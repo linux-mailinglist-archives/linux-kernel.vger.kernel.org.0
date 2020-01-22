@@ -2,34 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 021EB145609
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Jan 2020 14:35:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 12E681456CA
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Jan 2020 14:36:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729541AbgAVNTF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 22 Jan 2020 08:19:05 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34792 "EHLO mail.kernel.org"
+        id S1729008AbgAVNbe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 22 Jan 2020 08:31:34 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35268 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729501AbgAVNS7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 Jan 2020 08:18:59 -0500
+        id S1728904AbgAVNTW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 22 Jan 2020 08:19:22 -0500
 Received: from localhost (unknown [84.241.205.26])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7B18920678;
-        Wed, 22 Jan 2020 13:18:58 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 178742467E;
+        Wed, 22 Jan 2020 13:19:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579699139;
-        bh=jFgFEl3kD3YwrxxbrLfUwQV2Yq1uZPEM9yM+PSVcEpI=;
+        s=default; t=1579699161;
+        bh=LByY10wpkdMhOfDenUl7OS5TBtH4DUSUXN3WLEC0Sig=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=MOllp4plEBW6Ppj3RiXqYc5DDXNliEv+XVQM0fclN1M1FxZmZj7jzPPehid7nVzGH
-         xxh9SiOn0UCT7+3uUf5D1cIkgFDE0T4AES23LM+lkMt8vcqkuP1/fj2n7au9PiAcVE
-         RqwaJeV61EGRgh3zS8qLyfLAI1+FhaxNZGqZQGDo=
+        b=l9fui+BQRA9lMuBRBZnpCPtFDSytpEIq5Xm1p+Sgs1ihrufDdX9SzoFffzr5Ki2Uh
+         LTmBXcoVWNBa+eZOZUVIgKOEL02MHcIkTuXWSg0vWgeIpGRgX2QFgxQiG/Id7s9k1C
+         OAsubqotzWuDDYaaPGaC3DHq7ggNUpUMUHh6D9Co=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Johan Hovold <johan@kernel.org>
-Subject: [PATCH 5.4 052/222] USB: serial: quatech2: handle unbound ports
-Date:   Wed, 22 Jan 2020 10:27:18 +0100
-Message-Id: <20200122092837.340138921@linuxfoundation.org>
+        stable@vger.kernel.org, Esben Haabendal <esben@geanix.com>,
+        Han Xu <han.xu@nxp.com>,
+        Miquel Raynal <miquel.raynal@bootlin.com>
+Subject: [PATCH 5.4 059/222] mtd: rawnand: gpmi: Restore nfc timing setup after suspend/resume
+Date:   Wed, 22 Jan 2020 10:27:25 +0100
+Message-Id: <20200122092837.940724471@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
 In-Reply-To: <20200122092833.339495161@linuxfoundation.org>
 References: <20200122092833.339495161@linuxfoundation.org>
@@ -42,52 +44,37 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Johan Hovold <johan@kernel.org>
+From: Esben Haabendal <esben@geanix.com>
 
-commit 9715a43eea77e42678a1002623f2d9a78f5b81a1 upstream.
+commit d70486668cdf51b14a50425ab45fc18677a167b2 upstream.
 
-Check for NULL port data in the modem- and line-status handlers to avoid
-dereferencing a NULL pointer in the unlikely case where a port device
-isn't bound to a driver (e.g. after an allocation failure on port
-probe).
+As we reset the GPMI block at resume, the timing parameters setup by a
+previous exec_op is lost.  Rewriting GPMI timing registers on first exec_op
+after resume fixes the problem.
 
-Note that the other (stubbed) event handlers qt2_process_xmit_empty()
-and qt2_process_flush() would need similar sanity checks in case they
-are ever implemented.
-
-Fixes: f7a33e608d9a ("USB: serial: add quatech2 usb to serial driver")
-Cc: stable <stable@vger.kernel.org>     # 3.5
-Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Signed-off-by: Johan Hovold <johan@kernel.org>
+Fixes: ef347c0cfd61 ("mtd: rawnand: gpmi: Implement exec_op")
+Cc: stable@vger.kernel.org
+Signed-off-by: Esben Haabendal <esben@geanix.com>
+Acked-by: Han Xu <han.xu@nxp.com>
+Signed-off-by: Miquel Raynal <miquel.raynal@bootlin.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/usb/serial/quatech2.c |    6 ++++++
- 1 file changed, 6 insertions(+)
+ drivers/mtd/nand/raw/gpmi-nand/gpmi-nand.c |    4 ++++
+ 1 file changed, 4 insertions(+)
 
---- a/drivers/usb/serial/quatech2.c
-+++ b/drivers/usb/serial/quatech2.c
-@@ -841,7 +841,10 @@ static void qt2_update_msr(struct usb_se
- 	u8 newMSR = (u8) *ch;
- 	unsigned long flags;
+--- a/drivers/mtd/nand/raw/gpmi-nand/gpmi-nand.c
++++ b/drivers/mtd/nand/raw/gpmi-nand/gpmi-nand.c
+@@ -2727,6 +2727,10 @@ static int gpmi_pm_resume(struct device
+ 		return ret;
+ 	}
  
-+	/* May be called from qt2_process_read_urb() for an unbound port. */
- 	port_priv = usb_get_serial_port_data(port);
-+	if (!port_priv)
-+		return;
- 
- 	spin_lock_irqsave(&port_priv->lock, flags);
- 	port_priv->shadowMSR = newMSR;
-@@ -869,7 +872,10 @@ static void qt2_update_lsr(struct usb_se
- 	unsigned long flags;
- 	u8 newLSR = (u8) *ch;
- 
-+	/* May be called from qt2_process_read_urb() for an unbound port. */
- 	port_priv = usb_get_serial_port_data(port);
-+	if (!port_priv)
-+		return;
- 
- 	if (newLSR & UART_LSR_BI)
- 		newLSR &= (u8) (UART_LSR_OE | UART_LSR_BI);
++	/* Set flag to get timing setup restored for next exec_op */
++	if (this->hw.clk_rate)
++		this->hw.must_apply_timings = true;
++
+ 	/* re-init the BCH registers */
+ 	ret = bch_set_geometry(this);
+ 	if (ret) {
 
 
