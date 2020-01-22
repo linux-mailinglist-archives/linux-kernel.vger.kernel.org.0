@@ -2,43 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6C608144F4A
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Jan 2020 10:36:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4EB9C14501C
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Jan 2020 10:44:00 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730538AbgAVJgY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 22 Jan 2020 04:36:24 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51720 "EHLO mail.kernel.org"
+        id S2387966AbgAVJn7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 22 Jan 2020 04:43:59 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36682 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729277AbgAVJgP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 Jan 2020 04:36:15 -0500
+        id S1733238AbgAVJny (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 22 Jan 2020 04:43:54 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 96AFF2467B;
-        Wed, 22 Jan 2020 09:36:14 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 580FB24688;
+        Wed, 22 Jan 2020 09:43:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579685775;
-        bh=Ei0WUn/7hawY4OURlT4CiEtiWn271M8zq9cHlqLxs1A=;
+        s=default; t=1579686233;
+        bh=K5YyR0azjiv/e1ZJo5XVeYbPbX1Pec8euXUNLaJ1FZA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=viFjfIX/7vXpvloB27eWhcIzhzvcVqbFkjEwGWjZtFdFqS8oLVcHnHUknUC/QXgl2
-         KftOaxuSO0dOedeAS0UXVL9CuDccJZuuly0bhorI25uVe4S3MX64WRxSi78xEWZAsM
-         e2ugDzffuSqPSqKuUa6L8ii7VczLiLFHXTkYnMuk=
+        b=Kw9yElU/ffQp7lmJmidOH8cySMnZ5mINL5ytdvvqosItcHn8mlyBtBYfl3ZlSMaoq
+         FCVSZoSJ/1Lf6bJ94etYhc430S1V2IR96n2Z935ZaBLKzjsxcGsh/W5lFNQ48eer6e
+         f7vRu+R4Sf0Qzkr4tF9S/Mp7fkGUEA77YmTFFEqs=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Hiral Patel <hiralpat@cisco.com>,
-        Suma Ramars <sramars@cisco.com>,
-        Tom Tucker <tom@opengridcomputing.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        "Ewan D. Milne" <emilne@redhat.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 74/97] scsi: fnic: use kernels %pM format option to print MAC
+        stable@vger.kernel.org,
+        syzbot+0e63ae76d117ae1c3a01@syzkaller.appspotmail.com,
+        Florian Westphal <fw@strlen.de>,
+        Pablo Neira Ayuso <pablo@netfilter.org>
+Subject: [PATCH 4.19 062/103] netfilter: nf_tables: remove WARN and add NLA_STRING upper limits
 Date:   Wed, 22 Jan 2020 10:29:18 +0100
-Message-Id: <20200122092808.263950197@linuxfoundation.org>
+Message-Id: <20200122092813.141459145@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200122092755.678349497@linuxfoundation.org>
-References: <20200122092755.678349497@linuxfoundation.org>
+In-Reply-To: <20200122092803.587683021@linuxfoundation.org>
+References: <20200122092803.587683021@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -48,53 +45,74 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+From: Florian Westphal <fw@strlen.de>
 
-[ Upstream commit 36fe90b0f0bdc9d030e88ba2153f3c8d6b6a5964 ]
+commit 9332d27d7918182add34e8043f6a754530fdd022 upstream.
 
-Instead of supplying each byte through stack let's use %pM specifier.
+This WARN can trigger because some of the names fed to the module
+autoload function can be of arbitrary length.
 
-Cc: Hiral Patel <hiralpat@cisco.com>
-Cc: Suma Ramars <sramars@cisco.com>
-Acked-by: Tom Tucker <tom@opengridcomputing.com>
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Reviewed-by: Ewan D. Milne <emilne@redhat.com>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Remove the WARN and add limits for all NLA_STRING attributes.
+
+Reported-by: syzbot+0e63ae76d117ae1c3a01@syzkaller.appspotmail.com
+Fixes: 452238e8d5ffd8 ("netfilter: nf_tables: add and use helper for module autoload")
+Signed-off-by: Florian Westphal <fw@strlen.de>
+Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- drivers/scsi/fnic/vnic_dev.c | 10 ++--------
- 1 file changed, 2 insertions(+), 8 deletions(-)
+ net/netfilter/nf_tables_api.c |   13 +++++++++----
+ 1 file changed, 9 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/scsi/fnic/vnic_dev.c b/drivers/scsi/fnic/vnic_dev.c
-index 9795d6f3e197..ba69d6112fa1 100644
---- a/drivers/scsi/fnic/vnic_dev.c
-+++ b/drivers/scsi/fnic/vnic_dev.c
-@@ -499,10 +499,7 @@ void vnic_dev_add_addr(struct vnic_dev *vdev, u8 *addr)
+--- a/net/netfilter/nf_tables_api.c
++++ b/net/netfilter/nf_tables_api.c
+@@ -24,6 +24,8 @@
+ #include <net/net_namespace.h>
+ #include <net/sock.h>
  
- 	err = vnic_dev_cmd(vdev, CMD_ADDR_ADD, &a0, &a1, wait);
- 	if (err)
--		printk(KERN_ERR
--			"Can't add addr [%02x:%02x:%02x:%02x:%02x:%02x], %d\n",
--			addr[0], addr[1], addr[2], addr[3], addr[4], addr[5],
--			err);
-+		pr_err("Can't add addr [%pM], %d\n", addr, err);
++#define NFT_MODULE_AUTOLOAD_LIMIT (MODULE_NAME_LEN - sizeof("nft-expr-255-"))
++
+ static LIST_HEAD(nf_tables_expressions);
+ static LIST_HEAD(nf_tables_objects);
+ static LIST_HEAD(nf_tables_flowtables);
+@@ -504,7 +506,7 @@ static void nft_request_module(struct ne
+ 	va_start(args, fmt);
+ 	ret = vsnprintf(module_name, MODULE_NAME_LEN, fmt, args);
+ 	va_end(args);
+-	if (WARN(ret >= MODULE_NAME_LEN, "truncated: '%s' (len %d)", module_name, ret))
++	if (ret >= MODULE_NAME_LEN)
+ 		return;
+ 
+ 	mutex_unlock(&net->nft.commit_mutex);
+@@ -1129,7 +1131,8 @@ static const struct nla_policy nft_chain
+ 				    .len = NFT_CHAIN_MAXNAMELEN - 1 },
+ 	[NFTA_CHAIN_HOOK]	= { .type = NLA_NESTED },
+ 	[NFTA_CHAIN_POLICY]	= { .type = NLA_U32 },
+-	[NFTA_CHAIN_TYPE]	= { .type = NLA_STRING },
++	[NFTA_CHAIN_TYPE]	= { .type = NLA_STRING,
++				    .len = NFT_MODULE_AUTOLOAD_LIMIT },
+ 	[NFTA_CHAIN_COUNTERS]	= { .type = NLA_NESTED },
+ };
+ 
+@@ -2012,7 +2015,8 @@ static const struct nft_expr_type *nft_e
  }
  
- void vnic_dev_del_addr(struct vnic_dev *vdev, u8 *addr)
-@@ -517,10 +514,7 @@ void vnic_dev_del_addr(struct vnic_dev *vdev, u8 *addr)
+ static const struct nla_policy nft_expr_policy[NFTA_EXPR_MAX + 1] = {
+-	[NFTA_EXPR_NAME]	= { .type = NLA_STRING },
++	[NFTA_EXPR_NAME]	= { .type = NLA_STRING,
++				    .len = NFT_MODULE_AUTOLOAD_LIMIT },
+ 	[NFTA_EXPR_DATA]	= { .type = NLA_NESTED },
+ };
  
- 	err = vnic_dev_cmd(vdev, CMD_ADDR_DEL, &a0, &a1, wait);
- 	if (err)
--		printk(KERN_ERR
--			"Can't del addr [%02x:%02x:%02x:%02x:%02x:%02x], %d\n",
--			addr[0], addr[1], addr[2], addr[3], addr[4], addr[5],
--			err);
-+		pr_err("Can't del addr [%pM], %d\n", addr, err);
- }
+@@ -3796,7 +3800,8 @@ static const struct nla_policy nft_set_e
+ 	[NFTA_SET_ELEM_USERDATA]	= { .type = NLA_BINARY,
+ 					    .len = NFT_USERDATA_MAXLEN },
+ 	[NFTA_SET_ELEM_EXPR]		= { .type = NLA_NESTED },
+-	[NFTA_SET_ELEM_OBJREF]		= { .type = NLA_STRING },
++	[NFTA_SET_ELEM_OBJREF]		= { .type = NLA_STRING,
++					    .len = NFT_OBJ_MAXNAMELEN - 1 },
+ };
  
- int vnic_dev_notify_set(struct vnic_dev *vdev, u16 intr)
--- 
-2.20.1
-
+ static const struct nla_policy nft_set_elem_list_policy[NFTA_SET_ELEM_LIST_MAX + 1] = {
 
 
