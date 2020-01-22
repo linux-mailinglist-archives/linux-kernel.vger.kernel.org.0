@@ -2,44 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 84D781450C1
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Jan 2020 10:50:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 148DD144F45
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Jan 2020 10:36:28 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733070AbgAVJsO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 22 Jan 2020 04:48:14 -0500
-Received: from mail.kernel.org ([198.145.29.99]:32830 "EHLO mail.kernel.org"
+        id S1730987AbgAVJgL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 22 Jan 2020 04:36:11 -0500
+Received: from mail.kernel.org ([198.145.29.99]:51440 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387586AbgAVJld (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 Jan 2020 04:41:33 -0500
+        id S1731615AbgAVJgD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 22 Jan 2020 04:36:03 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0F33924684;
-        Wed, 22 Jan 2020 09:41:31 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 666D220704;
+        Wed, 22 Jan 2020 09:36:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579686092;
-        bh=0BtmGPs22M/KN4vGklPBEDBxRLyDfhHLM8jbiNuJg5s=;
+        s=default; t=1579685762;
+        bh=S2v/Klpj2hI2AgKj+OlwUrCMOKk0vPEvO5fPVW23H/M=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=tTXheWnD7G7mgt6ZMvfm0+scsbXDLv4Gizga19rP3I9wrfSRI8pG2U19zWxHKd8lo
-         Tq2INDtJZnzKTV76mvXLYUFw+s24O6lmj8lyWGRL+yGjuDiSAtdHvCNE5N1uwhZWkp
-         63ASbdWb4j70B5zpfVFYYpSq1ahlmN7LbwHNRybo=
+        b=SPONDFfaq5hRvu0dGMZuJGILE8gGHJhOZS6oQRLeTOY9rw0zaq5EGLS0+Mdm1k1oM
+         RYsLI/lhFrSyZmS+JO+7bp3q4yJ1kcyyn47+4Qs1sgNAb3brBrR6gcJMsiZOM8VOfQ
+         YmQf3y9ckeirn0siBf8vxNMbdS8cNKWac85yEkpM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        "Willhalm, Thomas" <thomas.willhalm@intel.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        "Bruggeman, Otto G" <otto.g.bruggeman@intel.com>,
-        "Aneesh Kumar K . V" <aneesh.kumar@linux.vnet.ibm.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Subject: [PATCH 4.19 040/103] mm/shmem.c: thp, shmem: fix conflict of above-47bit hint address and PMD alignment
+        stable@vger.kernel.org, Jerome Brunet <jbrunet@baylibre.com>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Stephen Boyd <sboyd@kernel.org>
+Subject: [PATCH 4.9 52/97] clk: Dont try to enable critical clocks if prepare failed
 Date:   Wed, 22 Jan 2020 10:28:56 +0100
-Message-Id: <20200122092809.942698826@linuxfoundation.org>
+Message-Id: <20200122092804.859188251@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200122092803.587683021@linuxfoundation.org>
-References: <20200122092803.587683021@linuxfoundation.org>
+In-Reply-To: <20200122092755.678349497@linuxfoundation.org>
+References: <20200122092755.678349497@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -49,74 +44,65 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Kirill A. Shutemov <kirill@shutemov.name>
+From: Guenter Roeck <linux@roeck-us.net>
 
-commit 991589974d9c9ecb24ee3799ec8c415c730598a2 upstream.
+commit 12ead77432f2ce32dea797742316d15c5800cb32 upstream.
 
-Shmem/tmpfs tries to provide THP-friendly mappings if huge pages are
-enabled.  But it doesn't work well with above-47bit hint address.
+The following traceback is seen if a critical clock fails to prepare.
 
-Normally, the kernel doesn't create userspace mappings above 47-bit,
-even if the machine allows this (such as with 5-level paging on x86-64).
-Not all user space is ready to handle wide addresses.  It's known that
-at least some JIT compilers use higher bits in pointers to encode their
-information.
+bcm2835-clk 3f101000.cprman: plld: couldn't lock PLL
+------------[ cut here ]------------
+Enabling unprepared plld_per
+WARNING: CPU: 1 PID: 1 at drivers/clk/clk.c:1014 clk_core_enable+0xcc/0x2c0
+...
+Call trace:
+ clk_core_enable+0xcc/0x2c0
+ __clk_register+0x5c4/0x788
+ devm_clk_hw_register+0x4c/0xb0
+ bcm2835_register_pll_divider+0xc0/0x150
+ bcm2835_clk_probe+0x134/0x1e8
+ platform_drv_probe+0x50/0xa0
+ really_probe+0xd4/0x308
+ driver_probe_device+0x54/0xe8
+ device_driver_attach+0x6c/0x78
+ __driver_attach+0x54/0xd8
+...
 
-Userspace can ask for allocation from full address space by specifying
-hint address (with or without MAP_FIXED) above 47-bits.  If the
-application doesn't need a particular address, but wants to allocate
-from whole address space it can specify -1 as a hint address.
+Check return values from clk_core_prepare() and clk_core_enable() and
+bail out if any of those functions returns an error.
 
-Unfortunately, this trick breaks THP alignment in shmem/tmp:
-shmem_get_unmapped_area() would not try to allocate PMD-aligned area if
-*any* hint address specified.
-
-This can be fixed by requesting the aligned area if the we failed to
-allocated at user-specified hint address.  The request with inflated
-length will also take the user-specified hint address.  This way we will
-not lose an allocation request from the full address space.
-
-[kirill@shutemov.name: fold in a fixup]
-  Link: http://lkml.kernel.org/r/20191223231309.t6bh5hkbmokihpfu@box
-Link: http://lkml.kernel.org/r/20191220142548.7118-3-kirill.shutemov@linux.intel.com
-Fixes: b569bab78d8d ("x86/mm: Prepare to expose larger address space to userspace")
-Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
-Cc: "Willhalm, Thomas" <thomas.willhalm@intel.com>
-Cc: Dan Williams <dan.j.williams@intel.com>
-Cc: "Bruggeman, Otto G" <otto.g.bruggeman@intel.com>
-Cc: "Aneesh Kumar K . V" <aneesh.kumar@linux.vnet.ibm.com>
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Jerome Brunet <jbrunet@baylibre.com>
+Fixes: 99652a469df1 ("clk: migrate the count of orphaned clocks at init")
+Signed-off-by: Guenter Roeck <linux@roeck-us.net>
+Link: https://lkml.kernel.org/r/20191225163429.29694-1-linux@roeck-us.net
+Signed-off-by: Stephen Boyd <sboyd@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- mm/shmem.c |    7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
+ drivers/clk/clk.c |   10 ++++++++--
+ 1 file changed, 8 insertions(+), 2 deletions(-)
 
---- a/mm/shmem.c
-+++ b/mm/shmem.c
-@@ -2072,9 +2072,10 @@ unsigned long shmem_get_unmapped_area(st
+--- a/drivers/clk/clk.c
++++ b/drivers/clk/clk.c
+@@ -2448,11 +2448,17 @@ static int __clk_core_init(struct clk_co
+ 	if (core->flags & CLK_IS_CRITICAL) {
+ 		unsigned long flags;
+ 
+-		clk_core_prepare(core);
++		ret = clk_core_prepare(core);
++		if (ret)
++			goto out;
+ 
+ 		flags = clk_enable_lock();
+-		clk_core_enable(core);
++		ret = clk_core_enable(core);
+ 		clk_enable_unlock(flags);
++		if (ret) {
++			clk_core_unprepare(core);
++			goto out;
++		}
+ 	}
+ 
  	/*
- 	 * Our priority is to support MAP_SHARED mapped hugely;
- 	 * and support MAP_PRIVATE mapped hugely too, until it is COWed.
--	 * But if caller specified an address hint, respect that as before.
-+	 * But if caller specified an address hint and we allocated area there
-+	 * successfully, respect that as before.
- 	 */
--	if (uaddr)
-+	if (uaddr == addr)
- 		return addr;
- 
- 	if (shmem_huge != SHMEM_HUGE_FORCE) {
-@@ -2108,7 +2109,7 @@ unsigned long shmem_get_unmapped_area(st
- 	if (inflated_len < len)
- 		return addr;
- 
--	inflated_addr = get_area(NULL, 0, inflated_len, 0, flags);
-+	inflated_addr = get_area(NULL, uaddr, inflated_len, 0, flags);
- 	if (IS_ERR_VALUE(inflated_addr))
- 		return addr;
- 	if (inflated_addr & ~PAGE_MASK)
 
 
