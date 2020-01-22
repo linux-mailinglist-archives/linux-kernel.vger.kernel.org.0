@@ -2,46 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 50536145159
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Jan 2020 10:53:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C9CFC144EE8
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Jan 2020 10:34:10 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731157AbgAVJfN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 22 Jan 2020 04:35:13 -0500
-Received: from mail.kernel.org ([198.145.29.99]:50006 "EHLO mail.kernel.org"
+        id S1730157AbgAVJcg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 22 Jan 2020 04:32:36 -0500
+Received: from mail.kernel.org ([198.145.29.99]:45522 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729906AbgAVJfH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 Jan 2020 04:35:07 -0500
+        id S1730136AbgAVJcd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 22 Jan 2020 04:32:33 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9AA0D2467B;
-        Wed, 22 Jan 2020 09:35:06 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 29D002071E;
+        Wed, 22 Jan 2020 09:32:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579685707;
-        bh=p9B0uT2oHpZTVWWgC2Fc08MdyScnRBmnaT96Qf13I7I=;
+        s=default; t=1579685552;
+        bh=wV4sBakQ3b/c4Lez57pR0uixWdNUh8E6EcO69dxaw7k=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=OhLMz8yp4OV5FT+abX1H2Qj9obe0rL8lAhwVNMMzy0AN4ykLEaq6sZmdf+LoWnydQ
-         D0H5qOaER753prH64P++6E+tnHrFJ2MhfXIw7UwoyLTdZLMCC7IjWdj5tDpzRTraxS
-         DikKiGJ+PwWCf+mOePu2Z2DeOndZG/DsCIl5zh9k=
+        b=FtyTWqphfB8yaehboktIzBSVzaOxgS5fWh0qXkKekJo2qxB6TiEheLaoWQ1EUSHDX
+         VVLh12R0EJXpw7yKfkqA676s8kZYdl7zkJ97ZLp8dHwBUnlOvLFz+yql/6jkOidxUY
+         AexnrBMf2tmNxPyenehvDZLOLsV1BebTteKKxCTo=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Shuah Khan <skhan@linuxfoundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
-        "Paul E. McKenney" <paulmck@linux.ibm.com>,
-        Boqun Feng <boqun.feng@gmail.com>,
-        "H . Peter Anvin" <hpa@zytor.com>, Paul Turner <pjt@google.com>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 45/97] rseq/selftests: Turn off timeout setting
+        stable@vger.kernel.org, Seung-Woo Kim <sw0312.kim@samsung.com>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>
+Subject: [PATCH 4.4 33/76] media: exynos4-is: Fix recursive locking in isp_video_release()
 Date:   Wed, 22 Jan 2020 10:28:49 +0100
-Message-Id: <20200122092803.764193669@linuxfoundation.org>
+Message-Id: <20200122092755.304524185@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200122092755.678349497@linuxfoundation.org>
-References: <20200122092755.678349497@linuxfoundation.org>
+In-Reply-To: <20200122092751.587775548@linuxfoundation.org>
+References: <20200122092751.587775548@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -51,38 +45,36 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+From: Seung-Woo Kim <sw0312.kim@samsung.com>
 
-[ Upstream commit af9cb29c5488381083b0b5ccdfb3cd931063384a ]
+commit 704c6c80fb471d1bb0ef0d61a94617d1d55743cd upstream.
 
-As the rseq selftests can run for a long period of time, disable the
-timeout that the general selftests have.
+>From isp_video_release(), &isp->video_lock is held and subsequent
+vb2_fop_release() tries to lock vdev->lock which is same with the
+previous one. Replace vb2_fop_release() with _vb2_fop_release() to
+fix the recursive locking.
 
-Signed-off-by: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Cc: Shuah Khan <skhan@linuxfoundation.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Peter Zijlstra (Intel) <peterz@infradead.org>
-Cc: "Paul E. McKenney" <paulmck@linux.ibm.com>
-Cc: Boqun Feng <boqun.feng@gmail.com>
-Cc: "H . Peter Anvin" <hpa@zytor.com>
-Cc: Paul Turner <pjt@google.com>
-Cc: Dmitry Vyukov <dvyukov@google.com>
-Signed-off-by: Shuah Khan <skhan@linuxfoundation.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Fixes: 1380f5754cb0 ("[media] videobuf2: Add missing lock held on vb2_fop_release")
+Signed-off-by: Seung-Woo Kim <sw0312.kim@samsung.com>
+Reviewed-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Signed-off-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
+Signed-off-by: Mauro Carvalho Chehab <mchehab@kernel.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- tools/testing/selftests/rseq/settings | 1 +
- 1 file changed, 1 insertion(+)
- create mode 100644 tools/testing/selftests/rseq/settings
+ drivers/media/platform/exynos4-is/fimc-isp-video.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/tools/testing/selftests/rseq/settings b/tools/testing/selftests/rseq/settings
-new file mode 100644
-index 000000000000..e7b9417537fb
---- /dev/null
-+++ b/tools/testing/selftests/rseq/settings
-@@ -0,0 +1 @@
-+timeout=0
--- 
-2.20.1
-
+--- a/drivers/media/platform/exynos4-is/fimc-isp-video.c
++++ b/drivers/media/platform/exynos4-is/fimc-isp-video.c
+@@ -323,7 +323,7 @@ static int isp_video_release(struct file
+ 		ivc->streaming = 0;
+ 	}
+ 
+-	vb2_fop_release(file);
++	_vb2_fop_release(file, NULL);
+ 
+ 	if (v4l2_fh_is_singular_file(file)) {
+ 		fimc_pipeline_call(&ivc->ve, close);
 
 
