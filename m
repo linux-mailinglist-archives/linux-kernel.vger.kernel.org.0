@@ -2,184 +2,138 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7BBEE1457C6
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Jan 2020 15:26:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0F35C1457C0
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Jan 2020 15:25:26 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729066AbgAVO0P (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 22 Jan 2020 09:26:15 -0500
-Received: from mga07.intel.com ([134.134.136.100]:7295 "EHLO mga07.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728205AbgAVO0O (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 Jan 2020 09:26:14 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga002.fm.intel.com ([10.253.24.26])
-  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 22 Jan 2020 06:25:22 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.70,350,1574150400"; 
-   d="scan'208";a="259481099"
-Received: from linux.intel.com ([10.54.29.200])
-  by fmsmga002.fm.intel.com with ESMTP; 22 Jan 2020 06:25:20 -0800
-Received: from [10.252.5.6] (unknown [10.252.5.6])
-        by linux.intel.com (Postfix) with ESMTP id C8A54580100;
-        Wed, 22 Jan 2020 06:25:10 -0800 (PST)
-Subject: Re: [PATCH v5 01/10] capabilities: introduce CAP_PERFMON to kernel
- and user space
-To:     Stephen Smalley <sds@tycho.nsa.gov>,
-        Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        "jani.nikula@linux.intel.com" <jani.nikula@linux.intel.com>,
-        "joonas.lahtinen@linux.intel.com" <joonas.lahtinen@linux.intel.com>,
-        "rodrigo.vivi@intel.com" <rodrigo.vivi@intel.com>,
-        "benh@kernel.crashing.org" <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        "james.bottomley@hansenpartnership.com" 
-        <james.bottomley@hansenpartnership.com>,
-        Serge Hallyn <serge@hallyn.com>,
-        James Morris <jmorris@namei.org>,
-        Will Deacon <will.deacon@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Robert Richter <rric@kernel.org>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Jiri Olsa <jolsa@redhat.com>, Andi Kleen <ak@linux.intel.com>,
-        Stephane Eranian <eranian@google.com>,
-        Igor Lubashev <ilubashe@akamai.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Song Liu <songliubraving@fb.com>,
-        Lionel Landwerlin <lionel.g.landwerlin@intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        "linux-security-module@vger.kernel.org" 
-        <linux-security-module@vger.kernel.org>,
-        "selinux@vger.kernel.org" <selinux@vger.kernel.org>,
-        "intel-gfx@lists.freedesktop.org" <intel-gfx@lists.freedesktop.org>,
-        "linux-parisc@vger.kernel.org" <linux-parisc@vger.kernel.org>,
-        "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        "linux-perf-users@vger.kernel.org" <linux-perf-users@vger.kernel.org>,
-        oprofile-list@lists.sf.net, Andy Lutomirski <luto@amacapital.net>
-References: <0548c832-7f4b-dc4c-8883-3f2b6d351a08@linux.intel.com>
- <9b77124b-675d-5ac7-3741-edec575bd425@linux.intel.com>
- <64cab472-806e-38c4-fb26-0ffbee485367@tycho.nsa.gov>
- <05297eff-8e14-ccdf-55a4-870c64516de8@linux.intel.com>
- <CAADnVQK-JzK-GUk4KOozn4c1xr=7TiCpB9Fi0QDC9nE6iVn8iQ@mail.gmail.com>
- <537bdb28-c9e4-f44f-d665-25250065a6bb@linux.intel.com>
- <63d9700f-231d-7973-5307-3e56a48c54cb@linux.intel.com>
- <d7213569-9578-7201-6106-f5ebc95bd6be@tycho.nsa.gov>
-From:   Alexey Budankov <alexey.budankov@linux.intel.com>
-Organization: Intel Corp.
-Message-ID: <ac0dbab7-de47-ee34-bb88-4c43d3538b7d@linux.intel.com>
-Date:   Wed, 22 Jan 2020 17:25:09 +0300
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.1
+        id S1729106AbgAVOZX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 22 Jan 2020 09:25:23 -0500
+Received: from us-smtp-1.mimecast.com ([205.139.110.61]:32206 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725884AbgAVOZV (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 22 Jan 2020 09:25:21 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1579703120;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=RFgGoOBhlbp8G8qaVhgWYbMLMOHhw7MLLAMMLlLXNk8=;
+        b=Xnr+c9KdCM6EEfSgCJeU2Htgmt93wmNQmALNv62MDmDuGdkE5B+Yd0Z0Q7ykDUVa8uFT48
+        iEIx94B4Bu4Ky1vaqqAOVGOIUDdfmAKF6KEkyeouGy/DB+ZHbV3WlN1Sy9UjRUwz3G9G7C
+        pqQWahjH9XAiZPf06dDQdlGIn3Gtsik=
+Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com
+ [209.85.221.72]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-4-dkhbqQhGNTqQlTlFEpJ37g-1; Wed, 22 Jan 2020 09:25:17 -0500
+X-MC-Unique: dkhbqQhGNTqQlTlFEpJ37g-1
+Received: by mail-wr1-f72.google.com with SMTP id f17so3126202wrt.19
+        for <linux-kernel@vger.kernel.org>; Wed, 22 Jan 2020 06:25:17 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=RFgGoOBhlbp8G8qaVhgWYbMLMOHhw7MLLAMMLlLXNk8=;
+        b=dt3B8n0RyL5G4onbvJNImclt/Krn32MIF+1MARCJ0WmJ9abofyg7lWjG9Ah1xihCR8
+         RwtrA1IUbIbvfReMy0DHXtyVgC+8gx3yO9sM4tMpZFwBNIL02tZFYM6v3Z4+gmGPAaJ4
+         iRk0TlA1BMw6YJKhWDbx8G9mlZVSG765Ha5oXB0/wjAJmCaYFQO62ZA9NZ+K0KjNETNX
+         idRNLJ4V85+nryFXDUL4pizYJni2vrL+5UJsQ4r/fQDaOuArqRCnpCgg/bLUhfOU/jeD
+         wJbfvMgM9CCN1S8beBOqgukJ/VJx/iG8MoSD/vBUFVOGp6yg54abySDmaD7tqnZjLejv
+         1ckA==
+X-Gm-Message-State: APjAAAXTkhGMd2XTvuB2i94RLi3jxiCXTwnlr7kn4bPWoM8QXYcAegxY
+        v4ET+9jOZhrL22Qiy2KlpQbu+T23m7bHf+PUWtxPJZr+ishYqXdDYfZbZPCV7VDL4uyF6L2iVm8
+        pEqtsrXkaXLbb3qsKXKiEMacL
+X-Received: by 2002:a5d:4acb:: with SMTP id y11mr11682172wrs.106.1579703116114;
+        Wed, 22 Jan 2020 06:25:16 -0800 (PST)
+X-Google-Smtp-Source: APXvYqyP2XsJnDsSThV8rarChN47R6UPyNGJ5Ur+DUzXB/tIVsKHJn5tBp7pP6PRF5kIpqccVYYx4w==
+X-Received: by 2002:a5d:4acb:: with SMTP id y11mr11682150wrs.106.1579703115876;
+        Wed, 22 Jan 2020 06:25:15 -0800 (PST)
+Received: from ?IPv6:2001:b07:6468:f312:b8fe:679e:87eb:c059? ([2001:b07:6468:f312:b8fe:679e:87eb:c059])
+        by smtp.gmail.com with ESMTPSA id s65sm4350127wmf.48.2020.01.22.06.25.15
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 22 Jan 2020 06:25:15 -0800 (PST)
+Subject: Re: [PATCH 02/01] KVM: x86: Use a typedef for fastop functions
+To:     Sean Christopherson <sean.j.christopherson@intel.com>
+Cc:     Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Wanpeng Li <wanpengli@tencent.com>,
+        Jim Mattson <jmattson@google.com>,
+        Joerg Roedel <joro@8bytes.org>, kvm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Miaohe Lin <linmiaohe@huawei.com>
+References: <1579663304-14524-1-git-send-email-linmiaohe@huawei.com>
+ <20200122044339.4888-1-sean.j.christopherson@intel.com>
+From:   Paolo Bonzini <pbonzini@redhat.com>
+Message-ID: <8c8606db-a2fa-d3b8-58c3-7630bc52195f@redhat.com>
+Date:   Wed, 22 Jan 2020 15:25:14 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.1.1
 MIME-Version: 1.0
-In-Reply-To: <d7213569-9578-7201-6106-f5ebc95bd6be@tycho.nsa.gov>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <20200122044339.4888-1-sean.j.christopherson@intel.com>
+Content-Type: text/plain; charset=windows-1252
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-On 22.01.2020 17:07, Stephen Smalley wrote:
-> On 1/22/20 5:45 AM, Alexey Budankov wrote:
->>
->> On 21.01.2020 21:27, Alexey Budankov wrote:
->>>
->>> On 21.01.2020 20:55, Alexei Starovoitov wrote:
->>>> On Tue, Jan 21, 2020 at 9:31 AM Alexey Budankov
->>>> <alexey.budankov@linux.intel.com> wrote:
->>>>>
->>>>>
->>>>> On 21.01.2020 17:43, Stephen Smalley wrote:
->>>>>> On 1/20/20 6:23 AM, Alexey Budankov wrote:
->>>>>>>
->>>>>>> Introduce CAP_PERFMON capability designed to secure system performance
->>>>>>> monitoring and observability operations so that CAP_PERFMON would assist
->>>>>>> CAP_SYS_ADMIN capability in its governing role for perf_events, i915_perf
->>>>>>> and other performance monitoring and observability subsystems.
->>>>>>>
->>>>>>> CAP_PERFMON intends to harden system security and integrity during system
->>>>>>> performance monitoring and observability operations by decreasing attack
->>>>>>> surface that is available to a CAP_SYS_ADMIN privileged process [1].
->>>>>>> Providing access to system performance monitoring and observability
->>>>>>> operations under CAP_PERFMON capability singly, without the rest of
->>>>>>> CAP_SYS_ADMIN credentials, excludes chances to misuse the credentials and
->>>>>>> makes operation more secure.
->>>>>>>
->>>>>>> CAP_PERFMON intends to take over CAP_SYS_ADMIN credentials related to
->>>>>>> system performance monitoring and observability operations and balance
->>>>>>> amount of CAP_SYS_ADMIN credentials following the recommendations in the
->>>>>>> capabilities man page [1] for CAP_SYS_ADMIN: "Note: this capability is
->>>>>>> overloaded; see Notes to kernel developers, below."
->>>>>>>
->>>>>>> Although the software running under CAP_PERFMON can not ensure avoidance
->>>>>>> of related hardware issues, the software can still mitigate these issues
->>>>>>> following the official embargoed hardware issues mitigation procedure [2].
->>>>>>> The bugs in the software itself could be fixed following the standard
->>>>>>> kernel development process [3] to maintain and harden security of system
->>>>>>> performance monitoring and observability operations.
->>>>>>>
->>>>>>> [1] http://man7.org/linux/man-pages/man7/capabilities.7.html
->>>>>>> [2] https://www.kernel.org/doc/html/latest/process/embargoed-hardware-issues.html
->>>>>>> [3] https://www.kernel.org/doc/html/latest/admin-guide/security-bugs.html
->>>>>>>
->>>>>>> Signed-off-by: Alexey Budankov <alexey.budankov@linux.intel.com>
->>>>>>> ---
->>>>>>>    include/linux/capability.h          | 12 ++++++++++++
->>>>>>>    include/uapi/linux/capability.h     |  8 +++++++-
->>>>>>>    security/selinux/include/classmap.h |  4 ++--
->>>>>>>    3 files changed, 21 insertions(+), 3 deletions(-)
->>>>>>>
->>>>>>> diff --git a/include/linux/capability.h b/include/linux/capability.h
->>>>>>> index ecce0f43c73a..8784969d91e1 100644
->>>>>>> --- a/include/linux/capability.h
->>>>>>> +++ b/include/linux/capability.h
->>>>>>> @@ -251,6 +251,18 @@ extern bool privileged_wrt_inode_uidgid(struct user_namespace *ns, const struct
->>>>>>>    extern bool capable_wrt_inode_uidgid(const struct inode *inode, int cap);
->>>>>>>    extern bool file_ns_capable(const struct file *file, struct user_namespace *ns, int cap);
->>>>>>>    extern bool ptracer_capable(struct task_struct *tsk, struct user_namespace *ns);
->>>>>>> +static inline bool perfmon_capable(void)
->>>>>>> +{
->>>>>>> +    struct user_namespace *ns = &init_user_ns;
->>>>>>> +
->>>>>>> +    if (ns_capable_noaudit(ns, CAP_PERFMON))
->>>>>>> +        return ns_capable(ns, CAP_PERFMON);
->>>>>>> +
->>>>>>> +    if (ns_capable_noaudit(ns, CAP_SYS_ADMIN))
->>>>>>> +        return ns_capable(ns, CAP_SYS_ADMIN);
->>>>>>> +
->>>>>>> +    return false;
->>>>>>> +}
->>>>>>
->>>>>> Why _noaudit()?  Normally only used when a permission failure is non-fatal to the operation.  Otherwise, we want the audit message.
->>
->> So far so good, I suggest using the simplest version for v6:
->>
->> static inline bool perfmon_capable(void)
->> {
->>     return capable(CAP_PERFMON) || capable(CAP_SYS_ADMIN);
->> }
->>
->> It keeps the implementation simple and readable. The implementation is more
->> performant in the sense of calling the API - one capable() call for CAP_PERFMON
->> privileged process.
->>
->> Yes, it bloats audit log for CAP_SYS_ADMIN privileged and unprivileged processes,
->> but this bloating also advertises and leverages using more secure CAP_PERFMON
->> based approach to use perf_event_open system call.
+On 22/01/20 05:43, Sean Christopherson wrote:
+> Add a typedef to for the fastop function prototype to make the code more
+> readable.
 > 
-> I can live with that.  We just need to document that when you see both a CAP_PERFMON and a CAP_SYS_ADMIN audit message for a process, try only allowing CAP_PERFMON first and see if that resolves the issue.  We have a similar issue with CAP_DAC_READ_SEARCH versus CAP_DAC_OVERRIDE.
+> No functional change intended.
+> 
+> Cc: Miaohe Lin <linmiaohe@huawei.com>
+> Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
+> ---
+> 
+> Applies on top of Miaohe's patch.  Feel free to squash this.
+> 
+>  arch/x86/kvm/emulate.c | 14 +++++++-------
+>  1 file changed, 7 insertions(+), 7 deletions(-)
+> 
+> diff --git a/arch/x86/kvm/emulate.c b/arch/x86/kvm/emulate.c
+> index 0accce94f660..ddbc61984227 100644
+> --- a/arch/x86/kvm/emulate.c
+> +++ b/arch/x86/kvm/emulate.c
+> @@ -311,7 +311,9 @@ static void invalidate_registers(struct x86_emulate_ctxt *ctxt)
+>  #define ON64(x)
+>  #endif
+>  
+> -static int fastop(struct x86_emulate_ctxt *ctxt, void (*fop)(struct fastop *));
+> +typedef void (*fastop_t)(struct fastop *);
+> +
+> +static int fastop(struct x86_emulate_ctxt *ctxt, fastop_t fop);
+>  
+>  #define __FOP_FUNC(name) \
+>  	".align " __stringify(FASTOP_SIZE) " \n\t" \
+> @@ -5502,7 +5504,7 @@ static void fetch_possible_mmx_operand(struct operand *op)
+>  		read_mmx_reg(&op->mm_val, op->addr.mm);
+>  }
+>  
+> -static int fastop(struct x86_emulate_ctxt *ctxt, void (*fop)(struct fastop *))
+> +static int fastop(struct x86_emulate_ctxt *ctxt, fastop_t fop)
+>  {
+>  	ulong flags = (ctxt->eflags & EFLAGS_MASK) | X86_EFLAGS_IF;
+>  
+> @@ -5680,12 +5682,10 @@ int x86_emulate_insn(struct x86_emulate_ctxt *ctxt)
+>  		ctxt->eflags &= ~X86_EFLAGS_RF;
+>  
+>  	if (ctxt->execute) {
+> -		if (ctxt->d & Fastop) {
+> -			void (*fop)(struct fastop *) = (void *)ctxt->execute;
+> -			rc = fastop(ctxt, fop);
+> -		} else {
+> +		if (ctxt->d & Fastop)
+> +			rc = fastop(ctxt, (fastop_t)ctxt->execute);
+> +		else
+>  			rc = ctxt->execute(ctxt);
+> -		}
+>  		if (rc != X86EMUL_CONTINUE)
+>  			goto done;
+>  		goto writeback;
+> 
 
-perf security [1] document can be updated, at least, to align and document 
-this audit logging specifics.
+Queued, thanks.
 
-~Alexey
+Paolo
 
-[1] https://www.kernel.org/doc/html/latest/admin-guide/perf-security.html
