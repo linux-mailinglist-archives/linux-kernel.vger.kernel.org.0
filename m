@@ -2,35 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 48200145580
+	by mail.lfdr.de (Postfix) with ESMTP id BB031145581
 	for <lists+linux-kernel@lfdr.de>; Wed, 22 Jan 2020 14:25:21 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730623AbgAVNWe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 22 Jan 2020 08:22:34 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40258 "EHLO mail.kernel.org"
+        id S1730632AbgAVNWj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 22 Jan 2020 08:22:39 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40364 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725827AbgAVNWd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 Jan 2020 08:22:33 -0500
+        id S1725827AbgAVNWi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 22 Jan 2020 08:22:38 -0500
 Received: from localhost (unknown [84.241.205.26])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D716A24690;
-        Wed, 22 Jan 2020 13:22:31 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 71CCF24690;
+        Wed, 22 Jan 2020 13:22:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579699352;
-        bh=izB+U4VTqVzEqSWKIcuixLoto9qu8cWMY14h+CQf9gE=;
+        s=default; t=1579699358;
+        bh=THZTOQTBOsJRrzlwegB7sVd2vR3v8N9OdsvPhENhc5g=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=lv93rYi5vtu6azTf45mi75PZfsC8hPVBLYaHCEKUqjAvwo+dwincbWuDNtqY/aehm
-         HOhwp7gemWcaMT+MCwDYdh2F6U114DuqUsODQKa6GJGbJLXVIN0jaubDTb7RXFBgvx
-         3txxUNZ/+VXUgXC2Ogx6bFCO5UxFJnFmh5vWQRxk=
+        b=yM2ptP1WXt38YUkHMqz5eeT6rUhN1FAtgiwv5A3hVJP+7JnRss9XSRXvv6vYoPi+E
+         B0xjXmbtLcdFfqyMKNnPZNwULURTmX3ek1HH3sYEW6gV+fyEYPCt1T+Ec2J5ev4uTT
+         jD+Zq1hjyS7vlwZq0t2aLiqCR4rLSF7V5zfEDyWU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Felix Fietkau <nbd@nbd.name>,
         Johannes Berg <johannes.berg@intel.com>
-Subject: [PATCH 5.4 119/222] cfg80211: fix memory leak in nl80211_probe_mesh_link
-Date:   Wed, 22 Jan 2020 10:28:25 +0100
-Message-Id: <20200122092842.260670992@linuxfoundation.org>
+Subject: [PATCH 5.4 120/222] cfg80211: fix memory leak in cfg80211_cqm_rssi_update
+Date:   Wed, 22 Jan 2020 10:28:26 +0100
+Message-Id: <20200122092842.331958509@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
 In-Reply-To: <20200122092833.339495161@linuxfoundation.org>
 References: <20200122092833.339495161@linuxfoundation.org>
@@ -45,31 +45,30 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Felix Fietkau <nbd@nbd.name>
 
-commit 2a279b34169e9bbf7c240691466420aba75b4175 upstream.
+commit df16737d438f534d0cc9948c7c5158f1986c5c87 upstream.
 
 The per-tid statistics need to be released after the call to rdev_get_station
 
 Cc: stable@vger.kernel.org
-Fixes: 5ab92e7fe49a ("cfg80211: add support to probe unexercised mesh link")
+Fixes: 8689c051a201 ("cfg80211: dynamically allocate per-tid stats for station info")
 Signed-off-by: Felix Fietkau <nbd@nbd.name>
-Link: https://lore.kernel.org/r/20200108170630.33680-1-nbd@nbd.name
+Link: https://lore.kernel.org/r/20200108170630.33680-2-nbd@nbd.name
 Signed-off-by: Johannes Berg <johannes.berg@intel.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- net/wireless/nl80211.c |    2 ++
- 1 file changed, 2 insertions(+)
+ net/wireless/nl80211.c |    1 +
+ 1 file changed, 1 insertion(+)
 
 --- a/net/wireless/nl80211.c
 +++ b/net/wireless/nl80211.c
-@@ -13787,6 +13787,8 @@ static int nl80211_probe_mesh_link(struc
- 	if (err)
- 		return err;
+@@ -10834,6 +10834,7 @@ static int cfg80211_cqm_rssi_update(stru
+ 		if (err)
+ 			return err;
  
-+	cfg80211_sinfo_release_content(&sinfo);
-+
- 	return rdev_probe_mesh_link(rdev, dev, dest, buf, len);
- }
- 
++		cfg80211_sinfo_release_content(&sinfo);
+ 		if (sinfo.filled & BIT_ULL(NL80211_STA_INFO_BEACON_SIGNAL_AVG))
+ 			wdev->cqm_config->last_rssi_event_value =
+ 				(s8) sinfo.rx_beacon_signal_avg;
 
 
