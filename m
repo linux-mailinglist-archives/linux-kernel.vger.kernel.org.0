@@ -2,79 +2,123 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0AF501455DF
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Jan 2020 14:26:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 057EF1454A4
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Jan 2020 14:00:52 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731458AbgAVN0D (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 22 Jan 2020 08:26:03 -0500
-Received: from mail.kernel.org ([198.145.29.99]:46504 "EHLO mail.kernel.org"
+        id S1729184AbgAVNAo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 22 Jan 2020 08:00:44 -0500
+Received: from pegase1.c-s.fr ([93.17.236.30]:37038 "EHLO pegase1.c-s.fr"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730785AbgAVN0B (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 Jan 2020 08:26:01 -0500
-Received: from localhost (unknown [84.241.205.26])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 47EF82467F;
-        Wed, 22 Jan 2020 13:26:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579699561;
-        bh=vnCbnJn57A55BNTw5QnrBbMb+AOMDapj65Mc6U1LwdE=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=VKXqE3wG1u1Z/ZrVpEW7+LRkNo4i6yRWZJX2hTNuZP87laPePl/Ee5r8H/HndNYjN
-         j+TCl6LO66pidRAG0tFHV7+D/2SriDd39nZEgfQCOvZ/B7RFj7iaTppt2Hh10GXiFF
-         nRsVeGB1s+xSFRufQOg/h6dN6zBL7A0OPO13jKpk=
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
-        Simon Horman <horms+renesas@verge.net.au>,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 5.4 179/222] arm64: dts: renesas: r8a77970: Fix PWM3
-Date:   Wed, 22 Jan 2020 10:29:25 +0100
-Message-Id: <20200122092846.509666279@linuxfoundation.org>
-X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200122092833.339495161@linuxfoundation.org>
-References: <20200122092833.339495161@linuxfoundation.org>
-User-Agent: quilt/0.66
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+        id S1728900AbgAVNAk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 22 Jan 2020 08:00:40 -0500
+Received: from localhost (mailhub1-int [192.168.12.234])
+        by localhost (Postfix) with ESMTP id 482lrM6r0Bz9v4T1;
+        Wed, 22 Jan 2020 14:00:35 +0100 (CET)
+Authentication-Results: localhost; dkim=pass
+        reason="1024-bit key; insecure key"
+        header.d=c-s.fr header.i=@c-s.fr header.b=Id0p0/pu; dkim-adsp=pass;
+        dkim-atps=neutral
+X-Virus-Scanned: Debian amavisd-new at c-s.fr
+Received: from pegase1.c-s.fr ([192.168.12.234])
+        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
+        with ESMTP id ER69ev4z_Xec; Wed, 22 Jan 2020 14:00:35 +0100 (CET)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+        by pegase1.c-s.fr (Postfix) with ESMTP id 482lrM51BQz9v4T0;
+        Wed, 22 Jan 2020 14:00:35 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=c-s.fr; s=mail;
+        t=1579698035; bh=IYuSNHph3xeKS9BqJ4P2sNK404BWtsrlVrUfzRg8JZc=;
+        h=From:Subject:To:Cc:Date:From;
+        b=Id0p0/punrqkIoihRIjlOTDIJUf8EAaYY/45qzeAcFcpIvcYgWSV7dABhL2qWd+Rd
+         OrZCEwEeHWaDFQsMYorxbrJexxNque0AKSTnLknGxGBn0IXYhJ8P0sIFr5JDMOEa91
+         sZ3Li+AyYuqq/Ks/DIu38NLCzSiqIwLU7TDPZFEo=
+Received: from localhost (localhost [127.0.0.1])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id CD87C8B803;
+        Wed, 22 Jan 2020 14:00:36 +0100 (CET)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+        with ESMTP id shOjK1liW11x; Wed, 22 Jan 2020 14:00:36 +0100 (CET)
+Received: from po14934vm.idsi0.si.c-s.fr (po15451.idsi0.si.c-s.fr [172.25.230.100])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id D917D8B7FA;
+        Wed, 22 Jan 2020 14:00:35 +0100 (CET)
+Received: by po14934vm.idsi0.si.c-s.fr (Postfix, from userid 0)
+        id 9179F651E0; Wed, 22 Jan 2020 13:00:35 +0000 (UTC)
+Message-Id: <a02d3426f93f7eb04960a4d9140902d278cab0bb.1579697910.git.christophe.leroy@c-s.fr>
+From:   Christophe Leroy <christophe.leroy@c-s.fr>
+Subject: [PATCH v1 1/6] fs/readdir: Fix filldir() and filldir64() use of
+ user_access_begin()
+To:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Andrew Morton <akpm@linux-foundation.org>
+Cc:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org
+Date:   Wed, 22 Jan 2020 13:00:35 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Some architectures grand full access to userspace regardless of the
+address/len passed to user_access_begin(), but other architectures
+only grand access to the requested area.
 
-commit 28a1b34c00dad4be91108369ca25ef8dc8bf850d upstream.
+For exemple, on 32 bits powerpc (book3s/32), access is granted by
+segments of 256 Mbytes.
 
-The pwm3 was incorrectly added with a compatible reference to the
-renesas,pwm-r8a7790 (H2) due to a single characther ommision.
+Modify filldir() and filldir64() to request the real area they need
+to get access to.
 
-Fix the compatible string.
-
-Fixes: de625477c632 ("arm64: dts: renesas: r8a779{7|8}0: add PWM support")
-Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
-Link: https://lore.kernel.org/r/20190912103143.985-1-kieran.bingham+renesas@ideasonboard.com
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Fixes: 9f79b78ef744 ("Convert filldir[64]() from __put_user() to unsafe_put_user()")
+Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
 ---
- arch/arm64/boot/dts/renesas/r8a77970.dtsi |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ fs/readdir.c | 20 ++++++--------------
+ 1 file changed, 6 insertions(+), 14 deletions(-)
 
---- a/arch/arm64/boot/dts/renesas/r8a77970.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a77970.dtsi
-@@ -652,7 +652,7 @@
- 		};
+diff --git a/fs/readdir.c b/fs/readdir.c
+index d26d5ea4de7b..ef04e5e76c59 100644
+--- a/fs/readdir.c
++++ b/fs/readdir.c
+@@ -236,15 +236,11 @@ static int filldir(struct dir_context *ctx, const char *name, int namlen,
+ 	if (dirent && signal_pending(current))
+ 		return -EINTR;
  
- 		pwm3: pwm@e6e33000 {
--			compatible = "renesas,pwm-r8a7790", "renesas,pwm-rcar";
-+			compatible = "renesas,pwm-r8a77970", "renesas,pwm-rcar";
- 			reg = <0 0xe6e33000 0 8>;
- 			#pwm-cells = <2>;
- 			clocks = <&cpg CPG_MOD 523>;
-
+-	/*
+-	 * Note! This range-checks 'previous' (which may be NULL).
+-	 * The real range was checked in getdents
+-	 */
+-	if (!user_access_begin(dirent, sizeof(*dirent)))
++	if (dirent && unlikely(put_user(offset, &dirent->d_off)))
+ 		goto efault;
+-	if (dirent)
+-		unsafe_put_user(offset, &dirent->d_off, efault_end);
+ 	dirent = buf->current_dir;
++	if (!user_access_begin(dirent, reclen))
++		goto efault;
+ 	unsafe_put_user(d_ino, &dirent->d_ino, efault_end);
+ 	unsafe_put_user(reclen, &dirent->d_reclen, efault_end);
+ 	unsafe_put_user(d_type, (char __user *) dirent + reclen - 1, efault_end);
+@@ -323,15 +319,11 @@ static int filldir64(struct dir_context *ctx, const char *name, int namlen,
+ 	if (dirent && signal_pending(current))
+ 		return -EINTR;
+ 
+-	/*
+-	 * Note! This range-checks 'previous' (which may be NULL).
+-	 * The real range was checked in getdents
+-	 */
+-	if (!user_access_begin(dirent, sizeof(*dirent)))
++	if (dirent && unlikely(put_user(offset, &dirent->d_off)))
+ 		goto efault;
+-	if (dirent)
+-		unsafe_put_user(offset, &dirent->d_off, efault_end);
+ 	dirent = buf->current_dir;
++	if (!user_access_begin(dirent, reclen))
++		goto efault;
+ 	unsafe_put_user(ino, &dirent->d_ino, efault_end);
+ 	unsafe_put_user(reclen, &dirent->d_reclen, efault_end);
+ 	unsafe_put_user(d_type, &dirent->d_type, efault_end);
+-- 
+2.25.0
 
