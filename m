@@ -2,99 +2,101 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B38D2144948
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Jan 2020 02:17:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AEA9B14494A
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Jan 2020 02:21:37 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729147AbgAVBRU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 21 Jan 2020 20:17:20 -0500
-Received: from mga06.intel.com ([134.134.136.31]:24737 "EHLO mga06.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729113AbgAVBRQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 Jan 2020 20:17:16 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 21 Jan 2020 17:17:16 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.70,347,1574150400"; 
-   d="scan'208";a="244885539"
-Received: from richard.sh.intel.com (HELO localhost) ([10.239.159.54])
-  by orsmga002.jf.intel.com with ESMTP; 21 Jan 2020 17:17:14 -0800
-From:   Wei Yang <richardw.yang@linux.intel.com>
-To:     akpm@linux-foundation.org
-Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org, mhocko@suse.com,
-        yang.shi@linux.alibaba.com, rientjes@google.com,
-        Wei Yang <richardw.yang@linux.intel.com>
-Subject: [Patch v2 4/4] mm/migrate.c: handle same node and add failure in the same way
-Date:   Wed, 22 Jan 2020 09:16:47 +0800
-Message-Id: <20200122011647.13636-5-richardw.yang@linux.intel.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20200122011647.13636-1-richardw.yang@linux.intel.com>
-References: <20200122011647.13636-1-richardw.yang@linux.intel.com>
+        id S1728913AbgAVBVg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 21 Jan 2020 20:21:36 -0500
+Received: from szxga05-in.huawei.com ([45.249.212.191]:9230 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728750AbgAVBVg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 21 Jan 2020 20:21:36 -0500
+Received: from DGGEMS402-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id 21D28D385F13DB2499EC;
+        Wed, 22 Jan 2020 09:21:33 +0800 (CST)
+Received: from [127.0.0.1] (10.177.131.64) by DGGEMS402-HUB.china.huawei.com
+ (10.3.19.202) with Microsoft SMTP Server id 14.3.439.0; Wed, 22 Jan 2020
+ 09:21:29 +0800
+Subject: Re: [PATCH -next] backlight: qcom-wled: fix unsigned comparison to
+ zero
+To:     Bjorn Andersson <bjorn.andersson@linaro.org>
+References: <20200120130143.35363-1-chenzhou10@huawei.com>
+ <20200122003932.GA3948@builder>
+CC:     <agross@kernel.org>, <lee.jones@linaro.org>,
+        <daniel.thompson@linaro.org>, <jingoohan1@gmail.com>,
+        <b.zolnierkie@samsung.com>, <kgunda@codeaurora.org>,
+        <linux-arm-msm@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
+        <linux-fbdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+From:   Chen Zhou <chenzhou10@huawei.com>
+Message-ID: <a497400e-b734-9346-5ce8-292e051f611a@huawei.com>
+Date:   Wed, 22 Jan 2020 09:21:26 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:45.0) Gecko/20100101
+ Thunderbird/45.7.1
+MIME-Version: 1.0
+In-Reply-To: <20200122003932.GA3948@builder>
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.177.131.64]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When page is not queued for migration, there are two possible cases:
+Hi Bjorn,
 
-  * page already on the target node
-  * failed to add to migration queue
+On 2020/1/22 8:39, Bjorn Andersson wrote:
+> On Mon 20 Jan 05:01 PST 2020, Chen Zhou wrote:
+> 
+>> Fixes coccicheck warning:
+>> ./drivers/video/backlight/qcom-wled.c:1104:5-15:
+>> 	WARNING: Unsigned expression compared with zero: string_len > 0
+>>
+>> The unsigned variable string_len is assigned a return value from the call
+>> to wled_configure, which may return negative error code.
+>>
+> 
+> Afaict string_len is the return value of
+> of_property_count_elems_of_size(), rather than wled_configure(). (And
+> please append () to function names to make it even more obvious)
+> 
+> Except for that your patch looks good, so please update the commit
+> message and add my Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+> 
+> Regards,
+> Bjorn
 
-Current code handle them differently, this leads to a behavior
-inconsistency.
+Thanks for your review, i will fix this in next version.
 
-Usually for each page's status, we just do store for once. While for the
-page already on the target node, we might store the node information for
-twice:
+Thanks,
+Chen Zhou
 
-  * once when we found the page is on the target node
-  * second when moving the pages to target node successfully after above
-    action
-
-The reason is even we don't add the page to pagelist, but store_status()
-does store in a range which still contains the page.
-
-This patch handles these two cases in the same way to reduce this
-inconsistency and also make the code a little easier to read.
-
-Signed-off-by: Wei Yang <richardw.yang@linux.intel.com>
-Acked-by: Michal Hocko <mhocko@suse.com>
----
- mm/migrate.c | 16 ++++++++--------
- 1 file changed, 8 insertions(+), 8 deletions(-)
-
-diff --git a/mm/migrate.c b/mm/migrate.c
-index 80d2bba57265..591f2e5caed6 100644
---- a/mm/migrate.c
-+++ b/mm/migrate.c
-@@ -1654,18 +1654,18 @@ static int do_pages_move(struct mm_struct *mm, nodemask_t task_nodes,
- 		err = add_page_for_migration(mm, addr, current_node,
- 				&pagelist, flags & MPOL_MF_MOVE_ALL);
- 
--		if (!err) {
--			/* The page is already on the target node */
--			err = store_status(status, i, current_node, 1);
--			if (err)
--				goto out_flush;
--			continue;
--		} else if (err > 0) {
-+		if (err > 0) {
- 			/* The page is successfully queued for migration */
- 			continue;
- 		}
- 
--		err = store_status(status, i, err, 1);
-+		/*
-+		 * Two possible cases for err here:
-+		 * == 0: page is already on the target node, then store
-+		 *       current_node to status
-+		 * <  0: failed to add page to list, then store err to status
-+		 */
-+		err = store_status(status, i, err ? : current_node, 1);
- 		if (err)
- 			goto out_flush;
- 
--- 
-2.17.1
+> 
+>> Fixes: 775d2ffb4af6 ("backlight: qcom-wled: Restructure the driver for WLED3")
+>> Signed-off-by: Chen Zhou <chenzhou10@huawei.com>
+>> ---
+>>  drivers/video/backlight/qcom-wled.c | 4 ++--
+>>  1 file changed, 2 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/drivers/video/backlight/qcom-wled.c b/drivers/video/backlight/qcom-wled.c
+>> index d46052d..3d276b3 100644
+>> --- a/drivers/video/backlight/qcom-wled.c
+>> +++ b/drivers/video/backlight/qcom-wled.c
+>> @@ -956,8 +956,8 @@ static int wled_configure(struct wled *wled, int version)
+>>  	struct wled_config *cfg = &wled->cfg;
+>>  	struct device *dev = wled->dev;
+>>  	const __be32 *prop_addr;
+>> -	u32 size, val, c, string_len;
+>> -	int rc, i, j;
+>> +	u32 size, val, c;
+>> +	int rc, i, j, string_len;
+>>  
+>>  	const struct wled_u32_opts *u32_opts = NULL;
+>>  	const struct wled_u32_opts wled3_opts[] = {
+>> -- 
+>> 2.7.4
+>>
+> 
+> .
+> 
 
