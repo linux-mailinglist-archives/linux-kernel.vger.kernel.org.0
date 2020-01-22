@@ -2,38 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 489D014509B
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Jan 2020 10:48:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7F7A9144F70
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Jan 2020 10:38:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729663AbgAVJrz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 22 Jan 2020 04:47:55 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33090 "EHLO mail.kernel.org"
+        id S1732126AbgAVJhw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 22 Jan 2020 04:37:52 -0500
+Received: from mail.kernel.org ([198.145.29.99]:54086 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729629AbgAVJlm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 Jan 2020 04:41:42 -0500
+        id S1732725AbgAVJhu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 22 Jan 2020 04:37:50 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 914F924686;
-        Wed, 22 Jan 2020 09:41:41 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 94BC624692;
+        Wed, 22 Jan 2020 09:37:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579686102;
-        bh=X2+KNYrnWc7xc7JQJmIwQfuTJNrbwS5UPIVPMmDqCPI=;
+        s=default; t=1579685870;
+        bh=GPdTpONVAoS5bRlpiLav4WH2cZTWfYVCNy9oGRHurC0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=V6hkPNyK1kAbdCaXzpWQjbR8U70aBCsy24uTwNRQQTqvQsL8rf6sZ3U0G9qTWCDV2
-         cfzMRzHX+O6lygq4EwitFOJ5GjggCXyc3gHjovv/k9TxS27+OrMKsB9onvRBJL1Bmj
-         HfcloUCk71/3EjDl6Xo+YaMS1f3Ga8h6dbBVaJN8=
+        b=Hne3rMUqnhYdobmZrVwcWgTwBlEY/ZwzoilVJMQwbkrxgQpbmAIIr2l8RlcG5Brwi
+         V62U9V8d02xUjSf6QlLGq67n4ZOrAoXMdQHb6o0sbxpkXjXuluwDk4eti+82AdBG1i
+         hcfOgRIkngOxLb2ROVnuYrqyzaqcnJHZWXHnVyLg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Josef Bacik <josef@toxicpanda.com>,
-        David Sterba <dsterba@suse.com>
-Subject: [PATCH 4.19 044/103] btrfs: do not delete mismatched root refs
-Date:   Wed, 22 Jan 2020 10:29:00 +0100
-Message-Id: <20200122092810.489624554@linuxfoundation.org>
+        stable@vger.kernel.org, Johan Hovold <johan@kernel.org>
+Subject: [PATCH 4.14 16/65] USB: serial: keyspan: handle unbound ports
+Date:   Wed, 22 Jan 2020 10:29:01 +0100
+Message-Id: <20200122092753.412168453@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200122092803.587683021@linuxfoundation.org>
-References: <20200122092803.587683021@linuxfoundation.org>
+In-Reply-To: <20200122092750.976732974@linuxfoundation.org>
+References: <20200122092750.976732974@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,45 +42,45 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Josef Bacik <josef@toxicpanda.com>
+From: Johan Hovold <johan@kernel.org>
 
-commit 423a716cd7be16fb08690760691befe3be97d3fc upstream.
+commit 3018dd3fa114b13261e9599ddb5656ef97a1fa17 upstream.
 
-btrfs_del_root_ref() will simply WARN_ON() if the ref doesn't match in
-any way, and then continue to delete the reference.  This shouldn't
-happen, we have these values because there's more to the reference than
-the original root and the sub root.  If any of these checks fail, return
--ENOENT.
+Check for NULL port data in the control URB completion handlers to avoid
+dereferencing a NULL pointer in the unlikely case where a port device
+isn't bound to a driver (e.g. after an allocation failure on port
+probe()).
 
-CC: stable@vger.kernel.org # 4.4+
-Signed-off-by: Josef Bacik <josef@toxicpanda.com>
-Reviewed-by: David Sterba <dsterba@suse.com>
-Signed-off-by: David Sterba <dsterba@suse.com>
+Fixes: 0ca1268e109a ("USB Serial Keyspan: add support for USA-49WG & USA-28XG")
+Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
+Cc: stable <stable@vger.kernel.org>
+Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Signed-off-by: Johan Hovold <johan@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/btrfs/root-tree.c |   10 ++++++----
- 1 file changed, 6 insertions(+), 4 deletions(-)
+ drivers/usb/serial/keyspan.c |    4 ++++
+ 1 file changed, 4 insertions(+)
 
---- a/fs/btrfs/root-tree.c
-+++ b/fs/btrfs/root-tree.c
-@@ -370,11 +370,13 @@ again:
- 		leaf = path->nodes[0];
- 		ref = btrfs_item_ptr(leaf, path->slots[0],
- 				     struct btrfs_root_ref);
--
--		WARN_ON(btrfs_root_ref_dirid(leaf, ref) != dirid);
--		WARN_ON(btrfs_root_ref_name_len(leaf, ref) != name_len);
- 		ptr = (unsigned long)(ref + 1);
--		WARN_ON(memcmp_extent_buffer(leaf, name, ptr, name_len));
-+		if ((btrfs_root_ref_dirid(leaf, ref) != dirid) ||
-+		    (btrfs_root_ref_name_len(leaf, ref) != name_len) ||
-+		    memcmp_extent_buffer(leaf, name, ptr, name_len)) {
-+			err = -ENOENT;
-+			goto out;
-+		}
- 		*sequence = btrfs_root_ref_sequence(leaf, ref);
+--- a/drivers/usb/serial/keyspan.c
++++ b/drivers/usb/serial/keyspan.c
+@@ -1062,6 +1062,8 @@ static void	usa49_glocont_callback(struc
+ 	for (i = 0; i < serial->num_ports; ++i) {
+ 		port = serial->port[i];
+ 		p_priv = usb_get_serial_port_data(port);
++		if (!p_priv)
++			continue;
  
- 		ret = btrfs_del_item(trans, tree_root, path);
+ 		if (p_priv->resend_cont) {
+ 			dev_dbg(&port->dev, "%s - sending setup\n", __func__);
+@@ -1463,6 +1465,8 @@ static void usa67_glocont_callback(struc
+ 	for (i = 0; i < serial->num_ports; ++i) {
+ 		port = serial->port[i];
+ 		p_priv = usb_get_serial_port_data(port);
++		if (!p_priv)
++			continue;
+ 
+ 		if (p_priv->resend_cont) {
+ 			dev_dbg(&port->dev, "%s - sending setup\n", __func__);
 
 
