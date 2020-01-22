@@ -2,38 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 67C49145196
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Jan 2020 10:55:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 248B0144F8C
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Jan 2020 10:39:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730319AbgAVJzH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 22 Jan 2020 04:55:07 -0500
-Received: from mail.kernel.org ([198.145.29.99]:46998 "EHLO mail.kernel.org"
+        id S1730845AbgAVJjA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 22 Jan 2020 04:39:00 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56130 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729587AbgAVJdT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 Jan 2020 04:33:19 -0500
+        id S1732769AbgAVJi4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 22 Jan 2020 04:38:56 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AB4652071E;
-        Wed, 22 Jan 2020 09:33:18 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C2C242467E;
+        Wed, 22 Jan 2020 09:38:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579685599;
-        bh=e36sjmPaCPPq1/i9Ltj188SqoWa1clYoefAn7mPbTaA=;
+        s=default; t=1579685936;
+        bh=jlwuOc04JQ/mlkGK+K25zV2RTSgLEUG02HcCGOeRKdg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=IjnoIz3BVOKOucX+wZB0elDz4y1HJTxIQ2qcx/eNo96zMEzZ7xMG5X7UZGXzkSBib
-         shX7Y+cybhEQgMZCFWn6vnZ+/ZLAvDwFZ8l+D08XVrPN4MM+ikBDz7v6L0YI8+LcAj
-         QTJ2YreURjE/8V5JhKBTRk36Mo4riYiBh/2ws3CE=
+        b=jCuv0VlvHhIASNl8ARt17H5ojjbeNXbWaoPPsafE7PqsCqpUCXd907E2vE7KcDOUw
+         1rf6030EttarspBFD6V5yJxZKe6IlGJ0Q/ZUW/xVcfJFmMTX3cOIlTCSTzZAuLZtHo
+         xVyTCOI0092MBwJuyd0MPbG4HZFruevsbxMIE9Z0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Pan Bian <bianpan2016@163.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>
-Subject: [PATCH 4.4 72/76] scsi: bnx2i: fix potential use after free
+        stable@vger.kernel.org, Andrew Lunn <andrew@lunn.ch>,
+        Alexander Lobakin <alobakin@dlink.ru>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.14 43/65] net: dsa: tag_qca: fix doubled Tx statistics
 Date:   Wed, 22 Jan 2020 10:29:28 +0100
-Message-Id: <20200122092802.446948684@linuxfoundation.org>
+Message-Id: <20200122092757.188372831@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200122092751.587775548@linuxfoundation.org>
-References: <20200122092751.587775548@linuxfoundation.org>
+In-Reply-To: <20200122092750.976732974@linuxfoundation.org>
+References: <20200122092750.976732974@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,39 +45,37 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Pan Bian <bianpan2016@163.com>
+From: Alexander Lobakin <alobakin@dlink.ru>
 
-commit 29d28f2b8d3736ac61c28ef7e20fda63795b74d9 upstream.
+[ Upstream commit bd5874da57edd001b35cf28ae737779498c16a56 ]
 
-The member hba->pcidev may be used after its reference is dropped. Move the
-put function to where it is never used to avoid potential use after free
-issues.
+DSA subsystem takes care of netdev statistics since commit 4ed70ce9f01c
+("net: dsa: Refactor transmit path to eliminate duplication"), so
+any accounting inside tagger callbacks is redundant and can lead to
+messing up the stats.
+This bug is present in Qualcomm tagger since day 0.
 
-Fixes: a77171806515 ("[SCSI] bnx2i: Removed the reference to the netdev->base_addr")
-Link: https://lore.kernel.org/r/1573043541-19126-1-git-send-email-bianpan2016@163.com
-Signed-off-by: Pan Bian <bianpan2016@163.com>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+Fixes: cafdc45c949b ("net-next: dsa: add Qualcomm tag RX/TX handler")
+Reviewed-by: Andrew Lunn <andrew@lunn.ch>
+Signed-off-by: Alexander Lobakin <alobakin@dlink.ru>
+Reviewed-by: Florian Fainelli <f.fainelli@gmail.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- drivers/scsi/bnx2i/bnx2i_iscsi.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ net/dsa/tag_qca.c |    3 ---
+ 1 file changed, 3 deletions(-)
 
---- a/drivers/scsi/bnx2i/bnx2i_iscsi.c
-+++ b/drivers/scsi/bnx2i/bnx2i_iscsi.c
-@@ -915,12 +915,12 @@ void bnx2i_free_hba(struct bnx2i_hba *hb
- 	INIT_LIST_HEAD(&hba->ep_ofld_list);
- 	INIT_LIST_HEAD(&hba->ep_active_list);
- 	INIT_LIST_HEAD(&hba->ep_destroy_list);
--	pci_dev_put(hba->pcidev);
+--- a/net/dsa/tag_qca.c
++++ b/net/dsa/tag_qca.c
+@@ -41,9 +41,6 @@ static struct sk_buff *qca_tag_xmit(stru
+ 	struct dsa_slave_priv *p = netdev_priv(dev);
+ 	u16 *phdr, hdr;
  
- 	if (hba->regview) {
- 		pci_iounmap(hba->pcidev, hba->regview);
- 		hba->regview = NULL;
- 	}
-+	pci_dev_put(hba->pcidev);
- 	bnx2i_free_mp_bdt(hba);
- 	bnx2i_release_free_cid_que(hba);
- 	iscsi_host_free(shost);
+-	dev->stats.tx_packets++;
+-	dev->stats.tx_bytes += skb->len;
+-
+ 	if (skb_cow_head(skb, 0) < 0)
+ 		return NULL;
+ 
 
 
