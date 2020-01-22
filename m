@@ -2,43 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C0BDC1450FC
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Jan 2020 10:50:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6C9C31451BD
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Jan 2020 10:56:27 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732267AbgAVJul (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 22 Jan 2020 04:50:41 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54658 "EHLO mail.kernel.org"
+        id S1730196AbgAVJ4C (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 22 Jan 2020 04:56:02 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44940 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730977AbgAVJiK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 Jan 2020 04:38:10 -0500
+        id S1729401AbgAVJcP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 22 Jan 2020 04:32:15 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4306D2467E;
-        Wed, 22 Jan 2020 09:38:09 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8039C24698;
+        Wed, 22 Jan 2020 09:32:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579685889;
-        bh=B6CoHhvLw7WB8SuV6DdMNus0dYLAJVGCvhoAIgBNBjk=;
+        s=default; t=1579685535;
+        bh=VvSxBTUM2iQ3N+zapYL3JW57CkB2JGsoaIGUI7TyPSA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=aH2GrSjU1vc1P/Na0Ks2PlRxOqvP6g5c6lAnzkwI52ELIlaqD9CnyOoFFCYzY2iUV
-         K3GcxOQraEF3Lg7h99BL7BGNIRbgVsoP+rS3wkS7ttvD56skIRSIQ6v0o1e/ZA6H4h
-         IDxKn3U4o89xQlXpfDJYNU46DxIDzSPlsaLXTGHU=
+        b=HQQr3RmFt4l3uVlhR+fYgtYR9rj4GQ9m26eYPQKh4XP4pbufik3U6icdBYawV4Cad
+         YkXUS5YGJmn2cRDPAbe71kR6vketFK+MDgJc5/xgwdhyhRdCHnFolm3dpv5h+FEalL
+         LOQ8pFYQJl/FB7UfEeXttPH20kFQFUEMH+kn9yRY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Ard Biesheuvel <ardb@kernel.org>,
-        Arvind Sankar <nivedita@alum.mit.edu>,
-        Hans de Goede <hdegoede@redhat.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        linux-efi@vger.kernel.org, Ingo Molnar <mingo@kernel.org>
-Subject: [PATCH 4.14 23/65] x86/efistub: Disable paging at mixed mode entry
-Date:   Wed, 22 Jan 2020 10:29:08 +0100
-Message-Id: <20200122092754.276233918@linuxfoundation.org>
+        stable@vger.kernel.org, Jose Abreu <Jose.Abreu@synopsys.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.4 53/76] net: stmmac: 16KB buffer must be 16 byte aligned
+Date:   Wed, 22 Jan 2020 10:29:09 +0100
+Message-Id: <20200122092758.756403838@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200122092750.976732974@linuxfoundation.org>
-References: <20200122092750.976732974@linuxfoundation.org>
+In-Reply-To: <20200122092751.587775548@linuxfoundation.org>
+References: <20200122092751.587775548@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -48,46 +43,33 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Ard Biesheuvel <ardb@kernel.org>
+From: Jose Abreu <Jose.Abreu@synopsys.com>
 
-commit 4911ee401b7ceff8f38e0ac597cbf503d71e690c upstream.
+commit 8605131747e7e1fd8f6c9f97a00287aae2b2c640 upstream.
 
-The EFI mixed mode entry code goes through the ordinary startup_32()
-routine before jumping into the kernel's EFI boot code in 64-bit
-mode. The 32-bit startup code must be entered with paging disabled,
-but this is not documented as a requirement for the EFI handover
-protocol, and so we should disable paging explicitly when entering
-the kernel from 32-bit EFI firmware.
+The 16KB RX Buffer must also be 16 byte aligned. Fix it.
 
-Signed-off-by: Ard Biesheuvel <ardb@kernel.org>
-Cc: <stable@vger.kernel.org>
-Cc: Arvind Sankar <nivedita@alum.mit.edu>
-Cc: Hans de Goede <hdegoede@redhat.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: linux-efi@vger.kernel.org
-Link: https://lkml.kernel.org/r/20191224132909.102540-4-ardb@kernel.org
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Fixes: 7ac6653a085b ("stmmac: Move the STMicroelectronics driver")
+Signed-off-by: Jose Abreu <Jose.Abreu@synopsys.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/x86/boot/compressed/head_64.S |    5 +++++
- 1 file changed, 5 insertions(+)
+ drivers/net/ethernet/stmicro/stmmac/common.h |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/arch/x86/boot/compressed/head_64.S
-+++ b/arch/x86/boot/compressed/head_64.S
-@@ -227,6 +227,11 @@ ENTRY(efi32_stub_entry)
- 	leal	efi32_config(%ebp), %eax
- 	movl	%eax, efi_config(%ebp)
+--- a/drivers/net/ethernet/stmicro/stmmac/common.h
++++ b/drivers/net/ethernet/stmicro/stmmac/common.h
+@@ -273,8 +273,8 @@ struct dma_features {
+ 	unsigned int enh_desc;
+ };
  
-+	/* Disable paging */
-+	movl	%cr0, %eax
-+	btrl	$X86_CR0_PG_BIT, %eax
-+	movl	%eax, %cr0
-+
- 	jmp	startup_32
- ENDPROC(efi32_stub_entry)
- #endif
+-/* GMAC TX FIFO is 8K, Rx FIFO is 16K */
+-#define BUF_SIZE_16KiB 16384
++/* RX Buffer size must be multiple of 4/8/16 bytes */
++#define BUF_SIZE_16KiB 16368
+ #define BUF_SIZE_8KiB 8192
+ #define BUF_SIZE_4KiB 4096
+ #define BUF_SIZE_2KiB 2048
 
 
