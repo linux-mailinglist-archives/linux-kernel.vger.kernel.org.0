@@ -2,40 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 50809145558
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Jan 2020 14:25:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3114D145571
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Jan 2020 14:25:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730153AbgAVNVE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 22 Jan 2020 08:21:04 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37536 "EHLO mail.kernel.org"
+        id S1730424AbgAVNWI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 22 Jan 2020 08:22:08 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39532 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730122AbgAVNU7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 Jan 2020 08:20:59 -0500
+        id S1728797AbgAVNWH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 22 Jan 2020 08:22:07 -0500
 Received: from localhost (unknown [84.241.205.26])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B59E82468A;
-        Wed, 22 Jan 2020 13:20:57 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C6A632468F;
+        Wed, 22 Jan 2020 13:22:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579699258;
-        bh=nWWiD5jEnlALudvtWMS1vnhl0X6ByubruA79LrLt6CE=;
+        s=default; t=1579699326;
+        bh=TIZmAdVjHSTjlNlJIi5CrdgHyPu2IsR1hqWI2t3lnOQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=yCUxls7otRVqCnXdPA7STuOCsALDQ2O4NxZgQlE7QqsByCgrgwHhdAH6uEz3dL6Gq
-         R7j2yIZwmohmfqPGZmo6AGdvyoGveYZJJmifD0Gx6ABtbG3S67XDVhFsoRC6HQ+I06
-         38M+sobVnd8h/32w10wIlmKXBjzVN4+/phpuYfpk=
+        b=CNT6PYFkIi0+kvJAHsVGNpK6SoJOKq9rPz4Sy4Kcvg2AEv7/tWTti6jW0sQLmzPz8
+         EnT3fmE2g/XWkfrmCDt37IyChFbtPClRj7s5SqsHMJNwsS3n/TmSa6GWBUvmO2w6qA
+         yYQUdpsE0MkqMAEGtbe85aJtSA4gALMPkX0nJVjk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Arvind Sankar <nivedita@alum.mit.edu>,
-        Ard Biesheuvel <ardb@kernel.org>,
-        Hans de Goede <hdegoede@redhat.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        linux-efi@vger.kernel.org, Ingo Molnar <mingo@kernel.org>
-Subject: [PATCH 5.4 072/222] efi/earlycon: Fix write-combine mapping on x86
-Date:   Wed, 22 Jan 2020 10:27:38 +0100
-Message-Id: <20200122092838.874517870@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Subject: [PATCH 5.4 074/222] clk: samsung: exynos5420: Keep top G3D clocks enabled
+Date:   Wed, 22 Jan 2020 10:27:40 +0100
+Message-Id: <20200122092839.017829447@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
 In-Reply-To: <20200122092833.339495161@linuxfoundation.org>
 References: <20200122092833.339495161@linuxfoundation.org>
@@ -48,84 +47,109 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Arvind Sankar <nivedita@alum.mit.edu>
+From: Marek Szyprowski <m.szyprowski@samsung.com>
 
-commit d92b54570d24d017d2630e314b525ed792f5aa6c upstream.
+commit 67f96ff7c8f073648696eab50fd23ded23441067 upstream.
 
-On x86, until PAT is initialized, WC translates into UC-. Since we
-calculate and store pgprot_writecombine(PAGE_KERNEL) when earlycon is
-initialized, this means we actually use UC- mappings instead of WC
-mappings, which makes scrolling very slow.
+In Exynos542x/5800 SoCs, the G3D leaf clocks are located in the G3D power
+domain. This is similar to the other hardware modules and their power
+domains. However there is one thing specific to G3D clocks hierarchy.
+Unlike other hardware modules, the G3D clocks hierarchy doesn't have any
+gate clock between the TOP part of the hierarchy and the part located in
+the power domain and some SoC internal busses are sourced directly from
+the TOP muxes. The consequence of this design if the fact that the TOP
+part of the hierarchy has to be enabled permanently to ensure proper
+operation of the SoC power related components (G3D power domain and
+Exynos Power Management Unit for system suspend/resume).
 
-Instead store a boolean flag to indicate whether we want to use
-writeback or write-combine mappings, and recalculate the actual pgprot_t
-we need on every mapping. Once PAT is initialized, we will start using
-write-combine mappings, which speeds up the scrolling considerably.
+This patch adds an explicit call to clk_prepare_enable() on the last MUX
+in the TOP part of G3D clock hierarchy to keep it enabled permanently to
+ensure that the internal busses get their clock regardless of the main
+G3D clock enablement status.
 
-Signed-off-by: Arvind Sankar <nivedita@alum.mit.edu>
-Signed-off-by: Ard Biesheuvel <ardb@kernel.org>
-Cc: Hans de Goede <hdegoede@redhat.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: linux-efi@vger.kernel.org
-Fixes: 69c1f396f25b ("efi/x86: Convert x86 EFI earlyprintk into generic earlycon implementation")
-Link: https://lkml.kernel.org/r/20191224132909.102540-2-ardb@kernel.org
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
+This fixes following imprecise abort issue observed on Odroid XU3/XU4
+after enabling Panfrost driver by commit 1a5a85c56402 "ARM: dts: exynos:
+Add Mali/GPU node on Exynos5420 and enable it on Odroid XU3/4"):
+
+panfrost 11800000.gpu: clock rate = 400000000
+panfrost 11800000.gpu: failed to get regulator: -517
+panfrost 11800000.gpu: regulator init failed -517
+Power domain G3D disable failed
+...
+panfrost 11800000.gpu: clock rate = 400000000
+8<--- cut here ---
+Unhandled fault: imprecise external abort (0x1406) at 0x00000000
+pgd = (ptrval)
+[00000000] *pgd=00000000
+Internal error: : 1406 [#1] PREEMPT SMP ARM
+Modules linked in:
+CPU: 7 PID: 53 Comm: kworker/7:1 Not tainted 5.4.0-rc8-next-20191119-00032-g56f1001191a6 #6923
+Hardware name: SAMSUNG EXYNOS (Flattened Device Tree)
+Workqueue: events deferred_probe_work_func
+PC is at panfrost_gpu_soft_reset+0x94/0x110
+LR is at ___might_sleep+0x128/0x2dc
+...
+[<c05c231c>] (panfrost_gpu_soft_reset) from [<c05c2704>] (panfrost_gpu_init+0x10/0x67c)
+[<c05c2704>] (panfrost_gpu_init) from [<c05c15d0>] (panfrost_device_init+0x158/0x2cc)
+[<c05c15d0>] (panfrost_device_init) from [<c05c0cb0>] (panfrost_probe+0x80/0x178)
+[<c05c0cb0>] (panfrost_probe) from [<c05cfaa0>] (platform_drv_probe+0x48/0x9c)
+[<c05cfaa0>] (platform_drv_probe) from [<c05cd20c>] (really_probe+0x1c4/0x474)
+[<c05cd20c>] (really_probe) from [<c05cd694>] (driver_probe_device+0x78/0x1bc)
+[<c05cd694>] (driver_probe_device) from [<c05cb374>] (bus_for_each_drv+0x74/0xb8)
+[<c05cb374>] (bus_for_each_drv) from [<c05ccfa8>] (__device_attach+0xd4/0x16c)
+[<c05ccfa8>] (__device_attach) from [<c05cc110>] (bus_probe_device+0x88/0x90)
+[<c05cc110>] (bus_probe_device) from [<c05cc634>] (deferred_probe_work_func+0x4c/0xd0)
+[<c05cc634>] (deferred_probe_work_func) from [<c0149df0>] (process_one_work+0x300/0x864)
+[<c0149df0>] (process_one_work) from [<c014a3ac>] (worker_thread+0x58/0x5a0)
+[<c014a3ac>] (worker_thread) from [<c0151174>] (kthread+0x12c/0x160)
+[<c0151174>] (kthread) from [<c01010b4>] (ret_from_fork+0x14/0x20)
+Exception stack(0xee03dfb0 to 0xee03dff8)
+...
+Code: e594300c e5933020 e3130c01 1a00000f (ebefff50).
+---[ end trace badde2b74a65a540 ]---
+
+In the above case, the Panfrost driver disables G3D clocks after failure
+of getting the needed regulator and return with -EPROVE_DEFER code. This
+causes G3D power domain disable failure and then, during second probe
+an imprecise abort is triggered due to undefined power domain state.
+
+Fixes: 45f10dabb56b ("clk: samsung: exynos5420: Add SET_RATE_PARENT flag to clocks on G3D path")
+Fixes: c9f7567aff31 ("clk: samsung: exynos542x: Move G3D subsystem clocks to its sub-CMU")
+Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+Link: https://lkml.kernel.org/r/20191216131407.17225-1-m.szyprowski@samsung.com
+Acked-by: Krzysztof Kozlowski <krzk@kernel.org>
+Acked-by: Chanwoo Choi <cw00.choi@samsung.com>
+Acked-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Signed-off-by: Stephen Boyd <sboyd@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/firmware/efi/earlycon.c |   16 +++++++---------
- 1 file changed, 7 insertions(+), 9 deletions(-)
+ drivers/clk/samsung/clk-exynos5420.c |    8 ++++++++
+ 1 file changed, 8 insertions(+)
 
---- a/drivers/firmware/efi/earlycon.c
-+++ b/drivers/firmware/efi/earlycon.c
-@@ -17,7 +17,7 @@ static const struct console *earlycon_co
- static const struct font_desc *font;
- static u32 efi_x, efi_y;
- static u64 fb_base;
--static pgprot_t fb_prot;
-+static bool fb_wb;
- static void *efi_fb;
+--- a/drivers/clk/samsung/clk-exynos5420.c
++++ b/drivers/clk/samsung/clk-exynos5420.c
+@@ -12,6 +12,7 @@
+ #include <linux/clk-provider.h>
+ #include <linux/of.h>
+ #include <linux/of_address.h>
++#include <linux/clk.h>
  
- /*
-@@ -33,10 +33,8 @@ static int __init efi_earlycon_remap_fb(
- 	if (!earlycon_console || !(earlycon_console->flags & CON_ENABLED))
- 		return 0;
+ #include "clk.h"
+ #include "clk-cpu.h"
+@@ -1630,6 +1631,13 @@ static void __init exynos5x_clk_init(str
+ 				     exynos5x_subcmus);
+ 	}
  
--	if (pgprot_val(fb_prot) == pgprot_val(PAGE_KERNEL))
--		efi_fb = memremap(fb_base, screen_info.lfb_size, MEMREMAP_WB);
--	else
--		efi_fb = memremap(fb_base, screen_info.lfb_size, MEMREMAP_WC);
-+	efi_fb = memremap(fb_base, screen_info.lfb_size,
-+			  fb_wb ? MEMREMAP_WB : MEMREMAP_WC);
- 
- 	return efi_fb ? 0 : -ENOMEM;
- }
-@@ -53,9 +51,12 @@ late_initcall(efi_earlycon_unmap_fb);
- 
- static __ref void *efi_earlycon_map(unsigned long start, unsigned long len)
- {
-+	pgprot_t fb_prot;
++	/*
++	 * Keep top part of G3D clock path enabled permanently to ensure
++	 * that the internal busses get their clock regardless of the
++	 * main G3D clock enablement status.
++	 */
++	clk_prepare_enable(__clk_lookup("mout_sw_aclk_g3d"));
 +
- 	if (efi_fb)
- 		return efi_fb + start;
- 
-+	fb_prot = fb_wb ? PAGE_KERNEL : pgprot_writecombine(PAGE_KERNEL);
- 	return early_memremap_prot(fb_base + start, len, pgprot_val(fb_prot));
+ 	samsung_clk_of_add_provider(np, ctx);
  }
  
-@@ -215,10 +216,7 @@ static int __init efi_earlycon_setup(str
- 	if (screen_info.capabilities & VIDEO_CAPABILITY_64BIT_BASE)
- 		fb_base |= (u64)screen_info.ext_lfb_base << 32;
- 
--	if (opt && !strcmp(opt, "ram"))
--		fb_prot = PAGE_KERNEL;
--	else
--		fb_prot = pgprot_writecombine(PAGE_KERNEL);
-+	fb_wb = opt && !strcmp(opt, "ram");
- 
- 	si = &screen_info;
- 	xres = si->lfb_width;
 
 
