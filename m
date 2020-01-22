@@ -2,39 +2,42 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E8010145083
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Jan 2020 10:47:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5B51C144F68
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Jan 2020 10:37:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729563AbgAVJqr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 22 Jan 2020 04:46:47 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35726 "EHLO mail.kernel.org"
+        id S1732554AbgAVJh3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 22 Jan 2020 04:37:29 -0500
+Received: from mail.kernel.org ([198.145.29.99]:53464 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387513AbgAVJnR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 Jan 2020 04:43:17 -0500
+        id S1730612AbgAVJhY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 22 Jan 2020 04:37:24 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AB4F224689;
-        Wed, 22 Jan 2020 09:43:16 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id AEBA820704;
+        Wed, 22 Jan 2020 09:37:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579686197;
-        bh=SpDzbbOwicUHa4Zm+r4y/NZKqNvo4lpUqQrWehgGjZg=;
+        s=default; t=1579685843;
+        bh=+hd9Udz4Ps2z/wojx+W9QEsplHHxx6M6mA/RYUNdHLs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ONzDCBBE1d8sX5MX2Mi5xhA7RSCfTVmtbrY4yZuszxsVc3px3zjAEl6/kHQxlM34y
-         plcfhW2cby7SiY8m4gw+feDRJdQJA3lxc608WVsOacmc6ht0lS4kzzQXjTKZrnOhqE
-         PoruTBw5WZAwRUjPp7MsPA7jUTKxAHXMLGeZY46k=
+        b=TAOgyhra1YoiVFQfUK4r8sDGdua84TqN4bteKpf55GfB0OR3ia+b1opUxdnV1m+Xw
+         9Iee3DPBDpvEJoPeeX9V4/LLT2Fu9cV56cMRmzD9MEBa9/t9Is/KiwftsYpXBZcxM4
+         vHoWg7AxHQeWpssMxemwNkVb10DYBAVKJk/mqyOI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Christian Hewitt <christianshewitt@gmail.com>,
-        Kevin Hilman <khilman@baylibre.com>
-Subject: [PATCH 4.19 083/103] arm64: dts: meson-gxl-s905x-khadas-vim: fix gpio-keys-polled node
+        stable@vger.kernel.org, Christoph Hellwig <hch@lst.de>,
+        Hannes Reinecke <hare@suse.com>,
+        Douglas Gilbert <dgilbert@interlog.com>,
+        Colin Ian King <colin.king@canonical.com>,
+        Bart Van Assche <bvanassche@acm.org>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>
+Subject: [PATCH 4.9 95/97] scsi: core: scsi_trace: Use get_unaligned_be*()
 Date:   Wed, 22 Jan 2020 10:29:39 +0100
-Message-Id: <20200122092815.061520037@linuxfoundation.org>
+Message-Id: <20200122092811.267312693@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200122092803.587683021@linuxfoundation.org>
-References: <20200122092803.587683021@linuxfoundation.org>
+In-Reply-To: <20200122092755.678349497@linuxfoundation.org>
+References: <20200122092755.678349497@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,40 +47,206 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Christian Hewitt <christianshewitt@gmail.com>
+From: Bart Van Assche <bvanassche@acm.org>
 
-commit d5f6fa904ecbadbb8e9fa6302b0fc165bec0559a upstream.
+commit b1335f5b0486f61fb66b123b40f8e7a98e49605d upstream.
 
-Fix DTC warnings:
+This patch fixes an unintended sign extension on left shifts. From Colin
+King: "Shifting a u8 left will cause the value to be promoted to an
+integer. If the top bit of the u8 is set then the following conversion to
+an u64 will sign extend the value causing the upper 32 bits to be set in
+the result."
 
-arch/arm/dts/meson-gxl-s905x-khadas-vim.dtb: Warning (avoid_unnecessary_addr_size):
-   /gpio-keys-polled: unnecessary #address-cells/#size-cells
-      without "ranges" or child "reg" property
+Fix this by using get_unaligned_be*() instead.
 
-Fixes: e15d2774b8c0 ("ARM64: dts: meson-gxl: add support for the Khadas VIM board")
-Signed-off-by: Christian Hewitt <christianshewitt@gmail.com>
-Reviewed-by: Kevin Hilman <khilman@baylibre.com>
-Signed-off-by: Kevin Hilman <khilman@baylibre.com>
+Fixes: bf8162354233 ("[SCSI] add scsi trace core functions and put trace points")
+Cc: Christoph Hellwig <hch@lst.de>
+Cc: Hannes Reinecke <hare@suse.com>
+Cc: Douglas Gilbert <dgilbert@interlog.com>
+Link: https://lore.kernel.org/r/20191101211447.187151-1-bvanassche@acm.org
+Reported-by: Colin Ian King <colin.king@canonical.com>
+Signed-off-by: Bart Van Assche <bvanassche@acm.org>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/arm64/boot/dts/amlogic/meson-gxl-s905x-khadas-vim.dts |    4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+ drivers/scsi/scsi_trace.c |  103 ++++++++++++----------------------------------
+ 1 file changed, 28 insertions(+), 75 deletions(-)
 
---- a/arch/arm64/boot/dts/amlogic/meson-gxl-s905x-khadas-vim.dts
-+++ b/arch/arm64/boot/dts/amlogic/meson-gxl-s905x-khadas-vim.dts
-@@ -33,11 +33,9 @@
+--- a/drivers/scsi/scsi_trace.c
++++ b/drivers/scsi/scsi_trace.c
+@@ -21,7 +21,7 @@
+ #include <trace/events/scsi.h>
  
- 	gpio-keys-polled {
- 		compatible = "gpio-keys-polled";
--		#address-cells = <1>;
--		#size-cells = <0>;
- 		poll-interval = <100>;
+ #define SERVICE_ACTION16(cdb) (cdb[1] & 0x1f)
+-#define SERVICE_ACTION32(cdb) ((cdb[8] << 8) | cdb[9])
++#define SERVICE_ACTION32(cdb) (get_unaligned_be16(&cdb[8]))
  
--		button@0 {
-+		power-button {
- 			label = "power";
- 			linux,code = <KEY_POWER>;
- 			gpios = <&gpio_ao GPIOAO_2 GPIO_ACTIVE_LOW>;
+ static const char *
+ scsi_trace_misc(struct trace_seq *, unsigned char *, int);
+@@ -51,17 +51,12 @@ static const char *
+ scsi_trace_rw10(struct trace_seq *p, unsigned char *cdb, int len)
+ {
+ 	const char *ret = trace_seq_buffer_ptr(p);
+-	sector_t lba = 0, txlen = 0;
++	u32 lba, txlen;
+ 
+-	lba |= (cdb[2] << 24);
+-	lba |= (cdb[3] << 16);
+-	lba |= (cdb[4] << 8);
+-	lba |=  cdb[5];
+-	txlen |= (cdb[7] << 8);
+-	txlen |=  cdb[8];
++	lba = get_unaligned_be32(&cdb[2]);
++	txlen = get_unaligned_be16(&cdb[7]);
+ 
+-	trace_seq_printf(p, "lba=%llu txlen=%llu protect=%u",
+-			 (unsigned long long)lba, (unsigned long long)txlen,
++	trace_seq_printf(p, "lba=%u txlen=%u protect=%u", lba, txlen,
+ 			 cdb[1] >> 5);
+ 
+ 	if (cdb[0] == WRITE_SAME)
+@@ -76,19 +71,12 @@ static const char *
+ scsi_trace_rw12(struct trace_seq *p, unsigned char *cdb, int len)
+ {
+ 	const char *ret = trace_seq_buffer_ptr(p);
+-	sector_t lba = 0, txlen = 0;
++	u32 lba, txlen;
+ 
+-	lba |= (cdb[2] << 24);
+-	lba |= (cdb[3] << 16);
+-	lba |= (cdb[4] << 8);
+-	lba |=  cdb[5];
+-	txlen |= (cdb[6] << 24);
+-	txlen |= (cdb[7] << 16);
+-	txlen |= (cdb[8] << 8);
+-	txlen |=  cdb[9];
++	lba = get_unaligned_be32(&cdb[2]);
++	txlen = get_unaligned_be32(&cdb[6]);
+ 
+-	trace_seq_printf(p, "lba=%llu txlen=%llu protect=%u",
+-			 (unsigned long long)lba, (unsigned long long)txlen,
++	trace_seq_printf(p, "lba=%u txlen=%u protect=%u", lba, txlen,
+ 			 cdb[1] >> 5);
+ 	trace_seq_putc(p, 0);
+ 
+@@ -99,23 +87,13 @@ static const char *
+ scsi_trace_rw16(struct trace_seq *p, unsigned char *cdb, int len)
+ {
+ 	const char *ret = trace_seq_buffer_ptr(p);
+-	sector_t lba = 0, txlen = 0;
++	u64 lba;
++	u32 txlen;
+ 
+-	lba |= ((u64)cdb[2] << 56);
+-	lba |= ((u64)cdb[3] << 48);
+-	lba |= ((u64)cdb[4] << 40);
+-	lba |= ((u64)cdb[5] << 32);
+-	lba |= (cdb[6] << 24);
+-	lba |= (cdb[7] << 16);
+-	lba |= (cdb[8] << 8);
+-	lba |=  cdb[9];
+-	txlen |= (cdb[10] << 24);
+-	txlen |= (cdb[11] << 16);
+-	txlen |= (cdb[12] << 8);
+-	txlen |=  cdb[13];
++	lba = get_unaligned_be64(&cdb[2]);
++	txlen = get_unaligned_be32(&cdb[10]);
+ 
+-	trace_seq_printf(p, "lba=%llu txlen=%llu protect=%u",
+-			 (unsigned long long)lba, (unsigned long long)txlen,
++	trace_seq_printf(p, "lba=%llu txlen=%u protect=%u", lba, txlen,
+ 			 cdb[1] >> 5);
+ 
+ 	if (cdb[0] == WRITE_SAME_16)
+@@ -130,8 +108,8 @@ static const char *
+ scsi_trace_rw32(struct trace_seq *p, unsigned char *cdb, int len)
+ {
+ 	const char *ret = trace_seq_buffer_ptr(p), *cmd;
+-	sector_t lba = 0, txlen = 0;
+-	u32 ei_lbrt = 0;
++	u64 lba;
++	u32 ei_lbrt, txlen;
+ 
+ 	switch (SERVICE_ACTION32(cdb)) {
+ 	case READ_32:
+@@ -151,26 +129,12 @@ scsi_trace_rw32(struct trace_seq *p, uns
+ 		goto out;
+ 	}
+ 
+-	lba |= ((u64)cdb[12] << 56);
+-	lba |= ((u64)cdb[13] << 48);
+-	lba |= ((u64)cdb[14] << 40);
+-	lba |= ((u64)cdb[15] << 32);
+-	lba |= (cdb[16] << 24);
+-	lba |= (cdb[17] << 16);
+-	lba |= (cdb[18] << 8);
+-	lba |=  cdb[19];
+-	ei_lbrt |= (cdb[20] << 24);
+-	ei_lbrt |= (cdb[21] << 16);
+-	ei_lbrt |= (cdb[22] << 8);
+-	ei_lbrt |=  cdb[23];
+-	txlen |= (cdb[28] << 24);
+-	txlen |= (cdb[29] << 16);
+-	txlen |= (cdb[30] << 8);
+-	txlen |=  cdb[31];
+-
+-	trace_seq_printf(p, "%s_32 lba=%llu txlen=%llu protect=%u ei_lbrt=%u",
+-			 cmd, (unsigned long long)lba,
+-			 (unsigned long long)txlen, cdb[10] >> 5, ei_lbrt);
++	lba = get_unaligned_be64(&cdb[12]);
++	ei_lbrt = get_unaligned_be32(&cdb[20]);
++	txlen = get_unaligned_be32(&cdb[28]);
++
++	trace_seq_printf(p, "%s_32 lba=%llu txlen=%u protect=%u ei_lbrt=%u",
++			 cmd, lba, txlen, cdb[10] >> 5, ei_lbrt);
+ 
+ 	if (SERVICE_ACTION32(cdb) == WRITE_SAME_32)
+ 		trace_seq_printf(p, " unmap=%u", cdb[10] >> 3 & 1);
+@@ -185,7 +149,7 @@ static const char *
+ scsi_trace_unmap(struct trace_seq *p, unsigned char *cdb, int len)
+ {
+ 	const char *ret = trace_seq_buffer_ptr(p);
+-	unsigned int regions = cdb[7] << 8 | cdb[8];
++	unsigned int regions = get_unaligned_be16(&cdb[7]);
+ 
+ 	trace_seq_printf(p, "regions=%u", (regions - 8) / 16);
+ 	trace_seq_putc(p, 0);
+@@ -197,8 +161,8 @@ static const char *
+ scsi_trace_service_action_in(struct trace_seq *p, unsigned char *cdb, int len)
+ {
+ 	const char *ret = trace_seq_buffer_ptr(p), *cmd;
+-	sector_t lba = 0;
+-	u32 alloc_len = 0;
++	u64 lba;
++	u32 alloc_len;
+ 
+ 	switch (SERVICE_ACTION16(cdb)) {
+ 	case SAI_READ_CAPACITY_16:
+@@ -212,21 +176,10 @@ scsi_trace_service_action_in(struct trac
+ 		goto out;
+ 	}
+ 
+-	lba |= ((u64)cdb[2] << 56);
+-	lba |= ((u64)cdb[3] << 48);
+-	lba |= ((u64)cdb[4] << 40);
+-	lba |= ((u64)cdb[5] << 32);
+-	lba |= (cdb[6] << 24);
+-	lba |= (cdb[7] << 16);
+-	lba |= (cdb[8] << 8);
+-	lba |=  cdb[9];
+-	alloc_len |= (cdb[10] << 24);
+-	alloc_len |= (cdb[11] << 16);
+-	alloc_len |= (cdb[12] << 8);
+-	alloc_len |=  cdb[13];
++	lba = get_unaligned_be64(&cdb[2]);
++	alloc_len = get_unaligned_be32(&cdb[10]);
+ 
+-	trace_seq_printf(p, "%s lba=%llu alloc_len=%u", cmd,
+-			 (unsigned long long)lba, alloc_len);
++	trace_seq_printf(p, "%s lba=%llu alloc_len=%u", cmd, lba, alloc_len);
+ 
+ out:
+ 	trace_seq_putc(p, 0);
 
 
