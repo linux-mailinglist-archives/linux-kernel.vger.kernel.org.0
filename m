@@ -2,37 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1D4211451D5
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Jan 2020 10:57:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E8227145117
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Jan 2020 10:51:46 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730472AbgAVJ4l (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 22 Jan 2020 04:56:41 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44410 "EHLO mail.kernel.org"
+        id S1732393AbgAVJvo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 22 Jan 2020 04:51:44 -0500
+Received: from mail.kernel.org ([198.145.29.99]:52970 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729917AbgAVJb6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 Jan 2020 04:31:58 -0500
+        id S1732387AbgAVJhG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 22 Jan 2020 04:37:06 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5DB2924673;
-        Wed, 22 Jan 2020 09:31:57 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A46052467E;
+        Wed, 22 Jan 2020 09:37:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579685517;
-        bh=R/hivULf9Rlgt4d9DReGdimTvR8R5RyaCUHZRSIki54=;
+        s=default; t=1579685826;
+        bh=VduW93Y0Qt9OjW9JLQTSDDgaDytptO9GJJ+sjcxCw08=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=q0G120Txq1lHzTfW/MV7plo8V8/syT7wLX4FDvc0l7/fp/zTLkP/RzWfGM85MOxT7
-         u1ds8suN1/g5X7zfts8TJE++9kcBdv5bfwecUgsDFyI7oCYzrEDRJwVcF8CYZOASrq
-         3/DwXwPX+M2tkLkrkSheSBZgXZayaAWWp0/CoRLY=
+        b=2JTWW9wEv2YediYJURlmiN+Of+57kcB0nIi/uvy8zZvfIJA55I7GABMh9vM5EiO+p
+         uWuCGnCBRM+UERqt+4pNzelUixONhP9iBHrTMhm3uTNxkk7+Y6BwFWLsrBjLaiQxIX
+         COVugq82lNx/dXD7GlV3eL+BxV3P1YVBc6IiJHVc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Johan Hovold <johan@kernel.org>
-Subject: [PATCH 4.4 47/76] USB: serial: io_edgeport: add missing active-port sanity check
+Subject: [PATCH 4.9 59/97] USB: serial: suppress driver bind attributes
 Date:   Wed, 22 Jan 2020 10:29:03 +0100
-Message-Id: <20200122092757.670006568@linuxfoundation.org>
+Message-Id: <20200122092805.915683644@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200122092751.587775548@linuxfoundation.org>
-References: <20200122092751.587775548@linuxfoundation.org>
+In-Reply-To: <20200122092755.678349497@linuxfoundation.org>
+References: <20200122092755.678349497@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,12 +44,17 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Johan Hovold <johan@kernel.org>
 
-commit 1568c58d11a7c851bd09341aeefd6a1c308ac40d upstream.
+commit fdb838efa31e1ed9a13ae6ad0b64e30fdbd00570 upstream.
 
-The driver receives the active port number from the device, but never
-made sure that the port number was valid. This could lead to a
-NULL-pointer dereference or memory corruption in case a device sends
-data for an invalid port.
+USB-serial drivers must not be unbound from their ports before the
+corresponding USB driver is unbound from the parent interface so
+suppress the bind and unbind attributes.
+
+Unbinding a serial driver while it's port is open is a sure way to
+trigger a crash as any driver state is released on unbind while port
+hangup is handled on the parent USB interface level. Drivers for
+multiport devices where ports share a resource such as an interrupt
+endpoint also generally cannot handle individual ports going away.
 
 Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
 Cc: stable <stable@vger.kernel.org>
@@ -58,51 +63,20 @@ Signed-off-by: Johan Hovold <johan@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/usb/serial/io_edgeport.c |   12 +++++++-----
- 1 file changed, 7 insertions(+), 5 deletions(-)
+ drivers/usb/serial/usb-serial.c |    3 +++
+ 1 file changed, 3 insertions(+)
 
---- a/drivers/usb/serial/io_edgeport.c
-+++ b/drivers/usb/serial/io_edgeport.c
-@@ -1666,7 +1666,8 @@ static void edge_break(struct tty_struct
- static void process_rcvd_data(struct edgeport_serial *edge_serial,
- 				unsigned char *buffer, __u16 bufferLength)
- {
--	struct device *dev = &edge_serial->serial->dev->dev;
-+	struct usb_serial *serial = edge_serial->serial;
-+	struct device *dev = &serial->dev->dev;
- 	struct usb_serial_port *port;
- 	struct edgeport_port *edge_port;
- 	__u16 lastBufferLength;
-@@ -1771,9 +1772,8 @@ static void process_rcvd_data(struct edg
+--- a/drivers/usb/serial/usb-serial.c
++++ b/drivers/usb/serial/usb-serial.c
+@@ -1351,6 +1351,9 @@ static int usb_serial_register(struct us
+ 		return -EINVAL;
+ 	}
  
- 			/* spit this data back into the tty driver if this
- 			   port is open */
--			if (rxLen) {
--				port = edge_serial->serial->port[
--							edge_serial->rxPort];
-+			if (rxLen && edge_serial->rxPort < serial->num_ports) {
-+				port = serial->port[edge_serial->rxPort];
- 				edge_port = usb_get_serial_port_data(port);
- 				if (edge_port->open) {
- 					dev_dbg(dev, "%s - Sending %d bytes to TTY for port %d\n",
-@@ -1783,8 +1783,8 @@ static void process_rcvd_data(struct edg
- 							rxLen);
- 					edge_port->port->icount.rx += rxLen;
- 				}
--				buffer += rxLen;
- 			}
-+			buffer += rxLen;
- 			break;
++	/* Prevent individual ports from being unbound. */
++	driver->driver.suppress_bind_attrs = true;
++
+ 	usb_serial_operations_init(driver);
  
- 		case EXPECT_HDR3:	/* Expect 3rd byte of status header */
-@@ -1819,6 +1819,8 @@ static void process_rcvd_status(struct e
- 	__u8 code = edge_serial->rxStatusCode;
- 
- 	/* switch the port pointer to the one being currently talked about */
-+	if (edge_serial->rxPort >= edge_serial->serial->num_ports)
-+		return;
- 	port = edge_serial->serial->port[edge_serial->rxPort];
- 	edge_port = usb_get_serial_port_data(port);
- 	if (edge_port == NULL) {
+ 	/* Add this device to our list of devices */
 
 
