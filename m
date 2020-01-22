@@ -2,39 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7623B144FDA
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Jan 2020 10:41:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A0E691450A0
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Jan 2020 10:48:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387582AbgAVJlh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 22 Jan 2020 04:41:37 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60792 "EHLO mail.kernel.org"
+        id S2387597AbgAVJlk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 22 Jan 2020 04:41:40 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60886 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387563AbgAVJlX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 Jan 2020 04:41:23 -0500
+        id S2387430AbgAVJlZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 22 Jan 2020 04:41:25 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7A57524684;
-        Wed, 22 Jan 2020 09:41:22 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id DFA892467B;
+        Wed, 22 Jan 2020 09:41:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579686082;
-        bh=DBde7uZQI+nAKqKHJs8EuTBmhlPbAKjNh1GJFTUbcss=;
+        s=default; t=1579686085;
+        bh=FKEdR/JXp9pHm5Szs+22yLYnGjAVtBoILz9tVXODj3A=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Z2tv6bYl3RTp77BYaVpasAznrZ116rCkwSSFlv5lud4NfFhwfWjdlNOeZZMNbd/aT
-         pwpwjfTFEEqMjURDvYiG7Ryd7tna5y6RlgIVZrlet2tknrzMD7Dv9X5FshJXZa5jM1
-         5QpsijhM9vEYpdeyjHjdL2U7fffILKnTtbybivfs=
+        b=XsPycQ+Dh9THaguFle/ExIFsXWyMRreDkF6+wZhjMx/FTIwFCx6V8NDG/fTGkrNJC
+         n8h8k4mF4loHD37i7GbRPtp8z5TwWtaxITRe5AGsUJY+uW6fJ/RC1CESNtbDIzoMRC
+         VbUknUwsxvk0HoK7EdL553w1UmZPvKDgT+dIbt4w=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Shakeel Butt <shakeelb@google.com>,
-        Borislav Petkov <bp@suse.de>,
-        Fenghua Yu <fenghua.yu@intel.com>,
-        "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
-        Reinette Chatre <reinette.chatre@intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>, x86-ml <x86@kernel.org>
-Subject: [PATCH 4.19 037/103] x86/resctrl: Fix potential memory leak
-Date:   Wed, 22 Jan 2020 10:28:53 +0100
-Message-Id: <20200122092809.478517811@linuxfoundation.org>
+        stable@vger.kernel.org, Yuya Fujita <fujita.yuya@fujitsu.com>,
+        Jiri Olsa <jolsa@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>
+Subject: [PATCH 4.19 038/103] perf hists: Fix variable names inconsistency in hists__for_each() macro
+Date:   Wed, 22 Jan 2020 10:28:54 +0100
+Message-Id: <20200122092809.637885442@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
 In-Reply-To: <20200122092803.587683021@linuxfoundation.org>
 References: <20200122092803.587683021@linuxfoundation.org>
@@ -47,54 +45,45 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Shakeel Butt <shakeelb@google.com>
+From: Yuya Fujita <fujita.yuya@fujitsu.com>
 
-commit ab6a2114433a3b5b555983dcb9b752a85255f04b upstream.
+commit 55347ec340af401437680fd0e88df6739a967f9f upstream.
 
-set_cache_qos_cfg() is leaking memory when the given level is not
-RDT_RESOURCE_L3 or RDT_RESOURCE_L2. At the moment, this function is
-called with only valid levels but move the allocation after the valid
-level checks in order to make it more robust and future proof.
+Variable names are inconsistent in hists__for_each macro().
 
- [ bp: Massage commit message. ]
+Due to this inconsistency, the macro replaces its second argument with
+"fmt" regardless of its original name.
 
-Fixes: 99adde9b370de ("x86/intel_rdt: Enable L2 CDP in MSR IA32_L2_QOS_CFG")
-Signed-off-by: Shakeel Butt <shakeelb@google.com>
-Signed-off-by: Borislav Petkov <bp@suse.de>
-Cc: Fenghua Yu <fenghua.yu@intel.com>
-Cc: "H. Peter Anvin" <hpa@zytor.com>
-Cc: Ingo Molnar <mingo@redhat.com>
-Cc: Reinette Chatre <reinette.chatre@intel.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: x86-ml <x86@kernel.org>
-Link: https://lkml.kernel.org/r/20200102165844.133133-1-shakeelb@google.com
+So far it works because only "fmt" is passed to the second argument.
+However, this behavior is not expected and should be fixed.
+
+Fixes: f0786af536bb ("perf hists: Introduce hists__for_each_format macro")
+Fixes: aa6f50af822a ("perf hists: Introduce hists__for_each_sort_list macro")
+Signed-off-by: Yuya Fujita <fujita.yuya@fujitsu.com>
+Acked-by: Jiri Olsa <jolsa@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Link: http://lore.kernel.org/lkml/OSAPR01MB1588E1C47AC22043175DE1B2E8520@OSAPR01MB1588.jpnprd01.prod.outlook.com
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/x86/kernel/cpu/intel_rdt_rdtgroup.c |    6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ tools/perf/util/hist.h |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/arch/x86/kernel/cpu/intel_rdt_rdtgroup.c
-+++ b/arch/x86/kernel/cpu/intel_rdt_rdtgroup.c
-@@ -1749,9 +1749,6 @@ static int set_cache_qos_cfg(int level,
- 	struct rdt_domain *d;
- 	int cpu;
+--- a/tools/perf/util/hist.h
++++ b/tools/perf/util/hist.h
+@@ -324,10 +324,10 @@ static inline void perf_hpp__prepend_sor
+ 	list_for_each_entry_safe(format, tmp, &(_list)->sorts, sort_list)
  
--	if (!zalloc_cpumask_var(&cpu_mask, GFP_KERNEL))
--		return -ENOMEM;
--
- 	if (level == RDT_RESOURCE_L3)
- 		update = l3_qos_cfg_update;
- 	else if (level == RDT_RESOURCE_L2)
-@@ -1759,6 +1756,9 @@ static int set_cache_qos_cfg(int level,
- 	else
- 		return -EINVAL;
+ #define hists__for_each_format(hists, format) \
+-	perf_hpp_list__for_each_format((hists)->hpp_list, fmt)
++	perf_hpp_list__for_each_format((hists)->hpp_list, format)
  
-+	if (!zalloc_cpumask_var(&cpu_mask, GFP_KERNEL))
-+		return -ENOMEM;
-+
- 	r_l = &rdt_resources_all[level];
- 	list_for_each_entry(d, &r_l->domains, list) {
- 		/* Pick one CPU from each domain instance to update MSR */
+ #define hists__for_each_sort_list(hists, format) \
+-	perf_hpp_list__for_each_sort_list((hists)->hpp_list, fmt)
++	perf_hpp_list__for_each_sort_list((hists)->hpp_list, format)
+ 
+ extern struct perf_hpp_fmt perf_hpp__format[];
+ 
 
 
