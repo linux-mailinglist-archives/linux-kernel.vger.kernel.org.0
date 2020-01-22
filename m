@@ -2,38 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 22BC5144FD5
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Jan 2020 10:41:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A8FF71450EB
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Jan 2020 10:50:27 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387568AbgAVJl0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 22 Jan 2020 04:41:26 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60614 "EHLO mail.kernel.org"
+        id S1733013AbgAVJi0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 22 Jan 2020 04:38:26 -0500
+Received: from mail.kernel.org ([198.145.29.99]:55120 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387544AbgAVJlP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 Jan 2020 04:41:15 -0500
+        id S1732959AbgAVJiX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 22 Jan 2020 04:38:23 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E8ED724680;
-        Wed, 22 Jan 2020 09:41:14 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8DD852467E;
+        Wed, 22 Jan 2020 09:38:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579686075;
-        bh=1AI0GKeVFPui5D7Xd+X1N/rgXNMOMBvlax163fQ8wHc=;
+        s=default; t=1579685902;
+        bh=0uAs/JgDdMToNLZ1f9xVmDOb3m1ZaiXy12qiW+AgroA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=CSR1EbKtYwjV7+FEsp/zWbLnvadWTnkXdI7IHUf1uKPAHIBDro9GWYjEj7lMSoxLW
-         2BRKNkZFppD2o+yRdqOBxiKZ4m5wK9DuPg6I/tN7EAANjhIF+bgDqlOpbgsnCU7g4Z
-         Nv7haWVxONy8ggZJCSrTN24nkU5Id5Tiy9+ye8v4=
+        b=2ZIOg/1qzGjp6domUUrVp5bcZZVng7yYEv61/BjGQ4uHM/lkAVZZWVnMOWdik2J4J
+         xLkdWvKOWc8yMmf1xTLhiCfwMyI6ZJGyTWoEDGB47YV88uB7QmUBZrquxetou0zPjS
+         qDSX3jFGO+no0OTxlmzJWt+TcKV8t7fM2I+BZgUc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Tom Lendacky <thomas.lendacky@amd.com>,
-        Borislav Petkov <bp@suse.de>
-Subject: [PATCH 4.19 034/103] x86/CPU/AMD: Ensure clearing of SME/SEV features is maintained
+        stable@vger.kernel.org, Jari Ruusu <jari.ruusu@gmail.com>,
+        Borislav Petkov <bp@alien8.de>,
+        Fenghua Yu <fenghua.yu@intel.com>,
+        Luis Chamberlain <mcgrof@kernel.org>, stable@kernel.org,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Subject: [PATCH 4.14 05/65] Fix built-in early-load Intel microcode alignment
 Date:   Wed, 22 Jan 2020 10:28:50 +0100
-Message-Id: <20200122092808.971627907@linuxfoundation.org>
+Message-Id: <20200122092752.187381188@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200122092803.587683021@linuxfoundation.org>
-References: <20200122092803.587683021@linuxfoundation.org>
+In-Reply-To: <20200122092750.976732974@linuxfoundation.org>
+References: <20200122092750.976732974@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,41 +46,54 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Tom Lendacky <thomas.lendacky@amd.com>
+From: Jari Ruusu <jari.ruusu@gmail.com>
 
-commit a006483b2f97af685f0e60f3a547c9ad4c9b9e94 upstream.
+commit f5ae2ea6347a308cfe91f53b53682ce635497d0d upstream.
 
-If the SME and SEV features are present via CPUID, but memory encryption
-support is not enabled (MSR 0xC001_0010[23]), the feature flags are cleared
-using clear_cpu_cap(). However, if get_cpu_cap() is later called, these
-feature flags will be reset back to present, which is not desired.
+Intel Software Developer's Manual, volume 3, chapter 9.11.6 says:
 
-Change from using clear_cpu_cap() to setup_clear_cpu_cap() so that the
-clearing of the flags is maintained.
+ "Note that the microcode update must be aligned on a 16-byte boundary
+  and the size of the microcode update must be 1-KByte granular"
 
-Signed-off-by: Tom Lendacky <thomas.lendacky@amd.com>
-Signed-off-by: Borislav Petkov <bp@suse.de>
-Cc: <stable@vger.kernel.org> # 4.16.x-
-Link: https://lkml.kernel.org/r/226de90a703c3c0be5a49565047905ac4e94e8f3.1579125915.git.thomas.lendacky@amd.com
+When early-load Intel microcode is loaded from initramfs, userspace tool
+'iucode_tool' has already 16-byte aligned those microcode bits in that
+initramfs image.  Image that was created something like this:
+
+ iucode_tool --write-earlyfw=FOO.cpio microcode-files...
+
+However, when early-load Intel microcode is loaded from built-in
+firmware BLOB using CONFIG_EXTRA_FIRMWARE= kernel config option, that
+16-byte alignment is not guaranteed.
+
+Fix this by forcing all built-in firmware BLOBs to 16-byte alignment.
+
+[ If we end up having other firmware with much bigger alignment
+  requirements, we might need to introduce some method for the firmware
+  to specify it, this is the minimal "just increase the alignment a bit
+  to account for this one special case" patch    - Linus ]
+
+Signed-off-by: Jari Ruusu <jari.ruusu@gmail.com>
+Cc: Borislav Petkov <bp@alien8.de>
+Cc: Fenghua Yu <fenghua.yu@intel.com>
+Cc: Luis Chamberlain <mcgrof@kernel.org>
+Cc: stable@kernel.org
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/x86/kernel/cpu/amd.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ firmware/Makefile |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/arch/x86/kernel/cpu/amd.c
-+++ b/arch/x86/kernel/cpu/amd.c
-@@ -609,9 +609,9 @@ static void early_detect_mem_encrypt(str
- 		return;
- 
- clear_all:
--		clear_cpu_cap(c, X86_FEATURE_SME);
-+		setup_clear_cpu_cap(X86_FEATURE_SME);
- clear_sev:
--		clear_cpu_cap(c, X86_FEATURE_SEV);
-+		setup_clear_cpu_cap(X86_FEATURE_SEV);
- 	}
- }
- 
+--- a/firmware/Makefile
++++ b/firmware/Makefile
+@@ -19,7 +19,7 @@ quiet_cmd_fwbin = MK_FW   $@
+ 		  PROGBITS=$(if $(CONFIG_ARM),%,@)progbits;		     \
+ 		  echo "/* Generated by firmware/Makefile */"		> $@;\
+ 		  echo "    .section .rodata"				>>$@;\
+-		  echo "    .p2align $${ASM_ALIGN}"			>>$@;\
++		  echo "    .p2align 4"					>>$@;\
+ 		  echo "_fw_$${FWSTR}_bin:"				>>$@;\
+ 		  echo "    .incbin \"$(2)\""				>>$@;\
+ 		  echo "_fw_end:"					>>$@;\
 
 
