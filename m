@@ -2,84 +2,97 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7314414582F
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Jan 2020 15:49:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id ECE9D145830
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Jan 2020 15:50:21 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726081AbgAVOtn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 22 Jan 2020 09:49:43 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34966 "EHLO mail.kernel.org"
+        id S1728708AbgAVOuQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 22 Jan 2020 09:50:16 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35364 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725802AbgAVOtn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 Jan 2020 09:49:43 -0500
+        id S1725928AbgAVOuP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 22 Jan 2020 09:50:15 -0500
 Received: from localhost (unknown [84.241.205.26])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9F83321835;
-        Wed, 22 Jan 2020 14:49:41 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6816921835;
+        Wed, 22 Jan 2020 14:50:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579704582;
-        bh=YzGQHHuNBzeqfnOJVGKpDcH5nkWq3UPDi+bDM6C5ln8=;
+        s=default; t=1579704615;
+        bh=u9SBj+9hYN9VEo3dzqDkTH/o4P8ccCPD7ZsTLNri4aw=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=j3xy4VPwHJI5qA7vr/Pf/Y8BQEx8TCchvpzTuTFNyTDsd2yj01MajBw8JgI63jd5B
-         WhtbDunGfk3PgKCy/jUoNY7gCqQWr+Ugi4hnkNs4hbvjs2x+RagMd4fxLwphwXzMTd
-         4orYSuvtROZO0DwguPXdufU/lkahqofC+vKJG9gg=
-Date:   Wed, 22 Jan 2020 15:49:39 +0100
+        b=I7YzUKuNndmXKoO2rM4SrZLuKSnydO9PlMvUeQ3rj1CKNIANMTqpQwfcA6GWCaVQC
+         3M9X9ZG53L1luNJjJ+VZ47im0+k4GH1tbyi1TBnmR5OoGH9edilIf/ajhcMIStBF2T
+         SSqQW2BQSR+EAhwPUsY67/UORTIOhqTYpRc+jKAY=
+Date:   Wed, 22 Jan 2020 15:50:12 +0100
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Mika Westerberg <mika.westerberg@linux.intel.com>
-Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Darren Hart <dvhart@infradead.org>,
-        Lee Jones <lee.jones@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H . Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
-        Zha Qipeng <qipeng.zha@intel.com>,
-        "David E . Box" <david.e.box@linux.intel.com>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-        Wim Van Sebroeck <wim@linux-watchdog.org>,
-        Mark Brown <broonie@kernel.org>,
-        platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 14/38] platform/x86: intel_scu_ipc: Introduce new SCU
- IPC API
-Message-ID: <20200122144939.GA59473@kroah.com>
-References: <20200121160114.60007-1-mika.westerberg@linux.intel.com>
- <20200121160114.60007-15-mika.westerberg@linux.intel.com>
- <20200122134359.GE4963@kroah.com>
- <20200122144048.GV2665@lahna.fi.intel.com>
+To:     Andrey Konovalov <andreyknvl@google.com>
+Cc:     Felipe Balbi <balbi@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
+        Alan Stern <stern@rowland.harvard.edu>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        Alexander Potapenko <glider@google.com>,
+        Marco Elver <elver@google.com>,
+        USB list <linux-usb@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v5 1/1] usb: gadget: add raw-gadget interface
+Message-ID: <20200122145012.GB59473@kroah.com>
+References: <cover.1579007786.git.andreyknvl@google.com>
+ <461a787e63a9a01d83edc563575b8585bc138e8d.1579007786.git.andreyknvl@google.com>
+ <CAAeHK+wGijhTaCdoD+xcUY=PRWLUOv5uwg7OjD=uMrU8nqqrdw@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200122144048.GV2665@lahna.fi.intel.com>
+In-Reply-To: <CAAeHK+wGijhTaCdoD+xcUY=PRWLUOv5uwg7OjD=uMrU8nqqrdw@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jan 22, 2020 at 04:40:48PM +0200, Mika Westerberg wrote:
-> On Wed, Jan 22, 2020 at 02:43:59PM +0100, Greg Kroah-Hartman wrote:
-> > > +	if (!scu->dev)
-> > > +		goto err_unlock;
-> > > +	if (!try_module_get(scu->dev->driver->owner))
-> > > +		goto err_unlock;
-> > > +	mutex_unlock(&ipclock);
-> > > +	return scu;
-> > 
-> > NO REFERENCE COUNT INCREMENT???
+On Wed, Jan 22, 2020 at 03:37:46PM +0100, Andrey Konovalov wrote:
+> On Tue, Jan 14, 2020 at 2:24 PM Andrey Konovalov <andreyknvl@google.com> wrote:
+> >
+> > USB Raw Gadget is a kernel module that provides a userspace interface for
+> > the USB Gadget subsystem. Essentially it allows to emulate USB devices
+> > from userspace. Enabled with CONFIG_USB_RAW_GADGET. Raw Gadget is
+> > currently a strictly debugging feature and shouldn't be used in
+> > production.
+> >
+> > Raw Gadget is similar to GadgetFS, but provides a more low-level and
+> > direct access to the USB Gadget layer for the userspace. The key
+> > differences are:
+> >
+> > 1. Every USB request is passed to the userspace to get a response, while
+> >    GadgetFS responds to some USB requests internally based on the provided
+> >    descriptors. However note, that the UDC driver might respond to some
+> >    requests on its own and never forward them to the Gadget layer.
+> >
+> > 2. GadgetFS performs some sanity checks on the provided USB descriptors,
+> >    while Raw Gadget allows you to provide arbitrary data as responses to
+> >    USB requests.
+> >
+> > 3. Raw Gadget provides a way to select a UDC device/driver to bind to,
+> >    while GadgetFS currently binds to the first available UDC.
+> >
+> > 4. Raw Gadget uses predictable endpoint names (handles) across different
+> >    UDCs (as long as UDCs have enough endpoints of each required transfer
+> >    type).
+> >
+> > 5. Raw Gadget has ioctl-based interface instead of a filesystem-based one.
+> >
+> > Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> > Signed-off-by: Andrey Konovalov <andreyknvl@google.com>
+> > ---
+> >
+> > Greg, I've assumed your LGTM meant that I can add a Reviewed-by from you.
+> >
+> > Felipe, looking forward to your review, thanks!
 > 
-> You mean increment the scu->dev reference count? I kind of thought that
-> the try_module_get() should make sure the thing stays there as long as
-> the caller has not called _put() but now when I think about it bit more
-> we would need to do device_get() here as well.
+> Hi Greg and Felipe,
+> 
+> I was wondering if it's feasible to get this reviewed and merged
+> during the upcoming merge window? This patch is the only piece missing
+> to enable USB fuzzing for Android common kernels on syzbot.
 
-module reference counts handle _code_ while structure reference counts
-handle _data_.
-
-You should almost never need to worry about module reference counts if
-your code is structured properly, only handle the reference counts on
-the pointers you throw around.
-
-The fact that you are even calling try_module_get() is a huge flag that
-something is wrong here.
+No objection from me, if Felipe acks it I can take it...
 
 thanks,
 
