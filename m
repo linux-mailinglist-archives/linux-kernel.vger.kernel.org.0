@@ -2,84 +2,88 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D9866144C27
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Jan 2020 07:58:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8D83F144C2D
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Jan 2020 07:58:26 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729100AbgAVG5Y (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 22 Jan 2020 01:57:24 -0500
-Received: from Galois.linutronix.de ([193.142.43.55]:36789 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725836AbgAVG5Y (ORCPT
+        id S1729151AbgAVG5l (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 22 Jan 2020 01:57:41 -0500
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:45315 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725924AbgAVG5l (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 Jan 2020 01:57:24 -0500
-Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tip-bot2@linutronix.de>)
-        id 1iu9x1-00034r-Kq; Wed, 22 Jan 2020 07:57:19 +0100
-Received: from [127.0.1.1] (localhost [IPv6:::1])
-        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 565471C1A3B;
-        Wed, 22 Jan 2020 07:57:19 +0100 (CET)
-Date:   Wed, 22 Jan 2020 06:57:19 -0000
-From:   "tip-bot2 for Olof Johansson" <tip-bot2@linutronix.de>
-Reply-to: linux-kernel@vger.kernel.org
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip: core/urgent] objtool: Silence build output
-Cc:     Olof Johansson <olof@lixom.net>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Ingo Molnar <mingo@kernel.org>, x86 <x86@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-In-Reply-To: <cb002857fafa8186cfb9c3e43fb62e4108a1bab9.1579543924.git.jpoimboe@redhat.com>
-References: <cb002857fafa8186cfb9c3e43fb62e4108a1bab9.1579543924.git.jpoimboe@redhat.com>
+        Wed, 22 Jan 2020 01:57:41 -0500
+Received: by mail-pf1-f196.google.com with SMTP id 2so2863628pfg.12;
+        Tue, 21 Jan 2020 22:57:40 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=MYul01GCq37ayThShJ9dZaDN18M/FwlRxDl1QupNebU=;
+        b=dnzCF34eyTR4XHrGflmfk99UgHH1ncq0JXUlqVGa8SKI91xQirSGUn6f8ydQYdA6rQ
+         bvAJBjhSG/qAbH4AZQQ6RyvwPBjVPAKjDn+i9XeeCiSdbWYLMp1lOtwKY2fYxZz21nKI
+         vF+lhMIQs6wHMe6KytTDLuJn/Li32hZUniHyCBqpyzXtKfI49xMqCxpJXhZVTOhyb9Ff
+         gjmlDu95gKdkd7MRcBeSEGBrr0H4DPQY4QgrjLwgl3fYem3tzEatpmB2ojgzxvs9rOhE
+         UnhRcjHzSigUZapD1Y/cOnyCzoF6VNvfDkKGZI8RBwXZ/2GdIv5cTKyBspdTMfTsDQoh
+         8YNA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=MYul01GCq37ayThShJ9dZaDN18M/FwlRxDl1QupNebU=;
+        b=lrxE0HZgaaZ4dwTAVsVXb537ARRh6diSEyHlgrHtDqwGwRmYE8JTElymayTOm04tY9
+         VNetj3eOawC4fgF809PGimK+YSaxUY+lAxzuYDpcOuMTD0rqSHQSRkA+VpRa2mhCh54f
+         JU3VgRe1Vmuu9PxKf7ZreSoreJ0WABY4NuuKMRFs0QmHVjPa+XV0Jiw3yQTZBCki/rMh
+         yujSdQC4UDP8K8iBf3DxOb60GQcJWc7oQ+YaZn62R0DRJZUrIMmp1V47+ZH0gjibAuMf
+         4HKoM0E+1yLA5rpJlyU6DZifl2KRhOTifBuc3SMHTLrOSxBiQKM2UfqiMrcb5tdB4p1m
+         2kFA==
+X-Gm-Message-State: APjAAAVrqmdXWjrlS74TCBnpwI9ZSszVLwdvjjLh+iXrY9GdP0cA3tAC
+        02y5q0oq54qL/1RcV7SPgwE=
+X-Google-Smtp-Source: APXvYqxjCexWKOScgRfZfKpFHyxyq43XkgznyZRFleu5ixWogr/GkiFAO/vChUmU23ICbwPFVTBGXg==
+X-Received: by 2002:a63:590e:: with SMTP id n14mr9404729pgb.10.1579676260432;
+        Tue, 21 Jan 2020 22:57:40 -0800 (PST)
+Received: from dtor-ws ([2620:15c:202:201:3adc:b08c:7acc:b325])
+        by smtp.gmail.com with ESMTPSA id b19sm44632997pfo.56.2020.01.21.22.57.39
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 21 Jan 2020 22:57:39 -0800 (PST)
+Date:   Tue, 21 Jan 2020 22:57:37 -0800
+From:   Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To:     Thomas Bogendoerfer <tbogendoerfer@suse.de>
+Cc:     linux-kernel@vger.kernel.org, linux-input@vger.kernel.org
+Subject: Re: [PATCH] Input: add IOC3 serio driver
+Message-ID: <20200122065737.GG110084@dtor-ws>
+References: <20200115125951.3677-1-tbogendoerfer@suse.de>
 MIME-Version: 1.0
-Message-ID: <157967623918.396.15730242469027669851.tip-bot2@tip-bot2>
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot2.linutronix.de>
-Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200115125951.3677-1-tbogendoerfer@suse.de>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The following commit has been merged into the core/urgent branch of tip:
+Hi Thomas,
 
-Commit-ID:     6ec14aa7a58a1c2fb303692f8cb1ff82d9abd10a
-Gitweb:        https://git.kernel.org/tip/6ec14aa7a58a1c2fb303692f8cb1ff82d9abd10a
-Author:        Olof Johansson <olof@lixom.net>
-AuthorDate:    Mon, 20 Jan 2020 12:14:07 -06:00
-Committer:     Ingo Molnar <mingo@kernel.org>
-CommitterDate: Wed, 22 Jan 2020 07:54:34 +01:00
+On Wed, Jan 15, 2020 at 01:59:50PM +0100, Thomas Bogendoerfer wrote:
+> +
+> +	platform_set_drvdata(pdev, d);
+> +	serio_register_port(d->kbd);
+> +	serio_register_port(d->aux);
+> +
+> +	ret = request_irq(irq, ioc3kbd_intr, IRQF_SHARED, "ioc3-kbd", d);
 
-objtool: Silence build output
+I just realized something - serio ports are registered asynchronously,
+and therefore may not be ready when you request IRQ which may fire
+immediately. To solve this issue serio core allows to specify start()
+method that is called after serio port has been registered. In this
+method you can set "exist" flag associated with either kbd or aux port,
+and check these flags in your interrupt routine before deciding whether
+you can forward the received data to appropriate port via
+serio_interrupt().
 
-The sync-check.sh script prints out the path due to a "cd -" at the end
-of the script, even on silent builds. This isn't even needed, since the
-script is executed in our build instead of sourced (so it won't change
-the working directory of the surrounding build anyway).
+Please see i8042_start() for example of use.
 
-Just remove the cd to make the build silent.
+Thanks.
 
-Fixes: 2ffd84ae973b ("objtool: Update sync-check.sh from perf's check-headers.sh")
-Signed-off-by: Olof Johansson <olof@lixom.net>
-Signed-off-by: Josh Poimboeuf <jpoimboe@redhat.com>
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
-Link: https://lore.kernel.org/r/cb002857fafa8186cfb9c3e43fb62e4108a1bab9.1579543924.git.jpoimboe@redhat.com
----
- tools/objtool/sync-check.sh | 2 --
- 1 file changed, 2 deletions(-)
-
-diff --git a/tools/objtool/sync-check.sh b/tools/objtool/sync-check.sh
-index 9bd04bb..2a1261b 100755
---- a/tools/objtool/sync-check.sh
-+++ b/tools/objtool/sync-check.sh
-@@ -48,5 +48,3 @@ check arch/x86/include/asm/inat.h     '-I "^#include [\"<]\(asm/\)*inat_types.h[
- check arch/x86/include/asm/insn.h     '-I "^#include [\"<]\(asm/\)*inat.h[\">]"'
- check arch/x86/lib/inat.c             '-I "^#include [\"<]\(../include/\)*asm/insn.h[\">]"'
- check arch/x86/lib/insn.c             '-I "^#include [\"<]\(../include/\)*asm/in\(at\|sn\).h[\">]" -I "^#include [\"<]\(../include/\)*asm/emulate_prefix.h[\">]"'
--
--cd -
+-- 
+Dmitry
