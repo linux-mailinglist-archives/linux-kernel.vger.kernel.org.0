@@ -2,39 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BBE93144F14
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Jan 2020 10:34:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C969B144EAE
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Jan 2020 10:30:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726094AbgAVJeR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 22 Jan 2020 04:34:17 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48544 "EHLO mail.kernel.org"
+        id S1729260AbgAVJah (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 22 Jan 2020 04:30:37 -0500
+Received: from mail.kernel.org ([198.145.29.99]:42062 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730154AbgAVJeL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 Jan 2020 04:34:11 -0500
+        id S1725911AbgAVJae (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 22 Jan 2020 04:30:34 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0A0CF24673;
-        Wed, 22 Jan 2020 09:34:09 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6E8B724673;
+        Wed, 22 Jan 2020 09:30:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579685650;
-        bh=lNwvgoE/PBtC0RiZuyLt2rKFKfMXnJYmrTD/qeV7Iio=;
+        s=default; t=1579685433;
+        bh=zPjs+tVGI9LSJMOzn29WDkK/KTQw5p59s0ju7EurzYY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=K1H5pLXvJMdeupj3q21MliQeUMthHNlOu81qTYORnNxTf+uKftNlf0lBgK+wf9/LM
-         q0W13BbKP4lLZvD268/TVRtx6jD1/uARw1X9JDJY5yvZDMpK8smtZbAtNbZrAEL9f2
-         acyUfXtdrqBh/8AYS6+9WGGCM2P7O+AEhtdkr1Qo=
+        b=jp92haY94684QFfkbMkFuHfxgaTYtusWDlS0Aomtz4Z6JE7w3dszh4hzWurR1UBbT
+         W72B8HY13zVWRdqw7vbrvS+CSO3m+qxi7EKw04/ys8nNATFD6hYSvDuIzQGaJ5uKBL
+         2+BaI3XwHe7XBZgnWyxuJ+5RH7By8ZUkgW7C+aPM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Nathan Chancellor <natechancellor@gmail.com>,
-        Steve French <stfrench@microsoft.com>
-Subject: [PATCH 4.9 24/97] cifs: Adjust indentation in smb2_open_file
-Date:   Wed, 22 Jan 2020 10:28:28 +0100
-Message-Id: <20200122092800.048406188@linuxfoundation.org>
+        Navid Emamdoost <navid.emamdoost@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Ben Hutchings <ben.hutchings@codethink.co.uk>
+Subject: [PATCH 4.4 13/76] wimax: i2400: fix memory leak
+Date:   Wed, 22 Jan 2020 10:28:29 +0100
+Message-Id: <20200122092752.924150591@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200122092755.678349497@linuxfoundation.org>
-References: <20200122092755.678349497@linuxfoundation.org>
+In-Reply-To: <20200122092751.587775548@linuxfoundation.org>
+References: <20200122092751.587775548@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,45 +45,30 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Nathan Chancellor <natechancellor@gmail.com>
+From: Navid Emamdoost <navid.emamdoost@gmail.com>
 
-commit 7935799e041ae10d380d04ea23868240f082bd11 upstream.
+commit 2507e6ab7a9a440773be476141a255934468c5ef upstream.
 
-Clang warns:
+In i2400m_op_rfkill_sw_toggle cmd buffer should be released along with
+skb response.
 
-../fs/cifs/smb2file.c:70:3: warning: misleading indentation; statement
-is not part of the previous 'if' [-Wmisleading-indentation]
-         if (oparms->tcon->use_resilient) {
-         ^
-../fs/cifs/smb2file.c:66:2: note: previous statement is here
-        if (rc)
-        ^
-1 warning generated.
-
-This warning occurs because there is a space after the tab on this line.
-Remove it so that the indentation is consistent with the Linux kernel
-coding style and clang no longer warns.
-
-Fixes: 592fafe644bf ("Add resilienthandles mount parm")
-Link: https://github.com/ClangBuiltLinux/linux/issues/826
-Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
-Signed-off-by: Steve French <stfrench@microsoft.com>
+Signed-off-by: Navid Emamdoost <navid.emamdoost@gmail.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Ben Hutchings <ben.hutchings@codethink.co.uk>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- fs/cifs/smb2file.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/net/wimax/i2400m/op-rfkill.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/fs/cifs/smb2file.c
-+++ b/fs/cifs/smb2file.c
-@@ -69,7 +69,7 @@ smb2_open_file(const unsigned int xid, s
- 		goto out;
- 
- 
--	 if (oparms->tcon->use_resilient) {
-+	if (oparms->tcon->use_resilient) {
- 		nr_ioctl_req.Timeout = 0; /* use server default (120 seconds) */
- 		nr_ioctl_req.Reserved = 0;
- 		rc = SMB2_ioctl(xid, oparms->tcon, fid->persistent_fid,
+--- a/drivers/net/wimax/i2400m/op-rfkill.c
++++ b/drivers/net/wimax/i2400m/op-rfkill.c
+@@ -142,6 +142,7 @@ int i2400m_op_rfkill_sw_toggle(struct wi
+ 			"%d\n", result);
+ 	result = 0;
+ error_cmd:
++	kfree(cmd);
+ 	kfree_skb(ack_skb);
+ error_msg_to_dev:
+ error_alloc:
 
 
