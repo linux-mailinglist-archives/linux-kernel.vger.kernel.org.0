@@ -2,243 +2,303 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A05C7144A61
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Jan 2020 04:22:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A38A7144A46
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Jan 2020 04:17:49 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729406AbgAVDVL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 21 Jan 2020 22:21:11 -0500
-Received: from mga06.intel.com ([134.134.136.31]:31511 "EHLO mga06.intel.com"
+        id S1729186AbgAVDRN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 21 Jan 2020 22:17:13 -0500
+Received: from mga05.intel.com ([192.55.52.43]:64595 "EHLO mga05.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729093AbgAVDVK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 Jan 2020 22:21:10 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
+        id S1728779AbgAVDRN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 21 Jan 2020 22:17:13 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
 X-Amp-File-Uploaded: False
-Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 21 Jan 2020 19:21:10 -0800
+Received: from fmsmga002.fm.intel.com ([10.253.24.26])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 21 Jan 2020 19:17:12 -0800
+X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.70,347,1574150400"; 
-   d="scan'208";a="221910061"
-Received: from dwillia2-desk3.jf.intel.com (HELO dwillia2-desk3.amr.corp.intel.com) ([10.54.39.16])
-  by fmsmga008-auth.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 21 Jan 2020 19:21:09 -0800
-Subject: [PATCH v4 6/6] libnvdimm/e820: Retrieve and populate correct
- 'target_node' info
-From:   Dan Williams <dan.j.williams@intel.com>
-To:     tglx@linutronix.de, mingo@redhat.com
-Cc:     Dave Hansen <dave.hansen@linux.intel.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        David Hildenbrand <david@redhat.com>,
-        Michal Hocko <mhocko@suse.com>,
-        Ira Weiny <ira.weiny@intel.com>,
-        Vishal Verma <vishal.l.verma@intel.com>,
-        Christoph Hellwig <hch@lst.de>, linux-kernel@vger.kernel.org,
-        linux-nvdimm@lists.01.org, x86@kernel.org
-Date:   Tue, 21 Jan 2020 19:05:06 -0800
-Message-ID: <157966230618.2508551.14800751520837218984.stgit@dwillia2-desk3.amr.corp.intel.com>
-In-Reply-To: <157966227494.2508551.7206194169374588977.stgit@dwillia2-desk3.amr.corp.intel.com>
-References: <157966227494.2508551.7206194169374588977.stgit@dwillia2-desk3.amr.corp.intel.com>
-User-Agent: StGit/0.18-3-g996c
+   d="scan'208";a="259310885"
+Received: from joy-optiplex-7040.sh.intel.com (HELO joy-OptiPlex-7040) ([10.239.13.16])
+  by fmsmga002.fm.intel.com with ESMTP; 21 Jan 2020 19:17:11 -0800
+Date:   Tue, 21 Jan 2020 22:07:58 -0500
+From:   Yan Zhao <yan.y.zhao@intel.com>
+To:     Alex Williamson <alex.williamson@redhat.com>
+Cc:     "Tian, Kevin" <kevin.tian@intel.com>,
+        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "peterx@redhat.com" <peterx@redhat.com>,
+        "zhenyuw@linux.intel.com" <zhenyuw@linux.intel.com>,
+        "pbonzini@redhat.com" <pbonzini@redhat.com>,
+        "intel-gvt-dev@lists.freedesktop.org" 
+        <intel-gvt-dev@lists.freedesktop.org>
+Subject: Re: [PATCH v2 2/2] drm/i915/gvt: subsitute kvm_read/write_guest with
+ vfio_dma_rw
+Message-ID: <20200122030758.GI1759@joy-OptiPlex-7040>
+Reply-To: Yan Zhao <yan.y.zhao@intel.com>
+References: <20200115034132.2753-1-yan.y.zhao@intel.com>
+ <20200115035455.12417-1-yan.y.zhao@intel.com>
+ <20200115130651.29d7e9e0@w520.home>
+ <20200116054941.GB1759@joy-OptiPlex-7040>
+ <20200116083729.40983f38@w520.home>
+ <20200119100637.GD1759@joy-OptiPlex-7040>
+ <20200120130157.0ee7042d@w520.home>
+ <20200121081207.GE1759@joy-OptiPlex-7040>
+ <20200121095116.05eeae14@w520.home>
+ <20200121221038.GH1759@joy-OptiPlex-7040>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200121221038.GH1759@joy-OptiPlex-7040>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Use the new phys_to_target_node() and numa_map_to_online_node() helpers
-to retrieve the correct id for the 'numa_node' ("local" / online
-initiator node) and 'target_node' (offline target memory node) sysfs
-attributes.
+On Wed, Jan 22, 2020 at 06:10:38AM +0800, Yan Zhao wrote:
+> On Wed, Jan 22, 2020 at 12:51:16AM +0800, Alex Williamson wrote:
+> > On Tue, 21 Jan 2020 03:12:07 -0500
+> > Yan Zhao <yan.y.zhao@intel.com> wrote:
+> > 
+> > > On Tue, Jan 21, 2020 at 04:01:57AM +0800, Alex Williamson wrote:
+> > > > On Sun, 19 Jan 2020 05:06:37 -0500
+> > > > Yan Zhao <yan.y.zhao@intel.com> wrote:
+> > > >   
+> > > > > On Thu, Jan 16, 2020 at 11:37:29PM +0800, Alex Williamson wrote:  
+> > > > > > On Thu, 16 Jan 2020 00:49:41 -0500
+> > > > > > Yan Zhao <yan.y.zhao@intel.com> wrote:
+> > > > > >     
+> > > > > > > On Thu, Jan 16, 2020 at 04:06:51AM +0800, Alex Williamson wrote:    
+> > > > > > > > On Tue, 14 Jan 2020 22:54:55 -0500
+> > > > > > > > Yan Zhao <yan.y.zhao@intel.com> wrote:
+> > > > > > > >       
+> > > > > > > > > As a device model, it is better to read/write guest memory using vfio
+> > > > > > > > > interface, so that vfio is able to maintain dirty info of device IOVAs.
+> > > > > > > > > 
+> > > > > > > > > Compared to kvm interfaces kvm_read/write_guest(), vfio_dma_rw() has ~600
+> > > > > > > > > cycles more overhead on average.
+> > > > > > > > > 
+> > > > > > > > > -------------------------------------
+> > > > > > > > > |    interface     | avg cpu cycles |
+> > > > > > > > > |-----------------------------------|
+> > > > > > > > > | kvm_write_guest  |     1554       |
+> > > > > > > > > | ----------------------------------|
+> > > > > > > > > | kvm_read_guest   |     707        |
+> > > > > > > > > |-----------------------------------|
+> > > > > > > > > | vfio_dma_rw(w)   |     2274       |
+> > > > > > > > > |-----------------------------------|
+> > > > > > > > > | vfio_dma_rw(r)   |     1378       |
+> > > > > > > > > -------------------------------------      
+> > > > > > > > 
+> > > > > > > > In v1 you had:
+> > > > > > > > 
+> > > > > > > > -------------------------------------
+> > > > > > > > |    interface     | avg cpu cycles |
+> > > > > > > > |-----------------------------------|
+> > > > > > > > | kvm_write_guest  |     1546       |
+> > > > > > > > | ----------------------------------|
+> > > > > > > > | kvm_read_guest   |     686        |
+> > > > > > > > |-----------------------------------|
+> > > > > > > > | vfio_iova_rw(w)  |     2233       |
+> > > > > > > > |-----------------------------------|
+> > > > > > > > | vfio_iova_rw(r)  |     1262       |
+> > > > > > > > -------------------------------------
+> > > > > > > > 
+> > > > > > > > So the kvm numbers remained within +0.5-3% while the vfio numbers are
+> > > > > > > > now +1.8-9.2%.  I would have expected the algorithm change to at least
+> > > > > > > > not be worse for small accesses and be better for accesses crossing
+> > > > > > > > page boundaries.  Do you know what happened?
+> > > > > > > >      
+> > > > > > > I only tested the 4 interfaces in GVT's environment, where most of the
+> > > > > > > guest memory accesses are less than one page.
+> > > > > > > And the different fluctuations should be caused by the locks.
+> > > > > > > vfio_dma_rw contends locks with other vfio accesses which are assumed to
+> > > > > > > be abundant in the case of GVT.    
+> > > > > > 
+> > > > > > Hmm, so maybe it's time to convert vfio_iommu.lock from a mutex to a
+> > > > > > rwsem?  Thanks,
+> > > > > >     
+> > > > > 
+> > > > > hi Alex
+> > > > > I tested your rwsem patches at (https://lkml.org/lkml/2020/1/16/1869).
+> > > > > They works without any runtime error at my side. :) 
+> > > > > However, I found out that the previous fluctuation may be because I didn't
+> > > > > take read/write counts in to account.
+> > > > > For example. though the two tests have different avg read/write cycles,
+> > > > > their average cycles are almost the same.
+> > > > >  ______________________________________________________________________
+> > > > > |        | avg read |            | avg write |            |            |
+> > > > > |        | cycles   | read cnt   | cycles    | write cnt  | avg cycles |
+> > > > > |----------------------------------------------------------------------|
+> > > > > | test 1 |   1339   | 29,587,120 |  2258     | 17,098,364 |    1676    |
+> > > > > | test 2 |   1340   | 28,454,262 |  2238     | 16,501,788 |    1670    |
+> > > > >  ----------------------------------------------------------------------
+> > > > > 
+> > > > > After measuring the exact read/write cnt and cycles of a specific workload,
+> > > > > I get below findings:
+> > > > > 
+> > > > > (1) with single VM running glmark2 inside.
+> > > > > glmark2: 40M+ read+write cnt, among which 63% is read.
+> > > > > among reads, 48% is of PAGE_SIZE, the rest is less than a page.
+> > > > > among writes, 100% is less than a page.
+> > > > > 
+> > > > >  __________________________________________________
+> > > > > |       cycles         | read | write |  avg | inc |
+> > > > > |--------------------------------------------------|
+> > > > > | kvm_read/write_page  |  694 |  1506 |  993 |  /  |
+> > > > > |--------------------------------------------------|
+> > > > > |  vfio_dma_rw(mutex)  | 1340 |  2248 | 1673 | 680 |
+> > > > > |--------------------------------------------------|
+> > > > > | vfio_dma_rw(rwsem r) | 1323 |  2198 | 1645 | 653 |
+> > > > >  ---------------------------------------------------
+> > > > > 
+> > > > > so vfio_dma_rw generally has 650+ more cycles per each read/write.
+> > > > > While kvm->srcu is of 160 cycles on average with one vm is running, the
+> > > > > cycles spending on locks for vfio_dma_rw spread like this:
+> > > > >  ___________________________
+> > > > > |        cycles       | avg |
+> > > > > |---------------------------|
+> > > > > |     iommu->lock     | 117 |
+> > > > > |---------------------------|
+> > > > > |   vfio.group_lock   | 108 |
+> > > > > |---------------------------|
+> > > > > | group->unbound_lock | 114 |
+> > > > > |---------------------------|
+> > > > > |  group->device_lock | 115 |
+> > > > > |---------------------------|
+> > > > > |     group->mutex    | 113 |
+> > > > >  ---------------------------
+> > > > > 
+> > > > > I measured the cycles for a mutex without any contention is 104 cycles
+> > > > > on average (including time for get_cycles() and measured in the same way
+> > > > > as other locks). So the contention of a single lock in a single vm
+> > > > > environment is light. probably because there's a vgpu lock hold in GVT already.
+> > > > > 
+> > > > > (2) with two VMs each running glmark2 inside.
+> > > > > The contention increases a little.
+> > > > > 
+> > > > >  ___________________________________________________
+> > > > > |       cycles         | read | write |  avg | inc  |
+> > > > > |---------------------------------------------------|
+> > > > > | kvm_read/write_page  | 1035 |  1832 | 1325 |  /   |
+> > > > > |---------------------------------------------------|
+> > > > > |  vfio_dma_rw(mutex)  | 2104 |  2886 | 2390 | 1065 |
+> > > > > |---------------------------------------------------|
+> > > > > | vfio_dma_rw(rwsem r) | 1965 |  2778 | 2260 | 935  |
+> > > > >  ---------------------------------------------------
+> > > > > 
+> > > > > 
+> > > > >  -----------------------------------------------
+> > > > > |     avg cycles       |   one VM   |  two VMs  |
+> > > > > |-----------------------------------------------|
+> > > > > |  iommu lock (mutex)  |     117    |   150     |
+> > > > > |-----------------------------------|-----------|
+> > > > > | iommu lock (rwsem r) |     117    |   156     |
+> > > > > |-----------------------------------|-----------|
+> > > > > |   kvm->srcu          |     160    |   213     |
+> > > > >  -----------------------------------------------
+> > > > > 
+> > > > > In the kvm case, avg cycles increased 332 cycles, while kvm->srcu only costed
+> > > > > 213 cycles. The rest 109 cycles may be spent on atomic operations.
+> > > > > But I didn't measure them, as get_cycles() operation itself would influence final
+> > > > > cycles by ~20 cycles.  
+> > > > 
+> > > > It seems like we need to extend the vfio external user interface so
+> > > > that GVT-g can hold the group and container user references across
+> > > > multiple calls.  For instance if we had a
+> > > > vfio_group_get_external_user_from_dev() (based on
+> > > > vfio_group_get_external_user()) then i915 could get an opaque
+> > > > vfio_group pointer which it could use to call vfio_group_dma_rw() which
+> > > > would leave us with only the iommu rw_sem locking.  i915 would release
+> > > > the reference with vfio_group_put_external_user() when the device is
+> > > > released.  The same could be done with the pin pages interface to
+> > > > streamline that as well.  Thoughts?  Thanks,
+> > > >  
+> > > hi Alex,
+> > > it works!
+> > 
+> > Hurrah!
+> > 
+> > > now the average vfio_dma_rw cycles can reduced to 1198. 
+> > > one thing I want to propose is that, in sight of dma->task is always user
+> > > space process, instead of calling get_task_mm(dma->task), can we just use
+> > > "mmget_not_zero(dma->task->mm)"? in this way, the avg cycles can
+> > > further reduce to 1051.
+> > 
+> > I'm not an expert there.  As noted in the type1 code we hold a
+> > reference to the task because it's not advised to hold a long term
+> > reference to the mm, so do we know we can look at task->mm without
+> > acquiring task_lock()?  It's possible this is safe, but it's not
+> > abundantly obvious to me.  Please research further and provide
+> > justification if you think it's correct.  Thanks,
+> > 
+> in get_task_mm, 
+> struct mm_struct *get_task_mm(struct task_struct *task)
+> {
+>         struct mm_struct *mm;
+> 
+>         task_lock(task);
+>         mm = task->mm;
+>         if (mm) {
+>                 if (task->flags & PF_KTHREAD)
+>                         mm = NULL;
+>                 else
+>                         mmget(mm);
+>         }
+>         task_unlock(task);
+>         return mm;
+> }
+> task lock is hold only during the call, so the purpose of it is to
+> ensure task->flags and task->mm is not changed or gone before mmget(mm)
+> or function return.
+> so, if we know for sure the task always has no flag PF_THREAD,
+> then we only need to ensure mm is not gone before mmget(mm) is done.
+> 
+> static inline void mmget(struct mm_struct *mm)
+> {
+>         atomic_inc(&mm->mm_users);
+> }
+> 
+> static inline bool mmget_not_zero(struct mm_struct *mm)
+> {
+>         return atomic_inc_not_zero(&mm->mm_users);
+> }
+> 
+> the atomic_inc_not_zero() in  mmget_not_zero can ensure mm is not gone
+> before its ref count inc.
+> 
+> So, I think the only thing we need to make sure is dma->task is not a
+> kernel thread.
+> Do you think I can make this assumption?
+> 
+hi Alex
+Maybe I can still test PF_KTHREAD without holding task_lock
+(task->alloc_lock), as it is only used to protect
+"->fs, ->files, ->mm, ->group_info, ->comm, keyring
+subscriptions and synchronises with wait4().  Also used in procfs.  Also
+pins the final release of task.io_context.  Also protects ->cpuset and 
+->cgroup.subsys[]. And ->vfork_done."
 
-Below is an example from a 4 numa node system where all the memory on
-node2 is pmem / reserved. It should be noted that with the arrival of
-the ACPI HMAT table and EFI Specific Purpose Memory the kernel will
-start to see more platforms with reserved / performance differentiated
-memory in its own numa node. Hence all the stakeholders on the Cc for
-what is ostensibly a libnvdimm local patch.
+I checked elsewhere in kernel, e.g.
+try_to_wake_up
+	|->select_task_rq
+		|->is_per_cpu_kthread
+			|->if (!(p->flags & PF_KTHREAD))
+task->alloc_lock is not hold there.
 
-=== Before ===
+So, I would replace get_task_mm(dma->task) into two steps:
+(1) check dma->task->flags & PF_KTHREAD, and (2) mmget_not_zero(mm).
 
-/* Notice no online memory on node2 at start */
+I'll do more tests and send out new patches after Chinese new year.
 
-# numactl --hardware
-available: 3 nodes (0-1,3)
-node 0 cpus: 0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19
-node 0 size: 3958 MB
-node 0 free: 3708 MB
-node 1 cpus: 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39
-node 1 size: 4027 MB
-node 1 free: 3871 MB
-node 3 cpus:
-node 3 size: 3994 MB
-node 3 free: 3971 MB
-node distances:
-node   0   1   3
-  0:  10  21  21
-  1:  21  10  21
-  3:  21  21  10
-
-/*
- * Put the pmem namespace into devdax mode so it can be assigned to the
- * kmem driver
- */
-
-# ndctl create-namespace -e namespace0.0 -m devdax -f
-{
-  "dev":"namespace0.0",
-  "mode":"devdax",
-  "map":"dev",
-  "size":"3.94 GiB (4.23 GB)",
-  "uuid":"1650af9b-9ba3-4704-acd6-10178399d9a3",
-  [..]
-}
-
-/* Online Persistent Memory as System RAM */
-
-# daxctl reconfigure-device --mode=system-ram dax0.0
-libdaxctl: memblock_in_dev: dax0.0: memory0: Unable to determine phys_index: Success
-libdaxctl: memblock_in_dev: dax0.0: memory0: Unable to determine phys_index: Success
-libdaxctl: memblock_in_dev: dax0.0: memory0: Unable to determine phys_index: Success
-libdaxctl: memblock_in_dev: dax0.0: memory0: Unable to determine phys_index: Success
-[
-  {
-    "chardev":"dax0.0",
-    "size":4225761280,
-    "target_node":0,
-    "mode":"system-ram"
-  }
-]
-reconfigured 1 device
-
-/* Note that the memory is onlined by default to the wrong node, node0 */
-
-# numactl --hardware
-available: 3 nodes (0-1,3)
-node 0 cpus: 0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19
-node 0 size: 7926 MB
-node 0 free: 7655 MB
-node 1 cpus: 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39
-node 1 size: 4027 MB
-node 1 free: 3871 MB
-node 3 cpus:
-node 3 size: 3994 MB
-node 3 free: 3971 MB
-node distances:
-node   0   1   3
-  0:  10  21  21
-  1:  21  10  21
-  3:  21  21  10
+Thanks
+Yan
 
 
-=== After ===
 
-/* Notice that the "phys_index" error messages are gone */
-
-# daxctl reconfigure-device --mode=system-ram dax0.0
-[
-  {
-    "chardev":"dax0.0",
-    "size":4225761280,
-    "target_node":2,
-    "mode":"system-ram"
-  }
-]
-reconfigured 1 device
-
-/* Notice that node2 is now correctly populated */
-
-# numactl --hardware
-available: 4 nodes (0-3)
-node 0 cpus: 0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19
-node 0 size: 3958 MB
-node 0 free: 3793 MB
-node 1 cpus: 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39
-node 1 size: 4027 MB
-node 1 free: 3851 MB
-node 2 cpus:
-node 2 size: 3968 MB
-node 2 free: 3968 MB
-node 3 cpus:
-node 3 size: 3994 MB
-node 3 free: 3908 MB
-node distances:
-node   0   1   2   3
-  0:  10  21  21  21
-  1:  21  10  21  21
-  2:  21  21  10  21
-  3:  21  21  21  10
-
-Cc: Dave Hansen <dave.hansen@linux.intel.com>
-Cc: Andy Lutomirski <luto@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Ingo Molnar <mingo@redhat.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Cc: David Hildenbrand <david@redhat.com>
-Cc: Michal Hocko <mhocko@suse.com>
-Cc: Ira Weiny <ira.weiny@intel.com>
-Cc: Vishal Verma <vishal.l.verma@intel.com>
-Cc: Christoph Hellwig <hch@lst.de>
-Signed-off-by: Dan Williams <dan.j.williams@intel.com>
----
- arch/x86/Kconfig      |    1 +
- drivers/nvdimm/e820.c |   18 ++++--------------
- 2 files changed, 5 insertions(+), 14 deletions(-)
-
-diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
-index 5e8949953660..3a827fe7afd6 100644
---- a/arch/x86/Kconfig
-+++ b/arch/x86/Kconfig
-@@ -1660,6 +1660,7 @@ config X86_PMEM_LEGACY
- 	depends on PHYS_ADDR_T_64BIT
- 	depends on BLK_DEV
- 	select X86_PMEM_LEGACY_DEVICE
-+	select KEEP_NUMA if NUMA
- 	select LIBNVDIMM
- 	help
- 	  Treat memory marked using the non-standard e820 type of 12 as used
-diff --git a/drivers/nvdimm/e820.c b/drivers/nvdimm/e820.c
-index e02f60ad6c99..4cd18be9d0e9 100644
---- a/drivers/nvdimm/e820.c
-+++ b/drivers/nvdimm/e820.c
-@@ -7,6 +7,7 @@
- #include <linux/memory_hotplug.h>
- #include <linux/libnvdimm.h>
- #include <linux/module.h>
-+#include <linux/numa.h>
- 
- static int e820_pmem_remove(struct platform_device *pdev)
- {
-@@ -16,27 +17,16 @@ static int e820_pmem_remove(struct platform_device *pdev)
- 	return 0;
- }
- 
--#ifdef CONFIG_MEMORY_HOTPLUG
--static int e820_range_to_nid(resource_size_t addr)
--{
--	return memory_add_physaddr_to_nid(addr);
--}
--#else
--static int e820_range_to_nid(resource_size_t addr)
--{
--	return NUMA_NO_NODE;
--}
--#endif
--
- static int e820_register_one(struct resource *res, void *data)
- {
- 	struct nd_region_desc ndr_desc;
- 	struct nvdimm_bus *nvdimm_bus = data;
-+	int nid = phys_to_target_node(res->start);
- 
- 	memset(&ndr_desc, 0, sizeof(ndr_desc));
- 	ndr_desc.res = res;
--	ndr_desc.numa_node = e820_range_to_nid(res->start);
--	ndr_desc.target_node = ndr_desc.numa_node;
-+	ndr_desc.numa_node = numa_map_to_online_node(nid);
-+	ndr_desc.target_node = nid;
- 	set_bit(ND_REGION_PAGEMAP, &ndr_desc.flags);
- 	if (!nvdimm_pmem_region_create(nvdimm_bus, &ndr_desc))
- 		return -ENXIO;
-
+> 
+> _______________________________________________
+> intel-gvt-dev mailing list
+> intel-gvt-dev@lists.freedesktop.org
+> https://lists.freedesktop.org/mailman/listinfo/intel-gvt-dev
