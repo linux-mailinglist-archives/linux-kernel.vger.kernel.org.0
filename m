@@ -2,37 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8D9F0145587
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Jan 2020 14:25:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0BFE8145588
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Jan 2020 14:25:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730655AbgAVNWv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 22 Jan 2020 08:22:51 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40652 "EHLO mail.kernel.org"
+        id S1730661AbgAVNWw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 22 Jan 2020 08:22:52 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40710 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729425AbgAVNWr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 Jan 2020 08:22:47 -0500
+        id S1730652AbgAVNWu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 22 Jan 2020 08:22:50 -0500
 Received: from localhost (unknown [84.241.205.26])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8C7432468D;
-        Wed, 22 Jan 2020 13:22:46 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 99E402468D;
+        Wed, 22 Jan 2020 13:22:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579699367;
-        bh=As0BFpKYdf8bREqme8P5/YpjihCcV/hXG3yG8sQOQCw=;
+        s=default; t=1579699370;
+        bh=nKIIHxRQoPuYzADYCCfZIBNX/f5+mmAUG6fCVypOrqI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=v6kLxPL+gaAoOJgZayM1q+SSKprAdO9ZbXaOUwcH4CX9DOFHtsX8P2id6ZtmERScl
-         h2jndKqZMQPdboAZZrg/Uleuj3bXkwaL3l/rQNRThFBeN6LpvD0I006DVKZsksnkL2
-         bsGr9O9yhPP2t1D7iKqRT1iJnj4g+S+dk9AWR4ds=
+        b=vxA3ZW/xuAAZlwj8OqbrzIALE/lN7WCJ8I0rURRvkHLmUx024SmKfVFNYlSKBDunL
+         cXXHsyV+RDHbDy2yHyqAkky5zTuoH5Ytqrw+aRy8yCHdAxQid5JLuUjAJd+9eAoo6p
+         lU2i460g4sQfbNJSw2HXjRO53fyFpuc6v9EVOzgQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, kbuild test robot <lkp@intel.com>,
-        Dan Carpenter <dan.carpenter@oracle.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Wolfram Sang <wsa@the-dreams.de>
-Subject: [PATCH 5.4 123/222] i2c: iop3xx: Fix memory leak in probe error path
-Date:   Wed, 22 Jan 2020 10:28:29 +0100
-Message-Id: <20200122092842.556199913@linuxfoundation.org>
+        stable@vger.kernel.org,
+        syzbot+4c3cc6dbe7259dbf9054@syzkaller.appspotmail.com,
+        Jozsef Kadlecsik <kadlec@netfilter.org>,
+        Cong Wang <xiyou.wangcong@gmail.com>,
+        Pablo Neira Ayuso <pablo@netfilter.org>
+Subject: [PATCH 5.4 124/222] netfilter: fix a use-after-free in mtype_destroy()
+Date:   Wed, 22 Jan 2020 10:28:30 +0100
+Message-Id: <20200122092842.631271349@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
 In-Reply-To: <20200122092833.339495161@linuxfoundation.org>
 References: <20200122092833.339495161@linuxfoundation.org>
@@ -45,50 +46,36 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Krzysztof Kozlowski <krzk@kernel.org>
+From: Cong Wang <xiyou.wangcong@gmail.com>
 
-commit e64175776d06a8ceebbfd349d7e66a4a46ca39ef upstream.
+commit c120959387efa51479056fd01dc90adfba7a590c upstream.
 
-When handling devm_gpiod_get_optional() errors, free the memory already
-allocated.  This fixes Smatch warnings:
+map->members is freed by ip_set_free() right before using it in
+mtype_ext_cleanup() again. So we just have to move it down.
 
-    drivers/i2c/busses/i2c-iop3xx.c:437 iop3xx_i2c_probe() warn: possible memory leak of 'new_adapter'
-    drivers/i2c/busses/i2c-iop3xx.c:442 iop3xx_i2c_probe() warn: possible memory leak of 'new_adapter'
-
-Fixes: fdb7e884ad61 ("i2c: iop: Use GPIO descriptors")
-Reported-by: kbuild test robot <lkp@intel.com>
-Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
-Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
-Signed-off-by: Wolfram Sang <wsa@the-dreams.de>
+Reported-by: syzbot+4c3cc6dbe7259dbf9054@syzkaller.appspotmail.com
+Fixes: 40cd63bf33b2 ("netfilter: ipset: Support extensions which need a per data destroy function")
+Acked-by: Jozsef Kadlecsik <kadlec@netfilter.org>
+Signed-off-by: Cong Wang <xiyou.wangcong@gmail.com>
+Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/i2c/busses/i2c-iop3xx.c |   12 ++++++++----
- 1 file changed, 8 insertions(+), 4 deletions(-)
+ net/netfilter/ipset/ip_set_bitmap_gen.h |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/i2c/busses/i2c-iop3xx.c
-+++ b/drivers/i2c/busses/i2c-iop3xx.c
-@@ -433,13 +433,17 @@ iop3xx_i2c_probe(struct platform_device
- 	adapter_data->gpio_scl = devm_gpiod_get_optional(&pdev->dev,
- 							 "scl",
- 							 GPIOD_ASIS);
--	if (IS_ERR(adapter_data->gpio_scl))
--		return PTR_ERR(adapter_data->gpio_scl);
-+	if (IS_ERR(adapter_data->gpio_scl)) {
-+		ret = PTR_ERR(adapter_data->gpio_scl);
-+		goto free_both;
-+	}
- 	adapter_data->gpio_sda = devm_gpiod_get_optional(&pdev->dev,
- 							 "sda",
- 							 GPIOD_ASIS);
--	if (IS_ERR(adapter_data->gpio_sda))
--		return PTR_ERR(adapter_data->gpio_sda);
-+	if (IS_ERR(adapter_data->gpio_sda)) {
-+		ret = PTR_ERR(adapter_data->gpio_sda);
-+		goto free_both;
-+	}
+--- a/net/netfilter/ipset/ip_set_bitmap_gen.h
++++ b/net/netfilter/ipset/ip_set_bitmap_gen.h
+@@ -60,9 +60,9 @@ mtype_destroy(struct ip_set *set)
+ 	if (SET_WITH_TIMEOUT(set))
+ 		del_timer_sync(&map->gc);
  
- 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
- 	if (!res) {
+-	ip_set_free(map->members);
+ 	if (set->dsize && set->extensions & IPSET_EXT_DESTROY)
+ 		mtype_ext_cleanup(set);
++	ip_set_free(map->members);
+ 	ip_set_free(map);
+ 
+ 	set->data = NULL;
 
 
