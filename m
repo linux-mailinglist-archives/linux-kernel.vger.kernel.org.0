@@ -2,35 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 361AF1455D9
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Jan 2020 14:26:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 174FA1455DD
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Jan 2020 14:26:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729184AbgAVNZu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 22 Jan 2020 08:25:50 -0500
-Received: from mail.kernel.org ([198.145.29.99]:46080 "EHLO mail.kernel.org"
+        id S1731051AbgAVNZ7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 22 Jan 2020 08:25:59 -0500
+Received: from mail.kernel.org ([198.145.29.99]:46302 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729635AbgAVNZq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 Jan 2020 08:25:46 -0500
+        id S1730507AbgAVNZy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 22 Jan 2020 08:25:54 -0500
 Received: from localhost (unknown [84.241.205.26])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1694F2467E;
-        Wed, 22 Jan 2020 13:25:44 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7AFE72467F;
+        Wed, 22 Jan 2020 13:25:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579699545;
-        bh=9PzwjJcwpVCdRQ1zeVZHCe7LeDuUolLlC1rLCy5M9is=;
+        s=default; t=1579699554;
+        bh=mA9+q3tVWbQmDklZccIueh25o1s3yAYql4biaqqZ/7M=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=YF+p+hUYSb/x8La5QxYnn4NuB29l1yLOZXWJAThgVN5d337FrvrfL5zvOa0S9Z+PU
-         sXugqLAaQIHvBduV5gFGMUXbqu7q9Uh3aaU0cWbT87LxFxq6hhz2nlz3IUSCEDNYOC
-         5siEBiAtSIrSfHuIvQUwa/eq57aCyanxIpupbgGQ=
+        b=1iOfNVOBOZfX4J1iCQF4e6P3ju40I+l6C+yGrbwtw2Ivu/K4hXoLUaBDdtPb8vm+g
+         r2LmfznhiRZYefS0EJJf3m0PDnuiFguADECpEaipvu+nBcQzKo42wUHipCKkxblldF
+         OaaQZ8MTsyXD5Yg6oW4NX3Tzls4EDe72nUDM9IjU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Jerome Brunet <jbrunet@baylibre.com>,
         Kevin Hilman <khilman@baylibre.com>
-Subject: [PATCH 5.4 176/222] arm64: dts: meson: axg: fix audio fifo reg size
-Date:   Wed, 22 Jan 2020 10:29:22 +0100
-Message-Id: <20200122092846.300974685@linuxfoundation.org>
+Subject: [PATCH 5.4 177/222] arm64: dts: meson: g12: fix audio fifo reg size
+Date:   Wed, 22 Jan 2020 10:29:23 +0100
+Message-Id: <20200122092846.371589826@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
 In-Reply-To: <20200122092833.339495161@linuxfoundation.org>
 References: <20200122092833.339495161@linuxfoundation.org>
@@ -45,75 +45,75 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Jerome Brunet <jbrunet@baylibre.com>
 
-commit 301b94d434ac3a3cd576a4bc1053cc243d6bd841 upstream.
+commit 22c4b148a0a1085e57a470e6f7dc515cf08f5a5c upstream.
 
 The register region size initially is too small to access all
 the fifo registers.
 
-Fixes: f2b8f6a93357 ("arm64: dts: meson-axg: add audio fifos")
+Fixes: c59b7fe5aafd ("arm64: dts: meson: g12a: add audio fifos")
 Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
 Signed-off-by: Kevin Hilman <khilman@baylibre.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/arm64/boot/dts/amlogic/meson-axg.dtsi |   12 ++++++------
+ arch/arm64/boot/dts/amlogic/meson-g12-common.dtsi |   12 ++++++------
  1 file changed, 6 insertions(+), 6 deletions(-)
 
---- a/arch/arm64/boot/dts/amlogic/meson-axg.dtsi
-+++ b/arch/arm64/boot/dts/amlogic/meson-axg.dtsi
-@@ -1162,7 +1162,7 @@
- 
- 			toddr_a: audio-controller@100 {
- 				compatible = "amlogic,axg-toddr";
--				reg = <0x0 0x100 0x0 0x1c>;
-+				reg = <0x0 0x100 0x0 0x2c>;
- 				#sound-dai-cells = <0>;
- 				sound-name-prefix = "TODDR_A";
- 				interrupts = <GIC_SPI 84 IRQ_TYPE_EDGE_RISING>;
-@@ -1173,7 +1173,7 @@
- 
- 			toddr_b: audio-controller@140 {
- 				compatible = "amlogic,axg-toddr";
--				reg = <0x0 0x140 0x0 0x1c>;
-+				reg = <0x0 0x140 0x0 0x2c>;
- 				#sound-dai-cells = <0>;
- 				sound-name-prefix = "TODDR_B";
- 				interrupts = <GIC_SPI 85 IRQ_TYPE_EDGE_RISING>;
-@@ -1184,7 +1184,7 @@
- 
- 			toddr_c: audio-controller@180 {
- 				compatible = "amlogic,axg-toddr";
--				reg = <0x0 0x180 0x0 0x1c>;
-+				reg = <0x0 0x180 0x0 0x2c>;
- 				#sound-dai-cells = <0>;
- 				sound-name-prefix = "TODDR_C";
- 				interrupts = <GIC_SPI 86 IRQ_TYPE_EDGE_RISING>;
-@@ -1195,7 +1195,7 @@
- 
- 			frddr_a: audio-controller@1c0 {
- 				compatible = "amlogic,axg-frddr";
--				reg = <0x0 0x1c0 0x0 0x1c>;
-+				reg = <0x0 0x1c0 0x0 0x2c>;
- 				#sound-dai-cells = <0>;
- 				sound-name-prefix = "FRDDR_A";
- 				interrupts = <GIC_SPI 88 IRQ_TYPE_EDGE_RISING>;
-@@ -1206,7 +1206,7 @@
- 
- 			frddr_b: audio-controller@200 {
- 				compatible = "amlogic,axg-frddr";
--				reg = <0x0 0x200 0x0 0x1c>;
-+				reg = <0x0 0x200 0x0 0x2c>;
- 				#sound-dai-cells = <0>;
- 				sound-name-prefix = "FRDDR_B";
- 				interrupts = <GIC_SPI 89 IRQ_TYPE_EDGE_RISING>;
-@@ -1217,7 +1217,7 @@
- 
- 			frddr_c: audio-controller@240 {
- 				compatible = "amlogic,axg-frddr";
--				reg = <0x0 0x240 0x0 0x1c>;
-+				reg = <0x0 0x240 0x0 0x2c>;
- 				#sound-dai-cells = <0>;
- 				sound-name-prefix = "FRDDR_C";
- 				interrupts = <GIC_SPI 90 IRQ_TYPE_EDGE_RISING>;
+--- a/arch/arm64/boot/dts/amlogic/meson-g12-common.dtsi
++++ b/arch/arm64/boot/dts/amlogic/meson-g12-common.dtsi
+@@ -1509,7 +1509,7 @@
+ 				toddr_a: audio-controller@100 {
+ 					compatible = "amlogic,g12a-toddr",
+ 						     "amlogic,axg-toddr";
+-					reg = <0x0 0x100 0x0 0x1c>;
++					reg = <0x0 0x100 0x0 0x2c>;
+ 					#sound-dai-cells = <0>;
+ 					sound-name-prefix = "TODDR_A";
+ 					interrupts = <GIC_SPI 148 IRQ_TYPE_EDGE_RISING>;
+@@ -1521,7 +1521,7 @@
+ 				toddr_b: audio-controller@140 {
+ 					compatible = "amlogic,g12a-toddr",
+ 						     "amlogic,axg-toddr";
+-					reg = <0x0 0x140 0x0 0x1c>;
++					reg = <0x0 0x140 0x0 0x2c>;
+ 					#sound-dai-cells = <0>;
+ 					sound-name-prefix = "TODDR_B";
+ 					interrupts = <GIC_SPI 149 IRQ_TYPE_EDGE_RISING>;
+@@ -1533,7 +1533,7 @@
+ 				toddr_c: audio-controller@180 {
+ 					compatible = "amlogic,g12a-toddr",
+ 						     "amlogic,axg-toddr";
+-					reg = <0x0 0x180 0x0 0x1c>;
++					reg = <0x0 0x180 0x0 0x2c>;
+ 					#sound-dai-cells = <0>;
+ 					sound-name-prefix = "TODDR_C";
+ 					interrupts = <GIC_SPI 150 IRQ_TYPE_EDGE_RISING>;
+@@ -1545,7 +1545,7 @@
+ 				frddr_a: audio-controller@1c0 {
+ 					compatible = "amlogic,g12a-frddr",
+ 						     "amlogic,axg-frddr";
+-					reg = <0x0 0x1c0 0x0 0x1c>;
++					reg = <0x0 0x1c0 0x0 0x2c>;
+ 					#sound-dai-cells = <0>;
+ 					sound-name-prefix = "FRDDR_A";
+ 					interrupts = <GIC_SPI 152 IRQ_TYPE_EDGE_RISING>;
+@@ -1557,7 +1557,7 @@
+ 				frddr_b: audio-controller@200 {
+ 					compatible = "amlogic,g12a-frddr",
+ 						     "amlogic,axg-frddr";
+-					reg = <0x0 0x200 0x0 0x1c>;
++					reg = <0x0 0x200 0x0 0x2c>;
+ 					#sound-dai-cells = <0>;
+ 					sound-name-prefix = "FRDDR_B";
+ 					interrupts = <GIC_SPI 153 IRQ_TYPE_EDGE_RISING>;
+@@ -1569,7 +1569,7 @@
+ 				frddr_c: audio-controller@240 {
+ 					compatible = "amlogic,g12a-frddr",
+ 						     "amlogic,axg-frddr";
+-					reg = <0x0 0x240 0x0 0x1c>;
++					reg = <0x0 0x240 0x0 0x2c>;
+ 					#sound-dai-cells = <0>;
+ 					sound-name-prefix = "FRDDR_C";
+ 					interrupts = <GIC_SPI 154 IRQ_TYPE_EDGE_RISING>;
 
 
