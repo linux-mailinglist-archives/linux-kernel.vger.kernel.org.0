@@ -2,109 +2,137 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6759F14586B
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Jan 2020 16:09:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 91E7A14587B
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Jan 2020 16:11:57 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726026AbgAVPJC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 22 Jan 2020 10:09:02 -0500
-Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:58732 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1725827AbgAVPJC (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 Jan 2020 10:09:02 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1579705740;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=Gs0hLkIZ3duxwFToMJ4ktrx5qsitsIbBNuQxZL9XjEY=;
-        b=Mr9+gK5hSg9yTm41pnynNNIdaSwz6xJ5yYaVRJFLe4q+qjovgkqZaq/VO0UQ6iGhDouP1s
-        nlP937HXra9yi8mj/ZrfkcEyshbFq1X4qLMdLDjrkUkpLoDOizqUBvdnhzU5I7eqNweqBx
-        IKBbsbk97WER33G9QE9yzndi9LFdVnk=
-Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com
- [209.85.221.72]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-425-xZi_QI4QMsG_aIDs96DT_A-1; Wed, 22 Jan 2020 10:08:58 -0500
-X-MC-Unique: xZi_QI4QMsG_aIDs96DT_A-1
-Received: by mail-wr1-f72.google.com with SMTP id k18so3214209wrw.9
-        for <linux-kernel@vger.kernel.org>; Wed, 22 Jan 2020 07:08:58 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:in-reply-to:references:date
-         :message-id:mime-version;
-        bh=Gs0hLkIZ3duxwFToMJ4ktrx5qsitsIbBNuQxZL9XjEY=;
-        b=X1CsPCgQIcsQ/eZL8OujjNFk0gDAXOnROhsDwgn8tyjTx/FxyBJGCD9gMFjxK+Zh6p
-         UcmCBPNyJDoewyBgtDErB2hCW3eXpltrv/SixsvDPwjMg9pXFkKTH8PCpEYsZX8MW7Ms
-         8ScHsXbSOPXoEP/gH73UZyQHSZMcOf5z0HXbyue/TK2cxI2w1nDt2WozPrygfb3S5VcG
-         AzK/KrTd5Tmt8oXleYkRyR4vxDBDBbJI5Ma9UWLiXeuQNEbE62/+fDzRU99CHpNv++Qe
-         1FjE1nqf0ebfjbY5KWv7jTn5QuXp102xMeLsCFaqwMHTaJtqHZD17jzAoTxFyIGbO/cj
-         /FIQ==
-X-Gm-Message-State: APjAAAWFBv/7ep7+7USwUIYUhW1xpxipYKF/vpt0+ieiiobNhKb8c6NX
-        kkGnBt0WNNh8lBQ1j96UkHa9FYLBVBJpo4zti1y966EOOKZh7IKupFD7uCmV3kGKEGRVH5GFYJb
-        Zglu5cv1cqrD1DPC7v5wfLdif
-X-Received: by 2002:a1c:61c1:: with SMTP id v184mr3600985wmb.160.1579705737469;
-        Wed, 22 Jan 2020 07:08:57 -0800 (PST)
-X-Google-Smtp-Source: APXvYqxxHQQ7M+5VlXhyTxrA6AqZnQ80yqWJgIp5dIPVzFm5/1K8pZKKmyUgPXC6mh2/XwH9oKiihw==
-X-Received: by 2002:a1c:61c1:: with SMTP id v184mr3600962wmb.160.1579705737142;
-        Wed, 22 Jan 2020 07:08:57 -0800 (PST)
-Received: from vitty.brq.redhat.com (nat-pool-brq-t.redhat.com. [213.175.37.10])
-        by smtp.gmail.com with ESMTPSA id b128sm4353614wmb.25.2020.01.22.07.08.55
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 22 Jan 2020 07:08:56 -0800 (PST)
-From:   Vitaly Kuznetsov <vkuznets@redhat.com>
-To:     Paolo Bonzini <pbonzini@redhat.com>,
-        Sean Christopherson <sean.j.christopherson@intel.com>
-Cc:     kvm@vger.kernel.org, Jim Mattson <jmattson@google.com>,
-        linux-kernel@vger.kernel.org, Liran Alon <liran.alon@oracle.com>,
-        Roman Kagan <rkagan@virtuozzo.com>
-Subject: Re: [PATCH RFC 2/3] x86/kvm/hyper-v: move VMX controls sanitization out of nested_enable_evmcs()
-In-Reply-To: <9c126d75-225b-3b1b-d97a-bcec1f189e02@redhat.com>
-References: <20200115171014.56405-1-vkuznets@redhat.com> <20200115171014.56405-3-vkuznets@redhat.com> <6c4bdb57-08fb-2c2d-9234-b7efffeb72ed@redhat.com> <20200122054724.GD18513@linux.intel.com> <9c126d75-225b-3b1b-d97a-bcec1f189e02@redhat.com>
-Date:   Wed, 22 Jan 2020 16:08:55 +0100
-Message-ID: <87eevrsf3s.fsf@vitty.brq.redhat.com>
+        id S1729012AbgAVPL4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 22 Jan 2020 10:11:56 -0500
+Received: from mail-vi1eur05on2053.outbound.protection.outlook.com ([40.107.21.53]:50108
+        "EHLO EUR05-VI1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725928AbgAVPLz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 22 Jan 2020 10:11:55 -0500
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=aEyOvh99v69RjfBhzM7Cshpo7xWvEIwGSlijk1jcVGJBWA7E6evOwGg0mIxOmUsVenUKDEXbfaE6RwKKU6zo6naM7oHKMGPjcXCvlVeH/kcfXGkaE5Bv/g1vrUjXIQ5FzjasISlDsDSnLtGNjJHPaUlm0eTL+sw+B5hCG/4tVbIcxs+++zb7h2erlAeSh0xW5gOSMQUhhgqs8nwJujgtm61XKtjWUKpSPn26kw+6VKw0irepK17O7xGMv6yumobMiU8sUJfCPYK7xCaa+BP21eaIf4BBmejNRlUvzpZuCOMYFEiPE8iUxpN/OgwA9D2QnKvn4UE2F434NgqVsc7Tzw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=4Gi/JVocE/IQO1CICKM3jipHINJ9lHvNGOkKoTPNg+g=;
+ b=eMkPad1yOWWnr/NQhXoaRfXWlgE7zbJGgYRWnNu/jqDd0UMvvml8psgIEZ7suDr3gISB5Ad79lSRKNLqB4IwlAXc+ZBfcbhcd7RKx1sIlBzaZkclfMG1IqBbmg4ZjvuWmwDs/21WcvLYTa9gVDzmINtj49H4t5ndzKFySJMRJxGwGrCDcTXQXFoLoqDaQPv/S78pwwD3xfLwoPhI7ZMEMOnXLLEa1BlnRCrVn2RHyk6kaQ/2Y08oB7QwHaVwUrNwjeH5JIv+zWi+bdJXqB94lde4we1tAprnltmj753oM9YZcBI+FyJgDd/ca7tDOPgs63IS8bru6/91OeGBKk/wkg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=4Gi/JVocE/IQO1CICKM3jipHINJ9lHvNGOkKoTPNg+g=;
+ b=kuh+mD9WGRhAPc/YREskCZfP0Qz2HLaF1/6GQ5gg6h3FL4MM6j5GxRASFLgmmVapPXqIq6wqnj2Zgd6YfUcXkqSNkGtjo4DAtQb0Mol/s9IF9HWwGv7yWDyQqmtvcMC/ecD8HVh7aGRgYyUHfvuDjX4SU3F9O/FyXaun09Q74+4=
+Received: from VI1PR0402MB3485.eurprd04.prod.outlook.com (52.134.3.153) by
+ VI1PR0402MB3469.eurprd04.prod.outlook.com (52.134.6.142) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2644.24; Wed, 22 Jan 2020 15:11:51 +0000
+Received: from VI1PR0402MB3485.eurprd04.prod.outlook.com
+ ([fe80::85e9:f844:f8b0:27d]) by VI1PR0402MB3485.eurprd04.prod.outlook.com
+ ([fe80::85e9:f844:f8b0:27d%7]) with mapi id 15.20.2644.027; Wed, 22 Jan 2020
+ 15:11:51 +0000
+From:   Horia Geanta <horia.geanta@nxp.com>
+To:     Andrey Smirnov <andrew.smirnov@gmail.com>,
+        "linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>
+CC:     Chris Healy <cphealy@gmail.com>,
+        Lucas Stach <l.stach@pengutronix.de>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        Iuliana Prodan <iuliana.prodan@nxp.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        dl-linux-imx <linux-imx@nxp.com>,
+        Andrei Botila <andrei.botila@nxp.com>,
+        Laurentiu Tudor <laurentiu.tudor@nxp.com>
+Subject: Re: [PATCH v6 0/7] enable CAAM's HWRNG as default
+Thread-Topic: [PATCH v6 0/7] enable CAAM's HWRNG as default
+Thread-Index: AQHVxjopojbABEfYu0izDuntHRvy8g==
+Date:   Wed, 22 Jan 2020 15:11:51 +0000
+Message-ID: <VI1PR0402MB34850E6CC88CD55642C7386C980C0@VI1PR0402MB3485.eurprd04.prod.outlook.com>
+References: <20200108154047.12526-1-andrew.smirnov@gmail.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=horia.geanta@nxp.com; 
+x-originating-ip: [212.146.100.6]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-ht: Tenant
+x-ms-office365-filtering-correlation-id: 428647f0-fd9f-40fd-c886-08d79f4d68b5
+x-ms-traffictypediagnostic: VI1PR0402MB3469:|VI1PR0402MB3469:
+x-ms-exchange-transport-forked: True
+x-microsoft-antispam-prvs: <VI1PR0402MB3469801837908756C83A03E9980C0@VI1PR0402MB3469.eurprd04.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:10000;
+x-forefront-prvs: 029097202E
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(136003)(366004)(39860400002)(396003)(376002)(346002)(199004)(189003)(26005)(186003)(86362001)(53546011)(6506007)(55016002)(52536014)(76116006)(66946007)(5660300002)(91956017)(64756008)(478600001)(7696005)(66556008)(66476007)(66446008)(44832011)(8676002)(110136005)(71200400001)(2906002)(4326008)(9686003)(316002)(81156014)(33656002)(81166006)(54906003)(8936002)(309714004);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR0402MB3469;H:VI1PR0402MB3485.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: Ag8VoGjDGnL3NcX3L3Ex4XZVsW2hG351mcMlRoEUzP2l0P8sKYDk4o1DiGfEZvDJSRKsyUPMKivrF2DgEaaaojpOK1e1xMApklw9IA2DFgMic39Az4Ea2l5wgZRRpBfdBjMCC+gWeEnv5Ft1hjSfPIsupBiiaqot6b2o/iztgSCG7kkA5Cfb1k/VjgGJvxDbPF2yV77hYWb15jP0syRq4WUUo1ySxDH343FrxN+TD9BrTsNYwJYZNCAuW7ur8lOG1pPZz/qW1fZK4P5PSwkm03S0gxpOhiSeE6kQZ9hqiIU+rjQTfKBTCgD6JTlmNaaz5i3gfVia8pRr+c36sMgM0osH+C5jwXjIypuvEGGub4ixDzdqsNfSWmVnMOPngQpzekEgAjNzKG5HDvaVvi/aj6l3XyXvP9q115b1eXKnfvV4NnPSqD2dj6yJkfNfTh/5zKIyW1AIdJkplxFOmvIdVg9tCJ333d0HjkOnCW3sbcpEvmEAPH++YKO8dyUiyzOl
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: text/plain
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 428647f0-fd9f-40fd-c886-08d79f4d68b5
+X-MS-Exchange-CrossTenant-originalarrivaltime: 22 Jan 2020 15:11:51.1985
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: zYO2oR418R1zCoO7NAqRDwD32uvxOVzXB1/vU/lqG3Apat1F80qsEiixZZIKAJ81nwE+7eD02bVqUpyl1G0AbQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR0402MB3469
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Paolo Bonzini <pbonzini@redhat.com> writes:
-
-> On 22/01/20 06:47, Sean Christopherson wrote:
->>> Yes, it most likely is and it would be nice if Microsoft fixed it, but I
->>> guess we're stuck with it for existing Windows versions.  Well, for one
->>> we found a bug in Hyper-V and not the converse. :)
->>>
->>> There is a problem with this approach, in that we're stuck with it
->>> forever due to live migration.  But I guess if in the future eVMCS v2
->>> adds an apic_address field we can limit the hack to eVMCS v1.  Another
->>> possibility is to use the quirks mechanism but it's overkill for now.
->>>
->>> Unless there are objections, I plan to apply these patches.
->> Doesn't applying this patch contradict your earlier opinion?  This patch
->> would still hide the affected controls from the guest because the host
->> controls enlightened_vmcs_enabled.
->
-> It does.  Unfortunately the key sentence is "we're stuck with it for
-> existing Windows versions". :(
->
->> Rather than update vmx->nested.msrs or filter vmx_get_msr(), what about
->> manually adding eVMCS consistency checks on the disallowed bits and handle
->> SECONDARY_EXEC_VIRTUALIZE_APIC_ACCESSES as a one-off case by simply
->> clearing it from the eVMCS?  Or alternatively, squashing all the disallowed
->> bits.
->
-> Hmm, that is also a possibility.  It's a very hacky one, but I guess
-> adding APIC virtualization to eVMCS would require bumping the version to
-> 2.  Vitaly, what do you think?
-
-As I already replied to Sean I like the idea to filter out unsupported
-controls from eVMCS but unfortunately it doesn't work: Hyper-V actually
-expects APIC virtualization to work when it enables
-SECONDARY_EXEC_VIRTUALIZE_APIC_ACCESSES (I have no idea how without
-apic_access_addr field but). I checked and at least Hyper-V 2016 doesn't
-boot (when >1 vCPU).
-
--- 
-Vitaly
-
+On 1/8/2020 5:41 PM, Andrey Smirnov wrote:=0A=
+> Everyone:=0A=
+> =0A=
+> This series is a continuation of original [discussion]. I don't know=0A=
+> if what's in the series is enough to use CAAMs HWRNG system wide, but=0A=
+> I am hoping that with enough iterations and feedback it will be.=0A=
+> =0A=
+Testing on DPAA2-based Layerscape platforms, for e.g. LS1088A:=0A=
+[...]=0A=
+[   12.379136] caam_jr 8010000.jr: 20000256: CCB: desc idx 2: RNG: Predicti=
+on resistance=0A=
+[   12.387036] hwrng: no data available=0A=
+[...]=0A=
+=0A=
+caamrng driver fails, because RNG initialization is skipped=0A=
+in ctrl.c - caam_probe():=0A=
+	[...]=0A=
+	np =3D of_find_compatible_node(NULL, NULL, "fsl,qoriq-mc");=0A=
+	ctrlpriv->mc_en =3D !!np;=0A=
+	[...]=0A=
+	/*=0A=
+	 * If SEC has RNG version >=3D 4 and RNG state handle has not been=0A=
+	 * already instantiated, do RNG instantiation=0A=
+	 * In case of SoCs with Management Complex, RNG is managed by MC f/w.=0A=
+	 */=0A=
+	if (!ctrlpriv->mc_en && rng_vid >=3D 4) {=0A=
+	[...]=0A=
+=0A=
+NXP is working at adding RNG Prediction Resistance support in MC f/w=0A=
+(will be available in v10.20.1).=0A=
+=0A=
+However, there's a backwards-compatibility requirement: kernel should work=
+=0A=
+with older MC f/w versions.=0A=
+To fix this, my suggestion is to force RNG (re)initialization in case=0A=
+MC f/w is present and its version is < 10.20.1, i.e.:=0A=
+	if ((!ctrlpriv->mc_en || (fsl_mc_get_version() < "10.20.1")) &&=0A=
+	    rng_vid >=3D 4) {=0A=
+	[...]=0A=
+=0A=
+fsl_mc_get_version() - I've made this up, it currently doesn't exist,=0A=
+it should be added in fsl-mc bus driver (drivers/bus/fsl-mc).=0A=
+We will provide this shortly, the plan being to integrate this change=0A=
+as part of this series.=0A=
+=0A=
+Thanks,=0A=
+Horia=0A=
