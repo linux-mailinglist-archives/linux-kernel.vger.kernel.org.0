@@ -2,117 +2,202 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B8E31145C80
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Jan 2020 20:33:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0ADC5145C8A
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Jan 2020 20:37:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727847AbgAVTdL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 22 Jan 2020 14:33:11 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:41800 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725884AbgAVTdL (ORCPT
+        id S1726049AbgAVThm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 22 Jan 2020 14:37:42 -0500
+Received: from mail-pl1-f196.google.com ([209.85.214.196]:35074 "EHLO
+        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725827AbgAVThm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 Jan 2020 14:33:11 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=kcpRCIsS+8zPHI9N27JqUU0XiwisZ8cI+0KOaDjpraE=; b=YRxBn3Rbvezdzr+TsmjTNiO/Q
-        tGEMNhUpWdydXTRrbh6/NlD7o6FOOKpo7CWlNb4M+OltymMa4moglgAvP96Y7V9BrGKYOhn8WBcg1
-        gDs4V24iN7Hc3LVZs0iv0Cw3O2ZH4SJxX9ewjH17PoYrOXEjZgAU9kAjzimYsfqnxW1vLeTlZGGOq
-        kYyBCUVbrLaxpbrMh5tWzkOIttVg8tGOeAlau2bM7b+o3Zv23e3ZqoIDCIxp166Paz2BwHhFbWeTA
-        FcO4tiMz4gM4HUmd1nVUwjfihan2fy7zx6x5CXGqGoEChKLHyxH97tcEHEhlrAQLgZAHUHZMbQ8Bj
-        C2Y5mitYw==;
-Received: from willy by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1iuLkQ-0003aF-Li; Wed, 22 Jan 2020 19:33:06 +0000
-Date:   Wed, 22 Jan 2020 11:33:06 -0800
-From:   Matthew Wilcox <willy@infradead.org>
-To:     David Howells <dhowells@redhat.com>
-Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [RFC][PATCH] iov_iter: Add ITER_MAPPING
-Message-ID: <20200122193306.GB4675@bombadil.infradead.org>
-References: <3577430.1579705075@warthog.procyon.org.uk>
+        Wed, 22 Jan 2020 14:37:42 -0500
+Received: by mail-pl1-f196.google.com with SMTP id g6so229697plt.2;
+        Wed, 22 Jan 2020 11:37:42 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=ON8PJR5r3xQ8JwBGbw7JRK/vHHibNpurM3r0DvPXsXk=;
+        b=u5AVwkUIzYsH20f10VYhX7TYzZxjZtZ2LQvTi06oFwvi1elLedTCmv/UfqQ9ojUPf3
+         ef6nwsf0NE08Qxfy/aVpFWGjsWsRh7EZ3RzbjuGTLAJiJbS4U26w9kGcXsbAkhyTyvJc
+         EadThNoAvmuHjFix1nDpw7rjRWwD+kjXH2C8ddq107084BQYRwHo6PE/ETuuz//V26us
+         34SAtSpfbcm7nwWfQJDb4ZRDHFfJUCgxMuNITEIbekuBQGIKxnPiykp7HCAszFLbpq1x
+         iqbDhoiQVmDpwkdv3kR5OcrxCH/kZMU40YIh+zV1zuvsIM/4fsxZmQr4od8oYxM/3LAS
+         ZQGQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition
+         :content-transfer-encoding:in-reply-to:user-agent;
+        bh=ON8PJR5r3xQ8JwBGbw7JRK/vHHibNpurM3r0DvPXsXk=;
+        b=YMBtEfEk3EZKSz6GimWDjnOsssyJm02AMxo9ilA0PfYTTwO740cfFZUCsgvO/682P3
+         nmdQDjhvwr4eYP73sJ3jHEHbJBF23OA2mc3bdYEQdQ9vNqXTxNQEz6VK9wgPFWIFoIuD
+         rbVnuPDm4S05xzEA2y+kKOfKU4ucsBJ9z1aPSHmOLFnY9ZRkFxC6ctDr1OEtF363CB+M
+         L7mNg6EEXZWEdo+67sAqolsev8Cdj/nPiBFeG3E9YxrXk4jHJXH1PbEqmmijp2udsgfB
+         vV1Nil3ex1ChvzV+4lszCAf+onQp63KkCqEYS0v2JNM5N8RCkeH1OpOncrfG/dL9HaOr
+         2ZZg==
+X-Gm-Message-State: APjAAAXn11g3E6MxffntFu1WJBtR1Z6U7wQCRb3eLe+heDTna0O9yFoN
+        x44u+I9UfQQa8QDDDLXtBg8=
+X-Google-Smtp-Source: APXvYqxHnY4JoRCY6pGw7WqFIvaj2QkhUPNlC0akT9CN62frr+hDYC64bnIfz14kOs2iQX+MXaSWCw==
+X-Received: by 2002:a17:90a:fb4f:: with SMTP id iq15mr53339pjb.86.1579721861802;
+        Wed, 22 Jan 2020 11:37:41 -0800 (PST)
+Received: from localhost ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id u23sm47660318pfm.29.2020.01.22.11.37.40
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 22 Jan 2020 11:37:41 -0800 (PST)
+Date:   Wed, 22 Jan 2020 11:37:39 -0800
+From:   Guenter Roeck <linux@roeck-us.net>
+To:     Sebastian Reichel <sebastian.reichel@collabora.com>
+Cc:     linux-hwmon@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Clemens Ladisch <clemens@ladisch.de>,
+        Jean Delvare <jdelvare@suse.com>,
+        Brad Campbell <lists2009@fnarfbargle.com>,
+        Ondrej =?utf-8?Q?=C4=8Cerman?= <ocerman@sda1.eu>,
+        Bernhard Gebetsberger <bernhard.gebetsberger@gmx.at>,
+        Holger Kiehl <Holger.Kiehl@dwd.de>,
+        Michael Larabel <michael@phoronix.com>,
+        Jonathan McDowell <noodles@earth.li>,
+        Ken Moffat <zarniwhoop73@googlemail.com>,
+        Darren Salt <devspam@moreofthesa.me.uk>
+Subject: Re: [PATCH v4 0/6] hwmon: k10temp driver improvements
+Message-ID: <20200122193739.GA22685@roeck-us.net>
+References: <20200122160800.12560-1-linux@roeck-us.net>
+ <20200122190508.tudp3gjscsxyidhw@earth.universe>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <3577430.1579705075@warthog.procyon.org.uk>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20200122190508.tudp3gjscsxyidhw@earth.universe>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jan 22, 2020 at 02:57:55PM +0000, David Howells wrote:
-> An alternative could be to have an "ITER_ARRAY" that just has the page
-> pointers and not the offset/length info.  This decreases the redundancy and
-> increases the max payload-per-array-page to 2M.
+On Wed, Jan 22, 2020 at 08:05:08PM +0100, Sebastian Reichel wrote:
+> Hi,
+> 
+> The series is
+> 
+> Tested-by: Sebastian Reichel <sebastian.reichel@collabora.com>
+> 
+Thanks again!
 
-We could also have an ITER_XARRAY which you just pass &mapping->i_pages
-to.  I don't think you use any other part of the mapping, so that would
-be a more generic version that is equally efficient.
+Guenter
 
-> +	rcu_read_lock();						\
-> +	for (page = xas_load(&xas); page; page = xas_next(&xas)) {	\
-> +		if (xas_retry(&xas, page))				\
-> +			continue;					\
-> +		if (xa_is_value(page))					\
-> +			break;						\
+> on 3800X.
+> 
+> idle:
+> 
+> k10temp-pci-00c3
+> Adapter: PCI adapter
+> Vcore:       919.00 mV
+> Vsoc:          1.01 V
+> Tdie:         +41.1°C
+> Tctl:         +41.1°C
+> Tccd1:        +39.8°C
+> Icore:         0.00 A
+> Isoc:          4.50 A
+> 
+> with load:
+> 
+> k10temp-pci-00c3
+> Adapter: PCI adapter
+> Vcore:         1.29 V
+> Vsoc:          1.01 V
+> Tdie:         +80.4°C
+> Tctl:         +80.4°C
+> Tccd1:        +78.5°C
+> Icore:        61.00 A
+> Isoc:          6.50 A
+> 
+> debugfs output is also register dumps are also working.
+> 
+> -- Sebastian
+> 
+> On Wed, Jan 22, 2020 at 08:07:54AM -0800, Guenter Roeck wrote:
+> > This patch series implements various improvements for the k10temp driver.
+> > 
+> > Patch 1/6 introduces the use of bit operations.
+> > 
+> > Patch 2/6 converts the driver to use the devm_hwmon_device_register_with_info
+> > API. This not only simplifies the code and reduces its size, it also
+> > makes the code easier to maintain and enhance. 
+> > 
+> > Patch 3/6 adds support for reporting Core Complex Die (CCD) temperatures
+> > on Zen2 (Ryzen and Threadripper) CPUs (note that reporting is incomplete
+> > for Threadripper CPUs - it is known that additional temperature sensors
+> > exist, but the register locations are unknown).
+> > 
+> > Patch 4/6 adds support for reporting core and SoC current and voltage
+> > information on Ryzen CPUs (note: voltage and current measurements for
+> > Threadripper and EPYC CPUs are known to exist, but register locations
+> > are unknown, and values are therefore not reported at this time).
+> > 
+> > Patch 5/6 removes the maximum temperature from Tdie for Ryzen CPUs.
+> > It is inaccurate, misleading, and it just doesn't make sense to report
+> > wrong information.
+> > 
+> > Patch 6/6 adds debugfs files to provide raw thermal and SVI register
+> > dumps. This may help in the future to identify additional sensors and/or
+> > to fix problems.
+> > 
+> > With all patches in place, output on Ryzen 3900X CPUs looks as follows
+> > (with the system under load).
+> > 
+> > k10temp-pci-00c3
+> > Adapter: PCI adapter
+> > Vcore:        +1.39 V
+> > Vsoc:         +1.18 V
+> > Tdie:         +79.9°C
+> > Tctl:         +79.9°C
+> > Tccd1:        +61.8°C
+> > Tccd2:        +76.5°C
+> > Icore:       +46.00 A
+> > Isoc:        +12.00 A
+> > 
+> > The voltage and current information is limited to Ryzen CPUs. Voltage
+> > and current reporting on Threadripper and EPYC CPUs is different, and the
+> > reported information is either incomplete or wrong. Exclude it for the time
+> > being; it can always be added if/when more information becomes available.
+> > 
+> > Tested with the following Ryzen CPUs:
+> >     1300X A user with this CPU in the system reported somewhat unexpected
+> >           values for Vcore; it isn't entirely if at all clear why that is
+> >           the case. Overall this does not warrant holding up the series.
+> >     1600
+> >     1800X
+> >     2200G
+> >     2400G
+> >     2700
+> >     2700X
+> >     2950X
+> >     3600X
+> >     3800X
+> >     3900X
+> >     3950X
+> >     3970X
+> >     EPYC 7302
+> >     EPYC 7742
+> > 
+> > Many thanks to everyone who helped to test this series.
+> > 
+> > ---
+> > v4: Normalize current calculations do show 1A / LSB for core current and
+> >     0.25A / LSB for SoC current. The reported current values are board
+> >     specific and need to be scaled using the configuration file.
+> >     Clarified that the maximum temperature of 70 degrees C (which is no
+> >     longer displayed) was associated to Tctl and not to Tdie.
+> >     Added debugfs support.
+> > 
+> > v3: Added more Tested-by: tags
+> >     Added detection for 3970X, and report Tccd1 for this CPU.
+> > 
+> > v2: Added Tested-by: tags as received.
+> >     Don't display voltage and current information for Threadripper and EPYC.
+> >     Stop displaying the fixed (and wrong) maximum temperature of 70 degrees C
+> >     for Tdie on model 17h/18h CPUs.
 
-Do you also want to check for !page?  That would be a bug in the caller.
-
-> +		if (PageCompound(page))					\
-> +			break;						\
-
-It's perfectly legal to have compound pages in the page cache.  Call
-find_subpage(page, xas.xa_index) unconditionally.
-
-> +		if (page_to_pgoff(page) != xas.xa_index)		\
-> +			break;						\
-
-... and you can ditch this if the pages are pinned as find_subpage()
-will bug in this case.
-
-> +		__v.bv_page = page;					\
-> +		offset = (i->mapping_start + skip) & ~PAGE_MASK;	\
-> +		seg = PAGE_SIZE - offset;			\
-> +		__v.bv_offset = offset;				\
-> +		__v.bv_len = min(n, seg);			\
-> +		(void)(STEP);					\
-> +		n -= __v.bv_len;				\
-> +		skip += __v.bv_len;				\
-
-Do we want STEP to be called with PAGE_SIZE chunks, or if they have a
-THP, can we have it called with larger than a PAGE_SIZE chunk?
-
-> +#define iterate_all_kinds(i, n, v, I, B, K, M) {		\
->  	if (likely(n)) {					\
->  		size_t skip = i->iov_offset;			\
->  		if (unlikely(i->type & ITER_BVEC)) {		\
-> @@ -86,6 +119,9 @@
->  			struct kvec v;				\
->  			iterate_kvec(i, n, v, kvec, skip, (K))	\
->  		} else if (unlikely(i->type & ITER_DISCARD)) {	\
-> +		} else if (unlikely(i->type & ITER_MAPPING)) {	\
-> +			struct bio_vec v;			\
-> +			iterate_mapping(i, n, v, skip, (M));	\
-
-bio_vec?
-
-> -#define iterate_and_advance(i, n, v, I, B, K) {			\
-> +#define iterate_and_advance(i, n, v, I, B, K, M) {		\
->  	if (unlikely(i->count < n))				\
->  		n = i->count;					\
->  	if (i->count) {						\
-> @@ -119,6 +155,9 @@
->  			i->kvec = kvec;				\
->  		} else if (unlikely(i->type & ITER_DISCARD)) {	\
->  			skip += n;				\
-> +		} else if (unlikely(i->type & ITER_MAPPING)) {	\
-> +			struct bio_vec v;			\
-> +			iterate_mapping(i, n, v, skip, (M))	\
-
-again?
 
