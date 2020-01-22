@@ -2,35 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1B12414507D
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Jan 2020 10:47:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C2350145017
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Jan 2020 10:43:57 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730040AbgAVJqU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 22 Jan 2020 04:46:20 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36438 "EHLO mail.kernel.org"
+        id S2387948AbgAVJnt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 22 Jan 2020 04:43:49 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36480 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387924AbgAVJno (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 Jan 2020 04:43:44 -0500
+        id S2387932AbgAVJnq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 22 Jan 2020 04:43:46 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5D51D2468B;
-        Wed, 22 Jan 2020 09:43:43 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C3E022468C;
+        Wed, 22 Jan 2020 09:43:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579686223;
-        bh=EwXiR3OAHCKqfa2wQBGY7nZhL1E2myYAN/IcWN8jdxM=;
+        s=default; t=1579686226;
+        bh=a05LJki7/JjRwAFxjy9uKz+C9AjD8lWYO8aJVVSFOVE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=kENbBnGUo7vbXIQj+1WgW73Ep9ll2xHfEJHCcefaplaEShSe2+Wa7zpYhfN91EMpm
-         G6uXxPZq6wEyeQDC95VuJ1lZa8lALqKSwm5m/dj0tbko0y3Pfze106KjFO2RSo0EVQ
-         nYwazvvVvfPwyV22AVpei9IFHSx+zL/qdmCOi3Lw=
+        b=ngxCaAk4kdUJMGvJXJ67ELmgi89ps+kn7d7CYqllwbO5ahDHo7A7o10pstd23GO+o
+         Zwjz+Ip9sTFZS53TwKxjM/2cZXAYlGrRJ+GyTqULI8/rFtQjxCAt+NbRIuBFmYzHaI
+         Je7u16r+FP5nr8wHTaLMTxjKk/J3k2Uu+G8ADODg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>,
+        stable@vger.kernel.org, Pan Bian <bianpan2016@163.com>,
+        Manish Rangankar <mrangankar@marvell.com>,
         "Martin K. Petersen" <martin.petersen@oracle.com>
-Subject: [PATCH 4.19 093/103] scsi: esas2r: unlock on error in esas2r_nvram_read_direct()
-Date:   Wed, 22 Jan 2020 10:29:49 +0100
-Message-Id: <20200122092815.975194637@linuxfoundation.org>
+Subject: [PATCH 4.19 094/103] scsi: qla4xxx: fix double free bug
+Date:   Wed, 22 Jan 2020 10:29:50 +0100
+Message-Id: <20200122092816.077967082@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
 In-Reply-To: <20200122092803.587683021@linuxfoundation.org>
 References: <20200122092803.587683021@linuxfoundation.org>
@@ -43,30 +44,35 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
+From: Pan Bian <bianpan2016@163.com>
 
-commit 906ca6353ac09696c1bf0892513c8edffff5e0a6 upstream.
+commit 3fe3d2428b62822b7b030577cd612790bdd8c941 upstream.
 
-This error path is missing an unlock.
+The variable init_fw_cb is released twice, resulting in a double free
+bug. The call to the function dma_free_coherent() before goto is removed to
+get rid of potential double free.
 
-Fixes: 26780d9e12ed ("[SCSI] esas2r: ATTO Technology ExpressSAS 6G SAS/SATA RAID Adapter Driver")
-Link: https://lore.kernel.org/r/20191022102324.GA27540@mwanda
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Fixes: 2a49a78ed3c8 ("[SCSI] qla4xxx: added IPv6 support.")
+Link: https://lore.kernel.org/r/1572945927-27796-1-git-send-email-bianpan2016@163.com
+Signed-off-by: Pan Bian <bianpan2016@163.com>
+Acked-by: Manish Rangankar <mrangankar@marvell.com>
 Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/scsi/esas2r/esas2r_flash.c |    1 +
- 1 file changed, 1 insertion(+)
+ drivers/scsi/qla4xxx/ql4_mbx.c |    3 ---
+ 1 file changed, 3 deletions(-)
 
---- a/drivers/scsi/esas2r/esas2r_flash.c
-+++ b/drivers/scsi/esas2r/esas2r_flash.c
-@@ -1197,6 +1197,7 @@ bool esas2r_nvram_read_direct(struct esa
- 	if (!esas2r_read_flash_block(a, a->nvram, FLS_OFFSET_NVR,
- 				     sizeof(struct esas2r_sas_nvram))) {
- 		esas2r_hdebug("NVRAM read failed, using defaults");
-+		up(&a->nvram_semaphore);
- 		return false;
+--- a/drivers/scsi/qla4xxx/ql4_mbx.c
++++ b/drivers/scsi/qla4xxx/ql4_mbx.c
+@@ -640,9 +640,6 @@ int qla4xxx_initialize_fw_cb(struct scsi
+ 
+ 	if (qla4xxx_get_ifcb(ha, &mbox_cmd[0], &mbox_sts[0], init_fw_cb_dma) !=
+ 	    QLA_SUCCESS) {
+-		dma_free_coherent(&ha->pdev->dev,
+-				  sizeof(struct addr_ctrl_blk),
+-				  init_fw_cb, init_fw_cb_dma);
+ 		goto exit_init_fw_cb;
  	}
  
 
