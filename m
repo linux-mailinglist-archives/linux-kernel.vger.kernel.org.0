@@ -2,38 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8369F144FF1
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Jan 2020 10:42:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4CD7D1451E1
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Jan 2020 10:57:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387740AbgAVJmd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 22 Jan 2020 04:42:33 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34236 "EHLO mail.kernel.org"
+        id S1729575AbgAVJbL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 22 Jan 2020 04:31:11 -0500
+Received: from mail.kernel.org ([198.145.29.99]:42950 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387707AbgAVJmY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 Jan 2020 04:42:24 -0500
+        id S1729527AbgAVJbH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 22 Jan 2020 04:31:07 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D94BE24680;
-        Wed, 22 Jan 2020 09:42:22 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id ADA7E24673;
+        Wed, 22 Jan 2020 09:31:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579686143;
-        bh=0Wy9QmnyEf2wGDNA62BLUT9kBGOueblak1F7BeV4wCU=;
+        s=default; t=1579685466;
+        bh=6BnNUWJF6aYZydoM8RpxRCigJKk8/js3efYHnlbHI4A=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=HzkWbOj2XX0WUD4M9bYdCqNCl3REx/GzGmT4WxauE0MFNUYJpzq+HErzGWnoCgtvO
-         kl7jDBhT8gfI2Vc1a5D2D5+dRWQHN+9G+KReSbMbnM70ZoGyDJYBiHdAdDNYwFRgRW
-         wsMyAHKpEs0SrxanFSliodnTMzG3eeTyLlS5joZQ=
+        b=hNtLZ8AVc0XhFHMz2sk4SOHcmofHzPcMsf0JKZkFEaNppa45kkw1beErkem2GmM30
+         Y1JvbDgCK6iWENMVDjahPb1NoYRw+jeqv5OZe8HyKtPYhRxuxuRHO5W9sk0MXVvzBk
+         313gn1pl5YyBodd21czFKnxfUSfY4vPKxgpDndlc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Johan Hovold <johan@kernel.org>,
-        Takashi Iwai <tiwai@suse.de>
-Subject: [PATCH 4.19 025/103] ALSA: usb-audio: fix sync-ep altsetting sanity check
+        stable@vger.kernel.org, Xiang Chen <chenxiang66@hisilicon.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>
+Subject: [PATCH 4.4 25/76] scsi: sd: Clear sdkp->protection_type if disk is reformatted without PI
 Date:   Wed, 22 Jan 2020 10:28:41 +0100
-Message-Id: <20200122092807.578377802@linuxfoundation.org>
+Message-Id: <20200122092754.326792715@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200122092803.587683021@linuxfoundation.org>
-References: <20200122092803.587683021@linuxfoundation.org>
+In-Reply-To: <20200122092751.587775548@linuxfoundation.org>
+References: <20200122092751.587775548@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,42 +43,42 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Johan Hovold <johan@kernel.org>
+From: Xiang Chen <chenxiang66@hisilicon.com>
 
-commit 5d1b71226dc4d44b4b65766fa9d74492f9d4587b upstream.
+commit 465f4edaecc6c37f81349233e84d46246bcac11a upstream.
 
-The altsetting sanity check in set_sync_ep_implicit_fb_quirk() was
-checking for there to be at least one altsetting but then went on to
-access the second one, which may not exist.
+If an attached disk with protection information enabled is reformatted
+to Type 0 the revalidation code does not clear the original protection
+type and subsequent accesses will keep setting RDPROTECT/WRPROTECT.
 
-This could lead to random slab data being used to initialise the sync
-endpoint in snd_usb_add_endpoint().
+Set the protection type to 0 if the disk reports PROT_EN=0 in READ
+CAPACITY(16).
 
-Fixes: c75a8a7ae565 ("ALSA: snd-usb: add support for implicit feedback")
-Fixes: ca10a7ebdff1 ("ALSA: usb-audio: FT C400 sync playback EP to capture EP")
-Fixes: 5e35dc0338d8 ("ALSA: usb-audio: add implicit fb quirk for Behringer UFX1204")
-Fixes: 17f08b0d9aaf ("ALSA: usb-audio: add implicit fb quirk for Axe-Fx II")
-Fixes: 103e9625647a ("ALSA: usb-audio: simplify set_sync_ep_implicit_fb_quirk")
-Cc: stable <stable@vger.kernel.org>     # 3.5
-Signed-off-by: Johan Hovold <johan@kernel.org>
-Link: https://lore.kernel.org/r/20200114083953.1106-1-johan@kernel.org
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
+[mkp: commit desc]
+
+Fixes: fe542396da73 ("[SCSI] sd: Ensure we correctly disable devices with unknown protection type")
+Link: https://lore.kernel.org/r/1578532344-101668-1-git-send-email-chenxiang66@hisilicon.com
+Signed-off-by: Xiang Chen <chenxiang66@hisilicon.com>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- sound/usb/pcm.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/scsi/sd.c |    4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
---- a/sound/usb/pcm.c
-+++ b/sound/usb/pcm.c
-@@ -377,7 +377,7 @@ static int set_sync_ep_implicit_fb_quirk
- add_sync_ep_from_ifnum:
- 	iface = usb_ifnum_to_if(dev, ifnum);
+--- a/drivers/scsi/sd.c
++++ b/drivers/scsi/sd.c
+@@ -1998,8 +1998,10 @@ static int sd_read_protection_type(struc
+ 	u8 type;
+ 	int ret = 0;
  
--	if (!iface || iface->num_altsetting == 0)
-+	if (!iface || iface->num_altsetting < 2)
- 		return -EINVAL;
+-	if (scsi_device_protection(sdp) == 0 || (buffer[12] & 1) == 0)
++	if (scsi_device_protection(sdp) == 0 || (buffer[12] & 1) == 0) {
++		sdkp->protection_type = 0;
+ 		return ret;
++	}
  
- 	alts = &iface->altsetting[1];
+ 	type = ((buffer[12] >> 1) & 7) + 1; /* P_TYPE 0 = Type 1 */
+ 
 
 
