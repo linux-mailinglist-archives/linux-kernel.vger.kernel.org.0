@@ -2,41 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BC0A1144EEA
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Jan 2020 10:34:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7F719144FAC
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Jan 2020 10:40:21 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730192AbgAVJcl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 22 Jan 2020 04:32:41 -0500
-Received: from mail.kernel.org ([198.145.29.99]:45660 "EHLO mail.kernel.org"
+        id S1732872AbgAVJkG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 22 Jan 2020 04:40:06 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58524 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729538AbgAVJci (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 Jan 2020 04:32:38 -0500
+        id S1733063AbgAVJkC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 22 Jan 2020 04:40:02 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 054582071E;
-        Wed, 22 Jan 2020 09:32:36 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E229F24684;
+        Wed, 22 Jan 2020 09:40:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579685557;
-        bh=U+exO/IhQYIUtg8AkY6Jou7+HjntXe3U5NgQyW5Z9Wc=;
+        s=default; t=1579686002;
+        bh=F3K8sIPF1qVUOqqBY13os+2ldJ8yavS81/VW8NRxjU8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ecsdtBj8EKejmT9nxaha6Owr5PoZEFsavlKiziTn1fqO4XkeXircA7WAyw3RSzkuF
-         jvprQHXSHhzg+HIBH7qPq+JZoBo8L7RwXa2jFBfiM2AYkkYblAWyV85fFwCC7zPbne
-         rv0BlMUZeHBX9fPRKpHVmLfHm0WmxSu0d2cLEo5A=
+        b=D8BiAvBjl5SH3hUmKcyBV0BPjOCAEywGAZqprAWia9lSYyDv/TvguaKNzTrCOX/qP
+         V2YTJLMSF8v57Elke3huiQB/3gQnLs34QVaY2PLy0GK3K2uXA/j5R2ZTP+vPEPf6Gu
+         WxJiYpj8l2/1BtFhTR23TyJmfTt01xJSIExZ8u10=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        syzbot+4c3cc6dbe7259dbf9054@syzkaller.appspotmail.com,
-        Jozsef Kadlecsik <kadlec@netfilter.org>,
-        Cong Wang <xiyou.wangcong@gmail.com>,
-        Pablo Neira Ayuso <pablo@netfilter.org>
-Subject: [PATCH 4.4 61/76] netfilter: fix a use-after-free in mtype_destroy()
-Date:   Wed, 22 Jan 2020 10:29:17 +0100
-Message-Id: <20200122092800.371757114@linuxfoundation.org>
+        stable@vger.kernel.org, Bharath Vedartham <linux.bhar@gmail.com>,
+        Michal Hocko <mhocko@suse.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.14 33/65] mm/huge_memory.c: make __thp_get_unmapped_area static
+Date:   Wed, 22 Jan 2020 10:29:18 +0100
+Message-Id: <20200122092755.561234359@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200122092751.587775548@linuxfoundation.org>
-References: <20200122092751.587775548@linuxfoundation.org>
+In-Reply-To: <20200122092750.976732974@linuxfoundation.org>
+References: <20200122092750.976732974@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,36 +46,38 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Cong Wang <xiyou.wangcong@gmail.com>
+From: Bharath Vedartham <linux.bhar@gmail.com>
 
-commit c120959387efa51479056fd01dc90adfba7a590c upstream.
+[ Upstream commit b3b07077b01ecbbd98efede778c195567de25b71 ]
 
-map->members is freed by ip_set_free() right before using it in
-mtype_ext_cleanup() again. So we just have to move it down.
+__thp_get_unmapped_area is only used in mm/huge_memory.c.  Make it static.
+Tested by building and booting the kernel.
 
-Reported-by: syzbot+4c3cc6dbe7259dbf9054@syzkaller.appspotmail.com
-Fixes: 40cd63bf33b2 ("netfilter: ipset: Support extensions which need a per data destroy function")
-Acked-by: Jozsef Kadlecsik <kadlec@netfilter.org>
-Signed-off-by: Cong Wang <xiyou.wangcong@gmail.com>
-Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Link: http://lkml.kernel.org/r/20190504102353.GA22525@bharath12345-Inspiron-5559
+Signed-off-by: Bharath Vedartham <linux.bhar@gmail.com>
+Acked-by: Michal Hocko <mhocko@suse.com>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/netfilter/ipset/ip_set_bitmap_gen.h |    2 +-
+ mm/huge_memory.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/net/netfilter/ipset/ip_set_bitmap_gen.h
-+++ b/net/netfilter/ipset/ip_set_bitmap_gen.h
-@@ -66,9 +66,9 @@ mtype_destroy(struct ip_set *set)
- 	if (SET_WITH_TIMEOUT(set))
- 		del_timer_sync(&map->gc);
+diff --git a/mm/huge_memory.c b/mm/huge_memory.c
+index 1adc2e6c50f9..6d835535946d 100644
+--- a/mm/huge_memory.c
++++ b/mm/huge_memory.c
+@@ -502,7 +502,7 @@ void prep_transhuge_page(struct page *page)
+ 	set_compound_page_dtor(page, TRANSHUGE_PAGE_DTOR);
+ }
  
--	ip_set_free(map->members);
- 	if (set->dsize && set->extensions & IPSET_EXT_DESTROY)
- 		mtype_ext_cleanup(set);
-+	ip_set_free(map->members);
- 	ip_set_free(map);
- 
- 	set->data = NULL;
+-unsigned long __thp_get_unmapped_area(struct file *filp, unsigned long len,
++static unsigned long __thp_get_unmapped_area(struct file *filp, unsigned long len,
+ 		loff_t off, unsigned long flags, unsigned long size)
+ {
+ 	unsigned long addr;
+-- 
+2.20.1
+
 
 
