@@ -2,126 +2,83 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AEBFC1458E0
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Jan 2020 16:38:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 680031458DB
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Jan 2020 16:37:52 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727141AbgAVPiR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 22 Jan 2020 10:38:17 -0500
-Received: from fllv0015.ext.ti.com ([198.47.19.141]:56346 "EHLO
-        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726049AbgAVPiM (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 Jan 2020 10:38:12 -0500
-Received: from fllv0035.itg.ti.com ([10.64.41.0])
-        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 00MFc6A4077656;
-        Wed, 22 Jan 2020 09:38:06 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1579707486;
-        bh=olm+bSOr7+k/3oDNurxPY/t/nOe+OgFg1ZjDwTThz2I=;
-        h=From:To:CC:Subject:Date:In-Reply-To:References;
-        b=R4wu5V7sTjUeS0eKpzr8qTvO3zI8TKwnXu43UW918mryMDQEA7WQ5XUzXHdexQIun
-         yWqLeXRLrhie0gY1pkPndYezIDVxaaWTWBF4m4sc+/Ugut0A1Jc3BOIcVOBXR3jClK
-         ahmN55X+B/NBwEcL25zSLgr96sXObub426ZXTYgA=
-Received: from DFLE113.ent.ti.com (dfle113.ent.ti.com [10.64.6.34])
-        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTP id 00MFc6jX058017;
-        Wed, 22 Jan 2020 09:38:06 -0600
-Received: from DFLE112.ent.ti.com (10.64.6.33) by DFLE113.ent.ti.com
- (10.64.6.34) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Wed, 22
- Jan 2020 09:38:06 -0600
-Received: from lelv0326.itg.ti.com (10.180.67.84) by DFLE112.ent.ti.com
- (10.64.6.33) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
- Frontend Transport; Wed, 22 Jan 2020 09:38:06 -0600
-Received: from localhost (ileax41-snat.itg.ti.com [10.172.224.153])
-        by lelv0326.itg.ti.com (8.15.2/8.15.2) with ESMTP id 00MFc6Q3019489;
-        Wed, 22 Jan 2020 09:38:06 -0600
-From:   Dan Murphy <dmurphy@ti.com>
-To:     <andrew@lunn.ch>, <f.fainelli@gmail.com>, <hkallweit1@gmail.com>,
-        <bunk@kernel.org>
-CC:     <netdev@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, Dan Murphy <dmurphy@ti.com>
-Subject: [PATCH net-next 2/2] net: phy: DP83822: Add support for additional DP83825 devices
-Date:   Wed, 22 Jan 2020 09:34:55 -0600
-Message-ID: <20200122153455.8777-3-dmurphy@ti.com>
-X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200122153455.8777-1-dmurphy@ti.com>
-References: <20200122153455.8777-1-dmurphy@ti.com>
+        id S1726005AbgAVPhu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 22 Jan 2020 10:37:50 -0500
+Received: from sauhun.de ([88.99.104.3]:43786 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725802AbgAVPhu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 22 Jan 2020 10:37:50 -0500
+Received: from localhost (p54B33378.dip0.t-ipconnect.de [84.179.51.120])
+        by pokefinder.org (Postfix) with ESMTPSA id CC5B52C0713;
+        Wed, 22 Jan 2020 16:37:47 +0100 (CET)
+Date:   Wed, 22 Jan 2020 16:37:47 +0100
+From:   Wolfram Sang <wsa@the-dreams.de>
+To:     Jean Delvare <jdelvare@suse.de>
+Cc:     Luca Ceresoli <luca@lucaceresoli.net>, linux-doc@vger.kernel.org,
+        linux-i2c@vger.kernel.org, Peter Rosin <peda@axentia.se>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 15/26] docs: i2c: smbus-protocol: enable kernel-doc
+ function syntax
+Message-ID: <20200122153747.GA21343@ninjato>
+References: <20200105224006.10321-1-luca@lucaceresoli.net>
+ <20200105225012.11701-1-luca@lucaceresoli.net>
+ <20200105225012.11701-15-luca@lucaceresoli.net>
+ <20200120154444.7c1d3863@endymion>
+ <211da679-154f-15e3-52d3-a24d50c526cf@lucaceresoli.net>
+ <20200122152608.40f7c90c@endymion>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="wRRV7LY7NUeQGEoC"
+Content-Disposition: inline
+In-Reply-To: <20200122152608.40f7c90c@endymion>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add PHY IDs for the DP83825CS, DP83825CM and the DP83825S devices to the
-DP83822 driver.
 
-Signed-off-by: Dan Murphy <dmurphy@ti.com>
----
- drivers/net/phy/Kconfig   |  3 ++-
- drivers/net/phy/dp83822.c | 12 ++++++++++--
- 2 files changed, 12 insertions(+), 3 deletions(-)
+--wRRV7LY7NUeQGEoC
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/drivers/net/phy/Kconfig b/drivers/net/phy/Kconfig
-index cc677ddd2719..71fc778ce398 100644
---- a/drivers/net/phy/Kconfig
-+++ b/drivers/net/phy/Kconfig
-@@ -348,7 +348,8 @@ config DAVICOM_PHY
- config DP83822_PHY
- 	tristate "Texas Instruments DP83822/825/826 PHYs"
- 	---help---
--	  Supports the DP83822, DP83825I, DP83826C and DP83826NC PHYs.
-+	  Supports the DP83822, DP83825I, DP83825CM, DP83825CS, DP83825S,
-+	  DP83826C and DP83826NC PHYs.
- 
- config DP83TC811_PHY
- 	tristate "Texas Instruments DP83TC811 PHY"
-diff --git a/drivers/net/phy/dp83822.c b/drivers/net/phy/dp83822.c
-index 5159b28baa0f..fe9aa3ad52a7 100644
---- a/drivers/net/phy/dp83822.c
-+++ b/drivers/net/phy/dp83822.c
-@@ -1,6 +1,5 @@
- // SPDX-License-Identifier: GPL-2.0
--/*
-- * Driver for the Texas Instruments DP83822 PHY
-+/* Driver for the Texas Instruments DP83822, DP83825 and DP83826 PHYs.
-  *
-  * Copyright (C) 2017 Texas Instruments Inc.
-  */
-@@ -15,7 +14,10 @@
- #include <linux/netdevice.h>
- 
- #define DP83822_PHY_ID	        0x2000a240
-+#define DP83825S_PHY_ID		0x2000a140
- #define DP83825I_PHY_ID		0x2000a150
-+#define DP83825CM_PHY_ID	0x2000a160
-+#define DP83825CS_PHY_ID	0x2000a170
- #define DP83826C_PHY_ID		0x2000a130
- #define DP83826NC_PHY_ID	0x2000a110
- 
-@@ -323,6 +325,9 @@ static struct phy_driver dp83822_driver[] = {
- 	DP83822_PHY_DRIVER(DP83825I_PHY_ID, "TI DP83825I"),
- 	DP83822_PHY_DRIVER(DP83826C_PHY_ID, "TI DP83826C"),
- 	DP83822_PHY_DRIVER(DP83826NC_PHY_ID, "TI DP83826NC"),
-+	DP83822_PHY_DRIVER(DP83825S_PHY_ID, "TI DP83825S"),
-+	DP83822_PHY_DRIVER(DP83825CM_PHY_ID, "TI DP83825M"),
-+	DP83822_PHY_DRIVER(DP83825CS_PHY_ID, "TI DP83825CS"),
- };
- module_phy_driver(dp83822_driver);
- 
-@@ -331,6 +336,9 @@ static struct mdio_device_id __maybe_unused dp83822_tbl[] = {
- 	{ DP83825I_PHY_ID, 0xfffffff0 },
- 	{ DP83826C_PHY_ID, 0xfffffff0 },
- 	{ DP83826NC_PHY_ID, 0xfffffff0 },
-+	{ DP83825S_PHY_ID, 0xfffffff0 },
-+	{ DP83825CM_PHY_ID, 0xfffffff0 },
-+	{ DP83825CS_PHY_ID, 0xfffffff0 },
- 	{ },
- };
- MODULE_DEVICE_TABLE(mdio, dp83822_tbl);
--- 
-2.25.0
+On Wed, Jan 22, 2020 at 03:26:08PM +0100, Jean Delvare wrote:
+> On Tue, 21 Jan 2020 18:31:23 +0100, Luca Ceresoli wrote:
+> > Good point. For v2 I added a new patch to use "Implemented by" also in
+> > i2c-protocol.rst.
+>=20
+> BTW... I don't know how Wolfram feels about it, but I don't think
+> documentation changes need to be split to such fine-grained patches.
 
+I don't mind too much. I think for a first version, fine grained can
+make review more easy. Maybe the second version could be less patches.
+Yet for me, since patchwork can handle series of patches, the amount
+doesn't matter too much. I am super happy that Luca did the work and you
+did the review!
+
+
+--wRRV7LY7NUeQGEoC
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAl4obEcACgkQFA3kzBSg
+KbZgnhAAobbez1AQk3ARJKpDVlYmSo8NsQHWUwQONM/7EffLjD8urWlZiCmTVhCI
+ca6MeCXcItFaoEzhlisYPA+G4sbkOhAjuXD1nmyAoEV5oTh3kPZvOQ5rUyrpBsIn
+5iK79er5tXUSjIBJUMUfEKiX4Ry95jvXZRv50ynnJdupFGbY4egbUElcDIjh4KYe
+0oJtDlat0ClqmcybeIEASfY1zebscTaJE2hbzIO1OZfyAxWrlwGp4FczDIFUUL0D
+FuGUVDz/nPy7EpHCfZQnVkl+MLVWzGX0pnhKCHZQIYsw79spwl4E77KR/N8y+PFo
+y7MZsOQkwbymQH9WjgNoqIR4GvQ7VS3AkiAjXHdw/Pf48JcGeEJ61rbjSWWEI1QB
+6BMu5G0vstmjT5uA7CGEj2YCU7KGZFSem5fcp9aU/iM/lAqp5mVIsbACNFbyO99H
+IubbvmIDg7stVVY20iJYS9L/vRRTs+o2g0aTZyFMr+tzLARQ8gRc1DhfJl09enCJ
+uqyyWXp9g+zidR41kDMd4kTB4Amq5xEHHJxYD0KIi8o/scSTWH7TNvz/okV3k4F8
+b84l5G641Xi2wL1Icme8xWncGfCs8vEHYyIdiPDCTPKSNhyl10QxRvtr/Q9Z1ess
+Ry8vKii/K276wptiVWJgf00qdl5w9CBfAYI3jY304job+8tdiiA=
+=gqj9
+-----END PGP SIGNATURE-----
+
+--wRRV7LY7NUeQGEoC--
