@@ -2,41 +2,45 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 773A114557A
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Jan 2020 14:25:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7F620145548
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Jan 2020 14:24:55 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730555AbgAVNWZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 22 Jan 2020 08:22:25 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39984 "EHLO mail.kernel.org"
+        id S1729996AbgAVNUd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 22 Jan 2020 08:20:33 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36778 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730520AbgAVNWX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 Jan 2020 08:22:23 -0500
+        id S1729368AbgAVNUa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 22 Jan 2020 08:20:30 -0500
 Received: from localhost (unknown [84.241.205.26])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CBC4324688;
-        Wed, 22 Jan 2020 13:22:21 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E9EDC24125;
+        Wed, 22 Jan 2020 13:20:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579699342;
-        bh=MAnP2AhfIm6LZWZ1PsAzMs4DYiF5mhiV3PWTnyrUOOU=;
+        s=default; t=1579699229;
+        bh=xhmPu01T1Q+loCI8xtjqHscvjwS+eSfiTFSimH8jT/o=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=M15oBGCuegSpSf16vNEZ2+IkkaKpMZYmBEZgI+QMb18AyriBAPCTM3Vujp25fzxmw
-         f14gZlXi/FUM6tNKZW4dTYERN/lpa6HanbdNNIY0cUHm6nwjB+YCsMXOZ8qi/Hj134
-         uzOz6NlEmwx0nxyiK4bg9ZuviSNeXgN6FyjcjYbY=
+        b=v1CMuedgLCRAPCeS2YU1UUIwX5zYrZrE9qDDjHvdzrmEjS8sh6abnx2Bv+/Nrk/0N
+         FUSJCSlvlWM1bDY9lmSjAff9kSyTTYYEEB/oSF4cXRYUQlQE8hPoF8Ie8UxlEiV2Xg
+         I3N/M3JXcARgc73p4gyqZKcZmC0iEuujt3g+R0aE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Thomas Willhalm <thomas.willhalm@intel.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        "Aneesh Kumar K . V" <aneesh.kumar@linux.vnet.ibm.com>,
-        "Bruggeman, Otto G" <otto.g.bruggeman@intel.com>,
+        stable@vger.kernel.org, Adrian Huang <ahuang12@lenovo.com>,
+        Xiaochun Lee <lixc17@lenovo.com>,
+        Shakeel Butt <shakeelb@google.com>,
+        Joerg Roedel <jroedel@suse.de>,
+        Christoph Lameter <cl@linux.com>,
+        Pekka Enberg <penberg@kernel.org>,
+        David Rientjes <rientjes@google.com>,
+        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
+        Michal Hocko <mhocko@kernel.org>,
+        Johannes Weiner <hannes@cmpxchg.org>,
         Andrew Morton <akpm@linux-foundation.org>,
         Linus Torvalds <torvalds@linux-foundation.org>
-Subject: [PATCH 5.4 079/222] mm/huge_memory.c: thp: fix conflict of above-47bit hint address and PMD alignment
-Date:   Wed, 22 Jan 2020 10:27:45 +0100
-Message-Id: <20200122092839.369227278@linuxfoundation.org>
+Subject: [PATCH 5.4 081/222] mm: memcg/slab: call flush_memcg_workqueue() only if memcg workqueue is valid
+Date:   Wed, 22 Jan 2020 10:27:47 +0100
+Message-Id: <20200122092839.510902160@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
 In-Reply-To: <20200122092833.339495161@linuxfoundation.org>
 References: <20200122092833.339495161@linuxfoundation.org>
@@ -49,134 +53,85 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Kirill A. Shutemov <kirill@shutemov.name>
+From: Adrian Huang <ahuang12@lenovo.com>
 
-commit 97d3d0f9a1cf132c63c0b8b8bd497b8a56283dd9 upstream.
+commit 2fe20210fc5f5e62644678b8f927c49f2c6f42a7 upstream.
 
-Patch series "Fix two above-47bit hint address vs.  THP bugs".
+When booting with amd_iommu=off, the following WARNING message
+appears:
 
-The two get_unmapped_area() implementations have to be fixed to provide
-THP-friendly mappings if above-47bit hint address is specified.
+  AMD-Vi: AMD IOMMU disabled on kernel command-line
+  ------------[ cut here ]------------
+  WARNING: CPU: 0 PID: 0 at kernel/workqueue.c:2772 flush_workqueue+0x42e/0x450
+  Modules linked in:
+  CPU: 0 PID: 0 Comm: swapper/0 Not tainted 5.5.0-rc3-amd-iommu #6
+  Hardware name: Lenovo ThinkSystem SR655-2S/7D2WRCZ000, BIOS D8E101L-1.00 12/05/2019
+  RIP: 0010:flush_workqueue+0x42e/0x450
+  Code: ff 0f 0b e9 7a fd ff ff 4d 89 ef e9 33 fe ff ff 0f 0b e9 7f fd ff ff 0f 0b e9 bc fd ff ff 0f 0b e9 a8 fd ff ff e8 52 2c fe ff <0f> 0b 31 d2 48 c7 c6 e0 88 c5 95 48 c7 c7 d8 ad f0 95 e8 19 f5 04
+  Call Trace:
+   kmem_cache_destroy+0x69/0x260
+   iommu_go_to_state+0x40c/0x5ab
+   amd_iommu_prepare+0x16/0x2a
+   irq_remapping_prepare+0x36/0x5f
+   enable_IR_x2apic+0x21/0x172
+   default_setup_apic_routing+0x12/0x6f
+   apic_intr_mode_init+0x1a1/0x1f1
+   x86_late_time_init+0x17/0x1c
+   start_kernel+0x480/0x53f
+   secondary_startup_64+0xb6/0xc0
+  ---[ end trace 30894107c3749449 ]---
+  x2apic: IRQ remapping doesn't support X2APIC mode
+  x2apic disabled
 
-This patch (of 2):
+The warning is caused by the calling of 'kmem_cache_destroy()'
+in free_iommu_resources(). Here is the call path:
 
-Filesystems use thp_get_unmapped_area() to provide THP-friendly
-mappings.  For DAX in particular.
+  free_iommu_resources
+    kmem_cache_destroy
+      flush_memcg_workqueue
+        flush_workqueue
 
-Normally, the kernel doesn't create userspace mappings above 47-bit,
-even if the machine allows this (such as with 5-level paging on x86-64).
-Not all user space is ready to handle wide addresses.  It's known that
-at least some JIT compilers use higher bits in pointers to encode their
-information.
+The root cause is that the IOMMU subsystem runs before the workqueue
+subsystem, which the variable 'wq_online' is still 'false'.  This leads
+to the statement 'if (WARN_ON(!wq_online))' in flush_workqueue() is
+'true'.
 
-Userspace can ask for allocation from full address space by specifying
-hint address (with or without MAP_FIXED) above 47-bits.  If the
-application doesn't need a particular address, but wants to allocate
-from whole address space it can specify -1 as a hint address.
+Since the variable 'memcg_kmem_cache_wq' is not allocated during the
+time, it is unnecessary to call flush_memcg_workqueue().  This prevents
+the WARNING message triggered by flush_workqueue().
 
-Unfortunately, this trick breaks thp_get_unmapped_area(): the function
-would not try to allocate PMD-aligned area if *any* hint address
-specified.
-
-Modify the routine to handle it correctly:
-
- - Try to allocate the space at the specified hint address with length
-   padding required for PMD alignment.
- - If failed, retry without length padding (but with the same hint
-   address);
- - If the returned address matches the hint address return it.
- - Otherwise, align the address as required for THP and return.
-
-The user specified hint address is passed down to get_unmapped_area() so
-above-47bit hint address will be taken into account without breaking
-alignment requirements.
-
-Link: http://lkml.kernel.org/r/20191220142548.7118-2-kirill.shutemov@linux.intel.com
-Fixes: b569bab78d8d ("x86/mm: Prepare to expose larger address space to userspace")
-Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
-Reported-by: Thomas Willhalm <thomas.willhalm@intel.com>
-Tested-by: Dan Williams <dan.j.williams@intel.com>
-Cc: "Aneesh Kumar K . V" <aneesh.kumar@linux.vnet.ibm.com>
-Cc: "Bruggeman, Otto G" <otto.g.bruggeman@intel.com>
+Link: http://lkml.kernel.org/r/20200103085503.1665-1-ahuang12@lenovo.com
+Fixes: 92ee383f6daab ("mm: fix race between kmem_cache destroy, create and deactivate")
+Signed-off-by: Adrian Huang <ahuang12@lenovo.com>
+Reported-by: Xiaochun Lee <lixc17@lenovo.com>
+Reviewed-by: Shakeel Butt <shakeelb@google.com>
+Cc: Joerg Roedel <jroedel@suse.de>
+Cc: Christoph Lameter <cl@linux.com>
+Cc: Pekka Enberg <penberg@kernel.org>
+Cc: David Rientjes <rientjes@google.com>
+Cc: Joonsoo Kim <iamjoonsoo.kim@lge.com>
+Cc: Michal Hocko <mhocko@kernel.org>
+Cc: Johannes Weiner <hannes@cmpxchg.org>
 Cc: <stable@vger.kernel.org>
 Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
 Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- mm/huge_memory.c |   38 ++++++++++++++++++++++++--------------
- 1 file changed, 24 insertions(+), 14 deletions(-)
+ mm/slab_common.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/mm/huge_memory.c
-+++ b/mm/huge_memory.c
-@@ -527,13 +527,13 @@ void prep_transhuge_page(struct page *pa
- 	set_compound_page_dtor(page, TRANSHUGE_PAGE_DTOR);
- }
+--- a/mm/slab_common.c
++++ b/mm/slab_common.c
+@@ -903,7 +903,8 @@ static void flush_memcg_workqueue(struct
+ 	 * deactivates the memcg kmem_caches through workqueue. Make sure all
+ 	 * previous workitems on workqueue are processed.
+ 	 */
+-	flush_workqueue(memcg_kmem_cache_wq);
++	if (likely(memcg_kmem_cache_wq))
++		flush_workqueue(memcg_kmem_cache_wq);
  
--static unsigned long __thp_get_unmapped_area(struct file *filp, unsigned long len,
-+static unsigned long __thp_get_unmapped_area(struct file *filp,
-+		unsigned long addr, unsigned long len,
- 		loff_t off, unsigned long flags, unsigned long size)
- {
--	unsigned long addr;
- 	loff_t off_end = off + len;
- 	loff_t off_align = round_up(off, size);
--	unsigned long len_pad;
-+	unsigned long len_pad, ret;
- 
- 	if (off_end <= off_align || (off_end - off_align) < size)
- 		return 0;
-@@ -542,30 +542,40 @@ static unsigned long __thp_get_unmapped_
- 	if (len_pad < len || (off + len_pad) < off)
- 		return 0;
- 
--	addr = current->mm->get_unmapped_area(filp, 0, len_pad,
-+	ret = current->mm->get_unmapped_area(filp, addr, len_pad,
- 					      off >> PAGE_SHIFT, flags);
--	if (IS_ERR_VALUE(addr))
-+
-+	/*
-+	 * The failure might be due to length padding. The caller will retry
-+	 * without the padding.
-+	 */
-+	if (IS_ERR_VALUE(ret))
- 		return 0;
- 
--	addr += (off - addr) & (size - 1);
--	return addr;
-+	/*
-+	 * Do not try to align to THP boundary if allocation at the address
-+	 * hint succeeds.
-+	 */
-+	if (ret == addr)
-+		return addr;
-+
-+	ret += (off - ret) & (size - 1);
-+	return ret;
- }
- 
- unsigned long thp_get_unmapped_area(struct file *filp, unsigned long addr,
- 		unsigned long len, unsigned long pgoff, unsigned long flags)
- {
-+	unsigned long ret;
- 	loff_t off = (loff_t)pgoff << PAGE_SHIFT;
- 
--	if (addr)
--		goto out;
- 	if (!IS_DAX(filp->f_mapping->host) || !IS_ENABLED(CONFIG_FS_DAX_PMD))
- 		goto out;
- 
--	addr = __thp_get_unmapped_area(filp, len, off, flags, PMD_SIZE);
--	if (addr)
--		return addr;
--
-- out:
-+	ret = __thp_get_unmapped_area(filp, addr, len, off, flags, PMD_SIZE);
-+	if (ret)
-+		return ret;
-+out:
- 	return current->mm->get_unmapped_area(filp, addr, len, pgoff, flags);
- }
- EXPORT_SYMBOL_GPL(thp_get_unmapped_area);
+ 	/*
+ 	 * If we're racing with children kmem_cache deactivation, it might
 
 
