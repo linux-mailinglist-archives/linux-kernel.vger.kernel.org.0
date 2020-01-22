@@ -2,59 +2,61 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 18F63145209
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Jan 2020 11:05:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 60CE214520E
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Jan 2020 11:05:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729360AbgAVKE4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 22 Jan 2020 05:04:56 -0500
-Received: from mail-wm1-f44.google.com ([209.85.128.44]:34190 "EHLO
-        mail-wm1-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726605AbgAVKE4 (ORCPT
+        id S1729188AbgAVKFA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 22 Jan 2020 05:05:00 -0500
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:35471 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729281AbgAVKE5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 Jan 2020 05:04:56 -0500
-Received: by mail-wm1-f44.google.com with SMTP id s144so1213465wme.1
-        for <linux-kernel@vger.kernel.org>; Wed, 22 Jan 2020 02:04:55 -0800 (PST)
+        Wed, 22 Jan 2020 05:04:57 -0500
+Received: by mail-wr1-f68.google.com with SMTP id g17so6598536wro.2
+        for <linux-kernel@vger.kernel.org>; Wed, 22 Jan 2020 02:04:56 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=xr55sisUQJBKj6Q4LrYEYaq2XUN1tVNpifr1uUk54Rc=;
-        b=2SpclnwqwF+ZtOGLn5/Pzqi457wTIzOMugjwrvqe2e6PJR797j6ImTx5WFNp7pJf+D
-         0oCYEuyjwuXAOyrBfb48iDlGtYXJ9iOcGW5YYffBgwRYC3gqYgczwyagZCk8Du3/RZRe
-         sVU4/NdlRN4MU59vussJBc4x1Wxp+5eXR12w1xgIxs+sZbBjapfCxeJOd659ECntnogA
-         u8/25V+tAYwHIh2eXheHPeMrHlgoEqotUdWOHcpexUj1fjvxMfVZXxE0C6H+AXpm4AWf
-         83HNZuCMrZVH9ziWGen75wPXIo5Zg+UUTeq6R7TbJBbiJ4BcYL5FzY3amnjSAs80R+iQ
-         ONPg==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=Yw/4NLYEuxJ4fKq4pCM6ugotTNyG68OGT/ZIT0URmH4=;
+        b=v+JqGgoJMtQE0pUX58ConDISFTmQqt6UPkNAzux0NzKoSfnD0mJKZd9bbeiH3o0I+g
+         9DQ1pWa3AuGN7EmtAkOnbWmwHuTYsTVf+s1BMzs4wer644CfyoyS0kwhXDz5bP9Ug+/X
+         iYdz2mRqESoQP3J9VE6u707i7BYGsUtNyqtNgPA204jK18X7JZAO9ue26q14GWFYfC87
+         towBTY8iUOCx8G2xwTz7P6G2+kxoxIH4V5QXvcpOegxQA2FZ841nR2KC9XK26LshiX1H
+         XmS/vkDvMvtuB8X+FfKduw0rlawm9n9/pPW2liRlgF/ed39P308pq9v/4QTS3UW5dGBU
+         rv1Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=xr55sisUQJBKj6Q4LrYEYaq2XUN1tVNpifr1uUk54Rc=;
-        b=epsrImrmFbN+pwzN3hq631VubUYu+8AT8eYlNyuGjOh+4FinZU+U1hCLgCzZryjSKy
-         Z7J9SmweVYB1vt4blf4cirMmlQf5fPkQZqWJKehbI7FzpGgt6Xojafrcn+he7GR9B693
-         qrk+/26nWsnpjQIpz7sgFVGcaONsAt9/S3xljxfWEGN+34z/v0QQg5h0ZcYSHOxv+/bO
-         lT8K0kXhrSMO0l8L7Ung0xEe3NT1EjqFRJ4xWSEdZqwuwEAra9TujrQyeQk3k+ovJKou
-         gYQ0038pNbkgfMFz9BjfbpwPF4vgmqVlIRBoMgwDGInfEaTulkDv9WhCv9u1k1+ZxHGl
-         r7fg==
-X-Gm-Message-State: APjAAAVsaVNBav4VPLeC++TVknXfEQmbtLhC+4qe9QgsFOKm6XuDzsB3
-        n/xZBrmNqIFQoqal4KkMpZOLQQ==
-X-Google-Smtp-Source: APXvYqxz2tZXmYV+E9Ld+AOXUw6DT+T8VYNXacbGMy0FhKPCjM0ksmIp44lJOlHnO0vFIuRXZGibVg==
-X-Received: by 2002:a1c:3b0a:: with SMTP id i10mr2197195wma.177.1579687494505;
-        Wed, 22 Jan 2020 02:04:54 -0800 (PST)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=Yw/4NLYEuxJ4fKq4pCM6ugotTNyG68OGT/ZIT0URmH4=;
+        b=AYVSIlwZD5n3wNJtKmQdtUlcC+8G9YOTm9foAPPljydzx2SlVa+sb+WSYkqooEZHYM
+         tntkA2gRJy2DFC7F3DVenjS/rpyzc2WZ4eDJKTN3HMi5gzj7z1tHqYVlseiurYBIbIY+
+         g6knv0rRRpJQy5h/MdSZU2r1Ld0WxnQ5HiHS+6FYJJVZe8A2WqFERxB6j14PCP2I5nMb
+         twH/hpNaIXqVhaZ7cLFdvlgpj8EoGyJKbGy6byMbCt/l1tiq34cB6Ku1QoFvdbh4pM0D
+         PFUUkXrNmEh26h4l3IJDj6uJpq7OkYCsxOWDuJWavnG4XaN1I4M/oIBrmwhWduYjmgEM
+         ptVw==
+X-Gm-Message-State: APjAAAWkRNFs73biSd86WRBvhaatDJTvW2JkxB7nr3SDfhH4YuWgxCfi
+        7WBthkqMJlD8h1XVIhfh45kGKw==
+X-Google-Smtp-Source: APXvYqwJXta7jmEApeIzjvflSF8Ln/f2IlsILY2IcIhiWwi7NvQ9mp+urqVjtg/E7wk5iecmCBOj/g==
+X-Received: by 2002:adf:8297:: with SMTP id 23mr9875680wrc.379.1579687495519;
+        Wed, 22 Jan 2020 02:04:55 -0800 (PST)
 Received: from starbuck.baylibre.local (laubervilliers-658-1-213-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
-        by smtp.googlemail.com with ESMTPSA id l3sm52237648wrt.29.2020.01.22.02.04.53
+        by smtp.googlemail.com with ESMTPSA id l3sm52237648wrt.29.2020.01.22.02.04.54
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 22 Jan 2020 02:04:53 -0800 (PST)
+        Wed, 22 Jan 2020 02:04:54 -0800 (PST)
 From:   Jerome Brunet <jbrunet@baylibre.com>
 To:     Neil Armstrong <narmstrong@baylibre.com>, linux-clk@vger.kernel.org
 Cc:     Jerome Brunet <jbrunet@baylibre.com>,
         Kevin Hilman <khilman@baylibre.com>,
         linux-amlogic@lists.infradead.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH 0/3] clk: meson: gxbb: audio clock updates
-Date:   Wed, 22 Jan 2020 11:04:48 +0100
-Message-Id: <20200122100451.2443153-1-jbrunet@baylibre.com>
+Subject: [PATCH 1/3] dt-bindings: clk: meson: add the gxl internal dac gate
+Date:   Wed, 22 Jan 2020 11:04:49 +0100
+Message-Id: <20200122100451.2443153-2-jbrunet@baylibre.com>
 X-Mailer: git-send-email 2.24.1
+In-Reply-To: <20200122100451.2443153-1-jbrunet@baylibre.com>
+References: <20200122100451.2443153-1-jbrunet@baylibre.com>
 MIME-Version: 1.0
 X-Patchwork-Bot: notify
 Content-Transfer-Encoding: 8bit
@@ -63,21 +65,24 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patcheset provides updates related to the audio peripheral clocks
-It adds the peripheral clock required by the internal audio dac
-and reorganize the AIU clocks into a hierarchy to better reflect the
-behavior of the SoC.
+Add the gxl ACODEC clock id to the gxbb clock controller bindings
 
-Jerome Brunet (3):
-  dt-bindings: clk: meson: add the gxl internal dac gate
-  clk: meson: gxbb: add the gxl internal dac gate
-  clk: meson: gxbb: set audio output clock hierarchy
+Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+---
+ include/dt-bindings/clock/gxbb-clkc.h | 1 +
+ 1 file changed, 1 insertion(+)
 
- drivers/clk/meson/gxbb.c              | 21 +++++++++++++--------
- drivers/clk/meson/gxbb.h              |  2 +-
- include/dt-bindings/clock/gxbb-clkc.h |  1 +
- 3 files changed, 15 insertions(+), 9 deletions(-)
-
+diff --git a/include/dt-bindings/clock/gxbb-clkc.h b/include/dt-bindings/clock/gxbb-clkc.h
+index db0763e96173..4073eb7a9da1 100644
+--- a/include/dt-bindings/clock/gxbb-clkc.h
++++ b/include/dt-bindings/clock/gxbb-clkc.h
+@@ -146,5 +146,6 @@
+ #define CLKID_CTS_VDAC		201
+ #define CLKID_HDMI_TX		202
+ #define CLKID_HDMI		205
++#define CLKID_ACODEC		206
+ 
+ #endif /* __GXBB_CLKC_H */
 -- 
 2.24.1
 
