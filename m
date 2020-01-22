@@ -2,2222 +2,1477 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9495E1457F5
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Jan 2020 15:37:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 39D711457FD
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Jan 2020 15:38:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729093AbgAVOhV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 22 Jan 2020 09:37:21 -0500
-Received: from mx0a-00128a01.pphosted.com ([148.163.135.77]:56948 "EHLO
-        mx0a-00128a01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728988AbgAVOhT (ORCPT
+        id S1729157AbgAVOiB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 22 Jan 2020 09:38:01 -0500
+Received: from mail-pl1-f193.google.com ([209.85.214.193]:41633 "EHLO
+        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725871AbgAVOiA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 Jan 2020 09:37:19 -0500
-Received: from pps.filterd (m0167088.ppops.net [127.0.0.1])
-        by mx0a-00128a01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 00MEZ7Dt030652;
-        Wed, 22 Jan 2020 09:37:17 -0500
-Received: from nwd2mta3.analog.com ([137.71.173.56])
-        by mx0a-00128a01.pphosted.com with ESMTP id 2xkvrbk1ue-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 22 Jan 2020 09:37:16 -0500
-Received: from ASHBMBX9.ad.analog.com (ashbmbx9.ad.analog.com [10.64.17.10])
-        by nwd2mta3.analog.com (8.14.7/8.14.7) with ESMTP id 00MEbFmg004106
-        (version=TLSv1/SSLv3 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=FAIL);
-        Wed, 22 Jan 2020 09:37:15 -0500
-Received: from SCSQMBX11.ad.analog.com (10.77.17.10) by ASHBMBX9.ad.analog.com
- (10.64.17.10) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1779.2; Wed, 22 Jan
- 2020 09:37:14 -0500
-Received: from zeus.spd.analog.com (10.64.82.11) by SCSQMBX11.ad.analog.com
- (10.77.17.10) with Microsoft SMTP Server id 15.1.1779.2 via Frontend
- Transport; Wed, 22 Jan 2020 06:37:14 -0800
-Received: from tachici-Precision-5530.ad.analog.com ([10.48.65.175])
-        by zeus.spd.analog.com (8.15.1/8.15.1) with ESMTP id 00MEb86w030736;
-        Wed, 22 Jan 2020 09:37:11 -0500
-From:   Alexandru Tachici <alexandru.tachici@analog.com>
-To:     <linux-iio@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-CC:     <jic23@kernel.org>,
-        Alexandru Tachici <alexandru.tachici@analog.com>
-Subject: [PATCH 2/2] staging: iio: adc: ad7192: move out of staging
-Date:   Wed, 22 Jan 2020 16:37:00 +0200
-Message-ID: <20200122143700.6069-3-alexandru.tachici@analog.com>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20200122143700.6069-1-alexandru.tachici@analog.com>
-References: <20200122143700.6069-1-alexandru.tachici@analog.com>
+        Wed, 22 Jan 2020 09:38:00 -0500
+Received: by mail-pl1-f193.google.com with SMTP id t14so3083189plr.8
+        for <linux-kernel@vger.kernel.org>; Wed, 22 Jan 2020 06:37:58 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=qrPi65Ugm5ZQFBRPydA5hshJUDM7DHdK9tTcv81Sej8=;
+        b=MNg6oyumO+IktAkmG1BzF49wnKYnuShntP8ctlRge6Nkday2ragqKvoGJbaCkDOUHZ
+         BVoIyQi5V/6AigpcQsp0sSv856Eu0uDMk2RKA6tnstNZeWeXZBZ92nQbIZSbrUthyDEC
+         nx1Bcqa5hwTHSQhsq6LmLdeVASdYPo/+27qEYU5GecjhR2oJX0d0WvZ3w4P3kqUZyVxC
+         0hXSphRjqQi7siqFWPLWZecFsW5jMJvTLZwuMqzbj0jYxuzWHdaguqsjcwiyAar/A2ii
+         DsFV3i52cKWHk5PhPVGqCgXqLrYnS/nSqG8LVWV5clIltACermeSbol6GvM1FOxkQ74b
+         eRWA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=qrPi65Ugm5ZQFBRPydA5hshJUDM7DHdK9tTcv81Sej8=;
+        b=PbMd2scLMa+SUv4MYvjpsPQEhVpG3PwRrtjJ+CFg98Wih6mQoOjCnHa4bFquoDAKAV
+         7fk6b7/xrpLIdTu5ikaSLRxoSgzXI2YSjsaCyK+3FzpjXJH5L0Nc6gjpEdgoqoI8u693
+         Z+Jirhh5DmgQhkGeWCX8lHiaCj7J0hQvpe9h2OXeCgLwW5oiESE6hbF8IHgfoFjqVq/g
+         fqKbdXV0P/rnA4RW48aR7P5yGEoQsPVLJYFfCkhHrwF52xSqRDNYBjHX1nj1kXHyLkN0
+         lKSWMfX6m4Ze0Fyx4dXxv+bcmgP/F8X6p8Wozvnvlzvg7vZJUPDOwzi1vvA1Ll29zIcT
+         58Tg==
+X-Gm-Message-State: APjAAAXbbI1AjF0m/cGAPc1yva6JwOntBg0F71pGfqZgZME34JNpTvGc
+        QfPUXn+elrdBlTLeFNe+y+d24mTiGZ+zvftncDm5gQ==
+X-Google-Smtp-Source: APXvYqw7MZ4ZAKBkKHjmFWwK1pDRneDDVBkkrbN6kTVHgB6rkIDk/AO7vCUus0jrih1tvF96dUxE/brhUDzFIUXGEYE=
+X-Received: by 2002:a17:902:ab95:: with SMTP id f21mr10850964plr.336.1579703877607;
+ Wed, 22 Jan 2020 06:37:57 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7BIT
-Content-Type:   text/plain; charset=US-ASCII
-X-ADIRoutedOnPrem: True
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.572
- definitions=2020-01-17_05:2020-01-16,2020-01-17 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0
- lowpriorityscore=0 suspectscore=0 mlxscore=0 malwarescore=0
- impostorscore=0 adultscore=0 phishscore=0 bulkscore=0 clxscore=1015
- priorityscore=1501 mlxlogscore=999 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.12.0-1910280000 definitions=main-2001220132
+References: <cover.1579007786.git.andreyknvl@google.com> <461a787e63a9a01d83edc563575b8585bc138e8d.1579007786.git.andreyknvl@google.com>
+In-Reply-To: <461a787e63a9a01d83edc563575b8585bc138e8d.1579007786.git.andreyknvl@google.com>
+From:   Andrey Konovalov <andreyknvl@google.com>
+Date:   Wed, 22 Jan 2020 15:37:46 +0100
+Message-ID: <CAAeHK+wGijhTaCdoD+xcUY=PRWLUOv5uwg7OjD=uMrU8nqqrdw@mail.gmail.com>
+Subject: Re: [PATCH v5 1/1] usb: gadget: add raw-gadget interface
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Felipe Balbi <balbi@kernel.org>
+Cc:     Jonathan Corbet <corbet@lwn.net>,
+        Alan Stern <stern@rowland.harvard.edu>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        Alexander Potapenko <glider@google.com>,
+        Marco Elver <elver@google.com>,
+        USB list <linux-usb@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Move ad7192 ADC driver out of staging into mainline.
+On Tue, Jan 14, 2020 at 2:24 PM Andrey Konovalov <andreyknvl@google.com> wrote:
+>
+> USB Raw Gadget is a kernel module that provides a userspace interface for
+> the USB Gadget subsystem. Essentially it allows to emulate USB devices
+> from userspace. Enabled with CONFIG_USB_RAW_GADGET. Raw Gadget is
+> currently a strictly debugging feature and shouldn't be used in
+> production.
+>
+> Raw Gadget is similar to GadgetFS, but provides a more low-level and
+> direct access to the USB Gadget layer for the userspace. The key
+> differences are:
+>
+> 1. Every USB request is passed to the userspace to get a response, while
+>    GadgetFS responds to some USB requests internally based on the provided
+>    descriptors. However note, that the UDC driver might respond to some
+>    requests on its own and never forward them to the Gadget layer.
+>
+> 2. GadgetFS performs some sanity checks on the provided USB descriptors,
+>    while Raw Gadget allows you to provide arbitrary data as responses to
+>    USB requests.
+>
+> 3. Raw Gadget provides a way to select a UDC device/driver to bind to,
+>    while GadgetFS currently binds to the first available UDC.
+>
+> 4. Raw Gadget uses predictable endpoint names (handles) across different
+>    UDCs (as long as UDCs have enough endpoints of each required transfer
+>    type).
+>
+> 5. Raw Gadget has ioctl-based interface instead of a filesystem-based one.
+>
+> Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> Signed-off-by: Andrey Konovalov <andreyknvl@google.com>
+> ---
+>
+> Greg, I've assumed your LGTM meant that I can add a Reviewed-by from you.
+>
+> Felipe, looking forward to your review, thanks!
 
-Signed-off-by: Alexandru Tachici <alexandru.tachici@analog.com>
----
- MAINTAINERS                      |    9 +
- drivers/iio/adc/Kconfig          |   12 +
- drivers/iio/adc/Makefile         |    1 +
- drivers/iio/adc/ad7192.c         | 1022 ++++++++++++++++++++++++++++++
- drivers/staging/iio/adc/Kconfig  |   12 -
- drivers/staging/iio/adc/Makefile |    1 -
- drivers/staging/iio/adc/ad7192.c | 1022 ------------------------------
- 7 files changed, 1044 insertions(+), 1035 deletions(-)
- create mode 100644 drivers/iio/adc/ad7192.c
- delete mode 100644 drivers/staging/iio/adc/ad7192.c
+Hi Greg and Felipe,
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index e699fe378e71..d58e2fa0e686 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -922,6 +922,15 @@ S:	Supported
- F:	drivers/iio/adc/ad7124.c
- F:	Documentation/devicetree/bindings/iio/adc/adi,ad7124.yaml
- 
-+ANALOG DEVICES INC AD7192 DRIVER
-+M:	Alexandru Tachici <alexandru.tachici@analog.com>
-+L:	linux-iio@vger.kernel.org
-+W:	http://ez.analog.com/community/linux-device-drivers
-+S:	Supported
-+F:	drivers/iio/adc/ad7192.c
-+F:	./Documentation/devicetree/bindings/iio/adc/adi,ad7192.yaml
-+
-+
- ANALOG DEVICES INC AD7292 DRIVER
- M:	Marcelo Schmitt <marcelo.schmitt1@gmail.com>
- L:	linux-iio@vger.kernel.org
-diff --git a/drivers/iio/adc/Kconfig b/drivers/iio/adc/Kconfig
-index 82e33082958c..f4da821c4022 100644
---- a/drivers/iio/adc/Kconfig
-+++ b/drivers/iio/adc/Kconfig
-@@ -39,6 +39,18 @@ config AD7124
- 	  To compile this driver as a module, choose M here: the module will be
- 	  called ad7124.
- 
-+config AD7192
-+	tristate "Analog Devices AD7190 AD7192 AD7193 AD7195 ADC driver"
-+	depends on SPI
-+	select AD_SIGMA_DELTA
-+	help
-+	  Say yes here to build support for Analog Devices AD7190,
-+	  AD7192, AD7193 or AD7195 SPI analog to digital converters (ADC).
-+	  If unsure, say N (but it's safe to say "Y").
-+
-+	  To compile this driver as a module, choose M here: the
-+	  module will be called ad7192.
-+
- config AD7266
- 	tristate "Analog Devices AD7265/AD7266 ADC driver"
- 	depends on SPI_MASTER
-diff --git a/drivers/iio/adc/Makefile b/drivers/iio/adc/Makefile
-index 919228900df9..8462455b4228 100644
---- a/drivers/iio/adc/Makefile
-+++ b/drivers/iio/adc/Makefile
-@@ -8,6 +8,7 @@ obj-$(CONFIG_AB8500_GPADC) += ab8500-gpadc.o
- obj-$(CONFIG_AD_SIGMA_DELTA) += ad_sigma_delta.o
- obj-$(CONFIG_AD7091R5) += ad7091r5.o ad7091r-base.o
- obj-$(CONFIG_AD7124) += ad7124.o
-+obj-$(CONFIG_AD7192) += ad7192.o
- obj-$(CONFIG_AD7266) += ad7266.o
- obj-$(CONFIG_AD7291) += ad7291.o
- obj-$(CONFIG_AD7292) += ad7292.o
-diff --git a/drivers/iio/adc/ad7192.c b/drivers/iio/adc/ad7192.c
-new file mode 100644
-index 000000000000..bf3e2a9cc07f
---- /dev/null
-+++ b/drivers/iio/adc/ad7192.c
-@@ -0,0 +1,1022 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * AD7190 AD7192 AD7193 AD7195 SPI ADC driver
-+ *
-+ * Copyright 2011-2015 Analog Devices Inc.
-+ */
-+
-+#include <linux/interrupt.h>
-+#include <linux/clk.h>
-+#include <linux/device.h>
-+#include <linux/kernel.h>
-+#include <linux/slab.h>
-+#include <linux/sysfs.h>
-+#include <linux/spi/spi.h>
-+#include <linux/regulator/consumer.h>
-+#include <linux/err.h>
-+#include <linux/sched.h>
-+#include <linux/delay.h>
-+
-+#include <linux/iio/iio.h>
-+#include <linux/iio/sysfs.h>
-+#include <linux/iio/buffer.h>
-+#include <linux/iio/trigger.h>
-+#include <linux/iio/trigger_consumer.h>
-+#include <linux/iio/triggered_buffer.h>
-+#include <linux/iio/adc/ad_sigma_delta.h>
-+
-+/* Registers */
-+#define AD7192_REG_COMM		0 /* Communications Register (WO, 8-bit) */
-+#define AD7192_REG_STAT		0 /* Status Register	     (RO, 8-bit) */
-+#define AD7192_REG_MODE		1 /* Mode Register	     (RW, 24-bit */
-+#define AD7192_REG_CONF		2 /* Configuration Register  (RW, 24-bit) */
-+#define AD7192_REG_DATA		3 /* Data Register	     (RO, 24/32-bit) */
-+#define AD7192_REG_ID		4 /* ID Register	     (RO, 8-bit) */
-+#define AD7192_REG_GPOCON	5 /* GPOCON Register	     (RO, 8-bit) */
-+#define AD7192_REG_OFFSET	6 /* Offset Register	     (RW, 16-bit */
-+				  /* (AD7792)/24-bit (AD7192)) */
-+#define AD7192_REG_FULLSALE	7 /* Full-Scale Register */
-+				  /* (RW, 16-bit (AD7792)/24-bit (AD7192)) */
-+
-+/* Communications Register Bit Designations (AD7192_REG_COMM) */
-+#define AD7192_COMM_WEN		BIT(7) /* Write Enable */
-+#define AD7192_COMM_WRITE	0 /* Write Operation */
-+#define AD7192_COMM_READ	BIT(6) /* Read Operation */
-+#define AD7192_COMM_ADDR(x)	(((x) & 0x7) << 3) /* Register Address */
-+#define AD7192_COMM_CREAD	BIT(2) /* Continuous Read of Data Register */
-+
-+/* Status Register Bit Designations (AD7192_REG_STAT) */
-+#define AD7192_STAT_RDY		BIT(7) /* Ready */
-+#define AD7192_STAT_ERR		BIT(6) /* Error (Overrange, Underrange) */
-+#define AD7192_STAT_NOREF	BIT(5) /* Error no external reference */
-+#define AD7192_STAT_PARITY	BIT(4) /* Parity */
-+#define AD7192_STAT_CH3		BIT(2) /* Channel 3 */
-+#define AD7192_STAT_CH2		BIT(1) /* Channel 2 */
-+#define AD7192_STAT_CH1		BIT(0) /* Channel 1 */
-+
-+/* Mode Register Bit Designations (AD7192_REG_MODE) */
-+#define AD7192_MODE_SEL(x)	(((x) & 0x7) << 21) /* Operation Mode Select */
-+#define AD7192_MODE_SEL_MASK	(0x7 << 21) /* Operation Mode Select Mask */
-+#define AD7192_MODE_DAT_STA	BIT(20) /* Status Register transmission */
-+#define AD7192_MODE_CLKSRC(x)	(((x) & 0x3) << 18) /* Clock Source Select */
-+#define AD7192_MODE_SINC3	BIT(15) /* SINC3 Filter Select */
-+#define AD7192_MODE_ACX		BIT(14) /* AC excitation enable(AD7195 only)*/
-+#define AD7192_MODE_ENPAR	BIT(13) /* Parity Enable */
-+#define AD7192_MODE_CLKDIV	BIT(12) /* Clock divide by 2 (AD7190/2 only)*/
-+#define AD7192_MODE_SCYCLE	BIT(11) /* Single cycle conversion */
-+#define AD7192_MODE_REJ60	BIT(10) /* 50/60Hz notch filter */
-+#define AD7192_MODE_RATE(x)	((x) & 0x3FF) /* Filter Update Rate Select */
-+
-+/* Mode Register: AD7192_MODE_SEL options */
-+#define AD7192_MODE_CONT		0 /* Continuous Conversion Mode */
-+#define AD7192_MODE_SINGLE		1 /* Single Conversion Mode */
-+#define AD7192_MODE_IDLE		2 /* Idle Mode */
-+#define AD7192_MODE_PWRDN		3 /* Power-Down Mode */
-+#define AD7192_MODE_CAL_INT_ZERO	4 /* Internal Zero-Scale Calibration */
-+#define AD7192_MODE_CAL_INT_FULL	5 /* Internal Full-Scale Calibration */
-+#define AD7192_MODE_CAL_SYS_ZERO	6 /* System Zero-Scale Calibration */
-+#define AD7192_MODE_CAL_SYS_FULL	7 /* System Full-Scale Calibration */
-+
-+/* Mode Register: AD7192_MODE_CLKSRC options */
-+#define AD7192_CLK_EXT_MCLK1_2		0 /* External 4.92 MHz Clock connected*/
-+					  /* from MCLK1 to MCLK2 */
-+#define AD7192_CLK_EXT_MCLK2		1 /* External Clock applied to MCLK2 */
-+#define AD7192_CLK_INT			2 /* Internal 4.92 MHz Clock not */
-+					  /* available at the MCLK2 pin */
-+#define AD7192_CLK_INT_CO		3 /* Internal 4.92 MHz Clock available*/
-+					  /* at the MCLK2 pin */
-+
-+/* Configuration Register Bit Designations (AD7192_REG_CONF) */
-+
-+#define AD7192_CONF_CHOP	BIT(23) /* CHOP enable */
-+#define AD7192_CONF_REFSEL	BIT(20) /* REFIN1/REFIN2 Reference Select */
-+#define AD7192_CONF_CHAN(x)	((x) << 8) /* Channel select */
-+#define AD7192_CONF_CHAN_MASK	(0x7FF << 8) /* Channel select mask */
-+#define AD7192_CONF_BURN	BIT(7) /* Burnout current enable */
-+#define AD7192_CONF_REFDET	BIT(6) /* Reference detect enable */
-+#define AD7192_CONF_BUF		BIT(4) /* Buffered Mode Enable */
-+#define AD7192_CONF_UNIPOLAR	BIT(3) /* Unipolar/Bipolar Enable */
-+#define AD7192_CONF_GAIN(x)	((x) & 0x7) /* Gain Select */
-+
-+#define AD7192_CH_AIN1P_AIN2M	BIT(0) /* AIN1(+) - AIN2(-) */
-+#define AD7192_CH_AIN3P_AIN4M	BIT(1) /* AIN3(+) - AIN4(-) */
-+#define AD7192_CH_TEMP		BIT(2) /* Temp Sensor */
-+#define AD7192_CH_AIN2P_AIN2M	BIT(3) /* AIN2(+) - AIN2(-) */
-+#define AD7192_CH_AIN1		BIT(4) /* AIN1 - AINCOM */
-+#define AD7192_CH_AIN2		BIT(5) /* AIN2 - AINCOM */
-+#define AD7192_CH_AIN3		BIT(6) /* AIN3 - AINCOM */
-+#define AD7192_CH_AIN4		BIT(7) /* AIN4 - AINCOM */
-+
-+#define AD7193_CH_AIN1P_AIN2M	0x001  /* AIN1(+) - AIN2(-) */
-+#define AD7193_CH_AIN3P_AIN4M	0x002  /* AIN3(+) - AIN4(-) */
-+#define AD7193_CH_AIN5P_AIN6M	0x004  /* AIN5(+) - AIN6(-) */
-+#define AD7193_CH_AIN7P_AIN8M	0x008  /* AIN7(+) - AIN8(-) */
-+#define AD7193_CH_TEMP		0x100 /* Temp senseor */
-+#define AD7193_CH_AIN2P_AIN2M	0x200 /* AIN2(+) - AIN2(-) */
-+#define AD7193_CH_AIN1		0x401 /* AIN1 - AINCOM */
-+#define AD7193_CH_AIN2		0x402 /* AIN2 - AINCOM */
-+#define AD7193_CH_AIN3		0x404 /* AIN3 - AINCOM */
-+#define AD7193_CH_AIN4		0x408 /* AIN4 - AINCOM */
-+#define AD7193_CH_AIN5		0x410 /* AIN5 - AINCOM */
-+#define AD7193_CH_AIN6		0x420 /* AIN6 - AINCOM */
-+#define AD7193_CH_AIN7		0x440 /* AIN7 - AINCOM */
-+#define AD7193_CH_AIN8		0x480 /* AIN7 - AINCOM */
-+#define AD7193_CH_AINCOM	0x600 /* AINCOM - AINCOM */
-+
-+/* ID Register Bit Designations (AD7192_REG_ID) */
-+#define ID_AD7190		0x4
-+#define ID_AD7192		0x0
-+#define ID_AD7193		0x2
-+#define ID_AD7195		0x6
-+#define AD7192_ID_MASK		0x0F
-+
-+/* GPOCON Register Bit Designations (AD7192_REG_GPOCON) */
-+#define AD7192_GPOCON_BPDSW	BIT(6) /* Bridge power-down switch enable */
-+#define AD7192_GPOCON_GP32EN	BIT(5) /* Digital Output P3 and P2 enable */
-+#define AD7192_GPOCON_GP10EN	BIT(4) /* Digital Output P1 and P0 enable */
-+#define AD7192_GPOCON_P3DAT	BIT(3) /* P3 state */
-+#define AD7192_GPOCON_P2DAT	BIT(2) /* P2 state */
-+#define AD7192_GPOCON_P1DAT	BIT(1) /* P1 state */
-+#define AD7192_GPOCON_P0DAT	BIT(0) /* P0 state */
-+
-+#define AD7192_EXT_FREQ_MHZ_MIN	2457600
-+#define AD7192_EXT_FREQ_MHZ_MAX	5120000
-+#define AD7192_INT_FREQ_MHZ	4915200
-+
-+#define AD7192_NO_SYNC_FILTER	1
-+#define AD7192_SYNC3_FILTER	3
-+#define AD7192_SYNC4_FILTER	4
-+
-+/* NOTE:
-+ * The AD7190/2/5 features a dual use data out ready DOUT/RDY output.
-+ * In order to avoid contentions on the SPI bus, it's therefore necessary
-+ * to use spi bus locking.
-+ *
-+ * The DOUT/RDY output must also be wired to an interrupt capable GPIO.
-+ */
-+
-+enum {
-+   AD7192_SYSCALIB_ZERO_SCALE,
-+   AD7192_SYSCALIB_FULL_SCALE,
-+};
-+
-+struct ad7192_state {
-+	struct regulator		*avdd;
-+	struct regulator		*dvdd;
-+	struct clk			*mclk;
-+	u16				int_vref_mv;
-+	u32				fclk;
-+	u32				f_order;
-+	u32				mode;
-+	u32				conf;
-+	u32				scale_avail[8][2];
-+	u8				gpocon;
-+	u8				devid;
-+	u8				clock_sel;
-+	struct mutex			lock;	/* protect sensor state */
-+	u8				syscalib_mode[8];
-+
-+	struct ad_sigma_delta		sd;
-+};
-+
-+static const char * const ad7192_syscalib_modes[] = {
-+	[AD7192_SYSCALIB_ZERO_SCALE] = "zero_scale",
-+	[AD7192_SYSCALIB_FULL_SCALE] = "full_scale",
-+};
-+
-+static int ad7192_set_syscalib_mode(struct iio_dev *indio_dev,
-+				    const struct iio_chan_spec *chan,
-+				    unsigned int mode)
-+{
-+	struct ad7192_state *st = iio_priv(indio_dev);
-+
-+	st->syscalib_mode[chan->channel] = mode;
-+
-+	return 0;
-+}
-+
-+static int ad7192_get_syscalib_mode(struct iio_dev *indio_dev,
-+				    const struct iio_chan_spec *chan)
-+{
-+	struct ad7192_state *st = iio_priv(indio_dev);
-+
-+	return st->syscalib_mode[chan->channel];
-+}
-+
-+static ssize_t ad7192_write_syscalib(struct iio_dev *indio_dev,
-+				     uintptr_t private,
-+				     const struct iio_chan_spec *chan,
-+				     const char *buf, size_t len)
-+{
-+	struct ad7192_state *st = iio_priv(indio_dev);
-+	bool sys_calib;
-+	int ret, temp;
-+
-+	ret = strtobool(buf, &sys_calib);
-+	if (ret)
-+		return ret;
-+
-+	temp = st->syscalib_mode[chan->channel];
-+	if (sys_calib) {
-+		if (temp == AD7192_SYSCALIB_ZERO_SCALE)
-+			ret = ad_sd_calibrate(&st->sd, AD7192_MODE_CAL_SYS_ZERO,
-+					      chan->address);
-+		else
-+			ret = ad_sd_calibrate(&st->sd, AD7192_MODE_CAL_SYS_FULL,
-+					      chan->address);
-+	}
-+
-+	return ret ? ret : len;
-+}
-+
-+static const struct iio_enum ad7192_syscalib_mode_enum = {
-+	.items = ad7192_syscalib_modes,
-+	.num_items = ARRAY_SIZE(ad7192_syscalib_modes),
-+	.set = ad7192_set_syscalib_mode,
-+	.get = ad7192_get_syscalib_mode
-+};
-+
-+static const struct iio_chan_spec_ext_info ad7192_calibsys_ext_info[] = {
-+	{
-+		.name = "sys_calibration",
-+		.write = ad7192_write_syscalib,
-+		.shared = IIO_SEPARATE,
-+	},
-+	IIO_ENUM("sys_calibration_mode", IIO_SEPARATE,
-+		 &ad7192_syscalib_mode_enum),
-+	IIO_ENUM_AVAILABLE("sys_calibration_mode", &ad7192_syscalib_mode_enum),
-+	{}
-+};
-+
-+static struct ad7192_state *ad_sigma_delta_to_ad7192(struct ad_sigma_delta *sd)
-+{
-+	return container_of(sd, struct ad7192_state, sd);
-+}
-+
-+static int ad7192_set_channel(struct ad_sigma_delta *sd, unsigned int channel)
-+{
-+	struct ad7192_state *st = ad_sigma_delta_to_ad7192(sd);
-+
-+	st->conf &= ~AD7192_CONF_CHAN_MASK;
-+	st->conf |= AD7192_CONF_CHAN(channel);
-+
-+	return ad_sd_write_reg(&st->sd, AD7192_REG_CONF, 3, st->conf);
-+}
-+
-+static int ad7192_set_mode(struct ad_sigma_delta *sd,
-+			   enum ad_sigma_delta_mode mode)
-+{
-+	struct ad7192_state *st = ad_sigma_delta_to_ad7192(sd);
-+
-+	st->mode &= ~AD7192_MODE_SEL_MASK;
-+	st->mode |= AD7192_MODE_SEL(mode);
-+
-+	return ad_sd_write_reg(&st->sd, AD7192_REG_MODE, 3, st->mode);
-+}
-+
-+static const struct ad_sigma_delta_info ad7192_sigma_delta_info = {
-+	.set_channel = ad7192_set_channel,
-+	.set_mode = ad7192_set_mode,
-+	.has_registers = true,
-+	.addr_shift = 3,
-+	.read_mask = BIT(6),
-+};
-+
-+static const struct ad_sd_calib_data ad7192_calib_arr[8] = {
-+	{AD7192_MODE_CAL_INT_ZERO, AD7192_CH_AIN1},
-+	{AD7192_MODE_CAL_INT_FULL, AD7192_CH_AIN1},
-+	{AD7192_MODE_CAL_INT_ZERO, AD7192_CH_AIN2},
-+	{AD7192_MODE_CAL_INT_FULL, AD7192_CH_AIN2},
-+	{AD7192_MODE_CAL_INT_ZERO, AD7192_CH_AIN3},
-+	{AD7192_MODE_CAL_INT_FULL, AD7192_CH_AIN3},
-+	{AD7192_MODE_CAL_INT_ZERO, AD7192_CH_AIN4},
-+	{AD7192_MODE_CAL_INT_FULL, AD7192_CH_AIN4}
-+};
-+
-+static int ad7192_calibrate_all(struct ad7192_state *st)
-+{
-+	return ad_sd_calibrate_all(&st->sd, ad7192_calib_arr,
-+				   ARRAY_SIZE(ad7192_calib_arr));
-+}
-+
-+static inline bool ad7192_valid_external_frequency(u32 freq)
-+{
-+	return (freq >= AD7192_EXT_FREQ_MHZ_MIN &&
-+		freq <= AD7192_EXT_FREQ_MHZ_MAX);
-+}
-+
-+static int ad7192_of_clock_select(struct ad7192_state *st)
-+{
-+	struct device_node *np = st->sd.spi->dev.of_node;
-+	unsigned int clock_sel;
-+
-+	clock_sel = AD7192_CLK_INT;
-+
-+	/* use internal clock */
-+	if (PTR_ERR(st->mclk) == -ENOENT) {
-+		if (of_property_read_bool(np, "adi,int-clock-output-enable"))
-+			clock_sel = AD7192_CLK_INT_CO;
-+	} else {
-+		if (of_property_read_bool(np, "adi,clock-xtal"))
-+			clock_sel = AD7192_CLK_EXT_MCLK1_2;
-+		else
-+			clock_sel = AD7192_CLK_EXT_MCLK2;
-+	}
-+
-+	return clock_sel;
-+}
-+
-+static int ad7192_setup(struct ad7192_state *st, struct device_node *np)
-+{
-+	struct iio_dev *indio_dev = spi_get_drvdata(st->sd.spi);
-+	bool rej60_en, refin2_en;
-+	bool buf_en, bipolar, burnout_curr_en;
-+	unsigned long long scale_uv;
-+	int i, ret, id;
-+
-+	/* reset the serial interface */
-+	ret = ad_sd_reset(&st->sd, 48);
-+	if (ret < 0)
-+		return ret;
-+	usleep_range(500, 1000); /* Wait for at least 500us */
-+
-+	/* write/read test for device presence */
-+	ret = ad_sd_read_reg(&st->sd, AD7192_REG_ID, 1, &id);
-+	if (ret)
-+		return ret;
-+
-+	id &= AD7192_ID_MASK;
-+
-+	if (id != st->devid)
-+		dev_warn(&st->sd.spi->dev, "device ID query failed (0x%X)\n",
-+			 id);
-+
-+	st->mode = AD7192_MODE_SEL(AD7192_MODE_IDLE) |
-+		AD7192_MODE_CLKSRC(st->clock_sel) |
-+		AD7192_MODE_RATE(480);
-+
-+	st->conf = AD7192_CONF_GAIN(0);
-+
-+	rej60_en = of_property_read_bool(np, "adi,rejection-60-Hz-enable");
-+	if (rej60_en)
-+		st->mode |= AD7192_MODE_REJ60;
-+
-+	refin2_en = of_property_read_bool(np, "adi,refin2-pins-enable");
-+	if (refin2_en && st->devid != ID_AD7195)
-+		st->conf |= AD7192_CONF_REFSEL;
-+
-+	st->conf &= ~AD7192_CONF_CHOP;
-+	st->f_order = AD7192_NO_SYNC_FILTER;
-+
-+	buf_en = of_property_read_bool(np, "adi,buffer-enable");
-+	if (buf_en)
-+		st->conf |= AD7192_CONF_BUF;
-+
-+	bipolar = of_property_read_bool(np, "bipolar");
-+	if (!bipolar)
-+		st->conf |= AD7192_CONF_UNIPOLAR;
-+
-+	burnout_curr_en = of_property_read_bool(np,
-+						"adi,burnout-currents-enable");
-+	if (burnout_curr_en && buf_en) {
-+		st->conf |= AD7192_CONF_BURN;
-+	} else if (burnout_curr_en) {
-+		dev_warn(&st->sd.spi->dev,
-+			 "Can't enable burnout currents: see CHOP or buffer\n");
-+	}
-+
-+	ret = ad_sd_write_reg(&st->sd, AD7192_REG_MODE, 3, st->mode);
-+	if (ret)
-+		return ret;
-+
-+	ret = ad_sd_write_reg(&st->sd, AD7192_REG_CONF, 3, st->conf);
-+	if (ret)
-+		return ret;
-+
-+	ret = ad7192_calibrate_all(st);
-+	if (ret)
-+		return ret;
-+
-+	/* Populate available ADC input ranges */
-+	for (i = 0; i < ARRAY_SIZE(st->scale_avail); i++) {
-+		scale_uv = ((u64)st->int_vref_mv * 100000000)
-+			>> (indio_dev->channels[0].scan_type.realbits -
-+			((st->conf & AD7192_CONF_UNIPOLAR) ? 0 : 1));
-+		scale_uv >>= i;
-+
-+		st->scale_avail[i][1] = do_div(scale_uv, 100000000) * 10;
-+		st->scale_avail[i][0] = scale_uv;
-+	}
-+
-+	return 0;
-+}
-+
-+static ssize_t ad7192_show_ac_excitation(struct device *dev,
-+					 struct device_attribute *attr,
-+					 char *buf)
-+{
-+	struct iio_dev *indio_dev = dev_to_iio_dev(dev);
-+	struct ad7192_state *st = iio_priv(indio_dev);
-+
-+	return sprintf(buf, "%d\n", !!(st->mode & AD7192_MODE_ACX));
-+}
-+
-+static ssize_t ad7192_show_bridge_switch(struct device *dev,
-+					 struct device_attribute *attr,
-+					 char *buf)
-+{
-+	struct iio_dev *indio_dev = dev_to_iio_dev(dev);
-+	struct ad7192_state *st = iio_priv(indio_dev);
-+
-+	return sprintf(buf, "%d\n", !!(st->gpocon & AD7192_GPOCON_BPDSW));
-+}
-+
-+static ssize_t ad7192_set(struct device *dev,
-+			  struct device_attribute *attr,
-+			  const char *buf,
-+			  size_t len)
-+{
-+	struct iio_dev *indio_dev = dev_to_iio_dev(dev);
-+	struct ad7192_state *st = iio_priv(indio_dev);
-+	struct iio_dev_attr *this_attr = to_iio_dev_attr(attr);
-+	int ret;
-+	bool val;
-+
-+	ret = strtobool(buf, &val);
-+	if (ret < 0)
-+		return ret;
-+
-+	ret = iio_device_claim_direct_mode(indio_dev);
-+	if (ret)
-+		return ret;
-+
-+	switch ((u32)this_attr->address) {
-+	case AD7192_REG_GPOCON:
-+		if (val)
-+			st->gpocon |= AD7192_GPOCON_BPDSW;
-+		else
-+			st->gpocon &= ~AD7192_GPOCON_BPDSW;
-+
-+		ad_sd_write_reg(&st->sd, AD7192_REG_GPOCON, 1, st->gpocon);
-+		break;
-+	case AD7192_REG_MODE:
-+		if (val)
-+			st->mode |= AD7192_MODE_ACX;
-+		else
-+			st->mode &= ~AD7192_MODE_ACX;
-+
-+		ad_sd_write_reg(&st->sd, AD7192_REG_MODE, 3, st->mode);
-+		break;
-+	default:
-+		ret = -EINVAL;
-+	}
-+
-+	iio_device_release_direct_mode(indio_dev);
-+
-+	return ret ? ret : len;
-+}
-+
-+static void ad7192_get_available_filter_freq(struct ad7192_state *st,
-+						    int *freq)
-+{
-+	unsigned int fadc;
-+
-+	/* Formulas for filter at page 25 of the datasheet */
-+	fadc = DIV_ROUND_CLOSEST(st->fclk,
-+				 AD7192_SYNC4_FILTER * AD7192_MODE_RATE(st->mode));
-+	freq[0] = DIV_ROUND_CLOSEST(fadc * 240, 1024);
-+
-+	fadc = DIV_ROUND_CLOSEST(st->fclk,
-+				 AD7192_SYNC3_FILTER * AD7192_MODE_RATE(st->mode));
-+	freq[1] = DIV_ROUND_CLOSEST(fadc * 240, 1024);
-+
-+	fadc = DIV_ROUND_CLOSEST(st->fclk, AD7192_MODE_RATE(st->mode));
-+	freq[2] = DIV_ROUND_CLOSEST(fadc * 230, 1024);
-+	freq[3] = DIV_ROUND_CLOSEST(fadc * 272, 1024);
-+}
-+
-+static ssize_t ad7192_show_filter_avail(struct device *dev,
-+					struct device_attribute *attr,
-+					char *buf)
-+{
-+	struct iio_dev *indio_dev = dev_to_iio_dev(dev);
-+	struct ad7192_state *st = iio_priv(indio_dev);
-+	unsigned int freq_avail[4], i;
-+	size_t len = 0;
-+
-+	ad7192_get_available_filter_freq(st, freq_avail);
-+
-+	for (i = 0; i < ARRAY_SIZE(freq_avail); i++)
-+		len += scnprintf(buf + len, PAGE_SIZE - len,
-+				 "%d.%d ", freq_avail[i] / 1000,
-+				 freq_avail[i] % 1000);
-+
-+	buf[len - 1] = '\n';
-+
-+	return len;
-+}
-+
-+static IIO_DEVICE_ATTR(filter_low_pass_3db_frequency_available,
-+		       0444, ad7192_show_filter_avail, NULL, 0);
-+
-+static IIO_DEVICE_ATTR(bridge_switch_en, 0644,
-+		       ad7192_show_bridge_switch, ad7192_set,
-+		       AD7192_REG_GPOCON);
-+
-+static IIO_DEVICE_ATTR(ac_excitation_en, 0644,
-+		       ad7192_show_ac_excitation, ad7192_set,
-+		       AD7192_REG_MODE);
-+
-+static struct attribute *ad7192_attributes[] = {
-+	&iio_dev_attr_filter_low_pass_3db_frequency_available.dev_attr.attr,
-+	&iio_dev_attr_bridge_switch_en.dev_attr.attr,
-+	&iio_dev_attr_ac_excitation_en.dev_attr.attr,
-+	NULL
-+};
-+
-+static const struct attribute_group ad7192_attribute_group = {
-+	.attrs = ad7192_attributes,
-+};
-+
-+static struct attribute *ad7195_attributes[] = {
-+	&iio_dev_attr_filter_low_pass_3db_frequency_available.dev_attr.attr,
-+	&iio_dev_attr_bridge_switch_en.dev_attr.attr,
-+	NULL
-+};
-+
-+static const struct attribute_group ad7195_attribute_group = {
-+	.attrs = ad7195_attributes,
-+};
-+
-+static unsigned int ad7192_get_temp_scale(bool unipolar)
-+{
-+	return unipolar ? 2815 * 2 : 2815;
-+}
-+
-+static int ad7192_set_3db_filter_freq(struct ad7192_state *st,
-+				      int val, int val2)
-+{
-+	int freq_avail[4], i, ret, freq;
-+	unsigned int diff_new, diff_old;
-+	int idx = 0;
-+
-+	diff_old = U32_MAX;
-+	freq = val * 1000 + val2;
-+
-+	ad7192_get_available_filter_freq(st, freq_avail);
-+
-+	for (i = 0; i < ARRAY_SIZE(freq_avail); i++) {
-+		diff_new = abs(freq - freq_avail[i]);
-+		if (diff_new < diff_old) {
-+			diff_old = diff_new;
-+			idx = i;
-+		}
-+	}
-+
-+	switch (idx) {
-+	case 0:
-+		st->f_order = AD7192_SYNC4_FILTER;
-+		st->mode &= ~AD7192_MODE_SINC3;
-+
-+		st->conf |= AD7192_CONF_CHOP;
-+		break;
-+	case 1:
-+		st->f_order = AD7192_SYNC3_FILTER;
-+		st->mode |= AD7192_MODE_SINC3;
-+
-+		st->conf |= AD7192_CONF_CHOP;
-+		break;
-+	case 2:
-+		st->f_order = AD7192_NO_SYNC_FILTER;
-+		st->mode &= ~AD7192_MODE_SINC3;
-+
-+		st->conf &= ~AD7192_CONF_CHOP;
-+		break;
-+	case 3:
-+		st->f_order = AD7192_NO_SYNC_FILTER;
-+		st->mode |= AD7192_MODE_SINC3;
-+
-+		st->conf &= ~AD7192_CONF_CHOP;
-+		break;
-+	}
-+
-+	ret = ad_sd_write_reg(&st->sd, AD7192_REG_MODE, 3, st->mode);
-+	if (ret < 0)
-+		return ret;
-+
-+	return ad_sd_write_reg(&st->sd, AD7192_REG_CONF, 3, st->conf);
-+}
-+
-+static int ad7192_get_3db_filter_freq(struct ad7192_state *st)
-+{
-+	unsigned int fadc;
-+
-+	fadc = DIV_ROUND_CLOSEST(st->fclk,
-+				 st->f_order * AD7192_MODE_RATE(st->mode));
-+
-+	if (st->conf & AD7192_CONF_CHOP)
-+		return DIV_ROUND_CLOSEST(fadc * 240, 1024);
-+	if (st->mode & AD7192_MODE_SINC3)
-+		return DIV_ROUND_CLOSEST(fadc * 272, 1024);
-+	else
-+		return DIV_ROUND_CLOSEST(fadc * 230, 1024);
-+}
-+
-+static int ad7192_read_raw(struct iio_dev *indio_dev,
-+			   struct iio_chan_spec const *chan,
-+			   int *val,
-+			   int *val2,
-+			   long m)
-+{
-+	struct ad7192_state *st = iio_priv(indio_dev);
-+	bool unipolar = !!(st->conf & AD7192_CONF_UNIPOLAR);
-+
-+	switch (m) {
-+	case IIO_CHAN_INFO_RAW:
-+		return ad_sigma_delta_single_conversion(indio_dev, chan, val);
-+	case IIO_CHAN_INFO_SCALE:
-+		switch (chan->type) {
-+		case IIO_VOLTAGE:
-+			mutex_lock(&st->lock);
-+			*val = st->scale_avail[AD7192_CONF_GAIN(st->conf)][0];
-+			*val2 = st->scale_avail[AD7192_CONF_GAIN(st->conf)][1];
-+			mutex_unlock(&st->lock);
-+			return IIO_VAL_INT_PLUS_NANO;
-+		case IIO_TEMP:
-+			*val = 0;
-+			*val2 = 1000000000 / ad7192_get_temp_scale(unipolar);
-+			return IIO_VAL_INT_PLUS_NANO;
-+		default:
-+			return -EINVAL;
-+		}
-+	case IIO_CHAN_INFO_OFFSET:
-+		if (!unipolar)
-+			*val = -(1 << (chan->scan_type.realbits - 1));
-+		else
-+			*val = 0;
-+		/* Kelvin to Celsius */
-+		if (chan->type == IIO_TEMP)
-+			*val -= 273 * ad7192_get_temp_scale(unipolar);
-+		return IIO_VAL_INT;
-+	case IIO_CHAN_INFO_SAMP_FREQ:
-+		*val = st->fclk /
-+			(st->f_order * 1024 * AD7192_MODE_RATE(st->mode));
-+		return IIO_VAL_INT;
-+	case IIO_CHAN_INFO_LOW_PASS_FILTER_3DB_FREQUENCY:
-+		*val = ad7192_get_3db_filter_freq(st);
-+		*val2 = 1000;
-+		return IIO_VAL_FRACTIONAL;
-+	}
-+
-+	return -EINVAL;
-+}
-+
-+static int ad7192_write_raw(struct iio_dev *indio_dev,
-+			    struct iio_chan_spec const *chan,
-+			    int val,
-+			    int val2,
-+			    long mask)
-+{
-+	struct ad7192_state *st = iio_priv(indio_dev);
-+	int ret, i, div;
-+	unsigned int tmp;
-+
-+	ret = iio_device_claim_direct_mode(indio_dev);
-+	if (ret)
-+		return ret;
-+
-+	switch (mask) {
-+	case IIO_CHAN_INFO_SCALE:
-+		ret = -EINVAL;
-+		mutex_lock(&st->lock);
-+		for (i = 0; i < ARRAY_SIZE(st->scale_avail); i++)
-+			if (val2 == st->scale_avail[i][1]) {
-+				ret = 0;
-+				tmp = st->conf;
-+				st->conf &= ~AD7192_CONF_GAIN(-1);
-+				st->conf |= AD7192_CONF_GAIN(i);
-+				if (tmp == st->conf)
-+					break;
-+				ad_sd_write_reg(&st->sd, AD7192_REG_CONF,
-+						3, st->conf);
-+				ad7192_calibrate_all(st);
-+				break;
-+			}
-+		mutex_unlock(&st->lock);
-+		break;
-+	case IIO_CHAN_INFO_SAMP_FREQ:
-+		if (!val) {
-+			ret = -EINVAL;
-+			break;
-+		}
-+
-+		div = st->fclk / (val * st->f_order * 1024);
-+		if (div < 1 || div > 1023) {
-+			ret = -EINVAL;
-+			break;
-+		}
-+
-+		st->mode &= ~AD7192_MODE_RATE(-1);
-+		st->mode |= AD7192_MODE_RATE(div);
-+		ad_sd_write_reg(&st->sd, AD7192_REG_MODE, 3, st->mode);
-+		break;
-+	case IIO_CHAN_INFO_LOW_PASS_FILTER_3DB_FREQUENCY:
-+		ret = ad7192_set_3db_filter_freq(st, val, val2 / 1000);
-+		break;
-+	default:
-+		ret = -EINVAL;
-+	}
-+
-+	iio_device_release_direct_mode(indio_dev);
-+
-+	return ret;
-+}
-+
-+static int ad7192_write_raw_get_fmt(struct iio_dev *indio_dev,
-+				    struct iio_chan_spec const *chan,
-+				    long mask)
-+{
-+	switch (mask) {
-+	case IIO_CHAN_INFO_SCALE:
-+		return IIO_VAL_INT_PLUS_NANO;
-+	case IIO_CHAN_INFO_SAMP_FREQ:
-+		return IIO_VAL_INT;
-+	case IIO_CHAN_INFO_LOW_PASS_FILTER_3DB_FREQUENCY:
-+		return IIO_VAL_INT_PLUS_MICRO;
-+	default:
-+		return -EINVAL;
-+	}
-+}
-+
-+static int ad7192_read_avail(struct iio_dev *indio_dev,
-+			     struct iio_chan_spec const *chan,
-+			     const int **vals, int *type, int *length,
-+			     long mask)
-+{
-+	struct ad7192_state *st = iio_priv(indio_dev);
-+
-+	switch (mask) {
-+	case IIO_CHAN_INFO_SCALE:
-+		*vals = (int *)st->scale_avail;
-+		*type = IIO_VAL_INT_PLUS_NANO;
-+		/* Values are stored in a 2D matrix  */
-+		*length = ARRAY_SIZE(st->scale_avail) * 2;
-+
-+		return IIO_AVAIL_LIST;
-+	}
-+
-+	return -EINVAL;
-+}
-+
-+static const struct iio_info ad7192_info = {
-+	.read_raw = ad7192_read_raw,
-+	.write_raw = ad7192_write_raw,
-+	.write_raw_get_fmt = ad7192_write_raw_get_fmt,
-+	.read_avail = ad7192_read_avail,
-+	.attrs = &ad7192_attribute_group,
-+	.validate_trigger = ad_sd_validate_trigger,
-+};
-+
-+static const struct iio_info ad7195_info = {
-+	.read_raw = ad7192_read_raw,
-+	.write_raw = ad7192_write_raw,
-+	.write_raw_get_fmt = ad7192_write_raw_get_fmt,
-+	.read_avail = ad7192_read_avail,
-+	.attrs = &ad7195_attribute_group,
-+	.validate_trigger = ad_sd_validate_trigger,
-+};
-+
-+static const struct iio_chan_spec ad7192_channels[] = {
-+	AD_SD_DIFF_CHANNEL(0, 1, 2, AD7192_CH_AIN1P_AIN2M, 24, 32, 0),
-+	AD_SD_DIFF_CHANNEL(1, 3, 4, AD7192_CH_AIN3P_AIN4M, 24, 32, 0),
-+	AD_SD_TEMP_CHANNEL(2, AD7192_CH_TEMP, 24, 32, 0),
-+	AD_SD_SHORTED_CHANNEL(3, 2, AD7192_CH_AIN2P_AIN2M, 24, 32, 0),
-+	AD_SD_CHANNEL(4, 1, AD7192_CH_AIN1, 24, 32, 0),
-+	AD_SD_CHANNEL(5, 2, AD7192_CH_AIN2, 24, 32, 0),
-+	AD_SD_CHANNEL(6, 3, AD7192_CH_AIN3, 24, 32, 0),
-+	AD_SD_CHANNEL(7, 4, AD7192_CH_AIN4, 24, 32, 0),
-+	IIO_CHAN_SOFT_TIMESTAMP(8),
-+};
-+
-+static const struct iio_chan_spec ad7193_channels[] = {
-+	AD_SD_DIFF_CHANNEL(0, 1, 2, AD7193_CH_AIN1P_AIN2M, 24, 32, 0),
-+	AD_SD_DIFF_CHANNEL(1, 3, 4, AD7193_CH_AIN3P_AIN4M, 24, 32, 0),
-+	AD_SD_DIFF_CHANNEL(2, 5, 6, AD7193_CH_AIN5P_AIN6M, 24, 32, 0),
-+	AD_SD_DIFF_CHANNEL(3, 7, 8, AD7193_CH_AIN7P_AIN8M, 24, 32, 0),
-+	AD_SD_TEMP_CHANNEL(4, AD7193_CH_TEMP, 24, 32, 0),
-+	AD_SD_SHORTED_CHANNEL(5, 2, AD7193_CH_AIN2P_AIN2M, 24, 32, 0),
-+	AD_SD_CHANNEL(6, 1, AD7193_CH_AIN1, 24, 32, 0),
-+	AD_SD_CHANNEL(7, 2, AD7193_CH_AIN2, 24, 32, 0),
-+	AD_SD_CHANNEL(8, 3, AD7193_CH_AIN3, 24, 32, 0),
-+	AD_SD_CHANNEL(9, 4, AD7193_CH_AIN4, 24, 32, 0),
-+	AD_SD_CHANNEL(10, 5, AD7193_CH_AIN5, 24, 32, 0),
-+	AD_SD_CHANNEL(11, 6, AD7193_CH_AIN6, 24, 32, 0),
-+	AD_SD_CHANNEL(12, 7, AD7193_CH_AIN7, 24, 32, 0),
-+	AD_SD_CHANNEL(13, 8, AD7193_CH_AIN8, 24, 32, 0),
-+	IIO_CHAN_SOFT_TIMESTAMP(14),
-+};
-+
-+static int ad7192_channels_config(struct iio_dev *indio_dev)
-+{
-+	struct ad7192_state *st = iio_priv(indio_dev);
-+	const struct iio_chan_spec *channels;
-+	struct iio_chan_spec *chan;
-+	int i;
-+
-+	switch (st->devid) {
-+	case ID_AD7193:
-+		channels = ad7193_channels;
-+		indio_dev->num_channels = ARRAY_SIZE(ad7193_channels);
-+		break;
-+	default:
-+		channels = ad7192_channels;
-+		indio_dev->num_channels = ARRAY_SIZE(ad7192_channels);
-+		break;
-+	}
-+
-+	chan = devm_kcalloc(indio_dev->dev.parent, indio_dev->num_channels,
-+			    sizeof(*chan), GFP_KERNEL);
-+	if (!chan)
-+		return -ENOMEM;
-+
-+	indio_dev->channels = chan;
-+
-+	for (i = 0; i < indio_dev->num_channels; i++) {
-+		*chan = channels[i];
-+		chan->info_mask_shared_by_all |=
-+			BIT(IIO_CHAN_INFO_LOW_PASS_FILTER_3DB_FREQUENCY);
-+		if (chan->type != IIO_TEMP) {
-+			chan->info_mask_shared_by_type_available |=
-+				BIT(IIO_CHAN_INFO_SCALE);
-+			chan->ext_info = ad7192_calibsys_ext_info;
-+		}
-+		chan++;
-+	}
-+
-+	return 0;
-+}
-+
-+static int ad7192_probe(struct spi_device *spi)
-+{
-+	struct ad7192_state *st;
-+	struct iio_dev *indio_dev;
-+	int ret, voltage_uv = 0;
-+
-+	if (!spi->irq) {
-+		dev_err(&spi->dev, "no IRQ?\n");
-+		return -ENODEV;
-+	}
-+
-+	indio_dev = devm_iio_device_alloc(&spi->dev, sizeof(*st));
-+	if (!indio_dev)
-+		return -ENOMEM;
-+
-+	st = iio_priv(indio_dev);
-+
-+	mutex_init(&st->lock);
-+
-+	st->avdd = devm_regulator_get(&spi->dev, "avdd");
-+	if (IS_ERR(st->avdd))
-+		return PTR_ERR(st->avdd);
-+
-+	ret = regulator_enable(st->avdd);
-+	if (ret) {
-+		dev_err(&spi->dev, "Failed to enable specified AVdd supply\n");
-+		return ret;
-+	}
-+
-+	st->dvdd = devm_regulator_get(&spi->dev, "dvdd");
-+	if (IS_ERR(st->dvdd)) {
-+		ret = PTR_ERR(st->dvdd);
-+		goto error_disable_avdd;
-+	}
-+
-+	ret = regulator_enable(st->dvdd);
-+	if (ret) {
-+		dev_err(&spi->dev, "Failed to enable specified DVdd supply\n");
-+		goto error_disable_avdd;
-+	}
-+
-+	voltage_uv = regulator_get_voltage(st->avdd);
-+
-+	if (voltage_uv)
-+		st->int_vref_mv = voltage_uv / 1000;
-+	else
-+		dev_err(&spi->dev, "Device tree error, reference voltage undefined\n");
-+
-+	spi_set_drvdata(spi, indio_dev);
-+	st->devid = spi_get_device_id(spi)->driver_data;
-+	indio_dev->dev.parent = &spi->dev;
-+	indio_dev->name = spi_get_device_id(spi)->name;
-+	indio_dev->modes = INDIO_DIRECT_MODE;
-+
-+	ret = ad7192_channels_config(indio_dev);
-+	if (ret < 0)
-+		goto error_disable_dvdd;
-+
-+	if (st->devid == ID_AD7195)
-+		indio_dev->info = &ad7195_info;
-+	else
-+		indio_dev->info = &ad7192_info;
-+
-+	ad_sd_init(&st->sd, indio_dev, spi, &ad7192_sigma_delta_info);
-+
-+	ret = ad_sd_setup_buffer_and_trigger(indio_dev);
-+	if (ret)
-+		goto error_disable_dvdd;
-+
-+	st->fclk = AD7192_INT_FREQ_MHZ;
-+
-+	st->mclk = devm_clk_get(&st->sd.spi->dev, "mclk");
-+	if (IS_ERR(st->mclk) && PTR_ERR(st->mclk) != -ENOENT) {
-+		ret = PTR_ERR(st->mclk);
-+		goto error_remove_trigger;
-+	}
-+
-+	st->clock_sel = ad7192_of_clock_select(st);
-+
-+	if (st->clock_sel == AD7192_CLK_EXT_MCLK1_2 ||
-+	    st->clock_sel == AD7192_CLK_EXT_MCLK2) {
-+		ret = clk_prepare_enable(st->mclk);
-+		if (ret < 0)
-+			goto error_remove_trigger;
-+
-+		st->fclk = clk_get_rate(st->mclk);
-+		if (!ad7192_valid_external_frequency(st->fclk)) {
-+			ret = -EINVAL;
-+			dev_err(&spi->dev,
-+				"External clock frequency out of bounds\n");
-+			goto error_disable_clk;
-+		}
-+	}
-+
-+	ret = ad7192_setup(st, spi->dev.of_node);
-+	if (ret)
-+		goto error_disable_clk;
-+
-+	ret = iio_device_register(indio_dev);
-+	if (ret < 0)
-+		goto error_disable_clk;
-+	return 0;
-+
-+error_disable_clk:
-+	clk_disable_unprepare(st->mclk);
-+error_remove_trigger:
-+	ad_sd_cleanup_buffer_and_trigger(indio_dev);
-+error_disable_dvdd:
-+	regulator_disable(st->dvdd);
-+error_disable_avdd:
-+	regulator_disable(st->avdd);
-+
-+	return ret;
-+}
-+
-+static int ad7192_remove(struct spi_device *spi)
-+{
-+	struct iio_dev *indio_dev = spi_get_drvdata(spi);
-+	struct ad7192_state *st = iio_priv(indio_dev);
-+
-+	iio_device_unregister(indio_dev);
-+	clk_disable_unprepare(st->mclk);
-+	ad_sd_cleanup_buffer_and_trigger(indio_dev);
-+
-+	regulator_disable(st->dvdd);
-+	regulator_disable(st->avdd);
-+
-+	return 0;
-+}
-+
-+static const struct spi_device_id ad7192_id[] = {
-+	{"ad7190", ID_AD7190},
-+	{"ad7192", ID_AD7192},
-+	{"ad7193", ID_AD7193},
-+	{"ad7195", ID_AD7195},
-+	{}
-+};
-+
-+MODULE_DEVICE_TABLE(spi, ad7192_id);
-+
-+static const struct of_device_id ad7192_of_match[] = {
-+	{ .compatible = "adi,ad7190" },
-+	{ .compatible = "adi,ad7192" },
-+	{ .compatible = "adi,ad7193" },
-+	{ .compatible = "adi,ad7195" },
-+	{}
-+};
-+
-+MODULE_DEVICE_TABLE(of, ad7192_of_match);
-+
-+static struct spi_driver ad7192_driver = {
-+	.driver = {
-+		.name	= "ad7192",
-+		.of_match_table = ad7192_of_match,
-+	},
-+	.probe		= ad7192_probe,
-+	.remove		= ad7192_remove,
-+	.id_table	= ad7192_id,
-+};
-+module_spi_driver(ad7192_driver);
-+
-+MODULE_AUTHOR("Michael Hennerich <michael.hennerich@analog.com>");
-+MODULE_DESCRIPTION("Analog Devices AD7190, AD7192, AD7193, AD7195 ADC");
-+MODULE_LICENSE("GPL v2");
-diff --git a/drivers/staging/iio/adc/Kconfig b/drivers/staging/iio/adc/Kconfig
-index 31cd9a12f40f..b25f41053fac 100644
---- a/drivers/staging/iio/adc/Kconfig
-+++ b/drivers/staging/iio/adc/Kconfig
-@@ -15,18 +15,6 @@ config AD7816
- 	  To compile this driver as a module, choose M here: the
- 	  module will be called ad7816.
- 
--config AD7192
--	tristate "Analog Devices AD7190 AD7192 AD7193 AD7195 ADC driver"
--	depends on SPI
--	select AD_SIGMA_DELTA
--	help
--	  Say yes here to build support for Analog Devices AD7190,
--	  AD7192, AD7193 or AD7195 SPI analog to digital converters (ADC).
--	  If unsure, say N (but it's safe to say "Y").
--
--	  To compile this driver as a module, choose M here: the
--	  module will be called ad7192.
--
- config AD7280
- 	tristate "Analog Devices AD7280A Lithium Ion Battery Monitoring System"
- 	depends on SPI
-diff --git a/drivers/staging/iio/adc/Makefile b/drivers/staging/iio/adc/Makefile
-index 4b76769b32bc..6436a62b6278 100644
---- a/drivers/staging/iio/adc/Makefile
-+++ b/drivers/staging/iio/adc/Makefile
-@@ -4,5 +4,4 @@
- #
- 
- obj-$(CONFIG_AD7816) += ad7816.o
--obj-$(CONFIG_AD7192) += ad7192.o
- obj-$(CONFIG_AD7280) += ad7280a.o
-diff --git a/drivers/staging/iio/adc/ad7192.c b/drivers/staging/iio/adc/ad7192.c
-deleted file mode 100644
-index bf3e2a9cc07f..000000000000
---- a/drivers/staging/iio/adc/ad7192.c
-+++ /dev/null
-@@ -1,1022 +0,0 @@
--// SPDX-License-Identifier: GPL-2.0
--/*
-- * AD7190 AD7192 AD7193 AD7195 SPI ADC driver
-- *
-- * Copyright 2011-2015 Analog Devices Inc.
-- */
--
--#include <linux/interrupt.h>
--#include <linux/clk.h>
--#include <linux/device.h>
--#include <linux/kernel.h>
--#include <linux/slab.h>
--#include <linux/sysfs.h>
--#include <linux/spi/spi.h>
--#include <linux/regulator/consumer.h>
--#include <linux/err.h>
--#include <linux/sched.h>
--#include <linux/delay.h>
--
--#include <linux/iio/iio.h>
--#include <linux/iio/sysfs.h>
--#include <linux/iio/buffer.h>
--#include <linux/iio/trigger.h>
--#include <linux/iio/trigger_consumer.h>
--#include <linux/iio/triggered_buffer.h>
--#include <linux/iio/adc/ad_sigma_delta.h>
--
--/* Registers */
--#define AD7192_REG_COMM		0 /* Communications Register (WO, 8-bit) */
--#define AD7192_REG_STAT		0 /* Status Register	     (RO, 8-bit) */
--#define AD7192_REG_MODE		1 /* Mode Register	     (RW, 24-bit */
--#define AD7192_REG_CONF		2 /* Configuration Register  (RW, 24-bit) */
--#define AD7192_REG_DATA		3 /* Data Register	     (RO, 24/32-bit) */
--#define AD7192_REG_ID		4 /* ID Register	     (RO, 8-bit) */
--#define AD7192_REG_GPOCON	5 /* GPOCON Register	     (RO, 8-bit) */
--#define AD7192_REG_OFFSET	6 /* Offset Register	     (RW, 16-bit */
--				  /* (AD7792)/24-bit (AD7192)) */
--#define AD7192_REG_FULLSALE	7 /* Full-Scale Register */
--				  /* (RW, 16-bit (AD7792)/24-bit (AD7192)) */
--
--/* Communications Register Bit Designations (AD7192_REG_COMM) */
--#define AD7192_COMM_WEN		BIT(7) /* Write Enable */
--#define AD7192_COMM_WRITE	0 /* Write Operation */
--#define AD7192_COMM_READ	BIT(6) /* Read Operation */
--#define AD7192_COMM_ADDR(x)	(((x) & 0x7) << 3) /* Register Address */
--#define AD7192_COMM_CREAD	BIT(2) /* Continuous Read of Data Register */
--
--/* Status Register Bit Designations (AD7192_REG_STAT) */
--#define AD7192_STAT_RDY		BIT(7) /* Ready */
--#define AD7192_STAT_ERR		BIT(6) /* Error (Overrange, Underrange) */
--#define AD7192_STAT_NOREF	BIT(5) /* Error no external reference */
--#define AD7192_STAT_PARITY	BIT(4) /* Parity */
--#define AD7192_STAT_CH3		BIT(2) /* Channel 3 */
--#define AD7192_STAT_CH2		BIT(1) /* Channel 2 */
--#define AD7192_STAT_CH1		BIT(0) /* Channel 1 */
--
--/* Mode Register Bit Designations (AD7192_REG_MODE) */
--#define AD7192_MODE_SEL(x)	(((x) & 0x7) << 21) /* Operation Mode Select */
--#define AD7192_MODE_SEL_MASK	(0x7 << 21) /* Operation Mode Select Mask */
--#define AD7192_MODE_DAT_STA	BIT(20) /* Status Register transmission */
--#define AD7192_MODE_CLKSRC(x)	(((x) & 0x3) << 18) /* Clock Source Select */
--#define AD7192_MODE_SINC3	BIT(15) /* SINC3 Filter Select */
--#define AD7192_MODE_ACX		BIT(14) /* AC excitation enable(AD7195 only)*/
--#define AD7192_MODE_ENPAR	BIT(13) /* Parity Enable */
--#define AD7192_MODE_CLKDIV	BIT(12) /* Clock divide by 2 (AD7190/2 only)*/
--#define AD7192_MODE_SCYCLE	BIT(11) /* Single cycle conversion */
--#define AD7192_MODE_REJ60	BIT(10) /* 50/60Hz notch filter */
--#define AD7192_MODE_RATE(x)	((x) & 0x3FF) /* Filter Update Rate Select */
--
--/* Mode Register: AD7192_MODE_SEL options */
--#define AD7192_MODE_CONT		0 /* Continuous Conversion Mode */
--#define AD7192_MODE_SINGLE		1 /* Single Conversion Mode */
--#define AD7192_MODE_IDLE		2 /* Idle Mode */
--#define AD7192_MODE_PWRDN		3 /* Power-Down Mode */
--#define AD7192_MODE_CAL_INT_ZERO	4 /* Internal Zero-Scale Calibration */
--#define AD7192_MODE_CAL_INT_FULL	5 /* Internal Full-Scale Calibration */
--#define AD7192_MODE_CAL_SYS_ZERO	6 /* System Zero-Scale Calibration */
--#define AD7192_MODE_CAL_SYS_FULL	7 /* System Full-Scale Calibration */
--
--/* Mode Register: AD7192_MODE_CLKSRC options */
--#define AD7192_CLK_EXT_MCLK1_2		0 /* External 4.92 MHz Clock connected*/
--					  /* from MCLK1 to MCLK2 */
--#define AD7192_CLK_EXT_MCLK2		1 /* External Clock applied to MCLK2 */
--#define AD7192_CLK_INT			2 /* Internal 4.92 MHz Clock not */
--					  /* available at the MCLK2 pin */
--#define AD7192_CLK_INT_CO		3 /* Internal 4.92 MHz Clock available*/
--					  /* at the MCLK2 pin */
--
--/* Configuration Register Bit Designations (AD7192_REG_CONF) */
--
--#define AD7192_CONF_CHOP	BIT(23) /* CHOP enable */
--#define AD7192_CONF_REFSEL	BIT(20) /* REFIN1/REFIN2 Reference Select */
--#define AD7192_CONF_CHAN(x)	((x) << 8) /* Channel select */
--#define AD7192_CONF_CHAN_MASK	(0x7FF << 8) /* Channel select mask */
--#define AD7192_CONF_BURN	BIT(7) /* Burnout current enable */
--#define AD7192_CONF_REFDET	BIT(6) /* Reference detect enable */
--#define AD7192_CONF_BUF		BIT(4) /* Buffered Mode Enable */
--#define AD7192_CONF_UNIPOLAR	BIT(3) /* Unipolar/Bipolar Enable */
--#define AD7192_CONF_GAIN(x)	((x) & 0x7) /* Gain Select */
--
--#define AD7192_CH_AIN1P_AIN2M	BIT(0) /* AIN1(+) - AIN2(-) */
--#define AD7192_CH_AIN3P_AIN4M	BIT(1) /* AIN3(+) - AIN4(-) */
--#define AD7192_CH_TEMP		BIT(2) /* Temp Sensor */
--#define AD7192_CH_AIN2P_AIN2M	BIT(3) /* AIN2(+) - AIN2(-) */
--#define AD7192_CH_AIN1		BIT(4) /* AIN1 - AINCOM */
--#define AD7192_CH_AIN2		BIT(5) /* AIN2 - AINCOM */
--#define AD7192_CH_AIN3		BIT(6) /* AIN3 - AINCOM */
--#define AD7192_CH_AIN4		BIT(7) /* AIN4 - AINCOM */
--
--#define AD7193_CH_AIN1P_AIN2M	0x001  /* AIN1(+) - AIN2(-) */
--#define AD7193_CH_AIN3P_AIN4M	0x002  /* AIN3(+) - AIN4(-) */
--#define AD7193_CH_AIN5P_AIN6M	0x004  /* AIN5(+) - AIN6(-) */
--#define AD7193_CH_AIN7P_AIN8M	0x008  /* AIN7(+) - AIN8(-) */
--#define AD7193_CH_TEMP		0x100 /* Temp senseor */
--#define AD7193_CH_AIN2P_AIN2M	0x200 /* AIN2(+) - AIN2(-) */
--#define AD7193_CH_AIN1		0x401 /* AIN1 - AINCOM */
--#define AD7193_CH_AIN2		0x402 /* AIN2 - AINCOM */
--#define AD7193_CH_AIN3		0x404 /* AIN3 - AINCOM */
--#define AD7193_CH_AIN4		0x408 /* AIN4 - AINCOM */
--#define AD7193_CH_AIN5		0x410 /* AIN5 - AINCOM */
--#define AD7193_CH_AIN6		0x420 /* AIN6 - AINCOM */
--#define AD7193_CH_AIN7		0x440 /* AIN7 - AINCOM */
--#define AD7193_CH_AIN8		0x480 /* AIN7 - AINCOM */
--#define AD7193_CH_AINCOM	0x600 /* AINCOM - AINCOM */
--
--/* ID Register Bit Designations (AD7192_REG_ID) */
--#define ID_AD7190		0x4
--#define ID_AD7192		0x0
--#define ID_AD7193		0x2
--#define ID_AD7195		0x6
--#define AD7192_ID_MASK		0x0F
--
--/* GPOCON Register Bit Designations (AD7192_REG_GPOCON) */
--#define AD7192_GPOCON_BPDSW	BIT(6) /* Bridge power-down switch enable */
--#define AD7192_GPOCON_GP32EN	BIT(5) /* Digital Output P3 and P2 enable */
--#define AD7192_GPOCON_GP10EN	BIT(4) /* Digital Output P1 and P0 enable */
--#define AD7192_GPOCON_P3DAT	BIT(3) /* P3 state */
--#define AD7192_GPOCON_P2DAT	BIT(2) /* P2 state */
--#define AD7192_GPOCON_P1DAT	BIT(1) /* P1 state */
--#define AD7192_GPOCON_P0DAT	BIT(0) /* P0 state */
--
--#define AD7192_EXT_FREQ_MHZ_MIN	2457600
--#define AD7192_EXT_FREQ_MHZ_MAX	5120000
--#define AD7192_INT_FREQ_MHZ	4915200
--
--#define AD7192_NO_SYNC_FILTER	1
--#define AD7192_SYNC3_FILTER	3
--#define AD7192_SYNC4_FILTER	4
--
--/* NOTE:
-- * The AD7190/2/5 features a dual use data out ready DOUT/RDY output.
-- * In order to avoid contentions on the SPI bus, it's therefore necessary
-- * to use spi bus locking.
-- *
-- * The DOUT/RDY output must also be wired to an interrupt capable GPIO.
-- */
--
--enum {
--   AD7192_SYSCALIB_ZERO_SCALE,
--   AD7192_SYSCALIB_FULL_SCALE,
--};
--
--struct ad7192_state {
--	struct regulator		*avdd;
--	struct regulator		*dvdd;
--	struct clk			*mclk;
--	u16				int_vref_mv;
--	u32				fclk;
--	u32				f_order;
--	u32				mode;
--	u32				conf;
--	u32				scale_avail[8][2];
--	u8				gpocon;
--	u8				devid;
--	u8				clock_sel;
--	struct mutex			lock;	/* protect sensor state */
--	u8				syscalib_mode[8];
--
--	struct ad_sigma_delta		sd;
--};
--
--static const char * const ad7192_syscalib_modes[] = {
--	[AD7192_SYSCALIB_ZERO_SCALE] = "zero_scale",
--	[AD7192_SYSCALIB_FULL_SCALE] = "full_scale",
--};
--
--static int ad7192_set_syscalib_mode(struct iio_dev *indio_dev,
--				    const struct iio_chan_spec *chan,
--				    unsigned int mode)
--{
--	struct ad7192_state *st = iio_priv(indio_dev);
--
--	st->syscalib_mode[chan->channel] = mode;
--
--	return 0;
--}
--
--static int ad7192_get_syscalib_mode(struct iio_dev *indio_dev,
--				    const struct iio_chan_spec *chan)
--{
--	struct ad7192_state *st = iio_priv(indio_dev);
--
--	return st->syscalib_mode[chan->channel];
--}
--
--static ssize_t ad7192_write_syscalib(struct iio_dev *indio_dev,
--				     uintptr_t private,
--				     const struct iio_chan_spec *chan,
--				     const char *buf, size_t len)
--{
--	struct ad7192_state *st = iio_priv(indio_dev);
--	bool sys_calib;
--	int ret, temp;
--
--	ret = strtobool(buf, &sys_calib);
--	if (ret)
--		return ret;
--
--	temp = st->syscalib_mode[chan->channel];
--	if (sys_calib) {
--		if (temp == AD7192_SYSCALIB_ZERO_SCALE)
--			ret = ad_sd_calibrate(&st->sd, AD7192_MODE_CAL_SYS_ZERO,
--					      chan->address);
--		else
--			ret = ad_sd_calibrate(&st->sd, AD7192_MODE_CAL_SYS_FULL,
--					      chan->address);
--	}
--
--	return ret ? ret : len;
--}
--
--static const struct iio_enum ad7192_syscalib_mode_enum = {
--	.items = ad7192_syscalib_modes,
--	.num_items = ARRAY_SIZE(ad7192_syscalib_modes),
--	.set = ad7192_set_syscalib_mode,
--	.get = ad7192_get_syscalib_mode
--};
--
--static const struct iio_chan_spec_ext_info ad7192_calibsys_ext_info[] = {
--	{
--		.name = "sys_calibration",
--		.write = ad7192_write_syscalib,
--		.shared = IIO_SEPARATE,
--	},
--	IIO_ENUM("sys_calibration_mode", IIO_SEPARATE,
--		 &ad7192_syscalib_mode_enum),
--	IIO_ENUM_AVAILABLE("sys_calibration_mode", &ad7192_syscalib_mode_enum),
--	{}
--};
--
--static struct ad7192_state *ad_sigma_delta_to_ad7192(struct ad_sigma_delta *sd)
--{
--	return container_of(sd, struct ad7192_state, sd);
--}
--
--static int ad7192_set_channel(struct ad_sigma_delta *sd, unsigned int channel)
--{
--	struct ad7192_state *st = ad_sigma_delta_to_ad7192(sd);
--
--	st->conf &= ~AD7192_CONF_CHAN_MASK;
--	st->conf |= AD7192_CONF_CHAN(channel);
--
--	return ad_sd_write_reg(&st->sd, AD7192_REG_CONF, 3, st->conf);
--}
--
--static int ad7192_set_mode(struct ad_sigma_delta *sd,
--			   enum ad_sigma_delta_mode mode)
--{
--	struct ad7192_state *st = ad_sigma_delta_to_ad7192(sd);
--
--	st->mode &= ~AD7192_MODE_SEL_MASK;
--	st->mode |= AD7192_MODE_SEL(mode);
--
--	return ad_sd_write_reg(&st->sd, AD7192_REG_MODE, 3, st->mode);
--}
--
--static const struct ad_sigma_delta_info ad7192_sigma_delta_info = {
--	.set_channel = ad7192_set_channel,
--	.set_mode = ad7192_set_mode,
--	.has_registers = true,
--	.addr_shift = 3,
--	.read_mask = BIT(6),
--};
--
--static const struct ad_sd_calib_data ad7192_calib_arr[8] = {
--	{AD7192_MODE_CAL_INT_ZERO, AD7192_CH_AIN1},
--	{AD7192_MODE_CAL_INT_FULL, AD7192_CH_AIN1},
--	{AD7192_MODE_CAL_INT_ZERO, AD7192_CH_AIN2},
--	{AD7192_MODE_CAL_INT_FULL, AD7192_CH_AIN2},
--	{AD7192_MODE_CAL_INT_ZERO, AD7192_CH_AIN3},
--	{AD7192_MODE_CAL_INT_FULL, AD7192_CH_AIN3},
--	{AD7192_MODE_CAL_INT_ZERO, AD7192_CH_AIN4},
--	{AD7192_MODE_CAL_INT_FULL, AD7192_CH_AIN4}
--};
--
--static int ad7192_calibrate_all(struct ad7192_state *st)
--{
--	return ad_sd_calibrate_all(&st->sd, ad7192_calib_arr,
--				   ARRAY_SIZE(ad7192_calib_arr));
--}
--
--static inline bool ad7192_valid_external_frequency(u32 freq)
--{
--	return (freq >= AD7192_EXT_FREQ_MHZ_MIN &&
--		freq <= AD7192_EXT_FREQ_MHZ_MAX);
--}
--
--static int ad7192_of_clock_select(struct ad7192_state *st)
--{
--	struct device_node *np = st->sd.spi->dev.of_node;
--	unsigned int clock_sel;
--
--	clock_sel = AD7192_CLK_INT;
--
--	/* use internal clock */
--	if (PTR_ERR(st->mclk) == -ENOENT) {
--		if (of_property_read_bool(np, "adi,int-clock-output-enable"))
--			clock_sel = AD7192_CLK_INT_CO;
--	} else {
--		if (of_property_read_bool(np, "adi,clock-xtal"))
--			clock_sel = AD7192_CLK_EXT_MCLK1_2;
--		else
--			clock_sel = AD7192_CLK_EXT_MCLK2;
--	}
--
--	return clock_sel;
--}
--
--static int ad7192_setup(struct ad7192_state *st, struct device_node *np)
--{
--	struct iio_dev *indio_dev = spi_get_drvdata(st->sd.spi);
--	bool rej60_en, refin2_en;
--	bool buf_en, bipolar, burnout_curr_en;
--	unsigned long long scale_uv;
--	int i, ret, id;
--
--	/* reset the serial interface */
--	ret = ad_sd_reset(&st->sd, 48);
--	if (ret < 0)
--		return ret;
--	usleep_range(500, 1000); /* Wait for at least 500us */
--
--	/* write/read test for device presence */
--	ret = ad_sd_read_reg(&st->sd, AD7192_REG_ID, 1, &id);
--	if (ret)
--		return ret;
--
--	id &= AD7192_ID_MASK;
--
--	if (id != st->devid)
--		dev_warn(&st->sd.spi->dev, "device ID query failed (0x%X)\n",
--			 id);
--
--	st->mode = AD7192_MODE_SEL(AD7192_MODE_IDLE) |
--		AD7192_MODE_CLKSRC(st->clock_sel) |
--		AD7192_MODE_RATE(480);
--
--	st->conf = AD7192_CONF_GAIN(0);
--
--	rej60_en = of_property_read_bool(np, "adi,rejection-60-Hz-enable");
--	if (rej60_en)
--		st->mode |= AD7192_MODE_REJ60;
--
--	refin2_en = of_property_read_bool(np, "adi,refin2-pins-enable");
--	if (refin2_en && st->devid != ID_AD7195)
--		st->conf |= AD7192_CONF_REFSEL;
--
--	st->conf &= ~AD7192_CONF_CHOP;
--	st->f_order = AD7192_NO_SYNC_FILTER;
--
--	buf_en = of_property_read_bool(np, "adi,buffer-enable");
--	if (buf_en)
--		st->conf |= AD7192_CONF_BUF;
--
--	bipolar = of_property_read_bool(np, "bipolar");
--	if (!bipolar)
--		st->conf |= AD7192_CONF_UNIPOLAR;
--
--	burnout_curr_en = of_property_read_bool(np,
--						"adi,burnout-currents-enable");
--	if (burnout_curr_en && buf_en) {
--		st->conf |= AD7192_CONF_BURN;
--	} else if (burnout_curr_en) {
--		dev_warn(&st->sd.spi->dev,
--			 "Can't enable burnout currents: see CHOP or buffer\n");
--	}
--
--	ret = ad_sd_write_reg(&st->sd, AD7192_REG_MODE, 3, st->mode);
--	if (ret)
--		return ret;
--
--	ret = ad_sd_write_reg(&st->sd, AD7192_REG_CONF, 3, st->conf);
--	if (ret)
--		return ret;
--
--	ret = ad7192_calibrate_all(st);
--	if (ret)
--		return ret;
--
--	/* Populate available ADC input ranges */
--	for (i = 0; i < ARRAY_SIZE(st->scale_avail); i++) {
--		scale_uv = ((u64)st->int_vref_mv * 100000000)
--			>> (indio_dev->channels[0].scan_type.realbits -
--			((st->conf & AD7192_CONF_UNIPOLAR) ? 0 : 1));
--		scale_uv >>= i;
--
--		st->scale_avail[i][1] = do_div(scale_uv, 100000000) * 10;
--		st->scale_avail[i][0] = scale_uv;
--	}
--
--	return 0;
--}
--
--static ssize_t ad7192_show_ac_excitation(struct device *dev,
--					 struct device_attribute *attr,
--					 char *buf)
--{
--	struct iio_dev *indio_dev = dev_to_iio_dev(dev);
--	struct ad7192_state *st = iio_priv(indio_dev);
--
--	return sprintf(buf, "%d\n", !!(st->mode & AD7192_MODE_ACX));
--}
--
--static ssize_t ad7192_show_bridge_switch(struct device *dev,
--					 struct device_attribute *attr,
--					 char *buf)
--{
--	struct iio_dev *indio_dev = dev_to_iio_dev(dev);
--	struct ad7192_state *st = iio_priv(indio_dev);
--
--	return sprintf(buf, "%d\n", !!(st->gpocon & AD7192_GPOCON_BPDSW));
--}
--
--static ssize_t ad7192_set(struct device *dev,
--			  struct device_attribute *attr,
--			  const char *buf,
--			  size_t len)
--{
--	struct iio_dev *indio_dev = dev_to_iio_dev(dev);
--	struct ad7192_state *st = iio_priv(indio_dev);
--	struct iio_dev_attr *this_attr = to_iio_dev_attr(attr);
--	int ret;
--	bool val;
--
--	ret = strtobool(buf, &val);
--	if (ret < 0)
--		return ret;
--
--	ret = iio_device_claim_direct_mode(indio_dev);
--	if (ret)
--		return ret;
--
--	switch ((u32)this_attr->address) {
--	case AD7192_REG_GPOCON:
--		if (val)
--			st->gpocon |= AD7192_GPOCON_BPDSW;
--		else
--			st->gpocon &= ~AD7192_GPOCON_BPDSW;
--
--		ad_sd_write_reg(&st->sd, AD7192_REG_GPOCON, 1, st->gpocon);
--		break;
--	case AD7192_REG_MODE:
--		if (val)
--			st->mode |= AD7192_MODE_ACX;
--		else
--			st->mode &= ~AD7192_MODE_ACX;
--
--		ad_sd_write_reg(&st->sd, AD7192_REG_MODE, 3, st->mode);
--		break;
--	default:
--		ret = -EINVAL;
--	}
--
--	iio_device_release_direct_mode(indio_dev);
--
--	return ret ? ret : len;
--}
--
--static void ad7192_get_available_filter_freq(struct ad7192_state *st,
--						    int *freq)
--{
--	unsigned int fadc;
--
--	/* Formulas for filter at page 25 of the datasheet */
--	fadc = DIV_ROUND_CLOSEST(st->fclk,
--				 AD7192_SYNC4_FILTER * AD7192_MODE_RATE(st->mode));
--	freq[0] = DIV_ROUND_CLOSEST(fadc * 240, 1024);
--
--	fadc = DIV_ROUND_CLOSEST(st->fclk,
--				 AD7192_SYNC3_FILTER * AD7192_MODE_RATE(st->mode));
--	freq[1] = DIV_ROUND_CLOSEST(fadc * 240, 1024);
--
--	fadc = DIV_ROUND_CLOSEST(st->fclk, AD7192_MODE_RATE(st->mode));
--	freq[2] = DIV_ROUND_CLOSEST(fadc * 230, 1024);
--	freq[3] = DIV_ROUND_CLOSEST(fadc * 272, 1024);
--}
--
--static ssize_t ad7192_show_filter_avail(struct device *dev,
--					struct device_attribute *attr,
--					char *buf)
--{
--	struct iio_dev *indio_dev = dev_to_iio_dev(dev);
--	struct ad7192_state *st = iio_priv(indio_dev);
--	unsigned int freq_avail[4], i;
--	size_t len = 0;
--
--	ad7192_get_available_filter_freq(st, freq_avail);
--
--	for (i = 0; i < ARRAY_SIZE(freq_avail); i++)
--		len += scnprintf(buf + len, PAGE_SIZE - len,
--				 "%d.%d ", freq_avail[i] / 1000,
--				 freq_avail[i] % 1000);
--
--	buf[len - 1] = '\n';
--
--	return len;
--}
--
--static IIO_DEVICE_ATTR(filter_low_pass_3db_frequency_available,
--		       0444, ad7192_show_filter_avail, NULL, 0);
--
--static IIO_DEVICE_ATTR(bridge_switch_en, 0644,
--		       ad7192_show_bridge_switch, ad7192_set,
--		       AD7192_REG_GPOCON);
--
--static IIO_DEVICE_ATTR(ac_excitation_en, 0644,
--		       ad7192_show_ac_excitation, ad7192_set,
--		       AD7192_REG_MODE);
--
--static struct attribute *ad7192_attributes[] = {
--	&iio_dev_attr_filter_low_pass_3db_frequency_available.dev_attr.attr,
--	&iio_dev_attr_bridge_switch_en.dev_attr.attr,
--	&iio_dev_attr_ac_excitation_en.dev_attr.attr,
--	NULL
--};
--
--static const struct attribute_group ad7192_attribute_group = {
--	.attrs = ad7192_attributes,
--};
--
--static struct attribute *ad7195_attributes[] = {
--	&iio_dev_attr_filter_low_pass_3db_frequency_available.dev_attr.attr,
--	&iio_dev_attr_bridge_switch_en.dev_attr.attr,
--	NULL
--};
--
--static const struct attribute_group ad7195_attribute_group = {
--	.attrs = ad7195_attributes,
--};
--
--static unsigned int ad7192_get_temp_scale(bool unipolar)
--{
--	return unipolar ? 2815 * 2 : 2815;
--}
--
--static int ad7192_set_3db_filter_freq(struct ad7192_state *st,
--				      int val, int val2)
--{
--	int freq_avail[4], i, ret, freq;
--	unsigned int diff_new, diff_old;
--	int idx = 0;
--
--	diff_old = U32_MAX;
--	freq = val * 1000 + val2;
--
--	ad7192_get_available_filter_freq(st, freq_avail);
--
--	for (i = 0; i < ARRAY_SIZE(freq_avail); i++) {
--		diff_new = abs(freq - freq_avail[i]);
--		if (diff_new < diff_old) {
--			diff_old = diff_new;
--			idx = i;
--		}
--	}
--
--	switch (idx) {
--	case 0:
--		st->f_order = AD7192_SYNC4_FILTER;
--		st->mode &= ~AD7192_MODE_SINC3;
--
--		st->conf |= AD7192_CONF_CHOP;
--		break;
--	case 1:
--		st->f_order = AD7192_SYNC3_FILTER;
--		st->mode |= AD7192_MODE_SINC3;
--
--		st->conf |= AD7192_CONF_CHOP;
--		break;
--	case 2:
--		st->f_order = AD7192_NO_SYNC_FILTER;
--		st->mode &= ~AD7192_MODE_SINC3;
--
--		st->conf &= ~AD7192_CONF_CHOP;
--		break;
--	case 3:
--		st->f_order = AD7192_NO_SYNC_FILTER;
--		st->mode |= AD7192_MODE_SINC3;
--
--		st->conf &= ~AD7192_CONF_CHOP;
--		break;
--	}
--
--	ret = ad_sd_write_reg(&st->sd, AD7192_REG_MODE, 3, st->mode);
--	if (ret < 0)
--		return ret;
--
--	return ad_sd_write_reg(&st->sd, AD7192_REG_CONF, 3, st->conf);
--}
--
--static int ad7192_get_3db_filter_freq(struct ad7192_state *st)
--{
--	unsigned int fadc;
--
--	fadc = DIV_ROUND_CLOSEST(st->fclk,
--				 st->f_order * AD7192_MODE_RATE(st->mode));
--
--	if (st->conf & AD7192_CONF_CHOP)
--		return DIV_ROUND_CLOSEST(fadc * 240, 1024);
--	if (st->mode & AD7192_MODE_SINC3)
--		return DIV_ROUND_CLOSEST(fadc * 272, 1024);
--	else
--		return DIV_ROUND_CLOSEST(fadc * 230, 1024);
--}
--
--static int ad7192_read_raw(struct iio_dev *indio_dev,
--			   struct iio_chan_spec const *chan,
--			   int *val,
--			   int *val2,
--			   long m)
--{
--	struct ad7192_state *st = iio_priv(indio_dev);
--	bool unipolar = !!(st->conf & AD7192_CONF_UNIPOLAR);
--
--	switch (m) {
--	case IIO_CHAN_INFO_RAW:
--		return ad_sigma_delta_single_conversion(indio_dev, chan, val);
--	case IIO_CHAN_INFO_SCALE:
--		switch (chan->type) {
--		case IIO_VOLTAGE:
--			mutex_lock(&st->lock);
--			*val = st->scale_avail[AD7192_CONF_GAIN(st->conf)][0];
--			*val2 = st->scale_avail[AD7192_CONF_GAIN(st->conf)][1];
--			mutex_unlock(&st->lock);
--			return IIO_VAL_INT_PLUS_NANO;
--		case IIO_TEMP:
--			*val = 0;
--			*val2 = 1000000000 / ad7192_get_temp_scale(unipolar);
--			return IIO_VAL_INT_PLUS_NANO;
--		default:
--			return -EINVAL;
--		}
--	case IIO_CHAN_INFO_OFFSET:
--		if (!unipolar)
--			*val = -(1 << (chan->scan_type.realbits - 1));
--		else
--			*val = 0;
--		/* Kelvin to Celsius */
--		if (chan->type == IIO_TEMP)
--			*val -= 273 * ad7192_get_temp_scale(unipolar);
--		return IIO_VAL_INT;
--	case IIO_CHAN_INFO_SAMP_FREQ:
--		*val = st->fclk /
--			(st->f_order * 1024 * AD7192_MODE_RATE(st->mode));
--		return IIO_VAL_INT;
--	case IIO_CHAN_INFO_LOW_PASS_FILTER_3DB_FREQUENCY:
--		*val = ad7192_get_3db_filter_freq(st);
--		*val2 = 1000;
--		return IIO_VAL_FRACTIONAL;
--	}
--
--	return -EINVAL;
--}
--
--static int ad7192_write_raw(struct iio_dev *indio_dev,
--			    struct iio_chan_spec const *chan,
--			    int val,
--			    int val2,
--			    long mask)
--{
--	struct ad7192_state *st = iio_priv(indio_dev);
--	int ret, i, div;
--	unsigned int tmp;
--
--	ret = iio_device_claim_direct_mode(indio_dev);
--	if (ret)
--		return ret;
--
--	switch (mask) {
--	case IIO_CHAN_INFO_SCALE:
--		ret = -EINVAL;
--		mutex_lock(&st->lock);
--		for (i = 0; i < ARRAY_SIZE(st->scale_avail); i++)
--			if (val2 == st->scale_avail[i][1]) {
--				ret = 0;
--				tmp = st->conf;
--				st->conf &= ~AD7192_CONF_GAIN(-1);
--				st->conf |= AD7192_CONF_GAIN(i);
--				if (tmp == st->conf)
--					break;
--				ad_sd_write_reg(&st->sd, AD7192_REG_CONF,
--						3, st->conf);
--				ad7192_calibrate_all(st);
--				break;
--			}
--		mutex_unlock(&st->lock);
--		break;
--	case IIO_CHAN_INFO_SAMP_FREQ:
--		if (!val) {
--			ret = -EINVAL;
--			break;
--		}
--
--		div = st->fclk / (val * st->f_order * 1024);
--		if (div < 1 || div > 1023) {
--			ret = -EINVAL;
--			break;
--		}
--
--		st->mode &= ~AD7192_MODE_RATE(-1);
--		st->mode |= AD7192_MODE_RATE(div);
--		ad_sd_write_reg(&st->sd, AD7192_REG_MODE, 3, st->mode);
--		break;
--	case IIO_CHAN_INFO_LOW_PASS_FILTER_3DB_FREQUENCY:
--		ret = ad7192_set_3db_filter_freq(st, val, val2 / 1000);
--		break;
--	default:
--		ret = -EINVAL;
--	}
--
--	iio_device_release_direct_mode(indio_dev);
--
--	return ret;
--}
--
--static int ad7192_write_raw_get_fmt(struct iio_dev *indio_dev,
--				    struct iio_chan_spec const *chan,
--				    long mask)
--{
--	switch (mask) {
--	case IIO_CHAN_INFO_SCALE:
--		return IIO_VAL_INT_PLUS_NANO;
--	case IIO_CHAN_INFO_SAMP_FREQ:
--		return IIO_VAL_INT;
--	case IIO_CHAN_INFO_LOW_PASS_FILTER_3DB_FREQUENCY:
--		return IIO_VAL_INT_PLUS_MICRO;
--	default:
--		return -EINVAL;
--	}
--}
--
--static int ad7192_read_avail(struct iio_dev *indio_dev,
--			     struct iio_chan_spec const *chan,
--			     const int **vals, int *type, int *length,
--			     long mask)
--{
--	struct ad7192_state *st = iio_priv(indio_dev);
--
--	switch (mask) {
--	case IIO_CHAN_INFO_SCALE:
--		*vals = (int *)st->scale_avail;
--		*type = IIO_VAL_INT_PLUS_NANO;
--		/* Values are stored in a 2D matrix  */
--		*length = ARRAY_SIZE(st->scale_avail) * 2;
--
--		return IIO_AVAIL_LIST;
--	}
--
--	return -EINVAL;
--}
--
--static const struct iio_info ad7192_info = {
--	.read_raw = ad7192_read_raw,
--	.write_raw = ad7192_write_raw,
--	.write_raw_get_fmt = ad7192_write_raw_get_fmt,
--	.read_avail = ad7192_read_avail,
--	.attrs = &ad7192_attribute_group,
--	.validate_trigger = ad_sd_validate_trigger,
--};
--
--static const struct iio_info ad7195_info = {
--	.read_raw = ad7192_read_raw,
--	.write_raw = ad7192_write_raw,
--	.write_raw_get_fmt = ad7192_write_raw_get_fmt,
--	.read_avail = ad7192_read_avail,
--	.attrs = &ad7195_attribute_group,
--	.validate_trigger = ad_sd_validate_trigger,
--};
--
--static const struct iio_chan_spec ad7192_channels[] = {
--	AD_SD_DIFF_CHANNEL(0, 1, 2, AD7192_CH_AIN1P_AIN2M, 24, 32, 0),
--	AD_SD_DIFF_CHANNEL(1, 3, 4, AD7192_CH_AIN3P_AIN4M, 24, 32, 0),
--	AD_SD_TEMP_CHANNEL(2, AD7192_CH_TEMP, 24, 32, 0),
--	AD_SD_SHORTED_CHANNEL(3, 2, AD7192_CH_AIN2P_AIN2M, 24, 32, 0),
--	AD_SD_CHANNEL(4, 1, AD7192_CH_AIN1, 24, 32, 0),
--	AD_SD_CHANNEL(5, 2, AD7192_CH_AIN2, 24, 32, 0),
--	AD_SD_CHANNEL(6, 3, AD7192_CH_AIN3, 24, 32, 0),
--	AD_SD_CHANNEL(7, 4, AD7192_CH_AIN4, 24, 32, 0),
--	IIO_CHAN_SOFT_TIMESTAMP(8),
--};
--
--static const struct iio_chan_spec ad7193_channels[] = {
--	AD_SD_DIFF_CHANNEL(0, 1, 2, AD7193_CH_AIN1P_AIN2M, 24, 32, 0),
--	AD_SD_DIFF_CHANNEL(1, 3, 4, AD7193_CH_AIN3P_AIN4M, 24, 32, 0),
--	AD_SD_DIFF_CHANNEL(2, 5, 6, AD7193_CH_AIN5P_AIN6M, 24, 32, 0),
--	AD_SD_DIFF_CHANNEL(3, 7, 8, AD7193_CH_AIN7P_AIN8M, 24, 32, 0),
--	AD_SD_TEMP_CHANNEL(4, AD7193_CH_TEMP, 24, 32, 0),
--	AD_SD_SHORTED_CHANNEL(5, 2, AD7193_CH_AIN2P_AIN2M, 24, 32, 0),
--	AD_SD_CHANNEL(6, 1, AD7193_CH_AIN1, 24, 32, 0),
--	AD_SD_CHANNEL(7, 2, AD7193_CH_AIN2, 24, 32, 0),
--	AD_SD_CHANNEL(8, 3, AD7193_CH_AIN3, 24, 32, 0),
--	AD_SD_CHANNEL(9, 4, AD7193_CH_AIN4, 24, 32, 0),
--	AD_SD_CHANNEL(10, 5, AD7193_CH_AIN5, 24, 32, 0),
--	AD_SD_CHANNEL(11, 6, AD7193_CH_AIN6, 24, 32, 0),
--	AD_SD_CHANNEL(12, 7, AD7193_CH_AIN7, 24, 32, 0),
--	AD_SD_CHANNEL(13, 8, AD7193_CH_AIN8, 24, 32, 0),
--	IIO_CHAN_SOFT_TIMESTAMP(14),
--};
--
--static int ad7192_channels_config(struct iio_dev *indio_dev)
--{
--	struct ad7192_state *st = iio_priv(indio_dev);
--	const struct iio_chan_spec *channels;
--	struct iio_chan_spec *chan;
--	int i;
--
--	switch (st->devid) {
--	case ID_AD7193:
--		channels = ad7193_channels;
--		indio_dev->num_channels = ARRAY_SIZE(ad7193_channels);
--		break;
--	default:
--		channels = ad7192_channels;
--		indio_dev->num_channels = ARRAY_SIZE(ad7192_channels);
--		break;
--	}
--
--	chan = devm_kcalloc(indio_dev->dev.parent, indio_dev->num_channels,
--			    sizeof(*chan), GFP_KERNEL);
--	if (!chan)
--		return -ENOMEM;
--
--	indio_dev->channels = chan;
--
--	for (i = 0; i < indio_dev->num_channels; i++) {
--		*chan = channels[i];
--		chan->info_mask_shared_by_all |=
--			BIT(IIO_CHAN_INFO_LOW_PASS_FILTER_3DB_FREQUENCY);
--		if (chan->type != IIO_TEMP) {
--			chan->info_mask_shared_by_type_available |=
--				BIT(IIO_CHAN_INFO_SCALE);
--			chan->ext_info = ad7192_calibsys_ext_info;
--		}
--		chan++;
--	}
--
--	return 0;
--}
--
--static int ad7192_probe(struct spi_device *spi)
--{
--	struct ad7192_state *st;
--	struct iio_dev *indio_dev;
--	int ret, voltage_uv = 0;
--
--	if (!spi->irq) {
--		dev_err(&spi->dev, "no IRQ?\n");
--		return -ENODEV;
--	}
--
--	indio_dev = devm_iio_device_alloc(&spi->dev, sizeof(*st));
--	if (!indio_dev)
--		return -ENOMEM;
--
--	st = iio_priv(indio_dev);
--
--	mutex_init(&st->lock);
--
--	st->avdd = devm_regulator_get(&spi->dev, "avdd");
--	if (IS_ERR(st->avdd))
--		return PTR_ERR(st->avdd);
--
--	ret = regulator_enable(st->avdd);
--	if (ret) {
--		dev_err(&spi->dev, "Failed to enable specified AVdd supply\n");
--		return ret;
--	}
--
--	st->dvdd = devm_regulator_get(&spi->dev, "dvdd");
--	if (IS_ERR(st->dvdd)) {
--		ret = PTR_ERR(st->dvdd);
--		goto error_disable_avdd;
--	}
--
--	ret = regulator_enable(st->dvdd);
--	if (ret) {
--		dev_err(&spi->dev, "Failed to enable specified DVdd supply\n");
--		goto error_disable_avdd;
--	}
--
--	voltage_uv = regulator_get_voltage(st->avdd);
--
--	if (voltage_uv)
--		st->int_vref_mv = voltage_uv / 1000;
--	else
--		dev_err(&spi->dev, "Device tree error, reference voltage undefined\n");
--
--	spi_set_drvdata(spi, indio_dev);
--	st->devid = spi_get_device_id(spi)->driver_data;
--	indio_dev->dev.parent = &spi->dev;
--	indio_dev->name = spi_get_device_id(spi)->name;
--	indio_dev->modes = INDIO_DIRECT_MODE;
--
--	ret = ad7192_channels_config(indio_dev);
--	if (ret < 0)
--		goto error_disable_dvdd;
--
--	if (st->devid == ID_AD7195)
--		indio_dev->info = &ad7195_info;
--	else
--		indio_dev->info = &ad7192_info;
--
--	ad_sd_init(&st->sd, indio_dev, spi, &ad7192_sigma_delta_info);
--
--	ret = ad_sd_setup_buffer_and_trigger(indio_dev);
--	if (ret)
--		goto error_disable_dvdd;
--
--	st->fclk = AD7192_INT_FREQ_MHZ;
--
--	st->mclk = devm_clk_get(&st->sd.spi->dev, "mclk");
--	if (IS_ERR(st->mclk) && PTR_ERR(st->mclk) != -ENOENT) {
--		ret = PTR_ERR(st->mclk);
--		goto error_remove_trigger;
--	}
--
--	st->clock_sel = ad7192_of_clock_select(st);
--
--	if (st->clock_sel == AD7192_CLK_EXT_MCLK1_2 ||
--	    st->clock_sel == AD7192_CLK_EXT_MCLK2) {
--		ret = clk_prepare_enable(st->mclk);
--		if (ret < 0)
--			goto error_remove_trigger;
--
--		st->fclk = clk_get_rate(st->mclk);
--		if (!ad7192_valid_external_frequency(st->fclk)) {
--			ret = -EINVAL;
--			dev_err(&spi->dev,
--				"External clock frequency out of bounds\n");
--			goto error_disable_clk;
--		}
--	}
--
--	ret = ad7192_setup(st, spi->dev.of_node);
--	if (ret)
--		goto error_disable_clk;
--
--	ret = iio_device_register(indio_dev);
--	if (ret < 0)
--		goto error_disable_clk;
--	return 0;
--
--error_disable_clk:
--	clk_disable_unprepare(st->mclk);
--error_remove_trigger:
--	ad_sd_cleanup_buffer_and_trigger(indio_dev);
--error_disable_dvdd:
--	regulator_disable(st->dvdd);
--error_disable_avdd:
--	regulator_disable(st->avdd);
--
--	return ret;
--}
--
--static int ad7192_remove(struct spi_device *spi)
--{
--	struct iio_dev *indio_dev = spi_get_drvdata(spi);
--	struct ad7192_state *st = iio_priv(indio_dev);
--
--	iio_device_unregister(indio_dev);
--	clk_disable_unprepare(st->mclk);
--	ad_sd_cleanup_buffer_and_trigger(indio_dev);
--
--	regulator_disable(st->dvdd);
--	regulator_disable(st->avdd);
--
--	return 0;
--}
--
--static const struct spi_device_id ad7192_id[] = {
--	{"ad7190", ID_AD7190},
--	{"ad7192", ID_AD7192},
--	{"ad7193", ID_AD7193},
--	{"ad7195", ID_AD7195},
--	{}
--};
--
--MODULE_DEVICE_TABLE(spi, ad7192_id);
--
--static const struct of_device_id ad7192_of_match[] = {
--	{ .compatible = "adi,ad7190" },
--	{ .compatible = "adi,ad7192" },
--	{ .compatible = "adi,ad7193" },
--	{ .compatible = "adi,ad7195" },
--	{}
--};
--
--MODULE_DEVICE_TABLE(of, ad7192_of_match);
--
--static struct spi_driver ad7192_driver = {
--	.driver = {
--		.name	= "ad7192",
--		.of_match_table = ad7192_of_match,
--	},
--	.probe		= ad7192_probe,
--	.remove		= ad7192_remove,
--	.id_table	= ad7192_id,
--};
--module_spi_driver(ad7192_driver);
--
--MODULE_AUTHOR("Michael Hennerich <michael.hennerich@analog.com>");
--MODULE_DESCRIPTION("Analog Devices AD7190, AD7192, AD7193, AD7195 ADC");
--MODULE_LICENSE("GPL v2");
--- 
-2.20.1
+I was wondering if it's feasible to get this reviewed and merged
+during the upcoming merge window? This patch is the only piece missing
+to enable USB fuzzing for Android common kernels on syzbot.
 
+Thanks!
+
+>
+>  Documentation/usb/index.rst            |    1 +
+>  Documentation/usb/raw-gadget.rst       |   59 ++
+>  drivers/usb/gadget/legacy/Kconfig      |   11 +
+>  drivers/usb/gadget/legacy/Makefile     |    1 +
+>  drivers/usb/gadget/legacy/raw_gadget.c | 1068 ++++++++++++++++++++++++
+>  include/uapi/linux/usb/raw_gadget.h    |  167 ++++
+>  6 files changed, 1307 insertions(+)
+>  create mode 100644 Documentation/usb/raw-gadget.rst
+>  create mode 100644 drivers/usb/gadget/legacy/raw_gadget.c
+>  create mode 100644 include/uapi/linux/usb/raw_gadget.h
+>
+> diff --git a/Documentation/usb/index.rst b/Documentation/usb/index.rst
+> index e55386a4abfb..90310e2a0c1f 100644
+> --- a/Documentation/usb/index.rst
+> +++ b/Documentation/usb/index.rst
+> @@ -22,6 +22,7 @@ USB support
+>      misc_usbsevseg
+>      mtouchusb
+>      ohci
+> +    raw-gadget
+>      rio
+>      usbip_protocol
+>      usbmon
+> diff --git a/Documentation/usb/raw-gadget.rst b/Documentation/usb/raw-gadget.rst
+> new file mode 100644
+> index 000000000000..cbedf5451ed3
+> --- /dev/null
+> +++ b/Documentation/usb/raw-gadget.rst
+> @@ -0,0 +1,59 @@
+> +==============
+> +USB Raw Gadget
+> +==============
+> +
+> +USB Raw Gadget is a kernel module that provides a userspace interface for
+> +the USB Gadget subsystem. Essentially it allows to emulate USB devices
+> +from userspace. Enabled with CONFIG_USB_RAW_GADGET. Raw Gadget is
+> +currently a strictly debugging feature and shouldn't be used in
+> +production, use GadgetFS instead.
+> +
+> +Comparison to GadgetFS
+> +~~~~~~~~~~~~~~~~~~~~~~
+> +
+> +Raw Gadget is similar to GadgetFS, but provides a more low-level and
+> +direct access to the USB Gadget layer for the userspace. The key
+> +differences are:
+> +
+> +1. Every USB request is passed to the userspace to get a response, while
+> +   GadgetFS responds to some USB requests internally based on the provided
+> +   descriptors. However note, that the UDC driver might respond to some
+> +   requests on its own and never forward them to the Gadget layer.
+> +
+> +2. GadgetFS performs some sanity checks on the provided USB descriptors,
+> +   while Raw Gadget allows you to provide arbitrary data as responses to
+> +   USB requests.
+> +
+> +3. Raw Gadget provides a way to select a UDC device/driver to bind to,
+> +   while GadgetFS currently binds to the first available UDC.
+> +
+> +4. Raw Gadget uses predictable endpoint names (handles) across different
+> +   UDCs (as long as UDCs have enough endpoints of each required transfer
+> +   type).
+> +
+> +5. Raw Gadget has ioctl-based interface instead of a filesystem-based one.
+> +
+> +Userspace interface
+> +~~~~~~~~~~~~~~~~~~~
+> +
+> +To create a Raw Gadget instance open /dev/raw-gadget. Multiple raw-gadget
+> +instances (bound to different UDCs) can be used at the same time. The
+> +interaction with the opened file happens through the ioctl() calls, see
+> +comments in include/uapi/linux/usb/raw_gadget.h for details.
+> +
+> +The typical usage of Raw Gadget looks like:
+> +
+> +1. Open Raw Gadget instance via /dev/raw-gadget.
+> +2. Initialize the instance via USB_RAW_IOCTL_INIT.
+> +3. Launch the instance with USB_RAW_IOCTL_RUN.
+> +4. In a loop issue USB_RAW_IOCTL_EVENT_FETCH calls to receive events from
+> +   Raw Gadget and react to those depending on what kind of USB device
+> +   needs to be emulated.
+> +
+> +Potential future improvements
+> +~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+> +
+> +- Implement ioctl's for setting/clearing halt status on endpoints.
+> +
+> +- Reporting more events (suspend, resume, etc.) through
+> +  USB_RAW_IOCTL_EVENT_FETCH.
+> diff --git a/drivers/usb/gadget/legacy/Kconfig b/drivers/usb/gadget/legacy/Kconfig
+> index 119a4e47681f..55e495f5d103 100644
+> --- a/drivers/usb/gadget/legacy/Kconfig
+> +++ b/drivers/usb/gadget/legacy/Kconfig
+> @@ -489,3 +489,14 @@ config USB_G_WEBCAM
+>
+>           Say "y" to link the driver statically, or "m" to build a
+>           dynamically linked module called "g_webcam".
+> +
+> +config USB_RAW_GADGET
+> +       tristate "USB Raw Gadget"
+> +       help
+> +         USB Raw Gadget is a kernel module that provides a userspace interface
+> +         for the USB Gadget subsystem. Essentially it allows to emulate USB
+> +         devices from userspace. See Documentation/usb/raw-gadget.rst for
+> +         details.
+> +
+> +         Say "y" to link the driver statically, or "m" to build a
+> +         dynamically linked module called "raw_gadget".
+> diff --git a/drivers/usb/gadget/legacy/Makefile b/drivers/usb/gadget/legacy/Makefile
+> index abd0c3e66a05..4d864bf82799 100644
+> --- a/drivers/usb/gadget/legacy/Makefile
+> +++ b/drivers/usb/gadget/legacy/Makefile
+> @@ -43,3 +43,4 @@ obj-$(CONFIG_USB_G_WEBCAM)    += g_webcam.o
+>  obj-$(CONFIG_USB_G_NCM)                += g_ncm.o
+>  obj-$(CONFIG_USB_G_ACM_MS)     += g_acm_ms.o
+>  obj-$(CONFIG_USB_GADGET_TARGET)        += tcm_usb_gadget.o
+> +obj-$(CONFIG_USB_RAW_GADGET)   += raw_gadget.o
+> diff --git a/drivers/usb/gadget/legacy/raw_gadget.c b/drivers/usb/gadget/legacy/raw_gadget.c
+> new file mode 100644
+> index 000000000000..51796af48069
+> --- /dev/null
+> +++ b/drivers/usb/gadget/legacy/raw_gadget.c
+> @@ -0,0 +1,1068 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * USB Raw Gadget driver.
+> + * See Documentation/usb/raw-gadget.rst for more details.
+> + *
+> + * Andrey Konovalov <andreyknvl@gmail.com>
+> + */
+> +
+> +#include <linux/compiler.h>
+> +#include <linux/debugfs.h>
+> +#include <linux/delay.h>
+> +#include <linux/kref.h>
+> +#include <linux/miscdevice.h>
+> +#include <linux/module.h>
+> +#include <linux/semaphore.h>
+> +#include <linux/sched.h>
+> +#include <linux/slab.h>
+> +#include <linux/uaccess.h>
+> +#include <linux/wait.h>
+> +
+> +#include <linux/usb.h>
+> +#include <linux/usb/ch9.h>
+> +#include <linux/usb/ch11.h>
+> +#include <linux/usb/gadget.h>
+> +
+> +#include <uapi/linux/usb/raw_gadget.h>
+> +
+> +#define        DRIVER_DESC "USB Raw Gadget"
+> +#define DRIVER_NAME "raw-gadget"
+> +
+> +MODULE_DESCRIPTION(DRIVER_DESC);
+> +MODULE_AUTHOR("Andrey Konovalov");
+> +MODULE_LICENSE("GPL");
+> +
+> +/*----------------------------------------------------------------------*/
+> +
+> +#define RAW_EVENT_QUEUE_SIZE   128
+> +
+> +struct raw_event_queue {
+> +       /* See the comment in raw_event_queue_fetch() for locking details. */
+> +       spinlock_t              lock;
+> +       struct semaphore        sema;
+> +       struct usb_raw_event    *events[RAW_EVENT_QUEUE_SIZE];
+> +       int                     size;
+> +};
+> +
+> +static void raw_event_queue_init(struct raw_event_queue *queue)
+> +{
+> +       spin_lock_init(&queue->lock);
+> +       sema_init(&queue->sema, 0);
+> +       queue->size = 0;
+> +}
+> +
+> +static int raw_event_queue_add(struct raw_event_queue *queue,
+> +       enum usb_raw_event_type type, size_t length, const void *data)
+> +{
+> +       unsigned long flags;
+> +       struct usb_raw_event *event;
+> +
+> +       spin_lock_irqsave(&queue->lock, flags);
+> +       if (WARN_ON(queue->size >= RAW_EVENT_QUEUE_SIZE)) {
+> +               spin_unlock_irqrestore(&queue->lock, flags);
+> +               return -ENOMEM;
+> +       }
+> +       event = kmalloc(sizeof(*event) + length, GFP_ATOMIC);
+> +       if (!event) {
+> +               spin_unlock_irqrestore(&queue->lock, flags);
+> +               return -ENOMEM;
+> +       }
+> +       event->type = type;
+> +       event->length = length;
+> +       if (event->length)
+> +               memcpy(&event->data[0], data, length);
+> +       queue->events[queue->size] = event;
+> +       queue->size++;
+> +       up(&queue->sema);
+> +       spin_unlock_irqrestore(&queue->lock, flags);
+> +       return 0;
+> +}
+> +
+> +static struct usb_raw_event *raw_event_queue_fetch(
+> +                               struct raw_event_queue *queue)
+> +{
+> +       unsigned long flags;
+> +       struct usb_raw_event *event;
+> +
+> +       /*
+> +        * This function can be called concurrently. We first check that
+> +        * there's at least one event queued by decrementing the semaphore,
+> +        * and then take the lock to protect queue struct fields.
+> +        */
+> +       if (down_interruptible(&queue->sema))
+> +               return NULL;
+> +       spin_lock_irqsave(&queue->lock, flags);
+> +       if (WARN_ON(!queue->size))
+> +               return NULL;
+> +       event = queue->events[0];
+> +       queue->size--;
+> +       memmove(&queue->events[0], &queue->events[1],
+> +                       queue->size * sizeof(queue->events[0]));
+> +       spin_unlock_irqrestore(&queue->lock, flags);
+> +       return event;
+> +}
+> +
+> +static void raw_event_queue_destroy(struct raw_event_queue *queue)
+> +{
+> +       int i;
+> +
+> +       for (i = 0; i < queue->size; i++)
+> +               kfree(queue->events[i]);
+> +       queue->size = 0;
+> +}
+> +
+> +/*----------------------------------------------------------------------*/
+> +
+> +struct raw_dev;
+> +
+> +#define USB_RAW_MAX_ENDPOINTS 32
+> +
+> +enum ep_state {
+> +       STATE_EP_DISABLED,
+> +       STATE_EP_ENABLED,
+> +};
+> +
+> +struct raw_ep {
+> +       struct raw_dev          *dev;
+> +       enum ep_state           state;
+> +       struct usb_ep           *ep;
+> +       struct usb_request      *req;
+> +       bool                    urb_queued;
+> +       bool                    disabling;
+> +       ssize_t                 status;
+> +};
+> +
+> +enum dev_state {
+> +       STATE_DEV_INVALID = 0,
+> +       STATE_DEV_OPENED,
+> +       STATE_DEV_INITIALIZED,
+> +       STATE_DEV_RUNNING,
+> +       STATE_DEV_CLOSED,
+> +       STATE_DEV_FAILED
+> +};
+> +
+> +struct raw_dev {
+> +       struct kref                     count;
+> +       spinlock_t                      lock;
+> +
+> +       const char                      *udc_name;
+> +       struct usb_gadget_driver        driver;
+> +
+> +       /* Reference to misc device: */
+> +       struct device                   *dev;
+> +
+> +       /* Protected by lock: */
+> +       enum dev_state                  state;
+> +       bool                            gadget_registered;
+> +       struct usb_gadget               *gadget;
+> +       struct usb_request              *req;
+> +       bool                            ep0_in_pending;
+> +       bool                            ep0_out_pending;
+> +       bool                            ep0_urb_queued;
+> +       ssize_t                         ep0_status;
+> +       struct raw_ep                   eps[USB_RAW_MAX_ENDPOINTS];
+> +
+> +       struct completion               ep0_done;
+> +       struct raw_event_queue          queue;
+> +};
+> +
+> +static struct raw_dev *dev_new(void)
+> +{
+> +       struct raw_dev *dev;
+> +
+> +       dev = kzalloc(sizeof(*dev), GFP_KERNEL);
+> +       if (!dev)
+> +               return NULL;
+> +       /* Matches kref_put() in raw_release(). */
+> +       kref_init(&dev->count);
+> +       spin_lock_init(&dev->lock);
+> +       init_completion(&dev->ep0_done);
+> +       raw_event_queue_init(&dev->queue);
+> +       return dev;
+> +}
+> +
+> +static void dev_free(struct kref *kref)
+> +{
+> +       struct raw_dev *dev = container_of(kref, struct raw_dev, count);
+> +       int i;
+> +
+> +       kfree(dev->udc_name);
+> +       kfree(dev->driver.udc_name);
+> +       if (dev->req) {
+> +               if (dev->ep0_urb_queued)
+> +                       usb_ep_dequeue(dev->gadget->ep0, dev->req);
+> +               usb_ep_free_request(dev->gadget->ep0, dev->req);
+> +       }
+> +       raw_event_queue_destroy(&dev->queue);
+> +       for (i = 0; i < USB_RAW_MAX_ENDPOINTS; i++) {
+> +               if (dev->eps[i].state != STATE_EP_ENABLED)
+> +                       continue;
+> +               usb_ep_disable(dev->eps[i].ep);
+> +               usb_ep_free_request(dev->eps[i].ep, dev->eps[i].req);
+> +               kfree(dev->eps[i].ep->desc);
+> +               dev->eps[i].state = STATE_EP_DISABLED;
+> +       }
+> +       kfree(dev);
+> +}
+> +
+> +/*----------------------------------------------------------------------*/
+> +
+> +static int raw_queue_event(struct raw_dev *dev,
+> +       enum usb_raw_event_type type, size_t length, const void *data)
+> +{
+> +       int ret = 0;
+> +       unsigned long flags;
+> +
+> +       ret = raw_event_queue_add(&dev->queue, type, length, data);
+> +       if (ret < 0) {
+> +               spin_lock_irqsave(&dev->lock, flags);
+> +               dev->state = STATE_DEV_FAILED;
+> +               spin_unlock_irqrestore(&dev->lock, flags);
+> +       }
+> +       return ret;
+> +}
+> +
+> +static void gadget_ep0_complete(struct usb_ep *ep, struct usb_request *req)
+> +{
+> +       struct raw_dev *dev = req->context;
+> +       unsigned long flags;
+> +
+> +       spin_lock_irqsave(&dev->lock, flags);
+> +       if (req->status)
+> +               dev->ep0_status = req->status;
+> +       else
+> +               dev->ep0_status = req->actual;
+> +       if (dev->ep0_in_pending)
+> +               dev->ep0_in_pending = false;
+> +       else
+> +               dev->ep0_out_pending = false;
+> +       spin_unlock_irqrestore(&dev->lock, flags);
+> +
+> +       complete(&dev->ep0_done);
+> +}
+> +
+> +static int gadget_bind(struct usb_gadget *gadget,
+> +                       struct usb_gadget_driver *driver)
+> +{
+> +       int ret = 0;
+> +       struct raw_dev *dev = container_of(driver, struct raw_dev, driver);
+> +       struct usb_request *req;
+> +       unsigned long flags;
+> +
+> +       if (strcmp(gadget->name, dev->udc_name) != 0)
+> +               return -ENODEV;
+> +
+> +       set_gadget_data(gadget, dev);
+> +       req = usb_ep_alloc_request(gadget->ep0, GFP_KERNEL);
+> +       if (!req) {
+> +               dev_err(&gadget->dev, "usb_ep_alloc_request failed\n");
+> +               set_gadget_data(gadget, NULL);
+> +               return -ENOMEM;
+> +       }
+> +
+> +       spin_lock_irqsave(&dev->lock, flags);
+> +       dev->req = req;
+> +       dev->req->context = dev;
+> +       dev->req->complete = gadget_ep0_complete;
+> +       dev->gadget = gadget;
+> +       spin_unlock_irqrestore(&dev->lock, flags);
+> +
+> +       /* Matches kref_put() in gadget_unbind(). */
+> +       kref_get(&dev->count);
+> +
+> +       ret = raw_queue_event(dev, USB_RAW_EVENT_CONNECT, 0, NULL);
+> +       if (ret < 0)
+> +               dev_err(&gadget->dev, "failed to queue event\n");
+> +
+> +       return ret;
+> +}
+> +
+> +static void gadget_unbind(struct usb_gadget *gadget)
+> +{
+> +       struct raw_dev *dev = get_gadget_data(gadget);
+> +
+> +       set_gadget_data(gadget, NULL);
+> +       /* Matches kref_get() in gadget_bind(). */
+> +       kref_put(&dev->count, dev_free);
+> +}
+> +
+> +static int gadget_setup(struct usb_gadget *gadget,
+> +                       const struct usb_ctrlrequest *ctrl)
+> +{
+> +       int ret = 0;
+> +       struct raw_dev *dev = get_gadget_data(gadget);
+> +       unsigned long flags;
+> +
+> +       spin_lock_irqsave(&dev->lock, flags);
+> +       if (dev->state != STATE_DEV_RUNNING) {
+> +               dev_err(&gadget->dev, "ignoring, device is not running\n");
+> +               ret = -ENODEV;
+> +               goto out_unlock;
+> +       }
+> +       if (dev->ep0_in_pending || dev->ep0_out_pending) {
+> +               dev_dbg(&gadget->dev, "stalling, request already pending\n");
+> +               ret = -EBUSY;
+> +               goto out_unlock;
+> +       }
+> +       if ((ctrl->bRequestType & USB_DIR_IN) && ctrl->wLength)
+> +               dev->ep0_in_pending = true;
+> +       else
+> +               dev->ep0_out_pending = true;
+> +       spin_unlock_irqrestore(&dev->lock, flags);
+> +
+> +       ret = raw_queue_event(dev, USB_RAW_EVENT_CONTROL, sizeof(*ctrl), ctrl);
+> +       if (ret < 0)
+> +               dev_err(&gadget->dev, "failed to queue event\n");
+> +       goto out;
+> +
+> +out_unlock:
+> +       spin_unlock_irqrestore(&dev->lock, flags);
+> +out:
+> +       return ret;
+> +}
+> +
+> +/* These are currently unused but present in case UDC driver requires them. */
+> +static void gadget_disconnect(struct usb_gadget *gadget) { }
+> +static void gadget_suspend(struct usb_gadget *gadget) { }
+> +static void gadget_resume(struct usb_gadget *gadget) { }
+> +static void gadget_reset(struct usb_gadget *gadget) { }
+> +
+> +/*----------------------------------------------------------------------*/
+> +
+> +static struct miscdevice raw_misc_device;
+> +
+> +static int raw_open(struct inode *inode, struct file *fd)
+> +{
+> +       struct raw_dev *dev;
+> +
+> +       dev = dev_new();
+> +       if (!dev)
+> +               return -ENOMEM;
+> +       fd->private_data = dev;
+> +       dev->state = STATE_DEV_OPENED;
+> +       dev->dev = raw_misc_device.this_device;
+> +       return 0;
+> +}
+> +
+> +static int raw_release(struct inode *inode, struct file *fd)
+> +{
+> +       int ret = 0;
+> +       struct raw_dev *dev = fd->private_data;
+> +       unsigned long flags;
+> +       bool unregister = false;
+> +
+> +       spin_lock_irqsave(&dev->lock, flags);
+> +       dev->state = STATE_DEV_CLOSED;
+> +       if (!dev->gadget) {
+> +               spin_unlock_irqrestore(&dev->lock, flags);
+> +               goto out_put;
+> +       }
+> +       if (dev->gadget_registered)
+> +               unregister = true;
+> +       dev->gadget_registered = false;
+> +       spin_unlock_irqrestore(&dev->lock, flags);
+> +
+> +       if (unregister) {
+> +               ret = usb_gadget_unregister_driver(&dev->driver);
+> +               if (ret != 0)
+> +                       dev_err(dev->dev,
+> +                               "usb_gadget_unregister_driver() failed with %d\n",
+> +                               ret);
+> +               /* Matches kref_get() in raw_ioctl_run(). */
+> +               kref_put(&dev->count, dev_free);
+> +       }
+> +
+> +out_put:
+> +       /* Matches dev_new() in raw_open(). */
+> +       kref_put(&dev->count, dev_free);
+> +       return ret;
+> +}
+> +
+> +/*----------------------------------------------------------------------*/
+> +
+> +static int raw_ioctl_init(struct raw_dev *dev, unsigned long value)
+> +{
+> +       int ret = 0;
+> +       struct usb_raw_init arg;
+> +       char *udc_driver_name;
+> +       char *udc_device_name;
+> +       unsigned long flags;
+> +
+> +       ret = copy_from_user(&arg, (void __user *)value, sizeof(arg));
+> +       if (ret)
+> +               return ret;
+> +
+> +       switch (arg.speed) {
+> +       case USB_SPEED_UNKNOWN:
+> +               arg.speed = USB_SPEED_HIGH;
+> +               break;
+> +       case USB_SPEED_LOW:
+> +       case USB_SPEED_FULL:
+> +       case USB_SPEED_HIGH:
+> +       case USB_SPEED_SUPER:
+> +               break;
+> +       default:
+> +               return -EINVAL;
+> +       }
+> +
+> +       udc_driver_name = kmalloc(UDC_NAME_LENGTH_MAX, GFP_KERNEL);
+> +       if (!udc_driver_name)
+> +               return -ENOMEM;
+> +       ret = strscpy(udc_driver_name, &arg.driver_name[0],
+> +                               UDC_NAME_LENGTH_MAX);
+> +       if (ret < 0) {
+> +               kfree(udc_driver_name);
+> +               return ret;
+> +       }
+> +       ret = 0;
+> +
+> +       udc_device_name = kmalloc(UDC_NAME_LENGTH_MAX, GFP_KERNEL);
+> +       if (!udc_device_name) {
+> +               kfree(udc_driver_name);
+> +               return -ENOMEM;
+> +       }
+> +       ret = strscpy(udc_device_name, &arg.device_name[0],
+> +                               UDC_NAME_LENGTH_MAX);
+> +       if (ret < 0) {
+> +               kfree(udc_driver_name);
+> +               kfree(udc_device_name);
+> +               return ret;
+> +       }
+> +       ret = 0;
+> +
+> +       spin_lock_irqsave(&dev->lock, flags);
+> +       if (dev->state != STATE_DEV_OPENED) {
+> +               dev_dbg(dev->dev, "fail, device is not opened\n");
+> +               kfree(udc_driver_name);
+> +               kfree(udc_device_name);
+> +               ret = -EINVAL;
+> +               goto out_unlock;
+> +       }
+> +       dev->udc_name = udc_driver_name;
+> +
+> +       dev->driver.function = DRIVER_DESC;
+> +       dev->driver.max_speed = arg.speed;
+> +       dev->driver.setup = gadget_setup;
+> +       dev->driver.disconnect = gadget_disconnect;
+> +       dev->driver.bind = gadget_bind;
+> +       dev->driver.unbind = gadget_unbind;
+> +       dev->driver.suspend = gadget_suspend;
+> +       dev->driver.resume = gadget_resume;
+> +       dev->driver.reset = gadget_reset;
+> +       dev->driver.driver.name = DRIVER_NAME;
+> +       dev->driver.udc_name = udc_device_name;
+> +       dev->driver.match_existing_only = 1;
+> +
+> +       dev->state = STATE_DEV_INITIALIZED;
+> +
+> +out_unlock:
+> +       spin_unlock_irqrestore(&dev->lock, flags);
+> +       return ret;
+> +}
+> +
+> +static int raw_ioctl_run(struct raw_dev *dev, unsigned long value)
+> +{
+> +       int ret = 0;
+> +       unsigned long flags;
+> +
+> +       if (value)
+> +               return -EINVAL;
+> +
+> +       spin_lock_irqsave(&dev->lock, flags);
+> +       if (dev->state != STATE_DEV_INITIALIZED) {
+> +               dev_dbg(dev->dev, "fail, device is not initialized\n");
+> +               ret = -EINVAL;
+> +               goto out_unlock;
+> +       }
+> +       spin_unlock_irqrestore(&dev->lock, flags);
+> +
+> +       ret = usb_gadget_probe_driver(&dev->driver);
+> +
+> +       spin_lock_irqsave(&dev->lock, flags);
+> +       if (ret) {
+> +               dev_err(dev->dev,
+> +                       "fail, usb_gadget_probe_driver returned %d\n", ret);
+> +               dev->state = STATE_DEV_FAILED;
+> +               goto out_unlock;
+> +       }
+> +       dev->gadget_registered = true;
+> +       dev->state = STATE_DEV_RUNNING;
+> +       /* Matches kref_put() in raw_release(). */
+> +       kref_get(&dev->count);
+> +
+> +out_unlock:
+> +       spin_unlock_irqrestore(&dev->lock, flags);
+> +       return ret;
+> +}
+> +
+> +static int raw_ioctl_event_fetch(struct raw_dev *dev, unsigned long value)
+> +{
+> +       int ret = 0;
+> +       struct usb_raw_event arg;
+> +       unsigned long flags;
+> +       struct usb_raw_event *event;
+> +       uint32_t length;
+> +
+> +       ret = copy_from_user(&arg, (void __user *)value, sizeof(arg));
+> +       if (ret)
+> +               return ret;
+> +
+> +       spin_lock_irqsave(&dev->lock, flags);
+> +       if (dev->state != STATE_DEV_RUNNING) {
+> +               dev_dbg(dev->dev, "fail, device is not running\n");
+> +               spin_unlock_irqrestore(&dev->lock, flags);
+> +               return -EINVAL;
+> +       }
+> +       if (!dev->gadget) {
+> +               dev_dbg(dev->dev, "fail, gadget is not bound\n");
+> +               spin_unlock_irqrestore(&dev->lock, flags);
+> +               return -EBUSY;
+> +       }
+> +       spin_unlock_irqrestore(&dev->lock, flags);
+> +
+> +       event = raw_event_queue_fetch(&dev->queue);
+> +       if (!event) {
+> +               dev_dbg(&dev->gadget->dev, "event fetching interrupted\n");
+> +               return -EINTR;
+> +       }
+> +       length = min(arg.length, event->length);
+> +       ret = copy_to_user((void __user *)value, event,
+> +                               sizeof(*event) + length);
+> +       return ret;
+> +}
+> +
+> +static void *raw_alloc_io_data(struct usb_raw_ep_io *io, void __user *ptr,
+> +                               bool get_from_user)
+> +{
+> +       int ret;
+> +       void *data;
+> +
+> +       ret = copy_from_user(io, ptr, sizeof(*io));
+> +       if (ret)
+> +               return ERR_PTR(ret);
+> +       if (io->ep >= USB_RAW_MAX_ENDPOINTS)
+> +               return ERR_PTR(-EINVAL);
+> +       if (!usb_raw_io_flags_valid(io->flags))
+> +               return ERR_PTR(-EINVAL);
+> +       if (io->length > PAGE_SIZE)
+> +               return ERR_PTR(-EINVAL);
+> +       if (get_from_user)
+> +               data = memdup_user(ptr + sizeof(*io), io->length);
+> +       else {
+> +               data = kmalloc(io->length, GFP_KERNEL);
+> +               if (!data)
+> +                       data = ERR_PTR(-ENOMEM);
+> +       }
+> +       return data;
+> +}
+> +
+> +static int raw_process_ep0_io(struct raw_dev *dev, struct usb_raw_ep_io *io,
+> +                               void *data, bool in)
+> +{
+> +       int ret = 0;
+> +       unsigned long flags;
+> +
+> +       spin_lock_irqsave(&dev->lock, flags);
+> +       if (dev->state != STATE_DEV_RUNNING) {
+> +               dev_dbg(dev->dev, "fail, device is not running\n");
+> +               ret = -EINVAL;
+> +               goto out_unlock;
+> +       }
+> +       if (!dev->gadget) {
+> +               dev_dbg(dev->dev, "fail, gadget is not bound\n");
+> +               ret = -EBUSY;
+> +               goto out_unlock;
+> +       }
+> +       if (dev->ep0_urb_queued) {
+> +               dev_dbg(&dev->gadget->dev, "fail, urb already queued\n");
+> +               ret = -EBUSY;
+> +               goto out_unlock;
+> +       }
+> +       if ((in && !dev->ep0_in_pending) ||
+> +                       (!in && !dev->ep0_out_pending)) {
+> +               dev_dbg(&dev->gadget->dev, "fail, wrong direction\n");
+> +               ret = -EBUSY;
+> +               goto out_unlock;
+> +       }
+> +       if (WARN_ON(in && dev->ep0_out_pending)) {
+> +               ret = -ENODEV;
+> +               dev->state = STATE_DEV_FAILED;
+> +               goto out_done;
+> +       }
+> +       if (WARN_ON(!in && dev->ep0_in_pending)) {
+> +               ret = -ENODEV;
+> +               dev->state = STATE_DEV_FAILED;
+> +               goto out_done;
+> +       }
+> +
+> +       dev->req->buf = data;
+> +       dev->req->length = io->length;
+> +       dev->req->zero = usb_raw_io_flags_zero(io->flags);
+> +       dev->ep0_urb_queued = true;
+> +       spin_unlock_irqrestore(&dev->lock, flags);
+> +
+> +       ret = usb_ep_queue(dev->gadget->ep0, dev->req, GFP_ATOMIC);
+> +       if (ret) {
+> +               dev_err(&dev->gadget->dev,
+> +                               "fail, usb_ep_queue returned %d\n", ret);
+> +               spin_lock_irqsave(&dev->lock, flags);
+> +               dev->state = STATE_DEV_FAILED;
+> +               goto out_done;
+> +       }
+> +
+> +       ret = wait_for_completion_interruptible(&dev->ep0_done);
+> +       if (ret) {
+> +               dev_dbg(&dev->gadget->dev, "wait interrupted\n");
+> +               usb_ep_dequeue(dev->gadget->ep0, dev->req);
+> +               wait_for_completion(&dev->ep0_done);
+> +               spin_lock_irqsave(&dev->lock, flags);
+> +               goto out_done;
+> +       }
+> +
+> +       spin_lock_irqsave(&dev->lock, flags);
+> +       ret = dev->ep0_status;
+> +
+> +out_done:
+> +       dev->ep0_urb_queued = false;
+> +out_unlock:
+> +       spin_unlock_irqrestore(&dev->lock, flags);
+> +       return ret;
+> +}
+> +
+> +static int raw_ioctl_ep0_write(struct raw_dev *dev, unsigned long value)
+> +{
+> +       int ret = 0;
+> +       void *data;
+> +       struct usb_raw_ep_io io;
+> +
+> +       data = raw_alloc_io_data(&io, (void __user *)value, true);
+> +       if (IS_ERR(data))
+> +               return PTR_ERR(data);
+> +       ret = raw_process_ep0_io(dev, &io, data, true);
+> +       kfree(data);
+> +       return ret;
+> +}
+> +
+> +static int raw_ioctl_ep0_read(struct raw_dev *dev, unsigned long value)
+> +{
+> +       int ret = 0;
+> +       void *data;
+> +       struct usb_raw_ep_io io;
+> +       unsigned int length;
+> +
+> +       data = raw_alloc_io_data(&io, (void __user *)value, false);
+> +       if (IS_ERR(data))
+> +               return PTR_ERR(data);
+> +       ret = raw_process_ep0_io(dev, &io, data, false);
+> +       if (ret < 0) {
+> +               kfree(data);
+> +               return ret;
+> +       }
+> +       length = min(io.length, (unsigned int)ret);
+> +       ret = copy_to_user((void __user *)(value + sizeof(io)), data, length);
+> +       kfree(data);
+> +       return ret;
+> +}
+> +
+> +static bool check_ep_caps(struct usb_ep *ep,
+> +                               struct usb_endpoint_descriptor *desc)
+> +{
+> +       switch (usb_endpoint_type(desc)) {
+> +       case USB_ENDPOINT_XFER_ISOC:
+> +               if (!ep->caps.type_iso)
+> +                       return false;
+> +               break;
+> +       case USB_ENDPOINT_XFER_BULK:
+> +               if (!ep->caps.type_bulk)
+> +                       return false;
+> +               break;
+> +       case USB_ENDPOINT_XFER_INT:
+> +               if (!ep->caps.type_int)
+> +                       return false;
+> +               break;
+> +       default:
+> +               return false;
+> +       }
+> +
+> +       if (usb_endpoint_dir_in(desc) && !ep->caps.dir_in)
+> +               return false;
+> +       if (usb_endpoint_dir_out(desc) && !ep->caps.dir_out)
+> +               return false;
+> +
+> +       return true;
+> +}
+> +
+> +static int raw_ioctl_ep_enable(struct raw_dev *dev, unsigned long value)
+> +{
+> +       int ret = 0, i;
+> +       unsigned long flags;
+> +       struct usb_endpoint_descriptor *desc;
+> +       struct usb_ep *ep = NULL;
+> +
+> +       desc = memdup_user((void __user *)value, sizeof(*desc));
+> +       if (IS_ERR(desc))
+> +               return PTR_ERR(desc);
+> +
+> +       /*
+> +        * Endpoints with a maxpacket length of 0 can cause crashes in UDC
+> +        * drivers.
+> +        */
+> +       if (usb_endpoint_maxp(desc) == 0) {
+> +               dev_dbg(dev->dev, "fail, bad endpoint maxpacket\n");
+> +               kfree(desc);
+> +               return -EINVAL;
+> +       }
+> +
+> +       spin_lock_irqsave(&dev->lock, flags);
+> +       if (dev->state != STATE_DEV_RUNNING) {
+> +               dev_dbg(dev->dev, "fail, device is not running\n");
+> +               ret = -EINVAL;
+> +               goto out_free;
+> +       }
+> +       if (!dev->gadget) {
+> +               dev_dbg(dev->dev, "fail, gadget is not bound\n");
+> +               ret = -EBUSY;
+> +               goto out_free;
+> +       }
+> +
+> +       for (i = 0; i < USB_RAW_MAX_ENDPOINTS; i++) {
+> +               if (dev->eps[i].state == STATE_EP_ENABLED)
+> +                       continue;
+> +               break;
+> +       }
+> +       if (i == USB_RAW_MAX_ENDPOINTS) {
+> +               dev_dbg(&dev->gadget->dev,
+> +                               "fail, no device endpoints available\n");
+> +               ret = -EBUSY;
+> +               goto out_free;
+> +       }
+> +
+> +       gadget_for_each_ep(ep, dev->gadget) {
+> +               if (ep->enabled)
+> +                       continue;
+> +               if (!check_ep_caps(ep, desc))
+> +                       continue;
+> +               ep->desc = desc;
+> +               ret = usb_ep_enable(ep);
+> +               if (ret < 0) {
+> +                       dev_err(&dev->gadget->dev,
+> +                               "fail, usb_ep_enable returned %d\n", ret);
+> +                       goto out_free;
+> +               }
+> +               dev->eps[i].req = usb_ep_alloc_request(ep, GFP_ATOMIC);
+> +               if (!dev->eps[i].req) {
+> +                       dev_err(&dev->gadget->dev,
+> +                               "fail, usb_ep_alloc_request failed\n");
+> +                       usb_ep_disable(ep);
+> +                       ret = -ENOMEM;
+> +                       goto out_free;
+> +               }
+> +               dev->eps[i].ep = ep;
+> +               dev->eps[i].state = STATE_EP_ENABLED;
+> +               ep->driver_data = &dev->eps[i];
+> +               ret = i;
+> +               goto out_unlock;
+> +       }
+> +
+> +       dev_dbg(&dev->gadget->dev, "fail, no gadget endpoints available\n");
+> +       ret = -EBUSY;
+> +
+> +out_free:
+> +       kfree(desc);
+> +out_unlock:
+> +       spin_unlock_irqrestore(&dev->lock, flags);
+> +       return ret;
+> +}
+> +
+> +static int raw_ioctl_ep_disable(struct raw_dev *dev, unsigned long value)
+> +{
+> +       int ret = 0, i = value;
+> +       unsigned long flags;
+> +       const void *desc;
+> +
+> +       if (i < 0 || i >= USB_RAW_MAX_ENDPOINTS)
+> +               return -EINVAL;
+> +
+> +       spin_lock_irqsave(&dev->lock, flags);
+> +       if (dev->state != STATE_DEV_RUNNING) {
+> +               dev_dbg(dev->dev, "fail, device is not running\n");
+> +               ret = -EINVAL;
+> +               goto out_unlock;
+> +       }
+> +       if (!dev->gadget) {
+> +               dev_dbg(dev->dev, "fail, gadget is not bound\n");
+> +               ret = -EBUSY;
+> +               goto out_unlock;
+> +       }
+> +       if (dev->eps[i].state != STATE_EP_ENABLED) {
+> +               dev_dbg(&dev->gadget->dev, "fail, endpoint is not enabled\n");
+> +               ret = -EINVAL;
+> +               goto out_unlock;
+> +       }
+> +       if (dev->eps[i].disabling) {
+> +               dev_dbg(&dev->gadget->dev,
+> +                               "fail, disable already in progress\n");
+> +               ret = -EINVAL;
+> +               goto out_unlock;
+> +       }
+> +       dev->eps[i].disabling = true;
+> +       spin_unlock_irqrestore(&dev->lock, flags);
+> +
+> +       usb_ep_disable(dev->eps[i].ep);
+> +
+> +       spin_lock_irqsave(&dev->lock, flags);
+> +       usb_ep_free_request(dev->eps[i].ep, dev->eps[i].req);
+> +       desc = dev->eps[i].ep->desc;
+> +       dev->eps[i].ep = NULL;
+> +       dev->eps[i].state = STATE_EP_DISABLED;
+> +       kfree(desc);
+> +       dev->eps[i].disabling = false;
+> +
+> +out_unlock:
+> +       spin_unlock_irqrestore(&dev->lock, flags);
+> +       return ret;
+> +}
+> +
+> +static void gadget_ep_complete(struct usb_ep *ep, struct usb_request *req)
+> +{
+> +       struct raw_ep *r_ep = (struct raw_ep *)ep->driver_data;
+> +       struct raw_dev *dev = r_ep->dev;
+> +       unsigned long flags;
+> +
+> +       spin_lock_irqsave(&dev->lock, flags);
+> +       if (req->status)
+> +               r_ep->status = req->status;
+> +       else
+> +               r_ep->status = req->actual;
+> +       spin_unlock_irqrestore(&dev->lock, flags);
+> +
+> +       complete((struct completion *)req->context);
+> +}
+> +
+> +static int raw_process_ep_io(struct raw_dev *dev, struct usb_raw_ep_io *io,
+> +                               void *data, bool in)
+> +{
+> +       int ret = 0;
+> +       unsigned long flags;
+> +       struct raw_ep *ep = &dev->eps[io->ep];
+> +       DECLARE_COMPLETION_ONSTACK(done);
+> +
+> +       spin_lock_irqsave(&dev->lock, flags);
+> +       if (dev->state != STATE_DEV_RUNNING) {
+> +               dev_dbg(dev->dev, "fail, device is not running\n");
+> +               ret = -EINVAL;
+> +               goto out_unlock;
+> +       }
+> +       if (!dev->gadget) {
+> +               dev_dbg(dev->dev, "fail, gadget is not bound\n");
+> +               ret = -EBUSY;
+> +               goto out_unlock;
+> +       }
+> +       if (ep->state != STATE_EP_ENABLED) {
+> +               dev_dbg(&dev->gadget->dev, "fail, endpoint is not enabled\n");
+> +               ret = -EBUSY;
+> +               goto out_unlock;
+> +       }
+> +       if (ep->disabling) {
+> +               dev_dbg(&dev->gadget->dev,
+> +                               "fail, endpoint is already being disabled\n");
+> +               ret = -EBUSY;
+> +               goto out_unlock;
+> +       }
+> +       if (ep->urb_queued) {
+> +               dev_dbg(&dev->gadget->dev, "fail, urb already queued\n");
+> +               ret = -EBUSY;
+> +               goto out_unlock;
+> +       }
+> +       if ((in && !ep->ep->caps.dir_in) || (!in && ep->ep->caps.dir_in)) {
+> +               dev_dbg(&dev->gadget->dev, "fail, wrong direction\n");
+> +               ret = -EINVAL;
+> +               goto out_unlock;
+> +       }
+> +
+> +       ep->dev = dev;
+> +       ep->req->context = &done;
+> +       ep->req->complete = gadget_ep_complete;
+> +       ep->req->buf = data;
+> +       ep->req->length = io->length;
+> +       ep->req->zero = usb_raw_io_flags_zero(io->flags);
+> +       ep->urb_queued = true;
+> +       spin_unlock_irqrestore(&dev->lock, flags);
+> +
+> +       ret = usb_ep_queue(ep->ep, ep->req, GFP_ATOMIC);
+> +       if (ret) {
+> +               dev_err(&dev->gadget->dev,
+> +                               "fail, usb_ep_queue returned %d\n", ret);
+> +               spin_lock_irqsave(&dev->lock, flags);
+> +               dev->state = STATE_DEV_FAILED;
+> +               goto out_done;
+> +       }
+> +
+> +       ret = wait_for_completion_interruptible(&done);
+> +       if (ret) {
+> +               dev_dbg(&dev->gadget->dev, "wait interrupted\n");
+> +               usb_ep_dequeue(ep->ep, ep->req);
+> +               wait_for_completion(&done);
+> +               spin_lock_irqsave(&dev->lock, flags);
+> +               goto out_done;
+> +       }
+> +
+> +       spin_lock_irqsave(&dev->lock, flags);
+> +       ret = ep->status;
+> +
+> +out_done:
+> +       ep->urb_queued = false;
+> +out_unlock:
+> +       spin_unlock_irqrestore(&dev->lock, flags);
+> +       return ret;
+> +}
+> +
+> +static int raw_ioctl_ep_write(struct raw_dev *dev, unsigned long value)
+> +{
+> +       int ret = 0;
+> +       char *data;
+> +       struct usb_raw_ep_io io;
+> +
+> +       data = raw_alloc_io_data(&io, (void __user *)value, true);
+> +       if (IS_ERR(data))
+> +               return PTR_ERR(data);
+> +       ret = raw_process_ep_io(dev, &io, data, true);
+> +       kfree(data);
+> +       return ret;
+> +}
+> +
+> +static int raw_ioctl_ep_read(struct raw_dev *dev, unsigned long value)
+> +{
+> +       int ret = 0;
+> +       char *data;
+> +       struct usb_raw_ep_io io;
+> +       unsigned int length;
+> +
+> +       data = raw_alloc_io_data(&io, (void __user *)value, false);
+> +       if (IS_ERR(data))
+> +               return PTR_ERR(data);
+> +       ret = raw_process_ep_io(dev, &io, data, false);
+> +       if (ret < 0) {
+> +               kfree(data);
+> +               return ret;
+> +       }
+> +       length = min(io.length, (unsigned int)ret);
+> +       ret = copy_to_user((void __user *)(value + sizeof(io)), data, length);
+> +       kfree(data);
+> +       return ret;
+> +}
+> +
+> +static int raw_ioctl_configure(struct raw_dev *dev, unsigned long value)
+> +{
+> +       int ret = 0;
+> +       unsigned long flags;
+> +
+> +       if (value)
+> +               return -EINVAL;
+> +       spin_lock_irqsave(&dev->lock, flags);
+> +       if (dev->state != STATE_DEV_RUNNING) {
+> +               dev_dbg(dev->dev, "fail, device is not running\n");
+> +               ret = -EINVAL;
+> +               goto out_unlock;
+> +       }
+> +       if (!dev->gadget) {
+> +               dev_dbg(dev->dev, "fail, gadget is not bound\n");
+> +               ret = -EBUSY;
+> +               goto out_unlock;
+> +       }
+> +       usb_gadget_set_state(dev->gadget, USB_STATE_CONFIGURED);
+> +
+> +out_unlock:
+> +       spin_unlock_irqrestore(&dev->lock, flags);
+> +       return ret;
+> +}
+> +
+> +static int raw_ioctl_vbus_draw(struct raw_dev *dev, unsigned long value)
+> +{
+> +       int ret = 0;
+> +       unsigned long flags;
+> +
+> +       spin_lock_irqsave(&dev->lock, flags);
+> +       if (dev->state != STATE_DEV_RUNNING) {
+> +               dev_dbg(dev->dev, "fail, device is not running\n");
+> +               ret = -EINVAL;
+> +               goto out_unlock;
+> +       }
+> +       if (!dev->gadget) {
+> +               dev_dbg(dev->dev, "fail, gadget is not bound\n");
+> +               ret = -EBUSY;
+> +               goto out_unlock;
+> +       }
+> +       usb_gadget_vbus_draw(dev->gadget, 2 * value);
+> +
+> +out_unlock:
+> +       spin_unlock_irqrestore(&dev->lock, flags);
+> +       return ret;
+> +}
+> +
+> +static long raw_ioctl(struct file *fd, unsigned int cmd, unsigned long value)
+> +{
+> +       struct raw_dev *dev = fd->private_data;
+> +       int ret = 0;
+> +
+> +       if (!dev)
+> +               return -EBUSY;
+> +
+> +       switch (cmd) {
+> +       case USB_RAW_IOCTL_INIT:
+> +               ret = raw_ioctl_init(dev, value);
+> +               break;
+> +       case USB_RAW_IOCTL_RUN:
+> +               ret = raw_ioctl_run(dev, value);
+> +               break;
+> +       case USB_RAW_IOCTL_EVENT_FETCH:
+> +               ret = raw_ioctl_event_fetch(dev, value);
+> +               break;
+> +       case USB_RAW_IOCTL_EP0_WRITE:
+> +               ret = raw_ioctl_ep0_write(dev, value);
+> +               break;
+> +       case USB_RAW_IOCTL_EP0_READ:
+> +               ret = raw_ioctl_ep0_read(dev, value);
+> +               break;
+> +       case USB_RAW_IOCTL_EP_ENABLE:
+> +               ret = raw_ioctl_ep_enable(dev, value);
+> +               break;
+> +       case USB_RAW_IOCTL_EP_DISABLE:
+> +               ret = raw_ioctl_ep_disable(dev, value);
+> +               break;
+> +       case USB_RAW_IOCTL_EP_WRITE:
+> +               ret = raw_ioctl_ep_write(dev, value);
+> +               break;
+> +       case USB_RAW_IOCTL_EP_READ:
+> +               ret = raw_ioctl_ep_read(dev, value);
+> +               break;
+> +       case USB_RAW_IOCTL_CONFIGURE:
+> +               ret = raw_ioctl_configure(dev, value);
+> +               break;
+> +       case USB_RAW_IOCTL_VBUS_DRAW:
+> +               ret = raw_ioctl_vbus_draw(dev, value);
+> +               break;
+> +       default:
+> +               ret = -EINVAL;
+> +       }
+> +
+> +       return ret;
+> +}
+> +
+> +/*----------------------------------------------------------------------*/
+> +
+> +static const struct file_operations raw_fops = {
+> +       .open =                 raw_open,
+> +       .unlocked_ioctl =       raw_ioctl,
+> +       .compat_ioctl =         raw_ioctl,
+> +       .release =              raw_release,
+> +       .llseek =               no_llseek,
+> +};
+> +
+> +static struct miscdevice raw_misc_device = {
+> +       .minor = MISC_DYNAMIC_MINOR,
+> +       .name = DRIVER_NAME,
+> +       .fops = &raw_fops,
+> +};
+> +
+> +module_misc_device(raw_misc_device);
+> diff --git a/include/uapi/linux/usb/raw_gadget.h b/include/uapi/linux/usb/raw_gadget.h
+> new file mode 100644
+> index 000000000000..00cbded71061
+> --- /dev/null
+> +++ b/include/uapi/linux/usb/raw_gadget.h
+> @@ -0,0 +1,167 @@
+> +/* SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note */
+> +/*
+> + * USB Raw Gadget driver.
+> + *
+> + * See Documentation/usb/raw-gadget.rst for more details.
+> + */
+> +
+> +#ifndef _UAPI__LINUX_USB_RAW_GADGET_H
+> +#define _UAPI__LINUX_USB_RAW_GADGET_H
+> +
+> +#include <asm/ioctl.h>
+> +#include <linux/types.h>
+> +#include <linux/usb/ch9.h>
+> +
+> +/* Maximum length of driver_name/device_name in the usb_raw_init struct. */
+> +#define UDC_NAME_LENGTH_MAX 128
+> +
+> +/*
+> + * struct usb_raw_init - argument for USB_RAW_IOCTL_INIT ioctl.
+> + * @speed: The speed of the emulated USB device, takes the same values as
+> + *     the usb_device_speed enum: USB_SPEED_FULL, USB_SPEED_HIGH, etc.
+> + * @driver_name: The name of the UDC driver.
+> + * @device_name: The name of a UDC instance.
+> + *
+> + * The last two fields identify a UDC the gadget driver should bind to.
+> + * For example, Dummy UDC has "dummy_udc" as its driver_name and "dummy_udc.N"
+> + * as its device_name, where N in the index of the Dummy UDC instance.
+> + * At the same time the dwc2 driver that is used on Raspberry Pi Zero, has
+> + * "20980000.usb" as both driver_name and device_name.
+> + */
+> +struct usb_raw_init {
+> +       __u8    driver_name[UDC_NAME_LENGTH_MAX];
+> +       __u8    device_name[UDC_NAME_LENGTH_MAX];
+> +       __u8    speed;
+> +};
+> +
+> +/* The type of event fetched with the USB_RAW_IOCTL_EVENT_FETCH ioctl. */
+> +enum usb_raw_event_type {
+> +       USB_RAW_EVENT_INVALID = 0,
+> +
+> +       /* This event is queued when the driver has bound to a UDC. */
+> +       USB_RAW_EVENT_CONNECT = 1,
+> +
+> +       /* This event is queued when a new control request arrived to ep0. */
+> +       USB_RAW_EVENT_CONTROL = 2,
+> +
+> +       /* The list might grow in the future. */
+> +};
+> +
+> +/*
+> + * struct usb_raw_event - argument for USB_RAW_IOCTL_EVENT_FETCH ioctl.
+> + * @type: The type of the fetched event.
+> + * @length: Length of the data buffer. Updated by the driver and set to the
+> + *     actual length of the fetched event data.
+> + * @data: A buffer to store the fetched event data.
+> + *
+> + * Currently the fetched data buffer is empty for USB_RAW_EVENT_CONNECT,
+> + * and contains struct usb_ctrlrequest for USB_RAW_EVENT_CONTROL.
+> + */
+> +struct usb_raw_event {
+> +       __u32           type;
+> +       __u32           length;
+> +       __u8            data[0];
+> +};
+> +
+> +#define USB_RAW_IO_FLAGS_ZERO  0x0001
+> +#define USB_RAW_IO_FLAGS_MASK  0x0001
+> +
+> +static int usb_raw_io_flags_valid(__u16 flags)
+> +{
+> +       return (flags & ~USB_RAW_IO_FLAGS_MASK) == 0;
+> +}
+> +
+> +static int usb_raw_io_flags_zero(__u16 flags)
+> +{
+> +       return (flags & USB_RAW_IO_FLAGS_ZERO);
+> +}
+> +
+> +/*
+> + * struct usb_raw_ep_io - argument for USB_RAW_IOCTL_EP0/EP_WRITE/READ ioctls.
+> + * @ep: Endpoint handle as returned by USB_RAW_IOCTL_EP_ENABLE for
+> + *     USB_RAW_IOCTL_EP_WRITE/READ. Ignored for USB_RAW_IOCTL_EP0_WRITE/READ.
+> + * @flags: When USB_RAW_IO_FLAGS_ZERO is specified, the zero flag is set on
+> + *     the submitted USB request, see include/linux/usb/gadget.h for details.
+> + * @length: Length of data.
+> + * @data: Data to send for USB_RAW_IOCTL_EP0/EP_WRITE. Buffer to store received
+> + *     data for USB_RAW_IOCTL_EP0/EP_READ.
+> + */
+> +struct usb_raw_ep_io {
+> +       __u16           ep;
+> +       __u16           flags;
+> +       __u32           length;
+> +       __u8            data[0];
+> +};
+> +
+> +/*
+> + * Initializes a Raw Gadget instance.
+> + * Accepts a pointer to the usb_raw_init struct as an argument.
+> + * Returns 0 on success or negative error code on failure.
+> + */
+> +#define USB_RAW_IOCTL_INIT             _IOW('U', 0, struct usb_raw_init)
+> +
+> +/*
+> + * Instructs Raw Gadget to bind to a UDC and start emulating a USB device.
+> + * Returns 0 on success or negative error code on failure.
+> + */
+> +#define USB_RAW_IOCTL_RUN              _IO('U', 1)
+> +
+> +/*
+> + * A blocking ioctl that waits for an event and returns fetched event data to
+> + * the user.
+> + * Accepts a pointer to the usb_raw_event struct.
+> + * Returns 0 on success or negative error code on failure.
+> + */
+> +#define USB_RAW_IOCTL_EVENT_FETCH      _IOR('U', 2, struct usb_raw_event)
+> +
+> +/*
+> + * Queues an IN (OUT for READ) urb as a response to the last control request
+> + * received on endpoint 0, provided that was an IN (OUT for READ) request and
+> + * waits until the urb is completed. Copies received data to user for READ.
+> + * Accepts a pointer to the usb_raw_ep_io struct as an argument.
+> + * Returns length of trasferred data on success or negative error code on
+> + * failure.
+> + */
+> +#define USB_RAW_IOCTL_EP0_WRITE                _IOW('U', 3, struct usb_raw_ep_io)
+> +#define USB_RAW_IOCTL_EP0_READ         _IOWR('U', 4, struct usb_raw_ep_io)
+> +
+> +/*
+> + * Finds an endpoint that supports the transfer type specified in the
+> + * descriptor and enables it.
+> + * Accepts a pointer to the usb_endpoint_descriptor struct as an argument.
+> + * Returns enabled endpoint handle on success or negative error code on failure.
+> + */
+> +#define USB_RAW_IOCTL_EP_ENABLE                _IOW('U', 5, struct usb_endpoint_descriptor)
+> +
+> +/* Disables specified endpoint.
+> + * Accepts endpoint handle as an argument.
+> + * Returns 0 on success or negative error code on failure.
+> + */
+> +#define USB_RAW_IOCTL_EP_DISABLE       _IOW('U', 6, __u32)
+> +
+> +/*
+> + * Queues an IN (OUT for READ) urb as a response to the last control request
+> + * received on endpoint usb_raw_ep_io.ep, provided that was an IN (OUT for READ)
+> + * request and waits until the urb is completed. Copies received data to user
+> + * for READ.
+> + * Accepts a pointer to the usb_raw_ep_io struct as an argument.
+> + * Returns length of trasferred data on success or negative error code on
+> + * failure.
+> + */
+> +#define USB_RAW_IOCTL_EP_WRITE         _IOW('U', 7, struct usb_raw_ep_io)
+> +#define USB_RAW_IOCTL_EP_READ          _IOWR('U', 8, struct usb_raw_ep_io)
+> +
+> +/*
+> + * Switches the gadget into the configured state.
+> + * Returns 0 on success or negative error code on failure.
+> + */
+> +#define USB_RAW_IOCTL_CONFIGURE                _IO('U', 9)
+> +
+> +/*
+> + * Constrains UDC VBUS power usage.
+> + * Accepts current limit in 2 mA units as an argument.
+> + * Returns 0 on success or negative error code on failure.
+> + */
+> +#define USB_RAW_IOCTL_VBUS_DRAW                _IOW('U', 10, __u32)
+> +
+> +#endif /* _UAPI__LINUX_USB_RAW_GADGET_H */
+> --
+> 2.25.0.rc1.283.g88dfdc4193-goog
+>
