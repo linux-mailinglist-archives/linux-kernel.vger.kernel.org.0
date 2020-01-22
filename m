@@ -2,37 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F1A7114564D
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Jan 2020 14:35:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 511A2145652
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Jan 2020 14:36:00 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731157AbgAVNZH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 22 Jan 2020 08:25:07 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44524 "EHLO mail.kernel.org"
+        id S1731430AbgAVN0C (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 22 Jan 2020 08:26:02 -0500
+Received: from mail.kernel.org ([198.145.29.99]:46412 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731131AbgAVNZE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 Jan 2020 08:25:04 -0500
+        id S1729774AbgAVNZ7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 22 Jan 2020 08:25:59 -0500
 Received: from localhost (unknown [84.241.205.26])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0195F2467B;
-        Wed, 22 Jan 2020 13:25:02 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A15F92467E;
+        Wed, 22 Jan 2020 13:25:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579699503;
-        bh=VY+e001eqKGE4m+ZqZaJPIa6rFwDCRWMN7NXie69oK4=;
+        s=default; t=1579699557;
+        bh=SpDzbbOwicUHa4Zm+r4y/NZKqNvo4lpUqQrWehgGjZg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=lLAjMS+IIH69F+Jnx+bjwayudiJsMBJhGAgjKiUECbRV/k2CPhWUZLwOBw2Bzg3Ll
-         kL/CU/P8Xh+lxHNqUw3qZLVqx4TanxqKGieE2U4K3k7kPDCRUgYzWZ+5+RbKF5v97K
-         ++6OStzCmLlFgWqYDfHoX7TGtobzqpQeyyE6oH78=
+        b=b49UKK4Zvd9Ly8KK8QKhFG7QKLDSmXyBJvCIWpoxvfsl50DtCty7S7/1ZQ/IN8n0z
+         elFOvc0UYzCP7NXn/7/QQ5dv8bi95519gQ5LHa0aZ6Jj61qAyhxV4s8ZrOqPjZEXs1
+         Z01deUI3PTESrllwhiQ+rAjZ3iSe18xOxJvKhMhY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Petr Machata <petrm@mellanox.com>,
-        Amit Cohen <amitc@mellanox.com>,
-        Ido Schimmel <idosch@mellanox.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 5.4 166/222] selftests: mlxsw: qos_mc_aware: Fix mausezahn invocation
-Date:   Wed, 22 Jan 2020 10:29:12 +0100
-Message-Id: <20200122092845.597727250@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Christian Hewitt <christianshewitt@gmail.com>,
+        Kevin Hilman <khilman@baylibre.com>
+Subject: [PATCH 5.4 178/222] arm64: dts: meson-gxl-s905x-khadas-vim: fix gpio-keys-polled node
+Date:   Wed, 22 Jan 2020 10:29:24 +0100
+Message-Id: <20200122092846.441350088@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
 In-Reply-To: <20200122092833.339495161@linuxfoundation.org>
 References: <20200122092833.339495161@linuxfoundation.org>
@@ -45,52 +44,40 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Petr Machata <petrm@mellanox.com>
+From: Christian Hewitt <christianshewitt@gmail.com>
 
-commit fef6d6704944c7be72fd2b77c021f1aed3d5df0d upstream.
+commit d5f6fa904ecbadbb8e9fa6302b0fc165bec0559a upstream.
 
-Mausezahn does not recognize "own" as a keyword on source IP address. As a
-result, the MC stream is not running at all, and therefore no UC
-degradation can be observed even in principle.
+Fix DTC warnings:
 
-Fix the invocation, and tighten the test: due to the minimum shaper
-configured at the MC TCs, we always expect about 20% degradation. Fail the
-test if it is lower.
+arch/arm/dts/meson-gxl-s905x-khadas-vim.dtb: Warning (avoid_unnecessary_addr_size):
+   /gpio-keys-polled: unnecessary #address-cells/#size-cells
+      without "ranges" or child "reg" property
 
-Fixes: 573363a68f27 ("selftests: mlxsw: Add qos_lib.sh")
-Signed-off-by: Petr Machata <petrm@mellanox.com>
-Reported-by: Amit Cohen <amitc@mellanox.com>
-Signed-off-by: Ido Schimmel <idosch@mellanox.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Fixes: e15d2774b8c0 ("ARM64: dts: meson-gxl: add support for the Khadas VIM board")
+Signed-off-by: Christian Hewitt <christianshewitt@gmail.com>
+Reviewed-by: Kevin Hilman <khilman@baylibre.com>
+Signed-off-by: Kevin Hilman <khilman@baylibre.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- tools/testing/selftests/drivers/net/mlxsw/qos_mc_aware.sh |    8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
+ arch/arm64/boot/dts/amlogic/meson-gxl-s905x-khadas-vim.dts |    4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
---- a/tools/testing/selftests/drivers/net/mlxsw/qos_mc_aware.sh
-+++ b/tools/testing/selftests/drivers/net/mlxsw/qos_mc_aware.sh
-@@ -232,7 +232,7 @@ test_mc_aware()
- 	stop_traffic
- 	local ucth1=${uc_rate[1]}
+--- a/arch/arm64/boot/dts/amlogic/meson-gxl-s905x-khadas-vim.dts
++++ b/arch/arm64/boot/dts/amlogic/meson-gxl-s905x-khadas-vim.dts
+@@ -33,11 +33,9 @@
  
--	start_traffic $h1 own bc bc
-+	start_traffic $h1 192.0.2.65 bc bc
+ 	gpio-keys-polled {
+ 		compatible = "gpio-keys-polled";
+-		#address-cells = <1>;
+-		#size-cells = <0>;
+ 		poll-interval = <100>;
  
- 	local d0=$(date +%s)
- 	local t0=$(ethtool_stats_get $h3 rx_octets_prio_0)
-@@ -254,7 +254,11 @@ test_mc_aware()
- 			ret = 100 * ($ucth1 - $ucth2) / $ucth1
- 			if (ret > 0) { ret } else { 0 }
- 		    ")
--	check_err $(bc <<< "$deg > 25")
-+
-+	# Minimum shaper of 200Mbps on MC TCs should cause about 20% of
-+	# degradation on 1Gbps link.
-+	check_err $(bc <<< "$deg < 15") "Minimum shaper not in effect"
-+	check_err $(bc <<< "$deg > 25") "MC traffic degrades UC performance too much"
- 
- 	local interval=$((d1 - d0))
- 	local mc_ir=$(rate $u0 $u1 $interval)
+-		button@0 {
++		power-button {
+ 			label = "power";
+ 			linux,code = <KEY_POWER>;
+ 			gpios = <&gpio_ao GPIOAO_2 GPIO_ACTIVE_LOW>;
 
 
