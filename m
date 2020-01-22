@@ -2,126 +2,166 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1865D145A80
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Jan 2020 18:03:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AEAA2145A85
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Jan 2020 18:03:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728809AbgAVRDP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 22 Jan 2020 12:03:15 -0500
-Received: from us-smtp-1.mimecast.com ([207.211.31.81]:27227 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726083AbgAVRDP (ORCPT
+        id S1729083AbgAVRDg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 22 Jan 2020 12:03:36 -0500
+Received: from mail-lf1-f66.google.com ([209.85.167.66]:38110 "EHLO
+        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728901AbgAVRDe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 Jan 2020 12:03:15 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1579712593;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=SWiH6GhAFCgnJrxuq8RYkBkdPUMZBLGGmuvb0dwUfcA=;
-        b=NqKZyjdrP4KaEecUrqY4uDaZA7V3h724lm3/gD9P+kFIszifVjJjWw/ZLppDLPiE3+zRkR
-        xm5OynxBxqv1vYmpl6DHr+7HmzhFt1Ugvm6T5fOYnH0fsv1bhGKMc/DzOSQgxw9mQAbHz1
-        rp74jdEjwyj5E5IDW0g687R5mFIPkWk=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-1-rR6dfSXFMcarOKze0rXmQg-1; Wed, 22 Jan 2020 12:02:54 -0500
-X-MC-Unique: rR6dfSXFMcarOKze0rXmQg-1
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 7539F18CA26E;
-        Wed, 22 Jan 2020 17:02:52 +0000 (UTC)
-Received: from napanee.usersys.redhat.com (dhcp-17-195.bos.redhat.com [10.18.17.195])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 4C45D1CB;
-        Wed, 22 Jan 2020 17:02:52 +0000 (UTC)
-Received: by napanee.usersys.redhat.com (Postfix, from userid 1000)
-        id AAB1DC0E93; Wed, 22 Jan 2020 12:02:51 -0500 (EST)
-Date:   Wed, 22 Jan 2020 12:02:51 -0500
-From:   Aristeu Rozanski <aris@redhat.com>
-To:     Robert Richter <rrichter@marvell.com>
-Cc:     Borislav Petkov <bp@alien8.de>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Tony Luck <tony.luck@intel.com>,
-        James Morse <james.morse@arm.com>,
-        "linux-edac@vger.kernel.org" <linux-edac@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2 00/10] EDAC: Rework core and ghes drivers, part two
-Message-ID: <20200122170251.a4ezf3epukx2iobc@redhat.com>
-References: <20191205093739.4040-1-rrichter@marvell.com>
+        Wed, 22 Jan 2020 12:03:34 -0500
+Received: by mail-lf1-f66.google.com with SMTP id r14so167542lfm.5
+        for <linux-kernel@vger.kernel.org>; Wed, 22 Jan 2020 09:03:33 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=zM+sYNfN68/VlMHBQ28OqftNF6xyw8Hnnx+TFdLsACk=;
+        b=YngsELv1j2RQ0Pv9zae+M720BMjOkELwpWeRg3c+s3lZovhBORsoZy2y/4p6hxw8fZ
+         8Ec80r27bcCippPbe6fyRQYUEalliO+qqoxv0Xv/74zVHsu5NdhRl5DeseVsI3JVYvCj
+         BWtPy83jor2v6kn/6wYSvAQ2do464r2qKn4T0ui8bGaJzaRTBnc1OHkENK/s1rR3w3IH
+         40jTkTXcsYe14e6y/EbfiQoP0/BjibXht1iq3/n+dhZD08YeNIMDV7snggWYsBePUClm
+         5jE8mHjcDEMDuJ3179r1ihmJBdgUBRy3GWS7gLJXyoO9tg9ZTUIpSSZRz/82RjCrGLbY
+         6cuQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=zM+sYNfN68/VlMHBQ28OqftNF6xyw8Hnnx+TFdLsACk=;
+        b=BxUy80yJJyJI2gdQddAaV7hhdlCJJN9r0y63qDxeHxf+fRqTxyaAk84yF2e40acozN
+         Sl+PU9yKQAR8IMB/W54BIQEbMcLFxOhHmfHoz+P8zjMHtLZAT1Szg8vlhGBBWdvvc+4g
+         1xa9iCbGnn/8MynD4vjlsW/XhdkIR4eT+1xxgK6Z5M+63B4hNaNWm3U1EiSI6nHLeHvn
+         mEMEeFXm4ZaANZvTIPFELekKxp94TZ0VsltwHzE3s17eOeOEvPoDws5aEyJyqq2Faqr9
+         SP2lk2Zpm1QIRS87a3AqYWO+7mrI0YCYX0bLevey4bAYBIs4PP3S7jHyDTTdFRm7rMSm
+         D9DA==
+X-Gm-Message-State: APjAAAVb4PtiL3ZH31Zcw3oFp4EbxrkamwsIsFttbzrL+qNZWDnB/0yh
+        yECahD+YJai4YqvpS0G4gPQ9qaGnA7ryK2S9pOSZNg==
+X-Google-Smtp-Source: APXvYqzzit4eCBkk59mE0XMjvsu19Ne34Er8Ak0RDXpP1K30LgYouyYzJTPnA3czMddxdbn1/jz6SIY9PKXwY89NeT8=
+X-Received: by 2002:ac2:4adc:: with SMTP id m28mr2340757lfp.26.1579712612116;
+ Wed, 22 Jan 2020 09:03:32 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191205093739.4040-1-rrichter@marvell.com>
-User-Agent: NeoMutt/20191207
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
+References: <20200122092803.587683021@linuxfoundation.org>
+In-Reply-To: <20200122092803.587683021@linuxfoundation.org>
+From:   Naresh Kamboju <naresh.kamboju@linaro.org>
+Date:   Wed, 22 Jan 2020 22:33:20 +0530
+Message-ID: <CA+G9fYv+9iscZ+Xp85Gh=JbXhtPBOO5uigLuWsn8_7zOOvqdiA@mail.gmail.com>
+Subject: Re: [PATCH 4.19 000/103] 4.19.98-stable review
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     open list <linux-kernel@vger.kernel.org>,
+        Shuah Khan <shuah@kernel.org>, patches@kernelci.org,
+        lkft-triage@lists.linaro.org,
+        Ben Hutchings <ben.hutchings@codethink.co.uk>,
+        linux- stable <stable@vger.kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Guenter Roeck <linux@roeck-us.net>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Dec 05, 2019 at 09:37:55AM +0000, Robert Richter wrote:
-> This patch set is part two of a rework of the ghes_edac and edac_mc
-> driver. It addresses issues found during code review and while working
-> with the code. Part one has been included to v5.5, see:
-> 
->  https://lore.kernel.org/patchwork/cover/1093488/
-> 
-> The changes of this series include:
-> 
->  * add helper functions and factor out code (#1, #2, #5)
-> 
->  * improve function interfaces and data structures to decrease
->    complexity such as number of function arguments, unused data, etc.
->    (#3, #4, #7, #8, #9, #10),
-> 
->  * minor functional fixes (#6)
-> 
->  * improve code readability (#9)
-> 
-> V2:
->  * fixed documentation issue in #3 found by "kbuild test robot
->    <lkp@intel.com>"
-> 
-> Changes compared to part one:
->  * rebased onto 5781823fd0d3 ("EDAC/altera: Use the Altera System
->    Manager driver")
->  * reworded patch subjects
->  * reordered patches
->  * collected Mauro's Reviewed-by-tags (note: I kept them though there
->    has been small conflicts but dropped it when reworked)
->  * dropped: "EDAC/mc: Rework edac_raw_mc_handle_error() to use struct
->    dimm_info"
->  * split "EDAC/mc: Remove per layer counters" into smaller changes
->  * added:
->    "EDAC/mc: Report "unknown memory" on too many DIMM labels found"
->    "EDAC/mc: Remove enable_per_layer_report function arguments"
->    "EDAC/mc: Pass the error descriptor to error reporting functions"
->    "EDAC/mc: Remove detail[] string and cleanup error string
->    generation"
->  * moved to the end:
->    "EDAC/mc: Remove per layer counters"
-> 
-> 
-> Robert Richter (10):
->   EDAC/mc: Split edac_mc_alloc() into smaller functions
->   EDAC/mc: Reorder functions edac_mc_alloc*()
->   EDAC: Store error type in struct edac_raw_error_desc
->   EDAC/mc: Determine mci pointer from the error descriptor
->   EDAC/mc: Create new function edac_inc_csrow()
->   EDAC/mc: Report "unknown memory" on too many DIMM labels found
->   EDAC/mc: Remove enable_per_layer_report function arguments
->   EDAC/mc: Pass the error descriptor to error reporting functions
->   EDAC/mc: Remove detail[] string and cleanup error string generation
->   EDAC/mc: Remove per layer counters
-> 
->  drivers/edac/edac_mc.c       | 496 ++++++++++++++++-------------------
->  drivers/edac/edac_mc.h       |   6 +-
->  drivers/edac/edac_mc_sysfs.c |  20 +-
->  drivers/edac/ghes_edac.c     |  16 +-
->  include/linux/edac.h         |   9 +-
->  5 files changed, 249 insertions(+), 298 deletions(-)
+On Wed, 22 Jan 2020 at 15:13, Greg Kroah-Hartman
+<gregkh@linuxfoundation.org> wrote:
+>
+> This is the start of the stable review cycle for the 4.19.98 release.
+> There are 103 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+>
+> Responses should be made by Fri, 24 Jan 2020 09:25:24 +0000.
+> Anything received after that time might be too late.
+>
+> The whole patch series can be found in one patch at:
+>         https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-=
+4.19.98-rc1.gz
+> or in the git tree and branch at:
+>         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
+-rc.git linux-4.19.y
+> and the diffstat can be found below.
+>
+> thanks,
+>
+> greg k-h
 
-Acked-by: Aristeu Rozanski <aris@redhat.com>
+Results from Linaro=E2=80=99s test farm.
+No regressions on arm64, arm, x86_64, and i386.
 
--- 
-Aristeu
+Summary
+------------------------------------------------------------------------
 
+kernel: 4.19.98-rc1
+git repo: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stab=
+le-rc.git
+git branch: linux-4.19.y
+git commit: 0ed30079b15d245f5a148a4ff156dff23d9569df
+git describe: v4.19.97-104-g0ed30079b15d
+Test details: https://qa-reports.linaro.org/lkft/linux-stable-rc-4.19-oe/bu=
+ild/v4.19.97-104-g0ed30079b15d
+
+
+No regressions (compared to build v4.19.97)
+
+
+No fixes (compared to build v4.19.97)
+
+Ran 18532 total tests in the following environments and test suites.
+
+Environments
+--------------
+- dragonboard-410c - arm64
+- hi6220-hikey - arm64
+- i386
+- juno-r2 - arm64
+- qemu_arm
+- qemu_arm64
+- qemu_i386
+- qemu_x86_64
+- x15 - arm
+- x86_64
+
+Test Suites
+-----------
+* build
+* install-android-platform-tools-r2600
+* kselftest
+* libhugetlbfs
+* linux-log-parser
+* ltp-commands-tests
+* ltp-containers-tests
+* ltp-cve-tests
+* ltp-dio-tests
+* ltp-fs-tests
+* ltp-hugetlb-tests
+* ltp-io-tests
+* ltp-ipc-tests
+* ltp-math-tests
+* ltp-mm-tests
+* ltp-sched-tests
+* spectre-meltdown-checker-test
+* ltp-filecaps-tests
+* ltp-fs_bind-tests
+* ltp-fs_perms_simple-tests
+* ltp-fsx-tests
+* ltp-nptl-tests
+* ltp-pty-tests
+* ltp-securebits-tests
+* network-basic-tests
+* perf
+* kvm-unit-tests
+* ltp-cap_bounds-tests
+* ltp-cpuhotplug-tests
+* ltp-fcntl-locktests-tests
+* ltp-open-posix-tests
+* ltp-syscalls-tests
+* v4l2-compliance
+* kselftest-vsyscall-mode-native
+* kselftest-vsyscall-mode-none
+* ssuite
+
+--=20
+Linaro LKFT
+https://lkft.linaro.org
