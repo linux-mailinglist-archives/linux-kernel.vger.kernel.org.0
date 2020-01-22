@@ -2,37 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 30C25145593
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Jan 2020 14:25:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 218E8145595
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Jan 2020 14:25:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729934AbgAVNXN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 22 Jan 2020 08:23:13 -0500
-Received: from mail.kernel.org ([198.145.29.99]:41228 "EHLO mail.kernel.org"
+        id S1730297AbgAVNXT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 22 Jan 2020 08:23:19 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41400 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730702AbgAVNXK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 Jan 2020 08:23:10 -0500
+        id S1729410AbgAVNXQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 22 Jan 2020 08:23:16 -0500
 Received: from localhost (unknown [84.241.205.26])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E90032468A;
-        Wed, 22 Jan 2020 13:23:08 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1A4192468A;
+        Wed, 22 Jan 2020 13:23:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579699389;
-        bh=3WDM5bF8zuIRfVx0BpJ2iBhF3cBl5nL3PHzCgeCXHfU=;
+        s=default; t=1579699395;
+        bh=Gf87LfOv9JacYdKcx/n23gu/OfWb61p8ecz42/mVdus=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=BpLSDMEx32Pg8kLRhAEyNiny3idVT1Qvmz8dzcLCZ1w1b4A+yOVrZKfHadnKhfIjw
-         IiTTdCBiqNOjLoK+vlkgbhqMT9+1JXOTndKOj/fqU7VFyyZSe6NAuq3WxQOVNGIgtj
-         hWp14kn6xrE4tgOfkd5kWMWX8jrQPnA5DS5byWkg=
+        b=2gf7HW723E/WGLK0/iqQWcTzF37FtSH/7NxtMubrFpW5a2ETJhfqchfFkcowMQia4
+         wbArYcrWBVkLyfittLITpVhVtaKFyjyMmuJ1OWfyMg16uc9QWCh9SSRFIlK2byY93A
+         TXtr7RBd9nzMOfByTKVqyysAfymBlPj1maCKn4aE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        syzbot+0e63ae76d117ae1c3a01@syzkaller.appspotmail.com,
+        syzbot+37a6804945a3a13b1572@syzkaller.appspotmail.com,
         Florian Westphal <fw@strlen.de>,
         Pablo Neira Ayuso <pablo@netfilter.org>
-Subject: [PATCH 5.4 129/222] netfilter: nf_tables: remove WARN and add NLA_STRING upper limits
-Date:   Wed, 22 Jan 2020 10:28:35 +0100
-Message-Id: <20200122092842.985072809@linuxfoundation.org>
+Subject: [PATCH 5.4 131/222] netfilter: nf_tables: fix flowtable list del corruption
+Date:   Wed, 22 Jan 2020 10:28:37 +0100
+Message-Id: <20200122092843.127326322@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
 In-Reply-To: <20200122092833.339495161@linuxfoundation.org>
 References: <20200122092833.339495161@linuxfoundation.org>
@@ -47,72 +47,69 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Florian Westphal <fw@strlen.de>
 
-commit 9332d27d7918182add34e8043f6a754530fdd022 upstream.
+commit 335178d5429c4cee61b58f4ac80688f556630818 upstream.
 
-This WARN can trigger because some of the names fed to the module
-autoload function can be of arbitrary length.
+syzbot reported following crash:
 
-Remove the WARN and add limits for all NLA_STRING attributes.
+  list_del corruption, ffff88808c9bb000->prev is LIST_POISON2 (dead000000000122)
+  [..]
+  Call Trace:
+   __list_del_entry include/linux/list.h:131 [inline]
+   list_del_rcu include/linux/rculist.h:148 [inline]
+   nf_tables_commit+0x1068/0x3b30 net/netfilter/nf_tables_api.c:7183
+   [..]
 
-Reported-by: syzbot+0e63ae76d117ae1c3a01@syzkaller.appspotmail.com
-Fixes: 452238e8d5ffd8 ("netfilter: nf_tables: add and use helper for module autoload")
+The commit transaction list has:
+
+NFT_MSG_NEWTABLE
+NFT_MSG_NEWFLOWTABLE
+NFT_MSG_DELFLOWTABLE
+NFT_MSG_DELTABLE
+
+A missing generation check during DELTABLE processing causes it to queue
+the DELFLOWTABLE operation a second time, so we corrupt the list here:
+
+  case NFT_MSG_DELFLOWTABLE:
+     list_del_rcu(&nft_trans_flowtable(trans)->list);
+     nf_tables_flowtable_notify(&trans->ctx,
+
+because we have two different DELFLOWTABLE transactions for the same
+flowtable.  We then call list_del_rcu() twice for the same flowtable->list.
+
+The object handling seems to suffer from the same bug so add a generation
+check too and only queue delete transactions for flowtables/objects that
+are still active in the next generation.
+
+Reported-by: syzbot+37a6804945a3a13b1572@syzkaller.appspotmail.com
+Fixes: 3b49e2e94e6eb ("netfilter: nf_tables: add flow table netlink frontend")
 Signed-off-by: Florian Westphal <fw@strlen.de>
 Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- net/netfilter/nf_tables_api.c |   13 +++++++++----
- 1 file changed, 9 insertions(+), 4 deletions(-)
+ net/netfilter/nf_tables_api.c |    6 ++++++
+ 1 file changed, 6 insertions(+)
 
 --- a/net/netfilter/nf_tables_api.c
 +++ b/net/netfilter/nf_tables_api.c
-@@ -22,6 +22,8 @@
- #include <net/net_namespace.h>
- #include <net/sock.h>
+@@ -981,12 +981,18 @@ static int nft_flush_table(struct nft_ct
+ 	}
  
-+#define NFT_MODULE_AUTOLOAD_LIMIT (MODULE_NAME_LEN - sizeof("nft-expr-255-"))
+ 	list_for_each_entry_safe(flowtable, nft, &ctx->table->flowtables, list) {
++		if (!nft_is_active_next(ctx->net, flowtable))
++			continue;
 +
- static LIST_HEAD(nf_tables_expressions);
- static LIST_HEAD(nf_tables_objects);
- static LIST_HEAD(nf_tables_flowtables);
-@@ -521,7 +523,7 @@ static void nft_request_module(struct ne
- 	va_start(args, fmt);
- 	ret = vsnprintf(module_name, MODULE_NAME_LEN, fmt, args);
- 	va_end(args);
--	if (WARN(ret >= MODULE_NAME_LEN, "truncated: '%s' (len %d)", module_name, ret))
-+	if (ret >= MODULE_NAME_LEN)
- 		return;
+ 		err = nft_delflowtable(ctx, flowtable);
+ 		if (err < 0)
+ 			goto out;
+ 	}
  
- 	mutex_unlock(&net->nft.commit_mutex);
-@@ -1174,7 +1176,8 @@ static const struct nla_policy nft_chain
- 				    .len = NFT_CHAIN_MAXNAMELEN - 1 },
- 	[NFTA_CHAIN_HOOK]	= { .type = NLA_NESTED },
- 	[NFTA_CHAIN_POLICY]	= { .type = NLA_U32 },
--	[NFTA_CHAIN_TYPE]	= { .type = NLA_STRING },
-+	[NFTA_CHAIN_TYPE]	= { .type = NLA_STRING,
-+				    .len = NFT_MODULE_AUTOLOAD_LIMIT },
- 	[NFTA_CHAIN_COUNTERS]	= { .type = NLA_NESTED },
- 	[NFTA_CHAIN_FLAGS]	= { .type = NLA_U32 },
- };
-@@ -2088,7 +2091,8 @@ static const struct nft_expr_type *nft_e
- }
- 
- static const struct nla_policy nft_expr_policy[NFTA_EXPR_MAX + 1] = {
--	[NFTA_EXPR_NAME]	= { .type = NLA_STRING },
-+	[NFTA_EXPR_NAME]	= { .type = NLA_STRING,
-+				    .len = NFT_MODULE_AUTOLOAD_LIMIT },
- 	[NFTA_EXPR_DATA]	= { .type = NLA_NESTED },
- };
- 
-@@ -3931,7 +3935,8 @@ static const struct nla_policy nft_set_e
- 	[NFTA_SET_ELEM_USERDATA]	= { .type = NLA_BINARY,
- 					    .len = NFT_USERDATA_MAXLEN },
- 	[NFTA_SET_ELEM_EXPR]		= { .type = NLA_NESTED },
--	[NFTA_SET_ELEM_OBJREF]		= { .type = NLA_STRING },
-+	[NFTA_SET_ELEM_OBJREF]		= { .type = NLA_STRING,
-+					    .len = NFT_OBJ_MAXNAMELEN - 1 },
- };
- 
- static const struct nla_policy nft_set_elem_list_policy[NFTA_SET_ELEM_LIST_MAX + 1] = {
+ 	list_for_each_entry_safe(obj, ne, &ctx->table->objects, list) {
++		if (!nft_is_active_next(ctx->net, obj))
++			continue;
++
+ 		err = nft_delobj(ctx, obj);
+ 		if (err < 0)
+ 			goto out;
 
 
