@@ -2,59 +2,90 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8B113145198
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Jan 2020 10:55:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 67406144F09
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Jan 2020 10:34:26 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730910AbgAVJzT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 22 Jan 2020 04:55:19 -0500
-Received: from szxga06-in.huawei.com ([45.249.212.32]:46786 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1730377AbgAVJdO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 Jan 2020 04:33:14 -0500
-Received: from DGGEMS412-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id E3C529708B054E010687;
-        Wed, 22 Jan 2020 17:33:11 +0800 (CST)
-Received: from [127.0.0.1] (10.133.208.128) by DGGEMS412-HUB.china.huawei.com
- (10.3.19.212) with Microsoft SMTP Server id 14.3.439.0; Wed, 22 Jan 2020
- 17:33:10 +0800
-To:     <tytso@mit.edu>, <jack@suse.com>, <linux-ext4@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-From:   wangyan <wangyan122@huawei.com>
-Subject: [PATCH] jbd2: delete the duplicated words in the comments
-Message-ID: <12087f77-ab4d-c7ba-53b4-893dbf0026f0@huawei.com>
-Date:   Wed, 22 Jan 2020 17:33:10 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:45.0) Gecko/20100101
- Thunderbird/45.7.1
+        id S1729727AbgAVJdy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 22 Jan 2020 04:33:54 -0500
+Received: from youngberry.canonical.com ([91.189.89.112]:36079 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729668AbgAVJdt (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 22 Jan 2020 04:33:49 -0500
+Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
+        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.86_2)
+        (envelope-from <colin.king@canonical.com>)
+        id 1iuCOK-0003Me-Dh; Wed, 22 Jan 2020 09:33:40 +0000
+From:   Colin King <colin.king@canonical.com>
+To:     Ping-Ke Shih <pkshih@realtek.com>,
+        Kalle Valo <kvalo@codeaurora.org>,
+        "David S . Miller" <davem@davemloft.net>,
+        linux-wireless@vger.kernel.org, netdev@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] rtlwifi: btcoex: fix spelling mistake "initilized" -> "initialized"
+Date:   Wed, 22 Jan 2020 09:33:40 +0000
+Message-Id: <20200122093340.2800226-1-colin.king@canonical.com>
+X-Mailer: git-send-email 2.24.0
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.133.208.128]
-X-CFilter-Loop: Reflected
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Delete the duplicated words "is" in the comments
+From: Colin Ian King <colin.king@canonical.com>
 
-Signed-off-by: Yan Wang <wangyan122@huawei.com>
+There is a spelling mistake in one of the fields in the btc_coexist struct,
+fix it.
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- fs/jbd2/transaction.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ .../net/wireless/realtek/rtlwifi/btcoexist/halbtc8192e2ant.c    | 2 +-
+ drivers/net/wireless/realtek/rtlwifi/btcoexist/halbtcoutsrc.c   | 2 +-
+ drivers/net/wireless/realtek/rtlwifi/btcoexist/halbtcoutsrc.h   | 2 +-
+ 3 files changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/fs/jbd2/transaction.c b/fs/jbd2/transaction.c
-index 27b9f9dee434..5c3abbaccb57 100644
---- a/fs/jbd2/transaction.c
-+++ b/fs/jbd2/transaction.c
-@@ -525,7 +525,7 @@ EXPORT_SYMBOL(jbd2__journal_start);
-  * modified buffers in the log.  We block until the log can guarantee
-  * that much space. Additionally, if rsv_blocks > 0, we also create another
-  * handle with rsv_blocks reserved blocks in the journal. This handle is
-- * is stored in h_rsv_handle. It is not attached to any particular transaction
-+ * stored in h_rsv_handle. It is not attached to any particular transaction
-  * and thus doesn't block transaction commit. If the caller uses this reserved
-  * handle, it has to set h_rsv_handle to NULL as otherwise jbd2_journal_stop()
-  * on the parent handle will dispose the reserved one. Reserved handle has to
+diff --git a/drivers/net/wireless/realtek/rtlwifi/btcoexist/halbtc8192e2ant.c b/drivers/net/wireless/realtek/rtlwifi/btcoexist/halbtc8192e2ant.c
+index 3c96c320236c..658ff425c256 100644
+--- a/drivers/net/wireless/realtek/rtlwifi/btcoexist/halbtc8192e2ant.c
++++ b/drivers/net/wireless/realtek/rtlwifi/btcoexist/halbtc8192e2ant.c
+@@ -862,7 +862,7 @@ static void btc8192e2ant_set_sw_rf_rx_lpf_corner(struct btc_coexist *btcoexist,
+ 		/* Resume RF Rx LPF corner
+ 		 * After initialized, we can use coex_dm->btRf0x1eBackup
+ 		 */
+-		if (btcoexist->initilized) {
++		if (btcoexist->initialized) {
+ 			RT_TRACE(rtlpriv, COMP_BT_COEXIST, DBG_LOUD,
+ 				 "[BTCoex], Resume RF Rx LPF corner!!\n");
+ 			btcoexist->btc_set_rf_reg(btcoexist, BTC_RF_A, 0x1e,
+diff --git a/drivers/net/wireless/realtek/rtlwifi/btcoexist/halbtcoutsrc.c b/drivers/net/wireless/realtek/rtlwifi/btcoexist/halbtcoutsrc.c
+index 191dafd03189..a4940a3842de 100644
+--- a/drivers/net/wireless/realtek/rtlwifi/btcoexist/halbtcoutsrc.c
++++ b/drivers/net/wireless/realtek/rtlwifi/btcoexist/halbtcoutsrc.c
+@@ -1461,7 +1461,7 @@ void exhalbtc_init_coex_dm(struct btc_coexist *btcoexist)
+ 			ex_btc8192e2ant_init_coex_dm(btcoexist);
+ 	}
+ 
+-	btcoexist->initilized = true;
++	btcoexist->initialized = true;
+ }
+ 
+ void exhalbtc_ips_notify(struct btc_coexist *btcoexist, u8 type)
+diff --git a/drivers/net/wireless/realtek/rtlwifi/btcoexist/halbtcoutsrc.h b/drivers/net/wireless/realtek/rtlwifi/btcoexist/halbtcoutsrc.h
+index 8c0a7fdbf200..a96a995dd850 100644
+--- a/drivers/net/wireless/realtek/rtlwifi/btcoexist/halbtcoutsrc.h
++++ b/drivers/net/wireless/realtek/rtlwifi/btcoexist/halbtcoutsrc.h
+@@ -679,7 +679,7 @@ struct btc_coexist {
+ 	bool auto_report_2ant;
+ 	bool dbg_mode_1ant;
+ 	bool dbg_mode_2ant;
+-	bool initilized;
++	bool initialized;
+ 	bool stop_coex_dm;
+ 	bool manual_control;
+ 	struct btc_statistics statistics;
 -- 
-2.19.1
+2.24.0
 
