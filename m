@@ -2,70 +2,92 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6577314539F
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Jan 2020 12:18:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D91601453AC
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Jan 2020 12:23:16 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729099AbgAVLSl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 22 Jan 2020 06:18:41 -0500
-Received: from mx2.suse.de ([195.135.220.15]:37754 "EHLO mx2.suse.de"
+        id S1729191AbgAVLXO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 22 Jan 2020 06:23:14 -0500
+Received: from mga14.intel.com ([192.55.52.115]:34818 "EHLO mga14.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726049AbgAVLSl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 Jan 2020 06:18:41 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id EE58FB109;
-        Wed, 22 Jan 2020 11:18:38 +0000 (UTC)
-Date:   Wed, 22 Jan 2020 12:18:37 +0100
-From:   Jean Delvare <jdelvare@suse.de>
-To:     Luca Ceresoli <luca@lucaceresoli.net>
-Cc:     linux-doc@vger.kernel.org, linux-i2c@vger.kernel.org,
-        Wolfram Sang <wsa@the-dreams.de>,
-        Peter Rosin <peda@axentia.se>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 24/26] docs: i2c: old-module-parameters: clarify this is
- for obsolete kernels
-Message-ID: <20200122121837.32da9bd7@endymion>
-In-Reply-To: <20200106074639.13763-1-luca@lucaceresoli.net>
-References: <20200105224006.10321-1-luca@lucaceresoli.net>
-        <20200106074639.13763-1-luca@lucaceresoli.net>
-Organization: SUSE Linux
-X-Mailer: Claws Mail 3.17.4 (GTK+ 2.24.32; x86_64-suse-linux-gnu)
+        id S1726204AbgAVLXM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 22 Jan 2020 06:23:12 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga007.fm.intel.com ([10.253.24.52])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 22 Jan 2020 03:23:11 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.70,349,1574150400"; 
+   d="scan'208";a="221209143"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by fmsmga007.fm.intel.com with ESMTP; 22 Jan 2020 03:23:08 -0800
+Received: by black.fi.intel.com (Postfix, from userid 1003)
+        id 7F6E329B; Wed, 22 Jan 2020 13:23:07 +0200 (EET)
+From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To:     Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
+        Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org
+Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Cezary Rojewski <cezary.rojewski@intel.com>,
+        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
+        Liam Girdwood <liam.r.girdwood@linux.intel.com>,
+        Jie Yang <yang.jie@linux.intel.com>,
+        alsa-devel@alsa-project.org
+Subject: [PATCH v3 0/9] x86: Easy way of detecting MS Surface 3
+Date:   Wed, 22 Jan 2020 13:22:57 +0200
+Message-Id: <20200122112306.64598-1-andriy.shevchenko@linux.intel.com>
+X-Mailer: git-send-email 2.24.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon,  6 Jan 2020 08:46:39 +0100, Luca Ceresoli wrote:
-> This section applies only to code for very old kernels. Avoid people
-> reading this unnecessarily.
-> 
-> Signed-off-by: Luca Ceresoli <luca@lucaceresoli.net>
-> ---
->  Documentation/i2c/old-module-parameters.rst | 5 +++++
->  1 file changed, 5 insertions(+)
-> 
-> diff --git a/Documentation/i2c/old-module-parameters.rst b/Documentation/i2c/old-module-parameters.rst
-> index 0503d2f0b127..80fb117883fd 100644
-> --- a/Documentation/i2c/old-module-parameters.rst
-> +++ b/Documentation/i2c/old-module-parameters.rst
-> @@ -2,6 +2,11 @@
->  I2C device driver binding control from user-space
->  =================================================
->  
-> +.. NOTE::
-> +   Note: this section is only relevant if you are handling some old code
-> +   found in kernel 2.6. If you work with more recent kernels, you can
-> +   safely skip this section.
-> +
->  Up to kernel 2.6.32, many I2C drivers used helper macros provided by
->  <linux/i2c.h> which created standard module parameters to let the user
->  control how the driver would probe I2C buses and attach to devices. These
+While working on RTC regression, I noticed that we are using the same DMI check
+over and over in the drivers for MS Surface 3 platform. This series dedicated
+for making it easier in the same way how it's done for Apple machines.
 
-Reviewed-by: Jean Delvare <jdelvare@suse.de>
+Changelog v3:
+- fixed typo in patch 5 (Jonathan)
+- returned back to if {} else {} condition in ASoC driver (Mark)
+- added Mark's Ack tag
 
+Changelog v2:
+- removed RTC patches for now (the fix will be independent to this series)
+- added couple more clean ups to arch/x86/kernel/quirks.c
+- redone DMI quirk to use driver_data instead of callback
+- simplified check in soc-acpi-intel-cht-match.c to be oneliner
+- added a new patch to cover rt5645 codec driver
+
+Cc: Cezary Rojewski <cezary.rojewski@intel.com>
+Cc: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+Cc: Liam Girdwood <liam.r.girdwood@linux.intel.com>
+Cc: Jie Yang <yang.jie@linux.intel.com>
+Cc: Mark Brown <broonie@kernel.org>
+Cc: alsa-devel@alsa-project.org
+
+Andy Shevchenko (9):
+  x86/platform: Rename x86/apple.h -> x86/machine.h
+  x86/quirks: Add missed include to satisfy static checker
+  x86/quirks: Introduce hpet_dev_print_force_hpet_address() helper
+  x86/quirks: Join string literals back
+  x86/quirks: Convert DMI matching to use a table
+  x86/quirks: Add a DMI quirk for Microsoft Surface 3
+  platform/x86: surface3_wmi: Switch DMI table match to a test of
+    variable
+  ASoC: rt5645: Switch DMI table match to a test of variable
+  ASoC: Intel: Switch DMI table match to a test of variable
+
+ arch/x86/kernel/quirks.c                      | 91 +++++++++++++------
+ drivers/platform/x86/surface3-wmi.c           | 16 +---
+ include/linux/platform_data/x86/apple.h       | 14 +--
+ include/linux/platform_data/x86/machine.h     | 20 ++++
+ sound/soc/codecs/rt5645.c                     | 14 ++-
+ .../intel/common/soc-acpi-intel-cht-match.c   | 28 +-----
+ 6 files changed, 93 insertions(+), 90 deletions(-)
+ create mode 100644 include/linux/platform_data/x86/machine.h
 
 -- 
-Jean Delvare
-SUSE L3 Support
+2.24.1
+
