@@ -2,38 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2E0EE144EB6
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Jan 2020 10:30:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 18F8A1450CE
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Jan 2020 10:50:14 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729429AbgAVJaz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 22 Jan 2020 04:30:55 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42552 "EHLO mail.kernel.org"
+        id S1730061AbgAVJs6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 22 Jan 2020 04:48:58 -0500
+Received: from mail.kernel.org ([198.145.29.99]:59676 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729396AbgAVJav (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 Jan 2020 04:30:51 -0500
+        id S2387470AbgAVJkm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 22 Jan 2020 04:40:42 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BD14A2071E;
-        Wed, 22 Jan 2020 09:30:50 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D82602467B;
+        Wed, 22 Jan 2020 09:40:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579685451;
-        bh=PIHW0L+5AV2n7O6ZFHtFj1XbG8tDtNQgLbILcnw0keI=;
+        s=default; t=1579686041;
+        bh=o5ENOhAOLvVXmvZAAxOD8ynA2Hhx+mzchRgQvihpNNg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=PSvSfcYBmF6J/1VC+AxD+tofpyosfeHLV2Y6GB1TxxKW03QydmSw/ZTycVJJheQnP
-         14kvL/So1rZtR8lrmxl+OGEy8Q0qvaeGvsz7bGtf+PFpI+Q/4TSEcHo3ctZGMGNBWp
-         KZVNbgariXeYyzW7ImJnCyPmLJpmfEo2HURq+os0=
+        b=M22pXMQc6bElc/ClEJ2LAcebJwdHyBsaFXhE36vOIuGbUJI5xvGE/8UUG0CrMh6gT
+         ap4MwhWRK3No33SdKLh/ums02NmO9a6AqCUk6fz1FZY8AEDLcbxk77kHNCOo3yj0yh
+         XsTW8/TIufoM+tVY5c6cdSOILXAqmNZVdjkYdOek=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Marcel Holtmann <marcel@holtmann.org>,
-        Jiri Kosina <jkosina@suse.cz>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.4 02/76] HID: hidraw: Fix returning EPOLLOUT from hidraw_poll
-Date:   Wed, 22 Jan 2020 10:28:18 +0100
-Message-Id: <20200122092751.985439544@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        Kevin Hilman <khilman@baylibre.com>
+Subject: [PATCH 4.19 003/103] dt-bindings: reset: meson8b: fix duplicate reset IDs
+Date:   Wed, 22 Jan 2020 10:28:19 +0100
+Message-Id: <20200122092804.144652552@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200122092751.587775548@linuxfoundation.org>
-References: <20200122092751.587775548@linuxfoundation.org>
+In-Reply-To: <20200122092803.587683021@linuxfoundation.org>
+References: <20200122092803.587683021@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,48 +44,42 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Marcel Holtmann <marcel@holtmann.org>
+From: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
 
-[ Upstream commit 9f3b61dc1dd7b81e99e7ed23776bb64a35f39e1a ]
+commit 4881873f4cc1460f63d85fa81363d56be328ccdc upstream.
 
-When polling a connected /dev/hidrawX device, it is useful to get the
-EPOLLOUT when writing is possible. Since writing is possible as soon as
-the device is connected, always return it.
+According to the public S805 datasheet the RESET2 register uses the
+following bits for the PIC_DC, PSC and NAND reset lines:
+- PIC_DC is at bit 3 (meaning: RESET_VD_RMEM + 3)
+- PSC is at bit 4 (meaning: RESET_VD_RMEM + 4)
+- NAND is at bit 5 (meaning: RESET_VD_RMEM + 4)
 
-Right now EPOLLOUT is only returned when there are also input reports
-are available. This works if devices start sending reports when
-connected, but some HID devices might need an output report first before
-sending any input reports. This change will allow using EPOLLOUT here as
-well.
+Update the reset IDs of these three reset lines so they don't conflict
+with PIC_DC and map to the actual hardware reset lines.
 
-Fixes: 378b80370aa1 ("hidraw: Return EPOLLOUT from hidraw_poll")
-Signed-off-by: Marcel Holtmann <marcel@holtmann.org>
-Cc: stable@vger.kernel.org
-Signed-off-by: Jiri Kosina <jkosina@suse.cz>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Fixes: 79795e20a184eb ("dt-bindings: reset: Add bindings for the Meson SoC Reset Controller")
+Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Signed-off-by: Kevin Hilman <khilman@baylibre.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- drivers/hid/hidraw.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ include/dt-bindings/reset/amlogic,meson8b-reset.h |    6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/hid/hidraw.c b/drivers/hid/hidraw.c
-index 27d2f5a48a11..e60d9c88bd35 100644
---- a/drivers/hid/hidraw.c
-+++ b/drivers/hid/hidraw.c
-@@ -265,10 +265,10 @@ static unsigned int hidraw_poll(struct file *file, poll_table *wait)
- 
- 	poll_wait(file, &list->hidraw->wait, wait);
- 	if (list->head != list->tail)
--		return POLLIN | POLLRDNORM | POLLOUT;
-+		return POLLIN | POLLRDNORM;
- 	if (!list->hidraw->exist)
- 		return POLLERR | POLLHUP;
--	return 0;
-+	return POLLOUT | POLLWRNORM;
- }
- 
- static int hidraw_open(struct inode *inode, struct file *file)
--- 
-2.20.1
-
+--- a/include/dt-bindings/reset/amlogic,meson8b-reset.h
++++ b/include/dt-bindings/reset/amlogic,meson8b-reset.h
+@@ -95,9 +95,9 @@
+ #define RESET_VD_RMEM			64
+ #define RESET_AUDIN			65
+ #define RESET_DBLK			66
+-#define RESET_PIC_DC			66
+-#define RESET_PSC			66
+-#define RESET_NAND			66
++#define RESET_PIC_DC			67
++#define RESET_PSC			68
++#define RESET_NAND			69
+ #define RESET_GE2D			70
+ #define RESET_PARSER_REG		71
+ #define RESET_PARSER_FETCH		72
 
 
