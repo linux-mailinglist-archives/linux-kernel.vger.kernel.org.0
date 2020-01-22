@@ -2,150 +2,64 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 72649144E73
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Jan 2020 10:15:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9ACF3144E7D
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Jan 2020 10:16:53 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729157AbgAVJPp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 22 Jan 2020 04:15:45 -0500
-Received: from lelv0142.ext.ti.com ([198.47.23.249]:42224 "EHLO
-        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725911AbgAVJPo (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 Jan 2020 04:15:44 -0500
-Received: from fllv0035.itg.ti.com ([10.64.41.0])
-        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id 00M9FMLM122955;
-        Wed, 22 Jan 2020 03:15:22 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1579684522;
-        bh=p6TXy9D8Jj5ZMAsUl92rse85KpLnXYI0D7il7xeObjo=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=uBtieWXwbpXSnRK/R3juokz75ZF07c3mFcuNzH5xfgGKpgBJPYDmetcojC/2gI9gN
-         0VOEXTfL2++aG1uTJbYPyywW3QlkZZVZYsgZZaJUD4mknt6vWvHEYL0OY/TgmX2SW2
-         Ngi7YqDlsI0/rO0y0n5xfRIm29JqCAdjoS1cC6wk=
-Received: from DLEE104.ent.ti.com (dlee104.ent.ti.com [157.170.170.34])
-        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTP id 00M9FM9x030906;
-        Wed, 22 Jan 2020 03:15:22 -0600
-Received: from DLEE109.ent.ti.com (157.170.170.41) by DLEE104.ent.ti.com
- (157.170.170.34) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Wed, 22
- Jan 2020 03:15:22 -0600
-Received: from fllv0040.itg.ti.com (10.64.41.20) by DLEE109.ent.ti.com
- (157.170.170.41) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
- Frontend Transport; Wed, 22 Jan 2020 03:15:22 -0600
-Received: from [192.168.2.6] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by fllv0040.itg.ti.com (8.15.2/8.15.2) with ESMTP id 00M9FJa9046831;
-        Wed, 22 Jan 2020 03:15:19 -0600
-Subject: Re: [PATCH 2/2] drm/bridge: Add tc358768 driver
-To:     Andrzej Hajda <a.hajda@samsung.com>, <airlied@linux.ie>,
-        <daniel@ffwll.ch>, <robh+dt@kernel.org>, <mark.rutland@arm.com>,
-        <narmstrong@baylibre.com>
-CC:     <tomi.valkeinen@ti.com>, <dri-devel@lists.freedesktop.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <Laurent.pinchart@ideasonboard.com>, <jonas@kwiboo.se>,
-        <jernej.skrabec@siol.net>
-References: <20191217101506.18910-1-peter.ujfalusi@ti.com>
- <CGME20191217101520epcas1p4a2bdee0cab0c11670b74fbe9e9397835@epcas1p4.samsung.com>
- <20191217101506.18910-3-peter.ujfalusi@ti.com>
- <35d664fe-8091-2744-abf2-69828ebf1148@samsung.com>
- <14306079-500d-09ca-df94-4cf72c43f858@ti.com>
- <cdc941c5-681f-962b-7f99-ebfda6aaaa91@samsung.com>
-From:   Peter Ujfalusi <peter.ujfalusi@ti.com>
-Message-ID: <e8774c16-c34c-adf8-fee5-17323dcd95bf@ti.com>
-Date:   Wed, 22 Jan 2020 11:16:00 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        id S1729251AbgAVJQr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 22 Jan 2020 04:16:47 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33482 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729195AbgAVJQo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 22 Jan 2020 04:16:44 -0500
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 83CDB24655;
+        Wed, 22 Jan 2020 09:16:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1579684604;
+        bh=hvk+tD/3VhwOAtY5cy8+p3bDb3HogumdFfcWJYY1nT8=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=QpKICW4X2MMDYAoBeuisEc2vsOPu5x38SthNZo4KjuXDJJyz2JGP1GT4vLYT7Ox2B
+         8rUQmYS7EsxMSRViBpRwNzaDS7gUZr+4wgeUjS0pCWb2V8TcTeDzVbXTngp2ESKZ7E
+         lN/qeI56p8loqWc+vw8gWLwETe4ERF8QsBbHevGc=
+Date:   Wed, 22 Jan 2020 10:16:41 +0100
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Heikki Krogerus <heikki.krogerus@linux.intel.com>
+Cc:     Thomas Hebb <tommyhebb@gmail.com>, linux-kernel@vger.kernel.org,
+        linux-stable@vger.kernel.org, Guenter Roeck <linux@roeck-us.net>,
+        Hans de Goede <hdegoede@redhat.com>,
+        linux-usb@vger.kernel.org
+Subject: Re: [PATCH v2 2/2] usb: typec: fusb302: fix "op-sink-microwatt"
+ default that was in mW
+Message-ID: <20200122091641.GA2697963@kroah.com>
+References: <0eac53c4878423a9abd49d2142fe4cb1136db4e2.1579529138.git.tommyhebb@gmail.com>
+ <c497958a1b0d8e3421c5eda46abddba6651cec1e.1579529138.git.tommyhebb@gmail.com>
+ <20200122090820.GA2643799@kroah.com>
+ <20200122091202.GA22653@kuha.fi.intel.com>
 MIME-Version: 1.0
-In-Reply-To: <cdc941c5-681f-962b-7f99-ebfda6aaaa91@samsung.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200122091202.GA22653@kuha.fi.intel.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Andrzej,
-
-On 22/01/2020 10.46, Andrzej Hajda wrote:
->>>> +struct tc358768_priv {
->>>> +	struct device *dev;
->>>> +	struct regmap *regmap;
->>>> +	struct gpio_desc *reset_gpio;
->>>> +	struct regulator_bulk_data supplies[ARRAY_SIZE(tc358768_supplies)];
->>>> +	struct clk *refclk;
->>>> +
->>>> +	struct mipi_dsi_host dsi_host;
->>>> +	struct drm_bridge bridge;
->>>> +	struct tc358768_dsi_output output;
->>>
->>> Since tc358768_dsi_output is used only here, you can define it here as
->>> well, up to you.
->> I think I have done it like this to avoid thinking about prefixes for
->> what is under the tc358768_dsi_output.
->> I'll take a look if it will look better unpacked here.
+On Wed, Jan 22, 2020 at 11:12:02AM +0200, Heikki Krogerus wrote:
+> On Wed, Jan 22, 2020 at 10:08:20AM +0100, Greg Kroah-Hartman wrote:
+> > On Mon, Jan 20, 2020 at 06:05:41AM -0800, Thomas Hebb wrote:
+> > > commit 8f6244055bd3 ("usb: typec: fusb302: Always provide fwnode for the
+> > > port") didn't convert this value from mW to uW when migrating to a new
+> > > specification format like it should have.
+> > > 
+> > > Fixes: 8f6244055bd3 ("usb: typec: fusb302: Always provide fwnode for the port")
+> > > Cc: linux-stable@vger.kernel.org
+> > 
+> > Nit, there is no such address :)
 > 
-> I though rather about in-place anonymous struct definition:
-> 
-> +    struct tc358768_dsi_output {
-> +        struct mipi_dsi_device *dev;
-> +        struct drm_panel *panel;
-> +        struct drm_bridge *bridge;
-> +    } output;
-> 
-> But, as I said - up to you.
+> Thomas already fixed the address in v3.
 
-I see. I think I will keep how it was. They are in proximity, so easy to
-check.
+Now see that series and queued it up, thanks.
 
->>>> +
->>>> +	refclk = clk_get_rate(priv->refclk);
->>>> +
->>>> +	best_diff = UINT_MAX;
->>>> +	best_pll = 0;
->>>> +	best_prd = 0;
->>>> +	best_fbd = 0;
->>>> +
->>>> +	for (prd = 0; prd < 16; ++prd) {
->>>> +		u32 divisor = (prd + 1) * (1 << frs);
->>>> +		u32 fbd;
->>>> +
->>>> +		for (fbd = 0; fbd < 512; ++fbd) {
->>>> +			u32 pll, diff;
->>>> +
->>>> +			pll = (u32)div_u64((u64)refclk * (fbd + 1), divisor);
->>>> +
->>>> +			if (pll >= max_pll || pll < min_pll)
->>>> +				continue;
->>>> +
->>>> +			diff = max(pll, target_pll) - min(pll, target_pll);
->>>> +
->>>> +			if (diff < best_diff) {
->>>> +				best_diff = diff;
->>>> +				best_pll = pll;
->>>> +				best_prd = prd;
->>>> +				best_fbd = fbd;
->>>> +			}
->>>> +
->>>> +			if (best_diff == 0)
->>>> +				break;
->>>> +		}
->>>> +
->>>> +		if (best_diff == 0)
->>>> +			break;
->>> why another check here?
->> To break out from the top for() loop also in case exact match has been
->> found.
-> 
-> 
-> Ahh, OK. So maybe you should put "if (diff == 0) goto found" inside "if
-> (diff < best_diff)" block, in such case goto is not considered harmful
-> :), and is more readable.
-
-Exactly my thoughts ;)
-
-- Péter
-
-Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
-Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
+greg k-h
