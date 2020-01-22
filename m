@@ -2,94 +2,101 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 34BBE145442
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Jan 2020 13:15:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 57A3F145452
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Jan 2020 13:20:07 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729225AbgAVMPu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 22 Jan 2020 07:15:50 -0500
-Received: from mx0a-00128a01.pphosted.com ([148.163.135.77]:38542 "EHLO
-        mx0a-00128a01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726204AbgAVMPt (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 Jan 2020 07:15:49 -0500
-Received: from pps.filterd (m0167088.ppops.net [127.0.0.1])
-        by mx0a-00128a01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 00MCF74Z012293;
-        Wed, 22 Jan 2020 07:15:29 -0500
-Received: from nwd2mta3.analog.com ([137.71.173.56])
-        by mx0a-00128a01.pphosted.com with ESMTP id 2xkvrbjpyj-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 22 Jan 2020 07:15:29 -0500
-Received: from ASHBMBX8.ad.analog.com (ashbmbx8.ad.analog.com [10.64.17.5])
-        by nwd2mta3.analog.com (8.14.7/8.14.7) with ESMTP id 00MCFS0R041149
-        (version=TLSv1/SSLv3 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=FAIL);
-        Wed, 22 Jan 2020 07:15:28 -0500
-Received: from SCSQMBX11.ad.analog.com (10.77.17.10) by ASHBMBX8.ad.analog.com
- (10.64.17.5) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1779.2; Wed, 22 Jan
- 2020 07:15:27 -0500
-Received: from zeus.spd.analog.com (10.64.82.11) by SCSQMBX11.ad.analog.com
- (10.77.17.10) with Microsoft SMTP Server id 15.1.1779.2 via Frontend
- Transport; Wed, 22 Jan 2020 04:15:26 -0800
-Received: from ben-Latitude-E6540.ad.analog.com ([10.48.65.231])
-        by zeus.spd.analog.com (8.15.1/8.15.1) with ESMTP id 00MCF513031122;
-        Wed, 22 Jan 2020 07:15:23 -0500
-From:   Beniamin Bia <beniamin.bia@analog.com>
-To:     <jic23@kernel.org>
-CC:     <lars@metafoo.de>, <Michael.Hennerich@analog.com>,
-        <pmeerw@pmeerw.net>, <linux-iio@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <biabeniamin@outlook.com>,
-        <knaack.h@gmx.de>, <robh+dt@kernel.org>, <mark.rutland@arm.com>,
-        <devicetree@vger.kernel.org>,
-        Beniamin Bia <beniamin.bia@analog.com>
-Subject: [PATCH v2 3/3] MAINTAINERS: add entry for hmc425a driver.
-Date:   Wed, 22 Jan 2020 14:17:02 +0200
-Message-ID: <20200122121702.30494-3-beniamin.bia@analog.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20200122121702.30494-1-beniamin.bia@analog.com>
-References: <20200122121702.30494-1-beniamin.bia@analog.com>
+        id S1729129AbgAVMUE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 22 Jan 2020 07:20:04 -0500
+Received: from foss.arm.com ([217.140.110.172]:55764 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728900AbgAVMUD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 22 Jan 2020 07:20:03 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 0BB71328;
+        Wed, 22 Jan 2020 04:20:03 -0800 (PST)
+Received: from e119884-lin.cambridge.arm.com (e119884-lin.cambridge.arm.com [10.1.196.72])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id E5EA33F52E;
+        Wed, 22 Jan 2020 04:20:01 -0800 (PST)
+From:   Vincenzo Frascino <vincenzo.frascino@arm.com>
+To:     thierry.reding@gmail.com, airlied@linux.ie, daniel@ffwll.ch,
+        jonathanh@nvidia.com
+Cc:     dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org, vincenzo.frascino@arm.com
+Subject: [PATCH] drm: tegra: Fix warning in PM ops
+Date:   Wed, 22 Jan 2020 12:19:51 +0000
+Message-Id: <20200122121951.52639-1-vincenzo.frascino@arm.com>
+X-Mailer: git-send-email 2.25.0
 MIME-Version: 1.0
-Content-Type: text/plain
-X-ADIRoutedOnPrem: True
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.572
- definitions=2020-01-17_05:2020-01-16,2020-01-17 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0
- lowpriorityscore=0 suspectscore=1 mlxscore=0 malwarescore=0
- impostorscore=0 adultscore=0 phishscore=0 bulkscore=0 clxscore=1015
- priorityscore=1501 mlxlogscore=853 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.12.0-1910280000 definitions=main-2001220112
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add Beniamin Bia and Michael Hennerich as maintainers for HMC425A
-attenuator.
+The tegra driver can be compiled without CONFIG_PM_SLEEP enabled.
+In this case the compilation triggers the warning below:
 
-Signed-off-by: Beniamin Bia <beniamin.bia@analog.com>
+drivers/gpu/drm/tegra/sor.c:3984:12: warning: ‘tegra_sor_resume’
+defined but not used [-Wunused-function]
+ 3984 | static int tegra_sor_resume(struct device *dev)
+      |            ^~~~~~~~~~~~~~~~
+drivers/gpu/drm/tegra/sor.c:3970:12: warning: ‘tegra_sor_suspend’
+defined but not used [-Wunused-function]
+ 3970 | static int tegra_sor_suspend(struct device *dev)
+      |            ^~~~~~~~~~~~~~~~~
+
+Fix the warning adding __maybe_unused to the PM functions.
+
+Cc: Thierry Reding <thierry.reding@gmail.com>
+Cc: David Airlie <airlied@linux.ie>
+Cc: Daniel Vetter <daniel@ffwll.ch>
+Cc: Jonathan Hunter <jonathanh@nvidia.com>
+Signed-off-by: Vincenzo Frascino <vincenzo.frascino@arm.com>
 ---
- MAINTAINERS | 9 +++++++++
- 1 file changed, 9 insertions(+)
+ drivers/gpu/drm/tegra/sor.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index ec05a06d7ddb..9ae436d67edf 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -1057,6 +1057,15 @@ F:	drivers/iio/adc/ltc249*
- X:	drivers/iio/*/adjd*
- F:	drivers/staging/iio/*/ad*
+diff --git a/drivers/gpu/drm/tegra/sor.c b/drivers/gpu/drm/tegra/sor.c
+index a68d3b36b972..69b9ebee7486 100644
+--- a/drivers/gpu/drm/tegra/sor.c
++++ b/drivers/gpu/drm/tegra/sor.c
+@@ -3912,7 +3912,7 @@ static int tegra_sor_remove(struct platform_device *pdev)
+ 	return 0;
+ }
  
-+ANALOG DEVICES INC HMC425A DRIVER
-+M:	Beniamin Bia <beniamin.bia@analog.com>
-+M:	Michael Hennerich <michael.hennerich@analog.com>
-+L:	linux-iio@vger.kernel.org
-+W:	http://ez.analog.com/community/linux-device-drivers
-+S:	Supported
-+F:	drivers/iio/amplifiers/hmc425a.c
-+F:	Documentation/devicetree/bindings/iio/amplifiers/adi,hmc425a.yaml
-+
- ANALOGBITS PLL LIBRARIES
- M:	Paul Walmsley <paul.walmsley@sifive.com>
- S:	Supported
+-static int tegra_sor_runtime_suspend(struct device *dev)
++static int __maybe_unused tegra_sor_runtime_suspend(struct device *dev)
+ {
+ 	struct tegra_sor *sor = dev_get_drvdata(dev);
+ 	int err;
+@@ -3934,7 +3934,7 @@ static int tegra_sor_runtime_suspend(struct device *dev)
+ 	return 0;
+ }
+ 
+-static int tegra_sor_runtime_resume(struct device *dev)
++static int __maybe_unused tegra_sor_runtime_resume(struct device *dev)
+ {
+ 	struct tegra_sor *sor = dev_get_drvdata(dev);
+ 	int err;
+@@ -3967,7 +3967,7 @@ static int tegra_sor_runtime_resume(struct device *dev)
+ 	return 0;
+ }
+ 
+-static int tegra_sor_suspend(struct device *dev)
++static int __maybe_unused tegra_sor_suspend(struct device *dev)
+ {
+ 	struct tegra_sor *sor = dev_get_drvdata(dev);
+ 	int err;
+@@ -3981,7 +3981,7 @@ static int tegra_sor_suspend(struct device *dev)
+ 	return 0;
+ }
+ 
+-static int tegra_sor_resume(struct device *dev)
++static int __maybe_unused tegra_sor_resume(struct device *dev)
+ {
+ 	struct tegra_sor *sor = dev_get_drvdata(dev);
+ 	int err;
 -- 
-2.17.1
+2.25.0
 
