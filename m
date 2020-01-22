@@ -2,57 +2,57 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DE2FE145754
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Jan 2020 15:00:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5984A145757
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Jan 2020 15:00:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728779AbgAVOAW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 22 Jan 2020 09:00:22 -0500
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:44074 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725911AbgAVOAU (ORCPT
+        id S1728981AbgAVOA2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 22 Jan 2020 09:00:28 -0500
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:40401 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725805AbgAVOAW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 Jan 2020 09:00:20 -0500
-Received: by mail-wr1-f68.google.com with SMTP id q10so7345769wrm.11;
-        Wed, 22 Jan 2020 06:00:19 -0800 (PST)
+        Wed, 22 Jan 2020 09:00:22 -0500
+Received: by mail-wr1-f65.google.com with SMTP id c14so7363172wrn.7;
+        Wed, 22 Jan 2020 06:00:20 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=llJtsD1yoIdDJJBrtXp9tF8w1Mo3indfYk+7VrYbE8Q=;
-        b=LPti3YbVAbzC2HZff/IMU/SFTweupPZu/GOiGZN9vql4modIiuZ3/cwzVaLLSrNJiw
-         dG7UEPKYxTXvjTPo3JN4jZnYd20NISOouc4ovwQbfCJ5t43jZvWIAoA09LFe8ygG7TNi
-         gUHkFoi/Qu/rfCIPnfnuVItWYB4ka3OmnKcbZLRK0QrAtn0TIFABVLA6DsjyFkfa20kF
-         jZx9wixTeVwQtAQ3H0VixiVKaViYqlauD2uf4wKeaQpctjPnxRcfHkznSNjsHE2FNBAz
-         5qC6CIDRU+yllm53O/74+quY1OprrxTlAT/zULBFW/g3TAbtDIpVNZz8OdCJ84P41URO
-         UJUA==
+        bh=wT1XptHM1yDaallnAlJ04tzwlvbDznGoQRImKRhMaTQ=;
+        b=gLPFwEPvjLGTR/oZW7yPAo9G3ITKN3RzYTHXTbR3OR2c6io8hgGMotpsBMJQ7UV3Xk
+         tHlBmA8pDmFepQXTO/O8r7GHAK121J20BeIeoTXVMR5RdapoL6H3sUQY/mSrmrH15WUA
+         7sg+ADEzNbUAlJF0bT+KDrUAewDCUfx52WlLRmcQO1sm1P5ai5KHiwTnFohFKGUQuEeA
+         nwI8KXZzjRXykb21Mzuq46AW5UeuObFfbULVkzKMPrxdOVkJOt/bNoXv4UjpxY2728fE
+         wIA74hOvPef7v83kRbHffOHpCWSM1OdO5JlTHtrlpqOy4P20Rl7Oli1whl9ikOICuCqp
+         hSfA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=llJtsD1yoIdDJJBrtXp9tF8w1Mo3indfYk+7VrYbE8Q=;
-        b=ovqfEam1d+HTsdwsU0Zm4qlzkz6NyluLq1xGlZ+MCIToZ2bScrFEoJPJKPie/+r0tZ
-         B96PMorU7f4pvWWW2FFCgTJZK62nSMHwCdlO2XIylByjU/gP+NvqR9ekL9G0jzvp2JMb
-         dDoVvUwbh3gmPMSqQ8BymIQreIeOhhlBXWXL5G8cOYjDNXVg7a3VrXPN38OcmUXKTmEj
-         9aKsmIO2ziuPChKAalsCqTfSCVOBV0zWUucOrfubK1ndH90+2x//d/z7NYz0VDwCoGTD
-         xLJhlc7O8fA+8CBg2zXgDyIlDnXJ7OoSkC0k7UmLjBGqLxm5A5oa1ZK+UtSS23nayYNk
-         4oeg==
-X-Gm-Message-State: APjAAAXHbasxOPXQ1Be2+o8OscXy0EsoQyur66YS6xgEbQT39dfUNZCw
-        sZI9v9EGghIjcy8Nj4fMKRaN+SQBv8k=
-X-Google-Smtp-Source: APXvYqyqAliVAlgsh46doxlz8/cWPyE704oyfyXYAxyPxE2HR7uLHYPdl3E1wVNaWzdYPlbj/MotEA==
-X-Received: by 2002:a5d:534d:: with SMTP id t13mr11871938wrv.77.1579701618471;
-        Wed, 22 Jan 2020 06:00:18 -0800 (PST)
+        bh=wT1XptHM1yDaallnAlJ04tzwlvbDznGoQRImKRhMaTQ=;
+        b=spWIL8mAxr3u2DGS3P6IutUmUbFxGw9//pTgbmeUPzdvRdZBrHj9K5eHreNIWUfaPR
+         evQcaBRyJUgbKhJD1FCgLaZ7dUqnBgqTogkXEDzDq58W3cl96crSgGgE4pQ672E911jY
+         fz81ZifzmdfxIQL/lsHwtjaCaucNC0hqKdvLV7rYLdnXJbq8Ondm6pDfbIrmB+6BdIT4
+         3WyTY3VSJfnsY/b3LyoRG40LgQODMAKm7bYM7XQ6iDbXA/1QOMcJogU0rsn6A6tXkDTm
+         lXgubaYb0G7q5/zW1RupiX/8aYli0pPR5zUzyidqtiAYCdGyaiEYpPNjeb9Ba11Y7d+e
+         iLLg==
+X-Gm-Message-State: APjAAAX9AGV7Cr1fZM9uZi0HzJSAxcfEqOEFJNoB6Ij6amZCliwQW2Oz
+        CKt0LDtClldaZAg3gwVSJ1MjDJynFq0=
+X-Google-Smtp-Source: APXvYqwno07hndqxJqhnfRnm+ajhc+icicrbEBr0upHPIZ9SXfjMqsDnTpxWKJoAWBs8qksE1CTPRg==
+X-Received: by 2002:adf:e58d:: with SMTP id l13mr11331079wrm.135.1579701619886;
+        Wed, 22 Jan 2020 06:00:19 -0800 (PST)
 Received: from localhost.localdomain (p5DCFF1C1.dip0.t-ipconnect.de. [93.207.241.193])
-        by smtp.gmail.com with ESMTPSA id g2sm57388270wrw.76.2020.01.22.06.00.17
+        by smtp.gmail.com with ESMTPSA id g2sm57388270wrw.76.2020.01.22.06.00.18
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 22 Jan 2020 06:00:17 -0800 (PST)
+        Wed, 22 Jan 2020 06:00:19 -0800 (PST)
 From:   Saravanan Sekar <sravanhome@gmail.com>
 To:     sravanhome@gmail.com, lgirdwood@gmail.com, broonie@kernel.org,
         robh+dt@kernel.org, mark.rutland@arm.com,
         gregkh@linuxfoundation.org, Jonathan.Cameron@huawei.com,
         davem@davemloft.net, mchehab+samsung@kernel.org
 Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 1/3] dt-bindings: regulator: add document bindings for mp5416
-Date:   Wed, 22 Jan 2020 14:59:56 +0100
-Message-Id: <20200122135958.13663-2-sravanhome@gmail.com>
+Subject: [PATCH 2/3] regulator: mp5416: add mp5416 regulator driver
+Date:   Wed, 22 Jan 2020 14:59:57 +0100
+Message-Id: <20200122135958.13663-3-sravanhome@gmail.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20200122135958.13663-1-sravanhome@gmail.com>
 References: <20200122135958.13663-1-sravanhome@gmail.com>
@@ -61,98 +61,302 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add device tree binding information for mp5416 regulator driver.
+Adding regulator driver for the device mp5416.
+The MP5416 PMIC device contains four DC-DC buck converters and
+five regulators, accessed over I2C.
 
 Signed-off-by: Saravanan Sekar <sravanhome@gmail.com>
 ---
- .../bindings/regulator/mps,mp5416.yaml        | 78 +++++++++++++++++++
- 1 file changed, 78 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/regulator/mps,mp5416.yaml
+ drivers/regulator/Kconfig  |  10 ++
+ drivers/regulator/Makefile |   1 +
+ drivers/regulator/mp5416.c | 245 +++++++++++++++++++++++++++++++++++++
+ 3 files changed, 256 insertions(+)
+ create mode 100644 drivers/regulator/mp5416.c
 
-diff --git a/Documentation/devicetree/bindings/regulator/mps,mp5416.yaml b/Documentation/devicetree/bindings/regulator/mps,mp5416.yaml
+diff --git a/drivers/regulator/Kconfig b/drivers/regulator/Kconfig
+index 97bfdd47954f..9925fd152cd6 100644
+--- a/drivers/regulator/Kconfig
++++ b/drivers/regulator/Kconfig
+@@ -612,6 +612,16 @@ config REGULATOR_MCP16502
+ 	  through the regulator interface. In addition it enables
+ 	  suspend-to-ram/standby transition.
+ 
++config REGULATOR_MP5416
++	tristate "Monolithic MP5416 PMIC"
++	depends on I2C && OF
++	select REGMAP_I2C
++	help
++	  Say y here to support the MP5416 PMIC. This will enable supports
++	  the software controllable 4 buck and 4 LDO regulators.
++	  Say M here if you want to include support for the regulator as a
++	  module.
++
+ config REGULATOR_MP8859
+ 	tristate "MPS MP8859 regulator driver"
+ 	depends on I2C
+diff --git a/drivers/regulator/Makefile b/drivers/regulator/Makefile
+index 07bc977c52b0..ab7149734c03 100644
+--- a/drivers/regulator/Makefile
++++ b/drivers/regulator/Makefile
+@@ -78,6 +78,7 @@ obj-$(CONFIG_REGULATOR_MC13783) += mc13783-regulator.o
+ obj-$(CONFIG_REGULATOR_MC13892) += mc13892-regulator.o
+ obj-$(CONFIG_REGULATOR_MC13XXX_CORE) +=  mc13xxx-regulator-core.o
+ obj-$(CONFIG_REGULATOR_MCP16502) += mcp16502.o
++obj-$(CONFIG_REGULATOR_MP5416) += mp5416.o
+ obj-$(CONFIG_REGULATOR_MP8859) += mp8859.o
+ obj-$(CONFIG_REGULATOR_MPQ7920) += mpq7920.o
+ obj-$(CONFIG_REGULATOR_MT6311) += mt6311-regulator.o
+diff --git a/drivers/regulator/mp5416.c b/drivers/regulator/mp5416.c
 new file mode 100644
-index 000000000000..702508e4267f
+index 000000000000..7954ad17249b
 --- /dev/null
-+++ b/Documentation/devicetree/bindings/regulator/mps,mp5416.yaml
-@@ -0,0 +1,78 @@
-+# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/regulator/mps,mp5416.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
++++ b/drivers/regulator/mp5416.c
+@@ -0,0 +1,245 @@
++// SPDX-License-Identifier: GPL-2.0+
++//
++// mp5416.c  - regulator driver for mps mp5416
++//
++// Copyright 2020 Monolithic Power Systems, Inc
++//
++// Author: Saravanan Sekar <sravanhome@gmail.com>
 +
-+title: Monolithic Power System MP5416 PMIC
++#include <linux/kernel.h>
++#include <linux/module.h>
++#include <linux/init.h>
++#include <linux/err.h>
++#include <linux/platform_device.h>
++#include <linux/regmap.h>
++#include <linux/regulator/driver.h>
++#include <linux/i2c.h>
 +
-+maintainers:
-+  - Saravanan Sekar <sravanhome@gmail.com>
++#define MP5416_REG_CTL0			0x00
++#define MP5416_REG_CTL1			0x01
++#define MP5416_REG_CTL2			0x02
++#define MP5416_REG_ILIM			0x03
++#define MP5416_REG_BUCK1		0x04
++#define MP5416_REG_BUCK2		0x05
++#define MP5416_REG_BUCK3		0x06
++#define MP5416_REG_BUCK4		0x07
++#define MP5416_REG_LDO1			0x08
++#define MP5416_REG_LDO2			0x09
++#define MP5416_REG_LDO3			0x0a
++#define MP5416_REG_LDO4			0x0b
 +
-+properties:
-+  $nodename:
-+    pattern: "pmic@[0-9a-f]{1,2}"
-+  compatible:
-+    enum:
-+      - mps,mp5416
++#define MP5416_REGULATOR_EN		BIT(7)
++#define MP5416_MASK_VSET		0x7f
++#define MP5416_MASK_BUCK1_ILIM		0xc0
++#define MP5416_MASK_BUCK2_ILIM		0x0c
++#define MP5416_MASK_BUCK3_ILIM		0x30
++#define MP5416_MASK_BUCK4_ILIM		0x03
++#define MP5416_MASK_DVS_SLEWRATE	0xc0
 +
-+  reg:
-+    maxItems: 1
++/* values in uV */
++#define MP5416_VOLT1_MIN		600000
++#define MP5416_VOLT1_MAX		2187500
++#define MP5416_VOLT1_STEP		12500
++#define MP5416_VOLT2_MIN		800000
++#define MP5416_VOLT2_MAX		3975000
++#define MP5416_VOLT2_STEP		25000
 +
-+  regulators:
-+    type: object
-+    allOf:
-+      - $ref: regulator.yaml#
-+    description: |
-+      list of regulators provided by this controller, must be named
-+      after their hardware counterparts BUCK[1-4] and LDO[1-4]
++#define MP5416_VOLT1_RANGE \
++	((MP5416_VOLT1_MAX - MP5416_VOLT1_MIN)/MP5416_VOLT1_STEP + 1)
++#define MP5416_VOLT2_RANGE \
++	((MP5416_VOLT2_MAX - MP5416_VOLT2_MIN)/MP5416_VOLT2_STEP + 1)
 +
-+    patternProperties:
-+      "^buck[1-4]$":
-+        $ref: "regulator.yaml#"
-+        type: object
++#define MP5416BUCK(_name, _id, _ilim, _dreg, _dval, _vsel)		\
++	[MP5416_BUCK ## _id] = {					\
++		.id = MP5416_BUCK ## _id,				\
++		.name = _name,						\
++		.of_match = _name,					\
++		.regulators_node = "regulators",			\
++		.ops = &mp5416_buck_ops,				\
++		.min_uV = MP5416_VOLT ##_vsel## _MIN,			\
++		.uV_step = MP5416_VOLT ##_vsel## _STEP,			\
++		.n_voltages = MP5416_VOLT ##_vsel## _RANGE,		\
++		.curr_table = _ilim,					\
++		.n_current_limits = ARRAY_SIZE(_ilim),			\
++		.csel_reg = MP5416_REG_ILIM,				\
++		.csel_mask = MP5416_MASK_BUCK ## _id ##_ILIM,		\
++		.vsel_reg = MP5416_REG_BUCK ## _id,			\
++		.vsel_mask = MP5416_MASK_VSET,				\
++		.enable_reg = MP5416_REG_BUCK ## _id,			\
++		.enable_mask = MP5416_REGULATOR_EN,			\
++		.active_discharge_on	= _dval,			\
++		.active_discharge_reg	= _dreg,			\
++		.active_discharge_mask	= _dval,			\
++		.owner			= THIS_MODULE,			\
++	}
 +
-+      "^ldo[1-4]$":
-+        $ref: "regulator.yaml#"
-+        type: object
++#define MP5416LDO(_name, _id)						\
++	[MP5416_LDO ## _id] = {						\
++		.id = MP5416_LDO ## _id,				\
++		.name = _name,						\
++		.of_match = _name,					\
++		.regulators_node = "regulators",			\
++		.ops = &mp5416_ldo_ops,					\
++		.min_uV = MP5416_VOLT2_MIN,				\
++		.uV_step = MP5416_VOLT2_STEP,				\
++		.n_voltages = MP5416_VOLT2_RANGE,			\
++		.vsel_reg = MP5416_REG_LDO ##_id,			\
++		.vsel_mask = MP5416_MASK_VSET,				\
++		.enable_reg = MP5416_REG_LDO ##_id,			\
++		.enable_mask = MP5416_REGULATOR_EN,			\
++		.active_discharge_on	= BIT(_id),			\
++		.active_discharge_reg	= MP5416_REG_CTL2,		\
++		.active_discharge_mask	= BIT(_id),			\
++		.owner			= THIS_MODULE,			\
++	}
 +
-+    additionalProperties: false
-+  additionalProperties: false
++enum mp5416_regulators {
++	MP5416_BUCK1,
++	MP5416_BUCK2,
++	MP5416_BUCK3,
++	MP5416_BUCK4,
++	MP5416_LDO1,
++	MP5416_LDO2,
++	MP5416_LDO3,
++	MP5416_LDO4,
++	MP5416_MAX_REGULATORS,
++};
 +
-+required:
-+  - compatible
-+  - reg
-+  - regulators
++static const struct regmap_config mp5416_regmap_config = {
++	.reg_bits = 8,
++	.val_bits = 8,
++	.max_register = 0x0d,
++};
 +
-+additionalProperties: false
++/* Current limits array (in uA)
++ * ILIM1 & ILIM3
++ */
++static const unsigned int mp5416_I_limits1[] = {
++	3800000, 4600000, 5600000, 6800000
++};
 +
-+examples:
-+  - |
-+    i2c {
-+        #address-cells = <1>;
-+        #size-cells = <0>;
++/* ILIM2 & ILIM4 */
++static const unsigned int mp5416_I_limits2[] = {
++	2200000, 3200000, 4200000, 5200000
++};
 +
-+        pmic@69 {
-+          compatible = "mps,mp5416";
-+          reg = <0x69>;
++static int mp5416_set_ramp_delay(struct regulator_dev *rdev, int ramp_delay);
 +
-+          regulators {
++static const struct regulator_ops mp5416_ldo_ops = {
++	.enable			= regulator_enable_regmap,
++	.disable		= regulator_disable_regmap,
++	.is_enabled		= regulator_is_enabled_regmap,
++	.list_voltage		= regulator_list_voltage_linear,
++	.map_voltage		= regulator_map_voltage_linear,
++	.get_voltage_sel	= regulator_get_voltage_sel_regmap,
++	.set_voltage_sel	= regulator_set_voltage_sel_regmap,
++	.set_active_discharge	= regulator_set_active_discharge_regmap,
++};
 +
-+            buck1 {
-+             regulator-name = "buck1";
-+             regulator-min-microvolt = <600000>;
-+             regulator-max-microvolt = <2187500>;
-+             regulator-min-microamp  = <3800000>;
-+             regulator-max-microamp  = <6800000>;
-+             regulator-boot-on;
-+            };
++static const struct regulator_ops mp5416_buck_ops = {
++	.enable			= regulator_enable_regmap,
++	.disable		= regulator_disable_regmap,
++	.is_enabled		= regulator_is_enabled_regmap,
++	.list_voltage		= regulator_list_voltage_linear,
++	.map_voltage		= regulator_map_voltage_linear,
++	.get_voltage_sel	= regulator_get_voltage_sel_regmap,
++	.set_voltage_sel	= regulator_set_voltage_sel_regmap,
++	.set_active_discharge	= regulator_set_active_discharge_regmap,
++	.get_current_limit	= regulator_get_current_limit_regmap,
++	.set_current_limit	= regulator_set_current_limit_regmap,
++	.set_ramp_delay		= mp5416_set_ramp_delay,
++};
 +
-+            ldo2 {
-+             regulator-name = "ldo2";
-+             regulator-min-microvolt = <800000>;
-+             regulator-max-microvolt = <3975000>;
-+            };
-+         };
-+       };
-+     };
-+...
++static struct regulator_desc mp5416_regulators_desc[MP5416_MAX_REGULATORS] = {
++	MP5416BUCK("buck1", 1, mp5416_I_limits1, MP5416_REG_CTL1, BIT(0), 1),
++	MP5416BUCK("buck2", 2, mp5416_I_limits2, MP5416_REG_CTL1, BIT(1), 2),
++	MP5416BUCK("buck3", 3, mp5416_I_limits1, MP5416_REG_CTL1, BIT(2), 1),
++	MP5416BUCK("buck4", 4, mp5416_I_limits2, MP5416_REG_CTL2, BIT(5), 2),
++	MP5416LDO("ldo1", 1),
++	MP5416LDO("ldo2", 2),
++	MP5416LDO("ldo3", 3),
++	MP5416LDO("ldo4", 4),
++};
++
++/*
++ * DVS ramp rate BUCK1 to BUCK4
++ * 00: 32mV/us
++ * 01: 16mV/us
++ * 10: 8mV/us
++ * 11: 4mV/us
++ */
++static int mp5416_set_ramp_delay(struct regulator_dev *rdev, int ramp_delay)
++{
++	unsigned int ramp_val;
++
++	if (ramp_delay > 32000 || ramp_delay < 0)
++		return -EINVAL;
++
++	if (ramp_delay <= 4000)
++		ramp_val = 3;
++	else if (ramp_delay <= 8000)
++		ramp_val = 2;
++	else if (ramp_delay <= 16000)
++		ramp_val = 1;
++	else
++		ramp_val = 0;
++
++	return regmap_update_bits(rdev->regmap, MP5416_REG_CTL2,
++				  MP5416_MASK_DVS_SLEWRATE, ramp_val << 6);
++}
++
++static int mp5416_i2c_probe(struct i2c_client *client)
++{
++	struct device *dev = &client->dev;
++	struct regulator_config config = { NULL, };
++	struct regulator_dev *rdev;
++	struct regmap *regmap;
++	int i;
++
++	regmap = devm_regmap_init_i2c(client, &mp5416_regmap_config);
++	if (IS_ERR(regmap)) {
++		dev_err(dev, "Failed to allocate regmap!\n");
++		return PTR_ERR(regmap);
++	}
++
++	config.dev = dev;
++	config.regmap = regmap;
++
++	for (i = 0; i < MP5416_MAX_REGULATORS; i++) {
++		rdev = devm_regulator_register(dev,
++					       &mp5416_regulators_desc[i],
++					       &config);
++		if (IS_ERR(rdev)) {
++			dev_err(dev, "Failed to register regulator!\n");
++			return PTR_ERR(rdev);
++		}
++	}
++
++	return 0;
++}
++
++static const struct of_device_id mp5416_of_match[] = {
++	{ .compatible = "mps,mp5416" },
++	{},
++};
++MODULE_DEVICE_TABLE(of, mp5416_of_match);
++
++static const struct i2c_device_id mp5416_id[] = {
++	{ "mp5416", },
++	{ },
++};
++MODULE_DEVICE_TABLE(i2c, mp5416_id);
++
++static struct i2c_driver mp5416_regulator_driver = {
++	.driver = {
++		.name = "mp5416",
++		.of_match_table = of_match_ptr(mp5416_of_match),
++	},
++	.probe_new = mp5416_i2c_probe,
++	.id_table = mp5416_id,
++};
++module_i2c_driver(mp5416_regulator_driver);
++
++MODULE_AUTHOR("Saravanan Sekar <sravanhome@gmail.com>");
++MODULE_DESCRIPTION("MP5416 PMIC regulator driver");
++MODULE_LICENSE("GPL");
 -- 
 2.17.1
 
