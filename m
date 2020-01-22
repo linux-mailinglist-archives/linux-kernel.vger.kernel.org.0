@@ -2,38 +2,43 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 99C2914508F
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Jan 2020 10:48:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1959B144EDE
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Jan 2020 10:34:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732848AbgAVJri (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 22 Jan 2020 04:47:38 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33546 "EHLO mail.kernel.org"
+        id S1730014AbgAVJcM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 22 Jan 2020 04:32:12 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44772 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732678AbgAVJl7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 Jan 2020 04:41:59 -0500
+        id S1729992AbgAVJcK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 22 Jan 2020 04:32:10 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BB4A724680;
-        Wed, 22 Jan 2020 09:41:58 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9BC9524672;
+        Wed, 22 Jan 2020 09:32:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579686119;
-        bh=B8b1iGGmLwxnipVFARy8tiXr20BXrE/G5HMziqKyUX4=;
+        s=default; t=1579685530;
+        bh=SZZSIre19pX2ghMbCXGVmCBnJhIcEsaSi5aYgH/A/s0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=nPZ+thSEROyHmev0G5zFg4jORfC2qPZ1tjVbgRraVDFphUxw3TNXScNDD3Q682dJF
-         cxfZIAYcTM0Z2XB28s9NTZtDVLPEDku//na0ElB5fFJbgQHf/prO/GfBZo6G9k+6X4
-         PhNcTwye24GDV0QMegXWDsITFW0GPpueCcQrLwp0=
+        b=uRv5n9V9XRWBYL3VEGkxYvnPtZGMRJDzka6CwwCoh9PJ0Nks7GKLhld7wDBYxZO8H
+         f1OJJQbQBOt8sm6M1M4ao8IzXsRVWMVE+TrcLcO95H6GNI/T5O8L0wd0bSmS2tHLt2
+         f2s22qLq5q2vV4LPPfGyLtzwdctmRogR6iAQogoM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jose Abreu <Jose.Abreu@synopsys.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.19 050/103] net: stmmac: 16KB buffer must be 16 byte aligned
-Date:   Wed, 22 Jan 2020 10:29:06 +0100
-Message-Id: <20200122092811.289668132@linuxfoundation.org>
+        stable@vger.kernel.org, Ard Biesheuvel <ardb@kernel.org>,
+        Arvind Sankar <nivedita@alum.mit.edu>,
+        Hans de Goede <hdegoede@redhat.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        linux-efi@vger.kernel.org, Ingo Molnar <mingo@kernel.org>
+Subject: [PATCH 4.4 51/76] x86/efistub: Disable paging at mixed mode entry
+Date:   Wed, 22 Jan 2020 10:29:07 +0100
+Message-Id: <20200122092758.413442383@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200122092803.587683021@linuxfoundation.org>
-References: <20200122092803.587683021@linuxfoundation.org>
+In-Reply-To: <20200122092751.587775548@linuxfoundation.org>
+References: <20200122092751.587775548@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,34 +48,46 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jose Abreu <Jose.Abreu@synopsys.com>
+From: Ard Biesheuvel <ardb@kernel.org>
 
-commit 8605131747e7e1fd8f6c9f97a00287aae2b2c640 upstream.
+commit 4911ee401b7ceff8f38e0ac597cbf503d71e690c upstream.
 
-The 16KB RX Buffer must also be 16 byte aligned. Fix it.
+The EFI mixed mode entry code goes through the ordinary startup_32()
+routine before jumping into the kernel's EFI boot code in 64-bit
+mode. The 32-bit startup code must be entered with paging disabled,
+but this is not documented as a requirement for the EFI handover
+protocol, and so we should disable paging explicitly when entering
+the kernel from 32-bit EFI firmware.
 
-Fixes: 7ac6653a085b ("stmmac: Move the STMicroelectronics driver")
-Signed-off-by: Jose Abreu <Jose.Abreu@synopsys.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Ard Biesheuvel <ardb@kernel.org>
+Cc: <stable@vger.kernel.org>
+Cc: Arvind Sankar <nivedita@alum.mit.edu>
+Cc: Hans de Goede <hdegoede@redhat.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: linux-efi@vger.kernel.org
+Link: https://lkml.kernel.org/r/20191224132909.102540-4-ardb@kernel.org
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/net/ethernet/stmicro/stmmac/common.h |    5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+ arch/x86/boot/compressed/head_64.S |    5 +++++
+ 1 file changed, 5 insertions(+)
 
---- a/drivers/net/ethernet/stmicro/stmmac/common.h
-+++ b/drivers/net/ethernet/stmicro/stmmac/common.h
-@@ -363,9 +363,8 @@ struct dma_features {
- 	unsigned int frpes;
- };
+--- a/arch/x86/boot/compressed/head_64.S
++++ b/arch/x86/boot/compressed/head_64.S
+@@ -225,6 +225,11 @@ ENTRY(efi32_stub_entry)
+ 	leal	efi32_config(%ebp), %eax
+ 	movl	%eax, efi_config(%ebp)
  
--/* GMAC TX FIFO is 8K, Rx FIFO is 16K */
--#define BUF_SIZE_16KiB 16384
--/* RX Buffer size must be < 8191 and multiple of 4/8/16 bytes */
-+/* RX Buffer size must be multiple of 4/8/16 bytes */
-+#define BUF_SIZE_16KiB 16368
- #define BUF_SIZE_8KiB 8188
- #define BUF_SIZE_4KiB 4096
- #define BUF_SIZE_2KiB 2048
++	/* Disable paging */
++	movl	%cr0, %eax
++	btrl	$X86_CR0_PG_BIT, %eax
++	movl	%eax, %cr0
++
+ 	jmp	startup_32
+ ENDPROC(efi32_stub_entry)
+ #endif
 
 
