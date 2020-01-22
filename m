@@ -2,94 +2,116 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AED3A145CE8
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Jan 2020 21:10:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 38BF0145CF9
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Jan 2020 21:17:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729078AbgAVUKh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 22 Jan 2020 15:10:37 -0500
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:38653 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727590AbgAVUKf (ORCPT
+        id S1729012AbgAVURi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 22 Jan 2020 15:17:38 -0500
+Received: from esa2.hc3370-68.iphmx.com ([216.71.145.153]:41191 "EHLO
+        esa2.hc3370-68.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725911AbgAVURi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 Jan 2020 15:10:35 -0500
-Received: by mail-wr1-f65.google.com with SMTP id y17so469528wrh.5;
-        Wed, 22 Jan 2020 12:10:34 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:subject:date:message-id:in-reply-to:references:mime-version
-         :content-transfer-encoding;
-        bh=97hUDGomP5N2F4tWBg0p6EMPWjoatVCKWy5V+71jKVI=;
-        b=K1VBWcQ54ctNAav5rbBF3Y8q1MQv4jxSE7ibg7+E8cGfIGv1A6UtuzU9jHagkpvZBU
-         gY/R+ptVQFD9ttvF7dmrkZqlMPCl3y+8cGs2o9kZSe7P05dHOLFs7m/YUumCxYvFC46v
-         8AOYPZQItSekyROeoAjAJOrLLjjJW4ugV3n0Jz/5Xk14Hut5Or6hYl3Pv/BCSKPm4Aig
-         b1MZOlTx+ISNfUpaF/xn+C9EvVA7O01EYLvOPuaJggYgiu35NrekyVwSbuIxsjIE2D6d
-         DvsjWvkEnu7x/m7imhTGc4jymFKl41qwDymBB8xEMN7q7tNb+r0uNsxuwkCvQgSxjseW
-         98YQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=97hUDGomP5N2F4tWBg0p6EMPWjoatVCKWy5V+71jKVI=;
-        b=qUKxuYrJzRSalJlD1C0UHHFRl2nEyNK5cFMWpp6V1MDTP7YSqDriDA5eJZQ5pTzfB2
-         Fh1JMXSFctjjlLNtrkU+bQpD1DCFA2ETaErzcc9K6cbaGiazMJGp8jeVJYBAfoHp+dLJ
-         sKy4EmdshGXd0WmW/ddTYkpcPfllhwGkHErDcvswsJT/vZ9PlJHtB8nLBwHHyKfyuAUG
-         msS9eUNEP1qXC3LuvEo6Hh74rMPMC6ETGQgIfFbUSJ7jrNuFqJbQWo6FwBdDT2yeQLfM
-         KQeXSThVaPKc5OVwbZE0cwKtA2KzanggE7O+WVvdvXj0dlt/5IR1yAI8BODjoXqunNd3
-         oBiw==
-X-Gm-Message-State: APjAAAWslWx+FQvCIzo/8wR6zzK0+y1pT4Q/UbabB2j3MvVMUJRWNq3q
-        i0JyHvP3/9Bvk3iO6uuv+iU=
-X-Google-Smtp-Source: APXvYqwtJFFMpINcfHwpkFhT7k0WB5DiNhDnxIYDISVer1aDFDsDWr60weA9N9lSGv5e67Uns/U4pQ==
-X-Received: by 2002:adf:f244:: with SMTP id b4mr12517664wrp.88.1579723833351;
-        Wed, 22 Jan 2020 12:10:33 -0800 (PST)
-Received: from localhost.localdomain ([109.126.145.157])
-        by smtp.gmail.com with ESMTPSA id b16sm5058310wmj.39.2020.01.22.12.10.31
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 22 Jan 2020 12:10:32 -0800 (PST)
-From:   Pavel Begunkov <asml.silence@gmail.com>
-To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH 2/2] io_uring: honor IOSQE_ASYNC for linked reqs
-Date:   Wed, 22 Jan 2020 23:09:36 +0300
-Message-Id: <202e6bdfee3fce1ebeedcff447afc14d3eb57898.1579723710.git.asml.silence@gmail.com>
-X-Mailer: git-send-email 2.24.0
-In-Reply-To: <cover.1579723710.git.asml.silence@gmail.com>
-References: <cover.1579723710.git.asml.silence@gmail.com>
+        Wed, 22 Jan 2020 15:17:38 -0500
+X-Greylist: delayed 427 seconds by postgrey-1.27 at vger.kernel.org; Wed, 22 Jan 2020 15:17:38 EST
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=citrix.com; s=securemail; t=1579724258;
+  h=from:to:cc:subject:date:message-id:mime-version;
+  bh=MJa4eYt3crjAenr4CmXGe3xMFCLr5PGiS6d0YsXiFss=;
+  b=LnFroqjiqxM8eXxkIKkY+4o7YPw3beto/bqa1OUQ+XKZPnocHa31uKHw
+   gEKS18lcjY/oJydfArkgMXGbXkbSKgccIx70x4xR8iRu75pPPZ5dVzGY2
+   g6xXKfwGi/yfQWDKCHoY9wdAgAaMdWVeqiD+xce46R20m4Qqm/DCdtFt3
+   o=;
+Authentication-Results: esa2.hc3370-68.iphmx.com; dkim=none (message not signed) header.i=none; spf=None smtp.pra=igor.druzhinin@citrix.com; spf=Pass smtp.mailfrom=igor.druzhinin@citrix.com; spf=None smtp.helo=postmaster@mail.citrix.com
+Received-SPF: None (esa2.hc3370-68.iphmx.com: no sender
+  authenticity information available from domain of
+  igor.druzhinin@citrix.com) identity=pra;
+  client-ip=162.221.158.21; receiver=esa2.hc3370-68.iphmx.com;
+  envelope-from="igor.druzhinin@citrix.com";
+  x-sender="igor.druzhinin@citrix.com";
+  x-conformance=sidf_compatible
+Received-SPF: Pass (esa2.hc3370-68.iphmx.com: domain of
+  igor.druzhinin@citrix.com designates 162.221.158.21 as
+  permitted sender) identity=mailfrom;
+  client-ip=162.221.158.21; receiver=esa2.hc3370-68.iphmx.com;
+  envelope-from="igor.druzhinin@citrix.com";
+  x-sender="igor.druzhinin@citrix.com";
+  x-conformance=sidf_compatible; x-record-type="v=spf1";
+  x-record-text="v=spf1 ip4:209.167.231.154 ip4:178.63.86.133
+  ip4:195.66.111.40/30 ip4:85.115.9.32/28 ip4:199.102.83.4
+  ip4:192.28.146.160 ip4:192.28.146.107 ip4:216.52.6.88
+  ip4:216.52.6.188 ip4:162.221.158.21 ip4:162.221.156.83
+  ip4:168.245.78.127 ~all"
+Received-SPF: None (esa2.hc3370-68.iphmx.com: no sender
+  authenticity information available from domain of
+  postmaster@mail.citrix.com) identity=helo;
+  client-ip=162.221.158.21; receiver=esa2.hc3370-68.iphmx.com;
+  envelope-from="igor.druzhinin@citrix.com";
+  x-sender="postmaster@mail.citrix.com";
+  x-conformance=sidf_compatible
+IronPort-SDR: TaUqzM78xDduaVYHQYABbgc2RX5soS0fqo+gu6ahOmZnliE9XG165ViAidcFXDPe5C7WJDiskD
+ RtlvoRkTnx74PwdcwhiG7h3JByPXH1KF/czSSrWh+X4n6oc0NcpZk5yyGecXTZ3XwqrJchhpjL
+ H6GVEjxuTq4Bh4jcTWQ4QTFDAMyb/ayPQg0/cPIfpFNNzSwnYI2AD4V15F2yuENc3hZPrsmGhB
+ 7E77TP4yCJYzZBVd61hpTV3nRoF3VNgTC9RfWBgdmAVbp8N7t7OwJ0S8FLNDRqdB91jLvOiW3m
+ zu8=
+X-SBRS: 2.7
+X-MesageID: 11306633
+X-Ironport-Server: esa2.hc3370-68.iphmx.com
+X-Remote-IP: 162.221.158.21
+X-Policy: $RELAYED
+X-IronPort-AV: E=Sophos;i="5.70,350,1574139600"; 
+   d="scan'208";a="11306633"
+From:   Igor Druzhinin <igor.druzhinin@citrix.com>
+To:     <intel-gvt-dev@lists.freedesktop.org>,
+        <intel-gfx@lists.freedesktop.org>,
+        <dri-devel@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>
+CC:     <zhenyuw@linux.intel.com>, <zhi.a.wang@intel.com>,
+        <jani.nikula@linux.intel.com>, <joonas.lahtinen@linux.intel.com>,
+        <rodrigo.vivi@intel.com>, <airlied@linux.ie>, <daniel@ffwll.ch>,
+        "Igor Druzhinin" <igor.druzhinin@citrix.com>
+Subject: [PATCH] drm/i915/gvt: fix high-order allocation failure on late load
+Date:   Wed, 22 Jan 2020 20:10:24 +0000
+Message-ID: <1579723824-25711-1-git-send-email-igor.druzhinin@citrix.com>
+X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-REQ_F_FORCE_ASYNC is checked only for the head of a link. Fix it.
+If the module happens to be loaded later at runtime there is a chance
+memory is already fragmented enough to fail allocation of firmware
+blob storage and consequently GVT init. Since it doesn't seem to be
+necessary to have the blob contiguous, use vmalloc() instead to avoid
+the issue.
 
-Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
+Signed-off-by: Igor Druzhinin <igor.druzhinin@citrix.com>
 ---
- fs/io_uring.c | 4 ++++
- 1 file changed, 4 insertions(+)
+ drivers/gpu/drm/i915/gvt/firmware.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/fs/io_uring.c b/fs/io_uring.c
-index cdbc711ae5fd..9f73586dcfb8 100644
---- a/fs/io_uring.c
-+++ b/fs/io_uring.c
-@@ -4512,6 +4512,7 @@ static void __io_queue_sqe(struct io_kiocb *req, const struct io_uring_sqe *sqe)
- 	 */
- 	if (ret == -EAGAIN && (!(req->flags & REQ_F_NOWAIT) ||
- 	    (req->flags & REQ_F_MUST_PUNT))) {
-+punt:
- 		if (req->work.flags & IO_WQ_WORK_NEEDS_FILES) {
- 			ret = io_grab_files(req);
- 			if (ret)
-@@ -4547,6 +4548,9 @@ static void __io_queue_sqe(struct io_kiocb *req, const struct io_uring_sqe *sqe)
- 	if (nxt) {
- 		req = nxt;
- 		nxt = NULL;
-+
-+		if (req->flags & REQ_F_FORCE_ASYNC)
-+			goto punt;
- 		goto again;
- 	}
+diff --git a/drivers/gpu/drm/i915/gvt/firmware.c b/drivers/gpu/drm/i915/gvt/firmware.c
+index 049775e..b0c1fda 100644
+--- a/drivers/gpu/drm/i915/gvt/firmware.c
++++ b/drivers/gpu/drm/i915/gvt/firmware.c
+@@ -146,7 +146,7 @@ void intel_gvt_free_firmware(struct intel_gvt *gvt)
+ 		clean_firmware_sysfs(gvt);
+ 
+ 	kfree(gvt->firmware.cfg_space);
+-	kfree(gvt->firmware.mmio);
++	vfree(gvt->firmware.mmio);
  }
+ 
+ static int verify_firmware(struct intel_gvt *gvt,
+@@ -229,7 +229,7 @@ int intel_gvt_load_firmware(struct intel_gvt *gvt)
+ 
+ 	firmware->cfg_space = mem;
+ 
+-	mem = kmalloc(info->mmio_size, GFP_KERNEL);
++	mem = vmalloc(info->mmio_size);
+ 	if (!mem) {
+ 		kfree(path);
+ 		kfree(firmware->cfg_space);
 -- 
-2.24.0
+2.7.4
 
