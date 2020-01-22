@@ -2,303 +2,196 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BAC811452F8
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Jan 2020 11:46:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 57EAE1452E6
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Jan 2020 11:46:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729110AbgAVKq2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 22 Jan 2020 05:46:28 -0500
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:34979 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729624AbgAVKqY (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 Jan 2020 05:46:24 -0500
-Received: by mail-wr1-f67.google.com with SMTP id g17so6743192wro.2;
-        Wed, 22 Jan 2020 02:46:22 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=HlVN3+Fqo4CnAsTqD0OmkrdM8WtTRqDQDULyBnPtHug=;
-        b=pHjQAKV6qoTnYiEUG8pxraj4nOM5bni+aQ67wNb2KUb2//W/kbVd+97/KkvsiDvFhU
-         KXfqLc/ykSk0I6tQToqBW5aydEU2S7a5z/ZaqJl4Roqxe9AiFIkwvl5713T/SMxDCs89
-         zHicB6uVbaRr0/qRVxYiZ4eAl2VabxBEfnuFZow7BlAD5/g8MbRObrb0MYdOm6903zc+
-         kwYTXGhCbJy/61a+nCJUYJtjXvJFwSNmXt/FpRo7Lb4t7ZpidDNG17axWiCba3nFw3md
-         /P/HBlOYKl5oYmNfqf3u019vsC7R9mbUrN3uRG0Upg7XDFPuVAFOPizJTj5ljKukwAFP
-         6xkg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=HlVN3+Fqo4CnAsTqD0OmkrdM8WtTRqDQDULyBnPtHug=;
-        b=tP5hQcVCsC85SMQQwmkwDu8qYDfzlJg6trgUPg9KBBEQSpAbJVfQXapYKR5vVYj7nn
-         B19oWiQ16Gz9cEX5Std7R071oYMC7KCT7GRhib0tiQU2e66tEKRBudNYNBKW2gsucoGo
-         xZvtsut8H0sMPMoiVwhC2FufMSpmMvoLBh/QprnzALTCfOUgJvA3VDiKWuKiwu14uDkD
-         vwu+M8k9/by1KESoysARV+d/KZBofd1FQcO3TkfPodAGgPfr8V49xSujgyvldgJ6Mcex
-         /9Ni7I3v6/MeoOR2Ol+j7B3U8zhpwnNs9V7nYnpGdPBIp+VLhcmdrm0KRuTE83VfclXq
-         wRbw==
-X-Gm-Message-State: APjAAAUGkSZr1N0hFDu6iQfBX3ArqlVi0v4MizNrXn1zFKcjoxy1jCcs
-        +UpLoKfkMUBT98lgTJpMQ2Y=
-X-Google-Smtp-Source: APXvYqxtNeNC1yK6GUuYbu+60bk+pxY4Zl+3F/5+yXvy3VXeniYyMGDE6MOXVSGfQdIi4qEjFVGD7w==
-X-Received: by 2002:a5d:534d:: with SMTP id t13mr10929059wrv.77.1579689981975;
-        Wed, 22 Jan 2020 02:46:21 -0800 (PST)
-Received: from Red.localdomain ([2a01:cb1d:3d5:a100:2e56:dcff:fed2:c6d6])
-        by smtp.googlemail.com with ESMTPSA id n3sm3443953wmc.27.2020.01.22.02.46.20
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 22 Jan 2020 02:46:21 -0800 (PST)
-From:   Corentin Labbe <clabbe.montjoie@gmail.com>
-To:     davem@davemloft.net, herbert@gondor.apana.org.au,
-        mripard@kernel.org, wens@csie.org, iuliana.prodan@nxp.com
-Cc:     linux-arm-kernel@lists.infradead.org, linux-crypto@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com,
-        Corentin Labbe <clabbe.montjoie@gmail.com>
-Subject: [PATCH 9/9] crypto: sun8i-ce: permit to batch requests
-Date:   Wed, 22 Jan 2020 11:45:28 +0100
-Message-Id: <20200122104528.30084-10-clabbe.montjoie@gmail.com>
-X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20200122104528.30084-1-clabbe.montjoie@gmail.com>
-References: <20200122104528.30084-1-clabbe.montjoie@gmail.com>
+        id S1729824AbgAVKqB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 22 Jan 2020 05:46:01 -0500
+Received: from mga11.intel.com ([192.55.52.93]:4673 "EHLO mga11.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729783AbgAVKp5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 22 Jan 2020 05:45:57 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 22 Jan 2020 02:45:56 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.70,349,1574150400"; 
+   d="scan'208";a="275571986"
+Received: from linux.intel.com ([10.54.29.200])
+  by FMSMGA003.fm.intel.com with ESMTP; 22 Jan 2020 02:45:53 -0800
+Received: from [10.125.253.5] (abudanko-mobl.ccr.corp.intel.com [10.125.253.5])
+        by linux.intel.com (Postfix) with ESMTP id E79D15803C5;
+        Wed, 22 Jan 2020 02:45:46 -0800 (PST)
+Subject: Re: [PATCH v5 01/10] capabilities: introduce CAP_PERFMON to kernel
+ and user space
+From:   Alexey Budankov <alexey.budankov@linux.intel.com>
+To:     Alexei Starovoitov <alexei.starovoitov@gmail.com>,
+        Stephen Smalley <sds@tycho.nsa.gov>
+Cc:     Peter Zijlstra <peterz@infradead.org>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        "jani.nikula@linux.intel.com" <jani.nikula@linux.intel.com>,
+        "joonas.lahtinen@linux.intel.com" <joonas.lahtinen@linux.intel.com>,
+        "rodrigo.vivi@intel.com" <rodrigo.vivi@intel.com>,
+        "benh@kernel.crashing.org" <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        "james.bottomley@hansenpartnership.com" 
+        <james.bottomley@hansenpartnership.com>,
+        Serge Hallyn <serge@hallyn.com>,
+        James Morris <jmorris@namei.org>,
+        Will Deacon <will.deacon@arm.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Robert Richter <rric@kernel.org>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Jiri Olsa <jolsa@redhat.com>, Andi Kleen <ak@linux.intel.com>,
+        Stephane Eranian <eranian@google.com>,
+        Igor Lubashev <ilubashe@akamai.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Song Liu <songliubraving@fb.com>,
+        Lionel Landwerlin <lionel.g.landwerlin@intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        "linux-security-module@vger.kernel.org" 
+        <linux-security-module@vger.kernel.org>,
+        "selinux@vger.kernel.org" <selinux@vger.kernel.org>,
+        "intel-gfx@lists.freedesktop.org" <intel-gfx@lists.freedesktop.org>,
+        "linux-parisc@vger.kernel.org" <linux-parisc@vger.kernel.org>,
+        "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        "linux-perf-users@vger.kernel.org" <linux-perf-users@vger.kernel.org>,
+        oprofile-list@lists.sf.net, Andy Lutomirski <luto@amacapital.net>
+References: <0548c832-7f4b-dc4c-8883-3f2b6d351a08@linux.intel.com>
+ <9b77124b-675d-5ac7-3741-edec575bd425@linux.intel.com>
+ <64cab472-806e-38c4-fb26-0ffbee485367@tycho.nsa.gov>
+ <05297eff-8e14-ccdf-55a4-870c64516de8@linux.intel.com>
+ <CAADnVQK-JzK-GUk4KOozn4c1xr=7TiCpB9Fi0QDC9nE6iVn8iQ@mail.gmail.com>
+ <537bdb28-c9e4-f44f-d665-25250065a6bb@linux.intel.com>
+Organization: Intel Corp.
+Message-ID: <63d9700f-231d-7973-5307-3e56a48c54cb@linux.intel.com>
+Date:   Wed, 22 Jan 2020 13:45:45 +0300
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <537bdb28-c9e4-f44f-d665-25250065a6bb@linux.intel.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch permit to batch request.
-This imply:
-- linking two task via next
-- set interrupt flag just before running the batch in the last task.
-- storing all requests for finalizing them later
 
-Signed-off-by: Corentin Labbe <clabbe.montjoie@gmail.com>
----
- .../allwinner/sun8i-ce/sun8i-ce-cipher.c      | 60 +++++++++++++++----
- .../crypto/allwinner/sun8i-ce/sun8i-ce-core.c | 15 +++--
- drivers/crypto/allwinner/sun8i-ce/sun8i-ce.h  |  6 ++
- 3 files changed, 66 insertions(+), 15 deletions(-)
+On 21.01.2020 21:27, Alexey Budankov wrote:
+> 
+> On 21.01.2020 20:55, Alexei Starovoitov wrote:
+>> On Tue, Jan 21, 2020 at 9:31 AM Alexey Budankov
+>> <alexey.budankov@linux.intel.com> wrote:
+>>>
+>>>
+>>> On 21.01.2020 17:43, Stephen Smalley wrote:
+>>>> On 1/20/20 6:23 AM, Alexey Budankov wrote:
+>>>>>
+>>>>> Introduce CAP_PERFMON capability designed to secure system performance
+>>>>> monitoring and observability operations so that CAP_PERFMON would assist
+>>>>> CAP_SYS_ADMIN capability in its governing role for perf_events, i915_perf
+>>>>> and other performance monitoring and observability subsystems.
+>>>>>
+>>>>> CAP_PERFMON intends to harden system security and integrity during system
+>>>>> performance monitoring and observability operations by decreasing attack
+>>>>> surface that is available to a CAP_SYS_ADMIN privileged process [1].
+>>>>> Providing access to system performance monitoring and observability
+>>>>> operations under CAP_PERFMON capability singly, without the rest of
+>>>>> CAP_SYS_ADMIN credentials, excludes chances to misuse the credentials and
+>>>>> makes operation more secure.
+>>>>>
+>>>>> CAP_PERFMON intends to take over CAP_SYS_ADMIN credentials related to
+>>>>> system performance monitoring and observability operations and balance
+>>>>> amount of CAP_SYS_ADMIN credentials following the recommendations in the
+>>>>> capabilities man page [1] for CAP_SYS_ADMIN: "Note: this capability is
+>>>>> overloaded; see Notes to kernel developers, below."
+>>>>>
+>>>>> Although the software running under CAP_PERFMON can not ensure avoidance
+>>>>> of related hardware issues, the software can still mitigate these issues
+>>>>> following the official embargoed hardware issues mitigation procedure [2].
+>>>>> The bugs in the software itself could be fixed following the standard
+>>>>> kernel development process [3] to maintain and harden security of system
+>>>>> performance monitoring and observability operations.
+>>>>>
+>>>>> [1] http://man7.org/linux/man-pages/man7/capabilities.7.html
+>>>>> [2] https://www.kernel.org/doc/html/latest/process/embargoed-hardware-issues.html
+>>>>> [3] https://www.kernel.org/doc/html/latest/admin-guide/security-bugs.html
+>>>>>
+>>>>> Signed-off-by: Alexey Budankov <alexey.budankov@linux.intel.com>
+>>>>> ---
+>>>>>   include/linux/capability.h          | 12 ++++++++++++
+>>>>>   include/uapi/linux/capability.h     |  8 +++++++-
+>>>>>   security/selinux/include/classmap.h |  4 ++--
+>>>>>   3 files changed, 21 insertions(+), 3 deletions(-)
+>>>>>
+>>>>> diff --git a/include/linux/capability.h b/include/linux/capability.h
+>>>>> index ecce0f43c73a..8784969d91e1 100644
+>>>>> --- a/include/linux/capability.h
+>>>>> +++ b/include/linux/capability.h
+>>>>> @@ -251,6 +251,18 @@ extern bool privileged_wrt_inode_uidgid(struct user_namespace *ns, const struct
+>>>>>   extern bool capable_wrt_inode_uidgid(const struct inode *inode, int cap);
+>>>>>   extern bool file_ns_capable(const struct file *file, struct user_namespace *ns, int cap);
+>>>>>   extern bool ptracer_capable(struct task_struct *tsk, struct user_namespace *ns);
+>>>>> +static inline bool perfmon_capable(void)
+>>>>> +{
+>>>>> +    struct user_namespace *ns = &init_user_ns;
+>>>>> +
+>>>>> +    if (ns_capable_noaudit(ns, CAP_PERFMON))
+>>>>> +        return ns_capable(ns, CAP_PERFMON);
+>>>>> +
+>>>>> +    if (ns_capable_noaudit(ns, CAP_SYS_ADMIN))
+>>>>> +        return ns_capable(ns, CAP_SYS_ADMIN);
+>>>>> +
+>>>>> +    return false;
+>>>>> +}
+>>>>
+>>>> Why _noaudit()?  Normally only used when a permission failure is non-fatal to the operation.  Otherwise, we want the audit message.
 
-diff --git a/drivers/crypto/allwinner/sun8i-ce/sun8i-ce-cipher.c b/drivers/crypto/allwinner/sun8i-ce/sun8i-ce-cipher.c
-index fc0a2299c701..832fb4a51da9 100644
---- a/drivers/crypto/allwinner/sun8i-ce/sun8i-ce-cipher.c
-+++ b/drivers/crypto/allwinner/sun8i-ce/sun8i-ce-cipher.c
-@@ -96,31 +96,38 @@ static int sun8i_ce_cipher_prepare(struct crypto_engine *engine, void *async_req
- 	int flow, i;
- 	int nr_sgs = 0;
- 	int nr_sgd = 0;
-+	int slot = 0;
- 	int err = 0;
- 
- 	algt = container_of(alg, struct sun8i_ce_alg_template, alg.skcipher);
- 
--	dev_dbg(ce->dev, "%s %s %u %x IV(%p %u) key=%u\n", __func__,
-+	dev_dbg(ce->dev, "%s %s %u %x IV(%p %u) key=%u slot=%d\n", __func__,
- 		crypto_tfm_alg_name(areq->base.tfm),
- 		areq->cryptlen,
- 		rctx->op_dir, areq->iv, crypto_skcipher_ivsize(tfm),
--		op->keylen);
--
--#ifdef CONFIG_CRYPTO_DEV_SUN8I_CE_DEBUG
--	algt->stat_req++;
--#endif
-+		op->keylen, slot);
- 
- 	flow = rctx->flow;
- 
- 	chan = &ce->chanlist[flow];
-+	slot = chan->ct;
-+
-+#ifdef CONFIG_CRYPTO_DEV_SUN8I_CE_DEBUG
-+	algt->stat_req++;
-+	if (chan->ct + 1 > chan->tmax)
-+		chan->tmax = chan->ct + 1;
-+#endif
- 
--	cet = chan->tl;
-+	cet = &chan->tl[slot];
- 	memset(cet, 0, sizeof(struct ce_task));
- 
- 	cet->t_id = cpu_to_le32(flow);
- 	common = ce->variant->alg_cipher[algt->ce_algo_id];
--	common |= rctx->op_dir | CE_COMM_INT;
-+	common |= rctx->op_dir;
- 	cet->t_common_ctl = cpu_to_le32(common);
-+	if (slot > 0)
-+		chan->tl[slot - 1].next = cpu_to_le32(chan->t_phy + 176 * slot);
-+
- 	/* CTS and recent CE (H6) need length in bytes, in word otherwise */
- 	if (ce->variant->has_t_dlen_in_bytes)
- 		cet->t_dlen = cpu_to_le32(areq->cryptlen);
-@@ -240,6 +247,9 @@ static int sun8i_ce_cipher_prepare(struct crypto_engine *engine, void *async_req
- 	chan->timeout = areq->cryptlen;
- 	rctx->nr_sgs = nr_sgs;
- 	rctx->nr_sgd = nr_sgd;
-+	rctx->slot = slot;
-+	chan->lreq[chan->ct] = &areq->base;
-+	chan->ct++;
- 	return 0;
- 
- theend_sgs:
-@@ -281,14 +291,41 @@ int sun8i_ce_cipher_run(struct crypto_engine *engine, void *areq)
- 	struct sun8i_cipher_tfm_ctx *op = crypto_skcipher_ctx(tfm);
- 	struct sun8i_ce_dev *ce = op->ce;
- 	struct sun8i_cipher_req_ctx *rctx = skcipher_request_ctx(breq);
-+	struct sun8i_ce_flow *chan;
- 	int flow, err;
-+	int i;
- 
- 	flow = rctx->flow;
-+	chan = &ce->chanlist[flow];
- 	err = sun8i_ce_run_task(ce, flow, crypto_tfm_alg_name(breq->base.tfm));
--	crypto_finalize_skcipher_request(engine, breq, err);
-+	for (i = 0; i < chan->ct; i++) {
-+		if (!chan->lreq[i]) {
-+			dev_err(ce->dev, "Missing request at slot %d\n", i);
-+			continue;
-+		}
-+		breq = container_of(chan->lreq[i], struct skcipher_request, base);
-+		crypto_finalize_skcipher_request(engine, breq, err);
-+		chan->lreq[i] = NULL;
-+	}
-+	chan->ct = 0;
- 	return 0;
- }
- 
-+static int sun8i_ce_qmore(struct crypto_engine *engine, void *async_req)
-+{
-+	struct skcipher_request *areq = container_of(async_req, struct skcipher_request, base);
-+	struct crypto_skcipher *tfm = crypto_skcipher_reqtfm(areq);
-+	struct sun8i_cipher_tfm_ctx *op = crypto_skcipher_ctx(tfm);
-+	struct sun8i_ce_dev *ce = op->ce;
-+	struct sun8i_cipher_req_ctx *rctx = skcipher_request_ctx(areq);
-+	struct sun8i_ce_flow *chan;
-+	int flow;
-+
-+	flow = rctx->flow;
-+	chan = &ce->chanlist[flow];
-+	return MAXTASK - chan->ct;
-+}
-+
- static int sun8i_ce_cipher_unprepare(struct crypto_engine *engine, void *async_req)
- {
- 	struct skcipher_request *areq = container_of(async_req, struct skcipher_request, base);
-@@ -301,11 +338,13 @@ static int sun8i_ce_cipher_unprepare(struct crypto_engine *engine, void *async_r
- 	unsigned int ivsize, offset;
- 	int nr_sgs = rctx->nr_sgs;
- 	int nr_sgd = rctx->nr_sgd;
-+	int slot = rctx->slot;
- 	int flow;
- 
- 	flow = rctx->flow;
- 	chan = &ce->chanlist[flow];
--	cet = chan->tl;
-+
-+	cet = &chan->tl[slot];
- 	ivsize = crypto_skcipher_ivsize(tfm);
- 
- 	if (areq->src == areq->dst) {
-@@ -404,6 +443,7 @@ int sun8i_ce_cipher_init(struct crypto_tfm *tfm)
- 	op->enginectx.op.do_one_request = sun8i_ce_cipher_run;
- 	op->enginectx.op.prepare_request = sun8i_ce_cipher_prepare;
- 	op->enginectx.op.unprepare_request = sun8i_ce_cipher_unprepare;
-+	op->enginectx.op.can_queue_more = sun8i_ce_qmore;
- 
- 	err = pm_runtime_get_sync(op->ce->dev);
- 	if (err < 0)
-diff --git a/drivers/crypto/allwinner/sun8i-ce/sun8i-ce-core.c b/drivers/crypto/allwinner/sun8i-ce/sun8i-ce-core.c
-index e8bf7bf31061..348d3927344b 100644
---- a/drivers/crypto/allwinner/sun8i-ce/sun8i-ce-core.c
-+++ b/drivers/crypto/allwinner/sun8i-ce/sun8i-ce-core.c
-@@ -104,8 +104,10 @@ int sun8i_ce_run_task(struct sun8i_ce_dev *ce, int flow, const char *name)
- 	int err = 0;
- 
- #ifdef CONFIG_CRYPTO_DEV_SUN8I_CE_DEBUG
--	ce->chanlist[flow].stat_req++;
-+	ce->chanlist[flow].stat_req += ce->chanlist[flow].ct;
- #endif
-+	/* mark last one */
-+	ce->chanlist[flow].tl[ce->chanlist[flow].ct - 1].t_common_ctl |= cpu_to_le32(CE_COMM_INT);
- 
- 	mutex_lock(&ce->mlock);
- 
-@@ -120,7 +122,7 @@ int sun8i_ce_run_task(struct sun8i_ce_dev *ce, int flow, const char *name)
- 	/* Be sure all data is written before enabling the task */
- 	wmb();
- 
--	v = 1 | (ce->chanlist[flow].tl->t_common_ctl & 0x7F) << 8;
-+	v = 1 | (ce->chanlist[flow].tl[0].t_common_ctl & 0x7F) << 8;
- 	writel(v, ce->base + CE_TLR);
- 	mutex_unlock(&ce->mlock);
- 
-@@ -128,7 +130,7 @@ int sun8i_ce_run_task(struct sun8i_ce_dev *ce, int flow, const char *name)
- 			msecs_to_jiffies(ce->chanlist[flow].timeout));
- 
- 	if (ce->chanlist[flow].status == 0) {
--		dev_err(ce->dev, "DMA timeout for %s\n", name);
-+		dev_err(ce->dev, "DMA timeout for %s on flow %d (batch=%d)\n", name, flow, ce->chanlist[flow].ct);
- 		err = -EFAULT;
- 	}
- 	/* No need to lock for this read, the channel is locked so
-@@ -285,7 +287,10 @@ static int sun8i_ce_dbgfs_read(struct seq_file *seq, void *v)
- 	int i;
- 
- 	for (i = 0; i < MAXFLOW; i++)
--		seq_printf(seq, "Channel %d: nreq %lu\n", i, ce->chanlist[i].stat_req);
-+		seq_printf(seq, "Channel %d: nreq %lu tmax %d eqlen=%d/%d\n", i,
-+			   ce->chanlist[i].stat_req, ce->chanlist[i].tmax,
-+			   ce->chanlist[i].engine->queue.qlen,
-+			   ce->chanlist[i].engine->queue.max_qlen);
- 
- 	for (i = 0; i < ARRAY_SIZE(ce_algs); i++) {
- 		if (!ce_algs[i].ce)
-@@ -343,7 +348,7 @@ static int sun8i_ce_allocate_chanlist(struct sun8i_ce_dev *ce)
- 	for (i = 0; i < MAXFLOW; i++) {
- 		init_completion(&ce->chanlist[i].complete);
- 
--		ce->chanlist[i].engine = crypto_engine_alloc_init(ce->dev, true);
-+		ce->chanlist[i].engine = crypto_engine_alloc_init2(ce->dev, true, MAXTASK * 2);
- 		if (!ce->chanlist[i].engine) {
- 			dev_err(ce->dev, "Cannot allocate engine\n");
- 			i--;
-diff --git a/drivers/crypto/allwinner/sun8i-ce/sun8i-ce.h b/drivers/crypto/allwinner/sun8i-ce/sun8i-ce.h
-index 2d3325a13bf1..59e9985fc6c8 100644
---- a/drivers/crypto/allwinner/sun8i-ce/sun8i-ce.h
-+++ b/drivers/crypto/allwinner/sun8i-ce/sun8i-ce.h
-@@ -135,6 +135,7 @@ struct ce_task {
-  * @t_phy:	Physical address of task
-  * @tl:		pointer to the current ce_task for this flow
-  * @stat_req:	number of request done by this flow
-+ * @tmax:	The maximum number of tasks done in one batch
-  */
- struct sun8i_ce_flow {
- 	struct crypto_engine *engine;
-@@ -143,8 +144,11 @@ struct sun8i_ce_flow {
- 	dma_addr_t t_phy;
- 	int timeout;
- 	struct ce_task *tl;
-+	struct crypto_async_request     *lreq[MAXTASK];
-+	int ct;
- #ifdef CONFIG_CRYPTO_DEV_SUN8I_CE_DEBUG
- 	unsigned long stat_req;
-+	int tmax;
- #endif
- };
- 
-@@ -185,6 +189,7 @@ struct sun8i_ce_dev {
-  * @ivlen:	size of bounce_iv
-  * @nr_sgs:	The number of source SG (as given by dma_map_sg())
-  * @nr_sgd:	The number of destination SG (as given by dma_map_sg())
-+ * @slot:	The slot in the tasklist used for this requests
-  */
- struct sun8i_cipher_req_ctx {
- 	u32 op_dir;
-@@ -194,6 +199,7 @@ struct sun8i_cipher_req_ctx {
- 	unsigned int ivlen;
- 	int nr_sgs;
- 	int nr_sgd;
-+	int slot;
- };
- 
- /*
--- 
-2.24.1
+So far so good, I suggest using the simplest version for v6:
 
+static inline bool perfmon_capable(void)
+{
+	return capable(CAP_PERFMON) || capable(CAP_SYS_ADMIN);
+}
+
+It keeps the implementation simple and readable. The implementation is more
+performant in the sense of calling the API - one capable() call for CAP_PERFMON
+privileged process.
+
+Yes, it bloats audit log for CAP_SYS_ADMIN privileged and unprivileged processes,
+but this bloating also advertises and leverages using more secure CAP_PERFMON
+based approach to use perf_event_open system call.
+
+~Alexey
+
+>>>
+>>> Some of ideas from v4 review.
+>>
+>> well, in the requested changes form v4 I wrote:
+>> return capable(CAP_PERFMON);
+>> instead of
+>> return false;
+> 
+> Aww, indeed. I was concerning exactly about it when updating the patch
+> and simply put false, missing the fact that capable() also logs.
+> 
+> I suppose the idea is originally from here [1].
+> BTW, Has it already seen any _more optimal_ implementation?
+> Anyway, original or optimized version could be reused for CAP_PERFMON.
+> 
+> ~Alexey
+> 
+> [1] https://patchwork.ozlabs.org/patch/1159243/
+> 
+>>
+>> That's what Andy suggested earlier for CAP_BPF.
+>> I think that should resolve Stephen's concern.
+>>
