@@ -2,124 +2,123 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 75DB7145116
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Jan 2020 10:51:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1F3AC144F65
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Jan 2020 10:37:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732888AbgAVJvl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 22 Jan 2020 04:51:41 -0500
-Received: from smtp-fw-9101.amazon.com ([207.171.184.25]:10183 "EHLO
-        smtp-fw-9101.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729809AbgAVJhH (ORCPT
+        id S1731690AbgAVJhY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 22 Jan 2020 04:37:24 -0500
+Received: from us-smtp-2.mimecast.com ([205.139.110.61]:22784 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1731650AbgAVJhV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 Jan 2020 04:37:07 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
-  t=1579685828; x=1611221828;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   mime-version;
-  bh=K9Kz0EYeQrURGwTjiRNoD6do9zmd0lXIO7vywrJCJO8=;
-  b=uRp6jW4JGtw9vMYS5hPKvfYGsFkEcaruIt126ZG1o9X5RVoBqVguBtnE
-   1TKWRcNJtLVSoog3HSFjAVTs40TJB4RmCnMlBCgnm7x2aTObplckddkKS
-   8mx9sabNgPXaGiJXhXxBoFCS1cCrNymVQH9sa77bMnnv+mkT9vRY8JD3Y
-   k=;
-IronPort-SDR: +ZLstp77iXAZO+vQ5DM0SWDzWs9fWxGYhsX8L1GfAcFYl7ljZWGWoubEp3F+ZLyxkgUzMc616p
- ILsZ+kD1SJBg==
-X-IronPort-AV: E=Sophos;i="5.70,349,1574121600"; 
-   d="scan'208";a="11919547"
-Received: from sea32-co-svc-lb4-vlan3.sea.corp.amazon.com (HELO email-inbound-relay-1e-17c49630.us-east-1.amazon.com) ([10.47.23.38])
-  by smtp-border-fw-out-9101.sea19.amazon.com with ESMTP; 22 Jan 2020 09:36:56 +0000
-Received: from EX13MTAUEA002.ant.amazon.com (iad55-ws-svc-p15-lb9-vlan3.iad.amazon.com [10.40.159.166])
-        by email-inbound-relay-1e-17c49630.us-east-1.amazon.com (Postfix) with ESMTPS id 2D141A1780;
-        Wed, 22 Jan 2020 09:36:48 +0000 (UTC)
-Received: from EX13D31EUA001.ant.amazon.com (10.43.165.15) by
- EX13MTAUEA002.ant.amazon.com (10.43.61.77) with Microsoft SMTP Server (TLS)
- id 15.0.1236.3; Wed, 22 Jan 2020 09:36:48 +0000
-Received: from u886c93fd17d25d.ant.amazon.com (10.43.162.224) by
- EX13D31EUA001.ant.amazon.com (10.43.165.15) with Microsoft SMTP Server (TLS)
- id 15.0.1367.3; Wed, 22 Jan 2020 09:36:40 +0000
-From:   SeongJae Park <sjpark@amazon.com>
-To:     Michal Hocko <mhocko@kernel.org>
-CC:     Minchan Kim <minchan@kernel.org>, <sspatil@google.com>,
-        <kirill@shutemov.name>, <akpm@linux-foundation.org>,
-        <linux-kernel@vger.kernel.org>, <linux-mm@kvack.org>,
-        <linux-api@vger.kernel.org>, <oleksandr@redhat.com>,
-        <surenb@google.com>, <timmurray@google.com>, <dancol@google.com>,
-        <sonnyrao@google.com>, <bgeffon@google.com>, <hannes@cmpxchg.org>,
-        <shakeelb@google.com>, <joaodias@google.com>,
-        <ktkhai@virtuozzo.com>, <christian.brauner@ubuntu.com>,
-        <sjpark@amazon.de>
-Subject: Re: Re: [PATCH v2 2/5] mm: introduce external memory hinting API
-Date:   Wed, 22 Jan 2020 10:36:24 +0100
-Message-ID: <20200122093624.14799-1-sjpark@amazon.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20200122082853.GS29276@dhcp22.suse.cz> (raw)
+        Wed, 22 Jan 2020 04:37:21 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1579685840;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=W6yEULGDzE/nInvw9JSJB7gTt3H5wvwQ6ls0gr1oQVY=;
+        b=g96lKX2KqcMqcZjB64N3nYR5Tjin/Ib7L8Sc8hQBU46+aqe/XYQMwjpLvEgjKdfvqXTffU
+        Aw3eCb2G/dcFkrTE8k8Tbm2tRk7XWUPyYtFM7WaYIzxsZvIlKLlBVm8nq+ZNg39IbFncpR
+        KC4nhm68AmoXtUcIMdz1DbTLSp10+Rc=
+Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
+ [209.85.221.69]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-184-i1bZkeShMji0lNzOVe2ocg-1; Wed, 22 Jan 2020 04:37:19 -0500
+X-MC-Unique: i1bZkeShMji0lNzOVe2ocg-1
+Received: by mail-wr1-f69.google.com with SMTP id o6so2771297wrp.8
+        for <linux-kernel@vger.kernel.org>; Wed, 22 Jan 2020 01:37:19 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:in-reply-to:references:date
+         :message-id:mime-version;
+        bh=W6yEULGDzE/nInvw9JSJB7gTt3H5wvwQ6ls0gr1oQVY=;
+        b=HlUmHeBe34WBeHCBg7bETLyapmFzF1o/HaMMAPS0etCMIx4IjyFBF7gJnvcO3UM6Ef
+         oDXbwyAFa42Xqzj2OgU/FxstA2/MZqqOrciafgK3k3nM6o1UDwX7pcOlgTskh57rqNzu
+         1/tmhWPB38AEV152ZmBuqKQTpzG3vZqfDaJXKf1wQw+WDwx2l2wl90RnKRn2cZspjUmf
+         hcCBHn1RJlg53fBRVA2ephSyvcwsNDNcC71aA2VS9AQbWl4eDDt86sMu6JqKc5/7lRMF
+         HI+P3UxMFxl5OApqGYv2WX7mGTUCqqLg2a6Yl5DPIB8602XlSt7eYHfhJvv5HxnUEb4s
+         dSBw==
+X-Gm-Message-State: APjAAAX1WGUX9SJ812JUVQYKk1A9jjfgp0fD62DUJlCgBJRkQwQCaX5v
+        rZCAVmOwsC3FvM5ULbyBjlOxy3+E9/1uIR+uU2GYZFqyiRsJYbnHX7VqehquQSYbBhKzMaMCkQb
+        grHqUWNZ5NZu1Oi/ksEo7wsaH
+X-Received: by 2002:adf:d846:: with SMTP id k6mr9578104wrl.337.1579685838124;
+        Wed, 22 Jan 2020 01:37:18 -0800 (PST)
+X-Google-Smtp-Source: APXvYqzqWhY53TzrvajxcRumOsfe7V0LUooFHe3j3uQkZe4Gzh7e9aIgcb7kzXkxzrsSylqS9LEr5Q==
+X-Received: by 2002:adf:d846:: with SMTP id k6mr9578074wrl.337.1579685837856;
+        Wed, 22 Jan 2020 01:37:17 -0800 (PST)
+Received: from vitty.brq.redhat.com (nat-pool-brq-t.redhat.com. [213.175.37.10])
+        by smtp.gmail.com with ESMTPSA id b17sm57898390wrx.15.2020.01.22.01.37.16
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 22 Jan 2020 01:37:16 -0800 (PST)
+From:   Vitaly Kuznetsov <vkuznets@redhat.com>
+To:     Sean Christopherson <sean.j.christopherson@intel.com>,
+        Paolo Bonzini <pbonzini@redhat.com>
+Cc:     kvm@vger.kernel.org, Jim Mattson <jmattson@google.com>,
+        linux-kernel@vger.kernel.org, Liran Alon <liran.alon@oracle.com>,
+        Roman Kagan <rkagan@virtuozzo.com>
+Subject: Re: [PATCH RFC 2/3] x86/kvm/hyper-v: move VMX controls sanitization out of nested_enable_evmcs()
+In-Reply-To: <20200122054724.GD18513@linux.intel.com>
+References: <20200115171014.56405-1-vkuznets@redhat.com> <20200115171014.56405-3-vkuznets@redhat.com> <6c4bdb57-08fb-2c2d-9234-b7efffeb72ed@redhat.com> <20200122054724.GD18513@linux.intel.com>
+Date:   Wed, 22 Jan 2020 10:37:16 +0100
+Message-ID: <87zhefsugj.fsf@vitty.brq.redhat.com>
 MIME-Version: 1.0
 Content-Type: text/plain
-X-Originating-IP: [10.43.162.224]
-X-ClientProxiedBy: EX13d09UWA004.ant.amazon.com (10.43.160.158) To
- EX13D31EUA001.ant.amazon.com (10.43.165.15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 22 Jan 2020 09:28:53 +0100 Michal Hocko <mhocko@kernel.org> wrote:
+Sean Christopherson <sean.j.christopherson@intel.com> writes:
 
-> On Tue 21-01-20 10:32:12, Minchan Kim wrote:
-> > On Mon, Jan 20, 2020 at 08:58:25AM +0100, Michal Hocko wrote:
-> [...]
-> > > The interface really has to be robust to future potential usecases.
-> > 
-> > I do understand your concern but for me, it's chicken and egg problem.
-> > We usually do best effort to make something perfect as far as possible
-> > but we also don't do over-engineering without real usecase from the
-> > beginning.
-> > 
-> > I already told you how we could synchronize among processes and potential
-> > way to be extended Daniel suggested(That's why current API has extra field
-> > for the cookie) even though we don't need it right now.
-> 
-> If you can synchronize with the target task then you do not need a
-> remote interface. Just use ptrace and you are done with it.
-> 
-> > If you want to suggest the other way, please explain why your idea is
-> > better and why we need it at this moment.
-> 
-> I believe I have explained my concerns and why they matter. All you are
-> saying is that you do not care because your particular usecase doesn't
-> care. And that is a first signal of a future disaster when we end up
-> with a broken and unfixable interface we have to maintain for ever.
-> 
-> I will not go as far as to nack this but you should seriously think
-> about other potential usecases and how they would work and what we are
-> going to do when a first non-cooperative userspace memory management
-> usecase materializes.
+> On Sat, Jan 18, 2020 at 10:42:31PM +0100, Paolo Bonzini wrote:
+>> IMHO the features should stay available in case the guest chooses not to
+>> use eVMCS.  A guest that uses eVMCS should know which features it cannot
+>> use and not enable them.
+>
+> Makes sense, wasn't thinking about the scenario where the guest doesn't
+> support eVMCS or doesn't want to use it for whatever reason.
+>
+> Rather than update vmx->nested.msrs or filter vmx_get_msr(), what about
+> manually adding eVMCS consistency checks on the disallowed bits and handle
+> SECONDARY_EXEC_VIRTUALIZE_APIC_ACCESSES as a one-off case by simply
+> clearing it from the eVMCS?
 
-Beside of the specific environment of Android, I think there are many ways to
-know the address space layout and access patterns of other processes.  The
-idle_page_tracking might be an example that widelay available.
+Unfortunately, this doesn't work because ... Windows. Not only Hyper-V
+enables SECONDARY_EXEC_VIRTUALIZE_APIC_ACCESSES, it actually expects it
+to work (somehow) so when I do
 
-Of course, the information might not strictly correct due to the timing issue,
-but could be still worth to be used under some extreme situations, such as
-memory pressure or fragmentation.  For the same reason, ptrace() would not be
-sufficient, as we have no perfect control, but only some level of control that
-would be useful under specific situations.
+diff --git a/arch/x86/kvm/vmx/evmcs.c b/arch/x86/kvm/vmx/evmcs.c
+index 72359709cdc1..e6c30eec2817 100644
+--- a/arch/x86/kvm/vmx/evmcs.c
++++ b/arch/x86/kvm/vmx/evmcs.c
+@@ -361,11 +361,5 @@ int nested_enable_evmcs(struct kvm_vcpu *vcpu,
+        if (evmcs_already_enabled)
+                return 0;
+ 
+-       vmx->nested.msrs.pinbased_ctls_high &= ~EVMCS1_UNSUPPORTED_PINCTRL;
+-       vmx->nested.msrs.entry_ctls_high &= ~EVMCS1_UNSUPPORTED_VMENTRY_CTRL;
+-       vmx->nested.msrs.exit_ctls_high &= ~EVMCS1_UNSUPPORTED_VMEXIT_CTRL;
+-       vmx->nested.msrs.secondary_ctls_high &= ~EVMCS1_UNSUPPORTED_2NDEXEC;
+-       vmx->nested.msrs.vmfunc_controls &= ~EVMCS1_UNSUPPORTED_VMFUNC;
+-
+        return 0;
+ }
+diff --git a/arch/x86/kvm/vmx/nested.c b/arch/x86/kvm/vmx/nested.c
+index bb8afe0c5e7f..cd1f5a1c884b 100644
+--- a/arch/x86/kvm/vmx/nested.c
++++ b/arch/x86/kvm/vmx/nested.c
+@@ -1590,7 +1590,7 @@ static int copy_enlightened_to_vmcs12(struct vcpu_vmx *vmx)
+                        evmcs->pin_based_vm_exec_control;
+                vmcs12->vm_exit_controls = evmcs->vm_exit_controls;
+                vmcs12->secondary_vm_exec_control =
+-                       evmcs->secondary_vm_exec_control;
++                       evmcs->secondary_vm_exec_control & ~SECONDARY_EXEC_VIRTUALIZE_APIC_ACCESSES;
+        }
+ 
+        if (unlikely(!(evmcs->hv_clean_fields &
 
-I assume the users of this systemcall would understand the tradeoff and make
-decisions.  Also, as the users already have the right to do the tradeoff, I
-think it's fair.  In other words, I think the caller has both the power and the
-responsibility to deal with the time-to-check-time-to-react problem.
+Hyper-V 2016 with > 1 vCPU fails to boot :-(
 
-Nonetheless, I also agree this is important concern and the patch would be
-better if it adds more detailed documentation regarding this issue.
+-- 
+Vitaly
 
-If I'm missing some points or you have different opinions, please let me know.
-
-
-Thanks,
-SeongJae Park
-
-> -- 
-> Michal Hocko
-> SUSE Labs
-> 
