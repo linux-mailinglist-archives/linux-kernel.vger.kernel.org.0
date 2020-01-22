@@ -2,95 +2,85 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2533A1457B6
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Jan 2020 15:24:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 09E7B1457BB
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Jan 2020 15:24:53 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726621AbgAVOYm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 22 Jan 2020 09:24:42 -0500
-Received: from mail-qv1-f66.google.com ([209.85.219.66]:34133 "EHLO
-        mail-qv1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725870AbgAVOYm (ORCPT
+        id S1729052AbgAVOYr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 22 Jan 2020 09:24:47 -0500
+Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:24273 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1729037AbgAVOYq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 Jan 2020 09:24:42 -0500
-Received: by mail-qv1-f66.google.com with SMTP id o18so3303206qvf.1
-        for <linux-kernel@vger.kernel.org>; Wed, 22 Jan 2020 06:24:41 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=9EOtDPRsqZedtcudRq1AD81ej0463sWnMh8/49dqlNI=;
-        b=gOnNFqhwLwiLzMgC2iShGAQOPeyOgZL6M67kZxnUPLtwbIaho7nblhnskv9aZtcHJC
-         UbdDJ8DBenTeZBYGTEJCJ6rvtDAmM7f4EJV1wjm4D64QlO6hTs1TodffanUYHxOaqtE+
-         KR9q6tcY6RYsomsindbVHCimHLSTwauxeB2gY7oP+fUy96x4Ge8JujEyyHLZabkEoyhi
-         +wedyI2nVngEW2MTqfCf9H2gyQ0Zq6Oj6FhRcaTJMiFJ7RemR5lTVUsvV2VTKA5lwN+5
-         tn/Oc8B5ok6sSH28fek83bSfh7oavvwVc+OyyNyY52Sn4OU7bugAA9ypUrUBm79Oj6WQ
-         2KYg==
+        Wed, 22 Jan 2020 09:24:46 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1579703086;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=aqT6CKkFGq3yewDVX4rWRr0dGnPZkXFg3u7EsnPq/64=;
+        b=gFfdY4a1CTVtqebu4zMtGxsFs6Lu25oLORhYFeqoUC6C3HjL3PyH7RjBcvmmRIM2PYR6kE
+        nCWd+u45ZKEM55FHegJW4hDp0WRuAmr/aGI5lP9X5r7tnGwCPjcP4znyZTVNVyfC+XbO+V
+        4sPFVGPgL903ZCa2okuRSraTGHfEisc=
+Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
+ [209.85.128.70]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-50-gIjaKBQmP52f6c6Rwcnkyg-1; Wed, 22 Jan 2020 09:24:45 -0500
+X-MC-Unique: gIjaKBQmP52f6c6Rwcnkyg-1
+Received: by mail-wm1-f70.google.com with SMTP id s13so1001131wme.7
+        for <linux-kernel@vger.kernel.org>; Wed, 22 Jan 2020 06:24:44 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=9EOtDPRsqZedtcudRq1AD81ej0463sWnMh8/49dqlNI=;
-        b=jhnLDBhowGnCEOSADeQGQCqiVE++BrjWsbJjhsgYOdBTub0Ke7gHulvqKrsJt6wMY8
-         BWZqhwpYE1aWlPbHye/cfS46z1LKyC98FfjS/DNGzexJ2C4FuARwjQwaumtINZBzX6TI
-         KjYPHG5VIOSUU/OlpJ0bX/XRI201ytuoHIGbSN0eWhiccp5bEu9Soa1eKyIOUzvSlGr1
-         6aE6f1z6gkA3miDnuOTRz++ME1AXDb87EuaviOyx4Kpb72q+q43okA2eVPu3n6JHb1Qe
-         W8+xtzOE7g4wO4awVyDxBm3Fv8849HFxhOKnpwVYRrMqjup8uhtwBr1+2jed1X6F4NpJ
-         dfnA==
-X-Gm-Message-State: APjAAAVGjvQ6+JGxvdFdALXpHFs69wKvzS9alJ9+vDOg96t4ypaT5aFs
-        m4PmqHyKtc5ch7ePbe04YyPuILd0vgjspfHQFXASXg==
-X-Google-Smtp-Source: APXvYqyr3UHmh9dEw4tsZ5jCd1wIGOCJ1jSpzdVLE5X9QzWaQId3N5ZsjbTR56ZpOPYQR/BtwhB/EGj0xC3hlNIuq6w=
-X-Received: by 2002:a0c:c351:: with SMTP id j17mr10856301qvi.80.1579703080516;
- Wed, 22 Jan 2020 06:24:40 -0800 (PST)
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=aqT6CKkFGq3yewDVX4rWRr0dGnPZkXFg3u7EsnPq/64=;
+        b=JwKE6Ps+5s0MHsJe0FyO78smui7FljTrSBXKBFQc1wBVvFQyfo+KKItaI+V1NvX5w9
+         vOGwWGrln3/HIXL3CRpvPHkVnFDpDATJ8kD94FNoImw+3YLG3B0GAM2U3qqx/LqcC9tS
+         XphRBExsjkQs4iXgv6sI7xSZk+lHlDWwQA7hY+sw8lGNv/0Ul3lIrMoq4LTgo7G5qlqt
+         rD3mcdWDOTwn1M10E5eWH9W/fvdwrO10rtjH23IJ/c6gAmAmiE/j9FUUoRkHCMTfcIQL
+         JTrIdLGaC+YXVenCqJQCWEGSWrRYLpg87KWfaZXehNCKAEk4TS42SyQ8LRi7YNPu8GZp
+         GafA==
+X-Gm-Message-State: APjAAAUUEkHLYA/HIb05Ep8Piex7JyqOtkGZIfMCDIrFM/INwjcJFeKh
+        VR7UPsCQ9U9v3dPAoZiABktDT8wnXlfsuKpn62Oe/yrhpczW7GU3JRcaAc0UyMULDwOSSdVQf1+
+        FNCvCcQ8vkOUQqOFb8hdzaW/4
+X-Received: by 2002:adf:f54d:: with SMTP id j13mr11499353wrp.19.1579703083586;
+        Wed, 22 Jan 2020 06:24:43 -0800 (PST)
+X-Google-Smtp-Source: APXvYqy/2ceqwR2kycBEWzkQorXDtWBW1IKh4GGt2+mtCymg1sayhTfnKvWGxkroPEuUM2HmBy7NKg==
+X-Received: by 2002:adf:f54d:: with SMTP id j13mr11499329wrp.19.1579703083264;
+        Wed, 22 Jan 2020 06:24:43 -0800 (PST)
+Received: from ?IPv6:2001:b07:6468:f312:b8fe:679e:87eb:c059? ([2001:b07:6468:f312:b8fe:679e:87eb:c059])
+        by smtp.gmail.com with ESMTPSA id m3sm55904641wrs.53.2020.01.22.06.24.42
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 22 Jan 2020 06:24:42 -0800 (PST)
+Subject: Re: [PATCH] KVM: X86: Add 'else' to unify fastop and execute call
+ path
+To:     Sean Christopherson <sean.j.christopherson@intel.com>,
+        linmiaohe <linmiaohe@huawei.com>
+Cc:     rkrcmar@redhat.com, vkuznets@redhat.com, wanpengli@tencent.com,
+        jmattson@google.com, joro@8bytes.org, tglx@linutronix.de,
+        mingo@redhat.com, bp@alien8.de, hpa@zytor.com, kvm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, x86@kernel.org
+References: <1579663304-14524-1-git-send-email-linmiaohe@huawei.com>
+ <20200122044256.GA18513@linux.intel.com>
+From:   Paolo Bonzini <pbonzini@redhat.com>
+Message-ID: <0914980e-30dd-5b39-a951-ca73e1b86ab3@redhat.com>
+Date:   Wed, 22 Jan 2020 15:24:41 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.1.1
 MIME-Version: 1.0
-References: <000000000000951cea059cba579b@google.com>
-In-Reply-To: <000000000000951cea059cba579b@google.com>
-From:   Dmitry Vyukov <dvyukov@google.com>
-Date:   Wed, 22 Jan 2020 15:24:27 +0100
-Message-ID: <CACT4Y+YJmVWFEhdWCtF391EM6qN5OBGTBFLuK4tLL61RiQr+MQ@mail.gmail.com>
-Subject: Re: linux-next build error (7)
-To:     syzbot <syzbot+dc92421ed22129134c0f@syzkaller.appspotmail.com>,
-        steven.price@arm.com, Andrew Morton <akpm@linux-foundation.org>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        Ard Biesheuvel <ardb@kernel.org>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20200122044256.GA18513@linux.intel.com>
+Content-Type: text/plain; charset=windows-1252
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jan 22, 2020 at 2:17 PM syzbot
-<syzbot+dc92421ed22129134c0f@syzkaller.appspotmail.com> wrote:
->
-> Hello,
->
-> syzbot found the following crash on:
->
-> HEAD commit:    ba0b4dfd Add linux-next specific files for 20200122
-> git tree:       linux-next
-> console output: https://syzkaller.appspot.com/x/log.txt?x=17caa985e00000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=7b604c617a6b217c
-> dashboard link: https://syzkaller.appspot.com/bug?extid=dc92421ed22129134c0f
-> compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
->
-> Unfortunately, I don't have any reproducer for this crash yet.
->
-> IMPORTANT: if you fix the bug, please add the following tag to the commit:
-> Reported-by: syzbot+dc92421ed22129134c0f@syzkaller.appspotmail.com
->
-> /syzkaller/managers/upstream-linux-next-kasan-gce-root/kernel/arch/x86/platform/efi/efi_64.c:560: undefined reference to `__efi64_thunk'
-> /syzkaller/managers/upstream-linux-next-kasan-gce-root/kernel/arch/x86/platform/efi/efi_64.c:902: undefined reference to `efi_uv1_memmap_phys_prolog'
-> /syzkaller/managers/upstream-linux-next-kasan-gce-root/kernel/arch/x86/platform/efi/efi_64.c:921: undefined reference to `efi_uv1_memmap_phys_epilog'
+On 22/01/20 05:42, Sean Christopherson wrote:
+> Reviewed-by: Sean Christopherson <sean.j.christopherson@intel.com>
 
-There are 2 recent commits in linux-next touching this file:
+Queued, thanks to both!
 
-commit 6616face70e25c80420539075a943ac1bc9b990c
-Date:   Wed Jan 22 09:12:37 2020 +1100
-    x86: mm+efi: convert ptdump_walk_pgd_level() to take a mm_struct
+Paolo
 
-commit 3cc028619e284188cdde652631e1c3c5a83692b9
-Date:   Sat Jan 18 17:57:03 2020 +0100
-    efi/x86: avoid KASAN false positives when accessing the 1: 1 mapping
-
-Not sure which one is this. But linux-next is build broken.
