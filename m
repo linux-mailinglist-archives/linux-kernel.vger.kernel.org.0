@@ -2,38 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 83BE0144FAA
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Jan 2020 10:40:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id ED6BA144F49
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Jan 2020 10:36:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732792AbgAVJj7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 22 Jan 2020 04:39:59 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58300 "EHLO mail.kernel.org"
+        id S1729930AbgAVJgS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 22 Jan 2020 04:36:18 -0500
+Received: from mail.kernel.org ([198.145.29.99]:51630 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1733295AbgAVJjz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 Jan 2020 04:39:55 -0500
+        id S1730978AbgAVJgL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 22 Jan 2020 04:36:11 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6AD8F24684;
-        Wed, 22 Jan 2020 09:39:54 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id AEEB02467B;
+        Wed, 22 Jan 2020 09:36:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579685994;
-        bh=bCq0ctxizNCAwzs1hJaNsvFiiEgdIQRvQWKcWtlFrOw=;
+        s=default; t=1579685770;
+        bh=b8o9ctzx/UnS2EB/1CSlOMZO1pa8fgjAdGq/4EKRJSo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=A6pf4rb6SpOFBoQAEVk5dmG8f6yFKEyMNXdoD0bht5UT/xEclvMSQHDPwbO1tOu3J
-         hpWnT92kCpO9bV7T1A2mUUg3S7nNoLcWYxLLFR+qqk28129259CmNzd01d+ipnvDVg
-         ey9RIOoIrH77uhLRSb5AOjeVCh1rKPNrk878MyvE=
+        b=iOkQ/2jU7rs8Zgf7gSa9A1VpQAlIgbs3n0RR3nGH4/zTgBLtlKmxdxKUGADN8tqPB
+         zZb2qLc2/Ay2UWaWeCy95LUcHA3UaHCvU9zEM4FMi97n1v74e5AEYaPcwesWlHB+dE
+         VtUevKzZtLLqOpgMkgPTugh4uiDmfkNqVlYa87uI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jose Abreu <Jose.Abreu@synopsys.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.14 30/65] net: stmmac: Enable 16KB buffer size
-Date:   Wed, 22 Jan 2020 10:29:15 +0100
-Message-Id: <20200122092755.081585763@linuxfoundation.org>
+        stable@vger.kernel.org, Johan Hovold <johan@kernel.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.9 72/97] USB: serial: io_edgeport: handle unbound ports on URB completion
+Date:   Wed, 22 Jan 2020 10:29:16 +0100
+Message-Id: <20200122092807.963863505@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200122092750.976732974@linuxfoundation.org>
-References: <20200122092750.976732974@linuxfoundation.org>
+In-Reply-To: <20200122092755.678349497@linuxfoundation.org>
+References: <20200122092755.678349497@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,34 +43,49 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jose Abreu <Jose.Abreu@synopsys.com>
+From: Johan Hovold <johan@kernel.org>
 
-commit b2f3a481c4cd62f78391b836b64c0a6e72b503d2 upstream.
+[ Upstream commit e37d1aeda737a20b1846a91a3da3f8b0f00cf690 ]
 
-XGMAC supports maximum MTU that can go to 16KB. Lets add this check in
-the calculation of RX buffer size.
+Check for NULL port data in the shared interrupt and bulk completion
+callbacks to avoid dereferencing a NULL pointer in case a device sends
+data for a port device which isn't bound to a driver (e.g. due to a
+malicious device having unexpected endpoints or after an allocation
+failure on port probe).
 
-Fixes: 7ac6653a085b ("stmmac: Move the STMicroelectronics driver")
-Signed-off-by: Jose Abreu <Jose.Abreu@synopsys.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
+Cc: stable <stable@vger.kernel.org>
+Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Signed-off-by: Johan Hovold <johan@kernel.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/stmicro/stmmac/stmmac_main.c |    4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ drivers/usb/serial/io_edgeport.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
-+++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
-@@ -1043,7 +1043,9 @@ static int stmmac_set_bfsize(int mtu, in
- {
- 	int ret = bufsize;
- 
--	if (mtu >= BUF_SIZE_4KiB)
-+	if (mtu >= BUF_SIZE_8KiB)
-+		ret = BUF_SIZE_16KiB;
-+	else if (mtu >= BUF_SIZE_4KiB)
- 		ret = BUF_SIZE_8KiB;
- 	else if (mtu >= BUF_SIZE_2KiB)
- 		ret = BUF_SIZE_4KiB;
+diff --git a/drivers/usb/serial/io_edgeport.c b/drivers/usb/serial/io_edgeport.c
+index b9b56ec6ff24..191588006e0e 100644
+--- a/drivers/usb/serial/io_edgeport.c
++++ b/drivers/usb/serial/io_edgeport.c
+@@ -640,7 +640,7 @@ static void edge_interrupt_callback(struct urb *urb)
+ 			if (txCredits) {
+ 				port = edge_serial->serial->port[portNumber];
+ 				edge_port = usb_get_serial_port_data(port);
+-				if (edge_port->open) {
++				if (edge_port && edge_port->open) {
+ 					spin_lock_irqsave(&edge_port->ep_lock,
+ 							  flags);
+ 					edge_port->txCredits += txCredits;
+@@ -1776,7 +1776,7 @@ static void process_rcvd_data(struct edgeport_serial *edge_serial,
+ 			if (rxLen && edge_serial->rxPort < serial->num_ports) {
+ 				port = serial->port[edge_serial->rxPort];
+ 				edge_port = usb_get_serial_port_data(port);
+-				if (edge_port->open) {
++				if (edge_port && edge_port->open) {
+ 					dev_dbg(dev, "%s - Sending %d bytes to TTY for port %d\n",
+ 						__func__, rxLen,
+ 						edge_serial->rxPort);
+-- 
+2.20.1
+
 
 
