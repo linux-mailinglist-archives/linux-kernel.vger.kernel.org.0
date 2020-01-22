@@ -2,40 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DB72C145009
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Jan 2020 10:43:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 96F41144F64
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Jan 2020 10:37:28 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387851AbgAVJnO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 22 Jan 2020 04:43:14 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35412 "EHLO mail.kernel.org"
+        id S1732436AbgAVJhW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 22 Jan 2020 04:37:22 -0500
+Received: from mail.kernel.org ([198.145.29.99]:53284 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387834AbgAVJnH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 Jan 2020 04:43:07 -0500
+        id S1729863AbgAVJhR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 22 Jan 2020 04:37:17 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0C13724688;
-        Wed, 22 Jan 2020 09:43:06 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 73DB824684;
+        Wed, 22 Jan 2020 09:37:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579686187;
-        bh=nmQXkcSiUAJqWYJ+V3uerZ+yCxSq758WLrSrWnOS+G4=;
+        s=default; t=1579685835;
+        bh=qXgDHxOXuDZD5R4tdepu4dG3IdI8o0vQJkklPvnJ3Aw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=CoTmTxFb/BnFDF/MfGp1bgi/TSjLyTm2E9N1/hOwlcQDuyylTphF7/x7AgMyk9N8X
-         /T5orrJQ/iS2BMthigWelN6oelr6h2lEmBH4ySrBDwpGMTWiHHS1Ah9EQjbf4A5/la
-         QAEWJhnb5cRcZ8Qw1d+Iw9wscY9COnCht4rJpGsw=
+        b=daGdDfHHrmX1cIcM2BZ7OslPpHkLXMRAEERh+9dX+knw1/76qdCw9uiSpCmhEHnzM
+         XI865hZAFFc9n1dfDKXd/FaP0WHVnbqqYKe1x42RmhgoueFLufP6k8CiIB9wHS33Pr
+         V3Ao0doYtIbiU7I/fgglqxntlGzTlqef1NbMLuDQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Nathan Chancellor <natechancellor@gmail.com>,
-        Juergen Gross <jgross@suse.com>,
-        =?UTF-8?q?Roger=20Pau=20Monn=C3=A9?= <roger.pau@citrix.com>
-Subject: [PATCH 4.19 079/103] xen/blkfront: Adjust indentation in xlvbd_alloc_gendisk
-Date:   Wed, 22 Jan 2020 10:29:35 +0100
-Message-Id: <20200122092814.733925700@linuxfoundation.org>
+        stable@vger.kernel.org, Pan Bian <bianpan2016@163.com>,
+        Manish Rangankar <mrangankar@marvell.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>
+Subject: [PATCH 4.9 92/97] scsi: qla4xxx: fix double free bug
+Date:   Wed, 22 Jan 2020 10:29:36 +0100
+Message-Id: <20200122092810.904922779@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200122092803.587683021@linuxfoundation.org>
-References: <20200122092803.587683021@linuxfoundation.org>
+In-Reply-To: <20200122092755.678349497@linuxfoundation.org>
+References: <20200122092755.678349497@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,51 +44,36 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Nathan Chancellor <natechancellor@gmail.com>
+From: Pan Bian <bianpan2016@163.com>
 
-commit 589b72894f53124a39d1bb3c0cecaf9dcabac417 upstream.
+commit 3fe3d2428b62822b7b030577cd612790bdd8c941 upstream.
 
-Clang warns:
+The variable init_fw_cb is released twice, resulting in a double free
+bug. The call to the function dma_free_coherent() before goto is removed to
+get rid of potential double free.
 
-../drivers/block/xen-blkfront.c:1117:4: warning: misleading indentation;
-statement is not part of the previous 'if' [-Wmisleading-indentation]
-                nr_parts = PARTS_PER_DISK;
-                ^
-../drivers/block/xen-blkfront.c:1115:3: note: previous statement is here
-                if (err)
-                ^
-
-This is because there is a space at the beginning of this line; remove
-it so that the indentation is consistent according to the Linux kernel
-coding style and clang no longer warns.
-
-While we are here, the previous line has some trailing whitespace; clean
-that up as well.
-
-Fixes: c80a420995e7 ("xen-blkfront: handle Xen major numbers other than XENVBD")
-Link: https://github.com/ClangBuiltLinux/linux/issues/791
-Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
-Reviewed-by: Juergen Gross <jgross@suse.com>
-Acked-by: Roger Pau Monné <roger.pau@citrix.com>
-Signed-off-by: Juergen Gross <jgross@suse.com>
+Fixes: 2a49a78ed3c8 ("[SCSI] qla4xxx: added IPv6 support.")
+Link: https://lore.kernel.org/r/1572945927-27796-1-git-send-email-bianpan2016@163.com
+Signed-off-by: Pan Bian <bianpan2016@163.com>
+Acked-by: Manish Rangankar <mrangankar@marvell.com>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/block/xen-blkfront.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/scsi/qla4xxx/ql4_mbx.c |    3 ---
+ 1 file changed, 3 deletions(-)
 
---- a/drivers/block/xen-blkfront.c
-+++ b/drivers/block/xen-blkfront.c
-@@ -1113,8 +1113,8 @@ static int xlvbd_alloc_gendisk(blkif_sec
- 	if (!VDEV_IS_EXTENDED(info->vdevice)) {
- 		err = xen_translate_vdev(info->vdevice, &minor, &offset);
- 		if (err)
--			return err;		
-- 		nr_parts = PARTS_PER_DISK;
-+			return err;
-+		nr_parts = PARTS_PER_DISK;
- 	} else {
- 		minor = BLKIF_MINOR_EXT(info->vdevice);
- 		nr_parts = PARTS_PER_EXT_DISK;
+--- a/drivers/scsi/qla4xxx/ql4_mbx.c
++++ b/drivers/scsi/qla4xxx/ql4_mbx.c
+@@ -641,9 +641,6 @@ int qla4xxx_initialize_fw_cb(struct scsi
+ 
+ 	if (qla4xxx_get_ifcb(ha, &mbox_cmd[0], &mbox_sts[0], init_fw_cb_dma) !=
+ 	    QLA_SUCCESS) {
+-		dma_free_coherent(&ha->pdev->dev,
+-				  sizeof(struct addr_ctrl_blk),
+-				  init_fw_cb, init_fw_cb_dma);
+ 		goto exit_init_fw_cb;
+ 	}
+ 
 
 
