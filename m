@@ -2,34 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 04CE614551B
+	by mail.lfdr.de (Postfix) with ESMTP id 77F0514551C
 	for <lists+linux-kernel@lfdr.de>; Wed, 22 Jan 2020 14:19:57 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729535AbgAVNTC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 22 Jan 2020 08:19:02 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34740 "EHLO mail.kernel.org"
+        id S1726811AbgAVNTH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 22 Jan 2020 08:19:07 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34846 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729473AbgAVNS4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 Jan 2020 08:18:56 -0500
+        id S1729534AbgAVNTC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 22 Jan 2020 08:19:02 -0500
 Received: from localhost (unknown [84.241.205.26])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 40C9424125;
-        Wed, 22 Jan 2020 13:18:55 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id CC335205F4;
+        Wed, 22 Jan 2020 13:19:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579699135;
-        bh=zHGxkpxG/eZRsdg4/16Zck/ramCs3aNedGgjwlOlSDA=;
+        s=default; t=1579699142;
+        bh=eGTOKWP2cniC/6Pqoc89aEbuIcifSHcRzi2ZdvM2NrA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=mxqbLnmkwN+KqkiGcug85yFSc622iYRce77cW1OjIlwiuOqysicyLmF9B18cxR7RT
-         HxI5/7VCHC2qz+fk823eo/hmmnvo7ds01dwHGOSC0sXjKCx/TxyseD/X9sEOEBYPAA
-         r/WSwP2BFctfknnmaKIwFmbulY9iAtLB59gKWpZg=
+        b=A9BJTv+7xrgVij1llbfBAHiLK4gAbKnsaIt40W2UWbDAjGdeWnRnVBKgzS5GR8O42
+         gNHLsBeBqq+pJAZJE3n+ulkzw4oAZ8xlWjOBjb+aK4E2htZJdd/VQp8wJhg9BZJvGL
+         M/ZAmSILxaTQNxydyUBjHzD8klz9aSpTJoPUQdRU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Johan Hovold <johan@kernel.org>
-Subject: [PATCH 5.4 051/222] USB: serial: keyspan: handle unbound ports
-Date:   Wed, 22 Jan 2020 10:27:17 +0100
-Message-Id: <20200122092837.265058198@linuxfoundation.org>
+        stable@vger.kernel.org, "Spencer E. Olson" <olsonse@umich.edu>,
+        Ian Abbott <abbotti@mev.co.uk>
+Subject: [PATCH 5.4 053/222] staging: comedi: ni_routes: fix null dereference in ni_find_route_source()
+Date:   Wed, 22 Jan 2020 10:27:19 +0100
+Message-Id: <20200122092837.416673594@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
 In-Reply-To: <20200122092833.339495161@linuxfoundation.org>
 References: <20200122092833.339495161@linuxfoundation.org>
@@ -42,45 +43,54 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Johan Hovold <johan@kernel.org>
+From: Ian Abbott <abbotti@mev.co.uk>
 
-commit 3018dd3fa114b13261e9599ddb5656ef97a1fa17 upstream.
+commit 01e20b664f808a4f3048ca3f930911fd257209bd upstream.
 
-Check for NULL port data in the control URB completion handlers to avoid
-dereferencing a NULL pointer in the unlikely case where a port device
-isn't bound to a driver (e.g. after an allocation failure on port
-probe()).
+In `ni_find_route_source()`, `tables->route_values` gets dereferenced.
+However it is possible that `tables->route_values` is `NULL`, leading to
+a null pointer dereference.  `tables->route_values` will be `NULL` if
+the call to `ni_assign_device_routes()` during board initialization
+returned an error due to missing device family routing information or
+missing board-specific routing information.  For example, there is
+currently no board-specific routing information provided for the
+PCIe-6251 board and several other boards, so those are affected by this
+bug.
 
-Fixes: 0ca1268e109a ("USB Serial Keyspan: add support for USA-49WG & USA-28XG")
-Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
-Cc: stable <stable@vger.kernel.org>
-Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Signed-off-by: Johan Hovold <johan@kernel.org>
+The bug is triggered when `ni_find_route_source()` is called via
+`ni_check_trigger_arg()` or `ni_check_trigger_arg_roffs()` when checking
+the arguments for setting up asynchronous commands.  Fix it by returning
+`-EINVAL` if `tables->route_values` is `NULL`.
+
+Even with this fix, setting up asynchronous commands to use external
+trigger sources for boards with missing routing information will still
+fail gracefully.  Since `ni_find_route_source()` only depends on the
+device family routing information, it would be better if that was made
+available even if the board-specific routing information is missing.
+That will be addressed by another patch.
+
+Fixes: 4bb90c87abbe ("staging: comedi: add interface to ni routing table information")
+Cc: <stable@vger.kernel.org> # 4.20+
+Cc: Spencer E. Olson <olsonse@umich.edu>
+Signed-off-by: Ian Abbott <abbotti@mev.co.uk>
+Link: https://lore.kernel.org/r/20200114182532.132058-2-abbotti@mev.co.uk
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/usb/serial/keyspan.c |    4 ++++
- 1 file changed, 4 insertions(+)
+ drivers/staging/comedi/drivers/ni_routes.c |    3 +++
+ 1 file changed, 3 insertions(+)
 
---- a/drivers/usb/serial/keyspan.c
-+++ b/drivers/usb/serial/keyspan.c
-@@ -1058,6 +1058,8 @@ static void	usa49_glocont_callback(struc
- 	for (i = 0; i < serial->num_ports; ++i) {
- 		port = serial->port[i];
- 		p_priv = usb_get_serial_port_data(port);
-+		if (!p_priv)
-+			continue;
+--- a/drivers/staging/comedi/drivers/ni_routes.c
++++ b/drivers/staging/comedi/drivers/ni_routes.c
+@@ -489,6 +489,9 @@ int ni_find_route_source(const u8 src_se
+ {
+ 	int src;
  
- 		if (p_priv->resend_cont) {
- 			dev_dbg(&port->dev, "%s - sending setup\n", __func__);
-@@ -1459,6 +1461,8 @@ static void usa67_glocont_callback(struc
- 	for (i = 0; i < serial->num_ports; ++i) {
- 		port = serial->port[i];
- 		p_priv = usb_get_serial_port_data(port);
-+		if (!p_priv)
-+			continue;
- 
- 		if (p_priv->resend_cont) {
- 			dev_dbg(&port->dev, "%s - sending setup\n", __func__);
++	if (!tables->route_values)
++		return -EINVAL;
++
+ 	dest = B(dest); /* subtract NI names offset */
+ 	/* ensure we are not going to under/over run the route value table */
+ 	if (dest < 0 || dest >= NI_NUM_NAMES)
 
 
