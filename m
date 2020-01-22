@@ -2,38 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 95540144F89
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Jan 2020 10:39:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CAA85144FF7
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Jan 2020 10:42:50 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733124AbgAVJix (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 22 Jan 2020 04:38:53 -0500
-Received: from mail.kernel.org ([198.145.29.99]:55858 "EHLO mail.kernel.org"
+        id S2387779AbgAVJmp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 22 Jan 2020 04:42:45 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34648 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1733104AbgAVJir (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 Jan 2020 04:38:47 -0500
+        id S2387757AbgAVJml (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 22 Jan 2020 04:42:41 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 234292467B;
-        Wed, 22 Jan 2020 09:38:45 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 222B924687;
+        Wed, 22 Jan 2020 09:42:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579685926;
-        bh=ww7v8HP4bT2dIJ+PNYY4ouiv91+eJiffjJuPz+myJbw=;
+        s=default; t=1579686160;
+        bh=7B3vAG2RIkwU8Eh5pEf069RrjsX8ed1jhGzTsQLF7V0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=E7c8tuenlmcPu/V9YFqZAakNJ7qxqysDPhVhQSvb+GfbOr/n9Za9LQt0CY+l/zE3q
-         fU0pWQk8xpzmH4I8TBgaz/hBFaAFtKCjPLN34V4qcwrm7/H93mTVKpE+J3YNa0NJkq
-         ylnEk62IaWXbTyNGXqFqUJ89Y66Sp0KsZWQNkUoE=
+        b=O4U1HGSZhYHY4Ef07smhDjZBH4lQKaveyzCwR6SNhs8RA735u64DwUEl9kpb3Cljx
+         DOsFC3lfUagSljHbNMlW0gfjlEqiou9UfsZtPqZhJ4EFH2+SRpWgVK0xnCjr7+jqrS
+         4X4X0itG6kqhDOvCnkOAB7ZygnOLMJxFBfRxG9I8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Johan Hovold <johan@kernel.org>,
-        Jakub Kicinski <kuba@kernel.org>
-Subject: [PATCH 4.14 39/65] NFC: pn533: fix bulk-message timeout
-Date:   Wed, 22 Jan 2020 10:29:24 +0100
-Message-Id: <20200122092756.519541147@linuxfoundation.org>
+        stable@vger.kernel.org, Andrew Lunn <andrew@lunn.ch>,
+        Alexander Lobakin <alobakin@dlink.ru>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.19 069/103] net: dsa: tag_qca: fix doubled Tx statistics
+Date:   Wed, 22 Jan 2020 10:29:25 +0100
+Message-Id: <20200122092813.867796961@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200122092750.976732974@linuxfoundation.org>
-References: <20200122092750.976732974@linuxfoundation.org>
+In-Reply-To: <20200122092803.587683021@linuxfoundation.org>
+References: <20200122092803.587683021@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,38 +45,37 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Johan Hovold <johan@kernel.org>
+From: Alexander Lobakin <alobakin@dlink.ru>
 
-commit a112adafcb47760feff959ee1ecd10b74d2c5467 upstream.
+[ Upstream commit bd5874da57edd001b35cf28ae737779498c16a56 ]
 
-The driver was doing a synchronous uninterruptible bulk-transfer without
-using a timeout. This could lead to the driver hanging on probe due to a
-malfunctioning (or malicious) device until the device is physically
-disconnected. While sleeping in probe the driver prevents other devices
-connected to the same hub from being added to (or removed from) the bus.
+DSA subsystem takes care of netdev statistics since commit 4ed70ce9f01c
+("net: dsa: Refactor transmit path to eliminate duplication"), so
+any accounting inside tagger callbacks is redundant and can lead to
+messing up the stats.
+This bug is present in Qualcomm tagger since day 0.
 
-An arbitrary limit of five seconds should be more than enough.
-
-Fixes: dbafc28955fa ("NFC: pn533: don't send USB data off of the stack")
-Signed-off-by: Johan Hovold <johan@kernel.org>
-Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Signed-off-by: Jakub Kicinski <kuba@kernel.org>
+Fixes: cafdc45c949b ("net-next: dsa: add Qualcomm tag RX/TX handler")
+Reviewed-by: Andrew Lunn <andrew@lunn.ch>
+Signed-off-by: Alexander Lobakin <alobakin@dlink.ru>
+Reviewed-by: Florian Fainelli <f.fainelli@gmail.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- drivers/nfc/pn533/usb.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ net/dsa/tag_qca.c |    3 ---
+ 1 file changed, 3 deletions(-)
 
---- a/drivers/nfc/pn533/usb.c
-+++ b/drivers/nfc/pn533/usb.c
-@@ -403,7 +403,7 @@ static int pn533_acr122_poweron_rdr(stru
- 		       cmd, sizeof(cmd), false);
+--- a/net/dsa/tag_qca.c
++++ b/net/dsa/tag_qca.c
+@@ -41,9 +41,6 @@ static struct sk_buff *qca_tag_xmit(stru
+ 	struct dsa_port *dp = dsa_slave_to_port(dev);
+ 	u16 *phdr, hdr;
  
- 	rc = usb_bulk_msg(phy->udev, phy->out_urb->pipe, buffer, sizeof(cmd),
--			  &transferred, 0);
-+			  &transferred, 5000);
- 	kfree(buffer);
- 	if (rc || (transferred != sizeof(cmd))) {
- 		nfc_err(&phy->udev->dev,
+-	dev->stats.tx_packets++;
+-	dev->stats.tx_bytes += skb->len;
+-
+ 	if (skb_cow_head(skb, 0) < 0)
+ 		return NULL;
+ 
 
 
