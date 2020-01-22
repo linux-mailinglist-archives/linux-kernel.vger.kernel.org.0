@@ -2,185 +2,193 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2AC2E145325
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Jan 2020 11:54:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D1DB214532A
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Jan 2020 11:55:48 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729037AbgAVKyS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 22 Jan 2020 05:54:18 -0500
-Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:23080 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1725911AbgAVKyS (ORCPT
+        id S1729263AbgAVKzp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 22 Jan 2020 05:55:45 -0500
+Received: from mx0a-0014ca01.pphosted.com ([208.84.65.235]:33308 "EHLO
+        mx0a-0014ca01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727022AbgAVKzn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 Jan 2020 05:54:18 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1579690457;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-        bh=HL4q4SIdwn4qNJd2TxvNKQGhoO2vFjD6maGgkbz3AS8=;
-        b=FntQREJz3rc9ffO9SCXTNxkA3HV4ZDsKO3v2w4LpZXEmUCo4/isN1kiwveYfsqLhAjoHUH
-        SDix6QF6vtxGstMukrYZw1DyNSXVsfxHPeYTpDUuouMvrpG/tqRN3sV9To59WDASdXxTB1
-        C8GbvBIseirbjpb3qbUDQrdVgedblK0=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-7-UAATY0T1PPWaBzJPkA2sFg-1; Wed, 22 Jan 2020 05:54:13 -0500
-X-MC-Unique: UAATY0T1PPWaBzJPkA2sFg-1
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 4CA0C1800D78;
-        Wed, 22 Jan 2020 10:54:10 +0000 (UTC)
-Received: from [10.36.117.205] (ovpn-117-205.ams2.redhat.com [10.36.117.205])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 5287C85740;
-        Wed, 22 Jan 2020 10:54:06 +0000 (UTC)
-Subject: Re: [PATCH RFC v1] mm: is_mem_section_removable() overhaul
-To:     Michal Hocko <mhocko@kernel.org>
-Cc:     Dan Williams <dan.j.williams@intel.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux MM <linux-mm@kvack.org>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Leonardo Bras <leonardo@linux.ibm.com>,
-        Nathan Lynch <nathanl@linux.ibm.com>,
-        Allison Randal <allison@lohutok.net>,
-        Nathan Fontenot <nfont@linux.vnet.ibm.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        Anshuman Khandual <anshuman.khandual@arm.com>,
-        lantianyu1986@gmail.com,
-        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>
-References: <20200117145233.GB19428@dhcp22.suse.cz>
- <65606e2e-1cf7-de3b-10b1-33653cb41a52@redhat.com>
- <20200117152947.GK19428@dhcp22.suse.cz>
- <CAPcyv4hHHzdPp4SQ0sePzx7XEvD7U_B+vZDT00O6VbFY8kJqjw@mail.gmail.com>
- <25a94f61-46a1-59a6-6b54-8cc6b35790d2@redhat.com>
- <CAPcyv4jvmYRbX9i+1_LvHoTDGABadHbYH3NVkqczKsQ4fsf74g@mail.gmail.com>
- <20200120074816.GG18451@dhcp22.suse.cz>
- <a5f0bd8d-de5e-9f27-5c94-7746a3d20a95@redhat.com>
- <20200121120714.GJ29276@dhcp22.suse.cz>
- <a29b49b9-28ad-44fa-6c0b-90cd43902f29@redhat.com>
- <20200122104230.GU29276@dhcp22.suse.cz>
-From:   David Hildenbrand <david@redhat.com>
-Autocrypt: addr=david@redhat.com; prefer-encrypt=mutual; keydata=
- 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
-Organization: Red Hat GmbH
-Message-ID: <98b6c208-b4dd-9052-43f6-543068c649cc@redhat.com>
-Date:   Wed, 22 Jan 2020 11:54:05 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.3.1
+        Wed, 22 Jan 2020 05:55:43 -0500
+Received: from pps.filterd (m0042385.ppops.net [127.0.0.1])
+        by mx0a-0014ca01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 00MAkedi012926;
+        Wed, 22 Jan 2020 02:55:20 -0800
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cadence.com; h=from : to : cc :
+ subject : date : message-id : mime-version : content-type; s=proofpoint;
+ bh=lMR2h13/uSeeRPpRDNAteBv9NiYLqRkPC7M825TzV5o=;
+ b=UmSbd0voHAE84nFvf+9sX1X19cl0CqPa3UPsWBoQ9vSP+z5i1Dlpg8FYsmj7/qpvgRjh
+ 5IF0UAQVpV4zryddZl2utvJPbAdjgp40UuBb/cPoo08Tc6nWWa3LAbTRjTGm1F4mDQtn
+ qV4B2htNMwxQBbMUNlVjHQYQjO9wWZzSfRmyibjeuZVo2YeBFQ6UVbVKkbl3LlMMcO4z
+ RsxHIkFtkOpsiilfxDI30j8EjEIKe9SZZbTCi8tjQp+lRgV5mhMKkrRNE1QngT98gka5
+ l5RSEuAO0Z9r5Cuy5lPuvFNx+QiEYcbx5sXg39HzTIhJvW/VGEGvBaR1cHG/BtYAlszc +A== 
+Received: from nam10-bn7-obe.outbound.protection.outlook.com (mail-bn7nam10lp2104.outbound.protection.outlook.com [104.47.70.104])
+        by mx0a-0014ca01.pphosted.com with ESMTP id 2xkyf5mhng-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 22 Jan 2020 02:55:19 -0800
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=S+E2VqYrZ5DBIjAMW2zK8/RKYVoMbVGjwtt98OHlPzHdbEqReOGGsb29KFUdAxEpt9N4BXwizDOacz5jZhBVjgsCxNkn25SvtKFFet4Iy/C8bObbrqxJPC6JVKk0hgITuJ29p+eJa3BcC/dy2ImR3zUBBjxYKhKUfQZUdes4mMCLLUq2pzS3xeJhJLSR1MZ6tg3BCISD1TBQPbdyVxP6Jao5mCKzYiFzMcYEZNeW9pQuYi516Ba254JU6HnJtX5cjJzWvm/nRyZu7U3UBNt4PI6rZ9uxIGG9YzCV56xJ3X4EI/RfNodbwkPGnWsSFZk34rJRoun0eSZWXCpu8J7hwg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=lMR2h13/uSeeRPpRDNAteBv9NiYLqRkPC7M825TzV5o=;
+ b=OArUKA2fx0dzGXRkiwtn8xligccRVGv9tizrCvwTDPcLjYJKVU2E6tbAG8mI7KPS8zpbDAY0yIlvnQ8ClLqwSANcPFRrSguX+Pxnxig4CVTJRW+8bGMhmODS9g+3YO4ydk6Yx0Z0aVbO6+oNb92xZTLAfSRUyI5CS5AhJszZlW8HUWVE6/5kenPzFfQBx+UEXQOG1g6kTaYM78mwRGbjQNwK/Ak60Ojtjl3xta9YbpqFCqKil0pFXUDukR0/76mGrlwizXqJZ5xkbWUW4zhGOxLp1JQ9gywn4oJ9wuI2VqpMxMcQjZ6k2cMPn5MKTUdLhTjL1ZOCJNyzGLIzb/UDZg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 64.207.220.243) smtp.rcpttodomain=linux.ie smtp.mailfrom=cadence.com;
+ dmarc=pass (p=none sp=none pct=100) action=none header.from=cadence.com;
+ dkim=none (message not signed); arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cadence.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=lMR2h13/uSeeRPpRDNAteBv9NiYLqRkPC7M825TzV5o=;
+ b=maoQNixYvuG7SPfsT+NEK3qgsP0OE0oXylmgbSEjAY58+yHlibAC1Y9kZxY+jIJUws/NP+h3axfSNPv8WdBb48hdocxOcyAtMK6TM08X4wwkrY0EZTUiKlNhnGgopwK23Mbn6acYr8ZLRA0Q+1cx1DiPn3CrS2qpQXWzo+WRmSA=
+Received: from CH2PR07CA0028.namprd07.prod.outlook.com (2603:10b6:610:20::41)
+ by BN8PR07MB6930.namprd07.prod.outlook.com (2603:10b6:408:7e::7) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2644.18; Wed, 22 Jan
+ 2020 10:55:15 +0000
+Received: from DM6NAM12FT062.eop-nam12.prod.protection.outlook.com
+ (2a01:111:f400:fe59::205) by CH2PR07CA0028.outlook.office365.com
+ (2603:10b6:610:20::41) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2644.20 via Frontend
+ Transport; Wed, 22 Jan 2020 10:55:14 +0000
+Received-SPF: Pass (protection.outlook.com: domain of cadence.com designates
+ 64.207.220.243 as permitted sender) receiver=protection.outlook.com;
+ client-ip=64.207.220.243; helo=wcmailrelayl01.cadence.com;
+Received: from wcmailrelayl01.cadence.com (64.207.220.243) by
+ DM6NAM12FT062.mail.protection.outlook.com (10.13.178.107) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2665.6 via Frontend Transport; Wed, 22 Jan 2020 10:55:14 +0000
+Received: from maileu3.global.cadence.com (maileu3.cadence.com [10.160.88.99])
+        by wcmailrelayl01.cadence.com (8.14.7/8.14.4) with ESMTP id 00MAt78c071698
+        (version=TLSv1/SSLv3 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=OK);
+        Wed, 22 Jan 2020 02:55:09 -0800
+X-CrossPremisesHeadersFilteredBySendConnector: maileu3.global.cadence.com
+Received: from maileu3.global.cadence.com (10.160.88.99) by
+ maileu3.global.cadence.com (10.160.88.99) with Microsoft SMTP Server (TLS) id
+ 15.0.1367.3; Wed, 22 Jan 2020 11:55:06 +0100
+Received: from vleu-orange.cadence.com (10.160.88.83) by
+ maileu3.global.cadence.com (10.160.88.99) with Microsoft SMTP Server (TLS) id
+ 15.0.1367.3 via Frontend Transport; Wed, 22 Jan 2020 11:55:06 +0100
+Received: from vleu-orange.cadence.com (localhost.localdomain [127.0.0.1])
+        by vleu-orange.cadence.com (8.14.4/8.14.4) with ESMTP id 00MAt6NX011093;
+        Wed, 22 Jan 2020 11:55:06 +0100
+Received: (from yamonkar@localhost)
+        by vleu-orange.cadence.com (8.14.4/8.14.4/Submit) id 00MAt2Mc010791;
+        Wed, 22 Jan 2020 11:55:02 +0100
+From:   Yuti Amonkar <yamonkar@cadence.com>
+To:     <linux-kernel@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
+        <devicetree@vger.kernel.org>, <robh+dt@kernel.org>,
+        <maxime@cerno.tech>, <airlied@linux.ie>, <daniel@ffwll.ch>,
+        <mark.rutland@arm.com>, <a.hajda@samsung.com>,
+        <narmstrong@baylibre.com>, <Laurent.pinchart@ideasonboard.com>,
+        <jonas@kwiboo.se>, <jernej.skrabec@siol.net>
+CC:     <praneeth@ti.com>, <jsarha@ti.com>, <tomi.valkeinen@ti.com>,
+        <mparab@cadence.com>, <sjakhade@cadence.com>,
+        <yamonkar@cadence.com>
+Subject: [PATCH v3 0/3] drm: Add support for Cadence MHDP DPI/DP bridge and J721E wrapper.
+Date:   Wed, 22 Jan 2020 11:54:58 +0100
+Message-ID: <1579690501-10698-1-git-send-email-yamonkar@cadence.com>
+X-Mailer: git-send-email 2.4.5
 MIME-Version: 1.0
-In-Reply-To: <20200122104230.GU29276@dhcp22.suse.cz>
-Content-Type: text/plain; charset=windows-1252
-Content-Language: en-US
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain
+X-OrganizationHeadersPreserved: maileu3.global.cadence.com
+X-EOPAttributedMessage: 0
+X-Forefront-Antispam-Report: CIP:64.207.220.243;IPV:;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(4636009)(39860400002)(396003)(346002)(136003)(376002)(199004)(189003)(36092001)(110136005)(81156014)(8676002)(70586007)(42186006)(19627235002)(316002)(478600001)(966005)(70206006)(4326008)(36906005)(5660300002)(2906002)(54906003)(186003)(6666004)(2616005)(356004)(36756003)(7416002)(336012)(81166006)(107886003)(26005)(426003)(86362001)(8936002)(921003)(1121003)(83996005)(2101003);DIR:OUT;SFP:1101;SCL:1;SRVR:BN8PR07MB6930;H:wcmailrelayl01.cadence.com;FPR:;SPF:Pass;LANG:en;PTR:unused.mynethost.com;A:1;MX:1;
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 4cb3d865-998d-4152-6067-08d79f298f57
+X-MS-TrafficTypeDiagnostic: BN8PR07MB6930:
+X-Microsoft-Antispam-PRVS: <BN8PR07MB69307DA0E9D1B74C313FFBB1D20C0@BN8PR07MB6930.namprd07.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:8273;
+X-Forefront-PRVS: 029097202E
+X-MS-Exchange-SenderADCheck: 1
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: VtdHUNpLaVAxcP+kWRugEmgR5B2QQvGdeVKrdH8xm0T5OmitARkoTlWkjgC4SKanlU819zbofY3WECEO/eh8onDrbe7CwyCd9l3ZMScn2h4mHCVzm7aL5Idc7rsn0IH+WwXop42qlqBjPrbAoql9AXPBk+88vFEpbdFfMXCvzQbgJ9NEVFaNs7HjryOMwxMbTxHHyX/wV77nyuu1E4d0QPbvF5xrpbxbUTG3buWxhkxjlFlmjr8sOfu9LvHpdrb0kQLW6rfuKa0J8nUh4KfZDvDf72AI8N8gVpboIVkZbenbaRmAXhyqvgKG6SOVyVlEtEATAbwqN2Ehei3MtsgLLxlXqUc5IkRhMGO/EWfyjAnX9KWmZZuBZaFTaH6cF/hk0M7SN4keryRUWlURH5xBDMPCPbf1zKXsDwBIv5m73CmKIG/Ie4NbytuP4POmvE2BIBln5pv3uZoNE6dCWKJk+rHn7J+XaHNglWcUuFbhWVXcqFSm2oCxeDbCz8DozuOmKiaxKIBcdBp2ARQInLcZplJ69EzKtONyH149kLGJK/0Kg8yAmxjUhpEux3JRAD9bgRFBPSDg8lDCF2Q+36GIbjYrS9W61tR6io7D0GI/ZG4=
+X-OriginatorOrg: cadence.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 Jan 2020 10:55:14.2329
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 4cb3d865-998d-4152-6067-08d79f298f57
+X-MS-Exchange-CrossTenant-Id: d36035c5-6ce6-4662-a3dc-e762e61ae4c9
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=d36035c5-6ce6-4662-a3dc-e762e61ae4c9;Ip=[64.207.220.243];Helo=[wcmailrelayl01.cadence.com]
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN8PR07MB6930
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.572
+ definitions=2020-01-17_05:2020-01-16,2020-01-17 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_check_notspam policy=outbound_check score=0 mlxlogscore=999
+ bulkscore=0 lowpriorityscore=0 malwarescore=0 suspectscore=0 clxscore=1011
+ priorityscore=1501 adultscore=0 spamscore=0 impostorscore=0 mlxscore=0
+ phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-1910280000 definitions=main-2001220099
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 22.01.20 11:42, Michal Hocko wrote:
-> On Wed 22-01-20 11:39:08, David Hildenbrand wrote:
->>>>> Really, the interface is flawed and should have never been merged i=
-n the
->>>>> first place. We cannot simply remove it altogether I am afraid so l=
-et's
->>>>> at least remove the bogus code and pretend that the world is a bett=
-er
->>>>> place where everything is removable except the reality sucks...
->>>>
->>>> As I expressed already, the interface works as designed/documented a=
-nd
->>>> has been used like that for years.
->>>
->>> It seems we do differ in the usefulness though. Using a crappy interf=
-ace
->>> for years doesn't make it less crappy. I do realize we cannot remove =
-the
->>> interface but we can remove issues with the implementation and I dare=
- to
->>> say that most existing users wouldn't really notice.
->>
->> Well, at least powerpc-utils (why this interface was introduced) will
->> notice a) performance wise and b) because more logging output will be
->> generated (obviously non-offlineable blocks will be tried to offline).
->=20
-> I would really appreciate some specific example for a real usecase. I a=
-m
-> not familiar with powerpc-utils worklflows myself.
->=20
+This patch series adds new DRM driver for Cadence Display Port.
+The Cadence Display Port is also referred as MHDP (Mobile High
+Definition Link, High-Definition Multimedia Interface Display
+Port) Cadence Display Port complies with VESA DisplayPort (DP)
+and embedded Display Port (eDP) standards. This driver implements
+Single Stream Transport (SST) support. Adds Texas Instruments SoC
+J721e specific wrapper and adds the device tree bindings in YAML format.
 
-Not an expert myself:
+The patch series has three patches which applies the changes in the below sequence
+1. 001-dt-bindings-drm-bridge-Document-Cadence-MHDP-bridge-bindings-in-yaml-format
+Documents the bindings in yaml format.
+2. 002-drm-bridge-Add-support-for-Cadence-MHDP-bridge
+This patch adds new DRM driver for Cadence MHDP Display Port. The patch imple  ments supports
+for single stream transport mode.
+3. 003-drm-mhdp-add-j721e-wrapper
+Add Texas Instruments (TI) j721e wrapper for mhdp. The wrapper configures mhdp clocks
+and muxes as required by SoC.
 
-https://github.com/ibm-power-utilities/powerpc-utils
+Version History:
 
--> src/drmgr/drslot_chrp_mem.c
+v3:
+- Added if / then clause to validate that the reg length is proper
+  based on the value of the compatible property.
+- Updated phy property description in YAML to a generic one.
+- Renamed num_lanes and max_bit_rate property strings to cdns,num-lanes 
+  and cdns,max-bit-rate based on update in PHY series [2].
 
-On request to remove some memory it will
+v2:
+- Use enum in compatible property of YAML file.
+- Add reg-names property to YAML file
+- Add minItems and maxItems to reg property in YAML.
+- Remove cdns_mhdp_link_probe function to remove
+  duplication of reading dpcd capabilities.
 
-a) Read "->removable" of all memory blocks ("lmb")
-b) Check if the request can be fulfilled using the removable blocks
-c) Try to offline the memory blocks by trying to offline it. If that
-succeeded, trigger removeal of it using some hypervisor hooks.
+This patch series is dependent on PHY DisplayPort configuration patch [1]
 
-Interestingly, with "AMS ballooning", it will already consider the
-"removable" information useless (most probably, because of
-non-migratable balloon pages that can be offlined - I assume the powerpc
-code that I converted to proper balloon compaction just recently). a)
-and b) is skipped.
+[1]
 
-Returning "yes" on all blocks will make them handle it just like if "AMS
-ballooning" is active. So any memory block will be tried. Should work
-but will be slower if no ballooning is active.
+https://lkml.org/lkml/2020/1/6/279
 
---=20
-Thanks,
+[2]
 
-David / dhildenb
+https://lkml.org/lkml/2020/1/22/631
+
+Yuti Amonkar (3):
+  dt-bindings: drm/bridge: Document Cadence MHDP bridge bindings in yaml
+    format
+  drm: bridge: Add support for Cadence MHDP DPI/DP bridge
+  drm/mhdp: add j721e wrapper
+
+ .../bindings/display/bridge/cdns,mhdp.yaml         |  131 ++
+ drivers/gpu/drm/bridge/Kconfig                     |   23 +
+ drivers/gpu/drm/bridge/Makefile                    |    6 +
+ drivers/gpu/drm/bridge/cdns-mhdp-j721e.c           |   79 +
+ drivers/gpu/drm/bridge/cdns-mhdp-j721e.h           |   55 +
+ drivers/gpu/drm/bridge/cdns-mhdp.c                 | 2214 ++++++++++++++++++++
+ drivers/gpu/drm/bridge/cdns-mhdp.h                 |  381 ++++
+ 7 files changed, 2889 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/display/bridge/cdns,mhdp.yaml
+ create mode 100644 drivers/gpu/drm/bridge/cdns-mhdp-j721e.c
+ create mode 100644 drivers/gpu/drm/bridge/cdns-mhdp-j721e.h
+ create mode 100644 drivers/gpu/drm/bridge/cdns-mhdp.c
+ create mode 100644 drivers/gpu/drm/bridge/cdns-mhdp.h
+
+-- 
+2.4.5
 
