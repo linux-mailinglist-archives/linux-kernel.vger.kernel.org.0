@@ -2,123 +2,103 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8B3CA14535F
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Jan 2020 12:02:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7A4EC145366
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Jan 2020 12:04:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728992AbgAVLCs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 22 Jan 2020 06:02:48 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:40318 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726191AbgAVLCr (ORCPT
+        id S1729134AbgAVLEh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 22 Jan 2020 06:04:37 -0500
+Received: from fllv0015.ext.ti.com ([198.47.19.141]:55690 "EHLO
+        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725911AbgAVLEh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 Jan 2020 06:02:47 -0500
-Received: from pps.filterd (m0098414.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 00MB2asj123513
-        for <linux-kernel@vger.kernel.org>; Wed, 22 Jan 2020 06:02:46 -0500
-Received: from e06smtp04.uk.ibm.com (e06smtp04.uk.ibm.com [195.75.94.100])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2xp95fbnqw-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Wed, 22 Jan 2020 06:02:42 -0500
-Received: from localhost
-        by e06smtp04.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <anju@linux.vnet.ibm.com>;
-        Wed, 22 Jan 2020 11:02:16 -0000
-Received: from b06avi18878370.portsmouth.uk.ibm.com (9.149.26.194)
-        by e06smtp04.uk.ibm.com (192.168.101.134) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Wed, 22 Jan 2020 11:02:07 -0000
-Received: from d06av22.portsmouth.uk.ibm.com (d06av22.portsmouth.uk.ibm.com [9.149.105.58])
-        by b06avi18878370.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 00MB26Fi44433748
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 22 Jan 2020 11:02:06 GMT
-Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 9A2A74C05A;
-        Wed, 22 Jan 2020 11:02:06 +0000 (GMT)
-Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 849814C044;
-        Wed, 22 Jan 2020 11:02:01 +0000 (GMT)
-Received: from localhost.localdomain (unknown [9.124.35.72])
-        by d06av22.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
-        Wed, 22 Jan 2020 11:02:01 +0000 (GMT)
-From:   Anju T Sudhakar <anju@linux.vnet.ibm.com>
-Subject: Re: [PATCH v5 07/10] powerpc/perf: open access for CAP_PERFMON
- privileged process
-To:     Alexey Budankov <alexey.budankov@linux.intel.com>
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        "jani.nikula@linux.intel.com" <jani.nikula@linux.intel.com>,
-        "joonas.lahtinen@linux.intel.com" <joonas.lahtinen@linux.intel.com>,
-        "rodrigo.vivi@intel.com" <rodrigo.vivi@intel.com>,
-        "benh@kernel.crashing.org" <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        "james.bottomley@hansenpartnership.com" 
-        <james.bottomley@hansenpartnership.com>,
-        Serge Hallyn <serge@hallyn.com>,
-        James Morris <jmorris@namei.org>,
-        Will Deacon <will.deacon@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Robert Richter <rric@kernel.org>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Song Liu <songliubraving@fb.com>,
-        Andi Kleen <ak@linux.intel.com>,
-        "linux-parisc@vger.kernel.org" <linux-parisc@vger.kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
-        "intel-gfx@lists.freedesktop.org" <intel-gfx@lists.freedesktop.org>,
-        Igor Lubashev <ilubashe@akamai.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Stephane Eranian <eranian@google.com>,
-        "linux-perf-users@vger.kernel.org" <linux-perf-users@vger.kernel.org>,
-        "selinux@vger.kernel.org" <selinux@vger.kernel.org>,
-        "linux-security-module@vger.kernel.org" 
-        <linux-security-module@vger.kernel.org>,
-        oprofile-list@lists.sf.net,
-        Lionel Landwerlin <lionel.g.landwerlin@intel.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Jiri Olsa <jolsa@redhat.com>,
-        linux-arm-kernel@lists.infradead.org
-References: <0548c832-7f4b-dc4c-8883-3f2b6d351a08@linux.intel.com>
- <b74a3983-8e41-aba7-c18d-b16eff6fd5e5@linux.intel.com>
-Date:   Wed, 22 Jan 2020 16:32:00 +0530
+        Wed, 22 Jan 2020 06:04:37 -0500
+Received: from lelv0266.itg.ti.com ([10.180.67.225])
+        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 00MB4OX0001728;
+        Wed, 22 Jan 2020 05:04:24 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1579691064;
+        bh=H0tZlxfnrWFRp0J+H9eAMOrfUBLlN+Vz4L+HPhGeAFY=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=twmymRWjInelvHECgTHY4Y4QIS90WCj6sbj6yBbj9FdtncvGGRMVGaX1/Gars4aht
+         uheH7NHNsnu5gjOgu9K1sJr1q38th+pgEipZARq8loUw4qgmNnR2lTnqnMgFrH/QKC
+         KoRAY8WTMEzWONHlAgfDiiZIPxKbcsmUh1xK5gMA=
+Received: from DFLE103.ent.ti.com (dfle103.ent.ti.com [10.64.6.24])
+        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 00MB4Oec043482
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Wed, 22 Jan 2020 05:04:24 -0600
+Received: from DFLE101.ent.ti.com (10.64.6.22) by DFLE103.ent.ti.com
+ (10.64.6.24) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Wed, 22
+ Jan 2020 05:04:23 -0600
+Received: from fllv0039.itg.ti.com (10.64.41.19) by DFLE101.ent.ti.com
+ (10.64.6.22) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
+ Frontend Transport; Wed, 22 Jan 2020 05:04:23 -0600
+Received: from [10.24.69.20] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by fllv0039.itg.ti.com (8.15.2/8.15.2) with ESMTP id 00MB4KPt028067;
+        Wed, 22 Jan 2020 05:04:21 -0600
+Subject: Re: [PATCH v2 1/9] arm64: dts: ti: k3-am65-main: Correct main NAVSS
+ representation
+To:     Peter Ujfalusi <peter.ujfalusi@ti.com>, <t-kristo@ti.com>,
+        <nm@ti.com>
+CC:     <mark.rutland@arm.com>, <devicetree@vger.kernel.org>,
+        <robh+dt@kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>
+References: <20200122082621.4974-1-peter.ujfalusi@ti.com>
+ <20200122082621.4974-2-peter.ujfalusi@ti.com>
+From:   Lokesh Vutla <lokeshvutla@ti.com>
+Message-ID: <600df214-620b-fa41-82ef-01132d9bdfae@ti.com>
+Date:   Wed, 22 Jan 2020 16:33:30 +0530
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+ Thunderbird/60.7.0
 MIME-Version: 1.0
-In-Reply-To: <b74a3983-8e41-aba7-c18d-b16eff6fd5e5@linux.intel.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <20200122082621.4974-2-peter.ujfalusi@ti.com>
+Content-Type: text/plain; charset="utf-8"
 Content-Language: en-US
-X-TM-AS-GCONF: 00
-x-cbid: 20012211-0016-0000-0000-000002DFA81F
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 20012211-0017-0000-0000-000033425322
-Message-Id: <fc4c8680-2a0c-ff0a-fd60-3ff68370d1cc@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.572
- definitions=2020-01-17_05:2020-01-16,2020-01-17 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 clxscore=1011
- mlxscore=0 spamscore=0 malwarescore=0 suspectscore=0 lowpriorityscore=0
- priorityscore=1501 phishscore=0 impostorscore=0 adultscore=0
- mlxlogscore=999 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-1910280000 definitions=main-2001220101
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
-On 1/20/20 5:00 PM, Alexey Budankov wrote:
-> Open access to monitoring for CAP_PERFMON privileged processes.
-> For backward compatibility reasons access to the monitoring remains
-> open for CAP_SYS_ADMIN privileged processes but CAP_SYS_ADMIN usage
-> for secure monitoring is discouraged with respect to CAP_PERFMON
-> capability. Providing the access under CAP_PERFMON capability singly,
-> without the rest of CAP_SYS_ADMIN credentials, excludes chances to
-> misuse the credentials and makes the operations more secure.
->
-> Signed-off-by: Alexey Budankov<alexey.budankov@linux.intel.com>
+
+On 22/01/20 1:56 PM, Peter Ujfalusi wrote:
+> NAVSS is a subsystem containing different IPs, it is not really a bus.
+> Change the compatible from "simple-bus" to "simple-mfd" to reflect that.
+> 
+> Signed-off-by: Peter Ujfalusi <peter.ujfalusi@ti.com>
 > ---
+>  arch/arm64/boot/dts/ti/k3-am65-main.dtsi | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/arch/arm64/boot/dts/ti/k3-am65-main.dtsi b/arch/arm64/boot/dts/ti/k3-am65-main.dtsi
+> index efb24579922c..e40f7acbec42 100644
+> --- a/arch/arm64/boot/dts/ti/k3-am65-main.dtsi
+> +++ b/arch/arm64/boot/dts/ti/k3-am65-main.dtsi
+> @@ -385,8 +385,8 @@ intr_main_gpio: interrupt-controller0 {
+>  		ti,sci-rm-range-girq = <0x1>;
+>  	};
+>  
+> -	cbass_main_navss: interconnect0 {
+> -		compatible = "simple-bus";
+> +	cbass_main_navss: navss@30800000 {
 
-Acked-by: Anju T Sudhakar<anju@linux.vnet.ibm.com>
+This introduces below dtc warning when built with W=1
 
+arch/arm64/boot/dts/ti/k3-am65-main.dtsi:388.35-530.4: Warning
+(unit_address_vs_reg): /interconnect@100000/navss@30800000: node has a unit
+name, but no reg property
+
+this is representing cbass inside main_navss, just like cbass_main. You can drop
+this patch and the similar mcu version.
+
+Thanks and regards,
+Lokesh
+
+> +		compatible = "simple-mfd";
+>  		#address-cells = <2>;
+>  		#size-cells = <2>;
+>  		ranges;
+> 
