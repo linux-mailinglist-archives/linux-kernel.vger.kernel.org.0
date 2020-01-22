@@ -2,150 +2,194 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CA69F14491F
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Jan 2020 01:53:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C703714492B
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Jan 2020 02:00:53 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728894AbgAVAxA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 21 Jan 2020 19:53:00 -0500
-Received: from mailout1.samsung.com ([203.254.224.24]:19588 "EHLO
-        mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728609AbgAVAxA (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 Jan 2020 19:53:00 -0500
-Received: from epcas1p3.samsung.com (unknown [182.195.41.47])
-        by mailout1.samsung.com (KnoxPortal) with ESMTP id 20200122005256epoutp015c1151730ce1df35c1ac588a1e92f818~sD0lCZEKr0517705177epoutp01e
-        for <linux-kernel@vger.kernel.org>; Wed, 22 Jan 2020 00:52:56 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20200122005256epoutp015c1151730ce1df35c1ac588a1e92f818~sD0lCZEKr0517705177epoutp01e
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1579654376;
-        bh=DfMv8N5K2TGBtbRDVetyXTHpNJdbQVw+CVRNPX6dVxk=;
-        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
-        b=F8/KEzOkZuhGmthwJDp+0uyef6i0UjlqUOlcMPxdGvqwYbR6+YTE4MS0fBPHjDlQr
-         Wv+N5JnOe31xeaNmD6xq2jSo8ujn0UqootisWwrjTKsFr4Q+oFT0NAUAhCZSGPvMad
-         MVLR8m+lO4mSuez+2h++/Hyzzay7cCw4rUbadwAg=
-Received: from epsnrtp3.localdomain (unknown [182.195.42.164]) by
-        epcas1p4.samsung.com (KnoxPortal) with ESMTP id
-        20200122005256epcas1p4d662afb8240222bae1a456d57aa2f73f~sD0klDDzk0621906219epcas1p4S;
-        Wed, 22 Jan 2020 00:52:56 +0000 (GMT)
-Received: from epsmges1p1.samsung.com (unknown [182.195.40.158]) by
-        epsnrtp3.localdomain (Postfix) with ESMTP id 482Rhk04k9zMqYkk; Wed, 22 Jan
-        2020 00:52:54 +0000 (GMT)
-Received: from epcas1p3.samsung.com ( [182.195.41.47]) by
-        epsmges1p1.samsung.com (Symantec Messaging Gateway) with SMTP id
-        6C.09.57028.5EC972E5; Wed, 22 Jan 2020 09:52:53 +0900 (KST)
-Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
-        epcas1p3.samsung.com (KnoxPortal) with ESMTPA id
-        20200122005253epcas1p326c9970bcfebf5bf26198b3604f1bfd2~sD0hvJPw32721027210epcas1p3D;
-        Wed, 22 Jan 2020 00:52:53 +0000 (GMT)
-Received: from epsmgms1p2new.samsung.com (unknown [182.195.42.42]) by
-        epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20200122005253epsmtrp27388d73bf4216e9d08e09efb0b76b1a0~sD0huM_km1843618436epsmtrp2V;
-        Wed, 22 Jan 2020 00:52:53 +0000 (GMT)
-X-AuditID: b6c32a35-50bff7000001dec4-52-5e279ce5baad
-Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
-        epsmgms1p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        88.3D.06569.4EC972E5; Wed, 22 Jan 2020 09:52:52 +0900 (KST)
-Received: from [10.113.221.102] (unknown [10.113.221.102]) by
-        epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
-        20200122005252epsmtip2de611a287484621a756e9372e010957b~sD0hiuf3D2165721657epsmtip2m;
-        Wed, 22 Jan 2020 00:52:52 +0000 (GMT)
-Subject: Re: [PATCH] clk: samsung: Remove redundant check in
- samsung_cmu_register_one
-To:     Aditya Pakki <pakki001@umn.edu>
-Cc:     kjlu@umn.edu, Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Tomasz Figa <tomasz.figa@gmail.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-From:   Chanwoo Choi <cw00.choi@samsung.com>
-Organization: Samsung Electronics
-Message-ID: <62afcecb-e019-eae2-c92d-a9cb2bc04592@samsung.com>
-Date:   Wed, 22 Jan 2020 10:00:19 +0900
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:59.0) Gecko/20100101
-        Thunderbird/59.0
+        id S1728890AbgAVA55 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 21 Jan 2020 19:57:57 -0500
+Received: from mga14.intel.com ([192.55.52.115]:61753 "EHLO mga14.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728609AbgAVA55 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 21 Jan 2020 19:57:57 -0500
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+Received: from fmsmga002.fm.intel.com ([10.253.24.26])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 21 Jan 2020 16:57:56 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.70,347,1574150400"; 
+   d="scan'208";a="259276615"
+Received: from richard.sh.intel.com (HELO localhost) ([10.239.159.54])
+  by fmsmga002.fm.intel.com with ESMTP; 21 Jan 2020 16:57:55 -0800
+Date:   Wed, 22 Jan 2020 08:58:06 +0800
+From:   Wei Yang <richardw.yang@linux.intel.com>
+To:     Anshuman Khandual <anshuman.khandual@arm.com>
+Cc:     Wei Yang <richardw.yang@linux.intel.com>,
+        akpm@linux-foundation.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, rientjes@google.com
+Subject: Re: [Patch v2 1/4] mm: enable dump several reasons for __dump_page()
+Message-ID: <20200122005806.GE11409@richard>
+Reply-To: Wei Yang <richardw.yang@linux.intel.com>
+References: <20200120030415.15925-1-richardw.yang@linux.intel.com>
+ <20200120030415.15925-2-richardw.yang@linux.intel.com>
+ <8426f31b-606e-deca-acbe-dd59b193e113@arm.com>
+ <20200120085530.GB18028@richard>
+ <1c2e1cd6-5b65-79d7-f332-b866d5446c71@arm.com>
 MIME-Version: 1.0
-In-Reply-To: <20200121233349.28627-1-pakki001@umn.edu>
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA01Sa0hTYRjm29nOtmz1tazeRtg6YZGh7rgdO5VWkMUoo0GRETQ96MGJu7Ez
-        IytKumkS0Y3SNbtpRYuMbFmuTLKkjMqFaBEZXbSidNLdMqptx8h/z3t5vud93u9VEOpLpEZR
-        YHfzLjtnpcgR0vpbM5ITe7zTzbqSirns3aMP5OzH3c9lbHvAS7IVbTck7KN7i9jqMz8Qe6u3
-        VMb+7rwoZX2BX2iB0tj/ZIfc2ODpkhvrfLtI4x6/Dxk7TmyVGz/XxZnINYVpFp7L411a3p7r
-        yCuw56dTS1dkL8xmUnV0Ij2bnUVp7ZyNT6cyMk2Jiwus4aEo7TrOWhROmThBoJLnpbkcRW5e
-        a3EI7nSKd+ZZnbOdSQJnE4rs+Um5DtscWqdLYcKNOYWWD/09UqdPuf7yywFUgtrk5UipAGwA
-        b1mQiGA1voqg/qS2HI0I408IOq/VysXgG4KLLQHJP0bv78NILDQiCLx5TIpBP4Luqpbou2Nx
-        Fnj3n44yYvFUqNn2RxppIvB+CQT7fVFBEidA07snZASPxlOgY+A1imAVngehikPRvBTHw6v3
-        ZdIIHodXQWv99qGeMdBa2R3NK3Eq1NcGo5jAE+Bp9zGJiCfDlT4vEREGXCqHwSOD4ekU4SAD
-        nv+JFe2Mhfd3/EPL0MDnUCMp4o1wtvU2KXLLEPibgjKxoIemUwckkXcIPAMuBJLF9BRoGKxC
-        ou4oCH3dLROlVFC2Uy22TIX2F11DW5wI1aW7yL2I8gxz4xnmwDPMgee/2HEk9aHxvFOw5fMC
-        7aSH/3Ydih5sAnMVHXyY2YywAlEjVZaeaWa1jFsnFNuaESgIKlZ1fGu8Wa3K44o38C5HtqvI
-        ygvNiAkvex+hGZfrCJ+/3Z1NMyl6vZ410KkMTVMTVIcztGY1zufcfCHPO3nXP55EodSUoFNk
-        Fnf/e3H7xt6u24/iAngNm+il3pZvoupavmSYpi9Z6TeF7vvjxmRt9r0tgbTG0p6UytXfB26e
-        2zA6lKQXYvZ9YHKSfWZHX+WWhsy1oRt9z2o0XTHnf3YcymE6C9vYj7WMTmWodhgMwYZPV15l
-        Lluyl5s/M7DJWLM8ZlL8weuUVLBwdALhEri/EJ6ZHsYDAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprHIsWRmVeSWpSXmKPExsWy7bCSvO7TOepxBk9cLU7MO8tu8bHnHqvF
-        5V1z2CxmnN/HZHHxlKvF4uU/GS0Ov2lntfh3bSOLxapdfxgdOD3e32hl99g56y67x6ZVnWwe
-        fVtWMXpcXdjE7vF5k1wAWxSXTUpqTmZZapG+XQJXxuv3T1kKVnFWbH34g7GB8Tx7FyMnh4SA
-        icSbf9MZuxi5OIQEdjNKvGq/DpWQlJh28ShzFyMHkC0scfhwMUTNW0aJJ/93gNUIC4RLzJm0
-        jAnEFhFQlljS/J8FpIhZYAqTxOoFc1khOjoZJU70fwKrYhPQktj/4gYbiM0voChx9cdjRhCb
-        V8BO4t2MaWBxFgFViUevOlhAbFGBMImdSx4zQdQISpyc+QQszilgJrFt3QUwm1lAXeLPvEvM
-        ELa4xK0n85kgbHmJ7W/nME9gFJ6FpH0WkpZZSFpmIWlZwMiyilEytaA4Nz232LDAKC+1XK84
-        Mbe4NC9dLzk/dxMjONa0tHYwnjgRf4hRgINRiYc346lanBBrYllxZe4hRgkOZiUR3gVNqnFC
-        vCmJlVWpRfnxRaU5qcWHGKU5WJTEeeXzj0UKCaQnlqRmp6YWpBbBZJk4OKUaGMseB8x4vPuS
-        7nPubp2ksOKjRXqCiS8PmWZF7zr9iV9+Q4ei1t3LxzfU2Dq9Ccn5kBz93X9x77Od5/crG6sL
-        Ni7cf3Zn1Ifd+zavEA998jCrMSLk2Rzz6izLxrvbduw9rnPV7VFAzPS0hXZ+j3ar1k5g+jbz
-        utOBZc2eNy8Ud9xL+ND+YN2/pblKLMUZiYZazEXFiQAaOcmgsQIAAA==
-X-CMS-MailID: 20200122005253epcas1p326c9970bcfebf5bf26198b3604f1bfd2
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: SVC_REQ_APPROVE
-CMS-TYPE: 101P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20200121233357epcas1p2ed13efb902d2b30c0ddd426e84351b9f
-References: <CGME20200121233357epcas1p2ed13efb902d2b30c0ddd426e84351b9f@epcas1p2.samsung.com>
-        <20200121233349.28627-1-pakki001@umn.edu>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1c2e1cd6-5b65-79d7-f332-b866d5446c71@arm.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 1/22/20 8:33 AM, Aditya Pakki wrote:
-> Consistent with other instances of samsung_clk_init, the check
-> if ctx is NULL is redundant. The function currently does not
-> return NULL.
-> 
-> Signed-off-by: Aditya Pakki <pakki001@umn.edu>
-> ---
->  drivers/clk/samsung/clk.c | 4 ----
->  1 file changed, 4 deletions(-)
-> 
-> diff --git a/drivers/clk/samsung/clk.c b/drivers/clk/samsung/clk.c
-> index dad31308c071..1949ae7851b2 100644
-> --- a/drivers/clk/samsung/clk.c
-> +++ b/drivers/clk/samsung/clk.c
-> @@ -356,10 +356,6 @@ struct samsung_clk_provider * __init samsung_cmu_register_one(
->  	}
->  
->  	ctx = samsung_clk_init(np, reg_base, cmu->nr_clk_ids);
-> -	if (!ctx) {
-> -		panic("%s: unable to allocate ctx\n", __func__);
-> -		return ctx;
-> -	}
->  
->  	if (cmu->pll_clks)
->  		samsung_clk_register_pll(ctx, cmu->pll_clks, cmu->nr_pll_clks,
-> 
+On Tue, Jan 21, 2020 at 10:50:41AM +0530, Anshuman Khandual wrote:
+>
+>
+>On 01/20/2020 02:25 PM, Wei Yang wrote:
+>> On Mon, Jan 20, 2020 at 11:42:30AM +0530, Anshuman Khandual wrote:
+>>>
+>>>
+>>> On 01/20/2020 08:34 AM, Wei Yang wrote:
+>>>> This is a preparation to dump all reasons during check page.
+>>>
+>>> This really makes sense rather then just picking the reason from
+>>> the last "if" statement.
+>>>
+>>>>
+>>>> Signed-off-by: Wei Yang <richardw.yang@linux.intel.com>
+>>>> ---
+>>>>  include/linux/mmdebug.h |  2 +-
+>>>>  mm/debug.c              | 11 ++++++-----
+>>>>  mm/page_alloc.c         |  2 +-
+>>>>  3 files changed, 8 insertions(+), 7 deletions(-)
+>>>>
+>>>> diff --git a/include/linux/mmdebug.h b/include/linux/mmdebug.h
+>>>> index 2ad72d2c8cc5..f0a612db8bae 100644
+>>>> --- a/include/linux/mmdebug.h
+>>>> +++ b/include/linux/mmdebug.h
+>>>> @@ -10,7 +10,7 @@ struct vm_area_struct;
+>>>>  struct mm_struct;
+>>>>  
+>>>>  extern void dump_page(struct page *page, const char *reason);
+>>>> -extern void __dump_page(struct page *page, const char *reason);
+>>>> +extern void __dump_page(struct page *page, int num, const char **reason);
+>>>>  void dump_vma(const struct vm_area_struct *vma);
+>>>>  void dump_mm(const struct mm_struct *mm);
+>>>>  
+>>>> diff --git a/mm/debug.c b/mm/debug.c
+>>>> index 0461df1207cb..a8ac6f951f9f 100644
+>>>> --- a/mm/debug.c
+>>>> +++ b/mm/debug.c
+>>>> @@ -42,11 +42,11 @@ const struct trace_print_flags vmaflag_names[] = {
+>>>>  	{0, NULL}
+>>>>  };
+>>>>  
+>>>> -void __dump_page(struct page *page, const char *reason)
+>>>> +void __dump_page(struct page *page, int num, const char **reason)
+>>>>  {
+>>>>  	struct address_space *mapping;
+>>>>  	bool page_poisoned = PagePoisoned(page);
+>>>> -	int mapcount;
+>>>> +	int mapcount, i;
+>>>>  
+>>>>  	/*
+>>>>  	 * If struct page is poisoned don't access Page*() functions as that
+>>>> @@ -97,8 +97,9 @@ void __dump_page(struct page *page, const char *reason)
+>>>>  			sizeof(unsigned long), page,
+>>>>  			sizeof(struct page), false);
+>>>>  
+>>>> -	if (reason)
+>>>> -		pr_warn("page dumped because: %s\n", reason);
+>>>> +	pr_warn("page dumped because:\n");
+>>>> +	for (i = 0; i < num; i++)
+>>>> +		pr_warn("\t%s\n", reason[i]);
+>>>
+>>> We should have a NR_BAD_PAGE_REASONS or something to cap this iteration
+>>> and also check reason[i] for non-NULL before trying to print the array.
+>>> There might be call sites like the following which will be problematic
+>>> otherwise.
+>>>
+>>> split_huge_page_to_list() -> dump_page(head, NULL)
+>>>
+>> 
+>> You are right, I missed this case.
+>> 
+>>>>  
+>>>>  #ifdef CONFIG_MEMCG
+>>>>  	if (!page_poisoned && page->mem_cgroup)
+>>>
+>>> While here, will it be better to move the above debug print block after
+>>> mem_cgroup block instead ?
+>>>
+>> 
+>> Not sure, let's see whether others have some idea.
+>> 
+>>>> @@ -108,7 +109,7 @@ void __dump_page(struct page *page, const char *reason)
+>>>>  
+>>>>  void dump_page(struct page *page, const char *reason)
+>>>>  {
+>>>> -	__dump_page(page, reason);
+>>>> +	__dump_page(page, 1, &reason);
+>>>>  	dump_page_owner(page);
+>>>>  }
+>>>>  EXPORT_SYMBOL(dump_page);
+>>>> diff --git a/mm/page_alloc.c b/mm/page_alloc.c
+>>>> index d047bf7d8fd4..0cf6218aaba7 100644
+>>>> --- a/mm/page_alloc.c
+>>>> +++ b/mm/page_alloc.c
+>>>> @@ -638,7 +638,7 @@ static void bad_page(struct page *page, const char *reason,
+>>>>  
+>>>>  	pr_alert("BUG: Bad page state in process %s  pfn:%05lx\n",
+>>>>  		current->comm, page_to_pfn(page));
+>>>> -	__dump_page(page, reason);
+>>>> +	__dump_page(page, 1, &reason);
+>>>>  	bad_flags &= page->flags;
+>>>>  	if (bad_flags)
+>>>>  		pr_alert("bad because of flags: %#lx(%pGp)\n",
+>>>>
+>>>
+>>> Do we still need to have bad_flags ? After consolidating all reasons making
+>>> a page bad should not we just print page->flags unconditionally each time and
+>>> let the user decipher it instead. __dump_page() will print page->flags for
+>>> each case (atleast after the new patch from Vlastimil). AFAICS, the only
+>>> place currently consuming bad_flags is bad_page() which seems redundant after
+>>> first calling __dump_page().
+>> 
+>> Hmm... I don't catch this. The work in __dump_page() seems a little different
+>> from this one. Not sure we could remove it.
+>
+>Lets look at 'bad_flags' as it exists today without this series.
+>
+>It gets evaluated in free_pages_check_bad() and check_new_page_bad() before
+>being passed into bad_page(). All other call sites for bad_page() just pass
+>0 for 'bad_flags'. Now in bad_page(), we have
+>
+>        __dump_page(page, reason);
+>        bad_flags &= page->flags;
+>        if (bad_flags)
+>                pr_alert("bad because of flags: %#lx(%pGp)\n",
+>                                                bad_flags, &bad_flags);
+>
+>Here, bad_flags &= page->flags will always be positive when 'reason'
+>is either
+>
+>"PAGE_FLAGS_CHECK_AT_FREE flag(s) set"
+>
+>or
+>
+>"PAGE_FLAGS_CHECK_AT_PREP flag set"
+>
+>The point here is we dont need to print bad_flags here as __dump_page()
+>already prints page->flags universally along with the "bad_reason"
+>after the following change.
+>
 
-If samsung_clk_init() fail to allocate the memory for 'ctx',
-call panic() without return. As the patch description,
-samsung_clk_init() either call panic() or return
-the correct 'ctx' instance. It looks good to me.
+Thanks, I see your point. It is not necessary to print flags twice.
 
-Acked-by: Chanwoo Choi <cw00.choi@samsung.com>
+>[1] https://patchwork.kernel.org/patch/11332035/
 
 -- 
-Best Regards,
-Chanwoo Choi
-Samsung Electronics
+Wei Yang
+Help you, Help me
