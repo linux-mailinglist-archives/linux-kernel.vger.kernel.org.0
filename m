@@ -2,40 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 51497144F51
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Jan 2020 10:36:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9A523144F01
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Jan 2020 10:34:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729785AbgAVJgk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 22 Jan 2020 04:36:40 -0500
-Received: from mail.kernel.org ([198.145.29.99]:52142 "EHLO mail.kernel.org"
+        id S1730614AbgAVJdd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 22 Jan 2020 04:33:33 -0500
+Received: from mail.kernel.org ([198.145.29.99]:47378 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730654AbgAVJgh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 Jan 2020 04:36:37 -0500
+        id S1729971AbgAVJdb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 22 Jan 2020 04:33:31 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 81D2B24125;
-        Wed, 22 Jan 2020 09:36:36 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C0F1B2071E;
+        Wed, 22 Jan 2020 09:33:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579685797;
-        bh=9kg3hd95kbchqpnKiuH5WYSqpajo2NxVMIJ/HmbOcQ0=;
+        s=default; t=1579685611;
+        bh=EwXiR3OAHCKqfa2wQBGY7nZhL1E2myYAN/IcWN8jdxM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=K7ChVpj/4xdDS53ouG8EnlgtXh2t15e9hzfX/sxm5oPouehWWj3dR6apDzZ8ohOeJ
-         hFSkJts5BXzY/vY/ZU/mZbaHK41WANmV/2ry0Vy6kUhYnoVS1vF/hjsmgTIQ+KYBZj
-         nVHN/v7k8Dh3L50DFMIjQfhnMtcJq4vhNB634pUY=
+        b=YanZYRfZ+eRS/FQhEu4IV/XBMFqDnJ4nfh/UTOBnxro71VSTMdUfdxF+BAghLktoE
+         r5FNuuZr5+PDHY5/Q3q4jezHshOYHDXkkpJlne5Pe96xeNBtjnN4l5Ng8rW/og77Zs
+         Zwk+jVn8RTYp0zjkLjBDDL1EDonJXuJHq1SUFjK0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Andrew Lunn <andrew@lunn.ch>,
-        Alexander Lobakin <alobakin@dlink.ru>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.9 82/97] net: dsa: tag_qca: fix doubled Tx statistics
+        stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>
+Subject: [PATCH 4.4 70/76] scsi: esas2r: unlock on error in esas2r_nvram_read_direct()
 Date:   Wed, 22 Jan 2020 10:29:26 +0100
-Message-Id: <20200122092809.531667409@linuxfoundation.org>
+Message-Id: <20200122092802.106510918@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200122092755.678349497@linuxfoundation.org>
-References: <20200122092755.678349497@linuxfoundation.org>
+In-Reply-To: <20200122092751.587775548@linuxfoundation.org>
+References: <20200122092751.587775548@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,37 +43,31 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Alexander Lobakin <alobakin@dlink.ru>
+From: Dan Carpenter <dan.carpenter@oracle.com>
 
-[ Upstream commit bd5874da57edd001b35cf28ae737779498c16a56 ]
+commit 906ca6353ac09696c1bf0892513c8edffff5e0a6 upstream.
 
-DSA subsystem takes care of netdev statistics since commit 4ed70ce9f01c
-("net: dsa: Refactor transmit path to eliminate duplication"), so
-any accounting inside tagger callbacks is redundant and can lead to
-messing up the stats.
-This bug is present in Qualcomm tagger since day 0.
+This error path is missing an unlock.
 
-Fixes: cafdc45c949b ("net-next: dsa: add Qualcomm tag RX/TX handler")
-Reviewed-by: Andrew Lunn <andrew@lunn.ch>
-Signed-off-by: Alexander Lobakin <alobakin@dlink.ru>
-Reviewed-by: Florian Fainelli <f.fainelli@gmail.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Fixes: 26780d9e12ed ("[SCSI] esas2r: ATTO Technology ExpressSAS 6G SAS/SATA RAID Adapter Driver")
+Link: https://lore.kernel.org/r/20191022102324.GA27540@mwanda
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- net/dsa/tag_qca.c |    3 ---
- 1 file changed, 3 deletions(-)
 
---- a/net/dsa/tag_qca.c
-+++ b/net/dsa/tag_qca.c
-@@ -40,9 +40,6 @@ static struct sk_buff *qca_tag_xmit(stru
- 	struct dsa_slave_priv *p = netdev_priv(dev);
- 	u16 *phdr, hdr;
- 
--	dev->stats.tx_packets++;
--	dev->stats.tx_bytes += skb->len;
--
- 	if (skb_cow_head(skb, 0) < 0)
- 		goto out_free;
+---
+ drivers/scsi/esas2r/esas2r_flash.c |    1 +
+ 1 file changed, 1 insertion(+)
+
+--- a/drivers/scsi/esas2r/esas2r_flash.c
++++ b/drivers/scsi/esas2r/esas2r_flash.c
+@@ -1197,6 +1197,7 @@ bool esas2r_nvram_read_direct(struct esa
+ 	if (!esas2r_read_flash_block(a, a->nvram, FLS_OFFSET_NVR,
+ 				     sizeof(struct esas2r_sas_nvram))) {
+ 		esas2r_hdebug("NVRAM read failed, using defaults");
++		up(&a->nvram_semaphore);
+ 		return false;
+ 	}
  
 
 
