@@ -2,40 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B921614515F
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Jan 2020 10:53:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0FB54144EC3
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Jan 2020 10:33:53 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731005AbgAVJet (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 22 Jan 2020 04:34:49 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49418 "EHLO mail.kernel.org"
+        id S1729593AbgAVJbN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 22 Jan 2020 04:31:13 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43040 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730989AbgAVJep (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 Jan 2020 04:34:45 -0500
+        id S1729537AbgAVJbJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 22 Jan 2020 04:31:09 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C332024672;
-        Wed, 22 Jan 2020 09:34:44 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2784A2467B;
+        Wed, 22 Jan 2020 09:31:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579685685;
-        bh=J2Uu6xeW8tRMtlFYFag5dwkPExafMGRmGM8omqTSyzI=;
+        s=default; t=1579685468;
+        bh=uVCNl6SSGH/xdURKbmYyLK7yEWgY0GtaC9ejSr1F9eQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=r54mBELV0iC6zfyIx8MxPYxQJz2SoAh7tR+qN51D1dXWQCIt7lHCLbyjxmQY0QbXm
-         /NayGtrTzUACskvO1yFoiPHpIi/vAbFE++aMsXUHekQaPPwPwfAW4/dnej7pop9lym
-         wwQd7HQGhy+S616ib7unudZ9S4qQmxXw1bshdvrY=
+        b=tbikjrwwkvw4z35atT9xFiGLhSSF7vnkEbNKZgHrDKikXllk2Z20+5HZsalHpweVc
+         RAJ2piMKst725Zl4SIhc/w1NCRKnbCoVTuGYoO/vuuFwFwvt/FmgP5HVm0JiXk2XCN
+         /MTUsfx77M/2TlrFgZon3CGEnJjBqT/VvZ28gxHI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Seung-Woo Kim <sw0312.kim@samsung.com>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>
-Subject: [PATCH 4.9 37/97] media: exynos4-is: Fix recursive locking in isp_video_release()
-Date:   Wed, 22 Jan 2020 10:28:41 +0100
-Message-Id: <20200122092802.518015494@linuxfoundation.org>
+        stable@vger.kernel.org, Jian-Hong Pan <jian-hong@endlessm.com>,
+        Daniel Drake <drake@endlessm.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Subject: [PATCH 4.4 26/76] platform/x86: asus-wmi: Fix keyboard brightness cannot be set to 0
+Date:   Wed, 22 Jan 2020 10:28:42 +0100
+Message-Id: <20200122092754.411204098@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200122092755.678349497@linuxfoundation.org>
-References: <20200122092755.678349497@linuxfoundation.org>
+In-Reply-To: <20200122092751.587775548@linuxfoundation.org>
+References: <20200122092751.587775548@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,36 +44,40 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Seung-Woo Kim <sw0312.kim@samsung.com>
+From: Jian-Hong Pan <jian-hong@endlessm.com>
 
-commit 704c6c80fb471d1bb0ef0d61a94617d1d55743cd upstream.
+commit 176a7fca81c5090a7240664e3002c106d296bf31 upstream.
 
->From isp_video_release(), &isp->video_lock is held and subsequent
-vb2_fop_release() tries to lock vdev->lock which is same with the
-previous one. Replace vb2_fop_release() with _vb2_fop_release() to
-fix the recursive locking.
+Some of ASUS laptops like UX431FL keyboard backlight cannot be set to
+brightness 0. According to ASUS' information, the brightness should be
+0x80 ~ 0x83. This patch fixes it by following the logic.
 
-Fixes: 1380f5754cb0 ("[media] videobuf2: Add missing lock held on vb2_fop_release")
-Signed-off-by: Seung-Woo Kim <sw0312.kim@samsung.com>
-Reviewed-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Signed-off-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
-Signed-off-by: Mauro Carvalho Chehab <mchehab@kernel.org>
+Fixes: e9809c0b9670 ("asus-wmi: add keyboard backlight support")
+Signed-off-by: Jian-Hong Pan <jian-hong@endlessm.com>
+Reviewed-by: Daniel Drake <drake@endlessm.com>
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/media/platform/exynos4-is/fimc-isp-video.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/platform/x86/asus-wmi.c |    8 +-------
+ 1 file changed, 1 insertion(+), 7 deletions(-)
 
---- a/drivers/media/platform/exynos4-is/fimc-isp-video.c
-+++ b/drivers/media/platform/exynos4-is/fimc-isp-video.c
-@@ -316,7 +316,7 @@ static int isp_video_release(struct file
- 		ivc->streaming = 0;
- 	}
+--- a/drivers/platform/x86/asus-wmi.c
++++ b/drivers/platform/x86/asus-wmi.c
+@@ -452,13 +452,7 @@ static void kbd_led_update(struct work_s
  
--	vb2_fop_release(file);
-+	_vb2_fop_release(file, NULL);
+ 	asus = container_of(work, struct asus_wmi, kbd_led_work);
  
- 	if (v4l2_fh_is_singular_file(file)) {
- 		fimc_pipeline_call(&ivc->ve, close);
+-	/*
+-	 * bits 0-2: level
+-	 * bit 7: light on/off
+-	 */
+-	if (asus->kbd_led_wk > 0)
+-		ctrl_param = 0x80 | (asus->kbd_led_wk & 0x7F);
+-
++	ctrl_param = 0x80 | (asus->kbd_led_wk & 0x7F);
+ 	asus_wmi_set_devstate(ASUS_WMI_DEVID_KBD_BACKLIGHT, ctrl_param, NULL);
+ }
+ 
 
 
