@@ -2,36 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DFD371455BD
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Jan 2020 14:25:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D0EE01455BF
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Jan 2020 14:25:50 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731077AbgAVNYq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 22 Jan 2020 08:24:46 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43990 "EHLO mail.kernel.org"
+        id S1729923AbgAVNYv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 22 Jan 2020 08:24:51 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44074 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730109AbgAVNYo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 Jan 2020 08:24:44 -0500
+        id S1730109AbgAVNYs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 22 Jan 2020 08:24:48 -0500
 Received: from localhost (unknown [84.241.205.26])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 773E0205F4;
-        Wed, 22 Jan 2020 13:24:43 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9A23424688;
+        Wed, 22 Jan 2020 13:24:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579699484;
-        bh=Wi8eRHhKo+a2NLw+JYSoyvFpgiNBdImEdPZVPKuUjcY=;
+        s=default; t=1579699487;
+        bh=AXzGzg7aB76QJhArJB3cCflXRp9u84Qf07aZ4biO7Uk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=O9+xuVqZgX5QNXpwwPBHBniWXNecJJZwWjPhe2o3diZojiReIvTEPawuJI9hN4hDq
-         pmLRdWf8GQJZ0mZEcF6hA5xk+cu/Kwvlgx6Zppbc2jEjC+2Benf6ESz19LQ8le49xb
-         nPPs0JIkoag5wdOFyYik3wYlSOfn2cpDDHGRy2b8=
+        b=0jgSovNa2tRsD9uXPWp068r8BRPKqgMGKf1rHY8lCLyLEyvqcKudnYa0KRpd6fBbA
+         6JvJ4wnVk0ik68Jk3rQx7enW/d364Vmsfkbe2wCE7Yr5+1Yli3sba6dABkRbze3FE9
+         gyAO4TLUKySzsbktuAqe3hrWdHPQ0wiSVkswEeAE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+        stable@vger.kernel.org, Ido Schimmel <idosch@mellanox.com>,
+        Shalom Toledo <shalomt@mellanox.com>,
+        Jiri Pirko <jiri@mellanox.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 5.4 160/222] sh_eth: check sh_eth_cpu_data::dual_port when dumping registers
-Date:   Wed, 22 Jan 2020 10:29:06 +0100
-Message-Id: <20200122092845.171712966@linuxfoundation.org>
+Subject: [PATCH 5.4 161/222] mlxsw: spectrum: Do not modify cloned SKBs during xmit
+Date:   Wed, 22 Jan 2020 10:29:07 +0100
+Message-Id: <20200122092845.242283226@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
 In-Reply-To: <20200122092833.339495161@linuxfoundation.org>
 References: <20200122092833.339495161@linuxfoundation.org>
@@ -44,70 +45,84 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+From: Ido Schimmel <idosch@mellanox.com>
 
-commit 3249b1e442a1be1a6b9f1026785b519d1443f807 upstream.
+commit 2da51ce75d86ab1f7770ac1391a9a1697ddaa60c upstream.
 
-When adding the sh_eth_cpu_data::dual_port flag I forgot to add the flag
-checks to __sh_eth_get_regs(), causing the non-existing TSU registers to
-be dumped by 'ethtool' on the single port Ether controllers having TSU...
+The driver needs to prepend a Tx header to each packet it is
+transmitting. The header includes information such as the egress port
+and traffic class.
 
-Fixes: a94cf2a614f8 ("sh_eth: fix TSU init on SH7734/R8A7740")
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+The addition of the header requires the driver to modify the SKB's
+header and therefore it must not be shared. Otherwise, we risk hitting
+various race conditions.
+
+For example, when a packet is flooded (cloned) by the bridge driver to
+two switch ports swp1 and swp2:
+
+t0 - mlxsw_sp_port_xmit() is called for swp1. Tx header is prepended with
+     swp1's port number
+t1 - mlxsw_sp_port_xmit() is called for swp2. Tx header is prepended with
+     swp2's port number, overwriting swp1's port number
+t2 - The device processes data buffer from t0. Packet is transmitted via
+     swp2
+t3 - The device processes data buffer from t1. Packet is transmitted via
+     swp2
+
+Usually, the device is fast enough and transmits the packet before its
+Tx header is overwritten, but this is not the case in emulated
+environments.
+
+Fix this by making sure the SKB's header is writable by calling
+skb_cow_head(). Since the function ensures we have headroom to push the
+Tx header, the check further in the function can be removed.
+
+v2:
+* Use skb_cow_head() instead of skb_unshare() as suggested by Jakub
+* Remove unnecessary check regarding headroom
+
+Fixes: 56ade8fe3fe1 ("mlxsw: spectrum: Add initial support for Spectrum ASIC")
+Signed-off-by: Ido Schimmel <idosch@mellanox.com>
+Reported-by: Shalom Toledo <shalomt@mellanox.com>
+Acked-by: Jiri Pirko <jiri@mellanox.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/net/ethernet/renesas/sh_eth.c |   38 ++++++++++++++++++----------------
- 1 file changed, 21 insertions(+), 17 deletions(-)
+ drivers/net/ethernet/mellanox/mlxsw/spectrum.c |   18 ++++++------------
+ 1 file changed, 6 insertions(+), 12 deletions(-)
 
---- a/drivers/net/ethernet/renesas/sh_eth.c
-+++ b/drivers/net/ethernet/renesas/sh_eth.c
-@@ -2204,24 +2204,28 @@ static size_t __sh_eth_get_regs(struct n
- 	if (cd->tsu) {
- 		add_tsu_reg(ARSTR);
- 		add_tsu_reg(TSU_CTRST);
--		add_tsu_reg(TSU_FWEN0);
--		add_tsu_reg(TSU_FWEN1);
--		add_tsu_reg(TSU_FCM);
--		add_tsu_reg(TSU_BSYSL0);
--		add_tsu_reg(TSU_BSYSL1);
--		add_tsu_reg(TSU_PRISL0);
--		add_tsu_reg(TSU_PRISL1);
--		add_tsu_reg(TSU_FWSL0);
--		add_tsu_reg(TSU_FWSL1);
-+		if (cd->dual_port) {
-+			add_tsu_reg(TSU_FWEN0);
-+			add_tsu_reg(TSU_FWEN1);
-+			add_tsu_reg(TSU_FCM);
-+			add_tsu_reg(TSU_BSYSL0);
-+			add_tsu_reg(TSU_BSYSL1);
-+			add_tsu_reg(TSU_PRISL0);
-+			add_tsu_reg(TSU_PRISL1);
-+			add_tsu_reg(TSU_FWSL0);
-+			add_tsu_reg(TSU_FWSL1);
-+		}
- 		add_tsu_reg(TSU_FWSLC);
--		add_tsu_reg(TSU_QTAGM0);
--		add_tsu_reg(TSU_QTAGM1);
--		add_tsu_reg(TSU_FWSR);
--		add_tsu_reg(TSU_FWINMK);
--		add_tsu_reg(TSU_ADQT0);
--		add_tsu_reg(TSU_ADQT1);
--		add_tsu_reg(TSU_VTAG0);
--		add_tsu_reg(TSU_VTAG1);
-+		if (cd->dual_port) {
-+			add_tsu_reg(TSU_QTAGM0);
-+			add_tsu_reg(TSU_QTAGM1);
-+			add_tsu_reg(TSU_FWSR);
-+			add_tsu_reg(TSU_FWINMK);
-+			add_tsu_reg(TSU_ADQT0);
-+			add_tsu_reg(TSU_ADQT1);
-+			add_tsu_reg(TSU_VTAG0);
-+			add_tsu_reg(TSU_VTAG1);
-+		}
- 		add_tsu_reg(TSU_ADSBSY);
- 		add_tsu_reg(TSU_TEN);
- 		add_tsu_reg(TSU_POST1);
+--- a/drivers/net/ethernet/mellanox/mlxsw/spectrum.c
++++ b/drivers/net/ethernet/mellanox/mlxsw/spectrum.c
+@@ -812,23 +812,17 @@ static netdev_tx_t mlxsw_sp_port_xmit(st
+ 	u64 len;
+ 	int err;
+ 
++	if (skb_cow_head(skb, MLXSW_TXHDR_LEN)) {
++		this_cpu_inc(mlxsw_sp_port->pcpu_stats->tx_dropped);
++		dev_kfree_skb_any(skb);
++		return NETDEV_TX_OK;
++	}
++
+ 	memset(skb->cb, 0, sizeof(struct mlxsw_skb_cb));
+ 
+ 	if (mlxsw_core_skb_transmit_busy(mlxsw_sp->core, &tx_info))
+ 		return NETDEV_TX_BUSY;
+ 
+-	if (unlikely(skb_headroom(skb) < MLXSW_TXHDR_LEN)) {
+-		struct sk_buff *skb_orig = skb;
+-
+-		skb = skb_realloc_headroom(skb, MLXSW_TXHDR_LEN);
+-		if (!skb) {
+-			this_cpu_inc(mlxsw_sp_port->pcpu_stats->tx_dropped);
+-			dev_kfree_skb_any(skb_orig);
+-			return NETDEV_TX_OK;
+-		}
+-		dev_consume_skb_any(skb_orig);
+-	}
+-
+ 	if (eth_skb_pad(skb)) {
+ 		this_cpu_inc(mlxsw_sp_port->pcpu_stats->tx_dropped);
+ 		return NETDEV_TX_OK;
 
 
