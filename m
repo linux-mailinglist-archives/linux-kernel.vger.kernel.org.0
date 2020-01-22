@@ -2,37 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A8588144FBC
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Jan 2020 10:40:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4FC47144EAF
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Jan 2020 10:30:43 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730364AbgAVJkj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 22 Jan 2020 04:40:39 -0500
-Received: from mail.kernel.org ([198.145.29.99]:59326 "EHLO mail.kernel.org"
+        id S1729285AbgAVJak (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 22 Jan 2020 04:30:40 -0500
+Received: from mail.kernel.org ([198.145.29.99]:42142 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387445AbgAVJk1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 Jan 2020 04:40:27 -0500
+        id S1729236AbgAVJag (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 22 Jan 2020 04:30:36 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 20CC624680;
-        Wed, 22 Jan 2020 09:40:25 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E15932465B;
+        Wed, 22 Jan 2020 09:30:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579686026;
-        bh=QbzSPHtU9cuKycGZVfisOWsZw2epy5XxYwUadro/hAg=;
+        s=default; t=1579685436;
+        bh=c0gxPAEd/zpRFcwzNNKQm8bhr5vCEg4u8wtCDuz6ZLE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=XM2aF05Ip8gUBVkxWE/NtKZHZDH0Ixl2Z8GeoILsaObaI1Zf7dJVYvPjl30OhZttd
-         eIZDgWGcG4n70Uu5fFC1NWZ4HPfuiYzlFftZUbYpBps55qjNKyu4LpsyXWL4NibeYR
-         lwoZihF4oJJxtEYa28VkEac8vZAphR+ToL78LioY=
+        b=UD9GqsROSy9E1F4HVaP5Avijuy+d8TOmGCuN6Pd2NFtmtV9DqLAoEA5Ttf/KRx4ag
+         aypXzLwamft5aFVHK3E/M+m2f6wOo2ZcCw39xawx+qx3X48G5XLyXMoo11L7xg7rl8
+         SQqRV5te7w1cqvYx09l8qsEl9vIi1118QLdxEcPc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Johan Hovold <johan@kernel.org>
-Subject: [PATCH 4.19 014/103] USB: serial: io_edgeport: handle unbound ports on URB completion
+        stable@vger.kernel.org,
+        Navid Emamdoost <navid.emamdoost@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Ben Hutchings <ben.hutchings@codethink.co.uk>
+Subject: [PATCH 4.4 14/76] wimax: i2400: Fix memory leak in i2400m_op_rfkill_sw_toggle
 Date:   Wed, 22 Jan 2020 10:28:30 +0100
-Message-Id: <20200122092805.814202345@linuxfoundation.org>
+Message-Id: <20200122092753.014344276@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200122092803.587683021@linuxfoundation.org>
-References: <20200122092803.587683021@linuxfoundation.org>
+In-Reply-To: <20200122092751.587775548@linuxfoundation.org>
+References: <20200122092751.587775548@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -42,45 +45,40 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Johan Hovold <johan@kernel.org>
+From: Navid Emamdoost <navid.emamdoost@gmail.com>
 
-commit e37d1aeda737a20b1846a91a3da3f8b0f00cf690 upstream.
+commit 6f3ef5c25cc762687a7341c18cbea5af54461407 upstream.
 
-Check for NULL port data in the shared interrupt and bulk completion
-callbacks to avoid dereferencing a NULL pointer in case a device sends
-data for a port device which isn't bound to a driver (e.g. due to a
-malicious device having unexpected endpoints or after an allocation
-failure on port probe).
+In the implementation of i2400m_op_rfkill_sw_toggle() the allocated
+buffer for cmd should be released before returning. The
+documentation for i2400m_msg_to_dev() says when it returns the buffer
+can be reused. Meaning cmd should be released in either case. Move
+kfree(cmd) before return to be reached by all execution paths.
 
-Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
-Cc: stable <stable@vger.kernel.org>
-Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Signed-off-by: Johan Hovold <johan@kernel.org>
+Fixes: 2507e6ab7a9a ("wimax: i2400: fix memory leak")
+Signed-off-by: Navid Emamdoost <navid.emamdoost@gmail.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Ben Hutchings <ben.hutchings@codethink.co.uk>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- drivers/usb/serial/io_edgeport.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/net/wimax/i2400m/op-rfkill.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/usb/serial/io_edgeport.c
-+++ b/drivers/usb/serial/io_edgeport.c
-@@ -716,7 +716,7 @@ static void edge_interrupt_callback(stru
- 			if (txCredits) {
- 				port = edge_serial->serial->port[portNumber];
- 				edge_port = usb_get_serial_port_data(port);
--				if (edge_port->open) {
-+				if (edge_port && edge_port->open) {
- 					spin_lock_irqsave(&edge_port->ep_lock,
- 							  flags);
- 					edge_port->txCredits += txCredits;
-@@ -1843,7 +1843,7 @@ static void process_rcvd_data(struct edg
- 				port = edge_serial->serial->port[
- 							edge_serial->rxPort];
- 				edge_port = usb_get_serial_port_data(port);
--				if (edge_port->open) {
-+				if (edge_port && edge_port->open) {
- 					dev_dbg(dev, "%s - Sending %d bytes to TTY for port %d\n",
- 						__func__, rxLen,
- 						edge_serial->rxPort);
+--- a/drivers/net/wimax/i2400m/op-rfkill.c
++++ b/drivers/net/wimax/i2400m/op-rfkill.c
+@@ -142,12 +142,12 @@ int i2400m_op_rfkill_sw_toggle(struct wi
+ 			"%d\n", result);
+ 	result = 0;
+ error_cmd:
+-	kfree(cmd);
+ 	kfree_skb(ack_skb);
+ error_msg_to_dev:
+ error_alloc:
+ 	d_fnend(4, dev, "(wimax_dev %p state %d) = %d\n",
+ 		wimax_dev, state, result);
++	kfree(cmd);
+ 	return result;
+ }
+ 
 
 
