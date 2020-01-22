@@ -2,39 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8358F14510E
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Jan 2020 10:51:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8C5BF144F99
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Jan 2020 10:39:37 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732375AbgAVJvY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 22 Jan 2020 04:51:24 -0500
-Received: from mail.kernel.org ([198.145.29.99]:53410 "EHLO mail.kernel.org"
+        id S1733206AbgAVJj0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 22 Jan 2020 04:39:26 -0500
+Received: from mail.kernel.org ([198.145.29.99]:57292 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731058AbgAVJhV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 Jan 2020 04:37:21 -0500
+        id S1733200AbgAVJjX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 22 Jan 2020 04:39:23 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 42DC22467E;
-        Wed, 22 Jan 2020 09:37:20 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9EBEB24684;
+        Wed, 22 Jan 2020 09:39:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579685840;
-        bh=9kdsAENDk8onj4AJteB91HNaL8zgrpxl1z1L7bDvJIE=;
+        s=default; t=1579685963;
+        bh=yUzz3pdxXKQpwQTWqhRKVlEnaLWaycXtq8Of/BB7q7c=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=M15AS1avLuvwZdJaBXxKjjJ6fn0q2ENKF8EPqDLQjlnVpMgLlD/OlFjtPF/wIVzZJ
-         YvvqM0BlPLCVPAJykvSucE3WOtSGnBW+lrz+kL850sGJxAg0V9ti/JEH3L3LXCaW+u
-         1LqmMJIW6wlCg5WuoTOd4gRXEXQ4KEtua5wrrOf4=
+        b=LeE8ann9pnb/ugWsMyBO9Me7Dunhhhiub6i2VOB+qKn6eEDX83xGutxXJiHSb/sSk
+         Wr7fCkt3FilK9Nq8Vj8deV8WTBxOzuuitrf8+obP0wlPbbFI5H+iSwQOUJhaVnCapY
+         wZzj1Xv+U14HDS5yW2pGRDSA8QOi9zco4zCXXVwg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Christoph Hellwig <hch@lst.de>,
-        Bart Van Assche <bvanassche@acm.org>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>
-Subject: [PATCH 4.9 94/97] scsi: target: core: Fix a pr_debug() argument
+        stable@vger.kernel.org,
+        syzbot+e8a797964a4180eb57d5@syzkaller.appspotmail.com,
+        syzbot+34b582cf32c1db008f8e@syzkaller.appspotmail.com,
+        Johannes Berg <johannes.berg@intel.com>
+Subject: [PATCH 4.14 53/65] cfg80211: check for set_wiphy_params
 Date:   Wed, 22 Jan 2020 10:29:38 +0100
-Message-Id: <20200122092811.126690482@linuxfoundation.org>
+Message-Id: <20200122092759.031820409@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200122092755.678349497@linuxfoundation.org>
-References: <20200122092755.678349497@linuxfoundation.org>
+In-Reply-To: <20200122092750.976732974@linuxfoundation.org>
+References: <20200122092750.976732974@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,34 +45,37 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Bart Van Assche <bvanassche@acm.org>
+From: Johannes Berg <johannes.berg@intel.com>
 
-commit c941e0d172605731de9b4628bd4146d35cf2e7d6 upstream.
+commit 24953de0a5e31dcca7e82c8a3c79abc2dfe8fb6e upstream.
 
-Print the string for which conversion failed instead of printing the
-function name twice.
+Check if set_wiphy_params is assigned and return an error if not,
+some drivers (e.g. virt_wifi where syzbot reported it) don't have
+it.
 
-Fixes: 2650d71e244f ("target: move transport ID handling to the core")
-Cc: Christoph Hellwig <hch@lst.de>
-Link: https://lore.kernel.org/r/20191107215525.64415-1-bvanassche@acm.org
-Signed-off-by: Bart Van Assche <bvanassche@acm.org>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+Reported-by: syzbot+e8a797964a4180eb57d5@syzkaller.appspotmail.com
+Reported-by: syzbot+34b582cf32c1db008f8e@syzkaller.appspotmail.com
+Signed-off-by: Johannes Berg <johannes.berg@intel.com>
+Link: https://lore.kernel.org/r/20200113125358.ac07f276efff.Ibd85ee1b12e47b9efb00a2adc5cd3fac50da791a@changeid
+Signed-off-by: Johannes Berg <johannes.berg@intel.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/target/target_core_fabric_lib.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ net/wireless/rdev-ops.h |    4 ++++
+ 1 file changed, 4 insertions(+)
 
---- a/drivers/target/target_core_fabric_lib.c
-+++ b/drivers/target/target_core_fabric_lib.c
-@@ -130,7 +130,7 @@ static int srp_get_pr_transport_id(
- 	memset(buf + 8, 0, leading_zero_bytes);
- 	rc = hex2bin(buf + 8 + leading_zero_bytes, p, count);
- 	if (rc < 0) {
--		pr_debug("hex2bin failed for %s: %d\n", __func__, rc);
-+		pr_debug("hex2bin failed for %s: %d\n", p, rc);
- 		return rc;
- 	}
- 
+--- a/net/wireless/rdev-ops.h
++++ b/net/wireless/rdev-ops.h
+@@ -537,6 +537,10 @@ static inline int
+ rdev_set_wiphy_params(struct cfg80211_registered_device *rdev, u32 changed)
+ {
+ 	int ret;
++
++	if (!rdev->ops->set_wiphy_params)
++		return -EOPNOTSUPP;
++
+ 	trace_rdev_set_wiphy_params(&rdev->wiphy, changed);
+ 	ret = rdev->ops->set_wiphy_params(&rdev->wiphy, changed);
+ 	trace_rdev_return_int(&rdev->wiphy, ret);
 
 
