@@ -2,35 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D78681453B5
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Jan 2020 12:23:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C92CF1453B0
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Jan 2020 12:23:33 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729476AbgAVLXn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 22 Jan 2020 06:23:43 -0500
-Received: from mga02.intel.com ([134.134.136.20]:19606 "EHLO mga02.intel.com"
+        id S1729451AbgAVLX1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 22 Jan 2020 06:23:27 -0500
+Received: from mga11.intel.com ([192.55.52.93]:7011 "EHLO mga11.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726194AbgAVLXL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 Jan 2020 06:23:11 -0500
+        id S1729158AbgAVLXN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 22 Jan 2020 06:23:13 -0500
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from fmsmga003.fm.intel.com ([10.253.24.29])
-  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 22 Jan 2020 03:23:10 -0800
+Received: from orsmga004.jf.intel.com ([10.7.209.38])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 22 Jan 2020 03:23:13 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.70,349,1574150400"; 
-   d="scan'208";a="275579123"
+   d="scan'208";a="374893591"
 Received: from black.fi.intel.com ([10.237.72.28])
-  by FMSMGA003.fm.intel.com with ESMTP; 22 Jan 2020 03:23:08 -0800
+  by orsmga004.jf.intel.com with ESMTP; 22 Jan 2020 03:23:11 -0800
 Received: by black.fi.intel.com (Postfix, from userid 1003)
-        id 9ED2B3CF; Wed, 22 Jan 2020 13:23:07 +0200 (EET)
+        id A69D8494; Wed, 22 Jan 2020 13:23:07 +0200 (EET)
 From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 To:     Thomas Gleixner <tglx@linutronix.de>,
         Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
         "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
         Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org
 Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: [PATCH v3 4/9] x86/quirks: Join string literals back
-Date:   Wed, 22 Jan 2020 13:23:01 +0200
-Message-Id: <20200122112306.64598-5-andriy.shevchenko@linux.intel.com>
+Subject: [PATCH v3 5/9] x86/quirks: Convert DMI matching to use a table
+Date:   Wed, 22 Jan 2020 13:23:02 +0200
+Message-Id: <20200122112306.64598-6-andriy.shevchenko@linux.intel.com>
 X-Mailer: git-send-email 2.24.1
 In-Reply-To: <20200122112306.64598-1-andriy.shevchenko@linux.intel.com>
 References: <20200122112306.64598-1-andriy.shevchenko@linux.intel.com>
@@ -41,70 +41,57 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-There is no need to split string literals. Moreover, it would be simpler
-to grep for an actual code line, when debugging, by using almost any
-part of the string literal in question.
-
-No functional change intended.
+In order to extend the DMI based quirks, convert them to a table.
 
 Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 ---
- arch/x86/kernel/quirks.c | 15 +++++----------
- 1 file changed, 5 insertions(+), 10 deletions(-)
+ arch/x86/kernel/quirks.c | 33 +++++++++++++++++++++++++++++++--
+ 1 file changed, 31 insertions(+), 2 deletions(-)
 
 diff --git a/arch/x86/kernel/quirks.c b/arch/x86/kernel/quirks.c
-index ce8fc9bec43b..6c122f35508a 100644
+index 6c122f35508a..3867f81baae7 100644
 --- a/arch/x86/kernel/quirks.c
 +++ b/arch/x86/kernel/quirks.c
-@@ -36,8 +36,7 @@ static void quirk_intel_irqbalance(struct pci_dev *dev)
- 	pci_bus_read_config_word(dev->bus, PCI_DEVFN(8, 0), 0x4c, &word);
+@@ -658,8 +658,37 @@ DECLARE_PCI_FIXUP_EARLY(PCI_VENDOR_ID_INTEL, 0x2083, quirk_intel_purley_xeon_ras
+ bool x86_apple_machine;
+ EXPORT_SYMBOL(x86_apple_machine);
  
- 	if (!(word & (1 << 13))) {
--		dev_info(&dev->dev, "Intel E7520/7320/7525 detected; "
--			"disabling irq balancing and affinity\n");
-+		dev_info(&dev->dev, "Intel E7520/7320/7525 detected; disabling irq balancing and affinity\n");
- 		noirqdebug_setup("");
- #ifdef CONFIG_PROC_FS
- 		no_irq_affinity = 1;
-@@ -110,16 +109,14 @@ static void ich_force_enable_hpet(struct pci_dev *dev)
- 	pci_read_config_dword(dev, 0xF0, &rcba);
- 	rcba &= 0xFFFFC000;
- 	if (rcba == 0) {
--		dev_printk(KERN_DEBUG, &dev->dev, "RCBA disabled; "
--			"cannot force enable HPET\n");
-+		dev_printk(KERN_DEBUG, &dev->dev, "RCBA disabled; cannot force enable HPET\n");
- 		return;
- 	}
- 
- 	/* use bits 31:14, 16 kB aligned */
- 	rcba_base = ioremap_nocache(rcba, 0x4000);
- 	if (rcba_base == NULL) {
--		dev_printk(KERN_DEBUG, &dev->dev, "ioremap failed; "
--			"cannot force enable HPET\n");
-+		dev_printk(KERN_DEBUG, &dev->dev, "ioremap failed; cannot force enable HPET\n");
- 		return;
- 	}
- 
-@@ -149,8 +146,7 @@ static void ich_force_enable_hpet(struct pci_dev *dev)
- 	if (err) {
- 		force_hpet_address = 0;
- 		iounmap(rcba_base);
--		dev_printk(KERN_DEBUG, &dev->dev,
--			"Failed to force enable HPET\n");
-+		dev_printk(KERN_DEBUG, &dev->dev, "Failed to force enable HPET\n");
- 	} else {
- 		force_hpet_resume_type = ICH_FORCE_HPET_RESUME;
- 		hpet_dev_print_force_hpet_address(&dev->dev);
-@@ -182,8 +178,7 @@ static struct pci_dev *cached_dev;
- 
- static void hpet_print_force_info(void)
++static const struct dmi_system_id x86_machine_table[] __initconst = {
++	{
++		.ident = "x86 Apple Macintosh",
++		.matches = {
++			DMI_MATCH(DMI_SYS_VENDOR, "Apple Inc."),
++		},
++		.driver_data = &x86_apple_machine,
++	},
++	{
++		.ident = "x86 Apple Macintosh",
++		.matches = {
++			DMI_MATCH(DMI_SYS_VENDOR, "Apple Computer, Inc."),
++		},
++		.driver_data = &x86_apple_machine,
++	},
++	{}
++};
++
++static void __init early_platform_detect_quirk(void)
++{
++	const struct dmi_system_id *id;
++
++	id = dmi_first_match(x86_machine_table);
++	if (!id)
++		return;
++
++	printk(KERN_DEBUG "Detected %s platform\n", id->ident);
++	*((bool *)id->driver_data) = true;
++}
++
+ void __init early_platform_quirks(void)
  {
--	printk(KERN_INFO "HPET not enabled in BIOS. "
--	       "You might try hpet=force boot option\n");
-+	printk(KERN_INFO "HPET not enabled in BIOS. You might try hpet=force boot option\n");
+-	x86_apple_machine = dmi_match(DMI_SYS_VENDOR, "Apple Inc.") ||
+-			    dmi_match(DMI_SYS_VENDOR, "Apple Computer, Inc.");
++	early_platform_detect_quirk();
  }
- 
- static void old_ich_force_hpet_resume(void)
 -- 
 2.24.1
 
