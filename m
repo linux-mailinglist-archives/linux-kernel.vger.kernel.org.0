@@ -2,138 +2,138 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 24678144C0A
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Jan 2020 07:54:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 12E69144C23
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Jan 2020 07:58:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729019AbgAVGx2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 22 Jan 2020 01:53:28 -0500
-Received: from mailgw02.mediatek.com ([210.61.82.184]:39247 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726005AbgAVGx0 (ORCPT
+        id S1727022AbgAVG5K (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 22 Jan 2020 01:57:10 -0500
+Received: from mail-io1-f70.google.com ([209.85.166.70]:44525 "EHLO
+        mail-io1-f70.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726099AbgAVG5J (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 Jan 2020 01:53:26 -0500
-X-UUID: 8a949a9172a649fb9605372d833f32b9-20200122
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-        h=Content-Transfer-Encoding:Content-Type:MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:CC:To:From; bh=hWDA1wJTEUP+o/6FkPnsHhm3+yVXX1P3eiqaY4U4TzM=;
-        b=BPy5IQf/QVjLp/8J8hZOt7uJM0rtyPuhy2d+lBrHIHoVMoCbWlqbYkETXLThcNrbEYaOZRvWw57o1j3c5xHZU0rdF3SJsPVqV6eCEl5GCHf8jguv+TriYvVGp7F5Jqx5e/Iwl4rUKdTDv6Bb2rQl4BV1feJ8rm4Icf1CxyptlJQ=;
-X-UUID: 8a949a9172a649fb9605372d833f32b9-20200122
-Received: from mtkcas06.mediatek.inc [(172.21.101.30)] by mailgw02.mediatek.com
-        (envelope-from <light.hsieh@mediatek.com>)
-        (Cellopoint E-mail Firewall v4.1.10 Build 0809 with TLS)
-        with ESMTP id 365753576; Wed, 22 Jan 2020 14:53:17 +0800
-Received: from mtkcas07.mediatek.inc (172.21.101.84) by
- mtkmbs02n1.mediatek.inc (172.21.101.77) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4; Wed, 22 Jan 2020 14:52:04 +0800
-Received: from mtkswgap22.mediatek.inc (172.21.77.33) by mtkcas07.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Wed, 22 Jan 2020 14:51:58 +0800
-From:   <light.hsieh@mediatek.com>
-To:     <linus.walleij@linaro.org>
-CC:     <linux-mediatek@lists.infradead.org>, <linux-gpio@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <sean.wang@kernel.org>,
-        <kuohong.wang@mediatek.com>, Light Hsieh <light.hsieh@mediatek.com>
-Subject: [PATCH v8 6/6] pinctrl: mediatek: Add support for pin configuration dump via debugfs.
-Date:   Wed, 22 Jan 2020 14:53:14 +0800
-Message-ID: <1579675994-7001-6-git-send-email-light.hsieh@mediatek.com>
-X-Mailer: git-send-email 1.8.1.1.dirty
-In-Reply-To: <1579675994-7001-1-git-send-email-light.hsieh@mediatek.com>
-References: <1579675994-7001-1-git-send-email-light.hsieh@mediatek.com>
+        Wed, 22 Jan 2020 01:57:09 -0500
+Received: by mail-io1-f70.google.com with SMTP id t17so3425479ioi.11
+        for <linux-kernel@vger.kernel.org>; Tue, 21 Jan 2020 22:57:09 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
+        bh=DaAO4OjrKFz8R/CBeO0tJNgxF+hhPU+pNFucr/6aoXM=;
+        b=XsLDX+hMg1QRrC92Hm3L+kHCm+1yWntRDwGxbJL7ma/YzmdecNfFK8xxLXow/4WQdD
+         mvbAunJ7HEul+bVFhzOv2KRXM4I/mS+rXesb1wcuxJtyLFBUJcVfpJg9AUpJX1ASC3sE
+         /C+5HPLNKzgdNxRjUgWjjDWhdMZnhq7WpijJDyOMTA6DbUMf6Y9OPeGOZ1Ia9LW2K/t6
+         M+1y+b4MaH/ZLOLPmUNbLCj68ZvmSy1M3QMVqDPdRi4XUYZW3mmn+93HR777p795A9QL
+         OgmiHjLhpe5X6E/uxrARnrjLVa7H8u85Fd6OW5tsr+z8ZDv2a3DjJdsQDlCRHyS6C1vf
+         D++w==
+X-Gm-Message-State: APjAAAXfpOOv3CsPCDwGTsRNE+8qOop5UsGi3A26rdqReZGpInQbCsPy
+        JiXJPm5SU9gi2YCc9zi+DGhDv7Y55qvJRqA0TrvFvzzjR7Lf
+X-Google-Smtp-Source: APXvYqwBMu6JpRpoxuoWYTHGSxoNuVl3TJEsvhwJ8YNOwZ/e2BBZAW5YXxENYOLMTaOhLpY3iZWCAPpAY6UqfmN3GG/pvEmV/Jpr
 MIME-Version: 1.0
-Content-Type: text/plain
-X-MTK:  N
-Content-Transfer-Encoding: base64
+X-Received: by 2002:a05:6638:2b7:: with SMTP id d23mr5984287jaq.108.1579676228910;
+ Tue, 21 Jan 2020 22:57:08 -0800 (PST)
+Date:   Tue, 21 Jan 2020 22:57:08 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000007c3ba2059cb50843@google.com>
+Subject: WARNING in cbq_destroy
+From:   syzbot <syzbot+63bdb6006961d8c917c6@syzkaller.appspotmail.com>
+To:     davem@davemloft.net, jhs@mojatatu.com, jiri@resnulli.us,
+        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com, xiyou.wangcong@gmail.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-RnJvbTogTGlnaHQgSHNpZWggPGxpZ2h0LmhzaWVoQG1lZGlhdGVrLmNvbT4NCg0KQWRkIHN1cHBv
-cnQgZm9yIHBpbiBjb25maWd1cmF0aW9uIGR1bXAgdmlhIGNhdHRpbmcNCi9zeXMva2VybmVsL2Rl
-YnVnL3BpbmN0cmwvJHBsYXRmb3JtX2RlcGVuZGVudF9wYXRoL3BpbmNvbmYtcGlucy4NCnBpbmN0
-cmwgZnJhbWV3b3JrIGhhZCBhbHJlYWR5IHN1cHBvcnQgc3VjaCBkdW1wLiBUaGlzIHBhdGNoIGlt
-cGxlbWVudCB0aGUNCm9wZXJhdGlvbiBmdW5jdGlvbiBwb2ludGVyIHRvIGZ1bGxmaWxsIHRoaXMg
-ZHVtcC4NCg0KU2lnbmVkLW9mZi1ieTogTGlnaHQgSHNpZWggPGxpZ2h0LmhzaWVoQG1lZGlhdGVr
-LmNvbT4NCi0tLQ0KIGRyaXZlcnMvcGluY3RybC9tZWRpYXRlay9waW5jdHJsLXBhcmlzLmMgfCAx
-MDkgKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKw0KIGRyaXZlcnMvcGluY3RybC9tZWRp
-YXRlay9waW5jdHJsLXBhcmlzLmggfCAgIDMgKw0KIDIgZmlsZXMgY2hhbmdlZCwgMTEyIGluc2Vy
-dGlvbnMoKykNCg0KZGlmZiAtLWdpdCBhL2RyaXZlcnMvcGluY3RybC9tZWRpYXRlay9waW5jdHJs
-LXBhcmlzLmMgYi9kcml2ZXJzL3BpbmN0cmwvbWVkaWF0ZWsvcGluY3RybC1wYXJpcy5jDQppbmRl
-eCAxMTVlYmMxLi44M2JmMjljIDEwMDY0NA0KLS0tIGEvZHJpdmVycy9waW5jdHJsL21lZGlhdGVr
-L3BpbmN0cmwtcGFyaXMuYw0KKysrIGIvZHJpdmVycy9waW5jdHJsL21lZGlhdGVrL3BpbmN0cmwt
-cGFyaXMuYw0KQEAgLTUzOSwxMiArNTM5LDEyMCBAQCBzdGF0aWMgaW50IG10a19wY3RybF9nZXRf
-Z3JvdXBfcGlucyhzdHJ1Y3QgcGluY3RybF9kZXYgKnBjdGxkZXYsDQogCXJldHVybiAwOw0KIH0N
-CiANCitzdGF0aWMgaW50IG10a19od19nZXRfdmFsdWVfd3JhcChzdHJ1Y3QgbXRrX3BpbmN0cmwg
-Kmh3LCB1bnNpZ25lZCBpbnQgZ3BpbywgaW50IGZpZWxkKQ0KK3sNCisJY29uc3Qgc3RydWN0IG10
-a19waW5fZGVzYyAqZGVzYzsNCisJaW50IHZhbHVlLCBlcnI7DQorDQorCWlmIChncGlvID4gaHct
-PnNvYy0+bnBpbnMpDQorCQlyZXR1cm4gLUVJTlZBTDsNCisNCisJZGVzYyA9IChjb25zdCBzdHJ1
-Y3QgbXRrX3Bpbl9kZXNjICopJmh3LT5zb2MtPnBpbnNbZ3Bpb107DQorDQorCWVyciA9IG10a19o
-d19nZXRfdmFsdWUoaHcsIGRlc2MsIGZpZWxkLCAmdmFsdWUpOw0KKwlpZiAoZXJyKQ0KKwkJcmV0
-dXJuIGVycjsNCisNCisJcmV0dXJuIHZhbHVlOw0KK30NCisNCisjZGVmaW5lIG10a19wY3RybF9n
-ZXRfcGlubXV4KGh3LCBncGlvKQkJCVwNCisJbXRrX2h3X2dldF92YWx1ZV93cmFwKGh3LCBncGlv
-LCBQSU5DVFJMX1BJTl9SRUdfTU9ERSkNCisNCisjZGVmaW5lIG10a19wY3RybF9nZXRfZGlyZWN0
-aW9uKGh3LCBncGlvKQkJXA0KKwltdGtfaHdfZ2V0X3ZhbHVlX3dyYXAoaHcsIGdwaW8sIFBJTkNU
-UkxfUElOX1JFR19ESVIpDQorDQorI2RlZmluZSBtdGtfcGN0cmxfZ2V0X291dChodywgZ3BpbykJ
-CQlcDQorCW10a19od19nZXRfdmFsdWVfd3JhcChodywgZ3BpbywgUElOQ1RSTF9QSU5fUkVHX0RP
-KQ0KKw0KKyNkZWZpbmUgbXRrX3BjdHJsX2dldF9pbihodywgZ3BpbykJCQlcDQorCW10a19od19n
-ZXRfdmFsdWVfd3JhcChodywgZ3BpbywgUElOQ1RSTF9QSU5fUkVHX0RJKQ0KKw0KKyNkZWZpbmUg
-bXRrX3BjdHJsX2dldF9zbXQoaHcsIGdwaW8pCQkJXA0KKwltdGtfaHdfZ2V0X3ZhbHVlX3dyYXAo
-aHcsIGdwaW8sIFBJTkNUUkxfUElOX1JFR19TTVQpDQorDQorI2RlZmluZSBtdGtfcGN0cmxfZ2V0
-X2llcyhodywgZ3BpbykJCQlcDQorCW10a19od19nZXRfdmFsdWVfd3JhcChodywgZ3BpbywgUElO
-Q1RSTF9QSU5fUkVHX0lFUykNCisNCisjZGVmaW5lIG10a19wY3RybF9nZXRfZHJpdmluZyhodywg
-Z3BpbykJCQlcDQorCW10a19od19nZXRfdmFsdWVfd3JhcChodywgZ3BpbywgUElOQ1RSTF9QSU5f
-UkVHX0RSVikNCisNCitzc2l6ZV90IG10a19wY3RybF9zaG93X29uZV9waW4oc3RydWN0IG10a19w
-aW5jdHJsICpodywNCisJdW5zaWduZWQgaW50IGdwaW8sIGNoYXIgKmJ1ZiwgdW5zaWduZWQgaW50
-IGJ1ZkxlbikNCit7DQorCWludCBwaW5tdXgsIHB1bGx1cCwgcHVsbGVuLCBsZW4gPSAwLCByMSA9
-IC0xLCByMCA9IC0xOw0KKwljb25zdCBzdHJ1Y3QgbXRrX3Bpbl9kZXNjICpkZXNjOw0KKw0KKwlp
-ZiAoZ3BpbyA+IGh3LT5zb2MtPm5waW5zKQ0KKwkJcmV0dXJuIC1FSU5WQUw7DQorDQorCWRlc2Mg
-PSAoY29uc3Qgc3RydWN0IG10a19waW5fZGVzYyAqKSZody0+c29jLT5waW5zW2dwaW9dOw0KKwlw
-aW5tdXggPSBtdGtfcGN0cmxfZ2V0X3Bpbm11eChodywgZ3Bpbyk7DQorCWlmIChwaW5tdXggPj0g
-aHctPnNvYy0+bmZ1bmNzKQ0KKwkJcGlubXV4IC09IGh3LT5zb2MtPm5mdW5jczsNCisNCisJbXRr
-X3BpbmNvbmZfYmlhc19nZXRfY29tYm8oaHcsIGRlc2MsICZwdWxsdXAsICZwdWxsZW4pOw0KKwlp
-ZiAocHVsbGVuID09IE1US19QVVBEX1NFVF9SMVIwXzAwKSB7DQorCQlwdWxsZW4gPSAwOw0KKwkJ
-cjEgPSAwOw0KKwkJcjAgPSAwOw0KKwl9IGVsc2UgaWYgKHB1bGxlbiA9PSBNVEtfUFVQRF9TRVRf
-UjFSMF8wMSkgew0KKwkJcHVsbGVuID0gMTsNCisJCXIxID0gMDsNCisJCXIwID0gMTsNCisJfSBl
-bHNlIGlmIChwdWxsZW4gPT0gTVRLX1BVUERfU0VUX1IxUjBfMTApIHsNCisJCXB1bGxlbiA9IDE7
-DQorCQlyMSA9IDE7DQorCQlyMCA9IDA7DQorCX0gZWxzZSBpZiAocHVsbGVuID09IE1US19QVVBE
-X1NFVF9SMVIwXzExKSB7DQorCQlwdWxsZW4gPSAxOw0KKwkJcjEgPSAxOw0KKwkJcjAgPSAxOw0K
-Kwl9IGVsc2UgaWYgKHB1bGxlbiAhPSBNVEtfRElTQUJMRSAmJiBwdWxsZW4gIT0gTVRLX0VOQUJM
-RSkgew0KKwkJcHVsbGVuID0gMDsNCisJfQ0KKwlsZW4gKz0gc25wcmludGYoYnVmICsgbGVuLCBi
-dWZMZW4gLSBsZW4sDQorCQkJIiUwM2Q6ICUxZCUxZCUxZCUxZCUwMmQlMWQlMWQlMWQlMWQiLA0K
-KwkJCWdwaW8sDQorCQkJcGlubXV4LA0KKwkJCW10a19wY3RybF9nZXRfZGlyZWN0aW9uKGh3LCBn
-cGlvKSwNCisJCQltdGtfcGN0cmxfZ2V0X291dChodywgZ3BpbyksDQorCQkJbXRrX3BjdHJsX2dl
-dF9pbihodywgZ3BpbyksDQorCQkJbXRrX3BjdHJsX2dldF9kcml2aW5nKGh3LCBncGlvKSwNCisJ
-CQltdGtfcGN0cmxfZ2V0X3NtdChodywgZ3BpbyksDQorCQkJbXRrX3BjdHJsX2dldF9pZXMoaHcs
-IGdwaW8pLA0KKwkJCXB1bGxlbiwNCisJCQlwdWxsdXApOw0KKw0KKwlpZiAocjEgIT0gLTEpIHsN
-CisJCWxlbiArPSBzbnByaW50ZihidWYgKyBsZW4sIGJ1ZkxlbiAtIGxlbiwgIiAoJTFkICUxZClc
-biIsDQorCQkJcjEsIHIwKTsNCisJfSBlbHNlIHsNCisJCWxlbiArPSBzbnByaW50ZihidWYgKyBs
-ZW4sIGJ1ZkxlbiAtIGxlbiwgIlxuIik7DQorCX0NCisNCisJcmV0dXJuIGxlbjsNCit9DQorDQor
-I2RlZmluZSBQSU5fREJHX0JVRl9TWiA5Ng0KK3N0YXRpYyB2b2lkIG10a19wY3RybF9kYmdfc2hv
-dyhzdHJ1Y3QgcGluY3RybF9kZXYgKnBjdGxkZXYsIHN0cnVjdCBzZXFfZmlsZSAqcywNCisJCQkg
-IHVuc2lnbmVkIGludCBncGlvKQ0KK3sNCisJc3RydWN0IG10a19waW5jdHJsICpodyA9IHBpbmN0
-cmxfZGV2X2dldF9kcnZkYXRhKHBjdGxkZXYpOw0KKwljaGFyIGJ1ZltQSU5fREJHX0JVRl9TWl07
-DQorDQorCSh2b2lkKW10a19wY3RybF9zaG93X29uZV9waW4oaHcsIGdwaW8sIGJ1ZiwgUElOX0RC
-R19CVUZfU1opOw0KKw0KKwlzZXFfcHJpbnRmKHMsICIlcyIsIGJ1Zik7DQorfQ0KKw0KIHN0YXRp
-YyBjb25zdCBzdHJ1Y3QgcGluY3RybF9vcHMgbXRrX3BjdGxvcHMgPSB7DQogCS5kdF9ub2RlX3Rv
-X21hcAkJPSBtdGtfcGN0cmxfZHRfbm9kZV90b19tYXAsDQogCS5kdF9mcmVlX21hcAkJPSBwaW5j
-dHJsX3V0aWxzX2ZyZWVfbWFwLA0KIAkuZ2V0X2dyb3Vwc19jb3VudAk9IG10a19wY3RybF9nZXRf
-Z3JvdXBzX2NvdW50LA0KIAkuZ2V0X2dyb3VwX25hbWUJCT0gbXRrX3BjdHJsX2dldF9ncm91cF9u
-YW1lLA0KIAkuZ2V0X2dyb3VwX3BpbnMJCT0gbXRrX3BjdHJsX2dldF9ncm91cF9waW5zLA0KKwku
-cGluX2RiZ19zaG93ICAgICAgICAgICA9IG10a19wY3RybF9kYmdfc2hvdywNCiB9Ow0KIA0KIHN0
-YXRpYyBpbnQgbXRrX3BteF9nZXRfZnVuY3NfY250KHN0cnVjdCBwaW5jdHJsX2RldiAqcGN0bGRl
-dikNCkBAIC02NDEsNiArNzQ5LDcgQEAgc3RhdGljIGludCBtdGtfcGNvbmZfZ3JvdXBfc2V0KHN0
-cnVjdCBwaW5jdHJsX2RldiAqcGN0bGRldiwgdW5zaWduZWQgZ3JvdXAsDQogCS5waW5fY29uZmln
-X2dldCA9IG10a19waW5jb25mX2dldCwNCiAJLnBpbl9jb25maWdfZ3JvdXBfZ2V0CT0gbXRrX3Bj
-b25mX2dyb3VwX2dldCwNCiAJLnBpbl9jb25maWdfZ3JvdXBfc2V0CT0gbXRrX3Bjb25mX2dyb3Vw
-X3NldCwNCisJLmlzX2dlbmVyaWMgPSB0cnVlLA0KIH07DQogDQogc3RhdGljIHN0cnVjdCBwaW5j
-dHJsX2Rlc2MgbXRrX2Rlc2MgPSB7DQpkaWZmIC0tZ2l0IGEvZHJpdmVycy9waW5jdHJsL21lZGlh
-dGVrL3BpbmN0cmwtcGFyaXMuaCBiL2RyaXZlcnMvcGluY3RybC9tZWRpYXRlay9waW5jdHJsLXBh
-cmlzLmgNCmluZGV4IDNkNDM3NzEuLmFmYjc2NTAgMTAwNjQ0DQotLS0gYS9kcml2ZXJzL3BpbmN0
-cmwvbWVkaWF0ZWsvcGluY3RybC1wYXJpcy5oDQorKysgYi9kcml2ZXJzL3BpbmN0cmwvbWVkaWF0
-ZWsvcGluY3RybC1wYXJpcy5oDQpAQCAtNjAsNiArNjAsOSBAQA0KIGludCBtdGtfcGFyaXNfcGlu
-Y3RybF9wcm9iZShzdHJ1Y3QgcGxhdGZvcm1fZGV2aWNlICpwZGV2LA0KIAkJCSAgICBjb25zdCBz
-dHJ1Y3QgbXRrX3Bpbl9zb2MgKnNvYyk7DQogDQorc3NpemVfdCBtdGtfcGN0cmxfc2hvd19vbmVf
-cGluKHN0cnVjdCBtdGtfcGluY3RybCAqaHcsDQorCXVuc2lnbmVkIGludCBncGlvLCBjaGFyICpi
-dWYsIHVuc2lnbmVkIGludCBidWZMZW4pOw0KKw0KIGV4dGVybiBjb25zdCBzdHJ1Y3QgZGV2X3Bt
-X29wcyBtdGtfcGFyaXNfcGluY3RybF9wbV9vcHM7DQogDQogI2VuZGlmIC8qIF9fUElOQ1RSTF9Q
-QVJJU19IICovDQotLSANCjEuOC4xLjEuZGlydHkNCg==
+Hello,
 
+syzbot found the following crash on:
+
+HEAD commit:    d96d875e Merge tag 'fixes_for_v5.5-rc8' of git://git.kerne..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=144f7601e00000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=83c00afca9cf5153
+dashboard link: https://syzkaller.appspot.com/bug?extid=63bdb6006961d8c917c6
+compiler:       clang version 10.0.0 (https://github.com/llvm/llvm-project/ c2443155a0fb245c8f17f2c1c72b6ea391e86e81)
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=17a1a721e00000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=11a91a95e00000
+
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+63bdb6006961d8c917c6@syzkaller.appspotmail.com
+
+netlink: 96 bytes leftover after parsing attributes in process `syz-executor899'.
+------------[ cut here ]------------
+WARNING: CPU: 1 PID: 8828 at net/sched/sch_cbq.c:1437 cbq_destroy_class net/sched/sch_cbq.c:1437 [inline]
+WARNING: CPU: 1 PID: 8828 at net/sched/sch_cbq.c:1437 cbq_destroy+0x324/0x400 net/sched/sch_cbq.c:1471
+Kernel panic - not syncing: panic_on_warn set ...
+CPU: 1 PID: 8828 Comm: syz-executor899 Not tainted 5.5.0-rc7-syzkaller #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
+Call Trace:
+ __dump_stack lib/dump_stack.c:77 [inline]
+ dump_stack+0x1fb/0x318 lib/dump_stack.c:118
+ panic+0x264/0x7a9 kernel/panic.c:221
+ __warn+0x209/0x210 kernel/panic.c:582
+ report_bug+0x1b6/0x2f0 lib/bug.c:195
+ fixup_bug arch/x86/kernel/traps.c:174 [inline]
+ do_error_trap+0xda/0x440 arch/x86/kernel/traps.c:267
+ do_invalid_op+0x36/0x40 arch/x86/kernel/traps.c:286
+ invalid_op+0x23/0x30 arch/x86/entry/entry_64.S:1027
+RIP: 0010:cbq_destroy_class net/sched/sch_cbq.c:1437 [inline]
+RIP: 0010:cbq_destroy+0x324/0x400 net/sched/sch_cbq.c:1471
+Code: 32 3d fb eb 06 90 e8 db 85 01 fb 49 8d 5f f8 4d 85 ff 49 0f 44 df 48 85 db 74 4b e8 c6 85 01 fb e9 01 ff ff ff e8 bc 85 01 fb <0f> 0b e9 47 ff ff ff 44 89 e9 80 e1 07 80 c1 03 38 c1 0f 8c 1a ff
+RSP: 0018:ffffc900078472b0 EFLAGS: 00010293
+RAX: ffffffff8674f7c4 RBX: ffff8880a7ef2320 RCX: ffff8880a25a2580
+RDX: 0000000000000000 RSI: 0000000000000001 RDI: 0000000000000000
+RBP: ffffc90007847308 R08: ffffffff8674f704 R09: fffffbfff13cd120
+R10: fffffbfff13cd120 R11: 0000000000000000 R12: ffff8880a7ef22c0
+R13: 0000000000000001 R14: dffffc0000000000 R15: 0000000000000000
+ qdisc_destroy+0x147/0x4c0 net/sched/sch_generic.c:958
+ qdisc_put+0x83/0xf0 net/sched/sch_generic.c:985
+ notify_and_destroy net/sched/sch_api.c:995 [inline]
+ qdisc_graft+0xcc8/0x11f0 net/sched/sch_api.c:1076
+ tc_modify_qdisc+0xddd/0x1d90 net/sched/sch_api.c:1663
+ rtnetlink_rcv_msg+0x889/0xd40 net/core/rtnetlink.c:5424
+ netlink_rcv_skb+0x19e/0x3e0 net/netlink/af_netlink.c:2477
+ rtnetlink_rcv+0x1c/0x20 net/core/rtnetlink.c:5442
+ netlink_unicast_kernel net/netlink/af_netlink.c:1302 [inline]
+ netlink_unicast+0x767/0x920 net/netlink/af_netlink.c:1328
+ netlink_sendmsg+0xa2c/0xd50 net/netlink/af_netlink.c:1917
+ sock_sendmsg_nosec net/socket.c:639 [inline]
+ sock_sendmsg net/socket.c:659 [inline]
+ kernel_sendmsg+0x109/0x140 net/socket.c:679
+ sock_no_sendpage+0x100/0x140 net/core/sock.c:2740
+ kernel_sendpage net/socket.c:3776 [inline]
+ sock_sendpage+0xd3/0x120 net/socket.c:937
+ pipe_to_sendpage+0x238/0x320 fs/splice.c:458
+ splice_from_pipe_feed fs/splice.c:512 [inline]
+ __splice_from_pipe+0x33d/0x870 fs/splice.c:636
+ splice_from_pipe fs/splice.c:671 [inline]
+ generic_splice_sendpage+0x114/0x180 fs/splice.c:844
+ do_splice_from fs/splice.c:863 [inline]
+ do_splice fs/splice.c:1170 [inline]
+ __do_sys_splice fs/splice.c:1447 [inline]
+ __se_sys_splice+0x719/0x1ac0 fs/splice.c:1427
+ __x64_sys_splice+0xe5/0x100 fs/splice.c:1427
+ do_syscall_64+0xf7/0x1c0 arch/x86/entry/common.c:294
+ entry_SYSCALL_64_after_hwframe+0x49/0xbe
+RIP: 0033:0x446e79
+Code: e8 5c b3 02 00 48 83 c4 18 c3 0f 1f 80 00 00 00 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 0f 83 0b 08 fc ff c3 66 2e 0f 1f 84 00 00 00 00
+RSP: 002b:00007fa4f9aa3d88 EFLAGS: 00000246 ORIG_RAX: 0000000000000113
+RAX: ffffffffffffffda RBX: 00000000006dcc98 RCX: 0000000000446e79
+RDX: 0000000000000009 RSI: 0000000000000000 RDI: 0000000000000007
+RBP: 00000000006dcc90 R08: 000000000004ffe0 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 00000000006dcc9c
+R13: 00000000004aed8e R14: 54c6c2ff093a6d32 R15: 0000000000010000
+Kernel Offset: disabled
+Rebooting in 86400 seconds..
+
+
+---
+This bug is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this bug report. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+syzbot can test patches for this bug, for details see:
+https://goo.gl/tpsmEJ#testing-patches
