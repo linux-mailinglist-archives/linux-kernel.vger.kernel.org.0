@@ -2,40 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4FC47144EAF
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Jan 2020 10:30:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 128D5145171
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Jan 2020 10:54:27 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729285AbgAVJak (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 22 Jan 2020 04:30:40 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42142 "EHLO mail.kernel.org"
+        id S1730811AbgAVJeZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 22 Jan 2020 04:34:25 -0500
+Received: from mail.kernel.org ([198.145.29.99]:48680 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729236AbgAVJag (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 Jan 2020 04:30:36 -0500
+        id S1729299AbgAVJeQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 22 Jan 2020 04:34:16 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E15932465B;
-        Wed, 22 Jan 2020 09:30:35 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 28C332467F;
+        Wed, 22 Jan 2020 09:34:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579685436;
-        bh=c0gxPAEd/zpRFcwzNNKQm8bhr5vCEg4u8wtCDuz6ZLE=;
+        s=default; t=1579685655;
+        bh=2WNeRsDryRBzpXQN44EbufOyKvzcVAspZ6zfgL6yVVw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=UD9GqsROSy9E1F4HVaP5Avijuy+d8TOmGCuN6Pd2NFtmtV9DqLAoEA5Ttf/KRx4ag
-         aypXzLwamft5aFVHK3E/M+m2f6wOo2ZcCw39xawx+qx3X48G5XLyXMoo11L7xg7rl8
-         SQqRV5te7w1cqvYx09l8qsEl9vIi1118QLdxEcPc=
+        b=SW6dmiQ4mAplkXmxKpXVKyRStrkObEDqxWlJ4OkwhbUwIpliHUHkat08k/6OEkoSz
+         cpZUUTjeApB8ov70HaCG59zZS8dj/Ux2DaEikV0h4lELyQz/tpYRwlD5GmJagnUJsD
+         wXSgBX6C6uUTEwp2IQt5pmsPsirBU26IBhMguqno=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Navid Emamdoost <navid.emamdoost@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Ben Hutchings <ben.hutchings@codethink.co.uk>
-Subject: [PATCH 4.4 14/76] wimax: i2400: Fix memory leak in i2400m_op_rfkill_sw_toggle
+        James Bottomley <James.Bottomley@HansenPartnership.com>,
+        Luo Jiaxing <luojiaxing@huawei.com>,
+        John Garry <john.garry@huawei.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>
+Subject: [PATCH 4.9 26/97] scsi: enclosure: Fix stale device oops with hot replug
 Date:   Wed, 22 Jan 2020 10:28:30 +0100
-Message-Id: <20200122092753.014344276@linuxfoundation.org>
+Message-Id: <20200122092800.422150517@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200122092751.587775548@linuxfoundation.org>
-References: <20200122092751.587775548@linuxfoundation.org>
+In-Reply-To: <20200122092755.678349497@linuxfoundation.org>
+References: <20200122092755.678349497@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,40 +46,45 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Navid Emamdoost <navid.emamdoost@gmail.com>
+From: James Bottomley <James.Bottomley@HansenPartnership.com>
 
-commit 6f3ef5c25cc762687a7341c18cbea5af54461407 upstream.
+commit 529244bd1afc102ab164429d338d310d5d65e60d upstream.
 
-In the implementation of i2400m_op_rfkill_sw_toggle() the allocated
-buffer for cmd should be released before returning. The
-documentation for i2400m_msg_to_dev() says when it returns the buffer
-can be reused. Meaning cmd should be released in either case. Move
-kfree(cmd) before return to be reached by all execution paths.
+Doing an add/remove/add on a SCSI device in an enclosure leads to an oops
+caused by poisoned values in the enclosure device list pointers.  The
+reason is because we are keeping the enclosure device across the enclosed
+device add/remove/add but the current code is doing a
+device_add/device_del/device_add on it.  This is the wrong thing to do in
+sysfs, so fix it by not doing a device_del on the enclosure device simply
+because of a hot remove of the drive in the slot.
 
-Fixes: 2507e6ab7a9a ("wimax: i2400: fix memory leak")
-Signed-off-by: Navid Emamdoost <navid.emamdoost@gmail.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Ben Hutchings <ben.hutchings@codethink.co.uk>
+[mkp: added missing email addresses]
+
+Fixes: 43d8eb9cfd0a ("[SCSI] ses: add support for enclosure component hot removal")
+Link: https://lore.kernel.org/r/1578532892.3852.10.camel@HansenPartnership.com
+Signed-off-by: James Bottomley <James.Bottomley@HansenPartnership.com>
+Reported-by: Luo Jiaxing <luojiaxing@huawei.com>
+Tested-by: John Garry <john.garry@huawei.com>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- drivers/net/wimax/i2400m/op-rfkill.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/net/wimax/i2400m/op-rfkill.c
-+++ b/drivers/net/wimax/i2400m/op-rfkill.c
-@@ -142,12 +142,12 @@ int i2400m_op_rfkill_sw_toggle(struct wi
- 			"%d\n", result);
- 	result = 0;
- error_cmd:
--	kfree(cmd);
- 	kfree_skb(ack_skb);
- error_msg_to_dev:
- error_alloc:
- 	d_fnend(4, dev, "(wimax_dev %p state %d) = %d\n",
- 		wimax_dev, state, result);
-+	kfree(cmd);
- 	return result;
- }
- 
+---
+ drivers/misc/enclosure.c |    3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+--- a/drivers/misc/enclosure.c
++++ b/drivers/misc/enclosure.c
+@@ -419,10 +419,9 @@ int enclosure_remove_device(struct enclo
+ 		cdev = &edev->component[i];
+ 		if (cdev->dev == dev) {
+ 			enclosure_remove_links(cdev);
+-			device_del(&cdev->cdev);
+ 			put_device(dev);
+ 			cdev->dev = NULL;
+-			return device_add(&cdev->cdev);
++			return 0;
+ 		}
+ 	}
+ 	return -ENODEV;
 
 
