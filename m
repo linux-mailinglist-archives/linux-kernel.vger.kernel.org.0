@@ -2,36 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4E3BE1455A0
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Jan 2020 14:25:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D7B251455AE
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Jan 2020 14:25:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730193AbgAVNXp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 22 Jan 2020 08:23:45 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42064 "EHLO mail.kernel.org"
+        id S1730977AbgAVNYS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 22 Jan 2020 08:24:18 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43120 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730782AbgAVNXl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 Jan 2020 08:23:41 -0500
+        id S1730958AbgAVNYQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 22 Jan 2020 08:24:16 -0500
 Received: from localhost (unknown [84.241.205.26])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1CC46205F4;
-        Wed, 22 Jan 2020 13:23:39 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1EA9A2468D;
+        Wed, 22 Jan 2020 13:24:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579699420;
-        bh=lCuu7sL1e/H2b4/0FmtQ9bkOCclElc5kZCwTiINyETA=;
+        s=default; t=1579699455;
+        bh=2XFJKf9YRkxVNoy0KmpGHz7h35hFjbn2m6Ub3IWWJng=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=p4u92QJ31H6LN0R8oUacs+f3ib3n9EkZ7B/65G/u30mYTkporCgJTwGgDLrKlC2Dr
-         Ok824KjtYcfyVUdeBU8gMBGeE8SD2cZnAy1n9XO2pqtOP3qCdBkfs2sYETCwk6xB3S
-         VW240ovV9ZKLkIq/6tPy0UtRcifae4np+D1X4Z0c=
+        b=fJaXxKPC0h6owD+4O7COaUW/Nh33k8Y8ZCazKSmrEh9eanaSoDKGEz2+Eq1gAwmAI
+         NIIvDdo/o80jGTBWjnq1lGPF/EZ/H8LLPNQKkfeoV8ETMGk153MLsa1IIq/cq7dtb4
+         M9CIey4DfxmZ9lQmwQmwrRDpDmQR1TAzr6ltPd8g=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, John Fastabend <john.fastabend@gmail.com>,
         Daniel Borkmann <daniel@iogearbox.net>,
-        Song Liu <songliubraving@fb.com>
-Subject: [PATCH 5.4 112/222] bpf: Sockmap/tls, msg_push_data may leave end mark in place
-Date:   Wed, 22 Jan 2020 10:28:18 +0100
-Message-Id: <20200122092841.753381385@linuxfoundation.org>
+        Jonathan Lemon <jonathan.lemon@gmail.com>
+Subject: [PATCH 5.4 115/222] bpf: Sockmap/tls, fix pop data with SK_DROP return code
+Date:   Wed, 22 Jan 2020 10:28:21 +0100
+Message-Id: <20200122092841.966043129@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
 In-Reply-To: <20200122092833.339495161@linuxfoundation.org>
 References: <20200122092833.339495161@linuxfoundation.org>
@@ -46,39 +46,65 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: John Fastabend <john.fastabend@gmail.com>
 
-commit cf21e9ba1eb86c9333ca5b05b2f1cc94021bcaef upstream.
+commit 7361d44896ff20d48bdd502d1a0cd66308055d45 upstream.
 
-Leaving an incorrect end mark in place when passing to crypto
-layer will cause crypto layer to stop processing data before
-all data is encrypted. To fix clear the end mark on push
-data instead of expecting users of the helper to clear the
-mark value after the fact.
+When user returns SK_DROP we need to reset the number of copied bytes
+to indicate to the user the bytes were dropped and not sent. If we
+don't reset the copied arg sendmsg will return as if those bytes were
+copied giving the user a positive return value.
 
-This happens when we push data into the middle of a skmsg and
-have room for it so we don't do a set of copies that already
-clear the end flag.
+This works as expected today except in the case where the user also
+pops bytes. In the pop case the sg.size is reduced but we don't correctly
+account for this when copied bytes is reset. The popped bytes are not
+accounted for and we return a small positive value potentially confusing
+the user.
 
-Fixes: 6fff607e2f14b ("bpf: sk_msg program helper bpf_msg_push_data")
+The reason this happens is due to a typo where we do the wrong comparison
+when accounting for pop bytes. In this fix notice the if/else is not
+needed and that we have a similar problem if we push data except its not
+visible to the user because if delta is larger the sg.size we return a
+negative value so it appears as an error regardless.
+
+Fixes: 7246d8ed4dcce ("bpf: helper to pop data from messages")
 Signed-off-by: John Fastabend <john.fastabend@gmail.com>
 Signed-off-by: Daniel Borkmann <daniel@iogearbox.net>
-Acked-by: Song Liu <songliubraving@fb.com>
+Acked-by: Jonathan Lemon <jonathan.lemon@gmail.com>
 Cc: stable@vger.kernel.org
-Link: https://lore.kernel.org/bpf/20200111061206.8028-6-john.fastabend@gmail.com
+Link: https://lore.kernel.org/bpf/20200111061206.8028-9-john.fastabend@gmail.com
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- net/core/filter.c |    1 +
- 1 file changed, 1 insertion(+)
+ net/ipv4/tcp_bpf.c |    5 +----
+ net/tls/tls_sw.c   |    5 +----
+ 2 files changed, 2 insertions(+), 8 deletions(-)
 
---- a/net/core/filter.c
-+++ b/net/core/filter.c
-@@ -2415,6 +2415,7 @@ BPF_CALL_4(bpf_msg_push_data, struct sk_
- 
- 		sk_msg_iter_var_next(i);
- 		sg_unmark_end(psge);
-+		sg_unmark_end(&rsge);
- 		sk_msg_iter_next(msg, end);
+--- a/net/ipv4/tcp_bpf.c
++++ b/net/ipv4/tcp_bpf.c
+@@ -315,10 +315,7 @@ more_data:
+ 		 */
+ 		delta = msg->sg.size;
+ 		psock->eval = sk_psock_msg_verdict(sk, psock, msg);
+-		if (msg->sg.size < delta)
+-			delta -= msg->sg.size;
+-		else
+-			delta = 0;
++		delta -= msg->sg.size;
  	}
  
+ 	if (msg->cork_bytes &&
+--- a/net/tls/tls_sw.c
++++ b/net/tls/tls_sw.c
+@@ -804,10 +804,7 @@ more_data:
+ 	if (psock->eval == __SK_NONE) {
+ 		delta = msg->sg.size;
+ 		psock->eval = sk_psock_msg_verdict(sk, psock, msg);
+-		if (delta < msg->sg.size)
+-			delta -= msg->sg.size;
+-		else
+-			delta = 0;
++		delta -= msg->sg.size;
+ 	}
+ 	if (msg->cork_bytes && msg->cork_bytes > msg->sg.size &&
+ 	    !enospc && !full_record) {
 
 
