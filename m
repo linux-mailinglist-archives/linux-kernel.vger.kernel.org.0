@@ -2,35 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2DAB3144F87
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Jan 2020 10:38:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 230B0144F88
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Jan 2020 10:39:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733109AbgAVJis (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 22 Jan 2020 04:38:48 -0500
-Received: from mail.kernel.org ([198.145.29.99]:55620 "EHLO mail.kernel.org"
+        id S1733117AbgAVJiv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 22 Jan 2020 04:38:51 -0500
+Received: from mail.kernel.org ([198.145.29.99]:55712 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731921AbgAVJij (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 Jan 2020 04:38:39 -0500
+        id S1733097AbgAVJim (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 22 Jan 2020 04:38:42 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 94AF424680;
-        Wed, 22 Jan 2020 09:38:38 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 481152467B;
+        Wed, 22 Jan 2020 09:38:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579685919;
-        bh=DtwRVVqTyZbpxbz99B6ySyjw+czejKuHgMCK2ACEiqE=;
+        s=default; t=1579685921;
+        bh=0W1V3W8CggVjNQyaN/zVeXev/bVrx1JcSlDjkkeRYbQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=K0pvfT1rJDBBGbUKrG5+mk4ohwNvJBjx6FKP6ZPFx5UFUVHM1JWasHCIDtHrndJe2
-         CpS3W50B2yaHpGVtxpioEv0cPhQSm6cTcEY7+h+NoczMOBp9Wn9K3dReqmpQdDL3KI
-         3NDvnewSbvMoxCjCQ2zs0qLjSWgK3HOU1iwFsyoU=
+        b=zi8q41BuzEWFbAZTJeAf8y42cznEPwIqZDHRGewj+LJJwP+cu77DxMeCpGVd+J7bD
+         euFZvm7ZO9TtG38W+mndCqxvHzTqXuPppzOWi8QtgZ2GIpbU9dpiNJqq2Rk1p4ZnCQ
+         UrC6b2dsDYetfuT+IWdeh2oWq3T1eU3qLg30tICE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Felix Fietkau <nbd@nbd.name>,
-        Johannes Berg <johannes.berg@intel.com>
-Subject: [PATCH 4.14 36/65] cfg80211: fix page refcount issue in A-MSDU decap
-Date:   Wed, 22 Jan 2020 10:29:21 +0100
-Message-Id: <20200122092756.021562257@linuxfoundation.org>
+        stable@vger.kernel.org,
+        syzbot+4c3cc6dbe7259dbf9054@syzkaller.appspotmail.com,
+        Jozsef Kadlecsik <kadlec@netfilter.org>,
+        Cong Wang <xiyou.wangcong@gmail.com>,
+        Pablo Neira Ayuso <pablo@netfilter.org>
+Subject: [PATCH 4.14 37/65] netfilter: fix a use-after-free in mtype_destroy()
+Date:   Wed, 22 Jan 2020 10:29:22 +0100
+Message-Id: <20200122092756.195019267@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
 In-Reply-To: <20200122092750.976732974@linuxfoundation.org>
 References: <20200122092750.976732974@linuxfoundation.org>
@@ -43,36 +46,36 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Felix Fietkau <nbd@nbd.name>
+From: Cong Wang <xiyou.wangcong@gmail.com>
 
-commit 81c044fc3bdc5b7be967cd3682528ea94b58c06a upstream.
+commit c120959387efa51479056fd01dc90adfba7a590c upstream.
 
-The fragments attached to a skb can be part of a compound page. In that case,
-page_ref_inc will increment the refcount for the wrong page. Fix this by
-using get_page instead, which calls page_ref_inc on the compound head and
-also checks for overflow.
+map->members is freed by ip_set_free() right before using it in
+mtype_ext_cleanup() again. So we just have to move it down.
 
-Fixes: 2b67f944f88c ("cfg80211: reuse existing page fragments in A-MSDU rx")
-Cc: stable@vger.kernel.org
-Signed-off-by: Felix Fietkau <nbd@nbd.name>
-Link: https://lore.kernel.org/r/20200113182107.20461-1-nbd@nbd.name
-Signed-off-by: Johannes Berg <johannes.berg@intel.com>
+Reported-by: syzbot+4c3cc6dbe7259dbf9054@syzkaller.appspotmail.com
+Fixes: 40cd63bf33b2 ("netfilter: ipset: Support extensions which need a per data destroy function")
+Acked-by: Jozsef Kadlecsik <kadlec@netfilter.org>
+Signed-off-by: Cong Wang <xiyou.wangcong@gmail.com>
+Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- net/wireless/util.c |    2 +-
+ net/netfilter/ipset/ip_set_bitmap_gen.h |    2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/net/wireless/util.c
-+++ b/net/wireless/util.c
-@@ -652,7 +652,7 @@ __frame_add_frag(struct sk_buff *skb, st
- 	struct skb_shared_info *sh = skb_shinfo(skb);
- 	int page_offset;
+--- a/net/netfilter/ipset/ip_set_bitmap_gen.h
++++ b/net/netfilter/ipset/ip_set_bitmap_gen.h
+@@ -64,9 +64,9 @@ mtype_destroy(struct ip_set *set)
+ 	if (SET_WITH_TIMEOUT(set))
+ 		del_timer_sync(&map->gc);
  
--	page_ref_inc(page);
-+	get_page(page);
- 	page_offset = ptr - page_address(page);
- 	skb_add_rx_frag(skb, sh->nr_frags, page, page_offset, len, size);
- }
+-	ip_set_free(map->members);
+ 	if (set->dsize && set->extensions & IPSET_EXT_DESTROY)
+ 		mtype_ext_cleanup(set);
++	ip_set_free(map->members);
+ 	ip_set_free(map);
+ 
+ 	set->data = NULL;
 
 
