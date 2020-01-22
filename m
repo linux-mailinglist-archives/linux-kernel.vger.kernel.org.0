@@ -2,37 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2104D144FBF
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Jan 2020 10:40:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 64FE31451EA
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Jan 2020 10:57:30 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387475AbgAVJkq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 22 Jan 2020 04:40:46 -0500
-Received: from mail.kernel.org ([198.145.29.99]:59492 "EHLO mail.kernel.org"
+        id S1729366AbgAVJas (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 22 Jan 2020 04:30:48 -0500
+Received: from mail.kernel.org ([198.145.29.99]:42358 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729830AbgAVJke (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 Jan 2020 04:40:34 -0500
+        id S1729334AbgAVJao (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 22 Jan 2020 04:30:44 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9C1A824680;
-        Wed, 22 Jan 2020 09:40:33 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2A6EA24672;
+        Wed, 22 Jan 2020 09:30:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579686034;
-        bh=4xSggBom71ZWppoMRXV5xVbze0sm9tnLQ1xiq8TZmv0=;
+        s=default; t=1579685443;
+        bh=JoBAKm2P5KYRaZHWujHHUbJl6+7uf7Ch3XDLnH4jh+4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=O5MJG71eGtHfxmo4ceACdBVGxNzeI5n7d9j+6MgR9S31cyfSb/U+7em8txlcMWDKC
-         mLDJEUShCrhswF47LFquuFfg1y4bDUq0IaJF8sIARCNe9hhuWFBD0CsV5fhTkWuPQi
-         OQBVH3wGwh8z0N9npTO+ZPvcIICeDqW5dyYGgtzE=
+        b=BlGlwjEKTUiqeAnA+l7Mh5WTy1yon2kfv6h5f+ClQpxxZfCJ7IvJBgiKpaPJsOfxo
+         7dU2pInUk/8eoKQ265u2xcm/tLlx1/Wrmqmf0JBe6yuj5vk+q298KfcSy4UalBTF7v
+         V5INO7JUzOx+BcwaxULFB6gCXYgfSdnuFYcBvaVU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Johan Hovold <johan@kernel.org>
-Subject: [PATCH 4.19 017/103] USB: serial: quatech2: handle unbound ports
+        stable@vger.kernel.org, Hulk Robot <hulkci@huawei.com>,
+        Mukesh Ojha <mojha@codeaurora.org>,
+        YueHaibing <yuehaibing@huawei.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Ben Hutchings <ben.hutchings@codethink.co.uk>
+Subject: [PATCH 4.4 17/76] dccp: Fix memleak in __feat_register_sp
 Date:   Wed, 22 Jan 2020 10:28:33 +0100
-Message-Id: <20200122092806.279006595@linuxfoundation.org>
+Message-Id: <20200122092753.340235007@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200122092803.587683021@linuxfoundation.org>
-References: <20200122092803.587683021@linuxfoundation.org>
+In-Reply-To: <20200122092751.587775548@linuxfoundation.org>
+References: <20200122092751.587775548@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -42,52 +46,39 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Johan Hovold <johan@kernel.org>
+From: YueHaibing <yuehaibing@huawei.com>
 
-commit 9715a43eea77e42678a1002623f2d9a78f5b81a1 upstream.
+commit 1d3ff0950e2b40dc861b1739029649d03f591820 upstream.
 
-Check for NULL port data in the modem- and line-status handlers to avoid
-dereferencing a NULL pointer in the unlikely case where a port device
-isn't bound to a driver (e.g. after an allocation failure on port
-probe).
+If dccp_feat_push_change fails, we forget free the mem
+which is alloced by kmemdup in dccp_feat_clone_sp_val.
 
-Note that the other (stubbed) event handlers qt2_process_xmit_empty()
-and qt2_process_flush() would need similar sanity checks in case they
-are ever implemented.
-
-Fixes: f7a33e608d9a ("USB: serial: add quatech2 usb to serial driver")
-Cc: stable <stable@vger.kernel.org>     # 3.5
-Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Signed-off-by: Johan Hovold <johan@kernel.org>
+Reported-by: Hulk Robot <hulkci@huawei.com>
+Fixes: e8ef967a54f4 ("dccp: Registration routines for changing feature values")
+Reviewed-by: Mukesh Ojha <mojha@codeaurora.org>
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Ben Hutchings <ben.hutchings@codethink.co.uk>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- drivers/usb/serial/quatech2.c |    6 ++++++
- 1 file changed, 6 insertions(+)
+ net/dccp/feat.c |    7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
 
---- a/drivers/usb/serial/quatech2.c
-+++ b/drivers/usb/serial/quatech2.c
-@@ -864,7 +864,10 @@ static void qt2_update_msr(struct usb_se
- 	u8 newMSR = (u8) *ch;
- 	unsigned long flags;
+--- a/net/dccp/feat.c
++++ b/net/dccp/feat.c
+@@ -738,7 +738,12 @@ static int __feat_register_sp(struct lis
+ 	if (dccp_feat_clone_sp_val(&fval, sp_val, sp_len))
+ 		return -ENOMEM;
  
-+	/* May be called from qt2_process_read_urb() for an unbound port. */
- 	port_priv = usb_get_serial_port_data(port);
-+	if (!port_priv)
-+		return;
+-	return dccp_feat_push_change(fn, feat, is_local, mandatory, &fval);
++	if (dccp_feat_push_change(fn, feat, is_local, mandatory, &fval)) {
++		kfree(fval.sp.vec);
++		return -ENOMEM;
++	}
++
++	return 0;
+ }
  
- 	spin_lock_irqsave(&port_priv->lock, flags);
- 	port_priv->shadowMSR = newMSR;
-@@ -892,7 +895,10 @@ static void qt2_update_lsr(struct usb_se
- 	unsigned long flags;
- 	u8 newLSR = (u8) *ch;
- 
-+	/* May be called from qt2_process_read_urb() for an unbound port. */
- 	port_priv = usb_get_serial_port_data(port);
-+	if (!port_priv)
-+		return;
- 
- 	if (newLSR & UART_LSR_BI)
- 		newLSR &= (u8) (UART_LSR_OE | UART_LSR_BI);
+ /**
 
 
