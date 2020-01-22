@@ -2,40 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0D16A144FAB
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Jan 2020 10:40:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6AA6F145005
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Jan 2020 10:43:16 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732834AbgAVJkD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 22 Jan 2020 04:40:03 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58382 "EHLO mail.kernel.org"
+        id S2387672AbgAVJnH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 22 Jan 2020 04:43:07 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35244 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1733104AbgAVJj6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 Jan 2020 04:39:58 -0500
+        id S2387803AbgAVJnD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 22 Jan 2020 04:43:03 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CD32924698;
-        Wed, 22 Jan 2020 09:39:56 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0F1C524686;
+        Wed, 22 Jan 2020 09:43:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579685997;
-        bh=4wZbYFNTr0SRfrRjKvqb0dHa2GAEiUJgedttLIvQc1s=;
+        s=default; t=1579686182;
+        bh=S3uee98AlMsi9nXtJdJVdcJ6q6OJiEvSw9r1WsbzTnU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=eYYYQeTvQxAxKZoiUB2RneZo5LLQXnrzPokn/6bYpEsR3zj6ph1bi1rzFmtY20QIy
-         hN2jByxhuYhlXJ2QGlPxW/mU6mfcwndYGqh7amhNGRwz20+Wi6eh1dArBeWnGGDqKi
-         k4CRNkMsJ1DxoswbYnbYiX4ZoYUxd8GZhjqWjC8Q=
+        b=MYBZ0gJc1ECqYiCrAUu1l2c0V9EujvmZJVzdCieR3uh02QR+30DlleD1aT1jSkqm4
+         G1o4aCvc5WWfy/hkqZtRDQQWBSqCgE8EniBwWNFPSXqhTfkh0v901D1vMXz4rnlfQf
+         egbNRedBjHlhTyz9CKW6akoIVHYbTWUqyZAouX+g=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, John Ogness <john.ogness@linutronix.de>,
-        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        Johan Hovold <johan@kernel.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 31/65] USB: serial: io_edgeport: use irqsave() in USBs complete callback
+        stable@vger.kernel.org,
+        syzbot+91bdd8eece0f6629ec8b@syzkaller.appspotmail.com,
+        Florian Westphal <fw@strlen.de>,
+        Pablo Neira Ayuso <pablo@netfilter.org>
+Subject: [PATCH 4.19 060/103] netfilter: arp_tables: init netns pointer in xt_tgdtor_param struct
 Date:   Wed, 22 Jan 2020 10:29:16 +0100
-Message-Id: <20200122092755.237700655@linuxfoundation.org>
+Message-Id: <20200122092812.951420105@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200122092750.976732974@linuxfoundation.org>
-References: <20200122092750.976732974@linuxfoundation.org>
+In-Reply-To: <20200122092803.587683021@linuxfoundation.org>
+References: <20200122092803.587683021@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,99 +45,124 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: John Ogness <john.ogness@linutronix.de>
+From: Florian Westphal <fw@strlen.de>
 
-[ Upstream commit dd1fae527612543e560e84f2eba4f6ef2006ac55 ]
+commit 212e7f56605ef9688d0846db60c6c6ec06544095 upstream.
 
-The USB completion callback does not disable interrupts while acquiring
-the lock. We want to remove the local_irq_disable() invocation from
-__usb_hcd_giveback_urb() and therefore it is required for the callback
-handler to disable the interrupts while acquiring the lock.
-The callback may be invoked either in IRQ or BH context depending on the
-USB host controller.
-Use the _irqsave() variant of the locking primitives.
+An earlier commit (1b789577f655060d98d20e,
+"netfilter: arp_tables: init netns pointer in xt_tgchk_param struct")
+fixed missing net initialization for arptables, but turns out it was
+incomplete.  We can get a very similar struct net NULL deref during
+error unwinding:
 
-Signed-off-by: John Ogness <john.ogness@linutronix.de>
-Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Signed-off-by: Johan Hovold <johan@kernel.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+general protection fault: 0000 [#1] PREEMPT SMP KASAN
+RIP: 0010:xt_rateest_put+0xa1/0x440 net/netfilter/xt_RATEEST.c:77
+ xt_rateest_tg_destroy+0x72/0xa0 net/netfilter/xt_RATEEST.c:175
+ cleanup_entry net/ipv4/netfilter/arp_tables.c:509 [inline]
+ translate_table+0x11f4/0x1d80 net/ipv4/netfilter/arp_tables.c:587
+ do_replace net/ipv4/netfilter/arp_tables.c:981 [inline]
+ do_arpt_set_ctl+0x317/0x650 net/ipv4/netfilter/arp_tables.c:1461
+
+Also init the netns pointer in xt_tgdtor_param struct.
+
+Fixes: add67461240c1d ("netfilter: add struct net * to target parameters")
+Reported-by: syzbot+91bdd8eece0f6629ec8b@syzkaller.appspotmail.com
+Signed-off-by: Florian Westphal <fw@strlen.de>
+Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- drivers/usb/serial/io_edgeport.c | 17 +++++++++++------
- 1 file changed, 11 insertions(+), 6 deletions(-)
+ net/ipv4/netfilter/arp_tables.c |   19 ++++++++++---------
+ 1 file changed, 10 insertions(+), 9 deletions(-)
 
-diff --git a/drivers/usb/serial/io_edgeport.c b/drivers/usb/serial/io_edgeport.c
-index 467870f504a5..8810de817095 100644
---- a/drivers/usb/serial/io_edgeport.c
-+++ b/drivers/usb/serial/io_edgeport.c
-@@ -652,6 +652,7 @@ static void edge_interrupt_callback(struct urb *urb)
- 	struct usb_serial_port *port;
- 	unsigned char *data = urb->transfer_buffer;
- 	int length = urb->actual_length;
-+	unsigned long flags;
- 	int bytes_avail;
- 	int position;
- 	int txCredits;
-@@ -683,7 +684,7 @@ static void edge_interrupt_callback(struct urb *urb)
- 		if (length > 1) {
- 			bytes_avail = data[0] | (data[1] << 8);
- 			if (bytes_avail) {
--				spin_lock(&edge_serial->es_lock);
-+				spin_lock_irqsave(&edge_serial->es_lock, flags);
- 				edge_serial->rxBytesAvail += bytes_avail;
- 				dev_dbg(dev,
- 					"%s - bytes_avail=%d, rxBytesAvail=%d, read_in_progress=%d\n",
-@@ -706,7 +707,8 @@ static void edge_interrupt_callback(struct urb *urb)
- 						edge_serial->read_in_progress = false;
- 					}
- 				}
--				spin_unlock(&edge_serial->es_lock);
-+				spin_unlock_irqrestore(&edge_serial->es_lock,
-+						       flags);
- 			}
- 		}
- 		/* grab the txcredits for the ports if available */
-@@ -719,9 +721,11 @@ static void edge_interrupt_callback(struct urb *urb)
- 				port = edge_serial->serial->port[portNumber];
- 				edge_port = usb_get_serial_port_data(port);
- 				if (edge_port->open) {
--					spin_lock(&edge_port->ep_lock);
-+					spin_lock_irqsave(&edge_port->ep_lock,
-+							  flags);
- 					edge_port->txCredits += txCredits;
--					spin_unlock(&edge_port->ep_lock);
-+					spin_unlock_irqrestore(&edge_port->ep_lock,
-+							       flags);
- 					dev_dbg(dev, "%s - txcredits for port%d = %d\n",
- 						__func__, portNumber,
- 						edge_port->txCredits);
-@@ -762,6 +766,7 @@ static void edge_bulk_in_callback(struct urb *urb)
- 	int			retval;
- 	__u16			raw_data_length;
- 	int status = urb->status;
-+	unsigned long flags;
- 
- 	if (status) {
- 		dev_dbg(&urb->dev->dev, "%s - nonzero read bulk status received: %d\n",
-@@ -781,7 +786,7 @@ static void edge_bulk_in_callback(struct urb *urb)
- 
- 	usb_serial_debug_data(dev, __func__, raw_data_length, data);
- 
--	spin_lock(&edge_serial->es_lock);
-+	spin_lock_irqsave(&edge_serial->es_lock, flags);
- 
- 	/* decrement our rxBytes available by the number that we just got */
- 	edge_serial->rxBytesAvail -= raw_data_length;
-@@ -805,7 +810,7 @@ static void edge_bulk_in_callback(struct urb *urb)
- 		edge_serial->read_in_progress = false;
- 	}
- 
--	spin_unlock(&edge_serial->es_lock);
-+	spin_unlock_irqrestore(&edge_serial->es_lock, flags);
+--- a/net/ipv4/netfilter/arp_tables.c
++++ b/net/ipv4/netfilter/arp_tables.c
+@@ -495,12 +495,13 @@ static inline int check_entry_size_and_h
+ 	return 0;
  }
  
+-static inline void cleanup_entry(struct arpt_entry *e)
++static void cleanup_entry(struct arpt_entry *e, struct net *net)
+ {
+ 	struct xt_tgdtor_param par;
+ 	struct xt_entry_target *t;
  
--- 
-2.20.1
-
+ 	t = arpt_get_target(e);
++	par.net      = net;
+ 	par.target   = t->u.kernel.target;
+ 	par.targinfo = t->data;
+ 	par.family   = NFPROTO_ARP;
+@@ -583,7 +584,7 @@ static int translate_table(struct net *n
+ 		xt_entry_foreach(iter, entry0, newinfo->size) {
+ 			if (i-- == 0)
+ 				break;
+-			cleanup_entry(iter);
++			cleanup_entry(iter, net);
+ 		}
+ 		return ret;
+ 	}
+@@ -926,7 +927,7 @@ static int __do_replace(struct net *net,
+ 	/* Decrease module usage counts and free resource */
+ 	loc_cpu_old_entry = oldinfo->entries;
+ 	xt_entry_foreach(iter, loc_cpu_old_entry, oldinfo->size)
+-		cleanup_entry(iter);
++		cleanup_entry(iter, net);
+ 
+ 	xt_free_table_info(oldinfo);
+ 	if (copy_to_user(counters_ptr, counters,
+@@ -989,7 +990,7 @@ static int do_replace(struct net *net, c
+ 
+  free_newinfo_untrans:
+ 	xt_entry_foreach(iter, loc_cpu_entry, newinfo->size)
+-		cleanup_entry(iter);
++		cleanup_entry(iter, net);
+  free_newinfo:
+ 	xt_free_table_info(newinfo);
+ 	return ret;
+@@ -1286,7 +1287,7 @@ static int compat_do_replace(struct net
+ 
+  free_newinfo_untrans:
+ 	xt_entry_foreach(iter, loc_cpu_entry, newinfo->size)
+-		cleanup_entry(iter);
++		cleanup_entry(iter, net);
+  free_newinfo:
+ 	xt_free_table_info(newinfo);
+ 	return ret;
+@@ -1513,7 +1514,7 @@ static int do_arpt_get_ctl(struct sock *
+ 	return ret;
+ }
+ 
+-static void __arpt_unregister_table(struct xt_table *table)
++static void __arpt_unregister_table(struct net *net, struct xt_table *table)
+ {
+ 	struct xt_table_info *private;
+ 	void *loc_cpu_entry;
+@@ -1525,7 +1526,7 @@ static void __arpt_unregister_table(stru
+ 	/* Decrease module usage counts and free resources */
+ 	loc_cpu_entry = private->entries;
+ 	xt_entry_foreach(iter, loc_cpu_entry, private->size)
+-		cleanup_entry(iter);
++		cleanup_entry(iter, net);
+ 	if (private->number > private->initial_entries)
+ 		module_put(table_owner);
+ 	xt_free_table_info(private);
+@@ -1565,7 +1566,7 @@ int arpt_register_table(struct net *net,
+ 
+ 	ret = nf_register_net_hooks(net, ops, hweight32(table->valid_hooks));
+ 	if (ret != 0) {
+-		__arpt_unregister_table(new_table);
++		__arpt_unregister_table(net, new_table);
+ 		*res = NULL;
+ 	}
+ 
+@@ -1580,7 +1581,7 @@ void arpt_unregister_table(struct net *n
+ 			   const struct nf_hook_ops *ops)
+ {
+ 	nf_unregister_net_hooks(net, ops, hweight32(table->valid_hooks));
+-	__arpt_unregister_table(table);
++	__arpt_unregister_table(net, table);
+ }
+ 
+ /* The built-in targets: standard (NULL) and error. */
 
 
