@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EDCC7145314
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Jan 2020 11:47:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8F03A145303
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Jan 2020 11:46:45 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729259AbgAVKrH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 22 Jan 2020 05:47:07 -0500
-Received: from mx0a-0014ca01.pphosted.com ([208.84.65.235]:5126 "EHLO
+        id S1729968AbgAVKqm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 22 Jan 2020 05:46:42 -0500
+Received: from mx0a-0014ca01.pphosted.com ([208.84.65.235]:23472 "EHLO
         mx0a-0014ca01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1729546AbgAVKpk (ORCPT
+        by vger.kernel.org with ESMTP id S1729567AbgAVKpl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 Jan 2020 05:45:40 -0500
+        Wed, 22 Jan 2020 05:45:41 -0500
 Received: from pps.filterd (m0042385.ppops.net [127.0.0.1])
-        by mx0a-0014ca01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 00MAgqZX009274;
+        by mx0a-0014ca01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 00MAgdbY009208;
         Wed, 22 Jan 2020 02:45:33 -0800
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cadence.com; h=from : to : cc :
  subject : date : message-id : in-reply-to : references : mime-version :
  content-type; s=proofpoint;
- bh=aDZTj+AW7EWerKl6gX+Oo7n8H0sTItxLWX7ygMcX7zs=;
- b=J989AgKp9xR1nqcpPS9O/m6oFqveVrZKCvxxOJI/ks4bx05h7tiWSMuZ2MzIqJgyvFEL
- xSvAYUJgSU5S1DF0YlKGR/qXn8g2B5DoF2BaRMIXPu/EIZSEh1CYlkxs0Thg23AgqaV/
- S3dmu2jSzrwp/YfAXDIPdq4fScI3JEvvh4xNRkM4ih4d9Gnz45H9DewwE5oEiD2ew70E
- cD5YLnyi0DChZMg5Snrkj7GBkji3N0MJ5syfMrUDaq/vxOA4SGA+ZJ10LRYM5eOxvXBD
- D1I7TWUtCCExSh8zt5Qomc/KbXfgFmuNchdugcgAUIyNhbu+vYTZygZfVBKCmoMnMHDm 9g== 
-Received: from nam04-co1-obe.outbound.protection.outlook.com (mail-co1nam04lp2051.outbound.protection.outlook.com [104.47.45.51])
-        by mx0a-0014ca01.pphosted.com with ESMTP id 2xkyf5mgyr-1
+ bh=g1ZoMRgjVa1BlxZO0YNEbQnuKkcwGGdEhwS/x7nIiv0=;
+ b=tDs/dnvYQJVTWRmKPWujMZbVtSvUk6iEjsUZBS0N9OXKmKPahemhPqSIe36dmT/yrRxj
+ u8CkgpzPeLL+c3JpOe0VoyhLS0XtSYaYQng0U6SAaHWq+vw4u3T57+mBtKnPJwQlkwF8
+ SVJ8iuebb370/TdIRjKt/tkm4dro9z4Nk0iZHvgtFDEHVQBI0zYGYUZPLQjbKNwOHUch
+ CmlpRnftlQlw4v5iagTl1CM1RSiemD65NPf14Y5hsYk1DbIsWZDLiWvEcHdek+0YmZen
+ Ciw/NbDxeYhfmMjamYMf6g6gwEL0xh++Ex/MKSF+7u/ZPlmLfSe1W/ZJT3iLYn1WuQP9 Xg== 
+Received: from nam11-bn8-obe.outbound.protection.outlook.com (mail-bn8nam11lp2174.outbound.protection.outlook.com [104.47.58.174])
+        by mx0a-0014ca01.pphosted.com with ESMTP id 2xkyf5mgyp-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
         Wed, 22 Jan 2020 02:45:33 -0800
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=EB7AM29ZYB6yxPswSSbpEqpg/UfZJ+SMFLWzPbqPOQOd/g3IVnPOhJ077O1OeWxY6HOESm+y3Onzg/1Q0KDly11Xdhqe4pVGO9sn+oNMHP2JGeKKJT0MBiN56+l+kQIqIu9tlwwJq/bHA1NR4pRUKSs98SiU8aK6CgCKJ/JAmdwaIcR28Ch+vfjhxpBLNPUNw0p8nqaaryWYG6U96WcmvCoe361bfw9tld3BesBxFgds3QtlXPke3YkdUVyhIMz/aDjKe0QqwgmJGY0n3yaEUEzSI0P/55PH8vzybiIeKRSw9FKSKF7X6G5I6fOL+NnmKsJ5n8+6dwb6Ln5rcQ72YA==
+ b=eMFlKvXCRmVzrc+St+FBkTR+RLvSRXhPzLLYIXN0bRz6bzupWrz44l4g7D17UzJSCX0MMdScCZt+mDD4Se4pjZgd/Zpgd5ZQfAGPm3prjLIfNVxxtyDrp9ZmbqyatyRrrnqU5WN1kdZyqiOXCkahdqz2w53hTxHf7Isuq/UwPrc7+4obXy9cbwu/ZXZi/0Up+I8Or80nSBXY6SzQNnz6psMZrZiTjVt4xGB7K6BM0hnPsXA9NppcaJH6y+pKd3Cu8LOC3IMcInFUthMAErs1+u3f/UFxo0piIUIHID4tEsszilS+z6wn1snHoFAFaNqaHUYwC92OfE4KSxAgS1xU+g==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=aDZTj+AW7EWerKl6gX+Oo7n8H0sTItxLWX7ygMcX7zs=;
- b=JRrjLp66sRjTLScHMWYFxeEMPJNY4ERcH1gI0c//cYHcc9qOQjbUzbzF1PYOWQMVE2nqY6yXg736Nee4BAVOXUWiXNGK4zgEtCi5Fa3JjH485rov4OVVT00PYfJwWM8z+hMROkfrY8vFsYlsMRg/SJa2jHOSXf3THjg77hbswxHwfjOv06ekhaXNl6BH+hAt1qA8HOpuW9iI5Lwo8zn8wuFq4Wj0IUtM6Y3nOf8lcc+C1G/FrYrQ8b0ADcHJPTUTpOBKoNh10Qky7Lv4Jq+O8gTPvJ6fftBf49JocjsmQSZst7p2HhDVYj7Bxqpp+z/w3OFRexkePP8cmCvWyDXO4A==
+ bh=g1ZoMRgjVa1BlxZO0YNEbQnuKkcwGGdEhwS/x7nIiv0=;
+ b=JCW3Q03uwMb2MPWFJgIzr1fd7sK3XBaSL6/c57MlEpBVP+RFvGVZNZbLJV/LyVSDQRG8TNG3/scWM0WG9UOkLHX/b6+QDyVrQWVEHHPOOANMw9t4lYEn13rZxNZQRtEhX8mUZVCa/Bky1XLoNGEnr0awFqJ49V18JXbJMOg/NeifdmdQopukFTJ2ZTGpi6fuZidKR0ehY6IgtI9nswk8ELXIiRsrep0UpxbJYUUXbsOSCwldkSENpYDpKOgbzJLm06FFB3SbMOcMLIrQmtWV6rCQutJogHUCbHyjAcaF7DMaj0VOhi7ywRgrntQ1jMVBnuTTOat1HeJyusHjt+JD/g==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
  158.140.1.28) smtp.rcpttodomain=ti.com smtp.mailfrom=cadence.com; dmarc=pass
  (p=none sp=none pct=100) action=none header.from=cadence.com; dkim=none
@@ -42,42 +42,41 @@ ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cadence.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=aDZTj+AW7EWerKl6gX+Oo7n8H0sTItxLWX7ygMcX7zs=;
- b=qolyDa0xvMFyMfhHjim1Py5VhtgNmI0D71cQ5osZ88RywJGVjrvRQArJfOPJll9k03e9czM5sD9EPCNZI+LApdH+Ai87FxJY1mnL2Ilo09rHgcqveq0Y4vf/e1OIp4GYNtr1gDuYEX+Q15bsNTb+onmJU6se/k+fT4NLSoupQRg=
-Received: from BYAPR07CA0030.namprd07.prod.outlook.com (2603:10b6:a02:bc::43)
- by MWHPR0701MB3772.namprd07.prod.outlook.com (2603:10b6:301:7b::32) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2644.21; Wed, 22 Jan
- 2020 10:45:30 +0000
-Received: from BN8NAM12FT009.eop-nam12.prod.protection.outlook.com
- (2a01:111:f400:fe5b::207) by BYAPR07CA0030.outlook.office365.com
- (2603:10b6:a02:bc::43) with Microsoft SMTP Server (version=TLS1_2,
+ bh=g1ZoMRgjVa1BlxZO0YNEbQnuKkcwGGdEhwS/x7nIiv0=;
+ b=MHZrDR8yGCik3cqmJu96+AdpT46lr0RS5iXtehsET2A+yORaUOvLMjSuG8gjjZi3P09qU/7vKn/Y3jjMHpIEoT/4kyDxi4vpZY9ic0mIIOVmk237wJhNMD6Hq+Hk4wwqDmQekOgMFJTwhZcg83+XIpx2LeFMMlnDSt0OYjT5O2U=
+Received: from DM5PR07CA0049.namprd07.prod.outlook.com (2603:10b6:4:ad::14) by
+ DM6PR07MB4939.namprd07.prod.outlook.com (2603:10b6:5:2e::22) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2644.18; Wed, 22 Jan 2020 10:45:30 +0000
+Received: from DM6NAM12FT012.eop-nam12.prod.protection.outlook.com
+ (2a01:111:f400:fe59::204) by DM5PR07CA0049.outlook.office365.com
+ (2603:10b6:4:ad::14) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2644.20 via Frontend
  Transport; Wed, 22 Jan 2020 10:45:30 +0000
 Received-SPF: Pass (protection.outlook.com: domain of cadence.com designates
  158.140.1.28 as permitted sender) receiver=protection.outlook.com;
  client-ip=158.140.1.28; helo=sjmaillnx1.cadence.com;
 Received: from sjmaillnx1.cadence.com (158.140.1.28) by
- BN8NAM12FT009.mail.protection.outlook.com (10.13.182.242) with Microsoft SMTP
+ DM6NAM12FT012.mail.protection.outlook.com (10.13.179.161) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2665.6 via Frontend Transport; Wed, 22 Jan 2020 10:45:29 +0000
+ 15.20.2665.6 via Frontend Transport; Wed, 22 Jan 2020 10:45:30 +0000
 Received: from maileu3.global.cadence.com (maileu3.cadence.com [10.160.88.99])
-        by sjmaillnx1.cadence.com (8.14.4/8.14.4) with ESMTP id 00MAjKBK001726
+        by sjmaillnx1.cadence.com (8.14.4/8.14.4) with ESMTP id 00MAjKBL001726
         (version=TLSv1/SSLv3 cipher=AES256-SHA bits=256 verify=OK);
-        Wed, 22 Jan 2020 02:45:28 -0800
+        Wed, 22 Jan 2020 02:45:29 -0800
 X-CrossPremisesHeadersFilteredBySendConnector: maileu3.global.cadence.com
 Received: from maileu3.global.cadence.com (10.160.88.99) by
  maileu3.global.cadence.com (10.160.88.99) with Microsoft SMTP Server (TLS) id
- 15.0.1367.3; Wed, 22 Jan 2020 11:45:23 +0100
+ 15.0.1367.3; Wed, 22 Jan 2020 11:45:24 +0100
 Received: from vleu-orange.cadence.com (10.160.88.83) by
  maileu3.global.cadence.com (10.160.88.99) with Microsoft SMTP Server (TLS) id
- 15.0.1367.3 via Frontend Transport; Wed, 22 Jan 2020 11:45:23 +0100
+ 15.0.1367.3 via Frontend Transport; Wed, 22 Jan 2020 11:45:24 +0100
 Received: from vleu-orange.cadence.com (localhost.localdomain [127.0.0.1])
-        by vleu-orange.cadence.com (8.14.4/8.14.4) with ESMTP id 00MAjNUA007327;
-        Wed, 22 Jan 2020 11:45:23 +0100
+        by vleu-orange.cadence.com (8.14.4/8.14.4) with ESMTP id 00MAjOKW007335;
+        Wed, 22 Jan 2020 11:45:24 +0100
 Received: (from yamonkar@localhost)
-        by vleu-orange.cadence.com (8.14.4/8.14.4/Submit) id 00MAjNu8007326;
-        Wed, 22 Jan 2020 11:45:23 +0100
+        by vleu-orange.cadence.com (8.14.4/8.14.4/Submit) id 00MAjO3t007331;
+        Wed, 22 Jan 2020 11:45:24 +0100
 From:   Yuti Amonkar <yamonkar@cadence.com>
 To:     <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
         <kishon@ti.com>, <robh+dt@kernel.org>, <mark.rutland@arm.com>,
@@ -85,9 +84,9 @@ To:     <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
 CC:     <jsarha@ti.com>, <tomi.valkeinen@ti.com>, <praneeth@ti.com>,
         <mparab@cadence.com>, <sjakhade@cadence.com>,
         <yamonkar@cadence.com>
-Subject: [PATCH v3 11/14] dt-bindings: phy: phy-cadence-torrent: Add platform dependent compatible string
-Date:   Wed, 22 Jan 2020 11:45:15 +0100
-Message-ID: <1579689918-7181-12-git-send-email-yamonkar@cadence.com>
+Subject: [PATCH v3 12/14] phy: cadence-torrent: Add platform dependent initialization structure
+Date:   Wed, 22 Jan 2020 11:45:16 +0100
+Message-ID: <1579689918-7181-13-git-send-email-yamonkar@cadence.com>
 X-Mailer: git-send-email 2.4.5
 In-Reply-To: <1579689918-7181-1-git-send-email-yamonkar@cadence.com>
 References: <1579689918-7181-1-git-send-email-yamonkar@cadence.com>
@@ -95,24 +94,24 @@ MIME-Version: 1.0
 Content-Type: text/plain
 X-OrganizationHeadersPreserved: maileu3.global.cadence.com
 X-EOPAttributedMessage: 0
-X-Forefront-Antispam-Report: CIP:158.140.1.28;IPV:CAL;SCL:-1;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(4636009)(376002)(346002)(39860400002)(136003)(396003)(36092001)(199004)(189003)(4744005)(86362001)(5660300002)(36756003)(2906002)(42186006)(316002)(186003)(54906003)(110136005)(26005)(336012)(426003)(2616005)(8936002)(7636002)(246002)(356004)(6666004)(478600001)(8676002)(107886003)(4326008)(26826003)(70586007)(70206006);DIR:OUT;SFP:1101;SCL:1;SRVR:MWHPR0701MB3772;H:sjmaillnx1.cadence.com;FPR:;SPF:Pass;LANG:en;PTR:corp.Cadence.COM;A:1;MX:1;
+X-Forefront-Antispam-Report: CIP:158.140.1.28;IPV:CAL;SCL:-1;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(4636009)(346002)(396003)(136003)(376002)(39860400002)(199004)(189003)(36092001)(4326008)(36756003)(2906002)(246002)(7636002)(6666004)(26005)(2616005)(186003)(336012)(107886003)(426003)(356004)(86362001)(316002)(26826003)(8676002)(8936002)(110136005)(478600001)(42186006)(5660300002)(54906003)(70586007)(70206006);DIR:OUT;SFP:1101;SCL:1;SRVR:DM6PR07MB4939;H:sjmaillnx1.cadence.com;FPR:;SPF:Pass;LANG:en;PTR:corp.cadence.com;A:1;MX:1;
 X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 75737e47-dfd8-4671-883a-08d79f2832f7
-X-MS-TrafficTypeDiagnostic: MWHPR0701MB3772:
-X-Microsoft-Antispam-PRVS: <MWHPR0701MB37724FEEF8DA1AF459E6BC2FD20C0@MWHPR0701MB3772.namprd07.prod.outlook.com>
-X-MS-Oob-TLC-OOBClassifiers: OLM:1079;
+X-MS-Office365-Filtering-Correlation-Id: 676ca15e-3ca7-4db0-a914-08d79f283322
+X-MS-TrafficTypeDiagnostic: DM6PR07MB4939:
+X-Microsoft-Antispam-PRVS: <DM6PR07MB493955F6C51CEEF87BFDB108D20C0@DM6PR07MB4939.namprd07.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:849;
 X-Forefront-PRVS: 029097202E
 X-MS-Exchange-SenderADCheck: 1
 X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: b+44m9GxOpcNdlQetLaAvFAgaGR2i9nu99kUgS0mt/dCdJf1FFQlPXh7YgUHq6xY7hjHOHOhuBEUN7CK9H5GC6fNRJLa7/VaudmXU5eGg8LYEkCTAXppgnv6yZNnlDFsC9fx0MOfZ5SKbWLTM7a/yGOprNarftFElQBhM2VUevfgiiIQ2Udg41Hcg2qiAdSftTLFxtuDTrqzaMpSf9O6K0Ujgyen4yN8fo1apGpzNir/NxmHna4S1LOEjm0Y03zk+QjSt/R312/1IlKVB7piKwe9o2p3KCB9CQ0eQG43zyDWCK7dCoJUathmkItx8P07sNXR+gQEwf9lf1v03OlwJkhc4QoT39kL+9z2Myx4P7hvHLv1mTBJ3PJt1EZF9oE5c+YMtXerIWY8/rHV24p9J7MX9UOCyq5Apb3Gu347SfMNaO3c56jcghvo8c4TlpitUwhjdsuKUTuhgG9GrqYvkN2O8yyCBmfUCrHUmaeidJCjlxSyN7TYCD4c95cnfSRK
+X-Microsoft-Antispam-Message-Info: xk/fjVfzkihW4fi1nekIETuQfZfQzfhpmQRrLm1k7UTnvmyx5j5nNt2mQIZ7f9G7WfkSyiyv2IWXGawPEQ41v+HGS8LxI2sjMxcd5FdD/ySxfHSWetJHo2n4UPUcqRhP5xVd6p9zgMhD3pDDWC2vVSij12eaM+7JIxZTXnMxBn+5ALuZ6t+BqqMJgvbdwWBWu9Rkygbx52NNiyCYbZP7r1KC+TzSYhUr4hTTxR7J7ovDrJBO4oqHDbA8lRiPVCOGfzGVF3o+vQB4yCXIh620pIYw8iyzcYzSE2HCu8q7OeJmvVQrIPZtMLTKOBIxwvaO97SpSucFFc4zTLZOrnPbRAu3kUhPJTl4l6YnNds4PRL0i8aUr0IxhSeUS4rDLhn7QVBUuX4SaYcMsNMBNHjMy6qIJaXXfs1tgC8KARN63xtj5fnYhSSLxWP3zL/TPtIpTIW0Ku0nqXsZMmWXgC4scBB7sUsxD3MjaSnFFQTGBWHRbdAw9v0mtyZeVlV6C2Vm
 X-OriginatorOrg: cadence.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 Jan 2020 10:45:29.7416
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 Jan 2020 10:45:30.0462
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 75737e47-dfd8-4671-883a-08d79f2832f7
+X-MS-Exchange-CrossTenant-Network-Message-Id: 676ca15e-3ca7-4db0-a914-08d79f283322
 X-MS-Exchange-CrossTenant-Id: d36035c5-6ce6-4662-a3dc-e762e61ae4c9
 X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=d36035c5-6ce6-4662-a3dc-e762e61ae4c9;Ip=[158.140.1.28];Helo=[sjmaillnx1.cadence.com]
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MWHPR0701MB3772
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR07MB4939
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.572
  definitions=2020-01-17_05:2020-01-16,2020-01-17 signatures=0
 X-Proofpoint-Spam-Details: rule=outbound_check_notspam policy=outbound_check score=0 mlxlogscore=999
@@ -125,29 +124,41 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add a new compatible string used for TI SoCs using Torrent PHY.
+From: Swapnil Jakhade <sjakhade@cadence.com>
 
-Signed-off-by: Yuti Amonkar <yamonkar@cadence.com>
-Reviewed-by: Rob Herring <robh@kernel.org>
+Add platform dependent initialization data for Torrent PHY used in TI's
+J721E SoC.
+
+Signed-off-by: Swapnil Jakhade <sjakhade@cadence.com>
 ---
- Documentation/devicetree/bindings/phy/phy-cadence-torrent.yaml | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ drivers/phy/cadence/phy-cadence-torrent.c | 9 +++++++++
+ 1 file changed, 9 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/phy/phy-cadence-torrent.yaml b/Documentation/devicetree/bindings/phy/phy-cadence-torrent.yaml
-index eb633d7..dbb8aa5 100644
---- a/Documentation/devicetree/bindings/phy/phy-cadence-torrent.yaml
-+++ b/Documentation/devicetree/bindings/phy/phy-cadence-torrent.yaml
-@@ -15,7 +15,9 @@ maintainers:
+diff --git a/drivers/phy/cadence/phy-cadence-torrent.c b/drivers/phy/cadence/phy-cadence-torrent.c
+index 0e03d3c..851a685 100644
+--- a/drivers/phy/cadence/phy-cadence-torrent.c
++++ b/drivers/phy/cadence/phy-cadence-torrent.c
+@@ -1770,11 +1770,20 @@ static const struct cdns_torrent_data cdns_map_torrent = {
+ 	.reg_offset_shift = 0x2,
+ };
  
- properties:
-   compatible:
--    const: cdns,torrent-phy
-+    enum:
-+      - cdns,torrent-phy
-+      - ti,j721e-serdes-10g
- 
-   clocks:
-     maxItems: 1
++static const struct cdns_torrent_data ti_j721e_map_torrent = {
++	.block_offset_shift = 0x0,
++	.reg_offset_shift = 0x1,
++};
++
+ static const struct of_device_id cdns_torrent_phy_of_match[] = {
+ 	{
+ 		.compatible = "cdns,torrent-phy",
+ 		.data = &cdns_map_torrent,
+ 	},
++	{
++		.compatible = "ti,j721e-serdes-10g",
++		.data = &ti_j721e_map_torrent,
++	},
+ 	{}
+ };
+ MODULE_DEVICE_TABLE(of, cdns_torrent_phy_of_match);
 -- 
 2.4.5
 
