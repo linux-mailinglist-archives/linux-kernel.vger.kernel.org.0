@@ -2,114 +2,98 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 199171448A6
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Jan 2020 01:01:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 722F31448B5
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Jan 2020 01:06:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728890AbgAVABP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 21 Jan 2020 19:01:15 -0500
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:33583 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728665AbgAVABO (ORCPT
+        id S1728984AbgAVAGL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 21 Jan 2020 19:06:11 -0500
+Received: from mail-wr1-f54.google.com ([209.85.221.54]:37319 "EHLO
+        mail-wr1-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726876AbgAVAGK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 Jan 2020 19:01:14 -0500
-Received: by mail-wr1-f65.google.com with SMTP id b6so5435893wrq.0
-        for <linux-kernel@vger.kernel.org>; Tue, 21 Jan 2020 16:01:12 -0800 (PST)
+        Tue, 21 Jan 2020 19:06:10 -0500
+Received: by mail-wr1-f54.google.com with SMTP id w15so5438101wru.4;
+        Tue, 21 Jan 2020 16:06:09 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chrisdown.name; s=google;
-        h=date:from:to:cc:subject:message-id:mime-version:content-disposition;
-        bh=OHaBdf9m1dDSgiWgOEcClSMTZD84LoHiqTmQD6cEaTs=;
-        b=bV93vL/4fDzGXFO2JCLe7XSiny5jsOXP+1mc/RM3P5+9LAEdfRZ4M2qFZguvwNb7Xg
-         9F1VYmZZ0XO1/g/fAbDib/KRX8L3WacCqQvO4UFl28J2h5N0x8RjEjQsbICjFSJoWwur
-         dwzrNK6ji2knC+Pl++t+qqjSspXviqg+HIn8s=
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=g+zEcwis6ThXfT6mloNcDub5UhY7saRP+atehPWXbg8=;
+        b=pd+w6iy4YfZTG6ykUdSO1TopUQ12Jv6roaH0TcvurH8bkSdsLNUR5XlfusQZys8jb7
+         n0ccud8Vk8MPYofAVlXGh2qTO4hga+4PaQsB1WiRCiZ2fW1d/bwzWXUXmX8K3pcerq4V
+         p0cz/RpdezhVGDVIlSIgcKBhXmQEsqNaxEEbz/+cyGA+qByQZ2hGt6+pXDytk6vuxxhP
+         NsSZ97Wpa8QgUh5cnZaAKZXiKy+8XHOSJD1dpYwl+XLG5TrcfcVBUoD74P601uuGJszJ
+         d4C4xNOzei3ajlTz3yYa48LkE1KhPMie0nJTbMm6czwCk0UMMYY60U63MtrCIwu1Isnm
+         u/Ww==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition;
-        bh=OHaBdf9m1dDSgiWgOEcClSMTZD84LoHiqTmQD6cEaTs=;
-        b=f+Es6abNr9xLu/FE5BVN5mquTMVIgqvcoM0PQdrY/bLXN3pCVHJIIcd+aeDJ2RtODR
-         kZr8Qz7XSuva+QXcOwId13hZLK/o4h9aMCLCSyVG+WGWODs5SyCt9INaratWocn9uTFi
-         IFjNTDQrqIbiBA5XDADlcDXUlw7MYlf3f+DyE2CvS+3s0sLXNP+52Lg/5mayusQhb/rN
-         tK/4cVFqo2M4yDlBlt2qtcoNTnqAISxgFoUWRZzmEcjlgkWIFgNhSDGYlD3PHLn6Bin9
-         5CgnCI2gcVuM+rv9iA9WYs7oySTTGKDoDRVDYB1+hRxZertZdK+aPQih/0r/lxGXFscp
-         odRg==
-X-Gm-Message-State: APjAAAXOGZGdIIS6ZmBg86CsEjMAk7eNp2PptKItztON0Z3IIPqn1JOY
-        tax73KOUbyjYOSHgrbt07Kk25w==
-X-Google-Smtp-Source: APXvYqzLfa6mB53r67UDMjQCKejKBIn+YrmuY3wys2gdKrsrsMSEhdOHpEKYG/W3HLJzNJrxjyoBgQ==
-X-Received: by 2002:a5d:5234:: with SMTP id i20mr7998319wra.403.1579651271992;
-        Tue, 21 Jan 2020 16:01:11 -0800 (PST)
-Received: from localhost ([2620:10d:c092:180::1:58ec])
-        by smtp.gmail.com with ESMTPSA id n3sm1341159wmc.27.2020.01.21.16.01.11
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=g+zEcwis6ThXfT6mloNcDub5UhY7saRP+atehPWXbg8=;
+        b=qlHde4rQVwaUp5NgGokcasbLgXzC1ATaDoVYWedcd/OqLA9NL1TsLpWVQICkwQcS0k
+         7lNrDeocsLF1rWxBAL0RqRTOoL4QO9VmOszJ85qPBYB9OCQnT/9suDa9/qNG5qHFA20O
+         A0uUDxuIgiGwIRxRsQ2v6RfTYWpU7LMUFEIP9Y0UCFN+KXeNdoXhvd0KWiD3L8HWeXKi
+         bn2Tm51EyOLuyVyNRYGBh8O4BcysyN0I+nviwp8jkeuPH35fhXAC6kFRsQRk43BiMmLk
+         DAeKdt2YQfwGw4glNVm1Z2GEwB7YYyGBTU4gCXTfpew7QonFrLnB/XWsCuOlucFVZDUE
+         5o/Q==
+X-Gm-Message-State: APjAAAU29B9vH4oYwWMECt6Wmtw5cEB0AeGl4pzxOsWqGkJWUbTX9sxZ
+        5spivxQalwBbcw1qj/iCP1fVx4RP
+X-Google-Smtp-Source: APXvYqz4uwvRFSatzkcA5ap1t5Hf5v+Km0/1AT8ntk0tClPEZiprUcwpm4D70VT4r31uJR1MHO5shQ==
+X-Received: by 2002:adf:e984:: with SMTP id h4mr7748945wrm.275.1579651568492;
+        Tue, 21 Jan 2020 16:06:08 -0800 (PST)
+Received: from localhost.localdomain ([109.126.145.157])
+        by smtp.gmail.com with ESMTPSA id o4sm54527068wrw.97.2020.01.21.16.06.07
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 21 Jan 2020 16:01:11 -0800 (PST)
-Date:   Wed, 22 Jan 2020 00:01:10 +0000
-From:   Chris Down <chris@chrisdown.name>
-To:     bpf@vger.kernel.org, netdev@vger.kernel.org
-Cc:     Stanislav Fomichev <sdf@google.com>,
-        Andrii Nakryiko <andriin@fb.com>,
-        John Fastabend <john.fastabend@gmail.com>,
-        linux-kernel@vger.kernel.org, kernel-team@fb.com
-Subject: [PATCH v2] bpf: btf: Always output invariant hit in pahole DWARF to
- BTF transform
-Message-ID: <20200122000110.GA310073@chrisdown.name>
+        Tue, 21 Jan 2020 16:06:08 -0800 (PST)
+From:   Pavel Begunkov <asml.silence@gmail.com>
+To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Cc:     Alexander Viro <viro@zeniv.linux.org.uk>
+Subject: [POC RFC 0/3] splice(2) support for io_uring
+Date:   Wed, 22 Jan 2020 03:05:16 +0300
+Message-Id: <cover.1579649589.git.asml.silence@gmail.com>
+X-Mailer: git-send-email 2.24.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When trying to compile with CONFIG_DEBUG_INFO_BTF enabled, I got this
-error:
+It works well for basic cases, but there is still work to be done. E.g.
+it misses @hash_reg_file checks for the second (output) file. Anyway,
+there are some questions I want to discuss:
 
-    % make -s
-    Failed to generate BTF for vmlinux
-    Try to disable CONFIG_DEBUG_INFO_BTF
-    make[3]: *** [vmlinux] Error 1
+- why sqe->len is __u32? Splice uses size_t, and I think it's better
+to have something wider (e.g. u64) for fututre use. That's the story
+behind added sqe->splice_len.
 
-Compiling again without -s shows the true error (that pahole is
-missing), but since this is fatal, we should show the error
-unconditionally on stderr as well, not silence it using the `info`
-function. With this patch:
+- it requires 2 fds, and it's painful. Currently file managing is done
+by common path (e.g. io_req_set_file(), __io_req_aux_free()). I'm
+thinking to make each opcode function handle file grabbing/putting
+themself with some helpers, as it's done in the patch for splice's
+out-file.
+    1. Opcode handler knows, whether it have/needs a file, and thus
+       doesn't need extra checks done in common path.
+    2. It will be more consistent with splice.
+Objections? Ideas?
 
-    % make -s
-    BTF: .tmp_vmlinux.btf: pahole (pahole) is not available
-    Failed to generate BTF for vmlinux
-    Try to disable CONFIG_DEBUG_INFO_BTF
-    make[3]: *** [vmlinux] Error 1
+- do we need offset pointers with fallback to file->f_pos? Or is it
+enough to have offset value. Jens, I remember you added the first
+option somewhere, could you tell the reasoning?
 
-Signed-off-by: Chris Down <chris@chrisdown.name>
-Cc: Stanislav Fomichev <sdf@google.com>
-Cc: Andrii Nakryiko <andriin@fb.com>
-Cc: John Fastabend <john.fastabend@gmail.com>
-Cc: linux-kernel@vger.kernel.org
-Cc: netdev@vger.kernel.org
-Cc: bpf@vger.kernel.org
-Cc: kernel-team@fb.com
----
- scripts/link-vmlinux.sh | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/scripts/link-vmlinux.sh b/scripts/link-vmlinux.sh
-index c287ad9b3a67..bbe9be2bf5ff 100755
---- a/scripts/link-vmlinux.sh
-+++ b/scripts/link-vmlinux.sh
-@@ -108,13 +108,13 @@ gen_btf()
- 	local bin_arch
- 
- 	if ! [ -x "$(command -v ${PAHOLE})" ]; then
--		info "BTF" "${1}: pahole (${PAHOLE}) is not available"
-+		echo >&2 "BTF: ${1}: pahole (${PAHOLE}) is not available"
- 		return 1
- 	fi
- 
- 	pahole_ver=$(${PAHOLE} --version | sed -E 's/v([0-9]+)\.([0-9]+)/\1\2/')
- 	if [ "${pahole_ver}" -lt "113" ]; then
--		info "BTF" "${1}: pahole version $(${PAHOLE} --version) is too old, need at least v1.13"
-+		echo >&2 "BTF: ${1}: pahole version $(${PAHOLE} --version) is too old, need at least v1.13"
- 		return 1
- 	fi
- 
+Pavel Begunkov (3):
+  splice: make do_splice public
+  io_uring: add interface for getting files
+  io_uring: add splice(2) support
+
+ fs/io_uring.c                 | 152 ++++++++++++++++++++++++++++------
+ fs/splice.c                   |   6 +-
+ include/linux/splice.h        |   3 +
+ include/uapi/linux/io_uring.h |  16 +++-
+ 4 files changed, 147 insertions(+), 30 deletions(-)
+
 -- 
-2.25.0
+2.24.0
 
