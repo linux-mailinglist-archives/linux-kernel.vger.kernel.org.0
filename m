@@ -2,27 +2,27 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1F1D1144F8E
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Jan 2020 10:39:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3AAD414511C
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Jan 2020 10:52:16 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733146AbgAVJjG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 22 Jan 2020 04:39:06 -0500
-Received: from mail.kernel.org ([198.145.29.99]:56266 "EHLO mail.kernel.org"
+        id S1730816AbgAVJgw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 22 Jan 2020 04:36:52 -0500
+Received: from mail.kernel.org ([198.145.29.99]:52412 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1733134AbgAVJjB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 Jan 2020 04:39:01 -0500
+        id S1732125AbgAVJgr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 22 Jan 2020 04:36:47 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9C14724680;
-        Wed, 22 Jan 2020 09:39:00 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 35B7E24680;
+        Wed, 22 Jan 2020 09:36:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579685941;
-        bh=p+8GyNqwrHT4q0DGDk/9BN7UfY+AzIYXz6i8tMjSyjY=;
+        s=default; t=1579685806;
+        bh=K64ZCmFD7ZV3wzJnReJx5yB7iYzJMGbv5X2Acvba6Ts=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=BR6phXev8MBmwYrXy6XiarPd7ENm10/rKerk4cUQ0Nmlo1DGdOpjeDxDxGRlBaC/m
-         vE6E7GJ9/6FMYa2vy42MwumAgoqHSxA7FnrOVs92Bq4TaBkk3pJtbL8gS1SucfV/Ev
-         krSgNz9lxCEfOw3jZYlStjg7zACOzvvXuBRvAvgA=
+        b=TL+tFBN4sT4B103zRGfhI74o0+d5gIVJ8df/HxlQx8JVa3yMgEYeezGALc8wbCubg
+         XXpI+a03J1tV/nKOieFAxp5FDELE541aY7OryJtvtvvVWXQN48XO0dWqLVKXOuWBQS
+         3q2Oyq0qVcphUWtg4D3YSgu/cj4OsdnOqh0/IX1M=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -32,12 +32,12 @@ Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Woojung Huh <woojung.huh@microchip.com>,
         Microchip Linux Driver Support <UNGLinuxDriver@microchip.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.14 45/65] net: usb: lan78xx: limit size of local TSO packets
+Subject: [PATCH 4.9 86/97] net: usb: lan78xx: limit size of local TSO packets
 Date:   Wed, 22 Jan 2020 10:29:30 +0100
-Message-Id: <20200122092757.538297009@linuxfoundation.org>
+Message-Id: <20200122092810.126276788@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200122092750.976732974@linuxfoundation.org>
-References: <20200122092750.976732974@linuxfoundation.org>
+In-Reply-To: <20200122092755.678349497@linuxfoundation.org>
+References: <20200122092755.678349497@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -80,10 +80,10 @@ Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 --- a/drivers/net/usb/lan78xx.c
 +++ b/drivers/net/usb/lan78xx.c
-@@ -3612,6 +3612,7 @@ static int lan78xx_probe(struct usb_inte
+@@ -3375,6 +3375,7 @@ static int lan78xx_probe(struct usb_inte
  
- 	/* MTU range: 68 - 9000 */
- 	netdev->max_mtu = MAX_SINGLE_PACKET_SIZE;
+ 	if (netdev->mtu > (dev->hard_mtu - netdev->hard_header_len))
+ 		netdev->mtu = dev->hard_mtu - netdev->hard_header_len;
 +	netif_set_gso_max_size(netdev, MAX_SINGLE_PACKET_SIZE - MAX_HEADER);
  
  	dev->ep_blkin = (intf->cur_altsetting)->endpoint + 0;
