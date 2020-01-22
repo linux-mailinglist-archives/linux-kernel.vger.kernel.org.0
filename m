@@ -2,112 +2,98 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 66954144901
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Jan 2020 01:39:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7B65A144906
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Jan 2020 01:40:19 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728901AbgAVAjh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 21 Jan 2020 19:39:37 -0500
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:42925 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728609AbgAVAjg (ORCPT
+        id S1729050AbgAVAkP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 21 Jan 2020 19:40:15 -0500
+Received: from kvm5.telegraphics.com.au ([98.124.60.144]:47524 "EHLO
+        kvm5.telegraphics.com.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728665AbgAVAkP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 Jan 2020 19:39:36 -0500
-Received: by mail-pg1-f193.google.com with SMTP id s64so2445947pgb.9
-        for <linux-kernel@vger.kernel.org>; Tue, 21 Jan 2020 16:39:36 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=SZpsgyfgTg+rpsMj6itxLgYi2Mi1dgKH1+oFAHOSpN0=;
-        b=NB2RKMZ732XQsFQzHnptmiW/oQQJiXyVAjkEF036D2HE3q2YoBbmXEgYZzaGw+929X
-         2G3IGNXCqyCJSaKhFRl6T1hSSMtaMMR92nET1Q+81VUvLfg5cocDznowLKLoCv1ccSYa
-         /G/1JLcEfeEmMFFXVyWT1i/qUs/jjo1/nUE8EFldsZAltWDW7NZKjW5RgtWGDQ2WBS6F
-         28Qu7gE6FEgGwPmZRbTuA3i1Kh9KzpFZVc8E2DqP/+rWFNozXZ1K3GxLu5izOQItNkBY
-         PpGn4PSUL4xDq6Do9KPt/QAPC2G/7+aLE35bi9+lGyTwVZTS8lfdakpulElBh3L8GLM9
-         d2Kg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=SZpsgyfgTg+rpsMj6itxLgYi2Mi1dgKH1+oFAHOSpN0=;
-        b=dBvILQvI8ePyBeUOmEFl6ugt5SgZ7M+YPrnVEgCqyjOnsjfX8mgJ/UMthtBCow421m
-         YJNjB8IoWxCDi6pHB+9zqpRx6rGw4QoUlsXFTEALciPiLhhUOOgJhvoPZL8jw61+mfaP
-         rtIUspC3DZ5fK9+Xp6bt1A9HqhBClyAtw6rZsnA3LA0P2AYTUh0BfoRtPi29bVRMxa6e
-         FcPxJQ3kBXBRK9aYtxhcj394rKNzlqYb7Ve2I7HR7teC/MFEyGQbx7Dh6Q8aj6e0ma74
-         qGO7lMi1U3ITy2FJemQ7u9IiWcMBmfAle2PXrqPb5MgF3FpoPNFWuEndtHkgzXl23zjW
-         6ZfQ==
-X-Gm-Message-State: APjAAAVmoDKIqto8dXGIDv9MYQh3OIj4q8olPMfe7PHIWkpBibtWNNj6
-        HopcxZlbSfjah9lAcyqzF3rpmGSr3ng=
-X-Google-Smtp-Source: APXvYqwkN7biw9CpP0gW6qNJiifMwMv8JHW7EU+oQ5nGJ68k+VE9SDpQSxt9ZMLwqEZrqnOdhWikiQ==
-X-Received: by 2002:a65:48cb:: with SMTP id o11mr8418173pgs.313.1579653575886;
-        Tue, 21 Jan 2020 16:39:35 -0800 (PST)
-Received: from builder (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
-        by smtp.gmail.com with ESMTPSA id o19sm736501pjr.2.2020.01.21.16.39.34
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 21 Jan 2020 16:39:35 -0800 (PST)
-Date:   Tue, 21 Jan 2020 16:39:32 -0800
-From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     Chen Zhou <chenzhou10@huawei.com>
-Cc:     agross@kernel.org, lee.jones@linaro.org,
-        daniel.thompson@linaro.org, jingoohan1@gmail.com,
-        b.zolnierkie@samsung.com, kgunda@codeaurora.org,
-        linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        linux-fbdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH -next] backlight: qcom-wled: fix unsigned comparison to
- zero
-Message-ID: <20200122003932.GA3948@builder>
-References: <20200120130143.35363-1-chenzhou10@huawei.com>
+        Tue, 21 Jan 2020 19:40:15 -0500
+Received: from localhost (localhost.localdomain [127.0.0.1])
+        by kvm5.telegraphics.com.au (Postfix) with ESMTP id 31A0222D7F;
+        Tue, 21 Jan 2020 19:40:11 -0500 (EST)
+Date:   Wed, 22 Jan 2020 11:40:09 +1100 (AEDT)
+From:   Finn Thain <fthain@telegraphics.com.au>
+To:     Eric Dumazet <eric.dumazet@gmail.com>
+cc:     "David S. Miller" <davem@davemloft.net>,
+        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+        Chris Zankel <chris@zankel.net>,
+        Laurent Vivier <laurent@vivier.eu>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net v2 01/12] net/sonic: Add mutual exclusion for accessing
+ shared state
+In-Reply-To: <1b8d9cbe-94cf-2eb6-de44-2a2f9cb0a084@gmail.com>
+Message-ID: <alpine.LNX.2.21.1.2001221139480.8@nippy.intranet>
+References: <cover.1579641728.git.fthain@telegraphics.com.au> <d7c6081de558e2fe5693a35bb735724411134cb5.1579641728.git.fthain@telegraphics.com.au> <0113c00f-3f77-8324-95a8-31dd6f64fa6a@gmail.com> <alpine.LNX.2.21.1.2001221021590.8@nippy.intranet>
+ <1b8d9cbe-94cf-2eb6-de44-2a2f9cb0a084@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200120130143.35363-1-chenzhou10@huawei.com>
-User-Agent: Mutt/1.12.2 (2019-09-21)
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon 20 Jan 05:01 PST 2020, Chen Zhou wrote:
+On Tue, 21 Jan 2020, Eric Dumazet wrote:
 
-> Fixes coccicheck warning:
-> ./drivers/video/backlight/qcom-wled.c:1104:5-15:
-> 	WARNING: Unsigned expression compared with zero: string_len > 0
+> On 1/21/20 3:33 PM, Finn Thain wrote:
+> > On Tue, 21 Jan 2020, Eric Dumazet wrote:
+> > 
+> >> On 1/21/20 1:22 PM, Finn Thain wrote:
+> >>> The netif_stop_queue() call in sonic_send_packet() races with the
+> >>> netif_wake_queue() call in sonic_interrupt(). This causes issues
+> >>> like "NETDEV WATCHDOG: eth0 (macsonic): transmit queue 0 timed out".
+> >>> Fix this by disabling interrupts when accessing tx_skb[] and next_tx.
+> >>> Update a comment to clarify the synchronization properties.
+> >>>
+> >>> Fixes: efcce839360f ("[PATCH] macsonic/jazzsonic network drivers update")
+> >>> Tested-by: Stan Johnson <userm57@yahoo.com>
+> >>> Signed-off-by: Finn Thain <fthain@telegraphics.com.au>
+> >>
+> >>> @@ -284,9 +287,16 @@ static irqreturn_t sonic_interrupt(int irq, void *dev_id)
+> >>>  	struct net_device *dev = dev_id;
+> >>>  	struct sonic_local *lp = netdev_priv(dev);
+> >>>  	int status;
+> >>> +	unsigned long flags;
+> >>> +
+> >>> +	spin_lock_irqsave(&lp->lock, flags);
+> >>
+> >>
+> >> This is a hard irq handler, no need to block hard irqs.
+> >>
+> >> spin_lock() here is enough.
+> >>
+> > 
+> > Well, yes, assuming we're dealing with SMP [1]. Probably just disabling 
+> > pre-emption is all that will ever be needed.
+> > 
+> > Anyway, the real problem solved by disabling irqs is that macsonic must 
+> > avoid re-entrance of sonic_interrupt(). [2]
+> > 
+> > [1]
+> > https://lore.kernel.org/netdev/alpine.LNX.2.21.1.2001211026190.8@nippy.intranet/T/#m0523c8b2a26a410ed56889d9230c37ba1160d40a
+> > 
+> > [2]
+> > https://lore.kernel.org/netdev/alpine.LNX.2.21.1.2001211026190.8@nippy.intranet/T/#m1c8ca580d2b45e61a628d17839978d0bd5aaf061
+> > 
 > 
-> The unsigned variable string_len is assigned a return value from the call
-> to wled_configure, which may return negative error code.
+
+I was overlooking the fact that sonic_send_packet() really does have to 
+exclude sonic_interrupt(). So disabling irqs is mandatory here, right?
+
+> Oh well... 
+> 
+> I would rather keep the m68k specific wrapper...
 > 
 
-Afaict string_len is the return value of
-of_property_count_elems_of_size(), rather than wled_configure(). (And
-please append () to function names to make it even more obvious)
+If disabling irqs is unavoidable, the wrapper is redundant.
 
-Except for that your patch looks good, so please update the commit
-message and add my Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-
-Regards,
-Bjorn
-
-> Fixes: 775d2ffb4af6 ("backlight: qcom-wled: Restructure the driver for WLED3")
-> Signed-off-by: Chen Zhou <chenzhou10@huawei.com>
-> ---
->  drivers/video/backlight/qcom-wled.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
+> Please add a fat comment of why spin_lock_irqsave() is used, to avoid a 
+> future 'cleanup', since average network developer wont be aware of m68k 
+> oddities.
 > 
-> diff --git a/drivers/video/backlight/qcom-wled.c b/drivers/video/backlight/qcom-wled.c
-> index d46052d..3d276b3 100644
-> --- a/drivers/video/backlight/qcom-wled.c
-> +++ b/drivers/video/backlight/qcom-wled.c
-> @@ -956,8 +956,8 @@ static int wled_configure(struct wled *wled, int version)
->  	struct wled_config *cfg = &wled->cfg;
->  	struct device *dev = wled->dev;
->  	const __be32 *prop_addr;
-> -	u32 size, val, c, string_len;
-> -	int rc, i, j;
-> +	u32 size, val, c;
-> +	int rc, i, j, string_len;
->  
->  	const struct wled_u32_opts *u32_opts = NULL;
->  	const struct wled_u32_opts wled3_opts[] = {
-> -- 
-> 2.7.4
-> 
+
+OK.
