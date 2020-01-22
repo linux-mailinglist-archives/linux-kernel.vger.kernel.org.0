@@ -2,41 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1E52314506A
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Jan 2020 10:47:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 951E1144F95
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Jan 2020 10:39:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387856AbgAVJnT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 22 Jan 2020 04:43:19 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35488 "EHLO mail.kernel.org"
+        id S1733192AbgAVJjU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 22 Jan 2020 04:39:20 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56900 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387837AbgAVJnK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 Jan 2020 04:43:10 -0500
+        id S1733180AbgAVJjS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 22 Jan 2020 04:39:18 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 745842467B;
-        Wed, 22 Jan 2020 09:43:09 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C486D24684;
+        Wed, 22 Jan 2020 09:39:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579686189;
-        bh=1uSgDFWlOyqmdj8luV1rCXcZUiJea10XFnyoKQ6D5QQ=;
+        s=default; t=1579685958;
+        bh=h9wDXmwEsFdoPohpB5Y3eEkycsp8x/x34bOnIPfQ6gw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=yQ1oSkCs9o397YJzqOg9BAAzisMjQm0voFhXVHdtfPNVfTerTRVqZF/OOIH8Sy93o
-         5mIrQCyIeo9CYzqoVsA6pj47giCEWivLBnGrLYQhtYfyQzn2rkwJjNIt+HnZlAr2K+
-         Artl98dN6x4keC2YGJbtI+7thV7sBH79sg1ldgO0=
+        b=mNbVzZ1FfpYlO0dlSXNqWU0XV3T9eQaJ9XLi6h41h+WSp9ruIxBPpfRpo17uiNULr
+         ylHQiDMCer2Bl9H7nkdeZXuOqCatSWcxOGgKSPUrPeD8wUpMqYkHggxPmSK++rWCbZ
+         w8m7mInZ8iL816wzATFunZHNvsTnSIralWnSod4w=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
-        Jason Baron <jbaron@akamai.com>,
-        Neal Cardwell <ncardwell@google.com>,
-        Soheil Hassas Yeganeh <soheil@google.com>,
-        Jakub Kicinski <jakub.kicinski@netronome.com>
-Subject: [PATCH 4.19 080/103] tcp: refine rule to allow EPOLLOUT generation under mem pressure
+        stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>,
+        Kalle Valo <kvalo@codeaurora.org>
+Subject: [PATCH 4.14 51/65] cw1200: Fix a signedness bug in cw1200_load_firmware()
 Date:   Wed, 22 Jan 2020 10:29:36 +0100
-Message-Id: <20200122092814.811302071@linuxfoundation.org>
+Message-Id: <20200122092758.610144895@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200122092803.587683021@linuxfoundation.org>
-References: <20200122092803.587683021@linuxfoundation.org>
+In-Reply-To: <20200122092750.976732974@linuxfoundation.org>
+References: <20200122092750.976732974@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,57 +43,39 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Eric Dumazet <edumazet@google.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
 
-commit 216808c6ba6d00169fd2aa928ec3c0e63bef254f upstream.
+commit 4a50d454502f1401171ff061a5424583f91266db upstream.
 
-At the time commit ce5ec440994b ("tcp: ensure epoll edge trigger
-wakeup when write queue is empty") was added to the kernel,
-we still had a single write queue, combining rtx and write queues.
+The "priv->hw_type" is an enum and in this context GCC will treat it
+as an unsigned int so the error handling will never trigger.
 
-Once we moved the rtx queue into a separate rb-tree, testing
-if sk_write_queue is empty has been suboptimal.
-
-Indeed, if we have packets in the rtx queue, we probably want
-to delay the EPOLLOUT generation at the time incoming packets
-will free them, making room, but more importantly avoiding
-flooding application with EPOLLOUT events.
-
-Solution is to use tcp_rtx_and_write_queues_empty() helper.
-
-Fixes: 75c119afe14f ("tcp: implement rb-tree based retransmit queue")
-Signed-off-by: Eric Dumazet <edumazet@google.com>
-Cc: Jason Baron <jbaron@akamai.com>
-Cc: Neal Cardwell <ncardwell@google.com>
-Acked-by: Soheil Hassas Yeganeh <soheil@google.com>
-Signed-off-by: Jakub Kicinski <jakub.kicinski@netronome.com>
+Fixes: a910e4a94f69 ("cw1200: add driver for the ST-E CW1100 & CW1200 WLAN chipsets")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- net/ipv4/tcp.c |    6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
+ drivers/net/wireless/st/cw1200/fwio.c |    6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
---- a/net/ipv4/tcp.c
-+++ b/net/ipv4/tcp.c
-@@ -1077,8 +1077,7 @@ do_error:
+--- a/drivers/net/wireless/st/cw1200/fwio.c
++++ b/drivers/net/wireless/st/cw1200/fwio.c
+@@ -323,12 +323,12 @@ int cw1200_load_firmware(struct cw1200_c
  		goto out;
- out_err:
- 	/* make sure we wake any epoll edge trigger waiter */
--	if (unlikely(skb_queue_len(&sk->sk_write_queue) == 0 &&
--		     err == -EAGAIN)) {
-+	if (unlikely(tcp_rtx_and_write_queues_empty(sk) && err == -EAGAIN)) {
- 		sk->sk_write_space(sk);
- 		tcp_chrono_stop(sk, TCP_CHRONO_SNDBUF_LIMITED);
  	}
-@@ -1437,8 +1436,7 @@ out_err:
- 	sock_zerocopy_put_abort(uarg);
- 	err = sk_stream_error(sk, flags, err);
- 	/* make sure we wake any epoll edge trigger waiter */
--	if (unlikely(skb_queue_len(&sk->sk_write_queue) == 0 &&
--		     err == -EAGAIN)) {
-+	if (unlikely(tcp_rtx_and_write_queues_empty(sk) && err == -EAGAIN)) {
- 		sk->sk_write_space(sk);
- 		tcp_chrono_stop(sk, TCP_CHRONO_SNDBUF_LIMITED);
+ 
+-	priv->hw_type = cw1200_get_hw_type(val32, &major_revision);
+-	if (priv->hw_type < 0) {
++	ret = cw1200_get_hw_type(val32, &major_revision);
++	if (ret < 0) {
+ 		pr_err("Can't deduce hardware type.\n");
+-		ret = -ENOTSUPP;
+ 		goto out;
  	}
++	priv->hw_type = ret;
+ 
+ 	/* Set DPLL Reg value, and read back to confirm writes work */
+ 	ret = cw1200_reg_write_32(priv, ST90TDS_TSET_GEN_R_W_REG_ID,
 
 
