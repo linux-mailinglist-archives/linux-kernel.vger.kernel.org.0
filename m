@@ -2,119 +2,62 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C55D2144C91
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Jan 2020 08:43:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 30E68144CA8
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Jan 2020 08:53:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728733AbgAVHnq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 22 Jan 2020 02:43:46 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60462 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725883AbgAVHnq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 Jan 2020 02:43:46 -0500
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3C8A524655;
-        Wed, 22 Jan 2020 07:43:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579679025;
-        bh=/whmBYaC4rMnY2P9A7GfcDIpf7X1/9zZdmRFzlm610M=;
-        h=Date:From:To:Cc:Subject:From;
-        b=yb6xsOrGMvzG3Ptwiwt/om1+S/5rfFSIWAUUR4f6pNNliLpiYvtmiXhWU584zGew/
-         jYUHjCUYcFNzB1fHhY7G2jxFpxnPyiAa7+YfKOgXKE8FY4k/MDosdiCM9UBrEMua3s
-         GMvEFqwbJY+50BUM2pyEYrGCIcdNe8TSu1o3ixa8=
-Date:   Wed, 22 Jan 2020 08:43:43 +0100
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Jason Baron <jbaron@akamai.com>
-Cc:     linux-kernel@vger.kernel.org, kernel-team@android.com
-Subject: [PATCH] dynamic_debug: allow to work if debugfs is disabled
-Message-ID: <20200122074343.GA2099098@kroah.com>
+        id S1729098AbgAVHxI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 22 Jan 2020 02:53:08 -0500
+Received: from szxga06-in.huawei.com ([45.249.212.32]:57488 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726083AbgAVHxI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 22 Jan 2020 02:53:08 -0500
+Received: from DGGEMS408-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id AD14DC6E8B170EEAAC4C;
+        Wed, 22 Jan 2020 15:53:05 +0800 (CST)
+Received: from localhost.localdomain.localdomain (10.175.113.25) by
+ DGGEMS408-HUB.china.huawei.com (10.3.19.208) with Microsoft SMTP Server id
+ 14.3.439.0; Wed, 22 Jan 2020 15:52:57 +0800
+From:   Wei Yongjun <weiyongjun1@huawei.com>
+To:     David Howells <dhowells@redhat.com>
+CC:     Wei Yongjun <weiyongjun1@huawei.com>,
+        <linux-kernel@vger.kernel.org>, <kernel-janitors@vger.kernel.org>
+Subject: [PATCH -next v2] watch_queue: fix error return code in watch_queue_set_size()
+Date:   Wed, 22 Jan 2020 07:48:07 +0000
+Message-ID: <20200122074807.10849-1-weiyongjun1@huawei.com>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20200120085411.116252-1-weiyongjun1@huawei.com>
+References: <20200120085411.116252-1-weiyongjun1@huawei.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Content-Type:   text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7BIT
+X-Originating-IP: [10.175.113.25]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-With the realization that having debugfs enabled on "production" systems is
-generally not a good idea, debugfs is being disabled from more and more
-platforms over time.  However, the functionality of dynamic debugging still is
-needed at times, and since it relies on debugfs for its user api, having
-debugfs disabled also forces dynamic debug to be disabled.
+Fix to return negative error code -ENOMEM from the error handling
+case instead of 0, as done elsewhere in this function.
 
-To get around this, move the "control" file for dynamic_debug to procfs IFF
-debugfs is disabled.  This lets people turn on debugging as needed at runtime
-for individual driverfs and subsystems.
-
-Reported-by: many different companies
-Cc: Jason Baron <jbaron@akamai.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Fixes: 009b0aa00c5a ("pipe: Add general notification queue support")
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
 ---
- .../admin-guide/dynamic-debug-howto.rst         |  3 +++
- lib/Kconfig.debug                               |  2 +-
- lib/dynamic_debug.c                             | 17 ++++++++++++++---
- 3 files changed, 18 insertions(+), 4 deletions(-)
+ kernel/watch_queue.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/Documentation/admin-guide/dynamic-debug-howto.rst b/Documentation/admin-guide/dynamic-debug-howto.rst
-index 252e5ef324e5..41f43a373a6a 100644
---- a/Documentation/admin-guide/dynamic-debug-howto.rst
-+++ b/Documentation/admin-guide/dynamic-debug-howto.rst
-@@ -54,6 +54,9 @@ If you make a mistake with the syntax, the write will fail thus::
- 				<debugfs>/dynamic_debug/control
-   -bash: echo: write error: Invalid argument
+diff --git a/kernel/watch_queue.c b/kernel/watch_queue.c
+index f195cbbbb3d3..f1028761cb9c 100644
+--- a/kernel/watch_queue.c
++++ b/kernel/watch_queue.c
+@@ -251,6 +251,7 @@ long watch_queue_set_size(struct pipe_inode_info *pipe, unsigned int nr_notes)
+ 	if (ret < 0)
+ 		goto error;
  
-+Note, for systems without 'debugfs' enabled, the control file can be
-+also found in ``/proc/dynamic_debug/control``.
-+
- Viewing Dynamic Debug Behaviour
- ===============================
- 
-diff --git a/lib/Kconfig.debug b/lib/Kconfig.debug
-index 5ffe144c9794..01d4add8b963 100644
---- a/lib/Kconfig.debug
-+++ b/lib/Kconfig.debug
-@@ -98,7 +98,7 @@ config DYNAMIC_DEBUG
- 	bool "Enable dynamic printk() support"
- 	default n
- 	depends on PRINTK
--	depends on DEBUG_FS
-+	depends on (DEBUG_FS || PROC_FS)
- 	help
- 
- 	  Compiles debug level messages into the kernel, which would not
-diff --git a/lib/dynamic_debug.c b/lib/dynamic_debug.c
-index c60409138e13..077b2d6623ac 100644
---- a/lib/dynamic_debug.c
-+++ b/lib/dynamic_debug.c
-@@ -993,13 +993,24 @@ static __initdata int ddebug_init_success;
- 
- static int __init dynamic_debug_init_debugfs(void)
- {
--	struct dentry *dir;
-+	struct dentry *debugfs_dir;
-+	struct proc_dir_entry *procfs_dir;
- 
- 	if (!ddebug_init_success)
- 		return -ENODEV;
- 
--	dir = debugfs_create_dir("dynamic_debug", NULL);
--	debugfs_create_file("control", 0644, dir, NULL, &ddebug_proc_fops);
-+	/* Create the control file in debugfs if it is enabled */
-+	if (debugfs_initialized) {
-+		debugfs_dir = debugfs_create_dir("dynamic_debug", NULL);
-+		debugfs_create_file("control", 0644, debugfs_dir, NULL,
-+				    &ddebug_proc_fops);
-+		return 0;
-+	}
-+
-+	/* No debugfs so put it in procfs instead */
-+	procfs_dir = proc_mkdir("dynamic_debug", NULL);
-+	if (procfs_dir)
-+		proc_create("control", 0x644, procfs_dir, &ddebug_proc_fops);
- 
- 	return 0;
- }
--- 
-2.25.0
++	ret = -ENOMEM;
+ 	pages = kcalloc(sizeof(struct page *), nr_pages, GFP_KERNEL);
+ 	if (!pages)
+ 		goto error;
+
+
 
