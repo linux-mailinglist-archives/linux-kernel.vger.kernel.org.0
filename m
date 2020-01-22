@@ -2,70 +2,83 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D784A1450C6
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Jan 2020 10:50:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DB8F6145111
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Jan 2020 10:51:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733185AbgAVJsa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 22 Jan 2020 04:48:30 -0500
-Received: from mx2.suse.de ([195.135.220.15]:41674 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729143AbgAVJs2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 Jan 2020 04:48:28 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id 7E979AAFD;
-        Wed, 22 Jan 2020 09:48:27 +0000 (UTC)
-Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id 6F8531E0A4F; Wed, 22 Jan 2020 10:48:26 +0100 (CET)
-Date:   Wed, 22 Jan 2020 10:48:26 +0100
-From:   Jan Kara <jack@suse.cz>
-To:     wangyan <wangyan122@huawei.com>
-Cc:     tytso@mit.edu, jack@suse.com, linux-ext4@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] jbd2: delete the duplicated words in the comments
-Message-ID: <20200122094826.GD12845@quack2.suse.cz>
-References: <12087f77-ab4d-c7ba-53b4-893dbf0026f0@huawei.com>
+        id S1731652AbgAVJv2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 22 Jan 2020 04:51:28 -0500
+Received: from lhrrgout.huawei.com ([185.176.76.210]:2291 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1729285AbgAVJvW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 22 Jan 2020 04:51:22 -0500
+Received: from lhreml702-cah.china.huawei.com (unknown [172.18.7.107])
+        by Forcepoint Email with ESMTP id 77878927E199B807C7BC;
+        Wed, 22 Jan 2020 09:51:19 +0000 (GMT)
+Received: from lhreml724-chm.china.huawei.com (10.201.108.75) by
+ lhreml702-cah.china.huawei.com (10.201.108.43) with Microsoft SMTP Server
+ (TLS) id 14.3.408.0; Wed, 22 Jan 2020 09:51:20 +0000
+Received: from [127.0.0.1] (10.202.226.43) by lhreml724-chm.china.huawei.com
+ (10.201.108.75) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1713.5; Wed, 22 Jan
+ 2020 09:51:19 +0000
+Subject: Re: linux-next: build failure after merge of the scsi-mkp tree
+To:     Stephen Rothwell <sfr@canb.auug.org.au>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>
+CC:     Linux Next Mailing List <linux-next@vger.kernel.org>,
+        "Linux Kernel Mailing List" <linux-kernel@vger.kernel.org>,
+        "James E . J . Bottomley" <jejb@linux.vnet.ibm.com>
+References: <20200122151056.7d09abf0@canb.auug.org.au>
+From:   John Garry <john.garry@huawei.com>
+Message-ID: <52ff5728-8530-2be8-6dfa-739db5897a61@huawei.com>
+Date:   Wed, 22 Jan 2020 09:51:18 +0000
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
+ Thunderbird/68.1.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <12087f77-ab4d-c7ba-53b4-893dbf0026f0@huawei.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20200122151056.7d09abf0@canb.auug.org.au>
+Content-Type: text/plain; charset="windows-1252"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.202.226.43]
+X-ClientProxiedBy: lhreml741-chm.china.huawei.com (10.201.108.191) To
+ lhreml724-chm.china.huawei.com (10.201.108.75)
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed 22-01-20 17:33:10, wangyan wrote:
-> Delete the duplicated words "is" in the comments
+On 22/01/2020 04:10, Stephen Rothwell wrote:
+> Hi all,
 > 
-> Signed-off-by: Yan Wang <wangyan122@huawei.com>
-
-Looks good. Thanks. You can add:
-
-Reviewed-by: Jan Kara <jack@suse.cz>
-	
-								Honza
-
-> ---
->  fs/jbd2/transaction.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+> After merging the scsi-mkp tree, today's linux-next build (x86_64
+> allmodconfig) failed like this:
 > 
-> diff --git a/fs/jbd2/transaction.c b/fs/jbd2/transaction.c
-> index 27b9f9dee434..5c3abbaccb57 100644
-> --- a/fs/jbd2/transaction.c
-> +++ b/fs/jbd2/transaction.c
-> @@ -525,7 +525,7 @@ EXPORT_SYMBOL(jbd2__journal_start);
->   * modified buffers in the log.  We block until the log can guarantee
->   * that much space. Additionally, if rsv_blocks > 0, we also create another
->   * handle with rsv_blocks reserved blocks in the journal. This handle is
-> - * is stored in h_rsv_handle. It is not attached to any particular transaction
-> + * stored in h_rsv_handle. It is not attached to any particular transaction
->   * and thus doesn't block transaction commit. If the caller uses this reserved
->   * handle, it has to set h_rsv_handle to NULL as otherwise jbd2_journal_stop()
->   * on the parent handle will dispose the reserved one. Reserved handle has to
-> -- 
-> 2.19.1
+> ERROR: "irq_create_affinity_masks" [drivers/scsi/hisi_sas/hisi_sas_v2_hw.ko] undefined!
+> ERROR: "__irq_set_affinity" [drivers/scsi/hisi_sas/hisi_sas_v2_hw.ko] undefined!
 > 
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+
+That's sloppy of me - I never build tested for this driver as a module.
+
+And so these symbols are not exported.
+
+> Caused by commit
+> 
+
+Hi Martin,
+
+>    3869a618eb88 ("scsi: hisi_sas: Use reply map for v2 hw")
+> 
+
+Could you please drop this patch from your branch/revert it? Sorry for 
+the hassle.
+
+I should have really talked with Thomas G about whether I should even 
+reference the first symbol at all. I'll do that now.
+
+> I have reverted that commit for today.
+> 
+
+Thanks,
+John
+
+
