@@ -2,151 +2,137 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E41D4145C9C
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Jan 2020 20:43:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 008C1145CA3
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Jan 2020 20:43:55 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727523AbgAVTnM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 22 Jan 2020 14:43:12 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40520 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725827AbgAVTnL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 Jan 2020 14:43:11 -0500
-Received: from mail-io1-f46.google.com (mail-io1-f46.google.com [209.85.166.46])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        id S1728988AbgAVTnn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 22 Jan 2020 14:43:43 -0500
+Received: from us-smtp-2.mimecast.com ([207.211.31.81]:47775 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1725827AbgAVTnn (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 22 Jan 2020 14:43:43 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1579722222;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=5tEuUkKDhsAj/8wgfLzijJY2JLpoVThoT94FD+ztjuA=;
+        b=A+p7OrQuEDOIxnUhG2PVzrTcN7HejjrFr2bfUKM19ByTXP9QZQK4tmsHRKcpL6Xq6TkKg2
+        URS99DxuU7hlb/NedvG5q8hZBARH/34XPPTxcNL34/yJhM1jNRh1hsK6H/652+aHOgxsto
+        bS+OjOs7H0HNx5olP/fnAzayGRdVXZo=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-149-nKyCzFggNiS1Ck3kiyDaKg-1; Wed, 22 Jan 2020 14:43:38 -0500
+X-MC-Unique: nKyCzFggNiS1Ck3kiyDaKg-1
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id F1F6C24656;
-        Wed, 22 Jan 2020 19:43:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579722191;
-        bh=A90BQl2RN2zbfyWz1gVKm18acKQthqJdIb4G83Hj8zw=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=OIts7Fe5sKuVNBOHwDMDngnIZ5ZZUdqywiV0gklD8cZ89LANd1gvTpVdvz7C/w572
-         qPQw9nlzvENXfN2U6IpN2w6h3+eu8DGep0/3Je9DyKp1igtSJj4VFR/a02y4jEP+Pt
-         wo4gGrYC6OzXA9ZNI/DQMn2+zq1irtB6/hHOMgO0=
-Received: by mail-io1-f46.google.com with SMTP id d15so506068iog.3;
-        Wed, 22 Jan 2020 11:43:10 -0800 (PST)
-X-Gm-Message-State: APjAAAUCM7yCkyUW8QwosjnTs2fdYWBhOILA4oALqfzOrPfxp7IMEnIw
-        AYozwZCb4EsrcGwg1gA1CxE8x2n4A01odaI0V3I=
-X-Google-Smtp-Source: APXvYqzdEnlQiuzPtG5eVAR0sRe8hnTBInOwWTvmLS9vE8nNrXJp7n6ilt+ClJZ78Hhs87Zp1aVUE38mh90sY2c5KgA=
-X-Received: by 2002:a6b:f206:: with SMTP id q6mr8435332ioh.264.1579722190438;
- Wed, 22 Jan 2020 11:43:10 -0800 (PST)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id C9547803776;
+        Wed, 22 Jan 2020 19:43:35 +0000 (UTC)
+Received: from malachite.bss.redhat.com (dhcp-10-20-1-90.bss.redhat.com [10.20.1.90])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id BB5C219C5B;
+        Wed, 22 Jan 2020 19:43:31 +0000 (UTC)
+From:   Lyude Paul <lyude@redhat.com>
+To:     dri-devel@lists.freedesktop.org
+Cc:     Sean Paul <sean@poorly.run>, Wayne Lin <Wayne.Lin@amd.com>,
+        =?UTF-8?q?Ville=20Syrj=C3=A4l=C3=A4?= 
+        <ville.syrjala@linux.intel.com>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>, linux-kernel@vger.kernel.org
+Subject: [PATCH v2 1/2] drm/dp_mst: Fix clearing payload state on topology disable
+Date:   Wed, 22 Jan 2020 14:43:20 -0500
+Message-Id: <20200122194321.14953-1-lyude@redhat.com>
 MIME-Version: 1.0
-References: <1579675994-7001-1-git-send-email-light.hsieh@mediatek.com> <1579675994-7001-4-git-send-email-light.hsieh@mediatek.com>
-In-Reply-To: <1579675994-7001-4-git-send-email-light.hsieh@mediatek.com>
-From:   Sean Wang <sean.wang@kernel.org>
-Date:   Wed, 22 Jan 2020 11:42:59 -0800
-X-Gmail-Original-Message-ID: <CAGp9LzpA3fGC8wHuEiJjkju1DLTt-3NJL7Q7SerxAP68B2pXZQ@mail.gmail.com>
-Message-ID: <CAGp9LzpA3fGC8wHuEiJjkju1DLTt-3NJL7Q7SerxAP68B2pXZQ@mail.gmail.com>
-Subject: Re: [PATCH v8 4/6] pinctrl: mediatek: Refine mtk_pinconf_get()
-To:     Light Hsieh <light.hsieh@mediatek.com>
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
-        "moderated list:ARM/Mediatek SoC support" 
-        <linux-mediatek@lists.infradead.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        lkml <linux-kernel@vger.kernel.org>, kuohong.wang@mediatek.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jan 21, 2020 at 10:53 PM <light.hsieh@mediatek.com> wrote:
->
-> From: Light Hsieh <light.hsieh@mediatek.com>
->
-> Correct cases for PIN_CONFIG_SLEW_RATE, PIN_CONFIG_INPUT_SCHMITT_ENABLE,
-> and PIN_CONFIG_OUTPUT_ENABLE -
-> Use variable ret to receive value in mtk_hw_get_value() (instead of
-> variable val) since pinconf_to_config_packed() at end of this function
-> use variable ret to pack config value.
->
-> Signed-off-by: Light Hsieh <light.hsieh@mediatek.com>
+The issues caused by:
 
-Acked-by: Sean Wang <sean.wang@kernel.org>
+64e62bdf04ab ("drm/dp_mst: Remove VCPI while disabling topology mgr")
 
-> ---
->  drivers/pinctrl/mediatek/pinctrl-paris.c | 40 ++++++++++++--------------------
->  1 file changed, 15 insertions(+), 25 deletions(-)
->
-> diff --git a/drivers/pinctrl/mediatek/pinctrl-paris.c b/drivers/pinctrl/mediatek/pinctrl-paris.c
-> index 2f07500..d09a726 100644
-> --- a/drivers/pinctrl/mediatek/pinctrl-paris.c
-> +++ b/drivers/pinctrl/mediatek/pinctrl-paris.c
-> @@ -78,7 +78,7 @@ static int mtk_pinconf_get(struct pinctrl_dev *pctldev,
->  {
->         struct mtk_pinctrl *hw = pinctrl_dev_get_drvdata(pctldev);
->         u32 param = pinconf_to_config_param(*config);
-> -       int val, val2, err, reg, ret = 1;
-> +       int err, reg, ret = 1;
->         const struct mtk_pin_desc *desc;
->
->         if (pin >= hw->soc->npins) {
-> @@ -107,17 +107,11 @@ static int mtk_pinconf_get(struct pinctrl_dev *pctldev,
->                         err = -ENOTSUPP;
->                 break;
->         case PIN_CONFIG_SLEW_RATE:
-> -               err = mtk_hw_get_value(hw, desc, PINCTRL_PIN_REG_SR, &val);
-> -               if (err)
-> -                       return err;
-> -
-> -               if (!val)
-> -                       return -EINVAL;
-> -
-> +               err = mtk_hw_get_value(hw, desc, PINCTRL_PIN_REG_SR, &ret);
->                 break;
->         case PIN_CONFIG_INPUT_ENABLE:
->         case PIN_CONFIG_OUTPUT_ENABLE:
-> -               err = mtk_hw_get_value(hw, desc, PINCTRL_PIN_REG_DIR, &val);
-> +               err = mtk_hw_get_value(hw, desc, PINCTRL_PIN_REG_DIR, &ret);
->                 if (err)
->                         goto out;
->                 /*     CONFIG     Current direction return value
-> @@ -128,20 +122,22 @@ static int mtk_pinconf_get(struct pinctrl_dev *pctldev,
->                  *                     input        1 (= reverse HW value)
->                  */
->                 if (param == PIN_CONFIG_INPUT_ENABLE)
-> -                       val = !val;
-> +                       ret = !ret;
->
->                 break;
->         case PIN_CONFIG_INPUT_SCHMITT_ENABLE:
-> -               err = mtk_hw_get_value(hw, desc, PINCTRL_PIN_REG_DIR, &val);
-> +               err = mtk_hw_get_value(hw, desc, PINCTRL_PIN_REG_DIR, &ret);
->                 if (err)
-> -                       return err;
-> -
-> -               err = mtk_hw_get_value(hw, desc, PINCTRL_PIN_REG_SMT, &val2);
-> -               if (err)
-> -                       return err;
-> +                       goto out;
-> +               /* return error when in output mode
-> +                * because schmitt trigger only work in input mode
-> +                */
-> +               if (ret) {
-> +                       err = -EINVAL;
-> +                       goto out;
-> +               }
->
-> -               if (val || !val2)
-> -                       return -EINVAL;
-> +               err = mtk_hw_get_value(hw, desc, PINCTRL_PIN_REG_SMT, &ret);
->
->                 break;
->         case PIN_CONFIG_DRIVE_STRENGTH:
-> @@ -154,13 +150,7 @@ static int mtk_pinconf_get(struct pinctrl_dev *pctldev,
->         case MTK_PIN_CONFIG_RDSEL:
->                 reg = (param == MTK_PIN_CONFIG_TDSEL) ?
->                        PINCTRL_PIN_REG_TDSEL : PINCTRL_PIN_REG_RDSEL;
-> -
-> -               err = mtk_hw_get_value(hw, desc, reg, &val);
-> -               if (err)
-> -                       return err;
-> -
-> -               ret = val;
-> -
-> +               err = mtk_hw_get_value(hw, desc, reg, &ret);
->                 break;
->         case MTK_PIN_CONFIG_PU_ADV:
->         case MTK_PIN_CONFIG_PD_ADV:
-> --
-> 1.8.1.1.dirty
+Prompted me to take a closer look at how we clear the payload state in
+general when disabling the topology, and it turns out there's actually
+two subtle issues here.
+
+The first is that we're not grabbing &mgr.payload_lock when clearing the
+payloads in drm_dp_mst_topology_mgr_set_mst(). Seeing as the canonical
+lock order is &mgr.payload_lock -> &mgr.lock (because we always want
+&mgr.lock to be the inner-most lock so topology validation always
+works), this makes perfect sense. It also means that -technically- there
+could be racing between someone calling
+drm_dp_mst_topology_mgr_set_mst() to disable the topology, along with a
+modeset occurring that's modifying the payload state at the same time.
+
+The second is the more obvious issue that Wayne Lin discovered, that
+we're not clearing proposed_payloads when disabling the topology.
+
+I actually can't see any obvious places where the racing caused by the
+first issue would break something, and it could be that some of our
+higher-level locks already prevent this by happenstance, but better safe
+then sorry. So, let's make it so that drm_dp_mst_topology_mgr_set_mst()
+first grabs &mgr.payload_lock followed by &mgr.lock so that we never
+race when modifying the payload state. Then, we also clear
+proposed_payloads to fix the original issue of enabling a new topology
+with a dirty payload state. This doesn't clear any of the drm_dp_vcpi
+structures, but those are getting destroyed along with the ports anyway.
+
+Changes since v1:
+* Use sizeof(mgr->payloads[0])/sizeof(mgr->proposed_vcpis[0]) instead -
+  vsyrjala
+
+Cc: Sean Paul <sean@poorly.run>
+Cc: Wayne Lin <Wayne.Lin@amd.com>
+Cc: Ville Syrj=C3=A4l=C3=A4 <ville.syrjala@linux.intel.com>
+Signed-off-by: Lyude Paul <lyude@redhat.com>
+---
+ drivers/gpu/drm/drm_dp_mst_topology.c | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/gpu/drm/drm_dp_mst_topology.c b/drivers/gpu/drm/drm_=
+dp_mst_topology.c
+index 3649e82b963d..23cf46bfef74 100644
+--- a/drivers/gpu/drm/drm_dp_mst_topology.c
++++ b/drivers/gpu/drm/drm_dp_mst_topology.c
+@@ -3501,6 +3501,7 @@ int drm_dp_mst_topology_mgr_set_mst(struct drm_dp_m=
+st_topology_mgr *mgr, bool ms
+ 	int ret =3D 0;
+ 	struct drm_dp_mst_branch *mstb =3D NULL;
+=20
++	mutex_lock(&mgr->payload_lock);
+ 	mutex_lock(&mgr->lock);
+ 	if (mst_state =3D=3D mgr->mst_state)
+ 		goto out_unlock;
+@@ -3559,7 +3560,10 @@ int drm_dp_mst_topology_mgr_set_mst(struct drm_dp_=
+mst_topology_mgr *mgr, bool ms
+ 		/* this can fail if the device is gone */
+ 		drm_dp_dpcd_writeb(mgr->aux, DP_MSTM_CTRL, 0);
+ 		ret =3D 0;
+-		memset(mgr->payloads, 0, mgr->max_payloads * sizeof(struct drm_dp_payl=
+oad));
++		memset(mgr->payloads, 0,
++		       mgr->max_payloads * sizeof(mgr->payloads[0]));
++		memset(mgr->proposed_vcpis, 0,
++		       mgr->max_payloads * sizeof(mgr->proposed_vcpis[0]));
+ 		mgr->payload_mask =3D 0;
+ 		set_bit(0, &mgr->payload_mask);
+ 		mgr->vcpi_mask =3D 0;
+@@ -3568,6 +3572,7 @@ int drm_dp_mst_topology_mgr_set_mst(struct drm_dp_m=
+st_topology_mgr *mgr, bool ms
+=20
+ out_unlock:
+ 	mutex_unlock(&mgr->lock);
++	mutex_unlock(&mgr->payload_lock);
+ 	if (mstb)
+ 		drm_dp_mst_topology_put_mstb(mstb);
+ 	return ret;
+--=20
+2.24.1
+
