@@ -2,108 +2,233 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 568E61452D5
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Jan 2020 11:44:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5F410145317
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Jan 2020 11:47:58 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729293AbgAVKoc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 22 Jan 2020 05:44:32 -0500
-Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:58082 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1729049AbgAVKoc (ORCPT
+        id S1730047AbgAVKrR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 22 Jan 2020 05:47:17 -0500
+Received: from mx0b-0014ca01.pphosted.com ([208.86.201.193]:2414 "EHLO
+        mx0a-0014ca01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1729049AbgAVKpi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 Jan 2020 05:44:32 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1579689870;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=YKd1QMlm00TztXoKQ6PyNFCO8FaCgt8+OJzIwwiLfiU=;
-        b=OxbO5SJRCy0294oCIKw0yraQc6E40CefIzUsg8ryT0r4MchtT2lSsXp3vyAohwvQ34LeS+
-        tN3qSwETUzDD84Jjqdnln785/uPVqgik5LNiS0kwjeO0zGb1S12YVSm8K4VBmczvpDtH1g
-        yol1KOLWwyYbj1XihKFC4VMr6dDNK00=
-Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
- [209.85.128.71]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-194-COpRrD9qPEuGHwCq8FVpbg-1; Wed, 22 Jan 2020 05:44:28 -0500
-X-MC-Unique: COpRrD9qPEuGHwCq8FVpbg-1
-Received: by mail-wm1-f71.google.com with SMTP id z2so1186712wmf.5
-        for <linux-kernel@vger.kernel.org>; Wed, 22 Jan 2020 02:44:28 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=YKd1QMlm00TztXoKQ6PyNFCO8FaCgt8+OJzIwwiLfiU=;
-        b=VddJVJPz1PpIB7BdqETN8l7uNRu4dtgk1bJEkH8u5rk0zvh1as7e9toNrgVJb5hTfH
-         CVZbHPkHq15mW95kXLbFXgHfDRSJerqXX0NheUPMRzSRkl/NjEH/wrMoq87WugJnyFsB
-         ssvVdwnK5XB0JW0Phtz66GS9iFsDRX2Gc1PhnWfkKqUroKEU1IbdVEtsMAUSFXcVYV9C
-         lCmOWolyHuBPZrz7hCn4MoY9WCDWthd09PnKgyYMo3YIcwpciW0Xq6uAGzU8LuloIF26
-         v8y9Eb9At5Rrihsq2azsuKdytw/R2/1wN2SZzHUVTw/4q9zYcLItbunf4K6ymWoPgCol
-         suig==
-X-Gm-Message-State: APjAAAUHiGlNXUrJvZDGdYVke35L/pQXB39ele+b8u7KMKVTtze9ZdhW
-        peDcR/Dfuxop2ABTngiRNfTcafcit6jyclYi4GEuvruAdxeZbxSLWibydegxZSbImFs7Agry/px
-        Co3+X3i1jppCHBF5YJwiB79ZD
-X-Received: by 2002:a1c:66d5:: with SMTP id a204mr2243084wmc.64.1579689867568;
-        Wed, 22 Jan 2020 02:44:27 -0800 (PST)
-X-Google-Smtp-Source: APXvYqzf4N7NDysvCU8k0EDfB9CCu9AGjs9RwppVG9KvmCJKfdHbDr0hbTUL7DfxuEinfHmAaQFORQ==
-X-Received: by 2002:a1c:66d5:: with SMTP id a204mr2243066wmc.64.1579689867379;
-        Wed, 22 Jan 2020 02:44:27 -0800 (PST)
-Received: from localhost (nat-pool-brq-t.redhat.com. [213.175.37.10])
-        by smtp.gmail.com with ESMTPSA id x10sm55168995wrv.60.2020.01.22.02.44.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 22 Jan 2020 02:44:25 -0800 (PST)
-Date:   Wed, 22 Jan 2020 11:44:24 +0100
-From:   Oleksandr Natalenko <oleksandr@redhat.com>
-To:     Minchan Kim <minchan@kernel.org>
-Cc:     "Kirill A. Shutemov" <kirill@shutemov.name>,
-        Michal Hocko <mhocko@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-mm <linux-mm@kvack.org>, linux-api@vger.kernel.org,
-        Suren Baghdasaryan <surenb@google.com>,
-        Tim Murray <timmurray@google.com>,
-        Daniel Colascione <dancol@google.com>,
-        Sandeep Patil <sspatil@google.com>,
-        Sonny Rao <sonnyrao@google.com>,
-        Brian Geffon <bgeffon@google.com>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Shakeel Butt <shakeelb@google.com>,
-        John Dias <joaodias@google.com>, ktkhai@virtuozzo.com,
-        christian.brauner@ubuntu.com, sjpark@amazon.de
-Subject: Re: [PATCH v2 2/5] mm: introduce external memory hinting API
-Message-ID: <20200122104424.7gvrfivymjvdous4@butterfly.localdomain>
-References: <20200116235953.163318-1-minchan@kernel.org>
- <20200116235953.163318-3-minchan@kernel.org>
- <20200117115225.GV19428@dhcp22.suse.cz>
- <20200117155837.bowyjpndfiym6cgs@box>
- <20200117173239.GB140922@google.com>
- <20200117212653.7uftw3lk35oykkmb@box>
- <20200121181113.GE140922@google.com>
+        Wed, 22 Jan 2020 05:45:38 -0500
+Received: from pps.filterd (m0042333.ppops.net [127.0.0.1])
+        by mx0b-0014ca01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 00MAisss016512;
+        Wed, 22 Jan 2020 02:45:26 -0800
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cadence.com; h=from : to : cc :
+ subject : date : message-id : mime-version : content-type; s=proofpoint;
+ bh=y1kqsuYzbdxg3KZETBS7aGnf9p+p3rm9WsYiQeiOKG8=;
+ b=DUpEDcut4KPv6KhrRV/qXSYJQaVoI1WVFyEAv5cw3RMRIHhirExwECgiHl/ULldInwFF
+ turPwQyc8ZGUpTKA26HTrs05/rbqbQdp1DAbbFr9eM9QEQMlwEQgc9dfqW8WZ7BJtl4t
+ o4cp69hLYDLpYIKh8oiFD/Se5aupzjZGXO/Gh/zAcJ7TtPZCL0rZkXdzv9+EawPot8EJ
+ bfLbo7Tj7EsO7u5jfY0KR7HuCP3GMNjHK0fOZPdv8o68ijajKXokbvzinzJFzI9qh5VU
+ lBj6rjDr9+OBmf8O6gb7XF3vkJjKK6cpcTNjp7tgLIXUkOnax+TwcRFdMxL+u33tXdrS Pw== 
+Received: from nam12-dm6-obe.outbound.protection.outlook.com (mail-dm6nam12lp2169.outbound.protection.outlook.com [104.47.59.169])
+        by mx0b-0014ca01.pphosted.com with ESMTP id 2xkxg3vssh-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 22 Jan 2020 02:45:26 -0800
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=nSDzaXW9s577DNOhkFiqMAiZStvLeTFg4mOrkvXRvJVjkYavAMrZi+o1LhE/F4iBT6J/0TngVumxDVfVQ1YVKA9LrYm1w/WxTpWk8NEIgmG2obWw8xW8KSbaEE5Lvp73I415fAwqcOBb1tT7YpxJIjlfOvwi+6RuJg4aAU8DZYSGWmhuUm1MzH59RtPWO0UbIAE0+FjlXWgARRIlIKi4Pexm8xGcWZWoeAX/j3bxTH7bMtfP01PLZMbSVYKTdCdAsrgzaj48bhmv5nHPicmhEwxroSfKUZl2Gj2HIM+eWus8BpcZucYJFzRvMePwYjtAqT1NKyb6QqQjgejACHzuzA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=y1kqsuYzbdxg3KZETBS7aGnf9p+p3rm9WsYiQeiOKG8=;
+ b=N5EXKdmE3Qm/JiMmARromE8UGtYswY5DAVbSi7EMqQOO7vhNYPpXUhh1Ku8sXjwahTdgBscwkjGtfrulkeIpTmEONLWtdopHJ3PjvW+/Zc7l1gxUK9pidEuNCOZnEOYq5OhsP9Mw+mfceRF+x+q2V4be6sccaUjlOUvufLurF0Pf1kH9xI+YeYpUX0r9bzggZEGntRpUqjAsYM734grbyDqMhGoRlT/4KWNvfzkv1iiI7lEUuZgtbYOZZqpydG5/H/W6/rXczG36Byj7/j1rDV8X/a3JKl4/7+L5HaQ5EgYjn5gG8X2IQs4+nkb27Ics8eIeKBHzaHcRXUvmvqE6qg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 158.140.1.28) smtp.rcpttodomain=ti.com smtp.mailfrom=cadence.com; dmarc=pass
+ (p=none sp=none pct=100) action=none header.from=cadence.com; dkim=none
+ (message not signed); arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cadence.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=y1kqsuYzbdxg3KZETBS7aGnf9p+p3rm9WsYiQeiOKG8=;
+ b=Qp6d6UpNg0lCrPnzkw7FgK5RjzEbCUWSLvIzkcdp4S/jcq27dGoy9Jg4ePNPG91l03WQ7tL1tSLiv4o1quVwyWrYCrViJPl+NK3clUWNO+xDOOxnBMthqix6Dqsa8uHa1ug8P8mXxP5hMYwqfM1PIlEQLPw65dYGqmNFC3A6CDo=
+Received: from DM5PR07CA0078.namprd07.prod.outlook.com (2603:10b6:4:ad::43) by
+ BL0PR07MB5458.namprd07.prod.outlook.com (2603:10b6:208:83::19) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2644.20; Wed, 22 Jan 2020 10:45:23 +0000
+Received: from DM6NAM12FT046.eop-nam12.prod.protection.outlook.com
+ (2a01:111:f400:fe59::207) by DM5PR07CA0078.outlook.office365.com
+ (2603:10b6:4:ad::43) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2644.18 via Frontend
+ Transport; Wed, 22 Jan 2020 10:45:23 +0000
+Received-SPF: Pass (protection.outlook.com: domain of cadence.com designates
+ 158.140.1.28 as permitted sender) receiver=protection.outlook.com;
+ client-ip=158.140.1.28; helo=sjmaillnx1.cadence.com;
+Received: from sjmaillnx1.cadence.com (158.140.1.28) by
+ DM6NAM12FT046.mail.protection.outlook.com (10.13.178.142) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2665.6 via Frontend Transport; Wed, 22 Jan 2020 10:45:23 +0000
+Received: from maileu3.global.cadence.com (maileu3.cadence.com [10.160.88.99])
+        by sjmaillnx1.cadence.com (8.14.4/8.14.4) with ESMTP id 00MAjKB9001726
+        (version=TLSv1/SSLv3 cipher=AES256-SHA bits=256 verify=OK);
+        Wed, 22 Jan 2020 02:45:21 -0800
+X-CrossPremisesHeadersFilteredBySendConnector: maileu3.global.cadence.com
+Received: from maileu3.global.cadence.com (10.160.88.99) by
+ maileu3.global.cadence.com (10.160.88.99) with Microsoft SMTP Server (TLS) id
+ 15.0.1367.3; Wed, 22 Jan 2020 11:45:19 +0100
+Received: from vleu-orange.cadence.com (10.160.88.83) by
+ maileu3.global.cadence.com (10.160.88.99) with Microsoft SMTP Server (TLS) id
+ 15.0.1367.3 via Frontend Transport; Wed, 22 Jan 2020 11:45:19 +0100
+Received: from vleu-orange.cadence.com (localhost.localdomain [127.0.0.1])
+        by vleu-orange.cadence.com (8.14.4/8.14.4) with ESMTP id 00MAjJQA007234;
+        Wed, 22 Jan 2020 11:45:19 +0100
+Received: (from yamonkar@localhost)
+        by vleu-orange.cadence.com (8.14.4/8.14.4/Submit) id 00MAjIRD007232;
+        Wed, 22 Jan 2020 11:45:18 +0100
+From:   Yuti Amonkar <yamonkar@cadence.com>
+To:     <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <kishon@ti.com>, <robh+dt@kernel.org>, <mark.rutland@arm.com>,
+        <maxime@cerno.tech>
+CC:     <jsarha@ti.com>, <tomi.valkeinen@ti.com>, <praneeth@ti.com>,
+        <mparab@cadence.com>, <sjakhade@cadence.com>,
+        <yamonkar@cadence.com>
+Subject: [PATCH v3 00/14] PHY: Update Cadence Torrent PHY driver with reconfiguration
+Date:   Wed, 22 Jan 2020 11:45:04 +0100
+Message-ID: <1579689918-7181-1-git-send-email-yamonkar@cadence.com>
+X-Mailer: git-send-email 2.4.5
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200121181113.GE140922@google.com>
+Content-Type: text/plain
+X-OrganizationHeadersPreserved: maileu3.global.cadence.com
+X-EOPAttributedMessage: 0
+X-Forefront-Antispam-Report: CIP:158.140.1.28;IPV:CAL;SCL:-1;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(4636009)(346002)(376002)(39860400002)(136003)(396003)(199004)(189003)(36092001)(8936002)(336012)(2906002)(478600001)(15650500001)(186003)(7636002)(26005)(19627235002)(4326008)(5660300002)(36756003)(70586007)(70206006)(42186006)(6666004)(316002)(356004)(54906003)(2616005)(966005)(426003)(26826003)(110136005)(107886003)(86362001)(246002)(8676002);DIR:OUT;SFP:1101;SCL:1;SRVR:BL0PR07MB5458;H:sjmaillnx1.cadence.com;FPR:;SPF:Pass;LANG:en;PTR:corp.cadence.com;A:1;MX:1;
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: d65ecc9e-18fa-4c24-fb5e-08d79f282f45
+X-MS-TrafficTypeDiagnostic: BL0PR07MB5458:
+X-Microsoft-Antispam-PRVS: <BL0PR07MB54589A7640C86323261CBFDDD20C0@BL0PR07MB5458.namprd07.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:8882;
+X-Forefront-PRVS: 029097202E
+X-MS-Exchange-SenderADCheck: 1
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: mRXy74N+pWPct+701gGcpFcis9WoaOMnJlrYze8Nypsq8KzmXL72h2O4R7MXuPDkZw9HtpznUYGtOUou/jYKXDjcRlUDsoJ8hI9V+Omh/a0aLMduvObAxMSvPrgLlIzCTE7zZ2PfiizKhb4HtlZG3tkGZ2GAFDLsAvTd3PI2tCmCoIdgg9azJIQVfrRijAie8MNmfXJCO1Apkhwo5TntyTWDXJYWYskGoPp1ihRWiSOietQ6i31e9u/3P5sJybgra6PNO1rW+bgmiV47ROsuQGiFAWL0Td1rdrUwe+hXAbtIM8LSNx9ebkmADrm1AHcWI3fJ0Gm5yQltgcOV1rRQT+yhSRZNUuFNxXkRY2OQrxK3T6/Xbjpvj/MBmEnvY6MaACCujdobJbGNLUXEQrGFwTGc2yqsW7ly3aDGYGTavZ2PpCuoFmFLH6AQycl1g59AW9Rzfr9xwnVyZoHSWVezH0CmlpgfACziFv1d9cp3YwxE7xVON7PP2F9bUCo42AR3XcX0msNAOMiSoTlo6N6v2H4CPVw51hSpQhZdNTALvoE=
+X-OriginatorOrg: cadence.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 Jan 2020 10:45:23.5738
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: d65ecc9e-18fa-4c24-fb5e-08d79f282f45
+X-MS-Exchange-CrossTenant-Id: d36035c5-6ce6-4662-a3dc-e762e61ae4c9
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=d36035c5-6ce6-4662-a3dc-e762e61ae4c9;Ip=[158.140.1.28];Helo=[sjmaillnx1.cadence.com]
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BL0PR07MB5458
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.572
+ definitions=2020-01-17_05:2020-01-16,2020-01-17 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_check_notspam policy=outbound_check score=0 phishscore=0
+ suspectscore=0 bulkscore=0 priorityscore=1501 spamscore=0 malwarescore=0
+ clxscore=1011 mlxlogscore=999 mlxscore=0 lowpriorityscore=0 adultscore=0
+ impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-1910280000 definitions=main-2001220098
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello.
+This patch series applies to the Cadence SD0801 PHY driver.
+Cadence SD0801 PHY is also known as Torrent PHY. Torrent PHY
+is a multiprotocol PHY supporting PHY configurations including
+Display Port, USB and PCIe.
 
-On Tue, Jan 21, 2020 at 10:11:13AM -0800, Minchan Kim wrote:
-> > > I also think people don't want to give an KSM hint to non-mergeable area.
-> > 
-> > And how the manager knows which data is mergable?
-> 
-> Oleksandr, could you say your thought why you need address range based
-> API?
+This patch series converts SD0801 PHY driver for DisplayPort into a
+generic Torrent PHY driver, updates DisplayPort functionality with
+reconfiguration support and finally adds platform dependent initialization
+for TI J7 SoCs.
 
-It seems I've overlooked an important piece of this submission: one
-cannot apply the hint to all the anonymous mapping regardless of address
-range. For KSM I'd rather either have a possibility to hint all the
-anonymous mappings, or, as it was suggested previously, be able to iterate
-over existing mappings using some (fd-based?) API.
+The patch series has following patches which applies the changes
+in the below sequence
+1. 001-dt-bindings-phy-Convert-Cadence-MHDP-PHY-bindings-to-YAML
+This patch converts the MHDP PHY device tree bindings to yaml schemas
+2. 002-phy-cadence-dp-Rename-to-phy-Cadence-Torrent
+Rename Cadence DP PHY driver from phy-cadence-dp to phy-cadence-torrent
+3. 003-phy-cadence-torrent-Adopt-Torrent-nomenclature
+Update private data structures, module descriptions and functions prefix to Torrent
+4. 004-phy-cadence-torrent-Add-wrapper-for-PHY-register-access
+Add a wrapper function to write Torrent PHY registers to improve code readability.
+5. 005-phy-cadence-torrent-Add-wrapper-for-DPTX-register-access
+Add wrapper functions to read, write DisplayPort specific PHY registers to improve code
+readability.
+6. 006-phy-cadence-torrent-Refactor-code-for-reusability
+Add separate function to set different power state values.
+Use of uniform polling timeout value. Check return values of functions for error handling.
+7. 007-phy-cadence-torrent-Add-19.2-MHz-reference-clock-support
+Add configuration functions for 19.2 MHz reference clock support. Add register configurations
+for SSC support.
+8. 008-phy-cadence-torrent-Implement-phy-configure-APIs
+Add PHY configuration APIs for link rate, number of lanes, voltage swing and pre-emphasis values.
+9. 009-phy-cadence-torrent-Use-regmap-to-read-and-write-Torrent-PHY-registers 
+Use regmap for accessing Torrent PHY registers. Update register offsets. Abstract address
+calculation using regmap APIs.
+10. 010-phy: cadence-torrent-Use-regmap-to-read-and-write-DPTX-PHY-registers
+Use regmap to read and write DPTX specific PHY registers.
+11. 011-dt-bindings-phy-phy-cadence-torrent-Add-platform-dependent-compatible-string
+Add a new compatible string used for TI SoCs using Torrent PHY.
+12. 012-phy-cadence-torrent-Add-platform-dependent-initialization-structure
+Add platform dependent initialization data for Torrent PHY used in TI's J721E SoC.
+13. 013-phy-cadence-torrent-dt-bindings-Add-subnode-bindings. 
+Add sub-node bindings.
+14. 014-phy: cadence-torrent-Add-support-for-subnode-bindings
+Implement single link subnode support to the phy driver.
+
+Version History:
+
+v3:
+- Removed "Add clock binding" patch from the series and merged it with
+  "Convert-Cadence-MHDP-PHY-bindings-to-YAML" patch.
+- Added reset and reset-names properties to YAML file.
+- Updated dptx_phy reg entry as optional in YAML.
+- Renamed reg-names from sd0801_phy to torrent_phy.
+- Added subnode property for each group of PHY lanes based on PHY
+  type to the YAML. Renamed num_lanes and max_bit_rate to cdns,num-lanes 
+  and cdns,max-bit-rate and moved it to subnode properties. 
+- Added cdns,phy-type property in subnode. Currently cdns,phy-type supports only
+  PHY_TYPE_DP.
+- Added subnode instance structure to the driver in reference to the dts change.
+- Updated functions to read properties from child node instead of parent node.
+- Added num_lanes as argument to the cdns_torrent_dp_run function.
+
+v2:
+- Remove patch [1] from this series and send for a separate review.
+- Use enum in compatible property of YAML file.
+- Remove quotes in clock-names property "refclk" -> refclk in YAML file.
+- Add reg-names property to YAML file
+- Add additionalProperties:false to YAML file.
+- No change in the driver code.
+
+This patch series is dependent on PHY DisplayPort configuration patch [1].
+
+[1]
+
+https://lkml.org/lkml/2020/1/6/279
+
+Swapnil Jakhade (11):
+  phy: cadence-torrent: Adopt Torrent nomenclature
+  phy: cadence-torrent: Add wrapper for PHY register access
+  phy: cadence-torrent: Add wrapper for DPTX register access
+  phy: cadence-torrent: Refactor code for reusability
+  phy: cadence-torrent: Add 19.2 MHz reference clock support
+  phy: cadence-torrent: Implement PHY configure APIs
+  phy: cadence-torrent: Use regmap to read and write Torrent PHY
+    registers
+  phy: cadence-torrent: Use regmap to read and write DPTX PHY registers
+  phy: cadence-torrent: Add platform dependent initialization structure
+  dt-bindings: phy: phy-cadence-torrent: Add subnode bindings.
+  phy: cadence-torrent: Add support for subnode bindings
+
+Yuti Amonkar (3):
+  dt-bindings: phy: Convert Cadence MHDP PHY bindings to YAML.
+  phy: cadence-dp: Rename to phy-cadence-torrent
+  dt-bindings: phy: phy-cadence-torrent: Add platform dependent
+    compatible string
+
+ .../devicetree/bindings/phy/phy-cadence-dp.txt     |   30 -
+ .../bindings/phy/phy-cadence-torrent.yaml          |  140 ++
+ drivers/phy/cadence/Kconfig                        |    6 +-
+ drivers/phy/cadence/Makefile                       |    2 +-
+ drivers/phy/cadence/phy-cadence-dp.c               |  541 ------
+ drivers/phy/cadence/phy-cadence-torrent.c          | 1945 ++++++++++++++++++++
+ 6 files changed, 2089 insertions(+), 575 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/phy/phy-cadence-dp.txt
+ create mode 100644 Documentation/devicetree/bindings/phy/phy-cadence-torrent.yaml
+ delete mode 100644 drivers/phy/cadence/phy-cadence-dp.c
+ create mode 100644 drivers/phy/cadence/phy-cadence-torrent.c
 
 -- 
-  Best regards,
-    Oleksandr Natalenko (post-factum)
-    Senior Software Maintenance Engineer
+2.4.5
 
