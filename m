@@ -2,181 +2,81 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 49EB7145BE7
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Jan 2020 19:57:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C1791145C1F
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Jan 2020 19:59:23 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729431AbgAVS44 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 22 Jan 2020 13:56:56 -0500
-Received: from mx0b-00190b01.pphosted.com ([67.231.157.127]:44522 "EHLO
-        mx0b-00190b01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1729406AbgAVS4x (ORCPT
+        id S1728831AbgAVS7S (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 22 Jan 2020 13:59:18 -0500
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:46736 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725884AbgAVS7S (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 Jan 2020 13:56:53 -0500
-Received: from pps.filterd (m0122331.ppops.net [127.0.0.1])
-        by mx0b-00190b01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 00MIpHtM026802;
-        Wed, 22 Jan 2020 18:56:50 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=akamai.com; h=subject : to : cc :
- references : from : message-id : date : mime-version : in-reply-to :
- content-type : content-transfer-encoding; s=jan2016.eng;
- bh=84Eajc8JxqbYazZtCN5GzfxkyK5qDdC45vm26w6BCe0=;
- b=QHk59WIuSf9egIf+TMq65j4xc/5A+YUqM3SAkumEmZVJiK6reI0WOS5zUDqw7JoD6f7P
- ahEnoUWCi3nD2kbZnqEmpUUMhFcYOYFLZ5dXPPpwD2VqYZFhDoCyLrKLvIo4B8X0YQg/
- LToFJ51/FdEPqdBCJ8GplJMA7OXFlQ+o+r7Uxkyi7DA+TFXaoZwK4cHzEjDmI+g491MI
- et4wXbwOLONu3SyMU7HhXPTuOnZECMYWvRLFBADvpJG9E74EefpkT12rbH+J6dZDOFd9
- +12xfXJsyDscSqNCifrFhSMqwmVZR2dTcNXnK+PBXw+dLiIs+x/FL6Bm3TSDJNQwcKwm ZA== 
-Received: from prod-mail-ppoint5 (prod-mail-ppoint5.akamai.com [184.51.33.60] (may be forged))
-        by mx0b-00190b01.pphosted.com with ESMTP id 2xkyudfspa-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 22 Jan 2020 18:56:49 +0000
-Received: from pps.filterd (prod-mail-ppoint5.akamai.com [127.0.0.1])
-        by prod-mail-ppoint5.akamai.com (8.16.0.27/8.16.0.27) with SMTP id 00MIldnR029127;
-        Wed, 22 Jan 2020 10:56:49 -0800
-Received: from prod-mail-relay11.akamai.com ([172.27.118.250])
-        by prod-mail-ppoint5.akamai.com with ESMTP id 2xm0vbptk8-1;
-        Wed, 22 Jan 2020 10:56:48 -0800
-Received: from [0.0.0.0] (prod-ssh-gw01.bos01.corp.akamai.com [172.27.119.138])
-        by prod-mail-relay11.akamai.com (Postfix) with ESMTP id B20EF214B1;
-        Wed, 22 Jan 2020 18:56:48 +0000 (GMT)
-Subject: Re: [PATCH v2] dynamic_debug: allow to work if debugfs is disabled
+        Wed, 22 Jan 2020 13:59:18 -0500
+Received: by mail-pf1-f193.google.com with SMTP id n9so255258pff.13;
+        Wed, 22 Jan 2020 10:59:18 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=HQxdX8PTl7oCMbkeLII63nN9RNrnV/YOss11w33YIf8=;
+        b=Mf4ceQIHyAGvwfiLFpIgmojwqAr6+OhF5VqI3zhC7ePPX8qWsjfsX/8DB9VSUyIpsb
+         pEr3pceCXKipTg2XL5qTQ2vo2jO60bQitjAv8wwmooOxzJRi9cgvCUzRitbSLXNBGO+9
+         /P/QZvI5SCgBUKdTp4y1QzI9XI+xFeAfJXyMM57Yc4Hmt2mMEehED0td6BeQ+YbGfc9S
+         bD+qi68mp/4/N51HqQJC1fzgXGmNCLnxlEjlEPQdbIZ7L3NvITTyjy8X+3IIszGetPzb
+         uY6jhepdQFrXSFd6Gb8yDUdJ4qXn3H9oZE0DROJlEjVeyffd+8PslEDsyvsI1b599Br+
+         TrZQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=HQxdX8PTl7oCMbkeLII63nN9RNrnV/YOss11w33YIf8=;
+        b=pQBj01XZdsPm79phhTkYTeeVbQ5Clw8I7xtlqo2souB8rPyBFwkEG1JhTHFPmFyj+G
+         xECY/wlxgVtIBJwl8X6GhEMlMPmA4R4zKNeLTAfnA8rELdqRABUM0uJYDfYvUwyQgbWh
+         /JNPbJPNM5rNfp4Xd6U9t7N7F3ctIJ02hXSoNGjugSGV+VEUYZbhsOIw4Fs5Lg0+1WKw
+         79L64B9dOq2+eatpqEo4qA/L9lrsfj6Z5Q83o/8e6LhWObEmZrt10DnA3pe0trCg5vEM
+         PMczb81otVXzVGeemL9nm6o5KVt5IEkC1oPzqCq1USoH0nESmuv2h2Bj22ANZATs9Oap
+         Q3hg==
+X-Gm-Message-State: APjAAAVpXpR0Izm/UqhI4MaHyUK24ACtP3MXEd2tv8j2Bo7kRiMKNZv1
+        dTcdVjBv8EqVXOCZUVvl0CE=
+X-Google-Smtp-Source: APXvYqw6cm5OGqc+QD/QB6T5Q25CpnOFzxW545Nvuuzw+vPDYbWK+zakzkgPDkZZ03z+W/nHQ0CIug==
+X-Received: by 2002:a63:d14:: with SMTP id c20mr52583pgl.77.1579719549617;
+        Wed, 22 Jan 2020 10:59:09 -0800 (PST)
+Received: from localhost ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id x8sm48994926pfd.76.2020.01.22.10.59.07
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 22 Jan 2020 10:59:08 -0800 (PST)
+Date:   Wed, 22 Jan 2020 10:59:07 -0800
+From:   Guenter Roeck <linux@roeck-us.net>
 To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     Will Deacon <will@kernel.org>, linux-kernel@vger.kernel.org,
-        kernel-team@android.com
-References: <20200122074343.GA2099098@kroah.com>
- <20200122080352.GA15354@willie-the-truck>
- <20200122081205.GA2227985@kroah.com> <20200122135352.GA9458@kroah.com>
-From:   Jason Baron <jbaron@akamai.com>
-Message-ID: <8d68b75c-05b8-b403-0a10-d17b94a73ba7@akamai.com>
-Date:   Wed, 22 Jan 2020 13:56:48 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+Cc:     linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+        akpm@linux-foundation.org, shuah@kernel.org, patches@kernelci.org,
+        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
+        stable@vger.kernel.org
+Subject: Re: [PATCH 4.4 00/76] 4.4.211-stable review
+Message-ID: <20200122185907.GA20093@roeck-us.net>
+References: <20200122092751.587775548@linuxfoundation.org>
 MIME-Version: 1.0
-In-Reply-To: <20200122135352.GA9458@kroah.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2020-01-22_08:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1911140001 definitions=main-2001220159
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.572
- definitions=2020-01-22_08:2020-01-22,2020-01-22 signatures=0
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxscore=0 malwarescore=0 bulkscore=0
- phishscore=0 priorityscore=1501 mlxlogscore=999 adultscore=0
- impostorscore=0 spamscore=0 lowpriorityscore=0 suspectscore=0
- clxscore=1011 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-1910280000 definitions=main-2001220159
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200122092751.587775548@linuxfoundation.org>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On 1/22/20 8:53 AM, Greg Kroah-Hartman wrote:
+On Wed, Jan 22, 2020 at 10:28:16AM +0100, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 4.4.211 release.
+> There are 76 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
 > 
-> With the realization that having debugfs enabled on "production" systems is
-> generally not a good idea, debugfs is being disabled from more and more
-> platforms over time.  However, the functionality of dynamic debugging still is
-> needed at times, and since it relies on debugfs for its user api, having
-> debugfs disabled also forces dynamic debug to be disabled.
+> Responses should be made by Fri, 24 Jan 2020 09:25:24 +0000.
+> Anything received after that time might be too late.
 > 
-> To get around this, move the "control" file for dynamic_debug to procfs IFF
-> debugfs is disabled.  This lets people turn on debugging as needed at runtime
-> for individual driverfs and subsystems.
-> 
+Build results:
+	total: 170 pass: 170 fail: 0
+Qemu test results:
+	total: 326 pass: 326 fail: 0
 
-Hi Greg,
-
-Thanks for updating this. Just a comment below.
-
-
-> Reported-by: many different companies
-> Cc: Jason Baron <jbaron@akamai.com>
-> Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> ---
-> v2: Fix up octal permissions and add procfs reference to the Kconfig
->     entry, thanks to Will for the review.
-> 
->  .../admin-guide/dynamic-debug-howto.rst         |  3 +++
->  lib/Kconfig.debug                               |  7 ++++---
->  lib/dynamic_debug.c                             | 17 ++++++++++++++---
->  3 files changed, 21 insertions(+), 6 deletions(-)
-> 
-> diff --git a/Documentation/admin-guide/dynamic-debug-howto.rst b/Documentation/admin-guide/dynamic-debug-howto.rst
-> index 252e5ef324e5..41f43a373a6a 100644
-> --- a/Documentation/admin-guide/dynamic-debug-howto.rst
-> +++ b/Documentation/admin-guide/dynamic-debug-howto.rst
-> @@ -54,6 +54,9 @@ If you make a mistake with the syntax, the write will fail thus::
->  				<debugfs>/dynamic_debug/control
->    -bash: echo: write error: Invalid argument
->  
-> +Note, for systems without 'debugfs' enabled, the control file can be
-> +also found in ``/proc/dynamic_debug/control``.
-> +
->  Viewing Dynamic Debug Behaviour
->  ===============================
->  
-> diff --git a/lib/Kconfig.debug b/lib/Kconfig.debug
-> index 5ffe144c9794..49980eb8c18e 100644
-> --- a/lib/Kconfig.debug
-> +++ b/lib/Kconfig.debug
-> @@ -98,7 +98,7 @@ config DYNAMIC_DEBUG
->  	bool "Enable dynamic printk() support"
->  	default n
->  	depends on PRINTK
-> -	depends on DEBUG_FS
-> +	depends on (DEBUG_FS || PROC_FS)
->  	help
->  
->  	  Compiles debug level messages into the kernel, which would not
-> @@ -116,8 +116,9 @@ config DYNAMIC_DEBUG
->  	  Usage:
->  
->  	  Dynamic debugging is controlled via the 'dynamic_debug/control' file,
-> -	  which is contained in the 'debugfs' filesystem. Thus, the debugfs
-> -	  filesystem must first be mounted before making use of this feature.
-> +	  which is contained in the 'debugfs' filesystem or procfs if
-> +	  debugfs is not present. Thus, the debugfs or procfs filesystem
-> +	  must first be mounted before making use of this feature.
->  	  We refer the control file as: <debugfs>/dynamic_debug/control. This
->  	  file contains a list of the debug statements that can be enabled. The
->  	  format for each line of the file is:
-> diff --git a/lib/dynamic_debug.c b/lib/dynamic_debug.c
-> index c60409138e13..0f1b26f10fb2 100644
-> --- a/lib/dynamic_debug.c
-> +++ b/lib/dynamic_debug.c
-> @@ -993,13 +993,24 @@ static __initdata int ddebug_init_success;
->  
->  static int __init dynamic_debug_init_debugfs(void)
->  {
-
-The naming now is a little confusing - dynamic_debug_init_control ?
-
-
-> -	struct dentry *dir;
-> +	struct dentry *debugfs_dir;
-> +	struct proc_dir_entry *procfs_dir;
->  
->  	if (!ddebug_init_success)
->  		return -ENODEV;
->  
-> -	dir = debugfs_create_dir("dynamic_debug", NULL);
-> -	debugfs_create_file("control", 0644, dir, NULL, &ddebug_proc_fops);
-> +	/* Create the control file in debugfs if it is enabled */
-> +	if (debugfs_initialized) {
-> +		debugfs_dir = debugfs_create_dir("dynamic_debug", NULL);
-> +		debugfs_create_file("control", 0644, debugfs_dir, NULL,
-> +				    &ddebug_proc_fops);
-> +		return 0;
-> +	}
-> +
-> +	/* No debugfs so put it in procfs instead */
-> +	procfs_dir = proc_mkdir("dynamic_debug", NULL);
-> +	if (procfs_dir)
-> +		proc_create("control", 0644, procfs_dir, &ddebug_proc_fops);
->  
->  	return 0;
->  }
-> 
+Guenter
