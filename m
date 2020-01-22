@@ -2,37 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 79B7E145535
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Jan 2020 14:20:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6C5A3145537
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Jan 2020 14:20:10 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729818AbgAVNTv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 22 Jan 2020 08:19:51 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35762 "EHLO mail.kernel.org"
+        id S1729836AbgAVNTz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 22 Jan 2020 08:19:55 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35892 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725933AbgAVNTo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 Jan 2020 08:19:44 -0500
+        id S1729058AbgAVNTu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 22 Jan 2020 08:19:50 -0500
 Received: from localhost (unknown [84.241.205.26])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 512AE2468A;
-        Wed, 22 Jan 2020 13:19:43 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 98E732467A;
+        Wed, 22 Jan 2020 13:19:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579699183;
-        bh=3gY41t3PBbf9Bh54MQwzN0iQ5H5WEPl331nOFmFK0gw=;
+        s=default; t=1579699190;
+        bh=lYcyzUsSueiTVaeCjUbMt38KiP52JGJR1GhZPYucS/4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=d1m+b2j1WYkCPfgGXQ4ApUXw60uFVkAwgTIRSvqd4c4Kya2VAX3dnnDxlS2OpbZRx
-         OGM7Ne02G+Uj3r58knncanAuYj9ekVBOr/Xif8StS0O/2c7VTwUFG4zaHe2ucEBY5+
-         ArEML+NxfdVug2lyvXwQ2lbtnW7RVLcjN6Tlp8nI=
+        b=rD9hxWb0B+Uew2OaI+6vlKSWy6UrpDLH6T1Z+2W+3AA9mEaxlGdQoydJw0BdXBp1x
+         0Ca3yMy7fRTknmY7alrclkQwGRKl2hfi5FNr6YATox+aSk4S9IKGxdlEEdjPsTAa8d
+         HAg7zsZXWAqMoZYfgWrLt85Rrc7BC7thKlhsTNYE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Like Xu <like.xu@linux.intel.com>,
-        Kan Liang <kan.liang@linux.intel.com>,
-        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
-        Ingo Molnar <mingo@kernel.org>
-Subject: [PATCH 5.4 065/222] perf/x86/intel/uncore: Fix missing marker for snr_uncore_imc_freerunning_events
-Date:   Wed, 22 Jan 2020 10:27:31 +0100
-Message-Id: <20200122092838.375669008@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Harald Freudenberger <freude@linux.ibm.com>,
+        Vasily Gorbik <gor@linux.ibm.com>
+Subject: [PATCH 5.4 067/222] s390/zcrypt: Fix CCA cipher key gen with clear key value function
+Date:   Wed, 22 Jan 2020 10:27:33 +0100
+Message-Id: <20200122092838.523158685@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
 In-Reply-To: <20200122092833.339495161@linuxfoundation.org>
 References: <20200122092833.339495161@linuxfoundation.org>
@@ -45,37 +44,38 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Kan Liang <kan.liang@linux.intel.com>
+From: Harald Freudenberger <freude@linux.ibm.com>
 
-commit fa694ae532836bd2f4cd659e9b4032abaf9fa9e5 upstream.
+commit 94dd3bada53ee77b80d0aeee5571eeb83654d156 upstream.
 
-An Oops during the boot is found on some SNR machines.  It turns out
-this is because the snr_uncore_imc_freerunning_events[] array was
-missing an end-marker.
+Regression tests showed that the CCA cipher key function which
+generates an CCA cipher key with given clear key value does not work
+correctly. At parsing the reply CPRB two limits are wrong calculated
+resulting in rejecting the reply as invalid with s390dbf message
+"_ip_cprb_helper reply with invalid or unknown key block".
 
-Fixes: ee49532b38dd ("perf/x86/intel/uncore: Add IMC uncore support for Snow Ridge")
-Reported-by: Like Xu <like.xu@linux.intel.com>
-Signed-off-by: Kan Liang <kan.liang@linux.intel.com>
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
-Tested-by: Like Xu <like.xu@linux.intel.com>
-Cc: stable@vger.kernel.org
-Link: https://lkml.kernel.org/r/20200116200210.18937-1-kan.liang@linux.intel.com
+Fixes: f2bbc96e7cfa ("s390/pkey: add CCA AES cipher key support")
+Cc: Stable <stable@vger.kernel.org>
+Signed-off-by: Harald Freudenberger <freude@linux.ibm.com>
+Signed-off-by: Vasily Gorbik <gor@linux.ibm.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/x86/events/intel/uncore_snbep.c |    1 +
- 1 file changed, 1 insertion(+)
+ drivers/s390/crypto/zcrypt_ccamisc.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/arch/x86/events/intel/uncore_snbep.c
-+++ b/arch/x86/events/intel/uncore_snbep.c
-@@ -4536,6 +4536,7 @@ static struct uncore_event_desc snr_unco
- 	INTEL_UNCORE_EVENT_DESC(write,		"event=0xff,umask=0x21"),
- 	INTEL_UNCORE_EVENT_DESC(write.scale,	"3.814697266e-6"),
- 	INTEL_UNCORE_EVENT_DESC(write.unit,	"MiB"),
-+	{ /* end: all zeroes */ },
- };
+--- a/drivers/s390/crypto/zcrypt_ccamisc.c
++++ b/drivers/s390/crypto/zcrypt_ccamisc.c
+@@ -1037,8 +1037,8 @@ static int _ip_cprb_helper(u16 cardnr, u
+ 	prepparm = (struct iprepparm *) prepcblk->rpl_parmb;
  
- static struct intel_uncore_ops snr_uncore_imc_freerunning_ops = {
+ 	/* do some plausibility checks on the key block */
+-	if (prepparm->kb.len < 120 + 5 * sizeof(uint16_t) ||
+-	    prepparm->kb.len > 136 + 5 * sizeof(uint16_t)) {
++	if (prepparm->kb.len < 120 + 3 * sizeof(uint16_t) ||
++	    prepparm->kb.len > 136 + 3 * sizeof(uint16_t)) {
+ 		DEBUG_ERR("%s reply with invalid or unknown key block\n",
+ 			  __func__);
+ 		rc = -EIO;
 
 
