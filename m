@@ -2,157 +2,140 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C418E147448
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Jan 2020 00:01:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D5408147458
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Jan 2020 00:10:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729660AbgAWXBc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 23 Jan 2020 18:01:32 -0500
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:34644 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729154AbgAWXBc (ORCPT
+        id S1729774AbgAWXKq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 23 Jan 2020 18:10:46 -0500
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:33640 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727056AbgAWXKp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Jan 2020 18:01:32 -0500
-Received: by mail-pg1-f196.google.com with SMTP id r11so917pgf.1;
-        Thu, 23 Jan 2020 15:01:31 -0800 (PST)
+        Thu, 23 Jan 2020 18:10:45 -0500
+Received: by mail-wr1-f67.google.com with SMTP id b6so5249513wrq.0;
+        Thu, 23 Jan 2020 15:10:44 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=k5c7h89QBsGnx1sKF1lZNrXB89jqLvVgTVCHNSa0+3o=;
-        b=gcF+U7eYmM7gB/elKE6pO77Y6c0brgr7/sVyjLbl5Dc3nKwq4CxH+ybtIBDBNoGf6S
-         fcPbJzLID1XnrU5HsJnRBM64IWRAdA8jnsoUYugG3jzQhk9vjY7lGC6/elkruXSsRfU2
-         EiJ4NQCesFoqCPv7ILq/G3I3OA7+ytjztmQ34Wa2t7BA0/kl23bYLD7y0ASYZLuL+i0V
-         565KhUOJoJB75Ra/Zj3VlxUygyxw4D6hXZ+4uBHyp3GEXjsTE8jVOCraR5p9aCQE1Csb
-         fxAmkrzllaQs9uCWPSrql8D+WMBR1JKhzgz3KlArDw0ptBo6iesKP1MDCFzRLnWBkhZd
-         8oWg==
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=J4auLfeTWYpfRnRGmALkFYqcKSPLJ0m/g2ODa3jrK1c=;
+        b=EGal7W4OAs1ShOUeFk8DBOF/grFbVGnHDqKtZt6ZKvoeae2FHLK346srFokFr8Z856
+         Ud9eLuOY5qggOmoXGH8Q94pIrY36Kn7ZVzrI/Z1JqsXPAQISwuZDRevKgJINRcBq/OiL
+         LnSfkgcK872L+evBH8dMdO42/WjPU9z0IF8BZysUCHP0vjr4Huugp8qMLcYzfVST3+Co
+         CNtbKiVBbTjSIIQFUI54BTxevfmyZNQ1ebq6sMP/yjmE4o5XlVU7Nj+mTQO/363CR7CL
+         UYPgdK94BqMLuWvOLS0PLUp90LGgES+1XTVBuyEo4P9g28GZEVnDUe3SmyHl4+/j6eRC
+         RmOA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=k5c7h89QBsGnx1sKF1lZNrXB89jqLvVgTVCHNSa0+3o=;
-        b=sMzXFodBu+8sROYvd3LkyArml4ms6XYWRGH6PutlgM4La7gPx9AEN/tzSLS1wX4g2e
-         2MsBtX6ZkPp+U8O5623SXxz5M5mFEQUUURBRrixqsNjKNKkrTmIXiWOWtCfgzW5p8UlY
-         SXMsTEZGjh8RrAP97tWw/QtkUeE2/mVLFb/qSkMRlIiOuggnAJb14aKyu/ZoZfm4QaHn
-         4xUokfc+N5uNO1kBqOPQQXT+pB2ThZwRptrCffuYP+PF9jznCebXCA8q8SRd1OjAVkwO
-         1XF7FHesUthPdN61TXgPYRWFncrGBqTCedWiuKiIg5GP/AkbhEyWboiHIML+KgMnKQ8K
-         W/6A==
-X-Gm-Message-State: APjAAAXU8w8xkAjL7V9y+5pZyxFWRtTVXYrbpHDB7k0PwoJe4SDK5x4p
-        v2M+f/ou0l4AqTsCykA8ul4=
-X-Google-Smtp-Source: APXvYqwG1cCuEhyVaiHuGSMoNd0FwJy8BJ/gM3MBWs9g9G8+VrVVPPmVPXubFYDbcxKpLBmHsw1jBQ==
-X-Received: by 2002:a63:1c5e:: with SMTP id c30mr807745pgm.30.1579820491377;
-        Thu, 23 Jan 2020 15:01:31 -0800 (PST)
-Received: from localhost ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id l14sm3824859pjq.5.2020.01.23.15.01.30
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 23 Jan 2020 15:01:30 -0800 (PST)
-Date:   Thu, 23 Jan 2020 15:01:29 -0800
-From:   Guenter Roeck <linux@roeck-us.net>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     linux-kernel@vger.kernel.org, stable@vger.kernel.org,
-        Oleg Nesterov <oleg@redhat.com>,
-        Eric Paris <eparis@redhat.com>,
-        Kees Cook <keescook@chromium.org>,
-        Serge Hallyn <serge@hallyn.com>, Jann Horn <jannh@google.com>,
-        Christian Brauner <christian.brauner@ubuntu.com>
-Subject: Re: [PATCH 4.14 20/65] ptrace: reintroduce usage of subjective
- credentials in ptrace_has_cap()
-Message-ID: <20200123230129.GA3737@roeck-us.net>
-References: <20200122092750.976732974@linuxfoundation.org>
- <20200122092754.007578340@linuxfoundation.org>
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=J4auLfeTWYpfRnRGmALkFYqcKSPLJ0m/g2ODa3jrK1c=;
+        b=Fun1lxI/o94/bOQgy8wOYsJQwPQ2uM0MF04fXShLzh4vy85ttKPK63YsJHKQoxhcy7
+         boW4kgkNtZxgE8SeWW4HoUzoktVonpQM3PbIwSYrcqXLGJsUgpiIH2C1GM7r/fN+ZmB8
+         RTl2eTiD1fT8B5vAv0GftUDiMWehY1W3SuvZm2ZzuHB9Tg9PX04U8httX8dFlnYt+0rP
+         EWsRr31l9W4ME75x14XlMowzkrHuocf4jRC3ofW2bibjC5gMaUrbBFrQ1w9AcfYnL6dB
+         s+bBe1OEKD/L7hVBm4yWOOfsyn+2sX+SLkyMVWZJfSTuWsWMP6XPvuN3uRVwTzPp8B0N
+         Bjdg==
+X-Gm-Message-State: APjAAAWdSN9sRwOr175kKZMn0yFWrMinvSrYlwtICAV8wnX/6JA4nGWA
+        /YjFURX/2lkuaOmGpq1S410=
+X-Google-Smtp-Source: APXvYqzpix3/UoO0zYYUskqcPQbRVEYyW2mrxMcV8vZWmWwc5qbmGd7vTFIsErg56ocucvRROmcNVg==
+X-Received: by 2002:a5d:4f8e:: with SMTP id d14mr473570wru.112.1579821043400;
+        Thu, 23 Jan 2020 15:10:43 -0800 (PST)
+Received: from localhost.localdomain (79-139-233-37.dynamic.spd-mgts.ru. [79.139.233.37])
+        by smtp.gmail.com with ESMTPSA id z6sm5105552wrw.36.2020.01.23.15.10.41
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 23 Jan 2020 15:10:42 -0800 (PST)
+From:   Dmitry Osipenko <digetx@gmail.com>
+To:     Laxman Dewangan <ldewangan@nvidia.com>,
+        Vinod Koul <vkoul@kernel.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        =?UTF-8?q?Micha=C5=82=20Miros=C5=82aw?= <mirq-linux@rere.qmqm.pl>
+Cc:     dmaengine@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v5 00/14] NVIDIA Tegra APB DMA driver fixes and improvements
+Date:   Fri, 24 Jan 2020 02:03:11 +0300
+Message-Id: <20200123230325.3037-1-digetx@gmail.com>
+X-Mailer: git-send-email 2.24.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200122092754.007578340@linuxfoundation.org>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jan 22, 2020 at 10:29:05AM +0100, Greg Kroah-Hartman wrote:
-> From: Christian Brauner <christian.brauner@ubuntu.com>
-> 
-> commit 6b3ad6649a4c75504edeba242d3fd36b3096a57f upstream.
-> 
-> Commit 69f594a38967 ("ptrace: do not audit capability check when outputing /proc/pid/stat")
-> introduced the ability to opt out of audit messages for accesses to various
-> proc files since they are not violations of policy.  While doing so it
-> somehow switched the check from ns_capable() to
-> has_ns_capability{_noaudit}(). That means it switched from checking the
-> subjective credentials of the task to using the objective credentials. This
-> is wrong since. ptrace_has_cap() is currently only used in
-> ptrace_may_access() And is used to check whether the calling task (subject)
-> has the CAP_SYS_PTRACE capability in the provided user namespace to operate
-> on the target task (object). According to the cred.h comments this would
-> mean the subjective credentials of the calling task need to be used.
-> This switches ptrace_has_cap() to use security_capable(). Because we only
-> call ptrace_has_cap() in ptrace_may_access() and in there we already have a
-> stable reference to the calling task's creds under rcu_read_lock() there's
-> no need to go through another series of dereferences and rcu locking done
-> in ns_capable{_noaudit}().
-> 
-> As one example where this might be particularly problematic, Jann pointed
-> out that in combination with the upcoming IORING_OP_OPENAT feature, this
-> bug might allow unprivileged users to bypass the capability checks while
-> asynchronously opening files like /proc/*/mem, because the capability
-> checks for this would be performed against kernel credentials.
-> 
-> To illustrate on the former point about this being exploitable: When
-> io_uring creates a new context it records the subjective credentials of the
-> caller. Later on, when it starts to do work it creates a kernel thread and
-> registers a callback. The callback runs with kernel creds for
-> ktask->real_cred and ktask->cred. To prevent this from becoming a
-> full-blown 0-day io_uring will call override_cred() and override
-> ktask->cred with the subjective credentials of the creator of the io_uring
-> instance. With ptrace_has_cap() currently looking at ktask->real_cred this
-> override will be ineffective and the caller will be able to open arbitray
-> proc files as mentioned above.
-> Luckily, this is currently not exploitable but will turn into a 0-day once
-> IORING_OP_OPENAT{2} land in v5.6. Fix it now!
-> 
-> Cc: Oleg Nesterov <oleg@redhat.com>
-> Cc: Eric Paris <eparis@redhat.com>
-> Cc: stable@vger.kernel.org
-> Reviewed-by: Kees Cook <keescook@chromium.org>
-> Reviewed-by: Serge Hallyn <serge@hallyn.com>
-> Reviewed-by: Jann Horn <jannh@google.com>
-> Fixes: 69f594a38967 ("ptrace: do not audit capability check when outputing /proc/pid/stat")
-> Signed-off-by: Christian Brauner <christian.brauner@ubuntu.com>
-> Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> 
-> ---
->  kernel/ptrace.c |   15 ++++++++++-----
->  1 file changed, 10 insertions(+), 5 deletions(-)
-> 
-> --- a/kernel/ptrace.c
-> +++ b/kernel/ptrace.c
-> @@ -258,12 +258,17 @@ static int ptrace_check_attach(struct ta
->  	return ret;
->  }
->  
-> -static int ptrace_has_cap(struct user_namespace *ns, unsigned int mode)
-> +static bool ptrace_has_cap(const struct cred *cred, struct user_namespace *ns,
-> +			   unsigned int mode)
->  {
-> +	int ret;
-> +
->  	if (mode & PTRACE_MODE_NOAUDIT)
-> -		return has_ns_capability_noaudit(current, ns, CAP_SYS_PTRACE);
-> +		ret = security_capable(cred, ns, CAP_SYS_PTRACE);
->  	else
-> -		return has_ns_capability(current, ns, CAP_SYS_PTRACE);
-> +		ret = security_capable(cred, ns, CAP_SYS_PTRACE);
-> +
-> +	return ret == 0;
+Hello,
 
-This results in
-	if (condition)
-		do_something;
-	else
-		do_the_same;
+This series fixes some problems that I spotted recently, secondly the
+driver's code gets a cleanup. Please review and apply, thanks in advance!
 
-Is that really correct ? The upstream patch calls security_capable()
-with additional CAP_OPT_NOAUDIT vs. CAP_OPT_NONE parameter, which does
-make sense. But I don't really see the benefit of the change above.
+Changelog:
 
-Guenter 
+v5: - Fixed touching hardware registers after RPM-suspending in the patch
+      "Keep clock enabled only during of DMA transfer", now RPM is kept
+      resumed in the tegra_dma_terminate_all() while needed. Thanks to
+      Jon Hunter for pointing at this problem in a review comment to v4.
+
+    - The "Clean up runtime PM teardown" patch is replaced with the "Remove
+      assumptions about unavailable runtime PM" patch because I recalled that
+      now RPM is always available on all Tegra SoCs.
+
+    - The "Clean up suspend-resume" patch got a minor improvement, now
+      tasklet_kill() is invoked before checking of the busy state in
+      tegra_dma_dev_suspend(), this should allow us to catch problems if DMA
+      callback issues a new DMA transfer.
+
+    - Added Jon's acks to the reviewed patches.
+
+v4: - Addressed Jon's request to *not* remove the runtime PM usage, instead
+      there is now new patch that makes RPM more practical:
+
+        dmaengine: tegra-apb: Keep clock enabled only during of DMA transfer
+
+    - Added new minor patch to clean up RPM's teardown:
+
+        dmaengine: tegra-apb: Clean up runtime PM teardown
+
+v3: - In the review comment to v1 Michał Mirosław suggested that "Prevent
+      race conditions on channel's freeing" does changes that deserve to
+      be separated into two patches. I factored out and improved tasklet
+      releasing into this new patch:
+
+        dmaengine: tegra-apb: Clean up tasklet releasing
+
+    - The "Fix use-after-free" patch got an improved commit message.
+
+v2: - I took another look at the driver and spotted few more things that
+      could be improved, which resulted in these new patches:
+
+        dmaengine: tegra-apb: Remove runtime PM usage
+        dmaengine: tegra-apb: Clean up suspend-resume
+        dmaengine: tegra-apb: Add missing of_dma_controller_free
+        dmaengine: tegra-apb: Allow to compile as a loadable kernel module
+        dmaengine: tegra-apb: Remove MODULE_ALIAS
+
+Dmitry Osipenko (14):
+  dmaengine: tegra-apb: Fix use-after-free
+  dmaengine: tegra-apb: Implement synchronization hook
+  dmaengine: tegra-apb: Prevent race conditions on channel's freeing
+  dmaengine: tegra-apb: Clean up tasklet releasing
+  dmaengine: tegra-apb: Prevent race conditions of tasklet vs free list
+  dmaengine: tegra-apb: Use devm_platform_ioremap_resource
+  dmaengine: tegra-apb: Use devm_request_irq
+  dmaengine: tegra-apb: Fix coding style problems
+  dmaengine: tegra-apb: Remove assumptions about unavailable runtime PM
+  dmaengine: tegra-apb: Keep clock enabled only during of DMA transfer
+  dmaengine: tegra-apb: Clean up suspend-resume
+  dmaengine: tegra-apb: Add missing of_dma_controller_free
+  dmaengine: tegra-apb: Allow to compile as a loadable kernel module
+  dmaengine: tegra-apb: Remove MODULE_ALIAS
+
+ drivers/dma/Kconfig           |   2 +-
+ drivers/dma/tegra20-apb-dma.c | 507 +++++++++++++++++-----------------
+ 2 files changed, 260 insertions(+), 249 deletions(-)
+
+-- 
+2.24.0
+
