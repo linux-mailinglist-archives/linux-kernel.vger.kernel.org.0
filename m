@@ -2,77 +2,100 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3352D146E71
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Jan 2020 17:29:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CE056146E7E
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Jan 2020 17:30:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728928AbgAWQ30 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 23 Jan 2020 11:29:26 -0500
-Received: from mga03.intel.com ([134.134.136.65]:29228 "EHLO mga03.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727278AbgAWQ30 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Jan 2020 11:29:26 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 23 Jan 2020 08:29:25 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.70,354,1574150400"; 
-   d="scan'208";a="229902118"
-Received: from orsmsx101.amr.corp.intel.com ([10.22.225.128])
-  by orsmga006.jf.intel.com with ESMTP; 23 Jan 2020 08:29:25 -0800
-Received: from orsmsx151.amr.corp.intel.com (10.22.226.38) by
- ORSMSX101.amr.corp.intel.com (10.22.225.128) with Microsoft SMTP Server (TLS)
- id 14.3.439.0; Thu, 23 Jan 2020 08:29:25 -0800
-Received: from orsmsx102.amr.corp.intel.com ([169.254.3.100]) by
- ORSMSX151.amr.corp.intel.com ([169.254.7.99]) with mapi id 14.03.0439.000;
- Thu, 23 Jan 2020 08:29:25 -0800
-From:   "Yang, Fei" <fei.yang@intel.com>
-To:     Andrzej Pietrasiewicz <andrzej.p@collabora.com>,
-        John Stultz <john.stultz@linaro.org>,
-        lkml <linux-kernel@vger.kernel.org>
-CC:     Felipe Balbi <felipe.balbi@linux.intel.com>,
-        Thinh Nguyen <thinhn@synopsys.com>,
-        Tejas Joglekar <tejas.joglekar@synopsys.com>,
-        "Jack Pham" <jackp@codeaurora.org>, Todd Kjos <tkjos@google.com>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        Linux USB List <linux-usb@vger.kernel.org>,
-        stable <stable@vger.kernel.org>
-Subject: RE: [RFC][PATCH 0/2] Avoiding DWC3 transfer stalls/hangs when using
- adb over f_fs
-Thread-Topic: [RFC][PATCH 0/2] Avoiding DWC3 transfer stalls/hangs when
- using adb over f_fs
-Thread-Index: AQHV0XMMcRoryuKxgUWuu9vXC1fi/6f4daqA///7ALA=
-Date:   Thu, 23 Jan 2020 16:29:24 +0000
-Message-ID: <02E7334B1630744CBDC55DA8586225837F9EE280@ORSMSX102.amr.corp.intel.com>
-References: <20200122222645.38805-1-john.stultz@linaro.org>
- <ef64036f-7621-50d9-0e23-0f7141a40d7a@collabora.com>
-In-Reply-To: <ef64036f-7621-50d9-0e23-0f7141a40d7a@collabora.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-dlp-product: dlpe-windows
-dlp-version: 11.2.0.6
-dlp-reaction: no-action
-x-originating-ip: [10.22.254.139]
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+        id S1729058AbgAWQaA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 23 Jan 2020 11:30:00 -0500
+Received: from mail-qk1-f195.google.com ([209.85.222.195]:35681 "EHLO
+        mail-qk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727523AbgAWQ37 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 23 Jan 2020 11:29:59 -0500
+Received: by mail-qk1-f195.google.com with SMTP id z76so4040695qka.2
+        for <linux-kernel@vger.kernel.org>; Thu, 23 Jan 2020 08:29:59 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=lca.pw; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=vnD7CtKsIUMQZngJBgz/z3z7LZDuTlk1mfUMotJq4ls=;
+        b=ITGRhoN8U017VrzMlBw/yrJX8jmgO/FLsQjjj5XEofW+pB8tFjk8wmXr3GwdIMO95/
+         TdbtO3PIJ8YnZ2nopdVCMK6Ajh4BMIljNe2MEnw/uHTiwJfiLrFUbyGT/2t6KpFSOkpX
+         vfn1n7ptNReviQswLnoPORqii+ccWPX1hrXG9+lrEjDGgnz9ODkEYgRkHFexhcsK48HQ
+         URC+C4PUMHEE1no+vyeTkSKzn6uIzycEMlQEpJTgmXu/9V/SUv5ogYGDOJGV9PLlw65+
+         bOcVPkI4ecRkzi1FpoqIPVnWw4a1SibDgHBDR+PGF12A3huLUWFgnWWS5KNq61gMQELm
+         Ps3Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=vnD7CtKsIUMQZngJBgz/z3z7LZDuTlk1mfUMotJq4ls=;
+        b=YEgWFFurj1gG304zu7t2mTy1/iclYLATKK5rghB1DLtbBGV0Cs0fyVWRGlPMe5+9wE
+         h4H2Z0pzjykFQgH3C6zWoqOsYM6GnJ9XsnibTVFIb6fEyXoO9hoqNUiT/mE+5ReyJBxp
+         V21YYuYB9lIG7PtMqRP8TDYXR+gLyg5eVsu6DKLmDwLK2pdLHnPWSHPfKwgmUDokGJWz
+         HSTZ/wLIkRt8xYRaY6JemqIhMD9go191Q2N1kQbWIyj2X4dbAXIVYVqx5fxY26/mgJEM
+         43X/IzGVteIDS4ipuX0c9ik3L2UD8EN3fIC4zIDXITH6CxQNKOq03s+946un0s9Gmj3B
+         WJDA==
+X-Gm-Message-State: APjAAAWEQHX+GnQlkqB5lsU01p8bkeofyPgBAGs0jJKYI0ZOwuXyApQk
+        /Nhf37hnFHL4Ong6W413J6D6Ag==
+X-Google-Smtp-Source: APXvYqwu8j+jB7xvMUwGV0+Vmf+pKoO72oLwOCLj8Yu+pN4KpMhRP/GPYpj7h2IQFwCZYa3ugyl0xg==
+X-Received: by 2002:a05:620a:134f:: with SMTP id c15mr16463418qkl.115.1579796998789;
+        Thu, 23 Jan 2020 08:29:58 -0800 (PST)
+Received: from ovpn-123-97.rdu2.redhat.com (pool-71-184-117-43.bstnma.fios.verizon.net. [71.184.117.43])
+        by smtp.gmail.com with ESMTPSA id k135sm1121731qke.6.2020.01.23.08.29.56
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 23 Jan 2020 08:29:57 -0800 (PST)
+From:   Qian Cai <cai@lca.pw>
+To:     peterz@infradead.org
+Cc:     will@kernel.org, longman@redhat.com, mingo@redhat.com,
+        catalin.marinas@arm.com, clang-built-linux@googlegroups.com,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Qian Cai <cai@lca.pw>
+Subject: [PATCH -next] arm64/spinlock: fix a -Wunused-function warning
+Date:   Thu, 23 Jan 2020 11:29:45 -0500
+Message-Id: <20200123162945.7705-1-cai@lca.pw>
+X-Mailer: git-send-email 2.21.0 (Apple Git-122.2)
 MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Pj4gSGV5IGFsbCwNCj4+ICAgIEkgd2FudGVkIHRvIHNlbmQgdGhlc2Ugb3V0IGZvciBjb21tZW50
-IGFuZCB0aG91Z2h0cy4NCj4+IA0KPj4gU2luY2UgfjQuMjAsIHdoZW4gdGhlIGZ1bmN0aW9uZnMg
-Z2FkZ2V0IGVuYWJsZWQgc2NhdHRlci1nYXRoZXIgDQo+PiBzdXBwb3J0LCB3ZSBoYXZlIHNlZW4g
-cHJvYmxlbXMgd2l0aCBhZGIgY29ubmVjdGlvbnMgc3RhbGxpbmcgYW5kIA0KPj4gc3RvcHBpbmcg
-dG8gZnVuY3Rpb24gb24gaGFyZHdhcmUgd2l0aCBkd2MzIHVzYiBjb250cm9sbGVycy4NCj4+IFNw
-ZWNpZmljYWxseSwgSGlLZXk5NjAsIERyYWdvbmJvYXJkIDg0NWMsIGFuZCBQaXhlbDMgZGV2aWNl
-cy4NCj4NCj4gQW55IGNoYW5jZSB0aGlzOg0KPiANCj4gaHR0cHM6Ly9naXQua2VybmVsLm9yZy9w
-dWIvc2NtL2xpbnV4L2tlcm5lbC9naXQvYmFsYmkvdXNiLmdpdC9jb21taXQvP2g9dGVzdGluZy9u
-ZXh0JmlkPWY2MzMzM2U4ZTRmZDYzZDhkOGFlODNiODlkMmMzOGNmMjFkNjQ4MDENClRoaXMgaXMg
-YSBkaWZmZXJlbnQgaXNzdWUuIEkgaGF2ZSB0cmllZCBpbml0aWFsaXppbmcgbnVtX3NncyB3aGVu
-IGRlYnVnZ2luZyB0aGlzIGFkYiBzdGFsbCBwcm9ibGVtLCBidXQgaXQgZGlkbid0IGhlbHAuDQoN
-Cj4+IGhhcyBzb21ldGhpbmcgdG8gZG8gd2l0aCB0aGUgcHJvYmxlbSB5b3UgYXJlIHJlcG9ydGlu
-Zz8NCj4NCj4+IEFuZHJ6ZWoNCg==
+The commit f5bfdc8e3947 ("locking/osq: Use optimized spinning loop for
+arm64") introduced a warning from Clang because vcpu_is_preempted() is
+compiled away,
+
+kernel/locking/osq_lock.c:25:19: warning: unused function 'node_cpu'
+[-Wunused-function]
+static inline int node_cpu(struct optimistic_spin_node *node)
+                  ^
+1 warning generated.
+
+Since vcpu_is_preempted() had already been defined in
+include/linux/sched.h as false, just comment out the redundant macro, so
+it can still be served for the documentation purpose.
+
+Fixes: f5bfdc8e3947 ("locking/osq: Use optimized spinning loop for arm64")
+Signed-off-by: Qian Cai <cai@lca.pw>
+---
+ arch/arm64/include/asm/spinlock.h | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/arch/arm64/include/asm/spinlock.h b/arch/arm64/include/asm/spinlock.h
+index 102404dc1e13..b05f82e8ba19 100644
+--- a/arch/arm64/include/asm/spinlock.h
++++ b/arch/arm64/include/asm/spinlock.h
+@@ -17,7 +17,8 @@
+  *
+  * See:
+  * https://lore.kernel.org/lkml/20200110100612.GC2827@hirez.programming.kicks-ass.net
++ *
++ * #define vcpu_is_preempted(cpu)	false
+  */
+-#define vcpu_is_preempted(cpu)	false
+ 
+ #endif /* __ASM_SPINLOCK_H */
+-- 
+2.21.0 (Apple Git-122.2)
+
