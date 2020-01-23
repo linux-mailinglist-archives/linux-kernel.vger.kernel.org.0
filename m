@@ -2,154 +2,172 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DF3A5146ACD
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Jan 2020 15:06:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 86213146A49
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Jan 2020 15:00:43 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729417AbgAWOFu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 23 Jan 2020 09:05:50 -0500
-Received: from gw.cm.dream.jp ([59.157.128.2]:45404 "EHLO vsmtp02.cm.dti.ne.jp"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726729AbgAWOFs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Jan 2020 09:05:48 -0500
-X-Greylist: delayed 400 seconds by postgrey-1.27 at vger.kernel.org; Thu, 23 Jan 2020 09:05:14 EST
-Received: from localhost (KD124210025232.ppp-bb.dion.ne.jp [124.210.25.232]) by vsmtp02.cm.dti.ne.jp (3.11v) with ESMTP AUTH id 00NDwSSk000958;Thu, 23 Jan 2020 22:58:32 +0900 (JST)
-Date:   Thu, 23 Jan 2020 22:58:27 +0900 (JST)
-Message-Id: <20200123.225827.1155989593018204741.hermes@ceres.dti.ne.jp>
-To:     linux-kernel@vger.kernel.org
-Subject: Re: BUG: unable to handle kernel NULL pointer dereference at
- 00000000000000a8 in nilfs_segctor_do_construct
-From:   ARAI Shun-ichi <hermes@ceres.dti.ne.jp>
-In-Reply-To: <CAKFNMo=k1wVHOwXhTLEOJ+A-nwmvJ+sN_PPa8kY8fMxrQ4R+Jw@mail.gmail.com>
-References: <8736emquds.fsf@logand.com>
-        <CAKFNMo=k1wVHOwXhTLEOJ+A-nwmvJ+sN_PPa8kY8fMxrQ4R+Jw@mail.gmail.com>
-X-Mailer: Mew version 6.8 on Emacs 26.3
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=iso-2022-jp
-Content-Transfer-Encoding: 7bit
+        id S1728981AbgAWOAk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 23 Jan 2020 09:00:40 -0500
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:36690 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726729AbgAWOAk (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 23 Jan 2020 09:00:40 -0500
+Received: by mail-pf1-f196.google.com with SMTP id w2so1596896pfd.3
+        for <linux-kernel@vger.kernel.org>; Thu, 23 Jan 2020 06:00:40 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=eaakHPtquLm/QuhUeGSfqmMfenCUub/aZvbkfRWUVhY=;
+        b=gZJabL7LaABtPWt7al+0/+3LNjRDPuq4glqMmEKJDlh+ZP3xZRJXbkZ6uha1vOnC3e
+         PWSLrRIMXyOeO1WS+xaIRZkMptT7m6cnrBWQns2vnJSO1o40TB+cmbSsiDm+ewQcix7t
+         ijBLNvVPmraSWZmwMzaq525Qx6KSqSAXURfj43iNf5brzeuOFUCTw/loRaKif5X5PS0h
+         vLs8E0bDnihc3vHoKnR+bPyQa0q6YiYM1G/uLZVEXxypX0hP4MHk+iwyfDCHgx1Kj9Tt
+         gEb2hZqrO54t4ngT7EAjquk4h1fBnFdF+w4H+5p/yXpAyvoEXT+cwJOMj19IrlhwrQiJ
+         Euvw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=eaakHPtquLm/QuhUeGSfqmMfenCUub/aZvbkfRWUVhY=;
+        b=hPjwuRZvwUumJHhO+QZqkNFu+fV7ieltMNTRCQXRqby9dzpcM+0xOhvyWXmR0PU2da
+         6hAe2zOOf3QGL7cXqZIacYfK6EC0ta+dalXsyM/Vjap4dyAcwoS9bI1lYMuRVgru+isE
+         6xc+9oB+B1karnwAXtqhduYbsB1c5IQsb4dq+pbsQftKOp8v6CwqUTOrCLu6SCndsUG5
+         tvtVxJIax/IO5rN+T7pHfJ3vwtQxdvlymK1+Id/Zyqjif6hJh4zzaGrzcBrYNdnwdHXf
+         Mc6gnA0Mp5Q8e45/K6u7S3gcT8n89nr67g7cSjM9VFmiR6HxnA3GhtsHkz9PHQYhjtSg
+         tPcg==
+X-Gm-Message-State: APjAAAVggq6o1+OEomaVHQU62YqWDQvLfcA9Qbv6g+F/ZLmejm66cQhR
+        rt6MtWyE+SgsmUc6V1DdRtAZshCQBfuhhS3jbD2VQA==
+X-Google-Smtp-Source: APXvYqwDl0oJcXLixPXvgprHhlnsCLhJar3LxDx0WVCyapUyt5ESsO5Yf5LY/ev1I3KmFnHXXseknHyAlr/WcDp/naU=
+X-Received: by 2002:a63:d906:: with SMTP id r6mr4118780pgg.440.1579788039422;
+ Thu, 23 Jan 2020 06:00:39 -0800 (PST)
+MIME-Version: 1.0
+References: <0000000000003a39d50599d200e6@google.com> <CAAeHK+wnE6anSjmoA-Cr4nvx_oujUWH=D_YkhE38eiJurjsCWg@mail.gmail.com>
+In-Reply-To: <CAAeHK+wnE6anSjmoA-Cr4nvx_oujUWH=D_YkhE38eiJurjsCWg@mail.gmail.com>
+From:   Andrey Konovalov <andreyknvl@google.com>
+Date:   Thu, 23 Jan 2020 15:00:28 +0100
+Message-ID: <CAAeHK+zZTWpnE=duVb+Jv9zj4wuYn6bj=yzUHugB-G9aoyDf1Q@mail.gmail.com>
+Subject: Re: WARNING in uvc_scan_chain_forward
+To:     syzbot <syzbot+0a5c96772a9b26f2a876@syzkaller.appspotmail.com>
+Cc:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        LKML <linux-kernel@vger.kernel.org>, linux-media@vger.kernel.org,
+        USB list <linux-usb@vger.kernel.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+On Fri, Jan 10, 2020 at 4:51 PM Andrey Konovalov <andreyknvl@google.com> wrote:
+>
+> On Mon, Dec 16, 2019 at 2:15 PM syzbot
+> <syzbot+0a5c96772a9b26f2a876@syzkaller.appspotmail.com> wrote:
+> >
+> > Hello,
+> >
+> > syzbot found the following crash on:
+> >
+> > HEAD commit:    4cc037ec usb: gadget: add raw-gadget interface
+> > git tree:       https://github.com/google/kasan.git usb-fuzzer
+> > console output: https://syzkaller.appspot.com/x/log.txt?x=11b905dee00000
+> > kernel config:  https://syzkaller.appspot.com/x/.config?x=e9c2b6de462bc469
+> > dashboard link: https://syzkaller.appspot.com/bug?extid=0a5c96772a9b26f2a876
+> > compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
+> > syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=10f82546e00000
+> > C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1638ef7ee00000
+> >
+> > IMPORTANT: if you fix the bug, please add the following tag to the commit:
+> > Reported-by: syzbot+0a5c96772a9b26f2a876@syzkaller.appspotmail.com
+> >
+> > usb 1-1: New USB device found, idVendor=0bd3, idProduct=0755,
+> > bcdDevice=69.6a
+> > usb 1-1: New USB device strings: Mfr=0, Product=0, SerialNumber=0
+> > usb 1-1: config 0 descriptor??
+> > usb 1-1: string descriptor 0 read error: -71
+> > uvcvideo: Found UVC 0.00 device <unnamed> (0bd3:0755)
+> > ------------[ cut here ]------------
+> > list_add double add: new=ffff8881d0637010, prev=ffff8881d0637010,
+> > next=ffff8881d4e87c18.
+> > WARNING: CPU: 1 PID: 22 at lib/list_debug.c:29 __list_add_valid+0xb4/0xf0
+> > lib/list_debug.c:29
+> > Kernel panic - not syncing: panic_on_warn set ...
+> > CPU: 1 PID: 22 Comm: kworker/1:1 Not tainted 5.5.0-rc1-syzkaller #0
+> > Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
+> > Google 01/01/2011
+> > Workqueue: usb_hub_wq hub_event
+> > Call Trace:
+> >   __dump_stack lib/dump_stack.c:77 [inline]
+> >   dump_stack+0xef/0x16e lib/dump_stack.c:118
+> >   panic+0x2aa/0x6e1 kernel/panic.c:221
+> >   __warn.cold+0x2f/0x30 kernel/panic.c:582
+> >   report_bug+0x27b/0x2f0 lib/bug.c:195
+> >   fixup_bug arch/x86/kernel/traps.c:174 [inline]
+> >   fixup_bug arch/x86/kernel/traps.c:169 [inline]
+> >   do_error_trap+0x12b/0x1e0 arch/x86/kernel/traps.c:267
+> >   do_invalid_op+0x32/0x40 arch/x86/kernel/traps.c:286
+> >   invalid_op+0x23/0x30 arch/x86/entry/entry_64.S:1027
+> > RIP: 0010:__list_add_valid+0xb4/0xf0 lib/list_debug.c:29
+> > Code: 48 c7 c7 e0 f3 da 85 4c 89 e6 e8 ef cf 2b ff 0f 0b 31 c0 eb c5 48 89
+> > f2 4c 89 e1 48 89 ee 48 c7 c7 60 f4 da 85 e8 d4 cf 2b ff <0f> 0b 31 c0 eb
+> > aa 48 89 34 24 e8 fd 3c 7f ff 48 8b 34 24 e9 60 ff
+> > RSP: 0018:ffff8881d8c37080 EFLAGS: 00010286
+> > RAX: 0000000000000000 RBX: ffff8881d0637010 RCX: 0000000000000000
+> > RDX: 0000000000000000 RSI: ffffffff81295dad RDI: ffffed103b186e02
+> > RBP: ffff8881d0637010 R08: ffff8881da24e200 R09: fffffbfff11f1eae
+> > R10: fffffbfff11f1ead R11: ffffffff88f8f56f R12: ffff8881d4e87c18
+> > R13: ffff8881d0637000 R14: dffffc0000000000 R15: ffff8881d4e87c18
+> >   __list_add include/linux/list.h:60 [inline]
+> >   list_add_tail include/linux/list.h:93 [inline]
+> >   uvc_scan_chain_forward.isra.0+0x4df/0x637
+> > drivers/media/usb/uvc/uvc_driver.c:1526
+> >   uvc_scan_chain drivers/media/usb/uvc/uvc_driver.c:1640 [inline]
+> >   uvc_scan_device drivers/media/usb/uvc/uvc_driver.c:1824 [inline]
+> >   uvc_probe.cold+0x1aee/0x29de drivers/media/usb/uvc/uvc_driver.c:2197
+> >   usb_probe_interface+0x305/0x7a0 drivers/usb/core/driver.c:361
+> >   really_probe+0x281/0x6d0 drivers/base/dd.c:548
+> >   driver_probe_device+0x104/0x210 drivers/base/dd.c:721
+> >   __device_attach_driver+0x1c2/0x220 drivers/base/dd.c:828
+> >   bus_for_each_drv+0x162/0x1e0 drivers/base/bus.c:430
+> >   __device_attach+0x217/0x360 drivers/base/dd.c:894
+> >   bus_probe_device+0x1e4/0x290 drivers/base/bus.c:490
+> >   device_add+0x1480/0x1c20 drivers/base/core.c:2487
+> >   usb_set_configuration+0xe67/0x1740 drivers/usb/core/message.c:2023
+> >   generic_probe+0x9d/0xd5 drivers/usb/core/generic.c:210
+> >   usb_probe_device+0x99/0x100 drivers/usb/core/driver.c:266
+> >   really_probe+0x281/0x6d0 drivers/base/dd.c:548
+> >   driver_probe_device+0x104/0x210 drivers/base/dd.c:721
+> >   __device_attach_driver+0x1c2/0x220 drivers/base/dd.c:828
+> >   bus_for_each_drv+0x162/0x1e0 drivers/base/bus.c:430
+> >   __device_attach+0x217/0x360 drivers/base/dd.c:894
+> >   bus_probe_device+0x1e4/0x290 drivers/base/bus.c:490
+> >   device_add+0x1480/0x1c20 drivers/base/core.c:2487
+> >   usb_new_device.cold+0x6a4/0xe79 drivers/usb/core/hub.c:2537
+> >   hub_port_connect drivers/usb/core/hub.c:5184 [inline]
+> >   hub_port_connect_change drivers/usb/core/hub.c:5324 [inline]
+> >   port_event drivers/usb/core/hub.c:5470 [inline]
+> >   hub_event+0x1e59/0x3860 drivers/usb/core/hub.c:5552
+> >   process_one_work+0x92b/0x1530 kernel/workqueue.c:2264
+> >   worker_thread+0x96/0xe20 kernel/workqueue.c:2410
+> >   kthread+0x318/0x420 kernel/kthread.c:255
+> >   ret_from_fork+0x24/0x30 arch/x86/entry/entry_64.S:352
+> > Kernel Offset: disabled
+> > Rebooting in 86400 seconds..
+> >
+> >
+> > ---
+> > This bug is generated by a bot. It may contain errors.
+> > See https://goo.gl/tpsmEJ for more information about syzbot.
+> > syzbot engineers can be reached at syzkaller@googlegroups.com.
+> >
+> > syzbot will keep track of this bug report. See:
+> > https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+> > syzbot can test patches for this bug, for details see:
+> > https://goo.gl/tpsmEJ#testing-patches
+>
+> #syz fix: media: uvc: Avoid cyclic entity chains due to malformed USB
+> descriptors
 
-It is reproducible in my environment.
-Kernel version is 4.19.86 (Gentoo).
-NILFS2 with kernel 4.19.82 works well.
-
-I did following for the test.
-
-i) mount corrupt partition with read-only option
- (this partition causes "mounting fs with errors" at every rw mount)
- i-1) wait a few minutes ... not crash
- i-2) fs access (ls, du, ...) ... not crash
-
-ii) create small NILFS2 fs and read-write mount
- dd if=/dev/zero of=/tmp/n bs=1M count=500
- mount -o loop /tmp/n /mnt/tmp
- ii-1) wait a few minutes ... not crash
- ii-2) touch file in the fs ... crash (in few seconds)
-
-
-In <CAKFNMo=k1wVHOwXhTLEOJ+A-nwmvJ+sN_PPa8kY8fMxrQ4R+Jw@mail.gmail.com>;
-   Ryusuke Konishi <konishi.ryusuke@gmail.com> wrote
-   as Subject "Re: BUG: unable to handle kernel NULL pointer dereference at 00000000000000a8 in nilfs_segctor_do_construct":
-
-> Hi,
-> 
->> It was likely caused by improper shutdown and following nilfs2 partition
->> corruption.  Now I can still read the data, but on the whole the
->> computer is not useable, because starting a process which uses the
->> corrupted file system simply crashes in kernel.
-> 
-> Thank you for reporting the issue.
-> Let me ask you a few questions:
-> 
-> 1) Is the crash reproducible in the environment ?
-> 2) Can you mount the corrupted(?) partition from a recent version of kernel ?
-> 3) Does read-only mount option (-r) work to avoid the crash ?
-> 
-> Thanks,
-> Ryusuke Konishi
-> 
-> 2019年11月18日(月) 2:34 Tomas Hlavaty <tom@logand.com>:
->>
->> Hi Ryusuke,
->>
->> today I got this bug in kernel, which seems to be related to nilfs2.
->>
->> It was likely caused by improper shutdown and following nilfs2 partition
->> corruption.  Now I can still read the data, but on the whole the
->> computer is not useable, because starting a process which uses the
->> corrupted file system simply crashes in kernel.  I am actually not sure
->> if the filesystem is corrupted, as I don't know about any tool to check
->> that.  The relevant parts of dmesg log are bellow.
->>
->> Please let me know if you are the right contact or if you need more info
->> about the problem.
->>
->> Thank you,
->>
->> Tomas
->>
->> [    0.000000] Linux version 4.19.84 (nixbld@localhost) (gcc version 8.3.0 (GCC)) #1-NixOS SMP Tue Nov 12 18:21:46 UTC 2019
->> [    0.000000] Command line: initrd=\efi\nixos\4s51zw36kd1qb0ymk0charxjg8x6k5k3-initrd-linux-4.19.84-initrd.efi systemConfig=/nix/store/gdbxhzysr929abrymjqala0b5bh2fqmv-nixos-system-ushi-19.09.1258.07e66484e67 init=/nix/store/gdbxhzysr929abrymjqala0b5bh2fqmv-nixos-system-ushi-19.09.1258.07e66484e67/init loglevel=4
->>
->>
->>
->> [   37.741106] systemd-journald[470]: Received client request to flush runtime journal.
->> [   37.749084] systemd-journald[470]: File /var/log/journal/55a4ea9159c14c0bb8767a43819c6927/system.journal corrupted or uncleanly shut down, renaming and replacing.
->> [   37.810819] audit: type=1130 audit(1573985039.617:3): pid=1 uid=0 auid=4294967295 ses=4294967295 subj==unconfined msg='unit=systemd-udevd comm="systemd" exe="/nix/store/v8flm2h07zcfg5k5npz56m0ayj0qm1q8-systemd-243/lib/systemd/systemd" hostname=? addr=? terminal=? res=success'
->>
->> [   38.321561] NILFS version 2 loaded
->> [   38.323236] NILFS (dm-1): mounting unchecked fs
->>
->>
->> [   38.349185] NILFS (dm-1): recovery complete
->> [   38.353228] NILFS (dm-1): segctord starting. Construction interval = 5 seconds, CP frequency < 30 seconds
->>
->> [   63.543941] systemd-journald[470]: File
->> /var/log/journal/55a4ea9159c14c0bb8767a43819c6927/user-1000.journal
->> corrupted or uncleanly shut down, renaming and replacing.
->>
->> [12637.085548] BUG: unable to handle kernel NULL pointer dereference at 00000000000000a8
->> [12637.085558] PGD 0 P4D 0
->> [12637.085567] Oops: 0000 [#1] SMP PTI
->> [12637.085574] CPU: 0 PID: 657 Comm: segctord Not tainted 4.19.84 #1-NixOS
->> [12637.085577] Hardware name: ASUSTeK COMPUTER INC. VivoBook 15_ASUS Laptop X507MA_R507MA/X507MA, BIOS X507MA.301 09/14/2018
->> [12637.085589] RIP: 0010:percpu_counter_add_batch+0x4/0x60
->> [12637.085593] Code: 89 e6 89 c7 e8 dd 3b 28 00 3b 05 fb e0 b6 00 72 d8 4c 89 ee 48 89 ef e8 7a 63 2a 00 48 89 d8 5b 5d 41 5c 41 5d c3 41 54 55 53 <48> 8b 47 20 65 44 8b 20 49 63 ec 48 63 ca 48 01 f5 48 39 e9 7e 0a
->> [12637.085597] RSP: 0018:ffff9d1b00a0bd20 EFLAGS: 00010006
->> [12637.085601] RAX: 0000000000000002 RBX: 0000000000000000 RCX: 0000000000000018
->> [12637.085604] RDX: 0000000000000018 RSI: 0000000000000001 RDI: 0000000000000088
->> [12637.085608] RBP: ffff8df67a2988d0 R08: 0000000000000000 R09: ffff8df66fe0cfe0
->> [12637.085611] R10: 0000000000000230 R11: 0000000000000000 R12: 0000000000000000
->> [12637.085614] R13: ffff8df67a298758 R14: ffff8df67a2988c8 R15: ffffccd684229a80
->> [12637.085618] FS:  0000000000000000(0000) GS:ffff8df67ba00000(0000) knlGS:0000000000000000
->> [12637.085621] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
->> [12637.085624] CR2: 00000000000000a8 CR3: 000000011ac0a000 CR4: 0000000000340ef0
->> [12637.085628] Call Trace:
->> [12637.085640]  __test_set_page_writeback+0x37c/0x3f0
->> [12637.085663]  nilfs_segctor_do_construct+0x184e/0x2040 [nilfs2]
->> [12637.085680]  nilfs_segctor_construct+0x1f5/0x2e0 [nilfs2]
->> [12637.085693]  nilfs_segctor_thread+0x129/0x370 [nilfs2]
->> [12637.085706]  ? nilfs_segctor_construct+0x2e0/0x2e0 [nilfs2]
->> [12637.085713]  kthread+0x112/0x130
->> [12637.085719]  ? kthread_bind+0x30/0x30
->> [12637.085728]  ret_from_fork+0x1f/0x40
->> [12637.085734] Modules linked in: ctr ccm af_packet msr 8021q snd_hda_codec_hdmi snd_hda_codec_realtek snd_hda_codec_generic hid_multitouch arc4 ath9k ath9k_common ath9k_hw ath mac80211 snd_soc_skl snd_soc_skl_ipc spi_pxa2xx_platform asus_nb_wmi snd_soc_sst_ipc snd_soc_sst_dsp asus_wmi 8250_dw i2c_designware_platform sparse_keymap i2c_designware_core wmi_bmof i915 snd_hda_ext_core nilfs2 snd_soc_acpi_intel_match snd_soc_acpi uvcvideo videobuf2_vmalloc nls_iso8859_1 videobuf2_memops videobuf2_v4l2 snd_soc_core nls_cp437 rtsx_usb_ms intel_telemetry_pltdrv vfat intel_punit_ipc intel_telemetry_core fat intel_pmc_ipc memstick videobuf2_common snd_compress kvmgt vfio_mdev mdev ath3k vfio_iommu_type1 vfio btusb ac97_bus snd_pcm_dmaengine btrtl x86_pkg_temp_thermal intel_powerclamp btbcm cec coretemp btintel
->> [12637.085819]  crct10dif_pclmul crc32_pclmul videodev snd_hda_intel bluetooth drm_kms_helper ghash_clmulni_intel deflate media efi_pstore intel_cstate pstore intel_rapl_perf cfg80211 snd_hda_codec joydev mousedev evdev wdat_wdt serio_raw mac_hid efivars drm snd_hda_core snd_hwdep ecdh_generic snd_pcm snd_timer mei_me idma64 virt_dma snd intel_gtt agpgart i2c_i801 i2c_algo_bit mei fb_sys_fops syscopyarea soundcore rfkill processor_thermal_device sysfillrect sysimgblt intel_lpss_pci intel_soc_dts_iosf thermal wmi intel_lpss i2c_hid i2c_core battery tpm_crb button ac tpm_tis tpm_tis_core asus_wireless video pcc_cpufreq tpm rng_core pinctrl_geminilake int3400_thermal int3403_thermal pinctrl_intel int340x_thermal_zone acpi_thermal_rel iptable_nat nf_nat_ipv4 nf_nat xt_conntrack nf_conntrack nf_defrag_ipv6
->> [12637.085912]  nf_defrag_ipv4 libcrc32c ip6t_rpfilter ipt_rpfilter ip6table_raw iptable_raw xt_pkttype nf_log_ipv6 nf_log_ipv4 nf_log_common xt_LOG xt_tcpudp ip6table_filter ip6_tables iptable_filter sch_fq_codel loop cpufreq_powersave tun tap macvlan bridge stp llc kvm_intel kvm irqbypass efivarfs ip_tables x_tables ipv6 crc_ccitt autofs4 ext4 crc32c_generic crc16 mbcache jbd2 fscrypto dm_crypt algif_skcipher af_alg rtsx_usb_sdmmc mmc_core rtsx_usb hid_generic usbhid hid sd_mod input_leds led_class atkbd libps2 ahci libahci xhci_pci libata xhci_hcd aesni_intel usbcore aes_x86_64 crypto_simd scsi_mod cryptd glue_helper crc32c_intel usb_common rtc_cmos i8042 serio dm_mod
->> [12637.086000] CR2: 00000000000000a8
->> [12637.086005] ---[ end trace ee0079180c990cd2 ]---
->> [12637.120805] RIP: 0010:percpu_counter_add_batch+0x4/0x60
->> [12637.120807] Code: 89 e6 89 c7 e8 dd 3b 28 00 3b 05 fb e0 b6 00 72 d8 4c 89 ee 48 89 ef e8 7a 63 2a 00 48 89 d8 5b 5d 41 5c 41 5d c3 41 54 55 53 <48> 8b 47 20 65 44 8b 20 49 63 ec 48 63 ca 48 01 f5 48 39 e9 7e 0a
->> [12637.120809] RSP: 0018:ffff9d1b00a0bd20 EFLAGS: 00010006
->> [12637.120811] RAX: 0000000000000002 RBX: 0000000000000000 RCX: 0000000000000018
->> [12637.120812] RDX: 0000000000000018 RSI: 0000000000000001 RDI: 0000000000000088
->> [12637.120814] RBP: ffff8df67a2988d0 R08: 0000000000000000 R09: ffff8df66fe0cfe0
->> [12637.120815] R10: 0000000000000230 R11: 0000000000000000 R12: 0000000000000000
->> [12637.120816] R13: ffff8df67a298758 R14: ffff8df67a2988c8 R15: ffffccd684229a80
->> [12637.120818] FS:  0000000000000000(0000) GS:ffff8df67ba00000(0000) knlGS:0000000000000000
->> [12637.120820] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
->> [12637.120821] CR2: 00000000000000a8 CR3: 0000000138e0a000 CR4: 0000000000340ef0
+#syz fix:
+media: uvc: Avoid cyclic entity chains due to malformed USB descriptors
