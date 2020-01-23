@@ -2,71 +2,71 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4C7DD146722
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Jan 2020 12:46:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A69E8146725
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Jan 2020 12:46:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729248AbgAWLps (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 23 Jan 2020 06:45:48 -0500
-Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:55292 "EHLO
+        id S1729274AbgAWLp5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 23 Jan 2020 06:45:57 -0500
+Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:35853 "EHLO
         us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1728811AbgAWLps (ORCPT
+        with ESMTP id S1726729AbgAWLpz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Jan 2020 06:45:48 -0500
+        Thu, 23 Jan 2020 06:45:55 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1579779947;
+        s=mimecast20190719; t=1579779954;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=snyDmTf7CBCw1wnH6HPrXaSpHlhW2BCaG6gTHi350h0=;
-        b=Nh3+ownS9nOpT0YSJcJNbmSRXFyz1MIcYR7rkPNLwRJSQqtoLi1yESCCsp1P9XY3ELuW4W
-        erc6LO8eWgkVrE634dtJ/cBuVhfU/jCQBaQBlkvgCBczVnY/PWHZ3Ubd2tSSNB0FZT4I34
-        AmCUB6uiFDtgkGxcg0E1Pkw5sTE1AvQ=
-Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
- [209.85.128.69]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-326-7MMngTKEOPGTrdxofsnv9A-1; Thu, 23 Jan 2020 06:45:45 -0500
-X-MC-Unique: 7MMngTKEOPGTrdxofsnv9A-1
-Received: by mail-wm1-f69.google.com with SMTP id q26so471270wmq.8
-        for <linux-kernel@vger.kernel.org>; Thu, 23 Jan 2020 03:45:45 -0800 (PST)
+        bh=OrVyjo0oqyywlytVkCXxXhcblo/6CF8e8F0Ha+//2Ek=;
+        b=AN5LvWBImkhc3bO0epvNrVk7tpkZMfvMrhrlUNnCM28Xr8mvUO5z0HOAoeWiKyyOxP5Niu
+        0F9Cz2fapzMM8e5kQP6PoWvuCiuZB//7U4r4wfHZsLYDvHri8IkrbRXAgjialFoOL3hNeX
+        f3NSBIGGf81mCL3vU3ClteiNvh2UNRE=
+Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
+ [209.85.128.71]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-193-ZJNA4eyTNkCCOvPPuycR7g-1; Thu, 23 Jan 2020 06:45:50 -0500
+X-MC-Unique: ZJNA4eyTNkCCOvPPuycR7g-1
+Received: by mail-wm1-f71.google.com with SMTP id l11so615574wmi.0
+        for <linux-kernel@vger.kernel.org>; Thu, 23 Jan 2020 03:45:50 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:to:cc:references:from:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=snyDmTf7CBCw1wnH6HPrXaSpHlhW2BCaG6gTHi350h0=;
-        b=AkI+6yRFPmdLNGz5Q9b/3Titx7wkK2I/nI8KMdLXcRuWU4UmJXckGJ2XlKFgdzifEo
-         8IWHP+BGzpOKpkaFb79qZNCGTtY9xG2uaB8tio0l1pfabFiCQGbEeuU7sANV5jW6iWvT
-         TPmmWWZTI3k8wlqA/fdIe+pX8IiPgDEmAEzJhCdxFTXxYDYI3yylQLs8UMzM3zNihojg
-         Lj00hl6Hqvy62TpDy1KOQrwXDDI1pWjq4oFb4SaCx/SWNEg16JoFOzxVYWoEB+1OfGrG
-         8+s27C4oSIiewRtQFNt/In9BDU8V86XZqTnm6Oe7mXScFHWplawYW6HQT7XeqY4X3+uo
-         Ug5w==
-X-Gm-Message-State: APjAAAXllM1G4MIsh5aB+cyPDAUM3QeyXBRLGcdkYQ5NqObTSflJ5DXO
-        TNiffugGI2piqRjzNNdcZlukmGHPJbsl6YrNfsWQ0nLMjRzPCsQincb1GHpdHJd/RCyQYo7AmdF
-        CGtE88dv9MzblMBBpirpKhGeB
-X-Received: by 2002:a05:600c:48a:: with SMTP id d10mr3806696wme.87.1579779944252;
-        Thu, 23 Jan 2020 03:45:44 -0800 (PST)
-X-Google-Smtp-Source: APXvYqwo5inKTgvBc+mV0kyUUFtWKnKpn/c8kgV9a7x3qOk7KCsOT9oh7insLR6xbWgPYU9HP5HyOQ==
-X-Received: by 2002:a05:600c:48a:: with SMTP id d10mr3806671wme.87.1579779944005;
-        Thu, 23 Jan 2020 03:45:44 -0800 (PST)
+        bh=OrVyjo0oqyywlytVkCXxXhcblo/6CF8e8F0Ha+//2Ek=;
+        b=pUJFIgi48HhG/ZbRiwHtQYe7o6TwMoW8UkgUtOOsX+LpZ/2a9K4leMq5Ujo/BuIKTI
+         fNgtIhzpROAYNc4mTLhamR5hfoI/4iMgGrllmZBNuC8Dy3l+tXcVSsMDwFtRhuRJLc1K
+         owUG3sH1LrJXk8617EU/RGbImmpQyQsDvNiiYbgDPW8QqSsggmKjK5vVBJMIjXbd1/vf
+         irLJa4MBSUyrchu8qNhimqDC910FPhp3IjhsY5otGRChw1yRPfDQOBXmGJAfki7REy4K
+         k81ffj3hJk8Rk/7+yCdJQSj6P/nap4gZD1MhZHP9eAXQvOHHzEd5VyMHzt0TWxV7gnI5
+         6O8w==
+X-Gm-Message-State: APjAAAVgQSdRYP7B5++IAI9msI9bAa6iYddd4fo33ajqvgx+BjA9MgpZ
+        o6ojPFsOTQ/ltUpl/f/jIppZGG+WLphVRZE83zyvTMToZMnhkVnzqidKKRNQrj9Dd0Bq6aKnsrl
+        YVgG98R+Jtefz9Lw5BqYfDtxx
+X-Received: by 2002:a1c:67c3:: with SMTP id b186mr3757816wmc.36.1579779949711;
+        Thu, 23 Jan 2020 03:45:49 -0800 (PST)
+X-Google-Smtp-Source: APXvYqy2/RO25x3GfNc/hah6VfoFxhZcx6jhmB2U+pGiK4uHFhpzGYFNDnmyuXKIw0WXa3XSq+SyYA==
+X-Received: by 2002:a1c:67c3:: with SMTP id b186mr3757800wmc.36.1579779949529;
+        Thu, 23 Jan 2020 03:45:49 -0800 (PST)
 Received: from [192.168.1.81] (host81-140-166-164.range81-140.btcentralplus.com. [81.140.166.164])
-        by smtp.gmail.com with ESMTPSA id u18sm2739453wrt.26.2020.01.23.03.45.42
+        by smtp.gmail.com with ESMTPSA id x11sm2750016wre.68.2020.01.23.03.45.48
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 23 Jan 2020 03:45:43 -0800 (PST)
-Subject: Re: [RFC v5 04/57] objtool: check: Ignore empty alternative groups
+        Thu, 23 Jan 2020 03:45:49 -0800 (PST)
+Subject: Re: [RFC v5 08/57] objtool: Make ORC support optional
 To:     Josh Poimboeuf <jpoimboe@redhat.com>
 Cc:     linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         peterz@infradead.org, raphael.gault@arm.com,
         catalin.marinas@arm.com, will@kernel.org
 References: <20200109160300.26150-1-jthierry@redhat.com>
- <20200109160300.26150-5-jthierry@redhat.com>
- <20200121163011.tk5koyg24gzuhoaa@treble>
+ <20200109160300.26150-9-jthierry@redhat.com>
+ <20200121163747.kbasjd2wn4q44vcf@treble>
 From:   Julien Thierry <jthierry@redhat.com>
-Message-ID: <35333a67-cf5b-450f-0f9b-c75ae1f9be8b@redhat.com>
-Date:   Thu, 23 Jan 2020 11:45:42 +0000
+Message-ID: <7d1df0d8-87ee-01c1-1fdb-7d25e1dc4f5b@redhat.com>
+Date:   Thu, 23 Jan 2020 11:45:48 +0000
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.3.0
 MIME-Version: 1.0
-In-Reply-To: <20200121163011.tk5koyg24gzuhoaa@treble>
+In-Reply-To: <20200121163747.kbasjd2wn4q44vcf@treble>
 Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -77,41 +77,26 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 
 
-On 1/21/20 4:30 PM, Josh Poimboeuf wrote:
-> On Thu, Jan 09, 2020 at 04:02:07PM +0000, Julien Thierry wrote:
->> Atlernative section can contain entries for alternatives with no
->> instructions. Objtool will currently crash when handling such an entry.
->>
->> Just skip that entry, but still give a warning to discourage useless
->> entries.
->>
->> Signed-off-by: Julien Thierry <jthierry@redhat.com>
->> ---
->>   tools/objtool/check.c | 7 +++++++
->>   1 file changed, 7 insertions(+)
->>
->> diff --git a/tools/objtool/check.c b/tools/objtool/check.c
->> index 5968e6f08891..27e5380e0e0b 100644
->> --- a/tools/objtool/check.c
->> +++ b/tools/objtool/check.c
->> @@ -866,6 +866,13 @@ static int add_special_section_alts(struct objtool_file *file)
->>   		}
+On 1/21/20 4:37 PM, Josh Poimboeuf wrote:
+> On Thu, Jan 09, 2020 at 04:02:11PM +0000, Julien Thierry wrote:
+>> diff --git a/tools/objtool/Makefile b/tools/objtool/Makefile
+>> index d2a19b0bc05a..24d653e0b6ec 100644
+>> --- a/tools/objtool/Makefile
+>> +++ b/tools/objtool/Makefile
+>> @@ -6,6 +6,10 @@ ifeq ($(ARCH),x86_64)
+>>   ARCH := x86
+>>   endif
 >>   
->>   		if (special_alt->group) {
->> +			if (!special_alt->orig_len) {
->> +				WARN("empty alternative entry at %s+0x%lx",
->> +				     orig_insn->sec->name,
->> +				     orig_insn->offset);
->> +				continue;
->> +			}
->> +
+>> +ifeq ($(ARCH),x86)
+>> +OBJTOOL_ORC := y
+>> +endif
 > 
-> I think WARN_FUNC() can be used here instead.
+> I think this should check SRCARCH instead, a la:
+> 
+>    https://lkml.kernel.org/r/d5d11370ae116df6c653493acd300ec3d7f5e925.1579543924.git.jpoimboe@redhat.com
 > 
 
-I'll do that.
-
-Thanks,
+Yes, thanks for pointing it out.
 
 -- 
 Julien Thierry
