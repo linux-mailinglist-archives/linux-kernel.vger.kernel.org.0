@@ -2,103 +2,89 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3EC9F1464A9
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Jan 2020 10:36:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 238491464AC
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Jan 2020 10:36:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726227AbgAWJgS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 23 Jan 2020 04:36:18 -0500
-Received: from merlin.infradead.org ([205.233.59.134]:60542 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726026AbgAWJgS (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Jan 2020 04:36:18 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Transfer-Encoding:
-        Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
-        Sender:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=YixZocxPtvbPBg+61NfVP/W8TQN9iRjk5ZtElvThCac=; b=wsgMKH/3+zhqxyAE0Yn4q+6ZNM
-        1i3hdKBlyLh13TkJcOydPEUGqTACaIsumP7f4saKJMOf9CotWZyy7cQol+DrVydLgWlquRUj1R/+A
-        QTtk/hlHgTdnyuzwgO2xpEAHHeAYZS/v0+nGoUaorAkteno8SiiQJEF+jczEOeVLgq/5M1hZqeRPW
-        jGyaWRn4+jQkfd5mAilEiDw+XSoDA/hWa4jyJ9JUsnINqttpc0E/2L3E2QG8fiJKqlzIBjal2EsVG
-        hN9qn5NhMhngueMvfbdw01OKeC/8f3T90IhuigH3lrLYVJhggjeqz952q50KeVMJP5T0ZaK7+5m3Q
-        93HnfLGg==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
-        by merlin.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1iuYuE-0002qM-Jg; Thu, 23 Jan 2020 09:36:06 +0000
-Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
+        id S1727296AbgAWJgi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 23 Jan 2020 04:36:38 -0500
+Received: from mail.kernel.org ([198.145.29.99]:45370 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726234AbgAWJge (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 23 Jan 2020 04:36:34 -0500
+Received: from willie-the-truck (236.31.169.217.in-addr.arpa [217.169.31.236])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (Client did not present a certificate)
-        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id E8574300B8D;
-        Thu, 23 Jan 2020 10:34:24 +0100 (CET)
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id DE3D42B70D34E; Thu, 23 Jan 2020 10:36:04 +0100 (CET)
-Date:   Thu, 23 Jan 2020 10:36:04 +0100
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Marco Elver <elver@google.com>
-Cc:     Qian Cai <cai@lca.pw>, Will Deacon <will@kernel.org>,
-        mingo@redhat.com, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] locking/osq_lock: fix a data race in osq_wait_next
-Message-ID: <20200123093604.GT14914@hirez.programming.kicks-ass.net>
-References: <20200122165938.GA16974@willie-the-truck>
- <A5114711-B8DE-48DA-AFD0-62128AC08270@lca.pw>
- <20200122223851.GA45602@google.com>
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7F44F22522;
+        Thu, 23 Jan 2020 09:36:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1579772193;
+        bh=gyt2Y4k10a3KJebAv2MMSWVNSPdTsVts58bB8fCDjL8=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=tf4QUMKz4/iknb74dTGe//f79onqkHHOGUngMEcibhz+JKsK+yfhUP5cOxiln+/UX
+         aD9Vdm7G6BwbcU5K4jvPMh1ZBsUjXgWEn7X2xyKquMAw1Sio6ZDnJN+AlJ22RcK7CZ
+         1+NwCRTz9RlboaYose8yTkUgmZHncZ1d8PrpRjPM=
+Date:   Thu, 23 Jan 2020 09:36:28 +0000
+From:   Will Deacon <will@kernel.org>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     Jason Baron <jbaron@akamai.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        linux-kernel@vger.kernel.org, kernel-team@android.com
+Subject: Re: [PATCH v4] dynamic_debug: allow to work if debugfs is disabled
+Message-ID: <20200123093628.GA18991@willie-the-truck>
+References: <20200122074343.GA2099098@kroah.com>
+ <20200122080352.GA15354@willie-the-truck>
+ <20200122081205.GA2227985@kroah.com>
+ <20200122135352.GA9458@kroah.com>
+ <8d68b75c-05b8-b403-0a10-d17b94a73ba7@akamai.com>
+ <20200122192940.GA88549@kroah.com>
+ <20200122193118.GA88722@kroah.com>
+ <ef1172ac-ea78-146e-575e-93e2d65b4606@infradead.org>
+ <20200123084847.GA435637@kroah.com>
+ <20200123085015.GA436361@kroah.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20200122223851.GA45602@google.com>
+In-Reply-To: <20200123085015.GA436361@kroah.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jan 22, 2020 at 11:38:51PM +0100, Marco Elver wrote:
+On Thu, Jan 23, 2020 at 09:50:15AM +0100, Greg Kroah-Hartman wrote:
+> With the realization that having debugfs enabled on "production" systems is
+> generally not a good idea, debugfs is being disabled from more and more
+> platforms over time.  However, the functionality of dynamic debugging still is
+> needed at times, and since it relies on debugfs for its user api, having
+> debugfs disabled also forces dynamic debug to be disabled.
+> 
+> To get around this, move the "control" file for dynamic_debug to procfs IFF
+> debugfs is disabled.  This lets people turn on debugging as needed at runtime
+> for individual driverfs and subsystems.
+> 
+> Reported-by: many different companies
+> Cc: Jason Baron <jbaron@akamai.com>
+> Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> ---
+> v4: tweaks to the .rst text thanks to Randy's review
+> v3: rename init function as it is now no longer just for debugfs, thanks
+>     to Jason for the review.
+>     Fix build warning for debugfs_initialized call.
+> v2: Fix up octal permissions and add procfs reference to the Kconfig
+>     entry, thanks to Will for the review.
+> 
+>  .../admin-guide/dynamic-debug-howto.rst       |  3 +++
+>  lib/Kconfig.debug                             |  7 ++++---
+>  lib/dynamic_debug.c                           | 21 ++++++++++++++-----
+>  3 files changed, 23 insertions(+), 8 deletions(-)
 
-> If possible, decode and get the line numbers. I have observed a data
-> race in osq_lock before, however, this is the only one I have recently
-> seen in osq_lock:
-> 
-> read to 0xffff88812c12d3d4 of 4 bytes by task 23304 on cpu 0:
->  osq_lock+0x170/0x2f0 kernel/locking/osq_lock.c:143
-> 
-> 	while (!READ_ONCE(node->locked)) {
-> 		/*
-> 		 * If we need to reschedule bail... so we can block.
-> 		 * Use vcpu_is_preempted() to avoid waiting for a preempted
-> 		 * lock holder:
-> 		 */
-> -->		if (need_resched() || vcpu_is_preempted(node_cpu(node->prev)))
-> 			goto unqueue;
-> 
-> 		cpu_relax();
-> 	}
-> 
-> where
-> 
-> 	static inline int node_cpu(struct optimistic_spin_node *node)
-> 	{
-> -->		return node->cpu - 1;
-> 	}
-> 
-> 
-> write to 0xffff88812c12d3d4 of 4 bytes by task 23334 on cpu 1:
->  osq_lock+0x89/0x2f0 kernel/locking/osq_lock.c:99
-> 
-> 	bool osq_lock(struct optimistic_spin_queue *lock)
-> 	{
-> 		struct optimistic_spin_node *node = this_cpu_ptr(&osq_node);
-> 		struct optimistic_spin_node *prev, *next;
-> 		int curr = encode_cpu(smp_processor_id());
-> 		int old;
-> 
-> 		node->locked = 0;
-> 		node->next = NULL;
-> -->		node->cpu = curr;
-> 
+I had a brief "oh crap" moment when I thought you were exposing both the
+procfs and debugfs interfaces at the same time, but thankfully that's not
+the case. Whilst it's a bit of a shame that it's come to this, the code
+looks pretty decent to me, so:
 
-Yeah, that's impossible. This store happens before the node is
-published, so no matter how the load in node_cpu() is shattered, it must
-observe the right value.
+Acked-by: Will Deacon <will@kernel.org>
+
+Thanks,
+
+Will
