@@ -2,126 +2,337 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 613931460B0
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Jan 2020 03:25:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D0D6E1460B6
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Jan 2020 03:26:51 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726219AbgAWCZC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 22 Jan 2020 21:25:02 -0500
-Received: from szxga06-in.huawei.com ([45.249.212.32]:47698 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725933AbgAWCZB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 Jan 2020 21:25:01 -0500
-Received: from DGGEMS401-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id 35ADC651C4DD263FBCD7;
-        Thu, 23 Jan 2020 10:24:58 +0800 (CST)
-Received: from [127.0.0.1] (10.133.219.224) by DGGEMS401-HUB.china.huawei.com
- (10.3.19.201) with Microsoft SMTP Server id 14.3.439.0; Thu, 23 Jan 2020
- 10:24:55 +0800
-Subject: Re: [PATCH] jffs2: Fix integer underflow in jffs2_rtime_compress
-To:     Richard Weinberger <richard@nod.at>
-CC:     <linux-mtd@lists.infradead.org>, <dwmw2@infradead.org>,
-        <linux-kernel@vger.kernel.org>, <stable@vger.kernel.org>
-References: <20181215162350.12489-1-richard@nod.at>
- <cae86ca1-91f9-6728-df64-40580145220d@huawei.com>
- <2142335.HPRDAJu19m@blindfold>
-From:   Hou Tao <houtao1@huawei.com>
-Message-ID: <e727e81a-c633-60be-9b93-5b6dc9d1936a@huawei.com>
-Date:   Thu, 23 Jan 2020 10:24:55 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        id S1726605AbgAWC0u (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 22 Jan 2020 21:26:50 -0500
+Received: from mail.kernel.org ([198.145.29.99]:54136 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725933AbgAWC0t (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 22 Jan 2020 21:26:49 -0500
+Received: from paulmck-ThinkPad-P72.home (50-39-105-78.bvtn.or.frontiernet.net [50.39.105.78])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2AD522465B;
+        Thu, 23 Jan 2020 02:26:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1579746408;
+        bh=G4bif5h0EdR1HBCRuvWeEfE18dKonKQ9YP77YLj7Ge8=;
+        h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
+        b=IjVuUTHeQGLlDF3gJGX8HxUwf6+pNC1GN0oauo/+p+MNRH1ex5lsth1fpjhNRmb+r
+         yGErdJqkyyNZQH4d6XszTd8kJyRsz76wN10gicXg1atDi8AQ7uCZy4E+xRf5ub+mSH
+         3EgiWmtvtWpH34x86rifB2ZfqDBOxQtkoaqUPVpA=
+Received: by paulmck-ThinkPad-P72.home (Postfix, from userid 1000)
+        id 4EAA2352271D; Wed, 22 Jan 2020 18:26:47 -0800 (PST)
+Date:   Wed, 22 Jan 2020 18:26:47 -0800
+From:   "Paul E. McKenney" <paulmck@kernel.org>
+To:     Masami Hiramatsu <mhiramat@kernel.org>
+Cc:     Steven Rostedt <rostedt@goodmis.org>,
+        Brendan Gregg <brendan.d.gregg@gmail.com>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Ingo Molnar <mingo@kernel.org>, bpf@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        "David S . Miller" <davem@davemloft.net>, joel@joelfernandes.org,
+        "Naveen N . Rao" <naveen.n.rao@linux.ibm.com>,
+        Anil S Keshavamurthy <anil.s.keshavamurthy@intel.com>
+Subject: Re: [RFT PATCH 04/13] kprobes: Make optimizer delay to 1 second
+Message-ID: <20200123022647.GO2935@paulmck-ThinkPad-P72>
+Reply-To: paulmck@kernel.org
+References: <157918584866.29301.6941815715391411338.stgit@devnote2>
+ <157918589199.29301.4419459150054220408.stgit@devnote2>
+ <20200121192905.0f001c61@gandalf.local.home>
+ <20200122162317.0299cf722dd618147d97e89c@kernel.org>
+ <20200122071115.28e3c763@gandalf.local.home>
+ <20200122221240.cef447446785f46862fee97a@kernel.org>
+ <20200122165432.GH2935@paulmck-ThinkPad-P72>
+ <20200123103334.6e1821625643d007297ecf94@kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <2142335.HPRDAJu19m@blindfold>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.133.219.224]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200123103334.6e1821625643d007297ecf94@kernel.org>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Richard,
-
-On 2018/12/20 18:45, Richard Weinberger wrote:
-> Am Donnerstag, 20. Dezember 2018, 11:43:08 CET schrieb Hou Tao:
->>
->> On 2018/12/16 0:23, Richard Weinberger wrote:
->>> The rtime compressor assumes that at least two bytes are
->>> compressed.
->>> If we try to compress just one byte, the loop condition will
->>> wrap around and an out-of-bounds write happens.
->>>
->>> Cc: <stable@vger.kernel.org>
->>> Signed-off-by: Richard Weinberger <richard@nod.at>
->>> ---
->>>  fs/jffs2/compr_rtime.c | 3 +++
->>>  1 file changed, 3 insertions(+)
->>> It seems that it doesn't incur any harm because the minimal allocated
->> size will be 8-bytes and jffs2_rtime_compress() will write 2-bytes into
->> the allocated buffer.
+On Thu, Jan 23, 2020 at 10:33:34AM +0900, Masami Hiramatsu wrote:
+> On Wed, 22 Jan 2020 08:54:32 -0800
+> "Paul E. McKenney" <paulmck@kernel.org> wrote:
 > 
-> Are you sure about that? I saw odd kernel behavior and KASAN complained too.
+> > On Wed, Jan 22, 2020 at 10:12:40PM +0900, Masami Hiramatsu wrote:
+> > > On Wed, 22 Jan 2020 07:11:15 -0500
+> > > Steven Rostedt <rostedt@goodmis.org> wrote:
+> > > 
+> > > > On Wed, 22 Jan 2020 16:23:17 +0900
+> > > > Masami Hiramatsu <mhiramat@kernel.org> wrote:
+> > > > 
+> > > > > On Tue, 21 Jan 2020 19:29:05 -0500
+> > > > > Steven Rostedt <rostedt@goodmis.org> wrote:
+> > > > > 
+> > > > > > On Thu, 16 Jan 2020 23:44:52 +0900
+> > > > > > Masami Hiramatsu <mhiramat@kernel.org> wrote:
+> > > > > >   
+> > > > > > > Since the 5 jiffies delay for the optimizer is too
+> > > > > > > short to wait for other probes, make it longer,
+> > > > > > > like 1 second.  
+> > > > > > 
+> > > > > > Hi Masami,
+> > > > > > 
+> > > > > > Can you explain more *why* 5 jiffies is too short.  
+> > > > > 
+> > > > > Yes, I had introduced this 5 jiffies delay for multiple probe registration
+> > > > > and unregistration like systemtap, which will use array-based interface to
+> > > > > register/unregister. In that case, 5 jiffies will be enough for the delay
+> > > > > to wait for other kprobe registration/unregsitration.
+> > > > > 
+> > > > > However, since perf and ftrace register/unregister probes one-by-one with
+> > > > > RCU synchronization interval, the optimizer will be started before
+> > > > > finishing to register/unregister all probes.
+> > > > > And the optimizer locks kprobe_mutex a while -- RCU-tasks synchronization.
+> > > > > Since the kprobe_mutex is also involved in disabling kprobes, this also
+> > > > > stops probe-event disabling.
+> > > > > 
+> > > > > Maybe 5 jiffies is enough for adding/removing a few probe events, but
+> > > > > not enough for dozens of probe events.
+> > > > > 
+> > > > 
+> > > > Perhaps we should have a mechanism that can detect new probes being
+> > > > added, and just continue to delay the optimization, instead of having
+> > > > some arbitrary delay.
+> > > 
+> > > Yes, that is what [03/13] does :) 
+> > > Anyway, it seems that the RCU-synchronization takes more than 5 jiffies.
+> > > And in that case, [03/13] still doesn't work. That's why I added this patch
+> > > after that.
+> > 
+> > If the RCU synchronization is synchronize_rcu_tasks(), then yes, it
+> > will often take way more than 5 jiffies.  If it is synchronize_rcu(),
+> > 5 jiffies would not be unusual, especially on larger systems.
+> > But in the case of synchronize_rcu(), one option is to instead use
+> > synchronize_rcu_expedited().  It is not clear that this last is really
+> > justified in this case, but figured it might be worth mentioning.
 > 
+> It is synchronize_rcu(), but it seems sometimes it is called several
+> times on one probe disabling.
 
-Sorry for the later reply.
+OK, good to know.
 
-Yes. KASAN complains but it doesn't incur any harm because the minimal allocated
-size returned by kmalloc() will be 8-bytes.
+> Anyway, without this update, I added a printk to count optimizer
+> queue-length and found that all optimizer call with a single kprobe
+> on the quenes. I think this depends on the machine, but as far as
+> I tested on 8-threads qemu x86, shows this result...
+> 
+> Probes: 256 kprobe_events
+> Enable events
+> real	0m 0.02s
+> user	0m 0.00s
+> sys	0m 0.02s
+> [   17.730548] Queue-update: 180, skipped, Total Queued: 180
+> [   17.739445] Queue-update: 1, go, Total Queued: 180
+> Disable events
+> [   19.744634] Queue-update: 1, go, Total Queued: 1
+> [   19.770743] Queue-update: 1, go, Total Queued: 1
+> [   19.886625] Queue-update: 1, go, Total Queued: 1
+> [   20.006631] Queue-update: 1, go, Total Queued: 1
+> [   20.126628] Queue-update: 1, go, Total Queued: 1
+> [   20.246620] Queue-update: 1, go, Total Queued: 1
+> [   20.374665] Queue-update: 1, go, Total Queued: 1
+> [   20.486617] Queue-update: 1, go, Total Queued: 1
+> [   20.606608] Queue-update: 1, go, Total Queued: 1
+> [   20.726596] Queue-update: 1, go, Total Queued: 1
+> [   20.846608] Queue-update: 1, go, Total Queued: 1
+> [   20.966723] Queue-update: 1, go, Total Queued: 1
+> [   21.086611] Queue-update: 1, go, Total Queued: 1
+> [   21.206605] Queue-update: 1, go, Total Queued: 1
+> [   21.326603] Queue-update: 1, go, Total Queued: 1
+> [   21.462609] Queue-update: 1, go, Total Queued: 1
+> [   21.566755] Queue-update: 1, go, Total Queued: 1
+> [   21.686606] Queue-update: 1, go, Total Queued: 1
+> [   21.806611] Queue-update: 1, go, Total Queued: 1
+> [   21.926609] Queue-update: 1, go, Total Queued: 1
+> [   22.046621] Queue-update: 1, go, Total Queued: 1
+> [   22.166729] Queue-update: 1, go, Total Queued: 1
+> [   22.302609] Queue-update: 1, go, Total Queued: 1
+> [   22.510627] Queue-update: 1, go, Total Queued: 1
+> [   22.536638] Queue-update: 1, go, Total Queued: 1
+> [   22.654618] Queue-update: 1, go, Total Queued: 1
+> [   22.774643] Queue-update: 1, go, Total Queued: 1
+> [   22.902609] Queue-update: 1, go, Total Queued: 1
+> [   23.022608] Queue-update: 1, go, Total Queued: 1
+> [   23.158606] Queue-update: 1, go, Total Queued: 1
+> [   23.254618] Queue-update: 1, go, Total Queued: 1
+> [   23.374647] Queue-update: 1, go, Total Queued: 1
+> [   23.494605] Queue-update: 1, go, Total Queued: 1
+> [   23.614610] Queue-update: 1, go, Total Queued: 1
+> [   23.734606] Queue-update: 1, go, Total Queued: 1
+> [   23.854609] Queue-update: 1, go, Total Queued: 1
+> [   23.974615] Queue-update: 1, go, Total Queued: 1
+> [   24.094609] Queue-update: 1, go, Total Queued: 1
+> [   24.230607] Queue-update: 1, go, Total Queued: 1
+> [   24.342625] Queue-update: 1, go, Total Queued: 1
+> [   24.475478] Queue-update: 1, go, Total Queued: 1
+> [   24.574554] Queue-update: 1, go, Total Queued: 1
+> [   24.694605] Queue-update: 1, go, Total Queued: 1
+> [   24.814585] Queue-update: 1, go, Total Queued: 1
+> [   24.934591] Queue-update: 1, go, Total Queued: 1
+> [   25.054614] Queue-update: 1, go, Total Queued: 1
+> [   25.174628] Queue-update: 1, go, Total Queued: 1
+> [   25.294637] Queue-update: 1, go, Total Queued: 1
+> [   25.414620] Queue-update: 1, go, Total Queued: 1
+> [   25.534553] Queue-update: 1, go, Total Queued: 1
+> [   25.654610] Queue-update: 1, go, Total Queued: 1
+> [   25.774627] Queue-update: 1, go, Total Queued: 1
+> [   25.894609] Queue-update: 1, go, Total Queued: 1
+> [   26.030548] Queue-update: 1, go, Total Queued: 1
+> [   26.134626] Queue-update: 1, go, Total Queued: 1
+> [   26.254620] Queue-update: 1, go, Total Queued: 1
+> [   26.373603] Queue-update: 1, go, Total Queued: 1
+> [   26.502606] Queue-update: 1, go, Total Queued: 1
+> [   26.614607] Queue-update: 1, go, Total Queued: 1
+> [   26.734610] Queue-update: 1, go, Total Queued: 1
+> [   26.854620] Queue-update: 1, go, Total Queued: 1
+> [   26.974660] Queue-update: 1, go, Total Queued: 1
+> [   27.094620] Queue-update: 1, go, Total Queued: 1
+> [   27.214596] Queue-update: 1, go, Total Queued: 1
+> [   27.334640] Queue-update: 1, go, Total Queued: 1
+> [   27.494606] Queue-update: 1, go, Total Queued: 1
+> [   27.574703] Queue-update: 1, go, Total Queued: 1
+> [   27.694609] Queue-update: 1, go, Total Queued: 1
+> [   27.814607] Queue-update: 1, go, Total Queued: 1
+> [   27.934631] Queue-update: 1, go, Total Queued: 1
+> [   28.054606] Queue-update: 1, go, Total Queued: 1
+> [   28.182685] Queue-update: 1, go, Total Queued: 1
+> [   28.318568] Queue-update: 1, go, Total Queued: 1
+> [   28.422610] Queue-update: 1, go, Total Queued: 1
+> [   28.534621] Queue-update: 1, go, Total Queued: 1
+> [   28.654618] Queue-update: 1, go, Total Queued: 1
+> [   28.774622] Queue-update: 1, go, Total Queued: 1
+> [   28.894609] Queue-update: 1, go, Total Queued: 1
+> [   29.022609] Queue-update: 1, go, Total Queued: 1
+> [   29.150615] Queue-update: 1, go, Total Queued: 1
+> [   29.262610] Queue-update: 1, go, Total Queued: 1
+> [   29.374621] Queue-update: 1, go, Total Queued: 1
+> [   29.494606] Queue-update: 1, go, Total Queued: 1
+> [   29.614616] Queue-update: 1, go, Total Queued: 1
+> [   29.734607] Queue-update: 1, go, Total Queued: 1
+> [   29.854601] Queue-update: 1, go, Total Queued: 1
+> [   29.974610] Queue-update: 1, go, Total Queued: 1
+> [   30.094625] Queue-update: 1, go, Total Queued: 1
+> [   30.214606] Queue-update: 1, go, Total Queued: 1
+> [   30.334602] Queue-update: 1, go, Total Queued: 1
+> [   30.454634] Queue-update: 1, go, Total Queued: 1
+> [   30.574606] Queue-update: 1, go, Total Queued: 1
+> [   30.694589] Queue-update: 1, go, Total Queued: 1
+> [   30.814613] Queue-update: 1, go, Total Queued: 1
+> [   30.934602] Queue-update: 1, go, Total Queued: 1
+> [   31.054605] Queue-update: 1, go, Total Queued: 1
+> [   31.182596] Queue-update: 1, go, Total Queued: 1
+> [   31.318621] Queue-update: 1, go, Total Queued: 1
+> [   31.414615] Queue-update: 1, go, Total Queued: 1
+> [   31.534610] Queue-update: 1, go, Total Queued: 1
+> [   31.670608] Queue-update: 1, go, Total Queued: 1
+> [   31.774626] Queue-update: 1, go, Total Queued: 1
+> [   31.894607] Queue-update: 1, go, Total Queued: 1
+> [   32.014609] Queue-update: 1, go, Total Queued: 1
+> [   32.134607] Queue-update: 1, go, Total Queued: 1
+> [   32.254611] Queue-update: 1, go, Total Queued: 1
+> [   32.374608] Queue-update: 1, go, Total Queued: 1
+> [   32.494619] Queue-update: 1, go, Total Queued: 1
+> [   32.614607] Queue-update: 1, go, Total Queued: 1
+> [   32.734612] Queue-update: 1, go, Total Queued: 1
+> [   32.862616] Queue-update: 1, go, Total Queued: 1
+> [   32.974620] Queue-update: 1, go, Total Queued: 1
+> [   33.110609] Queue-update: 1, go, Total Queued: 1
+> [   33.214609] Queue-update: 1, go, Total Queued: 1
+> [   33.342611] Queue-update: 1, go, Total Queued: 1
+> [   33.454607] Queue-update: 1, go, Total Queued: 1
+> [   33.574611] Queue-update: 1, go, Total Queued: 1
+> [   33.694619] Queue-update: 1, go, Total Queued: 1
+> [   33.814607] Queue-update: 1, go, Total Queued: 1
+> [   33.950614] Queue-update: 1, go, Total Queued: 1
+> [   34.062609] Queue-update: 1, go, Total Queued: 1
+> [   34.174609] Queue-update: 1, go, Total Queued: 1
+> [   34.294619] Queue-update: 1, go, Total Queued: 1
+> [   34.430533] Queue-update: 1, go, Total Queued: 1
+> [   34.534594] Queue-update: 1, go, Total Queued: 1
+> [   34.654605] Queue-update: 1, go, Total Queued: 1
+> [   34.790596] Queue-update: 1, go, Total Queued: 1
+> [   34.902611] Queue-update: 1, go, Total Queued: 1
+> [   35.014630] Queue-update: 1, go, Total Queued: 1
+> [   35.134634] Queue-update: 1, go, Total Queued: 1
+> [   35.262608] Queue-update: 1, go, Total Queued: 1
+> [   35.374634] Queue-update: 1, go, Total Queued: 1
+> [   35.494617] Queue-update: 1, go, Total Queued: 1
+> [   35.622608] Queue-update: 1, go, Total Queued: 1
+> [   35.742610] Queue-update: 1, go, Total Queued: 1
+> [   35.854572] Queue-update: 1, go, Total Queued: 1
+> [   35.982596] Queue-update: 1, go, Total Queued: 1
+> [   36.094603] Queue-update: 1, go, Total Queued: 1
+> [   36.222612] Queue-update: 1, go, Total Queued: 1
+> [   36.334610] Queue-update: 1, go, Total Queued: 1
+> [   36.454619] Queue-update: 1, go, Total Queued: 1
+> [   36.574619] Queue-update: 1, go, Total Queued: 1
+> [   36.694643] Queue-update: 1, go, Total Queued: 1
+> [   36.814614] Queue-update: 1, go, Total Queued: 1
+> [   36.934610] Queue-update: 1, go, Total Queued: 1
+> [   37.062609] Queue-update: 1, go, Total Queued: 1
+> [   37.198611] Queue-update: 1, go, Total Queued: 1
+> [   37.294618] Queue-update: 1, go, Total Queued: 1
+> [   37.414618] Queue-update: 1, go, Total Queued: 1
+> [   37.534595] Queue-update: 1, go, Total Queued: 1
+> [   37.662594] Queue-update: 1, go, Total Queued: 1
+> [   37.774610] Queue-update: 1, go, Total Queued: 1
+> [   37.894618] Queue-update: 1, go, Total Queued: 1
+> [   38.014619] Queue-update: 1, go, Total Queued: 1
+> [   38.142612] Queue-update: 1, go, Total Queued: 1
+> [   38.254609] Queue-update: 1, go, Total Queued: 1
+> [   38.374619] Queue-update: 1, go, Total Queued: 1
+> [   38.502481] Queue-update: 1, go, Total Queued: 1
+> [   38.614596] Queue-update: 1, go, Total Queued: 1
+> [   38.734597] Queue-update: 1, go, Total Queued: 1
+> [   38.854606] Queue-update: 1, go, Total Queued: 1
+> [   38.974620] Queue-update: 1, go, Total Queued: 1
+> [   39.094617] Queue-update: 1, go, Total Queued: 1
+> [   39.222597] Queue-update: 1, go, Total Queued: 1
+> [   39.334610] Queue-update: 1, go, Total Queued: 1
+> [   39.454609] Queue-update: 1, go, Total Queued: 1
+> [   39.574633] Queue-update: 1, go, Total Queued: 1
+> [   39.694611] Queue-update: 1, go, Total Queued: 1
+> [   39.814608] Queue-update: 1, go, Total Queued: 1
+> [   39.934610] Queue-update: 1, go, Total Queued: 1
+> [   40.054621] Queue-update: 1, go, Total Queued: 1
+> [   40.174611] Queue-update: 1, go, Total Queued: 1
+> [   40.297471] Queue-update: 1, go, Total Queued: 1
+> [   40.414504] Queue-update: 1, go, Total Queued: 1
+> [   40.534601] Queue-update: 1, go, Total Queued: 1
+> [   40.654611] Queue-update: 1, go, Total Queued: 1
+> [   40.774609] Queue-update: 1, go, Total Queued: 1
+> [   40.894628] Queue-update: 1, go, Total Queued: 1
+> [   41.014608] Queue-update: 1, go, Total Queued: 1
+> [   41.135594] Queue-update: 1, go, Total Queued: 1
+> real	0m 21.40s
+> user	0m 0.00s
+> sys	0m 0.04s
 
-But we better fix it, because it's bad to depend on the implementation of kmalloc().
+So 21.4s/256 = 84 milliseconds per event disable, correct?
 
-It seems that mtd-utils has already fixed it years ago. Maybe we can use it directly ?
+It might be worth trying synchronize_rcu_expedited() just as an experiment
+to see if it speeds things up significantly.
 
-And your fix also looks good to me, so
+							Thanx, Paul
 
-Reviewed-by: Hou Tao <houtao1@huawei.com>
-
-commit e8457f16306ad6e2c8708275bf42b5dfff40fffd
-Author: Enrico Scholz <enrico.scholz@sigma-chemnitz.de>
-Date:   Thu Jun 24 15:02:40 2010 +0200
-
-    mkfs.jffs2: fix integer underflow in jffs2_rtime_compress()
-
-    When '*dstlen' is 0 or 1, comparison will return wrong result.  Reported
-    by valgrind as
-
-    ==5919== Invalid write of size 1
-    ==5919==    at 0x40564E: jffs2_rtime_compress (compr_rtime.c:51)
-    ==5919==    by 0x40676B: jffs2_compress (compr.c:246)
-    ==5919==    by 0x403EE4: recursive_populate_directory (mkfs.jffs2.c:884)
-    ==5919==  Address 0x4e1bdb1 is 0 bytes after a block of size 1 alloc'd
-    ==5919==    at 0x4A0515D: malloc (vg_replace_malloc.c:195)
-    ==5919==    by 0x40671C: jffs2_compress (compr.c:229)
-    ==5919==    by 0x403EE4: recursive_populate_directory (mkfs.jffs2.c:884)
-
-    Signed-off-by: Enrico Scholz <enrico.scholz@sigma-chemnitz.de>
-    Signed-off-by: Artem Bityutskiy <Artem.Bityutskiy@nokia.com>
-
-diff --git a/compr_rtime.c b/compr_rtime.c
-index 131536c..5613963 100644
---- a/compr_rtime.c
-+++ b/compr_rtime.c
-@@ -32,7 +32,7 @@ static int jffs2_rtime_compress(unsigned char *data_in, unsigned char *cpage_out
-
-        memset(positions,0,sizeof(positions));
-
--       while (pos < (*sourcelen) && outpos <= (*dstlen)-2) {
-+       while (pos < (*sourcelen) && outpos+2 <= (*dstlen)) {
-                int backpos, runlen=0;
-                unsigned char value;
-
-
-
-> Thanks,
-> //richard
-
-
-
-
+> Remove events
+> real	0m 2.14s
+> user	0m 0.00s
+> sys	0m 0.04s
 > 
 > 
+> Thank you,
 > 
-> .
 > 
-
+> -- 
+> Masami Hiramatsu <mhiramat@kernel.org>
