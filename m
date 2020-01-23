@@ -2,64 +2,74 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D6DB3146B4B
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Jan 2020 15:29:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 372B8146B59
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Jan 2020 15:30:48 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729008AbgAWO3m (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 23 Jan 2020 09:29:42 -0500
-Received: from Chamillionaire.breakpoint.cc ([193.142.43.52]:44904 "EHLO
-        Chamillionaire.breakpoint.cc" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726231AbgAWO3l (ORCPT
+        id S1729027AbgAWOaq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 23 Jan 2020 09:30:46 -0500
+Received: from mail-io1-f68.google.com ([209.85.166.68]:45819 "EHLO
+        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726231AbgAWOaq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Jan 2020 09:29:41 -0500
-Received: from fw by Chamillionaire.breakpoint.cc with local (Exim 4.92)
-        (envelope-from <fw@strlen.de>)
-        id 1iudU9-0007vD-Dk; Thu, 23 Jan 2020 15:29:29 +0100
-Date:   Thu, 23 Jan 2020 15:29:29 +0100
-From:   Florian Westphal <fw@strlen.de>
-To:     Daniel Borkmann <daniel@iogearbox.net>
-Cc:     Florian Westphal <fw@strlen.de>,
-        Praveen Chaudhary <praveen5582@gmail.com>, pablo@netfilter.org,
-        davem@davemloft.net, kadlec@netfilter.org,
-        netfilter-devel@vger.kernel.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Zhenggen Xu <zxu@linkedin.com>,
-        Andy Stracner <astracner@linkedin.com>
-Subject: Re: [PATCH v3] [net]: Fix skb->csum update in
- inet_proto_csum_replace16().
-Message-ID: <20200123142929.GV795@breakpoint.cc>
-References: <1573080729-3102-1-git-send-email-pchaudhary@linkedin.com>
- <1573080729-3102-2-git-send-email-pchaudhary@linkedin.com>
- <16d56ee6-53bc-1124-3700-bc0a78f927d6@iogearbox.net>
- <20200122114333.GQ795@breakpoint.cc>
- <daf995db-37c6-a2f7-4d12-5c1a29e1c59b@iogearbox.net>
- <20200123082106.GT795@breakpoint.cc>
- <1c1fc75d-e69c-f2f6-78ce-de9dc8aa89ca@iogearbox.net>
+        Thu, 23 Jan 2020 09:30:46 -0500
+Received: by mail-io1-f68.google.com with SMTP id i11so3095894ioi.12
+        for <linux-kernel@vger.kernel.org>; Thu, 23 Jan 2020 06:30:45 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=FRpZc2K8rtySt0g/Uf8aZHkLQ6/PNDol3SnEb8AWinM=;
+        b=h0QkYri9Yp7KyFw2sOYrAifNEyLvX5ywLuinybzXcIUOmd4e1uZBvsVyzisS86YZO7
+         OgQstHaMhtJEOXG9MPrKD9NY9n2aCYvR6l+kPDQzy3XFRmLFGiPSWRlYOenRMkXpqyu8
+         qZpAdmyLek4GTQWSQCQJi7/V/yWmflq1KpLceyUgd15LQH6zb+cxAlmX26JxuM89M9bY
+         ahysNYOoybucdUTaqxWWfuHfkMzqMtGcF+ZnZ+g8jUYW+Jfvwj3kt654o2gOIysbm7kM
+         IUZQMMNYeLOK99R1l4OjYrBKnvgeSk7Mjvk1AfklqkDqSCAVJfsLPllunCf3Uz7NTcXs
+         oEXw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=FRpZc2K8rtySt0g/Uf8aZHkLQ6/PNDol3SnEb8AWinM=;
+        b=OEKgO19A/nEB6qtw7AIDE4poh62WcJ4Fjeju8qxOwzfXvlUqkB9WLtcQhxOcnmRwUV
+         0PxIZz59JX/zFm96zBFKvp7/DM8+AkkBbhEyzchsGsC8xUIKhGkSvM10D9eIUiMgsRwB
+         nTJ5cnMB6uthUkjBfUMLwsP22OJ3xqY89sk5fX1v8GWllHNYp0/TGIGzDZWXE7cbuFkE
+         v9S8bWtnSeFKnxfVgE46w9onJOvD2n2SuXZeu9siRcCEkyjtq6xpm82Yq3Yh4SqWoTkf
+         Czs9ysN3Yg4gDfqBZWTiJs3hgC/PlScNnjI/Qurqw7I55F2A9AVfd7zo2QkNpUPN6vVV
+         cZbA==
+X-Gm-Message-State: APjAAAVLzPNPDz7LSWWr3zWtw4SBzIZByXALspGrRvkPTir6aQQVQF7M
+        E3tbp8OwNalG94+DD8zMJMrtA4N2uEM3RPBfaFWI3w==
+X-Google-Smtp-Source: APXvYqwSf3MBFy40L9z7Lsg8cTAKdWiFqdm9ffUU+sKkZ74cwURCcHJaChpJcdQvwur/o0JvjpEI0xQyxnEzylJxsC0=
+X-Received: by 2002:a5d:8989:: with SMTP id m9mr11378201iol.118.1579789845058;
+ Thu, 23 Jan 2020 06:30:45 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1c1fc75d-e69c-f2f6-78ce-de9dc8aa89ca@iogearbox.net>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <CGME20200123134100eucas1p1078c46b83d1ef49f9b1616f8f7789cf1@eucas1p1.samsung.com>
+ <20200123134046.9769-1-m.szyprowski@samsung.com>
+In-Reply-To: <20200123134046.9769-1-m.szyprowski@samsung.com>
+From:   Tzung-Bi Shih <tzungbi@google.com>
+Date:   Thu, 23 Jan 2020 22:30:33 +0800
+Message-ID: <CA+Px+wUHzCixCh7JYu=Reqwx=D+-4aV9Mi8jGzxKYV9LGjjxvA@mail.gmail.com>
+Subject: Re: [PATCH] ASoC: max98090: silence lockdep warning
+To:     Marek Szyprowski <m.szyprowski@samsung.com>
+Cc:     ALSA development <alsa-devel@alsa-project.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux Samsung SOC <linux-samsung-soc@vger.kernel.org>,
+        Mark Brown <broonie@kernel.org>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Dylan Reid <dgreid@google.com>,
+        Jimmy Cheng-Yi Chiang <cychiang@google.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Daniel Borkmann <daniel@iogearbox.net> wrote:
-> On 1/23/20 9:21 AM, Florian Westphal wrote:
-> > So, AFAIU from what you're saying above the patch seems fine as-is and
-> > just needs a more verbose commit message explaining why replace16()
-> > doesn't update skb->csum while all the other ones do.
-> > 
-> > Is that correct?
-> 
-> Probably better a comment in the code to avoid confusion on why it's not done in
-> inet_proto_csum_replace16() but all the other cases; mainly to avoid some folks
-> in future sending random cleanup patches w/ removal attempts.
+On Thu, Jan 23, 2020 at 9:41 PM Marek Szyprowski
+<m.szyprowski@samsung.com> wrote:
+> Fixes: 08df0d9a00f7 ("ASoC: max98090: revert "ASoC: max98090: fix lockdep warning"")
+> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+Reviewed-by: Tzung-Bi Shih <tzungbi@google.com>
 
-Makes sense, thanks!
-
-Praveen, can you spin a v4 with a comment in replace16 that it
-intentionally elides the skb->csum update because the function is
-only used by ipv6?
-
-Thanks!
+Thanks for fixing this up.  I guess I can't see the lockdep warning
+messages because my environment is based on v4.4...anyway, thanks.
