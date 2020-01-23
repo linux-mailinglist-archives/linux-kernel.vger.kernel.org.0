@@ -2,87 +2,127 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 27DE41471F0
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Jan 2020 20:44:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5884D1471F3
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Jan 2020 20:44:30 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729159AbgAWToS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 23 Jan 2020 14:44:18 -0500
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:43207 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728809AbgAWToS (ORCPT
+        id S1729205AbgAWTo2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 23 Jan 2020 14:44:28 -0500
+Received: from mail-pj1-f66.google.com ([209.85.216.66]:52553 "EHLO
+        mail-pj1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728809AbgAWTo1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Jan 2020 14:44:18 -0500
-Received: by mail-pg1-f195.google.com with SMTP id u131so1876068pgc.10;
-        Thu, 23 Jan 2020 11:44:18 -0800 (PST)
+        Thu, 23 Jan 2020 14:44:27 -0500
+Received: by mail-pj1-f66.google.com with SMTP id a6so1663814pjh.2
+        for <linux-kernel@vger.kernel.org>; Thu, 23 Jan 2020 11:44:27 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=oe3tpj2pn2SzEi+ANvf3NoFA5tjVK51f2HZBdQilqo0=;
+        b=dB5eLweqvf35TPBISdU1xwmmdp6QInxS68BBL1qL5puHCpmiDALbpV3Iceg5o3Xo1e
+         W9vyT9P27GwgfmQL+35eWYC8IVKOLUrhWpSzN+yFnlnuAVCsjP750kfnlk2magiju4iP
+         TZcIkl0c+uYchItL7CKwbwObusC4E6sY7r7zXbX1B/ojCS0WVYzEcVNtx1JUfB2lOFtO
+         tyfWXrESpoAwPYGqnrkyczdvDaVlABpA32/y+eSkdL71mt7ZZygAJXVaROuJ8iayFHUq
+         L8itS5Da/GoRcsKsGVI7rSpirAnNKWwRLOWJngll6cK7aLp2twegubUI3SfDvO+bKO2L
+         TxjA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:date:from:to:cc:cc:cc:subject
-         :references:in-reply-to;
-        bh=eDdBKu4+lIbnXRrbYvUijk45X2JfgQi+0fmWjhCNciE=;
-        b=PMoKyVy7g/uBp5oHirLHYod0UUh/g2O8Ir9ChCPVDCSksNWgrLAnoiP3d7cDr9hzTQ
-         UA3A6rn3ku3v/7gw2Om3eARoPOCVtp17vuGi+P683L/Zbw9vHdVigW1SipDA2oisX/6n
-         ByDjHbOmIL4TCKZ3boiRFDF3iHimHexdwqbyLSif+791XkHofnqOgMmKG/57Lw8W5nis
-         rK0Pd9NM4DALYQI3fOQt07yc7rzhhfaX/xhCRJJ0KaOSV+gkZvu+mEhPgpNpR7Bv3+XA
-         4uzVQ+VZ8chqzYG5Ei0ck0jRAbbgbjOhzgFkVwdmF8xHe1MWkFcHOGuP4dUd3fPZaoOY
-         xtKg==
-X-Gm-Message-State: APjAAAVDBGmDwr75xzxkrJ11j5cy7Mr2O1OMo3J6FEFlmzGdFLav3N63
-        7w+Tjr7O8cPUwN1KjDFr2s/aWuA2c6Y=
-X-Google-Smtp-Source: APXvYqzHXStUo+f5atgElR1FxqTnQjq0EhGpW0zJixAJbseeVZlQ12PH3zSL0aBgh4+V2oqMYac+Aw==
-X-Received: by 2002:a65:64c6:: with SMTP id t6mr418097pgv.392.1579808657640;
-        Thu, 23 Jan 2020 11:44:17 -0800 (PST)
-Received: from localhost (MIPS-TECHNO.ear1.SanJose1.Level3.net. [4.15.122.74])
-        by smtp.gmail.com with ESMTPSA id c18sm3702271pfr.40.2020.01.23.11.44.16
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=oe3tpj2pn2SzEi+ANvf3NoFA5tjVK51f2HZBdQilqo0=;
+        b=s8KKcy8/qHdrMiuFVjI7G11/GZG1GGrohEYDbEy2tYVEb7WIP2qDk6lRrmm2C7g2Ll
+         vJu6+gJhpP2mzWbCPgEU588pV6qBl5f0QKaS1PaSNWvHlYY93LR4EYqKvcPtGmMWKzSl
+         9b/X6I8HlxT8eflOHf5gOULRfeXuJ/djtj+adUMVIlREX5uUovwti8vfh1Td5dFj0JDN
+         euf66d9J1oHf2Kip4+BzTanPamp6zGR+Ln5UUzSByISsk1tYHwNvH1+C6SpN1DAxEPbA
+         iSTETrAEUQXFqVSilP30qfOutfcs6sbZ1vQFBxRhsDl7Yw/FVKl5agaYc7531jmKwGw7
+         GUPg==
+X-Gm-Message-State: APjAAAWTav1C/z+tDOC4il4/qE4HMSblsIdlYoq8cyLVvOHd7WCFeo2o
+        FTrvAmguK6ezFZOzORNU299EUg==
+X-Google-Smtp-Source: APXvYqyD3wqyjLxo2F04nerpBjM8ZiRe3VcD2gewHYuCRmu8XhXMG4uG9TbTYkV/0z+6rFCH5gxrcw==
+X-Received: by 2002:a17:90a:a409:: with SMTP id y9mr6265671pjp.119.1579808666706;
+        Thu, 23 Jan 2020 11:44:26 -0800 (PST)
+Received: from google.com ([2620:15c:202:201:bc61:d85d:eb16:9036])
+        by smtp.gmail.com with ESMTPSA id d1sm3704244pjx.6.2020.01.23.11.44.25
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 23 Jan 2020 11:44:16 -0800 (PST)
-Message-ID: <5e29f790.1c69fb81.734a2.8d5f@mx.google.com>
-Date:   Thu, 23 Jan 2020 11:44:15 -0800
-From:   Paul Burton <paulburton@kernel.org>
-To:     Jiaxun Yang <jiaxun.yang@flygoat.com>
-CC:     linux-mips@vger.kernel.org
-CC:     chenhc@lemote.com, paul.burton@mips.com,
-        linux-kernel@vger.kernel.org, Jiaxun Yang <jiaxun.yang@flygoat.com>
-CC:     linux-mips@vger.kernel.org
-Subject: Re: [PATCH 1/3] MIPS: Make DIEI support as a config option
-References:  <20200113101501.37985-1-jiaxun.yang@flygoat.com>
-In-Reply-To:  <20200113101501.37985-1-jiaxun.yang@flygoat.com>
+        Thu, 23 Jan 2020 11:44:25 -0800 (PST)
+Date:   Thu, 23 Jan 2020 11:44:21 -0800
+From:   Benson Leung <bleung@google.com>
+To:     Stephen Boyd <swboyd@chromium.org>
+Cc:     Benson Leung <bleung@chromium.org>,
+        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] platform/chrome: wilco_ec: Allow wilco to be compiled in
+ COMPILE_TEST
+Message-ID: <20200123194421.GA38491@google.com>
+References: <20200122012434.88274-1-swboyd@chromium.org>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="2fHTh5uZTiUOsy+g"
+Content-Disposition: inline
+In-Reply-To: <20200122012434.88274-1-swboyd@chromium.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
 
-Jiaxun Yang wrote:
-> DI(Disable Interrupt) and EI(Enable Interrupt) instructions is required by
-> MIPSR2/MIPSR6, however, it appears to be buggy on some processors such as
-> Loongson-3A1000. Thus we make it as a config option to allow disable it at
-> compile time with CPU_MIPSR2 selected.
+--2fHTh5uZTiUOsy+g
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Series applied to mips-next.
+Hi Stephen,
 
-> MIPS: Make DIEI support as a config option
->   commit ba9196d2e005
->   https://git.kernel.org/mips/c/ba9196d2e005
->   
->   Signed-off-by: Jiaxun Yang <jiaxun.yang@flygoat.com>
->   Signed-off-by: Paul Burton <paulburton@kernel.org>
-> 
-> MIPS: Loongson64: Bump ISA level to MIPSR2
->   commit 51522217f65f
->   https://git.kernel.org/mips/c/51522217f65f
->   
->   Signed-off-by: Jiaxun Yang <jiaxun.yang@flygoat.com>
->   Signed-off-by: Paul Burton <paulburton@kernel.org>
-> 
-> MIPS: Loongson64: Disable exec hazard
->   commit 1306cc0a3091
->   https://git.kernel.org/mips/c/1306cc0a3091
->   
->   Signed-off-by: Jiaxun Yang <jiaxun.yang@flygoat.com>
->   Signed-off-by: Paul Burton <paulburton@kernel.org>
+On Tue, Jan 21, 2020 at 05:24:34PM -0800, Stephen Boyd wrote:
+> Enable this Kconfig on COMPILE_TEST enabled configs so we can get more
+> build coverage.
+>=20
+> Signed-off-by: Stephen Boyd <swboyd@chromium.org>
 
-Thanks,
-    Paul
+Applied to our for-next. Thanks!
 
-[ This message was auto-generated; if you believe anything is incorrect
-  then please email paulburton@kernel.org to report it. ]
+> ---
+>  drivers/platform/chrome/wilco_ec/Kconfig | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+>=20
+> diff --git a/drivers/platform/chrome/wilco_ec/Kconfig b/drivers/platform/=
+chrome/wilco_ec/Kconfig
+> index 365f30e116ee..49e8530ca0ac 100644
+> --- a/drivers/platform/chrome/wilco_ec/Kconfig
+> +++ b/drivers/platform/chrome/wilco_ec/Kconfig
+> @@ -1,7 +1,8 @@
+>  # SPDX-License-Identifier: GPL-2.0-only
+>  config WILCO_EC
+>  	tristate "ChromeOS Wilco Embedded Controller"
+> -	depends on ACPI && X86 && CROS_EC_LPC && LEDS_CLASS
+> +	depends on X86 || COMPILE_TEST
+> +	depends on ACPI && CROS_EC_LPC && LEDS_CLASS
+>  	help
+>  	  If you say Y here, you get support for talking to the ChromeOS
+>  	  Wilco EC over an eSPI bus. This uses a simple byte-level protocol
+> --=20
+> Sent by a computer, using git, on the internet
+>=20
+
+--=20
+Benson Leung
+Staff Software Engineer
+Chrome OS Kernel
+Google Inc.
+bleung@google.com
+Chromium OS Project
+bleung@chromium.org
+
+--2fHTh5uZTiUOsy+g
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQQCtZK6p/AktxXfkOlzbaomhzOwwgUCXin3lQAKCRBzbaomhzOw
+whJMAP0XYnJILlRQ1+86WnPMH8i2l18UKemSCUSkgLHwqfkCtQEAq7nbNNSGiuVr
+uxQVrA5c+J6616WfSQ7qvY986N7bBQY=
+=P96i
+-----END PGP SIGNATURE-----
+
+--2fHTh5uZTiUOsy+g--
