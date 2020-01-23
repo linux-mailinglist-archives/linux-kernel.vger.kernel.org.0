@@ -2,128 +2,122 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2B03B147092
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Jan 2020 19:17:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E64A214709B
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Jan 2020 19:19:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729075AbgAWSRB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 23 Jan 2020 13:17:01 -0500
-Received: from Galois.linutronix.de ([193.142.43.55]:40736 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727278AbgAWSRA (ORCPT
+        id S1729066AbgAWSTB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 23 Jan 2020 13:19:01 -0500
+Received: from mail-vs1-f66.google.com ([209.85.217.66]:37021 "EHLO
+        mail-vs1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728988AbgAWSTB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Jan 2020 13:17:00 -0500
-Received: from p5b06da22.dip0.t-ipconnect.de ([91.6.218.34] helo=nanos.tec.linutronix.de)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1iuh2G-0005bq-TU; Thu, 23 Jan 2020 19:16:57 +0100
-Received: by nanos.tec.linutronix.de (Postfix, from userid 1000)
-        id 3292F101623; Thu, 23 Jan 2020 19:16:56 +0100 (CET)
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     Evan Green <evgreen@chromium.org>, Rajat Jain <rajatja@google.com>
-Cc:     Bjorn Helgaas <bhelgaas@google.com>,
-        linux-pci <linux-pci@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2] PCI/MSI: Avoid torn updates to MSI pairs
-In-Reply-To: <87y2tytv5i.fsf@nanos.tec.linutronix.de>
-References: <20200117162444.v2.1.I9c7e72144ef639cc135ea33ef332852a6b33730f@changeid> <CACK8Z6Ft95qj4e_fsA32r_bcz2SsHOW1xxqZJt3_DBAJw=NMGA@mail.gmail.com> <CAE=gft6fKQWExW-=xjZGzXs30XohfpA5SKggvL2WtYXAHmzMew@mail.gmail.com> <87y2tytv5i.fsf@nanos.tec.linutronix.de>
-Date:   Thu, 23 Jan 2020 19:16:56 +0100
-Message-ID: <87eevqkpgn.fsf@nanos.tec.linutronix.de>
+        Thu, 23 Jan 2020 13:19:01 -0500
+Received: by mail-vs1-f66.google.com with SMTP id x18so2380921vsq.4
+        for <linux-kernel@vger.kernel.org>; Thu, 23 Jan 2020 10:19:01 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=benyossef-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=OqxshwjEZk15r2HIYLwJvhZobDP5rWlqMcRJh/RNTO4=;
+        b=vWDImQhWepEclk+VMgrMtqjicDFT3eIkDyKl3fKOvmTY2bj7EAZYV9HgzGnmXfPlyg
+         33UX4671AAMqIUqxSIklCyvbUM30AmviPYm12FXMYgej0FKwPweLv45xc1BfDMdgiG34
+         fhTZSJ4nNbHmRXGc7WLTKF/9kEQrTQ228JcsXqf3xjED9wHtbBOkBNVIjPUh0CLVCbxA
+         +hVOaTvN+d82xDY2LuN0revzmFywaEhJr+Gg+/0cbl12fITXYJlswyhvQHOnjjlLHJ3g
+         ok4rOPVTbE3Bkb2/+WzzTZpApczhCIYVhA9PBBcbPt+fpuWgJXt0WDoSljKei5NBivKF
+         q5Pg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=OqxshwjEZk15r2HIYLwJvhZobDP5rWlqMcRJh/RNTO4=;
+        b=dpeRh94u1Nx9ww6aWTyHM3jq+Kuj8rPolecnGXan4CXzCzhekQDVsv2o7nEL9KXkQb
+         Jd3Q2ScvkVUes1AtazwadhTkD2x7A+cLaPH3Ml0nWfaVkP089IOJMELh0roAZDUzY3p/
+         Y/9vWFef52tWymCuipeUPgIXa8PbWmuXB3ZGegkp9H6fmSlqqfznMbTDjjJzxTRienPX
+         /eWPnsTxix28BukWbFJO00dh4tAg5ggyR0DQt1KDoJPOrQpRzfLAuLHj2iQPS7VXGOyj
+         0gGF//7GR7jEnI5Rpeen33ldMYCj6Mi0hWJez1zliPhrMZaL+QHc0JM/9Dccz54P4eD2
+         l0Cw==
+X-Gm-Message-State: APjAAAXVCLbHVkEGXuT0Ga6znt4iiCF2aP8KQhc7F7D9GBdYZP+/zQuI
+        /qsxxSJKgV/lHs6kOb+2s+jGd5qdeuOEH8C6moplBA==
+X-Google-Smtp-Source: APXvYqzOjOD3kh4FjOTrXgXqCPEKCyM8OuN7CeGs4LHHfnmXvUi9lx3crZYBAUn3Op+myZU5Ui/tHw3vwrtGAzpq1BY=
+X-Received: by 2002:a67:c90d:: with SMTP id w13mr6769203vsk.164.1579803540508;
+ Thu, 23 Jan 2020 10:19:00 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+References: <20200116101447.20374-1-gilad@benyossef.com> <CAMuHMdUhR83SZyWX9Du9d3Sp4A48x_msKaOHGsa88EQKStEDQg@mail.gmail.com>
+ <CAOtvUMfDnoFu8V7sYvhgsstX6fuUk3foq+9FJ6SbUKEFnq-zMw@mail.gmail.com> <CAMuHMdUZbbNX-vsa4TmU7DNKAz2Qo3SR1pHXDOsO4Rh5G8ygZw@mail.gmail.com>
+In-Reply-To: <CAMuHMdUZbbNX-vsa4TmU7DNKAz2Qo3SR1pHXDOsO4Rh5G8ygZw@mail.gmail.com>
+From:   Gilad Ben-Yossef <gilad@benyossef.com>
+Date:   Thu, 23 Jan 2020 20:18:45 +0200
+Message-ID: <CAOtvUMdCm8LTfVOgrkGAa5ig6dodyd7QwcEvHz-TnvkMfnhDZA@mail.gmail.com>
+Subject: Re: [PATCH 00/11] crypto: ccree - fixes and cleanups
+To:     Geert Uytterhoeven <geert@linux-m68k.org>
+Cc:     Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S. Miller" <davem@davemloft.net>,
+        Ofir Drang <ofir.drang@arm.com>, Hadar Gat <hadar.gat@arm.com>,
+        Linux Crypto Mailing List <linux-crypto@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Christoph Hellwig <hch@lst.de>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Evan,
+On Thu, Jan 23, 2020 at 5:46 PM Geert Uytterhoeven <geert@linux-m68k.org> wrote:
+>
+> Hi Gilad
+>
+> On Thu, Jan 23, 2020 at 12:44 PM Gilad Ben-Yossef <gilad@benyossef.com> wrote:
+> > On Wed, Jan 22, 2020 at 6:51 PM Geert Uytterhoeven <geert@linux-m68k.org> wrote:
+> > > On Thu, Jan 16, 2020 at 11:25 AM Gilad Ben-Yossef <gilad@benyossef.com> wrote:
+> > > > A bunch of fixes and code cleanups for the ccree driver
+> > >
+> > > Thank you!
+> > >
+> > > I wanted to give this a try, but it looks like CCREE is no longer working
+> > > on R-Car H3, both with/without this series.
+> > >
+> > > E.g. with renesas-devel[*] and renesas_defconfig +
+> > > CONFIG_CRYPTO_MANAGER_DISABLE_TESTS=n, I get the following crash:
+> >
+> > Thank you for the bug report Geert!
+> >
+> > My R-Car board is on loan at the moment to another project. I didn't
+> > see this on our internal test board.
+> > I will track down my R-Car board and reproduce this - hopefully
+> > beginning of next week and will get back to you.
+>
+> In the mean time, I've bisected this failure to commit cdfee5623290bc89
+> ("driver core: initialize a default DMA mask for platform device").
+> However, this looks like a red herring, and seems to be only an exposer
+> of an underlying problem.
 
-Thomas Gleixner <tglx@linutronix.de> writes:
-> This is not yet debugged fully and as this is happening on MSI-X I'm not
-> really convinced yet that your 'torn write' theory holds.
+Thank you for continue digging into this.
 
-can you please apply the debug patch below and run your test. When the
-failure happens, stop the tracer and collect the trace.
+> What's happening is that cc_map_aead_request() receives a request with
+> cryptlen = 0.  Due to DRV_CRYPTO_DIRECTION_ENCRYPT, the length to map is
+> increased by 8.  This seems to works fine if there is sufficient space
+> in the request's scatterlist.  However, if the scatterlist has only a
+> single entry of size zero, cc_map_sg() tries to map a zero-length DMA
+> buffer, and the BUG)() is triggered.
+>
 
-Another question. Did you ever try to change the affinity of that
-interrupt without hotplug rapidly while the device makes traffic? If
-not, it would be interesting whether this leads to a failure as well.
+OK, this does rings a bell - can you verify please if
+CONFIG_CRYPTO_MANAGER_EXTRA_TESTS is enabled and if it does can you
+see if it happens if it is turned off?
 
-Thanks
+There was an issue I've seen happen only with
+CONFIG_CRYPTO_MANAGER_EXTRA_TESTS enabled and only after commit
+49763fc6b1af4 ("crypto: testmgr - generate inauthentic AEAD test
+vectors") which I am chasing. I was half starting to believe it
+was an issue in the testmgr commit and not the ccree driver.
 
-        tglx
+However, the stack trace doesn't look exactly the same but the
+description of the issue does. It seems you are seeing the same issue
+in another code path.
 
-8<---------------
+Thank you - this is very helpful!
 
---- a/arch/x86/kernel/apic/vector.c
-+++ b/arch/x86/kernel/apic/vector.c
-@@ -964,6 +964,8 @@ void irq_force_complete_move(struct irq_
- 	if (!vector)
- 		goto unlock;
- 
-+	trace_printk("IRQ %u vector %u irq inprogress %u\n", vector,
-+		     irqd->irq, apicd->move_in_progress);
- 	/*
- 	 * This is tricky. If the cleanup of the old vector has not been
- 	 * done yet, then the following setaffinity call will fail with
---- a/arch/x86/kernel/irq.c
-+++ b/arch/x86/kernel/irq.c
-@@ -244,6 +244,8 @@ u64 arch_irq_stat(void)
- 
- 	desc = __this_cpu_read(vector_irq[vector]);
- 	if (likely(!IS_ERR_OR_NULL(desc))) {
-+		trace_printk("Handle vector %u IRQ %u\n", vector,
-+			     desc->irq_data.irq);
- 		if (IS_ENABLED(CONFIG_X86_32))
- 			handle_irq(desc, regs);
- 		else
-@@ -252,10 +254,18 @@ u64 arch_irq_stat(void)
- 		ack_APIC_irq();
- 
- 		if (desc == VECTOR_UNUSED) {
-+			trace_printk("Handle unused vector %u\n", vector);
- 			pr_emerg_ratelimited("%s: %d.%d No irq handler for vector\n",
- 					     __func__, smp_processor_id(),
- 					     vector);
- 		} else {
-+			if (desc == VECTOR_SHUTDOWN) {
-+				trace_printk("Handle shutdown vector %u\n",
-+					     vector);
-+			} else if (desc == VECTOR_RETRIGGERED) {
-+				trace_printk("Handle retriggered vector %u\n",
-+					     vector);
-+			}
- 			__this_cpu_write(vector_irq[vector], VECTOR_UNUSED);
- 		}
- 	}
-@@ -373,9 +383,14 @@ void fixup_irqs(void)
- 		if (IS_ERR_OR_NULL(__this_cpu_read(vector_irq[vector])))
- 			continue;
- 
-+		desc = __this_cpu_read(vector_irq[vector]);
-+		trace_printk("FIXUP: %u\n", desc->irq_data.irq);
-+
- 		irr = apic_read(APIC_IRR + (vector / 32 * 0x10));
- 		if (irr  & (1 << (vector % 32))) {
- 			desc = __this_cpu_read(vector_irq[vector]);
-+			trace_printk("FIXUP: %u IRR pending\n",
-+				     desc->irq_data.irq);
- 
- 			raw_spin_lock(&desc->lock);
- 			data = irq_desc_get_irq_data(desc);
---- a/kernel/irq/cpuhotplug.c
-+++ b/kernel/irq/cpuhotplug.c
-@@ -122,6 +122,10 @@ static bool migrate_one_irq(struct irq_d
- 		affinity = cpu_online_mask;
- 		brokeaff = true;
- 	}
-+
-+	trace_printk("IRQ: %d maskchip %d wasmasked %d break %d\n",
-+		     d->irq, maskchip, irqd_irq_masked(d), brokeaff);
-+
- 	/*
- 	 * Do not set the force argument of irq_do_set_affinity() as this
- 	 * disables the masking of offline CPUs from the supplied affinity
+I now have a better direction to look into...
+
+Gilad
