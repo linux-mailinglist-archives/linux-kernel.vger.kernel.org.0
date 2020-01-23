@@ -2,95 +2,64 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BF76A147314
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Jan 2020 22:23:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B0D7414731E
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Jan 2020 22:27:21 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729504AbgAWVXg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 23 Jan 2020 16:23:36 -0500
-Received: from mga01.intel.com ([192.55.52.88]:39674 "EHLO mga01.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728765AbgAWVXg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Jan 2020 16:23:36 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 23 Jan 2020 13:23:35 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.70,355,1574150400"; 
-   d="scan'208";a="230009971"
-Received: from ray.jf.intel.com (HELO [10.7.201.139]) ([10.7.201.139])
-  by orsmga006.jf.intel.com with ESMTP; 23 Jan 2020 13:23:35 -0800
-Subject: Re: [PATCH 0/5] x86: finish the MPX removal process
-To:     Borislav Petkov <bp@alien8.de>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Dave Hansen <dave.hansen@linux.intel.com>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Andrew Lutomirski <luto@kernel.org>,
-        the arch/x86 maintainers <x86@kernel.org>,
-        linux-arch <linux-arch@vger.kernel.org>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Jeff Dike <jdike@addtoit.com>,
-        Richard Weinberger <richard@nod.at>,
-        Anton Ivanov <anton.ivanov@cambridgegreys.com>,
-        Guan Xuetao <gxt@pku.edu.cn>
-References: <20200123190456.8E05ADE6@viggo.jf.intel.com>
- <CAHk-=wgLR5JnaBgCtg0-AAxtdN3=4=LMp6-0212608=vbmCAxg@mail.gmail.com>
- <20200123202600.GG10328@zn.tnic>
-From:   Dave Hansen <dave.hansen@intel.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- mQINBE6HMP0BEADIMA3XYkQfF3dwHlj58Yjsc4E5y5G67cfbt8dvaUq2fx1lR0K9h1bOI6fC
- oAiUXvGAOxPDsB/P6UEOISPpLl5IuYsSwAeZGkdQ5g6m1xq7AlDJQZddhr/1DC/nMVa/2BoY
- 2UnKuZuSBu7lgOE193+7Uks3416N2hTkyKUSNkduyoZ9F5twiBhxPJwPtn/wnch6n5RsoXsb
- ygOEDxLEsSk/7eyFycjE+btUtAWZtx+HseyaGfqkZK0Z9bT1lsaHecmB203xShwCPT49Blxz
- VOab8668QpaEOdLGhtvrVYVK7x4skyT3nGWcgDCl5/Vp3TWA4K+IofwvXzX2ON/Mj7aQwf5W
- iC+3nWC7q0uxKwwsddJ0Nu+dpA/UORQWa1NiAftEoSpk5+nUUi0WE+5DRm0H+TXKBWMGNCFn
- c6+EKg5zQaa8KqymHcOrSXNPmzJuXvDQ8uj2J8XuzCZfK4uy1+YdIr0yyEMI7mdh4KX50LO1
- pmowEqDh7dLShTOif/7UtQYrzYq9cPnjU2ZW4qd5Qz2joSGTG9eCXLz5PRe5SqHxv6ljk8mb
- ApNuY7bOXO/A7T2j5RwXIlcmssqIjBcxsRRoIbpCwWWGjkYjzYCjgsNFL6rt4OL11OUF37wL
- QcTl7fbCGv53KfKPdYD5hcbguLKi/aCccJK18ZwNjFhqr4MliQARAQABtEVEYXZpZCBDaHJp
- c3RvcGhlciBIYW5zZW4gKEludGVsIFdvcmsgQWRkcmVzcykgPGRhdmUuaGFuc2VuQGludGVs
- LmNvbT6JAjgEEwECACIFAlQ+9J0CGwMGCwkIBwMCBhUIAgkKCwQWAgMBAh4BAheAAAoJEGg1
- lTBwyZKwLZUP/0dnbhDc229u2u6WtK1s1cSd9WsflGXGagkR6liJ4um3XCfYWDHvIdkHYC1t
- MNcVHFBwmQkawxsYvgO8kXT3SaFZe4ISfB4K4CL2qp4JO+nJdlFUbZI7cz/Td9z8nHjMcWYF
- IQuTsWOLs/LBMTs+ANumibtw6UkiGVD3dfHJAOPNApjVr+M0P/lVmTeP8w0uVcd2syiaU5jB
- aht9CYATn+ytFGWZnBEEQFnqcibIaOrmoBLu2b3fKJEd8Jp7NHDSIdrvrMjYynmc6sZKUqH2
- I1qOevaa8jUg7wlLJAWGfIqnu85kkqrVOkbNbk4TPub7VOqA6qG5GCNEIv6ZY7HLYd/vAkVY
- E8Plzq/NwLAuOWxvGrOl7OPuwVeR4hBDfcrNb990MFPpjGgACzAZyjdmYoMu8j3/MAEW4P0z
- F5+EYJAOZ+z212y1pchNNauehORXgjrNKsZwxwKpPY9qb84E3O9KYpwfATsqOoQ6tTgr+1BR
- CCwP712H+E9U5HJ0iibN/CDZFVPL1bRerHziuwuQuvE0qWg0+0SChFe9oq0KAwEkVs6ZDMB2
- P16MieEEQ6StQRlvy2YBv80L1TMl3T90Bo1UUn6ARXEpcbFE0/aORH/jEXcRteb+vuik5UGY
- 5TsyLYdPur3TXm7XDBdmmyQVJjnJKYK9AQxj95KlXLVO38lcuQINBFRjzmoBEACyAxbvUEhd
- GDGNg0JhDdezyTdN8C9BFsdxyTLnSH31NRiyp1QtuxvcqGZjb2trDVuCbIzRrgMZLVgo3upr
- MIOx1CXEgmn23Zhh0EpdVHM8IKx9Z7V0r+rrpRWFE8/wQZngKYVi49PGoZj50ZEifEJ5qn/H
- Nsp2+Y+bTUjDdgWMATg9DiFMyv8fvoqgNsNyrrZTnSgoLzdxr89FGHZCoSoAK8gfgFHuO54B
- lI8QOfPDG9WDPJ66HCodjTlBEr/Cwq6GruxS5i2Y33YVqxvFvDa1tUtl+iJ2SWKS9kCai2DR
- 3BwVONJEYSDQaven/EHMlY1q8Vln3lGPsS11vSUK3QcNJjmrgYxH5KsVsf6PNRj9mp8Z1kIG
- qjRx08+nnyStWC0gZH6NrYyS9rpqH3j+hA2WcI7De51L4Rv9pFwzp161mvtc6eC/GxaiUGuH
- BNAVP0PY0fqvIC68p3rLIAW3f97uv4ce2RSQ7LbsPsimOeCo/5vgS6YQsj83E+AipPr09Caj
- 0hloj+hFoqiticNpmsxdWKoOsV0PftcQvBCCYuhKbZV9s5hjt9qn8CE86A5g5KqDf83Fxqm/
- vXKgHNFHE5zgXGZnrmaf6resQzbvJHO0Fb0CcIohzrpPaL3YepcLDoCCgElGMGQjdCcSQ+Ci
- FCRl0Bvyj1YZUql+ZkptgGjikQARAQABiQIfBBgBAgAJBQJUY85qAhsMAAoJEGg1lTBwyZKw
- l4IQAIKHs/9po4spZDFyfDjunimEhVHqlUt7ggR1Hsl/tkvTSze8pI1P6dGp2XW6AnH1iayn
- yRcoyT0ZJ+Zmm4xAH1zqKjWplzqdb/dO28qk0bPso8+1oPO8oDhLm1+tY+cOvufXkBTm+whm
- +AyNTjaCRt6aSMnA/QHVGSJ8grrTJCoACVNhnXg/R0g90g8iV8Q+IBZyDkG0tBThaDdw1B2l
- asInUTeb9EiVfL/Zjdg5VWiF9LL7iS+9hTeVdR09vThQ/DhVbCNxVk+DtyBHsjOKifrVsYep
- WpRGBIAu3bK8eXtyvrw1igWTNs2wazJ71+0z2jMzbclKAyRHKU9JdN6Hkkgr2nPb561yjcB8
- sIq1pFXKyO+nKy6SZYxOvHxCcjk2fkw6UmPU6/j/nQlj2lfOAgNVKuDLothIxzi8pndB8Jju
- KktE5HJqUUMXePkAYIxEQ0mMc8Po7tuXdejgPMwgP7x65xtfEqI0RuzbUioFltsp1jUaRwQZ
- MTsCeQDdjpgHsj+P2ZDeEKCbma4m6Ez/YWs4+zDm1X8uZDkZcfQlD9NldbKDJEXLIjYWo1PH
- hYepSffIWPyvBMBTW2W5FRjJ4vLRrJSUoEfJuPQ3vW9Y73foyo/qFoURHO48AinGPZ7PC7TF
- vUaNOTjKedrqHkaOcqB185ahG2had0xnFsDPlx5y
-Message-ID: <636d5f4b-c47f-77f6-067f-a6b342db5650@intel.com>
-Date:   Thu, 23 Jan 2020 13:23:35 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        id S1728709AbgAWV1S (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 23 Jan 2020 16:27:18 -0500
+Received: from mail-il1-f196.google.com ([209.85.166.196]:40255 "EHLO
+        mail-il1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726118AbgAWV1S (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 23 Jan 2020 16:27:18 -0500
+Received: by mail-il1-f196.google.com with SMTP id c4so38778ilo.7
+        for <linux-kernel@vger.kernel.org>; Thu, 23 Jan 2020 13:27:17 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linuxfoundation.org; s=google;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=Rlz3hvUu+9u2oNJYG4g2Rw59Iz8hixxTpHD2vCOcLXo=;
+        b=PwBvHXWcPbHsFtHuoq3AUL5vFUZnWEbflYLFA0fa+kpnrYlFYyZ0WNPhmm0JH5IX20
+         wOJlpK/ta+WU/QC7YYY/nAK98YO4OkEzz+mMqfx2W1MeL5DIBZGjjs2GThFWLbmP4ZXO
+         BWndEWvmKE617UUJcuQWCt1gg1wDNoy4ZugQk=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=Rlz3hvUu+9u2oNJYG4g2Rw59Iz8hixxTpHD2vCOcLXo=;
+        b=H7y0+0+jgHLxp7cLT7toRm+yEi0dmrKaIfgTDQb05lCYmpMemi833jMOOkZbVcoT/D
+         QQB1JUDaG9ViGcglDczICJdUcLbPVBO+RxaYBXIOWA6aR4AFpJ+DE9r7TTHoDE9Ue5Uy
+         6c8nk3XpR/BOHDbdJPXSporfA7uGL5Lh9uRb5UGd3fODT2wHEB4wkbbeeqet9pjGJBFy
+         tT9Sgh8RW/+LmzI15UYtqLqb0YmbH+X98uVQrQBCe9FD/DIEmArItGddcFEB4qI1n78H
+         brn6Vh1OslAPVrbsM2D31Tcy7XZ+zdYSyTs5T1d5zsU+ly553TerG9XLMknJ6sQhE29V
+         tmfQ==
+X-Gm-Message-State: APjAAAXoth0PIlCtxbSUO7qpjZuc1b3Mc4ayc+dBWzog6hKyH4jWYhbS
+        QUxMfZS1MTTyaLTNTfTsRFAm1Q==
+X-Google-Smtp-Source: APXvYqzlBlohdIzyH1fQ7g2B5f1t9VHWWDYOQC2BgsHZYkufZHxwNvX/yEX1sbKHcfdWI3OzYGhGPQ==
+X-Received: by 2002:a05:6e02:cc5:: with SMTP id c5mr249989ilj.47.1579814837406;
+        Thu, 23 Jan 2020 13:27:17 -0800 (PST)
+Received: from [192.168.1.112] (c-24-9-64-241.hsd1.co.comcast.net. [24.9.64.241])
+        by smtp.gmail.com with ESMTPSA id i11sm701592ion.1.2020.01.23.13.27.16
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 23 Jan 2020 13:27:16 -0800 (PST)
+Subject: Re: [PATCH] iommu: amd: Fix IOMMU perf counter clobbering during init
+To:     Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>,
+        Joerg Roedel <joro@8bytes.org>
+Cc:     iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
+        Shuah Khan <skhan@linuxfoundation.org>
+References: <20200114151220.29578-1-skhan@linuxfoundation.org>
+ <20200117100829.GE15760@8bytes.org>
+ <42c0a806-9947-1401-9754-8aa88bd7062f@amd.com>
+ <24a46b0f-33d7-5f94-661a-80f035213892@linuxfoundation.org>
+From:   Shuah Khan <skhan@linuxfoundation.org>
+Message-ID: <d7b8aa31-ded5-082e-0324-91b6277507ba@linuxfoundation.org>
+Date:   Thu, 23 Jan 2020 14:27:15 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.1
 MIME-Version: 1.0
-In-Reply-To: <20200123202600.GG10328@zn.tnic>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <24a46b0f-33d7-5f94-661a-80f035213892@linuxfoundation.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -98,14 +67,49 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 1/23/20 12:26 PM, Borislav Petkov wrote:
-> On Thu, Jan 23, 2020 at 11:26:38AM -0800, Linus Torvalds wrote:
->> On Thu, Jan 23, 2020 at 11:23 AM Dave Hansen
->> <dave.hansen@linux.intel.com> wrote:
->>> I'd _rather_ this go in via the x86 tree, but I'm not picky.
-> Any particular reason why?
+On 1/21/20 8:32 AM, Shuah Khan wrote:
+> On 1/20/20 7:10 PM, Suravee Suthikulpanit wrote:
+>> On 1/17/2020 5:08 PM, Joerg Roedel wrote:
+>>> Adding Suravee, who wrote the IOMMU Perf Counter code.
+>>>
+>>> On Tue, Jan 14, 2020 at 08:12:20AM -0700, Shuah Khan wrote:
+>>>> init_iommu_perf_ctr() clobbers the register when it checks write access
+>>>> to IOMMU perf counters and fails to restore when they are writable.
+>>>>
+>>>> Add save and restore to fix it.
+>>>>
+>>>> Signed-off-by: Shuah Khan<skhan@linuxfoundation.org>
+>>>> ---
+>>>>   drivers/iommu/amd_iommu_init.c | 22 ++++++++++++++++------
+>>>>   1 file changed, 16 insertions(+), 6 deletions(-)
+>>> Suravee, can you please review this patch?
+>>>
+>>
+>> This looks ok. Does this fix certain issues? Or is this just for sanity.
+> 
+> I didn't notice any problems. Counters aren't writable on my system.
+> However, it certainly looks like a bog since registers aren't restored
+> like in other places in this file where such checks are done on other
+> registers.
+> 
+> I see 2 banks and 4 counters on my system. Is it sufficient to check
+> the first bank and first counter? In other words, if the first one
+> isn't writable, are all counters non-writable?
+> 
+> Should we read the config first and then, try to see if any of the
+> counters are writable? I have a patch that does that, I can send it
+> out for review.
+> 
+>>
+>> Reviewed-by: Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>
 
-I'm confident I can send patches to the x86 maintainers and not make
-them too angry.  Sending pull requests to Linus, not so much. :)
+Joerg,
 
-I'll just plan to send it to Linus directly.
+Please don't pull this in. I introduced a bug in this patch. It always
+returns amd_iommu_pc_present false even when it can write to the
+counters. My bad.
+
+I will send v2.
+
+thanks,
+-- Shuah
