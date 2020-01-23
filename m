@@ -2,109 +2,104 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 226CC146DB3
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Jan 2020 17:01:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8DF29146E3E
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Jan 2020 17:23:55 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728827AbgAWQBA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 23 Jan 2020 11:01:00 -0500
-Received: from mail25.static.mailgun.info ([104.130.122.25]:58655 "EHLO
-        mail25.static.mailgun.info" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726885AbgAWQBA (ORCPT
+        id S1727453AbgAWQXp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 23 Jan 2020 11:23:45 -0500
+Received: from gateway34.websitewelcome.com ([192.185.148.140]:17810 "EHLO
+        gateway34.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726605AbgAWQXp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Jan 2020 11:01:00 -0500
-DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
- s=smtp; t=1579795259; h=Content-Transfer-Encoding: MIME-Version:
- Message-Id: Date: Subject: Cc: To: From: Sender;
- bh=eFeZtL7giiOcNKhy0ZgWz6ZZVkZcK/c5/KyFaL3YYBo=; b=VE07v7+C6ofajeZZdj5OiMmM5RX1Ccx2CsKiKujkHkAiNCTJqny0p/z8pcflVww8lo/tOrMl
- 6TJTp0bxNvLZDRrXhSKioPulNZlLDoeVsH2JAJuxAuhDhYjmUVRtUlX1LHZacdlb3DkomEBN
- RIVfJV0EZATsXFh7q/PyWKcbE1Q=
-X-Mailgun-Sending-Ip: 104.130.122.25
-X-Mailgun-Sid: WyI0MWYwYSIsICJsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
-Received: from smtp.codeaurora.org (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171])
- by mxa.mailgun.org with ESMTP id 5e29c32b.7f86da1909d0-smtp-out-n03;
- Thu, 23 Jan 2020 16:00:43 -0000 (UTC)
-Received: by smtp.codeaurora.org (Postfix, from userid 1001)
-        id CE2FDC4479C; Thu, 23 Jan 2020 16:00:42 +0000 (UTC)
-X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
-        aws-us-west-2-caf-mail-1.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=2.0 tests=ALL_TRUSTED,SPF_NONE
-        autolearn=unavailable autolearn_force=no version=3.4.0
-Received: from blr-ubuntu-253.qualcomm.com (blr-bdr-fw-01_GlobalNAT_AllZones-Outside.qualcomm.com [103.229.18.19])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: saiprakash.ranjan)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 63103C43383;
-        Thu, 23 Jan 2020 16:00:38 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 63103C43383
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=none smtp.mailfrom=saiprakash.ranjan@codeaurora.org
-From:   Sai Prakash Ranjan <saiprakash.ranjan@codeaurora.org>
-To:     Kees Cook <keescook@chromium.org>,
-        Anton Vorontsov <anton@enomsg.org>,
-        Colin Cross <ccross@android.com>,
-        Tony Luck <tony.luck@intel.com>,
-        Joel Fernandes <joel@joelfernandes.org>
-Cc:     Stephen Boyd <swboyd@chromium.org>,
-        Matthias Kaehlcke <mka@chromium.org>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org,
-        Douglas Anderson <dianders@chromium.org>,
-        Sai Prakash Ranjan <saiprakash.ranjan@codeaurora.org>
-Subject: [PATCH] pstore: Fix printing of duplicate boot messages to console
-Date:   Thu, 23 Jan 2020 21:30:31 +0530
-Message-Id: <20200123160031.9853-1-saiprakash.ranjan@codeaurora.org>
-X-Mailer: git-send-email 2.24.0
+        Thu, 23 Jan 2020 11:23:45 -0500
+X-Greylist: delayed 1473 seconds by postgrey-1.27 at vger.kernel.org; Thu, 23 Jan 2020 11:23:45 EST
+Received: from cm12.websitewelcome.com (cm12.websitewelcome.com [100.42.49.8])
+        by gateway34.websitewelcome.com (Postfix) with ESMTP id C9E89E5658
+        for <linux-kernel@vger.kernel.org>; Thu, 23 Jan 2020 09:59:11 -0600 (CST)
+Received: from gator4166.hostgator.com ([108.167.133.22])
+        by cmsmtp with SMTP
+        id uesxiuFDa8a1puesxiARFZ; Thu, 23 Jan 2020 09:59:11 -0600
+X-Authority-Reason: nr=8
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=embeddedor.com; s=default; h=Content-Type:MIME-Version:Message-ID:Subject:
+        Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+        :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+        List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=oP2QJvbUq8Jm9J2za3HLAy5fshYGIjNaVrWjjbn3HQw=; b=p3qDpTJnvChXZ9NJusKIyrLob7
+        nraX5XpdxgJZqszfFNjJVh97NsbHb822++kTrZRp6Wrih3C4h7xy/HnpsPerec7l1pVJRJ8bsHOjE
+        m4t/EAnixNxWz+qkMVelDIiv1McuRlmtyY6x55SVY5rZTV6XyrfpRMsVummhF8oPu9XGWBvKsfgt0
+        Sw9FPlYWL/FJDpty70a6CqNEl4rOxeqw55lCBY11nyHXDfAFUBsJOHwlAUSKF30iBIEQ4UnBPNg/6
+        BcPDR9JlKnWCYwF7Y1GVhXcg+WZSVVDD2Pt0AhQfNR4o6cxT8ipzjYtvU3W6rhROuQrob2oLhg6gm
+        tj72qVqQ==;
+Received: from [189.152.234.38] (port=58026 helo=embeddedor)
+        by gator4166.hostgator.com with esmtpa (Exim 4.92)
+        (envelope-from <gustavo@embeddedor.com>)
+        id 1iuesw-001riw-CF; Thu, 23 Jan 2020 09:59:10 -0600
+Date:   Thu, 23 Jan 2020 10:01:15 -0600
+From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+To:     Andrey Ryabinin <ryabinin.a.a@gmail.com>,
+        Alexander Potapenko <glider@google.com>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Andrey Konovalov <adech.fo@gmail.com>
+Cc:     kasan-dev@googlegroups.com, linux-kernel@vger.kernel.org,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Subject: [PATCH] lib/test_kasan.c: Fix memory leak in
+ kmalloc_oob_krealloc_more()
+Message-ID: <20200123160115.GA4202@embeddedor>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 189.152.234.38
+X-Source-L: No
+X-Exim-ID: 1iuesw-001riw-CF
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: (embeddedor) [189.152.234.38]:58026
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 7
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Since commit f92b070f2dc8 ("printk: Do not miss new messages
-when replaying the log"), CON_PRINTBUFFER flag causes the
-duplicate boot messages to be printed on the console when
-PSTORE_CONSOLE and earlycon (boot console) is enabled.
-Pstore console registers to boot console when earlycon is
-enabled during pstore_register_console as a part of ramoops
-initialization in postcore_initcall and the printk core
-checks for CON_PRINTBUFFER flag and replays the log buffer
-to registered console (in this case pstore console which
-just registered to boot console) causing duplicate messages
-to be printed. Remove the CON_PRINTBUFFER flag from pstore
-console since pstore is not concerned with the printing of
-buffer to console but with writing of the buffer to the
-backend.
+In case memory resources for _ptr2_ were allocated, release them
+before return.
 
-Console log with earlycon and pstore console enabled:
+Notice that in case _ptr1_ happens to be NULL, krealloc() behaves
+exactly like kmalloc().
 
-[    0.008342] Console: colour dummy device 80x25
-[    0.000000] Booting Linux on physical CPU 0x0000000000 [0x51df805e]
-...
-[    1.244049] hw-breakpoint: found 6 breakpoint and 4 watchpoint registers.
-[    0.000000] Booting Linux on physical CPU 0x0000000000 [0x51df805e]
-
-Fixes: f92b070f2dc8 ("printk: Do not miss new messages when replaying the log")
-Reported-by: Douglas Anderson <dianders@chromium.org>
-Signed-off-by: Sai Prakash Ranjan <saiprakash.ranjan@codeaurora.org>
+Addresses-Coverity-ID: 1490594 ("Resource leak")
+Fixes: 3f15801cdc23 ("lib: add kasan test module")
+Cc: stable@vger.kernel.org
+Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
 ---
- fs/pstore/platform.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ lib/test_kasan.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/fs/pstore/platform.c b/fs/pstore/platform.c
-index d896457e7c11..271b00db0973 100644
---- a/fs/pstore/platform.c
-+++ b/fs/pstore/platform.c
-@@ -505,7 +505,7 @@ static void pstore_console_write(struct console *con, const char *s, unsigned c)
- static struct console pstore_console = {
- 	.name	= "pstore",
- 	.write	= pstore_console_write,
--	.flags	= CON_PRINTBUFFER | CON_ENABLED | CON_ANYTIME,
-+	.flags	= CON_ENABLED | CON_ANYTIME,
- 	.index	= -1,
- };
+diff --git a/lib/test_kasan.c b/lib/test_kasan.c
+index 328d33beae36..3872d250ed2c 100644
+--- a/lib/test_kasan.c
++++ b/lib/test_kasan.c
+@@ -158,6 +158,7 @@ static noinline void __init kmalloc_oob_krealloc_more(void)
+ 	if (!ptr1 || !ptr2) {
+ 		pr_err("Allocation failed\n");
+ 		kfree(ptr1);
++		kfree(ptr2);
+ 		return;
+ 	}
  
 -- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
-of Code Aurora Forum, hosted by The Linux Foundation
+2.25.0
+
