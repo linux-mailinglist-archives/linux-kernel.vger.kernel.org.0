@@ -2,323 +2,106 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6CB931464FC
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Jan 2020 10:52:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 49B61146503
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Jan 2020 10:53:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728928AbgAWJwM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 23 Jan 2020 04:52:12 -0500
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:40542 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726194AbgAWJwL (ORCPT
+        id S1728797AbgAWJxG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 23 Jan 2020 04:53:06 -0500
+Received: from mx07-00178001.pphosted.com ([62.209.51.94]:18370 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726181AbgAWJxF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Jan 2020 04:52:11 -0500
-Received: by mail-wr1-f66.google.com with SMTP id c14so2312802wrn.7
-        for <linux-kernel@vger.kernel.org>; Thu, 23 Jan 2020 01:52:09 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=references:user-agent:from:to:cc:subject:in-reply-to:date
-         :message-id:mime-version;
-        bh=Pe5Rsg965fXFIVcO925e+LyvSUF+nmybt0TNNTcsyVw=;
-        b=uPSyNfe/0xeA/qXiTcmG3RXI3AIZygm1++lzzIem3KlnWC/UzUARLQOWFRsDsdO5Qo
-         KiLGofookzvRESLJ+sRPyplTi6sAffDpWMsPfVoyH8V/U2PtbXe2jXBknIkB9LTqQvGr
-         tuN2cW7DlH8ObMw97Nj8ZrekgFAcSV2ddx57FqggGxTV0eV+PZPJ+CtoYUJXkvajnQfd
-         vpcFE9e4v2hrKWwMZI/9MaxZt0jpbt7N9IHWED/5lNOUOXcDaIDu5PKVU2uVoh+DYths
-         kTTmaCDQy/OdYnDfUkL2Sy4XQeGfiahDo6bEsFvupMMWXoSKGC6v/x/u6NMcp6ggtUjp
-         vF6g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:references:user-agent:from:to:cc:subject
-         :in-reply-to:date:message-id:mime-version;
-        bh=Pe5Rsg965fXFIVcO925e+LyvSUF+nmybt0TNNTcsyVw=;
-        b=fLRqvF8/X2cWBkRtpIewyZnqAp5JPa8NvT/E4PIOVpYM6YCM0OpAqt9JS9jqgxEGuG
-         gsSsObfNxwLwe+J99Ct0DsckBdveHKlbecw7kFlMAaU3/8vDFQ+3tLLL24sLKl30U6gI
-         RrjoERU4ML2dZ4yJeG0OxVQ0vOiKFk/ECBHp6GkvE+VovDhfqXZQY30GhFDNsdJfsVyI
-         6LvcurIyxJqSWWXdF4VdhOd2tnU2jCShC3u+j2vmJi9oB9QQHqydeAE7ftdLA3QbSEvN
-         OeCfmOYF5C5dmtfUdqbjdsSptj8dyd7LGWeVVRqbSY0v8usUmYbyrhyyruwIJfTbGqjd
-         E84A==
-X-Gm-Message-State: APjAAAVpc2WAejRaLp6a5rBeTEHVdDLtMp5n8zcQPF50E0w6ulpfz4EG
-        vnZ+QhSHH35o7S1QD9kvtPIUVQ==
-X-Google-Smtp-Source: APXvYqwZwrqdt3zOKkehDNPgAuzvRs+Y++wPfZWKhZLkuBHMMzAE5La3vJ7ohaAZBPKEr8qujgpaYg==
-X-Received: by 2002:a5d:4d0e:: with SMTP id z14mr16778098wrt.208.1579773128590;
-        Thu, 23 Jan 2020 01:52:08 -0800 (PST)
-Received: from localhost (laubervilliers-658-1-213-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
-        by smtp.gmail.com with ESMTPSA id l3sm2346985wrt.29.2020.01.23.01.52.07
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 23 Jan 2020 01:52:08 -0800 (PST)
-References: <20200116111850.23690-1-repk@triplefau.lt> <20200116111850.23690-8-repk@triplefau.lt>
-User-agent: mu4e 1.3.3; emacs 26.3
-From:   Jerome Brunet <jbrunet@baylibre.com>
-To:     Remi Pommarel <repk@triplefau.lt>,
-        Kishon Vijay Abraham I <kishon@ti.com>,
-        Yue Wang <yue.wang@Amlogic.com>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        Rob Herring <robh+dt@kernel.org>
-Cc:     linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org
-Subject: Re: [PATCH v5 7/7] PCI: amlogic: Use AXG PCIE
-In-reply-to: <20200116111850.23690-8-repk@triplefau.lt>
-Date:   Thu, 23 Jan 2020 10:52:07 +0100
-Message-ID: <1jy2tyv6t4.fsf@starbuckisacylon.baylibre.com>
+        Thu, 23 Jan 2020 04:53:05 -0500
+Received: from pps.filterd (m0046037.ppops.net [127.0.0.1])
+        by mx07-00178001.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 00N9qYtJ031103;
+        Thu, 23 Jan 2020 10:52:56 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=st.com; h=from : to : subject :
+ date : message-id : references : in-reply-to : content-type : content-id :
+ content-transfer-encoding : mime-version; s=STMicroelectronics;
+ bh=VkExEA1zSYkkIawwysFPM2UtiIcmbIryXd4T7Fqwhqw=;
+ b=MKEoa9U0xc75iuaGbBbbosWCuyYadzLqTILEEEWqRcR75ATLSLHrcIPj9jX3T8S+7Caw
+ JmAGtOoXoO4X2wuLUhigGLBBJ5Zf+stX01D6TTxpNSJV8s2zvRkewk40do/n7n/JyFB5
+ qHsa85WpdQlKxGfbNjNiwBGOlzhqXj6Db3pU5sVeToX7K5FVmupCmp8TMGncU97steV3
+ 3DixSsYcnRpM66nh6SWwaSojdJ+iYU364qANn0FVN3ZGPa5RGj1Rp6md+3Xp2gHKM34Q
+ ktOkVFEL0iLiZKL6pg4okiLsZ2Vjb437LIkpw2FX7cnIsx46QlfLFUJWYlt48SQQgq3e 8g== 
+Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
+        by mx07-00178001.pphosted.com with ESMTP id 2xkrp2hep3-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 23 Jan 2020 10:52:56 +0100
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 93FF310002A;
+        Thu, 23 Jan 2020 10:52:51 +0100 (CET)
+Received: from Webmail-eu.st.com (sfhdag3node1.st.com [10.75.127.7])
+        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 83128220301;
+        Thu, 23 Jan 2020 10:52:51 +0100 (CET)
+Received: from SFHDAG6NODE3.st.com (10.75.127.18) by SFHDAG3NODE1.st.com
+ (10.75.127.7) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Thu, 23 Jan
+ 2020 10:52:50 +0100
+Received: from SFHDAG6NODE3.st.com ([fe80::d04:5337:ab17:b6f6]) by
+ SFHDAG6NODE3.st.com ([fe80::d04:5337:ab17:b6f6%20]) with mapi id
+ 15.00.1473.003; Thu, 23 Jan 2020 10:52:50 +0100
+From:   Philippe CORNU <philippe.cornu@st.com>
+To:     Yannick FERTRE <yannick.fertre@st.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        "Alexandre TORGUE" <alexandre.torgue@st.com>,
+        Etienne CARRIERE <etienne.carriere@st.com>,
+        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
+        Benjamin Gaignard <benjamin.gaignard@linaro.org>,
+        "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>,
+        "linux-stm32@st-md-mailman.stormreply.com" 
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] media: platform: stm32: defer probe for auxiliary clock
+Thread-Topic: [PATCH] media: platform: stm32: defer probe for auxiliary clock
+Thread-Index: AQHV0ESzDelCfuJRrECy+dIwI+lKx6f39HIA
+Date:   Thu, 23 Jan 2020 09:52:50 +0000
+Message-ID: <e7573c97-7c88-bb3d-1bfb-dea92f146da9@st.com>
+References: <1579602152-7432-1-git-send-email-yannick.fertre@st.com>
+In-Reply-To: <1579602152-7432-1-git-send-email-yannick.fertre@st.com>
+Accept-Language: fr-FR, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+user-agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.1
+x-ms-exchange-messagesentrepresentingtype: 1
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.75.127.48]
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <034509C68120DF4483F7B9EB6FAA225C@st.com>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.572
+ definitions=2020-01-23_01:2020-01-23,2020-01-22 signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-On Thu 16 Jan 2020 at 12:18, Remi Pommarel <repk@triplefau.lt> wrote:
-
-> Now that PCIE PHY has been introduced for AXG, the whole has_shared_phy
-> logic can be mutualized between AXG and G12A platforms.
-
-This simply the driver and make it a lot easier to follow ! Thanks !
-
->
-> This new PHY makes use of the optional shared MIPI/PCIE analog PHY
-> found on AXG platforms, which need to be used in order to have reliable
-> PCIE communications.
-
-I'm a bit confused by the optional part ... from the probe of this
-driver, it does not seems optional ?
-
->
-> Signed-off-by: Remi Pommarel <repk@triplefau.lt>
-> ---
->  drivers/pci/controller/dwc/pci-meson.c | 116 +++++--------------------
->  1 file changed, 22 insertions(+), 94 deletions(-)
->
-> diff --git a/drivers/pci/controller/dwc/pci-meson.c b/drivers/pci/controller/dwc/pci-meson.c
-> index 3772b02a5c55..3715dceca1bf 100644
-> --- a/drivers/pci/controller/dwc/pci-meson.c
-> +++ b/drivers/pci/controller/dwc/pci-meson.c
-> @@ -66,7 +66,6 @@
->  #define PORT_CLK_RATE			100000000UL
->  #define MAX_PAYLOAD_SIZE		256
->  #define MAX_READ_REQ_SIZE		256
-> -#define MESON_PCIE_PHY_POWERUP		0x1c
->  #define PCIE_RESET_DELAY		500
->  #define PCIE_SHARED_RESET		1
->  #define PCIE_NORMAL_RESET		0
-> @@ -81,26 +80,19 @@ enum pcie_data_rate {
->  struct meson_pcie_mem_res {
->  	void __iomem *elbi_base;
->  	void __iomem *cfg_base;
-> -	void __iomem *phy_base;
->  };
->  
->  struct meson_pcie_clk_res {
->  	struct clk *clk;
-> -	struct clk *mipi_gate;
->  	struct clk *port_clk;
->  	struct clk *general_clk;
->  };
->  
->  struct meson_pcie_rc_reset {
-> -	struct reset_control *phy;
->  	struct reset_control *port;
->  	struct reset_control *apb;
->  };
->  
-> -struct meson_pcie_param {
-> -	bool has_shared_phy;
-> -};
-> -
->  struct meson_pcie {
->  	struct dw_pcie pci;
->  	struct meson_pcie_mem_res mem_res;
-> @@ -108,7 +100,6 @@ struct meson_pcie {
->  	struct meson_pcie_rc_reset mrst;
->  	struct gpio_desc *reset_gpio;
->  	struct phy *phy;
-> -	const struct meson_pcie_param *param;
->  };
->  
->  static struct reset_control *meson_pcie_get_reset(struct meson_pcie *mp,
-> @@ -130,13 +121,6 @@ static int meson_pcie_get_resets(struct meson_pcie *mp)
->  {
->  	struct meson_pcie_rc_reset *mrst = &mp->mrst;
->  
-> -	if (!mp->param->has_shared_phy) {
-> -		mrst->phy = meson_pcie_get_reset(mp, "phy", PCIE_SHARED_RESET);
-> -		if (IS_ERR(mrst->phy))
-> -			return PTR_ERR(mrst->phy);
-> -		reset_control_deassert(mrst->phy);
-> -	}
-> -
->  	mrst->port = meson_pcie_get_reset(mp, "port", PCIE_NORMAL_RESET);
->  	if (IS_ERR(mrst->port))
->  		return PTR_ERR(mrst->port);
-> @@ -162,22 +146,6 @@ static void __iomem *meson_pcie_get_mem(struct platform_device *pdev,
->  	return devm_ioremap_resource(dev, res);
->  }
->  
-> -static void __iomem *meson_pcie_get_mem_shared(struct platform_device *pdev,
-> -					       struct meson_pcie *mp,
-> -					       const char *id)
-> -{
-> -	struct device *dev = mp->pci.dev;
-> -	struct resource *res;
-> -
-> -	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, id);
-> -	if (!res) {
-> -		dev_err(dev, "No REG resource %s\n", id);
-> -		return ERR_PTR(-ENXIO);
-> -	}
-> -
-> -	return devm_ioremap(dev, res->start, resource_size(res));
-> -}
-> -
->  static int meson_pcie_get_mems(struct platform_device *pdev,
->  			       struct meson_pcie *mp)
->  {
-> @@ -189,14 +157,6 @@ static int meson_pcie_get_mems(struct platform_device *pdev,
->  	if (IS_ERR(mp->mem_res.cfg_base))
->  		return PTR_ERR(mp->mem_res.cfg_base);
->  
-> -	/* Meson AXG SoC has two PCI controllers use same phy register */
-> -	if (!mp->param->has_shared_phy) {
-> -		mp->mem_res.phy_base =
-> -			meson_pcie_get_mem_shared(pdev, mp, "phy");
-> -		if (IS_ERR(mp->mem_res.phy_base))
-> -			return PTR_ERR(mp->mem_res.phy_base);
-> -	}
-> -
->  	return 0;
->  }
->  
-> @@ -204,37 +164,33 @@ static int meson_pcie_power_on(struct meson_pcie *mp)
->  {
->  	int ret = 0;
->  
-> -	if (mp->param->has_shared_phy) {
-> -		ret = phy_init(mp->phy);
-> -		if (ret)
-> -			return ret;
-> +	ret = phy_init(mp->phy);
-> +	if (ret)
-> +		return ret;
->  
-> -		ret = phy_power_on(mp->phy);
-> -		if (ret) {
-> -			phy_exit(mp->phy);
-> -			return ret;
-> -		}
-> -	} else
-> -		writel(MESON_PCIE_PHY_POWERUP, mp->mem_res.phy_base);
-> +	ret = phy_power_on(mp->phy);
-> +	if (ret) {
-> +		phy_exit(mp->phy);
-> +		return ret;
-> +	}
->  
->  	return 0;
->  }
->  
-> +static void meson_pcie_power_off(struct meson_pcie *mp)
-> +{
-> +	phy_power_off(mp->phy);
-> +	phy_exit(mp->phy);
-> +}
-> +
->  static int meson_pcie_reset(struct meson_pcie *mp)
->  {
->  	struct meson_pcie_rc_reset *mrst = &mp->mrst;
->  	int ret = 0;
->  
-> -	if (mp->param->has_shared_phy) {
-> -		ret = phy_reset(mp->phy);
-> -		if (ret)
-> -			return ret;
-> -	} else {
-> -		reset_control_assert(mrst->phy);
-> -		udelay(PCIE_RESET_DELAY);
-> -		reset_control_deassert(mrst->phy);
-> -		udelay(PCIE_RESET_DELAY);
-> -	}
-> +	ret = phy_reset(mp->phy);
-> +	if (ret)
-> +		return ret;
->  
->  	reset_control_assert(mrst->port);
->  	reset_control_assert(mrst->apb);
-> @@ -286,12 +242,6 @@ static int meson_pcie_probe_clocks(struct meson_pcie *mp)
->  	if (IS_ERR(res->port_clk))
->  		return PTR_ERR(res->port_clk);
->  
-> -	if (!mp->param->has_shared_phy) {
-> -		res->mipi_gate = meson_pcie_probe_clock(dev, "mipi", 0);
-> -		if (IS_ERR(res->mipi_gate))
-> -			return PTR_ERR(res->mipi_gate);
-> -	}
-> -
->  	res->general_clk = meson_pcie_probe_clock(dev, "general", 0);
->  	if (IS_ERR(res->general_clk))
->  		return PTR_ERR(res->general_clk);
-> @@ -562,7 +512,6 @@ static const struct dw_pcie_ops dw_pcie_ops = {
->  
->  static int meson_pcie_probe(struct platform_device *pdev)
->  {
-> -	const struct meson_pcie_param *match_data;
->  	struct device *dev = &pdev->dev;
->  	struct dw_pcie *pci;
->  	struct meson_pcie *mp;
-> @@ -576,17 +525,10 @@ static int meson_pcie_probe(struct platform_device *pdev)
->  	pci->dev = dev;
->  	pci->ops = &dw_pcie_ops;
->  
-> -	match_data = of_device_get_match_data(dev);
-> -	if (!match_data) {
-> -		dev_err(dev, "failed to get match data\n");
-> -		return -ENODEV;
-> -	}
-> -	mp->param = match_data;
-> -
-> -	if (mp->param->has_shared_phy) {
-> -		mp->phy = devm_phy_get(dev, "pcie");
-> -		if (IS_ERR(mp->phy))
-> -			return PTR_ERR(mp->phy);
-> +	mp->phy = devm_phy_get(dev, "pcie");
-> +	if (IS_ERR(mp->phy)) {
-> +		dev_err(dev, "get phy failed, %ld\n", PTR_ERR(mp->phy));
-> +		return PTR_ERR(mp->phy);
->  	}
->  
->  	mp->reset_gpio = devm_gpiod_get(dev, "reset", GPIOD_OUT_LOW);
-> @@ -636,30 +578,16 @@ static int meson_pcie_probe(struct platform_device *pdev)
->  	return 0;
->  
->  err_phy:
-> -	if (mp->param->has_shared_phy) {
-> -		phy_power_off(mp->phy);
-> -		phy_exit(mp->phy);
-> -	}
-> -
-> +	meson_pcie_power_off(mp);
->  	return ret;
->  }
->  
-> -static struct meson_pcie_param meson_pcie_axg_param = {
-> -	.has_shared_phy = false,
-> -};
-> -
-> -static struct meson_pcie_param meson_pcie_g12a_param = {
-> -	.has_shared_phy = true,
-> -};
-> -
->  static const struct of_device_id meson_pcie_of_match[] = {
->  	{
->  		.compatible = "amlogic,axg-pcie",
-> -		.data = &meson_pcie_axg_param,
->  	},
->  	{
->  		.compatible = "amlogic,g12a-pcie",
-> -		.data = &meson_pcie_g12a_param,
->  	},
->  	{},
->  };
-
+RGVhcnMgWWFubmljayAmIEV0aWVubmUsDQpUaGFuayB5b3UgZm9yIHlvdXIgcGF0Y2gsDQoNClJl
+dmlld2VkLWJ5OiBQaGlsaXBwZSBDb3JudSA8cGhpbGlwcGUuY29ybnVAc3QuY29tPg0KDQpQaGls
+aXBwZSA6LSkNCg0KT24gMS8yMS8yMCAxMToyMiBBTSwgWWFubmljayBGZXJ0cmUgd3JvdGU6DQo+
+IEZyb206IEV0aWVubmUgQ2FycmllcmUgPGV0aWVubmUuY2FycmllcmVAc3QuY29tPg0KPiANCj4g
+Q2hhbmdlIHN0bTMyLWNlYyBkcml2ZXIgdG8gZGVmZXIgcHJvYmUgd2hlbiBhdXhpbGlhcnkgY2xv
+Y2sNCj4gImhkbWktY2VjIiBpcyByZWdpc3RlcmVkIGluIHRoZSBzeXN0ZW0gbm90IGhhcyBub3Qg
+YmVlbiBwcm9iZWQgeWV0Lg0KPiANCj4gU2lnbmVkLW9mZi1ieTogRXRpZW5uZSBDYXJyaWVyZSA8
+ZXRpZW5uZS5jYXJyaWVyZUBzdC5jb20+DQo+IC0tLQ0KPiAgIGRyaXZlcnMvbWVkaWEvcGxhdGZv
+cm0vc3RtMzIvc3RtMzItY2VjLmMgfCA2ICsrKysrLQ0KPiAgIDEgZmlsZSBjaGFuZ2VkLCA1IGlu
+c2VydGlvbnMoKyksIDEgZGVsZXRpb24oLSkNCj4gDQo+IGRpZmYgLS1naXQgYS9kcml2ZXJzL21l
+ZGlhL3BsYXRmb3JtL3N0bTMyL3N0bTMyLWNlYy5jIGIvZHJpdmVycy9tZWRpYS9wbGF0Zm9ybS9z
+dG0zMi9zdG0zMi1jZWMuYw0KPiBpbmRleCA4YTg2YjJjLi41NDNjOWVjIDEwMDY0NA0KPiAtLS0g
+YS9kcml2ZXJzL21lZGlhL3BsYXRmb3JtL3N0bTMyL3N0bTMyLWNlYy5jDQo+ICsrKyBiL2RyaXZl
+cnMvbWVkaWEvcGxhdGZvcm0vc3RtMzIvc3RtMzItY2VjLmMNCj4gQEAgLTMwMiwxMCArMzAyLDE0
+IEBAIHN0YXRpYyBpbnQgc3RtMzJfY2VjX3Byb2JlKHN0cnVjdCBwbGF0Zm9ybV9kZXZpY2UgKnBk
+ZXYpDQo+ICAgCX0NCj4gICANCj4gICAJY2VjLT5jbGtfaGRtaV9jZWMgPSBkZXZtX2Nsa19nZXQo
+JnBkZXYtPmRldiwgImhkbWktY2VjIik7DQo+ICsJaWYgKElTX0VSUihjZWMtPmNsa19oZG1pX2Nl
+YykgJiYNCj4gKwkgICAgUFRSX0VSUihjZWMtPmNsa19oZG1pX2NlYykgPT0gLUVQUk9CRV9ERUZF
+UikNCj4gKwkJCXJldHVybiAtRVBST0JFX0RFRkVSOw0KPiArDQo+ICAgCWlmICghSVNfRVJSKGNl
+Yy0+Y2xrX2hkbWlfY2VjKSkgew0KPiAgIAkJcmV0ID0gY2xrX3ByZXBhcmUoY2VjLT5jbGtfaGRt
+aV9jZWMpOw0KPiAgIAkJaWYgKHJldCkgew0KPiAtCQkJZGV2X2VycigmcGRldi0+ZGV2LCAiVW5h
+YmxlIHRvIHByZXBhcmUgaGRtaS1jZWMgY2xvY2tcbiIpOw0KPiArCQkJZGV2X2VycigmcGRldi0+
+ZGV2LCAiQ2FuJ3QgcHJlcGFyZSBoZG1pLWNlYyBjbG9ja1xuIik7DQo+ICAgCQkJcmV0dXJuIHJl
+dDsNCj4gICAJCX0NCj4gICAJfQ0KPiA=
