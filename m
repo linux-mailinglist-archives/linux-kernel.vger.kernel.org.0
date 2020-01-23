@@ -2,159 +2,99 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7E1E81468E8
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Jan 2020 14:18:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6941E1468FA
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Jan 2020 14:25:14 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728811AbgAWNSB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 23 Jan 2020 08:18:01 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:42458 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726026AbgAWNSA (ORCPT
+        id S1728911AbgAWNZM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 23 Jan 2020 08:25:12 -0500
+Received: from mout.kundenserver.de ([212.227.17.24]:35401 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726170AbgAWNZM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Jan 2020 08:18:00 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=LjsIU20D/tGx8niVTvYfWrpDanOSwpxliBTMem/g2OM=; b=lb78Mu7FdnDhJIi40ILkpzffm
-        xFO/o6Z+2J6dHKuohhXN4pq9r1/mHM5hzh5dvwdkjQZrxLEZB2yQaZ7TNQLa4jX5NpIQ09yE0hejJ
-        nfq6Pvxz+1e5Xtky2SjDRHIhID6Hp1IB+YtI/HQgIvP9nxVW6GYkR/2vcKFyefTzRA4em5V1JyEWW
-        65u2+f3lx6r2coePmTtVlCMTeaUgFUkJpk+9wVPQd4DR++xwjkS9cQpXwi549hVmHh00c45sK++Y6
-        Y+H/qDA6vjKKDc4HP7DEE93MhItUlIGrgUvyl9a2mp/2fc14uBQ3vqre2X7RIJDkr9xcr+q4w0m71
-        yHctJSFtQ==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1iucMe-0004ZB-I6; Thu, 23 Jan 2020 13:17:40 +0000
-Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (Client did not present a certificate)
-        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 6855E304121;
-        Thu, 23 Jan 2020 14:15:57 +0100 (CET)
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 787CD203CF5CE; Thu, 23 Jan 2020 14:17:37 +0100 (CET)
-Date:   Thu, 23 Jan 2020 14:17:37 +0100
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Will Deacon <will@kernel.org>
-Cc:     Alex Kogan <alex.kogan@oracle.com>, linux-arch@vger.kernel.org,
-        guohanjun@huawei.com, arnd@arndb.de, dave.dice@oracle.com,
-        jglauber@marvell.com, x86@kernel.org, will.deacon@arm.com,
-        linux@armlinux.org.uk, steven.sistare@oracle.com,
-        linux-kernel@vger.kernel.org, mingo@redhat.com, bp@alien8.de,
-        hpa@zytor.com, longman@redhat.com, tglx@linutronix.de,
-        daniel.m.jordan@oracle.com, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v9 3/5] locking/qspinlock: Introduce CNA into the slow
- path of qspinlock
-Message-ID: <20200123131737.GV14914@hirez.programming.kicks-ass.net>
-References: <20200115035920.54451-1-alex.kogan@oracle.com>
- <20200115035920.54451-4-alex.kogan@oracle.com>
- <20200123092658.GC14879@hirez.programming.kicks-ass.net>
- <20200123100635.GE14946@hirez.programming.kicks-ass.net>
- <20200123101649.GF14946@hirez.programming.kicks-ass.net>
- <20200123112251.GC18991@willie-the-truck>
+        Thu, 23 Jan 2020 08:25:12 -0500
+Received: from mail-qk1-f176.google.com ([209.85.222.176]) by
+ mrelayeu.kundenserver.de (mreue108 [212.227.15.145]) with ESMTPSA (Nemesis)
+ id 1Mn2iP-1jMHj53AIx-00kBHr; Thu, 23 Jan 2020 14:20:08 +0100
+Received: by mail-qk1-f176.google.com with SMTP id k6so3348095qki.5;
+        Thu, 23 Jan 2020 05:20:08 -0800 (PST)
+X-Gm-Message-State: APjAAAV+he4/YELK87zcK3qDC4gL1opJQhJ9ou7biac8+Hgl9gt7QT17
+        JtOg9eK1GTi1Ojc8RoZaZcyeQ2eH8unV0xkEaKA=
+X-Google-Smtp-Source: APXvYqwXq+DG32RN0wO1YrRms+3/K/FWivCk9LXncsUkH+wak60+fKaX9yKo9/wDoFA2a+wGHM6SlVs6Zvrtlwwp8iQ=
+X-Received: by 2002:a05:620a:a5b:: with SMTP id j27mr15758197qka.286.1579785607406;
+ Thu, 23 Jan 2020 05:20:07 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200123112251.GC18991@willie-the-truck>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20200123111836.7414-1-manivannan.sadhasivam@linaro.org>
+ <20200123111836.7414-2-manivannan.sadhasivam@linaro.org> <CAK8P3a3Nxr3yqDjZDV1b0e0mdWEEsktwrmKXxZgsnq7Kv82mhw@mail.gmail.com>
+ <20200123131015.GA11366@mani>
+In-Reply-To: <20200123131015.GA11366@mani>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Thu, 23 Jan 2020 14:19:51 +0100
+X-Gmail-Original-Message-ID: <CAK8P3a1z7mVEpxbk47Q3A-tLDhqHUid2_S4tE3NQuf_2_UCOcg@mail.gmail.com>
+Message-ID: <CAK8P3a1z7mVEpxbk47Q3A-tLDhqHUid2_S4tE3NQuf_2_UCOcg@mail.gmail.com>
+Subject: Re: [PATCH 01/16] docs: Add documentation for MHI bus
+To:     Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Cc:     gregkh <gregkh@linuxfoundation.org>, smohanad@codeaurora.org,
+        Jeffrey Hugo <jhugo@codeaurora.org>,
+        Kalle Valo <kvalo@codeaurora.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        hemantk@codeaurora.org,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+X-Provags-ID: V03:K1:FsPfcXjctBLIl0UBnWJI/axGoELjFyVvQ6i8JJEgDPFI2tdlxeM
+ 5/YASmkVHUUUEGp5wNLo3TYnrWhqnQo1sEUgwtvGS1SAV6MWJ49Uv8X1sz5nNUbm5bDx17Y
+ gRefQDoE0YI63JpufjN4tam/BPPjDOfPso5pcz9LyFu2TVMHynxKXycb/u5v7xCVLGPOg4d
+ pVsxFrSXdgPVTV+LXQTzg==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:P3xBzKHLjv4=:crL5yWVDiooFTsRz2e7AkE
+ uWhr71cxWy8I18TaME+GtvLxEyH0dTnToxxM4HJrj+7EKcqvS9VZ3u92wqlnCEg14GF5vuGts
+ NkjTQcDuBwAQvLK2xMF5uZa8O4RIMtfX7/GpPcNou2JEb9DRA0jg8bvb+GK7/CUHhM/qa/54C
+ +WSisnS0LEo+FsjdVBJ8eLZwYcPfCe0HJckylQvbG9vKqb12HKLmeYYC+Alx9UJkEabXhbXTi
+ 2RKtQhLVhEmOXtfgq3dw1B/xGLDATCoTWcxD8BmGsh7n766rYaBslQ3BzIN9Q4uprxmFD+nlF
+ vynmOos3UG0Edbg56b3+mSiEy6ROQBMs6EeNYhyxB1scpVIvflp9mKD/h4cYnUsGXsc1kKf8z
+ 16zLrawvJ71v5A4FRz5NOot8KDCDUF1aCuxMX7USWAPzEZlR8u7tF+wPntxFu9ZbJC7OWfezC
+ MzjDRphNLDbofl8PZ+7i7Hh+2TJ2A+sQTCBXADR7Z0JKwR0y6vlLJPTdjnhnIyBPTrXlsfDKm
+ lb81xJmBZy2SzqrHTSgfQMNtdFbeM6EzfM6G/jqILbs+U5FjXz6BeaFbxXwMAH360fYqWtQrt
+ PxNPW2NMSeOn0nRGq3vvW3BhukKgJWwJh7Fm0pYieExJaljf5B7St3zf12+JH0ENwsOOHgYun
+ aEYkRUrk5b7p2sLFFC0TQVq/X0A/Sb9JwNiwUyNZcuLtiwFoWVkWiZyg347GQ4yeY16CYmmxp
+ fdwHN7Sm4BS6Ipdrh1BnB0eAi3LxdonoTqIni/+G/iU5Ruu4Fdj71PLWXiCtDZwvjFiC3tdPJ
+ zQTHkNL1AlIU8FD7uQ0W9vlAsNJRfpEOm82zNRgybmZnZOMojc=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jan 23, 2020 at 11:22:51AM +0000, Will Deacon wrote:
+On Thu, Jan 23, 2020 at 2:10 PM Manivannan Sadhasivam
+<manivannan.sadhasivam@linaro.org> wrote:
+>
+> On Thu, Jan 23, 2020 at 01:58:22PM +0100, Arnd Bergmann wrote:
+> > On Thu, Jan 23, 2020 at 12:18 PM Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org> wrote:
+> >
+> > I don't see any callers of mhi_register_controller(). Did I just miss it or did
+> > you not post one? I'm particularly interested in where the configuration comes
+> > from, is this hardcoded in the driver, or parsed from firmware or from registers
+> > in the hardware itself?
+> >
+>
+> I have not included the controller driver in this patchset. But you can take a
+> look at the ath11k controller driver here:
+> https://git.linaro.org/people/manivannan.sadhasivam/linux.git/tree/drivers/net/wireless/ath/ath11k/mhi.c?h=ath11k-qca6390-mhi#n13
+>
+> So the configuration comes from the static structures defined in the controller
+> driver. Earlier revision derived the configuration from devicetree but there are
+> many cases where this MHI bus is being used in non DT environments like x86.
+> So inorder to be platform agnostic, we chose static declaration method.
+>
+> In future we can add DT/ACPI support for the applicable parameters.
 
-> > Argh, make that:
-> > 
-> > 	tail_2nd->next = NULL;
-> > 
-> > 	smp_wmb();
-> > 
-> > > 	if (!atomic_try_cmpxchg_relaxed(&lock, &val, new)) {
-> 
-> ... or could you drop the smp_wmb() and make this
-> atomic_try_cmpxchg_release()?
+What determines the configuration? Is this always something that is fixed
+in hardware, or can some of the properties be changed based on what
+firmware runs the device?
 
-My current code has the smp_wmb(), because most _releases end up being
-an smp_mb() (except for powerpc where it is of equal cost to wmb and
-arm64, where I have no idea of the costs).
+If this is determined by the firmware, maybe the configuration would also
+need to be loaded from the file that contains the firmware, which in turn
+could be a blob in DT.
 
-> To be honest, I've failed to understand the code prior to your changes
-> in this area: it appears to reply on a control-dependency from the two
-> cmpxchg_relaxed() calls (which isn't sufficient to order the store parts
-> afaict) and I also don't get how we deal with a transiently circular primary
-> queue.
-
-Ha!, yes, so this little piece took me a while too. Let me attempt an
-explanation.
-
-+ *    cna_node
-+ *   +----------+     +--------+         +--------+
-+ *   |mcs:next  | --> |mcs:next| --> ... |mcs:next| --> NULL  [Primary queue]
-+ *   |mcs:locked| -.  +--------+         +--------+
-+ *   +----------+  |
-+ *                 `----------------------.
-+ *                                        v
-+ *                 +--------+         +--------+
-+ *                 |mcs:next| --> ... |mcs:next|            [Secondary queue]
-+ *                 +--------+         +--------+
-+ *                     ^                    |
-+ *                     `--------------------'
-
-So @node is the current lock holder, node->next == NULL (primary queue
-is empty) and we're going to try and splice the secondary queue to the
-head of the primary.
-
-+       tail_2nd = decode_tail(node->locked);
-+       head_2nd = tail_2nd->next;
-
-this gets the secondary head and tail, so far so simple
-
-+       new = ((struct cna_node *)tail_2nd)->encoded_tail + _Q_LOCKED_VAL;
-
-this encodes the new primary tail (as kept in lock->val), still simple
-
-+       if (atomic_try_cmpxchg_relaxed(&lock->val, &val, new)) {
-
-if this here succeeds, we've got the primary tail pointing at the
-secondary tail. This is safe because only the lock holder (us) ever
-modifies the secondary queue.
-
-+               /*
-+                * Try to reset @next in tail_2nd to NULL, but no need to check
-+                * the result - if failed, a new successor has updated it.
-+                */
-+               cmpxchg_relaxed(&tail_2nd->next, head_2nd, NULL);
-
-This is (broken, as per the prior argument) breaking the circular link
-the secondary queue has. The trick here is that since we're the lock
-holder, nothing will actually iterate the primary ->next chain, so a
-bogus value in there is of no concern.
-
-_However_ a new waiter might at this point do:
-
-	old = xchg_tail(lock, node);
-	if (old) {
-		prev = decode_tail(old);
-		WRITE_ONCE(prev->next, node);
-		...
-	}
-
-which then results in conflicting stores to the one ->next variable.
-
-The cmpxchg() is attempting to terminate the list, while the new waiter
-is extending the list, it is therefore paramount the new waiter always
-wins this. To that end they're employing the cmpxchg, but it very much
-relies on the @head_2nd load to have happened before we exposed the
-secondary tail as primary tail, otherwise it can have loaded the new
-->next pointer and overwriten it.
-
-+               arch_mcs_pass_lock(&head_2nd->locked, 1);
-+               return true;
-+       }
-+
-+       return false;
-
-
-Did that help, or just make it worse?
+     Arnd
