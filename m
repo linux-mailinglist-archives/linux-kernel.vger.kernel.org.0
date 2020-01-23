@@ -2,108 +2,236 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 79E13147056
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Jan 2020 19:05:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 52192147098
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Jan 2020 19:18:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729355AbgAWSFF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 23 Jan 2020 13:05:05 -0500
-Received: from mail-vs1-f74.google.com ([209.85.217.74]:43706 "EHLO
-        mail-vs1-f74.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729345AbgAWSFE (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Jan 2020 13:05:04 -0500
-Received: by mail-vs1-f74.google.com with SMTP id j8so466077vsm.10
-        for <linux-kernel@vger.kernel.org>; Thu, 23 Jan 2020 10:05:03 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:in-reply-to:message-id:mime-version:references:subject:from:to
-         :cc;
-        bh=IgY/A9lI8I0CLEHHbAfWjUttLZ/uMo5ZHLdhVrD7cM0=;
-        b=t1FZb1fRlGn6sS3KiIywlF3SWXZSC72vi3l8yghm1rqJkGVi2ppxi2bhsdIjvKvpRo
-         mtWcSzCLmK9615UMLkHpgpsmNt5T84sa65TDnvwPSa9ngmlIgsKEROMy5IpuHkvfb8N7
-         bCjmso/kge2qOgVpMLvorx9kPfR6WTEwTFQ8ai/lbr8rUqpqvjYUnTSXQVQ71Drj5GJK
-         RECoQDzgsJUdJwfKMT9nw/Gcan8lFs4CF7xzacTYrzpmO7QXUtJ0wOvCMIvFcmKTG6ds
-         S0JhBqH4xNZ9AdbRXFzXIauav8aPfCE3jZORlJTJUBw0/YItGp4DWvk1Kp8cXJfqmuFI
-         13ag==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:in-reply-to:message-id:mime-version
-         :references:subject:from:to:cc;
-        bh=IgY/A9lI8I0CLEHHbAfWjUttLZ/uMo5ZHLdhVrD7cM0=;
-        b=R6DoAdmqz3Elfp0rKfYMHoSGUd6hA3j6nofREzl1OCI9VRzt0d7OQHepfvuS9g6IDr
-         1QDs25o3AR8nuEe8XxQJg8zOPifm6ZH7VnBQrNYpud5ZGF4JNOnxvVSs74jjPhYJB9d1
-         5zE9tTdZZ/tAF/C7JWVFTfDeFSEtEPBhUKJtV/FicJUyHOM3t669dWXTtvAt9O50Mxcb
-         XGjPbQIEZtMYGROzXqrrCvB4n4gND0QPffcBZVWTmO+R1vYmLvToo7Ucs24g1JFF4SnY
-         VzzdaczeTlK5JcMnYoq3qmU03OBKfaUrs2lFa7ECrg2t/dDf7gpWO4yNEUNr1nuwfeip
-         W35A==
-X-Gm-Message-State: APjAAAVkinz+gaB+iNPrgMCZ/Ok1OO683Iw46H1xNHkwpf190sjJ/+5F
-        H4pPWfO8X/lDxW0mAWYbWPMrpsUVb0LlyExEjgn2pMCssL3v6KEIS0Dv4C8hcRmjrVDzZtphmg0
-        VJd/JS963okWq/icgwLegPI/+5XdIkFw6EI1n1QEzIBn3Dd3hO5+hfSWA/euzegkPLLWo5to4
-X-Google-Smtp-Source: APXvYqxXhcIT67XYPNyAtt7N43so6bSsWc4OopxKKv8aAXTznOXWZ7A8M1Li4/dumBajBFClbx8iUmgtV+QX
-X-Received: by 2002:a67:e44b:: with SMTP id n11mr7496089vsm.115.1579802702764;
- Thu, 23 Jan 2020 10:05:02 -0800 (PST)
-Date:   Thu, 23 Jan 2020 10:04:36 -0800
-In-Reply-To: <20200123180436.99487-1-bgardon@google.com>
-Message-Id: <20200123180436.99487-11-bgardon@google.com>
-Mime-Version: 1.0
-References: <20200123180436.99487-1-bgardon@google.com>
-X-Mailer: git-send-email 2.25.0.341.g760bfbb309-goog
-Subject: [PATCH v4 10/10] KVM: selftests: Move memslot 0 above KVM internal memslots
-From:   Ben Gardon <bgardon@google.com>
-To:     linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
-        linux-kselftest@vger.kernel.org
-Cc:     Paolo Bonzini <pbonzini@redhat.com>,
-        Cannon Matthews <cannonmatthews@google.com>,
-        Peter Xu <peterx@redhat.com>,
-        Andrew Jones <drjones@redhat.com>,
-        Peter Shier <pshier@google.com>,
-        Oliver Upton <oupton@google.com>,
-        Ben Gardon <bgardon@google.com>
-Content-Type: text/plain; charset="UTF-8"
+        id S1728978AbgAWSS1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 23 Jan 2020 13:18:27 -0500
+Received: from mga03.intel.com ([134.134.136.65]:38999 "EHLO mga03.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727278AbgAWSS1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 23 Jan 2020 13:18:27 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga004.jf.intel.com ([10.7.209.38])
+  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 23 Jan 2020 10:07:10 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.70,354,1574150400"; 
+   d="scan'208";a="375295523"
+Received: from linux.intel.com ([10.54.29.200])
+  by orsmga004.jf.intel.com with ESMTP; 23 Jan 2020 10:07:10 -0800
+Received: from [10.54.74.33] (skuppusw-desk.jf.intel.com [10.54.74.33])
+        by linux.intel.com (Postfix) with ESMTP id 2AD275802C8;
+        Thu, 23 Jan 2020 10:07:10 -0800 (PST)
+Reply-To: sathyanarayanan.kuppuswamy@linux.intel.com
+Subject: Re: [PATCH v13 2/8] PCI/DPC: Allow dpc_probe() even if firmware first
+ mode is enabled
+To:     Bjorn Helgaas <helgaas@kernel.org>
+Cc:     linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
+        ashok.raj@intel.com, Keith Busch <keith.busch@intel.com>
+References: <20200123031016.GA68788@google.com>
+From:   Kuppuswamy Sathyanarayanan 
+        <sathyanarayanan.kuppuswamy@linux.intel.com>
+Organization: Intel
+Message-ID: <0db07d8b-017f-3d76-2d00-153912239a3f@linux.intel.com>
+Date:   Thu, 23 Jan 2020 10:04:58 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
+MIME-Version: 1.0
+In-Reply-To: <20200123031016.GA68788@google.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-KVM creates internal memslots between 3 and 4 GiB paddrs on the first
-vCPU creation. If memslot 0 is large enough it collides with these
-memslots an causes vCPU creation to fail. Instead of creating memslot 0
-at paddr 0, start it 4G into the guest physical address space.
 
-Signed-off-by: Ben Gardon <bgardon@google.com>
----
- tools/testing/selftests/kvm/lib/kvm_util.c | 11 +++++++----
- 1 file changed, 7 insertions(+), 4 deletions(-)
+On 1/22/20 7:10 PM, Bjorn Helgaas wrote:
+> On Wed, Jan 22, 2020 at 04:42:48PM -0800, Kuppuswamy Sathyanarayanan wrote:
+>> Hi Bjorn,
+>>
+>> On 1/22/20 3:17 PM, Bjorn Helgaas wrote:
+>>> On Sat, Jan 18, 2020 at 08:00:31PM -0800, sathyanarayanan.kuppuswamy@linux.intel.com wrote:
+>>>> From: Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>
+>>>>
+>>>> As per ACPI specification v6.3, sec 5.6.6, Error Disconnect Recover
+>>>> (EDR) notification used by firmware to let OS know about the DPC event
+>>>> and permit OS to perform error recovery when processing the EDR
+>>>> notification.
+>>> I want to clear up some of this description because this is a very
+>>> confusing area and we should follow the spec carefully so we all
+>>> understand each other.
+>>>
+>>>> Also, as per PCI firmware specification r3.2 Downstream
+>>>> Port Containment Related Enhancements ECN, sec 4.5.1, table 4-6, if DPC
+>>>> is controlled by firmware (firmware first mode), it's responsible for
+>>>> initializing Downstream Port Containment Extended Capability Structures
+>>>> per firmware policy.
+>>> The above is actually not what the ECN says.  What it does say is
+>>> this:
+>>>
+>>>     If control of this feature [DPC configuration] was requested and
+>>>     denied, firmware is responsible for initializing Downstream Port
+>>>     Containment Extended Capability Structures per firmware policy.
+>>>
+>>> Neither the PCI Firmware Spec (r3.2) nor the ECN contains any
+>>> reference to "firmware first".  As far as I can tell, "Firmware First"
+>>> is defined by the ACPI spec, and the FIRMWARE_FIRST bit in various
+>>> HEST entries (sec 18.3.2) is what tells us when a device is in
+>>> firmware-first mode.
+>>>
+>>> That's a really long way of saying that from a spec point of view, DPC
+>>> being controlled by firmware does NOT imply anything about
+>>> firmware-first mode.
+>> But current AER and DPC driver uses ACPI FIRMWARE_FIRST bit
+>> (in pcie_aer_get_firmware_first()) to decide whether AER/DPC is
+>> controlled by firmware or OS. That's why I used the term
+>> "firmware first mode" interchangeably with a mode in which
+>> DPC/AER is controlled by firmware.
+> Yes.  I think the current use of pcie_aer_get_firmware_first() there
+> is probably not optimal and we should change that so it corresponds
+> better with the spec.
+>
+>>>> And, OS is permitted to read or write DPC Control
+>>>> and Status registers of a port while processing an Error Disconnect
+>>>> Recover (EDR) notification from firmware on that port.
+>>>>
+>>>> Currently, if firmware controls DPC (firmware first mode), OS will not
+>>>> create/enumerate DPC PCIe port services. But, if OS supports EDR
+>>>> feature, then as mentioned in above spec references, it should permit
+>>>> enumeration of DPC driver and also support handling ACPI EDR
+>>>> notification. So as first step, allow dpc_probe() to continue even if
+>>>> firmware first mode is enabled. Also add appropriate checks to ensure
+>>>> device registers are not modified outside EDR notification window in
+>>>> firmware first mode. This is a preparatory patch for adding EDR support.
+>>>>
+>>>> Signed-off-by: Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>
+>>>> Acked-by: Keith Busch <keith.busch@intel.com>
+>>>> ---
+>>>>    drivers/pci/pcie/dpc.c | 74 ++++++++++++++++++++++++++++++++++--------
+>>>>    1 file changed, 61 insertions(+), 13 deletions(-)
+>>>>
+>>>> diff --git a/drivers/pci/pcie/dpc.c b/drivers/pci/pcie/dpc.c
+>>>> index e06f42f58d3d..c583a90fa90d 100644
+>>>> --- a/drivers/pci/pcie/dpc.c
+>>>> +++ b/drivers/pci/pcie/dpc.c
+>>>> @@ -22,6 +22,7 @@ struct dpc_dev {
+>>>>    	u16			cap_pos;
+>>>>    	bool			rp_extensions;
+>>>>    	u8			rp_log_size;
+>>>> +	bool			edr_enabled; /* EDR mode is supported */
+>>> This needs a better name, or perhaps it should be removed completely.
+>> Any suggestions ? native_mode or firmware_dpc ?
+>>> EDR is not a mode that can be enabled or disabled.  The _OSC "EDR
+>>> supported" bit tells the firmware whether the OS supports EDR
+>>> notification, but there's no corresponding bit that tells the OS
+>>> whether firmware will actually *send* those notifications.
+>> I agree that EDR is not a mode. But with EDR support, DPC driver functions
+>> can be triggered/executed in two contexts.
+>>
+>> 1. DPC is controlled by OS.
+>> 2. Via EDR notification if DPC is controlled by firmware.
+>>
+>> Since we want to use same code for both scenarios, we need some method
+>> to detect which context is currently in use.
+> I haven't gotten as far as looking at the actual EDR support yet, but
+> I wonder if this could be rearranged so that dpc.c contained two
+> things: (1) the existing DPC driver that claims DPC capability via
+> dpc_probe() and (2) a few functions exported for use by the EDR path.
+> Then maybe the EDR path could live in pci-acpi.c (or maybe a new edr.c
+> file) and would not depend on dpc_probe() actually *claiming* the
+> capability.
+In EDR code path, we depend on common pcie_do_recovery() function in
+pcie/err.c for doing the error recovery, and this function has
+dependency (related to callbacks) on service (DPC/AER) from
+which error recovery is triggered. So if we plan to separate EDR code 
+path from
+DPC by exporting required functions, we might have to do similar thing 
+in err.c.
+There will be also be some code duplication if we choose this path. So, 
+I am not
+sure whether there is enough gain in taking this approach. Let me know 
+your comments.
 
-diff --git a/tools/testing/selftests/kvm/lib/kvm_util.c b/tools/testing/selftests/kvm/lib/kvm_util.c
-index 5b971c04f1643..427c88d32e988 100644
---- a/tools/testing/selftests/kvm/lib/kvm_util.c
-+++ b/tools/testing/selftests/kvm/lib/kvm_util.c
-@@ -130,9 +130,11 @@ _Static_assert(sizeof(vm_guest_mode_string)/sizeof(char *) == NUM_VM_MODES,
-  *
-  * Creates a VM with the mode specified by mode (e.g. VM_MODE_P52V48_4K).
-  * When phy_pages is non-zero, a memory region of phy_pages physical pages
-- * is created and mapped starting at guest physical address 0.  The file
-- * descriptor to control the created VM is created with the permissions
-- * given by perm (e.g. O_RDWR).
-+ * is created, starting at 4G into the guest physical address space to avoid
-+ * KVM internal memslots which map the region between 3G and 4G. If tests need
-+ * to use the physical region between 0 and 3G, they can allocate another
-+ * memslot for that region. The file descriptor to control the created VM is
-+ * created with the permissions given by perm (e.g. O_RDWR).
-  */
- struct kvm_vm *_vm_create(enum vm_guest_mode mode, uint64_t phy_pages, int perm)
- {
-@@ -231,7 +233,8 @@ struct kvm_vm *_vm_create(enum vm_guest_mode mode, uint64_t phy_pages, int perm)
- 	vm->vpages_mapped = sparsebit_alloc();
- 	if (phy_pages != 0)
- 		vm_userspace_mem_region_add(vm, VM_MEM_SRC_ANONYMOUS,
--					    0, 0, phy_pages, 0);
-+					    KVM_INTERNAL_MEMSLOTS_END_PADDR,
-+					    0, phy_pages, 0);
- 
- 	return vm;
- }
+
+>
+>>> Also, EDR is an ACPI concept, and dpc.c is a generic driver not
+>>> specific to ACPI, so we should try to avoid polluting it with
+>>> ACPI-isms.
+>>>
+>>>>    };
+>>>>    static const char * const rp_pio_error_string[] = {
+>>>> @@ -69,6 +70,14 @@ void pci_save_dpc_state(struct pci_dev *dev)
+>>>>    	if (!dpc)
+>>>>    		return;
+>>>> +	/*
+>>>> +	 * If DPC is controlled by firmware then save/restore tasks are also
+>>>> +	 * controlled by firmware. So skip rest of the function if DPC is
+>>>> +	 * controlled by firmware.
+>>>> +	 */
+>>>> +	if (dpc->edr_enabled)
+>>>> +		return;
+>>> I think this should be something like:
+>>>
+>>>     if (!host->native_dpc)
+>>>       return;
+>>>
+>>> That's what the spec says: if firmware does not grant control of DPC
+>>> to the OS via _OSC, the OS may not read/write the DPC capability.
+>>>
+>>> The usual situation would be that if firmware doesn't grant the OS
+>>> permission to use DPC, we wouldn't use the dpc.c driver at all.
+>>>
+>>> But IIUC, the point of this EDR stuff is that we're adding a case
+>>> where the OS doesn't have permission to use DPC, but we *do* want to
+>>> use parts of dpc.c in limited cases while handling EDR notifications.
+>> Yes, your assumption is correct.
+>>> I think you should probably take the DPC-related _OSC stuff from the
+>>> last patch ("PCI/ACPI: Enable EDR support") and move it before this
+>>> patch, so it *only* negotiates DPC ownership, per the ECN.  That would
+>>> probably result in dpc.c being used only if _OSC grants DPC ownership
+>>> to the OS.
+>> Patch titled ("PCI/ACPI: Enable EDR support") exposes EDR support to
+>> firmware in _OSC negotiation. So you wanted me to move this patch to
+>> the end of the series to make sure we don't expose EDR support until
+>> we have necessary code changes in kernel.
+> It actually does *two* things: (1) adds OSC_PCI_EXPRESS_DPC_CONTROL
+> and native_dpc, and (2) adds OSC_PCI_EDR_SUPPORT and related code.  I
+> think these should be split into two patches, and part 1 is what I
+> think could be done early before adding EDR support.
+ok. makes sense.
+>
+>>>> +	 * As per PCIe r5.0, sec 6.2.10, implementation note titled
+>>>> +	 * "Determination of DPC Control", to avoid conflicts over whether
+>>>> +	 * platform firmware or the operating system have control of DPC,
+>>>> +	 * it is recommended that platform firmware and operating systems
+>>>> +	 * always link the control of DPC to the control of Advanced Error
+>>>> +	 * Reporting.
+>>>> +	 *
+>>>> +	 * So use AER FF mode check API pcie_aer_get_firmware_first() to decide
+>>>> +	 * whether DPC is controlled by software or firmware.
+>>> AFAICT, this is not what the spec says.  Firmware-first is not what
+>>> tells us whether DPC is controlled by firmware or the OS.  For ACPI
+>>> systems, _OSC tells us whether the OS is allowed control of DPC.
+>> But current DPC/AER driver use FIRMWARE_FIRST bit (in
+>> pcie_aer_get_firmware_first()) determine firmware/OS ownership.
+> I think that's a problem and we should fix it.  It's arguably a little
+> bit of feature creep to do that in this series, but it makes it very
+> confusing when the specs talk about ownership negotiated via _OSC and
+> the code talks about "firmware-first" and makes assumptions about
+> connections between the two.
+>
+> Those things may very well *be* related in the firmware
+> implementation, but assuming those connections in Linux makes the code
+> hard to read and maintain.  This series adds quite a bit of
+> ACPI-related stuff, and I think we should untangle confusions like
+> this before we add more.
+>
+> Bjorn
+>
 -- 
-2.25.0.341.g760bfbb309-goog
+Sathyanarayanan Kuppuswamy
+Linux kernel developer
 
