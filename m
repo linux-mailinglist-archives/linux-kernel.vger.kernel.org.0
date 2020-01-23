@@ -2,71 +2,90 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3DBE6147380
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Jan 2020 23:04:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A61FF147386
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Jan 2020 23:05:33 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729165AbgAWWEo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 23 Jan 2020 17:04:44 -0500
-Received: from www62.your-server.de ([213.133.104.62]:42932 "EHLO
-        www62.your-server.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727215AbgAWWEn (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Jan 2020 17:04:43 -0500
-Received: from sslproxy06.your-server.de ([78.46.172.3])
-        by www62.your-server.de with esmtpsa (TLSv1.2:DHE-RSA-AES256-GCM-SHA384:256)
-        (Exim 4.89_1)
-        (envelope-from <daniel@iogearbox.net>)
-        id 1iukaX-0004Li-4E; Thu, 23 Jan 2020 23:04:33 +0100
-Received: from [178.197.248.20] (helo=pc-9.home)
-        by sslproxy06.your-server.de with esmtpsa (TLSv1.3:TLS_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <daniel@iogearbox.net>)
-        id 1iukaW-000K4o-HK; Thu, 23 Jan 2020 23:04:32 +0100
-Subject: Re: [PATCH] bpf: devmap: Pass lockdep expression to RCU lists
-To:     Amol Grover <frextrite@gmail.com>,
-        Alexei Starovoitov <ast@kernel.org>,
-        "David S . Miller" <davem@davemloft.net>,
-        Jesper Dangaard Brouer <hawk@kernel.org>,
-        John Fastabend <john.fastabend@gmail.com>,
-        Martin KaFai Lau <kafai@fb.com>,
-        Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>,
-        Andrii Nakryiko <andriin@fb.com>, brouer@redhat.com,
-        toke@redhat.com
-Cc:     netdev@vger.kernel.org, bpf@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        linux-kernel-mentees@lists.linuxfoundation.org,
-        Joel Fernandes <joel@joelfernandes.org>,
-        Madhuparna Bhowmik <madhuparnabhowmik04@gmail.com>,
-        "Paul E . McKenney" <paulmck@kernel.org>
-References: <20200123120437.26506-1-frextrite@gmail.com>
- <20200123171800.GC4484@workstation-portable>
-From:   Daniel Borkmann <daniel@iogearbox.net>
-Message-ID: <991cab17-3616-4cb4-60f5-5fe235e5bec8@iogearbox.net>
-Date:   Thu, 23 Jan 2020 23:04:31 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.2
+        id S1729268AbgAWWFb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 23 Jan 2020 17:05:31 -0500
+Received: from mga03.intel.com ([134.134.136.65]:56889 "EHLO mga03.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729238AbgAWWFa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 23 Jan 2020 17:05:30 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga007.fm.intel.com ([10.253.24.52])
+  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 23 Jan 2020 14:04:42 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.70,355,1574150400"; 
+   d="scan'208";a="221739006"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by fmsmga007.fm.intel.com with ESMTP; 23 Jan 2020 14:04:41 -0800
+Received: by black.fi.intel.com (Postfix, from userid 1003)
+        id 54F5B202; Fri, 24 Jan 2020 00:04:40 +0200 (EET)
+From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To:     Petr Mladek <pmladek@suse.com>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        linux-kernel@vger.kernel.org
+Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Subject: [PATCH v1] printk: Drop double check for console_drivers being non-NULL
+Date:   Fri, 24 Jan 2020 00:04:39 +0200
+Message-Id: <20200123220439.11188-1-andriy.shevchenko@linux.intel.com>
+X-Mailer: git-send-email 2.24.1
 MIME-Version: 1.0
-In-Reply-To: <20200123171800.GC4484@workstation-portable>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Authenticated-Sender: daniel@iogearbox.net
-X-Virus-Scanned: Clear (ClamAV 0.101.4/25704/Thu Jan 23 12:37:43 2020)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 1/23/20 6:18 PM, Amol Grover wrote:
-> On Thu, Jan 23, 2020 at 05:34:38PM +0530, Amol Grover wrote:
->> head is traversed using hlist_for_each_entry_rcu outside an
->> RCU read-side critical section but under the protection
->> of dtab->index_lock.
->>
->> Hence, add corresponding lockdep expression to silence false-positive
->> lockdep warnings, and harden RCU lists.
->>
-> Fixes: 6f9d451ab1a3 ("xdp: Add devmap_hash map type for looking up devices by hashed index")
->> Signed-off-by: Amol Grover <frextrite@gmail.com>
+There is no need to explicitly check for console_drivers to be non-NULL
+since for_each_console() does this.
 
-Applied, thanks!
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+---
+ kernel/printk/printk.c | 16 ++++++----------
+ 1 file changed, 6 insertions(+), 10 deletions(-)
+
+diff --git a/kernel/printk/printk.c b/kernel/printk/printk.c
+index aa171d4e115c..011cdb97bcea 100644
+--- a/kernel/printk/printk.c
++++ b/kernel/printk/printk.c
+@@ -1772,9 +1772,6 @@ static void call_console_drivers(const char *ext_text, size_t ext_len,
+ 
+ 	trace_console_rcuidle(text, len);
+ 
+-	if (!console_drivers)
+-		return;
+-
+ 	for_each_console(con) {
+ 		if (exclusive_console && con != exclusive_console)
+ 			continue;
+@@ -2653,18 +2650,17 @@ void register_console(struct console *newcon)
+ 	struct console_cmdline *c;
+ 	static bool has_preferred;
+ 
+-	if (console_drivers)
+-		for_each_console(bcon)
+-			if (WARN(bcon == newcon,
+-					"console '%s%d' already registered\n",
+-					bcon->name, bcon->index))
+-				return;
++	for_each_console(bcon) {
++		if (WARN(bcon == newcon, "console '%s%d' already registered\n",
++					 bcon->name, bcon->index))
++			return;
++	}
+ 
+ 	/*
+ 	 * before we register a new CON_BOOT console, make sure we don't
+ 	 * already have a valid console
+ 	 */
+-	if (console_drivers && newcon->flags & CON_BOOT) {
++	if (newcon->flags & CON_BOOT) {
+ 		/* find the last or real console */
+ 		for_each_console(bcon) {
+ 			if (!(bcon->flags & CON_BOOT)) {
+-- 
+2.24.1
+
