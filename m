@@ -2,99 +2,168 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 389FB1469E4
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Jan 2020 14:54:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EA13C1469C9
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Jan 2020 14:52:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729262AbgAWNyB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 23 Jan 2020 08:54:01 -0500
-Received: from hostingweb31-40.netsons.net ([89.40.174.40]:46648 "EHLO
-        hostingweb31-40.netsons.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726729AbgAWNx7 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Jan 2020 08:53:59 -0500
-Received: from [109.168.11.45] (port=47192 helo=pc-ceresoli.dev.aim)
-        by hostingweb31.netsons.net with esmtpa (Exim 4.92)
-        (envelope-from <luca@lucaceresoli.net>)
-        id 1iucvl-000CNg-Oq; Thu, 23 Jan 2020 14:53:57 +0100
-From:   Luca Ceresoli <luca@lucaceresoli.net>
-To:     linux-i2c@vger.kernel.org, linux-doc@vger.kernel.org
-Cc:     Luca Ceresoli <luca@lucaceresoli.net>,
-        Wolfram Sang <wsa@the-dreams.de>,
-        Jean Delvare <jdelvare@suse.de>, Peter Rosin <peda@axentia.se>,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v2 13/28] docs: i2c: smbus-protocol: remove unneeded colons from table
-Date:   Thu, 23 Jan 2020 14:50:48 +0100
-Message-Id: <20200123135103.20540-14-luca@lucaceresoli.net>
-X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200123135103.20540-1-luca@lucaceresoli.net>
-References: <20200123135103.20540-1-luca@lucaceresoli.net>
+        id S1729165AbgAWNv5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 23 Jan 2020 08:51:57 -0500
+Received: from mail.kernel.org ([198.145.29.99]:37964 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726792AbgAWNvw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 23 Jan 2020 08:51:52 -0500
+Received: from mail-qk1-f171.google.com (mail-qk1-f171.google.com [209.85.222.171])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9B7902467E;
+        Thu, 23 Jan 2020 13:51:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1579787511;
+        bh=vLvMBfKBDUNVaF/aoU4PfN2HEsbDc54gpbCoCV6eEbk=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=b1iJ2GrWbJ6sOxtCE6X6YZSNhYFzNIpM/kQYgA7f2/wGJ1koX74CO1m1w/MCm5No0
+         BPLG4NXoQP5wOgn4QhptHUFzhR6166fKfS6Kxce1LEQd9yrrm3KsQU88+1pGGo0Au7
+         LREyoiAW0bRXR/meubXNdV6fucp7AraKrvthmWK0=
+Received: by mail-qk1-f171.google.com with SMTP id d10so3470716qke.1;
+        Thu, 23 Jan 2020 05:51:51 -0800 (PST)
+X-Gm-Message-State: APjAAAWtw3Red/ht3cdA8QN6luNT0Uj5cczoElWDB42a0jS4cHNLWSdV
+        bS0ZbErdlCANEm2Grher6dMU8XN/gz5pdItuHQ==
+X-Google-Smtp-Source: APXvYqwfO87Q0/W6AzS8yzHZDgljp8mtFonCDEPSQx1uYWjdYoPARCRWT3YmVbhrRhH7b66Aa6HwT9mSNtLWLu4ZXEM=
+X-Received: by 2002:a05:620a:135b:: with SMTP id c27mr14856515qkl.119.1579787510715;
+ Thu, 23 Jan 2020 05:51:50 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - hostingweb31.netsons.net
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - lucaceresoli.net
-X-Get-Message-Sender-Via: hostingweb31.netsons.net: authenticated_id: luca+lucaceresoli.net/only user confirmed/virtual account not confirmed
-X-Authenticated-Sender: hostingweb31.netsons.net: luca@lucaceresoli.net
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
+References: <20200123012317.14808-1-chris.packham@alliedtelesis.co.nz> <20200123012317.14808-2-chris.packham@alliedtelesis.co.nz>
+In-Reply-To: <20200123012317.14808-2-chris.packham@alliedtelesis.co.nz>
+From:   Rob Herring <robh+dt@kernel.org>
+Date:   Thu, 23 Jan 2020 07:51:37 -0600
+X-Gmail-Original-Message-ID: <CAL_JsqLvM34WSBE29beBgJj0jLA6P_UwQUbTuEQcYJgrkg3v1A@mail.gmail.com>
+Message-ID: <CAL_JsqLvM34WSBE29beBgJj0jLA6P_UwQUbTuEQcYJgrkg3v1A@mail.gmail.com>
+Subject: Re: [PATCH v2 1/2] dt-bindings: spi: Document binding for generic SPI multiplexer
+To:     Chris Packham <chris.packham@alliedtelesis.co.nz>
+Cc:     Mark Brown <broonie@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        linux-spi <linux-spi@vger.kernel.org>,
+        devicetree@vger.kernel.org,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-These colons are not needed: the columns already nicely separate the
-symbols from their description. They are also inconsistently preceded by
-whitespace.
+On Wed, Jan 22, 2020 at 7:24 PM Chris Packham
+<chris.packham@alliedtelesis.co.nz> wrote:
+>
+> Add binding documentation for the spi-mux driver. This allows a generic
+> multiplexer to be used to provide access to multiple SPI devices.
+>
+> Signed-off-by: Chris Packham <chris.packham@alliedtelesis.co.nz>
+> ---
+>
+> Notes:
+>     Changes in v2:
+>     - update license
+>     - make dt_binding_check clean
 
-Remove the colons completely to simplify and clean up.
+Sure about that?
 
-Signed-off-by: Luca Ceresoli <luca@lucaceresoli.net>
-Reviewed-by: Jean Delvare <jdelvare@suse.de>
+>
+>  .../devicetree/bindings/spi/spi-mux.yaml      | 84 +++++++++++++++++++
+>  1 file changed, 84 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/spi/spi-mux.yaml
+>
+> diff --git a/Documentation/devicetree/bindings/spi/spi-mux.yaml b/Documentation/devicetree/bindings/spi/spi-mux.yaml
+> new file mode 100644
+> index 000000000000..4bdb31e2257e
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/spi/spi-mux.yaml
+> @@ -0,0 +1,84 @@
+> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/spi/spi-mux.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Generic SPI Multiplexer
+> +
+> +description: |
+> +  This binding describes a SPI bus multiplexer to route the SPI chip select
+> +  signals. This can be used when you need more devices than the SPI controller
+> +  has chip selects available. An example setup is shown in ASCII art; the actual
+> +  setting of the multiplexer to a channel needs to be done by a specific SPI mux
+> +  driver.
+> +
+> +        MOSI /--------------------------------+--------+--------+--------\
+> +        MISO |/------------------------------+|-------+|-------+|-------\|
+> +         SCL ||/----------------------------+||------+||------+||------\||
+> +             |||                            |||      |||      |||      |||
+> +      +------------+                        |||      |||      |||      |||
+> +      | SoC  |||   |                      +-+++-+  +-+++-+  +-+++-+  +-+++-+
+> +      |      |||   |                      | dev |  | dev |  | dev |  | dev |
+> +      |   +--+++-+ | CS-X  +------+\      +--+--+  +--+--+  +--+--+  +--+--+
+> +      |   | SPI  +-|-------+ Mux  |\\   CS-0 |        |        |        |
+> +      |   +------+ |       +--+---+\\\-------/   CS-1 |        |        |
+> +      |            |          |    \\\----------------/   CS-2 |        |
+> +      |   +------+ |          |     \\-------------------------/   CS-3 |
+> +      |   | ?    +-|----------/      \----------------------------------/
+> +      |   +------+ |
+> +      +------------+
+> +
+> +allOf:
+> +  - $ref: "/schemas/spi/spi-controller.yaml#"
+> +
+> +maintainers:
+> +  - Chris Packham <chris.packham@alliedtelesis.co.nz>
+> +
+> +properties:
+> +  compatible:
+> +    const: spi-mux
+> +
+> +  mux-controls:
+> +    maxItems: 1
+> +
+> +required:
+> +   - compatible
+> +   - reg
+> +   - spi-max-frequency
+> +   - mux-controls
+> +
+> +examples:
+> +   - |
+> +     mux: mux-controller {
+> +       compatible = "gpio-mux";
+> +       #mux-control-cells = <0>;
+> +
+> +       mux-gpios = <&gpio0 3 GPIO_ACTIVE_HIGH>;
+> +     };
+> +
+> +     spi {
+> +       spi-mux@0 {
+> +         compatible = "spi-mux";
+> +         #address-cells = <1>;
+> +         #size-cells = <0>;
+> +         reg = <0>;
+> +         spi-max-frequency = <100000000>;
+> +
+> +         mux-controls = <&mux>
 
----
+Missing semicolon.
 
-Changes in v2:
- - fix typo in commit message (Jean Delvare)
----
- Documentation/i2c/smbus-protocol.rst | 18 +++++++++---------
- 1 file changed, 9 insertions(+), 9 deletions(-)
-
-diff --git a/Documentation/i2c/smbus-protocol.rst b/Documentation/i2c/smbus-protocol.rst
-index 8510eeda1dd0..fbadd4d25ad5 100644
---- a/Documentation/i2c/smbus-protocol.rst
-+++ b/Documentation/i2c/smbus-protocol.rst
-@@ -35,19 +35,19 @@ Key to symbols
- ==============
- 
- =============== =============================================================
--S             : Start condition
--P             : Stop condition
--Rd/Wr (1 bit) : Read/Write bit. Rd equals 1, Wr equals 0.
--A, NA (1 bit) : Accept and reverse accept bit.
--Addr  (7 bits): I2C 7 bit address. Note that this can be expanded as usual to
-+S               Start condition
-+P               Stop condition
-+Rd/Wr (1 bit)   Read/Write bit. Rd equals 1, Wr equals 0.
-+A, NA (1 bit)   Accept and reverse accept bit.
-+Addr  (7 bits)  I2C 7 bit address. Note that this can be expanded as usual to
-                 get a 10 bit I2C address.
--Comm  (8 bits): Command byte, a data byte which often selects a register on
-+Comm  (8 bits)  Command byte, a data byte which often selects a register on
-                 the device.
--Data  (8 bits): A plain data byte. Sometimes, I write DataLow, DataHigh
-+Data  (8 bits)  A plain data byte. Sometimes, I write DataLow, DataHigh
-                 for 16 bit data.
--Count (8 bits): A data byte containing the length of a block operation.
-+Count (8 bits)  A data byte containing the length of a block operation.
- 
--[..]:           Data sent by I2C device, as opposed to data sent by the host
-+[..]            Data sent by I2C device, as opposed to data sent by the host
-                 adapter.
- =============== =============================================================
- 
--- 
-2.25.0
-
+> +
+> +         spi-flash@0 {
+> +           compatible = "jedec,spi-nor";
+> +           #address-cells = <1>;
+> +           #size-cells = <1>;
+> +           reg = <0>;
+> +           spi-max-frequency = <40000000>;
+> +         };
+> +
+> +         spi-device@1 {
+> +           compatible = "lineartechnology,ltc2488";
+> +           reg = <1>;
+> +           spi-max-frequency = <10000000>;
+> +         };
+> +       };
+> +     };
+> --
+> 2.25.0
+>
