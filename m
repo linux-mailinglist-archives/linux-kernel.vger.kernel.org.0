@@ -2,54 +2,54 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 30891147050
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Jan 2020 19:05:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B5DBB147061
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Jan 2020 19:05:26 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729203AbgAWSE4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 23 Jan 2020 13:04:56 -0500
-Received: from mail-pj1-f73.google.com ([209.85.216.73]:33192 "EHLO
-        mail-pj1-f73.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729160AbgAWSEy (ORCPT
+        id S1729399AbgAWSFW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 23 Jan 2020 13:05:22 -0500
+Received: from mail-pf1-f202.google.com ([209.85.210.202]:51332 "EHLO
+        mail-pf1-f202.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729221AbgAWSEz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Jan 2020 13:04:54 -0500
-Received: by mail-pj1-f73.google.com with SMTP id u91so1511504pjb.0
+        Thu, 23 Jan 2020 13:04:55 -0500
+Received: by mail-pf1-f202.google.com with SMTP id z19so2070623pfn.18
         for <linux-kernel@vger.kernel.org>; Thu, 23 Jan 2020 10:04:54 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20161025;
         h=date:in-reply-to:message-id:mime-version:references:subject:from:to
          :cc;
-        bh=ii0SHfgzZYUwZb7/pvTlYqckx+NQoa62QNzOVUMGLgE=;
-        b=PLyp6z0CAVfybtr5KJdK4BBfI+xCS6iijTEsVuy8dz1EF81cfVUm4jiBXsFCTUknHo
-         PQcVYi9HFjlQ5LQF3cJuh3cErtPPBfqEOtl80cfSmYoh6giejP2Xkeq55zSVbOmvAN5c
-         8k0WJW1tSCXKy6+3lSxlXbHecJrTCsrfCfi0xHnYWCcovJUUbkNozPqdX0W6PNALccJq
-         jIl8iyp/gVfDlvYKWBhGVu7CU958B2XFlDQTIyeGJM1aTQZknxXggjEn6RRpB9A0BTJK
-         LfB+OWKCtg9PDadtPS5KLpFsWhsJ7RvAWYpuz5CYl2wZLcS0n/uJcp4haojwUTA5E/Ig
-         iH4A==
+        bh=fRJtGzU1nWtZCwyyEdBQOQV0uriURdFY4YOkq57xKFA=;
+        b=I/C8CMtDyMwkAyRWTigJSrx8ByPwzQxVcP2Y+qJ4lGvA2rQUQ+UnnLo7HnBLIstBBI
+         Se+PwmLQHN+LOVGuJqJzd/H7Bcbp05STGoP3ij0oUhXZqXYtjMxODspqKQ+r0Qf/48bi
+         XXhUwajJPI3kaI+9Ok0tfbC6HBRjJ6XiYJGcpudGe+aY+EvqIUsCZEGShQlf86XZaWzo
+         Q2P/+Y2eTaAm8vFcIPTkCe/0dFigQC6wmq42DqOwPkIRwZyXrBrWJGdFPD1QSYjfNjYL
+         rV8Z0D6oaAwGzyN0FI4d4McSMqWxeax+btspKH6/+JWKqHjpJ9le7DXX1SDGH0LLCwJn
+         jHSQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:in-reply-to:message-id:mime-version
          :references:subject:from:to:cc;
-        bh=ii0SHfgzZYUwZb7/pvTlYqckx+NQoa62QNzOVUMGLgE=;
-        b=QCZ7GR0xSw0vDWi9uiAe50AePyTTUoW5EouZRDx+B6q7U02+AI4mGMB2Un4F4Alwq5
-         ezjfa+Jv/BQ2jNg7JxOzdQfzT2wKEcH98EKviZmBGhrzPLIcQsgOlzVujobuc2So5DlX
-         ZZoifj/YF2tIGZy0lFyTe4qV0e+RlZ6pskmdIV/SkxPIaIO4MhVJzdvz8menv6izBEFu
-         gGX/IjENIKjO3zecS4GNb+/Sz20itpWNK2/WaR6bUITaTD2x26C+SrqkH1ggV6u1k76p
-         ELTP6CT/vsweEGnA5+YpIgr8bM7098VgwEvn36QySsL7ySvCOJqQVhjOS1GOz6WzbdGw
-         tPlw==
-X-Gm-Message-State: APjAAAU30KbxinaJMH/EpNGgAl9wzS8A2hjZ+J6FwP4IjW6z+Fy0sNNU
-        cm+vXsGOu72PhL8zanQ/yQofdbTfrHjoDuh31ArMNAzqL1VTmaq9CESXaJV1T5sp29Ua7nV8Lpv
-        eXqM2J6BGmx/qBKE0pKOmyewEUcmQ9IZj2rmSnCuQzJbqWYYcS7uZgwVG+AeMvG3naLlei1QT
-X-Google-Smtp-Source: APXvYqzoG885PQKUB+5r9e3ERU5dNsON806PZLYtG3pHCaY+uutcjNNjYcphpDoZq+MA1e7JH20yRhKI/XzA
-X-Received: by 2002:a63:5fca:: with SMTP id t193mr33015pgb.28.1579802691847;
- Thu, 23 Jan 2020 10:04:51 -0800 (PST)
-Date:   Thu, 23 Jan 2020 10:04:31 -0800
+        bh=fRJtGzU1nWtZCwyyEdBQOQV0uriURdFY4YOkq57xKFA=;
+        b=RwUfpoFjqzlmZ6uVF1EIbrFkPQGR8ELsT9Xp0o54PlwvACNf0k6kbb7PZJ9iZKyhk0
+         qoKyCIx6GTePWa7GEVik++2h3z14zGyKBQ5e7qd0hrTDY3JgNTzcoZRvJr1n89aQ7KzI
+         G2pb2cw3GT3UzPmRWhRHFxfB1YE0iDIozKyMTKGKLqd5Nc4I0aa9nM3xEqPuVGYe13i0
+         bt4ivUcETSWPJsBTs7OuuCb4s7fVof1g2svLawqj8BMzKXCEN8dTAtmQyIThxg7ltO6+
+         qqoxyX440K9I8VmNLZaD35lcHl/XQ1hzTng4dAOHQuutsNfltVl/bSu5oAVgS8Oc+Xd9
+         uADg==
+X-Gm-Message-State: APjAAAXFD47a5l2gGaqPUw2ZZBM5U1XNH+yv9a1KbW64ArMiu0spvuw9
+        SrTnrILZfhvCHyuLBmDTPAejpu93cJ6w/GN1t16gu3ruJ/0BIKYOUCQAVuyg05tvHKjzEPF4bD6
+        XQOzHuo3Ox59sZ4uCbr41fyH85i4mZ9RhjMUuv451fERh2w6TMWWxLfWX+6A5rylNqS+rehPR
+X-Google-Smtp-Source: APXvYqx0aHZM1DcqSFTVtQf5JBTmVMs5XjbKOT9oAFEQnjFFCQcfL2/KGMJmFYibuxRpdeVN5YZ1pdPKWiZd
+X-Received: by 2002:a63:6c86:: with SMTP id h128mr14829pgc.200.1579802694008;
+ Thu, 23 Jan 2020 10:04:54 -0800 (PST)
+Date:   Thu, 23 Jan 2020 10:04:32 -0800
 In-Reply-To: <20200123180436.99487-1-bgardon@google.com>
-Message-Id: <20200123180436.99487-6-bgardon@google.com>
+Message-Id: <20200123180436.99487-7-bgardon@google.com>
 Mime-Version: 1.0
 References: <20200123180436.99487-1-bgardon@google.com>
 X-Mailer: git-send-email 2.25.0.341.g760bfbb309-goog
-Subject: [PATCH v4 05/10] KVM: selftests: Pass args to vCPU in global vCPU
- args struct
+Subject: [PATCH v4 06/10] KVM: selftests: Add support for vcpu_args_set to
+ aarch64 and s390x
 From:   Ben Gardon <bgardon@google.com>
 To:     linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
         linux-kselftest@vger.kernel.org
@@ -66,107 +66,106 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In preparation for supporting multiple vCPUs in the demand paging test,
-pass arguments to the vCPU in a consolidated global struct instead of
-syncing multiple globals.
+Currently vcpu_args_set is only implemented for x86. This makes writing
+tests with multiple vCPUs difficult as each guest vCPU must either a.)
+do the same thing or b.) derive some kind of unique token from it's
+registers or the architecture. To simplify the process of writing tests
+with multiple vCPUs for s390 and aarch64, add set args functions for
+those architectures.
 
 Signed-off-by: Ben Gardon <bgardon@google.com>
 ---
- .../selftests/kvm/demand_paging_test.c        | 38 +++++++++++++------
- 1 file changed, 27 insertions(+), 11 deletions(-)
+ .../selftests/kvm/lib/aarch64/processor.c     | 33 +++++++++++++++++
+ .../selftests/kvm/lib/s390x/processor.c       | 35 +++++++++++++++++++
+ 2 files changed, 68 insertions(+)
 
-diff --git a/tools/testing/selftests/kvm/demand_paging_test.c b/tools/testing/selftests/kvm/demand_paging_test.c
-index 9d7514e96a639..9e2a5f7dfa140 100644
---- a/tools/testing/selftests/kvm/demand_paging_test.c
-+++ b/tools/testing/selftests/kvm/demand_paging_test.c
-@@ -42,7 +42,6 @@
-  */
- static uint64_t host_page_size;
- static uint64_t guest_page_size;
--static uint64_t guest_num_pages;
- 
- static char *guest_data_prototype;
- 
-@@ -59,18 +58,30 @@ static uint64_t guest_test_phys_mem;
-  */
- static uint64_t guest_test_virt_mem = DEFAULT_GUEST_TEST_MEM;
- 
-+struct vcpu_args {
-+	uint64_t gva;
-+	uint64_t pages;
-+
-+	/* Only used by the host userspace part of the vCPU thread */
-+	int vcpu_id;
-+	struct kvm_vm *vm;
-+};
-+
-+static struct vcpu_args vcpu_args;
-+
- /*
-  * Continuously write to the first 8 bytes of each page in the demand paging
-  * memory region.
-  */
- static void guest_code(void)
+diff --git a/tools/testing/selftests/kvm/lib/aarch64/processor.c b/tools/testing/selftests/kvm/lib/aarch64/processor.c
+index 86036a59a668e..a2ff90a75f326 100644
+--- a/tools/testing/selftests/kvm/lib/aarch64/processor.c
++++ b/tools/testing/selftests/kvm/lib/aarch64/processor.c
+@@ -333,3 +333,36 @@ void vm_vcpu_add_default(struct kvm_vm *vm, uint32_t vcpuid, void *guest_code)
  {
-+	uint64_t gva = vcpu_args.gva;
-+	uint64_t pages = vcpu_args.pages;
- 	int i;
+ 	aarch64_vcpu_add_default(vm, vcpuid, NULL, guest_code);
+ }
++
++/* VM VCPU Args Set
++ *
++ * Input Args:
++ *   vm - Virtual Machine
++ *   vcpuid - VCPU ID
++ *   num - number of arguments
++ *   ... - arguments, each of type uint64_t
++ *
++ * Output Args: None
++ *
++ * Return: None
++ *
++ * Sets the first num function input arguments to the values
++ * given as variable args.  Each of the variable args is expected to
++ * be of type uint64_t. The registers set by this function are r0-r7.
++ */
++void vcpu_args_set(struct kvm_vm *vm, uint32_t vcpuid, unsigned int num, ...)
++{
++	va_list ap;
++
++	TEST_ASSERT(num >= 1 && num <= 8, "Unsupported number of args,\n"
++		    "  num: %u\n",
++		    num);
++
++	va_start(ap, num);
++
++	for (i = 0; i < num; i++)
++		set_reg(vm, vcpuid, ARM64_CORE_REG(regs.regs[num]),
++			va_arg(ap, uint64_t));
++
++	va_end(ap);
++}
+diff --git a/tools/testing/selftests/kvm/lib/s390x/processor.c b/tools/testing/selftests/kvm/lib/s390x/processor.c
+index 32a02360b1eb0..680f37be9dbc9 100644
+--- a/tools/testing/selftests/kvm/lib/s390x/processor.c
++++ b/tools/testing/selftests/kvm/lib/s390x/processor.c
+@@ -269,6 +269,41 @@ void vm_vcpu_add_default(struct kvm_vm *vm, uint32_t vcpuid, void *guest_code)
+ 	run->psw_addr = (uintptr_t)guest_code;
+ }
  
--	for (i = 0; i < guest_num_pages; i++) {
--		uint64_t addr = guest_test_virt_mem;
-+	for (i = 0; i < pages; i++) {
-+		uint64_t addr = gva + (i * guest_page_size);
- 
--		addr += i * guest_page_size;
- 		addr &= ~(host_page_size - 1);
- 		*(uint64_t *)addr = 0x0123456789ABCDEF;
- 	}
-@@ -85,15 +96,16 @@ static uint64_t host_num_pages;
- static void *vcpu_worker(void *data)
++/* VM VCPU Args Set
++ *
++ * Input Args:
++ *   vm - Virtual Machine
++ *   vcpuid - VCPU ID
++ *   num - number of arguments
++ *   ... - arguments, each of type uint64_t
++ *
++ * Output Args: None
++ *
++ * Return: None
++ *
++ * Sets the first num function input arguments to the values
++ * given as variable args.  Each of the variable args is expected to
++ * be of type uint64_t. The registers set by this function are r2-r6.
++ */
++void vcpu_args_set(struct kvm_vm *vm, uint32_t vcpuid, unsigned int num, ...)
++{
++	va_list ap;
++	struct kvm_regs regs;
++
++	TEST_ASSERT(num >= 1 && num <= 5, "Unsupported number of args,\n"
++		    "  num: %u\n",
++		    num);
++
++	va_start(ap, num);
++	vcpu_regs_get(vm, vcpuid, &regs);
++
++	for (i = 0; i < num; i++)
++		regs.gprs[i + 2] = va_arg(ap, uint64_t);
++
++	vcpu_regs_set(vm, vcpuid, &regs);
++	va_end(ap);
++}
++
+ void vcpu_dump(FILE *stream, struct kvm_vm *vm, uint32_t vcpuid, uint8_t indent)
  {
- 	int ret;
--	struct kvm_vm *vm = data;
-+	struct kvm_vm *vm = vcpu_args.vm;
-+	int vcpu_id = vcpu_args.vcpu_id;
- 	struct kvm_run *run;
- 
--	run = vcpu_state(vm, VCPU_ID);
-+	run = vcpu_state(vm, vcpu_id);
- 
- 	/* Let the guest access its memory */
--	ret = _vcpu_run(vm, VCPU_ID);
-+	ret = _vcpu_run(vm, vcpu_id);
- 	TEST_ASSERT(ret == 0, "vcpu_run failed: %d\n", ret);
--	if (get_ucall(vm, VCPU_ID, NULL) != UCALL_SYNC) {
-+	if (get_ucall(vm, vcpu_id, NULL) != UCALL_SYNC) {
- 		TEST_ASSERT(false,
- 			    "Invalid guest sync status: exit_reason=%s\n",
- 			    exit_reason_str(run->exit_reason));
-@@ -285,6 +297,7 @@ static void run_test(enum vm_guest_mode mode, bool use_uffd,
- 	pthread_t uffd_handler_thread;
- 	int pipefd[2];
- 	struct kvm_vm *vm;
-+	uint64_t guest_num_pages;
- 	int r;
- 
- 	/*
-@@ -370,10 +383,13 @@ static void run_test(enum vm_guest_mode mode, bool use_uffd,
- 	/* Export the shared variables to the guest */
- 	sync_global_to_guest(vm, host_page_size);
- 	sync_global_to_guest(vm, guest_page_size);
--	sync_global_to_guest(vm, guest_test_virt_mem);
--	sync_global_to_guest(vm, guest_num_pages);
- 
--	pthread_create(&vcpu_thread, NULL, vcpu_worker, vm);
-+	vcpu_args.vm = vm;
-+	vcpu_args.vcpu_id = VCPU_ID;
-+	vcpu_args.gva = guest_test_virt_mem;
-+	vcpu_args.pages = guest_num_pages;
-+	sync_global_to_guest(vm, vcpu_args);
-+	pthread_create(&vcpu_thread, NULL, vcpu_worker, &vcpu_args);
- 
- 	/* Wait for the vcpu thread to quit */
- 	pthread_join(vcpu_thread, NULL);
+ 	struct vcpu *vcpu = vm->vcpu_head;
 -- 
 2.25.0.341.g760bfbb309-goog
 
