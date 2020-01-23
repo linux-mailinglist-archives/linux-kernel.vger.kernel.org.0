@@ -2,68 +2,76 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 41A011468C2
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Jan 2020 14:11:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D19F81468CF
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Jan 2020 14:13:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728803AbgAWNLP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 23 Jan 2020 08:11:15 -0500
-Received: from mga05.intel.com ([192.55.52.43]:31001 "EHLO mga05.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726605AbgAWNLO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Jan 2020 08:11:14 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 23 Jan 2020 05:11:14 -0800
-X-IronPort-AV: E=Sophos;i="5.70,354,1574150400"; 
-   d="scan'208";a="220660992"
-Received: from jnikula-mobl3.fi.intel.com (HELO localhost) ([10.237.66.161])
-  by orsmga008-auth.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 23 Jan 2020 05:11:08 -0800
-From:   Jani Nikula <jani.nikula@linux.intel.com>
-To:     Christophe Leroy <christophe.leroy@c-s.fr>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>
-Cc:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        dri-devel@lists.freedesktop.org, x86@kernel.org
-Subject: Re: [PATCH v3 2/7] uaccess: Tell user_access_begin() if it's for a write or not
-In-Reply-To: <e11a8f0670251267f87e3114e0bdbacb1eb72980.1579783936.git.christophe.leroy@c-s.fr>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-References: <fed4f49349913cb6739dac647ba6a61d56b989d2.1579783936.git.christophe.leroy@c-s.fr> <e11a8f0670251267f87e3114e0bdbacb1eb72980.1579783936.git.christophe.leroy@c-s.fr>
-Date:   Thu, 23 Jan 2020 15:11:05 +0200
-Message-ID: <8736c6e2s6.fsf@intel.com>
+        id S1728655AbgAWNND (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 23 Jan 2020 08:13:03 -0500
+Received: from mail26.static.mailgun.info ([104.130.122.26]:20883 "EHLO
+        mail26.static.mailgun.info" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726761AbgAWNM7 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 23 Jan 2020 08:12:59 -0500
+DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
+ s=smtp; t=1579785178; h=Content-Transfer-Encoding: MIME-Version:
+ Message-Id: Date: Subject: Cc: To: From: Sender;
+ bh=dJUiHDrAH4zx5c0H7WtmCINZ82HtU0D5rEpE/ztuV5w=; b=oX5hYg6VZdpNYnI/lvmdeuVRaEo/BFfYl/hLApQaRpFcWhNuAVEPv75b2w8RcvG97svx7DiG
+ zvnKYeIJ6C7jElUMTq5WaFtrYNQJlyWl2Benmwy27WAtjNHycZfrax4icsR5+vxndsU4vHdV
+ NkLZXnNZEySbpD7ifFaW+QjhDMs=
+X-Mailgun-Sending-Ip: 104.130.122.26
+X-Mailgun-Sid: WyI0MWYwYSIsICJsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
+Received: from smtp.codeaurora.org (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171])
+ by mxa.mailgun.org with ESMTP id 5e299bd7.7f52251e85e0-smtp-out-n01;
+ Thu, 23 Jan 2020 13:12:55 -0000 (UTC)
+Received: by smtp.codeaurora.org (Postfix, from userid 1001)
+        id 1F44BC433A2; Thu, 23 Jan 2020 13:12:55 +0000 (UTC)
+X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
+        aws-us-west-2-caf-mail-1.web.codeaurora.org
+X-Spam-Level: 
+X-Spam-Status: No, score=-1.0 required=2.0 tests=ALL_TRUSTED,SPF_NONE
+        autolearn=unavailable autolearn_force=no version=3.4.0
+Received: from blr-ubuntu-87.qualcomm.com (blr-bdr-fw-01_GlobalNAT_AllZones-Outside.qualcomm.com [103.229.18.19])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: sibis)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 796A8C43383;
+        Thu, 23 Jan 2020 13:12:50 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 796A8C43383
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=none smtp.mailfrom=sibis@codeaurora.org
+From:   Sibi Sankar <sibis@codeaurora.org>
+To:     bjorn.andersson@linaro.org, evgreen@chromium.org,
+        p.zabel@pengutronix.de
+Cc:     ohad@wizery.com, linux-arm-msm@vger.kernel.org,
+        linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        agross@kernel.org, Sibi Sankar <sibis@codeaurora.org>
+Subject: [PATCH v2 0/2] Improve general readability of MSS on SC7180
+Date:   Thu, 23 Jan 2020 18:42:34 +0530
+Message-Id: <20200123131236.1078-1-sibis@codeaurora.org>
+X-Mailer: git-send-email 2.22.1
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 23 Jan 2020, Christophe Leroy <christophe.leroy@c-s.fr> wrote:
-> On 32 bits powerPC (book3s/32), only write accesses to user are
-> protected and there is no point spending time on unlocking for reads.
->
-> On 64 bits powerpc (book3s/64 at least), access can be granted
-> read only, write only or read/write.
->
-> Add an argument to user_access_begin() to tell when it's for write and
-> return an opaque key that will be used by user_access_end() to know
-> what was done by user_access_begin().
+This series aims to improve the general readability of the mss reset
+sequence on SC7180 SoCs. No functional change intended.
 
-IMHO an opaque key is a prime example of a case where the use of an
-opaque typedef is warranted. Nobody needs to know or care it's
-specifically an unsigned long.
+v2:
+ * Use regmap_read_poll_timeout for halt_nav and halt_axi
+ * Redefine CONN_BOX_SPARE_0 to AXI_GATING_VALID_OVERRIDE
+ * Update more details about pipeline glitch issue
+ * Drop 2,3 patches from v1
 
-BR,
-Jani.
+Sibi Sankar (2):
+  remoteproc: qcom: q6v5-mss: Use regmap_read_poll_timeout
+  remoteproc: qcom: q6v5-mss: Improve readability of reset_assert
 
+ drivers/remoteproc/qcom_q6v5_mss.c | 42 ++++++++++++++----------------
+ 1 file changed, 19 insertions(+), 23 deletions(-)
 
 -- 
-Jani Nikula, Intel Open Source Graphics Center
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
