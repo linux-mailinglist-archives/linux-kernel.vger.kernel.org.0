@@ -2,89 +2,123 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CD43A14606D
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Jan 2020 02:40:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4486F146071
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Jan 2020 02:41:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726170AbgAWBkw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 22 Jan 2020 20:40:52 -0500
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:33973 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725943AbgAWBkw (ORCPT
+        id S1727022AbgAWBlg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 22 Jan 2020 20:41:36 -0500
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:41800 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725911AbgAWBlf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 Jan 2020 20:40:52 -0500
-Received: by mail-wm1-f66.google.com with SMTP id s144so763431wme.1;
-        Wed, 22 Jan 2020 17:40:50 -0800 (PST)
+        Wed, 22 Jan 2020 20:41:35 -0500
+Received: by mail-pf1-f193.google.com with SMTP id w62so722957pfw.8;
+        Wed, 22 Jan 2020 17:41:35 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=dxERX3Z6knme8mbg8LLRPMLRshct8bmUqfHIkVOFyXY=;
-        b=BmLthYi7yXkfQqaQ/Yu82ME78VMEz+g2Svn8AFdCwzluDqcrVEoyEk9kGRn2RdO+lI
-         d+uRAQ+iRqo1cgq1fb6tHIk1rQVRy4suxQVKjRzcKyEP+2RfTxHP9L6wWfmoay+UH3Ji
-         sAalggte4whNe9wzmJvrkRwmjAuQyLbp1TQcI1WHqWkpZb55JrhlHVOzFVavrSHoJL/Y
-         PJ/D2XPtRsLkWuc4IG2DP9MhD44oL60DB3+ggjXEX9mJz7c4ChZ45ZG2Nn6vZ3R9/JXA
-         BwNLTFcDSMdVwHH0hraSI8SCD1D3ZqHuztdTcJmQFRzdDmfhdzHbfa+e4sJA2Lg16+RS
-         t5Rg==
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=n52djEzsUpHwVAF4RVRzRPi7lkDjnzr2BXfsJcxQMZY=;
+        b=t8+zvXARhvvy6HrrT9NtUAOtP4drE9Y80izI7cJbe582ROnZUWKx4ANYOFb9WQ/B+e
+         RnlKlordyD1HEtNfFAa2Gba5pYUQuvunpUa6rMou4Gmzd8BkST536SQczpQ7i38i/RqX
+         Ri10YBvsGMB8PjTR7WYo00bbs/uj8hEC+FSLJVZ/dukpXQ0piio9RkB5MTtY4t6TebRF
+         Waso1ZdkU/XTwavK5MBsMqXYzCl6KzH81TyzwWlTRH+qbFWZpu5uX6Y2P1uwAnD0/lwK
+         6Iy9sU/jtO67/ZGGfm51RGz0AuGU/AaTPiIl05YNpR73HlpMgAXEbhv/O+joqG+ku1t6
+         9J/A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=dxERX3Z6knme8mbg8LLRPMLRshct8bmUqfHIkVOFyXY=;
-        b=KFy7CqcoTcEu1+ORbD/i/LJfAUnserpccSoyp0AhWQ+QeWxfPlGM6hUJMSrUljPD7s
-         qTrFONDsk45q6+29YnjA8adEchrXrS2tqj3zKGGC8DfC3m5UntzMt+xH7ZHPtILexw+7
-         QB5SlIc/1Y6wl3EWGdoUosLxuU2wXywdvAr4krelTr65ZKI2/9FAuUtq8nf7Y4ZaDWaM
-         wJvszQOkPaJTqdDp61jju0FJLc0vetDa7ftLgMe7ij0WZ7d52Rsq3yLvKuzVegoNRdpp
-         hIXmejdF3QLGArRxrFnMjskIDCVapuT7ZixSh8mca596duE6P0hbqRWkl47qzf8TaTx2
-         2Zfw==
-X-Gm-Message-State: APjAAAXdG1TNqDnmNVec7qv/EHNUNOYLtVDmHTaAmmzqhTQBKbiTAozR
-        FdRyYZOUM4GylgpKoqip5kMR0VtCFIcam95ROHgQE0N3a70CdQ==
-X-Google-Smtp-Source: APXvYqx/VfVrGYkRjQq9xgDLNm+4N559pc8TMzBq3MRYjQ9MPzm7WfGRD0wnnSNjXNWIlKNYioVh0v1DAm/m1PHswuc=
-X-Received: by 2002:a1c:cc06:: with SMTP id h6mr1148278wmb.118.1579743649711;
- Wed, 22 Jan 2020 17:40:49 -0800 (PST)
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=n52djEzsUpHwVAF4RVRzRPi7lkDjnzr2BXfsJcxQMZY=;
+        b=ILgQvcxyunCQlak0MGQMQDv9pCGuwBaoLN53Nac/Zcy9PxbE+t/rqYgG/iwpvQgMyp
+         SUzL2aZUzYssGdF+Hzl5p6z5/WbFOq4Q4MomAD4KqIM2f1ZctyuJgmGx+Lq+4i+dwqMF
+         GvE7v3WHOJwD7A1U3vbbhKq2FBvttAE09bq0j9kjz454WZtKM95blk/ODSiwV9ffMHDo
+         mCzwBB8yoi+cGX6THpdUcyilojEJqt6GI3YR9VbC+Xa9wzYFjtwSSwvYeCb41MFH03um
+         tWn2JqBtcbNuiPAmxpf3BHkH1pILHPRZHTuhBgUnOJ1ouGpPo5AS9qsaleL/kTG6ensw
+         GA8w==
+X-Gm-Message-State: APjAAAWYbmFWDhtqToaz8pRfWyHzNIBxhDnwglMjRbPo9hLAjgFFHu1E
+        Autr3wAvoAR3smQPr8qznOcIhpGi
+X-Google-Smtp-Source: APXvYqy1nHeYVhLof1rS2+iL6f/2vYHKSuGNizob3qzpmyerg6oFidHREkp0OJ/AzwUL8trYRDzPww==
+X-Received: by 2002:a63:744f:: with SMTP id e15mr1365651pgn.344.1579743694890;
+        Wed, 22 Jan 2020 17:41:34 -0800 (PST)
+Received: from google.com ([2620:15c:211:1:3e01:2939:5992:52da])
+        by smtp.gmail.com with ESMTPSA id b26sm312332pgn.1.2020.01.22.17.41.32
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 22 Jan 2020 17:41:33 -0800 (PST)
+Date:   Wed, 22 Jan 2020 17:41:31 -0800
+From:   Minchan Kim <minchan@kernel.org>
+To:     Michal Hocko <mhocko@kernel.org>
+Cc:     sspatil@google.com, kirill@shutemov.name,
+        akpm@linux-foundation.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, linux-api@vger.kernel.org,
+        oleksandr@redhat.com, surenb@google.com, timmurray@google.com,
+        dancol@google.com, sonnyrao@google.com, bgeffon@google.com,
+        hannes@cmpxchg.org, shakeelb@google.com, joaodias@google.com,
+        ktkhai@virtuozzo.com, christian.brauner@ubuntu.com,
+        sjpark@amazon.de
+Subject: Re: [PATCH v2 2/5] mm: introduce external memory hinting API
+Message-ID: <20200123014131.GA249784@google.com>
+References: <20200116235953.163318-1-minchan@kernel.org>
+ <20200116235953.163318-3-minchan@kernel.org>
+ <20200117115225.GV19428@dhcp22.suse.cz>
+ <20200117155837.bowyjpndfiym6cgs@box>
+ <20200117173239.GB140922@google.com>
+ <20200117212653.7uftw3lk35oykkmb@box>
+ <20200119161431.GA94410@google.com>
+ <20200120075825.GH18451@dhcp22.suse.cz>
+ <20200121183212.GF140922@google.com>
+ <20200122082853.GS29276@dhcp22.suse.cz>
 MIME-Version: 1.0
-References: <DM6PR04MB5754D8E261B4200AA62D442D860D0@DM6PR04MB5754.namprd04.prod.outlook.com>
- <20200121201014.52345-1-muraliraja.muniraju@rubrik.com>
-In-Reply-To: <20200121201014.52345-1-muraliraja.muniraju@rubrik.com>
-From:   Ming Lei <tom.leiming@gmail.com>
-Date:   Thu, 23 Jan 2020 09:40:38 +0800
-Message-ID: <CACVXFVN2QteGv=mWpVimZ9y2yzLZOOthB9muFsxTG3LkWWpwfA@mail.gmail.com>
-Subject: Re: Re [PATCH] Adding multiple workers to the loop device.
-To:     "muraliraja.muniraju" <muraliraja.muniraju@rubrik.com>
-Cc:     Chaitanya Kulkarni <Chaitanya.Kulkarni@wdc.com>,
-        Jens Axboe <axboe@kernel.dk>,
-        linux-block <linux-block@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200122082853.GS29276@dhcp22.suse.cz>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jan 22, 2020 at 4:11 AM muraliraja.muniraju
-<muraliraja.muniraju@rubrik.com> wrote:
->
-> Below is the dd results that I ran with the worker and without the worker changes.
-> Enhanced Loop has the changes and ran with 1,2,3,4 workers with 4 dds running on the same loop device.
-> Normal Loop is 1 worker(the existing code) with 4 dd's running on the same loop device.
-> Enhanced loop
-> 1 - READ: io=21981MB, aggrb=187558KB/s, minb=187558KB/s, maxb=187558KB/s, mint=120008msec, maxt=120008msec
-> 2 - READ: io=41109MB, aggrb=350785KB/s, minb=350785KB/s, maxb=350785KB/s, mint=120004msec, maxt=120004msec
-> 3 - READ: io=45927MB, aggrb=391802KB/s, minb=391802KB/s, maxb=391802KB/s, mint=120033msec, maxt=120033msec
-> 4 - READ: io=45771MB, aggrb=390543KB/s, minb=390543KB/s, maxb=390543KB/s, mint=120011msec, maxt=120011msec
-> Normal loop
-> 1 - READ: io=18432MB, aggrb=157201KB/s, minb=157201KB/s, maxb=157201KB/s, mint=120065msec, maxt=120065msec
-> 2 - READ: io=18762MB, aggrb=160035KB/s, minb=160035KB/s, maxb=160035KB/s, mint=120050msec, maxt=120050msec
-> 3 - READ: io=18174MB, aggrb=155058KB/s, minb=155058KB/s, maxb=155058KB/s, mint=120020msec, maxt=120020msec
-> 4 - READ: io=20559MB, aggrb=175407KB/s, minb=175407KB/s, maxb=175407KB/s, mint=120020msec, maxt=120020msec
+On Wed, Jan 22, 2020 at 09:28:53AM +0100, Michal Hocko wrote:
+> On Tue 21-01-20 10:32:12, Minchan Kim wrote:
+> > On Mon, Jan 20, 2020 at 08:58:25AM +0100, Michal Hocko wrote:
+> [...]
+> > > The interface really has to be robust to future potential usecases.
+> > 
+> > I do understand your concern but for me, it's chicken and egg problem.
+> > We usually do best effort to make something perfect as far as possible
+> > but we also don't do over-engineering without real usecase from the
+> > beginning.
+> > 
+> > I already told you how we could synchronize among processes and potential
+> > way to be extended Daniel suggested(That's why current API has extra field
+> > for the cookie) even though we don't need it right now.
+> 
+> If you can synchronize with the target task then you do not need a
+> remote interface. Just use ptrace and you are done with it.
 
-Could you share your exact test command?
+As I mentioned in other reply, we want to do in caller's context, not
+callee's one because target processes stay in little cores, which are
+much slower than the core the manager lives in.
+The other reason is the apps are already freezed so they couldn't response
+by ptrace.
 
-Multiple jobs may hurt performance in case of sequential IOs on HDD backend.
-Also the 1st version of the loop dio patch uses normal wq, I remembered that
-random IOperformance isn't improved much, meantime sequential IO perf drops
-with normal wq, whentesting SSD backend.
+> 
+> > If you want to suggest the other way, please explain why your idea is
+> > better and why we need it at this moment.
+> 
+> I believe I have explained my concerns and why they matter. All you are
+> saying is that you do not care because your particular usecase doesn't
+> care. And that is a first signal of a future disaster when we end up
+> with a broken and unfixable interface we have to maintain for ever.
 
-So I took kthread worker.
+We already had suggested cookie and fd based approaches so I reserved a
+argument for that to make the API extendable.
+Thing is currently it's a just optimization idea since we have several
+ways to sychronize processes(e.g., signal, cgroup freezer, userfaultfd
+and so). It's a just matter of granularity, not necessary one we should
+introduce it from the beginnig.
+If someone needs that kinds of fine-grained consistency, we could extend
+it then. And that's the usual way we make progress when we couldn't
+know the future.
 
-Thanks,
-Ming Lei
+What do you want to see further?
