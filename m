@@ -2,87 +2,71 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2D2501467F9
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Jan 2020 13:30:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 31A031467F6
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Jan 2020 13:30:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728797AbgAWMaJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 23 Jan 2020 07:30:09 -0500
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:40028 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728655AbgAWMaI (ORCPT
+        id S1728205AbgAWMaB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 23 Jan 2020 07:30:01 -0500
+Received: from mail-io1-f71.google.com ([209.85.166.71]:36705 "EHLO
+        mail-io1-f71.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726026AbgAWMaB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Jan 2020 07:30:08 -0500
-Received: by mail-wm1-f65.google.com with SMTP id t14so2334320wmi.5
-        for <linux-kernel@vger.kernel.org>; Thu, 23 Jan 2020 04:30:07 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=fGSddkn2oPOfmTp45og+40fbCbT5YOVg/hcLGMG+SRk=;
-        b=iPWd6aqZDSVrowqY+yXr1t9T8eaRJ1u9DG41qvU1O/8NZKaepvdruPPR1G72He/3ab
-         DgGnv0WNIMRDUFPC+37qhVZjcINw1xTizwvb6gP5948KHncNbjO03x2lN7Kyr27i9Pux
-         I63pzRi/28bAVU0gr1Aa1lXXrvT+KZH5r3zB7YYjqctolvbmW3nCsYXepFsDnwxloaMU
-         uzWlqF2sjgPrSFenojEg1eDKzz81bJYbYP6WWoDs0QtB+1ImRZOeUmVT1snmvSDlLq0Q
-         kyKoS6w4efa6VYEQKGe5MOuYkO8HEOe8VJL28Lj7v9eWiUjXMNkwqZ8oFEl54l/aGAPg
-         5n/w==
+        Thu, 23 Jan 2020 07:30:01 -0500
+Received: by mail-io1-f71.google.com with SMTP id d4so1920365iom.3
+        for <linux-kernel@vger.kernel.org>; Thu, 23 Jan 2020 04:30:00 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=fGSddkn2oPOfmTp45og+40fbCbT5YOVg/hcLGMG+SRk=;
-        b=BO4cFy8N+k/ubo+ImybPPhPoEvBMHG95aPOUAh9b/ZcMUILe2/K8ImHa8CV6Rk8OPI
-         shouqGzJJBZtaBo80S6w+Ih8GMuI3lhR99ybHODO194PESYcXjgttCXi5Ho0jRsfjyQL
-         GIGgA67EH+wdOYeZOJ+m/mVSxXZHVig3WMQDq5aU42ASOIM222olBAosZ4TIkDMU3vAl
-         t6TTU5JNh5suMB1ftsaORIDUt2xocyflBALVq2tIzWGWn1woi3Uk3Felgfj7Dldqw/mw
-         FWEa1iUHV612ErBwqnKZMeQRsO1QyzLQ7oclx8ZwbGWB5PpY4VOO86FuyOAV5wpbpgDz
-         jSvA==
-X-Gm-Message-State: APjAAAUDMvGuCYYkvNKsCoH1NhyBZYodaqe3t2RnOcVFW7RqILWPvGCo
-        PWGg4txc75+A+W9vtjqhPCxW8wPI6Sug7Uqhcn+Jtw3aMhU=
-X-Google-Smtp-Source: APXvYqwRdDw6IKpVxqtsb6wHOmHsoYFzKFkd0ur/MlxkxDjV/8oc+nyjFNKke74ZHCyQ/IDGPGm8XXZQ+xfwl2i5HHk=
-X-Received: by 2002:a05:600c:248:: with SMTP id 8mr2273208wmj.1.1579782606500;
- Thu, 23 Jan 2020 04:30:06 -0800 (PST)
+        h=x-gm-message-state:mime-version:date:in-reply-to:message-id:subject
+         :from:to;
+        bh=4SmMbABkY6ThQPONYy6cypBPBR0TLA6ap0ik5lnKxP8=;
+        b=ONC3dQgFumCnxJMcQ5lBetxeN63VzDruj8nFxyN5lxxouAyZZ/lhO2eDPufbQW2Uj/
+         imadePN+4b1Zg1IauCd6EgCLWNiYwVz2fnMptSRNdlZoJVGAE0Lxhw6ERoO5TLbp1Dxn
+         9OqJO68r2t+Q0vWgUzwUcS+V+qcESD2Y1Zt4q3RJxHF7Vgd7i1Y2m9JVukPcrcGlHkJ8
+         fjdKs8lBnctp+WVttWWuClx9iRmpAw1USlvxhY6Iotd7ZVtEXDCnw3+j6+s9RZGOxkJE
+         iOMRyJDtTvR5xYf38hr/2BNBRgSOykVdxGeg3t2HQzKaWvxuuZ4NYVKCAchKkj8Y7iub
+         vjHw==
+X-Gm-Message-State: APjAAAWKx2D8JBxBiLSSJkE3FTqt7zQ+tgYB71uehb+wZhm8b4eP2+El
+        DqqVnSeO14BSZl57zbFrnXm2W/wA2ABkNyYuw+6edmM6p7xA
+X-Google-Smtp-Source: APXvYqxSAwAGR1DUOhT8OmC+2lHPf8M7QnvokXyKxJl/MwEFN5SFQHJSUSrgtfrCq2Tq9CKYo7cWSjIffVV6IYpiJW39NHXvxpk0
 MIME-Version: 1.0
-References: <20200114141647.109347-1-ardb@kernel.org> <20200114141647.109347-3-ardb@kernel.org>
- <ada03416b1b362fa255feb45257414655d8ab023.camel@linux.intel.com>
-In-Reply-To: <ada03416b1b362fa255feb45257414655d8ab023.camel@linux.intel.com>
-From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Date:   Thu, 23 Jan 2020 13:29:55 +0100
-Message-ID: <CAKv+Gu-9KvzLEcNQnRfsOkU=5oc1otY_NS15fR5Oi4Z4UVvurw@mail.gmail.com>
-Subject: Re: [PATCH v2 2/2] tpm: tis: add support for MMIO TPM on SynQuacer
-To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Cc:     Ard Biesheuvel <ardb@kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        Masahisa Kojima <masahisa.kojima@linaro.org>,
-        Devicetree List <devicetree@vger.kernel.org>,
-        linux-integrity <linux-integrity@vger.kernel.org>,
-        =?UTF-8?Q?Peter_H=C3=BCwe?= <peterhuewe@gmx.de>,
-        Jason Gunthorpe <jgg@ziepe.ca>
+X-Received: by 2002:a5e:aa12:: with SMTP id s18mr10205269ioe.182.1579782600551;
+ Thu, 23 Jan 2020 04:30:00 -0800 (PST)
+Date:   Thu, 23 Jan 2020 04:30:00 -0800
+In-Reply-To: <00000000000014b040059c654481@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000ba7772059ccdcc7b@google.com>
+Subject: Re: WARNING in nf_tables_table_destroy
+From:   syzbot <syzbot+2a3b1b28cad90c608e20@syzkaller.appspotmail.com>
+To:     coreteam@netfilter.org, davem@davemloft.net, fw@strlen.de,
+        kadlec@netfilter.org, linux-kernel@vger.kernel.org,
+        netdev@vger.kernel.org, netfilter-devel@vger.kernel.org,
+        pablo@netfilter.org, syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 23 Jan 2020 at 13:27, Jarkko Sakkinen
-<jarkko.sakkinen@linux.intel.com> wrote:
->
-> On Tue, 2020-01-14 at 15:16 +0100, Ard Biesheuvel wrote:
-> > When fitted, the SynQuacer platform exposes its SPI TPM via a MMIO
-> > window that is backed by the SPI command sequencer in the SPI bus
-> > controller. This arrangement has the limitation that only byte size
-> > accesses are supported, and so we'll need to provide a separate set
-> > of read and write accessors that take this into account.
->
-> What is SynQuacer platform?
->
+syzbot has bisected this bug to:
 
-It is an arm64 SoC manufactured by Socionext.
+commit ec7470b834fe7b5d7eff11b6677f5d7fdf5e9a91
+Author: Pablo Neira Ayuso <pablo@netfilter.org>
+Date:   Mon Jan 13 17:09:58 2020 +0000
 
-> I'm also missing a resolution why tpm_tis.c is extended to handle both
-> and not add tpm_tis_something.c instead. It does not follow the pattern
-> we have in place (e.g. look up tpm_tis_spi.c).
->
+    netfilter: nf_tables: store transaction list locally while requesting module
 
-We could easily do that instead, if preferred. It's just that it would
-duplicate a bit of code.
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=12c2ef59e00000
+start commit:   5a9ef194 net: systemport: Fixed queue mapping in internal ..
+git tree:       net
+final crash:    https://syzkaller.appspot.com/x/report.txt?x=11c2ef59e00000
+console output: https://syzkaller.appspot.com/x/log.txt?x=16c2ef59e00000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=7e89bd00623fe71e
+dashboard link: https://syzkaller.appspot.com/bug?extid=2a3b1b28cad90c608e20
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=15338966e00000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1667d8d6e00000
+
+Reported-by: syzbot+2a3b1b28cad90c608e20@syzkaller.appspotmail.com
+Fixes: ec7470b834fe ("netfilter: nf_tables: store transaction list locally while requesting module")
+
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
