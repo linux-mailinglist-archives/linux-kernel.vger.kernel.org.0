@@ -2,26 +2,26 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3B6451472B0
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Jan 2020 21:40:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6743F1472BD
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Jan 2020 21:40:48 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729496AbgAWUj7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 23 Jan 2020 15:39:59 -0500
-Received: from mail.kernel.org ([198.145.29.99]:45974 "EHLO mail.kernel.org"
+        id S1729332AbgAWUkl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 23 Jan 2020 15:40:41 -0500
+Received: from mail.kernel.org ([198.145.29.99]:45990 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729158AbgAWUjr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1729318AbgAWUjr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Thu, 23 Jan 2020 15:39:47 -0500
 Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 579C22468E;
+        by mail.kernel.org (Postfix) with ESMTPSA id 8076424698;
         Thu, 23 Jan 2020 20:39:46 +0000 (UTC)
 Received: from rostedt by gandalf.local.home with local (Exim 4.93)
         (envelope-from <rostedt@goodmis.org>)
-        id 1iujGT-000mdh-99; Thu, 23 Jan 2020 15:39:45 -0500
-Message-Id: <20200123203945.169927322@goodmis.org>
+        id 1iujGT-000meB-Dw; Thu, 23 Jan 2020 15:39:45 -0500
+Message-Id: <20200123203945.314725398@goodmis.org>
 User-Agent: quilt/0.65
-Date:   Thu, 23 Jan 2020 15:39:50 -0500
+Date:   Thu, 23 Jan 2020 15:39:51 -0500
 From:   Steven Rostedt <rostedt@goodmis.org>
 To:     linux-kernel@vger.kernel.org,
         linux-rt-users <linux-rt-users@vger.kernel.org>
@@ -31,11 +31,10 @@ Cc:     Thomas Gleixner <tglx@linutronix.de>,
         John Kacur <jkacur@redhat.com>,
         Julia Cartwright <julia@ni.com>,
         Daniel Wagner <wagi@monom.org>,
-        Tom Zanussi <zanussi@kernel.org>,
-        Andre Przywara <andre.przywara@arm.com>,
-        Julien Grall <julien.grall@arm.com>,
-        Andrey Ryabinin <aryabinin@virtuozzo.com>
-Subject: [PATCH RT 20/30] lib/ubsan: Dont seralize UBSAN report
+        Tom Zanussi <zanussi@kernel.org>, stable-rt@vger.kernel.org,
+        Liu Haitao <haitao.liu@windriver.com>,
+        Yongxin Liu <yongxin.liu@windriver.com>
+Subject: [PATCH RT 21/30] kmemleak: Change the lock of kmemleak_object to raw_spinlock_t
 References: <20200123203930.646725253@goodmis.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-15
@@ -49,307 +48,291 @@ If anyone has any objections, please let me know.
 
 ------------------
 
-From: Julien Grall <julien.grall@arm.com>
+From: Liu Haitao <haitao.liu@windriver.com>
 
-[ Upstream commit 4702c28ac777b27acb499cbd5e8e787ce1a7d82d ]
+[ Upstream commit 217847f57119b5fdd377bfa3d344613ddb98d9fc ]
 
-At the moment, UBSAN report will be serialized using a spin_lock(). On
-RT-systems, spinlocks are turned to rt_spin_lock and may sleep. This will
-result to the following splat if the undefined behavior is in a context
-that can sleep:
+The commit ("kmemleak: Turn kmemleak_lock to raw spinlock on RT")
+changed the kmemleak_lock to raw spinlock. However the
+kmemleak_object->lock is held after the kmemleak_lock is held in
+scan_block().
 
-| BUG: sleeping function called from invalid context at /src/linux/kernel/locking/rtmutex.c:968
-| in_atomic(): 1, irqs_disabled(): 128, pid: 3447, name: make
-| 1 lock held by make/3447:
-|  #0: 000000009a966332 (&mm->mmap_sem){++++}, at: do_page_fault+0x140/0x4f8
-| Preemption disabled at:
-| [<ffff000011324a4c>] rt_mutex_futex_unlock+0x4c/0xb0
-| CPU: 3 PID: 3447 Comm: make Tainted: G        W         5.2.14-rt7-01890-ge6e057589653 #911
-| Call trace:
-|  dump_backtrace+0x0/0x148
-|  show_stack+0x14/0x20
-|  dump_stack+0xbc/0x104
-|  ___might_sleep+0x154/0x210
-|  rt_spin_lock+0x68/0xa0
-|  ubsan_prologue+0x30/0x68
-|  handle_overflow+0x64/0xe0
-|  __ubsan_handle_add_overflow+0x10/0x18
-|  __lock_acquire+0x1c28/0x2a28
-|  lock_acquire+0xf0/0x370
-|  _raw_spin_lock_irqsave+0x58/0x78
-|  rt_mutex_futex_unlock+0x4c/0xb0
-|  rt_spin_unlock+0x28/0x70
-|  get_page_from_freelist+0x428/0x2b60
-|  __alloc_pages_nodemask+0x174/0x1708
-|  alloc_pages_vma+0x1ac/0x238
-|  __handle_mm_fault+0x4ac/0x10b0
-|  handle_mm_fault+0x1d8/0x3b0
-|  do_page_fault+0x1c8/0x4f8
-|  do_translation_fault+0xb8/0xe0
-|  do_mem_abort+0x3c/0x98
-|  el0_da+0x20/0x24
+Make the object->lock a raw_spinlock_t.
 
-The spin_lock() will protect against multiple CPUs to output a report
-together, I guess to prevent them to be interleaved. However, they can
-still interleave with other messages (and even splat from __migth_sleep).
-
-So the lock usefulness seems pretty limited. Rather than trying to
-accomodate RT-system by switching to a raw_spin_lock(), the lock is now
-completely dropped.
-
-Link: https://lkml.kernel.org/r/20190920100835.14999-1-julien.grall@arm.com
-Reported-by: Andre Przywara <andre.przywara@arm.com>
-Signed-off-by: Julien Grall <julien.grall@arm.com>
-Acked-by: Andrey Ryabinin <aryabinin@virtuozzo.com>
+Cc: stable-rt@vger.kernel.org
+Link: https://lkml.kernel.org/r/20190927082230.34152-1-yongxin.liu@windriver.com
+Signed-off-by: Liu Haitao <haitao.liu@windriver.com>
+Signed-off-by: Yongxin Liu <yongxin.liu@windriver.com>
 Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
 Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
 ---
- lib/ubsan.c | 64 +++++++++++++++++++----------------------------------
- 1 file changed, 23 insertions(+), 41 deletions(-)
+ mm/kmemleak.c | 72 +++++++++++++++++++++++++--------------------------
+ 1 file changed, 36 insertions(+), 36 deletions(-)
 
-diff --git a/lib/ubsan.c b/lib/ubsan.c
-index 1e9e2ab25539..5830cc9a2164 100644
---- a/lib/ubsan.c
-+++ b/lib/ubsan.c
-@@ -143,25 +143,21 @@ static void val_to_string(char *str, size_t size, struct type_descriptor *type,
+diff --git a/mm/kmemleak.c b/mm/kmemleak.c
+index 92ce99b15f2b..e5f5eeed338d 100644
+--- a/mm/kmemleak.c
++++ b/mm/kmemleak.c
+@@ -147,7 +147,7 @@ struct kmemleak_scan_area {
+  * (use_count) and freed using the RCU mechanism.
+  */
+ struct kmemleak_object {
+-	spinlock_t lock;
++	raw_spinlock_t lock;
+ 	unsigned int flags;		/* object status flags */
+ 	struct list_head object_list;
+ 	struct list_head gray_list;
+@@ -561,7 +561,7 @@ static struct kmemleak_object *create_object(unsigned long ptr, size_t size,
+ 	INIT_LIST_HEAD(&object->object_list);
+ 	INIT_LIST_HEAD(&object->gray_list);
+ 	INIT_HLIST_HEAD(&object->area_list);
+-	spin_lock_init(&object->lock);
++	raw_spin_lock_init(&object->lock);
+ 	atomic_set(&object->use_count, 1);
+ 	object->flags = OBJECT_ALLOCATED;
+ 	object->pointer = ptr;
+@@ -642,9 +642,9 @@ static void __delete_object(struct kmemleak_object *object)
+ 	 * Locking here also ensures that the corresponding memory block
+ 	 * cannot be freed when it is being scanned.
+ 	 */
+-	spin_lock_irqsave(&object->lock, flags);
++	raw_spin_lock_irqsave(&object->lock, flags);
+ 	object->flags &= ~OBJECT_ALLOCATED;
+-	spin_unlock_irqrestore(&object->lock, flags);
++	raw_spin_unlock_irqrestore(&object->lock, flags);
+ 	put_object(object);
+ }
+ 
+@@ -716,9 +716,9 @@ static void paint_it(struct kmemleak_object *object, int color)
+ {
+ 	unsigned long flags;
+ 
+-	spin_lock_irqsave(&object->lock, flags);
++	raw_spin_lock_irqsave(&object->lock, flags);
+ 	__paint_it(object, color);
+-	spin_unlock_irqrestore(&object->lock, flags);
++	raw_spin_unlock_irqrestore(&object->lock, flags);
+ }
+ 
+ static void paint_ptr(unsigned long ptr, int color)
+@@ -778,7 +778,7 @@ static void add_scan_area(unsigned long ptr, size_t size, gfp_t gfp)
+ 		goto out;
  	}
+ 
+-	spin_lock_irqsave(&object->lock, flags);
++	raw_spin_lock_irqsave(&object->lock, flags);
+ 	if (size == SIZE_MAX) {
+ 		size = object->pointer + object->size - ptr;
+ 	} else if (ptr + size > object->pointer + object->size) {
+@@ -794,7 +794,7 @@ static void add_scan_area(unsigned long ptr, size_t size, gfp_t gfp)
+ 
+ 	hlist_add_head(&area->node, &object->area_list);
+ out_unlock:
+-	spin_unlock_irqrestore(&object->lock, flags);
++	raw_spin_unlock_irqrestore(&object->lock, flags);
+ out:
+ 	put_object(object);
  }
- 
--static DEFINE_SPINLOCK(report_lock);
--
--static void ubsan_prologue(struct source_location *location,
--			unsigned long *flags)
-+static void ubsan_prologue(struct source_location *location)
- {
- 	current->in_ubsan++;
--	spin_lock_irqsave(&report_lock, *flags);
- 
- 	pr_err("========================================"
- 		"========================================\n");
- 	print_source_location("UBSAN: Undefined behaviour in", location);
- }
- 
--static void ubsan_epilogue(unsigned long *flags)
-+static void ubsan_epilogue(void)
- {
- 	dump_stack();
- 	pr_err("========================================"
- 		"========================================\n");
--	spin_unlock_irqrestore(&report_lock, *flags);
-+
- 	current->in_ubsan--;
- }
- 
-@@ -170,14 +166,13 @@ static void handle_overflow(struct overflow_data *data, void *lhs,
- {
- 
- 	struct type_descriptor *type = data->type;
--	unsigned long flags;
- 	char lhs_val_str[VALUE_LENGTH];
- 	char rhs_val_str[VALUE_LENGTH];
- 
- 	if (suppress_report(&data->location))
+@@ -817,9 +817,9 @@ static void object_set_excess_ref(unsigned long ptr, unsigned long excess_ref)
  		return;
+ 	}
  
--	ubsan_prologue(&data->location, &flags);
-+	ubsan_prologue(&data->location);
- 
- 	val_to_string(lhs_val_str, sizeof(lhs_val_str), type, lhs);
- 	val_to_string(rhs_val_str, sizeof(rhs_val_str), type, rhs);
-@@ -189,7 +184,7 @@ static void handle_overflow(struct overflow_data *data, void *lhs,
- 		rhs_val_str,
- 		type->type_name);
- 
--	ubsan_epilogue(&flags);
-+	ubsan_epilogue();
+-	spin_lock_irqsave(&object->lock, flags);
++	raw_spin_lock_irqsave(&object->lock, flags);
+ 	object->excess_ref = excess_ref;
+-	spin_unlock_irqrestore(&object->lock, flags);
++	raw_spin_unlock_irqrestore(&object->lock, flags);
+ 	put_object(object);
  }
  
- void __ubsan_handle_add_overflow(struct overflow_data *data,
-@@ -217,20 +212,19 @@ EXPORT_SYMBOL(__ubsan_handle_mul_overflow);
- void __ubsan_handle_negate_overflow(struct overflow_data *data,
- 				void *old_val)
- {
--	unsigned long flags;
- 	char old_val_str[VALUE_LENGTH];
- 
- 	if (suppress_report(&data->location))
+@@ -839,9 +839,9 @@ static void object_no_scan(unsigned long ptr)
  		return;
+ 	}
  
--	ubsan_prologue(&data->location, &flags);
-+	ubsan_prologue(&data->location);
- 
- 	val_to_string(old_val_str, sizeof(old_val_str), data->type, old_val);
- 
- 	pr_err("negation of %s cannot be represented in type %s:\n",
- 		old_val_str, data->type->type_name);
- 
--	ubsan_epilogue(&flags);
-+	ubsan_epilogue();
+-	spin_lock_irqsave(&object->lock, flags);
++	raw_spin_lock_irqsave(&object->lock, flags);
+ 	object->flags |= OBJECT_NO_SCAN;
+-	spin_unlock_irqrestore(&object->lock, flags);
++	raw_spin_unlock_irqrestore(&object->lock, flags);
+ 	put_object(object);
  }
- EXPORT_SYMBOL(__ubsan_handle_negate_overflow);
  
-@@ -238,13 +232,12 @@ EXPORT_SYMBOL(__ubsan_handle_negate_overflow);
- void __ubsan_handle_divrem_overflow(struct overflow_data *data,
- 				void *lhs, void *rhs)
- {
--	unsigned long flags;
- 	char rhs_val_str[VALUE_LENGTH];
- 
- 	if (suppress_report(&data->location))
+@@ -902,11 +902,11 @@ static void early_alloc(struct early_log *log)
+ 			       log->min_count, GFP_ATOMIC);
+ 	if (!object)
+ 		goto out;
+-	spin_lock_irqsave(&object->lock, flags);
++	raw_spin_lock_irqsave(&object->lock, flags);
+ 	for (i = 0; i < log->trace_len; i++)
+ 		object->trace[i] = log->trace[i];
+ 	object->trace_len = log->trace_len;
+-	spin_unlock_irqrestore(&object->lock, flags);
++	raw_spin_unlock_irqrestore(&object->lock, flags);
+ out:
+ 	rcu_read_unlock();
+ }
+@@ -1096,9 +1096,9 @@ void __ref kmemleak_update_trace(const void *ptr)
  		return;
+ 	}
  
--	ubsan_prologue(&data->location, &flags);
-+	ubsan_prologue(&data->location);
+-	spin_lock_irqsave(&object->lock, flags);
++	raw_spin_lock_irqsave(&object->lock, flags);
+ 	object->trace_len = __save_stack_trace(object->trace);
+-	spin_unlock_irqrestore(&object->lock, flags);
++	raw_spin_unlock_irqrestore(&object->lock, flags);
  
- 	val_to_string(rhs_val_str, sizeof(rhs_val_str), data->type, rhs);
- 
-@@ -254,58 +247,52 @@ void __ubsan_handle_divrem_overflow(struct overflow_data *data,
- 	else
- 		pr_err("division by zero\n");
- 
--	ubsan_epilogue(&flags);
-+	ubsan_epilogue();
+ 	put_object(object);
  }
- EXPORT_SYMBOL(__ubsan_handle_divrem_overflow);
+@@ -1344,7 +1344,7 @@ static void scan_block(void *_start, void *_end,
+ 		 * previously acquired in scan_object(). These locks are
+ 		 * enclosed by scan_mutex.
+ 		 */
+-		spin_lock_nested(&object->lock, SINGLE_DEPTH_NESTING);
++		raw_spin_lock_nested(&object->lock, SINGLE_DEPTH_NESTING);
+ 		/* only pass surplus references (object already gray) */
+ 		if (color_gray(object)) {
+ 			excess_ref = object->excess_ref;
+@@ -1353,7 +1353,7 @@ static void scan_block(void *_start, void *_end,
+ 			excess_ref = 0;
+ 			update_refs(object);
+ 		}
+-		spin_unlock(&object->lock);
++		raw_spin_unlock(&object->lock);
  
- static void handle_null_ptr_deref(struct type_mismatch_data_common *data)
- {
--	unsigned long flags;
--
- 	if (suppress_report(data->location))
- 		return;
+ 		if (excess_ref) {
+ 			object = lookup_object(excess_ref, 0);
+@@ -1362,9 +1362,9 @@ static void scan_block(void *_start, void *_end,
+ 			if (object == scanned)
+ 				/* circular reference, ignore */
+ 				continue;
+-			spin_lock_nested(&object->lock, SINGLE_DEPTH_NESTING);
++			raw_spin_lock_nested(&object->lock, SINGLE_DEPTH_NESTING);
+ 			update_refs(object);
+-			spin_unlock(&object->lock);
++			raw_spin_unlock(&object->lock);
+ 		}
+ 	}
+ 	raw_spin_unlock_irqrestore(&kmemleak_lock, flags);
+@@ -1400,7 +1400,7 @@ static void scan_object(struct kmemleak_object *object)
+ 	 * Once the object->lock is acquired, the corresponding memory block
+ 	 * cannot be freed (the same lock is acquired in delete_object).
+ 	 */
+-	spin_lock_irqsave(&object->lock, flags);
++	raw_spin_lock_irqsave(&object->lock, flags);
+ 	if (object->flags & OBJECT_NO_SCAN)
+ 		goto out;
+ 	if (!(object->flags & OBJECT_ALLOCATED))
+@@ -1419,9 +1419,9 @@ static void scan_object(struct kmemleak_object *object)
+ 			if (start >= end)
+ 				break;
  
--	ubsan_prologue(data->location, &flags);
-+	ubsan_prologue(data->location);
- 
- 	pr_err("%s null pointer of type %s\n",
- 		type_check_kinds[data->type_check_kind],
- 		data->type->type_name);
- 
--	ubsan_epilogue(&flags);
-+	ubsan_epilogue();
- }
- 
- static void handle_misaligned_access(struct type_mismatch_data_common *data,
- 				unsigned long ptr)
- {
--	unsigned long flags;
--
- 	if (suppress_report(data->location))
- 		return;
- 
--	ubsan_prologue(data->location, &flags);
-+	ubsan_prologue(data->location);
- 
- 	pr_err("%s misaligned address %p for type %s\n",
- 		type_check_kinds[data->type_check_kind],
- 		(void *)ptr, data->type->type_name);
- 	pr_err("which requires %ld byte alignment\n", data->alignment);
- 
--	ubsan_epilogue(&flags);
-+	ubsan_epilogue();
- }
- 
- static void handle_object_size_mismatch(struct type_mismatch_data_common *data,
- 					unsigned long ptr)
- {
--	unsigned long flags;
--
- 	if (suppress_report(data->location))
- 		return;
- 
--	ubsan_prologue(data->location, &flags);
-+	ubsan_prologue(data->location);
- 	pr_err("%s address %p with insufficient space\n",
- 		type_check_kinds[data->type_check_kind],
- 		(void *) ptr);
- 	pr_err("for an object of type %s\n", data->type->type_name);
--	ubsan_epilogue(&flags);
-+	ubsan_epilogue();
+-			spin_unlock_irqrestore(&object->lock, flags);
++			raw_spin_unlock_irqrestore(&object->lock, flags);
+ 			cond_resched();
+-			spin_lock_irqsave(&object->lock, flags);
++			raw_spin_lock_irqsave(&object->lock, flags);
+ 		} while (object->flags & OBJECT_ALLOCATED);
+ 	} else
+ 		hlist_for_each_entry(area, &object->area_list, node)
+@@ -1429,7 +1429,7 @@ static void scan_object(struct kmemleak_object *object)
+ 				   (void *)(area->start + area->size),
+ 				   object);
+ out:
+-	spin_unlock_irqrestore(&object->lock, flags);
++	raw_spin_unlock_irqrestore(&object->lock, flags);
  }
  
- static void ubsan_type_mismatch_common(struct type_mismatch_data_common *data,
-@@ -369,25 +356,23 @@ EXPORT_SYMBOL(__ubsan_handle_vla_bound_not_positive);
+ /*
+@@ -1482,7 +1482,7 @@ static void kmemleak_scan(void)
+ 	/* prepare the kmemleak_object's */
+ 	rcu_read_lock();
+ 	list_for_each_entry_rcu(object, &object_list, object_list) {
+-		spin_lock_irqsave(&object->lock, flags);
++		raw_spin_lock_irqsave(&object->lock, flags);
+ #ifdef DEBUG
+ 		/*
+ 		 * With a few exceptions there should be a maximum of
+@@ -1499,7 +1499,7 @@ static void kmemleak_scan(void)
+ 		if (color_gray(object) && get_object(object))
+ 			list_add_tail(&object->gray_list, &gray_list);
  
- void __ubsan_handle_out_of_bounds(struct out_of_bounds_data *data, void *index)
- {
--	unsigned long flags;
- 	char index_str[VALUE_LENGTH];
+-		spin_unlock_irqrestore(&object->lock, flags);
++		raw_spin_unlock_irqrestore(&object->lock, flags);
+ 	}
+ 	rcu_read_unlock();
  
- 	if (suppress_report(&data->location))
- 		return;
+@@ -1564,14 +1564,14 @@ static void kmemleak_scan(void)
+ 	 */
+ 	rcu_read_lock();
+ 	list_for_each_entry_rcu(object, &object_list, object_list) {
+-		spin_lock_irqsave(&object->lock, flags);
++		raw_spin_lock_irqsave(&object->lock, flags);
+ 		if (color_white(object) && (object->flags & OBJECT_ALLOCATED)
+ 		    && update_checksum(object) && get_object(object)) {
+ 			/* color it gray temporarily */
+ 			object->count = object->min_count;
+ 			list_add_tail(&object->gray_list, &gray_list);
+ 		}
+-		spin_unlock_irqrestore(&object->lock, flags);
++		raw_spin_unlock_irqrestore(&object->lock, flags);
+ 	}
+ 	rcu_read_unlock();
  
--	ubsan_prologue(&data->location, &flags);
-+	ubsan_prologue(&data->location);
+@@ -1591,13 +1591,13 @@ static void kmemleak_scan(void)
+ 	 */
+ 	rcu_read_lock();
+ 	list_for_each_entry_rcu(object, &object_list, object_list) {
+-		spin_lock_irqsave(&object->lock, flags);
++		raw_spin_lock_irqsave(&object->lock, flags);
+ 		if (unreferenced_object(object) &&
+ 		    !(object->flags & OBJECT_REPORTED)) {
+ 			object->flags |= OBJECT_REPORTED;
+ 			new_leaks++;
+ 		}
+-		spin_unlock_irqrestore(&object->lock, flags);
++		raw_spin_unlock_irqrestore(&object->lock, flags);
+ 	}
+ 	rcu_read_unlock();
  
- 	val_to_string(index_str, sizeof(index_str), data->index_type, index);
- 	pr_err("index %s is out of range for type %s\n", index_str,
- 		data->array_type->type_name);
--	ubsan_epilogue(&flags);
-+	ubsan_epilogue();
+@@ -1749,10 +1749,10 @@ static int kmemleak_seq_show(struct seq_file *seq, void *v)
+ 	struct kmemleak_object *object = v;
+ 	unsigned long flags;
+ 
+-	spin_lock_irqsave(&object->lock, flags);
++	raw_spin_lock_irqsave(&object->lock, flags);
+ 	if ((object->flags & OBJECT_REPORTED) && unreferenced_object(object))
+ 		print_unreferenced(seq, object);
+-	spin_unlock_irqrestore(&object->lock, flags);
++	raw_spin_unlock_irqrestore(&object->lock, flags);
+ 	return 0;
  }
- EXPORT_SYMBOL(__ubsan_handle_out_of_bounds);
  
- void __ubsan_handle_shift_out_of_bounds(struct shift_out_of_bounds_data *data,
- 					void *lhs, void *rhs)
- {
--	unsigned long flags;
- 	struct type_descriptor *rhs_type = data->rhs_type;
- 	struct type_descriptor *lhs_type = data->lhs_type;
- 	char rhs_str[VALUE_LENGTH];
-@@ -396,7 +381,7 @@ void __ubsan_handle_shift_out_of_bounds(struct shift_out_of_bounds_data *data,
- 	if (suppress_report(&data->location))
- 		return;
+@@ -1782,9 +1782,9 @@ static int dump_str_object_info(const char *str)
+ 		return -EINVAL;
+ 	}
  
--	ubsan_prologue(&data->location, &flags);
-+	ubsan_prologue(&data->location);
+-	spin_lock_irqsave(&object->lock, flags);
++	raw_spin_lock_irqsave(&object->lock, flags);
+ 	dump_object_info(object);
+-	spin_unlock_irqrestore(&object->lock, flags);
++	raw_spin_unlock_irqrestore(&object->lock, flags);
  
- 	val_to_string(rhs_str, sizeof(rhs_str), rhs_type, rhs);
- 	val_to_string(lhs_str, sizeof(lhs_str), lhs_type, lhs);
-@@ -419,18 +404,16 @@ void __ubsan_handle_shift_out_of_bounds(struct shift_out_of_bounds_data *data,
- 			lhs_str, rhs_str,
- 			lhs_type->type_name);
+ 	put_object(object);
+ 	return 0;
+@@ -1803,11 +1803,11 @@ static void kmemleak_clear(void)
  
--	ubsan_epilogue(&flags);
-+	ubsan_epilogue();
- }
- EXPORT_SYMBOL(__ubsan_handle_shift_out_of_bounds);
+ 	rcu_read_lock();
+ 	list_for_each_entry_rcu(object, &object_list, object_list) {
+-		spin_lock_irqsave(&object->lock, flags);
++		raw_spin_lock_irqsave(&object->lock, flags);
+ 		if ((object->flags & OBJECT_REPORTED) &&
+ 		    unreferenced_object(object))
+ 			__paint_it(object, KMEMLEAK_GREY);
+-		spin_unlock_irqrestore(&object->lock, flags);
++		raw_spin_unlock_irqrestore(&object->lock, flags);
+ 	}
+ 	rcu_read_unlock();
  
- 
- void __ubsan_handle_builtin_unreachable(struct unreachable_data *data)
- {
--	unsigned long flags;
--
--	ubsan_prologue(&data->location, &flags);
-+	ubsan_prologue(&data->location);
- 	pr_err("calling __builtin_unreachable()\n");
--	ubsan_epilogue(&flags);
-+	ubsan_epilogue();
- 	panic("can't return from __builtin_unreachable()");
- }
- EXPORT_SYMBOL(__ubsan_handle_builtin_unreachable);
-@@ -438,19 +421,18 @@ EXPORT_SYMBOL(__ubsan_handle_builtin_unreachable);
- void __ubsan_handle_load_invalid_value(struct invalid_value_data *data,
- 				void *val)
- {
--	unsigned long flags;
- 	char val_str[VALUE_LENGTH];
- 
- 	if (suppress_report(&data->location))
- 		return;
- 
--	ubsan_prologue(&data->location, &flags);
-+	ubsan_prologue(&data->location);
- 
- 	val_to_string(val_str, sizeof(val_str), data->type, val);
- 
- 	pr_err("load of value %s is not a valid value for type %s\n",
- 		val_str, data->type->type_name);
- 
--	ubsan_epilogue(&flags);
-+	ubsan_epilogue();
- }
- EXPORT_SYMBOL(__ubsan_handle_load_invalid_value);
 -- 
 2.24.1
 
