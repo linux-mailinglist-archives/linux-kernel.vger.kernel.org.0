@@ -2,48 +2,48 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 563C114671B
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Jan 2020 12:45:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7575B14670F
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Jan 2020 12:45:27 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729075AbgAWLpH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 23 Jan 2020 06:45:07 -0500
-Received: from fllv0015.ext.ti.com ([198.47.19.141]:51390 "EHLO
-        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729014AbgAWLpG (ORCPT
+        id S1729146AbgAWLpO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 23 Jan 2020 06:45:14 -0500
+Received: from lelv0142.ext.ti.com ([198.47.23.249]:53892 "EHLO
+        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729099AbgAWLpK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Jan 2020 06:45:06 -0500
+        Thu, 23 Jan 2020 06:45:10 -0500
 Received: from fllv0035.itg.ti.com ([10.64.41.0])
-        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 00NBivDZ130112;
-        Thu, 23 Jan 2020 05:44:57 -0600
+        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id 00NBj06I023604;
+        Thu, 23 Jan 2020 05:45:00 -0600
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1579779897;
-        bh=4yZdLht/dF2W+8Ik5Mp0clG2tpniIX/fKRbolmG+ZKg=;
+        s=ti-com-17Q1; t=1579779900;
+        bh=hwo4SPzQcYRWYiFG/PnL0FoCUy64iM7gQWTEm4b6sPc=;
         h=From:To:CC:Subject:Date:In-Reply-To:References;
-        b=IqoN+eLrB+4iye2ex3jePqIHN14uhbkXg6Jh7uq/bE5WehqjeEKnkFV9gSvDrQHyG
-         UTlAJ0b4DSalTVnqV+qTYv65SWBgrv/1eHgNSIcGBLGxxXpD2onV8MkMhIXYM53Mad
-         ErHJtp5cyAVeKkskaQE6dV3j+plCxo+JRtrkgj6Y=
-Received: from DLEE103.ent.ti.com (dlee103.ent.ti.com [157.170.170.33])
-        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTP id 00NBivxH060580;
-        Thu, 23 Jan 2020 05:44:57 -0600
-Received: from DLEE112.ent.ti.com (157.170.170.23) by DLEE103.ent.ti.com
- (157.170.170.33) with Microsoft SMTP Server (version=TLS1_2,
+        b=s5aVkRgp4/GnH/6N5jciJ5qY3jK0n/NUUhuTuVl+2IsKg1mnd6PTqd933NQbiGQl3
+         wT6Nhux8B6hxdcLPHiuYluKh2U2T5dzXV8cXjeGTR5lgD1m87r8SD/eJbQN8yE+2lY
+         vMnJJHtPNbWGY0rihvbfVtn2w4KlbtA2BEtE3xHc=
+Received: from DFLE103.ent.ti.com (dfle103.ent.ti.com [10.64.6.24])
+        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTP id 00NBj0xY060592;
+        Thu, 23 Jan 2020 05:45:00 -0600
+Received: from DFLE103.ent.ti.com (10.64.6.24) by DFLE103.ent.ti.com
+ (10.64.6.24) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Thu, 23
- Jan 2020 05:44:57 -0600
-Received: from fllv0040.itg.ti.com (10.64.41.20) by DLEE112.ent.ti.com
- (157.170.170.23) with Microsoft SMTP Server (version=TLS1_2,
+ Jan 2020 05:44:59 -0600
+Received: from fllv0040.itg.ti.com (10.64.41.20) by DFLE103.ent.ti.com
+ (10.64.6.24) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
- Frontend Transport; Thu, 23 Jan 2020 05:44:57 -0600
+ Frontend Transport; Thu, 23 Jan 2020 05:44:59 -0600
 Received: from feketebors.ti.com (ileax41-snat.itg.ti.com [10.172.224.153])
-        by fllv0040.itg.ti.com (8.15.2/8.15.2) with ESMTP id 00NBijBH114078;
-        Thu, 23 Jan 2020 05:44:55 -0600
+        by fllv0040.itg.ti.com (8.15.2/8.15.2) with ESMTP id 00NBijBI114078;
+        Thu, 23 Jan 2020 05:44:57 -0600
 From:   Peter Ujfalusi <peter.ujfalusi@ti.com>
 To:     <t-kristo@ti.com>, <nm@ti.com>, <lokeshvutla@ti.com>
 CC:     <robh+dt@kernel.org>, <mark.rutland@arm.com>,
         <linux-arm-kernel@lists.infradead.org>,
         <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: [PATCH v3 4/9] arm64: dts: ti: k3-j721e: Correct the address for MAIN NAVSS
-Date:   Thu, 23 Jan 2020 13:45:23 +0200
-Message-ID: <20200123114528.26552-5-peter.ujfalusi@ti.com>
+Subject: [PATCH v3 5/9] arm64: dts: ti: k3-j721e-main: Correct main NAVSS representation
+Date:   Thu, 23 Jan 2020 13:45:24 +0200
+Message-ID: <20200123114528.26552-6-peter.ujfalusi@ti.com>
 X-Mailer: git-send-email 2.25.0
 In-Reply-To: <20200123114528.26552-1-peter.ujfalusi@ti.com>
 References: <20200123114528.26552-1-peter.ujfalusi@ti.com>
@@ -56,27 +56,29 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On am654 the MAIN NAVSS base address was 0x30800000, but in j721e it is
-at 0x30000000
+NAVSS is a subsystem containing different IPs, it is not really a bus.
+Change the compatible from "simple-bus" to "simple-mfd" to reflect that.
 
 Signed-off-by: Peter Ujfalusi <peter.ujfalusi@ti.com>
 ---
- arch/arm64/boot/dts/ti/k3-j721e.dtsi | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/arm64/boot/dts/ti/k3-j721e-main.dtsi | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/ti/k3-j721e.dtsi b/arch/arm64/boot/dts/ti/k3-j721e.dtsi
-index ee5470edb435..027bd1febafa 100644
---- a/arch/arm64/boot/dts/ti/k3-j721e.dtsi
-+++ b/arch/arm64/boot/dts/ti/k3-j721e.dtsi
-@@ -130,7 +130,7 @@ cbass_main: interconnect@100000 {
- 			 <0x00 0x06000000 0x00 0x06000000 0x00 0x00400000>, /* USBSS0 */
- 			 <0x00 0x06400000 0x00 0x06400000 0x00 0x00400000>, /* USBSS1 */
- 			 <0x00 0x01000000 0x00 0x01000000 0x00 0x0af02400>, /* Most peripherals */
--			 <0x00 0x30800000 0x00 0x30800000 0x00 0x0bc00000>, /* MAIN NAVSS */
-+			 <0x00 0x30000000 0x00 0x30000000 0x00 0x0c400000>, /* MAIN NAVSS */
- 			 <0x00 0x0d000000 0x00 0x0d000000 0x00 0x01000000>, /* PCIe Core*/
- 			 <0x00 0x10000000 0x00 0x10000000 0x00 0x10000000>, /* PCIe DAT */
- 			 <0x00 0x64800000 0x00 0x64800000 0x00 0x00800000>, /* C71 */
+diff --git a/arch/arm64/boot/dts/ti/k3-j721e-main.dtsi b/arch/arm64/boot/dts/ti/k3-j721e-main.dtsi
+index 1e9d86b806df..6a805be4513a 100644
+--- a/arch/arm64/boot/dts/ti/k3-j721e-main.dtsi
++++ b/arch/arm64/boot/dts/ti/k3-j721e-main.dtsi
+@@ -62,8 +62,8 @@ main_gpio_intr: interrupt-controller0 {
+ 		ti,sci-rm-range-girq = <0x1>;
+ 	};
+ 
+-	cbass_main_navss: interconnect0 {
+-		compatible = "simple-bus";
++	main_navss {
++		compatible = "simple-mfd";
+ 		#address-cells = <2>;
+ 		#size-cells = <2>;
+ 		ranges;
 -- 
 Peter
 
