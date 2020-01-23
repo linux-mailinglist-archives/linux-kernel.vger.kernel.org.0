@@ -2,29 +2,29 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C8ACE146298
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Jan 2020 08:26:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DDD321462A0
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Jan 2020 08:26:52 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726911AbgAWH0J (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 23 Jan 2020 02:26:09 -0500
-Received: from mail25.static.mailgun.info ([104.130.122.25]:15242 "EHLO
-        mail25.static.mailgun.info" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726054AbgAWH0I (ORCPT
+        id S1727453AbgAWH0R (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 23 Jan 2020 02:26:17 -0500
+Received: from mail26.static.mailgun.info ([104.130.122.26]:57112 "EHLO
+        mail26.static.mailgun.info" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727235AbgAWH0P (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Jan 2020 02:26:08 -0500
+        Thu, 23 Jan 2020 02:26:15 -0500
 DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
- s=smtp; t=1579764367; h=References: In-Reply-To: Message-Id: Date:
+ s=smtp; t=1579764375; h=References: In-Reply-To: Message-Id: Date:
  Subject: Cc: To: From: Sender;
- bh=jlECrQqzMHz44LBdbWGV4n3B2pcNbtodfLvTBcDva38=; b=vkO7nBjeQ0exqso0S1jNdNrB/Va2QomrA1Z4z3S8FNah3AtBmaR0xIS2wkgVApADYIP3Ee7S
- YLfoF7s8NXp4ZNXqDCI8i0pp614Vnh0CmO0FuvDvG8vt8mjq9vrf0Nro7thgsDP43C4tuyGd
- t3e0t37evzsG1P9/pCfpAcUXu54=
-X-Mailgun-Sending-Ip: 104.130.122.25
+ bh=XIO4R52V16bc2UoZaoRV3qPV4uc6yiXd4Yjq0YFOOKM=; b=ZQo2kW0f3nztOaxwQxn7+wBXNyleuSuxpCfmSUB0T2+IaB0SnNEm3GDNyjl8IfYv5DI3Afgu
+ /u3YFE+ErN7jwsPrVif9CeRaaB9yftdIhkdqPyq6cqw9ckvgtthjDJKNkXnGxbOUm+D4c0qS
+ UnGLApeX9s/sdzl7vC82oR4UyO4=
+X-Mailgun-Sending-Ip: 104.130.122.26
 X-Mailgun-Sid: WyI0MWYwYSIsICJsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
 Received: from smtp.codeaurora.org (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171])
- by mxa.mailgun.org with ESMTP id 5e294a8d.7f05fd58fc70-smtp-out-n01;
- Thu, 23 Jan 2020 07:26:05 -0000 (UTC)
+ by mxa.mailgun.org with ESMTP id 5e294a91.7f7de49ded18-smtp-out-n01;
+ Thu, 23 Jan 2020 07:26:09 -0000 (UTC)
 Received: by smtp.codeaurora.org (Postfix, from userid 1001)
-        id AB229C447A1; Thu, 23 Jan 2020 07:26:05 +0000 (UTC)
+        id 7A311C433CB; Thu, 23 Jan 2020 07:26:09 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
         aws-us-west-2-caf-mail-1.web.codeaurora.org
 X-Spam-Level: 
@@ -34,9 +34,9 @@ Received: from pacamara-linux.qualcomm.com (i-global254.qualcomm.com [199.106.10
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
         (No client certificate requested)
         (Authenticated sender: cang)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 5D27BC433CB;
-        Thu, 23 Jan 2020 07:26:04 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 5D27BC433CB
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 5D39FC43383;
+        Thu, 23 Jan 2020 07:26:08 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 5D39FC43383
 Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=none smtp.mailfrom=cang@codeaurora.org
 From:   Can Guo <cang@codeaurora.org>
@@ -50,12 +50,13 @@ Cc:     Alim Akhtar <alim.akhtar@samsung.com>,
         "James E.J. Bottomley" <jejb@linux.ibm.com>,
         "Martin K. Petersen" <martin.petersen@oracle.com>,
         Stanley Chu <stanley.chu@mediatek.com>,
+        Bean Huo <beanhuo@micron.com>,
         Venkat Gopalakrishnan <venkatg@codeaurora.org>,
         Tomas Winkler <tomas.winkler@intel.com>,
         linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH v4 2/8] scsi: ufs: set load before setting voltage in regulators
-Date:   Wed, 22 Jan 2020 23:25:43 -0800
-Message-Id: <1579764349-15578-3-git-send-email-cang@codeaurora.org>
+Subject: [PATCH v4 3/8] scsi: ufs: Remove the check before call setup clock notify vops
+Date:   Wed, 22 Jan 2020 23:25:44 -0800
+Message-Id: <1579764349-15578-4-git-send-email-cang@codeaurora.org>
 X-Mailer: git-send-email 1.9.1
 In-Reply-To: <1579764349-15578-1-git-send-email-cang@codeaurora.org>
 References: <1579764349-15578-1-git-send-email-cang@codeaurora.org>
@@ -64,50 +65,58 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Asutosh Das <asutoshd@codeaurora.org>
+The functionality of vendor specific ops should be handled properly in
+platform specific driver, but should not count on the UFS driver.
 
-This sequence change is required to avoid dips in voltage
-during boot-up.
-
-Apparently, this dip is caused because in the original
-sequence, the regulators are initialized in lpm mode.
-And then when the load is set to high, and more current
-is drawn, than is allowed in lpm, the dip is seen.
-
-Signed-off-by: Asutosh Das <asutoshd@codeaurora.org>
 Signed-off-by: Can Guo <cang@codeaurora.org>
 ---
- drivers/scsi/ufs/ufshcd.c | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
+ drivers/scsi/ufs/ufshcd.c | 26 ++++++--------------------
+ 1 file changed, 6 insertions(+), 20 deletions(-)
 
 diff --git a/drivers/scsi/ufs/ufshcd.c b/drivers/scsi/ufs/ufshcd.c
-index c2de29f..c386c2d 100644
+index c386c2d..4dfd705 100644
 --- a/drivers/scsi/ufs/ufshcd.c
 +++ b/drivers/scsi/ufs/ufshcd.c
-@@ -7225,6 +7225,11 @@ static int ufshcd_config_vreg(struct device *dev,
- 	name = vreg->name;
+@@ -7379,16 +7379,9 @@ static int __ufshcd_setup_clocks(struct ufs_hba *hba, bool on,
+ 	if (list_empty(head))
+ 		goto out;
  
- 	if (regulator_count_voltages(reg) > 0) {
-+		uA_load = on ? vreg->max_uA : 0;
-+		ret = ufshcd_config_vreg_load(dev, vreg, uA_load);
-+		if (ret)
-+			goto out;
-+
- 		if (vreg->min_uV && vreg->max_uV) {
- 			min_uV = on ? vreg->min_uV : 0;
- 			ret = regulator_set_voltage(reg, min_uV, vreg->max_uV);
-@@ -7235,11 +7240,6 @@ static int ufshcd_config_vreg(struct device *dev,
- 				goto out;
- 			}
- 		}
--
--		uA_load = on ? vreg->max_uA : 0;
--		ret = ufshcd_config_vreg_load(dev, vreg, uA_load);
+-	/*
+-	 * vendor specific setup_clocks ops may depend on clocks managed by
+-	 * this standard driver hence call the vendor specific setup_clocks
+-	 * before disabling the clocks managed here.
+-	 */
+-	if (!on) {
+-		ret = ufshcd_vops_setup_clocks(hba, on, PRE_CHANGE);
 -		if (ret)
--			goto out;
+-			return ret;
+-	}
++	ret = ufshcd_vops_setup_clocks(hba, on, PRE_CHANGE);
++	if (ret)
++		return ret;
+ 
+ 	list_for_each_entry(clki, head, list) {
+ 		if (!IS_ERR_OR_NULL(clki->clk)) {
+@@ -7412,16 +7405,9 @@ static int __ufshcd_setup_clocks(struct ufs_hba *hba, bool on,
+ 		}
  	}
+ 
+-	/*
+-	 * vendor specific setup_clocks ops may depend on clocks managed by
+-	 * this standard driver hence call the vendor specific setup_clocks
+-	 * after enabling the clocks managed here.
+-	 */
+-	if (on) {
+-		ret = ufshcd_vops_setup_clocks(hba, on, POST_CHANGE);
+-		if (ret)
+-			return ret;
+-	}
++	ret = ufshcd_vops_setup_clocks(hba, on, POST_CHANGE);
++	if (ret)
++		return ret;
+ 
  out:
- 	return ret;
+ 	if (ret) {
 -- 
 The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
 a Linux Foundation Collaborative Project
