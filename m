@@ -2,29 +2,29 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AF9B91461DF
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Jan 2020 07:13:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AF72C1461E5
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Jan 2020 07:13:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728799AbgAWGNQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 23 Jan 2020 01:13:16 -0500
-Received: from mail25.static.mailgun.info ([104.130.122.25]:38589 "EHLO
+        id S1728916AbgAWGN2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 23 Jan 2020 01:13:28 -0500
+Received: from mail25.static.mailgun.info ([104.130.122.25]:42451 "EHLO
         mail25.static.mailgun.info" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728665AbgAWGNP (ORCPT
+        by vger.kernel.org with ESMTP id S1726442AbgAWGN1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Jan 2020 01:13:15 -0500
+        Thu, 23 Jan 2020 01:13:27 -0500
 DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
- s=smtp; t=1579759994; h=References: In-Reply-To: Message-Id: Date:
+ s=smtp; t=1579760006; h=References: In-Reply-To: Message-Id: Date:
  Subject: Cc: To: From: Sender;
- bh=rBbiMubrsSJY16sYdP0KKGOi7Z2x2RztZoP0ot3NB4I=; b=n9QXFGKk9/PrE68IzNkxHgOJrfBqOcd+aZcB0xqXGCA6aZKVcL3IxYouL06cxvUQk16uTT9H
- 77K3QtAu/KZHD9Hwyrt4v2BUdSL/uguwBKrdUHvS6YueR7RI/GDQo4Zy6KZ77nYdraLyFXPt
- 11SvRxWrWsQR0+hjSlKpYXeWPr8=
+ bh=DRe55gyP9VoDIllwVThe+RSPKfVqdEKIlVGV9CdjbXw=; b=loexn+6iI7auro3DL97U27bh2h467tFnmO8y8Xe2I8zaDpB6/wGElZAdDs1+WciMWsdzkRbw
+ mwqq872KLWIE7t/7OtbqHMF0H3Gm8lsBDCV6pSKQezNmzl3bAvJo/0Sqe2h4yWVKJNAb7cTS
+ q1hXRHt8HRt8NJd7GWgUgbarwpQ=
 X-Mailgun-Sending-Ip: 104.130.122.25
 X-Mailgun-Sid: WyI0MWYwYSIsICJsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
 Received: from smtp.codeaurora.org (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171])
- by mxa.mailgun.org with ESMTP id 5e293979.7f7e6e746730-smtp-out-n01;
- Thu, 23 Jan 2020 06:13:13 -0000 (UTC)
+ by mxa.mailgun.org with ESMTP id 5e293982.7f0d7c4a1ed8-smtp-out-n02;
+ Thu, 23 Jan 2020 06:13:22 -0000 (UTC)
 Received: by smtp.codeaurora.org (Postfix, from userid 1001)
-        id AB542C43383; Thu, 23 Jan 2020 06:13:12 +0000 (UTC)
+        id 35FADC447AD; Thu, 23 Jan 2020 06:13:20 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
         aws-us-west-2-caf-mail-1.web.codeaurora.org
 X-Spam-Level: 
@@ -34,9 +34,9 @@ Received: from pacamara-linux.qualcomm.com (i-global254.qualcomm.com [199.106.10
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
         (No client certificate requested)
         (Authenticated sender: cang)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 258D6C447A9;
-        Thu, 23 Jan 2020 06:13:11 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 258D6C447A9
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 38AE5C433CB;
+        Thu, 23 Jan 2020 06:13:18 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 38AE5C433CB
 Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=none smtp.mailfrom=cang@codeaurora.org
 From:   Can Guo <cang@codeaurora.org>
@@ -44,17 +44,22 @@ To:     asutoshd@codeaurora.org, nguyenb@codeaurora.org,
         hongwus@codeaurora.org, rnayak@codeaurora.org,
         linux-scsi@vger.kernel.org, kernel-team@android.com,
         saravanak@google.com, salyzyn@google.com, cang@codeaurora.org
-Cc:     Andy Gross <agross@kernel.org>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
+Cc:     Alim Akhtar <alim.akhtar@samsung.com>,
         Avri Altman <avri.altman@wdc.com>,
         Pedro Sousa <pedrom.sousa@synopsys.com>,
         "James E.J. Bottomley" <jejb@linux.ibm.com>,
         "Martin K. Petersen" <martin.petersen@oracle.com>,
-        linux-arm-msm@vger.kernel.org (open list:ARM/QUALCOMM SUPPORT),
+        Stanley Chu <stanley.chu@mediatek.com>,
+        Bean Huo <beanhuo@micron.com>,
+        Venkat Gopalakrishnan <venkatg@codeaurora.org>,
+        Tomas Winkler <tomas.winkler@intel.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Allison Randal <allison@lohutok.net>,
         linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH v3 7/8] scsi: ufs-qcom: Delay specific time before gate ref clk
-Date:   Wed, 22 Jan 2020 22:12:24 -0800
-Message-Id: <1579759946-5448-8-git-send-email-cang@codeaurora.org>
+Subject: [PATCH v3 8/8] scsi: ufs: Select INITIAL adapt for HS Gear4
+Date:   Wed, 22 Jan 2020 22:12:25 -0800
+Message-Id: <1579759946-5448-9-git-send-email-cang@codeaurora.org>
 X-Mailer: git-send-email 1.9.1
 In-Reply-To: <1579759946-5448-1-git-send-email-cang@codeaurora.org>
 References: <1579759946-5448-1-git-send-email-cang@codeaurora.org>
@@ -63,48 +68,47 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-After enter hibern8, as UFS JEDEC ver 3.0 requires, a specific gating wait
-time is required before disable the device reference clock. If it is not
-specified, use the old delay.
+ADAPT is added specifically for HS Gear4 mode only, select INITIAL adapt
+before do power mode change to G4 and select no adapt before switch to
+non-G4 modes.
 
 Signed-off-by: Can Guo <cang@codeaurora.org>
 ---
- drivers/scsi/ufs/ufs-qcom.c | 13 ++++++++++---
- 1 file changed, 10 insertions(+), 3 deletions(-)
+ drivers/scsi/ufs/ufshcd.c | 8 ++++++++
+ drivers/scsi/ufs/unipro.h | 1 +
+ 2 files changed, 9 insertions(+)
 
-diff --git a/drivers/scsi/ufs/ufs-qcom.c b/drivers/scsi/ufs/ufs-qcom.c
-index 85d7c17..3b5b2d9 100644
---- a/drivers/scsi/ufs/ufs-qcom.c
-+++ b/drivers/scsi/ufs/ufs-qcom.c
-@@ -833,6 +833,8 @@ static int ufs_qcom_bus_register(struct ufs_qcom_host *host)
+diff --git a/drivers/scsi/ufs/ufshcd.c b/drivers/scsi/ufs/ufshcd.c
+index 1ee2187..20b9428 100644
+--- a/drivers/scsi/ufs/ufshcd.c
++++ b/drivers/scsi/ufs/ufshcd.c
+@@ -4134,6 +4134,14 @@ static int ufshcd_change_power_mode(struct ufs_hba *hba,
+ 		ufshcd_dme_set(hba, UIC_ARG_MIB(PA_HSSERIES),
+ 						pwr_mode->hs_rate);
  
- static void ufs_qcom_dev_ref_clk_ctrl(struct ufs_qcom_host *host, bool enable)
- {
-+	unsigned long gating_wait;
++	if (pwr_mode->gear_tx == UFS_HS_G4)
++		/* INITIAL ADAPT */
++		ufshcd_dme_set(hba, UIC_ARG_MIB(PA_TXHSADAPTTYPE),
++						PA_INITIAL_ADAPT);
++	else
++		/* NO ADAPT */
++		ufshcd_dme_set(hba, UIC_ARG_MIB(PA_TXHSADAPTTYPE), PA_NO_ADAPT);
 +
- 	if (host->dev_ref_clk_ctrl_mmio &&
- 	    (enable ^ host->is_dev_ref_clk_enabled)) {
- 		u32 temp = readl_relaxed(host->dev_ref_clk_ctrl_mmio);
-@@ -845,11 +847,16 @@ static void ufs_qcom_dev_ref_clk_ctrl(struct ufs_qcom_host *host, bool enable)
- 		/*
- 		 * If we are here to disable this clock it might be immediately
- 		 * after entering into hibern8 in which case we need to make
--		 * sure that device ref_clk is active at least 1us after the
-+		 * sure that device ref_clk is active for specific time after
- 		 * hibern8 enter.
- 		 */
--		if (!enable)
--			udelay(1);
-+		if (!enable) {
-+			gating_wait = host->hba->dev_info.clk_gating_wait_us;
-+			if (!gating_wait)
-+				udelay(1);
-+			else
-+				usleep_range(gating_wait, gating_wait + 10);
-+		}
+ 	ret = ufshcd_uic_change_pwr_mode(hba, pwr_mode->pwr_rx << 4
+ 			| pwr_mode->pwr_tx);
  
- 		writel_relaxed(temp, host->dev_ref_clk_ctrl_mmio);
+diff --git a/drivers/scsi/ufs/unipro.h b/drivers/scsi/ufs/unipro.h
+index f539f87..bd1c3d6 100644
+--- a/drivers/scsi/ufs/unipro.h
++++ b/drivers/scsi/ufs/unipro.h
+@@ -192,6 +192,7 @@ enum ufs_hs_gear_tag {
+ 	UFS_HS_G1,		/* HS Gear 1 (default for reset) */
+ 	UFS_HS_G2,		/* HS Gear 2 */
+ 	UFS_HS_G3,		/* HS Gear 3 */
++	UFS_HS_G4,		/* HS Gear 4 */
+ };
  
+ enum ufs_unipro_ver {
 -- 
 The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
 a Linux Foundation Collaborative Project
