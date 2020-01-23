@@ -2,88 +2,99 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E5BB9146408
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Jan 2020 10:02:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0F837146404
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Jan 2020 10:01:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727278AbgAWJCQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 23 Jan 2020 04:02:16 -0500
-Received: from mga02.intel.com ([134.134.136.20]:42400 "EHLO mga02.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725785AbgAWJCQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Jan 2020 04:02:16 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 23 Jan 2020 00:56:22 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.70,353,1574150400"; 
-   d="scan'208";a="287240587"
-Received: from lahna.fi.intel.com (HELO lahna) ([10.237.72.163])
-  by fmsmga001.fm.intel.com with SMTP; 23 Jan 2020 00:56:17 -0800
-Received: by lahna (sSMTP sendmail emulation); Thu, 23 Jan 2020 10:56:16 +0200
-Date:   Thu, 23 Jan 2020 10:56:16 +0200
-From:   Mika Westerberg <mika.westerberg@linux.intel.com>
-To:     Lee Jones <lee.jones@linaro.org>
-Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Darren Hart <dvhart@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H . Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
-        Zha Qipeng <qipeng.zha@intel.com>,
-        "David E . Box" <david.e.box@linux.intel.com>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Wim Van Sebroeck <wim@linux-watchdog.org>,
-        Mark Brown <broonie@kernel.org>,
-        platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 37/38] platform/x86: intel_pmc_ipc: Convert to MFD
-Message-ID: <20200123085616.GF2665@lahna.fi.intel.com>
-References: <20200121160114.60007-1-mika.westerberg@linux.intel.com>
- <20200121160114.60007-38-mika.westerberg@linux.intel.com>
- <20200122123454.GL15507@dell>
- <20200122125300.GO2665@lahna.fi.intel.com>
- <20200122132757.GM15507@dell>
- <20200122144523.GX2665@lahna.fi.intel.com>
- <20200123080142.GP15507@dell>
+        id S1726605AbgAWJBM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 23 Jan 2020 04:01:12 -0500
+Received: from merlin.infradead.org ([205.233.59.134]:60352 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725785AbgAWJBL (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 23 Jan 2020 04:01:11 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=ZO2+biof4EL4C/JTzti+vPwupIT1oX/9/8bYDrArCwQ=; b=NOiIWQWR4GnTdEVaJdQR3fftc
+        2cjR9yhlWoh9F+xe7DPXmdBijCqW1eXE8n5Fvs/tpQU5tjazIKyXL7ozieETUP8D7R2Dr52zTYZxr
+        P/gUBWd02yvOYvrmHlHZAQBDFPQHdNFALsPqjjJj346oGnEuLC8ye6YplJxt91+stCTMCRXavRPnA
+        HDLYjxi9LLgx4ck9ovojPNc9iu6QmqJDymrRomPMUDquZklmJPPX0yYRZRvACzenYgm41Rx1LaLgA
+        PUF1NFgWuRJPJdX25fpYDxfHwEcyY85OTcn6+gGC1zLeO88BR9EM2Lhck1X3rsq9cPaXXeJRgd1XY
+        0j/R7gpyg==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
+        by merlin.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1iuYLx-0002NM-GD; Thu, 23 Jan 2020 09:00:41 +0000
+Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (Client did not present a certificate)
+        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 52282304121;
+        Thu, 23 Jan 2020 09:58:58 +0100 (CET)
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 3D19D20983FC2; Thu, 23 Jan 2020 10:00:38 +0100 (CET)
+Date:   Thu, 23 Jan 2020 10:00:38 +0100
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Alex Kogan <alex.kogan@oracle.com>
+Cc:     linux@armlinux.org.uk, mingo@redhat.com, will.deacon@arm.com,
+        arnd@arndb.de, longman@redhat.com, linux-arch@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        tglx@linutronix.de, bp@alien8.de, hpa@zytor.com, x86@kernel.org,
+        guohanjun@huawei.com, jglauber@marvell.com,
+        steven.sistare@oracle.com, daniel.m.jordan@oracle.com,
+        dave.dice@oracle.com, rahul.x.yadav@oracle.com
+Subject: Re: [PATCH v7 3/5] locking/qspinlock: Introduce CNA into the slow
+ path of qspinlock
+Message-ID: <20200123090038.GD14946@hirez.programming.kicks-ass.net>
+References: <20191125210709.10293-1-alex.kogan@oracle.com>
+ <20191125210709.10293-4-alex.kogan@oracle.com>
+ <20200121202919.GM11457@worktop.programming.kicks-ass.net>
+ <20200122095127.GC14946@hirez.programming.kicks-ass.net>
+ <20200122170456.GY14879@hirez.programming.kicks-ass.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200123080142.GP15507@dell>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+In-Reply-To: <20200122170456.GY14879@hirez.programming.kicks-ass.net>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jan 23, 2020 at 08:01:42AM +0000, Lee Jones wrote:
-> On Wed, 22 Jan 2020, Mika Westerberg wrote:
-> 
-> > On Wed, Jan 22, 2020 at 01:27:57PM +0000, Lee Jones wrote:
-> > > > Which type of device you suggest here? And which bus it should be
-> > > > registered to? I think we can make this create a platform_device but
-> > > > then we would need to do that from the PCI driver as well which seems
-> > > > unnecessary since we already have the struct pci_dev.
-> > > 
-> > > What kind of device is it?
-> > 
-> > It is either part of an ACPI device (platform_device) or a PCI device
-> > depending on the platform.
-> > 
-> > > Refrain from using platform device, unless it is one please.
-> > 
-> > OK.
-> > 
-> > Greg suggested making the SCU IPC functionality a class and I think it
-> > fits here nicely so I'm going to try that next if nobody objects. I'll
-> > send the first cleanup patches separately.
-> 
-> Sounds good.
+On Wed, Jan 22, 2020 at 06:04:56PM +0100, Peter Zijlstra wrote:
+> +/*
+> + * cna_splice_head -- splice the entire secondary queue onto the head of the
+> + * primary queue.
+> + */
+> +static cna_splice_head(struct qspinlock *lock, u32 val,
+> +		       struct mcs_spinlock *node, struct mcs_spinlock *next)
+> +{
+> +	struct mcs_spinlock *head_2nd, *tail_2nd;
+> +
+> +	tail_2nd = decode_tail(node->locked);
+> +	head_2nd = tail_2nd->next;
+> +
+> +	if (lock) {
 
-FYI, I the cleanup patch series can be found here:
+That should be: if (!next) {
 
-https://www.spinics.net/lists/platform-driver-x86/msg20728.html
-https://www.spinics.net/lists/platform-driver-x86/msg20729.html
-https://www.spinics.net/lists/platform-driver-x86/msg20734.html
-https://www.spinics.net/lists/platform-driver-x86/msg20750.html
+> +		u32 new = ((struct cna_node *)tail_2nd)->encoded_tail | _Q_LOCKED_VAL;
+> +		if (!atomic_try_cmpxchg_relaxed(&lock->val, &val, new))
+> +			return NULL;
+> +
+> +		/*
+> +		 * The moment we've linked the primary tail we can race with
+> +		 * the WRITE_ONCE(prev->next, node) store from new waiters.
+> +		 * That store must win.
+> +		 */
+
+And that still is a shit comment; I'll go try again.
+
+> +		cmpxchg_relaxed(&tail_2nd->next, head_2nd, next);
+> +	} else {
+> +		tail_2nd->next = next;
+> +	}
+> +
+> +	return head_2nd;
+> +}
