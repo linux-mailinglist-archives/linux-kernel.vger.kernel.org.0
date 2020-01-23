@@ -2,230 +2,141 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E975514604D
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Jan 2020 02:25:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 236EB14605C
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Jan 2020 02:32:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726227AbgAWBZi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 22 Jan 2020 20:25:38 -0500
-Received: from kross.rwserver.com ([69.13.37.146]:43796 "EHLO
-        kross2019.rwserver.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726004AbgAWBZi (ORCPT
+        id S1726205AbgAWBcN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 22 Jan 2020 20:32:13 -0500
+Received: from linux.microsoft.com ([13.77.154.182]:55864 "EHLO
+        linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725911AbgAWBcM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 Jan 2020 20:25:38 -0500
-Received: from localhost (localhost [127.0.0.1])
-        by kross2019.rwserver.com (Postfix) with ESMTP id 1A6B7B39EF;
-        Wed, 22 Jan 2020 19:25:37 -0600 (CST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=neuralgames.com;
-         h=user-agent:message-id:references:in-reply-to:subject:subject
-        :from:from:date:date:content-transfer-encoding:content-type
-        :content-type:mime-version; s=default; t=1579742736; x=
-        1581557137; bh=Rk/Ounh4vmGF04q+59h2/BCGllWhaNrGkT3gZmCD4gg=; b=J
-        L4ECqtM8PRZ4hdC/SzbrrjBJW1nz42HjpM5FgtmftoIl4EvXxcRCHbBKS+YhMwqB
-        6Eu/gtTTxKx56BePYs5714M1h0QpcKjlh3tyJnJ2fTjxMUUUFDCzxDESp+FZo/k7
-        XPSQJGUp0igogDccsH5O87reiPvJc6ApOq/i1bo/CQ=
-X-Virus-Scanned: Debian amavisd-new at kross2019.rwserver.com
-Received: from kross2019.rwserver.com ([127.0.0.1])
-        by localhost (kross2019.rwserver.com [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id IFigBOrF8czw; Wed, 22 Jan 2020 19:25:36 -0600 (CST)
-Received: from rwserver.com (localhost [IPv6:::1])
-        (Authenticated sender: linux@neuralgames.com)
-        by kross2019.rwserver.com (Postfix) with ESMTPA id 7723FB39EE;
-        Wed, 22 Jan 2020 19:25:36 -0600 (CST)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date:   Wed, 22 Jan 2020 19:25:36 -0600
-From:   linux@neuralgames.com
-To:     Joel Stanley <joel@jms.id.au>
-Cc:     Matt Mackall <mpm@selenic.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Andrew Jeffery <andrew@aj.id.au>,
-        Linux Crypto Mailing List <linux-crypto@vger.kernel.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        linux-aspeed <linux-aspeed@lists.ozlabs.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 1/2] hwrng: Add support for ASPEED RNG
-In-Reply-To: <CACPK8XfuVN3Q=npEoOP-amQS0-wemxcx6LKaHHZEsBAHzq1wzA@mail.gmail.com>
-References: <20200120150113.2565-1-linux@neuralgames.com>
- <CACPK8XfuVN3Q=npEoOP-amQS0-wemxcx6LKaHHZEsBAHzq1wzA@mail.gmail.com>
-Message-ID: <4446ffb694c7742ca9492c7360856789@neuralgames.com>
-X-Sender: linux@neuralgames.com
-User-Agent: Roundcube Webmail/1.3.8
+        Wed, 22 Jan 2020 20:32:12 -0500
+Received: from nramas-ThinkStation-P520.corp.microsoft.com (unknown [131.107.174.108])
+        by linux.microsoft.com (Postfix) with ESMTPSA id 6D9312007679;
+        Wed, 22 Jan 2020 17:32:11 -0800 (PST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 6D9312007679
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+        s=default; t=1579743131;
+        bh=ybWxbWJoAxOFI4m8oIsd6jXbfNUgRqtqlDATjCgMlmU=;
+        h=From:To:Cc:Subject:Date:From;
+        b=Wx32loep/PQbGBJCJMpl4SSFtw0ajmJK1+12g90t4qz/dOwq8Hf5AyX2HK35jh17b
+         bzAuCdFHg69SSBjS2EGc2pS9tLhS8nwATJ7n+7z20u4aahzahugYe8tE8dfrlyfSBn
+         nmZbAIj7Qgl4gfFpcJJrxxk3fgXkN46mI39exC8U=
+From:   Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
+To:     zohar@linux.ibm.com, James.Bottomley@HansenPartnership.com,
+        linux-integrity@vger.kernel.org
+Cc:     sashal@kernel.org, dhowells@redhat.com,
+        linux-kernel@vger.kernel.org, keyrings@vger.kernel.org
+Subject: [PATCH v9 0/3] IMA: Deferred measurement of keys
+Date:   Wed, 22 Jan 2020 17:32:03 -0800
+Message-Id: <20200123013206.8499-1-nramas@linux.microsoft.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Joel,
+The IMA subsystem supports measuring asymmetric keys when the key is
+created or updated[1]. But keys created or updated before a custom IMA
+policy is loaded are currently not measured.  This includes keys added,
+for instance, to either the .ima or .builtin_trusted_keys keyrings, which
+happens early in the boot process.
 
-On 2020-01-20 19:53, Joel Stanley wrote:
-> Hi,
-> 
-> On Mon, 20 Jan 2020 at 15:12, Oscar A Perez <linux@neuralgames.com> 
-> wrote:
->> 
->> This minimal driver adds support for the Hardware Random Number 
->> Generator
->> that comes with the AST2400/AST2500/AST2600 SOCs from AspeedTech.
->> 
->> The HRNG on these SOCs uses Ring Oscillators working together to 
->> generate
->> a stream of random bits that can be read by the platform via a 32bit 
->> data
->> register.
-> 
-> Thanks for the patch.
-> 
-> We've been using the timeriomem-rng driver for the past few years on
-> aspeed hardware. You can see how that's set up by looking at
-> arch/arm/boot/dts/aspeed-g{4,5,6}.dtsi
-> 
-> I suggest we continue to use the generic driver.
-> 
-> Cheers,
-> 
-> Joel
-> 
-> 
-> 
+Measuring the early boot keys, by design, requires loading a custom IMA
+policy.  This change adds support for queuing keys created or updated
+before a custom IMA policy is loaded.  The queued keys are processed when
+a custom policy is loaded.  Keys created or updated after a custom policy
+is loaded are measured immediately (not queued).  In the case when a
+custom policy is not loaded within 5 minutes of IMA initialization, the
+queued keys are freed.
 
-Thanks for reviewing the patch.
+[1] https://lore.kernel.org/linux-integrity/20191211164707.4698-1-nramas@linux.microsoft.com/
 
-The RNG on Aspeed hardware allows eight different modes for combining 
-its four internal Ring Oscillators that together generate a stream of 
-random bits. However, the timeriomem-rng driver does not allow for mode 
-selection so, the Aspeed RNG with this generic driver runs always on 
-mode 'seven' (The default value for mode according to the AspeedTech 
-datasheets).
+Changelog:
 
-I've performed some testings on this Aspeed RNG using the NIST 
-Statistical Test Suite (NIST 800-22r1a) and, the results I got show that 
-the default mode 'seven' isn't producing the best entropy and linear 
-rank when compared against the other modes available on these SOCs.  On 
-the other hand, the driver that I'm proposing here allows for mode 
-selection which would help improve the random output for those looking 
-to get the best out of this Aspeed RNG.
+  v9
 
-Thanks and regards,
+  => Rebased the changes to v5.5-rc7
+  => Defined an intermediate Kconfig boolean option namely
+     IMA_QUEUE_EARLY_BOOT_KEYS to declare the deferred key
+     measurement functions.
+  => Use delayed workqueue to free the queued keys when a custom IMA
+     policy is not loaded.
 
-Oscar A Perez
+  v8
 
->> 
->> Signed-off-by: Oscar A Perez <linux@neuralgames.com>
->> ---
->>  .../devicetree/bindings/rng/aspeed-rng.yaml   | 90 
->> +++++++++++++++++++
->>  1 file changed, 90 insertions(+)
->>  create mode 100644 
->> Documentation/devicetree/bindings/rng/aspeed-rng.yaml
->> 
->> diff --git a/Documentation/devicetree/bindings/rng/aspeed-rng.yaml 
->> b/Documentation/devicetree/bindings/rng/aspeed-rng.yaml
->> new file mode 100644
->> index 000000000000..06070ebe1c33
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/rng/aspeed-rng.yaml
->> @@ -0,0 +1,90 @@
->> +# SPDX-License-Identifier: GPL-2.0
->> +%YAML 1.2
->> +---
->> +$id: "http://devicetree.org/schemas/rng/aspeed-rng.yaml#"
->> +$schema: "http://devicetree.org/meta-schemas/core.yaml#"
->> +
->> +
->> +title: Bindings for Aspeed Hardware Random Number Generator
->> +
->> +
->> +maintainers:
->> +  - Oscar A Perez <linux@neuralgames.com>
->> +
->> +
->> +description: |
->> +  The HRNG on the AST2400/AST2500/AST2600 SOCs from AspeedTech  uses 
->> four Ring
->> +  Oscillators working together to generate a stream of random bits 
->> that can be
->> +  read by the platform via a 32bit data register every one 
->> microsecond.
->> +  All the platform has to do is to provide to the driver the 
->> 'quality' entropy
->> +  value, the  'mode' in which the combining  ROs will generate the  
->> stream  of
->> +  random bits and, the 'period' value that is used as a wait-time 
->> between reads
->> +  from the 32bit data register.
->> +
->> +
->> +properties:
->> +  compatible:
->> +    oneOf:
->> +      - items:
->> +          - enum:
->> +              - aspeed,ast2400-rng
->> +              - aspeed,ast2500-rng
->> +              - aspeed,ast2600-rng
->> +
->> +
->> +  reg:
->> +    description:
->> +      Base address and length of the register set of this block.
->> +      Currently 'reg' must be eight bytes wide and 32-bit aligned.
->> +
->> +    maxItems: 1
->> +
->> +
->> +  period:
->> +    description:
->> +      Wait time in microseconds to be used between reads.
->> +      The RNG on these Aspeed SOCs generates 32bit of random data
->> +      every one microsecond. Choose between 1 and n microseconds.
->> +
->> +    maxItems: 1
->> +
->> +
->> +  mode:
->> +    description:
->> +      One of the eight modes in which the four internal ROs (Ring
->> +      Oscillators)  are combined to generate a stream  of random
->> +      bits. The default mode is seven which is the default method
->> +      of combining RO random bits on these Aspeed SOCs.
->> +
->> +    maxItems: 1
->> +
->> +
->> +  quality:
->> +    description:
->> +      Estimated number of bits of entropy per 1024 bits read from
->> +      the RNG.  Note that the default quality is zero which stops
->> +      this HRNG from automatically filling the kernel's entropy
->> +      pool with data.
->> +
->> +    maxItems: 1
->> +
->> +
->> +required:
->> +  - compatible
->> +  - reg
->> +  - period
->> +  - quality
->> +
->> +
->> +examples:
->> +  - |
->> +    rng: hwrng@1e6e2074 {
->> +         compatible = "aspeed,ast2500-rng";
->> +         reg = <0x1e6e2074 0x8>;
->> +         period = <4>;
->> +         quality = <128>;
->> +         mode = <0x7>;
->> +    };
->> +
->> +
->> +...
->> --
->> 2.17.1
->> 
+  => Rebased the changes to linux-next
+  => Need to apply the following patch first
+  https://lore.kernel.org/linux-integrity/20200108160508.5938-1-nramas@linux.microsoft.com/
+
+  v7
+
+  => Updated cover letter per Mimi's suggestions.
+  => Updated "Reported-by" tag to be specific about
+     the issues fixed in the patch.
+
+  v6
+
+  => Replaced mutex with a spinlock to sychronize access to
+     queued keys. This fixes the problem reported by
+     "kernel test robot <rong.a.chen@intel.com>"
+     https://lore.kernel.org/linux-integrity/2a831fe9-30e5-63b4-af10-a69f327f7fb7@linux.microsoft.com/T/#t
+  => Changed ima_queue_key() to a static function. This fixes
+     the issue reported by "kbuild test robot <lkp@intel.com>"
+     https://lore.kernel.org/linux-integrity/1577370464.4487.10.camel@linux.ibm.com/
+  => Added the patch to free the queued keys if a custom IMA policy
+     was not loaded to this patch set.
+
+  v5
+
+  => Removed temp keys list in ima_process_queued_keys()
+
+  v4
+
+  => Check and set ima_process_keys flag with mutex held.
+
+  v3
+
+  => Defined ima_process_keys flag to be static.
+  => Set ima_process_keys with ima_keys_mutex held.
+  => Added a comment in ima_process_queued_keys() function
+     to state the use of temporary list for keys.
+
+  v2
+
+  => Rebased the changes to v5.5-rc1
+  => Updated function names, variable names, and code comments
+     to be less verbose.
+
+  v1
+
+  => Code cleanup
+
+  v0
+
+  => Based changes on v5.4-rc8
+  => The following patchsets should be applied in that order
+     https://lore.kernel.org/linux-integrity/1572492694-6520-1-git-send-email-zohar@linux.ibm.com
+     https://lore.kernel.org/linux-integrity/20191204224131.3384-1-nramas@linux.microsoft.com/
+  => Added functions to queue and dequeue keys, and process
+     the queued keys when custom IMA policies are applied.
+
+Lakshmi Ramasubramanian (3):
+  IMA: Define workqueue for early boot key measurements
+  IMA: Call workqueue functions to measure queued keys
+  IMA: Defined delayed workqueue to free the queued keys
+
+ security/integrity/ima/Kconfig               |   5 +
+ security/integrity/ima/Makefile              |   1 +
+ security/integrity/ima/ima.h                 |  24 +++
+ security/integrity/ima/ima_asymmetric_keys.c |   8 +
+ security/integrity/ima/ima_init.c            |   8 +-
+ security/integrity/ima/ima_policy.c          |   3 +
+ security/integrity/ima/ima_queue_keys.c      | 171 +++++++++++++++++++
+ 7 files changed, 219 insertions(+), 1 deletion(-)
+ create mode 100644 security/integrity/ima/ima_queue_keys.c
+
+-- 
+2.17.1
+
