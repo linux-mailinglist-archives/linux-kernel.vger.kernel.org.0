@@ -2,307 +2,230 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CF21A146049
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Jan 2020 02:24:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E975514604D
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Jan 2020 02:25:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726885AbgAWBY1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 22 Jan 2020 20:24:27 -0500
-Received: from gate2.alliedtelesis.co.nz ([202.36.163.20]:36149 "EHLO
-        gate2.alliedtelesis.co.nz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725924AbgAWBY1 (ORCPT
+        id S1726227AbgAWBZi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 22 Jan 2020 20:25:38 -0500
+Received: from kross.rwserver.com ([69.13.37.146]:43796 "EHLO
+        kross2019.rwserver.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726004AbgAWBZi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 Jan 2020 20:24:27 -0500
-Received: from mmarshal3.atlnz.lc (mmarshal3.atlnz.lc [10.32.18.43])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (Client did not present a certificate)
-        by gate2.alliedtelesis.co.nz (Postfix) with ESMTPS id 1B1E883640;
-        Thu, 23 Jan 2020 14:24:25 +1300 (NZDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alliedtelesis.co.nz;
-        s=mail181024; t=1579742665;
-        bh=2gBER1PvepW7C/LmCCkcdmnlievV9RChs4q6y2glIWI=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References;
-        b=pjkIA38ZB5aUZtzAvBfkJfF/9RlOXtV7rSfh1FSvaZ2NPaebxek3u5f6pdb2MQOd/
-         nvyZmTsYLALDJG8bzbyXUkohjbOAVU5dqeESueCruDKwLNrIgMW/j/yo+uYdGe1vxo
-         ryrE9B3arko2Y25VoICqs8baRI5pSUJGuXgVH3gWViQjSetCkUysWW0ZnRCrkFg+L1
-         wLrxR2v7VfpP8n6hc7mruoydKdtENs4bkEezdXEsTbmzVqx5sgYBiR5HUfYuGqvBbm
-         Zg5U3Vj7LSjVNqbKkV3tjMbv5Kq7ImVz/I5+N25w6bufEn0gZY2P5JT5IEjB78ubWY
-         hIyljr4YE0vpg==
-Received: from smtp (Not Verified[10.32.16.33]) by mmarshal3.atlnz.lc with Trustwave SEG (v7,5,8,10121)
-        id <B5e28f58d0000>; Thu, 23 Jan 2020 14:23:28 +1300
-Received: from chrisp-dl.ws.atlnz.lc (chrisp-dl.ws.atlnz.lc [10.33.22.20])
-        by smtp (Postfix) with ESMTP id 7FB5613EF90;
-        Thu, 23 Jan 2020 14:23:23 +1300 (NZDT)
-Received: by chrisp-dl.ws.atlnz.lc (Postfix, from userid 1030)
-        id DD717280071; Thu, 23 Jan 2020 14:23:24 +1300 (NZDT)
-From:   Chris Packham <chris.packham@alliedtelesis.co.nz>
-To:     broonie@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com
-Cc:     linux-spi@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Chris Packham <chris.packham@alliedtelesis.co.nz>
-Subject: [PATCH v2 2/2] spi: Add generic SPI multiplexer
-Date:   Thu, 23 Jan 2020 14:23:17 +1300
-Message-Id: <20200123012317.14808-3-chris.packham@alliedtelesis.co.nz>
-X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200123012317.14808-1-chris.packham@alliedtelesis.co.nz>
-References: <20200123012317.14808-1-chris.packham@alliedtelesis.co.nz>
+        Wed, 22 Jan 2020 20:25:38 -0500
+Received: from localhost (localhost [127.0.0.1])
+        by kross2019.rwserver.com (Postfix) with ESMTP id 1A6B7B39EF;
+        Wed, 22 Jan 2020 19:25:37 -0600 (CST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=neuralgames.com;
+         h=user-agent:message-id:references:in-reply-to:subject:subject
+        :from:from:date:date:content-transfer-encoding:content-type
+        :content-type:mime-version; s=default; t=1579742736; x=
+        1581557137; bh=Rk/Ounh4vmGF04q+59h2/BCGllWhaNrGkT3gZmCD4gg=; b=J
+        L4ECqtM8PRZ4hdC/SzbrrjBJW1nz42HjpM5FgtmftoIl4EvXxcRCHbBKS+YhMwqB
+        6Eu/gtTTxKx56BePYs5714M1h0QpcKjlh3tyJnJ2fTjxMUUUFDCzxDESp+FZo/k7
+        XPSQJGUp0igogDccsH5O87reiPvJc6ApOq/i1bo/CQ=
+X-Virus-Scanned: Debian amavisd-new at kross2019.rwserver.com
+Received: from kross2019.rwserver.com ([127.0.0.1])
+        by localhost (kross2019.rwserver.com [127.0.0.1]) (amavisd-new, port 10026)
+        with ESMTP id IFigBOrF8czw; Wed, 22 Jan 2020 19:25:36 -0600 (CST)
+Received: from rwserver.com (localhost [IPv6:::1])
+        (Authenticated sender: linux@neuralgames.com)
+        by kross2019.rwserver.com (Postfix) with ESMTPA id 7723FB39EE;
+        Wed, 22 Jan 2020 19:25:36 -0600 (CST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-x-atlnz-ls: pat
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Date:   Wed, 22 Jan 2020 19:25:36 -0600
+From:   linux@neuralgames.com
+To:     Joel Stanley <joel@jms.id.au>
+Cc:     Matt Mackall <mpm@selenic.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Andrew Jeffery <andrew@aj.id.au>,
+        Linux Crypto Mailing List <linux-crypto@vger.kernel.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        linux-aspeed <linux-aspeed@lists.ozlabs.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 1/2] hwrng: Add support for ASPEED RNG
+In-Reply-To: <CACPK8XfuVN3Q=npEoOP-amQS0-wemxcx6LKaHHZEsBAHzq1wzA@mail.gmail.com>
+References: <20200120150113.2565-1-linux@neuralgames.com>
+ <CACPK8XfuVN3Q=npEoOP-amQS0-wemxcx6LKaHHZEsBAHzq1wzA@mail.gmail.com>
+Message-ID: <4446ffb694c7742ca9492c7360856789@neuralgames.com>
+X-Sender: linux@neuralgames.com
+User-Agent: Roundcube Webmail/1.3.8
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add a SPI device driver that sits in-band and provides a SPI controller
-which supports chip selects via a mux-control. This enables extra SPI
-devices to be connected with limited native chip selects.
+Hi Joel,
 
-Signed-off-by: Chris Packham <chris.packham@alliedtelesis.co.nz>
----
- drivers/spi/Kconfig   |  12 +++
- drivers/spi/Makefile  |   1 +
- drivers/spi/spi-mux.c | 189 ++++++++++++++++++++++++++++++++++++++++++
- 3 files changed, 202 insertions(+)
- create mode 100644 drivers/spi/spi-mux.c
+On 2020-01-20 19:53, Joel Stanley wrote:
+> Hi,
+> 
+> On Mon, 20 Jan 2020 at 15:12, Oscar A Perez <linux@neuralgames.com> 
+> wrote:
+>> 
+>> This minimal driver adds support for the Hardware Random Number 
+>> Generator
+>> that comes with the AST2400/AST2500/AST2600 SOCs from AspeedTech.
+>> 
+>> The HRNG on these SOCs uses Ring Oscillators working together to 
+>> generate
+>> a stream of random bits that can be read by the platform via a 32bit 
+>> data
+>> register.
+> 
+> Thanks for the patch.
+> 
+> We've been using the timeriomem-rng driver for the past few years on
+> aspeed hardware. You can see how that's set up by looking at
+> arch/arm/boot/dts/aspeed-g{4,5,6}.dtsi
+> 
+> I suggest we continue to use the generic driver.
+> 
+> Cheers,
+> 
+> Joel
+> 
+> 
+> 
 
-diff --git a/drivers/spi/Kconfig b/drivers/spi/Kconfig
-index 870f7797b56b..90df945490d9 100644
---- a/drivers/spi/Kconfig
-+++ b/drivers/spi/Kconfig
-@@ -880,6 +880,18 @@ config SPI_ZYNQMP_GQSPI
- #
- # Add new SPI master controllers in alphabetical order above this line
- #
-+#
-+
-+comment "SPI Multiplexer support"
-+
-+config SPI_MUX
-+	tristate "SPI multiplexer support"
-+	select MULTIPLEXER
-+	help
-+	  This adds support for SPI multiplexers. Each SPI mux will be
-+	  accessible as a SPI controller, the devices behind the mux will appea=
-r
-+	  to be chip selects on this controller. It is still necessary to
-+	  select one or more specific mux-controller drivers.
-=20
- #
- # There are lots of SPI device types, with sensors and memory
-diff --git a/drivers/spi/Makefile b/drivers/spi/Makefile
-index bb49c9e6d0a0..5f7593c84210 100644
---- a/drivers/spi/Makefile
-+++ b/drivers/spi/Makefile
-@@ -11,6 +11,7 @@ obj-$(CONFIG_SPI_MASTER)		+=3D spi.o
- obj-$(CONFIG_SPI_MEM)			+=3D spi-mem.o
- obj-$(CONFIG_SPI_SPIDEV)		+=3D spidev.o
- obj-$(CONFIG_SPI_LOOPBACK_TEST)		+=3D spi-loopback-test.o
-+obj-$(CONFIG_SPI_MUX)			+=3D spi-mux.o
-=20
- # SPI master controller drivers (bus)
- obj-$(CONFIG_SPI_ALTERA)		+=3D spi-altera.o
-diff --git a/drivers/spi/spi-mux.c b/drivers/spi/spi-mux.c
-new file mode 100644
-index 000000000000..8481067be5ae
---- /dev/null
-+++ b/drivers/spi/spi-mux.c
-@@ -0,0 +1,189 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * General Purpose SPI multiplexer
-+ */
-+
-+#include <linux/kernel.h>
-+#include <linux/module.h>
-+#include <linux/err.h>
-+#include <linux/slab.h>
-+#include <linux/spi/spi.h>
-+#include <linux/mux/consumer.h>
-+
-+#define SPI_MUX_NO_CS	((unsigned int)-1)
-+
-+/**
-+ * DOC: Driver description
-+ *
-+ * This driver supports a MUX on an SPI bus. This can be useful when you=
- need
-+ * more chip selects than the hardware peripherals support, or than are
-+ * available in a particular board setup.
-+ *
-+ * The driver will create an additional SPI controller. Devices added un=
-der the
-+ * mux will be handled as 'chip selects' on this controller.
-+ */
-+
-+/**
-+ * struct spi_mux_priv - the basic spi_mux structure
-+ * @spi:		pointer to the device struct attached to the parent
-+ *			spi controller
-+ * @current_cs:		The current chip select set in the mux
-+ * @child_mesg_complete: The mux replaces the complete callback in the c=
-hild's
-+ *			message to its own callback; this field is used by the
-+ *			driver to store the child's callback during a transfer
-+ * @child_mesg_context: Used to store the child's context to the callbac=
-k
-+ * @child_mesg_dev:	Used to store the spi_device pointer to the child
-+ * @mux:		mux_control structure used to provide chip selects for
-+ *			downstream spi devices
-+ */
-+struct spi_mux_priv {
-+	struct spi_device	*spi;
-+	unsigned int		current_cs;
-+
-+	void			(*child_mesg_complete)(void *context);
-+	void			*child_mesg_context;
-+	struct spi_device	*child_mesg_dev;
-+	struct mux_control	*mux;
-+};
-+
-+/* should not get called when the parent controller is doing a transfer =
-*/
-+static int spi_mux_select(struct spi_device *spi)
-+{
-+	struct spi_mux_priv *priv =3D spi_controller_get_devdata(spi->controlle=
-r);
-+	int ret =3D 0;
-+
-+	if (priv->current_cs !=3D spi->chip_select) {
-+		dev_dbg(&priv->spi->dev,
-+			"setting up the mux for cs %d\n",
-+			spi->chip_select);
-+
-+		/* copy the child device's settings except for the cs */
-+		priv->spi->max_speed_hz =3D spi->max_speed_hz;
-+		priv->spi->mode =3D spi->mode;
-+		priv->spi->bits_per_word =3D spi->bits_per_word;
-+
-+		ret =3D mux_control_select(priv->mux, spi->chip_select);
-+		if (ret)
-+			return ret;
-+
-+		priv->current_cs =3D spi->chip_select;
-+	}
-+
-+	return ret;
-+}
-+
-+static int spi_mux_setup(struct spi_device *spi)
-+{
-+	struct spi_mux_priv *priv =3D spi_controller_get_devdata(spi->controlle=
-r);
-+
-+	/*
-+	 * can be called multiple times, won't do a valid setup now but we will
-+	 * change the settings when we do a transfer (necessary because we
-+	 * can't predict from which device it will be anyway)
-+	 */
-+	return spi_setup(priv->spi);
-+}
-+
-+static void spi_mux_complete_cb(void *context)
-+{
-+	struct spi_mux_priv *priv =3D (struct spi_mux_priv *)context;
-+	struct spi_controller *ctlr =3D spi_get_drvdata(priv->spi);
-+	struct spi_message *m =3D ctlr->cur_msg;
-+
-+	m->complete =3D priv->child_mesg_complete;
-+	m->context =3D priv->child_mesg_context;
-+	m->spi =3D priv->child_mesg_dev;
-+	spi_finalize_current_message(ctlr);
-+	mux_control_deselect(priv->mux);
-+}
-+
-+static int spi_mux_transfer_one_message(struct spi_controller *ctlr,
-+						struct spi_message *m)
-+{
-+	struct spi_mux_priv *priv =3D spi_controller_get_devdata(ctlr);
-+	struct spi_device *spi =3D m->spi;
-+	int ret;
-+
-+	ret =3D spi_mux_select(spi);
-+	if (ret)
-+		return ret;
-+
-+	/*
-+	 * Replace the complete callback, context and spi_device with our own
-+	 * pointers. Save originals
-+	 */
-+	priv->child_mesg_complete =3D m->complete;
-+	priv->child_mesg_context =3D m->context;
-+	priv->child_mesg_dev =3D m->spi;
-+
-+	m->complete =3D spi_mux_complete_cb;
-+	m->context =3D priv;
-+	m->spi =3D priv->spi;
-+
-+	/* do the transfer */
-+	ret =3D spi_async(priv->spi, m);
-+	return ret;
-+}
-+
-+static int spi_mux_probe(struct spi_device *spi)
-+{
-+	struct spi_controller *ctlr;
-+	struct spi_mux_priv *priv;
-+	int ret;
-+
-+	ctlr =3D spi_alloc_master(&spi->dev, sizeof(*priv));
-+	if (!ctlr)
-+		return -ENOMEM;
-+
-+	spi_set_drvdata(spi, ctlr);
-+	priv =3D spi_controller_get_devdata(ctlr);
-+	priv->spi =3D spi;
-+
-+	priv->mux =3D devm_mux_control_get(&spi->dev, NULL);
-+	ret =3D PTR_ERR_OR_ZERO(priv->mux);
-+	if (ret) {
-+		if (ret !=3D -EPROBE_DEFER)
-+			dev_err(&spi->dev, "failed to get control-mux\n");
-+		goto err_put_ctlr;
-+	}
-+
-+	priv->current_cs =3D SPI_MUX_NO_CS;
-+
-+	/* supported modes are the same as our parent's */
-+	ctlr->mode_bits =3D spi->controller->mode_bits;
-+	ctlr->flags =3D spi->controller->flags;
-+	ctlr->transfer_one_message =3D spi_mux_transfer_one_message;
-+	ctlr->setup =3D spi_mux_setup;
-+	ctlr->num_chipselect =3D mux_control_states(priv->mux);
-+	ctlr->bus_num =3D -1;
-+	ctlr->dev.of_node =3D spi->dev.of_node;
-+
-+	ret =3D devm_spi_register_controller(&spi->dev, ctlr);
-+	if (ret)
-+		goto err_put_ctlr;
-+
-+	return ret;
-+
-+err_put_ctlr:
-+	spi_controller_put(ctlr);
-+
-+	return ret;
-+}
-+
-+static const struct of_device_id spi_mux_of_match[] =3D {
-+	{ .compatible =3D "spi-mux" },
-+	{ },
-+};
-+
-+static struct spi_driver spi_mux_driver =3D {
-+	.probe  =3D spi_mux_probe,
-+	.driver =3D {
-+		.name   =3D "spi-mux",
-+		.of_match_table =3D spi_mux_of_match,
-+	},
-+};
-+
-+module_spi_driver(spi_mux_driver);
-+
-+MODULE_DESCRIPTION("SPI multiplexer");
-+MODULE_LICENSE("GPL");
---=20
-2.25.0
+Thanks for reviewing the patch.
 
+The RNG on Aspeed hardware allows eight different modes for combining 
+its four internal Ring Oscillators that together generate a stream of 
+random bits. However, the timeriomem-rng driver does not allow for mode 
+selection so, the Aspeed RNG with this generic driver runs always on 
+mode 'seven' (The default value for mode according to the AspeedTech 
+datasheets).
+
+I've performed some testings on this Aspeed RNG using the NIST 
+Statistical Test Suite (NIST 800-22r1a) and, the results I got show that 
+the default mode 'seven' isn't producing the best entropy and linear 
+rank when compared against the other modes available on these SOCs.  On 
+the other hand, the driver that I'm proposing here allows for mode 
+selection which would help improve the random output for those looking 
+to get the best out of this Aspeed RNG.
+
+Thanks and regards,
+
+Oscar A Perez
+
+>> 
+>> Signed-off-by: Oscar A Perez <linux@neuralgames.com>
+>> ---
+>>  .../devicetree/bindings/rng/aspeed-rng.yaml   | 90 
+>> +++++++++++++++++++
+>>  1 file changed, 90 insertions(+)
+>>  create mode 100644 
+>> Documentation/devicetree/bindings/rng/aspeed-rng.yaml
+>> 
+>> diff --git a/Documentation/devicetree/bindings/rng/aspeed-rng.yaml 
+>> b/Documentation/devicetree/bindings/rng/aspeed-rng.yaml
+>> new file mode 100644
+>> index 000000000000..06070ebe1c33
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/rng/aspeed-rng.yaml
+>> @@ -0,0 +1,90 @@
+>> +# SPDX-License-Identifier: GPL-2.0
+>> +%YAML 1.2
+>> +---
+>> +$id: "http://devicetree.org/schemas/rng/aspeed-rng.yaml#"
+>> +$schema: "http://devicetree.org/meta-schemas/core.yaml#"
+>> +
+>> +
+>> +title: Bindings for Aspeed Hardware Random Number Generator
+>> +
+>> +
+>> +maintainers:
+>> +  - Oscar A Perez <linux@neuralgames.com>
+>> +
+>> +
+>> +description: |
+>> +  The HRNG on the AST2400/AST2500/AST2600 SOCs from AspeedTech  uses 
+>> four Ring
+>> +  Oscillators working together to generate a stream of random bits 
+>> that can be
+>> +  read by the platform via a 32bit data register every one 
+>> microsecond.
+>> +  All the platform has to do is to provide to the driver the 
+>> 'quality' entropy
+>> +  value, the  'mode' in which the combining  ROs will generate the  
+>> stream  of
+>> +  random bits and, the 'period' value that is used as a wait-time 
+>> between reads
+>> +  from the 32bit data register.
+>> +
+>> +
+>> +properties:
+>> +  compatible:
+>> +    oneOf:
+>> +      - items:
+>> +          - enum:
+>> +              - aspeed,ast2400-rng
+>> +              - aspeed,ast2500-rng
+>> +              - aspeed,ast2600-rng
+>> +
+>> +
+>> +  reg:
+>> +    description:
+>> +      Base address and length of the register set of this block.
+>> +      Currently 'reg' must be eight bytes wide and 32-bit aligned.
+>> +
+>> +    maxItems: 1
+>> +
+>> +
+>> +  period:
+>> +    description:
+>> +      Wait time in microseconds to be used between reads.
+>> +      The RNG on these Aspeed SOCs generates 32bit of random data
+>> +      every one microsecond. Choose between 1 and n microseconds.
+>> +
+>> +    maxItems: 1
+>> +
+>> +
+>> +  mode:
+>> +    description:
+>> +      One of the eight modes in which the four internal ROs (Ring
+>> +      Oscillators)  are combined to generate a stream  of random
+>> +      bits. The default mode is seven which is the default method
+>> +      of combining RO random bits on these Aspeed SOCs.
+>> +
+>> +    maxItems: 1
+>> +
+>> +
+>> +  quality:
+>> +    description:
+>> +      Estimated number of bits of entropy per 1024 bits read from
+>> +      the RNG.  Note that the default quality is zero which stops
+>> +      this HRNG from automatically filling the kernel's entropy
+>> +      pool with data.
+>> +
+>> +    maxItems: 1
+>> +
+>> +
+>> +required:
+>> +  - compatible
+>> +  - reg
+>> +  - period
+>> +  - quality
+>> +
+>> +
+>> +examples:
+>> +  - |
+>> +    rng: hwrng@1e6e2074 {
+>> +         compatible = "aspeed,ast2500-rng";
+>> +         reg = <0x1e6e2074 0x8>;
+>> +         period = <4>;
+>> +         quality = <128>;
+>> +         mode = <0x7>;
+>> +    };
+>> +
+>> +
+>> +...
+>> --
+>> 2.17.1
+>> 
