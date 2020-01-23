@@ -2,155 +2,143 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5E77514701E
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Jan 2020 18:56:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A6C5C147023
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Jan 2020 18:57:07 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728988AbgAWR4V (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 23 Jan 2020 12:56:21 -0500
-Received: from mail-lf1-f66.google.com ([209.85.167.66]:36454 "EHLO
-        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726621AbgAWR4U (ORCPT
+        id S1729083AbgAWR5G (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 23 Jan 2020 12:57:06 -0500
+Received: from mx0a-00082601.pphosted.com ([67.231.145.42]:12716 "EHLO
+        mx0a-00082601.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728760AbgAWR5F (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Jan 2020 12:56:20 -0500
-Received: by mail-lf1-f66.google.com with SMTP id f24so3020159lfh.3
-        for <linux-kernel@vger.kernel.org>; Thu, 23 Jan 2020 09:56:18 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=tbUt6go+kLuXKXQ0VzJ6Mhyl0zSlPzgGsNDFNiXJt7g=;
-        b=NK4+dXDpNBbzPh3b80IEDt5inscQTCvjYG7+GPJ5WUbiU+W/8YhHNLVwGhxs57FIS4
-         fK7JN1NswFF2h0zIXnkR7Xk+qgzuLlEZVN6S32B+6w20Ygvnm09GYcbJgAJZKjeKpTGc
-         792wHEdxRwurEfdqWJVhjVFcefHoQJugA+IyI=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=tbUt6go+kLuXKXQ0VzJ6Mhyl0zSlPzgGsNDFNiXJt7g=;
-        b=HbBeZ38yXuWPElfNaRsPw/ss1YAxZ8OFrF/zRSB/lZ/nCFpRyWdRIRz49ngNZGPMlh
-         /dUJgEBAaxot/fuvF0auK80+3KXQwQ/8z76ukW4QAMCfv6lFTbFPjcsSI/2pXD0LjnsK
-         G1kmoCZnWm/+nMgYaOwqqdKpFXWFIkkDp9ZB3b3TD8E7PAikdWdFRKbHN3aZajEHgo90
-         vhPJlTcDOZnNGDIcRuavw67+FPCz5VByyxa/PttbEFQ+0S85YVFRyWEHLFBNaUgM4OI8
-         KXGrZnYAXrdt6s5rDWt9hvS9RT3+5axvPkRUqixuMKb5Z64VeVU3UQxLpiWzwVVRwNOk
-         NeFA==
-X-Gm-Message-State: APjAAAUd+l0KZ+CdAFVY2K/F3hloV1zapUbWizEZc4qMxyKgbDR0vvvv
-        Zj9/LQdHcjpA1FPeRAfHiiDrC0nlLlg=
-X-Google-Smtp-Source: APXvYqzTBj4kZDmNLLjuYQ0Y8nAgf93cDy01vB5IM3Bopk3X2vbaJoXVD1I9EdWS8Mw6R4xfaFZBXA==
-X-Received: by 2002:ac2:44bc:: with SMTP id c28mr4749572lfm.72.1579802177333;
-        Thu, 23 Jan 2020 09:56:17 -0800 (PST)
-Received: from mail-lj1-f174.google.com (mail-lj1-f174.google.com. [209.85.208.174])
-        by smtp.gmail.com with ESMTPSA id x10sm79734ljd.68.2020.01.23.09.56.16
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 23 Jan 2020 09:56:16 -0800 (PST)
-Received: by mail-lj1-f174.google.com with SMTP id o13so4582551ljg.4
-        for <linux-kernel@vger.kernel.org>; Thu, 23 Jan 2020 09:56:16 -0800 (PST)
-X-Received: by 2002:a2e:b017:: with SMTP id y23mr24733117ljk.229.1579802175831;
- Thu, 23 Jan 2020 09:56:15 -0800 (PST)
+        Thu, 23 Jan 2020 12:57:05 -0500
+Received: from pps.filterd (m0109333.ppops.net [127.0.0.1])
+        by mx0a-00082601.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 00NHukcF009571;
+        Thu, 23 Jan 2020 09:56:49 -0800
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
+ : date : message-id : references : in-reply-to : content-type : content-id
+ : content-transfer-encoding : mime-version; s=facebook;
+ bh=JFvD0shaGY2HvJ7Gqrji+2IYQLtSoq+CHdYPM+wq1rQ=;
+ b=A1IhVSZtA8sd/ywtaND8CULVSrLii0Iiios0z9e8tM3S58fpZEiUYNkokcfBjwXuZDec
+ gAtcpsfFGypJ2vie5pa9JBKjCZ2dPVtKjknKrJyWggQKZOH5UNDAeTCZmUrNPZzymfN/
+ ZIKNjeij/7SaLLVJLVUI09z4TKylJ8UWnP8= 
+Received: from mail.thefacebook.com ([163.114.132.120])
+        by mx0a-00082601.pphosted.com with ESMTP id 2xqc881a54-13
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
+        Thu, 23 Jan 2020 09:56:49 -0800
+Received: from NAM11-CO1-obe.outbound.protection.outlook.com (100.104.98.9) by
+ o365-in.thefacebook.com (100.104.94.199) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.1779.2; Thu, 23 Jan 2020 09:56:48 -0800
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=QGI5Gz2mXN5HyWQ8uFKRocY5z0vLWMQDgZtxBlo6s+obY9+TTP9fqc26qsCAjI3xjtCOwHRUOg/OmtBolzNtja9Inzlv8XD6eKSxBMa1B00pt4oPlrFpfdvonIcRAZcJ4rumPTlEJpz6fEP9dQLrJi0YgDWvqlepPOlXtI5bFa+6i4adMMS35yxvfK7WNy84/zOtj9q88z2Gu27FQndgSR2AwpTyMPqYc668k4ljOJzc328mjC7EoS8N4GYS7aQ7EZirSgJLF5NNxWyWoB21MO09QyFVBIiPYBHUabXxYv4PchMkDXoJkMJvNhx7wTXf5dVMNBdfgFk1LbOxfX7BIg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=JFvD0shaGY2HvJ7Gqrji+2IYQLtSoq+CHdYPM+wq1rQ=;
+ b=n3GP0RlT9Fshv9Okg4oveQUvMuzQnEOBVKfB6MDnvI/gVswcgxaJjQGdbVLpWQbX4dbncTqlyUJlvJ6t0xoHNMwQxD7AOYTeGir5HZYj65/COR051wgr6o98d2knUSjT2lULmHrSr2IcQJhPZsvD/2DugixtNXHVB10kut1c2JSSkkO3pAnsB5ZdosaEqSsP/P9DEfU33ae+zlqwvNgmqf0LCN/GEF/QyL8NL+nFRt8glWAw+lTMdchb1XwBIVMEToGtf/Mcobg8mcBDxPAyfgLO7tthjLtUPRS3avr4+A3fVAiLLExfSwzk7F1rak0UdqvdWCwPqoP6ate28+AHmQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=fb.com; dmarc=pass action=none header.from=fb.com; dkim=pass
+ header.d=fb.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.onmicrosoft.com;
+ s=selector2-fb-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=JFvD0shaGY2HvJ7Gqrji+2IYQLtSoq+CHdYPM+wq1rQ=;
+ b=bfwm8n350p2bucIrwFhQCbpH7GMf/sWL+fsP+BzQdEBdVLkEULAopdjhDChKD5ibBmaTpwJkAZ+EJm28tkldIMAgcIcCwUxgI3Z8j5gic2hY09i60fg6XoyqoqYVcC3stsTOD/k9/18VPIHUVj+L0Ashfi5RCdg4En5lg0COOhE=
+Received: from MN2PR15MB3213.namprd15.prod.outlook.com (20.179.21.76) by
+ MN2PR15MB2719.namprd15.prod.outlook.com (20.179.146.160) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2644.23; Thu, 23 Jan 2020 17:56:47 +0000
+Received: from MN2PR15MB3213.namprd15.prod.outlook.com
+ ([fe80::6d1e:f2f7:d36:a42f]) by MN2PR15MB3213.namprd15.prod.outlook.com
+ ([fe80::6d1e:f2f7:d36:a42f%4]) with mapi id 15.20.2644.027; Thu, 23 Jan 2020
+ 17:56:47 +0000
+Received: from kafai-mbp.dhcp.thefacebook.com (2620:10d:c090:200::2:d66d) by CO2PR18CA0045.namprd18.prod.outlook.com (2603:10b6:104:2::13) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2665.20 via Frontend Transport; Thu, 23 Jan 2020 17:56:46 +0000
+From:   Martin Lau <kafai@fb.com>
+To:     Lorenz Bauer <lmb@cloudflare.com>
+CC:     Shuah Khan <shuah@kernel.org>, Alexei Starovoitov <ast@kernel.org>,
+        "Daniel Borkmann" <daniel@iogearbox.net>,
+        Song Liu <songliubraving@fb.com>, "Yonghong Song" <yhs@fb.com>,
+        Andrii Nakryiko <andriin@fb.com>,
+        "linux-kselftest@vger.kernel.org" <linux-kselftest@vger.kernel.org>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "bpf@vger.kernel.org" <bpf@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH bpf 4/4] selftests: bpf: reset global state between
+ reuseport test runs
+Thread-Topic: [PATCH bpf 4/4] selftests: bpf: reset global state between
+ reuseport test runs
+Thread-Index: AQHV0g6SqqQcnu2MV0ypmzGJv4yvkaf4iNUA
+Date:   Thu, 23 Jan 2020 17:56:47 +0000
+Message-ID: <20200123175644.x3j7jhl5owi34fdo@kafai-mbp.dhcp.thefacebook.com>
+References: <20200123165934.9584-1-lmb@cloudflare.com>
+ <20200123165934.9584-5-lmb@cloudflare.com>
+In-Reply-To: <20200123165934.9584-5-lmb@cloudflare.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-clientproxiedby: CO2PR18CA0045.namprd18.prod.outlook.com
+ (2603:10b6:104:2::13) To MN2PR15MB3213.namprd15.prod.outlook.com
+ (2603:10b6:208:3d::12)
+x-ms-exchange-messagesentrepresentingtype: 1
+x-originating-ip: [2620:10d:c090:200::2:d66d]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: a64cff7e-a7b2-4861-06bd-08d7a02d9da2
+x-ms-traffictypediagnostic: MN2PR15MB2719:
+x-ms-exchange-transport-forked: True
+x-microsoft-antispam-prvs: <MN2PR15MB27191905A2F83AC95DE0B941D50F0@MN2PR15MB2719.namprd15.prod.outlook.com>
+x-fb-source: Internal
+x-ms-oob-tlc-oobclassifiers: OLM:7219;
+x-forefront-prvs: 029174C036
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(396003)(136003)(376002)(39860400002)(366004)(346002)(189003)(199004)(9686003)(186003)(6506007)(52116002)(16526019)(2906002)(4326008)(7696005)(55016002)(86362001)(4744005)(5660300002)(66476007)(66556008)(64756008)(66946007)(1076003)(66446008)(81166006)(81156014)(8676002)(8936002)(6916009)(54906003)(478600001)(316002)(71200400001);DIR:OUT;SFP:1102;SCL:1;SRVR:MN2PR15MB2719;H:MN2PR15MB3213.namprd15.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: fb.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: LCrlu9bZA5ID+161CfQRBUBTJrVhvjYvGPutXunDJ0LuFLDqA/WzmHq0WEZOEC+3xV710JRm8o8AU8SruEojDKWVINTwkFBF4NMaU64ISoTzgPELr04kgUjMCwIc6Ky67LjxiSzw473RASu1Hf3EcY3v4lXSU9nWv4QcVaXT9KGa786irsQ38UTZEp1qxaHAGJc5u1hxHT94i7w0tavOTbrYRCyoj6dKzuT9XLrT0Ebnc3Bi05bcZlantGIdM4Zvm8kYx/ZjUmoQOcN8g7Nb1NgIfgYUI/kn5JEmHC7U25Di7R9Iqx20iSUtkoR10aEpvWM0cRoxxTNX7TvlnHwp5lt++ZHmtbqlruZD1ozwwOeePfYk+8L+pHTFhH6kB0HIQ/J6tzQAVYb1GEqQ7+zgTRtYhLoqXDStyQHPfpSVmAkmk1MeI5hrltdrEOHBlOV/
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <501BAC2656A9BD4B9D7F9D55BC72CCD5@namprd15.prod.outlook.com>
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-References: <20200116133102.1.I9c7e72144ef639cc135ea33ef332852a6b33730f@changeid>
- <20200122172816.GA139285@google.com> <CAE=gft6hvO7G2OrxFGXeSDctz-21ryiu8JSBWT0g2fRFss-pxA@mail.gmail.com>
- <875zh3ukoy.fsf@nanos.tec.linutronix.de> <CAE=gft7ukQOxHmJT_tkWzA3u2cecmV0Jiq-ukAu-1OR+sPnTtg@mail.gmail.com>
- <871rrqva0t.fsf@nanos.tec.linutronix.de>
-In-Reply-To: <871rrqva0t.fsf@nanos.tec.linutronix.de>
-From:   Evan Green <evgreen@chromium.org>
-Date:   Thu, 23 Jan 2020 09:55:39 -0800
-X-Gmail-Original-Message-ID: <CAE=gft77xmkc6-4+h3WAp_4C7ra8XKSxcsqrVkBrYgXE0JPeSw@mail.gmail.com>
-Message-ID: <CAE=gft77xmkc6-4+h3WAp_4C7ra8XKSxcsqrVkBrYgXE0JPeSw@mail.gmail.com>
-Subject: Re: [PATCH] PCI/MSI: Avoid torn updates to MSI pairs
-To:     Thomas Gleixner <tglx@linutronix.de>
-Cc:     Bjorn Helgaas <helgaas@kernel.org>,
-        linux-pci <linux-pci@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Marc Zyngier <maz@kernel.org>, Christoph Hellwig <hch@lst.de>,
-        Rajat Jain <rajatxjain@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+X-MS-Exchange-CrossTenant-Network-Message-Id: a64cff7e-a7b2-4861-06bd-08d7a02d9da2
+X-MS-Exchange-CrossTenant-originalarrivaltime: 23 Jan 2020 17:56:47.6877
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 8ae927fe-1255-47a7-a2af-5f3a069daaa2
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: /3DhYisfttcQUHTL2uzzM1g1UqWyD+prGxpofRMT8w/OQCyuToQQSwoQnknYlbOp
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR15MB2719
+X-OriginatorOrg: fb.com
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.572
+ definitions=2020-01-23_11:2020-01-23,2020-01-23 signatures=0
+X-Proofpoint-Spam-Details: rule=fb_default_notspam policy=fb_default score=0 mlxlogscore=861
+ spamscore=0 priorityscore=1501 impostorscore=0 suspectscore=0 phishscore=0
+ adultscore=0 lowpriorityscore=0 mlxscore=0 malwarescore=0 bulkscore=0
+ clxscore=1015 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-1910280000 definitions=main-2001230139
+X-FB-Internal: deliver
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jan 23, 2020 at 12:42 AM Thomas Gleixner <tglx@linutronix.de> wrote:
->
-> Evan Green <evgreen@chromium.org> writes:
-> > On Wed, Jan 22, 2020 at 3:37 PM Thomas Gleixner <tglx@linutronix.de> wrote:
-> >> > One other way you could avoid torn MSI writes would be to ensure that
-> >> > if you migrate IRQs across cores, you keep the same x86 vector number.
-> >> > That way the address portion would be updated, and data doesn't
-> >> > change, so there's no window. But that may not actually be feasible.
-> >>
-> >> That's not possible simply because the x86 vector space is limited. If
-> >> we would have to guarantee that then we'd end up with a max of ~220
-> >> interrupts per system. Sufficient for your notebook, but the big iron
-> >> people would be not amused.
-> >
-> > Right, that occurred to me as well. The actual requirement isn't quite
-> > as restrictive. What you really need is the old vector to be
-> > registered on both the old CPU and the new CPU. Then once the
-> > interrupt is confirmed to have moved we could release both the old
-> > vector both CPUs, leaving only the new vector on the new CPU.
->
-> Sure, and how can you guarantee that without reserving the vector on all
-> CPUs in the first place? If you don't do that then if the vector is not
-> available affinity setting would fail every so often and it would pretty
-> much prevent hotplug if a to be migrated vector is not available on at
-> least one online CPU.
->
-> > In that world some SMP affinity transitions might fail, which is a
-> > bummer. To avoid that, you could first migrate to a vector that's
-> > available on both the source and destination CPUs, keeping affinity
-> > the same. Then change affinity in a separate step.
->
-> Good luck with doing that at the end of the hotplug routine where the
-> CPU is about to vanish.
->
-> > Or alternatively, you could permanently designate a "transit" vector.
-> > If an interrupt fires on this vector, then we call all ISRs currently
-> > in transit between CPUs. You might end up calling ISRs that didn't
-> > actually need service, but at least that's better than missing edges.
->
-> I don't think we need that. While walking the dogs I thought about
-> invoking a force migrated interrupt on the target CPU, but haven't
-> thought it through yet.
+On Thu, Jan 23, 2020 at 04:59:33PM +0000, Lorenz Bauer wrote:
+> Currently, there is a lot of false positives if a single reuseport test
+> fails. This is because expected_results and the result map are not cleare=
+d.
+Ah, right.  An earlier test failure has ripple effect on the following test=
+s.
 
-Yeah, I think the Intel folks did that in some tree of theirs too.
+I notice another embarrassing typo.  Can you also make this change in this =
+fix?
 
->
-> >> 'lscpci -vvv' and 'cat /proc/interrupts'
-> >
-> > Here it is:
-> > https://pastebin.com/YyxBUvQ2
->
-> Hrm:
->
->         Capabilities: [80] MSI-X: Enable+ Count=16 Masked-
->
-> So this is weird. We mask it before moving it, so the tear issue should
-> not happen on MSI-X. So the tearing might be just a red herring.
+-static enum result expected_results[NR_RESULTS];
++static __u32 expected_results[NR_RESULTS];
 
-Mmm... sorry what? This is the complete entry for xhci:
+>=20
+> Zero both after individual test runs, which fixes the mentioned false
+> positives.
+Thanks for the fix!
 
-00:14.0 USB controller: Intel Corporation Device 02ed (prog-if 30 [XHCI])
-        Subsystem: Intel Corporation Device 7270
-        Control: I/O- Mem+ BusMaster- SpecCycle- MemWINV- VGASnoop-
-ParErr- Stepping- SERR- FastB2B- DisINTx+
-        Status: Cap+ 66MHz- UDF- FastB2B+ ParErr- DEVSEL=medium
->TAbort- <TAbort- <MAbort- >SERR- <PERR- INTx-
-        Interrupt: pin A routed to IRQ 124
-        Region 0: Memory at d1200000 (64-bit, non-prefetchable) [size=64K]
-        Capabilities: [70] Power Management version 2
-                Flags: PMEClk- DSI- D1- D2- AuxCurrent=375mA
-PME(D0-,D1-,D2-,D3hot+,D3cold+)
-                Status: D3 NoSoftRst+ PME-Enable+ DSel=0 DScale=0 PME-
-        Capabilities: [80] MSI: Enable+ Count=1/8 Maskable- 64bit+
-                Address: 00000000fee10004  Data: 402a
-        Capabilities: [90] Vendor Specific Information: Len=14 <?>
-        Kernel driver in use: xhci_hcd
-
-
->
-> Let me stare into the code a bit.
-
-Thanks, I appreciate the help.
-
--Evan
+Acked-by: Martin KaFai Lau <kafai@fb.com>
