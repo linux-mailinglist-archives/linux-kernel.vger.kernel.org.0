@@ -2,93 +2,122 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5F914147474
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Jan 2020 00:12:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C968614744D
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Jan 2020 00:06:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729992AbgAWXLL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 23 Jan 2020 18:11:11 -0500
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:36745 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729921AbgAWXLD (ORCPT
+        id S1729603AbgAWXGM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 23 Jan 2020 18:06:12 -0500
+Received: from mail25.static.mailgun.info ([104.130.122.25]:25192 "EHLO
+        mail25.static.mailgun.info" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727056AbgAWXGL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Jan 2020 18:11:03 -0500
-Received: by mail-wr1-f66.google.com with SMTP id z3so5214634wru.3;
-        Thu, 23 Jan 2020 15:11:02 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=QMJiXLF1JbYFb+JW/uJeE/qawBShUmR+DHoM9EjGezk=;
-        b=d0idhHLC9THq4K5LGz36aLPqrpXYpX+W2KMXspfIWMeBlV2v+FEkZjKahD0jvgIQLF
-         uB2vJd3lOWB+MGYf4SuIAQrWdj88KKQNkpCIDTWWTHf2S51vqGL7og/F9YemACSoBkJh
-         29TF0Skv4bjCmVPRbgyQb4MYov9HZxD62xM7tTDN2o1B0P1SEXA9QI/+dp+1kxzq6S/R
-         WRSSuNjiEPD8ApHNrHTgE2NyAhnblLpa5VP6HRnMbsBj3IRmaKG7nGM7B02fuA/YBj+z
-         YQ7frwo3Ux6TSLzREqfBTEK2267tqOej+rL1UFp2z+0BF9UhNHaZllfC4mZY9nuvpm8w
-         TVIg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=QMJiXLF1JbYFb+JW/uJeE/qawBShUmR+DHoM9EjGezk=;
-        b=hQuV4vVZ2vSXzlfe5NgIDPTsCVP5UWdnOMiqnBTl7pI+fAMaBqizjoxMwdNrhQIsto
-         CYlPpe9QMtqZi0+9T4vdFh3EV/udtLWUgGcJPdVAP1uEjJEMrBWtbj1ZnczK7F+o7Yeb
-         XV7d9tqMODrDkghxruVD/NR/IC5BGw0gDxQYgSDY5N94VIrOO91noeT7BJy6boyz5o3u
-         od0p49IX8ZuLcU7+OzM0noTHKANdT6e9Vywmo3XBiNaRrrhEl9f9NeKWxHFNCPdYoI8/
-         msPJGEBlioZhuZtn3w3AhL/V8PzjB7gZgOCVS7cW/3xMYuIz/Fz3WwQgdEh6vTCjHFFp
-         i6Xg==
-X-Gm-Message-State: APjAAAVsotbfsxTKL0hvb6/WyeGBP9TO5o/phSoNd/AeeC4uIURLLcPM
-        06jHWQQHKQ5qLlSGoEfw56U=
-X-Google-Smtp-Source: APXvYqyTPHMPE845HLY2B5GKwIiCGHer2IWZI3hDnBCaAmDvl3yXjJXOPRuuOri8w/BzlrEodwNJTQ==
-X-Received: by 2002:adf:fc4b:: with SMTP id e11mr484141wrs.326.1579821061580;
-        Thu, 23 Jan 2020 15:11:01 -0800 (PST)
-Received: from localhost.localdomain (79-139-233-37.dynamic.spd-mgts.ru. [79.139.233.37])
-        by smtp.gmail.com with ESMTPSA id z6sm5105552wrw.36.2020.01.23.15.11.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 23 Jan 2020 15:11:01 -0800 (PST)
-From:   Dmitry Osipenko <digetx@gmail.com>
-To:     Laxman Dewangan <ldewangan@nvidia.com>,
-        Vinod Koul <vkoul@kernel.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        =?UTF-8?q?Micha=C5=82=20Miros=C5=82aw?= <mirq-linux@rere.qmqm.pl>
-Cc:     dmaengine@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v5 14/14] dmaengine: tegra-apb: Remove MODULE_ALIAS
-Date:   Fri, 24 Jan 2020 02:03:25 +0300
-Message-Id: <20200123230325.3037-15-digetx@gmail.com>
-X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20200123230325.3037-1-digetx@gmail.com>
-References: <20200123230325.3037-1-digetx@gmail.com>
+        Thu, 23 Jan 2020 18:06:11 -0500
+DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
+ s=smtp; t=1579820771; h=Message-ID: References: In-Reply-To: Subject:
+ Cc: To: From: Date: Content-Transfer-Encoding: Content-Type:
+ MIME-Version: Sender; bh=hgQq6Cm2C8WFWwe4zjX8Nmm79ZjwTRrTKn+plFJyrz8=;
+ b=N7TA0gcQ27QJ03RE3iQuHPQFObslW+B6B9HFg4Oqlrpo2k+0ZWIWtTPoT3PYThdYvmi5hBeD
+ 2wu6/QlurXm1Mfmyw0iRlmtiyUX0C+V5NFYZtEvEZ9SuTfv94ucNy6bGPhFL2DadVVOQ/HoE
+ HG2qCyQFM68J8PF5SFxfPn+Rl1A=
+X-Mailgun-Sending-Ip: 104.130.122.25
+X-Mailgun-Sid: WyI0MWYwYSIsICJsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
+Received: from smtp.codeaurora.org (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171])
+ by mxa.mailgun.org with ESMTP id 5e2a26de.7f30f685b110-smtp-out-n01;
+ Thu, 23 Jan 2020 23:06:06 -0000 (UTC)
+Received: by smtp.codeaurora.org (Postfix, from userid 1001)
+        id 7FAF5C447A3; Thu, 23 Jan 2020 23:06:04 +0000 (UTC)
+X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
+        aws-us-west-2-caf-mail-1.web.codeaurora.org
+X-Spam-Level: 
+X-Spam-Status: No, score=-1.0 required=2.0 tests=ALL_TRUSTED
+        autolearn=unavailable autolearn_force=no version=3.4.0
+Received: from mail.codeaurora.org (localhost.localdomain [127.0.0.1])
+        (using TLSv1 with cipher ECDHE-RSA-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        (Authenticated sender: abhinavk)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id ADB32C43383;
+        Thu, 23 Jan 2020 23:06:03 +0000 (UTC)
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8;
+ format=flowed
 Content-Transfer-Encoding: 8bit
+Date:   Thu, 23 Jan 2020 15:06:03 -0800
+From:   abhinavk@codeaurora.org
+To:     =?UTF-8?Q?Ville_Syrj=C3=A4l=C3=A4?= <ville.syrjala@linux.intel.com>
+Cc:     Laurentiu Palcu <laurentiu.palcu@nxp.com>,
+        Daniel Vetter <daniel.vetter@ffwll.ch>,
+        Uma Shankar <uma.shankar@intel.com>,
+        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        dl-linux-imx <linux-imx@nxp.com>, nganji@codeaurora.org,
+        aravindh@codeaurora.org, adelva@google.com, seanpaul@chromium.org,
+        jsanka@codeaurora.org
+Subject: Re: [EXT] Re: [PATCH] drm: fix HDR static metadata type field
+ numbering
+In-Reply-To: <20191128111418.GP1208@intel.com>
+References: <1574865719-24490-1-git-send-email-laurentiu.palcu@nxp.com>
+ <20191127151703.GJ1208@intel.com> <20191128083940.GC10251@fsr-ub1664-121>
+ <20191128111418.GP1208@intel.com>
+Message-ID: <b9631ab9b7329e8307a3dccb00807972@codeaurora.org>
+X-Sender: abhinavk@codeaurora.org
+User-Agent: Roundcube Webmail/1.3.9
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Tegra APB DMA driver is an Open Firmware driver and thus it uses OF alias
-naming scheme which overrides MODULE_ALIAS, meaning that MODULE_ALIAS does
-nothing and could be removed safely.
+Hi Ville and Laurentiu
 
-Acked-by: Jon Hunter <jonathanh@nvidia.com>
-Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
----
- drivers/dma/tegra20-apb-dma.c | 1 -
- 1 file changed, 1 deletion(-)
+On 2019-11-28 03:14, Ville Syrjälä wrote:
+> On Thu, Nov 28, 2019 at 08:39:41AM +0000, Laurentiu Palcu wrote:
+>> On Wed, Nov 27, 2019 at 05:17:03PM +0200, Ville Syrjälä wrote:
+>> > Caution: EXT Email
+>> >
+>> > On Wed, Nov 27, 2019 at 02:42:35PM +0000, Laurentiu Palcu wrote:
+>> > > According to CTA-861 specification, HDR static metadata data block allows a
+>> > > sink to indicate which HDR metadata types it supports by setting the SM_0 to
+>> > > SM_7 bits. Currently, only Static Metadata Type 1 is supported and this is
+>> > > indicated by setting the SM_0 bit to 1.
+>> > >
+>> > > However, the connector->hdr_sink_metadata.hdmi_type1.metadata_type is always
+>> > > 0, because hdr_metadata_type() in drm_edid.c checks the wrong bit.
+>> > >
+>> > > This patch corrects the HDMI_STATIC_METADATA_TYPE1 bit position.
+>> >
+>> > Was confused for a while why this has even been workning, but I guess
+>> > that's due to userspace populating the metadata infoframe blob correctly
+>> > even if we misreported the metadata types in the parsed EDID metadata
+>> > blob.
+>> >
+>> > Hmm. Actually on further inspection this all seems to be dead code. The
+>> > only thing we seem to use from the parsed EDID metadata stuff is
+>> > eotf bitmask. We check that in drm_hdmi_infoframe_set_hdr_metadata()
+>> > but we don't check the metadata type.
+>> >
+>> > Maybe we should just nuke this EDID parsing stuff entirely? Seems
+>> > pretty much pointless.
+>> 
+>> I've been thinking about that but we may need the rest of the fields 
+>> as
+>> well, even though they're not currently used. I'm referring to sink's
+>> min/max luminance data. Shouldn't we also check min/max cll, besides
+>> eotf, to make sure the source does not pass higher/lower luminance
+>> values, than the sink supports, for optimal content rendering?
+>> 
+>> However, CTA-861 is not very clear on how a sink should behave if
+>> the CLL values exceed the allowed range... :/ Also, if the CLL range 
+>> or
+>> the FALL values passed in the DRM infoframe exceed the sink's 
+>> advertised
+>> min/max values, I guess the sink cannot go lower/higher than it can
+>> anyway. In which case, we don't really need the rest of the HDR static
+>> metadata block and nuking that part should be ok.
+> 
+> I'm thinking we should just conclude that such userspace is a
+> buggy mess and deserves whatever it gets.
 
-diff --git a/drivers/dma/tegra20-apb-dma.c b/drivers/dma/tegra20-apb-dma.c
-index 8f4281ab6296..756a5dbef118 100644
---- a/drivers/dma/tegra20-apb-dma.c
-+++ b/drivers/dma/tegra20-apb-dma.c
-@@ -1684,7 +1684,6 @@ static struct platform_driver tegra_dmac_driver = {
- 
- module_platform_driver(tegra_dmac_driver);
- 
--MODULE_ALIAS("platform:tegra20-apbdma");
- MODULE_DESCRIPTION("NVIDIA Tegra APB DMA Controller driver");
- MODULE_AUTHOR("Laxman Dewangan <ldewangan@nvidia.com>");
- MODULE_LICENSE("GPL v2");
--- 
-2.24.0
-
+[Abhinav] The display driver for MSM chipsets relies on the drm_edid.c 
+parsing for the CEA extension blocks. The parts which use this shall be 
+posted later when we post our changes for HDR support for the display 
+driver for MSM chipset. Meanwhile, if there are no further concerns on 
+this, we would like to go ahead with this change and get it merged as 
+its an important bug fix. Thanks.
