@@ -2,307 +2,234 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 176091465F1
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Jan 2020 11:47:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A59B8146605
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Jan 2020 11:58:49 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726771AbgAWKrl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 23 Jan 2020 05:47:41 -0500
-Received: from relay6-d.mail.gandi.net ([217.70.183.198]:51239 "EHLO
-        relay6-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726099AbgAWKrl (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Jan 2020 05:47:41 -0500
-X-Originating-IP: 88.190.179.123
-Received: from localhost (unknown [88.190.179.123])
-        (Authenticated sender: repk@triplefau.lt)
-        by relay6-d.mail.gandi.net (Postfix) with ESMTPSA id 88472C0005;
-        Thu, 23 Jan 2020 10:47:35 +0000 (UTC)
-Date:   Thu, 23 Jan 2020 11:56:01 +0100
-From:   Remi Pommarel <repk@triplefau.lt>
-To:     Jerome Brunet <jbrunet@baylibre.com>
-Cc:     Kishon Vijay Abraham I <kishon@ti.com>,
-        Yue Wang <yue.wang@amlogic.com>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org
-Subject: Re: [PATCH v5 6/7] phy: amlogic: Add Amlogic AXG PCIE PHY Driver
-Message-ID: <20200123105601.GR1803@voidbox>
-References: <20200116111850.23690-1-repk@triplefau.lt>
- <20200116111850.23690-7-repk@triplefau.lt>
- <1jzheev75g.fsf@starbuckisacylon.baylibre.com>
+        id S1726885AbgAWK6i (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 23 Jan 2020 05:58:38 -0500
+Received: from foss.arm.com ([217.140.110.172]:37720 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726099AbgAWK6h (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 23 Jan 2020 05:58:37 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E298931B;
+        Thu, 23 Jan 2020 02:58:35 -0800 (PST)
+Received: from [10.1.197.50] (e120937-lin.cambridge.arm.com [10.1.197.50])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 3D4DC3F6C4;
+        Thu, 23 Jan 2020 02:58:35 -0800 (PST)
+Subject: Re: [RFC PATCH 03/11] firmware: arm_scmi: Add support for
+ notifications message processing
+To:     Jim Quinlan <james.quinlan@broadcom.com>,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc:     sudeep.holla@arm.com, lukasz.luba@arm.com
+References: <20200120122333.46217-1-cristian.marussi@arm.com>
+ <20200120122333.46217-4-cristian.marussi@arm.com>
+ <4c59008e-6010-fb98-d7bf-8677454d1e4f@broadcom.com>
+From:   Cristian Marussi <cristian.marussi@arm.com>
+Message-ID: <049bac5a-dbc2-f3a2-a039-1dcf4c503103@arm.com>
+Date:   Thu, 23 Jan 2020 10:58:33 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1jzheev75g.fsf@starbuckisacylon.baylibre.com>
+In-Reply-To: <4c59008e-6010-fb98-d7bf-8677454d1e4f@broadcom.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jan 23, 2020 at 10:44:43AM +0100, Jerome Brunet wrote:
+Hi Jim
+
+On 22/01/2020 23:27, Jim Quinlan wrote:
+> Hi,
 > 
-> On Thu 16 Jan 2020 at 12:18, Remi Pommarel <repk@triplefau.lt> wrote:
+> I tried "git am" on an mbox file  from these commits and get stuck on
 > 
-> > This adds support for the PCI PHY found in the Amlogic AXG SoC Family.
-> > This will allow to mutualize code in pci-meson.c between AXG and G12A
-> > SoC.
-> >
-> > This PHY can chain and use an optional analog PHY, which is used on
-> > AXG platform to have reliable PCIe communication.
-> >
-> > Signed-off-by: Remi Pommarel <repk@triplefau.lt>
-> > ---
-> >  drivers/phy/amlogic/Kconfig              |  11 ++
-> >  drivers/phy/amlogic/Makefile             |   1 +
-> >  drivers/phy/amlogic/phy-meson-axg-pcie.c | 192 +++++++++++++++++++++++
-> >  3 files changed, 204 insertions(+)
-> >  create mode 100644 drivers/phy/amlogic/phy-meson-axg-pcie.c
-> >
-> > diff --git a/drivers/phy/amlogic/Kconfig b/drivers/phy/amlogic/Kconfig
-> > index 8c9cf2403591..71801e30d601 100644
-> > --- a/drivers/phy/amlogic/Kconfig
-> > +++ b/drivers/phy/amlogic/Kconfig
-> > @@ -60,6 +60,17 @@ config PHY_MESON_G12A_USB3_PCIE
-> >  	  in Meson G12A SoCs.
-> >  	  If unsure, say N.
-> >  
-> > +config PHY_MESON_AXG_PCIE
-> > +	tristate "Meson AXG PCIE PHY driver"
-> > +	default ARCH_MESON
-> > +	depends on OF && (ARCH_MESON || COMPILE_TEST)
-> > +	select GENERIC_PHY
-> > +	select REGMAP_MMIO
-> > +	help
-> > +	  Enable this to support the Meson MIPI + PCIE PHY found
-> > +	  in Meson AXG SoCs.
-> > +	  If unsure, say N.
-> > +
-> >  config PHY_MESON_AXG_MIPI_PCIE_ANALOG
-> >  	tristate "Meson AXG MIPI + PCIE analog PHY driver"
-> >  	default ARCH_MESON
-> > diff --git a/drivers/phy/amlogic/Makefile b/drivers/phy/amlogic/Makefile
-> > index 0aecf92d796a..e2baa133f7af 100644
-> > --- a/drivers/phy/amlogic/Makefile
-> > +++ b/drivers/phy/amlogic/Makefile
-> > @@ -4,4 +4,5 @@ obj-$(CONFIG_PHY_MESON_GXL_USB2)		+= phy-meson-gxl-usb2.o
-> >  obj-$(CONFIG_PHY_MESON_G12A_USB2)		+= phy-meson-g12a-usb2.o
-> >  obj-$(CONFIG_PHY_MESON_GXL_USB3)		+= phy-meson-gxl-usb3.o
-> >  obj-$(CONFIG_PHY_MESON_G12A_USB3_PCIE)		+= phy-meson-g12a-usb3-pcie.o
-> > +obj-$(CONFIG_PHY_MESON_AXG_PCIE)		+= phy-meson-axg-pcie.o
-> >  obj-$(CONFIG_PHY_MESON_AXG_MIPI_PCIE_ANALOG)	+= phy-meson-axg-mipi-pcie-analog.o
-> > diff --git a/drivers/phy/amlogic/phy-meson-axg-pcie.c b/drivers/phy/amlogic/phy-meson-axg-pcie.c
-> > new file mode 100644
-> > index 000000000000..0c5d0732cd1c
-> > --- /dev/null
-> > +++ b/drivers/phy/amlogic/phy-meson-axg-pcie.c
-> > @@ -0,0 +1,192 @@
-> > +// SPDX-License-Identifier: GPL-2.0
-> > +/*
-> > + * Amlogic AXG PCIE PHY driver
-> > + *
-> > + * Copyright (C) 2020 Remi Pommarel <repk@triplefau.lt>
-> > + */
-> > +#include <linux/module.h>
-> > +#include <linux/phy/phy.h>
-> > +#include <linux/regmap.h>
-> > +#include <linux/reset.h>
-> > +#include <linux/platform_device.h>
-> > +#include <linux/bitfield.h>
-> > +#include <dt-bindings/phy/phy.h>
-> > +
-> > +#define MESON_PCIE_REG0 0x00
-> > +#define		MESON_PCIE_COMMON_CLK	BIT(4)
-> > +#define		MESON_PCIE_PORT_SEL	GENMASK(3, 2)
-> > +#define		MESON_PCIE_CLK		BIT(1)
-> > +#define		MESON_PCIE_POWERDOWN	BIT(0)
-> > +
-> > +#define MESON_PCIE_TWO_X1		FIELD_PREP(MESON_PCIE_PORT_SEL, 0x3)
-> > +#define MESON_PCIE_COMMON_REF_CLK	FIELD_PREP(MESON_PCIE_COMMON_CLK, 0x1)
-> > +#define MESON_PCIE_PHY_INIT		(MESON_PCIE_TWO_X1 |		\
-> > +					 MESON_PCIE_COMMON_REF_CLK)
-> > +#define MESON_PCIE_RESET_DELAY		500
-> > +
-> > +struct phy_axg_pcie_priv {
-> > +	struct phy *phy;
-> > +	struct phy *analog;
-> > +	struct regmap *regmap;
-> > +	struct reset_control *reset;
-> > +};
-> > +
-> > +static const struct regmap_config phy_axg_pcie_regmap_conf = {
-> > +	.reg_bits = 8,
-> > +	.val_bits = 32,
-> > +	.reg_stride = 4,
-> > +	.max_register = MESON_PCIE_REG0,
-> > +};
-> > +
-> > +static int phy_axg_pcie_power_on(struct phy *phy)
-> > +{
-> > +	struct phy_axg_pcie_priv *priv = phy_get_drvdata(phy);
-> > +	int ret;
-> > +
-> > +	ret = phy_power_on(priv->analog);
-> > +	if (ret != 0)
-> > +		return ret;
-> > +
-> > +	regmap_update_bits(priv->regmap, MESON_PCIE_REG0,
-> > +			   MESON_PCIE_POWERDOWN, 0);
-> > +	return 0;
-> > +}
-> > +
-> > +static int phy_axg_pcie_power_off(struct phy *phy)
-> > +{
-> > +	struct phy_axg_pcie_priv *priv = phy_get_drvdata(phy);
-> > +	int ret;
-> > +
-> > +	ret = phy_power_off(priv->analog);
-> > +	if (ret != 0)
-> > +		return ret;
-> > +
-> > +	regmap_update_bits(priv->regmap, MESON_PCIE_REG0,
-> > +			   MESON_PCIE_POWERDOWN, 1);
-> > +	return 0;
-> > +}
-> > +
-> > +static int phy_axg_pcie_init(struct phy *phy)
-> > +{
-> > +	struct phy_axg_pcie_priv *priv = phy_get_drvdata(phy);
-> > +	int ret;
-> > +
-> > +	ret = phy_init(priv->analog);
-> > +	if (ret != 0)
-> > +		return ret;
-> > +
-> > +	regmap_write(priv->regmap, MESON_PCIE_REG0, MESON_PCIE_PHY_INIT);
-> > +	return reset_control_reset(priv->reset);
-> > +}
-> > +
-> > +static int phy_axg_pcie_exit(struct phy *phy)
-> > +{
-> > +	struct phy_axg_pcie_priv *priv = phy_get_drvdata(phy);
-> > +	int ret;
-> > +
-> > +	ret = phy_exit(priv->analog);
-> > +	if (ret != 0)
-> > +		return ret;
-> > +
-> > +	return reset_control_reset(priv->reset);
-> > +}
-> > +
-> > +static int phy_axg_pcie_reset(struct phy *phy)
-> > +{
-> > +	struct phy_axg_pcie_priv *priv = phy_get_drvdata(phy);
-> > +	int ret = 0;
-> > +
-> > +	ret = phy_reset(priv->analog);
-> > +	if (ret != 0)
-> > +		goto out;
-> > +
-> > +	ret = reset_control_assert(priv->reset);
-> > +	if (ret != 0)
-> > +		goto out;
-> > +	udelay(MESON_PCIE_RESET_DELAY);
-> > +
-> > +	ret = reset_control_deassert(priv->reset);
-> > +	if (ret != 0)
-> > +		goto out;
-> > +	udelay(MESON_PCIE_RESET_DELAY);
-> > +
-> > +out:
-> > +	return ret;
-> > +}
-> > +
-> > +static const struct phy_ops phy_axg_pcie_ops = {
-> > +	.init = phy_axg_pcie_init,
-> > +	.exit = phy_axg_pcie_exit,
-> > +	.power_on = phy_axg_pcie_power_on,
-> > +	.power_off = phy_axg_pcie_power_off,
-> > +	.reset = phy_axg_pcie_reset,
-> > +	.owner = THIS_MODULE,
-> > +};
-> > +
-> > +static int phy_axg_pcie_probe(struct platform_device *pdev)
-> > +{
-> > +	struct phy_provider *pphy;
-> > +	struct device *dev = &pdev->dev;
-> > +	struct phy_axg_pcie_priv *priv;
-> > +	struct device_node *np = dev->of_node;
-> > +	struct resource *res;
-> > +	void __iomem *base;
-> > +	int ret;
-> > +
-> > +	priv = devm_kmalloc(dev, sizeof(*priv), GFP_KERNEL);
-> > +	if (!priv)
-> > +		return -ENOMEM;
-> > +
-> > +	priv->phy = devm_phy_create(dev, np, &phy_axg_pcie_ops);
-> > +	if (IS_ERR(priv->phy)) {
-> > +		ret = PTR_ERR(priv->phy);
-> > +		if (ret != -EPROBE_DEFER)
-> > +			dev_err(dev, "failed to create PHY\n");
-> > +		return ret;
-> > +	}
-> > +
-> > +	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-> > +	base = devm_ioremap_resource(dev, res);
-> > +	if (IS_ERR(base))
-> > +		return PTR_ERR(base);
-> > +
-> > +	priv->regmap = devm_regmap_init_mmio(dev, base,
-> > +					     &phy_axg_pcie_regmap_conf);
-> > +	if (IS_ERR(priv->regmap))
-> > +		return PTR_ERR(priv->regmap);
-> > +
-> > +	priv->reset = devm_reset_control_array_get(dev, false, false);
-> > +	if (IS_ERR(priv->reset))
-> > +		return PTR_ERR(priv->reset);
-> > +
-> > +	priv->analog = devm_phy_optional_get(dev, "analog");
-> > +	if (IS_ERR(priv->analog))
-> > +		return PTR_ERR(priv->analog);
+>     Applying: firmware: arm_scmi: Add receive buffer support for notifications
+>     Applying: firmware: arm_scmi: Update protocol commands and notification list
+>     Applying: firmware: arm_scmi: Add support for notifications message processing
+>     error: patch failed: drivers/firmware/arm_scmi/driver.c:355
+>     error: drivers/firmware/arm_scmi/driver.c: patch does not apply
 > 
-> Isn't required for on the axg platform for the pcie to work reliably ?
-> Does this driver support another SoC ?
+> 
+> Could you please apply this email patchset and let me know if it works for you?  I am doing this onto
+> 
+>     257d0e20ec4f include: trace: Add SCMI header with trace events     
+> 
 > 
 
-That is just me being overly cautious here. It is indeed required on AXG
-SoC to have pcie working reliably.
+Sorry... my fault .. it is on top of the following commit on that same branch in fact:
 
-Will change that in next patchset version.
+729d3530a504 drivers: firmware: scmi: Extend SCMI transport layer by trace events
 
-Thanks.
+10:51 $ git am patch_scmi_notif/ext_V1/final/00*                          
+Applying: firmware: arm_scmi: Add receive buffer support for notifications
+Applying: firmware: arm_scmi: Update protocol commands and notification list         
+Applying: firmware: arm_scmi: Add support for notifications message processing
+Applying: firmware: arm_scmi: Add core notifications support                    
+Applying: firmware: arm_scmi: Add notifications anti-tampering                                 
+Applying: firmware: arm_scmi: Enable core notifications                  
+Applying: firmware: arm_scmi: Add Power notifications support             
+Applying: firmware: arm_scmi: Add Perf notifications support                
+Applying: firmware: arm_scmi: Add Sensor notifications support             
+Applying: firmware: arm_scmi: Add Reset notifications support                  
+Applying: firmware: arm_scmi: Add Base notifications support            
 
-> > +
-> > +	phy_set_drvdata(priv->phy, priv);
-> > +	dev_set_drvdata(dev, priv);
-> > +	pphy = devm_of_phy_provider_register(dev, of_phy_simple_xlate);
-> > +
-> > +	return PTR_ERR_OR_ZERO(pphy);
-> > +}
-> > +
-> > +static const struct of_device_id phy_axg_pcie_of_match[] = {
-> > +	{
-> > +		.compatible = "amlogic,axg-pcie-phy",
-> > +	},
-> > +	{ },
-> > +};
-> > +MODULE_DEVICE_TABLE(of, phy_axg_pcie_of_match);
-> > +
-> > +static struct platform_driver phy_axg_pcie_driver = {
-> > +	.probe = phy_axg_pcie_probe,
-> > +	.driver = {
-> > +		.name = "phy-axg-pcie",
-> > +		.of_match_table = phy_axg_pcie_of_match,
-> > +	},
-> > +};
-> > +module_platform_driver(phy_axg_pcie_driver);
-> > +
-> > +MODULE_AUTHOR("Remi Pommarel <repk@triplefau.lt>");
-> > +MODULE_DESCRIPTION("Amlogic AXG PCIE PHY driver");
-> > +MODULE_LICENSE("GPL v2");
+I'll follow up to my cover to warn about this.
+
+Thanks for trying it out.
+
+Regards
+
+Cristian
+
+> as you directed.
 > 
+> Thanks,
+> Jim
+> 
+> 
+> 
+> On 1/20/20 7:23 AM, Cristian Marussi wrote:
+>> From: Sudeep Holla <sudeep.holla@arm.com>
+>>
+>> Add the mechanisms to distinguish notifications from delayed responses and
+>> to properly fetch notification messages upon reception: notifications
+>> processing does not continue further after the fetch phase.
+>>
+>> Signed-off-by: Sudeep Holla <sudeep.holla@arm.com>
+>> Signed-off-by: Cristian Marussi <cristian.marussi@arm.com>
+>> ---
+>>  drivers/firmware/arm_scmi/driver.c | 92 +++++++++++++++++++++---------
+>>  1 file changed, 65 insertions(+), 27 deletions(-)
+>>
+>> diff --git a/drivers/firmware/arm_scmi/driver.c b/drivers/firmware/arm_scmi/driver.c
+>> index 9611e8037d77..28ed1f0cb417 100644
+>> --- a/drivers/firmware/arm_scmi/driver.c
+>> +++ b/drivers/firmware/arm_scmi/driver.c
+>> @@ -212,6 +212,15 @@ static void scmi_fetch_response(struct scmi_xfer *xfer,
+>>  	memcpy_fromio(xfer->rx.buf, mem->msg_payload + 4, xfer->rx.len);
+>>  }
+>>  
+>> +static void scmi_fetch_notification(struct scmi_xfer *xfer, size_t max_len,
+>> +				    struct scmi_shared_mem __iomem *mem)
+>> +{
+>> +	/* Skip only length of header in payload area i.e 4 bytes */
+>> +	xfer->rx.len = min_t(size_t, max_len, ioread32(&mem->length) - 4);
+>> +
+>> +	memcpy_fromio(xfer->rx.buf, mem->msg_payload, xfer->rx.len);
+>> +}
+>> +
+>>  /**
+>>   * pack_scmi_header() - packs and returns 32-bit header
+>>   *
+>> @@ -339,6 +348,58 @@ __scmi_xfer_put(struct scmi_xfers_info *minfo, struct scmi_xfer *xfer)
+>>  	spin_unlock_irqrestore(&minfo->xfer_lock, flags);
+>>  }
+>>  
+>> +static void scmi_handle_notification(struct scmi_chan_info *cinfo, u32 msg_hdr)
+>> +{
+>> +	struct scmi_xfer *xfer;
+>> +	struct device *dev = cinfo->dev;
+>> +	struct scmi_info *info = handle_to_scmi_info(cinfo->handle);
+>> +	struct scmi_xfers_info *minfo = &info->rx_minfo;
+>> +	struct scmi_shared_mem __iomem *mem = cinfo->payload;
+>> +
+>> +	xfer = scmi_xfer_get(cinfo->handle, minfo);
+>> +	if (IS_ERR(xfer)) {
+>> +		dev_err(dev, "failed to get free message slot (%ld)\n",
+>> +			PTR_ERR(xfer));
+>> +		iowrite32(SCMI_SHMEM_CHAN_STAT_CHANNEL_FREE,
+>> +			  &mem->channel_status);
+>> +		return;
+>> +	}
+>> +
+>> +	unpack_scmi_header(msg_hdr, &xfer->hdr);
+>> +	scmi_dump_header_dbg(dev, &xfer->hdr);
+>> +	scmi_fetch_notification(xfer, info->desc->max_msg_size, mem);
+>> +	__scmi_xfer_put(minfo, xfer);
+>> +
+>> +	iowrite32(SCMI_SHMEM_CHAN_STAT_CHANNEL_FREE, &mem->channel_status);
+>> +}
+>> +
+>> +static void scmi_handle_xfer_delayed_resp(struct scmi_chan_info *cinfo,
+>> +					  u16 xfer_id, bool delayed_resp)
+>> +{
+>> +	struct scmi_xfer *xfer;
+>> +	struct device *dev = cinfo->dev;
+>> +	struct scmi_info *info = handle_to_scmi_info(cinfo->handle);
+>> +	struct scmi_xfers_info *minfo = &info->tx_minfo;
+>> +	struct scmi_shared_mem __iomem *mem = cinfo->payload;
+>> +
+>> +	/* Are we even expecting this? */
+>> +	if (!test_bit(xfer_id, minfo->xfer_alloc_table)) {
+>> +		dev_err(dev, "message for %d is not expected!\n", xfer_id);
+>> +		return;
+>> +	}
+>> +
+>> +	xfer = &minfo->xfer_block[xfer_id];
+>> +
+>> +	scmi_dump_header_dbg(dev, &xfer->hdr);
+>> +
+>> +	scmi_fetch_response(xfer, mem);
+>> +
+>> +	if (delayed_resp)
+>> +		complete(xfer->async_done);
+>> +	else
+>> +		complete(&xfer->done);
+>> +}
+>> +
+>>  /**
+>>   * scmi_rx_callback() - mailbox client callback for receive messages
+>>   *
+>> @@ -355,41 +416,18 @@ static void scmi_rx_callback(struct mbox_client *cl, void *m)
+>>  {
+>>  	u8 msg_type;
+>>  	u32 msg_hdr;
+>> -	u16 xfer_id;
+>> -	struct scmi_xfer *xfer;
+>>  	struct scmi_chan_info *cinfo = client_to_scmi_chan_info(cl);
+>> -	struct device *dev = cinfo->dev;
+>> -	struct scmi_info *info = handle_to_scmi_info(cinfo->handle);
+>> -	struct scmi_xfers_info *minfo = &info->tx_minfo;
+>>  	struct scmi_shared_mem __iomem *mem = cinfo->payload;
+>>  
+>>  	msg_hdr = ioread32(&mem->msg_header);
+>>  	msg_type = MSG_XTRACT_TYPE(msg_hdr);
+>> -	xfer_id = MSG_XTRACT_TOKEN(msg_hdr);
+>>  
+>>  	if (msg_type == MSG_TYPE_NOTIFICATION)
+>> -		return; /* Notifications not yet supported */
+>> -
+>> -	/* Are we even expecting this? */
+>> -	if (!test_bit(xfer_id, minfo->xfer_alloc_table)) {
+>> -		dev_err(dev, "message for %d is not expected!\n", xfer_id);
+>> -		return;
+>> -	}
+>> -
+>> -	xfer = &minfo->xfer_block[xfer_id];
+>> -
+>> -	scmi_dump_header_dbg(dev, &xfer->hdr);
+>> -
+>> -	scmi_fetch_response(xfer, mem);
+>> -
+>> -	trace_scmi_rx_done(xfer->transfer_id, xfer->hdr.id,
+>> -			   xfer->hdr.protocol_id, xfer->hdr.seq,
+>> -			   msg_type);
+>> -
+>> -	if (msg_type == MSG_TYPE_DELAYED_RESP)
+>> -		complete(xfer->async_done);
+>> +		scmi_handle_notification(cinfo, msg_hdr);
+>>  	else
+>> -		complete(&xfer->done);
+>> +		scmi_handle_xfer_delayed_resp(cinfo, MSG_XTRACT_TOKEN(msg_hdr),
+>> +					      msg_type);
+>> +
+>>  }
+>>  
+>>  /**
+> 
+> 
+
