@@ -2,123 +2,91 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5F24014743B
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Jan 2020 00:00:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D14D2147449
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Jan 2020 00:02:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729604AbgAWW77 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 23 Jan 2020 17:59:59 -0500
-Received: from mga03.intel.com ([134.134.136.65]:60764 "EHLO mga03.intel.com"
+        id S1729683AbgAWXCC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 23 Jan 2020 18:02:02 -0500
+Received: from mga18.intel.com ([134.134.136.126]:46816 "EHLO mga18.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727061AbgAWW76 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Jan 2020 17:59:58 -0500
+        id S1729154AbgAWXCC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 23 Jan 2020 18:02:02 -0500
 X-Amp-Result: UNKNOWN
 X-Amp-Original-Verdict: FILE UNKNOWN
 X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 23 Jan 2020 14:59:30 -0800
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
+  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 23 Jan 2020 15:01:25 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.70,355,1574150400"; 
-   d="scan'208";a="290005495"
-Received: from richard.sh.intel.com (HELO localhost) ([10.239.159.54])
-  by fmsmga001.fm.intel.com with ESMTP; 23 Jan 2020 14:59:28 -0800
-Date:   Fri, 24 Jan 2020 06:59:40 +0800
-From:   Wei Yang <richardw.yang@linux.intel.com>
-To:     Yang Shi <yang.shi@linux.alibaba.com>
-Cc:     mhocko@suse.com, richardw.yang@linux.intel.com,
-        akpm@linux-foundation.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Subject: Re: [v2 PATCH] mm: move_pages: report the number of non-attempted
- pages
-Message-ID: <20200123225940.GC29851@richard>
-Reply-To: Wei Yang <richardw.yang@linux.intel.com>
-References: <1579736331-85494-1-git-send-email-yang.shi@linux.alibaba.com>
+   d="scan'208";a="276175592"
+Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.202])
+  by FMSMGA003.fm.intel.com with ESMTP; 23 Jan 2020 15:01:25 -0800
+Date:   Thu, 23 Jan 2020 15:01:25 -0800
+From:   Sean Christopherson <sean.j.christopherson@intel.com>
+To:     Jim Mattson <jmattson@google.com>
+Cc:     Paolo Bonzini <pbonzini@redhat.com>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>,
+        linmiaohe <linmiaohe@huawei.com>, kvm list <kvm@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        the arch/x86 maintainers <x86@kernel.org>,
+        Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>,
+        Wanpeng Li <wanpengli@tencent.com>,
+        Joerg Roedel <joro@8bytes.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H . Peter Anvin" <hpa@zytor.com>
+Subject: Re: [PATCH] KVM: nVMX: set rflags to specify success in
+ handle_invvpid() default case
+Message-ID: <20200123230125.GA24211@linux.intel.com>
+References: <1579749241-712-1-git-send-email-linmiaohe@huawei.com>
+ <8736c6sga7.fsf@vitty.brq.redhat.com>
+ <1a083ac8-3b01-fd2d-d867-2b3956cdef6d@redhat.com>
+ <87wo9iqzfa.fsf@vitty.brq.redhat.com>
+ <ee7d815f-750f-3d0e-2def-1631be66a483@redhat.com>
+ <CALMp9eRRUY6a_QzbG-rHoZi5zc1YWHLk243=V2VBSQa=HL-Dpw@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1579736331-85494-1-git-send-email-yang.shi@linux.alibaba.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <CALMp9eRRUY6a_QzbG-rHoZi5zc1YWHLk243=V2VBSQa=HL-Dpw@mail.gmail.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jan 23, 2020 at 07:38:51AM +0800, Yang Shi wrote:
->Since commit a49bd4d71637 ("mm, numa: rework do_pages_move"),
->the semantic of move_pages() was changed to return the number of
->non-migrated pages (failed to migration) and the call would be aborted
->immediately if migrate_pages() returns positive value.  But it didn't
->report the number of pages that we even haven't attempted to migrate.
->So, fix it by including non-attempted pages in the return value.
->
->Fixes: a49bd4d71637 ("mm, numa: rework do_pages_move")
->Suggested-by: Michal Hocko <mhocko@suse.com>
->Cc: Wei Yang <richardw.yang@linux.intel.com>
->Cc: <stable@vger.kernel.org>    [4.17+]
->Signed-off-by: Yang Shi <yang.shi@linux.alibaba.com>
->---
->v2: Rebased on top of the latest mainline kernel per Andrew
->
-> mm/migrate.c | 24 ++++++++++++++++++++++--
-> 1 file changed, 22 insertions(+), 2 deletions(-)
->
->diff --git a/mm/migrate.c b/mm/migrate.c
->index 86873b6..9b8eb5d 100644
->--- a/mm/migrate.c
->+++ b/mm/migrate.c
->@@ -1627,8 +1627,18 @@ static int do_pages_move(struct mm_struct *mm, nodemask_t task_nodes,
-> 			start = i;
-> 		} else if (node != current_node) {
-> 			err = do_move_pages_to_node(mm, &pagelist, current_node);
->-			if (err)
->+			if (err) {
->+				/*
->+				 * Positive err means the number of failed
->+				 * pages to migrate.  Since we are going to
->+				 * abort and return the number of non-migrated
->+				 * pages, so need incude the rest of the
->+				 * nr_pages that have not attempted as well.
->+				 */
->+				if (err > 0)
->+					err += nr_pages - i - 1;
-> 				goto out;
->+			}
-> 			err = store_status(status, start, current_node, i - start);
-> 			if (err)
-> 				goto out;
->@@ -1659,8 +1669,11 @@ static int do_pages_move(struct mm_struct *mm, nodemask_t task_nodes,
-> 			goto out_flush;
+On Thu, Jan 23, 2020 at 10:22:24AM -0800, Jim Mattson wrote:
+> On Thu, Jan 23, 2020 at 1:54 AM Paolo Bonzini <pbonzini@redhat.com> wrote:
+> >
+> > On 23/01/20 10:45, Vitaly Kuznetsov wrote:
+> > >>> SDM says that "If an
+> > >>> unsupported INVVPID type is specified, the instruction fails." and this
+> > >>> is similar to INVEPT and I decided to check what handle_invept()
+> > >>> does. Well, it does BUG_ON().
+> > >>>
+> > >>> Are we doing the right thing in any of these cases?
+> > >>
+> > >> Yes, both INVEPT and INVVPID catch this earlier.
+> > >>
+> > >> So I'm leaning towards not applying Miaohe's patch.
+> > >
+> > > Well, we may at least want to converge on BUG_ON() for both
+> > > handle_invvpid()/handle_invept(), there's no need for them to differ.
+> >
+> > WARN_ON_ONCE + nested_vmx_failValid would probably be better, if we
+> > really want to change this.
+> >
+> > Paolo
 > 
-> 		err = do_move_pages_to_node(mm, &pagelist, current_node);
->-		if (err)
->+		if (err) {
->+			if (err > 0)
->+				err += nr_pages - i - 1;
-> 			goto out;
->+		}
-> 		if (i > start) {
-> 			err = store_status(status, start, current_node, i - start);
-> 			if (err)
->@@ -1674,6 +1687,13 @@ static int do_pages_move(struct mm_struct *mm, nodemask_t task_nodes,
-> 
-> 	/* Make sure we do not overwrite the existing error */
-> 	err1 = do_move_pages_to_node(mm, &pagelist, current_node);
->+	/*
->+	 * Don't have to report non-attempted pages here since:
+> In both cases, something is seriously wrong. The only plausible
+> explanations are compiler error or hardware failure. It would be nice
+> to handle *all* such failures with a KVM_INTERNAL_ERROR exit to
+> userspace. (I'm also thinking of situations like getting a VM-exit for
+> INIT.)
 
-In previous comment, you use "non-migrated". Here is "non-attempted". What's
-the difference?
+Ya.  Vitaly and I had a similar discussion[*].  The idea we tossed around
+was to also mark the VM as having encountered a KVM/hardware bug so that
+the VM is effectively dead.  That would also allow gracefully handling bugs
+that are detected deep in the stack, i.e. can't simply return 0 to get out
+to userspace.
 
->+	 *     - If the above loop is done gracefully there is not non-attempted
->+	 *       page.
->+	 *     - If the above loop is aborted to it means more fatal error
->+	 *       happened, should return err.
->+	 */
-> 	if (!err1)
-> 		err1 = store_status(status, start, current_node, i - start);
-> 	if (!err)
->-- 
->1.8.3.1
-
--- 
-Wei Yang
-Help you, Help me
+[*] https://lkml.kernel.org/r/20190930153358.GD14693@linux.intel.com
