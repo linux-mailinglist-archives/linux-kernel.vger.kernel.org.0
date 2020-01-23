@@ -2,130 +2,75 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 371C41469CE
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Jan 2020 14:52:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8AFEF1469E9
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Jan 2020 14:54:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729151AbgAWNw0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 23 Jan 2020 08:52:26 -0500
-Received: from us-smtp-1.mimecast.com ([205.139.110.61]:59892 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726729AbgAWNw0 (ORCPT
+        id S1729288AbgAWNyG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 23 Jan 2020 08:54:06 -0500
+Received: from mail-oi1-f193.google.com ([209.85.167.193]:35079 "EHLO
+        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729256AbgAWNyF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Jan 2020 08:52:26 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1579787544;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=FzK0nabFcVqCxu+Dc6EYvtOWvTDLB9MHtbAW7toY8PA=;
-        b=jWnQ47Uuuy0UR+AUB7Gahh6BG9xCfkBLDQnVXMAcI1zh5dh6ggD/Wwj9qSDVaOYSwa3mgn
-        UOZer9hlg5TG83SyCD6dtYb/syw91vKSAOUU9shFlPnaxBG8LKnSy3WXNZDtsBfJ1r5CR4
-        FS9Z3YIXkhxStQL2nAvDdyy1wYjTUAA=
-Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
- [209.85.128.72]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-174-ZiJkwW3FOwyTA2V4ZCYDKw-1; Thu, 23 Jan 2020 08:52:22 -0500
-X-MC-Unique: ZiJkwW3FOwyTA2V4ZCYDKw-1
-Received: by mail-wm1-f72.google.com with SMTP id t16so1056598wmt.4
-        for <linux-kernel@vger.kernel.org>; Thu, 23 Jan 2020 05:52:21 -0800 (PST)
+        Thu, 23 Jan 2020 08:54:05 -0500
+Received: by mail-oi1-f193.google.com with SMTP id k4so2967510oik.2;
+        Thu, 23 Jan 2020 05:54:04 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=FzK0nabFcVqCxu+Dc6EYvtOWvTDLB9MHtbAW7toY8PA=;
-        b=fa/bYEMi7qEoe27cvQjh/80ppOCX5+fvtUHvOlMFG+eqrsX80Q64qmyP1AzEx8KJ8T
-         WhWNVNfFP75rJUQxp0Pw6zkAU2jOzfgOYJ1RoYwPiA2w7VaOfyn5+GhSjyX5ZJHbQXi+
-         YUcsOBDoClEZkgJlKSbYladPeIaVnT/RdF7AaudIqSv1Qru1MkTpzp1GURy8eEHa+Ycl
-         I49sWDyXvT/OzHt/kE90ILJAPjpfPO6W2JsbgsEoqABhaPqTgUeEc0g2SYwivcd1A6EX
-         3DtfSwPTbOgRkASRCQBx20ATIJRrUa1VXkuTL3VvgS+3D8+i9WUWDWySnGD6A5ant5Bu
-         MHZg==
-X-Gm-Message-State: APjAAAUU9ysxa91odNet3r6atbaeWI/JGdX1ARbdqrkdM3+2kjwTDh0J
-        5DqHKppavfEHjMsg5U50nXAGrtYGbMomptvcLUh0hwvAEc4/Dm4SbkUYK9f4+phdxcEI/JXS50A
-        udX58URmEdt5Q1TPxPmgSKDI3
-X-Received: by 2002:a1c:4008:: with SMTP id n8mr4342413wma.121.1579787540984;
-        Thu, 23 Jan 2020 05:52:20 -0800 (PST)
-X-Google-Smtp-Source: APXvYqwwuAHOv3mQdajAOj8Wx0mgp4dKgh3ugzrnb0nmfg+V0M9H/8uW8obx7N/CZnGLglD/gLhKTg==
-X-Received: by 2002:a1c:4008:: with SMTP id n8mr4342396wma.121.1579787540799;
-        Thu, 23 Jan 2020 05:52:20 -0800 (PST)
-Received: from [192.168.1.81] (host81-140-166-164.range81-140.btcentralplus.com. [81.140.166.164])
-        by smtp.gmail.com with ESMTPSA id l3sm3135558wrt.29.2020.01.23.05.52.19
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 23 Jan 2020 05:52:20 -0800 (PST)
-Subject: Re: [RFC v5 00/57] objtool: Add support for arm64
-To:     Will Deacon <will@kernel.org>
-Cc:     linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        jpoimboe@redhat.com, peterz@infradead.org, raphael.gault@arm.com,
-        catalin.marinas@arm.com
-References: <20200109160300.26150-1-jthierry@redhat.com>
- <20200121103025.GC11154@willie-the-truck>
-From:   Julien Thierry <jthierry@redhat.com>
-Message-ID: <400d402d-c964-6f0c-2954-6f6afcb94635@redhat.com>
-Date:   Thu, 23 Jan 2020 13:52:17 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.3.0
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=R/qM3etQQpBSLTEqBLeVd9eY87SXmbEFDzRP+5up0C8=;
+        b=E385wjK+G12yazTclPY7ZOl88Tk4da5PqvLPOjo3KkXIe4BSXxaC0PILlA1RFCcYez
+         481NYK0bpigIzfWbVZCEAHqDTHCIvbmygfneG5V4qAe2mLrp86AiY3yyWBHP5H5aEIHI
+         UXD0BQt1JeqvdwIa+Nbfm2iJXfTCrdrzoA2z7q+gi4ezpgV4Q94EqeCoGKDtyw77lykn
+         0SBDcm7i4D21p3TCHP679ogWWyLv9oTrsqBokaZ1FCDuwu7HZKleJavbxrGX0Dltr4yl
+         O0n0j8iwMqRpCvJD4yg4pDFqusbMRRD4NUKQ/Sg5EskD7s89Qjd+7HwuEVYzQVTbV5EK
+         VM3Q==
+X-Gm-Message-State: APjAAAVl8c4nm0a9Yz+HZ2Xr5H6cMvNUZsLPFl+gBlV0LreYBckFK5fy
+        Ukx9uiHnR6qP8PNOQT+qdNgXkR8=
+X-Google-Smtp-Source: APXvYqxbmVw4pPuJNM4zzDBdpevfcNsr9BgaGlQWY114ibeMBYPE5XKl4w2rJlu5/DKjrG/8rQ80/Q==
+X-Received: by 2002:a05:6808:1c6:: with SMTP id x6mr10556492oic.49.1579787643963;
+        Thu, 23 Jan 2020 05:54:03 -0800 (PST)
+Received: from rob-hp-laptop (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id 17sm808746oty.48.2020.01.23.05.54.03
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 23 Jan 2020 05:54:03 -0800 (PST)
+Received: (nullmailer pid 4960 invoked by uid 1000);
+        Thu, 23 Jan 2020 13:54:02 -0000
+Date:   Thu, 23 Jan 2020 07:54:02 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Kamal Dasu <kdasu.kdev@gmail.com>
+Cc:     linux-kernel@vger.kernel.org,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        Richard Weinberger <richard@nod.at>,
+        Vignesh Raghavendra <vigneshr@ti.com>,
+        Brian Norris <computersforpeace@gmail.com>,
+        Kamal Dasu <kdasu.kdev@gmail.com>,
+        Sumit Semwal <sumit.semwal@linaro.org>,
+        linux-mtd@lists.infradead.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH V3 1/3] dt: bindings: brcmnand: Add support for flash-edu
+Message-ID: <20200123135402.GA4763@bogus>
+References: <20200122204111.47554-1-kdasu.kdev@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20200121103025.GC11154@willie-the-truck>
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200122204111.47554-1-kdasu.kdev@gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On 1/21/20 10:30 AM, Will Deacon wrote:
-> On Thu, Jan 09, 2020 at 04:02:03PM +0000, Julien Thierry wrote:
->> This patch series is the continuation of Raphael's work [1]. All the
->> patches can be retrieved from:
->> git clone -b arm64-objtool-v5 https://github.com/julien-thierry/linux.git
+On Wed, 22 Jan 2020 15:41:09 -0500, Kamal Dasu wrote:
+> Adding support for EBI DMA unit (EDU).
 > 
-> [...]
-> 
->>    objtool: arm64: Decode unknown instructions
->>    objtool: arm64: Decode simple data processing instructions
->>    objtool: arm64: Decode add/sub immediate instructions
->>    objtool: arm64: Decode logical data processing instructions
->>    objtool: arm64: Decode system instructions not affecting the flow
->>    objtool: arm64: Decode calls to higher EL
->>    objtool: arm64: Decode brk instruction
->>    objtool: arm64: Decode instruction triggering context switch
->>    objtool: arm64: Decode branch instructions with PC relative immediates
->>    objtool: arm64: Decode branch to register instruction
->>    objtool: arm64: Decode basic load/stores
->>    objtool: arm64: Decode load/store with register offset
->>    objtool: arm64: Decode load/store register pair instructions
->>    objtool: arm64: Decode FP/SIMD load/store instructions
->>    objtool: arm64: Decode load/store exclusive
->>    objtool: arm64: Decode atomic load/store
->>    objtool: arm64: Decode pointer auth load instructions
->>    objtool: arm64: Decode load acquire/store release
->>    objtool: arm64: Decode load/store with memory tag
->>    objtool: arm64: Decode load literal
->>    objtool: arm64: Decode register data processing instructions
->>    objtool: arm64: Decode FP/SIMD data processing instructions
->>    objtool: arm64: Decode SVE instructions
-> 
-> That's a lot of decoding logic which we already have in
-> arch/arm64/{kernel/insn.c,include/asm/insn.h}. I'd prefer to see this stuff
-> reused or generated from a single source, since it's really easy to get it
-> wrong, has a tendency to bitrot and is nasty to debug.
+> Signed-off-by: Kamal Dasu <kdasu.kdev@gmail.com>
+> ---
+>  .../devicetree/bindings/mtd/brcm,brcmnand.txt          | 10 +++++-----
+>  1 file changed, 5 insertions(+), 5 deletions(-)
 > 
 
-The thing is that the code in those files is mostly encoding logic 
-(motivated by BPF) rather than decoding (except for the instruction that 
-might be trapped, but these rarely overlap with instructions that 
-objtools cares about). I agree that ideally the decoding/encoding should 
-be under arch/arm64/lib, I was just a bit weary introducing a lot of 
-decoding code under arch/arm64 that wouldn't even be used in kernel code.
+Please add Acked-by/Reviewed-by tags when posting new versions. However,
+there's no need to repost patches *only* to add the tags. The upstream
+maintainer will do that for acks received on the version they apply.
 
-But I can make an attempt for the encode/decode lib and post it as part 
-of the next version.
-
-Cheers,
-
--- 
-Julien Thierry
-
+If a tag was not added on purpose, please state why and what changed.
