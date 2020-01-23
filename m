@@ -2,61 +2,54 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 76356146705
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Jan 2020 12:44:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 42C50146706
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Jan 2020 12:45:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727893AbgAWLo5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 23 Jan 2020 06:44:57 -0500
-Received: from mail-vk1-f195.google.com ([209.85.221.195]:35458 "EHLO
-        mail-vk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726584AbgAWLo4 (ORCPT
+        id S1728900AbgAWLpA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 23 Jan 2020 06:45:00 -0500
+Received: from lelv0142.ext.ti.com ([198.47.23.249]:53834 "EHLO
+        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727523AbgAWLo5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Jan 2020 06:44:56 -0500
-Received: by mail-vk1-f195.google.com with SMTP id o187so890876vka.2
-        for <linux-kernel@vger.kernel.org>; Thu, 23 Jan 2020 03:44:56 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=benyossef-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=nyiurIf26J2PnKEaG0CFQgYd31QfXbKBOura+Qp9DBM=;
-        b=tFSNFy7TaEacy7bRpPIqB4cdCI5aO5jI7z4Cz85Gpq+te0ukUI1F9tsIluuVi7pitp
-         IASLT0XUDz+7mt6+T5PWGQVi2TyP99a4j7wI8IeGOK8IJfM0ZvZqWOVzMwjZa/SZIlRO
-         UhjSe3iGotRv80qlMo4mh8woMNVDkRC7+S8hpJpGFGUCPWKYGpkLj7gJgZcNHyTPTi8N
-         n7IT5cBKS3ckzzajq3S2TmVlfBqFqJibhUuToaaVHHQOKdGG9sxZIVOt+He66nhFu/qM
-         xZnIkhCjLDz+TZB9Knu+i4BqsL7fdf0Q7KTUfWx0IVfeUvdoCcw3oUaaDvSb5pG4gw22
-         tC+g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=nyiurIf26J2PnKEaG0CFQgYd31QfXbKBOura+Qp9DBM=;
-        b=g9eWbwQ1nY/+JwuHJ4NcyTZSnZi1JB51Er3LTHrivIVUkEK5Tfi4K0iAN9j9j4b6wm
-         RsB0JwebY3LZtwn/HnnUPzclGoluJVsBAV2EWAow2gV44HcC9SsBfbtp3sR+c9Rk4L6M
-         jktiW+VKcHoAO8+G9CD52IfOg8wqOuKjLxiBev7kq5AWPc/2X8bbGOFFrd87afZBOwwx
-         sE5Nnu0InhO7nLzJwq/NhsaxYyKGZmlYkbzSxsfMNxQ2D2naRGrviTtfCQFUWUtXRLIx
-         iZQLrUOkg7EDXHp2k4yXWwix2ykeRQMFPTAywD4tjlkev0vSWJM5hs5Otvt5NmRhtjk8
-         3YUA==
-X-Gm-Message-State: APjAAAVDY6EjcAzkZwDbDd0lKAbZjzK11u9yvXACaW47EEg+3O+6bRNz
-        oAwIZ/bZBPlIH7jzSyv86syTWMTTOzlOCMaytrlcrg==
-X-Google-Smtp-Source: APXvYqzNR8YxDD7XcoX4QE85sxHKmUMY554jZmO4LxS//U6VPPcRLCy7qBezxGpzkc27vKwsef+pT4RGYMyYwlw0Pz0=
-X-Received: by 2002:a1f:7cc2:: with SMTP id x185mr9354470vkc.1.1579779895649;
- Thu, 23 Jan 2020 03:44:55 -0800 (PST)
+        Thu, 23 Jan 2020 06:44:57 -0500
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id 00NBinIw023470;
+        Thu, 23 Jan 2020 05:44:49 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1579779889;
+        bh=056yP0wQc7y1OMqVn54WtC4Yn6DYkshBLN9I0yRi7e8=;
+        h=From:To:CC:Subject:Date;
+        b=cUIkrbLol1zXrJYj+GSwPOJQauBCLtHn6ZqwzVlf4XZMxM9vcmV9zXYdeFC8Yz4yS
+         edVrO//9G754yHYpOj6iw4XbW9nzbpUzBgW907Qk7JqWmMGZfBDBO5A7I3g8JfwQY8
+         L9TKwkR43NYxF+PugcyaiePOoFHoo9J/2MhG2YRU=
+Received: from DFLE105.ent.ti.com (dfle105.ent.ti.com [10.64.6.26])
+        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 00NBimiW016993
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Thu, 23 Jan 2020 05:44:49 -0600
+Received: from DFLE111.ent.ti.com (10.64.6.32) by DFLE105.ent.ti.com
+ (10.64.6.26) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Thu, 23
+ Jan 2020 05:44:47 -0600
+Received: from fllv0040.itg.ti.com (10.64.41.20) by DFLE111.ent.ti.com
+ (10.64.6.32) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
+ Frontend Transport; Thu, 23 Jan 2020 05:44:47 -0600
+Received: from feketebors.ti.com (ileax41-snat.itg.ti.com [10.172.224.153])
+        by fllv0040.itg.ti.com (8.15.2/8.15.2) with ESMTP id 00NBijBD114078;
+        Thu, 23 Jan 2020 05:44:45 -0600
+From:   Peter Ujfalusi <peter.ujfalusi@ti.com>
+To:     <t-kristo@ti.com>, <nm@ti.com>, <lokeshvutla@ti.com>
+CC:     <robh+dt@kernel.org>, <mark.rutland@arm.com>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: [PATCH v3 0/9] arm64: dts: ti: UDMAP and McASP support
+Date:   Thu, 23 Jan 2020 13:45:19 +0200
+Message-ID: <20200123114528.26552-1-peter.ujfalusi@ti.com>
+X-Mailer: git-send-email 2.25.0
 MIME-Version: 1.0
-References: <20200116101447.20374-1-gilad@benyossef.com> <CAMuHMdUhR83SZyWX9Du9d3Sp4A48x_msKaOHGsa88EQKStEDQg@mail.gmail.com>
-In-Reply-To: <CAMuHMdUhR83SZyWX9Du9d3Sp4A48x_msKaOHGsa88EQKStEDQg@mail.gmail.com>
-From:   Gilad Ben-Yossef <gilad@benyossef.com>
-Date:   Thu, 23 Jan 2020 13:44:43 +0200
-Message-ID: <CAOtvUMfDnoFu8V7sYvhgsstX6fuUk3foq+9FJ6SbUKEFnq-zMw@mail.gmail.com>
-Subject: Re: [PATCH 00/11] crypto: ccree - fixes and cleanups
-To:     Geert Uytterhoeven <geert@linux-m68k.org>
-Cc:     Herbert Xu <herbert@gondor.apana.org.au>,
-        "David S. Miller" <davem@davemloft.net>,
-        Ofir Drang <ofir.drang@arm.com>, Hadar Gat <hadar.gat@arm.com>,
-        Linux Crypto Mailing List <linux-crypto@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -64,117 +57,55 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 Hi,
 
-On Wed, Jan 22, 2020 at 6:51 PM Geert Uytterhoeven <geert@linux-m68k.org> w=
-rote:
->
-> Hi Gilad,
->
-> On Thu, Jan 16, 2020 at 11:25 AM Gilad Ben-Yossef <gilad@benyossef.com> w=
-rote:
-> > A bunch of fixes and code cleanups for the ccree driver
->
-> Thank you!
->
-> I wanted to give this a try, but it looks like CCREE is no longer working
-> on R-Car H3, both with/without this series.
->
-> E.g. with renesas-devel[*] and renesas_defconfig +
-> CONFIG_CRYPTO_MANAGER_DISABLE_TESTS=3Dn, I get the following crash:
->
+Changes since v2:
+- Correct unit addresses for the McASP nodes
+- Remove unit address and label for MAIN and MCU NAVSS
 
-Thank you for the bug report Geert!
+Changes since v1:
+- rebased on ti-k3-next
+- Corrected j721e mcu_udma node: s/udmap/dma-controller
+- Moved the two McASP node patch at the end of the series
 
-My R-Car board is on loan at the moment to another project. I didn't
-see this on our internal test board.
-I will track down my R-Car board and reproduce this - hopefully
-beginning of next week and will get back to you.
+The ringacc and UDMA documentation and drivers are in next-20200122.
 
-Thanks again,
-Gilad
+While adding the DMA support I have noticed few issues which is also fixed by
+this series.
 
-> ccree e6601000.crypto: ARM CryptoCell 630P Driver: HW version
-> 0xAF400001/0xDCC63000, Driver version 5.0
-> alg: No test for authenc(xcbc(aes),cbc(aes)) (authenc-xcbc-aes-cbc-aes-cc=
-ree)
-> alg: No test for authenc(xcbc(aes),rfc3686(ctr(aes)))
-> (authenc-xcbc-aes-rfc3686-ctr-aes-ccree)
-> ------------[ cut here ]------------
-> kernel BUG at kernel/dma/swiotlb.c:497!
-> Internal error: Oops - BUG: 0 [#1] PREEMPT SMP
-> CPU: 7 PID: 189 Comm: cryptomgr_test Not tainted 5.5.0-rc7-arm64-renesas =
-#463
-> Hardware name: Renesas Salvator-X 2nd version board based on r8a77951 (DT=
-)
-> pstate: 80000005 (Nzcv daif -PAN -UAO)
-> pc : swiotlb_tbl_map_single+0x30c/0x380
-> lr : swiotlb_map+0xb0/0x300
-> sp : ffff800012313430
-> x29: ffff800012313430 x28: 0000000000000000
-> x27: 0000000000000000 x26: 0000000738e7e000
-> x25: ffff0006fa5f8010 x24: 0000000000000000
-> x23: ffff800011aed000 x22: 0000000000000000
-> x21: 0000000000000000 x20: 00000000000e8000
-> x19: ffff80001105e000 x18: ffffffffffffffff
-> x17: 0000000000000007 x16: 0000000000000001
-> x15: ffff800010f5f908 x14: ffff800092313cf7
-> x13: ffff0006ff0b4000 x12: 0000000000000001
-> x11: 0000000000000003 x10: 0000000000200000
-> x9 : 0000000000000000 x8 : 0000000000000001
-> x7 : ffff800011aed9e0 x6 : 0000000000000000
-> x5 : 0000000000000000 x4 : 0000000000000000
-> x3 : 0000000000000000 x2 : 0000000000000000
-> x1 : 0000000074000000 x0 : 0000000000000000
-> Call trace:
->  swiotlb_tbl_map_single+0x30c/0x380
->  swiotlb_map+0xb0/0x300
->  dma_direct_map_page+0xb8/0x140
->  dma_direct_map_sg+0x78/0xe0
->  cc_map_sg+0x10c/0x1a8
->  cc_map_aead_request+0x160/0x990
->  cc_proc_aead+0x140/0xef8
->  cc_aead_encrypt+0x48/0x68
->  crypto_aead_encrypt+0x20/0x30
->  test_aead_vec_cfg+0x20c/0x848
->  test_aead+0xb8/0x140
->  alg_test_aead+0x94/0x178
->  alg_test+0x108/0x3f8
->  cryptomgr_test+0x40/0x48
->  kthread+0x11c/0x120
->  ret_from_fork+0x10/0x18
-> Code: f9402fbc 17ffffa0 f9000bb3 f9002fbc (d4210000)
-> ---[ end trace 272124cd4e3fd6f0 ]---
-> note: cryptomgr_test[189] exited with preempt_count 1
-> ------------[ cut here ]------------
->
-> FWIW, the same happens on R-Car H3 ES1.0.
-> I haven't tried investigating when it stopped working.
-> I stopped running the crypto manager tests when they were broken by
-> CONFIG_HARDENED_USERCOPY_PAGESPAN=3Dy.
->
-> Do you have a clue?
-> Thanks!
->
-> [*] https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-devel.g=
-it/
->
-> Gr{oetje,eeting}s,
->
->                         Geert
->
-> --
-> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m6=
-8k.org
->
-> In personal conversations with technical people, I call myself a hacker. =
-But
-> when I'm talking to journalists I just say "programmer" or something like=
- that.
->                                 -- Linus Torvalds
+Tero: I have included the McASP nodes as well to have examples for other
+peripherals on how he binding should be used.
+The patches for the McASP driver is not in next, but they are only internal
+driver changes (and Kconfig), not adding new DT dependencies.
+Since the McASP is disabled in SoC dtsi due to board level configuration needs
+it is not going to erroneously probe drivers.
 
+It is up to you if you pick them or not, but I believe they serve a safe and
+nice example how the dma binding should be used for UDMA.
 
+Regards,
+Peter
+---
+Peter Ujfalusi (9):
+  arm64: dts: ti: k3-am65-main: Correct main NAVSS representation
+  arm64: dts: ti: k3-am65-main: Move secure proxy under cbass_main_navss
+  arm64: dts: ti: k3-am65: DMA support
+  arm64: dts: ti: k3-j721e: Correct the address for MAIN NAVSS
+  arm64: dts: ti: k3-j721e-main: Correct main NAVSS representation
+  arm64: dts: ti: k3-j721e-main: Move secure proxy and smmu under
+    main_navss
+  arm64: dts: ti: k3-j721e: DMA support
+  arm64: dts: ti: k3-am654-main: Add McASP nodes
+  arm64: dts: ti: k3-j721e-main: Add McASP nodes
 
---=20
-Gilad Ben-Yossef
-Chief Coffee Drinker
+ arch/arm64/boot/dts/ti/k3-am65-main.dtsi      | 122 ++++++-
+ arch/arm64/boot/dts/ti/k3-am65-mcu.dtsi       |  46 +++
+ arch/arm64/boot/dts/ti/k3-j721e-main.dtsi     | 313 ++++++++++++++++--
+ .../boot/dts/ti/k3-j721e-mcu-wakeup.dtsi      |  45 +++
+ arch/arm64/boot/dts/ti/k3-j721e.dtsi          |   2 +-
+ 5 files changed, 491 insertions(+), 37 deletions(-)
 
-values of =CE=B2 will give rise to dom!
+-- 
+Peter
+
+Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
+Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
+
