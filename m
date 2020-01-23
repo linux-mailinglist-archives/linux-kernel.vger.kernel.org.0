@@ -2,180 +2,125 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 72CA114604A
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Jan 2020 02:24:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4D17B146041
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Jan 2020 02:23:24 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727590AbgAWBY2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 22 Jan 2020 20:24:28 -0500
-Received: from gate2.alliedtelesis.co.nz ([202.36.163.20]:36154 "EHLO
-        gate2.alliedtelesis.co.nz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726083AbgAWBY1 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 Jan 2020 20:24:27 -0500
-Received: from mmarshal3.atlnz.lc (mmarshal3.atlnz.lc [10.32.18.43])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (Client did not present a certificate)
-        by gate2.alliedtelesis.co.nz (Postfix) with ESMTPS id 25550886BF;
-        Thu, 23 Jan 2020 14:24:25 +1300 (NZDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alliedtelesis.co.nz;
-        s=mail181024; t=1579742665;
-        bh=kmiDiaKiwZNr3ZUWD2bOHX6HuBV/rQF0LIqOia8udp0=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References;
-        b=aDDTHRR4URHuZS3fjfF7HTgM8A8ts02wm/nzU8sO2/1+9l2wzyZafWNTT3a68ONbl
-         ZHa4qo/B9UCiNLMSWvNiv0PrgN7vcugYrMPk7Lc8YF6w2sK8nSk4XmgzgDGOoYbMKV
-         r+0zGkJEPTPYJoNA62iOBwT/NM/lz8tObaebPoiEmZ4l3akgWLL+S9lVAH7FivX3Uu
-         tlgqRHeI/iR8ObyELObQKYXSYwmJ+AgDXsAfotgMPG3I+DxbO5cUTgl5qwQdYIo59i
-         KvRnFk9FQutyDZRzPt8FF+ToKSIUAEfrznyzFSBK7HPGImm1dFgj6wEHBpDB529yiz
-         sQ9pc3N4gm8Tw==
-Received: from smtp (Not Verified[10.32.16.33]) by mmarshal3.atlnz.lc with Trustwave SEG (v7,5,8,10121)
-        id <B5e28f58c0001>; Thu, 23 Jan 2020 14:23:28 +1300
-Received: from chrisp-dl.ws.atlnz.lc (chrisp-dl.ws.atlnz.lc [10.33.22.20])
-        by smtp (Postfix) with ESMTP id 42B3213EF28;
-        Thu, 23 Jan 2020 14:23:23 +1300 (NZDT)
-Received: by chrisp-dl.ws.atlnz.lc (Postfix, from userid 1030)
-        id A1F9E280071; Thu, 23 Jan 2020 14:23:24 +1300 (NZDT)
-From:   Chris Packham <chris.packham@alliedtelesis.co.nz>
-To:     broonie@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com
-Cc:     linux-spi@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Chris Packham <chris.packham@alliedtelesis.co.nz>
-Subject: [PATCH v2 1/2] dt-bindings: spi: Document binding for generic SPI multiplexer
-Date:   Thu, 23 Jan 2020 14:23:16 +1300
-Message-Id: <20200123012317.14808-2-chris.packham@alliedtelesis.co.nz>
-X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200123012317.14808-1-chris.packham@alliedtelesis.co.nz>
-References: <20200123012317.14808-1-chris.packham@alliedtelesis.co.nz>
+        id S1726181AbgAWBXU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 22 Jan 2020 20:23:20 -0500
+Received: from mga02.intel.com ([134.134.136.20]:13205 "EHLO mga02.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725911AbgAWBXT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 22 Jan 2020 20:23:19 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga004.fm.intel.com ([10.253.24.48])
+  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 22 Jan 2020 17:23:18 -0800
+X-IronPort-AV: E=Sophos;i="5.70,352,1574150400"; 
+   d="scan'208";a="250814494"
+Received: from agluck-desk2.sc.intel.com (HELO agluck-desk2.amr.corp.intel.com) ([10.3.52.68])
+  by fmsmga004-auth.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 22 Jan 2020 17:23:18 -0800
+Date:   Wed, 22 Jan 2020 17:23:17 -0800
+From:   "Luck, Tony" <tony.luck@intel.com>
+To:     Arvind Sankar <nivedita@alum.mit.edu>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        "Christopherson, Sean J" <sean.j.christopherson@intel.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        "Yu, Fenghua" <fenghua.yu@intel.com>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        H Peter Anvin <hpa@zytor.com>,
+        "Raj, Ashok" <ashok.raj@intel.com>,
+        "Shankar, Ravi V" <ravi.v.shankar@intel.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>, x86 <x86@kernel.org>
+Subject: Re: [PATCH v12] x86/split_lock: Enable split lock detection by kernel
+Message-ID: <20200123012317.GA21843@agluck-desk2.amr.corp.intel.com>
+References: <20191125161348.GA12178@linux.intel.com>
+ <20191212085948.GS2827@hirez.programming.kicks-ass.net>
+ <20200110192409.GA23315@agluck-desk2.amr.corp.intel.com>
+ <20200114055521.GI14928@linux.intel.com>
+ <20200115222754.GA13804@agluck-desk2.amr.corp.intel.com>
+ <20200115225724.GA18268@linux.intel.com>
+ <20200122185514.GA16010@agluck-desk2.amr.corp.intel.com>
+ <20200122224245.GA2331824@rani.riverdale.lan>
+ <3908561D78D1C84285E8C5FCA982C28F7F54887A@ORSMSX114.amr.corp.intel.com>
+ <20200123004507.GA2403906@rani.riverdale.lan>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-x-atlnz-ls: pat
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200123004507.GA2403906@rani.riverdale.lan>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add binding documentation for the spi-mux driver. This allows a generic
-multiplexer to be used to provide access to multiple SPI devices.
+On Wed, Jan 22, 2020 at 07:45:08PM -0500, Arvind Sankar wrote:
+> On Wed, Jan 22, 2020 at 11:24:34PM +0000, Luck, Tony wrote:
+> > >> +static enum split_lock_detect_state sld_state = sld_warn;
+> > >> +
+> > >
+> > > This sets sld_state to sld_warn even on CPUs that don't support
+> > > split-lock detection. split_lock_init will then try to read/write the
+> > > MSR to turn it on. Would it be better to initialize it to sld_off and
+> > > set it to sld_warn in split_lock_setup instead, which is only called if
+> > > the CPU supports the feature?
+> > 
+> > I've lost some bits of this patch series somewhere along the way :-(  There
+> > was once code to decide whether the feature was supported (either with
+> > x86_match_cpu() for a couple of models, or using the architectural test
+> > based on some MSR bits.  I need to dig that out and put it back in. Then
+> > stuff can check X86_FEATURE_SPLIT_LOCK before wandering into code
+> > that messes with MSRs
+> 
+> That code is still there (cpu_set_core_cap_bits). The issue is that with
+> the initialization here, nothing ever sets sld_state to sld_off if the
+> feature isn't supported.
+> 
+> v10 had a corresponding split_lock_detect_enabled that was
+> 0-initialized, but Peter's patch as he sent out had the flag initialized
+> to sld_warn.
 
-Signed-off-by: Chris Packham <chris.packham@alliedtelesis.co.nz>
----
+Ah yes. Maybe the problem is that split_lock_init() is only
+called on systems that support split loc detect, while we call
+split_lock_init() unconditionally.
 
-Notes:
-    Changes in v2:
-    - update license
-    - make dt_binding_check clean
+What if we start with sld_state = sld_off, and then have split_lock_setup
+set it to either sld_warn, or whatever the user chose on the command
+line.  Patch below (on top of patch so you can see what I'm saying,
+but will just merge it in for next version.
 
- .../devicetree/bindings/spi/spi-mux.yaml      | 84 +++++++++++++++++++
- 1 file changed, 84 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/spi/spi-mux.yaml
+-Tony
 
-diff --git a/Documentation/devicetree/bindings/spi/spi-mux.yaml b/Documen=
-tation/devicetree/bindings/spi/spi-mux.yaml
-new file mode 100644
-index 000000000000..4bdb31e2257e
---- /dev/null
-+++ b/Documentation/devicetree/bindings/spi/spi-mux.yaml
-@@ -0,0 +1,84 @@
-+# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/spi/spi-mux.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Generic SPI Multiplexer
-+
-+description: |
-+  This binding describes a SPI bus multiplexer to route the SPI chip sel=
-ect
-+  signals. This can be used when you need more devices than the SPI cont=
-roller
-+  has chip selects available. An example setup is shown in ASCII art; th=
-e actual
-+  setting of the multiplexer to a channel needs to be done by a specific=
- SPI mux
-+  driver.
-+
-+        MOSI /--------------------------------+--------+--------+-------=
--\
-+        MISO |/------------------------------+|-------+|-------+|-------=
-\|
-+         SCL ||/----------------------------+||------+||------+||------\=
-||
-+             |||                            |||      |||      |||      |=
-||
-+      +------------+                        |||      |||      |||      |=
-||
-+      | SoC  |||   |                      +-+++-+  +-+++-+  +-+++-+  +-+=
-++-+
-+      |      |||   |                      | dev |  | dev |  | dev |  | d=
-ev |
-+      |   +--+++-+ | CS-X  +------+\      +--+--+  +--+--+  +--+--+  +--=
-+--+
-+      |   | SPI  +-|-------+ Mux  |\\   CS-0 |        |        |        =
-|
-+      |   +------+ |       +--+---+\\\-------/   CS-1 |        |        =
-|
-+      |            |          |    \\\----------------/   CS-2 |        =
-|
-+      |   +------+ |          |     \\-------------------------/   CS-3 =
-|
-+      |   | ?    +-|----------/      \----------------------------------=
-/
-+      |   +------+ |
-+      +------------+
-+
-+allOf:
-+  - $ref: "/schemas/spi/spi-controller.yaml#"
-+
-+maintainers:
-+  - Chris Packham <chris.packham@alliedtelesis.co.nz>
-+
-+properties:
-+  compatible:
-+    const: spi-mux
-+
-+  mux-controls:
-+    maxItems: 1
-+
-+required:
-+   - compatible
-+   - reg
-+   - spi-max-frequency
-+   - mux-controls
-+
-+examples:
-+   - |
-+     mux: mux-controller {
-+       compatible =3D "gpio-mux";
-+       #mux-control-cells =3D <0>;
-+
-+       mux-gpios =3D <&gpio0 3 GPIO_ACTIVE_HIGH>;
-+     };
-+
-+     spi {
-+       spi-mux@0 {
-+         compatible =3D "spi-mux";
-+         #address-cells =3D <1>;
-+         #size-cells =3D <0>;
-+         reg =3D <0>;
-+         spi-max-frequency =3D <100000000>;
-+
-+         mux-controls =3D <&mux>
-+
-+         spi-flash@0 {
-+           compatible =3D "jedec,spi-nor";
-+           #address-cells =3D <1>;
-+           #size-cells =3D <1>;
-+           reg =3D <0>;
-+           spi-max-frequency =3D <40000000>;
-+         };
-+
-+         spi-device@1 {
-+           compatible =3D "lineartechnology,ltc2488";
-+           reg =3D <1>;
-+           spi-max-frequency =3D <10000000>;
-+         };
-+       };
-+     };
---=20
-2.25.0
 
+diff --git a/arch/x86/kernel/cpu/intel.c b/arch/x86/kernel/cpu/intel.c
+index 7478bebcd735..b6046ccfa372 100644
+--- a/arch/x86/kernel/cpu/intel.c
++++ b/arch/x86/kernel/cpu/intel.c
+@@ -39,7 +39,13 @@ enum split_lock_detect_state {
+ 	sld_fatal,
+ };
+ 
+-static enum split_lock_detect_state sld_state = sld_warn;
++/*
++ * Default to sld_off because most systems do not support
++ * split lock detection. split_lock_setup() will switch this
++ * to sld_warn, and then check to see if there is a command
++ * line override.
++ */
++static enum split_lock_detect_state sld_state = sld_off;
+ 
+ /*
+  * Just in case our CPU detection goes bad, or you have a weird system,
+@@ -1017,10 +1023,11 @@ static inline bool match_option(const char *arg, int arglen, const char *opt)
+ 
+ static void __init split_lock_setup(void)
+ {
+-	enum split_lock_detect_state sld = sld_state;
++	enum split_lock_detect_state sld;
+ 	char arg[20];
+ 	int i, ret;
+ 
++	sld_state = sld = sld_warn;
+ 	setup_force_cpu_cap(X86_FEATURE_SPLIT_LOCK_DETECT);
+ 
+ 	ret = cmdline_find_option(boot_command_line, "split_lock_ac",
