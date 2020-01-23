@@ -2,112 +2,75 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AC7BB1462AE
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Jan 2020 08:29:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2EF1F14623A
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Jan 2020 08:05:19 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726164AbgAWH3K (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 23 Jan 2020 02:29:10 -0500
-Received: from us-smtp-1.mimecast.com ([207.211.31.81]:29902 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1725777AbgAWH3K (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Jan 2020 02:29:10 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1579764549;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=Swf1miaJ2KibF1rWEltK6FB4Al/NU26D9Z8MNRvgV1o=;
-        b=G52D8YgHWIsZhVqHm1vk9HxsUHKk+PSLCx86kvrT+ulwDx9uao78tLlE4H0Hp/Y7hWrNAh
-        AFHS8H/y+f9NK242c56VMGje7MbdUqP2wwuL2mSRKFoZeyEXNM6PpAqZQgfRVsh9U8FfKC
-        L/gJeqe2ZOZDQ3MAIJjNJOB6cGvH1BY=
-Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
- [209.85.221.70]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-419-Yrx5KV4OMdWYXRDKdw2KFw-1; Thu, 23 Jan 2020 02:29:07 -0500
-X-MC-Unique: Yrx5KV4OMdWYXRDKdw2KFw-1
-Received: by mail-wr1-f70.google.com with SMTP id t3so1284513wrm.23
-        for <linux-kernel@vger.kernel.org>; Wed, 22 Jan 2020 23:29:07 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=Swf1miaJ2KibF1rWEltK6FB4Al/NU26D9Z8MNRvgV1o=;
-        b=kE6F71YnFcu6hW2G/X1MgPRGaq6RRyIpaKJq5EsZbqmrTWOGTLJzeQr7CnOyGsPePX
-         ViyAqiEXc9Yx0rVLVKipudwASkLGF8jZwX+p3DKhRSkOltksYQIXAtDKS4e3OOYwugeO
-         6XIQyvhmN+grw6jJjZ6tdjxM3DGbBW0ooaFEnjuZvexB+kh7SBBhG6kCFGl9OBd6ruWV
-         EA+8WDMdomQ2d4BtpLXlYjaD+vuUw0czCYevhLhzbnayZST5H1vB6fYBN/x9JndmJyQt
-         dbADZe1i0rN3HbDOvaOAkS8ZwQ3iSvHNlg9Z1GQsM24kVdj1g2k6OkJuQh9huYOwH8fX
-         dmbg==
-X-Gm-Message-State: APjAAAV1N1yTMNiyjdxyZLli3Tqf9Sfj7jv1Nuu8StfXgWC6x9h66+yv
-        lFnkfCcdGJLMkztabZ0NNjQb9VIka0/jpJ858bdrDXg4HmEv8ddUzmaeTMpIIROQO60pmMYP/cv
-        3vJkyCUTEgONtpmWBrmPjrhR/
-X-Received: by 2002:adf:fe0e:: with SMTP id n14mr16615705wrr.116.1579764546475;
-        Wed, 22 Jan 2020 23:29:06 -0800 (PST)
-X-Google-Smtp-Source: APXvYqynoI3k83YYvEjN9Vq70/cg2K/88hFd6YtoeaGnpbIqaxUURJKASpUHj31Q/0KxCIPHp2utJg==
-X-Received: by 2002:adf:fe0e:: with SMTP id n14mr16615675wrr.116.1579764546241;
-        Wed, 22 Jan 2020 23:29:06 -0800 (PST)
-Received: from localhost (nat-pool-brq-t.redhat.com. [213.175.37.10])
-        by smtp.gmail.com with ESMTPSA id a9sm1509848wmm.15.2020.01.22.23.29.04
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 22 Jan 2020 23:29:04 -0800 (PST)
-Date:   Thu, 23 Jan 2020 08:29:04 +0100
-From:   Oleksandr Natalenko <oleksandr@redhat.com>
-To:     Minchan Kim <minchan@kernel.org>
-Cc:     "Kirill A. Shutemov" <kirill@shutemov.name>,
-        Michal Hocko <mhocko@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-mm <linux-mm@kvack.org>, linux-api@vger.kernel.org,
-        Suren Baghdasaryan <surenb@google.com>,
-        Tim Murray <timmurray@google.com>,
-        Daniel Colascione <dancol@google.com>,
-        Sandeep Patil <sspatil@google.com>,
-        Sonny Rao <sonnyrao@google.com>,
-        Brian Geffon <bgeffon@google.com>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Shakeel Butt <shakeelb@google.com>,
-        John Dias <joaodias@google.com>, ktkhai@virtuozzo.com,
-        christian.brauner@ubuntu.com, sjpark@amazon.de
-Subject: Re: [PATCH v2 2/5] mm: introduce external memory hinting API
-Message-ID: <20200123072904.ludphxkxseyg2qli@butterfly.localdomain>
-References: <20200116235953.163318-1-minchan@kernel.org>
- <20200116235953.163318-3-minchan@kernel.org>
- <20200117115225.GV19428@dhcp22.suse.cz>
- <20200117155837.bowyjpndfiym6cgs@box>
- <20200117173239.GB140922@google.com>
- <20200117212653.7uftw3lk35oykkmb@box>
- <20200121181113.GE140922@google.com>
- <20200122104424.7gvrfivymjvdous4@butterfly.localdomain>
- <20200123014316.GB249784@google.com>
+        id S1726240AbgAWHFM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 23 Jan 2020 02:05:12 -0500
+Received: from szxga06-in.huawei.com ([45.249.212.32]:48812 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725828AbgAWHFL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 23 Jan 2020 02:05:11 -0500
+Received: from DGGEMS401-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id 4FCF3AEBE20CF7D75747;
+        Thu, 23 Jan 2020 15:05:10 +0800 (CST)
+Received: from huawei.com (10.175.102.38) by DGGEMS401-HUB.china.huawei.com
+ (10.3.19.201) with Microsoft SMTP Server id 14.3.439.0; Thu, 23 Jan 2020
+ 15:05:01 +0800
+From:   Xuefeng Wang <wxf.wang@hisilicon.com>
+To:     <catalin.marinas@arm.com>, <will@kernel.org>,
+        <mark.rutland@arm.com>, <arnd@arndb.de>,
+        <akpm@linux-foundation.org>
+CC:     <linux-arch@vger.kernel.org>, <linux-mm@kvack.org>,
+        <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <chenzhou10@huawei.com>,
+        Xuefeng Wang <wxf.wang@hisilicon.com>
+Subject: [PATCH 0/2] mm/thp: rework the pmd protect changing flow
+Date:   Thu, 23 Jan 2020 15:55:11 +0800
+Message-ID: <20200123075514.15142-1-wxf.wang@hisilicon.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200123014316.GB249784@google.com>
+Content-Type: text/plain
+X-Originating-IP: [10.175.102.38]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jan 22, 2020 at 05:43:16PM -0800, Minchan Kim wrote:
-> > It seems I've overlooked an important piece of this submission: one
-> > cannot apply the hint to all the anonymous mapping regardless of address
-> > range. For KSM I'd rather either have a possibility to hint all the
-> > anonymous mappings, or, as it was suggested previously, be able to iterate
-> > over existing mappings using some (fd-based?) API.
-> 
-> Thing is how you could identify a certan range is better for KSM than
-> others from external process?
+On KunPeng920 board. When changing permission of a large range region,
+pmdp_invalidate() takes about 65% in profile (with hugepages) in JIT tool.
+Kernel will flush tlb twice: first flush happens in pmdp_invalidate, second
+flush happens at the end of change_protect_range(). The first pmdp_invalidate
+is not necessary if the hardware support atomic pmdp changing. The atomic
+changing pimd to zero can prevent the hardware from update asynchronous.
+So reconstruct it and remove the first pmdp_invalidate. And the second tlb
+flush can make sure the new tlb entry valid.
 
-I think the info like this is kinda available via /proc/pid/smaps. It
-lists the ranges and the vmflags. But using it raises 2 concerns: one is
-the absence of guarantee the mappings won't change after smaps is read
-and the second one is that there's no separate vmflag for marking a vma
-as non-meregable (and IIRC from previous attempts on addressing this,
-we've already exhausted all the flags on 32-bit arches, so it is not
-something that can be trivially addressed).
+This patch series add a pmdp_modify_prot transaction abstraction firstly.
+Then add pmdp_modify_prot_start() in arm64, which uses pmdp_huge_get_and_clear()
+to atomically fetch the pmd and zero the entry.
 
--- 
-  Best regards,
-    Oleksandr Natalenko (post-factum)
-    Senior Software Maintenance Engineer
+After rework, the mprotect can get 3~13 times performace gain in range
+64M to 512M on KunPeng920:
 
+4K granule/THP on
+memory size(M)	64	128	256	320	448	512
+pre-patch	0.77	1.40	2.64	3.23	4.49	5.10
+post-patch	0.20	0.23	0.28	0.31	0.37	0.39
+
+Changes:
+v2:
+ - fix set_pmd_at compile problems
+
+Xuefeng Wang (2):
+  mm: add helpers pmdp_modify_prot_start/commit
+  arm64: mm: rework the pmd protect changing flow
+
+ arch/arm64/include/asm/pgtable.h | 14 +++++++++++++
+ include/asm-generic/pgtable.h    | 35 ++++++++++++++++++++++++++++++++
+ mm/huge_memory.c                 | 19 ++++++++---------
+ 3 files changed, 57 insertions(+), 11 deletions(-)
+
+--
+2.17.1
