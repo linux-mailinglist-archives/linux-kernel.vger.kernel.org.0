@@ -2,308 +2,94 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C5847146715
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Jan 2020 12:45:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 375C8146724
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Jan 2020 12:46:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729208AbgAWLpY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 23 Jan 2020 06:45:24 -0500
-Received: from fllv0016.ext.ti.com ([198.47.19.142]:56732 "EHLO
-        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729157AbgAWLpT (ORCPT
+        id S1729174AbgAWLpw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 23 Jan 2020 06:45:52 -0500
+Received: from mout.kundenserver.de ([212.227.126.135]:45971 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726729AbgAWLpv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Jan 2020 06:45:19 -0500
-Received: from fllv0035.itg.ti.com ([10.64.41.0])
-        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 00NBj96J014080;
-        Thu, 23 Jan 2020 05:45:09 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1579779909;
-        bh=63sAqn5erf4xNEvqueAvduHlLaJiBo1Ph/nn0rBGpS0=;
-        h=From:To:CC:Subject:Date:In-Reply-To:References;
-        b=a1Yp1/LmaH/K5nuHV3mMI4CLud4GFaOh8WEqtj0PujxKMDJay9ZaqpdQdNEklWwpa
-         jWnZLTn81AJEkdpdQJJFgGvDbuvecxPXr0P6y9BwJCbe5lQ4SpEe1Med00G4DkCnDd
-         VOhez4t++4C85i68J2X0pz5ya80ddNCyJoc05wn8=
-Received: from DFLE100.ent.ti.com (dfle100.ent.ti.com [10.64.6.21])
-        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTP id 00NBj9cq060995;
-        Thu, 23 Jan 2020 05:45:09 -0600
-Received: from DFLE107.ent.ti.com (10.64.6.28) by DFLE100.ent.ti.com
- (10.64.6.21) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Thu, 23
- Jan 2020 05:45:08 -0600
-Received: from fllv0040.itg.ti.com (10.64.41.20) by DFLE107.ent.ti.com
- (10.64.6.28) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
- Frontend Transport; Thu, 23 Jan 2020 05:45:08 -0600
-Received: from feketebors.ti.com (ileax41-snat.itg.ti.com [10.172.224.153])
-        by fllv0040.itg.ti.com (8.15.2/8.15.2) with ESMTP id 00NBijBM114078;
-        Thu, 23 Jan 2020 05:45:06 -0600
-From:   Peter Ujfalusi <peter.ujfalusi@ti.com>
-To:     <t-kristo@ti.com>, <nm@ti.com>, <lokeshvutla@ti.com>
-CC:     <robh+dt@kernel.org>, <mark.rutland@arm.com>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: [PATCH v3 9/9] arm64: dts: ti: k3-j721e-main: Add McASP nodes
-Date:   Thu, 23 Jan 2020 13:45:28 +0200
-Message-ID: <20200123114528.26552-10-peter.ujfalusi@ti.com>
-X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200123114528.26552-1-peter.ujfalusi@ti.com>
-References: <20200123114528.26552-1-peter.ujfalusi@ti.com>
+        Thu, 23 Jan 2020 06:45:51 -0500
+Received: from mail-qt1-f182.google.com ([209.85.160.182]) by
+ mrelayeu.kundenserver.de (mreue012 [212.227.15.129]) with ESMTPSA (Nemesis)
+ id 1MrOq7-1jQft430v1-00oXw7; Thu, 23 Jan 2020 12:45:49 +0100
+Received: by mail-qt1-f182.google.com with SMTP id v25so2172023qto.7;
+        Thu, 23 Jan 2020 03:45:49 -0800 (PST)
+X-Gm-Message-State: APjAAAUWtmJO49mDYvoeUf6WO6p3BIvA57+nxpE6wWtoiLF2pGAzAPM4
+        Xmzc6s/tGIsXSPQGx0nYltuP91mjREeKP8huhwI=
+X-Google-Smtp-Source: APXvYqxYu69axy0Bewc1SVBnWuSZtPZgssykBaJE3cPmA0cwybtu/U5OsB+bGh3Rj3Te6JVRFOoM+OOuH2eryzlCEdQ=
+X-Received: by 2002:ac8:768d:: with SMTP id g13mr15548731qtr.7.1579779948545;
+ Thu, 23 Jan 2020 03:45:48 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+References: <20200123111836.7414-1-manivannan.sadhasivam@linaro.org> <20200123111836.7414-17-manivannan.sadhasivam@linaro.org>
+In-Reply-To: <20200123111836.7414-17-manivannan.sadhasivam@linaro.org>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Thu, 23 Jan 2020 12:45:32 +0100
+X-Gmail-Original-Message-ID: <CAK8P3a3PKukf4K48T89v5R_eUAMuYhoULsF1noK2gzSDpi1qVg@mail.gmail.com>
+Message-ID: <CAK8P3a3PKukf4K48T89v5R_eUAMuYhoULsF1noK2gzSDpi1qVg@mail.gmail.com>
+Subject: Re: [PATCH 16/16] soc: qcom: Do not depend on ARCH_QCOM for QMI helpers
+To:     Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Cc:     gregkh <gregkh@linuxfoundation.org>, smohanad@codeaurora.org,
+        Jeffrey Hugo <jhugo@codeaurora.org>,
+        Kalle Valo <kvalo@codeaurora.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        hemantk@codeaurora.org,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Andy Gross <agross@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+X-Provags-ID: V03:K1:drnzXxFqzCA0v3Z9j1+uqKH8+9u+OYJuS6+cG2SpKWhFPUUzQke
+ zFdr71U0bVk6NR7X4GhvMBPuA5hAB2FLzeUqheD0IVPIDrKnMUG/xKwl2VlxiHUcYtwP3Sz
+ Kvl+U+K5qO1TuGicIimRb1bwnTf3yIo1NuPYSksAulSe4SGPnZiSwK9Bo9F8NX3HQ7NEbiD
+ apS2RH3w2sOI5QL13rPWQ==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:eNSsmYP/dAM=:5TlaWMR+JT6vEooaGM3TBn
+ afIleCIAvJ6ff1Xpv5I34XRDk8BXVjkr171fhkJSrrwuj2GPK5cO+vZygAeBw7JytFWQBp+z7
+ vCYBescbp0d2Khb5F4DHDtvQ30Eijlt0ZWoL0jciLwL8TtvaSnfp8sxn2QeeQa+iJE0UOXcRN
+ d/q7ugQyGoDRESkKkZHpKdG/XWaQXCYnDEIBJ84lkCeP9yoZW7Vm5TcbhQntKybmQJinorBwE
+ ovR4T7hWsfqDoVeqNMbwyckZYgO+5e52KIUGOcToR6e+982NmRJ0NqPJc2jQ6kPRRYF07TaNx
+ cVtGv1Z7JyBdBUKPme/45GNfMR1+6aDsV5/+KDrY2Pdwt/z12sAaA5qwB938t2FfbrJ1cNA7o
+ +1XdMdtKaY4XqQaenj1cKyIFkDiQGiI6GK8M6M85VsScCZUNzy3xCpcag44Ix32PqFglqVjLY
+ dqnaUxkthiLCHI8YqXwOwKe3+L3/3yFOn/Hmo9OpFnYA7+B9dd/NJDcwb8obFt0wW6lw6lhhf
+ S+Ttal1BsW1KMcQ+Ax/Zrba0t2GsSsF0xWslxpkhu5jNAuNAuh7vuw/mgJVwVZw8oqdqAB3R/
+ O8PGzwcsstvFMeK2SKx6eq5CvKztCkxY/M07BZRo6e1ChvWy8X+L+hc/nthZTpjU4Ip9L1kpP
+ NdrFV/Giu3EYvLuN+I6zUEDtaTXehX/MZ4tEA65rg1+vCwpd/EXoFReMJvy8uMhZqsqWZhlpe
+ HsaAyWlSbXR3OsA3vZGpP12ygjMoYmbDYvyZrATMcZ2AXbgDGfjOM2sJsNO8uR2NMJTGLVwmB
+ nuCxRfrwjuEVmOUt7Cf7GMqC3utAFEjddEiAkj8RZPxWfQb7F8=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add the nodes for McASP 0-11 and keep them disabled because several
-required properties are not present as they are board specific.
+On Thu, Jan 23, 2020 at 12:19 PM Manivannan Sadhasivam
+<manivannan.sadhasivam@linaro.org> wrote:
+>
+> QMI helpers are not always used by Qualcomm platforms. One of the
+> exceptions is the external modems available in near future. As a
+> side effect of removing the dependency, it is also going to loose
+> COMPILE_TEST build coverage.
+>
+> Cc: Andy Gross <agross@kernel.org>
+> Cc: Bjorn Andersson <bjorn.andersson@linaro.org>
+> Cc: linux-arm-msm@vger.kernel.org
+> Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+> ---
+>  drivers/soc/qcom/Kconfig | 1 -
+>  1 file changed, 1 deletion(-)
+>
+> diff --git a/drivers/soc/qcom/Kconfig b/drivers/soc/qcom/Kconfig
+> index 79d826553ac8..ca057bc9aae6 100644
+> --- a/drivers/soc/qcom/Kconfig
+> +++ b/drivers/soc/qcom/Kconfig
+> @@ -88,7 +88,6 @@ config QCOM_PM
+>
+>  config QCOM_QMI_HELPERS
+>         tristate
+> -       depends on ARCH_QCOM || COMPILE_TEST
+>         depends on NET
 
-Signed-off-by: Peter Ujfalusi <peter.ujfalusi@ti.com>
----
- arch/arm64/boot/dts/ti/k3-j721e-main.dtsi | 228 ++++++++++++++++++++++
- 1 file changed, 228 insertions(+)
+Should this be moved out of drivers/soc/ then?
 
-diff --git a/arch/arm64/boot/dts/ti/k3-j721e-main.dtsi b/arch/arm64/boot/dts/ti/k3-j721e-main.dtsi
-index 6c909bd98a6b..0b9d14b838a1 100644
---- a/arch/arm64/boot/dts/ti/k3-j721e-main.dtsi
-+++ b/arch/arm64/boot/dts/ti/k3-j721e-main.dtsi
-@@ -735,4 +735,232 @@ ufs@4e84000 {
- 			dma-coherent;
- 		};
- 	};
-+
-+	mcasp0: mcasp@2b00000 {
-+		compatible = "ti,am33xx-mcasp-audio";
-+		reg = <0x0 0x02b00000 0x0 0x2000>,
-+			<0x0 0x02b08000 0x0 0x1000>;
-+		reg-names = "mpu","dat";
-+		interrupts = <GIC_SPI 544 IRQ_TYPE_LEVEL_HIGH>,
-+				<GIC_SPI 545 IRQ_TYPE_LEVEL_HIGH>;
-+		interrupt-names = "tx", "rx";
-+
-+		dmas = <&main_udmap 0xc400>, <&main_udmap 0x4400>;
-+		dma-names = "tx", "rx";
-+
-+		clocks = <&k3_clks 174 1>;
-+		clock-names = "fck";
-+		power-domains = <&k3_pds 174 TI_SCI_PD_EXCLUSIVE>;
-+
-+		status = "disabled";
-+	};
-+
-+	mcasp1: mcasp@2b10000 {
-+		compatible = "ti,am33xx-mcasp-audio";
-+		reg = <0x0 0x02b10000 0x0 0x2000>,
-+			<0x0 0x02b18000 0x0 0x1000>;
-+		reg-names = "mpu","dat";
-+		interrupts = <GIC_SPI 546 IRQ_TYPE_LEVEL_HIGH>,
-+				<GIC_SPI 547 IRQ_TYPE_LEVEL_HIGH>;
-+		interrupt-names = "tx", "rx";
-+
-+		dmas = <&main_udmap 0xc401>, <&main_udmap 0x4401>;
-+		dma-names = "tx", "rx";
-+
-+		clocks = <&k3_clks 175 1>;
-+		clock-names = "fck";
-+		power-domains = <&k3_pds 175 TI_SCI_PD_EXCLUSIVE>;
-+
-+		status = "disabled";
-+	};
-+
-+	mcasp2: mcasp@2b20000 {
-+		compatible = "ti,am33xx-mcasp-audio";
-+		reg = <0x0 0x02b20000 0x0 0x2000>,
-+			<0x0 0x02b28000 0x0 0x1000>;
-+		reg-names = "mpu","dat";
-+		interrupts = <GIC_SPI 548 IRQ_TYPE_LEVEL_HIGH>,
-+				<GIC_SPI 549 IRQ_TYPE_LEVEL_HIGH>;
-+		interrupt-names = "tx", "rx";
-+
-+		dmas = <&main_udmap 0xc402>, <&main_udmap 0x4402>;
-+		dma-names = "tx", "rx";
-+
-+		clocks = <&k3_clks 176 1>;
-+		clock-names = "fck";
-+		power-domains = <&k3_pds 176 TI_SCI_PD_EXCLUSIVE>;
-+
-+		status = "disabled";
-+	};
-+
-+	mcasp3: mcasp@2b30000 {
-+		compatible = "ti,am33xx-mcasp-audio";
-+		reg = <0x0 0x02b30000 0x0 0x2000>,
-+			<0x0 0x02b38000 0x0 0x1000>;
-+		reg-names = "mpu","dat";
-+		interrupts = <GIC_SPI 550 IRQ_TYPE_LEVEL_HIGH>,
-+				<GIC_SPI 551 IRQ_TYPE_LEVEL_HIGH>;
-+		interrupt-names = "tx", "rx";
-+
-+		dmas = <&main_udmap 0xc500>, <&main_udmap 0x4500>;
-+		dma-names = "tx", "rx";
-+
-+		clocks = <&k3_clks 177 1>;
-+		clock-names = "fck";
-+		power-domains = <&k3_pds 177 TI_SCI_PD_EXCLUSIVE>;
-+
-+		status = "disabled";
-+	};
-+
-+	mcasp4: mcasp@2b40000 {
-+		compatible = "ti,am33xx-mcasp-audio";
-+		reg = <0x0 0x02b40000 0x0 0x2000>,
-+			<0x0 0x02b48000 0x0 0x1000>;
-+		reg-names = "mpu","dat";
-+		interrupts = <GIC_SPI 552 IRQ_TYPE_LEVEL_HIGH>,
-+				<GIC_SPI 553 IRQ_TYPE_LEVEL_HIGH>;
-+		interrupt-names = "tx", "rx";
-+
-+		dmas = <&main_udmap 0xc501>, <&main_udmap 0x4501>;
-+		dma-names = "tx", "rx";
-+
-+		clocks = <&k3_clks 178 1>;
-+		clock-names = "fck";
-+		power-domains = <&k3_pds 178 TI_SCI_PD_EXCLUSIVE>;
-+
-+		status = "disabled";
-+	};
-+
-+	mcasp5: mcasp@2b50000 {
-+		compatible = "ti,am33xx-mcasp-audio";
-+		reg = <0x0 0x02b50000 0x0 0x2000>,
-+			<0x0 0x02b58000 0x0 0x1000>;
-+		reg-names = "mpu","dat";
-+		interrupts = <GIC_SPI 554 IRQ_TYPE_LEVEL_HIGH>,
-+				<GIC_SPI 555 IRQ_TYPE_LEVEL_HIGH>;
-+		interrupt-names = "tx", "rx";
-+
-+		dmas = <&main_udmap 0xc502>, <&main_udmap 0x4502>;
-+		dma-names = "tx", "rx";
-+
-+		clocks = <&k3_clks 179 1>;
-+		clock-names = "fck";
-+		power-domains = <&k3_pds 179 TI_SCI_PD_EXCLUSIVE>;
-+
-+		status = "disabled";
-+	};
-+
-+	mcasp6: mcasp@2b60000 {
-+		compatible = "ti,am33xx-mcasp-audio";
-+		reg = <0x0 0x02b60000 0x0 0x2000>,
-+			<0x0 0x02b68000 0x0 0x1000>;
-+		reg-names = "mpu","dat";
-+		interrupts = <GIC_SPI 556 IRQ_TYPE_LEVEL_HIGH>,
-+				<GIC_SPI 557 IRQ_TYPE_LEVEL_HIGH>;
-+		interrupt-names = "tx", "rx";
-+
-+		dmas = <&main_udmap 0xc503>, <&main_udmap 0x4503>;
-+		dma-names = "tx", "rx";
-+
-+		clocks = <&k3_clks 180 1>;
-+		clock-names = "fck";
-+		power-domains = <&k3_pds 180 TI_SCI_PD_EXCLUSIVE>;
-+
-+		status = "disabled";
-+	};
-+
-+	mcasp7: mcasp@2b70000 {
-+		compatible = "ti,am33xx-mcasp-audio";
-+		reg = <0x0 0x02b70000 0x0 0x2000>,
-+			<0x0 0x02b78000 0x0 0x1000>;
-+		reg-names = "mpu","dat";
-+		interrupts = <GIC_SPI 558 IRQ_TYPE_LEVEL_HIGH>,
-+				<GIC_SPI 559 IRQ_TYPE_LEVEL_HIGH>;
-+		interrupt-names = "tx", "rx";
-+
-+		dmas = <&main_udmap 0xc504>, <&main_udmap 0x4504>;
-+		dma-names = "tx", "rx";
-+
-+		clocks = <&k3_clks 181 1>;
-+		clock-names = "fck";
-+		power-domains = <&k3_pds 181 TI_SCI_PD_EXCLUSIVE>;
-+
-+		status = "disabled";
-+	};
-+
-+	mcasp8: mcasp@2b80000 {
-+		compatible = "ti,am33xx-mcasp-audio";
-+		reg = <0x0 0x02b80000 0x0 0x2000>,
-+			<0x0 0x02b88000 0x0 0x1000>;
-+		reg-names = "mpu","dat";
-+		interrupts = <GIC_SPI 560 IRQ_TYPE_LEVEL_HIGH>,
-+				<GIC_SPI 561 IRQ_TYPE_LEVEL_HIGH>;
-+		interrupt-names = "tx", "rx";
-+
-+		dmas = <&main_udmap 0xc505>, <&main_udmap 0x4505>;
-+		dma-names = "tx", "rx";
-+
-+		clocks = <&k3_clks 182 1>;
-+		clock-names = "fck";
-+		power-domains = <&k3_pds 182 TI_SCI_PD_EXCLUSIVE>;
-+
-+		status = "disabled";
-+	};
-+
-+	mcasp9: mcasp@2b90000 {
-+		compatible = "ti,am33xx-mcasp-audio";
-+		reg = <0x0 0x02b90000 0x0 0x2000>,
-+			<0x0 0x02b98000 0x0 0x1000>;
-+		reg-names = "mpu","dat";
-+		interrupts = <GIC_SPI 562 IRQ_TYPE_LEVEL_HIGH>,
-+				<GIC_SPI 563 IRQ_TYPE_LEVEL_HIGH>;
-+		interrupt-names = "tx", "rx";
-+
-+		dmas = <&main_udmap 0xc506>, <&main_udmap 0x4506>;
-+		dma-names = "tx", "rx";
-+
-+		clocks = <&k3_clks 183 1>;
-+		clock-names = "fck";
-+		power-domains = <&k3_pds 183 TI_SCI_PD_EXCLUSIVE>;
-+
-+		status = "disabled";
-+	};
-+
-+	mcasp10: mcasp@2ba0000 {
-+		compatible = "ti,am33xx-mcasp-audio";
-+		reg = <0x0 0x02ba0000 0x0 0x2000>,
-+			<0x0 0x02ba8000 0x0 0x1000>;
-+		reg-names = "mpu","dat";
-+		interrupts = <GIC_SPI 564 IRQ_TYPE_LEVEL_HIGH>,
-+				<GIC_SPI 565 IRQ_TYPE_LEVEL_HIGH>;
-+		interrupt-names = "tx", "rx";
-+
-+		dmas = <&main_udmap 0xc507>, <&main_udmap 0x4507>;
-+		dma-names = "tx", "rx";
-+
-+		clocks = <&k3_clks 184 1>;
-+		clock-names = "fck";
-+		power-domains = <&k3_pds 184 TI_SCI_PD_EXCLUSIVE>;
-+
-+		status = "disabled";
-+	};
-+
-+	mcasp11: mcasp@2bb0000 {
-+		compatible = "ti,am33xx-mcasp-audio";
-+		reg = <0x0 0x02bb0000 0x0 0x2000>,
-+			<0x0 0x02bb8000 0x0 0x1000>;
-+		reg-names = "mpu","dat";
-+		interrupts = <GIC_SPI 566 IRQ_TYPE_LEVEL_HIGH>,
-+				<GIC_SPI 567 IRQ_TYPE_LEVEL_HIGH>;
-+		interrupt-names = "tx", "rx";
-+
-+		dmas = <&main_udmap 0xc508>, <&main_udmap 0x4508>;
-+		dma-names = "tx", "rx";
-+
-+		clocks = <&k3_clks 185 1>;
-+		clock-names = "fck";
-+		power-domains = <&k3_pds 185 TI_SCI_PD_EXCLUSIVE>;
-+
-+		status = "disabled";
-+	};
- };
--- 
-Peter
-
-Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
-Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
-
+        Arnd
