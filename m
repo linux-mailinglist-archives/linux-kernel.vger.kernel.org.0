@@ -2,42 +2,60 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7A0BA146941
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Jan 2020 14:37:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E8894146943
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Jan 2020 14:38:19 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727816AbgAWNho (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 23 Jan 2020 08:37:44 -0500
-Received: from us-smtp-2.mimecast.com ([205.139.110.61]:59903 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726729AbgAWNhn (ORCPT
+        id S1728760AbgAWNiR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 23 Jan 2020 08:38:17 -0500
+Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:45951 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726729AbgAWNiQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Jan 2020 08:37:43 -0500
+        Thu, 23 Jan 2020 08:38:16 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1579786662;
+        s=mimecast20190719; t=1579786695;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=D/mKKFH0Pgl6eS/j/YSBbgLp/TGqqZwcT4ZYT6DqoVE=;
-        b=ehfZwprk0j1lEJz4juilZedVKzN146EAVxRRqQehD2Tfb3OGMGmCjXJr0I+IFQEgHMe5Eg
-        heFKqpzhXGXdwfl9gpIzMK/fGtyRaY5En8B++uub1ZJforNmrPBNbkFzDMEip4/9122x7t
-        UPLbJaxwgdjdw/J1mmOePcAlON23t7g=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-76-RmPa_-kPPlyz1GZ6KM_CTA-1; Thu, 23 Jan 2020 08:37:37 -0500
-X-MC-Unique: RmPa_-kPPlyz1GZ6KM_CTA-1
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 96BAE800D48;
-        Thu, 23 Jan 2020 13:37:34 +0000 (UTC)
-Received: from carbon (ovpn-200-37.brq.redhat.com [10.40.200.37])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 40B737C42C;
-        Thu, 23 Jan 2020 13:37:26 +0000 (UTC)
-Date:   Thu, 23 Jan 2020 14:37:25 +0100
-From:   Jesper Dangaard Brouer <brouer@redhat.com>
-To:     Amol Grover <frextrite@gmail.com>
-Cc:     brouer@redhat.com, Alexei Starovoitov <ast@kernel.org>,
+        bh=h6uD+1e68gi91qvBrZ/lqf2TnuTpmHDoEyL/oCZyo6k=;
+        b=MIBtzhidHuL3gfyTami1B0Gbw2dt3VeAgEK2l2zXxCLt5BRHa+Z5Ra85NforfACev7dXmx
+        RSTaF6XDQ9gFnsTcdgjDrrELzFjjz7EZYVuU9q6M/Rm+YPYpIFQQK/CLWXlum7VPGxjPoD
+        vELHZoHbIcyNhI+7GnS7Lz0mSCdOMkE=
+Received: from mail-lj1-f200.google.com (mail-lj1-f200.google.com
+ [209.85.208.200]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-429-eKdXM8euOsefgA3i7apSsQ-1; Thu, 23 Jan 2020 08:38:14 -0500
+X-MC-Unique: eKdXM8euOsefgA3i7apSsQ-1
+Received: by mail-lj1-f200.google.com with SMTP id w6so1082765ljo.20
+        for <linux-kernel@vger.kernel.org>; Thu, 23 Jan 2020 05:38:13 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:in-reply-to:references:date
+         :message-id:mime-version:content-transfer-encoding;
+        bh=h6uD+1e68gi91qvBrZ/lqf2TnuTpmHDoEyL/oCZyo6k=;
+        b=XI9hgSbWku7Uj13/NjlgVZExgS4uU7aDv2Ym6GiCRrQWwwt+4Y7cLeLbUzQfTL4we+
+         zztoYyR9XY0JMrPX4xE3XPGNZqptgyXuXxezlqUrdpaOPmQiM7OR4qu0fPTC/H5MNSkb
+         SVczD1BCzejIP8czb7gCu9V1MKFmHkAFseTnr0Kmg7AzxVc2P6fKHy1mOoTRlFJxN1YI
+         VippLr4ArP1DgZd/OhFEWtm2wTKkzlc48CQkP5o/cN4ovzGmJMYlcO3CTbLJDRSTwbCN
+         vt/HYpbsQhhxN9keGcJaFb1VlUlXMIRcWk1ydoUYuHDgVpc9qTT6Q+mnODA087VRgrZg
+         +VnA==
+X-Gm-Message-State: APjAAAVGiZ+VtAExL9x+3oDPmRZ+ErZaxAGc262DfvK9a2dqq2kgssv/
+        iZn4woy35dNXQEFbOhxvjiJLtt1pIVe10tXqDoHF4/5A8F917NAGDmYCqgVt+i5tulks16UJ+cX
+        /V+6K6jeNAq91W7Z2ZN7661d5
+X-Received: by 2002:ac2:50da:: with SMTP id h26mr4787293lfm.80.1579786692705;
+        Thu, 23 Jan 2020 05:38:12 -0800 (PST)
+X-Google-Smtp-Source: APXvYqy4BWaWs+3H0Frdse6iV+jJqbBxUwLv0Dvg8acnZgByftBSE4MEGvlY+Jnho0dUBWe823FHAw==
+X-Received: by 2002:ac2:50da:: with SMTP id h26mr4787274lfm.80.1579786692511;
+        Thu, 23 Jan 2020 05:38:12 -0800 (PST)
+Received: from alrua-x1.borgediget.toke.dk ([85.204.121.218])
+        by smtp.gmail.com with ESMTPSA id s4sm1309808ljd.94.2020.01.23.05.38.11
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 23 Jan 2020 05:38:11 -0800 (PST)
+Received: by alrua-x1.borgediget.toke.dk (Postfix, from userid 1000)
+        id F36231800FF; Thu, 23 Jan 2020 14:38:10 +0100 (CET)
+From:   Toke =?utf-8?Q?H=C3=B8iland-J=C3=B8rgensen?= <toke@redhat.com>
+To:     Amol Grover <frextrite@gmail.com>,
+        Alexei Starovoitov <ast@kernel.org>,
         Daniel Borkmann <daniel@iogearbox.net>,
         "David S . Miller" <davem@davemloft.net>,
         Jakub Kicinski <jakub.kicinski@netronome.com>,
@@ -45,65 +63,41 @@ Cc:     brouer@redhat.com, Alexei Starovoitov <ast@kernel.org>,
         John Fastabend <john.fastabend@gmail.com>,
         Martin KaFai Lau <kafai@fb.com>,
         Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>,
-        Andrii Nakryiko <andriin@fb.com>, netdev@vger.kernel.org,
-        bpf@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Andrii Nakryiko <andriin@fb.com>
+Cc:     netdev@vger.kernel.org, bpf@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
         linux-kernel-mentees@lists.linuxfoundation.org,
         Joel Fernandes <joel@joelfernandes.org>,
         Madhuparna Bhowmik <madhuparnabhowmik04@gmail.com>,
-        "Paul E . McKenney" <paulmck@kernel.org>
+        "Paul E . McKenney" <paulmck@kernel.org>,
+        Amol Grover <frextrite@gmail.com>
 Subject: Re: [PATCH] bpf: devmap: Pass lockdep expression to RCU lists
-Message-ID: <20200123143725.036140e7@carbon>
 In-Reply-To: <20200123120437.26506-1-frextrite@gmail.com>
 References: <20200123120437.26506-1-frextrite@gmail.com>
+X-Clacks-Overhead: GNU Terry Pratchett
+Date:   Thu, 23 Jan 2020 14:38:10 +0100
+Message-ID: <87d0ba9ttp.fsf@toke.dk>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 23 Jan 2020 17:34:38 +0530
-Amol Grover <frextrite@gmail.com> wrote:
+Amol Grover <frextrite@gmail.com> writes:
 
 > head is traversed using hlist_for_each_entry_rcu outside an
 > RCU read-side critical section but under the protection
 > of dtab->index_lock.
-
-We do hold the lock in update and delete cases, but not in the lookup
-cases.  Is it then still okay to add the lockdep_is_held() annotation?
-
-If it is then it looks fine to me:
-
-Acked-by: Jesper Dangaard Brouer <brouer@redhat.com>
- 
+>
 > Hence, add corresponding lockdep expression to silence false-positive
 > lockdep warnings, and harden RCU lists.
-> 
+>
 > Signed-off-by: Amol Grover <frextrite@gmail.com>
-> ---
->  kernel/bpf/devmap.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
-> 
-> diff --git a/kernel/bpf/devmap.c b/kernel/bpf/devmap.c
-> index 3d3d61b5985b..b4b6b77f309c 100644
-> --- a/kernel/bpf/devmap.c
-> +++ b/kernel/bpf/devmap.c
-> @@ -293,7 +293,8 @@ struct bpf_dtab_netdev *__dev_map_hash_lookup_elem(struct bpf_map *map, u32 key)
->  	struct hlist_head *head = dev_map_index_hash(dtab, key);
->  	struct bpf_dtab_netdev *dev;
->  
-> -	hlist_for_each_entry_rcu(dev, head, index_hlist)
-> +	hlist_for_each_entry_rcu(dev, head, index_hlist,
-> +				 lockdep_is_held(&dtab->index_lock))
->  		if (dev->idx == key)
->  			return dev;
->  
 
--- 
-Best regards,
-  Jesper Dangaard Brouer
-  MSc.CS, Principal Kernel Engineer at Red Hat
-  LinkedIn: http://www.linkedin.com/in/brouer
+Could you please add an appropriate Fixes: tag?
+
+Otherwise:
+Acked-by: Toke H=C3=B8iland-J=C3=B8rgensen <toke@redhat.com>
 
