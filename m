@@ -2,312 +2,160 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CC4DE146565
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Jan 2020 11:11:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id F118814654E
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Jan 2020 11:03:23 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726771AbgAWKLn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 23 Jan 2020 05:11:43 -0500
-Received: from mga05.intel.com ([192.55.52.43]:59628 "EHLO mga05.intel.com"
+        id S1727215AbgAWKDV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 23 Jan 2020 05:03:21 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56588 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726188AbgAWKLn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Jan 2020 05:11:43 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 23 Jan 2020 02:11:42 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.70,353,1574150400"; 
-   d="scan'208";a="400293430"
-Received: from joy-optiplex-7040.sh.intel.com (HELO joy-OptiPlex-7040) ([10.239.13.16])
-  by orsmga005.jf.intel.com with ESMTP; 23 Jan 2020 02:11:40 -0800
-Date:   Thu, 23 Jan 2020 05:02:27 -0500
-From:   Yan Zhao <yan.y.zhao@intel.com>
-To:     Alex Williamson <alex.williamson@redhat.com>
-Cc:     "Tian, Kevin" <kevin.tian@intel.com>,
-        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "peterx@redhat.com" <peterx@redhat.com>,
-        "zhenyuw@linux.intel.com" <zhenyuw@linux.intel.com>,
-        "pbonzini@redhat.com" <pbonzini@redhat.com>,
-        "intel-gvt-dev@lists.freedesktop.org" 
-        <intel-gvt-dev@lists.freedesktop.org>
-Subject: Re: [PATCH v2 2/2] drm/i915/gvt: subsitute kvm_read/write_guest with
- vfio_dma_rw
-Message-ID: <20200123100227.GJ1759@joy-OptiPlex-7040>
-Reply-To: Yan Zhao <yan.y.zhao@intel.com>
-References: <20200115035455.12417-1-yan.y.zhao@intel.com>
- <20200115130651.29d7e9e0@w520.home>
- <20200116054941.GB1759@joy-OptiPlex-7040>
- <20200116083729.40983f38@w520.home>
- <20200119100637.GD1759@joy-OptiPlex-7040>
- <20200120130157.0ee7042d@w520.home>
- <20200121081207.GE1759@joy-OptiPlex-7040>
- <20200121095116.05eeae14@w520.home>
- <20200121221038.GH1759@joy-OptiPlex-7040>
- <20200122030758.GI1759@joy-OptiPlex-7040>
+        id S1726231AbgAWKDU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 23 Jan 2020 05:03:20 -0500
+Received: from paulmck-ThinkPad-P72.home (50-39-105-78.bvtn.or.frontiernet.net [50.39.105.78])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id E4C7E24655;
+        Thu, 23 Jan 2020 10:03:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1579773799;
+        bh=N3XkL17Wojfkt7YhtPf2926Re43uxA07Wv9vZpSBb/8=;
+        h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
+        b=QaIBvsqKSXYB8353wgwEwkkc29yIvr18EsYDsUYa+GpFtF33BglxppddXaqLCGLjw
+         X5pnL419hiTzCYpn9jAwkw8rQwYE0n/MsZ3hhPVBXYauddJ6qdBIQAeB+p4LfmwY8z
+         XxQNKjFzORJ/SmuHbreDtejZzDkCuUeuJUTyl/ss=
+Received: by paulmck-ThinkPad-P72.home (Postfix, from userid 1000)
+        id AC26E3522727; Thu, 23 Jan 2020 02:03:18 -0800 (PST)
+Date:   Thu, 23 Jan 2020 02:03:18 -0800
+From:   "Paul E. McKenney" <paulmck@kernel.org>
+To:     Masami Hiramatsu <mhiramat@kernel.org>
+Cc:     Steven Rostedt <rostedt@goodmis.org>,
+        Brendan Gregg <brendan.d.gregg@gmail.com>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Ingo Molnar <mingo@kernel.org>, bpf@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        "David S . Miller" <davem@davemloft.net>, joel@joelfernandes.org,
+        "Naveen N . Rao" <naveen.n.rao@linux.ibm.com>,
+        Anil S Keshavamurthy <anil.s.keshavamurthy@intel.com>
+Subject: Re: [RFT PATCH 04/13] kprobes: Make optimizer delay to 1 second
+Message-ID: <20200123100318.GP2935@paulmck-ThinkPad-P72>
+Reply-To: paulmck@kernel.org
+References: <157918584866.29301.6941815715391411338.stgit@devnote2>
+ <157918589199.29301.4419459150054220408.stgit@devnote2>
+ <20200121192905.0f001c61@gandalf.local.home>
+ <20200122162317.0299cf722dd618147d97e89c@kernel.org>
+ <20200122071115.28e3c763@gandalf.local.home>
+ <20200122221240.cef447446785f46862fee97a@kernel.org>
+ <20200122165432.GH2935@paulmck-ThinkPad-P72>
+ <20200123103334.6e1821625643d007297ecf94@kernel.org>
+ <20200123022647.GO2935@paulmck-ThinkPad-P72>
+ <20200123151328.f977525ea447da3b7fe4256d@kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200122030758.GI1759@joy-OptiPlex-7040>
+In-Reply-To: <20200123151328.f977525ea447da3b7fe4256d@kernel.org>
 User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jan 22, 2020 at 11:07:58AM +0800, Yan Zhao wrote:
-> On Wed, Jan 22, 2020 at 06:10:38AM +0800, Yan Zhao wrote:
-> > On Wed, Jan 22, 2020 at 12:51:16AM +0800, Alex Williamson wrote:
-> > > On Tue, 21 Jan 2020 03:12:07 -0500
-> > > Yan Zhao <yan.y.zhao@intel.com> wrote:
-> > > 
-> > > > On Tue, Jan 21, 2020 at 04:01:57AM +0800, Alex Williamson wrote:
-> > > > > On Sun, 19 Jan 2020 05:06:37 -0500
-> > > > > Yan Zhao <yan.y.zhao@intel.com> wrote:
-> > > > >   
-> > > > > > On Thu, Jan 16, 2020 at 11:37:29PM +0800, Alex Williamson wrote:  
-> > > > > > > On Thu, 16 Jan 2020 00:49:41 -0500
-> > > > > > > Yan Zhao <yan.y.zhao@intel.com> wrote:
-> > > > > > >     
-> > > > > > > > On Thu, Jan 16, 2020 at 04:06:51AM +0800, Alex Williamson wrote:    
-> > > > > > > > > On Tue, 14 Jan 2020 22:54:55 -0500
-> > > > > > > > > Yan Zhao <yan.y.zhao@intel.com> wrote:
-> > > > > > > > >       
-> > > > > > > > > > As a device model, it is better to read/write guest memory using vfio
-> > > > > > > > > > interface, so that vfio is able to maintain dirty info of device IOVAs.
-> > > > > > > > > > 
-> > > > > > > > > > Compared to kvm interfaces kvm_read/write_guest(), vfio_dma_rw() has ~600
-> > > > > > > > > > cycles more overhead on average.
-> > > > > > > > > > 
-> > > > > > > > > > -------------------------------------
-> > > > > > > > > > |    interface     | avg cpu cycles |
-> > > > > > > > > > |-----------------------------------|
-> > > > > > > > > > | kvm_write_guest  |     1554       |
-> > > > > > > > > > | ----------------------------------|
-> > > > > > > > > > | kvm_read_guest   |     707        |
-> > > > > > > > > > |-----------------------------------|
-> > > > > > > > > > | vfio_dma_rw(w)   |     2274       |
-> > > > > > > > > > |-----------------------------------|
-> > > > > > > > > > | vfio_dma_rw(r)   |     1378       |
-> > > > > > > > > > -------------------------------------      
-> > > > > > > > > 
-> > > > > > > > > In v1 you had:
-> > > > > > > > > 
-> > > > > > > > > -------------------------------------
-> > > > > > > > > |    interface     | avg cpu cycles |
-> > > > > > > > > |-----------------------------------|
-> > > > > > > > > | kvm_write_guest  |     1546       |
-> > > > > > > > > | ----------------------------------|
-> > > > > > > > > | kvm_read_guest   |     686        |
-> > > > > > > > > |-----------------------------------|
-> > > > > > > > > | vfio_iova_rw(w)  |     2233       |
-> > > > > > > > > |-----------------------------------|
-> > > > > > > > > | vfio_iova_rw(r)  |     1262       |
-> > > > > > > > > -------------------------------------
-> > > > > > > > > 
-> > > > > > > > > So the kvm numbers remained within +0.5-3% while the vfio numbers are
-> > > > > > > > > now +1.8-9.2%.  I would have expected the algorithm change to at least
-> > > > > > > > > not be worse for small accesses and be better for accesses crossing
-> > > > > > > > > page boundaries.  Do you know what happened?
-> > > > > > > > >      
-> > > > > > > > I only tested the 4 interfaces in GVT's environment, where most of the
-> > > > > > > > guest memory accesses are less than one page.
-> > > > > > > > And the different fluctuations should be caused by the locks.
-> > > > > > > > vfio_dma_rw contends locks with other vfio accesses which are assumed to
-> > > > > > > > be abundant in the case of GVT.    
-> > > > > > > 
-> > > > > > > Hmm, so maybe it's time to convert vfio_iommu.lock from a mutex to a
-> > > > > > > rwsem?  Thanks,
-> > > > > > >     
-> > > > > > 
-> > > > > > hi Alex
-> > > > > > I tested your rwsem patches at (https://lkml.org/lkml/2020/1/16/1869).
-> > > > > > They works without any runtime error at my side. :) 
-> > > > > > However, I found out that the previous fluctuation may be because I didn't
-> > > > > > take read/write counts in to account.
-> > > > > > For example. though the two tests have different avg read/write cycles,
-> > > > > > their average cycles are almost the same.
-> > > > > >  ______________________________________________________________________
-> > > > > > |        | avg read |            | avg write |            |            |
-> > > > > > |        | cycles   | read cnt   | cycles    | write cnt  | avg cycles |
-> > > > > > |----------------------------------------------------------------------|
-> > > > > > | test 1 |   1339   | 29,587,120 |  2258     | 17,098,364 |    1676    |
-> > > > > > | test 2 |   1340   | 28,454,262 |  2238     | 16,501,788 |    1670    |
-> > > > > >  ----------------------------------------------------------------------
-> > > > > > 
-> > > > > > After measuring the exact read/write cnt and cycles of a specific workload,
-> > > > > > I get below findings:
-> > > > > > 
-> > > > > > (1) with single VM running glmark2 inside.
-> > > > > > glmark2: 40M+ read+write cnt, among which 63% is read.
-> > > > > > among reads, 48% is of PAGE_SIZE, the rest is less than a page.
-> > > > > > among writes, 100% is less than a page.
-> > > > > > 
-> > > > > >  __________________________________________________
-> > > > > > |       cycles         | read | write |  avg | inc |
-> > > > > > |--------------------------------------------------|
-> > > > > > | kvm_read/write_page  |  694 |  1506 |  993 |  /  |
-> > > > > > |--------------------------------------------------|
-> > > > > > |  vfio_dma_rw(mutex)  | 1340 |  2248 | 1673 | 680 |
-> > > > > > |--------------------------------------------------|
-> > > > > > | vfio_dma_rw(rwsem r) | 1323 |  2198 | 1645 | 653 |
-> > > > > >  ---------------------------------------------------
-> > > > > > 
-> > > > > > so vfio_dma_rw generally has 650+ more cycles per each read/write.
-> > > > > > While kvm->srcu is of 160 cycles on average with one vm is running, the
-> > > > > > cycles spending on locks for vfio_dma_rw spread like this:
-> > > > > >  ___________________________
-> > > > > > |        cycles       | avg |
-> > > > > > |---------------------------|
-> > > > > > |     iommu->lock     | 117 |
-> > > > > > |---------------------------|
-> > > > > > |   vfio.group_lock   | 108 |
-> > > > > > |---------------------------|
-> > > > > > | group->unbound_lock | 114 |
-> > > > > > |---------------------------|
-> > > > > > |  group->device_lock | 115 |
-> > > > > > |---------------------------|
-> > > > > > |     group->mutex    | 113 |
-> > > > > >  ---------------------------
-> > > > > > 
-> > > > > > I measured the cycles for a mutex without any contention is 104 cycles
-> > > > > > on average (including time for get_cycles() and measured in the same way
-> > > > > > as other locks). So the contention of a single lock in a single vm
-> > > > > > environment is light. probably because there's a vgpu lock hold in GVT already.
-> > > > > > 
-> > > > > > (2) with two VMs each running glmark2 inside.
-> > > > > > The contention increases a little.
-> > > > > > 
-> > > > > >  ___________________________________________________
-> > > > > > |       cycles         | read | write |  avg | inc  |
-> > > > > > |---------------------------------------------------|
-> > > > > > | kvm_read/write_page  | 1035 |  1832 | 1325 |  /   |
-> > > > > > |---------------------------------------------------|
-> > > > > > |  vfio_dma_rw(mutex)  | 2104 |  2886 | 2390 | 1065 |
-> > > > > > |---------------------------------------------------|
-> > > > > > | vfio_dma_rw(rwsem r) | 1965 |  2778 | 2260 | 935  |
-> > > > > >  ---------------------------------------------------
-> > > > > > 
-> > > > > > 
-> > > > > >  -----------------------------------------------
-> > > > > > |     avg cycles       |   one VM   |  two VMs  |
-> > > > > > |-----------------------------------------------|
-> > > > > > |  iommu lock (mutex)  |     117    |   150     |
-> > > > > > |-----------------------------------|-----------|
-> > > > > > | iommu lock (rwsem r) |     117    |   156     |
-> > > > > > |-----------------------------------|-----------|
-> > > > > > |   kvm->srcu          |     160    |   213     |
-> > > > > >  -----------------------------------------------
-> > > > > > 
-> > > > > > In the kvm case, avg cycles increased 332 cycles, while kvm->srcu only costed
-> > > > > > 213 cycles. The rest 109 cycles may be spent on atomic operations.
-> > > > > > But I didn't measure them, as get_cycles() operation itself would influence final
-> > > > > > cycles by ~20 cycles.  
-> > > > > 
-> > > > > It seems like we need to extend the vfio external user interface so
-> > > > > that GVT-g can hold the group and container user references across
-> > > > > multiple calls.  For instance if we had a
-> > > > > vfio_group_get_external_user_from_dev() (based on
-> > > > > vfio_group_get_external_user()) then i915 could get an opaque
-> > > > > vfio_group pointer which it could use to call vfio_group_dma_rw() which
-> > > > > would leave us with only the iommu rw_sem locking.  i915 would release
-> > > > > the reference with vfio_group_put_external_user() when the device is
-> > > > > released.  The same could be done with the pin pages interface to
-> > > > > streamline that as well.  Thoughts?  Thanks,
-> > > > >  
-> > > > hi Alex,
-> > > > it works!
-> > > 
-> > > Hurrah!
-> > > 
-> > > > now the average vfio_dma_rw cycles can reduced to 1198. 
-> > > > one thing I want to propose is that, in sight of dma->task is always user
-> > > > space process, instead of calling get_task_mm(dma->task), can we just use
-> > > > "mmget_not_zero(dma->task->mm)"? in this way, the avg cycles can
-> > > > further reduce to 1051.
-> > > 
-> > > I'm not an expert there.  As noted in the type1 code we hold a
-> > > reference to the task because it's not advised to hold a long term
-> > > reference to the mm, so do we know we can look at task->mm without
-> > > acquiring task_lock()?  It's possible this is safe, but it's not
-> > > abundantly obvious to me.  Please research further and provide
-> > > justification if you think it's correct.  Thanks,
-> > > 
-> > in get_task_mm, 
-> > struct mm_struct *get_task_mm(struct task_struct *task)
-> > {
-> >         struct mm_struct *mm;
-> > 
-> >         task_lock(task);
-> >         mm = task->mm;
-> >         if (mm) {
-> >                 if (task->flags & PF_KTHREAD)
-> >                         mm = NULL;
-> >                 else
-> >                         mmget(mm);
-> >         }
-> >         task_unlock(task);
-> >         return mm;
-> > }
-> > task lock is hold only during the call, so the purpose of it is to
-> > ensure task->flags and task->mm is not changed or gone before mmget(mm)
-> > or function return.
-> > so, if we know for sure the task always has no flag PF_THREAD,
-> > then we only need to ensure mm is not gone before mmget(mm) is done.
-> > 
-> > static inline void mmget(struct mm_struct *mm)
-> > {
-> >         atomic_inc(&mm->mm_users);
-> > }
-> > 
-> > static inline bool mmget_not_zero(struct mm_struct *mm)
-> > {
-> >         return atomic_inc_not_zero(&mm->mm_users);
-> > }
-> > 
-> > the atomic_inc_not_zero() in  mmget_not_zero can ensure mm is not gone
-> > before its ref count inc.
-> > 
-> > So, I think the only thing we need to make sure is dma->task is not a
-> > kernel thread.
-> > Do you think I can make this assumption?
-> > 
-> hi Alex
-> Maybe I can still test PF_KTHREAD without holding task_lock
-> (task->alloc_lock), as it is only used to protect
-> "->fs, ->files, ->mm, ->group_info, ->comm, keyring
-> subscriptions and synchronises with wait4().  Also used in procfs.  Also
-> pins the final release of task.io_context.  Also protects ->cpuset and 
-> ->cgroup.subsys[]. And ->vfork_done."
+On Thu, Jan 23, 2020 at 03:13:28PM +0900, Masami Hiramatsu wrote:
+> On Wed, 22 Jan 2020 18:26:47 -0800
+> "Paul E. McKenney" <paulmck@kernel.org> wrote:
 > 
-> I checked elsewhere in kernel, e.g.
-> try_to_wake_up
-> 	|->select_task_rq
-> 		|->is_per_cpu_kthread
-> 			|->if (!(p->flags & PF_KTHREAD))
-> task->alloc_lock is not hold there.
+> > > Anyway, without this update, I added a printk to count optimizer
+> > > queue-length and found that all optimizer call with a single kprobe
+> > > on the quenes. I think this depends on the machine, but as far as
+> > > I tested on 8-threads qemu x86, shows this result...
+> > > 
+> > > Probes: 256 kprobe_events
+> > > Enable events
+> > > real	0m 0.02s
+> > > user	0m 0.00s
+> > > sys	0m 0.02s
+> > > [   17.730548] Queue-update: 180, skipped, Total Queued: 180
+> > > [   17.739445] Queue-update: 1, go, Total Queued: 180
+> > > Disable events
+> [...]
+> > > [   41.135594] Queue-update: 1, go, Total Queued: 1
+> > > real	0m 21.40s
+> > > user	0m 0.00s
+> > > sys	0m 0.04s
+> > 
+> > So 21.4s/256 = 84 milliseconds per event disable, correct?
 > 
-> So, I would replace get_task_mm(dma->task) into two steps:
-> (1) check dma->task->flags & PF_KTHREAD, and (2) mmget_not_zero(mm).
+> Actually, it seems only 172 probes are on the unoptimized list, so
+> the number will be a bit different.
 > 
-> I'll do more tests and send out new patches after Chinese new year.
+> Anyway, that above elapsed time is including non-batch optimizer
+> working time as below.
 > 
-> Thanks
-> Yan
->
-hi Alex
-after a second thought, I find out that the task->alloc_lock cannot be
-dropped, as there are chances that dma->task->mm is set to null between
-checking "dma->task->mm != NULL" and "mmget_not_zero(dma->task->mm)".
+> (1) start looping on probe events
+>   (2) disabling-kprobe
+>     (2.1) wait kprobe_mutex if optimizer is running
+>     (2.2) if the kprobe is on optimized kprobe, queue it to unoptimizing
+>           list and kick optimizer with 5 jiffies delay
+>   (4) unlink enabled event
+>   (5) wait synchronize_rcu()
+>   (6) optimizer start optimization before finishing (5)
+> (7) goto (1)
+> 
+> I think the disabling performance issue came from (6) (and (2.1)).
+> Thus, if we change (2.2) to 1 HZ jiffies, the optimizer will start
+> after some loops are done. (and the optimizer detects "active"
+> queuing, postpone the process)
+> 
+> > 
+> > It might be worth trying synchronize_rcu_expedited() just as an experiment
+> > to see if it speeds things up significantly.
+> 
+> Would you mean replacing synchronize_rcu() in disabling loop, or
+> replacing synchronize_rcu_tasks() in optimizer?
 
-The chances of this condition can be increased by adding a msleep in-between
-the two lines of code to mimic possible task schedule. Then it was proved that
-dma->task->mm could be set to NULL in exit_mm() by killing QEMU.
+The former.  (There is no synchronize_rcu_tasks_expedited().)
 
-So I have to keep the call to get_task_mm().  :)
+> I think that is not a root cause of this behavior, since if we
+> make the optimizer delay to 1 sec, it seems enough for making
+> it a batch operation. See below, this is the result with patched
+> kernel (1 HZ delay).
+> 
+> Probes: 256 kprobe_events
+> Enable events
+> real	0m 0.07s
+> user	0m 0.00s
+> sys	0m 0.07s
+> [   19.191181] Queue-update: 180, skipped, Total Queued: 180
+> Disable events
+> [   20.214966] Queue-update: 1, go, Total Queued: 172
+> [   21.302924] Queue-update: 86, skipped, Total Queued: 86
+> real	0m 2.11s
+> user	0m 0.00s
+> sys	0m 0.03s
+> [   22.327173] Queue-update: 87, skipped, Total Queued: 172
+> [   23.350933] Queue-update: 1, go, Total Queued: 172
+> Remove events
+> real	0m 2.13s
+> user	0m 0.02s
+> sys	0m 0.02s
+> 
+> As you can see, the optimizer ran outside of the disabling loop.
+> In that case, it is OK to synchronize RCU tasks in the optimizer
+> because it just runs *once* per multiple probe events.
 
-Thanks
-Yan
+Even better!
 
+> >From above result, 86 probes are disabled per 1 sec delay.
+> Each probe disabling took 11-12 msec in average. So 
+> (HZ / 10) can also be good. (But note that the optimizer
+> will retry to run each time until the disabling loop is
+> finished.)
+> 
+> BTW, testing kernel was build with HZ=1000, if HZ=250 or HZ=100,
+> the result will be different in the current code. So I think
+> we should use HZ-based delay instead of fixed number.
 
+Agreed, the HZ-based delay seems worth a try.
+
+							Thanx, Paul
