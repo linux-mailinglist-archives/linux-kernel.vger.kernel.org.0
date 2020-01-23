@@ -2,99 +2,105 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9B29C146D97
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Jan 2020 16:57:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8BED2146D9A
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Jan 2020 16:58:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729014AbgAWP56 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 23 Jan 2020 10:57:58 -0500
-Received: from mail-ed1-f66.google.com ([209.85.208.66]:39344 "EHLO
-        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726885AbgAWP56 (ORCPT
+        id S1729049AbgAWP60 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 23 Jan 2020 10:58:26 -0500
+Received: from mail26.static.mailgun.info ([104.130.122.26]:54228 "EHLO
+        mail26.static.mailgun.info" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726885AbgAWP60 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Jan 2020 10:57:58 -0500
-Received: by mail-ed1-f66.google.com with SMTP id t17so3782015eds.6
-        for <linux-kernel@vger.kernel.org>; Thu, 23 Jan 2020 07:57:56 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:reply-to:sender:from:date:message-id:subject:to
-         :content-transfer-encoding;
-        bh=9cjhA4qf/j4CRMN5OVb7mLnKqm0J0VfV6m4ZKqcx010=;
-        b=VtK8eQ0UDHoyZhTB/y5FgdZMeIl9z1xu0oPJbFtDqmgpaMSPU6mKPdydYtvsW0Dg54
-         2QL8iTrERUz1gHzvN1ctHnSKTlnf9wq/Gcl8m7/6H294PvB6RqprtfViuxy0i7Lti/lh
-         TrowDVRLArc8x3w8Ldcgj928k14yYfuYwjybA+pvil7xzRrrDC0YMKPC4tykfsEUkJbn
-         ImhwCUFxfT26o3GbG/h+tvOyx/5JwRB7nmRk2o0MJx825BkVtaElKrQuJUVyET2PiL78
-         37rQnEB+f8wotFgqlICuptcBjsV+9H3BGz+oI+Fz0FMK4id/7m1+G7UxlisnBZScCkU5
-         U0Lw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:reply-to:sender:from:date
-         :message-id:subject:to:content-transfer-encoding;
-        bh=9cjhA4qf/j4CRMN5OVb7mLnKqm0J0VfV6m4ZKqcx010=;
-        b=cZJkDQHjs6Gj9J3p1W46qoZiurxob22jlPhiCBX0brOog9Fdd9kICosab5znWbGkLz
-         LRNzLOhP1XzFMjVqHVyFc8z5PZNlbk4kP1IdmuZ6O0tZSgnUSPIDd3VxvKxYDaZpxfFi
-         McNX4XAw8tcfLXBFKHCi2JK7bN0oGHSjYJBBde3fskuycbeTeQce8sOx6CYQISENyp1s
-         NypGjLbuvMlU19Siu+KzkgCaOuvhJYK7m9nGWfuGy5JQYk9cC9zdKZXJfNNlFCRsZskv
-         ARQi1YtI+bSzgz72zSw7dGxM6NVUdJqMfcclkMsmMuMEdg0XXTarVIiiGuDFAb0P1VlI
-         S8kw==
-X-Gm-Message-State: APjAAAWF4rVpRmrT73egDmqAN5Q+S8nvBVptf2Gg7jydXqFjqNOOCZmQ
-        emM3B/ppqIHN/DZmJDxCfhvA0lH+grKcuRz0rsE=
-X-Google-Smtp-Source: APXvYqxYSn9A7iMDLOOHhSbwPCJVsJ2j/pMUnJS1MdnL8Z8pShuhBSghRXyL6LUCDfNT/CQHZY6NstY1w6Q8vd9B7sw=
-X-Received: by 2002:a17:906:53c9:: with SMTP id p9mr7538333ejo.185.1579795076220;
- Thu, 23 Jan 2020 07:57:56 -0800 (PST)
+        Thu, 23 Jan 2020 10:58:26 -0500
+DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
+ s=smtp; t=1579795105; h=In-Reply-To: Content-Type: MIME-Version:
+ References: Message-ID: Subject: Cc: To: From: Date: Sender;
+ bh=cyM8CFsI8eeTQsNH7DLgcGWPSRi12+w5DPdW4N60rn0=; b=ZWocr9SvZ5He/Qo+CxbYlSJe2Uj6ZkjpT33mkdG24s5ad2ETjfooY4jdzkbSjKCt1n0jgYKc
+ rUKP3Dg00vRwp6Noj8NQ8hDMEVDCuXb4C6zHWnonuTQ5mpT8rzxfs3mJe1GfktNC0JTnUclV
+ apNDJf0TQ6xh9A5M3ZiX9TElSyA=
+X-Mailgun-Sending-Ip: 104.130.122.26
+X-Mailgun-Sid: WyI0MWYwYSIsICJsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
+Received: from smtp.codeaurora.org (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171])
+ by mxa.mailgun.org with ESMTP id 5e29c29d.7f93f000f880-smtp-out-n02;
+ Thu, 23 Jan 2020 15:58:21 -0000 (UTC)
+Received: by smtp.codeaurora.org (Postfix, from userid 1001)
+        id 0DF68C433A2; Thu, 23 Jan 2020 15:58:20 +0000 (UTC)
+X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
+        aws-us-west-2-caf-mail-1.web.codeaurora.org
+X-Spam-Level: 
+X-Spam-Status: No, score=-1.0 required=2.0 tests=ALL_TRUSTED,SPF_NONE
+        autolearn=ham autolearn_force=no version=3.4.0
+Received: from jcrouse1-lnx.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: jcrouse)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 43DF1C433CB;
+        Thu, 23 Jan 2020 15:58:19 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 43DF1C433CB
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=none smtp.mailfrom=jcrouse@codeaurora.org
+Date:   Thu, 23 Jan 2020 08:58:17 -0700
+From:   Jordan Crouse <jcrouse@codeaurora.org>
+To:     Sharat Masetty <smasetty@codeaurora.org>
+Cc:     freedreno@lists.freedesktop.org, dri-devel@freedesktop.org,
+        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 1/3] drm: msm: Add 618 gpu to the adreno gpu list
+Message-ID: <20200123155817.GA20380@jcrouse1-lnx.qualcomm.com>
+Mail-Followup-To: Sharat Masetty <smasetty@codeaurora.org>,
+        freedreno@lists.freedesktop.org, dri-devel@freedesktop.org,
+        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <1579763945-10478-1-git-send-email-smasetty@codeaurora.org>
 MIME-Version: 1.0
-Reply-To: ibrahim8rahman@gmail.com
-Received: by 2002:a17:906:95ce:0:0:0:0 with HTTP; Thu, 23 Jan 2020 07:57:55
- -0800 (PST)
-From:   MRIbrahimRahman <ibrahim8rahman@gmail.com>
-Date:   Thu, 23 Jan 2020 15:57:55 +0000
-X-Google-Sender-Auth: pWeWJzFRZA8wxKKp79zrMbyF5Dc
-Message-ID: <CAHQGum-0mSAqfoPyBovsQjkRmubqSZ5MXqkWoTKrF2x3e7Bc6g@mail.gmail.com>
-Subject: Dear Sir/Madam!,
-To:     undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1579763945-10478-1-git-send-email-smasetty@codeaurora.org>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Dear how are you,
+On Thu, Jan 23, 2020 at 12:49:03PM +0530, Sharat Masetty wrote:
+> This patch adds Adreno 618 entry and its associated properties
+> to the gpulist entries.
+> 
+> Signed-off-by: Sharat Masetty <smasetty@codeaurora.org>
 
+I'm extremely confused - these have been in linux-next for weeks. Why are you
+sending them out again?
 
-How Are You? I Know That This Mail May Come To You Almost A Surprise
-As We Never Met Before And Please Before You Proceed Reading This
-mail,This Is True and not An Well I Saw Your Contact Email From Yahoo
-Search when I Was Looking For a Foreign Partner, please I don=E2=80=99t now=
- if
-you can keep secret? A word of your own as a human-being? As I have
-gone through your profile.Well I have a deal worth 15.5m$ from the
-dormant account in the bank where I am working.so Please if you can
-keep secret, I will give you more details and the nest thing to do,
+Jordan
 
-Also all the documents that will back you up must send to you.
-Meanwhile before I contact you I have done every underground work
-through the documents of the deceases person, I have put or attachment
-his file to our favor. Also with my position every thing works
-successfully.
+> ---
+>  drivers/gpu/drm/msm/adreno/adreno_device.c | 11 +++++++++++
+>  1 file changed, 11 insertions(+)
+> 
+> diff --git a/drivers/gpu/drm/msm/adreno/adreno_device.c b/drivers/gpu/drm/msm/adreno/adreno_device.c
+> index fbbdf86..cb3a6e5 100644
+> --- a/drivers/gpu/drm/msm/adreno/adreno_device.c
+> +++ b/drivers/gpu/drm/msm/adreno/adreno_device.c
+> @@ -167,6 +167,17 @@
+>  		.init = a5xx_gpu_init,
+>  		.zapfw = "a540_zap.mdt",
+>  	}, {
+> +		.rev = ADRENO_REV(6, 1, 8, ANY_ID),
+> +		.revn = 618,
+> +		.name = "A618",
+> +		.fw = {
+> +			[ADRENO_FW_SQE] = "a630_sqe.fw",
+> +			[ADRENO_FW_GMU] = "a630_gmu.bin",
+> +		},
+> +		.gmem = SZ_512K,
+> +		.inactive_period = DRM_MSM_INACTIVE_PERIOD,
+> +		.init = a6xx_gpu_init,
+> +	}, {
+>  		.rev = ADRENO_REV(6, 3, 0, ANY_ID),
+>  		.revn = 630,
+>  		.name = "A630",
+> -- 
+> 1.9.1
+> 
 
-Your Full Name,
-Phone No=E2=80=A6.,
-Receiver Country..,
-Occupation..,
-
-thanks for your understandplease contact me base if you can control
-this fund once it transferinto your account before my family and I
-will arriver in your country for the sharing, 40% for you. 10% for the
-poorest, rest is for me.
-Give me your Phone number Let me call you so that we can talk one and one=
-=E2=80=A6=E2=80=A6=E2=80=A6=E2=80=A6
-
-You should contact me immediately as soon as you receive this
-letter,if only you are interested and ready to help On this Contact
-me. through my private email
-address(ibrahimrahman3048@gmail.com)Trusting to hear from you
-immediately. Do keep this a top secret for security reasons.
-
-Yours faithfully,
-
-From Mr.Ibrahim Rahman.
+-- 
+The Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
