@@ -2,107 +2,91 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AA7151466E7
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Jan 2020 12:38:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 059A81466EE
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Jan 2020 12:39:30 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728760AbgAWLh7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 23 Jan 2020 06:37:59 -0500
-Received: from foss.arm.com ([217.140.110.172]:38148 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726194AbgAWLh6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Jan 2020 06:37:58 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E13B1328;
-        Thu, 23 Jan 2020 03:37:57 -0800 (PST)
-Received: from [10.1.197.50] (e120937-lin.cambridge.arm.com [10.1.197.50])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id DA3513F6C4;
-        Thu, 23 Jan 2020 03:37:56 -0800 (PST)
-Subject: Re: [PATCH V4] firmware: arm_scmi: Make scmi core independent of the
- transport type
-To:     Viresh Kumar <viresh.kumar@linaro.org>,
-        Sudeep Holla <sudeep.holla@arm.com>
-Cc:     arnd@arndb.de, jassisinghbrar@gmail.com, peng.fan@nxp.com,
-        peter.hilber@opensynergy.com, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-References: <20200121183818.GA11522@bogus>
- <a9ec58818b5e0c982810e74efe3f5f22b930ae40.1579660436.git.viresh.kumar@linaro.org>
- <20200122121538.GA31240@bogus> <20200123103033.GA7511@bogus>
- <20200123112711.mggm7ayxcqnr54yf@vireshk-i7>
-From:   Cristian Marussi <cristian.marussi@arm.com>
-Message-ID: <6b614d90-6326-db81-12dc-a0b4a467400f@arm.com>
-Date:   Thu, 23 Jan 2020 11:37:55 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.1
+        id S1728831AbgAWLj0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 23 Jan 2020 06:39:26 -0500
+Received: from mout.kundenserver.de ([217.72.192.75]:33255 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726026AbgAWLjZ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 23 Jan 2020 06:39:25 -0500
+Received: from mail-qt1-f180.google.com ([209.85.160.180]) by
+ mrelayeu.kundenserver.de (mreue109 [212.227.15.145]) with ESMTPSA (Nemesis)
+ id 1MqJuP-1jPa3j0wz5-00nTYa; Thu, 23 Jan 2020 12:39:24 +0100
+Received: by mail-qt1-f180.google.com with SMTP id h12so2197192qtu.1;
+        Thu, 23 Jan 2020 03:39:23 -0800 (PST)
+X-Gm-Message-State: APjAAAU5DRNmRvP/YQPxKZCB/+NXbf6iuaIG9QHUkHhb3UphS2I1oxBo
+        q0aWeUw0/hJW0w1LR6uwncRZ/ui2RVBdRy1BBvE=
+X-Google-Smtp-Source: APXvYqwl5OWM4a/1rCO8squxRomDrH9Sttl8L71MEQHGCRT0NS52GLYNPbwvgsMB5wUaCGgV9NXsq1uBH3hdgjylhWY=
+X-Received: by 2002:ac8:709a:: with SMTP id y26mr15472564qto.304.1579779562982;
+ Thu, 23 Jan 2020 03:39:22 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <20200123112711.mggm7ayxcqnr54yf@vireshk-i7>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <20200123111836.7414-1-manivannan.sadhasivam@linaro.org> <20200123111836.7414-6-manivannan.sadhasivam@linaro.org>
+In-Reply-To: <20200123111836.7414-6-manivannan.sadhasivam@linaro.org>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Thu, 23 Jan 2020 12:39:06 +0100
+X-Gmail-Original-Message-ID: <CAK8P3a2pZEdsAi6YQ5z3YD=zD1iZLu+WPirhwmxeZ33k7sjkeg@mail.gmail.com>
+Message-ID: <CAK8P3a2pZEdsAi6YQ5z3YD=zD1iZLu+WPirhwmxeZ33k7sjkeg@mail.gmail.com>
+Subject: Re: [PATCH 05/16] bus: mhi: core: Add support for ringing
+ channel/event ring doorbells
+To:     Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Cc:     gregkh <gregkh@linuxfoundation.org>, smohanad@codeaurora.org,
+        Jeffrey Hugo <jhugo@codeaurora.org>,
+        Kalle Valo <kvalo@codeaurora.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        hemantk@codeaurora.org,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+X-Provags-ID: V03:K1:62/enJC96IEUk7ZONzFwU2xeZN5I7NYxjeTLe541vlWo9LBXs2j
+ n0asGyBaPW2M06tyyDofmUSkoZmNxHJN+cbvOA8A3OJ860n5bnte60fw9XAvtRCLoBc/Q3J
+ iG/mQaaJis/nTue7gvVDBr+QyMBTrznrwFLCuiWoEDocL2g+3zJuBxGN3xuPr7WU8puIJ4Y
+ FBdvYsm8QUUgwp2HUe11Q==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:3rKgSTS5XWE=:Odw7OjvEf1uEOGayHy2YR2
+ uKk5zW2G6XkXijrs7tdyWCNpOatfVSmVP5FOpeQ8Sk8Vn7jpYe6o8BZ3qg8q97YKYIAE9CJC2
+ TTmS38U9bbJ7aqf2/9t05jboVOh2/NvYvLlAfj6JCIyMisdlPe4Amu5E+OOsVJccBi3PrG+be
+ usJxxX96Aw8ws/vCOrNCnjigCCm3HPQgfcS52TS7lbtxPCC4scTHp5Ryoy9ciZ4LYvsf56Ohx
+ O2T1b+gxsV2Wi814FGqgY6AWsQUzBYF6C6mntoMSVHEzVvC+dLlCHuwqg9Mp3wE8oD8ud7oo+
+ F6hK0gnoQpFKGnUb6hUNRpkaVo3KJ57AvNztJx60TW6dnKl5I0OjauHWhQTl2R6mWqaGEzwYB
+ ITAa4+m4eSnO6m4D7d+iuI5kwpnIhsv8iyaa+t+Kuej0xX7+WGV7j02ULgF4levKGij5fjnCj
+ k59cPHnUaCq03Nht77I1f0MAX1n8/wLDJwTUzxGrswRQ2KYaiDDmBW7k3ljwkFILhfZEK2f9H
+ tqY4ntTw4LeI96hj0YOcyv71Sin+aaX1Ic86GbcSAY9ECpLq4ZllGrRSMW/tYzGXGp5FpcG1/
+ hgwRtw/i+1wsYENzDbwSNayJJ/JjKn8Iu323te49ykrLYuwYqZ0bRc5N/IQsjXm45JsDScPmR
+ FuxG7T5TAJqTP6/dKOgGt3rapRVWfTDVfqHw71f7RgTM4FoLQ0vYgtGf3jo5lIQ8hYU9ySvHp
+ 7+7Y0VyaAs+P3fmtHDd0UH4dEjpI9cde7CH6teLBI3jox45g5rO/N9R1jPjJwA2VhNCwM5b4d
+ oIKz2DD8RJD1SVu/KrmvCyzHmvjHdS6ytJa9wG3qMZN2/ypvuI=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 23/01/2020 11:27, Viresh Kumar wrote:
-> On 23-01-20, 10:30, Sudeep Holla wrote:
->> On Wed, Jan 22, 2020 at 12:15:38PM +0000, Sudeep Holla wrote:
->>> On Wed, Jan 22, 2020 at 08:06:23AM +0530, Viresh Kumar wrote:
->>>
->>
->> [...]
->>
->>>> Can you please help me getting this tested, now that I have rebased it
->>>> as well :) ?
->>>>
->>>
->>> Sure, I will give it a go on my Juno. Thanks for the rebase, makes it
->>> simpler.
->>>
->>
->> Sorry for the delay. I gave this a spin on my Juno. I am seeing below
->> warning once on boot but it continues and everything seem to work fine.
->> Also the warning is not related to this change I believe and this patch
->> is just helping to hit some corner case with deferred probe and devres.
->> I need to spend some time to debug it.
->>
->> Regards,
->> Sudeep
->>
->> --->8
->>
->> WARNING: CPU: 1 PID: 187 at drivers/base/dd.c:519 really_probe+0x11c/0x418
->> Modules linked in:
->> CPU: 1 PID: 187 Comm: kworker/1:2 Not tainted 5.5.0-rc7-00026-gf7231cd3108d-dirty #20
->> Hardware name: ARM LTD ARM Juno Development Platform/ARM Juno Development Platform, BIOS EDK II Jan 16 2020
->> Workqueue: events deferred_probe_work_func
->> pstate: 80000005 (Nzcv daif -PAN -UAO)
->> pc : really_probe+0x11c/0x418
->> lr : really_probe+0x10c/0x418
->> Call trace:
->>  really_probe+0x11c/0x418
->>  driver_probe_device+0xe4/0x138
->>  __device_attach_driver+0x90/0x110
->>  bus_for_each_drv+0x80/0xd0
->>  __device_attach+0xdc/0x160
->>  device_initial_probe+0x18/0x20
->>  bus_probe_device+0x98/0xa0
->>  deferred_probe_work_func+0x90/0xe0
->>  process_one_work+0x1ec/0x4a8
->>  worker_thread+0x210/0x490
->>  kthread+0x110/0x118
->>  ret_from_fork+0x10/0x18
->> ---[ end trace 06f96d55ce6093a8 ]---
-> 
-> Still it looks strange that the warning comes only after my patch :)
+On Thu, Jan 23, 2020 at 12:19 PM Manivannan Sadhasivam
+<manivannan.sadhasivam@linaro.org> wrote:
 
-In fact, got the same warning while testing your patch on JUNO at top of SCMI for-next.
-But then everything worked fine as Sudeep said.
+> +int __must_check mhi_read_reg(struct mhi_controller *mhi_cntrl,
+> +                             void __iomem *base, u32 offset, u32 *out)
+> +{
+> +       u32 tmp = readl_relaxed(base + offset);
+....
+> +void mhi_write_reg(struct mhi_controller *mhi_cntrl, void __iomem *base,
+> +                  u32 offset, u32 val)
+> +{
+> +       writel_relaxed(val, base + offset);
 
-Thanks
+Please avoid using _relaxed accessors by default, and use the regular
+ones instead. There are a number of things that can go wrong with
+the relaxed version, so ideally each caller should have a comment
+explaining why this instance is safe without the barriers and why it
+matters to not have it.
 
-Cristian
+If there are performance critical callers of mhi_read_reg/mhi_write_reg,
+you could add mhi_read_reg_relaxed/mhi_write_reg_relaxed for those
+and apply the same rules there.
 
-> 
-> Should I send V5 (fixed few comments after reviews) now ?
-> 
+Usually most mmio accesses are only needed for reconfiguration or
+other slow paths.
 
+      Arnd
