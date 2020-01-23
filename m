@@ -2,239 +2,216 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9178B146AC4
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Jan 2020 15:05:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 002D8146AC7
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Jan 2020 15:05:48 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729361AbgAWOFh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 23 Jan 2020 09:05:37 -0500
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:39161 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729191AbgAWOF3 (ORCPT
+        id S1729399AbgAWOFq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 23 Jan 2020 09:05:46 -0500
+Received: from us-smtp-1.mimecast.com ([207.211.31.81]:52443 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729375AbgAWOFo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Jan 2020 09:05:29 -0500
-Received: by mail-wm1-f68.google.com with SMTP id 20so2650611wmj.4
-        for <linux-kernel@vger.kernel.org>; Thu, 23 Jan 2020 06:05:28 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=f+1d4FRlTWDoZyLvhcrUylaJhZuzCdWZutZr0QUDHa4=;
-        b=r1NRMv1lKNUj6IIPd0RJFTxopIS/eswVfnEaJavKAox2ii06YHIak9aCdHPu6cTtsT
-         bvnpDO7OgajlnqCU5yZlgkUFyVNXLQEwJIacsNoTESytpcH51+Ov//s/Cad7hASlssRo
-         iDh1AZOFl3EIsaH7CufcexNRY4qK8nYLfddwqjYfmvO8iT+IvZKC1OFTgUdtxYQqNpEH
-         nyU+UlGKrHRW4B7YY/vhTL+8FAnEE5aLRe+2peaaWr6mmhUm3WZaEnIAnbdYQivZeOkh
-         a/Y7+7Q13XAStl7fIZm1BfUDiW2FYkyfeljUEH9GoWavTUj5B/Q/hcf/yD8Yvzvo/HL5
-         K1Zg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=f+1d4FRlTWDoZyLvhcrUylaJhZuzCdWZutZr0QUDHa4=;
-        b=bXqX6ibb9Oka1sw0YfauyvuZEUzcAyjRqZOwObiNNC7rpAfrHildqqyS3TIhtg1K9A
-         39A620q1dTmwnMYrIbhxGEkoJBMEMyit6AKkU1ehFKLbHsK8h5ik2rk5qiWgWNYX5Ljt
-         NkeSJGe96XA429Esbwr3MGovPPNC0Tjxm/wPyzzQ0+W4nnege0S+Go2prful+Wklu5tZ
-         D42ZFXh39cqOJ1YecpAU+gOMqe+Etm+/Z+Vxah2ByWY4HAOzk2v4tu4jFsP5GPMKReSF
-         PexkVQqLQwF1vT6VxhwmQcm1Lh/B/TsoaJzOQYqktb42m+VGrTTqe2Rus3Mw/ZoL60MC
-         K5vA==
-X-Gm-Message-State: APjAAAWt4fuTFpyY7HBCA2j0z5co1TWxB4vcem26vW7kxeKKJ5AvAiA2
-        skJXkGVcc7CAwpALU/AOCb5pdwTPPLQ=
-X-Google-Smtp-Source: APXvYqwxUh0AWe8ZvFn0nwXnPnoUVBG4RrSgfCix+SDmU/rQsuAPI4+12ddYPHPRLeQh9/UYWCGT1A==
-X-Received: by 2002:a1c:6707:: with SMTP id b7mr4481392wmc.54.1579788327491;
-        Thu, 23 Jan 2020 06:05:27 -0800 (PST)
-Received: from localhost.localdomain (amontpellier-652-1-53-230.w109-210.abo.wanadoo.fr. [109.210.44.230])
-        by smtp.gmail.com with ESMTPSA id n16sm3100963wro.88.2020.01.23.06.05.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 23 Jan 2020 06:05:26 -0800 (PST)
-From:   Bartosz Golaszewski <brgl@bgdev.pl>
-To:     Kent Gibson <warthog618@gmail.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Jiri Kosina <jkosina@suse.cz>,
-        Stefani Seibold <stefani@seibold.net>
-Cc:     linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: [RESEND PATCH v5 7/7] tools: gpio: implement gpio-watch
-Date:   Thu, 23 Jan 2020 15:05:06 +0100
-Message-Id: <20200123140506.29275-8-brgl@bgdev.pl>
-X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20200123140506.29275-1-brgl@bgdev.pl>
-References: <20200123140506.29275-1-brgl@bgdev.pl>
+        Thu, 23 Jan 2020 09:05:44 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1579788343;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+        bh=WPUndn+3PlaftyGJyUhWMdZQ5jf1QcGRmeI6Yc2wsnQ=;
+        b=cxSHZjZP2w1dUfKouVAmLxELNtJbMi1oo0mePOeg6z/n4+48xY03JOADGmrUuQux4dYFKk
+        J5jiVbLlEl+Cu/zM4KbGWyABwB9//k0itHEkApEQIGzy8fDfcXIkFa8cjdgTvXrRvESZj8
+        Sg+kxXhF//ujinJdkdfmwdc7A/kG/Cw=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-1-gMCv7wvPNRaGl0ErooX8Bw-1; Thu, 23 Jan 2020 09:05:41 -0500
+X-MC-Unique: gMCv7wvPNRaGl0ErooX8Bw-1
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 9D30BDBF7;
+        Thu, 23 Jan 2020 14:05:37 +0000 (UTC)
+Received: from [10.36.117.56] (ovpn-117-56.ams2.redhat.com [10.36.117.56])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 91FF98CCEB;
+        Thu, 23 Jan 2020 14:05:12 +0000 (UTC)
+Subject: Re: [PATCH v16.1 0/9] mm / virtio: Provide support for free page
+ reporting
+To:     Alexander Graf <graf@amazon.com>,
+        Alexander Duyck <alexander.duyck@gmail.com>,
+        kvm@vger.kernel.org, mst@redhat.com, linux-kernel@vger.kernel.org,
+        willy@infradead.org, mhocko@kernel.org, linux-mm@kvack.org,
+        akpm@linux-foundation.org, mgorman@techsingularity.net,
+        vbabka@suse.cz
+Cc:     yang.zhang.wz@gmail.com, nitesh@redhat.com, konrad.wilk@oracle.com,
+        pagupta@redhat.com, riel@surriel.com, lcapitulino@redhat.com,
+        dave.hansen@intel.com, wei.w.wang@intel.com, aarcange@redhat.com,
+        pbonzini@redhat.com, dan.j.williams@intel.com,
+        alexander.h.duyck@linux.intel.com, osalvador@suse.de,
+        "Paterson-Jones, Roland" <rolandp@amazon.com>, hannes@cmpxchg.org,
+        hare@suse.com
+References: <20200122173040.6142.39116.stgit@localhost.localdomain>
+ <914aa4c3-c814-45e0-830b-02796b00b762@amazon.com>
+From:   David Hildenbrand <david@redhat.com>
+Autocrypt: addr=david@redhat.com; prefer-encrypt=mutual; keydata=
+ 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
+Organization: Red Hat GmbH
+Message-ID: <0e2d04a8-af74-e2db-cab0-c67286e33a2a@redhat.com>
+Date:   Thu, 23 Jan 2020 15:05:11 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.3.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <914aa4c3-c814-45e0-830b-02796b00b762@amazon.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+On 23.01.20 11:20, Alexander Graf wrote:
+> Hi Alex,
+> 
+> On 22.01.20 18:43, Alexander Duyck wrote:
+>> This series provides an asynchronous means of reporting free guest pages
+>> to a hypervisor so that the memory associated with those pages can be
+>> dropped and reused by other processes and/or guests on the host. Using
+>> this it is possible to avoid unnecessary I/O to disk and greatly improve
+>> performance in the case of memory overcommit on the host.
+>>
+>> When enabled we will be performing a scan of free memory every 2 seconds
+>> while pages of sufficiently high order are being freed. In each pass at
+>> least one sixteenth of each free list will be reported. By doing this we
+>> avoid racing against other threads that may be causing a high amount of
+>> memory churn.
+>>
+>> The lowest page order currently scanned when reporting pages is
+>> pageblock_order so that this feature will not interfere with the use of
+>> Transparent Huge Pages in the case of virtualization.
+>>
+>> Currently this is only in use by virtio-balloon however there is the hope
+>> that at some point in the future other hypervisors might be able to make
+>> use of it. In the virtio-balloon/QEMU implementation the hypervisor is
+>> currently using MADV_DONTNEED to indicate to the host kernel that the page
+>> is currently free. It will be zeroed and faulted back into the guest the
+>> next time the page is accessed.
+>>
+>> To track if a page is reported or not the Uptodate flag was repurposed and
+>> used as a Reported flag for Buddy pages. We walk though the free list
+>> isolating pages and adding them to the scatterlist until we either
+>> encounter the end of the list, processed as many pages as were listed in
+>> nr_free prior to us starting, or have filled the scatterlist with pages to
+>> be reported. If we fill the scatterlist before we reach the end of the
+>> list we rotate the list so that the first unreported page we encounter is
+>> moved to the head of the list as that is where we will resume after we
+>> have freed the reported pages back into the tail of the list.
+>>
+>> Below are the results from various benchmarks. I primarily focused on two
+>> tests. The first is the will-it-scale/page_fault2 test, and the other is
+>> a modified version of will-it-scale/page_fault1 that was enabled to use
+>> THP. I did this as it allows for better visibility into different parts
+>> of the memory subsystem. The guest is running with 32G for RAM on one
+>> node of a E5-2630 v3. The host has had some features such as CPU turbo
+>> disabled in the BIOS.
+>>
+>> Test                   page_fault1 (THP)    page_fault2
+>> Name            tasks  Process Iter  STDEV  Process Iter  STDEV
+>> Baseline            1    1012402.50  0.14%     361855.25  0.81%
+>>                     16    8827457.25  0.09%    3282347.00  0.34%
+>>
+>> Patches Applied     1    1007897.00  0.23%     361887.00  0.26%
+>>                     16    8784741.75  0.39%    3240669.25  0.48%
+>>
+>> Patches Enabled     1    1010227.50  0.39%     359749.25  0.56%
+>>                     16    8756219.00  0.24%    3226608.75  0.97%
+>>
+>> Patches Enabled     1    1050982.00  4.26%     357966.25  0.14%
+>>   page shuffle      16    8672601.25  0.49%    3223177.75  0.40%
+>>
+>> Patches enabled     1    1003238.00  0.22%     360211.00  0.22%
+>>   shuffle w/ RFC    16    8767010.50  0.32%    3199874.00  0.71%
+>>
+>> The results above are for a baseline with a linux-next-20191219 kernel,
+>> that kernel with this patch set applied but page reporting disabled in
+>> virtio-balloon, the patches applied and page reporting fully enabled, the
+>> patches enabled with page shuffling enabled, and the patches applied with
+>> page shuffling enabled and an RFC patch that makes used of MADV_FREE in
+>> QEMU. These results include the deviation seen between the average value
+>> reported here versus the high and/or low value. I observed that during the
+>> test memory usage for the first three tests never dropped whereas with the
+>> patches fully enabled the VM would drop to using only a few GB of the
+>> host's memory when switching from memhog to page fault tests.
+>>
+>> Any of the overhead visible with this patch set enabled seems due to page
+>> faults caused by accessing the reported pages and the host zeroing the page
+>> before giving it back to the guest. This overhead is much more visible when
+>> using THP than with standard 4K pages. In addition page shuffling seemed to
+>> increase the amount of faults generated due to an increase in memory churn.
+>> The overhead is reduced when using MADV_FREE as we can avoid the extra
+>> zeroing of the pages when they are reintroduced to the host, as can be seen
+>> when the RFC is applied with shuffling enabled.
+>>
+>> The overall guest size is kept fairly small to only a few GB while the test
+>> is running. If the host memory were oversubscribed this patch set should
+>> result in a performance improvement as swapping memory in the host can be
+>> avoided.
+> 
+> 
+> I really like the approach overall. Voluntarily propagating free memory 
+> from a guest to the host has been a sore point ever since KVM was 
+> around. This solution looks like a very elegant way to do so.
+> 
+> The big piece I'm missing is the page cache. Linux will by default try 
+> to keep the free list as small as it can in favor of page cache, so most 
+> of the benefit of this patch set will be void in real world scenarios.
 
-Add a simple program that allows to test the new LINECHANGED_FD ioctl().
+One approach is to move (parts of) the page cache from the guest to the
+hypervisor - e.g., using emulated NVDIMM or virtio-pmem.
 
-Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
----
- tools/gpio/.gitignore   |  1 +
- tools/gpio/Build        |  1 +
- tools/gpio/Makefile     | 11 ++++-
- tools/gpio/gpio-watch.c | 99 +++++++++++++++++++++++++++++++++++++++++
- 4 files changed, 111 insertions(+), 1 deletion(-)
- create mode 100644 tools/gpio/gpio-watch.c
-
-diff --git a/tools/gpio/.gitignore b/tools/gpio/.gitignore
-index a94c0e83b209..eab36c6d7751 100644
---- a/tools/gpio/.gitignore
-+++ b/tools/gpio/.gitignore
-@@ -1,4 +1,5 @@
- gpio-event-mon
- gpio-hammer
-+gpio-watch
- lsgpio
- include/linux/gpio.h
-diff --git a/tools/gpio/Build b/tools/gpio/Build
-index 4141f35837db..67c7b7f6a717 100644
---- a/tools/gpio/Build
-+++ b/tools/gpio/Build
-@@ -2,3 +2,4 @@ gpio-utils-y += gpio-utils.o
- lsgpio-y += lsgpio.o gpio-utils.o
- gpio-hammer-y += gpio-hammer.o gpio-utils.o
- gpio-event-mon-y += gpio-event-mon.o gpio-utils.o
-+gpio-watch-y += gpio-watch.o
-diff --git a/tools/gpio/Makefile b/tools/gpio/Makefile
-index 6080de58861f..842287e42c83 100644
---- a/tools/gpio/Makefile
-+++ b/tools/gpio/Makefile
-@@ -18,7 +18,7 @@ MAKEFLAGS += -r
- 
- override CFLAGS += -O2 -Wall -g -D_GNU_SOURCE -I$(OUTPUT)include
- 
--ALL_TARGETS := lsgpio gpio-hammer gpio-event-mon
-+ALL_TARGETS := lsgpio gpio-hammer gpio-event-mon gpio-watch
- ALL_PROGRAMS := $(patsubst %,$(OUTPUT)%,$(ALL_TARGETS))
- 
- all: $(ALL_PROGRAMS)
-@@ -66,6 +66,15 @@ $(GPIO_EVENT_MON_IN): prepare FORCE $(OUTPUT)gpio-utils-in.o
- $(OUTPUT)gpio-event-mon: $(GPIO_EVENT_MON_IN)
- 	$(QUIET_LINK)$(CC) $(CFLAGS) $(LDFLAGS) $< -o $@
- 
-+#
-+# gpio-watch
-+#
-+GPIO_WATCH_IN := $(OUTPUT)gpio-watch-in.o
-+$(GPIO_WATCH_IN): prepare FORCE
-+	$(Q)$(MAKE) $(build)=gpio-watch
-+$(OUTPUT)gpio-watch: $(GPIO_WATCH_IN)
-+	$(QUIET_LINK)$(CC) $(CFLAGS) $(LDFLAGS) $< -o $@
-+
- clean:
- 	rm -f $(ALL_PROGRAMS)
- 	rm -f $(OUTPUT)include/linux/gpio.h
-diff --git a/tools/gpio/gpio-watch.c b/tools/gpio/gpio-watch.c
-new file mode 100644
-index 000000000000..5cea24fddfa7
---- /dev/null
-+++ b/tools/gpio/gpio-watch.c
-@@ -0,0 +1,99 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+/*
-+ * gpio-watch - monitor unrequested lines for property changes using the
-+ *              character device
-+ *
-+ * Copyright (C) 2019 BayLibre SAS
-+ * Author: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-+ */
-+
-+#include <ctype.h>
-+#include <errno.h>
-+#include <fcntl.h>
-+#include <linux/gpio.h>
-+#include <poll.h>
-+#include <stdbool.h>
-+#include <stdio.h>
-+#include <stdlib.h>
-+#include <string.h>
-+#include <sys/ioctl.h>
-+#include <unistd.h>
-+
-+int main(int argc, char **argv)
-+{
-+	struct gpioline_info_changed chg;
-+	struct gpioline_info req;
-+	struct pollfd pfd;
-+	int fd, i, j, ret;
-+	char *event, *end;
-+	ssize_t rd;
-+
-+	if (argc < 3)
-+		goto err_usage;
-+
-+	fd = open(argv[1], O_RDWR | O_CLOEXEC);
-+	if (fd < 0) {
-+		perror("unable to open gpiochip");
-+		return EXIT_FAILURE;
-+	}
-+
-+	for (i = 0, j = 2; i < argc - 2; i++, j++) {
-+		memset(&req, 0, sizeof(req));
-+
-+		req.line_offset = strtoul(argv[j], &end, 0);
-+		if (*end != '\0')
-+			goto err_usage;
-+
-+		ret = ioctl(fd, GPIO_GET_LINEINFO_WATCH_IOCTL, &req);
-+		if (ret) {
-+			perror("unable to set up line watch");
-+			return EXIT_FAILURE;
-+		}
-+	}
-+
-+	pfd.fd = fd;
-+	pfd.events = POLLIN | POLLPRI;
-+
-+	for (;;) {
-+		ret = poll(&pfd, 1, 5000);
-+		if (ret < 0) {
-+			perror("error polling the linechanged fd");
-+			return EXIT_FAILURE;
-+		} else if (ret > 0) {
-+			memset(&chg, 0, sizeof(chg));
-+			rd = read(pfd.fd, &chg, sizeof(chg));
-+			if (rd < 0 || rd != sizeof(chg)) {
-+				if (rd != sizeof(chg))
-+					errno = EIO;
-+
-+				perror("error reading line change event");
-+				return EXIT_FAILURE;
-+			}
-+
-+			switch (chg.event_type) {
-+			case GPIOLINE_CHANGED_REQUESTED:
-+				event = "requested";
-+				break;
-+			case GPIOLINE_CHANGED_RELEASED:
-+				event = "released";
-+				break;
-+			case GPIOLINE_CHANGED_CONFIG:
-+				event = "config changed";
-+				break;
-+			default:
-+				fprintf(stderr,
-+					"invalid event type received from the kernel\n");
-+				return EXIT_FAILURE;
-+			}
-+
-+			printf("line %u: %s at %llu\n",
-+			       chg.info.line_offset, event, chg.timestamp);
-+		}
-+	}
-+
-+	return 0;
-+
-+err_usage:
-+	printf("%s: <gpiochip> <line0> <line1> ...\n", argv[0]);
-+	return EXIT_FAILURE;
-+}
 -- 
-2.23.0
+Thanks,
+
+David / dhildenb
 
