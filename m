@@ -2,85 +2,82 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3C00A14635E
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Jan 2020 09:21:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4CAC214636A
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Jan 2020 09:23:43 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727093AbgAWIVP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 23 Jan 2020 03:21:15 -0500
-Received: from Chamillionaire.breakpoint.cc ([193.142.43.52]:43226 "EHLO
-        Chamillionaire.breakpoint.cc" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726083AbgAWIVP (ORCPT
+        id S1728609AbgAWIXk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 23 Jan 2020 03:23:40 -0500
+Received: from mx08-00178001.pphosted.com ([91.207.212.93]:57282 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726135AbgAWIXj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Jan 2020 03:21:15 -0500
-Received: from fw by Chamillionaire.breakpoint.cc with local (Exim 4.92)
-        (envelope-from <fw@strlen.de>)
-        id 1iuXje-0005Xd-Ny; Thu, 23 Jan 2020 09:21:06 +0100
-Date:   Thu, 23 Jan 2020 09:21:06 +0100
-From:   Florian Westphal <fw@strlen.de>
-To:     Daniel Borkmann <daniel@iogearbox.net>
-Cc:     Florian Westphal <fw@strlen.de>,
-        Praveen Chaudhary <praveen5582@gmail.com>, pablo@netfilter.org,
-        davem@davemloft.net, kadlec@netfilter.org,
-        netfilter-devel@vger.kernel.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Zhenggen Xu <zxu@linkedin.com>,
-        Andy Stracner <astracner@linkedin.com>
-Subject: Re: [PATCH v3] [net]: Fix skb->csum update in
- inet_proto_csum_replace16().
-Message-ID: <20200123082106.GT795@breakpoint.cc>
-References: <1573080729-3102-1-git-send-email-pchaudhary@linkedin.com>
- <1573080729-3102-2-git-send-email-pchaudhary@linkedin.com>
- <16d56ee6-53bc-1124-3700-bc0a78f927d6@iogearbox.net>
- <20200122114333.GQ795@breakpoint.cc>
- <daf995db-37c6-a2f7-4d12-5c1a29e1c59b@iogearbox.net>
+        Thu, 23 Jan 2020 03:23:39 -0500
+Received: from pps.filterd (m0046661.ppops.net [127.0.0.1])
+        by mx07-00178001.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 00N8DfUn017496;
+        Thu, 23 Jan 2020 09:23:21 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=st.com; h=from : to : cc : subject
+ : date : message-id : mime-version : content-type; s=STMicroelectronics;
+ bh=v2rNH4Gsw0bzUghfyGUw+uoKwXzibWz9pq9H3oEz7bQ=;
+ b=B1qARC/kP+m68l3RIC3OE6xFWuO4hUxfbL9cUkfn2YW57LnXOqBB8SUJNsmrn91P2fTd
+ 0h0xHn+Jc3ekuiajiilRpYjrQqk0e8hKKrToyrUalnWsqbL+hv+4/oTknEbr35rnoSsO
+ RIno2e0Z4jOum+2O21AfF7qB6U1P7ndkFQyTFUs96UKY4lZsWrNLApZ2vqpGsmXzb8di
+ TVOcjNaySGjBhi70Lm+zT+yRRdS7pATwSldb3YNJ85XCMtxmGl1526YTJv+j+LOcZlmT
+ VhCG8naFSmDqaCDBvUB4nXNiANarXYEpG4TQ5gnWsnJsTBwiQKNI2rHX7ifA4sEBDcLC QQ== 
+Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
+        by mx07-00178001.pphosted.com with ESMTP id 2xkssp8r8r-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 23 Jan 2020 09:23:21 +0100
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 0BA75100038;
+        Thu, 23 Jan 2020 09:23:17 +0100 (CET)
+Received: from Webmail-eu.st.com (sfhdag6node2.st.com [10.75.127.17])
+        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id E9A4320EDDA;
+        Thu, 23 Jan 2020 09:23:16 +0100 (CET)
+Received: from localhost (10.75.127.46) by SFHDAG6NODE2.st.com (10.75.127.17)
+ with Microsoft SMTP Server (TLS) id 15.0.1347.2; Thu, 23 Jan 2020 09:23:16
+ +0100
+From:   Christophe Kerello <christophe.kerello@st.com>
+To:     <miquel.raynal@bootlin.com>, <richard@nod.at>, <vigneshr@ti.com>
+CC:     <linux-mtd@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        Christophe Kerello <christophe.kerello@st.com>
+Subject: mtd: rawnand: free the nand_device object
+Date:   Thu, 23 Jan 2020 09:22:48 +0100
+Message-ID: <1579767768-32295-1-git-send-email-christophe.kerello@st.com>
+X-Mailer: git-send-email 1.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <daf995db-37c6-a2f7-4d12-5c1a29e1c59b@iogearbox.net>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain
+X-Originating-IP: [10.75.127.46]
+X-ClientProxiedBy: SFHDAG7NODE1.st.com (10.75.127.19) To SFHDAG6NODE2.st.com
+ (10.75.127.17)
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.572
+ definitions=2020-01-22_08:2020-01-22,2020-01-22 signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Daniel Borkmann <daniel@iogearbox.net> wrote:
-> On 1/22/20 12:43 PM, Florian Westphal wrote:
-> > Daniel Borkmann <daniel@iogearbox.net> wrote:
-> > > > @@ -449,9 +464,6 @@ void inet_proto_csum_replace16(__sum16 *sum, struct sk_buff *skb,
-> > > >    	if (skb->ip_summed != CHECKSUM_PARTIAL) {
-> > > >    		*sum = csum_fold(csum_partial(diff, sizeof(diff),
-> > > >    				 ~csum_unfold(*sum)));
-> > > > -		if (skb->ip_summed == CHECKSUM_COMPLETE && pseudohdr)
-> > > > -			skb->csum = ~csum_partial(diff, sizeof(diff),
-> > > > -						  ~skb->csum);
-> > > 
-> > > What is the technical rationale in removing this here but not in any of the
-> > > other inet_proto_csum_replace*() functions? You changelog has zero analysis
-> > > on why here but not elsewhere this change would be needed?
-> > 
-> > Right, I think it could be dropped everywhere BUT there is a major caveat:
-> > 
-> > At least for the nf_nat case ipv4 header manipulation (which uses the other
-> > helpers froum utils.c) will eventually also update iph->checksum field
-> > to account for the changed ip addresses.
-> > 
-> > And that update doesn't touch skb->csum.
-> > 
-> > So in a way the update of skb->csum in the other helpers indirectly account
-> > for later ip header checksum update.
-> > 
-> > At least that was my conclusion when reviewing the earlier incarnation
-> > of the patch.
-> 
-> Mainly asking because not inet_proto_csum_replace16() but the other ones are
-> exposed via BPF and they are all in no way fundamentally different to each
-> other, but my concern is that depending on how the BPF prog updates the csums
-> things could start to break. :/
+This patch releases the resources allocated in nanddev_init function.
 
-I'm reasonably sure removing the skb->csum update from the other
-helpers will also break ipv4 nat :)
+Fixes: a7ab085d7c16 ("mtd: rawnand: Initialize the nand_device object")
+Signed-off-by: Christophe Kerello <christophe.kerello@st.com>
+---
+ drivers/mtd/nand/raw/nand_base.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-So, AFAIU from what you're saying above the patch seems fine as-is and
-just needs a more verbose commit message explaining why replace16()
-doesn't update skb->csum while all the other ones do.
+diff --git a/drivers/mtd/nand/raw/nand_base.c b/drivers/mtd/nand/raw/nand_base.c
+index f64e3b6..47c6396 100644
+--- a/drivers/mtd/nand/raw/nand_base.c
++++ b/drivers/mtd/nand/raw/nand_base.c
+@@ -5907,6 +5907,8 @@ void nand_cleanup(struct nand_chip *chip)
+ 	    chip->ecc.algo == NAND_ECC_BCH)
+ 		nand_bch_free((struct nand_bch_control *)chip->ecc.priv);
+ 
++	nanddev_cleanup(&chip->base);
++
+ 	/* Free bad block table memory */
+ 	kfree(chip->bbt);
+ 	kfree(chip->data_buf);
+-- 
+1.9.1
 
-Is that correct?
