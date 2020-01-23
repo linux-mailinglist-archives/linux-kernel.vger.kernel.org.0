@@ -2,144 +2,166 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D91D61472E7
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Jan 2020 22:03:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5A8B51472EF
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Jan 2020 22:05:16 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729318AbgAWVCv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 23 Jan 2020 16:02:51 -0500
-Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:26205 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726191AbgAWVCv (ORCPT
+        id S1729413AbgAWVFL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 23 Jan 2020 16:05:11 -0500
+Received: from mail-qv1-f66.google.com ([209.85.219.66]:43652 "EHLO
+        mail-qv1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727816AbgAWVFL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Jan 2020 16:02:51 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1579813370;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding;
-        bh=pLi5SfL84NgXq8WFsW3R7nL9ScHECfM9R+VNo4tDUzg=;
-        b=eJkxG8YwEtCHo9879u+18Ah0ZeipVLPZogUGNnVWuyXdankzgleuFefYjW0t5QFt9VeklF
-        +jgRkX7vCoA17F2GLk+UMNMsfuJGPNQ700bJgkqtGo/pfTjIddczpBo1gI+FIFf0eGH2Ll
-        +hM3fLMvaOFCVIO/v1bAePKmGJEM6vY=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-267-_5pGQQheORiVH_i-ROBxuA-1; Thu, 23 Jan 2020 16:02:48 -0500
-X-MC-Unique: _5pGQQheORiVH_i-ROBxuA-1
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 16724100551D;
-        Thu, 23 Jan 2020 21:02:46 +0000 (UTC)
-Received: from shalem.localdomain.com (ovpn-116-20.ams2.redhat.com [10.36.116.20])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id D75DC8CCD9;
-        Thu, 23 Jan 2020 21:02:43 +0000 (UTC)
-From:   Hans de Goede <hdegoede@redhat.com>
-To:     Mika Westerberg <mika.westerberg@linux.intel.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H . Peter Anvin" <hpa@zytor.com>
-Cc:     Hans de Goede <hdegoede@redhat.com>, linux-gpio@vger.kernel.org,
-        linux-acpi@vger.kernel.org, x86@kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [RFC v2] x86: Select HARDIRQS_SW_RESEND on x86
-Date:   Thu, 23 Jan 2020 22:02:42 +0100
-Message-Id: <20200123210242.53367-1-hdegoede@redhat.com>
+        Thu, 23 Jan 2020 16:05:11 -0500
+Received: by mail-qv1-f66.google.com with SMTP id p2so2183708qvo.10
+        for <linux-kernel@vger.kernel.org>; Thu, 23 Jan 2020 13:05:10 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=mcbgbKXHYzFeK72nb97pWxaHY+EZyGnc0S9E+ApdXgs=;
+        b=kiQh5gmyJl9700k6zOiLXFG+rMXZHdZexdPHhc9Oo/WZkyRTatXR1udIrGkvsG66u8
+         q0rAB/dhh0LWPtn+GWe5a99BMC97Lurx5lQOotFfeIIYCtCGszmf0r2j0ZbYnFnfPn/1
+         n3l2OfAYzoYlLsKH4ck090Hf41x1DJLwZtQahzFGTxBThS3FTWwUygkzuc7W1seUZlmB
+         1itqYVomtcqrt0pSIN7H1+3UvpITXzxUGhFcbLvc6NUPWnPN26yTIleOEzzDYh+MrtYg
+         8OgG0KY7Pyqj2UnBj/Agzut5JTZpX3rWNDKl8j9vQ1/aA0W40ph/AGl9IM5w++cesls9
+         crMg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=mcbgbKXHYzFeK72nb97pWxaHY+EZyGnc0S9E+ApdXgs=;
+        b=CV8m1WJfv5crhhYYFqaPoCbXPg/xEoT/DqxT9PzjsAumHGj3Ay1dUqaXd0a6yuX1Lp
+         nohK1iPVwaSnB30273+UOcuimdx2lXR+TdnUicsPjVnXw4+pqnghAYe34uLBm6BgBY+V
+         bsGnwP8NuI18+xnOgcY739rr5s1HYUMz4M31lKoLnrh6UGILL32Trm1PmtqQS1/duHGU
+         PtYs4oKl19LV3A8roKBjSZuEyszyeuBbTtAE+phYmjUCEWi//rrKNg+N3Sljca8hqQfd
+         Mxf+Hr+OlOnRW+tIuZtlvVfZIYXQBfhhWNGYkRKEyBiqP4MqQFsTWNuvCJHC79IM4n+4
+         bkUg==
+X-Gm-Message-State: APjAAAVawJWbeDwyQp/Pup87c3XEHQd1ibvOiVoETnEYeybR7PMe5jRu
+        FY/lYMFcY6wgbhfP+bmR9FA7pVq5V6CehjLk6xQ=
+X-Google-Smtp-Source: APXvYqyU4q0R+13VyLA6khfyhXa/z4Ae+4+LM6baqHej3pQtAvoBbfdV2vu5cZ8RDOXlrnl3VafUWuaJgCovP0srz4E=
+X-Received: by 2002:a0c:edb2:: with SMTP id h18mr17967337qvr.94.1579813509664;
+ Thu, 23 Jan 2020 13:05:09 -0800 (PST)
 MIME-Version: 1.0
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
-Content-Transfer-Encoding: quoted-printable
+References: <20200107220640.834-1-yichengli@chromium.org>
+In-Reply-To: <20200107220640.834-1-yichengli@chromium.org>
+From:   Enric Balletbo Serra <eballetbo@gmail.com>
+Date:   Thu, 23 Jan 2020 22:04:58 +0100
+Message-ID: <CAFqH_538ncoNMuSZoC9VfT9fV_NUd7GhGd2q0D0-ag-V9Cpw3A@mail.gmail.com>
+Subject: Re: [PATCH v5] platform: cros_ec: Query EC protocol version if EC
+ transitions between RO/RW
+To:     Yicheng Li <yichengli@chromium.org>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        Benson Leung <bleung@chromium.org>,
+        Gwendal Grignou <gwendal@chromium.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Modern x86 laptops are starting to use GPIO pins as interrupts more
-and more, e.g. touchpads and touchscreens have almost all moved away
-from PS/2 and USB to using I2C with a GPIO pin as interrupt.
-Modern x86 laptops also have almost all moved to using s2idle instead
-of using the system S3 ACPI power state to suspend.
+Hi Yicheng,
 
-The Intel and AMD pinctrl drivers do not define irq_retrigger handlers
-for the irqchips they register, this is causing edge triggered interrupts
-which happen while suspended using s2idle to get lost.
+Missatge de Yicheng Li <yichengli@chromium.org> del dia dt., 7 de gen.
+2020 a les 23:10:
+>
+> RO and RW of EC may have different EC protocol version. If EC transitions
+> between RO and RW, but AP does not reboot (this is true for fingerprint
+> microcontroller / cros_fp, but not true for main ec / cros_ec), the AP
+> still uses the protocol version queried before transition, which can
+> cause problems. In the case of fingerprint microcontroller, this causes
+> AP to send the wrong version of EC_CMD_GET_NEXT_EVENT to RO in the
+> interrupt handler, which in turn prevents RO to clear the interrupt
+> line to AP, in an infinite loop.
+>
+> Once an EC_HOST_EVENT_INTERFACE_READY is received, we know that there
+> might have been a transition between RO and RW, so re-query the protocol.
+>
+> Change-Id: I49a51cc10d22a4ab9e75204a4c0c8819d5b3d282
 
-One specific example of this is the lid switch on some devices, lid
-switches used to be handled by the embedded-controller, but now the
-lid open/closed sensor is sometimes directly connected to a GPIO pin.
-On most devices the ACPI code for this looks like this:
+I changed the subject to 'platform/chrome' and removed the Change-id line
 
-Method (_E00, ...) {
-	Notify (LID0, 0x80) // Status Change
-}
+> Signed-off-by: Yicheng Li <yichengli@chromium.org>
 
-Where _E00 is an ACPI event handler for changes on both edges of the GPIO
-connected to the lid sensor, this event handler is then combined with an
-_LID method which directly reads the pin. When the device is resumed by
-opening the lid, the GPIO interrupt will wake the system, but because the
-pinctrl irqchip doesn't have an irq_retrigger handler, the Notify will no=
-t
-happen. This is not a problem in the case the _LID method directly reads
-the GPIO, because the drivers/acpi/button.c code will call _LID on resume
-anyways.
+And added the Fabien's Tested-by tag
 
-But some devices have an event handler for the GPIO connected to the
-lid sensor which looks like this:
+> ---
+>  drivers/platform/chrome/cros_ec.c           | 24 +++++++++++++++++++++
+>  include/linux/platform_data/cros_ec_proto.h |  3 +++
 
-Method (_E00, ...) {
-	if (LID_GPIO =3D=3D One)
-		LIDS =3D One
-	else
-		LIDS =3D Zero
-	Notify (LID0, 0x80) // Status Change
-}
+Fixed a trivial conflict with current chrome-platform tree and applied for-next.
 
-And the _LID method returns the cached LIDS value, since on open we
-do not re-run the edge-interrupt handler when we re-enable IRQS on resume
-(because of the missing irq_retrigger handler), _LID now will keep
-reporting closed, as LIDS was never changed to reflect the open status,
-this causes userspace to re-resume the laptop again shortly after opening
-the lid.
+Please remember to cc all the maintainers and maintain a changelog
+between version next time.
 
-The Intel GPIO controllers do not allow implementing irq_retrigger withou=
-t
-emulating it in software, at which point we are better of just using the
-generic HARDIRQS_SW_RESEND mechanism rather then re-implementing software
-emulation for this separately in aprox. 14 different pinctrl drivers.
+Thanks,
+ Enric
 
-This commit selects HARDIRQS_SW_RESEND solving the problem of
-edge-triggered GPIO interrupts not being re-triggered on resume when they
-were triggered during suspend (s2idle) and/or when they were the cause of
-the wakeup.
 
-Signed-off-by: Hans de Goede <hdegoede@redhat.com>
----
-I'm sending this out as a RFC since I'm not %100 sure this is the best
-solution and it seems like a somewhat big change to make.
-
-Also maybe we should add a Cc: stable@vger.kernel.org ??? This seems like
-somewhat a big change for that but it does solve some real issues...
----
-Changes in v2:
--v2 is really a resend because I forgot to add the pinctrl people to the =
-Cc
--While at it also fix some typos in the commit message
----
- arch/x86/Kconfig | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
-index c1cbfc7b3ae8..8f8128047b49 100644
---- a/arch/x86/Kconfig
-+++ b/arch/x86/Kconfig
-@@ -118,6 +118,7 @@ config X86
- 	select GENERIC_IRQ_PROBE
- 	select GENERIC_IRQ_RESERVATION_MODE
- 	select GENERIC_IRQ_SHOW
-+	select HARDIRQS_SW_RESEND
- 	select GENERIC_PENDING_IRQ		if SMP
- 	select GENERIC_SMP_IDLE_THREAD
- 	select GENERIC_STRNCPY_FROM_USER
---=20
-2.24.1
-
+>  2 files changed, 27 insertions(+)
+>
+> diff --git a/drivers/platform/chrome/cros_ec.c b/drivers/platform/chrome/cros_ec.c
+> index 9b2d07422e17..38ec1fb409a5 100644
+> --- a/drivers/platform/chrome/cros_ec.c
+> +++ b/drivers/platform/chrome/cros_ec.c
+> @@ -104,6 +104,23 @@ static int cros_ec_sleep_event(struct cros_ec_device *ec_dev, u8 sleep_event)
+>         return ret;
+>  }
+>
+> +static int cros_ec_ready_event(struct notifier_block *nb,
+> +       unsigned long queued_during_suspend, void *_notify)
+> +{
+> +       struct cros_ec_device *ec_dev = container_of(nb, struct cros_ec_device,
+> +                                                    notifier_ready);
+> +       u32 host_event = cros_ec_get_host_event(ec_dev);
+> +
+> +       if (host_event & EC_HOST_EVENT_MASK(EC_HOST_EVENT_INTERFACE_READY)) {
+> +               mutex_lock(&ec_dev->lock);
+> +               cros_ec_query_all(ec_dev);
+> +               mutex_unlock(&ec_dev->lock);
+> +               return NOTIFY_OK;
+> +       }
+> +
+> +       return NOTIFY_DONE;
+> +}
+> +
+>  /**
+>   * cros_ec_register() - Register a new ChromeOS EC, using the provided info.
+>   * @ec_dev: Device to register.
+> @@ -201,6 +218,13 @@ int cros_ec_register(struct cros_ec_device *ec_dev)
+>                 dev_dbg(ec_dev->dev, "Error %d clearing sleep event to ec",
+>                         err);
+>
+> +       /* Register the notifier for EC_HOST_EVENT_INTERFACE_READY event. */
+> +       ec_dev->notifier_ready.notifier_call = cros_ec_ready_event;
+> +       err = blocking_notifier_chain_register(&ec_dev->event_notifier,
+> +                                              &ec_dev->notifier_ready);
+> +       if (err)
+> +               return err;
+> +
+>         dev_info(dev, "Chrome EC device registered\n");
+>
+>         return 0;
+> diff --git a/include/linux/platform_data/cros_ec_proto.h b/include/linux/platform_data/cros_ec_proto.h
+> index 0d4e4aaed37a..a1c545c464e7 100644
+> --- a/include/linux/platform_data/cros_ec_proto.h
+> +++ b/include/linux/platform_data/cros_ec_proto.h
+> @@ -121,6 +121,8 @@ struct cros_ec_command {
+>   * @event_data: Raw payload transferred with the MKBP event.
+>   * @event_size: Size in bytes of the event data.
+>   * @host_event_wake_mask: Mask of host events that cause wake from suspend.
+> + * @notifier_ready: The notifier_block to let the kernel re-query EC
+> + *      communication protocol when the EC sends EC_HOST_EVENT_INTERFACE_READY.
+>   * @ec: The platform_device used by the mfd driver to interface with the
+>   *      main EC.
+>   * @pd: The platform_device used by the mfd driver to interface with the
+> @@ -161,6 +163,7 @@ struct cros_ec_device {
+>         int event_size;
+>         u32 host_event_wake_mask;
+>         u32 last_resume_result;
+> +       struct notifier_block notifier_ready;
+>
+>         /* The platform devices used by the mfd driver */
+>         struct platform_device *ec;
+> --
+> 2.21.0
+>
