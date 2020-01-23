@@ -2,99 +2,99 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A9BFD146B69
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Jan 2020 15:33:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8DEB7146B6E
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Jan 2020 15:35:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728890AbgAWOdg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 23 Jan 2020 09:33:36 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:18138 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726240AbgAWOdg (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Jan 2020 09:33:36 -0500
-Received: from pps.filterd (m0098396.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 00NERsxR078328
-        for <linux-kernel@vger.kernel.org>; Thu, 23 Jan 2020 09:33:35 -0500
-Received: from e06smtp01.uk.ibm.com (e06smtp01.uk.ibm.com [195.75.94.97])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2xqba351aj-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Thu, 23 Jan 2020 09:33:35 -0500
-Received: from localhost
-        by e06smtp01.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <latha@linux.vnet.ibm.com>;
-        Thu, 23 Jan 2020 14:33:33 -0000
-Received: from b06cxnps4074.portsmouth.uk.ibm.com (9.149.109.196)
-        by e06smtp01.uk.ibm.com (192.168.101.131) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Thu, 23 Jan 2020 14:33:31 -0000
-Received: from d06av26.portsmouth.uk.ibm.com (d06av26.portsmouth.uk.ibm.com [9.149.105.62])
-        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 00NEXULA56164378
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 23 Jan 2020 14:33:30 GMT
-Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id F0CBEAE058;
-        Thu, 23 Jan 2020 14:33:29 +0000 (GMT)
-Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id BCC05AE04D;
-        Thu, 23 Jan 2020 14:33:28 +0000 (GMT)
-Received: from localhost.localdomain (unknown [9.199.37.157])
-        by d06av26.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Thu, 23 Jan 2020 14:33:28 +0000 (GMT)
-From:   latha@linux.vnet.ibm.com
-To:     linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     trenn@suse.com, shuah@kernel.org,
-        Brahadambal Srinivasan <latha@linux.vnet.ibm.com>
-Subject: [PATCH] Correction to manpage of cpupower
-Date:   Thu, 23 Jan 2020 20:03:19 +0530
-X-Mailer: git-send-email 2.19.1
+        id S1728988AbgAWOfJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 23 Jan 2020 09:35:09 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38582 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727307AbgAWOfJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 23 Jan 2020 09:35:09 -0500
+Received: from willie-the-truck (236.31.169.217.in-addr.arpa [217.169.31.236])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 43BAF2087E;
+        Thu, 23 Jan 2020 14:35:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1579790108;
+        bh=JNtixxJ/yw1iFwwAJ9ohnh46vXkDLO9OMR488psZi7Y=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=0BsJ627kvWrt2CDSqPfrDlznsX+RCpuOBXBDDOxDvG++isOd/KeDDX6iSaEZtPmvG
+         YRkdpadtdV/Obl9NJ3Dmn9Kd7PaJJW3s+dOrbPn8k/X/sGC1vy8sHxnObLD/1LjGMX
+         WF8lClEQHLsDqE2aLHc1FlTqaHupTpHJm+0o42Y4=
+Date:   Thu, 23 Jan 2020 14:35:03 +0000
+From:   Will Deacon <will@kernel.org>
+To:     Julien Thierry <jthierry@redhat.com>
+Cc:     linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        jpoimboe@redhat.com, peterz@infradead.org, raphael.gault@arm.com,
+        catalin.marinas@arm.com
+Subject: Re: [RFC v5 00/57] objtool: Add support for arm64
+Message-ID: <20200123143503.GA19649@willie-the-truck>
+References: <20200109160300.26150-1-jthierry@redhat.com>
+ <20200121103025.GC11154@willie-the-truck>
+ <400d402d-c964-6f0c-2954-6f6afcb94635@redhat.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-x-cbid: 20012314-4275-0000-0000-0000039A4328
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 20012314-4276-0000-0000-000038AE5112
-Message-Id: <20200123143319.19580-1-latha@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.572
- definitions=2020-01-23_08:2020-01-23,2020-01-23 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0
- priorityscore=1501 lowpriorityscore=0 mlxlogscore=999 impostorscore=0
- bulkscore=0 malwarescore=0 phishscore=0 suspectscore=0 mlxscore=0
- spamscore=0 clxscore=1011 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-1910280000 definitions=main-2001230124
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <400d402d-c964-6f0c-2954-6f6afcb94635@redhat.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Brahadambal Srinivasan <latha@linux.vnet.ibm.com>
+On Thu, Jan 23, 2020 at 01:52:17PM +0000, Julien Thierry wrote:
+> 
+> 
+> On 1/21/20 10:30 AM, Will Deacon wrote:
+> > On Thu, Jan 09, 2020 at 04:02:03PM +0000, Julien Thierry wrote:
+> > > This patch series is the continuation of Raphael's work [1]. All the
+> > > patches can be retrieved from:
+> > > git clone -b arm64-objtool-v5 https://github.com/julien-thierry/linux.git
+> > 
+> > [...]
+> > 
+> > >    objtool: arm64: Decode unknown instructions
+> > >    objtool: arm64: Decode simple data processing instructions
+> > >    objtool: arm64: Decode add/sub immediate instructions
+> > >    objtool: arm64: Decode logical data processing instructions
+> > >    objtool: arm64: Decode system instructions not affecting the flow
+> > >    objtool: arm64: Decode calls to higher EL
+> > >    objtool: arm64: Decode brk instruction
+> > >    objtool: arm64: Decode instruction triggering context switch
+> > >    objtool: arm64: Decode branch instructions with PC relative immediates
+> > >    objtool: arm64: Decode branch to register instruction
+> > >    objtool: arm64: Decode basic load/stores
+> > >    objtool: arm64: Decode load/store with register offset
+> > >    objtool: arm64: Decode load/store register pair instructions
+> > >    objtool: arm64: Decode FP/SIMD load/store instructions
+> > >    objtool: arm64: Decode load/store exclusive
+> > >    objtool: arm64: Decode atomic load/store
+> > >    objtool: arm64: Decode pointer auth load instructions
+> > >    objtool: arm64: Decode load acquire/store release
+> > >    objtool: arm64: Decode load/store with memory tag
+> > >    objtool: arm64: Decode load literal
+> > >    objtool: arm64: Decode register data processing instructions
+> > >    objtool: arm64: Decode FP/SIMD data processing instructions
+> > >    objtool: arm64: Decode SVE instructions
+> > 
+> > That's a lot of decoding logic which we already have in
+> > arch/arm64/{kernel/insn.c,include/asm/insn.h}. I'd prefer to see this stuff
+> > reused or generated from a single source, since it's really easy to get it
+> > wrong, has a tendency to bitrot and is nasty to debug.
+> > 
+> 
+> The thing is that the code in those files is mostly encoding logic
+> (motivated by BPF) rather than decoding (except for the instruction that
+> might be trapped, but these rarely overlap with instructions that objtools
+> cares about). I agree that ideally the decoding/encoding should be under
+> arch/arm64/lib, I was just a bit weary introducing a lot of decoding code
+> under arch/arm64 that wouldn't even be used in kernel code.
 
-Manpage of cpupower is listing wrong sub-commands in "See Also"
-section. The option for cpupower-idle(1) should actually be
-cpupower-idle-info(1) and cpupower-idle-set(1). This patch corrects
-this anomaly.
+Hmm, but kprobes decodes instructions somehow :p
 
-Signed-off-by: Brahadambal Srinivasan <latha@linux.vnet.ibm.com>
----
- tools/power/cpupower/man/cpupower.1 | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+Not saying you have to refactor everything, but I'd hope you could reuse
+some of the aarch64_insn_is* and aarch64_insn_extract* functions at least.
 
-diff --git a/tools/power/cpupower/man/cpupower.1 b/tools/power/cpupower/man/cpupower.1
-index baf741d06e82..bdbf089794c7 100644
---- a/tools/power/cpupower/man/cpupower.1
-+++ b/tools/power/cpupower/man/cpupower.1
-@@ -62,9 +62,9 @@ all cores
- Print the package name and version number.
- 
- .SH "SEE ALSO"
--cpupower-set(1), cpupower-info(1), cpupower-idle(1),
--cpupower-frequency-set(1), cpupower-frequency-info(1), cpupower-monitor(1),
--powertop(1)
-+cpupower-set(1), cpupower-info(1), cpupower-idle-info(1), 
-+cpupower-idle-set(1), cpupower-frequency-set(1), cpupower-frequency-info(1), 
-+cpupower-monitor(1), powertop(1)
- .PP
- .SH AUTHORS
- .nf
--- 
-2.19.1
-
+Will
