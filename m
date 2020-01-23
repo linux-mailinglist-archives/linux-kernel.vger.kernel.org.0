@@ -2,217 +2,135 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6671C146273
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Jan 2020 08:19:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C0F18146281
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Jan 2020 08:23:37 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726219AbgAWHTa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 23 Jan 2020 02:19:30 -0500
-Received: from mail25.static.mailgun.info ([104.130.122.25]:32820 "EHLO
-        mail25.static.mailgun.info" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725818AbgAWHT2 (ORCPT
+        id S1726103AbgAWHXb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 23 Jan 2020 02:23:31 -0500
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:43294 "EHLO
+        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725785AbgAWHXa (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Jan 2020 02:19:28 -0500
-DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
- s=smtp; t=1579763968; h=References: In-Reply-To: Message-Id: Date:
- Subject: Cc: To: From: Sender;
- bh=E9rFyJiCzi3BOP2GWCnLe8i2T5M7xVnalr0gbC8pg+E=; b=EMhc42VoOcV+2mbzLHx8IHBTFSgv5/ix+PMl9OCBdOMA0smS1swz0O7siNPOE5A9IADIE7QE
- nqrZ0VkQn+mPZTkkAJcaKCIQyYaTiA2hZ9fIszkOutBhTxPb95nYeXGU9O3x47rem0gVznQI
- AqfP1v35qhRbgM/o7y1EoxqL/JA=
-X-Mailgun-Sending-Ip: 104.130.122.25
-X-Mailgun-Sid: WyI0MWYwYSIsICJsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
-Received: from smtp.codeaurora.org (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171])
- by mxa.mailgun.org with ESMTP id 5e2948f8.7f82d7b821f0-smtp-out-n01;
- Thu, 23 Jan 2020 07:19:20 -0000 (UTC)
-Received: by smtp.codeaurora.org (Postfix, from userid 1001)
-        id BA08EC433CB; Thu, 23 Jan 2020 07:19:20 +0000 (UTC)
-X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
-        aws-us-west-2-caf-mail-1.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=2.0 tests=ALL_TRUSTED,SPF_NONE
-        autolearn=ham autolearn_force=no version=3.4.0
-Received: from smasetty-linux.qualcomm.com (blr-c-bdr-fw-01_GlobalNAT_AllZones-Outside.qualcomm.com [103.229.19.19])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: smasetty)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 43536C43383;
-        Thu, 23 Jan 2020 07:19:18 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 43536C43383
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=none smtp.mailfrom=smasetty@codeaurora.org
-From:   Sharat Masetty <smasetty@codeaurora.org>
-To:     freedreno@lists.freedesktop.org
-Cc:     dri-devel@freedesktop.org, linux-arm-msm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, jcrouse@codeaurora.org,
-        Sharat Masetty <smasetty@codeaurora.org>
-Subject: [PATCH v2 3/3] drm: msm: a6xx: Dump GBIF registers, debugbus in gpu state
-Date:   Thu, 23 Jan 2020 12:49:05 +0530
-Message-Id: <1579763945-10478-3-git-send-email-smasetty@codeaurora.org>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1579763945-10478-1-git-send-email-smasetty@codeaurora.org>
-References: <1579763945-10478-1-git-send-email-smasetty@codeaurora.org>
+        Thu, 23 Jan 2020 02:23:30 -0500
+Received: by mail-lj1-f195.google.com with SMTP id a13so2034472ljm.10;
+        Wed, 22 Jan 2020 23:23:29 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:from:to:cc:subject:in-reply-to:references:date:message-id
+         :mime-version;
+        bh=gDItKQODNCo3RItGu1dOVyk4407nhjcjRPWOwl5ZOSY=;
+        b=Oaq2E/4zpGFCt/KRakEbVrU4qyRq6N2u9zZab0zGVl4LdK3zowHLnbHczXFu9tipby
+         we/0TqqkEA40bFJ5wKL1cRLKbFT3mzyl+ASCC/FvUro3URHlS7j5epLkqsFKWJcijckU
+         oZlFxbsg7AUU2NhQF82CzLWnYjym7UsfJqyu5A1QoZ6HS681cRy6eCM+O3lHgh9tLxXb
+         y75s1ueIZDtaUvLX0mz1m9+IDvJGnimVdsgVta73PzHV6cj7Uw/4LrSchabqYR8bMere
+         No3xmgQz4IsiRuTBIxuMa0j3jhan2qE4GyZfRQSkaUyHzxROoVMa1Qwmc1f6hlbHbQiU
+         jGIg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:from:to:cc:subject:in-reply-to:references
+         :date:message-id:mime-version;
+        bh=gDItKQODNCo3RItGu1dOVyk4407nhjcjRPWOwl5ZOSY=;
+        b=Apt+uAeNpUzAckcxNYbuJ5jz7lcmxU/HQKTTT4hDl8UU5VuIuWFW7DA6+j9miAe6ya
+         597y7L91YfE7K87nEphFpHgAA3aAnRqonEU7RnpdQZT4DOsNmGS5Quw7ZQ+G5IOc3YEh
+         Hf0DOyITsP/2pqE1cuE4OHuK2F0PJ0rn0wz7KwnVNbLBvchXd5JOVjSgh+8pgv/+g4mD
+         V/Fm/DgYF9fmnXbJ22fOoTzgRxJLdPuMk1m/SherPXRuD6+PYvAFa3LTYBCR2hzZ5z83
+         db99AaBdv5ACUTUQSkttkt67NcQd3tJjrSR5u+fqbMOlyo2ZmRIT9JEBNLQYa51kTMAV
+         G7JQ==
+X-Gm-Message-State: APjAAAXP7sVrwUwQ7zd1v0kj4c3ZDggSbnrZ9O21imNp4ml0ydnvb/K8
+        xF1CnL9CPQOml1peFo8u/6o=
+X-Google-Smtp-Source: APXvYqyCcm21ptR/gV7N5UyDN/60CxAedcvdaOjjjZP/JU0Hp3CjJXKL8y1aL9t5JzLZJofMsliRTQ==
+X-Received: by 2002:a2e:8603:: with SMTP id a3mr21337802lji.210.1579764208666;
+        Wed, 22 Jan 2020 23:23:28 -0800 (PST)
+Received: from saruman (88-113-215-33.elisa-laajakaista.fi. [88.113.215.33])
+        by smtp.gmail.com with ESMTPSA id k1sm604109lji.43.2020.01.22.23.23.27
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 22 Jan 2020 23:23:27 -0800 (PST)
+From:   Felipe Balbi <balbi@kernel.org>
+To:     John Stultz <john.stultz@linaro.org>,
+        lkml <linux-kernel@vger.kernel.org>
+Cc:     Anurag Kumar Vulisha <anurag.kumar.vulisha@xilinx.com>,
+        Yang Fei <fei.yang@intel.com>,
+        Thinh Nguyen <thinhn@synopsys.com>,
+        Tejas Joglekar <tejas.joglekar@synopsys.com>,
+        Andrzej Pietrasiewicz <andrzej.p@collabora.com>,
+        Jack Pham <jackp@codeaurora.org>, Todd Kjos <tkjos@google.com>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        Linux USB List <linux-usb@vger.kernel.org>,
+        stable <stable@vger.kernel.org>,
+        John Stultz <john.stultz@linaro.org>
+Subject: Re: [RFC][PATCH 1/2] usb: dwc3: gadget: Check for IOC/LST bit in both event->status and TRB->ctrl fields
+In-Reply-To: <20200122222645.38805-2-john.stultz@linaro.org>
+References: <20200122222645.38805-1-john.stultz@linaro.org> <20200122222645.38805-2-john.stultz@linaro.org>
+Date:   Thu, 23 Jan 2020 09:24:17 +0200
+Message-ID: <87tv4m4ov2.fsf@kernel.org>
+MIME-Version: 1.0
+Content-Type: multipart/signed; boundary="=-=-=";
+        micalg=pgp-sha256; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add the relevant GBIF registers and the debug bus to the a6xx gpu
-state. This comes in pretty handy when debugging GPU bus related
-issues.
+--=-=-=
+Content-Type: text/plain
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Sharat Masetty <smasetty@codeaurora.org>
----
- drivers/gpu/drm/msm/adreno/a6xx_gpu_state.c | 52 +++++++++++++++++++++++------
- drivers/gpu/drm/msm/adreno/a6xx_gpu_state.h | 16 +++++++--
- 2 files changed, 55 insertions(+), 13 deletions(-)
 
-diff --git a/drivers/gpu/drm/msm/adreno/a6xx_gpu_state.c b/drivers/gpu/drm/msm/adreno/a6xx_gpu_state.c
-index 691c1a27..d6023ba 100644
---- a/drivers/gpu/drm/msm/adreno/a6xx_gpu_state.c
-+++ b/drivers/gpu/drm/msm/adreno/a6xx_gpu_state.c
-@@ -1,5 +1,5 @@
- // SPDX-License-Identifier: GPL-2.0
--/* Copyright (c) 2018 The Linux Foundation. All rights reserved. */
-+/* Copyright (c) 2018-2019 The Linux Foundation. All rights reserved. */
- 
- #include <linux/ascii85.h>
- #include "msm_gem.h"
-@@ -320,6 +320,7 @@ static void a6xx_get_debugbus(struct msm_gpu *gpu,
- {
- 	struct resource *res;
- 	void __iomem *cxdbg = NULL;
-+	int nr_debugbus_blocks;
- 
- 	/* Set up the GX debug bus */
- 
-@@ -374,9 +375,11 @@ static void a6xx_get_debugbus(struct msm_gpu *gpu,
- 		cxdbg_write(cxdbg, REG_A6XX_CX_DBGC_CFG_DBGBUS_MASKL_3, 0);
- 	}
- 
--	a6xx_state->debugbus = state_kcalloc(a6xx_state,
--		ARRAY_SIZE(a6xx_debugbus_blocks),
--		sizeof(*a6xx_state->debugbus));
-+	nr_debugbus_blocks = ARRAY_SIZE(a6xx_debugbus_blocks) +
-+		(a6xx_has_gbif(to_adreno_gpu(gpu)) ? 1 : 0);
-+
-+	a6xx_state->debugbus = state_kcalloc(a6xx_state, nr_debugbus_blocks,
-+			sizeof(*a6xx_state->debugbus));
- 
- 	if (a6xx_state->debugbus) {
- 		int i;
-@@ -388,15 +391,31 @@ static void a6xx_get_debugbus(struct msm_gpu *gpu,
- 				&a6xx_state->debugbus[i]);
- 
- 		a6xx_state->nr_debugbus = ARRAY_SIZE(a6xx_debugbus_blocks);
-+
-+		/*
-+		 * GBIF has same debugbus as of other GPU blocks, fall back to
-+		 * default path if GPU uses GBIF, also GBIF uses exactly same
-+		 * ID as of VBIF.
-+		 */
-+		if (a6xx_has_gbif(to_adreno_gpu(gpu))) {
-+			a6xx_get_debugbus_block(gpu, a6xx_state,
-+				&a6xx_gbif_debugbus_block,
-+				&a6xx_state->debugbus[i]);
-+
-+			a6xx_state->nr_debugbus += 1;
-+		}
- 	}
- 
--	a6xx_state->vbif_debugbus =
--		state_kcalloc(a6xx_state, 1,
--			sizeof(*a6xx_state->vbif_debugbus));
-+	/*  Dump the VBIF debugbus on applicable targets */
-+	if (!a6xx_has_gbif(to_adreno_gpu(gpu))) {
-+		a6xx_state->vbif_debugbus =
-+			state_kcalloc(a6xx_state, 1,
-+					sizeof(*a6xx_state->vbif_debugbus));
- 
--	if (a6xx_state->vbif_debugbus)
--		a6xx_get_vbif_debugbus_block(gpu, a6xx_state,
--			a6xx_state->vbif_debugbus);
-+		if (a6xx_state->vbif_debugbus)
-+			a6xx_get_vbif_debugbus_block(gpu, a6xx_state,
-+					a6xx_state->vbif_debugbus);
-+	}
- 
- 	if (cxdbg) {
- 		a6xx_state->cx_debugbus =
-@@ -770,14 +789,16 @@ static void a6xx_get_gmu_registers(struct msm_gpu *gpu,
- 		&a6xx_state->gmu_registers[1]);
- }
- 
-+#define A6XX_GBIF_REGLIST_SIZE   1
- static void a6xx_get_registers(struct msm_gpu *gpu,
- 		struct a6xx_gpu_state *a6xx_state,
- 		struct a6xx_crashdumper *dumper)
- {
- 	int i, count = ARRAY_SIZE(a6xx_ahb_reglist) +
- 		ARRAY_SIZE(a6xx_reglist) +
--		ARRAY_SIZE(a6xx_hlsq_reglist);
-+		ARRAY_SIZE(a6xx_hlsq_reglist) + A6XX_GBIF_REGLIST_SIZE;
- 	int index = 0;
-+	struct adreno_gpu *adreno_gpu = to_adreno_gpu(gpu);
- 
- 	a6xx_state->registers = state_kcalloc(a6xx_state,
- 		count, sizeof(*a6xx_state->registers));
-@@ -792,6 +813,15 @@ static void a6xx_get_registers(struct msm_gpu *gpu,
- 			a6xx_state, &a6xx_ahb_reglist[i],
- 			&a6xx_state->registers[index++]);
- 
-+	if (a6xx_has_gbif(adreno_gpu))
-+		a6xx_get_ahb_gpu_registers(gpu,
-+				a6xx_state, &a6xx_gbif_reglist,
-+				&a6xx_state->registers[index++]);
-+	else
-+		a6xx_get_ahb_gpu_registers(gpu,
-+				a6xx_state, &a6xx_vbif_reglist,
-+				&a6xx_state->registers[index++]);
-+
- 	for (i = 0; i < ARRAY_SIZE(a6xx_reglist); i++)
- 		a6xx_get_crashdumper_registers(gpu,
- 			a6xx_state, &a6xx_reglist[i],
-diff --git a/drivers/gpu/drm/msm/adreno/a6xx_gpu_state.h b/drivers/gpu/drm/msm/adreno/a6xx_gpu_state.h
-index 68cccfa..e67c20c 100644
---- a/drivers/gpu/drm/msm/adreno/a6xx_gpu_state.h
-+++ b/drivers/gpu/drm/msm/adreno/a6xx_gpu_state.h
-@@ -1,5 +1,5 @@
- // SPDX-License-Identifier: GPL-2.0
--/* Copyright (c) 2018 The Linux Foundation. All rights reserved. */
-+/* Copyright (c) 2018-2019 The Linux Foundation. All rights reserved. */
- 
- #ifndef _A6XX_CRASH_DUMP_H_
- #define _A6XX_CRASH_DUMP_H_
-@@ -307,11 +307,20 @@ struct a6xx_registers {
- 	0x3410, 0x3410, 0x3800, 0x3801,
- };
- 
-+static const u32 a6xx_gbif_registers[] = {
-+	0x3C00, 0X3C0B, 0X3C40, 0X3C47, 0X3CC0, 0X3CD1, 0xE3A, 0xE3A,
-+};
-+
- static const struct a6xx_registers a6xx_ahb_reglist[] = {
- 	REGS(a6xx_ahb_registers, 0, 0),
--	REGS(a6xx_vbif_registers, 0, 0),
- };
- 
-+static const struct a6xx_registers a6xx_vbif_reglist =
-+			REGS(a6xx_vbif_registers, 0, 0);
-+
-+static const struct a6xx_registers a6xx_gbif_reglist =
-+			REGS(a6xx_gbif_registers, 0, 0);
-+
- static const u32 a6xx_gmu_gx_registers[] = {
- 	/* GMU GX */
- 	0x0000, 0x0000, 0x0010, 0x0013, 0x0016, 0x0016, 0x0018, 0x001b,
-@@ -422,6 +431,9 @@ struct a6xx_registers {
- 	DEBUGBUS(A6XX_DBGBUS_TPL1_3, 0x100),
- };
- 
-+static const struct a6xx_debugbus_block a6xx_gbif_debugbus_block =
-+			DEBUGBUS(A6XX_DBGBUS_VBIF, 0x100);
-+
- static const struct a6xx_debugbus_block a6xx_cx_debugbus_blocks[] = {
- 	DEBUGBUS(A6XX_DBGBUS_GMU_CX, 0x100),
- 	DEBUGBUS(A6XX_DBGBUS_CX, 0x100),
--- 
-1.9.1
+Hi,
+
+John Stultz <john.stultz@linaro.org> writes:
+
+> From: Anurag Kumar Vulisha <anurag.kumar.vulisha@xilinx.com>
+>
+> The present code in dwc3_gadget_ep_reclaim_completed_trb() will check
+> for IOC/LST bit in the event->status and returns if IOC/LST bit is
+> set. This logic doesn't work if multiple TRBs are queued per
+> request and the IOC/LST bit is set on the last TRB of that request.
+> Consider an example where a queued request has multiple queued TRBs
+> and IOC/LST bit is set only for the last TRB. In this case, the Core
+> generates XferComplete/XferInProgress events only for the last TRB
+> (since IOC/LST are set only for the last TRB). As per the logic in
+> dwc3_gadget_ep_reclaim_completed_trb() event->status is checked for
+> IOC/LST bit and returns on the first TRB. This makes the remaining
+> TRBs left unhandled.
+> To aviod this, changed the code to check for IOC/LST bits in both
+     avoid
+
+> event->status & TRB->ctrl. This patch does the same.
+
+We don't need to check both. It's very likely that checking the TRB is
+enough.
+
+> At a practical level, this patch resolves USB transfer stalls seen
+> with adb on dwc3 based HiKey960 after functionfs gadget added
+> scatter-gather support around v4.20.
+
+Right, I remember asking for tracepoint data showing this problem
+happening. It's the best way to figure out what's really going on.
+
+Before we accept these two patches, could you collect dwc3 tracepoint
+data and share here?
+
+=2D-=20
+balbi
+
+--=-=-=
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCAAdFiEElLzh7wn96CXwjh2IzL64meEamQYFAl4pSiEACgkQzL64meEa
+mQZYGA//d2Ww8m08gOCrieOfXT+35bsGS2RrQfTLzF0DAHJV2hrTVtRoJMpZwRwu
+6MECo4hpg+smuTY0Xgj0QwZCQLUKCdLHetmTd+EC8cyPjGFnt24XxxXIpfyG+y4E
+OZuUEngwW3PVkcBbg3WwIfWVPGQ4tEpf9Q/nwCKUSFEj/djTdOuLl8DlgHvC9oq3
+lsBdNIkIvjRzpjUpXUIvQbgrxgrJAJ4EHAqoUO+1djmaOcCj+HNRhSFWKTGUjbjl
+xsKprp2ZjZH088ebQbrbmqFbKk0+Yw9krSc+BHK2ZIMZJFMKLoNtL6Th/X4qVpu/
+quAHCskQYrv/PlmJsteBfSpCimz3R4iYyCQdjWLkld8ESAnDnuWst4p7o7Lvt3SQ
+c9ZibfWrnP5NmbL4Ejh7O0LtEk+IAVdRCyFE2rxFfzwXVGrBtxKJv/I3GUc6Mn3F
+ZiE8U96hjjM9hDSoZ95AySYEZM5vAblbdR938ZJPlbEZLz16XpBlFvaTlGiuyGlg
+esqPEmFUlKnlv5FgK13avIdz4GGUpUXQdR7cQs41BaWoa+gKPmMKg3m0c35naiTf
+84QTLsgXNwSGo5w9vpNQ04ris1pDxPk5m8afm59to6soaxfb2fjhRhXumSN80cuK
+KZxKs54yC44wiNHkotOyrG/x2wRhjqyvvWpQ8yynx72rZwpkytA=
+=IQai
+-----END PGP SIGNATURE-----
+--=-=-=--
