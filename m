@@ -2,95 +2,88 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5CDBE146400
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Jan 2020 09:59:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E5BB9146408
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Jan 2020 10:02:19 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726234AbgAWI7z (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 23 Jan 2020 03:59:55 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:37586 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725785AbgAWI7z (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Jan 2020 03:59:55 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
-        Content-Type:In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:
-        Subject:Sender:Reply-To:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=dpZ47qLZaEo9JYE9lvvCZ6F2TCPcWXoLFmFAw8P69Fo=; b=iJDkJ1S4gq3EJ1+VdxtvCFj7Y
-        rTeEbPXx3tZ1Tze79PmAxEEKo4IGjlEpXwtPJsJNGq63U9jMxKB49sGuGgZaXA6rh1GPLVYK4BAdf
-        BuW+hFUSe0w/LOQhKJXHg4+b5fbtDVbUGLt7aNHOeX+Ur1faJopoXAg6g/LvathcaPCN3auDakc4L
-        ubzySayOORDpdnB+dozE9V0wPKs5ytcm+hIXhOwuMUnACvmU+Jw9gx/Ua0QWlnneZ7MSl25jbT2GM
-        sM7XXXAELfHaR3Q6/XnSLtW96ySyzkUvbaw8A5DmsAs7/+elxXdnyhh7HAQ8vWcKtkpRkfQdKpzNb
-        VYYD05Srg==;
-Received: from [2601:1c0:6280:3f0::ed68]
-        by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1iuYL6-0005PN-VT; Thu, 23 Jan 2020 08:59:49 +0000
-Subject: Re: linux-next: Tree for Jan 23 (PHY_EXYNOS5250_SATA in
- drivers/phy/samsung/Kconfig)
-To:     Krzysztof Kozlowski <krzk@kernel.org>
-Cc:     Stephen Rothwell <sfr@canb.auug.org.au>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Kishon Vijay Abraham I <kishon@ti.com>,
-        Wolfram Sang <wsa@the-dreams.de>,
-        Geert Uytterhoeven <geert@linux-m68k.org>
-References: <20200123172101.2f31947c@canb.auug.org.au>
- <beb9e3a3-4824-6328-12f8-3d005f376374@infradead.org>
- <CAJKOXPcJ8V+bLDeJGg+emCaYHtDjuKa--yMk_HRCsB_DrwJGrw@mail.gmail.com>
-From:   Randy Dunlap <rdunlap@infradead.org>
-Message-ID: <6c09668b-488e-eb1d-3d11-2e2773b32e70@infradead.org>
-Date:   Thu, 23 Jan 2020 00:59:47 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.3.0
+        id S1727278AbgAWJCQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 23 Jan 2020 04:02:16 -0500
+Received: from mga02.intel.com ([134.134.136.20]:42400 "EHLO mga02.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725785AbgAWJCQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 23 Jan 2020 04:02:16 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 23 Jan 2020 00:56:22 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.70,353,1574150400"; 
+   d="scan'208";a="287240587"
+Received: from lahna.fi.intel.com (HELO lahna) ([10.237.72.163])
+  by fmsmga001.fm.intel.com with SMTP; 23 Jan 2020 00:56:17 -0800
+Received: by lahna (sSMTP sendmail emulation); Thu, 23 Jan 2020 10:56:16 +0200
+Date:   Thu, 23 Jan 2020 10:56:16 +0200
+From:   Mika Westerberg <mika.westerberg@linux.intel.com>
+To:     Lee Jones <lee.jones@linaro.org>
+Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Darren Hart <dvhart@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H . Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
+        Zha Qipeng <qipeng.zha@intel.com>,
+        "David E . Box" <david.e.box@linux.intel.com>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Wim Van Sebroeck <wim@linux-watchdog.org>,
+        Mark Brown <broonie@kernel.org>,
+        platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 37/38] platform/x86: intel_pmc_ipc: Convert to MFD
+Message-ID: <20200123085616.GF2665@lahna.fi.intel.com>
+References: <20200121160114.60007-1-mika.westerberg@linux.intel.com>
+ <20200121160114.60007-38-mika.westerberg@linux.intel.com>
+ <20200122123454.GL15507@dell>
+ <20200122125300.GO2665@lahna.fi.intel.com>
+ <20200122132757.GM15507@dell>
+ <20200122144523.GX2665@lahna.fi.intel.com>
+ <20200123080142.GP15507@dell>
 MIME-Version: 1.0
-In-Reply-To: <CAJKOXPcJ8V+bLDeJGg+emCaYHtDjuKa--yMk_HRCsB_DrwJGrw@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200123080142.GP15507@dell>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 1/23/20 12:03 AM, Krzysztof Kozlowski wrote:
-> On Thu, 23 Jan 2020 at 08:00, Randy Dunlap <rdunlap@infradead.org> wrote:
->>
->> On 1/22/20 10:21 PM, Stephen Rothwell wrote:
->>> Hi all,
->>>
->>> Changes since 20200122:
->>>
->>
->> Is linux-next missing some of the COMPILE_TEST fixes?  I am still seeing
->> this warning (that I reported on Jan. 9-2020 and that Arnd has sent a
->> possible patch for):
->>
->>
->> on i386 or x86_64:
->>
->> WARNING: unmet direct dependencies detected for I2C_S3C2410
->>   Depends on [n]: I2C [=y] && HAS_IOMEM [=y] && HAVE_S3C2410_I2C [=n]
->>   Selected by [y]:
->>   - PHY_EXYNOS5250_SATA [=y] && (SOC_EXYNOS5250 || COMPILE_TEST [=y]) && HAS_IOMEM [=y] && OF [=y]
+On Thu, Jan 23, 2020 at 08:01:42AM +0000, Lee Jones wrote:
+> On Wed, 22 Jan 2020, Mika Westerberg wrote:
 > 
-> Hi Randy,
+> > On Wed, Jan 22, 2020 at 01:27:57PM +0000, Lee Jones wrote:
+> > > > Which type of device you suggest here? And which bus it should be
+> > > > registered to? I think we can make this create a platform_device but
+> > > > then we would need to do that from the PCI driver as well which seems
+> > > > unnecessary since we already have the struct pci_dev.
+> > > 
+> > > What kind of device is it?
+> > 
+> > It is either part of an ACPI device (platform_device) or a PCI device
+> > depending on the platform.
+> > 
+> > > Refrain from using platform device, unless it is one please.
+> > 
+> > OK.
+> > 
+> > Greg suggested making the SCU IPC functionality a class and I think it
+> > fits here nicely so I'm going to try that next if nobody objects. I'll
+> > send the first cleanup patches separately.
 > 
-> The fix was posted quite some time ago - next to the patches
-> (unfortunately) introducing the issue.  I posted v2, after review, on
-> 7th of January:
-> https://lore.kernel.org/linux-arm-kernel/1578384779-15487-1-git-send-email-krzk@kernel.org/T/#t
+> Sounds good.
 
-That works for me.
-Acked-by: Randy Dunlap <rdunlap@infradead.org> # build-tested
+FYI, I the cleanup patch series can be found here:
 
-> Maybe I missed someone on Cc there?
-
-Sometimes you just have to resend patches...
-
-thanks.
--- 
-~Randy
-
+https://www.spinics.net/lists/platform-driver-x86/msg20728.html
+https://www.spinics.net/lists/platform-driver-x86/msg20729.html
+https://www.spinics.net/lists/platform-driver-x86/msg20734.html
+https://www.spinics.net/lists/platform-driver-x86/msg20750.html
