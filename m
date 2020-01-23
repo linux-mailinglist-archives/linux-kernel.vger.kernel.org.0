@@ -2,123 +2,93 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3AA5F146DD3
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Jan 2020 17:08:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 16368146DD7
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Jan 2020 17:09:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726792AbgAWQIp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 23 Jan 2020 11:08:45 -0500
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:39195 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726231AbgAWQIn (ORCPT
+        id S1729191AbgAWQJB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 23 Jan 2020 11:09:01 -0500
+Received: from userp2130.oracle.com ([156.151.31.86]:51046 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726231AbgAWQJB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Jan 2020 11:08:43 -0500
-Received: by mail-pf1-f195.google.com with SMTP id q10so1744176pfs.6
-        for <linux-kernel@vger.kernel.org>; Thu, 23 Jan 2020 08:08:43 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=td46G8H/xG3KwKZVoWzOjjmv0BfVbkqqajOdOX1P7gY=;
-        b=lM+qRMYpFmvxGN+/4LhnZq4sqRW6FLBBMnhUm0cU5iKquVddBZxPgV/elfaSzzEO77
-         vj3MsgXT9yuc/fP9pFOrTf+q0gQHGhRPHkoxFOhYkHqF6sCKpolIG+LqdkLSXFxQCh1c
-         uLBvwDYe69yYr5Ab8NL9YcTU4dIQjwq7ctGUR/RKZ8jvjJddtbHpZFaK9eGVsAF+AsXR
-         ZUOoCLEmDSHw6KuwivGzgSEpCB0BUXPv8GON4AkN/4lDqw2T8ObUpfi+vM5qE9uACjGh
-         i7BKwexFGTKGtAhOgr6n6x6fd81CcOhuUpv+RrLuEz/wUcmxPEbQciYeMCw5jyTgIA5p
-         ZFrQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=td46G8H/xG3KwKZVoWzOjjmv0BfVbkqqajOdOX1P7gY=;
-        b=R5YyKYRaK4OoG/Kq1sGvQhLwkWWMrt0wAFRA6QGDgYR3kb25M3F9SSwTRNRKQFPZI4
-         PeHvX4qFFyriIe0gfinbIq+yNN2MfzdgP6YPM8VGZGCdg5fVLgBrZpEw4I9Dqv8W/AVl
-         pUOYFTN4dU30NnvW3YKhC5orB8nb4pPhN53qeGih3hsk5sRVImOoc+I65iccplCi5ycB
-         seaWspZNS18bi0mz39xw9Wg6FiG+xLjygL05bO3W+l5f0+d594q40KMs4wNl2vsk5hKX
-         bjjXt+K18ZDoNTjew4nDY95GHoRqobJB1yu6LYa2lQvWIajJ14gJuPIv3pCNDHi/Cqvw
-         /gKg==
-X-Gm-Message-State: APjAAAXhLA1L9HBiz2wm6EUKpGJwK2fvbvElzl/lo2pi8QblEnvCggj9
-        JUzEa6+EMasZQvzHYJgwUzv+aA==
-X-Google-Smtp-Source: APXvYqyWFE/06GhooYKazl6pIep62Iz/i5wyCJpTVPsFAFVDTHngEfFdHOY7P3gqOAl2IQhW45vjSw==
-X-Received: by 2002:a63:4006:: with SMTP id n6mr4591570pga.139.1579795722829;
-        Thu, 23 Jan 2020 08:08:42 -0800 (PST)
-Received: from tuxbook-pro (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
-        by smtp.gmail.com with ESMTPSA id u12sm3214680pfm.165.2020.01.23.08.08.41
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 23 Jan 2020 08:08:42 -0800 (PST)
-Date:   Thu, 23 Jan 2020 08:08:39 -0800
-From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     Roja Rani Yarubandi <rojay@codeaurora.org>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        akashast@codeaurora.org, msavaliy@qti.qualcomm.com,
-        mgautam@codeaurora.org, skakit@codeaurora.org,
-        Andy Gross <agross@kernel.org>, Jiri Slaby <jslaby@suse.com>,
-        linux-arm-msm@vger.kernel.org, linux-serial@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 1/1] tty: serial: qcom_geni_serial: Configure
- UART_IO_MACRO_CTRL register
-Message-ID: <20200123160839.GB3888@tuxbook-pro>
-References: <20200123124802.24862-1-rojay@codeaurora.org>
- <20200123124802.24862-2-rojay@codeaurora.org>
+        Thu, 23 Jan 2020 11:09:01 -0500
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id 00NFwZZJ007967;
+        Thu, 23 Jan 2020 16:08:45 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2019-08-05;
+ bh=sIDGp/oEBR2StqKw04W1x4gi0FRiIz5M+YjbmfBvszs=;
+ b=XCrBGgrYj9bndyOobOoM8k5DYXHJfr1LPqt3+wr5qcoGmJLNtIfq78+281u4BfrvfzVi
+ a0I2DtfFLW/snynjFqvrhnIChESd8xA1roDVJNldRARO5BVL6VEIGSHJRRg0Ftmk4rwH
+ oskLVpTfdnGnS5U2mRfYZCWITkC1bB103TNoaQfnJvPlXfpiNlP1rWrveGrqKSHGi3Sy
+ LWNggW28CHBmk2pI1zRgux+6PXvl812eQuCoyuCVTK9oOploaaLBnh4GlyZQk4TMI2mV
+ 8X2V2YSIIYSx6IJlDSg8mPkEdDudQHUAY7z+KPkPcFiH3lSiC3k8iphraCxqWqKQzN7A lA== 
+Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
+        by userp2130.oracle.com with ESMTP id 2xkseuudfv-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 23 Jan 2020 16:08:45 +0000
+Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
+        by userp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id 00NFxJMg072214;
+        Thu, 23 Jan 2020 16:08:44 GMT
+Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
+        by userp3030.oracle.com with ESMTP id 2xpq7n2pej-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 23 Jan 2020 16:08:44 +0000
+Received: from abhmp0007.oracle.com (abhmp0007.oracle.com [141.146.116.13])
+        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id 00NG8etx011729;
+        Thu, 23 Jan 2020 16:08:40 GMT
+Received: from ca-dmjordan1.us.oracle.com (/10.211.9.48)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Thu, 23 Jan 2020 08:08:40 -0800
+Date:   Thu, 23 Jan 2020 11:08:50 -0500
+From:   Daniel Jordan <daniel.m.jordan@oracle.com>
+To:     madhuparnabhowmik10@gmail.com
+Cc:     steffen.klassert@secunet.com, linux-crypto@vger.kernel.org,
+        linux-kernel@vger.kernel.org, joel@joelfernandes.org,
+        frextrite@gmail.com, rcu@vger.kernel.org,
+        linux-kernel-mentees@lists.linuxfoundation.org, paulmck@kernel.org,
+        Herbert Xu <herbert@gondor.apana.org.au>
+Subject: Re: [PATCH] padata.h: Annotate parallel_data with __rcu
+Message-ID: <20200123160850.gcwoydrdpw6saotk@ca-dmjordan1.us.oracle.com>
+References: <20200122170246.20177-1-madhuparnabhowmik10@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200123124802.24862-2-rojay@codeaurora.org>
+In-Reply-To: <20200122170246.20177-1-madhuparnabhowmik10@gmail.com>
+User-Agent: NeoMutt/20180716
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9508 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=385
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1911140001 definitions=main-2001230130
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9508 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=440 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1911140001
+ definitions=main-2001230130
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu 23 Jan 04:48 PST 2020, Roja Rani Yarubandi wrote:
+[add Herbert]
 
-> Configure UART_IO_MACRO_CTRL register if UART lines are swapped.
+Hi Madhuparna,
+
+On Wed, Jan 22, 2020 at 10:32:46PM +0530, madhuparnabhowmik10@gmail.com wrote:
+> From: Madhuparna Bhowmik <madhuparnabhowmik10@gmail.com>
 > 
-> Signed-off-by: Roja Rani Yarubandi <rojay@codeaurora.org>
-> ---
->  drivers/tty/serial/qcom_geni_serial.c | 6 ++++++
->  1 file changed, 6 insertions(+)
-> 
-> diff --git a/drivers/tty/serial/qcom_geni_serial.c b/drivers/tty/serial/qcom_geni_serial.c
-> index ff63728a95f4..24b862937c1e 100644
-> --- a/drivers/tty/serial/qcom_geni_serial.c
-> +++ b/drivers/tty/serial/qcom_geni_serial.c
-> @@ -24,6 +24,7 @@
->  
->  /* UART specific GENI registers */
->  #define SE_UART_LOOPBACK_CFG		0x22c
-> +#define SE_UART_IO_MACRO_CTRL		0x240
->  #define SE_UART_TX_TRANS_CFG		0x25c
->  #define SE_UART_TX_WORD_LEN		0x268
->  #define SE_UART_TX_STOP_BIT_LEN		0x26c
-> @@ -1260,6 +1261,7 @@ static int qcom_geni_serial_probe(struct platform_device *pdev)
->  	int irq;
->  	bool console = false;
->  	struct uart_driver *drv;
-> +	u32 val;
->  
->  	if (of_device_is_compatible(pdev->dev.of_node, "qcom,geni-debug-uart"))
->  		console = true;
-> @@ -1309,6 +1311,10 @@ static int qcom_geni_serial_probe(struct platform_device *pdev)
->  		return irq;
->  	uport->irq = irq;
->  
-> +	ret = of_property_read_u32(pdev->dev.of_node, "qcom,pin_inverse", &val);
+> This patch fixes the following sparse errors:
+> kernel/padata.c:110:14: error: incompatible types in comparison expression
+> kernel/padata.c:520:9: error: incompatible types in comparison expression
+> kernel/padata.c:1000:9: error: incompatible types in comparison expression
 
-This needs to be documented in the DT binding document. And I assume
-it's better suited as a bool property to be read using
-of_property_read_bool().
+This recent patch to padata in the cryptodev tree has fixed these sparse errors
+and is heading for mainline soon:
 
-Also avoid '_' in property names and make it a '-'.
+https://git.kernel.org/pub/scm/linux/kernel/git/herbert/cryptodev-2.6.git/commit/?id=bbefa1dd6a6d53537c11624752219e39959d04fb
 
-Regards,
-Bjorn
-
-> +	if (!ret)
-> +		writel(val, uport->membase + SE_UART_IO_MACRO_CTRL);
-> +
->  	irq_set_status_flags(uport->irq, IRQ_NOAUTOEN);
->  	ret = devm_request_irq(uport->dev, uport->irq, qcom_geni_serial_isr,
->  			IRQF_TRIGGER_HIGH, port->name, uport);
-> -- 
-> QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
-> of the Code Aurora Forum, hosted by The Linux Foundation
-> 
+Thanks,
+Daniel
