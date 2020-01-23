@@ -2,214 +2,133 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 06D5C14752D
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Jan 2020 00:59:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9AEC4147523
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Jan 2020 00:59:23 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730170AbgAWX7x (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 23 Jan 2020 18:59:53 -0500
-Received: from mail-yw1-f97.google.com ([209.85.161.97]:35800 "EHLO
-        mail-yw1-f97.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729149AbgAWX7x (ORCPT
+        id S1729384AbgAWX7U (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 23 Jan 2020 18:59:20 -0500
+Received: from mail-pf1-f201.google.com ([209.85.210.201]:56743 "EHLO
+        mail-pf1-f201.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728911AbgAWX7U (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Jan 2020 18:59:53 -0500
-Received: by mail-yw1-f97.google.com with SMTP id i190so77948ywc.2
-        for <linux-kernel@vger.kernel.org>; Thu, 23 Jan 2020 15:59:51 -0800 (PST)
+        Thu, 23 Jan 2020 18:59:20 -0500
+Received: by mail-pf1-f201.google.com with SMTP id h16so196329pfn.23
+        for <linux-kernel@vger.kernel.org>; Thu, 23 Jan 2020 15:59:19 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=brkho-com.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=XkieX+lARW7jwwokHZn19MDXFxT+kUy0zHmwNjMdulo=;
-        b=TG08TXKztCGbirXV6G1fy/G5h2JPYKTRpwTr5NDhYAC9FlbjFTEysoVWk63mFgSC2p
-         0si89LjNS/Kj+XvzCqDXcVCySiuwSO9REulyHuxCZBYcaACRk0R1OOwrVrhmsVvQfShP
-         HBB2c2+4cFmq9+zEe6wQvnNZXzDStJIlwZwhpZ3z2Dk7EAQ/J7odBM4G98Kgm2qrPmYf
-         Pa2VynKmTPsfuLsoxeOxVh7eVdFp/Jt+EBdSboipvjHonh9hQbmpnLCmYaiyQenVe4nF
-         kmF7FEvPJJzpJ6L5U4Lcc1KoGguFl2APFAkEQC2Z48TFXN4okshC9KGGPJJ6zzuB8fKZ
-         0MCw==
+        d=google.com; s=20161025;
+        h=date:message-id:mime-version:subject:from:to:cc;
+        bh=taYXiMSvG/uOaWszHXNY3LIQcqdsQdZuQaVnEsyfgN4=;
+        b=X9ZZUmQCdFs3o0xNe3+a2C4Q/lpN3y90i7OPOgw8+bGTRkrAQwpN6gGiTFeZ2JR44C
+         vMbVwSw1/C/YVthi+ePmCJjl+nqJFlPnMna01e7d3lSWe/GrOkQX8NFNZZpOPkni8UqW
+         aiffVoXahEftvoB+wQpe9YS+2/B+YKdPeHB+ZlSuWMIgmbbDKa100IIaISWeB0OquqJL
+         fo0IzJpTh5hSuYaQH9eIAEDn4vOdGkCiM3zASdah+l1bHwAAEyNz6ROyEIiN2FFA05LU
+         P4+XGcpqX1Sw0l/BbUCUBZ22LzzckjxeoujgJk6s4Zn1G3ps6YVr/hPcD0dH/0xYIheO
+         hnNA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=XkieX+lARW7jwwokHZn19MDXFxT+kUy0zHmwNjMdulo=;
-        b=GgFoc9XSUCQjwB73pRqNc+RcKOSmL8bcXgiERPSRjURJjKBr8+3MOuM6f9/KjOfxzo
-         UG78unrPqI3j4APdF1SW0NJzYw8h4ooVJldY6m8KGf5jGYYnT2hD7S7jueHJXJMWPXhn
-         csLMJMUd/IcouT6yMxXde3JnBPnDaXLkuNUtjmEDykCt3itKiul7NVlvSbRjtMKwPKS2
-         Tbcm211Sh/0ICb/4ivPqR6pro8Z2OQIgMt3pJPakk91ByK3FwL7PgSMsUpAvOdB8b4h1
-         78spPvEIaED7VPHfeMa+gG/kLEy4klGsPtpvfHNMTGA0nf3N/JmSShgCQnkbAripba3k
-         ConA==
-X-Gm-Message-State: APjAAAVK4lOEoI73BoqCcqBbQ5VcmLdJCQZJr01pZrhcgLKVvAqjYLOn
-        bHoB0zCDmpeGE514UXiLQj3yJu+L7xd9kRB83RyDb8MYKkmqsw==
-X-Google-Smtp-Source: APXvYqyNb7l2M3Y21n67mPcv2NN0GqSRUmdlYWCjqiOEL6AOYJWcIF95BSaX2iBxD91TZWVYUcAS56Ea7say
-X-Received: by 2002:a0d:c5c2:: with SMTP id h185mr157830ywd.287.1579823990901;
-        Thu, 23 Jan 2020 15:59:50 -0800 (PST)
-Received: from hob1.nyc.corp.google.com ([100.118.32.120])
-        by smtp-relay.gmail.com with ESMTPS id i82sm591239ywg.11.2020.01.23.15.59.50
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 23 Jan 2020 15:59:50 -0800 (PST)
-X-Relaying-Domain: brkho.com
-From:   Brian Ho <brian@brkho.com>
-To:     freedreno@lists.freedesktop.org
-Cc:     hoegsberg@chromium.org, robdclark@chromium.org,
-        Brian Ho <brian@brkho.com>, Rob Clark <robdclark@gmail.com>,
-        Sean Paul <sean@poorly.run>, David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        linux-arm-msm@vger.kernel.org (open list:DRM DRIVER FOR MSM ADRENO GPU),
-        dri-devel@lists.freedesktop.org (open list:DRM DRIVER FOR MSM ADRENO
-        GPU), linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH v3 2/2] drm/msm: Add MSM_WAIT_IOVA ioctl
-Date:   Thu, 23 Jan 2020 18:57:38 -0500
-Message-Id: <20200123235738.48182-3-brian@brkho.com>
+        h=x-gm-message-state:date:message-id:mime-version:subject:from:to:cc;
+        bh=taYXiMSvG/uOaWszHXNY3LIQcqdsQdZuQaVnEsyfgN4=;
+        b=Kgm7oFeAj4bSfnbs1A73XjRjIwjrhBHWD+ty8gYfV7Uh0NqMdUSeJwe02jINNY+EOv
+         h1rpkn4KZSMTs1y4bUJY0BPzBZbjSS6eiuQrn3DVudgvUWUQ2D2G16LrndPwXUef6cUk
+         9QsnnJnoYZj5V7gAaLwwoxcv51xwlMwjv6YNoEia/FyFd0/vs4Ykm+XWabSJ613Ed53Y
+         sJ5YOVggA9UYqzcoKocXE0q1jM5pGxxRrSBM0kS7pkcjKoCY+dHYJ6KCqS2FOSKVgm5T
+         r2+8DGTpvFBtZp3PwKKlH4gBe2TOrwvERLgpEtqxZtykQLhZeSItT8/4zOU02hrEFWcP
+         cxvA==
+X-Gm-Message-State: APjAAAUgU1xLMyhcWMOu2G52Of4S42YJpoUhIh7GvJuMRTZsLNlaJahh
+        6L+55lr1kHqrq4tK8vS3Xt3BAeHX+AbXbot81Kn73Q==
+X-Google-Smtp-Source: APXvYqyDIp+eGmrYp3/rfPhDduqurXLOKZW+c8hSrVPuXFgIDBtOVRKHnifIEoajdXNfOrzKOOaJj0Mi9uj6fqXTRVQmeg==
+X-Received: by 2002:a63:744f:: with SMTP id e15mr1054047pgn.344.1579823959193;
+ Thu, 23 Jan 2020 15:59:19 -0800 (PST)
+Date:   Thu, 23 Jan 2020 15:59:14 -0800
+Message-Id: <20200123235914.223178-1-brendanhiggins@google.com>
+Mime-Version: 1.0
 X-Mailer: git-send-email 2.25.0.341.g760bfbb309-goog
-In-Reply-To: <20200123235738.48182-1-brian@brkho.com>
-References: <20200123235738.48182-1-brian@brkho.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Subject: [PATCH v2] uml: make CONFIG_STATIC_LINK actually static
+From:   Brendan Higgins <brendanhiggins@google.com>
+To:     jdike@addtoit.com, richard@nod.at, anton.ivanov@cambridgegreys.com,
+        geert@linux-m68k.org, james_mcmechan@hotmail.com
+Cc:     linux-um@lists.infradead.org, linux-kernel@vger.kernel.org,
+        davidgow@google.com, Brendan Higgins <brendanhiggins@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Implements an ioctl to wait until a value at a given iova is greater
-than or equal to a supplied value.
+Currently, CONFIG_STATIC_LINK can be enabled with options which cannot
+be statically linked, namely UML_NET_VECTOR, UML_NET_VDE, and
+UML_NET_PCAP; this is because glibc tries to load NSS which does not
+support being statically linked. So make CONFIG_STATIC_LINK depend on
+!UML_NET_VECTOR && !UML_NET_VDE && !UML_NET_PCAP.
 
-This will initially be used by turnip (open-source Vulkan driver for
-QC in mesa) for occlusion queries where the userspace driver can
-block on a query becoming available before continuing via
-vkGetQueryPoolResults.
-
-Change-Id: I1413fc34b7eb8ba569c765ad65126e9024341730
-Signed-off-by: Brian Ho <brian@brkho.com>
+Link: https://lore.kernel.org/lkml/f658f317-be54-ed75-8296-c373c2dcc697@cambridgegreys.com/#t
+Signed-off-by: Brendan Higgins <brendanhiggins@google.com>
 ---
- drivers/gpu/drm/msm/msm_drv.c | 61 +++++++++++++++++++++++++++++++++--
- include/uapi/drm/msm_drm.h    | 14 ++++++++
- 2 files changed, 73 insertions(+), 2 deletions(-)
+Changes since last revision:
 
-diff --git a/drivers/gpu/drm/msm/msm_drv.c b/drivers/gpu/drm/msm/msm_drv.c
-index c84f0a8b3f2c..f746ac86bca3 100644
---- a/drivers/gpu/drm/msm/msm_drv.c
-+++ b/drivers/gpu/drm/msm/msm_drv.c
-@@ -36,10 +36,11 @@
-  *           MSM_GEM_INFO ioctl.
-  * - 1.4.0 - softpin, MSM_RELOC_BO_DUMP, and GEM_INFO support to set/get
-  *           GEM object's debug name
-- * - 1.5.0 - Add SUBMITQUERY_QUERY ioctl
-+ * - 1.5.0 - Add SUBMITQUEUE_QUERY ioctl
-+ * - 1.6.0 - Add WAIT_IOVA ioctl
-  */
- #define MSM_VERSION_MAJOR	1
--#define MSM_VERSION_MINOR	5
-+#define MSM_VERSION_MINOR	6
- #define MSM_VERSION_PATCHLEVEL	0
+Incorporated Geert Uytterhoeven's suggestion of using a separate
+FORBID_STATIC_LINK config option that each driver incompatible with
+static linking selects.
+---
+ arch/um/Kconfig         | 7 +++++++
+ arch/um/drivers/Kconfig | 3 +++
+ 2 files changed, 10 insertions(+)
+
+diff --git a/arch/um/Kconfig b/arch/um/Kconfig
+index 0917f8443c285..27a51e7dd59c6 100644
+--- a/arch/um/Kconfig
++++ b/arch/um/Kconfig
+@@ -62,8 +62,12 @@ config NR_CPUS
  
- static const struct drm_mode_config_funcs mode_config_funcs = {
-@@ -952,6 +953,61 @@ static int msm_ioctl_submitqueue_close(struct drm_device *dev, void *data,
- 	return msm_submitqueue_remove(file->driver_priv, id);
- }
+ source "arch/$(HEADER_ARCH)/um/Kconfig"
  
-+static int msm_ioctl_wait_iova(struct drm_device *dev, void *data,
-+		struct drm_file *file)
-+{
-+	struct msm_drm_private *priv = dev->dev_private;
-+	struct drm_gem_object *obj;
-+	struct drm_msm_wait_iova *args = data;
-+	ktime_t timeout = to_ktime(args->timeout);
-+	unsigned long remaining_jiffies = timeout_to_jiffies(&timeout);
-+	struct msm_gpu *gpu = priv->gpu;
-+	void *base_vaddr;
-+	uint64_t *vaddr;
-+	int ret;
++config FORBID_STATIC_LINK
++	def_bool n
 +
-+	if (args->pad)
-+		return -EINVAL;
-+
-+	if (!gpu)
-+		return -ENODEV;
-+
-+	obj = drm_gem_object_lookup(file, args->handle);
-+	if (!obj)
-+		return -ENOENT;
-+
-+	if (args->offset + sizeof(*vaddr) < args->offset ||
-+		args->offset + sizeof(*vaddr) > obj->size) {
-+		ret = -EINVAL;
-+		goto err_put_gem_object;
-+	}
-+
-+	base_vaddr = msm_gem_get_vaddr(obj);
-+	if (IS_ERR(base_vaddr)) {
-+		ret = PTR_ERR(base_vaddr);
-+		goto err_put_gem_object;
-+	}
-+
-+	vaddr = base_vaddr + args->offset;
-+
-+	/* TODO: Support 64 bit reference values with a flag. */
-+	ret = wait_event_interruptible_timeout(gpu->event,
-+			(int32_t)((uint32_t)(*vaddr & args->mask) -
-+					  (uint32_t)args->value) >= 0,
-+			remaining_jiffies);
-+
-+	if (ret == 0)
-+		ret = -ETIMEDOUT;
-+	else if (ret > 0)
-+		ret = 0;
-+
-+    msm_gem_put_vaddr(obj);
-+
-+err_put_gem_object:
-+	drm_gem_object_put_unlocked(obj);
-+	return ret;
-+}
-+
- static const struct drm_ioctl_desc msm_ioctls[] = {
- 	DRM_IOCTL_DEF_DRV(MSM_GET_PARAM,    msm_ioctl_get_param,    DRM_RENDER_ALLOW),
- 	DRM_IOCTL_DEF_DRV(MSM_GEM_NEW,      msm_ioctl_gem_new,      DRM_RENDER_ALLOW),
-@@ -964,6 +1020,7 @@ static const struct drm_ioctl_desc msm_ioctls[] = {
- 	DRM_IOCTL_DEF_DRV(MSM_SUBMITQUEUE_NEW,   msm_ioctl_submitqueue_new,   DRM_RENDER_ALLOW),
- 	DRM_IOCTL_DEF_DRV(MSM_SUBMITQUEUE_CLOSE, msm_ioctl_submitqueue_close, DRM_RENDER_ALLOW),
- 	DRM_IOCTL_DEF_DRV(MSM_SUBMITQUEUE_QUERY, msm_ioctl_submitqueue_query, DRM_RENDER_ALLOW),
-+	DRM_IOCTL_DEF_DRV(MSM_WAIT_IOVA, msm_ioctl_wait_iova, DRM_RENDER_ALLOW),
- };
+ config STATIC_LINK
+ 	bool "Force a static link"
++	depends on !FORBID_STATIC_LINK
+ 	default n
+ 	help
+ 	  This option gives you the ability to force a static link of UML.
+@@ -73,6 +77,9 @@ config STATIC_LINK
+ 	  Additionally, this option enables using higher memory spaces (up to
+ 	  2.75G) for UML.
  
- static const struct vm_operations_struct vm_ops = {
-diff --git a/include/uapi/drm/msm_drm.h b/include/uapi/drm/msm_drm.h
-index 0b85ed6a3710..d4eac312f56e 100644
---- a/include/uapi/drm/msm_drm.h
-+++ b/include/uapi/drm/msm_drm.h
-@@ -298,6 +298,18 @@ struct drm_msm_submitqueue_query {
- 	__u32 pad;
- };
- 
-+/* This ioctl blocks until the value at bo + offset is greater than or equal
-+ * to the reference value.
-+ */
-+struct drm_msm_wait_iova {
-+	__u32 handle;          /* in, GEM handle */
-+	__u32 pad;
-+	struct drm_msm_timespec timeout;   /* in */
-+	__u64 offset;          /* in, offset into bo */
-+	__u64 mask;            /* in, mask of the value at bo + offset */
-+	__u64 value;           /* in, reference value, 32 bits */
-+};
++	  NOTE: This option is incompatible with some networking features which
++	  depend on features that require being dynamically loaded (like NSS).
 +
- #define DRM_MSM_GET_PARAM              0x00
- /* placeholder:
- #define DRM_MSM_SET_PARAM              0x01
-@@ -315,6 +327,7 @@ struct drm_msm_submitqueue_query {
- #define DRM_MSM_SUBMITQUEUE_NEW        0x0A
- #define DRM_MSM_SUBMITQUEUE_CLOSE      0x0B
- #define DRM_MSM_SUBMITQUEUE_QUERY      0x0C
-+#define DRM_MSM_WAIT_IOVA      0x0D
- 
- #define DRM_IOCTL_MSM_GET_PARAM        DRM_IOWR(DRM_COMMAND_BASE + DRM_MSM_GET_PARAM, struct drm_msm_param)
- #define DRM_IOCTL_MSM_GEM_NEW          DRM_IOWR(DRM_COMMAND_BASE + DRM_MSM_GEM_NEW, struct drm_msm_gem_new)
-@@ -327,6 +340,7 @@ struct drm_msm_submitqueue_query {
- #define DRM_IOCTL_MSM_SUBMITQUEUE_NEW    DRM_IOWR(DRM_COMMAND_BASE + DRM_MSM_SUBMITQUEUE_NEW, struct drm_msm_submitqueue)
- #define DRM_IOCTL_MSM_SUBMITQUEUE_CLOSE  DRM_IOW (DRM_COMMAND_BASE + DRM_MSM_SUBMITQUEUE_CLOSE, __u32)
- #define DRM_IOCTL_MSM_SUBMITQUEUE_QUERY  DRM_IOW (DRM_COMMAND_BASE + DRM_MSM_SUBMITQUEUE_QUERY, struct drm_msm_submitqueue_query)
-+#define DRM_IOCTL_MSM_WAIT_IOVA        DRM_IOW (DRM_COMMAND_BASE + DRM_MSM_WAIT_IOVA, struct drm_msm_wait_iova)
- 
- #if defined(__cplusplus)
- }
+ config LD_SCRIPT_STATIC
+ 	bool
+ 	default y
+diff --git a/arch/um/drivers/Kconfig b/arch/um/drivers/Kconfig
+index 72d4170557820..9160ead56e33c 100644
+--- a/arch/um/drivers/Kconfig
++++ b/arch/um/drivers/Kconfig
+@@ -234,6 +234,7 @@ config UML_NET_DAEMON
+ config UML_NET_VECTOR
+ 	bool "Vector I/O high performance network devices"
+ 	depends on UML_NET
++	select FORBID_STATIC_LINK
+ 	help
+ 	This User-Mode Linux network driver uses multi-message send
+ 	and receive functions. The host running the UML guest must have
+@@ -245,6 +246,7 @@ config UML_NET_VECTOR
+ config UML_NET_VDE
+ 	bool "VDE transport (obsolete)"
+ 	depends on UML_NET
++	select FORBID_STATIC_LINK
+ 	help
+ 	This User-Mode Linux network transport allows one or more running
+ 	UMLs on a single host to communicate with each other and also
+@@ -292,6 +294,7 @@ config UML_NET_MCAST
+ config UML_NET_PCAP
+ 	bool "pcap transport (obsolete)"
+ 	depends on UML_NET
++	select FORBID_STATIC_LINK
+ 	help
+ 	The pcap transport makes a pcap packet stream on the host look
+ 	like an ethernet device inside UML.  This is useful for making
 -- 
 2.25.0.341.g760bfbb309-goog
 
