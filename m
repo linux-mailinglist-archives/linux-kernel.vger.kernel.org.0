@@ -2,29 +2,29 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D9B7C146297
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Jan 2020 08:26:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C8ACE146298
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Jan 2020 08:26:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726376AbgAWH0E (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 23 Jan 2020 02:26:04 -0500
-Received: from mail26.static.mailgun.info ([104.130.122.26]:23129 "EHLO
-        mail26.static.mailgun.info" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726054AbgAWH0D (ORCPT
+        id S1726911AbgAWH0J (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 23 Jan 2020 02:26:09 -0500
+Received: from mail25.static.mailgun.info ([104.130.122.25]:15242 "EHLO
+        mail25.static.mailgun.info" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726054AbgAWH0I (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Jan 2020 02:26:03 -0500
+        Thu, 23 Jan 2020 02:26:08 -0500
 DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
- s=smtp; t=1579764363; h=References: In-Reply-To: Message-Id: Date:
+ s=smtp; t=1579764367; h=References: In-Reply-To: Message-Id: Date:
  Subject: Cc: To: From: Sender;
- bh=9S0QIlbYmQAb+fbkT7yD3PV4Zf5YseEdwAjssYu+PQ8=; b=vnr9wTWw2x2Veo4SM1099Zb4UQdHa1hU6RcceKNILV7zvbtEja1UaX36JHlbWs5TBF4f3o5c
- 7O7AFLmr8TVljm7+KhrAAIW0lqT6l2KT0Yw+/KnQCKcl5Sst/wa1h+XMOjToAoHgFN0rtAvX
- LHD6+KXvrvovmyVTvQFUmvwT7WQ=
-X-Mailgun-Sending-Ip: 104.130.122.26
+ bh=jlECrQqzMHz44LBdbWGV4n3B2pcNbtodfLvTBcDva38=; b=vkO7nBjeQ0exqso0S1jNdNrB/Va2QomrA1Z4z3S8FNah3AtBmaR0xIS2wkgVApADYIP3Ee7S
+ YLfoF7s8NXp4ZNXqDCI8i0pp614Vnh0CmO0FuvDvG8vt8mjq9vrf0Nro7thgsDP43C4tuyGd
+ t3e0t37evzsG1P9/pCfpAcUXu54=
+X-Mailgun-Sending-Ip: 104.130.122.25
 X-Mailgun-Sid: WyI0MWYwYSIsICJsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
 Received: from smtp.codeaurora.org (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171])
- by mxa.mailgun.org with ESMTP id 5e294a8a.7fd2376666f8-smtp-out-n01;
- Thu, 23 Jan 2020 07:26:02 -0000 (UTC)
+ by mxa.mailgun.org with ESMTP id 5e294a8d.7f05fd58fc70-smtp-out-n01;
+ Thu, 23 Jan 2020 07:26:05 -0000 (UTC)
 Received: by smtp.codeaurora.org (Postfix, from userid 1001)
-        id 1B3C1C447A5; Thu, 23 Jan 2020 07:26:02 +0000 (UTC)
+        id AB229C447A1; Thu, 23 Jan 2020 07:26:05 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
         aws-us-west-2-caf-mail-1.web.codeaurora.org
 X-Spam-Level: 
@@ -34,9 +34,9 @@ Received: from pacamara-linux.qualcomm.com (i-global254.qualcomm.com [199.106.10
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
         (No client certificate requested)
         (Authenticated sender: cang)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 666D0C43383;
-        Thu, 23 Jan 2020 07:26:00 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 666D0C43383
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 5D27BC433CB;
+        Thu, 23 Jan 2020 07:26:04 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 5D27BC433CB
 Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=none smtp.mailfrom=cang@codeaurora.org
 From:   Can Guo <cang@codeaurora.org>
@@ -44,20 +44,18 @@ To:     asutoshd@codeaurora.org, nguyenb@codeaurora.org,
         hongwus@codeaurora.org, rnayak@codeaurora.org,
         linux-scsi@vger.kernel.org, kernel-team@android.com,
         saravanak@google.com, salyzyn@google.com, cang@codeaurora.org
-Cc:     Sayali Lokhande <sayalil@codeaurora.org>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
+Cc:     Alim Akhtar <alim.akhtar@samsung.com>,
         Avri Altman <avri.altman@wdc.com>,
         Pedro Sousa <pedrom.sousa@synopsys.com>,
         "James E.J. Bottomley" <jejb@linux.ibm.com>,
         "Martin K. Petersen" <martin.petersen@oracle.com>,
         Stanley Chu <stanley.chu@mediatek.com>,
-        Bean Huo <beanhuo@micron.com>,
         Venkat Gopalakrishnan <venkatg@codeaurora.org>,
         Tomas Winkler <tomas.winkler@intel.com>,
         linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH v4 1/8] scsi: ufs: Flush exception event before suspend
-Date:   Wed, 22 Jan 2020 23:25:42 -0800
-Message-Id: <1579764349-15578-2-git-send-email-cang@codeaurora.org>
+Subject: [PATCH v4 2/8] scsi: ufs: set load before setting voltage in regulators
+Date:   Wed, 22 Jan 2020 23:25:43 -0800
+Message-Id: <1579764349-15578-3-git-send-email-cang@codeaurora.org>
 X-Mailer: git-send-email 1.9.1
 In-Reply-To: <1579764349-15578-1-git-send-email-cang@codeaurora.org>
 References: <1579764349-15578-1-git-send-email-cang@codeaurora.org>
@@ -66,68 +64,50 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Sayali Lokhande <sayalil@codeaurora.org>
+From: Asutosh Das <asutoshd@codeaurora.org>
 
-Exception event can be raised by the device when system
-suspend is in progress. This will result in unclocked
-register access in exception event handler as clocks will
-be turned off during suspend. This change makes sure to flush
-exception event handler work in suspend before disabling
-clocks to avoid unclocked register access issue.
+This sequence change is required to avoid dips in voltage
+during boot-up.
 
-Signed-off-by: Sayali Lokhande <sayalil@codeaurora.org>
+Apparently, this dip is caused because in the original
+sequence, the regulators are initialized in lpm mode.
+And then when the load is set to high, and more current
+is drawn, than is allowed in lpm, the dip is seen.
+
 Signed-off-by: Asutosh Das <asutoshd@codeaurora.org>
 Signed-off-by: Can Guo <cang@codeaurora.org>
 ---
- drivers/scsi/ufs/ufshcd.c | 21 ++++++++++++++++++---
- 1 file changed, 18 insertions(+), 3 deletions(-)
+ drivers/scsi/ufs/ufshcd.c | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
 diff --git a/drivers/scsi/ufs/ufshcd.c b/drivers/scsi/ufs/ufshcd.c
-index 1201578..c2de29f 100644
+index c2de29f..c386c2d 100644
 --- a/drivers/scsi/ufs/ufshcd.c
 +++ b/drivers/scsi/ufs/ufshcd.c
-@@ -4760,8 +4760,15 @@ static void ufshcd_slave_destroy(struct scsi_device *sdev)
- 			 * UFS device needs urgent BKOPs.
- 			 */
- 			if (!hba->pm_op_in_progress &&
--			    ufshcd_is_exception_event(lrbp->ucd_rsp_ptr))
--				schedule_work(&hba->eeh_work);
-+			    ufshcd_is_exception_event(lrbp->ucd_rsp_ptr)) {
-+				/*
-+				 * Prevent suspend once eeh_work is scheduled
-+				 * to avoid deadlock between ufshcd_suspend
-+				 * and exception event handler.
-+				 */
-+				if (schedule_work(&hba->eeh_work))
-+					pm_runtime_get_noresume(hba->dev);
-+			}
- 			break;
- 		case UPIU_TRANSACTION_REJECT_UPIU:
- 			/* TODO: handle Reject UPIU Response */
-@@ -5215,7 +5222,14 @@ static void ufshcd_exception_event_handler(struct work_struct *work)
+@@ -7225,6 +7225,11 @@ static int ufshcd_config_vreg(struct device *dev,
+ 	name = vreg->name;
  
- out:
- 	scsi_unblock_requests(hba->host);
--	pm_runtime_put_sync(hba->dev);
-+	/*
-+	 * pm_runtime_get_noresume is called while scheduling
-+	 * eeh_work to avoid suspend racing with exception work.
-+	 * Hence decrement usage counter using pm_runtime_put_noidle
-+	 * to allow suspend on completion of exception event handler.
-+	 */
-+	pm_runtime_put_noidle(hba->dev);
-+	pm_runtime_put(hba->dev);
- 	return;
- }
- 
-@@ -7901,6 +7915,7 @@ static int ufshcd_suspend(struct ufs_hba *hba, enum ufs_pm_op pm_op)
- 			goto enable_gating;
+ 	if (regulator_count_voltages(reg) > 0) {
++		uA_load = on ? vreg->max_uA : 0;
++		ret = ufshcd_config_vreg_load(dev, vreg, uA_load);
++		if (ret)
++			goto out;
++
+ 		if (vreg->min_uV && vreg->max_uV) {
+ 			min_uV = on ? vreg->min_uV : 0;
+ 			ret = regulator_set_voltage(reg, min_uV, vreg->max_uV);
+@@ -7235,11 +7240,6 @@ static int ufshcd_config_vreg(struct device *dev,
+ 				goto out;
+ 			}
+ 		}
+-
+-		uA_load = on ? vreg->max_uA : 0;
+-		ret = ufshcd_config_vreg_load(dev, vreg, uA_load);
+-		if (ret)
+-			goto out;
  	}
- 
-+	flush_work(&hba->eeh_work);
- 	ret = ufshcd_link_state_transition(hba, req_link_state, 1);
- 	if (ret)
- 		goto set_dev_active;
+ out:
+ 	return ret;
 -- 
 The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
 a Linux Foundation Collaborative Project
