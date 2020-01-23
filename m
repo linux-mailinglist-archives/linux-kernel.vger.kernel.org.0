@@ -2,147 +2,159 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 992E01468DE
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Jan 2020 14:17:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7E1E81468E8
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Jan 2020 14:18:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727312AbgAWNRM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 23 Jan 2020 08:17:12 -0500
-Received: from mail-il1-f199.google.com ([209.85.166.199]:47830 "EHLO
-        mail-il1-f199.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726026AbgAWNRL (ORCPT
+        id S1728811AbgAWNSB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 23 Jan 2020 08:18:01 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:42458 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726026AbgAWNSA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Jan 2020 08:17:11 -0500
-Received: by mail-il1-f199.google.com with SMTP id x69so2288403ill.14
-        for <linux-kernel@vger.kernel.org>; Thu, 23 Jan 2020 05:17:11 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=M/T56jh5ZjLwzBjohUJv3CPw6EZc5CaN+pPMp5UPMi8=;
-        b=cQz8FpjNkLrR9gJ0Q7oS6D8kcHQMxz3NRdsfyPZTcpjIac4GhK9dZ4qgSD6yyx4Ern
-         xDPXC9zzhaJ3DQQlIjKGtT1/wxUi42GZa6KG/AGmeHc30HIpxUbYK+oOquFfkbR691LO
-         BGiEfxIsMnoL3cLT3Kw9KRUeLbA7phyLJ6uuYYHgky0cT4MhAwR5Gfx4wn3HkZwnRU9W
-         ShVSA+TWwXtULBl9hLhZEuh/OB3wqSyoT5LzE80gTebFctp0/EpwRq8T5aVwVG0xztHA
-         F+TaXpPV2zvZfOHg9VwaZIMJuXt+7KbGAvSRqH2TKbdyDTO0J09DgB5X0NTG/Qp6uXfL
-         OQiA==
-X-Gm-Message-State: APjAAAUibhqOYa8TEcn8XocoupdDFI9yNmjtmvzUD6wnJ27fJiaseEYR
-        cT6uwwJAhemDghbxWvKK4eHcdAvjMEoa8+LHO8wInbj45Gl6
-X-Google-Smtp-Source: APXvYqwsg5y57hY5025HrdixFMdwrZEyUk/g+pM7hsnTs15k9799/GGmSVH6lvg8jb7EHZSh1E0VDLugipmv5mqvJ1+Ipylnthdw
+        Thu, 23 Jan 2020 08:18:00 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=LjsIU20D/tGx8niVTvYfWrpDanOSwpxliBTMem/g2OM=; b=lb78Mu7FdnDhJIi40ILkpzffm
+        xFO/o6Z+2J6dHKuohhXN4pq9r1/mHM5hzh5dvwdkjQZrxLEZB2yQaZ7TNQLa4jX5NpIQ09yE0hejJ
+        nfq6Pvxz+1e5Xtky2SjDRHIhID6Hp1IB+YtI/HQgIvP9nxVW6GYkR/2vcKFyefTzRA4em5V1JyEWW
+        65u2+f3lx6r2coePmTtVlCMTeaUgFUkJpk+9wVPQd4DR++xwjkS9cQpXwi549hVmHh00c45sK++Y6
+        Y+H/qDA6vjKKDc4HP7DEE93MhItUlIGrgUvyl9a2mp/2fc14uBQ3vqre2X7RIJDkr9xcr+q4w0m71
+        yHctJSFtQ==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
+        by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1iucMe-0004ZB-I6; Thu, 23 Jan 2020 13:17:40 +0000
+Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (Client did not present a certificate)
+        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 6855E304121;
+        Thu, 23 Jan 2020 14:15:57 +0100 (CET)
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 787CD203CF5CE; Thu, 23 Jan 2020 14:17:37 +0100 (CET)
+Date:   Thu, 23 Jan 2020 14:17:37 +0100
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Will Deacon <will@kernel.org>
+Cc:     Alex Kogan <alex.kogan@oracle.com>, linux-arch@vger.kernel.org,
+        guohanjun@huawei.com, arnd@arndb.de, dave.dice@oracle.com,
+        jglauber@marvell.com, x86@kernel.org, will.deacon@arm.com,
+        linux@armlinux.org.uk, steven.sistare@oracle.com,
+        linux-kernel@vger.kernel.org, mingo@redhat.com, bp@alien8.de,
+        hpa@zytor.com, longman@redhat.com, tglx@linutronix.de,
+        daniel.m.jordan@oracle.com, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v9 3/5] locking/qspinlock: Introduce CNA into the slow
+ path of qspinlock
+Message-ID: <20200123131737.GV14914@hirez.programming.kicks-ass.net>
+References: <20200115035920.54451-1-alex.kogan@oracle.com>
+ <20200115035920.54451-4-alex.kogan@oracle.com>
+ <20200123092658.GC14879@hirez.programming.kicks-ass.net>
+ <20200123100635.GE14946@hirez.programming.kicks-ass.net>
+ <20200123101649.GF14946@hirez.programming.kicks-ass.net>
+ <20200123112251.GC18991@willie-the-truck>
 MIME-Version: 1.0
-X-Received: by 2002:a5d:8451:: with SMTP id w17mr5679243ior.303.1579785430679;
- Thu, 23 Jan 2020 05:17:10 -0800 (PST)
-Date:   Thu, 23 Jan 2020 05:17:10 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000006ac90f059cce75d4@google.com>
-Subject: BUG: corrupted list in em28xx_init_extension
-From:   syzbot <syzbot+a6969ef522a36d3344c9@syzkaller.appspotmail.com>
-To:     andreyknvl@google.com, linux-kernel@vger.kernel.org,
-        linux-media@vger.kernel.org, linux-usb@vger.kernel.org,
-        mchehab@kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200123112251.GC18991@willie-the-truck>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+On Thu, Jan 23, 2020 at 11:22:51AM +0000, Will Deacon wrote:
 
-syzbot found the following crash on:
+> > Argh, make that:
+> > 
+> > 	tail_2nd->next = NULL;
+> > 
+> > 	smp_wmb();
+> > 
+> > > 	if (!atomic_try_cmpxchg_relaxed(&lock, &val, new)) {
+> 
+> ... or could you drop the smp_wmb() and make this
+> atomic_try_cmpxchg_release()?
 
-HEAD commit:    4cc301ee usb: gadget: add raw-gadget interface
-git tree:       https://github.com/google/kasan.git usb-fuzzer
-console output: https://syzkaller.appspot.com/x/log.txt?x=15de59c9e00000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=9ba75825443d54bd
-dashboard link: https://syzkaller.appspot.com/bug?extid=a6969ef522a36d3344c9
-compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=11934d85e00000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=10c70721e00000
+My current code has the smp_wmb(), because most _releases end up being
+an smp_mb() (except for powerpc where it is of equal cost to wmb and
+arm64, where I have no idea of the costs).
 
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+a6969ef522a36d3344c9@syzkaller.appspotmail.com
+> To be honest, I've failed to understand the code prior to your changes
+> in this area: it appears to reply on a control-dependency from the two
+> cmpxchg_relaxed() calls (which isn't sufficient to order the store parts
+> afaict) and I also don't get how we deal with a transiently circular primary
+> queue.
 
-em28xx 1-1:0.200: Audio interface 200 found (Vendor Class)
-em28xx 1-1:0.200: unknown em28xx chip ID (0)
-em28xx 1-1:0.200: Config register raw data: 0xfffffffb
-em28xx 1-1:0.200: AC97 chip type couldn't be determined
-em28xx 1-1:0.200: No AC97 audio processor
-list_add corruption. prev->next should be next (ffffffff87a1a960), but was ffffffff85a00184. (prev=ffff8881cd5e0240).
-------------[ cut here ]------------
-kernel BUG at lib/list_debug.c:26!
-invalid opcode: 0000 [#1] SMP KASAN
-CPU: 1 PID: 94 Comm: kworker/1:2 Not tainted 5.5.0-rc6-syzkaller #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-Workqueue: usb_hub_wq hub_event
-RIP: 0010:__list_add_valid.cold+0x3a/0x3c lib/list_debug.c:26
-Code: 0b 48 89 f2 4c 89 e1 48 89 ee 48 c7 c7 a0 fc fb 85 e8 04 17 40 ff 0f 0b 48 89 f1 48 c7 c7 20 fc fb 85 4c 89 e6 e8 f0 16 40 ff <0f> 0b 48 89 ee 48 c7 c7 c0 fd fb 85 e8 df 16 40 ff 0f 0b 4c 89 ea
-RSP: 0018:ffff8881d5d570c8 EFLAGS: 00010282
-RAX: 0000000000000075 RBX: ffff8881cd764120 RCX: 0000000000000000
-RDX: 0000000000000000 RSI: ffffffff8129598d RDI: ffffed103abaae0b
-RBP: ffff8881cd764240 R08: 0000000000000075 R09: ffffed103b666210
-R10: ffffed103b66620f R11: ffff8881db33107f R12: ffffffff87a1a960
-R13: ffff8881cd764000 R14: ffff8881cd76412c R15: ffff8881cd5a2000
-FS:  0000000000000000(0000) GS:ffff8881db300000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007f7f37b26000 CR3: 00000001c5fe1000 CR4: 00000000001406e0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- __list_add include/linux/list.h:60 [inline]
- list_add_tail include/linux/list.h:93 [inline]
- em28xx_init_extension+0x44/0x1f0 drivers/media/usb/em28xx/em28xx-core.c:1125
- em28xx_init_dev.isra.0+0xa7b/0x15d8 drivers/media/usb/em28xx/em28xx-cards.c:3540
- em28xx_usb_probe.cold+0xcac/0x2515 drivers/media/usb/em28xx/em28xx-cards.c:3889
- usb_probe_interface+0x310/0x800 drivers/usb/core/driver.c:361
- really_probe+0x290/0xad0 drivers/base/dd.c:548
- driver_probe_device+0x223/0x350 drivers/base/dd.c:721
- __device_attach_driver+0x1d1/0x290 drivers/base/dd.c:828
- bus_for_each_drv+0x162/0x1e0 drivers/base/bus.c:430
- __device_attach+0x217/0x390 drivers/base/dd.c:894
- bus_probe_device+0x1e4/0x290 drivers/base/bus.c:490
- device_add+0x1459/0x1bf0 drivers/base/core.c:2487
- usb_set_configuration+0xe47/0x17d0 drivers/usb/core/message.c:2023
- generic_probe+0x9d/0xd5 drivers/usb/core/generic.c:210
- usb_probe_device+0xaf/0x140 drivers/usb/core/driver.c:266
- really_probe+0x290/0xad0 drivers/base/dd.c:548
- driver_probe_device+0x223/0x350 drivers/base/dd.c:721
- __device_attach_driver+0x1d1/0x290 drivers/base/dd.c:828
- bus_for_each_drv+0x162/0x1e0 drivers/base/bus.c:430
- __device_attach+0x217/0x390 drivers/base/dd.c:894
- bus_probe_device+0x1e4/0x290 drivers/base/bus.c:490
- device_add+0x1459/0x1bf0 drivers/base/core.c:2487
- usb_new_device.cold+0x540/0xcd0 drivers/usb/core/hub.c:2537
- hub_port_connect drivers/usb/core/hub.c:5184 [inline]
- hub_port_connect_change drivers/usb/core/hub.c:5324 [inline]
- port_event drivers/usb/core/hub.c:5470 [inline]
- hub_event+0x21cb/0x4300 drivers/usb/core/hub.c:5552
- process_one_work+0x945/0x15c0 kernel/workqueue.c:2264
- process_scheduled_works kernel/workqueue.c:2326 [inline]
- worker_thread+0x7ab/0xe20 kernel/workqueue.c:2412
- kthread+0x318/0x420 kernel/kthread.c:255
- ret_from_fork+0x24/0x30 arch/x86/entry/entry_64.S:352
-Modules linked in:
----[ end trace 8bae0db31a929c42 ]---
-RIP: 0010:__list_add_valid.cold+0x3a/0x3c lib/list_debug.c:26
-Code: 0b 48 89 f2 4c 89 e1 48 89 ee 48 c7 c7 a0 fc fb 85 e8 04 17 40 ff 0f 0b 48 89 f1 48 c7 c7 20 fc fb 85 4c 89 e6 e8 f0 16 40 ff <0f> 0b 48 89 ee 48 c7 c7 c0 fd fb 85 e8 df 16 40 ff 0f 0b 4c 89 ea
-RSP: 0018:ffff8881d5d570c8 EFLAGS: 00010282
-RAX: 0000000000000075 RBX: ffff8881cd764120 RCX: 0000000000000000
-RDX: 0000000000000000 RSI: ffffffff8129598d RDI: ffffed103abaae0b
-RBP: ffff8881cd764240 R08: 0000000000000075 R09: ffffed103b666210
-R10: ffffed103b66620f R11: ffff8881db33107f R12: ffffffff87a1a960
-R13: ffff8881cd764000 R14: ffff8881cd76412c R15: ffff8881cd5a2000
-FS:  0000000000000000(0000) GS:ffff8881db300000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007f7f37b26000 CR3: 00000001c5fe1000 CR4: 00000000001406e0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Ha!, yes, so this little piece took me a while too. Let me attempt an
+explanation.
+
++ *    cna_node
++ *   +----------+     +--------+         +--------+
++ *   |mcs:next  | --> |mcs:next| --> ... |mcs:next| --> NULL  [Primary queue]
++ *   |mcs:locked| -.  +--------+         +--------+
++ *   +----------+  |
++ *                 `----------------------.
++ *                                        v
++ *                 +--------+         +--------+
++ *                 |mcs:next| --> ... |mcs:next|            [Secondary queue]
++ *                 +--------+         +--------+
++ *                     ^                    |
++ *                     `--------------------'
+
+So @node is the current lock holder, node->next == NULL (primary queue
+is empty) and we're going to try and splice the secondary queue to the
+head of the primary.
+
++       tail_2nd = decode_tail(node->locked);
++       head_2nd = tail_2nd->next;
+
+this gets the secondary head and tail, so far so simple
+
++       new = ((struct cna_node *)tail_2nd)->encoded_tail + _Q_LOCKED_VAL;
+
+this encodes the new primary tail (as kept in lock->val), still simple
+
++       if (atomic_try_cmpxchg_relaxed(&lock->val, &val, new)) {
+
+if this here succeeds, we've got the primary tail pointing at the
+secondary tail. This is safe because only the lock holder (us) ever
+modifies the secondary queue.
+
++               /*
++                * Try to reset @next in tail_2nd to NULL, but no need to check
++                * the result - if failed, a new successor has updated it.
++                */
++               cmpxchg_relaxed(&tail_2nd->next, head_2nd, NULL);
+
+This is (broken, as per the prior argument) breaking the circular link
+the secondary queue has. The trick here is that since we're the lock
+holder, nothing will actually iterate the primary ->next chain, so a
+bogus value in there is of no concern.
+
+_However_ a new waiter might at this point do:
+
+	old = xchg_tail(lock, node);
+	if (old) {
+		prev = decode_tail(old);
+		WRITE_ONCE(prev->next, node);
+		...
+	}
+
+which then results in conflicting stores to the one ->next variable.
+
+The cmpxchg() is attempting to terminate the list, while the new waiter
+is extending the list, it is therefore paramount the new waiter always
+wins this. To that end they're employing the cmpxchg, but it very much
+relies on the @head_2nd load to have happened before we exposed the
+secondary tail as primary tail, otherwise it can have loaded the new
+->next pointer and overwriten it.
+
++               arch_mcs_pass_lock(&head_2nd->locked, 1);
++               return true;
++       }
++
++       return false;
 
 
----
-This bug is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this bug report. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-syzbot can test patches for this bug, for details see:
-https://goo.gl/tpsmEJ#testing-patches
+Did that help, or just make it worse?
