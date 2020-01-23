@@ -2,137 +2,106 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3CC9D1468E1
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Jan 2020 14:17:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A7D6C1468B3
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Jan 2020 14:09:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728760AbgAWNRQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 23 Jan 2020 08:17:16 -0500
-Received: from rnd-relay.smtp.broadcom.com ([192.19.229.170]:41776 "EHLO
-        rnd-relay.smtp.broadcom.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726026AbgAWNRP (ORCPT
+        id S1727022AbgAWNJG convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Thu, 23 Jan 2020 08:09:06 -0500
+Received: from Galois.linutronix.de ([193.142.43.55]:39975 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726170AbgAWNJF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Jan 2020 08:17:15 -0500
-X-Greylist: delayed 527 seconds by postgrey-1.27 at vger.kernel.org; Thu, 23 Jan 2020 08:17:13 EST
-Received: from mail-irv-17.broadcom.com (mail-irv-17.lvn.broadcom.net [10.75.242.48])
-        by rnd-relay.smtp.broadcom.com (Postfix) with ESMTP id C21C330C123;
-        Thu, 23 Jan 2020 05:01:47 -0800 (PST)
-DKIM-Filter: OpenDKIM Filter v2.10.3 rnd-relay.smtp.broadcom.com C21C330C123
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=broadcom.com;
-        s=dkimrelay; t=1579784507;
-        bh=GRbeVqWsXvHOOBiyzIBZ+swPrvzsE9qungb3Sc5kCHg=;
-        h=From:To:Cc:Subject:Date:From;
-        b=AaKLcq1HqgI96Pla0Fz4E2OjsKquCk2SOU1wtq/cyl3xZlgQixYJJT2a8zgQ5U7u2
-         HbWSE0aVgxBGr1mJ6hhaV6Ge93zaEfARcs1vWj25PDGaOOsQDlKCNM7eRKPxiSYmuK
-         VSg6ixTSxTkLzudFyFR7Ew/1NLW1BlRdqJj63rHc=
-Received: from lvnvde3894.broadcom.com (lvnvde3894.lvn.broadcom.net [10.175.127.104])
-        by mail-irv-17.broadcom.com (Postfix) with ESMTP id 5F78E140069;
-        Thu, 23 Jan 2020 05:08:25 -0800 (PST)
-Received: by lvnvde3894.broadcom.com (Postfix, from userid 55335)
-        id 58086220AF8; Thu, 23 Jan 2020 05:08:25 -0800 (PST)
-From:   Kalimuthu Velappan <kalimuthu.velappan@broadcom.com>
-To:     kalimuthu.velappan@broadcom.com
-Cc:     Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Martin KaFai Lau <kafai@fb.com>,
-        Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>,
-        Andrii Nakryiko <andriin@fb.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Stanislav Fomichev <sdf@google.com>,
-        Quentin Monnet <quentin.monnet@netronome.com>,
-        Andrey Ignatov <rdna@fb.com>,
-        netdev@vger.kernel.org (open list:BPF (Safe dynamic programs and tools)),
-        bpf@vger.kernel.org (open list:BPF (Safe dynamic programs and tools)),
-        linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH] Support for nlattr and nested_nlattr attribute search in EBPF filter
-Date:   Thu, 23 Jan 2020 05:08:12 -0800
-Message-Id: <20200123130816.24815-1-kalimuthu.velappan@broadcom.com>
-X-Mailer: git-send-email 2.18.0
+        Thu, 23 Jan 2020 08:09:05 -0500
+Received: from [5.158.153.53] (helo=nanos.tec.linutronix.de)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tglx@linutronix.de>)
+        id 1iucEA-00006a-Ow; Thu, 23 Jan 2020 14:08:54 +0100
+Received: by nanos.tec.linutronix.de (Postfix, from userid 1000)
+        id 692DD1017FA; Thu, 23 Jan 2020 14:08:54 +0100 (CET)
+From:   Thomas Gleixner <tglx@linutronix.de>
+To:     sean.v.kelley@linux.intel.com, Kar Hin Ong <kar.hin.ong@ni.com>,
+        Bjorn Helgaas <helgaas@kernel.org>
+Cc:     linux-rt-users <linux-rt-users@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        "x86\@kernel.org" <x86@kernel.org>,
+        "linux-pci\@vger.kernel.org" <linux-pci@vger.kernel.org>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Julia Cartwright <julia.cartwright@ni.com>,
+        Keng Soon Cheah <keng.soon.cheah@ni.com>,
+        Gratian Crisan <gratian.crisan@ni.com>,
+        Peter Zijlstra <peterz@infradead.org>
+Subject: Re: RE: Re: "oneshot" interrupt causes another interrupt to be fired erroneously in Haswell system
+In-Reply-To: <8f1e5981b519acb5edf53b5392c81ef7cbf6a3eb.camel@linux.intel.com>
+References: <20191031230532.GA170712@google.com> <alpine.DEB.2.21.1911050017410.17054@nanos.tec.linutronix.de> <MN2PR04MB625594021250E0FB92EC955DC3780@MN2PR04MB6255.namprd04.prod.outlook.com> <87a76oxqv1.fsf@nanos.tec.linutronix.de> <MN2PR04MB62551D8B240966B02ED71516C3360@MN2PR04MB6255.namprd04.prod.outlook.com> <87muanwwhb.fsf@nanos.tec.linutronix.de> <8f1e5981b519acb5edf53b5392c81ef7cbf6a3eb.camel@linux.intel.com>
+Date:   Thu, 23 Jan 2020 14:08:54 +0100
+Message-ID: <87muaetj4p.fsf@nanos.tec.linutronix.de>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8BIT
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Added attribute search and nested attribute support in EBPF filter
-functionality.
+Sean,
 
-Signed-off-by: Kalimuthu Velappan <kalimuthu.velappan@broadcom.com>
----
- include/uapi/linux/bpf.h       |  5 ++++-
- net/core/filter.c              | 22 ++++++++++++++++++++++
- tools/include/uapi/linux/bpf.h |  4 +++-
- 3 files changed, 29 insertions(+), 2 deletions(-)
+Sean V Kelley <sean.v.kelley@linux.intel.com> writes:
+> I looked into it Thomas.  The issue is as you suggested early in the
+> thread.  If an IRQ arrives at line N of a non-primary IO-APIC and that
+> line is masked, a new IRQ is generated on the primary IO-APIC/PIC.  
+>
+> The BIOS setting to address this forwarding is as above Disable INTx
+> Route to PCH/ICH/SouthBridge. When this bit is set, local INTx messages
+> received from the PCI-E ports are not routed to legacy PCH - they are
+> either converted into MSI via the integrated I/OxAPIC (if the I/OxAPIC
+> mask bit is clear in the appropriate entries) or cause no further
+> action (when mask bit is set).
+>
+> This capability is tested and supported fully on Intel platforms.
 
-diff --git a/include/uapi/linux/bpf.h b/include/uapi/linux/bpf.h
-index dbbcf0b..ac9794c 100644
---- a/include/uapi/linux/bpf.h
-+++ b/include/uapi/linux/bpf.h
-@@ -2938,7 +2938,10 @@ union bpf_attr {
- 	FN(probe_read_user),		\
- 	FN(probe_read_kernel),		\
- 	FN(probe_read_user_str),	\
--	FN(probe_read_kernel_str),
-+	FN(probe_read_kernel_str),  \
-+	FN(skb_get_nlattr),     \
-+	FN(skb_get_nlattr_nest),
-+
- 
- /* integer value in 'imm' field of BPF_CALL instruction selects which helper
-  * function eBPF program intends to call
-diff --git a/net/core/filter.c b/net/core/filter.c
-index 538f6a7..56a87e1 100644
---- a/net/core/filter.c
-+++ b/net/core/filter.c
-@@ -2699,6 +2699,24 @@ static const struct bpf_func_proto bpf_set_hash_invalid_proto = {
- 	.arg1_type	= ARG_PTR_TO_CTX,
- };
- 
-+static const struct bpf_func_proto bpf_skb_get_nlattr_proto = {
-+	.func		= bpf_skb_get_nlattr,
-+	.gpl_only	= false,
-+	.ret_type	= RET_INTEGER,
-+	.arg1_type	= ARG_PTR_TO_CTX,
-+	.arg2_type  = ARG_ANYTHING,
-+	.arg3_type  = ARG_ANYTHING,
-+};
-+
-+static const struct bpf_func_proto skb_get_nlattr_nest_proto = {
-+	.func		= bpf_skb_get_nlattr_nest,
-+	.gpl_only	= false,
-+	.ret_type	= RET_INTEGER,
-+	.arg1_type	= ARG_PTR_TO_CTX,
-+	.arg2_type  = ARG_ANYTHING,
-+	.arg3_type  = ARG_ANYTHING,
-+};
-+
- BPF_CALL_2(bpf_set_hash, struct sk_buff *, skb, u32, hash)
- {
- 	/* Set user specified hash as L4(+), so that it gets returned
-@@ -6091,6 +6109,10 @@ sk_filter_func_proto(enum bpf_func_id func_id, const struct bpf_prog *prog)
- 		return &bpf_get_socket_uid_proto;
- 	case BPF_FUNC_perf_event_output:
- 		return &bpf_skb_event_output_proto;
-+	case BPF_FUNC_skb_get_nlattr:
-+		return &bpf_skb_get_nlattr_proto;
-+	case BPF_FUNC_skb_get_nlattr_nest:
-+		return &skb_get_nlattr_nest_proto;
- 	default:
- 		return bpf_base_func_proto(func_id);
- 	}
-diff --git a/tools/include/uapi/linux/bpf.h b/tools/include/uapi/linux/bpf.h
-index dbbcf0b..3bfbc0e 100644
---- a/tools/include/uapi/linux/bpf.h
-+++ b/tools/include/uapi/linux/bpf.h
-@@ -2938,7 +2938,9 @@ union bpf_attr {
- 	FN(probe_read_user),		\
- 	FN(probe_read_kernel),		\
- 	FN(probe_read_user_str),	\
--	FN(probe_read_kernel_str),
-+	FN(probe_read_kernel_str),  \
-+	FN(skb_get_nlattr),     \
-+	FN(skb_get_nlattr_nest),
- 
- /* integer value in 'imm' field of BPF_CALL instruction selects which helper
-  * function eBPF program intends to call
--- 
-2.7.4
+Thanks for the confirmation.
 
+> Once you get to SKX/CLX things change and integrated IOxAPICs in the
+> IIO module convert legacy PCI Express interrupt messages into MSI
+> interrupts directly.  Beyond SKX/CLX there are no longer IOxAPICs in
+> IIO. IOxAPIC is only in the PCH. Devices connected to the
+> IIO will use native MSI/MSI-x mechanisms.
+>
+> The problem is with the absolute lack of useful documentation.  That’s
+> not acceptable.
+
+Yeah.
+
+> You recall the work Olaf and Stefan did at SuSE ten years ago (?) on
+> boot irq quirks and the amount of research they had to do it learn
+> about the behavior.[4]
+
+Oh yes.
+
+> From a Real-Time Linux perspective this is really important to me.  As
+> we get closer to fully mainlined we need to have this information
+> readily available with greater usage of threaded irqs in combination
+> with legacy interrupts on the older platforms.
+>
+> So I will ensure we actually create useful information pointing to this
+> behavior either in kernel docs or online as in a white paper or both.
+
+Great.
+
+>> As we have already quirks in drivers/pci/quirks.c which handle the
+>> same issue on older chipsets, we really should add one for these kind
+>> of systems to avoid fiddling with the BIOS (which you can, but most
+>> people cannot).
+
+> Agreed, and I will follow-up with Kar Hin Ong to get them added.
+
+Much appreciated.
+
+Thanks,
+
+        tglx
