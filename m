@@ -2,403 +2,84 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0BAC6146038
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Jan 2020 02:14:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EDA98146044
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Jan 2020 02:24:07 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726083AbgAWBN6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 22 Jan 2020 20:13:58 -0500
-Received: from mail.kernel.org ([198.145.29.99]:56282 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725924AbgAWBN6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 Jan 2020 20:13:58 -0500
-Received: from localhost (unknown [104.132.0.77])
+        id S1726442AbgAWBYG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 22 Jan 2020 20:24:06 -0500
+Received: from gate2.alliedtelesis.co.nz ([202.36.163.20]:36139 "EHLO
+        gate2.alliedtelesis.co.nz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725943AbgAWBYG (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 22 Jan 2020 20:24:06 -0500
+Received: from mmarshal3.atlnz.lc (mmarshal3.atlnz.lc [10.32.18.43])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 914DE24676;
-        Thu, 23 Jan 2020 01:13:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579742036;
-        bh=qyzRU2B7Xw6wKUGaKGWwp7d9aPqqAiGcaZX9p0fHTig=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Ye9RnSu0VR9FN913KwuHQWrkDJAdtEMYR+7blrY7O+7JYtORwpaP26bTeo/lWHbik
-         WfGNQ01AWTQlj/Cz75V3yJF3znBccOgakPXjUL36QHS3mKdh1aEm7S8NH3vDYxhYHa
-         2YLTPpBzVPPTzdU7cYmJD7HeleO4R5FnjFvRWZTA=
-From:   Jaegeuk Kim <jaegeuk@kernel.org>
-To:     linux-kernel@vger.kernel.org,
-        linux-f2fs-devel@lists.sourceforge.net
-Cc:     Hridya Valsaraju <hridya@google.com>,
-        Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: [PATCH 2/2] f2fs: Add f2fs stats to sysfs
-Date:   Wed, 22 Jan 2020 17:13:54 -0800
-Message-Id: <20200123011354.75282-2-jaegeuk@kernel.org>
-X-Mailer: git-send-email 2.24.0.525.g8f36a354ae-goog
-In-Reply-To: <20200123011354.75282-1-jaegeuk@kernel.org>
-References: <20200123011354.75282-1-jaegeuk@kernel.org>
+        (Client did not present a certificate)
+        by gate2.alliedtelesis.co.nz (Postfix) with ESMTPS id 56BF083640;
+        Thu, 23 Jan 2020 14:24:03 +1300 (NZDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alliedtelesis.co.nz;
+        s=mail181024; t=1579742643;
+        bh=EQZqOLnUuKakn1KmMPjNCgsEbo3zAAhg/fJw/2TVSeo=;
+        h=From:To:Cc:Subject:Date;
+        b=rZi5EOPrmaNR52Z9ZM1ZiubQGFlryAtcQGa0A5hkTMfBMgxAmVWCQWU/qHobbeaCF
+         67A7tHq3OtO6izuGOm+t9UcBsWOJneYpMQE7wyyqDer2tAXqO6eOLsNKH1Z0RVmtYF
+         5zKofospWdfZznOc1qqKhKUvcdghZvYSxRMA8E3ZBCM4c3t+I3+Vc3xHWSvmbycPYo
+         d3h96NtBTWYO4e9uiUL5eKo3o8FlOPrDWxAMVeCGm4C5PSABPLMmz7sE1Zph+Me14a
+         Mx+AsUnZP+2i9s+HO9y+YOsUQs60jVbIR91daUF0anBjhAWzjpPL2eJlI/JsXh0idw
+         jm26O1VwmtOtg==
+Received: from smtp (Not Verified[10.32.16.33]) by mmarshal3.atlnz.lc with Trustwave SEG (v7,5,8,10121)
+        id <B5e28f58c0000>; Thu, 23 Jan 2020 14:23:28 +1300
+Received: from chrisp-dl.ws.atlnz.lc (chrisp-dl.ws.atlnz.lc [10.33.22.20])
+        by smtp (Postfix) with ESMTP id 1BA4813EEB9;
+        Thu, 23 Jan 2020 14:23:23 +1300 (NZDT)
+Received: by chrisp-dl.ws.atlnz.lc (Postfix, from userid 1030)
+        id 78F16280071; Thu, 23 Jan 2020 14:23:24 +1300 (NZDT)
+From:   Chris Packham <chris.packham@alliedtelesis.co.nz>
+To:     broonie@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com
+Cc:     linux-spi@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Chris Packham <chris.packham@alliedtelesis.co.nz>
+Subject: [PATCH v2 0/2] SPI bus multiplexing
+Date:   Thu, 23 Jan 2020 14:23:15 +1300
+Message-Id: <20200123012317.14808-1-chris.packham@alliedtelesis.co.nz>
+X-Mailer: git-send-email 2.25.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
+x-atlnz-ls: pat
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Hridya Valsaraju <hridya@google.com>
+This is a revisit of two earlier efforts to add more complex mutliplexing=
+ to
+SPI busses.
 
-Currently f2fs stats are only available from /d/f2fs/status. This patch
-adds some of the f2fs stats to sysfs so that they are accessible even
-when debugfs is not mounted.
+https://patchwork.kernel.org/patch/2706151/
+https://patchwork.kernel.org/patch/10897255/
 
-The following sysfs nodes are added:
--/sys/fs/f2fs/<disk>/free_segments
--/sys/fs/f2fs/<disk>/cp_foreground_calls
--/sys/fs/f2fs/<disk>/cp_background_calls
--/sys/fs/f2fs/<disk>/gc_foreground_calls
--/sys/fs/f2fs/<disk>/gc_background_calls
--/sys/fs/f2fs/<disk>/moved_blocks_foreground
--/sys/fs/f2fs/<disk>/moved_blocks_background
--/sys/fs/f2fs/<disk>/avg_vblocks
+This version makes use of the general purpose mux controller which simpli=
+fies
+things greatly.
 
-Signed-off-by: Hridya Valsaraju <hridya@google.com>
-Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
----
- Documentation/ABI/testing/sysfs-fs-f2fs |  47 ++++++++
- fs/f2fs/debug.c                         |   2 +-
- fs/f2fs/f2fs.h                          |   2 +
- fs/f2fs/sysfs.c                         | 139 ++++++++++++++++++------
- 4 files changed, 157 insertions(+), 33 deletions(-)
+One outstanding problem is the need for the spi-max-frequency on the mux
+device. This is not used for anything and is just needed to satisfy the s=
+pi
+driver infrastructure which expects all spi devices to have this property=
+.
 
-diff --git a/Documentation/ABI/testing/sysfs-fs-f2fs b/Documentation/ABI/testing/sysfs-fs-f2fs
-index 7cdaed02981a..1a6cd5397129 100644
---- a/Documentation/ABI/testing/sysfs-fs-f2fs
-+++ b/Documentation/ABI/testing/sysfs-fs-f2fs
-@@ -271,3 +271,50 @@ Date		July 2019
- Contact:	"Daniel Rosenberg" <drosen@google.com>
- Description:	Displays name and version of the encoding set for the filesystem.
- 		If no encoding is set, displays (none)
-+
-+What:		/sys/fs/f2fs/<disk>/free_segments
-+Date:		September 2019
-+Contact:	"Hridya Valsaraju" <hridya@google.com>
-+Description:	Number of free segments in disk.
-+
-+What:		/sys/fs/f2fs/<disk>/cp_foreground_calls
-+Date:		September 2019
-+Contact:	"Hridya Valsaraju" <hridya@google.com>
-+Description:	Number of checkpoint operations performed on demand. Available when
-+		CONFIG_F2FS_STAT_FS=y.
-+
-+What:		/sys/fs/f2fs/<disk>/cp_background_calls
-+Date:		September 2019
-+Contact:	"Hridya Valsaraju" <hridya@google.com>
-+Description:	Number of checkpoint operations performed in the background to
-+		free segments. Available when CONFIG_F2FS_STAT_FS=y.
-+
-+What:		/sys/fs/f2fs/<disk>/gc_foreground_calls
-+Date:		September 2019
-+Contact:	"Hridya Valsaraju" <hridya@google.com>
-+Description:	Number of garbage collection operations performed on demand.
-+		Available when CONFIG_F2FS_STAT_FS=y.
-+
-+What:		/sys/fs/f2fs/<disk>/gc_background_calls
-+Date:		September 2019
-+Contact:	"Hridya Valsaraju" <hridya@google.com>
-+Description:	Number of garbage collection operations triggered in background.
-+		Available when CONFIG_F2FS_STAT_FS=y.
-+
-+What:		/sys/fs/f2fs/<disk>/moved_blocks_foreground
-+Date:		September 2019
-+Contact:	"Hridya Valsaraju" <hridya@google.com>
-+Description:	Number of blocks moved by garbage collection in foreground.
-+		Available when CONFIG_F2FS_STAT_FS=y.
-+
-+What:		/sys/fs/f2fs/<disk>/moved_blocks_background
-+Date:		September 2019
-+Contact:	"Hridya Valsaraju" <hridya@google.com>
-+Description:	Number of blocks moved by garbage collection in background.
-+		Available when CONFIG_F2FS_STAT_FS=y.
-+
-+What:		/sys/fs/f2fs/<disk>/avg_vblocks
-+Date:		September 2019
-+Contact:	"Hridya Valsaraju" <hridya@google.com>
-+Description:	Average number of valid blocks.
-+		Available when CONFIG_F2FS_STAT_FS=y.
-diff --git a/fs/f2fs/debug.c b/fs/f2fs/debug.c
-index ce2936554ef8..7565ba9967dd 100644
---- a/fs/f2fs/debug.c
-+++ b/fs/f2fs/debug.c
-@@ -150,7 +150,7 @@ static void update_general_status(struct f2fs_sb_info *sbi)
- /*
-  * This function calculates BDF of every segments
-  */
--static void update_sit_info(struct f2fs_sb_info *sbi)
-+void update_sit_info(struct f2fs_sb_info *sbi)
- {
- 	struct f2fs_stat_info *si = F2FS_STAT(sbi);
- 	unsigned long long blks_per_sec, hblks_per_sec, total_vblocks;
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index 61d62cd06449..148f45f3ea0e 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -3584,6 +3584,7 @@ int f2fs_build_stats(struct f2fs_sb_info *sbi);
- void f2fs_destroy_stats(struct f2fs_sb_info *sbi);
- void __init f2fs_create_root_stats(void);
- void f2fs_destroy_root_stats(void);
-+void update_sit_info(struct f2fs_sb_info *sbi);
- #else
- #define stat_inc_cp_count(si)				do { } while (0)
- #define stat_inc_bg_cp_count(si)			do { } while (0)
-@@ -3626,6 +3627,7 @@ static inline int f2fs_build_stats(struct f2fs_sb_info *sbi) { return 0; }
- static inline void f2fs_destroy_stats(struct f2fs_sb_info *sbi) { }
- static inline void __init f2fs_create_root_stats(void) { }
- static inline void f2fs_destroy_root_stats(void) { }
-+static inline void update_sit_info(struct f2fs_sb_info *sbi) {}
- #endif
- 
- extern const struct file_operations f2fs_dir_operations;
-diff --git a/fs/f2fs/sysfs.c b/fs/f2fs/sysfs.c
-index 5152a7487335..0ea95c06f2cf 100644
---- a/fs/f2fs/sysfs.c
-+++ b/fs/f2fs/sysfs.c
-@@ -25,6 +25,9 @@ enum {
- 	DCC_INFO,	/* struct discard_cmd_control */
- 	NM_INFO,	/* struct f2fs_nm_info */
- 	F2FS_SBI,	/* struct f2fs_sb_info */
-+#ifdef CONFIG_F2FS_STAT_FS
-+	STAT_INFO,      /* struct f2fs_stat_info */
-+#endif
- #ifdef CONFIG_F2FS_FAULT_INJECTION
- 	FAULT_INFO_RATE,	/* struct f2fs_fault_info */
- 	FAULT_INFO_TYPE,	/* struct f2fs_fault_info */
-@@ -42,6 +45,9 @@ struct f2fs_attr {
- 	int id;
- };
- 
-+static ssize_t f2fs_sbi_show(struct f2fs_attr *a,
-+			     struct f2fs_sb_info *sbi, char *buf);
-+
- static unsigned char *__struct_ptr(struct f2fs_sb_info *sbi, int struct_type)
- {
- 	if (struct_type == GC_THREAD)
-@@ -58,6 +64,10 @@ static unsigned char *__struct_ptr(struct f2fs_sb_info *sbi, int struct_type)
- 	else if (struct_type == FAULT_INFO_RATE ||
- 					struct_type == FAULT_INFO_TYPE)
- 		return (unsigned char *)&F2FS_OPTION(sbi).fault_info;
-+#endif
-+#ifdef CONFIG_F2FS_STAT_FS
-+	else if (struct_type == STAT_INFO)
-+		return (unsigned char *)F2FS_STAT(sbi);
- #endif
- 	return NULL;
- }
-@@ -65,35 +75,15 @@ static unsigned char *__struct_ptr(struct f2fs_sb_info *sbi, int struct_type)
- static ssize_t dirty_segments_show(struct f2fs_attr *a,
- 		struct f2fs_sb_info *sbi, char *buf)
- {
--	return snprintf(buf, PAGE_SIZE, "%llu\n",
--		(unsigned long long)(dirty_segments(sbi)));
-+	return sprintf(buf, "%llu\n",
-+			(unsigned long long)(dirty_segments(sbi)));
- }
- 
--static ssize_t unusable_show(struct f2fs_attr *a,
-+static ssize_t free_segments_show(struct f2fs_attr *a,
- 		struct f2fs_sb_info *sbi, char *buf)
- {
--	block_t unusable;
--
--	if (test_opt(sbi, DISABLE_CHECKPOINT))
--		unusable = sbi->unusable_block_count;
--	else
--		unusable = f2fs_get_unusable_blocks(sbi);
--	return snprintf(buf, PAGE_SIZE, "%llu\n",
--		(unsigned long long)unusable);
--}
--
--static ssize_t encoding_show(struct f2fs_attr *a,
--		struct f2fs_sb_info *sbi, char *buf)
--{
--#ifdef CONFIG_UNICODE
--	if (f2fs_sb_has_casefold(sbi))
--		return snprintf(buf, PAGE_SIZE, "%s (%d.%d.%d)\n",
--			sbi->s_encoding->charset,
--			(sbi->s_encoding->version >> 16) & 0xff,
--			(sbi->s_encoding->version >> 8) & 0xff,
--			sbi->s_encoding->version & 0xff);
--#endif
--	return snprintf(buf, PAGE_SIZE, "(none)");
-+	return sprintf(buf, "%llu\n",
-+			(unsigned long long)(free_segments(sbi)));
- }
- 
- static ssize_t lifetime_write_kbytes_show(struct f2fs_attr *a,
-@@ -102,10 +92,10 @@ static ssize_t lifetime_write_kbytes_show(struct f2fs_attr *a,
- 	struct super_block *sb = sbi->sb;
- 
- 	if (!sb->s_bdev->bd_part)
--		return snprintf(buf, PAGE_SIZE, "0\n");
-+		return sprintf(buf, "0\n");
- 
--	return snprintf(buf, PAGE_SIZE, "%llu\n",
--		(unsigned long long)(sbi->kbytes_written +
-+	return sprintf(buf, "%llu\n",
-+			(unsigned long long)(sbi->kbytes_written +
- 			BD_PART_WRITTEN(sbi)));
- }
- 
-@@ -116,7 +106,7 @@ static ssize_t features_show(struct f2fs_attr *a,
- 	int len = 0;
- 
- 	if (!sb->s_bdev->bd_part)
--		return snprintf(buf, PAGE_SIZE, "0\n");
-+		return sprintf(buf, "0\n");
- 
- 	if (f2fs_sb_has_encrypt(sbi))
- 		len += snprintf(buf, PAGE_SIZE - len, "%s",
-@@ -166,9 +156,66 @@ static ssize_t features_show(struct f2fs_attr *a,
- static ssize_t current_reserved_blocks_show(struct f2fs_attr *a,
- 					struct f2fs_sb_info *sbi, char *buf)
- {
--	return snprintf(buf, PAGE_SIZE, "%u\n", sbi->current_reserved_blocks);
-+	return sprintf(buf, "%u\n", sbi->current_reserved_blocks);
-+}
-+
-+static ssize_t unusable_show(struct f2fs_attr *a,
-+		struct f2fs_sb_info *sbi, char *buf)
-+{
-+	block_t unusable;
-+
-+	if (test_opt(sbi, DISABLE_CHECKPOINT))
-+		unusable = sbi->unusable_block_count;
-+	else
-+		unusable = f2fs_get_unusable_blocks(sbi);
-+	return sprintf(buf, "%llu\n", (unsigned long long)unusable);
- }
- 
-+static ssize_t encoding_show(struct f2fs_attr *a,
-+		struct f2fs_sb_info *sbi, char *buf)
-+{
-+#ifdef CONFIG_UNICODE
-+	if (f2fs_sb_has_casefold(sbi))
-+		return snprintf(buf, PAGE_SIZE, "%s (%d.%d.%d)\n",
-+			sbi->s_encoding->charset,
-+			(sbi->s_encoding->version >> 16) & 0xff,
-+			(sbi->s_encoding->version >> 8) & 0xff,
-+			sbi->s_encoding->version & 0xff);
-+#endif
-+	return sprintf(buf, "(none)");
-+}
-+
-+#ifdef CONFIG_F2FS_STAT_FS
-+static ssize_t moved_blocks_foreground_show(struct f2fs_attr *a,
-+				struct f2fs_sb_info *sbi, char *buf)
-+{
-+	struct f2fs_stat_info *si = F2FS_STAT(sbi);
-+
-+	return sprintf(buf, "%llu\n",
-+		(unsigned long long)(si->tot_blks -
-+			(si->bg_data_blks + si->bg_node_blks)));
-+}
-+
-+static ssize_t moved_blocks_background_show(struct f2fs_attr *a,
-+				struct f2fs_sb_info *sbi, char *buf)
-+{
-+	struct f2fs_stat_info *si = F2FS_STAT(sbi);
-+
-+	return sprintf(buf, "%llu\n",
-+		(unsigned long long)(si->bg_data_blks + si->bg_node_blks));
-+}
-+
-+static ssize_t avg_vblocks_show(struct f2fs_attr *a,
-+		struct f2fs_sb_info *sbi, char *buf)
-+{
-+	struct f2fs_stat_info *si = F2FS_STAT(sbi);
-+
-+	si->dirty_count = dirty_segments(sbi);
-+	update_sit_info(sbi);
-+	return sprintf(buf, "%llu\n", (unsigned long long)(si->avg_vblocks));
-+}
-+#endif
-+
- static ssize_t f2fs_sbi_show(struct f2fs_attr *a,
- 			struct f2fs_sb_info *sbi, char *buf)
- {
-@@ -202,7 +249,7 @@ static ssize_t f2fs_sbi_show(struct f2fs_attr *a,
- 
- 	ui = (unsigned int *)(ptr + a->offset);
- 
--	return snprintf(buf, PAGE_SIZE, "%u\n", *ui);
-+	return sprintf(buf, "%u\n", *ui);
- }
- 
- static ssize_t __sbi_store(struct f2fs_attr *a,
-@@ -413,7 +460,7 @@ static ssize_t f2fs_feature_show(struct f2fs_attr *a,
- 	case FEAT_SB_CHECKSUM:
- 	case FEAT_CASEFOLD:
- 	case FEAT_COMPRESSION:
--		return snprintf(buf, PAGE_SIZE, "supported\n");
-+		return sprintf(buf, "supported\n");
- 	}
- 	return 0;
- }
-@@ -442,6 +489,14 @@ static struct f2fs_attr f2fs_attr_##_name = {			\
- 	.id	= _id,						\
- }
- 
-+#define F2FS_STAT_ATTR(_struct_type, _struct_name, _name, _elname)	\
-+static struct f2fs_attr f2fs_attr_##_name = {			\
-+	.attr = {.name = __stringify(_name), .mode = 0444 },	\
-+	.show = f2fs_sbi_show,					\
-+	.struct_type = _struct_type,				\
-+	.offset = offsetof(struct _struct_name, _elname),       \
-+}
-+
- F2FS_RW_ATTR(GC_THREAD, f2fs_gc_kthread, gc_urgent_sleep_time,
- 							urgent_sleep_time);
- F2FS_RW_ATTR(GC_THREAD, f2fs_gc_kthread, gc_min_sleep_time, min_sleep_time);
-@@ -483,11 +538,21 @@ F2FS_RW_ATTR(FAULT_INFO_RATE, f2fs_fault_info, inject_rate, inject_rate);
- F2FS_RW_ATTR(FAULT_INFO_TYPE, f2fs_fault_info, inject_type, inject_type);
- #endif
- F2FS_GENERAL_RO_ATTR(dirty_segments);
-+F2FS_GENERAL_RO_ATTR(free_segments);
- F2FS_GENERAL_RO_ATTR(lifetime_write_kbytes);
- F2FS_GENERAL_RO_ATTR(features);
- F2FS_GENERAL_RO_ATTR(current_reserved_blocks);
- F2FS_GENERAL_RO_ATTR(unusable);
- F2FS_GENERAL_RO_ATTR(encoding);
-+#ifdef CONFIG_F2FS_STAT_FS
-+F2FS_STAT_ATTR(STAT_INFO, f2fs_stat_info, cp_foreground_calls, cp_count);
-+F2FS_STAT_ATTR(STAT_INFO, f2fs_stat_info, cp_background_calls, bg_cp_count);
-+F2FS_STAT_ATTR(STAT_INFO, f2fs_stat_info, gc_foreground_calls, call_count);
-+F2FS_STAT_ATTR(F2FS_SBI, f2fs_sb_info, gc_background_calls, bg_gc);
-+F2FS_GENERAL_RO_ATTR(moved_blocks_background);
-+F2FS_GENERAL_RO_ATTR(moved_blocks_foreground);
-+F2FS_GENERAL_RO_ATTR(avg_vblocks);
-+#endif
- 
- #ifdef CONFIG_FS_ENCRYPTION
- F2FS_FEATURE_RO_ATTR(encryption, FEAT_CRYPTO);
-@@ -549,12 +614,22 @@ static struct attribute *f2fs_attrs[] = {
- 	ATTR_LIST(inject_type),
- #endif
- 	ATTR_LIST(dirty_segments),
-+	ATTR_LIST(free_segments),
- 	ATTR_LIST(unusable),
- 	ATTR_LIST(lifetime_write_kbytes),
- 	ATTR_LIST(features),
- 	ATTR_LIST(reserved_blocks),
- 	ATTR_LIST(current_reserved_blocks),
- 	ATTR_LIST(encoding),
-+#ifdef CONFIG_F2FS_STAT_FS
-+	ATTR_LIST(cp_foreground_calls),
-+	ATTR_LIST(cp_background_calls),
-+	ATTR_LIST(gc_foreground_calls),
-+	ATTR_LIST(gc_background_calls),
-+	ATTR_LIST(moved_blocks_foreground),
-+	ATTR_LIST(moved_blocks_background),
-+	ATTR_LIST(avg_vblocks),
-+#endif
- 	NULL,
- };
- ATTRIBUTE_GROUPS(f2fs);
--- 
-2.24.0.525.g8f36a354ae-goog
+Chris Packham (2):
+  dt-bindings: spi: Document binding for generic SPI multiplexer
+  spi: Add generic SPI multiplexer
+
+ .../devicetree/bindings/spi/spi-mux.yaml      |  84 ++++++++
+ drivers/spi/Kconfig                           |  12 ++
+ drivers/spi/Makefile                          |   1 +
+ drivers/spi/spi-mux.c                         | 189 ++++++++++++++++++
+ 4 files changed, 286 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/spi/spi-mux.yaml
+ create mode 100644 drivers/spi/spi-mux.c
+
+--=20
+2.25.0
 
