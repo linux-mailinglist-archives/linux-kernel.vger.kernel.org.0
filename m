@@ -2,86 +2,70 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 28342146215
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Jan 2020 07:41:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B153714621A
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Jan 2020 07:44:16 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726170AbgAWGll (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 23 Jan 2020 01:41:41 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:60062 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725818AbgAWGll (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Jan 2020 01:41:41 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=Content-Type:MIME-Version:Message-ID:
-        Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
-        List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=vzA4qFI0clehk17KAQWnrnqYblUUCzc7lcilnwcRFvA=; b=PIVXTPnpPMrYaUzy4A4QmGXDD1
-        F2yRfoz0Em5QGFQtULhnLC+Al6M+v5iz9V6KGHTI4W9fC7cgM3JwuIa/IDXWW4IlgusDM90rgVRm+
-        8qGAyvv54PG/P5klPQIbSeTFpIARw9kVzLg5CAct8QLjaom5acY1Xg87avWx9NBoolhwskCpZkmJN
-        WHeoVfH0r1rocGdd45006lBGjqAXvsiqvtcfN/w27n0LfswZcMp0yKKiAMOnz/HdAr0RSCv2A0+gH
-        BiWJsT2v6Yr/J9zho3kFjBqSJM2Fnb2aiakIdsBpn+wnUhprd6dyK+cdGbUwUsIpCw6bj/stxFSIe
-        nLZwxfcQ==;
-Received: from willy by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1iuWBQ-0001la-NL; Thu, 23 Jan 2020 06:41:40 +0000
-Date:   Wed, 22 Jan 2020 22:41:40 -0800
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     linux-kernel@vger.kernel.org
-Subject: [GIT PULL] XArray for 5.5
-Message-ID: <20200123064140.GG4675@bombadil.infradead.org>
+        id S1726194AbgAWGoJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 23 Jan 2020 01:44:09 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35374 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725535AbgAWGoI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 23 Jan 2020 01:44:08 -0500
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0041124676;
+        Thu, 23 Jan 2020 06:44:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1579761848;
+        bh=+qi4DUw9jPqOv33t2VN4VutJS6xHK0z0lu0KmoxSSH0=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=anNe+KQG2pZIp1XNx0+WyhYBUFamQ4nTVCDZec37Y4W1t+TN/3kWHXgTbg37y9uKW
+         Tzq/55wSw3TCWQEolzVtFJTYGWlHogXAX0SClncc+iaLvLCof1tKELcgq38zkHfeqU
+         1zWMytqKbrWi0LNsHTb8YGKGSfPH9M4m6EXnAxzo=
+Date:   Thu, 23 Jan 2020 07:44:06 +0100
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     shuah <shuah@kernel.org>
+Cc:     linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+        akpm@linux-foundation.org, linux@roeck-us.net,
+        patches@kernelci.org, ben.hutchings@codethink.co.uk,
+        lkft-triage@lists.linaro.org, stable@vger.kernel.org
+Subject: Re: [PATCH 5.4 000/222] 5.4.14-stable review
+Message-ID: <20200123064406.GB124954@kroah.com>
+References: <20200122092833.339495161@linuxfoundation.org>
+ <d1a53f66-136e-f1c8-34d4-9ead26cff0b7@kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <d1a53f66-136e-f1c8-34d4-9ead26cff0b7@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Wed, Jan 22, 2020 at 01:51:20PM -0700, shuah wrote:
+> On 1/22/20 2:26 AM, Greg Kroah-Hartman wrote:
+> > This is the start of the stable review cycle for the 5.4.14 release.
+> > There are 222 patches in this series, all will be posted as a response
+> > to this one.  If anyone has any issues with these being applied, please
+> > let me know.
+> > 
+> > Responses should be made by Fri, 24 Jan 2020 09:25:24 +0000.
+> > Anything received after that time might be too late.
+> > 
+> > The whole patch series can be found in one patch at:
+> > 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.4.14-rc1.gz
+> > or in the git tree and branch at:
+> > 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.4.y
+> > and the diffstat can be found below.
+> > 
+> > thanks,
+> > 
+> > greg k-h
+> > 
+> 
+> Compiled and booted on my test system. No dmesg regressions.
 
-I had an oops live on stage at linux.conf.au this year, and it turned out
-to be a bug in xas_find() which I can't prove isn't triggerable in the
-current codebase.  Then in looking for the bug, I spotted two more bugs.
-The bots have had a few days to chew on this with no problems reported,
-and it passes the test-suite (which now has more tests to make sure
-these problems don't come back).
+Great, thanks for testing all of these and letting me know.
 
-So I feel pretty comfortable asking you to pull this, even though it's
-so late in the development cycle.
-
-The following changes since commit 0058b0a506e40d9a2c62015fe92eb64a44d78cd9:
-
-  Merge git://git.kernel.org/pub/scm/linux/kernel/git/netdev/net (2019-11-08 18:21:05 -0800)
-
-are available in the Git repository at:
-
-  git://git.infradead.org/users/willy/linux-dax.git tags/xarray-5.5
-
-for you to fetch changes up to 00ed452c210a0bc1ff3ee79e1ce6b199f00a0638:
-
-  XArray: Add xa_for_each_range (2020-01-17 22:33:37 -0500)
-
-----------------------------------------------------------------
-XArray updates for 5.5
-
-Primarily bugfixes, mostly around handling index wrap-around correctly.
-A couple of doc fixes and adding missing APIs.
-
-----------------------------------------------------------------
-Matthew Wilcox (Oracle) (7):
-      XArray: Fix xas_pause at ULONG_MAX
-      XArray: Improve documentation of search marks
-      XArray: Add wrappers for nested spinlocks
-      XArray: Fix infinite loop with entry at ULONG_MAX
-      XArray: Fix xa_find_after with multi-index entries
-      XArray: Fix xas_find returning too many entries
-      XArray: Add xa_for_each_range
-
- Documentation/core-api/xarray.rst | 70 +++++++++++++++++++++--------------
- include/linux/xarray.h            | 45 +++++++++++++++++++---
- lib/test_xarray.c                 | 78 ++++++++++++++++++++++++++++++++-------
- lib/xarray.c                      | 41 ++++++++++++++------
- 4 files changed, 175 insertions(+), 59 deletions(-)
-
+greg k-h
