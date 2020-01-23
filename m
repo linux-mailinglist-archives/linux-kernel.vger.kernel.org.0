@@ -2,80 +2,79 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 88C991472CE
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Jan 2020 21:44:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3CC001472D2
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Jan 2020 21:50:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729274AbgAWUnv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 23 Jan 2020 15:43:51 -0500
-Received: from bilbo.ozlabs.org ([203.11.71.1]:33733 "EHLO ozlabs.org"
+        id S1729199AbgAWUuh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 23 Jan 2020 15:50:37 -0500
+Received: from mail.kernel.org ([198.145.29.99]:48840 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729012AbgAWUnu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Jan 2020 15:43:50 -0500
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        id S1728831AbgAWUuh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 23 Jan 2020 15:50:37 -0500
+Received: from mail-qv1-f50.google.com (mail-qv1-f50.google.com [209.85.219.50])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 483Z4M6d2Xz9sP3;
-        Fri, 24 Jan 2020 07:43:47 +1100 (AEDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1579812228;
-        bh=83x96HuRmZI8HHCCDM2x3tssC2dnG1Ta+2mmPEAAWCw=;
-        h=Date:From:To:Cc:Subject:From;
-        b=TW7NOjaJRth72YbYMqruCrwL+W51IX4hZVKDv8n+t4Dc6vPl6/8G6HGbM9CkEslnD
-         eoq67NnLRqk4r+W+Y7Z8f3Zs1bzPjmVmFZoAgyTorJaCW0511323Xwzf31/xtATjPV
-         DUAJkFEmZ1cXQ/THOgvLfgtfxrXYm8LfN1NjiUhBJjDb+N9ioEHRdvzunxjSNEdq7u
-         qTKD+NluiBl16fT2TK3Q4Ie+KPZbHWd2lIQjpELXOu2ee3bWZBdx6icjI17Q5pKB1S
-         vO0/DJxYjvOT+k2IRlFXF7+IN8NQaJ200Z725zSY/Qf2RNg65TFcWTRiZ1lmQMyBmt
-         SSVujzqnQ1C/g==
-Date:   Fri, 24 Jan 2020 07:43:42 +1100
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Paolo Bonzini <pbonzini@redhat.com>,
-        Radim =?UTF-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>,
-        KVM <kvm@vger.kernel.org>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Marios Pomonis <pomonis@google.com>
-Subject: linux-next: Signed-off-by missing for commit in the kvm tree
-Message-ID: <20200124074331.30855ca4@canb.auug.org.au>
+        by mail.kernel.org (Postfix) with ESMTPSA id A00EB2253D;
+        Thu, 23 Jan 2020 20:50:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1579812636;
+        bh=D4LTdBYYcqv+ik1Pg4jtD5ZnmXsEUXj8mdhQQjWTksA=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=TGRTjbhNsL4XA1B13RstA2PBC9UNxAAcPQ1EhwHxew8oHjyEXFb0f0NlwSjrZJj8e
+         +mtBcQfwSoBGDIVvAEWOEwb7Skz706EOwFZOEe3czEJaTyJ88CHL5ENeoqWnw2jry2
+         6Al5UdFzlvY1OGGjrtuoTKD0oHuNdR3MHZnbRVKk=
+Received: by mail-qv1-f50.google.com with SMTP id u10so2190641qvi.2;
+        Thu, 23 Jan 2020 12:50:36 -0800 (PST)
+X-Gm-Message-State: APjAAAVlWOCVPhVppxNA1Oi34q9wxdj6s7TLsANSiZ3LbzsNxvevZwe8
+        01APxjdcBf9LweqluOEjqdHxPteDLQBmLldSDQ==
+X-Google-Smtp-Source: APXvYqyrN/ifItlATEFTfxubxslw3zMCfRZgyB5QYn1GQetklMTcxJ3km4RPXJFBnI525IWkPPS16O71YGW8tHw1uvk=
+X-Received: by 2002:ad4:450a:: with SMTP id k10mr17058351qvu.136.1579812635794;
+ Thu, 23 Jan 2020 12:50:35 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/lESH38tHS8EWSmCvUcbj37q";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+References: <20200122174005.17257-1-sravanhome@gmail.com> <CAL_JsqLq5XFdVRJa-XuTDbA_s=hpu3P4VGou=XfmSJs5NFAQqQ@mail.gmail.com>
+ <3489a505-9992-037d-5007-6e5f5726a4e7@gmail.com>
+In-Reply-To: <3489a505-9992-037d-5007-6e5f5726a4e7@gmail.com>
+From:   Rob Herring <robh+dt@kernel.org>
+Date:   Thu, 23 Jan 2020 14:50:24 -0600
+X-Gmail-Original-Message-ID: <CAL_JsqJ6B76nyQ8W8LPaM7czesqN54LE=nqd_Vaz++tQ65r2PQ@mail.gmail.com>
+Message-ID: <CAL_JsqJ6B76nyQ8W8LPaM7czesqN54LE=nqd_Vaz++tQ65r2PQ@mail.gmail.com>
+Subject: Re: [PATCH v8] dt-bindings: regulator: add document bindings for mpq7920
+To:     saravanan sekar <sravanhome@gmail.com>
+Cc:     Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Maxime Ripard <mripard@kernel.org>, devicetree@vger.kernel.org,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/lESH38tHS8EWSmCvUcbj37q
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Thu, Jan 23, 2020 at 1:14 AM saravanan sekar <sravanhome@gmail.com> wrote:
+>
+>
+> On 22/01/20 11:16 pm, Rob Herring wrote:
+>
+> On Wed, Jan 22, 2020 at 11:40 AM Saravanan Sekar <sravanhome@gmail.com> wrote:
+>
+> Add device tree binding information for mpq7920 regulator driver.
+> Example bindings for mpq7920 are added.
+>
+> Signed-off-by: Saravanan Sekar <sravanhome@gmail.com>
+> ---
+>
+> Notes:
+>     Changes on v8 :
+>       - fixed error reported by dt_binding_check
+>
+> Still broken. :(
+>
+> Sorry I cannot reproduce any error, yaml is parsed and mps,mpq7920.example.dts is generated
+>   CHKDT   Documentation/devicetree/bindings/regulator/mps,mpq7920.yaml
+> Please help me giving more detail
 
-Hi all,
+What about building the example? The build log is attached to the
+patch in DT patchwork.
 
-Commit
-
-  821189a1c9b1 ("KVM: x86: Refactor prefix decoding to prevent Spectre-v1/L=
-1TF attacks")
-
-is missing a Signed-off-by from its author.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/lESH38tHS8EWSmCvUcbj37q
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl4qBX4ACgkQAVBC80lX
-0GyUaQf/VBHGHO0SyZgerneK71woKrNjHeKPH85NnUQyv0y0Dma6SIPNIbjyNvju
-giTysRD9dBeSBK9/ue1DImtkQhXZBzyrfUmL0hEDY79kUERhHUE5pXZf+Sxlqajw
-NL1HMhuFopccV3LFWCuLQfZw61Xz8S4LmeUxzX3e7AabRiVpGQOIOXJswJeL2VSp
-L5mavH6h+iajJBdLQlbTV7PZ5ZjX8+qOg41/96BaZ27u5csqopWOUkXO1SVntZgH
-REkfLSwPgJ/+e4Ja92T/NxRRWIy06CYjlFia4nBDVXB25UmVDpCvQlXKAuE9DFLU
-HOwk/7AiqVM5ary6+XoRecgMXqKwFg==
-=9kGt
------END PGP SIGNATURE-----
-
---Sig_/lESH38tHS8EWSmCvUcbj37q--
+Rob
