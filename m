@@ -2,94 +2,72 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 64AC0147015
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Jan 2020 18:52:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6542C14701B
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Jan 2020 18:55:45 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728827AbgAWRw4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 23 Jan 2020 12:52:56 -0500
-Received: from foss.arm.com ([217.140.110.172]:42864 "EHLO foss.arm.com"
+        id S1728931AbgAWRzm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 23 Jan 2020 12:55:42 -0500
+Received: from mail.kernel.org ([198.145.29.99]:49012 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727022AbgAWRw4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Jan 2020 12:52:56 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 49B711FB;
-        Thu, 23 Jan 2020 09:52:55 -0800 (PST)
-Received: from [10.1.195.43] (e107049-lin.cambridge.arm.com [10.1.195.43])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 2B0673F52E;
-        Thu, 23 Jan 2020 09:52:54 -0800 (PST)
-Subject: Re: [RFC PATCH v4 3/6] sched/cpufreq: Hook em_pd_get_higher_power()
- into get_next_freq()
-To:     Quentin Perret <qperret@google.com>
-Cc:     linux-kernel@vger.kernel.org, rjw@rjwysocki.net,
-        viresh.kumar@linaro.org, peterz@infradead.org,
-        juri.lelli@redhat.com, vincent.guittot@linaro.org,
-        dietmar.eggemann@arm.com, linux-pm@vger.kernel.org
-References: <20200122173538.1142069-1-douglas.raillard@arm.com>
- <20200122173538.1142069-4-douglas.raillard@arm.com>
- <20200123161644.GA144523@google.com>
-From:   Douglas Raillard <douglas.raillard@arm.com>
-Organization: ARM
-Message-ID: <5a2af4e7-f9eb-4f23-908a-fab2c7395a99@arm.com>
-Date:   Thu, 23 Jan 2020 17:52:53 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.3.1
+        id S1726621AbgAWRzl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 23 Jan 2020 12:55:41 -0500
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 28BB920718;
+        Thu, 23 Jan 2020 17:55:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1579802139;
+        bh=WQfF52ocBvdFZrGb8gqOqp46CCs46jtplHpqIo6xK7o=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=izD0sZ/0eWhZ0V86Gh+KU1CiIJHw7hDsdlomWl779Ou720ttBnLEIfT5g0nvJom66
+         B9Uw8EsWfyHs3dXpaMxJL172BZLzQSBOnn57ynjeHg6bFSegWBk1hqDkDPRi4c4Yxu
+         d0GtijL0/hb3/8OuG/Q5pagbdf+OJV6A6tahHfyI=
+Date:   Thu, 23 Jan 2020 18:55:36 +0100
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     "Theodore Y. Ts'o" <tytso@mit.edu>
+Cc:     Jason Baron <jbaron@akamai.com>, Will Deacon <will@kernel.org>,
+        linux-kernel@vger.kernel.org, kernel-team@android.com
+Subject: Re: [PATCH v3] dynamic_debug: allow to work if debugfs is disabled
+Message-ID: <20200123175536.GA1796501@kroah.com>
+References: <20200122074343.GA2099098@kroah.com>
+ <20200122080352.GA15354@willie-the-truck>
+ <20200122081205.GA2227985@kroah.com>
+ <20200122135352.GA9458@kroah.com>
+ <8d68b75c-05b8-b403-0a10-d17b94a73ba7@akamai.com>
+ <20200122192940.GA88549@kroah.com>
+ <20200122193118.GA88722@kroah.com>
+ <20200123155340.GD147870@mit.edu>
 MIME-Version: 1.0
-In-Reply-To: <20200123161644.GA144523@google.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB-large
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200123155340.GD147870@mit.edu>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On 1/23/20 4:16 PM, Quentin Perret wrote:
-> On Wednesday 22 Jan 2020 at 17:35:35 (+0000), Douglas RAILLARD wrote:
->> @@ -210,9 +211,16 @@ static unsigned int get_next_freq(struct sugov_policy *sg_policy,
->>  	struct cpufreq_policy *policy = sg_policy->policy;
->>  	unsigned int freq = arch_scale_freq_invariant() ?
->>  				policy->cpuinfo.max_freq : policy->cur;
->> +	struct em_perf_domain *pd = sugov_policy_get_pd(sg_policy);
->>  
->>  	freq = map_util_freq(util, freq, max);
->>  
->> +	/*
->> +	 * Try to get a higher frequency if one is available, given the extra
->> +	 * power we are ready to spend.
->> +	 */
->> +	freq = em_pd_get_higher_freq(pd, freq, 0);
+On Thu, Jan 23, 2020 at 10:53:40AM -0500, Theodore Y. Ts'o wrote:
+> On Wed, Jan 22, 2020 at 08:31:18PM +0100, Greg Kroah-Hartman wrote:
+> > With the realization that having debugfs enabled on "production" systems is
+> > generally not a good idea, debugfs is being disabled from more and more
+> > platforms over time.  However, the functionality of dynamic debugging still is
+> > needed at times, and since it relies on debugfs for its user api, having
+> > debugfs disabled also forces dynamic debug to be disabled.
+> > 
+> > To get around this, move the "control" file for dynamic_debug to procfs IFF
+> > debugfs is disabled.  This lets people turn on debugging as needed at runtime
+> > for individual driverfs and subsystems.
 > 
-> I find it sad that the call just below to cpufreq_driver_resolve_freq()
-> and cpufreq_frequency_table_target() iterates the OPPs all over again.
-> It's especially a shame since most existing users of the EM stuff do
-> have a cpufreq frequency table.
-> 
-> Have you looked at hooking this inside cpufreq_driver_resolve_freq()
-> instead ? If we have a well-formed EM available, the call to
-> cpufreq_frequency_table_target() feels redundant, so we might want to
-> skip it.
+> Instead of moving the control file IFF debugfs is enabled, what about
+> always making it available in /proc, and marking the control file for
+> dynamic_debug in debugfs as deprecated?  It would seem to me that this
+> would cause less confusion in the future....
 
-We can't really move the call to em_pd_get_higher_freq() into
-cpufreq_driver_resolve_freq() since that's a schedutil-specific feature,
-and we would loose the !sg_policy->need_freq_update optimization.
+Why deprecate it?  It's fine where it is, and most developer's have
+debugfs enabled so all is good.  I'd rather only use /proc as a
+last-resort.
 
-Maybe we can add a flag to cpufreq_driver_resolve_freq() that promises
-that the frequency is already a valid one. We have to be careful though,
-since a number of things can make that untrue:
- - em_pd_get_higher_freq() will return the passed freq verbatim if it's
-higher than the max freq, so em_pd_get_higher_freq() will have to set
-the flag itself in case that logic changes.
- - policy limits can change the value
- - future things could tinker with the freq and forget to reset the flag.
+thanks,
 
-If you think it's worth it I can make these changes.
-
-> Thoughts ?
-> 
-> Quentin
-> 
-
-Cheers,
-Douglas
+greg k-h
