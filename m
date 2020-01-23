@@ -2,185 +2,165 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CC33D147009
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Jan 2020 18:49:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AF3E2147016
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Jan 2020 18:54:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729078AbgAWRt4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 23 Jan 2020 12:49:56 -0500
-Received: from mx08-00178001.pphosted.com ([91.207.212.93]:1053 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727022AbgAWRt4 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Jan 2020 12:49:56 -0500
-Received: from pps.filterd (m0046660.ppops.net [127.0.0.1])
-        by mx07-00178001.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 00NHeEXV029160;
-        Thu, 23 Jan 2020 18:49:46 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=st.com; h=subject : to : cc :
- references : from : message-id : date : mime-version : in-reply-to :
- content-type : content-transfer-encoding; s=STMicroelectronics;
- bh=6fSPNr7rvrjO4ZCLWwcFOZUjczpj72PXNX0gM6nq77o=;
- b=KYkxkhMnXTqD/v/s98CtEe/GlzEiOZzcfaKd3Oh/xzmYDtcMGC6yfg/5+chJ1F6JLkZp
- ZztGvxVwE3kZaAVVvYfuyyy8z6HrlWD1X1S3dMugzHufz33qhTU8n8D/MzmvIoAf+p0v
- frMXu0IoXvwD/UBUrUHomL2wWwB4KgxfcBmXVvQsWqBgxlV0gCzKBKwk8gchcv4ETaXi
- V1Vz3H2EGr92mv5vi7HWMQcTREJVAh7PkUIXowDpoMKs5vFhjMlhK/TItkQHhXn1v+1N
- wgjiio1S2VFOT1Ah9RmyGMFL0oyl7pRVHYR3U7vs8aVaNTenA4oeGh/eWIrSH3oQayPs 8A== 
-Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx07-00178001.pphosted.com with ESMTP id 2xkr1ebr35-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 23 Jan 2020 18:49:46 +0100
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 1681D100034;
-        Thu, 23 Jan 2020 18:49:46 +0100 (CET)
-Received: from Webmail-eu.st.com (sfhdag3node1.st.com [10.75.127.7])
-        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id ED9502C6A66;
-        Thu, 23 Jan 2020 18:49:45 +0100 (CET)
-Received: from lmecxl0889.lme.st.com (10.75.127.47) by SFHDAG3NODE1.st.com
- (10.75.127.7) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Thu, 23 Jan
- 2020 18:49:44 +0100
-Subject: Re: [PATCH v2 7/8] remoteproc: qcom: q6v5: Add common panic handler
-To:     Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>
-CC:     Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Ohad Ben-Cohen <ohad@wizery.com>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        <devicetree@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-remoteproc <linux-remoteproc@vger.kernel.org>,
-        Sibi Sankar <sibis@codeaurora.org>,
-        Rishabh Bhatnagar <rishabhb@codeaurora.org>
-References: <20191227053215.423811-1-bjorn.andersson@linaro.org>
- <20191227053215.423811-8-bjorn.andersson@linaro.org>
- <20200110212806.GD11555@xps15> <20200122193936.GB3261042@ripper>
- <CANLsYkx-C9U4W3R3Xo6t3BJBM4UK_i3zuwzhnXMMEQ0-ur+8Kg@mail.gmail.com>
- <20200123171524.GV1511@yoga>
-From:   Arnaud POULIQUEN <arnaud.pouliquen@st.com>
-Message-ID: <8d92c4b5-4238-23d2-50fc-1a5bdfc2c67b@st.com>
-Date:   Thu, 23 Jan 2020 18:49:44 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.2.2
+        id S1729047AbgAWRyA convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Thu, 23 Jan 2020 12:54:00 -0500
+Received: from mga09.intel.com ([134.134.136.24]:30479 "EHLO mga09.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727022AbgAWRx7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 23 Jan 2020 12:53:59 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga006.fm.intel.com ([10.253.24.20])
+  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 23 Jan 2020 09:49:44 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.70,354,1574150400"; 
+   d="scan'208";a="428040520"
+Received: from vcostago-desk1.jf.intel.com (HELO vcostago-desk1) ([10.54.70.26])
+  by fmsmga006.fm.intel.com with ESMTP; 23 Jan 2020 09:49:42 -0800
+From:   Vinicius Costa Gomes <vinicius.gomes@intel.com>
+To:     Vladimir Oltean <olteanv@gmail.com>,
+        Murali Karicheri <m-karicheri2@ti.com>
+Cc:     Po Liu <po.liu@nxp.com>,
+        "davem\@davemloft.net" <davem@davemloft.net>,
+        "hauke.mehrtens\@intel.com" <hauke.mehrtens@intel.com>,
+        "gregkh\@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+        "allison\@lohutok.net" <allison@lohutok.net>,
+        "tglx\@linutronix.de" <tglx@linutronix.de>,
+        "hkallweit1\@gmail.com" <hkallweit1@gmail.com>,
+        "saeedm\@mellanox.com" <saeedm@mellanox.com>,
+        "andrew\@lunn.ch" <andrew@lunn.ch>,
+        "f.fainelli\@gmail.com" <f.fainelli@gmail.com>,
+        "alexandru.ardelean\@analog.com" <alexandru.ardelean@analog.com>,
+        "jiri\@mellanox.com" <jiri@mellanox.com>,
+        "ayal\@mellanox.com" <ayal@mellanox.com>,
+        "pablo\@netfilter.org" <pablo@netfilter.org>,
+        "linux-kernel\@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "netdev\@vger.kernel.org" <netdev@vger.kernel.org>,
+        "simon.horman\@netronome.com" <simon.horman@netronome.com>,
+        Claudiu Manoil <claudiu.manoil@nxp.com>,
+        Vladimir Oltean <vladimir.oltean@nxp.com>,
+        Alexandru Marginean <alexandru.marginean@nxp.com>,
+        Xiaoliang Yang <xiaoliang.yang_1@nxp.com>,
+        Roy Zang <roy.zang@nxp.com>, Mingkai Hu <mingkai.hu@nxp.com>,
+        Jerry Huang <jerry.huang@nxp.com>, Leo Li <leoyang.li@nxp.com>
+Subject: Re: [v1,net-next, 1/2] ethtool: add setting frame preemption of traffic classes
+In-Reply-To: <CA+h21hqk2pCfrQg5kC6HzmL=eEqJXjuRsu+cVkGsEi8OXGpKJA@mail.gmail.com>
+References: <20191127094517.6255-1-Po.Liu@nxp.com> <87v9p93a2s.fsf@linux.intel.com> <9b13a47e-8ca3-66b0-063c-798a5fa71149@ti.com> <CA+h21hqk2pCfrQg5kC6HzmL=eEqJXjuRsu+cVkGsEi8OXGpKJA@mail.gmail.com>
+Date:   Thu, 23 Jan 2020 09:50:54 -0800
+Message-ID: <87d0bajc3l.fsf@linux.intel.com>
 MIME-Version: 1.0
-In-Reply-To: <20200123171524.GV1511@yoga>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.75.127.47]
-X-ClientProxiedBy: SFHDAG3NODE1.st.com (10.75.127.7) To SFHDAG3NODE1.st.com
- (10.75.127.7)
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.572
- definitions=2020-01-23_10:2020-01-23,2020-01-23 signatures=0
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Bjorn, Mathieu
+Hi,
 
-On 1/23/20 6:15 PM, Bjorn Andersson wrote:
-> On Thu 23 Jan 09:01 PST 2020, Mathieu Poirier wrote:
-> 
->> On Wed, 22 Jan 2020 at 12:40, Bjorn Andersson
->> <bjorn.andersson@linaro.org> wrote:
->>>
->>> On Fri 10 Jan 13:28 PST 2020, Mathieu Poirier wrote:
->>>
->>>> On Thu, Dec 26, 2019 at 09:32:14PM -0800, Bjorn Andersson wrote:
->>>>> Add a common panic handler that invokes a stop request and sleep enough
->>>>> to let the remoteproc flush it's caches etc in order to aid post mortem
->>>>> debugging.
->>>>>
->>>>> Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
->>>>> ---
->>>>>
->>>>> Changes since v1:
->>>>> - None
->>>>>
->>>>>  drivers/remoteproc/qcom_q6v5.c | 19 +++++++++++++++++++
->>>>>  drivers/remoteproc/qcom_q6v5.h |  1 +
->>>>>  2 files changed, 20 insertions(+)
->>>>>
->>>>> diff --git a/drivers/remoteproc/qcom_q6v5.c b/drivers/remoteproc/qcom_q6v5.c
->>>>> index cb0f4a0be032..17167c980e02 100644
->>>>> --- a/drivers/remoteproc/qcom_q6v5.c
->>>>> +++ b/drivers/remoteproc/qcom_q6v5.c
->>>>> @@ -6,6 +6,7 @@
->>>>>   * Copyright (C) 2014 Sony Mobile Communications AB
->>>>>   * Copyright (c) 2012-2013, The Linux Foundation. All rights reserved.
->>>>>   */
->>>>> +#include <linux/delay.h>
->>>>>  #include <linux/kernel.h>
->>>>>  #include <linux/platform_device.h>
->>>>>  #include <linux/interrupt.h>
->>>>> @@ -15,6 +16,8 @@
->>>>>  #include <linux/remoteproc.h>
->>>>>  #include "qcom_q6v5.h"
->>>>>
->>>>> +#define Q6V5_PANIC_DELAY_MS        200
->>>>> +
->>>>>  /**
->>>>>   * qcom_q6v5_prepare() - reinitialize the qcom_q6v5 context before start
->>>>>   * @q6v5:  reference to qcom_q6v5 context to be reinitialized
->>>>> @@ -162,6 +165,22 @@ int qcom_q6v5_request_stop(struct qcom_q6v5 *q6v5)
->>>>>  }
->>>>>  EXPORT_SYMBOL_GPL(qcom_q6v5_request_stop);
->>>>>
->>>>> +/**
->>>>> + * qcom_q6v5_panic() - panic handler to invoke a stop on the remote
->>>>> + * @q6v5:  reference to qcom_q6v5 context
->>>>> + *
->>>>> + * Set the stop bit and sleep in order to allow the remote processor to flush
->>>>> + * its caches etc for post mortem debugging.
->>>>> + */
->>>>> +void qcom_q6v5_panic(struct qcom_q6v5 *q6v5)
->>>>> +{
->>>>> +   qcom_smem_state_update_bits(q6v5->state,
->>>>> +                               BIT(q6v5->stop_bit), BIT(q6v5->stop_bit));
->>>>> +
->>>>> +   mdelay(Q6V5_PANIC_DELAY_MS);
->>>>
->>>> I really wonder if the delay should be part of the remoteproc core and
->>>> configurable via device tree.  Wanting the remote processor to flush its caches
->>>> is likely something other vendors will want when dealing with a kernel panic.
->>>> It would be nice to see if other people have an opinion on this topic.  If not
->>>> then we can keep the delay here and move it to the core if need be.
->>>>
->>>
->>> I gave this some more thought and what we're trying to achieve is to
->>> signal the remote processors about the panic and then give them time to
->>> react, but per the proposal (and Qualcomm downstream iirc) we will do
->>> this for each remote processor, one by one.
->>>
->>> So in the typical case of a Qualcomm platform with 4-5 remoteprocs we'll
->>> end up giving the first one a whole second to react and the last one
->>> "only" 200ms.
->>>
->>> Moving the delay to the core by iterating over rproc_list calling
->>> panic() and then delaying would be cleaner imo.
->>
->> I agree.
->>
->>>
->>> It might be nice to make this configurable in DT, but I agree that it
->>> would be nice to hear from others if this would be useful.
->>
->> I think the delay has to be configurable via DT if we move this to the
->> core.  The binding can be optional and default to 200ms if not
->> present.
->>
-> 
-> How about I make the panic() return the required delay and then we let
-> the core sleep for MAX() of the returned durations? That way the default
-> is still a property of the remoteproc drivers - and 200ms seems rather
-> arbitrary to put in the core, even as a default.
+Vladimir Oltean <olteanv@gmail.com> writes:
 
-I agree with Bjorn, the delay should be provided by the platform.
-But in this case i wonder if it is simpler to just let the platform take care it?
-For instance for stm32mp1 the stop corresponds to the reset on the remote processor core. To inform the coprocessor about an imminent shutdown we use a signal relying on a mailbox (cf. stm32_rproc_stop).  
-In this case we would need a delay between the signal and the reset, but not after (no cache management).
+> Hi Murali,
+>
+> On Wed, 22 Jan 2020 at 20:04, Murali Karicheri <m-karicheri2@ti.com> wrote:
+>>
+>> I have question about the below parameters in The Gate Parameter Table
+>> that are not currently supported by tc command. Looks like they need to
+>> be shown to user for management.
+>>
+>>      - ConfigChange - Looks like this needs to be controlled by
+>>        user. After sending admin command, user send this trigger to start
+>>        copying admin schedule to operation schedule. Is this getting
+>>        added to tc command?
+>
+> "The ConfigChange parameter signals the start of a
+> configuration change for the gate
+> when it is set to TRUE. This should only be done
+> when the various administrative parameters
+> are all set to appropriate values."
+>
+> As far as my understanding goes, all tc-taprio commands currently
+> behave as though this boolean is implicitly set to TRUE after the
+> structures have been set up. I'm not sure there is any value in doing
+> otherwise.
+>
+>>      - ConfigChangeTime - The time at which the administrative variables
+>>        that determine the cycle are to be copied across to the
+>>        corresponding operational variables, expressed as a PTP timescale
+>
+> This is the base-time of the admin schedule, no?
+>
+> "The PTPtime at which the next config change is scheduled to occur.
+> The value is a representation of a PTPtime value,
+> consisting of a 48-bit integer
+> number of seconds and a 32-bit integer number of nanoseconds."
+>
+>>      - TickGranularity - the management parameters specified in Gate
+>>        Parameter Table allow a management station to discover the
+>>        characteristics of an implementation’s cycle timer clock
+>>        (TickGranularity) and to set the parameters for the gating cycle
+>>        accordingly.
+>
+> Not sure who is going to use this and for what purpose, but ok.
+>
+>>      - ConfigPending - A Boolean variable, set TRUE to indicate that
+>>        there is a new cycle configuration awaiting installation.
+>
+> I had tried to export something like this (driver calls back into
+> sch_taprio.c when hw has applied the config, this would result in
+> ConfigPending = FALSE), but ultimately didn't finish the idea, and it
+> caused some problems too, due to incorrect RCU usage.
+>
 
-Regards,
-Arnaud
-> 
-> Regards,
-> Bjorn
-> 
+If this should be exported, this should be done from taprio, perhaps
+adding a new field to what is exported via the dump() callback, which
+should be quite easy.
+
+>>      - ConfigChangeError - Error in configuration (AdminBaseTime <
+>>        CurrentTime)
+>
+> This can be exported similarly.
+
+In my view, having this as a "runtime" error is not useful, as we can
+verify this at configuration time.
+
+>
+>>      - SupportedListMax - Maximum supported Admin/Open shed list.
+>>
+>> Is there a plan to export these from driver through tc show or such
+>> command? The reason being, there would be applications developed to
+>> manage configuration/schedule of TSN nodes that would requires these
+>> information from the node. So would need a support either in tc or
+>> some other means to retrieve them from hardware or driver. That is my
+>> understanding...
+>>
+
+Hm, now I understamd what you meant here...
+
+>
+> Not sure what answer you expect to receive for "is there any plan".
+> You can go ahead and propose something, as long as it is reasonably
+> useful to have.
+
+... if this is indeed useful, perhaps one way to do is to add a subcommand
+to TC_SETUP_QDISC_TAPRIO, so we can retrieve the stats/information we want
+from the driver. Similar to what cls_flower does.
+
+>
+>> Regards,
+>>
+>> Murali
+>>
+>> --
+>> Murali Karicheri
+>> Texas Instruments
+>
+> Thanks,
+> -Vladimir
+
+Cheers,
+--
+Vinicius
