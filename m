@@ -2,21 +2,21 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BC618146DD0
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Jan 2020 17:08:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B8237146DD4
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Jan 2020 17:08:55 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729133AbgAWQIm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 23 Jan 2020 11:08:42 -0500
-Received: from foss.arm.com ([217.140.110.172]:41698 "EHLO foss.arm.com"
+        id S1727296AbgAWQIv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 23 Jan 2020 11:08:51 -0500
+Received: from foss.arm.com ([217.140.110.172]:41722 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726231AbgAWQIm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Jan 2020 11:08:42 -0500
+        id S1726231AbgAWQIu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 23 Jan 2020 11:08:50 -0500
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 2F4C1328;
-        Thu, 23 Jan 2020 08:08:42 -0800 (PST)
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id C9519328;
+        Thu, 23 Jan 2020 08:08:49 -0800 (PST)
 Received: from e112479-lin.arm.com (unknown [10.37.9.147])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 5EDBD3F68E;
-        Thu, 23 Jan 2020 08:08:35 -0800 (PST)
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id A3FB03F68E;
+        Thu, 23 Jan 2020 08:08:42 -0800 (PST)
 From:   James Clark <james.clark@arm.com>
 To:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 Cc:     suzuki.poulose@arm.com, gengdongjiu@huawei.com,
@@ -33,9 +33,9 @@ Cc:     suzuki.poulose@arm.com, gengdongjiu@huawei.com,
         Jiri Olsa <jolsa@redhat.com>,
         Tan Xiaojun <tanxiaojun@huawei.com>,
         Al Grant <al.grant@arm.com>, Namhyung Kim <namhyung@kernel.org>
-Subject: [PATCH v2 6/7] perf tools: arm-spe: fix record hang after being terminated
-Date:   Thu, 23 Jan 2020 16:07:33 +0000
-Message-Id: <20200123160734.3775-7-james.clark@arm.com>
+Subject: [PATCH v2 7/7] perf tools: Unset precise_ip when using SPE
+Date:   Thu, 23 Jan 2020 16:07:34 +0000
+Message-Id: <20200123160734.3775-8-james.clark@arm.com>
 X-Mailer: git-send-email 2.25.0
 In-Reply-To: <20200123160734.3775-1-james.clark@arm.com>
 References: <20200123160734.3775-1-james.clark@arm.com>
@@ -46,12 +46,10 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Wei Li <liwei391@huawei.com>
+precise_ip is not supported on Arm and the kernel may be
+updated to reflect this. So unset it when we know we can use
+SPE to get precise data instead.
 
-If the spe event is terminated, we don't enable it again here.
-
-Signed-off-by: Wei Li <liwei391@huawei.com>
-Tested-by: Qi Liu <liuqi115@hisilicon.com>
 Signed-off-by: James Clark <james.clark@arm.com>
 Cc: Will Deacon <will@kernel.org>
 Cc: Mark Rutland <mark.rutland@arm.com>
@@ -64,29 +62,20 @@ Cc: Tan Xiaojun <tanxiaojun@huawei.com>
 Cc: Al Grant <al.grant@arm.com>
 Cc: Namhyung Kim <namhyung@kernel.org>
 ---
- tools/perf/arch/arm64/util/arm-spe.c | 10 +++++++---
- 1 file changed, 7 insertions(+), 3 deletions(-)
+ tools/perf/util/arm-spe.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/tools/perf/arch/arm64/util/arm-spe.c b/tools/perf/arch/arm64/util/arm-spe.c
-index eba6541ec0f1..629badda724d 100644
---- a/tools/perf/arch/arm64/util/arm-spe.c
-+++ b/tools/perf/arch/arm64/util/arm-spe.c
-@@ -165,9 +165,13 @@ static int arm_spe_read_finish(struct auxtrace_record *itr, int idx)
- 	struct evsel *evsel;
- 
- 	evlist__for_each_entry(sper->evlist, evsel) {
--		if (evsel->core.attr.type == sper->arm_spe_pmu->type)
--			return perf_evlist__enable_event_idx(sper->evlist,
--							     evsel, idx);
-+		if (evsel->core.attr.type == sper->arm_spe_pmu->type) {
-+			if (evsel->terminated)
-+				return 0;
-+			else
-+				return perf_evlist__enable_event_idx(
-+						sper->evlist, evsel, idx);
-+		}
+diff --git a/tools/perf/util/arm-spe.c b/tools/perf/util/arm-spe.c
+index 0fcaefd386a6..0ed2a68db0b3 100644
+--- a/tools/perf/util/arm-spe.c
++++ b/tools/perf/util/arm-spe.c
+@@ -937,6 +937,7 @@ void arm_spe_precise_ip_support(struct evlist *evlist, struct evsel *evsel)
+ 			evsel->core.attr.config = SPE_ATTR_TS_ENABLE
+ 						| SPE_ATTR_BRANCH_FILTER;
+ 			evsel->core.attr.config1 = SPE_ATTR_EV_BRANCH;
++			evsel->core.attr.precise_ip = 0;
+ 		}
  	}
- 	return -EINVAL;
  }
 -- 
 2.25.0
