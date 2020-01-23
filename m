@@ -2,131 +2,180 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 92E36146500
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Jan 2020 10:53:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8A438146534
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Jan 2020 10:56:30 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727093AbgAWJxB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 23 Jan 2020 04:53:01 -0500
-Received: from fllv0015.ext.ti.com ([198.47.19.141]:40642 "EHLO
-        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726181AbgAWJxA (ORCPT
+        id S1727847AbgAWJ40 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 23 Jan 2020 04:56:26 -0500
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:38890 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726103AbgAWJ4Z (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Jan 2020 04:53:00 -0500
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 00N9qpqn104688;
-        Thu, 23 Jan 2020 03:52:51 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1579773171;
-        bh=unRflK1ngAfU5idFLJ2noLbxFExfbABirG8nbGcTCE0=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=Fa9hI8Q4VIxzY0PjWcmAD4ySmg053bjihz0pKXesuoeBgmEIcLCYEQ5QJASXwz5k0
-         w2XANSzvMgI6a32hliEUObFclPtfpxDhBZfvonUQ5vOxZnA2ZCHI9clsshMLG+fFyR
-         3zj2tcoR3JYK04JwQKk6q8mWY/fWBp8dNLNCfSmM=
-Received: from DFLE115.ent.ti.com (dfle115.ent.ti.com [10.64.6.36])
-        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 00N9qp0Q024537
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Thu, 23 Jan 2020 03:52:51 -0600
-Received: from DFLE115.ent.ti.com (10.64.6.36) by DFLE115.ent.ti.com
- (10.64.6.36) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Thu, 23
- Jan 2020 03:52:50 -0600
-Received: from fllv0039.itg.ti.com (10.64.41.19) by DFLE115.ent.ti.com
- (10.64.6.36) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
- Frontend Transport; Thu, 23 Jan 2020 03:52:50 -0600
-Received: from [10.24.69.159] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by fllv0039.itg.ti.com (8.15.2/8.15.2) with ESMTP id 00N9qiJD128288;
-        Thu, 23 Jan 2020 03:52:45 -0600
-Subject: Re: [PATCH V2 0/5] Add support to defer core initialization
-To:     Vidya Sagar <vidyas@nvidia.com>
-CC:     <jingoohan1@gmail.com>, <gustavo.pimentel@synopsys.com>,
-        <lorenzo.pieralisi@arm.com>, <andrew.murray@arm.com>,
-        <bhelgaas@google.com>, <thierry.reding@gmail.com>,
-        <Jisheng.Zhang@synaptics.com>, <jonathanh@nvidia.com>,
-        <linux-pci@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <kthota@nvidia.com>, <mmaddireddy@nvidia.com>, <sagar.tv@gmail.com>
-References: <20200103100736.27627-1-vidyas@nvidia.com>
- <a8678df3-141b-51ab-b0cb-5e88c6ac91b5@nvidia.com>
- <680a58ec-5d09-3e3b-2fd6-544c32732818@nvidia.com>
-From:   Kishon Vijay Abraham I <kishon@ti.com>
-Message-ID: <ca911119-da45-4cbd-b173-2ac8397fd79a@ti.com>
-Date:   Thu, 23 Jan 2020 15:25:53 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:73.0) Gecko/20100101
- Thunderbird/73.0
+        Thu, 23 Jan 2020 04:56:25 -0500
+Received: by mail-wr1-f67.google.com with SMTP id y17so2351775wrh.5
+        for <linux-kernel@vger.kernel.org>; Thu, 23 Jan 2020 01:56:24 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:autocrypt:organization:message-id
+         :date:user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=VyZufTAHzG0B+KdIv8OnEwMN8OB0cQqLwgSWc435sGw=;
+        b=wp5ifDpktRyPyK8pOI4sCd7NhBQ7i393u408ljX1HLyDBbv8r7/5mrDreNWzOUA7bZ
+         2gqn1pVg1/JhqFiaFltZfdzJ2LV/xMS7RL6sJgQpYTTgk3rra+laf5uz3kkSc8qdxt7s
+         XKEzgDc0abNaoXaiTNuYBbUS1yTJtRMA7nSfCg03AK2RNsnONn26XKpubUD0UkjkBS7A
+         ksdg9GC6A1dXfJGAgC0ZDeUDWmbaobQWOqE5P1dpEOfDms7fCm5XsI4aCauquKj30PaK
+         zXeCZH2EpQ8ZlqAhGFEdTalUufziouN+SOgik+RE17TkjDmcUc6rU9r7qvZFQe5ptNO5
+         WEcA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:autocrypt
+         :organization:message-id:date:user-agent:mime-version:in-reply-to
+         :content-language:content-transfer-encoding;
+        bh=VyZufTAHzG0B+KdIv8OnEwMN8OB0cQqLwgSWc435sGw=;
+        b=JKO+e5fRYOAhEetCBbvSt0puudzaPUlg+XizxPhUDFFugeaKOpUMopv5ZTqzgX/clS
+         Bi6pMnczPO7jkfyfGei66J/ZwbDyOi4SwUwzCRhdFpQvUfdi3s9F6N7H/qmMOtnSd4Pr
+         wbA6G1wAaPf+/Cq4Yes0ZSVydEUm1porUKZMLec6OzPhrzVh4Z1h5qtrZyb11zyyeYKo
+         zxERhZKyZcihyfkp7PaJyQOKJjggwyfmvPYAaCYamM8g5izo5MLNfPiiQ2CoLCgcEW51
+         +AAW2vDytLeflDU+gi0GZm+k0JWU+V3Hijc2eWbmtbKp5sYnK2kFg/1swQHQWNNts2oT
+         Oajw==
+X-Gm-Message-State: APjAAAVdaUqRAG5Pg/ksHn8tA2c08EhgZRhLis0Dz+zCrrbMUAbAI/zl
+        x+KALDPaASJJoyw9UA5NPm4XYw==
+X-Google-Smtp-Source: APXvYqzd/lqZIxQU0eyXUMQG6Mh/pgoN6qRbX+kPVIfcoHkN9n3u9gaYZMxQbYavWXVSKEk9HcQe/A==
+X-Received: by 2002:a5d:494f:: with SMTP id r15mr17145294wrs.143.1579773383156;
+        Thu, 23 Jan 2020 01:56:23 -0800 (PST)
+Received: from [10.1.2.12] (laubervilliers-658-1-213-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
+        by smtp.gmail.com with ESMTPSA id y6sm2282040wrl.17.2020.01.23.01.56.22
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 23 Jan 2020 01:56:22 -0800 (PST)
+Subject: Re: [PATCH v5 4/7] arm64: dts: meson-axg: Add PCIE PHY nodes
+To:     Remi Pommarel <repk@triplefau.lt>,
+        Kishon Vijay Abraham I <kishon@ti.com>,
+        Yue Wang <yue.wang@Amlogic.com>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        Rob Herring <robh+dt@kernel.org>
+Cc:     Jerome Brunet <jbrunet@baylibre.com>,
+        linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org
+References: <20200116111850.23690-1-repk@triplefau.lt>
+ <20200116111850.23690-5-repk@triplefau.lt>
+From:   Neil Armstrong <narmstrong@baylibre.com>
+Autocrypt: addr=narmstrong@baylibre.com; prefer-encrypt=mutual; keydata=
+ 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
+ BSwxi7g3Mu7u5kUByanqHyA=
+Organization: Baylibre
+Message-ID: <8c942ea0-0ef0-6f6d-8336-927b6ba8729f@baylibre.com>
+Date:   Thu, 23 Jan 2020 10:56:21 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.2.2
 MIME-Version: 1.0
-In-Reply-To: <680a58ec-5d09-3e3b-2fd6-544c32732818@nvidia.com>
-Content-Type: text/plain; charset="utf-8"
+In-Reply-To: <20200116111850.23690-5-repk@triplefau.lt>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Vidya Sagar,
-
-On 23/01/20 2:54 pm, Vidya Sagar wrote:
-> Hi Kishon,
-> Apologies for pinging again. Could you please review this series?
+On 16/01/2020 12:18, Remi Pommarel wrote:
+> Enable both PCIE and shared MIPI/PCIE PHY nodes in order to make PCIE
+> reliable on AXG SoC.
 > 
-> Thanks,
-> Vidya Sagar
+> Signed-off-by: Remi Pommarel <repk@triplefau.lt>
+> ---
+>  arch/arm64/boot/dts/amlogic/meson-axg.dtsi | 16 ++++++++++++++++
+>  1 file changed, 16 insertions(+)
 > 
-> On 1/11/2020 5:18 PM, Vidya Sagar wrote:
->> Hi Kishon,
->> Could you please review this series?
->>
->> Also, this series depends on the following change of yours
->> http://patchwork.ozlabs.org/patch/1109884/
->> Whats the plan to get this merged?
+> diff --git a/arch/arm64/boot/dts/amlogic/meson-axg.dtsi b/arch/arm64/boot/dts/amlogic/meson-axg.dtsi
+> index 04803c3bccfa..08a178aa0133 100644
+> --- a/arch/arm64/boot/dts/amlogic/meson-axg.dtsi
+> +++ b/arch/arm64/boot/dts/amlogic/meson-axg.dtsi
+> @@ -12,6 +12,7 @@
+>  #include <dt-bindings/interrupt-controller/arm-gic.h>
+>  #include <dt-bindings/reset/amlogic,meson-axg-audio-arb.h>
+>  #include <dt-bindings/reset/amlogic,meson-axg-reset.h>
+> +#include <dt-bindings/phy/phy.h>
+>  
+>  / {
+>  	compatible = "amlogic,meson-axg";
+> @@ -1104,6 +1105,12 @@ hiubus: bus@ff63c000 {
+>  			#size-cells = <2>;
+>  			ranges = <0x0 0x0 0x0 0xff63c000 0x0 0x1c00>;
+>  
+> +			mipi_analog_phy: phy@0 {
+> +				compatible = "amlogic,axg-mipi-pcie-analog-phy";
+> +				reg = <0x0 0x0 0x0 0xc>;
+> +				#phy-cells = <1>;
+> +			};
+> +
+>  			sysctrl: system-controller@0 {
+>  				compatible = "amlogic,meson-axg-hhi-sysctrl",
+>  					     "simple-mfd", "syscon";
+> @@ -1356,6 +1363,15 @@ tdmout_c: audio-controller@580 {
+>  			};
+>  		};
+>  
+> +		pcie_phy: bus@ff644000 {
+> +			compatible = "amlogic,axg-pcie-phy";
+> +			reg = <0x0 0xff644000 0x0 0x1c>;
+> +			resets = <&reset RESET_PCIE_PHY>;
+> +			phys = <&mipi_analog_phy PHY_TYPE_PCIE>;
+> +			phy-names = "analog";
+> +			#phy-cells = <0>;
+> +		};
+> +
+>  		aobus: bus@ff800000 {
+>  			compatible = "simple-bus";
+>  			reg = <0x0 0xff800000 0x0 0x100000>;
+> 
 
-I've posted the endpoint improvements as a separate series
-http://lore.kernel.org/r/20191231100331.6316-1-kishon@ti.com
-
-I'd prefer this series gets tested by others. I'm also planning to test
-this series. Sorry for the delay. I'll test review and test this series
-early next week.
-
-Thanks
-Kishon
-
->>
->> Thanks,
->> Vidya Sagar
->>
->> On 1/3/20 3:37 PM, Vidya Sagar wrote:
->>> EPC/DesignWare core endpoint subsystems assume that the core
->>> registers are
->>> available always for SW to initialize. But, that may not be the case
->>> always.
->>> For example, Tegra194 hardware has the core running on a clock that
->>> is derived
->>> from reference clock that is coming into the endpoint system from host.
->>> Hence core is made available asynchronously based on when host system
->>> is going
->>> for enumeration of devices. To accommodate this kind of hardwares,
->>> support is
->>> required to defer the core initialization until the respective
->>> platform driver
->>> informs the EPC/DWC endpoint sub-systems that the core is indeed
->>> available for
->>> initiaization. This patch series is attempting to add precisely that.
->>> This series is based on Kishon's patch that adds notification mechanism
->>> support from EPC to EPF @ http://patchwork.ozlabs.org/patch/1109884/
->>>
->>> Vidya Sagar (5):
->>>    PCI: endpoint: Add core init notifying feature
->>>    PCI: dwc: Refactor core initialization code for EP mode
->>>    PCI: endpoint: Add notification for core init completion
->>>    PCI: dwc: Add API to notify core initialization completion
->>>    PCI: pci-epf-test: Add support to defer core initialization
->>>
->>>   .../pci/controller/dwc/pcie-designware-ep.c   |  79 +++++++-----
->>>   drivers/pci/controller/dwc/pcie-designware.h  |  11 ++
->>>   drivers/pci/endpoint/functions/pci-epf-test.c | 118 ++++++++++++------
->>>   drivers/pci/endpoint/pci-epc-core.c           |  19 ++-
->>>   include/linux/pci-epc.h                       |   2 +
->>>   include/linux/pci-epf.h                       |   5 +
->>>   6 files changed, 164 insertions(+), 70 deletions(-)
->>>
+Reviewed-by: Neil Armstrong <narmstrong@baylibre.com>
