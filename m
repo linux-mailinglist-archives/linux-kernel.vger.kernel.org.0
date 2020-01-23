@@ -2,94 +2,146 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7148C147456
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Jan 2020 00:09:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B41E014747F
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Jan 2020 00:12:46 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729751AbgAWXJr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 23 Jan 2020 18:09:47 -0500
-Received: from www62.your-server.de ([213.133.104.62]:51846 "EHLO
-        www62.your-server.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727056AbgAWXJq (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Jan 2020 18:09:46 -0500
-Received: from sslproxy06.your-server.de ([78.46.172.3])
-        by www62.your-server.de with esmtpsa (TLSv1.2:DHE-RSA-AES256-GCM-SHA384:256)
-        (Exim 4.89_1)
-        (envelope-from <daniel@iogearbox.net>)
-        id 1iulbZ-0003Iv-NT; Fri, 24 Jan 2020 00:09:41 +0100
-Received: from [178.197.248.20] (helo=pc-9.home)
-        by sslproxy06.your-server.de with esmtpsa (TLSv1.3:TLS_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <daniel@iogearbox.net>)
-        id 1iulbZ-000TS6-9W; Fri, 24 Jan 2020 00:09:41 +0100
-Subject: Re: [PATCH v2 bpf-next 1/3] bpf: Add bpf_perf_prog_read_branches()
- helper
-To:     Andrii Nakryiko <andriin@fb.com>, Daniel Xu <dxu@dxuuu.xyz>,
-        John Fastabend <john.fastabend@gmail.com>,
-        "bpf@vger.kernel.org" <bpf@vger.kernel.org>,
-        "ast@kernel.org" <ast@kernel.org>,
-        Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>
-Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Kernel Team <Kernel-team@fb.com>,
-        "peterz@infradead.org" <peterz@infradead.org>,
-        "mingo@redhat.com" <mingo@redhat.com>,
-        "acme@kernel.org" <acme@kernel.org>
-References: <C03IYDPABSU1.1C6OL4DJ7ID1H@dlxu-fedora-R90QNFJV>
- <2b11467f-9d93-8109-4561-d25ac605ef10@fb.com>
-From:   Daniel Borkmann <daniel@iogearbox.net>
-Message-ID: <34ee093c-9757-e8dd-bc06-80398822f27e@iogearbox.net>
-Date:   Fri, 24 Jan 2020 00:09:40 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.2
-MIME-Version: 1.0
-In-Reply-To: <2b11467f-9d93-8109-4561-d25ac605ef10@fb.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+        id S1730088AbgAWXLc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 23 Jan 2020 18:11:32 -0500
+Received: from mail-dm6nam10on2069.outbound.protection.outlook.com ([40.107.93.69]:6122
+        "EHLO NAM10-DM6-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1729856AbgAWXLa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 23 Jan 2020 18:11:30 -0500
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=GCu0UJ0z3mmmXoAQcN6taGZIb+tGVcNbaPr6IsWgcBP5ZM7LZpYeUMPeFNPh93YM/uw9fkmZRGSSP5TM/x2m3CkATth9YVRfq/83Gb5CZKMBfGIGxT13vWGtI8SJKsdcAOCBJGK1NH4CyK4PeD2qnwr9Rqmo1VSmC3C84FWbR9qYLbXMqireWw1iiTxPpxEGMwl9XSQY+HzOmLKADqATqY+OBPjYImVdnMwdjuzuqWmj7WyEeFdjlag7cDOdoqIxM/dBiUFvy5O23SFib6IABEn7GBPWHncCxjD/COJU3Wp6V+5H5rhWBKkK5eygSBlDPc0Q41SMdpSfAnKdpzHKJg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=c7kB4iEppudzQFEQ7mXbjjcX57yhENgppXLNQtCq7Xs=;
+ b=La/YL5XNkxj5N9M8ZvDLX+QaCAUessSGnjB9/I2AuYezCWcGFQiFC5I/MuEAGK/3ixXO+PanYZ9TN4iML2I/caKcqenA7O5hpP1Vv31xAzaEQatICCMUhijNTN7wf8pSnbZDpB+3iYcvavnHL6lNkF1Npy8tGUjv+IYb83t2egFjnbFTmp+kzaM6eyIxvhlFqle06aQErQL88Oy5+Rqpylq/gvOYPsH8cECeq7Tz9q8Kbzk2yjHfl8ujPItQ0S+uz6xtRo6bjB/p78UN0ewiYjOtParKPWjgGOtLRBR+NMXyssTCNvl4qhIBq8I9zMDeChI5apEiwJHFeJvHRewmDQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=micron.com; dmarc=pass action=none header.from=micron.com;
+ dkim=pass header.d=micron.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=micron.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=c7kB4iEppudzQFEQ7mXbjjcX57yhENgppXLNQtCq7Xs=;
+ b=ERI4ttiZtJZAGhw+kDV1w+9zT9rNUXACDaH9c1r7ZDMXRn57W+DXSgWMjzOIzU8TSDoKNLJ8QMvSL5irzZCLwQFE5iQr1KYIDIpWIbjFC9+5Pn5b4pg82nxIlrNhQSB+p6lqpGMfRnH9InHrSe/MFH6XF7pAc21CCHRcaAeDXrU=
+Received: from BN7PR08MB5684.namprd08.prod.outlook.com (20.176.179.87) by
+ BN7PR08MB5218.namprd08.prod.outlook.com (20.176.26.217) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2644.19; Thu, 23 Jan 2020 23:11:26 +0000
+Received: from BN7PR08MB5684.namprd08.prod.outlook.com
+ ([fe80::981f:90d7:d45f:fd11]) by BN7PR08MB5684.namprd08.prod.outlook.com
+ ([fe80::981f:90d7:d45f:fd11%7]) with mapi id 15.20.2665.017; Thu, 23 Jan 2020
+ 23:11:26 +0000
+From:   "Bean Huo (beanhuo)" <beanhuo@micron.com>
+To:     Can Guo <cang@codeaurora.org>,
+        "asutoshd@codeaurora.org" <asutoshd@codeaurora.org>,
+        "nguyenb@codeaurora.org" <nguyenb@codeaurora.org>,
+        "hongwus@codeaurora.org" <hongwus@codeaurora.org>,
+        "rnayak@codeaurora.org" <rnayak@codeaurora.org>,
+        "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
+        "kernel-team@android.com" <kernel-team@android.com>,
+        "saravanak@google.com" <saravanak@google.com>,
+        "salyzyn@google.com" <salyzyn@google.com>
+CC:     Alim Akhtar <alim.akhtar@samsung.com>,
+        Avri Altman <avri.altman@wdc.com>,
+        Pedro Sousa <pedrom.sousa@synopsys.com>,
+        "James E.J. Bottomley" <jejb@linux.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        Tomas Winkler <tomas.winkler@intel.com>,
+        Stanley Chu <stanley.chu@mediatek.com>,
+        Venkat Gopalakrishnan <venkatg@codeaurora.org>,
+        open list <linux-kernel@vger.kernel.org>
+Subject: RE: [EXT] [PATCH v4 6/8] scsi: ufs: Add dev ref clock gating wait
+ time support
+Thread-Topic: [EXT] [PATCH v4 6/8] scsi: ufs: Add dev ref clock gating wait
+ time support
+Thread-Index: AQHV0b5x4/fsh3ghJ0K+tlX/zBIPzaf44R8g
+Date:   Thu, 23 Jan 2020 23:11:26 +0000
+Message-ID: <BN7PR08MB568451D6C66F4C6FB11E6EEBDB0F0@BN7PR08MB5684.namprd08.prod.outlook.com>
+References: <1579764349-15578-1-git-send-email-cang@codeaurora.org>
+ <1579764349-15578-7-git-send-email-cang@codeaurora.org>
+In-Reply-To: <1579764349-15578-7-git-send-email-cang@codeaurora.org>
+Accept-Language: en-150, en-US
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Authenticated-Sender: daniel@iogearbox.net
-X-Virus-Scanned: Clear (ClamAV 0.101.4/25704/Thu Jan 23 12:37:43 2020)
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-dg-ref: PG1ldGE+PGF0IG5tPSJib2R5LnR4dCIgcD0iYzpcdXNlcnNcYmVhbmh1b1xhcHBkYXRhXHJvYW1pbmdcMDlkODQ5YjYtMzJkMy00YTQwLTg1ZWUtNmI4NGJhMjllMzViXG1zZ3NcbXNnLWFiZmI3YTdkLTNlMzUtMTFlYS04Yjg5LWRjNzE5NjFmOWRkM1xhbWUtdGVzdFxhYmZiN2E3Zi0zZTM1LTExZWEtOGI4OS1kYzcxOTYxZjlkZDNib2R5LnR4dCIgc3o9IjEzNTgiIHQ9IjEzMjI0Mjk0NjgzODE1MjczNCIgaD0iMzQwMEh5NEZ4bFBORUFLcDQwRGsxWW1zV0xZPSIgaWQ9IiIgYmw9IjAiIGJvPSIxIiBjaT0iY0FBQUFFUkhVMVJTUlVGTkNnVUFBSEFBQUFBZXhsWnVRdExWQVdqcDhsR3o2bnc2YU9ueVViUHFmRG9BQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFCQUFBQkFBQUEvaFRDdndBQUFBQUFBQUFBQUFBQUFBPT0iLz48L21ldGE+
+x-dg-rorf: true
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=beanhuo@micron.com; 
+x-originating-ip: [165.225.86.90]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 7490bbb8-96cd-4b72-12b5-08d7a0599244
+x-ms-traffictypediagnostic: BN7PR08MB5218:|BN7PR08MB5218:|BN7PR08MB5218:
+x-microsoft-antispam-prvs: <BN7PR08MB5218FB29581E54D3581F110CDB0F0@BN7PR08MB5218.namprd08.prod.outlook.com>
+x-ms-exchange-transport-forked: True
+x-ms-oob-tlc-oobclassifiers: OLM:8273;
+x-forefront-prvs: 029174C036
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(136003)(366004)(39860400002)(346002)(376002)(396003)(189003)(199004)(8936002)(81166006)(81156014)(8676002)(66946007)(5660300002)(55236004)(478600001)(66556008)(2906002)(33656002)(7696005)(6506007)(71200400001)(52536014)(66476007)(7416002)(54906003)(110136005)(186003)(64756008)(66446008)(9686003)(55016002)(4326008)(76116006)(26005)(86362001)(316002);DIR:OUT;SFP:1101;SCL:1;SRVR:BN7PR08MB5218;H:BN7PR08MB5684.namprd08.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: micron.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: rqzFSOkp6Gt2Qpe/2bXChqrC/G+G0+GL5dd9zsvpGinhQlACbM5Pnf1Rq3sB18FtMqHjUGT3x1cH3ZU3cVjcapIWSbbA6cQ02RZnABnxMAmyeP8EcWT26IlzTOIN8Dg5ZN/YJ7bcWd9VNfM3f+LtOloq79PIG3gFiuZF072ZKn3aYtMdlGGnSqoDaaDesEwEu9KVFB0mFTEij0u2cXRXMFLCtHehBq6Y3W20nIZ6UXqlFy6Ao2zb9OsGxztEPrJVV6JeuXIyEwboKmbts1RoYlGnToE2OIbtvZc/AM4OiNfG1p6Qk+gFFp3CpJQWhud1QMyTdC1RmDc1MVaASp4mcmIt+BNxoJJ79ZEjK48v2CWh2KQu6qz+EoA3QX2VKN58Dz5oBtG6Sa3qXQCvoxdxA52qixUF4y2UrYh2/jJZHcm7o3Z6cpc1hN3888N7yEnT
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+X-OriginatorOrg: micron.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 7490bbb8-96cd-4b72-12b5-08d7a0599244
+X-MS-Exchange-CrossTenant-originalarrivaltime: 23 Jan 2020 23:11:26.0314
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: f38a5ecd-2813-4862-b11b-ac1d563c806f
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: QXUw3PrOvffGJtoUD6MWfX1U5bVJfQU+pH2WJYsFt2w2ReHaE6Jxian1zdtZXFezrjuaItiqgTFrVppDc2fVEw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN7PR08MB5218
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 1/23/20 11:41 PM, Andrii Nakryiko wrote:
-> On 1/23/20 2:30 PM, Daniel Xu wrote:
->> On Thu Jan 23, 2020 at 11:23 PM, Daniel Borkmann wrote:
->> [...]
->>>
->>> Yes, so we've been following this practice for all the BPF helpers no
->>> matter
->>> which program type. Though for tracing it may be up to debate whether it
->>> makes
->>> still sense given there's nothing to be leaked here since you can read
->>> this data
->>> anyway via probe read if you'd wanted to. So we might as well get rid of
->>> the
->>> clearing for all tracing helpers.
->>
->> Right, that makes sense. Do you want me to leave it in for this patchset
->> and then remove all of them in a followup patchset?
-> 
-> I don't think we can remove that for existing tracing helpers (e.g.,
-> bpf_probe_read). There are applications that explicitly expect
-> destination memory to be zeroed out on failure. It's a BPF world's
-> memset(0).
+Hi,  Can
 
-Due to avoiding error checks that way if the expected outcome of the buf
-is non-zero anyway? Agree, that those would break, so yeah they cannot be
-removed then.
-
-> I also wonder if BPF verifier has any extra assumptions for
-> ARG_PTR_TO_UNINIT_MEM w.r.t. it being initialized after helper call
-> (e.g., for liveness tracking).
-
-There are no extra assumptions other than memory being written after the
-helper call (whether success or failure of the helper itself doesn't matter,
-so there are no assumptions about the content); the data that has been
-written to the buffer is marked as initialized but unknown (e.g. in
-check_stack_write() the case where reg remains NULL since value_regno is
-negative).
+>=20
+> In UFS version 3.0, a newly added attribute bRefClkGatingWaitTime defines=
+ the
+> minimum time for which the reference clock is required by device during
+> transition to LS-MODE or HIBERN8 state. Make this change to reflect the n=
+ew
+> requirement by adding delays before turning off the clock.
+>=20
+> Signed-off-by: Can Guo <cang@codeaurora.org>
+> ---
+>  drivers/scsi/ufs/ufs.h    |  3 +++
+>  drivers/scsi/ufs/ufshcd.c | 41
+> +++++++++++++++++++++++++++++++++++++++++
+>  2 files changed, 44 insertions(+)
+>=20
+> diff --git a/drivers/scsi/ufs/ufs.h b/drivers/scsi/ufs/ufs.h index
+> 3327981..385bac8 100644
+> --- a/drivers/scsi/ufs/ufs.h
+> +++ b/drivers/scsi/ufs/ufs.h
+> @@ -168,6 +168,7 @@ enum attr_idn {
+>  	QUERY_ATTR_IDN_FFU_STATUS		=3D 0x14,
+>  	QUERY_ATTR_IDN_PSA_STATE		=3D 0x15,
+>  	QUERY_ATTR_IDN_PSA_DATA_SIZE		=3D 0x16,
+> +	QUERY_ATTR_IDN_REF_CLK_GATING_WAIT_TIME	=3D 0x17,
+>  };
+>=20
+>  /* Descriptor idn for Query requests */ @@ -530,6 +531,8 @@ struct
+> ufs_dev_info {
+>  	bool f_power_on_wp_en;
+>  	/* Keeps information if any of the LU is power on write protected */
+>  	bool is_lu_power_on_wp;
+> +	u16 spec_version;
+> +	u32 clk_gating_wait_us;
+>  };
+>=20
+This one also need rebase
 
 Thanks,
-Daniel
+
+//Bean
