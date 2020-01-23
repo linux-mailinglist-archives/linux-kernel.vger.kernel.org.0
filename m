@@ -2,77 +2,83 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C9FC0146C90
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Jan 2020 16:24:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AA00E146C97
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Jan 2020 16:25:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728927AbgAWPYu convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Thu, 23 Jan 2020 10:24:50 -0500
-Received: from mail.fireflyinternet.com ([109.228.58.192]:50517 "EHLO
-        fireflyinternet.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726968AbgAWPYu (ORCPT
+        id S1729099AbgAWPY7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 23 Jan 2020 10:24:59 -0500
+Received: from mail-io1-f43.google.com ([209.85.166.43]:34289 "EHLO
+        mail-io1-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726968AbgAWPY6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Jan 2020 10:24:50 -0500
-X-Default-Received-SPF: pass (skip=forwardok (res=PASS)) x-ip-name=78.156.65.138;
-Received: from localhost (unverified [78.156.65.138]) 
-        by fireflyinternet.com (Firefly Internet (M1)) with ESMTP (TLS) id 19984240-1500050 
-        for multiple; Thu, 23 Jan 2020 15:24:46 +0000
-Content-Type: text/plain; charset="utf-8"
+        Thu, 23 Jan 2020 10:24:58 -0500
+Received: by mail-io1-f43.google.com with SMTP id z193so3359795iof.1
+        for <linux-kernel@vger.kernel.org>; Thu, 23 Jan 2020 07:24:58 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=BC99IbgznV51ebkSNmOlrBudQG7GZ3+AdYLBnCjDBqE=;
+        b=nU81obDAB3xzze9+m3K7YBN1TZ3htR7PWAbiHRx7Q5iA/6i9aOmjRlME8wQlYZqM0X
+         wQ5a7JFKNbQGIBTTU06kgXo0ZNFhy/Oj+YjE3CupnrptmMKo6ZCLr6QuVDliNeZs3szr
+         MisGDT6n0ppw396O5BYnEQY7Jh4cLHXRr/bKSUqgq1DdghwcHCLF5aLlEYIRMeCRwHiK
+         20np/ldbhY2TFScg6G63Nt0Faf2F4hMbHblW9I2LCk/OBdHbTRyTXRwBt9z0Q5RYE3Vi
+         VDUL7Q/7m7/I+iKVhBGAcoyJ28cBk8bJn98+Ag+IRn5QPNIbn5sQSvjV5G5HjRT0wuoB
+         nCng==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=BC99IbgznV51ebkSNmOlrBudQG7GZ3+AdYLBnCjDBqE=;
+        b=b/c0aZ3h054VS2yqBu8CMbE+tBqJxj5QtbjsYbLZ0hlquqmw1Pj/063hdb+R+ut3DP
+         Gst+JvnVL749R2tYRfn0QzJpKg9ZdOYTDoFPVGaxR1iMaOLyh0eeerR3dznWtQjqUR1X
+         IUSNS01MZg4/9NH/tJ+9bVI4hV+BGFBdKhoYzP6A5SJ5F4wG1HKnoa/YDSnhCEIZP2jl
+         34yDMuGrPYADM+5MTX8CPtFMdlFLniX212qFo62TX04sk84JbQh7pywzT3Mg5AkdBsj3
+         w8SV/JLD+q4GFqAmvP95Ab3DTjHnFIgc+adrq4cCGB+NFT0l0RtUoF+WGA4DIW7jgUKH
+         pRvg==
+X-Gm-Message-State: APjAAAWCqOG6KdTLEr6N8oEWzyoeBAKcnfKIhwfEvKbiJnCcHZBU3u+P
+        SNYWMqy0YKq+1UY0BclqpMpHODY6xJqQXdmaaqXesQ==
+X-Google-Smtp-Source: APXvYqwGqBocjjR32aYXUSpm+fAyIaNTMJhRfvsKcYSQG+OWC5akeoEIMD2bkacKENwDt1VBALJDMq6ff2W1JRyXVk4=
+X-Received: by 2002:a05:6638:72c:: with SMTP id j12mr11974539jad.136.1579793097823;
+ Thu, 23 Jan 2020 07:24:57 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8BIT
-To:     "Michael J . Ruhl" <michael.j.ruhl@intel.com>,
-        Colin King <colin.king@canonical.com>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        David Airlie <airlied@linux.ie>,
-        Jani Nikula <jani.nikula@linux.intel.com>,
-        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-        Rodrigo Vivi <rodrigo.vivi@intel.com>,
-        Tvrtko Ursulin <tvrtko.ursulin@intel.com>,
-        dri-devel@lists.freedesktop.org, intel-gfx@lists.freedesktop.org
-From:   Chris Wilson <chris@chris-wilson.co.uk>
-In-Reply-To: <20200123151406.51679-1-colin.king@canonical.com>
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20200123151406.51679-1-colin.king@canonical.com>
-Message-ID: <157979308341.19995.6106728840274572701@skylake-alporthouse-com>
-User-Agent: alot/0.6
-Subject: Re: [PATCH][next] drm/i915/gem: fix null pointer dereference on vm
-Date:   Thu, 23 Jan 2020 15:24:43 +0000
+References: <20200123140506.29275-1-brgl@bgdev.pl> <20200123145058.GW32742@smile.fi.intel.com>
+In-Reply-To: <20200123145058.GW32742@smile.fi.intel.com>
+From:   Bartosz Golaszewski <brgl@bgdev.pl>
+Date:   Thu, 23 Jan 2020 16:24:46 +0100
+Message-ID: <CAMRc=MfNHjYB_8hbN610mnOG8y=9zEOG7+YE1s5-sYoi63=U4Q@mail.gmail.com>
+Subject: Re: [RESEND PATCH v5 0/7] gpiolib: add an ioctl() for monitoring line
+ status changes
+To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc:     Kent Gibson <warthog618@gmail.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Jiri Kosina <jkosina@suse.cz>,
+        Stefani Seibold <stefani@seibold.net>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting Colin King (2020-01-23 15:14:06)
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> Currently if the call to function context_get_vm_rcu returns
-> a null pointer for vm then the error exit path via label err_put
-> will call i915_vm_put on the null vm, causing a null pointer
-> dereference.  Fix this by adding a null check on vm and returning
-> without calling the i915_vm_put.
-> 
-> Fixes: 5dbd2b7be61e ("drm/i915/gem: Convert vm idr to xarray")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+czw., 23 sty 2020 o 15:51 Andy Shevchenko
+<andriy.shevchenko@linux.intel.com> napisa=C5=82(a):
+>
+> On Thu, Jan 23, 2020 at 03:04:59PM +0100, Bartosz Golaszewski wrote:
+> > From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+> >
+> > Resending with some people who could ack kfifo patches in copy.
+>
+> Haven't you got Ack from Stefani [1]?
+>
+> [1]: https://lkml.org/lkml/2020/1/7/514
+>
 
-Hmm. Actually, we can drop the rcu_read_lock as soon as we've acquire
-the local ref to ctx->vm. So something like,
+Ha! Somehow I must have missed this.
 
-        if (!rcu_access_pointer(ctx->vm))
-                return -ENODEV;
-
--       err = -ENODEV;
-        rcu_read_lock();
-        vm = context_get_vm_rcu(ctx);
--       if (vm)
--               err = xa_alloc(&file_priv->vm_xa, &id, vm,
--                              xa_limit_32b, GFP_KERNEL);
-        rcu_read_unlock();
-+       if (!vm)
-+               return -ENODEV;
-+
-+       err = xa_alloc(&file_priv->vm_xa, &id, vm,
-+                      xa_limit_32b, GFP_KERNEL);
-        if (err)
-                goto err_put;
-
-would work.
--Chris
+Thanks, that's settled then.
