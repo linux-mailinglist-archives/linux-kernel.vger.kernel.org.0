@@ -2,83 +2,134 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AA00E146C97
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Jan 2020 16:25:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 605DB146CA5
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Jan 2020 16:25:28 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729099AbgAWPY7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 23 Jan 2020 10:24:59 -0500
-Received: from mail-io1-f43.google.com ([209.85.166.43]:34289 "EHLO
-        mail-io1-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726968AbgAWPY6 (ORCPT
+        id S1726885AbgAWPZX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 23 Jan 2020 10:25:23 -0500
+Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:45350 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1729236AbgAWPZV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Jan 2020 10:24:58 -0500
-Received: by mail-io1-f43.google.com with SMTP id z193so3359795iof.1
-        for <linux-kernel@vger.kernel.org>; Thu, 23 Jan 2020 07:24:58 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=BC99IbgznV51ebkSNmOlrBudQG7GZ3+AdYLBnCjDBqE=;
-        b=nU81obDAB3xzze9+m3K7YBN1TZ3htR7PWAbiHRx7Q5iA/6i9aOmjRlME8wQlYZqM0X
-         wQ5a7JFKNbQGIBTTU06kgXo0ZNFhy/Oj+YjE3CupnrptmMKo6ZCLr6QuVDliNeZs3szr
-         MisGDT6n0ppw396O5BYnEQY7Jh4cLHXRr/bKSUqgq1DdghwcHCLF5aLlEYIRMeCRwHiK
-         20np/ldbhY2TFScg6G63Nt0Faf2F4hMbHblW9I2LCk/OBdHbTRyTXRwBt9z0Q5RYE3Vi
-         VDUL7Q/7m7/I+iKVhBGAcoyJ28cBk8bJn98+Ag+IRn5QPNIbn5sQSvjV5G5HjRT0wuoB
-         nCng==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=BC99IbgznV51ebkSNmOlrBudQG7GZ3+AdYLBnCjDBqE=;
-        b=b/c0aZ3h054VS2yqBu8CMbE+tBqJxj5QtbjsYbLZ0hlquqmw1Pj/063hdb+R+ut3DP
-         Gst+JvnVL749R2tYRfn0QzJpKg9ZdOYTDoFPVGaxR1iMaOLyh0eeerR3dznWtQjqUR1X
-         IUSNS01MZg4/9NH/tJ+9bVI4hV+BGFBdKhoYzP6A5SJ5F4wG1HKnoa/YDSnhCEIZP2jl
-         34yDMuGrPYADM+5MTX8CPtFMdlFLniX212qFo62TX04sk84JbQh7pywzT3Mg5AkdBsj3
-         w8SV/JLD+q4GFqAmvP95Ab3DTjHnFIgc+adrq4cCGB+NFT0l0RtUoF+WGA4DIW7jgUKH
-         pRvg==
-X-Gm-Message-State: APjAAAWCqOG6KdTLEr6N8oEWzyoeBAKcnfKIhwfEvKbiJnCcHZBU3u+P
-        SNYWMqy0YKq+1UY0BclqpMpHODY6xJqQXdmaaqXesQ==
-X-Google-Smtp-Source: APXvYqwGqBocjjR32aYXUSpm+fAyIaNTMJhRfvsKcYSQG+OWC5akeoEIMD2bkacKENwDt1VBALJDMq6ff2W1JRyXVk4=
-X-Received: by 2002:a05:6638:72c:: with SMTP id j12mr11974539jad.136.1579793097823;
- Thu, 23 Jan 2020 07:24:57 -0800 (PST)
+        Thu, 23 Jan 2020 10:25:21 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1579793120;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=2iN/148ydxo6cOEibr7t4o6TqZN00D1PLyEg2aOUAsE=;
+        b=N/ImqNQKIivh8OIOEw4MhvodqBsbZzkrCPqydS8TUySwbD7Ee8ehByo58FJg2Fn+tTxyiA
+        TSAhk5Khj6yVK8Guv/ZGV0qTxHgrcVDPhno3vRdG0uLLVCVRj4BQr8p8uza17CuUaJZaQ0
+        uCdUiW6ssgmFDl1EcdHL4TmcRe08r9w=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-52-3aZizUTBO7aYE8g_rivKQQ-1; Thu, 23 Jan 2020 10:25:16 -0500
+X-MC-Unique: 3aZizUTBO7aYE8g_rivKQQ-1
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 44FDC1005513;
+        Thu, 23 Jan 2020 15:25:13 +0000 (UTC)
+Received: from llong.remote.csb (dhcp-17-59.bos.redhat.com [10.18.17.59])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 4F3EE610D8;
+        Thu, 23 Jan 2020 15:25:08 +0000 (UTC)
+Subject: Re: [PATCH v9 0/5] Add NUMA-awareness to qspinlock
+To:     Will Deacon <will@kernel.org>
+Cc:     Lihao Liang <lihaoliang@google.com>,
+        Alex Kogan <alex.kogan@oracle.com>, linux@armlinux.org.uk,
+        peterz@infradead.org, mingo@redhat.com, will.deacon@arm.com,
+        arnd@arndb.de, linux-arch@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        tglx@linutronix.de, bp@alien8.de, hpa@zytor.com, x86@kernel.org,
+        guohanjun@huawei.com, jglauber@marvell.com, dave.dice@oracle.com,
+        steven.sistare@oracle.com, daniel.m.jordan@oracle.com
+References: <20200115035920.54451-1-alex.kogan@oracle.com>
+ <CAC4j=Y8rCeTX9oKKbh+dCdTP8Ud4hW1ybu+iE7t_nxMSYBOR5w@mail.gmail.com>
+ <4e15fa1d-9540-3274-502a-4195a0d46f63@redhat.com>
+ <20200123113547.GD18991@willie-the-truck>
+From:   Waiman Long <longman@redhat.com>
+Organization: Red Hat
+Message-ID: <54ba237b-e1db-c14c-7cff-b0be41731ba5@redhat.com>
+Date:   Thu, 23 Jan 2020 10:25:07 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.2
 MIME-Version: 1.0
-References: <20200123140506.29275-1-brgl@bgdev.pl> <20200123145058.GW32742@smile.fi.intel.com>
-In-Reply-To: <20200123145058.GW32742@smile.fi.intel.com>
-From:   Bartosz Golaszewski <brgl@bgdev.pl>
-Date:   Thu, 23 Jan 2020 16:24:46 +0100
-Message-ID: <CAMRc=MfNHjYB_8hbN610mnOG8y=9zEOG7+YE1s5-sYoi63=U4Q@mail.gmail.com>
-Subject: Re: [RESEND PATCH v5 0/7] gpiolib: add an ioctl() for monitoring line
- status changes
-To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc:     Kent Gibson <warthog618@gmail.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Jiri Kosina <jkosina@suse.cz>,
-        Stefani Seibold <stefani@seibold.net>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20200123113547.GD18991@willie-the-truck>
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-czw., 23 sty 2020 o 15:51 Andy Shevchenko
-<andriy.shevchenko@linux.intel.com> napisa=C5=82(a):
+On 1/23/20 6:35 AM, Will Deacon wrote:
+> Hi folks,
 >
-> On Thu, Jan 23, 2020 at 03:04:59PM +0100, Bartosz Golaszewski wrote:
-> > From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-> >
-> > Resending with some people who could ack kfifo patches in copy.
+> (I think Lihao is travelling at the moment, so he may be delayed in his
+> replies)
 >
-> Haven't you got Ack from Stefani [1]?
+> On Wed, Jan 22, 2020 at 12:24:58PM -0500, Waiman Long wrote:
+>> On 1/22/20 6:45 AM, Lihao Liang wrote:
+>>> On Wed, Jan 22, 2020 at 10:28 AM Alex Kogan <alex.kogan@oracle.com> wrote:
+>>>> Summary
+>>>> -------
+>>>>
+>>>> Lock throughput can be increased by handing a lock to a waiter on the
+>>>> same NUMA node as the lock holder, provided care is taken to avoid
+>>>> starvation of waiters on other NUMA nodes. This patch introduces CNA
+>>>> (compact NUMA-aware lock) as the slow path for qspinlock. It is
+>>>> enabled through a configuration option (NUMA_AWARE_SPINLOCKS).
+>>>>
+>>> Thanks for your patches. The experimental results look promising!
+>>>
+>>> I understand that the new CNA qspinlock uses randomization to achieve
+>>> long-term fairness, and provides the numa_spinlock_threshold parameter
+>>> for users to tune. As Linux runs extremely diverse workloads, it is not
+>>> clear how randomization affects its fairness, and how users with
+>>> different requirements are supposed to tune this parameter.
+>>>
+>>> To this end, Will and I consider it beneficial to be able to answer the
+>>> following question:
+>>>
+>>> With different values of numa_spinlock_threshold and
+>>> SHUFFLE_REDUCTION_PROB_ARG, how long do threads running on different
+>>> sockets have to wait to acquire the lock? This is particularly relevant
+>>> in high contention situations when new threads keep arriving on the same
+>>> socket as the lock holder.
+>>>
+>>> In this email, I try to provide some formal analysis to address this
+>>> question. Let's assume the probability for the lock to stay on the
+>>> same socket is *at least* p, which corresponds to the probability for
+>>> the function probably(unsigned int num_bits) in the patch to return *false*,
+>>> where SHUFFLE_REDUCTION_PROB_ARG is passed as the value of num_bits to the
+>>> function.
+>> That is not strictly true from my understanding of the code. The
+>> probably() function does not come into play if a secondary queue is
+>> present. Also calling cna_scan_main_queue() doesn't guarantee that a
+>> waiter in the same node can be found. So the simple mathematical
+>> analysis isn't that applicable in this case. One will have to do an
+>> actual simulation to find out what the actual behavior will be.
+> It's certainly true that the analysis is based on the worst-case scenario,
+> but I think it's still worth considering. For example, the secondary queue
+> does not exist initially so it seems a bit odd that we only instantiate it
+> with < 1% probability.
 >
-> [1]: https://lkml.org/lkml/2020/1/7/514
->
+> That said, my real concern with any of this is that it makes formal
+> modelling and analysis of the qspinlock considerably more challenging. I
+> would /really/ like to see an update to the TLA+ model we have of the
+> current implementation [1] and preferably also the userspace version I
+> hacked together [2] so that we can continue to test and validate changes
+> to the code outside of the usual kernel stress-testing.
 
-Ha! Somehow I must have missed this.
+I do agree that the current CNA code is hard to model. The CNA lock
+behaves like a regular qspinlock in many cases. If the lock becomes
+fairly contended with waiters from different nodes, it will
+opportunistically switch to CNA mode where preference is given to
+waiters in the same node.
 
-Thanks, that's settled then.
+Cheers,
+Longman
+
