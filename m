@@ -2,81 +2,109 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3EDA6146627
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Jan 2020 11:59:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B1901146643
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Jan 2020 12:02:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729151AbgAWK7U (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 23 Jan 2020 05:59:20 -0500
-Received: from sauhun.de ([88.99.104.3]:52126 "EHLO pokefinder.org"
+        id S1727296AbgAWLCR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 23 Jan 2020 06:02:17 -0500
+Received: from foss.arm.com ([217.140.110.172]:37772 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729094AbgAWK7O (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Jan 2020 05:59:14 -0500
-Received: from localhost (p54B335E9.dip0.t-ipconnect.de [84.179.53.233])
-        by pokefinder.org (Postfix) with ESMTPSA id C070C2C084A;
-        Thu, 23 Jan 2020 11:59:12 +0100 (CET)
-Date:   Thu, 23 Jan 2020 11:59:12 +0100
-From:   Wolfram Sang <wsa@the-dreams.de>
-To:     Krzysztof Kozlowski <krzk@kernel.org>
-Cc:     Jean Delvare <jdelvare@suse.de>,
-        Jarkko Nikula <jarkko.nikula@linux.intel.com>,
-        linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Kishon Vijay Abraham I <kishon@ti.com>,
-        Greg KH <greg@kroah.com>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH v2 2/2] i2c: exynos: Update Kconfig documentation
-Message-ID: <20200123105912.GF1105@ninjato>
-References: <1578384779-15487-1-git-send-email-krzk@kernel.org>
- <1578384779-15487-2-git-send-email-krzk@kernel.org>
+        id S1726170AbgAWLCR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 23 Jan 2020 06:02:17 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 96BE631B;
+        Thu, 23 Jan 2020 03:02:16 -0800 (PST)
+Received: from [10.1.197.50] (e120937-lin.cambridge.arm.com [10.1.197.50])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id E150A3F6C4;
+        Thu, 23 Jan 2020 03:02:15 -0800 (PST)
+Subject: Re: [RFC PATCH 00/11] SCMI Notifications Support
+To:     linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc:     sudeep.holla@arm.com, lukasz.luba@arm.com,
+        james.quinlan@broadcom.com
+References: <20200120122333.46217-1-cristian.marussi@arm.com>
+From:   Cristian Marussi <cristian.marussi@arm.com>
+Message-ID: <04de7f47-76c8-6250-3360-5a928cd3842c@arm.com>
+Date:   Thu, 23 Jan 2020 11:02:14 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.1
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="27ZtN5FSuKKSZcBU"
-Content-Disposition: inline
-In-Reply-To: <1578384779-15487-2-git-send-email-krzk@kernel.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20200120122333.46217-1-cristian.marussi@arm.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi
 
---27ZtN5FSuKKSZcBU
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On 20/01/2020 12:23, Cristian Marussi wrote:
+> Hi all,
+> 
+> this series wants to introduce SCMI Notification Support, built on top of
+> the standard Kernel notification chain subsystem.
+> 
+[snip]
 
-On Tue, Jan 07, 2020 at 09:12:59AM +0100, Krzysztof Kozlowski wrote:
-> Update the help text to reflect current support devices:
-> 1. The Exynos high speed I2C driver supports Exynos5 (ARMv7), Exynos5433
->    and Exynos7 (both ARMv8) SoCs,
-> 2. The S3C I2C driver supports S3C, S5Pv210 and Exynos{3,4,5} SoCs.
->=20
-> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
->=20
+> 
+> Based on scmi-next [1], on top of:
+> 
+> commit 257d0e20ec4f ("include: trace: Add SCMI header with trace events")
 
-Applied to for-next, thanks!
+Sorry but I've got this is wrong, the series is based in fact on top of the
+very following commit on scmi-next [1]:
 
+729d3530a504 drivers: firmware: scmi: Extend SCMI transport layer by trace events
 
---27ZtN5FSuKKSZcBU
-Content-Type: application/pgp-signature; name="signature.asc"
+Thanks Jim for reporting this.
 
------BEGIN PGP SIGNATURE-----
+Regards
 
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAl4pfIAACgkQFA3kzBSg
-KbbrcA//Tms/+ltBFvXpVJ3+fW0prOmA4azr0VsupDhuUL+TRYlw9eOQrGOwdJrN
-mXGiFIesmGw1uWs/c0OPEaYIFL96C75XvPd8DY5VBr2+HIESpAN+4VgGsG2Z1hh1
-n84Dzmul4cQsh4qTzYPjjIaYYOW17ZiQXmr7Si3oygqOFHGnr41lUwKTsKbJFLKV
-h7wY1+7bP8KyaThxFTUMYeKBPsGV+hrhiBhUk1RyrcuNQZCdDNN+cGh2PYpY9N36
-KoBJ19u0l6h8+FL4iSLS4Oby3h9TL/1EqweiPlsHctVnMcvdeyHjtB9NNUX48SqY
-spkG0lMJl4O8YsK1maNlDpEEHu/mWApdh3vQSbWiDzwlBb58Saqr1SBVklwj922Z
-QgpYvZl0yQE2XWaP/ikuV6N8ey/JiKPdU5jrMKuCpZpiCKCNqMyCfC5WWIlUr8FM
-dxZyQ8bMrzgCCZY9/LwkIOnKLYrQY4yb/wgto2Os8aTQvg2V0dZuOUYoiJp2c/Dq
-W+pke8DJiOJqfAY4fPuFSl+jjPC9JlyLFuKacKDKqpKm/mJ/i0J6sNbC57jwESys
-gAUrmpGmZEYgyT1Ep8xInZA/2LDZuE6JTfSuLO8vawRrKhb21JXaT9Ehkwk2R8BP
-bQnvmVUDg3nlmoMpY21DFeAzppz7p9UFA0RvPqBSOd6c3u6sZaY=
-=PVpe
------END PGP SIGNATURE-----
+Cristian
 
---27ZtN5FSuKKSZcBU--
+> 
+> This series has been tested on JUNO with an experimental firmware only
+> supporting Perf Notifications.
+> 
+> Any thoughts ?
+> 
+> Thanks
+> 
+> Cristian
+> ----
+> 
+> [1] git://git.kernel.org/pub/scm/linux/kernel/git/sudeep.holla/linux.git
+> 
+> Cristian Marussi (8):
+>   firmware: arm_scmi: Add core notifications support
+>   firmware: arm_scmi: Add notifications anti-tampering
+>   firmware: arm_scmi: Enable core notifications
+>   firmware: arm_scmi: Add Power notifications support
+>   firmware: arm_scmi: Add Perf notifications support
+>   firmware: arm_scmi: Add Sensor notifications support
+>   firmware: arm_scmi: Add Reset notifications support
+>   firmware: arm_scmi: Add Base notifications support
+> 
+> Sudeep Holla (3):
+>   firmware: arm_scmi: Add receive buffer support for notifications
+>   firmware: arm_scmi: Update protocol commands and notification list
+>   firmware: arm_scmi: Add support for notifications message processing
+> 
+>  drivers/firmware/arm_scmi/Makefile  |    2 +-
+>  drivers/firmware/arm_scmi/base.c    |  132 ++++
+>  drivers/firmware/arm_scmi/bus.c     |    3 +
+>  drivers/firmware/arm_scmi/common.h  |    4 +
+>  drivers/firmware/arm_scmi/driver.c  |  121 +++-
+>  drivers/firmware/arm_scmi/notify.c  | 1047 +++++++++++++++++++++++++++
+>  drivers/firmware/arm_scmi/notify.h  |   79 ++
+>  drivers/firmware/arm_scmi/perf.c    |  167 ++++-
+>  drivers/firmware/arm_scmi/power.c   |  161 +++-
+>  drivers/firmware/arm_scmi/reset.c   |  126 +++-
+>  drivers/firmware/arm_scmi/sensors.c |  105 ++-
+>  include/linux/scmi_protocol.h       |   82 +++
+>  12 files changed, 1991 insertions(+), 38 deletions(-)
+>  create mode 100644 drivers/firmware/arm_scmi/notify.c
+>  create mode 100644 drivers/firmware/arm_scmi/notify.h
+> 
+
