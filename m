@@ -2,46 +2,46 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3D3EC146ED0
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Jan 2020 17:59:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B97DB146EE0
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Jan 2020 18:00:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729794AbgAWQ7q (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 23 Jan 2020 11:59:46 -0500
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:47005 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729701AbgAWQ7n (ORCPT
+        id S1729882AbgAWRAE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 23 Jan 2020 12:00:04 -0500
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:41347 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729721AbgAWQ7p (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Jan 2020 11:59:43 -0500
-Received: by mail-wr1-f66.google.com with SMTP id z7so3862467wrl.13
-        for <linux-kernel@vger.kernel.org>; Thu, 23 Jan 2020 08:59:42 -0800 (PST)
+        Thu, 23 Jan 2020 11:59:45 -0500
+Received: by mail-wr1-f67.google.com with SMTP id c9so3897730wrw.8
+        for <linux-kernel@vger.kernel.org>; Thu, 23 Jan 2020 08:59:44 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=cloudflare.com; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=U8uUo0eaJeKJ0jdbXMjf43VAJdQstWVWgqdI6CSzlSg=;
-        b=ZBYiAK31WOO0xPmTOkUDOEZRtghl3RzdtoEptjudCjV2kUxmHW05di8KVWAHgyu0/k
-         1c8+KarUAPRv3AsK6adDHyUV2PPufffkYjy3iJkmEWZXLA2oquozbnezzeKzB9fVTCNp
-         p0mcdJ74lP9u+fQLEDxTO47ildJS+I5mltKtE=
+        bh=g7SvZ9phUNQgBFhv9EVqVUJXNc7V2T/+gA9/uB1lrNY=;
+        b=gtrzkuQ3f7nCSsbvZV+79p3YHEpiG55tz/BtLLT1TKC04h4wnV8nBZfVTy/oeleTWI
+         FLytsgneqoqPVgRerwb4UmFKfANQw/OyLCbDS9cyI8/FdPksxF1YRxNFYVfCmifcHrmO
+         gfDjmiP/5qHzq51cApwjJfE8JvSN2pHsTbzhE=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=U8uUo0eaJeKJ0jdbXMjf43VAJdQstWVWgqdI6CSzlSg=;
-        b=mUzpJS1XCBCRXyWHda1SqxD0NSztjxqS+7IEqwxXEGoimJXRGPq3MNe1fsomm7nYf8
-         UQ4FxdY/qQite3GwfttzoOn8lshV+G8EvjzlcBhmeKOlZ/yQvnDv3Ym2XS4AwfMfR5vI
-         nTtBWUor7yzxn+Mr7USCgUuFC8/fyFYTVBrJufoZoy6bOzAOZ8aKlh0+D/39rTKdb6JN
-         s0HiSwBVzIs/DlHKxFUIg1dvFlJLNfbKNrJg3V+0P7CMxahmm6VRTetJA+f4tSFZgIHP
-         opvJhv+dkNPeeTEsLVlkdvrth7pvl3VOc1abA7EFUVNDbcvdeHe00gsO+DpIXfN9/84C
-         DcNQ==
-X-Gm-Message-State: APjAAAU/YPZfHT6ZcVLnK2FfTJaSu3eKr7xwnPv22S19Z9BmCmh1+qiD
-        LUggPuphgbHeTiDAUQDeeBO5iQ==
-X-Google-Smtp-Source: APXvYqztXSSZ2nYGIIOXGCU19AzvGz7ltbdVZS6Ad/z/XL7I6uqOCN+zAkxKcPOoy0Q+UnAyTkUoDA==
-X-Received: by 2002:a5d:6652:: with SMTP id f18mr19175902wrw.246.1579798781846;
-        Thu, 23 Jan 2020 08:59:41 -0800 (PST)
+        bh=g7SvZ9phUNQgBFhv9EVqVUJXNc7V2T/+gA9/uB1lrNY=;
+        b=Br/rcPTWq5nbhVFZ6yTn/EZ4D30Wn1WVmu74hE1UJnU6cNTt62LNM3Bj7ivrteK4ao
+         9Rlroap3t3kd2SDhdsLiN4g2w7T/MPgcyrOMGbDGkaAOk/KJQ/t+3fyM4+XluSPvR5nu
+         aKiFZGjjn0r0W/LMchLFhKocklfI8BowN8JlU/Jfp/qzDHvcb0qr9hNSNZ2CU5nbUxRb
+         wZwlHgZ3yqQI7X5PcezHbyJ78LFBet9Ixc2V2H7r+jqFjUAnCZ2F3me6KNJITN6uDy7E
+         vZg8EQX3hBdcFFcrb0KcfQ95aGtaPb/K8YhQklMM54QSGqS/CBseIo29wsDC+n/BWMN6
+         ficg==
+X-Gm-Message-State: APjAAAUYCLGutWO49EbWh0g/bBe/9KrPeOlzAixK7LVHKVMRgQ1HIs6x
+        TeVpHfTNt0hXdqnkMBcc8Zr+lA==
+X-Google-Smtp-Source: APXvYqxZBMzloyeuvuGWMOXyEMsTRg357vgRAFLanDZW9K3hvo17Oc9CnYfhEOKDJRcCoIGSj/eFaA==
+X-Received: by 2002:adf:cf0a:: with SMTP id o10mr18246948wrj.325.1579798783545;
+        Thu, 23 Jan 2020 08:59:43 -0800 (PST)
 Received: from localhost.localdomain ([2a06:98c0:1000:8250:d0a9:6cca:1210:a574])
-        by smtp.gmail.com with ESMTPSA id u1sm3217698wmc.5.2020.01.23.08.59.40
+        by smtp.gmail.com with ESMTPSA id u1sm3217698wmc.5.2020.01.23.08.59.42
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 23 Jan 2020 08:59:40 -0800 (PST)
+        Thu, 23 Jan 2020 08:59:42 -0800 (PST)
 From:   Lorenz Bauer <lmb@cloudflare.com>
 To:     Shuah Khan <shuah@kernel.org>, Alexei Starovoitov <ast@kernel.org>,
         Daniel Borkmann <daniel@iogearbox.net>,
@@ -51,9 +51,9 @@ To:     Shuah Khan <shuah@kernel.org>, Alexei Starovoitov <ast@kernel.org>,
 Cc:     Lorenz Bauer <lmb@cloudflare.com>, linux-kselftest@vger.kernel.org,
         netdev@vger.kernel.org, bpf@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH bpf 1/4] selftests: bpf: use a temporary file in test_sockmap
-Date:   Thu, 23 Jan 2020 16:59:30 +0000
-Message-Id: <20200123165934.9584-2-lmb@cloudflare.com>
+Subject: [PATCH bpf 2/4] selftests: bpf: ignore RST packets for reuseport tests
+Date:   Thu, 23 Jan 2020 16:59:31 +0000
+Message-Id: <20200123165934.9584-3-lmb@cloudflare.com>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200123165934.9584-1-lmb@cloudflare.com>
 References: <20200123165934.9584-1-lmb@cloudflare.com>
@@ -64,66 +64,35 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Use a proper temporary file for sendpage tests. This means that running
-the tests doesn't clutter the working directory, and allows running the
-test on read-only filesystems.
+The reuseport tests currently suffer from a race condition: RST
+packets count towards DROP_ERR_SKB_DATA, since they don't contain
+a valid struct cmd. Tests will spuriously fail depending on whether
+check_results is called before or after the RST is processed.
+
+Exit the BPF program early if FIN is set.
 
 Signed-off-by: Lorenz Bauer <lmb@cloudflare.com>
 ---
- tools/testing/selftests/bpf/test_sockmap.c | 15 +++++----------
- 1 file changed, 5 insertions(+), 10 deletions(-)
+ .../selftests/bpf/progs/test_select_reuseport_kern.c        | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-diff --git a/tools/testing/selftests/bpf/test_sockmap.c b/tools/testing/selftests/bpf/test_sockmap.c
-index 4a851513c842..779e11da979c 100644
---- a/tools/testing/selftests/bpf/test_sockmap.c
-+++ b/tools/testing/selftests/bpf/test_sockmap.c
-@@ -331,7 +331,7 @@ static int msg_loop_sendpage(int fd, int iov_length, int cnt,
- 	FILE *file;
- 	int i, fp;
+diff --git a/tools/testing/selftests/bpf/progs/test_select_reuseport_kern.c b/tools/testing/selftests/bpf/progs/test_select_reuseport_kern.c
+index d69a1f2bbbfd..26e77dcc7e91 100644
+--- a/tools/testing/selftests/bpf/progs/test_select_reuseport_kern.c
++++ b/tools/testing/selftests/bpf/progs/test_select_reuseport_kern.c
+@@ -113,6 +113,12 @@ int _select_by_skb_data(struct sk_reuseport_md *reuse_md)
+ 		data_check.skb_ports[0] = th->source;
+ 		data_check.skb_ports[1] = th->dest;
  
--	file = fopen(".sendpage_tst.tmp", "w+");
-+	file = tmpfile();
- 	if (!file) {
- 		perror("create file for sendpage");
- 		return 1;
-@@ -340,13 +340,8 @@ static int msg_loop_sendpage(int fd, int iov_length, int cnt,
- 		fwrite(&k, sizeof(char), 1, file);
- 	fflush(file);
- 	fseek(file, 0, SEEK_SET);
--	fclose(file);
- 
--	fp = open(".sendpage_tst.tmp", O_RDONLY);
--	if (fp < 0) {
--		perror("reopen file for sendpage");
--		return 1;
--	}
-+	fp = fileno(file);
- 
- 	clock_gettime(CLOCK_MONOTONIC, &s->start);
- 	for (i = 0; i < cnt; i++) {
-@@ -354,11 +349,11 @@ static int msg_loop_sendpage(int fd, int iov_length, int cnt,
- 
- 		if (!drop && sent < 0) {
- 			perror("send loop error");
--			close(fp);
-+			fclose(file);
- 			return sent;
- 		} else if (drop && sent >= 0) {
- 			printf("sendpage loop error expected: %i\n", sent);
--			close(fp);
-+			fclose(file);
- 			return -EIO;
- 		}
- 
-@@ -366,7 +361,7 @@ static int msg_loop_sendpage(int fd, int iov_length, int cnt,
- 			s->bytes_sent += sent;
- 	}
- 	clock_gettime(CLOCK_MONOTONIC, &s->end);
--	close(fp);
-+	fclose(file);
- 	return 0;
- }
- 
++		if (th->fin)
++			/* The connection is being torn down at the end of a
++			 * test. It can't contain a cmd, so return early.
++			 */
++			return SK_PASS;
++
+ 		if ((th->doff << 2) + sizeof(*cmd) > data_check.len)
+ 			GOTO_DONE(DROP_ERR_SKB_DATA);
+ 		if (bpf_skb_load_bytes(reuse_md, th->doff << 2, &cmd_copy,
 -- 
 2.20.1
 
