@@ -2,112 +2,112 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9455D146138
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Jan 2020 05:55:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0136A146151
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Jan 2020 06:19:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726227AbgAWEza (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 22 Jan 2020 23:55:30 -0500
-Received: from mail26.static.mailgun.info ([104.130.122.26]:63889 "EHLO
-        mail26.static.mailgun.info" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726118AbgAWEz3 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 Jan 2020 23:55:29 -0500
-DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
- s=smtp; t=1579755329; h=Message-ID: References: In-Reply-To: Subject:
- Cc: To: From: Date: Content-Transfer-Encoding: Content-Type:
- MIME-Version: Sender; bh=99PdJyM1Ez87NeZe2HjnZWq1VMrDCTFIbcSGdc8l8U4=;
- b=M+sOXDa4QLTMhDi0V/ee1rWESsruOmqLurQgo2Kdr+MnL7Q4TPk7zclR/hQ7Ie07zmreU0tL
- /wqrS8Hx0x7gLAW4HGyaAG+mnE1dSn/sCOOeuVEiWnOpxhk4Hwo5Oj7QH+QiofA5bQZ3o8zQ
- jUx21kGOfcIbgAj/QhQw+kOCAQk=
-X-Mailgun-Sending-Ip: 104.130.122.26
-X-Mailgun-Sid: WyI0MWYwYSIsICJsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
-Received: from smtp.codeaurora.org (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171])
- by mxa.mailgun.org with ESMTP id 5e29273d.7fc7ea9d0d88-smtp-out-n01;
- Thu, 23 Jan 2020 04:55:25 -0000 (UTC)
-Received: by smtp.codeaurora.org (Postfix, from userid 1001)
-        id 824BDC433CB; Thu, 23 Jan 2020 04:55:25 +0000 (UTC)
-X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
-        aws-us-west-2-caf-mail-1.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=2.0 tests=ALL_TRUSTED
-        autolearn=unavailable autolearn_force=no version=3.4.0
-Received: from mail.codeaurora.org (localhost.localdomain [127.0.0.1])
-        (using TLSv1 with cipher ECDHE-RSA-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        (Authenticated sender: kgunda)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 99255C43383;
-        Thu, 23 Jan 2020 04:55:24 +0000 (UTC)
+        id S1726135AbgAWFT2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 23 Jan 2020 00:19:28 -0500
+Received: from mga01.intel.com ([192.55.52.88]:48637 "EHLO mga01.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725535AbgAWFT2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 23 Jan 2020 00:19:28 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from orsmga007.jf.intel.com ([10.7.209.58])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 22 Jan 2020 21:19:26 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.70,352,1574150400"; 
+   d="asc'?scan'208";a="216152482"
+Received: from zhen-hp.sh.intel.com (HELO zhen-hp) ([10.239.13.14])
+  by orsmga007.jf.intel.com with ESMTP; 22 Jan 2020 21:19:24 -0800
+Date:   Thu, 23 Jan 2020 13:07:27 +0800
+From:   Zhenyu Wang <zhenyuw@linux.intel.com>
+To:     Igor Druzhinin <igor.druzhinin@citrix.com>
+Cc:     intel-gvt-dev@lists.freedesktop.org,
+        intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+        linux-kernel@vger.kernel.org, zhenyuw@linux.intel.com,
+        zhi.a.wang@intel.com, jani.nikula@linux.intel.com,
+        joonas.lahtinen@linux.intel.com, rodrigo.vivi@intel.com,
+        airlied@linux.ie, daniel@ffwll.ch
+Subject: Re: [PATCH] drm/i915/gvt: fix high-order allocation failure on late
+ load
+Message-ID: <20200123050727.GA25905@zhen-hp.sh.intel.com>
+Reply-To: Zhenyu Wang <zhenyuw@linux.intel.com>
+References: <1579723824-25711-1-git-send-email-igor.druzhinin@citrix.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date:   Thu, 23 Jan 2020 10:25:24 +0530
-From:   kgunda@codeaurora.org
-To:     Daniel Thompson <daniel.thompson@linaro.org>
-Cc:     Chen Zhou <chenzhou10@huawei.com>, agross@kernel.org,
-        bjorn.andersson@linaro.org, lee.jones@linaro.org,
-        jingoohan1@gmail.com, b.zolnierkie@samsung.com,
-        linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        linux-fbdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-msm-owner@vger.kernel.org
-Subject: Re: [PATCH -next v2] backlight: qcom-wled: fix unsigned comparison to
- zero
-In-Reply-To: <20200122105540.w5vrvs34zxmhkjae@holly.lan>
-References: <20200122013240.132861-1-chenzhou10@huawei.com>
- <20200122105540.w5vrvs34zxmhkjae@holly.lan>
-Message-ID: <c9da004a1110b51d1737fe773901678b@codeaurora.org>
-X-Sender: kgunda@codeaurora.org
-User-Agent: Roundcube Webmail/1.3.9
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="vkogqOf2sHV7VnPd"
+Content-Disposition: inline
+In-Reply-To: <1579723824-25711-1-git-send-email-igor.druzhinin@citrix.com>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2020-01-22 16:25, Daniel Thompson wrote:
-> On Wed, Jan 22, 2020 at 09:32:40AM +0800, Chen Zhou wrote:
->> Fixes coccicheck warning:
->> ./drivers/video/backlight/qcom-wled.c:1104:5-15:
->> 	WARNING: Unsigned expression compared with zero: string_len > 0
->> 
->> The unsigned variable string_len is assigned a return value from the 
->> call
->> to of_property_count_elems_of_size(), which may return negative error 
->> code.
->> 
->> Fixes: 775d2ffb4af6 ("backlight: qcom-wled: Restructure the driver for 
->> WLED3")
->> Signed-off-by: Chen Zhou <chenzhou10@huawei.com>
->> Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-> 
-> Reviewed-by: Daniel Thompson <daniel.thompson@linaro.org>
-> 
-Reviewed-by: Kiran Gunda <kgunda@codeaurora.org>
->> ---
->> 
->> changes in v2:
->> - fix commit message description.
->> 
->> ---
->>  drivers/video/backlight/qcom-wled.c | 4 ++--
->>  1 file changed, 2 insertions(+), 2 deletions(-)
->> 
->> diff --git a/drivers/video/backlight/qcom-wled.c 
->> b/drivers/video/backlight/qcom-wled.c
->> index d46052d..3d276b3 100644
->> --- a/drivers/video/backlight/qcom-wled.c
->> +++ b/drivers/video/backlight/qcom-wled.c
->> @@ -956,8 +956,8 @@ static int wled_configure(struct wled *wled, int 
->> version)
->>  	struct wled_config *cfg = &wled->cfg;
->>  	struct device *dev = wled->dev;
->>  	const __be32 *prop_addr;
->> -	u32 size, val, c, string_len;
->> -	int rc, i, j;
->> +	u32 size, val, c;
->> +	int rc, i, j, string_len;
->> 
->>  	const struct wled_u32_opts *u32_opts = NULL;
->>  	const struct wled_u32_opts wled3_opts[] = {
->> --
->> 2.7.4
->> 
+
+--vkogqOf2sHV7VnPd
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On 2020.01.22 20:10:24 +0000, Igor Druzhinin wrote:
+> If the module happens to be loaded later at runtime there is a chance
+> memory is already fragmented enough to fail allocation of firmware
+> blob storage and consequently GVT init. Since it doesn't seem to be
+> necessary to have the blob contiguous, use vmalloc() instead to avoid
+> the issue.
+>=20
+> Signed-off-by: Igor Druzhinin <igor.druzhinin@citrix.com>
+> ---
+>  drivers/gpu/drm/i915/gvt/firmware.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+>=20
+> diff --git a/drivers/gpu/drm/i915/gvt/firmware.c b/drivers/gpu/drm/i915/g=
+vt/firmware.c
+> index 049775e..b0c1fda 100644
+> --- a/drivers/gpu/drm/i915/gvt/firmware.c
+> +++ b/drivers/gpu/drm/i915/gvt/firmware.c
+> @@ -146,7 +146,7 @@ void intel_gvt_free_firmware(struct intel_gvt *gvt)
+>  		clean_firmware_sysfs(gvt);
+> =20
+>  	kfree(gvt->firmware.cfg_space);
+> -	kfree(gvt->firmware.mmio);
+> +	vfree(gvt->firmware.mmio);
+>  }
+> =20
+>  static int verify_firmware(struct intel_gvt *gvt,
+> @@ -229,7 +229,7 @@ int intel_gvt_load_firmware(struct intel_gvt *gvt)
+> =20
+>  	firmware->cfg_space =3D mem;
+> =20
+> -	mem =3D kmalloc(info->mmio_size, GFP_KERNEL);
+> +	mem =3D vmalloc(info->mmio_size);
+>  	if (!mem) {
+>  		kfree(path);
+>  		kfree(firmware->cfg_space);
+> --=20
+> 2.7.4
+>
+
+Looks fine to me. Thanks!
+
+Reviewed-by: Zhenyu Wang <zhenyuw@linux.intel.com>
+
+--=20
+Open Source Technology Center, Intel ltd.
+
+$gpg --keyserver wwwkeys.pgp.net --recv-keys 4D781827
+
+--vkogqOf2sHV7VnPd
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iF0EARECAB0WIQTXuabgHDW6LPt9CICxBBozTXgYJwUCXikqDwAKCRCxBBozTXgY
+J+4uAJ96YbLIY0cQA9wjsw2Zc/jXBf4gXwCeMpf5uwvjnowmgSrYjEle8958Ezw=
+=DlrF
+-----END PGP SIGNATURE-----
+
+--vkogqOf2sHV7VnPd--
