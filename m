@@ -2,73 +2,124 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8644A146098
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Jan 2020 02:55:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 09D051460B3
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Jan 2020 03:26:24 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726761AbgAWBzi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 22 Jan 2020 20:55:38 -0500
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:46891 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725911AbgAWBzh (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 Jan 2020 20:55:37 -0500
-Received: by mail-pf1-f194.google.com with SMTP id n9so724992pff.13;
-        Wed, 22 Jan 2020 17:55:37 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=U/9QhT+ohC+FY6Xzfn/y36apKCPCrHk4ZLflzz5fU6g=;
-        b=HmKrq9i6UTQOujYHxMVVJYgTRi6w4yV+PyHGcUoOS7jQK6CytW68axj7QswFIAkroR
-         zoaMZwfnrqQMU+dh9NSyUqiYyJ9ZZWqXpOJi2NsboW6vwJvvRHkK7eiCVRckGu4XFfmS
-         iZrnh8uqhdjhF2CB033YnECFXskRt6RvWpfNSc5UYss0CA0QfH6iIzg5RqhkYEKZu1d7
-         N5ASFJhpncfwIHN2FwlnCqOjw9VBs+bGS54E5NkflWfwem/mQRvb94R14kZmL1e22i0O
-         HBkO6DDiSBVlXxR/PZx6u4WPSBCVvMya4o33zV9AuC+BzXZ1S2TU8IpKd2M2qAZ84GQi
-         N1Ag==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=U/9QhT+ohC+FY6Xzfn/y36apKCPCrHk4ZLflzz5fU6g=;
-        b=k7+HlTYIc+Fe25Vs6wYTdU/92qndIo7h9of4426EaLEAi2U+mlPVc8aTJcY1te5c7u
-         mm3pNIRU09+OJdp3FpXHrQDscC7IHGdaCun5D8eTxP78GjlNI6KbHJ2MY9kjcLXSnD75
-         DqkcISvpB+kr9IWMMYM4+wYVNnNtEpzPwPHNHBSC7NQ1mNigsLtdM8TLv8sb9OaaQtyB
-         OaQ6TS3aoi2JIcFPRg/rMsGyIVtvFrvvLwHetHn8iIsNpUnIBSIfYn61Ot0yi+RnvEe0
-         dCD0v8pWKRkGJgH31ctKzTJf3NRQh48gouoPNsfigtA49d/ZbV2NqQXDbiHQKMjSBL1l
-         ebtw==
-X-Gm-Message-State: APjAAAV1dD8uqC4xPfpnS3FpvySherPzxwB5dYiET9vKoWasAMnfXqnL
-        GcurHvYkkOowdlmhXLHNSkk=
-X-Google-Smtp-Source: APXvYqwcPZDd3TH6DQcYJCQhKz5YbG9/pomqV4qommUPmX8pUCo2zNoIadM1hsstxeuv5JojCVCLoQ==
-X-Received: by 2002:a63:4c4f:: with SMTP id m15mr1322140pgl.346.1579744537053;
-        Wed, 22 Jan 2020 17:55:37 -0800 (PST)
-Received: from google.com ([2620:15c:211:1:3e01:2939:5992:52da])
-        by smtp.gmail.com with ESMTPSA id w5sm237103pjt.32.2020.01.22.17.55.35
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 22 Jan 2020 17:55:36 -0800 (PST)
-Date:   Wed, 22 Jan 2020 17:55:34 -0800
-From:   Minchan Kim <minchan@kernel.org>
-To:     Yue Hu <zbestahu@gmail.com>
-Cc:     ngupta@vflare.org, sergey.senozhatsky.work@gmail.com,
-        corbet@lwn.net, linux-kernel@vger.kernel.org,
-        linux-doc@vger.kernel.org, huyue2@yulong.com, zhangwen@yulong.com
-Subject: Re: [PATCH] zram: correct documentation about sysfs node of huge
- page writeback
-Message-ID: <20200123015534.GE249784@google.com>
-References: <20200120102949.12132-1-zbestahu@gmail.com>
+        id S1726194AbgAWC0U (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 22 Jan 2020 21:26:20 -0500
+Received: from mga12.intel.com ([192.55.52.136]:21435 "EHLO mga12.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725933AbgAWC0U (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 22 Jan 2020 21:26:20 -0500
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+Received: from fmsmga006.fm.intel.com ([10.253.24.20])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 22 Jan 2020 18:26:20 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.70,352,1574150400"; 
+   d="scan'208";a="427615570"
+Received: from hao-dev.bj.intel.com (HELO localhost) ([10.238.157.65])
+  by fmsmga006.fm.intel.com with ESMTP; 22 Jan 2020 18:26:17 -0800
+Date:   Thu, 23 Jan 2020 10:05:56 +0800
+From:   Wu Hao <hao.wu@intel.com>
+To:     Greg KH <gregkh@linuxfoundation.org>
+Cc:     will@kernel.org, mdf@kernel.org, mark.rutland@arm.com,
+        linux-fpga@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-api@vger.kernel.org, atull@kernel.org,
+        Luwei Kang <luwei.kang@intel.com>,
+        Xu Yilun <yilun.xu@intel.com>
+Subject: Re: [RESEND Patch v6 2/2] fpga: dfl: fme: add performance reporting
+ support
+Message-ID: <20200123020556.GA9716@hao-dev>
+References: <1579230628-22243-1-git-send-email-hao.wu@intel.com>
+ <1579230628-22243-3-git-send-email-hao.wu@intel.com>
+ <20200122141026.GA10399@kroah.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200120102949.12132-1-zbestahu@gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20200122141026.GA10399@kroah.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jan 20, 2020 at 06:29:49PM +0800, Yue Hu wrote:
-> From: Yue Hu <huyue2@yulong.com>
+On Wed, Jan 22, 2020 at 03:10:26PM +0100, Greg KH wrote:
+> On Fri, Jan 17, 2020 at 11:10:28AM +0800, Wu Hao wrote:
+> > +static const struct attribute_group fme_perf_fabric_events_group = {
+> > +	.name = "events",
+> > +	.attrs = fme_perf_fabric_events_attrs,
+> > +	.is_visible = fme_perf_fabric_events_visible,
+> > +};
+> > +
 > 
-> sysfs node for huge page writeback is writeback rather than write.
+> I don't see any Documentation/ABI/ entries for all of these new files.
+> Please properly document them so we know how to review this.
+
+Hi Greg,
+
+Thanks a lot for the review. Actually all the sysfs entries under events
+are perf monitoring events following the same format documented in 
+"Documentation/ABI/testing/sysfs-bus-event_source-devices-events" and
+we added some description in our fpga documentation in patch #1.
+
+Yes, I can add something in ABI directly as well in the next version.
+I pasted related descriptions below. I hope this won't block review.
+
+Thank you very much!
+Hao
+
+
+From Documentation/ABI/testing/sysfs-bus-event_source-devices-events
+
+What: /sys/bus/event_source/devices/<pmu>/events/<event>
+Date: 2014/02/24
+Contact:        Linux kernel mailing list <linux-kernel@vger.kernel.org>
+Description:    Per-pmu performance monitoring events specific to the running system
+
+                Each file (except for some of those with a '.' in them, '.unit'
+                and '.scale') in the 'events' directory describes a single
+                performance monitoring event supported by the <pmu>. The name
+                of the file is the name of the event.
+
+                File contents:
+
+                        <term>[=<value>][,<term>[=<value>]]...
+
+                Where <term> is one of the terms listed under
+                /sys/bus/event_source/devices/<pmu>/format/ and <value> is
+                a number is base-16 format with a '0x' prefix (lowercase only).
+                If a <term> is specified alone (without an assigned value), it
+                is implied that 0x1 is assigned to that <term>.
+
+                Examples (each of these lines would be in a seperate file):
+
+                        event=0x2abc
+                        event=0x423,inv,cmask=0x3
+                        domain=0x1,offset=0x8,starting_index=0xffff
+                        domain=0x1,offset=0x8,core=?
+
+                Each of the assignments indicates a value to be assigned to a
+                particular set of bits (as defined by the format file
+                corresponding to the <term>) in the perf_event structure passed
+                to the perf_open syscall.
+
+                In the case of the last example, a value replacing "?" would
+                need to be provided by the user selecting the particular event.
+                This is referred to as "event parameterization". Event
+                parameters have the format 'param=?'.
+
+From Documentation/fpga/dfl.rst added by patch #1.
+
+"
+The "events" directory describes the configuration templates for all available
+events which can be used with perf tool directly. For example, fab_mmio_read
+has the configuration "event=0x06,evtype=0x02,portid=0xff", which shows this
+event belongs to fabric type (0x02), the local event id is 0x06 and it is for
+overall monitoring (portid=0xff).
+"
+
 > 
-> Signed-off-by: Yue Hu <huyue2@yulong.com>
-Acked-by: Minchan Kim <minchan@kernel.org>
+> thanks,
+> 
+> greg k-h
