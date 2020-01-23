@@ -2,119 +2,104 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5EA0F146822
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Jan 2020 13:36:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6088D14682C
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Jan 2020 13:38:47 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728767AbgAWMgc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 23 Jan 2020 07:36:32 -0500
-Received: from foss.arm.com ([217.140.110.172]:39016 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726170AbgAWMgc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Jan 2020 07:36:32 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 57A8D328;
-        Thu, 23 Jan 2020 04:36:31 -0800 (PST)
-Received: from localhost (unknown [10.37.6.21])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id CA11D3F6C4;
-        Thu, 23 Jan 2020 04:36:30 -0800 (PST)
-Date:   Thu, 23 Jan 2020 12:36:29 +0000
-From:   Mark Brown <broonie@kernel.org>
-To:     Tomer Maimon <tmaimon77@gmail.com>
-Cc:     avifishman70@gmail.com, benjaminfair@google.com,
-        broonie@kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-spi@vger.kernel.org,
-        Mark Brown <broonie@kernel.org>, mark.rutland@arm.com,
-        openbmc@lists.ozlabs.org, robh+dt@kernel.org,
-        Rob Herring <robh@kernel.org>, tali.perry1@gmail.com,
-        venture@google.com, yuenn@google.com
-Subject: Applied "dt-binding: spi: add NPCM PSPI reset binding" to the spi tree
-In-Reply-To: <20200115162301.235926-4-tmaimon77@gmail.com>
-Message-Id: <applied-20200115162301.235926-4-tmaimon77@gmail.com>
-X-Patchwork-Hint: ignore
+        id S1726771AbgAWMio (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 23 Jan 2020 07:38:44 -0500
+Received: from mail-ed1-f68.google.com ([209.85.208.68]:39278 "EHLO
+        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726170AbgAWMin (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 23 Jan 2020 07:38:43 -0500
+Received: by mail-ed1-f68.google.com with SMTP id t17so3134895eds.6
+        for <linux-kernel@vger.kernel.org>; Thu, 23 Jan 2020 04:38:42 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:reply-to:sender:from:date:message-id:subject:to
+         :content-transfer-encoding;
+        bh=t0TLC5mt6zw20J38nO6UV1Kz+5E95WBtIXeRkoxQ4a0=;
+        b=OHWSkl4ak/YuAtPTnICsSNl6lufuA10T9sYQKpJVt4ljiu/LBaKOoAEE5EjMOXsDO5
+         GxXPTcDHqa/pz/wPilJfSyDYKMcXB+rXlNMyKD79iq8Gobgb5N+ASe17Mz7savb8Lo6l
+         dwjnxK6aPX6aFBaH4UG6Z8eho+pcQkxHpQZodKsljFKNWcNY+KenTM5G4fQIQGbhSLdL
+         pCi+vV4tJYSQKgW9afwFl6jPj3cfKVWdPLlv7rRcYf5PdWXWw3lisenem5X7JwoFNa/4
+         2UxcYdq61fB5URkEmBLBogwya1kE9LtmGUa419/n6ZoUb0qL1Cgbqwl4BiIOAWS6Z5jj
+         +dvw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:reply-to:sender:from:date
+         :message-id:subject:to:content-transfer-encoding;
+        bh=t0TLC5mt6zw20J38nO6UV1Kz+5E95WBtIXeRkoxQ4a0=;
+        b=m+9MrE9wiIEihbb6838tNsXQNPN2Z41rCYgBxAmqdyv9RLSolcbDYi91Kt1bPkhKB5
+         ji76JCJ6H16tz9MSZGNhUpAY/UkWrh46JGKzxgH1Wx1adijGKUht7uWRlAQVBB4Yof29
+         rD2uzGmdPrxGo2jYQmPwSJjoODFqjHG8bsCmww5UhAqfLDEoaVduDvBMvHa3rKu1Sqzn
+         oGcqdAk4Fno2nQ3BEJZ9+puWyEIYGxzqEgB2nnjzgLC+pAsQ1n+qxGOUoqHatyC95oRT
+         QKuJNPEFLs4JX6b82RIj0Frg7iPRdhnAt/uToIAOSKsEq638oJ1o877HImgmPKF9bJ9l
+         pcLw==
+X-Gm-Message-State: APjAAAVovpU9/5+fZbUC/KkN03oO+GDp/btIPmQdNJqnHFqabM1A2vkq
+        Rn3x1gERqsP/v5qWgilzNiypZBEbXW8yPcGw0rc=
+X-Google-Smtp-Source: APXvYqy6Z+3/+45rn2yAwMLCrin7uDuqoOIHSH7+xzqQGBwKT8CLaSqPjnMBwmpzI4kPWHMXIj5drlsSe3FV04LQddA=
+X-Received: by 2002:a05:6402:c8a:: with SMTP id cm10mr6586430edb.287.1579783121587;
+ Thu, 23 Jan 2020 04:38:41 -0800 (PST)
+MIME-Version: 1.0
+Reply-To: mrsanna.h.bruun119@gmail.com
+Received: by 2002:a05:6402:164d:0:0:0:0 with HTTP; Thu, 23 Jan 2020 04:38:41
+ -0800 (PST)
+From:   "Mrs. Anna H. Bruun" <mrsanna.h.bruun119@gmail.com>
+Date:   Thu, 23 Jan 2020 04:38:41 -0800
+X-Google-Sender-Auth: UaZclDnr6ys_zlv_mQYnFs0VMyU
+Message-ID: <CAKPCGAgDcK99ssOjEgPmEtDmDQCP9S+j6V0r4KWY7VnDj6tGYA@mail.gmail.com>
+Subject: My Greetings
+To:     undisclosed-recipients:;
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The patch
+My Dear
 
-   dt-binding: spi: add NPCM PSPI reset binding
+My Name is Mrs. Anna H. Bruun, from Norway. I know that this message
+will be a surprise to you. Firstly, I am married to Mr. Patrick Bruun,
+A gold merchant who owns a small gold Mine in Burkina Faso; He died of
+Cardiovascular Disease in mid-March 2011. During his life time he
+deposited the sum of =E2=82=AC 8.5 Million Euro) Eight million, Five hundre=
+d
+thousand Euros in a bank in Ouagadougou the capital city of Burkina
+Faso. The deposited money was from the sale of the shares, death
+benefits payment and entitlements of my deceased husband by his
+company.
 
-has been applied to the spi tree at
+I am sending this message to you praying that it will reach you in
+good health, since I am not in good health condition in which I sleep
+every night without knowing if I may be alive to see the next day. I
+am suffering from long time cancer and presently i am partially
+suffering from a stroke illness which has become almost impossible for
+me to move around. I am married to my late husband for over 4 years
+before he died and is unfortunately that we don't have a child, my
+doctor confided in me that i have less chance to live. Having known my
+health condition, I decided to contact you to claim the fund since I
+don't have any relation I grew up from the orphanage home,
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git for-5.6
+I have decided to donate what I have to you for the support of helping
+Motherless babies/Less privileged/Widows' because I am dying and
+diagnosed of cancer for about 2 years ago. I have been touched by God
+Almighty to donate from what I have inherited from my late husband to
+you for good work of God Almighty. I have asked Almighty God to
+forgive me and believe he has, because He is a Merciful God I will be
+going in for an operation surgery soon
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
+This is the reason i need your services to stand as my next of kin or
+an executor to claim the funds for charity purposes. If this money
+remains unclaimed after my death, the bank executives or the
+government will take the money as unclaimed fund and maybe use it for
+selfish and worthless ventures, I need a very honest person who can
+claim this money and use it for Charity works, for orphanages, widows
+and also build schools for less privilege that will be named after my
+late husband and my name; I need your urgent answer to know if you
+will be able to execute this project, and I will give you more
+Information on how the fund will be transferred to your bank account.
 
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
-From a5362b84bdff1def10c136e36ef2126f7f545b2c Mon Sep 17 00:00:00 2001
-From: Tomer Maimon <tmaimon77@gmail.com>
-Date: Wed, 15 Jan 2020 18:23:00 +0200
-Subject: [PATCH] dt-binding: spi: add NPCM PSPI reset binding
-
-Add NPCM Peripheral SPI reset binding documentation,
-Removing unnecessary aliases use.
-
-Signed-off-by: Tomer Maimon <tmaimon77@gmail.com>
-Acked-by: Rob Herring <robh@kernel.org>
-Link: https://lore.kernel.org/r/20200115162301.235926-4-tmaimon77@gmail.com
-Signed-off-by: Mark Brown <broonie@kernel.org>
----
- .../devicetree/bindings/spi/nuvoton,npcm-pspi.txt    | 12 ++----------
- 1 file changed, 2 insertions(+), 10 deletions(-)
-
-diff --git a/Documentation/devicetree/bindings/spi/nuvoton,npcm-pspi.txt b/Documentation/devicetree/bindings/spi/nuvoton,npcm-pspi.txt
-index 1fd9a4406a1d..b98203ca656d 100644
---- a/Documentation/devicetree/bindings/spi/nuvoton,npcm-pspi.txt
-+++ b/Documentation/devicetree/bindings/spi/nuvoton,npcm-pspi.txt
-@@ -12,6 +12,7 @@ Required properties:
-  - clock-names: Should be "clk_apb5".
-  - pinctrl-names : a pinctrl state named "default" must be defined.
-  - pinctrl-0 : phandle referencing pin configuration of the device.
-+ - resets : phandle to the reset control for this device.
-  - cs-gpios: Specifies the gpio pins to be used for chipselects.
-             See: Documentation/devicetree/bindings/spi/spi-bus.txt
- 
-@@ -19,16 +20,6 @@ Optional properties:
- - clock-frequency : Input clock frequency to the PSPI block in Hz.
- 		    Default is 25000000 Hz.
- 
--Aliases:
--- All the SPI controller nodes should be represented in the aliases node using
--  the following format 'spi{n}' withe the correct numbered in "aliases" node.
--
--Example:
--
--aliases {
--	spi0 = &spi0;
--};
--
- spi0: spi@f0200000 {
- 	compatible = "nuvoton,npcm750-pspi";
- 	reg = <0xf0200000 0x1000>;
-@@ -39,5 +30,6 @@ spi0: spi@f0200000 {
- 	interrupts = <GIC_SPI 31 IRQ_TYPE_LEVEL_HIGH>;
- 	clocks = <&clk NPCM7XX_CLK_APB5>;
- 	clock-names = "clk_apb5";
-+	resets = <&rstc NPCM7XX_RESET_IPSRST2 NPCM7XX_RESET_PSPI1>
- 	cs-gpios = <&gpio6 11 GPIO_ACTIVE_LOW>;
- };
--- 
-2.20.1
-
+Thanks
+Mrs. Anna H.
