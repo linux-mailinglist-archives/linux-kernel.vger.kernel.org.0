@@ -2,114 +2,147 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5C938146932
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Jan 2020 14:34:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0A2CD146920
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Jan 2020 14:31:01 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728767AbgAWNex convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Thu, 23 Jan 2020 08:34:53 -0500
-Received: from logand.com ([37.48.87.44]:33250 "EHLO logand.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726232AbgAWNex (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Jan 2020 08:34:53 -0500
-Received: by logand.com (Postfix, from userid 1001)
-        id 2C76619F8AB; Thu, 23 Jan 2020 14:34:51 +0100 (CET)
-X-Mailer: emacs 26.3 (via feedmail 11-beta-1 Q)
-From:   Tomas Hlavaty <tom@logand.com>
-To:     Viacheslav Dubeyko <slava@dubeyko.com>,
-        Ryusuke Konishi <konishi.ryusuke@gmail.com>
-Cc:     linux-nilfs <linux-nilfs@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: BUG: unable to handle kernel NULL pointer dereference at 00000000000000a8 in nilfs_segctor_do_construct
-In-Reply-To: <76887BD9-D6C4-4A89-8F55-4BEAF2828FD3@dubeyko.com>
-References: <8736emquds.fsf@logand.com> <CAKFNMo=k1wVHOwXhTLEOJ+A-nwmvJ+sN_PPa8kY8fMxrQ4R+Jw@mail.gmail.com> <76887BD9-D6C4-4A89-8F55-4BEAF2828FD3@dubeyko.com>
-Date:   Thu, 23 Jan 2020 14:00:21 +0100
-Message-ID: <87sgk6tjiy.fsf@logand.com>
+        id S1728931AbgAWNa7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 23 Jan 2020 08:30:59 -0500
+Received: from mail-ua1-f66.google.com ([209.85.222.66]:36741 "EHLO
+        mail-ua1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726729AbgAWNa6 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 23 Jan 2020 08:30:58 -0500
+Received: by mail-ua1-f66.google.com with SMTP id y3so1007358uae.3;
+        Thu, 23 Jan 2020 05:30:57 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=0+L/2IhzPeQzIOBWlkZ5pb6nsfpL9PHovfEkpJKJ33U=;
+        b=tfZ8xdMXne2j6zAYSePkCxIvjgsESJ2alS2OrK1gvvUe9qj08TPmb2CWYRjOH4kDYk
+         5F9VtLFQ7thkAFH3CCL3vWBHT6A7gLnxA0Nbbja98kpXZr+kTkjdY76QpSo1MI4vCJZc
+         uKzyYnbxDVbakiYl4bT9+fVvK1wh+o6vPDu7U0p/sFEbejl+OMXF8bHr4bcYPEj9PU4B
+         AuHHjGqDLJf5mKDhzH3dY/2VE/BkQGWEojVeCXJkLXJ8Mvz3nksoipmWzSb3v1sjLZXD
+         T7C93+Y4F41CKy8YfFiVBs8JXOPccmP6ApM+ZTPLR7kWtdbkoy3vL5TzWkU/KS5ql1RN
+         4iLw==
+X-Gm-Message-State: APjAAAUdT1rWfzN9PaDYU97tRW+uJFtX1HEJVnpdpPRqgvSEHxaZQGdA
+        e3UAZX4vGa2w59BI7jnXipfFWX+AI3Gc2SgGzBe+j0UU
+X-Google-Smtp-Source: APXvYqyRlraHNmDMZdZCjBusJQDVjLX1k8LZn1KXe8p0/vt6EjbszONOt8LLgQR0Jfc3uHWQsHfSAGvWLUwy+B2lRik=
+X-Received: by 2002:a9d:7984:: with SMTP id h4mr11516407otm.297.1579785825019;
+ Thu, 23 Jan 2020 05:23:45 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8BIT
+References: <56c7b6d5-1248-15bd-8441-5d80557455b3@free.fr> <CAMuHMdX3kZoEfCeGamreeWq0-Tu2+Mw8MYEbRUZV8wBS+e2K=A@mail.gmail.com>
+ <8f1f01a1-b0c7-77d5-7d01-dd53811fa217@free.fr> <CAMuHMdW=0Qf=bdE8Vy75wySRV5wzWhgM=-vhXjc0RhLGwomF_g@mail.gmail.com>
+ <91058d8f-7075-6baa-6131-cce1ccd160a6@free.fr>
+In-Reply-To: <91058d8f-7075-6baa-6131-cce1ccd160a6@free.fr>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Thu, 23 Jan 2020 14:23:33 +0100
+Message-ID: <CAMuHMdWVisqq-rXi4aB2woKb9rHbXoQjWcbhN4zcf3F2+jhewg@mail.gmail.com>
+Subject: Re: [RFC PATCH v2] clk: Use a new helper in managed functions
+To:     Marc Gonzalez <marc.w.gonzalez@free.fr>
+Cc:     Arnd Bergmann <arnd@arndb.de>,
+        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Russell King <linux@armlinux.org.uk>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Sudip Mukherjee <sudipm.mukherjee@gmail.com>,
+        Guenter Roeck <linux@roeck-us.net>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Viacheslav,
+Hi Marc,
 
-Viacheslav Dubeyko <slava@dubeyko.com> writes:
-> (1) the partition size?
+On Thu, Jan 23, 2020 at 1:18 PM Marc Gonzalez <marc.w.gonzalez@free.fr> wrote:
+> On 23/01/2020 11:32, Geert Uytterhoeven wrote:
+> > On Thu, Jan 23, 2020 at 11:13 AM Marc Gonzalez wrote:
+> >> A limitation of devm_add_action is that it stores the void *data argument "as is".
+> >> Users cannot pass the address of a struct on the stack. devm_add() addresses that
+> >> specific use-case, while being a minimal wrapper around devres_alloc + devres_add.
+> >> (devm_add_action adds an extra level of indirection.)
+> >
+> > I didn't mean the advantage of devm_add() over devm_add_action(),
+> > but the advantage of dr_release_t, which has a device pointer.
+>
+> I'm confused...
+>
+>         void *devres_alloc(dr_release_t release, size_t size, gfp_t gfp);
+>         int devm_add_action(struct device *dev, void (*action)(void *), void *data);
+>
+> devres_alloc() expects a dr_release_t argument; devm_add() is a thin wrapper
+> around devres_alloc(); ergo devm_add() expects that dr_release_t argument.
 
-the first disk with crash was 1TB
+OK.
 
-the second disk with crash, which i have by me, is 2TB:
+> devm_add_action() is a "heavier" wrapper around devres_alloc() which defines
+> a "private" release function which calls a user-defined "action".
+> (i.e. the extra level of indirection I mentioned above.)
+>
+> I don't understand the question about the advantage of dr_release_t.
 
-$ lsblk /dev/sdb
-NAME      MAJ:MIN RM  SIZE RO TYPE  MOUNTPOINT
-sdb         8:16   0  1.8T  0 disk  
-└─extdisk 254:2    0  1.8T  0 crypt /mnt/b
+OK. So devm_add_action() is the odd man out there.
 
-> (2) the logical block size?
-> (3) the segment size?
+> >>>> +       void *data = devres_alloc(func, size, GFP_KERNEL);
+> >>>> +
+> >>>> +       if (data) {
+> >>>> +               memcpy(data, arg, size);
+> >>>> +               devres_add(dev, data);
+> >>>> +       } else
+> >>>> +               func(dev, arg);
+> >>>> +
+> >>>> +       return data;
+> >>>
+> >>> Why return data or NULL, instead of 0 or -Efoo, like devm_add_action()?
+> >>
+> >> My intent is to make devm_add a minimal wrapper (it even started out as
+> >> a macro). As such, I just transparently pass the result of devres_alloc.
+> >>
+> >> Do you see an advantage in processing the result?
+> >
+> > There are actually two questions to consider here:
+> >   1. Is there a use case for returning the data pointer?
+> >      I.e. will the caller ever use it?
+> >   2. Can there be another failure mode than out-of-memory?
+> >      Changing from NULL to ERR_PTR() later means that all callers
+> >      need to be updated.
+>
+> I think I see your point. You're saying it's not good to kick the can down
+> the road, because callers won't know what to do with the pointer.
 
-how can i find (2) and (3) out?
+Exactly.
 
-here is the output of nilfs-tune:
+> Actually, I'm in the same boat as these users. I looked at
+> devres_alloc -> devres_alloc_node -> alloc_dr -> kmalloc_node_track_caller -> __do_kmalloc
+>
+> Basically, the result is NULL when something went wrong, but the actual
+> error condition is not propagated. It could be:
+> 1) check_add_overflow() finds an overflow
+> 2) size > KMALLOC_MAX_CACHE_SIZE
+> 3) kmalloc_slab() or kasan_kmalloc() fail
+> 4) different errors on the CONFIG_NUMA path
+>
+> Basically, if lower-level functions don't propagate errors, it's not
+> easy for a wrapper to do something sensible... ENOMEM looks reasonable
+> for kmalloc-related failures.
 
-$ sudo nilfs-tune -l /dev/mapper/extdisk
-nilfs-tune 2.2.7
-Filesystem volume name:	  backup1_nilfs2
-Filesystem UUID:	  7d9708f9-464f-41b7-a0c6-eda18741012f
-Filesystem magic number:  0x3434
-Filesystem revision #:	  2.0
-Filesystem features:      (none)
-Filesystem state:	  valid
-Filesystem OS type:	  Linux
-Block size:		  4096
-Filesystem created:	  Thu Dec 27 14:14:14 2018
-Last mount time:	  Fri Dec 20 13:06:15 2019
-Last write time:	  Thu Jan 23 13:04:30 2020
-Mount count:		  15
-Maximum mount count:	  50
-Reserve blocks uid:	  0 (user root)
-Reserve blocks gid:	  0 (group root)
-First inode:		  11
-Inode size:		  128
-DAT entry size:		  32
-Checkpoint size:	  192
-Segment usage size:	  16
-Number of segments:	  238465
-Device size:		  2000396834816
-First data block:	  1
-# of blocks per segment:  2048
-Reserved segments %:	  5
-Last checkpoint #:	  9884
-Last block address:	  280841435
-Last sequence #:	  137120
-Free blocks count:	  207591424
-Commit interval:	  0
-# of blks to create seg:  0
-CRC seed:		  0x5172270a
-CRC check sum:		  0x2ef767d2
-CRC check data size:	  0x00000118
+Indeed.  If devm_add() would return an error code, callers could just check
+for error, and propagate the error code, without a need for hardcoding -ENOMEM.
 
-it seems strange that the last write time is today, even though i
-mounted the partition read-only
+Gr{oetje,eeting}s,
 
-/dev/mapper/extdisk on /mnt/b type nilfs2 (ro,relatime)
+                        Geert
 
-> (4) how the partition was created?
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-using parted
-then cryptsetup luksFormat
-then cryptsetup luksOpen
-then mkfs.nilfs2
-
-> (5) the version of tools that created the partition?
-
-how can i find this out?  is it saved somewhere?
-
-> (6) the amount of free space on the partition?
-
-/dev/mapper/extdisk  1.9T  1.1T  699G  61% /mnt/b
-
-Regards,
-
-Tomas
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
