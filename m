@@ -2,138 +2,202 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0EA50147383
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Jan 2020 23:05:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 07962147387
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Jan 2020 23:05:47 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729235AbgAWWFM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 23 Jan 2020 17:05:12 -0500
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:37160 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727215AbgAWWFL (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Jan 2020 17:05:11 -0500
-Received: by mail-wr1-f65.google.com with SMTP id w15so5019148wru.4;
-        Thu, 23 Jan 2020 14:05:09 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:autocrypt:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=j9l2lUNEgC3uCWE9qlaj3kgcT1oYJLaipyq8aFv9F14=;
-        b=rE/IFdm7j39ezBy8ojPUVMvJVVNmQdON1spIWG2VzV1+eLS4doZbPYQD2n19fRQ6mB
-         8WFVqxzrllTXmpXAumFMgt40EDOOEfEckfzy+mr7UDIMip6lSp1CIvf6Cok7ZO73seAe
-         Ux8C2AUBLibXoSBc0ESsyrm60rYyeIVy6QO7h7cKZzI+W0BqPz2S4SaPstj2eEvVre5H
-         argn8T74ikw9/UOjcKF4vrAvQch39V16CL4Wtm9xvUvXrg8p3hTbxGyb7vRzWaJHsOSR
-         qU0m2ObgVhwRy77mzVfXQEZRk8ocR4foatk92OyhX0VzEcT4vGPaXwJFW65sYPJTyd1O
-         z1Aw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:autocrypt
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=j9l2lUNEgC3uCWE9qlaj3kgcT1oYJLaipyq8aFv9F14=;
-        b=hKSrMG3yusPBku2Ksla+d4sUus/RWi9Sag39lNjjEG8GJLTSvpNhYfQ42gWVk4GNL0
-         Yvd+sSdia/kW3KAHn+no9iHMH0ipk/xlAR30oqjLClfu6AoM60Ezl7/cfiKqAT5WaPC8
-         otJtVMZoVBELB8LZoc1t4yxwrTJRCVao10OeNFx+nnbyG3xedzFd/eZxSc8AqCZOEtKB
-         ZBkV1RdbE+Czdis7Bn9wj0EzDjOqGZkBLUjrNjdNN0E/vzflb4S0xxTEVIR/KdJRwNJs
-         AefhLOG+qh/+1Uuy8WPa/pdTz00nJeVeJC3kZD2NjKf850vwqTu/+1P+OJicR/E7pKd5
-         EUpw==
-X-Gm-Message-State: APjAAAVa98dDCzYgIDfd6mL5KQs13n+mu+wA7RH/06j6494KnnjrzLe4
-        yor2Om8mZEdnNoQa5AQXaeSMGngo
-X-Google-Smtp-Source: APXvYqwyECFRlyTuvh0a/a0sX4wpfpiw2FBvyVgEITEUcQH2qCBgcv2IfiK1j8cCNf89bKJOqCbGDA==
-X-Received: by 2002:adf:fa87:: with SMTP id h7mr239315wrr.172.1579817108569;
-        Thu, 23 Jan 2020 14:05:08 -0800 (PST)
-Received: from [10.67.49.112] ([192.19.223.252])
-        by smtp.gmail.com with ESMTPSA id n1sm4481499wrw.52.2020.01.23.14.05.06
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 23 Jan 2020 14:05:07 -0800 (PST)
-Subject: Re: [PATCH net] net: bcmgenet: Use netif_tx_napi_add() for TX NAPI
-To:     Florian Fainelli <f.fainelli@gmail.com>, netdev@vger.kernel.org
-Cc:     "David S. Miller" <davem@davemloft.net>,
-        "open list:BROADCOM GENET ETHERNET DRIVER" 
-        <bcm-kernel-feedback-list@broadcom.com>,
-        open list <linux-kernel@vger.kernel.org>
-References: <20200123174934.29500-1-f.fainelli@gmail.com>
-From:   Doug Berger <opendmb@gmail.com>
-Autocrypt: addr=opendmb@gmail.com; prefer-encrypt=mutual; keydata=
- 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
- rQQYjNSD8+NSdOsIpGNCZ9xhWw==
-Message-ID: <abbd691d-592f-f58d-215b-0f40da485e76@gmail.com>
-Date:   Thu, 23 Jan 2020 14:05:05 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.2.2
+        id S1729336AbgAWWFo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 23 Jan 2020 17:05:44 -0500
+Received: from mga09.intel.com ([134.134.136.24]:58721 "EHLO mga09.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727215AbgAWWFn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 23 Jan 2020 17:05:43 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga005.jf.intel.com ([10.7.209.41])
+  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 23 Jan 2020 14:05:27 -0800
+X-IronPort-AV: E=Sophos;i="5.70,355,1574150400"; 
+   d="scan'208";a="400485240"
+Received: from ahduyck-desk1.jf.intel.com ([10.7.198.76])
+  by orsmga005-auth.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 23 Jan 2020 14:05:26 -0800
+Message-ID: <c0046c44ba12134b857416a8ec9ab44fac582f37.camel@linux.intel.com>
+Subject: Re: [PATCH v16.1 0/9] mm / virtio: Provide support for free page
+ reporting
+From:   Alexander Duyck <alexander.h.duyck@linux.intel.com>
+To:     "Graf (AWS), Alexander" <graf@amazon.de>
+Cc:     Alexander Duyck <alexander.duyck@gmail.com>,
+        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+        "mst@redhat.com" <mst@redhat.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "willy@infradead.org" <willy@infradead.org>,
+        "mhocko@kernel.org" <mhocko@kernel.org>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+        "mgorman@techsingularity.net" <mgorman@techsingularity.net>,
+        "vbabka@suse.cz" <vbabka@suse.cz>,
+        "yang.zhang.wz@gmail.com" <yang.zhang.wz@gmail.com>,
+        "nitesh@redhat.com" <nitesh@redhat.com>,
+        "konrad.wilk@oracle.com" <konrad.wilk@oracle.com>,
+        "david@redhat.com" <david@redhat.com>,
+        "pagupta@redhat.com" <pagupta@redhat.com>,
+        "riel@surriel.com" <riel@surriel.com>,
+        "lcapitulino@redhat.com" <lcapitulino@redhat.com>,
+        "dave.hansen@intel.com" <dave.hansen@intel.com>,
+        "wei.w.wang@intel.com" <wei.w.wang@intel.com>,
+        "aarcange@redhat.com" <aarcange@redhat.com>,
+        "pbonzini@redhat.com" <pbonzini@redhat.com>,
+        "dan.j.williams@intel.com" <dan.j.williams@intel.com>,
+        "osalvador@suse.de" <osalvador@suse.de>,
+        "Paterson-Jones, Roland" <rolandp@amazon.com>,
+        "hannes@cmpxchg.org" <hannes@cmpxchg.org>,
+        "hare@suse.com" <hare@suse.com>,
+        Christian Borntraeger <borntraeger@de.ibm.com>,
+        "Singh, Balbir" <sblbir@amazon.com>
+Date:   Thu, 23 Jan 2020 14:05:26 -0800
+In-Reply-To: <E7B6C412-76D1-47B2-BE62-F29A63A0C8D5@amazon.de>
+References: <20200122173040.6142.39116.stgit@localhost.localdomain>
+         <914aa4c3-c814-45e0-830b-02796b00b762@amazon.com>
+         <af0b12780092e0007ec9e6dbfc92bc15b604b8f4.camel@linux.intel.com>
+         <ad73c0c8-3a9c-8ffd-9a31-7e9a5cd5f246@amazon.com>
+        ,<3e24a8ad7afe7c2f6ec8ffe7260a3e31bbe41651.camel@linux.intel.com>
+         <E7B6C412-76D1-47B2-BE62-F29A63A0C8D5@amazon.de>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.32.5 (3.32.5-1.fc30) 
 MIME-Version: 1.0
-In-Reply-To: <20200123174934.29500-1-f.fainelli@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 1/23/20 9:49 AM, Florian Fainelli wrote:
-> Before commit 7587935cfa11 ("net: bcmgenet: move NAPI initialization to
-> ring initialization") moved the code, this used to be
-> netif_tx_napi_add(), but we lost that small semantic change in the
-> process, restore that.
+On Thu, 2020-01-23 at 18:47 +0000, Graf (AWS), Alexander wrote:
+> > > Am 23.01.2020 um 19:34 schrieb Alexander Duyck <alexander.h.duyck@linux.intel.com>:
+> > > 
+> > > ﻿On Thu, 2020-01-23 at 17:54 +0100, Alexander Graf wrote:
+> > > > On 23.01.20 17:26, Alexander Duyck wrote:
+> > > > On Thu, 2020-01-23 at 11:20 +0100, Alexander Graf wrote:
+> > > > > Hi Alex,
+> > > > > > On 22.01.20 18:43, Alexander Duyck wrote:
+> > > [...]
+> > > > > > The overall guest size is kept fairly small to only a few GB while the test
+> > > > > > is running. If the host memory were oversubscribed this patch set should
+> > > > > > result in a performance improvement as swapping memory in the host can be
+> > > > > > avoided.
+> > > > > I really like the approach overall. Voluntarily propagating free memory
+> > > > > from a guest to the host has been a sore point ever since KVM was
+> > > > > around. This solution looks like a very elegant way to do so.
+> > > > > The big piece I'm missing is the page cache. Linux will by default try
+> > > > > to keep the free list as small as it can in favor of page cache, so most
+> > > > > of the benefit of this patch set will be void in real world scenarios.
+> > > > Agreed. This is a the next piece of this I plan to work on once this is
+> > > > accepted. For now the quick and dirty approach is to essentially make use
+> > > > of the /proc/sys/vm/drop_caches interface in the guest by either putting
+> > > > it in a cronjob somewhere or to have it after memory intensive workloads.
+> > > > > Traditionally, this was solved by creating pressure from the host
+> > > > > through virtio-balloon: Exactly the piece that this patch set gets away
+> > > > > with. I never liked "ballooning", because the host has very limited
+> > > > > visibility into the actual memory utility of its guests. So leaving the
+> > > > > decision on how much memory is actually needed at a given point in time
+> > > > > should ideally stay with the guest.
+> > > > > What would keep us from applying the page hinting approach to inactive,
+> > > > > clean page cache pages? With writeback in place as well, we would slowly
+> > > > > propagate pages from
+> > > > >   dirty -> clean -> clean, inactive -> free -> host owned
+> > > > > which gives a guest a natural path to give up "not important" memory.
+> > > > I considered something similar. Basically one thought I had was to
+> > > > essentially look at putting together some sort of epoch. When the host is
+> > > > under memory pressure it would need to somehow notify the guest and then
+> > > > the guest would start moving the epoch forward so that we start evicting
+> > > > pages out of the page cache when the host is under memory pressure.
+> > > I think we want to consider an interface in which the host actively asks
+> > > guests to purge pages to be on the same line as swapping: The last line
+> > > of defense.
+> > 
+> > I suppose. The only reason I was thinking that we may want to look at
+> > doing something like that was to avoid putting pressure on the guest when
+> > the host doesn't need us to.
+> > 
+> > > In the normal mode of operation, you still want to shrink down
+> > > voluntarily, so that everyone cooperatively tries to make free for new
+> > > guests you could potentially run on the same host.
+> > > If you start to apply pressure to guests to find out of they might have
+> > > some pages to spare, we're almost back to the old style ballooning approach.
+> > 
+> > Thats true. In addition we avoid possible issues with us trying to flush
+> > out a bunch of memory from multiple guests as once since they would be
+> > proactively freeing the memory.
+> > 
+> > I'm thinking the inactive state could be something similar to MADV_FREE in
+> > terms of behavior.  If it sits in the queue for long enough we decide
+> > nobody is using it anymore so it is freed, but if it is accessed it is
+> > cheap for us to just put it back without much in the way of overhead.
 > 
-> Fixes: 7587935cfa11 ("net: bcmgenet: move NAPI initialization to ring initialization")
-> Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
-> ---
->  drivers/net/ethernet/broadcom/genet/bcmgenet.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
+> I think the main difference between the MADV_FREE and what we want is
+> that we also want to pull the page into active state on read.
 > 
-> diff --git a/drivers/net/ethernet/broadcom/genet/bcmgenet.c b/drivers/net/ethernet/broadcom/genet/bcmgenet.c
-> index 120fa05a39ff..0a8624be44a9 100644
-> --- a/drivers/net/ethernet/broadcom/genet/bcmgenet.c
-> +++ b/drivers/net/ethernet/broadcom/genet/bcmgenet.c
-> @@ -2164,8 +2164,8 @@ static void bcmgenet_init_tx_ring(struct bcmgenet_priv *priv,
->  				  DMA_END_ADDR);
->  
->  	/* Initialize Tx NAPI */
-> -	netif_napi_add(priv->dev, &ring->napi, bcmgenet_tx_poll,
-> -		       NAPI_POLL_WEIGHT);
-> +	netif_tx_napi_add(priv->dev, &ring->napi, bcmgenet_tx_poll,
-> +			  NAPI_POLL_WEIGHT);
->  }
->  
->  /* Initialize a RDMA ring */
-> 
+> But sure, that's a possible interface. What I'd like to make sure of is
+> that we can have different host policies: discard the page straight
+> away, keep it for a fixed amount of time or discard it lazily on
+> pressure. As long as the guest gives the host its clean pages
+> voluntarily, I'm happy.
 
-Acked-by: Doug Berger <opendmb@gmail.com>
+Well the current model I am working with has us using MAD_DONTNEED from
+the hypervisor if the unsued page is reported. So it will still have to be
+pulled back in, but it will start out as a zeroed page.
 
-Thanks Florian!
+> Btw, have you already given thought to the faulting interface when a
+> page was evicted? That's where it gets especially tricky. With a simple
+> "discard the page straight away" style interface, we would not have to
+> fault.
+
+So the fault I was referring to would be inside the guest only. Basically
+we would keep the page for a little while longer while it is inactive and
+just let the mapping go. Then if something accesses it before we finally
+release it we don't pay the heavy cost of having to get it back from the
+host and then copying the memory back in from swap or the file.
+
+I'm just loosely basing that on the "proactive reclaim" idea that was
+proposed back at the last lsf/mm summit (https://lwn.net/Articles/787611/)
+. I still haven't even started work on any of those pieces yet nor looked
+at it too closely. I'm still in the information gathering phase.
+
+
+> > > Btw, have you ever looked at CMM2 [1]? With that, the host can
+> > > essentially just "steal" pages from the guest when it needs any, without
+> > > the need to execute the guest meanwhile. That means inside the host
+> > > swapping path, CMM2 can just evict guest page cache pages as easily as
+> > > we evict host page cache pages. To me, that's even more attractive in
+> > > the swap / emergency case than an interface which requires the guest to
+> > > proactively execute while we are in a low mem situation.
+> > 
+> > <snip>
+> > 
+> > > [1] https://www.kernel.org/doc/ols/2006/ols2006v2-pages-321-336.pdf
+> > 
+> > I hadn't read through this before. If nothing else the verbiage is useful
+> > since what we are discussing is essentially how to deal with the
+> > "volatile" pages within the system, the "unused" pages are the ones we
+> > have reported to the host with the page reporting, and the "stable" pages
+> > are those pages that have been faulted back into the guest when it
+> > accessed them.
+> > 
+> > I can see there would be some advantages to CMM2, however it seems like it
+> > is adding a significant amount of state to pages since it has to support a
+> > fairly significant number of states and then there is the added complexity
+> > for all the transitions in and out of stable from the various states
+> > depending on how things are being changed.
+> > 
+> > Do you happen to know if anyone has done any research into how much
+> > overhead is added with CMM2 enabled? I'd be curious since it seems like
+> > the paper mentions having to track a signficant number of state
+> > transitions for the memory throughout the kernel.
+> 
+> Let me add Christian Borntraeger to the thread. He can definitely help
+> on that side. I asked him earlier today and he confirmed that cmm2 is in
+> active use on s390.
+> 
+> Alex
+
+Okay, sounds good.
+
+- Alex
+
