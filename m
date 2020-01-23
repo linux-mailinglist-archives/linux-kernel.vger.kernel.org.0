@@ -2,234 +2,68 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A59B8146605
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Jan 2020 11:58:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A248C14662B
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Jan 2020 11:59:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726885AbgAWK6i (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 23 Jan 2020 05:58:38 -0500
-Received: from foss.arm.com ([217.140.110.172]:37720 "EHLO foss.arm.com"
+        id S1729163AbgAWK71 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 23 Jan 2020 05:59:27 -0500
+Received: from bilbo.ozlabs.org ([203.11.71.1]:34149 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726099AbgAWK6h (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Jan 2020 05:58:37 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E298931B;
-        Thu, 23 Jan 2020 02:58:35 -0800 (PST)
-Received: from [10.1.197.50] (e120937-lin.cambridge.arm.com [10.1.197.50])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 3D4DC3F6C4;
-        Thu, 23 Jan 2020 02:58:35 -0800 (PST)
-Subject: Re: [RFC PATCH 03/11] firmware: arm_scmi: Add support for
- notifications message processing
-To:     Jim Quinlan <james.quinlan@broadcom.com>,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc:     sudeep.holla@arm.com, lukasz.luba@arm.com
-References: <20200120122333.46217-1-cristian.marussi@arm.com>
- <20200120122333.46217-4-cristian.marussi@arm.com>
- <4c59008e-6010-fb98-d7bf-8677454d1e4f@broadcom.com>
-From:   Cristian Marussi <cristian.marussi@arm.com>
-Message-ID: <049bac5a-dbc2-f3a2-a039-1dcf4c503103@arm.com>
-Date:   Thu, 23 Jan 2020 10:58:33 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.1
+        id S1729108AbgAWK7Q (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 23 Jan 2020 05:59:16 -0500
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 483K5r5snRz9sSQ;
+        Thu, 23 Jan 2020 21:59:12 +1100 (AEDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ellerman.id.au;
+        s=201909; t=1579777154;
+        bh=HLfndF9RAt4g+AGkbC5qXfhi2W5ru43lrY+OrFwE77c=;
+        h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+        b=HSStN14FpEBPLwZGlx8oA+ZZNFfWdzHQErga4zK0XJhZfzP21D9wVvy2nuua2Mcro
+         coc6kYH0eO3TodIQoXW3uHMTv0a3Qpku4sXMmh6C1rqkRglSS/MAUic6YqP0/byH0G
+         ZJ7pawYuL1pjqPlF2vm4ykwCpFBmFOSc0iYPFqJZo0mEpsJQ76+wJbrBrKrEo9nmNs
+         ZgSBsLMbn5gSujjwiM9+A2Ut5yJUmDY0rLKA8hcDKkIQJCPsjUpvQ3nRRKQRMY/OPV
+         I80FJuKhnIDrVr9c3L0OKrBKo50KaQQi2hgOJyv7mbq1cJ3kvDlZyYKoDIRW7yeq51
+         dxF8E/uUq8TlQ==
+From:   Michael Ellerman <mpe@ellerman.id.au>
+To:     Christophe Leroy <christophe.leroy@c-s.fr>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>
+Cc:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org
+Subject: Re: [PATCH v2 5/6] powerpc/32s: prepare prevent_user_access() for user_access_end()
+In-Reply-To: <824b69f5452d1d41d12c4dbd306d4b8f32d493fc.1579715466.git.christophe.leroy@c-s.fr>
+References: <12a4be679e43de1eca6e5e2173163f27e2f25236.1579715466.git.christophe.leroy@c-s.fr> <824b69f5452d1d41d12c4dbd306d4b8f32d493fc.1579715466.git.christophe.leroy@c-s.fr>
+Date:   Thu, 23 Jan 2020 21:59:07 +1100
+Message-ID: <87pnfaiglg.fsf@mpe.ellerman.id.au>
 MIME-Version: 1.0
-In-Reply-To: <4c59008e-6010-fb98-d7bf-8677454d1e4f@broadcom.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Jim
+Christophe Leroy <christophe.leroy@c-s.fr> writes:
+> In preparation of implementing user_access_begin and friends
+> on powerpc, the book3s/32 version of prevent_user_access() need
+> to be prepared for user_access_end().
+>
+> user_access_end() doesn't provide the address and size which
+> were passed to user_access_begin(), required by prevent_user_access()
+> to know which segment to modify.
+>
+> The list of segments which where unprotected by allow_user_access()
+> are available in current->kuap. But we don't want prevent_user_access()
+> to read this all the time, especially everytime it is 0 (for instance
+> because the access was not a write access).
+>
+> Implement a special direction case named KUAP_SELF. In this case only,
+> the addr and end are retrieved from current->kuap.
 
-On 22/01/2020 23:27, Jim Quinlan wrote:
-> Hi,
-> 
-> I tried "git am" on an mbox file  from these commits and get stuck on
-> 
->     Applying: firmware: arm_scmi: Add receive buffer support for notifications
->     Applying: firmware: arm_scmi: Update protocol commands and notification list
->     Applying: firmware: arm_scmi: Add support for notifications message processing
->     error: patch failed: drivers/firmware/arm_scmi/driver.c:355
->     error: drivers/firmware/arm_scmi/driver.c: patch does not apply
-> 
-> 
-> Could you please apply this email patchset and let me know if it works for you?  I am doing this onto
-> 
->     257d0e20ec4f include: trace: Add SCMI header with trace events     
-> 
-> 
+Can we call it KUAP_CURRENT?
 
-Sorry... my fault .. it is on top of the following commit on that same branch in fact:
+ie. "use the KUAP state in current"
 
-729d3530a504 drivers: firmware: scmi: Extend SCMI transport layer by trace events
-
-10:51 $ git am patch_scmi_notif/ext_V1/final/00*                          
-Applying: firmware: arm_scmi: Add receive buffer support for notifications
-Applying: firmware: arm_scmi: Update protocol commands and notification list         
-Applying: firmware: arm_scmi: Add support for notifications message processing
-Applying: firmware: arm_scmi: Add core notifications support                    
-Applying: firmware: arm_scmi: Add notifications anti-tampering                                 
-Applying: firmware: arm_scmi: Enable core notifications                  
-Applying: firmware: arm_scmi: Add Power notifications support             
-Applying: firmware: arm_scmi: Add Perf notifications support                
-Applying: firmware: arm_scmi: Add Sensor notifications support             
-Applying: firmware: arm_scmi: Add Reset notifications support                  
-Applying: firmware: arm_scmi: Add Base notifications support            
-
-I'll follow up to my cover to warn about this.
-
-Thanks for trying it out.
-
-Regards
-
-Cristian
-
-> as you directed.
-> 
-> Thanks,
-> Jim
-> 
-> 
-> 
-> On 1/20/20 7:23 AM, Cristian Marussi wrote:
->> From: Sudeep Holla <sudeep.holla@arm.com>
->>
->> Add the mechanisms to distinguish notifications from delayed responses and
->> to properly fetch notification messages upon reception: notifications
->> processing does not continue further after the fetch phase.
->>
->> Signed-off-by: Sudeep Holla <sudeep.holla@arm.com>
->> Signed-off-by: Cristian Marussi <cristian.marussi@arm.com>
->> ---
->>  drivers/firmware/arm_scmi/driver.c | 92 +++++++++++++++++++++---------
->>  1 file changed, 65 insertions(+), 27 deletions(-)
->>
->> diff --git a/drivers/firmware/arm_scmi/driver.c b/drivers/firmware/arm_scmi/driver.c
->> index 9611e8037d77..28ed1f0cb417 100644
->> --- a/drivers/firmware/arm_scmi/driver.c
->> +++ b/drivers/firmware/arm_scmi/driver.c
->> @@ -212,6 +212,15 @@ static void scmi_fetch_response(struct scmi_xfer *xfer,
->>  	memcpy_fromio(xfer->rx.buf, mem->msg_payload + 4, xfer->rx.len);
->>  }
->>  
->> +static void scmi_fetch_notification(struct scmi_xfer *xfer, size_t max_len,
->> +				    struct scmi_shared_mem __iomem *mem)
->> +{
->> +	/* Skip only length of header in payload area i.e 4 bytes */
->> +	xfer->rx.len = min_t(size_t, max_len, ioread32(&mem->length) - 4);
->> +
->> +	memcpy_fromio(xfer->rx.buf, mem->msg_payload, xfer->rx.len);
->> +}
->> +
->>  /**
->>   * pack_scmi_header() - packs and returns 32-bit header
->>   *
->> @@ -339,6 +348,58 @@ __scmi_xfer_put(struct scmi_xfers_info *minfo, struct scmi_xfer *xfer)
->>  	spin_unlock_irqrestore(&minfo->xfer_lock, flags);
->>  }
->>  
->> +static void scmi_handle_notification(struct scmi_chan_info *cinfo, u32 msg_hdr)
->> +{
->> +	struct scmi_xfer *xfer;
->> +	struct device *dev = cinfo->dev;
->> +	struct scmi_info *info = handle_to_scmi_info(cinfo->handle);
->> +	struct scmi_xfers_info *minfo = &info->rx_minfo;
->> +	struct scmi_shared_mem __iomem *mem = cinfo->payload;
->> +
->> +	xfer = scmi_xfer_get(cinfo->handle, minfo);
->> +	if (IS_ERR(xfer)) {
->> +		dev_err(dev, "failed to get free message slot (%ld)\n",
->> +			PTR_ERR(xfer));
->> +		iowrite32(SCMI_SHMEM_CHAN_STAT_CHANNEL_FREE,
->> +			  &mem->channel_status);
->> +		return;
->> +	}
->> +
->> +	unpack_scmi_header(msg_hdr, &xfer->hdr);
->> +	scmi_dump_header_dbg(dev, &xfer->hdr);
->> +	scmi_fetch_notification(xfer, info->desc->max_msg_size, mem);
->> +	__scmi_xfer_put(minfo, xfer);
->> +
->> +	iowrite32(SCMI_SHMEM_CHAN_STAT_CHANNEL_FREE, &mem->channel_status);
->> +}
->> +
->> +static void scmi_handle_xfer_delayed_resp(struct scmi_chan_info *cinfo,
->> +					  u16 xfer_id, bool delayed_resp)
->> +{
->> +	struct scmi_xfer *xfer;
->> +	struct device *dev = cinfo->dev;
->> +	struct scmi_info *info = handle_to_scmi_info(cinfo->handle);
->> +	struct scmi_xfers_info *minfo = &info->tx_minfo;
->> +	struct scmi_shared_mem __iomem *mem = cinfo->payload;
->> +
->> +	/* Are we even expecting this? */
->> +	if (!test_bit(xfer_id, minfo->xfer_alloc_table)) {
->> +		dev_err(dev, "message for %d is not expected!\n", xfer_id);
->> +		return;
->> +	}
->> +
->> +	xfer = &minfo->xfer_block[xfer_id];
->> +
->> +	scmi_dump_header_dbg(dev, &xfer->hdr);
->> +
->> +	scmi_fetch_response(xfer, mem);
->> +
->> +	if (delayed_resp)
->> +		complete(xfer->async_done);
->> +	else
->> +		complete(&xfer->done);
->> +}
->> +
->>  /**
->>   * scmi_rx_callback() - mailbox client callback for receive messages
->>   *
->> @@ -355,41 +416,18 @@ static void scmi_rx_callback(struct mbox_client *cl, void *m)
->>  {
->>  	u8 msg_type;
->>  	u32 msg_hdr;
->> -	u16 xfer_id;
->> -	struct scmi_xfer *xfer;
->>  	struct scmi_chan_info *cinfo = client_to_scmi_chan_info(cl);
->> -	struct device *dev = cinfo->dev;
->> -	struct scmi_info *info = handle_to_scmi_info(cinfo->handle);
->> -	struct scmi_xfers_info *minfo = &info->tx_minfo;
->>  	struct scmi_shared_mem __iomem *mem = cinfo->payload;
->>  
->>  	msg_hdr = ioread32(&mem->msg_header);
->>  	msg_type = MSG_XTRACT_TYPE(msg_hdr);
->> -	xfer_id = MSG_XTRACT_TOKEN(msg_hdr);
->>  
->>  	if (msg_type == MSG_TYPE_NOTIFICATION)
->> -		return; /* Notifications not yet supported */
->> -
->> -	/* Are we even expecting this? */
->> -	if (!test_bit(xfer_id, minfo->xfer_alloc_table)) {
->> -		dev_err(dev, "message for %d is not expected!\n", xfer_id);
->> -		return;
->> -	}
->> -
->> -	xfer = &minfo->xfer_block[xfer_id];
->> -
->> -	scmi_dump_header_dbg(dev, &xfer->hdr);
->> -
->> -	scmi_fetch_response(xfer, mem);
->> -
->> -	trace_scmi_rx_done(xfer->transfer_id, xfer->hdr.id,
->> -			   xfer->hdr.protocol_id, xfer->hdr.seq,
->> -			   msg_type);
->> -
->> -	if (msg_type == MSG_TYPE_DELAYED_RESP)
->> -		complete(xfer->async_done);
->> +		scmi_handle_notification(cinfo, msg_hdr);
->>  	else
->> -		complete(&xfer->done);
->> +		scmi_handle_xfer_delayed_resp(cinfo, MSG_XTRACT_TOKEN(msg_hdr),
->> +					      msg_type);
->> +
->>  }
->>  
->>  /**
-> 
-> 
-
+cheers
