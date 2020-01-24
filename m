@@ -2,98 +2,97 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 97A05148F4A
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Jan 2020 21:23:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EB15D148F27
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Jan 2020 21:12:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392065AbgAXUXq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 24 Jan 2020 15:23:46 -0500
-Received: from mail-lf1-f67.google.com ([209.85.167.67]:44601 "EHLO
-        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388724AbgAXUXo (ORCPT
+        id S2404202AbgAXUMg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 24 Jan 2020 15:12:36 -0500
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:33841 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387535AbgAXUMg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 24 Jan 2020 15:23:44 -0500
-Received: by mail-lf1-f67.google.com with SMTP id v201so1998987lfa.11
-        for <linux-kernel@vger.kernel.org>; Fri, 24 Jan 2020 12:23:43 -0800 (PST)
+        Fri, 24 Jan 2020 15:12:36 -0500
+Received: by mail-wr1-f66.google.com with SMTP id t2so3519283wrr.1
+        for <linux-kernel@vger.kernel.org>; Fri, 24 Jan 2020 12:12:34 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=lixom-net.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=YNUNzci7Ki+kYYCPvb39XVTgjfk5mcI92JUtukf799o=;
-        b=eqqiUcBNVVH+UrA+DM3vLI5nS815gkneczHy+NGnuiq3u2HqT3jXnATb3eUDRR0GQO
-         4vhlHlDPiiL772CNPAMzt7U0uuZgh0C0WRdblM4zctdf4R4P5COJNKEnppD+cgWFjWuG
-         UhNX+3otnjoeMnIk8Eu5aV39oo0SUmgI6x4FHrQsttiGslEol8mXa5msrnfUOfthAt9F
-         2SWMdciNoyytzAofnwUOrpSyBSMD2gBICMpHgqW4xFKp1daMjuC7pJgBS3xGq+yh0SYx
-         1nzPpy9kkj4R/xCGmgN7cfKKIKqH2cDL/1L5gcnO5n9yN3WfJmDaqL02PD69OmM6KGNi
-         2P2g==
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=rwO60z18tzr7WQ1TP+fRraEsg7xwuQbgnqSnqaMw5hc=;
+        b=b6nEs34Lez22ZBBp+RU/DKcDzy+B2KZikc59VGSL95cIqqFk5U4LW92rw3xrF/nYXA
+         A5Ig334+JLGJ6V298+KsUZthCMGiVqFYAipxMuMjyKBg+xXRR96a7Hfussm6OO2TBwic
+         tLyxTsl3XfBym5roX2ilHicefHn21awM/CUH2JChGjVfE0jb1smZcc6ImkvJbtyo2g/h
+         mAxRJ4AZUpMrU1PjdNg0nnfWR4bjNXLnStv5pdmuyexwyV92kqnofx+fLWDDptJKpZZ3
+         e38F3Yd8QuGS8HtuNQK1pbm7OzqzA6JX0nC7uRfEOw3r01gHhSm4bb5y5hfAt/4txkJG
+         aabg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=YNUNzci7Ki+kYYCPvb39XVTgjfk5mcI92JUtukf799o=;
-        b=bacCzcj6ZpwFnoYQDwns9SlS4yfWTgOE/3XhtI1EEjbYz+Z4nz9HbRdrYGR6Wv4KfH
-         KSReIZlzk42Zki7AhFSwp0mrnIuYKs2FJwogyptBs0h/gN2xPON7Vk1ijrMY/Uz41idB
-         mRQNP4vX9rTITt7cqzDY68n8BfrC3CrQxAD4SS2EIHsNoHWPM3S0YvRlXfPXErBB2lnJ
-         R58bJycGyQAnkmWKOQIMtaI+4BwkbAJF4+P8kT9HddxBxhxHOHQz9Qz0wuF+6ypy6vaq
-         SBnL7FmAh6FM4vcLyGGw7a3PRQVCHfTaLZkWaSGtk/gGAuH+85ybZMtD9YjcOVYua7JC
-         mhEQ==
-X-Gm-Message-State: APjAAAWYTYu/RZVKX8k9aQOo+vzIW3jcaXtGzCuuGMd30CF55XSGwA+m
-        IFYE2u1UfW5akk39QPMPOoT/Mw==
-X-Google-Smtp-Source: APXvYqwKZYJUPJeYgEpmrE/NTzuIH587Zpaxvsd190XRkzqqSgxGbHOlCFcDOcIq6d06uBMsG0OmNA==
-X-Received: by 2002:a19:3f16:: with SMTP id m22mr2266907lfa.116.1579897422600;
-        Fri, 24 Jan 2020 12:23:42 -0800 (PST)
-Received: from localhost (h85-30-9-151.cust.a3fiber.se. [85.30.9.151])
-        by smtp.gmail.com with ESMTPSA id d11sm3386928lfj.3.2020.01.24.12.23.41
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 24 Jan 2020 12:23:41 -0800 (PST)
-Date:   Fri, 24 Jan 2020 12:11:40 -0800
-From:   Olof Johansson <olof@lixom.net>
-To:     Rob Herring <robh+dt@kernel.org>
-Cc:     Dafna Hirschfeld <dafna.hirschfeld@collabora.com>, soc@kernel.org,
-        devicetree@vger.kernel.org, Kishon Vijay Abraham I <kishon@ti.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Helen Koike <helen.koike@collabora.com>,
-        Ezequiel Garcia <ezequiel@collabora.com>,
-        Collabora Kernel ML <kernel@collabora.com>, dafna3@gmail.com
-Subject: Re: [PATCH] dt-bindings: fix compilation error of the example in
- marvell,mmp3-hsic-phy.yaml
-Message-ID: <20200124201140.oczzqz2xplbq3abe@localhost>
-References: <20200124105753.15976-1-dafna.hirschfeld@collabora.com>
- <CAL_Jsq+7E6B181hYn_6yNE53Mf+jiQ+o6pGDotwGX=m+GysW4A@mail.gmail.com>
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=rwO60z18tzr7WQ1TP+fRraEsg7xwuQbgnqSnqaMw5hc=;
+        b=LgAFQIYoIvuQpY1LKDZVr0toiul3oC9N6qhfTK6VULq9A7K+Kbkc0gsFFn9GcScs5P
+         cwcmDiWq45h2r3yniOXXclchGCNoFxiSh9raCS6SPV50N7r/pJ9vBKz3etwOWIFYC74i
+         qkESNk3QKgIUkeFcx9YDR2Zw2OTA6gUz2RWyF8AcJPnJ3qrf0TWmEJClRqC7Qnvqu3FW
+         cwgJFFLmQ+ZO4Ba1uqWh53ZyVyLHlqY8hM6GxiSbHuLYf/Tjz7T/Aj45aakkACGWerJD
+         d4ExQETk5DXOf0AMhiVY7pogOfAkve2qMBoRXg8GbQHrAOMj+7VWI29dPSAT6oLmiIdR
+         EoOA==
+X-Gm-Message-State: APjAAAXXvxxg9aP3rYeJ/rbjGG9O+O5OuLdnBVt44nLpYFZSWD+oeB9O
+        TergvluSvJcsHp/wb+Y0AH3DH82d7g==
+X-Google-Smtp-Source: APXvYqz1EKFYVnl5kf+N2sLKycLiAepUZcXUxPrVeHgff0oVBCNvs7vQ/jaV/lybZkvIfeEfeyE8eA==
+X-Received: by 2002:adf:f58a:: with SMTP id f10mr6573895wro.105.1579896754091;
+        Fri, 24 Jan 2020 12:12:34 -0800 (PST)
+Received: from ninjahub.lan (host-92-15-174-87.as43234.net. [92.15.174.87])
+        by smtp.googlemail.com with ESMTPSA id i204sm6897654wma.44.2020.01.24.12.12.33
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 24 Jan 2020 12:12:33 -0800 (PST)
+From:   Jules Irenge <jbi.octave@gmail.com>
+Cc:     boqun.feng@gmail.com, Jules Irenge <jbi.octave@gmail.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Darren Hart <dvhart@infradead.org>,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH 2/3] futex: Add missing annotation for wake_futex_pi()
+Date:   Fri, 24 Jan 2020 20:12:19 +0000
+Message-Id: <a3868cdf0328e5953d6c12fe1e94fb2d8932044b.1579893447.git.jbi.octave@gmail.com>
+X-Mailer: git-send-email 2.24.1
+In-Reply-To: <cover.1579893447.git.jbi.octave@gmail.com>
+References: <0/3> <cover.1579893447.git.jbi.octave@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAL_Jsq+7E6B181hYn_6yNE53Mf+jiQ+o6pGDotwGX=m+GysW4A@mail.gmail.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+Content-Transfer-Encoding: 8bit
+To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jan 24, 2020 at 08:08:58AM -0600, Rob Herring wrote:
-> On Fri, Jan 24, 2020 at 4:58 AM Dafna Hirschfeld
-> <dafna.hirschfeld@collabora.com> wrote:
-> >
-> > Running `make dt_binging_check`, gives the error:
-> >
-> > DTC     Documentation/devicetree/bindings/phy/marvell,mmp3-hsic-phy.example.dt.yaml
-> > Error: Documentation/devicetree/bindings/phy/marvell,mmp3-hsic-phy.example.dts:20.41-42 syntax error
-> > FATAL ERROR: Unable to parse input tree
-> >
-> > This is because the example uses the macro GPIO_ACTIVE_HIGH which
-> > is defined in gpio.h but the include of this header is missing.
-> > Add the include to fix the error.
-> >
-> > Signed-off-by: Dafna Hirschfeld <dafna.hirschfeld@collabora.com>
-> 
-> Fixes: f6f149604eef ("dt-bindings: phy: Add binding for marvell,mmp3-hsic-phy")
-> Acked-by: Rob Herring <robh@kernel.org>
-> 
-> Arnd, Olof, The above commit is in your tree. Please apply this.
+Sparse reports a warning at wake_futex_pi()
 
-Applied.
+|warning: context imbalance in wake_futex_pi() - unexpected unlock
+To fix this,
+a __releases(&pi_state->pi_mutex.wait_lock) annotation is added
+Given that wake_futex_pi() does actually call
+raw_spin_unlock_irq(&pi_state->pi_mutex.wait_lock)
+This not only fixes the warning
+but also improves on the readability of the code.
 
+Signed-off-by: Jules Irenge <jbi.octave@gmail.com>
+---
+ kernel/futex.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-Thanks,
+diff --git a/kernel/futex.c b/kernel/futex.c
+index 03c518e9747e..8bc288a7187f 100644
+--- a/kernel/futex.c
++++ b/kernel/futex.c
+@@ -1549,6 +1549,7 @@ static void mark_wake_futex(struct wake_q_head *wake_q, struct futex_q *q)
+  * Caller must hold a reference on @pi_state.
+  */
+ static int wake_futex_pi(u32 __user *uaddr, u32 uval, struct futex_pi_state *pi_state)
++	__releases(&pi_state->pi_mutex.wait_lock)
+ {
+ 	u32 uninitialized_var(curval), newval;
+ 	struct task_struct *new_owner;
+-- 
+2.24.1
 
--Olof
