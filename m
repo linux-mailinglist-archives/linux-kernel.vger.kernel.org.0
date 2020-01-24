@@ -2,290 +2,394 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AA9D91483F9
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Jan 2020 12:41:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 222F5148400
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Jan 2020 12:41:21 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391962AbgAXLjV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 24 Jan 2020 06:39:21 -0500
-Received: from mail-vk1-f193.google.com ([209.85.221.193]:36873 "EHLO
-        mail-vk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2391539AbgAXL0E (ORCPT
+        id S2392024AbgAXLjm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 24 Jan 2020 06:39:42 -0500
+Received: from mail1.bemta25.messagelabs.com ([195.245.230.7]:46547 "EHLO
+        mail1.bemta25.messagelabs.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S2391499AbgAXLZf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 24 Jan 2020 06:26:04 -0500
-Received: by mail-vk1-f193.google.com with SMTP id b129so433143vka.4
-        for <linux-kernel@vger.kernel.org>; Fri, 24 Jan 2020 03:26:03 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=yA+q0/tdz9pHwwQsFpujNL3r5hUZDki5Wt7XV+ptBKg=;
-        b=b6o5NV0ph6Q5glGwWKgOfj96/rl7OpNF7ROax+CxomyD2+2mjB8eOKk92zzzlJ6YeN
-         m6WZ1HBJjJtrPgxLvTAK0EHIQHE4gg/fAH3C6jVOCwyK2lHpsGzvwjrNw/RIzmOCxh2v
-         +xqEFOtn3154mXloQvuBC/YS6t8zWwfAGDcQRSVi398wv0mvGB9vdEaRPldzpUeAmbjB
-         9nLVp0UFICNnuTz/4JGrZUC85F58N9OYvxNwC0jY1gf71+W+JyTlwEfm+cpItbglH0IC
-         SbAVfwF5wlW5zfQM7k47puAe/fp9WqLf65EgRQuecEzLJHYQhQrj6qiORWAu5cM+mo3W
-         viyA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=yA+q0/tdz9pHwwQsFpujNL3r5hUZDki5Wt7XV+ptBKg=;
-        b=U/sErpveRj8G9vq5TD2Gxcsrrtlw6PMnz48ziTpihyBjx4XWITehKGhJjXTckZWicS
-         Gls1q/XkRAFsitxK/sLUsBLpg3TrUeIQRuE5J7cXF4qXMySomGMgwgYKJWYgtyUgXHId
-         bGU2cBLytTLdh/gUGRIJkhZDliXszT/hqmqhL4Mev6H0noSOk+aJp8/KeVo8l+j0ALFY
-         XtSoBOdnHpiLGG/cbul7aIL3uAcWCFoYJv652q9rrdl9cuxEP2Es8gdyOi6OopyyCdhv
-         EeKvX2I4Ob7kPzNZLOmbscNN0FUO7kAPAPSPmDqs9HuJ6TtHvL4a6Y3f7u9fxbGuBmJi
-         GLwQ==
-X-Gm-Message-State: APjAAAV62rnB2fKpsWSURHl9x8rprrVe+526f+nGaQbxxvne+oRg+laB
-        3HmPgkrrU0XFFAA/oPY8TDLyhVLlvqrRFrTJLtKSFQ==
-X-Google-Smtp-Source: APXvYqyJdUDT6GFcqq2yfAaUP/QP9wvF8DIKUg6lcbvTtc2pgywF0VGwYxowttRK1UdAtwMIFixCI2grpuBptG0UGQQ=
-X-Received: by 2002:a1f:94c1:: with SMTP id w184mr1709760vkd.43.1579865162655;
- Fri, 24 Jan 2020 03:26:02 -0800 (PST)
+        Fri, 24 Jan 2020 06:25:35 -0500
+Received: from [46.226.52.108] (using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256 bits))
+        by server-7.bemta.az-a.eu-west-1.aws.symcld.net id E6/F5-00394-C24DA2E5; Fri, 24 Jan 2020 11:25:32 +0000
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrOIsWRWlGSWpSXmKPExsVy8IPnUV2dK1p
+  xBgtmylrc/3qU0eLyrjlsDkwed67tYfP4vEkugCmKNTMvKb8igTXj76JGxoK1IRVz3p9mb2Bs
+  9Oxi5OIQEljPKLFuy3/WLkZOIKdComvfGXYQm1cgU2JCVz8jiM0p4C5x8Mlhti5GDqAaN4kVP
+  Z4gYTYBC4nJJx6wgdgsAqoSy0+1gY0RFoiTWLluISNIuYiAisS5N+YgJrNAhMSfU8wQwwUlTs
+  58wgJiMwtISBx88YIZ4gADidMLGsHiEgL2EtPfX2UGaZUQ0JdoPBYLETaU+D7rGwtE2Fxi7Tq
+  vCYyCs5AMnYVk6AJGplWMFklFmekZJbmJmTm6hgYGuoaGRrqGliZA2lQvsUo3US+1VLc8tbhE
+  11AvsbxYr7gyNzknRS8vtWQTIzCMUwoOFe9gfPP1rd4hRkkOJiVR3q65WnFCfEn5KZUZicUZ8
+  UWlOanFhxhlODiUJHjtLwHlBItS01Mr0jJzgDEFk5bg4FES4fUESfMWFyTmFmemQ6ROMepy7D
+  w6bxGzEEtefl6qlDjvbJAiAZCijNI8uBGw+L7EKCslzMvIwMAgxFOQWpSbWYIq/4pRnINRSZg
+  3DWQKT2ZeCdymV0BHMAEd4aIEdkRJIkJKqoGpdf8dx+UZem0eN3PYrov8sfy1xkf+1Hb25dvz
+  2I4Xbdht7XM49tuHSOXYC4uU5FztQ5z7Am4fOSeyjOfe1kz9dXKHf5141CCquH/ih/AJ0tbGh
+  98838Lsc/BlB9vdVTL5inH2HVOytU9tsZlZenCl1/WiFjFbxlf3rE6fexv8zveD/ZJJKxpOFv
+  D5CPlusnAVs+VRbZodcWbiMfFPrV8zJ8aUKsdGOHq8S3k1f2FhpPG6jYcm8Bdntd10q7x6/Kr
+  sC/kD5cv9dVy5FiQXCL+OeMJ//t58V56FRypC9gULM92/5PDrsM3CR4JXDxzd1a7J9s34uBx3
+  6DNxabWZTroFCcfsv/Q9P1BYcji5J32yEktxRqKhFnNRcSIAi2YiOGoDAAA=
+X-Env-Sender: Adam.Thomson.Opensource@diasemi.com
+X-Msg-Ref: server-28.tower-272.messagelabs.com!1579865131!1056631!2
+X-Originating-IP: [193.240.73.197]
+X-SYMC-ESS-Client-Auth: outbound-route-from=pass
+X-StarScan-Received: 
+X-StarScan-Version: 9.44.25; banners=-,-,-
+X-VirusChecked: Checked
+Received: (qmail 26644 invoked from network); 24 Jan 2020 11:25:32 -0000
+Received: from unknown (HELO sw-ex-cashub01.diasemi.com) (193.240.73.197)
+  by server-28.tower-272.messagelabs.com with ECDHE-RSA-AES256-SHA384 encrypted SMTP; 24 Jan 2020 11:25:32 -0000
+Received: from swsrvapps-01.diasemi.com (10.20.28.141) by
+ SW-EX-CASHUB01.diasemi.com (10.20.16.140) with Microsoft SMTP Server id
+ 14.3.468.0; Fri, 24 Jan 2020 11:25:31 +0000
+Received: by swsrvapps-01.diasemi.com (Postfix, from userid 22379)      id
+ 6C7303FBE5; Fri, 24 Jan 2020 11:25:31 +0000 (GMT)
+Message-ID: <c75e6e04281fd8da78cd209a888664c35a6fb8c1.1579864546.git.Adam.Thomson.Opensource@diasemi.com>
+In-Reply-To: <cover.1579864546.git.Adam.Thomson.Opensource@diasemi.com>
+References: <cover.1579864546.git.Adam.Thomson.Opensource@diasemi.com>
+From:   Adam Thomson <Adam.Thomson.Opensource@diasemi.com>
+Date:   Fri, 24 Jan 2020 11:25:31 +0000
+Subject: [RESEND PATCH 1/2] mfd: da9063: Fix revision handling to correctly select
+ reg tables
+To:     Lee Jones <lee.jones@linaro.org>
+CC:     <linux-kernel@vger.kernel.org>,
+        Support Opensource <support.opensource@diasemi.com>
 MIME-Version: 1.0
-References: <20200116152230.29831-1-jbx6244@gmail.com> <20200116152230.29831-2-jbx6244@gmail.com>
-In-Reply-To: <20200116152230.29831-2-jbx6244@gmail.com>
-From:   Ulf Hansson <ulf.hansson@linaro.org>
-Date:   Fri, 24 Jan 2020 12:25:26 +0100
-Message-ID: <CAPDyKFrgGTDK_4bv3ofs2ky6d5optfTh2H-99uBMjZzNpcOhUQ@mail.gmail.com>
-Subject: Re: [PATCH v2 2/3] dt-bindings: mmc: convert rockchip dw-mshc
- bindings to yaml
-To:     Johan Jonker <jbx6244@gmail.com>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Heiko Stuebner <heiko@sntech.de>,
-        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
-        DTML <devicetree@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
+X-KSE-AttachmentFiltering-Interceptor-Info: protection disabled
+X-KSE-ServerInfo: sw-ex-cashub01.diasemi.com, 9
+X-KSE-Antivirus-Interceptor-Info: scan successful
+X-KSE-Antivirus-Info: Clean, bases: 24/01/2020 10:17:00
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 16 Jan 2020 at 16:22, Johan Jonker <jbx6244@gmail.com> wrote:
->
-> Current dts files with 'dwmmc' nodes are manually verified.
-> In order to automate this process rockchip-dw-mshc.txt
-> has to be converted to yaml. In the new setup
-> rockchip-dw-mshc.yaml will inherit properties from
-> mmc-controller.yaml and synopsys-dw-mshc-common.yaml.
-> 'dwmmc' will no longer be a valid name for a node and
-> should be changed to 'mmc'.
->
-> Signed-off-by: Johan Jonker <jbx6244@gmail.com>
+The current implementation performs checking in the i2c_probe()
+function of the variant_code but does this immediately after the
+containing struct has been initialised as all zero. This means the
+check for variant code will always default to using the BB tables
+and will never select AD. The variant code is subsequently set
+by device_init() and later used by the RTC so really it's a little
+fortunate this mismatch works.
 
-Applied for next, thanks!
+This update creates an initial temporary regmap instantiation to
+simply read the chip and variant/revision information (common to
+all revisions) so that it can subsequently correctly choose the
+proper regmap tables for real initialisation.
 
-Kind regards
-Uffe
+Signed-off-by: Adam Thomson <Adam.Thomson.Opensource@diasemi.com>
+---
+ drivers/mfd/da9063-core.c            |  31 -------
+ drivers/mfd/da9063-i2c.c             | 167 +++++++++++++++++++++++++++++++----
+ include/linux/mfd/da9063/registers.h |  15 ++--
+ 3 files changed, 160 insertions(+), 53 deletions(-)
 
+diff --git a/drivers/mfd/da9063-core.c b/drivers/mfd/da9063-core.c
+index b125f90d..a353d52 100644
+--- a/drivers/mfd/da9063-core.c
++++ b/drivers/mfd/da9063-core.c
+@@ -160,7 +160,6 @@ static int da9063_clear_fault_log(struct da9063 *da9063)
+ 
+ int da9063_device_init(struct da9063 *da9063, unsigned int irq)
+ {
+-	int model, variant_id, variant_code;
+ 	int ret;
+ 
+ 	ret = da9063_clear_fault_log(da9063);
+@@ -171,36 +170,6 @@ int da9063_device_init(struct da9063 *da9063, unsigned int irq)
+ 	da9063->irq_base = -1;
+ 	da9063->chip_irq = irq;
+ 
+-	ret = regmap_read(da9063->regmap, DA9063_REG_CHIP_ID, &model);
+-	if (ret < 0) {
+-		dev_err(da9063->dev, "Cannot read chip model id.\n");
+-		return -EIO;
+-	}
+-	if (model != PMIC_CHIP_ID_DA9063) {
+-		dev_err(da9063->dev, "Invalid chip model id: 0x%02x\n", model);
+-		return -ENODEV;
+-	}
+-
+-	ret = regmap_read(da9063->regmap, DA9063_REG_CHIP_VARIANT, &variant_id);
+-	if (ret < 0) {
+-		dev_err(da9063->dev, "Cannot read chip variant id.\n");
+-		return -EIO;
+-	}
+-
+-	variant_code = variant_id >> DA9063_CHIP_VARIANT_SHIFT;
+-
+-	dev_info(da9063->dev,
+-		 "Device detected (chip-ID: 0x%02X, var-ID: 0x%02X)\n",
+-		 model, variant_id);
+-
+-	if (variant_code < PMIC_DA9063_BB && variant_code != PMIC_DA9063_AD) {
+-		dev_err(da9063->dev,
+-			"Cannot support variant code: 0x%02X\n", variant_code);
+-		return -ENODEV;
+-	}
+-
+-	da9063->variant_code = variant_code;
+-
+ 	ret = da9063_irq_init(da9063);
+ 	if (ret) {
+ 		dev_err(da9063->dev, "Cannot initialize interrupts.\n");
+diff --git a/drivers/mfd/da9063-i2c.c b/drivers/mfd/da9063-i2c.c
+index 455de74..c7f3057 100644
+--- a/drivers/mfd/da9063-i2c.c
++++ b/drivers/mfd/da9063-i2c.c
+@@ -22,12 +22,107 @@
+ #include <linux/of.h>
+ #include <linux/regulator/of_regulator.h>
+ 
++/*
++ * Temporary regmap config for just accessing chip and variant info before we
++ * know which device is present. The info read from the device using this config
++ * is then used to select the correct regmap tables.
++ */
++
++static const struct regmap_range da9063_tmp_readable_ranges[] = {
++	regmap_reg_range(DA9063_REG_PAGE_CON, DA9063_REG_PAGE_CON),
++	regmap_reg_range(DA9063_REG_DEVICE_ID, DA9063_REG_VARIANT_ID),
++};
++
++static const struct regmap_range da9063_tmp_writeable_ranges[] = {
++	regmap_reg_range(DA9063_REG_PAGE_CON, DA9063_REG_PAGE_CON),
++};
++
++static const struct regmap_access_table da9063_tmp_readable_table = {
++	.yes_ranges = da9063_tmp_readable_ranges,
++	.n_yes_ranges = ARRAY_SIZE(da9063_tmp_readable_ranges),
++};
++
++static const struct regmap_access_table da9063_tmp_writeable_table = {
++	.yes_ranges = da9063_tmp_writeable_ranges,
++	.n_yes_ranges = ARRAY_SIZE(da9063_tmp_writeable_ranges),
++};
++
++static const struct regmap_range_cfg da9063_tmp_range_cfg[] = {
++	{
++		.range_min = DA9063_REG_PAGE_CON,
++		.range_max = DA9063_REG_VARIANT_ID,
++		.selector_reg = DA9063_REG_PAGE_CON,
++		.selector_mask = 1 << DA9063_I2C_PAGE_SEL_SHIFT,
++		.selector_shift = DA9063_I2C_PAGE_SEL_SHIFT,
++		.window_start = 0,
++		.window_len = 256,
++	}
++};
++
++static struct regmap_config da9063_tmp_regmap_config = {
++	.reg_bits = 8,
++	.val_bits = 8,
++	.ranges = da9063_tmp_range_cfg,
++	.num_ranges = ARRAY_SIZE(da9063_tmp_range_cfg),
++	.max_register = DA9063_REG_VARIANT_ID,
++	.cache_type = REGCACHE_NONE,
++	.rd_table = &da9063_tmp_readable_table,
++	.wr_table = &da9063_tmp_writeable_table,
++};
++
++static int da9063_get_device_type(struct i2c_client *i2c, struct da9063 *da9063)
++{
++	int ret;
++	int device_id, variant_id;
++	struct regmap *tmp_regmap;
++
++	tmp_regmap = regmap_init_i2c(i2c, &da9063_tmp_regmap_config);
++	if (IS_ERR(tmp_regmap)) {
++		dev_err(da9063->dev,
++			"Failed to allocate temporary register map\n");
++		return PTR_ERR(tmp_regmap);
++	}
++
++	ret = regmap_read(tmp_regmap, DA9063_REG_DEVICE_ID, &device_id);
++	if (ret < 0) {
++		dev_err(da9063->dev, "Cannot read chip device id.\n");
++		return -EIO;
++	}
++
++	if (device_id != PMIC_CHIP_ID_DA9063) {
++		dev_err(da9063->dev,
++			"Invalid chip device id: 0x%02x\n", device_id);
++		return -ENODEV;
++	}
++
++	ret = regmap_read(tmp_regmap, DA9063_REG_VARIANT_ID, &variant_id);
++	if (ret < 0) {
++		dev_err(da9063->dev, "Cannot read chip variant id.\n");
++		return -EIO;
++	}
++
++	dev_info(da9063->dev,
++		 "Device detected (chip-ID: 0x%02X, var-ID: 0x%02X)\n",
++		 device_id, variant_id);
++
++	da9063->variant_code = (variant_id & DA9063_VARIANT_ID_MRC_MASK)
++			       >> DA9063_VARIANT_ID_MRC_SHIFT;
++
++	regmap_exit(tmp_regmap);
++
++	return 0;
++}
++
++/*
++ * Variant specific regmap configs
++ */
++
+ static const struct regmap_range da9063_ad_readable_ranges[] = {
+ 	regmap_reg_range(DA9063_REG_PAGE_CON, DA9063_AD_REG_SECOND_D),
+ 	regmap_reg_range(DA9063_REG_SEQ, DA9063_REG_ID_32_31),
+ 	regmap_reg_range(DA9063_REG_SEQ_A, DA9063_REG_AUTO3_LOW),
+ 	regmap_reg_range(DA9063_REG_T_OFFSET, DA9063_AD_REG_GP_ID_19),
+-	regmap_reg_range(DA9063_REG_CHIP_ID, DA9063_REG_CHIP_VARIANT),
++	regmap_reg_range(DA9063_REG_DEVICE_ID, DA9063_REG_VARIANT_ID),
+ };
+ 
+ static const struct regmap_range da9063_ad_writeable_ranges[] = {
+@@ -72,7 +167,7 @@
+ 	regmap_reg_range(DA9063_REG_SEQ, DA9063_REG_ID_32_31),
+ 	regmap_reg_range(DA9063_REG_SEQ_A, DA9063_REG_AUTO3_LOW),
+ 	regmap_reg_range(DA9063_REG_T_OFFSET, DA9063_BB_REG_GP_ID_19),
+-	regmap_reg_range(DA9063_REG_CHIP_ID, DA9063_REG_CHIP_VARIANT),
++	regmap_reg_range(DA9063_REG_DEVICE_ID, DA9063_REG_VARIANT_ID),
+ };
+ 
+ static const struct regmap_range da9063_bb_writeable_ranges[] = {
+@@ -117,7 +212,7 @@
+ 	regmap_reg_range(DA9063_REG_SEQ, DA9063_REG_ID_32_31),
+ 	regmap_reg_range(DA9063_REG_SEQ_A, DA9063_REG_AUTO3_LOW),
+ 	regmap_reg_range(DA9063_REG_T_OFFSET, DA9063_BB_REG_GP_ID_19),
+-	regmap_reg_range(DA9063_REG_CHIP_ID, DA9063_REG_CHIP_VARIANT),
++	regmap_reg_range(DA9063_REG_DEVICE_ID, DA9063_REG_VARIANT_ID),
+ };
+ 
+ static const struct regmap_range da9063l_bb_writeable_ranges[] = {
+@@ -159,7 +254,7 @@
+ static const struct regmap_range_cfg da9063_range_cfg[] = {
+ 	{
+ 		.range_min = DA9063_REG_PAGE_CON,
+-		.range_max = DA9063_REG_CHIP_VARIANT,
++		.range_max = DA9063_REG_CONFIG_ID,
+ 		.selector_reg = DA9063_REG_PAGE_CON,
+ 		.selector_mask = 1 << DA9063_I2C_PAGE_SEL_SHIFT,
+ 		.selector_shift = DA9063_I2C_PAGE_SEL_SHIFT,
+@@ -173,7 +268,7 @@
+ 	.val_bits = 8,
+ 	.ranges = da9063_range_cfg,
+ 	.num_ranges = ARRAY_SIZE(da9063_range_cfg),
+-	.max_register = DA9063_REG_CHIP_VARIANT,
++	.max_register = DA9063_REG_CONFIG_ID,
+ 
+ 	.cache_type = REGCACHE_RBTREE,
+ };
+@@ -199,18 +294,56 @@ static int da9063_i2c_probe(struct i2c_client *i2c,
+ 	da9063->chip_irq = i2c->irq;
+ 	da9063->type = id->driver_data;
+ 
+-	if (da9063->variant_code == PMIC_DA9063_AD) {
+-		da9063_regmap_config.rd_table = &da9063_ad_readable_table;
+-		da9063_regmap_config.wr_table = &da9063_ad_writeable_table;
+-		da9063_regmap_config.volatile_table = &da9063_ad_volatile_table;
+-	} else if (da9063->type == PMIC_TYPE_DA9063L) {
+-		da9063_regmap_config.rd_table = &da9063l_bb_readable_table;
+-		da9063_regmap_config.wr_table = &da9063l_bb_writeable_table;
+-		da9063_regmap_config.volatile_table = &da9063l_bb_volatile_table;
+-	} else {
+-		da9063_regmap_config.rd_table = &da9063_bb_readable_table;
+-		da9063_regmap_config.wr_table = &da9063_bb_writeable_table;
+-		da9063_regmap_config.volatile_table = &da9063_bb_volatile_table;
++	ret = da9063_get_device_type(i2c, da9063);
++	if (ret < 0)
++		return ret;
++
++	switch (da9063->type) {
++	case PMIC_TYPE_DA9063:
++		switch (da9063->variant_code) {
++		case PMIC_DA9063_AD:
++			da9063_regmap_config.rd_table =
++				&da9063_ad_readable_table;
++			da9063_regmap_config.wr_table =
++				&da9063_ad_writeable_table;
++			da9063_regmap_config.volatile_table =
++				&da9063_ad_volatile_table;
++			break;
++		case PMIC_DA9063_BB:
++		case PMIC_DA9063_CA:
++			da9063_regmap_config.rd_table =
++				&da9063_bb_readable_table;
++			da9063_regmap_config.wr_table =
++				&da9063_bb_writeable_table;
++			da9063_regmap_config.volatile_table =
++				&da9063_bb_volatile_table;
++			break;
++		default:
++			dev_err(da9063->dev,
++				"Chip variant not supported for DA9063\n");
++			return -ENODEV;
++		}
++		break;
++	case PMIC_TYPE_DA9063L:
++		switch (da9063->variant_code) {
++		case PMIC_DA9063_BB:
++		case PMIC_DA9063_CA:
++			da9063_regmap_config.rd_table =
++				&da9063l_bb_readable_table;
++			da9063_regmap_config.wr_table =
++				&da9063l_bb_writeable_table;
++			da9063_regmap_config.volatile_table =
++				&da9063l_bb_volatile_table;
++			break;
++		default:
++			dev_err(da9063->dev,
++				"Chip variant not supported for DA9063L\n");
++			return -ENODEV;
++		}
++		break;
++	default:
++		dev_err(da9063->dev, "Chip type not supported\n");
++		return -ENODEV;
+ 	}
+ 
+ 	da9063->regmap = devm_regmap_init_i2c(i2c, &da9063_regmap_config);
+diff --git a/include/linux/mfd/da9063/registers.h b/include/linux/mfd/da9063/registers.h
+index ba706b0..1dbabf1 100644
+--- a/include/linux/mfd/da9063/registers.h
++++ b/include/linux/mfd/da9063/registers.h
+@@ -292,8 +292,10 @@
+ #define	DA9063_BB_REG_GP_ID_19		0x134
+ 
+ /* Chip ID and variant */
+-#define	DA9063_REG_CHIP_ID		0x181
+-#define	DA9063_REG_CHIP_VARIANT		0x182
++#define	DA9063_REG_DEVICE_ID		0x181
++#define	DA9063_REG_VARIANT_ID		0x182
++#define	DA9063_REG_CUSTOMER_ID		0x183
++#define	DA9063_REG_CONFIG_ID		0x184
+ 
+ /*
+  * PMIC registers bits
+@@ -929,9 +931,6 @@
+ #define	DA9063_RTC_CLOCK			0x40
+ #define	DA9063_OUT_32K_EN			0x80
+ 
+-/* DA9063_REG_CHIP_VARIANT */
+-#define	DA9063_CHIP_VARIANT_SHIFT		4
+-
+ /* DA9063_REG_BUCK_ILIM_A (addr=0x9A) */
+ #define DA9063_BIO_ILIM_MASK			0x0F
+ #define DA9063_BMEM_ILIM_MASK			0xF0
+@@ -1065,4 +1064,10 @@
+ #define		DA9063_MON_A10_IDX_LDO9		0x04
+ #define		DA9063_MON_A10_IDX_LDO10	0x05
+ 
++/* DA9063_REG_VARIANT_ID (addr=0x182) */
++#define	DA9063_VARIANT_ID_VRC_SHIFT		0
++#define DA9063_VARIANT_ID_VRC_MASK		0x0F
++#define	DA9063_VARIANT_ID_MRC_SHIFT		4
++#define DA9063_VARIANT_ID_MRC_MASK		0xF0
++
+ #endif /* _DA9063_REG_H */
+-- 
+1.9.1
 
-> ---
->  .../devicetree/bindings/mmc/rockchip-dw-mshc.txt   |  49 --------
->  .../devicetree/bindings/mmc/rockchip-dw-mshc.yaml  | 123 +++++++++++++++++++++
->  MAINTAINERS                                        |   1 +
->  3 files changed, 124 insertions(+), 49 deletions(-)
->  delete mode 100644 Documentation/devicetree/bindings/mmc/rockchip-dw-mshc.txt
->  create mode 100644 Documentation/devicetree/bindings/mmc/rockchip-dw-mshc.yaml
->
-> diff --git a/Documentation/devicetree/bindings/mmc/rockchip-dw-mshc.txt b/Documentation/devicetree/bindings/mmc/rockchip-dw-mshc.txt
-> deleted file mode 100644
-> index 6f629b12b..000000000
-> --- a/Documentation/devicetree/bindings/mmc/rockchip-dw-mshc.txt
-> +++ /dev/null
-> @@ -1,49 +0,0 @@
-> -* Rockchip specific extensions to the Synopsys Designware Mobile
-> -  Storage Host Controller
-> -
-> -The Synopsys designware mobile storage host controller is used to interface
-> -a SoC with storage medium such as eMMC or SD/MMC cards. This file documents
-> -differences between the core Synopsys dw mshc controller properties described
-> -by synopsys-dw-mshc.txt and the properties used by the Rockchip specific
-> -extensions to the Synopsys Designware Mobile Storage Host Controller.
-> -
-> -Required Properties:
-> -
-> -* compatible: should be
-> -       - "rockchip,rk2928-dw-mshc": for Rockchip RK2928 and following,
-> -                                                       before RK3288
-> -       - "rockchip,rk3288-dw-mshc": for Rockchip RK3288
-> -       - "rockchip,rv1108-dw-mshc", "rockchip,rk3288-dw-mshc": for Rockchip RV1108
-> -       - "rockchip,px30-dw-mshc", "rockchip,rk3288-dw-mshc": for Rockchip PX30
-> -       - "rockchip,rk3036-dw-mshc", "rockchip,rk3288-dw-mshc": for Rockchip RK3036
-> -       - "rockchip,rk3228-dw-mshc", "rockchip,rk3288-dw-mshc": for Rockchip RK322x
-> -       - "rockchip,rk3328-dw-mshc", "rockchip,rk3288-dw-mshc": for Rockchip RK3328
-> -       - "rockchip,rk3368-dw-mshc", "rockchip,rk3288-dw-mshc": for Rockchip RK3368
-> -       - "rockchip,rk3399-dw-mshc", "rockchip,rk3288-dw-mshc": for Rockchip RK3399
-> -
-> -Optional Properties:
-> -* clocks: from common clock binding: if ciu-drive and ciu-sample are
-> -  specified in clock-names, should contain handles to these clocks.
-> -
-> -* clock-names: Apart from the clock-names described in synopsys-dw-mshc.txt
-> -  two more clocks "ciu-drive" and "ciu-sample" are supported. They are used
-> -  to control the clock phases, "ciu-sample" is required for tuning high-
-> -  speed modes.
-> -
-> -* rockchip,default-sample-phase: The default phase to set ciu-sample at
-> -  probing, low speeds or in case where all phases work at tuning time.
-> -  If not specified 0 deg will be used.
-> -
-> -* rockchip,desired-num-phases: The desired number of times that the host
-> -  execute tuning when needed. If not specified, the host will do tuning
-> -  for 360 times, namely tuning for each degree.
-> -
-> -Example:
-> -
-> -       rkdwmmc0@12200000 {
-> -               compatible = "rockchip,rk3288-dw-mshc";
-> -               reg = <0x12200000 0x1000>;
-> -               interrupts = <0 75 0>;
-> -               #address-cells = <1>;
-> -               #size-cells = <0>;
-> -       };
-> diff --git a/Documentation/devicetree/bindings/mmc/rockchip-dw-mshc.yaml b/Documentation/devicetree/bindings/mmc/rockchip-dw-mshc.yaml
-> new file mode 100644
-> index 000000000..2f70f5ef0
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/mmc/rockchip-dw-mshc.yaml
-> @@ -0,0 +1,123 @@
-> +# SPDX-License-Identifier: GPL-2.0
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/mmc/rockchip-dw-mshc.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Rockchip designware mobile storage host controller device tree bindings
-> +
-> +description:
-> +  Rockchip uses the Synopsys designware mobile storage host controller
-> +  to interface a SoC with storage medium such as eMMC or SD/MMC cards.
-> +  This file documents the combined properties for the core Synopsys dw mshc
-> +  controller that are not already included in the synopsys-dw-mshc-common.yaml
-> +  file and the Rockchip specific extensions.
-> +
-> +allOf:
-> +  - $ref: "synopsys-dw-mshc-common.yaml#"
-> +
-> +maintainers:
-> +  - Heiko Stuebner <heiko@sntech.de>
-> +
-> +# Everything else is described in the common file
-> +properties:
-> +  compatible:
-> +    oneOf:
-> +      # for Rockchip RK2928 and before RK3288
-> +      - const: rockchip,rk2928-dw-mshc
-> +      # for Rockchip RK3288
-> +      - const: rockchip,rk3288-dw-mshc
-> +      - items:
-> +          - enum:
-> +            # for Rockchip PX30
-> +            - rockchip,px30-dw-mshc
-> +            # for Rockchip RK3036
-> +            - rockchip,rk3036-dw-mshc
-> +            # for Rockchip RK322x
-> +            - rockchip,rk3228-dw-mshc
-> +            # for Rockchip RK3328
-> +            - rockchip,rk3328-dw-mshc
-> +            # for Rockchip RK3368
-> +            - rockchip,rk3368-dw-mshc
-> +            # for Rockchip RK3399
-> +            - rockchip,rk3399-dw-mshc
-> +            # for Rockchip RV1108
-> +            - rockchip,rv1108-dw-mshc
-> +          - const: rockchip,rk3288-dw-mshc
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  interrupts:
-> +    maxItems: 1
-> +
-> +  clocks:
-> +    minItems: 2
-> +    maxItems: 4
-> +    description:
-> +      Handle to "biu" and "ciu" clocks for the bus interface unit clock and
-> +      the card interface unit clock. If "ciu-drive" and "ciu-sample" are
-> +      specified in clock-names, it should also contain
-> +      handles to these clocks.
-> +
-> +  clock-names:
-> +    minItems: 2
-> +    items:
-> +      - const: biu
-> +      - const: ciu
-> +      - const: ciu-drive
-> +      - const: ciu-sample
-> +    description:
-> +      Apart from the clock-names "biu" and "ciu" two more clocks
-> +      "ciu-drive" and "ciu-sample" are supported. They are used
-> +      to control the clock phases, "ciu-sample" is required for tuning
-> +      high speed modes.
-> +
-> +  rockchip,default-sample-phase:
-> +    allOf:
-> +      - $ref: /schemas/types.yaml#/definitions/uint32
-> +    minimum: 0
-> +    maximum: 360
-> +    default: 0
-> +    description:
-> +      The default phase to set "ciu-sample" at probing,
-> +      low speeds or in case where all phases work at tuning time.
-> +      If not specified 0 deg will be used.
-> +
-> +  rockchip,desired-num-phases:
-> +    allOf:
-> +      - $ref: /schemas/types.yaml#/definitions/uint32
-> +    minimum: 0
-> +    maximum: 360
-> +    default: 360
-> +    description:
-> +      The desired number of times that the host execute tuning when needed.
-> +      If not specified, the host will do tuning for 360 times,
-> +      namely tuning for each degree.
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - interrupts
-> +  - clocks
-> +  - clock-names
-> +
-> +examples:
-> +  - |
-> +    #include <dt-bindings/clock/rk3288-cru.h>
-> +    #include <dt-bindings/interrupt-controller/arm-gic.h>
-> +    #include <dt-bindings/interrupt-controller/irq.h>
-> +    sdmmc: mmc@ff0c0000 {
-> +      compatible = "rockchip,rk3288-dw-mshc";
-> +      reg = <0x0 0xff0c0000 0x0 0x4000>;
-> +      interrupts = <GIC_SPI 32 IRQ_TYPE_LEVEL_HIGH>;
-> +      clocks = <&cru HCLK_SDMMC>, <&cru SCLK_SDMMC>,
-> +               <&cru SCLK_SDMMC_DRV>, <&cru SCLK_SDMMC_SAMPLE>;
-> +      clock-names = "biu", "ciu", "ciu-drive", "ciu-sample";
-> +      resets = <&cru SRST_MMC0>;
-> +      reset-names = "reset";
-> +      fifo-depth = <0x100>;
-> +      max-frequency = <150000000>;
-> +    };
-> +
-> +...
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index d6ad01d71..1b16c0fdf 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -2240,6 +2240,7 @@ L:        linux-rockchip@lists.infradead.org
->  T:     git git://git.kernel.org/pub/scm/linux/kernel/git/mmind/linux-rockchip.git
->  S:     Maintained
->  F:     Documentation/devicetree/bindings/i2c/i2c-rk3x.txt
-> +F:     Documentation/devicetree/bindings/mmc/rockchip-dw-mshc.yaml
->  F:     arch/arm/boot/dts/rk3*
->  F:     arch/arm/boot/dts/rv1108*
->  F:     arch/arm/mach-rockchip/
-> --
-> 2.11.0
->
