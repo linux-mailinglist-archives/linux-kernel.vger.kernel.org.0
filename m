@@ -2,135 +2,114 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F3508147C68
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Jan 2020 10:52:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 726AC147E79
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Jan 2020 11:13:48 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387844AbgAXJvq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 24 Jan 2020 04:51:46 -0500
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:46153 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388018AbgAXJvc (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 24 Jan 2020 04:51:32 -0500
-Received: by mail-wr1-f68.google.com with SMTP id z7so1166913wrl.13
-        for <linux-kernel@vger.kernel.org>; Fri, 24 Jan 2020 01:51:30 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=RzNBHiBM5DbXxFUCQ9dlJFviC6ZX759dmrnjTXv765A=;
-        b=VhEnEoJB5kqvQztDtZ1+sgqXwqrwEslLahHlElBF3lpg5qQvZfcZnM7vGeVvzMRaqx
-         sdx4UD1JsYKtnoJ3HCjp52IkgqyLeVeIwbSKpbt7DegjPfmfH14KbUGl2rbEF3uGtFpQ
-         IzYmaBW9kYrFVZnO88Bpp/6fVD4sKiQeC5j0gsWjIZQCuoxg6+Ay8mLsF9y4TZD8qYbk
-         Qd0Ud6omR3y4tooLG6NwEpfBS4R6utxM9TxLG/rfy0t0vKxH+SnxQmTeSK9urLTqu+KN
-         Zorhxq/SV+jJbAs9OODxdldv+TtTD0+ukPqqwUowCJlMnkyqHcPTIkgekKECsyGu6jyL
-         iUng==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=RzNBHiBM5DbXxFUCQ9dlJFviC6ZX759dmrnjTXv765A=;
-        b=MAP5+Inn21ldyrAEo4u/0SfKDxnY11AQQv9ZuL1JWoQdMhP0gaEkSvHoQVD6BQh9FX
-         uO1AUZKRuziSJBEKLLVS/tIlINlKUeIPaVDcC+GVAXaqF5bL5X4Dysyc87rV3AAHMOXU
-         LHP4l+3n5XiO9/E5Pi/m3eVzl39v9UlJ7h2L1TMR7O2X/z6RgyIYE6Ztaog7olofLEZR
-         QS+JvsjEofoNxfnDRSxm7KBA+hbFoRqTc4xx+kxGDlwNWHtlv96SqB7p9jIaDL4oLkLx
-         CgOQpPkjsbfHBht0M21oXZuxPrAGUdS+hybQVhS8yUED646vRwQNbEXhyMg2j9biP38G
-         k3IQ==
-X-Gm-Message-State: APjAAAXWGTsQKInLZ7+dEJPqkdUinQcXIJa8AdKFQ4atOQvhYSy2JKTa
-        w/KndFw3Nqqdawwnpkfc+L7v+A==
-X-Google-Smtp-Source: APXvYqwqC9cGnHGiTVfZGEQ9XEABof4G9y74dllDLrLAebt1sPpbX2gB5tjK4zRY6rHIpUPi5FvR6g==
-X-Received: by 2002:adf:ca07:: with SMTP id o7mr3195324wrh.49.1579859489752;
-        Fri, 24 Jan 2020 01:51:29 -0800 (PST)
-Received: from google.com ([2a00:79e0:d:110:d6cc:2030:37c1:9964])
-        by smtp.gmail.com with ESMTPSA id n16sm6761700wro.88.2020.01.24.01.51.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 24 Jan 2020 01:51:29 -0800 (PST)
-Date:   Fri, 24 Jan 2020 09:51:25 +0000
-From:   Quentin Perret <qperret@google.com>
-To:     Qais Yousef <qais.yousef@arm.com>
-Cc:     Wei Wang <wvw@google.com>, wei.vince.wang@gmail.com,
-        dietmar.eggemann@arm.com, valentin.schneider@arm.com,
-        chris.redpath@arm.com, Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] [RFC] sched: restrict iowait boost for boosted task only
-Message-ID: <20200124095125.GA121494@google.com>
-References: <20200124002811.228334-1-wvw@google.com>
- <20200124025238.jsf36n6w4rrn2ehc@e107158-lin>
+        id S2389337AbgAXKJX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 24 Jan 2020 05:09:23 -0500
+Received: from mail.kernel.org ([198.145.29.99]:46276 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730613AbgAXKJV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 24 Jan 2020 05:09:21 -0500
+Received: from localhost (unknown [145.15.244.15])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 24A1420709;
+        Fri, 24 Jan 2020 10:09:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1579860560;
+        bh=3ehFq4T1Fx17zHR4BLqED3D+P7648DSUJ/AqXZK1dSk=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=o8XFR2ThIWMYG/809Z04Bv4g7CBIsdK8IjR+d0b0cVSaFStjkpaD2KzOeeM9+vPoE
+         VXssf2Ysl1Bv71wgI1efz83p1L+cnMBWE6+0xFtmjNu3QHPuG6B2+Lgt/UPrc/9Zsu
+         fiZxk8Ywxh+deOj/BzbMtUirfNB+iC7ZNYppx1k4=
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, Chris Chiu <chiu@endlessm.com>,
+        Jarkko Nikula <jarkko.nikula@linux.intel.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Lee Jones <lee.jones@linaro.org>
+Subject: [PATCH 4.19 005/639] mfd: intel-lpss: Add default I2C device properties for Gemini Lake
+Date:   Fri, 24 Jan 2020 10:22:55 +0100
+Message-Id: <20200124093047.754685196@linuxfoundation.org>
+X-Mailer: git-send-email 2.25.0
+In-Reply-To: <20200124093047.008739095@linuxfoundation.org>
+References: <20200124093047.008739095@linuxfoundation.org>
+User-Agent: quilt/0.66
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200124025238.jsf36n6w4rrn2ehc@e107158-lin>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Friday 24 Jan 2020 at 02:52:39 (+0000), Qais Yousef wrote:
-> > diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-> > index ba749f579714..221c0fbcea0e 100644
-> > --- a/kernel/sched/fair.c
-> > +++ b/kernel/sched/fair.c
-> > @@ -5220,8 +5220,10 @@ enqueue_task_fair(struct rq *rq, struct task_struct *p, int flags)
-> >  	 * If in_iowait is set, the code below may not trigger any cpufreq
-> >  	 * utilization updates, so do it here explicitly with the IOWAIT flag
-> >  	 * passed.
-> > +	 * If CONFIG_ENERGY_MODEL and CONFIG_UCLAMP_TASK are both configured,
-> > +	 * only boost for tasks set with non-null min-clamp.
-> >  	 */
-> > -	if (p->in_iowait)
-> > +	if (iowait_boosted(p))
-> >  		cpufreq_update_util(rq, SCHED_CPUFREQ_IOWAIT);
-> >  
-> >  	for_each_sched_entity(se) {
-> > diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
-> > index 280a3c735935..a13d49d835ed 100644
-> > --- a/kernel/sched/sched.h
-> > +++ b/kernel/sched/sched.h
-> > @@ -2341,6 +2341,18 @@ static inline unsigned int uclamp_util(struct rq *rq, unsigned int util)
-> >  }
-> >  #endif /* CONFIG_UCLAMP_TASK */
-> >  
-> > +#if defined(CONFIG_ENERGY_MODEL) && defined(CONFIG_UCLAMP_TASK)
-> 
-> Why depend on CONFIG_ENERGY_MODEL? Laptops are battery powered and might not
-> have this option enabled. Do we really need energy model here?
+From: Jarkko Nikula <jarkko.nikula@linux.intel.com>
 
-+1
+commit 3f31bc67e4dc6a555341dffefe328ddd58e8b431 upstream.
 
-> > +static inline bool iowait_boosted(struct task_struct *p)
-> > +{
-> > +	return p->in_iowait && uclamp_eff_value(p, UCLAMP_MIN) > 0;
-> 
-> I think this is overloading the usage of util clamp. You're basically using
-> cpu.uclamp.min to temporarily switch iowait boost on/off.
-> 
-> Isn't it better to add a new cgroup attribute to toggle this feature?
-> 
-> The problem does seem generic enough and could benefit other battery-powered
-> devices outside of the Android world. I don't think the dependency on uclamp &&
-> energy model are necessary to solve this.
+It turned out Intel Gemini Lake doesn't use the same I2C timing
+parameters as Broxton.
 
-I think using uclamp is not a bad idea here, but perhaps we could do
-things differently. As of today the iowait boost escapes the clamping
-mechanism, so one option would be to change that. That would let us set
-a low max clamp in the 'background' cgroup, which in turns would limit
-the frequency request for those tasks even if they're IO-intensive.
+I got confirmation from the Windows team that Gemini Lake systems should
+use updated timing parameters that differ from those used in Broxton
+based systems.
 
-That'll have to be done at the RQ level, but figuring out what's the
-current max clamp on the rq should be doable from sugov I think.
+Fixes: f80e78aa11ad ("mfd: intel-lpss: Add Intel Gemini Lake PCI IDs")
+Tested-by: Chris Chiu <chiu@endlessm.com>
+Signed-off-by: Jarkko Nikula <jarkko.nikula@linux.intel.com>
+Acked-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Signed-off-by: Lee Jones <lee.jones@linaro.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-Wei: would that work for your use case ?
+---
+ drivers/mfd/intel-lpss-pci.c |   28 ++++++++++++++++++++--------
+ 1 file changed, 20 insertions(+), 8 deletions(-)
 
-Also, the iowait boost really should be per-task and not per-cpu, so it
-can be taken into account during wake-up balance on big.LITTLE. That
-might also help on SMP if a task doing a lot of IO migrates, as the
-boost would migrate with it. But that's perhaps for later ...
+--- a/drivers/mfd/intel-lpss-pci.c
++++ b/drivers/mfd/intel-lpss-pci.c
+@@ -126,6 +126,18 @@ static const struct intel_lpss_platform_
+ 	.properties = apl_i2c_properties,
+ };
+ 
++static struct property_entry glk_i2c_properties[] = {
++	PROPERTY_ENTRY_U32("i2c-sda-hold-time-ns", 313),
++	PROPERTY_ENTRY_U32("i2c-sda-falling-time-ns", 171),
++	PROPERTY_ENTRY_U32("i2c-scl-falling-time-ns", 290),
++	{ },
++};
++
++static const struct intel_lpss_platform_info glk_i2c_info = {
++	.clk_rate = 133000000,
++	.properties = glk_i2c_properties,
++};
++
+ static const struct intel_lpss_platform_info cnl_i2c_info = {
+ 	.clk_rate = 216000000,
+ 	.properties = spt_i2c_properties,
+@@ -165,14 +177,14 @@ static const struct pci_device_id intel_
+ 	{ PCI_VDEVICE(INTEL, 0x1ac6), (kernel_ulong_t)&bxt_info },
+ 	{ PCI_VDEVICE(INTEL, 0x1aee), (kernel_ulong_t)&bxt_uart_info },
+ 	/* GLK */
+-	{ PCI_VDEVICE(INTEL, 0x31ac), (kernel_ulong_t)&bxt_i2c_info },
+-	{ PCI_VDEVICE(INTEL, 0x31ae), (kernel_ulong_t)&bxt_i2c_info },
+-	{ PCI_VDEVICE(INTEL, 0x31b0), (kernel_ulong_t)&bxt_i2c_info },
+-	{ PCI_VDEVICE(INTEL, 0x31b2), (kernel_ulong_t)&bxt_i2c_info },
+-	{ PCI_VDEVICE(INTEL, 0x31b4), (kernel_ulong_t)&bxt_i2c_info },
+-	{ PCI_VDEVICE(INTEL, 0x31b6), (kernel_ulong_t)&bxt_i2c_info },
+-	{ PCI_VDEVICE(INTEL, 0x31b8), (kernel_ulong_t)&bxt_i2c_info },
+-	{ PCI_VDEVICE(INTEL, 0x31ba), (kernel_ulong_t)&bxt_i2c_info },
++	{ PCI_VDEVICE(INTEL, 0x31ac), (kernel_ulong_t)&glk_i2c_info },
++	{ PCI_VDEVICE(INTEL, 0x31ae), (kernel_ulong_t)&glk_i2c_info },
++	{ PCI_VDEVICE(INTEL, 0x31b0), (kernel_ulong_t)&glk_i2c_info },
++	{ PCI_VDEVICE(INTEL, 0x31b2), (kernel_ulong_t)&glk_i2c_info },
++	{ PCI_VDEVICE(INTEL, 0x31b4), (kernel_ulong_t)&glk_i2c_info },
++	{ PCI_VDEVICE(INTEL, 0x31b6), (kernel_ulong_t)&glk_i2c_info },
++	{ PCI_VDEVICE(INTEL, 0x31b8), (kernel_ulong_t)&glk_i2c_info },
++	{ PCI_VDEVICE(INTEL, 0x31ba), (kernel_ulong_t)&glk_i2c_info },
+ 	{ PCI_VDEVICE(INTEL, 0x31bc), (kernel_ulong_t)&bxt_uart_info },
+ 	{ PCI_VDEVICE(INTEL, 0x31be), (kernel_ulong_t)&bxt_uart_info },
+ 	{ PCI_VDEVICE(INTEL, 0x31c0), (kernel_ulong_t)&bxt_uart_info },
 
-Thanks,
-Quentin
+
