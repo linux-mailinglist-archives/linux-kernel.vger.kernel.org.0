@@ -2,170 +2,232 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 579B5148D41
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Jan 2020 18:48:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 661F6148D46
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Jan 2020 18:59:23 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390808AbgAXRsk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 24 Jan 2020 12:48:40 -0500
-Received: from out30-42.freemail.mail.aliyun.com ([115.124.30.42]:43624 "EHLO
-        out30-42.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2390378AbgAXRsk (ORCPT
+        id S2390965AbgAXR7Q (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 24 Jan 2020 12:59:16 -0500
+Received: from mail-io1-f66.google.com ([209.85.166.66]:39249 "EHLO
+        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2390902AbgAXR7P (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 24 Jan 2020 12:48:40 -0500
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R201e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e07417;MF=yang.shi@linux.alibaba.com;NM=1;PH=DS;RN=6;SR=0;TI=SMTPD_---0ToSpJP6_1579888114;
-Received: from US-143344MP.local(mailfrom:yang.shi@linux.alibaba.com fp:SMTPD_---0ToSpJP6_1579888114)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Sat, 25 Jan 2020 01:48:37 +0800
-Subject: Re: [v2 PATCH] mm: move_pages: report the number of non-attempted
- pages
-To:     Wei Yang <richardw.yang@linux.intel.com>,
-        Michal Hocko <mhocko@kernel.org>
-Cc:     akpm@linux-foundation.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, stable@vger.kernel.org
-References: <1579736331-85494-1-git-send-email-yang.shi@linux.alibaba.com>
- <20200123032736.GA22196@richard> <20200123085526.GH29276@dhcp22.suse.cz>
- <20200123225647.GB29851@richard> <20200124064649.GM29276@dhcp22.suse.cz>
- <20200124152642.GB12509@richard>
-From:   Yang Shi <yang.shi@linux.alibaba.com>
-Message-ID: <9aa3ff03-8397-4ca9-dc55-d893948f7ece@linux.alibaba.com>
-Date:   Fri, 24 Jan 2020 09:48:30 -0800
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.12; rv:52.0)
- Gecko/20100101 Thunderbird/52.7.0
+        Fri, 24 Jan 2020 12:59:15 -0500
+Received: by mail-io1-f66.google.com with SMTP id c16so2856649ioh.6
+        for <linux-kernel@vger.kernel.org>; Fri, 24 Jan 2020 09:59:14 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linuxfoundation.org; s=google;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=Ex0Isa11/flUHUOcxw59BzxTs8GRZOlZkq93u4RA4cc=;
+        b=HGuapn5TKXdsGZVP/fd3t4XZ3KECr31sSy71HHNkBR1yREz/nnbselm1Io6SqGJDC3
+         7AqBXqewKQctdURvHPlNLYCxvPWb4dXm28iYOVKQuPav8B4ggEIJHQ00jfGsjTJqXJSo
+         kTuoVPu3MSMoaAeyexzQ73reTt3mIIChM1v5k=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=Ex0Isa11/flUHUOcxw59BzxTs8GRZOlZkq93u4RA4cc=;
+        b=cqCaOF1wLeSPxuIXkmvuPqUiGxkTW5kDvCUqvN7A4WWHbud5fofH0PqUgFg7HLHt+f
+         5a7IURp7wvMxEj5tafdkCzJ6AJg41AE7MKXc8X5xoKd5RNwgCtkRywB7rHdnaVTfd6Ub
+         2sFW0fphtjjwhBYwiTFp3zSoHF7r4HQtsxhqUR58zyxOLBrDICmfNZth0YJlbPGYzwlQ
+         XPxDSUxEP6BlfWXIYPo7hMwUfcCou4MptwA4f+d7BJnAZzAINKMlUetNELhK8DE5nejq
+         Y19mzo6TF//ZTlmtBBoXz+fYYWWQlPsxO5goBwSlPEXLjzHJKrDqqxI5EP2dplBmhH+n
+         JlAQ==
+X-Gm-Message-State: APjAAAWa5Eq61/VBgmqMdatKiHCVu5sXBbBSN33r3tRwdQebbz7DKrqG
+        IZV6jk91/mqHFPgFW0ksoN7paCQ6XGY=
+X-Google-Smtp-Source: APXvYqzbojxj7MjKCh5WcRlf+iKihR3vmOwHSm53h/ObLAA0Fw3I7khmHWixbodbBkGe+QaiCAqfLg==
+X-Received: by 2002:a5d:9d11:: with SMTP id j17mr3255546ioj.83.1579888754401;
+        Fri, 24 Jan 2020 09:59:14 -0800 (PST)
+Received: from [192.168.1.112] (c-24-9-64-241.hsd1.co.comcast.net. [24.9.64.241])
+        by smtp.gmail.com with ESMTPSA id i11sm1338641ion.1.2020.01.24.09.59.13
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 24 Jan 2020 09:59:13 -0800 (PST)
+Subject: Re: [PATCH v2] iommu: amd: Fix IOMMU perf counter clobbering during
+ init
+To:     Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>,
+        joro@8bytes.org
+Cc:     iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
+        "Grimm, Jon" <jon.grimm@amd.com>,
+        "skh >> Shuah Khan" <skhan@linuxfoundation.org>
+References: <20200123223214.2566-1-skhan@linuxfoundation.org>
+ <096ee758-a372-4caa-c082-e1e8cff3f033@amd.com>
+From:   Shuah Khan <skhan@linuxfoundation.org>
+Message-ID: <11e832e3-67ca-cc8a-7e5c-c60b9fc54da1@linuxfoundation.org>
+Date:   Fri, 24 Jan 2020 10:59:13 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.1
 MIME-Version: 1.0
-In-Reply-To: <20200124152642.GB12509@richard>
+In-Reply-To: <096ee758-a372-4caa-c082-e1e8cff3f033@amd.com>
 Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
 Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On 1/24/20 7:26 AM, Wei Yang wrote:
-> On Fri, Jan 24, 2020 at 07:46:49AM +0100, Michal Hocko wrote:
->> On Fri 24-01-20 06:56:47, Wei Yang wrote:
->>> On Thu, Jan 23, 2020 at 09:55:26AM +0100, Michal Hocko wrote:
->>>> On Thu 23-01-20 11:27:36, Wei Yang wrote:
->>>>> On Thu, Jan 23, 2020 at 07:38:51AM +0800, Yang Shi wrote:
->>>>>> Since commit a49bd4d71637 ("mm, numa: rework do_pages_move"),
->>>>>> the semantic of move_pages() was changed to return the number of
->>>>>> non-migrated pages (failed to migration) and the call would be aborted
->>>>>> immediately if migrate_pages() returns positive value.  But it didn't
->>>>>> report the number of pages that we even haven't attempted to migrate.
->>>>>> So, fix it by including non-attempted pages in the return value.
->>>>>>
->>>>> First, we want to change the semantic of move_pages(2). The return value
->>>>> indicates the number of pages we didn't managed to migrate?
->>>>>
->>>>> Second, the return value from migrate_pages() doesn't mean the number of pages
->>>>> we failed to migrate. For example, one -ENOMEM is returned on the first page,
->>>>> migrate_pages() would return 1. But actually, no page successfully migrated.
->>>> ENOMEM is considered a permanent failure and as such it is returned by
->>>> migrate pages (see goto out).
->>>>
->>>>> Third, even the migrate_pages() return the exact non-migrate page, we are not
->>>>> sure those non-migrated pages are at the tail of the list. Because in the last
->>>>> case in migrate_pages(), it just remove the page from list. It could be a page
->>>>> in the middle of the list. Then, in userspace, how the return value be
->>>>> leveraged to determine the valid status? Any page in the list could be the
->>>>> victim.
->>>> Yes, I was wrong when stating that the caller would know better which
->>>> status to check. I misremembered the original patch as it was quite some
->>>> time ago. While storing the error code would be possible after some
->>>> massaging of migrate_pages is this really something we deeply care
->>>> about. The caller can achieve the same by initializing the status array
->>>> to a non-node number - e.g. -1 - and check based on that.
->>>>
->>> So for a user, the best practice is to initialize the status array to -1 and
->>> check each status to see whether the page is migrated successfully?
->> Yes IMO. Just consider -errno return value. You have no way to find out
->> which pages have been migrated until we reached that error. The
->> possitive return value would fall into the same case.
+On 1/23/20 11:43 PM, Suravee Suthikulpanit wrote:
+> 
+> 
+> On 1/24/20 5:32 AM, Shuah Khan wrote:
+>> init_iommu_perf_ctr() clobbers the register when it checks write access
+>> to IOMMU perf counters and fails to restore when they are writable.
 >>
->>> Then do we need to return the number of non-migrated page? What benefit could
->>> user get from the number. How about just return an error code to indicate the
->>> failure? I may miss some point, would you mind giving me a hint?
->> This is certainly possible. We can return -EAGAIN if some pages couldn't
->> be migrated because they are pinned. But please read my previous email
->> to the very end for arguments why this might cause more problems than it
->> actually solves.
+>> Add save and restore to fix it.
 >>
-> Let me put your comment here:
->
->      Because new users could have started depending on it. It
->      is not all that unlikely that the current implementation would just
->      work for them because they are migrating a set of pages on to the same
->      node so the batch would be a single list throughout the whole given
->      page set.
->
-> Your idea is to preserve current semantic, return non-migrated pages number to
-> userspace.
->
-> And the reason is:
->
->     1. Users have started depending on it.
->     2. No real bug reported yet.
->     3. User always migrate page to the same node. (If my understanding is
->        correct)
->
-> I think this gets some reason, since we want to minimize the impact to
-> userland.
->
-> While let's see what user probably use this syscall. Since from the man page,
-> we never told the return value could be positive, the number of non-migrated
-> pages, user would think only 0 means a successful migration and all other
-> cases are failure. Then user probably handle negative and positive return
-> value the same way, like (!err).
->
-> If my guess is true, return a negative error value for this case could
-> minimize the impact to userland here.
->     1. Preserve the semantic of move_pages(2): 0 means success, negative means
->        some error and needs extra handling.
->     2. Trivial change to the man page.
->     3. Suppose no change to users.
->
-> Well, in case I missed your point, sorry about that.
+>> Signed-off-by: Shuah Khan <skhan@linuxfoundation.org>
+>> ---
+>> Changes since v1:
+>> -- Fix bug in sucessful return path. Add a return instead of
+>>     fall through to pc_false error case
+>>
+>>   drivers/iommu/amd_iommu_init.c | 24 ++++++++++++++++++------
+>>   1 file changed, 18 insertions(+), 6 deletions(-)
+>>
+>> diff --git a/drivers/iommu/amd_iommu_init.c 
+>> b/drivers/iommu/amd_iommu_init.c
+>> index 568c52317757..483f7bc379fa 100644
+>> --- a/drivers/iommu/amd_iommu_init.c
+>> +++ b/drivers/iommu/amd_iommu_init.c
+>> @@ -1655,27 +1655,39 @@ static int iommu_pc_get_set_reg(struct 
+>> amd_iommu *iommu, u8 bank, u8 cntr,
+>>   static void init_iommu_perf_ctr(struct amd_iommu *iommu)
+>>   {
+>>       struct pci_dev *pdev = iommu->dev;
+>> -    u64 val = 0xabcd, val2 = 0;
+>> +    u64 val = 0xabcd, val2 = 0, save_reg = 0;
+>>       if (!iommu_feature(iommu, FEATURE_PC))
+>>           return;
+>>       amd_iommu_pc_present = true;
+>> +    /* save the value to restore, if writable */
+>> +    if (iommu_pc_get_set_reg(iommu, 0, 0, 0, &save_reg, false))
+>> +        goto pc_false;
+>> +
+>>       /* Check if the performance counters can be written to */
+>>       if ((iommu_pc_get_set_reg(iommu, 0, 0, 0, &val, true)) ||
+>>           (iommu_pc_get_set_reg(iommu, 0, 0, 0, &val2, false)) ||
+>> -        (val != val2)) {
+>> -        pci_err(pdev, "Unable to write to IOMMU perf counter.\n");
+>> -        amd_iommu_pc_present = false;
+>> -        return;
+>> -    }
+>> +        (val != val2))
+>> +        goto pc_false;
+>> +
+>> +    /* restore */
+>> +    if (iommu_pc_get_set_reg(iommu, 0, 0, 0, &save_reg, true))
+>> +        goto pc_false;
+>>       pci_info(pdev, "IOMMU performance counters supported\n");
+>>       val = readl(iommu->mmio_base + MMIO_CNTR_CONF_OFFSET);
+>>       iommu->max_banks = (u8) ((val >> 12) & 0x3f);
+>>       iommu->max_counters = (u8) ((val >> 7) & 0xf);
+>> +
+>> +    return;
+>> +
+> 
+> Good catch. Sorry, I missed this part as well :(
+> 
+>> +pc_false:
+>> +    pci_err(pdev, "Unable to read/write to IOMMU perf counter.\n");
+>> +    amd_iommu_pc_present = false;
+>> +    return;
+>>   }
+>>   static ssize_t amd_iommu_show_cap(struct device *dev,
+>>
+> 
+> As for your question in v1:
+> 
+>  > I see 2 banks and 4 counters on my system. Is it sufficient to check
+>  > the first bank and first counter? In other words, if the first one
+>  > isn't writable, are all counters non-writable?
+> 
+> We currently assume all counters have the same write-ability. So, it 
+> should be sufficient
+> to just check the first one.
+> 
+>  > Should we read the config first and then, try to see if any of the
+>  > counters are writable? I have a patch that does that, I can send it
+>  > out for review.
+> 
+> Which config are you referring to? Not sure what you mean.
 
-I think we should compare the new semantic with the old one. With the 
-old semantic the move_pages() return 0 for both success *and* migration 
-failure. So, I'm supposed (I don't have any real usecase) the user may 
-do the below with the old semantic:
-     - Just check if it is failed (ignore migration failure), "!err" is 
-good enough.  This usecase is fine as well with the new semantic since 
-migration failure is also a kind of error cases.
-      - Care about migration failure, the user needs traverse all bits 
-in the status array. With the new semantic they just need check if "err 
- > 0", if they want to know what specific pages are failed to migrate, 
-then traverse the status array (with initialized as -1 as Michal 
-suggested in earlier email).
+I mean reading MMIO_CNTR_CONF_OFFSET to get max banks and counters.
+Also what is the reason to check writable?
 
-So, with returning errno for migration failure if the userspace wants to 
-see if migration is failed, they need do:
-     1. Check "!err"
-     2. Read errno if #1 returns false
-     3. Traverse status array to see how many pages are failed to migrate
+I tried a couplf og things on my
 
-But with the new semantic they just need check if "err > 0", one step is 
-fine for the most cases. So I said this approach seems more 
-straightforward to the userspace and makes more sense IMHO.
+AMD Ryzen 5 PRO 2400GE w/ Radeon Vega Graphics
 
->>>> This system call has quite a complex semantic and I am not 100% sure
->>>> what is the right thing to do here. Maybe we do want to continue and try
->>>> to migrate as much as possible on non-fatal migration failures and
->>>> accumulate the number of failed pages while doing so.
->>>>
->>>> The main problem is that we can have an academic discussion but
->>>> the primary question is what do actual users want. A lack of real
->>>> bug reports suggests that nobody has actually noticed this. So I
->>>> would rather keep returning the correct number of non-migrated
->>>> pages. Why? Because new users could have started depending on it. It
->>>> is not all that unlikely that the current implementation would just
->>>> work for them because they are migrating a set of pages on to the same
->>>> node so the batch would be a single list throughout the whole given
->>>> page set.
->> -- 
->> Michal Hocko
->> SUSE Labs
+I changed the logic to read config to get max banks and counters
+before checking if counters are writable and tried writing to all.
+The result is the same and all of them aren't writable. However,
+when disable the writable check and assume they are, I can run
 
+perf stat -e 'amd_iommu_0 on all events and get data.
+
+perf stat -e 'amd_iommu_0/cmd_processed/' sleep 10
+
+  Performance counter stats for 'system wide':
+
+                 56      amd_iommu_0/cmd_processed/ 
+
+
+       10.001525171 seconds time elapsed
+
+
+perf stat -a -e amd_iommu/mem_trans_total/ sleep 10
+
+  Performance counter stats for 'system wide':
+
+              2,696      amd_iommu/mem_trans_total/ 
+
+
+       10.001465115 seconds time elapsed
+
+I tried all possible events listed under amd_iommu_0 and I can get
+data on all of them. No problems in dmesg.
+
+Is this inline with what you expect? I am curious what this write
+tell us and can we enable read only mode on these counters?
+
+> 
+> By the way, here is the output from booting the system with this patch 
+> (+ debug messages).
+> 
+> [   14.408834] pci 0000:60:00.2: AMD-Vi: IOMMU performance counters 
+> supported
+> [   14.416526] DEBUG: init_iommu_perf_ctr: amd_iommu_pc_present=0x1
+> [   14.429602] pci 0000:40:00.2: AMD-Vi: IOMMU performance counters 
+> supported
+> [   14.437275] DEBUG: init_iommu_perf_ctr: amd_iommu_pc_present=0x1
+> [   14.450320] pci 0000:20:00.2: AMD-Vi: IOMMU performance counters 
+> supported
+> [   14.457991] DEBUG: init_iommu_perf_ctr: amd_iommu_pc_present=0x1
+> [   14.471049] pci 0000:00:00.2: AMD-Vi: IOMMU performance counters 
+> supported
+> [   14.478722] DEBUG: init_iommu_perf_ctr: amd_iommu_pc_present=0x1
+> 
+> Also, here is the perf amd_iommu testing.
+> 
+> # perf stat -e 'amd_iommu_0/cmd_processed/,\
+>          amd_iommu_1/cmd_processed/,\
+>          amd_iommu_2/cmd_processed/,\
+>          amd_iommu_3/cmd_processed/'
+> 
+>   Performance counter stats for 'system wide':
+> 
+>                 204      amd_iommu_0/cmd_processed/
+>                   0      amd_iommu_1/cmd_processed/
+>                 472      amd_iommu_2/cmd_processed/
+>                   2      amd_iommu_3/cmd_processed/
+> 
+>        10.198257728 seconds time elapsed
+> 
+> Reviewed-by: Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>
+> Tested-by: Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>
+> 
+
+Thanks for testing it.
+
+-- Shuah
