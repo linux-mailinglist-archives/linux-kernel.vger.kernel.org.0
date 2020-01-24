@@ -2,110 +2,114 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 03125148D15
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Jan 2020 18:38:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4B35D148D05
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Jan 2020 18:32:14 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390093AbgAXRiB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 24 Jan 2020 12:38:01 -0500
-Received: from mail.andi.de1.cc ([85.214.55.253]:50916 "EHLO mail.andi.de1.cc"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389487AbgAXRiA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 24 Jan 2020 12:38:00 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=kemnade.info; s=20180802; h=Content-Type:MIME-Version:References:
-        In-Reply-To:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=kO2pTpMXTjirs1T9+Tqx7exh45U6cC4XVCnw+kz4z9E=; b=kMv1Q6A1EdayuI15tq9yAZ6k+
-        qa++o6aMBXi60PmCr+b+soC0XqQAisYB5fIds9C/ILLai0zmZq8Yyg0RIeWY2I0psyaAn6s69AHH7
-        xvyHg8q3olYxaA0+Mbe/yFnIlKHq0szjubS4hfJp0+XfZxVLvWVvGZ6lg8ipISRDkOYBo=;
-Received: from p200300ccff0b16007ee9d3fffe1fa246.dip0.t-ipconnect.de ([2003:cc:ff0b:1600:7ee9:d3ff:fe1f:a246] helo=eeepc.fritz.box)
-        by mail.andi.de1.cc with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <andreas@kemnade.info>)
-        id 1iv2tv-0007T7-E8; Fri, 24 Jan 2020 18:37:49 +0100
-Received: from [::1] (helo=localhost)
-        by eeepc with esmtp (Exim 4.89)
-        (envelope-from <andreas@kemnade.info>)
-        id 1iv0sq-0006jm-2T; Fri, 24 Jan 2020 16:28:32 +0100
-Date:   Fri, 24 Jan 2020 16:28:18 +0100
-From:   Andreas Kemnade <andreas@kemnade.info>
-To:     Lee Jones <lee.jones@linaro.org>
-Cc:     jic23@kernel.org, knaack.h@gmx.de, lars@metafoo.de,
-        pmeerw@pmeerw.net, b.galvani@gmail.com, linus.walleij@linaro.org,
-        linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org,
-        phh@phh.me, stefan@agner.ch, letux-kernel@openphoenux.org
-Subject: Re: [PATCH 2/5] mfd: rn5t618: add ADC subdevice for RC5T619
-Message-ID: <20200124162818.0697f551@kemnade.info>
-In-Reply-To: <20200120084934.GZ15507@dell>
-References: <20200117215926.15194-1-andreas@kemnade.info>
-        <20200117215926.15194-3-andreas@kemnade.info>
-        <20200120084934.GZ15507@dell>
-X-Mailer: Claws Mail 3.14.1 (GTK+ 2.24.31; i686-pc-linux-gnu)
+        id S2389903AbgAXRcN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 24 Jan 2020 12:32:13 -0500
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:42692 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2389463AbgAXRcM (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 24 Jan 2020 12:32:12 -0500
+Received: by mail-pf1-f196.google.com with SMTP id 4so1441353pfz.9
+        for <linux-kernel@vger.kernel.org>; Fri, 24 Jan 2020 09:32:12 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=CxnFfi1OVtcvBCqSwcv0ZRctexZ9zrixK0G0Fd+YL9M=;
+        b=uAQTbihJp9Y377xep7kVEyC+tfqQ1RNOMgHCu+FmUGNTld/PKnP5PmFCvPZfXYtMb+
+         ujFDt5FsY2Su1FkuDyta3kmF08yhl6zQ3U1Cenpy7YkzAKaXGmP3idWcYd4JDxr6/Gh+
+         aZsV1pyVwEBaDAjUOzQSlMRawIPJEDasbggi4218ieg1f/MvrxWgGrRDnLcc1kM1Vxz+
+         ma2FUf0Nn6jga+b3Jr6v8Jw0z9JLIJFCjU5dex7gP1+xG4WrEJb2K8ZkPGTKarCVKMEq
+         928fsSwlHio6XGBCtu8zSV9k/W7e+lYeZKi3z0j5TrE2dE2dNYZoo6tOllJf2qbOu+Ft
+         KSqg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=CxnFfi1OVtcvBCqSwcv0ZRctexZ9zrixK0G0Fd+YL9M=;
+        b=lUCJz2re1dqQA3Fb9XH1Jr0Fyrjca5nfwWnlfLyEw1eyqPRrO/AlKZEUAQ3xnRVmJf
+         NgEKIaY0Y3KGyH1OjbUnvbel5t/E8po3LKJdp3ss20cJJ2pA3bD1US2waimfOMWQ55D8
+         8Fc3avKX6NszoBW+C3C3nExRJ8uUriHOkYphFazqz0pd7s7m7fWi0FzHZc2Ph3bkbU1A
+         M0Xmp9FFDcqHb6kA19pltvCskjf/Lmx8MAFC9IacmBKw0VJNHOEeal7RLODIDbxgTmSy
+         PIhop0tJkE6EDLP2H/vl588hXyBtiqFkCSKSlxJm6CNu9DJ/TgSAU4R4chDaYSdoUPUr
+         RYQw==
+X-Gm-Message-State: APjAAAVJOA8fadOdgzX+08vhXfrNv4pi6IxkvxYql+7lhkpWuGCGIk/S
+        hx2xtOBae9lD6z/ja1ZBZ+7gbw==
+X-Google-Smtp-Source: APXvYqwDf89NqtAzeKmdxMJBFd8Gev2DtVh0Oryoa24PJycUxhDvWQcSvp/ck/kZ74zux/rtOiZz+A==
+X-Received: by 2002:a62:b418:: with SMTP id h24mr4455754pfn.192.1579887131841;
+        Fri, 24 Jan 2020 09:32:11 -0800 (PST)
+Received: from yoga (pat_11.qualcomm.com. [192.35.156.11])
+        by smtp.gmail.com with ESMTPSA id d2sm7245833pjv.18.2020.01.24.09.32.10
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 24 Jan 2020 09:32:11 -0800 (PST)
+Date:   Fri, 24 Jan 2020 09:32:08 -0800
+From:   Bjorn Andersson <bjorn.andersson@linaro.org>
+To:     Harigovindan P <harigovi@codeaurora.org>
+Cc:     dri-devel@lists.freedesktop.org, linux-arm-msm@vger.kernel.org,
+        freedreno@lists.freedesktop.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, robdclark@gmail.com,
+        seanpaul@chromium.org, hoegsberg@chromium.org,
+        kalyan_t@codeaurora.org, nganji@codeaurora.org
+Subject: Re: [v3] arm64: dts: sc7180: add display dt nodes
+Message-ID: <20200124173208.GZ1511@yoga>
+References: <1579867572-17188-1-git-send-email-harigovi@codeaurora.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/IMwQ3EA3mlW=xf1Y4GDLMWA"; protocol="application/pgp-signature"
-X-Spam-Score: -1.0 (-)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1579867572-17188-1-git-send-email-harigovi@codeaurora.org>
+User-Agent: Mutt/1.12.2 (2019-09-21)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/IMwQ3EA3mlW=xf1Y4GDLMWA
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+On Fri 24 Jan 04:06 PST 2020, Harigovindan P wrote:
 
-Hi,
+> Add display, DSI hardware DT nodes for sc7180.
+> 
+> Signed-off-by: Harigovindan P <harigovi@codeaurora.org>
 
-hmm, I cannot find this in any branch/repo I know of and not in linux-next,
-just wondering...
-I guess the iio part is something to go towards 5.7 unless 5.5
-is delayed mucch.
+Thanks for respinning this Harigovindan, just a few more small things
+below.
+
+Are the drivers ready for me to merge this?
+
+> diff --git a/arch/arm64/boot/dts/qcom/sc7180-idp.dts b/arch/arm64/boot/dts/qcom/sc7180-idp.dts
+[..]
+> +&pm6150l_gpio {
+> +	disp_pins {
+
+You can omit this subnode level, i.e. just put disp_pins_default
+directly in &pm6150l_gpio.
+
+> +		disp_pins_default: disp_pins_default{
+> +			pins = "gpio3";
+> +			function = "func1";
+> +			qcom,drive-strength = <2>;
+> +			power-source = <0>;
+> +			bias-disable;
+> +			output-low;
+> +		};
+> +	};
+> +};
+> +
+>  &qspi_clk {
+>  	pinconf {
+>  		pins = "gpio63";
+> diff --git a/arch/arm64/boot/dts/qcom/sc7180.dtsi b/arch/arm64/boot/dts/qcom/sc7180.dtsi
+> index 3bc3f64..3ebc45b 100644
+> --- a/arch/arm64/boot/dts/qcom/sc7180.dtsi
+> +++ b/arch/arm64/boot/dts/qcom/sc7180.dtsi
+> @@ -1184,6 +1184,130 @@
+>  			#power-domain-cells = <1>;
+>  		};
+>  
+> +		mdss: display_subsystem@ae00000 {
+
+Whenever possible, use - and not _ in node names.
 
 Regards,
-Andreas
-
-On Mon, 20 Jan 2020 08:49:34 +0000
-Lee Jones <lee.jones@linaro.org> wrote:
-
-> On Fri, 17 Jan 2020, Andreas Kemnade wrote:
->=20
-> > This adds a subdevice for the ADC in the RC5T619.
-> >=20
-> > Signed-off-by: Andreas Kemnade <andreas@kemnade.info>
-> > ---
-> >  drivers/mfd/rn5t618.c | 1 +
-> >  1 file changed, 1 insertion(+) =20
->=20
-> Applied, thanks.
->=20
-> --=20
-> Lee Jones [=E6=9D=8E=E7=90=BC=E6=96=AF]
-> Linaro Services Technical Lead
-> Linaro.org =E2=94=82 Open source software for ARM SoCs
-> Follow Linaro: Facebook | Twitter | Blog
->=20
-
---Sig_/IMwQ3EA3mlW=xf1Y4GDLMWA
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCAAdFiEEPIWxmAFyOaBcwCpFl4jFM1s/ye8FAl4rDRMACgkQl4jFM1s/
-ye+L9hAAs+bo7p2SXf11Rn3tlAHcI94DNVUx7FnrebA36C1LXkMWC0RrclYtKkPS
-xLyxLiZLeUxUvOWjlRXcBU0FU7QVeM+FxB61ze9V50dBGFgj1PHAVPAgmyeM+Ch3
-d/TGMONsI2lfR5NFU/TSWyPan2Em6s5Yet4HAnpv2WIyAGT4qHfyoHo5gmU5GqD3
-wQCekCRwi5gs/yYIKG/AEpVo/MT6DOQ3bSPRmC6sxaqgfJVJXAXsStcNRNW07cq7
-onj/OU+aauVT6xJ2XvB7uiKaC8kzrVXK0t02nOhqDIct3GYOpm2bO0AtFafURKhe
-sGgq/SPFCBISOMqIGvU+0/Hd2abGA/r4win12xYWI9o/0LPMZs25LyFxXNBBaRtc
-9QFhE7DazpoLpPCFv7Za5+KmuZxcifN8DZgFl177V0U79vXPuS52g3vEIbzwZboc
-+HCB2imqCOIhAOMhwGr7ADn0u/ryo8LG4HgozzoEztm7xoSMOyDPf9ct9wZS8Np5
-2ImzgpnYb70qIvSV9y6JCupLXeChZmyB6Kfc3sird2bwNIQNPHOLEQKoDlvkawNG
-7ePxvN0pqZUuS2DhLbbzKFoljnhiR4DEiIHmnQDUEEvEfz6dHDGM7fEzY5679Fuu
-3L0DmPqvHi28vobM2YscZ9VTHimw7N6lZozqVy2t12NNbl36D7E=
-=nb2+
------END PGP SIGNATURE-----
-
---Sig_/IMwQ3EA3mlW=xf1Y4GDLMWA--
+Bjorn
