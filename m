@@ -2,36 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8D649148092
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Jan 2020 12:12:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B1E18148085
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Jan 2020 12:12:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389988AbgAXLM1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 24 Jan 2020 06:12:27 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48688 "EHLO mail.kernel.org"
+        id S2389942AbgAXLL6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 24 Jan 2020 06:11:58 -0500
+Received: from mail.kernel.org ([198.145.29.99]:48082 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388374AbgAXLMX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 24 Jan 2020 06:12:23 -0500
+        id S2389930AbgAXLL4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 24 Jan 2020 06:11:56 -0500
 Received: from localhost (ip-213-127-102-57.ip.prioritytelecom.net [213.127.102.57])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9805A20663;
-        Fri, 24 Jan 2020 11:12:22 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id AFCF220663;
+        Fri, 24 Jan 2020 11:11:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579864343;
-        bh=c6gzUqxlvOJ9c3CTRw7aCZ/FwMvPQlg8CdOj1USoyRE=;
+        s=default; t=1579864315;
+        bh=Ltsya09+w8x7dsyysFBQINaYsAo+nNg0ywQVgB0u/iQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=YqiCbFItUREyd9HAcEVHhn2R4hU8jih+Ukd5oYUjow4jvqAVAIk+AK06wiOBHHrnO
-         SFIRlt2QbiN5HAm+ZhbRmfY9P+KubJxEkdDFTBM1OZ5RSuTLCJzYowOvYgSNt8xMsS
-         Sd0aSNKPO4v1gR2NKKHBrOGtC/sV5H/zI9DQj80c=
+        b=VUy2CBatoIEhklQU4MjbBRB4SGxjpaFpQWIGW+pcp8ESML8IPNkVuQP42u2km539I
+         kCiZ/2U9g2+IGhBBp62O/HL/QhRCUW6f/LDjGuFxu18TJbJ6HKPjWMHf6n7de1Lklt
+         dtRubsCkHBpV4Ec9mu5fARc2JqX0RiKmLX1eRQ/4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Leon Romanovsky <leonro@mellanox.com>,
-        Saeed Mahameed <saeedm@mellanox.com>,
+        stable@vger.kernel.org, Colin Ian King <colin.king@canonical.com>,
+        Ben Skeggs <bskeggs@redhat.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 217/639] net/mlx5: Delete unused FPGA QPN variable
-Date:   Fri, 24 Jan 2020 10:26:27 +0100
-Message-Id: <20200124093114.144719822@linuxfoundation.org>
+Subject: [PATCH 4.19 219/639] drm/nouveau/pmu: dont print reply values if exec is false
+Date:   Fri, 24 Jan 2020 10:26:29 +0100
+Message-Id: <20200124093114.381458515@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
 In-Reply-To: <20200124093047.008739095@linuxfoundation.org>
 References: <20200124093047.008739095@linuxfoundation.org>
@@ -44,47 +44,42 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Leon Romanovsky <leonro@mellanox.com>
+From: Colin Ian King <colin.king@canonical.com>
 
-[ Upstream commit 566428375a53619196e31803130dd1a7010c4d7f ]
+[ Upstream commit b1d03fc36ec9834465a08c275c8d563e07f6f6bf ]
 
-fpga_qpn was assigned but never used and compilation with W=1
-produced the following warning:
+Currently the uninitialized values in the array reply are printed out
+when exec is false and nvkm_pmu_send has not updated the array. Avoid
+confusion by only dumping out these values if they have been actually
+updated.
 
-drivers/net/ethernet/mellanox/mlx5/core/fpga/core.c: In function _mlx5_fpga_event_:
-drivers/net/ethernet/mellanox/mlx5/core/fpga/core.c:320:6: warning:
-variable _fpga_qpn_ set but not used [-Wunused-but-set-variable]
-  u32 fpga_qpn;
-      ^~~~~~~~
+Detected by CoverityScan, CID#1271291 ("Uninitialized scaler variable")
+Fixes: ebb58dc2ef8c ("drm/nouveau/pmu: rename from pwr (no binary change)")
 
-Fixes: 98db16bab59f ("net/mlx5: FPGA, Handle QP error event")
-Signed-off-by: Leon Romanovsky <leonro@mellanox.com>
-Signed-off-by: Saeed Mahameed <saeedm@mellanox.com>
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Signed-off-by: Ben Skeggs <bskeggs@redhat.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/mellanox/mlx5/core/fpga/core.c | 2 --
- 1 file changed, 2 deletions(-)
+ drivers/gpu/drm/nouveau/nvkm/subdev/pmu/memx.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/net/ethernet/mellanox/mlx5/core/fpga/core.c b/drivers/net/ethernet/mellanox/mlx5/core/fpga/core.c
-index 436a8136f26ff..310f9e7d83200 100644
---- a/drivers/net/ethernet/mellanox/mlx5/core/fpga/core.c
-+++ b/drivers/net/ethernet/mellanox/mlx5/core/fpga/core.c
-@@ -289,7 +289,6 @@ void mlx5_fpga_event(struct mlx5_core_dev *mdev, u8 event, void *data)
- 	const char *event_name;
- 	bool teardown = false;
- 	unsigned long flags;
--	u32 fpga_qpn;
- 	u8 syndrome;
+diff --git a/drivers/gpu/drm/nouveau/nvkm/subdev/pmu/memx.c b/drivers/gpu/drm/nouveau/nvkm/subdev/pmu/memx.c
+index 11b28b086a062..7b052879af728 100644
+--- a/drivers/gpu/drm/nouveau/nvkm/subdev/pmu/memx.c
++++ b/drivers/gpu/drm/nouveau/nvkm/subdev/pmu/memx.c
+@@ -88,10 +88,10 @@ nvkm_memx_fini(struct nvkm_memx **pmemx, bool exec)
+ 	if (exec) {
+ 		nvkm_pmu_send(pmu, reply, PROC_MEMX, MEMX_MSG_EXEC,
+ 			      memx->base, finish);
++		nvkm_debug(subdev, "Exec took %uns, PMU_IN %08x\n",
++			   reply[0], reply[1]);
+ 	}
  
- 	switch (event) {
-@@ -300,7 +299,6 @@ void mlx5_fpga_event(struct mlx5_core_dev *mdev, u8 event, void *data)
- 	case MLX5_EVENT_TYPE_FPGA_QP_ERROR:
- 		syndrome = MLX5_GET(fpga_qp_error_event, data, syndrome);
- 		event_name = mlx5_fpga_qp_syndrome_to_string(syndrome);
--		fpga_qpn = MLX5_GET(fpga_qp_error_event, data, fpga_qpn);
- 		break;
- 	default:
- 		mlx5_fpga_warn_ratelimited(fdev, "Unexpected event %u\n",
+-	nvkm_debug(subdev, "Exec took %uns, PMU_IN %08x\n",
+-		   reply[0], reply[1]);
+ 	kfree(memx);
+ 	return 0;
+ }
 -- 
 2.20.1
 
