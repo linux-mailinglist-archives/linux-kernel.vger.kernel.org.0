@@ -2,98 +2,110 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 08589148CFD
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Jan 2020 18:29:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 03125148D15
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Jan 2020 18:38:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389254AbgAXR3r (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 24 Jan 2020 12:29:47 -0500
-Received: from 8bytes.org ([81.169.241.247]:60826 "EHLO theia.8bytes.org"
+        id S2390093AbgAXRiB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 24 Jan 2020 12:38:01 -0500
+Received: from mail.andi.de1.cc ([85.214.55.253]:50916 "EHLO mail.andi.de1.cc"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387661AbgAXR3q (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 24 Jan 2020 12:29:46 -0500
-Received: by theia.8bytes.org (Postfix, from userid 1000)
-        id 79A5AA52; Fri, 24 Jan 2020 18:29:45 +0100 (CET)
-Date:   Fri, 24 Jan 2020 18:29:44 +0100
-From:   Joerg Roedel <joro@8bytes.org>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     linux-kernel@vger.kernel.org, iommu@lists.linux-foundation.org
-Subject: [git pull] IOMMU Fixes for Linux v5.5-rc7
-Message-ID: <20200124172938.GA30565@8bytes.org>
+        id S2389487AbgAXRiA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 24 Jan 2020 12:38:00 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=kemnade.info; s=20180802; h=Content-Type:MIME-Version:References:
+        In-Reply-To:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=kO2pTpMXTjirs1T9+Tqx7exh45U6cC4XVCnw+kz4z9E=; b=kMv1Q6A1EdayuI15tq9yAZ6k+
+        qa++o6aMBXi60PmCr+b+soC0XqQAisYB5fIds9C/ILLai0zmZq8Yyg0RIeWY2I0psyaAn6s69AHH7
+        xvyHg8q3olYxaA0+Mbe/yFnIlKHq0szjubS4hfJp0+XfZxVLvWVvGZ6lg8ipISRDkOYBo=;
+Received: from p200300ccff0b16007ee9d3fffe1fa246.dip0.t-ipconnect.de ([2003:cc:ff0b:1600:7ee9:d3ff:fe1f:a246] helo=eeepc.fritz.box)
+        by mail.andi.de1.cc with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <andreas@kemnade.info>)
+        id 1iv2tv-0007T7-E8; Fri, 24 Jan 2020 18:37:49 +0100
+Received: from [::1] (helo=localhost)
+        by eeepc with esmtp (Exim 4.89)
+        (envelope-from <andreas@kemnade.info>)
+        id 1iv0sq-0006jm-2T; Fri, 24 Jan 2020 16:28:32 +0100
+Date:   Fri, 24 Jan 2020 16:28:18 +0100
+From:   Andreas Kemnade <andreas@kemnade.info>
+To:     Lee Jones <lee.jones@linaro.org>
+Cc:     jic23@kernel.org, knaack.h@gmx.de, lars@metafoo.de,
+        pmeerw@pmeerw.net, b.galvani@gmail.com, linus.walleij@linaro.org,
+        linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org,
+        phh@phh.me, stefan@agner.ch, letux-kernel@openphoenux.org
+Subject: Re: [PATCH 2/5] mfd: rn5t618: add ADC subdevice for RC5T619
+Message-ID: <20200124162818.0697f551@kemnade.info>
+In-Reply-To: <20200120084934.GZ15507@dell>
+References: <20200117215926.15194-1-andreas@kemnade.info>
+        <20200117215926.15194-3-andreas@kemnade.info>
+        <20200120084934.GZ15507@dell>
+X-Mailer: Claws Mail 3.14.1 (GTK+ 2.24.31; i686-pc-linux-gnu)
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="G4iJoqBmSsgzjUCe"
-Content-Disposition: inline
-User-Agent: Mutt/1.10.1 (2018-07-13)
+ boundary="Sig_/IMwQ3EA3mlW=xf1Y4GDLMWA"; protocol="application/pgp-signature"
+X-Spam-Score: -1.0 (-)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+--Sig_/IMwQ3EA3mlW=xf1Y4GDLMWA
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
---G4iJoqBmSsgzjUCe
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Hi,
 
-Hi Linus,
+hmm, I cannot find this in any branch/repo I know of and not in linux-next,
+just wondering...
+I guess the iio part is something to go towards 5.7 unless 5.5
+is delayed mucch.
 
-The following changes since commit def9d2780727cec3313ed3522d0123158d87224d:
+Regards,
+Andreas
 
-  Linux 5.5-rc7 (2020-01-19 16:02:49 -0800)
+On Mon, 20 Jan 2020 08:49:34 +0000
+Lee Jones <lee.jones@linaro.org> wrote:
 
-are available in the Git repository at:
+> On Fri, 17 Jan 2020, Andreas Kemnade wrote:
+>=20
+> > This adds a subdevice for the ADC in the RC5T619.
+> >=20
+> > Signed-off-by: Andreas Kemnade <andreas@kemnade.info>
+> > ---
+> >  drivers/mfd/rn5t618.c | 1 +
+> >  1 file changed, 1 insertion(+) =20
+>=20
+> Applied, thanks.
+>=20
+> --=20
+> Lee Jones [=E6=9D=8E=E7=90=BC=E6=96=AF]
+> Linaro Services Technical Lead
+> Linaro.org =E2=94=82 Open source software for ARM SoCs
+> Follow Linaro: Facebook | Twitter | Blog
+>=20
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/joro/iommu.git tags/iommu-fixes-v5.5-rc7
-
-for you to fetch changes up to 8c17bbf6c8f70058a66305f2e1982552e6ea7f47:
-
-  iommu/amd: Fix IOMMU perf counter clobbering during init (2020-01-24 15:28:40 +0100)
-
-----------------------------------------------------------------
-IOMMU Fixes for Linux v5.5-rc7
-
-Two Fixes:
-
-	- Fix NULL-ptr dereference bug in Intel IOMMU driver
-
-	- Properly safe and restore AMD IOMMU performance counter
-	  registers when testing if they are writable.
-
-----------------------------------------------------------------
-Jerry Snitselaar (1):
-      iommu/vt-d: Call __dmar_remove_one_dev_info with valid pointer
-
-Shuah Khan (1):
-      iommu/amd: Fix IOMMU perf counter clobbering during init
-
- drivers/iommu/amd_iommu_init.c | 24 ++++++++++++++++++------
- drivers/iommu/intel-iommu.c    |  3 ++-
- 2 files changed, 20 insertions(+), 7 deletions(-)
-
-Please pull.
-
-Thanks,
-
-	Joerg
-
---G4iJoqBmSsgzjUCe
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
+--Sig_/IMwQ3EA3mlW=xf1Y4GDLMWA
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAEBCAAdFiEEr9jSbILcajRFYWYyK/BELZcBGuMFAl4rKYEACgkQK/BELZcB
-GuNdkhAAlRLkHjoXT38iYdfMCBUggHmc7U5H/GiIADORG9kD/CoKDwmvtmpqRfk/
-Kta1udCotWFtBGyWm77mglk2cdxlHAyfsN+Prmy+4acFCBu/7dgu/KvgaYWcZiz+
-UGNuHP8D9LvXIupkEI3w4xszR63TBPU8ptwQti0yyXb11zpyUFu8WdJgOjE/ejDM
-CqABUbgYy5ZGnWmU3mmNF7uU895199jRCy74PWJ8fyulhwlIeXVRGviseF7Lhumr
-SULq7PGXVWrLQ4BxWXHQZ+bTA7ZtOntj80DH5pLXkQYEWYbF46Tk4o+7swsdcRvj
-+EFdDxrLkgVtuRWXGQ9e1LcK/hpWTuoWcZZiAEskmGuQfCASuK9v0a0Z7tOa3VYO
-ewVzn7fQFP4jM/6Vj4ulqw34+xTWnZ77W7LCgCYxAc/mVSSaWu5ieR7uqtTBFRpv
-IC6w95gQaUwMYnh42UN+5TLRWVrGxZVQ2daCsoqu0m4H0N1B2sXyJOK9AuAMDteN
-FxDQJc+YBPfVCB5mnHopU604uzVTXJ8goXudo4kAz3B45JvCngCa5pPUYfWMsf1j
-0XdVy9uDw17mRTX85gv5AjwbyIM2exowxbaGI6+3Y3m853WZN1tHIkV5dF/ulT+M
-M3GgWktVnd5J8BfJgvaKvncxVRWL/mCymNYi2YUQD/yCBp01r1o=
-=DFl+
+iQIzBAEBCAAdFiEEPIWxmAFyOaBcwCpFl4jFM1s/ye8FAl4rDRMACgkQl4jFM1s/
+ye+L9hAAs+bo7p2SXf11Rn3tlAHcI94DNVUx7FnrebA36C1LXkMWC0RrclYtKkPS
+xLyxLiZLeUxUvOWjlRXcBU0FU7QVeM+FxB61ze9V50dBGFgj1PHAVPAgmyeM+Ch3
+d/TGMONsI2lfR5NFU/TSWyPan2Em6s5Yet4HAnpv2WIyAGT4qHfyoHo5gmU5GqD3
+wQCekCRwi5gs/yYIKG/AEpVo/MT6DOQ3bSPRmC6sxaqgfJVJXAXsStcNRNW07cq7
+onj/OU+aauVT6xJ2XvB7uiKaC8kzrVXK0t02nOhqDIct3GYOpm2bO0AtFafURKhe
+sGgq/SPFCBISOMqIGvU+0/Hd2abGA/r4win12xYWI9o/0LPMZs25LyFxXNBBaRtc
+9QFhE7DazpoLpPCFv7Za5+KmuZxcifN8DZgFl177V0U79vXPuS52g3vEIbzwZboc
++HCB2imqCOIhAOMhwGr7ADn0u/ryo8LG4HgozzoEztm7xoSMOyDPf9ct9wZS8Np5
+2ImzgpnYb70qIvSV9y6JCupLXeChZmyB6Kfc3sird2bwNIQNPHOLEQKoDlvkawNG
+7ePxvN0pqZUuS2DhLbbzKFoljnhiR4DEiIHmnQDUEEvEfz6dHDGM7fEzY5679Fuu
+3L0DmPqvHi28vobM2YscZ9VTHimw7N6lZozqVy2t12NNbl36D7E=
+=nb2+
 -----END PGP SIGNATURE-----
 
---G4iJoqBmSsgzjUCe--
+--Sig_/IMwQ3EA3mlW=xf1Y4GDLMWA--
