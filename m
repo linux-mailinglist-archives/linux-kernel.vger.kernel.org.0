@@ -2,39 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E707B1486F6
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Jan 2020 15:20:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D13511486F8
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Jan 2020 15:20:16 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392017AbgAXOTp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 24 Jan 2020 09:19:45 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39738 "EHLO mail.kernel.org"
+        id S2392092AbgAXOTs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 24 Jan 2020 09:19:48 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39870 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2391620AbgAXOT0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 24 Jan 2020 09:19:26 -0500
+        id S2391727AbgAXOTb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 24 Jan 2020 09:19:31 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DA0C920838;
-        Fri, 24 Jan 2020 14:19:24 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E185B214AF;
+        Fri, 24 Jan 2020 14:19:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579875565;
-        bh=T9IqlH2GDcO96bbIxhZJVm4mjhUxT05VXehOGgsoU2c=;
+        s=default; t=1579875570;
+        bh=Bjl/84MAqt36tPliX79YykcxfdCerORPjvbNJvHNhrM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=b7Z9qLJwe1x3RrpHU15wcvU/U8O9B9Iy/IvgqA1UUVrUV7g3zNaduB9eoKWThFi7e
-         ypc7LLxU+cvcTvRHd94Z0Z0z/smPM9lqn1ASSutEtcC9dT3HguxF8xBGhxpZBVagEL
-         AviO+YD9IC0cA1ph1zoHYatpAZIpwqjE2K0nsOXI=
+        b=I5ThdANSXhiTxAIUACOzYa8td4b4I8fMIipWTn+NBFaEj7LYk5jwRSCNuuSnCBkxC
+         ATZOVCpSVkHreLW/zobO5GNDh7Fi063eWdGyEgxCSysqKCTNKOlYZSCvCOjkUyCMDK
+         VcuCCu1r7AtA9tVrsxyKZJCl07iBdhR6i7c1kzY8=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Cong Wang <xiyou.wangcong@gmail.com>,
-        syzbot+4c3cc6dbe7259dbf9054@syzkaller.appspotmail.com,
-        Jozsef Kadlecsik <kadlec@netfilter.org>,
-        Pablo Neira Ayuso <pablo@netfilter.org>,
-        Sasha Levin <sashal@kernel.org>,
-        netfilter-devel@vger.kernel.org, coreteam@netfilter.org,
-        netdev@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.4 059/107] netfilter: fix a use-after-free in mtype_destroy()
-Date:   Fri, 24 Jan 2020 09:17:29 -0500
-Message-Id: <20200124141817.28793-59-sashal@kernel.org>
+Cc:     Krzysztof Kozlowski <krzk@kernel.org>,
+        Helge Deller <deller@gmx.de>, Sasha Levin <sashal@kernel.org>,
+        linux-parisc@vger.kernel.org
+Subject: [PATCH AUTOSEL 5.4 063/107] parisc: Use proper printk format for resource_size_t
+Date:   Fri, 24 Jan 2020 09:17:33 -0500
+Message-Id: <20200124141817.28793-63-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200124141817.28793-1-sashal@kernel.org>
 References: <20200124141817.28793-1-sashal@kernel.org>
@@ -47,38 +43,41 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Cong Wang <xiyou.wangcong@gmail.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
 
-[ Upstream commit c120959387efa51479056fd01dc90adfba7a590c ]
+[ Upstream commit 4f80b70e1953cb846dbdd1ce72cb17333d4c8d11 ]
 
-map->members is freed by ip_set_free() right before using it in
-mtype_ext_cleanup() again. So we just have to move it down.
+resource_size_t should be printed with its own size-independent format
+to fix warnings when compiling on 64-bit platform (e.g. with
+COMPILE_TEST):
 
-Reported-by: syzbot+4c3cc6dbe7259dbf9054@syzkaller.appspotmail.com
-Fixes: 40cd63bf33b2 ("netfilter: ipset: Support extensions which need a per data destroy function")
-Acked-by: Jozsef Kadlecsik <kadlec@netfilter.org>
-Signed-off-by: Cong Wang <xiyou.wangcong@gmail.com>
-Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
+    arch/parisc/kernel/drivers.c: In function 'print_parisc_device':
+    arch/parisc/kernel/drivers.c:892:9: warning:
+        format '%p' expects argument of type 'void *',
+        but argument 4 has type 'resource_size_t {aka unsigned int}' [-Wformat=]
+
+Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+Signed-off-by: Helge Deller <deller@gmx.de>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/netfilter/ipset/ip_set_bitmap_gen.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/parisc/kernel/drivers.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/net/netfilter/ipset/ip_set_bitmap_gen.h b/net/netfilter/ipset/ip_set_bitmap_gen.h
-index 063df74b46470..e1f271a1b2c14 100644
---- a/net/netfilter/ipset/ip_set_bitmap_gen.h
-+++ b/net/netfilter/ipset/ip_set_bitmap_gen.h
-@@ -60,9 +60,9 @@ mtype_destroy(struct ip_set *set)
- 	if (SET_WITH_TIMEOUT(set))
- 		del_timer_sync(&map->gc);
+diff --git a/arch/parisc/kernel/drivers.c b/arch/parisc/kernel/drivers.c
+index a6c9f49c66128..a5f3e50fe9761 100644
+--- a/arch/parisc/kernel/drivers.c
++++ b/arch/parisc/kernel/drivers.c
+@@ -889,8 +889,8 @@ static void print_parisc_device(struct parisc_device *dev)
+ 	static int count;
  
--	ip_set_free(map->members);
- 	if (set->dsize && set->extensions & IPSET_EXT_DESTROY)
- 		mtype_ext_cleanup(set);
-+	ip_set_free(map->members);
- 	ip_set_free(map);
+ 	print_pa_hwpath(dev, hw_path);
+-	pr_info("%d. %s at 0x%px [%s] { %d, 0x%x, 0x%.3x, 0x%.5x }",
+-		++count, dev->name, (void*) dev->hpa.start, hw_path, dev->id.hw_type,
++	pr_info("%d. %s at %pap [%s] { %d, 0x%x, 0x%.3x, 0x%.5x }",
++		++count, dev->name, &(dev->hpa.start), hw_path, dev->id.hw_type,
+ 		dev->id.hversion_rev, dev->id.hversion, dev->id.sversion);
  
- 	set->data = NULL;
+ 	if (dev->num_addrs) {
 -- 
 2.20.1
 
