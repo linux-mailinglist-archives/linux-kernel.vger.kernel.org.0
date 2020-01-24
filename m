@@ -2,37 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 10713148ECD
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Jan 2020 20:45:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5ED90148ED7
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Jan 2020 20:45:51 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392268AbgAXTp2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 24 Jan 2020 14:45:28 -0500
-Received: from Galois.linutronix.de ([193.142.43.55]:43561 "EHLO
+        id S2404216AbgAXTph (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 24 Jan 2020 14:45:37 -0500
+Received: from Galois.linutronix.de ([193.142.43.55]:43565 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2390664AbgAXTp2 (ORCPT
+        with ESMTP id S2392270AbgAXTpb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 24 Jan 2020 14:45:28 -0500
+        Fri, 24 Jan 2020 14:45:31 -0500
 Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
         by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
         (Exim 4.80)
         (envelope-from <tip-bot2@linutronix.de>)
-        id 1iv4tO-0000Bq-KI; Fri, 24 Jan 2020 20:45:22 +0100
+        id 1iv4tO-0000Br-Vs; Fri, 24 Jan 2020 20:45:23 +0100
 Received: from [127.0.1.1] (localhost [IPv6:::1])
-        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 395051C1A69;
+        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 90AA61C1A6A;
         Fri, 24 Jan 2020 20:45:22 +0100 (CET)
-Date:   Fri, 24 Jan 2020 19:45:21 -0000
+Date:   Fri, 24 Jan 2020 19:45:22 -0000
 From:   "tip-bot2 for Sebastian Andrzej Siewior" <tip-bot2@linutronix.de>
 Reply-to: linux-kernel@vger.kernel.org
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip: smp/core] smp: Remove allocation mask from on_each_cpu_cond.*()
+Subject: [tip: smp/core] smp: Add a smp_cond_func_t argument to
+ smp_call_function_many()
 Cc:     Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
         Thomas Gleixner <tglx@linutronix.de>,
         "Peter Zijlstra (Intel)" <peterz@infradead.org>,
         x86 <x86@kernel.org>, LKML <linux-kernel@vger.kernel.org>
-In-Reply-To: <20200117090137.1205765-4-bigeasy@linutronix.de>
-References: <20200117090137.1205765-4-bigeasy@linutronix.de>
+In-Reply-To: <20200117090137.1205765-3-bigeasy@linutronix.de>
+References: <20200117090137.1205765-3-bigeasy@linutronix.de>
 MIME-Version: 1.0
-Message-ID: <157989512196.396.4216786603220868613.tip-bot2@tip-bot2>
+Message-ID: <157989512234.396.13725764794800050132.tip-bot2@tip-bot2>
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot2.linutronix.de>
 Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
@@ -48,151 +49,155 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The following commit has been merged into the smp/core branch of tip:
 
-Commit-ID:     cb923159bbb8cc8fe09c19a3435ee11fd546f3d3
-Gitweb:        https://git.kernel.org/tip/cb923159bbb8cc8fe09c19a3435ee11fd546f3d3
+Commit-ID:     67719ef25eeb2048b11befa6a757aeb3848b5df1
+Gitweb:        https://git.kernel.org/tip/67719ef25eeb2048b11befa6a757aeb3848b5df1
 Author:        Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-AuthorDate:    Fri, 17 Jan 2020 10:01:37 +01:00
+AuthorDate:    Fri, 17 Jan 2020 10:01:36 +01:00
 Committer:     Thomas Gleixner <tglx@linutronix.de>
 CommitterDate: Fri, 24 Jan 2020 20:40:09 +01:00
 
-smp: Remove allocation mask from on_each_cpu_cond.*()
+smp: Add a smp_cond_func_t argument to smp_call_function_many()
 
-The allocation mask is no longer used by on_each_cpu_cond() and
-on_each_cpu_cond_mask() and can be removed.
+on_each_cpu_cond_mask() allocates a new CPU mask. The newly allocated
+mask is a subset of the provided mask based on the conditional function.
+
+This memory allocation can be avoided by extending smp_call_function_many()
+with the conditional function and performing the remote function call based
+on the mask and the conditional function.
+
+Rename smp_call_function_many() to smp_call_function_many_cond() and add
+the smp_cond_func_t argument. If smp_cond_func_t is provided then it is
+used before invoking the function.  Provide smp_call_function_many() with
+cond_func set to NULL.  Let on_each_cpu_cond_mask() use
+smp_call_function_many_cond().
 
 Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
 Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Link: https://lore.kernel.org/r/20200117090137.1205765-4-bigeasy@linutronix.de
+Link: https://lore.kernel.org/r/20200117090137.1205765-3-bigeasy@linutronix.de
 
 ---
- arch/x86/mm/tlb.c   |  2 +-
- fs/buffer.c         |  2 +-
- include/linux/smp.h |  5 ++---
- kernel/smp.c        | 13 +++----------
- kernel/up.c         |  7 +++----
- mm/slub.c           |  2 +-
- 6 files changed, 11 insertions(+), 20 deletions(-)
+ kernel/smp.c | 81 +++++++++++++++++++++++----------------------------
+ 1 file changed, 38 insertions(+), 43 deletions(-)
 
-diff --git a/arch/x86/mm/tlb.c b/arch/x86/mm/tlb.c
-index e6a9edc..66f96f2 100644
---- a/arch/x86/mm/tlb.c
-+++ b/arch/x86/mm/tlb.c
-@@ -708,7 +708,7 @@ void native_flush_tlb_others(const struct cpumask *cpumask,
- 			       (void *)info, 1);
- 	else
- 		on_each_cpu_cond_mask(tlb_is_not_lazy, flush_tlb_func_remote,
--				(void *)info, 1, GFP_ATOMIC, cpumask);
-+				(void *)info, 1, cpumask);
- }
- 
- /*
-diff --git a/fs/buffer.c b/fs/buffer.c
-index 18a87ec..b8d2837 100644
---- a/fs/buffer.c
-+++ b/fs/buffer.c
-@@ -1433,7 +1433,7 @@ static bool has_bh_in_lru(int cpu, void *dummy)
- 
- void invalidate_bh_lrus(void)
- {
--	on_each_cpu_cond(has_bh_in_lru, invalidate_bh_lru, NULL, 1, GFP_KERNEL);
-+	on_each_cpu_cond(has_bh_in_lru, invalidate_bh_lru, NULL, 1);
- }
- EXPORT_SYMBOL_GPL(invalidate_bh_lrus);
- 
-diff --git a/include/linux/smp.h b/include/linux/smp.h
-index 4734416..cbc9162 100644
---- a/include/linux/smp.h
-+++ b/include/linux/smp.h
-@@ -51,11 +51,10 @@ void on_each_cpu_mask(const struct cpumask *mask, smp_call_func_t func,
-  * processor.
-  */
- void on_each_cpu_cond(smp_cond_func_t cond_func, smp_call_func_t func,
--		      void *info, bool wait, gfp_t gfp_flags);
-+		      void *info, bool wait);
- 
- void on_each_cpu_cond_mask(smp_cond_func_t cond_func, smp_call_func_t func,
--			   void *info, bool wait, gfp_t gfp_flags,
--			   const struct cpumask *mask);
-+			   void *info, bool wait, const struct cpumask *mask);
- 
- int smp_call_function_single_async(int cpu, call_single_data_t *csd);
- 
 diff --git a/kernel/smp.c b/kernel/smp.c
-index e17e634..3b7bedc 100644
+index c64044d..e17e634 100644
 --- a/kernel/smp.c
 +++ b/kernel/smp.c
-@@ -679,11 +679,6 @@ EXPORT_SYMBOL(on_each_cpu_mask);
-  * @info:	An arbitrary pointer to pass to both functions.
-  * @wait:	If true, wait (atomically) until function has
-  *		completed on other CPUs.
-- * @gfp_flags:	GFP flags to use when allocating the cpumask
-- *		used internally by the function.
+@@ -395,22 +395,9 @@ call:
+ }
+ EXPORT_SYMBOL_GPL(smp_call_function_any);
+ 
+-/**
+- * smp_call_function_many(): Run a function on a set of other CPUs.
+- * @mask: The set of cpus to run on (only runs on online subset).
+- * @func: The function to run. This must be fast and non-blocking.
+- * @info: An arbitrary pointer to pass to the function.
+- * @wait: If true, wait (atomically) until function has completed
+- *        on other CPUs.
 - *
-- * The function might sleep if the GFP flags indicates a non
-- * atomic allocation is allowed.
-  *
-  * Preemption is disabled to protect against CPUs going offline but not online.
-  * CPUs going online during the call will not be seen or sent an IPI.
-@@ -692,8 +687,7 @@ EXPORT_SYMBOL(on_each_cpu_mask);
-  * from a hardware interrupt handler or from a bottom half handler.
-  */
- void on_each_cpu_cond_mask(smp_cond_func_t cond_func, smp_call_func_t func,
--			   void *info, bool wait, gfp_t gfp_flags,
--			   const struct cpumask *mask)
-+			   void *info, bool wait, const struct cpumask *mask)
+- * If @wait is true, then returns once @func has returned.
+- *
+- * You must not call this function with disabled interrupts or from a
+- * hardware interrupt handler or from a bottom half handler. Preemption
+- * must be disabled when calling this function.
+- */
+-void smp_call_function_many(const struct cpumask *mask,
+-			    smp_call_func_t func, void *info, bool wait)
++static void smp_call_function_many_cond(const struct cpumask *mask,
++					smp_call_func_t func, void *info,
++					bool wait, smp_cond_func_t cond_func)
  {
- 	int cpu = get_cpu();
+ 	struct call_function_data *cfd;
+ 	int cpu, next_cpu, this_cpu = smp_processor_id();
+@@ -448,7 +435,8 @@ void smp_call_function_many(const struct cpumask *mask,
  
-@@ -710,10 +704,9 @@ void on_each_cpu_cond_mask(smp_cond_func_t cond_func, smp_call_func_t func,
+ 	/* Fastpath: do that cpu by itself. */
+ 	if (next_cpu >= nr_cpu_ids) {
+-		smp_call_function_single(cpu, func, info, wait);
++		if (!cond_func || (cond_func && cond_func(cpu, info)))
++			smp_call_function_single(cpu, func, info, wait);
+ 		return;
+ 	}
+ 
+@@ -465,6 +453,9 @@ void smp_call_function_many(const struct cpumask *mask,
+ 	for_each_cpu(cpu, cfd->cpumask) {
+ 		call_single_data_t *csd = per_cpu_ptr(cfd->csd, cpu);
+ 
++		if (cond_func && !cond_func(cpu, info))
++			continue;
++
+ 		csd_lock(csd);
+ 		if (wait)
+ 			csd->flags |= CSD_FLAG_SYNCHRONOUS;
+@@ -486,6 +477,26 @@ void smp_call_function_many(const struct cpumask *mask,
+ 		}
+ 	}
+ }
++
++/**
++ * smp_call_function_many(): Run a function on a set of other CPUs.
++ * @mask: The set of cpus to run on (only runs on online subset).
++ * @func: The function to run. This must be fast and non-blocking.
++ * @info: An arbitrary pointer to pass to the function.
++ * @wait: If true, wait (atomically) until function has completed
++ *        on other CPUs.
++ *
++ * If @wait is true, then returns once @func has returned.
++ *
++ * You must not call this function with disabled interrupts or from a
++ * hardware interrupt handler or from a bottom half handler. Preemption
++ * must be disabled when calling this function.
++ */
++void smp_call_function_many(const struct cpumask *mask,
++			    smp_call_func_t func, void *info, bool wait)
++{
++	smp_call_function_many_cond(mask, func, info, wait, NULL);
++}
+ EXPORT_SYMBOL(smp_call_function_many);
+ 
+ /**
+@@ -684,33 +695,17 @@ void on_each_cpu_cond_mask(smp_cond_func_t cond_func, smp_call_func_t func,
+ 			   void *info, bool wait, gfp_t gfp_flags,
+ 			   const struct cpumask *mask)
+ {
+-	cpumask_var_t cpus;
+-	int cpu, ret;
+-
+-	might_sleep_if(gfpflags_allow_blocking(gfp_flags));
+-
+-	if (likely(zalloc_cpumask_var(&cpus, (gfp_flags|__GFP_NOWARN)))) {
+-		preempt_disable();
+-		for_each_cpu(cpu, mask)
+-			if (cond_func(cpu, info))
+-				__cpumask_set_cpu(cpu, cpus);
+-		on_each_cpu_mask(cpus, func, info, wait);
+-		preempt_enable();
+-		free_cpumask_var(cpus);
+-	} else {
+-		/*
+-		 * No free cpumask, bother. No matter, we'll
+-		 * just have to IPI them one by one.
+-		 */
+-		preempt_disable();
+-		for_each_cpu(cpu, mask)
+-			if (cond_func(cpu, info)) {
+-				ret = smp_call_function_single(cpu, func,
+-								info, wait);
+-				WARN_ON_ONCE(ret);
+-			}
+-		preempt_enable();
++	int cpu = get_cpu();
++
++	smp_call_function_many_cond(mask, func, info, wait, cond_func);
++	if (cpumask_test_cpu(cpu, mask) && cond_func(cpu, info)) {
++		unsigned long flags;
++
++		local_irq_save(flags);
++		func(info);
++		local_irq_restore(flags);
+ 	}
++	put_cpu();
+ }
  EXPORT_SYMBOL(on_each_cpu_cond_mask);
  
- void on_each_cpu_cond(smp_cond_func_t cond_func, smp_call_func_t func,
--		      void *info, bool wait, gfp_t gfp_flags)
-+		      void *info, bool wait)
- {
--	on_each_cpu_cond_mask(cond_func, func, info, wait, gfp_flags,
--				cpu_online_mask);
-+	on_each_cpu_cond_mask(cond_func, func, info, wait, cpu_online_mask);
- }
- EXPORT_SYMBOL(on_each_cpu_cond);
- 
-diff --git a/kernel/up.c b/kernel/up.c
-index 5c0d4f2..53144d0 100644
---- a/kernel/up.c
-+++ b/kernel/up.c
-@@ -69,8 +69,7 @@ EXPORT_SYMBOL(on_each_cpu_mask);
-  * same condtions in UP and SMP.
-  */
- void on_each_cpu_cond_mask(smp_cond_func_t cond_func, smp_call_func_t func,
--			   void *info, bool wait, gfp_t gfp_flags,
--			   const struct cpumask *mask)
-+			   void *info, bool wait, const struct cpumask *mask)
- {
- 	unsigned long flags;
- 
-@@ -85,9 +84,9 @@ void on_each_cpu_cond_mask(smp_cond_func_t cond_func, smp_call_func_t func,
- EXPORT_SYMBOL(on_each_cpu_cond_mask);
- 
- void on_each_cpu_cond(smp_cond_func_t cond_func, smp_call_func_t func,
--		      void *info, bool wait, gfp_t gfp_flags)
-+		      void *info, bool wait)
- {
--	on_each_cpu_cond_mask(cond_func, func, info, wait, gfp_flags, NULL);
-+	on_each_cpu_cond_mask(cond_func, func, info, wait, NULL);
- }
- EXPORT_SYMBOL(on_each_cpu_cond);
- 
-diff --git a/mm/slub.c b/mm/slub.c
-index 8eafccf..2e1a577 100644
---- a/mm/slub.c
-+++ b/mm/slub.c
-@@ -2341,7 +2341,7 @@ static bool has_cpu_slab(int cpu, void *info)
- 
- static void flush_all(struct kmem_cache *s)
- {
--	on_each_cpu_cond(has_cpu_slab, flush_cpu_slab, s, 1, GFP_ATOMIC);
-+	on_each_cpu_cond(has_cpu_slab, flush_cpu_slab, s, 1);
- }
- 
- /*
