@@ -2,113 +2,180 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 750E6148D19
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Jan 2020 18:40:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AEB1B148D23
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Jan 2020 18:43:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390721AbgAXRkB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 24 Jan 2020 12:40:01 -0500
-Received: from mail-pj1-f66.google.com ([209.85.216.66]:51525 "EHLO
-        mail-pj1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387629AbgAXRkA (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 24 Jan 2020 12:40:00 -0500
-Received: by mail-pj1-f66.google.com with SMTP id d15so136884pjw.1
-        for <linux-kernel@vger.kernel.org>; Fri, 24 Jan 2020 09:40:00 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=8Fl9DtoEGdJPaF6wiMaulBg+k/QaiWHWReTuVYIV7lg=;
-        b=Xr9b25sdtL1HdTl6hIooGcqIRd77GjAUtxMUHXNaiCS1iSPex4xjnYaSAa7vjnBSwA
-         ugXGLMsg/kU5nG0Z4WxkDnFka5Iy3pai7Wq0DuQKHFoEKsHpqsF3bEH1+L9HK1J+DIGP
-         7hu0Q2s9C5Dzf3hM3lR6FOFv/007cTLHNxSogaGt8jC5u1tNAOOqn1ye8RoaQjx6hNJT
-         pd1QmxvxE9zCPKaeOwUDAYXlclQbb3JRBsqU3PQdjG3zYTIHiJoMMnBr8t6PaB3AbWux
-         8BNJPGoRCzK1reJUQL1aHxGkjnR728wbRC6FCyMaesHxw7p61aM0z6iXQVXJqsj6GTII
-         1GPw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=8Fl9DtoEGdJPaF6wiMaulBg+k/QaiWHWReTuVYIV7lg=;
-        b=K0zMyXxAKSad0GgZ/V645T+X6ngniVTXlWT3v3wqyq9tfAaqI5jvSRIqGuKY4OIyWZ
-         /BnU5gtSYaKFE/QjzcxCSJlA5lJ1xgewCu0bjXzoKbcaXiTchMcmvkxTmCLIqydzg6eu
-         QIg09uTzU5CM7oFP+zezGOcftbDWnuJpTiQq3UXRtOtDoJGQZvlOzmLx2wwvpSd8S9/s
-         8RRrN4mLe2k/9+vodw+8rbAjNxzogqDb/1r6DKnP++heF5RTXoSm4fpsi30kLojILX50
-         XYjM9aGfazvajueB941rulXR9POn6QvbVsHzAhzIwWpGuntTczMzixIBT+GT7Fc/9KIU
-         L93w==
-X-Gm-Message-State: APjAAAWA2+CopxlwicOtOY1/0emdWXmyydytM+kSRq8HTgzjA5WR7TBQ
-        TwN6sQX70ErvjviLW+H0K31EIg5qfSnz5QOWzZ3fzg==
-X-Google-Smtp-Source: APXvYqw2zvIPa/E8BPtiWkInChMYVaS/82b3KS2QfXEyshMm2NfjWPdDTnav/pt/y77redQAAMi2iysMW3m636r4Ioo=
-X-Received: by 2002:a17:902:6948:: with SMTP id k8mr4558881plt.223.1579887599337;
- Fri, 24 Jan 2020 09:39:59 -0800 (PST)
+        id S2390766AbgAXRnU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 24 Jan 2020 12:43:20 -0500
+Received: from mail.kernel.org ([198.145.29.99]:59842 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2389575AbgAXRnT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 24 Jan 2020 12:43:19 -0500
+Received: from disco-boy.misterjones.org (disco-boy.misterjones.org [51.254.78.96])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id E16762071A;
+        Fri, 24 Jan 2020 17:43:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1579887798;
+        bh=eHeEdx5jYIbll54hbcQuNIrY4e29kvcMCG5gyr7lF5M=;
+        h=From:To:Cc:Subject:Date:From;
+        b=UuEj8UUAwe6jO9TxGz8ClbfJOs3YuLHCLCts2CpLl35FQ1e0+XzwpfZ71Dqmujfcj
+         Fx7ZK5oolZ7mpyqV0azbhbp3MR/XpmB3WcaNp+fDJO1KzNCtivKE+AWH3glsz68C2s
+         /EitGk9auozt+AoERW4IWcFLCDJfNDzRvjxkYpNw=
+Received: from 78.163-31-62.static.virginmediabusiness.co.uk ([62.31.163.78] helo=why.lan)
+        by disco-boy.misterjones.org with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <maz@kernel.org>)
+        id 1iv2zE-001FmX-3n; Fri, 24 Jan 2020 17:43:16 +0000
+From:   Marc Zyngier <maz@kernel.org>
+To:     Thomas Gleixner <tglx@linutronix.de>
+Cc:     Andrew Jeffery <andrew@aj.id.au>,
+        Atish Patra <atish.patra@wdc.com>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Eddie James <eajames@linux.ibm.com>,
+        Hanjun Guo <guohanjun@huawei.com>,
+        Hyunki Koo <hyunki00.koo@samsung.com>,
+        Joakim Zhang <qiangqing.zhang@nxp.com>,
+        John Garry <john.garry@huawei.com>,
+        Kevin Hao <haokexin@gmail.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Qianggui Song <qianggui.song@amlogic.com>,
+        Rob Herring <robh@kernel.org>,
+        Shengjiu Wang <shengjiu.wang@nxp.com>,
+        "Wesley W . Terpstra" <wesley@sifive.com>,
+        Yash Shah <yash.shah@sifive.com>,
+        Zenghui Yu <yuzenghui@huawei.com>,
+        Jason Cooper <jason@lakedaemon.net>,
+        linux-kernel@vger.kernel.org
+Subject: [GIT PULL] irqchip updates for Linux 5.6
+Date:   Fri, 24 Jan 2020 17:42:48 +0000
+Message-Id: <20200124174248.25708-1-maz@kernel.org>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-References: <20200124155750.33753-1-natechancellor@gmail.com>
-In-Reply-To: <20200124155750.33753-1-natechancellor@gmail.com>
-From:   Nick Desaulniers <ndesaulniers@google.com>
-Date:   Fri, 24 Jan 2020 09:39:48 -0800
-Message-ID: <CAKwvOd=R6NrqAvQWdu3yZHFNPVqAMO=verL6gRDGprMjCDPGcQ@mail.gmail.com>
-Subject: Re: [PATCH] ASoC: rt1015: Remove unnecessary const
-To:     Nathan Chancellor <natechancellor@gmail.com>
-Cc:     Bard Liao <bardliao@realtek.com>,
-        Oder Chiou <oder_chiou@realtek.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>, alsa-devel@alsa-project.org,
-        LKML <linux-kernel@vger.kernel.org>,
-        clang-built-linux <clang-built-linux@googlegroups.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 62.31.163.78
+X-SA-Exim-Rcpt-To: tglx@linutronix.de, andrew@aj.id.au, atish.patra@wdc.com, bgolaszewski@baylibre.com, eajames@linux.ibm.com, guohanjun@huawei.com, hyunki00.koo@samsung.com, qiangqing.zhang@nxp.com, john.garry@huawei.com, haokexin@gmail.com, krzk@kernel.org, linus.walleij@linaro.org, qianggui.song@amlogic.com, robh@kernel.org, shengjiu.wang@nxp.com, wesley@sifive.com, yash.shah@sifive.com, yuzenghui@huawei.com, jason@lakedaemon.net, linux-kernel@vger.kernel.org
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jan 24, 2020 at 7:58 AM Nathan Chancellor
-<natechancellor@gmail.com> wrote:
->
-> Clang warns:
->
-> ../sound/soc/codecs/rt1015.c:392:14: warning: duplicate 'const'
-> declaration specifier [-Wduplicate-decl-specifier]
-> static const SOC_ENUM_SINGLE_DECL(rt1015_boost_mode_enum, 0, 0,
->              ^
-> ../include/sound/soc.h:355:2: note: expanded from macro
-> 'SOC_ENUM_SINGLE_DECL'
->         SOC_ENUM_DOUBLE_DECL(name, xreg, xshift, xshift, xtexts)
->         ^
-> ../include/sound/soc.h:352:2: note: expanded from macro
-> 'SOC_ENUM_DOUBLE_DECL'
->         const struct soc_enum name = SOC_ENUM_DOUBLE(xreg, xshift_l, xshift_r, \
->         ^
-> 1 warning generated.
->
-> Remove the const after static to fix it.
->
-> Fixes: df31007400c3 ("ASoC: rt1015: add rt1015 amplifier driver")
-> Link: https://github.com/ClangBuiltLinux/linux/issues/845
-> Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
+Hi Thomas,
 
-Thanks for the patch!
+Here's a bunch of updates from the irqchip dept. On the menu this
+time around, three new drivers (SiFive, Aspeed and NXP), a fairly
+large update on the GIC side (and it is only the first half, I'm
+keeping the juicy bits for 5.7), additional support for the AmLogic
+Meson A1 platform, and a bunch of semi-random fixes.
 
-Reviewed-by: Nick Desaulniers <ndesaulniers@google.com>
+Please pull.
 
-> ---
->  sound/soc/codecs/rt1015.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/sound/soc/codecs/rt1015.c b/sound/soc/codecs/rt1015.c
-> index 4a9c5b54008f..6d490e2dbc25 100644
-> --- a/sound/soc/codecs/rt1015.c
-> +++ b/sound/soc/codecs/rt1015.c
-> @@ -389,7 +389,7 @@ static const char * const rt1015_boost_mode[] = {
->         "Bypass", "Adaptive", "Fixed Adaptive"
->  };
->
-> -static const SOC_ENUM_SINGLE_DECL(rt1015_boost_mode_enum, 0, 0,
-> +static SOC_ENUM_SINGLE_DECL(rt1015_boost_mode_enum, 0, 0,
->         rt1015_boost_mode);
->
->  static int rt1015_boost_mode_get(struct snd_kcontrol *kcontrol,
-> --
+	M.
 
--- 
-Thanks,
-~Nick Desaulniers
+The following changes since commit fd6988496e79a6a4bdb514a4655d2920209eb85d:
+
+  Linux 5.5-rc4 (2019-12-29 15:29:16 -0800)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/maz/arm-platforms.git tags/irqchip-5.6
+
+for you to fetch changes up to f4a81f5a853e0b7c38bfad3afd6d0365d654e777:
+
+  irqchip/gic-v4.1: Allow direct invalidation of VLPIs (2020-01-22 14:22:21 +0000)
+
+----------------------------------------------------------------
+irqchip updates for Linux 5.6:
+
+- Conversion of the SiFive PLIC to hierarchical domains
+- New SiFive GPIO irqchip driver
+- New Aspeed SCI irqchip driver
+- New NXP INTMUX irqchip driver
+- Additional support for the Meson A1 GPIO irqchip
+- First part of the GICv4.1 support
+- Assorted fixes
+
+----------------------------------------------------------------
+Eddie James (2):
+      dt-bindings: interrupt-controller: Add Aspeed SCU interrupt controller
+      irqchip: Add Aspeed SCU interrupt controller
+
+Hyunki Koo (1):
+      irqchip: Define EXYNOS_IRQ_COMBINER
+
+Joakim Zhang (2):
+      dt-bindings: interrupt-controller: Add binding for NXP INTMUX interrupt multiplexer
+      irqchip: Add NXP INTMUX interrupt multiplexer support
+
+John Garry (1):
+      irqchip/mbigen: Set driver .suppress_bind_attrs to avoid remove problems
+
+Kevin Hao (1):
+      irqdomain: Fix a memory leak in irq_domain_push_irq()
+
+Marc Zyngier (14):
+      irqchip/gic-v3-its: Fix get_vlpi_map() breakage with doorbells
+      irqchip/gic-v3: Detect GICv4.1 supporting RVPEID
+      irqchip/gic-v3: Add GICv4.1 VPEID size discovery
+      irqchip/gic-v4.1: VPE table (aka GICR_VPROPBASER) allocation
+      irqchip/gic-v4.1: Implement the v4.1 flavour of VMAPP
+      irqchip/gic-v4.1: Don't use the VPE proxy if RVPEID is set
+      irqchip/gic-v4.1: Implement the v4.1 flavour of VMOVP
+      irqchip/gic-v4.1: Plumb skeletal VPE irqchip
+      irqchip/gic-v4.1: Add mask/unmask doorbell callbacks
+      irqchip/gic-v4.1: Add VPE residency callback
+      irqchip/gic-v4.1: Add VPE eviction callback
+      irqchip/gic-v4.1: Add VPE INVALL callback
+      irqchip/gic-v4.1: Suppress per-VLPI doorbell
+      irqchip/gic-v4.1: Allow direct invalidation of VLPIs
+
+Qianggui Song (3):
+      dt-bindings: interrupt-controller: New binding for Meson-A1 SoCs
+      irqchip/meson-gpio: Rework meson irqchip driver to support meson-A1 SoCs
+      irqchip/meson-gpio: Add support for meson a1 SoCs
+
+Yash Shah (5):
+      genirq: Introduce irq_domain_translate_onecell
+      irqchip/nvic: Use irq_domain_translate_onecell instead of custom func
+      irqchip/sifive-plic: Support irq domain hierarchy
+      gpio/sifive: Add DT documentation for SiFive GPIO
+      gpio/sifive: Add GPIO driver for SiFive SoCs
+
+ .../devicetree/bindings/gpio/sifive,gpio.yaml      |  68 ++
+ .../amlogic,meson-gpio-intc.txt                    |   1 +
+ .../interrupt-controller/aspeed,ast2xxx-scu-ic.txt |  23 +
+ .../bindings/interrupt-controller/fsl,intmux.yaml  |  68 ++
+ MAINTAINERS                                        |   8 +
+ arch/arm/include/asm/arch_gicv3.h                  |   2 +
+ arch/arm/mach-exynos/Kconfig                       |   1 +
+ arch/arm64/include/asm/arch_gicv3.h                |   1 +
+ drivers/gpio/Kconfig                               |   9 +
+ drivers/gpio/Makefile                              |   1 +
+ drivers/gpio/gpio-sifive.c                         | 252 ++++++++
+ drivers/irqchip/Kconfig                            |  14 +
+ drivers/irqchip/Makefile                           |   5 +-
+ drivers/irqchip/irq-aspeed-scu-ic.c                | 239 +++++++
+ drivers/irqchip/irq-gic-v3-its.c                   | 698 +++++++++++++++++++--
+ drivers/irqchip/irq-gic-v3.c                       |  24 +-
+ drivers/irqchip/irq-imx-intmux.c                   | 309 +++++++++
+ drivers/irqchip/irq-mbigen.c                       |   1 +
+ drivers/irqchip/irq-meson-gpio.c                   | 137 +++-
+ drivers/irqchip/irq-nvic.c                         |  15 +-
+ drivers/irqchip/irq-sifive-plic.c                  |  30 +-
+ .../interrupt-controller/aspeed-scu-ic.h           |  23 +
+ include/linux/irqchip/arm-gic-v3.h                 |  59 +-
+ include/linux/irqchip/arm-gic-v4.h                 |  23 +-
+ include/linux/irqdomain.h                          |   5 +
+ kernel/irq/irqdomain.c                             |  18 +
+ 26 files changed, 1930 insertions(+), 104 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/gpio/sifive,gpio.yaml
+ create mode 100644 Documentation/devicetree/bindings/interrupt-controller/aspeed,ast2xxx-scu-ic.txt
+ create mode 100644 Documentation/devicetree/bindings/interrupt-controller/fsl,intmux.yaml
+ create mode 100644 drivers/gpio/gpio-sifive.c
+ create mode 100644 drivers/irqchip/irq-aspeed-scu-ic.c
+ create mode 100644 drivers/irqchip/irq-imx-intmux.c
+ create mode 100644 include/dt-bindings/interrupt-controller/aspeed-scu-ic.h
