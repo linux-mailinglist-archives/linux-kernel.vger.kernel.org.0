@@ -2,94 +2,83 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B2EA0147797
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Jan 2020 05:28:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 57E0014779B
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Jan 2020 05:29:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730433AbgAXE25 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 23 Jan 2020 23:28:57 -0500
-Received: from mail-lf1-f68.google.com ([209.85.167.68]:37398 "EHLO
-        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729760AbgAXE25 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Jan 2020 23:28:57 -0500
-Received: by mail-lf1-f68.google.com with SMTP id b15so301339lfc.4;
-        Thu, 23 Jan 2020 20:28:55 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=VLtJqd9n8iEGWWWwFYJk44IhKuekuFlbjkOOSjbK4Ug=;
-        b=b7VL69Al4Q3TfIx5Glo4Lk/mg/RMvnYyJKH/l2Yzy5Oex07mnDpixdToqeCBQaoAWK
-         B9nzH8IJcDmQd26XXA66TJkZfV7/u9aW1PcLZlg43tTjKlDt7O6av3JfuZa8oW+kOZbT
-         PiSjuNcQh+X8/rsAroz+7FMrjT+mrpQBUdUGUxR4QvetWX9Z5OW+6b0vIZoky9V0BvZh
-         14IHMkUS21cds/eS9GcYG3UndNtA+LoWyAnB9lw4IHvNJDW188GKTHaJ58/0Z8bY4J0L
-         7o1xo3iI45c56/LRLxwcXsTcoo1Ys0YXF9MmCgeQ7+KWP+9bvL8b0DK0NiUxUKPRubbG
-         5ONw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=VLtJqd9n8iEGWWWwFYJk44IhKuekuFlbjkOOSjbK4Ug=;
-        b=Q7B39cVfS0vwCx3Zntnn9BBFMyxR1B1juIpJ4xUzEfbZ563cPVsZVGPsBU2zhWIjAR
-         sXQ0yGC5fGKz+R1Q1wvpCQFOix7NqoGwUaJ2WQYzYx+zYuoJ4+Q8GTBGCjHzer3cJA22
-         Nk484F0dnOSnTYvdMLSid/CA/li+FYyXtxGad+9r21ev5Y5en6p7ivvm6lS+ZOeVd8Oy
-         +RdQc3ndutZVb3URswFPv+fziYtfwhCqTK1UG6zNmBG+5xUeZB4NqXaXSIzuj/9VfzMh
-         lTXEN32eplOKZ1efFIA7oXSK212Sp/Dl4m697HfSbzyLvA0FDCLpvkN8YNrEuB0JrAEj
-         ZbEw==
-X-Gm-Message-State: APjAAAVI2J4CO2RC+RXU+5Ci8wrvzKB9onVUVsdAmrlxpRn214QkFQZa
-        kbB+dWRpMKhw5nweZ8S/gkA=
-X-Google-Smtp-Source: APXvYqyRExhBqqvbAcTEoPhTfbxzuj7kgwI599mLqXvMCeAtJ/7luyFkKBpeGBOzIDDLGas1DcH8rw==
-X-Received: by 2002:a05:6512:3ac:: with SMTP id v12mr496446lfp.205.1579840134560;
-        Thu, 23 Jan 2020 20:28:54 -0800 (PST)
-Received: from [192.168.2.145] (79-139-233-37.dynamic.spd-mgts.ru. [79.139.233.37])
-        by smtp.googlemail.com with ESMTPSA id e20sm2302728ljl.59.2020.01.23.20.28.52
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 23 Jan 2020 20:28:54 -0800 (PST)
-Subject: Re: [alsa-devel] [PATCH 5/9] ASoC: tegra: add Tegra210 based AHUB
- driver
-To:     Sameer Pujar <spujar@nvidia.com>, perex@perex.cz, tiwai@suse.com,
-        robh+dt@kernel.org
-Cc:     devicetree@vger.kernel.org, alsa-devel@alsa-project.org,
-        atalambedu@nvidia.com, linux-kernel@vger.kernel.org,
-        lgirdwood@gmail.com, jonathanh@nvidia.com, viswanathl@nvidia.com,
-        sharadg@nvidia.com, broonie@kernel.org, thierry.reding@gmail.com,
-        linux-tegra@vger.kernel.org, rlokhande@nvidia.com,
-        mkumard@nvidia.com, dramesh@nvidia.com
-References: <1579530198-13431-1-git-send-email-spujar@nvidia.com>
- <1579530198-13431-6-git-send-email-spujar@nvidia.com>
- <5ed7482e-e874-9e11-c84e-7418e4b5162e@gmail.com>
- <d160fa01-27d0-6290-cb16-07d159d6fbb2@nvidia.com>
-From:   Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <37669247-daaf-c6cb-0ef2-464e61db9838@gmail.com>
-Date:   Fri, 24 Jan 2020 07:28:52 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.3.0
+        id S1730546AbgAXE34 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 23 Jan 2020 23:29:56 -0500
+Received: from mail.kernel.org ([198.145.29.99]:50666 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729316AbgAXE3z (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 23 Jan 2020 23:29:55 -0500
+Received: from sol.localdomain (c-107-3-166-239.hsd1.ca.comcast.net [107.3.166.239])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id CC6392072C;
+        Fri, 24 Jan 2020 04:29:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1579840195;
+        bh=w7bUGOmBcf8WYfmLHNz1iZda5pKwrIDULz8xqJEmZmo=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=RJRx1UroRpNjDxxEZ8+qL1gktnq773hIx31h2M0OdBjHhtDUVdOlVsijub/9qOrJC
+         l16OFpelVLUsiwddVu0rQyNDShAvyriuZEyJnfg6kkHmDYhN8CJDcx/BAP2oLrP6OW
+         tgAwolhEK7ImbCOQj5cJpnHZjDPPM3BpUgQxIjes=
+Date:   Thu, 23 Jan 2020 20:29:53 -0800
+From:   Eric Biggers <ebiggers@kernel.org>
+To:     Al Viro <viro@zeniv.linux.org.uk>
+Cc:     OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>,
+        Pali =?iso-8859-1?Q?Roh=E1r?= <pali.rohar@gmail.com>,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        "Theodore Y. Ts'o" <tytso@mit.edu>,
+        Namjae Jeon <linkinjeon@gmail.com>,
+        Gabriel Krisman Bertazi <krisman@collabora.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Subject: Re: oopsably broken case-insensitive support in ext4 and f2fs (Re:
+ vfat: Broken case-insensitive support for UTF-8)
+Message-ID: <20200124042953.GA832@sol.localdomain>
+References: <20200119221455.bac7dc55g56q2l4r@pali>
+ <87sgkan57p.fsf@mail.parknet.co.jp>
+ <20200120073040.GZ8904@ZenIV.linux.org.uk>
+ <20200120074558.GA8904@ZenIV.linux.org.uk>
+ <20200120080721.GB8904@ZenIV.linux.org.uk>
+ <20200120193558.GD8904@ZenIV.linux.org.uk>
 MIME-Version: 1.0
-In-Reply-To: <d160fa01-27d0-6290-cb16-07d159d6fbb2@nvidia.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200120193558.GD8904@ZenIV.linux.org.uk>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-24.01.2020 06:39, Sameer Pujar пишет:
->>> +static int tegra_ahub_put_value_enum(struct snd_kcontrol *kctl,
->>> +                                  struct snd_ctl_elem_value *uctl)
->>> +{
->>> +     struct snd_soc_component *cmpnt =
->>> snd_soc_dapm_kcontrol_component(kctl);
->>> +     struct tegra_ahub *ahub = snd_soc_component_get_drvdata(cmpnt);
->>> +     struct snd_soc_dapm_context *dapm =
->>> snd_soc_dapm_kcontrol_dapm(kctl);
->>> +     struct soc_enum *e = (struct soc_enum *)kctl->private_value;
->>> +     struct snd_soc_dapm_update update[TEGRA_XBAR_UPDATE_MAX_REG] =
->>> { };
->> Shouldn't this be {0} to make array zero'ed?
+On Mon, Jan 20, 2020 at 07:35:58PM +0000, Al Viro wrote:
+> On Mon, Jan 20, 2020 at 08:07:21AM +0000, Al Viro wrote:
 > 
-> Isn't it the same with empty braces?
+> > > > I hadn't checked ->d_compare() instances for a while; somebody needs to
+> > > > do that again, by the look of it.  The above definitely is broken;
+> > > > no idea how many other instaces had grown such bugs...
+> > > 
+> > > f2fs one also has the same bug.  Anyway, I'm going down right now, will
+> > > check the rest tomorrow morning...
+> > 
+> > We _probably_ can get away with just checking that inode for NULL and
+> > buggering off if it is (->d_seq mismatch is guaranteed in that case),
+> > but I suspect that we might need READ_ONCE() on both dereferences.
+> > I hate memory barriers...
+> 
+> FWIW, other instances seem to be OK; HFS+ one might or might not be
+> OK in the face of concurrent rename (wrong result in that case is
+> no problem; oops would be), but it doesn't play silly buggers with
+> pointer-chasing.
+> 
+> ext4 and f2fs do, and ->d_compare() is broken in both of them.
 
-Looks like is should be the same because turns out GCC has an extension
-for that.
+Thanks Al.  I sent out fixes for this:
+
+ext4: https://lore.kernel.org/r/20200124041234.159740-1-ebiggers@kernel.org
+f2fs: https://lore.kernel.org/r/20200124041549.159983-1-ebiggers@kernel.org
+
+Note that ->d_hash() was broken too.  In fact, that was much easier to
+reproduce.
+
+- Eric
