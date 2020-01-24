@@ -2,97 +2,69 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8DA04147B56
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Jan 2020 10:43:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4DBA7147A62
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Jan 2020 10:32:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732838AbgAXJmw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 24 Jan 2020 04:42:52 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40484 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1733151AbgAXJmp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 24 Jan 2020 04:42:45 -0500
-Received: from localhost (unknown [145.15.244.15])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AAD2D20718;
-        Fri, 24 Jan 2020 09:42:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579858965;
-        bh=hi2dX1oVv8yZreDP+0pmyOaOSai6d6i0N6rpzahexjY=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=DRsJfQUP9RnckdnCP4AFyR10OTnQGebc/rb0IybwmBwbt7eeIR/ZWTdbfcZh8lSeS
-         +1bwaz+LGFszyfbh9QwWtS6GQkQWv99ZJEMCqAqw3kLlTrap/NoyLXC0f1QGcjdMIn
-         /RTm+fN7bxKojAddggZb2gsd/NZJJeJazDkgq+1Q=
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Vincent Cao <vincent.t.cao@intel.com>,
-        Sumit Garg <sumit.garg@linaro.org>,
-        Jens Wiklander <jens.wiklander@linaro.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.4 102/102] optee: Fix multi page dynamic shm pool alloc
-Date:   Fri, 24 Jan 2020 10:31:43 +0100
-Message-Id: <20200124092822.172144798@linuxfoundation.org>
-X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200124092806.004582306@linuxfoundation.org>
-References: <20200124092806.004582306@linuxfoundation.org>
-User-Agent: quilt/0.66
+        id S1729433AbgAXJce (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 24 Jan 2020 04:32:34 -0500
+Received: from www62.your-server.de ([213.133.104.62]:45784 "EHLO
+        www62.your-server.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725821AbgAXJcd (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 24 Jan 2020 04:32:33 -0500
+Received: from sslproxy03.your-server.de ([88.198.220.132])
+        by www62.your-server.de with esmtpsa (TLSv1.2:DHE-RSA-AES256-GCM-SHA384:256)
+        (Exim 4.89_1)
+        (envelope-from <daniel@iogearbox.net>)
+        id 1iuvKG-0006Dq-UV; Fri, 24 Jan 2020 10:32:29 +0100
+Received: from [2001:1620:665:0:5795:5b0a:e5d5:5944] (helo=linux-3.fritz.box)
+        by sslproxy03.your-server.de with esmtpsa (TLSv1.3:TLS_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <daniel@iogearbox.net>)
+        id 1iuvKG-000Bp8-I2; Fri, 24 Jan 2020 10:32:28 +0100
+Subject: Re: [PATCH bpf 2/4] selftests: bpf: ignore RST packets for reuseport
+ tests
+To:     Lorenz Bauer <lmb@cloudflare.com>, Martin Lau <kafai@fb.com>
+Cc:     Shuah Khan <shuah@kernel.org>, Alexei Starovoitov <ast@kernel.org>,
+        Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>,
+        Andrii Nakryiko <andriin@fb.com>,
+        "linux-kselftest@vger.kernel.org" <linux-kselftest@vger.kernel.org>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "bpf@vger.kernel.org" <bpf@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <20200123165934.9584-1-lmb@cloudflare.com>
+ <20200123165934.9584-3-lmb@cloudflare.com>
+ <20200123215348.zql3d5xpg2if7v6q@kafai-mbp.dhcp.thefacebook.com>
+ <CACAyw9_OGBbsXepTcp=1frEHB7Q2cD9BVXTbgt7Ci_eFyV2Egg@mail.gmail.com>
+From:   Daniel Borkmann <daniel@iogearbox.net>
+Message-ID: <d5d230bd-6d62-3bb4-f663-8cec751b38a4@iogearbox.net>
+Date:   Fri, 24 Jan 2020 10:32:27 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <CACAyw9_OGBbsXepTcp=1frEHB7Q2cD9BVXTbgt7Ci_eFyV2Egg@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Authenticated-Sender: daniel@iogearbox.net
+X-Virus-Scanned: Clear (ClamAV 0.101.4/25704/Thu Jan 23 12:37:43 2020)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Sumit Garg <sumit.garg@linaro.org>
+On 1/24/20 10:00 AM, Lorenz Bauer wrote:
+> On Thu, 23 Jan 2020 at 21:54, Martin Lau <kafai@fb.com> wrote:
+>>
+>> btw, it needs a Fixes tag.
+>>
+>> Patch 4 and Patch 1 also need a Fixes tag.
+> 
+> This makes me wonder, should these go via bpf or bpf-next? Do I have
+> to split the series then?
 
-[ Upstream commit 5a769f6ff439cedc547395a6dc78faa26108f741 ]
+Lets do all of these for bpf-next since timing is very close before v5.5 release.
+If needed, we can later have them picked up for 5.5 stable.
 
-optee_shm_register() expected pages to be passed as an array of page
-pointers rather than as an array of contiguous pages. So fix that via
-correctly passing pages as per expectation.
-
-Fixes: a249dd200d03 ("tee: optee: Fix dynamic shm pool allocations")
-Reported-by: Vincent Cao <vincent.t.cao@intel.com>
-Signed-off-by: Sumit Garg <sumit.garg@linaro.org>
-Tested-by: Vincent Cao <vincent.t.cao@intel.com>
-Signed-off-by: Jens Wiklander <jens.wiklander@linaro.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- drivers/tee/optee/shm_pool.c | 15 ++++++++++++++-
- 1 file changed, 14 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/tee/optee/shm_pool.c b/drivers/tee/optee/shm_pool.c
-index 0332a5301d613..d767eebf30bdd 100644
---- a/drivers/tee/optee/shm_pool.c
-+++ b/drivers/tee/optee/shm_pool.c
-@@ -28,9 +28,22 @@ static int pool_op_alloc(struct tee_shm_pool_mgr *poolm,
- 	shm->size = PAGE_SIZE << order;
- 
- 	if (shm->flags & TEE_SHM_DMA_BUF) {
-+		unsigned int nr_pages = 1 << order, i;
-+		struct page **pages;
-+
-+		pages = kcalloc(nr_pages, sizeof(pages), GFP_KERNEL);
-+		if (!pages)
-+			return -ENOMEM;
-+
-+		for (i = 0; i < nr_pages; i++) {
-+			pages[i] = page;
-+			page++;
-+		}
-+
- 		shm->flags |= TEE_SHM_REGISTER;
--		rc = optee_shm_register(shm->ctx, shm, &page, 1 << order,
-+		rc = optee_shm_register(shm->ctx, shm, pages, nr_pages,
- 					(unsigned long)shm->kaddr);
-+		kfree(pages);
- 	}
- 
- 	return rc;
--- 
-2.20.1
-
-
-
+Thanks,
+Daniel
