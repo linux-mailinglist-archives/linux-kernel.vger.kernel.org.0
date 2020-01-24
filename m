@@ -2,37 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E82941486DF
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Jan 2020 15:19:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5C5411486E0
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Jan 2020 15:19:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391383AbgAXOTM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 24 Jan 2020 09:19:12 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39220 "EHLO mail.kernel.org"
+        id S2391443AbgAXOTP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 24 Jan 2020 09:19:15 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39306 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2403870AbgAXOTG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 24 Jan 2020 09:19:06 -0500
+        id S2403984AbgAXOTK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 24 Jan 2020 09:19:10 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EEE30208C4;
-        Fri, 24 Jan 2020 14:19:04 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9022F214AF;
+        Fri, 24 Jan 2020 14:19:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579875545;
-        bh=YXimIeVVabdHST4MA4fpnqw1T32CaDvKUYGappcD4SQ=;
+        s=default; t=1579875549;
+        bh=818dV68auhzfZV8Z6AwH03tA4JCYnv794bYqjpVR21c=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=LYTPECr71HpX0d0IC0d90slm7oKA0KYbgOqTFACS6eajEm5geThMTWbTch7yFS7Zt
-         736/7/rWBYr3Eteco4nIlCKtUBL8lmaid5JxajopqxjvnT2IFB2GYWUodL9S9pkxck
-         Onnv5m9jvk4lJWA33bV+36I1dMBgphjJP57ce6sw=
+        b=kp5f89L3W2SQNelsC3+v9B5AhvMe4uczht4aq62s/zdsYaeJ9peiUKgK3GFGItKf6
+         +XVTVSd9TISMXQwOVAkeUtfvAGmCOBbMk9HoDX8A6QQ0qqkr3BGHAp3ANaM4Zsg42t
+         uykbhpadGk3jKKWNL9s4GOqIe6jsnf4ZzETHvOX8=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Manfred Rudigier <manfred.rudigier@omicronenergy.com>,
-        Aaron Brown <aaron.f.brown@intel.com>,
-        Jeff Kirsher <jeffrey.t.kirsher@intel.com>,
-        Sasha Levin <sashal@kernel.org>,
-        intel-wired-lan@lists.osuosl.org, netdev@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.4 041/107] igb: Fix SGMII SFP module discovery for 100FX/LX.
-Date:   Fri, 24 Jan 2020 09:17:11 -0500
-Message-Id: <20200124141817.28793-41-sashal@kernel.org>
+Cc:     Lingpeng Chen <forrest0579@gmail.com>,
+        Arika Chen <eaglesora@gmail.com>,
+        John Fastabend <john.fastabend@gmail.com>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Song Liu <songliubraving@fb.com>,
+        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org
+Subject: [PATCH AUTOSEL 5.4 044/107] bpf/sockmap: Read psock ingress_msg before sk_receive_queue
+Date:   Fri, 24 Jan 2020 09:17:14 -0500
+Message-Id: <20200124141817.28793-44-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200124141817.28793-1-sashal@kernel.org>
 References: <20200124141817.28793-1-sashal@kernel.org>
@@ -45,71 +46,63 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Manfred Rudigier <manfred.rudigier@omicronenergy.com>
+From: Lingpeng Chen <forrest0579@gmail.com>
 
-[ Upstream commit 5365ec1aeff5b9f2962a9c9b31d63f9dad7e0e2d ]
+[ Upstream commit e7a5f1f1cd0008e5ad379270a8657e121eedb669 ]
 
-Changing the link mode should also be done for 100BaseFX SGMII modules,
-otherwise they just don't work when the default link mode in CTRL_EXT
-coming from the EEPROM is SERDES.
+Right now in tcp_bpf_recvmsg, sock read data first from sk_receive_queue
+if not empty than psock->ingress_msg otherwise. If a FIN packet arrives
+and there's also some data in psock->ingress_msg, the data in
+psock->ingress_msg will be purged. It is always happen when request to a
+HTTP1.0 server like python SimpleHTTPServer since the server send FIN
+packet after data is sent out.
 
-Additionally 100Base-LX SGMII SFP modules are also supported now, which
-was not the case before.
-
-Tested with an i210 using Flexoptix S.1303.2M.G 100FX and
-S.1303.10.G 100LX SGMII SFP modules.
-
-Signed-off-by: Manfred Rudigier <manfred.rudigier@omicronenergy.com>
-Tested-by: Aaron Brown <aaron.f.brown@intel.com>
-Signed-off-by: Jeff Kirsher <jeffrey.t.kirsher@intel.com>
+Fixes: 604326b41a6fb ("bpf, sockmap: convert to generic sk_msg interface")
+Reported-by: Arika Chen <eaglesora@gmail.com>
+Suggested-by: Arika Chen <eaglesora@gmail.com>
+Signed-off-by: Lingpeng Chen <forrest0579@gmail.com>
+Signed-off-by: John Fastabend <john.fastabend@gmail.com>
+Signed-off-by: Daniel Borkmann <daniel@iogearbox.net>
+Acked-by: Song Liu <songliubraving@fb.com>
+Link: https://lore.kernel.org/bpf/20200109014833.18951-1-forrest0579@gmail.com
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/intel/igb/e1000_82575.c | 8 ++------
- drivers/net/ethernet/intel/igb/igb_ethtool.c | 2 +-
- 2 files changed, 3 insertions(+), 7 deletions(-)
+ net/ipv4/tcp_bpf.c | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/net/ethernet/intel/igb/e1000_82575.c b/drivers/net/ethernet/intel/igb/e1000_82575.c
-index 8a6ef35141292..438b42ce2cd9a 100644
---- a/drivers/net/ethernet/intel/igb/e1000_82575.c
-+++ b/drivers/net/ethernet/intel/igb/e1000_82575.c
-@@ -530,7 +530,7 @@ static s32 igb_set_sfp_media_type_82575(struct e1000_hw *hw)
- 		dev_spec->module_plugged = true;
- 		if (eth_flags->e1000_base_lx || eth_flags->e1000_base_sx) {
- 			hw->phy.media_type = e1000_media_type_internal_serdes;
--		} else if (eth_flags->e100_base_fx) {
-+		} else if (eth_flags->e100_base_fx || eth_flags->e100_base_lx) {
- 			dev_spec->sgmii_active = true;
- 			hw->phy.media_type = e1000_media_type_internal_serdes;
- 		} else if (eth_flags->e1000_base_t) {
-@@ -657,14 +657,10 @@ static s32 igb_get_invariants_82575(struct e1000_hw *hw)
- 			break;
- 		}
+diff --git a/net/ipv4/tcp_bpf.c b/net/ipv4/tcp_bpf.c
+index e38705165ac9b..e6b08b5a08955 100644
+--- a/net/ipv4/tcp_bpf.c
++++ b/net/ipv4/tcp_bpf.c
+@@ -121,14 +121,14 @@ int tcp_bpf_recvmsg(struct sock *sk, struct msghdr *msg, size_t len,
+ 	struct sk_psock *psock;
+ 	int copied, ret;
  
--		/* do not change link mode for 100BaseFX */
--		if (dev_spec->eth_flags.e100_base_fx)
--			break;
+-	if (unlikely(flags & MSG_ERRQUEUE))
+-		return inet_recv_error(sk, msg, len, addr_len);
+-	if (!skb_queue_empty(&sk->sk_receive_queue))
+-		return tcp_recvmsg(sk, msg, len, nonblock, flags, addr_len);
 -
- 		/* change current link mode setting */
- 		ctrl_ext &= ~E1000_CTRL_EXT_LINK_MODE_MASK;
- 
--		if (hw->phy.media_type == e1000_media_type_copper)
-+		if (dev_spec->sgmii_active)
- 			ctrl_ext |= E1000_CTRL_EXT_LINK_MODE_SGMII;
- 		else
- 			ctrl_ext |= E1000_CTRL_EXT_LINK_MODE_PCIE_SERDES;
-diff --git a/drivers/net/ethernet/intel/igb/igb_ethtool.c b/drivers/net/ethernet/intel/igb/igb_ethtool.c
-index 3182b059bf55c..8959418776f67 100644
---- a/drivers/net/ethernet/intel/igb/igb_ethtool.c
-+++ b/drivers/net/ethernet/intel/igb/igb_ethtool.c
-@@ -181,7 +181,7 @@ static int igb_get_link_ksettings(struct net_device *netdev,
- 				advertising &= ~ADVERTISED_1000baseKX_Full;
- 			}
- 		}
--		if (eth_flags->e100_base_fx) {
-+		if (eth_flags->e100_base_fx || eth_flags->e100_base_lx) {
- 			supported |= SUPPORTED_100baseT_Full;
- 			advertising |= ADVERTISED_100baseT_Full;
- 		}
+ 	psock = sk_psock_get(sk);
+ 	if (unlikely(!psock))
+ 		return tcp_recvmsg(sk, msg, len, nonblock, flags, addr_len);
++	if (unlikely(flags & MSG_ERRQUEUE))
++		return inet_recv_error(sk, msg, len, addr_len);
++	if (!skb_queue_empty(&sk->sk_receive_queue) &&
++	    sk_psock_queue_empty(psock))
++		return tcp_recvmsg(sk, msg, len, nonblock, flags, addr_len);
+ 	lock_sock(sk);
+ msg_bytes_ready:
+ 	copied = __tcp_bpf_recvmsg(sk, psock, msg, len, flags);
+@@ -139,7 +139,7 @@ msg_bytes_ready:
+ 		timeo = sock_rcvtimeo(sk, nonblock);
+ 		data = tcp_bpf_wait_data(sk, psock, flags, timeo, &err);
+ 		if (data) {
+-			if (skb_queue_empty(&sk->sk_receive_queue))
++			if (!sk_psock_queue_empty(psock))
+ 				goto msg_bytes_ready;
+ 			release_sock(sk);
+ 			sk_psock_put(sk, psock);
 -- 
 2.20.1
 
