@@ -2,36 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4041A1486C7
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Jan 2020 15:18:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D0B1B1486CF
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Jan 2020 15:19:23 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390951AbgAXOSj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 24 Jan 2020 09:18:39 -0500
-Received: from mail.kernel.org ([198.145.29.99]:38118 "EHLO mail.kernel.org"
+        id S2390987AbgAXOSk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 24 Jan 2020 09:18:40 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38178 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390893AbgAXOSh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 24 Jan 2020 09:18:37 -0500
+        id S2390918AbgAXOSi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 24 Jan 2020 09:18:38 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6216020838;
-        Fri, 24 Jan 2020 14:18:35 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8CB32214DB;
+        Fri, 24 Jan 2020 14:18:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579875516;
-        bh=+I5ykO5NXtCEJfLJit9LMgzYwZuR+pnoXVd6Iosr3M8=;
+        s=default; t=1579875517;
+        bh=Rw6tVfC2c6QLdOPEUQ6KBAa5nQZ0ZZvMUWY3ziIiaFo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=eAMCnbuVP71YhDIlg6xokDhb/rsL+0IMjUuLucYeCCxRqIhu5M+PLrpiK7E2RpoLM
-         i6IabTPT3hrj+1gXEmLNGV64RVS/6SFAma5x/iP4bKnfD/0WxS0knPqgnFq/NJgldL
-         ZwNsOM3FSamqK4bYwjdzFUylkjIk7t+Yz9f6J/Wc=
+        b=VFEsRlAE8ivstaHVipUa0VT3IObPqddh7o4ixE/SDV0wALvKWKbUIw8tDOFoNczl1
+         cULqk5iPZ3HbnOTtXynxo0lxVivIV51FhdsvtYqDU8nLpPYWLehs0sdRwWi8unAkh0
+         o4tMVGn+SEXW58knwmGDN86jJqpxh+sXAabEUOy8=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Peng Fan <peng.fan@nxp.com>, Fabio Estevam <festevam@gmail.com>,
+Cc:     Marek Vasut <marex@denx.de>, Fabio Estevam <festevam@gmail.com>,
+        Ludwig Zenz <lzenz@dh-electronics.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
         Shawn Guo <shawnguo@kernel.org>,
         Sasha Levin <sashal@kernel.org>,
         linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.4 016/107] ARM: dts: imx7ulp: fix reg of cpu node
-Date:   Fri, 24 Jan 2020 09:16:46 -0500
-Message-Id: <20200124141817.28793-16-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.4 017/107] ARM: dts: imx6q-dhcom: Fix SGTL5000 VDDIO regulator connection
+Date:   Fri, 24 Jan 2020 09:16:47 -0500
+Message-Id: <20200124141817.28793-17-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200124141817.28793-1-sashal@kernel.org>
 References: <20200124141817.28793-1-sashal@kernel.org>
@@ -44,51 +46,37 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Peng Fan <peng.fan@nxp.com>
+From: Marek Vasut <marex@denx.de>
 
-[ Upstream commit b8ab62ff7199fac8ce27fa4a149929034fabe7f8 ]
+[ Upstream commit fe6a6689d1815b63528796886853890d8ee7f021 ]
 
-According to arm cpus binding doc,
-"
-      On 32-bit ARM v7 or later systems this property is
-        required and matches the CPU MPIDR[23:0] register
-        bits.
+The SGTL5000 VDDIO is connected to the PMIC SW2 output, not to
+a fixed 3V3 rail. Describe this correctly in the DT.
 
-        Bits [23:0] in the reg cell must be set to
-        bits [23:0] in MPIDR.
-
-        All other bits in the reg cell must be set to 0.
-"
-
-In i.MX7ULP, the MPIDR[23:0] is 0xf00, not 0, so fix it.
-Otherwise there will be warning:
-"DT missing boot CPU MPIDR[23:0], fall back to default cpu_logical_map"
-
-Fixes: 20434dc92c05 ("ARM: dts: imx: add common imx7ulp dtsi support")
-Signed-off-by: Peng Fan <peng.fan@nxp.com>
-Reviewed-by: Fabio Estevam <festevam@gmail.com>
+Fixes: 52c7a088badd ("ARM: dts: imx6q: Add support for the DHCOM iMX6 SoM and PDK2")
+Signed-off-by: Marek Vasut <marex@denx.de>
+Cc: Fabio Estevam <festevam@gmail.com>
+Cc: Ludwig Zenz <lzenz@dh-electronics.com>
+Cc: NXP Linux Team <linux-imx@nxp.com>
+To: linux-arm-kernel@lists.infradead.org
 Signed-off-by: Shawn Guo <shawnguo@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arm/boot/dts/imx7ulp.dtsi | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ arch/arm/boot/dts/imx6q-dhcom-pdk2.dts | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/arm/boot/dts/imx7ulp.dtsi b/arch/arm/boot/dts/imx7ulp.dtsi
-index 6859a3a83750c..3dac6898cdc57 100644
---- a/arch/arm/boot/dts/imx7ulp.dtsi
-+++ b/arch/arm/boot/dts/imx7ulp.dtsi
-@@ -37,10 +37,10 @@
- 		#address-cells = <1>;
- 		#size-cells = <0>;
- 
--		cpu0: cpu@0 {
-+		cpu0: cpu@f00 {
- 			compatible = "arm,cortex-a7";
- 			device_type = "cpu";
--			reg = <0>;
-+			reg = <0xf00>;
- 		};
+diff --git a/arch/arm/boot/dts/imx6q-dhcom-pdk2.dts b/arch/arm/boot/dts/imx6q-dhcom-pdk2.dts
+index 9c61e3be2d9a3..1c46df6827f50 100644
+--- a/arch/arm/boot/dts/imx6q-dhcom-pdk2.dts
++++ b/arch/arm/boot/dts/imx6q-dhcom-pdk2.dts
+@@ -55,7 +55,7 @@
+ 		#sound-dai-cells = <0>;
+ 		clocks = <&clk_ext_audio_codec>;
+ 		VDDA-supply = <&reg_3p3v>;
+-		VDDIO-supply = <&reg_3p3v>;
++		VDDIO-supply = <&sw2_reg>;
  	};
+ };
  
 -- 
 2.20.1
