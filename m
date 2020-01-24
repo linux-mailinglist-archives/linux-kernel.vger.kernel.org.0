@@ -2,37 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4BBB11480DC
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Jan 2020 12:15:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DBDD91480D8
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Jan 2020 12:15:10 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390247AbgAXLPM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 24 Jan 2020 06:15:12 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51478 "EHLO mail.kernel.org"
+        id S2390212AbgAXLPH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 24 Jan 2020 06:15:07 -0500
+Received: from mail.kernel.org ([198.145.29.99]:51570 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389143AbgAXLPA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 24 Jan 2020 06:15:00 -0500
+        id S1731323AbgAXLPE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 24 Jan 2020 06:15:04 -0500
 Received: from localhost (ip-213-127-102-57.ip.prioritytelecom.net [213.127.102.57])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D12DA2075D;
-        Fri, 24 Jan 2020 11:14:59 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5A7422071A;
+        Fri, 24 Jan 2020 11:15:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579864500;
-        bh=X9i5C4/sC5uBnkoCnSFyPe6JepwPdQ+sVLyu9VPvxuI=;
+        s=default; t=1579864504;
+        bh=6OjTw3TEj6HhTq5Xkir6kyaBIG8CIbwSSO8B832Xe8Y=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=RiKWtfi6yLE3AOm9TerVN6nd8tDSPZ91cPYije+vkuJcBP9mPAQhhIVoU5K5XGcfF
-         yR5T6x7s25cxQZft48Rz7mBtE79RHsH+RKAUgj1EXHGTPgAoKs1xIW0ksDft4VHotx
-         fzjxVk2zsrmeJIfZFaT8LWasajIY6fVI9y3omqz4=
+        b=ar9FOYlN/PI+7BFEIbdREZV3XeVSO52IzcBtDQo5m5CwbY67vAPaqU9dabhw+H/+0
+         SLwks2bykYLCjltdc3pTKxg/2wnDman+KV7oz//J3fwvMwDSTm89uZSY5I7iDyonKT
+         voGkKKEaC1VtoRTmlpVKX4LO67jIe2j6kMO8qM5k=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
-        Gilad Ben-Yossef <gilad@benyossef.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
+        Dave Kleikamp <dave.kleikamp@oracle.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 269/639] crypto: ccree - reduce kernel stack usage with clang
-Date:   Fri, 24 Jan 2020 10:27:19 +0100
-Message-Id: <20200124093120.395167362@linuxfoundation.org>
+Subject: [PATCH 4.19 270/639] jfs: fix bogus variable self-initialization
+Date:   Fri, 24 Jan 2020 10:27:20 +0100
+Message-Id: <20200124093120.515595476@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
 In-Reply-To: <20200124093047.008739095@linuxfoundation.org>
 References: <20200124093047.008739095@linuxfoundation.org>
@@ -47,48 +46,41 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Arnd Bergmann <arnd@arndb.de>
 
-[ Upstream commit 5db46ac29a6797541943d3c4081821747e342732 ]
+[ Upstream commit a5fdd713d256887b5f012608701149fa939e5645 ]
 
-Building with clang for a 32-bit architecture runs over the stack
-frame limit in the setkey function:
+A statement was originally added in 2006 to shut up a gcc warning,
+now but now clang warns about it:
 
-drivers/crypto/ccree/cc_cipher.c:318:12: error: stack frame size of 1152 bytes in function 'cc_cipher_setkey' [-Werror,-Wframe-larger-than=]
+fs/jfs/jfs_txnmgr.c:1932:15: error: variable 'pxd' is uninitialized when used within its own initialization
+      [-Werror,-Wuninitialized]
+                pxd_t pxd = pxd;        /* truncated extent of xad */
+                      ~~~   ^~~
 
-The problem is that there are two large variables: the temporary
-'tmp' array and the SHASH_DESC_ON_STACK() declaration. Moving
-the first into the block in which it is used reduces the
-total frame size to 768 bytes, which seems more reasonable
-and is under the warning limit.
+Modern versions of gcc are fine without the silly assignment, so just
+drop it. Tested with gcc-4.6 (released 2011), 4.7, 4.8, and 4.9.
 
-Fixes: 63ee04c8b491 ("crypto: ccree - add skcipher support")
+Fixes: c9e3ad6021e5 ("JFS: Get rid of "may be used uninitialized" warnings")
 Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-Acked-By: Gilad Ben-Yossef <gilad@benyossef.com>
-Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
+Signed-off-by: Dave Kleikamp <dave.kleikamp@oracle.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/crypto/ccree/cc_cipher.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ fs/jfs/jfs_txnmgr.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/drivers/crypto/ccree/cc_cipher.c b/drivers/crypto/ccree/cc_cipher.c
-index 54a39164aab8f..28a5b8b38fa2f 100644
---- a/drivers/crypto/ccree/cc_cipher.c
-+++ b/drivers/crypto/ccree/cc_cipher.c
-@@ -306,7 +306,6 @@ static int cc_cipher_setkey(struct crypto_skcipher *sktfm, const u8 *key,
- 	struct crypto_tfm *tfm = crypto_skcipher_tfm(sktfm);
- 	struct cc_cipher_ctx *ctx_p = crypto_tfm_ctx(tfm);
- 	struct device *dev = drvdata_to_dev(ctx_p->drvdata);
--	u32 tmp[DES3_EDE_EXPKEY_WORDS];
- 	struct cc_crypto_alg *cc_alg =
- 			container_of(tfm->__crt_alg, struct cc_crypto_alg,
- 				     skcipher_alg.base);
-@@ -332,6 +331,7 @@ static int cc_cipher_setkey(struct crypto_skcipher *sktfm, const u8 *key,
- 	 * HW does the expansion on its own.
+diff --git a/fs/jfs/jfs_txnmgr.c b/fs/jfs/jfs_txnmgr.c
+index a5663cb621d8d..78789c5ed36b0 100644
+--- a/fs/jfs/jfs_txnmgr.c
++++ b/fs/jfs/jfs_txnmgr.c
+@@ -1928,8 +1928,7 @@ static void xtLog(struct jfs_log * log, struct tblock * tblk, struct lrd * lrd,
+ 	 * header ?
  	 */
- 	if (ctx_p->flow_mode == S_DIN_to_DES) {
-+		u32 tmp[DES3_EDE_EXPKEY_WORDS];
- 		if (keylen == DES3_EDE_KEY_SIZE &&
- 		    __des3_ede_setkey(tmp, &tfm->crt_flags, key,
- 				      DES3_EDE_KEY_SIZE)) {
+ 	if (tlck->type & tlckTRUNCATE) {
+-		/* This odd declaration suppresses a bogus gcc warning */
+-		pxd_t pxd = pxd;	/* truncated extent of xad */
++		pxd_t pxd;	/* truncated extent of xad */
+ 		int twm;
+ 
+ 		/*
 -- 
 2.20.1
 
