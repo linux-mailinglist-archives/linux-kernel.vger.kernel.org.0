@@ -2,159 +2,181 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9BBA314912F
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Jan 2020 23:43:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DE2AF14914D
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Jan 2020 23:47:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387526AbgAXWnf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 24 Jan 2020 17:43:35 -0500
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:37223 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387488AbgAXWn1 (ORCPT
+        id S1729239AbgAXWrL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 24 Jan 2020 17:47:11 -0500
+Received: from mail-io1-f71.google.com ([209.85.166.71]:36914 "EHLO
+        mail-io1-f71.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729047AbgAXWrK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 24 Jan 2020 17:43:27 -0500
-Received: by mail-pg1-f195.google.com with SMTP id q127so1861686pga.4
-        for <linux-kernel@vger.kernel.org>; Fri, 24 Jan 2020 14:43:27 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=W9Q9a9KTrafykk7sSvwstO8MsMaSjnD9xam7szWjZDw=;
-        b=jgjD9Xxy4nlsaa7hkNYnuT4CcmzwgvwlFgpRuwAPR3fdSGa7W9GTwmxt/bvF513wuw
-         Z1C0VQpRrsrKWTSMCQhlr/vinxMWl+ODRosOtXxAcvpaj4/Pt2tvxVpsi1JI8pLt4WjW
-         eOgUHMcY/25hhzXZcsr7VEYgR7Z/pVuxz1tis=
+        Fri, 24 Jan 2020 17:47:10 -0500
+Received: by mail-io1-f71.google.com with SMTP id p4so2299024ioo.4
+        for <linux-kernel@vger.kernel.org>; Fri, 24 Jan 2020 14:47:09 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=W9Q9a9KTrafykk7sSvwstO8MsMaSjnD9xam7szWjZDw=;
-        b=iGIqVUPO+N/Skn1yWIUpbmOZyp9GDO3IbchUxbdmYKhv0RqoPyaa5GOVaAqXSeJffk
-         198GfrJxu8HE/p7ZZ3Uq50tvtkJ+viG/EqAepwuf3Yb58e4DznnCn1w/iC9Qum2GcUAw
-         lP8RGrkxek6wkaDFZukmgjFGnw5ZMWazLQjqmY5khjyqctUJrQf+hShVAUXodJKonZ7v
-         0rmnB0Dpp3aKXbMNwUSdns74Cm7OFxt+/JQt3SCmJC+ZzbITN74XEvo/wisFK8mZvouO
-         hU3AfPL0tTnCZywq/uqnlb/LAQzPW6PtBokk54ADkIRgWGOGvtfr3YERfNuLYQO0k01h
-         CI4w==
-X-Gm-Message-State: APjAAAXFrKkWSHV0Px9q4pwSwr3+ioWDzjNepRTp32Yh3yF6g3UVoO+O
-        u0Resmj5lKyf7mOAYEC7X3aR0g==
-X-Google-Smtp-Source: APXvYqyvlxXWuURQFVjahxnKg8HiiJD1ty6z3PYW5nbOmdrvu0Ae1oXPHdhdKlHv1P1ziyQGUdj1Vg==
-X-Received: by 2002:aa7:8006:: with SMTP id j6mr5297976pfi.185.1579905806866;
-        Fri, 24 Jan 2020 14:43:26 -0800 (PST)
-Received: from tictac2.mtv.corp.google.com ([2620:15c:202:1:24fa:e766:52c9:e3b2])
-        by smtp.gmail.com with ESMTPSA id o2sm7690948pjo.26.2020.01.24.14.43.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 24 Jan 2020 14:43:26 -0800 (PST)
-From:   Douglas Anderson <dianders@chromium.org>
-To:     Rob Herring <robh@kernel.org>, Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Stephen Boyd <sboyd@codeaurora.org>
-Cc:     Jeffrey Hugo <jhugo@codeaurora.org>,
-        Taniya Das <tdas@codeaurora.org>, devicetree@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, harigovi@codeaurora.org,
-        mka@chromium.org, kalyan_t@codeaurora.org,
-        Mark Rutland <mark.rutland@arm.com>, linux-clk@vger.kernel.org,
-        hoegsberg@chromium.org, Douglas Anderson <dianders@chromium.org>,
-        linux-kernel@vger.kernel.org, Rob Herring <robh+dt@kernel.org>
-Subject: [PATCH v2 10/10] arm64: dts: sc7180: Add clock controller nodes
-Date:   Fri, 24 Jan 2020 14:42:25 -0800
-Message-Id: <20200124144154.v2.10.I1a4b93fb005791e29a9dcf288fc8bd459a555a59@changeid>
-X-Mailer: git-send-email 2.25.0.341.g760bfbb309-goog
-In-Reply-To: <20200124224225.22547-1-dianders@chromium.org>
-References: <20200124224225.22547-1-dianders@chromium.org>
+        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
+        bh=GyfX6QdtSm5FDCLxpCdzonVwcZRhU9kbKHjsX9ZfODQ=;
+        b=iwAYnUwT0hLLazFWYazfa+mEjs9Q0KbyUedKPMCh3hAKJAFRQW1YVYgP7ISE1Le0Z3
+         7Ir1mju7pqFoGHxFM1hGdOuJpKaK4u3NKPPMkYgu+G28zUhRLODk4EAtfv0/P0QKJyWq
+         G3IcYkhPyeQIZGsMmSlsFUgvs1aOZgMtxWNJLnMQUB6RgVjSwra+6DSPnyi8WLDS1/7g
+         k/kK2M8YMudA0o04EwuM+K0FcOhm+mcbhJGSFsHQBTxsR/rVHCzTeyNAU3xcZ44ZZK7p
+         D6zsr2SHd2LhuxK+/Zsn6gaXtDVcOi/ZLGOexfQ6uXGrah0JJ6cS0LO8Id9RrkgZVucF
+         TmCQ==
+X-Gm-Message-State: APjAAAXiCuYPk793wPlQXqAA0jXNEszFcEURZC3apkC+MeHx2eqbjJef
+        9wUZaFvtdkXfOqs9nZDoH2aed938rz8OqcqjmkDshHc4n2JS
+X-Google-Smtp-Source: APXvYqxuCViQajD/HxO7K5v1pP/+idG4DMJdLcZ+snnQQMEvOxuWCxNbQXMbtCwk1rd0WPXZ3bpjHd5tV6z2AasvbMyug+d5qxgm
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-Received: by 2002:a92:8458:: with SMTP id l85mr5344761ild.296.1579906029661;
+ Fri, 24 Jan 2020 14:47:09 -0800 (PST)
+Date:   Fri, 24 Jan 2020 14:47:09 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000ad33b8059cea8966@google.com>
+Subject: memory leak in em_nbyte_change
+From:   syzbot <syzbot+03c4738ed29d5d366ddf@syzkaller.appspotmail.com>
+To:     davem@davemloft.net, jhs@mojatatu.com, jiri@resnulli.us,
+        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com, xiyou.wangcong@gmail.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Taniya Das <tdas@codeaurora.org>
+Hello,
 
-Add the display, video & graphics clock controller nodes supported on
-SC7180.
+syzbot found the following crash on:
 
-NOTE: the dispcc needs input clocks from various PHYs that aren't in
-the device tree yet.  For now we'll leave these stubbed out with <0>,
-which is apparently the magic way to do this.  These clocks aren't
-really "optional" and this stubbing out method is apparently the best
-way to handle it.
+HEAD commit:    4703d911 Merge tag 'xarray-5.5' of git://git.infradead.org..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=1031e335e00000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=15478c61c836a72e
+dashboard link: https://syzkaller.appspot.com/bug?extid=03c4738ed29d5d366ddf
+compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1277ce01e00000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=16681611e00000
 
-Signed-off-by: Taniya Das <tdas@codeaurora.org>
-Signed-off-by: Douglas Anderson <dianders@chromium.org>
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+03c4738ed29d5d366ddf@syzkaller.appspotmail.com
+
+BUG: memory leak
+unreferenced object 0xffff888121850a40 (size 32):
+  comm "syz-executor927", pid 7193, jiffies 4294941655 (age 19.840s)
+  hex dump (first 32 bytes):
+    00 00 00 00 01 00 00 00 00 00 00 00 00 00 00 00  ................
+    00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+  backtrace:
+    [<00000000f67036ea>] kmemleak_alloc_recursive include/linux/kmemleak.h:43 [inline]
+    [<00000000f67036ea>] slab_post_alloc_hook mm/slab.h:586 [inline]
+    [<00000000f67036ea>] slab_alloc mm/slab.c:3320 [inline]
+    [<00000000f67036ea>] __do_kmalloc mm/slab.c:3654 [inline]
+    [<00000000f67036ea>] __kmalloc_track_caller+0x165/0x300 mm/slab.c:3671
+    [<00000000fab0cc8e>] kmemdup+0x27/0x60 mm/util.c:127
+    [<00000000d9992e0a>] kmemdup include/linux/string.h:453 [inline]
+    [<00000000d9992e0a>] em_nbyte_change+0x5b/0x90 net/sched/em_nbyte.c:32
+    [<000000007e04f711>] tcf_em_validate net/sched/ematch.c:241 [inline]
+    [<000000007e04f711>] tcf_em_tree_validate net/sched/ematch.c:359 [inline]
+    [<000000007e04f711>] tcf_em_tree_validate+0x332/0x46f net/sched/ematch.c:300
+    [<000000007a769204>] basic_set_parms net/sched/cls_basic.c:157 [inline]
+    [<000000007a769204>] basic_change+0x1d7/0x5f0 net/sched/cls_basic.c:219
+    [<00000000e57a5997>] tc_new_tfilter+0x566/0xf70 net/sched/cls_api.c:2104
+    [<0000000074b68559>] rtnetlink_rcv_msg+0x3b2/0x4b0 net/core/rtnetlink.c:5415
+    [<00000000b7fe53fb>] netlink_rcv_skb+0x61/0x170 net/netlink/af_netlink.c:2477
+    [<00000000e83a40d0>] rtnetlink_rcv+0x1d/0x30 net/core/rtnetlink.c:5442
+    [<00000000d62ba933>] netlink_unicast_kernel net/netlink/af_netlink.c:1302 [inline]
+    [<00000000d62ba933>] netlink_unicast+0x223/0x310 net/netlink/af_netlink.c:1328
+    [<0000000088070f72>] netlink_sendmsg+0x2c0/0x570 net/netlink/af_netlink.c:1917
+    [<00000000f70b15ea>] sock_sendmsg_nosec net/socket.c:639 [inline]
+    [<00000000f70b15ea>] sock_sendmsg+0x54/0x70 net/socket.c:659
+    [<00000000ef95a9be>] ____sys_sendmsg+0x2d0/0x300 net/socket.c:2330
+    [<00000000b650f1ab>] ___sys_sendmsg+0x8a/0xd0 net/socket.c:2384
+    [<0000000055bfa74a>] __sys_sendmsg+0x80/0xf0 net/socket.c:2417
+    [<000000002abac183>] __do_sys_sendmsg net/socket.c:2426 [inline]
+    [<000000002abac183>] __se_sys_sendmsg net/socket.c:2424 [inline]
+    [<000000002abac183>] __x64_sys_sendmsg+0x23/0x30 net/socket.c:2424
+
+BUG: memory leak
+unreferenced object 0xffff888115438ea0 (size 32):
+  comm "syz-executor927", pid 7194, jiffies 4294942248 (age 13.910s)
+  hex dump (first 32 bytes):
+    00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+    00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+  backtrace:
+    [<00000000f67036ea>] kmemleak_alloc_recursive include/linux/kmemleak.h:43 [inline]
+    [<00000000f67036ea>] slab_post_alloc_hook mm/slab.h:586 [inline]
+    [<00000000f67036ea>] slab_alloc mm/slab.c:3320 [inline]
+    [<00000000f67036ea>] __do_kmalloc mm/slab.c:3654 [inline]
+    [<00000000f67036ea>] __kmalloc_track_caller+0x165/0x300 mm/slab.c:3671
+    [<00000000fab0cc8e>] kmemdup+0x27/0x60 mm/util.c:127
+    [<00000000d9992e0a>] kmemdup include/linux/string.h:453 [inline]
+    [<00000000d9992e0a>] em_nbyte_change+0x5b/0x90 net/sched/em_nbyte.c:32
+    [<000000007e04f711>] tcf_em_validate net/sched/ematch.c:241 [inline]
+    [<000000007e04f711>] tcf_em_tree_validate net/sched/ematch.c:359 [inline]
+    [<000000007e04f711>] tcf_em_tree_validate+0x332/0x46f net/sched/ematch.c:300
+    [<000000007a769204>] basic_set_parms net/sched/cls_basic.c:157 [inline]
+    [<000000007a769204>] basic_change+0x1d7/0x5f0 net/sched/cls_basic.c:219
+    [<00000000e57a5997>] tc_new_tfilter+0x566/0xf70 net/sched/cls_api.c:2104
+    [<0000000074b68559>] rtnetlink_rcv_msg+0x3b2/0x4b0 net/core/rtnetlink.c:5415
+    [<00000000b7fe53fb>] netlink_rcv_skb+0x61/0x170 net/netlink/af_netlink.c:2477
+    [<00000000e83a40d0>] rtnetlink_rcv+0x1d/0x30 net/core/rtnetlink.c:5442
+    [<00000000d62ba933>] netlink_unicast_kernel net/netlink/af_netlink.c:1302 [inline]
+    [<00000000d62ba933>] netlink_unicast+0x223/0x310 net/netlink/af_netlink.c:1328
+    [<0000000088070f72>] netlink_sendmsg+0x2c0/0x570 net/netlink/af_netlink.c:1917
+    [<00000000f70b15ea>] sock_sendmsg_nosec net/socket.c:639 [inline]
+    [<00000000f70b15ea>] sock_sendmsg+0x54/0x70 net/socket.c:659
+    [<00000000ef95a9be>] ____sys_sendmsg+0x2d0/0x300 net/socket.c:2330
+    [<00000000b650f1ab>] ___sys_sendmsg+0x8a/0xd0 net/socket.c:2384
+    [<0000000055bfa74a>] __sys_sendmsg+0x80/0xf0 net/socket.c:2417
+    [<000000002abac183>] __do_sys_sendmsg net/socket.c:2426 [inline]
+    [<000000002abac183>] __se_sys_sendmsg net/socket.c:2424 [inline]
+    [<000000002abac183>] __x64_sys_sendmsg+0x23/0x30 net/socket.c:2424
+
+BUG: memory leak
+unreferenced object 0xffff88811c962180 (size 32):
+  comm "syz-executor927", pid 7195, jiffies 4294942844 (age 7.950s)
+  hex dump (first 32 bytes):
+    00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+    00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+  backtrace:
+    [<00000000f67036ea>] kmemleak_alloc_recursive include/linux/kmemleak.h:43 [inline]
+    [<00000000f67036ea>] slab_post_alloc_hook mm/slab.h:586 [inline]
+    [<00000000f67036ea>] slab_alloc mm/slab.c:3320 [inline]
+    [<00000000f67036ea>] __do_kmalloc mm/slab.c:3654 [inline]
+    [<00000000f67036ea>] __kmalloc_track_caller+0x165/0x300 mm/slab.c:3671
+    [<00000000fab0cc8e>] kmemdup+0x27/0x60 mm/util.c:127
+    [<00000000d9992e0a>] kmemdup include/linux/string.h:453 [inline]
+    [<00000000d9992e0a>] em_nbyte_change+0x5b/0x90 net/sched/em_nbyte.c:32
+    [<000000007e04f711>] tcf_em_validate net/sched/ematch.c:241 [inline]
+    [<000000007e04f711>] tcf_em_tree_validate net/sched/ematch.c:359 [inline]
+    [<000000007e04f711>] tcf_em_tree_validate+0x332/0x46f net/sched/ematch.c:300
+    [<000000007a769204>] basic_set_parms net/sched/cls_basic.c:157 [inline]
+    [<000000007a769204>] basic_change+0x1d7/0x5f0 net/sched/cls_basic.c:219
+    [<00000000e57a5997>] tc_new_tfilter+0x566/0xf70 net/sched/cls_api.c:2104
+    [<0000000074b68559>] rtnetlink_rcv_msg+0x3b2/0x4b0 net/core/rtnetlink.c:5415
+    [<00000000b7fe53fb>] netlink_rcv_skb+0x61/0x170 net/netlink/af_netlink.c:2477
+    [<00000000e83a40d0>] rtnetlink_rcv+0x1d/0x30 net/core/rtnetlink.c:5442
+    [<00000000d62ba933>] netlink_unicast_kernel net/netlink/af_netlink.c:1302 [inline]
+    [<00000000d62ba933>] netlink_unicast+0x223/0x310 net/netlink/af_netlink.c:1328
+    [<0000000088070f72>] netlink_sendmsg+0x2c0/0x570 net/netlink/af_netlink.c:1917
+    [<00000000f70b15ea>] sock_sendmsg_nosec net/socket.c:639 [inline]
+    [<00000000f70b15ea>] sock_sendmsg+0x54/0x70 net/socket.c:659
+    [<00000000ef95a9be>] ____sys_sendmsg+0x2d0/0x300 net/socket.c:2330
+    [<00000000b650f1ab>] ___sys_sendmsg+0x8a/0xd0 net/socket.c:2384
+    [<0000000055bfa74a>] __sys_sendmsg+0x80/0xf0 net/socket.c:2417
+    [<000000002abac183>] __do_sys_sendmsg net/socket.c:2426 [inline]
+    [<000000002abac183>] __se_sys_sendmsg net/socket.c:2424 [inline]
+    [<000000002abac183>] __x64_sys_sendmsg+0x23/0x30 net/socket.c:2424
+
+
+
 ---
+This bug is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-Changes in v2:
-- Added includes
-- Changed various parent names to match bindings / driver
-
- arch/arm64/boot/dts/qcom/sc7180.dtsi | 41 ++++++++++++++++++++++++++++
- 1 file changed, 41 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/qcom/sc7180.dtsi b/arch/arm64/boot/dts/qcom/sc7180.dtsi
-index 8011c5fe2a31..ee3b4bade66b 100644
---- a/arch/arm64/boot/dts/qcom/sc7180.dtsi
-+++ b/arch/arm64/boot/dts/qcom/sc7180.dtsi
-@@ -5,7 +5,9 @@
-  * Copyright (c) 2019, The Linux Foundation. All rights reserved.
-  */
- 
-+#include <dt-bindings/clock/qcom,dispcc-sc7180.h>
- #include <dt-bindings/clock/qcom,gcc-sc7180.h>
-+#include <dt-bindings/clock/qcom,gpucc-sc7180.h>
- #include <dt-bindings/clock/qcom,rpmh.h>
- #include <dt-bindings/interrupt-controller/arm-gic.h>
- #include <dt-bindings/phy/phy-qcom-qusb2.h>
-@@ -1039,6 +1041,18 @@ pinmux {
- 			};
- 		};
- 
-+		gpucc: clock-controller@5090000 {
-+			compatible = "qcom,sc7180-gpucc";
-+			reg = <0 0x05090000 0 0x9000>;
-+			clocks = <&rpmhcc RPMH_CXO_CLK>,
-+				 <&gcc GCC_GPU_GPLL0_CLK_SRC>,
-+				 <&gcc GCC_GPU_GPLL0_DIV_CLK_SRC>;
-+			clock-names = "xo", "gpll0", "gpll0_div";
-+			#clock-cells = <1>;
-+			#reset-cells = <1>;
-+			#power-domain-cells = <1>;
-+		};
-+
- 		qspi: spi@88dc000 {
- 			compatible = "qcom,qspi-v1";
- 			reg = <0 0x088dc000 0 0x600>;
-@@ -1151,6 +1165,33 @@ usb_1_dwc3: dwc3@a600000 {
- 			};
- 		};
- 
-+		videocc: clock-controller@ab00000 {
-+			compatible = "qcom,sc7180-videocc";
-+			reg = <0 0x0ab00000 0 0x10000>;
-+			clocks = <&rpmhcc RPMH_CXO_CLK>;
-+			clock-names = "xo";
-+			#clock-cells = <1>;
-+			#reset-cells = <1>;
-+			#power-domain-cells = <1>;
-+		};
-+
-+		dispcc: clock-controller@af00000 {
-+			compatible = "qcom,sc7180-dispcc";
-+			reg = <0 0x0af00000 0 0x200000>;
-+			clocks = <&rpmhcc RPMH_CXO_CLK>,
-+				 <&gcc GCC_DISP_GPLL0_CLK_SRC>,
-+				 <0>,
-+				 <0>,
-+				 <0>,
-+				 <0>;
-+			clock-names = "xo", "gpll0",
-+				      "dsi_phy_pll_byte", "dsi_phy_pll_pixel",
-+				      "dp_phy_pll_link", "dp_phy_pll_vco_div";
-+			#clock-cells = <1>;
-+			#reset-cells = <1>;
-+			#power-domain-cells = <1>;
-+		};
-+
- 		pdc: interrupt-controller@b220000 {
- 			compatible = "qcom,sc7180-pdc", "qcom,pdc";
- 			reg = <0 0x0b220000 0 0x30000>;
--- 
-2.25.0.341.g760bfbb309-goog
-
+syzbot will keep track of this bug report. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+syzbot can test patches for this bug, for details see:
+https://goo.gl/tpsmEJ#testing-patches
