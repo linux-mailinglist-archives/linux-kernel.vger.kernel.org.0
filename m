@@ -2,38 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 59C4C1481BC
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Jan 2020 12:22:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0EA7E1481C9
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Jan 2020 12:22:48 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391196AbgAXLWV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 24 Jan 2020 06:22:21 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33534 "EHLO mail.kernel.org"
+        id S2391245AbgAXLWq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 24 Jan 2020 06:22:46 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34408 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390948AbgAXLWR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 24 Jan 2020 06:22:17 -0500
+        id S2390883AbgAXLWj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 24 Jan 2020 06:22:39 -0500
 Received: from localhost (ip-213-127-102-57.ip.prioritytelecom.net [213.127.102.57])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5869920704;
-        Fri, 24 Jan 2020 11:22:16 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0B675206D4;
+        Fri, 24 Jan 2020 11:22:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579864937;
-        bh=XYakaCXNYLllXDDo4tPnPA2c1J+mQYpUsBXO6Kz+Akw=;
+        s=default; t=1579864958;
+        bh=keRMlsFYzGpMPCm7+dNMTo6TNXo44yeRXT4UcS8m8+U=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=JwOXAym81rZtT+YJMNtcpBap20Rqs8qYdo66Q9hAdQX/uEEJnBTRe6Gl3R7zhl/1y
-         fNsd/dZSjf8ov5SeZlwUZP+4519qESJVV5M6fcEuHCHgAxub0bYHt98iktTb9B7evl
-         5+NHnXti7WvjLsNWT+W1JzGLKDB6BrTa0YZprNjU=
+        b=pWtJ5zuXtmHhwGs8TSRSe08Zf0J0f9Odjs/jsezbPeqyChvty8noQxxxSR+hMtEje
+         D0KNXXcxEn7D676+EfZyEOyIBR3agpQzNdlE6rBfvQjm2y3R+qSLgrmj4IbVMEn/0L
+         e5+hxVQXNcgcVA6fY8LBdwS4F9w0j2PCL2PtSmjE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Namjae Jeon <namjae.jeon@samsung.com>,
-        Jeff Layton <jlayton@primarydata.com>,
-        Steve French <smfrench@gmail.com>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
+        stable@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
+        "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 399/639] signal/cifs: Fix cifs_put_tcp_session to call send_sig instead of force_sig
-Date:   Fri, 24 Jan 2020 10:29:29 +0100
-Message-Id: <20200124093136.910052750@linuxfoundation.org>
+Subject: [PATCH 4.19 400/639] inet: frags: call inet_frags_fini() after unregister_pernet_subsys()
+Date:   Fri, 24 Jan 2020 10:29:30 +0100
+Message-Id: <20200124093137.053859588@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
 In-Reply-To: <20200124093047.008739095@linuxfoundation.org>
 References: <20200124093047.008739095@linuxfoundation.org>
@@ -46,51 +44,54 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Eric W. Biederman <ebiederm@xmission.com>
+From: Eric Dumazet <edumazet@google.com>
 
-[ Upstream commit 72abe3bcf0911d69b46c1e8bdb5612675e0ac42c ]
+[ Upstream commit ae7352d384a552d8c799c242e74a934809990a71 ]
 
-The locking in force_sig_info is not prepared to deal with a task that
-exits or execs (as sighand may change).  The is not a locking problem
-in force_sig as force_sig is only built to handle synchronous
-exceptions.
+Both IPv6 and 6lowpan are calling inet_frags_fini() too soon.
 
-Further the function force_sig_info changes the signal state if the
-signal is ignored, or blocked or if SIGNAL_UNKILLABLE will prevent the
-delivery of the signal.  The signal SIGKILL can not be ignored and can
-not be blocked and SIGNAL_UNKILLABLE won't prevent it from being
-delivered.
+inet_frags_fini() is dismantling a kmem_cache, that might be needed
+later when unregister_pernet_subsys() eventually has to remove
+frags queues from hash tables and free them.
 
-So using force_sig rather than send_sig for SIGKILL is confusing
-and pointless.
+This fixes potential use-after-free, and is a prereq for the following patch.
 
-Because it won't impact the sending of the signal and and because
-using force_sig is wrong, replace force_sig with send_sig.
-
-Cc: Namjae Jeon <namjae.jeon@samsung.com>
-Cc: Jeff Layton <jlayton@primarydata.com>
-Cc: Steve French <smfrench@gmail.com>
-Fixes: a5c3e1c725af ("Revert "cifs: No need to send SIGKILL to demux_thread during umount"")
-Fixes: e7ddee9037e7 ("cifs: disable sharing session and tcon and add new TCP sharing code")
-Signed-off-by: "Eric W. Biederman" <ebiederm@xmission.com>
+Fixes: d4ad4d22e7ac ("inet: frags: use kmem_cache for inet_frag_queue")
+Signed-off-by: Eric Dumazet <edumazet@google.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/cifs/connect.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ net/ieee802154/6lowpan/reassembly.c | 2 +-
+ net/ipv6/reassembly.c               | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/fs/cifs/connect.c b/fs/cifs/connect.c
-index 7e85070d010f4..a59dcda075343 100644
---- a/fs/cifs/connect.c
-+++ b/fs/cifs/connect.c
-@@ -2454,7 +2454,7 @@ cifs_put_tcp_session(struct TCP_Server_Info *server, int from_reconnect)
+diff --git a/net/ieee802154/6lowpan/reassembly.c b/net/ieee802154/6lowpan/reassembly.c
+index e7857a8ac86db..f3074249c6fc9 100644
+--- a/net/ieee802154/6lowpan/reassembly.c
++++ b/net/ieee802154/6lowpan/reassembly.c
+@@ -629,7 +629,7 @@ err_sysctl:
  
- 	task = xchg(&server->tsk, NULL);
- 	if (task)
--		force_sig(SIGKILL, task);
-+		send_sig(SIGKILL, task, 1);
+ void lowpan_net_frag_exit(void)
+ {
+-	inet_frags_fini(&lowpan_frags);
+ 	lowpan_frags_sysctl_unregister();
+ 	unregister_pernet_subsys(&lowpan_frags_ops);
++	inet_frags_fini(&lowpan_frags);
  }
+diff --git a/net/ipv6/reassembly.c b/net/ipv6/reassembly.c
+index 095825f964e28..c6132e39ab16b 100644
+--- a/net/ipv6/reassembly.c
++++ b/net/ipv6/reassembly.c
+@@ -593,8 +593,8 @@ err_protocol:
  
- static struct TCP_Server_Info *
+ void ipv6_frag_exit(void)
+ {
+-	inet_frags_fini(&ip6_frags);
+ 	ip6_frags_sysctl_unregister();
+ 	unregister_pernet_subsys(&ip6_frags_ops);
+ 	inet6_del_protocol(&frag_protocol, IPPROTO_FRAGMENT);
++	inet_frags_fini(&ip6_frags);
+ }
 -- 
 2.20.1
 
