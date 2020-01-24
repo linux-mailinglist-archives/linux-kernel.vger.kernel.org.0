@@ -2,39 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 28A8B147F89
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Jan 2020 12:03:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D559D147F71
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Jan 2020 12:03:24 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388245AbgAXLDE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 24 Jan 2020 06:03:04 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36662 "EHLO mail.kernel.org"
+        id S2388005AbgAXLCU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 24 Jan 2020 06:02:20 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35660 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731809AbgAXLDA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 24 Jan 2020 06:03:00 -0500
+        id S1732560AbgAXLCQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 24 Jan 2020 06:02:16 -0500
 Received: from localhost (ip-213-127-102-57.ip.prioritytelecom.net [213.127.102.57])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BEB0B2071A;
-        Fri, 24 Jan 2020 11:02:58 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4AD502075D;
+        Fri, 24 Jan 2020 11:02:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579863779;
-        bh=fy2M3xR3wpkWQhh+QyG69LM9fOJD6ppSxAtIJL0QPnY=;
+        s=default; t=1579863736;
+        bh=idE7uanoUdfPw1a8abpqU7AvgxTpTCJnI6uXTrkdGQ8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=YpqQy4aMg7cWVfy9qBkkqzDn2OZCECjzKihUt+qh2QK5NbSVt3AQXBoy+hpKvecXm
-         Y/RryD1iqvUp8pLSMt9uNchdIaaNDXMkCEACxgBufVPZFCgMdGFpYYA7BU+q3TK06h
-         XqxMcAYkDfYRNvVwywrX6JEOF/azc2BC7ZBZPX3E=
+        b=MH9+VtXemN5pzd5p+OoZ7ucP1KV8Um/xaqShSVa8qwCsmViEbF0h5RFRnzflGX1Dn
+         6l+BrUtgswCjzdKukAMB180Xo3aCbYJv3sZQ2ZVkj0mu8hMtfhBPsZqVEMi6mZtwW7
+         pdryP8SZP2inKEtBG4YwJnVUJmWhyXeQaKUzjz3s=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Lyude Paul <lyude@redhat.com>,
-        Jerry Zuo <Jerry.Zuo@amd.com>,
-        Harry Wentland <Harry.Wentland@amd.com>,
-        Dave Airlie <airlied@redhat.com>,
-        Sean Paul <seanpaul@chromium.org>,
+        stable@vger.kernel.org, Neil Armstrong <narmstrong@baylibre.com>,
+        Kevin Hilman <khilman@baylibre.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 073/639] drm/dp_mst: Skip validating ports during destruction, just ref
-Date:   Fri, 24 Jan 2020 10:24:03 +0100
-Message-Id: <20200124093056.539811118@linuxfoundation.org>
+Subject: [PATCH 4.19 074/639] arm64: dts: meson-gx: Add hdmi_5v regulator as hdmi tx supply
+Date:   Fri, 24 Jan 2020 10:24:04 +0100
+Message-Id: <20200124093056.663827593@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
 In-Reply-To: <20200124093047.008739095@linuxfoundation.org>
 References: <20200124093047.008739095@linuxfoundation.org>
@@ -47,88 +44,85 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Lyude Paul <lyude@redhat.com>
+From: Neil Armstrong <narmstrong@baylibre.com>
 
-[ Upstream commit c54c7374ff44de5e609506aca7c0deae4703b6d1 ]
+[ Upstream commit e1f2163deac059ad39f07aba9e314ebe605d5a7a ]
 
-Jerry Zuo pointed out a rather obscure hotplugging issue that it seems I
-accidentally introduced into DRM two years ago.
+The hdmi_5v regulator must be enabled to provide power to the physical HDMI
+PHY and enables the HDMI 5V presence loopback for the monitor.
 
-Pretend we have a topology like this:
-
-|- DP-1: mst_primary
-   |- DP-4: active display
-   |- DP-5: disconnected
-   |- DP-6: active hub
-      |- DP-7: active display
-      |- DP-8: disconnected
-      |- DP-9: disconnected
-
-If we unplug DP-6, the topology starting at DP-7 will be destroyed but
-it's payloads will live on in DP-1's VCPI allocations and thus require
-removal. However, this removal currently fails because
-drm_dp_update_payload_part1() will (rightly so) try to validate the port
-before accessing it, fail then abort. If we keep going, eventually we
-run the MST hub out of bandwidth and all new allocations will start to
-fail (or in my case; all new displays just start flickering a ton).
-
-We could just teach drm_dp_update_payload_part1() not to drop the port
-ref in this case, but then we also need to teach
-drm_dp_destroy_payload_step1() to do the same thing, then hope no one
-ever adds anything to the that requires a validated port reference in
-drm_dp_destroy_connector_work(). Kind of sketchy.
-
-So let's go with a more clever solution: any port that
-drm_dp_destroy_connector_work() interacts with is guaranteed to still
-exist in memory until we say so. While said port might not be valid we
-don't really care: that's the whole reason we're destroying it in the
-first place! So, teach drm_dp_get_validated_port_ref() to use the all
-mighty current_work() function to avoid attempting to validate ports
-from the context of mgr->destroy_connector_work. I can't see any
-situation where this wouldn't be safe, and this avoids having to play
-whack-a-mole in the future of trying to work around port validation.
-
-Signed-off-by: Lyude Paul <lyude@redhat.com>
-Fixes: 263efde31f97 ("drm/dp/mst: Get validated port ref in drm_dp_update_payload_part1()")
-Reported-by: Jerry Zuo <Jerry.Zuo@amd.com>
-Cc: Jerry Zuo <Jerry.Zuo@amd.com>
-Cc: Harry Wentland <Harry.Wentland@amd.com>
-Cc: <stable@vger.kernel.org> # v4.6+
-Reviewed-by: Dave Airlie <airlied@redhat.com>
-Link: https://patchwork.freedesktop.org/patch/msgid/20181113224613.28809-1-lyude@redhat.com
-Signed-off-by: Sean Paul <seanpaul@chromium.org>
+Fixes: b409f625a6d5 ("ARM64: dts: meson-gx: Add HDMI_5V regulator on selected boards")
+Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
+Signed-off-by: Kevin Hilman <khilman@baylibre.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpu/drm/drm_dp_mst_topology.c | 15 +++++++++++++--
- 1 file changed, 13 insertions(+), 2 deletions(-)
+ arch/arm64/boot/dts/amlogic/meson-gx-p23x-q20x.dtsi          | 1 +
+ arch/arm64/boot/dts/amlogic/meson-gxl-s905x-khadas-vim.dts   | 1 +
+ arch/arm64/boot/dts/amlogic/meson-gxl-s905x-libretech-cc.dts | 1 +
+ arch/arm64/boot/dts/amlogic/meson-gxl-s905x-p212.dts         | 1 +
+ arch/arm64/boot/dts/amlogic/meson-gxm-khadas-vim2.dts        | 1 +
+ 5 files changed, 5 insertions(+)
 
-diff --git a/drivers/gpu/drm/drm_dp_mst_topology.c b/drivers/gpu/drm/drm_dp_mst_topology.c
-index 4d77158453060..58fe3945494cf 100644
---- a/drivers/gpu/drm/drm_dp_mst_topology.c
-+++ b/drivers/gpu/drm/drm_dp_mst_topology.c
-@@ -1022,9 +1022,20 @@ static struct drm_dp_mst_port *drm_dp_mst_get_port_ref_locked(struct drm_dp_mst_
- static struct drm_dp_mst_port *drm_dp_get_validated_port_ref(struct drm_dp_mst_topology_mgr *mgr, struct drm_dp_mst_port *port)
- {
- 	struct drm_dp_mst_port *rport = NULL;
-+
- 	mutex_lock(&mgr->lock);
--	if (mgr->mst_primary)
--		rport = drm_dp_mst_get_port_ref_locked(mgr->mst_primary, port);
-+	/*
-+	 * Port may or may not be 'valid' but we don't care about that when
-+	 * destroying the port and we are guaranteed that the port pointer
-+	 * will be valid until we've finished
-+	 */
-+	if (current_work() == &mgr->destroy_connector_work) {
-+		kref_get(&port->kref);
-+		rport = port;
-+	} else if (mgr->mst_primary) {
-+		rport = drm_dp_mst_get_port_ref_locked(mgr->mst_primary,
-+						       port);
-+	}
- 	mutex_unlock(&mgr->lock);
- 	return rport;
- }
+diff --git a/arch/arm64/boot/dts/amlogic/meson-gx-p23x-q20x.dtsi b/arch/arm64/boot/dts/amlogic/meson-gx-p23x-q20x.dtsi
+index 765247bc4f247..e14e0ce7e89fe 100644
+--- a/arch/arm64/boot/dts/amlogic/meson-gx-p23x-q20x.dtsi
++++ b/arch/arm64/boot/dts/amlogic/meson-gx-p23x-q20x.dtsi
+@@ -125,6 +125,7 @@
+ 	status = "okay";
+ 	pinctrl-0 = <&hdmi_hpd_pins>, <&hdmi_i2c_pins>;
+ 	pinctrl-names = "default";
++	hdmi-supply = <&hdmi_5v>;
+ };
+ 
+ &hdmi_tx_tmds_port {
+diff --git a/arch/arm64/boot/dts/amlogic/meson-gxl-s905x-khadas-vim.dts b/arch/arm64/boot/dts/amlogic/meson-gxl-s905x-khadas-vim.dts
+index 9d858eb193ca6..062e12aa46770 100644
+--- a/arch/arm64/boot/dts/amlogic/meson-gxl-s905x-khadas-vim.dts
++++ b/arch/arm64/boot/dts/amlogic/meson-gxl-s905x-khadas-vim.dts
+@@ -76,6 +76,7 @@
+ 	status = "okay";
+ 	pinctrl-0 = <&hdmi_hpd_pins>, <&hdmi_i2c_pins>;
+ 	pinctrl-names = "default";
++	hdmi-supply = <&hdmi_5v>;
+ };
+ 
+ &hdmi_tx_tmds_port {
+diff --git a/arch/arm64/boot/dts/amlogic/meson-gxl-s905x-libretech-cc.dts b/arch/arm64/boot/dts/amlogic/meson-gxl-s905x-libretech-cc.dts
+index b4dfb9afdef86..db293440e4cae 100644
+--- a/arch/arm64/boot/dts/amlogic/meson-gxl-s905x-libretech-cc.dts
++++ b/arch/arm64/boot/dts/amlogic/meson-gxl-s905x-libretech-cc.dts
+@@ -155,6 +155,7 @@
+ 	status = "okay";
+ 	pinctrl-0 = <&hdmi_hpd_pins>, <&hdmi_i2c_pins>;
+ 	pinctrl-names = "default";
++	hdmi-supply = <&hdmi_5v>;
+ };
+ 
+ &hdmi_tx_tmds_port {
+diff --git a/arch/arm64/boot/dts/amlogic/meson-gxl-s905x-p212.dts b/arch/arm64/boot/dts/amlogic/meson-gxl-s905x-p212.dts
+index 5896e8a5d86bc..2602940c2077b 100644
+--- a/arch/arm64/boot/dts/amlogic/meson-gxl-s905x-p212.dts
++++ b/arch/arm64/boot/dts/amlogic/meson-gxl-s905x-p212.dts
+@@ -51,6 +51,7 @@
+ 	status = "okay";
+ 	pinctrl-0 = <&hdmi_hpd_pins>, <&hdmi_i2c_pins>;
+ 	pinctrl-names = "default";
++	hdmi-supply = <&hdmi_5v>;
+ };
+ 
+ &hdmi_tx_tmds_port {
+diff --git a/arch/arm64/boot/dts/amlogic/meson-gxm-khadas-vim2.dts b/arch/arm64/boot/dts/amlogic/meson-gxm-khadas-vim2.dts
+index 313f88f8759e1..782e9edac8051 100644
+--- a/arch/arm64/boot/dts/amlogic/meson-gxm-khadas-vim2.dts
++++ b/arch/arm64/boot/dts/amlogic/meson-gxm-khadas-vim2.dts
+@@ -271,6 +271,7 @@
+ 	status = "okay";
+ 	pinctrl-0 = <&hdmi_hpd_pins>, <&hdmi_i2c_pins>;
+ 	pinctrl-names = "default";
++	hdmi-supply = <&hdmi_5v>;
+ };
+ 
+ &hdmi_tx_tmds_port {
 -- 
 2.20.1
 
