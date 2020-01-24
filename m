@@ -2,102 +2,84 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0A3D4148552
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Jan 2020 13:43:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 59A32148557
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Jan 2020 13:45:21 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387465AbgAXMnV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 24 Jan 2020 07:43:21 -0500
-Received: from foss.arm.com ([217.140.110.172]:51284 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388011AbgAXMnR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 24 Jan 2020 07:43:17 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 3C72E1063;
-        Fri, 24 Jan 2020 04:43:17 -0800 (PST)
-Received: from e113632-lin.cambridge.arm.com (e113632-lin.cambridge.arm.com [10.1.194.46])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id E8D7F3F68E;
-        Fri, 24 Jan 2020 04:43:15 -0800 (PST)
-From:   Valentin Schneider <valentin.schneider@arm.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     mingo@redhat.com, peterz@infradead.org, vincent.guittot@linaro.org,
-        dietmar.eggemann@arm.com, morten.rasmussen@arm.com,
-        qperret@google.com, adharmap@codeaurora.org
-Subject: [PATCH 3/3] sched/fair: Kill wake_cap()
-Date:   Fri, 24 Jan 2020 12:42:55 +0000
-Message-Id: <20200124124255.1095-4-valentin.schneider@arm.com>
-X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20200124124255.1095-1-valentin.schneider@arm.com>
-References: <20200124124255.1095-1-valentin.schneider@arm.com>
+        id S2388598AbgAXMpQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 24 Jan 2020 07:45:16 -0500
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:35694 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387574AbgAXMpP (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 24 Jan 2020 07:45:15 -0500
+Received: by mail-wm1-f67.google.com with SMTP id p17so1599246wmb.0;
+        Fri, 24 Jan 2020 04:45:14 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=j+mBBTpQJ4wbg8K52L8M4km/ID9qCvpn337om+dHJcg=;
+        b=fdHlWwGYPjfw1Ny99VNqIHv7bDzqZDoVW4n0C8WSqvY63tYJ2HMLuDAMQwgCxjnBRv
+         8KEf0IQRR7pUczoEdpU70ftrD4wYXvZG/cnspnutGv+CfBNClBBfGiyy6Pm0Tqnsutc/
+         JPowucQAKQvfOuQa3GPqk8X4E0bkTEk+YRY5/gR61Fk+7oBviF/spObsda+0HDiJbnkZ
+         DsOlGjJR2MwlNXSjpt1CeL47jlZ/buX/2QErkoOw1oxAjg90ijW1p+y/ZiCk3qQXaki2
+         7eQG1OdaLuwSHVz5b+wDmh4YuzjUjwpsGC4F3nTRNzifeC2eSwFvk4KKMAnD65ltq1RH
+         RLCA==
+X-Gm-Message-State: APjAAAXRQUXIVFxj9It/7WgwhK1HmbmDY2npWkBvZcsTd4amJ4VhlaFk
+        vG23a35xXUPLhsxNRAKq0NE=
+X-Google-Smtp-Source: APXvYqw48IZitTegCDEqW/DRYA1NjgNNLdiLHQ9/3fjlhxhOgsQMrqFvY7FUdFcstQQHzviWIpDW8Q==
+X-Received: by 2002:a1c:bc08:: with SMTP id m8mr2654997wmf.189.1579869913658;
+        Fri, 24 Jan 2020 04:45:13 -0800 (PST)
+Received: from localhost (prg-ext-pat.suse.com. [213.151.95.130])
+        by smtp.gmail.com with ESMTPSA id g25sm14465121wmh.3.2020.01.24.04.45.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 24 Jan 2020 04:45:12 -0800 (PST)
+Date:   Fri, 24 Jan 2020 13:45:12 +0100
+From:   Michal Hocko <mhocko@kernel.org>
+To:     Dan Williams <dan.j.williams@intel.com>
+Cc:     David Hildenbrand <david@redhat.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        stable <stable@vger.kernel.org>,
+        Vishal Verma <vishal.l.verma@intel.com>,
+        Pavel Tatashin <pasha.tatashin@soleen.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Linux MM <linux-mm@kvack.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] mm/memory_hotplug: Fix remove_memory() lockdep splat
+Message-ID: <20200124124512.GT29276@dhcp22.suse.cz>
+References: <e60e64f9-894b-4121-d97b-fb61459cbbe5@redhat.com>
+ <CAPcyv4jm=fmP=-5vbo2jxzMe2qXqZP=zDYF8G_rs3X6_Om0wPg@mail.gmail.com>
+ <4d0334e2-c4e7-6d3f-99ba-2ca0495e1549@redhat.com>
+ <CAPcyv4jixmv8fJ5FiYE=97Jud3Mc+6QzRX1txceSYU+WY_0rQA@mail.gmail.com>
+ <fc0cfb97-5a60-7e73-4f85-d8e6947c5e28@redhat.com>
+ <CAPcyv4jVpN26RGQLRn4BewYtzHDoQfvh37DEdEBq1dd4-BP0kw@mail.gmail.com>
+ <64902066-51dd-9693-53fc-4a5975c58409@redhat.com>
+ <CAPcyv4hcDNeQO3CfnqTRou+6R5gZwyi4pVUMxp1DadAOp7kJGQ@mail.gmail.com>
+ <516aa930-9b64-b377-557c-5413ed9fe336@redhat.com>
+ <CAPcyv4iiYtN6iGt=rVuNR=O=H9YcY1b1yWp+5TuDhu0QoVqT_A@mail.gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAPcyv4iiYtN6iGt=rVuNR=O=H9YcY1b1yWp+5TuDhu0QoVqT_A@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Morten Rasmussen <morten.rasmussen@arm.com>
+On Fri 10-01-20 13:27:24, Dan Williams wrote:
+> On Fri, Jan 10, 2020 at 9:42 AM David Hildenbrand <david@redhat.com> wrote:
+[...]
+> > For your reference (roughly 5 months ago, so not that old)
+> >
+> > https://lkml.kernel.org/r/20190724143017.12841-1-david@redhat.com
+> 
+> Oh, now I see the problem. You need to add that lock so far away from
+> the __add_memory() to avoid lock inversion problems with the
+> acpi_scan_lock. The organization I was envisioning would not work
+> without deeper refactoring.
 
-Capacity-awareness in the wake-up path previously involved disabling
-wake_affine in certain scenarios. We have just made select_idle_sibling()
-capacity-aware, so this isn't needed anymore.
+Sorry to come back to this late. Has this been resolved?
 
-Remove wake_cap() entirely.
-
-Signed-off-by: Morten Rasmussen <morten.rasmussen@arm.com>
-[Changelog tweaks]
-Signed-off-by: Valentin Schneider <valentin.schneider@arm.com>
----
- kernel/sched/fair.c | 30 +-----------------------------
- 1 file changed, 1 insertion(+), 29 deletions(-)
-
-diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index 47a4f52d89b44..e21ce8f2186a4 100644
---- a/kernel/sched/fair.c
-+++ b/kernel/sched/fair.c
-@@ -6124,33 +6124,6 @@ static unsigned long cpu_util_without(int cpu, struct task_struct *p)
- 	return min_t(unsigned long, util, capacity_orig_of(cpu));
- }
- 
--/*
-- * Disable WAKE_AFFINE in the case where task @p doesn't fit in the
-- * capacity of either the waking CPU @cpu or the previous CPU @prev_cpu.
-- *
-- * In that case WAKE_AFFINE doesn't make sense and we'll let
-- * BALANCE_WAKE sort things out.
-- */
--static int wake_cap(struct task_struct *p, int cpu, int prev_cpu)
--{
--	long min_cap, max_cap;
--
--	if (!static_branch_unlikely(&sched_asym_cpucapacity))
--		return 0;
--
--	min_cap = min(capacity_orig_of(prev_cpu), capacity_orig_of(cpu));
--	max_cap = cpu_rq(cpu)->rd->max_cpu_capacity;
--
--	/* Minimum capacity is close to max, no need to abort wake_affine */
--	if (max_cap - min_cap < max_cap >> 3)
--		return 0;
--
--	/* Bring task utilization in sync with prev_cpu */
--	sync_entity_load_avg(&p->se);
--
--	return !task_fits_capacity(p, min_cap);
--}
--
- /*
-  * Predicts what cpu_util(@cpu) would return if @p was migrated (and enqueued)
-  * to @dst_cpu.
-@@ -6415,8 +6388,7 @@ select_task_rq_fair(struct task_struct *p, int prev_cpu, int sd_flag, int wake_f
- 			new_cpu = prev_cpu;
- 		}
- 
--		want_affine = !wake_wide(p) && !wake_cap(p, cpu, prev_cpu) &&
--			      cpumask_test_cpu(cpu, p->cpus_ptr);
-+		want_affine = !wake_wide(p) && cpumask_test_cpu(cpu, p->cpus_ptr);
- 	}
- 
- 	rcu_read_lock();
 -- 
-2.24.0
-
+Michal Hocko
+SUSE Labs
