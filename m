@@ -2,82 +2,79 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6171A148DF6
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Jan 2020 19:45:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2A8A4148E04
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Jan 2020 19:53:27 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391527AbgAXSpT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 24 Jan 2020 13:45:19 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60814 "EHLO mail.kernel.org"
+        id S2391545AbgAXSxW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 24 Jan 2020 13:53:22 -0500
+Received: from mga04.intel.com ([192.55.52.120]:59351 "EHLO mga04.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388325AbgAXSpT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 24 Jan 2020 13:45:19 -0500
-Received: from gmail.com (unknown [104.132.1.77])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5046F2077C;
-        Fri, 24 Jan 2020 18:45:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579891518;
-        bh=dGB8kebwnSDsnoTqQ5uaB5KlcwF3BEdMp8/VYDFuqZY=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=ViJDPCwzPtouadbVBV+Pfuhb3+Gdqsaq8mixX7FeDS63hiScV796g3/lCp1XeqFqP
-         ZxsbjvzR1mv1WlcJRCAmjFAFbv9gpbflxZRfSNe1xYdW9AHG8ge3TXhBBoFJlGUVo8
-         w1ZDiLkZa4LqAlPGiGTza2jw7mWTAJ8TnTuohEPc=
-Date:   Fri, 24 Jan 2020 10:45:16 -0800
-From:   Eric Biggers <ebiggers@kernel.org>
-To:     Jaegeuk Kim <jaegeuk@kernel.org>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>,
-        Pali =?iso-8859-1?Q?Roh=E1r?= <pali.rohar@gmail.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        "Theodore Y. Ts'o" <tytso@mit.edu>,
-        Namjae Jeon <linkinjeon@gmail.com>,
-        Gabriel Krisman Bertazi <krisman@collabora.com>
-Subject: Re: oopsably broken case-insensitive support in ext4 and f2fs (Re:
- vfat: Broken case-insensitive support for UTF-8)
-Message-ID: <20200124184516.GB41762@gmail.com>
-References: <20200119221455.bac7dc55g56q2l4r@pali>
- <87sgkan57p.fsf@mail.parknet.co.jp>
- <20200120073040.GZ8904@ZenIV.linux.org.uk>
- <20200120074558.GA8904@ZenIV.linux.org.uk>
- <20200120080721.GB8904@ZenIV.linux.org.uk>
- <20200120193558.GD8904@ZenIV.linux.org.uk>
- <20200124042953.GA832@sol.localdomain>
- <CAHk-=wgwFMW09uz0HLUuQFMpi_UYtKAUvcCJ-oxyVqybry1=Ng@mail.gmail.com>
- <20200124180323.GA33470@jaegeuk-macbookpro.roam.corp.google.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200124180323.GA33470@jaegeuk-macbookpro.roam.corp.google.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        id S2387486AbgAXSxW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 24 Jan 2020 13:53:22 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga008.fm.intel.com ([10.253.24.58])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 24 Jan 2020 10:53:21 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.70,358,1574150400"; 
+   d="scan'208";a="222692766"
+Received: from unknown (HELO gayuk-dev-mach.sc.intel.com) ([10.3.79.172])
+  by fmsmga008.fm.intel.com with ESMTP; 24 Jan 2020 10:53:21 -0800
+From:   Gayatri Kammela <gayatri.kammela@intel.com>
+To:     platform-driver-x86@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org, vishwanath.somayaji@intel.com,
+        dvhart@infradead.org, mika.westerberg@intel.com,
+        peterz@infradead.org, charles.d.prestopine@intel.com,
+        Gayatri Kammela <gayatri.kammela@intel.com>,
+        Srinivas Pandruvada <srinivas.pandruvada@intel.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        David Box <david.e.box@intel.com>
+Subject: [PATCH v1 0/7] platform/x86: intel_pmc_core: Add debugfs entries
+Date:   Fri, 24 Jan 2020 10:50:21 -0800
+Message-Id: <cover.1579890793.git.gayatri.kammela@intel.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jan 24, 2020 at 10:03:23AM -0800, Jaegeuk Kim wrote:
-> On 01/24, Linus Torvalds wrote:
-> > On Thu, Jan 23, 2020 at 8:29 PM Eric Biggers <ebiggers@kernel.org> wrote:
-> > >
-> > > Thanks Al.  I sent out fixes for this:
-> > 
-> > How did that f2fs_d_compare() function ever work? It was doing the
-> > memcmp on completely the wrong thing.
-> 
-> Urg.. my bad. I didn't do enough stress test on casefolding case which
-> is only activated given "mkfs -C utf8:strict". And Android hasn't enabled
-> it yet.
-> 
+Hi,
 
-It also didn't cause *really* obvious breakage because in practice it only
-caused ->d_compare() to incorrectly return false, and that just caused new
-dentries to be created rather than the existing ones reused.  So most things
-continued to work.
+Tiger Lake platform supports 8 sub-states/low power modes of S0ix. Add
+debugfs entries to pmc_core driver to access low power mode registers
+and residencies.
 
-It can be noticed by way of deleting files not actually freeing up space... Or
-the way I noticed it is that my reproducer for the ->d_hash() crash worked on
-ext4 but not f2fs.
+Patch 1: Add debugfs entry to access sub-state residencies
+Patch 2: Add debugfs entry for low power mode status registers
+Patch 3: Refactor the driver by removing redundant code
+Patch 4: Remove slp_s0 attributes from tgl_reg_map
+Patch 5: Add an additional parameter to pmc_core_lpm_display_map()
+Patch 6: Dump low power status registers on an S0ix.y failure
+Patch 7: Add debugfs support to access live status registers
 
-- Eric
+Gayatri Kammela (7):
+  platform/x86: intel_pmc_core: Add debugfs entry to access sub-state
+    residencies
+  platform/x86: intel_pmc_core: Add debugfs entry for low power mode
+    status registers
+  platform/x86: intel_pmc_core: Refactor the driver by removing
+    redundant code
+  platform/x86: intel_pmc_core: Remove slp_s0 attributes from
+    tgl_reg_map
+  platform/x86: intel_pmc_core: Add an additional parameter to
+    pmc_core_lpm_display()
+  platform/x86: intel_pmc_core: Dump low power status registers on an
+    S0ix.y failure
+  platform/x86: intel_pmc_core: Add debugfs support to access live
+    status registers
+
+ drivers/platform/x86/intel_pmc_core.c | 301 +++++++++++++++++++++++---
+ drivers/platform/x86/intel_pmc_core.h |  28 +++
+ 2 files changed, 302 insertions(+), 27 deletions(-)
+
+Cc: Srinivas Pandruvada <srinivas.pandruvada@intel.com>
+Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: David Box <david.e.box@intel.com>
+-- 
+2.17.1
+
