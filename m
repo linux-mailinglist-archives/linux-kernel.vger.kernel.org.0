@@ -2,92 +2,78 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 816011476B9
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Jan 2020 02:28:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7010F1476BB
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Jan 2020 02:29:19 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730054AbgAXB2c (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 23 Jan 2020 20:28:32 -0500
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:45879 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728799AbgAXB2b (ORCPT
+        id S1729860AbgAXB3P (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 23 Jan 2020 20:29:15 -0500
+Received: from sonic312-22.consmr.mail.bf2.yahoo.com ([74.6.128.84]:45438 "EHLO
+        sonic312-22.consmr.mail.bf2.yahoo.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1729246AbgAXB3P (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Jan 2020 20:28:31 -0500
-Received: by mail-lj1-f195.google.com with SMTP id j26so526308ljc.12;
-        Thu, 23 Jan 2020 17:28:30 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=WI+Ptr4jWGvf9sG0CsP+d/rPdqVcRiXjBDng4X6qfAo=;
-        b=IWhyOeQUSmo3xu9H4u2oZLkCl+B28KSQ//kzmtueEdrjJiCkgUjc7xObfFUYgg/3Jt
-         WN6L5BVjS+aylpgwq+HKPF6cSQGg2SpcNPPqkpyNtIijZZWdxhJceRTrR0bGrlLxcPDk
-         ZQcuU4cVj9OwzCr0XvpZUQSIasa3gbZUYiBewpoDd+cDqe6z0Dl8/isN64cRDYqFaZX2
-         1I50PCGlrYq8sBgAMOJKGS+QhZPiC4lyjXWNtp+pw3giQ027CEr6U1bMUTkndSUP7cuK
-         bE4SsWAHFJ90iDLnniZGCZ3IfhKuWbiQQIwshPTNGUrrTjYFhFk7kSkAZm7ErxlcB6Mv
-         Hlqg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=WI+Ptr4jWGvf9sG0CsP+d/rPdqVcRiXjBDng4X6qfAo=;
-        b=JmGaLPmBw0NTs9Qi4ZpLV8BNQSbayEM4XauM3Dm6L75IyExcbByPkSemAmFwLC7rao
-         IuCbekaI616cxTWaRtLMi9w6bB2FRlgCo6Y5zGNHd8iK3oq5P0axUAfWqWuu4myCsD/h
-         A0WpmupPylFJO04lCyJnmZHE46oXv2g5Q4LthtI4IXAMCLJXhX/hZh/nSX8Q0Yeyg5Sb
-         5GJjd7z058I+eg1N+3Q+p8oou+zLhr8CjuGqVyC264Vm8K7d4QR0aip43rce9n9nuRTV
-         bZfyDp6ioNTPhya7G0BtV2p5juq88zXxkTdBo/x4OCGMbSNjqN52LdivMIW5srUbG68E
-         XD6g==
-X-Gm-Message-State: APjAAAXuLtpRr1IdTLC2sMq6Q7Alld/NSICuTKz4zyBd4iJ5OantKuGN
-        WkC0e2sm4XZanUuXItpx7J4=
-X-Google-Smtp-Source: APXvYqwGOnXwDuyIxTBQaJTSzHJLm33JXg0GYndn6ydyGv3O+5zNh+qRhrfYF9Q5iyLM8WQFQtOLfQ==
-X-Received: by 2002:a2e:9592:: with SMTP id w18mr711637ljh.98.1579829309536;
-        Thu, 23 Jan 2020 17:28:29 -0800 (PST)
-Received: from [192.168.2.145] (79-139-233-37.dynamic.spd-mgts.ru. [79.139.233.37])
-        by smtp.googlemail.com with ESMTPSA id l28sm1886927lfk.21.2020.01.23.17.28.28
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 23 Jan 2020 17:28:28 -0800 (PST)
-Subject: Re: [alsa-devel] [PATCH 7/9] ASoC: tegra: add Tegra210 based ADMAIF
- driver
-To:     Sameer Pujar <spujar@nvidia.com>, perex@perex.cz, tiwai@suse.com,
-        robh+dt@kernel.org
-Cc:     devicetree@vger.kernel.org, alsa-devel@alsa-project.org,
-        atalambedu@nvidia.com, linux-kernel@vger.kernel.org,
-        lgirdwood@gmail.com, jonathanh@nvidia.com, viswanathl@nvidia.com,
-        sharadg@nvidia.com, broonie@kernel.org, thierry.reding@gmail.com,
-        linux-tegra@vger.kernel.org, rlokhande@nvidia.com,
-        mkumard@nvidia.com, dramesh@nvidia.com
-References: <1579530198-13431-1-git-send-email-spujar@nvidia.com>
- <1579530198-13431-8-git-send-email-spujar@nvidia.com>
-From:   Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <743d6d7d-f29c-191a-853b-414250ca38df@gmail.com>
-Date:   Fri, 24 Jan 2020 04:28:26 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.3.0
+        Thu, 23 Jan 2020 20:29:15 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1579829353; bh=ZRVo8cW60+cgKR0PbgGoTN2balmbpWdCdFkvBmd1w8c=; h=Date:From:Reply-To:Subject:References:From:Subject; b=Lrp0/HHd8ZuEOKj4mmZ6Mh9CScF83gK2CYQ7Kw36O8C8oaGUmU1p9s8dCXrWZBzQtMaR7W6tQ7M5RocuNynuQupmedi1tSWEsDzNgyW31gFb0v8bgF5yeeRsoGf//K3N8tuiQTh9g6WgicBrFDW4UE0QSOkhyHuOT3//V+1OGwtd0EUyumhI6nLiTvglIHC6De7ur65rHJbW7kuZTMlHVkEF9f+Cnz0FjtTs747NSQBCkQHHcG0oEtB+RkTT5Z7KZP2rjw7XNxi0+xF9bWcLB0DQmqt6NVWkMdsGvDfGe2Y3UAzcq4NKkGr5RYQGCLiQdT9YkxbgDRSzsSkBqQNKkg==
+X-YMail-OSG: NxoW3ckVM1lmnlkwr_0sSv84wJJeH_XBwRVP0fODcG_5TBFtWAZ1_mYRjUYIoc9
+ 60dFzLGeKV9AfVcze2BMc6Syk1UpGMqxSFszL0GUx8VBv0chSELmJsyIWzCPq5KBmjH.fbLvdO.H
+ ueDv3eomE7J0B8xG1CofICiYx4q5EmkLRwl9PSFyKfbuBc7EEH5wOCqBXk6Hz0A1YcErcDnHySLq
+ BGK.CfUAj.YeUTloYoDoeafsMifnT8LLetdH_A21vA5krAvcLYVVFIAhYSr6wMCey3fWhlnU3aBO
+ zptyL3tJdU70aZCWtS2InFTWQuJCVoeQdD1e.EfM9CDx71NkpyhfuN3VunOpdAFv5irzL7syfeV6
+ JmGTJZXlVzCa86av_ebwznMKidFV0ppkxtMemI4HzWRT4kqMefeeP3VDTXUm4I1oCTHOiFdujtCP
+ V7j0vi7PQC_5dRTITfRgt1Q0Wo4VNpYACRT0MMTOH.b.814D2GMfxVZPEASB61auktutSUQ.Fpb8
+ VliB0nncTUtdH8hPeXtxhCaXCZFsIqVv5F9iEE0nYYHF8yBOe5h78FNaeCnrMgOhIgs7h_qbXpaU
+ Ix2_tUCe2jn1EpLlPXJP7.Sjsa7oOOiY3UzNLv2PuvzD.sXWkKmx.XMRJ49ol9WBrC5Rqx.vsdQ_
+ ZK4HzTPqFmbty2cN71kQS3DASB61fI573_H_JYFMmRbZbbfkCMzTmaqXe15_0TiSkbk4aANxF4pR
+ Mi9OFfqATF745GE3YFzjuDNRLpqMqiioezmY_n5jjkv60zDiuD5B_t5BkzZ5Rl.80VjhQJntcOXJ
+ 0z3iBUwJOpzBh_2dChl7nE11SLCHpjXUi.qqADXadGW17zn0_MYI.qZgqrWZP3owRoiFRGtFJE_N
+ X6.ycpoqy5QY4Tz8.jeEh3Gd.tEqln.7e4Hw7jVP81kl7mar1Tu1wTbrrkuSkcCWjZMf_RnhwX7n
+ vV5noC18jDl.n9suaMTV.44EJV0SyY97loJ0tG2bXCNVg_BRpv8lX7MTNKworSweOVlk4kZ2pdgA
+ Setg5LyjF_6ErjEMkKqt5qgZnYNzpjeOJEQu3QZlnMtV0RYS9ri_bI5LlDmeTUk0YTZVwbaoi6eQ
+ poEXCE7PVv80t6obhFjVmErfx5nsbfi14xxFD8zygrNrrElO83mVN24dpHpXDMBXl7egoJ8LJHal
+ XkM6AyM.7IyjplkSVPBreZ30hXh80ZsCZg.FzBZ4X1hjSW_y_S0EHhKqMkLHrsbY5l1qqtJ_zm_n
+ vfFH1_FHmUqhtyws2NeeafOYIIw9TVk1HzUUzRJuhEOSPY3ZszmgN0rs6G.vm3adl.TTCoI7Znu9
+ gCQ--
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic312.consmr.mail.bf2.yahoo.com with HTTP; Fri, 24 Jan 2020 01:29:13 +0000
+Date:   Fri, 24 Jan 2020 01:29:10 +0000 (UTC)
+From:   aderson <adersonadersonmark01@gmail.com>
+Reply-To: adersonadersonmark01@gmail.com
+Message-ID: <1739355342.10950021.1579829350788@mail.yahoo.com>
+Subject: ATTENTION: DEAR BENEFICIARY COMPLIMENTS OF THE SEASON. 2020.
 MIME-Version: 1.0
-In-Reply-To: <1579530198-13431-8-git-send-email-spujar@nvidia.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+References: <1739355342.10950021.1579829350788.ref@mail.yahoo.com>
+X-Mailer: WebService/1.1.14873 YMailNodin Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/79.0.3945.130 Safari/537.36
+To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-20.01.2020 17:23, Sameer Pujar пишет:
-[snip]
-> +static bool tegra_admaif_wr_reg(struct device *dev, unsigned int reg)
-> +{
-> +	struct tegra_admaif *admaif = dev_get_drvdata(dev);
-> +	unsigned int ch_stride = TEGRA_ADMAIF_CHANNEL_REG_STRIDE;
-> +	unsigned int num_ch = admaif->soc_data->num_ch;
-> +	unsigned int rx_base = admaif->soc_data->rx_base;
-> +	unsigned int tx_base = admaif->soc_data->tx_base;
-> +	unsigned int global_base = admaif->soc_data->global_base;
-> +	unsigned int reg_max = admaif->soc_data->regmap_conf->max_register;
-> +	unsigned int rx_max = rx_base + (num_ch * ch_stride);
-> +	unsigned int tx_max = tx_base + (num_ch * ch_stride);
-> +
-> +	if ((reg >= rx_base) && (reg < rx_max)) {
+CONGRATULATIONS TO YOU,
 
-The braces are not needed around the comparisons because they precede
-the AND. Same for all other similar occurrences in the code.
+I RECEIVE YOUR CONTENT OF YOUR EMAIL FROM THIS FEDEX ATM CARD OFFICES
+YOUR FUNDS SUM OF $10.5MILLION DOLLARS, HAS DISCOVER HERE AFTER THE
+BOARD OF DIRECTORS MEETINGS, THE UNITED NATIONS GOVERNMENT HAVE
+DECIDED TO ISSUE YOU YOUR (ATM CARD) VALUED AT $10.5 MILLION UNITED
+STATES DOLLARS.
+
+THIS IS TO BRING TO YOUR NOTICE THAT YOUR VALUED SUM OF 10.5 MILLION
+DOLLARS HAS BEING CREDITED IN YOUR NAME. AS BENEFICIARY TO THIS (ATM
+CARD), AND HAS BEEN HANDLE TO THE FOREIGN REMITTANCE DEPARTMENT TO
+SEND IT TO YOU IN YOUR FAVOR IMMEDIATELY WITHOUT ANY DELAY.
+
+WITH YOUR BELONGING (ATM CARD), YOU WILL HAVE ACCESS TO MAKE DAILY
+WITHDRAWALS OF; $5000 UNITED STATE DOLLARS DAILIES,
+
+AS SOON AS WE RECEIVE YOUR INFORMATION'S AND YOUR HOME ADDRESS OF YOUR COUNTRY AS ALREADY PROGRAMMED; WE WILL SEND TO YOU YOUR (ATM CARD), WE HAVE RECEIVED A SIGNAL FROM THE SWISS WORLD BANK, BANK OF AMERICA, TO EFFECT YOUR TRANSFER TO YOU WITHIN ONE WEEK, WITHOUT ANY DELAY.
+
+WE HAVE JUST FINISHED OUR ANNUAL GENERAL MEETING WITH THE CENTRAL BANK OF AMERICA (BOA). AT THE END OF THE BOARD OF DIRECTORS MEETING.
+
+THE BOARD OF DIRECTORS UNITED NATIONS GOVERNMENT HAS  CONCLUDED TO
+IMMEDIATELY ISSUE YOUR BELONGING (ATM CARD) SUM OF $10.5 MILLION
+DOLLARS.
+
+ONCE AGAIN CONGRATULATIONS TO YOU AND YOUR LOVELY FAMILY'S,
+YOURS
+SINCERELY.
+MR. Aderson Mark
