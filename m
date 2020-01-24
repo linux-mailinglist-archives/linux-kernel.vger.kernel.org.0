@@ -2,33 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A86DE148A0B
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Jan 2020 15:41:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A27B5148A25
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Jan 2020 15:41:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390742AbgAXOS3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 24 Jan 2020 09:18:29 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37746 "EHLO mail.kernel.org"
+        id S2389497AbgAXOjq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 24 Jan 2020 09:39:46 -0500
+Received: from mail.kernel.org ([198.145.29.99]:37776 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390579AbgAXOS0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 24 Jan 2020 09:18:26 -0500
+        id S2390631AbgAXOS1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 24 Jan 2020 09:18:27 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 42D87214DB;
-        Fri, 24 Jan 2020 14:18:25 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1EB2A208C4;
+        Fri, 24 Jan 2020 14:18:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579875505;
-        bh=dCB5a7jBrPFkI8apoOVO1s5KUGv3XxaDg3HI2580nQQ=;
+        s=default; t=1579875506;
+        bh=8q1Jas/q+s5IaRxGYxL9jFMJFjlPUTIRXcKAPTYK13U=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=maiZgQl6n14WTf1KCL1OU0NbSGEk8rhD5y1H5wjxIB/gwcnpM3sjCTU+bKN/tb4U/
-         uU/onzHIyw5JUr/hxV5FOCnFcjBzRJkEkFMLldhI+vr3oVYhnOhulm2n9blTy6u3+j
-         MgyJBQah4jg39XHS/QBJ3mNQVhffz5jDEJu7qn/Y=
+        b=FdANWs9lue4ZKnuGHKGwQBAXbAWXwD6x+rJw+872BdsXQhJV8lNfMUR5EUF9WiJpR
+         a1dmmyajLxdQsc4XfRIZrT9tKk7oy/Ul2CnDRUOFCX63ctsXTQyndjE379V/Z/hLPZ
+         lDnwmWnvu1bAm5OIMbPgpMg2dSS7z2qsQa+6zWAo=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Tony Lindgren <tony@atomide.com>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 5.4 007/107] bus: ti-sysc: Fix iterating over clocks
-Date:   Fri, 24 Jan 2020 09:16:37 -0500
-Message-Id: <20200124141817.28793-7-sashal@kernel.org>
+Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
+        Maxime Ripard <maxime@cerno.tech>,
+        Sasha Levin <sashal@kernel.org>, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: [PATCH AUTOSEL 5.4 008/107] ARM: dts: sun8i: a83t: Correct USB3503 GPIOs polarity
+Date:   Fri, 24 Jan 2020 09:16:38 -0500
+Message-Id: <20200124141817.28793-8-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200124141817.28793-1-sashal@kernel.org>
 References: <20200124141817.28793-1-sashal@kernel.org>
@@ -41,66 +44,38 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Tony Lindgren <tony@atomide.com>
+From: Marek Szyprowski <m.szyprowski@samsung.com>
 
-[ Upstream commit 2c81f0f6d3f52ac222a5dc07a6e5c06e1543e88b ]
+[ Upstream commit 1c226017d3ec93547b58082bdf778d9db7401c95 ]
 
-Commit d878970f6ce1 ("bus: ti-sysc: Add separate functions for handling
-clocks") separated handling of optional clocks from the main clocks, but
-introduced an issue where we do not necessarily allocate a slot for both
-fck and ick clocks, but still assume fixed slots for enumerating over the
-clocks.
+Current USB3503 driver ignores GPIO polarity and always operates as if the
+GPIO lines were flagged as ACTIVE_HIGH. Fix the polarity for the existing
+USB3503 chip applications to match the chip specification and common
+convention for naming the pins. The only pin, which has to be ACTIVE_LOW
+is the reset pin. The remaining are ACTIVE_HIGH. This change allows later
+to fix the USB3503 driver to properly use generic GPIO bindings and read
+polarity from DT.
 
-Let's fix the issue by ensuring we always have slots for both fck and ick
-even if we don't use ick, and don't attempt to enumerate optional clocks
-if not allocated.
-
-In the long run we might want to simplify things a bit by only allocating
-space only for the optional clocks as we have only few devices with
-optional clocks.
-
-Fixes: d878970f6ce1 ("bus: ti-sysc: Add separate functions for handling clocks")
-Signed-off-by: Tony Lindgren <tony@atomide.com>
+Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+Signed-off-by: Maxime Ripard <maxime@cerno.tech>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/bus/ti-sysc.c | 10 ++++++++--
- 1 file changed, 8 insertions(+), 2 deletions(-)
+ arch/arm/boot/dts/sun8i-a83t-cubietruck-plus.dts | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/bus/ti-sysc.c b/drivers/bus/ti-sysc.c
-index 34bd9bf4e68ab..abbf281ee337b 100644
---- a/drivers/bus/ti-sysc.c
-+++ b/drivers/bus/ti-sysc.c
-@@ -343,6 +343,12 @@ static int sysc_get_clocks(struct sysc *ddata)
- 		return -EINVAL;
- 	}
- 
-+	/* Always add a slot for main clocks fck and ick even if unused */
-+	if (!nr_fck)
-+		ddata->nr_clocks++;
-+	if (!nr_ick)
-+		ddata->nr_clocks++;
-+
- 	ddata->clocks = devm_kcalloc(ddata->dev,
- 				     ddata->nr_clocks, sizeof(*ddata->clocks),
- 				     GFP_KERNEL);
-@@ -421,7 +427,7 @@ static int sysc_enable_opt_clocks(struct sysc *ddata)
- 	struct clk *clock;
- 	int i, error;
- 
--	if (!ddata->clocks)
-+	if (!ddata->clocks || ddata->nr_clocks < SYSC_OPTFCK0 + 1)
- 		return 0;
- 
- 	for (i = SYSC_OPTFCK0; i < SYSC_MAX_CLOCKS; i++) {
-@@ -455,7 +461,7 @@ static void sysc_disable_opt_clocks(struct sysc *ddata)
- 	struct clk *clock;
- 	int i;
- 
--	if (!ddata->clocks)
-+	if (!ddata->clocks || ddata->nr_clocks < SYSC_OPTFCK0 + 1)
- 		return;
- 
- 	for (i = SYSC_OPTFCK0; i < SYSC_MAX_CLOCKS; i++) {
+diff --git a/arch/arm/boot/dts/sun8i-a83t-cubietruck-plus.dts b/arch/arm/boot/dts/sun8i-a83t-cubietruck-plus.dts
+index fb928503ad45d..d9be511f054f0 100644
+--- a/arch/arm/boot/dts/sun8i-a83t-cubietruck-plus.dts
++++ b/arch/arm/boot/dts/sun8i-a83t-cubietruck-plus.dts
+@@ -101,7 +101,7 @@
+ 		initial-mode = <1>; /* initialize in HUB mode */
+ 		disabled-ports = <1>;
+ 		intn-gpios = <&pio 7 5 GPIO_ACTIVE_HIGH>; /* PH5 */
+-		reset-gpios = <&pio 4 16 GPIO_ACTIVE_HIGH>; /* PE16 */
++		reset-gpios = <&pio 4 16 GPIO_ACTIVE_LOW>; /* PE16 */
+ 		connect-gpios = <&pio 4 17 GPIO_ACTIVE_HIGH>; /* PE17 */
+ 		refclk-frequency = <19200000>;
+ 	};
 -- 
 2.20.1
 
