@@ -2,47 +2,48 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CDB20148C0C
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Jan 2020 17:30:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 50BF8148C1F
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Jan 2020 17:30:50 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387894AbgAXQaN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 24 Jan 2020 11:30:13 -0500
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:36107 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387536AbgAXQaN (ORCPT
+        id S2388926AbgAXQaR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 24 Jan 2020 11:30:17 -0500
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:35730 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387603AbgAXQaO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 24 Jan 2020 11:30:13 -0500
-Received: by mail-wr1-f65.google.com with SMTP id z3so2723520wru.3;
-        Fri, 24 Jan 2020 08:30:10 -0800 (PST)
+        Fri, 24 Jan 2020 11:30:14 -0500
+Received: by mail-wm1-f67.google.com with SMTP id p17so72433wmb.0;
+        Fri, 24 Jan 2020 08:30:13 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=RGn2IHBa7rMucV+pLzAZrr7Jhhs9oxLFIRG0ooqfrjs=;
-        b=Ls5PpEstrt36pHLjCEV2vP/HZpfjm57O0FCJC3IhuSDlKJKzSXM8caQY1CVM34FgYw
-         0xDeKYV83in6cpD4ENdBgku7ptoOoeFRMu/CdmMIejkOGP6XdUfK4TSofnNSccd3mWEC
-         nNTtQqaCzMOOzYTmdr6kRnAQPeEAiLVeHkrKzVZTBPOwNasD53e46udhJnukKMfV46qC
-         0q9opsuFTvHaCZs8tVK/LAtGmdGaaGG2tfrnohaCh6cxx4ukpSbFaBJbJxjDrH5S6/3G
-         hYe3E2YNd41g93v3jh90Mt9ljqWZhTuyDXH40ehB+TgPCjLyRk/gg4DL1E3a5ILTfS0F
-         a4mw==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=uJoeltGGhmQKQoFJipSF7NJGrgp+ESh1SyyRe6anT6U=;
+        b=XO6PPX2pWqnpKnGovVWZfIR79tFHTFU2R3vop4kZP4gw9HGbYbZY0S7Qh5vf+Mu2DG
+         a27PRLxbXCESnbT1uxnPCwpd26mpy2DvPV2pExJyERgMsM77q5aCZYQ6Lwb05J2jCqVa
+         bNtr5cmcKFZOHyqZjFY9qPQCj9AJqCcI9oUcx1+oIOOtFtEG2eOWzm7QKVAvxvIX/MQM
+         QaI2RvIo1p+EXBB7TlyuBu+c9A0mumMXWy1l5X2zq0QifLdu9p1cu5iIorMOYQnIk3bl
+         3ctPkflh/W0nmz412KOz1oDYI+Me5Jg+dgkLwb3aHkLIsPrLGLT37EZRrn5XTlv+kfjH
+         hLzg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=RGn2IHBa7rMucV+pLzAZrr7Jhhs9oxLFIRG0ooqfrjs=;
-        b=kwTZTqoqtwEZKbFZVoQkzSUaGPPGJ7mbWli1Kfb79wat6cWzwl3j0xHNiWGlb+xdAS
-         RyITFTtqj9mwWJnuDM9Po9pqEQRSQNHPZ6r+whBiTBdA6saCAlvNZKbSx36uK/PRLM33
-         pYWiGMyffHNN677feThj/t1MOF3V39B1M1Q/E7mqPRdEe/oldqB9hKpivRHsT9XGB7Xv
-         qXrU66aOR3PyXaC7DIi92cnkTNfdWslfw3v9zzBWBwQCVeqdrSnFdbNJxtmpOetlVCzc
-         XfP6SogMGHdqlIL+Zj5/kTVOqyQKLFrFbjU6or8PQ8roxWaOHyt6HLAs3e9PPl3Es2rk
-         qjqA==
-X-Gm-Message-State: APjAAAXz9W4QcCbIjVEgYr0otRTVwDzvr4u/5Kbck5cCjpODgFFfWQOA
-        qYMZnthbpOhm201NaHg92IU=
-X-Google-Smtp-Source: APXvYqwsBI+cQKo69TQfsz129ei/c2ChSkpdFG2WKm1fnCKWQHtNxYTlbuvgO/xMgCdNnHpQDw/J0Q==
-X-Received: by 2002:a05:6000:11c6:: with SMTP id i6mr5466569wrx.178.1579883409872;
-        Fri, 24 Jan 2020 08:30:09 -0800 (PST)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=uJoeltGGhmQKQoFJipSF7NJGrgp+ESh1SyyRe6anT6U=;
+        b=YIrlW1z4eYOpeT3kV3qgTOwH/lyIesy0w26VUrWLRtUHK6V/lrJrJFOK/FmXM2ccXR
+         ZdfKImQFripZ0E7DD43k0k96QfL9tuGS4Y0OuPEreF0F/294pZqZBYmwnmyhBUamEfRX
+         si/HF+l88hHex6nox719Nc7g/K6FmLWR/lhPu5kRKrLZLndome73GtBzHCEOduyvISE+
+         kNrjd4B4QkFlodMxDKlraR5g61UmYtW0KJf7yrxN8K1b2hl6twOjaZT6VJq2Xa61x6Ld
+         b+W66IVrMxdPhUExFcflpgvnOY6Lu8z4BBkKUP+JqrbdO22tRAQsz5FEF7EE6OxNRX4M
+         cEag==
+X-Gm-Message-State: APjAAAWq6FoYbUjizDyQ0H/bAGQPQESosePRY8WXYzYSiuujFzTYq3f+
+        Z9sGBvZXnFDer3K0OykK5wg=
+X-Google-Smtp-Source: APXvYqy3mk7rwTNk9qGgqbzMeEjnTVID618sKjWfbjGW+VxAoMrQQ9N9uv2TnvdBzWt4d8bgabEuHw==
+X-Received: by 2002:a1c:2902:: with SMTP id p2mr44736wmp.19.1579883411139;
+        Fri, 24 Jan 2020 08:30:11 -0800 (PST)
 Received: from debian.home (ip51ccf9cd.speed.planet.nl. [81.204.249.205])
-        by smtp.gmail.com with ESMTPSA id 205sm1977304wmd.42.2020.01.24.08.30.08
+        by smtp.gmail.com with ESMTPSA id 205sm1977304wmd.42.2020.01.24.08.30.09
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 24 Jan 2020 08:30:09 -0800 (PST)
+        Fri, 24 Jan 2020 08:30:10 -0800 (PST)
 From:   Johan Jonker <jbx6244@gmail.com>
 To:     miquel.raynal@bootlin.com
 Cc:     richard@nod.at, vigneshr@ti.com, robh+dt@kernel.org,
@@ -51,174 +52,123 @@ Cc:     richard@nod.at, vigneshr@ti.com, robh+dt@kernel.org,
         linux-arm-kernel@lists.infradead.org,
         linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
         shawn.lin@rock-chips.com, yifeng.zhao@rock-chips.com
-Subject: [RFC PATCH v2 00/10] Enable RK3066 NANDC for MK808
-Date:   Fri, 24 Jan 2020 17:29:51 +0100
-Message-Id: <20200124163001.28910-1-jbx6244@gmail.com>
+Subject: [RFC PATCH v2 01/10] dt-bindings: mtd: add rockchip nand controller bindings
+Date:   Fri, 24 Jan 2020 17:29:52 +0100
+Message-Id: <20200124163001.28910-2-jbx6244@gmail.com>
 X-Mailer: git-send-email 2.11.0
+In-Reply-To: <20200124163001.28910-1-jbx6244@gmail.com>
+References: <20200124163001.28910-1-jbx6244@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-DISCLAIMER: Use at your own risk.
-Status: For testing only!
+Add the Rockchip NAND controller bindings.
 
-Version: V2
-
-Title: Enable RK3066 NANDC for MK808.
-
-The majority of Rockchip devices use a closed source FTL driver
-to reduce wear leveling. This patch serie proposes
-an experimental raw NAND controller driver for basic tasks
-in order to get the bindings and the nodes accepted for in the dts files.
-
-What does it do:
-
-On module load this driver will reserve its resources.
-After initialization the MTD framework will then try to detect
-the type and number of NAND chips. When all conditions are met,
-it registers it self as MTD device.
-This driver is then ready to receive user commands
-such as to read and write NAND pages.
-
-Test examples:
-
-# dd if=/dev/mtd0 of=dd.bin bs=8192 count=4
-
-# nanddump -a -l 32768 -f nanddump.bin /dev/mtd0
-
-Not tested:
-
-NANDC version 9.
-NAND raw write.
-RK3066 still has no support for Uboot.
-Any write command would interfere with data structures made by the boot loader.
-
-Etc.
-
-Problems:
-
-No bad block support. Most devices use a FTL bad block map with tags
-that must be located on specific page locations which is outside
-the scope of the raw MTD framework.
-
-hynix_nand_init() add extra option NAND_BBM_LASTPAGE for H27UCG8T2ATR-BC.
-
-No partition support. A FTL driver will store at random locations and
-a linear user specific layout does not fit within
-the generic character of this basic driver.
-
-Driver assumes that IO pins are correctly set by the boot loader.
-
-Fixed timing setting.
-
-RK3228A/RK3228B compatibility version 701 unknown
-RV1108 nand version unknown
-
-Etc.
-
-Todo:
-
-MLC ?
-ARM vs arm64 testing
-move BCH strengths and array size to struct rk_nandc_data
-
-Changes V2:
-Include suggestions by Miquel Raynal
-Include suggestions by Rob Herring
-
-Kconfig:
-  add supported Socs
-
-rk3*.dtsi
-  change compatible
-  remove #address-cells and #size-cells;
-  swap clock
-  swap clock-names
-
-rockchip,nand-controller.yaml
-  add "rockchip,idb-res-blk-num" property
-  add hash
-  change compatible
-  change doc name
-  swap clock-names
-
-rockchip-nand-controller.c
-  add fls(8 * 1024) original intention
-  add more struct rk_nandc_data types
-  add rk_nandc_hw_ecc_setup_helper()
-  add "rockchip,idb-res-blk-num" property
-  add struct rk_nandc_cap
-  add struct rk_nandc_reg_offset
-  change copyright text
-  change dev_err to dev_dbg in rk_nandc_probe()
-  change driver name
-  change of_rk_nandc_match compatible and data
-  change rk_nandc_hw_syndrome_ecc_read_page() error message
-  check return status rk_nandc_hw_syndrome_ecc_read_page()
-  check return status rk_nandc_hw_syndrome_ecc_write_page()
-  fix ./scripts/checkpatch.pl --strict issues
-  fix arm64 compile (untested)
-  fix rk_nandc_chip_init nand_scan
-  move empty line above MODULE_LICENSE()
-  move NAND_ECC_HW below NAND_ECC_HW_SYNDROME
-  move vars from controller to chip structure
-  relocate init_completion()
-  remove nand_to_mtd in rk_nandc_attach_chip()
-  remove page pointer write tag for bootrom
-  rename all defines to RK_NANDC_*
-  rename rk_nand_ctrl
-  replace bank_base calculations by defines
-  replace g_nandc_info[id]
-  replace kmalloc by devm_kzalloc
-  replace uint8_t by u8
-  replace uint32_t bu u32
-  replace writel by writel_relaxed
-  replace RK_NANDC_NUM_BANKS by ctrl->cap->max_cs
-
-
-Chris Zhong (1):
-  ARM: dts: rockchip: add nandc node for rk3066a/rk3188
-
-Dingqiang Lin (2):
-  arm64: dts: rockchip: add nandc node for px30
-  arm64: dts: rockchip: add nandc node for rk3308
-
-Jianqun Xu (1):
-  ARM: dts: rockchip: add nandc nodes for rk3288
-
-Johan Jonker (2):
-  dt-bindings: mtd: add rockchip nand controller bindings
-  ARM: dts: rockchip: rk3066a-mk808: enable nandc node
-
-Jon Lin (1):
-  ARM: dts: rockchip: add nandc node for rv1108
-
-Wenping Zhang (1):
-  ARM: dts: rockchip: add nandc node for rk322x
-
-Yifeng Zhao (1):
-  mtd: rawnand: rockchip: Add NAND controller driver
-
-Zhaoyifeng (1):
-  arm64: dts: rockchip: add nandc node for rk3368
-
- .../bindings/mtd/rockchip,nand-controller.yaml     |   92 ++
- arch/arm/boot/dts/rk3066a-mk808.dts                |   11 +
- arch/arm/boot/dts/rk322x.dtsi                      |    9 +
- arch/arm/boot/dts/rk3288.dtsi                      |   20 +
- arch/arm/boot/dts/rk3xxx.dtsi                      |    9 +
- arch/arm/boot/dts/rv1108.dtsi                      |    9 +
- arch/arm64/boot/dts/rockchip/px30.dtsi             |   12 +
- arch/arm64/boot/dts/rockchip/rk3308.dtsi           |    9 +
- arch/arm64/boot/dts/rockchip/rk3368.dtsi           |    9 +
- drivers/mtd/nand/raw/Kconfig                       |    9 +
- drivers/mtd/nand/raw/Makefile                      |    1 +
- drivers/mtd/nand/raw/rockchip-nand-controller.c    | 1307 ++++++++++++++++++++
- 12 files changed, 1497 insertions(+)
+Signed-off-by: Johan Jonker <jbx6244@gmail.com>
+---
+ .../bindings/mtd/rockchip,nand-controller.yaml     | 92 ++++++++++++++++++++++
+ 1 file changed, 92 insertions(+)
  create mode 100644 Documentation/devicetree/bindings/mtd/rockchip,nand-controller.yaml
- create mode 100644 drivers/mtd/nand/raw/rockchip-nand-controller.c
 
---
+diff --git a/Documentation/devicetree/bindings/mtd/rockchip,nand-controller.yaml b/Documentation/devicetree/bindings/mtd/rockchip,nand-controller.yaml
+new file mode 100644
+index 000000000..5c725f972
+--- /dev/null
++++ b/Documentation/devicetree/bindings/mtd/rockchip,nand-controller.yaml
+@@ -0,0 +1,92 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/mtd/rockchip,nand-controller.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Rockchip NAND Controller Device Tree Bindings
++
++allOf:
++  - $ref: "nand-controller.yaml#"
++
++maintainers:
++  - Heiko Stuebner <heiko@sntech.de>
++
++properties:
++  compatible:
++    enum:
++      - rockchip,px30-nand-controller
++      - rockchip,rk3066-nand-controller
++      - rockchip,rk3228-nand-controller
++      - rockchip,rk3288-nand-controller
++      - rockchip,rk3308-nand-controller
++      - rockchip,rk3368-nand-controller
++      - rockchip,rv1108-nand-controller
++
++  reg:
++    maxItems: 1
++
++  interrupts:
++    maxItems: 1
++
++  clocks:
++    minItems: 1
++    maxItems: 2
++
++  clock-names:
++    minItems: 1
++    items:
++      - const: hclk_nandc
++      - const: clk_nandc
++
++patternProperties:
++  "^nand@[a-f0-9]+$":
++    type: object
++    properties:
++      reg:
++        minimum: 0
++        maximum: 3
++
++      nand-is-boot-medium: true
++
++      rockchip,idb-res-blk-num:
++        minimum: 2
++        default: 16
++        allOf:
++        - $ref: /schemas/types.yaml#/definitions/uint32
++        description:
++          For legacy devices where the bootrom can only handle 24 bit BCH/ECC.
++          If specified it indicates the number of erase blocks in use by
++          the bootloader that need a lower BCH/ECC setting.
++          Only used in combination with 'nand-is-boot-medium'.
++
++    additionalProperties: false
++
++required:
++  - compatible
++  - reg
++  - interrupts
++  - clocks
++  - clock-names
++
++examples:
++  - |
++    #include <dt-bindings/clock/rk3188-cru-common.h>
++    #include <dt-bindings/interrupt-controller/arm-gic.h>
++    #include <dt-bindings/interrupt-controller/irq.h>
++    nandc: nand-controller@10500000 {
++      compatible = "rockchip,rk3066-nand-controller";
++      reg = <0x10500000 0x4000>;
++      interrupts = <GIC_SPI 27 IRQ_TYPE_LEVEL_HIGH>;
++      clocks = <&cru HCLK_NANDC0>;
++      clock-names = "hclk_nandc";
++      #address-cells = <1>;
++      #size-cells = <0>;
++
++      nand@0 {
++        reg = <0>;
++        nand-is-boot-medium;
++      };
++    };
++
++...
+-- 
 2.11.0
 
