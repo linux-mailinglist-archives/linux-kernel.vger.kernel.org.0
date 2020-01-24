@@ -2,294 +2,130 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0B600149005
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Jan 2020 22:17:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7651D149016
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Jan 2020 22:25:45 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387457AbgAXVR1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 24 Jan 2020 16:17:27 -0500
-Received: from new2-smtp.messagingengine.com ([66.111.4.224]:33541 "EHLO
-        new2-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2387436AbgAXVRY (ORCPT
+        id S1726300AbgAXVZm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 24 Jan 2020 16:25:42 -0500
+Received: from mx0b-00082601.pphosted.com ([67.231.153.30]:47342 "EHLO
+        mx0a-00082601.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1725747AbgAXVZl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 24 Jan 2020 16:17:24 -0500
-Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
-        by mailnew.nyi.internal (Postfix) with ESMTP id 34EB96ED3;
-        Fri, 24 Jan 2020 16:17:24 -0500 (EST)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute4.internal (MEProxy); Fri, 24 Jan 2020 16:17:24 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=dxuuu.xyz; h=
-        from:to:cc:subject:date:message-id:in-reply-to:references
-        :mime-version:content-transfer-encoding; s=fm2; bh=Hdjj2f7GL7mXR
-        XrLkPhEpfZGgTfws9l4BcxNMa7aa5g=; b=p+BmpU5xnEgekAB+vu1B7c1llSEUx
-        8VLMxLUQq4PHtl2BCmncQnGKrhl06lRcygbMTXcwQIhHgyAVgw/Fvf6EhvLM/IYv
-        lLssNz6p+/VXbaj1tj0CH7vk/hX8YFz056oHR0DMK5roRiJnJJ5wHJ8HUKa5EWfY
-        TSSZcpPcUFvzXcTWyFPo5nluCwM5NOqGTqImFvhRYj/tvDyFCdtECaTE6q9kO+tx
-        9XSZBJ/FJ5NJSUKnUxs3FK/TMp/KBuicMBOUQEukayCiGbYjWtgZVUDiLIV+FyDt
-        VS6EbtN/SLuNbm/8hRp++gQOlzES1/c2kSUa55Cyqj5h9vRV4TuCgvOtg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-transfer-encoding:date:from
-        :in-reply-to:message-id:mime-version:references:subject:to
-        :x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-        fm1; bh=Hdjj2f7GL7mXRXrLkPhEpfZGgTfws9l4BcxNMa7aa5g=; b=FiB294UC
-        TmlgumkXAD1D+OI2PoyzLd3hbaoj9JlWKmQAzJqR58124OVe1AOPDmjhLNb/OMNq
-        DHjWY5CClaREHGasQ1DvCd/qgVWCLphGQ1MznZq4zIff41V1GGvSujcV4glyMDoC
-        79UqX9Z77ntdVM3dj34QaWFsUEQH1nxUZ504NiaqU3d++AVBdP2e/fUtwYHvnWE8
-        kvDNCInmWjiuPnyLII/HZx9vJ0t2qU6aQJ0DskejMVnKCOPwqCiNAPbr+pGLop4l
-        ceDr269pOYIkEUYLB8X8nEmGuHM0d8kMynZ8WjNWGfTI9SFNbviDzbQVVLuX30XW
-        kD54JPiangDppQ==
-X-ME-Sender: <xms:5F4rXufaK0ykMu3yqLJAt2GhnARVbyD51vAZSZzCgMcJXTh6z_OCdg>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedugedrvdehgdduvdcutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
-    uegrihhlohhuthemuceftddtnecufghrlhcuvffnffculdejtddmnecujfgurhephffvuf
-    ffkffojghfggfgsedtkeertdertddtnecuhfhrohhmpeffrghnihgvlhcuighuuceougig
-    uhesugiguhhuuhdrgiihiieqnecukfhppeduleelrddvtddurdeigedrgeenucevlhhush
-    htvghrufhiiigvpedvnecurfgrrhgrmhepmhgrihhlfhhrohhmpegugihusegugihuuhhu
-    rdighiii
-X-ME-Proxy: <xmx:5F4rXvN-eldXtZV6bUtNHmaGKjXozs_OE6YHoO0yKOu57iC4pp5WUA>
-    <xmx:5F4rXkhtJH083itIzMFxEBIp_Tz_mCaNMvvE8lWDanD2cUoYhIv5ow>
-    <xmx:5F4rXq1FMQqdNbgqfqgUjYplB6UPyCOGc31atwJKBavRZvxkWNzN_A>
-    <xmx:5F4rXqeLUFL2bquHg200MRdiKCFKxQ3n2zpB6Hj0CNqad38lY8kfBg>
-Received: from dlxu-fedora-R90QNFJV.thefacebook.com (prnvpn05.thefacebook.com [199.201.64.4])
-        by mail.messagingengine.com (Postfix) with ESMTPA id 96C273062B0E;
-        Fri, 24 Jan 2020 16:17:22 -0500 (EST)
-From:   Daniel Xu <dxu@dxuuu.xyz>
-To:     bpf@vger.kernel.org, ast@kernel.org, daniel@iogearbox.net,
-        songliubraving@fb.com, yhs@fb.com, andriin@fb.com
-Cc:     Daniel Xu <dxu@dxuuu.xyz>, linux-kernel@vger.kernel.org,
-        kernel-team@fb.com, peterz@infradead.org, mingo@redhat.com,
-        acme@kernel.org
-Subject: [PATCH v4 bpf-next 3/3] selftests/bpf: add bpf_perf_prog_read_branches() selftest
-Date:   Fri, 24 Jan 2020 13:17:05 -0800
-Message-Id: <20200124211705.24759-4-dxu@dxuuu.xyz>
-X-Mailer: git-send-email 2.21.1
-In-Reply-To: <20200124211705.24759-1-dxu@dxuuu.xyz>
-References: <20200124211705.24759-1-dxu@dxuuu.xyz>
+        Fri, 24 Jan 2020 16:25:41 -0500
+Received: from pps.filterd (m0089730.ppops.net [127.0.0.1])
+        by m0089730.ppops.net (8.16.0.42/8.16.0.42) with SMTP id 00OLNBaf012113;
+        Fri, 24 Jan 2020 13:25:38 -0800
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
+ : date : message-id : content-type : content-id :
+ content-transfer-encoding : mime-version; s=facebook;
+ bh=8bPwUIldTl2etCaVErCjnL+rAZoQ9/rn4rwb4xfARMU=;
+ b=jMJrYhj7tn7AxuryUehaH3BWwyZPryTFSBCdi5JT9jISSlu7uQb/FVm75slsKuR3x5Wq
+ POtPyJJvRS+DQl84XhfAiyP8kIJHtm9d63zy5XeLDTx4CbA8NIePmkDtE73KnbCqOs2S
+ 5rFbtoe0u740m80FT2svpB6NHI5I5ny+NyA= 
+Received: from mail.thefacebook.com ([163.114.132.120])
+        by m0089730.ppops.net with ESMTP id 2xr63a8pem-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
+        Fri, 24 Jan 2020 13:25:38 -0800
+Received: from NAM11-BN8-obe.outbound.protection.outlook.com (100.104.98.9) by
+ o365-in.thefacebook.com (100.104.94.196) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.1779.2; Fri, 24 Jan 2020 13:25:37 -0800
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=S4BSTaOBQM8PyKfl3mzlQ637+8iYPLeuyQMZF7HnJ1UAJtltu8NU/s1aB/N1P/FlPLLvkKpRYqKKKQkO++R1HF2nXCMY5fY+hzV4FRoiOdTtv+pDs2NDQXMfz3CPFTk0JLOTyagaES5F/or9CkNkZrToyrZnRHgfFwL0lR832PqaWsVL79x41yh2xHDYU5nQdGQiEg6KlyQvrFlameNDM+oTPyQnI7fF4NK3j8vKd5iWpLbWRfnx9mXSmz1zwQ4bJvpDBsT7dS389DtQt83m6tSLY3XJedgMoe8TMr18haQlF+YEjmgA4YsNRGtbxl4GItBPbL0NTQ5x0KBTnbE+dA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=8bPwUIldTl2etCaVErCjnL+rAZoQ9/rn4rwb4xfARMU=;
+ b=H5qAxf0xncT3g9vgRRhlS1LeEeRo0b1noHnUjsNeb8A+DNxsnpPhnz7d/e05rjSixHEOYZijtju+pJcNB+akS5IW8KTr0qb9LhFZWDDfTQdVaijseM2zbYgSRcLlfiot3NuaT/y9QUBld8VTc3ryOWOXsLV32HomQZ1idehncjfYNk9oGThthHPP7wjDwewXHCWlCO4U7t0hcBQ0cTvD25MNwC8v8b0NTZlP4xZvJ3KbGV52joGeOFxsKty2oH9aF5/8mJYPYMGukym8MuUqrUiLQSVVDVDc6sN2lkplyKPE/eRWgApshkJdE0mYCO8SursPKqMLT7F9Cliz9wizSg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=fb.com; dmarc=pass action=none header.from=fb.com; dkim=pass
+ header.d=fb.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.onmicrosoft.com;
+ s=selector2-fb-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=8bPwUIldTl2etCaVErCjnL+rAZoQ9/rn4rwb4xfARMU=;
+ b=PK6B5X1fPLqNjz12rT82ay3Sy48/BPpoc8u4UrZvLG0zjrcA0BNomEnHds0us7zxKj3myYhVche2QDxmyVmTB6A7yX3lErYE048DaLLToJCzAVeBLRhFeLH1Wqhq9HrXYfyQdYGZJG1zYg4U5nDZhkhl+81xFlZtF5gGnejln2s=
+Received: from BYAPR15MB3029.namprd15.prod.outlook.com (20.178.238.208) by
+ BYAPR15MB3303.namprd15.prod.outlook.com (20.179.59.32) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2665.21; Fri, 24 Jan 2020 21:25:22 +0000
+Received: from BYAPR15MB3029.namprd15.prod.outlook.com
+ ([fe80::3541:85d8:c4c8:760d]) by BYAPR15MB3029.namprd15.prod.outlook.com
+ ([fe80::3541:85d8:c4c8:760d%3]) with mapi id 15.20.2665.017; Fri, 24 Jan 2020
+ 21:25:22 +0000
+From:   Song Liu <songliubraving@fb.com>
+To:     "lsf-pc@lists.linux-foundation.org" 
+        <lsf-pc@lists.linux-foundation.org>, bpf <bpf@vger.kernel.org>
+CC:     linux-kernel <linux-kernel@vger.kernel.org>
+Subject: [LSF/MM/BPF TOPIC] ls+cat based debugging for BPF 
+Thread-Topic: [LSF/MM/BPF TOPIC] ls+cat based debugging for BPF 
+Thread-Index: AQHV0vzJAHvUmDTCaE+/nrClRclyqQ==
+Date:   Fri, 24 Jan 2020 21:25:22 +0000
+Message-ID: <A8AB5F56-7233-40AD-9C49-2348B708557B@fb.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-mailer: Apple Mail (2.3608.40.2.2.4)
+x-originating-ip: [2620:10d:c090:200::3:f503]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: fc0a86f9-f832-4bb5-5b24-08d7a113eb94
+x-ms-traffictypediagnostic: BYAPR15MB3303:
+x-microsoft-antispam-prvs: <BYAPR15MB330382BAC61DAC31B785BCA8B30E0@BYAPR15MB3303.namprd15.prod.outlook.com>
+x-fb-source: Internal
+x-ms-oob-tlc-oobclassifiers: OLM:9508;
+x-forefront-prvs: 02929ECF07
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(396003)(346002)(376002)(136003)(39860400002)(366004)(199004)(189003)(4743002)(110136005)(8936002)(4326008)(8676002)(81156014)(316002)(81166006)(36756003)(33656002)(6512007)(6506007)(86362001)(478600001)(2616005)(186003)(6486002)(66556008)(4744005)(2906002)(5660300002)(66476007)(66446008)(64756008)(71200400001)(76116006)(91956017)(66946007);DIR:OUT;SFP:1102;SCL:1;SRVR:BYAPR15MB3303;H:BYAPR15MB3029.namprd15.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: fb.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: q43wA1csceVzZshCJZXShxwZyH2Z4ph/L5VASHNtPRVa98jIHSOX5ouZXMD3o2Qy5Q0LzquwnpJKZqe0xaRMUw5HlOlOt3fINPhEy40l7bC/JuUrv0rVIh54PlV1wtxxemROtIvu1GOdC51ZYupEBmrbAMDZLaTNAImN7ZHQbWa0pv39rXLhClZ4TwOjRX5g3fuxdw+rukuuJXiuPCygCn1xu/u7Ao3wsXpEt+TC9gMCkoYgEU3pUpBOc2PaB4IoNQaWhuu+G9prEN4l7samOFkczGrTvJ9Uh1PQdWUYmrk/hUVz6alS7y3Vd4p7hsITlM3tiO5K8bxNjs64sAyKsw/iznoldR1UgT6du6sWIDlF0/9w7fmAIFYaTOgcUp4VXiSfa9E0OBtngrhrMZIQLcnjF84DRGlz8J0IQvnr/i3cfc2vFkf8GSITIOVKbKlw
+x-ms-exchange-antispam-messagedata: uys5K7tt48SLYBdSL1OQ7XUHCBVhZSdevb3snTgwbXmBcSASfN+iz8Y4hWv4q2pREh6du8d13/WRg7Tzu6RWQooJ1sKLnMGy1UwCgsuahSRKeIhJzdk4BYtg9PxTNaJcYna93zw6lq0D4oUHoPG3lDAIWVeY1O+oUSIz4PkVskLu1UxPwZ5utS5xZtnBd33g
+x-ms-exchange-transport-forked: True
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <0E8E382F1A6B704CAA77760EF1906D79@namprd15.prod.outlook.com>
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-MS-Exchange-CrossTenant-Network-Message-Id: fc0a86f9-f832-4bb5-5b24-08d7a113eb94
+X-MS-Exchange-CrossTenant-originalarrivaltime: 24 Jan 2020 21:25:22.3374
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 8ae927fe-1255-47a7-a2af-5f3a069daaa2
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: LN5pqBXBO430Usb4RSkvaVzanZWD15KkohSLZbBDXWNsr1Mx6xSN1HOsg6Ul/zcJV3CoiAFrDxbFGRvcZo2AgA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR15MB3303
+X-OriginatorOrg: fb.com
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.572
+ definitions=2020-01-24_07:2020-01-24,2020-01-24 signatures=0
+X-Proofpoint-Spam-Details: rule=fb_default_notspam policy=fb_default score=0 lowpriorityscore=0
+ suspectscore=0 clxscore=1011 impostorscore=0 spamscore=0 mlxlogscore=588
+ adultscore=0 malwarescore=0 bulkscore=0 mlxscore=0 priorityscore=1501
+ phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-1911200001 definitions=main-2001240175
+X-FB-Internal: deliver
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add a selftest to test:
+ls+cat based debugging for BPF
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D
 
-* default bpf_perf_prog_read_branches() behavior
-* BPF_F_GET_BR_SIZE flag behavior
-* using helper to write to stack
-* using helper to write to map
+Currently, users monitor/debug BPF programs and maps via sys_bpf(). This
+approach is different to the habit of some system admins, who do these
+works via ls+cat in sysfs. In this LSF/MM/BPF, we would like to discuss
+whether/how to enable similar debugging interface for BPF programs and=20
+maps. Specifically, we can discuss:
 
-Tested by running:
+  1) What inforamtions to show in sysfs/bpffs;
+  2) Granularity to enable/disable these information;
+  3) Will there be any overhead? If so, how much overhead is acceptable.
 
-    # ./test_progs -t perf_branches
-    #27 perf_branches:OK
-    Summary: 1/0 PASSED, 0 SKIPPED, 0 FAILED
+These discussions should save us a lot of time over emails.=20
 
-Signed-off-by: Daniel Xu <dxu@dxuuu.xyz>
----
- .../selftests/bpf/prog_tests/perf_branches.c  | 112 ++++++++++++++++++
- .../selftests/bpf/progs/test_perf_branches.c  |  74 ++++++++++++
- 2 files changed, 186 insertions(+)
- create mode 100644 tools/testing/selftests/bpf/prog_tests/perf_branches.c
- create mode 100644 tools/testing/selftests/bpf/progs/test_perf_branches.c
+I will share a prototype of this before LSF/MM/BPF.
 
-diff --git a/tools/testing/selftests/bpf/prog_tests/perf_branches.c b/tools/testing/selftests/bpf/prog_tests/perf_branches.c
-new file mode 100644
-index 000000000000..54a982a6c513
---- /dev/null
-+++ b/tools/testing/selftests/bpf/prog_tests/perf_branches.c
-@@ -0,0 +1,112 @@
-+// SPDX-License-Identifier: GPL-2.0
-+#define _GNU_SOURCE
-+#include <pthread.h>
-+#include <sched.h>
-+#include <sys/socket.h>
-+#include <test_progs.h>
-+#include "bpf/libbpf_internal.h"
-+#include "test_perf_branches.skel.h"
-+
-+struct output {
-+	int required_size;
-+	int written_stack;
-+	int written_map;
-+};
-+
-+static void on_sample(void *ctx, int cpu, void *data, __u32 size)
-+{
-+	int pbe_size = sizeof(struct perf_branch_entry);
-+	int required_size = ((struct output *)data)->required_size;
-+	int written_stack = ((struct output *)data)->written_stack;
-+	int written_map = ((struct output *)data)->written_map;
-+	int duration = 0;
-+
-+	/*
-+	 * It's hard to validate the contents of the branch entries b/c it
-+	 * would require some kind of disassembler and also encoding the
-+	 * valid jump instructions for supported architectures. So just check
-+	 * the easy stuff for now.
-+	 */
-+	CHECK(required_size <= 0, "read_branches_size", "err %d\n", required_size);
-+	CHECK(written_stack < 0, "read_branches_stack", "err %d\n", written_stack);
-+	CHECK(written_stack % pbe_size != 0, "read_branches_stack",
-+	      "stack bytes written=%d not multiple of struct size=%d\n",
-+	      written_stack, pbe_size);
-+	CHECK(written_map < 0, "read_branches_map", "err %d\n", written_map);
-+	CHECK(written_map % pbe_size != 0, "read_branches_map",
-+	      "map bytes written=%d not multiple of struct size=%d\n",
-+	      written_map, pbe_size);
-+	CHECK(written_map < written_stack, "read_branches_size",
-+	      "written_map=%d < written_stack=%d\n", written_map, written_stack);
-+
-+	*(int *)ctx = 1;
-+}
-+
-+void test_perf_branches(void)
-+{
-+	int err, i, pfd = -1, duration = 0, ok = 0;
-+	struct perf_buffer_opts pb_opts = {};
-+	struct perf_event_attr attr = {};
-+	struct perf_buffer *pb;
-+	struct bpf_link *link;
-+	volatile int j = 0;
-+	cpu_set_t cpu_set;
-+
-+
-+	struct test_perf_branches *skel;
-+	skel = test_perf_branches__open_and_load();
-+	if (CHECK(!skel, "test_perf_branches_load",
-+		  "perf_branches skeleton failed\n"))
-+		goto out_destroy;
-+
-+	/* create perf event */
-+	attr.size = sizeof(attr);
-+	attr.type = PERF_TYPE_HARDWARE;
-+	attr.config = PERF_COUNT_HW_CPU_CYCLES;
-+	attr.freq = 1;
-+	attr.sample_freq = 4000;
-+	attr.sample_type = PERF_SAMPLE_BRANCH_STACK;
-+	attr.branch_sample_type = PERF_SAMPLE_BRANCH_USER | PERF_SAMPLE_BRANCH_ANY;
-+	pfd = syscall(__NR_perf_event_open, &attr, -1, 0, -1, PERF_FLAG_FD_CLOEXEC);
-+	if (CHECK(pfd < 0, "perf_event_open", "err %d\n", pfd))
-+		goto out_destroy;
-+
-+	/* attach perf_event */
-+	link = bpf_program__attach_perf_event(skel->progs.perf_branches, pfd);
-+	if (CHECK(IS_ERR(link), "attach_perf_event", "err %ld\n", PTR_ERR(link)))
-+		goto out_close_perf;
-+
-+	/* set up perf buffer */
-+	pb_opts.sample_cb = on_sample;
-+	pb_opts.ctx = &ok;
-+	pb = perf_buffer__new(bpf_map__fd(skel->maps.perf_buf_map), 1, &pb_opts);
-+	if (CHECK(IS_ERR(pb), "perf_buf__new", "err %ld\n", PTR_ERR(pb)))
-+		goto out_detach;
-+
-+	/* generate some branches on cpu 0 */
-+	CPU_ZERO(&cpu_set);
-+	CPU_SET(0, &cpu_set);
-+	err = pthread_setaffinity_np(pthread_self(), sizeof(cpu_set), &cpu_set);
-+	if (CHECK(err, "set_affinity", "cpu #0, err %d\n", err))
-+		goto out_free_pb;
-+	/* spin the loop for a while (random high number) */
-+	for (i = 0; i < 1000000; ++i)
-+		++j;
-+
-+	/* read perf buffer */
-+	err = perf_buffer__poll(pb, 500);
-+	if (CHECK(err < 0, "perf_buffer__poll", "err %d\n", err))
-+		goto out_free_pb;
-+
-+	if (CHECK(!ok, "ok", "not ok\n"))
-+		goto out_free_pb;
-+
-+out_free_pb:
-+	perf_buffer__free(pb);
-+out_detach:
-+	bpf_link__destroy(link);
-+out_close_perf:
-+	close(pfd);
-+out_destroy:
-+	test_perf_branches__destroy(skel);
-+}
-diff --git a/tools/testing/selftests/bpf/progs/test_perf_branches.c b/tools/testing/selftests/bpf/progs/test_perf_branches.c
-new file mode 100644
-index 000000000000..6811ad5839e7
---- /dev/null
-+++ b/tools/testing/selftests/bpf/progs/test_perf_branches.c
-@@ -0,0 +1,74 @@
-+// SPDX-License-Identifier: GPL-2.0
-+// Copyright (c) 2019 Facebook
-+
-+#include <stddef.h>
-+#include <linux/ptrace.h>
-+#include <linux/bpf.h>
-+#include <bpf/bpf_helpers.h>
-+#include "bpf_trace_helpers.h"
-+
-+struct fake_perf_branch_entry {
-+	__u64 _a;
-+	__u64 _b;
-+	__u64 _c;
-+};
-+
-+struct output {
-+	int required_size;
-+	int written_stack;
-+	int written_map;
-+};
-+
-+struct {
-+	__uint(type, BPF_MAP_TYPE_PERF_EVENT_ARRAY);
-+	__uint(key_size, sizeof(int));
-+	__uint(value_size, sizeof(int));
-+} perf_buf_map SEC(".maps");
-+
-+typedef struct fake_perf_branch_entry fpbe_t[30];
-+
-+struct {
-+	__uint(type, BPF_MAP_TYPE_ARRAY);
-+	__uint(max_entries, 1);
-+	__type(key, __u32);
-+	__type(value, fpbe_t);
-+} scratch_map SEC(".maps");
-+
-+SEC("perf_event")
-+int perf_branches(void *ctx)
-+{
-+	struct fake_perf_branch_entry entries[4] = {0};
-+	struct output output = {0};
-+	__u32 key = 0, *value;
-+
-+	/* write to stack */
-+	output.written_stack =
-+		bpf_perf_prog_read_branches(ctx, entries,
-+					    sizeof(entries), 0);
-+	/* ignore spurious events */
-+	if (!output.written_stack)
-+		return 1;
-+
-+	/* get required size */
-+	output.required_size =
-+		bpf_perf_prog_read_branches(ctx, NULL, 0, BPF_F_GET_BR_SIZE);
-+
-+	/* write to map */
-+	value = bpf_map_lookup_elem(&scratch_map, &key);
-+	if (value)
-+		output.written_map =
-+			bpf_perf_prog_read_branches(ctx,
-+						    value,
-+						    30 * sizeof(struct fake_perf_branch_entry),
-+						    0);
-+
-+	/* ignore spurious events */
-+	if (!output.written_map)
-+		return 1;
-+
-+	bpf_perf_event_output(ctx, &perf_buf_map, BPF_F_CURRENT_CPU,
-+			      &output, sizeof(output));
-+	return 0;
-+}
-+
-+char _license[] SEC("license") = "GPL";
--- 
-2.21.1
-
+Thanks,
+Song
