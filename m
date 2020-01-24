@@ -2,183 +2,236 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 97F191481C6
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Jan 2020 12:22:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 465431481DB
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Jan 2020 12:23:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391226AbgAXLWi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 24 Jan 2020 06:22:38 -0500
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:52873 "EHLO
-        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2391217AbgAXLWc (ORCPT
+        id S2391305AbgAXLXU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 24 Jan 2020 06:23:20 -0500
+Received: from mail-qv1-f66.google.com ([209.85.219.66]:35462 "EHLO
+        mail-qv1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2391283AbgAXLXJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 24 Jan 2020 06:22:32 -0500
-Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
-        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20200124112231euoutp02bec6b79d424790710f845023d90a3da2~szs2REXOh1664216642euoutp02m
-        for <linux-kernel@vger.kernel.org>; Fri, 24 Jan 2020 11:22:31 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20200124112231euoutp02bec6b79d424790710f845023d90a3da2~szs2REXOh1664216642euoutp02m
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1579864951;
-        bh=gH8EIJeJlCpXZLUo9SizzuGQeQgKu9yKoahR+VdzaC0=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=ZUsjU/snKJDoLgpzOZzP4YhLLm5qsWkOK/QVKyREP34CAeJgq+1kqqUmh8E5h15dh
-         y8932klgGlKlSJUWGLHNxebDDo6A9UHu0BkEknDleHa2NEZ9JkzHk/5K92kKM3HEi1
-         riMifFVq3XjCgkztweXYam7w/lbC8f/NF401Tbg8=
-Received: from eusmges3new.samsung.com (unknown [203.254.199.245]) by
-        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
-        20200124112230eucas1p16d9ec921d759632091731778cb04cd6e~szs1nHtSe2709327093eucas1p11;
-        Fri, 24 Jan 2020 11:22:30 +0000 (GMT)
-Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
-        eusmges3new.samsung.com (EUCPMTA) with SMTP id CD.A8.60698.673DA2E5; Fri, 24
-        Jan 2020 11:22:30 +0000 (GMT)
-Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
-        20200124112230eucas1p291726bf7d38e291fba61b48f61eee9fe~szs1Sbhr02304223042eucas1p2w;
-        Fri, 24 Jan 2020 11:22:30 +0000 (GMT)
-Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
-        eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20200124112230eusmtrp1437ace3339b579ec0f61a6988674b2e2~szs1R3yFr0086800868eusmtrp14;
-        Fri, 24 Jan 2020 11:22:30 +0000 (GMT)
-X-AuditID: cbfec7f5-a0fff7000001ed1a-b0-5e2ad3761941
-Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
-        eusmgms1.samsung.com (EUCPMTA) with SMTP id 4B.FC.08375.673DA2E5; Fri, 24
-        Jan 2020 11:22:30 +0000 (GMT)
-Received: from AMDC3555 (unknown [106.120.51.67]) by eusmtip2.samsung.com
-        (KnoxPortal) with ESMTPA id
-        20200124112230eusmtip23eb7cec6c530209891158808b8cd0899~szs0yYZFW1635916359eusmtip2Q;
-        Fri, 24 Jan 2020 11:22:29 +0000 (GMT)
-Message-ID: <6c41f75456d4c9347414b94215162d81acf4b84a.camel@samsung.com>
-Subject: Re: [PATCH v4 1/3] interconnect: Export of_icc_get_from_provider()
-From:   Artur =?UTF-8?Q?=C5=9Awigo=C5=84?= <a.swigon@samsung.com>
-To:     Georgi Djakov <georgi.djakov@linaro.org>, linux-pm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Cc:     cw00.choi@samsung.com, b.zolnierkie@samsung.com,
-        m.szyprowski@samsung.com, krzk@kernel.org
-Date:   Fri, 24 Jan 2020 12:22:29 +0100
-In-Reply-To: <45e28d51-27db-2faa-d633-3a3d857ecdc9@linaro.org>
-X-Mailer: Evolution 3.28.5-0ubuntu0.18.04.1 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprFKsWRmVeSWpSXmKPExsWy7djP87pll7XiDGZPMrTYOGM9q8X1L89Z
-        Labv3cRmcf78BnaLy7vmsFl87j3CaDHj/D4mi7VH7rI7cHhsWtXJ5nHn2h42j74tqxg9Pm+S
-        C2CJ4rJJSc3JLEst0rdL4Mpobu1kLJguXnHx5hO2Bsb3Ql2MnBwSAiYSby51sYDYQgIrGCXO
-        37bvYuQCsr8wSky7PJ0ZIvGZUeLa2wqYhk9Nx5khipYzShx4vIoRwnnGKDFxfyMrSBWvgIfE
-        tk8z2UFsYQFvicevLjCC2GwC9hJnb39jAmkQEehklFg36SFYglkgUeL75GawBhYBVYnrhy+C
-        2ZwCdhIvvyxhhFitI/H2VB/QrRxACwQl/u4QhmiVl2jeOpsZomQRu8SCJ0YQtovEk0VrmSBs
-        YYlXx7ewQ9gyEqcn97BA2MUST3feZwW5R0KggVFi07IjUIOsJe6c+8UGsotZQFNi/S59iLCj
-        xNMTN8HCEgJ8EjfeCkKcwCcxaRsosEDCvBIdbUIQppLErpl8EI0SEk2rr0HN9pCY/3sv+wRG
-        xVkIr8xC8soshK0LGJlXMYqnlhbnpqcWG+ellusVJ+YWl+al6yXn525iBKaY0/+Of93BuO9P
-        0iFGAQ5GJR7eA12acUKsiWXFlbmHGCU4mJVEeBnDgEK8KYmVValF+fFFpTmpxYcYpTlYlMR5
-        jRe9jBUSSE8sSc1OTS1ILYLJMnFwSjUwMmg+7Xyg59KikNvsN7t2QolN35OPaokbrM/lrSvI
-        1G19OP2NtdNOm3vT/IOSbrJUbupuLREU2XSq6Oiest6J0n8fs0+YKlPTe/FpTse5m1UJ5wu+
-        vv9u8Idf/oGWsce5A5yTrs4NPhTs8+Diwqb4edXpe70TJ3ZzvZlxTr0pVfqYYZvGZKNPSizF
-        GYmGWsxFxYkAg5/ZVC0DAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrKIsWRmVeSWpSXmKPExsVy+t/xe7pll7XiDGY3yFpsnLGe1eL6l+es
-        FtP3bmKzOH9+A7vF5V1z2Cw+9x5htJhxfh+Txdojd9kdODw2repk87hzbQ+bR9+WVYwenzfJ
-        BbBE6dkU5ZeWpCpk5BeX2CpFG1oY6RlaWugZmVjqGRqbx1oZmSrp29mkpOZklqUW6dsl6GU0
-        t3YyFkwXr7h48wlbA+N7oS5GTg4JAROJT03HmbsYuTiEBJYySpz69IUFIiEh8XH9DVYIW1ji
-        z7UuNoiiJ4wSUx7tB0vwCnhIbPs0kx3EFhbwlnj86gIjiM0mYC9x9vY3JpAGEYEuRok7k5cy
-        gySYBRIl9nycAtbAIqAqcf3wRTCbU8BO4uWXJYwQG74wSkxaOheqQVOidftvdogzdCTenuoD
-        Oo8DaLOgxN8dwhAl8hLNW2czT2AUnIWkYxZC1SwkVQsYmVcxiqSWFuem5xYb6hUn5haX5qXr
-        JefnbmIERtG2Yz8372C8tDH4EKMAB6MSD69Er2acEGtiWXFl7iFGCQ5mJRFexjCgEG9KYmVV
-        alF+fFFpTmrxIUZToH8mMkuJJucDIzyvJN7Q1NDcwtLQ3Njc2MxCSZy3Q+BgjJBAemJJanZq
-        akFqEUwfEwenVANjGl/3n2O9TqHyiVtk/m8Sfsn86fbixf/Fak6/Yk2XuXWitSE2K6nTpmN5
-        3Z03X4v3/G7o/X1H0XtuVrFZI2fY88QZun/XK1xqsA7O/T9txeptvk2xHq8XSh8y33wmgVd5
-        y/2LC/b5Oj8XceHJX/jsI+93P+t2iwtaLGL/J8y1XHZxV+f95RFlSizFGYmGWsxFxYkA+gX1
-        k7gCAAA=
-X-CMS-MailID: 20200124112230eucas1p291726bf7d38e291fba61b48f61eee9fe
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20200116144241eucas1p18dcf099873015e955d71d90712bbe9e0
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20200116144241eucas1p18dcf099873015e955d71d90712bbe9e0
-References: <20200116144202.12116-1-a.swigon@samsung.com>
-        <CGME20200116144241eucas1p18dcf099873015e955d71d90712bbe9e0@eucas1p1.samsung.com>
-        <20200116144202.12116-2-a.swigon@samsung.com>
-        <45e28d51-27db-2faa-d633-3a3d857ecdc9@linaro.org>
+        Fri, 24 Jan 2020 06:23:09 -0500
+Received: by mail-qv1-f66.google.com with SMTP id u10so716882qvi.2
+        for <linux-kernel@vger.kernel.org>; Fri, 24 Jan 2020 03:23:08 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=hwzQ3VCUqoiQqyG2DwDT1s000avPDz+MSypapI5GJkU=;
+        b=tBdd9AOgbGoefVh+ESSREOiklsPn1d77K/Z5wFAES3zsRlmecr69hozwJsD6NXOiwr
+         RS9KD3JteWX1fOpwBTGhtclav8Pe0gYHDDdj/dJtvD+vsycy9s7cOC27/EDv+oMXr9RU
+         N0Mvcnkok5z5ftwgqX1r0IoOqXFcd5skObUigB52pxuTzPIxARasiFCgtQq7IIhG6Twp
+         1e1r4j7OaEBbRPtsVcNZY7L07dR00eBKM0Y3O79/JgZYSKL5kqsKkFitVMMCu6wHkJt4
+         fezr3Y07wnwe/dKxSkktfScgB9kVXndNX3zywa5Sh/XZL2QwZKzROJpBtv1kp4Dh2zDh
+         Ydjg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=hwzQ3VCUqoiQqyG2DwDT1s000avPDz+MSypapI5GJkU=;
+        b=i6JQRlu0qZhoc4VaalJsyVEsHes/KN/d8xqfVG/orv1bsYiRYSpqI1qZ+K9goWJMVO
+         R7rKj1QVQuyur9/U3/v0ZZQdKAbmq0MN3MyFJc5h06wTTQPMDBWpVM8kikh6jeVmIcG5
+         TEmMV8DZVHopT0QZkojE91Heo/8GUrZ+4RM/oSzHnUnXUhZfM3fwGwNu/GYo6nVwQ+4j
+         RRxE/ARNIlh5xAmIEfP9uDDNUA5ZjJHbkJg0K7xoiYdRYvrkk9K87bSsVB4ZvyCMs/B+
+         +eHkF61MSNei94EEShkNas7Ul4D54BIYRbKIajH2eiiW3WNrcj4jsv2sbVOf7p5+3dp5
+         mG5A==
+X-Gm-Message-State: APjAAAXSmFzVjizZCGLNnR95t0txYDZ8KZQzEFAeEXRtWNKNNtx+MRWK
+        rLw3LUkXt430ANDMmeVDr3HQRGTlvBqQ1xB3M/vUCQ==
+X-Google-Smtp-Source: APXvYqwobgdvp5BoQe6vJueIBTtvwmjSRei1KJDbZLfuVUJ4xFnT3tCN7BW9EBcKj1JLiMydg7FDKvy9PT60+W+LLsk=
+X-Received: by 2002:a05:6214:1103:: with SMTP id e3mr2207642qvs.159.1579864987764;
+ Fri, 24 Jan 2020 03:23:07 -0800 (PST)
+MIME-Version: 1.0
+References: <20200121160512.70887-1-elver@google.com>
+In-Reply-To: <20200121160512.70887-1-elver@google.com>
+From:   Dmitry Vyukov <dvyukov@google.com>
+Date:   Fri, 24 Jan 2020 12:22:56 +0100
+Message-ID: <CACT4Y+aRk5=7UoPb9zmDm5XL9CcJDv9YnzndjXYtt+3FKd8maw@mail.gmail.com>
+Subject: Re: [PATCH v2 1/5] include/linux: Add instrumented.h infrastructure
+To:     Marco Elver <elver@google.com>
+Cc:     "Paul E. McKenney" <paulmck@kernel.org>,
+        Andrey Konovalov <andreyknvl@google.com>,
+        Alexander Potapenko <glider@google.com>,
+        kasan-dev <kasan-dev@googlegroups.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Will Deacon <will@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Boqun Feng <boqun.feng@gmail.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Daniel Axtens <dja@axtens.net>,
+        Christophe Leroy <christophe.leroy@c-s.fr>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Kees Cook <keescook@chromium.org>, cyphar@cyphar.com,
+        linux-arch <linux-arch@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+On Tue, Jan 21, 2020 at 5:05 PM 'Marco Elver' via kasan-dev
+<kasan-dev@googlegroups.com> wrote:
+>
+> This adds instrumented.h, which provides generic wrappers for memory
+> access instrumentation that the compiler cannot emit for various
+> sanitizers. Currently this unifies KASAN and KCSAN instrumentation. In
+> future this will also include KMSAN instrumentation.
+>
+> Note that, copy_{to,from}_user should use special instrumentation, since
+> we should be able to instrument both source and destination memory
+> accesses if both are kernel memory.
+>
+> The current patch only instruments the memory access where the address
+> is always in kernel space, however, both may in fact be kernel addresses
+> when a compat syscall passes an argument allocated in the kernel to a
+> real syscall. In a future change, both KASAN and KCSAN should check both
+> addresses in such cases, as well as KMSAN will make use of both
+> addresses. [It made more sense to provide the completed function
+> signature, rather than updating it and changing all locations again at a
+> later time.]
 
-On Thu, 2020-01-23 at 11:21 +0200, Georgi Djakov wrote:
-> Hi Artur,
-> 
-> On 1/16/20 16:42, Artur Świgoń wrote:
-> > This patch makes the above function public (for use in exynos-bus devfreq
-> > driver).
-> > 
-> > Signed-off-by: Artur Świgoń <a.swigon@samsung.com>
-> > Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
-> > Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
-> > ---
-> >  drivers/interconnect/core.c           | 3 ++-
-> >  include/linux/interconnect-provider.h | 6 ++++++
-> >  2 files changed, 8 insertions(+), 1 deletion(-)
-> > 
-> > diff --git a/drivers/interconnect/core.c b/drivers/interconnect/core.c
-> > index f277e467156f..0be1764d3528 100644
-> > --- a/drivers/interconnect/core.c
-> > +++ b/drivers/interconnect/core.c
-> > @@ -330,7 +330,7 @@ EXPORT_SYMBOL_GPL(of_icc_xlate_onecell);
-> >   * Returns a valid pointer to struct icc_node on success or ERR_PTR()
-> >   * on failure.
-> >   */
-> > -static struct icc_node *of_icc_get_from_provider(struct of_phandle_args *spec)
-> > +struct icc_node *of_icc_get_from_provider(struct of_phandle_args *spec)
-> >  {
-> >  	struct icc_node *node = ERR_PTR(-EPROBE_DEFER);
-> >  	struct icc_provider *provider;
-> > @@ -349,6 +349,7 @@ static struct icc_node *of_icc_get_from_provider(struct of_phandle_args *spec)
-> >  
-> >  	return node;
-> >  }
-> > +EXPORT_SYMBOL_GPL(of_icc_get_from_provider);
-> >  
-> >  /**
-> >   * of_icc_get() - get a path handle from a DT node based on name
-> > diff --git a/include/linux/interconnect-provider.h b/include/linux/interconnect-provider.h
-> > index 0c494534b4d3..cc965b8fab53 100644
-> > --- a/include/linux/interconnect-provider.h
-> > +++ b/include/linux/interconnect-provider.h
-> > @@ -103,6 +103,7 @@ void icc_node_del(struct icc_node *node);
-> >  int icc_nodes_remove(struct icc_provider *provider);
-> >  int icc_provider_add(struct icc_provider *provider);
-> >  int icc_provider_del(struct icc_provider *provider);
-> > +struct icc_node *of_icc_get_from_provider(struct of_phandle_args *spec);
-> >  
-> >  #else
-> >  
-> > @@ -154,6 +155,11 @@ static inline int icc_provider_del(struct icc_provider *provider)
-> >  	return -ENOTSUPP;
-> >  }
-> >  
-> > +struct icc_node *of_icc_get_from_provider(struct of_phandle_args *spec)
-> 
-> Please make this static inline, as we may see a warning in some configurations:
+Reviewed-by: Dmitry Vyukov <dvyukov@google.com>
 
-Sure, will fix.
-
-> In file included from drivers/devfreq/exynos-bus.c:18:
-> ./include/linux/interconnect-provider.h:160:18: warning: no previous prototype
-> for ‘of_icc_get_from_provider’ [-Wmissing-prototypes]
->   160 | struct icc_node *of_icc_get_from_provider(struct of_phandle_args *spec)
->       |                  ^~~~~~~~~~~~~~~~~~~~~~~~
-> 
-> > +{
-> > +	return ERR_PTR(-ENOTSUPP);
-> > +}
-> > +
-> >  #endif /* CONFIG_INTERCONNECT */
-> >  
-> >  #endif /* __LINUX_INTERCONNECT_PROVIDER_H */
-> > 
-
--- 
-Artur Świgoń
-Samsung R&D Institute Poland
-Samsung Electronics
-
-
+> Suggested-by: Arnd Bergmann <arnd@arndb.de>
+> Signed-off-by: Marco Elver <elver@google.com>
+> Acked-by: Alexander Potapenko <glider@google.com>
+> ---
+> v2:
+> * Simplify header, since we currently do not need pre/post user-copy
+>   distinction.
+> * Make instrument_copy_{to,from}_user function arguments match
+>   copy_{to,from}_user and update rationale in commit message.
+> ---
+>  include/linux/instrumented.h | 109 +++++++++++++++++++++++++++++++++++
+>  1 file changed, 109 insertions(+)
+>  create mode 100644 include/linux/instrumented.h
+>
+> diff --git a/include/linux/instrumented.h b/include/linux/instrumented.h
+> new file mode 100644
+> index 000000000000..43e6ea591975
+> --- /dev/null
+> +++ b/include/linux/instrumented.h
+> @@ -0,0 +1,109 @@
+> +/* SPDX-License-Identifier: GPL-2.0 */
+> +
+> +/*
+> + * This header provides generic wrappers for memory access instrumentation that
+> + * the compiler cannot emit for: KASAN, KCSAN.
+> + */
+> +#ifndef _LINUX_INSTRUMENTED_H
+> +#define _LINUX_INSTRUMENTED_H
+> +
+> +#include <linux/compiler.h>
+> +#include <linux/kasan-checks.h>
+> +#include <linux/kcsan-checks.h>
+> +#include <linux/types.h>
+> +
+> +/**
+> + * instrument_read - instrument regular read access
+> + *
+> + * Instrument a regular read access. The instrumentation should be inserted
+> + * before the actual read happens.
+> + *
+> + * @ptr address of access
+> + * @size size of access
+> + */
+> +static __always_inline void instrument_read(const volatile void *v, size_t size)
+> +{
+> +       kasan_check_read(v, size);
+> +       kcsan_check_read(v, size);
+> +}
+> +
+> +/**
+> + * instrument_write - instrument regular write access
+> + *
+> + * Instrument a regular write access. The instrumentation should be inserted
+> + * before the actual write happens.
+> + *
+> + * @ptr address of access
+> + * @size size of access
+> + */
+> +static __always_inline void instrument_write(const volatile void *v, size_t size)
+> +{
+> +       kasan_check_write(v, size);
+> +       kcsan_check_write(v, size);
+> +}
+> +
+> +/**
+> + * instrument_atomic_read - instrument atomic read access
+> + *
+> + * Instrument an atomic read access. The instrumentation should be inserted
+> + * before the actual read happens.
+> + *
+> + * @ptr address of access
+> + * @size size of access
+> + */
+> +static __always_inline void instrument_atomic_read(const volatile void *v, size_t size)
+> +{
+> +       kasan_check_read(v, size);
+> +       kcsan_check_atomic_read(v, size);
+> +}
+> +
+> +/**
+> + * instrument_atomic_write - instrument atomic write access
+> + *
+> + * Instrument an atomic write access. The instrumentation should be inserted
+> + * before the actual write happens.
+> + *
+> + * @ptr address of access
+> + * @size size of access
+> + */
+> +static __always_inline void instrument_atomic_write(const volatile void *v, size_t size)
+> +{
+> +       kasan_check_write(v, size);
+> +       kcsan_check_atomic_write(v, size);
+> +}
+> +
+> +/**
+> + * instrument_copy_to_user - instrument reads of copy_to_user
+> + *
+> + * Instrument reads from kernel memory, that are due to copy_to_user (and
+> + * variants). The instrumentation must be inserted before the accesses.
+> + *
+> + * @to destination address
+> + * @from source address
+> + * @n number of bytes to copy
+> + */
+> +static __always_inline void
+> +instrument_copy_to_user(void __user *to, const void *from, unsigned long n)
+> +{
+> +       kasan_check_read(from, n);
+> +       kcsan_check_read(from, n);
+> +}
+> +
+> +/**
+> + * instrument_copy_from_user - instrument writes of copy_from_user
+> + *
+> + * Instrument writes to kernel memory, that are due to copy_from_user (and
+> + * variants). The instrumentation should be inserted before the accesses.
+> + *
+> + * @to destination address
+> + * @from source address
+> + * @n number of bytes to copy
+> + */
+> +static __always_inline void
+> +instrument_copy_from_user(const void *to, const void __user *from, unsigned long n)
+> +{
+> +       kasan_check_write(to, n);
+> +       kcsan_check_write(to, n);
+> +}
+> +
+> +#endif /* _LINUX_INSTRUMENTED_H */
+> --
+> 2.25.0.341.g760bfbb309-goog
+>
+> --
+> You received this message because you are subscribed to the Google Groups "kasan-dev" group.
+> To unsubscribe from this group and stop receiving emails from it, send an email to kasan-dev+unsubscribe@googlegroups.com.
+> To view this discussion on the web visit https://groups.google.com/d/msgid/kasan-dev/20200121160512.70887-1-elver%40google.com.
