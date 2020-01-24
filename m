@@ -2,127 +2,96 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A92AB148E84
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Jan 2020 20:13:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 02835148E94
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Jan 2020 20:17:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392240AbgAXTNN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 24 Jan 2020 14:13:13 -0500
-Received: from mail-ed1-f68.google.com ([209.85.208.68]:34383 "EHLO
-        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389171AbgAXTNM (ORCPT
+        id S2390409AbgAXTRB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 24 Jan 2020 14:17:01 -0500
+Received: from mail-wm1-f46.google.com ([209.85.128.46]:50874 "EHLO
+        mail-wm1-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387683AbgAXTRB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 24 Jan 2020 14:13:12 -0500
-Received: by mail-ed1-f68.google.com with SMTP id r18so3640881edl.1
-        for <linux-kernel@vger.kernel.org>; Fri, 24 Jan 2020 11:13:11 -0800 (PST)
+        Fri, 24 Jan 2020 14:17:01 -0500
+Received: by mail-wm1-f46.google.com with SMTP id a5so541059wmb.0;
+        Fri, 24 Jan 2020 11:16:59 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
+        d=gmail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=pnshRx+yfJVL9rNOvojgRi7jn44CYdJG0KWpqXP4zPQ=;
-        b=Oa94JIt5CKbuWnjPvbSVRCesgEW9ckySl83l9PgWm734fJW2xI/a4R8GiX9sQUosa1
-         Akh31uBTvqxq9EtfFrLdlrP22Gb/k0LLypBBgu4QLVVmy1Sno1nqxI3UGREXMzQJ3iuA
-         uVdVM2EQcNmv0jpSDIirPfZTQtMxmJlqGVNURO5Am9MTCoIYQAdLsmgDF/AdJXffDjus
-         g8w6Lcvt6OF+QAGF9Hh4i/G+26lg3r/5tJsdyZMWtsPv4RhHens0kamZFmK4WvQPOE1b
-         v0vhWkodgp9ZhxSCd1ioRsK7ihL8j7uttGuCiAPjemwZ01Iye+9skD5XcZrscNagWcsa
-         Uh3w==
+        bh=NVgy0lYIavDAsk5TdKFdtxlyaFip4mNRyTLE6SI9Fts=;
+        b=gl9/rgpsy8UyFX7QflBl7HRfvvG9waAhSa2dwgafLLG1xX7317546Kqz0ashea/4jw
+         B4aF8fiAt98Oh2ju1g7cN76Xad3pmYy3g34krm2TI6gzO2JExn8pNAOdqJ0D9QGnDJtV
+         r1a558CBRM66lgx6RREyHqdmfRGFPUBCCwZae0b70nFJBENHMwJqK6PlccDyuDqKRZLG
+         BRtB+2y+KsI710VbZSQhr6f4H8VIz2Sk8y9ispGobD0lmpavjfi0324f9yhClerOeqJL
+         LeX4+KFGlRyrJL552GrWfZ6i4am40XjH/eitVKJ3qVabXSXGNimWkIykuVsSWl8kwLu/
+         lyIA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=pnshRx+yfJVL9rNOvojgRi7jn44CYdJG0KWpqXP4zPQ=;
-        b=s+E3BgPjjEQ6+Htx5o6kcIxAKvGkDPZO8uFhaYlbtwhpT8WGV8UYnPKZljGpMNaH6L
-         ACD85qJPnBYR1wbIIggtE+kOFmPGoOLCnK6kYw1tIAlFKpZSMaUUoR14XHLp5UNVPDG2
-         jRBqU67y3RoPqwuL+jZOYFQzv+rHrjTx+4DcYZMoLTmXUDzIdZNTd5DxPULsO5j54lSK
-         kH6yvQ0ivjlweFH3+PRWFN9lz9QRr92JOVpjZR8X7xl91usLGxh4op063hpLeXCALEpa
-         V88r5pPD5d5Y4vqnh9+JAZYHcl2rH5MWE9z4Ee91GqmmXmjH4eRFJhlSu3h4gvn6jcRp
-         PI8A==
-X-Gm-Message-State: APjAAAUoI6nlNEe4l5AihOOsomsQ9hueqSOJzHrJSHTqA3E9z2npWB08
-        +1vckE6+E51gDXQTRfF/eYWxpIyGdsNKglxLubnmFw==
-X-Google-Smtp-Source: APXvYqzGpON1aI0Lf+lLvktGOy8Ophajy9UFe0tazZYf/p9pmaYSV4PgsqxnDQnVSimg2RY8Ba3anholFuufP5c/sMI=
-X-Received: by 2002:a50:ef1a:: with SMTP id m26mr3881337eds.289.1579893190505;
- Fri, 24 Jan 2020 11:13:10 -0800 (PST)
+        bh=NVgy0lYIavDAsk5TdKFdtxlyaFip4mNRyTLE6SI9Fts=;
+        b=PkcCp1zh/WNPbmcXH4b18ioFjbk6R4yPq/kqPbeuAJVUntIawaA2nH9KBZmZfmAgZP
+         FCrCa8BOqiaJNFkHu36bx1ibRh0zS91bKoTu0MxFxAtOY/kdmn34J21EAkPppaDVFNeF
+         SZoOPINUtkjQbaZwMis/xqz/WHCwm10nAYnKospdA1Boga5sqZHY7EG3bre6F9wV6bta
+         BZYibSz4agwA5F7gTYm7rwnhLS72r7h75IV07pS9WFbptbp5lc+5Id1YY5jIOUDiEyXS
+         Qwdkni2GBG5PDPMBYc7aF98wfwYOT5lsJTw8i4skS3e5Bew4wjzTaMm5rdFp4b+fQlYU
+         SDEw==
+X-Gm-Message-State: APjAAAUzqYYTDm16ioCCrOKiAVNn15wNsCzMNT57jeN9R3V6/4cA8sj5
+        WYPMPHRx68t0Z1B13R+3ndkZmFRSGDVmxqXcelg=
+X-Google-Smtp-Source: APXvYqwIaMBIgp9u4RBMFgNgjHfrbGRQFCndgTcnJptndGTaMsCl9tAyrSKd5hD8JMWls3/97IqKPZvNHLXBGL18K1Q=
+X-Received: by 2002:a1c:7205:: with SMTP id n5mr622251wmc.9.1579893419173;
+ Fri, 24 Jan 2020 11:16:59 -0800 (PST)
 MIME-Version: 1.0
-References: <20200124002811.228334-1-wvw@google.com> <20200124025238.jsf36n6w4rrn2ehc@e107158-lin>
- <20200124095125.GA121494@google.com> <849cc9f0-f4ae-f2b6-8449-f55697928cf5@arm.com>
-In-Reply-To: <849cc9f0-f4ae-f2b6-8449-f55697928cf5@arm.com>
-From:   Wei Wang <wvw@google.com>
-Date:   Fri, 24 Jan 2020 11:12:58 -0800
-Message-ID: <CAGXk5yri3DjjDvJMaCiwcYkz7gmq2Pae4HHpfHf7zRV93kNsfQ@mail.gmail.com>
-Subject: Re: [PATCH] [RFC] sched: restrict iowait boost for boosted task only
-To:     Valentin Schneider <valentin.schneider@arm.com>
-Cc:     Quentin Perret <qperret@google.com>,
-        Qais Yousef <qais.yousef@arm.com>,
-        Wei Wang <wei.vince.wang@gmail.com>, dietmar.eggemann@arm.com,
-        chris.redpath@arm.com, Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
-        LKML <linux-kernel@vger.kernel.org>
+References: <20200121105711.zzeeolydlivqnik7@ws.net.home>
+In-Reply-To: <20200121105711.zzeeolydlivqnik7@ws.net.home>
+From:   Carlos Santos <unixmania@gmail.com>
+Date:   Fri, 24 Jan 2020 16:16:47 -0300
+Message-ID: <CAJ4jsadjw3xXbrqjsB9cwv_iwodfHWJ4CnhD4oXW_Lvwh0W8XQ@mail.gmail.com>
+Subject: Re: [ANNOUNCE] util-linux v2.35
+To:     Karel Zak <kzak@redhat.com>
+Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        util-linux@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jan 24, 2020 at 3:01 AM Valentin Schneider
-<valentin.schneider@arm.com> wrote:
->
-> On 24/01/2020 09:51, Quentin Perret wrote:
-> >>> +static inline bool iowait_boosted(struct task_struct *p)
-> >>> +{
-> >>> +   return p->in_iowait && uclamp_eff_value(p, UCLAMP_MIN) > 0;
-> >>
-> >> I think this is overloading the usage of util clamp. You're basically using
-> >> cpu.uclamp.min to temporarily switch iowait boost on/off.
-> >>
-> >> Isn't it better to add a new cgroup attribute to toggle this feature?
-> >>
-> >> The problem does seem generic enough and could benefit other battery-powered
-> >> devices outside of the Android world. I don't think the dependency on uclamp &&
-> >> energy model are necessary to solve this.
-> >
-> > I think using uclamp is not a bad idea here, but perhaps we could do
-> > things differently. As of today the iowait boost escapes the clamping
-> > mechanism, so one option would be to change that. That would let us set
-> > a low max clamp in the 'background' cgroup, which in turns would limit
-> > the frequency request for those tasks even if they're IO-intensive.
-> >
+Hi Karel,
 
-Something we see e.g. is f2fs's gc thread, and my thought on this is
-instead of chasing everything down, it is a lot easier for us to only
-boost what we know in foreground (and on Android we sort of have that
-information on hand from framework).
-I was hesitant to introduce a new switch ( e.g. Android's older EAS
-kernel prefer_idle toggle ) but would be happy to do that if someone
-supports that idea.
+On Tue, Jan 21, 2020 at 7:59 AM Karel Zak <kzak@redhat.com> wrote:
+>
+>
+> The util-linux release v2.35 is available at
+>
+>   http://www.kernel.org/pub/linux/utils/util-linux/v2.35/
+>
+> Feedback and bug reports, as always, are welcomed.
+>
+>   Karel
+>
 
->
->
->
-> So I'm pretty sure we *do* want tasks with the default clamps to get iowait
-> boost'd. What we don't want are background tasks driving up the frequency,
-> and that should be via uclamp.max (as Quentin is suggesting) rather than
-> uclamp.min (as is suggested in the patch).
->
-> Now, whether that is overloading the usage of uclamp... I'm not sure.
-> One of the argument for uclamp was actually frequency selection, so if
-> we just make iowait boost respect that, IOW not boost further than
-> uclamp.max (which is a bit better than a simple on/off switch), that
-> wouldn't be too crazy I think.
->
->
-> > That'll have to be done at the RQ level, but figuring out what's the
-> > current max clamp on the rq should be doable from sugov I think.
-> >
-> > Wei: would that work for your use case ?
-> >
-> > Also, the iowait boost really should be per-task and not per-cpu, so it
-> > can be taken into account during wake-up balance on big.LITTLE. That
-> > might also help on SMP if a task doing a lot of IO migrates, as the
-> > boost would migrate with it. But that's perhaps for later ...
-> >
-> > Thanks,
-> > Quentin
-> >
+That's great. Thanks!
+
+--8<--
+> Changes between v2.34 and v2.35
+> -------------------------------
+--8<--
+> docs:
+>    - Fix adjtime documentation  [Pierre Labastie]
+>    - add GPLv3 text  [Karel Zak]
+
+That's a problem. It makes hwclock hard to include in embedded systems
+due to the GPLv3 restrictions.
+
+I noticed that it comes due to sys-utils/hwclock-parse-date.y, which
+was taken from gnulib. Would it be possible to take the file from an
+previous version of gnulib that was still under GPLv2?
+
+An alternative approach would be porting a similar code using a more
+liberal license, e.g. BSD.
+
+What do you think?
+
+-- 
+Carlos Santos <unixmania@gmail.com>
