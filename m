@@ -2,40 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B80B9148E55
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Jan 2020 20:12:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 25FF9148E4F
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Jan 2020 20:12:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391955AbgAXTLg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 24 Jan 2020 14:11:36 -0500
-Received: from Galois.linutronix.de ([193.142.43.55]:43080 "EHLO
+        id S2404129AbgAXTL3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 24 Jan 2020 14:11:29 -0500
+Received: from Galois.linutronix.de ([193.142.43.55]:43065 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2404082AbgAXTL2 (ORCPT
+        with ESMTP id S2403988AbgAXTLZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 24 Jan 2020 14:11:28 -0500
+        Fri, 24 Jan 2020 14:11:25 -0500
 Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
         by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
         (Exim 4.80)
         (envelope-from <tip-bot2@linutronix.de>)
-        id 1iv4MT-0007hZ-Ld; Fri, 24 Jan 2020 20:11:21 +0100
+        id 1iv4MS-0007f4-N0; Fri, 24 Jan 2020 20:11:20 +0100
 Received: from [127.0.1.1] (localhost [IPv6:::1])
-        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 08EE51C1A6D;
-        Fri, 24 Jan 2020 20:11:13 +0100 (CET)
+        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 3F29E1C1A60;
+        Fri, 24 Jan 2020 20:11:12 +0100 (CET)
 Date:   Fri, 24 Jan 2020 19:11:12 -0000
-From:   "tip-bot2 for Yash Shah" <tip-bot2@linutronix.de>
+From:   "tip-bot2 for John Garry" <tip-bot2@linutronix.de>
 Reply-to: linux-kernel@vger.kernel.org
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip: irq/core] gpio/sifive: Add GPIO driver for SiFive SoCs
-Cc:     "Wesley W. Terpstra" <wesley@sifive.com>,
-        Atish Patra <atish.patra@wdc.com>,
-        Yash Shah <yash.shah@sifive.com>,
-        Marc Zyngier <maz@kernel.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Linus Walleij <linus.walleij@linaro.org>, x86 <x86@kernel.org>,
+Subject: [tip: irq/core] irqchip/mbigen: Set driver .suppress_bind_attrs to
+ avoid remove problems
+Cc:     John Garry <john.garry@huawei.com>, Marc Zyngier <maz@kernel.org>,
+        Hanjun Guo <guohanjun@huawei.com>, x86 <x86@kernel.org>,
         LKML <linux-kernel@vger.kernel.org>
-In-Reply-To: <1575976274-13487-6-git-send-email-yash.shah@sifive.com>
-References: <1575976274-13487-6-git-send-email-yash.shah@sifive.com>
+In-Reply-To: <1579196323-180137-1-git-send-email-john.garry@huawei.com>
+References: <1579196323-180137-1-git-send-email-john.garry@huawei.com>
 MIME-Version: 1.0
-Message-ID: <157989307283.396.8643506329199494285.tip-bot2@tip-bot2>
+Message-ID: <157989307202.396.10033194386520544016.tip-bot2@tip-bot2>
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot2.linutronix.de>
 Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
@@ -51,319 +48,125 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The following commit has been merged into the irq/core branch of tip:
 
-Commit-ID:     96868dce644d002383f6d5eb575a6ce3c8779f39
-Gitweb:        https://git.kernel.org/tip/96868dce644d002383f6d5eb575a6ce3c8779f39
-Author:        Yash Shah <yash.shah@sifive.com>
-AuthorDate:    Tue, 10 Dec 2019 16:41:13 +05:30
+Commit-ID:     d6152e6ec9e2171280436f7b31a571509b9287e1
+Gitweb:        https://git.kernel.org/tip/d6152e6ec9e2171280436f7b31a571509b9287e1
+Author:        John Garry <john.garry@huawei.com>
+AuthorDate:    Fri, 17 Jan 2020 01:38:43 +08:00
 Committer:     Marc Zyngier <maz@kernel.org>
-CommitterDate: Mon, 20 Jan 2020 19:10:03 
+CommitterDate: Mon, 20 Jan 2020 19:10:04 
 
-gpio/sifive: Add GPIO driver for SiFive SoCs
+irqchip/mbigen: Set driver .suppress_bind_attrs to avoid remove problems
 
-Adds the GPIO driver for SiFive RISC-V SoCs.
+The following crash can be seen for setting
+CONFIG_DEBUG_TEST_DRIVER_REMOVE=y for DT FW (which some people still use):
 
-Signed-off-by: Wesley W. Terpstra <wesley@sifive.com>
-[Atish: Various fixes and code cleanup]
-Signed-off-by: Atish Patra <atish.patra@wdc.com>
-Signed-off-by: Yash Shah <yash.shah@sifive.com>
+Hisilicon MBIGEN-V2 60080000.interrupt-controller: Failed to create mbi-gen irqdomain
+Hisilicon MBIGEN-V2: probe of 60080000.interrupt-controller failed with error -12
+
+[...]
+
+Unable to handle kernel paging request at virtual address 0000000000005008
+ Mem abort info:
+   ESR = 0x96000004
+   EC = 0x25: DABT (current EL), IL = 32 bits
+   SET = 0, FnV = 0
+   EA = 0, S1PTW = 0
+ Data abort info:
+   ISV = 0, ISS = 0x00000004
+   CM = 0, WnR = 0
+ user pgtable: 4k pages, 48-bit VAs, pgdp=0000041fb9990000
+ [0000000000005008] pgd=0000000000000000
+ Internal error: Oops: 96000004 [#1] PREEMPT SMP
+ Modules linked in:
+ CPU: 7 PID: 1 Comm: swapper/0 Not tainted 5.5.0-rc6-00002-g3fc42638a506-dirty #1622
+ Hardware name: Huawei Taishan 2280 /D05, BIOS Hisilicon D05 IT21 Nemo 2.0 RC0 04/18/2018
+ pstate: 40000085 (nZcv daIf -PAN -UAO)
+ pc : mbigen_set_type+0x38/0x60
+ lr : __irq_set_trigger+0x6c/0x188
+ sp : ffff800014b4b400
+ x29: ffff800014b4b400 x28: 0000000000000007
+ x27: 0000000000000000 x26: 0000000000000000
+ x25: ffff041fd83bd0d4 x24: ffff041fd83bd188
+ x23: 0000000000000000 x22: ffff80001193ce00
+ x21: 0000000000000004 x20: 0000000000000000
+ x19: ffff041fd83bd000 x18: ffffffffffffffff
+ x17: 0000000000000000 x16: 0000000000000000
+ x15: ffff8000119098c8 x14: ffff041fb94ec91c
+ x13: ffff041fb94ec1a1 x12: 0000000000000030
+ x11: 0101010101010101 x10: 0000000000000040
+ x9 : 0000000000000000 x8 : ffff041fb98c6680
+ x7 : ffff800014b4b380 x6 : ffff041fd81636c8
+ x5 : 0000000000000000 x4 : 000000000000025f
+ x3 : 0000000000005000 x2 : 0000000000005008
+ x1 : 0000000000000004 x0 : 0000000080000000
+ Call trace:
+  mbigen_set_type+0x38/0x60
+  __setup_irq+0x744/0x900
+  request_threaded_irq+0xe0/0x198
+  pcie_pme_probe+0x98/0x118
+  pcie_port_probe_service+0x38/0x78
+  really_probe+0xa0/0x3e0
+  driver_probe_device+0x58/0x100
+  __device_attach_driver+0x90/0xb0
+  bus_for_each_drv+0x64/0xc8
+  __device_attach+0xd8/0x138
+  device_initial_probe+0x10/0x18
+  bus_probe_device+0x90/0x98
+  device_add+0x4c4/0x770
+  device_register+0x1c/0x28
+  pcie_port_device_register+0x1e4/0x4f0
+  pcie_portdrv_probe+0x34/0xd8
+  local_pci_probe+0x3c/0xa0
+  pci_device_probe+0x128/0x1c0
+  really_probe+0xa0/0x3e0
+  driver_probe_device+0x58/0x100
+  __device_attach_driver+0x90/0xb0
+  bus_for_each_drv+0x64/0xc8
+  __device_attach+0xd8/0x138
+  device_attach+0x10/0x18
+  pci_bus_add_device+0x4c/0xb8
+  pci_bus_add_devices+0x38/0x88
+  pci_host_probe+0x3c/0xc0
+  pci_host_common_probe+0xf0/0x208
+  hisi_pcie_almost_ecam_probe+0x24/0x30
+  platform_drv_probe+0x50/0xa0
+  really_probe+0xa0/0x3e0
+  driver_probe_device+0x58/0x100
+  device_driver_attach+0x6c/0x90
+  __driver_attach+0x84/0xc8
+  bus_for_each_dev+0x74/0xc8
+  driver_attach+0x20/0x28
+  bus_add_driver+0x148/0x1f0
+  driver_register+0x60/0x110
+  __platform_driver_register+0x40/0x48
+  hisi_pcie_almost_ecam_driver_init+0x1c/0x24
+
+The specific problem here is that the mbigen driver real probe has failed
+as the mbigen_of_create_domain()->of_platform_device_create() call fails,
+the reason for that being that we never destroyed the platform device
+created during the remove test dry run and there is some conflict.
+
+Since we generally would never want to unbind this driver, and to save
+adding a driver tear down path for that, just set the driver
+.suppress_bind_attrs member to avoid this possibility.
+
+Signed-off-by: John Garry <john.garry@huawei.com>
 Signed-off-by: Marc Zyngier <maz@kernel.org>
-Reviewed-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
-Link: https://lore.kernel.org/r/1575976274-13487-6-git-send-email-yash.shah@sifive.com
+Reviewed-by: Hanjun Guo <guohanjun@huawei.com>
+Link: https://lore.kernel.org/r/1579196323-180137-1-git-send-email-john.garry@huawei.com
 ---
- drivers/gpio/Kconfig       |   9 +-
- drivers/gpio/Makefile      |   1 +-
- drivers/gpio/gpio-sifive.c | 252 ++++++++++++++++++++++++++++++++++++-
- 3 files changed, 262 insertions(+)
- create mode 100644 drivers/gpio/gpio-sifive.c
+ drivers/irqchip/irq-mbigen.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
-index 6ab25fe..809dd54 100644
---- a/drivers/gpio/Kconfig
-+++ b/drivers/gpio/Kconfig
-@@ -479,6 +479,15 @@ config GPIO_SAMA5D2_PIOBU
- 	  The difference from regular GPIOs is that they
- 	  maintain their value during backup/self-refresh.
- 
-+config GPIO_SIFIVE
-+	bool "SiFive GPIO support"
-+	depends on OF_GPIO && IRQ_DOMAIN_HIERARCHY
-+	select GPIO_GENERIC
-+	select GPIOLIB_IRQCHIP
-+	select REGMAP_MMIO
-+	help
-+	  Say yes here to support the GPIO device on SiFive SoCs.
-+
- config GPIO_SIOX
- 	tristate "SIOX GPIO support"
- 	depends on SIOX
-diff --git a/drivers/gpio/Makefile b/drivers/gpio/Makefile
-index 34eb8b2..11eeeeb 100644
---- a/drivers/gpio/Makefile
-+++ b/drivers/gpio/Makefile
-@@ -124,6 +124,7 @@ obj-$(CONFIG_ARCH_SA1100)		+= gpio-sa1100.o
- obj-$(CONFIG_GPIO_SAMA5D2_PIOBU)	+= gpio-sama5d2-piobu.o
- obj-$(CONFIG_GPIO_SCH311X)		+= gpio-sch311x.o
- obj-$(CONFIG_GPIO_SCH)			+= gpio-sch.o
-+obj-$(CONFIG_GPIO_SIFIVE)		+= gpio-sifive.o
- obj-$(CONFIG_GPIO_SIOX)			+= gpio-siox.o
- obj-$(CONFIG_GPIO_SODAVILLE)		+= gpio-sodaville.o
- obj-$(CONFIG_GPIO_SPEAR_SPICS)		+= gpio-spear-spics.o
-diff --git a/drivers/gpio/gpio-sifive.c b/drivers/gpio/gpio-sifive.c
-new file mode 100644
-index 0000000..147a1bd
---- /dev/null
-+++ b/drivers/gpio/gpio-sifive.c
-@@ -0,0 +1,252 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Copyright (C) 2019 SiFive
-+ */
-+
-+#include <linux/bitops.h>
-+#include <linux/device.h>
-+#include <linux/errno.h>
-+#include <linux/of_irq.h>
-+#include <linux/gpio/driver.h>
-+#include <linux/init.h>
-+#include <linux/platform_device.h>
-+#include <linux/slab.h>
-+#include <linux/spinlock.h>
-+#include <linux/regmap.h>
-+
-+#define SIFIVE_GPIO_INPUT_VAL	0x00
-+#define SIFIVE_GPIO_INPUT_EN	0x04
-+#define SIFIVE_GPIO_OUTPUT_EN	0x08
-+#define SIFIVE_GPIO_OUTPUT_VAL	0x0C
-+#define SIFIVE_GPIO_RISE_IE	0x18
-+#define SIFIVE_GPIO_RISE_IP	0x1C
-+#define SIFIVE_GPIO_FALL_IE	0x20
-+#define SIFIVE_GPIO_FALL_IP	0x24
-+#define SIFIVE_GPIO_HIGH_IE	0x28
-+#define SIFIVE_GPIO_HIGH_IP	0x2C
-+#define SIFIVE_GPIO_LOW_IE	0x30
-+#define SIFIVE_GPIO_LOW_IP	0x34
-+#define SIFIVE_GPIO_OUTPUT_XOR	0x40
-+
-+#define SIFIVE_GPIO_MAX		32
-+#define SIFIVE_GPIO_IRQ_OFFSET	7
-+
-+struct sifive_gpio {
-+	void __iomem		*base;
-+	struct gpio_chip	gc;
-+	struct regmap		*regs;
-+	u32			irq_state;
-+	unsigned int		trigger[SIFIVE_GPIO_MAX];
-+	unsigned int		irq_parent[SIFIVE_GPIO_MAX];
-+};
-+
-+static void sifive_gpio_set_ie(struct sifive_gpio *chip, unsigned int offset)
-+{
-+	unsigned long flags;
-+	unsigned int trigger;
-+
-+	spin_lock_irqsave(&chip->gc.bgpio_lock, flags);
-+	trigger = (chip->irq_state & BIT(offset)) ? chip->trigger[offset] : 0;
-+	regmap_update_bits(chip->regs, SIFIVE_GPIO_RISE_IE, BIT(offset),
-+			   (trigger & IRQ_TYPE_EDGE_RISING) ? BIT(offset) : 0);
-+	regmap_update_bits(chip->regs, SIFIVE_GPIO_FALL_IE, BIT(offset),
-+			   (trigger & IRQ_TYPE_EDGE_FALLING) ? BIT(offset) : 0);
-+	regmap_update_bits(chip->regs, SIFIVE_GPIO_HIGH_IE, BIT(offset),
-+			   (trigger & IRQ_TYPE_LEVEL_HIGH) ? BIT(offset) : 0);
-+	regmap_update_bits(chip->regs, SIFIVE_GPIO_LOW_IE, BIT(offset),
-+			   (trigger & IRQ_TYPE_LEVEL_LOW) ? BIT(offset) : 0);
-+	spin_unlock_irqrestore(&chip->gc.bgpio_lock, flags);
-+}
-+
-+static int sifive_gpio_irq_set_type(struct irq_data *d, unsigned int trigger)
-+{
-+	struct gpio_chip *gc = irq_data_get_irq_chip_data(d);
-+	struct sifive_gpio *chip = gpiochip_get_data(gc);
-+	int offset = irqd_to_hwirq(d);
-+
-+	if (offset < 0 || offset >= gc->ngpio)
-+		return -EINVAL;
-+
-+	chip->trigger[offset] = trigger;
-+	sifive_gpio_set_ie(chip, offset);
-+	return 0;
-+}
-+
-+static void sifive_gpio_irq_enable(struct irq_data *d)
-+{
-+	struct gpio_chip *gc = irq_data_get_irq_chip_data(d);
-+	struct sifive_gpio *chip = gpiochip_get_data(gc);
-+	int offset = irqd_to_hwirq(d) % SIFIVE_GPIO_MAX;
-+	u32 bit = BIT(offset);
-+	unsigned long flags;
-+
-+	irq_chip_enable_parent(d);
-+
-+	/* Switch to input */
-+	gc->direction_input(gc, offset);
-+
-+	spin_lock_irqsave(&gc->bgpio_lock, flags);
-+	/* Clear any sticky pending interrupts */
-+	regmap_write(chip->regs, SIFIVE_GPIO_RISE_IP, bit);
-+	regmap_write(chip->regs, SIFIVE_GPIO_FALL_IP, bit);
-+	regmap_write(chip->regs, SIFIVE_GPIO_HIGH_IP, bit);
-+	regmap_write(chip->regs, SIFIVE_GPIO_LOW_IP, bit);
-+	spin_unlock_irqrestore(&gc->bgpio_lock, flags);
-+
-+	/* Enable interrupts */
-+	assign_bit(offset, (unsigned long *)&chip->irq_state, 1);
-+	sifive_gpio_set_ie(chip, offset);
-+}
-+
-+static void sifive_gpio_irq_disable(struct irq_data *d)
-+{
-+	struct gpio_chip *gc = irq_data_get_irq_chip_data(d);
-+	struct sifive_gpio *chip = gpiochip_get_data(gc);
-+	int offset = irqd_to_hwirq(d) % SIFIVE_GPIO_MAX;
-+
-+	assign_bit(offset, (unsigned long *)&chip->irq_state, 0);
-+	sifive_gpio_set_ie(chip, offset);
-+	irq_chip_disable_parent(d);
-+}
-+
-+static void sifive_gpio_irq_eoi(struct irq_data *d)
-+{
-+	struct gpio_chip *gc = irq_data_get_irq_chip_data(d);
-+	struct sifive_gpio *chip = gpiochip_get_data(gc);
-+	int offset = irqd_to_hwirq(d) % SIFIVE_GPIO_MAX;
-+	u32 bit = BIT(offset);
-+	unsigned long flags;
-+
-+	spin_lock_irqsave(&gc->bgpio_lock, flags);
-+	/* Clear all pending interrupts */
-+	regmap_write(chip->regs, SIFIVE_GPIO_RISE_IP, bit);
-+	regmap_write(chip->regs, SIFIVE_GPIO_FALL_IP, bit);
-+	regmap_write(chip->regs, SIFIVE_GPIO_HIGH_IP, bit);
-+	regmap_write(chip->regs, SIFIVE_GPIO_LOW_IP, bit);
-+	spin_unlock_irqrestore(&gc->bgpio_lock, flags);
-+
-+	irq_chip_eoi_parent(d);
-+}
-+
-+static struct irq_chip sifive_gpio_irqchip = {
-+	.name		= "sifive-gpio",
-+	.irq_set_type	= sifive_gpio_irq_set_type,
-+	.irq_mask	= irq_chip_mask_parent,
-+	.irq_unmask	= irq_chip_unmask_parent,
-+	.irq_enable	= sifive_gpio_irq_enable,
-+	.irq_disable	= sifive_gpio_irq_disable,
-+	.irq_eoi	= sifive_gpio_irq_eoi,
-+};
-+
-+static int sifive_gpio_child_to_parent_hwirq(struct gpio_chip *gc,
-+					     unsigned int child,
-+					     unsigned int child_type,
-+					     unsigned int *parent,
-+					     unsigned int *parent_type)
-+{
-+	*parent_type = IRQ_TYPE_NONE;
-+	*parent = child + SIFIVE_GPIO_IRQ_OFFSET;
-+	return 0;
-+}
-+
-+static const struct regmap_config sifive_gpio_regmap_config = {
-+	.reg_bits = 32,
-+	.reg_stride = 4,
-+	.val_bits = 32,
-+	.fast_io = true,
-+	.disable_locking = true,
-+};
-+
-+static int sifive_gpio_probe(struct platform_device *pdev)
-+{
-+	struct device *dev = &pdev->dev;
-+	struct device_node *node = pdev->dev.of_node;
-+	struct device_node *irq_parent;
-+	struct irq_domain *parent;
-+	struct gpio_irq_chip *girq;
-+	struct sifive_gpio *chip;
-+	int ret, ngpio;
-+
-+	chip = devm_kzalloc(dev, sizeof(*chip), GFP_KERNEL);
-+	if (!chip)
-+		return -ENOMEM;
-+
-+	chip->base = devm_platform_ioremap_resource(pdev, 0);
-+	if (IS_ERR(chip->base)) {
-+		dev_err(dev, "failed to allocate device memory\n");
-+		return PTR_ERR(chip->base);
-+	}
-+
-+	chip->regs = devm_regmap_init_mmio(dev, chip->base,
-+					   &sifive_gpio_regmap_config);
-+	if (IS_ERR(chip->regs))
-+		return PTR_ERR(chip->regs);
-+
-+	ngpio = of_irq_count(node);
-+	if (ngpio >= SIFIVE_GPIO_MAX) {
-+		dev_err(dev, "Too many GPIO interrupts (max=%d)\n",
-+			SIFIVE_GPIO_MAX);
-+		return -ENXIO;
-+	}
-+
-+	irq_parent = of_irq_find_parent(node);
-+	if (!irq_parent) {
-+		dev_err(dev, "no IRQ parent node\n");
-+		return -ENODEV;
-+	}
-+	parent = irq_find_host(irq_parent);
-+	if (!parent) {
-+		dev_err(dev, "no IRQ parent domain\n");
-+		return -ENODEV;
-+	}
-+
-+	ret = bgpio_init(&chip->gc, dev, 4,
-+			 chip->base + SIFIVE_GPIO_INPUT_VAL,
-+			 chip->base + SIFIVE_GPIO_OUTPUT_VAL,
-+			 NULL,
-+			 chip->base + SIFIVE_GPIO_OUTPUT_EN,
-+			 chip->base + SIFIVE_GPIO_INPUT_EN,
-+			 0);
-+	if (ret) {
-+		dev_err(dev, "unable to init generic GPIO\n");
-+		return ret;
-+	}
-+
-+	/* Disable all GPIO interrupts before enabling parent interrupts */
-+	regmap_write(chip->regs, SIFIVE_GPIO_RISE_IE, 0);
-+	regmap_write(chip->regs, SIFIVE_GPIO_FALL_IE, 0);
-+	regmap_write(chip->regs, SIFIVE_GPIO_HIGH_IE, 0);
-+	regmap_write(chip->regs, SIFIVE_GPIO_LOW_IE, 0);
-+	chip->irq_state = 0;
-+
-+	chip->gc.base = -1;
-+	chip->gc.ngpio = ngpio;
-+	chip->gc.label = dev_name(dev);
-+	chip->gc.parent = dev;
-+	chip->gc.owner = THIS_MODULE;
-+	girq = &chip->gc.irq;
-+	girq->chip = &sifive_gpio_irqchip;
-+	girq->fwnode = of_node_to_fwnode(node);
-+	girq->parent_domain = parent;
-+	girq->child_to_parent_hwirq = sifive_gpio_child_to_parent_hwirq;
-+	girq->handler = handle_bad_irq;
-+	girq->default_type = IRQ_TYPE_NONE;
-+
-+	platform_set_drvdata(pdev, chip);
-+	return gpiochip_add_data(&chip->gc, chip);
-+}
-+
-+static const struct of_device_id sifive_gpio_match[] = {
-+	{ .compatible = "sifive,gpio0" },
-+	{ .compatible = "sifive,fu540-c000-gpio" },
-+	{ },
-+};
-+
-+static struct platform_driver sifive_gpio_driver = {
-+	.probe		= sifive_gpio_probe,
-+	.driver = {
-+		.name	= "sifive_gpio",
-+		.of_match_table = of_match_ptr(sifive_gpio_match),
-+	},
-+};
-+builtin_platform_driver(sifive_gpio_driver)
+diff --git a/drivers/irqchip/irq-mbigen.c b/drivers/irqchip/irq-mbigen.c
+index 3f09f65..6b566bb 100644
+--- a/drivers/irqchip/irq-mbigen.c
++++ b/drivers/irqchip/irq-mbigen.c
+@@ -374,6 +374,7 @@ static struct platform_driver mbigen_platform_driver = {
+ 		.name		= "Hisilicon MBIGEN-V2",
+ 		.of_match_table	= mbigen_of_match,
+ 		.acpi_match_table = ACPI_PTR(mbigen_acpi_match),
++		.suppress_bind_attrs = true,
+ 	},
+ 	.probe			= mbigen_device_probe,
+ };
