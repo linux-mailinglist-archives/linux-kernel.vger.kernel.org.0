@@ -2,144 +2,79 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6BD18148237
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Jan 2020 12:26:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A22E0148225
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Jan 2020 12:26:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2403911AbgAXL0K (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 24 Jan 2020 06:26:10 -0500
-Received: from mail-vs1-f67.google.com ([209.85.217.67]:35366 "EHLO
-        mail-vs1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2403902AbgAXL0H (ORCPT
+        id S2391521AbgAXLZk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 24 Jan 2020 06:25:40 -0500
+Received: from mail1.bemta25.messagelabs.com ([195.245.230.4]:41093 "EHLO
+        mail1.bemta25.messagelabs.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S2391388AbgAXLZe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 24 Jan 2020 06:26:07 -0500
-Received: by mail-vs1-f67.google.com with SMTP id x123so996242vsc.2
-        for <linux-kernel@vger.kernel.org>; Fri, 24 Jan 2020 03:26:06 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=qOVhDHhFnWlF9FUDYt4fHzJxv54r3t+l/PCp99DTE8g=;
-        b=NYKCSRmcwL0rUYuSrq1VwqQIZNkH8SN4ZZ5A3TVgdm0R/hzjxs4JbX4+0Xo1fPtoEK
-         Boro/o30ULd+1byBxjrU4znPuo8TBltkqrjDBAyQPY5P64Cm6yEqQsW9rdt/FiIivoge
-         xNiLEFsa+a+xuUZKanzlEL9L4mq7FBszDsnVxA0NHy/bbQ1ledvMcfTbS7Cx1Ie8xYhd
-         xywqDQPVluykgE5NIUtBJ4PZuMAVVt8C3VEt1J/fpG3rHwplTsZigeaYJAjhnnJWXv/w
-         o5chQJC0l067hVa3y5r6STGGstb17hwZbqJqG4+NMJjxHrMzOWP03vf6irmD5Wh9H6PO
-         u5lw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=qOVhDHhFnWlF9FUDYt4fHzJxv54r3t+l/PCp99DTE8g=;
-        b=cUp71k5iZU+twUZA57gUOgtFo3jOhkVCVQayvdBu+qhzZHRusGWpfrhQpuBLKeBUs7
-         G52TbFEa/jeiTMNXTPiXXkHTRLfhibVzmIuU1ZAx0qoKGCuSEbQqO1TW1vNt6Sd55oVt
-         HipNxNYmk087jMDLrRRiNo5xObRwLAUJCmCZRbGolw9VlXgi0BEzFahiUJvhez4Zslyu
-         mqUFq1W6EUj1xW2sgsCWI0FeXiEkAUEr0ow9ct1ItH1QMpslzWVupSDj1UZyuXAGtfP4
-         xk6Kh0MEkk+BLVGEhCex+aM5+vBMvkEm07YPH7RyHLBniSJjj1O428muUTm5FtwJYLDi
-         UUpQ==
-X-Gm-Message-State: APjAAAWjlMswQOJIdwZB/XKm+fcGNpK5XCtjo0D3E8LiXsROBgvlVBR+
-        M5N/ekg71G323tfOH/RezLJcBN/nP63QSC+r/fnTQQ==
-X-Google-Smtp-Source: APXvYqy+M1uWEEV6pkXqgm2LjH+aSiRVIOkGsD38hn1CYw56gxSpzMyk8WBJG4wPxzVUnYw/JZBSj3WLKNpHRR+pQOk=
-X-Received: by 2002:a67:79cd:: with SMTP id u196mr1862322vsc.191.1579865166014;
- Fri, 24 Jan 2020 03:26:06 -0800 (PST)
+        Fri, 24 Jan 2020 06:25:34 -0500
+Received: from [46.226.52.108] (using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256 bits))
+        by server-4.bemta.az-a.eu-west-1.aws.symcld.net id 92/0A-01118-C24DA2E5; Fri, 24 Jan 2020 11:25:32 +0000
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrAIsWRWlGSWpSXmKPExsVy8IPnUV2dK1p
+  xBs9uC1rc/3qU0eLyrjlsDkwed67tYfP4vEkugCmKNTMvKb8igTXj4sG1jAXnWCp+belib2C8
+  xdzFyMUhJLCeUeLg4aVADieQUyFx9upyJhCbV8BN4uXvY2wgNpuAhcTkEw/AbBYBVYnGnVtZQ
+  WxhgRCJi28WA8U5OEQEVCTOvTEHMZkFIiT+nGKGmCIocXLmExYQm1lAQuLgixdQmwwkTi9oBI
+  tLCNhLTH9/lRmkVUJAX6LxWCxE2FDi+6xvLBBhc4m167wmMPLPQjJ0FpKhCxiZVjFaJBVlpme
+  U5CZm5ugaGhjoGhoa6RpamugamhnoJVbpJuqlluqWpxaX6BrqJZYX6xVX5ibnpOjlpZZsYgQG
+  ZkrBoQU7GKd+eqt3iFGSg0lJlLdrrlacEF9SfkplRmJxRnxRaU5q8SFGGQ4OJQle+0tAOcGi1
+  PTUirTMHGCUwKQlOHiURHg9QdK8xQWJucWZ6RCpU4y6HDuPzlvELMSSl5+XKiXOOxukSACkKK
+  M0D24ELGIvMcpKCfMyMjAwCPEUpBblZpagyr9iFOdgVBLmTQOZwpOZVwK36RXQEUxAR7gogR1
+  RkoiQkmpgclOvVHvVpV/6YNM+vwiJSzZzNt5i1Y030rile76kiXnTLacs92nfrOv33lnmZBn1
+  MUe9o6f+HEtmzjqZ0MUBdw1Ppk26wNDOZPKkiHPvQa/6a+Vx+g9zud7oSe88z+yh9U3L1L4x4
+  spRo5u5u9U3PsnL3NFxJWPNolSBuTExmrbJNrySzU/VLySl1TzpcOmpfXksutZOzeTE3DMLr6
+  hYsDw7x3hNNZqnYI71n1/VB6LXH6rx/rmktv7opivPGp+s+C36oOVOusFippITmydrXY48qC2
+  beVu3t8c/ldGunM+WecO5TwKv3aauXp7sXhEiVO2waUIXz6ni5TpH/HiYFvzP1LmdPmH2iaWf
+  DpQrsRRnJBpqMRcVJwIAPmQ9olMDAAA=
+X-Env-Sender: Adam.Thomson.Opensource@diasemi.com
+X-Msg-Ref: server-28.tower-272.messagelabs.com!1579865131!1056631!1
+X-Originating-IP: [193.240.73.197]
+X-SYMC-ESS-Client-Auth: outbound-route-from=pass
+X-StarScan-Received: 
+X-StarScan-Version: 9.44.25; banners=-,-,-
+X-VirusChecked: Checked
+Received: (qmail 26580 invoked from network); 24 Jan 2020 11:25:32 -0000
+Received: from unknown (HELO sw-ex-cashub01.diasemi.com) (193.240.73.197)
+  by server-28.tower-272.messagelabs.com with ECDHE-RSA-AES256-SHA384 encrypted SMTP; 24 Jan 2020 11:25:32 -0000
+Received: from swsrvapps-01.diasemi.com (10.20.28.141) by
+ SW-EX-CASHUB01.diasemi.com (10.20.16.140) with Microsoft SMTP Server id
+ 14.3.468.0; Fri, 24 Jan 2020 11:25:30 +0000
+Received: by swsrvapps-01.diasemi.com (Postfix, from userid 22379)      id
+ 6AC183FB8D; Fri, 24 Jan 2020 11:25:30 +0000 (GMT)
+Message-ID: <cover.1579864546.git.Adam.Thomson.Opensource@diasemi.com>
+From:   Adam Thomson <Adam.Thomson.Opensource@diasemi.com>
+Date:   Fri, 24 Jan 2020 11:25:30 +0000
+Subject: [RESEND PATCH 0/2] Resolve revision handling and add support for DA silicon
+To:     Lee Jones <lee.jones@linaro.org>
+CC:     <linux-kernel@vger.kernel.org>,
+        Support Opensource <support.opensource@diasemi.com>
 MIME-Version: 1.0
-References: <1579519045-26467-1-git-send-email-vbadigan@codeaurora.org> <1579531122-28341-1-git-send-email-vbadigan@codeaurora.org>
-In-Reply-To: <1579531122-28341-1-git-send-email-vbadigan@codeaurora.org>
-From:   Ulf Hansson <ulf.hansson@linaro.org>
-Date:   Fri, 24 Jan 2020 12:25:30 +0100
-Message-ID: <CAPDyKFpiMU5PdUOP-VZEXT_Rsot9LfHmWp4ZTBC5oboWXiWsDA@mail.gmail.com>
-Subject: Re: [PATCH V3] mmc: sdhci: Let a vendor driver supply and update ADMA
- descriptor size
-To:     Veerabhadrarao Badiganti <vbadigan@codeaurora.org>
-Cc:     Adrian Hunter <adrian.hunter@intel.com>,
-        Asutosh Das <asutoshd@codeaurora.org>,
-        Sahitya Tummala <stummala@codeaurora.org>,
-        Sayali Lokhande <sayalil@codeaurora.org>, cang@codeaurora.org,
-        Ram Prakash Gupta <rampraka@codeaurora.org>,
-        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
+X-KSE-AttachmentFiltering-Interceptor-Info: protection disabled
+X-KSE-ServerInfo: sw-ex-cashub01.diasemi.com, 9
+X-KSE-Antivirus-Interceptor-Info: scan successful
+X-KSE-Antivirus-Info: Clean, bases: 24/01/2020 10:17:00
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 20 Jan 2020 at 15:39, Veerabhadrarao Badiganti
-<vbadigan@codeaurora.org> wrote:
->
-> Let a vendor driver supply the maximum descriptor size that it
-> can operate on. ADMA descriptor table would be allocated using this
-> supplied size.
-> If any SD Host controller is of version prior to v4.10 spec
-> but supports 16byte descriptor, this change allows them to supply
-> correct descriptor size for ADMA table allocation.
->
-> Also let a vendor driver update the descriptor size by overriding
-> sdhc_host->desc_size if it has to operates on a different descriptor
-> sizes in different conditions.
->
-> Suggested-by: Adrian Hunter <adrian.hunter@intel.com>
-> Signed-off-by: Veerabhadrarao Badiganti <vbadigan@codeaurora.org>
-> Acked-by: Adrian Hunter <adrian.hunter@intel.com>
-> --
-> Thanks Adrian.
->
-> Hi Ulf,
-> Can you pick this patch instead of earlier one? This is more clean
-> change, sorry for the multiple interations.
-> Otherwise let me know, I will make these changes as seperate patch.
+This patch set fixes the currently broken revision handling in the driver's
+i2c_probe() function and then adds DA support to existing permitted revisions.
 
-Alright, I have replaced the previous version with this one.
+Adam Thomson (2):
+  mfd: da9063: Fix revision handling to correctly select reg tables
+  mfd: da9063: Add support for latest DA silicon revision
 
-Kind regards
-Uffe
+ drivers/mfd/da9063-core.c            |  31 -----
+ drivers/mfd/da9063-i2c.c             | 254 +++++++++++++++++++++++++++++++----
+ include/linux/mfd/da9063/core.h      |   1 +
+ include/linux/mfd/da9063/registers.h |  15 ++-
+ 4 files changed, 240 insertions(+), 61 deletions(-)
 
+-- 
+1.9.1
 
-> ---
->  drivers/mmc/host/sdhci.c | 16 +++++++---------
->  drivers/mmc/host/sdhci.h |  3 ++-
->  2 files changed, 9 insertions(+), 10 deletions(-)
->
-> diff --git a/drivers/mmc/host/sdhci.c b/drivers/mmc/host/sdhci.c
-> index 3140fe2..7a7a18e 100644
-> --- a/drivers/mmc/host/sdhci.c
-> +++ b/drivers/mmc/host/sdhci.c
-> @@ -3821,15 +3821,13 @@ int sdhci_setup_host(struct sdhci_host *host)
->                 dma_addr_t dma;
->                 void *buf;
->
-> -               if (host->flags & SDHCI_USE_64_BIT_DMA) {
-> -                       host->adma_table_sz = host->adma_table_cnt *
-> -                                             SDHCI_ADMA2_64_DESC_SZ(host);
-> -                       host->desc_sz = SDHCI_ADMA2_64_DESC_SZ(host);
-> -               } else {
-> -                       host->adma_table_sz = host->adma_table_cnt *
-> -                                             SDHCI_ADMA2_32_DESC_SZ;
-> -                       host->desc_sz = SDHCI_ADMA2_32_DESC_SZ;
-> -               }
-> +               if (!(host->flags & SDHCI_USE_64_BIT_DMA))
-> +                       host->alloc_desc_sz = SDHCI_ADMA2_32_DESC_SZ;
-> +               else if (!host->alloc_desc_sz)
-> +                       host->alloc_desc_sz = SDHCI_ADMA2_64_DESC_SZ(host);
-> +
-> +               host->desc_sz = host->alloc_desc_sz;
-> +               host->adma_table_sz = host->adma_table_cnt * host->desc_sz;
->
->                 host->align_buffer_sz = SDHCI_MAX_SEGS * SDHCI_ADMA2_ALIGN;
->                 /*
-> diff --git a/drivers/mmc/host/sdhci.h b/drivers/mmc/host/sdhci.h
-> index 0ed3e0e..10bda3a 100644
-> --- a/drivers/mmc/host/sdhci.h
-> +++ b/drivers/mmc/host/sdhci.h
-> @@ -554,7 +554,8 @@ struct sdhci_host {
->         dma_addr_t adma_addr;   /* Mapped ADMA descr. table */
->         dma_addr_t align_addr;  /* Mapped bounce buffer */
->
-> -       unsigned int desc_sz;   /* ADMA descriptor size */
-> +       unsigned int desc_sz;   /* ADMA current descriptor size */
-> +       unsigned int alloc_desc_sz;     /* ADMA descr. max size host supports */
->
->         struct workqueue_struct *complete_wq;   /* Request completion wq */
->         struct work_struct      complete_work;  /* Request completion work */
-> --
-> Qualcomm India Private Limited, on behalf of Qualcomm Innovation Center, Inc., is a member of Code Aurora Forum, a Linux Foundation Collaborative Project
