@@ -2,37 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 34DE01489EC
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Jan 2020 15:38:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B97EB1489DB
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Jan 2020 15:38:21 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388739AbgAXOio (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 24 Jan 2020 09:38:44 -0500
-Received: from mail.kernel.org ([198.145.29.99]:38270 "EHLO mail.kernel.org"
+        id S2391112AbgAXOSu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 24 Jan 2020 09:18:50 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38420 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390932AbgAXOSj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 24 Jan 2020 09:18:39 -0500
+        id S2390998AbgAXOSn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 24 Jan 2020 09:18:43 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DF94F208C4;
-        Fri, 24 Jan 2020 14:18:37 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 89B4B214DB;
+        Fri, 24 Jan 2020 14:18:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579875518;
-        bh=TDxPorzrIJGs1ZqB7kiIUwv25RiRwUZ8gQeU5ZGA0Yc=;
+        s=default; t=1579875522;
+        bh=/0Ksl39P2LVCGJpGFA7i6rnSlgdgbXNvz6q6O1RuE+0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=r0fV1D/da4A/2mpzyJpC950PQ2V/861yc9+JBLLk5ULwQcs49yUvC8CtDkAiN4MEG
-         7CORZZHhFFiy3XWGQT0H4D//0fUOGapTgqBB1ooHK0kampU0e8rAW/kukr+9gYjsoC
-         2TRdR+Jh1dpDimQuq7Ye9i3HUBakBZix9CfDTE6M=
+        b=kI4djcW4exCiDjImmWiKjhjkXtRsEsx7+w2m++g94/8aZLBF1GPT3xgEkoAh6Bvlw
+         c0ryfrv3IBxWIpW1seCbzkWDd0C9l3KqTHngiKC1wTlttxcVOCzu0/wmUJxGtFBSr6
+         bl6mLs2fopjfNTT75KGJ0Vtwo8rNNkuPT9JAiwWg=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     "Angus Ainslie (Purism)" <angus@akkea.ca>,
-        Martin Kepplinger <martin.kepplinger@puri.sm>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sasha Levin <sashal@kernel.org>, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: [PATCH AUTOSEL 5.4 018/107] arm64: dts: imx8mq-librem5-devkit: use correct interrupt for the magnetometer
-Date:   Fri, 24 Jan 2020 09:16:48 -0500
-Message-Id: <20200124141817.28793-18-sashal@kernel.org>
+Cc:     Arvind Sankar <nivedita@alum.mit.edu>,
+        Ard Biesheuvel <ardb@kernel.org>,
+        Hans de Goede <hdegoede@redhat.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        linux-efi@vger.kernel.org, Ingo Molnar <mingo@kernel.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.4 021/107] efi/earlycon: Fix write-combine mapping on x86
+Date:   Fri, 24 Jan 2020 09:16:51 -0500
+Message-Id: <20200124141817.28793-21-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200124141817.28793-1-sashal@kernel.org>
 References: <20200124141817.28793-1-sashal@kernel.org>
@@ -45,34 +48,86 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: "Angus Ainslie (Purism)" <angus@akkea.ca>
+From: Arvind Sankar <nivedita@alum.mit.edu>
 
-[ Upstream commit 106f7b3bf943d267eb657f34616adcaadb2ab07f ]
+[ Upstream commit d92b54570d24d017d2630e314b525ed792f5aa6c ]
 
-The LSM9DS1 uses a high level interrupt.
+On x86, until PAT is initialized, WC translates into UC-. Since we
+calculate and store pgprot_writecombine(PAGE_KERNEL) when earlycon is
+initialized, this means we actually use UC- mappings instead of WC
+mappings, which makes scrolling very slow.
 
-Signed-off-by: Angus Ainslie (Purism) <angus@akkea.ca>
-Signed-off-by: Martin Kepplinger <martin.kepplinger@puri.sm>
-Fixes: eb4ea0857c83 ("arm64: dts: fsl: librem5: Add a device tree for the Librem5 devkit")
-Signed-off-by: Shawn Guo <shawnguo@kernel.org>
+Instead store a boolean flag to indicate whether we want to use
+writeback or write-combine mappings, and recalculate the actual pgprot_t
+we need on every mapping. Once PAT is initialized, we will start using
+write-combine mappings, which speeds up the scrolling considerably.
+
+Signed-off-by: Arvind Sankar <nivedita@alum.mit.edu>
+Signed-off-by: Ard Biesheuvel <ardb@kernel.org>
+Cc: Hans de Goede <hdegoede@redhat.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: linux-efi@vger.kernel.org
+Fixes: 69c1f396f25b ("efi/x86: Convert x86 EFI earlyprintk into generic earlycon implementation")
+Link: https://lkml.kernel.org/r/20191224132909.102540-2-ardb@kernel.org
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arm64/boot/dts/freescale/imx8mq-librem5-devkit.dts | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/firmware/efi/earlycon.c | 16 +++++++---------
+ 1 file changed, 7 insertions(+), 9 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/freescale/imx8mq-librem5-devkit.dts b/arch/arm64/boot/dts/freescale/imx8mq-librem5-devkit.dts
-index 683a110356431..98cfe67b7db7b 100644
---- a/arch/arm64/boot/dts/freescale/imx8mq-librem5-devkit.dts
-+++ b/arch/arm64/boot/dts/freescale/imx8mq-librem5-devkit.dts
-@@ -421,7 +421,7 @@
- 		pinctrl-names = "default";
- 		pinctrl-0 = <&pinctrl_imu>;
- 		interrupt-parent = <&gpio3>;
--		interrupts = <19 IRQ_TYPE_LEVEL_LOW>;
-+		interrupts = <19 IRQ_TYPE_LEVEL_HIGH>;
- 		vdd-supply = <&reg_3v3_p>;
- 		vddio-supply = <&reg_3v3_p>;
- 	};
+diff --git a/drivers/firmware/efi/earlycon.c b/drivers/firmware/efi/earlycon.c
+index d4077db6dc97f..5d4f84781aa03 100644
+--- a/drivers/firmware/efi/earlycon.c
++++ b/drivers/firmware/efi/earlycon.c
+@@ -17,7 +17,7 @@ static const struct console *earlycon_console __initdata;
+ static const struct font_desc *font;
+ static u32 efi_x, efi_y;
+ static u64 fb_base;
+-static pgprot_t fb_prot;
++static bool fb_wb;
+ static void *efi_fb;
+ 
+ /*
+@@ -33,10 +33,8 @@ static int __init efi_earlycon_remap_fb(void)
+ 	if (!earlycon_console || !(earlycon_console->flags & CON_ENABLED))
+ 		return 0;
+ 
+-	if (pgprot_val(fb_prot) == pgprot_val(PAGE_KERNEL))
+-		efi_fb = memremap(fb_base, screen_info.lfb_size, MEMREMAP_WB);
+-	else
+-		efi_fb = memremap(fb_base, screen_info.lfb_size, MEMREMAP_WC);
++	efi_fb = memremap(fb_base, screen_info.lfb_size,
++			  fb_wb ? MEMREMAP_WB : MEMREMAP_WC);
+ 
+ 	return efi_fb ? 0 : -ENOMEM;
+ }
+@@ -53,9 +51,12 @@ late_initcall(efi_earlycon_unmap_fb);
+ 
+ static __ref void *efi_earlycon_map(unsigned long start, unsigned long len)
+ {
++	pgprot_t fb_prot;
++
+ 	if (efi_fb)
+ 		return efi_fb + start;
+ 
++	fb_prot = fb_wb ? PAGE_KERNEL : pgprot_writecombine(PAGE_KERNEL);
+ 	return early_memremap_prot(fb_base + start, len, pgprot_val(fb_prot));
+ }
+ 
+@@ -215,10 +216,7 @@ static int __init efi_earlycon_setup(struct earlycon_device *device,
+ 	if (screen_info.capabilities & VIDEO_CAPABILITY_64BIT_BASE)
+ 		fb_base |= (u64)screen_info.ext_lfb_base << 32;
+ 
+-	if (opt && !strcmp(opt, "ram"))
+-		fb_prot = PAGE_KERNEL;
+-	else
+-		fb_prot = pgprot_writecombine(PAGE_KERNEL);
++	fb_wb = opt && !strcmp(opt, "ram");
+ 
+ 	si = &screen_info;
+ 	xres = si->lfb_width;
 -- 
 2.20.1
 
