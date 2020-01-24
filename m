@@ -2,41 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DED5D148985
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Jan 2020 15:36:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EF118148983
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Jan 2020 15:36:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392052AbgAXOff (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 24 Jan 2020 09:35:35 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39900 "EHLO mail.kernel.org"
+        id S2391993AbgAXOfT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 24 Jan 2020 09:35:19 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40070 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2391754AbgAXOTc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 24 Jan 2020 09:19:32 -0500
+        id S2404039AbgAXOTh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 24 Jan 2020 09:19:37 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E3A3320838;
-        Fri, 24 Jan 2020 14:19:30 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C8BB9208C4;
+        Fri, 24 Jan 2020 14:19:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579875571;
-        bh=CwDH/HNXqT9/UsCdUOLdCqHjqNXYqggcWW09wtaEFS8=;
+        s=default; t=1579875576;
+        bh=jQ+TaHHThZHA3Y8tm3ijmMsa/OkFMve527Jlx5shKTc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=YV3mVzHUQv8DabbMzubH9nmHbGnqemm8gg1idgXxgl6+0oR1MU9QZ1atRSt5MaKvO
-         oJhf6cy8sRVkqf8k6BF4LMPQV+9/yF/DiJ3rUdlwoRgbt+OMRKhU73USkite2i6O+U
-         +FE+vSyBb1mkPqaQaf5dUgE6Pwd4T566nMZrS5Ng=
+        b=cUwMMU5PaFALncXKoZj3mSKIqAXNwes7sYxYTa/+8qWJNvGsdmgHfS0GifJgNltGP
+         hUXja7SdkKJ8yjMk8sMsFHGtdabbdwYIxO/g0hU+7cdPfQ2Q0GgJisyi5P0aACswrO
+         enu2OyeODtiWJ941DqP0Jo0sKsoP/WagsvO4fKzs=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Brendan Higgins <brendanhiggins@google.com>,
-        Kees Cook <keescook@chromium.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 5.4 064/107] lkdtm/bugs: fix build error in lkdtm_UNSET_SMEP
-Date:   Fri, 24 Jan 2020 09:17:34 -0500
-Message-Id: <20200124141817.28793-64-sashal@kernel.org>
+Cc:     Ganapathi Bhat <ganapathi.bhat@nxp.com>,
+        Cathy Luo <xiaohua.luo@nxp.com>,
+        Johannes Berg <johannes.berg@intel.com>,
+        Sasha Levin <sashal@kernel.org>,
+        linux-wireless@vger.kernel.org, netdev@vger.kernel.org
+Subject: [PATCH AUTOSEL 5.4 068/107] wireless: fix enabling channel 12 for custom regulatory domain
+Date:   Fri, 24 Jan 2020 09:17:38 -0500
+Message-Id: <20200124141817.28793-68-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200124141817.28793-1-sashal@kernel.org>
 References: <20200124141817.28793-1-sashal@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 X-stable: review
 X-Patchwork-Hint: Ignore
 Content-Transfer-Encoding: 8bit
@@ -45,52 +45,63 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Brendan Higgins <brendanhiggins@google.com>
+From: Ganapathi Bhat <ganapathi.bhat@nxp.com>
 
-[ Upstream commit 0e31e3573f0cd94d7b821117db854187ffc85765 ]
+[ Upstream commit c4b9d655e445a8be0bff624aedea190606b5ebbc ]
 
-When building ARCH=um with CONFIG_UML_X86=y and CONFIG_64BIT=y we get
-the build errors:
+Commit e33e2241e272 ("Revert "cfg80211: Use 5MHz bandwidth by
+default when checking usable channels"") fixed a broken
+regulatory (leaving channel 12 open for AP where not permitted).
+Apply a similar fix to custom regulatory domain processing.
 
-drivers/misc/lkdtm/bugs.c: In function ‘lkdtm_UNSET_SMEP’:
-drivers/misc/lkdtm/bugs.c:288:8: error: implicit declaration of function ‘native_read_cr4’ [-Werror=implicit-function-declaration]
-  cr4 = native_read_cr4();
-        ^~~~~~~~~~~~~~~
-drivers/misc/lkdtm/bugs.c:290:13: error: ‘X86_CR4_SMEP’ undeclared (first use in this function); did you mean ‘X86_FEATURE_SMEP’?
-  if ((cr4 & X86_CR4_SMEP) != X86_CR4_SMEP) {
-             ^~~~~~~~~~~~
-             X86_FEATURE_SMEP
-drivers/misc/lkdtm/bugs.c:290:13: note: each undeclared identifier is reported only once for each function it appears in
-drivers/misc/lkdtm/bugs.c:297:2: error: implicit declaration of function ‘native_write_cr4’; did you mean ‘direct_write_cr4’? [-Werror=implicit-function-declaration]
-  native_write_cr4(cr4);
-  ^~~~~~~~~~~~~~~~
-  direct_write_cr4
-
-So specify that this block of code should only build when
-CONFIG_X86_64=y *AND* CONFIG_UML is unset.
-
-Signed-off-by: Brendan Higgins <brendanhiggins@google.com>
-Acked-by: Kees Cook <keescook@chromium.org>
-Link: https://lore.kernel.org/r/20191213003522.66450-1-brendanhiggins@google.com
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Signed-off-by: Cathy Luo <xiaohua.luo@nxp.com>
+Signed-off-by: Ganapathi Bhat <ganapathi.bhat@nxp.com>
+Link: https://lore.kernel.org/r/1576836859-8945-1-git-send-email-ganapathi.bhat@nxp.com
+[reword commit message, fix coding style, add a comment]
+Signed-off-by: Johannes Berg <johannes.berg@intel.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/misc/lkdtm/bugs.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ net/wireless/reg.c | 13 ++++++++++---
+ 1 file changed, 10 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/misc/lkdtm/bugs.c b/drivers/misc/lkdtm/bugs.c
-index 7284a22b1a09e..4d5a512769e99 100644
---- a/drivers/misc/lkdtm/bugs.c
-+++ b/drivers/misc/lkdtm/bugs.c
-@@ -274,7 +274,7 @@ void lkdtm_STACK_GUARD_PAGE_TRAILING(void)
+diff --git a/net/wireless/reg.c b/net/wireless/reg.c
+index 446c76d44e65a..3c2070040277d 100644
+--- a/net/wireless/reg.c
++++ b/net/wireless/reg.c
+@@ -2261,14 +2261,15 @@ static void update_all_wiphy_regulatory(enum nl80211_reg_initiator initiator)
  
- void lkdtm_UNSET_SMEP(void)
+ static void handle_channel_custom(struct wiphy *wiphy,
+ 				  struct ieee80211_channel *chan,
+-				  const struct ieee80211_regdomain *regd)
++				  const struct ieee80211_regdomain *regd,
++				  u32 min_bw)
  {
--#ifdef CONFIG_X86_64
-+#if IS_ENABLED(CONFIG_X86_64) && !IS_ENABLED(CONFIG_UML)
- #define MOV_CR4_DEPTH	64
- 	void (*direct_write_cr4)(unsigned long val);
- 	unsigned char *insn;
+ 	u32 bw_flags = 0;
+ 	const struct ieee80211_reg_rule *reg_rule = NULL;
+ 	const struct ieee80211_power_rule *power_rule = NULL;
+ 	u32 bw;
+ 
+-	for (bw = MHZ_TO_KHZ(20); bw >= MHZ_TO_KHZ(5); bw = bw / 2) {
++	for (bw = MHZ_TO_KHZ(20); bw >= min_bw; bw = bw / 2) {
+ 		reg_rule = freq_reg_info_regd(MHZ_TO_KHZ(chan->center_freq),
+ 					      regd, bw);
+ 		if (!IS_ERR(reg_rule))
+@@ -2324,8 +2325,14 @@ static void handle_band_custom(struct wiphy *wiphy,
+ 	if (!sband)
+ 		return;
+ 
++	/*
++	 * We currently assume that you always want at least 20 MHz,
++	 * otherwise channel 12 might get enabled if this rule is
++	 * compatible to US, which permits 2402 - 2472 MHz.
++	 */
+ 	for (i = 0; i < sband->n_channels; i++)
+-		handle_channel_custom(wiphy, &sband->channels[i], regd);
++		handle_channel_custom(wiphy, &sband->channels[i], regd,
++				      MHZ_TO_KHZ(20));
+ }
+ 
+ /* Used by drivers prior to wiphy registration */
 -- 
 2.20.1
 
