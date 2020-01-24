@@ -2,36 +2,33 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2A61D148A0A
+	by mail.lfdr.de (Postfix) with ESMTP id A86DE148A0B
 	for <lists+linux-kernel@lfdr.de>; Fri, 24 Jan 2020 15:41:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390640AbgAXOS1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 24 Jan 2020 09:18:27 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37710 "EHLO mail.kernel.org"
+        id S2390742AbgAXOS3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 24 Jan 2020 09:18:29 -0500
+Received: from mail.kernel.org ([198.145.29.99]:37746 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390511AbgAXOSY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 24 Jan 2020 09:18:24 -0500
+        id S2390579AbgAXOS0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 24 Jan 2020 09:18:26 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 197D021556;
-        Fri, 24 Jan 2020 14:18:23 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 42D87214DB;
+        Fri, 24 Jan 2020 14:18:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579875503;
-        bh=57FOBy08qBEXlKgCxiaToUjk/k0ohn9GFat1iPhq1H0=;
+        s=default; t=1579875505;
+        bh=dCB5a7jBrPFkI8apoOVO1s5KUGv3XxaDg3HI2580nQQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=a1UmPzfAk4DFfv5pZgrb9tDHTQEOYPK9FVf9bvDDOLiH5AC7sSCXv2xIyNOMbv4Hm
-         CjW9r6ndUYdwtDEsA+IJzOxvAT1ql1pGC7JuK5o5AewL/7gp0im7h6O6KkzTO93+7L
-         bUj3PPl2A14cIAhcYwmun+jv0ln7BlVXIByLrPes=
+        b=maiZgQl6n14WTf1KCL1OU0NbSGEk8rhD5y1H5wjxIB/gwcnpM3sjCTU+bKN/tb4U/
+         uU/onzHIyw5JUr/hxV5FOCnFcjBzRJkEkFMLldhI+vr3oVYhnOhulm2n9blTy6u3+j
+         MgyJBQah4jg39XHS/QBJ3mNQVhffz5jDEJu7qn/Y=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Guillaume La Roque <glaroque@baylibre.com>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Sasha Levin <sashal@kernel.org>, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: [PATCH AUTOSEL 5.4 005/107] arm64: dts: meson-sm1-sei610: add gpio bluetooth interrupt
-Date:   Fri, 24 Jan 2020 09:16:35 -0500
-Message-Id: <20200124141817.28793-5-sashal@kernel.org>
+Cc:     Tony Lindgren <tony@atomide.com>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.4 007/107] bus: ti-sysc: Fix iterating over clocks
+Date:   Fri, 24 Jan 2020 09:16:37 -0500
+Message-Id: <20200124141817.28793-7-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200124141817.28793-1-sashal@kernel.org>
 References: <20200124141817.28793-1-sashal@kernel.org>
@@ -44,32 +41,66 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Guillaume La Roque <glaroque@baylibre.com>
+From: Tony Lindgren <tony@atomide.com>
 
-[ Upstream commit 30388cc075720aa0af4f2cb5933afa1f8f39d313 ]
+[ Upstream commit 2c81f0f6d3f52ac222a5dc07a6e5c06e1543e88b ]
 
-add gpio irq to support interrupt trigger mode.
+Commit d878970f6ce1 ("bus: ti-sysc: Add separate functions for handling
+clocks") separated handling of optional clocks from the main clocks, but
+introduced an issue where we do not necessarily allocate a slot for both
+fck and ick clocks, but still assume fixed slots for enumerating over the
+clocks.
 
-Signed-off-by: Guillaume La Roque <glaroque@baylibre.com>
-Signed-off-by: Kevin Hilman <khilman@baylibre.com>
+Let's fix the issue by ensuring we always have slots for both fck and ick
+even if we don't use ick, and don't attempt to enumerate optional clocks
+if not allocated.
+
+In the long run we might want to simplify things a bit by only allocating
+space only for the optional clocks as we have only few devices with
+optional clocks.
+
+Fixes: d878970f6ce1 ("bus: ti-sysc: Add separate functions for handling clocks")
+Signed-off-by: Tony Lindgren <tony@atomide.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arm64/boot/dts/amlogic/meson-sm1-sei610.dts | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/bus/ti-sysc.c | 10 ++++++++--
+ 1 file changed, 8 insertions(+), 2 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/amlogic/meson-sm1-sei610.dts b/arch/arm64/boot/dts/amlogic/meson-sm1-sei610.dts
-index 3435aaa4e8db5..5d6a8dafe8dc0 100644
---- a/arch/arm64/boot/dts/amlogic/meson-sm1-sei610.dts
-+++ b/arch/arm64/boot/dts/amlogic/meson-sm1-sei610.dts
-@@ -361,6 +361,8 @@
+diff --git a/drivers/bus/ti-sysc.c b/drivers/bus/ti-sysc.c
+index 34bd9bf4e68ab..abbf281ee337b 100644
+--- a/drivers/bus/ti-sysc.c
++++ b/drivers/bus/ti-sysc.c
+@@ -343,6 +343,12 @@ static int sysc_get_clocks(struct sysc *ddata)
+ 		return -EINVAL;
+ 	}
  
- 	bluetooth {
- 		compatible = "brcm,bcm43438-bt";
-+		interrupt-parent = <&gpio_intc>;
-+		interrupts = <95 IRQ_TYPE_LEVEL_HIGH>;
- 		shutdown-gpios = <&gpio GPIOX_17 GPIO_ACTIVE_HIGH>;
- 		max-speed = <2000000>;
- 		clocks = <&wifi32k>;
++	/* Always add a slot for main clocks fck and ick even if unused */
++	if (!nr_fck)
++		ddata->nr_clocks++;
++	if (!nr_ick)
++		ddata->nr_clocks++;
++
+ 	ddata->clocks = devm_kcalloc(ddata->dev,
+ 				     ddata->nr_clocks, sizeof(*ddata->clocks),
+ 				     GFP_KERNEL);
+@@ -421,7 +427,7 @@ static int sysc_enable_opt_clocks(struct sysc *ddata)
+ 	struct clk *clock;
+ 	int i, error;
+ 
+-	if (!ddata->clocks)
++	if (!ddata->clocks || ddata->nr_clocks < SYSC_OPTFCK0 + 1)
+ 		return 0;
+ 
+ 	for (i = SYSC_OPTFCK0; i < SYSC_MAX_CLOCKS; i++) {
+@@ -455,7 +461,7 @@ static void sysc_disable_opt_clocks(struct sysc *ddata)
+ 	struct clk *clock;
+ 	int i;
+ 
+-	if (!ddata->clocks)
++	if (!ddata->clocks || ddata->nr_clocks < SYSC_OPTFCK0 + 1)
+ 		return;
+ 
+ 	for (i = SYSC_OPTFCK0; i < SYSC_MAX_CLOCKS; i++) {
 -- 
 2.20.1
 
