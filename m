@@ -2,81 +2,87 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9168714909B
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Jan 2020 23:00:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 959501490A0
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Jan 2020 23:01:48 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727306AbgAXWAZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 24 Jan 2020 17:00:25 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:48208 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725821AbgAXWAZ (ORCPT
+        id S1729012AbgAXWBq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 24 Jan 2020 17:01:46 -0500
+Received: from mail-pj1-f67.google.com ([209.85.216.67]:34352 "EHLO
+        mail-pj1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725821AbgAXWBq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 24 Jan 2020 17:00:25 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=EHG6Q1AO3iuT6O0CXN+hQkY2MviKsXG45P08g3eUA9c=; b=XxSKomYe9qO2pHUJ4g7F1egF8
-        OgnONfKVG8tW+PkImifBcGdo/lXupljgt8slZrTeik8u+eSsfMIX4CAjPc/XYd9ZMc/mUp7LmrTwb
-        JpdAJulhZ0CABJTU5zKI6ou6Snfxih/bM1V77We8ZJEYde4+fRZHEG8BssTOsmQnR4r2SHln/Jqnm
-        Ao/GbN7p1DZYOss+cgDc3U9lY4V1k4suTJ4TVEAIwB+g3tREepaqhkTix0x1XrWnv5YNZ+MpyR2wx
-        uoI66X9rt1Hhf5zPqMHqJ/zbpTZRhHQh6bjKa7eLmrHwyM1vp/TGXp+f0igWG7iRvAwizy04Dx42w
-        ljPPZs2aA==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=worktop.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1iv6zr-00014k-16; Fri, 24 Jan 2020 22:00:11 +0000
-Received: by worktop.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 316FF980E48; Fri, 24 Jan 2020 23:00:08 +0100 (CET)
-Date:   Fri, 24 Jan 2020 23:00:08 +0100
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Nick Desaulniers <ndesaulniers@google.com>,
-        Will Deacon <will@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-arch <linux-arch@vger.kernel.org>,
-        kernel-team <kernel-team@android.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Segher Boessenkool <segher@kernel.crashing.org>,
-        Christian Borntraeger <borntraeger@de.ibm.com>,
-        Luc Van Oostenryck <luc.vanoostenryck@gmail.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Peter Oberparleiter <oberpar@linux.ibm.com>,
-        Masahiro Yamada <masahiroy@kernel.org>,
-        Pablo Neira Ayuso <pablo@netfilter.org>,
-        Jozsef Kadlecsik <kadlec@netfilter.org>,
-        Florian Westphal <fw@strlen.de>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: Re: [PATCH v2 02/10] netfilter: Avoid assigning 'const' pointer to
- non-const pointer
-Message-ID: <20200124220008.GS11457@worktop.programming.kicks-ass.net>
-References: <20200123153341.19947-1-will@kernel.org>
- <20200123153341.19947-3-will@kernel.org>
- <CAKwvOdm2snorniFunMF=0nDH8-RFwm7wtjYK_Tcwkd+JZinYPg@mail.gmail.com>
- <20200124082443.GY14914@hirez.programming.kicks-ass.net>
- <CAHk-=wgbAfG6UZYd3PY3fmh5nCE191gY76Fn_g_D8nO64mdx-A@mail.gmail.com>
+        Fri, 24 Jan 2020 17:01:46 -0500
+Received: by mail-pj1-f67.google.com with SMTP id f2so880571pjq.1
+        for <linux-kernel@vger.kernel.org>; Fri, 24 Jan 2020 14:01:45 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=BFmViv0LWpYCZmRZzBXX+e0FCAJTM0WkywcL3e5bisU=;
+        b=VKO5iySR05BivpDQZf/VKaq5KXC/T0tXr1RXOxM2Cjjz+2DdsYlr12Q19jKOBereBA
+         Nlu9+EGmJw2Ad+dKijIamnqzcecBWtEi2aukIVdIfiK8Fo9SXepfP1CpTyXrn24Ji8M0
+         66gHlAJsRUvJpWz/ElEPqWt7DwmZ0aSAfW9AAxSmDzZDKF12hx/+yw/GM4I7nm6Qz5Sz
+         o8LNez99DjtBAxQJmSHleGfzM3RFP9Op2Apahq7HW79aRQzo9BYNWyqVYv//HPuTxJVp
+         rAF2oyYaLC9GroGIKw30bqpSIMbPq8G9oboKRKYFkVUd4jLdJod1ttB346M86rIfwZLz
+         dJmQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=BFmViv0LWpYCZmRZzBXX+e0FCAJTM0WkywcL3e5bisU=;
+        b=NVtVHQ9eaugSzo4fKYLuQlcaDo8VhFjw7IteYBYV1S1FbCrXrSUkQ8X/gNZs0z3wGA
+         ubuNCdzX6cwU59zl+2y+Ywahk5tuT9DlA87WNwdn1yKHexiwmR6+SPaA1QffoFhxmina
+         BSTtbFTlrp3Nk0LrinO4zyei8vcIEMTI0bu7KxX2Lm+d/88STcCw9IUSpBz/atNhpuk4
+         3hOTSozMhqMEP1idhDkHbA8Q4ordgEUN/XUOWcQcfnLbwv6ADGtJ0d0+J9JmdVbOkgrq
+         hctpp9jfJFLZGbvDoOrDZ0ipCD+FIISBa/zFkimevKelRZbhDNsUo2yfg41X4ZAvvyby
+         l6iA==
+X-Gm-Message-State: APjAAAUqyTQ9/wjawnDuyDr3ZqInT4aB6DBBfTCW/lsdc8WLb8GB1Any
+        nwGFV2ij/+p1V8kdS/QFmBk0NA2UxuljxHlNhc7mDw==
+X-Google-Smtp-Source: APXvYqzLJ4DMJP4xsUJ7yoV9hJv9V84tY3jtbZITHm4QWVVh8MDBcRDMqpXCXdzorK9BUvIJ/Al7pvb/nzCerCcaAMg=
+X-Received: by 2002:a17:90a:c390:: with SMTP id h16mr1511151pjt.131.1579903305086;
+ Fri, 24 Jan 2020 14:01:45 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAHk-=wgbAfG6UZYd3PY3fmh5nCE191gY76Fn_g_D8nO64mdx-A@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20200124194507.34121-1-davidgow@google.com>
+In-Reply-To: <20200124194507.34121-1-davidgow@google.com>
+From:   Brendan Higgins <brendanhiggins@google.com>
+Date:   Fri, 24 Jan 2020 14:01:34 -0800
+Message-ID: <CAFd5g46Jym_HX+QmX8ffVYfL1KATNjs9U6sR1Qv9SoVLx5GKDg@mail.gmail.com>
+Subject: Re: [PATCH] Fix linked-list KUnit test when run multiple times
+To:     David Gow <davidgow@google.com>
+Cc:     shuah <shuah@kernel.org>,
+        KUnit Development <kunit-dev@googlegroups.com>,
+        "open list:KERNEL SELFTEST FRAMEWORK" 
+        <linux-kselftest@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Alan Maguire <alan.maguire@oracle.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jan 24, 2020 at 09:36:54AM -0800, Linus Torvalds wrote:
-> On Fri, Jan 24, 2020 at 12:25 AM Peter Zijlstra <peterz@infradead.org> wrote:
-> >
-> > Just for curiosity's sake. What does clang actually do in that case?
-> 
-> This shouldn't necessarily be clang-specific. If the variable itself
-> is 'const', it might go into a read-only section. So trying to modify
-> it will quite possibly hit a SIGSEGV in user space (and in kernel
-> space cause an oops).
+On Fri, Jan 24, 2020 at 11:46 AM David Gow <davidgow@google.com> wrote:
+>
+> A few of the lists used in the linked-list KUnit tests (the
+> for_each_entry{,_reverse} tests) are declared 'static', and so are
+> not-reinitialised if the test runs multiple times. This was not a
+> problem when KUnit tests were run once on startup, but when tests are
+> able to be run manually (e.g. from debugfs[1]), this is no longer the
+> case.
+>
+> Making these lists no longer 'static' causes the lists to be
+> reinitialised, and the test passes each time it is run. While there may
+> be some value in testing that initialising static lists works, the
+> for_each_entry_* tests are unlikely to be the right place for it.
 
-Quite; but I worried clang would use the UB to omit the access entirely,
-and therefore rob us of the well deserved crash or something.
+Oh good, I am glad we are getting rid of those static variables. (I
+thought we already dropped those - whoops.) I think this drops this
+last of them, can you confirm David?
 
-Let me go read Nick's email tho, see what it actually does.
+Regardless, this patch looks good to me.
+
+> Signed-off-by: David Gow <davidgow@google.com>
+
+Reviewed-by: Brendan Higgins <brendanhiggins@google.com>
+
+Thanks for taking care of this!
