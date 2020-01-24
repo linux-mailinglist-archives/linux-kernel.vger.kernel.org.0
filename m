@@ -2,235 +2,173 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 37958148CF1
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Jan 2020 18:27:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 193FB148CF9
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Jan 2020 18:28:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390595AbgAXR1e (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 24 Jan 2020 12:27:34 -0500
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:46830 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2390498AbgAXR1Z (ORCPT
+        id S2390141AbgAXR2G (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 24 Jan 2020 12:28:06 -0500
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:46359 "EHLO
+        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387661AbgAXR2F (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 24 Jan 2020 12:27:25 -0500
-Received: by mail-wr1-f67.google.com with SMTP id z7so2914048wrl.13
-        for <linux-kernel@vger.kernel.org>; Fri, 24 Jan 2020 09:27:24 -0800 (PST)
+        Fri, 24 Jan 2020 12:28:05 -0500
+Received: by mail-lj1-f195.google.com with SMTP id x14so974620ljd.13
+        for <linux-kernel@vger.kernel.org>; Fri, 24 Jan 2020 09:28:04 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=f+1d4FRlTWDoZyLvhcrUylaJhZuzCdWZutZr0QUDHa4=;
-        b=EN4LDKx/+A9m19kIQgSzjf/5W2brwuUtJOdaMfXpXtsI/gW4HTHPkgH/876NIReTWJ
-         Tg5zHVO1XjuDF6TEMLMxIg9OXXU3QWUKi/kKngRSDqLKubZoL5N2LIV62IwcAIc1ZmpG
-         GBnFtBL1WvKoupCVFusdAZTPGRQ9sUsz2nMutTlKf5XiupASZZPBebK9FLG7+pWbRuhv
-         aNtNRUbCj3AIvvZSbsBQ5jp5ZQTo8RQXTRamPTM4hfpmHCNjtpxZBiKzhCc+RUV/If1H
-         aqQW6MJD/2+N4c5nvr3pHAsPuZXxQsAeFAfaduH96DJBxRYncQttVajyX2i3jYi1Ffgg
-         EExQ==
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=UGMSWK76YdUJLyg/HEwmEe/+T4vUjTTYEZ1ajGzTMqY=;
+        b=lgKYwjUjZTof1gSEQSFrujri+3PDPFyGTTggqYxzgqP8HQY+17ABImTM+sEIO6/bbm
+         TmQKG9KGdY0EVIoYXp8orfht0wpVPmsGoLn7GEWhvi4PkyL925nRXEJjtui8Zcrvvp2Q
+         s2GT/PRt3Uv6JRYB4SKoCuW5LXaycyha7T5E6H2SckBEyfy0VgpthNGNMq7h1LM2f3GH
+         dRWu35H/QRygaSsErhXWNuRwNRjoP8c4lQTog21i7Z9YpdadHJ1XC55PvLv3ydYwjgdD
+         QVnvcs7fjEhplOJy7PWJVs3juLl2VnwcNI3ZZ17rM5trQkTdu5vJVEJqASOQOFqeAbIc
+         aWvg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=f+1d4FRlTWDoZyLvhcrUylaJhZuzCdWZutZr0QUDHa4=;
-        b=bpDqj5V9W1Vgwomv4u3gJxKF7KPfK+rGb5dD+3YYhb8EkWg8dPKKyBELYxhs41TvpK
-         2dt8FC8BtsNjfVgEIi/hASZVh04ksBW/vnax7cU0tF7oxLeO2KWwaOtOWNJW+nRlEllw
-         qe9el3X93QBp8CW7bsvANtoylGKY4PuYjtZyHE2ffEPdocVg8Yf7CS7taU+pNc5oOFZx
-         xv0gX5GW9iyjrvNgEu30u7SdK3NvbWFD1rU40HX/qM55Le31AecGkqIHMjQr76sOZVn1
-         z9B8eqKfNkE1m82wGyZD5/N0+nYYEbG+gzGZJZMF7ryM7El9di0RiuDTTiJMiZTRWki0
-         c1Aw==
-X-Gm-Message-State: APjAAAUQ4947cEfAZC1PbQFGXvPbDAy2iQPMDVQys3FERVonZ/PBrcZq
-        iMR45+QRpw0ISfshWZ0dJZnoJw==
-X-Google-Smtp-Source: APXvYqx+Aw4+S8K8xNHG+vqpELNQADUOde9Hp1Z9eCweohf4RJ+sIspUEpwop5ZEDkU7U92gy1pzVQ==
-X-Received: by 2002:adf:edd0:: with SMTP id v16mr5339423wro.310.1579886844037;
-        Fri, 24 Jan 2020 09:27:24 -0800 (PST)
-Received: from debian-brgl.home ([2a01:cb1d:af:5b00:6d6c:8493:1ab5:dad7])
-        by smtp.gmail.com with ESMTPSA id t8sm8358585wrp.69.2020.01.24.09.27.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 24 Jan 2020 09:27:23 -0800 (PST)
-From:   Bartosz Golaszewski <brgl@bgdev.pl>
-To:     Kent Gibson <warthog618@gmail.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc:     linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: [PATCH v6 7/7] tools: gpio: implement gpio-watch
-Date:   Fri, 24 Jan 2020 18:27:10 +0100
-Message-Id: <20200124172710.20776-8-brgl@bgdev.pl>
-X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20200124172710.20776-1-brgl@bgdev.pl>
-References: <20200124172710.20776-1-brgl@bgdev.pl>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=UGMSWK76YdUJLyg/HEwmEe/+T4vUjTTYEZ1ajGzTMqY=;
+        b=AcyIhImY+O0HnTnO+TMFUjXMDQbzQXXlxCXKEquCUBiqXzHxR2Q+I1tZe3aDb5O+Yv
+         ZgnO7h+izQfiI7chWYmuKHA5GHwdX+PealEOhAgajzMFVtEHgjPtf1hGeo4fGZDshTbY
+         kfMA/iI3ABPxKLhbndo43QW6ISmOvzxBLC5vKsLpJJq7lJ6RXPJL+K4KGy78B2h8su0a
+         EJMvDA8J1pgtkpOy2dvS9v95fOHSO+qmYBoK3UDcte9v+wLwU7z+FKdP8F4vLLzvGGI7
+         XZp+NfIlkLQBdQcKpHAI6OPrydSv43YMHSntB+alSmWbnYAJ/ZXyblDCz8VmOw4GL7RX
+         Yd+g==
+X-Gm-Message-State: APjAAAUfQhD/IGzZAQLpIMjbz2Lb+7afyYulHeombShuWXe5FPmFItOI
+        keh6SGQzrXrBrse++RhZyevsi5UmK+kkIhQfXba/PA==
+X-Google-Smtp-Source: APXvYqxRYP4fYsYxiT3t3PxbIXqTMQPcarw9xwK44aXITbQvo8PJc5+Zz+AHMJXhXhG2NjY/bEQI2C6ApWOBXGplPSA=
+X-Received: by 2002:a2e:e12:: with SMTP id 18mr2925450ljo.123.1579886883335;
+ Fri, 24 Jan 2020 09:28:03 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20200124093047.008739095@linuxfoundation.org>
+In-Reply-To: <20200124093047.008739095@linuxfoundation.org>
+From:   Naresh Kamboju <naresh.kamboju@linaro.org>
+Date:   Fri, 24 Jan 2020 22:57:52 +0530
+Message-ID: <CA+G9fYu4Vwux7yKxrVZ6ZAMQXp16O_=odyMpzLDSM8YTD4CaQA@mail.gmail.com>
+Subject: Re: [PATCH 4.19 000/639] 4.19.99-stable review
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     open list <linux-kernel@vger.kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Shuah Khan <shuah@kernel.org>, patches@kernelci.org,
+        Ben Hutchings <ben.hutchings@codethink.co.uk>,
+        lkft-triage@lists.linaro.org,
+        linux- stable <stable@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+On Fri, 24 Jan 2020 at 15:08, Greg Kroah-Hartman
+<gregkh@linuxfoundation.org> wrote:
+>
+> This is the start of the stable review cycle for the 4.19.99 release.
+> There are 639 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+>
+> Responses should be made by Sun, 26 Jan 2020 09:26:29 +0000.
+> Anything received after that time might be too late.
+>
+> The whole patch series can be found in one patch at:
+>         https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-=
+4.19.99-rc1.gz
+> or in the git tree and branch at:
+>         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
+-rc.git linux-4.19.y
+> and the diffstat can be found below.
+>
+> thanks,
+>
+> greg k-h
+>
+> Petr Machata <petrm@mellanox.com>
+>    vxlan: changelink: Fix handling of default remotes
 
-Add a simple program that allows to test the new LINECHANGED_FD ioctl().
+Results from Linaro=E2=80=99s test farm.
+No regressions on arm64, arm, x86_64, and i386.
 
-Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
----
- tools/gpio/.gitignore   |  1 +
- tools/gpio/Build        |  1 +
- tools/gpio/Makefile     | 11 ++++-
- tools/gpio/gpio-watch.c | 99 +++++++++++++++++++++++++++++++++++++++++
- 4 files changed, 111 insertions(+), 1 deletion(-)
- create mode 100644 tools/gpio/gpio-watch.c
+selftest / net / test_vxlan_fdb_changelink.sh fixed.
 
-diff --git a/tools/gpio/.gitignore b/tools/gpio/.gitignore
-index a94c0e83b209..eab36c6d7751 100644
---- a/tools/gpio/.gitignore
-+++ b/tools/gpio/.gitignore
-@@ -1,4 +1,5 @@
- gpio-event-mon
- gpio-hammer
-+gpio-watch
- lsgpio
- include/linux/gpio.h
-diff --git a/tools/gpio/Build b/tools/gpio/Build
-index 4141f35837db..67c7b7f6a717 100644
---- a/tools/gpio/Build
-+++ b/tools/gpio/Build
-@@ -2,3 +2,4 @@ gpio-utils-y += gpio-utils.o
- lsgpio-y += lsgpio.o gpio-utils.o
- gpio-hammer-y += gpio-hammer.o gpio-utils.o
- gpio-event-mon-y += gpio-event-mon.o gpio-utils.o
-+gpio-watch-y += gpio-watch.o
-diff --git a/tools/gpio/Makefile b/tools/gpio/Makefile
-index 6080de58861f..842287e42c83 100644
---- a/tools/gpio/Makefile
-+++ b/tools/gpio/Makefile
-@@ -18,7 +18,7 @@ MAKEFLAGS += -r
- 
- override CFLAGS += -O2 -Wall -g -D_GNU_SOURCE -I$(OUTPUT)include
- 
--ALL_TARGETS := lsgpio gpio-hammer gpio-event-mon
-+ALL_TARGETS := lsgpio gpio-hammer gpio-event-mon gpio-watch
- ALL_PROGRAMS := $(patsubst %,$(OUTPUT)%,$(ALL_TARGETS))
- 
- all: $(ALL_PROGRAMS)
-@@ -66,6 +66,15 @@ $(GPIO_EVENT_MON_IN): prepare FORCE $(OUTPUT)gpio-utils-in.o
- $(OUTPUT)gpio-event-mon: $(GPIO_EVENT_MON_IN)
- 	$(QUIET_LINK)$(CC) $(CFLAGS) $(LDFLAGS) $< -o $@
- 
-+#
-+# gpio-watch
-+#
-+GPIO_WATCH_IN := $(OUTPUT)gpio-watch-in.o
-+$(GPIO_WATCH_IN): prepare FORCE
-+	$(Q)$(MAKE) $(build)=gpio-watch
-+$(OUTPUT)gpio-watch: $(GPIO_WATCH_IN)
-+	$(QUIET_LINK)$(CC) $(CFLAGS) $(LDFLAGS) $< -o $@
-+
- clean:
- 	rm -f $(ALL_PROGRAMS)
- 	rm -f $(OUTPUT)include/linux/gpio.h
-diff --git a/tools/gpio/gpio-watch.c b/tools/gpio/gpio-watch.c
-new file mode 100644
-index 000000000000..5cea24fddfa7
---- /dev/null
-+++ b/tools/gpio/gpio-watch.c
-@@ -0,0 +1,99 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+/*
-+ * gpio-watch - monitor unrequested lines for property changes using the
-+ *              character device
-+ *
-+ * Copyright (C) 2019 BayLibre SAS
-+ * Author: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-+ */
-+
-+#include <ctype.h>
-+#include <errno.h>
-+#include <fcntl.h>
-+#include <linux/gpio.h>
-+#include <poll.h>
-+#include <stdbool.h>
-+#include <stdio.h>
-+#include <stdlib.h>
-+#include <string.h>
-+#include <sys/ioctl.h>
-+#include <unistd.h>
-+
-+int main(int argc, char **argv)
-+{
-+	struct gpioline_info_changed chg;
-+	struct gpioline_info req;
-+	struct pollfd pfd;
-+	int fd, i, j, ret;
-+	char *event, *end;
-+	ssize_t rd;
-+
-+	if (argc < 3)
-+		goto err_usage;
-+
-+	fd = open(argv[1], O_RDWR | O_CLOEXEC);
-+	if (fd < 0) {
-+		perror("unable to open gpiochip");
-+		return EXIT_FAILURE;
-+	}
-+
-+	for (i = 0, j = 2; i < argc - 2; i++, j++) {
-+		memset(&req, 0, sizeof(req));
-+
-+		req.line_offset = strtoul(argv[j], &end, 0);
-+		if (*end != '\0')
-+			goto err_usage;
-+
-+		ret = ioctl(fd, GPIO_GET_LINEINFO_WATCH_IOCTL, &req);
-+		if (ret) {
-+			perror("unable to set up line watch");
-+			return EXIT_FAILURE;
-+		}
-+	}
-+
-+	pfd.fd = fd;
-+	pfd.events = POLLIN | POLLPRI;
-+
-+	for (;;) {
-+		ret = poll(&pfd, 1, 5000);
-+		if (ret < 0) {
-+			perror("error polling the linechanged fd");
-+			return EXIT_FAILURE;
-+		} else if (ret > 0) {
-+			memset(&chg, 0, sizeof(chg));
-+			rd = read(pfd.fd, &chg, sizeof(chg));
-+			if (rd < 0 || rd != sizeof(chg)) {
-+				if (rd != sizeof(chg))
-+					errno = EIO;
-+
-+				perror("error reading line change event");
-+				return EXIT_FAILURE;
-+			}
-+
-+			switch (chg.event_type) {
-+			case GPIOLINE_CHANGED_REQUESTED:
-+				event = "requested";
-+				break;
-+			case GPIOLINE_CHANGED_RELEASED:
-+				event = "released";
-+				break;
-+			case GPIOLINE_CHANGED_CONFIG:
-+				event = "config changed";
-+				break;
-+			default:
-+				fprintf(stderr,
-+					"invalid event type received from the kernel\n");
-+				return EXIT_FAILURE;
-+			}
-+
-+			printf("line %u: %s at %llu\n",
-+			       chg.info.line_offset, event, chg.timestamp);
-+		}
-+	}
-+
-+	return 0;
-+
-+err_usage:
-+	printf("%s: <gpiochip> <line0> <line1> ...\n", argv[0]);
-+	return EXIT_FAILURE;
-+}
--- 
-2.23.0
+Summary
+------------------------------------------------------------------------
 
+kernel: 4.19.99-rc1
+git repo: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stab=
+le-rc.git
+git branch: linux-4.19.y
+git commit: d521598bed2464511b7d1f1dd553132c7b658394
+git describe: v4.19.98-640-gd521598bed24
+Test details: https://qa-reports.linaro.org/lkft/linux-stable-rc-4.19-oe/bu=
+ild/v4.19.98-640-gd521598bed24
+
+No regressions (compared to build v4.19.98)
+
+Fixes (compared to build v4.19.98)
+------------------------------------------------------------------------
+  kselftest:
+    * net_test_vxlan_fdb_changelink.sh
+
+
+Ran 24093 total tests in the following environments and test suites.
+
+Environments
+--------------
+- dragonboard-410c - arm64
+- hi6220-hikey - arm64
+- i386
+- juno-r2 - arm64
+- nxp-ls2088
+- qemu_arm
+- qemu_arm64
+- qemu_i386
+- qemu_x86_64
+- x15 - arm
+- x86_64
+
+Test Suites
+-----------
+* build
+* install-android-platform-tools-r2600
+* libhugetlbfs
+* linux-log-parser
+* ltp-containers-tests
+* ltp-ipc-tests
+* ltp-hugetlb-tests
+* ltp-mm-tests
+* kselftest
+* kvm-unit-tests
+* ltp-cap_bounds-tests
+* ltp-commands-tests
+* ltp-cpuhotplug-tests
+* ltp-cve-tests
+* ltp-dio-tests
+* ltp-fcntl-locktests-tests
+* ltp-filecaps-tests
+* ltp-fs-tests
+* ltp-fs_bind-tests
+* ltp-fs_perms_simple-tests
+* ltp-fsx-tests
+* ltp-io-tests
+* ltp-math-tests
+* ltp-nptl-tests
+* ltp-open-posix-tests
+* ltp-pty-tests
+* ltp-sched-tests
+* ltp-securebits-tests
+* ltp-syscalls-tests
+* network-basic-tests
+* spectre-meltdown-checker-test
+* v4l2-compliance
+* perf
+* kselftest-vsyscall-mode-native
+* kselftest-vsyscall-mode-none
+
+--=20
+Linaro LKFT
+https://lkft.linaro.org
