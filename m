@@ -2,45 +2,45 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0C526148059
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Jan 2020 12:10:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id F0EE1148088
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Jan 2020 12:12:51 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387561AbgAXLKM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 24 Jan 2020 06:10:12 -0500
-Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:22166 "EHLO
+        id S2388783AbgAXLL5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 24 Jan 2020 06:11:57 -0500
+Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:44937 "EHLO
         us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1731494AbgAXLKG (ORCPT
+        with ESMTP id S2389925AbgAXLLy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 24 Jan 2020 06:10:06 -0500
+        Fri, 24 Jan 2020 06:11:54 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1579864205;
+        s=mimecast20190719; t=1579864313;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc; bh=K3NBi6Sf5iK2lQ6XY2SqwGkLxd++w8nf2TJFIHAXCmc=;
-        b=TOVb3qFW03Z/V2wVqevx61AOe5//RWwCoENSHfssSXHyiO4mKyddb0K/94y+ivi+ytporM
-        9t7cmQlj8XxwIIy9s3EBT8okn5P+DPIkfLpe7y10XQujJB5CMPMwvVIW3BXQ9CA2XVwKaY
-        iWkK0GYxP9HLqPdGQABgYkW2cVtN7KE=
+         to:to:cc:cc; bh=Kjk6W1LG3gaFL8I+p/fnWXQ4uCBjZbkmuUT77YK/Eis=;
+        b=IYO5rFg9WxhRzMWdwbJoDBcLnewV/tD5mzUvVJwgdNBjsHyNhCUOnvtflR3yGAK9jf18bm
+        Alvk/Imazv7ipkDo/KV6uFs+x6tavAI2vNJ/zlUEkmZHEH69Dq/IoItM3LyINQ6PuYw5Wa
+        flI+Dq1FBOPGtUR5ky5qvygvoQrpXa0=
 Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
  [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-343-THEMo_z8NGO3QyxfJlrVUQ-1; Fri, 24 Jan 2020 06:10:02 -0500
-X-MC-Unique: THEMo_z8NGO3QyxfJlrVUQ-1
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+ us-mta-266-SODjscnQMUurREWEQT0_pg-1; Fri, 24 Jan 2020 06:11:50 -0500
+X-MC-Unique: SODjscnQMUurREWEQT0_pg-1
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id F32658017CC;
-        Fri, 24 Jan 2020 11:10:00 +0000 (UTC)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id A7D29800D48;
+        Fri, 24 Jan 2020 11:11:48 +0000 (UTC)
 Received: from intel-purley-fpgabmp-02.ml3.eng.bos.redhat.com (intel-purley-fpgabmp-02.ml3.eng.bos.redhat.com [10.19.176.206])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 352A219C69;
-        Fri, 24 Jan 2020 11:10:00 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 01C851001B28;
+        Fri, 24 Jan 2020 11:11:47 +0000 (UTC)
 From:   Scott Wood <swood@redhat.com>
 To:     Sebastian Andrzej Siewior <bigeasy@linutronix.de>
 Cc:     linux-rt-users@vger.kernel.org, linux-kernel@vger.kernel.org,
         Steven Rostedt <rostedt@goodmis.org>,
         Thomas Gleixner <tglx@linutronix.de>,
         Scott Wood <swood@redhat.com>
-Subject: [PATCH 1/2] sched: migrate_enable: Use per-cpu cpu_stop_work
-Date:   Fri, 24 Jan 2020 06:09:58 -0500
-Message-Id: <1579864199-13036-1-git-send-email-swood@redhat.com>
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
+Subject: [PATCH RT 1/2] sched: migrate_enable: Use per-cpu cpu_stop_work
+Date:   Fri, 24 Jan 2020 06:11:46 -0500
+Message-Id: <1579864307-13093-1-git-send-email-swood@redhat.com>
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -63,6 +63,9 @@ Fixes: e6c287b1512d ("sched: migrate_enable: Use stop_one_cpu_nowait()")
 Suggested-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
 Signed-off-by: Scott Wood <swood@redhat.com>
 ---
+Ignore the other 1/2 just sent -- forgot the RT in the subject and
+didn't quite hit Ctrl-C in time.
+
  kernel/sched/core.c | 22 ++++++++++++++--------
  1 file changed, 14 insertions(+), 8 deletions(-)
 
