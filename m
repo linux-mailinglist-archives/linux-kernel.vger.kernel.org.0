@@ -2,17 +2,17 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 59287148A17
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Jan 2020 15:41:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D99E6148A1D
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Jan 2020 15:41:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389075AbgAXOjI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 24 Jan 2020 09:39:08 -0500
-Received: from szxga07-in.huawei.com ([45.249.212.35]:46572 "EHLO huawei.com"
+        id S2389285AbgAXOj1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 24 Jan 2020 09:39:27 -0500
+Received: from szxga05-in.huawei.com ([45.249.212.191]:9674 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2388993AbgAXOjG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S2388988AbgAXOjG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Fri, 24 Jan 2020 09:39:06 -0500
-Received: from DGGEMS410-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id 8A8E2D5C149B98C0DB21;
+Received: from DGGEMS410-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id 5116C6EDBC484FAE0A6D;
         Fri, 24 Jan 2020 22:39:03 +0800 (CST)
 Received: from localhost.localdomain (10.69.192.58) by
  DGGEMS410-HUB.china.huawei.com (10.3.19.210) with Microsoft SMTP Server id
@@ -26,9 +26,9 @@ CC:     <linuxarm@huawei.com>, <linux-kernel@vger.kernel.org>,
         <linux-arm-kernel@lists.infradead.org>, <suzuki.poulose@arm.com>,
         <james.clark@arm.com>, <zhangshaokun@hisilicon.com>,
         <robin.murphy@arm.com>, John Garry <john.garry@huawei.com>
-Subject: [PATCH RFC 4/7] perf pmu: Rename uncore symbols to include system PMUs
-Date:   Fri, 24 Jan 2020 22:35:02 +0800
-Message-ID: <1579876505-113251-5-git-send-email-john.garry@huawei.com>
+Subject: [PATCH RFC 5/7] perf pmu: Support matching by sysid
+Date:   Fri, 24 Jan 2020 22:35:03 +0800
+Message-ID: <1579876505-113251-6-git-send-email-john.garry@huawei.com>
 X-Mailer: git-send-email 2.8.1
 In-Reply-To: <1579876505-113251-1-git-send-email-john.garry@huawei.com>
 References: <1579876505-113251-1-git-send-email-john.garry@huawei.com>
@@ -41,154 +41,149 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-We want to expand the perf PMU support to cover system PMUs, which are
-essentially the same as uncore pmus (from a kernel sysfs perspective
-anyway).
+Match system or uncore PMU aliases by system id, SYSID.
 
-So rename pmu_is_uncore() et al to cover this.
+We use a SYSID read from sysfs or from an env variable to match against
+uncore or system PMU events.
 
-Unfortunately we have no real way to detect if a PMU is uncore or system.
-We could check the PMU name for "uncore_" prefix to detect if really uncore,
-but this does not work for all uncore PMUs - maybe we should introduce
-this kernel naming convention for future support.
+For x86, they want to match uncore events with cpuid - this still works
+fine for x86 as it would not have system event tables for uncore PMUs.
 
 Signed-off-by: John Garry <john.garry@huawei.com>
 ---
- tools/perf/arch/arm64/util/arm-spe.c |  2 +-
- tools/perf/util/evsel.h              |  2 +-
- tools/perf/util/parse-events.c       | 12 ++++++------
- tools/perf/util/pmu.c                |  6 +++---
- tools/perf/util/pmu.h                |  2 +-
- 5 files changed, 12 insertions(+), 12 deletions(-)
+ tools/perf/util/pmu.c | 105 +++++++++++++++++++++++++++++++++++++-----
+ 1 file changed, 94 insertions(+), 11 deletions(-)
 
-diff --git a/tools/perf/arch/arm64/util/arm-spe.c b/tools/perf/arch/arm64/util/arm-spe.c
-index eba6541ec0f1..4241ad6c9fa0 100644
---- a/tools/perf/arch/arm64/util/arm-spe.c
-+++ b/tools/perf/arch/arm64/util/arm-spe.c
-@@ -223,7 +223,7 @@ struct perf_event_attr
- 	}
- 
- 	arm_spe_pmu->selectable = true;
--	arm_spe_pmu->is_uncore = false;
-+	arm_spe_pmu->is_uncore_or_sys = false;
- 
- 	return attr;
- }
-diff --git a/tools/perf/util/evsel.h b/tools/perf/util/evsel.h
-index dc14f4a823cd..d583b2a64d93 100644
---- a/tools/perf/util/evsel.h
-+++ b/tools/perf/util/evsel.h
-@@ -75,7 +75,7 @@ struct evsel {
- 	bool			precise_max;
- 	bool			ignore_missing_thread;
- 	bool			forced_leader;
--	bool			use_uncore_alias;
-+	bool			use_uncore_or_system_alias;
- 	/* parse modifier helper */
- 	int			exclude_GH;
- 	int			sample_read;
-diff --git a/tools/perf/util/parse-events.c b/tools/perf/util/parse-events.c
-index ed7c008b9c8b..89105d5f0f0b 100644
---- a/tools/perf/util/parse-events.c
-+++ b/tools/perf/util/parse-events.c
-@@ -367,7 +367,7 @@ __add_event(struct list_head *list, int *idx,
- 	(*idx)++;
- 	evsel->core.cpus   = perf_cpu_map__get(cpus);
- 	evsel->core.own_cpus = perf_cpu_map__get(cpus);
--	evsel->core.system_wide = pmu ? pmu->is_uncore : false;
-+	evsel->core.system_wide = pmu ? pmu->is_uncore_or_sys : false;
- 	evsel->auto_merge_stats = auto_merge_stats;
- 
- 	if (name)
-@@ -1404,7 +1404,7 @@ int parse_events_add_pmu(struct parse_events_state *parse_state,
- 	struct perf_pmu *pmu;
- 	struct evsel *evsel;
- 	struct parse_events_error *err = parse_state->error;
--	bool use_uncore_alias;
-+	bool use_uncore_or_system_alias;
- 	LIST_HEAD(config_terms);
- 
- 	pmu = perf_pmu__find(name);
-@@ -1425,7 +1425,7 @@ int parse_events_add_pmu(struct parse_events_state *parse_state,
- 		memset(&attr, 0, sizeof(attr));
- 	}
- 
--	use_uncore_alias = (pmu->is_uncore && use_alias);
-+	use_uncore_or_system_alias = (pmu->is_uncore_or_sys && use_alias);
- 
- 	if (!head_config) {
- 		attr.type = pmu->type;
-@@ -1433,7 +1433,7 @@ int parse_events_add_pmu(struct parse_events_state *parse_state,
- 				    auto_merge_stats, NULL);
- 		if (evsel) {
- 			evsel->pmu_name = name;
--			evsel->use_uncore_alias = use_uncore_alias;
-+			evsel->use_uncore_or_system_alias = use_uncore_or_system_alias;
- 			return 0;
- 		} else {
- 			return -ENOMEM;
-@@ -1481,7 +1481,7 @@ int parse_events_add_pmu(struct parse_events_state *parse_state,
- 		evsel->metric_expr = info.metric_expr;
- 		evsel->metric_name = info.metric_name;
- 		evsel->pmu_name = name;
--		evsel->use_uncore_alias = use_uncore_alias;
-+		evsel->use_uncore_or_system_alias = use_uncore_or_system_alias;
- 		evsel->percore = config_term_percore(&evsel->config_terms);
- 	}
- 
-@@ -1598,7 +1598,7 @@ parse_events__set_leader_for_uncore_aliase(char *name, struct list_head *list,
- 	__evlist__for_each_entry(list, evsel) {
- 
- 		/* Only split the uncore group which members use alias */
--		if (!evsel->use_uncore_alias)
-+		if (!evsel->use_uncore_or_system_alias)
- 			goto out;
- 
- 		/* The events must be from the same uncore block */
 diff --git a/tools/perf/util/pmu.c b/tools/perf/util/pmu.c
-index 8b99fd312aae..569aba4cec89 100644
+index 569aba4cec89..4d4fe0c1ae22 100644
 --- a/tools/perf/util/pmu.c
 +++ b/tools/perf/util/pmu.c
-@@ -623,7 +623,7 @@ static struct perf_cpu_map *pmu_cpumask(const char *name)
- 	return NULL;
+@@ -672,11 +672,78 @@ static char *perf_pmu__getcpuid(struct perf_pmu *pmu)
+ 	return cpuid;
  }
  
--static bool pmu_is_uncore(const char *name)
-+static bool pmu_is_uncore_or_sys(const char *name)
++static char *get_sysid_str(void)
++{
++	char *buf = NULL;
++	char path[PATH_MAX];
++	const char *sysfs = sysfs__mountpoint();
++	FILE *file;
++	int s, i;
++
++	if (!sysfs)
++		return NULL;
++
++	buf = malloc(PATH_MAX);
++	if (!buf) {
++		pr_err("%s alloc failed\n", __func__);
++		return NULL;
++	}
++
++	scnprintf(path, PATH_MAX, "%s/devices/soc0/machine", sysfs);
++
++	file = fopen(path, "r");
++	if (!file) {
++		pr_debug("fopen failed for file %s\n", path);
++		free(buf);
++		return NULL;
++	}
++
++	if (!fgets(buf, PATH_MAX, file)) {
++		fclose(file);
++		pr_debug("gets failed for file %s\n", path);
++		free(buf);
++		return NULL;
++	}
++	fclose(file);
++
++	/* Remove any whitespace, this could be from ACPI HID */
++	s = strlen(buf);
++	for (i = 0; i < s; i++) {
++		if (buf[i] == ' ') {
++			buf[i] = 0;
++			break;
++		};
++	}
++
++	return buf;
++}
++
++static char *perf_pmu__getsysid(void)
++{
++	char *sysid;
++	static bool printed;
++
++	sysid = getenv("PERF_SYSID");
++	if (sysid)
++		sysid = strdup(sysid);
++
++	if (!sysid)
++		sysid = get_sysid_str();
++	if (!sysid)
++		return NULL;
++
++	if (!printed) {
++		pr_debug("Using SYSID %s\n", sysid);
++		printed = true;
++	}
++	return sysid;
++}
++
+ struct pmu_events_map *perf_pmu__find_map(struct perf_pmu *pmu)
  {
- 	char path[PATH_MAX];
- 	const char *sysfs;
-@@ -769,7 +769,7 @@ static void pmu_add_cpu_aliases(struct list_head *head, struct perf_pmu *pmu)
- 			break;
+-	struct pmu_events_map *map;
++	struct pmu_events_map *map, *found_map = NULL;
+ 	char *cpuid = perf_pmu__getcpuid(pmu);
+-	int i;
++	char *sysid;
+ 
+ 	/* on some platforms which uses cpus map, cpuid can be NULL for
+ 	 * PMUs other than CORE PMUs.
+@@ -684,19 +751,35 @@ struct pmu_events_map *perf_pmu__find_map(struct perf_pmu *pmu)
+ 	if (!cpuid)
+ 		return NULL;
+ 
+-	i = 0;
+-	for (;;) {
+-		map = &pmu_events_map[i++];
+-		if (!map->table) {
+-			map = NULL;
+-			break;
++	sysid = perf_pmu__getsysid();
++
++	/*
++	 * Match sysid as first perference for uncore/sys PMUs.
++	 *
++	 * x86 uncore events match by cpuid, but we would not have map->socid
++	 * set for that arch (so any matching here would fail for that).
++	 */
++	if (pmu && pmu_is_uncore_or_sys(pmu->name) &&
++	    !is_arm_pmu_core(pmu->name) && sysid) {
++		for (map = &pmu_events_map[0]; map->table; map++) {
++			if (map->sysid && !strcmp(map->sysid, sysid)) {
++				found_map = map;
++				goto out;
++			}
  		}
++	}
  
--		if (pmu_is_uncore(name) &&
-+		if (pmu_is_uncore_or_sys(name) &&
- 		    pmu_uncore_alias_match(pname, name))
- 			goto new_alias;
+-		if (!strcmp_cpuid_str(map->cpuid, cpuid))
+-			break;
++	for (map = &pmu_events_map[0]; map->table; map++) {
++		if (map->cpuid && cpuid &&
++		    !strcmp_cpuid_str(map->cpuid, cpuid)) {
++			found_map = map;
++			goto out;
++		}
+ 	}
++out:
+ 	free(cpuid);
+-	return map;
++	free(sysid); /* Can safely handle is sysid is NULL */
++	return found_map;
+ }
  
-@@ -838,7 +838,7 @@ static struct perf_pmu *pmu_lookup(const char *name)
- 	pmu->cpus = pmu_cpumask(name);
- 	pmu->name = strdup(name);
- 	pmu->type = type;
--	pmu->is_uncore = pmu_is_uncore(name);
-+	pmu->is_uncore_or_sys = pmu_is_uncore_or_sys(name);
- 	pmu->max_precise = pmu_max_precise(name);
- 	pmu_add_cpu_aliases(&aliases, pmu);
- 
-diff --git a/tools/perf/util/pmu.h b/tools/perf/util/pmu.h
-index 6737e3d5d568..67cf002c9458 100644
---- a/tools/perf/util/pmu.h
-+++ b/tools/perf/util/pmu.h
-@@ -25,7 +25,7 @@ struct perf_pmu {
- 	char *name;
- 	__u32 type;
- 	bool selectable;
--	bool is_uncore;
-+	bool is_uncore_or_sys;
- 	bool auxtrace;
- 	int max_precise;
- 	struct perf_event_attr *default_config;
+ static bool pmu_uncore_alias_match(const char *pmu_name, const char *name)
 -- 
 2.17.1
 
