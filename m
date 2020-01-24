@@ -2,83 +2,156 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CDB641482B2
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Jan 2020 12:30:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C5399147F2C
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Jan 2020 12:00:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404172AbgAXLaF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 24 Jan 2020 06:30:05 -0500
-Received: from mail.kernel.org ([198.145.29.99]:47514 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2404162AbgAXLaD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 24 Jan 2020 06:30:03 -0500
-Received: from localhost (ip-213-127-102-57.ip.prioritytelecom.net [213.127.102.57])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B5F7B206D4;
-        Fri, 24 Jan 2020 11:30:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579865402;
-        bh=w8I3q/H8D+xz74nVtTtd2Hsj1Psua0C3tPm6m8HhW4M=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Yr0DUTRveu9vXgwxTtEe0BHkIop5MdqVynyMveh7C29WO2EpHInooFky8+IJBRCW1
-         72E0T5UcTc/evJ2m5SAQ01Te/gWyN2qsh5r4eYXTCANlXFmmFgXirwB74kbtcwy0Un
-         MOB/2Uw/pqgnFSYujX67zGg5D80m1bfHd90YQhCk=
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>,
-        Coly Li <colyli@suse.de>, Jens Axboe <axboe@kernel.dk>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 536/639] bcache: Fix an error code in bch_dump_read()
-Date:   Fri, 24 Jan 2020 10:31:46 +0100
-Message-Id: <20200124093156.146001293@linuxfoundation.org>
-X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200124093047.008739095@linuxfoundation.org>
-References: <20200124093047.008739095@linuxfoundation.org>
-User-Agent: quilt/0.66
+        id S1733075AbgAXLAM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 24 Jan 2020 06:00:12 -0500
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:41126 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726294AbgAXLAI (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 24 Jan 2020 06:00:08 -0500
+Received: by mail-wr1-f66.google.com with SMTP id c9so1433163wrw.8
+        for <linux-kernel@vger.kernel.org>; Fri, 24 Jan 2020 03:00:07 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=pvVTcmdkHq4QrYZRiMMxNdIvg0TySYTHHMAhoBk2JiQ=;
+        b=boKpOa5UJJStmfYHjgjPvdfpxPD1HCiWrCiMe1wbK3CSnqaFBBg4CsDasj9QBjWFWF
+         ZmOhJq0xlnEru86tarsw3nKBy8N3p4JW793PtefCyK25rbeipXYc4/LqFTY9ASin0O2u
+         v/j54jVpe3efFhzGxuSs1dbwgZym+48Ie5wR6EiMKpoM5hPQz3CKiTSBngH7dQwm9S5T
+         6HKWv6OSEEtHOkTen+cJE/0o2v3ERK6S92xLdUixzgggHn3dxrQJAGdsFiFVEzUtMLMD
+         iIDKLLa0H0M61U5HhK4kZ2xx3TYQ6gk6V1/E1HP8sdv5gn2RIDVu3WpBeKb9jCMyEdPq
+         iaBA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=pvVTcmdkHq4QrYZRiMMxNdIvg0TySYTHHMAhoBk2JiQ=;
+        b=k65tRSnOEENi0BM2UijFYushpWBfuySxdIZ8YLrg73raeXcVe31qce5VfZO+eMzc8d
+         3NK887MRVcrFyYae9vmqEH9QXQa4BamMHW5F1fXh5ZYMVBi3UTedF7wXJhPAAzypmgm2
+         m+m7rTLek3IFRhodQNQuFm0hhumHHOd2Y0692AqSVJ5r9fvWxmWVgNhx2zfYT0HrXRNR
+         bEtDQNyNLjGuD0POjZnPhPFMZEWP5CXu6AcAlFdobm+BndSDg9l+0Aawo3BbAHWfNR70
+         WwCHOL5eszCDHoIx0JJoAUzq9e2J/5ZAIyPTvVRIYJAY7F6wFIl4jpwdbTk53JIRDw9h
+         0OOg==
+X-Gm-Message-State: APjAAAXfYaqQpDMUQCqMbiKmqndn9mYa0/Xb/FaC4bxpkw4NR4VH18vo
+        ZFuS9XCe6p5HclHTBC78Vt2LJksOzes=
+X-Google-Smtp-Source: APXvYqwItrU1nQnB007oBxkHF4j67xd8TpR3rTt3vVb6twgjBG1+0pPLWD6tmOApucF5G/UHU+VXNg==
+X-Received: by 2002:a5d:494b:: with SMTP id r11mr3606877wrs.184.1579863606189;
+        Fri, 24 Jan 2020 03:00:06 -0800 (PST)
+Received: from dell ([2.27.35.227])
+        by smtp.gmail.com with ESMTPSA id v83sm6388079wmg.16.2020.01.24.03.00.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 24 Jan 2020 03:00:05 -0800 (PST)
+Date:   Fri, 24 Jan 2020 11:00:18 +0000
+From:   Lee Jones <lee.jones@linaro.org>
+To:     Adam Thomson <Adam.Thomson.Opensource@diasemi.com>,
+        Mark Brown <broonie@kernel.org>,
+        Wolfram Sang <wsa@the-dreams.de>
+Cc:     Helmut Grohne <helmut.grohne@intenta.de>,
+        Support Opensource <Support.Opensource@diasemi.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 1/2] mfd: da9062: enable being a system-power-controller
+Message-ID: <20200124110018.GR15507@dell>
+References: <20200107120559.GA700@laureti-dev>
+ <AM6PR10MB226306BDE8575CED80071148800F0@AM6PR10MB2263.EURPRD10.PROD.OUTLOOK.COM>
+ <20200124085310.GA27231@laureti-dev>
+ <AM6PR10MB22636902FCF576272AC8F373800E0@AM6PR10MB2263.EURPRD10.PROD.OUTLOOK.COM>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <AM6PR10MB22636902FCF576272AC8F373800E0@AM6PR10MB2263.EURPRD10.PROD.OUTLOOK.COM>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
+On Fri, 24 Jan 2020, Adam Thomson wrote:
+> On 24 January 2020 08:53, Helmut Grohne wrote:
+> > On Thu, Jan 23, 2020 at 04:51:37PM +0100, Adam Thomson wrote:
+> > > I have concerns about using regmap/I2C within the pm_power_off() callback
+> > > function although I am aware there are other examples of this in the kernel. At
+> > > the point that is called I believe IRQs are disabled so it would require a
+> > > platform to have an atomic version of the I2C bus's xfer function. Don't know
+> > > if there's a check to see if the bus supports this, but if not then maybe it's
+> > > something worth adding? That way we can then only support the
+> > pm_power_off()
+> > > approach on systems which can actually do it.
+> > 
+> > On arm, machine_power_off calls the pm_power_off callback after issuing
+> > local_irq_disable() and smp_send_stop(). So I think your intuition is
+> > correct that we are running with only one CPU left with IRQs disabled.
+> > 
+> > I have tested this code on a board with an i2c-cadence bus. This driver
+> > seems to use IRQs for completion tracking with no fallback to polling.
+> > I'm now puzzled as to why this works at all. Given that I'm using
+> > regmap_update_bits on a volatile register, it would have to complete the
+> > read before performing the relevant write. Nevertheless, it reliably
+> > turns off here. So I'm starting to wonder whether there is a flaw in the
+> > analysis.
+> > 
+> > I also looked into whether linux/i2c.h would tell us about the
+> > availability of an atomic xfer function. Indeed, the i2c_algorithm
+> > structure has a master_xfer_atomic specifically for this purpose. The
+> > i2c core will automatically use this function when irqs are disabled.
+> > Unfortunately, very few buses implement this function. In particular,
+> > i2c-cadence lacks it.
+> > 
+> > So I could check for i2c_dev->adapter->algo->master_xfer_atomic != NULL
+> > indeed. Possibly this could be wrapped in a central inline function.
+> 
+> Yes, I'd be tempted to make this a nice wrapper function to hide the
+> particulars, were someone to implement this.
+> 
+> > 
+> > I concur that quite a few other drivers use a regmap/i2c from their
+> > pm_power_off hook. Examples include:
+> >  * arch/powerpc/platforms/83xx/mcu_mpc8349emitx.c (i2c without regmap)
+> >  * drivers/mfd/axp20x.c (regmap without i2c)
+> >  * drivers/mfd/dm355evm_msp.c (i2c without regmap)
+> >  * drivers/mfd/max77620.c (regmap and i2c)
+> >  * drivers/mfd/max8907.c (regmap and i2c)
+> >  * drivers/mfd/palmas.c (regmap and i2c)
+> >  * drivers/mfd/retu-mfd.c (regmap and i2c)
+> >  * drivers/mfd/rn5t618.c (regmap and i2c)
+> >  * drivers/mfd/tps6586x.c (regmap and i2c)
+> >  * drivers/mfd/tps65910.c (regmap and i2c)
+> >  * drivers/mfd/tps80031.c (regmap and i2c)
+> >  * drivers/mfd/twl4030-power.c (i2c without regmap)
+> >  * drivers/regulator/act8865-regulator.c (regmap and i2c)
+> > 
+> > For this reason, I think the practice of using regmap/i2c within
+> > pm_power_off is well-established and should not be questioned for an
+> > individual device. In addition, the relevant functionality must be
+> > explicitly requested by modifying a board-specific device-tree. It can
+> > be assumed that an integrator would test whether the mfd actually works
+> > as a power controller when adding the relevant property. Given that we
+> > turned off other CPUs and IRQs, the behaviour should be fairly reliable.
+> 
+> I never like assumptions and they tend to catch people out. A lot of the time
+> driver developers will use another as a template/example and so the same
+> possible mistakes can be duplicated. I don't know for certain these are mistakes
+> but the code seems to indicate that could be the case, and there's a good
+> reason that atomic I2C transfer code has been added into the kernel. I also
+> prefer code that helps people identify where a problem might lie so having a
+> check for I2C atomic support would be useful to indicate if there is a problem.
+> 
+> Lee, do you have any further insight into any of this? Am I barking up the
+> wrong tree here?
 
-[ Upstream commit d66c9920c0cf984cf99cab5036fd5f3a1b7fba46 ]
+Not off-hand, sorry.  I would have to do a deep-dive to figure it
+out for myself.
 
-The copy_to_user() function returns the number of bytes remaining to be
-copied, but the intention here was to return -EFAULT if the copy fails.
+Maybe this is where Mark and/or Wolfram (Cc'ed) have some knowledge.
 
-Fixes: cafe56359144 ("bcache: A block layer cache")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-Signed-off-by: Coly Li <colyli@suse.de>
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- drivers/md/bcache/debug.c | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/md/bcache/debug.c b/drivers/md/bcache/debug.c
-index 8c53d874ada4a..f6b60d5908f70 100644
---- a/drivers/md/bcache/debug.c
-+++ b/drivers/md/bcache/debug.c
-@@ -178,10 +178,9 @@ static ssize_t bch_dump_read(struct file *file, char __user *buf,
- 	while (size) {
- 		struct keybuf_key *w;
- 		unsigned int bytes = min(i->bytes, size);
--		int err = copy_to_user(buf, i->buf, bytes);
- 
--		if (err)
--			return err;
-+		if (copy_to_user(buf, i->buf, bytes))
-+			return -EFAULT;
- 
- 		ret	 += bytes;
- 		buf	 += bytes;
 -- 
-2.20.1
-
-
-
+Lee Jones [李琼斯]
+Linaro Services Technical Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
