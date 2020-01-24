@@ -2,128 +2,84 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5F06F147A35
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Jan 2020 10:17:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 82BB6147A3B
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Jan 2020 10:18:00 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730338AbgAXJQ4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 24 Jan 2020 04:16:56 -0500
-Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:55914 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1730287AbgAXJQy (ORCPT
+        id S1730396AbgAXJR7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 24 Jan 2020 04:17:59 -0500
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:39864 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729880AbgAXJR6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 24 Jan 2020 04:16:54 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1579857413;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=eVwp3U5GzOX2o0jWqVHj3WHwgjI/zlg9dOk4xt7JmuA=;
-        b=VQOkVf103fQn8r2Iy5fiqFBIMOqqer1SkL9v9y4w8NF9hT/dA+OeXhMEwlCaR/hecFS5Jx
-        EV9gwXK/uBV6SMHq8oFvmbRxwY3PgitLDIlkCJPoX+bCD/u82VPrSF21z5RrCjGIj3ZnIR
-        Ib6sXLf5CY7iKz+BHjaTRIzbn0IcbzA=
-Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
- [209.85.128.70]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-169-1Q_BTgs6Mj2Nl56QR7PAPQ-1; Fri, 24 Jan 2020 04:16:52 -0500
-X-MC-Unique: 1Q_BTgs6Mj2Nl56QR7PAPQ-1
-Received: by mail-wm1-f70.google.com with SMTP id p26so288230wmg.5
-        for <linux-kernel@vger.kernel.org>; Fri, 24 Jan 2020 01:16:52 -0800 (PST)
+        Fri, 24 Jan 2020 04:17:58 -0500
+Received: by mail-pg1-f194.google.com with SMTP id 4so709449pgd.6
+        for <linux-kernel@vger.kernel.org>; Fri, 24 Jan 2020 01:17:58 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=sargun.me; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=FFs/EsdtRscf8mrY/Jnn+OFoGxG7CxqnjEoCeXl2Nps=;
+        b=G4Cbvo9JI2cOaoZ6s2snBtga4+6+zZ+SvltXUrVS9l2l0ftyHUrsFQBF5pip5iYmTQ
+         RmT6PoG48wReiyER4H92O0wJC/aLoWEvH+SW3hzCxtOpJFbejVmFC5BsD1cMjGbyKJcp
+         alEdqeIiup81GNvrnPtLSqvYYHW646cUh/DdA=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=eVwp3U5GzOX2o0jWqVHj3WHwgjI/zlg9dOk4xt7JmuA=;
-        b=r8RB6D9JcCfceRWEiG/Jzvji0Nqq3mPPRltrU7QWIv0BvFAnIrliZboxapIeNfylVx
-         N3qysFKJYtDv3mc50IFT3L1EGiltITTePmyRgKSDk838Kc+F+sUNlF1T89FjnXBRFaz/
-         inPxM3MOeMaoSwUdhRTwmG0bXDs5ScoZrOjl3t/S7IQzQen/1Fgno2G4YLPQV7aCADvu
-         NFvgaORoeq622VjDpFfKOfd0Zj8FaQgkH8LkuEN7YS5zxKGrGCGfef9wGl3GVqePnHzz
-         w2K3qgVBZAqoMb5WE3Nij0/Fd9QfUwV21Ekfw7kml64gB0Zt33qIb+CpxGyh7QKCEHvv
-         yGwA==
-X-Gm-Message-State: APjAAAXZrbMhS8fjWNas89goB84mB1eypEjXCK2tG1iKPZSikPQucGpo
-        hO5JhD8qQ7wfK1V+TQsK0GUsXyy/cOLsEYr0mPWzzmAjN/uSVU7rEm3VUOgvuC/ciTTI/NiobCQ
-        4NQI2WWIo4v+7ESD+fAZ8PkLD
-X-Received: by 2002:a1c:a445:: with SMTP id n66mr2460521wme.151.1579857411356;
-        Fri, 24 Jan 2020 01:16:51 -0800 (PST)
-X-Google-Smtp-Source: APXvYqxUiU565WJyxONGgI7w4xQRq/ENXZEynENvjhqk4CBvmo8g5IcgWmw96rLrMcfuNGJKf9m74A==
-X-Received: by 2002:a1c:a445:: with SMTP id n66mr2460489wme.151.1579857411156;
-        Fri, 24 Jan 2020 01:16:51 -0800 (PST)
-Received: from localhost.localdomain ([109.38.141.136])
-        by smtp.gmail.com with ESMTPSA id a132sm6060770wme.3.2020.01.24.01.16.49
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 24 Jan 2020 01:16:50 -0800 (PST)
-Subject: Re: [PATCH v12 03/10] firmware: Rename FW_OPT_NOFALLBACK to
- FW_OPT_NOFALLBACK_SYSFS
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Andy Lutomirski <luto@kernel.org>
-Cc:     Ard Biesheuvel <ardb@kernel.org>,
-        Darren Hart <dvhart@infradead.org>,
-        Andy Shevchenko <andy@infradead.org>,
-        Luis Chamberlain <mcgrof@kernel.org>,
-        "Rafael J . Wysocki" <rafael@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H . Peter Anvin" <hpa@zytor.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Peter Jones <pjones@redhat.com>,
-        Dave Olsthoorn <dave@bewaar.me>, x86@kernel.org,
-        platform-driver-x86@vger.kernel.org, linux-efi@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
-        linux-input@vger.kernel.org
-References: <20200115163554.101315-1-hdegoede@redhat.com>
- <20200115163554.101315-4-hdegoede@redhat.com>
- <20200124085751.GA2957916@kroah.com>
-From:   Hans de Goede <hdegoede@redhat.com>
-Message-ID: <d25d5d6e-0348-b19f-539e-048cfa70d6a6@redhat.com>
-Date:   Fri, 24 Jan 2020 10:16:48 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.1.1
+        bh=FFs/EsdtRscf8mrY/Jnn+OFoGxG7CxqnjEoCeXl2Nps=;
+        b=jQYl+P0+t9tQ49wZRYT04OCaVSkQT4uF+W5fm3DclZxI4GIBUJmxIFP1mBsEChIPw2
+         gSoQL3XXmBzQ5w49BfrxFMwO8JILuINuyPcfiash9/PajfJ8L5ptYmYbozhQkw1mDG8L
+         mCuhsqc4D8h+rXvIdGdKX6TNl0tmjXATTRpVxuAh4rzg8Bg9s5zjSqNKtK2LoYSeXR4k
+         NXcuu0IEwW5Z+kvTk7Jr+qOYiWZnpkAviQ19e8YJxczr+Xb8EffQ322zBSbESO55KH/x
+         AvDW2EjdDXW1vJudPNNL+WKg609o2vai2b68WfsCvLupw55dawBIYhqtjetCc+yTtKF8
+         XvvQ==
+X-Gm-Message-State: APjAAAXF7/RPn3OQkc8N0OIO+uN2BiQ+AUfIKYEnmISBdjDWV3z6FcXm
+        cd+3Rd8y7rdKM3u0XOgjR6Isp6qvj/Gwbw==
+X-Google-Smtp-Source: APXvYqzLdYRkEKsSqDWOYv8GoFK+AQpSZfH5CoQU2dOQbZHX4rkib4veekPke6G0fxy+dn+UfaXSuw==
+X-Received: by 2002:a63:946:: with SMTP id 67mr2925580pgj.277.1579857477139;
+        Fri, 24 Jan 2020 01:17:57 -0800 (PST)
+Received: from ubuntu.netflix.com (203.20.25.136.in-addr.arpa. [136.25.20.203])
+        by smtp.gmail.com with ESMTPSA id y14sm5459507pfe.147.2020.01.24.01.17.56
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 24 Jan 2020 01:17:56 -0800 (PST)
+From:   Sargun Dhillon <sargun@sargun.me>
+To:     linux-kernel@vger.kernel.org,
+        containers@lists.linux-foundation.org, linux-api@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org
+Cc:     Sargun Dhillon <sargun@sargun.me>, tycho@tycho.ws,
+        christian.brauner@ubuntu.com
+Subject: [PATCH 0/4] Add the ability to get a pidfd on seccomp user notifications
+Date:   Fri, 24 Jan 2020 01:17:39 -0800
+Message-Id: <20200124091743.3357-1-sargun@sargun.me>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-In-Reply-To: <20200124085751.GA2957916@kroah.com>
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+This patchset adds the ability for users of the seccomp user notification API
+to receive the pidfd of the process which triggered the notification. It is
+an optional feature that users must opt into by setting a flag when they
+call the ioctl. With enhancements to other APIs, it should decrease
+the need for the cookie-checking mechanism.
 
-On 1/24/20 9:57 AM, Greg Kroah-Hartman wrote:
-> On Wed, Jan 15, 2020 at 05:35:47PM +0100, Hans de Goede wrote:
->> This is a preparation patch for adding a new platform fallback mechanism,
->> which will have its own enable/disable FW_OPT_xxx option.
->>
->> Note this also fixes a typo in one of the re-wordwrapped comments:
->> enfoce -> enforce.
->>
->> Acked-by: Luis Chamberlain <mcgrof@kernel.org>
->> Signed-off-by: Hans de Goede <hdegoede@redhat.com>
-> 
-> I've taken this in my tree for now in a quest to try to get others to
-> pay attention to this series...
+Sargun Dhillon (4):
+  pid: Add pidfd_create_file helper
+  fork: Use newly created pidfd_create_file helper
+  seccomp: Add SECCOMP_USER_NOTIF_FLAG_PIDFD to get pidfd on listener
+    trap
+  selftests/seccomp: test SECCOMP_USER_NOTIF_FLAG_PIDFD
 
-Thank you.
+ include/linux/pid.h                           |   1 +
+ include/uapi/linux/seccomp.h                  |   4 +
+ kernel/fork.c                                 |   4 +-
+ kernel/pid.c                                  |  22 ++++
+ kernel/seccomp.c                              |  68 ++++++++++-
+ tools/testing/selftests/seccomp/seccomp_bpf.c | 110 ++++++++++++++++++
+ 6 files changed, 200 insertions(+), 9 deletions(-)
 
-As mentioned before I believe that this series is ready for merging now.
-
-Andy Lutomirski had one last change request for v12 of the second
-patch in the series, specifically to replace the loop searching for
-the prefix with a memem, but the kernel does not have memmem.
-
-Andy, are you ok with v12 as is, given that we don't have memmem ?
-
-Assuming Andy is ok with v12 as is, then to merge this we need
-to probably wait for 5.6-rc1 and then have the x86/efi folks do
-an immutable branch with the first 2 patches of the series.
-
-After that you (Greg) can merge patches 3-10 (after merging the
-branch) and the platform/drivers/x86 folks can take 11 and 12
-(also after merging the branch).
-
-Regards,
-
-Hans
+-- 
+2.20.1
 
