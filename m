@@ -2,86 +2,79 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2772B148F1A
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Jan 2020 21:09:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 088F0148F1E
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Jan 2020 21:10:23 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390938AbgAXUJe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 24 Jan 2020 15:09:34 -0500
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:35315 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387397AbgAXUJe (ORCPT
+        id S2403919AbgAXUKP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 24 Jan 2020 15:10:15 -0500
+Received: from mail-ed1-f67.google.com ([209.85.208.67]:42385 "EHLO
+        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729683AbgAXUKP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 24 Jan 2020 15:09:34 -0500
-Received: by mail-wr1-f68.google.com with SMTP id g17so3495876wro.2
-        for <linux-kernel@vger.kernel.org>; Fri, 24 Jan 2020 12:09:32 -0800 (PST)
+        Fri, 24 Jan 2020 15:10:15 -0500
+Received: by mail-ed1-f67.google.com with SMTP id e10so3797585edv.9
+        for <linux-kernel@vger.kernel.org>; Fri, 24 Jan 2020 12:10:14 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=pmMv0e1ipy/mmadM3tMkpkKH9Ht+YA21gUnOiVe810U=;
-        b=ag5VQjaCbMqVXUUqABJnv9Q7B87NLXXN9QMOrYT+HBkrCzaj9sZSiKT7w0oIh2pGwe
-         ckwwC9iYxggjpnF+lg71fIVu0abGufngHaHcsYTaExmBNefOTvRr1GYgbdVKk5nbYG7k
-         VC99p+FcomDTEu3c/HoOm35KXOFynW7JWpQrsql/TaBQidV/diTzmMDJH6nEMROumTpX
-         FDi4q/yNek+I+TpAFXGINS1W9GVmCkkK/2zOQFA1c/OCjMPzem50CQa9SHS+EgSzbrnj
-         gblMqO+cwdGsypdyClAy1G+/dOQI+75TmV/4NvB1kdfr2RkcxqmFZtrpa5So+5/ReMFA
-         +aLg==
+        d=sargun.me; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=EW6Y/EZHZi/ttUxTUSXyYBrJLM6UmlUPE/P/09OJMp8=;
+        b=D57LaX6fPIH9yUp1n9+Oi2UloLj6giH8ArlR4WpiryOjEWH0YZzmHpB7st9eYWD7TS
+         3j+v+LFsCXuf38Ry79+XOYI8bX8rWiHVP83p0KFyhcNBtyplhPLMBFeQgyCznZeNhu4d
+         bnUnov6ftmIi4qUTGqr5SEUrcbtZUY6nZZ2nI=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=pmMv0e1ipy/mmadM3tMkpkKH9Ht+YA21gUnOiVe810U=;
-        b=BtjRjyTN820pSNSkS/Pb1x8BIo/A1Dw/paW9MCwCGWB/STHDuuReK3tPGVLjz3TJ/3
-         nukdKpzH7QF2mY+y71mrWNHuz0mSZB2JjDEkKADKyzdIIHXJ6mRjXBtVIXwK1j5rWcuo
-         T8tK632IGNPtxnnyghMzBhhD0BW5+mJawlim0y8TggSaA2OKABcQitoadqCE/W/MAEhC
-         TMnLJSyjHbj+cHG87rygj94ly2O93GRh7G7ixmAAfbQfyQPVdiBJ6g1orfVKKKeD664j
-         5QAd+yk4biHhXhjnpWbetJaruSmOgRktQlMj1sPzvZBZcQ51zL7EA97t9a1kMmrENRqP
-         FKXA==
-X-Gm-Message-State: APjAAAVk7CbY9P7Sw6lYkPsCX/0J4YqKOteH5n48fJDtbvB1PHu+FvKF
-        GXQRkhN3jEw9GgLr4uOefA==
-X-Google-Smtp-Source: APXvYqzDdQwOXqgq63BAmN/jQHZqKgMj0Fm0OWR/WKFbabnIBCgUubKq+Iu3rVYQWKK1x1tM/MwLZw==
-X-Received: by 2002:adf:81c2:: with SMTP id 60mr6089094wra.8.1579896570826;
-        Fri, 24 Jan 2020 12:09:30 -0800 (PST)
-Received: from ninjahub.lan (host-92-15-174-87.as43234.net. [92.15.174.87])
-        by smtp.googlemail.com with ESMTPSA id u1sm7689785wmc.5.2020.01.24.12.09.29
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 24 Jan 2020 12:09:30 -0800 (PST)
-From:   Jules Irenge <jbi.octave@gmail.com>
-To:     boqun.feng@gmail.com
-Cc:     linux-kernel@vger.kernel.org, peterz@infradead.org,
-        tglx@linutronix.de, mingo@redhat.com, will@kernel.org,
-        Jules Irenge <jbi.octave@gmail.com>
-Subject: [PATCH 0/3] Lock warning cleanup
-Date:   Fri, 24 Jan 2020 20:08:59 +0000
-Message-Id: <cover.1579893447.git.jbi.octave@gmail.com>
-X-Mailer: git-send-email 2.24.1
-In-Reply-To: <0/3>
-References: <0/3>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=EW6Y/EZHZi/ttUxTUSXyYBrJLM6UmlUPE/P/09OJMp8=;
+        b=bvQq6Q9wIRe0cwBAoJvCWK9FnITy1inhx9Z2pU3yYJLy6ZbJe+FVkM5UaCaIXiSaE9
+         FY7Z7y953CgIoS20ao7xbu2Adlq4rJp67D/esJW+OUTgaZS4HrsIvx+0CaswEYV7MSA9
+         4oUlU+rZk8iDJ0n7sAUgoW6Zj+A9+nGOf9vgtm/qxdUMvqvk4vmgtHO9PgPvZa4R9otv
+         mb2hJ35rXe6SebpGhswWxeN80X26oeaMEt7IwYGd9VdQxmltZLkFwO2tESKJySA1BGtU
+         04GLOXhAe0wmqMfjo+0jcrsS0Yhro7k+hf2HodqiWcrMzXsEwU9xKO7UcXVu7h2+MNS4
+         iWkw==
+X-Gm-Message-State: APjAAAV5IhTo0pP4veBuzu/kBdsnqi2s8dG54QU2UwteaMJiNqvPuh3Z
+        6ToDx1+7GUx8kswBD0xULIKzcyPYHcrtOrRu6nTbRA==
+X-Google-Smtp-Source: APXvYqwWJyOj8lNCsez+rW7XtOC4RGJBUgl+VpwoBouyvHuLrvQ3yPoOq7ALyHD46F67pPGbj4kMWn5TGsuAHVWCMdo=
+X-Received: by 2002:a17:906:680b:: with SMTP id k11mr4160436ejr.0.1579896613104;
+ Fri, 24 Jan 2020 12:10:13 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20200124091743.3357-1-sargun@sargun.me> <20200124091743.3357-4-sargun@sargun.me>
+ <20200124180332.GA4151@cisco>
+In-Reply-To: <20200124180332.GA4151@cisco>
+From:   Sargun Dhillon <sargun@sargun.me>
+Date:   Fri, 24 Jan 2020 12:09:37 -0800
+Message-ID: <CAMp4zn_WXwxJ6Md4rgFzdAY_xea4TmVDdQc1iJDObEMm5Yc79g@mail.gmail.com>
+Subject: Re: [PATCH 3/4] seccomp: Add SECCOMP_USER_NOTIF_FLAG_PIDFD to get
+ pidfd on listener trap
+To:     Tycho Andersen <tycho@tycho.ws>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        Linux Containers <containers@lists.linux-foundation.org>,
+        Linux API <linux-api@vger.kernel.org>,
+        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
+        Christian Brauner <christian.brauner@ubuntu.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-1. TIME subsytem : patch 1, an __acquires(timer) annotation is added. as
-the function despite having a nested lock the outer one allows entry to
-critical section only.
-2. Within futex.c file or path 2, a __releases() annotation is added. as the
-function releases the lock at exit.
-3. MUTEX subsystem : patch 3, __acquires(lock) and __releases(lock) are
-added to mutex_lock() and mutex_unlock() to fix issues raised in other
-files. 
+On Fri, Jan 24, 2020 at 10:03 AM Tycho Andersen <tycho@tycho.ws> wrote:
+>
+> On Fri, Jan 24, 2020 at 01:17:42AM -0800, Sargun Dhillon wrote:
+> > Currently, this just opens the group leader of the thread that triggere
+> > the event, as pidfds (currently) are limited to group leaders.
+>
+> I don't love the semantics of this; when they're not limited to thread
+> group leaders any more, we won't be able to change this. Is that work
+> far off?
+>
+> Tycho
 
-Jules Irenge (3):
-  time: Add missing annotation to lock_hrtimer_base()
-  futex: Add missing annotation for wake_futex_pi()
-  mutex: Add missing annotations
-
- include/linux/mutex.h | 4 ++--
- kernel/futex.c        | 1 +
- kernel/time/hrtimer.c | 1 +
- 3 files changed, 4 insertions(+), 2 deletions(-)
-
--- 
-2.24.1
-
+We would be able to change this in the future if we introduced a flag like
+SECCOMP_USER_NOTIF_FLAG_PIDFD_THREAD which would send a
+pidfd that's for the thread, and not just the group leader. The flag could
+either be XOR with SECCOMP_USER_NOTIF_FLAG_PIDFD, or
+could require both. Alternatively, we can rename
+SECCOMP_USER_NOTIF_FLAG_PIDFD to
+SECCOMP_USER_NOTIF_FLAG_GROUP_LEADER_PIDFD.
