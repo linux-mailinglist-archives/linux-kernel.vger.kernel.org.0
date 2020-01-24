@@ -2,84 +2,85 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D4C9C147937
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Jan 2020 09:19:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 57B20147943
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Jan 2020 09:22:23 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729225AbgAXITF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 24 Jan 2020 03:19:05 -0500
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:55353 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726080AbgAXITD (ORCPT
+        id S1729429AbgAXIWU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 24 Jan 2020 03:22:20 -0500
+Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:36300 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726080AbgAXIWT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 24 Jan 2020 03:19:03 -0500
-Received: by mail-wm1-f68.google.com with SMTP id q9so781349wmj.5
-        for <linux-kernel@vger.kernel.org>; Fri, 24 Jan 2020 00:19:03 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=EYXzH+H+dYYs2s9oEC15MO7DnSTfxVq0anYWtofAEvU=;
-        b=WMHLT1B1V8VMJQ6+eutHfhQrXRLLPIUI6C+IdymyX7eJ4Qx5tz1e2M8ENmee0X3u/E
-         yb5ThDSDWnvSZiumf+GgH1Ve9lAmr4kpytT1CZ59VcQ6LRNkxqxZfJwgV7FJSGaaMSSj
-         p5xT4WRGbUvn/MdFYvgi4oEQf0XkE7gDX6a3p/pacn/Xmg5CEr3Du57KujzH1DfjzK08
-         KGUcKsBzUHoc8NoAT+dC28wh7clo602Iv6TouEUpmkHoiTM2EVxkUA4zvgUh0ibYMOmv
-         HmquZuPvrdGO6/JMGqYghY7ojm+wd79BX63iyNGyRSNturNb52n1fKYuEmHYxVecFC6p
-         L9nA==
+        Fri, 24 Jan 2020 03:22:19 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1579854138;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=JkbP5+LvgNJD8LbEa+fzcqZQFolNmASwwPkutJLSYdg=;
+        b=EHaaj6LbA+0i6IiSVPTinUeySBOgXYGrn17VliLPjIGNA/j3aX5kboNY+hzzlfIS0SYl3H
+        awaza8NGagWwmc9FPeNTI0BoI70yXtol3NhgDgBYYFu3sGI5nQOeR7vePYgSr5/7vyh00H
+        wBCDvRyfCXCAUIFyNv0hyKfcT6JbyOA=
+Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
+ [209.85.128.71]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-244-FbDlC6O8MY2Rw4M2qts25Q-1; Fri, 24 Jan 2020 03:22:16 -0500
+X-MC-Unique: FbDlC6O8MY2Rw4M2qts25Q-1
+Received: by mail-wm1-f71.google.com with SMTP id m21so366418wmg.6
+        for <linux-kernel@vger.kernel.org>; Fri, 24 Jan 2020 00:22:16 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=EYXzH+H+dYYs2s9oEC15MO7DnSTfxVq0anYWtofAEvU=;
-        b=lOIpJrl2NYEU/IZCSju8Xg7D65+zslIc8KW1G5izkTNZotnq7n4QmtLrzmIrUiKMDz
-         o+mOPESzbaUxSepdSvxl1P0Wa3vHXxsHoTtS3jPDLcy1wUzMqpUFszVy05l2SJv6thTF
-         yipWSoyjGW9xdSGQBRQSoe3wPuOKDc71qX8PsuyBcjsDXHPI76gCn8P3L+xNBsJ+RBvD
-         5xXE2Irm8m59pMa8IgFyjFrWS3UnsGEHHE6skwx2olJiyN6pXc0OKp3t/VRXJfkXmTO1
-         O1HB+8j/18gZLhqJDoZb0aPER/u/9aV9OvUAp25eRd9lvxXSC5OG+Ki/dV+xEA01iQNu
-         oPEQ==
-X-Gm-Message-State: APjAAAX8WnM+5PCOI1YWqfBNAxPIx5meUSed2vVShtgmhPmhi7Q3c2ov
-        HH2vbMzxchtaoEXx1B9FBjm1SNoHyIKL6Q==
-X-Google-Smtp-Source: APXvYqy42um/AC80iyve1O6j/ud6xSEH06OklOsJ1TvbT+3k8XTXmlgwtDixRIjUskyj8E2ZeDqCDw==
-X-Received: by 2002:a7b:cbd6:: with SMTP id n22mr2242778wmi.118.1579853941957;
-        Fri, 24 Jan 2020 00:19:01 -0800 (PST)
-Received: from ogabbay-VM.habana-labs.com ([31.154.190.6])
-        by smtp.gmail.com with ESMTPSA id y15sm6046555wma.2.2020.01.24.00.19.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 24 Jan 2020 00:19:00 -0800 (PST)
-From:   Oded Gabbay <oded.gabbay@gmail.com>
-To:     linux-kernel@vger.kernel.org, oshpigelman@habana.ai,
-        ttayar@habana.ai
-Cc:     gregkh@linuxfoundation.org
-Subject: [PATCH] habanalabs: patched cb equals user cb in device memset
-Date:   Fri, 24 Jan 2020 10:18:59 +0200
-Message-Id: <20200124081859.23849-1-oded.gabbay@gmail.com>
-X-Mailer: git-send-email 2.17.1
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=JkbP5+LvgNJD8LbEa+fzcqZQFolNmASwwPkutJLSYdg=;
+        b=UXCuMKcfqeZci8rPL+dRuiQck6QrojHvv/IUYzmIdyzzZ5GJfb1o1ZgV9Lrwt5b3DP
+         aaNf2XXiX/7wroZHRBt66thi7fcxVbldjcK1K6P7ZIck3hMd+eU5z4iMZZgL+X2ALFU3
+         SYQz1GF3HnszDQ32vXAEwRbnE/1BF6WSRVbt1uadm3pZiKjdYP/qha/rZMVZcbbg5ckS
+         dO6wy76jXlwBcJ7ea3NOwhpwX6jbJ8o3sVnMfJWoPfUrEazHr3XK8UxepUsaqGjZwoJU
+         CZjOBzcHcZ0eDmgz3DyHDQoBtCPtu/eDwi7O6472QrWqUjoNQ40JuHdAPNRhll5tNBQW
+         iuWg==
+X-Gm-Message-State: APjAAAUGLaf34sO7ubaxUJBitHOCAdCyNBo7iNW6cw132KHJ7+0kPiQQ
+        oGd+5ig/MRa6TR39VS2YyjQfoa8fkq5oEEyurI5bV/nDE0KuXRVzI4UDzQFCujroqzxWRb+sgs6
+        Aa/fnKXHfCW7Yy886pRsoqziV
+X-Received: by 2002:a5d:6ca1:: with SMTP id a1mr2789748wra.36.1579854135490;
+        Fri, 24 Jan 2020 00:22:15 -0800 (PST)
+X-Google-Smtp-Source: APXvYqz10DrEvjEBKBDFT9OrSLCpjfy0GI6NWMPczTFepONKfqG3vqBFEl4fBzoVAQY9ySVL6vc6gg==
+X-Received: by 2002:a5d:6ca1:: with SMTP id a1mr2789723wra.36.1579854135210;
+        Fri, 24 Jan 2020 00:22:15 -0800 (PST)
+Received: from ?IPv6:2001:b07:6468:f312:b8fe:679e:87eb:c059? ([2001:b07:6468:f312:b8fe:679e:87eb:c059])
+        by smtp.gmail.com with ESMTPSA id u16sm5672516wmj.41.2020.01.24.00.22.14
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 24 Jan 2020 00:22:14 -0800 (PST)
+Subject: Re: [PATCH] KVM: x86: avoid incorrect writes to host
+ MSR_IA32_SPEC_CTRL
+To:     Xiaoyao Li <xiaoyao.li@intel.com>, linux-kernel@vger.kernel.org,
+        kvm@vger.kernel.org
+Cc:     Jim Mattson <jmattson@redhat.com>
+References: <1579614487-44583-3-git-send-email-pbonzini@redhat.com>
+ <8b960dfe-620b-b649-d377-e5bb1556bb48@intel.com>
+From:   Paolo Bonzini <pbonzini@redhat.com>
+Message-ID: <6b725990-f0c2-6577-be7e-44e101e540b5@redhat.com>
+Date:   Fri, 24 Jan 2020 09:22:13 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.1.1
+MIME-Version: 1.0
+In-Reply-To: <8b960dfe-620b-b649-d377-e5bb1556bb48@intel.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-During device memory memset, the driver allocates and use a CB (command
-buffer). To reuse existing code, it keeps a pointer to the CB in two
-variables, user_cb and patched_cb. Therefore, there is no need to "put"
-both the user_cb and patched_cb, as it will cause an underflow of the
-refcnt of the CB.
+On 24/01/20 09:00, Xiaoyao Li wrote:
+>>
+>>   +bool kvm_spec_ctrl_valid_bits(struct kvm_vcpu *vcpu)
+> 
+> The return type should be u64.
 
-Signed-off-by: Oded Gabbay <oded.gabbay@gmail.com>
----
- drivers/misc/habanalabs/goya/goya.c | 2 --
- 1 file changed, 2 deletions(-)
+Ugh... Thanks.
 
-diff --git a/drivers/misc/habanalabs/goya/goya.c b/drivers/misc/habanalabs/goya/goya.c
-index 382331cc00d3..74785ccd2cb1 100644
---- a/drivers/misc/habanalabs/goya/goya.c
-+++ b/drivers/misc/habanalabs/goya/goya.c
-@@ -4693,8 +4693,6 @@ static int goya_memset_device_memory(struct hl_device *hdev, u64 addr, u64 size,
- 
- 	rc = goya_send_job_on_qman0(hdev, job);
- 
--	hl_cb_put(job->patched_cb);
--
- 	hl_debugfs_remove_job(hdev, job);
- 	kfree(job);
- 	cb->cs_cnt--;
--- 
-2.17.1
+Paolo
 
