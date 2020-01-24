@@ -2,36 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5E22A147F2D
+	by mail.lfdr.de (Postfix) with ESMTP id C708C147F2E
 	for <lists+linux-kernel@lfdr.de>; Fri, 24 Jan 2020 12:00:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730338AbgAXLAP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 24 Jan 2020 06:00:15 -0500
-Received: from mail.kernel.org ([198.145.29.99]:59056 "EHLO mail.kernel.org"
+        id S1733130AbgAXLAS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 24 Jan 2020 06:00:18 -0500
+Received: from mail.kernel.org ([198.145.29.99]:59210 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732904AbgAXLAK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 24 Jan 2020 06:00:10 -0500
+        id S1733089AbgAXLAN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 24 Jan 2020 06:00:13 -0500
 Received: from localhost (ip-213-127-102-57.ip.prioritytelecom.net [213.127.102.57])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1E3FF20838;
-        Fri, 24 Jan 2020 11:00:08 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A81112075D;
+        Fri, 24 Jan 2020 11:00:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579863609;
-        bh=fF0ICyfsbhKCKmHfG4nav6E/FfEtWRg5ZKB3FseJpLE=;
+        s=default; t=1579863613;
+        bh=ZKI9m9r9ZBkJSDjSyGik+RALoIn8moPnYi4EQWm8ZBc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=JjaFtjIM7ubVMlxdtDElcqR2sp9MJwhSJu0vpNA1EpYYJZ6oVPrm/mpjGfHFbt1DE
-         cIwPoRqK27mJ5/CXncoIwA8OLs/Q4ByU6EQfHj4ONIRC9QUmYn5njjLsXUkW9SbLuQ
-         6jK0gesvcY65OYo/Dk1PRoByGBji4AlLC+1Iaqww=
+        b=CTNQMYzpUsYzamqLXxm87tVz9pV6cxIkpPIcp9henuXP2aYZTf85uOWycKh+NIZoi
+         DkuByJfDLXreQRhOUjDZpPvSkVyrDC6OlxCHH8kNcTWC/gfiA0VzDiekNDDKcv3Dtu
+         nyx+/K1a/yZu+xkirBE87pPMGbaQZDi6xUYHr0jU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jann Horn <jannh@google.com>,
-        John Johansen <john.johansen@canonical.com>,
+        stable@vger.kernel.org, Frank Rowand <frank.rowand@sony.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Andy Gross <andy.gross@linaro.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 026/639] apparmor: dont try to replace stale label in ptrace access check
-Date:   Fri, 24 Jan 2020 10:23:16 +0100
-Message-Id: <20200124093050.608541006@linuxfoundation.org>
+Subject: [PATCH 4.19 027/639] ARM: qcom_defconfig: Enable MAILBOX
+Date:   Fri, 24 Jan 2020 10:23:17 +0100
+Message-Id: <20200124093050.738625323@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
 In-Reply-To: <20200124093047.008739095@linuxfoundation.org>
 References: <20200124093047.008739095@linuxfoundation.org>
@@ -44,62 +45,44 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jann Horn <jannh@google.com>
+From: Frank Rowand <frank.rowand@sony.com>
 
-[ Upstream commit 1f8266ff58840d698a1e96d2274189de1bdf7969 ]
+[ Upstream commit 54c2678cd198f61555796bbda5e1727e6e1858f1 ]
 
-As a comment above begin_current_label_crit_section() explains,
-begin_current_label_crit_section() must run in sleepable context because
-when label_is_stale() is true, aa_replace_current_label() runs, which uses
-prepare_creds(), which can sleep.
-Until now, the ptrace access check (which runs with a task lock held)
-violated this rule.
+Problem:
+ab460a2e72da ("rpmsg: qcom_smd: Access APCS through mailbox framework"
+added a "depends on MAILBOX") to RPMSG_QCOM_SMD, thus RPMSG_QCOM_SMD
+becomes unset since MAILBOX was not enabled in qcom_defconfig and is
+not otherwise selected for the dragonboard.  When the resulting
+kernel is booted the mmc device which contains the root file system
+is not available.
 
-Also add a might_sleep() assertion to begin_current_label_crit_section(),
-because asserts are less likely to be ignored than comments.
+Fix:
+add CONFIG_MAILBOX to qcom_defconfig
 
-Fixes: b2d09ae449ced ("apparmor: move ptrace checks to using labels")
-Signed-off-by: Jann Horn <jannh@google.com>
-Signed-off-by: John Johansen <john.johansen@canonical.com>
+Fixes: ab460a2e72da ("rpmsg: qcom_smd: Access APCS through mailbox framework"
+added a "depends on MAILBOX")
+
+Signed-off-by: Frank Rowand <frank.rowand@sony.com>
+Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+Signed-off-by: Andy Gross <andy.gross@linaro.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- security/apparmor/include/cred.h | 2 ++
- security/apparmor/lsm.c          | 4 ++--
- 2 files changed, 4 insertions(+), 2 deletions(-)
+ arch/arm/configs/qcom_defconfig | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/security/apparmor/include/cred.h b/security/apparmor/include/cred.h
-index e287b7d0d4beb..265ae6641a064 100644
---- a/security/apparmor/include/cred.h
-+++ b/security/apparmor/include/cred.h
-@@ -151,6 +151,8 @@ static inline struct aa_label *begin_current_label_crit_section(void)
- {
- 	struct aa_label *label = aa_current_raw_label();
- 
-+	might_sleep();
-+
- 	if (label_is_stale(label)) {
- 		label = aa_get_newest_label(label);
- 		if (aa_replace_current_label(label) == 0)
-diff --git a/security/apparmor/lsm.c b/security/apparmor/lsm.c
-index 590ca7d8fae54..730de4638b4e2 100644
---- a/security/apparmor/lsm.c
-+++ b/security/apparmor/lsm.c
-@@ -114,13 +114,13 @@ static int apparmor_ptrace_access_check(struct task_struct *child,
- 	struct aa_label *tracer, *tracee;
- 	int error;
- 
--	tracer = begin_current_label_crit_section();
-+	tracer = __begin_current_label_crit_section();
- 	tracee = aa_get_task_label(child);
- 	error = aa_may_ptrace(tracer, tracee,
- 			(mode & PTRACE_MODE_READ) ? AA_PTRACE_READ
- 						  : AA_PTRACE_TRACE);
- 	aa_put_label(tracee);
--	end_current_label_crit_section(tracer);
-+	__end_current_label_crit_section(tracer);
- 
- 	return error;
- }
+diff --git a/arch/arm/configs/qcom_defconfig b/arch/arm/configs/qcom_defconfig
+index 6aa7046fb91ff..bd6440f234939 100644
+--- a/arch/arm/configs/qcom_defconfig
++++ b/arch/arm/configs/qcom_defconfig
+@@ -207,6 +207,7 @@ CONFIG_MSM_MMCC_8974=y
+ CONFIG_MSM_IOMMU=y
+ CONFIG_HWSPINLOCK=y
+ CONFIG_HWSPINLOCK_QCOM=y
++CONFIG_MAILBOX=y
+ CONFIG_REMOTEPROC=y
+ CONFIG_QCOM_ADSP_PIL=y
+ CONFIG_QCOM_Q6V5_PIL=y
 -- 
 2.20.1
 
