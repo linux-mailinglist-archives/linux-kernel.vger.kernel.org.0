@@ -2,22 +2,21 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 43FCB147A31
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Jan 2020 10:17:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 72623147A12
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Jan 2020 10:10:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730196AbgAXJQu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 24 Jan 2020 04:16:50 -0500
-Received: from ste-pvt-msa2.bahnhof.se ([213.80.101.71]:35753 "EHLO
-        ste-pvt-msa2.bahnhof.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729384AbgAXJQt (ORCPT
+        id S1730320AbgAXJKG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 24 Jan 2020 04:10:06 -0500
+Received: from pio-pvt-msa1.bahnhof.se ([79.136.2.40]:48794 "EHLO
+        pio-pvt-msa1.bahnhof.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730142AbgAXJJ6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 24 Jan 2020 04:16:49 -0500
-X-Greylist: delayed 416 seconds by postgrey-1.27 at vger.kernel.org; Fri, 24 Jan 2020 04:16:49 EST
+        Fri, 24 Jan 2020 04:09:58 -0500
 Received: from localhost (localhost [127.0.0.1])
-        by ste-pvt-msa2.bahnhof.se (Postfix) with ESMTP id 681DF3F6EE;
-        Fri, 24 Jan 2020 10:09:51 +0100 (CET)
-Authentication-Results: ste-pvt-msa2.bahnhof.se;
-        dkim=pass (1024-bit key; unprotected) header.d=shipmail.org header.i=@shipmail.org header.b=lmfX8Jm+;
+        by pio-pvt-msa1.bahnhof.se (Postfix) with ESMTP id 308B24027D;
+        Fri, 24 Jan 2020 10:09:56 +0100 (CET)
+Authentication-Results: pio-pvt-msa1.bahnhof.se;
+        dkim=pass (1024-bit key; unprotected) header.d=shipmail.org header.i=@shipmail.org header.b="K/ky+h1J";
         dkim-atps=neutral
 X-Virus-Scanned: Debian amavisd-new at bahnhof.se
 X-Spam-Flag: NO
@@ -27,24 +26,22 @@ X-Spam-Status: No, score=-2.099 tagged_above=-999 required=6.31
         tests=[BAYES_00=-1.9, DKIM_SIGNED=0.1, DKIM_VALID=-0.1,
         DKIM_VALID_AU=-0.1, DKIM_VALID_EF=-0.1, URIBL_BLOCKED=0.001]
         autolearn=ham autolearn_force=no
-Authentication-Results: ste-ftg-msa2.bahnhof.se (amavisd-new);
-        dkim=pass (1024-bit key) header.d=shipmail.org
-Received: from ste-pvt-msa2.bahnhof.se ([127.0.0.1])
-        by localhost (ste-ftg-msa2.bahnhof.se [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id ja-EDtmmEIsb; Fri, 24 Jan 2020 10:09:50 +0100 (CET)
+Received: from pio-pvt-msa1.bahnhof.se ([127.0.0.1])
+        by localhost (pio-pvt-msa1.bahnhof.se [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id zsP62CDLljKA; Fri, 24 Jan 2020 10:09:50 +0100 (CET)
 Received: from mail1.shipmail.org (h-205-35.A357.priv.bahnhof.se [155.4.205.35])
         (Authenticated sender: mb878879)
-        by ste-pvt-msa2.bahnhof.se (Postfix) with ESMTPA id 524263F5D8;
+        by pio-pvt-msa1.bahnhof.se (Postfix) with ESMTPA id 525BD4036F;
         Fri, 24 Jan 2020 10:09:48 +0100 (CET)
 Received: from localhost.localdomain.localdomain (h-205-35.A357.priv.bahnhof.se [155.4.205.35])
-        by mail1.shipmail.org (Postfix) with ESMTPSA id E914F360653;
-        Fri, 24 Jan 2020 10:09:47 +0100 (CET)
+        by mail1.shipmail.org (Postfix) with ESMTPSA id 1507836065E;
+        Fri, 24 Jan 2020 10:09:48 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=shipmail.org; s=mail;
-        t=1579856988; bh=3/LLclKt7+aCOVoEUoZ2rgY+/+paTMjeNbg1mLjGtXI=;
+        t=1579856988; bh=a72u2tKS1ZtRKlCXrQ5ZPVxfZmBaody2JgynKp4b49o=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=lmfX8Jm+eY3Ry7JJWrVaHib0VAmvysHOsKTd9EAgG/hvEs5eV4BZxhxGhZkhc3KUb
-         qjticevxCPxJ7uQTZL5bBAT/UuQbgXOtIDKWZyMumrDy3cVT4UDntUaK2AQro++6tB
-         l+ZCGTshLQUO4igVhjWCh145hJkc3nYcxQvdNfJY=
+        b=K/ky+h1J6XHvH14pPW9WJ942iKbqBKQyZZWvXNtKEGxPvWMlrODlsVJXv9LA6rHUy
+         TD0lkFfUDl0aIqrIOEujk3CYlf/KzyZHX6r/SW5QOjQBjjXNFh+xAUXeLzRmuTZgMc
+         jZm/WuM8nWbaEFieoLlJPQjrZMK43R7tDglaeZfQ=
 From:   =?UTF-8?q?Thomas=20Hellstr=C3=B6m=20=28VMware=29?= 
         <thomas_os@shipmail.org>
 To:     linux-mm@kvack.org, dri-devel@lists.freedesktop.org,
@@ -59,9 +56,9 @@ Cc:     pv-drivers@vmware.com, linux-graphics-maintainer@vmware.com,
         =?UTF-8?q?J=C3=A9r=C3=B4me=20Glisse?= <jglisse@redhat.com>,
         =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
         Dan Williams <dan.j.williams@intel.com>
-Subject: [PATCH 3/9] mm: Split huge pages on write-notify or COW
-Date:   Fri, 24 Jan 2020 10:09:34 +0100
-Message-Id: <20200124090940.26571-4-thomas_os@shipmail.org>
+Subject: [PATCH 4/9] mm: Add vmf_insert_pfn_xxx_prot() for huge page-table entries
+Date:   Fri, 24 Jan 2020 10:09:35 +0100
+Message-Id: <20200124090940.26571-5-thomas_os@shipmail.org>
 X-Mailer: git-send-email 2.21.0
 In-Reply-To: <20200124090940.26571-1-thomas_os@shipmail.org>
 References: <20200124090940.26571-1-thomas_os@shipmail.org>
@@ -75,17 +72,8 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Thomas Hellstrom <thellstrom@vmware.com>
 
-We currently only do COW and write-notify on the PTE level, so if the
-huge_fault() handler returns VM_FAULT_FALLBACK on wp faults,
-split the huge pages and page-table entries. Also do this for huge PUDs
-if there is no huge_fault() handler and the vma is not anonymous, similar
-to how it's done for PMDs.
-
-Note that fs/dax.c does the splitting in the huge_fault() handler, but as
-huge_fault() is implemented by modules we need to consider whether to
-export the splitting functions for use in the modules or whether to try
-to keep calls in the core. Opt for the latter. A follow-up patch can
-remove the dax.c split_huge_pmd() if needed.
+For graphics drivers needing to modify the page-protection, add
+huge page-table entries counterparts to vmf_insert_prn_prot().
 
 Cc: Andrew Morton <akpm@linux-foundation.org>
 Cc: Michal Hocko <mhocko@suse.com>
@@ -97,57 +85,138 @@ Cc: "Christian König" <christian.koenig@amd.com>
 Cc: Dan Williams <dan.j.williams@intel.com>
 Signed-off-by: Thomas Hellstrom <thellstrom@vmware.com>
 ---
- mm/memory.c | 27 +++++++++++++++++++--------
- 1 file changed, 19 insertions(+), 8 deletions(-)
+ include/linux/huge_mm.h | 41 +++++++++++++++++++++++++++++++++++++++--
+ mm/huge_memory.c        | 38 ++++++++++++++++++++++++++++++++------
+ 2 files changed, 71 insertions(+), 8 deletions(-)
 
-diff --git a/mm/memory.c b/mm/memory.c
-index 17aadc751e5c..4c49fe963e5c 100644
---- a/mm/memory.c
-+++ b/mm/memory.c
-@@ -3880,11 +3880,14 @@ static inline vm_fault_t wp_huge_pmd(struct vm_fault *vmf, pmd_t orig_pmd)
- {
- 	if (vma_is_anonymous(vmf->vma))
- 		return do_huge_pmd_wp_page(vmf, orig_pmd);
--	if (vmf->vma->vm_ops->huge_fault)
--		return vmf->vma->vm_ops->huge_fault(vmf, PE_SIZE_PMD);
-+	if (vmf->vma->vm_ops->huge_fault) {
-+		vm_fault_t ret = vmf->vma->vm_ops->huge_fault(vmf, PE_SIZE_PMD);
- 
--	/* COW handled on pte level: split pmd */
--	VM_BUG_ON_VMA(vmf->vma->vm_flags & VM_SHARED, vmf->vma);
-+		if (!(ret & VM_FAULT_FALLBACK))
-+			return ret;
-+	}
+diff --git a/include/linux/huge_mm.h b/include/linux/huge_mm.h
+index 0b84e13e88e2..a95d1bc8ffe8 100644
+--- a/include/linux/huge_mm.h
++++ b/include/linux/huge_mm.h
+@@ -47,8 +47,45 @@ extern bool move_huge_pmd(struct vm_area_struct *vma, unsigned long old_addr,
+ extern int change_huge_pmd(struct vm_area_struct *vma, pmd_t *pmd,
+ 			unsigned long addr, pgprot_t newprot,
+ 			int prot_numa);
+-vm_fault_t vmf_insert_pfn_pmd(struct vm_fault *vmf, pfn_t pfn, bool write);
+-vm_fault_t vmf_insert_pfn_pud(struct vm_fault *vmf, pfn_t pfn, bool write);
++vm_fault_t vmf_insert_pfn_pmd_prot(struct vm_fault *vmf, pfn_t pfn,
++				   pgprot_t pgprot, bool write);
 +
-+	/* COW or write-notify handled on pte level: split pmd. */
- 	__split_huge_pmd(vmf->vma, vmf->pmd, vmf->address, false, NULL);
- 
- 	return VM_FAULT_FALLBACK;
-@@ -3897,12 +3900,20 @@ static inline bool vma_is_accessible(struct vm_area_struct *vma)
- 
- static vm_fault_t create_huge_pud(struct vm_fault *vmf)
- {
--#ifdef CONFIG_TRANSPARENT_HUGEPAGE
-+#if defined(CONFIG_TRANSPARENT_HUGEPAGE) &&			\
-+	defined(CONFIG_HAVE_ARCH_TRANSPARENT_HUGEPAGE_PUD)
- 	/* No support for anonymous transparent PUD pages yet */
- 	if (vma_is_anonymous(vmf->vma))
--		return VM_FAULT_FALLBACK;
--	if (vmf->vma->vm_ops->huge_fault)
--		return vmf->vma->vm_ops->huge_fault(vmf, PE_SIZE_PUD);
-+		goto split;
-+	if (vmf->vma->vm_ops->huge_fault) {
-+		vm_fault_t ret = vmf->vma->vm_ops->huge_fault(vmf, PE_SIZE_PUD);
++/**
++ * vmf_insert_pfn_pmd - insert a pmd size pfn
++ * @vmf: Structure describing the fault
++ * @pfn: pfn to insert
++ * @pgprot: page protection to use
++ * @write: whether it's a write fault
++ *
++ * Insert a pmd size pfn. See vmf_insert_pfn() for additional info.
++ *
++ * Return: vm_fault_t value.
++ */
++static inline vm_fault_t vmf_insert_pfn_pmd(struct vm_fault *vmf, pfn_t pfn,
++					    bool write)
++{
++	return vmf_insert_pfn_pmd_prot(vmf, pfn, vmf->vma->vm_page_prot, write);
++}
++vm_fault_t vmf_insert_pfn_pud_prot(struct vm_fault *vmf, pfn_t pfn,
++				   pgprot_t pgprot, bool write);
 +
-+		if (!(ret & VM_FAULT_FALLBACK))
-+			return ret;
-+	}
-+split:
-+	/* COW or write-notify not handled on PUD level: split pud.*/
-+	__split_huge_pud(vmf->vma, vmf->pud, vmf->address);
- #endif /* CONFIG_TRANSPARENT_HUGEPAGE */
- 	return VM_FAULT_FALLBACK;
++/**
++ * vmf_insert_pfn_pud - insert a pud size pfn
++ * @vmf: Structure describing the fault
++ * @pfn: pfn to insert
++ * @pgprot: page protection to use
++ * @write: whether it's a write fault
++ *
++ * Insert a pud size pfn. See vmf_insert_pfn() for additional info.
++ *
++ * Return: vm_fault_t value.
++ */
++static inline vm_fault_t vmf_insert_pfn_pud(struct vm_fault *vmf, pfn_t pfn,
++					    bool write)
++{
++	return vmf_insert_pfn_pud_prot(vmf, pfn, vmf->vma->vm_page_prot, write);
++}
++
+ enum transparent_hugepage_flag {
+ 	TRANSPARENT_HUGEPAGE_FLAG,
+ 	TRANSPARENT_HUGEPAGE_REQ_MADV_FLAG,
+diff --git a/mm/huge_memory.c b/mm/huge_memory.c
+index f8d24fc3f4df..b2ec62cca3ae 100644
+--- a/mm/huge_memory.c
++++ b/mm/huge_memory.c
+@@ -811,11 +811,24 @@ static void insert_pfn_pmd(struct vm_area_struct *vma, unsigned long addr,
+ 		pte_free(mm, pgtable);
  }
+ 
+-vm_fault_t vmf_insert_pfn_pmd(struct vm_fault *vmf, pfn_t pfn, bool write)
++/**
++ * vmf_insert_pfn_pmd_prot - insert a pmd size pfn
++ * @vmf: Structure describing the fault
++ * @pfn: pfn to insert
++ * @pgprot: page protection to use
++ * @write: whether it's a write fault
++ *
++ * Insert a pmd size pfn. See vmf_insert_pfn() for additional info and
++ * also consult the vmf_insert_mixed_prot() documentation when
++ * @pgprot != @vmf->vma->vm_page_prot.
++ *
++ * Return: vm_fault_t value.
++ */
++vm_fault_t vmf_insert_pfn_pmd_prot(struct vm_fault *vmf, pfn_t pfn,
++				   pgprot_t pgprot, bool write)
+ {
+ 	unsigned long addr = vmf->address & PMD_MASK;
+ 	struct vm_area_struct *vma = vmf->vma;
+-	pgprot_t pgprot = vma->vm_page_prot;
+ 	pgtable_t pgtable = NULL;
+ 
+ 	/*
+@@ -843,7 +856,7 @@ vm_fault_t vmf_insert_pfn_pmd(struct vm_fault *vmf, pfn_t pfn, bool write)
+ 	insert_pfn_pmd(vma, addr, vmf->pmd, pfn, pgprot, write, pgtable);
+ 	return VM_FAULT_NOPAGE;
+ }
+-EXPORT_SYMBOL_GPL(vmf_insert_pfn_pmd);
++EXPORT_SYMBOL_GPL(vmf_insert_pfn_pmd_prot);
+ 
+ #ifdef CONFIG_HAVE_ARCH_TRANSPARENT_HUGEPAGE_PUD
+ static pud_t maybe_pud_mkwrite(pud_t pud, struct vm_area_struct *vma)
+@@ -889,11 +902,24 @@ static void insert_pfn_pud(struct vm_area_struct *vma, unsigned long addr,
+ 	spin_unlock(ptl);
+ }
+ 
+-vm_fault_t vmf_insert_pfn_pud(struct vm_fault *vmf, pfn_t pfn, bool write)
++/**
++ * vmf_insert_pfn_pud_prot - insert a pud size pfn
++ * @vmf: Structure describing the fault
++ * @pfn: pfn to insert
++ * @pgprot: page protection to use
++ * @write: whether it's a write fault
++ *
++ * Insert a pud size pfn. See vmf_insert_pfn() for additional info and
++ * also consult the vmf_insert_mixed_prot() documentation when
++ * @pgprot != @vmf->vma->vm_page_prot.
++ *
++ * Return: vm_fault_t value.
++ */
++vm_fault_t vmf_insert_pfn_pud_prot(struct vm_fault *vmf, pfn_t pfn,
++				   pgprot_t pgprot, bool write)
+ {
+ 	unsigned long addr = vmf->address & PUD_MASK;
+ 	struct vm_area_struct *vma = vmf->vma;
+-	pgprot_t pgprot = vma->vm_page_prot;
+ 
+ 	/*
+ 	 * If we had pud_special, we could avoid all these restrictions,
+@@ -914,7 +940,7 @@ vm_fault_t vmf_insert_pfn_pud(struct vm_fault *vmf, pfn_t pfn, bool write)
+ 	insert_pfn_pud(vma, addr, vmf->pud, pfn, pgprot, write);
+ 	return VM_FAULT_NOPAGE;
+ }
+-EXPORT_SYMBOL_GPL(vmf_insert_pfn_pud);
++EXPORT_SYMBOL_GPL(vmf_insert_pfn_pud_prot);
+ #endif /* CONFIG_HAVE_ARCH_TRANSPARENT_HUGEPAGE_PUD */
+ 
+ static void touch_pmd(struct vm_area_struct *vma, unsigned long addr,
 -- 
 2.21.0
 
