@@ -2,37 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BE44214888D
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Jan 2020 15:30:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C0EE11488A4
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Jan 2020 15:30:24 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405086AbgAXOUx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 24 Jan 2020 09:20:53 -0500
-Received: from mail.kernel.org ([198.145.29.99]:41978 "EHLO mail.kernel.org"
+        id S2387874AbgAXOaT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 24 Jan 2020 09:30:19 -0500
+Received: from mail.kernel.org ([198.145.29.99]:42074 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2404964AbgAXOUl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 24 Jan 2020 09:20:41 -0500
+        id S2405032AbgAXOUp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 24 Jan 2020 09:20:45 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 35F4722527;
-        Fri, 24 Jan 2020 14:20:40 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 73AC324676;
+        Fri, 24 Jan 2020 14:20:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579875641;
-        bh=pYJmhRfn9YOi7piJCSMO3M5A4Rv0EXDHpAb2QRyajSE=;
+        s=default; t=1579875645;
+        bh=E6Fv9O+OegQ5OgqHUfaQME7FUO6QA7TWUMPDerY7pLQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ZfbPKGV8vO+0HYTRvfBiZcYUvAtAz+TN9E5j3TXddgrDY5idKwqEyNBhTQeZG96O8
-         MNvF0otU9FrPqRrN8vP18Uq4X0oe7pMBR4yB2nq639HLgrKQVxyNTsqT4WQ5MaFcaM
-         lsBhO3ig2vUGz1sh2Rn3YrpM866yzP8XoHgSpIds=
+        b=rNN/ICvjPLO354inOVoDOAx+Cm20TzM7vV9ckyfxYiwGPwvE6ET+UxPKusuLEqu+d
+         misNPT0PFUnVfGmlMf0x30usUyy+q/WEIslIE57LR56d5dRQWzy2oeiBY3lLABBjlj
+         esbdli3O91owtR1CTZo9vvuyk3C/VOP8hR6qpWrc=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Hans de Goede <hdegoede@redhat.com>,
-        Jason Anderson <jasona.594@gmail.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Sasha Levin <sashal@kernel.org>,
-        platform-driver-x86@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 24/56] platform/x86: GPD pocket fan: Allow somewhat lower/higher temperature limits
-Date:   Fri, 24 Jan 2020 09:19:40 -0500
-Message-Id: <20200124142012.29752-24-sashal@kernel.org>
+Cc:     Stephan Gerhold <stephan@gerhold.net>,
+        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+        Mark Brown <broonie@kernel.org>,
+        Sasha Levin <sashal@kernel.org>, alsa-devel@alsa-project.org
+Subject: [PATCH AUTOSEL 4.19 28/56] ASoC: msm8916-wcd-digital: Reset RX interpolation path after use
+Date:   Fri, 24 Jan 2020 09:19:44 -0500
+Message-Id: <20200124142012.29752-28-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200124142012.29752-1-sashal@kernel.org>
 References: <20200124142012.29752-1-sashal@kernel.org>
@@ -45,37 +44,54 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Hans de Goede <hdegoede@redhat.com>
+From: Stephan Gerhold <stephan@gerhold.net>
 
-[ Upstream commit 1f27dbd8265dbb379926c8f6a4453fe7fe26d7a3 ]
+[ Upstream commit 85578bbd642f65065039b1765ebe1a867d5435b0 ]
 
-Allow the user to configure the fan to turn on / speed-up at lower
-thresholds then before (20 degrees Celcius as minimum instead of 40) and
-likewise also allow the user to delay the fan speeding-up till the
-temperature hits 90 degrees Celcius (was 70).
+For some reason, attempting to route audio through QDSP6 on MSM8916
+causes the RX interpolation path to get "stuck" after playing audio
+a few times. In this situation, the analog codec part is still working,
+but the RX path in the digital codec stops working, so you only hear
+the analog parts powering up. After a reboot everything works again.
 
-Cc: Jason Anderson <jasona.594@gmail.com>
-Reported-by: Jason Anderson <jasona.594@gmail.com>
-Signed-off-by: Hans de Goede <hdegoede@redhat.com>
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+So far I was not able to reproduce the problem when using lpass-cpu.
+
+The downstream kernel driver avoids this by resetting the RX
+interpolation path after use. In mainline we do something similar
+for the TX decimator (LPASS_CDC_CLK_TX_RESET_B1_CTL), but the
+interpolator reset (LPASS_CDC_CLK_RX_RESET_CTL) got lost when the
+msm8916-wcd driver was split into analog and digital.
+
+Fix this problem by adding the reset to
+msm8916_wcd_digital_enable_interpolator().
+
+Fixes: 150db8c5afa1 ("ASoC: codecs: Add msm8916-wcd digital codec")
+Cc: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Signed-off-by: Stephan Gerhold <stephan@gerhold.net>
+Link: https://lore.kernel.org/r/20200105102753.83108-1-stephan@gerhold.net
+Signed-off-by: Mark Brown <broonie@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/platform/x86/gpd-pocket-fan.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ sound/soc/codecs/msm8916-wcd-digital.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-diff --git a/drivers/platform/x86/gpd-pocket-fan.c b/drivers/platform/x86/gpd-pocket-fan.c
-index 73eb1572b9662..b471b86c28fe8 100644
---- a/drivers/platform/x86/gpd-pocket-fan.c
-+++ b/drivers/platform/x86/gpd-pocket-fan.c
-@@ -127,7 +127,7 @@ static int gpd_pocket_fan_probe(struct platform_device *pdev)
- 	int i;
- 
- 	for (i = 0; i < ARRAY_SIZE(temp_limits); i++) {
--		if (temp_limits[i] < 40000 || temp_limits[i] > 70000) {
-+		if (temp_limits[i] < 20000 || temp_limits[i] > 90000) {
- 			dev_err(&pdev->dev, "Invalid temp-limit %d (must be between 40000 and 70000)\n",
- 				temp_limits[i]);
- 			temp_limits[0] = TEMP_LIMIT0_DEFAULT;
+diff --git a/sound/soc/codecs/msm8916-wcd-digital.c b/sound/soc/codecs/msm8916-wcd-digital.c
+index 3063dedd21cff..6de2ab6f97068 100644
+--- a/sound/soc/codecs/msm8916-wcd-digital.c
++++ b/sound/soc/codecs/msm8916-wcd-digital.c
+@@ -357,6 +357,12 @@ static int msm8916_wcd_digital_enable_interpolator(
+ 		snd_soc_component_write(component, rx_gain_reg[w->shift],
+ 			      snd_soc_component_read32(component, rx_gain_reg[w->shift]));
+ 		break;
++	case SND_SOC_DAPM_POST_PMD:
++		snd_soc_component_update_bits(component, LPASS_CDC_CLK_RX_RESET_CTL,
++					      1 << w->shift, 1 << w->shift);
++		snd_soc_component_update_bits(component, LPASS_CDC_CLK_RX_RESET_CTL,
++					      1 << w->shift, 0x0);
++		break;
+ 	}
+ 	return 0;
+ }
 -- 
 2.20.1
 
