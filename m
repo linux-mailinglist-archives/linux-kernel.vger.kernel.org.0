@@ -2,63 +2,103 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A61B8148D11
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Jan 2020 18:37:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A05B8148D07
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Jan 2020 18:37:18 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390662AbgAXRh1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 24 Jan 2020 12:37:27 -0500
-Received: from mail.kernel.org ([198.145.29.99]:56542 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390106AbgAXRhZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 24 Jan 2020 12:37:25 -0500
-Received: from localhost (unknown [84.241.198.31])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6920E20709;
-        Fri, 24 Jan 2020 17:37:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579887445;
-        bh=vrdwfmKJ2vX5fqIQG0Y3KARRAq9BP/c6YUKg9aIfqTw=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=FczvMkuEuP7nQmcVd13gtxE8xghLrdhBR8p3GrjbhnPq/1pKfs/rhej6y4ihS5hmb
-         SWiBxTkr3VPG+t/YJ2iInwIRiPxAbBFY6zjZOnuIdkWi3X1f3g8TzUBghhU027Di0v
-         26Lcr0ZeVD9nJJGUCQUCePdmE80SXF2H4OIvfaDI=
-Date:   Fri, 24 Jan 2020 18:36:40 +0100
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Linus Walleij <linus.walleij@linaro.org>
-Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        stable <stable@vger.kernel.org>,
-        Leonard Crestez <leonard.crestez@nxp.com>,
-        Fabio Estevam <festevam@gmail.com>,
-        John Stultz <john.stultz@linaro.org>,
-        Anders Roxell <anders.roxell@linaro.org>,
-        Mark Brown <broonie@kernel.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: Re: [PATCH 4.14 016/343] regulator: fixed: Default enable high on DT
- regulators
-Message-ID: <20200124173640.GC3166016@kroah.com>
-References: <20200124092919.490687572@linuxfoundation.org>
- <20200124092921.766134559@linuxfoundation.org>
- <CACRpkdYJZoQpTCdTikQTu62EuxbUG5A=h3CV2xfHfra=TbD+eQ@mail.gmail.com>
+        id S2390074AbgAXRhP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 24 Jan 2020 12:37:15 -0500
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:35688 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387873AbgAXRhO (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 24 Jan 2020 12:37:14 -0500
+Received: by mail-lj1-f194.google.com with SMTP id j1so3404485lja.2
+        for <linux-kernel@vger.kernel.org>; Fri, 24 Jan 2020 09:37:13 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=PpUhy8WdhQo7yn2G9tENFyd+BPqi316s2p72a22I/kM=;
+        b=E0Lq8FFbgVl9GzkkHHsvD4aAT7s8Kyiy5R3To2otgXvIV4WtGWhmO0VAPKZyplWkpQ
+         9fbytk/03qWfDWSy/b4im5LObo51pXVPG+2QYc8xouyIReu0xgLTNMnBqvtURbYmRlXH
+         9ggvethS3Fn2LsF1kSh3PipG5fC47A+kEvXS4=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=PpUhy8WdhQo7yn2G9tENFyd+BPqi316s2p72a22I/kM=;
+        b=fh+Er/CQLVm8R59yz4HOaFM4TiUtER4mkc8g31DE9DHLmPZsdcOUJcm5OkmouSxYwi
+         4j3FpGonERskg/dB3okCQvR3sHVUNv1DcAdpA4+47HKZ1FS+BtCDSVR5lxqvd2o6BJgh
+         BDlRHOfHg8cWf+acqna/FJiLaDJmtwI/ctdSxL9ozh8uSgBcvOFQQM0tYE0Y6PAxFTun
+         v9fHIamXyhofG0XspiYL5QKqwb9UdG0WDwOWIQY5IzvkJY3tJvYL6OHHXqQwjqoTgHIx
+         1gcrQFD2sm8fIc4uY/9a1WsplYrvt6KbayS3vj3bS6rdfxMf9IgXVURrbLQ0pMhwe3wV
+         4UVw==
+X-Gm-Message-State: APjAAAVO2n7KLDh9S174W6+6rpTCjjSdjo2wWbSEMQJQXKn7piinuZyJ
+        i0QT15Rb2mXyTDlHvoWPTQ/YChwDpAc=
+X-Google-Smtp-Source: APXvYqzjOMf5wOi2B9tNpYzfTVg/LhigrVmNyLNfe57/p8atfMsnlfEjDWLTS+pZCHr5DGwgfOPqaw==
+X-Received: by 2002:a2e:978d:: with SMTP id y13mr2810158lji.103.1579887431906;
+        Fri, 24 Jan 2020 09:37:11 -0800 (PST)
+Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com. [209.85.167.43])
+        by smtp.gmail.com with ESMTPSA id g15sm3426259ljl.10.2020.01.24.09.37.10
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 24 Jan 2020 09:37:11 -0800 (PST)
+Received: by mail-lf1-f43.google.com with SMTP id m30so1646398lfp.8
+        for <linux-kernel@vger.kernel.org>; Fri, 24 Jan 2020 09:37:10 -0800 (PST)
+X-Received: by 2002:a05:6512:78:: with SMTP id i24mr1931608lfo.10.1579887430457;
+ Fri, 24 Jan 2020 09:37:10 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CACRpkdYJZoQpTCdTikQTu62EuxbUG5A=h3CV2xfHfra=TbD+eQ@mail.gmail.com>
+References: <20200123153341.19947-1-will@kernel.org> <20200123153341.19947-3-will@kernel.org>
+ <CAKwvOdm2snorniFunMF=0nDH8-RFwm7wtjYK_Tcwkd+JZinYPg@mail.gmail.com> <20200124082443.GY14914@hirez.programming.kicks-ass.net>
+In-Reply-To: <20200124082443.GY14914@hirez.programming.kicks-ass.net>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Fri, 24 Jan 2020 09:36:54 -0800
+X-Gmail-Original-Message-ID: <CAHk-=wgbAfG6UZYd3PY3fmh5nCE191gY76Fn_g_D8nO64mdx-A@mail.gmail.com>
+Message-ID: <CAHk-=wgbAfG6UZYd3PY3fmh5nCE191gY76Fn_g_D8nO64mdx-A@mail.gmail.com>
+Subject: Re: [PATCH v2 02/10] netfilter: Avoid assigning 'const' pointer to
+ non-const pointer
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     Nick Desaulniers <ndesaulniers@google.com>,
+        Will Deacon <will@kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-arch <linux-arch@vger.kernel.org>,
+        kernel-team <kernel-team@android.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Segher Boessenkool <segher@kernel.crashing.org>,
+        Christian Borntraeger <borntraeger@de.ibm.com>,
+        Luc Van Oostenryck <luc.vanoostenryck@gmail.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Peter Oberparleiter <oberpar@linux.ibm.com>,
+        Masahiro Yamada <masahiroy@kernel.org>,
+        Pablo Neira Ayuso <pablo@netfilter.org>,
+        Jozsef Kadlecsik <kadlec@netfilter.org>,
+        Florian Westphal <fw@strlen.de>,
+        "David S. Miller" <davem@davemloft.net>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jan 24, 2020 at 02:46:45PM +0100, Linus Walleij wrote:
-> On Fri, Jan 24, 2020 at 10:44 AM Greg Kroah-Hartman
-> <gregkh@linuxfoundation.org> wrote:
-> >
-> > From: Linus Walleij <linus.walleij@linaro.org>
-> >
-> > [ Upstream commit 28be5f15df2ee6882b0a122693159c96a28203c7 ]
-> 
-> This exploded on v4.19 so please drop this one.
+On Fri, Jan 24, 2020 at 12:25 AM Peter Zijlstra <peterz@infradead.org> wrote:
+>
+> Just for curiosity's sake. What does clang actually do in that case?
 
-Sasha dropped this, thanks.
+This shouldn't necessarily be clang-specific. If the variable itself
+is 'const', it might go into a read-only section. So trying to modify
+it will quite possibly hit a SIGSEGV in user space (and in kernel
+space cause an oops).
 
-greg k-h
+Note that that is different from a const pointer to something that
+wasn't originally const. That's just a "error out at compile time if
+somebody tries to write through it", but the const'ness can be cast
+away, because all the 'const' really said was that the object can't be
+modified through _that_ pointer, not in general.
+
+(That also means that the compiler can't necessarily even optimize
+multiple accesses through a const pointer away, because the object
+might be modified through another pointer that aliases the const one -
+you'd need to also mark it "restrict" to tell the compiler that no
+other pointer will alias).
+
+                 Linus
