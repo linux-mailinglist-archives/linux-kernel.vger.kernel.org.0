@@ -2,174 +2,93 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2340C148F81
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Jan 2020 21:43:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 74934148F95
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Jan 2020 21:48:01 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388262AbgAXUnH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 24 Jan 2020 15:43:07 -0500
-Received: from alexa-out-sd-01.qualcomm.com ([199.106.114.38]:23203 "EHLO
-        alexa-out-sd-01.qualcomm.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2387633AbgAXUnE (ORCPT
+        id S1730177AbgAXUsA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 24 Jan 2020 15:48:00 -0500
+Received: from mail-ed1-f65.google.com ([209.85.208.65]:35456 "EHLO
+        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725747AbgAXUr7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 24 Jan 2020 15:43:04 -0500
-Received: from unknown (HELO ironmsg05-sd.qualcomm.com) ([10.53.140.145])
-  by alexa-out-sd-01.qualcomm.com with ESMTP; 24 Jan 2020 12:43:03 -0800
-Received: from gurus-linux.qualcomm.com ([10.46.162.81])
-  by ironmsg05-sd.qualcomm.com with ESMTP; 24 Jan 2020 12:43:02 -0800
-Received: by gurus-linux.qualcomm.com (Postfix, from userid 383780)
-        id B8EE748C4; Fri, 24 Jan 2020 12:43:03 -0800 (PST)
-From:   Guru Das Srinagesh <gurus@codeaurora.org>
-To:     linux-pwm@vger.kernel.org
-Cc:     Thierry Reding <thierry.reding@gmail.com>,
-        =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <uwe@kleine-koenig.org>,
-        Subbaraman Narayanamurthy <subbaram@codeaurora.org>,
-        linux-kernel@vger.kernel.org,
-        Guru Das Srinagesh <gurus@codeaurora.org>
-Subject: [PATCH v5 2/2] pwm: core: Convert period and duty cycle to u64
-Date:   Fri, 24 Jan 2020 12:43:00 -0800
-Message-Id: <f7986df5d54b2bb84ee14e80d0c1225444608f32.1579896984.git.gurus@codeaurora.org>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <cover.1579896984.git.gurus@codeaurora.org>
-References: <cover.1579896984.git.gurus@codeaurora.org>
-In-Reply-To: <cover.1579896984.git.gurus@codeaurora.org>
-References: <cover.1579896984.git.gurus@codeaurora.org>
+        Fri, 24 Jan 2020 15:47:59 -0500
+Received: by mail-ed1-f65.google.com with SMTP id f8so3978257edv.2;
+        Fri, 24 Jan 2020 12:47:58 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=JU7gxEFwqK+Oxre///Ayp0+fP1f8xI82V+ZomELLvp4=;
+        b=eRu+xQmFlMp1p123ro0L8uEz6rLywSSxjfCP//d3n5T5sSVRI9vgFDwkWZaYhPDb01
+         AA1TJ+Cu5TAUm6Ts+9sl0p5o1u5fY4dXUzQmsa1PbeakWDjkncijtz3uljdd77xRBmHD
+         TbNTGMIu8npkRA0YNARxdeYcH3draPkudVWEBhsW6ngSiUi5oREnoj3bxO1xA7aNaV+i
+         QDTcwmKM5cu16LaK3KZvHqJYHhks70rumEqDcyfoAQIKvP3r/DvlmKikNKqsMS4j0Anl
+         dvbBuud/ZKUP2bTHB4YhlsE5mulb2xDVwXlp0U1S+CtRyKwgjzZXYE2OMC0M0UTYfH0L
+         KQcA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=JU7gxEFwqK+Oxre///Ayp0+fP1f8xI82V+ZomELLvp4=;
+        b=iYgzcyXwLXUYHziNksT0ckDvK0V2sDsSRmOF4lrxqgik2gfOvE3OEw+QhTUDzKjd/W
+         61To+EqDUKuG+TuyrDOwf3hQaUfTrLchejzIlrovdlxkJtldbto4N+p0hOo1g68Zrhu/
+         1FwJ5kjlQTm8Tnvy5JnyCPnltmueq36K9JwYQeckJTv5UGOSLFNbYqoy4b7mSYB53hkH
+         0QsWknG2iTNvX8LWnWJSwNbjaCADs9furjzkDtSJJl6JfwWf/xEbpYMZ/iRKOtKxgDJM
+         +CJE9PvnuQVMNC4f5BmQ3eXAHPrkaCIVUUEz4Q0WIJSzMZhfFTrERoE6ZFO1CqMXFocN
+         uQFA==
+X-Gm-Message-State: APjAAAWPbYb6vX1cVeTPIX7nCDnWZY55E2yWgfTsH8PpcSrQrjIdwMZy
+        8f+n4ofGg2ftuLC0UWSkUmL5h16i
+X-Google-Smtp-Source: APXvYqxnina41SA8+MgC1xi6wgEfub21FhhEpsBWu5i6V9WtJ/iIpEmyMw1/fN294AV9Djv5FKmk2g==
+X-Received: by 2002:a17:907:104e:: with SMTP id oy14mr3769362ejb.82.1579898877190;
+        Fri, 24 Jan 2020 12:47:57 -0800 (PST)
+Received: from jwang-Latitude-5491.fkb.profitbricks.net ([2001:16b8:4965:9a00:596f:3f84:9af0:9e48])
+        by smtp.gmail.com with ESMTPSA id b17sm53830edt.5.2020.01.24.12.47.55
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 24 Jan 2020 12:47:56 -0800 (PST)
+From:   Jack Wang <jinpuwang@gmail.com>
+To:     linux-block@vger.kernel.org, linux-rdma@vger.kernel.org
+Cc:     axboe@kernel.dk, hch@infradead.org, sagi@grimberg.me,
+        bvanassche@acm.org, leon@kernel.org, dledford@redhat.com,
+        jgg@ziepe.ca, danil.kipnis@cloud.ionos.com,
+        jinpu.wang@cloud.ionos.com, rpenyaev@suse.de,
+        Roman Pen <roman.penyaev@profitbricks.com>,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v8 01/25] sysfs: export sysfs_remove_file_self()
+Date:   Fri, 24 Jan 2020 21:47:29 +0100
+Message-Id: <20200124204753.13154-2-jinpuwang@gmail.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20200124204753.13154-1-jinpuwang@gmail.com>
+References: <20200124204753.13154-1-jinpuwang@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Because period and duty cycle are defined as ints with units of
-nanoseconds, the maximum time duration that can be set is limited to
-~2.147 seconds. Change their definitions to u64 in the structs of the
-PWM framework so that higher durations may be set.
+From: Jack Wang <jinpu.wang@cloud.ionos.com>
 
-Signed-off-by: Guru Das Srinagesh <gurus@codeaurora.org>
+Function is going to be used in transport over RDMA module
+in subsequent patches, so export it to GPL modules.
+
+Signed-off-by: Roman Pen <roman.penyaev@profitbricks.com>
+Acked-by: Tejun Heo <tj@kernel.org>
+Cc: linux-kernel@vger.kernel.org
+[jwang: extend the commit message]
+Signed-off-by: Jack Wang <jinpu.wang@cloud.ionos.com>
 ---
- drivers/pwm/core.c  |  4 ++--
- drivers/pwm/sysfs.c | 10 +++++-----
- include/linux/pwm.h | 16 ++++++++--------
- 3 files changed, 15 insertions(+), 15 deletions(-)
+ fs/sysfs/file.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/pwm/core.c b/drivers/pwm/core.c
-index 5a7f659..81aa3c2 100644
---- a/drivers/pwm/core.c
-+++ b/drivers/pwm/core.c
-@@ -1163,8 +1163,8 @@ static void pwm_dbg_show(struct pwm_chip *chip, struct seq_file *s)
- 		if (state.enabled)
- 			seq_puts(s, " enabled");
- 
--		seq_printf(s, " period: %u ns", state.period);
--		seq_printf(s, " duty: %u ns", state.duty_cycle);
-+		seq_printf(s, " period: %llu ns", state.period);
-+		seq_printf(s, " duty: %llu ns", state.duty_cycle);
- 		seq_printf(s, " polarity: %s",
- 			   state.polarity ? "inverse" : "normal");
- 
-diff --git a/drivers/pwm/sysfs.c b/drivers/pwm/sysfs.c
-index 2389b86..3fb1610 100644
---- a/drivers/pwm/sysfs.c
-+++ b/drivers/pwm/sysfs.c
-@@ -42,7 +42,7 @@ static ssize_t period_show(struct device *child,
- 
- 	pwm_get_state(pwm, &state);
- 
--	return sprintf(buf, "%u\n", state.period);
-+	return sprintf(buf, "%llu\n", state.period);
+diff --git a/fs/sysfs/file.c b/fs/sysfs/file.c
+index 130fc6fbcc03..1ff4672d7746 100644
+--- a/fs/sysfs/file.c
++++ b/fs/sysfs/file.c
+@@ -492,6 +492,7 @@ bool sysfs_remove_file_self(struct kobject *kobj, const struct attribute *attr)
+ 	kernfs_put(kn);
+ 	return ret;
  }
++EXPORT_SYMBOL_GPL(sysfs_remove_file_self);
  
- static ssize_t period_store(struct device *child,
-@@ -52,10 +52,10 @@ static ssize_t period_store(struct device *child,
- 	struct pwm_export *export = child_to_pwm_export(child);
- 	struct pwm_device *pwm = export->pwm;
- 	struct pwm_state state;
--	unsigned int val;
-+	u64 val;
- 	int ret;
- 
--	ret = kstrtouint(buf, 0, &val);
-+	ret = kstrtou64(buf, 0, &val);
- 	if (ret)
- 		return ret;
- 
-@@ -77,7 +77,7 @@ static ssize_t duty_cycle_show(struct device *child,
- 
- 	pwm_get_state(pwm, &state);
- 
--	return sprintf(buf, "%u\n", state.duty_cycle);
-+	return sprintf(buf, "%llu\n", state.duty_cycle);
- }
- 
- static ssize_t duty_cycle_store(struct device *child,
-@@ -212,7 +212,7 @@ static ssize_t capture_show(struct device *child,
- 	if (ret)
- 		return ret;
- 
--	return sprintf(buf, "%u %u\n", result.period, result.duty_cycle);
-+	return sprintf(buf, "%llu %llu\n", result.period, result.duty_cycle);
- }
- 
- static DEVICE_ATTR_RW(period);
-diff --git a/include/linux/pwm.h b/include/linux/pwm.h
-index 0ef808d..df83440 100644
---- a/include/linux/pwm.h
-+++ b/include/linux/pwm.h
-@@ -39,7 +39,7 @@ enum pwm_polarity {
-  * current PWM hardware state.
-  */
- struct pwm_args {
--	unsigned int period;
-+	u64 period;
- 	enum pwm_polarity polarity;
- };
- 
-@@ -56,8 +56,8 @@ enum {
-  * @enabled: PWM enabled status
-  */
- struct pwm_state {
--	unsigned int period;
--	unsigned int duty_cycle;
-+	u64 period;
-+	u64 duty_cycle;
- 	enum pwm_polarity polarity;
- 	bool enabled;
- };
-@@ -105,13 +105,13 @@ static inline bool pwm_is_enabled(const struct pwm_device *pwm)
- 	return state.enabled;
- }
- 
--static inline void pwm_set_period(struct pwm_device *pwm, unsigned int period)
-+static inline void pwm_set_period(struct pwm_device *pwm, u64 period)
+ void sysfs_remove_files(struct kobject *kobj, const struct attribute * const *ptr)
  {
- 	if (pwm)
- 		pwm->state.period = period;
- }
- 
--static inline unsigned int pwm_get_period(const struct pwm_device *pwm)
-+static inline u64 pwm_get_period(const struct pwm_device *pwm)
- {
- 	struct pwm_state state;
- 
-@@ -126,7 +126,7 @@ static inline void pwm_set_duty_cycle(struct pwm_device *pwm, unsigned int duty)
- 		pwm->state.duty_cycle = duty;
- }
- 
--static inline unsigned int pwm_get_duty_cycle(const struct pwm_device *pwm)
-+static inline u64 pwm_get_duty_cycle(const struct pwm_device *pwm)
- {
- 	struct pwm_state state;
- 
-@@ -305,8 +305,8 @@ struct pwm_chip {
-  * @duty_cycle: duty cycle of the PWM signal (in nanoseconds)
-  */
- struct pwm_capture {
--	unsigned int period;
--	unsigned int duty_cycle;
-+	u64 period;
-+	u64 duty_cycle;
- };
- 
- #if IS_ENABLED(CONFIG_PWM)
 -- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+2.17.1
 
