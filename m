@@ -2,39 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4942F14822D
+	by mail.lfdr.de (Postfix) with ESMTP id BD6B514822E
 	for <lists+linux-kernel@lfdr.de>; Fri, 24 Jan 2020 12:26:07 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2403776AbgAXLZ6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 24 Jan 2020 06:25:58 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40206 "EHLO mail.kernel.org"
+        id S2391526AbgAXL0A (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 24 Jan 2020 06:26:00 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40300 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2403866AbgAXLZy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 24 Jan 2020 06:25:54 -0500
+        id S2403893AbgAXLZ6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 24 Jan 2020 06:25:58 -0500
 Received: from localhost (ip-213-127-102-57.ip.prioritytelecom.net [213.127.102.57])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 30D8220704;
-        Fri, 24 Jan 2020 11:25:53 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id BCCBF2075D;
+        Fri, 24 Jan 2020 11:25:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579865153;
-        bh=y2dLlM8guqKpltZjCUwHNqmlcjAi5k+ZqR+8aA9UrbU=;
+        s=default; t=1579865157;
+        bh=MxQxF8QIHW4yZ+xMdIkYYejitL9UIWZRgNUdAFMgmt8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=J362XDmZY4ClZZsmFH2WGXc+Ajfo8Qq8iQm/8XdNQWlclm0iD0asNJ7lXn94HuKXu
-         rvGsobnSMlrfIm3TcUWh0358Hh2a9vTq0e2W5m7o1RuRlgfYn3I0RLyYcBARdm9ZGn
-         uapehhEBFaGsFI54+CZpy+e623DgKJDmJWY3ba/s=
+        b=wFLyV+bVkB2sj5LbIvjx9xnN+ggur3ka3seOcjF1GhBGDpfEjw5q7G7+bZfGpnb0F
+         pwvFzyRz+NOesj274YtgFF1nnwB4JWjxjIMygRZdJVH8GyHpdsqXT2is+XIRpStobD
+         1wSKFyMD4ZQ+Pp2HqDR+oTwFuuMS0tEnbl/+m178=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Jakub Kicinski <jakub.kicinski@netronome.com>,
-        Quentin Monnet <quentin.monnet@netronome.com>,
-        Roman Gushchin <guro@fb.com>,
-        Daniel Borkmann <daniel@iogearbox.net>,
+        stable@vger.kernel.org, Matthias Kaehlcke <mka@chromium.org>,
+        Daniel Thompson <daniel.thompson@linaro.org>,
+        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
+        Lee Jones <lee.jones@linaro.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 452/639] tools: bpftool: use correct argument in cgroup errors
-Date:   Fri, 24 Jan 2020 10:30:22 +0100
-Message-Id: <20200124093143.634353310@linuxfoundation.org>
+Subject: [PATCH 4.19 453/639] backlight: pwm_bl: Fix heuristic to determine number of brightness levels
+Date:   Fri, 24 Jan 2020 10:30:23 +0100
+Message-Id: <20200124093143.782393427@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
 In-Reply-To: <20200124093047.008739095@linuxfoundation.org>
 References: <20200124093047.008739095@linuxfoundation.org>
@@ -47,54 +46,85 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jakub Kicinski <jakub.kicinski@netronome.com>
+From: Matthias Kaehlcke <mka@chromium.org>
 
-[ Upstream commit 6c6874f401e5a0caab3b6a0663169e1fb5e930bb ]
+[ Upstream commit 73fbfc499448455f1e1c77717040e09e25f1d976 ]
 
-cgroup code tries to use argv[0] as the cgroup path,
-but if it fails uses argv[1] to report errors.
+With commit 88ba95bedb79 ("backlight: pwm_bl: Compute brightness of
+LED linearly to human eye") the number of set bits (aka hweight())
+in the PWM period is used in the heuristic to determine the number
+of brightness levels, when the brightness table isn't specified in
+the DT. The number of set bits doesn't provide a reliable clue about
+the length of the period, instead change the heuristic to:
 
-Fixes: 5ccda64d38cc ("bpftool: implement cgroup bpf operations")
-Signed-off-by: Jakub Kicinski <jakub.kicinski@netronome.com>
-Reviewed-by: Quentin Monnet <quentin.monnet@netronome.com>
-Acked-by: Roman Gushchin <guro@fb.com>
-Signed-off-by: Daniel Borkmann <daniel@iogearbox.net>
+ nlevels = period / fls(period)
+
+Also limit the maximum number of brightness levels to 4096 to avoid
+excessively large tables.
+
+With this the number of levels increases monotonically with the PWM
+period, until the maximum of 4096 levels is reached:
+
+period (ns)    # levels
+
+100    	       16
+500	       62
+1000	       111
+5000	       416
+10000	       769
+50000	       3333
+100000	       4096
+
+Fixes: 88ba95bedb79 ("backlight: pwm_bl: Compute brightness of LED linearly to human eye")
+Signed-off-by: Matthias Kaehlcke <mka@chromium.org>
+Acked-by: Daniel Thompson <daniel.thompson@linaro.org>
+Tested-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+Signed-off-by: Lee Jones <lee.jones@linaro.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- tools/bpf/bpftool/cgroup.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/video/backlight/pwm_bl.c | 24 ++++++------------------
+ 1 file changed, 6 insertions(+), 18 deletions(-)
 
-diff --git a/tools/bpf/bpftool/cgroup.c b/tools/bpf/bpftool/cgroup.c
-index ee7a9765c6b32..adbcd84818f74 100644
---- a/tools/bpf/bpftool/cgroup.c
-+++ b/tools/bpf/bpftool/cgroup.c
-@@ -164,7 +164,7 @@ static int do_show(int argc, char **argv)
+diff --git a/drivers/video/backlight/pwm_bl.c b/drivers/video/backlight/pwm_bl.c
+index 7ddc0930e98c6..3a3098d4873be 100644
+--- a/drivers/video/backlight/pwm_bl.c
++++ b/drivers/video/backlight/pwm_bl.c
+@@ -199,29 +199,17 @@ int pwm_backlight_brightness_default(struct device *dev,
+ 				     struct platform_pwm_backlight_data *data,
+ 				     unsigned int period)
+ {
+-	unsigned int counter = 0;
+-	unsigned int i, n;
++	unsigned int i;
+ 	u64 retval;
  
- 	cgroup_fd = open(argv[0], O_RDONLY);
- 	if (cgroup_fd < 0) {
--		p_err("can't open cgroup %s", argv[1]);
-+		p_err("can't open cgroup %s", argv[0]);
- 		goto exit;
- 	}
+ 	/*
+-	 * Count the number of bits needed to represent the period number. The
+-	 * number of bits is used to calculate the number of levels used for the
+-	 * brightness-levels table, the purpose of this calculation is have a
+-	 * pre-computed table with enough levels to get linear brightness
+-	 * perception. The period is divided by the number of bits so for a
+-	 * 8-bit PWM we have 255 / 8 = 32 brightness levels or for a 16-bit PWM
+-	 * we have 65535 / 16 = 4096 brightness levels.
+-	 *
+-	 * Note that this method is based on empirical testing on different
+-	 * devices with PWM of 8 and 16 bits of resolution.
++	 * Once we have 4096 levels there's little point going much higher...
++	 * neither interactive sliders nor animation benefits from having
++	 * more values in the table.
+ 	 */
+-	n = period;
+-	while (n) {
+-		counter += n % 2;
+-		n >>= 1;
+-	}
++	data->max_brightness =
++		min((int)DIV_ROUND_UP(period, fls(period)), 4096);
  
-@@ -345,7 +345,7 @@ static int do_attach(int argc, char **argv)
- 
- 	cgroup_fd = open(argv[0], O_RDONLY);
- 	if (cgroup_fd < 0) {
--		p_err("can't open cgroup %s", argv[1]);
-+		p_err("can't open cgroup %s", argv[0]);
- 		goto exit;
- 	}
- 
-@@ -403,7 +403,7 @@ static int do_detach(int argc, char **argv)
- 
- 	cgroup_fd = open(argv[0], O_RDONLY);
- 	if (cgroup_fd < 0) {
--		p_err("can't open cgroup %s", argv[1]);
-+		p_err("can't open cgroup %s", argv[0]);
- 		goto exit;
- 	}
- 
+-	data->max_brightness = DIV_ROUND_UP(period, counter);
+ 	data->levels = devm_kcalloc(dev, data->max_brightness,
+ 				    sizeof(*data->levels), GFP_KERNEL);
+ 	if (!data->levels)
 -- 
 2.20.1
 
