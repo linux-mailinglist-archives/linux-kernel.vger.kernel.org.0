@@ -2,35 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 320D51489AC
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Jan 2020 15:37:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 889CA148997
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Jan 2020 15:36:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388184AbgAXOgS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 24 Jan 2020 09:36:18 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39442 "EHLO mail.kernel.org"
+        id S1730960AbgAXOgJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 24 Jan 2020 09:36:09 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39482 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2391437AbgAXOTP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 24 Jan 2020 09:19:15 -0500
+        id S2391490AbgAXOTR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 24 Jan 2020 09:19:17 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1B04D22527;
-        Fri, 24 Jan 2020 14:19:14 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1C60821734;
+        Fri, 24 Jan 2020 14:19:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579875554;
-        bh=gwglXmvrIi4VDRmJR5DkNs9Ge87mVzgPfw3jUvzxi4s=;
+        s=default; t=1579875556;
+        bh=pYJmhRfn9YOi7piJCSMO3M5A4Rv0EXDHpAb2QRyajSE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=K5wcELfc2gYDqKxlPYmJEMV80CvZ15DNCx0lk6p04MrAwBFV2jaY7EAQ/57nRstsR
-         lg6/+mpfd6xnMnhj3yl97QiFcyTYEnGXycAU/ac+OBXR2CzJoIol8EIGRhzEzHAjyQ
-         MGwJGFroEBy9MLuxno1X5ITjaayPgvEjoF8EXVfo=
+        b=KGAS7QpEvP2SU7no3ZTRorXB6eO7DCuNEkhpokzjJQnbJdBnrXUgKPl27f2UcmlJL
+         w5+SZu5PFloCPFUmg1l694HTHfPsaMSC1LDhFDAKBgAlrIZbM4u4U86Q5cZgpuCIvT
+         o99nBaqFJXby/zSxzP1rTR+82QznKzU/7rmgxc3I=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Jose Abreu <Jose.Abreu@synopsys.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.4 049/107] net: stmmac: tc: Do not setup flower filtering if RSS is enabled
-Date:   Fri, 24 Jan 2020 09:17:19 -0500
-Message-Id: <20200124141817.28793-49-sashal@kernel.org>
+Cc:     Hans de Goede <hdegoede@redhat.com>,
+        Jason Anderson <jasona.594@gmail.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Sasha Levin <sashal@kernel.org>,
+        platform-driver-x86@vger.kernel.org
+Subject: [PATCH AUTOSEL 5.4 051/107] platform/x86: GPD pocket fan: Allow somewhat lower/higher temperature limits
+Date:   Fri, 24 Jan 2020 09:17:21 -0500
+Message-Id: <20200124141817.28793-51-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200124141817.28793-1-sashal@kernel.org>
 References: <20200124141817.28793-1-sashal@kernel.org>
@@ -43,36 +45,37 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jose Abreu <Jose.Abreu@synopsys.com>
+From: Hans de Goede <hdegoede@redhat.com>
 
-[ Upstream commit 7bd754c47dd3ad1b048c9641294b0234fcce2c58 ]
+[ Upstream commit 1f27dbd8265dbb379926c8f6a4453fe7fe26d7a3 ]
 
-RSS, when enabled, will bypass the L3 and L4 filtering causing it not
-to work. Add a check before trying to setup the filters.
+Allow the user to configure the fan to turn on / speed-up at lower
+thresholds then before (20 degrees Celcius as minimum instead of 40) and
+likewise also allow the user to delay the fan speeding-up till the
+temperature hits 90 degrees Celcius (was 70).
 
-Fixes: 425eabddaf0f ("net: stmmac: Implement L3/L4 Filters using TC Flower")
-Signed-off-by: Jose Abreu <Jose.Abreu@synopsys.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Cc: Jason Anderson <jasona.594@gmail.com>
+Reported-by: Jason Anderson <jasona.594@gmail.com>
+Signed-off-by: Hans de Goede <hdegoede@redhat.com>
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/stmicro/stmmac/stmmac_tc.c | 4 ++++
- 1 file changed, 4 insertions(+)
+ drivers/platform/x86/gpd-pocket-fan.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_tc.c b/drivers/net/ethernet/stmicro/stmmac/stmmac_tc.c
-index f9a9a9d822333..1d135b02ea021 100644
---- a/drivers/net/ethernet/stmicro/stmmac/stmmac_tc.c
-+++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_tc.c
-@@ -579,6 +579,10 @@ static int tc_setup_cls(struct stmmac_priv *priv,
- {
- 	int ret = 0;
+diff --git a/drivers/platform/x86/gpd-pocket-fan.c b/drivers/platform/x86/gpd-pocket-fan.c
+index 73eb1572b9662..b471b86c28fe8 100644
+--- a/drivers/platform/x86/gpd-pocket-fan.c
++++ b/drivers/platform/x86/gpd-pocket-fan.c
+@@ -127,7 +127,7 @@ static int gpd_pocket_fan_probe(struct platform_device *pdev)
+ 	int i;
  
-+	/* When RSS is enabled, the filtering will be bypassed */
-+	if (priv->rss.enable)
-+		return -EBUSY;
-+
- 	switch (cls->command) {
- 	case FLOW_CLS_REPLACE:
- 		ret = tc_add_flow(priv, cls);
+ 	for (i = 0; i < ARRAY_SIZE(temp_limits); i++) {
+-		if (temp_limits[i] < 40000 || temp_limits[i] > 70000) {
++		if (temp_limits[i] < 20000 || temp_limits[i] > 90000) {
+ 			dev_err(&pdev->dev, "Invalid temp-limit %d (must be between 40000 and 70000)\n",
+ 				temp_limits[i]);
+ 			temp_limits[0] = TEMP_LIMIT0_DEFAULT;
 -- 
 2.20.1
 
