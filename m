@@ -2,46 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9E5701483FF
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Jan 2020 12:41:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6942A1483BE
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Jan 2020 12:40:50 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392018AbgAXLjj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 24 Jan 2020 06:39:39 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39746 "EHLO mail.kernel.org"
+        id S2403871AbgAXLZv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 24 Jan 2020 06:25:51 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40036 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2391507AbgAXLZg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 24 Jan 2020 06:25:36 -0500
+        id S2391281AbgAXLZq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 24 Jan 2020 06:25:46 -0500
 Received: from localhost (ip-213-127-102-57.ip.prioritytelecom.net [213.127.102.57])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DA7D2206D4;
-        Fri, 24 Jan 2020 11:25:34 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 80BF42075D;
+        Fri, 24 Jan 2020 11:25:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579865135;
-        bh=6TtykuFZrqLHKaZtkj3B2ER4gFI3EtL5V4YPruKL8aM=;
+        s=default; t=1579865146;
+        bh=4xFVPzqQsMK+jnu1OlS4yghH50+CHg3Q/b2cFEtdarM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=1tSfVD1tWWSuyK+7Yfxyv7vGNHgMnm3/tl157G1FNuL4vy0R874PA8JuR+/LNDIXd
-         sKg9yrl4Df8fh9ANepmGXynwLE/T5KMReyUUWv6UpJSzlXb8GhcRvnFMfuAfKO0J+o
-         uhjqgE3t60T2sgx2gIVCpIYhicA9h63i+COIQFE0=
+        b=AVyF/DSPakU4u4UyKXzZFwomkzUgfTAnlp4PZjFTbVMCYCWf0ixlvw1gUy9cKZbFQ
+         obzNCEOD2+ile096A6evWKKxXzkIV/cCmC7gYh6vhCP5Hs4w4uWMIYeRxVmtlbgvS7
+         PmGrMO8QWAVXsSDSgRXnRJ0CCHzF6kv/3MZY7r9Q=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Ravi Bangoria <ravi.bangoria@linux.ibm.com>,
-        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Stephane Eranian <eranian@google.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Vince Weaver <vincent.weaver@maine.edu>, acme@kernel.org,
-        linuxppc-dev@lists.ozlabs.org, maddy@linux.vnet.ibm.com,
-        mpe@ellerman.id.au, Ingo Molnar <mingo@kernel.org>,
+        Bryan ODonoghue <pure.logic@nexus-software.ie>,
+        Leonard Crestez <leonard.crestez@nxp.com>,
+        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 447/639] perf/ioctl: Add check for the sample_period value
-Date:   Fri, 24 Jan 2020 10:30:17 +0100
-Message-Id: <20200124093143.005390193@linuxfoundation.org>
+Subject: [PATCH 4.19 450/639] nvmem: imx-ocotp: Ensure WAIT bits are preserved when setting timing
+Date:   Fri, 24 Jan 2020 10:30:20 +0100
+Message-Id: <20200124093143.361582651@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
 In-Reply-To: <20200124093047.008739095@linuxfoundation.org>
 References: <20200124093047.008739095@linuxfoundation.org>
@@ -54,55 +46,45 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Ravi Bangoria <ravi.bangoria@linux.ibm.com>
+From: Bryan O'Donoghue <pure.logic@nexus-software.ie>
 
-[ Upstream commit 913a90bc5a3a06b1f04c337320e9aeee2328dd77 ]
+[ Upstream commit 0493c4792b4eb260441e57f52cc11a9ded48b5a7 ]
 
-perf_event_open() limits the sample_period to 63 bits. See:
+The i.MX6 and i.MX8 both have a bit-field spanning bits 27:22 called the
+WAIT field.
 
-  0819b2e30ccb ("perf: Limit perf_event_attr::sample_period to 63 bits")
+The WAIT field according to the documentation for both parts "specifies
+time interval between auto read and write access in one time program. It is
+given in number of ipg_clk periods."
 
-Make ioctl() consistent with it.
+This patch ensures that the relevant field is read and written back to the
+timing register.
 
-Also on PowerPC, negative sample_period could cause a recursive
-PMIs leading to a hang (reported when running perf-fuzzer).
+Fixes: 0642bac7da42 ("nvmem: imx-ocotp: add write support")
 
-Signed-off-by: Ravi Bangoria <ravi.bangoria@linux.ibm.com>
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Arnaldo Carvalho de Melo <acme@redhat.com>
-Cc: Jiri Olsa <jolsa@redhat.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Stephane Eranian <eranian@google.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Vince Weaver <vincent.weaver@maine.edu>
-Cc: acme@kernel.org
-Cc: linuxppc-dev@lists.ozlabs.org
-Cc: maddy@linux.vnet.ibm.com
-Cc: mpe@ellerman.id.au
-Fixes: 0819b2e30ccb ("perf: Limit perf_event_attr::sample_period to 63 bits")
-Link: https://lkml.kernel.org/r/20190604042953.914-1-ravi.bangoria@linux.ibm.com
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Signed-off-by: Bryan O'Donoghue <pure.logic@nexus-software.ie>
+Reviewed-by: Leonard Crestez <leonard.crestez@nxp.com>
+Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- kernel/events/core.c | 3 +++
- 1 file changed, 3 insertions(+)
+ drivers/nvmem/imx-ocotp.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/kernel/events/core.c b/kernel/events/core.c
-index 751888cbed5c0..16af86ab24c42 100644
---- a/kernel/events/core.c
-+++ b/kernel/events/core.c
-@@ -5012,6 +5012,9 @@ static int perf_event_period(struct perf_event *event, u64 __user *arg)
- 	if (perf_event_check_period(event, value))
- 		return -EINVAL;
+diff --git a/drivers/nvmem/imx-ocotp.c b/drivers/nvmem/imx-ocotp.c
+index 926d9cc080cf4..04421a73f74aa 100644
+--- a/drivers/nvmem/imx-ocotp.c
++++ b/drivers/nvmem/imx-ocotp.c
+@@ -189,7 +189,8 @@ static void imx_ocotp_set_imx6_timing(struct ocotp_priv *priv)
+ 	strobe_prog = clk_rate / (1000000000 / 10000) + 2 * (DEF_RELAX + 1) - 1;
+ 	strobe_read = clk_rate / (1000000000 / 40) + 2 * (DEF_RELAX + 1) - 1;
  
-+	if (!event->attr.freq && (value & (1ULL << 63)))
-+		return -EINVAL;
-+
- 	event_function_call(event, __perf_event_period, &value);
+-	timing = strobe_prog & 0x00000FFF;
++	timing = readl(priv->base + IMX_OCOTP_ADDR_TIMING) & 0x0FC00000;
++	timing |= strobe_prog & 0x00000FFF;
+ 	timing |= (relax       << 12) & 0x0000F000;
+ 	timing |= (strobe_read << 16) & 0x003F0000;
  
- 	return 0;
 -- 
 2.20.1
 
