@@ -2,128 +2,196 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 63602148310
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Jan 2020 12:33:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8B0C1148398
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Jan 2020 12:37:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391911AbgAXLdF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 24 Jan 2020 06:33:05 -0500
-Received: from lelv0143.ext.ti.com ([198.47.23.248]:49200 "EHLO
-        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388159AbgAXLdD (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 24 Jan 2020 06:33:03 -0500
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 00OBWtri042094;
-        Fri, 24 Jan 2020 05:32:55 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1579865575;
-        bh=c8f7d0QFL08xNSoD/1DZYVvClgyENpiDhzqCItQ9mFs=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=modb9885HvyjGetaE6PWy8EkNHP1tLV7mEeoDXo3Q0Dfd1sSkEt9rw/5Xs2iztVxG
-         veV0SIuzJBowghsAJj5sEcnIxBCzvE66BFQSN+6pov1hmMw5QSF7D0ccHbEz0RQflj
-         l52eU8Pmj4oONlgIpzC/eOyCIeLlz20SFD3Lg0/U=
-Received: from DFLE104.ent.ti.com (dfle104.ent.ti.com [10.64.6.25])
-        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 00OBWtRY127768
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Fri, 24 Jan 2020 05:32:55 -0600
-Received: from DFLE108.ent.ti.com (10.64.6.29) by DFLE104.ent.ti.com
- (10.64.6.25) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Fri, 24
- Jan 2020 05:32:53 -0600
-Received: from fllv0039.itg.ti.com (10.64.41.19) by DFLE108.ent.ti.com
- (10.64.6.29) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
- Frontend Transport; Fri, 24 Jan 2020 05:32:53 -0600
-Received: from [127.0.0.1] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by fllv0039.itg.ti.com (8.15.2/8.15.2) with ESMTP id 00OBWpEk091417;
-        Fri, 24 Jan 2020 05:32:51 -0600
-Subject: Re: [PATCH v3 0/9] arm64: dts: ti: UDMAP and McASP support
-To:     Lokesh Vutla <lokeshvutla@ti.com>,
-        Peter Ujfalusi <peter.ujfalusi@ti.com>, <nm@ti.com>
-CC:     <robh+dt@kernel.org>, <mark.rutland@arm.com>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <20200123114528.26552-1-peter.ujfalusi@ti.com>
- <7a34dbfa-426d-061e-cbf6-3da1d8bada65@ti.com>
-From:   Tero Kristo <t-kristo@ti.com>
-Message-ID: <14b395ad-122a-3331-5b89-b6f8708bc00e@ti.com>
-Date:   Fri, 24 Jan 2020 13:32:50 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.2.2
+        id S2391928AbgAXLh0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 24 Jan 2020 06:37:26 -0500
+Received: from mga18.intel.com ([134.134.136.126]:54239 "EHLO mga18.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2404959AbgAXLg5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 24 Jan 2020 06:36:57 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga008.jf.intel.com ([10.7.209.65])
+  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 24 Jan 2020 03:36:56 -0800
+X-IronPort-AV: E=Sophos;i="5.70,357,1574150400"; 
+   d="scan'208";a="220996786"
+Received: from omarkovx-mobl.ger.corp.intel.com (HELO localhost) ([10.249.37.60])
+  by orsmga008-auth.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 24 Jan 2020 03:36:49 -0800
+From:   Jani Nikula <jani.nikula@linux.intel.com>
+To:     Rajat Jain <rajatja@google.com>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        Sean Paul <sean@poorly.run>, David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+        Rodrigo Vivi <rodrigo.vivi@intel.com>,
+        Ville =?utf-8?B?U3lyasOkbMOk?= <ville.syrjala@linux.intel.com>,
+        Chris Wilson <chris@chris-wilson.co.uk>,
+        Imre Deak <imre.deak@intel.com>,
+        =?utf-8?Q?Jos=C3=A9?= Roberto de Souza <jose.souza@intel.com>,
+        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        intel-gfx@lists.freedesktop.org, gregkh@linuxfoundation.org,
+        mathewk@google.com, Daniel Thompson <daniel.thompson@linaro.org>,
+        Jonathan Corbet <corbet@lwn.net>, Pavel Machek <pavel@denx.de>,
+        seanpaul@google.com, Duncan Laurie <dlaurie@google.com>,
+        jsbarnes@google.com, Thierry Reding <thierry.reding@gmail.com>
+Cc:     Rajat Jain <rajatja@google.com>, rajatxjain@gmail.com
+Subject: Re: [PATCH v5 2/3] drm/i915: Lookup and attach ACPI device node for connectors
+In-Reply-To: <20191220200353.252399-2-rajatja@google.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+References: <20191220200353.252399-1-rajatja@google.com> <20191220200353.252399-2-rajatja@google.com>
+Date:   Fri, 24 Jan 2020 13:37:48 +0200
+Message-ID: <87v9p1gk4z.fsf@intel.com>
 MIME-Version: 1.0
-In-Reply-To: <7a34dbfa-426d-061e-cbf6-3da1d8bada65@ti.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 23/01/2020 14:35, Lokesh Vutla wrote:
-> 
-> 
-> On 23/01/20 5:15 PM, Peter Ujfalusi wrote:
->> Hi,
->>
->> Changes since v2:
->> - Correct unit addresses for the McASP nodes
->> - Remove unit address and label for MAIN and MCU NAVSS
->>
->> Changes since v1:
->> - rebased on ti-k3-next
->> - Corrected j721e mcu_udma node: s/udmap/dma-controller
->> - Moved the two McASP node patch at the end of the series
->>
->> The ringacc and UDMA documentation and drivers are in next-20200122.
->>
->> While adding the DMA support I have noticed few issues which is also fixed by
->> this series.
-> 
-> 
-> Entire series looks good to me.
-> 
-> Reviewed-by: Lokesh Vutla <lokeshvutla@ti.com>
+On Fri, 20 Dec 2019, Rajat Jain <rajatja@google.com> wrote:
+> Lookup and attach ACPI nodes for intel connectors. The lookup is done
+> in compliance with ACPI Spec 6.3
+> https://uefi.org/sites/default/files/resources/ACPI_6_3_final_Jan30.pdf
+> (Ref: Pages 1119 - 1123).
+>
+> This can be useful for any connector specific platform properties. (This
+> will be used for privacy screen in next patch).
+>
+> Signed-off-by: Rajat Jain <rajatja@google.com>
+> ---
+> v5: same as v4
+> v4: Same as v3
+> v3: fold the code into existing acpi_device_id_update() function
+> v2: formed by splitting the original patch into ACPI lookup, and privacy
+>     screen property. Also move it into i915 now that I found existing code
+>     in i915 that can be re-used.
+>
+>  drivers/gpu/drm/i915/display/intel_acpi.c     | 24 +++++++++++++++++++
+>  .../drm/i915/display/intel_display_types.h    |  3 +++
+>  drivers/gpu/drm/i915/display/intel_dp.c       |  3 +++
+>  3 files changed, 30 insertions(+)
+>
+> diff --git a/drivers/gpu/drm/i915/display/intel_acpi.c b/drivers/gpu/drm/i915/display/intel_acpi.c
+> index e21fb14d5e07..101a56c08996 100644
+> --- a/drivers/gpu/drm/i915/display/intel_acpi.c
+> +++ b/drivers/gpu/drm/i915/display/intel_acpi.c
+> @@ -222,11 +222,23 @@ static u32 acpi_display_type(struct intel_connector *connector)
+>  	return display_type;
+>  }
+>  
+> +/*
+> + * Ref: ACPI Spec 6.3
+> + * https://uefi.org/sites/default/files/resources/ACPI_6_3_final_Jan30.pdf
+> + * Pages 1119 - 1123 describe, what I believe, a standard way of
+> + * identifying / addressing "display panels" in the ACPI. It provides
+> + * a way for the ACPI to define devices for the display panels attached
+> + * to the system. It thus provides a way for the BIOS to export any panel
+> + * specific properties to the system via ACPI (like device trees).
+> + */
+>  void intel_acpi_device_id_update(struct drm_i915_private *dev_priv)
+>  {
+>  	struct drm_device *drm_dev = &dev_priv->drm;
+>  	struct intel_connector *connector;
+>  	struct drm_connector_list_iter conn_iter;
+> +	struct device *dev = &drm_dev->pdev->dev;
 
-Queued the whole series towards 5.6, thanks.
+Hmm, already pushed patch 1 with the unfortunate "drm_dev" local. We use
+"dev" for struct drm_device * and almost never use struct device.
 
--Tero
+> +	struct acpi_device *conn_dev;
+> +	u64 conn_addr;
+>  	u8 display_index[16] = {};
+>  
+>  	/* Populate the ACPI IDs for all connectors for a given drm_device */
+> @@ -242,6 +254,18 @@ void intel_acpi_device_id_update(struct drm_i915_private *dev_priv)
+>  		device_id |= display_index[type]++ << ACPI_DISPLAY_INDEX_SHIFT;
+>  
+>  		connector->acpi_device_id = device_id;
+> +
+> +		/* Build the _ADR to look for */
+> +		conn_addr = device_id | ACPI_DEVICE_ID_SCHEME |
+> +				ACPI_BIOS_CAN_DETECT;
+> +
+> +		DRM_DEV_INFO(dev, "Checking connector ACPI node at _ADR=%llX\n",
+> +			     conn_addr);
 
-> 
->>
->> Tero: I have included the McASP nodes as well to have examples for other
->> peripherals on how he binding should be used.
->> The patches for the McASP driver is not in next, but they are only internal
->> driver changes (and Kconfig), not adding new DT dependencies.
->> Since the McASP is disabled in SoC dtsi due to board level configuration needs
->> it is not going to erroneously probe drivers.
->>
->> It is up to you if you pick them or not, but I believe they serve a safe and
->> nice example how the dma binding should be used for UDMA.
->>
->> Regards,
->> Peter
->> ---
->> Peter Ujfalusi (9):
->>    arm64: dts: ti: k3-am65-main: Correct main NAVSS representation
->>    arm64: dts: ti: k3-am65-main: Move secure proxy under cbass_main_navss
->>    arm64: dts: ti: k3-am65: DMA support
->>    arm64: dts: ti: k3-j721e: Correct the address for MAIN NAVSS
->>    arm64: dts: ti: k3-j721e-main: Correct main NAVSS representation
->>    arm64: dts: ti: k3-j721e-main: Move secure proxy and smmu under
->>      main_navss
->>    arm64: dts: ti: k3-j721e: DMA support
->>    arm64: dts: ti: k3-am654-main: Add McASP nodes
->>    arm64: dts: ti: k3-j721e-main: Add McASP nodes
->>
->>   arch/arm64/boot/dts/ti/k3-am65-main.dtsi      | 122 ++++++-
->>   arch/arm64/boot/dts/ti/k3-am65-mcu.dtsi       |  46 +++
->>   arch/arm64/boot/dts/ti/k3-j721e-main.dtsi     | 313 ++++++++++++++++--
->>   .../boot/dts/ti/k3-j721e-mcu-wakeup.dtsi      |  45 +++
->>   arch/arm64/boot/dts/ti/k3-j721e.dtsi          |   2 +-
->>   5 files changed, 491 insertions(+), 37 deletions(-)
->>
+This is more than a little verbose. One line of INFO level dmesg for
+every connector at boot and at resume.
 
---
-Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki. Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
+Please use the new drm_dbg_kms() macro for this.
+
+> +
+> +		/* Look up the connector device, under the PCI device */
+> +		conn_dev = acpi_find_child_device(ACPI_COMPANION(dev),
+> +						  conn_addr, false);
+> +		connector->acpi_handle = conn_dev ? conn_dev->handle : NULL;
+
+acpi_device_handle(conn_dev)
+
+>  	}
+>  	drm_connector_list_iter_end(&conn_iter);
+>  }
+> diff --git a/drivers/gpu/drm/i915/display/intel_display_types.h b/drivers/gpu/drm/i915/display/intel_display_types.h
+> index 1a7334dbe802..0a4a04116091 100644
+> --- a/drivers/gpu/drm/i915/display/intel_display_types.h
+> +++ b/drivers/gpu/drm/i915/display/intel_display_types.h
+> @@ -407,6 +407,9 @@ struct intel_connector {
+>  	/* ACPI device id for ACPI and driver cooperation */
+>  	u32 acpi_device_id;
+>  
+> +	/* ACPI handle corresponding to this connector display, if found */
+> +	void *acpi_handle;
+> +
+
+The type is acpi_handle. It's none of our business to know what the
+underlying type is.
+
+>  	/* Reads out the current hw, returning true if the connector is enabled
+>  	 * and active (i.e. dpms ON state). */
+>  	bool (*get_hw_state)(struct intel_connector *);
+> diff --git a/drivers/gpu/drm/i915/display/intel_dp.c b/drivers/gpu/drm/i915/display/intel_dp.c
+> index b05b2191b919..93cece8e2516 100644
+> --- a/drivers/gpu/drm/i915/display/intel_dp.c
+> +++ b/drivers/gpu/drm/i915/display/intel_dp.c
+> @@ -45,6 +45,7 @@
+>  #include "i915_debugfs.h"
+>  #include "i915_drv.h"
+>  #include "i915_trace.h"
+> +#include "intel_acpi.h"
+>  #include "intel_atomic.h"
+>  #include "intel_audio.h"
+>  #include "intel_connector.h"
+> @@ -6623,6 +6624,8 @@ intel_dp_add_properties(struct intel_dp *intel_dp, struct drm_connector *connect
+>  
+>  		connector->state->scaling_mode = DRM_MODE_SCALE_ASPECT;
+>  
+> +		/* Lookup the ACPI node corresponding to the connector */
+> +		intel_acpi_device_id_update(dev_priv);
+
+Auch, this is problematic. It iterates all connectors, for every DP
+connector being added. In the middle of registering all connectors.
+
+From the POV of this patch alone, this is also unnecessary. This gets
+called via intel_opregion_register() after all connectors have been
+registered.
+
+I am aware it's not enough for your next patch, because it will need the
+acpi handle right here.
+
+I'm wondering if we need to maintain display_index[] in struct
+drm_i915_private, and update that as connectors get added instead of all
+at once in the end. connector->acpi_device_id never changes, does it,
+even though we keep updating it?
+
+BR,
+Jani.
+
+
+>  	}
+>  }
+
+-- 
+Jani Nikula, Intel Open Source Graphics Center
