@@ -2,35 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4E8A5148E54
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Jan 2020 20:12:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 96C87148E57
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Jan 2020 20:12:16 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391939AbgAXTLe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 24 Jan 2020 14:11:34 -0500
-Received: from Galois.linutronix.de ([193.142.43.55]:43076 "EHLO
+        id S2392000AbgAXTLl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 24 Jan 2020 14:11:41 -0500
+Received: from Galois.linutronix.de ([193.142.43.55]:43100 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2404080AbgAXTL0 (ORCPT
+        with ESMTP id S2404134AbgAXTLa (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 24 Jan 2020 14:11:26 -0500
+        Fri, 24 Jan 2020 14:11:30 -0500
 Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
         by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
         (Exim 4.80)
         (envelope-from <tip-bot2@linutronix.de>)
-        id 1iv4MU-0007iI-Ll; Fri, 24 Jan 2020 20:11:22 +0100
+        id 1iv4MW-0007iC-Op; Fri, 24 Jan 2020 20:11:24 +0100
 Received: from [127.0.1.1] (localhost [IPv6:::1])
-        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 811A41C1A65;
+        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 41F711C1A6E;
         Fri, 24 Jan 2020 20:11:13 +0100 (CET)
 Date:   Fri, 24 Jan 2020 19:11:13 -0000
 From:   "tip-bot2 for Yash Shah" <tip-bot2@linutronix.de>
 Reply-to: linux-kernel@vger.kernel.org
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip: irq/core] irqchip/sifive-plic: Support irq domain hierarchy
-Cc:     Yash Shah <yash.shah@sifive.com>, Marc Zyngier <maz@kernel.org>,
-        x86 <x86@kernel.org>, LKML <linux-kernel@vger.kernel.org>
-In-Reply-To: <1575976274-13487-4-git-send-email-yash.shah@sifive.com>
-References: <1575976274-13487-4-git-send-email-yash.shah@sifive.com>
+Subject: [tip: irq/core] gpio/sifive: Add DT documentation for SiFive GPIO
+Cc:     "Wesley W. Terpstra" <wesley@sifive.com>,
+        Atish Patra <atish.patra@wdc.com>,
+        Yash Shah <yash.shah@sifive.com>,
+        Marc Zyngier <maz@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Rob Herring <robh@kernel.org>, x86 <x86@kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+In-Reply-To: <1575976274-13487-5-git-send-email-yash.shah@sifive.com>
+References: <1575976274-13487-5-git-send-email-yash.shah@sifive.com>
 MIME-Version: 1.0
-Message-ID: <157989307333.396.2092591097107837224.tip-bot2@tip-bot2>
+Message-ID: <157989307309.396.12029128798763007003.tip-bot2@tip-bot2>
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot2.linutronix.de>
 Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
@@ -46,81 +51,101 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The following commit has been merged into the irq/core branch of tip:
 
-Commit-ID:     466008f984358231f4608a0a4171b0e6e8251de8
-Gitweb:        https://git.kernel.org/tip/466008f984358231f4608a0a4171b0e6e8251de8
+Commit-ID:     7875f8242494f8e4c8a75f2aeab4a6fb742599bd
+Gitweb:        https://git.kernel.org/tip/7875f8242494f8e4c8a75f2aeab4a6fb742599bd
 Author:        Yash Shah <yash.shah@sifive.com>
-AuthorDate:    Tue, 10 Dec 2019 16:41:11 +05:30
+AuthorDate:    Tue, 10 Dec 2019 16:41:12 +05:30
 Committer:     Marc Zyngier <maz@kernel.org>
-CommitterDate: Mon, 20 Jan 2020 09:24:56 
+CommitterDate: Mon, 20 Jan 2020 09:26:05 
 
-irqchip/sifive-plic: Support irq domain hierarchy
+gpio/sifive: Add DT documentation for SiFive GPIO
 
-Add support for hierarchical irq domains. This is needed as
-pre-requisite for gpio-sifive driver.
+DT json-schema for GPIO controller added.
 
+Signed-off-by: Wesley W. Terpstra <wesley@sifive.com>
+[Atish: Compatible string update]
+Signed-off-by: Atish Patra <atish.patra@wdc.com>
 Signed-off-by: Yash Shah <yash.shah@sifive.com>
 Signed-off-by: Marc Zyngier <maz@kernel.org>
-Link: https://lore.kernel.org/r/1575976274-13487-4-git-send-email-yash.shah@sifive.com
+Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+Reviewed-by: Rob Herring <robh@kernel.org>
+Link: https://lore.kernel.org/r/1575976274-13487-5-git-send-email-yash.shah@sifive.com
 ---
- drivers/irqchip/Kconfig           |  1 +-
- drivers/irqchip/irq-sifive-plic.c | 30 ++++++++++++++++++++++++++----
- 2 files changed, 27 insertions(+), 4 deletions(-)
+ Documentation/devicetree/bindings/gpio/sifive,gpio.yaml | 68 ++++++++-
+ 1 file changed, 68 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/gpio/sifive,gpio.yaml
 
-diff --git a/drivers/irqchip/Kconfig b/drivers/irqchip/Kconfig
-index 697e6a8..bb89dfc 100644
---- a/drivers/irqchip/Kconfig
-+++ b/drivers/irqchip/Kconfig
-@@ -490,6 +490,7 @@ config TI_SCI_INTA_IRQCHIP
- config SIFIVE_PLIC
- 	bool "SiFive Platform-Level Interrupt Controller"
- 	depends on RISCV
-+	select IRQ_DOMAIN_HIERARCHY
- 	help
- 	   This enables support for the PLIC chip found in SiFive (and
- 	   potentially other) RISC-V systems.  The PLIC controls devices
-diff --git a/drivers/irqchip/irq-sifive-plic.c b/drivers/irqchip/irq-sifive-plic.c
-index 8df547d..0332f60 100644
---- a/drivers/irqchip/irq-sifive-plic.c
-+++ b/drivers/irqchip/irq-sifive-plic.c
-@@ -154,15 +154,37 @@ static struct irq_chip plic_chip = {
- static int plic_irqdomain_map(struct irq_domain *d, unsigned int irq,
- 			      irq_hw_number_t hwirq)
- {
--	irq_set_chip_and_handler(irq, &plic_chip, handle_fasteoi_irq);
--	irq_set_chip_data(irq, NULL);
-+	irq_domain_set_info(d, irq, hwirq, &plic_chip, d->host_data,
-+			    handle_fasteoi_irq, NULL, NULL);
- 	irq_set_noprobe(irq);
- 	return 0;
- }
- 
-+static int plic_irq_domain_alloc(struct irq_domain *domain, unsigned int virq,
-+				 unsigned int nr_irqs, void *arg)
-+{
-+	int i, ret;
-+	irq_hw_number_t hwirq;
-+	unsigned int type;
-+	struct irq_fwspec *fwspec = arg;
+diff --git a/Documentation/devicetree/bindings/gpio/sifive,gpio.yaml b/Documentation/devicetree/bindings/gpio/sifive,gpio.yaml
+new file mode 100644
+index 0000000..418e838
+--- /dev/null
++++ b/Documentation/devicetree/bindings/gpio/sifive,gpio.yaml
+@@ -0,0 +1,68 @@
++# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/gpio/sifive,gpio.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
 +
-+	ret = irq_domain_translate_onecell(domain, fwspec, &hwirq, &type);
-+	if (ret)
-+		return ret;
++title: SiFive GPIO controller
 +
-+	for (i = 0; i < nr_irqs; i++) {
-+		ret = plic_irqdomain_map(domain, virq + i, hwirq + i);
-+		if (ret)
-+			return ret;
-+	}
++maintainers:
++  - Yash Shah <yash.shah@sifive.com>
++  - Paul Walmsley <paul.walmsley@sifive.com>
 +
-+	return 0;
-+}
++properties:
++  compatible:
++    items:
++      - const: sifive,fu540-c000-gpio
++      - const: sifive,gpio0
 +
- static const struct irq_domain_ops plic_irqdomain_ops = {
--	.map		= plic_irqdomain_map,
--	.xlate		= irq_domain_xlate_onecell,
-+	.translate	= irq_domain_translate_onecell,
-+	.alloc		= plic_irq_domain_alloc,
-+	.free		= irq_domain_free_irqs_top,
- };
- 
- static struct irq_domain *plic_irqdomain;
++  reg:
++    maxItems: 1
++
++  interrupts:
++    description:
++      interrupt mapping one per GPIO. Maximum 16 GPIOs.
++    minItems: 1
++    maxItems: 16
++
++  interrupt-controller: true
++
++  "#interrupt-cells":
++    const: 2
++
++  clocks:
++    maxItems: 1
++
++  "#gpio-cells":
++    const: 2
++
++  gpio-controller: true
++
++required:
++  - compatible
++  - reg
++  - interrupts
++  - interrupt-controller
++  - "#interrupt-cells"
++  - clocks
++  - "#gpio-cells"
++  - gpio-controller
++
++additionalProperties: false
++
++examples:
++  - |
++      #include <dt-bindings/clock/sifive-fu540-prci.h>
++      gpio@10060000 {
++        compatible = "sifive,fu540-c000-gpio", "sifive,gpio0";
++        interrupt-parent = <&plic>;
++        interrupts = <7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22>;
++        reg = <0x0 0x10060000 0x0 0x1000>;
++        clocks = <&tlclk PRCI_CLK_TLCLK>;
++        gpio-controller;
++        #gpio-cells = <2>;
++        interrupt-controller;
++        #interrupt-cells = <2>;
++      };
++
++...
