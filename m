@@ -2,36 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 49B5D14895A
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Jan 2020 15:35:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 30D70148960
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Jan 2020 15:35:47 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391841AbgAXOTe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 24 Jan 2020 09:19:34 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39554 "EHLO mail.kernel.org"
+        id S2389386AbgAXOTm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 24 Jan 2020 09:19:42 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39658 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2391518AbgAXOTT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 24 Jan 2020 09:19:19 -0500
+        id S2391575AbgAXOTY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 24 Jan 2020 09:19:24 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3C2E120838;
-        Fri, 24 Jan 2020 14:19:18 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id AB5FD214AF;
+        Fri, 24 Jan 2020 14:19:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579875559;
-        bh=VliAeT8Po/eV+MTczlUWIup6JgY6fmjh0jhjULFIku0=;
+        s=default; t=1579875563;
+        bh=iPMVL4crNxPbC1jQF3SB1zO7fOwWGK3uSOuPiijHZqo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=DQF6eejBL21HMrBLloIcOE1RUwIudjS34LONfAivMIRtCwrLVEtcikKflKJmvf/0T
-         lDVPwERfhVH6ZqoI3ymU4AXs0kJQU+Z6m5HPlOvewRDE6a2PCnDk2j4sYVO/eC6xyp
-         umSkp1NzdD23pvsxdHbX1zCK051pF/MHBv07kXVI=
+        b=GdmZBD1p7wDQu+0NYME9NabsF5IKIuAS79tC8SaqpAaBJqdxXIXSe9aaSWlUYCMA+
+         3aINDv75+qd6+AZ14RXUyrsby7dPS4k5tB9vWb3Zb3b+PfIK8gvWTTnFX1NPUW0Up0
+         mnVsi8Chcs9RAQtww94Awv2tgZfAlfWvV6Ae01Gs=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Kai Vehmanen <kai.vehmanen@linux.intel.com>,
-        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
+Cc:     Stephan Gerhold <stephan@gerhold.net>,
+        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
         Mark Brown <broonie@kernel.org>,
         Sasha Levin <sashal@kernel.org>, alsa-devel@alsa-project.org
-Subject: [PATCH AUTOSEL 5.4 053/107] ASoC: SOF: Intel: fix HDA codec driver probe with multiple controllers
-Date:   Fri, 24 Jan 2020 09:17:23 -0500
-Message-Id: <20200124141817.28793-53-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.4 057/107] ASoC: msm8916-wcd-analog: Fix MIC BIAS Internal1
+Date:   Fri, 24 Jan 2020 09:17:27 -0500
+Message-Id: <20200124141817.28793-57-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200124141817.28793-1-sashal@kernel.org>
 References: <20200124141817.28793-1-sashal@kernel.org>
@@ -44,88 +44,69 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Kai Vehmanen <kai.vehmanen@linux.intel.com>
+From: Stephan Gerhold <stephan@gerhold.net>
 
-[ Upstream commit 2c63bea714780f8e1fc9cb7bc10deda26fada25b ]
+[ Upstream commit 057efcf9faea4769cf1020677d93d040db9b23f3 ]
 
-In case system has multiple HDA controllers, it can happen that
-same HDA codec driver is used for codecs of multiple controllers.
-In this case, SOF may fail to probe the HDA driver and SOF
-initialization fails.
+MIC BIAS Internal1 is broken at the moment because we always
+enable the internal rbias resistor to the TX2 line (connected to
+the headset microphone), rather than enabling the resistor connected
+to TX1.
 
-SOF HDA code currently relies that a call to request_module() will
-also run device matching logic to attach driver to the codec instance.
-However if driver for another HDA controller was already loaded and it
-already loaded the HDA codec driver, this breaks current logic in SOF.
-In this case the request_module() SOF does becomes a no-op and HDA
-Codec driver is not attached to the codec instance sitting on the HDA
-bus SOF is controlling. Typical scenario would be a system with both
-external and internal GPUs, with driver of the external GPU loaded
-first.
+Move the RBIAS code to pm8916_wcd_analog_enable_micbias_int1/2()
+to fix this.
 
-Fix this by adding similar logic as is used in legacy HDA driver
-where an explicit device_attach() call is done after request_module().
-
-Also add logic to propagate errors reported by device_attach() back
-to caller. This also works in the case where drivers are not built
-as modules.
-
-Signed-off-by: Kai Vehmanen <kai.vehmanen@linux.intel.com>
-Signed-off-by: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-Link: https://lore.kernel.org/r/20200110235751.3404-8-pierre-louis.bossart@linux.intel.com
+Fixes: 585e881e5b9e ("ASoC: codecs: Add msm8916-wcd analog codec")
+Cc: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Signed-off-by: Stephan Gerhold <stephan@gerhold.net>
+Link: https://lore.kernel.org/r/20200111164006.43074-3-stephan@gerhold.net
 Signed-off-by: Mark Brown <broonie@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- sound/soc/sof/intel/hda-codec.c | 19 ++++++++++++-------
- 1 file changed, 12 insertions(+), 7 deletions(-)
+ sound/soc/codecs/msm8916-wcd-analog.c | 16 +++++++++++++---
+ 1 file changed, 13 insertions(+), 3 deletions(-)
 
-diff --git a/sound/soc/sof/intel/hda-codec.c b/sound/soc/sof/intel/hda-codec.c
-index 3ca6795a89ba3..9e8233c10d860 100644
---- a/sound/soc/sof/intel/hda-codec.c
-+++ b/sound/soc/sof/intel/hda-codec.c
-@@ -24,19 +24,18 @@
- #define IDISP_VID_INTEL	0x80860000
+diff --git a/sound/soc/codecs/msm8916-wcd-analog.c b/sound/soc/codecs/msm8916-wcd-analog.c
+index 08399a734be27..84289ebeae872 100644
+--- a/sound/soc/codecs/msm8916-wcd-analog.c
++++ b/sound/soc/codecs/msm8916-wcd-analog.c
+@@ -391,9 +391,6 @@ static int pm8916_wcd_analog_enable_micbias_int(struct snd_soc_component
  
- /* load the legacy HDA codec driver */
--#ifdef MODULE
--static void hda_codec_load_module(struct hda_codec *codec)
-+static int hda_codec_load_module(struct hda_codec *codec)
- {
-+#ifdef MODULE
- 	char alias[MODULE_NAME_LEN];
- 	const char *module = alias;
+ 	switch (event) {
+ 	case SND_SOC_DAPM_PRE_PMU:
+-		snd_soc_component_update_bits(component, CDC_A_MICB_1_INT_RBIAS,
+-				    MICB_1_INT_TX2_INT_RBIAS_EN_MASK,
+-				    MICB_1_INT_TX2_INT_RBIAS_EN_ENABLE);
+ 		snd_soc_component_update_bits(component, reg, MICB_1_EN_PULL_DOWN_EN_MASK, 0);
+ 		snd_soc_component_update_bits(component, CDC_A_MICB_1_EN,
+ 				    MICB_1_EN_OPA_STG2_TAIL_CURR_MASK,
+@@ -443,6 +440,14 @@ static int pm8916_wcd_analog_enable_micbias_int1(struct
+ 	struct snd_soc_component *component = snd_soc_dapm_to_component(w->dapm);
+ 	struct pm8916_wcd_analog_priv *wcd = snd_soc_component_get_drvdata(component);
  
- 	snd_hdac_codec_modalias(&codec->core, alias, sizeof(alias));
- 	dev_dbg(&codec->core.dev, "loading codec module: %s\n", module);
- 	request_module(module);
--}
--#else
--static void hda_codec_load_module(struct hda_codec *codec) {}
- #endif
-+	return device_attach(hda_codec_dev(codec));
-+}
++	switch (event) {
++	case SND_SOC_DAPM_PRE_PMU:
++		snd_soc_component_update_bits(component, CDC_A_MICB_1_INT_RBIAS,
++				    MICB_1_INT_TX1_INT_RBIAS_EN_MASK,
++				    MICB_1_INT_TX1_INT_RBIAS_EN_ENABLE);
++		break;
++	}
++
+ 	return pm8916_wcd_analog_enable_micbias_int(component, event, w->reg,
+ 						     wcd->micbias1_cap_mode);
+ }
+@@ -553,6 +558,11 @@ static int pm8916_wcd_analog_enable_micbias_int2(struct
+ 	struct pm8916_wcd_analog_priv *wcd = snd_soc_component_get_drvdata(component);
  
- /* enable controller wake up event for all codecs with jack connectors */
- void hda_codec_jack_wake_enable(struct snd_sof_dev *sdev)
-@@ -116,10 +115,16 @@ static int hda_codec_probe(struct snd_sof_dev *sdev, int address)
- 	/* use legacy bus only for HDA codecs, idisp uses ext bus */
- 	if ((resp & 0xFFFF0000) != IDISP_VID_INTEL) {
- 		hdev->type = HDA_DEV_LEGACY;
--		hda_codec_load_module(&hda_priv->codec);
-+		ret = hda_codec_load_module(&hda_priv->codec);
-+		/*
-+		 * handle ret==0 (no driver bound) as an error, but pass
-+		 * other return codes without modification
-+		 */
-+		if (ret == 0)
-+			ret = -ENOENT;
- 	}
- 
--	return 0;
-+	return ret;
- #else
- 	hdev = devm_kzalloc(sdev->dev, sizeof(*hdev), GFP_KERNEL);
- 	if (!hdev)
+ 	switch (event) {
++	case SND_SOC_DAPM_PRE_PMU:
++		snd_soc_component_update_bits(component, CDC_A_MICB_1_INT_RBIAS,
++				    MICB_1_INT_TX2_INT_RBIAS_EN_MASK,
++				    MICB_1_INT_TX2_INT_RBIAS_EN_ENABLE);
++		break;
+ 	case SND_SOC_DAPM_POST_PMU:
+ 		pm8916_mbhc_configure_bias(wcd, true);
+ 		break;
 -- 
 2.20.1
 
