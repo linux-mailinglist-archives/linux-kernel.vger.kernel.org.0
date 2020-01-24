@@ -2,48 +2,48 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F33E0148C1B
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Jan 2020 17:30:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D28E6148C1E
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Jan 2020 17:30:49 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389076AbgAXQaR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 24 Jan 2020 11:30:17 -0500
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:36118 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388341AbgAXQaQ (ORCPT
+        id S2390391AbgAXQao (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 24 Jan 2020 11:30:44 -0500
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:45339 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388793AbgAXQaR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 24 Jan 2020 11:30:16 -0500
-Received: by mail-wr1-f68.google.com with SMTP id z3so2723829wru.3;
-        Fri, 24 Jan 2020 08:30:14 -0800 (PST)
+        Fri, 24 Jan 2020 11:30:17 -0500
+Received: by mail-wr1-f67.google.com with SMTP id j42so2680699wrj.12;
+        Fri, 24 Jan 2020 08:30:15 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=hYFbabH/1+eJ5tgZu8gLApj2AMrLFA7PILlgYylYfww=;
-        b=ttoW4FJX0uyIo4LvuzYHHh6Q2hKvvZTOmQ1R9vyPsn8wHAhh4UrcWnvxbYR6M8Lw5O
-         VnfCpwIO34bxDsK2hKHXo/dc+uANQ3V76q0PsA0QV6N9/wTbxci2fcBVupoItf1DH9xb
-         08R1vxFYvluoAXgpJjLElER8668aFhH+gda3dQe+uUOvjvIMWNzEqPHbWxNBl/5G/9uT
-         6CdZahcOpZG2SlVgZqUGrXL16FPRdM6wNgimndjOqiwO9OxmPoC0TMvbWSwAdJJrGZnG
-         rm1RxYAtmNzQNVKQKAVxuFdGYQ7m+4JyGQpo9UhZRqhPjkFVMQhAq0DU3S6fq4cjPgzy
-         Nz0Q==
+        bh=5CG21ojEDjECTj7XUBPSg8AMrBX1gphh8BPherlSg2c=;
+        b=qODzbZGmaHGWOL3dDb3Xify6xkGEbOZyCAuqjPjEIaPY8V6dE42lSq2czZnDgXBpUG
+         7auQNJ2tdS+OMddJObOB02bB0h12ZrwpqtFLHg1hlmO2MtcbeSXfw6hwogMvGmXXG0Rq
+         hAyyxGmJmWE3AdA/1RdJ7y+J22+B04xgc5Gq0GZa2jgbbH+SMWXEH8LErXNVr3JPEJfu
+         Fr/zJqBqy+XGPgKnRqvDGP+OamI41kH+w0KAvqYV+Yb4tjmH6yv2237dABwohRIrA48C
+         oomdcNS3Y6flFc9EoLqbLn2zbxr8IstdVfrNwZlNKbGp4mSW/HmCBdJcsYMBgdpsg+5s
+         i9Yw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=hYFbabH/1+eJ5tgZu8gLApj2AMrLFA7PILlgYylYfww=;
-        b=s4aVJ/1RiiR9spMu8ELteomu0xE8hpY+x3kSxMl1MgNMd0m2S3C7jmuco5xrUbzjOZ
-         GSPhrgAMsHxlCxhBooaogcugmtmmgsbGG1YvJlw1rsbS5B0l9cM5Rpp820hogde/4esi
-         lQjpmTrcKfId+Vwy5VK2gN/cdrHaOH4ltewfuI22zea2TXTaBt9Dj06TSIt3BrgyU/HB
-         yg7VDwExKXGcQyiO50xz4lowqm0W2fJ6RWkPtbxUcd13Ex8gBMQtAsoJ8AUWZaQrAkhM
-         8GUMWAN7mZ2qUT5sXNsyXbw1Uv2vtLYmlpdPacsBIWeJtyGTUBkMYA8gcAHzs+1wUcQ7
-         sjgw==
-X-Gm-Message-State: APjAAAW4QUp8E4bxSEa19VWr7RMLreLGQnaQbGyrMBs7eSPxEvPzyuKy
-        LKp6ZBEB1CuYbCyuxi6u4Ic=
-X-Google-Smtp-Source: APXvYqykWcME/KmUDZrrd7CGyy/O95zP9Xfvvz6gjuR9vTr6EyI82sKy8dHM95zTWTcR0vjltX6/ng==
-X-Received: by 2002:adf:f288:: with SMTP id k8mr5516067wro.301.1579883414238;
-        Fri, 24 Jan 2020 08:30:14 -0800 (PST)
+        bh=5CG21ojEDjECTj7XUBPSg8AMrBX1gphh8BPherlSg2c=;
+        b=SbR2M5Bpi6SCtqRBRHHF/kXLy5awuYNPsCkJi6gYBotkwZH2Z3vQK0JLY1XH2NCC7H
+         dBxJxF3VEkbiA8DZHcG6ZVDvji7PgTB/M+IE87ERNPStn7ImF1G3u+9wmhhJctSSDIEg
+         HS3u7j69gX1sulr4WRPaaPFD7Fi6BelgtQhcTqQBNci3fUCanGaYgqhSyfmFLb5d18iq
+         3kCqPCUU6isGQ0qifD7LOlAc8XdiuJVWrB4pVH5b+bH4xXtRzRYCgJxetf0TIEkuvwlI
+         zM+eyZTJVpEi/Pyf4719UMpwUSwJ1Bf4F/sXZzCYdeY/oqxwvMkG+0Jul8yCUAUpgvp7
+         0H7w==
+X-Gm-Message-State: APjAAAXYNHobIYbdadvOeG9Y8IltRUvilCFpbEI0/4Y6X+TfWSMAjXWb
+        TUcxw/4Sp0MB28FzQ8lPIoA=
+X-Google-Smtp-Source: APXvYqyb6Y4gGv12/4HSD8PzStB662RmnSDlEdKQLoXAtCs6xALQmyQQxt8zVDbHFXtpDTTV1Yl7TA==
+X-Received: by 2002:a5d:6a10:: with SMTP id m16mr5110889wru.411.1579883415317;
+        Fri, 24 Jan 2020 08:30:15 -0800 (PST)
 Received: from debian.home (ip51ccf9cd.speed.planet.nl. [81.204.249.205])
-        by smtp.gmail.com with ESMTPSA id 205sm1977304wmd.42.2020.01.24.08.30.13
+        by smtp.gmail.com with ESMTPSA id 205sm1977304wmd.42.2020.01.24.08.30.14
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 24 Jan 2020 08:30:13 -0800 (PST)
+        Fri, 24 Jan 2020 08:30:14 -0800 (PST)
 From:   Johan Jonker <jbx6244@gmail.com>
 To:     miquel.raynal@bootlin.com
 Cc:     richard@nod.at, vigneshr@ti.com, robh+dt@kernel.org,
@@ -52,9 +52,9 @@ Cc:     richard@nod.at, vigneshr@ti.com, robh+dt@kernel.org,
         linux-arm-kernel@lists.infradead.org,
         linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
         shawn.lin@rock-chips.com, yifeng.zhao@rock-chips.com
-Subject: [RFC PATCH v2 03/10] ARM: dts: rockchip: add nandc node for rk3066a/rk3188
-Date:   Fri, 24 Jan 2020 17:29:54 +0100
-Message-Id: <20200124163001.28910-4-jbx6244@gmail.com>
+Subject: [RFC PATCH v2 04/10] ARM: dts: rockchip: add nandc node for rk322x
+Date:   Fri, 24 Jan 2020 17:29:55 +0100
+Message-Id: <20200124163001.28910-5-jbx6244@gmail.com>
 X-Mailer: git-send-email 2.11.0
 In-Reply-To: <20200124163001.28910-1-jbx6244@gmail.com>
 References: <20200124163001.28910-1-jbx6244@gmail.com>
@@ -63,36 +63,36 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Chris Zhong <zyw@rock-chips.com>
+From: Wenping Zhang <wenping.zhang@rock-chips.com>
 
-Add nandc node for rk3066a/rk3188.
+Add nandc node for rk322x.
 
-Signed-off-by: Chris Zhong <zyw@rock-chips.com>
+Signed-off-by: Wenping Zhang <wenping.zhang@rock-chips.com>
 Signed-off-by: Johan Jonker <jbx6244@gmail.com>
 ---
- arch/arm/boot/dts/rk3xxx.dtsi | 9 +++++++++
+ arch/arm/boot/dts/rk322x.dtsi | 9 +++++++++
  1 file changed, 9 insertions(+)
 
-diff --git a/arch/arm/boot/dts/rk3xxx.dtsi b/arch/arm/boot/dts/rk3xxx.dtsi
-index 97307a405..221c30314 100644
---- a/arch/arm/boot/dts/rk3xxx.dtsi
-+++ b/arch/arm/boot/dts/rk3xxx.dtsi
-@@ -273,6 +273,15 @@
+diff --git a/arch/arm/boot/dts/rk322x.dtsi b/arch/arm/boot/dts/rk322x.dtsi
+index 340ed6ccb..2f5122206 100644
+--- a/arch/arm/boot/dts/rk322x.dtsi
++++ b/arch/arm/boot/dts/rk322x.dtsi
+@@ -707,6 +707,15 @@
  		status = "disabled";
  	};
  
-+	nandc: nand-controller@10500000 {
-+		compatible = "rockchip,rk3066-nand-controller";
-+		reg = <0x10500000 0x4000>;
-+		interrupts = <GIC_SPI 27 IRQ_TYPE_LEVEL_HIGH>;
-+		clocks = <&cru HCLK_NANDC0>;
-+		clock-names = "hclk_nandc";
++	nandc: nand-controller@30030000 {
++		compatible = "rockchip,rk3228-nand-controller";
++		reg = <0x30030000 0x4000>;
++		interrupts = <GIC_SPI 15 IRQ_TYPE_LEVEL_HIGH>;
++		clocks = <&cru HCLK_NANDC>, <&cru SCLK_NANDC>;
++		clock-names = "hclk_nandc", "clk_nandc";
 +		status = "disabled";
 +	};
 +
- 	pmu: pmu@20004000 {
- 		compatible = "rockchip,rk3066-pmu", "syscon", "simple-mfd";
- 		reg = <0x20004000 0x100>;
+ 	usb_otg: usb@30040000 {
+ 		compatible = "rockchip,rk3228-usb", "rockchip,rk3066-usb",
+ 			     "snps,dwc2";
 -- 
 2.11.0
 
