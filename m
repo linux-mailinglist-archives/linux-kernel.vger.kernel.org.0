@@ -2,105 +2,173 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 90B9914844F
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Jan 2020 12:41:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 55196148411
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Jan 2020 12:41:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392103AbgAXLl4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 24 Jan 2020 06:41:56 -0500
-Received: from mail-lj1-f178.google.com ([209.85.208.178]:40855 "EHLO
-        mail-lj1-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2390001AbgAXLQW (ORCPT
+        id S2392039AbgAXLk2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 24 Jan 2020 06:40:28 -0500
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:59227 "EHLO
+        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2391200AbgAXLWZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 24 Jan 2020 06:16:22 -0500
-Received: by mail-lj1-f178.google.com with SMTP id n18so2049245ljo.7
-        for <linux-kernel@vger.kernel.org>; Fri, 24 Jan 2020 03:16:20 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rasmusvillemoes.dk; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=WPh74pEP+nQ76ELzYt+TrcyRCi7yaoOoadSkrfPnPw0=;
-        b=UiiEOmI5crrZFnXah+iBEOCV1kFA6HM7uH0AeaaVeCmEY0JQFlbkI5t8sr83qk61jO
-         ENI1Xm1UUUGXlAoQn+AgsSPXkmL1Hx34lQhSF7FiDCi+8GlB7JdN5aVzcdCM/RbQbz0T
-         gr+P+irrrT+iCw23HnU+FbiaxS5z0yDBgxLkk=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=WPh74pEP+nQ76ELzYt+TrcyRCi7yaoOoadSkrfPnPw0=;
-        b=WvdgzlQ4b9zCkglQ3OhahnLeoLoeTAUvryWDkjuGve3rAFGVAgosCQBvi2Zvf8E9Pc
-         wOSJkIfy4tumY7cqiVsmeG4WOr4mwYLLJxgxmegu8E5Zf/hC5R1A3g0WzateUSMSMem8
-         vhj3ixtEbf/FxJFnMJzxCztZw0DRaYY2rLX7WfsCTnhW214JNFYxLFh9yW1tANGzmq7s
-         nxF9rNJbZMpUB1hDb3H1Z7RGueQVPzPsPnVvgksDGQvqaP1uk9TLv7379oPSUac5PlI+
-         fzVha6i5ZckWshLqnKBDMK2+61EewF36KTjabPqaROQjw7Tj7SCuuWe1EsH2TYNhLmz/
-         Ltyg==
-X-Gm-Message-State: APjAAAW1iee1OKR8wHCjYBKprggfwZ3zQrIQqBE4IdRJ54lotbagjaH1
-        LbaEZDgDg662DSVn4a6KgxTNHHe9J8MLik9O
-X-Google-Smtp-Source: APXvYqwhcWeDSkhp2yrEeOy7QBdhQdx7TS6ALPFnsE1YmPPh0m3SZYBK+yeJxbdM4du+1HhZ1HMVbQ==
-X-Received: by 2002:a2e:7a07:: with SMTP id v7mr1853505ljc.271.1579864580100;
-        Fri, 24 Jan 2020 03:16:20 -0800 (PST)
-Received: from [172.16.11.50] ([81.216.59.226])
-        by smtp.gmail.com with ESMTPSA id t1sm2947207lji.98.2020.01.24.03.16.18
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 24 Jan 2020 03:16:19 -0800 (PST)
-Subject: Re: vmlinux ELF header sometimes corrupt
-To:     Michael Ellerman <mpe@ellerman.id.au>,
-        LKML <linux-kernel@vger.kernel.org>
-Cc:     Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
-        "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>
-References: <71aa76d0-a3b8-b4f3-a7c3-766cfb75412f@rasmusvillemoes.dk>
- <875zh1i0wj.fsf@mpe.ellerman.id.au>
-From:   Rasmus Villemoes <linux@rasmusvillemoes.dk>
-Message-ID: <b5f6ab1c-337e-c5e4-6449-0cf73413e1be@rasmusvillemoes.dk>
-Date:   Fri, 24 Jan 2020 12:16:17 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.2.2
-MIME-Version: 1.0
-In-Reply-To: <875zh1i0wj.fsf@mpe.ellerman.id.au>
-Content-Type: text/plain; charset=windows-1252
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        Fri, 24 Jan 2020 06:22:25 -0500
+Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
+        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20200124112223euoutp01de9ba781425f64927778eef07afe1ff6~szsvLnJMv3148331483euoutp01Z
+        for <linux-kernel@vger.kernel.org>; Fri, 24 Jan 2020 11:22:23 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20200124112223euoutp01de9ba781425f64927778eef07afe1ff6~szsvLnJMv3148331483euoutp01Z
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1579864944;
+        bh=7gGcPJwJd/puSj7LZi16us9UvxlBRcOghdJ+QKXKrdE=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=j2HbyfiEpJlWfcLa4htJuVkGu00LorD0r61DzhxI2ALm/0uJEhh7+smjerjEDBAxn
+         k27cOlmJmzjMOHdH8h5tb8lGVu/9qRDS4fgulO8+Aob2q3JM4SdmTyT1puTCpmQH5x
+         4qn3ZdRNvhXmaxM8kfg113XMgbjcN/uKioXGKYWc=
+Received: from eusmges3new.samsung.com (unknown [203.254.199.245]) by
+        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
+        20200124112223eucas1p12ce3c0b8be44a47331317961f80efc9f~szsu5wh0u3241032410eucas1p1C;
+        Fri, 24 Jan 2020 11:22:23 +0000 (GMT)
+Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
+        eusmges3new.samsung.com (EUCPMTA) with SMTP id C9.A8.60698.F63DA2E5; Fri, 24
+        Jan 2020 11:22:23 +0000 (GMT)
+Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
+        eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
+        20200124112223eucas1p1ff581c051a056b7517655a3eb9ec68de~szsuZclkv2709327093eucas1p1w;
+        Fri, 24 Jan 2020 11:22:23 +0000 (GMT)
+Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
+        eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
+        20200124112223eusmtrp1e4b8f1c165f594e10570ca50f4a6e1a1~szsuYtXfM0086800868eusmtrp1f;
+        Fri, 24 Jan 2020 11:22:23 +0000 (GMT)
+X-AuditID: cbfec7f5-a0fff7000001ed1a-9c-5e2ad36f1c56
+Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
+        eusmgms1.samsung.com (EUCPMTA) with SMTP id 87.FC.08375.F63DA2E5; Fri, 24
+        Jan 2020 11:22:23 +0000 (GMT)
+Received: from AMDC3555 (unknown [106.120.51.67]) by eusmtip2.samsung.com
+        (KnoxPortal) with ESMTPA id
+        20200124112222eusmtip2758daabb6f8219629e4888f27bc2e161~szstqcurH1453014530eusmtip2O;
+        Fri, 24 Jan 2020 11:22:22 +0000 (GMT)
+Message-ID: <669f89cddb185db7412a4012427fb5ccbaae2652.camel@samsung.com>
+Subject: Re: [RFC PATCH v3 4/7] arm: dts: exynos: Add interconnect bindings
+ for Exynos4412
+From:   Artur =?UTF-8?Q?=C5=9Awigo=C5=84?= <a.swigon@samsung.com>
+To:     Georgi Djakov <georgi.djakov@linaro.org>,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-pm@vger.kernel.org, dri-devel@lists.freedesktop.org
+Cc:     cw00.choi@samsung.com, myungjoo.ham@samsung.com,
+        inki.dae@samsung.com, sw0312.kim@samsung.com,
+        leonard.crestez@nxp.com, m.szyprowski@samsung.com,
+        b.zolnierkie@samsung.com, krzk@kernel.org
+Date:   Fri, 24 Jan 2020 12:22:22 +0100
+In-Reply-To: <747a1c94-8eee-f46a-fcc7-d111cd9df70d@linaro.org>
+X-Mailer: Evolution 3.28.5-0ubuntu0.18.04.1 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA01Sa0hTYRjm27nsuNz6mlFvFl1WEUlpocGBLrMLcggiRQzp6sqDRm7WTkvn
+        j9IsSy01JTIVL2Flq1BXhlmayVDRdMhEK7VR64LW7OK16LZ5FvbveZ73ed7ne+FjCGUn5csc
+        1h3n9TpNnIqWkQ+av1tXx9v89q/58mIZW51fSbG9ox8otsTSSbHdY59p9kq9mWZz7Tkka7VW
+        SdmKga8Ua3b0UKytrohmRy5aEJtvbZCwdy0DUrYvpYJm8/MG6eCZnNmUTnP9PY9pzp7ZIuHu
+        lZ/iqodrJVzWfRPiRswLQ6W7ZRui+bjDJ3h9wKYoWazNMkkeLcOJbxwrktEZeQbyYgAHQX3K
+        ZSIDyRglrkBg7y2WiGQUwdhLGxLJCIKSohH6X2SiK9szuIkg91OpVCTvXa6fZ5HbJcccWNNt
+        UwkfvBcKJu1SN6axGjr6xqc6ZuNvCDrKC6dWEdiC4OP4W9LtIvFyaM6rIdzYC2+CoeI+qdi9
+        CpxtWS4P42qYBb9qfdwygRdBak3h1BWAnVLIyXYSon8btBWlSkTsA0Mt9z17FkB73gVSxAK8
+        e2inxHAyAvMNiye8Hvo7f9DuMgKvhMq6AFHeDDUTmRK3DFgBz52zxDcoIPfBFUKU5XA+TSlC
+        FdRdVYhBgNO3ezy7OegqT6dy0JKC6VsK/rulYLq1FBEmNJc3CNoYXgjU8Qn+gkYrGHQx/ofi
+        tWbk+mXtv1vGalHDz4NNCDNI5S1vzFi5X0lpTghGbRMChlDNlqNdLkkerTEm8fr4A3pDHC80
+        ofkMqZorD7w2uE+JYzTH+SM8f5TX/5tKGC/fZBR5qdGKXiqeRnyY0R8WscfvTag1cfuh891R
+        T0Kc2leBrVWjscHzfw0b6qJ3SBM3PvKtjnz2J7P9k3XRrVJSgXTPjoU6Ux2OrcFo7bjJGWZ8
+        nW3D19PWBekTTMacO8sg5BLhrZ53uTVhTtnJgInwxfXrz4XvUS/daZSpJxu3JDnfqkghVrPW
+        j9ALmr9Pu97MYQMAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrGIsWRmVeSWpSXmKPExsVy+t/xe7r5l7XiDOZcZLXYOGM9q8X1L89Z
+        LeYfOcdqceXrezaL6Xs3sVlMuj+BxeL8+Q3sFivufmS12PT4GqvF5V1z2Cw+9x5htJhxfh+T
+        xdojd9ktbjeuYLOYMfklmwO/x6ZVnWwed67tYfO4332cyWPzknqPje92MHn0bVnF6PF5k1wA
+        e5SeTVF+aUmqQkZ+cYmtUrShhZGeoaWFnpGJpZ6hsXmslZGpkr6dTUpqTmZZapG+XYJexuUj
+        P1gKFgpUPHqs3sDYwtvFyMkhIWAi8f1iP2MXIxeHkMBSRomfU9ayQiQkJD6uvwFlC0v8udbF
+        BlH0hFHi26apjCAJXgEPifOdl9lAbGGBGIlZP+6zg9hsAvYSZ29/YwJpEBH4zChxeNEnFhCH
+        WeAoo8SzExBVLAKqEscmb2UGsTkF7CRezbvNDrHiE6PE3/l3mUASzAKaEq3bf7ND3KEj8fZU
+        H9AkDqDVghJ/dwhDlMhLNG+dzTyBUXAWko5ZCFWzkFQtYGRexSiSWlqcm55bbKhXnJhbXJqX
+        rpecn7uJERin24793LyD8dLG4EOMAhyMSjy8Er2acUKsiWXFlbmHGCU4mJVEeBnDgEK8KYmV
+        ValF+fFFpTmpxYcYTYH+mcgsJZqcD0wheSXxhqaG5haWhubG5sZmFkrivB0CB2OEBNITS1Kz
+        U1MLUotg+pg4OKUaGCVWL7+stiLm/LNlh0KSAir8bIv8L/8yfBJisa5Uz6Nx+nUtyfvuGjsa
+        LmZnyk24Iv+7a2Gsw8bVnIveXV7AnDT9Y1incJmMoGTKXLkLsR+MF8VvfzD90lTPNt9k2ZlW
+        xc+dtvav3xGuxGbraO56PfK7q17IPAGpux0/UrNseA//vz69suZZlRJLcUaioRZzUXEiAMAO
+        xRfpAgAA
+X-CMS-MailID: 20200124112223eucas1p1ff581c051a056b7517655a3eb9ec68de
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20191220120144eucas1p119ececf161a6d45a6a194e432bbbd1f9
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20191220120144eucas1p119ececf161a6d45a6a194e432bbbd1f9
+References: <20191220115653.6487-1-a.swigon@samsung.com>
+        <CGME20191220120144eucas1p119ececf161a6d45a6a194e432bbbd1f9@eucas1p1.samsung.com>
+        <20191220115653.6487-5-a.swigon@samsung.com>
+        <747a1c94-8eee-f46a-fcc7-d111cd9df70d@linaro.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 24/01/2020 11.50, Michael Ellerman wrote:
-> Rasmus Villemoes <linux@rasmusvillemoes.dk> writes:
->> I'm building for a ppc32 (mpc8309) target using Yocto, and I'm hitting a
->> very hard to debug problem that maybe someone else has encountered. This
->> doesn't happen always, perhaps 1 in 8 times or something like that.
->>
->> The issue is that when the build gets to do "${CROSS}objcopy -O binary
->> ... vmlinux", vmlinux is not (no longer) a proper ELF file, so naturally
->> that fails with
->>
->>   powerpc-oe-linux-objcopy:vmlinux: file format not recognized
->>
->>
->> Any ideas?
+Hi,
+
+On Wed, 2020-01-22 at 18:54 +0200, Georgi Djakov wrote:
+> Hi Artur,
 > 
-> Not really sorry. Haven't seen or heard of that before.
+> Thank you for your continuous work on this.
 > 
-> Are you doing a parallel make? If so does -j 1 fix it?
+> On 12/20/19 13:56, Artur Świgoń wrote:
+> > This patch adds the following properties to the Exynos4412 DT:
+> >   - exynos,interconnect-parent-node: to declare connections between
+> >     nodes in order to guarantee PM QoS requirements between nodes;
+> 
+> Is this DT property documented somewhere? I believe that there should be a patch
+> to document it somewhere in Documentation/devicetree/bindings/ before using it.
 
-Hard to say, I'll have to try that a number of times to see if it can be
-reproduced with that setting.
+It will be documented in Documentation/devicetree/bindings/devfreq/exynos-bus.txt
+in the next version.
 
-> If it seems like sortextable is at fault then strace'ing it would be my
-> next step.
+> >   - #interconnect-cells: required by the interconnect framework.
+> > 
+> > Note that #interconnect-cells is always zero and node IDs are not
+> > hardcoded anywhere.
+> > 
+> > Signed-off-by: Artur Świgoń <a.swigon@samsung.com>
+> > ---
+> >  arch/arm/boot/dts/exynos4412-odroid-common.dtsi | 5 +++++
+> >  1 file changed, 5 insertions(+)
+> > 
+> > diff --git a/arch/arm/boot/dts/exynos4412-odroid-common.dtsi b/arch/arm/boot/dts/exynos4412-odroid-common.dtsi
+> > index 4ce3d77a6704..d9d70eacfcaf 100644
+> > --- a/arch/arm/boot/dts/exynos4412-odroid-common.dtsi
+> > +++ b/arch/arm/boot/dts/exynos4412-odroid-common.dtsi
+> > @@ -90,6 +90,7 @@
+> >  &bus_dmc {
+> >  	exynos,ppmu-device = <&ppmu_dmc0_3>, <&ppmu_dmc1_3>;
+> >  	vdd-supply = <&buck1_reg>;
+> > +	#interconnect-cells = <0>;
+> >  	status = "okay";
+> >  };
+> >  
+> > @@ -106,6 +107,8 @@
+> >  &bus_leftbus {
+> >  	exynos,ppmu-device = <&ppmu_leftbus_3>, <&ppmu_rightbus_3>;
+> >  	vdd-supply = <&buck3_reg>;
+> > +	exynos,interconnect-parent-node = <&bus_dmc>;
+> > +	#interconnect-cells = <0>;
+> >  	status = "okay";
+> >  };
+> >  
+> > @@ -116,6 +119,8 @@
+> >  
+> >  &bus_display {
+> >  	exynos,parent-bus = <&bus_leftbus>;
+> > +	exynos,interconnect-parent-node = <&bus_leftbus>;
+> > +	#interconnect-cells = <0>;
+> >  	status = "okay";
+> >  };
 
-I don't think sortextable is at fault, that was just my first "I know
-that at least pokes around in the ELF file". I do "cp vmlinux
-vmlinux.before_sort" and "cp vmlinux vmlinux.after_sort", and both of
-those copies are proper ELF files - and the .after_sort is identical to
-the corrupt vmlinux apart from vmlinux ending up with its ELF header wiped.
+-- 
+Artur Świgoń
+Samsung R&D Institute Poland
+Samsung Electronics
 
-So it's something that happens during some later build step (Yocto has a
-lot of steps), perhaps "make modules" or "make modules_install" or
-something ends up somehow deciding "hey, vmlinux isn't quite uptodate,
-let's nuke it". I'm not even sure it's a Kbuild problem, but I've seen
-the same thing happen using another meta-build system called oe-lite,
-which is why I'm not primarily suspecting the Yocto logic.
 
-Rasmus
