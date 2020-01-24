@@ -2,42 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0AECD148001
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Jan 2020 12:08:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 119B5147FE3
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Jan 2020 12:08:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389349AbgAXLGz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 24 Jan 2020 06:06:55 -0500
-Received: from mail.kernel.org ([198.145.29.99]:41826 "EHLO mail.kernel.org"
+        id S2389004AbgAXLGD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 24 Jan 2020 06:06:03 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40602 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387790AbgAXLGx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 24 Jan 2020 06:06:53 -0500
+        id S1732644AbgAXLGA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 24 Jan 2020 06:06:00 -0500
 Received: from localhost (ip-213-127-102-57.ip.prioritytelecom.net [213.127.102.57])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 25E9020663;
-        Fri, 24 Jan 2020 11:06:52 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 79E4120663;
+        Fri, 24 Jan 2020 11:05:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579864012;
-        bh=CMmrG1Krn981BFeYs8Nwv5F3gDnF8U99tH+6SAxUW8s=;
+        s=default; t=1579863960;
+        bh=pleHYfFuolpnnq+6nCW1//6E9yDhm2FdQf3zhWHjvc8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=E1LuUbbm4eqbCwwddjFepkyorM9bQd1xu1JhS6C6s61blb6dNzAjDdHykXpemKtCa
-         amBa5d4wOmtxes5MkCrm+VhzBgA7/iGROBaIyfxnnHavAXW60s7f65L9mB72lifJ+w
-         fl9pGXKP4JFtSaMVxmEOVHXXIgkRgpKdyvjz8ERA=
+        b=lJHWKjVyGXa+7etEqOUI4UCK+NBNZesprVUAJsdYu1qauZHLfMrakKUU+1lby+WfU
+         K5PSzz4YXgBkWGvVimCVhBPjg2U/FvKto2GUqyEPBuIId9gDyq+afvp+OptldzvJi9
+         Y0i9gol889VMqYYSPn8BAjHp/SwNTn9ChKGBE15Q=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Shakeel Butt <shakeelb@google.com>,
-        Michal Hocko <mhocko@suse.com>,
-        Rik van Riel <riel@surriel.com>,
-        Roman Gushchin <guro@fb.com>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Tejun Heo <tj@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
+        stable@vger.kernel.org, Gal Pressman <galpress@amazon.com>,
+        Parvi Kaustubhi <pkaustub@cisco.com>,
+        Jason Gunthorpe <jgg@mellanox.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 123/639] fork, memcg: fix cached_stacks case
-Date:   Fri, 24 Jan 2020 10:24:53 +0100
-Message-Id: <20200124093102.707201224@linuxfoundation.org>
+Subject: [PATCH 4.19 124/639] IB/usnic: Fix out of bounds index check in query pkey
+Date:   Fri, 24 Jan 2020 10:24:54 +0100
+Message-Id: <20200124093102.835711596@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
 In-Reply-To: <20200124093047.008739095@linuxfoundation.org>
 References: <20200124093047.008739095@linuxfoundation.org>
@@ -50,45 +45,35 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Shakeel Butt <shakeelb@google.com>
+From: Gal Pressman <galpress@amazon.com>
 
-[ Upstream commit ba4a45746c362b665e245c50b870615f02f34781 ]
+[ Upstream commit 4959d5da5737dd804255c75b8cea0a2929ce279a ]
 
-Commit 5eed6f1dff87 ("fork,memcg: fix crash in free_thread_stack on
-memcg charge fail") fixes a crash caused due to failed memcg charge of
-the kernel stack.  However the fix misses the cached_stacks case which
-this patch fixes.  So, the same crash can happen if the memcg charge of
-a cached stack is failed.
+The pkey table size is one element, index should be tested for > 0 instead
+of > 1.
 
-Link: http://lkml.kernel.org/r/20190102180145.57406-1-shakeelb@google.com
-Fixes: 5eed6f1dff87 ("fork,memcg: fix crash in free_thread_stack on memcg charge fail")
-Signed-off-by: Shakeel Butt <shakeelb@google.com>
-Acked-by: Michal Hocko <mhocko@suse.com>
-Acked-by: Rik van Riel <riel@surriel.com>
-Cc: Rik van Riel <riel@surriel.com>
-Cc: Roman Gushchin <guro@fb.com>
-Cc: Johannes Weiner <hannes@cmpxchg.org>
-Cc: Tejun Heo <tj@kernel.org>
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Fixes: e3cf00d0a87f ("IB/usnic: Add Cisco VIC low-level hardware driver")
+Signed-off-by: Gal Pressman <galpress@amazon.com>
+Acked-by: Parvi Kaustubhi <pkaustub@cisco.com>
+Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- kernel/fork.c | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/infiniband/hw/usnic/usnic_ib_verbs.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/kernel/fork.c b/kernel/fork.c
-index 5718c5decc55b..1bd119530a492 100644
---- a/kernel/fork.c
-+++ b/kernel/fork.c
-@@ -216,6 +216,7 @@ static unsigned long *alloc_thread_stack_node(struct task_struct *tsk, int node)
- 		memset(s->addr, 0, THREAD_SIZE);
+diff --git a/drivers/infiniband/hw/usnic/usnic_ib_verbs.c b/drivers/infiniband/hw/usnic/usnic_ib_verbs.c
+index 3db232429630e..e611f133aa97b 100644
+--- a/drivers/infiniband/hw/usnic/usnic_ib_verbs.c
++++ b/drivers/infiniband/hw/usnic/usnic_ib_verbs.c
+@@ -447,7 +447,7 @@ struct net_device *usnic_get_netdev(struct ib_device *device, u8 port_num)
+ int usnic_ib_query_pkey(struct ib_device *ibdev, u8 port, u16 index,
+ 				u16 *pkey)
+ {
+-	if (index > 1)
++	if (index > 0)
+ 		return -EINVAL;
  
- 		tsk->stack_vm_area = s;
-+		tsk->stack = s->addr;
- 		return s->addr;
- 	}
- 
+ 	*pkey = 0xffff;
 -- 
 2.20.1
 
