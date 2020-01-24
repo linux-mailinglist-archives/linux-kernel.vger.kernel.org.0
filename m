@@ -2,65 +2,107 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0AB7C14790C
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Jan 2020 08:47:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CAB97147910
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Jan 2020 08:51:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729991AbgAXHr1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 24 Jan 2020 02:47:27 -0500
-Received: from relay.sw.ru ([185.231.240.75]:54378 "EHLO relay.sw.ru"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725821AbgAXHr1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 24 Jan 2020 02:47:27 -0500
-Received: from vvs-ws.sw.ru ([172.16.24.21])
-        by relay.sw.ru with esmtp (Exim 4.92.3)
-        (envelope-from <vvs@virtuozzo.com>)
-        id 1iutgQ-0008M2-HG; Fri, 24 Jan 2020 10:47:14 +0300
-From:   Vasily Averin <vvs@virtuozzo.com>
-Subject: [PATCH] seq_read: info message about buggy .next functions
-To:     linux-kernel@vger.kernel.org
-Cc:     NeilBrown <neilb@suse.com>
-References: <244674e5-760c-86bd-d08a-047042881748@virtuozzo.com>
-Message-ID: <7c24087c-e280-e580-5b0c-0cdaeb14cd18@virtuozzo.com>
-Date:   Fri, 24 Jan 2020 10:47:13 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.2.2
+        id S1728831AbgAXHvE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 24 Jan 2020 02:51:04 -0500
+Received: from mail-oi1-f194.google.com ([209.85.167.194]:38495 "EHLO
+        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725817AbgAXHvD (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 24 Jan 2020 02:51:03 -0500
+Received: by mail-oi1-f194.google.com with SMTP id l9so1057758oii.5
+        for <linux-kernel@vger.kernel.org>; Thu, 23 Jan 2020 23:51:03 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=HT2x788AM1A0+5HwkBHH4G8cjfc7f1MBnQHIXAFoYnI=;
+        b=Cf9qleF0HFvK1GPVdbnpWXecqZTX+KHInyOtV0X1ML+gTg0qMaJaHR+69kRRXALNm3
+         StPZ03V5mlrDXhKFletHkNzcSnlFcPyKZm2qSOGfNG5jATrEvA6VBhqinckLLwMPEQZy
+         jKmckqwH74iJNbFF8NJjwo7w5grIbTH0/XvwdXgz/ZMELCLm9oa+OsQ6wduJ6nL0UQRZ
+         YlVW2BIkWAiJdC7YT25kCVNfwgTfiIGEhB+conoLdjwiFCWqBlcCZGDuuWhX0QZKbYlZ
+         jxf3ClQl52YkUsfiyM/uy7+qQW1Bym+RFtVs6W/i80uIqkEtFXfXl1xva0C1IL8qOoun
+         s+Fw==
+X-Gm-Message-State: APjAAAWTVeESmlQdb9aW6XaKtBdRyaHKar1NU9vHWOx6Xl8VXUQRgOvy
+        fWbgIcaU3rvV+cUUSpznersb+eT8VbgjWpiKy8Y=
+X-Google-Smtp-Source: APXvYqxJaLWdwe0RsmxfvQT+clUM3Yv9RXsCnLaveOqiQ7fXlM1Pe5Surtf6FmC+XS21csvE3aA1QZhj3B5AHfJ27SY=
+X-Received: by 2002:aca:5905:: with SMTP id n5mr1256281oib.54.1579852262583;
+ Thu, 23 Jan 2020 23:51:02 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <244674e5-760c-86bd-d08a-047042881748@virtuozzo.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <20200123235914.223178-1-brendanhiggins@google.com>
+In-Reply-To: <20200123235914.223178-1-brendanhiggins@google.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Fri, 24 Jan 2020 08:50:51 +0100
+Message-ID: <CAMuHMdVLcMXyxnoFvoqkt3KbdmXXk+6Swveez9+A_yowFsWRAg@mail.gmail.com>
+Subject: Re: [PATCH v2] uml: make CONFIG_STATIC_LINK actually static
+To:     Brendan Higgins <brendanhiggins@google.com>
+Cc:     Jeff Dike <jdike@addtoit.com>, Richard Weinberger <richard@nod.at>,
+        Anton Ivanov <anton.ivanov@cambridgegreys.com>,
+        James McMechan <james_mcmechan@hotmail.com>,
+        linux-um <linux-um@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        David Gow <davidgow@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-It helps to detect missed or out-of-tree incorect .next seq_file functions
+Hi Brendan,
 
-https://bugzilla.kernel.org/show_bug.cgi?id=206283
-Signed-off-by: Vasily Averin <vvs@virtuozzo.com>
----
- fs/seq_file.c | 7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
+On Fri, Jan 24, 2020 at 12:59 AM Brendan Higgins
+<brendanhiggins@google.com> wrote:
+> Currently, CONFIG_STATIC_LINK can be enabled with options which cannot
+> be statically linked, namely UML_NET_VECTOR, UML_NET_VDE, and
+> UML_NET_PCAP; this is because glibc tries to load NSS which does not
+> support being statically linked. So make CONFIG_STATIC_LINK depend on
+> !UML_NET_VECTOR && !UML_NET_VDE && !UML_NET_PCAP.
+>
+> Link: https://lore.kernel.org/lkml/f658f317-be54-ed75-8296-c373c2dcc697@cambridgegreys.com/#t
+> Signed-off-by: Brendan Higgins <brendanhiggins@google.com>
+> ---
+> Changes since last revision:
+>
+> Incorporated Geert Uytterhoeven's suggestion of using a separate
+> FORBID_STATIC_LINK config option that each driver incompatible with
+> static linking selects.
+> ---
+>  arch/um/Kconfig         | 7 +++++++
+>  arch/um/drivers/Kconfig | 3 +++
+>  2 files changed, 10 insertions(+)
+>
+> diff --git a/arch/um/Kconfig b/arch/um/Kconfig
+> index 0917f8443c285..27a51e7dd59c6 100644
+> --- a/arch/um/Kconfig
+> +++ b/arch/um/Kconfig
+> @@ -62,8 +62,12 @@ config NR_CPUS
+>
+>  source "arch/$(HEADER_ARCH)/um/Kconfig"
+>
+> +config FORBID_STATIC_LINK
+> +       def_bool n
 
-diff --git a/fs/seq_file.c b/fs/seq_file.c
-index 1600034..07c6909 100644
---- a/fs/seq_file.c
-+++ b/fs/seq_file.c
-@@ -256,9 +256,12 @@ ssize_t seq_read(struct file *file, char __user *buf, size_t size, loff_t *ppos)
- 		loff_t pos = m->index;
- 
- 		p = m->op->next(m, p, &m->index);
--		if (pos == m->index)
--			/* Buggy ->next function */
-+		if (pos == m->index) {
-+			pr_info("buggy seq_file .next function %ps "
-+				"did not updated position index\n",
-+				m->op->next);
- 			m->index++;
-+		}
- 		if (!p || IS_ERR(p)) {
- 			err = PTR_ERR(p);
- 			break;
+    bool
+
+("n" is the default)
+
+> +
+>  config STATIC_LINK
+>         bool "Force a static link"
+> +       depends on !FORBID_STATIC_LINK
+>         default n
+
+"default n" is the default (preexisting)
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
 -- 
-1.8.3.1
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
