@@ -2,143 +2,119 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 198BA14814E
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Jan 2020 12:19:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BCEC2148199
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Jan 2020 12:21:21 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390706AbgAXLSu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 24 Jan 2020 06:18:50 -0500
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:35735 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2390477AbgAXLSp (ORCPT
+        id S2391032AbgAXLVQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 24 Jan 2020 06:21:16 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:57382 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2390799AbgAXLVP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 24 Jan 2020 06:18:45 -0500
-Received: by mail-wm1-f66.google.com with SMTP id p17so1351898wmb.0
-        for <linux-kernel@vger.kernel.org>; Fri, 24 Jan 2020 03:18:44 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=ANMpFHUuJ7AoaEIR0Mfi1Yglq+QTNbfCcaUKdxl54oM=;
-        b=qfe6+PLd80Lj9i8WHJ5i/jm5S39Vl4ZarKRjFY+DLcmhl2tYWYIWC8NfPFTLDJ3QMk
-         A8VchwGeZaDVrjIeegtr0+RSpk1JwwVi2NVqPdLNcSkBKix2CxRD+cTcwUc6aPWP7Jg6
-         KYMTpr7vVH+a7IA03jv7nmKzhXwZJm5nHe/4p0reELPsxBxjkSxSugxwBnI9UzB4k2m9
-         9zgxahOSxAER+hf5xAcpxvfC8C5fpZQ6ipZ09a85vXtDYsvKtYeHNY8gSqgGO6FWImEe
-         RPMEuMLvZHdQzD4DoZSxJo+yR//AgNNAU+Q6KpVDLQlyIzNE+fnjV5NA69w9mdIcojB1
-         CR1g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=ANMpFHUuJ7AoaEIR0Mfi1Yglq+QTNbfCcaUKdxl54oM=;
-        b=oLggcD0yiWxkAg01fjbOM30K1tDxwR74UpZD3CZVBt3QenvtqoMUV/c89ggXXTn8+Y
-         EY6NXCK2ILA0YiKmW3hpfjfFCswBd3md363tfovqy+IB8ErDRwq8qmYuMUByd1E7xDGL
-         MYoKEpnMl5ZVtGqfhCz0I7Nd6+6E6yx2Gv62PQ7osTRkpwn82/qGiw5yIlqnItLUvbK+
-         Pklcx7xTZtfkinCWcf5IwwTKrcbOjDrOf/Ih0X6R0P6BeVqE/hm56L4VOLQuy5GOf072
-         ueSoyxxGgrpVH/vLQTStHK3XxenHqkSfGqhXCsqaJrC9pS9j77885+fd5wvTyTsCijuu
-         k9YA==
-X-Gm-Message-State: APjAAAULhOcN/mDcyh8UKyStVy/2Tm6HxkndwH/KsR9zYkFMsrogokKD
-        BffEEkVoLdfk++vaudgky0XDgVraDsMlC+/461WeUA==
-X-Google-Smtp-Source: APXvYqzaopuaYUqr3B668awTBBxMMz+ierAFISQIhE+3j4KVokdIsPwFPjjwv1X/LnQF7rKqW8YZCmf7n53HPoZyd5w=
-X-Received: by 2002:a05:600c:108a:: with SMTP id e10mr2897384wmd.10.1579864723486;
- Fri, 24 Jan 2020 03:18:43 -0800 (PST)
+        Fri, 24 Jan 2020 06:21:15 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=8NtwvVXwMbEeKGtQBpJWoIGytCazgM6ygP8M0AMB/oU=; b=uw5i2aWn7LL3opxrLL8s3yLU7
+        OlFhXFgymnVfWwiFsQv7xuY8rEzyIYDxDrHR1EfJUBpR7CaOxyBVzpag72ZwQO2HsATPjMEIsqnMx
+        FxGLIux7G5uCfbbZhltleiqFqOnQCntQkAm0DW8m4MmYDdbxw8O7gP6HVg9EeIiP0WRgTu1FdaMrp
+        sNjmWJFMBE4hR09qjY/ekkPZvjZt2jLDGLhd60fvpVg5yQRhlgUOINx0CfZL49q8mhHt7CRiDnSXO
+        6evHpbTq9I7kRdNX3bFlOnM+U412f1nq4ftd26DBGGCqqkRFB56va9jGFf2xU4ezJZL49Z2jGV82m
+        +eJ6gnGNQ==;
+Received: from willy by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1iux1R-0002C3-Uo; Fri, 24 Jan 2020 11:21:09 +0000
+Date:   Fri, 24 Jan 2020 03:21:09 -0800
+From:   Matthew Wilcox <willy@infradead.org>
+To:     David Howells <dhowells@redhat.com>
+Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [RFC][PATCH] iov_iter: Add ITER_MAPPING
+Message-ID: <20200124112109.GK4675@bombadil.infradead.org>
+References: <20200122193306.GB4675@bombadil.infradead.org>
+ <3577430.1579705075@warthog.procyon.org.uk>
+ <3785795.1579777499@warthog.procyon.org.uk>
 MIME-Version: 1.0
-References: <20200116133437.2443-1-narmstrong@baylibre.com> <20200116133437.2443-5-narmstrong@baylibre.com>
-In-Reply-To: <20200116133437.2443-5-narmstrong@baylibre.com>
-From:   Maxime Jourdan <mjourdan@baylibre.com>
-Date:   Fri, 24 Jan 2020 12:18:32 +0100
-Message-ID: <CAMO6naw79tYi7gbwVcHyTG=T=HTNPErp352ZdFOQqzZTvz=89Q@mail.gmail.com>
-Subject: Re: [PATCH v3 4/5] media: meson: vdec: add VP9 input support
-To:     Neil Armstrong <narmstrong@baylibre.com>
-Cc:     Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Hans Verkuil <hans.verkuil@cisco.com>,
-        Linux Media Mailing List <linux-media@vger.kernel.org>,
-        linux-amlogic@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <3785795.1579777499@warthog.procyon.org.uk>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jan 16, 2020 at 2:34 PM Neil Armstrong <narmstrong@baylibre.com> wrote:
->
-> From: Maxime Jourdan <mjourdan@baylibre.com>
->
-> Amlogic VP9 decoder requires an additional 16-byte payload before every
-> frame header.
->
-> The source buffer is updated in-place, then given to the Parser FIFO DMA.
->
-> The FIFO DMA copies the blocks into the 16MiB parser ring buffer, then parses
-> and copies the slice into the decoder "workspace".
->
-> Signed-off-by: Maxime Jourdan <mjourdan@baylibre.com>
-> Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
-> ---
+On Thu, Jan 23, 2020 at 11:04:59AM +0000, David Howells wrote:
+> Matthew Wilcox <willy@infradead.org> wrote:
+> 
+> > It's perfectly legal to have compound pages in the page cache.  Call
+> > find_subpage(page, xas.xa_index) unconditionally.
+> 
+> Like this?
+> 
+> #define iterate_mapping(i, n, __v, skip, STEP) {		\
+> 	struct page *page;					\
+> 	size_t wanted = n, seg, offset;				\
+> 	loff_t start = i->mapping_start + skip;			\
+> 	pgoff_t index = start >> PAGE_SHIFT;			\
+> 								\
+> 	XA_STATE(xas, &i->mapping->i_pages, index);		\
+> 								\
+> 	rcu_read_lock();						\
+> 	xas_for_each(&xas, page, ULONG_MAX) {				\
 
-[...]
+I actually quite liked the iterator you had before; I was thinking of
+wrapping it up as xas_for_each_contig().
 
-> @@ -186,13 +294,27 @@ esparser_queue(struct amvdec_session *sess, struct vb2_v4l2_buffer *vbuf)
->         int ret;
->         struct vb2_buffer *vb = &vbuf->vb2_buf;
->         struct amvdec_core *core = sess->core;
-> +       struct amvdec_codec_ops *codec_ops = sess->fmt_out->codec_ops;
->         u32 payload_size = vb2_get_plane_payload(vb, 0);
->         dma_addr_t phy = vb2_dma_contig_plane_dma_addr(vb, 0);
-> +       u32 num_dst_bufs = 0;
->         u32 offset;
->         u32 pad_size;
->
-> -       if (esparser_vififo_get_free_space(sess) < payload_size)
-> +       if (sess->fmt_out->pixfmt == V4L2_PIX_FMT_VP9) {
-> +               if (codec_ops->num_pending_bufs)
-> +                       num_dst_bufs = codec_ops->num_pending_bufs(sess);
-> +
-> +               num_dst_bufs += v4l2_m2m_num_dst_bufs_ready(sess->m2m_ctx);
-> +               if (sess->fmt_out->pixfmt == V4L2_PIX_FMT_VP9)
-> +                       num_dst_bufs -= 2;
+> 		if (xas_retry(&xas, page) || xa_is_value(page)) {	\
+> 			WARN_ON(1);					\
+> 			break;						\
+> 		}							\
 
-With the changes that happened in the updated series where one more
-ref frame is held by VP9, this should be -= 3 to prevent a shortage of
-CAPTURE buffers on the decoder side.
+Actually, xas_retry() can happen, even with the page itself pinned.  It
+indicates the xarray data structure changed under you while walking it
+and you need to restart the walk from the top (arguably this shouldn't
+be exposed to callers at all, and in the future it may not be ... it's
+something inherited from the radix tree interface).
 
-For the future, a good enhancement of the way this is handled could be
-to notify new capture buffers to the decoding modules (codec_*.c), so
-that they could pause when there is no capture buffer available and
-resume on this notification.
+So this should be:
 
-> +
-> +               if (esparser_vififo_get_free_space(sess) < payload_size ||
-> +                   atomic_read(&sess->esparser_queued_bufs) >= num_dst_bufs)
-> +                       return -EAGAIN;
-> +       } else if (esparser_vififo_get_free_space(sess) < payload_size) {
->                 return -EAGAIN;
-> +       }
->
->         v4l2_m2m_src_buf_remove_by_buf(sess->m2m_ctx, vbuf);
->
-> @@ -206,7 +328,19 @@ esparser_queue(struct amvdec_session *sess, struct vb2_v4l2_buffer *vbuf)
->         vbuf->field = V4L2_FIELD_NONE;
->         vbuf->sequence = sess->sequence_out++;
->
-> -       pad_size = esparser_pad_start_code(core, vb);
-> +       if (sess->fmt_out->pixfmt == V4L2_PIX_FMT_VP9) {
-> +               payload_size = vp9_update_header(core, vb);
-> +
-> +               /* If unable to alter buffer to add headers */
-> +               if (payload_size == 0) {
-> +                       amvdec_remove_ts(sess, vb->timestamp);
-> +                       v4l2_m2m_buf_done(vbuf, VB2_BUF_STATE_ERROR);
-> +
-> +                       return 0;
-> +               }
-> +       }
-> +
-> +       pad_size = esparser_pad_start_code(core, vb, payload_size);
->         ret = esparser_write_data(core, phy, payload_size + pad_size);
->
->         if (ret <= 0) {
-> --
-> 2.22.0
->
+		if (xas_retry(&xas, page))
+			continue;
+		if (WARN_ON(xa_is_value(page)))
+			break;
+
+> 		__v.bv_page = find_subpage(page, xas.xa_index);		\
+
+Yes.
+
+> 		offset = (i->mapping_start + skip) & ~PAGE_MASK;	\
+> 		seg = PAGE_SIZE - offset;			\
+> 		__v.bv_offset = offset;				\
+> 		__v.bv_len = min(n, seg);			\
+> 		(void)(STEP);					\
+> 		n -= __v.bv_len;				\
+> 		skip += __v.bv_len;				\
+> 		if (n == 0)					\
+> 			break;					\
+> 	}							\
+> 	rcu_read_unlock();					\
+> 	n = wanted - n;						\
+> }
+> 
+> Note that the walk is not restartable - and the array is supposed to have been
+> fully populated by the caller for the range specified - so I've made it print
+> a warning and end the loop if xas_retry() or xa_is_value() return true (which
+> takes care of the !page case too).  Possibly I could just leave it to fault in
+> this case and not check.
+> 
+> If PageHuge(page) is true, I presume I need to support that too.  How do I
+> find out how big the page is?
+
+PageHuge() is only going to be true for hugetlbfs mappings.  I'm OK
+with not supporting those for now ... eventually I want to get rid of
+the special cases in the page cache for hugetlbfs, but there's about
+six other projects standing between me and that.
