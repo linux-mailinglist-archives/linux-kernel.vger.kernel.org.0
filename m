@@ -2,38 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3EE6E148084
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Jan 2020 12:12:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C65D81480AD
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Jan 2020 12:13:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388027AbgAXLLy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 24 Jan 2020 06:11:54 -0500
-Received: from mail.kernel.org ([198.145.29.99]:47980 "EHLO mail.kernel.org"
+        id S2390052AbgAXLN2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 24 Jan 2020 06:13:28 -0500
+Received: from mail.kernel.org ([198.145.29.99]:49718 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388069AbgAXLLw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 24 Jan 2020 06:11:52 -0500
+        id S2390047AbgAXLNY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 24 Jan 2020 06:13:24 -0500
 Received: from localhost (ip-213-127-102-57.ip.prioritytelecom.net [213.127.102.57])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0824620663;
-        Fri, 24 Jan 2020 11:11:50 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9E53920708;
+        Fri, 24 Jan 2020 11:13:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579864311;
-        bh=uzTE8TbwK78FXSf2VUeORIQN1uub9Ihg/cHv5SiDxYM=;
+        s=default; t=1579864404;
+        bh=B2vmsTBKpvoAqNMkcTnWn3fggVW2VM0yv9v+TYBNCdA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ETojN69SvToAK5Df7Cu2iU4IDoJr7PAuJc4hXzF7P2XvIMjZ0qjHZZcwhs8gcC41I
-         t7qCPdqPIxnK1Di2mH+HPmRVFJtB52U3Pp6NazrCrpcLVpk0+wI7Z/hmr/hY4Fm/ot
-         ABKFZ9Bsm0iAf+8yyOaCh4khK/OVzxDZUaaFJlvw=
+        b=JpSN+mohGPBELEQn/HkvDQqriKqlNu0ZxTJWWJblzP0u/n6AM9leRXYuq6zXvsPqp
+         KQYpVOcxkppsdnOs/S9NL9SJBSTSQ+j+FJsHx9YNue4tmQrqGN9q7EsTE+edi+SaFp
+         hLlxcwnERVC0Q5o2sE6t6QtU7u1WU4eHH269ShVM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        stable@vger.kernel.org, Mattias Jacobsson <2pi@mok.nu>,
+        "Darren Hart (VMware)" <dvhart@infradead.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 231/639] clocksource/drivers/exynos_mct: Fix error path in timer resources initialization
-Date:   Fri, 24 Jan 2020 10:26:41 +0100
-Message-Id: <20200124093115.793232969@linuxfoundation.org>
+Subject: [PATCH 4.19 232/639] platform/x86: wmi: fix potential null pointer dereference
+Date:   Fri, 24 Jan 2020 10:26:42 +0100
+Message-Id: <20200124093115.912225311@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
 In-Reply-To: <20200124093047.008739095@linuxfoundation.org>
 References: <20200124093047.008739095@linuxfoundation.org>
@@ -46,49 +44,39 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Marek Szyprowski <m.szyprowski@samsung.com>
+From: Mattias Jacobsson <2pi@mok.nu>
 
-[ Upstream commit b9307420196009cdf18bad55e762ac49fb9a80f4 ]
+[ Upstream commit c355ec651a8941864549f2586f969d0eb7bf499a ]
 
-While freeing interrupt handlers in error path, don't assume that all
-requested interrupts are per-processor interrupts and properly release
-standard interrupts too.
+In the function wmi_dev_match() the variable id is dereferenced without
+first performing a NULL check. The variable can for example be NULL if
+a WMI driver is registered without specifying the id_table field in
+struct wmi_driver.
 
-Reported-by: Krzysztof Kozlowski <krzk@kernel.org>
-Fixes: 56a94f13919c ("clocksource: exynos_mct: Avoid blocking calls in the cpu hotplug notifier")
-Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
-Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
-Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
+Add a NULL check and return that the driver can't handle the device if
+the variable is NULL.
+
+Fixes: 844af950da94 ("platform/x86: wmi: Turn WMI into a bus driver")
+Signed-off-by: Mattias Jacobsson <2pi@mok.nu>
+Signed-off-by: Darren Hart (VMware) <dvhart@infradead.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/clocksource/exynos_mct.c | 14 +++++++++++++-
- 1 file changed, 13 insertions(+), 1 deletion(-)
+ drivers/platform/x86/wmi.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/drivers/clocksource/exynos_mct.c b/drivers/clocksource/exynos_mct.c
-index aaf5bfa9bd9c9..e3ae041ac30e1 100644
---- a/drivers/clocksource/exynos_mct.c
-+++ b/drivers/clocksource/exynos_mct.c
-@@ -563,7 +563,19 @@ static int __init exynos4_timer_resources(struct device_node *np, void __iomem *
- 	return 0;
+diff --git a/drivers/platform/x86/wmi.c b/drivers/platform/x86/wmi.c
+index 04791ea5d97b6..35cdc3998eb59 100644
+--- a/drivers/platform/x86/wmi.c
++++ b/drivers/platform/x86/wmi.c
+@@ -768,6 +768,9 @@ static int wmi_dev_match(struct device *dev, struct device_driver *driver)
+ 	struct wmi_block *wblock = dev_to_wblock(dev);
+ 	const struct wmi_device_id *id = wmi_driver->id_table;
  
- out_irq:
--	free_percpu_irq(mct_irqs[MCT_L0_IRQ], &percpu_mct_tick);
-+	if (mct_int_type == MCT_INT_PPI) {
-+		free_percpu_irq(mct_irqs[MCT_L0_IRQ], &percpu_mct_tick);
-+	} else {
-+		for_each_possible_cpu(cpu) {
-+			struct mct_clock_event_device *pcpu_mevt =
-+				per_cpu_ptr(&percpu_mct_tick, cpu);
++	if (id == NULL)
++		return 0;
 +
-+			if (pcpu_mevt->evt.irq != -1) {
-+				free_irq(pcpu_mevt->evt.irq, pcpu_mevt);
-+				pcpu_mevt->evt.irq = -1;
-+			}
-+		}
-+	}
- 	return err;
- }
+ 	while (id->guid_string) {
+ 		uuid_le driver_guid;
  
 -- 
 2.20.1
