@@ -2,37 +2,46 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DF5EE1483BB
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Jan 2020 12:40:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9E5701483FF
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Jan 2020 12:41:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391439AbgAXLYd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 24 Jan 2020 06:24:33 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37916 "EHLO mail.kernel.org"
+        id S2392018AbgAXLjj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 24 Jan 2020 06:39:39 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39746 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729635AbgAXLY3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 24 Jan 2020 06:24:29 -0500
+        id S2391507AbgAXLZg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 24 Jan 2020 06:25:36 -0500
 Received: from localhost (ip-213-127-102-57.ip.prioritytelecom.net [213.127.102.57])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0A95620718;
-        Fri, 24 Jan 2020 11:24:27 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id DA7D2206D4;
+        Fri, 24 Jan 2020 11:25:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579865068;
-        bh=0M8wbBcq8ZoY45k6pcaYMDnGfdysss6JAKqWK7Awf8w=;
+        s=default; t=1579865135;
+        bh=6TtykuFZrqLHKaZtkj3B2ER4gFI3EtL5V4YPruKL8aM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=S6QAEop3vv8P4xWnzExy3pqJZfuS66VG3ctRaZJ2dgw9FD+7PW+H0SnkQkE+GrM5P
-         qqSj75sVxj3xaK1MhDtQ/f3G4BqW3mgIafZQf8Kr2tK7lUY9LLQoFenJyP1ulP7cRY
-         RZMTnjJSvwDCYOswnsctL5VGYW0DrYSMA/JhCkgI=
+        b=1tSfVD1tWWSuyK+7Yfxyv7vGNHgMnm3/tl157G1FNuL4vy0R874PA8JuR+/LNDIXd
+         sKg9yrl4Df8fh9ANepmGXynwLE/T5KMReyUUWv6UpJSzlXb8GhcRvnFMfuAfKO0J+o
+         uhjqgE3t60T2sgx2gIVCpIYhicA9h63i+COIQFE0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Nathan Lynch <nathanl@linux.ibm.com>,
-        "Gautham R. Shenoy" <ego@linux.vnet.ibm.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
+        stable@vger.kernel.org,
+        Ravi Bangoria <ravi.bangoria@linux.ibm.com>,
+        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Stephane Eranian <eranian@google.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Vince Weaver <vincent.weaver@maine.edu>, acme@kernel.org,
+        linuxppc-dev@lists.ozlabs.org, maddy@linux.vnet.ibm.com,
+        mpe@ellerman.id.au, Ingo Molnar <mingo@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 431/639] powerpc/pseries/mobility: rebuild cacheinfo hierarchy post-migration
-Date:   Fri, 24 Jan 2020 10:30:01 +0100
-Message-Id: <20200124093141.001203486@linuxfoundation.org>
+Subject: [PATCH 4.19 447/639] perf/ioctl: Add check for the sample_period value
+Date:   Fri, 24 Jan 2020 10:30:17 +0100
+Message-Id: <20200124093143.005390193@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
 In-Reply-To: <20200124093047.008739095@linuxfoundation.org>
 References: <20200124093047.008739095@linuxfoundation.org>
@@ -45,79 +54,55 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Nathan Lynch <nathanl@linux.ibm.com>
+From: Ravi Bangoria <ravi.bangoria@linux.ibm.com>
 
-[ Upstream commit e610a466d16a086e321f0bd421e2fc75cff28605 ]
+[ Upstream commit 913a90bc5a3a06b1f04c337320e9aeee2328dd77 ]
 
-It's common for the platform to replace the cache device nodes after a
-migration. Since the cacheinfo code is never informed about this, it
-never drops its references to the source system's cache nodes, causing
-it to wind up in an inconsistent state resulting in warnings and oopses
-as soon as CPU online/offline occurs after the migration, e.g.
+perf_event_open() limits the sample_period to 63 bits. See:
 
-  cache for /cpus/l3-cache@3113(Unified) refers to cache for /cpus/l2-cache@200d(Unified)
-  WARNING: CPU: 15 PID: 86 at arch/powerpc/kernel/cacheinfo.c:176 release_cache+0x1bc/0x1d0
-  [...]
-  NIP release_cache+0x1bc/0x1d0
-  LR  release_cache+0x1b8/0x1d0
-  Call Trace:
-    release_cache+0x1b8/0x1d0 (unreliable)
-    cacheinfo_cpu_offline+0x1c4/0x2c0
-    unregister_cpu_online+0x1b8/0x260
-    cpuhp_invoke_callback+0x114/0xf40
-    cpuhp_thread_fun+0x270/0x310
-    smpboot_thread_fn+0x2c8/0x390
-    kthread+0x1b8/0x1c0
-    ret_from_kernel_thread+0x5c/0x68
+  0819b2e30ccb ("perf: Limit perf_event_attr::sample_period to 63 bits")
 
-Using device tree notifiers won't work since we want to rebuild the
-hierarchy only after all the removals and additions have occurred and
-the device tree is in a consistent state. Call cacheinfo_teardown()
-before processing device tree updates, and rebuild the hierarchy
-afterward.
+Make ioctl() consistent with it.
 
-Fixes: 410bccf97881 ("powerpc/pseries: Partition migration in the kernel")
-Signed-off-by: Nathan Lynch <nathanl@linux.ibm.com>
-Reviewed-by: Gautham R. Shenoy <ego@linux.vnet.ibm.com>
-Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+Also on PowerPC, negative sample_period could cause a recursive
+PMIs leading to a hang (reported when running perf-fuzzer).
+
+Signed-off-by: Ravi Bangoria <ravi.bangoria@linux.ibm.com>
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: Arnaldo Carvalho de Melo <acme@redhat.com>
+Cc: Jiri Olsa <jolsa@redhat.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Stephane Eranian <eranian@google.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Vince Weaver <vincent.weaver@maine.edu>
+Cc: acme@kernel.org
+Cc: linuxppc-dev@lists.ozlabs.org
+Cc: maddy@linux.vnet.ibm.com
+Cc: mpe@ellerman.id.au
+Fixes: 0819b2e30ccb ("perf: Limit perf_event_attr::sample_period to 63 bits")
+Link: https://lkml.kernel.org/r/20190604042953.914-1-ravi.bangoria@linux.ibm.com
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/powerpc/platforms/pseries/mobility.c | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+ kernel/events/core.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/arch/powerpc/platforms/pseries/mobility.c b/arch/powerpc/platforms/pseries/mobility.c
-index e4ea713833832..70744b4fbd9ed 100644
---- a/arch/powerpc/platforms/pseries/mobility.c
-+++ b/arch/powerpc/platforms/pseries/mobility.c
-@@ -24,6 +24,7 @@
- #include <asm/machdep.h>
- #include <asm/rtas.h>
- #include "pseries.h"
-+#include "../../kernel/cacheinfo.h"
+diff --git a/kernel/events/core.c b/kernel/events/core.c
+index 751888cbed5c0..16af86ab24c42 100644
+--- a/kernel/events/core.c
++++ b/kernel/events/core.c
+@@ -5012,6 +5012,9 @@ static int perf_event_period(struct perf_event *event, u64 __user *arg)
+ 	if (perf_event_check_period(event, value))
+ 		return -EINVAL;
  
- static struct kobject *mobility_kobj;
- 
-@@ -360,11 +361,20 @@ void post_mobility_fixup(void)
- 	 */
- 	cpus_read_lock();
- 
-+	/*
-+	 * It's common for the destination firmware to replace cache
-+	 * nodes.  Release all of the cacheinfo hierarchy's references
-+	 * before updating the device tree.
-+	 */
-+	cacheinfo_teardown();
++	if (!event->attr.freq && (value & (1ULL << 63)))
++		return -EINVAL;
 +
- 	rc = pseries_devicetree_update(MIGRATION_SCOPE);
- 	if (rc)
- 		printk(KERN_ERR "Post-mobility device tree update "
- 			"failed: %d\n", rc);
+ 	event_function_call(event, __perf_event_period, &value);
  
-+	cacheinfo_rebuild();
-+
- 	cpus_read_unlock();
- 
- 	/* Possibly switch to a new RFI flush type */
+ 	return 0;
 -- 
 2.20.1
 
