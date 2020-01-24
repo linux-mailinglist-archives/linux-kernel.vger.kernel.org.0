@@ -2,465 +2,197 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 78E4F147AC8
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Jan 2020 10:40:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 59E96147A9F
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Jan 2020 10:37:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731270AbgAXJh4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 24 Jan 2020 04:37:56 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35240 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729971AbgAXJhy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 24 Jan 2020 04:37:54 -0500
-Received: from localhost (unknown [145.15.244.15])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S1729567AbgAXJf5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 24 Jan 2020 04:35:57 -0500
+Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:45466 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1729180AbgAXJf5 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 24 Jan 2020 04:35:57 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1579858556;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=KkR9XsyYszWewqqmOrVzZ1ik4TqqddD7Z9JTAAFoEcA=;
+        b=IBmc5q1wcP1F7aKhwG108GEyx/J3ix5QqeSus0dGe1VzSQ9lmiknffAu8PyEhMcXLo9VF+
+        CO5cQLsyJUetR6XRFfcHttpYnC/21kUdLMwL55wu85GFtNqt0WstnlRe8NcTmV75D60kds
+        YNQ6O6gVK0XFOrGsObg5a+l14lEIEvo=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-395-OIjQAVdYPbepnMZWON9ngw-1; Fri, 24 Jan 2020 04:35:52 -0500
+X-MC-Unique: OIjQAVdYPbepnMZWON9ngw-1
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5E19920709;
-        Fri, 24 Jan 2020 09:37:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579858673;
-        bh=jVGLbEpaWow1v62g/ZmWJOY/WsFgrGqB/Ly8GPdebuo=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=1XozggkKHLtwNOm5b8CSqvBMUjgvqyXG1JtPGwDdAR8KoXfi831kg6CZiBcd19C6r
-         YiA93iv6dQsnoVhTPvegK456VfJusscY4XXQ9TmYjRv+A7eNpL3WeqZ27ZNanW9cOd
-         HVAesQ21BP7+H6PUS8RmssKcyVAke+CWkPbtt0LI=
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
-        Finn Thain <fthain@telegraphics.com.au>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 639/639] m68k: Call timer_interrupt() with interrupts disabled
-Date:   Fri, 24 Jan 2020 10:33:29 +0100
-Message-Id: <20200124093209.652963517@linuxfoundation.org>
-X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200124093047.008739095@linuxfoundation.org>
-References: <20200124093047.008739095@linuxfoundation.org>
-User-Agent: quilt/0.66
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 84FB28C5C9B;
+        Fri, 24 Jan 2020 09:35:50 +0000 (UTC)
+Received: from kamzik.brq.redhat.com (unknown [10.43.2.160])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id EA1A6863BC;
+        Fri, 24 Jan 2020 09:35:45 +0000 (UTC)
+Date:   Fri, 24 Jan 2020 10:35:43 +0100
+From:   Andrew Jones <drjones@redhat.com>
+To:     Paolo Bonzini <pbonzini@redhat.com>
+Cc:     Ben Gardon <bgardon@google.com>, linux-kernel@vger.kernel.org,
+        kvm@vger.kernel.org, linux-kselftest@vger.kernel.org,
+        Cannon Matthews <cannonmatthews@google.com>,
+        Peter Xu <peterx@redhat.com>, Peter Shier <pshier@google.com>,
+        Oliver Upton <oupton@google.com>,
+        Marc Zyngier <Marc.Zyngier@arm.com>,
+        Cornelia Huck <cohuck@redhat.com>,
+        Christian Borntraeger <borntraeger@de.ibm.com>
+Subject: Re: [PATCH v4 06/10] KVM: selftests: Add support for vcpu_args_set
+ to aarch64 and s390x
+Message-ID: <20200124093543.m5oqo7fnjnc2scko@kamzik.brq.redhat.com>
+References: <20200123180436.99487-1-bgardon@google.com>
+ <20200123180436.99487-7-bgardon@google.com>
+ <4dbb6d1b-3162-d9b3-4ebb-5e4061776bb6@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <4dbb6d1b-3162-d9b3-4ebb-5e4061776bb6@redhat.com>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Finn Thain <fthain@telegraphics.com.au>
+On Fri, Jan 24, 2020 at 10:03:08AM +0100, Paolo Bonzini wrote:
+> CCing Marc, Conny and Christian (plus Thomas and Drew who were already
+> in the list) for review.
+> 
+> Thanks,
+> 
+> Paolo
+> 
+> On 23/01/20 19:04, Ben Gardon wrote:
+> > Currently vcpu_args_set is only implemented for x86. This makes writing
+> > tests with multiple vCPUs difficult as each guest vCPU must either a.)
+> > do the same thing or b.) derive some kind of unique token from it's
+> > registers or the architecture. To simplify the process of writing tests
+> > with multiple vCPUs for s390 and aarch64, add set args functions for
+> > those architectures.
 
-[ Upstream commit 1efdd4bd254311498123a15fa0acd565f454da97 ]
+It'd be nice to keep the separate architecture changes in separate
+patches. Otherwise I can't really give an r-b.
 
-Some platforms execute their timer handler with the interrupt priority
-level set below 6. That means the handler could be interrupted by another
-driver and this could lead to re-entry of the timer core.
+> > 
+> > Signed-off-by: Ben Gardon <bgardon@google.com>
+> > ---
+> >  .../selftests/kvm/lib/aarch64/processor.c     | 33 +++++++++++++++++
+> >  .../selftests/kvm/lib/s390x/processor.c       | 35 +++++++++++++++++++
+> >  2 files changed, 68 insertions(+)
+> > 
+> > diff --git a/tools/testing/selftests/kvm/lib/aarch64/processor.c b/tools/testing/selftests/kvm/lib/aarch64/processor.c
+> > index 86036a59a668e..a2ff90a75f326 100644
+> > --- a/tools/testing/selftests/kvm/lib/aarch64/processor.c
+> > +++ b/tools/testing/selftests/kvm/lib/aarch64/processor.c
+> > @@ -333,3 +333,36 @@ void vm_vcpu_add_default(struct kvm_vm *vm, uint32_t vcpuid, void *guest_code)
+> >  {
+> >  	aarch64_vcpu_add_default(vm, vcpuid, NULL, guest_code);
+> >  }
+> > +
+> > +/* VM VCPU Args Set
+> > + *
+> > + * Input Args:
+> > + *   vm - Virtual Machine
+> > + *   vcpuid - VCPU ID
+> > + *   num - number of arguments
+> > + *   ... - arguments, each of type uint64_t
+> > + *
+> > + * Output Args: None
+> > + *
+> > + * Return: None
+> > + *
+> > + * Sets the first num function input arguments to the values
+> > + * given as variable args.  Each of the variable args is expected to
+> > + * be of type uint64_t. The registers set by this function are r0-r7.
+> > + */
 
-Avoid this by use of local_irq_save/restore for timer interrupt dispatch.
-This provides mutual exclusion around the timer interrupt flag access
-which is needed later in this series for the clocksource conversion.
+lib/aarch64/processor.c so far doesn't have big function headers like
+this. Also, since this function is common for all architectures [now],
+I feel like the documentation should be in common code - so in the header
+file.
 
-Reported-by: Thomas Gleixner <tglx@linutronix.de>
-Link: http://lkml.kernel.org/r/alpine.DEB.2.21.1811131407120.2697@nanos.tec.linutronix.de
-Signed-off-by: Finn Thain <fthain@telegraphics.com.au>
-Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- arch/m68k/amiga/cia.c       |  9 +++++++++
- arch/m68k/atari/ataints.c   |  4 ++--
- arch/m68k/atari/time.c      | 15 ++++++++++++++-
- arch/m68k/bvme6000/config.c | 20 ++++++++++----------
- arch/m68k/hp300/time.c      | 10 ++++++++--
- arch/m68k/mac/via.c         | 17 +++++++++++++++++
- arch/m68k/mvme147/config.c  | 18 ++++++++++--------
- arch/m68k/mvme16x/config.c  | 21 +++++++++++----------
- arch/m68k/q40/q40ints.c     | 19 +++++++++++--------
- arch/m68k/sun3/sun3ints.c   |  3 +++
- arch/m68k/sun3x/time.c      | 16 ++++++++++------
- 11 files changed, 105 insertions(+), 47 deletions(-)
+> > +void vcpu_args_set(struct kvm_vm *vm, uint32_t vcpuid, unsigned int num, ...)
+> > +{
+> > +	va_list ap;
+> > +
+> > +	TEST_ASSERT(num >= 1 && num <= 8, "Unsupported number of args,\n"
+> > +		    "  num: %u\n",
+> > +		    num);
 
-diff --git a/arch/m68k/amiga/cia.c b/arch/m68k/amiga/cia.c
-index 2081b8cd5591c..b9aee983e6f4c 100644
---- a/arch/m68k/amiga/cia.c
-+++ b/arch/m68k/amiga/cia.c
-@@ -88,10 +88,19 @@ static irqreturn_t cia_handler(int irq, void *dev_id)
- 	struct ciabase *base = dev_id;
- 	int mach_irq;
- 	unsigned char ints;
-+	unsigned long flags;
- 
-+	/* Interrupts get disabled while the timer irq flag is cleared and
-+	 * the timer interrupt serviced.
-+	 */
- 	mach_irq = base->cia_irq;
-+	local_irq_save(flags);
- 	ints = cia_set_irq(base, CIA_ICR_ALL);
- 	amiga_custom.intreq = base->int_mask;
-+	if (ints & 1)
-+		generic_handle_irq(mach_irq);
-+	local_irq_restore(flags);
-+	mach_irq++, ints >>= 1;
- 	for (; ints; mach_irq++, ints >>= 1) {
- 		if (ints & 1)
- 			generic_handle_irq(mach_irq);
-diff --git a/arch/m68k/atari/ataints.c b/arch/m68k/atari/ataints.c
-index 3d2b63bedf058..56f02ea2c248d 100644
---- a/arch/m68k/atari/ataints.c
-+++ b/arch/m68k/atari/ataints.c
-@@ -142,7 +142,7 @@ struct mfptimerbase {
- 	.name		= "MFP Timer D"
- };
- 
--static irqreturn_t mfptimer_handler(int irq, void *dev_id)
-+static irqreturn_t mfp_timer_d_handler(int irq, void *dev_id)
- {
- 	struct mfptimerbase *base = dev_id;
- 	int mach_irq;
-@@ -344,7 +344,7 @@ void __init atari_init_IRQ(void)
- 	st_mfp.tim_ct_cd = (st_mfp.tim_ct_cd & 0xf0) | 0x6;
- 
- 	/* request timer D dispatch handler */
--	if (request_irq(IRQ_MFP_TIMD, mfptimer_handler, IRQF_SHARED,
-+	if (request_irq(IRQ_MFP_TIMD, mfp_timer_d_handler, IRQF_SHARED,
- 			stmfp_base.name, &stmfp_base))
- 		pr_err("Couldn't register %s interrupt\n", stmfp_base.name);
- 
-diff --git a/arch/m68k/atari/time.c b/arch/m68k/atari/time.c
-index 9cca64286464c..fafa20f75ab9a 100644
---- a/arch/m68k/atari/time.c
-+++ b/arch/m68k/atari/time.c
-@@ -24,6 +24,18 @@
- DEFINE_SPINLOCK(rtc_lock);
- EXPORT_SYMBOL_GPL(rtc_lock);
- 
-+static irqreturn_t mfp_timer_c_handler(int irq, void *dev_id)
-+{
-+	irq_handler_t timer_routine = dev_id;
-+	unsigned long flags;
-+
-+	local_irq_save(flags);
-+	timer_routine(0, NULL);
-+	local_irq_restore(flags);
-+
-+	return IRQ_HANDLED;
-+}
-+
- void __init
- atari_sched_init(irq_handler_t timer_routine)
- {
-@@ -32,7 +44,8 @@ atari_sched_init(irq_handler_t timer_routine)
-     /* start timer C, div = 1:100 */
-     st_mfp.tim_ct_cd = (st_mfp.tim_ct_cd & 15) | 0x60;
-     /* install interrupt service routine for MFP Timer C */
--    if (request_irq(IRQ_MFP_TIMC, timer_routine, 0, "timer", timer_routine))
-+    if (request_irq(IRQ_MFP_TIMC, mfp_timer_c_handler, 0, "timer",
-+                    timer_routine))
- 	pr_err("Couldn't register timer interrupt\n");
- }
- 
-diff --git a/arch/m68k/bvme6000/config.c b/arch/m68k/bvme6000/config.c
-index 143ee9fa3893e..0e5efed4da865 100644
---- a/arch/m68k/bvme6000/config.c
-+++ b/arch/m68k/bvme6000/config.c
-@@ -44,11 +44,6 @@ extern int bvme6000_hwclk (int, struct rtc_time *);
- extern void bvme6000_reset (void);
- void bvme6000_set_vectors (void);
- 
--/* Save tick handler routine pointer, will point to xtime_update() in
-- * kernel/timer/timekeeping.c, called via bvme6000_process_int() */
--
--static irq_handler_t tick_handler;
--
- 
- int __init bvme6000_parse_bootinfo(const struct bi_record *bi)
- {
-@@ -157,12 +152,18 @@ irqreturn_t bvme6000_abort_int (int irq, void *dev_id)
- 
- static irqreturn_t bvme6000_timer_int (int irq, void *dev_id)
- {
-+    irq_handler_t timer_routine = dev_id;
-+    unsigned long flags;
-     volatile RtcPtr_t rtc = (RtcPtr_t)BVME_RTC_BASE;
--    unsigned char msr = rtc->msr & 0xc0;
-+    unsigned char msr;
- 
-+    local_irq_save(flags);
-+    msr = rtc->msr & 0xc0;
-     rtc->msr = msr | 0x20;		/* Ack the interrupt */
-+    timer_routine(0, NULL);
-+    local_irq_restore(flags);
- 
--    return tick_handler(irq, dev_id);
-+    return IRQ_HANDLED;
- }
- 
- /*
-@@ -181,9 +182,8 @@ void bvme6000_sched_init (irq_handler_t timer_routine)
- 
-     rtc->msr = 0;	/* Ensure timer registers accessible */
- 
--    tick_handler = timer_routine;
--    if (request_irq(BVME_IRQ_RTC, bvme6000_timer_int, 0,
--				"timer", bvme6000_timer_int))
-+    if (request_irq(BVME_IRQ_RTC, bvme6000_timer_int, 0, "timer",
-+                    timer_routine))
- 	panic ("Couldn't register timer int");
- 
-     rtc->t1cr_omr = 0x04;	/* Mode 2, ext clk */
-diff --git a/arch/m68k/hp300/time.c b/arch/m68k/hp300/time.c
-index 289d928a46cbe..d30b03ea93a27 100644
---- a/arch/m68k/hp300/time.c
-+++ b/arch/m68k/hp300/time.c
-@@ -38,13 +38,19 @@
- 
- static irqreturn_t hp300_tick(int irq, void *dev_id)
- {
-+	irq_handler_t timer_routine = dev_id;
-+	unsigned long flags;
- 	unsigned long tmp;
--	irq_handler_t vector = dev_id;
-+
-+	local_irq_save(flags);
- 	in_8(CLOCKBASE + CLKSR);
- 	asm volatile ("movpw %1@(5),%0" : "=d" (tmp) : "a" (CLOCKBASE));
-+	timer_routine(0, NULL);
-+	local_irq_restore(flags);
-+
- 	/* Turn off the network and SCSI leds */
- 	blinken_leds(0, 0xe0);
--	return vector(irq, NULL);
-+	return IRQ_HANDLED;
- }
- 
- u32 hp300_gettimeoffset(void)
-diff --git a/arch/m68k/mac/via.c b/arch/m68k/mac/via.c
-index 288ec3aa5b575..038d5a1c4d484 100644
---- a/arch/m68k/mac/via.c
-+++ b/arch/m68k/mac/via.c
-@@ -387,6 +387,8 @@ void via_nubus_irq_shutdown(int irq)
-  * via6522.c :-), disable/pending masks added.
-  */
- 
-+#define VIA_TIMER_1_INT BIT(6)
-+
- void via1_irq(struct irq_desc *desc)
- {
- 	int irq_num;
-@@ -396,6 +398,21 @@ void via1_irq(struct irq_desc *desc)
- 	if (!events)
- 		return;
- 
-+	irq_num = IRQ_MAC_TIMER_1;
-+	irq_bit = VIA_TIMER_1_INT;
-+	if (events & irq_bit) {
-+		unsigned long flags;
-+
-+		local_irq_save(flags);
-+		via1[vIFR] = irq_bit;
-+		generic_handle_irq(irq_num);
-+		local_irq_restore(flags);
-+
-+		events &= ~irq_bit;
-+		if (!events)
-+			return;
-+	}
-+
- 	irq_num = VIA1_SOURCE_BASE;
- 	irq_bit = 1;
- 	do {
-diff --git a/arch/m68k/mvme147/config.c b/arch/m68k/mvme147/config.c
-index adea549d240e9..93c68d2b8e0ea 100644
---- a/arch/m68k/mvme147/config.c
-+++ b/arch/m68k/mvme147/config.c
-@@ -45,11 +45,6 @@ extern void mvme147_reset (void);
- 
- static int bcd2int (unsigned char b);
- 
--/* Save tick handler routine pointer, will point to xtime_update() in
-- * kernel/time/timekeeping.c, called via mvme147_process_int() */
--
--irq_handler_t tick_handler;
--
- 
- int __init mvme147_parse_bootinfo(const struct bi_record *bi)
- {
-@@ -104,16 +99,23 @@ void __init config_mvme147(void)
- 
- static irqreturn_t mvme147_timer_int (int irq, void *dev_id)
- {
-+	irq_handler_t timer_routine = dev_id;
-+	unsigned long flags;
-+
-+	local_irq_save(flags);
- 	m147_pcc->t1_int_cntrl = PCC_TIMER_INT_CLR;
- 	m147_pcc->t1_int_cntrl = PCC_INT_ENAB|PCC_LEVEL_TIMER1;
--	return tick_handler(irq, dev_id);
-+	timer_routine(0, NULL);
-+	local_irq_restore(flags);
-+
-+	return IRQ_HANDLED;
- }
- 
- 
- void mvme147_sched_init (irq_handler_t timer_routine)
- {
--	tick_handler = timer_routine;
--	if (request_irq(PCC_IRQ_TIMER1, mvme147_timer_int, 0, "timer 1", NULL))
-+	if (request_irq(PCC_IRQ_TIMER1, mvme147_timer_int, 0, "timer 1",
-+			timer_routine))
- 		pr_err("Couldn't register timer interrupt\n");
- 
- 	/* Init the clock with a value */
-diff --git a/arch/m68k/mvme16x/config.c b/arch/m68k/mvme16x/config.c
-index 6ee36a5b528d8..5feb3ab484d08 100644
---- a/arch/m68k/mvme16x/config.c
-+++ b/arch/m68k/mvme16x/config.c
-@@ -50,11 +50,6 @@ extern void mvme16x_reset (void);
- 
- int bcd2int (unsigned char b);
- 
--/* Save tick handler routine pointer, will point to xtime_update() in
-- * kernel/time/timekeeping.c, called via mvme16x_process_int() */
--
--static irq_handler_t tick_handler;
--
- 
- unsigned short mvme16x_config;
- EXPORT_SYMBOL(mvme16x_config);
-@@ -352,8 +347,15 @@ static irqreturn_t mvme16x_abort_int (int irq, void *dev_id)
- 
- static irqreturn_t mvme16x_timer_int (int irq, void *dev_id)
- {
--    *(volatile unsigned char *)0xfff4201b |= 8;
--    return tick_handler(irq, dev_id);
-+	irq_handler_t timer_routine = dev_id;
-+	unsigned long flags;
-+
-+	local_irq_save(flags);
-+	*(volatile unsigned char *)0xfff4201b |= 8;
-+	timer_routine(0, NULL);
-+	local_irq_restore(flags);
-+
-+	return IRQ_HANDLED;
- }
- 
- void mvme16x_sched_init (irq_handler_t timer_routine)
-@@ -361,14 +363,13 @@ void mvme16x_sched_init (irq_handler_t timer_routine)
-     uint16_t brdno = be16_to_cpu(mvme_bdid.brdno);
-     int irq;
- 
--    tick_handler = timer_routine;
-     /* Using PCCchip2 or MC2 chip tick timer 1 */
-     *(volatile unsigned long *)0xfff42008 = 0;
-     *(volatile unsigned long *)0xfff42004 = 10000;	/* 10ms */
-     *(volatile unsigned char *)0xfff42017 |= 3;
-     *(volatile unsigned char *)0xfff4201b = 0x16;
--    if (request_irq(MVME16x_IRQ_TIMER, mvme16x_timer_int, 0,
--				"timer", mvme16x_timer_int))
-+    if (request_irq(MVME16x_IRQ_TIMER, mvme16x_timer_int, 0, "timer",
-+                    timer_routine))
- 	panic ("Couldn't register timer int");
- 
-     if (brdno == 0x0162 || brdno == 0x172)
-diff --git a/arch/m68k/q40/q40ints.c b/arch/m68k/q40/q40ints.c
-index 3e7603202977e..1c696906c159f 100644
---- a/arch/m68k/q40/q40ints.c
-+++ b/arch/m68k/q40/q40ints.c
-@@ -127,10 +127,10 @@ void q40_mksound(unsigned int hz, unsigned int ticks)
- 	sound_ticks = ticks << 1;
- }
- 
--static irq_handler_t q40_timer_routine;
--
--static irqreturn_t q40_timer_int (int irq, void * dev)
-+static irqreturn_t q40_timer_int(int irq, void *dev_id)
- {
-+	irq_handler_t timer_routine = dev_id;
-+
- 	ql_ticks = ql_ticks ? 0 : 1;
- 	if (sound_ticks) {
- 		unsigned char sval=(sound_ticks & 1) ? 128-SVOL : 128+SVOL;
-@@ -139,8 +139,13 @@ static irqreturn_t q40_timer_int (int irq, void * dev)
- 		*DAC_RIGHT=sval;
- 	}
- 
--	if (!ql_ticks)
--		q40_timer_routine(irq, dev);
-+	if (!ql_ticks) {
-+		unsigned long flags;
-+
-+		local_irq_save(flags);
-+		timer_routine(0, NULL);
-+		local_irq_restore(flags);
-+	}
- 	return IRQ_HANDLED;
- }
- 
-@@ -148,11 +153,9 @@ void q40_sched_init (irq_handler_t timer_routine)
- {
- 	int timer_irq;
- 
--	q40_timer_routine = timer_routine;
- 	timer_irq = Q40_IRQ_FRAME;
- 
--	if (request_irq(timer_irq, q40_timer_int, 0,
--				"timer", q40_timer_int))
-+	if (request_irq(timer_irq, q40_timer_int, 0, "timer", timer_routine))
- 		panic("Couldn't register timer int");
- 
- 	master_outb(-1, FRAME_CLEAR_REG);
-diff --git a/arch/m68k/sun3/sun3ints.c b/arch/m68k/sun3/sun3ints.c
-index 6bbca30c91884..a5824abb4a39c 100644
---- a/arch/m68k/sun3/sun3ints.c
-+++ b/arch/m68k/sun3/sun3ints.c
-@@ -61,8 +61,10 @@ static irqreturn_t sun3_int7(int irq, void *dev_id)
- 
- static irqreturn_t sun3_int5(int irq, void *dev_id)
- {
-+	unsigned long flags;
- 	unsigned int cnt;
- 
-+	local_irq_save(flags);
- #ifdef CONFIG_SUN3
- 	intersil_clear();
- #endif
-@@ -76,6 +78,7 @@ static irqreturn_t sun3_int5(int irq, void *dev_id)
- 	cnt = kstat_irqs_cpu(irq, 0);
- 	if (!(cnt % 20))
- 		sun3_leds(led_pattern[cnt % 160 / 20]);
-+	local_irq_restore(flags);
- 	return IRQ_HANDLED;
- }
- 
-diff --git a/arch/m68k/sun3x/time.c b/arch/m68k/sun3x/time.c
-index 047e2bcee3d7a..3c8a86d085084 100644
---- a/arch/m68k/sun3x/time.c
-+++ b/arch/m68k/sun3x/time.c
-@@ -80,15 +80,19 @@ u32 sun3x_gettimeoffset(void)
- }
- 
- #if 0
--static void sun3x_timer_tick(int irq, void *dev_id, struct pt_regs *regs)
-+static irqreturn_t sun3x_timer_tick(int irq, void *dev_id)
- {
--    void (*vector)(int, void *, struct pt_regs *) = dev_id;
-+	irq_handler_t timer_routine = dev_id;
-+	unsigned long flags;
- 
--    /* Clear the pending interrupt - pulse the enable line low */
--    disable_irq(5);
--    enable_irq(5);
-+	local_irq_save(flags);
-+	/* Clear the pending interrupt - pulse the enable line low */
-+	disable_irq(5);
-+	enable_irq(5);
-+	timer_routine(0, NULL);
-+	local_irq_restore(flags);
- 
--    vector(irq, NULL, regs);
-+	return IRQ_HANDLED;
- }
- #endif
- 
--- 
-2.20.1
+Weird line breaking. I see it came from the x86 implementation, but it's
+weird there too... Personally I'd just put it all on one line, because
+my vt100 died two decades ago.
 
+> > +
+> > +	va_start(ap, num);
+> > +
+> > +	for (i = 0; i < num; i++)
+> > +		set_reg(vm, vcpuid, ARM64_CORE_REG(regs.regs[num]),
+                                                             ^^ should be 'i'
 
+> > +			va_arg(ap, uint64_t));
+
+nit: I'd use {} because of the line break. Or just not break the line and
+bust the 80 char "limit" (RIP vt100).
+
+Thanks,
+drew
+
+> > +
+> > +	va_end(ap);
+> > +}
+> > diff --git a/tools/testing/selftests/kvm/lib/s390x/processor.c b/tools/testing/selftests/kvm/lib/s390x/processor.c
+> > index 32a02360b1eb0..680f37be9dbc9 100644
+> > --- a/tools/testing/selftests/kvm/lib/s390x/processor.c
+> > +++ b/tools/testing/selftests/kvm/lib/s390x/processor.c
+> > @@ -269,6 +269,41 @@ void vm_vcpu_add_default(struct kvm_vm *vm, uint32_t vcpuid, void *guest_code)
+> >  	run->psw_addr = (uintptr_t)guest_code;
+> >  }
+> >  
+> > +/* VM VCPU Args Set
+> > + *
+> > + * Input Args:
+> > + *   vm - Virtual Machine
+> > + *   vcpuid - VCPU ID
+> > + *   num - number of arguments
+> > + *   ... - arguments, each of type uint64_t
+> > + *
+> > + * Output Args: None
+> > + *
+> > + * Return: None
+> > + *
+> > + * Sets the first num function input arguments to the values
+> > + * given as variable args.  Each of the variable args is expected to
+> > + * be of type uint64_t. The registers set by this function are r2-r6.
+> > + */
+> > +void vcpu_args_set(struct kvm_vm *vm, uint32_t vcpuid, unsigned int num, ...)
+> > +{
+> > +	va_list ap;
+> > +	struct kvm_regs regs;
+> > +
+> > +	TEST_ASSERT(num >= 1 && num <= 5, "Unsupported number of args,\n"
+> > +		    "  num: %u\n",
+> > +		    num);
+> > +
+> > +	va_start(ap, num);
+> > +	vcpu_regs_get(vm, vcpuid, &regs);
+> > +
+> > +	for (i = 0; i < num; i++)
+> > +		regs.gprs[i + 2] = va_arg(ap, uint64_t);
+> > +
+> > +	vcpu_regs_set(vm, vcpuid, &regs);
+> > +	va_end(ap);
+> > +}
+> > +
+> >  void vcpu_dump(FILE *stream, struct kvm_vm *vm, uint32_t vcpuid, uint8_t indent)
+> >  {
+> >  	struct vcpu *vcpu = vm->vcpu_head;
+> > 
+> 
 
