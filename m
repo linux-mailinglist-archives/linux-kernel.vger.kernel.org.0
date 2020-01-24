@@ -2,86 +2,60 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5E32014868C
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Jan 2020 15:07:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 557CB1487B5
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Jan 2020 15:24:53 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389475AbgAXOHZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 24 Jan 2020 09:07:25 -0500
-Received: from 216-12-86-13.cv.mvl.ntelos.net ([216.12.86.13]:52890 "EHLO
-        brightrain.aerifal.cx" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387412AbgAXOHY (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 24 Jan 2020 09:07:24 -0500
-Received: from dalias by brightrain.aerifal.cx with local (Exim 3.15 #2)
-        id 1iuzcH-0001sV-00; Fri, 24 Jan 2020 14:07:21 +0000
-Date:   Fri, 24 Jan 2020 09:07:21 -0500
-From:   Rich Felker <dalias@libc.org>
-To:     Florian Weimer <fweimer@redhat.com>
-Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-api@vger.kernel.org, Alexander Viro <viro@zeniv.linux.org.uk>
-Subject: Re: Proposal to fix pwrite with O_APPEND via pwritev2 flag
-Message-ID: <20200124140721.GV30412@brightrain.aerifal.cx>
-References: <20200124000243.GA12112@brightrain.aerifal.cx>
- <87d0b942lp.fsf@oldenburg2.str.redhat.com>
+        id S2392481AbgAXOYo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 24 Jan 2020 09:24:44 -0500
+Received: from elvis.franken.de ([193.175.24.41]:59877 "EHLO elvis.franken.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2389799AbgAXOYm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 24 Jan 2020 09:24:42 -0500
+X-Greylist: delayed 980 seconds by postgrey-1.27 at vger.kernel.org; Fri, 24 Jan 2020 09:24:41 EST
+Received: from uucp (helo=alpha)
+        by elvis.franken.de with local-bsmtp (Exim 3.36 #1)
+        id 1iuzdC-0003XT-00; Fri, 24 Jan 2020 15:08:18 +0100
+Received: by alpha.franken.de (Postfix, from userid 1000)
+        id 454FCC0784; Fri, 24 Jan 2020 15:07:51 +0100 (CET)
+Date:   Fri, 24 Jan 2020 15:07:51 +0100
+From:   Thomas Bogendoerfer <tsbogend@alpha.franken.de>
+To:     Paul Burton <paulburton@kernel.org>
+Cc:     Jiaxun Yang <jiaxun.yang@flygoat.com>, linux-mips@vger.kernel.org,
+        chenhc@lemote.com, paul.burton@mips.com,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] MIPS: Introduce aligned IO memory operations
+Message-ID: <20200124140751.GA17030@alpha.franken.de>
+References: <20200114122343.163685-1-jiaxun.yang@flygoat.com>
+ <20200122184506.7zbzetn5xturxamj@pburton-laptop>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <87d0b942lp.fsf@oldenburg2.str.redhat.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+In-Reply-To: <20200122184506.7zbzetn5xturxamj@pburton-laptop>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jan 24, 2020 at 10:37:22AM +0100, Florian Weimer wrote:
-> * Rich Felker:
+On Wed, Jan 22, 2020 at 10:45:06AM -0800, Paul Burton wrote:
+> Hi Jiaxun,
 > 
-> > There's a longstanding unfixable (due to API stability) bug in the
-> > pwrite syscall:
-> >
-> > http://man7.org/linux/man-pages/man2/pwrite.2.html#BUGS
-> >
-> > whereby it wrongly honors O_APPEND if set, ignoring the caller-passed
-> > offset. Now that there's a pwritev2 syscall that takes a flags
-> > argument, it's possible to fix this without breaking stability by
-> > adding a new RWF_NOAPPEND flag, which callers that want the fixed
-> > behavior can then pass.
-> >
-> > I have a completely untested patch to add such a flag, but would like
-> > to get a feel for whether the concept is acceptable before putting
-> > time into testing it. If so, I'll submit this as a proper patch with
-> > detailed commit message etc. Draft is below.
+> On Tue, Jan 14, 2020 at 08:23:43PM +0800, Jiaxun Yang wrote:
+> > Some platforms, such as Loongson64 or QEMU/KVM, don't support unaligned
+> > instructions like lwl or lwr in IO memory access. However, our current
+> > IO memcpy/memset is wired to the generic implementation, which leads
+> > to a fatal result.
 > 
-> Has this come up before?
+> Hmm, I wonder if we should just do this unconditionally on all systems.
+> I can't think of a reason it'd ever be a good idea to use lwl/lwr on an
+> MMIO device. Any thoughts on that?
 
-I'm not sure if there's an open glibc bug for it or not, but it's come
-up in musl community before that the kernel is non-conforming here for
-historical reasons (preserving the original bug in case any software
-is depending on it) and we've always wanted to have a fix, but
-couldn't find one short of just erroring out if O_APPEND is set when
-pwrite is called. That's what the fallback will do (rather than
-silently write data at the wrong place) if pwritev2+RWF_NOAPPEND is
-not supported on the system at runtime.
+depends on the type of device. I can see benefits for framebuffers
+and memory devices since memset/memcpy are more optimised than the
+function in this patch.
 
-> I had already written a test case and it turns out that an O_APPEND
-> descriptor does not protect the previously written data in the file:
-> 
-> openat(AT_FDCWD, "/tmp/append-truncateuoRexJ", O_RDWR|O_CREAT|O_EXCL, 0600) = 3
-> write(3, "@", 1)                        = 1
-> close(3)                                = 0
-> openat(AT_FDCWD, "/tmp/append-truncateuoRexJ", O_WRONLY|O_APPEND) = 3
-> ftruncate(3, 0)                         = 0
-> 
-> So at least it looks like there is no security issue in adding a
-> RWF_NOAPPEND flag.
+Thomas.
 
-Indeed, if you have the file open you can just use fcntl to remove
-O_APPEND (but of course using that in an emulation would be racy), so
-it's not a security boundary. Someone could try to "make it into one"
-with seccomp, blocking fcntl that would remove O_APPEND and blocking
-ftruncate, mmap, and all other ways you could modify the existing part
-of the file, but that sounds fragile, and if they really want to do
-that they can block pwritev2 as well (or at least block it with
-RWF_NOAPPEND or future/unknown flags).
-
-Rich
+-- 
+Crap can work. Given enough thrust pigs will fly, but it's not necessarily a
+good idea.                                                [ RFC1925, 2.3 ]
