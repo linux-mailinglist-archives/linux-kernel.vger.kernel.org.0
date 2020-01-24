@@ -2,110 +2,86 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 81D9F1479E2
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Jan 2020 09:59:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id ACDDA1479C3
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Jan 2020 09:54:52 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729982AbgAXI7C (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 24 Jan 2020 03:59:02 -0500
-Received: from mail.intenta.de ([178.249.25.132]:41319 "EHLO mail.intenta.de"
+        id S1729904AbgAXIyr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 24 Jan 2020 03:54:47 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40090 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725887AbgAXI7C (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 24 Jan 2020 03:59:02 -0500
-X-Greylist: delayed 347 seconds by postgrey-1.27 at vger.kernel.org; Fri, 24 Jan 2020 03:59:01 EST
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=intenta.de; s=dkim1;
-        h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:CC:To:From:Date; bh=Tp/ScpeoKbLnxbH+JstXsTL0gsEEzyCFfak5/6i2le4=;
-        b=HER4T5u1WlJkPuYOaju2hnnMy6VVvlARLBljloDNNNKYHLyUjPH7MfQkqlVl9kwRPrNS9hCr8gKaR2uMQAUS8ElOs/sp4G8fKyLJrAJnqN7JG8cTOueowH+FUfEOvstrw+xtWO8ECKLHnaMfK0s+POEkCQHdo0MMPirp4Lw9uAibjFa0GK04WqvPKiraN9LjacchWwGk7r1r8aYppVWC2ScIS0W0n5dMX4ugfcLBX7CwU/V3GRPSXJEwKsiDqs4hVDyfzkEbxx0Oo+9doCXylIkxnPfHPg6HtTM89Qc79wnSBenTqn3630v9B9WQkfl7+f7q7Jur9LoyDto5Jqs1cw==;
-Date:   Fri, 24 Jan 2020 09:53:10 +0100
-From:   Helmut Grohne <helmut.grohne@intenta.de>
-To:     Adam Thomson <Adam.Thomson.Opensource@diasemi.com>
-CC:     Support Opensource <Support.Opensource@diasemi.com>,
-        Lee Jones <lee.jones@linaro.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 1/2] mfd: da9062: enable being a system-power-controller
-Message-ID: <20200124085310.GA27231@laureti-dev>
-References: <20200107120559.GA700@laureti-dev>
- <AM6PR10MB226306BDE8575CED80071148800F0@AM6PR10MB2263.EURPRD10.PROD.OUTLOOK.COM>
+        id S1729225AbgAXIyr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 24 Jan 2020 03:54:47 -0500
+Received: from localhost (unknown [145.15.244.15])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 05D7020709;
+        Fri, 24 Jan 2020 08:54:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1579856086;
+        bh=0xY6x9V00TP+QraY/L7nzfuOqHEO6nvqTQwrER0e3Ys=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=LuIt2JgMidLItMGSneEjOjLaEAmYbQDtNOSJ77X4jm6dMcS6nNqRhW2jKfOejaUnq
+         XEbKamI2R/rlHE3qvk8NnzcMCKYRCvWaztzt5ZFioGwAHCBMjhHLQ7pC/0uP117+i6
+         jBZ+Ka6opDx+8LncDFqJh2y964etJCfDYctenPpI=
+Date:   Fri, 24 Jan 2020 09:54:43 +0100
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Cc:     Linux PM <linux-pm@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Chanho Min <chanho.min@lge.com>,
+        Daewoong Kim <daewoong00.kim@lge.com>,
+        Seokjoo Lee <seokjoo.lee@lge.com>,
+        "Rafael J. Wysocki" <rafael@kernel.org>
+Subject: Re: [PATCH] PM: core: Fix handling of devices deleted during
+ system-wide resume
+Message-ID: <20200124085443.GA2936887@kroah.com>
+References: <2601275.1tEomSadG4@kreacher>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <AM6PR10MB226306BDE8575CED80071148800F0@AM6PR10MB2263.EURPRD10.PROD.OUTLOOK.COM>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-ClientProxiedBy: ICSMA002.intenta.de (10.10.16.48) To ICSMA002.intenta.de
- (10.10.16.48)
+In-Reply-To: <2601275.1tEomSadG4@kreacher>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+On Thu, Jan 23, 2020 at 12:11:24AM +0100, Rafael J. Wysocki wrote:
+> From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> 
+> If a device is deleted by one of its system-wide resume callbacks
+> (for example, because it does not appear to be present or accessible
+> any more) along with its children, the resume of the children may
+> continue leading to use-after-free errors and other issues
+> (potentially).
+> 
+> Namely, if the device's children are resumed asynchronously, their
+> resume may have been scheduled already before the device's callback
+> runs and so the device may be deleted while dpm_wait_for_superior()
+> is being executed for them.  The memory taken up by the parent device
+> object may be freed then while dpm_wait() is waiting for the parent's
+> resume callback to complete, which leads to a use-after-free.
+> Moreover, the resume of the children is really not expected to
+> continue after they have been unregistered, so it must be terminated
+> right away in that case.
+> 
+> To address this problem, modify dpm_wait_for_superior() to check
+> if the target device is still there in the system-wide PM list of
+> devices and if so, to increment its parent's reference counter, both
+> under dpm_list_mtx which prevents device_del() running for the child
+> from dropping the parent's reference counter prematurely.
+> 
+> If the device is not present in the system-wide PM list of devices
+> any more, the resume of it cannot continue, so check that again after
+> dpm_wait() returns, which means that the parent's callback has been
+> completed, and pass the result of that check to the caller of
+> dpm_wait_for_superior() to allow it to abort the device's resume
+> if it is not there any more.
+> 
+> Link: https://lore.kernel.org/linux-pm/1579568452-27253-1-git-send-email-chanho.min@lge.com
+> Reported-by: Chanho Min <chanho.min@lge.com>
+> Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> ---
+>  drivers/base/power/main.c |   42 +++++++++++++++++++++++++++++++++++++-----
+>  1 file changed, 37 insertions(+), 5 deletions(-)
 
-Thank you for reviewing the code.
-
-On Thu, Jan 23, 2020 at 04:51:37PM +0100, Adam Thomson wrote:
-> I have concerns about using regmap/I2C within the pm_power_off() callback
-> function although I am aware there are other examples of this in the kernel. At
-> the point that is called I believe IRQs are disabled so it would require a
-> platform to have an atomic version of the I2C bus's xfer function. Don't know
-> if there's a check to see if the bus supports this, but if not then maybe it's
-> something worth adding? That way we can then only support the pm_power_off()
-> approach on systems which can actually do it.
-
-On arm, machine_power_off calls the pm_power_off callback after issuing
-local_irq_disable() and smp_send_stop(). So I think your intuition is
-correct that we are running with only one CPU left with IRQs disabled.
-
-I have tested this code on a board with an i2c-cadence bus. This driver
-seems to use IRQs for completion tracking with no fallback to polling.
-I'm now puzzled as to why this works at all. Given that I'm using
-regmap_update_bits on a volatile register, it would have to complete the
-read before performing the relevant write. Nevertheless, it reliably
-turns off here. So I'm starting to wonder whether there is a flaw in the
-analysis.
-
-I also looked into whether linux/i2c.h would tell us about the
-availability of an atomic xfer function. Indeed, the i2c_algorithm
-structure has a master_xfer_atomic specifically for this purpose. The
-i2c core will automatically use this function when irqs are disabled.
-Unfortunately, very few buses implement this function. In particular,
-i2c-cadence lacks it.
-
-So I could check for i2c_dev->adapter->algo->master_xfer_atomic != NULL
-indeed. Possibly this could be wrapped in a central inline function.
-
-I concur that quite a few other drivers use a regmap/i2c from their
-pm_power_off hook. Examples include:
- * arch/powerpc/platforms/83xx/mcu_mpc8349emitx.c (i2c without regmap)
- * drivers/mfd/axp20x.c (regmap without i2c)
- * drivers/mfd/dm355evm_msp.c (i2c without regmap)
- * drivers/mfd/max77620.c (regmap and i2c)
- * drivers/mfd/max8907.c (regmap and i2c)
- * drivers/mfd/palmas.c (regmap and i2c)
- * drivers/mfd/retu-mfd.c (regmap and i2c)
- * drivers/mfd/rn5t618.c (regmap and i2c)
- * drivers/mfd/tps6586x.c (regmap and i2c)
- * drivers/mfd/tps65910.c (regmap and i2c)
- * drivers/mfd/tps80031.c (regmap and i2c)
- * drivers/mfd/twl4030-power.c (i2c without regmap)
- * drivers/regulator/act8865-regulator.c (regmap and i2c)
-
-For this reason, I think the practice of using regmap/i2c within
-pm_power_off is well-established and should not be questioned for an
-individual device. In addition, the relevant functionality must be
-explicitly requested by modifying a board-specific device-tree. It can
-be assumed that an integrator would test whether the mfd actually works
-as a power controller when adding the relevant property. Given that we
-turned off other CPUs and IRQs, the behaviour should be fairly reliable.
-
-I think that requiring atomic transfers for pm_power_off would be
-relatively easy to implement (for all mfds). However, I also think that
-it would break a fair number of boards, because so few buses implement
-atomic transfers. As such, I don't think we can actually require it
-before requiring all buses to implement atomic transfers. At that point,
-the check becomes useless, because the i2c core will automatically use
-atomic transfers during pm_power_off.
-
-Given these reasons (consistency with other drivers, testing and "don't
-break"), I think that including the functionality without an additional
-check is a reasonable thing to do.
-
-Helmut
+Acked-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
