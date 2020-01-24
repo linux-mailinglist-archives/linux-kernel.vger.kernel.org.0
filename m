@@ -2,38 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 40190148047
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Jan 2020 12:10:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1EEDB148049
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Jan 2020 12:10:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731596AbgAXLJb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 24 Jan 2020 06:09:31 -0500
-Received: from mail.kernel.org ([198.145.29.99]:45062 "EHLO mail.kernel.org"
+        id S1730192AbgAXLJf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 24 Jan 2020 06:09:35 -0500
+Received: from mail.kernel.org ([198.145.29.99]:45128 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730882AbgAXLJ2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 24 Jan 2020 06:09:28 -0500
+        id S1731391AbgAXLJb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 24 Jan 2020 06:09:31 -0500
 Received: from localhost (ip-213-127-102-57.ip.prioritytelecom.net [213.127.102.57])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 79C1020663;
-        Fri, 24 Jan 2020 11:09:26 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 012FD20663;
+        Fri, 24 Jan 2020 11:09:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579864167;
-        bh=Aj9msqVAVmTezlKExZH+VTX5nRmOUPm/Ywm8Vkk5XRY=;
+        s=default; t=1579864170;
+        bh=WGMkkEwBEFh8uETLno4+HXpzwOrbp4/bVvc4bg1aMgs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=2mBDRr/P5YzFggLhVjgHW2c2cCyVfpZH7joQsZ8wiWwCNcKfbWWD0bFzj0rlnrT9Z
-         7aHYpVZEto1Evo9nKHwCkpegr/3YsR8EgWy5lpNbJk/T48326cSeQeNP4jr/umK1hU
-         4L2azRBOkH3SQxc+ypump2+1NlpUog8mdYdjddns=
+        b=BFV0Gk7BviwF6yYHpSRlIUsTqGgoTm85F/kvnutVPLf5cGvDQ6cjsewAmVhoUHBSC
+         Ubg4NhPgUkVw9P1WPzXoKtiKmcac/Ty/qdhiECGlRwuVIRN3YboSHfzjNnOPb3dqdQ
+         nqcEMzAjllTcTcQ/Au2UgMMV/LXkOZWyGoUjlwQw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= 
-        <u.kleine-koenig@pengutronix.de>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        stable@vger.kernel.org, Eugene Syromiatnikov <esyr@redhat.com>,
+        Karsten Graul <kgraul@linux.ibm.com>,
+        Ursula Braun <ubraun@linux.ibm.com>,
+        "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 177/639] rtc: ds1307: rx8130: Fix alarm handling
-Date:   Fri, 24 Jan 2020 10:25:47 +0100
-Message-Id: <20200124093109.349854130@linuxfoundation.org>
+Subject: [PATCH 4.19 178/639] net/smc: original socket family in inet_sock_diag
+Date:   Fri, 24 Jan 2020 10:25:48 +0100
+Message-Id: <20200124093109.468776492@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
 In-Reply-To: <20200124093047.008739095@linuxfoundation.org>
 References: <20200124093047.008739095@linuxfoundation.org>
@@ -46,52 +46,54 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
+From: Karsten Graul <kgraul@linux.ibm.com>
 
-[ Upstream commit 3f929cad943380370b6db31fcb7a38d898d91089 ]
+[ Upstream commit 232dc8ef647658a5352da807d9e994e0e03b43cd ]
 
-When the EXTENSION.WADA bit is set, register 0x19 contains a bitmap of
-week days, not a day of month. As Linux only handles a single alarm
-without repetition using day of month is more flexible, so clear this
-bit. (Otherwise a value depending on time.tm_wday would have to be
-written to register 0x19.)
+Commit ed75986f4aae ("net/smc: ipv6 support for smc_diag.c") changed the
+value of the diag_family field. The idea was to indicate the family of
+the IP address in the inet_diag_sockid field. But the change makes it
+impossible to distinguish an inet_sock_diag response message from SMC
+sock_diag response. This patch restores the original behaviour and sends
+AF_SMC as value of the diag_family field.
 
-Also optimize setting the AIE bit to use a single register write instead
-of a bulk write of three registers.
-
-Fixes: ee0981be7704 ("rtc: ds1307: Add support for Epson RX8130CE")
-Signed-off-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
-Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
+Fixes: ed75986f4aae ("net/smc: ipv6 support for smc_diag.c")
+Reported-by: Eugene Syromiatnikov <esyr@redhat.com>
+Signed-off-by: Karsten Graul <kgraul@linux.ibm.com>
+Signed-off-by: Ursula Braun <ubraun@linux.ibm.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/rtc/rtc-ds1307.c | 7 +++----
- 1 file changed, 3 insertions(+), 4 deletions(-)
+ net/smc/smc_diag.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/drivers/rtc/rtc-ds1307.c b/drivers/rtc/rtc-ds1307.c
-index 71396b62dc52b..ebd59e86a567b 100644
---- a/drivers/rtc/rtc-ds1307.c
-+++ b/drivers/rtc/rtc-ds1307.c
-@@ -749,8 +749,8 @@ static int rx8130_set_alarm(struct device *dev, struct rtc_wkalrm *t)
- 	if (ret < 0)
- 		return ret;
+diff --git a/net/smc/smc_diag.c b/net/smc/smc_diag.c
+index dbf64a93d68ad..371b4cf31fcd2 100644
+--- a/net/smc/smc_diag.c
++++ b/net/smc/smc_diag.c
+@@ -38,6 +38,7 @@ static void smc_diag_msg_common_fill(struct smc_diag_msg *r, struct sock *sk)
+ {
+ 	struct smc_sock *smc = smc_sk(sk);
  
--	ctl[0] &= ~RX8130_REG_EXTENSION_WADA;
--	ctl[1] |= RX8130_REG_FLAG_AF;
-+	ctl[0] &= RX8130_REG_EXTENSION_WADA;
-+	ctl[1] &= ~RX8130_REG_FLAG_AF;
- 	ctl[2] &= ~RX8130_REG_CONTROL0_AIE;
- 
- 	ret = regmap_bulk_write(ds1307->regmap, RX8130_REG_EXTENSION, ctl,
-@@ -773,8 +773,7 @@ static int rx8130_set_alarm(struct device *dev, struct rtc_wkalrm *t)
- 
- 	ctl[2] |= RX8130_REG_CONTROL0_AIE;
- 
--	return regmap_bulk_write(ds1307->regmap, RX8130_REG_EXTENSION, ctl,
--				 sizeof(ctl));
-+	return regmap_write(ds1307->regmap, RX8130_REG_CONTROL0, ctl[2]);
- }
- 
- static int rx8130_alarm_irq_enable(struct device *dev, unsigned int enabled)
++	r->diag_family = sk->sk_family;
+ 	if (!smc->clcsock)
+ 		return;
+ 	r->id.idiag_sport = htons(smc->clcsock->sk->sk_num);
+@@ -45,14 +46,12 @@ static void smc_diag_msg_common_fill(struct smc_diag_msg *r, struct sock *sk)
+ 	r->id.idiag_if = smc->clcsock->sk->sk_bound_dev_if;
+ 	sock_diag_save_cookie(sk, r->id.idiag_cookie);
+ 	if (sk->sk_protocol == SMCPROTO_SMC) {
+-		r->diag_family = PF_INET;
+ 		memset(&r->id.idiag_src, 0, sizeof(r->id.idiag_src));
+ 		memset(&r->id.idiag_dst, 0, sizeof(r->id.idiag_dst));
+ 		r->id.idiag_src[0] = smc->clcsock->sk->sk_rcv_saddr;
+ 		r->id.idiag_dst[0] = smc->clcsock->sk->sk_daddr;
+ #if IS_ENABLED(CONFIG_IPV6)
+ 	} else if (sk->sk_protocol == SMCPROTO_SMC6) {
+-		r->diag_family = PF_INET6;
+ 		memcpy(&r->id.idiag_src, &smc->clcsock->sk->sk_v6_rcv_saddr,
+ 		       sizeof(smc->clcsock->sk->sk_v6_rcv_saddr));
+ 		memcpy(&r->id.idiag_dst, &smc->clcsock->sk->sk_v6_daddr,
 -- 
 2.20.1
 
