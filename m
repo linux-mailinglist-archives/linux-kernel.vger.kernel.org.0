@@ -2,88 +2,125 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5AD6F147ABD
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Jan 2020 10:40:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E5C5F147AE5
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Jan 2020 10:40:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731112AbgAXJhc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 24 Jan 2020 04:37:32 -0500
-Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:37559 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1731041AbgAXJhb (ORCPT
+        id S1731597AbgAXJjR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 24 Jan 2020 04:39:17 -0500
+Received: from mail-ot1-f66.google.com ([209.85.210.66]:41816 "EHLO
+        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730923AbgAXJjF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 24 Jan 2020 04:37:31 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1579858650;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=QugXP++tX2QdF2BlYh+oWt5d/1+WjAi+1riPy4DfzEI=;
-        b=XsaJ/DyUjXSvnPyZs3/fZtppGSEM7b3lT1cvKYUIru3cDpcrzpDnXAfiojLTe1YBJTRI07
-        z7ntmACyGv+TPErmjIatZyXyydTJlWOlkZPfIbNfirtljKqU8vr29eAcwuN7SoeD3tovWQ
-        nt4HQjhGQoj8WByAKenbu8yMYJAZkg0=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-157-5EmjIe8IMX62BrAeobcsDg-1; Fri, 24 Jan 2020 04:37:26 -0500
-X-MC-Unique: 5EmjIe8IMX62BrAeobcsDg-1
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 3F306DB23;
-        Fri, 24 Jan 2020 09:37:25 +0000 (UTC)
-Received: from oldenburg2.str.redhat.com (dhcp-192-227.str.redhat.com [10.33.192.227])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 253A210016EB;
-        Fri, 24 Jan 2020 09:37:23 +0000 (UTC)
-From:   Florian Weimer <fweimer@redhat.com>
-To:     Rich Felker <dalias@libc.org>
-Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-api@vger.kernel.org, Alexander Viro <viro@zeniv.linux.org.uk>
-Subject: Re: Proposal to fix pwrite with O_APPEND via pwritev2 flag
-References: <20200124000243.GA12112@brightrain.aerifal.cx>
-Date:   Fri, 24 Jan 2020 10:37:22 +0100
-In-Reply-To: <20200124000243.GA12112@brightrain.aerifal.cx> (Rich Felker's
-        message of "Thu, 23 Jan 2020 19:02:43 -0500")
-Message-ID: <87d0b942lp.fsf@oldenburg2.str.redhat.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.3 (gnu/linux)
+        Fri, 24 Jan 2020 04:39:05 -0500
+Received: by mail-ot1-f66.google.com with SMTP id r27so1031147otc.8
+        for <linux-kernel@vger.kernel.org>; Fri, 24 Jan 2020 01:39:05 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=KiV1c6wrp94w+IHJVeAB9MSJJhCX1k8bVyzQM9PAZU0=;
+        b=pchzY+3TjivETzxd8jhVPMcAwo9v121q36h6UWhV/C1UCB4L2tV04XWJPXyIkppn3i
+         y11I7rjHncspMjgSNHCrxLwBZ/kjTeZ31QLabMjg2abni/4tzZAWKlWsyyWrot+/O75k
+         aOP7K391ySa15JXofUhq+d/rC+fBdDon5dBbwBIedWZKBCqSbU6KjtT1/+69pyzyauXW
+         /CD6q36C8AZnnxhTpHB4DQU8bbFqpLMOD9PSqyBCb7u4l3HNF8OsCVv0hSVn4UwxlcIk
+         wRfr8cWmmDMOeQuQ51wkhCE9gxrAHka5SVAQ5HQzLX4Uwzcjliyc4gJRVZC8dC2pFoJh
+         RUfA==
+X-Gm-Message-State: APjAAAUbRyM+Yb8rHVifmV1rFncCy2FaeNuiGgmhpJG4D52gbH/18rHW
+        YLSHd7CR21wajRkHK6A2Ug9eW1Iqafu4xrs63k8WJw==
+X-Google-Smtp-Source: APXvYqwVtRSh0P5Y+CM+jxdNi08h9wIsY+nrQY5/l2/DgblmmCOL9JA68fv4cLDJadXXkjGORwiIIO6GnqX000Lljhs=
+X-Received: by 2002:a05:6830:d5:: with SMTP id x21mr1725342oto.262.1579858744718;
+ Fri, 24 Jan 2020 01:39:04 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+References: <20200120104909.13991-1-david@redhat.com> <20200124090052.GA2958140@kroah.com>
+ <6dd0ea5a-e5c3-c4b6-2b2e-93537571d7d6@redhat.com>
+In-Reply-To: <6dd0ea5a-e5c3-c4b6-2b2e-93537571d7d6@redhat.com>
+From:   "Rafael J. Wysocki" <rafael@kernel.org>
+Date:   Fri, 24 Jan 2020 10:38:53 +0100
+Message-ID: <CAJZ5v0iJJfTjZ6mZRDJSkZp+Cn1+VjFz=D8nLM15r6WtTRa88w@mail.gmail.com>
+Subject: Re: [PATCH v1] driver core: check for dead devices before onlining/offlining
+To:     David Hildenbrand <david@redhat.com>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Suzuki K Poulose <suzuki.poulose@arm.com>,
+        Saravana Kannan <saravanak@google.com>,
+        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Michal Hocko <mhocko@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-* Rich Felker:
-
-> There's a longstanding unfixable (due to API stability) bug in the
-> pwrite syscall:
+On Fri, Jan 24, 2020 at 10:09 AM David Hildenbrand <david@redhat.com> wrote:
 >
-> http://man7.org/linux/man-pages/man2/pwrite.2.html#BUGS
+> On 24.01.20 10:00, Greg Kroah-Hartman wrote:
+> > On Mon, Jan 20, 2020 at 11:49:09AM +0100, David Hildenbrand wrote:
+> >> We can have rare cases where the removal of a device races with
+> >> somebody trying to online it (esp. via sysfs). We can simply check
+> >> if the device is already removed or getting removed under the dev->lock.
+> >>
+> >> E.g., right now, if memory block devices are removed (remove_memory()),
+> >> we do a:
+> >>
+> >> remove_memory() -> lock_device_hotplug() -> mem_hotplug_begin() ->
+> >> lock_device() -> dev->dead = true
+> >>
+> >> Somebody coming via sysfs (/sys/devices/system/memory/memoryX/online)
+> >> triggers a:
+> >>
+> >> lock_device_hotplug_sysfs() -> device_online() -> lock_device() ...
+> >>
+> >> So if we made it just before the lock_device_hotplug_sysfs() but get
+> >> delayed until remove_memory() released all locks, we will continue
+> >> taking locks and trying to online the device - which is then a zombie
+> >> device.
+> >>
+> >> Note that at least the memory onlining path seems to be protected by
+> >> checking if all memory sections are still present (something we can then
+> >> get rid of). We do have other sysfs attributes
+> >> (e.g., /sys/devices/system/memory/memoryX/valid_zones) that don't do any
+> >> such locking yet and might race with memory removal in a similar way. For
+> >> these users, we can then do a
+> >>
+> >> device_lock(dev);
+> >> if (!device_is_dead(dev)) {
+> >>      /* magic /*
+> >> }
+> >> device_unlock(dev);
+> >>
+> >> Introduce and use device_is_dead() right away.
+> >>
+> >> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> >> Cc: "Rafael J. Wysocki" <rafael@kernel.org>
+> >> Cc: Suzuki K Poulose <suzuki.poulose@arm.com>
+> >> Cc: Saravana Kannan <saravanak@google.com>
+> >> Cc: Heikki Krogerus <heikki.krogerus@linux.intel.com>
+> >> Cc: Dan Williams <dan.j.williams@intel.com>
+> >> Cc: Michal Hocko <mhocko@kernel.org>
+> >> Signed-off-by: David Hildenbrand <david@redhat.com>
+> >> ---
+> >>
+> >> Am I missing any obvious mechanism in the device core that handles
+> >> something like this already? (especially also for other sysfs attributes?)
+> >
+> > So is a sysfs attribute causing the device itself to go away?  We have
 >
-> whereby it wrongly honors O_APPEND if set, ignoring the caller-passed
-> offset. Now that there's a pwritev2 syscall that takes a flags
-> argument, it's possible to fix this without breaking stability by
-> adding a new RWF_NOAPPEND flag, which callers that want the fixed
-> behavior can then pass.
+> nope, removal is triggered via the driver, not via a sysfs attribute.
 >
-> I have a completely untested patch to add such a flag, but would like
-> to get a feel for whether the concept is acceptable before putting
-> time into testing it. If so, I'll submit this as a proper patch with
-> detailed commit message etc. Draft is below.
+> Regarding this patch: Is there anything prohibiting the possible
+> scenario I document above (IOW, is this patch applicable, or is there
+> another way to fence it properly (e.g., the "specific call" you mentioned))?
 
-Has this come up before?
+For the devices that support online/offline (like CPUs in memory), the
+idea is that calling device_del() on them while they are in use may
+cause problems like data loss to occur and note that device_del()
+itself cannot fail (because it needs to handle surprise removal too).
+However, offline can fail, so the rule of thumb is to do the offline
+(and handle the errors possibly returned by it) and only call
+device_del() if that is successful.
 
-I had already written a test case and it turns out that an O_APPEND
-descriptor does not protect the previously written data in the file:
-
-openat(AT_FDCWD, "/tmp/append-truncateuoRexJ", O_RDWR|O_CREAT|O_EXCL, 0600) = 3
-write(3, "@", 1)                        = 1
-close(3)                                = 0
-openat(AT_FDCWD, "/tmp/append-truncateuoRexJ", O_WRONLY|O_APPEND) = 3
-ftruncate(3, 0)                         = 0
-
-So at least it looks like there is no security issue in adding a
-RWF_NOAPPEND flag.
-
-Thanks,
-Florian
-
+Of course, if surprise removal is possible, offline is kind of
+pointless, but if it is supported anyway it should return success when
+the device is physically not present already.
