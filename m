@@ -2,169 +2,266 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9EBF1148F4B
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Jan 2020 21:24:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 74C04148F48
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Jan 2020 21:23:51 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392431AbgAXUX7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 24 Jan 2020 15:23:59 -0500
-Received: from smtprelay0102.hostedemail.com ([216.40.44.102]:38050 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S2388215AbgAXUX6 (ORCPT
+        id S2388682AbgAXUXl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 24 Jan 2020 15:23:41 -0500
+Received: from mail-lf1-f67.google.com ([209.85.167.67]:32931 "EHLO
+        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387480AbgAXUXk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 24 Jan 2020 15:23:58 -0500
-Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
-        by smtprelay08.hostedemail.com (Postfix) with ESMTP id B7182182CED34;
-        Fri, 24 Jan 2020 20:23:56 +0000 (UTC)
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,:::::::::::::::::::::::,RULES_HIT:41:69:355:379:599:800:960:973:988:989:1260:1277:1311:1313:1314:1345:1359:1437:1515:1516:1518:1535:1543:1593:1594:1711:1730:1747:1777:1792:2393:2553:2559:2562:2828:3138:3139:3140:3141:3142:3354:3622:3865:3866:3867:3870:3871:3872:4250:4321:5007:6737:7576:8603:10004:10400:10848:11026:11232:11473:11658:11914:12043:12048:12296:12297:12438:12555:12679:12740:12760:12895:13095:13439:14093:14097:14181:14659:14721:21080:21433:21627:30054:30070:30090:30091,0,RBL:none,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:,MSBL:0,DNSBL:none,Custom_rules:0:0:0,LFtime:2,LUA_SUMMARY:none
-X-HE-Tag: front94_3f46724fd7512
-X-Filterd-Recvd-Size: 5158
-Received: from XPS-9350.home (unknown [47.151.135.224])
-        (Authenticated sender: joe@perches.com)
-        by omf14.hostedemail.com (Postfix) with ESMTPA;
-        Fri, 24 Jan 2020 20:23:54 +0000 (UTC)
-Message-ID: <315149bed8f3442fabcb36ec9d8c8caffe8e11eb.camel@perches.com>
-Subject: Re: [PATCH] iio: ad5755: fix spelling mistake "to" -> "too"
-From:   Joe Perches <joe@perches.com>
-To:     David Laight <David.Laight@ACULAB.COM>,
-        "'Ardelean, Alexandru'" <alexandru.Ardelean@analog.com>,
-        "zzzzPopa, zzzzStefan Serban" <StefanSerban.Popa@analog.com>,
-        "linux-iio@vger.kernel.org" <linux-iio@vger.kernel.org>,
-        "jic23@kernel.org" <jic23@kernel.org>,
-        "colin.king@canonical.com" <colin.king@canonical.com>,
-        "Hennerich, Michael" <Michael.Hennerich@analog.com>,
-        "lars@metafoo.de" <lars@metafoo.de>,
-        "knaack.h@gmx.de" <knaack.h@gmx.de>,
-        "pmeerw@pmeerw.net" <pmeerw@pmeerw.net>
-Cc:     "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Date:   Fri, 24 Jan 2020 12:22:52 -0800
-In-Reply-To: <69bbc2af79d9463681b54d0aa240f89b@AcuMS.aculab.com>
-References: <20200122235839.2830850-1-colin.king@canonical.com>
-         <c32a44272aa593c3d0cda71a50b08f33338a2dc0.camel@analog.com>
-         <69bbc2af79d9463681b54d0aa240f89b@AcuMS.aculab.com>
-Content-Type: text/plain; charset="ISO-8859-1"
-User-Agent: Evolution 3.34.1-2 
+        Fri, 24 Jan 2020 15:23:40 -0500
+Received: by mail-lf1-f67.google.com with SMTP id n25so2027007lfl.0
+        for <linux-kernel@vger.kernel.org>; Fri, 24 Jan 2020 12:23:38 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=eibpFJ/dL/po7h/5lUN6b9t7vGqoq6edRosDwybFErA=;
+        b=THXVTwkodkl4NV0lthJq64T8BkB+kb+ffvrbOIIER8YxEvQBCT2o/7LDw2RGVsJRL2
+         uXOqDAz/tYlhLLwyQPSbMtBDwZfl9wCyed52H+MSR+Bhx3i7TtCEQ5VJU92oS91V0RFM
+         ZV5jHG9CroKc3T7vN4hYoBeavgcbdaIhntw1I43u67p8jWEleo+IoYekee0/fKj5k0q5
+         j7pVKy/aHd/X5lwcOmIBtCfUfiW1DfPSHtSfw5MX86ChFkP7YXD5BEfd29Jxxk9IAv24
+         S4NJIPiBbOExUxqQNGmNrCJhRl4iIoj27x5+BxRyuAPtp8XZPn0qsKyzOjcH1s/aC3Lz
+         SQow==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=eibpFJ/dL/po7h/5lUN6b9t7vGqoq6edRosDwybFErA=;
+        b=TWQMKuRuxu8EjnHrpDiJA7ev/9JW7LH01yZFXb2xnMDM+MqSG2N9jYPVfuARw0Inpi
+         IcV8246CtPGu+ai57vU+5GTIfl+Vl25EK3SSdIVxHTpXitXTeoCmbAuxrufw0YN4mJYC
+         IjaO1HsoJekpBIirRIJP+cHsbIAYs26ado6zWGYvomzBeCYKp4n0j1ohPxhKFHD19dho
+         0ZzWvlWd5Ym479cACUnMpKjwG852U7YcRLi8Lc1Ssy+yQjWQkROIdNmDkfY3DMWORF3Q
+         W2fmVqIWC6yMCQI66gtP6rbYEfzMZKGunbtTKn1tJ2eNRof92jkc5y/tzMr7h2Y68849
+         1cwQ==
+X-Gm-Message-State: APjAAAUx+mtyXJGghUUgfJBbRQIPqrBPafkd6kMDz/2bsRFeEE3sprSI
+        JXGtm+LLVXMC+0v8whldcii+z9is9TPi1qF81kpThg==
+X-Google-Smtp-Source: APXvYqxuuu1/zxYUm5WDAcBoC5BQJSb6/tHB3M19FeY/I611GVLHEkCovpovRlvKoQIBXafdXuc2bwrDj8ePsYYTNKk=
+X-Received: by 2002:a19:4208:: with SMTP id p8mr2257984lfa.160.1579897417530;
+ Fri, 24 Jan 2020 12:23:37 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+References: <20191220200353.252399-1-rajatja@google.com> <20191220200353.252399-2-rajatja@google.com>
+ <87v9p1gk4z.fsf@intel.com>
+In-Reply-To: <87v9p1gk4z.fsf@intel.com>
+From:   Rajat Jain <rajatja@google.com>
+Date:   Fri, 24 Jan 2020 12:23:00 -0800
+Message-ID: <CACK8Z6GN1tXj+a3HHgyVKzTcgYBB+v8gpLCqh+YgTU0tS5b-OA@mail.gmail.com>
+Subject: Re: [PATCH v5 2/3] drm/i915: Lookup and attach ACPI device node for connectors
+To:     Jani Nikula <jani.nikula@linux.intel.com>
+Cc:     Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        Sean Paul <sean@poorly.run>, David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+        Rodrigo Vivi <rodrigo.vivi@intel.com>,
+        =?UTF-8?B?VmlsbGUgU3lyasOkbMOk?= <ville.syrjala@linux.intel.com>,
+        Chris Wilson <chris@chris-wilson.co.uk>,
+        Imre Deak <imre.deak@intel.com>,
+        =?UTF-8?Q?Jos=C3=A9_Roberto_de_Souza?= <jose.souza@intel.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        intel-gfx@lists.freedesktop.org,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Mat King <mathewk@google.com>,
+        Daniel Thompson <daniel.thompson@linaro.org>,
+        Jonathan Corbet <corbet@lwn.net>, Pavel Machek <pavel@denx.de>,
+        Sean Paul <seanpaul@google.com>,
+        Duncan Laurie <dlaurie@google.com>,
+        Jesse Barnes <jsbarnes@google.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Rajat Jain <rajatxjain@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 2020-01-23 at 14:55 +0000, David Laight wrote:
-> From Ardelean, Alexandru
-> > Sent: 23 January 2020 07:03
-> > 
-> > On Wed, 2020-01-22 at 23:58 +0000, Colin King wrote:
-> > > [External]
-> > > 
-> > > From: Colin Ian King <colin.king@canonical.com>
-> > > 
-> > > There is a spelling mistake in a dev_err message. Fix it.
-> > > 
-> > > Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> > > ---
-> > >  drivers/iio/dac/ad5755.c | 2 +-
-> > >  1 file changed, 1 insertion(+), 1 deletion(-)
-> > > 
-> > > diff --git a/drivers/iio/dac/ad5755.c b/drivers/iio/dac/ad5755.c
-> > > index b9175fb4c8ab..dad0b26228a2 100644
-> > > --- a/drivers/iio/dac/ad5755.c
-> > > +++ b/drivers/iio/dac/ad5755.c
-> > > @@ -655,7 +655,7 @@ static struct ad5755_platform_data *ad5755_parse_dt(struct
-> > > device *dev)
-> > >  	for_each_child_of_node(np, pp) {
-> > >  		if (devnr >= AD5755_NUM_CHANNELS) {
-> > >  			dev_err(dev,
-> > > -				"There is to many channels defined in DT\n");
-> > > +				"There is too many channels defined in DT\n");
-> > 
-> > If going for the spelling stuff, maybe also change "is" to "are":
-> > 'There are too many channels defined in DT\n'
-> 
-> Probably better still: "The DT defines too many channels\n"
+Hi Jani,
 
-bikeshedding:
+Thank you for the review. Please see inline.
 
-How about fixing:
+On Fri, Jan 24, 2020 at 3:37 AM Jani Nikula <jani.nikula@linux.intel.com> wrote:
+>
+> On Fri, 20 Dec 2019, Rajat Jain <rajatja@google.com> wrote:
+> > Lookup and attach ACPI nodes for intel connectors. The lookup is done
+> > in compliance with ACPI Spec 6.3
+> > https://uefi.org/sites/default/files/resources/ACPI_6_3_final_Jan30.pdf
+> > (Ref: Pages 1119 - 1123).
+> >
+> > This can be useful for any connector specific platform properties. (This
+> > will be used for privacy screen in next patch).
+> >
+> > Signed-off-by: Rajat Jain <rajatja@google.com>
+> > ---
+> > v5: same as v4
+> > v4: Same as v3
+> > v3: fold the code into existing acpi_device_id_update() function
+> > v2: formed by splitting the original patch into ACPI lookup, and privacy
+> >     screen property. Also move it into i915 now that I found existing code
+> >     in i915 that can be re-used.
+> >
+> >  drivers/gpu/drm/i915/display/intel_acpi.c     | 24 +++++++++++++++++++
+> >  .../drm/i915/display/intel_display_types.h    |  3 +++
+> >  drivers/gpu/drm/i915/display/intel_dp.c       |  3 +++
+> >  3 files changed, 30 insertions(+)
+> >
+> > diff --git a/drivers/gpu/drm/i915/display/intel_acpi.c b/drivers/gpu/drm/i915/display/intel_acpi.c
+> > index e21fb14d5e07..101a56c08996 100644
+> > --- a/drivers/gpu/drm/i915/display/intel_acpi.c
+> > +++ b/drivers/gpu/drm/i915/display/intel_acpi.c
+> > @@ -222,11 +222,23 @@ static u32 acpi_display_type(struct intel_connector *connector)
+> >       return display_type;
+> >  }
+> >
+> > +/*
+> > + * Ref: ACPI Spec 6.3
+> > + * https://uefi.org/sites/default/files/resources/ACPI_6_3_final_Jan30.pdf
+> > + * Pages 1119 - 1123 describe, what I believe, a standard way of
+> > + * identifying / addressing "display panels" in the ACPI. It provides
+> > + * a way for the ACPI to define devices for the display panels attached
+> > + * to the system. It thus provides a way for the BIOS to export any panel
+> > + * specific properties to the system via ACPI (like device trees).
+> > + */
+> >  void intel_acpi_device_id_update(struct drm_i915_private *dev_priv)
+> >  {
+> >       struct drm_device *drm_dev = &dev_priv->drm;
+> >       struct intel_connector *connector;
+> >       struct drm_connector_list_iter conn_iter;
+> > +     struct device *dev = &drm_dev->pdev->dev;
+>
+> Hmm, already pushed patch 1 with the unfortunate "drm_dev" local. We use
+> "dev" for struct drm_device * and almost never use struct device.
 
-o missing newlines
-o odd indentation
-o unnecessary braces
-o message grammar
+Sorry, I did not know. I'll send an independent fixup patch for patch
+1 on top of drm-intel-next-queued (or let me know if you want to
+handle it). I will also change this patch to rename the variable.
 
-at the same time?
----
- drivers/iio/dac/ad5755.c | 25 ++++++++++---------------
- 1 file changed, 10 insertions(+), 15 deletions(-)
+>
+> > +     struct acpi_device *conn_dev;
+> > +     u64 conn_addr;
+> >       u8 display_index[16] = {};
+> >
+> >       /* Populate the ACPI IDs for all connectors for a given drm_device */
+> > @@ -242,6 +254,18 @@ void intel_acpi_device_id_update(struct drm_i915_private *dev_priv)
+> >               device_id |= display_index[type]++ << ACPI_DISPLAY_INDEX_SHIFT;
+> >
+> >               connector->acpi_device_id = device_id;
+> > +
+> > +             /* Build the _ADR to look for */
+> > +             conn_addr = device_id | ACPI_DEVICE_ID_SCHEME |
+> > +                             ACPI_BIOS_CAN_DETECT;
+> > +
+> > +             DRM_DEV_INFO(dev, "Checking connector ACPI node at _ADR=%llX\n",
+> > +                          conn_addr);
+>
+> This is more than a little verbose. One line of INFO level dmesg for
+> every connector at boot and at resume.
+>
+> Please use the new drm_dbg_kms() macro for this.
 
-diff --git a/drivers/iio/dac/ad5755.c b/drivers/iio/dac/ad5755.c
-index b9175f..f6e4cf92 100644
---- a/drivers/iio/dac/ad5755.c
-+++ b/drivers/iio/dac/ad5755.c
-@@ -631,10 +631,9 @@ static struct ad5755_platform_data *ad5755_parse_dt(struct device *dev)
- 			}
- 		}
- 
--		if (i == ARRAY_SIZE(ad5755_dcdc_freq_table)) {
-+		if (i == ARRAY_SIZE(ad5755_dcdc_freq_table))
- 			dev_err(dev,
--				"adi,dc-dc-freq out of range selecting 410kHz");
--		}
-+				"adi,dc-dc-freq out of range selecting 410kHz\n");
- 	}
- 
- 	pdata->dc_dc_maxv = AD5755_DC_DC_MAXV_23V;
-@@ -645,17 +644,15 @@ static struct ad5755_platform_data *ad5755_parse_dt(struct device *dev)
- 				break;
- 			}
- 		}
--		if (i == ARRAY_SIZE(ad5755_dcdc_maxv_table)) {
--				dev_err(dev,
--					"adi,dc-dc-maxv out of range selecting 23V");
--		}
-+		if (i == ARRAY_SIZE(ad5755_dcdc_maxv_table))
-+			dev_err(dev,
-+				"adi,dc-dc-maxv out of range selecting 23V\n");
- 	}
- 
- 	devnr = 0;
- 	for_each_child_of_node(np, pp) {
- 		if (devnr >= AD5755_NUM_CHANNELS) {
--			dev_err(dev,
--				"There is to many channels defined in DT\n");
-+			dev_err(dev, "Too many channels defined in DT\n");
- 			goto error_out;
- 		}
- 
-@@ -681,11 +678,10 @@ static struct ad5755_platform_data *ad5755_parse_dt(struct device *dev)
- 					break;
- 				}
- 			}
--			if (i == ARRAY_SIZE(ad5755_slew_rate_table)) {
-+			if (i == ARRAY_SIZE(ad5755_slew_rate_table))
- 				dev_err(dev,
--					"channel %d slew rate out of range selecting 64kHz",
-+					"channel %d slew rate out of range selecting 64kHz\n",
- 					devnr);
--			}
- 
- 			pdata->dac[devnr].slew.step_size = AD5755_SLEW_STEP_SIZE_1;
- 			for (i = 0; i < ARRAY_SIZE(ad5755_slew_step_table); i++) {
-@@ -695,11 +691,10 @@ static struct ad5755_platform_data *ad5755_parse_dt(struct device *dev)
- 					break;
- 				}
- 			}
--			if (i == ARRAY_SIZE(ad5755_slew_step_table)) {
-+			if (i == ARRAY_SIZE(ad5755_slew_step_table))
- 				dev_err(dev,
--					"channel %d slew step size out of range selecting 1 LSB",
-+					"channel %d slew step size out of range selecting 1 LSB\n",
- 					devnr);
--			}
- 		} else {
- 			pdata->dac[devnr].slew.enable = false;
- 			pdata->dac[devnr].slew.rate = AD5755_SLEW_RATE_64k;
+Will do.
+
+>
+> > +
+> > +             /* Look up the connector device, under the PCI device */
+> > +             conn_dev = acpi_find_child_device(ACPI_COMPANION(dev),
+> > +                                               conn_addr, false);
+> > +             connector->acpi_handle = conn_dev ? conn_dev->handle : NULL;
+>
+> acpi_device_handle(conn_dev)
+>
+
+Will do.
 
 
+> >       }
+> >       drm_connector_list_iter_end(&conn_iter);
+> >  }
+> > diff --git a/drivers/gpu/drm/i915/display/intel_display_types.h b/drivers/gpu/drm/i915/display/intel_display_types.h
+> > index 1a7334dbe802..0a4a04116091 100644
+> > --- a/drivers/gpu/drm/i915/display/intel_display_types.h
+> > +++ b/drivers/gpu/drm/i915/display/intel_display_types.h
+> > @@ -407,6 +407,9 @@ struct intel_connector {
+> >       /* ACPI device id for ACPI and driver cooperation */
+> >       u32 acpi_device_id;
+> >
+> > +     /* ACPI handle corresponding to this connector display, if found */
+> > +     void *acpi_handle;
+> > +
+>
+> The type is acpi_handle. It's none of our business to know what the
+> underlying type is.
+
+Will do.
+
+>
+> >       /* Reads out the current hw, returning true if the connector is enabled
+> >        * and active (i.e. dpms ON state). */
+> >       bool (*get_hw_state)(struct intel_connector *);
+> > diff --git a/drivers/gpu/drm/i915/display/intel_dp.c b/drivers/gpu/drm/i915/display/intel_dp.c
+> > index b05b2191b919..93cece8e2516 100644
+> > --- a/drivers/gpu/drm/i915/display/intel_dp.c
+> > +++ b/drivers/gpu/drm/i915/display/intel_dp.c
+> > @@ -45,6 +45,7 @@
+> >  #include "i915_debugfs.h"
+> >  #include "i915_drv.h"
+> >  #include "i915_trace.h"
+> > +#include "intel_acpi.h"
+> >  #include "intel_atomic.h"
+> >  #include "intel_audio.h"
+> >  #include "intel_connector.h"
+> > @@ -6623,6 +6624,8 @@ intel_dp_add_properties(struct intel_dp *intel_dp, struct drm_connector *connect
+> >
+> >               connector->state->scaling_mode = DRM_MODE_SCALE_ASPECT;
+> >
+> > +             /* Lookup the ACPI node corresponding to the connector */
+> > +             intel_acpi_device_id_update(dev_priv);
+>
+> Auch, this is problematic. It iterates all connectors, for every DP
+> connector being added. In the middle of registering all connectors.
+>
+> From the POV of this patch alone, this is also unnecessary. This gets
+> called via intel_opregion_register() after all connectors have been
+> registered.
+>
+> I am aware it's not enough for your next patch, because it will need the
+> acpi handle right here.
+>
+> I'm wondering if we need to maintain display_index[] in struct
+> drm_i915_private, and update that as connectors get added instead of all
+> at once in the end.
+
+Sure, I can do that.
+
+> connector->acpi_device_id never changes, does it,
+> even though we keep updating it?
+
+This is the part I am not so sure about - I hypothesized that theory
+because of the current behavior in code (i.e. it is getting updated in
+intel_opregion_resume() path). May be it does not change, I was not
+sure, so I did not want to create any regression in the intel_opregion
+code that I did not understand. I tried on my system and as far as I
+could experiment, I did not see it changing. Please let me know if you
+would like me to change my code to:
+
+1) Maintain drm_i915_private->display_index[] and update it as
+connectors are added.
+2) Remove the code to update it on every resume and while registering
+the connector.
+
+Thanks & Best Regards,
+
+Rajat
+
+>
+> BR,
+> Jani.
+>
+>
+> >       }
+> >  }
+>
+> --
+> Jani Nikula, Intel Open Source Graphics Center
