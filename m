@@ -2,28 +2,28 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8D75B1478A2
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Jan 2020 07:49:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 00BE51478AC
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Jan 2020 07:50:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730816AbgAXGtk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 24 Jan 2020 01:49:40 -0500
-Received: from mailgw02.mediatek.com ([210.61.82.184]:31589 "EHLO
+        id S1730953AbgAXGt7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 24 Jan 2020 01:49:59 -0500
+Received: from mailgw02.mediatek.com ([210.61.82.184]:1275 "EHLO
         mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1725821AbgAXGtj (ORCPT
+        with ESMTP id S1730733AbgAXGtj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Fri, 24 Jan 2020 01:49:39 -0500
-X-UUID: de6d9fd5596a4800928f240ecbbb70be-20200124
+X-UUID: 4cbe7cd87c4e49a98719101d13caea04-20200124
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-        h=Content-Transfer-Encoding:Content-Type:MIME-Version:Message-ID:Date:Subject:CC:To:From; bh=9ZQEtQSDH2l7X4gZYfdkXUBut/YYbTfvmWSTS2DhTxg=;
-        b=D10F9DWFCdvj4U79P4WJKEhizwxu5CWKXi9GlCvouB108AP/tFyU+Z3j+umHGI1/9OAR/tzCQMk8ZFQNZ9X23jxCb0Ll0IVMfL9+bXrYIaKpsNdNx9HE1MlxgH+Nt62/C+rduZTOJpNZEb/7yH0YiYRHobB/n39qJO13Uj3hzT8=;
-X-UUID: de6d9fd5596a4800928f240ecbbb70be-20200124
+        h=Content-Transfer-Encoding:Content-Type:MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:CC:To:From; bh=r4uFNCZlrJfbAJ6zHc5lh0WBsNxu96UHiQ4PJMYHYz8=;
+        b=V5Vm7bIkKPgkjZPA86djf7vhc3N01MAGvA5lFFUmR3BwIK17VzRzPC64K9t/jjk36K+bQP/i5Wg0xeKAV7EBgVJmjbBVpgh/31RqGRL0R+jAsQKNzVH3VPHwn4alSaQsOWNEYIyzUz4G7XYX7OEqTxUUNFGy+UAtGeM+c5N08OA=;
+X-UUID: 4cbe7cd87c4e49a98719101d13caea04-20200124
 Received: from mtkexhb01.mediatek.inc [(172.21.101.102)] by mailgw02.mediatek.com
         (envelope-from <stanley.chu@mediatek.com>)
         (Cellopoint E-mail Firewall v4.1.10 Build 0809 with TLS)
-        with ESMTP id 43464048; Fri, 24 Jan 2020 14:49:30 +0800
+        with ESMTP id 1671562585; Fri, 24 Jan 2020 14:49:31 +0800
 Received: from mtkcas08.mediatek.inc (172.21.101.126) by
- mtkmbs05n1.mediatek.inc (172.21.101.15) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4; Fri, 24 Jan 2020 14:48:53 +0800
+ mtkmbs02n2.mediatek.inc (172.21.101.101) with Microsoft SMTP Server (TLS) id
+ 15.0.1395.4; Fri, 24 Jan 2020 14:48:24 +0800
 Received: from mtksdccf07.mediatek.inc (172.21.84.99) by mtkcas08.mediatek.inc
  (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
  Transport; Fri, 24 Jan 2020 14:48:57 +0800
@@ -38,12 +38,15 @@ CC:     <beanhuo@micron.com>, <asutoshd@codeaurora.org>,
         <linux-kernel@vger.kernel.org>, <kuohong.wang@mediatek.com>,
         <peter.wang@mediatek.com>, <chun-hung.wu@mediatek.com>,
         <andy.teng@mediatek.com>, Stanley Chu <stanley.chu@mediatek.com>
-Subject: [PATCH v1 0/5] MediaTek UFS vendor implemenation part III and Auto-Hibern8 fix
-Date:   Fri, 24 Jan 2020 14:49:21 +0800
-Message-ID: <20200124064926.29472-1-stanley.chu@mediatek.com>
+Subject: [PATCH v1 1/5] scsi: ufs-mediatek: ensure UniPro is not powered down before linkup
+Date:   Fri, 24 Jan 2020 14:49:22 +0800
+Message-ID: <20200124064926.29472-2-stanley.chu@mediatek.com>
 X-Mailer: git-send-email 2.18.0
+In-Reply-To: <20200124064926.29472-1-stanley.chu@mediatek.com>
+References: <20200124064926.29472-1-stanley.chu@mediatek.com>
 MIME-Version: 1.0
 Content-Type: text/plain
+X-TM-SNTS-SMTP: EE6B3AAFE2976FDE2B0D0A4B718E0322C10E6D114694D9985155B9BB79974CB92000:8
 X-MTK:  N
 Content-Transfer-Encoding: base64
 Sender: linux-kernel-owner@vger.kernel.org
@@ -51,20 +54,40 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-SGksDQoNClRoaXMgc2VyaWVzIHByb3ZpZGVzIE1lZGlhVGVrIHZlbmRvciBpbXBsZW1lbnRhdGlv
-bnMgYW5kIHNvbWUgZ2VuZXJhbCBmaXhlcy4NCg0KLSBHZW5lcmFsIGZpeGVzDQoJLSBGaXggQXV0
-by1IaWJlcm44IGVycm9yIGRldGVjdGlvbg0KDQotIE1lZGlhVGVrIHZlbmRvciBpbXBsZW1lbnRh
-dGlvbnMNCgktIEVuc3VyZSBVbmlQcm8gaXMgcG93ZXJlZCBvbiBiZWZvcmUgZXZlcnkgbGluayBz
-dGFydHVwDQoJLSBTdXBwb3J0IGxpbmtvZmYgc3RhdGUgZHVyaW5nIHN1c3BlbmQNCgktIEdhdGUg
-cmVmZXJlbmNlIGNsb2NrIGZvciBBdXRvLUhpYmVybjggY2FzZQ0KDQpTdGFubGV5IENodSAoNSk6
-DQogIHNjc2k6IHVmcy1tZWRpYXRlazogZW5zdXJlIFVuaVBybyBpcyBub3QgcG93ZXJlZCBkb3du
-IGJlZm9yZSBsaW5rdXANCiAgc2NzaTogdWZzLW1lZGlhdGVrOiBzdXBwb3J0IGxpbmtvZmYgc3Rh
-dGUgZHVyaW5nIHN1c3BlbmQNCiAgc2NzaTogdWZzOiBhZGQgdWZzaGNkX2lzX2F1dG9faGliZXJu
-OF9lbmFibGVkIGZhY2lsaXR5DQogIHNjc2k6IHVmczogZml4IGF1dG8taGliZXJuOCBlcnJvciBk
-ZXRlY3Rpb24NCiAgc2NzaTogdWZzLW1lZGlhdGVrOiBnYXRlIHJlZi1jbGsgZHVyaW5nIEF1dG8t
-SGliZXJuOA0KDQogZHJpdmVycy9zY3NpL3Vmcy91ZnMtbWVkaWF0ZWsuYyB8IDY1ICsrKysrKysr
-KysrKysrKysrKysrKy0tLS0tLS0tLS0tLQ0KIGRyaXZlcnMvc2NzaS91ZnMvdWZzLW1lZGlhdGVr
-LmggfCAxMiArKysrKysNCiBkcml2ZXJzL3Njc2kvdWZzL3Vmc2hjZC5jICAgICAgIHwgIDMgKy0N
-CiBkcml2ZXJzL3Njc2kvdWZzL3Vmc2hjZC5oICAgICAgIHwgIDYgKysrDQogNCBmaWxlcyBjaGFu
-Z2VkLCA2MiBpbnNlcnRpb25zKCspLCAyNCBkZWxldGlvbnMoLSkNCg0KLS0gDQoyLjE4LjANCg==
+TWVkaWF0ZWsgQ2hpcHNldHMgd2lsbCBlbnRlciBwcm9wcmlldGFyeSBVbmlQcm8gbG93LXBvd2Vy
+IG1vZGUgZHVyaW5nDQpzdXNwZW5kIHdpdGggbGluayBzdGF0dXMgYXMgaGliZXJuOC4gTWFrZSBz
+dXJlIGxlYXZpbmcgc3VjaCBsb3ctcG93ZXINCm1vZGUgYmVmb3JlIGxpbmt1cCB0byBhdm9pZCBh
+bnkgcG9zc2libGUgcmVjb3ZlcnkgcGF0aC4NCg0KSW4gdGhlIHNhbWUgdGltZSwgcmUtZmFjdG9y
+IHJlbGF0ZWQgZnVuY2l0b24gdG8gaW1wcm92ZSBjb2RlIHJlYWRhYmlsaXR5Lg0KDQpTaWduZWQt
+b2ZmLWJ5OiBTdGFubGV5IENodSA8c3RhbmxleS5jaHVAbWVkaWF0ZWsuY29tPg0KLS0tDQogZHJp
+dmVycy9zY3NpL3Vmcy91ZnMtbWVkaWF0ZWsuYyB8IDE5ICsrKysrKysrKystLS0tLS0tLS0NCiAx
+IGZpbGUgY2hhbmdlZCwgMTAgaW5zZXJ0aW9ucygrKSwgOSBkZWxldGlvbnMoLSkNCg0KZGlmZiAt
+LWdpdCBhL2RyaXZlcnMvc2NzaS91ZnMvdWZzLW1lZGlhdGVrLmMgYi9kcml2ZXJzL3Njc2kvdWZz
+L3Vmcy1tZWRpYXRlay5jDQppbmRleCA1M2VhZTVmZTJhZGUuLjdhYzgzOGNjMTVkMSAxMDA2NDQN
+Ci0tLSBhL2RyaXZlcnMvc2NzaS91ZnMvdWZzLW1lZGlhdGVrLmMNCisrKyBiL2RyaXZlcnMvc2Nz
+aS91ZnMvdWZzLW1lZGlhdGVrLmMNCkBAIC0zMCw2ICszMCwxMSBAQA0KICNkZWZpbmUgdWZzX210
+a19kZXZpY2VfcmVzZXRfY3RybChoaWdoLCByZXMpIFwNCiAJdWZzX210a19zbWMoVUZTX01US19T
+SVBfREVWSUNFX1JFU0VULCBoaWdoLCByZXMpDQogDQorI2RlZmluZSB1ZnNfbXRrX3VuaXByb19w
+b3dlcmRvd24oaGJhLCBwb3dlcmRvd24pIFwNCisJdWZzaGNkX2RtZV9zZXQoaGJhLCBcDQorCQkg
+ICAgICAgVUlDX0FSR19NSUJfU0VMKFZTX1VOSVBST1BPV0VSRE9XTkNPTlRST0wsIDApLCBcDQor
+CQkgICAgICAgcG93ZXJkb3duKQ0KKw0KIHN0YXRpYyB2b2lkIHVmc19tdGtfY2ZnX3VuaXByb19j
+ZyhzdHJ1Y3QgdWZzX2hiYSAqaGJhLCBib29sIGVuYWJsZSkNCiB7DQogCXUzMiB0bXA7DQpAQCAt
+MjkwLDYgKzI5NSw4IEBAIHN0YXRpYyBpbnQgdWZzX210a19wcmVfbGluayhzdHJ1Y3QgdWZzX2hi
+YSAqaGJhKQ0KIAlpbnQgcmV0Ow0KIAl1MzIgdG1wOw0KIA0KKwl1ZnNfbXRrX3VuaXByb19wb3dl
+cmRvd24oaGJhLCAwKTsNCisNCiAJLyogZGlzYWJsZSBkZWVwIHN0YWxsICovDQogCXJldCA9IHVm
+c2hjZF9kbWVfZ2V0KGhiYSwgVUlDX0FSR19NSUIoVlNfU0FWRVBPV0VSQ09OVFJPTCksICZ0bXAp
+Ow0KIAlpZiAocmV0KQ0KQEAgLTM5MCw5ICszOTcsNyBAQCBzdGF0aWMgaW50IHVmc19tdGtfbGlu
+a19zZXRfaHBtKHN0cnVjdCB1ZnNfaGJhICpoYmEpDQogCWlmIChlcnIpDQogCQlyZXR1cm4gZXJy
+Ow0KIA0KLQllcnIgPSB1ZnNoY2RfZG1lX3NldChoYmEsDQotCQkJICAgICBVSUNfQVJHX01JQl9T
+RUwoVlNfVU5JUFJPUE9XRVJET1dOQ09OVFJPTCwgMCksDQotCQkJICAgICAwKTsNCisJZXJyID0g
+dWZzX210a191bmlwcm9fcG93ZXJkb3duKGhiYSwgMCk7DQogCWlmIChlcnIpDQogCQlyZXR1cm4g
+ZXJyOw0KIA0KQEAgLTQxMywxNCArNDE4LDEwIEBAIHN0YXRpYyBpbnQgdWZzX210a19saW5rX3Nl
+dF9scG0oc3RydWN0IHVmc19oYmEgKmhiYSkNCiB7DQogCWludCBlcnI7DQogDQotCWVyciA9IHVm
+c2hjZF9kbWVfc2V0KGhiYSwNCi0JCQkgICAgIFVJQ19BUkdfTUlCX1NFTChWU19VTklQUk9QT1dF
+UkRPV05DT05UUk9MLCAwKSwNCi0JCQkgICAgIDEpOw0KKwllcnIgPSB1ZnNfbXRrX3VuaXByb19w
+b3dlcmRvd24oaGJhLCAxKTsNCiAJaWYgKGVycikgew0KIAkJLyogUmVzdW1lIFVuaVBybyBzdGF0
+ZSBmb3IgZm9sbG93aW5nIGVycm9yIHJlY292ZXJ5ICovDQotCQl1ZnNoY2RfZG1lX3NldChoYmEs
+DQotCQkJICAgICAgIFVJQ19BUkdfTUlCX1NFTChWU19VTklQUk9QT1dFUkRPV05DT05UUk9MLCAw
+KSwNCi0JCQkgICAgICAgMCk7DQorCQl1ZnNfbXRrX3VuaXByb19wb3dlcmRvd24oaGJhLCAwKTsN
+CiAJCXJldHVybiBlcnI7DQogCX0NCiANCi0tIA0KMi4xOC4wDQo=
 
