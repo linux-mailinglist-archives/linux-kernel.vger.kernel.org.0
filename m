@@ -2,60 +2,73 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 557CB1487B5
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Jan 2020 15:24:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 804A0148690
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Jan 2020 15:09:14 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392481AbgAXOYo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 24 Jan 2020 09:24:44 -0500
-Received: from elvis.franken.de ([193.175.24.41]:59877 "EHLO elvis.franken.de"
+        id S2389767AbgAXOJL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 24 Jan 2020 09:09:11 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34854 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389799AbgAXOYm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 24 Jan 2020 09:24:42 -0500
-X-Greylist: delayed 980 seconds by postgrey-1.27 at vger.kernel.org; Fri, 24 Jan 2020 09:24:41 EST
-Received: from uucp (helo=alpha)
-        by elvis.franken.de with local-bsmtp (Exim 3.36 #1)
-        id 1iuzdC-0003XT-00; Fri, 24 Jan 2020 15:08:18 +0100
-Received: by alpha.franken.de (Postfix, from userid 1000)
-        id 454FCC0784; Fri, 24 Jan 2020 15:07:51 +0100 (CET)
-Date:   Fri, 24 Jan 2020 15:07:51 +0100
-From:   Thomas Bogendoerfer <tsbogend@alpha.franken.de>
-To:     Paul Burton <paulburton@kernel.org>
-Cc:     Jiaxun Yang <jiaxun.yang@flygoat.com>, linux-mips@vger.kernel.org,
-        chenhc@lemote.com, paul.burton@mips.com,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] MIPS: Introduce aligned IO memory operations
-Message-ID: <20200124140751.GA17030@alpha.franken.de>
-References: <20200114122343.163685-1-jiaxun.yang@flygoat.com>
- <20200122184506.7zbzetn5xturxamj@pburton-laptop>
+        id S2387412AbgAXOJL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 24 Jan 2020 09:09:11 -0500
+Received: from mail-qt1-f178.google.com (mail-qt1-f178.google.com [209.85.160.178])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 906E92087E;
+        Fri, 24 Jan 2020 14:09:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1579874950;
+        bh=QFpulhqs7BhwPzn6uhHuG/g25Qlt5GhN8GB8XRQmIbE=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=x+9GRFEDe/CZ5Egno7tT03tafQdhrpnnkDgdVXXLr4AA0itgSS5o+siUXhSdqU5t0
+         CD4NTq5Mi/LTDl00BpdEocKXMMX5Hgg+pIgt0zm9kE76O0w4h0omAJNwgqto1v3iJs
+         /PK289bU1BuH8u3OEHTzDhep/38Sub4qdQRG9VX8=
+Received: by mail-qt1-f178.google.com with SMTP id d9so1542189qte.12;
+        Fri, 24 Jan 2020 06:09:10 -0800 (PST)
+X-Gm-Message-State: APjAAAV4jCgCmINVmie57kE2BY4ce+LxhuI31EqO/VzvgynnO6UvmoOs
+        UDsNwiWiH/Fr8g7os3dhZq4NymtWadTMEip0Kg==
+X-Google-Smtp-Source: APXvYqw9emwqw3XGNWzol/n1tHMUux0BStqaxT8MOP10X+Z7I4obcUr5hYArd029o57NsAJ4M/xzBjV3YF57vgHToNM=
+X-Received: by 2002:ac8:59:: with SMTP id i25mr2279317qtg.110.1579874949719;
+ Fri, 24 Jan 2020 06:09:09 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200122184506.7zbzetn5xturxamj@pburton-laptop>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+References: <20200124105753.15976-1-dafna.hirschfeld@collabora.com>
+In-Reply-To: <20200124105753.15976-1-dafna.hirschfeld@collabora.com>
+From:   Rob Herring <robh+dt@kernel.org>
+Date:   Fri, 24 Jan 2020 08:08:58 -0600
+X-Gmail-Original-Message-ID: <CAL_Jsq+7E6B181hYn_6yNE53Mf+jiQ+o6pGDotwGX=m+GysW4A@mail.gmail.com>
+Message-ID: <CAL_Jsq+7E6B181hYn_6yNE53Mf+jiQ+o6pGDotwGX=m+GysW4A@mail.gmail.com>
+Subject: Re: [PATCH] dt-bindings: fix compilation error of the example in marvell,mmp3-hsic-phy.yaml
+To:     Dafna Hirschfeld <dafna.hirschfeld@collabora.com>, soc@kernel.org
+Cc:     devicetree@vger.kernel.org, Kishon Vijay Abraham I <kishon@ti.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Helen Koike <helen.koike@collabora.com>,
+        Ezequiel Garcia <ezequiel@collabora.com>,
+        Collabora Kernel ML <kernel@collabora.com>, dafna3@gmail.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jan 22, 2020 at 10:45:06AM -0800, Paul Burton wrote:
-> Hi Jiaxun,
-> 
-> On Tue, Jan 14, 2020 at 08:23:43PM +0800, Jiaxun Yang wrote:
-> > Some platforms, such as Loongson64 or QEMU/KVM, don't support unaligned
-> > instructions like lwl or lwr in IO memory access. However, our current
-> > IO memcpy/memset is wired to the generic implementation, which leads
-> > to a fatal result.
-> 
-> Hmm, I wonder if we should just do this unconditionally on all systems.
-> I can't think of a reason it'd ever be a good idea to use lwl/lwr on an
-> MMIO device. Any thoughts on that?
+On Fri, Jan 24, 2020 at 4:58 AM Dafna Hirschfeld
+<dafna.hirschfeld@collabora.com> wrote:
+>
+> Running `make dt_binging_check`, gives the error:
+>
+> DTC     Documentation/devicetree/bindings/phy/marvell,mmp3-hsic-phy.example.dt.yaml
+> Error: Documentation/devicetree/bindings/phy/marvell,mmp3-hsic-phy.example.dts:20.41-42 syntax error
+> FATAL ERROR: Unable to parse input tree
+>
+> This is because the example uses the macro GPIO_ACTIVE_HIGH which
+> is defined in gpio.h but the include of this header is missing.
+> Add the include to fix the error.
+>
+> Signed-off-by: Dafna Hirschfeld <dafna.hirschfeld@collabora.com>
 
-depends on the type of device. I can see benefits for framebuffers
-and memory devices since memset/memcpy are more optimised than the
-function in this patch.
+Fixes: f6f149604eef ("dt-bindings: phy: Add binding for marvell,mmp3-hsic-phy")
+Acked-by: Rob Herring <robh@kernel.org>
 
-Thomas.
+Arnd, Olof, The above commit is in your tree. Please apply this.
 
--- 
-Crap can work. Given enough thrust pigs will fly, but it's not necessarily a
-good idea.                                                [ RFC1925, 2.3 ]
+Rob
