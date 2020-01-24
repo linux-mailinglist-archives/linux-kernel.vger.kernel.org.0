@@ -2,125 +2,78 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E5C5F147AE5
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Jan 2020 10:40:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 695A8147B41
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Jan 2020 10:43:00 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731597AbgAXJjR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 24 Jan 2020 04:39:17 -0500
-Received: from mail-ot1-f66.google.com ([209.85.210.66]:41816 "EHLO
-        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730923AbgAXJjF (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 24 Jan 2020 04:39:05 -0500
-Received: by mail-ot1-f66.google.com with SMTP id r27so1031147otc.8
-        for <linux-kernel@vger.kernel.org>; Fri, 24 Jan 2020 01:39:05 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=KiV1c6wrp94w+IHJVeAB9MSJJhCX1k8bVyzQM9PAZU0=;
-        b=pchzY+3TjivETzxd8jhVPMcAwo9v121q36h6UWhV/C1UCB4L2tV04XWJPXyIkppn3i
-         y11I7rjHncspMjgSNHCrxLwBZ/kjTeZ31QLabMjg2abni/4tzZAWKlWsyyWrot+/O75k
-         aOP7K391ySa15JXofUhq+d/rC+fBdDon5dBbwBIedWZKBCqSbU6KjtT1/+69pyzyauXW
-         /CD6q36C8AZnnxhTpHB4DQU8bbFqpLMOD9PSqyBCb7u4l3HNF8OsCVv0hSVn4UwxlcIk
-         wRfr8cWmmDMOeQuQ51wkhCE9gxrAHka5SVAQ5HQzLX4Uwzcjliyc4gJRVZC8dC2pFoJh
-         RUfA==
-X-Gm-Message-State: APjAAAUbRyM+Yb8rHVifmV1rFncCy2FaeNuiGgmhpJG4D52gbH/18rHW
-        YLSHd7CR21wajRkHK6A2Ug9eW1Iqafu4xrs63k8WJw==
-X-Google-Smtp-Source: APXvYqwVtRSh0P5Y+CM+jxdNi08h9wIsY+nrQY5/l2/DgblmmCOL9JA68fv4cLDJadXXkjGORwiIIO6GnqX000Lljhs=
-X-Received: by 2002:a05:6830:d5:: with SMTP id x21mr1725342oto.262.1579858744718;
- Fri, 24 Jan 2020 01:39:04 -0800 (PST)
+        id S1733113AbgAXJmG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 24 Jan 2020 04:42:06 -0500
+Received: from ozlabs.org ([203.11.71.1]:60269 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1731535AbgAXJmE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 24 Jan 2020 04:42:04 -0500
+Received: by ozlabs.org (Postfix, from userid 1034)
+        id 483vLK1YJvz9sSb; Fri, 24 Jan 2020 20:42:01 +1100 (AEDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ellerman.id.au;
+        s=201909; t=1579858921;
+        bh=ijs9DWaapmhyMwt/s0m86iyYYE/6ER+Falkp2AK4k1M=;
+        h=From:To:Cc:Subject:Date:From;
+        b=FcoKRz6iPslqhHKVdIsWR9rVztpcKIw7307asdvbyt1cd+nHvGdl/5gZ4Lri8dggx
+         CduFeUNsxqe0zinUssxanLSIfnJNYR5XM6iYK/rDVw2nSvfqj+kWa2TraA1PCCG3wl
+         xKZF8lPMlLsVJFAm8Ray3YvN+tc4wCToBJvIc31VhcYtflMhwBrKY4yn3+FhAefGw8
+         wgOpGb6+hXa9wNWhjdf9EVUbFrakNYGISydm2MgyZ5L9iPHp0j/JaYvmbiTtThCJEn
+         aN8u/8s1Tl82bjlGsaFFHGSMT2L2CGbrXu210NraO5C2P45zm+5SdD0KLwVXplkFn8
+         oqsD3HCOtq67g==
+From:   Michael Ellerman <mpe@ellerman.id.au>
+To:     netdev@vger.kernel.org
+Cc:     davem@davemloft.net, linux-kernel@vger.kernel.org,
+        security@kernel.org, ivansprundel@ioactive.com, vishal@chelsio.com
+Subject: [PATCH] net: cxgb3_main: Add CAP_NET_ADMIN check to CHELSIO_GET_MEM
+Date:   Fri, 24 Jan 2020 20:41:44 +1100
+Message-Id: <20200124094144.15831-1-mpe@ellerman.id.au>
+X-Mailer: git-send-email 2.21.1
 MIME-Version: 1.0
-References: <20200120104909.13991-1-david@redhat.com> <20200124090052.GA2958140@kroah.com>
- <6dd0ea5a-e5c3-c4b6-2b2e-93537571d7d6@redhat.com>
-In-Reply-To: <6dd0ea5a-e5c3-c4b6-2b2e-93537571d7d6@redhat.com>
-From:   "Rafael J. Wysocki" <rafael@kernel.org>
-Date:   Fri, 24 Jan 2020 10:38:53 +0100
-Message-ID: <CAJZ5v0iJJfTjZ6mZRDJSkZp+Cn1+VjFz=D8nLM15r6WtTRa88w@mail.gmail.com>
-Subject: Re: [PATCH v1] driver core: check for dead devices before onlining/offlining
-To:     David Hildenbrand <david@redhat.com>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Suzuki K Poulose <suzuki.poulose@arm.com>,
-        Saravana Kannan <saravanak@google.com>,
-        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Michal Hocko <mhocko@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jan 24, 2020 at 10:09 AM David Hildenbrand <david@redhat.com> wrote:
->
-> On 24.01.20 10:00, Greg Kroah-Hartman wrote:
-> > On Mon, Jan 20, 2020 at 11:49:09AM +0100, David Hildenbrand wrote:
-> >> We can have rare cases where the removal of a device races with
-> >> somebody trying to online it (esp. via sysfs). We can simply check
-> >> if the device is already removed or getting removed under the dev->lock.
-> >>
-> >> E.g., right now, if memory block devices are removed (remove_memory()),
-> >> we do a:
-> >>
-> >> remove_memory() -> lock_device_hotplug() -> mem_hotplug_begin() ->
-> >> lock_device() -> dev->dead = true
-> >>
-> >> Somebody coming via sysfs (/sys/devices/system/memory/memoryX/online)
-> >> triggers a:
-> >>
-> >> lock_device_hotplug_sysfs() -> device_online() -> lock_device() ...
-> >>
-> >> So if we made it just before the lock_device_hotplug_sysfs() but get
-> >> delayed until remove_memory() released all locks, we will continue
-> >> taking locks and trying to online the device - which is then a zombie
-> >> device.
-> >>
-> >> Note that at least the memory onlining path seems to be protected by
-> >> checking if all memory sections are still present (something we can then
-> >> get rid of). We do have other sysfs attributes
-> >> (e.g., /sys/devices/system/memory/memoryX/valid_zones) that don't do any
-> >> such locking yet and might race with memory removal in a similar way. For
-> >> these users, we can then do a
-> >>
-> >> device_lock(dev);
-> >> if (!device_is_dead(dev)) {
-> >>      /* magic /*
-> >> }
-> >> device_unlock(dev);
-> >>
-> >> Introduce and use device_is_dead() right away.
-> >>
-> >> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> >> Cc: "Rafael J. Wysocki" <rafael@kernel.org>
-> >> Cc: Suzuki K Poulose <suzuki.poulose@arm.com>
-> >> Cc: Saravana Kannan <saravanak@google.com>
-> >> Cc: Heikki Krogerus <heikki.krogerus@linux.intel.com>
-> >> Cc: Dan Williams <dan.j.williams@intel.com>
-> >> Cc: Michal Hocko <mhocko@kernel.org>
-> >> Signed-off-by: David Hildenbrand <david@redhat.com>
-> >> ---
-> >>
-> >> Am I missing any obvious mechanism in the device core that handles
-> >> something like this already? (especially also for other sysfs attributes?)
-> >
-> > So is a sysfs attribute causing the device itself to go away?  We have
->
-> nope, removal is triggered via the driver, not via a sysfs attribute.
->
-> Regarding this patch: Is there anything prohibiting the possible
-> scenario I document above (IOW, is this patch applicable, or is there
-> another way to fence it properly (e.g., the "specific call" you mentioned))?
+The cxgb3 driver for "Chelsio T3-based gigabit and 10Gb Ethernet
+adapters" implements a custom ioctl as SIOCCHIOCTL/SIOCDEVPRIVATE in
+cxgb_extension_ioctl().
 
-For the devices that support online/offline (like CPUs in memory), the
-idea is that calling device_del() on them while they are in use may
-cause problems like data loss to occur and note that device_del()
-itself cannot fail (because it needs to handle surprise removal too).
-However, offline can fail, so the rule of thumb is to do the offline
-(and handle the errors possibly returned by it) and only call
-device_del() if that is successful.
+One of the subcommands of the ioctl is CHELSIO_GET_MEM, which appears
+to read memory directly out of the adapter and return it to userspace.
+It's not entirely clear what the contents of the adapter memory
+contains, but the assumption is that it shouldn't be accessible to all
+users.
 
-Of course, if surprise removal is possible, offline is kind of
-pointless, but if it is supported anyway it should return success when
-the device is physically not present already.
+So add a CAP_NET_ADMIN check to the CHELSIO_GET_MEM case. Put it after
+the is_offload() check, which matches two of the other subcommands in
+the same function which also check for is_offload() and CAP_NET_ADMIN.
+
+Found by Ilja by code inspection, not tested as I don't have the
+required hardware.
+
+Reported-by: Ilja Van Sprundel <ivansprundel@ioactive.com>
+Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+---
+ drivers/net/ethernet/chelsio/cxgb3/cxgb3_main.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/drivers/net/ethernet/chelsio/cxgb3/cxgb3_main.c b/drivers/net/ethernet/chelsio/cxgb3/cxgb3_main.c
+index 58f89f6a040f..97ff8608f0ab 100644
+--- a/drivers/net/ethernet/chelsio/cxgb3/cxgb3_main.c
++++ b/drivers/net/ethernet/chelsio/cxgb3/cxgb3_main.c
+@@ -2448,6 +2448,8 @@ static int cxgb_extension_ioctl(struct net_device *dev, void __user *useraddr)
+ 
+ 		if (!is_offload(adapter))
+ 			return -EOPNOTSUPP;
++		if (!capable(CAP_NET_ADMIN))
++			return -EPERM;
+ 		if (!(adapter->flags & FULL_INIT_DONE))
+ 			return -EIO;	/* need the memory controllers */
+ 		if (copy_from_user(&t, useraddr, sizeof(t)))
+-- 
+2.21.1
+
