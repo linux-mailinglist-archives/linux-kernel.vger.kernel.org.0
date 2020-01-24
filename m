@@ -2,37 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CE0F2148466
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Jan 2020 12:44:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3B256148471
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Jan 2020 12:44:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389552AbgAXLHk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 24 Jan 2020 06:07:40 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42804 "EHLO mail.kernel.org"
+        id S2389718AbgAXLI6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 24 Jan 2020 06:08:58 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44384 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732427AbgAXLHe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 24 Jan 2020 06:07:34 -0500
+        id S2389717AbgAXLIy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 24 Jan 2020 06:08:54 -0500
 Received: from localhost (ip-213-127-102-57.ip.prioritytelecom.net [213.127.102.57])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 59FD72071A;
-        Fri, 24 Jan 2020 11:07:33 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 476FC20663;
+        Fri, 24 Jan 2020 11:08:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579864053;
-        bh=JpbGFaVqvCFMCutViGa8QSn9JWFJ0c7Uuy6gghZq4iM=;
+        s=default; t=1579864134;
+        bh=65oIQUbtDm3SrnohFcdeYGu2gUSsLPXvueJeKXNf02s=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=TbG0KQpmSqWsNLEPT8YqOrDdDJwYdeY1Ku6ygiPQU5uuRjKPK8Yd9QBcrbtrAXf9u
-         AxSY6O1dXPprpmN8t1mGDWwFymCeoZ0qeMaTwMxC99Pu7cAqA7csn8Xvq3GutrphOf
-         pOLVm9RRVewv7etYWl1LILsgJ0LfiZzXXjSGiLCQ=
+        b=KpFzNHEibMvaQeRSJ5qK5EdS1ZlNRlHN94vjkSYMd+OOqlR4obTEO9HOzO5Xc6cX/
+         2LIN7O8O4xTKZQ4+oRdfaMbabGRENNRG6lr2Kx8Qqqek1lRFhcj3xVo7SCxQk2GB3Y
+         42eF9Eg2lXElgu24e/aqVOTAXbq5WJ7T5aiORBis=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Huazhong Tan <tanhuazhong@huawei.com>,
-        Peng Li <lipeng321@huawei.com>,
-        "David S. Miller" <davem@davemloft.net>,
+        stable@vger.kernel.org, Liu Jian <liujian56@huawei.com>,
+        Hamish Martin <hamish.martin@alliedtelesis.co.nz>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 145/639] net: hns3: fix bug of ethtool_ops.get_channels for VF
-Date:   Fri, 24 Jan 2020 10:25:15 +0100
-Message-Id: <20200124093105.406619516@linuxfoundation.org>
+Subject: [PATCH 4.19 155/639] driver: uio: fix possible memory leak in __uio_register_device
+Date:   Fri, 24 Jan 2020 10:25:25 +0100
+Message-Id: <20200124093106.624509510@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
 In-Reply-To: <20200124093047.008739095@linuxfoundation.org>
 References: <20200124093047.008739095@linuxfoundation.org>
@@ -45,49 +44,39 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Huazhong Tan <tanhuazhong@huawei.com>
+From: Liu Jian <liujian56@huawei.com>
 
-[ Upstream commit 8be7362186bd5ccb5f6f72be49751ad2778e2636 ]
+[ Upstream commit 1a392b3de7c5747506b38fc14b2e79977d3c7770 ]
 
-The current code returns the number of all queues that can be used and
-the number of queues that have been allocated, which is incorrect.
-What should be returned is the number of queues allocated for each enabled
-TC and the number of queues that can be allocated.
+'idev' is malloced in __uio_register_device() and leak free it before
+leaving from the uio_get_minor() error handing case, it will cause
+memory leak.
 
-This patch fixes it.
-
-Fixes: 849e46077689 ("net: hns3: add ethtool_ops.get_channels support for VF")
-Signed-off-by: Huazhong Tan <tanhuazhong@huawei.com>
-Signed-off-by: Peng Li <lipeng321@huawei.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Fixes: a93e7b331568 ("uio: Prevent device destruction while fds are open")
+Signed-off-by: Liu Jian <liujian56@huawei.com>
+Reviewed-by: Hamish Martin <hamish.martin@alliedtelesis.co.nz>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/hisilicon/hns3/hns3vf/hclgevf_main.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ drivers/uio/uio.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3vf/hclgevf_main.c b/drivers/net/ethernet/hisilicon/hns3/hns3vf/hclgevf_main.c
-index 67db19709deaa..fd5375b5991bb 100644
---- a/drivers/net/ethernet/hisilicon/hns3/hns3vf/hclgevf_main.c
-+++ b/drivers/net/ethernet/hisilicon/hns3/hns3vf/hclgevf_main.c
-@@ -1957,7 +1957,8 @@ static u32 hclgevf_get_max_channels(struct hclgevf_dev *hdev)
- 	struct hnae3_handle *nic = &hdev->nic;
- 	struct hnae3_knic_private_info *kinfo = &nic->kinfo;
+diff --git a/drivers/uio/uio.c b/drivers/uio/uio.c
+index 2762148c169df..e4b418757017f 100644
+--- a/drivers/uio/uio.c
++++ b/drivers/uio/uio.c
+@@ -938,8 +938,10 @@ int __uio_register_device(struct module *owner,
+ 	atomic_set(&idev->event, 0);
  
--	return min_t(u32, hdev->rss_size_max * kinfo->num_tc, hdev->num_tqps);
-+	return min_t(u32, hdev->rss_size_max,
-+		     hdev->num_tqps / kinfo->num_tc);
- }
+ 	ret = uio_get_minor(idev);
+-	if (ret)
++	if (ret) {
++		kfree(idev);
+ 		return ret;
++	}
  
- /**
-@@ -1978,7 +1979,7 @@ static void hclgevf_get_channels(struct hnae3_handle *handle,
- 	ch->max_combined = hclgevf_get_max_channels(hdev);
- 	ch->other_count = 0;
- 	ch->max_other = 0;
--	ch->combined_count = hdev->num_tqps;
-+	ch->combined_count = handle->kinfo.rss_size;
- }
- 
- static void hclgevf_get_tqps_and_rss_info(struct hnae3_handle *handle,
+ 	idev->dev.devt = MKDEV(uio_major, idev->minor);
+ 	idev->dev.class = &uio_class;
 -- 
 2.20.1
 
