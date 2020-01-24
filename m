@@ -2,37 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6D3DE1480E5
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Jan 2020 12:15:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E73F11480EA
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Jan 2020 12:15:55 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387917AbgAXLP1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 24 Jan 2020 06:15:27 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51924 "EHLO mail.kernel.org"
+        id S2390290AbgAXLPd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 24 Jan 2020 06:15:33 -0500
+Received: from mail.kernel.org ([198.145.29.99]:52090 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390259AbgAXLPX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 24 Jan 2020 06:15:23 -0500
+        id S2388378AbgAXLPa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 24 Jan 2020 06:15:30 -0500
 Received: from localhost (ip-213-127-102-57.ip.prioritytelecom.net [213.127.102.57])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7C3542077C;
-        Fri, 24 Jan 2020 11:15:21 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id CC42320708;
+        Fri, 24 Jan 2020 11:15:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579864522;
-        bh=Z2e3TdZKupN01dUrMHq1I9q68NvHCMqnkZ6AhniEOHs=;
+        s=default; t=1579864529;
+        bh=zEjikqgN+4XezL7ZwWvV/RPtGlMNwTf5fCbigx2ZWuQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ii2Ucn6iPKlR1En59G3vdntmT2Zri65RJVC9lrdrINa8txEaug94GGVZz7GlZtiAv
-         1H+3rPqUyguHZ1oSXQUW+YlSc9eUOQMZ7spkTctk2Fz1wsNKaB2BaQkqXE33fsGHcM
-         tMtxSoiDcGhnnoJkYXRYplFvfz8fjXUMzoQM7iNk=
+        b=Bu+/jYOM89ZRpDzD8bSXj8Fjsc8eUPdngPOYMXpFnfbM4qwKPdBxdtsJLIGnoSsxP
+         LYn1MWR2Ha4l70sRZjUahMcL4dpI/VnTu6QHVikglzVLVA/0+sp2tMZ+v6aSBsZmZh
+         3c/UAVatNjbXc84HuXRm9Z/7xbEa8qDyDU7krsRU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Martin Sperl <kernel@martin.sperl.org>,
-        Stefan Wahren <stefan.wahren@i2se.com>,
-        Mark Brown <broonie@kernel.org>,
+        stable@vger.kernel.org, Mark Rutland <mark.rutland@arm.com>,
+        Matteo Croce <mcroce@redhat.com>,
+        Will Deacon <will.deacon@arm.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 289/639] spi: bcm2835aux: fix driver to not allow 65535 (=-1) cs-gpios
-Date:   Fri, 24 Jan 2020 10:27:39 +0100
-Message-Id: <20200124093123.082918885@linuxfoundation.org>
+Subject: [PATCH 4.19 291/639] arm64/vdso: dont leak kernel addresses
+Date:   Fri, 24 Jan 2020 10:27:41 +0100
+Message-Id: <20200124093123.346392872@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
 In-Reply-To: <20200124093047.008739095@linuxfoundation.org>
 References: <20200124093047.008739095@linuxfoundation.org>
@@ -45,59 +45,39 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Martin Sperl <kernel@martin.sperl.org>
+From: Matteo Croce <mcroce@redhat.com>
 
-[ Upstream commit 509c583620e9053e43d611bf1614fc3d3abafa96 ]
+[ Upstream commit 0f1bf7e39822476b2f921435cf990f67a61f5f92 ]
 
-The original driver by default defines num_chipselects as -1.
-This actually allicates an array of 65535 entries in
-of_spi_register_master.
+Since commit ad67b74d2469d9b8 ("printk: hash addresses printed with %p"),
+two obfuscated kernel pointer are printed at every boot:
 
-There is a side-effect for buggy device trees that (contrary to
-dt-binding documentation) have no cs-gpio defined.
+    vdso: 2 pages (1 code @ (____ptrval____), 1 data @ (____ptrval____))
 
-This mode was never supported by the driver due to limitations
-of native cs and additional code complexity and is explicitly
-not stated to be implemented.
+Remove the the print completely, as it's useless without the addresses.
 
-To keep backwards compatibility with such buggy DTs we limit
-the number of chip_selects to 1, as for all practical purposes
-it is only ever realistic to use a single chip select in
-native cs mode without negative side-effects.
-
-Fixes: 1ea29b39f4c812ec ("spi: bcm2835aux: add bcm2835 auxiliary spi device...")
-Signed-off-by: Martin Sperl <kernel@martin.sperl.org>
-Acked-by: Stefan Wahren <stefan.wahren@i2se.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Fixes: ad67b74d2469d9b8 ("printk: hash addresses printed with %p")
+Acked-by: Mark Rutland <mark.rutland@arm.com>
+Signed-off-by: Matteo Croce <mcroce@redhat.com>
+Signed-off-by: Will Deacon <will.deacon@arm.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/spi/spi-bcm2835aux.c | 13 ++++++++++++-
- 1 file changed, 12 insertions(+), 1 deletion(-)
+ arch/arm64/kernel/vdso.c | 2 --
+ 1 file changed, 2 deletions(-)
 
-diff --git a/drivers/spi/spi-bcm2835aux.c b/drivers/spi/spi-bcm2835aux.c
-index 12c1fa5b06c5b..c63ed402cf860 100644
---- a/drivers/spi/spi-bcm2835aux.c
-+++ b/drivers/spi/spi-bcm2835aux.c
-@@ -416,7 +416,18 @@ static int bcm2835aux_spi_probe(struct platform_device *pdev)
- 	platform_set_drvdata(pdev, master);
- 	master->mode_bits = (SPI_CPOL | SPI_CS_HIGH | SPI_NO_CS);
- 	master->bits_per_word_mask = SPI_BPW_MASK(8);
--	master->num_chipselect = -1;
-+	/* even though the driver never officially supported native CS
-+	 * allow a single native CS for legacy DT support purposes when
-+	 * no cs-gpio is configured.
-+	 * Known limitations for native cs are:
-+	 * * multiple chip-selects: cs0-cs2 are all simultaniously asserted
-+	 *     whenever there is a transfer -  this even includes SPI_NO_CS
-+	 * * SPI_CS_HIGH: is ignores - cs are always asserted low
-+	 * * cs_change: cs is deasserted after each spi_transfer
-+	 * * cs_delay_usec: cs is always deasserted one SCK cycle after
-+	 *     a spi_transfer
-+	 */
-+	master->num_chipselect = 1;
- 	master->transfer_one = bcm2835aux_spi_transfer_one;
- 	master->handle_err = bcm2835aux_spi_handle_err;
- 	master->prepare_message = bcm2835aux_spi_prepare_message;
+diff --git a/arch/arm64/kernel/vdso.c b/arch/arm64/kernel/vdso.c
+index ec0bb588d7553..42b7082029e1d 100644
+--- a/arch/arm64/kernel/vdso.c
++++ b/arch/arm64/kernel/vdso.c
+@@ -146,8 +146,6 @@ static int __init vdso_init(void)
+ 	}
+ 
+ 	vdso_pages = (vdso_end - vdso_start) >> PAGE_SHIFT;
+-	pr_info("vdso: %ld pages (%ld code @ %p, %ld data @ %p)\n",
+-		vdso_pages + 1, vdso_pages, vdso_start, 1L, vdso_data);
+ 
+ 	/* Allocate the vDSO pagelist, plus a page for the data. */
+ 	vdso_pagelist = kcalloc(vdso_pages + 1, sizeof(struct page *),
 -- 
 2.20.1
 
