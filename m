@@ -2,266 +2,86 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 74C04148F48
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Jan 2020 21:23:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B54FE148F4D
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Jan 2020 21:24:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388682AbgAXUXl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 24 Jan 2020 15:23:41 -0500
-Received: from mail-lf1-f67.google.com ([209.85.167.67]:32931 "EHLO
-        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387480AbgAXUXk (ORCPT
+        id S2404238AbgAXUYC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 24 Jan 2020 15:24:02 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:37334 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2392088AbgAXUX7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 24 Jan 2020 15:23:40 -0500
-Received: by mail-lf1-f67.google.com with SMTP id n25so2027007lfl.0
-        for <linux-kernel@vger.kernel.org>; Fri, 24 Jan 2020 12:23:38 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=eibpFJ/dL/po7h/5lUN6b9t7vGqoq6edRosDwybFErA=;
-        b=THXVTwkodkl4NV0lthJq64T8BkB+kb+ffvrbOIIER8YxEvQBCT2o/7LDw2RGVsJRL2
-         uXOqDAz/tYlhLLwyQPSbMtBDwZfl9wCyed52H+MSR+Bhx3i7TtCEQ5VJU92oS91V0RFM
-         ZV5jHG9CroKc3T7vN4hYoBeavgcbdaIhntw1I43u67p8jWEleo+IoYekee0/fKj5k0q5
-         j7pVKy/aHd/X5lwcOmIBtCfUfiW1DfPSHtSfw5MX86ChFkP7YXD5BEfd29Jxxk9IAv24
-         S4NJIPiBbOExUxqQNGmNrCJhRl4iIoj27x5+BxRyuAPtp8XZPn0qsKyzOjcH1s/aC3Lz
-         SQow==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=eibpFJ/dL/po7h/5lUN6b9t7vGqoq6edRosDwybFErA=;
-        b=TWQMKuRuxu8EjnHrpDiJA7ev/9JW7LH01yZFXb2xnMDM+MqSG2N9jYPVfuARw0Inpi
-         IcV8246CtPGu+ai57vU+5GTIfl+Vl25EK3SSdIVxHTpXitXTeoCmbAuxrufw0YN4mJYC
-         IjaO1HsoJekpBIirRIJP+cHsbIAYs26ado6zWGYvomzBeCYKp4n0j1ohPxhKFHD19dho
-         0ZzWvlWd5Ym479cACUnMpKjwG852U7YcRLi8Lc1Ssy+yQjWQkROIdNmDkfY3DMWORF3Q
-         W2fmVqIWC6yMCQI66gtP6rbYEfzMZKGunbtTKn1tJ2eNRof92jkc5y/tzMr7h2Y68849
-         1cwQ==
-X-Gm-Message-State: APjAAAUx+mtyXJGghUUgfJBbRQIPqrBPafkd6kMDz/2bsRFeEE3sprSI
-        JXGtm+LLVXMC+0v8whldcii+z9is9TPi1qF81kpThg==
-X-Google-Smtp-Source: APXvYqxuuu1/zxYUm5WDAcBoC5BQJSb6/tHB3M19FeY/I611GVLHEkCovpovRlvKoQIBXafdXuc2bwrDj8ePsYYTNKk=
-X-Received: by 2002:a19:4208:: with SMTP id p8mr2257984lfa.160.1579897417530;
- Fri, 24 Jan 2020 12:23:37 -0800 (PST)
+        Fri, 24 Jan 2020 15:23:59 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
+        Content-Type:In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:
+        Subject:Sender:Reply-To:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=dI15mVTzCi+gGAV9o/iOXkOXan3t0Vgap5WIuCnA5H4=; b=JVrBnaCJO2kxOHjSfLs3JvXpl
+        J2u9N2QO5KAZY9TfdOJSl9EFQ/nMbrFza+6IxFSiIcQenlv3IhQro03R2rhnd5SQ+X4QuoxBvj1eQ
+        uo5KynW7h3KNEIbOH+SVqjZNrzWzbH/JFDaRo4XtaGYG0B3rI/eU+NE2mlIJfbhytAWHcDQvZBIS2
+        u7RzhNBPfKIEva/CD8K8aqy08fRGMrZkLA2KzusHZGAfsoND6tkYRZc/QlY3ZrDt0n80MRTCOH+jM
+        4DfDTu5QJie5JJ0U/PKQv2lqRBZhEOXZsWhjJ4RlcmmFcpCqFIZRlH/azkFtxCl3bwOhPidGby3Hh
+        n7DKtkPVw==;
+Received: from [2601:1c0:6280:3f0::ed68]
+        by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1iv5Uk-0003Hp-VA; Fri, 24 Jan 2020 20:23:59 +0000
+Subject: Re: [PATCH] random: Document add_hwgenerator_randomness() with other
+ input functions
+To:     Mark Brown <broonie@kernel.org>, Theodore Ts'o <tytso@mit.edu>
+Cc:     linux-kernel@vger.kernel.org
+References: <20200124134106.8472-1-broonie@kernel.org>
+From:   Randy Dunlap <rdunlap@infradead.org>
+Message-ID: <825bf310-8ae6-ba62-1b70-709c738a7aa5@infradead.org>
+Date:   Fri, 24 Jan 2020 12:23:57 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.3.0
 MIME-Version: 1.0
-References: <20191220200353.252399-1-rajatja@google.com> <20191220200353.252399-2-rajatja@google.com>
- <87v9p1gk4z.fsf@intel.com>
-In-Reply-To: <87v9p1gk4z.fsf@intel.com>
-From:   Rajat Jain <rajatja@google.com>
-Date:   Fri, 24 Jan 2020 12:23:00 -0800
-Message-ID: <CACK8Z6GN1tXj+a3HHgyVKzTcgYBB+v8gpLCqh+YgTU0tS5b-OA@mail.gmail.com>
-Subject: Re: [PATCH v5 2/3] drm/i915: Lookup and attach ACPI device node for connectors
-To:     Jani Nikula <jani.nikula@linux.intel.com>
-Cc:     Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Sean Paul <sean@poorly.run>, David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-        Rodrigo Vivi <rodrigo.vivi@intel.com>,
-        =?UTF-8?B?VmlsbGUgU3lyasOkbMOk?= <ville.syrjala@linux.intel.com>,
-        Chris Wilson <chris@chris-wilson.co.uk>,
-        Imre Deak <imre.deak@intel.com>,
-        =?UTF-8?Q?Jos=C3=A9_Roberto_de_Souza?= <jose.souza@intel.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        intel-gfx@lists.freedesktop.org,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Mat King <mathewk@google.com>,
-        Daniel Thompson <daniel.thompson@linaro.org>,
-        Jonathan Corbet <corbet@lwn.net>, Pavel Machek <pavel@denx.de>,
-        Sean Paul <seanpaul@google.com>,
-        Duncan Laurie <dlaurie@google.com>,
-        Jesse Barnes <jsbarnes@google.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Rajat Jain <rajatxjain@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20200124134106.8472-1-broonie@kernel.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Jani,
+On 1/24/20 5:41 AM, Mark Brown wrote:
+> The section at the top of random.c which documents the input functions
+> available does not document add_hwgenerator_randomness() which might lead
+> a reader to overlook it. Add a brief note about it.
+> 
+> Signed-off-by: Mark Brown <broonie@kernel.org>
+> ---
+>  drivers/char/random.c | 8 ++++++++
+>  1 file changed, 8 insertions(+)
+> 
+> diff --git a/drivers/char/random.c b/drivers/char/random.c
+> index c7f9584de2c8..16070c36add3 100644
+> --- a/drivers/char/random.c
+> +++ b/drivers/char/random.c
+> @@ -228,6 +228,14 @@
+>   * particular randomness source.  They do this by keeping track of the
+>   * first and second order deltas of the event timings.
+>   *
+> + * There is also an interface for true hardware RNGs:
+> + *
+> + *	void add_hwgenerator_randomness(const char *buffer, size_t count,
+> + *				size_t entropy);
+> + *
+> + * This will credit entropy as specified by the caller, if the entropy
 
-Thank you for the review. Please see inline.
+Not a comma there. Either a ';' or "caller. If ..."
 
-On Fri, Jan 24, 2020 at 3:37 AM Jani Nikula <jani.nikula@linux.intel.com> wrote:
->
-> On Fri, 20 Dec 2019, Rajat Jain <rajatja@google.com> wrote:
-> > Lookup and attach ACPI nodes for intel connectors. The lookup is done
-> > in compliance with ACPI Spec 6.3
-> > https://uefi.org/sites/default/files/resources/ACPI_6_3_final_Jan30.pdf
-> > (Ref: Pages 1119 - 1123).
-> >
-> > This can be useful for any connector specific platform properties. (This
-> > will be used for privacy screen in next patch).
-> >
-> > Signed-off-by: Rajat Jain <rajatja@google.com>
-> > ---
-> > v5: same as v4
-> > v4: Same as v3
-> > v3: fold the code into existing acpi_device_id_update() function
-> > v2: formed by splitting the original patch into ACPI lookup, and privacy
-> >     screen property. Also move it into i915 now that I found existing code
-> >     in i915 that can be re-used.
-> >
-> >  drivers/gpu/drm/i915/display/intel_acpi.c     | 24 +++++++++++++++++++
-> >  .../drm/i915/display/intel_display_types.h    |  3 +++
-> >  drivers/gpu/drm/i915/display/intel_dp.c       |  3 +++
-> >  3 files changed, 30 insertions(+)
-> >
-> > diff --git a/drivers/gpu/drm/i915/display/intel_acpi.c b/drivers/gpu/drm/i915/display/intel_acpi.c
-> > index e21fb14d5e07..101a56c08996 100644
-> > --- a/drivers/gpu/drm/i915/display/intel_acpi.c
-> > +++ b/drivers/gpu/drm/i915/display/intel_acpi.c
-> > @@ -222,11 +222,23 @@ static u32 acpi_display_type(struct intel_connector *connector)
-> >       return display_type;
-> >  }
-> >
-> > +/*
-> > + * Ref: ACPI Spec 6.3
-> > + * https://uefi.org/sites/default/files/resources/ACPI_6_3_final_Jan30.pdf
-> > + * Pages 1119 - 1123 describe, what I believe, a standard way of
-> > + * identifying / addressing "display panels" in the ACPI. It provides
-> > + * a way for the ACPI to define devices for the display panels attached
-> > + * to the system. It thus provides a way for the BIOS to export any panel
-> > + * specific properties to the system via ACPI (like device trees).
-> > + */
-> >  void intel_acpi_device_id_update(struct drm_i915_private *dev_priv)
-> >  {
-> >       struct drm_device *drm_dev = &dev_priv->drm;
-> >       struct intel_connector *connector;
-> >       struct drm_connector_list_iter conn_iter;
-> > +     struct device *dev = &drm_dev->pdev->dev;
->
-> Hmm, already pushed patch 1 with the unfortunate "drm_dev" local. We use
-> "dev" for struct drm_device * and almost never use struct device.
+> + * pool is full it will block until more entropy is needed.
+> + *
+>   * Ensuring unpredictability at system startup
+>   * ============================================
+>   *
+> 
 
-Sorry, I did not know. I'll send an independent fixup patch for patch
-1 on top of drm-intel-next-queued (or let me know if you want to
-handle it). I will also change this patch to rename the variable.
+thanks.
+-- 
+~Randy
 
->
-> > +     struct acpi_device *conn_dev;
-> > +     u64 conn_addr;
-> >       u8 display_index[16] = {};
-> >
-> >       /* Populate the ACPI IDs for all connectors for a given drm_device */
-> > @@ -242,6 +254,18 @@ void intel_acpi_device_id_update(struct drm_i915_private *dev_priv)
-> >               device_id |= display_index[type]++ << ACPI_DISPLAY_INDEX_SHIFT;
-> >
-> >               connector->acpi_device_id = device_id;
-> > +
-> > +             /* Build the _ADR to look for */
-> > +             conn_addr = device_id | ACPI_DEVICE_ID_SCHEME |
-> > +                             ACPI_BIOS_CAN_DETECT;
-> > +
-> > +             DRM_DEV_INFO(dev, "Checking connector ACPI node at _ADR=%llX\n",
-> > +                          conn_addr);
->
-> This is more than a little verbose. One line of INFO level dmesg for
-> every connector at boot and at resume.
->
-> Please use the new drm_dbg_kms() macro for this.
-
-Will do.
-
->
-> > +
-> > +             /* Look up the connector device, under the PCI device */
-> > +             conn_dev = acpi_find_child_device(ACPI_COMPANION(dev),
-> > +                                               conn_addr, false);
-> > +             connector->acpi_handle = conn_dev ? conn_dev->handle : NULL;
->
-> acpi_device_handle(conn_dev)
->
-
-Will do.
-
-
-> >       }
-> >       drm_connector_list_iter_end(&conn_iter);
-> >  }
-> > diff --git a/drivers/gpu/drm/i915/display/intel_display_types.h b/drivers/gpu/drm/i915/display/intel_display_types.h
-> > index 1a7334dbe802..0a4a04116091 100644
-> > --- a/drivers/gpu/drm/i915/display/intel_display_types.h
-> > +++ b/drivers/gpu/drm/i915/display/intel_display_types.h
-> > @@ -407,6 +407,9 @@ struct intel_connector {
-> >       /* ACPI device id for ACPI and driver cooperation */
-> >       u32 acpi_device_id;
-> >
-> > +     /* ACPI handle corresponding to this connector display, if found */
-> > +     void *acpi_handle;
-> > +
->
-> The type is acpi_handle. It's none of our business to know what the
-> underlying type is.
-
-Will do.
-
->
-> >       /* Reads out the current hw, returning true if the connector is enabled
-> >        * and active (i.e. dpms ON state). */
-> >       bool (*get_hw_state)(struct intel_connector *);
-> > diff --git a/drivers/gpu/drm/i915/display/intel_dp.c b/drivers/gpu/drm/i915/display/intel_dp.c
-> > index b05b2191b919..93cece8e2516 100644
-> > --- a/drivers/gpu/drm/i915/display/intel_dp.c
-> > +++ b/drivers/gpu/drm/i915/display/intel_dp.c
-> > @@ -45,6 +45,7 @@
-> >  #include "i915_debugfs.h"
-> >  #include "i915_drv.h"
-> >  #include "i915_trace.h"
-> > +#include "intel_acpi.h"
-> >  #include "intel_atomic.h"
-> >  #include "intel_audio.h"
-> >  #include "intel_connector.h"
-> > @@ -6623,6 +6624,8 @@ intel_dp_add_properties(struct intel_dp *intel_dp, struct drm_connector *connect
-> >
-> >               connector->state->scaling_mode = DRM_MODE_SCALE_ASPECT;
-> >
-> > +             /* Lookup the ACPI node corresponding to the connector */
-> > +             intel_acpi_device_id_update(dev_priv);
->
-> Auch, this is problematic. It iterates all connectors, for every DP
-> connector being added. In the middle of registering all connectors.
->
-> From the POV of this patch alone, this is also unnecessary. This gets
-> called via intel_opregion_register() after all connectors have been
-> registered.
->
-> I am aware it's not enough for your next patch, because it will need the
-> acpi handle right here.
->
-> I'm wondering if we need to maintain display_index[] in struct
-> drm_i915_private, and update that as connectors get added instead of all
-> at once in the end.
-
-Sure, I can do that.
-
-> connector->acpi_device_id never changes, does it,
-> even though we keep updating it?
-
-This is the part I am not so sure about - I hypothesized that theory
-because of the current behavior in code (i.e. it is getting updated in
-intel_opregion_resume() path). May be it does not change, I was not
-sure, so I did not want to create any regression in the intel_opregion
-code that I did not understand. I tried on my system and as far as I
-could experiment, I did not see it changing. Please let me know if you
-would like me to change my code to:
-
-1) Maintain drm_i915_private->display_index[] and update it as
-connectors are added.
-2) Remove the code to update it on every resume and while registering
-the connector.
-
-Thanks & Best Regards,
-
-Rajat
-
->
-> BR,
-> Jani.
->
->
-> >       }
-> >  }
->
-> --
-> Jani Nikula, Intel Open Source Graphics Center
