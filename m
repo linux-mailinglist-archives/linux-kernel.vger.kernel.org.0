@@ -2,36 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1AF65149175
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Jan 2020 23:57:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5DE8A14916C
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Jan 2020 23:57:24 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387543AbgAXW5W (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 24 Jan 2020 17:57:22 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39478 "EHLO mail.kernel.org"
+        id S1729275AbgAXW4m (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 24 Jan 2020 17:56:42 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39544 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729355AbgAXW4h (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 24 Jan 2020 17:56:37 -0500
+        id S1729416AbgAXW4j (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 24 Jan 2020 17:56:39 -0500
 Received: from localhost.localdomain (c-98-220-238-81.hsd1.il.comcast.net [98.220.238.81])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D19E420880;
-        Fri, 24 Jan 2020 22:56:35 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B070920838;
+        Fri, 24 Jan 2020 22:56:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579906596;
-        bh=uEwRyd/kCuzxK41onqOdXQyVYqH3TKGRLcUJ7YQGFkQ=;
+        s=default; t=1579906598;
+        bh=BZ24rNXNnEWMgqioQfJk/5pdtgaudTTDXR88DPBdOqE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:In-Reply-To:
          References:From;
-        b=L3NTExagokzBLMxf3AK3dtSa6wyZuXnSo4wMB6tYGaw9MbuU0C+/YVAWB4yPrbWSW
-         MQmfX5n7i/3qsYhgWwPUak5A9B6LsKAj3Mp4RhRG7ffrXh+m/dM7yZQ1q/xTrIbRtQ
-         D1JzVdWmpsi/dD+bkY6kAbpudw96dxYF19lc6YAI=
+        b=cfZot1Bg5sloimUIK17Wlu23QNJ9SB5Y8NLvC9neQzYJgUQy/vsXfw0qHFMqNuoKR
+         LyCQkeBtya/8du3+l27ZXaexwtJZIxM0Ja+c0cXdO/6Lf3R7fxO2b5fomkQqxex+ex
+         OOPQfmFXynPOhKePPNZC/3Qq9i0umzVH9vPy6/G4=
 From:   Tom Zanussi <zanussi@kernel.org>
 To:     rostedt@goodmis.org
 Cc:     artem.bityutskiy@linux.intel.com, mhiramat@kernel.org,
         linux-kernel@vger.kernel.org, linux-rt-users@vger.kernel.org,
         ndesaulniers@google.com
-Subject: [PATCH v3 04/12] tracing: Add dynamic event command creation interface
-Date:   Fri, 24 Jan 2020 16:56:15 -0600
-Message-Id: <4a38478f56b9e831803500f82af896bda92a5370.1579904761.git.zanussi@kernel.org>
+Subject: [PATCH v3 05/12] tracing: Add synthetic event command generation functions
+Date:   Fri, 24 Jan 2020 16:56:16 -0600
+Message-Id: <1e76e618a5c5e3cedcda4bbf8ca9f5954ebc44de.1579904761.git.zanussi@kernel.org>
 X-Mailer: git-send-email 2.14.1
 In-Reply-To: <cover.1579904761.git.zanussi@kernel.org>
 References: <cover.1579904761.git.zanussi@kernel.org>
@@ -42,362 +42,521 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add an interface used to build up dynamic event creation commands,
-such as synthetic and kprobe events.  Interfaces specific to those
-particular types of events and others can be built on top of this
-interface.
+Add functions used to generate synthetic event commands, built on top
+of the dynevent_cmd interface.
 
-Command creation is started by first using the dynevent_cmd_init()
-function to initialize the dynevent_cmd object.  Following that, args
-are appended and optionally checked by the dynevent_arg_add() and
-dynevent_arg_pair_add() functions, which use objects representing
-arguments and pairs of arguments, initialized respectively by
-dynevent_arg_init() and dynevent_arg_pair_init().  Finally, once all
-args have been successfully added, the command is finalized and
-actually created using dynevent_create().
+synth_event_gen_cmd_start() is used to create a synthetic event
+command using a variable arg list and
+synth_event_gen_cmd_array_start() does the same thing but using an
+array of field descriptors.  synth_event_add_field(),
+synth_event_add_field_str() and synth_event_add_fields() can be used
+to add single fields one by one or as a group.  Once all desired
+fields are added, synth_event_gen_cmd_end() is used to actually
+execute the command and create the event.
 
-The code here for actually printing into the dyn_event->cmd buffer
-using snprintf() etc was adapted from v4 of Masami's 'tracing/boot:
-Add synthetic event support' patch.
+synth_event_create() does everything, including creating the event, in
+a single call.
 
 Signed-off-by: Tom Zanussi <zanussi@kernel.org>
-Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
 ---
- include/linux/trace_events.h |  23 +++++
- kernel/trace/trace.h         |  34 ++++++
- kernel/trace/trace_events.c  | 240 +++++++++++++++++++++++++++++++++++++++++++
- 3 files changed, 297 insertions(+)
+ include/linux/trace_events.h     |  37 ++++
+ kernel/trace/trace_events_hist.c | 379 ++++++++++++++++++++++++++++++++++++++-
+ 2 files changed, 412 insertions(+), 4 deletions(-)
 
 diff --git a/include/linux/trace_events.h b/include/linux/trace_events.h
-index 25fe743bcbaf..651b03d5e272 100644
+index 651b03d5e272..07b83532a3c6 100644
 --- a/include/linux/trace_events.h
 +++ b/include/linux/trace_events.h
-@@ -354,6 +354,29 @@ extern struct trace_event_file *trace_get_event_file(const char *instance,
- 						     const char *event);
- extern void trace_put_event_file(struct trace_event_file *file);
+@@ -357,6 +357,7 @@ extern void trace_put_event_file(struct trace_event_file *file);
+ #define MAX_DYNEVENT_CMD_LEN	(2048)
  
-+#define MAX_DYNEVENT_CMD_LEN	(2048)
-+
-+enum dynevent_type {
-+	DYNEVENT_TYPE_NONE,
-+};
-+
-+struct dynevent_cmd;
-+
-+typedef int (*dynevent_create_fn_t)(struct dynevent_cmd *cmd);
-+
-+struct dynevent_cmd {
-+	char			*buf;
-+	const char		*event_name;
-+	int			maxlen;
-+	int			remaining;
-+	unsigned int		n_fields;
-+	enum dynevent_type	type;
-+	dynevent_create_fn_t	run_command;
-+	void			*private_data;
-+};
-+
-+extern int dynevent_create(struct dynevent_cmd *cmd);
-+
+ enum dynevent_type {
++	DYNEVENT_TYPE_SYNTH = 1,
+ 	DYNEVENT_TYPE_NONE,
+ };
+ 
+@@ -379,6 +380,42 @@ extern int dynevent_create(struct dynevent_cmd *cmd);
+ 
  extern int synth_event_delete(const char *name);
  
++extern void synth_event_cmd_init(struct dynevent_cmd *cmd,
++				 char *buf, int maxlen);
++
++extern int __synth_event_gen_cmd_start(struct dynevent_cmd *cmd,
++				       const char *name,
++				       struct module *mod, ...);
++
++#define synth_event_gen_cmd_start(cmd, name, mod, ...)	\
++	__synth_event_gen_cmd_start(cmd, name, mod, ## __VA_ARGS__, NULL)
++
++struct synth_field_desc {
++	const char *type;
++	const char *name;
++};
++
++extern int synth_event_gen_cmd_array_start(struct dynevent_cmd *cmd,
++					   const char *name,
++					   struct module *mod,
++					   struct synth_field_desc *fields,
++					   unsigned int n_fields);
++extern int synth_event_create(const char *name,
++			      struct synth_field_desc *fields,
++			      unsigned int n_fields, struct module *mod);
++
++extern int synth_event_add_field(struct dynevent_cmd *cmd,
++				 const char *type,
++				 const char *name);
++extern int synth_event_add_field_str(struct dynevent_cmd *cmd,
++				     const char *type_name);
++extern int synth_event_add_fields(struct dynevent_cmd *cmd,
++				  struct synth_field_desc *fields,
++				  unsigned int n_fields);
++
++#define synth_event_gen_cmd_end(cmd)	\
++	dynevent_create(cmd)
++
  /*
-diff --git a/kernel/trace/trace.h b/kernel/trace/trace.h
-index 8fe3b16c8cec..0e8afc32d972 100644
---- a/kernel/trace/trace.h
-+++ b/kernel/trace/trace.h
-@@ -1877,6 +1877,40 @@ static inline bool event_command_needs_rec(struct event_command *cmd_ops)
+  * Event file flags:
+  *  ENABLED	  - The event is enabled
+diff --git a/kernel/trace/trace_events_hist.c b/kernel/trace/trace_events_hist.c
+index 94ee1e576a1e..2e7181ce51aa 100644
+--- a/kernel/trace/trace_events_hist.c
++++ b/kernel/trace/trace_events_hist.c
+@@ -374,7 +374,7 @@ struct hist_trigger_data {
+ 	unsigned int			n_save_var_str;
+ };
  
- extern int trace_event_enable_disable(struct trace_event_file *file,
- 				      int enable, int soft_disable);
+-static int synth_event_create(int argc, const char **argv);
++static int create_synth_event(int argc, const char **argv);
+ static int synth_event_show(struct seq_file *m, struct dyn_event *ev);
+ static int synth_event_release(struct dyn_event *ev);
+ static bool synth_event_is_busy(struct dyn_event *ev);
+@@ -382,7 +382,7 @@ static bool synth_event_match(const char *system, const char *event,
+ 			int argc, const char **argv, struct dyn_event *ev);
+ 
+ static struct dyn_event_operations synth_event_ops = {
+-	.create = synth_event_create,
++	.create = create_synth_event,
+ 	.show = synth_event_show,
+ 	.is_busy = synth_event_is_busy,
+ 	.free = synth_event_release,
+@@ -407,6 +407,7 @@ struct synth_event {
+ 	struct trace_event_class		class;
+ 	struct trace_event_call			call;
+ 	struct tracepoint			*tp;
++	struct module				*mod;
+ };
+ 
+ static bool is_synth_event(struct dyn_event *ev)
+@@ -1286,6 +1287,273 @@ struct hist_var_data {
+ 	struct hist_trigger_data *hist_data;
+ };
+ 
++static int synth_event_check_arg_fn(void *data)
++{
++	struct dynevent_arg_pair *arg_pair = data;
++	int size;
 +
-+extern void dynevent_cmd_init(struct dynevent_cmd *cmd, char *buf, int maxlen,
-+			      enum dynevent_type type,
-+			      dynevent_create_fn_t run_command);
++	size = synth_field_size((char *)arg_pair->lhs);
 +
-+typedef int (*dynevent_check_arg_fn_t)(void *data);
++	return size ? 0 : -EINVAL;
++}
 +
-+struct dynevent_arg {
-+	const char		*str;
-+	char			separator; /* e.g. ';', ',', or nothing */
-+	dynevent_check_arg_fn_t	check_arg;
-+};
++/**
++ * synth_event_add_field - Add a new field to a synthetic event cmd
++ * @cmd: A pointer to the dynevent_cmd struct representing the new event
++ * @type: The type of the new field to add
++ * @name: The name of the new field to add
++ *
++ * Add a new field to a synthetic event cmd object.  Field ordering is in
++ * the same order the fields are added.
++ *
++ * See synth_field_size() for available types. If field_name contains
++ * [n] the field is considered to be an array.
++ *
++ * Return: 0 if successful, error otherwise.
++ */
++int synth_event_add_field(struct dynevent_cmd *cmd, const char *type,
++			  const char *name)
++{
++	struct dynevent_arg_pair arg_pair;
++	int ret;
 +
-+extern void dynevent_arg_init(struct dynevent_arg *arg,
-+			      dynevent_check_arg_fn_t check_arg,
-+			      char separator);
-+extern int dynevent_arg_add(struct dynevent_cmd *cmd,
-+			    struct dynevent_arg *arg);
++	if (cmd->type != DYNEVENT_TYPE_SYNTH)
++		return -EINVAL;
 +
-+struct dynevent_arg_pair {
-+	const char		*lhs;
-+	const char		*rhs;
-+	char			operator; /* e.g. '=' or nothing */
-+	char			separator; /* e.g. ';', ',', or nothing */
-+	dynevent_check_arg_fn_t	check_arg;
-+};
++	if (!type || !name)
++		return -EINVAL;
 +
-+extern void dynevent_arg_pair_init(struct dynevent_arg_pair *arg_pair,
-+				   dynevent_check_arg_fn_t check_arg,
-+				   char operator, char separator);
-+extern int dynevent_arg_pair_add(struct dynevent_cmd *cmd,
-+				 struct dynevent_arg_pair *arg_pair);
-+extern int dynevent_str_add(struct dynevent_cmd *cmd, const char *str);
++	dynevent_arg_pair_init(&arg_pair, synth_event_check_arg_fn, 0, ';');
 +
- extern int tracing_alloc_snapshot(void);
- extern void tracing_snapshot_cond(struct trace_array *tr, void *cond_data);
- extern int tracing_snapshot_cond_enable(struct trace_array *tr, void *cond_data, cond_update_fn_t update);
-diff --git a/kernel/trace/trace_events.c b/kernel/trace/trace_events.c
-index 402426a82cfb..aa56bb6ff6ca 100644
---- a/kernel/trace/trace_events.c
-+++ b/kernel/trace/trace_events.c
-@@ -3300,6 +3300,246 @@ void __init trace_event_init(void)
- 	event_trace_enable();
++	arg_pair.lhs = type;
++	arg_pair.rhs = name;
++
++	ret = dynevent_arg_pair_add(cmd, &arg_pair);
++	if (ret)
++		return ret;
++
++	if (++cmd->n_fields > SYNTH_FIELDS_MAX)
++		ret = -EINVAL;
++
++	return ret;
++}
++EXPORT_SYMBOL_GPL(synth_event_add_field);
++
++/**
++ * synth_event_add_field_str - Add a new field to a synthetic event cmd
++ * @cmd: A pointer to the dynevent_cmd struct representing the new event
++ * @type_name: The type and name of the new field to add, as a single string
++ *
++ * Add a new field to a synthetic event cmd object, as a single
++ * string.  The @type_name string is expected to be of the form 'type
++ * name', which will be appended by ';'.  No sanity checking is done -
++ * what's passed in is assumed to already be well-formed.  Field
++ * ordering is in the same order the fields are added.
++ *
++ * See synth_field_size() for available types. If field_name contains
++ * [n] the field is considered to be an array.
++ *
++ * Return: 0 if successful, error otherwise.
++ */
++int synth_event_add_field_str(struct dynevent_cmd *cmd, const char *type_name)
++{
++	struct dynevent_arg arg;
++	int ret;
++
++	if (cmd->type != DYNEVENT_TYPE_SYNTH)
++		return -EINVAL;
++
++	if (!type_name)
++		return -EINVAL;
++
++	dynevent_arg_init(&arg, NULL, ';');
++
++	arg.str = type_name;
++
++	ret = dynevent_arg_add(cmd, &arg);
++	if (ret)
++		return ret;
++
++	if (++cmd->n_fields > SYNTH_FIELDS_MAX)
++		ret = -EINVAL;
++
++	return ret;
++}
++EXPORT_SYMBOL_GPL(synth_event_add_field_str);
++
++/**
++ * synth_event_add_fields - Add multiple fields to a synthetic event cmd
++ * @cmd: A pointer to the dynevent_cmd struct representing the new event
++ * @fields: An array of type/name field descriptions
++ * @n_fields: The number of field descriptions contained in the fields array
++ *
++ * Add a new set of fields to a synthetic event cmd object.  The event
++ * fields that will be defined for the event should be passed in as an
++ * array of struct synth_field_desc, and the number of elements in the
++ * array passed in as n_fields.  Field ordering will retain the
++ * ordering given in the fields array.
++ *
++ * See synth_field_size() for available types. If field_name contains
++ * [n] the field is considered to be an array.
++ *
++ * Return: 0 if successful, error otherwise.
++ */
++int synth_event_add_fields(struct dynevent_cmd *cmd,
++			   struct synth_field_desc *fields,
++			   unsigned int n_fields)
++{
++	unsigned int i;
++	int ret = 0;
++
++	for (i = 0; i < n_fields; i++) {
++		if (fields[i].type == NULL || fields[i].name == NULL) {
++			ret = -EINVAL;
++			break;
++		}
++
++		ret = synth_event_add_field(cmd, fields[i].type, fields[i].name);
++		if (ret)
++			break;
++	}
++
++	return ret;
++}
++EXPORT_SYMBOL_GPL(synth_event_add_fields);
++
++/**
++ * __synth_event_gen_cmd_start - Start a synthetic event command from arg list
++ * @cmd: A pointer to the dynevent_cmd struct representing the new event
++ * @name: The name of the synthetic event
++ * @mod: The module creating the event, NULL if not created from a module
++ * @args: Variable number of arg (pairs), one pair for each field
++ *
++ * NOTE: Users normally won't want to call this function directly, but
++ * rather use the synth_event_gen_cmd_start() wrapper, which
++ * automatically adds a NULL to the end of the arg list.  If this
++ * function is used directly, make sure the last arg in the variable
++ * arg list is NULL.
++ *
++ * Generate a synthetic event command to be executed by
++ * synth_event_gen_cmd_end().  This function can be used to generate
++ * the complete command or only the first part of it; in the latter
++ * case, synth_event_add_field(), synth_event_add_field_str(), or
++ * synth_event_add_fields() can be used to add more fields following
++ * this.
++ *
++ * There should be an even number variable args, each pair consisting
++ * of a type followed by a field name.
++ *
++ * See synth_field_size() for available types. If field_name contains
++ * [n] the field is considered to be an array.
++ *
++ * Return: 0 if successful, error otherwise.
++ */
++int __synth_event_gen_cmd_start(struct dynevent_cmd *cmd, const char *name,
++				struct module *mod, ...)
++{
++	struct dynevent_arg arg;
++	va_list args;
++	int ret;
++
++	cmd->event_name = name;
++	cmd->private_data = mod;
++
++	if (cmd->type != DYNEVENT_TYPE_SYNTH)
++		return -EINVAL;
++
++	dynevent_arg_init(&arg, NULL, 0);
++	arg.str = name;
++	ret = dynevent_arg_add(cmd, &arg);
++	if (ret)
++		return ret;
++
++	va_start(args, mod);
++	for (;;) {
++		const char *type, *name;
++
++		type = va_arg(args, const char *);
++		if (!type)
++			break;
++		name = va_arg(args, const char *);
++		if (!name)
++			break;
++
++		if (++cmd->n_fields > SYNTH_FIELDS_MAX) {
++			ret = -EINVAL;
++			break;
++		}
++
++		ret = synth_event_add_field(cmd, type, name);
++		if (ret)
++			break;
++	}
++	va_end(args);
++
++	return ret;
++}
++EXPORT_SYMBOL_GPL(__synth_event_gen_cmd_start);
++
++/**
++ * synth_event_gen_cmd_array_start - Start synthetic event command from an array
++ * @cmd: A pointer to the dynevent_cmd struct representing the new event
++ * @name: The name of the synthetic event
++ * @fields: An array of type/name field descriptions
++ * @n_fields: The number of field descriptions contained in the fields array
++ *
++ * Generate a synthetic event command to be executed by
++ * synth_event_gen_cmd_end().  This function can be used to generate
++ * the complete command or only the first part of it; in the latter
++ * case, synth_event_add_field(), synth_event_add_field_str(), or
++ * synth_event_add_fields() can be used to add more fields following
++ * this.
++ *
++ * The event fields that will be defined for the event should be
++ * passed in as an array of struct synth_field_desc, and the number of
++ * elements in the array passed in as n_fields.  Field ordering will
++ * retain the ordering given in the fields array.
++ *
++ * See synth_field_size() for available types. If field_name contains
++ * [n] the field is considered to be an array.
++ *
++ * Return: 0 if successful, error otherwise.
++ */
++int synth_event_gen_cmd_array_start(struct dynevent_cmd *cmd, const char *name,
++				    struct module *mod,
++				    struct synth_field_desc *fields,
++				    unsigned int n_fields)
++{
++	struct dynevent_arg arg;
++	unsigned int i;
++	int ret = 0;
++
++	cmd->event_name = name;
++	cmd->private_data = mod;
++
++	if (cmd->type != DYNEVENT_TYPE_SYNTH)
++		return -EINVAL;
++
++	if (n_fields > SYNTH_FIELDS_MAX)
++		return -EINVAL;
++
++	dynevent_arg_init(&arg, NULL, 0);
++	arg.str = name;
++	ret = dynevent_arg_add(cmd, &arg);
++	if (ret)
++		return ret;
++
++	for (i = 0; i < n_fields; i++) {
++		if (fields[i].type == NULL || fields[i].name == NULL)
++			return -EINVAL;
++
++		ret = synth_event_add_field(cmd, fields[i].type, fields[i].name);
++		if (ret)
++			break;
++	}
++
++	return ret;
++}
++EXPORT_SYMBOL_GPL(synth_event_gen_cmd_array_start);
++
+ static int __create_synth_event(int argc, const char *name, const char **argv)
+ {
+ 	struct synth_field *field, *fields[SYNTH_FIELDS_MAX];
+@@ -1354,6 +1622,56 @@ static int __create_synth_event(int argc, const char *name, const char **argv)
+ 	goto out;
  }
  
 +/**
-+ * dynevent_arg_add - Add an arg to a dynevent_cmd
-+ * @cmd: A pointer to the dynevent_cmd struct representing the new event cmd
-+ * @arg: The argument to append to the current cmd
++ * synth_event_create - Create a new synthetic event
++ * @name: The name of the new sythetic event
++ * @fields: An array of type/name field descriptions
++ * @n_fields: The number of field descriptions contained in the fields array
++ * @mod: The module creating the event, NULL if not created from a module
 + *
-+ * Append an argument to a dynevent_cmd.  The argument string will be
-+ * appended to the current cmd string, followed by a separator, if
-+ * applicable.  Before the argument is added, the check_arg()
-+ * function, if defined, is called.
++ * Create a new synthetic event with the given name under the
++ * trace/events/synthetic/ directory.  The event fields that will be
++ * defined for the event should be passed in as an array of struct
++ * synth_field_desc, and the number elements in the array passed in as
++ * n_fields. Field ordering will retain the ordering given in the
++ * fields array.
 + *
-+ * The cmd string, separator, and check_arg() function should be set
-+ * using the dynevent_arg_init() before any arguments are added using
-+ * this function.
++ * If the new synthetic event is being created from a module, the mod
++ * param must be non-NULL.  This will ensure that the trace buffer
++ * won't contain unreadable events.
 + *
-+ * Return: 0 if successful, error otherwise.
-+ */
-+int dynevent_arg_add(struct dynevent_cmd *cmd,
-+		     struct dynevent_arg *arg)
-+{
-+	int ret = 0;
-+	int delta;
-+	char *q;
-+
-+	if (arg->check_arg) {
-+		ret = arg->check_arg(arg);
-+		if (ret)
-+			return ret;
-+	}
-+
-+	q = cmd->buf + (cmd->maxlen - cmd->remaining);
-+
-+	delta = snprintf(q, cmd->remaining, " %s%c", arg->str, arg->separator);
-+	if (delta >= cmd->remaining) {
-+		pr_err("String is too long: %s\n", arg->str);
-+		return -E2BIG;
-+	}
-+	cmd->remaining -= delta;
-+
-+	return ret;
-+}
-+
-+/**
-+ * dynevent_arg_pair_add - Add an arg pair to a dynevent_cmd
-+ * @cmd: A pointer to the dynevent_cmd struct representing the new event cmd
-+ * @arg_pair: The argument pair to append to the current cmd
-+ *
-+ * Append an argument pair to a dynevent_cmd.  An argument pair
-+ * consists of a left-hand-side argument and a right-hand-side
-+ * argument separated by an operator, which can be whitespace, all
-+ * followed by a separator, if applicable.  This can be used to add
-+ * arguments of the form 'type variable_name;' or 'x+y'.
-+ *
-+ * The lhs argument string will be appended to the current cmd string,
-+ * followed by an operator, if applicable, followd by the rhs string,
-+ * followed finally by a separator, if applicable.  Before anything is
-+ * added, the check_arg() function, if defined, is called.
-+ *
-+ * The cmd strings, operator, separator, and check_arg() function
-+ * should be set using the dynevent_arg_pair_init() before any arguments
-+ * are added using this function.
++ * The new synth event should be deleted using synth_event_delete()
++ * function.  The new synthetic event can be generated from modules or
++ * other kernel code using trace_synth_event() and related functions.
 + *
 + * Return: 0 if successful, error otherwise.
 + */
-+int dynevent_arg_pair_add(struct dynevent_cmd *cmd,
-+			  struct dynevent_arg_pair *arg_pair)
++int synth_event_create(const char *name, struct synth_field_desc *fields,
++		       unsigned int n_fields, struct module *mod)
 +{
-+	int ret = 0;
-+	int delta;
-+	char *q;
++	struct dynevent_cmd cmd;
++	char *buf;
++	int ret;
 +
-+	if (arg_pair->check_arg) {
-+		ret = arg_pair->check_arg(arg_pair);
-+		if (ret)
-+			return ret;
-+	}
++	buf = kzalloc(MAX_DYNEVENT_CMD_LEN, GFP_KERNEL);
++	if (!buf)
++		return -ENOMEM;
 +
-+	q = cmd->buf + (cmd->maxlen - cmd->remaining);
++	synth_event_cmd_init(&cmd, buf, MAX_DYNEVENT_CMD_LEN);
 +
-+	delta = snprintf(q, cmd->remaining, " %s%c", arg_pair->lhs,
-+			 arg_pair->operator);
-+	if (delta >= cmd->remaining) {
-+		pr_err("field string is too long: %s\n", arg_pair->lhs);
-+		return -E2BIG;
-+	}
-+	cmd->remaining -= delta; q += delta;
++	ret = synth_event_gen_cmd_array_start(&cmd, name, mod,
++					      fields, n_fields);
++	if (ret)
++		goto out;
 +
-+	delta = snprintf(q, cmd->remaining, "%s%c", arg_pair->rhs,
-+			 arg_pair->separator);
-+	if (delta >= cmd->remaining) {
-+		pr_err("field string is too long: %s\n", arg_pair->rhs);
-+		return -E2BIG;
-+	}
-+	cmd->remaining -= delta; q += delta;
++	ret = synth_event_gen_cmd_end(&cmd);
++ out:
++	kfree(buf);
 +
 +	return ret;
 +}
++EXPORT_SYMBOL_GPL(synth_event_create);
 +
-+/**
-+ * dynevent_str_add - Add a string to a dynevent_cmd
-+ * @cmd: A pointer to the dynevent_cmd struct representing the new event cmd
-+ * @str: The string to append to the current cmd
-+ *
-+ * Append a string to a dynevent_cmd.  The string will be appended to
-+ * the current cmd string as-is, with nothing prepended or appended.
-+ *
-+ * Return: 0 if successful, error otherwise.
-+ */
-+int dynevent_str_add(struct dynevent_cmd *cmd, const char *str)
-+{
-+	int ret = 0;
-+	int delta;
-+	char *q;
-+
-+	q = cmd->buf + (cmd->maxlen - cmd->remaining);
-+
-+	delta = snprintf(q, cmd->remaining, "%s", str);
-+	if (delta >= cmd->remaining) {
-+		pr_err("String is too long: %s\n", str);
-+		return -E2BIG;
-+	}
-+	cmd->remaining -= delta;
-+
-+	return ret;
-+}
-+
-+/**
-+ * dynevent_cmd_init - Initialize a dynevent_cmd object
-+ * @cmd: A pointer to the dynevent_cmd struct representing the cmd
-+ * @buf: A pointer to the buffer to generate the command into
-+ * @maxlen: The length of the buffer the command will be generated into
-+ * @type: The type of the cmd, checked against further operations
-+ * @run_command: The type-specific function that will actually run the command
-+ *
-+ * Initialize a dynevent_cmd.  A dynevent_cmd is used to build up and
-+ * run dynamic event creation commands, such as commands for creating
-+ * synthetic and kprobe events.  Before calling any of the functions
-+ * used to build the command, a dynevent_cmd object should be
-+ * instantiated and initialized using this function.
-+ *
-+ * The initialization sets things up by saving a pointer to the
-+ * user-supplied buffer and its length via the @buf and @maxlen
-+ * params, and by saving the cmd-specific @type and @run_command
-+ * params which are used to check subsequent dynevent_cmd operations
-+ * and actually run the command when complete.
-+ */
-+void dynevent_cmd_init(struct dynevent_cmd *cmd, char *buf, int maxlen,
-+		       enum dynevent_type type,
-+		       dynevent_create_fn_t run_command)
-+{
-+	memset(cmd, '\0', sizeof(*cmd));
-+
-+	cmd->buf = buf;
-+	cmd->maxlen = maxlen;
-+	cmd->remaining = cmd->maxlen;
-+	cmd->type = type;
-+	cmd->run_command = run_command;
-+}
-+
-+/**
-+ * dynevent_arg_init - Initialize a dynevent_arg object
-+ * @arg: A pointer to the dynevent_arg struct representing the arg
-+ * @check_arg: An (optional) pointer to a function checking arg sanity
-+ * @separator: An (optional) separator, appended after adding the arg
-+ *
-+ * Initialize a dynevent_arg object.  A dynevent_arg represents an
-+ * object used to append single arguments to the current command
-+ * string.  The @check_arg function, if present, will be used to check
-+ * the sanity of the current arg string (which is directly set by the
-+ * caller).  After the arg string is successfully appended to the
-+ * command string, the optional @separator is appended.  If no
-+ * separator was specified when initializing the arg, a space will be
-+ * appended.
-+ */
-+void dynevent_arg_init(struct dynevent_arg *arg,
-+		       dynevent_check_arg_fn_t check_arg,
-+		       char separator)
-+{
-+	memset(arg, '\0', sizeof(*arg));
-+
-+	if (!separator)
-+		separator = ' ';
-+	arg->separator = separator;
-+
-+	arg->check_arg = check_arg;
-+}
-+
-+/**
-+ * dynevent_arg_pair_init - Initialize a dynevent_arg_pair object
-+ * @arg_pair: A pointer to the dynevent_arg_pair struct representing the arg
-+ * @check_arg: An (optional) pointer to a function checking arg sanity
-+ * @operator: An (optional) operator, appended after adding the first arg
-+ * @separator: An (optional) separator, appended after adding the second arg
-+ *
-+ * Initialize a dynevent_arg_pair object.  A dynevent_arg_pair
-+ * represents an object used to append argument pairs such as 'type
-+ * variable_name;' or 'x+y' to the current command string.  An
-+ * argument pair consists of a left-hand-side argument and a
-+ * right-hand-side argument separated by an operator, which can be
-+ * whitespace, all followed by a separator, if applicable. The
-+ * @check_arg function, if present, will be used to check the sanity
-+ * of the current arg strings (which is directly set by the caller).
-+ * After the first arg string is successfully appended to the command
-+ * string, the optional @operator is appended, followed by the second
-+ * arg and and optional @separator.  If no separator was specified
-+ * when initializing the arg, a space will be appended.
-+ */
-+void dynevent_arg_pair_init(struct dynevent_arg_pair *arg_pair,
-+			    dynevent_check_arg_fn_t check_arg,
-+			    char operator, char separator)
-+{
-+	memset(arg_pair, '\0', sizeof(*arg_pair));
-+
-+	if (!operator)
-+		operator = ' ';
-+	arg_pair->operator = operator;
-+
-+	if (!separator)
-+		separator = ' ';
-+	arg_pair->separator = separator;
-+
-+	arg_pair->check_arg = check_arg;
-+}
-+
-+/**
-+ * dynevent_create - Create the dynamic event contained in dynevent_cmd
-+ * @cmd: The dynevent_cmd object containing the dynamic event creation command
-+ *
-+ * Once a dynevent_cmd object has been successfully built up via the
-+ * dynevent_cmd_init(), dynevent_arg_add() and dynevent_arg_pair_add()
-+ * functions, this function runs the final command to actually create
-+ * the event.
-+ *
-+ * Return: 0 if the event was successfully created, error otherwise.
-+ */
-+int dynevent_create(struct dynevent_cmd *cmd)
-+{
-+	return cmd->run_command(cmd);
-+}
-+EXPORT_SYMBOL_GPL(dynevent_create);
-+
- #ifdef CONFIG_EVENT_TRACE_STARTUP_TEST
+ static int destroy_synth_event(struct synth_event *se)
+ {
+ 	int ret;
+@@ -1382,14 +1700,33 @@ static int destroy_synth_event(struct synth_event *se)
+ int synth_event_delete(const char *event_name)
+ {
+ 	struct synth_event *se = NULL;
++	struct module *mod = NULL;
+ 	int ret = -ENOENT;
  
- static DEFINE_SPINLOCK(test_spinlock);
+ 	mutex_lock(&event_mutex);
+ 	se = find_synth_event(event_name);
+-	if (se)
++	if (se) {
++		mod = se->mod;
+ 		ret = destroy_synth_event(se);
++	}
+ 	mutex_unlock(&event_mutex);
+ 
++	if (mod) {
++		mutex_lock(&trace_types_lock);
++		/*
++		 * It is safest to reset the ring buffer if the module
++		 * being unloaded registered any events that were
++		 * used. The only worry is if a new module gets
++		 * loaded, and takes on the same id as the events of
++		 * this module. When printing out the buffer, traced
++		 * events left over from this module may be passed to
++		 * the new module events and unexpected results may
++		 * occur.
++		 */
++		tracing_reset_all_online_cpus();
++		mutex_unlock(&trace_types_lock);
++	}
++
+ 	return ret;
+ }
+ EXPORT_SYMBOL_GPL(synth_event_delete);
+@@ -1414,7 +1751,41 @@ int synth_event_run_command(const char *command)
+ 	return trace_run_command(command, create_or_delete_synth_event);
+ }
+ 
+-static int synth_event_create(int argc, const char **argv)
++static int synth_event_run_cmd(struct dynevent_cmd *cmd)
++{
++	struct synth_event *se;
++	int ret;
++
++	ret = trace_run_command(cmd->buf, create_or_delete_synth_event);
++	if (ret)
++		return ret;
++
++	se = find_synth_event(cmd->event_name);
++	if (WARN_ON(!se))
++		return -ENOENT;
++
++	se->mod = cmd->private_data;
++
++	return ret;
++}
++
++/**
++ * synth_event_cmd_init - Initialize a synthetic event command object
++ * @cmd: A pointer to the dynevent_cmd struct representing the new event
++ * @buf: A pointer to the buffer used to build the command
++ * @maxlen: The length of the buffer passed in @buf
++ *
++ * Initialize a synthetic event command object.  Use this before
++ * calling any of the other dyenvent_cmd functions.
++ */
++void synth_event_cmd_init(struct dynevent_cmd *cmd, char *buf, int maxlen)
++{
++	dynevent_cmd_init(cmd, buf, maxlen, DYNEVENT_TYPE_SYNTH,
++			  synth_event_run_cmd);
++}
++EXPORT_SYMBOL_GPL(synth_event_cmd_init);
++
++static int create_synth_event(int argc, const char **argv)
+ {
+ 	const char *name = argv[0];
+ 	int len;
 -- 
 2.14.1
 
