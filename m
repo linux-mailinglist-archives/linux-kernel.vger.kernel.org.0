@@ -2,78 +2,98 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3F616148382
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Jan 2020 12:37:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4F11B1484A4
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Jan 2020 12:44:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391961AbgAXLgr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 24 Jan 2020 06:36:47 -0500
-Received: from mail.kernel.org ([198.145.29.99]:56886 "EHLO mail.kernel.org"
+        id S2392125AbgAXLnV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 24 Jan 2020 06:43:21 -0500
+Received: from mail.skyhub.de ([5.9.137.197]:52392 "EHLO mail.skyhub.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2391938AbgAXLgk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 24 Jan 2020 06:36:40 -0500
-Received: from localhost (ip-213-127-102-57.ip.prioritytelecom.net [213.127.102.57])
+        id S1729188AbgAXLJR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 24 Jan 2020 06:09:17 -0500
+Received: from zn.tnic (p200300EC2F0C660015FB9CFA6160A1DF.dip0.t-ipconnect.de [IPv6:2003:ec:2f0c:6600:15fb:9cfa:6160:a1df])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2F6F0206D4;
-        Fri, 24 Jan 2020 11:36:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579865800;
-        bh=k+jTFQk3X8t0HDDXYfCH0ipj/Bck3QikThdhT2n3CZ8=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=g1D3gGtSuBx91wxdfPxmZg8UXrUURcGLxq96D2YIVoRN8ElOks1Ej1rZlftkwOLjp
-         arJgJNHANmEMwS0smDLN57KWqwdq528JPcOHsd9CmIItk1ZTZw7zypE/8jDGsmqAuQ
-         4gv9tXWx/29dJ0LdRxLGHnjjA33wkaGFKoiZinh4=
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Christian Hewitt <christianshewitt@gmail.com>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 638/639] arm64: dts: meson-gxm-khadas-vim2: fix uart_A bluetooth node
-Date:   Fri, 24 Jan 2020 10:33:28 +0100
-Message-Id: <20200124093209.538436193@linuxfoundation.org>
-X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200124093047.008739095@linuxfoundation.org>
-References: <20200124093047.008739095@linuxfoundation.org>
-User-Agent: quilt/0.66
+        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id C8E7C1EC01AD;
+        Fri, 24 Jan 2020 12:09:15 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
+        t=1579864155;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=6QRUD1yaQPUyr/7NjvJ/XUfSTFPMJPOv0k6vx6QEWoc=;
+        b=juHgfbyBv6GNjVGcVsiCuy9UpEKTuJZtjrsYhHhQg6tgWxXmh+bNxx6vQ5M8Sd/VOYaL3M
+        qEj6M7CH3e1U5Jnno9DLQ0mtUp7Pbk8DDQ3M5HOi+HqPW+Q2IbTBh5rTUgLoSBqwddgdtY
+        rCWyijhJg8BiUJDxvTZeZIC84P/4cv4=
+Date:   Fri, 24 Jan 2020 12:09:07 +0100
+From:   Borislav Petkov <bp@alien8.de>
+To:     Zhenzhong Duan <zhenzhong.duan@gmail.com>
+Cc:     Arvind Sankar <nivedita@alum.mit.edu>,
+        linux-kernel@vger.kernel.org, x86@kernel.org,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
+Subject: Re: [PATCH v2] x86/boot/KASLR: Fix unused variable warning
+Message-ID: <20200124110907.GA6750@zn.tnic>
+References: <20200103033929.4956-1-zhenzhong.duan@gmail.com>
+ <20200109184055.GI5603@zn.tnic>
+ <20200109204638.GA523773@rani.riverdale.lan>
+ <CAFH1YnNA9qfM4tPzKKDaQD6DPxnE=tJsB7AUZQBohDTW3zm=Xg@mail.gmail.com>
+ <20200110090032.GB19453@zn.tnic>
+ <CAFH1YnN8v+8UH3RvaeT7TJEdtEyxhoBA-ZEMk-mRFWNad8e9Jw@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAFH1YnN8v+8UH3RvaeT7TJEdtEyxhoBA-ZEMk-mRFWNad8e9Jw@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Christian Hewitt <christianshewitt@gmail.com>
+On Mon, Jan 13, 2020 at 10:43:14AM +0800, Zhenzhong Duan wrote:
+> Just tried Arvind's patch, result is not that bad. Below are all
+> warnings during build:
+> In fact, only gop.c and kaslr.c have compile warning.
 
-[ Upstream commit 388a2772979b625042524d8b91280616ab4ff5ee ]
+gop.c is not part of arch/x86/boot/compressed/
 
-Fixes: 33344e2111a3 ("arm64: dts: meson-gxm-khadas-vim2: fix Bluetooth support")
-Signed-off-by: Christian Hewitt <christianshewitt@gmail.com>
-Reviewed-by: Kevin Hilman <khilman@baylibre.com>
-Signed-off-by: Kevin Hilman <khilman@baylibre.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- arch/arm64/boot/dts/amlogic/meson-gxm-khadas-vim2.dts | 3 +++
- 1 file changed, 3 insertions(+)
+So I'd take a patch adding -Wunused to arch/x86/boot/compressed/Makefile
+and fixing the single warning in kaslr.c
 
-diff --git a/arch/arm64/boot/dts/amlogic/meson-gxm-khadas-vim2.dts b/arch/arm64/boot/dts/amlogic/meson-gxm-khadas-vim2.dts
-index 785240733d946..bdf7c6c5983ce 100644
---- a/arch/arm64/boot/dts/amlogic/meson-gxm-khadas-vim2.dts
-+++ b/arch/arm64/boot/dts/amlogic/meson-gxm-khadas-vim2.dts
-@@ -413,6 +413,9 @@
- 	bluetooth {
- 		compatible = "brcm,bcm43438-bt";
- 		shutdown-gpios = <&gpio GPIOX_17 GPIO_ACTIVE_HIGH>;
-+		max-speed = <2000000>;
-+		clocks = <&wifi32k>;
-+		clock-names = "lpo";
- 	};
- };
- 
+The extrawarn W=1 stuff gives a lot more (below) and there I guess I'd
+take only well thought out patches, each fixing all -Wmissing-prototypes
+in a single compilation unit.
+
+In file included from arch/x86/boot/compressed/string.c:11:
+arch/x86/boot/compressed/../string.c:43:5: warning: no previous prototype for ‘bcmp’ [-Wmissing-prototypes]
+arch/x86/boot/compressed/../string.c:146:6: warning: no previous prototype for ‘simple_strtol’ [-Wmissing-prototypes]
+arch/x86/boot/compressed/string.c:53:7: warning: no previous prototype for ‘memmove’ [-Wmissing-prototypes]
+In file included from arch/x86/boot/compressed/string.c:11:
+arch/x86/boot/compressed/../string.c:43:5: warning: no previous prototype for ‘bcmp’ [-Wmissing-prototypes]
+arch/x86/boot/compressed/../string.c:146:6: warning: no previous prototype for ‘simple_strtol’ [-Wmissing-prototypes]
+arch/x86/boot/compressed/string.c:53:7: warning: no previous prototype for ‘memmove’ [-Wmissing-prototypes]
+In file included from arch/x86/boot/compressed/cmdline.c:14:
+arch/x86/boot/compressed/../cmdline.c:28:5: warning: no previous prototype for ‘__cmdline_find_option’ [-Wmissing-prototypes]
+arch/x86/boot/compressed/../cmdline.c:100:5: warning: no previous prototype for ‘__cmdline_find_option_bool’ [-Wmissing-prototypes]
+arch/x86/boot/compressed/cmdline.c:15:15: warning: no previous prototype for ‘get_cmd_line_ptr’ [-Wmissing-prototypes]
+arch/x86/boot/compressed/eboot.c:26:28: warning: no previous prototype for ‘efi_system_table’ [-Wmissing-prototypes]
+arch/x86/boot/compressed/eboot.c:318:6: warning: no previous prototype for ‘setup_graphics’ [-Wmissing-prototypes]
+arch/x86/boot/compressed/eboot.c:357:23: warning: no previous prototype for ‘efi_pe_entry’ [-Wmissing-prototypes]
+arch/x86/boot/compressed/pgtable_64.c:110:22: warning: no previous prototype for ‘paging_prepare’ [-Wmissing-prototypes]
+arch/x86/boot/compressed/pgtable_64.c:193:6: warning: no previous prototype for ‘cleanup_trampoline’ [-Wmissing-prototypes]
+arch/x86/boot/compressed/eboot.c:711:21: warning: no previous prototype for ‘efi_main’ [-Wmissing-prototypes]
+arch/x86/boot/compressed/misc.c:340:28: warning: no previous prototype for ‘extract_kernel’ [-Wmissing-prototypes]
+...
+
+Thx.
+
 -- 
-2.20.1
+Regards/Gruss,
+    Boris.
 
-
-
+https://people.kernel.org/tglx/notes-about-netiquette
