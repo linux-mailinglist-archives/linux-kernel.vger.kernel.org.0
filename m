@@ -2,69 +2,99 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 636931489B7
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Jan 2020 15:37:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D498B1489BE
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Jan 2020 15:37:37 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731631AbgAXOgw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 24 Jan 2020 09:36:52 -0500
-Received: from 8bytes.org ([81.169.241.247]:60812 "EHLO theia.8bytes.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731450AbgAXOgu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 24 Jan 2020 09:36:50 -0500
-Received: by theia.8bytes.org (Postfix, from userid 1000)
-        id 97D33A52; Fri, 24 Jan 2020 15:36:49 +0100 (CET)
-Date:   Fri, 24 Jan 2020 15:36:48 +0100
-From:   Joerg Roedel <joro@8bytes.org>
-To:     Lu Baolu <baolu.lu@linux.intel.com>
-Cc:     ashok.raj@intel.com, jacob.jun.pan@intel.com, kevin.tian@intel.com,
-        iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/1] iommu/vt-d: Remove unnecessary WARN_ON_ONCE()
-Message-ID: <20200124143648.GC27081@8bytes.org>
-References: <20200116015236.4458-1-baolu.lu@linux.intel.com>
- <20200117095953.GB15760@8bytes.org>
- <b56e8a8f-acd7-b318-5a1c-f32c5a07657f@linux.intel.com>
+        id S2387626AbgAXOhP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 24 Jan 2020 09:37:15 -0500
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:35988 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387676AbgAXOhK (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 24 Jan 2020 09:37:10 -0500
+Received: by mail-wm1-f68.google.com with SMTP id p17so1925289wma.1
+        for <linux-kernel@vger.kernel.org>; Fri, 24 Jan 2020 06:37:09 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=dzsZn5YGBm3wUhQPoMDUJ14zEU+MEc78x4rzaBDLSP0=;
+        b=G4PCXCZvqK2HNyrqpe/9EKycb+jQXw97AZkRxWS9FasZLV3pYn+fkJ1xa1QmczUANh
+         PZQWXmEaQFOnW9EpzrRP/J7zOtCN7iy2MIdoGWSpUPdIoxynMQ3KWZh6W9fxM1w55urS
+         oCRqjJmrd9DrJRcfO1teS8g8zNr/5XJJycB8t40LS4sHy9sVgls/wyDfKwVPK8sq4PbD
+         Z/n+2MMHuoCSzBI6hRHHirCQyy33Axe6x/gM7tn+Q96IKsdn7lOSybmec5hqZ29PRzSt
+         J4J3bpoBYjTnNWrT9kMH6N08+3+irqZ547Dx1GLy99S0ZVBl7v4cdRzBAvCaZYbKTJC6
+         NasA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=dzsZn5YGBm3wUhQPoMDUJ14zEU+MEc78x4rzaBDLSP0=;
+        b=IQ/CRyflM3WGmsrPFn0+BDO6trCfyLAdWhXBEjZDn+QRebXreCpq2r4yeyMgFA30XE
+         t3EtSqmdl0DqUoeV7vZsMroeOyKlYW8P3qjKzXVWaExd4oqQveHakKhvYlxjc2xahBwl
+         AC1NIjca146wJcQA6/Y1Tjk1SQpz0SPonwxYTyyYELbVuhVlc3lanKwxv1PHcnYhsJE3
+         yHWxVqVORJg9kaQgKcSUdxX6y/8qWREtqEXrW42cKPJ3JRwOjJy5YCt7ixCYQ1//WzVr
+         Yt8uC6jFPipn0CcnvI6cSwRsLIpGh2/KHutntV0JJBuenXcTd4i2FgUrwPQtYCHa2yKZ
+         FHMg==
+X-Gm-Message-State: APjAAAUpCdWUYsbadK6HEubMl9cqD3QWbj2J4/PQfzlU11OlCVhwFLok
+        WGARNsvr1jF01Cu1mCyme3cPe7oV9UrwTQ==
+X-Google-Smtp-Source: APXvYqyMVfaMhToiGNn5b34BkYqDXlqLtMg4JBeFdVJpPM+zLlKRZ/0/+kA99MsGFZbIep1CF9uRPA==
+X-Received: by 2002:a1c:9602:: with SMTP id y2mr3569784wmd.23.1579876628063;
+        Fri, 24 Jan 2020 06:37:08 -0800 (PST)
+Received: from google.com ([2a00:79e0:d:110:d6cc:2030:37c1:9964])
+        by smtp.gmail.com with ESMTPSA id s19sm6831173wmj.33.2020.01.24.06.37.07
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 24 Jan 2020 06:37:07 -0800 (PST)
+Date:   Fri, 24 Jan 2020 14:37:04 +0000
+From:   Quentin Perret <qperret@google.com>
+To:     Douglas Raillard <douglas.raillard@arm.com>
+Cc:     linux-kernel@vger.kernel.org, rjw@rjwysocki.net,
+        viresh.kumar@linaro.org, peterz@infradead.org,
+        juri.lelli@redhat.com, vincent.guittot@linaro.org,
+        dietmar.eggemann@arm.com, linux-pm@vger.kernel.org
+Subject: Re: [RFC PATCH v4 3/6] sched/cpufreq: Hook em_pd_get_higher_power()
+ into get_next_freq()
+Message-ID: <20200124143704.GA215244@google.com>
+References: <20200122173538.1142069-1-douglas.raillard@arm.com>
+ <20200122173538.1142069-4-douglas.raillard@arm.com>
+ <20200123161644.GA144523@google.com>
+ <5a2af4e7-f9eb-4f23-908a-fab2c7395a99@arm.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <b56e8a8f-acd7-b318-5a1c-f32c5a07657f@linux.intel.com>
+In-Reply-To: <5a2af4e7-f9eb-4f23-908a-fab2c7395a99@arm.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Jan 18, 2020 at 10:14:11AM +0800, Lu Baolu wrote:
-> Hi Joerg,
-> 
-> On 1/17/20 5:59 PM, Joerg Roedel wrote:
-> > On Thu, Jan 16, 2020 at 09:52:36AM +0800, Lu Baolu wrote:
-> > > Address field in device TLB invalidation descriptor is qualified
-> > > by the S field. If S field is zero, a single page at page address
-> > > specified by address [63:12] is requested to be invalidated. If S
-> > > field is set, the least significant bit in the address field with
-> > > value 0b (say bit N) indicates the invalidation address range. The
-> > > spec doesn't require the address [N - 1, 0] to be cleared, hence
-> > > remove the unnecessary WARN_ON_ONCE().
-> > > 
-> > > Otherwise, the caller might set "mask = MAX_AGAW_PFN_WIDTH" in order
-> > > to invalidating all the cached mappings on an endpoint, and below
-> > > overflow error will be triggered.
-> > > 
-> > > [...]
-> > > UBSAN: Undefined behaviour in drivers/iommu/dmar.c:1354:3
-> > > shift exponent 64 is too large for 64-bit type 'long long unsigned int'
-> > > [...]
-> > > 
-> > > Reported-and-tested-by: Frank <fgndev@posteo.de>
-> > > Signed-off-by: Lu Baolu <baolu.lu@linux.intel.com>
-> > 
-> > Does this need a Fixes and/or stable tag?
-> > 
-> 
-> This doesn't cause any errors, just an unnecessary checking of
-> 
-> 	"0 & ((1UL << 64) - 1)"
-> 
-> in some cases.
+On Thursday 23 Jan 2020 at 17:52:53 (+0000), Douglas Raillard wrote:
+> We can't really move the call to em_pd_get_higher_freq() into
+> cpufreq_driver_resolve_freq() since that's a schedutil-specific feature,
+> and we would loose the !sg_policy->need_freq_update optimization.
 
-Okay, applied for v5.6.
+Depends how you do it. You could add a new method to cpufreq_policy that
+is defined only for sugov or something along those lines. And you'd call
+that instead of cpufreq_frequency_table_target() when that makes sense.
+
+> Maybe we can add a flag to cpufreq_driver_resolve_freq() that promises
+> that the frequency is already a valid one. We have to be careful though,
+> since a number of things can make that untrue:
+>  - em_pd_get_higher_freq() will return the passed freq verbatim if it's
+> higher than the max freq, so em_pd_get_higher_freq() will have to set
+> the flag itself in case that logic changes.
+>  - policy limits can change the value
+>  - future things could tinker with the freq and forget to reset the flag.
+> 
+> If you think it's worth it I can make these changes.
+
+The thing is, not only with the current patch we end up iterating the
+frequencies twice for nothing, but also I think it'd be interesting to
+use the EM for consistency with EAS. It'd be nice to use the same data
+structure for the predictions we do in compute_energy() and for the
+actual request.
+
+Thoughts ?
+
+Quentin
