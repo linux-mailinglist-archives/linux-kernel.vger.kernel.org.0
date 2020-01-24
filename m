@@ -2,36 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8F31D148051
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Jan 2020 12:10:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 75D7D14805A
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Jan 2020 12:10:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389795AbgAXLJx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 24 Jan 2020 06:09:53 -0500
-Received: from mail.kernel.org ([198.145.29.99]:45534 "EHLO mail.kernel.org"
+        id S2389835AbgAXLKO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 24 Jan 2020 06:10:14 -0500
+Received: from mail.kernel.org ([198.145.29.99]:45932 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1733090AbgAXLJv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 24 Jan 2020 06:09:51 -0500
+        id S1731494AbgAXLKM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 24 Jan 2020 06:10:12 -0500
 Received: from localhost (ip-213-127-102-57.ip.prioritytelecom.net [213.127.102.57])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 821D220663;
-        Fri, 24 Jan 2020 11:09:50 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8DE8520663;
+        Fri, 24 Jan 2020 11:10:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579864191;
-        bh=FP24LIk+CmFXKN0TcLClW14rFaaJcJ7idY9+i+nQ6sE=;
+        s=default; t=1579864212;
+        bh=8DUr0XJniirH8876wu3ciyN2L3R147bhI/RTwJO5dzU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=UEuzXWwpCGel8mkYg87eU6usMNER4ezrCog4UDcsWg1poewojKg+aGzL03gm1hwFM
-         BBkwEyLff7bWOwmIWEY9832VOF+zqfREIJO9H7roJWyB51hngVK424uVzkWxGEi8sX
-         JqLKHqg/P5ro69LUBjOj6o+DpK22dEZ+LiKlxX88=
+        b=0O/val5KfFP9ql4PhhNObAGoRzL5/uoej1wvYkwDgJ+bgigT0IN+tztKWvTYe8Qj7
+         f0C80nAqdYR2gMMtywxpOE6q2WOZ/mMx7vHe7OoqfLATmta+vKFyjE1PmHDN+81WGO
+         ESyYJOJ00tAcJyCIisUGyWTjGA4iQ2Oe5alXB2lQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Wesley Sheng <wesley.sheng@microchip.com>,
-        Logan Gunthorpe <logang@deltatee.com>,
-        Jon Mason <jdmason@kudzu.us>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 189/639] ntb_hw_switchtec: NT req id mapping table register entry number should be 512
-Date:   Fri, 24 Jan 2020 10:25:59 +0100
-Message-Id: <20200124093110.787659312@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Simon Horman <horms+renesas@verge.net.au>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.19 190/639] pinctrl: sh-pfc: emev2: Add missing pinmux functions
+Date:   Fri, 24 Jan 2020 10:26:00 +0100
+Message-Id: <20200124093110.905864779@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
 In-Reply-To: <20200124093047.008739095@linuxfoundation.org>
 References: <20200124093047.008739095@linuxfoundation.org>
@@ -44,39 +45,80 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Wesley Sheng <wesley.sheng@microchip.com>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-[ Upstream commit d123fab71f63aae129aebe052664fda73131921a ]
+[ Upstream commit 1ecd8c9cb899ae277e6986ae134635cb1a50f5de ]
 
-The number of available NT req id mapping table entries per NTB control
-register is 512. The driver mistakenly limits the number to 256.
+The err_rst_reqb, ext_clki, lowpwr, and ref_clko pin groups are present,
+but no pinmux functions refer to them, hence they can not be selected.
 
-Fix the array size of NT req id mapping table.
-
-Fixes: c082b04c9d40 ("NTB: switchtec: Add NTB hardware register definitions")
-Signed-off-by: Wesley Sheng <wesley.sheng@microchip.com>
-Reviewed-by: Logan Gunthorpe <logang@deltatee.com>
-Signed-off-by: Jon Mason <jdmason@kudzu.us>
+Fixes: 1e7d5d849cf4f0c5 ("sh-pfc: Add emev2 pinmux support")
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- include/linux/switchtec.h | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/pinctrl/sh-pfc/pfc-emev2.c | 20 ++++++++++++++++++++
+ 1 file changed, 20 insertions(+)
 
-diff --git a/include/linux/switchtec.h b/include/linux/switchtec.h
-index ab400af6f0ce3..623719c917061 100644
---- a/include/linux/switchtec.h
-+++ b/include/linux/switchtec.h
-@@ -244,8 +244,8 @@ struct ntb_ctrl_regs {
- 		u64 xlate_addr;
- 	} bar_entry[6];
- 	u32 reserved2[216];
--	u32 req_id_table[256];
--	u32 reserved3[512];
-+	u32 req_id_table[512];
-+	u32 reserved3[256];
- 	u64 lut_entry[512];
- } __packed;
+diff --git a/drivers/pinctrl/sh-pfc/pfc-emev2.c b/drivers/pinctrl/sh-pfc/pfc-emev2.c
+index 1cbbe04d7df65..eafd8edbcbe95 100644
+--- a/drivers/pinctrl/sh-pfc/pfc-emev2.c
++++ b/drivers/pinctrl/sh-pfc/pfc-emev2.c
+@@ -1263,6 +1263,14 @@ static const char * const dtv_groups[] = {
+ 	"dtv_b",
+ };
  
++static const char * const err_rst_reqb_groups[] = {
++	"err_rst_reqb",
++};
++
++static const char * const ext_clki_groups[] = {
++	"ext_clki",
++};
++
+ static const char * const iic0_groups[] = {
+ 	"iic0",
+ };
+@@ -1285,6 +1293,10 @@ static const char * const lcd_groups[] = {
+ 	"yuv3",
+ };
+ 
++static const char * const lowpwr_groups[] = {
++	"lowpwr",
++};
++
+ static const char * const ntsc_groups[] = {
+ 	"ntsc_clk",
+ 	"ntsc_data",
+@@ -1298,6 +1310,10 @@ static const char * const pwm1_groups[] = {
+ 	"pwm1",
+ };
+ 
++static const char * const ref_clko_groups[] = {
++	"ref_clko",
++};
++
+ static const char * const sd_groups[] = {
+ 	"sd_cki",
+ };
+@@ -1391,13 +1407,17 @@ static const struct sh_pfc_function pinmux_functions[] = {
+ 	SH_PFC_FUNCTION(cam),
+ 	SH_PFC_FUNCTION(cf),
+ 	SH_PFC_FUNCTION(dtv),
++	SH_PFC_FUNCTION(err_rst_reqb),
++	SH_PFC_FUNCTION(ext_clki),
+ 	SH_PFC_FUNCTION(iic0),
+ 	SH_PFC_FUNCTION(iic1),
+ 	SH_PFC_FUNCTION(jtag),
+ 	SH_PFC_FUNCTION(lcd),
++	SH_PFC_FUNCTION(lowpwr),
+ 	SH_PFC_FUNCTION(ntsc),
+ 	SH_PFC_FUNCTION(pwm0),
+ 	SH_PFC_FUNCTION(pwm1),
++	SH_PFC_FUNCTION(ref_clko),
+ 	SH_PFC_FUNCTION(sd),
+ 	SH_PFC_FUNCTION(sdi0),
+ 	SH_PFC_FUNCTION(sdi1),
 -- 
 2.20.1
 
