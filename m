@@ -2,36 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1A2E114844C
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Jan 2020 12:41:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AB603148440
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Jan 2020 12:41:51 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390367AbgAXLQ3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 24 Jan 2020 06:16:29 -0500
-Received: from mail.kernel.org ([198.145.29.99]:53176 "EHLO mail.kernel.org"
+        id S2392101AbgAXLlj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 24 Jan 2020 06:41:39 -0500
+Received: from mail.kernel.org ([198.145.29.99]:54792 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390351AbgAXLQX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 24 Jan 2020 06:16:23 -0500
+        id S2390550AbgAXLRq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 24 Jan 2020 06:17:46 -0500
 Received: from localhost (ip-213-127-102-57.ip.prioritytelecom.net [213.127.102.57])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4E3B0222C2;
-        Fri, 24 Jan 2020 11:16:22 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A601322464;
+        Fri, 24 Jan 2020 11:17:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579864583;
-        bh=SEkrU5RrUmnxK+Y+4PKjzS91d5FOlBsKjvsiZhCDIu0=;
+        s=default; t=1579864666;
+        bh=6agRs+YRKKOS8R/DyaannaansL5ChLoutYtVdBZj7gk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=YApEU2BSd0kS20aJ57DSQQ6+7MQkhJqLzMPYD39gUBnkHDNYbqpeujLeTNUhvGjP1
-         nhyYDkG5Q80Vui58b8ky22nk9SzxOFv2464kDiaOFGLo3PZWWNM71t+HZXGlCB0QuQ
-         HFe9fhYge6M9ZO8vBjs9m44k9z1R9M/c1lAiBF0Y=
+        b=AxjTktiit9vmvI5o6Nzc3xzmhXYjAwMI5o98jpou01yLd71GEfobcOGMcGZDiwtd2
+         BHHyQ7oluWiLk9TtrSUpP8+V6ocwnHuPMKGKcjzvHqjmIEdWStWvwV6m8hwPVs6NrQ
+         1FUKOhVJjkuKLXMDNSJbQz9K0PNDG7NFvGW+N9As=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, YueHaibing <yuehaibing@huawei.com>,
-        Robert Jarzmik <robert.jarzmik@free.fr>,
+        stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>,
+        Yunsheng Lin <linyunsheng@huawei.com>,
+        Huazhong Tan <tanhuazhong@huawei.com>,
+        "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 306/639] ARM: pxa: ssp: Fix "WARNING: invalid free of devm_ allocated data"
-Date:   Fri, 24 Jan 2020 10:27:56 +0100
-Message-Id: <20200124093125.268338306@linuxfoundation.org>
+Subject: [PATCH 4.19 308/639] net: hns3: fix for vport->bw_limit overflow problem
+Date:   Fri, 24 Jan 2020 10:27:58 +0100
+Message-Id: <20200124093125.517750014@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
 In-Reply-To: <20200124093047.008739095@linuxfoundation.org>
 References: <20200124093047.008739095@linuxfoundation.org>
@@ -44,45 +46,39 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: YueHaibing <yuehaibing@huawei.com>
+From: Yunsheng Lin <linyunsheng@huawei.com>
 
-[ Upstream commit 9ee8578d953023cc57e7e736ae48502c707c0210 ]
+[ Upstream commit 2566f10676ba996b745e138f54f3e2f974311692 ]
 
-Since commit 1c459de1e645 ("ARM: pxa: ssp: use devm_ functions")
-kfree, iounmap, clk_put etc are not needed anymore in remove path.
+When setting vport->bw_limit to hdev->tm_info.pg_info[0].bw_limit
+in hclge_tm_vport_tc_info_update, vport->bw_limit can be as big as
+HCLGE_ETHER_MAX_RATE (100000), which can not fit into u16 (65535).
 
-Fixes: 1c459de1e645 ("ARM: pxa: ssp: use devm_ functions")
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
-[ commit message spelling fix ]
-Signed-off-by: Robert Jarzmik <robert.jarzmik@free.fr>
+So this patch fixes it by using u32 for vport->bw_limit.
+
+Fixes: 848440544b41 ("net: hns3: Add support of TX Scheduler & Shaper to HNS3 driver")
+Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Yunsheng Lin <linyunsheng@huawei.com>
+Signed-off-by: Huazhong Tan <tanhuazhong@huawei.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arm/plat-pxa/ssp.c | 6 ------
- 1 file changed, 6 deletions(-)
+ drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/arm/plat-pxa/ssp.c b/arch/arm/plat-pxa/ssp.c
-index f519199741837..bf25f780c1c9e 100644
---- a/arch/arm/plat-pxa/ssp.c
-+++ b/arch/arm/plat-pxa/ssp.c
-@@ -183,18 +183,12 @@ static int pxa_ssp_probe(struct platform_device *pdev)
+diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.h b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.h
+index 260b1e7796908..d14b7018fdf34 100644
+--- a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.h
++++ b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.h
+@@ -600,7 +600,7 @@ struct hclge_vport {
+ 	u16 alloc_rss_size;
  
- static int pxa_ssp_remove(struct platform_device *pdev)
- {
--	struct resource *res;
- 	struct ssp_device *ssp;
+ 	u16 qs_offset;
+-	u16 bw_limit;		/* VSI BW Limit (0 = disabled) */
++	u32 bw_limit;		/* VSI BW Limit (0 = disabled) */
+ 	u8  dwrr;
  
- 	ssp = platform_get_drvdata(pdev);
- 	if (ssp == NULL)
- 		return -ENODEV;
- 
--	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
--	release_mem_region(res->start, resource_size(res));
--
--	clk_put(ssp->clk);
--
- 	mutex_lock(&ssp_lock);
- 	list_del(&ssp->node);
- 	mutex_unlock(&ssp_lock);
+ 	struct hclge_tx_vtag_cfg  txvlan_cfg;
 -- 
 2.20.1
 
