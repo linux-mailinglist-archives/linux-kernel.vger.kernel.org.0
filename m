@@ -2,84 +2,71 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C8A69148B08
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Jan 2020 16:14:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D5C07148B23
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Jan 2020 16:18:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731286AbgAXPOk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 24 Jan 2020 10:14:40 -0500
-Received: from mail-vs1-f68.google.com ([209.85.217.68]:47075 "EHLO
-        mail-vs1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726293AbgAXPOk (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 24 Jan 2020 10:14:40 -0500
-Received: by mail-vs1-f68.google.com with SMTP id t12so1396497vso.13
-        for <linux-kernel@vger.kernel.org>; Fri, 24 Jan 2020 07:14:39 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:reply-to:from:date:message-id:subject:to
-         :content-transfer-encoding;
-        bh=na7KQLR3x5PuoONbMHDphI0U8+NkHY+U9l/hu64w3TU=;
-        b=HSjv2e7OZrgEVwZ7lFEDBDhHGHzpRrW6f7x2vUiacoT8ZZfge/m+/50gmJQ0ZrmyrU
-         +ZF4iIazdtqqCqvMGjFJi1/lQjF7MxhYXus5JGz7hcf6tEzy7KFXmI0HJk5ey4yVYYNu
-         i5xtAAs4wXFliLrOLo7DFuzwXzujaWP0mWGdZmky4p8t/eA1DewesB2Nq/jc+M9GMCIV
-         QDRXPErPyNWLTh4hcWsV7ldq6stgMVIZhKtHV1uuhLwZmWY7AvrOMsKYaKEt63riR0Lp
-         drMnuU1Bni97OxYLcCCvIJa6jYfqrJVKx79a9Zr6WcHL2VuXJ0VEKTQKnCbLCNrbhdxs
-         /PMQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
-         :subject:to:content-transfer-encoding;
-        bh=na7KQLR3x5PuoONbMHDphI0U8+NkHY+U9l/hu64w3TU=;
-        b=ABlUdRhsXv7++WyCBXHVGZQv1SR/loEo/agdtQmphQz8BljoZ/Tzlc+NAvsTYmQNhz
-         N/nevzW1Hg3hxh8aCkyGjOVJyxxoDo/IjtBKwTNIK/Z+4o7df6SjO4rti/aU7IQ/4HiL
-         kLFD1MtDWkiNiJCLFRikIfbFP6V1yFOLUN7Oz1nFZlP0FzCC8tes6k/fHI0Rui2j6DpQ
-         fGf6ugsE4ZoFOl93YtRcqxWeJLX9Ecmj5VvSU158hZFzVustFw+j3H2M9qe5kY+ONZVo
-         82jwDU+Iyf0XMoekYcoZ7z/ADAcGspcXLDn3ShK5p9iNJ4jBaAvqlWh9z7PWtSAyoA+Z
-         acTQ==
-X-Gm-Message-State: APjAAAXqgxpwSCRRhADa44Gk+X7BXEG6KZRAu3PiargVNu5176dWKfu1
-        E0WACRdS4YwQVifGFspeNiTdf7AIeHzobGsbL6c=
-X-Google-Smtp-Source: APXvYqy9KBY6M14xblSXukDSiYEHQJ5xzCICQBsW1MutFAoFtaKOpjRNTCfoH4sr7R8n/j7ExzzqIMpowLHD63kDWgM=
-X-Received: by 2002:a67:fc96:: with SMTP id x22mr2320697vsp.33.1579878879013;
- Fri, 24 Jan 2020 07:14:39 -0800 (PST)
-MIME-Version: 1.0
-Received: by 2002:a9f:2b8f:0:0:0:0:0 with HTTP; Fri, 24 Jan 2020 07:14:38
- -0800 (PST)
-Reply-To: abdoul.hassan01@gmail.com
-From:   MR Abdoul Hassan <issa.maho1@gmail.com>
-Date:   Fri, 24 Jan 2020 07:14:38 -0800
-Message-ID: <CAMot+=dXPWe00hEr4_k-nuAb7Xy2SoVJCg2qcgeDnHuubzKgKQ@mail.gmail.com>
-Subject: I want to seek your assistance
-To:     undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+        id S2387569AbgAXPR0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 24 Jan 2020 10:17:26 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34018 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2387398AbgAXPR0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 24 Jan 2020 10:17:26 -0500
+Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 822BC20709;
+        Fri, 24 Jan 2020 15:17:25 +0000 (UTC)
+Received: from rostedt by gandalf.local.home with local (Exim 4.93)
+        (envelope-from <rostedt@goodmis.org>)
+        id 1iv0i4-000qAl-Dm; Fri, 24 Jan 2020 10:17:24 -0500
+Message-Id: <20200124151651.852781301@goodmis.org>
+User-Agent: quilt/0.65
+Date:   Fri, 24 Jan 2020 10:16:51 -0500
+From:   Steven Rostedt <rostedt@goodmis.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Ingo Molnar <mingo@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>
+Subject: [for-next][PATCH 00/14] tracing: More updates for 5.6
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---=20
-Greeting to you!!!
-Mr Abdoul Hassan
-abdoul.hassan01@gmail.com
+Alex Shi (5):
+      ftrace: Remove abandoned macros
+      ftrace: Remove NR_TO_INIT macro
+      ring-buffer: Remove abandoned macro RB_MISSED_FLAGS
+      tracing: Remove unused TRACE_SEQ_BUF_USED
+      trace/kprobe: Remove unused MAX_KPROBE_CMDLINE_SIZE
 
-I am Mr Abdoul Hassan. I am working with one of the prime banks in
-Burkina Faso. I have a business proposal which concerns the transfer
-of.of Twenty Two Million and Five Hundred Thousand united state
-dollars ($22.500 000mUSD).into a foreign account. Everything about
-this transaction shall be legally done without any problem. If you are
-interested to help me, I will give you more details as soon as I
-receive your positive response.If you are willing to work with me,
-send me immediately the information listed below.
+Colin Ian King (1):
+      tools: bootconfig: Fix spelling mistake "faile" -> "failed"
 
-Your   Name=E2=80=A6=E2=80=A6=E2=80=A6=E2=80=A6=E2=80=A6=E2=80=A6=E2=80=A6
-Your   Nationality=E2=80=A6=E2=80=A6=E2=80=A6=E2=80=A6=E2=80=A6
-Your  Age=E2=80=A6=E2=80=A6=E2=80=A6=E2=80=A6=E2=80=A6=E2=80=A6=E2=80=A6=E2=
-=80=A6
-Your  Occupation=E2=80=A6=E2=80=A6=E2=80=A6=E2=80=A6
-Your Mobile Telephone Line=E2=80=A6=E2=80=A6=E2=80=A6=E2=80=A6
-Your Address=E2=80=A6=E2=80=A6=E2=80=A6=E2=80=A6=E2=80=A6=E2=80=A6=E2=80=A6=
-=E2=80=A6=E2=80=A6=E2=80=A6
-Thanks
-Best regards,
-Mr Abdoul Hassan
-abdoul.hassan01@gmail.com
+Dan Carpenter (1):
+      tracing/boot: Fix an IS_ERR() vs NULL bug
+
+Fabian Frederick (1):
+      ring-bufer: kernel-doc warning fixes
+
+Masami Hiramatsu (3):
+      bootconfig: Fix Kconfig help message for BOOT_CONFIG
+      Documentation: bootconfig: Fix typos in bootconfig documentation
+      Documentation: tracing: Fix typos in boot-time tracing documentation
+
+Steven Rostedt (VMware) (3):
+      ring-buffer: Fix kernel doc for rb_update_event()
+      tracing: Allow trace_printk() to nest in other tracing code
+      tracing: Fix uninitialized buffer var on early exit to trace_vbprintk()
+
+----
+ Documentation/admin-guide/bootconfig.rst | 32 +++++++++++++++++---------------
+ Documentation/trace/boottime-trace.rst   | 18 +++++++++---------
+ init/Kconfig                             |  4 +++-
+ kernel/trace/ftrace.c                    |  5 -----
+ kernel/trace/ring_buffer.c               | 11 ++++++-----
+ kernel/trace/trace.c                     | 27 +++++++++++++++++++++------
+ kernel/trace/trace_boot.c                |  2 +-
+ kernel/trace/trace_kprobe.c              |  1 -
+ kernel/trace/trace_seq.c                 |  3 ---
+ tools/bootconfig/main.c                  |  4 ++--
+ 10 files changed, 59 insertions(+), 48 deletions(-)
