@@ -2,236 +2,100 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 465431481DB
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Jan 2020 12:23:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3360D14822F
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Jan 2020 12:26:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391305AbgAXLXU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 24 Jan 2020 06:23:20 -0500
-Received: from mail-qv1-f66.google.com ([209.85.219.66]:35462 "EHLO
-        mail-qv1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2391283AbgAXLXJ (ORCPT
+        id S2391537AbgAXL0D (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 24 Jan 2020 06:26:03 -0500
+Received: from mail-vs1-f66.google.com ([209.85.217.66]:35358 "EHLO
+        mail-vs1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2391312AbgAXL0A (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 24 Jan 2020 06:23:09 -0500
-Received: by mail-qv1-f66.google.com with SMTP id u10so716882qvi.2
-        for <linux-kernel@vger.kernel.org>; Fri, 24 Jan 2020 03:23:08 -0800 (PST)
+        Fri, 24 Jan 2020 06:26:00 -0500
+Received: by mail-vs1-f66.google.com with SMTP id x123so996065vsc.2
+        for <linux-kernel@vger.kernel.org>; Fri, 24 Jan 2020 03:25:59 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
+        d=linaro.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=hwzQ3VCUqoiQqyG2DwDT1s000avPDz+MSypapI5GJkU=;
-        b=tBdd9AOgbGoefVh+ESSREOiklsPn1d77K/Z5wFAES3zsRlmecr69hozwJsD6NXOiwr
-         RS9KD3JteWX1fOpwBTGhtclav8Pe0gYHDDdj/dJtvD+vsycy9s7cOC27/EDv+oMXr9RU
-         N0Mvcnkok5z5ftwgqX1r0IoOqXFcd5skObUigB52pxuTzPIxARasiFCgtQq7IIhG6Twp
-         1e1r4j7OaEBbRPtsVcNZY7L07dR00eBKM0Y3O79/JgZYSKL5kqsKkFitVMMCu6wHkJt4
-         fezr3Y07wnwe/dKxSkktfScgB9kVXndNX3zywa5Sh/XZL2QwZKzROJpBtv1kp4Dh2zDh
-         Ydjg==
+        bh=GGsD1sBB17Gd7giKo9E0XOhIIGoiPHUb5uVBe4K6KfQ=;
+        b=ZHQFkn7qEfCeDFCKUCYYzCcwyGJdwaRXzv2BuMkWX5iUNbHh0wy5Zs1LqHFZD6MO41
+         YymE5o3W53OrflaEhYWSZo0JAgctGarHB5C6nEkJ3e+YBAm+tMVAiOt/0Y3RFvBC9IIN
+         DRURUS0/4XLEtZ8t/zyJ9aD6KKE2jsuZeHWwLP+Lfk0jJrKfOTIG8YjC5tFVw0c35xFR
+         A7zv0IWvK13GnstfKGbNusTwqgR+nDRLsHrIG05wR84waOMiBwlExbAY/Kuu6WdQww33
+         JF8uuFsBR4ctYSC+q9d2b83NhMVqXIdlzDlVhnY7Ya4kjv6xR/I8mSzNGHwDS735ByRX
+         byMA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=hwzQ3VCUqoiQqyG2DwDT1s000avPDz+MSypapI5GJkU=;
-        b=i6JQRlu0qZhoc4VaalJsyVEsHes/KN/d8xqfVG/orv1bsYiRYSpqI1qZ+K9goWJMVO
-         R7rKj1QVQuyur9/U3/v0ZZQdKAbmq0MN3MyFJc5h06wTTQPMDBWpVM8kikh6jeVmIcG5
-         TEmMV8DZVHopT0QZkojE91Heo/8GUrZ+4RM/oSzHnUnXUhZfM3fwGwNu/GYo6nVwQ+4j
-         RRxE/ARNIlh5xAmIEfP9uDDNUA5ZjJHbkJg0K7xoiYdRYvrkk9K87bSsVB4ZvyCMs/B+
-         +eHkF61MSNei94EEShkNas7Ul4D54BIYRbKIajH2eiiW3WNrcj4jsv2sbVOf7p5+3dp5
-         mG5A==
-X-Gm-Message-State: APjAAAXSmFzVjizZCGLNnR95t0txYDZ8KZQzEFAeEXRtWNKNNtx+MRWK
-        rLw3LUkXt430ANDMmeVDr3HQRGTlvBqQ1xB3M/vUCQ==
-X-Google-Smtp-Source: APXvYqwobgdvp5BoQe6vJueIBTtvwmjSRei1KJDbZLfuVUJ4xFnT3tCN7BW9EBcKj1JLiMydg7FDKvy9PT60+W+LLsk=
-X-Received: by 2002:a05:6214:1103:: with SMTP id e3mr2207642qvs.159.1579864987764;
- Fri, 24 Jan 2020 03:23:07 -0800 (PST)
+        bh=GGsD1sBB17Gd7giKo9E0XOhIIGoiPHUb5uVBe4K6KfQ=;
+        b=prJti7FSIkxQFFfD4b0ZC96TR7qpU8J9OcHbIbmkH7V3Hgb2lXAQ5nLx4NxcBkjfFj
+         XD/6oPFw602mtFOq35u+mF7GzFConoJmi++CjWq92AdTlJqbBmIkHnxuCkxQUbhQXVo9
+         zhL6qW9S/8LGDbzhU5D1PncEfx5MG8jsjQDp9Ao3vAiW4UomgI2kDuIh5acHZ0jFfSBq
+         a4F8QhW+Kw7EqiEig6FTiAyITIU5PvFFFFVyPGwG8JuKTdeFcvF/0AEAUfhb+EWCCKiy
+         rmAnlb+JHGT99G0KBJBOM0VxzVu0GoREi5CjcdeyLjFtg1I/20tAeEPiOmvrcYyhKKwa
+         W1dA==
+X-Gm-Message-State: APjAAAUh0Y2pXfefnPHGjv2rCfZa8QtdhqEsaZBgMtps04gVULjmlG8s
+        o0x9b4PCKJPCXKc6CwoLJQiYwpx+JthOHbDwcX+pDQ==
+X-Google-Smtp-Source: APXvYqzz0CgsEy9v7WP14mwK3BPa/e7ShAoPeynnFWYXVmg4lZ1WwFjup6ErJ5tLPVN+TwriSjBOwrxaTaR9xEi9ggw=
+X-Received: by 2002:a67:cc3:: with SMTP id 186mr1916849vsm.200.1579865159257;
+ Fri, 24 Jan 2020 03:25:59 -0800 (PST)
 MIME-Version: 1.0
-References: <20200121160512.70887-1-elver@google.com>
-In-Reply-To: <20200121160512.70887-1-elver@google.com>
-From:   Dmitry Vyukov <dvyukov@google.com>
-Date:   Fri, 24 Jan 2020 12:22:56 +0100
-Message-ID: <CACT4Y+aRk5=7UoPb9zmDm5XL9CcJDv9YnzndjXYtt+3FKd8maw@mail.gmail.com>
-Subject: Re: [PATCH v2 1/5] include/linux: Add instrumented.h infrastructure
-To:     Marco Elver <elver@google.com>
-Cc:     "Paul E. McKenney" <paulmck@kernel.org>,
-        Andrey Konovalov <andreyknvl@google.com>,
-        Alexander Potapenko <glider@google.com>,
-        kasan-dev <kasan-dev@googlegroups.com>,
-        LKML <linux-kernel@vger.kernel.org>,
+References: <20200116152230.29831-1-jbx6244@gmail.com> <20200116152230.29831-3-jbx6244@gmail.com>
+In-Reply-To: <20200116152230.29831-3-jbx6244@gmail.com>
+From:   Ulf Hansson <ulf.hansson@linaro.org>
+Date:   Fri, 24 Jan 2020 12:25:23 +0100
+Message-ID: <CAPDyKFpE+raCp82aMhm876T+fL3EvPDxSm0-mJTgUuvc8CohFA@mail.gmail.com>
+Subject: Re: [PATCH v2 3/3] dt-bindings: mmc: rockchip-dw-mshc: add
+ description for rk3308
+To:     Johan Jonker <jbx6244@gmail.com>
+Cc:     Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
-        Will Deacon <will@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Boqun Feng <boqun.feng@gmail.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Daniel Axtens <dja@axtens.net>,
-        Christophe Leroy <christophe.leroy@c-s.fr>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Kees Cook <keescook@chromium.org>, cyphar@cyphar.com,
-        linux-arch <linux-arch@vger.kernel.org>
+        Heiko Stuebner <heiko@sntech.de>,
+        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
+        DTML <devicetree@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jan 21, 2020 at 5:05 PM 'Marco Elver' via kasan-dev
-<kasan-dev@googlegroups.com> wrote:
+On Thu, 16 Jan 2020 at 16:22, Johan Jonker <jbx6244@gmail.com> wrote:
 >
-> This adds instrumented.h, which provides generic wrappers for memory
-> access instrumentation that the compiler cannot emit for various
-> sanitizers. Currently this unifies KASAN and KCSAN instrumentation. In
-> future this will also include KMSAN instrumentation.
+> The description below is already in use for rk3308.dtsi,
+> but was somehow never added to a document, so add
+> "rockchip,rk3308-dw-mshc", "rockchip,rk3288-dw-mshc"
+> for mmc nodes on a rk3308 platform to rockchip-dw-mshc.yaml.
 >
-> Note that, copy_{to,from}_user should use special instrumentation, since
-> we should be able to instrument both source and destination memory
-> accesses if both are kernel memory.
->
-> The current patch only instruments the memory access where the address
-> is always in kernel space, however, both may in fact be kernel addresses
-> when a compat syscall passes an argument allocated in the kernel to a
-> real syscall. In a future change, both KASAN and KCSAN should check both
-> addresses in such cases, as well as KMSAN will make use of both
-> addresses. [It made more sense to provide the completed function
-> signature, rather than updating it and changing all locations again at a
-> later time.]
+> Signed-off-by: Johan Jonker <jbx6244@gmail.com>
 
-Reviewed-by: Dmitry Vyukov <dvyukov@google.com>
+Applied for next, thanks!
 
-> Suggested-by: Arnd Bergmann <arnd@arndb.de>
-> Signed-off-by: Marco Elver <elver@google.com>
-> Acked-by: Alexander Potapenko <glider@google.com>
+Kind regards
+Uffe
+
+
 > ---
-> v2:
-> * Simplify header, since we currently do not need pre/post user-copy
->   distinction.
-> * Make instrument_copy_{to,from}_user function arguments match
->   copy_{to,from}_user and update rationale in commit message.
-> ---
->  include/linux/instrumented.h | 109 +++++++++++++++++++++++++++++++++++
->  1 file changed, 109 insertions(+)
->  create mode 100644 include/linux/instrumented.h
+>  Documentation/devicetree/bindings/mmc/rockchip-dw-mshc.yaml | 2 ++
+>  1 file changed, 2 insertions(+)
 >
-> diff --git a/include/linux/instrumented.h b/include/linux/instrumented.h
-> new file mode 100644
-> index 000000000000..43e6ea591975
-> --- /dev/null
-> +++ b/include/linux/instrumented.h
-> @@ -0,0 +1,109 @@
-> +/* SPDX-License-Identifier: GPL-2.0 */
-> +
-> +/*
-> + * This header provides generic wrappers for memory access instrumentation that
-> + * the compiler cannot emit for: KASAN, KCSAN.
-> + */
-> +#ifndef _LINUX_INSTRUMENTED_H
-> +#define _LINUX_INSTRUMENTED_H
-> +
-> +#include <linux/compiler.h>
-> +#include <linux/kasan-checks.h>
-> +#include <linux/kcsan-checks.h>
-> +#include <linux/types.h>
-> +
-> +/**
-> + * instrument_read - instrument regular read access
-> + *
-> + * Instrument a regular read access. The instrumentation should be inserted
-> + * before the actual read happens.
-> + *
-> + * @ptr address of access
-> + * @size size of access
-> + */
-> +static __always_inline void instrument_read(const volatile void *v, size_t size)
-> +{
-> +       kasan_check_read(v, size);
-> +       kcsan_check_read(v, size);
-> +}
-> +
-> +/**
-> + * instrument_write - instrument regular write access
-> + *
-> + * Instrument a regular write access. The instrumentation should be inserted
-> + * before the actual write happens.
-> + *
-> + * @ptr address of access
-> + * @size size of access
-> + */
-> +static __always_inline void instrument_write(const volatile void *v, size_t size)
-> +{
-> +       kasan_check_write(v, size);
-> +       kcsan_check_write(v, size);
-> +}
-> +
-> +/**
-> + * instrument_atomic_read - instrument atomic read access
-> + *
-> + * Instrument an atomic read access. The instrumentation should be inserted
-> + * before the actual read happens.
-> + *
-> + * @ptr address of access
-> + * @size size of access
-> + */
-> +static __always_inline void instrument_atomic_read(const volatile void *v, size_t size)
-> +{
-> +       kasan_check_read(v, size);
-> +       kcsan_check_atomic_read(v, size);
-> +}
-> +
-> +/**
-> + * instrument_atomic_write - instrument atomic write access
-> + *
-> + * Instrument an atomic write access. The instrumentation should be inserted
-> + * before the actual write happens.
-> + *
-> + * @ptr address of access
-> + * @size size of access
-> + */
-> +static __always_inline void instrument_atomic_write(const volatile void *v, size_t size)
-> +{
-> +       kasan_check_write(v, size);
-> +       kcsan_check_atomic_write(v, size);
-> +}
-> +
-> +/**
-> + * instrument_copy_to_user - instrument reads of copy_to_user
-> + *
-> + * Instrument reads from kernel memory, that are due to copy_to_user (and
-> + * variants). The instrumentation must be inserted before the accesses.
-> + *
-> + * @to destination address
-> + * @from source address
-> + * @n number of bytes to copy
-> + */
-> +static __always_inline void
-> +instrument_copy_to_user(void __user *to, const void *from, unsigned long n)
-> +{
-> +       kasan_check_read(from, n);
-> +       kcsan_check_read(from, n);
-> +}
-> +
-> +/**
-> + * instrument_copy_from_user - instrument writes of copy_from_user
-> + *
-> + * Instrument writes to kernel memory, that are due to copy_from_user (and
-> + * variants). The instrumentation should be inserted before the accesses.
-> + *
-> + * @to destination address
-> + * @from source address
-> + * @n number of bytes to copy
-> + */
-> +static __always_inline void
-> +instrument_copy_from_user(const void *to, const void __user *from, unsigned long n)
-> +{
-> +       kasan_check_write(to, n);
-> +       kcsan_check_write(to, n);
-> +}
-> +
-> +#endif /* _LINUX_INSTRUMENTED_H */
+> diff --git a/Documentation/devicetree/bindings/mmc/rockchip-dw-mshc.yaml b/Documentation/devicetree/bindings/mmc/rockchip-dw-mshc.yaml
+> index 2f70f5ef0..89c3edd6a 100644
+> --- a/Documentation/devicetree/bindings/mmc/rockchip-dw-mshc.yaml
+> +++ b/Documentation/devicetree/bindings/mmc/rockchip-dw-mshc.yaml
+> @@ -35,6 +35,8 @@ properties:
+>              - rockchip,rk3036-dw-mshc
+>              # for Rockchip RK322x
+>              - rockchip,rk3228-dw-mshc
+> +            # for Rockchip RK3308
+> +            - rockchip,rk3308-dw-mshc
+>              # for Rockchip RK3328
+>              - rockchip,rk3328-dw-mshc
+>              # for Rockchip RK3368
 > --
-> 2.25.0.341.g760bfbb309-goog
+> 2.11.0
 >
-> --
-> You received this message because you are subscribed to the Google Groups "kasan-dev" group.
-> To unsubscribe from this group and stop receiving emails from it, send an email to kasan-dev+unsubscribe@googlegroups.com.
-> To view this discussion on the web visit https://groups.google.com/d/msgid/kasan-dev/20200121160512.70887-1-elver%40google.com.
