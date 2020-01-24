@@ -2,36 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3C8F6148A22
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Jan 2020 15:41:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 666DC148A15
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Jan 2020 15:41:37 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389415AbgAXOjg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 24 Jan 2020 09:39:36 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37866 "EHLO mail.kernel.org"
+        id S2388898AbgAXOi4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 24 Jan 2020 09:38:56 -0500
+Received: from mail.kernel.org ([198.145.29.99]:37998 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390723AbgAXOS3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 24 Jan 2020 09:18:29 -0500
+        id S2390829AbgAXOSd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 24 Jan 2020 09:18:33 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 71C8821569;
-        Fri, 24 Jan 2020 14:18:28 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 09983214DB;
+        Fri, 24 Jan 2020 14:18:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579875509;
-        bh=+5JA2poJMjR7STyvd8Wt5wYwpE8j6WD4wo/41oMHMv0=;
+        s=default; t=1579875512;
+        bh=m50/OUe2xxBl9ap4i6GvXtg5TbSS//D+WuXbEtrqyBU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=BS2nQ4hNrQlgVR2ecFcVX8RH6dhsuF4vTc19szhufT1NGT+Bi82pd8QCznZQhqSYr
-         cGLkhPM8yn+g1JRhSK+qxZaVZ8adaGNwnYPcI97NJvF8TVjN0/j0pICnbxpgOKl9Ri
-         9erIoJXm8lLGTZuIwTWJ+nfAfnfQBQ3KqJgKop+I=
+        b=qnuHbv4w5H8IGIIkpACzs8EpBUJqgDKCXCC6LeLNXDSBu/Nl7IwJG/br7xjpUURCj
+         Q3dICElUzHaBOBgLwXV+n78Qgi1BC/lyzqjjXrb8qPSJ/whjFQskJAzrCRnfmGpcB3
+         1ZjRAVyaoxMF4n9Ftw2CEHeDXpm9JI76Ew8X7JMc=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Kishon Vijay Abraham I <kishon@ti.com>,
-        Tony Lindgren <tony@atomide.com>,
-        Sasha Levin <sashal@kernel.org>, linux-omap@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: [PATCH AUTOSEL 5.4 010/107] ARM: dts: beagle-x15-common: Model 5V0 regulator
-Date:   Fri, 24 Jan 2020 09:16:40 -0500
-Message-Id: <20200124141817.28793-10-sashal@kernel.org>
+Cc:     Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sasha Levin <sashal@kernel.org>,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org
+Subject: [PATCH AUTOSEL 5.4 013/107] ARM: dts: imx6q-dhcom: fix rtc compatible
+Date:   Fri, 24 Jan 2020 09:16:43 -0500
+Message-Id: <20200124141817.28793-13-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200124141817.28793-1-sashal@kernel.org>
 References: <20200124141817.28793-1-sashal@kernel.org>
@@ -44,54 +44,34 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Kishon Vijay Abraham I <kishon@ti.com>
+From: Alexandre Belloni <alexandre.belloni@bootlin.com>
 
-[ Upstream commit e17e7c498d4f734df93c300441e100818ed58168 ]
+[ Upstream commit 7d7778b1396bc9e2a3875009af522beb4ea9355a ]
 
-On am57xx-beagle-x15, 5V0 is connected to P16, P17, P18 and P19
-connectors. On am57xx-evm, 5V0 regulator is used to get 3V6 regulator
-which is connected to the COMQ port. Model 5V0 regulator here in order
-for it to be used in am57xx-evm to model 3V6 regulator.
+The only correct and documented compatible string for the rv3029 is
+microcrystal,rv3029. Fix it up.
 
-Signed-off-by: Kishon Vijay Abraham I <kishon@ti.com>
-Signed-off-by: Tony Lindgren <tony@atomide.com>
+Fixes: 52c7a088badd ("ARM: dts: imx6q: Add support for the DHCOM iMX6 SoM and PDK2")
+Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
+Signed-off-by: Shawn Guo <shawnguo@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- .../boot/dts/am57xx-beagle-x15-common.dtsi    | 21 +++++++++++++++++++
- 1 file changed, 21 insertions(+)
+ arch/arm/boot/dts/imx6q-dhcom-som.dtsi | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/arm/boot/dts/am57xx-beagle-x15-common.dtsi b/arch/arm/boot/dts/am57xx-beagle-x15-common.dtsi
-index 9a94c96b0350e..a813a0cf3ff39 100644
---- a/arch/arm/boot/dts/am57xx-beagle-x15-common.dtsi
-+++ b/arch/arm/boot/dts/am57xx-beagle-x15-common.dtsi
-@@ -29,6 +29,27 @@
- 		reg = <0x0 0x80000000 0x0 0x80000000>;
+diff --git a/arch/arm/boot/dts/imx6q-dhcom-som.dtsi b/arch/arm/boot/dts/imx6q-dhcom-som.dtsi
+index 387801dde02e2..08a2e17e0539b 100644
+--- a/arch/arm/boot/dts/imx6q-dhcom-som.dtsi
++++ b/arch/arm/boot/dts/imx6q-dhcom-som.dtsi
+@@ -206,7 +206,7 @@
  	};
  
-+	main_12v0: fixedregulator-main_12v0 {
-+		/* main supply */
-+		compatible = "regulator-fixed";
-+		regulator-name = "main_12v0";
-+		regulator-min-microvolt = <12000000>;
-+		regulator-max-microvolt = <12000000>;
-+		regulator-always-on;
-+		regulator-boot-on;
-+	};
-+
-+	evm_5v0: fixedregulator-evm_5v0 {
-+		/* Output of TPS54531D */
-+		compatible = "regulator-fixed";
-+		regulator-name = "evm_5v0";
-+		regulator-min-microvolt = <5000000>;
-+		regulator-max-microvolt = <5000000>;
-+		vin-supply = <&main_12v0>;
-+		regulator-always-on;
-+		regulator-boot-on;
-+	};
-+
- 	vdd_3v3: fixedregulator-vdd_3v3 {
- 		compatible = "regulator-fixed";
- 		regulator-name = "vdd_3v3";
+ 	rtc@56 {
+-		compatible = "rv3029c2";
++		compatible = "microcrystal,rv3029";
+ 		pinctrl-names = "default";
+ 		pinctrl-0 = <&pinctrl_rtc_hw300>;
+ 		reg = <0x56>;
 -- 
 2.20.1
 
