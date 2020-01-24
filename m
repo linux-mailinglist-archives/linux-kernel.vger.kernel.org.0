@@ -2,110 +2,144 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BFB41147903
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Jan 2020 08:32:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id F33A614790E
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Jan 2020 08:47:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730381AbgAXHcx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 24 Jan 2020 02:32:53 -0500
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:42848 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726050AbgAXHcx (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 24 Jan 2020 02:32:53 -0500
-Received: by mail-pg1-f194.google.com with SMTP id s64so567355pgb.9
-        for <linux-kernel@vger.kernel.org>; Thu, 23 Jan 2020 23:32:53 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=XMan5I+mKArqobbqFNZ+gUF18xHrDU9k/d4NqHI6zu4=;
-        b=XNlEkrtB5WyC+6KEfcv9h47Qsg6EErvwdpfmokrUteEgzL60mkvaZxTq6BbI6ETlBX
-         XdjnC0mX6AeVz20ETbOKynfAkVrQyiIFqpPZoCPcSunnwy6rizJ0b6eKupQONUPo1Rkr
-         9Yi3IZ+BzIJwT7Bb5XadFn5dcRZGLuSB5NixY=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=XMan5I+mKArqobbqFNZ+gUF18xHrDU9k/d4NqHI6zu4=;
-        b=kSNo2lncjGnduSl5nWjTqm7uTYkmYpIqzi4/JKuNbJd6ZGUUVt8IUn0TT+9LZnhyd1
-         Wr8HZrUDmK2dgFpkC5vVMG635za5L03qyw/eLa0HO/SQUqGRacX8OePBzBH+Y47qGM2r
-         LfO4FHQJFwxEMi8jceaNYxf57akp4FDObV+BrBQzJCPcRcdQpuZaBlgwFdLwAI282F36
-         XB7IRRtPpA5Wy6LOaJ41utGnt5a72A/cxLYFlk5OVa58hwbagm8zk5hOwyqNMLjbYuiA
-         acyf7akLpjB51qZoUh5nHBrWicUYMfZz86qHabdr1yiA/bLwxklP1ihJyxyGY6kJe8Ta
-         Y2Kw==
-X-Gm-Message-State: APjAAAVNhrBLxZ8t54MUzKKv9UiKK65OSfpqn2Zkh+RNp5x05X5L4Vqf
-        sc2HWwg6FOtfb6g4zrfkA+4eEw==
-X-Google-Smtp-Source: APXvYqxiUqWwFe+UJfx8sjkXD/VqNusZI+TARTuJH/GXSLaBL6MI+VbKjEv23KOYn+XOWzCHtYk1Pw==
-X-Received: by 2002:a63:b64a:: with SMTP id v10mr2701819pgt.145.1579851172840;
-        Thu, 23 Jan 2020 23:32:52 -0800 (PST)
-Received: from localhost ([2401:fa00:8f:203:5bbb:c872:f2b1:f53b])
-        by smtp.gmail.com with ESMTPSA id p5sm5517224pga.69.2020.01.23.23.32.51
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 23 Jan 2020 23:32:52 -0800 (PST)
-Date:   Fri, 24 Jan 2020 16:32:50 +0900
-From:   Sergey Senozhatsky <senozhatsky@chromium.org>
-To:     Hans Verkuil <hverkuil@xs4all.nl>
-Cc:     Hans Verkuil <hans.verkuil@cisco.com>,
-        Tomasz Figa <tfiga@chromium.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Sakari Ailus <sakari.ailus@iki.fi>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Pawel Osciak <posciak@chromium.org>,
-        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Sergey Senozhatsky <senozhatsky@chromium.org>
-Subject: Re: [RFC][PATCH 13/15] videobuf2: do not sync buffers for DMABUF
- queues
-Message-ID: <20200124073250.GA100275@google.com>
-References: <20191217032034.54897-1-senozhatsky@chromium.org>
- <20191217032034.54897-14-senozhatsky@chromium.org>
- <2d0e1a9b-6c5e-ff70-9862-32c8b8aaf65f@xs4all.nl>
- <20200122050515.GB49953@google.com>
- <57f711a0-6183-74f6-ab24-ebe414cb6881@xs4all.nl>
- <20200124022544.GD158382@google.com>
+        id S1730627AbgAXHre (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 24 Jan 2020 02:47:34 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38138 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725821AbgAXHre (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 24 Jan 2020 02:47:34 -0500
+Received: from localhost (unknown [145.15.244.15])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3EFB92071A;
+        Fri, 24 Jan 2020 07:47:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1579852052;
+        bh=TzKIcShPbXV86j/ne+0jGsahikBovP7GGd4G3GuTOIw=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=Jcf90v8W35fcShvCDVE9NfL2UBWbi2jhBr8SY16yFJ4IKoNnfHxmzPgiP2g/m9rXh
+         H7iGu8kt9BXrC5t8Grow4NPJU+wMzRmcLhvplSgU6Ilfvdk0KAj9LBQVo0L5H7ACDf
+         O1+DPMkFjS0Wa7SZfzJZSX/TM4dkgtAQk1E5tkDA=
+Date:   Fri, 24 Jan 2020 08:38:22 +0100
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Sasha Levin <sashal@kernel.org>, Guenter Roeck <linux@roeck-us.net>
+Cc:     linux-kernel@vger.kernel.org, stable@vger.kernel.org,
+        Oleg Nesterov <oleg@redhat.com>,
+        Eric Paris <eparis@redhat.com>,
+        Kees Cook <keescook@chromium.org>,
+        Serge Hallyn <serge@hallyn.com>, Jann Horn <jannh@google.com>,
+        Christian Brauner <christian.brauner@ubuntu.com>
+Subject: Re: [PATCH 4.14 20/65] ptrace: reintroduce usage of subjective
+ credentials in ptrace_has_cap()
+Message-ID: <20200124073822.GA2910462@kroah.com>
+References: <20200122092750.976732974@linuxfoundation.org>
+ <20200122092754.007578340@linuxfoundation.org>
+ <20200123230129.GA3737@roeck-us.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200124022544.GD158382@google.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20200123230129.GA3737@roeck-us.net>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On (20/01/24 11:25), Sergey Senozhatsky wrote:
-[..]
->
-> > Then, if q->allow_cache_hint is set, then default to a cache sync (cache clean)
-> > in the prepare for OUTPUT buffers and a cache sync (cache invalidate) in the
-> > finish for CAPTURE buffers.
->
-> We alter default cache sync behaviour based both on queue ->memory
-> type and queue ->dma_dir. Shall both of those cases depend on
-> ->allow_cache_hints, or q->memory can be independent?
->
-> static void set_buffer_cache_hints(struct vb2_queue *q,
-> 				   struct vb2_buffer *vb,
-> 				   struct v4l2_buffer *b)
-> {
-> 	if (!q->allow_cache_hints)
-> 		return;
->
-> 	/*
-> 	 * DMA exporter should take care of cache syncs, so we can avoid
-> 	 * explicit ->prepare()/->finish() syncs. For other ->memory types
-> 	 * we always need ->prepare() or/and ->finish() cache sync.
-> 	 */
-> 	if (q->memory == VB2_MEMORY_DMABUF) {
-> 		vb->need_cache_sync_on_finish = 0;
-> 		vb->need_cache_sync_on_prepare = 0;
-> 		return;
-> 	}
+On Thu, Jan 23, 2020 at 03:01:29PM -0800, Guenter Roeck wrote:
+> On Wed, Jan 22, 2020 at 10:29:05AM +0100, Greg Kroah-Hartman wrote:
+> > From: Christian Brauner <christian.brauner@ubuntu.com>
+> > 
+> > commit 6b3ad6649a4c75504edeba242d3fd36b3096a57f upstream.
+> > 
+> > Commit 69f594a38967 ("ptrace: do not audit capability check when outputing /proc/pid/stat")
+> > introduced the ability to opt out of audit messages for accesses to various
+> > proc files since they are not violations of policy.  While doing so it
+> > somehow switched the check from ns_capable() to
+> > has_ns_capability{_noaudit}(). That means it switched from checking the
+> > subjective credentials of the task to using the objective credentials. This
+> > is wrong since. ptrace_has_cap() is currently only used in
+> > ptrace_may_access() And is used to check whether the calling task (subject)
+> > has the CAP_SYS_PTRACE capability in the provided user namespace to operate
+> > on the target task (object). According to the cred.h comments this would
+> > mean the subjective credentials of the calling task need to be used.
+> > This switches ptrace_has_cap() to use security_capable(). Because we only
+> > call ptrace_has_cap() in ptrace_may_access() and in there we already have a
+> > stable reference to the calling task's creds under rcu_read_lock() there's
+> > no need to go through another series of dereferences and rcu locking done
+> > in ns_capable{_noaudit}().
+> > 
+> > As one example where this might be particularly problematic, Jann pointed
+> > out that in combination with the upcoming IORING_OP_OPENAT feature, this
+> > bug might allow unprivileged users to bypass the capability checks while
+> > asynchronously opening files like /proc/*/mem, because the capability
+> > checks for this would be performed against kernel credentials.
+> > 
+> > To illustrate on the former point about this being exploitable: When
+> > io_uring creates a new context it records the subjective credentials of the
+> > caller. Later on, when it starts to do work it creates a kernel thread and
+> > registers a callback. The callback runs with kernel creds for
+> > ktask->real_cred and ktask->cred. To prevent this from becoming a
+> > full-blown 0-day io_uring will call override_cred() and override
+> > ktask->cred with the subjective credentials of the creator of the io_uring
+> > instance. With ptrace_has_cap() currently looking at ktask->real_cred this
+> > override will be ineffective and the caller will be able to open arbitray
+> > proc files as mentioned above.
+> > Luckily, this is currently not exploitable but will turn into a 0-day once
+> > IORING_OP_OPENAT{2} land in v5.6. Fix it now!
+> > 
+> > Cc: Oleg Nesterov <oleg@redhat.com>
+> > Cc: Eric Paris <eparis@redhat.com>
+> > Cc: stable@vger.kernel.org
+> > Reviewed-by: Kees Cook <keescook@chromium.org>
+> > Reviewed-by: Serge Hallyn <serge@hallyn.com>
+> > Reviewed-by: Jann Horn <jannh@google.com>
+> > Fixes: 69f594a38967 ("ptrace: do not audit capability check when outputing /proc/pid/stat")
+> > Signed-off-by: Christian Brauner <christian.brauner@ubuntu.com>
+> > Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> > 
+> > ---
+> >  kernel/ptrace.c |   15 ++++++++++-----
+> >  1 file changed, 10 insertions(+), 5 deletions(-)
+> > 
+> > --- a/kernel/ptrace.c
+> > +++ b/kernel/ptrace.c
+> > @@ -258,12 +258,17 @@ static int ptrace_check_attach(struct ta
+> >  	return ret;
+> >  }
+> >  
+> > -static int ptrace_has_cap(struct user_namespace *ns, unsigned int mode)
+> > +static bool ptrace_has_cap(const struct cred *cred, struct user_namespace *ns,
+> > +			   unsigned int mode)
+> >  {
+> > +	int ret;
+> > +
+> >  	if (mode & PTRACE_MODE_NOAUDIT)
+> > -		return has_ns_capability_noaudit(current, ns, CAP_SYS_PTRACE);
+> > +		ret = security_capable(cred, ns, CAP_SYS_PTRACE);
+> >  	else
+> > -		return has_ns_capability(current, ns, CAP_SYS_PTRACE);
+> > +		ret = security_capable(cred, ns, CAP_SYS_PTRACE);
+> > +
+> > +	return ret == 0;
+> 
+> This results in
+> 	if (condition)
+> 		do_something;
+> 	else
+> 		do_the_same;
+> 
+> Is that really correct ? The upstream patch calls security_capable()
+> with additional CAP_OPT_NOAUDIT vs. CAP_OPT_NONE parameter, which does
+> make sense. But I don't really see the benefit of the change above.
 
-I personally would prefer this to be above ->allow_cache_hints check,
-IOW to be independent. Because we need to skip flush/invalidation for
-DMABUF anyway, that's what allocators do in ->prepare() and ->finish()
-currently.
+Yeah, this is odd, and differs from the original version I applied to
+the staging queue.
 
-	-ss
+Sasha, you made this change to the patch, I'm guessing to make it build
+properly in 4.14?  Should I just have dropped it from there instead?
+
+thanks,
+
+greg k-h
