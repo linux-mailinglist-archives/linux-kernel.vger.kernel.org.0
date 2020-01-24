@@ -2,35 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 882971486F2
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Jan 2020 15:20:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E707B1486F6
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Jan 2020 15:20:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404081AbgAXOTh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 24 Jan 2020 09:19:37 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39644 "EHLO mail.kernel.org"
+        id S2392017AbgAXOTp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 24 Jan 2020 09:19:45 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39738 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389364AbgAXOTW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 24 Jan 2020 09:19:22 -0500
+        id S2391620AbgAXOT0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 24 Jan 2020 09:19:26 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A28FA2467F;
-        Fri, 24 Jan 2020 14:19:21 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id DA0C920838;
+        Fri, 24 Jan 2020 14:19:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579875562;
-        bh=Y5BE0zz7rfVgCd+kfgW/W0Mn6NUEnOOC+qIMHaMIPGY=;
+        s=default; t=1579875565;
+        bh=T9IqlH2GDcO96bbIxhZJVm4mjhUxT05VXehOGgsoU2c=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=HVWRpQ/pi+U2/eroH4hksc2zgYnkSvfApI8KkrghzFSDjeYenn15iIqMpYcWyN/23
-         hyw+nlPtAkhgequMK4yyl8bncP9PoKqaejnUky2gL53RRvWpTDeyLACyiQlsGt9CTR
-         NWCATp9mgn8hhXDtve/w+y0C6MM06CMajsa6g/uo=
+        b=b7Z9qLJwe1x3RrpHU15wcvU/U8O9B9Iy/IvgqA1UUVrUV7g3zNaduB9eoKWThFi7e
+         ypc7LLxU+cvcTvRHd94Z0Z0z/smPM9lqn1ASSutEtcC9dT3HguxF8xBGhxpZBVagEL
+         AviO+YD9IC0cA1ph1zoHYatpAZIpwqjE2K0nsOXI=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Arnaud Pouliquen <arnaud.pouliquen@st.com>,
-        Mark Brown <broonie@kernel.org>,
-        Sasha Levin <sashal@kernel.org>, alsa-devel@alsa-project.org
-Subject: [PATCH AUTOSEL 5.4 056/107] ASoC: sti: fix possible sleep-in-atomic
-Date:   Fri, 24 Jan 2020 09:17:26 -0500
-Message-Id: <20200124141817.28793-56-sashal@kernel.org>
+Cc:     Cong Wang <xiyou.wangcong@gmail.com>,
+        syzbot+4c3cc6dbe7259dbf9054@syzkaller.appspotmail.com,
+        Jozsef Kadlecsik <kadlec@netfilter.org>,
+        Pablo Neira Ayuso <pablo@netfilter.org>,
+        Sasha Levin <sashal@kernel.org>,
+        netfilter-devel@vger.kernel.org, coreteam@netfilter.org,
+        netdev@vger.kernel.org
+Subject: [PATCH AUTOSEL 5.4 059/107] netfilter: fix a use-after-free in mtype_destroy()
+Date:   Fri, 24 Jan 2020 09:17:29 -0500
+Message-Id: <20200124141817.28793-59-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200124141817.28793-1-sashal@kernel.org>
 References: <20200124141817.28793-1-sashal@kernel.org>
@@ -43,69 +47,38 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Arnaud Pouliquen <arnaud.pouliquen@st.com>
+From: Cong Wang <xiyou.wangcong@gmail.com>
 
-[ Upstream commit ce780a47c3c01e1e179d0792df6b853a913928f1 ]
+[ Upstream commit c120959387efa51479056fd01dc90adfba7a590c ]
 
-Change mutex and spinlock management to avoid sleep
-in atomic issue.
+map->members is freed by ip_set_free() right before using it in
+mtype_ext_cleanup() again. So we just have to move it down.
 
-Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@st.com>
-Link: https://lore.kernel.org/r/20200113100400.30472-1-arnaud.pouliquen@st.com
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Reported-by: syzbot+4c3cc6dbe7259dbf9054@syzkaller.appspotmail.com
+Fixes: 40cd63bf33b2 ("netfilter: ipset: Support extensions which need a per data destroy function")
+Acked-by: Jozsef Kadlecsik <kadlec@netfilter.org>
+Signed-off-by: Cong Wang <xiyou.wangcong@gmail.com>
+Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- sound/soc/sti/uniperif_player.c | 7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
+ net/netfilter/ipset/ip_set_bitmap_gen.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/sound/soc/sti/uniperif_player.c b/sound/soc/sti/uniperif_player.c
-index 48ea915b24ba2..2ed92c990b97c 100644
---- a/sound/soc/sti/uniperif_player.c
-+++ b/sound/soc/sti/uniperif_player.c
-@@ -226,7 +226,6 @@ static void uni_player_set_channel_status(struct uniperif *player,
- 	 * sampling frequency. If no sample rate is already specified, then
- 	 * set one.
- 	 */
--	mutex_lock(&player->ctrl_lock);
- 	if (runtime) {
- 		switch (runtime->rate) {
- 		case 22050:
-@@ -303,7 +302,6 @@ static void uni_player_set_channel_status(struct uniperif *player,
- 		player->stream_settings.iec958.status[3 + (n * 4)] << 24;
- 		SET_UNIPERIF_CHANNEL_STA_REGN(player, n, status);
- 	}
--	mutex_unlock(&player->ctrl_lock);
+diff --git a/net/netfilter/ipset/ip_set_bitmap_gen.h b/net/netfilter/ipset/ip_set_bitmap_gen.h
+index 063df74b46470..e1f271a1b2c14 100644
+--- a/net/netfilter/ipset/ip_set_bitmap_gen.h
++++ b/net/netfilter/ipset/ip_set_bitmap_gen.h
+@@ -60,9 +60,9 @@ mtype_destroy(struct ip_set *set)
+ 	if (SET_WITH_TIMEOUT(set))
+ 		del_timer_sync(&map->gc);
  
- 	/* Update the channel status */
- 	if (player->ver < SND_ST_UNIPERIF_VERSION_UNI_PLR_TOP_1_0)
-@@ -365,8 +363,10 @@ static int uni_player_prepare_iec958(struct uniperif *player,
+-	ip_set_free(map->members);
+ 	if (set->dsize && set->extensions & IPSET_EXT_DESTROY)
+ 		mtype_ext_cleanup(set);
++	ip_set_free(map->members);
+ 	ip_set_free(map);
  
- 	SET_UNIPERIF_CTRL_ZERO_STUFF_HW(player);
- 
-+	mutex_lock(&player->ctrl_lock);
- 	/* Update the channel status */
- 	uni_player_set_channel_status(player, runtime);
-+	mutex_unlock(&player->ctrl_lock);
- 
- 	/* Clear the user validity user bits */
- 	SET_UNIPERIF_USER_VALIDITY_VALIDITY_LR(player, 0);
-@@ -598,7 +598,6 @@ static int uni_player_ctl_iec958_put(struct snd_kcontrol *kcontrol,
- 	iec958->status[1] = ucontrol->value.iec958.status[1];
- 	iec958->status[2] = ucontrol->value.iec958.status[2];
- 	iec958->status[3] = ucontrol->value.iec958.status[3];
--	mutex_unlock(&player->ctrl_lock);
- 
- 	spin_lock_irqsave(&player->irq_lock, flags);
- 	if (player->substream && player->substream->runtime)
-@@ -608,6 +607,8 @@ static int uni_player_ctl_iec958_put(struct snd_kcontrol *kcontrol,
- 		uni_player_set_channel_status(player, NULL);
- 
- 	spin_unlock_irqrestore(&player->irq_lock, flags);
-+	mutex_unlock(&player->ctrl_lock);
-+
- 	return 0;
- }
- 
+ 	set->data = NULL;
 -- 
 2.20.1
 
