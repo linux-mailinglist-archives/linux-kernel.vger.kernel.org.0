@@ -2,66 +2,99 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BAABB148A62
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Jan 2020 15:47:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 37EFB148A65
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Jan 2020 15:47:24 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389818AbgAXOrB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 24 Jan 2020 09:47:01 -0500
-Received: from mx2.suse.de ([195.135.220.15]:43572 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389588AbgAXOqs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 24 Jan 2020 09:46:48 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id 255C1AFCB;
-        Fri, 24 Jan 2020 14:46:47 +0000 (UTC)
-From:   Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
-To:     gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org
-Cc:     Nicolas Saenz Julienne <nsaenzjulienne@suse.de>,
-        bcm-kernel-feedback-list@broadcom.com,
-        linux-rpi-kernel@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, devel@driverdev.osuosl.org
-Subject: [PATCH 22/22] staging: vc04_services: vchiq_arm: Get rid of unused defines
-Date:   Fri, 24 Jan 2020 15:46:16 +0100
-Message-Id: <20200124144617.2213-23-nsaenzjulienne@suse.de>
-X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200124144617.2213-1-nsaenzjulienne@suse.de>
-References: <20200124144617.2213-1-nsaenzjulienne@suse.de>
+        id S2389895AbgAXOrS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 24 Jan 2020 09:47:18 -0500
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:42053 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2389447AbgAXOqq (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 24 Jan 2020 09:46:46 -0500
+Received: by mail-wr1-f65.google.com with SMTP id q6so2269658wro.9
+        for <linux-kernel@vger.kernel.org>; Fri, 24 Jan 2020 06:46:45 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=d7nho88btA7XdPKueW+DP7zXBwkgUh/Agx/c+r7pFKg=;
+        b=DTZylmCwg5vELLX/se29ZL5QefwWb5Pxqp3i8o0pxcrnW6Rmr2QhZqBoxDKMEiH/IE
+         IKZLYSJu28s/9NTqow02DckxtvnaagJUEXB6PuKkW282rAlFdRRFvq9/Qx0neQJKLOV7
+         qDsHerItTkCbURWEkgYKLaH5ArIj2G6cvEiXEB/IC1YZDjFZoIKwub/ugp0coYZ3rGuL
+         +pNdvEP7Uu7veTffsrxb+YFoEW3ggTMhIQ/8o2AIDoR1NL3KM5N+iqDcIex2OE2FVkdr
+         ZwL4lEIzeNTfnDQwlk8j80abWODr5VhmgQ9psmG/oNXgBH5lM/WxFPsfVKDPu+5rNIPN
+         /QVQ==
+X-Gm-Message-State: APjAAAUJxIZk+cIcEaqBkDXt97480Jr74iNVox6/7QgWbQXBgrsOjOId
+        fGMEDXsGvWWuN32TmAboHBIL4guz
+X-Google-Smtp-Source: APXvYqwy13C+hrb5rggN5Fl0X/KO2iHGJRZqQvDZIaU7Uvx2HYIxOl4AtUirvS8iwnXAGM3sw4j40A==
+X-Received: by 2002:a5d:44ca:: with SMTP id z10mr4758194wrr.266.1579877204963;
+        Fri, 24 Jan 2020 06:46:44 -0800 (PST)
+Received: from localhost (prg-ext-pat.suse.com. [213.151.95.130])
+        by smtp.gmail.com with ESMTPSA id b128sm7032226wmb.25.2020.01.24.06.46.43
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 24 Jan 2020 06:46:44 -0800 (PST)
+Date:   Fri, 24 Jan 2020 15:46:43 +0100
+From:   Michal Hocko <mhocko@kernel.org>
+To:     Wei Yang <richardw.yang@linux.intel.com>
+Cc:     akpm@linux-foundation.org, yang.shi@linux.alibaba.com,
+        jhubbard@nvidia.com, vbabka@suse.cz, cl@linux.com,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Subject: Re: [Patch v2] mm/migrate.c: also overwrite error when it is bigger
+ than zero
+Message-ID: <20200124144643.GV29276@dhcp22.suse.cz>
+References: <20200119065753.21694-1-richardw.yang@linux.intel.com>
+ <20200124072127.GO29276@dhcp22.suse.cz>
+ <20200124141538.GA12509@richard>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200124141538.GA12509@richard>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-They aren't used anywhere. Get rid of them.
+On Fri 24-01-20 22:15:38, Wei Yang wrote:
+> On Fri, Jan 24, 2020 at 08:21:27AM +0100, Michal Hocko wrote:
+> >[Sorry I have missed this patch previously]
+> >
+> 
+> No problem, thanks for your comment.
+> 
+> >On Sun 19-01-20 14:57:53, Wei Yang wrote:
+> >> If we get here after successfully adding page to list, err would be
+> >> 1 to indicate the page is queued in the list.
+> >> 
+> >> Current code has two problems:
+> >> 
+> >>   * on success, 0 is not returned
+> >>   * on error, if add_page_for_migratioin() return 1, and the following err1
+> >>     from do_move_pages_to_node() is set, the err1 is not returned since err
+> >>     is 1
+> >
+> >This made my really scratch my head to grasp. So essentially err > 0
+> >will happen when we reach the end of the loop and rely on the
+> >out_flush flushing to migrate the batch. Then err contains the
+> >add_page_for_migratioin return value. And that would leak to the
+> >userspace.
+> >
+> >What would you say about the following wording instead?
+> >"
+> >out_flush part of do_pages_move is responsible for migrating the last
+> >batch that accumulated while processing the input in the loop.
+> >do_move_pages_to_node return value is supposed to override any
+> >preexisting error (e.g. when the user input is garbage) but the current
+> 
+> I am afraid I have a different understanding here.
+> 
+> If we jump to out_flush on the test of node_isset(), err is -EACCESS. Current
+> logic would return this instead of the error from do_move_pages_to_node().
+> Seems we don't override -EACCESS.
 
-Signed-off-by: Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
----
- .../vc04_services/interface/vchiq_arm/vchiq_arm.c      | 10 ----------
- 1 file changed, 10 deletions(-)
-
-diff --git a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_arm.c b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_arm.c
-index d81c2ed27ccc..9dcd73def3be 100644
---- a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_arm.c
-+++ b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_arm.c
-@@ -48,16 +48,6 @@
- int vchiq_arm_log_level = VCHIQ_LOG_DEFAULT;
- int vchiq_susp_log_level = VCHIQ_LOG_ERROR;
- 
--/* The number of times we allow force suspend to timeout before actually
--** _forcing_ suspend.  This is to cater for SW which fails to release vchiq
--** correctly - we don't want to prevent ARM suspend indefinitely in this case.
--*/
--#define FORCE_SUSPEND_FAIL_MAX 8
--
--/* The time in ms allowed for videocore to go idle when force suspend has been
-- * requested */
--#define FORCE_SUSPEND_TIMEOUT_MS 200
--
- struct user_service {
- 	struct vchiq_service *service;
- 	void *userdata;
+And this is the expected logic. The unexpected behavior is the one you
+have fixed by this patch because err = 1 wouldn't get overriden and that
+should have been.
 -- 
-2.25.0
-
+Michal Hocko
+SUSE Labs
