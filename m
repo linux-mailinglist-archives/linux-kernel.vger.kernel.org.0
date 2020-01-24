@@ -2,52 +2,52 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2B23B1483FC
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Jan 2020 12:41:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AA9D91483F9
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Jan 2020 12:41:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392004AbgAXLj3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 24 Jan 2020 06:39:29 -0500
-Received: from mail-vs1-f65.google.com ([209.85.217.65]:35353 "EHLO
-        mail-vs1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2403889AbgAXLZ6 (ORCPT
+        id S2391962AbgAXLjV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 24 Jan 2020 06:39:21 -0500
+Received: from mail-vk1-f193.google.com ([209.85.221.193]:36873 "EHLO
+        mail-vk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2391539AbgAXL0E (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 24 Jan 2020 06:25:58 -0500
-Received: by mail-vs1-f65.google.com with SMTP id x123so995988vsc.2
-        for <linux-kernel@vger.kernel.org>; Fri, 24 Jan 2020 03:25:56 -0800 (PST)
+        Fri, 24 Jan 2020 06:26:04 -0500
+Received: by mail-vk1-f193.google.com with SMTP id b129so433143vka.4
+        for <linux-kernel@vger.kernel.org>; Fri, 24 Jan 2020 03:26:03 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=F2jETx1K2QROvuqY65KaH9YzpqUlnDhQy9Jrb9ahM4g=;
-        b=ELgej1eneLjocmxUcRdNNa2G/bM/1I8WD3QAC7JMAowuwaxD23XyMiM6P2ctm0FjCM
-         0Zkx0NZGHUJPrpd5uzytEy7RI7KKVfJQRdVOkoOhZlwxht5LtvCu+mRqSW5ficRC+2uX
-         Wtavp5xOUQaXM1LfU2NC/DShfBYWpt/YtZPwev53cop08KRrfwejMRwBrqGrR7eWdln0
-         FYISyd7Hg94AGWvojH2V8gZ0H9taOIPnBnQaLCQ/28G+xpPAY8U1oeG/kWi/zBIkniaj
-         0vxSaKnsgOYfJLoC0Xw0iTFldsHiXFpbFAfGk7Ru+GZhFm4DM9blzBfFFGl0L2bJoBVd
-         Br1w==
+        bh=yA+q0/tdz9pHwwQsFpujNL3r5hUZDki5Wt7XV+ptBKg=;
+        b=b6o5NV0ph6Q5glGwWKgOfj96/rl7OpNF7ROax+CxomyD2+2mjB8eOKk92zzzlJ6YeN
+         m6WZ1HBJjJtrPgxLvTAK0EHIQHE4gg/fAH3C6jVOCwyK2lHpsGzvwjrNw/RIzmOCxh2v
+         +xqEFOtn3154mXloQvuBC/YS6t8zWwfAGDcQRSVi398wv0mvGB9vdEaRPldzpUeAmbjB
+         9nLVp0UFICNnuTz/4JGrZUC85F58N9OYvxNwC0jY1gf71+W+JyTlwEfm+cpItbglH0IC
+         SbAVfwF5wlW5zfQM7k47puAe/fp9WqLf65EgRQuecEzLJHYQhQrj6qiORWAu5cM+mo3W
+         viyA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=F2jETx1K2QROvuqY65KaH9YzpqUlnDhQy9Jrb9ahM4g=;
-        b=Es6gjXaKNpsxaxak5akainBZjYXUSS2qY49hoVQjmAX4LW0Q/pXJglCx3nM/JNU8AO
-         w7VNJWTeYzBVoPpDIyjAbv3CPTYKmC0S089QDSHv0uSxXzCHTb6UQDy9Z8moyq/OB6+o
-         VRseSepyk1imdabJJiAzoCXqrIrOSxYD6Ly6VfXdsI1tZTgJwjiXgpYA1wtfAI+NznPU
-         8GsFFO8D/KrjkbKE+jvy3CMN1oxqSoiTWciOkzIe4SxtiolCJhotJlDaXegSE6ipcFmG
-         obaWnzKySq3i0Bv3UE/7+AW0nfBtvm/0TXWrqTGz5sYS0ZSMf5e4n4khXVKj1VZjHKI1
-         b/Ww==
-X-Gm-Message-State: APjAAAUVOLg1Xhv5mmVwXD8ZgWuDUJOouzHW5Tshar2vq0Vx7vdr0BcB
-        caVRbHxlGL+73pY/WstRxEx6jy3fI7k+spjR8B7Rjg==
-X-Google-Smtp-Source: APXvYqxM6zYamgN6EVeKj7kVi1fOSzFudc87cWzGYD3HJobgEqJgawyNx4yUZWp27wRfHgwmoNQU5Nvwm+RSd45hGqo=
-X-Received: by 2002:a67:de15:: with SMTP id q21mr1800776vsk.165.1579865156235;
- Fri, 24 Jan 2020 03:25:56 -0800 (PST)
+        bh=yA+q0/tdz9pHwwQsFpujNL3r5hUZDki5Wt7XV+ptBKg=;
+        b=U/sErpveRj8G9vq5TD2Gxcsrrtlw6PMnz48ziTpihyBjx4XWITehKGhJjXTckZWicS
+         Gls1q/XkRAFsitxK/sLUsBLpg3TrUeIQRuE5J7cXF4qXMySomGMgwgYKJWYgtyUgXHId
+         bGU2cBLytTLdh/gUGRIJkhZDliXszT/hqmqhL4Mev6H0noSOk+aJp8/KeVo8l+j0ALFY
+         XtSoBOdnHpiLGG/cbul7aIL3uAcWCFoYJv652q9rrdl9cuxEP2Es8gdyOi6OopyyCdhv
+         EeKvX2I4Ob7kPzNZLOmbscNN0FUO7kAPAPSPmDqs9HuJ6TtHvL4a6Y3f7u9fxbGuBmJi
+         GLwQ==
+X-Gm-Message-State: APjAAAV62rnB2fKpsWSURHl9x8rprrVe+526f+nGaQbxxvne+oRg+laB
+        3HmPgkrrU0XFFAA/oPY8TDLyhVLlvqrRFrTJLtKSFQ==
+X-Google-Smtp-Source: APXvYqyJdUDT6GFcqq2yfAaUP/QP9wvF8DIKUg6lcbvTtc2pgywF0VGwYxowttRK1UdAtwMIFixCI2grpuBptG0UGQQ=
+X-Received: by 2002:a1f:94c1:: with SMTP id w184mr1709760vkd.43.1579865162655;
+ Fri, 24 Jan 2020 03:26:02 -0800 (PST)
 MIME-Version: 1.0
-References: <20200116152230.29831-1-jbx6244@gmail.com>
-In-Reply-To: <20200116152230.29831-1-jbx6244@gmail.com>
+References: <20200116152230.29831-1-jbx6244@gmail.com> <20200116152230.29831-2-jbx6244@gmail.com>
+In-Reply-To: <20200116152230.29831-2-jbx6244@gmail.com>
 From:   Ulf Hansson <ulf.hansson@linaro.org>
-Date:   Fri, 24 Jan 2020 12:25:19 +0100
-Message-ID: <CAPDyKFoGCs5ZoYfzPN1D6KZN+bQkuTa+iAWhwkan1noBdfu0CQ@mail.gmail.com>
-Subject: Re: [PATCH v2 1/3] dt-bindings: mmc: convert synopsys dw-mshc
+Date:   Fri, 24 Jan 2020 12:25:26 +0100
+Message-ID: <CAPDyKFrgGTDK_4bv3ofs2ky6d5optfTh2H-99uBMjZzNpcOhUQ@mail.gmail.com>
+Subject: Re: [PATCH v2 2/3] dt-bindings: mmc: convert rockchip dw-mshc
  bindings to yaml
 To:     Johan Jonker <jbx6244@gmail.com>
 Cc:     Rob Herring <robh+dt@kernel.org>,
@@ -67,9 +67,9 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 On Thu, 16 Jan 2020 at 16:22, Johan Jonker <jbx6244@gmail.com> wrote:
 >
 > Current dts files with 'dwmmc' nodes are manually verified.
-> In order to automate this process synopsys-dw-mshc.txt
+> In order to automate this process rockchip-dw-mshc.txt
 > has to be converted to yaml. In the new setup
-> synopsys-dw-mshc.yaml will inherit properties from
+> rockchip-dw-mshc.yaml will inherit properties from
 > mmc-controller.yaml and synopsys-dw-mshc-common.yaml.
 > 'dwmmc' will no longer be a valid name for a node and
 > should be changed to 'mmc'.
@@ -83,259 +83,120 @@ Uffe
 
 
 > ---
->  .../bindings/mmc/synopsys-dw-mshc-common.yaml      |  68 ++++++++++
->  .../devicetree/bindings/mmc/synopsys-dw-mshc.txt   | 141 ---------------------
->  .../devicetree/bindings/mmc/synopsys-dw-mshc.yaml  |  70 ++++++++++
->  3 files changed, 138 insertions(+), 141 deletions(-)
->  create mode 100644 Documentation/devicetree/bindings/mmc/synopsys-dw-mshc-common.yaml
->  delete mode 100644 Documentation/devicetree/bindings/mmc/synopsys-dw-mshc.txt
->  create mode 100644 Documentation/devicetree/bindings/mmc/synopsys-dw-mshc.yaml
+>  .../devicetree/bindings/mmc/rockchip-dw-mshc.txt   |  49 --------
+>  .../devicetree/bindings/mmc/rockchip-dw-mshc.yaml  | 123 +++++++++++++++++++++
+>  MAINTAINERS                                        |   1 +
+>  3 files changed, 124 insertions(+), 49 deletions(-)
+>  delete mode 100644 Documentation/devicetree/bindings/mmc/rockchip-dw-mshc.txt
+>  create mode 100644 Documentation/devicetree/bindings/mmc/rockchip-dw-mshc.yaml
 >
-> diff --git a/Documentation/devicetree/bindings/mmc/synopsys-dw-mshc-common.yaml b/Documentation/devicetree/bindings/mmc/synopsys-dw-mshc-common.yaml
-> new file mode 100644
-> index 000000000..890d47a87
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/mmc/synopsys-dw-mshc-common.yaml
-> @@ -0,0 +1,68 @@
-> +# SPDX-License-Identifier: GPL-2.0
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/mmc/synopsys-dw-mshc-common.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Synopsys Designware Mobile Storage Host Controller Common Properties
-> +
-> +allOf:
-> +  - $ref: "mmc-controller.yaml#"
-> +
-> +maintainers:
-> +  - Ulf Hansson <ulf.hansson@linaro.org>
-> +
-> +# Everything else is described in the common file
-> +properties:
-> +  resets:
-> +    maxItems: 1
-> +
-> +  reset-names:
-> +    const: reset
-> +
-> +  clock-frequency:
-> +    description:
-> +      Should be the frequency (in Hz) of the ciu clock.  If this
-> +      is specified and the ciu clock is specified then we'll try to set the ciu
-> +      clock to this at probe time.
-> +
-> +  fifo-depth:
-> +    allOf:
-> +      - $ref: /schemas/types.yaml#/definitions/uint32
-> +    description:
-> +      The maximum size of the tx/rx fifo's. If this property is not
-> +      specified, the default value of the fifo size is determined from the
-> +      controller registers.
-> +
-> +  card-detect-delay:
-> +    allOf:
-> +      - $ref: /schemas/types.yaml#/definitions/uint32
-> +      - default: 0
-> +    description:
-> +      Delay in milli-seconds before detecting card after card
-> +      insert event. The default value is 0.
-> +
-> +  data-addr:
-> +    allOf:
-> +      - $ref: /schemas/types.yaml#/definitions/uint32
-> +    description:
-> +      Override fifo address with value provided by DT. The default FIFO reg
-> +      offset is assumed as 0x100 (version < 0x240A) and 0x200(version >= 0x240A)
-> +      by driver. If the controller does not follow this rule, please use
-> +      this property to set fifo address in device tree.
-> +
-> +  fifo-watermark-aligned:
-> +    allOf:
-> +      - $ref: /schemas/types.yaml#/definitions/flag
-> +    description:
-> +      Data done irq is expected if data length is less than
-> +      watermark in PIO mode. But fifo watermark is requested to be aligned
-> +      with data length in some SoC so that TX/RX irq can be generated with
-> +      data done irq. Add this watermark quirk to mark this requirement and
-> +      force fifo watermark setting accordingly.
-> +
-> +  dmas:
-> +    maxItems: 1
-> +
-> +  dma-names:
-> +    const: rx-tx
-> diff --git a/Documentation/devicetree/bindings/mmc/synopsys-dw-mshc.txt b/Documentation/devicetree/bindings/mmc/synopsys-dw-mshc.txt
+> diff --git a/Documentation/devicetree/bindings/mmc/rockchip-dw-mshc.txt b/Documentation/devicetree/bindings/mmc/rockchip-dw-mshc.txt
 > deleted file mode 100644
-> index 7e5e427a2..000000000
-> --- a/Documentation/devicetree/bindings/mmc/synopsys-dw-mshc.txt
+> index 6f629b12b..000000000
+> --- a/Documentation/devicetree/bindings/mmc/rockchip-dw-mshc.txt
 > +++ /dev/null
-> @@ -1,141 +0,0 @@
-> -* Synopsys Designware Mobile Storage Host Controller
+> @@ -1,49 +0,0 @@
+> -* Rockchip specific extensions to the Synopsys Designware Mobile
+> -  Storage Host Controller
 > -
 > -The Synopsys designware mobile storage host controller is used to interface
 > -a SoC with storage medium such as eMMC or SD/MMC cards. This file documents
-> -differences between the core mmc properties described by mmc.txt and the
-> -properties used by the Synopsys Designware Mobile Storage Host Controller.
+> -differences between the core Synopsys dw mshc controller properties described
+> -by synopsys-dw-mshc.txt and the properties used by the Rockchip specific
+> -extensions to the Synopsys Designware Mobile Storage Host Controller.
 > -
 > -Required Properties:
 > -
 > -* compatible: should be
-> -       - snps,dw-mshc: for controllers compliant with synopsys dw-mshc.
-> -* #address-cells: should be 1.
-> -* #size-cells: should be 0.
+> -       - "rockchip,rk2928-dw-mshc": for Rockchip RK2928 and following,
+> -                                                       before RK3288
+> -       - "rockchip,rk3288-dw-mshc": for Rockchip RK3288
+> -       - "rockchip,rv1108-dw-mshc", "rockchip,rk3288-dw-mshc": for Rockchip RV1108
+> -       - "rockchip,px30-dw-mshc", "rockchip,rk3288-dw-mshc": for Rockchip PX30
+> -       - "rockchip,rk3036-dw-mshc", "rockchip,rk3288-dw-mshc": for Rockchip RK3036
+> -       - "rockchip,rk3228-dw-mshc", "rockchip,rk3288-dw-mshc": for Rockchip RK322x
+> -       - "rockchip,rk3328-dw-mshc", "rockchip,rk3288-dw-mshc": for Rockchip RK3328
+> -       - "rockchip,rk3368-dw-mshc", "rockchip,rk3288-dw-mshc": for Rockchip RK3368
+> -       - "rockchip,rk3399-dw-mshc", "rockchip,rk3288-dw-mshc": for Rockchip RK3399
 > -
-> -# Slots (DEPRECATED): The slot specific information are contained within
-> -  child-nodes with each child-node representing a supported slot. There should
-> -  be atleast one child node representing a card slot. The name of the child node
-> -  representing the slot is recommended to be slot@n where n is the unique number
-> -  of the slot connected to the controller. The following are optional properties
-> -  which can be included in the slot child node.
+> -Optional Properties:
+> -* clocks: from common clock binding: if ciu-drive and ciu-sample are
+> -  specified in clock-names, should contain handles to these clocks.
 > -
-> -       * reg: specifies the physical slot number. The valid values of this
-> -         property is 0 to (num-slots -1), where num-slots is the value
-> -         specified by the num-slots property.
+> -* clock-names: Apart from the clock-names described in synopsys-dw-mshc.txt
+> -  two more clocks "ciu-drive" and "ciu-sample" are supported. They are used
+> -  to control the clock phases, "ciu-sample" is required for tuning high-
+> -  speed modes.
 > -
-> -       * bus-width: as documented in mmc core bindings.
+> -* rockchip,default-sample-phase: The default phase to set ciu-sample at
+> -  probing, low speeds or in case where all phases work at tuning time.
+> -  If not specified 0 deg will be used.
 > -
-> -       * wp-gpios: specifies the write protect gpio line. The format of the
-> -         gpio specifier depends on the gpio controller. If a GPIO is not used
-> -         for write-protect, this property is optional.
-> -
-> -       * disable-wp: If the wp-gpios property isn't present then (by default)
-> -         we'd assume that the write protect is hooked up directly to the
-> -         controller's special purpose write protect line (accessible via
-> -         the WRTPRT register).  However, it's possible that we simply don't
-> -         want write protect.  In that case specify 'disable-wp'.
-> -         NOTE: This property is not required for slots known to always
-> -         connect to eMMC or SDIO cards.
-> -
-> -Optional properties:
-> -
-> -* resets: phandle + reset specifier pair, intended to represent hardware
-> -  reset signal present internally in some host controller IC designs.
-> -  See Documentation/devicetree/bindings/reset/reset.txt for details.
-> -
-> -* reset-names: request name for using "resets" property. Must be "reset".
-> -       (It will be used together with "resets" property.)
-> -
-> -* clocks: from common clock binding: handle to biu and ciu clocks for the
-> -  bus interface unit clock and the card interface unit clock.
-> -
-> -* clock-names: from common clock binding: Shall be "biu" and "ciu".
-> -  If the biu clock is missing we'll simply skip enabling it.  If the
-> -  ciu clock is missing we'll just assume that the clock is running at
-> -  clock-frequency.  It is an error to omit both the ciu clock and the
-> -  clock-frequency.
-> -
-> -* clock-frequency: should be the frequency (in Hz) of the ciu clock.  If this
-> -  is specified and the ciu clock is specified then we'll try to set the ciu
-> -  clock to this at probe time.
-> -
-> -* fifo-depth: The maximum size of the tx/rx fifo's. If this property is not
-> -  specified, the default value of the fifo size is determined from the
-> -  controller registers.
-> -
-> -* card-detect-delay: Delay in milli-seconds before detecting card after card
-> -  insert event. The default value is 0.
-> -
-> -* data-addr: Override fifo address with value provided by DT. The default FIFO reg
-> -  offset is assumed as 0x100 (version < 0x240A) and 0x200(version >= 0x240A) by
-> -  driver. If the controller does not follow this rule, please use this property
-> -  to set fifo address in device tree.
-> -
-> -* fifo-watermark-aligned: Data done irq is expected if data length is less than
-> -  watermark in PIO mode. But fifo watermark is requested to be aligned with data
-> -  length in some SoC so that TX/RX irq can be generated with data done irq. Add this
-> -  watermark quirk to mark this requirement and force fifo watermark setting
-> -  accordingly.
-> -
-> -* vmmc-supply: The phandle to the regulator to use for vmmc.  If this is
-> -  specified we'll defer probe until we can find this regulator.
-> -
-> -* dmas: List of DMA specifiers with the controller specific format as described
-> -  in the generic DMA client binding. Refer to dma.txt for details.
-> -
-> -* dma-names: request names for generic DMA client binding. Must be "rx-tx".
-> -  Refer to dma.txt for details.
-> -
-> -Aliases:
-> -
-> -- All the MSHC controller nodes should be represented in the aliases node using
-> -  the following format 'mshc{n}' where n is a unique number for the alias.
+> -* rockchip,desired-num-phases: The desired number of times that the host
+> -  execute tuning when needed. If not specified, the host will do tuning
+> -  for 360 times, namely tuning for each degree.
 > -
 > -Example:
 > -
-> -The MSHC controller node can be split into two portions, SoC specific and
-> -board specific portions as listed below.
-> -
-> -       dwmmc0@12200000 {
-> -               compatible = "snps,dw-mshc";
-> -               clocks = <&clock 351>, <&clock 132>;
-> -               clock-names = "biu", "ciu";
+> -       rkdwmmc0@12200000 {
+> -               compatible = "rockchip,rk3288-dw-mshc";
 > -               reg = <0x12200000 0x1000>;
 > -               interrupts = <0 75 0>;
 > -               #address-cells = <1>;
 > -               #size-cells = <0>;
-> -               data-addr = <0x200>;
-> -               fifo-watermark-aligned;
-> -               resets = <&rst 20>;
-> -               reset-names = "reset";
 > -       };
-> -
-> -[board specific internal DMA resources]
-> -
-> -       dwmmc0@12200000 {
-> -               clock-frequency = <400000000>;
-> -               clock-freq-min-max = <400000 200000000>;
-> -               broken-cd;
-> -               fifo-depth = <0x80>;
-> -               card-detect-delay = <200>;
-> -               vmmc-supply = <&buck8>;
-> -               bus-width = <8>;
-> -               cap-mmc-highspeed;
-> -               cap-sd-highspeed;
-> -       };
-> -
-> -[board specific generic DMA request binding]
-> -
-> -       dwmmc0@12200000 {
-> -               clock-frequency = <400000000>;
-> -               clock-freq-min-max = <400000 200000000>;
-> -               broken-cd;
-> -               fifo-depth = <0x80>;
-> -               card-detect-delay = <200>;
-> -               vmmc-supply = <&buck8>;
-> -               bus-width = <8>;
-> -               cap-mmc-highspeed;
-> -               cap-sd-highspeed;
-> -               dmas = <&pdma 12>;
-> -               dma-names = "rx-tx";
-> -       };
-> diff --git a/Documentation/devicetree/bindings/mmc/synopsys-dw-mshc.yaml b/Documentation/devicetree/bindings/mmc/synopsys-dw-mshc.yaml
+> diff --git a/Documentation/devicetree/bindings/mmc/rockchip-dw-mshc.yaml b/Documentation/devicetree/bindings/mmc/rockchip-dw-mshc.yaml
 > new file mode 100644
-> index 000000000..05f9f36dc
+> index 000000000..2f70f5ef0
 > --- /dev/null
-> +++ b/Documentation/devicetree/bindings/mmc/synopsys-dw-mshc.yaml
-> @@ -0,0 +1,70 @@
+> +++ b/Documentation/devicetree/bindings/mmc/rockchip-dw-mshc.yaml
+> @@ -0,0 +1,123 @@
 > +# SPDX-License-Identifier: GPL-2.0
 > +%YAML 1.2
 > +---
-> +$id: http://devicetree.org/schemas/mmc/synopsys-dw-mshc.yaml#
+> +$id: http://devicetree.org/schemas/mmc/rockchip-dw-mshc.yaml#
 > +$schema: http://devicetree.org/meta-schemas/core.yaml#
 > +
-> +title: Synopsys Designware Mobile Storage Host Controller Binding
+> +title: Rockchip designware mobile storage host controller device tree bindings
+> +
+> +description:
+> +  Rockchip uses the Synopsys designware mobile storage host controller
+> +  to interface a SoC with storage medium such as eMMC or SD/MMC cards.
+> +  This file documents the combined properties for the core Synopsys dw mshc
+> +  controller that are not already included in the synopsys-dw-mshc-common.yaml
+> +  file and the Rockchip specific extensions.
 > +
 > +allOf:
 > +  - $ref: "synopsys-dw-mshc-common.yaml#"
 > +
 > +maintainers:
-> +  - Ulf Hansson <ulf.hansson@linaro.org>
+> +  - Heiko Stuebner <heiko@sntech.de>
 > +
 > +# Everything else is described in the common file
 > +properties:
 > +  compatible:
-> +    const: snps,dw-mshc
+> +    oneOf:
+> +      # for Rockchip RK2928 and before RK3288
+> +      - const: rockchip,rk2928-dw-mshc
+> +      # for Rockchip RK3288
+> +      - const: rockchip,rk3288-dw-mshc
+> +      - items:
+> +          - enum:
+> +            # for Rockchip PX30
+> +            - rockchip,px30-dw-mshc
+> +            # for Rockchip RK3036
+> +            - rockchip,rk3036-dw-mshc
+> +            # for Rockchip RK322x
+> +            - rockchip,rk3228-dw-mshc
+> +            # for Rockchip RK3328
+> +            - rockchip,rk3328-dw-mshc
+> +            # for Rockchip RK3368
+> +            - rockchip,rk3368-dw-mshc
+> +            # for Rockchip RK3399
+> +            - rockchip,rk3399-dw-mshc
+> +            # for Rockchip RV1108
+> +            - rockchip,rv1108-dw-mshc
+> +          - const: rockchip,rk3288-dw-mshc
 > +
 > +  reg:
 > +    maxItems: 1
@@ -345,15 +206,47 @@ Uffe
 > +
 > +  clocks:
 > +    minItems: 2
-> +    maxItems: 2
+> +    maxItems: 4
 > +    description:
-> +      Handle to "biu" and "ciu" clocks for the
-> +      bus interface unit clock and the card interface unit clock.
+> +      Handle to "biu" and "ciu" clocks for the bus interface unit clock and
+> +      the card interface unit clock. If "ciu-drive" and "ciu-sample" are
+> +      specified in clock-names, it should also contain
+> +      handles to these clocks.
 > +
 > +  clock-names:
+> +    minItems: 2
 > +    items:
 > +      - const: biu
 > +      - const: ciu
+> +      - const: ciu-drive
+> +      - const: ciu-sample
+> +    description:
+> +      Apart from the clock-names "biu" and "ciu" two more clocks
+> +      "ciu-drive" and "ciu-sample" are supported. They are used
+> +      to control the clock phases, "ciu-sample" is required for tuning
+> +      high speed modes.
+> +
+> +  rockchip,default-sample-phase:
+> +    allOf:
+> +      - $ref: /schemas/types.yaml#/definitions/uint32
+> +    minimum: 0
+> +    maximum: 360
+> +    default: 0
+> +    description:
+> +      The default phase to set "ciu-sample" at probing,
+> +      low speeds or in case where all phases work at tuning time.
+> +      If not specified 0 deg will be used.
+> +
+> +  rockchip,desired-num-phases:
+> +    allOf:
+> +      - $ref: /schemas/types.yaml#/definitions/uint32
+> +    minimum: 0
+> +    maximum: 360
+> +    default: 360
+> +    description:
+> +      The desired number of times that the host execute tuning when needed.
+> +      If not specified, the host will do tuning for 360 times,
+> +      namely tuning for each degree.
 > +
 > +required:
 > +  - compatible
@@ -364,30 +257,35 @@ Uffe
 > +
 > +examples:
 > +  - |
-> +    mmc@12200000 {
-> +      compatible = "snps,dw-mshc";
-> +      reg = <0x12200000 0x1000>;
-> +      interrupts = <0 75 0>;
-> +      clocks = <&clock 351>, <&clock 132>;
-> +      clock-names = "biu", "ciu";
-> +      dmas = <&pdma 12>;
-> +      dma-names = "rx-tx";
-> +      resets = <&rst 20>;
+> +    #include <dt-bindings/clock/rk3288-cru.h>
+> +    #include <dt-bindings/interrupt-controller/arm-gic.h>
+> +    #include <dt-bindings/interrupt-controller/irq.h>
+> +    sdmmc: mmc@ff0c0000 {
+> +      compatible = "rockchip,rk3288-dw-mshc";
+> +      reg = <0x0 0xff0c0000 0x0 0x4000>;
+> +      interrupts = <GIC_SPI 32 IRQ_TYPE_LEVEL_HIGH>;
+> +      clocks = <&cru HCLK_SDMMC>, <&cru SCLK_SDMMC>,
+> +               <&cru SCLK_SDMMC_DRV>, <&cru SCLK_SDMMC_SAMPLE>;
+> +      clock-names = "biu", "ciu", "ciu-drive", "ciu-sample";
+> +      resets = <&cru SRST_MMC0>;
 > +      reset-names = "reset";
-> +      vmmc-supply = <&buck8>;
-> +      #address-cells = <1>;
-> +      #size-cells = <0>;
-> +      broken-cd;
-> +      bus-width = <8>;
-> +      cap-mmc-highspeed;
-> +      cap-sd-highspeed;
-> +      card-detect-delay = <200>;
-> +      clock-freq-min-max = <400000 200000000>;
-> +      clock-frequency = <400000000>;
-> +      data-addr = <0x200>;
-> +      fifo-depth = <0x80>;
-> +      fifo-watermark-aligned;
+> +      fifo-depth = <0x100>;
+> +      max-frequency = <150000000>;
 > +    };
+> +
+> +...
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index d6ad01d71..1b16c0fdf 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -2240,6 +2240,7 @@ L:        linux-rockchip@lists.infradead.org
+>  T:     git git://git.kernel.org/pub/scm/linux/kernel/git/mmind/linux-rockchip.git
+>  S:     Maintained
+>  F:     Documentation/devicetree/bindings/i2c/i2c-rk3x.txt
+> +F:     Documentation/devicetree/bindings/mmc/rockchip-dw-mshc.yaml
+>  F:     arch/arm/boot/dts/rk3*
+>  F:     arch/arm/boot/dts/rv1108*
+>  F:     arch/arm/mach-rockchip/
 > --
 > 2.11.0
 >
