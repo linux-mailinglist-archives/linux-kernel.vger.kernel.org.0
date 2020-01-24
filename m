@@ -2,44 +2,47 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 61F4A1487F3
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Jan 2020 15:26:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 552BC1487F5
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Jan 2020 15:26:18 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389947AbgAXOZy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 24 Jan 2020 09:25:54 -0500
-Received: from us-smtp-1.mimecast.com ([205.139.110.61]:28040 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S2387621AbgAXOZv (ORCPT
+        id S2390154AbgAXO0A (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 24 Jan 2020 09:26:00 -0500
+Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:37879 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S2389790AbgAXOZx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 24 Jan 2020 09:25:51 -0500
+        Fri, 24 Jan 2020 09:25:53 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1579875950;
+        s=mimecast20190719; t=1579875952;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding;
-        bh=gFUS+IYpTMcPpriTfqC+Rs1/QtFWk7pC2ooCgkxv0Po=;
-        b=amgWxDk292hKUeEXyajV2l+frm3Fh/3pfFqN6hQFHSpGH5ox/kWnKO2BA/F6LDgC+/S4nI
-        Yu6w+dwFQ2hLEXS8xCgWc1VFGX7sMpNIaNeOUFl8VRSaRpiwRoipsWJc1PGof/Rk0862IM
-        zIJE5SzB3TqutYDJOIEVNqTz/J2HD8Y=
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=ZfbqCEGb1Hozb97Wquprp+GaP9A0aUtFnhQN/uvV2os=;
+        b=LFrV84A7VQ/eUyMGP6182CfhMjGOBbGUWGJonp+uJFqnLhTKqVnPAPcOho/2ZIwjswyGpR
+        S8ADWdrbn7cMLPhY6zJnbSeNMaXRakw1KF3P9kFpLVoKJ1d+UKTOVFphJQtnoXIcfHphFm
+        8LfaxGvv75Dc5KtO03S08P5thQOyGno=
 Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
  [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-116-8HkIZKcTMhqYNkxhYA9nDw-1; Fri, 24 Jan 2020 09:25:45 -0500
-X-MC-Unique: 8HkIZKcTMhqYNkxhYA9nDw-1
+ us-mta-283-3FfZJy17PoKvPLfhp7L94A-1; Fri, 24 Jan 2020 09:25:50 -0500
+X-MC-Unique: 3FfZJy17PoKvPLfhp7L94A-1
 Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id E23DB190D345;
-        Fri, 24 Jan 2020 14:25:43 +0000 (UTC)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id CC690800D41;
+        Fri, 24 Jan 2020 14:25:48 +0000 (UTC)
 Received: from laptop.redhat.com (ovpn-116-37.ams2.redhat.com [10.36.116.37])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id BFFEC3B0;
-        Fri, 24 Jan 2020 14:25:38 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 46DF119C69;
+        Fri, 24 Jan 2020 14:25:44 +0000 (UTC)
 From:   Eric Auger <eric.auger@redhat.com>
 To:     eric.auger.pro@gmail.com, eric.auger@redhat.com, maz@kernel.org,
         linux-kernel@vger.kernel.org, kvmarm@lists.cs.columbia.edu
 Cc:     andrew.murray@arm.com
-Subject: [PATCH 0/4] KVM/ARM: Misc PMU fixes
-Date:   Fri, 24 Jan 2020 15:25:31 +0100
-Message-Id: <20200124142535.29386-1-eric.auger@redhat.com>
+Subject: [PATCH 1/4] KVM: arm64: pmu: Don't increment SW_INCR if PMCR.E is unset
+Date:   Fri, 24 Jan 2020 15:25:32 +0100
+Message-Id: <20200124142535.29386-2-eric.auger@redhat.com>
+In-Reply-To: <20200124142535.29386-1-eric.auger@redhat.com>
+References: <20200124142535.29386-1-eric.auger@redhat.com>
 MIME-Version: 1.0
 X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
 Content-Transfer-Encoding: quoted-printable
@@ -48,55 +51,37 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-While writing new PMUv3 event counter kvm-unit-tests I found
-some bugs related to the chained counter implementation:
+The specification says PMSWINC increments PMEVCNTR<n>_EL1 by 1
+if PMEVCNTR<n>_EL0 is enabled and configured to count SW_INCR.
 
-- the enable state of the high counter is not taken into account,
-- chain counters are not implemented along with SW_INCR type,
-- SW_INCR does not take into account the global enable state
+For PMEVCNTR<n>_EL0 to be enabled, we need both PMCNTENSET to
+be set for the corresponding event counter but we also need
+the PMCR.E bit to be set.
 
-The last patch rather is an optimization that avoids manipulating
-non supported counters.
+Fixes: 7a0adc7064b8 ("arm64: KVM: Add access handler for PMSWINC register=
+")
+Signed-off-by: Eric Auger <eric.auger@redhat.com>
+Reviewed-by: Andrew Murray <andrew.murray@arm.com>
+Acked-by: Marc Zyngier <maz@kernel.org>
+---
+ virt/kvm/arm/pmu.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-Best Regards
-
-Eric
-
-This series can be found at:
-https://github.com/eauger/linux/tree/v5.5-rc7-pmu-fixes-v1
-
-Test:
-Tested with kvm-unit-tests [1]: all tests now pass,
-at the exception of one sub-test in pmu-chain-promotion
-but this is a bug in test.
-
-Other testing at higher level (perf) appreciated.
-
-references:
-[1] KVM: arm64: PMUv3 Event Counter Tests
-(https://lore.kernel.org/kvmarm/c1831b6c-dc75-1bd3-6657-0375682c30af@redh=
-at.com/T/)
-
-History:
-
-RFC -> v1:
-- remove  [RFC 3/3] KVM: arm64: pmu: Enforce PMEVTYPER evtCount size
-- add KVM: arm64: pmu: Only handle supported event counters
-- Take into account the enable state of the CHAIN high counter
-- revisit kvm_pmu_software_increment() implementation as suggested
-  by Marc
-
-
-Eric Auger (4):
-  KVM: arm64: pmu: Don't increment SW_INCR if PMCR.E is unset
-  KVM: arm64: pmu: Don't mark a counter as chained if the odd one is
-    disabled
-  KVM: arm64: pmu: Fix chained SW_INCR counters
-  KVM: arm64: pmu: Only handle supported event counters
-
- virt/kvm/arm/pmu.c | 114 +++++++++++++++++++++++++++------------------
- 1 file changed, 69 insertions(+), 45 deletions(-)
-
+diff --git a/virt/kvm/arm/pmu.c b/virt/kvm/arm/pmu.c
+index 8731dfeced8b..c3f8b059881e 100644
+--- a/virt/kvm/arm/pmu.c
++++ b/virt/kvm/arm/pmu.c
+@@ -486,6 +486,9 @@ void kvm_pmu_software_increment(struct kvm_vcpu *vcpu=
+, u64 val)
+ 	if (val =3D=3D 0)
+ 		return;
+=20
++	if (!(__vcpu_sys_reg(vcpu, PMCR_EL0) & ARMV8_PMU_PMCR_E))
++		return;
++
+ 	enable =3D __vcpu_sys_reg(vcpu, PMCNTENSET_EL0);
+ 	for (i =3D 0; i < ARMV8_PMU_CYCLE_IDX; i++) {
+ 		if (!(val & BIT(i)))
 --=20
 2.20.1
 
