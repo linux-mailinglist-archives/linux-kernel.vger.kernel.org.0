@@ -2,287 +2,64 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 125FF148BB9
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Jan 2020 17:17:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1EDCB148BBF
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Jan 2020 17:18:26 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388925AbgAXQRC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 24 Jan 2020 11:17:02 -0500
-Received: from ns.iliad.fr ([212.27.33.1]:43194 "EHLO ns.iliad.fr"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388010AbgAXQRC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 24 Jan 2020 11:17:02 -0500
-Received: from ns.iliad.fr (localhost [127.0.0.1])
-        by ns.iliad.fr (Postfix) with ESMTP id 9EED521876;
-        Fri, 24 Jan 2020 17:16:59 +0100 (CET)
-Received: from [192.168.108.51] (freebox.vlq16.iliad.fr [213.36.7.13])
-        by ns.iliad.fr (Postfix) with ESMTP id 6EC3721875;
-        Fri, 24 Jan 2020 17:16:59 +0100 (CET)
-From:   Marc Gonzalez <marc.w.gonzalez@free.fr>
-Subject: [RFC PATCH v3] clk: Use new helper in managed functions
-To:     linux-clk <linux-clk@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Cc:     Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Sudip Mukherjee <sudipm.mukherjee@gmail.com>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Rafael Wysocki <rjw@rjwysocki.net>,
-        Suzuki Poulose <suzuki.poulose@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>
-Message-ID: <19f7e109-e5d3-2401-efd2-1f19ec995e66@free.fr>
-Date:   Fri, 24 Jan 2020 17:16:59 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.1
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Virus-Scanned: ClamAV using ClamSMTP ; ns.iliad.fr ; Fri Jan 24 17:16:59 2020 +0100 (CET)
+        id S2389488AbgAXQSY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 24 Jan 2020 11:18:24 -0500
+Received: from out30-43.freemail.mail.aliyun.com ([115.124.30.43]:60343 "EHLO
+        out30-43.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S2387404AbgAXQSX (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 24 Jan 2020 11:18:23 -0500
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R231e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01f04455;MF=guoren@linux.alibaba.com;NM=1;PH=DS;RN=7;SR=0;TI=SMTPD_---0ToSJxNn_1579882700;
+Received: from localhost(mailfrom:guoren@linux.alibaba.com fp:SMTPD_---0ToSJxNn_1579882700)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Sat, 25 Jan 2020 00:18:20 +0800
+From:   Guo Ren <guoren@linux.alibaba.com>
+To:     linux-riscv@lists.infradead.org
+Cc:     linux-arch@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-csky@vger.kernel.org, Guo Ren <guoren@linux.alibaba.com>,
+        Andrew Waterman <andrew@sifive.com>,
+        Palmer Dabbelt <palmer@sifive.com>
+Subject: [PATCH] riscv: Use flush_icache_mm for flush_icache_user_range
+Date:   Sat, 25 Jan 2020 00:18:10 +0800
+Message-Id: <20200124161810.24322-1-guoren@linux.alibaba.com>
+X-Mailer: git-send-email 2.17.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Introduce devm_add() to factorize devres_alloc/devres_add calls.
+The only call path is:
 
-Using that helper produces simpler code, and smaller object size.
-E.g. with gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu:
+__access_remote_vm -> copy_to_user_page -> flush_icache_user_range
 
-    text	   data	    bss	    dec	    hex	filename
--   1708	     80	      0	   1788	    6fc	drivers/clk/clk-devres.o
-+   1524	     80	      0	   1604	    644	drivers/clk/clk-devres.o
+Seems it's ok to use flush_icache_mm instead of flush_icache_all and
+it could reduce flush_icache_all called on other harts.
 
-Signed-off-by: Marc Gonzalez <marc.w.gonzalez@free.fr>
+I think the patch is the fixup for the commit 08f051eda33b.
+
+Signed-off-by: Guo Ren <guoren@linux.alibaba.com>
+Cc: Andrew Waterman <andrew@sifive.com>
+Cc: Palmer Dabbelt <palmer@sifive.com>
 ---
-Differences from v2 to v3
-x Make devm_add() return an error-code rather than the raw data pointer
-  (in case devres_alloc ever returns an ERR_PTR) as suggested by Geert
-x Provide a variadic version devm_vadd() to work with structs as suggested
-  by Geert
-x Don't use nested ifs in clk_devm* implementations (hopefully simpler
-  code logic to follow) as suggested by Geert
+ arch/riscv/include/asm/cacheflush.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Questions:
-x This patch might need to be split in two? (Introduce the new API, then use it)
-x Convert other subsystems to show the value of this proposal?
-x Maybe comment the API usage somewhere
----
- drivers/base/devres.c    | 15 ++++++
- drivers/clk/clk-devres.c | 99 ++++++++++++++--------------------------
- include/linux/device.h   |  3 ++
- 3 files changed, 53 insertions(+), 64 deletions(-)
-
-diff --git a/drivers/base/devres.c b/drivers/base/devres.c
-index 0bbb328bd17f..b2603789755b 100644
---- a/drivers/base/devres.c
-+++ b/drivers/base/devres.c
-@@ -685,6 +685,21 @@ int devres_release_group(struct device *dev, void *id)
- }
- EXPORT_SYMBOL_GPL(devres_release_group);
+diff --git a/arch/riscv/include/asm/cacheflush.h b/arch/riscv/include/asm/cacheflush.h
+index b69aecbb36d3..26589623fd57 100644
+--- a/arch/riscv/include/asm/cacheflush.h
++++ b/arch/riscv/include/asm/cacheflush.h
+@@ -85,7 +85,7 @@ static inline void flush_dcache_page(struct page *page)
+  * so instead we just flush the whole thing.
+  */
+ #define flush_icache_range(start, end) flush_icache_all()
+-#define flush_icache_user_range(vma, pg, addr, len) flush_icache_all()
++#define flush_icache_user_range(vma, pg, addr, len) flush_icache_mm(vma->vm_mm, 0)
  
-+int devm_add(struct device *dev, dr_release_t func, void *arg, size_t size)
-+{
-+	void *data = devres_alloc(func, size, GFP_KERNEL);
-+
-+	if (!data) {
-+		func(dev, arg);
-+		return -ENOMEM;
-+	}
-+
-+	memcpy(data, arg, size);
-+	devres_add(dev, data);
-+	return 0;
-+}
-+EXPORT_SYMBOL_GPL(devm_add);
-+
- /*
-  * Custom devres actions allow inserting a simple function call
-  * into the teadown sequence.
-diff --git a/drivers/clk/clk-devres.c b/drivers/clk/clk-devres.c
-index be160764911b..1da69d273855 100644
---- a/drivers/clk/clk-devres.c
-+++ b/drivers/clk/clk-devres.c
-@@ -4,26 +4,22 @@
- #include <linux/export.h>
- #include <linux/gfp.h>
- 
--static void devm_clk_release(struct device *dev, void *res)
-+static void my_clk_put(struct device *dev, void *res)
- {
- 	clk_put(*(struct clk **)res);
- }
- 
- struct clk *devm_clk_get(struct device *dev, const char *id)
- {
--	struct clk **ptr, *clk;
--
--	ptr = devres_alloc(devm_clk_release, sizeof(*ptr), GFP_KERNEL);
--	if (!ptr)
--		return ERR_PTR(-ENOMEM);
--
--	clk = clk_get(dev, id);
--	if (!IS_ERR(clk)) {
--		*ptr = clk;
--		devres_add(dev, ptr);
--	} else {
--		devres_free(ptr);
--	}
-+	int ret;
-+	struct clk *clk = clk_get(dev, id);
-+
-+	if (IS_ERR(clk))
-+		return clk;
-+
-+	ret = devm_add(dev, my_clk_put, &clk, sizeof(clk));
-+	if (ret)
-+		return ERR_PTR(ret);
- 
- 	return clk;
- }
-@@ -40,14 +36,14 @@ struct clk *devm_clk_get_optional(struct device *dev, const char *id)
- }
- EXPORT_SYMBOL(devm_clk_get_optional);
- 
--struct clk_bulk_devres {
--	struct clk_bulk_data *clks;
-+struct clk_bulk_args {
- 	int num_clks;
-+	struct clk_bulk_data *clks;
- };
- 
--static void devm_clk_bulk_release(struct device *dev, void *res)
-+static void my_clk_bulk_put(struct device *dev, void *res)
- {
--	struct clk_bulk_devres *devres = res;
-+	struct clk_bulk_args *devres = res;
- 
- 	clk_bulk_put(devres->num_clks, devres->clks);
- }
-@@ -55,25 +51,17 @@ static void devm_clk_bulk_release(struct device *dev, void *res)
- static int __devm_clk_bulk_get(struct device *dev, int num_clks,
- 			       struct clk_bulk_data *clks, bool optional)
- {
--	struct clk_bulk_devres *devres;
- 	int ret;
- 
--	devres = devres_alloc(devm_clk_bulk_release,
--			      sizeof(*devres), GFP_KERNEL);
--	if (!devres)
--		return -ENOMEM;
--
- 	if (optional)
- 		ret = clk_bulk_get_optional(dev, num_clks, clks);
- 	else
- 		ret = clk_bulk_get(dev, num_clks, clks);
--	if (!ret) {
--		devres->clks = clks;
--		devres->num_clks = num_clks;
--		devres_add(dev, devres);
--	} else {
--		devres_free(devres);
--	}
-+
-+	if (ret)
-+		return ret;
-+
-+	ret = devm_vadd(dev, my_clk_bulk_put, clk_bulk_args, num_clks, clks);
- 
- 	return ret;
- }
-@@ -95,24 +83,15 @@ EXPORT_SYMBOL_GPL(devm_clk_bulk_get_optional);
- int __must_check devm_clk_bulk_get_all(struct device *dev,
- 				       struct clk_bulk_data **clks)
- {
--	struct clk_bulk_devres *devres;
- 	int ret;
-+	int num_clks = clk_bulk_get_all(dev, clks);
- 
--	devres = devres_alloc(devm_clk_bulk_release,
--			      sizeof(*devres), GFP_KERNEL);
--	if (!devres)
--		return -ENOMEM;
--
--	ret = clk_bulk_get_all(dev, &devres->clks);
--	if (ret > 0) {
--		*clks = devres->clks;
--		devres->num_clks = ret;
--		devres_add(dev, devres);
--	} else {
--		devres_free(devres);
--	}
-+	if (num_clks <= 0)
-+		return num_clks;
- 
--	return ret;
-+	ret = devm_vadd(dev, my_clk_bulk_put, clk_bulk_args, num_clks, *clks);
-+
-+	return ret ? : num_clks;
- }
- EXPORT_SYMBOL_GPL(devm_clk_bulk_get_all);
- 
-@@ -128,30 +107,22 @@ static int devm_clk_match(struct device *dev, void *res, void *data)
- 
- void devm_clk_put(struct device *dev, struct clk *clk)
- {
--	int ret;
--
--	ret = devres_release(dev, devm_clk_release, devm_clk_match, clk);
--
--	WARN_ON(ret);
-+	WARN_ON(devres_release(dev, my_clk_put, devm_clk_match, clk));
- }
- EXPORT_SYMBOL(devm_clk_put);
- 
- struct clk *devm_get_clk_from_child(struct device *dev,
- 				    struct device_node *np, const char *con_id)
- {
--	struct clk **ptr, *clk;
--
--	ptr = devres_alloc(devm_clk_release, sizeof(*ptr), GFP_KERNEL);
--	if (!ptr)
--		return ERR_PTR(-ENOMEM);
--
--	clk = of_clk_get_by_name(np, con_id);
--	if (!IS_ERR(clk)) {
--		*ptr = clk;
--		devres_add(dev, ptr);
--	} else {
--		devres_free(ptr);
--	}
-+	int ret;
-+	struct clk *clk = of_clk_get_by_name(np, con_id);
-+
-+	if (IS_ERR(clk))
-+		return clk;
-+
-+	ret = devm_add(dev, my_clk_put, &clk, sizeof(clk));
-+	if (ret)
-+		return ERR_PTR(ret);
- 
- 	return clk;
- }
-diff --git a/include/linux/device.h b/include/linux/device.h
-index e226030c1df3..9f18582fc0f9 100644
---- a/include/linux/device.h
-+++ b/include/linux/device.h
-@@ -969,6 +969,9 @@ void __iomem *devm_of_iomap(struct device *dev,
- 			    struct device_node *node, int index,
- 			    resource_size_t *size);
- 
-+int devm_add(struct device *dev, dr_release_t func, void *arg, size_t size);
-+#define devm_vadd(dev, func, type, args...) \
-+	devm_add(dev, func, &(struct type){args}, sizeof(struct type))
- /* allows to add/remove a custom action to devres stack */
- int devm_add_action(struct device *dev, void (*action)(void *), void *data);
- void devm_remove_action(struct device *dev, void (*action)(void *), void *data);
+ void dma_wbinv_range(unsigned long start, unsigned long end);
+ void dma_wb_range(unsigned long start, unsigned long end);
 -- 
-2.17.1
+2.17.0
+
