@@ -2,79 +2,98 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 088F0148F1E
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Jan 2020 21:10:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 97A05148F4A
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Jan 2020 21:23:52 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2403919AbgAXUKP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 24 Jan 2020 15:10:15 -0500
-Received: from mail-ed1-f67.google.com ([209.85.208.67]:42385 "EHLO
-        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729683AbgAXUKP (ORCPT
+        id S2392065AbgAXUXq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 24 Jan 2020 15:23:46 -0500
+Received: from mail-lf1-f67.google.com ([209.85.167.67]:44601 "EHLO
+        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388724AbgAXUXo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 24 Jan 2020 15:10:15 -0500
-Received: by mail-ed1-f67.google.com with SMTP id e10so3797585edv.9
-        for <linux-kernel@vger.kernel.org>; Fri, 24 Jan 2020 12:10:14 -0800 (PST)
+        Fri, 24 Jan 2020 15:23:44 -0500
+Received: by mail-lf1-f67.google.com with SMTP id v201so1998987lfa.11
+        for <linux-kernel@vger.kernel.org>; Fri, 24 Jan 2020 12:23:43 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=sargun.me; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=EW6Y/EZHZi/ttUxTUSXyYBrJLM6UmlUPE/P/09OJMp8=;
-        b=D57LaX6fPIH9yUp1n9+Oi2UloLj6giH8ArlR4WpiryOjEWH0YZzmHpB7st9eYWD7TS
-         3j+v+LFsCXuf38Ry79+XOYI8bX8rWiHVP83p0KFyhcNBtyplhPLMBFeQgyCznZeNhu4d
-         bnUnov6ftmIi4qUTGqr5SEUrcbtZUY6nZZ2nI=
+        d=lixom-net.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=YNUNzci7Ki+kYYCPvb39XVTgjfk5mcI92JUtukf799o=;
+        b=eqqiUcBNVVH+UrA+DM3vLI5nS815gkneczHy+NGnuiq3u2HqT3jXnATb3eUDRR0GQO
+         4vhlHlDPiiL772CNPAMzt7U0uuZgh0C0WRdblM4zctdf4R4P5COJNKEnppD+cgWFjWuG
+         UhNX+3otnjoeMnIk8Eu5aV39oo0SUmgI6x4FHrQsttiGslEol8mXa5msrnfUOfthAt9F
+         2SWMdciNoyytzAofnwUOrpSyBSMD2gBICMpHgqW4xFKp1daMjuC7pJgBS3xGq+yh0SYx
+         1nzPpy9kkj4R/xCGmgN7cfKKIKqH2cDL/1L5gcnO5n9yN3WfJmDaqL02PD69OmM6KGNi
+         2P2g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=EW6Y/EZHZi/ttUxTUSXyYBrJLM6UmlUPE/P/09OJMp8=;
-        b=bvQq6Q9wIRe0cwBAoJvCWK9FnITy1inhx9Z2pU3yYJLy6ZbJe+FVkM5UaCaIXiSaE9
-         FY7Z7y953CgIoS20ao7xbu2Adlq4rJp67D/esJW+OUTgaZS4HrsIvx+0CaswEYV7MSA9
-         4oUlU+rZk8iDJ0n7sAUgoW6Zj+A9+nGOf9vgtm/qxdUMvqvk4vmgtHO9PgPvZa4R9otv
-         mb2hJ35rXe6SebpGhswWxeN80X26oeaMEt7IwYGd9VdQxmltZLkFwO2tESKJySA1BGtU
-         04GLOXhAe0wmqMfjo+0jcrsS0Yhro7k+hf2HodqiWcrMzXsEwU9xKO7UcXVu7h2+MNS4
-         iWkw==
-X-Gm-Message-State: APjAAAV5IhTo0pP4veBuzu/kBdsnqi2s8dG54QU2UwteaMJiNqvPuh3Z
-        6ToDx1+7GUx8kswBD0xULIKzcyPYHcrtOrRu6nTbRA==
-X-Google-Smtp-Source: APXvYqwWJyOj8lNCsez+rW7XtOC4RGJBUgl+VpwoBouyvHuLrvQ3yPoOq7ALyHD46F67pPGbj4kMWn5TGsuAHVWCMdo=
-X-Received: by 2002:a17:906:680b:: with SMTP id k11mr4160436ejr.0.1579896613104;
- Fri, 24 Jan 2020 12:10:13 -0800 (PST)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=YNUNzci7Ki+kYYCPvb39XVTgjfk5mcI92JUtukf799o=;
+        b=bacCzcj6ZpwFnoYQDwns9SlS4yfWTgOE/3XhtI1EEjbYz+Z4nz9HbRdrYGR6Wv4KfH
+         KSReIZlzk42Zki7AhFSwp0mrnIuYKs2FJwogyptBs0h/gN2xPON7Vk1ijrMY/Uz41idB
+         mRQNP4vX9rTITt7cqzDY68n8BfrC3CrQxAD4SS2EIHsNoHWPM3S0YvRlXfPXErBB2lnJ
+         R58bJycGyQAnkmWKOQIMtaI+4BwkbAJF4+P8kT9HddxBxhxHOHQz9Qz0wuF+6ypy6vaq
+         SBnL7FmAh6FM4vcLyGGw7a3PRQVCHfTaLZkWaSGtk/gGAuH+85ybZMtD9YjcOVYua7JC
+         mhEQ==
+X-Gm-Message-State: APjAAAWYTYu/RZVKX8k9aQOo+vzIW3jcaXtGzCuuGMd30CF55XSGwA+m
+        IFYE2u1UfW5akk39QPMPOoT/Mw==
+X-Google-Smtp-Source: APXvYqwKZYJUPJeYgEpmrE/NTzuIH587Zpaxvsd190XRkzqqSgxGbHOlCFcDOcIq6d06uBMsG0OmNA==
+X-Received: by 2002:a19:3f16:: with SMTP id m22mr2266907lfa.116.1579897422600;
+        Fri, 24 Jan 2020 12:23:42 -0800 (PST)
+Received: from localhost (h85-30-9-151.cust.a3fiber.se. [85.30.9.151])
+        by smtp.gmail.com with ESMTPSA id d11sm3386928lfj.3.2020.01.24.12.23.41
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 24 Jan 2020 12:23:41 -0800 (PST)
+Date:   Fri, 24 Jan 2020 12:11:40 -0800
+From:   Olof Johansson <olof@lixom.net>
+To:     Rob Herring <robh+dt@kernel.org>
+Cc:     Dafna Hirschfeld <dafna.hirschfeld@collabora.com>, soc@kernel.org,
+        devicetree@vger.kernel.org, Kishon Vijay Abraham I <kishon@ti.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Helen Koike <helen.koike@collabora.com>,
+        Ezequiel Garcia <ezequiel@collabora.com>,
+        Collabora Kernel ML <kernel@collabora.com>, dafna3@gmail.com
+Subject: Re: [PATCH] dt-bindings: fix compilation error of the example in
+ marvell,mmp3-hsic-phy.yaml
+Message-ID: <20200124201140.oczzqz2xplbq3abe@localhost>
+References: <20200124105753.15976-1-dafna.hirschfeld@collabora.com>
+ <CAL_Jsq+7E6B181hYn_6yNE53Mf+jiQ+o6pGDotwGX=m+GysW4A@mail.gmail.com>
 MIME-Version: 1.0
-References: <20200124091743.3357-1-sargun@sargun.me> <20200124091743.3357-4-sargun@sargun.me>
- <20200124180332.GA4151@cisco>
-In-Reply-To: <20200124180332.GA4151@cisco>
-From:   Sargun Dhillon <sargun@sargun.me>
-Date:   Fri, 24 Jan 2020 12:09:37 -0800
-Message-ID: <CAMp4zn_WXwxJ6Md4rgFzdAY_xea4TmVDdQc1iJDObEMm5Yc79g@mail.gmail.com>
-Subject: Re: [PATCH 3/4] seccomp: Add SECCOMP_USER_NOTIF_FLAG_PIDFD to get
- pidfd on listener trap
-To:     Tycho Andersen <tycho@tycho.ws>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        Linux Containers <containers@lists.linux-foundation.org>,
-        Linux API <linux-api@vger.kernel.org>,
-        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
-        Christian Brauner <christian.brauner@ubuntu.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAL_Jsq+7E6B181hYn_6yNE53Mf+jiQ+o6pGDotwGX=m+GysW4A@mail.gmail.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jan 24, 2020 at 10:03 AM Tycho Andersen <tycho@tycho.ws> wrote:
->
-> On Fri, Jan 24, 2020 at 01:17:42AM -0800, Sargun Dhillon wrote:
-> > Currently, this just opens the group leader of the thread that triggere
-> > the event, as pidfds (currently) are limited to group leaders.
->
-> I don't love the semantics of this; when they're not limited to thread
-> group leaders any more, we won't be able to change this. Is that work
-> far off?
->
-> Tycho
+On Fri, Jan 24, 2020 at 08:08:58AM -0600, Rob Herring wrote:
+> On Fri, Jan 24, 2020 at 4:58 AM Dafna Hirschfeld
+> <dafna.hirschfeld@collabora.com> wrote:
+> >
+> > Running `make dt_binging_check`, gives the error:
+> >
+> > DTC     Documentation/devicetree/bindings/phy/marvell,mmp3-hsic-phy.example.dt.yaml
+> > Error: Documentation/devicetree/bindings/phy/marvell,mmp3-hsic-phy.example.dts:20.41-42 syntax error
+> > FATAL ERROR: Unable to parse input tree
+> >
+> > This is because the example uses the macro GPIO_ACTIVE_HIGH which
+> > is defined in gpio.h but the include of this header is missing.
+> > Add the include to fix the error.
+> >
+> > Signed-off-by: Dafna Hirschfeld <dafna.hirschfeld@collabora.com>
+> 
+> Fixes: f6f149604eef ("dt-bindings: phy: Add binding for marvell,mmp3-hsic-phy")
+> Acked-by: Rob Herring <robh@kernel.org>
+> 
+> Arnd, Olof, The above commit is in your tree. Please apply this.
 
-We would be able to change this in the future if we introduced a flag like
-SECCOMP_USER_NOTIF_FLAG_PIDFD_THREAD which would send a
-pidfd that's for the thread, and not just the group leader. The flag could
-either be XOR with SECCOMP_USER_NOTIF_FLAG_PIDFD, or
-could require both. Alternatively, we can rename
-SECCOMP_USER_NOTIF_FLAG_PIDFD to
-SECCOMP_USER_NOTIF_FLAG_GROUP_LEADER_PIDFD.
+Applied.
+
+
+Thanks,
+
+-Olof
