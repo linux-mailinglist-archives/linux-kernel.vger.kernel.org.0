@@ -2,125 +2,97 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2F77B147A1F
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Jan 2020 10:11:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BBDA4147A21
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Jan 2020 10:12:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730191AbgAXJLn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 24 Jan 2020 04:11:43 -0500
-Received: from us-smtp-1.mimecast.com ([207.211.31.81]:34458 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1729575AbgAXJLn (ORCPT
+        id S1730322AbgAXJMb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 24 Jan 2020 04:12:31 -0500
+Received: from aserp2120.oracle.com ([141.146.126.78]:47310 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729575AbgAXJMa (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 24 Jan 2020 04:11:43 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1579857101;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=4rW7myJJ2GuW+fTx8x7EBJbhNaqxnzwmpTqYDBQ5SZU=;
-        b=EaAOe95p3edOD5PbIwBI2TS/KwR7AuUqH40ElfmkMq04vj+NcudIYWqeGRiwHYVS1SoEtN
-        OtsOwceZ9vV7CacwExZ0hQcjqMoWnK0+IMRAvj4hnpOs4j0uwoGbt+e9kl4JEvfklWeIqx
-        Lu/fKR78Q8C9CVJ9JlgAHPex9ohu7J0=
-Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
- [209.85.128.69]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-39-G_QB2jjzPBSHoBQsZVvXYw-1; Fri, 24 Jan 2020 04:11:39 -0500
-X-MC-Unique: G_QB2jjzPBSHoBQsZVvXYw-1
-Received: by mail-wm1-f69.google.com with SMTP id m21so422173wmg.6
-        for <linux-kernel@vger.kernel.org>; Fri, 24 Jan 2020 01:11:39 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=4rW7myJJ2GuW+fTx8x7EBJbhNaqxnzwmpTqYDBQ5SZU=;
-        b=iiLSW8zsTX2CG073OJ9AJDYbpKXVuiLA8jSrDoDx53gyiaXhk8DtwXsQHRoPDqd8aU
-         jtbL7cLLSfTQnOr216u57JleyUV01qh0t4eRLr70shqCEoQUyDDn2igD4rjGk8+DLoTe
-         /XHAgX4oPOz9MWNpXB+uyyksJHaXqOIT8qOIrXpaSm7apjSz+Nb8rS7GfDzbLQnJ67Q2
-         gus/TbKnUco8og2o8r3mcTzYqqV12LYq5t/OPk0g9aRZ1q0qSUq6GhwlgCLiOsR9gHnm
-         gHBxVyguGgXmoNbX0NAI2qc6pYt7mducyOBeJwPK9+9gn/kmh2ZMlbCLTnYMISdPswhV
-         4beQ==
-X-Gm-Message-State: APjAAAUiNzow+vAN6Hhu6NjjTXib6QNCNLL+FVjeoYPTS8j/hwaVo0t8
-        U3dBOmb4qKE2Q70ONW2RoUM8+cVNovO21lSaMFVP5WssutkwUJ43QCdG9d6r98wM8k1muKFBbQq
-        GnoFS/8bKOI+TYwoLWPSLnxk7
-X-Received: by 2002:adf:f885:: with SMTP id u5mr3083556wrp.359.1579857097051;
-        Fri, 24 Jan 2020 01:11:37 -0800 (PST)
-X-Google-Smtp-Source: APXvYqwHTA1utlLqgh3JNj/13z6suNbkceqhb5JYG+L0X3nT5kjvdpBpX5mJygE3kQEHccGMvWn7Cw==
-X-Received: by 2002:adf:f885:: with SMTP id u5mr3083521wrp.359.1579857096726;
-        Fri, 24 Jan 2020 01:11:36 -0800 (PST)
-Received: from localhost.localdomain ([109.38.141.136])
-        by smtp.gmail.com with ESMTPSA id g2sm6536988wrw.76.2020.01.24.01.11.35
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 24 Jan 2020 01:11:35 -0800 (PST)
-Subject: Re: [v3] x86/tsc: Unset TSC_KNOWN_FREQ and TSC_RELIABLE flags on
- Intel Bay Trail SoC
-To:     Thomas Gleixner <tglx@linutronix.de>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        vipul kumar <vipulk0511@gmail.com>
-Cc:     Daniel Lezcano <daniel.lezcano@linaro.org>,
-        linux-kernel@vger.kernel.org, Stable <stable@vger.kernel.org>,
-        Srikanth Krishnakar <Srikanth_Krishnakar@mentor.com>,
-        Cedric Hombourger <Cedric_Hombourger@mentor.com>,
-        x86@kernel.org, Len Brown <len.brown@intel.com>,
-        Vipul Kumar <vipul_kumar@mentor.com>
-References: <1579617717-4098-1-git-send-email-vipulk0511@gmail.com>
- <87eevs7lfd.fsf@nanos.tec.linutronix.de>
- <CADdC98RJpsvu_zWehNGDDN=W11rD11NSPaodg-zuaXsHuOJYTQ@mail.gmail.com>
- <878slzeeim.fsf@nanos.tec.linutronix.de>
- <CADdC98TE4oNWZyEsqXzr+zJtfdTTOyeeuHqu1u04X_ktLHo-Hg@mail.gmail.com>
- <20200123144108.GU32742@smile.fi.intel.com>
- <df04f43d-8c6d-7602-cb50-535b85cf2aaa@redhat.com>
- <87iml11ccf.fsf@nanos.tec.linutronix.de>
-From:   Hans de Goede <hdegoede@redhat.com>
-Message-ID: <c06260e3-bd19-bf3c-89f7-d36bdb9a5b20@redhat.com>
-Date:   Fri, 24 Jan 2020 10:11:34 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.1.1
+        Fri, 24 Jan 2020 04:12:30 -0500
+Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
+        by aserp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id 00O98DT2182359;
+        Fri, 24 Jan 2020 09:12:05 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2019-08-05;
+ bh=8kvAOtCW6dIcRl85xkPmD0Dw0YMEA5UV2a/Xwj5qbos=;
+ b=inKXSq39uT760lyxFhb/Iry+4rta4FHzI3rIkFJcgT/MeedI6PSK1qTO/1NcQQpaDowL
+ VATKdMYWVTUaisa5YAEfMwA34wOsys953dhWE+3P0liveF2CeUPxqj0sr1nyQunxV4tM
+ MK165yZqnlxc9uH9cuHMPA23gDSrghP0tHn47SowU+99fWdeaTxdgTCROqW6ukFNFMW/
+ UpQR2c9imJKMeestcI+xjhP1fGZQdJhjT0Y9UgDyaCyrAFIQXdO5CoGg42Ez/DWMACfA
+ fXxmbcO4d64SId4SaWbd8i99Tg8GXruXsjVdFJ6QtL2fr4fqdpQWbWUsyEnHSWseB0Cv JQ== 
+Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
+        by aserp2120.oracle.com with ESMTP id 2xksyqqrbj-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 24 Jan 2020 09:12:05 +0000
+Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
+        by aserp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id 00O99IWp113807;
+        Fri, 24 Jan 2020 09:12:05 GMT
+Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
+        by aserp3020.oracle.com with ESMTP id 2xqmwdtx51-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 24 Jan 2020 09:12:04 +0000
+Received: from abhmp0006.oracle.com (abhmp0006.oracle.com [141.146.116.12])
+        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 00O9Bs73023462;
+        Fri, 24 Jan 2020 09:11:54 GMT
+Received: from kadam (/129.205.23.165)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Fri, 24 Jan 2020 01:11:53 -0800
+Date:   Fri, 24 Jan 2020 12:11:44 +0300
+From:   Dan Carpenter <dan.carpenter@oracle.com>
+To:     Hillf Danton <hdanton@sina.com>
+Cc:     syzbot <syzbot+b96275fd6ad891076ced@syzkaller.appspotmail.com>,
+        coreteam@netfilter.org, davem@davemloft.net,
+        florent.fourcot@wifirst.fr, fw@strlen.de, jeremy@azazel.net,
+        johannes.berg@intel.com, kadlec@netfilter.org,
+        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+        netfilter-devel@vger.kernel.org, pablo@netfilter.org,
+        syzkaller-bugs@googlegroups.com
+Subject: Re: KASAN: slab-out-of-bounds Read in bitmap_port_destroy
+Message-ID: <20200124091144.GK1847@kadam>
+References: <20200124085521.12504-1-hdanton@sina.com>
 MIME-Version: 1.0
-In-Reply-To: <87iml11ccf.fsf@nanos.tec.linutronix.de>
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200124085521.12504-1-hdanton@sina.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9509 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1911140001 definitions=main-2001240076
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9509 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1911140001
+ definitions=main-2001240076
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
-
-On 1/24/20 9:35 AM, Thomas Gleixner wrote:
-> Hans,
+On Fri, Jan 24, 2020 at 04:55:21PM +0800, Hillf Danton wrote:
+> Ensure four bytes and ask slab to do the rest.
 > 
-> Hans de Goede <hdegoede@redhat.com> writes:
-> 
->> Hi,
->>
->> Sorry for top posting, but this is a long and almost unreadable thread ...
->>
->> So it seems to me that a better fix would be to change the freq_desc_byt struct from:
->>
->> static const struct freq_desc freq_desc_byt = {
->>           1, { 83300, 100000, 133300, 116700, 80000, 0, 0, 0 }
->> };
->>
->> to:
->>
->> static const struct freq_desc freq_desc_byt = {
->>           1, { 83333, 100000, 133300, 116700, 80000, 0, 0, 0 }
->> };
->>
->> That should give us the right TSC frequency without needing to mess with
->> the TSC_KNOWN_FREQ and TSC_RELIABLE flags.
-> 
-> Where does that number come from? Just math?
+> --- a/include/linux/netfilter/ipset/ip_set.h
+> +++ b/include/linux/netfilter/ipset/ip_set.h
+> @@ -430,7 +430,7 @@ ip6addrptr(const struct sk_buff *skb, bo
+>  static inline int
+>  bitmap_bytes(u32 a, u32 b)
+>  {
+> -	return 4 * ((((b - a + 8) / 8) + 3) / 4);
+> +	return 4 + (b - a) / 8;
+>  }
+>  
 
-Yes just math, but perhaps the Intel folks can see if they can find some
-datasheet to back this up ?
+Thanks, but this was already fixed by:
 
-I mean if the calculated freq is off by that much, then chances are that
-my solution actuallly is not only "just math" but also correct :)
+https://lore.kernel.org/netfilter-devel/alpine.DEB.2.20.2001192203200.18095@blackhole.kfki.hu/
 
-Regards,
-
-Hans
+regards,
+dan carpenter
 
