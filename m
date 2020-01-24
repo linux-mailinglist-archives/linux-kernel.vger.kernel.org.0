@@ -2,100 +2,144 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3360D14822F
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Jan 2020 12:26:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6BD18148237
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Jan 2020 12:26:46 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391537AbgAXL0D (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 24 Jan 2020 06:26:03 -0500
-Received: from mail-vs1-f66.google.com ([209.85.217.66]:35358 "EHLO
-        mail-vs1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2391312AbgAXL0A (ORCPT
+        id S2403911AbgAXL0K (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 24 Jan 2020 06:26:10 -0500
+Received: from mail-vs1-f67.google.com ([209.85.217.67]:35366 "EHLO
+        mail-vs1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2403902AbgAXL0H (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 24 Jan 2020 06:26:00 -0500
-Received: by mail-vs1-f66.google.com with SMTP id x123so996065vsc.2
-        for <linux-kernel@vger.kernel.org>; Fri, 24 Jan 2020 03:25:59 -0800 (PST)
+        Fri, 24 Jan 2020 06:26:07 -0500
+Received: by mail-vs1-f67.google.com with SMTP id x123so996242vsc.2
+        for <linux-kernel@vger.kernel.org>; Fri, 24 Jan 2020 03:26:06 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=GGsD1sBB17Gd7giKo9E0XOhIIGoiPHUb5uVBe4K6KfQ=;
-        b=ZHQFkn7qEfCeDFCKUCYYzCcwyGJdwaRXzv2BuMkWX5iUNbHh0wy5Zs1LqHFZD6MO41
-         YymE5o3W53OrflaEhYWSZo0JAgctGarHB5C6nEkJ3e+YBAm+tMVAiOt/0Y3RFvBC9IIN
-         DRURUS0/4XLEtZ8t/zyJ9aD6KKE2jsuZeHWwLP+Lfk0jJrKfOTIG8YjC5tFVw0c35xFR
-         A7zv0IWvK13GnstfKGbNusTwqgR+nDRLsHrIG05wR84waOMiBwlExbAY/Kuu6WdQww33
-         JF8uuFsBR4ctYSC+q9d2b83NhMVqXIdlzDlVhnY7Ya4kjv6xR/I8mSzNGHwDS735ByRX
-         byMA==
+        bh=qOVhDHhFnWlF9FUDYt4fHzJxv54r3t+l/PCp99DTE8g=;
+        b=NYKCSRmcwL0rUYuSrq1VwqQIZNkH8SN4ZZ5A3TVgdm0R/hzjxs4JbX4+0Xo1fPtoEK
+         Boro/o30ULd+1byBxjrU4znPuo8TBltkqrjDBAyQPY5P64Cm6yEqQsW9rdt/FiIivoge
+         xNiLEFsa+a+xuUZKanzlEL9L4mq7FBszDsnVxA0NHy/bbQ1ledvMcfTbS7Cx1Ie8xYhd
+         xywqDQPVluykgE5NIUtBJ4PZuMAVVt8C3VEt1J/fpG3rHwplTsZigeaYJAjhnnJWXv/w
+         o5chQJC0l067hVa3y5r6STGGstb17hwZbqJqG4+NMJjxHrMzOWP03vf6irmD5Wh9H6PO
+         u5lw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=GGsD1sBB17Gd7giKo9E0XOhIIGoiPHUb5uVBe4K6KfQ=;
-        b=prJti7FSIkxQFFfD4b0ZC96TR7qpU8J9OcHbIbmkH7V3Hgb2lXAQ5nLx4NxcBkjfFj
-         XD/6oPFw602mtFOq35u+mF7GzFConoJmi++CjWq92AdTlJqbBmIkHnxuCkxQUbhQXVo9
-         zhL6qW9S/8LGDbzhU5D1PncEfx5MG8jsjQDp9Ao3vAiW4UomgI2kDuIh5acHZ0jFfSBq
-         a4F8QhW+Kw7EqiEig6FTiAyITIU5PvFFFFVyPGwG8JuKTdeFcvF/0AEAUfhb+EWCCKiy
-         rmAnlb+JHGT99G0KBJBOM0VxzVu0GoREi5CjcdeyLjFtg1I/20tAeEPiOmvrcYyhKKwa
-         W1dA==
-X-Gm-Message-State: APjAAAUh0Y2pXfefnPHGjv2rCfZa8QtdhqEsaZBgMtps04gVULjmlG8s
-        o0x9b4PCKJPCXKc6CwoLJQiYwpx+JthOHbDwcX+pDQ==
-X-Google-Smtp-Source: APXvYqzz0CgsEy9v7WP14mwK3BPa/e7ShAoPeynnFWYXVmg4lZ1WwFjup6ErJ5tLPVN+TwriSjBOwrxaTaR9xEi9ggw=
-X-Received: by 2002:a67:cc3:: with SMTP id 186mr1916849vsm.200.1579865159257;
- Fri, 24 Jan 2020 03:25:59 -0800 (PST)
+        bh=qOVhDHhFnWlF9FUDYt4fHzJxv54r3t+l/PCp99DTE8g=;
+        b=cUp71k5iZU+twUZA57gUOgtFo3jOhkVCVQayvdBu+qhzZHRusGWpfrhQpuBLKeBUs7
+         G52TbFEa/jeiTMNXTPiXXkHTRLfhibVzmIuU1ZAx0qoKGCuSEbQqO1TW1vNt6Sd55oVt
+         HipNxNYmk087jMDLrRRiNo5xObRwLAUJCmCZRbGolw9VlXgi0BEzFahiUJvhez4Zslyu
+         mqUFq1W6EUj1xW2sgsCWI0FeXiEkAUEr0ow9ct1ItH1QMpslzWVupSDj1UZyuXAGtfP4
+         xk6Kh0MEkk+BLVGEhCex+aM5+vBMvkEm07YPH7RyHLBniSJjj1O428muUTm5FtwJYLDi
+         UUpQ==
+X-Gm-Message-State: APjAAAWjlMswQOJIdwZB/XKm+fcGNpK5XCtjo0D3E8LiXsROBgvlVBR+
+        M5N/ekg71G323tfOH/RezLJcBN/nP63QSC+r/fnTQQ==
+X-Google-Smtp-Source: APXvYqy+M1uWEEV6pkXqgm2LjH+aSiRVIOkGsD38hn1CYw56gxSpzMyk8WBJG4wPxzVUnYw/JZBSj3WLKNpHRR+pQOk=
+X-Received: by 2002:a67:79cd:: with SMTP id u196mr1862322vsc.191.1579865166014;
+ Fri, 24 Jan 2020 03:26:06 -0800 (PST)
 MIME-Version: 1.0
-References: <20200116152230.29831-1-jbx6244@gmail.com> <20200116152230.29831-3-jbx6244@gmail.com>
-In-Reply-To: <20200116152230.29831-3-jbx6244@gmail.com>
+References: <1579519045-26467-1-git-send-email-vbadigan@codeaurora.org> <1579531122-28341-1-git-send-email-vbadigan@codeaurora.org>
+In-Reply-To: <1579531122-28341-1-git-send-email-vbadigan@codeaurora.org>
 From:   Ulf Hansson <ulf.hansson@linaro.org>
-Date:   Fri, 24 Jan 2020 12:25:23 +0100
-Message-ID: <CAPDyKFpE+raCp82aMhm876T+fL3EvPDxSm0-mJTgUuvc8CohFA@mail.gmail.com>
-Subject: Re: [PATCH v2 3/3] dt-bindings: mmc: rockchip-dw-mshc: add
- description for rk3308
-To:     Johan Jonker <jbx6244@gmail.com>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Heiko Stuebner <heiko@sntech.de>,
+Date:   Fri, 24 Jan 2020 12:25:30 +0100
+Message-ID: <CAPDyKFpiMU5PdUOP-VZEXT_Rsot9LfHmWp4ZTBC5oboWXiWsDA@mail.gmail.com>
+Subject: Re: [PATCH V3] mmc: sdhci: Let a vendor driver supply and update ADMA
+ descriptor size
+To:     Veerabhadrarao Badiganti <vbadigan@codeaurora.org>
+Cc:     Adrian Hunter <adrian.hunter@intel.com>,
+        Asutosh Das <asutoshd@codeaurora.org>,
+        Sahitya Tummala <stummala@codeaurora.org>,
+        Sayali Lokhande <sayalil@codeaurora.org>, cang@codeaurora.org,
+        Ram Prakash Gupta <rampraka@codeaurora.org>,
         "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
-        DTML <devicetree@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 16 Jan 2020 at 16:22, Johan Jonker <jbx6244@gmail.com> wrote:
+On Mon, 20 Jan 2020 at 15:39, Veerabhadrarao Badiganti
+<vbadigan@codeaurora.org> wrote:
 >
-> The description below is already in use for rk3308.dtsi,
-> but was somehow never added to a document, so add
-> "rockchip,rk3308-dw-mshc", "rockchip,rk3288-dw-mshc"
-> for mmc nodes on a rk3308 platform to rockchip-dw-mshc.yaml.
+> Let a vendor driver supply the maximum descriptor size that it
+> can operate on. ADMA descriptor table would be allocated using this
+> supplied size.
+> If any SD Host controller is of version prior to v4.10 spec
+> but supports 16byte descriptor, this change allows them to supply
+> correct descriptor size for ADMA table allocation.
 >
-> Signed-off-by: Johan Jonker <jbx6244@gmail.com>
+> Also let a vendor driver update the descriptor size by overriding
+> sdhc_host->desc_size if it has to operates on a different descriptor
+> sizes in different conditions.
+>
+> Suggested-by: Adrian Hunter <adrian.hunter@intel.com>
+> Signed-off-by: Veerabhadrarao Badiganti <vbadigan@codeaurora.org>
+> Acked-by: Adrian Hunter <adrian.hunter@intel.com>
+> --
+> Thanks Adrian.
+>
+> Hi Ulf,
+> Can you pick this patch instead of earlier one? This is more clean
+> change, sorry for the multiple interations.
+> Otherwise let me know, I will make these changes as seperate patch.
 
-Applied for next, thanks!
+Alright, I have replaced the previous version with this one.
 
 Kind regards
 Uffe
 
 
 > ---
->  Documentation/devicetree/bindings/mmc/rockchip-dw-mshc.yaml | 2 ++
->  1 file changed, 2 insertions(+)
+>  drivers/mmc/host/sdhci.c | 16 +++++++---------
+>  drivers/mmc/host/sdhci.h |  3 ++-
+>  2 files changed, 9 insertions(+), 10 deletions(-)
 >
-> diff --git a/Documentation/devicetree/bindings/mmc/rockchip-dw-mshc.yaml b/Documentation/devicetree/bindings/mmc/rockchip-dw-mshc.yaml
-> index 2f70f5ef0..89c3edd6a 100644
-> --- a/Documentation/devicetree/bindings/mmc/rockchip-dw-mshc.yaml
-> +++ b/Documentation/devicetree/bindings/mmc/rockchip-dw-mshc.yaml
-> @@ -35,6 +35,8 @@ properties:
->              - rockchip,rk3036-dw-mshc
->              # for Rockchip RK322x
->              - rockchip,rk3228-dw-mshc
-> +            # for Rockchip RK3308
-> +            - rockchip,rk3308-dw-mshc
->              # for Rockchip RK3328
->              - rockchip,rk3328-dw-mshc
->              # for Rockchip RK3368
+> diff --git a/drivers/mmc/host/sdhci.c b/drivers/mmc/host/sdhci.c
+> index 3140fe2..7a7a18e 100644
+> --- a/drivers/mmc/host/sdhci.c
+> +++ b/drivers/mmc/host/sdhci.c
+> @@ -3821,15 +3821,13 @@ int sdhci_setup_host(struct sdhci_host *host)
+>                 dma_addr_t dma;
+>                 void *buf;
+>
+> -               if (host->flags & SDHCI_USE_64_BIT_DMA) {
+> -                       host->adma_table_sz = host->adma_table_cnt *
+> -                                             SDHCI_ADMA2_64_DESC_SZ(host);
+> -                       host->desc_sz = SDHCI_ADMA2_64_DESC_SZ(host);
+> -               } else {
+> -                       host->adma_table_sz = host->adma_table_cnt *
+> -                                             SDHCI_ADMA2_32_DESC_SZ;
+> -                       host->desc_sz = SDHCI_ADMA2_32_DESC_SZ;
+> -               }
+> +               if (!(host->flags & SDHCI_USE_64_BIT_DMA))
+> +                       host->alloc_desc_sz = SDHCI_ADMA2_32_DESC_SZ;
+> +               else if (!host->alloc_desc_sz)
+> +                       host->alloc_desc_sz = SDHCI_ADMA2_64_DESC_SZ(host);
+> +
+> +               host->desc_sz = host->alloc_desc_sz;
+> +               host->adma_table_sz = host->adma_table_cnt * host->desc_sz;
+>
+>                 host->align_buffer_sz = SDHCI_MAX_SEGS * SDHCI_ADMA2_ALIGN;
+>                 /*
+> diff --git a/drivers/mmc/host/sdhci.h b/drivers/mmc/host/sdhci.h
+> index 0ed3e0e..10bda3a 100644
+> --- a/drivers/mmc/host/sdhci.h
+> +++ b/drivers/mmc/host/sdhci.h
+> @@ -554,7 +554,8 @@ struct sdhci_host {
+>         dma_addr_t adma_addr;   /* Mapped ADMA descr. table */
+>         dma_addr_t align_addr;  /* Mapped bounce buffer */
+>
+> -       unsigned int desc_sz;   /* ADMA descriptor size */
+> +       unsigned int desc_sz;   /* ADMA current descriptor size */
+> +       unsigned int alloc_desc_sz;     /* ADMA descr. max size host supports */
+>
+>         struct workqueue_struct *complete_wq;   /* Request completion wq */
+>         struct work_struct      complete_work;  /* Request completion work */
 > --
-> 2.11.0
->
+> Qualcomm India Private Limited, on behalf of Qualcomm Innovation Center, Inc., is a member of Code Aurora Forum, a Linux Foundation Collaborative Project
