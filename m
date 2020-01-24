@@ -2,156 +2,93 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C5399147F2C
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Jan 2020 12:00:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D9476147F5F
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Jan 2020 12:01:54 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733075AbgAXLAM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 24 Jan 2020 06:00:12 -0500
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:41126 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726294AbgAXLAI (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 24 Jan 2020 06:00:08 -0500
-Received: by mail-wr1-f66.google.com with SMTP id c9so1433163wrw.8
-        for <linux-kernel@vger.kernel.org>; Fri, 24 Jan 2020 03:00:07 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=pvVTcmdkHq4QrYZRiMMxNdIvg0TySYTHHMAhoBk2JiQ=;
-        b=boKpOa5UJJStmfYHjgjPvdfpxPD1HCiWrCiMe1wbK3CSnqaFBBg4CsDasj9QBjWFWF
-         ZmOhJq0xlnEru86tarsw3nKBy8N3p4JW793PtefCyK25rbeipXYc4/LqFTY9ASin0O2u
-         v/j54jVpe3efFhzGxuSs1dbwgZym+48Ie5wR6EiMKpoM5hPQz3CKiTSBngH7dQwm9S5T
-         6HKWv6OSEEtHOkTen+cJE/0o2v3ERK6S92xLdUixzgggHn3dxrQJAGdsFiFVEzUtMLMD
-         iIDKLLa0H0M61U5HhK4kZ2xx3TYQ6gk6V1/E1HP8sdv5gn2RIDVu3WpBeKb9jCMyEdPq
-         iaBA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=pvVTcmdkHq4QrYZRiMMxNdIvg0TySYTHHMAhoBk2JiQ=;
-        b=k65tRSnOEENi0BM2UijFYushpWBfuySxdIZ8YLrg73raeXcVe31qce5VfZO+eMzc8d
-         3NK887MRVcrFyYae9vmqEH9QXQa4BamMHW5F1fXh5ZYMVBi3UTedF7wXJhPAAzypmgm2
-         m+m7rTLek3IFRhodQNQuFm0hhumHHOd2Y0692AqSVJ5r9fvWxmWVgNhx2zfYT0HrXRNR
-         bEtDQNyNLjGuD0POjZnPhPFMZEWP5CXu6AcAlFdobm+BndSDg9l+0Aawo3BbAHWfNR70
-         WwCHOL5eszCDHoIx0JJoAUzq9e2J/5ZAIyPTvVRIYJAY7F6wFIl4jpwdbTk53JIRDw9h
-         0OOg==
-X-Gm-Message-State: APjAAAXfYaqQpDMUQCqMbiKmqndn9mYa0/Xb/FaC4bxpkw4NR4VH18vo
-        ZFuS9XCe6p5HclHTBC78Vt2LJksOzes=
-X-Google-Smtp-Source: APXvYqwItrU1nQnB007oBxkHF4j67xd8TpR3rTt3vVb6twgjBG1+0pPLWD6tmOApucF5G/UHU+VXNg==
-X-Received: by 2002:a5d:494b:: with SMTP id r11mr3606877wrs.184.1579863606189;
-        Fri, 24 Jan 2020 03:00:06 -0800 (PST)
-Received: from dell ([2.27.35.227])
-        by smtp.gmail.com with ESMTPSA id v83sm6388079wmg.16.2020.01.24.03.00.05
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 24 Jan 2020 03:00:05 -0800 (PST)
-Date:   Fri, 24 Jan 2020 11:00:18 +0000
-From:   Lee Jones <lee.jones@linaro.org>
-To:     Adam Thomson <Adam.Thomson.Opensource@diasemi.com>,
-        Mark Brown <broonie@kernel.org>,
-        Wolfram Sang <wsa@the-dreams.de>
-Cc:     Helmut Grohne <helmut.grohne@intenta.de>,
-        Support Opensource <Support.Opensource@diasemi.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 1/2] mfd: da9062: enable being a system-power-controller
-Message-ID: <20200124110018.GR15507@dell>
-References: <20200107120559.GA700@laureti-dev>
- <AM6PR10MB226306BDE8575CED80071148800F0@AM6PR10MB2263.EURPRD10.PROD.OUTLOOK.COM>
- <20200124085310.GA27231@laureti-dev>
- <AM6PR10MB22636902FCF576272AC8F373800E0@AM6PR10MB2263.EURPRD10.PROD.OUTLOOK.COM>
+        id S2387817AbgAXLBu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 24 Jan 2020 06:01:50 -0500
+Received: from foss.arm.com ([217.140.110.172]:49168 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2387786AbgAXLBs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 24 Jan 2020 06:01:48 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 303D3328;
+        Fri, 24 Jan 2020 03:01:48 -0800 (PST)
+Received: from [10.1.194.46] (e113632-lin.cambridge.arm.com [10.1.194.46])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 5D9983F68E;
+        Fri, 24 Jan 2020 03:01:46 -0800 (PST)
+Subject: Re: [PATCH] [RFC] sched: restrict iowait boost for boosted task only
+To:     Quentin Perret <qperret@google.com>,
+        Qais Yousef <qais.yousef@arm.com>
+Cc:     Wei Wang <wvw@google.com>, wei.vince.wang@gmail.com,
+        dietmar.eggemann@arm.com, chris.redpath@arm.com,
+        Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
+        linux-kernel@vger.kernel.org
+References: <20200124002811.228334-1-wvw@google.com>
+ <20200124025238.jsf36n6w4rrn2ehc@e107158-lin>
+ <20200124095125.GA121494@google.com>
+From:   Valentin Schneider <valentin.schneider@arm.com>
+Message-ID: <849cc9f0-f4ae-f2b6-8449-f55697928cf5@arm.com>
+Date:   Fri, 24 Jan 2020 11:01:45 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
+In-Reply-To: <20200124095125.GA121494@google.com>
 Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <AM6PR10MB22636902FCF576272AC8F373800E0@AM6PR10MB2263.EURPRD10.PROD.OUTLOOK.COM>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 24 Jan 2020, Adam Thomson wrote:
-> On 24 January 2020 08:53, Helmut Grohne wrote:
-> > On Thu, Jan 23, 2020 at 04:51:37PM +0100, Adam Thomson wrote:
-> > > I have concerns about using regmap/I2C within the pm_power_off() callback
-> > > function although I am aware there are other examples of this in the kernel. At
-> > > the point that is called I believe IRQs are disabled so it would require a
-> > > platform to have an atomic version of the I2C bus's xfer function. Don't know
-> > > if there's a check to see if the bus supports this, but if not then maybe it's
-> > > something worth adding? That way we can then only support the
-> > pm_power_off()
-> > > approach on systems which can actually do it.
-> > 
-> > On arm, machine_power_off calls the pm_power_off callback after issuing
-> > local_irq_disable() and smp_send_stop(). So I think your intuition is
-> > correct that we are running with only one CPU left with IRQs disabled.
-> > 
-> > I have tested this code on a board with an i2c-cadence bus. This driver
-> > seems to use IRQs for completion tracking with no fallback to polling.
-> > I'm now puzzled as to why this works at all. Given that I'm using
-> > regmap_update_bits on a volatile register, it would have to complete the
-> > read before performing the relevant write. Nevertheless, it reliably
-> > turns off here. So I'm starting to wonder whether there is a flaw in the
-> > analysis.
-> > 
-> > I also looked into whether linux/i2c.h would tell us about the
-> > availability of an atomic xfer function. Indeed, the i2c_algorithm
-> > structure has a master_xfer_atomic specifically for this purpose. The
-> > i2c core will automatically use this function when irqs are disabled.
-> > Unfortunately, very few buses implement this function. In particular,
-> > i2c-cadence lacks it.
-> > 
-> > So I could check for i2c_dev->adapter->algo->master_xfer_atomic != NULL
-> > indeed. Possibly this could be wrapped in a central inline function.
+On 24/01/2020 09:51, Quentin Perret wrote:
+>>> +static inline bool iowait_boosted(struct task_struct *p)
+>>> +{
+>>> +	return p->in_iowait && uclamp_eff_value(p, UCLAMP_MIN) > 0;
+>>
+>> I think this is overloading the usage of util clamp. You're basically using
+>> cpu.uclamp.min to temporarily switch iowait boost on/off.
+>>
+>> Isn't it better to add a new cgroup attribute to toggle this feature?
+>>
+>> The problem does seem generic enough and could benefit other battery-powered
+>> devices outside of the Android world. I don't think the dependency on uclamp &&
+>> energy model are necessary to solve this.
 > 
-> Yes, I'd be tempted to make this a nice wrapper function to hide the
-> particulars, were someone to implement this.
+> I think using uclamp is not a bad idea here, but perhaps we could do
+> things differently. As of today the iowait boost escapes the clamping
+> mechanism, so one option would be to change that. That would let us set
+> a low max clamp in the 'background' cgroup, which in turns would limit
+> the frequency request for those tasks even if they're IO-intensive.
 > 
-> > 
-> > I concur that quite a few other drivers use a regmap/i2c from their
-> > pm_power_off hook. Examples include:
-> >  * arch/powerpc/platforms/83xx/mcu_mpc8349emitx.c (i2c without regmap)
-> >  * drivers/mfd/axp20x.c (regmap without i2c)
-> >  * drivers/mfd/dm355evm_msp.c (i2c without regmap)
-> >  * drivers/mfd/max77620.c (regmap and i2c)
-> >  * drivers/mfd/max8907.c (regmap and i2c)
-> >  * drivers/mfd/palmas.c (regmap and i2c)
-> >  * drivers/mfd/retu-mfd.c (regmap and i2c)
-> >  * drivers/mfd/rn5t618.c (regmap and i2c)
-> >  * drivers/mfd/tps6586x.c (regmap and i2c)
-> >  * drivers/mfd/tps65910.c (regmap and i2c)
-> >  * drivers/mfd/tps80031.c (regmap and i2c)
-> >  * drivers/mfd/twl4030-power.c (i2c without regmap)
-> >  * drivers/regulator/act8865-regulator.c (regmap and i2c)
-> > 
-> > For this reason, I think the practice of using regmap/i2c within
-> > pm_power_off is well-established and should not be questioned for an
-> > individual device. In addition, the relevant functionality must be
-> > explicitly requested by modifying a board-specific device-tree. It can
-> > be assumed that an integrator would test whether the mfd actually works
-> > as a power controller when adding the relevant property. Given that we
-> > turned off other CPUs and IRQs, the behaviour should be fairly reliable.
-> 
-> I never like assumptions and they tend to catch people out. A lot of the time
-> driver developers will use another as a template/example and so the same
-> possible mistakes can be duplicated. I don't know for certain these are mistakes
-> but the code seems to indicate that could be the case, and there's a good
-> reason that atomic I2C transfer code has been added into the kernel. I also
-> prefer code that helps people identify where a problem might lie so having a
-> check for I2C atomic support would be useful to indicate if there is a problem.
-> 
-> Lee, do you have any further insight into any of this? Am I barking up the
-> wrong tree here?
 
-Not off-hand, sorry.  I would have to do a deep-dive to figure it
-out for myself.
+So I'm pretty sure we *do* want tasks with the default clamps to get iowait
+boost'd. What we don't want are background tasks driving up the frequency,
+and that should be via uclamp.max (as Quentin is suggesting) rather than
+uclamp.min (as is suggested in the patch).
 
-Maybe this is where Mark and/or Wolfram (Cc'ed) have some knowledge.
+Now, whether that is overloading the usage of uclamp... I'm not sure.
+One of the argument for uclamp was actually frequency selection, so if
+we just make iowait boost respect that, IOW not boost further than
+uclamp.max (which is a bit better than a simple on/off switch), that
+wouldn't be too crazy I think.
 
--- 
-Lee Jones [李琼斯]
-Linaro Services Technical Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+> That'll have to be done at the RQ level, but figuring out what's the
+> current max clamp on the rq should be doable from sugov I think.
+> 
+> Wei: would that work for your use case ?
+> 
+> Also, the iowait boost really should be per-task and not per-cpu, so it
+> can be taken into account during wake-up balance on big.LITTLE. That
+> might also help on SMP if a task doing a lot of IO migrates, as the
+> boost would migrate with it. But that's perhaps for later ...
+> 
+> Thanks,
+> Quentin
+> 
