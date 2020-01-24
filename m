@@ -2,36 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 07B71148489
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Jan 2020 12:44:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E6716148493
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Jan 2020 12:44:50 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389766AbgAXLLj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 24 Jan 2020 06:11:39 -0500
-Received: from mail.kernel.org ([198.145.29.99]:47588 "EHLO mail.kernel.org"
+        id S2390017AbgAXLNH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 24 Jan 2020 06:13:07 -0500
+Received: from mail.kernel.org ([198.145.29.99]:49344 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388283AbgAXLLe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 24 Jan 2020 06:11:34 -0500
+        id S2389425AbgAXLNA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 24 Jan 2020 06:13:00 -0500
 Received: from localhost (ip-213-127-102-57.ip.prioritytelecom.net [213.127.102.57])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 232B82075D;
-        Fri, 24 Jan 2020 11:11:32 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B365320708;
+        Fri, 24 Jan 2020 11:12:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579864293;
-        bh=/n7YcuZlOmzfYT8zxRWGW7Iz53ruotEq+5osQ/b2GX4=;
+        s=default; t=1579864380;
+        bh=aact3I6c+oZm65CsIWErj5LOzFRreHh98x1rQVOP7rs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=r2dTPYwEw5acbkJ1FsW8HjpTfA1jshwGQg0gWDJ8Bmbe+5bTsmL6nG94MQ9RhdEqV
-         XfmLKU/8vgz7dN4r31WnwhH7pCUds4QwwTBBpk7ix3zHbv2DyF+Mdog4aUxrqcuQq8
-         uGs43MeIk3OxcS360oS8pWRl2p4JvHdRaZ4Ao4iE=
+        b=C4BnjheDEgQSmfu8fzCC2N5agLslB50tn+j5O13kQ1/rKvjUAejcIKCksBVyc8VeD
+         FUFOEn2wBE3BHNGEfz/E3qd1S/cIMvl/FAJ8GMCECxrNF9H+Zuy98k8B0pAESdvYde
+         90C+ANGDyvuY32x0W/Jf8Sl0fdx9bRdVtiKEyaXY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Colin Ian King <colin.king@canonical.com>,
-        Ben Skeggs <bskeggs@redhat.com>,
+        stable@vger.kernel.org, Vladimir Murzin <vladimir.murzin@arm.com>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Russell King <rmk+kernel@armlinux.org.uk>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 218/639] drm/nouveau/bios/ramcfg: fix missing parentheses when calculating RON
-Date:   Fri, 24 Jan 2020 10:26:28 +0100
-Message-Id: <20200124093114.264419728@linuxfoundation.org>
+Subject: [PATCH 4.19 237/639] ARM: 8848/1: virt: Align GIC version check with arm64 counterpart
+Date:   Fri, 24 Jan 2020 10:26:47 +0100
+Message-Id: <20200124093116.503286821@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
 In-Reply-To: <20200124093047.008739095@linuxfoundation.org>
 References: <20200124093047.008739095@linuxfoundation.org>
@@ -44,41 +45,38 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+From: Vladimir Murzin <vladimir.murzin@arm.com>
 
-[ Upstream commit 13649101a25c53c87f4ab98a076dfe61f3636ab1 ]
+[ Upstream commit 9db043d36bd379f4cc99054c079de0dabfc38d03 ]
 
-Currently, the expression for calculating RON is always going to result
-in zero no matter the value of ram->mr[1] because the ! operator has
-higher precedence than the shift >> operator.  I believe the missing
-parentheses around the expression before appying the ! operator will
-result in the desired result.
+arm64 has got relaxation on GIC version check at early boot stage due
+to update of the GIC architecture let's align ARM with that.
 
-[ Note, not tested ]
-
-Detected by CoveritScan, CID#1324005 ("Operands don't affect result")
-
-Fixes: c25bf7b6155c ("drm/nouveau/bios/ramcfg: Separate out RON pull value")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
-Signed-off-by: Ben Skeggs <bskeggs@redhat.com>
+To help backports (even though the code was correct at the time of writing)
+Fixes: e59941b9b381 ("ARM: 8527/1: virt: enable GICv3 system registers")
+Signed-off-by: Vladimir Murzin <vladimir.murzin@arm.com>
+Reviewed-by: Marc Zyngier <marc.zyngier@arm.com>
+Signed-off-by: Russell King <rmk+kernel@armlinux.org.uk>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpu/drm/nouveau/nvkm/subdev/fb/gddr3.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/arm/kernel/hyp-stub.S | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/gpu/drm/nouveau/nvkm/subdev/fb/gddr3.c b/drivers/gpu/drm/nouveau/nvkm/subdev/fb/gddr3.c
-index 60ece0a8a2e1b..1d2d6bae73cd1 100644
---- a/drivers/gpu/drm/nouveau/nvkm/subdev/fb/gddr3.c
-+++ b/drivers/gpu/drm/nouveau/nvkm/subdev/fb/gddr3.c
-@@ -87,7 +87,7 @@ nvkm_gddr3_calc(struct nvkm_ram *ram)
- 		WR  = (ram->next->bios.timing[2] & 0x007f0000) >> 16;
- 		/* XXX: Get these values from the VBIOS instead */
- 		DLL = !(ram->mr[1] & 0x1);
--		RON = !(ram->mr[1] & 0x300) >> 8;
-+		RON = !((ram->mr[1] & 0x300) >> 8);
- 		break;
- 	default:
- 		return -ENOSYS;
+diff --git a/arch/arm/kernel/hyp-stub.S b/arch/arm/kernel/hyp-stub.S
+index 60146e32619a5..82a942894fc04 100644
+--- a/arch/arm/kernel/hyp-stub.S
++++ b/arch/arm/kernel/hyp-stub.S
+@@ -180,8 +180,8 @@ ARM_BE8(orr	r7, r7, #(1 << 25))     @ HSCTLR.EE
+ 	@ Check whether GICv3 system registers are available
+ 	mrc	p15, 0, r7, c0, c1, 1	@ ID_PFR1
+ 	ubfx	r7, r7, #28, #4
+-	cmp	r7, #1
+-	bne	2f
++	teq	r7, #0
++	beq	2f
+ 
+ 	@ Enable system register accesses
+ 	mrc	p15, 4, r7, c12, c9, 5	@ ICC_HSRE
 -- 
 2.20.1
 
