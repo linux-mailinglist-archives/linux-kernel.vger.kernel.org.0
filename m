@@ -2,38 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F0DEC1488B6
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Jan 2020 15:31:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5F26A1488BA
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Jan 2020 15:31:07 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404951AbgAXOUl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 24 Jan 2020 09:20:41 -0500
-Received: from mail.kernel.org ([198.145.29.99]:41598 "EHLO mail.kernel.org"
+        id S2404965AbgAXOUn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 24 Jan 2020 09:20:43 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41662 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2404862AbgAXOUb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 24 Jan 2020 09:20:31 -0500
+        id S2404879AbgAXOUc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 24 Jan 2020 09:20:32 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CC8B522464;
-        Fri, 24 Jan 2020 14:20:29 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 40F592077C;
+        Fri, 24 Jan 2020 14:20:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579875630;
-        bh=/IiXlaG9WEJyyLDQ4WYbK2Bc4QgiTbo8sl7iizV2S7Q=;
+        s=default; t=1579875632;
+        bh=qZ/AK7qDtTJakLsjaUI3mUDTzYXOk3amPehL/OjaO/M=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=rUFFBNAZ5fn5/12QoRQLcjbh6tdTKmq6DBo3jCapOgh4oas9Ijp1gWURrYY2HfZmz
-         MBInD6vnoL5n7wr7GLl3Dj4mGwb6xdYHozIZHN0t5rzGP4+uNlrhhz2jlwK5jRp8sw
-         vZC2loCcKCeHSVyKlEzHPOd/0mCSCrmeIHV8FsHg=
+        b=PjOGT76wvXQbHp3rSUX+AgBe+jcQJKD9gGj5gmjIl0NPAF6ynZjuXUqMJC8CWQ8mr
+         qB5+k1Ps5nRDIyVFeBVy0YXicnEefPbPFBzs4CNsYsR9njTcl3xYRTwoJFB6lWIws8
+         yKUUryEOw4nlZ48cXOQjlNULTIXUjmwwazMjfXpM=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Shakeel Butt <shakeelb@google.com>, Borislav Petkov <bp@suse.de>,
-        Fenghua Yu <fenghua.yu@intel.com>,
-        "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
-        Reinette Chatre <reinette.chatre@intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>, x86-ml <x86@kernel.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.19 15/56] x86/resctrl: Fix potential memory leak
-Date:   Fri, 24 Jan 2020 09:19:31 -0500
-Message-Id: <20200124142012.29752-15-sashal@kernel.org>
+Cc:     Georgi Djakov <georgi.djakov@linaro.org>,
+        Rob Clark <robdclark@gmail.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Sasha Levin <sashal@kernel.org>, linux-clk@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.19 16/56] clk: qcom: gcc-sdm845: Add missing flag to votable GDSCs
+Date:   Fri, 24 Jan 2020 09:19:32 -0500
+Message-Id: <20200124142012.29752-16-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200124142012.29752-1-sashal@kernel.org>
 References: <20200124142012.29752-1-sashal@kernel.org>
@@ -46,56 +44,98 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Shakeel Butt <shakeelb@google.com>
+From: Georgi Djakov <georgi.djakov@linaro.org>
 
-[ Upstream commit ab6a2114433a3b5b555983dcb9b752a85255f04b ]
+[ Upstream commit 5e82548e26ef62e257dc2ff37c11acb5eb72728e ]
 
-set_cache_qos_cfg() is leaking memory when the given level is not
-RDT_RESOURCE_L3 or RDT_RESOURCE_L2. At the moment, this function is
-called with only valid levels but move the allocation after the valid
-level checks in order to make it more robust and future proof.
+On sdm845 devices, during boot we see the following warnings (unless we
+have added 'pd_ignore_unused' to the kernel command line):
+	hlos1_vote_mmnoc_mmu_tbu_sf_gdsc status stuck at 'on'
+	hlos1_vote_mmnoc_mmu_tbu_hf1_gdsc status stuck at 'on'
+	hlos1_vote_mmnoc_mmu_tbu_hf0_gdsc status stuck at 'on'
+	hlos1_vote_aggre_noc_mmu_tbu2_gdsc status stuck at 'on'
+	hlos1_vote_aggre_noc_mmu_tbu1_gdsc status stuck at 'on'
+	hlos1_vote_aggre_noc_mmu_pcie_tbu_gdsc status stuck at 'on'
+	hlos1_vote_aggre_noc_mmu_audio_tbu_gdsc status stuck at 'on'
 
- [ bp: Massage commit message. ]
+As the name of these GDSCs suggests, they are "votable" and in downstream
+DT, they all have the property "qcom,no-status-check-on-disable", which
+means that we should not poll the status bit when we disable them.
 
-Fixes: 99adde9b370de ("x86/intel_rdt: Enable L2 CDP in MSR IA32_L2_QOS_CFG")
-Signed-off-by: Shakeel Butt <shakeelb@google.com>
-Signed-off-by: Borislav Petkov <bp@suse.de>
-Cc: Fenghua Yu <fenghua.yu@intel.com>
-Cc: "H. Peter Anvin" <hpa@zytor.com>
-Cc: Ingo Molnar <mingo@redhat.com>
-Cc: Reinette Chatre <reinette.chatre@intel.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: x86-ml <x86@kernel.org>
-Link: https://lkml.kernel.org/r/20200102165844.133133-1-shakeelb@google.com
+Luckily the VOTABLE flag already exists and it does exactly what we need,
+so let's make use of it to make the warnings disappear.
+
+Fixes: 06391eddb60a ("clk: qcom: Add Global Clock controller (GCC) driver for SDM845")
+Reported-by: Rob Clark <robdclark@gmail.com>
+Signed-off-by: Georgi Djakov <georgi.djakov@linaro.org>
+Link: https://lkml.kernel.org/r/20191126153437.11808-1-georgi.djakov@linaro.org
+Tested-by: Rob Clark <robdclark@gmail.com>
+Signed-off-by: Stephen Boyd <sboyd@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/x86/kernel/cpu/intel_rdt_rdtgroup.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/clk/qcom/gcc-sdm845.c | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-diff --git a/arch/x86/kernel/cpu/intel_rdt_rdtgroup.c b/arch/x86/kernel/cpu/intel_rdt_rdtgroup.c
-index a2d7e6646cce8..841a0246eb897 100644
---- a/arch/x86/kernel/cpu/intel_rdt_rdtgroup.c
-+++ b/arch/x86/kernel/cpu/intel_rdt_rdtgroup.c
-@@ -1749,9 +1749,6 @@ static int set_cache_qos_cfg(int level, bool enable)
- 	struct rdt_domain *d;
- 	int cpu;
+diff --git a/drivers/clk/qcom/gcc-sdm845.c b/drivers/clk/qcom/gcc-sdm845.c
+index ada3e4aeb38f9..6bd96ddadbe31 100644
+--- a/drivers/clk/qcom/gcc-sdm845.c
++++ b/drivers/clk/qcom/gcc-sdm845.c
+@@ -3150,6 +3150,7 @@ static struct gdsc hlos1_vote_aggre_noc_mmu_audio_tbu_gdsc = {
+ 		.name = "hlos1_vote_aggre_noc_mmu_audio_tbu_gdsc",
+ 	},
+ 	.pwrsts = PWRSTS_OFF_ON,
++	.flags = VOTABLE,
+ };
  
--	if (!zalloc_cpumask_var(&cpu_mask, GFP_KERNEL))
--		return -ENOMEM;
--
- 	if (level == RDT_RESOURCE_L3)
- 		update = l3_qos_cfg_update;
- 	else if (level == RDT_RESOURCE_L2)
-@@ -1759,6 +1756,9 @@ static int set_cache_qos_cfg(int level, bool enable)
- 	else
- 		return -EINVAL;
+ static struct gdsc hlos1_vote_aggre_noc_mmu_pcie_tbu_gdsc = {
+@@ -3158,6 +3159,7 @@ static struct gdsc hlos1_vote_aggre_noc_mmu_pcie_tbu_gdsc = {
+ 		.name = "hlos1_vote_aggre_noc_mmu_pcie_tbu_gdsc",
+ 	},
+ 	.pwrsts = PWRSTS_OFF_ON,
++	.flags = VOTABLE,
+ };
  
-+	if (!zalloc_cpumask_var(&cpu_mask, GFP_KERNEL))
-+		return -ENOMEM;
-+
- 	r_l = &rdt_resources_all[level];
- 	list_for_each_entry(d, &r_l->domains, list) {
- 		/* Pick one CPU from each domain instance to update MSR */
+ static struct gdsc hlos1_vote_aggre_noc_mmu_tbu1_gdsc = {
+@@ -3166,6 +3168,7 @@ static struct gdsc hlos1_vote_aggre_noc_mmu_tbu1_gdsc = {
+ 		.name = "hlos1_vote_aggre_noc_mmu_tbu1_gdsc",
+ 	},
+ 	.pwrsts = PWRSTS_OFF_ON,
++	.flags = VOTABLE,
+ };
+ 
+ static struct gdsc hlos1_vote_aggre_noc_mmu_tbu2_gdsc = {
+@@ -3174,6 +3177,7 @@ static struct gdsc hlos1_vote_aggre_noc_mmu_tbu2_gdsc = {
+ 		.name = "hlos1_vote_aggre_noc_mmu_tbu2_gdsc",
+ 	},
+ 	.pwrsts = PWRSTS_OFF_ON,
++	.flags = VOTABLE,
+ };
+ 
+ static struct gdsc hlos1_vote_mmnoc_mmu_tbu_hf0_gdsc = {
+@@ -3182,6 +3186,7 @@ static struct gdsc hlos1_vote_mmnoc_mmu_tbu_hf0_gdsc = {
+ 		.name = "hlos1_vote_mmnoc_mmu_tbu_hf0_gdsc",
+ 	},
+ 	.pwrsts = PWRSTS_OFF_ON,
++	.flags = VOTABLE,
+ };
+ 
+ static struct gdsc hlos1_vote_mmnoc_mmu_tbu_hf1_gdsc = {
+@@ -3190,6 +3195,7 @@ static struct gdsc hlos1_vote_mmnoc_mmu_tbu_hf1_gdsc = {
+ 		.name = "hlos1_vote_mmnoc_mmu_tbu_hf1_gdsc",
+ 	},
+ 	.pwrsts = PWRSTS_OFF_ON,
++	.flags = VOTABLE,
+ };
+ 
+ static struct gdsc hlos1_vote_mmnoc_mmu_tbu_sf_gdsc = {
+@@ -3198,6 +3204,7 @@ static struct gdsc hlos1_vote_mmnoc_mmu_tbu_sf_gdsc = {
+ 		.name = "hlos1_vote_mmnoc_mmu_tbu_sf_gdsc",
+ 	},
+ 	.pwrsts = PWRSTS_OFF_ON,
++	.flags = VOTABLE,
+ };
+ 
+ static struct clk_regmap *gcc_sdm845_clocks[] = {
 -- 
 2.20.1
 
