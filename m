@@ -2,161 +2,202 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A759D149020
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Jan 2020 22:29:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0474314902E
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Jan 2020 22:32:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727440AbgAXV3l (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 24 Jan 2020 16:29:41 -0500
-Received: from mx0a-00082601.pphosted.com ([67.231.145.42]:13292 "EHLO
-        mx0a-00082601.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725747AbgAXV3l (ORCPT
+        id S1728708AbgAXVcF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 24 Jan 2020 16:32:05 -0500
+Received: from gateway31.websitewelcome.com ([192.185.143.36]:11231 "EHLO
+        gateway31.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726204AbgAXVcE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 24 Jan 2020 16:29:41 -0500
-Received: from pps.filterd (m0109333.ppops.net [127.0.0.1])
-        by mx0a-00082601.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 00OLN9FU001077;
-        Fri, 24 Jan 2020 13:28:28 -0800
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
- : date : message-id : references : in-reply-to : content-type : content-id
- : content-transfer-encoding : mime-version; s=facebook;
- bh=C3iDzxcgnls7Q5rOfp3pyAvSEkMw5YNp5/FIEGjr3+M=;
- b=qhFS6Ovf841vp1ONtzywkH0fTvdgpZ7LdX/JWcU6nRUDUP8tihrnmAtiq3U7BjxEjN2L
- k0zeGFVhvoIDIttDy2rsM5ZyQVwH9FtBBDlIkwQiJDFoENrdV22HkeihA5Xu+LlvHFPV
- V+MiY9bsOLsjcRmjFXDZNuV7wr1QhYY72jg= 
-Received: from mail.thefacebook.com ([163.114.132.120])
-        by mx0a-00082601.pphosted.com with ESMTP id 2xr63brq0h-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
-        Fri, 24 Jan 2020 13:28:28 -0800
-Received: from NAM10-DM6-obe.outbound.protection.outlook.com (100.104.98.9) by
- o365-in.thefacebook.com (100.104.94.199) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.1779.2; Fri, 24 Jan 2020 13:28:28 -0800
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=G+nAu2HLsEvtz5u32cWAyZs3W8EjVPLEa/nGcdfUKXnfxuI/8LOt++hkgv1hm6wCbPDJbdpDQSBRzHn9kNURLxMf+gi6ZNQPqLw7I/ez8dI/z+SY4moWR+6NWxOjOKZyCAp+0AyYgaOp6lEUnz5KW3XPr6yMu1fKUOtdxijsAxR2+PrSMvFPN8HyaSOa2yjAXwKw5vsa2eVwK3xSAsUNJC0FWRmQ/VC3n+aS0sILK4WqkVtWAig4rJxJnp0YUpXaYpgoZj32FurvqH3BGvz4O3grYogAyJihkAwpDrO+V2fmSj8w59tUseAHoizDDqJ9nQbxYuxkkDtcrJ6dww0kpg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=C3iDzxcgnls7Q5rOfp3pyAvSEkMw5YNp5/FIEGjr3+M=;
- b=Q7jCAvT2LMMprtsBwsg3FWR09Q29xAlahHg22zdS2Cv+zzmN2O/PTJsH49XDG8lrU8FM0vKuWWOAF64QBUGzwR7cGuWEHNZ5j7Qgjdp1Y2WnKLMZJpCeue3fLu/wLf3fYrxmYtu7DJDVVtH08h7IHguRJxXcErPKE23pR0ZKI6hITZMq1RzVb5nSlwI90IoJVJz+XHMrruEFhiweIHqEnBt2/gXQQAWfkP++UXYmlfqzklxM8JK86KATUf2ORrxqsn/4AKHEpSHQiqlhVqYQVXypoTugjedd17tfRqxtAEEOxRRhf8w8gtbiOIkNozX7B7MAwZLPktrmmFKmNe/3UQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=fb.com; dmarc=pass action=none header.from=fb.com; dkim=pass
- header.d=fb.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.onmicrosoft.com;
- s=selector2-fb-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=C3iDzxcgnls7Q5rOfp3pyAvSEkMw5YNp5/FIEGjr3+M=;
- b=a77kMqQ+zpkiWDVj++YD3juTpHnUyJrwW/Vd5ENW9FwwEMT/R8k8qb+BgSSrjedyRgkHQd692Jfy+n3rgYwGWA0bfCyTIrG6IGCaIHm7wV4PkCy1hJO4datTag36jzBcU/0NnTFXYTzGe2C/+EKih41gB9DKoK2A1DgNpNxOIHE=
-Received: from BYAPR15MB3029.namprd15.prod.outlook.com (20.178.238.208) by
- BYAPR15MB2823.namprd15.prod.outlook.com (20.179.158.30) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2665.22; Fri, 24 Jan 2020 21:28:26 +0000
-Received: from BYAPR15MB3029.namprd15.prod.outlook.com
- ([fe80::3541:85d8:c4c8:760d]) by BYAPR15MB3029.namprd15.prod.outlook.com
- ([fe80::3541:85d8:c4c8:760d%3]) with mapi id 15.20.2665.017; Fri, 24 Jan 2020
- 21:28:26 +0000
-From:   Song Liu <songliubraving@fb.com>
-To:     Alexander Shishkin <alexander.shishkin@linux.intel.com>
-CC:     linux-kernel <linux-kernel@vger.kernel.org>,
-        Kernel Team <Kernel-team@fb.com>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
-        Jiri Olsa <jolsa@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>
-Subject: Re: [PATCH v3] perf/core: fix mlock accounting in perf_mmap()
-Thread-Topic: [PATCH v3] perf/core: fix mlock accounting in perf_mmap()
-Thread-Index: AQHV0hibb+4nJKVWcEm/RwrBoFjiL6f5jF2AgADJ1IA=
-Date:   Fri, 24 Jan 2020 21:28:26 +0000
-Message-ID: <0E502E71-B1A8-493B-BD9F-24F15BEDA1D6@fb.com>
-References: <20200123181146.2238074-1-songliubraving@fb.com>
- <87zhed9pek.fsf@ashishki-desk.ger.corp.intel.com>
-In-Reply-To: <87zhed9pek.fsf@ashishki-desk.ger.corp.intel.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-mailer: Apple Mail (2.3608.40.2.2.4)
-x-originating-ip: [2620:10d:c090:200::3:f503]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: d720a4a5-a2b9-43d3-0204-08d7a114591a
-x-ms-traffictypediagnostic: BYAPR15MB2823:
-x-ms-exchange-transport-forked: True
-x-microsoft-antispam-prvs: <BYAPR15MB28239C203CC862D952149D09B30E0@BYAPR15MB2823.namprd15.prod.outlook.com>
-x-fb-source: Internal
-x-ms-oob-tlc-oobclassifiers: OLM:7691;
-x-forefront-prvs: 02929ECF07
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(39860400002)(376002)(346002)(366004)(396003)(136003)(189003)(199004)(4326008)(2906002)(36756003)(5660300002)(8676002)(316002)(8936002)(81156014)(86362001)(81166006)(54906003)(2616005)(66446008)(64756008)(66476007)(91956017)(15650500001)(66946007)(71200400001)(6916009)(76116006)(478600001)(33656002)(6506007)(53546011)(6486002)(186003)(6512007)(66556008);DIR:OUT;SFP:1102;SCL:1;SRVR:BYAPR15MB2823;H:BYAPR15MB3029.namprd15.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: fb.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: uoMcJACfjQu98upHoCzTCfvgbIydgNGHIxlA6YruCSPNaD+9tpRz0qhN6CVR6Fgvbj/kMwwaF2ANh9EtybAFBsvbyDe03JFmqgpwnvE5B9ZBpIvrJlvdRE7uDfjBzgQ7a4eIdlzEGSyACJ5r8En3kxSPoE00uIVq734tLTLGT+o7f31GTz8ViHLzd30b8mft+s9bTRx1w3xZcGlZG5Vpwwgisc4xEXQqELCmK8JlDvO/eZkWbblQ+9xPaZi/0ycLqAqmQfbSmmLck2Q4awuqqlCOWZOsdF0MnP1OarsGFy52g+djwQ/dCX1vTSjEh214Nv8JVMlFBZA7k0YMiFkIdrvCk27RA5Xz1Sn+ndGsvU6TFbqDs7cJJNG2xR9Bv6C2govhX0OgLxK7/7JWuJ/h3GBv8HJlntaYTNUOzBHxuwOmZ3DlK8s3+Uf+ZHOndGmB
-x-ms-exchange-antispam-messagedata: scfmjMXakIJLMOm02QMB6eIJt9cdCfz7HkgWUEFnofs9s5WfvSUDApKzkNTvQGZ5i5xa6HK6BMCRFiHeFu1+3xK8H9JlZgUtgRa1GMRT/ltLe/YIExjdE9HU9v5Ur4068lqq4MevJE9toO2ZY1Qg3ad8/3q1UVRy0GhKJtOj7kwtge/NBt/31VRKnTXmXsRW
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <E003F42E1A1CDF42AC142C209BAF5698@namprd15.prod.outlook.com>
-Content-Transfer-Encoding: quoted-printable
+        Fri, 24 Jan 2020 16:32:04 -0500
+Received: from cm12.websitewelcome.com (cm12.websitewelcome.com [100.42.49.8])
+        by gateway31.websitewelcome.com (Postfix) with ESMTP id 0A31F18C83
+        for <linux-kernel@vger.kernel.org>; Fri, 24 Jan 2020 15:10:56 -0600 (CST)
+Received: from gator4166.hostgator.com ([108.167.133.22])
+        by cmsmtp with SMTP
+        id v6EBiGt2ZvYkQv6ECi87Da; Fri, 24 Jan 2020 15:10:56 -0600
+X-Authority-Reason: nr=8
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=embeddedor.com; s=default; h=Content-Transfer-Encoding:Content-Type:
+        In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender
+        :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=1EpH8LoV2wKCDxmGEvKAlzcq+d1bdGaTLz6SBk7EsoA=; b=Zhqc3Oc2s9jnh7Gj4BALhfaPFG
+        B4vX/BUf9Nk3wzOtLdOt9kxZXSKhaLG03cHatyCg9VUf4uIaGZOxFR6P1B/miQ4WxfIHEsIVk95au
+        ol1pV7iI+9Gav6L+F0cR8EzpcS4Q1oCm2UTW/Hi1X+OpMi0zcaptzizCrgWSTQ1GBii56FX/o6cxG
+        pEvA/TF4t53F3/KJZObRoZ3qr3agLf0NaNda/+sm3MogW7qHwtkd6/QeBfysQblAhLytp/8QsQuOf
+        RwlfLJXJL3dqY48PlnmujZjwo4iC22LtQ2ZiN+Z/m5/C9aMN2l6VxzLh2e5PcY9TsSKf/uTMp3iGp
+        PcUF4SMw==;
+Received: from [201.162.161.199] (port=60838 helo=[192.168.43.131])
+        by gator4166.hostgator.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
+        (Exim 4.92)
+        (envelope-from <gustavo@embeddedor.com>)
+        id 1iv6EB-001MCI-B1; Fri, 24 Jan 2020 15:10:55 -0600
+Subject: Re: [PATCH] drbd fifo_alloc: use struct_size
+To:     Stephen Kitt <steve@sk2.org>,
+        Philipp Reisner <philipp.reisner@linbit.com>,
+        Lars Ellenberg <lars.ellenberg@linbit.com>,
+        Jens Axboe <axboe@kernel.dk>, drbd-dev@lists.linbit.com
+Cc:     linux-block@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20200124200307.1808593-1-steve@sk2.org>
+From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Autocrypt: addr=gustavo@embeddedor.com; keydata=
+ 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
+ VtSixD1uOgytAP7RWS474w==
+Message-ID: <6016329a-4dac-ac23-9e6f-5da3dd3fefa0@embeddedor.com>
+Date:   Fri, 24 Jan 2020 15:12:59 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.1
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-Network-Message-Id: d720a4a5-a2b9-43d3-0204-08d7a114591a
-X-MS-Exchange-CrossTenant-originalarrivaltime: 24 Jan 2020 21:28:26.0430
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 8ae927fe-1255-47a7-a2af-5f3a069daaa2
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: fPOeMS5q1C69SuRSiIM1aHoa82y01cej/H0TZn77gw5zblW3Vas6n9jU0TAv40O8HwuWT3pcPUcUAQUYx9XCOw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR15MB2823
-X-OriginatorOrg: fb.com
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.572
- definitions=2020-01-24_07:2020-01-24,2020-01-24 signatures=0
-X-Proofpoint-Spam-Details: rule=fb_default_notspam policy=fb_default score=0 impostorscore=0
- lowpriorityscore=0 spamscore=0 priorityscore=1501 mlxlogscore=999
- malwarescore=0 suspectscore=0 phishscore=0 adultscore=0 mlxscore=0
- bulkscore=0 clxscore=1015 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-1911200001 definitions=main-2001240175
-X-FB-Internal: deliver
+In-Reply-To: <20200124200307.1808593-1-steve@sk2.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 201.162.161.199
+X-Source-L: No
+X-Exim-ID: 1iv6EB-001MCI-B1
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: ([192.168.43.131]) [201.162.161.199]:60838
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 7
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Thanks Alex!
 
-> On Jan 24, 2020, at 1:25 AM, Alexander Shishkin <alexander.shishkin@linux=
-.intel.com> wrote:
->=20
-> Song Liu <songliubraving@fb.com> writes:
->=20
->> Eecreasing sysctl_perf_event_mlock between two consecutive perf_mmap()s =
-of
->=20
-> Typo: "Decreasing".
 
-Peter, could you please fix this typo when you apply the patch? I guess
-it is not necessary to spam the list with a v4 just for this typo.=20
+On 1/24/20 14:03, Stephen Kitt wrote:
+> Switching to struct_size for the allocation in fifo_alloc avoids
+> hard-coding the type of fifo_buffer.values in fifo_alloc. It also
+> provides overflow protection; to avoid pessimistic code being
+> generated by the compiler as a result, this patch also switches
+> fifo_size to unsigned, propagating the change as appropriate.
+> 
+> Signed-off-by: Stephen Kitt <steve@sk2.org>
 
-Thanks,
-Song
+Reviewed-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
 
->=20
->> a perf ring buffer may lead to an integer underflow in locked memory
->> accounting. This may lead to the undesired behaviors, such as failures i=
-n
->> BPF map creation.
->>=20
->> Address this by adjusting the accounting logic to take into account the
->> possibility that the amount of already locked memory may exceed the
->> current limit.
->>=20
->> Fixes: c4b75479741c ("perf/core: Make the mlock accounting simple again"=
-)
->> Signed-off-by: Song Liu <songliubraving@fb.com>
->> Suggested-by: Alexander Shishkin <alexander.shishkin@linux.intel.com>
->> Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
->> Cc: Arnaldo Carvalho de Melo <acme@redhat.com>
->> Cc: Jiri Olsa <jolsa@kernel.org>
->> Cc: Peter Zijlstra <peterz@infradead.org>
->=20
-> Other than that,
->=20
-> Acked-by: Alexander Shishkin <alexander.shishkin@linux.intel.com>
->=20
-> Thanks,
-> --
-> Alex
+Thanks
+--
+Gustavo
 
+> ---
+>  drivers/block/drbd/drbd_int.h      | 2 +-
+>  drivers/block/drbd/drbd_nl.c       | 3 ++-
+>  drivers/block/drbd/drbd_receiver.c | 2 +-
+>  drivers/block/drbd/drbd_worker.c   | 4 ++--
+>  4 files changed, 6 insertions(+), 5 deletions(-)
+> 
+> diff --git a/drivers/block/drbd/drbd_int.h b/drivers/block/drbd/drbd_int.h
+> index ddbf56014c51..aae99a2d7bd4 100644
+> --- a/drivers/block/drbd/drbd_int.h
+> +++ b/drivers/block/drbd/drbd_int.h
+> @@ -622,7 +622,7 @@ struct fifo_buffer {
+>  	int total; /* sum of all values */
+>  	int values[0];
+>  };
+> -extern struct fifo_buffer *fifo_alloc(int fifo_size);
+> +extern struct fifo_buffer *fifo_alloc(unsigned int fifo_size);
+>  
+>  /* flag bits per connection */
+>  enum {
+> diff --git a/drivers/block/drbd/drbd_nl.c b/drivers/block/drbd/drbd_nl.c
+> index de2f94d0103a..da4a3ebe04ef 100644
+> --- a/drivers/block/drbd/drbd_nl.c
+> +++ b/drivers/block/drbd/drbd_nl.c
+> @@ -1575,7 +1575,8 @@ int drbd_adm_disk_opts(struct sk_buff *skb, struct genl_info *info)
+>  	struct drbd_device *device;
+>  	struct disk_conf *new_disk_conf, *old_disk_conf;
+>  	struct fifo_buffer *old_plan = NULL, *new_plan = NULL;
+> -	int err, fifo_size;
+> +	int err;
+> +	unsigned int fifo_size;
+>  
+>  	retcode = drbd_adm_prepare(&adm_ctx, skb, info, DRBD_ADM_NEED_MINOR);
+>  	if (!adm_ctx.reply_skb)
+> diff --git a/drivers/block/drbd/drbd_receiver.c b/drivers/block/drbd/drbd_receiver.c
+> index 2b3103c30857..79e216446030 100644
+> --- a/drivers/block/drbd/drbd_receiver.c
+> +++ b/drivers/block/drbd/drbd_receiver.c
+> @@ -3887,7 +3887,7 @@ static int receive_SyncParam(struct drbd_connection *connection, struct packet_i
+>  	struct disk_conf *old_disk_conf = NULL, *new_disk_conf = NULL;
+>  	const int apv = connection->agreed_pro_version;
+>  	struct fifo_buffer *old_plan = NULL, *new_plan = NULL;
+> -	int fifo_size = 0;
+> +	unsigned int fifo_size = 0;
+>  	int err;
+>  
+>  	peer_device = conn_peer_device(connection, pi->vnr);
+> diff --git a/drivers/block/drbd/drbd_worker.c b/drivers/block/drbd/drbd_worker.c
+> index 5bdcc70ad589..b7f605c6e231 100644
+> --- a/drivers/block/drbd/drbd_worker.c
+> +++ b/drivers/block/drbd/drbd_worker.c
+> @@ -482,11 +482,11 @@ static void fifo_add_val(struct fifo_buffer *fb, int value)
+>  		fb->values[i] += value;
+>  }
+>  
+> -struct fifo_buffer *fifo_alloc(int fifo_size)
+> +struct fifo_buffer *fifo_alloc(unsigned int fifo_size)
+>  {
+>  	struct fifo_buffer *fb;
+>  
+> -	fb = kzalloc(sizeof(struct fifo_buffer) + sizeof(int) * fifo_size, GFP_NOIO);
+> +	fb = kzalloc(struct_size(fb, values, fifo_size), GFP_NOIO);
+>  	if (!fb)
+>  		return NULL;
+>  
+> 
