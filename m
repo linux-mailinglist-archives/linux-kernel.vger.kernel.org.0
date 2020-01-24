@@ -2,35 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3335714819A
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Jan 2020 12:21:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D77CC148183
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Jan 2020 12:20:46 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391041AbgAXLVR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 24 Jan 2020 06:21:17 -0500
-Received: from mail.kernel.org ([198.145.29.99]:59232 "EHLO mail.kernel.org"
+        id S2390942AbgAXLUi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 24 Jan 2020 06:20:38 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58322 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1733219AbgAXLVO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 24 Jan 2020 06:21:14 -0500
+        id S2390727AbgAXLUd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 24 Jan 2020 06:20:33 -0500
 Received: from localhost (ip-213-127-102-57.ip.prioritytelecom.net [213.127.102.57])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1C06B206D4;
-        Fri, 24 Jan 2020 11:21:12 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6154A2075D;
+        Fri, 24 Jan 2020 11:20:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579864873;
-        bh=xx/5NPMChgsJxC9KdTXY9qZMPHMzyd1H6sdrMha8ULg=;
+        s=default; t=1579864833;
+        bh=Bahj00EtHP8l6OKebt7WF0LuUHVdytY1H+LqkI8HKj4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=fbg9qf67A2IFnM4gpit2hpktyM/Hp97sUaVHNZkaj6v54bKZzcLGlE/E7x3GZiB2q
-         VMz1xjADGX6s+02t9gSHHkrXt3mGjqxLlKchon98b3NTIiW0HmwsKXowi7wLZAkBVP
-         4l1eEOy60W+C+HdlvBixujJcvdtSkLTJ0T8xIv7M=
+        b=euqW1X51Rkg4n4NRs3lxgyej/+B0yoxypigjBH1tAudnO3OeOmswqEqJKvOnuA36X
+         dMJLFZGTnx09a2/0g5/UKG5A13yjvnXFeYb6tPIsXH8a4C+Gq+QimHGFbW5B4ZlBGL
+         LGgQX6EQzv/4CbFISP4zwo4ft2VFZrK5BwEKeT8c=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, David Howells <dhowells@redhat.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 377/639] afs: Fix lock-wait/callback-break double locking
-Date:   Fri, 24 Jan 2020 10:29:07 +0100
-Message-Id: <20200124093134.233102242@linuxfoundation.org>
+Subject: [PATCH 4.19 378/639] afs: Fix double inc of vnode->cb_break
+Date:   Fri, 24 Jan 2020 10:29:08 +0100
+Message-Id: <20200124093134.349568391@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
 In-Reply-To: <20200124093047.008739095@linuxfoundation.org>
 References: <20200124093047.008739095@linuxfoundation.org>
@@ -45,60 +45,42 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: David Howells <dhowells@redhat.com>
 
-[ Upstream commit c7226e407b6065d3bda8bd9dc627663d2c505ea3 ]
+[ Upstream commit fd711586bb7d63f257da5eff234e68c446ac35ea ]
 
-__afs_break_callback() holds vnode->lock around its call of
-afs_lock_may_be_available() - which also takes that lock.
+When __afs_break_callback() clears the CB_PROMISED flag, it increments
+vnode->cb_break to trigger a future refetch of the status and callback -
+however it also calls afs_clear_permits(), which also increments
+vnode->cb_break.
 
-Fix this by not taking the lock in __afs_break_callback().
+Fix this by removing the increment from afs_clear_permits().
 
-Also, there's no point checking the granted_locks and pending_locks queues;
-it's sufficient to check lock_state, so move that check out of
-afs_lock_may_be_available() into __afs_break_callback() to replace the
-queue checks.
+Whilst we're at it, fix the conditional call to afs_put_permits() as the
+function checks to see if the argument is NULL, so the check is redundant.
 
-Fixes: e8d6c554126b ("AFS: implement file locking")
+Fixes: be080a6f43c4 ("afs: Overhaul permit caching");
 Signed-off-by: David Howells <dhowells@redhat.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/afs/callback.c | 8 +-------
- fs/afs/flock.c    | 3 ---
- 2 files changed, 1 insertion(+), 10 deletions(-)
+ fs/afs/security.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-diff --git a/fs/afs/callback.c b/fs/afs/callback.c
-index 4ad7012502998..97283b04fa6fd 100644
---- a/fs/afs/callback.c
-+++ b/fs/afs/callback.c
-@@ -221,14 +221,8 @@ void afs_break_callback(struct afs_vnode *vnode)
- 		vnode->cb_break++;
- 		afs_clear_permits(vnode);
+diff --git a/fs/afs/security.c b/fs/afs/security.c
+index 81dfedb7879ff..66042b432baa8 100644
+--- a/fs/afs/security.c
++++ b/fs/afs/security.c
+@@ -87,11 +87,9 @@ void afs_clear_permits(struct afs_vnode *vnode)
+ 	permits = rcu_dereference_protected(vnode->permit_cache,
+ 					    lockdep_is_held(&vnode->lock));
+ 	RCU_INIT_POINTER(vnode->permit_cache, NULL);
+-	vnode->cb_break++;
+ 	spin_unlock(&vnode->lock);
  
--		spin_lock(&vnode->lock);
--
--		_debug("break callback");
--
--		if (list_empty(&vnode->granted_locks) &&
--		    !list_empty(&vnode->pending_locks))
-+		if (vnode->lock_state == AFS_VNODE_LOCK_WAITING_FOR_CB)
- 			afs_lock_may_be_available(vnode);
--		spin_unlock(&vnode->lock);
- 	}
+-	if (permits)
+-		afs_put_permits(permits);
++	afs_put_permits(permits);
+ }
  
- 	write_sequnlock(&vnode->cb_lock);
-diff --git a/fs/afs/flock.c b/fs/afs/flock.c
-index aea7224ba1981..fbf4986b12245 100644
---- a/fs/afs/flock.c
-+++ b/fs/afs/flock.c
-@@ -39,9 +39,6 @@ void afs_lock_may_be_available(struct afs_vnode *vnode)
- {
- 	_enter("{%x:%u}", vnode->fid.vid, vnode->fid.vnode);
- 
--	if (vnode->lock_state != AFS_VNODE_LOCK_WAITING_FOR_CB)
--		return;
--
- 	spin_lock(&vnode->lock);
- 	if (vnode->lock_state == AFS_VNODE_LOCK_WAITING_FOR_CB)
- 		afs_next_locker(vnode, 0);
+ /*
 -- 
 2.20.1
 
