@@ -2,49 +2,49 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D388F148CEA
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Jan 2020 18:27:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 900D2148CF6
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Jan 2020 18:27:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389941AbgAXR1V (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 24 Jan 2020 12:27:21 -0500
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:51139 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389761AbgAXR1S (ORCPT
+        id S2390626AbgAXR1l (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 24 Jan 2020 12:27:41 -0500
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:45958 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2390532AbgAXR1c (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 24 Jan 2020 12:27:18 -0500
-Received: by mail-wm1-f65.google.com with SMTP id a5so241599wmb.0
-        for <linux-kernel@vger.kernel.org>; Fri, 24 Jan 2020 09:27:18 -0800 (PST)
+        Fri, 24 Jan 2020 12:27:32 -0500
+Received: by mail-wr1-f65.google.com with SMTP id j42so2910582wrj.12
+        for <linux-kernel@vger.kernel.org>; Fri, 24 Jan 2020 09:27:31 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=aJjGrvg3mOwAKVCibupA56dSZoCmNQpaCvrxwBxCbkI=;
-        b=mFbbTkusJM1h2k2a+IS4yzllB9ot90bMcuamF2QcPW9Pvlgh3nARvTHgSw8CSQdPsI
-         NPXQ1vPyIGLafpGSyt+zZiJiGF5FYtqP9GeWFDbHlvVCdsZkqsyB1Xr2iyu62V+xece/
-         KXKv6Ty/a7F3RiYjm1yvjYxdRDuGKtBhaqcA5yr2zwKdNYpn8TsidQX5Egj/2/p1uWYA
-         iE4gd6oP6UElJgUa9RvSVfPGydB22yLGDviG5bztfywAXjpH8otc4kXzy6kaWW4PGixz
-         nDNKiTWdQ/6p5so/wKHvMTsq17NHHPqtK4y0fVmNHQ4nGfuWfKZ25KH6Tjs5dFBq0iBB
-         EKkQ==
+        bh=/WIeivaGQxrlEYfXU5yeyOajIwgi/x64w9TFpm3Lzbs=;
+        b=OMNP06LJVv7z/8HMT1U3LlJLhp8LpJoYHDGY0rPhdPVcxLykArz0KpN2rLQ9kbYJwf
+         lyN/K128daIdO0KovHl+M4Rg3rqokbx+3wrkuvItJ9S7tbBV8w0bZW6A15aH+b58gbvm
+         zV9fRlEBav9fownSv0tL3Ig9GxByTfTlkdS/l+JETR1hmbS8OOBbXHUML8eTsVnwz+iU
+         lO96xJRH4VPogg6Le7EjEyc7c0jS/VG3GOZgz330m70hb+AJO1g4yycHWIBgkpJwb8rD
+         x/VbeduqLCqLdHNG1wWnCWuDySYvAXKJKiIJ95i4sZMZ2Z8muEbO1IwbYAtsVm1+yeD+
+         /pbw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=aJjGrvg3mOwAKVCibupA56dSZoCmNQpaCvrxwBxCbkI=;
-        b=VRrCbxC1Q+gGkDx6f+7qrU63d2+bBQfs8GfIlhUNWD6gc/9NOTljf32SiyJ/Dvczl0
-         86AzprbcSF8w8D3DCskxI4BE26ut3taaNX2j1yduHM5iYZXsmyO8MLPETwJGzbOBzTJQ
-         C275f8JEedleL5ITkIeTzNWCsMmT9SlqMCHVwx+RBG9vglfl35HT8vAqfWzQR59wJEZ0
-         dSCIR6F5vWezw+i7lwN5TX7srNTnq5M/AH/nOnqcDcNihv9ZVCjY/rYdY3GEqpw7Ol/b
-         emtMyfUmm+EGwi47x/yFZ7Odp4PH1sV3HQPv9TL0tKqrX4NcbsLICw8mkEBjIt3FBcR6
-         dmdw==
-X-Gm-Message-State: APjAAAUCmynVGEd8IKhEruVOYA8/FwXg8CODl/qUmB0F2KsIfUGyTKI1
-        LtrPjUJT40ECH+rMLJf3qbr/Jg==
-X-Google-Smtp-Source: APXvYqxAAhN/LBVU89VSmwcW1dRuEvPfLVB1wwzNte3lzf/a9AR7CI7QWj6jF1hiJ438so/l2mgvrA==
-X-Received: by 2002:a1c:1d16:: with SMTP id d22mr249273wmd.158.1579886837536;
-        Fri, 24 Jan 2020 09:27:17 -0800 (PST)
+        bh=/WIeivaGQxrlEYfXU5yeyOajIwgi/x64w9TFpm3Lzbs=;
+        b=Qdj9cCgGi/oTuWp/N8SSAivyFCSoOyaYjMMbWigMCgd6ekosS6yIAp1f0zdoSGJsEw
+         xfGXZwk6S0BfznzPlHpFG60KhCvS6X2Cyos3Hwy8nE9dxv3gqN/6CCjwt+u5TyfEU1SC
+         pQui8TTeXwfvnWWT57zvRpv8SrYBSoJPaSVJArtFAf8AKjwuztWRUQWXtJ0Mhr4pcI+5
+         QEaQ3mj6wYkdbwS/0RZDmr6VdsBRBOnveEeP5JcIftfRqnC3vLwEcnfGKZB5gH36+Dgs
+         7bIiFLAxeS9FBHuIDr3Jr23Bl9drY0YRnI3ynB5WKVNsF324GcKhNwGyr/SAIJh4tiJe
+         lGZw==
+X-Gm-Message-State: APjAAAVBu8fB/KTUqzV5TrWH9UJCVtok1A84G/vbteYhpbuaGaht5MSS
+        Tz0zb1LRaW50FKxlHZjm6attZQ==
+X-Google-Smtp-Source: APXvYqziiJlYF3fliGq+eS20t/bwAty9dObiuwbBRCW6TAT6PG/9boi52uBZx0zUmB9xMt+7lAjuTg==
+X-Received: by 2002:a05:6000:160d:: with SMTP id u13mr5252608wrb.22.1579886838627;
+        Fri, 24 Jan 2020 09:27:18 -0800 (PST)
 Received: from debian-brgl.home ([2a01:cb1d:af:5b00:6d6c:8493:1ab5:dad7])
-        by smtp.gmail.com with ESMTPSA id t8sm8358585wrp.69.2020.01.24.09.27.16
+        by smtp.gmail.com with ESMTPSA id t8sm8358585wrp.69.2020.01.24.09.27.17
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 24 Jan 2020 09:27:16 -0800 (PST)
+        Fri, 24 Jan 2020 09:27:18 -0800 (PST)
 From:   Bartosz Golaszewski <brgl@bgdev.pl>
 To:     Kent Gibson <warthog618@gmail.com>,
         Linus Walleij <linus.walleij@linaro.org>,
@@ -52,9 +52,9 @@ To:     Kent Gibson <warthog618@gmail.com>,
 Cc:     linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
         Bartosz Golaszewski <bgolaszewski@baylibre.com>,
         Stefani Seibold <stefani@seibold.net>
-Subject: [PATCH v6 1/7] kfifo: provide noirqsave variants of spinlocked in and out helpers
-Date:   Fri, 24 Jan 2020 18:27:04 +0100
-Message-Id: <20200124172710.20776-2-brgl@bgdev.pl>
+Subject: [PATCH v6 2/7] kfifo: provide kfifo_is_empty_spinlocked()
+Date:   Fri, 24 Jan 2020 18:27:05 +0100
+Message-Id: <20200124172710.20776-3-brgl@bgdev.pl>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20200124172710.20776-1-brgl@bgdev.pl>
 References: <20200124172710.20776-1-brgl@bgdev.pl>
@@ -67,75 +67,57 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 
-Provide variants of spinlocked kfifo_in() and kfifo_out() routines which
-don't disable interrupts.
+Provide two spinlocked versions of kfifo_is_empty() to be used with
+spinlocked variants of kfifo_in() and kfifo_out().
 
 Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 Acked-by: Stefani Seibold <stefani@seibold.net>
 ---
- include/linux/kfifo.h | 42 ++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 42 insertions(+)
+ include/linux/kfifo.h | 31 +++++++++++++++++++++++++++++++
+ 1 file changed, 31 insertions(+)
 
 diff --git a/include/linux/kfifo.h b/include/linux/kfifo.h
-index fc4b0b10210f..123c200ed7cb 100644
+index 123c200ed7cb..86249476b57f 100644
 --- a/include/linux/kfifo.h
 +++ b/include/linux/kfifo.h
-@@ -517,6 +517,26 @@ __kfifo_uint_must_check_helper( \
- 	__ret; \
+@@ -246,6 +246,37 @@ __kfifo_int_must_check_helper(int val)
+ 	__tmpq->kfifo.in == __tmpq->kfifo.out; \
  })
  
 +/**
-+ * kfifo_in_spinlocked_noirqsave - put data into fifo using a spinlock for
-+ * locking, don't disable interrupts
++ * kfifo_is_empty_spinlocked - returns true if the fifo is empty using
++ * a spinlock for locking
 + * @fifo: address of the fifo to be used
-+ * @buf: the data to be added
-+ * @n: number of elements to be added
-+ * @lock: pointer to the spinlock to use for locking
-+ *
-+ * This is a variant of kfifo_in_spinlocked() but uses spin_lock/unlock()
-+ * for locking and doesn't disable interrupts.
++ * @lock: spinlock to be used for locking
 + */
-+#define kfifo_in_spinlocked_noirqsave(fifo, buf, n, lock) \
++#define kfifo_is_empty_spinlocked(fifo, lock) \
 +({ \
-+	unsigned int __ret; \
++	unsigned long __flags; \
++	bool __ret; \
++	spin_lock_irqsave(lock, __flags); \
++	__ret = kfifo_is_empty(fifo); \
++	spin_unlock_irqrestore(lock, __flags); \
++	__ret; \
++})
++
++/**
++ * kfifo_is_empty_spinlocked_noirqsave  - returns true if the fifo is empty
++ * using a spinlock for locking, doesn't disable interrupts
++ * @fifo: address of the fifo to be used
++ * @lock: spinlock to be used for locking
++ */
++#define kfifo_is_empty_spinlocked_noirqsave(fifo, lock) \
++({ \
++	bool __ret; \
 +	spin_lock(lock); \
-+	__ret = kfifo_in(fifo, buf, n); \
++	__ret = kfifo_is_empty(fifo); \
 +	spin_unlock(lock); \
 +	__ret; \
 +})
 +
- /* alias for kfifo_in_spinlocked, will be removed in a future release */
- #define kfifo_in_locked(fifo, buf, n, lock) \
- 		kfifo_in_spinlocked(fifo, buf, n, lock)
-@@ -569,6 +589,28 @@ __kfifo_uint_must_check_helper( \
- }) \
- )
- 
-+/**
-+ * kfifo_out_spinlocked_noirqsave - get data from the fifo using a spinlock
-+ * for locking, don't disable interrupts
-+ * @fifo: address of the fifo to be used
-+ * @buf: pointer to the storage buffer
-+ * @n: max. number of elements to get
-+ * @lock: pointer to the spinlock to use for locking
-+ *
-+ * This is a variant of kfifo_out_spinlocked() which uses spin_lock/unlock()
-+ * for locking and doesn't disable interrupts.
-+ */
-+#define kfifo_out_spinlocked_noirqsave(fifo, buf, n, lock) \
-+__kfifo_uint_must_check_helper( \
-+({ \
-+	unsigned int __ret; \
-+	spin_lock(lock); \
-+	__ret = kfifo_out(fifo, buf, n); \
-+	spin_unlock(lock); \
-+	__ret; \
-+}) \
-+)
-+
- /* alias for kfifo_out_spinlocked, will be removed in a future release */
- #define kfifo_out_locked(fifo, buf, n, lock) \
- 		kfifo_out_spinlocked(fifo, buf, n, lock)
+ /**
+  * kfifo_is_full - returns true if the fifo is full
+  * @fifo: address of the fifo to be used
 -- 
 2.23.0
 
