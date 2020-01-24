@@ -2,36 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CB9CC1484A3
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Jan 2020 12:44:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8D844148484
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Jan 2020 12:44:43 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390921AbgAXLnG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 24 Jan 2020 06:43:06 -0500
-Received: from mail.kernel.org ([198.145.29.99]:45894 "EHLO mail.kernel.org"
+        id S2389883AbgAXLLO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 24 Jan 2020 06:11:14 -0500
+Received: from mail.kernel.org ([198.145.29.99]:46952 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389822AbgAXLKJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 24 Jan 2020 06:10:09 -0500
+        id S2388237AbgAXLLF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 24 Jan 2020 06:11:05 -0500
 Received: from localhost (ip-213-127-102-57.ip.prioritytelecom.net [213.127.102.57])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 15B1E20663;
-        Fri, 24 Jan 2020 11:10:07 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 942AE2075D;
+        Fri, 24 Jan 2020 11:11:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579864208;
-        bh=LQYh9mpS6C1pxz8TTiF+44lSeHOO183tIPQyxYRyGrI=;
+        s=default; t=1579864265;
+        bh=OT71+5E1Ja8X2ipIEcrWpHYmjwcMy5GNtYtKWURAuiI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=aBarR6v8Uw+eFxTUqsJ3v799zPtoaxkRB0+xAXpzKfTXtNNH3ek0EdZMM64AByO/7
-         ArPSbbqA08buZ6yg4AZswLO7vNL1qUxMiL06E/qZVKgbx4AUi8JO3zS3Jd6No5g7VT
-         FZZxsuObot8417cfkMZMD8qqFjMQGabIqEWasN7g=
+        b=vf0xEpqFP2jFHOmUdUxGq/isxXj7V3F/D0zoNHl5YAagiD619T3TcYuLuXZWUauLR
+         ci7yGvBagGr6x5mxluyDLEpcPp0/75yrtxEmKgGzc5B3mKtIr3V8KG6Z7CNFZeQn+6
+         dB67tH2Yrxn2WYbW1QJJ2dJLyAdT27suW8FNtwKc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Florian Fainelli <f.fainelli@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>,
+        stable@vger.kernel.org, Vadim Pasternak <vadimp@mellanox.com>,
+        Guenter Roeck <linux@roeck-us.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 202/639] net: dsa: b53: Do not program CPU ports PVID
-Date:   Fri, 24 Jan 2020 10:26:12 +0100
-Message-Id: <20200124093112.340694982@linuxfoundation.org>
+Subject: [PATCH 4.19 206/639] hwmon: (pmbus/tps53679) Fix driver info initialization in probe routine
+Date:   Fri, 24 Jan 2020 10:26:16 +0100
+Message-Id: <20200124093112.838210216@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
 In-Reply-To: <20200124093047.008739095@linuxfoundation.org>
 References: <20200124093047.008739095@linuxfoundation.org>
@@ -44,35 +44,45 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Florian Fainelli <f.fainelli@gmail.com>
+From: Vadim Pasternak <vadimp@mellanox.com>
 
-[ Upstream commit 10163aaee9671b01b2f4737922e1a4f43581047a ]
+[ Upstream commit ff066653aeed8ee2d4dadb1e35774dd91ecbb19f ]
 
-The CPU port is special and does not need to obey VLAN restrictions as
-far as untagged traffic goes, also, having the CPU port be part of a
-particular PVID is against the idea of keeping it tagged in all VLANs.
+Fix tps53679_probe() by using dynamically allocated "pmbus_driver_info"
+structure instead of static. Usage of static structures causes
+overwritten of the field "vrm_version", in case the system is equipped
+with several tps53679 devices with the different "vrm_version".
+In such case the last probed device overwrites this field for all
+others.
 
-Fixes: ca8931948344 ("net: dsa: b53: Keep CPU port as tagged in all VLANs")
-Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Fixes: 610526527a13 ("hwmon: (pmbus) Add support for Texas Instruments tps53679 device")
+Signed-off-by: Vadim Pasternak <vadimp@mellanox.com>
+Signed-off-by: Guenter Roeck <linux@roeck-us.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/dsa/b53/b53_common.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/hwmon/pmbus/tps53679.c | 9 ++++++++-
+ 1 file changed, 8 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/net/dsa/b53/b53_common.c b/drivers/net/dsa/b53/b53_common.c
-index 426ec1c05799a..9f21e710fc38b 100644
---- a/drivers/net/dsa/b53/b53_common.c
-+++ b/drivers/net/dsa/b53/b53_common.c
-@@ -1175,7 +1175,7 @@ void b53_vlan_add(struct dsa_switch *ds, int port,
- 		b53_fast_age_vlan(dev, vid);
- 	}
+diff --git a/drivers/hwmon/pmbus/tps53679.c b/drivers/hwmon/pmbus/tps53679.c
+index 85b515cd9df0e..2bc352c5357f4 100644
+--- a/drivers/hwmon/pmbus/tps53679.c
++++ b/drivers/hwmon/pmbus/tps53679.c
+@@ -80,7 +80,14 @@ static struct pmbus_driver_info tps53679_info = {
+ static int tps53679_probe(struct i2c_client *client,
+ 			  const struct i2c_device_id *id)
+ {
+-	return pmbus_do_probe(client, id, &tps53679_info);
++	struct pmbus_driver_info *info;
++
++	info = devm_kmemdup(&client->dev, &tps53679_info, sizeof(*info),
++			    GFP_KERNEL);
++	if (!info)
++		return -ENOMEM;
++
++	return pmbus_do_probe(client, id, info);
+ }
  
--	if (pvid) {
-+	if (pvid && !dsa_is_cpu_port(ds, port)) {
- 		b53_write16(dev, B53_VLAN_PAGE, B53_VLAN_PORT_DEF_TAG(port),
- 			    vlan->vid_end);
- 		b53_fast_age_vlan(dev, vid);
+ static const struct i2c_device_id tps53679_id[] = {
 -- 
 2.20.1
 
