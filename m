@@ -2,192 +2,184 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2DFE1149204
-	for <lists+linux-kernel@lfdr.de>; Sat, 25 Jan 2020 00:27:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9456F1491BC
+	for <lists+linux-kernel@lfdr.de>; Sat, 25 Jan 2020 00:19:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729587AbgAXX1f (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 24 Jan 2020 18:27:35 -0500
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:36607 "EHLO
-        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729530AbgAXX1f (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 24 Jan 2020 18:27:35 -0500
-Received: by mail-pl1-f194.google.com with SMTP id a6so1409244plm.3
-        for <linux-kernel@vger.kernel.org>; Fri, 24 Jan 2020 15:27:34 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=pMA+QteS/JKIrgzNNehkgXK6WKtqs9yO/7325HU0xxA=;
-        b=J8T7f7GLnK78uiyRBnCLfOmhrZTQC9Snw78JgipV4iORMKkCyjpWK6Ywu969t4OCWn
-         vHVgk8OMilaDg72I96iQnY49oKejS5E4WkIGj7sHU4H9yMdm7xTCLQ/pLUUUruZZOKSd
-         5TxNBzu5M228WEMt7/FxGDohHhvzc8IdHhmw0=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=pMA+QteS/JKIrgzNNehkgXK6WKtqs9yO/7325HU0xxA=;
-        b=QLG08TzaGNZikLuVzK9+XsReaCZGwsBPpY7CRKuCsuwqDL8Q/7G3bUsDg6Ih/H5jGU
-         Y91/yG3godmE1Yu1dJ5CujLt/5DhqxiNGLtCUM6SBr9fwNKI7LzSpzKYcZ99mAr66gfT
-         XsY28LbgJK9zz1nu/EXCXs7w3jU51PRLwC813t4wRYRCD3+l1RCBGPtX8CR5d97cWnu3
-         +0yEAuvbk4/fpc4toJDGka/QeApKDajsKX3k/ggMvKVkGPyvBl7BKgH+QK+bEonAH8le
-         ShLlhlxZq2c4k3gENS7oXwgKFrOtYbHxZKdi+MItsNwZJaLXfmYO6dR8YQ6+vClndL5J
-         WRoA==
-X-Gm-Message-State: APjAAAV/mMzgmLs3I3bepfl9Vz1fuSUbYfVk5EjtwusHsR69gdc0f4km
-        Mrn0p6Sx/hsC385d72+T6jTxGQ==
-X-Google-Smtp-Source: APXvYqwY0AaVqS2LMQRZ1k5/WiWlXd2hBWliRPyl4SxOhlErcaZ2nhCS1Or5k6hnLxc4GiBDU6wz0w==
-X-Received: by 2002:a17:902:6ac3:: with SMTP id i3mr6070491plt.111.1579908454326;
-        Fri, 24 Jan 2020 15:27:34 -0800 (PST)
-Received: from pmalani2.mtv.corp.google.com ([2620:15c:202:201:172e:4646:c089:ce59])
-        by smtp.gmail.com with ESMTPSA id b12sm2823103pfr.26.2020.01.24.15.27.33
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 24 Jan 2020 15:27:33 -0800 (PST)
-From:   Prashant Malani <pmalani@chromium.org>
-To:     enric.balletbo@collabora.com, groeck@chromium.org,
-        bleung@chromium.org, lee.jones@linaro.org, sre@kernel.org
-Cc:     linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-        Jon Flatley <jflat@chromium.org>,
-        Prashant Malani <pmalani@chromium.org>
-Subject: [PATCH v8 4/4] power: supply: cros-ec-usbpd-charger: Fix host events
-Date:   Fri, 24 Jan 2020 15:18:38 -0800
-Message-Id: <20200124231834.63628-4-pmalani@chromium.org>
-X-Mailer: git-send-email 2.25.0.341.g760bfbb309-goog
-In-Reply-To: <20200124231834.63628-1-pmalani@chromium.org>
-References: <20200124231834.63628-1-pmalani@chromium.org>
+        id S1729532AbgAXXTQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 24 Jan 2020 18:19:16 -0500
+Received: from mga05.intel.com ([192.55.52.43]:25812 "EHLO mga05.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729147AbgAXXTQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 24 Jan 2020 18:19:16 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga005.fm.intel.com ([10.253.24.32])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 24 Jan 2020 15:19:15 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.70,359,1574150400"; 
+   d="scan'208";a="426771863"
+Received: from richard.sh.intel.com (HELO localhost) ([10.239.159.54])
+  by fmsmga005.fm.intel.com with ESMTP; 24 Jan 2020 15:19:14 -0800
+Date:   Sat, 25 Jan 2020 07:19:26 +0800
+From:   Wei Yang <richardw.yang@linux.intel.com>
+To:     Michal Hocko <mhocko@kernel.org>
+Cc:     Wei Yang <richardw.yang@linux.intel.com>, g@richard.suse.de,
+        Yang Shi <yang.shi@linux.alibaba.com>,
+        akpm@linux-foundation.org, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Subject: Re: [v2 PATCH] mm: move_pages: report the number of non-attempted
+ pages
+Message-ID: <20200124231926.GA16638@richard>
+Reply-To: Wei Yang <richardw.yang@linux.intel.com>
+References: <1579736331-85494-1-git-send-email-yang.shi@linux.alibaba.com>
+ <20200123032736.GA22196@richard>
+ <20200123085526.GH29276@dhcp22.suse.cz>
+ <20200123225647.GB29851@richard>
+ <20200124064649.GM29276@dhcp22.suse.cz>
+ <20200124152642.GB12509@richard>
+ <20200124154015.GW29276@dhcp22.suse.cz>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200124154015.GW29276@dhcp22.suse.cz>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jon Flatley <jflat@chromium.org>
+On Fri, Jan 24, 2020 at 04:40:15PM +0100, Michal Hocko wrote:
+>On Fri 24-01-20 23:26:42, Wei Yang wrote:
+>> On Fri, Jan 24, 2020 at 07:46:49AM +0100, Michal Hocko wrote:
+>> >On Fri 24-01-20 06:56:47, Wei Yang wrote:
+>> >> On Thu, Jan 23, 2020 at 09:55:26AM +0100, Michal Hocko wrote:
+>> >> >On Thu 23-01-20 11:27:36, Wei Yang wrote:
+>> >> >> On Thu, Jan 23, 2020 at 07:38:51AM +0800, Yang Shi wrote:
+>> >> >> >Since commit a49bd4d71637 ("mm, numa: rework do_pages_move"),
+>> >> >> >the semantic of move_pages() was changed to return the number of
+>> >> >> >non-migrated pages (failed to migration) and the call would be aborted
+>> >> >> >immediately if migrate_pages() returns positive value.  But it didn't
+>> >> >> >report the number of pages that we even haven't attempted to migrate.
+>> >> >> >So, fix it by including non-attempted pages in the return value.
+>> >> >> >
+>> >> >> 
+>> >> >> First, we want to change the semantic of move_pages(2). The return value
+>> >> >> indicates the number of pages we didn't managed to migrate?
+>> >> >> 
+>> >> >> Second, the return value from migrate_pages() doesn't mean the number of pages
+>> >> >> we failed to migrate. For example, one -ENOMEM is returned on the first page,
+>> >> >> migrate_pages() would return 1. But actually, no page successfully migrated.
+>> >> >
+>> >> >ENOMEM is considered a permanent failure and as such it is returned by
+>> >> >migrate pages (see goto out).
+>> >> >
+>> >> >> Third, even the migrate_pages() return the exact non-migrate page, we are not
+>> >> >> sure those non-migrated pages are at the tail of the list. Because in the last
+>> >> >> case in migrate_pages(), it just remove the page from list. It could be a page
+>> >> >> in the middle of the list. Then, in userspace, how the return value be
+>> >> >> leveraged to determine the valid status? Any page in the list could be the
+>> >> >> victim.
+>> >> >
+>> >> >Yes, I was wrong when stating that the caller would know better which
+>> >> >status to check. I misremembered the original patch as it was quite some
+>> >> >time ago. While storing the error code would be possible after some
+>> >> >massaging of migrate_pages is this really something we deeply care
+>> >> >about. The caller can achieve the same by initializing the status array
+>> >> >to a non-node number - e.g. -1 - and check based on that.
+>> >> >
+>> >> 
+>> >> So for a user, the best practice is to initialize the status array to -1 and
+>> >> check each status to see whether the page is migrated successfully?
+>> >
+>> >Yes IMO. Just consider -errno return value. You have no way to find out
+>> >which pages have been migrated until we reached that error. The
+>> >possitive return value would fall into the same case.
+>> >
+>> >> Then do we need to return the number of non-migrated page? What benefit could
+>> >> user get from the number. How about just return an error code to indicate the
+>> >> failure? I may miss some point, would you mind giving me a hint?
+>> >
+>> >This is certainly possible. We can return -EAGAIN if some pages couldn't
+>> >be migrated because they are pinned. But please read my previous email
+>> >to the very end for arguments why this might cause more problems than it
+>> >actually solves.
+>> >
+>> 
+>> Let me put your comment here:
+>> 
+>>     Because new users could have started depending on it. It
+>>     is not all that unlikely that the current implementation would just
+>>     work for them because they are migrating a set of pages on to the same
+>>     node so the batch would be a single list throughout the whole given
+>>     page set.
+>> 
+>> Your idea is to preserve current semantic, return non-migrated pages number to
+>> userspace.
+>> 
+>> And the reason is:
+>> 
+>>    1. Users have started depending on it.
+>>    2. No real bug reported yet.
+>>    3. User always migrate page to the same node. (If my understanding is
+>>       correct)
+>> 
+>> I think this gets some reason, since we want to minimize the impact to
+>> userland.
+>> 
+>> While let's see what user probably use this syscall. Since from the man page,
+>> we never told the return value could be positive, the number of non-migrated
+>> pages, user would think only 0 means a successful migration and all other
+>> cases are failure. Then user probably handle negative and positive return
+>> value the same way, like (!err).
+>> 
+>> If my guess is true, return a negative error value for this case could
+>> minimize the impact to userland here.
+>>    1. Preserve the semantic of move_pages(2): 0 means success, negative means
+>>       some error and needs extra handling.
+>>    2. Trivial change to the man page.
+>>    3. Suppose no change to users.
+>
+>Do you have any actual proposal we can discuss? I suspect we are going
+>in circles here. Sure both ways are possible. The disucssion we are
+>having here is which behavior makes more sense. The interface is and has
+>been in the past very awkward. Some corner cases have been fixed some
+>new created. While I am not happy about the later we should finally land
+>with some decision.
 
-There's a bug on ACPI platforms where host events from the ECPD ACPI
-device never make their way to the cros-ec-usbpd-charger driver. This
-makes it so the only time the charger driver updates its state is when
-user space accesses its sysfs attributes.
+Ok, I found myself may miss some mechanism about the err reporting from kernel
+to userland.
 
-Now that these events have been unified into a single notifier chain on
-both ACPI and non-ACPI platforms, update the charger driver to use this
-new notifier.
+  If do_pages_move() returns a negative err, the value would be set into errno
+  and actually user just see a return value of -1?
 
-Reviewed-by: Benson Leung <bleung@chromium.org>
-Co-Developed-by: Prashant Malani <pmalani@chromium.org>
-Signed-off-by: Jon Flatley <jflat@chromium.org>
-Signed-off-by: Prashant Malani <pmalani@chromium.org>
----
+So userland just see two types of return value if kernel comply with man page:
 
-Changes in v8(pmalani@chromium.org):
-- No changes.
+   0 : success
+   -1: failure, with reason set into errno
 
-Changes in v7(pmalani@chromium.org):
-- Alphabetize #include header.
+Is my understanding correct? I tried to read the syscall path, but not find
+how the negative value is set into errno.
 
-Changes in v6(pmalani@chromium.org):
-- Patch first introduced into the series in v6.
+Since our kernel already return a positive value one migration failure, so the
+exact return value from move_pages() syscall is:
 
- drivers/power/supply/Kconfig              |  2 +-
- drivers/power/supply/cros_usbpd-charger.c | 50 ++++++++---------------
- 2 files changed, 19 insertions(+), 33 deletions(-)
+  > 0: number of non-migrate pages
+  0  : success
+  -1 : failure, with reason set into errno
 
-diff --git a/drivers/power/supply/Kconfig b/drivers/power/supply/Kconfig
-index 27164a1d3c7c4..ba74ddd793c3d 100644
---- a/drivers/power/supply/Kconfig
-+++ b/drivers/power/supply/Kconfig
-@@ -659,7 +659,7 @@ config CHARGER_RT9455
- 
- config CHARGER_CROS_USBPD
- 	tristate "ChromeOS EC based USBPD charger"
--	depends on CROS_EC
-+	depends on CROS_USBPD_NOTIFY
- 	default n
- 	help
- 	  Say Y here to enable ChromeOS EC based USBPD charger
-diff --git a/drivers/power/supply/cros_usbpd-charger.c b/drivers/power/supply/cros_usbpd-charger.c
-index 6cc7c3910e098..7eea080048f43 100644
---- a/drivers/power/supply/cros_usbpd-charger.c
-+++ b/drivers/power/supply/cros_usbpd-charger.c
-@@ -9,6 +9,7 @@
- #include <linux/module.h>
- #include <linux/platform_data/cros_ec_commands.h>
- #include <linux/platform_data/cros_ec_proto.h>
-+#include <linux/platform_data/cros_usbpd_notify.h>
- #include <linux/platform_device.h>
- #include <linux/power_supply.h>
- #include <linux/slab.h>
-@@ -524,32 +525,21 @@ static int cros_usbpd_charger_property_is_writeable(struct power_supply *psy,
- }
- 
- static int cros_usbpd_charger_ec_event(struct notifier_block *nb,
--				       unsigned long queued_during_suspend,
-+				       unsigned long host_event,
- 				       void *_notify)
- {
--	struct cros_ec_device *ec_device;
--	struct charger_data *charger;
--	u32 host_event;
-+	struct charger_data *charger = container_of(nb, struct charger_data,
-+						    notifier);
- 
--	charger = container_of(nb, struct charger_data, notifier);
--	ec_device = charger->ec_device;
--
--	host_event = cros_ec_get_host_event(ec_device);
--	if (host_event & EC_HOST_EVENT_MASK(EC_HOST_EVENT_PD_MCU)) {
--		cros_usbpd_charger_power_changed(charger->ports[0]->psy);
--		return NOTIFY_OK;
--	} else {
--		return NOTIFY_DONE;
--	}
-+	cros_usbpd_charger_power_changed(charger->ports[0]->psy);
-+	return NOTIFY_OK;
- }
- 
- static void cros_usbpd_charger_unregister_notifier(void *data)
- {
- 	struct charger_data *charger = data;
--	struct cros_ec_device *ec_device = charger->ec_device;
- 
--	blocking_notifier_chain_unregister(&ec_device->event_notifier,
--					   &charger->notifier);
-+	cros_usbpd_unregister_notify(&charger->notifier);
- }
- 
- static int cros_usbpd_charger_probe(struct platform_device *pd)
-@@ -683,21 +673,17 @@ static int cros_usbpd_charger_probe(struct platform_device *pd)
- 		goto fail;
- 	}
- 
--	if (ec_device->mkbp_event_supported) {
--		/* Get PD events from the EC */
--		charger->notifier.notifier_call = cros_usbpd_charger_ec_event;
--		ret = blocking_notifier_chain_register(
--						&ec_device->event_notifier,
--						&charger->notifier);
--		if (ret < 0) {
--			dev_warn(dev, "failed to register notifier\n");
--		} else {
--			ret = devm_add_action_or_reset(dev,
--					cros_usbpd_charger_unregister_notifier,
--					charger);
--			if (ret < 0)
--				goto fail;
--		}
-+	/* Get PD events from the EC */
-+	charger->notifier.notifier_call = cros_usbpd_charger_ec_event;
-+	ret = cros_usbpd_register_notify(&charger->notifier);
-+	if (ret < 0) {
-+		dev_warn(dev, "failed to register notifier\n");
-+	} else {
-+		ret = devm_add_action_or_reset(dev,
-+				cros_usbpd_charger_unregister_notifier,
-+				charger);
-+		if (ret < 0)
-+			goto fail;
- 	}
- 
- 	return 0;
+Since everything looks good to userland now, we just extend the semantic of
+move_pages() to make positive return value an explicit error case.
+
+Is my understanding correct here?
+
+If this is the case, I agree with this fix. It looks the minimal change to
+current real world.
+
+>-- 
+>Michal Hocko
+>SUSE Labs
+
 -- 
-2.25.0.341.g760bfbb309-goog
-
+Wei Yang
+Help you, Help me
