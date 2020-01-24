@@ -2,85 +2,69 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C132B148A1B
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Jan 2020 15:41:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 636931489B7
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Jan 2020 15:37:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389219AbgAXOjN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 24 Jan 2020 09:39:13 -0500
-Received: from szxga05-in.huawei.com ([45.249.212.191]:9676 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2388997AbgAXOjH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 24 Jan 2020 09:39:07 -0500
-Received: from DGGEMS410-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id 60679D70EC9CD3104DCB;
-        Fri, 24 Jan 2020 22:39:03 +0800 (CST)
-Received: from localhost.localdomain (10.69.192.58) by
- DGGEMS410-HUB.china.huawei.com (10.3.19.210) with Microsoft SMTP Server id
- 14.3.439.0; Fri, 24 Jan 2020 22:38:55 +0800
-From:   John Garry <john.garry@huawei.com>
-To:     <peterz@infradead.org>, <mingo@redhat.com>, <acme@kernel.org>,
-        <mark.rutland@arm.com>, <alexander.shishkin@linux.intel.com>,
-        <jolsa@redhat.com>, <namhyung@kernel.org>, <will@kernel.org>,
-        <ak@linux.intel.com>
-CC:     <linuxarm@huawei.com>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <suzuki.poulose@arm.com>,
-        <james.clark@arm.com>, <zhangshaokun@hisilicon.com>,
-        <robin.murphy@arm.com>, John Garry <john.garry@huawei.com>
-Subject: [PATCH RFC 7/7] perf vendor events arm64: Add hip08 SMMUv3 PMCG IMP DEF events
-Date:   Fri, 24 Jan 2020 22:35:05 +0800
-Message-ID: <1579876505-113251-8-git-send-email-john.garry@huawei.com>
-X-Mailer: git-send-email 2.8.1
-In-Reply-To: <1579876505-113251-1-git-send-email-john.garry@huawei.com>
-References: <1579876505-113251-1-git-send-email-john.garry@huawei.com>
+        id S1731631AbgAXOgw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 24 Jan 2020 09:36:52 -0500
+Received: from 8bytes.org ([81.169.241.247]:60812 "EHLO theia.8bytes.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1731450AbgAXOgu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 24 Jan 2020 09:36:50 -0500
+Received: by theia.8bytes.org (Postfix, from userid 1000)
+        id 97D33A52; Fri, 24 Jan 2020 15:36:49 +0100 (CET)
+Date:   Fri, 24 Jan 2020 15:36:48 +0100
+From:   Joerg Roedel <joro@8bytes.org>
+To:     Lu Baolu <baolu.lu@linux.intel.com>
+Cc:     ashok.raj@intel.com, jacob.jun.pan@intel.com, kevin.tian@intel.com,
+        iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/1] iommu/vt-d: Remove unnecessary WARN_ON_ONCE()
+Message-ID: <20200124143648.GC27081@8bytes.org>
+References: <20200116015236.4458-1-baolu.lu@linux.intel.com>
+ <20200117095953.GB15760@8bytes.org>
+ <b56e8a8f-acd7-b318-5a1c-f32c5a07657f@linux.intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.69.192.58]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <b56e8a8f-acd7-b318-5a1c-f32c5a07657f@linux.intel.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add the SMMUv3 PMCG (Performance Monitor Event Group) 
-implementation defined events for hip08 platform.
+On Sat, Jan 18, 2020 at 10:14:11AM +0800, Lu Baolu wrote:
+> Hi Joerg,
+> 
+> On 1/17/20 5:59 PM, Joerg Roedel wrote:
+> > On Thu, Jan 16, 2020 at 09:52:36AM +0800, Lu Baolu wrote:
+> > > Address field in device TLB invalidation descriptor is qualified
+> > > by the S field. If S field is zero, a single page at page address
+> > > specified by address [63:12] is requested to be invalidated. If S
+> > > field is set, the least significant bit in the address field with
+> > > value 0b (say bit N) indicates the invalidation address range. The
+> > > spec doesn't require the address [N - 1, 0] to be cleared, hence
+> > > remove the unnecessary WARN_ON_ONCE().
+> > > 
+> > > Otherwise, the caller might set "mask = MAX_AGAW_PFN_WIDTH" in order
+> > > to invalidating all the cached mappings on an endpoint, and below
+> > > overflow error will be triggered.
+> > > 
+> > > [...]
+> > > UBSAN: Undefined behaviour in drivers/iommu/dmar.c:1354:3
+> > > shift exponent 64 is too large for 64-bit type 'long long unsigned int'
+> > > [...]
+> > > 
+> > > Reported-and-tested-by: Frank <fgndev@posteo.de>
+> > > Signed-off-by: Lu Baolu <baolu.lu@linux.intel.com>
+> > 
+> > Does this need a Fixes and/or stable tag?
+> > 
+> 
+> This doesn't cause any errors, just an unnecessary checking of
+> 
+> 	"0 & ((1UL << 64) - 1)"
+> 
+> in some cases.
 
-Only a single event is added, but this is just an example for now.
-
-Signed-off-by: John Garry <john.garry@huawei.com>
----
- .../arch/arm64/hisilicon/hip08/sys/smmu-v3-pmcg.json     | 9 +++++++++
- tools/perf/pmu-events/jevents.c                          | 2 ++
- 2 files changed, 11 insertions(+)
- create mode 100644 tools/perf/pmu-events/arch/arm64/hisilicon/hip08/sys/smmu-v3-pmcg.json
-
-diff --git a/tools/perf/pmu-events/arch/arm64/hisilicon/hip08/sys/smmu-v3-pmcg.json b/tools/perf/pmu-events/arch/arm64/hisilicon/hip08/sys/smmu-v3-pmcg.json
-new file mode 100644
-index 000000000000..ff2414a5ebc4
---- /dev/null
-+++ b/tools/perf/pmu-events/arch/arm64/hisilicon/hip08/sys/smmu-v3-pmcg.json
-@@ -0,0 +1,9 @@
-+[
-+   {
-+	    "EventCode": "0x8a",
-+	    "EventName": "smmuv3_pmcg.l1_tlb",
-+	    "BriefDescription": "SMMUv3 PMCG l1_tlb",
-+	    "PublicDescription": "SMMUv3 PMCG l1_tlb",
-+	    "Unit": "smmuv3_pmcg"
-+   },
-+]
-diff --git a/tools/perf/pmu-events/jevents.c b/tools/perf/pmu-events/jevents.c
-index da6430c0d184..01541825a6c7 100644
---- a/tools/perf/pmu-events/jevents.c
-+++ b/tools/perf/pmu-events/jevents.c
-@@ -239,6 +239,8 @@ static struct map {
- 	{ "hisi_sccl,ddrc", "hisi_sccl,ddrc" },
- 	{ "hisi_sccl,hha", "hisi_sccl,hha" },
- 	{ "hisi_sccl,l3c", "hisi_sccl,l3c" },
-+	/* it's not realistic to keep adding these, we need something more scalable ... */
-+	{ "smmuv3_pmcg", "smmuv3_pmcg" },
- 	{ "L3PMC", "amd_l3" },
- 	{}
- };
--- 
-2.17.1
-
+Okay, applied for v5.6.
