@@ -2,38 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0900A1488E6
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Jan 2020 15:32:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6AC551488D8
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Jan 2020 15:31:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404232AbgAXObb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 24 Jan 2020 09:31:31 -0500
-Received: from mail.kernel.org ([198.145.29.99]:41462 "EHLO mail.kernel.org"
+        id S2404094AbgAXObU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 24 Jan 2020 09:31:20 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41534 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730086AbgAXOUZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 24 Jan 2020 09:20:25 -0500
+        id S1730735AbgAXOU2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 24 Jan 2020 09:20:28 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DFFD024682;
-        Fri, 24 Jan 2020 14:20:23 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8212321734;
+        Fri, 24 Jan 2020 14:20:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579875625;
-        bh=Rw6tVfC2c6QLdOPEUQ6KBAa5nQZ0ZZvMUWY3ziIiaFo=;
+        s=default; t=1579875627;
+        bh=AdNJfBZT1x1BaLd8p6we8Ve89sDM0YNM9mNhOtP4xxU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=lWohjO3Cb/KydxuMy3cmZPxOMFTeC04Nnr7YAxFdHeTSx3wgQ5LkHcztgfvkCtIiv
-         NdUPS3NWFTquMzdscfuNVUcEWh5LX9r0THnP5B5RCHLFoB9h2FsWFd1y/RD1TgibCv
-         JspS53O/zXK8tLnGJqd5AtZog9fqxTCvInBx7X7M=
+        b=CrACNmGXz1W33bo0GpwARbl6Gc7cFyLdXeEOPo4XkrSPKV6vHBWuUXOJR2hlkoIDf
+         jT1awdO8obM2MHJmd7hsjiN0XUmopNd/Tf+LRLZvWRgy70VcR1vdSysd5krhkRzvZ8
+         e0UtAnWvI4Wcu01RwFKubqSKMv+gTGRhEY1zZxAw=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Marek Vasut <marex@denx.de>, Fabio Estevam <festevam@gmail.com>,
-        Ludwig Zenz <lzenz@dh-electronics.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sasha Levin <sashal@kernel.org>,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 10/56] ARM: dts: imx6q-dhcom: Fix SGTL5000 VDDIO regulator connection
-Date:   Fri, 24 Jan 2020 09:19:26 -0500
-Message-Id: <20200124142012.29752-10-sashal@kernel.org>
+Cc:     Guenter Roeck <linux@roeck-us.net>,
+        Jerome Brunet <jbrunet@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Sasha Levin <sashal@kernel.org>, linux-clk@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.19 12/56] clk: Don't try to enable critical clocks if prepare failed
+Date:   Fri, 24 Jan 2020 09:19:28 -0500
+Message-Id: <20200124142012.29752-12-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200124142012.29752-1-sashal@kernel.org>
 References: <20200124142012.29752-1-sashal@kernel.org>
@@ -46,38 +44,67 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Marek Vasut <marex@denx.de>
+From: Guenter Roeck <linux@roeck-us.net>
 
-[ Upstream commit fe6a6689d1815b63528796886853890d8ee7f021 ]
+[ Upstream commit 12ead77432f2ce32dea797742316d15c5800cb32 ]
 
-The SGTL5000 VDDIO is connected to the PMIC SW2 output, not to
-a fixed 3V3 rail. Describe this correctly in the DT.
+The following traceback is seen if a critical clock fails to prepare.
 
-Fixes: 52c7a088badd ("ARM: dts: imx6q: Add support for the DHCOM iMX6 SoM and PDK2")
-Signed-off-by: Marek Vasut <marex@denx.de>
-Cc: Fabio Estevam <festevam@gmail.com>
-Cc: Ludwig Zenz <lzenz@dh-electronics.com>
-Cc: NXP Linux Team <linux-imx@nxp.com>
-To: linux-arm-kernel@lists.infradead.org
-Signed-off-by: Shawn Guo <shawnguo@kernel.org>
+bcm2835-clk 3f101000.cprman: plld: couldn't lock PLL
+------------[ cut here ]------------
+Enabling unprepared plld_per
+WARNING: CPU: 1 PID: 1 at drivers/clk/clk.c:1014 clk_core_enable+0xcc/0x2c0
+...
+Call trace:
+ clk_core_enable+0xcc/0x2c0
+ __clk_register+0x5c4/0x788
+ devm_clk_hw_register+0x4c/0xb0
+ bcm2835_register_pll_divider+0xc0/0x150
+ bcm2835_clk_probe+0x134/0x1e8
+ platform_drv_probe+0x50/0xa0
+ really_probe+0xd4/0x308
+ driver_probe_device+0x54/0xe8
+ device_driver_attach+0x6c/0x78
+ __driver_attach+0x54/0xd8
+...
+
+Check return values from clk_core_prepare() and clk_core_enable() and
+bail out if any of those functions returns an error.
+
+Cc: Jerome Brunet <jbrunet@baylibre.com>
+Fixes: 99652a469df1 ("clk: migrate the count of orphaned clocks at init")
+Signed-off-by: Guenter Roeck <linux@roeck-us.net>
+Link: https://lkml.kernel.org/r/20191225163429.29694-1-linux@roeck-us.net
+Signed-off-by: Stephen Boyd <sboyd@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arm/boot/dts/imx6q-dhcom-pdk2.dts | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/clk/clk.c | 10 ++++++++--
+ 1 file changed, 8 insertions(+), 2 deletions(-)
 
-diff --git a/arch/arm/boot/dts/imx6q-dhcom-pdk2.dts b/arch/arm/boot/dts/imx6q-dhcom-pdk2.dts
-index 9c61e3be2d9a3..1c46df6827f50 100644
---- a/arch/arm/boot/dts/imx6q-dhcom-pdk2.dts
-+++ b/arch/arm/boot/dts/imx6q-dhcom-pdk2.dts
-@@ -55,7 +55,7 @@
- 		#sound-dai-cells = <0>;
- 		clocks = <&clk_ext_audio_codec>;
- 		VDDA-supply = <&reg_3p3v>;
--		VDDIO-supply = <&reg_3p3v>;
-+		VDDIO-supply = <&sw2_reg>;
- 	};
- };
+diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+index 5413ffaf02e23..71621a171f8af 100644
+--- a/drivers/clk/clk.c
++++ b/drivers/clk/clk.c
+@@ -3066,11 +3066,17 @@ static int __clk_core_init(struct clk_core *core)
+ 	if (core->flags & CLK_IS_CRITICAL) {
+ 		unsigned long flags;
  
+-		clk_core_prepare(core);
++		ret = clk_core_prepare(core);
++		if (ret)
++			goto out;
+ 
+ 		flags = clk_enable_lock();
+-		clk_core_enable(core);
++		ret = clk_core_enable(core);
+ 		clk_enable_unlock(flags);
++		if (ret) {
++			clk_core_unprepare(core);
++			goto out;
++		}
+ 	}
+ 
+ 	/*
 -- 
 2.20.1
 
