@@ -2,114 +2,60 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4B35D148D05
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Jan 2020 18:32:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6CE2F148D09
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Jan 2020 18:37:24 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389903AbgAXRcN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 24 Jan 2020 12:32:13 -0500
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:42692 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389463AbgAXRcM (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 24 Jan 2020 12:32:12 -0500
-Received: by mail-pf1-f196.google.com with SMTP id 4so1441353pfz.9
-        for <linux-kernel@vger.kernel.org>; Fri, 24 Jan 2020 09:32:12 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=CxnFfi1OVtcvBCqSwcv0ZRctexZ9zrixK0G0Fd+YL9M=;
-        b=uAQTbihJp9Y377xep7kVEyC+tfqQ1RNOMgHCu+FmUGNTld/PKnP5PmFCvPZfXYtMb+
-         ujFDt5FsY2Su1FkuDyta3kmF08yhl6zQ3U1Cenpy7YkzAKaXGmP3idWcYd4JDxr6/Gh+
-         aZsV1pyVwEBaDAjUOzQSlMRawIPJEDasbggi4218ieg1f/MvrxWgGrRDnLcc1kM1Vxz+
-         ma2FUf0Nn6jga+b3Jr6v8Jw0z9JLIJFCjU5dex7gP1+xG4WrEJb2K8ZkPGTKarCVKMEq
-         928fsSwlHio6XGBCtu8zSV9k/W7e+lYeZKi3z0j5TrE2dE2dNYZoo6tOllJf2qbOu+Ft
-         KSqg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=CxnFfi1OVtcvBCqSwcv0ZRctexZ9zrixK0G0Fd+YL9M=;
-        b=lUCJz2re1dqQA3Fb9XH1Jr0Fyrjca5nfwWnlfLyEw1eyqPRrO/AlKZEUAQ3xnRVmJf
-         NgEKIaY0Y3KGyH1OjbUnvbel5t/E8po3LKJdp3ss20cJJ2pA3bD1US2waimfOMWQ55D8
-         8Fc3avKX6NszoBW+C3C3nExRJ8uUriHOkYphFazqz0pd7s7m7fWi0FzHZc2Ph3bkbU1A
-         M0Xmp9FFDcqHb6kA19pltvCskjf/Lmx8MAFC9IacmBKw0VJNHOEeal7RLODIDbxgTmSy
-         PIhop0tJkE6EDLP2H/vl588hXyBtiqFkCSKSlxJm6CNu9DJ/TgSAU4R4chDaYSdoUPUr
-         RYQw==
-X-Gm-Message-State: APjAAAVJOA8fadOdgzX+08vhXfrNv4pi6IxkvxYql+7lhkpWuGCGIk/S
-        hx2xtOBae9lD6z/ja1ZBZ+7gbw==
-X-Google-Smtp-Source: APXvYqwDf89NqtAzeKmdxMJBFd8Gev2DtVh0Oryoa24PJycUxhDvWQcSvp/ck/kZ74zux/rtOiZz+A==
-X-Received: by 2002:a62:b418:: with SMTP id h24mr4455754pfn.192.1579887131841;
-        Fri, 24 Jan 2020 09:32:11 -0800 (PST)
-Received: from yoga (pat_11.qualcomm.com. [192.35.156.11])
-        by smtp.gmail.com with ESMTPSA id d2sm7245833pjv.18.2020.01.24.09.32.10
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 24 Jan 2020 09:32:11 -0800 (PST)
-Date:   Fri, 24 Jan 2020 09:32:08 -0800
-From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     Harigovindan P <harigovi@codeaurora.org>
-Cc:     dri-devel@lists.freedesktop.org, linux-arm-msm@vger.kernel.org,
-        freedreno@lists.freedesktop.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, robdclark@gmail.com,
-        seanpaul@chromium.org, hoegsberg@chromium.org,
-        kalyan_t@codeaurora.org, nganji@codeaurora.org
-Subject: Re: [v3] arm64: dts: sc7180: add display dt nodes
-Message-ID: <20200124173208.GZ1511@yoga>
-References: <1579867572-17188-1-git-send-email-harigovi@codeaurora.org>
+        id S2390237AbgAXRhU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 24 Jan 2020 12:37:20 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56378 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2390106AbgAXRhT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 24 Jan 2020 12:37:19 -0500
+Received: from localhost (unknown [84.241.198.31])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4006020709;
+        Fri, 24 Jan 2020 17:37:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1579887438;
+        bh=8y6qiUBr3k966rZqNeQ+ebfw9E7qa43OnEMTfLCg/Og=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=I+2MGmqraSSKfOGp8vP7Ojbc3C2OViJMMytEVcEQuD9TLTZk7voqGs15jfWZlWdXC
+         rfCSrQcqG21WhVHEhkEaxxP5WWMCcjwaXrlHhmj4Kw19q7RRIymh4SC8qHbC1sshJA
+         Z8lWTCm9GxnPUe7IJvCxAvS6W3/8PEJJaDfP9uuk=
+Date:   Fri, 24 Jan 2020 18:33:22 +0100
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Marion et Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc:     linux-kernel@vger.kernel.org, stable@vger.kernel.org,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: Re: [PATCH 4.19 402/639] media: Staging: media: Release the correct
+ resource in an error handling path
+Message-ID: <20200124173322.GA3166016@kroah.com>
+References: <20200124093047.008739095@linuxfoundation.org>
+ <20200124093137.297261658@linuxfoundation.org>
+ <1578497930.3188.1579867610896.JavaMail.www@wwinf1n19>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <1579867572-17188-1-git-send-email-harigovi@codeaurora.org>
-User-Agent: Mutt/1.12.2 (2019-09-21)
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <1578497930.3188.1579867610896.JavaMail.www@wwinf1n19>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri 24 Jan 04:06 PST 2020, Harigovindan P wrote:
-
-> Add display, DSI hardware DT nodes for sc7180.
+On Fri, Jan 24, 2020 at 01:06:50PM +0100, Marion et Christophe JAILLET wrote:
+> Hi,
 > 
-> Signed-off-by: Harigovindan P <harigovi@codeaurora.org>
+>  
+> 
+> Apparently is patch is no more needed in 4.19.98+.
+> 
+> 'res' is not used anymore in the error handling path (or its use depends on another patch which has not been backported). 'res' can safely be overriden.
+> 
+> There is no need to add extra variable 
 
-Thanks for respinning this Harigovindan, just a few more small things
-below.
+Ok, now dropped, thanks.
 
-Are the drivers ready for me to merge this?
-
-> diff --git a/arch/arm64/boot/dts/qcom/sc7180-idp.dts b/arch/arm64/boot/dts/qcom/sc7180-idp.dts
-[..]
-> +&pm6150l_gpio {
-> +	disp_pins {
-
-You can omit this subnode level, i.e. just put disp_pins_default
-directly in &pm6150l_gpio.
-
-> +		disp_pins_default: disp_pins_default{
-> +			pins = "gpio3";
-> +			function = "func1";
-> +			qcom,drive-strength = <2>;
-> +			power-source = <0>;
-> +			bias-disable;
-> +			output-low;
-> +		};
-> +	};
-> +};
-> +
->  &qspi_clk {
->  	pinconf {
->  		pins = "gpio63";
-> diff --git a/arch/arm64/boot/dts/qcom/sc7180.dtsi b/arch/arm64/boot/dts/qcom/sc7180.dtsi
-> index 3bc3f64..3ebc45b 100644
-> --- a/arch/arm64/boot/dts/qcom/sc7180.dtsi
-> +++ b/arch/arm64/boot/dts/qcom/sc7180.dtsi
-> @@ -1184,6 +1184,130 @@
->  			#power-domain-cells = <1>;
->  		};
->  
-> +		mdss: display_subsystem@ae00000 {
-
-Whenever possible, use - and not _ in node names.
-
-Regards,
-Bjorn
+greg k-h
