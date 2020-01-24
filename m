@@ -2,36 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A31F9147F32
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Jan 2020 12:00:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5E22A147F2D
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Jan 2020 12:00:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733183AbgAXLAY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 24 Jan 2020 06:00:24 -0500
-Received: from mail.kernel.org ([198.145.29.99]:59610 "EHLO mail.kernel.org"
+        id S1730338AbgAXLAP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 24 Jan 2020 06:00:15 -0500
+Received: from mail.kernel.org ([198.145.29.99]:59056 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732904AbgAXLAW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 24 Jan 2020 06:00:22 -0500
+        id S1732904AbgAXLAK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 24 Jan 2020 06:00:10 -0500
 Received: from localhost (ip-213-127-102-57.ip.prioritytelecom.net [213.127.102.57])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5BFDC20838;
-        Fri, 24 Jan 2020 11:00:20 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1E3FF20838;
+        Fri, 24 Jan 2020 11:00:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579863621;
-        bh=UWl/S2js9Wg1+AuLTYSHxvlC9MVnFZjfyWK5de/QnHg=;
+        s=default; t=1579863609;
+        bh=fF0ICyfsbhKCKmHfG4nav6E/FfEtWRg5ZKB3FseJpLE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=YP65Cj592Fvwzu4VI6bHvfTKljC6Q2OvJYb2K7T4dGj+OinOSLP6wHnUWTriYCGGd
-         B2rNA0ksOriNAEuf2II3HSGGWGwMHFomn/pj6Wce1z21PufbOfx0WCkcyYNKk1XuB8
-         TuXPGMKfoTJSO6qzRCyOfv/u85ECcHHxJAJjlUTY=
+        b=JjaFtjIM7ubVMlxdtDElcqR2sp9MJwhSJu0vpNA1EpYYJZ6oVPrm/mpjGfHFbt1DE
+         cIwPoRqK27mJ5/CXncoIwA8OLs/Q4ByU6EQfHj4ONIRC9QUmYn5njjLsXUkW9SbLuQ
+         6jK0gesvcY65OYo/Dk1PRoByGBji4AlLC+1Iaqww=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Peter Rosin <peda@axentia.se>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        stable@vger.kernel.org, Jann Horn <jannh@google.com>,
+        John Johansen <john.johansen@canonical.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 019/639] ARM: dts: at91: nattis: set the PRLUD and HIPOW signals low
-Date:   Fri, 24 Jan 2020 10:23:09 +0100
-Message-Id: <20200124093049.605522294@linuxfoundation.org>
+Subject: [PATCH 4.19 026/639] apparmor: dont try to replace stale label in ptrace access check
+Date:   Fri, 24 Jan 2020 10:23:16 +0100
+Message-Id: <20200124093050.608541006@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
 In-Reply-To: <20200124093047.008739095@linuxfoundation.org>
 References: <20200124093047.008739095@linuxfoundation.org>
@@ -44,44 +44,62 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Peter Rosin <peda@axentia.se>
+From: Jann Horn <jannh@google.com>
 
-[ Upstream commit 29feb2c960ab32fc24249443d4434194ce96f083 ]
+[ Upstream commit 1f8266ff58840d698a1e96d2274189de1bdf7969 ]
 
-AT91_PINCTRL_OUTPUT_VAL(0) without AT91_PINCTRL_OUTPUT is a no-op, so
-make sure the pins really output a zero.
+As a comment above begin_current_label_crit_section() explains,
+begin_current_label_crit_section() must run in sleepable context because
+when label_is_stale() is true, aa_replace_current_label() runs, which uses
+prepare_creds(), which can sleep.
+Until now, the ptrace access check (which runs with a task lock held)
+violated this rule.
 
-Fixes: 0e4323899973 ("ARM: dts: at91: add devicetree for the Axentia Nattis with Natte power")
-Signed-off-by: Peter Rosin <peda@axentia.se>
-Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
+Also add a might_sleep() assertion to begin_current_label_crit_section(),
+because asserts are less likely to be ignored than comments.
+
+Fixes: b2d09ae449ced ("apparmor: move ptrace checks to using labels")
+Signed-off-by: Jann Horn <jannh@google.com>
+Signed-off-by: John Johansen <john.johansen@canonical.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arm/boot/dts/at91-nattis-2-natte-2.dts | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ security/apparmor/include/cred.h | 2 ++
+ security/apparmor/lsm.c          | 4 ++--
+ 2 files changed, 4 insertions(+), 2 deletions(-)
 
-diff --git a/arch/arm/boot/dts/at91-nattis-2-natte-2.dts b/arch/arm/boot/dts/at91-nattis-2-natte-2.dts
-index af9f38456d04e..bfa5815a07214 100644
---- a/arch/arm/boot/dts/at91-nattis-2-natte-2.dts
-+++ b/arch/arm/boot/dts/at91-nattis-2-natte-2.dts
-@@ -38,14 +38,16 @@
- 						atmel,pins =
- 							<AT91_PIOA 21
- 							 AT91_PERIPH_GPIO
--							 AT91_PINCTRL_OUTPUT_VAL(0)>;
-+							 (AT91_PINCTRL_OUTPUT |
-+							  AT91_PINCTRL_OUTPUT_VAL(0))>;
- 					};
+diff --git a/security/apparmor/include/cred.h b/security/apparmor/include/cred.h
+index e287b7d0d4beb..265ae6641a064 100644
+--- a/security/apparmor/include/cred.h
++++ b/security/apparmor/include/cred.h
+@@ -151,6 +151,8 @@ static inline struct aa_label *begin_current_label_crit_section(void)
+ {
+ 	struct aa_label *label = aa_current_raw_label();
  
- 					pinctrl_lcd_hipow0: lcd_hipow0 {
- 						atmel,pins =
- 							<AT91_PIOA 23
- 							 AT91_PERIPH_GPIO
--							 AT91_PINCTRL_OUTPUT_VAL(0)>;
-+							 (AT91_PINCTRL_OUTPUT |
-+							  AT91_PINCTRL_OUTPUT_VAL(0))>;
- 					};
- 				};
- 			};
++	might_sleep();
++
+ 	if (label_is_stale(label)) {
+ 		label = aa_get_newest_label(label);
+ 		if (aa_replace_current_label(label) == 0)
+diff --git a/security/apparmor/lsm.c b/security/apparmor/lsm.c
+index 590ca7d8fae54..730de4638b4e2 100644
+--- a/security/apparmor/lsm.c
++++ b/security/apparmor/lsm.c
+@@ -114,13 +114,13 @@ static int apparmor_ptrace_access_check(struct task_struct *child,
+ 	struct aa_label *tracer, *tracee;
+ 	int error;
+ 
+-	tracer = begin_current_label_crit_section();
++	tracer = __begin_current_label_crit_section();
+ 	tracee = aa_get_task_label(child);
+ 	error = aa_may_ptrace(tracer, tracee,
+ 			(mode & PTRACE_MODE_READ) ? AA_PTRACE_READ
+ 						  : AA_PTRACE_TRACE);
+ 	aa_put_label(tracee);
+-	end_current_label_crit_section(tracer);
++	__end_current_label_crit_section(tracer);
+ 
+ 	return error;
+ }
 -- 
 2.20.1
 
