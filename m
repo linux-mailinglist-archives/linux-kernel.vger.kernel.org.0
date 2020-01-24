@@ -2,623 +2,535 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 190D614876D
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Jan 2020 15:23:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1DB341487BD
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Jan 2020 15:24:57 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388309AbgAXOW5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 24 Jan 2020 09:22:57 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44712 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2392397AbgAXOWd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 24 Jan 2020 09:22:33 -0500
-Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
+        id S2392485AbgAXOYy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 24 Jan 2020 09:24:54 -0500
+Received: from mail26.static.mailgun.info ([104.130.122.26]:46835 "EHLO
+        mail26.static.mailgun.info" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S2387498AbgAXOYv (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 24 Jan 2020 09:24:51 -0500
+DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
+ s=smtp; t=1579875890; h=Content-Transfer-Encoding: Content-Type:
+ In-Reply-To: MIME-Version: Date: Message-ID: From: References: Cc: To:
+ Subject: Sender; bh=wf62vQMPmves3NyJozWscw8hAClcf+WUjRkPvg/Z15U=; b=tN/HJii8HBGQpYfbOW4IpjceKKBHEWudEmQCi7ksROIHCp6DSiXU1C1pC1aE8lGEdmA5Tfa5
+ 9T7fmqCKc97DFJMujhPdNmNPLZL3KfFMUEHMAfG7YAKukVrgLHCmsjkOwIubnhlI3Rct4dA9
+ RGo3muDE8c+Nagycx/ZJyNLhOVM=
+X-Mailgun-Sending-Ip: 104.130.122.26
+X-Mailgun-Sid: WyI0MWYwYSIsICJsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
+Received: from smtp.codeaurora.org (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171])
+ by mxa.mailgun.org with ESMTP id 5e2afe31.7f93e91ea618-smtp-out-n02;
+ Fri, 24 Jan 2020 14:24:49 -0000 (UTC)
+Received: by smtp.codeaurora.org (Postfix, from userid 1001)
+        id C0D4BC43383; Fri, 24 Jan 2020 14:24:47 +0000 (UTC)
+X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
+        aws-us-west-2-caf-mail-1.web.codeaurora.org
+X-Spam-Level: 
+X-Spam-Status: No, score=-1.0 required=2.0 tests=ALL_TRUSTED,SPF_NONE
+        autolearn=unavailable autolearn_force=no version=3.4.0
+Received: from [10.226.58.28] (i-global254.qualcomm.com [199.106.103.254])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BAEB122527;
-        Fri, 24 Jan 2020 14:22:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579875752;
-        bh=LwzExljeYI2evYxgrBuUsCwPgYYVMotkGukuDrg8DSM=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=zlw5quaqEPz8yn8Iahg48ZAkrwejqDQ6xHvcPp+ePyT81+uFwfv7GZKFVkskUg7aR
-         4vqKlQaCt0lBKqy75TBnwPpz0hzY2p7ukq+aAr41OLawpKH0AKqYdE3tW3sXpJmBFv
-         cs6xj8CtHHwIK+v8J/GeBffGvzFcIa6Uyyq3ZwI8=
-From:   Sasha Levin <sashal@kernel.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Dan Carpenter <dan.carpenter@oracle.com>,
-        Tom Hatskevich <tom2001tom.23@gmail.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Martin K . Petersen" <martin.petersen@oracle.com>,
-        Sasha Levin <sashal@kernel.org>,
-        MPT-FusionLinux.pdl@avagotech.com, linux-scsi@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.4 9/9] scsi: mptfusion: Fix double fetch bug in ioctl
-Date:   Fri, 24 Jan 2020 09:22:21 -0500
-Message-Id: <20200124142221.31201-9-sashal@kernel.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20200124142221.31201-1-sashal@kernel.org>
-References: <20200124142221.31201-1-sashal@kernel.org>
+        (Authenticated sender: jhugo)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 2FDADC43383;
+        Fri, 24 Jan 2020 14:24:44 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 2FDADC43383
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=none smtp.mailfrom=jhugo@codeaurora.org
+Subject: Re: [PATCH 02/16] bus: mhi: core: Add support for registering MHI
+ controllers
+To:     Greg KH <gregkh@linuxfoundation.org>,
+        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Cc:     arnd@arndb.de, smohanad@codeaurora.org, kvalo@codeaurora.org,
+        bjorn.andersson@linaro.org, hemantk@codeaurora.org,
+        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20200123111836.7414-1-manivannan.sadhasivam@linaro.org>
+ <20200123111836.7414-3-manivannan.sadhasivam@linaro.org>
+ <20200124082939.GA2921617@kroah.com>
+From:   Jeffrey Hugo <jhugo@codeaurora.org>
+Message-ID: <42c79181-9d97-3542-c6b0-1e37f9b2ff39@codeaurora.org>
+Date:   Fri, 24 Jan 2020 07:24:43 -0700
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
+ Thunderbird/68.3.1
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20200124082939.GA2921617@kroah.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
+On 1/24/2020 1:29 AM, Greg KH wrote:
+> On Thu, Jan 23, 2020 at 04:48:22PM +0530, Manivannan Sadhasivam wrote:
+>> --- /dev/null
+>> +++ b/include/linux/mhi.h
+>> @@ -0,0 +1,438 @@
+>> +/* SPDX-License-Identifier: GPL-2.0 */
+>> +/*
+>> + * Copyright (c) 2018-2020, The Linux Foundation. All rights reserved.
+>> + *
+>> + */
+>> +#ifndef _MHI_H_
+>> +#define _MHI_H_
+>> +
+>> +#include <linux/device.h>
+>> +#include <linux/dma-direction.h>
+>> +#include <linux/mutex.h>
+>> +#include <linux/rwlock_types.h>
+>> +#include <linux/slab.h>
+>> +#include <linux/spinlock_types.h>
+>> +#include <linux/wait.h>
+>> +#include <linux/workqueue.h>
+>> +
+>> +struct mhi_chan;
+>> +struct mhi_event;
+>> +struct mhi_ctxt;
+>> +struct mhi_cmd;
+>> +struct mhi_buf_info;
+>> +
+>> +/**
+>> + * enum mhi_callback - MHI callback
+>> + * @MHI_CB_IDLE: MHI entered idle state
+>> + * @MHI_CB_PENDING_DATA: New data available for client to process
+>> + * @MHI_CB_LPM_ENTER: MHI host entered low power mode
+>> + * @MHI_CB_LPM_EXIT: MHI host about to exit low power mode
+>> + * @MHI_CB_EE_RDDM: MHI device entered RDDM exec env
+>> + * @MHI_CB_EE_MISSION_MODE: MHI device entered Mission Mode exec env
+>> + * @MHI_CB_SYS_ERROR: MHI device entered error state (may recover)
+>> + * @MHI_CB_FATAL_ERROR: MHI device entered fatal error state
+>> + */
+>> +enum mhi_callback {
+>> +	MHI_CB_IDLE,
+>> +	MHI_CB_PENDING_DATA,
+>> +	MHI_CB_LPM_ENTER,
+>> +	MHI_CB_LPM_EXIT,
+>> +	MHI_CB_EE_RDDM,
+>> +	MHI_CB_EE_MISSION_MODE,
+>> +	MHI_CB_SYS_ERROR,
+>> +	MHI_CB_FATAL_ERROR,
+>> +};
+>> +
+>> +/**
+>> + * enum mhi_flags - Transfer flags
+>> + * @MHI_EOB: End of buffer for bulk transfer
+>> + * @MHI_EOT: End of transfer
+>> + * @MHI_CHAIN: Linked transfer
+>> + */
+>> +enum mhi_flags {
+>> +	MHI_EOB,
+>> +	MHI_EOT,
+>> +	MHI_CHAIN,
+>> +};
+>> +
+>> +/**
+>> + * enum mhi_device_type - Device types
+>> + * @MHI_DEVICE_XFER: Handles data transfer
+>> + * @MHI_DEVICE_TIMESYNC: Use for timesync feature
+>> + * @MHI_DEVICE_CONTROLLER: Control device
+>> + */
+>> +enum mhi_device_type {
+>> +	MHI_DEVICE_XFER,
+>> +	MHI_DEVICE_TIMESYNC,
+>> +	MHI_DEVICE_CONTROLLER,
+>> +};
+>> +
+>> +/**
+>> + * enum mhi_ch_type - Channel types
+>> + * @MHI_CH_TYPE_INVALID: Invalid channel type
+>> + * @MHI_CH_TYPE_OUTBOUND: Outbound channel to the device
+>> + * @MHI_CH_TYPE_INBOUND: Inbound channel from the device
+>> + * @MHI_CH_TYPE_INBOUND_COALESCED: Coalesced channel for the device to combine
+>> + *				   multiple packets and send them as a single
+>> + *				   large packet to reduce CPU consumption
+>> + */
+>> +enum mhi_ch_type {
+>> +	MHI_CH_TYPE_INVALID = 0,
+>> +	MHI_CH_TYPE_OUTBOUND = DMA_TO_DEVICE,
+>> +	MHI_CH_TYPE_INBOUND = DMA_FROM_DEVICE,
+>> +	MHI_CH_TYPE_INBOUND_COALESCED = 3,
+>> +};
+>> +
+>> +/**
+>> + * enum mhi_ee_type - Execution environment types
+>> + * @MHI_EE_PBL: Primary Bootloader
+>> + * @MHI_EE_SBL: Secondary Bootloader
+>> + * @MHI_EE_AMSS: Modem, aka the primary runtime EE
+>> + * @MHI_EE_RDDM: Ram dump download mode
+>> + * @MHI_EE_WFW: WLAN firmware mode
+>> + * @MHI_EE_PTHRU: Passthrough
+>> + * @MHI_EE_EDL: Embedded downloader
+>> + */
+>> +enum mhi_ee_type {
+>> +	MHI_EE_PBL,
+>> +	MHI_EE_SBL,
+>> +	MHI_EE_AMSS,
+>> +	MHI_EE_RDDM,
+>> +	MHI_EE_WFW,
+>> +	MHI_EE_PTHRU,
+>> +	MHI_EE_EDL,
+>> +	MHI_EE_MAX_SUPPORTED = MHI_EE_EDL,
+>> +	MHI_EE_DISABLE_TRANSITION, /* local EE, not related to mhi spec */
+>> +	MHI_EE_NOT_SUPPORTED,
+>> +	MHI_EE_MAX,
+>> +};
+>> +
+>> +/**
+>> + * enum mhi_buf_type - Accepted buffer type for the channel
+>> + * @MHI_BUF_RAW: Raw buffer
+>> + * @MHI_BUF_SKB: SKB struct
+>> + * @MHI_BUF_SCLIST: Scatter-gather list
+>> + * @MHI_BUF_NOP: CPU offload channel, host does not accept transfer
+>> + * @MHI_BUF_DMA: Receive DMA address mapped by client
+>> + * @MHI_BUF_RSC_DMA: RSC type premapped buffer
+>> + */
+>> +enum mhi_buf_type {
+>> +	MHI_BUF_RAW,
+>> +	MHI_BUF_SKB,
+>> +	MHI_BUF_SCLIST,
+>> +	MHI_BUF_NOP,
+>> +	MHI_BUF_DMA,
+>> +	MHI_BUF_RSC_DMA,
+>> +};
+>> +
+>> +/**
+>> + * enum mhi_er_data_type - Event ring data types
+>> + * @MHI_ER_DATA: Only client data over this ring
+>> + * @MHI_ER_CTRL: MHI control data and client data
+>> + * @MHI_ER_TSYNC: Time sync events
+>> + */
+>> +enum mhi_er_data_type {
+>> +	MHI_ER_DATA,
+>> +	MHI_ER_CTRL,
+>> +	MHI_ER_TSYNC,
+>> +};
+>> +
+>> +/**
+>> + * enum mhi_db_brst_mode - Doorbell mode
+>> + * @MHI_DB_BRST_DISABLE: Burst mode disable
+>> + * @MHI_DB_BRST_ENABLE: Burst mode enable
+>> + */
+>> +enum mhi_db_brst_mode {
+>> +	MHI_DB_BRST_DISABLE = 0x2,
+>> +	MHI_DB_BRST_ENABLE = 0x3,
+>> +};
+>> +
+>> +/**
+>> + * struct mhi_channel_config - Channel configuration structure for controller
+>> + * @num: The number assigned to this channel
+>> + * @name: The name of this channel
+>> + * @num_elements: The number of elements that can be queued to this channel
+>> + * @local_elements: The local ring length of the channel
+>> + * @event_ring: The event rung index that services this channel
+>> + * @dir: Direction that data may flow on this channel
+>> + * @type: Channel type
+>> + * @ee_mask: Execution Environment mask for this channel
+>> + * @pollcfg: Polling configuration for burst mode.  0 is default.  milliseconds
+>> +	     for UL channels, multiple of 8 ring elements for DL channels
+>> + * @data_type: Data type accepted by this channel
+>> + * @doorbell: Doorbell mode
+>> + * @lpm_notify: The channel master requires low power mode notifications
+>> + * @offload_channel: The client manages the channel completely
+>> + * @doorbell_mode_switch: Channel switches to doorbell mode on M0 transition
+>> + * @auto_queue: Framework will automatically queue buffers for DL traffic
+>> + * @auto_start: Automatically start (open) this channel
+>> + */
+>> +struct mhi_channel_config {
+>> +	u32 num;
+>> +	char *name;
+> 
+> If you have a "name" for your configuration, shouldn't this be a struct
+> device so you see that in sysfs?  If not, what is the name for?
 
-[ Upstream commit 28d76df18f0ad5bcf5fa48510b225f0ed262a99b ]
+The config struct is used to create the channel device, but is not the 
+channel device.  Eventually a struct mhi_device is created from this 
+information.
 
-Tom Hatskevich reported that we look up "iocp" then, in the called
-functions we do a second copy_from_user() and look it up again.
-The problem that could cause is:
+> 
+>> +	u32 num_elements;
+>> +	u32 local_elements;
+>> +	u32 event_ring;
+>> +	enum dma_data_direction dir;
+>> +	enum mhi_ch_type type;
+>> +	u32 ee_mask;
+>> +	u32 pollcfg;
+>> +	enum mhi_buf_type data_type;
+>> +	enum mhi_db_brst_mode doorbell;
+>> +	bool lpm_notify;
+>> +	bool offload_channel;
+>> +	bool doorbell_mode_switch;
+>> +	bool auto_queue;
+>> +	bool auto_start;
+>> +};
+>> +
+>> +/**
+>> + * struct mhi_event_config - Event ring configuration structure for controller
+>> + * @num_elements: The number of elements that can be queued to this ring
+>> + * @irq_moderation_ms: Delay irq for additional events to be aggregated
+>> + * @irq: IRQ associated with this ring
+>> + * @channel: Dedicated channel number. U32_MAX indicates a non-dedicated ring
+>> + * @mode: Doorbell mode
+>> + * @data_type: Type of data this ring will process
+>> + * @hardware_event: This ring is associated with hardware channels
+>> + * @client_managed: This ring is client managed
+>> + * @offload_channel: This ring is associated with an offloaded channel
+>> + * @priority: Priority of this ring. Use 1 for now
+>> + */
+>> +struct mhi_event_config {
+>> +	u32 num_elements;
+>> +	u32 irq_moderation_ms;
+>> +	u32 irq;
+>> +	u32 channel;
+>> +	enum mhi_db_brst_mode mode;
+>> +	enum mhi_er_data_type data_type;
+>> +	bool hardware_event;
+>> +	bool client_managed;
+>> +	bool offload_channel;
+>> +	u32 priority;
+>> +};
+>> +
+>> +/**
+>> + * struct mhi_controller_config - Root MHI controller configuration
+>> + * @max_channels: Maximum number of channels supported
+>> + * @timeout_ms: Timeout value for operations. 0 means use default
+>> + * @use_bounce_buf: Use a bounce buffer pool due to limited DDR access
+>> + * @m2_no_db: Host is not allowed to ring DB in M2 state
+>> + * @buf_len: Size of automatically allocated buffers. 0 means use default
+>> + * @num_channels: Number of channels defined in @ch_cfg
+>> + * @ch_cfg: Array of defined channels
+>> + * @num_events: Number of event rings defined in @event_cfg
+>> + * @event_cfg: Array of defined event rings
+>> + */
+>> +struct mhi_controller_config {
+>> +	u32 max_channels;
+>> +	u32 timeout_ms;
+>> +	bool use_bounce_buf;
+>> +	bool m2_no_db;
+>> +	u32 buf_len;
+>> +	u32 num_channels;
+>> +	struct mhi_channel_config *ch_cfg;
+>> +	u32 num_events;
+>> +	struct mhi_event_config *event_cfg;
+> 
+> You really should run pahole on this file to see how badly packed these
+> structures are :(
+> 
+>> +};
+>> +
+>> +/**
+>> + * struct mhi_controller - Master MHI controller structure
+>> + * @name: Name of the controller
+>> + * @dev: Driver model device node for the controller
+>> + * @mhi_dev: MHI device instance for the controller
+>> + * @dev_id: Device ID of the controller
+>> + * @bus_id: Physical bus instance used by the controller
+>> + * @regs: Base address of MHI MMIO register space
+>> + * @iova_start: IOMMU starting address for data
+>> + * @iova_stop: IOMMU stop address for data
+>> + * @fw_image: Firmware image name for normal booting
+>> + * @edl_image: Firmware image name for emergency download mode
+>> + * @fbc_download: MHI host needs to do complete image transfer
+>> + * @sbl_size: SBL image size
+>> + * @seg_len: BHIe vector size
+>> + * @max_chan: Maximum number of channels the controller supports
+>> + * @mhi_chan: Points to the channel configuration table
+>> + * @lpm_chans: List of channels that require LPM notifications
+>> + * @total_ev_rings: Total # of event rings allocated
+>> + * @hw_ev_rings: Number of hardware event rings
+>> + * @sw_ev_rings: Number of software event rings
+>> + * @nr_irqs_req: Number of IRQs required to operate
+>> + * @nr_irqs: Number of IRQ allocated by bus master
+>> + * @irq: base irq # to request
+>> + * @mhi_event: MHI event ring configurations table
+>> + * @mhi_cmd: MHI command ring configurations table
+>> + * @mhi_ctxt: MHI device context, shared memory between host and device
+>> + * @timeout_ms: Timeout in ms for state transitions
+>> + * @pm_mutex: Mutex for suspend/resume operation
+>> + * @pre_init: MHI host needs to do pre-initialization before power up
+>> + * @pm_lock: Lock for protecting MHI power management state
+>> + * @pm_state: MHI power management state
+>> + * @db_access: DB access states
+>> + * @ee: MHI device execution environment
+>> + * @wake_set: Device wakeup set flag
+>> + * @dev_wake: Device wakeup count
+>> + * @alloc_size: Total memory allocations size of the controller
+>> + * @pending_pkts: Pending packets for the controller
+>> + * @transition_list: List of MHI state transitions
+>> + * @wlock: Lock for protecting device wakeup
+>> + * @M0: M0 state counter for debugging
+>> + * @M2: M2 state counter for debugging
+>> + * @M3: M3 state counter for debugging
+>> + * @M3_FAST: M3 Fast state counter for debugging
+>> + * @st_worker: State transition worker
+>> + * @fw_worker: Firmware download worker
+>> + * @syserr_worker: System error worker
+>> + * @state_event: State change event
+>> + * @status_cb: CB function to notify various power states to bus master
+>> + * @link_status: CB function to query link status of the device
+>> + * @wake_get: CB function to assert device wake
+>> + * @wake_put: CB function to de-assert device wake
+>> + * @wake_toggle: CB function to assert and deasset (toggle) device wake
+>> + * @runtime_get: CB function to controller runtime resume
+>> + * @runtimet_put: CB function to decrement pm usage
+>> + * @lpm_disable: CB function to request disable link level low power modes
+>> + * @lpm_enable: CB function to request enable link level low power modes again
+>> + * @bounce_buf: Use of bounce buffer
+>> + * @buffer_len: Bounce buffer length
+>> + * @priv_data: Points to bus master's private data
+>> + */
+>> +struct mhi_controller {
+>> +	const char *name;
+>> +	struct device *dev;
+> 
+> Why isn't this a struct device directly?  Why a pointer?
+> 
+> And why don't you use the name in the struct device?
+> 
+>> +	struct mhi_device *mhi_dev;
+>> +	u32 dev_id;
+>> +	u32 bus_id;
+> 
+> Shouldn't the bus id come from the bus it is assigned to?  Why store it
+> again?
+> 
+>> +	void __iomem *regs;
+>> +	dma_addr_t iova_start;
+>> +	dma_addr_t iova_stop;
+>> +	const char *fw_image;
+>> +	const char *edl_image;
+>> +	bool fbc_download;
+>> +	size_t sbl_size;
+>> +	size_t seg_len;
+>> +	u32 max_chan;
+>> +	struct mhi_chan *mhi_chan;
+>> +	struct list_head lpm_chans;
+>> +	u32 total_ev_rings;
+>> +	u32 hw_ev_rings;
+>> +	u32 sw_ev_rings;
+>> +	u32 nr_irqs_req;
+>> +	u32 nr_irqs;
+>> +	int *irq;
+>> +
+>> +	struct mhi_event *mhi_event;
+>> +	struct mhi_cmd *mhi_cmd;
+>> +	struct mhi_ctxt *mhi_ctxt;
+>> +
+>> +	u32 timeout_ms;
+>> +	struct mutex pm_mutex;
+>> +	bool pre_init;
+>> +	rwlock_t pm_lock;
+>> +	u32 pm_state;
+>> +	u32 db_access;
+>> +	enum mhi_ee_type ee;
+>> +	bool wake_set;
+>> +	atomic_t dev_wake;
+>> +	atomic_t alloc_size;
+>> +	atomic_t pending_pkts;
+> 
+> Why a bunch of atomic variables when you already have a lock?
+> 
+>> +	struct list_head transition_list;
+>> +	spinlock_t transition_lock;
+> 
+> You don't document this lock.
+> 
+>> +	spinlock_t wlock;
+> 
+> Why have 2 locks?
+> 
+>> +	u32 M0, M2, M3, M3_FAST;
+>> +	struct work_struct st_worker;
+>> +	struct work_struct fw_worker;
+>> +	struct work_struct syserr_worker;
+>> +	wait_queue_head_t state_event;
+>> +
+>> +	void (*status_cb)(struct mhi_controller *mhi_cntrl, void *priv,
+>> +			  enum mhi_callback cb);
+>> +	int (*link_status)(struct mhi_controller *mhi_cntrl, void *priv);
+>> +	void (*wake_get)(struct mhi_controller *mhi_cntrl, bool override);
+>> +	void (*wake_put)(struct mhi_controller *mhi_cntrl, bool override);
+>> +	void (*wake_toggle)(struct mhi_controller *mhi_cntrl);
+>> +	int (*runtime_get)(struct mhi_controller *mhi_cntrl, void *priv);
+>> +	void (*runtime_put)(struct mhi_controller *mhi_cntrl, void *priv);
+>> +	void (*lpm_disable)(struct mhi_controller *mhi_cntrl, void *priv);
+>> +	void (*lpm_enable)(struct mhi_controller *mhi_cntrl, void *priv);
+> 
+> Shouldn't all of these be part of the bus or driver assigned to this
+> device and not in the device itself?  This feels odd as-is.
+> 
+>> +
+>> +	bool bounce_buf;
+>> +	size_t buffer_len;
+>> +	void *priv_data;
+> 
+> Why can't you use the private pointer in struct device?
+> 
+>> +};
+>> +
+>> +/**
+>> + * struct mhi_device - Structure representing a MHI device which binds
+>> + *                     to channels
+>> + * @dev: Driver model device node for the MHI device
+>> + * @tiocm: Device current terminal settings
+>> + * @id: Pointer to MHI device ID struct
+>> + * @chan_name: Name of the channel to which the device binds
+>> + * @mhi_cntrl: Controller the device belongs to
+>> + * @ul_chan: UL channel for the device
+>> + * @dl_chan: DL channel for the device
+>> + * @dev_wake: Device wakeup counter
+>> + * @dev_type: MHI device type
+>> + */
+>> +struct mhi_device {
+>> +	struct device dev;
+>> +	u32 tiocm;
+>> +	const struct mhi_device_id *id;
+>> +	const char *chan_name;
+>> +	struct mhi_controller *mhi_cntrl;
+>> +	struct mhi_chan *ul_chan;
+>> +	struct mhi_chan *dl_chan;
+>> +	atomic_t dev_wake;
+> 
+> Why does this have to be atomic?
+> 
+>> +	enum mhi_device_type dev_type;
+>> +};
+>> +
+>> +/**
+>> + * struct mhi_result - Completed buffer information
+>> + * @buf_addr: Address of data buffer
+>> + * @dir: Channel direction
+>> + * @bytes_xfer: # of bytes transferred
+>> + * @transaction_status: Status of last transaction
+>> + */
+>> +struct mhi_result {
+>> +	void *buf_addr;
+> 
+> Why void *?
 
-drivers/message/fusion/mptctl.c
-   674          /* All of these commands require an interrupt or
-   675           * are unknown/illegal.
-   676           */
-   677          if ((ret = mptctl_syscall_down(iocp, nonblock)) != 0)
-                                               ^^^^
-We take this lock.
+Because its not possible to resolve this more clearly.  The client 
+provides the buffer and knows what the structure is.  The bus does not. 
+Its just an opaque pointer (hence void *) to the bus, and the client 
+needs to decode it.  This is the struct that is handed to the client to 
+allow them to decode the activity (either a received buf, or a 
+confirmation that a transmitted buf has been consumed).
 
-   678                  return ret;
-   679
-   680          if (cmd == MPTFWDOWNLOAD)
-   681                  ret = mptctl_fw_download(arg);
-                                                 ^^^
-Then the user memory changes and we look up "iocp" again but a different
-one so now we are holding the incorrect lock and have a race condition.
+> 
+>> +	enum dma_data_direction dir;
+>> +	size_t bytes_xferd;
+>> +	int transaction_status;
+>> +};
+>> +
+> 
+> thanks,
+> 
+> greg k-h
+> 
 
-   682          else if (cmd == MPTCOMMAND)
-   683                  ret = mptctl_mpt_command(arg);
 
-The security impact of this bug is not as bad as it could have been
-because these operations are all privileged and root already has
-enormous destructive power.  But it's still worth fixing.
-
-This patch passes the "iocp" pointer to the functions to avoid the
-second lookup.  That deletes 100 lines of code from the driver so
-it's a nice clean up as well.
-
-Link: https://lore.kernel.org/r/20200114123414.GA7957@kadam
-Reported-by: Tom Hatskevich <tom2001tom.23@gmail.com>
-Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- drivers/message/fusion/mptctl.c | 213 ++++++++------------------------
- 1 file changed, 50 insertions(+), 163 deletions(-)
-
-diff --git a/drivers/message/fusion/mptctl.c b/drivers/message/fusion/mptctl.c
-index 14cf6dfc3b145..4d837bcad5db8 100644
---- a/drivers/message/fusion/mptctl.c
-+++ b/drivers/message/fusion/mptctl.c
-@@ -100,19 +100,19 @@ struct buflist {
-  * Function prototypes. Called from OS entry point mptctl_ioctl.
-  * arg contents specific to function.
-  */
--static int mptctl_fw_download(unsigned long arg);
--static int mptctl_getiocinfo(unsigned long arg, unsigned int cmd);
--static int mptctl_gettargetinfo(unsigned long arg);
--static int mptctl_readtest(unsigned long arg);
--static int mptctl_mpt_command(unsigned long arg);
--static int mptctl_eventquery(unsigned long arg);
--static int mptctl_eventenable(unsigned long arg);
--static int mptctl_eventreport(unsigned long arg);
--static int mptctl_replace_fw(unsigned long arg);
--
--static int mptctl_do_reset(unsigned long arg);
--static int mptctl_hp_hostinfo(unsigned long arg, unsigned int cmd);
--static int mptctl_hp_targetinfo(unsigned long arg);
-+static int mptctl_fw_download(MPT_ADAPTER *iocp, unsigned long arg);
-+static int mptctl_getiocinfo(MPT_ADAPTER *iocp, unsigned long arg, unsigned int cmd);
-+static int mptctl_gettargetinfo(MPT_ADAPTER *iocp, unsigned long arg);
-+static int mptctl_readtest(MPT_ADAPTER *iocp, unsigned long arg);
-+static int mptctl_mpt_command(MPT_ADAPTER *iocp, unsigned long arg);
-+static int mptctl_eventquery(MPT_ADAPTER *iocp, unsigned long arg);
-+static int mptctl_eventenable(MPT_ADAPTER *iocp, unsigned long arg);
-+static int mptctl_eventreport(MPT_ADAPTER *iocp, unsigned long arg);
-+static int mptctl_replace_fw(MPT_ADAPTER *iocp, unsigned long arg);
-+
-+static int mptctl_do_reset(MPT_ADAPTER *iocp, unsigned long arg);
-+static int mptctl_hp_hostinfo(MPT_ADAPTER *iocp, unsigned long arg, unsigned int cmd);
-+static int mptctl_hp_targetinfo(MPT_ADAPTER *iocp, unsigned long arg);
- 
- static int  mptctl_probe(struct pci_dev *, const struct pci_device_id *);
- static void mptctl_remove(struct pci_dev *);
-@@ -123,8 +123,8 @@ static long compat_mpctl_ioctl(struct file *f, unsigned cmd, unsigned long arg);
- /*
-  * Private function calls.
-  */
--static int mptctl_do_mpt_command(struct mpt_ioctl_command karg, void __user *mfPtr);
--static int mptctl_do_fw_download(int ioc, char __user *ufwbuf, size_t fwlen);
-+static int mptctl_do_mpt_command(MPT_ADAPTER *iocp, struct mpt_ioctl_command karg, void __user *mfPtr);
-+static int mptctl_do_fw_download(MPT_ADAPTER *iocp, char __user *ufwbuf, size_t fwlen);
- static MptSge_t *kbuf_alloc_2_sgl(int bytes, u32 dir, int sge_offset, int *frags,
- 		struct buflist **blp, dma_addr_t *sglbuf_dma, MPT_ADAPTER *ioc);
- static void kfree_sgl(MptSge_t *sgl, dma_addr_t sgl_dma,
-@@ -656,19 +656,19 @@ __mptctl_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
- 	 * by TM and FW reloads.
- 	 */
- 	if ((cmd & ~IOCSIZE_MASK) == (MPTIOCINFO & ~IOCSIZE_MASK)) {
--		return mptctl_getiocinfo(arg, _IOC_SIZE(cmd));
-+		return mptctl_getiocinfo(iocp, arg, _IOC_SIZE(cmd));
- 	} else if (cmd == MPTTARGETINFO) {
--		return mptctl_gettargetinfo(arg);
-+		return mptctl_gettargetinfo(iocp, arg);
- 	} else if (cmd == MPTTEST) {
--		return mptctl_readtest(arg);
-+		return mptctl_readtest(iocp, arg);
- 	} else if (cmd == MPTEVENTQUERY) {
--		return mptctl_eventquery(arg);
-+		return mptctl_eventquery(iocp, arg);
- 	} else if (cmd == MPTEVENTENABLE) {
--		return mptctl_eventenable(arg);
-+		return mptctl_eventenable(iocp, arg);
- 	} else if (cmd == MPTEVENTREPORT) {
--		return mptctl_eventreport(arg);
-+		return mptctl_eventreport(iocp, arg);
- 	} else if (cmd == MPTFWREPLACE) {
--		return mptctl_replace_fw(arg);
-+		return mptctl_replace_fw(iocp, arg);
- 	}
- 
- 	/* All of these commands require an interrupt or
-@@ -678,15 +678,15 @@ __mptctl_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
- 		return ret;
- 
- 	if (cmd == MPTFWDOWNLOAD)
--		ret = mptctl_fw_download(arg);
-+		ret = mptctl_fw_download(iocp, arg);
- 	else if (cmd == MPTCOMMAND)
--		ret = mptctl_mpt_command(arg);
-+		ret = mptctl_mpt_command(iocp, arg);
- 	else if (cmd == MPTHARDRESET)
--		ret = mptctl_do_reset(arg);
-+		ret = mptctl_do_reset(iocp, arg);
- 	else if ((cmd & ~IOCSIZE_MASK) == (HP_GETHOSTINFO & ~IOCSIZE_MASK))
--		ret = mptctl_hp_hostinfo(arg, _IOC_SIZE(cmd));
-+		ret = mptctl_hp_hostinfo(iocp, arg, _IOC_SIZE(cmd));
- 	else if (cmd == HP_GETTARGETINFO)
--		ret = mptctl_hp_targetinfo(arg);
-+		ret = mptctl_hp_targetinfo(iocp, arg);
- 	else
- 		ret = -EINVAL;
- 
-@@ -705,11 +705,10 @@ mptctl_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
- 	return ret;
- }
- 
--static int mptctl_do_reset(unsigned long arg)
-+static int mptctl_do_reset(MPT_ADAPTER *iocp, unsigned long arg)
- {
- 	struct mpt_ioctl_diag_reset __user *urinfo = (void __user *) arg;
- 	struct mpt_ioctl_diag_reset krinfo;
--	MPT_ADAPTER		*iocp;
- 
- 	if (copy_from_user(&krinfo, urinfo, sizeof(struct mpt_ioctl_diag_reset))) {
- 		printk(KERN_ERR MYNAM "%s@%d::mptctl_do_reset - "
-@@ -718,12 +717,6 @@ static int mptctl_do_reset(unsigned long arg)
- 		return -EFAULT;
- 	}
- 
--	if (mpt_verify_adapter(krinfo.hdr.iocnum, &iocp) < 0) {
--		printk(KERN_DEBUG MYNAM "%s@%d::mptctl_do_reset - ioc%d not found!\n",
--				__FILE__, __LINE__, krinfo.hdr.iocnum);
--		return -ENODEV; /* (-6) No such device or address */
--	}
--
- 	dctlprintk(iocp, printk(MYIOC_s_DEBUG_FMT "mptctl_do_reset called.\n",
- 	    iocp->name));
- 
-@@ -754,7 +747,7 @@ static int mptctl_do_reset(unsigned long arg)
-  *		-ENOMSG if FW upload returned bad status
-  */
- static int
--mptctl_fw_download(unsigned long arg)
-+mptctl_fw_download(MPT_ADAPTER *iocp, unsigned long arg)
- {
- 	struct mpt_fw_xfer __user *ufwdl = (void __user *) arg;
- 	struct mpt_fw_xfer	 kfwdl;
-@@ -766,7 +759,7 @@ mptctl_fw_download(unsigned long arg)
- 		return -EFAULT;
- 	}
- 
--	return mptctl_do_fw_download(kfwdl.iocnum, kfwdl.bufp, kfwdl.fwlen);
-+	return mptctl_do_fw_download(iocp, kfwdl.bufp, kfwdl.fwlen);
- }
- 
- /*=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=*/
-@@ -784,11 +777,10 @@ mptctl_fw_download(unsigned long arg)
-  *		-ENOMSG if FW upload returned bad status
-  */
- static int
--mptctl_do_fw_download(int ioc, char __user *ufwbuf, size_t fwlen)
-+mptctl_do_fw_download(MPT_ADAPTER *iocp, char __user *ufwbuf, size_t fwlen)
- {
- 	FWDownload_t		*dlmsg;
- 	MPT_FRAME_HDR		*mf;
--	MPT_ADAPTER		*iocp;
- 	FWDownloadTCSGE_t	*ptsge;
- 	MptSge_t		*sgl, *sgIn;
- 	char			*sgOut;
-@@ -808,17 +800,10 @@ mptctl_do_fw_download(int ioc, char __user *ufwbuf, size_t fwlen)
- 	pFWDownloadReply_t	 ReplyMsg = NULL;
- 	unsigned long		 timeleft;
- 
--	if (mpt_verify_adapter(ioc, &iocp) < 0) {
--		printk(KERN_DEBUG MYNAM "ioctl_fwdl - ioc%d not found!\n",
--				 ioc);
--		return -ENODEV; /* (-6) No such device or address */
--	} else {
--
--		/*  Valid device. Get a message frame and construct the FW download message.
--	 	*/
--		if ((mf = mpt_get_msg_frame(mptctl_id, iocp)) == NULL)
--			return -EAGAIN;
--	}
-+	/*  Valid device. Get a message frame and construct the FW download message.
-+	*/
-+	if ((mf = mpt_get_msg_frame(mptctl_id, iocp)) == NULL)
-+		return -EAGAIN;
- 
- 	dctlprintk(iocp, printk(MYIOC_s_DEBUG_FMT
- 	    "mptctl_do_fwdl called. mptctl_id = %xh.\n", iocp->name, mptctl_id));
-@@ -826,8 +811,6 @@ mptctl_do_fw_download(int ioc, char __user *ufwbuf, size_t fwlen)
- 	    iocp->name, ufwbuf));
- 	dctlprintk(iocp, printk(MYIOC_s_DEBUG_FMT "DbG: kfwdl.fwlen = %d\n",
- 	    iocp->name, (int)fwlen));
--	dctlprintk(iocp, printk(MYIOC_s_DEBUG_FMT "DbG: kfwdl.ioc   = %04xh\n",
--	    iocp->name, ioc));
- 
- 	dlmsg = (FWDownload_t*) mf;
- 	ptsge = (FWDownloadTCSGE_t *) &dlmsg->SGL;
-@@ -1238,13 +1221,11 @@ kfree_sgl(MptSge_t *sgl, dma_addr_t sgl_dma, struct buflist *buflist, MPT_ADAPTE
-  *		-ENODEV  if no such device/adapter
-  */
- static int
--mptctl_getiocinfo (unsigned long arg, unsigned int data_size)
-+mptctl_getiocinfo (MPT_ADAPTER *ioc, unsigned long arg, unsigned int data_size)
- {
- 	struct mpt_ioctl_iocinfo __user *uarg = (void __user *) arg;
- 	struct mpt_ioctl_iocinfo *karg;
--	MPT_ADAPTER		*ioc;
- 	struct pci_dev		*pdev;
--	int			iocnum;
- 	unsigned int		port;
- 	int			cim_rev;
- 	struct scsi_device 	*sdev;
-@@ -1272,14 +1253,6 @@ mptctl_getiocinfo (unsigned long arg, unsigned int data_size)
- 		return PTR_ERR(karg);
- 	}
- 
--	if (((iocnum = mpt_verify_adapter(karg->hdr.iocnum, &ioc)) < 0) ||
--	    (ioc == NULL)) {
--		printk(KERN_DEBUG MYNAM "%s::mptctl_getiocinfo() @%d - ioc%d not found!\n",
--				__FILE__, __LINE__, iocnum);
--		kfree(karg);
--		return -ENODEV;
--	}
--
- 	/* Verify the data transfer size is correct. */
- 	if (karg->hdr.maxDataSize != data_size) {
- 		printk(MYIOC_s_ERR_FMT "%s@%d::mptctl_getiocinfo - "
-@@ -1385,15 +1358,13 @@ mptctl_getiocinfo (unsigned long arg, unsigned int data_size)
-  *		-ENODEV  if no such device/adapter
-  */
- static int
--mptctl_gettargetinfo (unsigned long arg)
-+mptctl_gettargetinfo (MPT_ADAPTER *ioc, unsigned long arg)
- {
- 	struct mpt_ioctl_targetinfo __user *uarg = (void __user *) arg;
- 	struct mpt_ioctl_targetinfo karg;
--	MPT_ADAPTER		*ioc;
- 	VirtDevice		*vdevice;
- 	char			*pmem;
- 	int			*pdata;
--	int			iocnum;
- 	int			numDevices = 0;
- 	int			lun;
- 	int			maxWordsLeft;
-@@ -1408,13 +1379,6 @@ mptctl_gettargetinfo (unsigned long arg)
- 		return -EFAULT;
- 	}
- 
--	if (((iocnum = mpt_verify_adapter(karg.hdr.iocnum, &ioc)) < 0) ||
--	    (ioc == NULL)) {
--		printk(KERN_DEBUG MYNAM "%s::mptctl_gettargetinfo() @%d - ioc%d not found!\n",
--				__FILE__, __LINE__, iocnum);
--		return -ENODEV;
--	}
--
- 	dctlprintk(ioc, printk(MYIOC_s_DEBUG_FMT "mptctl_gettargetinfo called.\n",
- 	    ioc->name));
- 	/* Get the port number and set the maximum number of bytes
-@@ -1510,12 +1474,10 @@ mptctl_gettargetinfo (unsigned long arg)
-  *		-ENODEV  if no such device/adapter
-  */
- static int
--mptctl_readtest (unsigned long arg)
-+mptctl_readtest (MPT_ADAPTER *ioc, unsigned long arg)
- {
- 	struct mpt_ioctl_test __user *uarg = (void __user *) arg;
- 	struct mpt_ioctl_test	 karg;
--	MPT_ADAPTER *ioc;
--	int iocnum;
- 
- 	if (copy_from_user(&karg, uarg, sizeof(struct mpt_ioctl_test))) {
- 		printk(KERN_ERR MYNAM "%s@%d::mptctl_readtest - "
-@@ -1524,13 +1486,6 @@ mptctl_readtest (unsigned long arg)
- 		return -EFAULT;
- 	}
- 
--	if (((iocnum = mpt_verify_adapter(karg.hdr.iocnum, &ioc)) < 0) ||
--	    (ioc == NULL)) {
--		printk(KERN_DEBUG MYNAM "%s::mptctl_readtest() @%d - ioc%d not found!\n",
--				__FILE__, __LINE__, iocnum);
--		return -ENODEV;
--	}
--
- 	dctlprintk(ioc, printk(MYIOC_s_DEBUG_FMT "mptctl_readtest called.\n",
- 	    ioc->name));
- 	/* Fill in the data and return the structure to the calling
-@@ -1571,12 +1526,10 @@ mptctl_readtest (unsigned long arg)
-  *		-ENODEV  if no such device/adapter
-  */
- static int
--mptctl_eventquery (unsigned long arg)
-+mptctl_eventquery (MPT_ADAPTER *ioc, unsigned long arg)
- {
- 	struct mpt_ioctl_eventquery __user *uarg = (void __user *) arg;
- 	struct mpt_ioctl_eventquery	 karg;
--	MPT_ADAPTER *ioc;
--	int iocnum;
- 
- 	if (copy_from_user(&karg, uarg, sizeof(struct mpt_ioctl_eventquery))) {
- 		printk(KERN_ERR MYNAM "%s@%d::mptctl_eventquery - "
-@@ -1585,13 +1538,6 @@ mptctl_eventquery (unsigned long arg)
- 		return -EFAULT;
- 	}
- 
--	if (((iocnum = mpt_verify_adapter(karg.hdr.iocnum, &ioc)) < 0) ||
--	    (ioc == NULL)) {
--		printk(KERN_DEBUG MYNAM "%s::mptctl_eventquery() @%d - ioc%d not found!\n",
--				__FILE__, __LINE__, iocnum);
--		return -ENODEV;
--	}
--
- 	dctlprintk(ioc, printk(MYIOC_s_DEBUG_FMT "mptctl_eventquery called.\n",
- 	    ioc->name));
- 	karg.eventEntries = MPTCTL_EVENT_LOG_SIZE;
-@@ -1610,12 +1556,10 @@ mptctl_eventquery (unsigned long arg)
- 
- /*=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=*/
- static int
--mptctl_eventenable (unsigned long arg)
-+mptctl_eventenable (MPT_ADAPTER *ioc, unsigned long arg)
- {
- 	struct mpt_ioctl_eventenable __user *uarg = (void __user *) arg;
- 	struct mpt_ioctl_eventenable	 karg;
--	MPT_ADAPTER *ioc;
--	int iocnum;
- 
- 	if (copy_from_user(&karg, uarg, sizeof(struct mpt_ioctl_eventenable))) {
- 		printk(KERN_ERR MYNAM "%s@%d::mptctl_eventenable - "
-@@ -1624,13 +1568,6 @@ mptctl_eventenable (unsigned long arg)
- 		return -EFAULT;
- 	}
- 
--	if (((iocnum = mpt_verify_adapter(karg.hdr.iocnum, &ioc)) < 0) ||
--	    (ioc == NULL)) {
--		printk(KERN_DEBUG MYNAM "%s::mptctl_eventenable() @%d - ioc%d not found!\n",
--				__FILE__, __LINE__, iocnum);
--		return -ENODEV;
--	}
--
- 	dctlprintk(ioc, printk(MYIOC_s_DEBUG_FMT "mptctl_eventenable called.\n",
- 	    ioc->name));
- 	if (ioc->events == NULL) {
-@@ -1658,12 +1595,10 @@ mptctl_eventenable (unsigned long arg)
- 
- /*=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=*/
- static int
--mptctl_eventreport (unsigned long arg)
-+mptctl_eventreport (MPT_ADAPTER *ioc, unsigned long arg)
- {
- 	struct mpt_ioctl_eventreport __user *uarg = (void __user *) arg;
- 	struct mpt_ioctl_eventreport	 karg;
--	MPT_ADAPTER		 *ioc;
--	int			 iocnum;
- 	int			 numBytes, maxEvents, max;
- 
- 	if (copy_from_user(&karg, uarg, sizeof(struct mpt_ioctl_eventreport))) {
-@@ -1673,12 +1608,6 @@ mptctl_eventreport (unsigned long arg)
- 		return -EFAULT;
- 	}
- 
--	if (((iocnum = mpt_verify_adapter(karg.hdr.iocnum, &ioc)) < 0) ||
--	    (ioc == NULL)) {
--		printk(KERN_DEBUG MYNAM "%s::mptctl_eventreport() @%d - ioc%d not found!\n",
--				__FILE__, __LINE__, iocnum);
--		return -ENODEV;
--	}
- 	dctlprintk(ioc, printk(MYIOC_s_DEBUG_FMT "mptctl_eventreport called.\n",
- 	    ioc->name));
- 
-@@ -1712,12 +1641,10 @@ mptctl_eventreport (unsigned long arg)
- 
- /*=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=*/
- static int
--mptctl_replace_fw (unsigned long arg)
-+mptctl_replace_fw (MPT_ADAPTER *ioc, unsigned long arg)
- {
- 	struct mpt_ioctl_replace_fw __user *uarg = (void __user *) arg;
- 	struct mpt_ioctl_replace_fw	 karg;
--	MPT_ADAPTER		 *ioc;
--	int			 iocnum;
- 	int			 newFwSize;
- 
- 	if (copy_from_user(&karg, uarg, sizeof(struct mpt_ioctl_replace_fw))) {
-@@ -1727,13 +1654,6 @@ mptctl_replace_fw (unsigned long arg)
- 		return -EFAULT;
- 	}
- 
--	if (((iocnum = mpt_verify_adapter(karg.hdr.iocnum, &ioc)) < 0) ||
--	    (ioc == NULL)) {
--		printk(KERN_DEBUG MYNAM "%s::mptctl_replace_fw() @%d - ioc%d not found!\n",
--				__FILE__, __LINE__, iocnum);
--		return -ENODEV;
--	}
--
- 	dctlprintk(ioc, printk(MYIOC_s_DEBUG_FMT "mptctl_replace_fw called.\n",
- 	    ioc->name));
- 	/* If caching FW, Free the old FW image
-@@ -1780,12 +1700,10 @@ mptctl_replace_fw (unsigned long arg)
-  *		-ENOMEM if memory allocation error
-  */
- static int
--mptctl_mpt_command (unsigned long arg)
-+mptctl_mpt_command (MPT_ADAPTER *ioc, unsigned long arg)
- {
- 	struct mpt_ioctl_command __user *uarg = (void __user *) arg;
- 	struct mpt_ioctl_command  karg;
--	MPT_ADAPTER	*ioc;
--	int		iocnum;
- 	int		rc;
- 
- 
-@@ -1796,14 +1714,7 @@ mptctl_mpt_command (unsigned long arg)
- 		return -EFAULT;
- 	}
- 
--	if (((iocnum = mpt_verify_adapter(karg.hdr.iocnum, &ioc)) < 0) ||
--	    (ioc == NULL)) {
--		printk(KERN_DEBUG MYNAM "%s::mptctl_mpt_command() @%d - ioc%d not found!\n",
--				__FILE__, __LINE__, iocnum);
--		return -ENODEV;
--	}
--
--	rc = mptctl_do_mpt_command (karg, &uarg->MF);
-+	rc = mptctl_do_mpt_command (ioc, karg, &uarg->MF);
- 
- 	return rc;
- }
-@@ -1821,9 +1732,8 @@ mptctl_mpt_command (unsigned long arg)
-  *		-EPERM if SCSI I/O and target is untagged
-  */
- static int
--mptctl_do_mpt_command (struct mpt_ioctl_command karg, void __user *mfPtr)
-+mptctl_do_mpt_command (MPT_ADAPTER *ioc, struct mpt_ioctl_command karg, void __user *mfPtr)
- {
--	MPT_ADAPTER	*ioc;
- 	MPT_FRAME_HDR	*mf = NULL;
- 	MPIHeader_t	*hdr;
- 	char		*psge;
-@@ -1832,7 +1742,7 @@ mptctl_do_mpt_command (struct mpt_ioctl_command karg, void __user *mfPtr)
- 	dma_addr_t	dma_addr_in;
- 	dma_addr_t	dma_addr_out;
- 	int		sgSize = 0;	/* Num SG elements */
--	int		iocnum, flagsLength;
-+	int		flagsLength;
- 	int		sz, rc = 0;
- 	int		msgContext;
- 	u16		req_idx;
-@@ -1847,13 +1757,6 @@ mptctl_do_mpt_command (struct mpt_ioctl_command karg, void __user *mfPtr)
- 	bufIn.kptr = bufOut.kptr = NULL;
- 	bufIn.len = bufOut.len = 0;
- 
--	if (((iocnum = mpt_verify_adapter(karg.hdr.iocnum, &ioc)) < 0) ||
--	    (ioc == NULL)) {
--		printk(KERN_DEBUG MYNAM "%s::mptctl_do_mpt_command() @%d - ioc%d not found!\n",
--				__FILE__, __LINE__, iocnum);
--		return -ENODEV;
--	}
--
- 	spin_lock_irqsave(&ioc->taskmgmt_lock, flags);
- 	if (ioc->ioc_reset_in_progress) {
- 		spin_unlock_irqrestore(&ioc->taskmgmt_lock, flags);
-@@ -2418,17 +2321,15 @@ done_free_mem:
-  *		-ENOMEM if memory allocation error
-  */
- static int
--mptctl_hp_hostinfo(unsigned long arg, unsigned int data_size)
-+mptctl_hp_hostinfo(MPT_ADAPTER *ioc, unsigned long arg, unsigned int data_size)
- {
- 	hp_host_info_t	__user *uarg = (void __user *) arg;
--	MPT_ADAPTER		*ioc;
- 	struct pci_dev		*pdev;
- 	char                    *pbuf=NULL;
- 	dma_addr_t		buf_dma;
- 	hp_host_info_t		karg;
- 	CONFIGPARMS		cfg;
- 	ConfigPageHeader_t	hdr;
--	int			iocnum;
- 	int			rc, cim_rev;
- 	ToolboxIstwiReadWriteRequest_t	*IstwiRWRequest;
- 	MPT_FRAME_HDR		*mf = NULL;
-@@ -2452,12 +2353,6 @@ mptctl_hp_hostinfo(unsigned long arg, unsigned int data_size)
- 		return -EFAULT;
- 	}
- 
--	if (((iocnum = mpt_verify_adapter(karg.hdr.iocnum, &ioc)) < 0) ||
--	    (ioc == NULL)) {
--		printk(KERN_DEBUG MYNAM "%s::mptctl_hp_hostinfo() @%d - ioc%d not found!\n",
--				__FILE__, __LINE__, iocnum);
--		return -ENODEV;
--	}
- 	dctlprintk(ioc, printk(MYIOC_s_DEBUG_FMT ": mptctl_hp_hostinfo called.\n",
- 	    ioc->name));
- 
-@@ -2670,15 +2565,13 @@ retry_wait:
-  *		-ENOMEM if memory allocation error
-  */
- static int
--mptctl_hp_targetinfo(unsigned long arg)
-+mptctl_hp_targetinfo(MPT_ADAPTER *ioc, unsigned long arg)
- {
- 	hp_target_info_t __user *uarg = (void __user *) arg;
- 	SCSIDevicePage0_t	*pg0_alloc;
- 	SCSIDevicePage3_t	*pg3_alloc;
--	MPT_ADAPTER		*ioc;
- 	MPT_SCSI_HOST 		*hd = NULL;
- 	hp_target_info_t	karg;
--	int			iocnum;
- 	int			data_sz;
- 	dma_addr_t		page_dma;
- 	CONFIGPARMS	 	cfg;
-@@ -2692,12 +2585,6 @@ mptctl_hp_targetinfo(unsigned long arg)
- 		return -EFAULT;
- 	}
- 
--	if (((iocnum = mpt_verify_adapter(karg.hdr.iocnum, &ioc)) < 0) ||
--		(ioc == NULL)) {
--		printk(KERN_DEBUG MYNAM "%s::mptctl_hp_targetinfo() @%d - ioc%d not found!\n",
--				__FILE__, __LINE__, iocnum);
--		return -ENODEV;
--	}
- 	if (karg.hdr.id >= MPT_MAX_FC_DEVICES)
- 		return -EINVAL;
- 	dctlprintk(ioc, printk(MYIOC_s_DEBUG_FMT "mptctl_hp_targetinfo called.\n",
-@@ -2865,7 +2752,7 @@ compat_mptfwxfer_ioctl(struct file *filp, unsigned int cmd,
- 	kfw.fwlen = kfw32.fwlen;
- 	kfw.bufp = compat_ptr(kfw32.bufp);
- 
--	ret = mptctl_do_fw_download(kfw.iocnum, kfw.bufp, kfw.fwlen);
-+	ret = mptctl_do_fw_download(iocp, kfw.bufp, kfw.fwlen);
- 
- 	mutex_unlock(&iocp->ioctl_cmds.mutex);
- 
-@@ -2919,7 +2806,7 @@ compat_mpt_command(struct file *filp, unsigned int cmd,
- 
- 	/* Pass new structure to do_mpt_command
- 	 */
--	ret = mptctl_do_mpt_command (karg, &uarg->MF);
-+	ret = mptctl_do_mpt_command (iocp, karg, &uarg->MF);
- 
- 	mutex_unlock(&iocp->ioctl_cmds.mutex);
- 
 -- 
-2.20.1
-
+Jeffrey Hugo
+Qualcomm Technologies, Inc. is a member of the
+Code Aurora Forum, a Linux Foundation Collaborative Project.
