@@ -2,38 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E2652148251
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Jan 2020 12:27:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0513D148238
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Jan 2020 12:26:47 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391611AbgAXL06 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 24 Jan 2020 06:26:58 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42048 "EHLO mail.kernel.org"
+        id S2403920AbgAXL0M (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 24 Jan 2020 06:26:12 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40678 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2391599AbgAXL0x (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 24 Jan 2020 06:26:53 -0500
+        id S2389966AbgAXL0J (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 24 Jan 2020 06:26:09 -0500
 Received: from localhost (ip-213-127-102-57.ip.prioritytelecom.net [213.127.102.57])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 34CE42075D;
-        Fri, 24 Jan 2020 11:26:52 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5BAD320704;
+        Fri, 24 Jan 2020 11:26:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579865213;
-        bh=/Xyrt+GlzXqdolnXrvTicWdp54n+ZBtuc5H/3+PFcwo=;
+        s=default; t=1579865169;
+        bh=K+D7iZJvxBljDBeZS49YJgy+ZZwvIV6A4ChR8TLxfQI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=tG86WkaZ41hkudbrW1tw2iBb9uryAnHvnqLDbVIHRq4V/TJvSdw84jmr2agEYHi8q
-         q1YvC7C7tmoZ/iECseRN++fZjr4WuNtJs40XieAJiWPeYjIuTsp1h+iE9cl12tgEdM
-         xnOCWGVrjkW7ui/jaD8eSm0NJERzffiPGLUSg53g=
+        b=U8A7s+g7HgkvNJxyLGnAlI3pwxlPGQbuOPU9iVjZjQA5oZdjvm9mfeUi96VqhuVhg
+         NJ2yjjb86h0nozpF3JE+0EuujqN1Fsd9IV0D2HhdD9xtJPxrinP1a5oEUY0CniOQtA
+         AjcYLF2jet24DJZgs3424a7PMV4cn3aRGFVHFQXY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Hou Zhiqiang <Zhiqiang.Hou@nxp.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Minghuan Lian <Minghuan.Lian@nxp.com>,
-        Subrahmanya Lingappa <l.subrahmanya@mobiveil.co.in>,
+        stable@vger.kernel.org, David Disseldorp <ddiss@suse.de>,
+        Ilya Dryomov <idryomov@gmail.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 471/639] PCI: mobiveil: Fix the valid check for inbound and outbound windows
-Date:   Fri, 24 Jan 2020 10:30:41 +0100
-Message-Id: <20200124093146.440853123@linuxfoundation.org>
+Subject: [PATCH 4.19 472/639] ceph: fix "ceph.dir.rctime" vxattr value
+Date:   Fri, 24 Jan 2020 10:30:42 +0100
+Message-Id: <20200124093146.764584528@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
 In-Reply-To: <20200124093047.008739095@linuxfoundation.org>
 References: <20200124093047.008739095@linuxfoundation.org>
@@ -46,46 +44,36 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Hou Zhiqiang <Zhiqiang.Hou@nxp.com>
+From: David Disseldorp <ddiss@suse.de>
 
-[ Upstream commit ccd34dac2ed596b1f26079912bdf638e002a3979 ]
+[ Upstream commit 718807289d4130be1fe13f24f018733116958070 ]
 
-In program_ib/ob_windows() check the window index from the function
-parameter instead of the total number of initialized windows to
-determine if the specified window is valid.
+The vxattr value incorrectly places a "09" prefix to the nanoseconds
+field, instead of providing it as a zero-pad width specifier after '%'.
 
-Fixes: 9af6bcb11e12 ("PCI: mobiveil: Add Mobiveil PCIe Host Bridge IP driver")
-Signed-off-by: Hou Zhiqiang <Zhiqiang.Hou@nxp.com>
-Signed-off-by: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-Reviewed-by: Minghuan Lian <Minghuan.Lian@nxp.com>
-Reviewed-by: Subrahmanya Lingappa <l.subrahmanya@mobiveil.co.in>
+Fixes: 3489b42a72a4 ("ceph: fix three bugs, two in ceph_vxattrcb_file_layout()")
+Link: https://tracker.ceph.com/issues/39943
+Signed-off-by: David Disseldorp <ddiss@suse.de>
+Reviewed-by: Ilya Dryomov <idryomov@gmail.com>
+Signed-off-by: Ilya Dryomov <idryomov@gmail.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/pci/controller/pcie-mobiveil.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ fs/ceph/xattr.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/pci/controller/pcie-mobiveil.c b/drivers/pci/controller/pcie-mobiveil.c
-index 476be4f3c7f6e..14f816591e844 100644
---- a/drivers/pci/controller/pcie-mobiveil.c
-+++ b/drivers/pci/controller/pcie-mobiveil.c
-@@ -395,7 +395,7 @@ static void program_ib_windows(struct mobiveil_pcie *pcie, int win_num,
- 	int amap_ctrl_dw;
- 	u64 size64 = ~(size - 1);
+diff --git a/fs/ceph/xattr.c b/fs/ceph/xattr.c
+index 5e4f3f833e85e..a09ce27ab2204 100644
+--- a/fs/ceph/xattr.c
++++ b/fs/ceph/xattr.c
+@@ -221,7 +221,7 @@ static size_t ceph_vxattrcb_dir_rbytes(struct ceph_inode_info *ci, char *val,
+ static size_t ceph_vxattrcb_dir_rctime(struct ceph_inode_info *ci, char *val,
+ 				       size_t size)
+ {
+-	return snprintf(val, size, "%lld.09%ld", ci->i_rctime.tv_sec,
++	return snprintf(val, size, "%lld.%09ld", ci->i_rctime.tv_sec,
+ 			ci->i_rctime.tv_nsec);
+ }
  
--	if ((pcie->ib_wins_configured + 1) > pcie->ppio_wins) {
-+	if (win_num >= pcie->ppio_wins) {
- 		dev_err(&pcie->pdev->dev,
- 			"ERROR: max inbound windows reached !\n");
- 		return;
-@@ -429,7 +429,7 @@ static void program_ob_windows(struct mobiveil_pcie *pcie, int win_num,
- 	u32 value, type;
- 	u64 size64 = ~(size - 1);
- 
--	if ((pcie->ob_wins_configured + 1) > pcie->apio_wins) {
-+	if (win_num >= pcie->apio_wins) {
- 		dev_err(&pcie->pdev->dev,
- 			"ERROR: max outbound windows reached !\n");
- 		return;
 -- 
 2.20.1
 
