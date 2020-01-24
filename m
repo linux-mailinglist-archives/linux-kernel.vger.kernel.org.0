@@ -2,37 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 30CA8148120
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Jan 2020 12:17:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0E7F7148122
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Jan 2020 12:17:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390480AbgAXLRN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 24 Jan 2020 06:17:13 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54076 "EHLO mail.kernel.org"
+        id S2390500AbgAXLRX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 24 Jan 2020 06:17:23 -0500
+Received: from mail.kernel.org ([198.145.29.99]:54186 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1733082AbgAXLRL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 24 Jan 2020 06:17:11 -0500
+        id S2389371AbgAXLRR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 24 Jan 2020 06:17:17 -0500
 Received: from localhost (ip-213-127-102-57.ip.prioritytelecom.net [213.127.102.57])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6DFB420708;
-        Fri, 24 Jan 2020 11:17:10 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 89E712087E;
+        Fri, 24 Jan 2020 11:17:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579864631;
-        bh=RJeEkwX1T8qdvdAUEK3an+nSjFvQlKmlFzM5QPGXXgU=;
+        s=default; t=1579864637;
+        bh=xo47iMd4fSvK6849rhg7FJ/0OLUiD5TP2a9VzGl3glw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=hKD6D1DfUr1FfYQSnQ1hG7osBle+0jKrTPEKmXa12Xw3egm2y16Y2WudGTRjOK6/m
-         9vdXKCVyMd6NNCaDmvSgBbLc2aNR6JvE0oBmqGN4VvidEeHV+RdTPiiGIrfZXHlJ4C
-         IGTunVidtDbzrUJiZXDgNM71Gmnu5XNz3Heg81Ic=
+        b=S0ViAeGJb+f4MKi0GQ+6/gl7vFs7wxrq1nZREmxABcPcGezmfcns40ynvlLZ6fXfJ
+         juoV22FIZNvi2JOOXPFwBcL3pkSWBJAkmF3WJBnq8cNAhNrdZiIIYYWUPdFsY8dSUC
+         d4begl5jDAQhR6su532LbNcc6o/hi4q58vFo96xg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Vladimir Oltean <olteanv@gmail.com>,
-        Claudiu Manoil <claudiu.manoil@nxp.com>,
-        Li Yang <leoyang.li@nxp.com>, Shawn Guo <shawnguo@kernel.org>,
+        stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>,
+        Jukka Rissanen <jukka.rissanen@linux.intel.com>,
+        Alexander Aring <aring@mojatatu.com>,
+        Marcel Holtmann <marcel@holtmann.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 320/639] ARM: dts: ls1021: Fix SGMII PCS link remaining down after PHY disconnect
-Date:   Fri, 24 Jan 2020 10:28:10 +0100
-Message-Id: <20200124093127.122646308@linuxfoundation.org>
+Subject: [PATCH 4.19 322/639] 6lowpan: Off by one handling ->nexthdr
+Date:   Fri, 24 Jan 2020 10:28:12 +0100
+Message-Id: <20200124093127.379892553@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
 In-Reply-To: <20200124093047.008739095@linuxfoundation.org>
 References: <20200124093047.008739095@linuxfoundation.org>
@@ -45,93 +46,39 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Vladimir Oltean <olteanv@gmail.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
 
-[ Upstream commit c7861adbe37f576931650ad8ef805e0c47564b9a ]
+[ Upstream commit f57c4bbf34439531adccd7d3a4ecc14f409c1399 ]
 
-Each eTSEC MAC has its own TBI (SGMII) PCS and private MDIO bus.
-But due to a DTS oversight, both SGMII-compatible MACs of the LS1021 SoC
-are pointing towards the same internal PCS. Therefore nobody is
-controlling the internal PCS of eTSEC0.
+NEXTHDR_MAX is 255.  What happens here is that we take a u8 value
+"hdr->nexthdr" from the network and then look it up in
+lowpan_nexthdr_nhcs[].  The problem is that if hdr->nexthdr is 0xff then
+we read one element beyond the end of the array so the array needs to
+be one element larger.
 
-Upon initial ndo_open, the SGMII link is ok by virtue of U-boot
-initialization. But upon an ifdown/ifup sequence, the code path from
-ndo_open -> init_phy -> gfar_configure_serdes does not get executed for
-the PCS of eTSEC0 (and is executed twice for MAC eTSEC1). So the SGMII
-link remains down for eTSEC0. On the LS1021A-TWR board, to signal this
-failure condition, the PHY driver keeps printing
-'803x_aneg_done: SGMII link is not ok'.
-
-Also, it changes compatible of mdio0 to "fsl,etsec2-mdio" to match
-mdio1 device.
-
-Fixes: 055223d4d22d ("ARM: dts: ls1021a: Enable the eTSEC ports on QDS and TWR")
-Signed-off-by: Vladimir Oltean <olteanv@gmail.com>
-Reviewed-by: Claudiu Manoil <claudiu.manoil@nxp.com>
-Acked-by: Li Yang <leoyang.li@nxp.com>
-Signed-off-by: Shawn Guo <shawnguo@kernel.org>
+Fixes: 92aa7c65d295 ("6lowpan: add generic nhc layer interface")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Acked-by: Jukka Rissanen <jukka.rissanen@linux.intel.com>
+Acked-by: Alexander Aring <aring@mojatatu.com>
+Signed-off-by: Marcel Holtmann <marcel@holtmann.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arm/boot/dts/ls1021a-twr.dts |  9 ++++++++-
- arch/arm/boot/dts/ls1021a.dtsi    | 11 ++++++++++-
- 2 files changed, 18 insertions(+), 2 deletions(-)
+ net/6lowpan/nhc.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/arm/boot/dts/ls1021a-twr.dts b/arch/arm/boot/dts/ls1021a-twr.dts
-index f0c949d748331..ec5afad3efd8e 100644
---- a/arch/arm/boot/dts/ls1021a-twr.dts
-+++ b/arch/arm/boot/dts/ls1021a-twr.dts
-@@ -143,7 +143,7 @@
- };
+diff --git a/net/6lowpan/nhc.c b/net/6lowpan/nhc.c
+index 4fa2fdda174d0..9e56fb98f33cf 100644
+--- a/net/6lowpan/nhc.c
++++ b/net/6lowpan/nhc.c
+@@ -18,7 +18,7 @@
+ #include "nhc.h"
  
- &enet0 {
--	tbi-handle = <&tbi1>;
-+	tbi-handle = <&tbi0>;
- 	phy-handle = <&sgmii_phy2>;
- 	phy-connection-type = "sgmii";
- 	status = "okay";
-@@ -222,6 +222,13 @@
- 	sgmii_phy2: ethernet-phy@2 {
- 		reg = <0x2>;
- 	};
-+	tbi0: tbi-phy@1f {
-+		reg = <0x1f>;
-+		device_type = "tbi-phy";
-+	};
-+};
-+
-+&mdio1 {
- 	tbi1: tbi-phy@1f {
- 		reg = <0x1f>;
- 		device_type = "tbi-phy";
-diff --git a/arch/arm/boot/dts/ls1021a.dtsi b/arch/arm/boot/dts/ls1021a.dtsi
-index f18490548c785..7e22309bccac7 100644
---- a/arch/arm/boot/dts/ls1021a.dtsi
-+++ b/arch/arm/boot/dts/ls1021a.dtsi
-@@ -584,7 +584,7 @@
- 		};
+ static struct rb_root rb_root = RB_ROOT;
+-static struct lowpan_nhc *lowpan_nexthdr_nhcs[NEXTHDR_MAX];
++static struct lowpan_nhc *lowpan_nexthdr_nhcs[NEXTHDR_MAX + 1];
+ static DEFINE_SPINLOCK(lowpan_nhc_lock);
  
- 		mdio0: mdio@2d24000 {
--			compatible = "gianfar";
-+			compatible = "fsl,etsec2-mdio";
- 			device_type = "mdio";
- 			#address-cells = <1>;
- 			#size-cells = <0>;
-@@ -592,6 +592,15 @@
- 			      <0x0 0x2d10030 0x0 0x4>;
- 		};
- 
-+		mdio1: mdio@2d64000 {
-+			compatible = "fsl,etsec2-mdio";
-+			device_type = "mdio";
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			reg = <0x0 0x2d64000 0x0 0x4000>,
-+			      <0x0 0x2d50030 0x0 0x4>;
-+		};
-+
- 		ptp_clock@2d10e00 {
- 			compatible = "fsl,etsec-ptp";
- 			reg = <0x0 0x2d10e00 0x0 0xb0>;
+ static int lowpan_nhc_insert(struct lowpan_nhc *nhc)
 -- 
 2.20.1
 
