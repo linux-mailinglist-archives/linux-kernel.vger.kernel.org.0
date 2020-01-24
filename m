@@ -2,126 +2,72 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5CCBF147969
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Jan 2020 09:29:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 139ED147973
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Jan 2020 09:33:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729652AbgAXI3X (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 24 Jan 2020 03:29:23 -0500
-Received: from relay6-d.mail.gandi.net ([217.70.183.198]:37353 "EHLO
-        relay6-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725843AbgAXI3W (ORCPT
+        id S1729828AbgAXIdP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 24 Jan 2020 03:33:15 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:53408 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725843AbgAXIdP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 24 Jan 2020 03:29:22 -0500
-X-Originating-IP: 88.190.179.123
-Received: from localhost (unknown [88.190.179.123])
-        (Authenticated sender: repk@triplefau.lt)
-        by relay6-d.mail.gandi.net (Postfix) with ESMTPSA id 1C7C6C0010;
-        Fri, 24 Jan 2020 08:29:18 +0000 (UTC)
-Date:   Fri, 24 Jan 2020 09:37:43 +0100
-From:   Remi Pommarel <repk@triplefau.lt>
-To:     Neil Armstrong <narmstrong@baylibre.com>
-Cc:     Kishon Vijay Abraham I <kishon@ti.com>,
-        Yue Wang <yue.wang@amlogic.com>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-pci@vger.kernel.org
-Subject: Re: [PATCH v6 0/7] PCI: amlogic: Make PCIe working reliably on AXG
- platforms
-Message-ID: <20200124083743.GY1803@voidbox>
-References: <20200123232943.10229-1-repk@triplefau.lt>
- <64b5d857-569a-ab2e-a467-9cdb47cf20e4@baylibre.com>
+        Fri, 24 Jan 2020 03:33:15 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=wAaIX3Ih8IQ185qLvWSUryJc/NNBflOLyVlEkXyqLT0=; b=GxFqNFVgF5Qvy+bbO1KN26kGt
+        SL3UQ4aNwRE0TNGP2OMGlr7OE2wxmVO3HGMlq6JKjBoAChHrcCEnuAaHidCMPcPHC04u+4qQ4KA06
+        dQt/HDyYCp0LeSz5ulq6PS4ZzHr5adyESwAfzJTDZvxoSagc5pRBPczwQCF2VVBYWmKSszz8K2/sI
+        x8hhYKHGc//wox664zNwtlRaedkEqKSCe0n6AG1568SlYZBRbaRiuNnbsr5slRXq1OpSvlAytzWBc
+        s1vCNqtlavdTusKiwGBm7Ze32YHBvmRWRphmZTq+QIrupTpsUeKlhOaEE0LZzFTgnyFKg0+GTHbQn
+        XlnyNwdxA==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
+        by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1iuuOr-0002we-CT; Fri, 24 Jan 2020 08:33:09 +0000
+Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (Client did not present a certificate)
+        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 538913008A9;
+        Fri, 24 Jan 2020 09:31:27 +0100 (CET)
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id BB2A42B715B69; Fri, 24 Jan 2020 09:33:07 +0100 (CET)
+Date:   Fri, 24 Jan 2020 09:33:07 +0100
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Will Deacon <will@kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-arch <linux-arch@vger.kernel.org>,
+        Android Kernel Team <kernel-team@android.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Segher Boessenkool <segher@kernel.crashing.org>,
+        Christian Borntraeger <borntraeger@de.ibm.com>,
+        Luc Van Oostenryck <luc.vanoostenryck@gmail.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Peter Oberparleiter <oberpar@linux.ibm.com>,
+        Masahiro Yamada <masahiroy@kernel.org>,
+        Nick Desaulniers <ndesaulniers@google.com>
+Subject: Re: [PATCH v2 00/10] Rework READ_ONCE() to improve codegen
+Message-ID: <20200124083307.GA14914@hirez.programming.kicks-ass.net>
+References: <20200123153341.19947-1-will@kernel.org>
+ <CAHk-=wjC2EDquO8_kzc-FHOGGjgODOLKjswYGJAMh58zTkyX3w@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <64b5d857-569a-ab2e-a467-9cdb47cf20e4@baylibre.com>
+In-Reply-To: <CAHk-=wjC2EDquO8_kzc-FHOGGjgODOLKjswYGJAMh58zTkyX3w@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
-
-On Fri, Jan 24, 2020 at 09:02:12AM +0100, Neil Armstrong wrote:
-> Hi,
+On Thu, Jan 23, 2020 at 09:59:03AM -0800, Linus Torvalds wrote:
+> On Thu, Jan 23, 2020 at 7:33 AM Will Deacon <will@kernel.org> wrote:
+> >
+> > This is version two of the patches I previously posted as an RFC here:
 > 
-> On 24/01/2020 00:29, Remi Pommarel wrote:
-> > PCIe device probing failures have been seen on AXG platforms and were
-> > due to unreliable clock signal output. Setting HHI_MIPI_CNTL0[26] bit
-> > in MIPI's PHY registers solved the problem. This bit controls band gap
-> > reference.
-> > 
-> > As discussed here [1] one of these shared MIPI/PCIE analog PHY register
-> > bits was implemented in the clock driver as CLKID_MIPI_ENABLE. This adds
-> > a PHY driver to control this bit instead, as well as setting the band
-> > gap one in order to get reliable PCIE communication.
-> > 
-> > While at it add another PHY driver to control PCIE only PHY registers,
-> > making AXG code more similar to G12A platform thus allowing to remove
-> > some specific platform handling in pci-meson driver.
-> > 
-> > Please note that CLKID_MIPI_ENABLE removable will be done in a different
-> > serie.
-> > 
-> > Changes since v5:
-> >  - Add additionalProperties in device tree binding documentation
-> >  - Make analog PHY required
-> > 
-> > Changes since v4:
-> >  - Rename the shared MIPI/PCIe PHY to analog
-> >  - Chain the MIPI/PCIe PHY to the PCIe one
-> > 
-> > Changes since v3:
-> >  - Go back to the shared MIPI/PCIe phy driver solution from v2
-> >  - Remove syscon usage
-> >  - Add all dt-bindings documentation
-> > 
-> > Changes since v2:
-> >  - Remove shared MIPI/PCIE device driver and use syscon to access register
-> >    in PCIE only driver instead
-> >  - Include devicetree documentation
-> > 
-> > Changes sinve v1:
-> >  - Move HHI_MIPI_CNTL0 bit control in its own PHY driver
-> >  - Add a PHY driver for PCIE_PHY registers
-> >  - Modify pci-meson.c to make use of both PHYs and remove specific
-> >    handling for AXG and G12A
-> > 
-> > [1] https://lkml.org/lkml/2019/12/16/119
-> > 
-> > Remi Pommarel (7):
-> >   dt-bindings: Add AXG PCIE PHY bindings
-> >   dt-bindings: Add AXG shared MIPI/PCIE analog PHY bindings
-> >   dt-bindings: PCI: meson: Update PCIE bindings documentation
-> >   arm64: dts: meson-axg: Add PCIE PHY nodes
-> >   phy: amlogic: Add Amlogic AXG MIPI/PCIE analog PHY Driver
-> >   phy: amlogic: Add Amlogic AXG PCIE PHY Driver
-> >   PCI: amlogic: Use AXG PCIE
-> > 
-> >  .../bindings/pci/amlogic,meson-pcie.txt       |  22 +-
-> >  .../amlogic,meson-axg-mipi-pcie-analog.yaml   |  35 ++++
-> >  .../bindings/phy/amlogic,meson-axg-pcie.yaml  |  52 +++++
-> >  arch/arm64/boot/dts/amlogic/meson-axg.dtsi    |  16 ++
-> >  drivers/pci/controller/dwc/pci-meson.c        | 116 ++---------
-> >  drivers/phy/amlogic/Kconfig                   |  22 ++
-> >  drivers/phy/amlogic/Makefile                  |  12 +-
-> >  .../amlogic/phy-meson-axg-mipi-pcie-analog.c  | 188 +++++++++++++++++
-> >  drivers/phy/amlogic/phy-meson-axg-pcie.c      | 192 ++++++++++++++++++
-> >  9 files changed, 543 insertions(+), 112 deletions(-)
-> >  create mode 100644 Documentation/devicetree/bindings/phy/amlogic,meson-axg-mipi-pcie-analog.yaml
-> >  create mode 100644 Documentation/devicetree/bindings/phy/amlogic,meson-axg-pcie.yaml
-> >  create mode 100644 drivers/phy/amlogic/phy-meson-axg-mipi-pcie-analog.c
-> >  create mode 100644 drivers/phy/amlogic/phy-meson-axg-pcie.c
-> > 
-> 
-> You forgot to keep the Reviewed-by/Acked-by tags from the previous reviews.
-> 
+> Looks fine to me, as far as I can tell,
 
-Indeed, sorry about that, I have just added them.
-
--- 
-Remi
+Awesome, I've picked them up with a target for tip/locking/core.
