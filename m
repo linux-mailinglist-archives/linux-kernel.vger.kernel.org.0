@@ -2,54 +2,55 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 17E831491FD
-	for <lists+linux-kernel@lfdr.de>; Sat, 25 Jan 2020 00:25:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2DFE1149204
+	for <lists+linux-kernel@lfdr.de>; Sat, 25 Jan 2020 00:27:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387488AbgAXXZY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 24 Jan 2020 18:25:24 -0500
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:46896 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387447AbgAXXZY (ORCPT
+        id S1729587AbgAXX1f (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 24 Jan 2020 18:27:35 -0500
+Received: from mail-pl1-f194.google.com ([209.85.214.194]:36607 "EHLO
+        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729530AbgAXX1f (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 24 Jan 2020 18:25:24 -0500
-Received: by mail-pl1-f196.google.com with SMTP id y8so1388733pll.13
-        for <linux-kernel@vger.kernel.org>; Fri, 24 Jan 2020 15:25:23 -0800 (PST)
+        Fri, 24 Jan 2020 18:27:35 -0500
+Received: by mail-pl1-f194.google.com with SMTP id a6so1409244plm.3
+        for <linux-kernel@vger.kernel.org>; Fri, 24 Jan 2020 15:27:34 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=FARh9+NSyoh9cEVojaQ5yO/5qNpny8hvAgXD5nEC67I=;
-        b=H06xmx89YXaZ0rcfRMS2TzEW37mYI8VF98nq0ZMSaYi3lu8uAeqHa9gZSfOnFRnKYm
-         qoFdh8VmrW/jYfFXK8gbQ2XlEKnW0TJ3P54II9lv3xnVRSLXaGayP+I8D1beKJxMK8bs
-         oKHBzJRcMOmv12M0LXdfYDDpetCcuhWsZ6r5A=
+        bh=pMA+QteS/JKIrgzNNehkgXK6WKtqs9yO/7325HU0xxA=;
+        b=J8T7f7GLnK78uiyRBnCLfOmhrZTQC9Snw78JgipV4iORMKkCyjpWK6Ywu969t4OCWn
+         vHVgk8OMilaDg72I96iQnY49oKejS5E4WkIGj7sHU4H9yMdm7xTCLQ/pLUUUruZZOKSd
+         5TxNBzu5M228WEMt7/FxGDohHhvzc8IdHhmw0=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=FARh9+NSyoh9cEVojaQ5yO/5qNpny8hvAgXD5nEC67I=;
-        b=VsCEgAhCEnXJyBGGnxyYZ821CIuLSTM93C/DyxTFO26qRiYvcJ+3qLoqUya7WO8OIB
-         yQwRS9JWrqVs1K2wPDHCt5RRKbof66+dsyKP2kMEbKoRY13VLTjfYG/5JIw9RWXtLjDK
-         pbU/tkAPayZ4mBu4w97csA15WzzhPVoSn1BWrOU6/C4G7bNQyGaI3B72D/ojAr900rk5
-         1v1XpGG4sht2hbsTuPlbQvHW3NYIkLU9cQNcj1Sb2zs7jwf4xS0270CR5+RyILORIKwU
-         RXw5HKBz81/7AdU7ccbj+eikx46hWJaFWuUafpseB15QlebzKPw7KAuDI+V/kwgR0T/S
-         rc+Q==
-X-Gm-Message-State: APjAAAVrGHi//MRbgYMPJPk85TUJZDYXKoYq9EakfGvjiO1FDHfZgS+U
-        mMRxtlI6pPUwj2i+F81K1aTs7w==
-X-Google-Smtp-Source: APXvYqyHd5FT8CvoOI9/vPxv4sxwo5PHmJDSN6SkVVSjaI1OtaJ7MDk1gnotjCGKLpyZEXEYrUGOcA==
-X-Received: by 2002:a17:90a:9c1:: with SMTP id 59mr1846965pjo.65.1579908323338;
-        Fri, 24 Jan 2020 15:25:23 -0800 (PST)
+        bh=pMA+QteS/JKIrgzNNehkgXK6WKtqs9yO/7325HU0xxA=;
+        b=QLG08TzaGNZikLuVzK9+XsReaCZGwsBPpY7CRKuCsuwqDL8Q/7G3bUsDg6Ih/H5jGU
+         Y91/yG3godmE1Yu1dJ5CujLt/5DhqxiNGLtCUM6SBr9fwNKI7LzSpzKYcZ99mAr66gfT
+         XsY28LbgJK9zz1nu/EXCXs7w3jU51PRLwC813t4wRYRCD3+l1RCBGPtX8CR5d97cWnu3
+         +0yEAuvbk4/fpc4toJDGka/QeApKDajsKX3k/ggMvKVkGPyvBl7BKgH+QK+bEonAH8le
+         ShLlhlxZq2c4k3gENS7oXwgKFrOtYbHxZKdi+MItsNwZJaLXfmYO6dR8YQ6+vClndL5J
+         WRoA==
+X-Gm-Message-State: APjAAAV/mMzgmLs3I3bepfl9Vz1fuSUbYfVk5EjtwusHsR69gdc0f4km
+        Mrn0p6Sx/hsC385d72+T6jTxGQ==
+X-Google-Smtp-Source: APXvYqwY0AaVqS2LMQRZ1k5/WiWlXd2hBWliRPyl4SxOhlErcaZ2nhCS1Or5k6hnLxc4GiBDU6wz0w==
+X-Received: by 2002:a17:902:6ac3:: with SMTP id i3mr6070491plt.111.1579908454326;
+        Fri, 24 Jan 2020 15:27:34 -0800 (PST)
 Received: from pmalani2.mtv.corp.google.com ([2620:15c:202:201:172e:4646:c089:ce59])
-        by smtp.gmail.com with ESMTPSA id b12sm2823103pfr.26.2020.01.24.15.25.22
+        by smtp.gmail.com with ESMTPSA id b12sm2823103pfr.26.2020.01.24.15.27.33
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 24 Jan 2020 15:25:22 -0800 (PST)
+        Fri, 24 Jan 2020 15:27:33 -0800 (PST)
 From:   Prashant Malani <pmalani@chromium.org>
 To:     enric.balletbo@collabora.com, groeck@chromium.org,
         bleung@chromium.org, lee.jones@linaro.org, sre@kernel.org
 Cc:     linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+        Jon Flatley <jflat@chromium.org>,
         Prashant Malani <pmalani@chromium.org>
-Subject: [PATCH v8 3/4] mfd: cros_ec: Check DT node for usbpd-notify add
-Date:   Fri, 24 Jan 2020 15:18:36 -0800
-Message-Id: <20200124231834.63628-3-pmalani@chromium.org>
+Subject: [PATCH v8 4/4] power: supply: cros-ec-usbpd-charger: Fix host events
+Date:   Fri, 24 Jan 2020 15:18:38 -0800
+Message-Id: <20200124231834.63628-4-pmalani@chromium.org>
 X-Mailer: git-send-email 2.25.0.341.g760bfbb309-goog
 In-Reply-To: <20200124231834.63628-1-pmalani@chromium.org>
 References: <20200124231834.63628-1-pmalani@chromium.org>
@@ -60,33 +61,133 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add a check to ensure there is indeed an EC device tree entry before
-adding the cros-usbpd-notify device. This covers configs where both
-CONFIG_ACPI and CONFIG_OF are defined, but the EC device is defined
-using device tree and not in ACPI.
+From: Jon Flatley <jflat@chromium.org>
 
+There's a bug on ACPI platforms where host events from the ECPD ACPI
+device never make their way to the cros-ec-usbpd-charger driver. This
+makes it so the only time the charger driver updates its state is when
+user space accesses its sysfs attributes.
+
+Now that these events have been unified into a single notifier chain on
+both ACPI and non-ACPI platforms, update the charger driver to use this
+new notifier.
+
+Reviewed-by: Benson Leung <bleung@chromium.org>
+Co-Developed-by: Prashant Malani <pmalani@chromium.org>
+Signed-off-by: Jon Flatley <jflat@chromium.org>
 Signed-off-by: Prashant Malani <pmalani@chromium.org>
 ---
 
-Changes in v8:
-- Patch first introduced in v8 of the series.
+Changes in v8(pmalani@chromium.org):
+- No changes.
 
- drivers/mfd/cros_ec_dev.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Changes in v7(pmalani@chromium.org):
+- Alphabetize #include header.
 
-diff --git a/drivers/mfd/cros_ec_dev.c b/drivers/mfd/cros_ec_dev.c
-index d0c28a4c10ad0..411e80fc9a066 100644
---- a/drivers/mfd/cros_ec_dev.c
-+++ b/drivers/mfd/cros_ec_dev.c
-@@ -212,7 +212,7 @@ static int ec_device_probe(struct platform_device *pdev)
- 	 * explicitly added on platforms that don't have the PD notifier ACPI
- 	 * device entry defined.
- 	 */
--	if (IS_ENABLED(CONFIG_OF)) {
-+	if (IS_ENABLED(CONFIG_OF) && ec->ec_dev->dev->of_node) {
- 		if (cros_ec_check_features(ec, EC_FEATURE_USB_PD)) {
- 			retval = mfd_add_hotplug_devices(ec->dev,
- 					cros_usbpd_notify_cells,
+Changes in v6(pmalani@chromium.org):
+- Patch first introduced into the series in v6.
+
+ drivers/power/supply/Kconfig              |  2 +-
+ drivers/power/supply/cros_usbpd-charger.c | 50 ++++++++---------------
+ 2 files changed, 19 insertions(+), 33 deletions(-)
+
+diff --git a/drivers/power/supply/Kconfig b/drivers/power/supply/Kconfig
+index 27164a1d3c7c4..ba74ddd793c3d 100644
+--- a/drivers/power/supply/Kconfig
++++ b/drivers/power/supply/Kconfig
+@@ -659,7 +659,7 @@ config CHARGER_RT9455
+ 
+ config CHARGER_CROS_USBPD
+ 	tristate "ChromeOS EC based USBPD charger"
+-	depends on CROS_EC
++	depends on CROS_USBPD_NOTIFY
+ 	default n
+ 	help
+ 	  Say Y here to enable ChromeOS EC based USBPD charger
+diff --git a/drivers/power/supply/cros_usbpd-charger.c b/drivers/power/supply/cros_usbpd-charger.c
+index 6cc7c3910e098..7eea080048f43 100644
+--- a/drivers/power/supply/cros_usbpd-charger.c
++++ b/drivers/power/supply/cros_usbpd-charger.c
+@@ -9,6 +9,7 @@
+ #include <linux/module.h>
+ #include <linux/platform_data/cros_ec_commands.h>
+ #include <linux/platform_data/cros_ec_proto.h>
++#include <linux/platform_data/cros_usbpd_notify.h>
+ #include <linux/platform_device.h>
+ #include <linux/power_supply.h>
+ #include <linux/slab.h>
+@@ -524,32 +525,21 @@ static int cros_usbpd_charger_property_is_writeable(struct power_supply *psy,
+ }
+ 
+ static int cros_usbpd_charger_ec_event(struct notifier_block *nb,
+-				       unsigned long queued_during_suspend,
++				       unsigned long host_event,
+ 				       void *_notify)
+ {
+-	struct cros_ec_device *ec_device;
+-	struct charger_data *charger;
+-	u32 host_event;
++	struct charger_data *charger = container_of(nb, struct charger_data,
++						    notifier);
+ 
+-	charger = container_of(nb, struct charger_data, notifier);
+-	ec_device = charger->ec_device;
+-
+-	host_event = cros_ec_get_host_event(ec_device);
+-	if (host_event & EC_HOST_EVENT_MASK(EC_HOST_EVENT_PD_MCU)) {
+-		cros_usbpd_charger_power_changed(charger->ports[0]->psy);
+-		return NOTIFY_OK;
+-	} else {
+-		return NOTIFY_DONE;
+-	}
++	cros_usbpd_charger_power_changed(charger->ports[0]->psy);
++	return NOTIFY_OK;
+ }
+ 
+ static void cros_usbpd_charger_unregister_notifier(void *data)
+ {
+ 	struct charger_data *charger = data;
+-	struct cros_ec_device *ec_device = charger->ec_device;
+ 
+-	blocking_notifier_chain_unregister(&ec_device->event_notifier,
+-					   &charger->notifier);
++	cros_usbpd_unregister_notify(&charger->notifier);
+ }
+ 
+ static int cros_usbpd_charger_probe(struct platform_device *pd)
+@@ -683,21 +673,17 @@ static int cros_usbpd_charger_probe(struct platform_device *pd)
+ 		goto fail;
+ 	}
+ 
+-	if (ec_device->mkbp_event_supported) {
+-		/* Get PD events from the EC */
+-		charger->notifier.notifier_call = cros_usbpd_charger_ec_event;
+-		ret = blocking_notifier_chain_register(
+-						&ec_device->event_notifier,
+-						&charger->notifier);
+-		if (ret < 0) {
+-			dev_warn(dev, "failed to register notifier\n");
+-		} else {
+-			ret = devm_add_action_or_reset(dev,
+-					cros_usbpd_charger_unregister_notifier,
+-					charger);
+-			if (ret < 0)
+-				goto fail;
+-		}
++	/* Get PD events from the EC */
++	charger->notifier.notifier_call = cros_usbpd_charger_ec_event;
++	ret = cros_usbpd_register_notify(&charger->notifier);
++	if (ret < 0) {
++		dev_warn(dev, "failed to register notifier\n");
++	} else {
++		ret = devm_add_action_or_reset(dev,
++				cros_usbpd_charger_unregister_notifier,
++				charger);
++		if (ret < 0)
++			goto fail;
+ 	}
+ 
+ 	return 0;
 -- 
 2.25.0.341.g760bfbb309-goog
 
