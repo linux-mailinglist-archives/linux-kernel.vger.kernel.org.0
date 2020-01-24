@@ -2,36 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 96FDC148058
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Jan 2020 12:10:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5EA5E14807D
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Jan 2020 12:11:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387585AbgAXLKJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 24 Jan 2020 06:10:09 -0500
-Received: from mail.kernel.org ([198.145.29.99]:45830 "EHLO mail.kernel.org"
+        id S1732480AbgAXLLg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 24 Jan 2020 06:11:36 -0500
+Received: from mail.kernel.org ([198.145.29.99]:47452 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730170AbgAXLKG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 24 Jan 2020 06:10:06 -0500
+        id S2388450AbgAXLLa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 24 Jan 2020 06:11:30 -0500
 Received: from localhost (ip-213-127-102-57.ip.prioritytelecom.net [213.127.102.57])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CD67720663;
-        Fri, 24 Jan 2020 11:10:04 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8769920708;
+        Fri, 24 Jan 2020 11:11:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579864205;
-        bh=JIkjs8C9QE1u8UoMgAl79rNB1yLw+RBxDt3+1CJ6u1o=;
+        s=default; t=1579864290;
+        bh=G4tfkGkVxGfOb6rWktH3tl5zNrvKAE42h5/a4FwKegY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Sj0WcHDd95hQglwoH6z2mCJv4bC04e5tjh9Ex6bWobeDi7KIChm/0YinzwxPKHkPE
-         9h2dhy4KRT8wzWhYognhxyTCEJf8dbsSxJBOfWajNixGrQa/ru+lE2rjZis3EUnI38
-         WfYpNipdW+2CFqFKINsXYxeSPZnHEOMLzMg82duw=
+        b=UF5HxFZcTl6LR0IblEz/QCFl84thamBRZwjfpwQ2kip78pBlVetwBv4HpSecgLr1O
+         zAl1YCGqNn9HSc2XwK77SLjKoDxPOpyEPdI6jjPiCM6r+SOiRlk2EefWH4St887ZJx
+         6lTyL9zK/R/GTKB9yTbQ1H5pcUGlYkUkAo2ygi0E=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Florian Fainelli <f.fainelli@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 201/639] net: dsa: b53: Properly account for VLAN filtering
-Date:   Fri, 24 Jan 2020 10:26:11 +0100
-Message-Id: <20200124093112.222982098@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Lorenzo Bianconi <lorenzo.bianconi@redhat.com>,
+        Felix Fietkau <nbd@nbd.name>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.19 203/639] mt76: usb: fix possible memory leak in mt76u_buf_free
+Date:   Fri, 24 Jan 2020 10:26:13 +0100
+Message-Id: <20200124093112.459167813@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
 In-Reply-To: <20200124093047.008739095@linuxfoundation.org>
 References: <20200124093047.008739095@linuxfoundation.org>
@@ -44,150 +44,63 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Florian Fainelli <f.fainelli@gmail.com>
+From: Lorenzo Bianconi <lorenzo.bianconi@redhat.com>
 
-[ Upstream commit dad8d7c6452b5b9f9828c9e2c7ca143205fd40c7 ]
+[ Upstream commit cb83585e1121bd6d6c039cf09fa32380bf8b6258 ]
 
-VLAN filtering can be built into the kernel, and also dynamically turned
-on/off through the bridge master device. Allow re-configuring the switch
-appropriately to account for that by deciding whether VLAN table
-(v_table) misses should lead to a drop or forward.
+Move q->ndesc initialization before the for loop in mt76u_alloc_rx
+since otherwise allocated urbs will not be freed in mt76u_buf_free
+Double-check scatterlist pointer in mt76u_buf_free
 
-Fixes: a2482d2ce349 ("net: dsa: b53: Plug in VLAN support")
-Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Fixes: b40b15e1521f ("mt76: add usb support to mt76 layer")
+Signed-off-by: Lorenzo Bianconi <lorenzo.bianconi@redhat.com>
+Signed-off-by: Felix Fietkau <nbd@nbd.name>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/dsa/b53/b53_common.c | 59 +++++++++++++++++++++++++++++---
- drivers/net/dsa/b53/b53_priv.h   |  3 ++
- 2 files changed, 57 insertions(+), 5 deletions(-)
+ drivers/net/wireless/mediatek/mt76/usb.c | 14 ++++++++++----
+ 1 file changed, 10 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/net/dsa/b53/b53_common.c b/drivers/net/dsa/b53/b53_common.c
-index bceda1e884426..426ec1c05799a 100644
---- a/drivers/net/dsa/b53/b53_common.c
-+++ b/drivers/net/dsa/b53/b53_common.c
-@@ -343,7 +343,8 @@ static void b53_set_forwarding(struct b53_device *dev, int enable)
- 	b53_write8(dev, B53_CTRL_PAGE, B53_SWITCH_CTRL, mgmt);
- }
- 
--static void b53_enable_vlan(struct b53_device *dev, bool enable)
-+static void b53_enable_vlan(struct b53_device *dev, bool enable,
-+			    bool enable_filtering)
+diff --git a/drivers/net/wireless/mediatek/mt76/usb.c b/drivers/net/wireless/mediatek/mt76/usb.c
+index 8d40e92fb6f27..dcf927de65f39 100644
+--- a/drivers/net/wireless/mediatek/mt76/usb.c
++++ b/drivers/net/wireless/mediatek/mt76/usb.c
+@@ -273,10 +273,16 @@ EXPORT_SYMBOL_GPL(mt76u_buf_alloc);
+ void mt76u_buf_free(struct mt76u_buf *buf)
  {
- 	u8 mgmt, vc0, vc1, vc4 = 0, vc5;
+ 	struct urb *urb = buf->urb;
++	struct scatterlist *sg;
+ 	int i;
  
-@@ -368,8 +369,13 @@ static void b53_enable_vlan(struct b53_device *dev, bool enable)
- 		vc0 |= VC0_VLAN_EN | VC0_VID_CHK_EN | VC0_VID_HASH_VID;
- 		vc1 |= VC1_RX_MCST_UNTAG_EN | VC1_RX_MCST_FWD_EN;
- 		vc4 &= ~VC4_ING_VID_CHECK_MASK;
--		vc4 |= VC4_ING_VID_VIO_DROP << VC4_ING_VID_CHECK_S;
--		vc5 |= VC5_DROP_VTABLE_MISS;
-+		if (enable_filtering) {
-+			vc4 |= VC4_ING_VID_VIO_DROP << VC4_ING_VID_CHECK_S;
-+			vc5 |= VC5_DROP_VTABLE_MISS;
-+		} else {
-+			vc4 |= VC4_ING_VID_VIO_FWD << VC4_ING_VID_CHECK_S;
-+			vc5 &= ~VC5_DROP_VTABLE_MISS;
-+		}
- 
- 		if (is5325(dev))
- 			vc0 &= ~VC0_RESERVED_1;
-@@ -419,6 +425,9 @@ static void b53_enable_vlan(struct b53_device *dev, bool enable)
+-	for (i = 0; i < urb->num_sgs; i++)
+-		skb_free_frag(sg_virt(&urb->sg[i]));
++	for (i = 0; i < urb->num_sgs; i++) {
++		sg = &urb->sg[i];
++		if (!sg)
++			continue;
++
++		skb_free_frag(sg_virt(sg));
++	}
+ 	usb_free_urb(buf->urb);
+ }
+ EXPORT_SYMBOL_GPL(mt76u_buf_free);
+@@ -478,7 +484,8 @@ static int mt76u_alloc_rx(struct mt76_dev *dev)
+ 		nsgs = 1;
  	}
  
- 	b53_write8(dev, B53_CTRL_PAGE, B53_SWITCH_MODE, mgmt);
-+
-+	dev->vlan_enabled = enable;
-+	dev->vlan_filtering_enabled = enable_filtering;
- }
- 
- static int b53_set_jumbo(struct b53_device *dev, bool enable, bool allow_10_100)
-@@ -646,7 +655,7 @@ int b53_configure_vlan(struct dsa_switch *ds)
- 		b53_do_vlan_op(dev, VTA_CMD_CLEAR);
+-	for (i = 0; i < MT_NUM_RX_ENTRIES; i++) {
++	q->ndesc = MT_NUM_RX_ENTRIES;
++	for (i = 0; i < q->ndesc; i++) {
+ 		err = mt76u_buf_alloc(dev, &q->entry[i].ubuf,
+ 				      nsgs, q->buf_size,
+ 				      SKB_WITH_OVERHEAD(q->buf_size),
+@@ -486,7 +493,6 @@ static int mt76u_alloc_rx(struct mt76_dev *dev)
+ 		if (err < 0)
+ 			return err;
  	}
+-	q->ndesc = MT_NUM_RX_ENTRIES;
  
--	b53_enable_vlan(dev, false);
-+	b53_enable_vlan(dev, false, dev->vlan_filtering_enabled);
- 
- 	b53_for_each_port(dev, i)
- 		b53_write16(dev, B53_VLAN_PAGE,
-@@ -1081,6 +1090,46 @@ static void b53_adjust_link(struct dsa_switch *ds, int port,
- 
- int b53_vlan_filtering(struct dsa_switch *ds, int port, bool vlan_filtering)
- {
-+	struct b53_device *dev = ds->priv;
-+	struct net_device *bridge_dev;
-+	unsigned int i;
-+	u16 pvid, new_pvid;
-+
-+	/* Handle the case were multiple bridges span the same switch device
-+	 * and one of them has a different setting than what is being requested
-+	 * which would be breaking filtering semantics for any of the other
-+	 * bridge devices.
-+	 */
-+	b53_for_each_port(dev, i) {
-+		bridge_dev = dsa_to_port(ds, i)->bridge_dev;
-+		if (bridge_dev &&
-+		    bridge_dev != dsa_to_port(ds, port)->bridge_dev &&
-+		    br_vlan_enabled(bridge_dev) != vlan_filtering) {
-+			netdev_err(bridge_dev,
-+				   "VLAN filtering is global to the switch!\n");
-+			return -EINVAL;
-+		}
-+	}
-+
-+	b53_read16(dev, B53_VLAN_PAGE, B53_VLAN_PORT_DEF_TAG(port), &pvid);
-+	new_pvid = pvid;
-+	if (dev->vlan_filtering_enabled && !vlan_filtering) {
-+		/* Filtering is currently enabled, use the default PVID since
-+		 * the bridge does not expect tagging anymore
-+		 */
-+		dev->ports[port].pvid = pvid;
-+		new_pvid = b53_default_pvid(dev);
-+	} else if (!dev->vlan_filtering_enabled && vlan_filtering) {
-+		/* Filtering is currently disabled, restore the previous PVID */
-+		new_pvid = dev->ports[port].pvid;
-+	}
-+
-+	if (pvid != new_pvid)
-+		b53_write16(dev, B53_VLAN_PAGE, B53_VLAN_PORT_DEF_TAG(port),
-+			    new_pvid);
-+
-+	b53_enable_vlan(dev, dev->vlan_enabled, vlan_filtering);
-+
- 	return 0;
+ 	return mt76u_submit_rx_buffers(dev);
  }
- EXPORT_SYMBOL(b53_vlan_filtering);
-@@ -1096,7 +1145,7 @@ int b53_vlan_prepare(struct dsa_switch *ds, int port,
- 	if (vlan->vid_end > dev->num_vlans)
- 		return -ERANGE;
- 
--	b53_enable_vlan(dev, true);
-+	b53_enable_vlan(dev, true, dev->vlan_filtering_enabled);
- 
- 	return 0;
- }
-diff --git a/drivers/net/dsa/b53/b53_priv.h b/drivers/net/dsa/b53/b53_priv.h
-index df149756c2820..e87af5db0d6d8 100644
---- a/drivers/net/dsa/b53/b53_priv.h
-+++ b/drivers/net/dsa/b53/b53_priv.h
-@@ -73,6 +73,7 @@ enum {
- struct b53_port {
- 	u16		vlan_ctl_mask;
- 	struct ethtool_eee eee;
-+	u16		pvid;
- };
- 
- struct b53_vlan {
-@@ -118,6 +119,8 @@ struct b53_device {
- 
- 	unsigned int num_vlans;
- 	struct b53_vlan *vlans;
-+	bool vlan_enabled;
-+	bool vlan_filtering_enabled;
- 	unsigned int num_ports;
- 	struct b53_port *ports;
- };
 -- 
 2.20.1
 
