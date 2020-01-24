@@ -2,106 +2,166 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B27A3148FE9
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Jan 2020 22:08:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0DF4F148FEC
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Jan 2020 22:09:48 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729861AbgAXVIi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 24 Jan 2020 16:08:38 -0500
-Received: from [167.172.186.51] ([167.172.186.51]:57100 "EHLO shell.v3.sk"
-        rhost-flags-FAIL-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725747AbgAXVIi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 24 Jan 2020 16:08:38 -0500
-Received: from localhost (localhost.localdomain [127.0.0.1])
-        by zimbra.v3.sk (Postfix) with ESMTP id 3D8B6DFE17;
-        Fri, 24 Jan 2020 21:08:46 +0000 (UTC)
-Received: from shell.v3.sk ([127.0.0.1])
-        by localhost (zimbra.v3.sk [127.0.0.1]) (amavisd-new, port 10032)
-        with ESMTP id nsCRUdqw7lCo; Fri, 24 Jan 2020 21:08:45 +0000 (UTC)
-Received: from localhost (localhost.localdomain [127.0.0.1])
-        by zimbra.v3.sk (Postfix) with ESMTP id 97A45DFEAD;
-        Fri, 24 Jan 2020 21:08:45 +0000 (UTC)
-X-Virus-Scanned: amavisd-new at zimbra.v3.sk
-Received: from shell.v3.sk ([127.0.0.1])
-        by localhost (zimbra.v3.sk [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id ELtJo5_L7sxB; Fri, 24 Jan 2020 21:08:45 +0000 (UTC)
-Received: from localhost (unknown [109.183.109.54])
-        by zimbra.v3.sk (Postfix) with ESMTPSA id 4F1C4DFE17;
-        Fri, 24 Jan 2020 21:08:45 +0000 (UTC)
-Date:   Fri, 24 Jan 2020 22:08:33 +0100
-From:   Lubomir Rintel <lkundrak@v3.sk>
-To:     Sasha Levin <sashal@kernel.org>
-Cc:     linux-kernel@vger.kernel.org, stable@vger.kernel.org,
-        Stephen Boyd <sboyd@kernel.org>,
-        Olof Johansson <olof@lixom.net>, linux-clk@vger.kernel.org
-Subject: Re: [PATCH AUTOSEL 5.4 028/107] clk: mmp2: Fix the order of timer
- mux parents
-Message-ID: <20200124210833.GA244505@furthur.local>
-References: <20200124141817.28793-1-sashal@kernel.org>
- <20200124141817.28793-28-sashal@kernel.org>
+        id S1729991AbgAXVJo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 24 Jan 2020 16:09:44 -0500
+Received: from mga12.intel.com ([192.55.52.136]:47523 "EHLO mga12.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726080AbgAXVJo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 24 Jan 2020 16:09:44 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga006.fm.intel.com ([10.253.24.20])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 24 Jan 2020 13:09:44 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.70,358,1574150400"; 
+   d="scan'208";a="428409476"
+Received: from lkp-server01.sh.intel.com (HELO lkp-server01) ([10.239.97.150])
+  by fmsmga006.fm.intel.com with ESMTP; 24 Jan 2020 13:09:43 -0800
+Received: from kbuild by lkp-server01 with local (Exim 4.89)
+        (envelope-from <lkp@intel.com>)
+        id 1iv6D0-0001Yu-S4; Sat, 25 Jan 2020 05:09:42 +0800
+Date:   Sat, 25 Jan 2020 05:08:39 +0800
+From:   kbuild test robot <lkp@intel.com>
+To:     "Paul E. McKenney" <paulmck@kernel.org>
+Cc:     linux-kernel@vger.kernel.org
+Subject: [rcu:dev.2020.01.14a] BUILD INCOMPLETE
+ d5111eeaba3028b58dfc469f033b8cc3084f1092
+Message-ID: <5e2b5cd7.U5NOmBvB/UIGcK8B%lkp@intel.com>
+User-Agent: Heirloom mailx 12.5 6/20/10
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200124141817.28793-28-sashal@kernel.org>
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jan 24, 2020 at 09:16:58AM -0500, Sasha Levin wrote:
-> From: Lubomir Rintel <lkundrak@v3.sk>
-> 
-> [ Upstream commit 8bea5ac0fbc5b2103f8779ddff216122e3c2e1ad ]
-> 
-> Determined empirically, no documentation is available.
-> 
-> The OLPC XO-1.75 laptop used parent 1, that one being VCTCXO/4 (65MHz), but
-> thought it's a VCTCXO/2 (130MHz). The mmp2 timer driver, not knowing
-> what is going on, ended up just dividing the rate as of
-> commit f36797ee4380 ("ARM: mmp/mmp2: dt: enable the clock")'
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/paulmck/linux-rcu.git  dev.2020.01.14a
+branch HEAD: d5111eeaba3028b58dfc469f033b8cc3084f1092  rcu: Add missing annotation for rcu_nocb_bypass_lock()
 
-Hi,
+TIMEOUT after 2898m
 
-this has to go together with this one (in other stable trees too):
 
-  commit 0bd0f30bbf060891f58866a46083a9931f71787c
-  Author: Lubomir Rintel <lkundrak@v3.sk>
-  Date:   Wed Dec 18 20:04:53 2019 +0100
-  
-      ARM: mmp: do not divide the clock rate
-      
-      This was done because the clock driver returned the wrong rate, which is
-      fixed in "clk: mmp2: Fix the order of timer mux parents" patch.
+Sorry we cannot finish the testset for your branch within a reasonable time.
+It's our fault -- either some build server is down or some build worker is busy
+doing bisects for _other_ trees. The branch will get more complete coverage and
+possible error reports when our build infrastructure is restored or catches up.
+There will be no more build success notification for this branch head, but you
+can expect reasonably good test coverage after waiting for 1 day.
 
-It removes a workaround for the same issue from before it was
-understood what is going on. If it stays, the clock will run twice as
-fast.
+configs timed out: 46
 
-Thanks
-Lubo
+arm                              allmodconfig
+arm                               allnoconfig
+arm                              allyesconfig
+arm                         at91_dt_defconfig
+arm                           efm32_defconfig
+arm                          exynos_defconfig
+arm                        multi_v5_defconfig
+arm                        multi_v7_defconfig
+arm                        shmobile_defconfig
+arm                           sunxi_defconfig
+arm64                            allmodconfig
+arm64                             allnoconfig
+arm64                            allyesconfig
+arm64                               defconfig
+c6x                              allyesconfig
+c6x                        evmc6678_defconfig
+mips                           32r2_defconfig
+mips                         64r6el_defconfig
+mips                             allmodconfig
+mips                              allnoconfig
+mips                             allyesconfig
+mips                      fuloong2e_defconfig
+mips                      malta_kvm_defconfig
+nios2                         10m50_defconfig
+nios2                         3c120_defconfig
+openrisc                    or1ksim_defconfig
+openrisc                 simple_smp_defconfig
+riscv                            allmodconfig
+riscv                            allyesconfig
+riscv                    nommu_virt_defconfig
+sh                               allmodconfig
+sh                                allnoconfig
+sh                          rsk7269_defconfig
+sh                  sh7785lcr_32bit_defconfig
+sh                            titan_defconfig
+sparc64                           allnoconfig
+sparc64                          allyesconfig
+sparc64                             defconfig
+x86_64                              fedora-25
+x86_64                                  kexec
+x86_64                                    lkp
+x86_64                                   rhel
+x86_64                         rhel-7.2-clear
+x86_64                               rhel-7.6
+xtensa                       common_defconfig
+xtensa                          iss_defconfig
 
-> 
-> Link: https://lore.kernel.org/r/20191218190454.420358-3-lkundrak@v3.sk
-> Signed-off-by: Lubomir Rintel <lkundrak@v3.sk>
-> Acked-by: Stephen Boyd <sboyd@kernel.org>
-> Signed-off-by: Olof Johansson <olof@lixom.net>
-> Signed-off-by: Sasha Levin <sashal@kernel.org>
-> ---
->  drivers/clk/mmp/clk-of-mmp2.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/clk/mmp/clk-of-mmp2.c b/drivers/clk/mmp/clk-of-mmp2.c
-> index a60a1be937ad6..b4a95cbbda989 100644
-> --- a/drivers/clk/mmp/clk-of-mmp2.c
-> +++ b/drivers/clk/mmp/clk-of-mmp2.c
-> @@ -134,7 +134,7 @@ static DEFINE_SPINLOCK(ssp3_lock);
->  static const char *ssp_parent_names[] = {"vctcxo_4", "vctcxo_2", "vctcxo", "pll1_16"};
->  
->  static DEFINE_SPINLOCK(timer_lock);
-> -static const char *timer_parent_names[] = {"clk32", "vctcxo_2", "vctcxo_4", "vctcxo"};
-> +static const char *timer_parent_names[] = {"clk32", "vctcxo_4", "vctcxo_2", "vctcxo"};
->  
->  static DEFINE_SPINLOCK(reset_lock);
->  
-> -- 
-> 2.20.1
-> 
+configs tested: 57
+configs skipped: 1
+
+arc                              allyesconfig
+arc                                 defconfig
+microblaze                      mmu_defconfig
+microblaze                    nommu_defconfig
+powerpc                           allnoconfig
+powerpc                             defconfig
+powerpc                       ppc64_defconfig
+powerpc                          rhel-kconfig
+s390                              allnoconfig
+s390                             alldefconfig
+s390                          debug_defconfig
+s390                             allmodconfig
+s390                                defconfig
+s390                       zfcpdump_defconfig
+s390                             allyesconfig
+sparc64                          allmodconfig
+um                           x86_64_defconfig
+um                             i386_defconfig
+um                                  defconfig
+ia64                             allmodconfig
+ia64                              allnoconfig
+ia64                             allyesconfig
+ia64                                defconfig
+ia64                             alldefconfig
+i386                              allnoconfig
+i386                                defconfig
+i386                             allyesconfig
+i386                             alldefconfig
+nds32                               defconfig
+alpha                               defconfig
+csky                                defconfig
+nds32                             allnoconfig
+x86_64               randconfig-a001-20200124
+i386                 randconfig-a001-20200124
+x86_64               randconfig-a002-20200124
+i386                 randconfig-a002-20200124
+i386                 randconfig-a003-20200124
+x86_64               randconfig-a003-20200124
+m68k                          multi_defconfig
+m68k                       m5475evb_defconfig
+h8300                    h8300h-sim_defconfig
+h8300                     edosk2674_defconfig
+m68k                           sun3_defconfig
+h8300                       h8s-sim_defconfig
+m68k                             allmodconfig
+parisc                        c3000_defconfig
+parisc                         b180_defconfig
+parisc                              defconfig
+parisc                            allnoconfig
+arm                  randconfig-a001-20200123
+sparc                randconfig-a001-20200123
+h8300                randconfig-a001-20200123
+nios2                randconfig-a001-20200123
+c6x                  randconfig-a001-20200123
+riscv                          rv32_defconfig
+riscv                             allnoconfig
+riscv                               defconfig
+
+---
+0-DAY kernel test infrastructure                 Open Source Technology Center
+https://lists.01.org/hyperkitty/list/kbuild-all@lists.01.org Intel Corporation
