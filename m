@@ -2,35 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 07ED01488C1
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Jan 2020 15:31:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C3F611488BD
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Jan 2020 15:31:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392529AbgAXOab (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 24 Jan 2020 09:30:31 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42038 "EHLO mail.kernel.org"
+        id S2392389AbgAXOa0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 24 Jan 2020 09:30:26 -0500
+Received: from mail.kernel.org ([198.145.29.99]:42066 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2405003AbgAXOUn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 24 Jan 2020 09:20:43 -0500
+        id S2405020AbgAXOUo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 24 Jan 2020 09:20:44 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6292222522;
-        Fri, 24 Jan 2020 14:20:42 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 606CC2467E;
+        Fri, 24 Jan 2020 14:20:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579875643;
-        bh=3UhvI8O3+HQoLTBCTeoSba6nKdJFcCf8MRzo7M4mGKc=;
+        s=default; t=1579875644;
+        bh=0JWmRm7twNzWFAnJhWYBpGSoOmzLET+276Z/o2Em/DI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=AtsjL3ylGjppy/K+j2cJ+ByfgISYvIV2mlU0511/C0HEeC83CWC5rUTbzcNwa68F1
-         JTZ9hbD3qFdyGSabazimEskQ/mozp1sm1O1SUsUg4GnRk4q1jfeM7W7bVH4awBvk7N
-         /8nn85LtwA8Jn/0s5BzWSwDwWU+5qO1P6S9ZyUxI=
+        b=YspxQqvTap+A81506yh4zYRuxEykM3CKvBarMrPJmKik7VlJoDjxuJIA7bMW5ROfD
+         AmPg0FKsFmQoNSisKBVhDsvekaP6YIpXHQSXrNHbeiMXhlYypAbUv1BHAw28y8KRWX
+         vOPrq+XzoXr1jTC77Lyn+C6y2rrHWjcZv4df/JHs=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Arnaud Pouliquen <arnaud.pouliquen@st.com>,
+Cc:     Stephan Gerhold <stephan@gerhold.net>,
+        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
         Mark Brown <broonie@kernel.org>,
         Sasha Levin <sashal@kernel.org>, alsa-devel@alsa-project.org
-Subject: [PATCH AUTOSEL 4.19 26/56] ASoC: sti: fix possible sleep-in-atomic
-Date:   Fri, 24 Jan 2020 09:19:42 -0500
-Message-Id: <20200124142012.29752-26-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 27/56] ASoC: msm8916-wcd-analog: Fix MIC BIAS Internal1
+Date:   Fri, 24 Jan 2020 09:19:43 -0500
+Message-Id: <20200124142012.29752-27-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200124142012.29752-1-sashal@kernel.org>
 References: <20200124142012.29752-1-sashal@kernel.org>
@@ -43,69 +44,69 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Arnaud Pouliquen <arnaud.pouliquen@st.com>
+From: Stephan Gerhold <stephan@gerhold.net>
 
-[ Upstream commit ce780a47c3c01e1e179d0792df6b853a913928f1 ]
+[ Upstream commit 057efcf9faea4769cf1020677d93d040db9b23f3 ]
 
-Change mutex and spinlock management to avoid sleep
-in atomic issue.
+MIC BIAS Internal1 is broken at the moment because we always
+enable the internal rbias resistor to the TX2 line (connected to
+the headset microphone), rather than enabling the resistor connected
+to TX1.
 
-Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@st.com>
-Link: https://lore.kernel.org/r/20200113100400.30472-1-arnaud.pouliquen@st.com
+Move the RBIAS code to pm8916_wcd_analog_enable_micbias_int1/2()
+to fix this.
+
+Fixes: 585e881e5b9e ("ASoC: codecs: Add msm8916-wcd analog codec")
+Cc: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Signed-off-by: Stephan Gerhold <stephan@gerhold.net>
+Link: https://lore.kernel.org/r/20200111164006.43074-3-stephan@gerhold.net
 Signed-off-by: Mark Brown <broonie@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- sound/soc/sti/uniperif_player.c | 7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
+ sound/soc/codecs/msm8916-wcd-analog.c | 16 +++++++++++++---
+ 1 file changed, 13 insertions(+), 3 deletions(-)
 
-diff --git a/sound/soc/sti/uniperif_player.c b/sound/soc/sti/uniperif_player.c
-index 313dab2857ef9..4b0beb372cd94 100644
---- a/sound/soc/sti/uniperif_player.c
-+++ b/sound/soc/sti/uniperif_player.c
-@@ -226,7 +226,6 @@ static void uni_player_set_channel_status(struct uniperif *player,
- 	 * sampling frequency. If no sample rate is already specified, then
- 	 * set one.
- 	 */
--	mutex_lock(&player->ctrl_lock);
- 	if (runtime) {
- 		switch (runtime->rate) {
- 		case 22050:
-@@ -303,7 +302,6 @@ static void uni_player_set_channel_status(struct uniperif *player,
- 		player->stream_settings.iec958.status[3 + (n * 4)] << 24;
- 		SET_UNIPERIF_CHANNEL_STA_REGN(player, n, status);
- 	}
--	mutex_unlock(&player->ctrl_lock);
+diff --git a/sound/soc/codecs/msm8916-wcd-analog.c b/sound/soc/codecs/msm8916-wcd-analog.c
+index 6083b44ce1c6c..cbdb6d4bb91ef 100644
+--- a/sound/soc/codecs/msm8916-wcd-analog.c
++++ b/sound/soc/codecs/msm8916-wcd-analog.c
+@@ -388,9 +388,6 @@ static int pm8916_wcd_analog_enable_micbias_int(struct snd_soc_component
  
- 	/* Update the channel status */
- 	if (player->ver < SND_ST_UNIPERIF_VERSION_UNI_PLR_TOP_1_0)
-@@ -365,8 +363,10 @@ static int uni_player_prepare_iec958(struct uniperif *player,
+ 	switch (event) {
+ 	case SND_SOC_DAPM_PRE_PMU:
+-		snd_soc_component_update_bits(component, CDC_A_MICB_1_INT_RBIAS,
+-				    MICB_1_INT_TX2_INT_RBIAS_EN_MASK,
+-				    MICB_1_INT_TX2_INT_RBIAS_EN_ENABLE);
+ 		snd_soc_component_update_bits(component, reg, MICB_1_EN_PULL_DOWN_EN_MASK, 0);
+ 		snd_soc_component_update_bits(component, CDC_A_MICB_1_EN,
+ 				    MICB_1_EN_OPA_STG2_TAIL_CURR_MASK,
+@@ -440,6 +437,14 @@ static int pm8916_wcd_analog_enable_micbias_int1(struct
+ 	struct snd_soc_component *component = snd_soc_dapm_to_component(w->dapm);
+ 	struct pm8916_wcd_analog_priv *wcd = snd_soc_component_get_drvdata(component);
  
- 	SET_UNIPERIF_CTRL_ZERO_STUFF_HW(player);
- 
-+	mutex_lock(&player->ctrl_lock);
- 	/* Update the channel status */
- 	uni_player_set_channel_status(player, runtime);
-+	mutex_unlock(&player->ctrl_lock);
- 
- 	/* Clear the user validity user bits */
- 	SET_UNIPERIF_USER_VALIDITY_VALIDITY_LR(player, 0);
-@@ -598,7 +598,6 @@ static int uni_player_ctl_iec958_put(struct snd_kcontrol *kcontrol,
- 	iec958->status[1] = ucontrol->value.iec958.status[1];
- 	iec958->status[2] = ucontrol->value.iec958.status[2];
- 	iec958->status[3] = ucontrol->value.iec958.status[3];
--	mutex_unlock(&player->ctrl_lock);
- 
- 	spin_lock_irqsave(&player->irq_lock, flags);
- 	if (player->substream && player->substream->runtime)
-@@ -608,6 +607,8 @@ static int uni_player_ctl_iec958_put(struct snd_kcontrol *kcontrol,
- 		uni_player_set_channel_status(player, NULL);
- 
- 	spin_unlock_irqrestore(&player->irq_lock, flags);
-+	mutex_unlock(&player->ctrl_lock);
++	switch (event) {
++	case SND_SOC_DAPM_PRE_PMU:
++		snd_soc_component_update_bits(component, CDC_A_MICB_1_INT_RBIAS,
++				    MICB_1_INT_TX1_INT_RBIAS_EN_MASK,
++				    MICB_1_INT_TX1_INT_RBIAS_EN_ENABLE);
++		break;
++	}
 +
- 	return 0;
+ 	return pm8916_wcd_analog_enable_micbias_int(component, event, w->reg,
+ 						     wcd->micbias1_cap_mode);
  }
+@@ -550,6 +555,11 @@ static int pm8916_wcd_analog_enable_micbias_int2(struct
+ 	struct pm8916_wcd_analog_priv *wcd = snd_soc_component_get_drvdata(component);
  
+ 	switch (event) {
++	case SND_SOC_DAPM_PRE_PMU:
++		snd_soc_component_update_bits(component, CDC_A_MICB_1_INT_RBIAS,
++				    MICB_1_INT_TX2_INT_RBIAS_EN_MASK,
++				    MICB_1_INT_TX2_INT_RBIAS_EN_ENABLE);
++		break;
+ 	case SND_SOC_DAPM_POST_PMU:
+ 		pm8916_mbhc_configure_bias(wcd, true);
+ 		break;
 -- 
 2.20.1
 
