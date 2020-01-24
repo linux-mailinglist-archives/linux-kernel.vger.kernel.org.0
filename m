@@ -2,37 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E5265147F4F
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Jan 2020 12:01:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 22AAE147F33
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Jan 2020 12:00:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387612AbgAXLBQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 24 Jan 2020 06:01:16 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33888 "EHLO mail.kernel.org"
+        id S1733205AbgAXLA2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 24 Jan 2020 06:00:28 -0500
+Received: from mail.kernel.org ([198.145.29.99]:59796 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730614AbgAXLBP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 24 Jan 2020 06:01:15 -0500
+        id S1733185AbgAXLAZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 24 Jan 2020 06:00:25 -0500
 Received: from localhost (ip-213-127-102-57.ip.prioritytelecom.net [213.127.102.57])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 89C562071A;
-        Fri, 24 Jan 2020 11:01:13 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 52C692071A;
+        Fri, 24 Jan 2020 11:00:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579863674;
-        bh=KU8PfJUa6fdmlzZuEbVLvGlGX2RO86ME0LZgXXhZrqw=;
+        s=default; t=1579863625;
+        bh=SxPgSaC3Z9OSyuIBN90jXVJ5S8zcRTzhZAnQKqLR6pM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=2sRGgQHXQ0X5wa1fsHDWCjhcdqwC8vd1Qf4D3s3jeObf1YJOkHMkOnpkPvRlSEXcG
-         C33fRVSyEmTcDIuLnyd+czEaNUF7j9c8eT+xR4ka43BIySM31NtzK3xX2GbGvAyGT+
-         fcu6xXO2SQCH5o1NpvpAOzEfcQZPU2qRhJ1XQdk0=
+        b=PEokW19ESH8H0MND86uYmzSFmfGgh0C6x2tnFWuUMbm45vxyzdNY9rSzYgLoP2msM
+         /NKhVbHOFTuMiF2BEEfd1QIzoD+wxPl4fYITnz07r3yyZcNh6ZditFHTBz5plHX3VT
+         QO1vImz/6jgyJzu9z16Y5xclEPKU1IcT1dUjkxWA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
-        Charles Keepax <ckeepax@opensource.cirrus.com>,
-        Mark Brown <broonie@kernel.org>,
+        stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>,
+        Houlong Wei <houlong.wei@mediatek.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Jassi Brar <jaswinder.singh@linaro.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 034/639] ASoC: wm9712: fix unused variable warning
-Date:   Fri, 24 Jan 2020 10:23:24 +0100
-Message-Id: <20200124093051.703049750@linuxfoundation.org>
+Subject: [PATCH 4.19 035/639] mailbox: mediatek: Add check for possible failure of kzalloc
+Date:   Fri, 24 Jan 2020 10:23:25 +0100
+Message-Id: <20200124093051.838285303@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
 In-Reply-To: <20200124093047.008739095@linuxfoundation.org>
 References: <20200124093047.008739095@linuxfoundation.org>
@@ -45,45 +46,39 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Arnd Bergmann <arnd@arndb.de>
+From: Houlong Wei <houlong.wei@mediatek.com>
 
-[ Upstream commit 18380dcc52cc8965e5144ce33fdfad7e168679a5 ]
+[ Upstream commit 9f0a0a381c5db56e7922dbeea6831f27db58372f ]
 
-The 'ret' variable is now only used in an #ifdef, and causes a
-warning if it is declared outside of that block:
+The patch 623a6143a845("mailbox: mediatek: Add Mediatek CMDQ driver")
+introduce the following static checker warning:
+  drivers/mailbox/mtk-cmdq-mailbox.c:366 cmdq_mbox_send_data()
+  error: potential null dereference 'task'.  (kzalloc returns null)
 
-sound/soc/codecs/wm9712.c: In function 'wm9712_soc_probe':
-sound/soc/codecs/wm9712.c:641:6: error: unused variable 'ret' [-Werror=unused-variable]
-
-Fixes: 2ed1a8e0ce8d ("ASoC: wm9712: add ac97 new bus support")
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-Acked-by: Charles Keepax <ckeepax@opensource.cirrus.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Fixes: 623a6143a845 ("mailbox: mediatek: Add Mediatek CMDQ driver")
+Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Houlong Wei <houlong.wei@mediatek.com>
+Reviewed-by: Philipp Zabel <p.zabel@pengutronix.de>
+Signed-off-by: Jassi Brar <jaswinder.singh@linaro.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- sound/soc/codecs/wm9712.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/mailbox/mtk-cmdq-mailbox.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/sound/soc/codecs/wm9712.c b/sound/soc/codecs/wm9712.c
-index ade34c26ad2f3..e873baa9e7780 100644
---- a/sound/soc/codecs/wm9712.c
-+++ b/sound/soc/codecs/wm9712.c
-@@ -638,13 +638,14 @@ static int wm9712_soc_probe(struct snd_soc_component *component)
- {
- 	struct wm9712_priv *wm9712 = snd_soc_component_get_drvdata(component);
- 	struct regmap *regmap;
--	int ret;
+diff --git a/drivers/mailbox/mtk-cmdq-mailbox.c b/drivers/mailbox/mtk-cmdq-mailbox.c
+index aec46d5d35061..f7cc29c00302a 100644
+--- a/drivers/mailbox/mtk-cmdq-mailbox.c
++++ b/drivers/mailbox/mtk-cmdq-mailbox.c
+@@ -363,6 +363,9 @@ static int cmdq_mbox_send_data(struct mbox_chan *chan, void *data)
+ 	WARN_ON(cmdq->suspended);
  
- 	if (wm9712->mfd_pdata) {
- 		wm9712->ac97 = wm9712->mfd_pdata->ac97;
- 		regmap = wm9712->mfd_pdata->regmap;
- 	} else {
- #ifdef CONFIG_SND_SOC_AC97_BUS
-+		int ret;
+ 	task = kzalloc(sizeof(*task), GFP_ATOMIC);
++	if (!task)
++		return -ENOMEM;
 +
- 		wm9712->ac97 = snd_soc_new_ac97_component(component, WM9712_VENDOR_ID,
- 						      WM9712_VENDOR_ID_MASK);
- 		if (IS_ERR(wm9712->ac97)) {
+ 	task->cmdq = cmdq;
+ 	INIT_LIST_HEAD(&task->list_entry);
+ 	task->pa_base = pkt->pa_base;
 -- 
 2.20.1
 
