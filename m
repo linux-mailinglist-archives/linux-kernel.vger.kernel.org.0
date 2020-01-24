@@ -2,18 +2,18 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5BCB4148A71
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Jan 2020 15:47:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 43BB1148A5D
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Jan 2020 15:47:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390041AbgAXOro (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 24 Jan 2020 09:47:44 -0500
-Received: from mx2.suse.de ([195.135.220.15]:43448 "EHLO mx2.suse.de"
+        id S2389569AbgAXOqq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 24 Jan 2020 09:46:46 -0500
+Received: from mx2.suse.de ([195.135.220.15]:43572 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388658AbgAXOqj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 24 Jan 2020 09:46:39 -0500
+        id S2388704AbgAXOqk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 24 Jan 2020 09:46:40 -0500
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id 34EEAAD5C;
+        by mx2.suse.de (Postfix) with ESMTP id DEA2CAEEE;
         Fri, 24 Jan 2020 14:46:38 +0000 (UTC)
 From:   Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
 To:     gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org
@@ -21,9 +21,9 @@ Cc:     Nicolas Saenz Julienne <nsaenzjulienne@suse.de>,
         bcm-kernel-feedback-list@broadcom.com,
         linux-rpi-kernel@lists.infradead.org,
         linux-arm-kernel@lists.infradead.org, devel@driverdev.osuosl.org
-Subject: [PATCH 10/22] staging: vc04_services: Get rid of vchiq_platform_handle_timeout()
-Date:   Fri, 24 Jan 2020 15:46:04 +0100
-Message-Id: <20200124144617.2213-11-nsaenzjulienne@suse.de>
+Subject: [PATCH 11/22] staging: vc04_services: Get rid of vchiq_on_remote_use_active()
+Date:   Fri, 24 Jan 2020 15:46:05 +0100
+Message-Id: <20200124144617.2213-12-nsaenzjulienne@suse.de>
 X-Mailer: git-send-email 2.25.0
 In-Reply-To: <20200124144617.2213-1-nsaenzjulienne@suse.de>
 References: <20200124144617.2213-1-nsaenzjulienne@suse.de>
@@ -34,61 +34,43 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The function does nothing.
+Function does nothing.
 
 Signed-off-by: Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
 ---
- .../vc04_services/interface/vchiq_arm/vchiq_2835_arm.c       | 5 -----
- .../staging/vc04_services/interface/vchiq_arm/vchiq_core.c   | 5 -----
- .../staging/vc04_services/interface/vchiq_arm/vchiq_core.h   | 3 ---
- 3 files changed, 13 deletions(-)
+ .../staging/vc04_services/interface/vchiq_arm/vchiq_arm.c   | 6 ------
+ .../staging/vc04_services/interface/vchiq_arm/vchiq_core.c  | 1 -
+ 2 files changed, 7 deletions(-)
 
-diff --git a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_2835_arm.c b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_2835_arm.c
-index a7f72dba2e20..c18c6ca0b6c0 100644
---- a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_2835_arm.c
-+++ b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_2835_arm.c
-@@ -257,11 +257,6 @@ int vchiq_dump_platform_state(void *dump_context)
- 	return vchiq_dump(dump_context, buf, len + 1);
+diff --git a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_arm.c b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_arm.c
+index a90d6fbbb54b..dbe403f9291b 100644
+--- a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_arm.c
++++ b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_arm.c
+@@ -2961,12 +2961,6 @@ vchiq_check_service(struct vchiq_service *service)
+ 	return ret;
  }
  
--void
--vchiq_platform_handle_timeout(struct vchiq_state *state)
+-/* stub functions */
+-void vchiq_on_remote_use_active(struct vchiq_state *state)
 -{
 -	(void)state;
 -}
- /*
-  * Local functions
-  */
+-
+ void vchiq_platform_conn_state_changed(struct vchiq_state *state,
+ 				       enum vchiq_connstate oldstate,
+ 				       enum vchiq_connstate newstate)
 diff --git a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_core.c b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_core.c
-index ef8340ab8a52..f135d55b29e5 100644
+index f135d55b29e5..c5493dee6dd7 100644
 --- a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_core.c
 +++ b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_core.c
-@@ -1911,11 +1911,6 @@ slot_handler_func(void *v)
- 						"message");
- 				}
- 				break;
--
--			case VCHIQ_CONNSTATE_PAUSE_TIMEOUT:
--			case VCHIQ_CONNSTATE_RESUME_TIMEOUT:
--				vchiq_platform_handle_timeout(state);
--				break;
- 			default:
- 				break;
- 			}
-diff --git a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_core.h b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_core.h
-index 535a67cc68ed..11037a499408 100644
---- a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_core.h
-+++ b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_core.h
-@@ -638,9 +638,6 @@ vchiq_platform_conn_state_changed(struct vchiq_state *state,
- 				  enum vchiq_connstate oldstate,
- 				  enum vchiq_connstate newstate);
+@@ -1815,7 +1815,6 @@ parse_rx_slots(struct vchiq_state *state)
+ 			vchiq_on_remote_release(state);
+ 			break;
+ 		case VCHIQ_MSG_REMOTE_USE_ACTIVE:
+-			vchiq_on_remote_use_active(state);
+ 			break;
  
--extern void
--vchiq_platform_handle_timeout(struct vchiq_state *state);
--
- extern void
- vchiq_set_conn_state(struct vchiq_state *state, enum vchiq_connstate newstate);
- 
+ 		default:
 -- 
 2.25.0
 
