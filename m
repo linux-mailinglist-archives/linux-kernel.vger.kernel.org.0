@@ -2,36 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6E3341486C1
+	by mail.lfdr.de (Postfix) with ESMTP id D829C1486C2
 	for <lists+linux-kernel@lfdr.de>; Fri, 24 Jan 2020 15:18:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390764AbgAXOSa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 24 Jan 2020 09:18:30 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37816 "EHLO mail.kernel.org"
+        id S2390819AbgAXOSc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 24 Jan 2020 09:18:32 -0500
+Received: from mail.kernel.org ([198.145.29.99]:37900 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390657AbgAXOS3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 24 Jan 2020 09:18:29 -0500
+        id S2390774AbgAXOSa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 24 Jan 2020 09:18:30 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 434C62087E;
-        Fri, 24 Jan 2020 14:18:27 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9DB58208C4;
+        Fri, 24 Jan 2020 14:18:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579875508;
-        bh=HLGLxSrsXy20mO7PpmbyNdO1rFVVjTyzEN2g0d2ZYoA=;
+        s=default; t=1579875510;
+        bh=7uUGsk4n0XXVgZsu9YNHGZEaSX4/OsqDtUdjcRoeTZY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=OpcpCvFmciq7INya800Y+JT9ucmfoZcvUyT362+B+TcwA+gwnlVFyIHV0ytdBZqpU
-         V09mvoXnkidSXeHti9tRKAle0OgZqvIWRON0ykwkCigJJ2j4s0OZzZKhwnEn/IF9JV
-         tvzPRik9UOkPrnyw6QfyVrH7O+cSsHW7oexgThp0=
+        b=etqrt8Nry6TimpWEieuEZL7LsqI8bmGnruxTCAw+gOHrKQz9c+QQkJmq9a6DNoohi
+         /FEkjziHDdhxH49QNjkUeEk5oV6ia6EwKmqFcEtUliogQtJReZAVnm3Bj+MuK8XKFl
+         lf6X6Z8dBBUp4PwWfp0rGSk5tnmfU87eLjIAMD+Y=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Kishon Vijay Abraham I <kishon@ti.com>,
+Cc:     Dave Gerlach <d-gerlach@ti.com>, Suman Anna <s-anna@ti.com>,
+        Santosh Shilimkar <ssantosh@kernel.org>,
         Tony Lindgren <tony@atomide.com>,
-        Sasha Levin <sashal@kernel.org>, linux-omap@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: [PATCH AUTOSEL 5.4 009/107] ARM: dts: am57xx-beagle-x15/am57xx-idk: Remove "gpios" for  endpoint dt nodes
-Date:   Fri, 24 Jan 2020 09:16:39 -0500
-Message-Id: <20200124141817.28793-9-sashal@kernel.org>
+        Sasha Levin <sashal@kernel.org>,
+        linux-arm-kernel@lists.infradead.org
+Subject: [PATCH AUTOSEL 5.4 011/107] soc: ti: wkup_m3_ipc: Fix race condition with rproc_boot
+Date:   Fri, 24 Jan 2020 09:16:41 -0500
+Message-Id: <20200124141817.28793-11-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200124141817.28793-1-sashal@kernel.org>
 References: <20200124141817.28793-1-sashal@kernel.org>
@@ -44,68 +45,53 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Kishon Vijay Abraham I <kishon@ti.com>
+From: Dave Gerlach <d-gerlach@ti.com>
 
-[ Upstream commit 81cc0877840f72210e809bbedd6346d686560fc1 ]
+[ Upstream commit 03729cfa0d543bc996bf959e762ec999afc8f3d2 ]
 
-PERST# line in the PCIE connector is driven by the host mode and not
-EP mode. The gpios property here is used for driving the PERST# line.
-Remove gpios property from all endpoint device tree nodes.
+Any user of wkup_m3_ipc calls wkup_m3_ipc_get to get a handle and this
+checks the value of the static variable m3_ipc_state to see if the
+wkup_m3 is ready. Currently this is populated during probe before
+rproc_boot has been called, meaning there is a window of time that
+wkup_m3_ipc_get can return a valid handle but the wkup_m3 itself is not
+ready, leading to invalid IPC calls to the wkup_m3 and system
+instability.
 
-Signed-off-by: Kishon Vijay Abraham I <kishon@ti.com>
+To avoid this, move the population of the m3_ipc_state variable until
+after rproc_boot has succeeded to guarantee a valid and usable handle
+is always returned.
+
+Reported-by: Suman Anna <s-anna@ti.com>
+Signed-off-by: Dave Gerlach <d-gerlach@ti.com>
+Acked-by: Santosh Shilimkar <ssantosh@kernel.org>
 Signed-off-by: Tony Lindgren <tony@atomide.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arm/boot/dts/am571x-idk.dts                | 4 ----
- arch/arm/boot/dts/am572x-idk-common.dtsi        | 4 ----
- arch/arm/boot/dts/am57xx-beagle-x15-common.dtsi | 4 ----
- 3 files changed, 12 deletions(-)
+ drivers/soc/ti/wkup_m3_ipc.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/arch/arm/boot/dts/am571x-idk.dts b/arch/arm/boot/dts/am571x-idk.dts
-index 0aaacea1d887b..975a6b1d3fc80 100644
---- a/arch/arm/boot/dts/am571x-idk.dts
-+++ b/arch/arm/boot/dts/am571x-idk.dts
-@@ -170,10 +170,6 @@
- 	gpios = <&gpio3 23 GPIO_ACTIVE_HIGH>;
- };
+diff --git a/drivers/soc/ti/wkup_m3_ipc.c b/drivers/soc/ti/wkup_m3_ipc.c
+index 378369d9364ae..e9ece45d7a333 100644
+--- a/drivers/soc/ti/wkup_m3_ipc.c
++++ b/drivers/soc/ti/wkup_m3_ipc.c
+@@ -419,6 +419,8 @@ static void wkup_m3_rproc_boot_thread(struct wkup_m3_ipc *m3_ipc)
+ 	ret = rproc_boot(m3_ipc->rproc);
+ 	if (ret)
+ 		dev_err(dev, "rproc_boot failed\n");
++	else
++		m3_ipc_state = m3_ipc;
  
--&pcie1_ep {
--	gpios = <&gpio3 23 GPIO_ACTIVE_HIGH>;
--};
--
- &mmc1 {
- 	pinctrl-names = "default", "hs";
- 	pinctrl-0 = <&mmc1_pins_default_no_clk_pu>;
-diff --git a/arch/arm/boot/dts/am572x-idk-common.dtsi b/arch/arm/boot/dts/am572x-idk-common.dtsi
-index a064f13b38802..ddf123620e962 100644
---- a/arch/arm/boot/dts/am572x-idk-common.dtsi
-+++ b/arch/arm/boot/dts/am572x-idk-common.dtsi
-@@ -147,10 +147,6 @@
- 	gpios = <&gpio3 23 GPIO_ACTIVE_HIGH>;
- };
+ 	do_exit(0);
+ }
+@@ -505,8 +507,6 @@ static int wkup_m3_ipc_probe(struct platform_device *pdev)
+ 		goto err_put_rproc;
+ 	}
  
--&pcie1_ep {
--	gpios = <&gpio3 23 GPIO_ACTIVE_HIGH>;
--};
+-	m3_ipc_state = m3_ipc;
 -
- &mailbox5 {
- 	status = "okay";
- 	mbox_ipu1_ipc3x: mbox_ipu1_ipc3x {
-diff --git a/arch/arm/boot/dts/am57xx-beagle-x15-common.dtsi b/arch/arm/boot/dts/am57xx-beagle-x15-common.dtsi
-index bc76f1705c0f6..9a94c96b0350e 100644
---- a/arch/arm/boot/dts/am57xx-beagle-x15-common.dtsi
-+++ b/arch/arm/boot/dts/am57xx-beagle-x15-common.dtsi
-@@ -547,10 +547,6 @@
- 	gpios = <&gpio2 8 GPIO_ACTIVE_LOW>;
- };
+ 	return 0;
  
--&pcie1_ep {
--	gpios = <&gpio2 8 GPIO_ACTIVE_LOW>;
--};
--
- &mcasp3 {
- 	#sound-dai-cells = <0>;
- 	assigned-clocks = <&l4per2_clkctrl DRA7_L4PER2_MCASP3_CLKCTRL 24>;
+ err_put_rproc:
 -- 
 2.20.1
 
