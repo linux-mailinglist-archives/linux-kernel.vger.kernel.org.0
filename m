@@ -2,83 +2,107 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9FFAC148B9B
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Jan 2020 16:59:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A5449148B98
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Jan 2020 16:58:16 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731187AbgAXP7l (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 24 Jan 2020 10:59:41 -0500
-Received: from mga18.intel.com ([134.134.136.126]:37307 "EHLO mga18.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727306AbgAXP7i (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 24 Jan 2020 10:59:38 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 24 Jan 2020 07:57:36 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.70,358,1574150400"; 
-   d="scan'208";a="293080681"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by fmsmga001.fm.intel.com with ESMTP; 24 Jan 2020 07:57:34 -0800
-Received: by black.fi.intel.com (Postfix, from userid 1003)
-        id BB36F3F4; Fri, 24 Jan 2020 17:57:33 +0200 (EET)
-From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To:     Petr Mladek <pmladek@suse.com>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        linux-kernel@vger.kernel.org
-Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: [PATCH v2 5/5] console: Introduce ->exit() callback
-Date:   Fri, 24 Jan 2020 17:57:32 +0200
-Message-Id: <20200124155733.54799-5-andriy.shevchenko@linux.intel.com>
-X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20200124155733.54799-1-andriy.shevchenko@linux.intel.com>
-References: <20200124155733.54799-1-andriy.shevchenko@linux.intel.com>
+        id S1730768AbgAXP6M (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 24 Jan 2020 10:58:12 -0500
+Received: from mail-oi1-f196.google.com ([209.85.167.196]:42113 "EHLO
+        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727306AbgAXP6M (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 24 Jan 2020 10:58:12 -0500
+Received: by mail-oi1-f196.google.com with SMTP id 18so2254873oin.9
+        for <linux-kernel@vger.kernel.org>; Fri, 24 Jan 2020 07:58:11 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=KPUbG3hCFOeAz+2tCYBbaM8hPXs0XfYtKSvTc52tAwI=;
+        b=JpQEHJ2Rcu3UyhumgEo2C76O1gAHMmICbO2XqI7Cx98M0sv72GM6EfAYOsMAghsqQe
+         JhMIElcRwrzaB1PpFbvbZE6ZPXLJlxYob3nq/iQTVmdVW9VWBTmfDnTtLYgBvXZrYFBW
+         +PwQ5MwpbCW6+5LcAeBGsvRQiBrVRwreDkJQbpHKrM2qiaH7OMfO16arMTqYmNuxKMik
+         fK63KEzewuCjpm1mdX2UgaUF8lzZnLb2oOisZUeJ1UUJTWUZSFe2d+4ejC2PkgJ0IUn8
+         saG8B3Lu3rsM2mERpGk+B+s8M6aUbZwxBHmmASQwgJ5RdytOrVrPukKjrggp4ZPZEHM2
+         kBPQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=KPUbG3hCFOeAz+2tCYBbaM8hPXs0XfYtKSvTc52tAwI=;
+        b=aTu2qTN+C9fVgXbSsM4qvOhHNyYJMxDdanJGsCvNQPhNs7g0HCk7IJO1M2PFIBHL93
+         AtvEHYMvccDpNFgzYl08xhTnrms83KeKcSZtrVc9aLMQG+alOLFVOkvxQvAE7puxXgJ1
+         FKZilPHzvMdAR+kNZRAaFfgVdM1gcOl4TIDqMpA4G3dOp4WlRz22MIwlGtNhNrUizaYL
+         TeHkv9Ph9GkbjDCW9mqnnF5n4T0VdqTBCyGPzEAH1Ps7wq7ShkpQjtREv5M864i/Viyc
+         giHU4xnCNcm7URXD3S53TCJ0vTzJVwmF5zN43Lt2VKk3URG1u7lvE5yjbs2XXOVvMS/D
+         Un0g==
+X-Gm-Message-State: APjAAAXpSaeLGseczWXX0PfO7rmt9Y55BBz/1sWMr7YSPEO8cR+qZOFC
+        0DUhdlu/4radnODtmB+SZRE=
+X-Google-Smtp-Source: APXvYqxmvd6MtkEknI+El5yUIiHfg27D/3uWaC3fx0XSnCQ5yTtInRzhZgJc540e0oIK+rptku90Pw==
+X-Received: by 2002:a05:6808:a9c:: with SMTP id q28mr2455682oij.176.1579881491127;
+        Fri, 24 Jan 2020 07:58:11 -0800 (PST)
+Received: from localhost.localdomain ([2604:1380:4111:8b00::1])
+        by smtp.gmail.com with ESMTPSA id h9sm1820292oie.53.2020.01.24.07.58.09
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 24 Jan 2020 07:58:09 -0800 (PST)
+From:   Nathan Chancellor <natechancellor@gmail.com>
+To:     Bard Liao <bardliao@realtek.com>,
+        Oder Chiou <oder_chiou@realtek.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>
+Cc:     alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org,
+        clang-built-linux@googlegroups.com,
+        Nathan Chancellor <natechancellor@gmail.com>
+Subject: [PATCH] ASoC: rt1015: Remove unnecessary const
+Date:   Fri, 24 Jan 2020 08:57:50 -0700
+Message-Id: <20200124155750.33753-1-natechancellor@gmail.com>
+X-Mailer: git-send-email 2.25.0
 MIME-Version: 1.0
+X-Patchwork-Bot: notify
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Some consoles might require special operations on unregistering. For example,
-serial console, when registered in the kernel, keeps power on for entire time,
-until it gets unregistered. For such cases to have a balance we would provide
-->exit() callback.
+Clang warns:
 
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+../sound/soc/codecs/rt1015.c:392:14: warning: duplicate 'const'
+declaration specifier [-Wduplicate-decl-specifier]
+static const SOC_ENUM_SINGLE_DECL(rt1015_boost_mode_enum, 0, 0,
+             ^
+../include/sound/soc.h:355:2: note: expanded from macro
+'SOC_ENUM_SINGLE_DECL'
+        SOC_ENUM_DOUBLE_DECL(name, xreg, xshift, xshift, xtexts)
+        ^
+../include/sound/soc.h:352:2: note: expanded from macro
+'SOC_ENUM_DOUBLE_DECL'
+        const struct soc_enum name = SOC_ENUM_DOUBLE(xreg, xshift_l, xshift_r, \
+        ^
+1 warning generated.
+
+Remove the const after static to fix it.
+
+Fixes: df31007400c3 ("ASoC: rt1015: add rt1015 amplifier driver")
+Link: https://github.com/ClangBuiltLinux/linux/issues/845
+Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
 ---
-v2: new patch
- include/linux/console.h | 1 +
- kernel/printk/printk.c  | 3 +++
- 2 files changed, 4 insertions(+)
+ sound/soc/codecs/rt1015.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/include/linux/console.h b/include/linux/console.h
-index f33016b3a401..54759ad0c36b 100644
---- a/include/linux/console.h
-+++ b/include/linux/console.h
-@@ -148,6 +148,7 @@ struct console {
- 	struct tty_driver *(*device)(struct console *, int *);
- 	void	(*unblank)(void);
- 	int	(*setup)(struct console *, char *);
-+	void	(*exit)(struct console *);
- 	int	(*match)(struct console *, char *name, int idx, char *options);
- 	short	flags;
- 	short	index;
-diff --git a/kernel/printk/printk.c b/kernel/printk/printk.c
-index da6a9bdf76b6..0319bb698d05 100644
---- a/kernel/printk/printk.c
-+++ b/kernel/printk/printk.c
-@@ -2850,6 +2850,9 @@ int unregister_console(struct console *console)
- 	if (console_drivers != NULL && console->flags & CON_CONSDEV)
- 		console_drivers->flags |= CON_CONSDEV;
+diff --git a/sound/soc/codecs/rt1015.c b/sound/soc/codecs/rt1015.c
+index 4a9c5b54008f..6d490e2dbc25 100644
+--- a/sound/soc/codecs/rt1015.c
++++ b/sound/soc/codecs/rt1015.c
+@@ -389,7 +389,7 @@ static const char * const rt1015_boost_mode[] = {
+ 	"Bypass", "Adaptive", "Fixed Adaptive"
+ };
  
-+	if (console->exit)
-+		console->exit(console);
-+
- 	console->flags &= ~CON_ENABLED;
- 	console_unlock();
- 	console_sysfs_notify();
+-static const SOC_ENUM_SINGLE_DECL(rt1015_boost_mode_enum, 0, 0,
++static SOC_ENUM_SINGLE_DECL(rt1015_boost_mode_enum, 0, 0,
+ 	rt1015_boost_mode);
+ 
+ static int rt1015_boost_mode_get(struct snd_kcontrol *kcontrol,
 -- 
-2.24.1
+2.25.0
 
