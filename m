@@ -2,64 +2,88 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E9785147F17
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Jan 2020 11:58:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A31F9147F32
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Jan 2020 12:00:37 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730070AbgAXK6D (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 24 Jan 2020 05:58:03 -0500
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:57392 "EHLO
-        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726294AbgAXK6D (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 24 Jan 2020 05:58:03 -0500
-Received: from localhost.localdomain (p200300CB87166A009DA8F7B8A96C6547.dip0.t-ipconnect.de [IPv6:2003:cb:8716:6a00:9da8:f7b8:a96c:6547])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        id S1733183AbgAXLAY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 24 Jan 2020 06:00:24 -0500
+Received: from mail.kernel.org ([198.145.29.99]:59610 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1732904AbgAXLAW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 24 Jan 2020 06:00:22 -0500
+Received: from localhost (ip-213-127-102-57.ip.prioritytelecom.net [213.127.102.57])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        (Authenticated sender: dafna)
-        by bhuna.collabora.co.uk (Postfix) with ESMTPSA id 8D520293601;
-        Fri, 24 Jan 2020 10:58:01 +0000 (GMT)
-From:   Dafna Hirschfeld <dafna.hirschfeld@collabora.com>
-To:     devicetree@vger.kernel.org
-Cc:     kishon@ti.com, robh+dt@kernel.org, mark.rutland@arm.com,
-        linux-kernel@vger.kernel.org, dafna.hirschfeld@collabora.com,
-        helen.koike@collabora.com, ezequiel@collabora.com,
-        kernel@collabora.com, dafna3@gmail.com
-Subject: [PATCH] dt-bindings: fix compilation error of the example in marvell,mmp3-hsic-phy.yaml
-Date:   Fri, 24 Jan 2020 11:57:53 +0100
-Message-Id: <20200124105753.15976-1-dafna.hirschfeld@collabora.com>
-X-Mailer: git-send-email 2.17.1
+        by mail.kernel.org (Postfix) with ESMTPSA id 5BFDC20838;
+        Fri, 24 Jan 2020 11:00:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1579863621;
+        bh=UWl/S2js9Wg1+AuLTYSHxvlC9MVnFZjfyWK5de/QnHg=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=YP65Cj592Fvwzu4VI6bHvfTKljC6Q2OvJYb2K7T4dGj+OinOSLP6wHnUWTriYCGGd
+         B2rNA0ksOriNAEuf2II3HSGGWGwMHFomn/pj6Wce1z21PufbOfx0WCkcyYNKk1XuB8
+         TuXPGMKfoTJSO6qzRCyOfv/u85ECcHHxJAJjlUTY=
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, Peter Rosin <peda@axentia.se>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.19 019/639] ARM: dts: at91: nattis: set the PRLUD and HIPOW signals low
+Date:   Fri, 24 Jan 2020 10:23:09 +0100
+Message-Id: <20200124093049.605522294@linuxfoundation.org>
+X-Mailer: git-send-email 2.25.0
+In-Reply-To: <20200124093047.008739095@linuxfoundation.org>
+References: <20200124093047.008739095@linuxfoundation.org>
+User-Agent: quilt/0.66
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Running `make dt_binging_check`, gives the error:
+From: Peter Rosin <peda@axentia.se>
 
-DTC     Documentation/devicetree/bindings/phy/marvell,mmp3-hsic-phy.example.dt.yaml
-Error: Documentation/devicetree/bindings/phy/marvell,mmp3-hsic-phy.example.dts:20.41-42 syntax error
-FATAL ERROR: Unable to parse input tree
+[ Upstream commit 29feb2c960ab32fc24249443d4434194ce96f083 ]
 
-This is because the example uses the macro GPIO_ACTIVE_HIGH which
-is defined in gpio.h but the include of this header is missing.
-Add the include to fix the error.
+AT91_PINCTRL_OUTPUT_VAL(0) without AT91_PINCTRL_OUTPUT is a no-op, so
+make sure the pins really output a zero.
 
-Signed-off-by: Dafna Hirschfeld <dafna.hirschfeld@collabora.com>
+Fixes: 0e4323899973 ("ARM: dts: at91: add devicetree for the Axentia Nattis with Natte power")
+Signed-off-by: Peter Rosin <peda@axentia.se>
+Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- Documentation/devicetree/bindings/phy/marvell,mmp3-hsic-phy.yaml | 1 +
- 1 file changed, 1 insertion(+)
+ arch/arm/boot/dts/at91-nattis-2-natte-2.dts | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/phy/marvell,mmp3-hsic-phy.yaml b/Documentation/devicetree/bindings/phy/marvell,mmp3-hsic-phy.yaml
-index 7917a95cda78..5ab436189f3b 100644
---- a/Documentation/devicetree/bindings/phy/marvell,mmp3-hsic-phy.yaml
-+++ b/Documentation/devicetree/bindings/phy/marvell,mmp3-hsic-phy.yaml
-@@ -33,6 +33,7 @@ required:
+diff --git a/arch/arm/boot/dts/at91-nattis-2-natte-2.dts b/arch/arm/boot/dts/at91-nattis-2-natte-2.dts
+index af9f38456d04e..bfa5815a07214 100644
+--- a/arch/arm/boot/dts/at91-nattis-2-natte-2.dts
++++ b/arch/arm/boot/dts/at91-nattis-2-natte-2.dts
+@@ -38,14 +38,16 @@
+ 						atmel,pins =
+ 							<AT91_PIOA 21
+ 							 AT91_PERIPH_GPIO
+-							 AT91_PINCTRL_OUTPUT_VAL(0)>;
++							 (AT91_PINCTRL_OUTPUT |
++							  AT91_PINCTRL_OUTPUT_VAL(0))>;
+ 					};
  
- examples:
-   - |
-+    #include <dt-bindings/gpio/gpio.h>
-     hsic-phy@f0001800 {
-             compatible = "marvell,mmp3-hsic-phy";
-             reg = <0xf0001800 0x40>;
+ 					pinctrl_lcd_hipow0: lcd_hipow0 {
+ 						atmel,pins =
+ 							<AT91_PIOA 23
+ 							 AT91_PERIPH_GPIO
+-							 AT91_PINCTRL_OUTPUT_VAL(0)>;
++							 (AT91_PINCTRL_OUTPUT |
++							  AT91_PINCTRL_OUTPUT_VAL(0))>;
+ 					};
+ 				};
+ 			};
 -- 
-2.17.1
+2.20.1
+
+
 
