@@ -2,95 +2,147 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 88F4E148A30
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Jan 2020 15:43:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DBEC9148A3B
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Jan 2020 15:45:50 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387483AbgAXOnJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 24 Jan 2020 09:43:09 -0500
-Received: from us-smtp-2.mimecast.com ([205.139.110.61]:27252 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1729604AbgAXOnI (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 24 Jan 2020 09:43:08 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1579876988;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=9l6POn3eu1T5wYGvqIrxXu86ud4cnXxoH7SZuURfrZw=;
-        b=BM65m3LyBYV97o3I8XEp4Zpt4hoEb/Fx0RssAf8yQFDdcWiFPVL6N7411M9X1Nqn4HQwAV
-        s3qrbEIJW3X90F0KPbLaPupjYmCCOh2PLq1bvVyqKVoT2E6EaH5ztn8HVniQ7z6FBR1rlD
-        EiL9oHE+Sl49gLC9vU88YwfwhAybtsE=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-106-NZHuf-WlOACiaqvI3HcN3A-1; Fri, 24 Jan 2020 09:43:03 -0500
-X-MC-Unique: NZHuf-WlOACiaqvI3HcN3A-1
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 9DAB4800D5B;
-        Fri, 24 Jan 2020 14:42:48 +0000 (UTC)
-Received: from llong.remote.csb (ovpn-124-92.rdu2.redhat.com [10.10.124.92])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 445F919C69;
-        Fri, 24 Jan 2020 14:42:42 +0000 (UTC)
-Subject: Re: [PATCH v8 4/5] locking/qspinlock: Introduce starvation avoidance
- into CNA
-To:     Peter Zijlstra <peterz@infradead.org>,
-        Alex Kogan <alex.kogan@oracle.com>
-Cc:     linux@armlinux.org.uk, Ingo Molnar <mingo@redhat.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Arnd Bergmann <arnd@arndb.de>, linux-arch@vger.kernel.org,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
-        Borislav Petkov <bp@alien8.de>, hpa@zytor.com, x86@kernel.org,
-        Hanjun Guo <guohanjun@huawei.com>,
-        Jan Glauber <jglauber@marvell.com>,
-        Steven Sistare <steven.sistare@oracle.com>,
-        Daniel Jordan <daniel.m.jordan@oracle.com>,
-        dave.dice@oracle.com
-References: <20191230194042.67789-1-alex.kogan@oracle.com>
- <20191230194042.67789-5-alex.kogan@oracle.com>
- <20200121132949.GL14914@hirez.programming.kicks-ass.net>
- <cfdf635d-be2e-9d4b-c4ca-6bcbddc6868f@redhat.com>
- <3862F8A1-FF9B-40AD-A88E-2C0BA7AF6F58@oracle.com>
- <20200124075235.GX14914@hirez.programming.kicks-ass.net>
-From:   Waiman Long <longman@redhat.com>
-Organization: Red Hat
-Message-ID: <2c6741c5-d89d-4b2c-cebe-a7c7f6eed884@redhat.com>
-Date:   Fri, 24 Jan 2020 09:42:42 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.2
-MIME-Version: 1.0
-In-Reply-To: <20200124075235.GX14914@hirez.programming.kicks-ass.net>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
+        id S2387889AbgAXOpr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 24 Jan 2020 09:45:47 -0500
+Received: from mga03.intel.com ([134.134.136.65]:33746 "EHLO mga03.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726173AbgAXOpr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 24 Jan 2020 09:45:47 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga005.jf.intel.com ([10.7.209.41])
+  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 24 Jan 2020 06:43:37 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.70,358,1574150400"; 
+   d="scan'208";a="400676239"
+Received: from chenyu-office.sh.intel.com ([10.239.158.173])
+  by orsmga005.jf.intel.com with ESMTP; 24 Jan 2020 06:43:35 -0800
+From:   Chen Yu <yu.c.chen@intel.com>
+To:     linux-pci@vger.kernel.org
+Cc:     Jonathan Corbet <corbet@lwn.net>,
+        Bjorn Helgaas <bhelgaas@google.com>, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Len Brown <lenb@kernel.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Chen Yu <yu.c.chen@intel.com>
+Subject: [PATCH][RFC] PCI: Add "pci=blacklist_dev=" parameter to blacklist specific devices
+Date:   Fri, 24 Jan 2020 22:42:48 +0800
+Message-Id: <20200124144248.11719-1-yu.c.chen@intel.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 1/24/20 2:52 AM, Peter Zijlstra wrote:
-> On Thu, Jan 23, 2020 at 04:33:54PM -0500, Alex Kogan wrote:
->> Let me put this question to you. What do you think the number should be?
-> I think it would be very good to keep the inter-node latency below 1ms.
-It is hard to guarantee that given that lock hold times can vary quite a
-lot depending on the workload. What we can control is just how many
-later lock waiters can jump ahead before a given waiter.
-> But to realize that we need data on the lock hold times. Specifically
-> for the heavily contended locks that make CNA worth it in the first
-> place.
->
-> I don't see that data, so I don't see how we can argue about this let
-> alone call something reasonable.
->
-In essence, CNA lock is for improving throughput on NUMA machines at the
-expense of increasing worst case latency. If low latency is important,
-it should be disabled. If CONFIG_PREEMPT_RT is on,
-CONFIG_NUMA_AWARE_SPINLOCKS should be off.
+It was found that on some platforms the bogus pci device might bring
+troubles to the system. For example, on a MacBookPro the system could
+not be power off or suspended due to internal pci resource confliction
+between bogus pci device and [io 0x1804]. Another case is that, once
+resumed from hibernation on a VM, the pci config space of a pci device
+is corrupt.
 
-Cheers,
-Longman
+To narrow down and benefit future debugging for such kind of issues,
+introduce the command line blacklist_dev=<vendor:device_id>> to blacklist
+such pci devices thus they will not be scanned thus not visible after
+bootup. For example,
+
+ pci.blacklist_dev=8086:293e
+
+forbid the audio device to be exposed to the OS.
+
+Signed-off-by: Chen Yu <yu.c.chen@intel.com>
+---
+ Documentation/admin-guide/kernel-parameters.txt |  6 ++++++
+ drivers/pci/pci.c                               | 17 +++++++++++++++++
+ drivers/pci/pci.h                               |  1 +
+ drivers/pci/probe.c                             |  3 +++
+ 4 files changed, 27 insertions(+)
+
+diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
+index ade4e6ec23e0..cd4a47e236aa 100644
+--- a/Documentation/admin-guide/kernel-parameters.txt
++++ b/Documentation/admin-guide/kernel-parameters.txt
+@@ -3583,6 +3583,12 @@
+ 				may put more devices in an IOMMU group.
+ 		force_floating	[S390] Force usage of floating interrupts.
+ 		nomio		[S390] Do not use MIO instructions.
++		blacklist_dev=<vendor:device_id>[; ...]
++				Specify one or more PCI devices (in the format
++				specified above) separated by semicolons.
++				Each device specified will not be scanned thus
++				will be invisible after boot up. This can be
++				used for debugging purpose.
+ 
+ 	pcie_aspm=	[PCIE] Forcibly enable or disable PCIe Active State Power
+ 			Management.
+diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
+index e87196cc1a7f..0e3626a401f4 100644
+--- a/drivers/pci/pci.c
++++ b/drivers/pci/pci.c
+@@ -6393,6 +6393,19 @@ void __weak pci_fixup_cardbus(struct pci_bus *bus)
+ }
+ EXPORT_SYMBOL(pci_fixup_cardbus);
+ 
++static const char *pci_blacklist_devs_param;
++
++bool pci_is_blacklist_dev(unsigned short vendor, unsigned short device)
++{
++	char search[10];
++
++	if (!pci_blacklist_devs_param)
++		return false;
++	sprintf(search, "%x:%x", vendor, device);
++
++	return strstr(pci_blacklist_devs_param, search) ? true : false;
++}
++
+ static int __init pci_setup(char *str)
+ {
+ 	while (str) {
+@@ -6451,6 +6464,8 @@ static int __init pci_setup(char *str)
+ 				pci_add_flags(PCI_SCAN_ALL_PCIE_DEVS);
+ 			} else if (!strncmp(str, "disable_acs_redir=", 18)) {
+ 				disable_acs_redir_param = str + 18;
++			} else if (!strncmp(str, "blacklist_dev=", 14)) {
++				pci_blacklist_devs_param = str + 14;
+ 			} else {
+ 				pr_err("PCI: Unknown option `%s'\n", str);
+ 			}
+@@ -6476,6 +6491,8 @@ static int __init pci_realloc_setup_params(void)
+ 					   GFP_KERNEL);
+ 	disable_acs_redir_param = kstrdup(disable_acs_redir_param, GFP_KERNEL);
+ 
++	pci_blacklist_devs_param = kstrdup(pci_blacklist_devs_param, GFP_KERNEL);
++
+ 	return 0;
+ }
+ pure_initcall(pci_realloc_setup_params);
+diff --git a/drivers/pci/pci.h b/drivers/pci/pci.h
+index a0a53bd05a0b..01b8ab2da065 100644
+--- a/drivers/pci/pci.h
++++ b/drivers/pci/pci.h
+@@ -669,4 +669,5 @@ static inline int pci_acpi_program_hp_params(struct pci_dev *dev)
+ extern const struct attribute_group aspm_ctrl_attr_group;
+ #endif
+ 
++bool pci_is_blacklist_dev(unsigned short vendor, unsigned short device);
+ #endif /* DRIVERS_PCI_H */
+diff --git a/drivers/pci/probe.c b/drivers/pci/probe.c
+index 512cb4312ddd..812ef901ecea 100644
+--- a/drivers/pci/probe.c
++++ b/drivers/pci/probe.c
+@@ -2271,6 +2271,9 @@ static struct pci_dev *pci_scan_device(struct pci_bus *bus, int devfn)
+ 	if (!pci_bus_read_dev_vendor_id(bus, devfn, &l, 60*1000))
+ 		return NULL;
+ 
++	if (pci_is_blacklist_dev(l & 0xffff, (l >> 16) & 0xffff))
++		return NULL;
++
+ 	dev = pci_alloc_dev(bus);
+ 	if (!dev)
+ 		return NULL;
+-- 
+2.17.1
 
