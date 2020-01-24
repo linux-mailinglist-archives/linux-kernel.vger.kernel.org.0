@@ -2,99 +2,84 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 37EFB148A65
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Jan 2020 15:47:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D15DE148ABC
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Jan 2020 15:55:30 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389895AbgAXOrS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 24 Jan 2020 09:47:18 -0500
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:42053 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389447AbgAXOqq (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 24 Jan 2020 09:46:46 -0500
-Received: by mail-wr1-f65.google.com with SMTP id q6so2269658wro.9
-        for <linux-kernel@vger.kernel.org>; Fri, 24 Jan 2020 06:46:45 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=d7nho88btA7XdPKueW+DP7zXBwkgUh/Agx/c+r7pFKg=;
-        b=DTZylmCwg5vELLX/se29ZL5QefwWb5Pxqp3i8o0pxcrnW6Rmr2QhZqBoxDKMEiH/IE
-         IKZLYSJu28s/9NTqow02DckxtvnaagJUEXB6PuKkW282rAlFdRRFvq9/Qx0neQJKLOV7
-         qDsHerItTkCbURWEkgYKLaH5ArIj2G6cvEiXEB/IC1YZDjFZoIKwub/ugp0coYZ3rGuL
-         +pNdvEP7Uu7veTffsrxb+YFoEW3ggTMhIQ/8o2AIDoR1NL3KM5N+iqDcIex2OE2FVkdr
-         ZwL4lEIzeNTfnDQwlk8j80abWODr5VhmgQ9psmG/oNXgBH5lM/WxFPsfVKDPu+5rNIPN
-         /QVQ==
-X-Gm-Message-State: APjAAAUJxIZk+cIcEaqBkDXt97480Jr74iNVox6/7QgWbQXBgrsOjOId
-        fGMEDXsGvWWuN32TmAboHBIL4guz
-X-Google-Smtp-Source: APXvYqwy13C+hrb5rggN5Fl0X/KO2iHGJRZqQvDZIaU7Uvx2HYIxOl4AtUirvS8iwnXAGM3sw4j40A==
-X-Received: by 2002:a5d:44ca:: with SMTP id z10mr4758194wrr.266.1579877204963;
-        Fri, 24 Jan 2020 06:46:44 -0800 (PST)
-Received: from localhost (prg-ext-pat.suse.com. [213.151.95.130])
-        by smtp.gmail.com with ESMTPSA id b128sm7032226wmb.25.2020.01.24.06.46.43
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 24 Jan 2020 06:46:44 -0800 (PST)
-Date:   Fri, 24 Jan 2020 15:46:43 +0100
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Wei Yang <richardw.yang@linux.intel.com>
-Cc:     akpm@linux-foundation.org, yang.shi@linux.alibaba.com,
-        jhubbard@nvidia.com, vbabka@suse.cz, cl@linux.com,
-        linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Subject: Re: [Patch v2] mm/migrate.c: also overwrite error when it is bigger
- than zero
-Message-ID: <20200124144643.GV29276@dhcp22.suse.cz>
-References: <20200119065753.21694-1-richardw.yang@linux.intel.com>
- <20200124072127.GO29276@dhcp22.suse.cz>
- <20200124141538.GA12509@richard>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200124141538.GA12509@richard>
+        id S2388077AbgAXOz1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 24 Jan 2020 09:55:27 -0500
+Received: from mx2.suse.de ([195.135.220.15]:48066 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2387597AbgAXOz1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 24 Jan 2020 09:55:27 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx2.suse.de (Postfix) with ESMTP id 68062AD5C;
+        Fri, 24 Jan 2020 14:55:25 +0000 (UTC)
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+In-Reply-To: <86672a12-6b88-dba8-0945-b6321ccf28c3@ti.com>
+Date:   Fri, 24 Jan 2020 15:47:19 +0100
+Subject: Re: [PATCH for-next] arm64: defconfig: Set bcm2835-dma as built-in
+From:   "Nicolas Saenz Julienne" <nsaenzjulienne@suse.de>
+To:     "Peter Ujfalusi" <peter.ujfalusi@ti.com>,
+        "Ulf Hansson" <ulf.hansson@linaro.org>
+Cc:     <f.fainelli@gmail.com>,
+        "Catalin Marinas" <catalin.marinas@arm.com>,
+        <linux-kernel@vger.kernel.org>,
+        <linux-rpi-kernel@lists.infradead.org>,
+        "Will Deacon" <will@kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>
+Message-Id: <C043QOCZ7SMB.2XXX2ESS1ZJ98@linux-9qgx>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri 24-01-20 22:15:38, Wei Yang wrote:
-> On Fri, Jan 24, 2020 at 08:21:27AM +0100, Michal Hocko wrote:
-> >[Sorry I have missed this patch previously]
-> >
-> 
-> No problem, thanks for your comment.
-> 
-> >On Sun 19-01-20 14:57:53, Wei Yang wrote:
-> >> If we get here after successfully adding page to list, err would be
-> >> 1 to indicate the page is queued in the list.
-> >> 
-> >> Current code has two problems:
-> >> 
-> >>   * on success, 0 is not returned
-> >>   * on error, if add_page_for_migratioin() return 1, and the following err1
-> >>     from do_move_pages_to_node() is set, the err1 is not returned since err
-> >>     is 1
-> >
-> >This made my really scratch my head to grasp. So essentially err > 0
-> >will happen when we reach the end of the loop and rely on the
-> >out_flush flushing to migrate the batch. Then err contains the
-> >add_page_for_migratioin return value. And that would leak to the
-> >userspace.
-> >
-> >What would you say about the following wording instead?
-> >"
-> >out_flush part of do_pages_move is responsible for migrating the last
-> >batch that accumulated while processing the input in the loop.
-> >do_move_pages_to_node return value is supposed to override any
-> >preexisting error (e.g. when the user input is garbage) but the current
-> 
-> I am afraid I have a different understanding here.
-> 
-> If we jump to out_flush on the test of node_isset(), err is -EACCESS. Current
-> logic would return this instead of the error from do_move_pages_to_node().
-> Seems we don't override -EACCESS.
+Hi Peter,
 
-And this is the expected logic. The unexpected behavior is the one you
-have fixed by this patch because err = 1 wouldn't get overriden and that
-should have been.
--- 
-Michal Hocko
-SUSE Labs
+On Fri Jan 24, 2020 at 2:05 PM, Peter Ujfalusi wrote:
+> On 24/01/2020 13.51, Nicolas Saenz Julienne wrote:
+> > Hi Peter,
+> >=20
+> > On Fri Jan 24, 2020 at 1:31 PM, Peter Ujfalusi wrote:
+> >> Hi Nicolas,
+> >>
+> >> On 24/01/2020 13.17, Nicolas Saenz Julienne wrote:
+> >>> With the introduction of 738987a1d6f1 ("mmc: bcm2835: Use
+> >>> dma_request_chan() instead dma_request_slave_channel()") sdhost-bcm28=
+35
+> >>> now waits for its DMA channel to be available when defined in the
+> >>> device-tree (it would previously default to PIO). Albeit the right
+> >>> behaviour, the MMC host is needed for booting. So this makes sure the
+> >>> DMA channel shows up in time.
+> >>>
+> >>> Fixes: 738987a1d6f1 ("mmc: bcm2835: Use dma_request_chan() instead dm=
+a_request_slave_channel()")
+> >>
+> >> it is not a bug, it is a feature ;)
+> >=20
+> > Agree, I'm just afraid of your series being picked up by a stable
+> > release without this patch. But maybe it's not necessary?
+>
+> If you need MMC rootfs then the DMA needs to be built in or have initrd
+> with the modules.
+> The driver expects to have DMA channel and it is going to wait for it to
+> appear unless the request fails.
+>
+> Without moving the DMA as built in and removing the deferred probe
+> handling form the MMC driver, one can just remove the DMA support from
+> the mmc-bcm2835 as it is not used at all.
+
+Oh sorry, I meant to ask if the 'Fixes:' tag was really needed. The
+patch itself is very much needed since not everyone uses initrds in the
+RPi world, and we want to keep being compatible as much as possible with
+older device-trees.
+
+> I wonder why this is not signaled by automated boot testing, if any
+> exists for bcm2835.
+
+Actually now that you mention it, it's failing since today here:
+https://kernelci.org/boot/bcm2837-rpi-3-b/
+
+Regards,
+Nicolas
