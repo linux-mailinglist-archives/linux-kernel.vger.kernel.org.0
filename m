@@ -2,93 +2,127 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 564D8147E4B
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Jan 2020 11:13:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CA138147D98
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Jan 2020 11:02:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389425AbgAXKHq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 24 Jan 2020 05:07:46 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44324 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389036AbgAXKHn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 24 Jan 2020 05:07:43 -0500
-Received: from localhost (unknown [145.15.244.15])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S2388735AbgAXKCA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 24 Jan 2020 05:02:00 -0500
+Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:46151 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1730743AbgAXKB6 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 24 Jan 2020 05:01:58 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1579860118;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=PMJRKqMk2D6RalzmkNddIEyqjvW23GFO/6wjGDDka/U=;
+        b=hFHNcdELgWpet0E1ObeDWznH/WaTAwepa0+3pH6YTSb+sv0NDm92RY3JM7y6lIN5ew/WNl
+        QHPnWFv4LXcoYvB0ulzOYgeGtIhVPXS0fMjZzOiaBjkkQ+UbsLQopVExX7nhVS2WpD6/UY
+        9TlYN3XtNo/GEaUbHRvsrq2fqB1Ky2M=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-92-a1tmzfSVNUKLmQfftrL5aw-1; Fri, 24 Jan 2020 05:01:56 -0500
+X-MC-Unique: a1tmzfSVNUKLmQfftrL5aw-1
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B2201214DB;
-        Fri, 24 Jan 2020 10:07:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579860462;
-        bh=bsH3ijRqniYLrLbQj0Njg+l5UNwU8vHEuRPVfW5okbg=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=CaVMy/qBhVUudS5xHitTMZzrdIRu6jJIuTqXrPjENE9PncMgEy94EysYoe5fi/s+0
-         TyTyuIypiWS3SJW7TcXA+xLwKVOQM3s1KoJcU39OKkZnIfTrXY7H2vPnkj2FeAGVC6
-         qx4yW79LcPLJl0iRTZieyDr4k/gjsW2h2C2VZWbk=
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Fabrice Gasnier <fabrice.gasnier@st.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 342/343] serial: stm32: fix clearing interrupt error flags
-Date:   Fri, 24 Jan 2020 10:32:40 +0100
-Message-Id: <20200124093004.818892172@linuxfoundation.org>
-X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200124092919.490687572@linuxfoundation.org>
-References: <20200124092919.490687572@linuxfoundation.org>
-User-Agent: quilt/0.66
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id DE0F21882CC7;
+        Fri, 24 Jan 2020 10:01:54 +0000 (UTC)
+Received: from kamzik.brq.redhat.com (unknown [10.43.2.160])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 9AC9260BE1;
+        Fri, 24 Jan 2020 10:01:50 +0000 (UTC)
+Date:   Fri, 24 Jan 2020 11:01:47 +0100
+From:   Andrew Jones <drjones@redhat.com>
+To:     Ben Gardon <bgardon@google.com>
+Cc:     linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
+        linux-kselftest@vger.kernel.org,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Cannon Matthews <cannonmatthews@google.com>,
+        Peter Xu <peterx@redhat.com>, Peter Shier <pshier@google.com>,
+        Oliver Upton <oupton@google.com>
+Subject: Re: [PATCH v4 04/10] KVM: selftests: Add memory size parameter to
+ the demand paging test
+Message-ID: <20200124100147.p5tlpsgu6phauygv@kamzik.brq.redhat.com>
+References: <20200123180436.99487-1-bgardon@google.com>
+ <20200123180436.99487-5-bgardon@google.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200123180436.99487-5-bgardon@google.com>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Fabrice Gasnier <fabrice.gasnier@st.com>
+> diff --git a/tools/testing/selftests/kvm/lib/test_util.c b/tools/testing/selftests/kvm/lib/test_util.c
+> new file mode 100644
+> index 0000000000000..706e0f963a44b
+> --- /dev/null
+> +++ b/tools/testing/selftests/kvm/lib/test_util.c
+> @@ -0,0 +1,61 @@
+> +// SPDX-License-Identifier: GPL-2.0-only
+> +/*
+> + * tools/testing/selftests/kvm/lib/test_util.c
+> + *
+> + * Copyright (C) 2020, Google LLC.
+> + */
+> +
+> +#include "test_util.h"
+> +
+> +#include <ctype.h>
+> +
+> +/*
+> + * Parses "[0-9]+[kmgt]?".
+> + */
+> +size_t parse_size(const char *size)
+> +{
+> +	size_t len = strlen(size);
+> +	size_t i;
+> +	size_t scale_shift = 0;
+> +	size_t base;
+> +
+> +	TEST_ASSERT(len > 0, "Need at least 1 digit in '%s'", size);
+> +
+> +	/* Find the first letter in the string, indicating scale. */
+> +	for (i = 0; i < len; i++) {
+> +		if (!isdigit(size[i])) {
+> +			TEST_ASSERT(i > 0, "Need at least 1 digit in '%s'",
+> +				    size);
+> +			TEST_ASSERT(i == len - 1,
+> +				    "Expected letter at the end in '%s'.",
+> +				    size);
+> +			switch (tolower(size[i])) {
+> +			case 't':
+> +				scale_shift = 40;
+> +				break;
+> +			case 'g':
+> +				scale_shift = 30;
+> +				break;
+> +			case 'm':
+> +				scale_shift = 20;
+> +				break;
+> +			case 'k':
+> +				scale_shift = 10;
+> +				break;
+> +			default:
+> +				TEST_ASSERT(false, "Unknown size letter %c",
+> +					    size[i]);
+> +			}
+> +		}
+> +	}
+> +
+> +	TEST_ASSERT(scale_shift < 8 * sizeof(size_t),
+> +		    "Overflow parsing scale!");
+> +
+> +	base = atoi(size);
 
-[ Upstream commit 1250ed7114a977cdc2a67a0c09d6cdda63970eb9 ]
+I'd use strtoull(size, NULL, 0), allowing the user to input full 0x...
+sizes too. And, if the strtoull is done before the scale parsing, then
+you could supply a non-null endptr and avoid the need for the for loop.
 
-The interrupt clear flag register is a "write 1 to clear" register.
-So, only writing ones allows to clear flags:
-- Replace buggy stm32_clr_bits() by a simple write to clear error flags
-- Replace useless read/modify/write stm32_set_bits() routine by a
-  simple write to clear TC (transfer complete) flag.
-
-Fixes: 4f01d833fdcd ("serial: stm32: fix rx error handling")
-Signed-off-by: Fabrice Gasnier <fabrice.gasnier@st.com>
-Cc: stable <stable@vger.kernel.org>
-Link: https://lore.kernel.org/r/1574323849-1909-1-git-send-email-fabrice.gasnier@st.com
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- drivers/tty/serial/stm32-usart.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/tty/serial/stm32-usart.c b/drivers/tty/serial/stm32-usart.c
-index f8f3f8fafd9f0..1e854e1851fbb 100644
---- a/drivers/tty/serial/stm32-usart.c
-+++ b/drivers/tty/serial/stm32-usart.c
-@@ -132,8 +132,8 @@ static void stm32_receive_chars(struct uart_port *port, bool threaded)
- 		 * cleared by the sequence [read SR - read DR].
- 		 */
- 		if ((sr & USART_SR_ERR_MASK) && ofs->icr != UNDEF_REG)
--			stm32_clr_bits(port, ofs->icr, USART_ICR_ORECF |
--				       USART_ICR_PECF | USART_ICR_FECF);
-+			writel_relaxed(sr & USART_SR_ERR_MASK,
-+				       port->membase + ofs->icr);
- 
- 		c = stm32_get_char(port, &sr, &stm32_port->last_res);
- 		port->icount.rx++;
-@@ -302,7 +302,7 @@ static void stm32_transmit_chars(struct uart_port *port)
- 	if (ofs->icr == UNDEF_REG)
- 		stm32_clr_bits(port, ofs->isr, USART_SR_TC);
- 	else
--		stm32_set_bits(port, ofs->icr, USART_ICR_TCCF);
-+		writel_relaxed(USART_ICR_TCCF, port->membase + ofs->icr);
- 
- 	if (stm32_port->tx_ch)
- 		stm32_transmit_chars_dma(port);
--- 
-2.20.1
-
-
+Thanks,
+drew
 
