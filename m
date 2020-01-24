@@ -2,265 +2,170 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DA836148976
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Jan 2020 15:35:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DA1EC148A16
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Jan 2020 15:41:37 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732389AbgAXOey (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 24 Jan 2020 09:34:54 -0500
-Received: from Galois.linutronix.de ([193.142.43.55]:42565 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731074AbgAXOes (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 24 Jan 2020 09:34:48 -0500
-Received: from [5.158.153.53] (helo=nanos.tec.linutronix.de)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1iv02l-0002eQ-Qz; Fri, 24 Jan 2020 15:34:43 +0100
-Received: by nanos.tec.linutronix.de (Postfix, from userid 1000)
-        id 67F5E103089; Fri, 24 Jan 2020 15:34:43 +0100 (CET)
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     Evan Green <evgreen@chromium.org>
-Cc:     Rajat Jain <rajatja@google.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        linux-pci <linux-pci@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        x86@kernel.org
-Subject: Re: [PATCH v2] PCI/MSI: Avoid torn updates to MSI pairs
-In-Reply-To: <CAE=gft7MqQ3Mej5oCT=gw6ZLMSTHoSyMGOFz=-hae-eRZvXLxA@mail.gmail.com>
-References: <20200117162444.v2.1.I9c7e72144ef639cc135ea33ef332852a6b33730f@changeid> <CACK8Z6Ft95qj4e_fsA32r_bcz2SsHOW1xxqZJt3_DBAJw=NMGA@mail.gmail.com> <CAE=gft6fKQWExW-=xjZGzXs30XohfpA5SKggvL2WtYXAHmzMew@mail.gmail.com> <87y2tytv5i.fsf@nanos.tec.linutronix.de> <87eevqkpgn.fsf@nanos.tec.linutronix.de> <CAE=gft6YiM5S1A7iJYJTd5zmaAa8=nhLE3B94JtWa+XW-qVSqQ@mail.gmail.com> <CAE=gft5xta4XCJtctWe=R3w=kVr598JCbk9VSRue04nzKAk3CQ@mail.gmail.com> <CAE=gft7MqQ3Mej5oCT=gw6ZLMSTHoSyMGOFz=-hae-eRZvXLxA@mail.gmail.com>
-Date:   Fri, 24 Jan 2020 15:34:43 +0100
-Message-ID: <87d0b82a9o.fsf@nanos.tec.linutronix.de>
+        id S2388966AbgAXOjD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 24 Jan 2020 09:39:03 -0500
+Received: from szxga06-in.huawei.com ([45.249.212.32]:58530 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S2388927AbgAXOjA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 24 Jan 2020 09:39:00 -0500
+Received: from DGGEMS410-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id 388E5CE5092B4A3F2C15;
+        Fri, 24 Jan 2020 22:38:58 +0800 (CST)
+Received: from localhost.localdomain (10.69.192.58) by
+ DGGEMS410-HUB.china.huawei.com (10.3.19.210) with Microsoft SMTP Server id
+ 14.3.439.0; Fri, 24 Jan 2020 22:38:50 +0800
+From:   John Garry <john.garry@huawei.com>
+To:     <peterz@infradead.org>, <mingo@redhat.com>, <acme@kernel.org>,
+        <mark.rutland@arm.com>, <alexander.shishkin@linux.intel.com>,
+        <jolsa@redhat.com>, <namhyung@kernel.org>, <will@kernel.org>,
+        <ak@linux.intel.com>
+CC:     <linuxarm@huawei.com>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <suzuki.poulose@arm.com>,
+        <james.clark@arm.com>, <zhangshaokun@hisilicon.com>,
+        <robin.murphy@arm.com>, John Garry <john.garry@huawei.com>
+Subject: [PATCH RFC 0/7] perf pmu-events: Support event aliasing for system PMUs
+Date:   Fri, 24 Jan 2020 22:34:58 +0800
+Message-ID: <1579876505-113251-1-git-send-email-john.garry@huawei.com>
+X-Mailer: git-send-email 2.8.1
 MIME-Version: 1.0
 Content-Type: text/plain
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+X-Originating-IP: [10.69.192.58]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Evan,
+Currently event aliasing for only CPU and uncore PMUs is supported. In
+fact, only uncore PMUs aliasing for when the uncore PMUs are fixed for a
+CPU is supported, which may not always be the case for certain
+architectures.
 
-Evan Green <evgreen@chromium.org> writes:
-> I did another experiment that I think lends credibility to my torn MSI
-> hypothesis. I have the following change:
->
-> And indeed, I get a machine check, despite the fact that MSI_DATA is
-> overwritten just after address is updated.
+This series adds support for PMU event aliasing for system and other
+uncore PMUs which are not fixed to a specific CPU.
 
-I don't have to understand why a SoC released in 2019 still has
-unmaskable MSI especially as Inhell's own XHCI spec clearly documents
-and recommends MSI-X.
+For this, we introduce support for another per-arch mapfile, which maps a
+particular system identifier to a set of system PMU events for that
+system. This is much the same as what we do for CPU event aliasing.
 
-While your workaround (disabling MSI) works in this particular case it's
-not really a good option:
+To support this, we need to change how we match a PMU to a mapfile,
+whether it should use a CPU or system mapfile. For this we do the
+following:
 
- 1) Quite some devices have a bug where the legacy INTX disable does not
-    work reliably or is outright broken. That means MSI disable will
-    reroute to INTX.
+- For CPU PMU, we always match for the event mapfile based on the CPUID.
+  This has not changed.
 
- 2) I digged out old debug data which confirms that some silly devices
-    lose interrupts accross MSI disable/reenable if the INTX fallback is
-    disabled.
+- For an uncore or system PMU, we match first based on the SYSID (if set).
+  If this fails, then we match on the CPUID.
 
-    And no, it's not a random weird device, it's part of a chipset which
-    was pretty popular a few years ago. I leave it as an excercise for
-    the reader to guess the vendor.
+  This works for x86, as x86 would not have any system mapfiles for uncore
+  PMUs (and match on the CPUID).
 
-Can you please apply the patch below? It enforces an IPI to the new
-vector/target CPU when the interrupt is MSI w/o masking. It should
-cure the issue. It goes without saying that I'm not proud of it.
+Initial reference support is also added for ARM SMMUv3 PMCG (Performance
+Monitor Event Group) PMU for HiSilicon hip08 platform with only a single
+event so far - see driver in drivers/perf/arm_smmuv3_pmu.c for that driver.
 
-Thanks,
+Here is a sample output with this series:
 
-        tglx
+root@ubuntu:/# ./perf list
+  [...]
 
-8<--------------
+  smmuv3_pmcg_100020/config_cache_miss/              [Kernel PMU event]
+  smmuv3_pmcg_100020/config_struct_access/           [Kernel PMU event]
+  smmuv3_pmcg_100020/cycles/                         [Kernel PMU event]
+  smmuv3_pmcg_100020/pcie_ats_trans_passed/          [Kernel PMU event]
+  smmuv3_pmcg_100020/pcie_ats_trans_rq/              [Kernel PMU event]
+  smmuv3_pmcg_100020/tlb_miss/                       [Kernel PMU event]
+  smmuv3_pmcg_100020/trans_table_walk_access/        [Kernel PMU event]
+  smmuv3_pmcg_100020/transaction/                    [Kernel PMU event]
 
---- a/arch/x86/include/asm/apic.h
-+++ b/arch/x86/include/asm/apic.h
-@@ -498,6 +498,7 @@ extern bool default_check_apicid_used(ph
- extern void default_ioapic_phys_id_map(physid_mask_t *phys_map, physid_mask_t *retmap);
- extern int default_cpu_present_to_apicid(int mps_cpu);
- extern int default_check_phys_apicid_present(int phys_apicid);
-+extern bool apic_hotplug_force_retrigger(struct irq_data *irqd);
- 
- #endif /* CONFIG_X86_LOCAL_APIC */
- 
---- a/arch/x86/include/asm/irqdomain.h
-+++ b/arch/x86/include/asm/irqdomain.h
-@@ -10,6 +10,7 @@ enum {
- 	/* Allocate contiguous CPU vectors */
- 	X86_IRQ_ALLOC_CONTIGUOUS_VECTORS		= 0x1,
- 	X86_IRQ_ALLOC_LEGACY				= 0x2,
-+	X86_IRQ_MSI_NOMASK_TRAINWRECK			= 0x4,
- };
- 
- extern struct irq_domain *x86_vector_domain;
---- a/arch/x86/kernel/apic/msi.c
-+++ b/arch/x86/kernel/apic/msi.c
-@@ -103,6 +103,14 @@ int pci_msi_prepare(struct irq_domain *d
- 	} else {
- 		arg->type = X86_IRQ_ALLOC_TYPE_MSI;
- 		arg->flags |= X86_IRQ_ALLOC_CONTIGUOUS_VECTORS;
-+		/*
-+		 * If the MSI implementation does not provide masking
-+		 * enable the workaround for the CPU hotplug forced
-+		 * migration problem which is caused by the torn write of
-+		 * the address/data pair.
-+		 */
-+		if (!desc->msi_attrib.maskbit)
-+			arg->flags |= X86_IRQ_MSI_NOMASK_TRAINWRECK;
- 	}
- 
- 	return 0;
---- a/arch/x86/kernel/apic/vector.c
-+++ b/arch/x86/kernel/apic/vector.c
-@@ -34,7 +34,8 @@ struct apic_chip_data {
- 	unsigned int		move_in_progress	: 1,
- 				is_managed		: 1,
- 				can_reserve		: 1,
--				has_reserved		: 1;
-+				has_reserved		: 1,
-+				force_retrigger		: 1;
- };
- 
- struct irq_domain *x86_vector_domain;
-@@ -99,6 +100,18 @@ struct irq_cfg *irq_cfg(unsigned int irq
- 	return irqd_cfg(irq_get_irq_data(irq));
- }
- 
-+bool apic_hotplug_force_retrigger(struct irq_data *irqd)
-+{
-+	struct apic_chip_data *apicd;
-+
-+	irqd = __irq_domain_get_irq_data(x86_vector_domain, irqd);
-+	if (!irqd)
-+		return false;
-+
-+	apicd = apic_chip_data(irqd);
-+	return apicd && apicd->force_retrigger;
-+}
-+
- static struct apic_chip_data *alloc_apic_chip_data(int node)
- {
- 	struct apic_chip_data *apicd;
-@@ -552,6 +565,8 @@ static int x86_vector_alloc_irqs(struct
- 		}
- 
- 		apicd->irq = virq + i;
-+		if (info->flags & X86_IRQ_MSI_NOMASK_TRAINWRECK)
-+			apicd->force_retrigger = true;
- 		irqd->chip = &lapic_controller;
- 		irqd->chip_data = apicd;
- 		irqd->hwirq = virq + i;
-@@ -624,6 +639,7 @@ static void x86_vector_debug_show(struct
- 	seq_printf(m, "%*scan_reserve:      %u\n", ind, "", apicd.can_reserve ? 1 : 0);
- 	seq_printf(m, "%*shas_reserved:     %u\n", ind, "", apicd.has_reserved ? 1 : 0);
- 	seq_printf(m, "%*scleanup_pending:  %u\n", ind, "", !hlist_unhashed(&apicd.clist));
-+	seq_printf(m, "%*sforce_retrigger:  %u\n", ind, "", apicd.force_retrigger ? 1 : 0);
- }
- #endif
- 
---- a/arch/x86/kernel/irq.c
-+++ b/arch/x86/kernel/irq.c
-@@ -350,6 +350,7 @@ void fixup_irqs(void)
- 	struct irq_desc *desc;
- 	struct irq_data *data;
- 	struct irq_chip *chip;
-+	bool retrigger;
- 
- 	irq_migrate_all_off_this_cpu();
- 
-@@ -370,24 +371,29 @@ void fixup_irqs(void)
- 	 * nothing else will touch it.
- 	 */
- 	for (vector = FIRST_EXTERNAL_VECTOR; vector < NR_VECTORS; vector++) {
--		if (IS_ERR_OR_NULL(__this_cpu_read(vector_irq[vector])))
-+		desc = __this_cpu_read(vector_irq[vector]);
-+		if (IS_ERR_OR_NULL(desc))
- 			continue;
- 
-+		raw_spin_lock(&desc->lock);
-+		data = irq_desc_get_irq_data(desc);
-+		retrigger = apic_hotplug_force_retrigger(data);
-+
- 		irr = apic_read(APIC_IRR + (vector / 32 * 0x10));
--		if (irr  & (1 << (vector % 32))) {
--			desc = __this_cpu_read(vector_irq[vector]);
-+		if (irr  & (1 << (vector % 32)))
-+			retrigger = true;
- 
--			raw_spin_lock(&desc->lock);
--			data = irq_desc_get_irq_data(desc);
-+		if (!retrigger) {
-+			__this_cpu_write(vector_irq[vector], VECTOR_UNUSED);
-+		} else {
- 			chip = irq_data_get_irq_chip(data);
- 			if (chip->irq_retrigger) {
- 				chip->irq_retrigger(data);
--				__this_cpu_write(vector_irq[vector], VECTOR_RETRIGGERED);
-+				__this_cpu_write(vector_irq[vector],
-+						 VECTOR_RETRIGGERED);
- 			}
--			raw_spin_unlock(&desc->lock);
- 		}
--		if (__this_cpu_read(vector_irq[vector]) != VECTOR_RETRIGGERED)
--			__this_cpu_write(vector_irq[vector], VECTOR_UNUSED);
-+		raw_spin_unlock(&desc->lock);
- 	}
- }
- #endif
---- a/include/linux/irqdomain.h
-+++ b/include/linux/irqdomain.h
-@@ -432,6 +432,8 @@ int irq_reserve_ipi(struct irq_domain *d
- int irq_destroy_ipi(unsigned int irq, const struct cpumask *dest);
- 
- /* V2 interfaces to support hierarchy IRQ domains. */
-+struct irq_data *__irq_domain_get_irq_data(struct irq_domain *domain,
-+					   struct irq_data *irq_data);
- extern struct irq_data *irq_domain_get_irq_data(struct irq_domain *domain,
- 						unsigned int virq);
- extern void irq_domain_set_info(struct irq_domain *domain, unsigned int virq,
---- a/kernel/irq/irqdomain.c
-+++ b/kernel/irq/irqdomain.c
-@@ -1165,6 +1165,21 @@ static int irq_domain_alloc_irq_data(str
- }
- 
- /**
-+ * __irq_domain_get_irq_data - Get irq_data associated with @domain for @data
-+ * @domain:	domain to match
-+ * @irq_data:	initial irq data to start hierarchy search
-+ */
-+struct irq_data *__irq_domain_get_irq_data(struct irq_domain *domain,
-+					   struct irq_data *irq_data)
-+{
-+	for (; irq_data; irq_data = irq_data->parent_data) {
-+		if (irq_data->domain == domain)
-+			return irq_data;
-+	}
-+	return NULL;
-+}
-+
-+/**
-  * irq_domain_get_irq_data - Get irq_data associated with @virq and @domain
-  * @domain:	domain to match
-  * @virq:	IRQ number to get irq_data
-@@ -1172,14 +1187,7 @@ static int irq_domain_alloc_irq_data(str
- struct irq_data *irq_domain_get_irq_data(struct irq_domain *domain,
- 					 unsigned int virq)
- {
--	struct irq_data *irq_data;
--
--	for (irq_data = irq_get_irq_data(virq); irq_data;
--	     irq_data = irq_data->parent_data)
--		if (irq_data->domain == domain)
--			return irq_data;
--
--	return NULL;
-+	return __irq_domain_get_irq_data(domain, irq_get_irq_data(virq));
- }
- EXPORT_SYMBOL_GPL(irq_domain_get_irq_data);
- 
+  [...]
+
+smmu v3 pmcg:
+  smmuv3_pmcg.l1_tlb                                
+       [SMMUv3 PMCG l1_tlb. Unit: smmuv3_pmcg]
+
+  [...]
+
+root@ubuntu:/# ./perf stat -v -e smmuv3_pmcg.l1_tlb sleep 1
+Using CPUID 0x00000000480fd010
+Using SYSID HIP08
+ -> smmuv3_pmcg_200100020/event=0x8a/
+ -> smmuv3_pmcg_200140020/event=0x8a/
+ -> smmuv3_pmcg_100020/event=0x8a/
+ -> smmuv3_pmcg_140020/event=0x8a/
+ -> smmuv3_pmcg_200148020/event=0x8a/
+ -> smmuv3_pmcg_148020/event=0x8a/
+smmuv3_pmcg.l1_tlb: 0 1001221690 1001221690
+smmuv3_pmcg.l1_tlb: 0 1001220090 1001220090
+smmuv3_pmcg.l1_tlb: 101 1001219660 1001219660
+smmuv3_pmcg.l1_tlb: 0 1001219010 1001219010
+smmuv3_pmcg.l1_tlb: 0 1001218360 1001218360
+smmuv3_pmcg.l1_tlb: 134 1001217850 1001217850
+
+ Performance counter stats for 'system wide':
+
+               235      smmuv3_pmcg.l1_tlb                                          
+
+       1.001263128 seconds time elapsed
+
+root@ubuntu:/# 
+
+Issues with this series which need to be addressed (aware to me):
+
+- It would be good to have a universal method to identify the system from
+  sysfs. Nothing exists which I know about. There is DMI, but this is not
+  always available (or has correct info). Maybe systems which want to
+  support this feature will need a "soc" driver, and a
+  /sys/devices/socX/machine file (which I used for testing this series -
+  this driver is out of tree currently).
+
+- Maybe it is ok, but for systems which match on the system identifier,
+  uncore PMUs should be in the system mapfile, and, as such, match on the
+  system identifier and not CPU identifier.
+
+- We need a better way in jevents.c to give a direct mapping of PMU name
+  aliases, i.e. for any PMU name not prefixed with "uncore_", we need to
+  add this to table unit_to_pmu[]. Not scalable.
+
+  Having said that, maybe the kernel can introduce some future PMU naming
+  convention in future.
+
+John Garry (7):
+  perf jevents: Add support for an extra directory level
+  perf vendor events arm64: Relocate hip08 core events
+  perf jevents: Add support for a system events PMU
+  perf pmu: Rename uncore symbols to include system pmus
+  perf pmu: Support matching by sysid
+  perf vendor events arm64: Relocate uncore events for hip08
+  perf vendor events arm64: Add hip08 SMMUv3 PMCG IMP DEF events
+
+ tools/perf/arch/arm64/util/arm-spe.c          |   2 +-
+ tools/perf/pmu-events/README                  |  47 ++++++--
+ .../hip08/{ => cpu}/core-imp-def.json         |   0
+ .../hisilicon/hip08/sys/smmu-v3-pmcg.json     |   9 ++
+ .../hip08/{ => sys}/uncore-ddrc.json          |   0
+ .../hisilicon/hip08/{ => sys}/uncore-hha.json |   0
+ .../hisilicon/hip08/{ => sys}/uncore-l3c.json |   0
+ tools/perf/pmu-events/arch/arm64/mapfile.csv  |   2 +-
+ .../pmu-events/arch/arm64/mapfile_sys.csv     |  14 +++
+ tools/perf/pmu-events/jevents.c               |  65 ++++++++--
+ tools/perf/pmu-events/pmu-events.h            |   1 +
+ tools/perf/util/evsel.h                       |   2 +-
+ tools/perf/util/parse-events.c                |  12 +-
+ tools/perf/util/pmu.c                         | 111 +++++++++++++++---
+ tools/perf/util/pmu.h                         |   2 +-
+ 15 files changed, 221 insertions(+), 46 deletions(-)
+ rename tools/perf/pmu-events/arch/arm64/hisilicon/hip08/{ => cpu}/core-imp-def.json (100%)
+ create mode 100644 tools/perf/pmu-events/arch/arm64/hisilicon/hip08/sys/smmu-v3-pmcg.json
+ rename tools/perf/pmu-events/arch/arm64/hisilicon/hip08/{ => sys}/uncore-ddrc.json (100%)
+ rename tools/perf/pmu-events/arch/arm64/hisilicon/hip08/{ => sys}/uncore-hha.json (100%)
+ rename tools/perf/pmu-events/arch/arm64/hisilicon/hip08/{ => sys}/uncore-l3c.json (100%)
+ create mode 100644 tools/perf/pmu-events/arch/arm64/mapfile_sys.csv
+
+-- 
+2.17.1
+
