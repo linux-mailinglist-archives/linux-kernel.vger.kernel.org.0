@@ -2,100 +2,59 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A7C03148B3F
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Jan 2020 16:28:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8C483148B47
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Jan 2020 16:32:53 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388003AbgAXP2g (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 24 Jan 2020 10:28:36 -0500
-Received: from mga05.intel.com ([192.55.52.43]:57686 "EHLO mga05.intel.com"
+        id S2388315AbgAXPcu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 24 Jan 2020 10:32:50 -0500
+Received: from unicorn.mansr.com ([81.2.72.234]:38110 "EHLO unicorn.mansr.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387792AbgAXP2d (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 24 Jan 2020 10:28:33 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 24 Jan 2020 07:28:33 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.70,358,1574150400"; 
-   d="scan'208";a="222645471"
-Received: from richard.sh.intel.com (HELO localhost) ([10.239.159.54])
-  by fmsmga008.fm.intel.com with ESMTP; 24 Jan 2020 07:28:32 -0800
-Date:   Fri, 24 Jan 2020 23:28:43 +0800
-From:   Wei Yang <richardw.yang@linux.intel.com>
-To:     Michal Hocko <mhocko@kernel.org>
-Cc:     Wei Yang <richardw.yang@linux.intel.com>,
-        akpm@linux-foundation.org, yang.shi@linux.alibaba.com,
-        jhubbard@nvidia.com, vbabka@suse.cz, cl@linux.com,
-        linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Subject: Re: [Patch v2] mm/migrate.c: also overwrite error when it is bigger
- than zero
-Message-ID: <20200124152843.GC12509@richard>
-Reply-To: Wei Yang <richardw.yang@linux.intel.com>
-References: <20200119065753.21694-1-richardw.yang@linux.intel.com>
- <20200124072127.GO29276@dhcp22.suse.cz>
- <20200124141538.GA12509@richard>
- <20200124144643.GV29276@dhcp22.suse.cz>
+        id S2387724AbgAXPct (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 24 Jan 2020 10:32:49 -0500
+Received: by unicorn.mansr.com (Postfix, from userid 51770)
+        id C71C4118E1; Fri, 24 Jan 2020 15:25:40 +0000 (GMT)
+From:   Mans Rullgard <mans@mansr.com>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+Cc:     linux-usb@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [RESEND][PATCH 1/2] dt-bindings: usb: add non-removable-ports hub property
+Date:   Fri, 24 Jan 2020 15:25:03 +0000
+Message-Id: <20200124152504.23411-1-mans@mansr.com>
+X-Mailer: git-send-email 2.25.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200124144643.GV29276@dhcp22.suse.cz>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jan 24, 2020 at 03:46:43PM +0100, Michal Hocko wrote:
->On Fri 24-01-20 22:15:38, Wei Yang wrote:
->> On Fri, Jan 24, 2020 at 08:21:27AM +0100, Michal Hocko wrote:
->> >[Sorry I have missed this patch previously]
->> >
->> 
->> No problem, thanks for your comment.
->> 
->> >On Sun 19-01-20 14:57:53, Wei Yang wrote:
->> >> If we get here after successfully adding page to list, err would be
->> >> 1 to indicate the page is queued in the list.
->> >> 
->> >> Current code has two problems:
->> >> 
->> >>   * on success, 0 is not returned
->> >>   * on error, if add_page_for_migratioin() return 1, and the following err1
->> >>     from do_move_pages_to_node() is set, the err1 is not returned since err
->> >>     is 1
->> >
->> >This made my really scratch my head to grasp. So essentially err > 0
->> >will happen when we reach the end of the loop and rely on the
->> >out_flush flushing to migrate the batch. Then err contains the
->> >add_page_for_migratioin return value. And that would leak to the
->> >userspace.
->> >
->> >What would you say about the following wording instead?
->> >"
->> >out_flush part of do_pages_move is responsible for migrating the last
->> >batch that accumulated while processing the input in the loop.
->> >do_move_pages_to_node return value is supposed to override any
->> >preexisting error (e.g. when the user input is garbage) but the current
->> 
->> I am afraid I have a different understanding here.
->> 
->> If we jump to out_flush on the test of node_isset(), err is -EACCESS. Current
->> logic would return this instead of the error from do_move_pages_to_node().
->> Seems we don't override -EACCESS.
->
->And this is the expected logic. The unexpected behavior is the one you
->have fixed by this patch because err = 1 wouldn't get overriden and that
->should have been.
+Add a non-removable-ports property that lists the hardwired downstream
+ports of a hub.  Although hubs can provide this information, they are
+not always configured correctly.  An alternate means of indicating this
+for built-in USB devices is thus useful.
 
-Ok, if the sentence cover this case, the wording looks good to me.
+Signed-off-by: Mans Rullgard <mans@mansr.com>
+---
+ Documentation/devicetree/bindings/usb/usb-device.txt | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-Thanks :-)
-
->-- 
->Michal Hocko
->SUSE Labs
-
+diff --git a/Documentation/devicetree/bindings/usb/usb-device.txt b/Documentation/devicetree/bindings/usb/usb-device.txt
+index 036be172b1ae..92d863cc96b6 100644
+--- a/Documentation/devicetree/bindings/usb/usb-device.txt
++++ b/Documentation/devicetree/bindings/usb/usb-device.txt
+@@ -66,6 +66,10 @@ Required properties for host-controller nodes with device nodes:
+ - #size-cells: shall be 0
+ 
+ 
++Optional properties for hub and host-controller nodes:
++- non-removable-ports: list of hardwired downstream ports
++
++
+ Example:
+ 
+ &usb1 {	/* host controller */
 -- 
-Wei Yang
-Help you, Help me
+2.25.0
+
