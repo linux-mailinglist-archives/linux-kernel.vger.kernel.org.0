@@ -2,217 +2,59 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7931C1484BE
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Jan 2020 12:55:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B85F91484C6
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Jan 2020 12:56:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387615AbgAXLyu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 24 Jan 2020 06:54:50 -0500
-Received: from pegase1.c-s.fr ([93.17.236.30]:4143 "EHLO pegase1.c-s.fr"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387464AbgAXLyr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 24 Jan 2020 06:54:47 -0500
-Received: from localhost (mailhub1-int [192.168.12.234])
-        by localhost (Postfix) with ESMTP id 483yHS5Mk3z9tyMx;
-        Fri, 24 Jan 2020 12:54:44 +0100 (CET)
-Authentication-Results: localhost; dkim=pass
-        reason="1024-bit key; insecure key"
-        header.d=c-s.fr header.i=@c-s.fr header.b=VhVS76BL; dkim-adsp=pass;
-        dkim-atps=neutral
-X-Virus-Scanned: Debian amavisd-new at c-s.fr
-Received: from pegase1.c-s.fr ([192.168.12.234])
-        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
-        with ESMTP id 9aePS3j3XYfQ; Fri, 24 Jan 2020 12:54:44 +0100 (CET)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-        by pegase1.c-s.fr (Postfix) with ESMTP id 483yHS42bsz9tyMv;
-        Fri, 24 Jan 2020 12:54:44 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=c-s.fr; s=mail;
-        t=1579866884; bh=K+rJXLvKLhEXW6x/OC3sboi3DWloT83ulrteIzzb3Rk=;
-        h=In-Reply-To:References:From:Subject:To:Cc:Date:From;
-        b=VhVS76BLS/CZmKDAnsrYShUw62XXulqByufQDd125U9eayBO1lsIEQ3RAhp2eKYa1
-         4U7OV8RTqZoe7Y7RMIoQ3iGCDYs2TxhFCXnRZNhasZhEFwk2IDskzS0fnLImjB/+KN
-         zh/9NXFK0aOojpsN2WZLaanqt2CD2ufEaLYqQn98=
-Received: from localhost (localhost [127.0.0.1])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id CF5F28B85C;
-        Fri, 24 Jan 2020 12:54:45 +0100 (CET)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-        with ESMTP id Mu-PjnmSDGiX; Fri, 24 Jan 2020 12:54:45 +0100 (CET)
-Received: from po14934vm.idsi0.si.c-s.fr (po15451.idsi0.si.c-s.fr [172.25.230.111])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id 9EE6B8B84A;
-        Fri, 24 Jan 2020 12:54:45 +0100 (CET)
-Received: by po14934vm.idsi0.si.c-s.fr (Postfix, from userid 0)
-        id 80E4D651F0; Fri, 24 Jan 2020 11:54:45 +0000 (UTC)
-Message-Id: <54f2f74938006b33c55a416674807b42ef222068.1579866752.git.christophe.leroy@c-s.fr>
-In-Reply-To: <b6f97231868c43b90ae7abe7f68f84d176a8ebe1.1579866752.git.christophe.leroy@c-s.fr>
-References: <b6f97231868c43b90ae7abe7f68f84d176a8ebe1.1579866752.git.christophe.leroy@c-s.fr>
-From:   Christophe Leroy <christophe.leroy@c-s.fr>
-Subject: [PATCH v4 7/7] powerpc: Implement user_access_save() and
- user_access_restore()
-To:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>
-Cc:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        linux-mm@kvack.org
-Date:   Fri, 24 Jan 2020 11:54:45 +0000 (UTC)
+        id S2387570AbgAXL4K (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 24 Jan 2020 06:56:10 -0500
+Received: from Galois.linutronix.de ([193.142.43.55]:42134 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729567AbgAXL4J (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 24 Jan 2020 06:56:09 -0500
+Received: from [5.158.153.53] (helo=nanos.tec.linutronix.de)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tglx@linutronix.de>)
+        id 1iuxZ5-0007IW-50; Fri, 24 Jan 2020 12:55:55 +0100
+Received: by nanos.tec.linutronix.de (Postfix, from userid 1000)
+        id C06C3103089; Fri, 24 Jan 2020 12:55:54 +0100 (CET)
+From:   Thomas Gleixner <tglx@linutronix.de>
+To:     Hans de Goede <hdegoede@redhat.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        vipul kumar <vipulk0511@gmail.com>
+Cc:     Daniel Lezcano <daniel.lezcano@linaro.org>,
+        linux-kernel@vger.kernel.org, Stable <stable@vger.kernel.org>,
+        Srikanth Krishnakar <Srikanth_Krishnakar@mentor.com>,
+        Cedric Hombourger <Cedric_Hombourger@mentor.com>,
+        x86@kernel.org, Len Brown <len.brown@intel.com>,
+        Vipul Kumar <vipul_kumar@mentor.com>
+Subject: Re: [v3] x86/tsc: Unset TSC_KNOWN_FREQ and TSC_RELIABLE flags on Intel Bay Trail SoC
+In-Reply-To: <c06260e3-bd19-bf3c-89f7-d36bdb9a5b20@redhat.com>
+References: <1579617717-4098-1-git-send-email-vipulk0511@gmail.com> <87eevs7lfd.fsf@nanos.tec.linutronix.de> <CADdC98RJpsvu_zWehNGDDN=W11rD11NSPaodg-zuaXsHuOJYTQ@mail.gmail.com> <878slzeeim.fsf@nanos.tec.linutronix.de> <CADdC98TE4oNWZyEsqXzr+zJtfdTTOyeeuHqu1u04X_ktLHo-Hg@mail.gmail.com> <20200123144108.GU32742@smile.fi.intel.com> <df04f43d-8c6d-7602-cb50-535b85cf2aaa@redhat.com> <87iml11ccf.fsf@nanos.tec.linutronix.de> <c06260e3-bd19-bf3c-89f7-d36bdb9a5b20@redhat.com>
+Date:   Fri, 24 Jan 2020 12:55:54 +0100
+Message-ID: <87ftg5131x.fsf@nanos.tec.linutronix.de>
+MIME-Version: 1.0
+Content-Type: text/plain
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Implement user_access_save() and user_access_restore()
+Hans,
 
-On 8xx and radix:
-- On save, get the value of the associated special register
-then prevent user access.
-- On restore, set back the saved value to the associated special
-register.
+Hans de Goede <hdegoede@redhat.com> writes:
+> On 1/24/20 9:35 AM, Thomas Gleixner wrote:
+>> Where does that number come from? Just math?
+>
+> Yes just math, but perhaps the Intel folks can see if they can find some
+> datasheet to back this up ?
 
-On book3s/32:
-- On save, get the value stored in current->thread.kuap and prevent
-user access.
-- On restore, regenerate address range from the stored value and
-reopen read/write access for that range.
+Can you observe the issue on one of the machines in your zoo as well?
 
-Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
----
-v4: new
----
- arch/powerpc/include/asm/book3s/32/kup.h      | 23 +++++++++++++++++++
- .../powerpc/include/asm/book3s/64/kup-radix.h | 22 ++++++++++++++++++
- arch/powerpc/include/asm/kup.h                |  2 ++
- arch/powerpc/include/asm/nohash/32/kup-8xx.h  | 14 +++++++++++
- arch/powerpc/include/asm/uaccess.h            |  5 ++--
- 5 files changed, 63 insertions(+), 3 deletions(-)
+Thanks,
 
-diff --git a/arch/powerpc/include/asm/book3s/32/kup.h b/arch/powerpc/include/asm/book3s/32/kup.h
-index 17e069291c72..3c0ba22dc360 100644
---- a/arch/powerpc/include/asm/book3s/32/kup.h
-+++ b/arch/powerpc/include/asm/book3s/32/kup.h
-@@ -153,6 +153,29 @@ static __always_inline void prevent_user_access(void __user *to, const void __us
- 	kuap_update_sr(mfsrin(addr) | SR_KS, addr, end);	/* set Ks */
- }
- 
-+static inline unsigned long prevent_user_access_return(void)
-+{
-+	unsigned long flags = current->thread.kuap;
-+	unsigned long addr = flags & 0xf0000000;
-+	unsigned long end = flags << 28;
-+	void __user *to = (__force void __user *)addr;
-+
-+	if (flags)
-+		prevent_user_access(to, to, end - addr, KUAP_READ_WRITE);
-+
-+	return flags;
-+}
-+
-+static inline void restore_user_access(unsigned long flags)
-+{
-+	unsigned long addr = flags & 0xf0000000;
-+	unsigned long end = flags << 28;
-+	void __user *to = (__force void __user *)addr;
-+
-+	if (flags)
-+		allow_user_access(to, to, end - addr, KUAP_READ_WRITE);
-+}
-+
- static inline bool
- bad_kuap_fault(struct pt_regs *regs, unsigned long address, bool is_write)
- {
-diff --git a/arch/powerpc/include/asm/book3s/64/kup-radix.h b/arch/powerpc/include/asm/book3s/64/kup-radix.h
-index a0263e94df33..90dd3a3fc8c7 100644
---- a/arch/powerpc/include/asm/book3s/64/kup-radix.h
-+++ b/arch/powerpc/include/asm/book3s/64/kup-radix.h
-@@ -63,6 +63,14 @@
-  * because that would require an expensive read/modify write of the AMR.
-  */
- 
-+static inline unsigned long get_kuap(void)
-+{
-+	if (!early_mmu_has_feature(MMU_FTR_RADIX_KUAP))
-+		return 0;
-+
-+	return mfspr(SPRN_AMR);
-+}
-+
- static inline void set_kuap(unsigned long value)
- {
- 	if (!early_mmu_has_feature(MMU_FTR_RADIX_KUAP))
-@@ -98,6 +106,20 @@ static inline void prevent_user_access(void __user *to, const void __user *from,
- 	set_kuap(AMR_KUAP_BLOCKED);
- }
- 
-+static inline unsigned long prevent_user_access_return(void)
-+{
-+	unsigned long flags = get_kuap();
-+
-+	set_kuap(AMR_KUAP_BLOCKED);
-+
-+	return flags;
-+}
-+
-+static inline void restore_user_access(unsigned long flags)
-+{
-+	set_kuap(flags);
-+}
-+
- static inline bool
- bad_kuap_fault(struct pt_regs *regs, unsigned long address, bool is_write)
- {
-diff --git a/arch/powerpc/include/asm/kup.h b/arch/powerpc/include/asm/kup.h
-index c3ce7e8ae9ea..92bcd1a26d73 100644
---- a/arch/powerpc/include/asm/kup.h
-+++ b/arch/powerpc/include/asm/kup.h
-@@ -55,6 +55,8 @@ static inline void allow_user_access(void __user *to, const void __user *from,
- 				     unsigned long size, unsigned long dir) { }
- static inline void prevent_user_access(void __user *to, const void __user *from,
- 				       unsigned long size, unsigned long dir) { }
-+static inline unsigned long prevent_user_access_return(void) { return 0UL; }
-+static inline void restore_user_access(unsigned long flags) { }
- static inline bool
- bad_kuap_fault(struct pt_regs *regs, unsigned long address, bool is_write)
- {
-diff --git a/arch/powerpc/include/asm/nohash/32/kup-8xx.h b/arch/powerpc/include/asm/nohash/32/kup-8xx.h
-index 1d70c80366fd..85ed2390fb99 100644
---- a/arch/powerpc/include/asm/nohash/32/kup-8xx.h
-+++ b/arch/powerpc/include/asm/nohash/32/kup-8xx.h
-@@ -46,6 +46,20 @@ static inline void prevent_user_access(void __user *to, const void __user *from,
- 	mtspr(SPRN_MD_AP, MD_APG_KUAP);
- }
- 
-+static inline unsigned long prevent_user_access_return(void)
-+{
-+	unsigned long flags = mfspr(SPRN_MD_AP);
-+
-+	mtspr(SPRN_MD_AP, MD_APG_KUAP);
-+
-+	return flags;
-+}
-+
-+static inline void restore_user_access(unsigned long flags)
-+{
-+	mtspr(SPRN_MD_AP, flags);
-+}
-+
- static inline bool
- bad_kuap_fault(struct pt_regs *regs, unsigned long address, bool is_write)
- {
-diff --git a/arch/powerpc/include/asm/uaccess.h b/arch/powerpc/include/asm/uaccess.h
-index af905d7fc1df..2f500debae21 100644
---- a/arch/powerpc/include/asm/uaccess.h
-+++ b/arch/powerpc/include/asm/uaccess.h
-@@ -465,9 +465,8 @@ static __must_check inline bool user_access_begin(const void __user *ptr, size_t
- }
- #define user_access_begin	user_access_begin
- #define user_access_end		prevent_current_access_user
--
--static inline unsigned long user_access_save(void) { return 0UL; }
--static inline void user_access_restore(unsigned long flags) { }
-+#define user_access_save	prevent_user_access_return
-+#define user_access_restore	restore_user_access
- 
- #define unsafe_op_wrap(op, err) do { if (unlikely(op)) goto err; } while (0)
- #define unsafe_get_user(x, p, e) unsafe_op_wrap(__get_user_allowed(x, p), e)
--- 
-2.25.0
-
+        tglx
