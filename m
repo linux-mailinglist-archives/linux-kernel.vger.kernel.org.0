@@ -2,121 +2,64 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F0EE1148088
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Jan 2020 12:12:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 99E6A148121
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Jan 2020 12:17:24 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388783AbgAXLL5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 24 Jan 2020 06:11:57 -0500
-Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:44937 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S2389925AbgAXLLy (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 24 Jan 2020 06:11:54 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1579864313;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc; bh=Kjk6W1LG3gaFL8I+p/fnWXQ4uCBjZbkmuUT77YK/Eis=;
-        b=IYO5rFg9WxhRzMWdwbJoDBcLnewV/tD5mzUvVJwgdNBjsHyNhCUOnvtflR3yGAK9jf18bm
-        Alvk/Imazv7ipkDo/KV6uFs+x6tavAI2vNJ/zlUEkmZHEH69Dq/IoItM3LyINQ6PuYw5Wa
-        flI+Dq1FBOPGtUR5ky5qvygvoQrpXa0=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-266-SODjscnQMUurREWEQT0_pg-1; Fri, 24 Jan 2020 06:11:50 -0500
-X-MC-Unique: SODjscnQMUurREWEQT0_pg-1
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id A7D29800D48;
-        Fri, 24 Jan 2020 11:11:48 +0000 (UTC)
-Received: from intel-purley-fpgabmp-02.ml3.eng.bos.redhat.com (intel-purley-fpgabmp-02.ml3.eng.bos.redhat.com [10.19.176.206])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 01C851001B28;
-        Fri, 24 Jan 2020 11:11:47 +0000 (UTC)
-From:   Scott Wood <swood@redhat.com>
-To:     Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Cc:     linux-rt-users@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Scott Wood <swood@redhat.com>
-Subject: [PATCH RT 1/2] sched: migrate_enable: Use per-cpu cpu_stop_work
-Date:   Fri, 24 Jan 2020 06:11:46 -0500
-Message-Id: <1579864307-13093-1-git-send-email-swood@redhat.com>
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+        id S2390485AbgAXLRS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 24 Jan 2020 06:17:18 -0500
+Received: from mx2.suse.de ([195.135.220.15]:33434 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1733082AbgAXLRQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 24 Jan 2020 06:17:16 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx2.suse.de (Postfix) with ESMTP id 3F290B034;
+        Fri, 24 Jan 2020 11:17:15 +0000 (UTC)
+From:   Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
+To:     Peter Ujfalusi <peter.ujfalusi@ti.com>,
+        Nicolas Saenz Julienne <nsaenzjulienne@suse.de>,
+        Ulf Hansson <ulf.hansson@linaro.org>
+Cc:     f.fainelli@gmail.com, linux-rpi-kernel@lists.infradead.org,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: [PATCH for-next] arm64: defconfig: Set bcm2835-dma as built-in
+Date:   Fri, 24 Jan 2020 12:17:00 +0100
+Message-Id: <20200124111700.29910-1-nsaenzjulienne@suse.de>
+X-Mailer: git-send-email 2.25.0
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit e6c287b1512d ("sched: migrate_enable: Use stop_one_cpu_nowait()")
-adds a busy wait to deal with an edge case where the migrated thread
-can resume running on another CPU before the stopper has consumed
-cpu_stop_work.  However, this is done with preemption disabled and can
-potentially lead to deadlock.
+With the introduction of 738987a1d6f1 ("mmc: bcm2835: Use
+dma_request_chan() instead dma_request_slave_channel()") sdhost-bcm2835
+now waits for its DMA channel to be available when defined in the
+device-tree (it would previously default to PIO). Albeit the right
+behaviour, the MMC host is needed for booting. So this makes sure the
+DMA channel shows up in time.
 
-While it is not guaranteed that the cpu_stop_work will be consumed before
-the migrating thread resumes and exits the stack frame, it is guaranteed
-that nothing other than the stopper can run on the old cpu between the
-migrating thread scheduling out and the cpu_stop_work being consumed.
-Thus, we can store cpu_stop_work in per-cpu data without it being
-reused too early.
-
-Fixes: e6c287b1512d ("sched: migrate_enable: Use stop_one_cpu_nowait()")
-Suggested-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Signed-off-by: Scott Wood <swood@redhat.com>
+Fixes: 738987a1d6f1 ("mmc: bcm2835: Use dma_request_chan() instead dma_request_slave_channel()")
+Signed-off-by: Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
 ---
-Ignore the other 1/2 just sent -- forgot the RT in the subject and
-didn't quite hit Ctrl-C in time.
+ arch/arm64/configs/defconfig | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
- kernel/sched/core.c | 22 ++++++++++++++--------
- 1 file changed, 14 insertions(+), 8 deletions(-)
-
-diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-index 754f6afb438d..7713e9c34ad1 100644
---- a/kernel/sched/core.c
-+++ b/kernel/sched/core.c
-@@ -8189,6 +8189,9 @@ static void migrate_disabled_sched(struct task_struct *p)
- 	p->migrate_disable_scheduled = 1;
- }
- 
-+static DEFINE_PER_CPU(struct cpu_stop_work, migrate_work);
-+static DEFINE_PER_CPU(struct migration_arg, migrate_arg);
-+
- void migrate_enable(void)
- {
- 	struct task_struct *p = current;
-@@ -8227,22 +8230,25 @@ void migrate_enable(void)
- 
- 	WARN_ON(smp_processor_id() != cpu);
- 	if (!is_cpu_allowed(p, cpu)) {
--		struct migration_arg arg = { .task = p };
--		struct cpu_stop_work work;
-+		struct migration_arg __percpu *arg;
-+		struct cpu_stop_work __percpu *work;
- 		struct rq_flags rf;
- 
-+		work = this_cpu_ptr(&migrate_work);
-+		arg = this_cpu_ptr(&migrate_arg);
-+		WARN_ON_ONCE(!arg->done && !work->disabled && work->arg);
-+
-+		arg->task = p;
-+		arg->done = false;
-+
- 		rq = task_rq_lock(p, &rf);
- 		update_rq_clock(rq);
--		arg.dest_cpu = select_fallback_rq(cpu, p);
-+		arg->dest_cpu = select_fallback_rq(cpu, p);
- 		task_rq_unlock(rq, p, &rf);
- 
- 		stop_one_cpu_nowait(task_cpu(p), migration_cpu_stop,
--				    &arg, &work);
-+				    arg, work);
- 		__schedule(true);
--		if (!work.disabled) {
--			while (!arg.done)
--				cpu_relax();
--		}
- 	}
- 
- out:
+diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
+index 4631a1190719..905109f6814f 100644
+--- a/arch/arm64/configs/defconfig
++++ b/arch/arm64/configs/defconfig
+@@ -683,7 +683,7 @@ CONFIG_RTC_DRV_SNVS=m
+ CONFIG_RTC_DRV_IMX_SC=m
+ CONFIG_RTC_DRV_XGENE=y
+ CONFIG_DMADEVICES=y
+-CONFIG_DMA_BCM2835=m
++CONFIG_DMA_BCM2835=y
+ CONFIG_DMA_SUN6I=m
+ CONFIG_FSL_EDMA=y
+ CONFIG_IMX_SDMA=y
 -- 
-1.8.3.1
+2.25.0
 
