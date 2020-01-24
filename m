@@ -2,79 +2,131 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A22E0148225
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Jan 2020 12:26:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E3D0B1482B0
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Jan 2020 12:30:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391521AbgAXLZk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 24 Jan 2020 06:25:40 -0500
-Received: from mail1.bemta25.messagelabs.com ([195.245.230.4]:41093 "EHLO
-        mail1.bemta25.messagelabs.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2391388AbgAXLZe (ORCPT
+        id S2404151AbgAXLaA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 24 Jan 2020 06:30:00 -0500
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:43776 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2404119AbgAXL3x (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 24 Jan 2020 06:25:34 -0500
-Received: from [46.226.52.108] (using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256 bits))
-        by server-4.bemta.az-a.eu-west-1.aws.symcld.net id 92/0A-01118-C24DA2E5; Fri, 24 Jan 2020 11:25:32 +0000
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrAIsWRWlGSWpSXmKPExsVy8IPnUV2dK1p
-  xBs9uC1rc/3qU0eLyrjlsDkwed67tYfP4vEkugCmKNTMvKb8igTXj4sG1jAXnWCp+belib2C8
-  xdzFyMUhJLCeUeLg4aVADieQUyFx9upyJhCbV8BN4uXvY2wgNpuAhcTkEw/AbBYBVYnGnVtZQ
-  WxhgRCJi28WA8U5OEQEVCTOvTEHMZkFIiT+nGKGmCIocXLmExYQm1lAQuLgixdQmwwkTi9oBI
-  tLCNhLTH9/lRmkVUJAX6LxWCxE2FDi+6xvLBBhc4m167wmMPLPQjJ0FpKhCxiZVjFaJBVlpme
-  U5CZm5ugaGhjoGhoa6RpamugamhnoJVbpJuqlluqWpxaX6BrqJZYX6xVX5ibnpOjlpZZsYgQG
-  ZkrBoQU7GKd+eqt3iFGSg0lJlLdrrlacEF9SfkplRmJxRnxRaU5q8SFGGQ4OJQle+0tAOcGi1
-  PTUirTMHGCUwKQlOHiURHg9QdK8xQWJucWZ6RCpU4y6HDuPzlvELMSSl5+XKiXOOxukSACkKK
-  M0D24ELGIvMcpKCfMyMjAwCPEUpBblZpagyr9iFOdgVBLmTQOZwpOZVwK36RXQEUxAR7gogR1
-  RkoiQkmpgclOvVHvVpV/6YNM+vwiJSzZzNt5i1Y030rile76kiXnTLacs92nfrOv33lnmZBn1
-  MUe9o6f+HEtmzjqZ0MUBdw1Ppk26wNDOZPKkiHPvQa/6a+Vx+g9zud7oSe88z+yh9U3L1L4x4
-  spRo5u5u9U3PsnL3NFxJWPNolSBuTExmrbJNrySzU/VLySl1TzpcOmpfXksutZOzeTE3DMLr6
-  hYsDw7x3hNNZqnYI71n1/VB6LXH6rx/rmktv7opivPGp+s+C36oOVOusFippITmydrXY48qC2
-  beVu3t8c/ldGunM+WecO5TwKv3aauXp7sXhEiVO2waUIXz6ni5TpH/HiYFvzP1LmdPmH2iaWf
-  DpQrsRRnJBpqMRcVJwIAPmQ9olMDAAA=
-X-Env-Sender: Adam.Thomson.Opensource@diasemi.com
-X-Msg-Ref: server-28.tower-272.messagelabs.com!1579865131!1056631!1
-X-Originating-IP: [193.240.73.197]
-X-SYMC-ESS-Client-Auth: outbound-route-from=pass
-X-StarScan-Received: 
-X-StarScan-Version: 9.44.25; banners=-,-,-
-X-VirusChecked: Checked
-Received: (qmail 26580 invoked from network); 24 Jan 2020 11:25:32 -0000
-Received: from unknown (HELO sw-ex-cashub01.diasemi.com) (193.240.73.197)
-  by server-28.tower-272.messagelabs.com with ECDHE-RSA-AES256-SHA384 encrypted SMTP; 24 Jan 2020 11:25:32 -0000
-Received: from swsrvapps-01.diasemi.com (10.20.28.141) by
- SW-EX-CASHUB01.diasemi.com (10.20.16.140) with Microsoft SMTP Server id
- 14.3.468.0; Fri, 24 Jan 2020 11:25:30 +0000
-Received: by swsrvapps-01.diasemi.com (Postfix, from userid 22379)      id
- 6AC183FB8D; Fri, 24 Jan 2020 11:25:30 +0000 (GMT)
-Message-ID: <cover.1579864546.git.Adam.Thomson.Opensource@diasemi.com>
-From:   Adam Thomson <Adam.Thomson.Opensource@diasemi.com>
-Date:   Fri, 24 Jan 2020 11:25:30 +0000
-Subject: [RESEND PATCH 0/2] Resolve revision handling and add support for DA silicon
-To:     Lee Jones <lee.jones@linaro.org>
-CC:     <linux-kernel@vger.kernel.org>,
-        Support Opensource <support.opensource@diasemi.com>
+        Fri, 24 Jan 2020 06:29:53 -0500
+Received: by mail-wr1-f66.google.com with SMTP id d16so1535562wre.10
+        for <linux-kernel@vger.kernel.org>; Fri, 24 Jan 2020 03:29:52 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=cloudflare.com; s=google;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=TKV/95Tqr8ROSRylR8JvM121PLnBe6Qd7B63cuI3StE=;
+        b=qfNpKKm07hnqLiriIGmOr8J8e8KK/BT8LiD/HbKtoVjdqQIg+L8LRXe//9Ho80yqRW
+         7AvncSW3NSitZvir1vo58IpBYDCnD/EtNFepZo3FhkZ0iiHhpaSH/KB/OO9e+S+UblOE
+         8hor5p0V7rrRFpupNxhkSJdagqdnZoRD7wTMI=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=TKV/95Tqr8ROSRylR8JvM121PLnBe6Qd7B63cuI3StE=;
+        b=pEugVa1VuXeBS4mO/hU4+AdHhFUQt+3ABn8mZWFN0YsgUR37ZyyBLAzcGrJKmMHV6s
+         9LD/vJBYVoUIBU2w8FRB6T2lrDIfXT7foPSH0DmrbPfBtpUctwYz21omPMvAxtLIrIHU
+         hAmPJLPz/VkcbqgX60pwQd7yjlqTM6q2CElClVgnF/DA7Wi7UnHirrTWRleC0kzcS8zv
+         zAa29nurrVr2w1kXao+PflbhQIx42w2KkH0PK+O9St5AEf4IrlMsLXwFahZ9VSJ+LRuo
+         HAdZ3vqAAsgOcy12GW71Gm3OMar+ql+wzjo4Hx8527VTpnPxz2FRuNEsQI/OlP5ElJWO
+         l2Rw==
+X-Gm-Message-State: APjAAAVVPll59DdFnDxVzKFqlULlSrWflYOrJgzhbkXfprJ7vJ6amJ4v
+        Q65jT4GTMmRr+Pb6v/K+THcykOQmiK+C4Q==
+X-Google-Smtp-Source: APXvYqxbVdXusdBMhELuISik8LOouZ+0LdsP7kXq8h43aLT+jdhkf6tMvHQYoAN1zRAngTNzB02TJg==
+X-Received: by 2002:adf:dfcf:: with SMTP id q15mr3804339wrn.404.1579865392024;
+        Fri, 24 Jan 2020 03:29:52 -0800 (PST)
+Received: from antares.lan (3.a.c.b.c.e.9.a.8.e.c.d.e.4.1.6.f.f.6.2.a.5.a.7.0.b.8.0.1.0.0.2.ip6.arpa. [2001:8b0:7a5a:26ff:614e:dce8:a9ec:bca3])
+        by smtp.gmail.com with ESMTPSA id n189sm6808688wme.33.2020.01.24.03.29.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 24 Jan 2020 03:29:51 -0800 (PST)
+From:   Lorenz Bauer <lmb@cloudflare.com>
+To:     Shuah Khan <shuah@kernel.org>, Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Martin KaFai Lau <kafai@fb.com>,
+        Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>,
+        Andrii Nakryiko <andriin@fb.com>,
+        John Fastabend <john.fastabend@gmail.com>
+Cc:     Lorenz Bauer <lmb@cloudflare.com>, linux-kselftest@vger.kernel.org,
+        netdev@vger.kernel.org, bpf@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH bpf-next v2 1/4] selftests: bpf: use a temporary file in test_sockmap
+Date:   Fri, 24 Jan 2020 11:27:51 +0000
+Message-Id: <20200124112754.19664-2-lmb@cloudflare.com>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20200124112754.19664-1-lmb@cloudflare.com>
+References: <20200123165934.9584-1-lmb@cloudflare.com>
+ <20200124112754.19664-1-lmb@cloudflare.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-KSE-AttachmentFiltering-Interceptor-Info: protection disabled
-X-KSE-ServerInfo: sw-ex-cashub01.diasemi.com, 9
-X-KSE-Antivirus-Interceptor-Info: scan successful
-X-KSE-Antivirus-Info: Clean, bases: 24/01/2020 10:17:00
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch set fixes the currently broken revision handling in the driver's
-i2c_probe() function and then adds DA support to existing permitted revisions.
+Use a proper temporary file for sendpage tests. This means that running
+the tests doesn't clutter the working directory, and allows running the
+test on read-only filesystems.
 
-Adam Thomson (2):
-  mfd: da9063: Fix revision handling to correctly select reg tables
-  mfd: da9063: Add support for latest DA silicon revision
+Signed-off-by: Lorenz Bauer <lmb@cloudflare.com>
+Fixes: 16962b2404ac ("bpf: sockmap, add selftests")
+---
+ tools/testing/selftests/bpf/test_sockmap.c | 15 +++++----------
+ 1 file changed, 5 insertions(+), 10 deletions(-)
 
- drivers/mfd/da9063-core.c            |  31 -----
- drivers/mfd/da9063-i2c.c             | 254 +++++++++++++++++++++++++++++++----
- include/linux/mfd/da9063/core.h      |   1 +
- include/linux/mfd/da9063/registers.h |  15 ++-
- 4 files changed, 240 insertions(+), 61 deletions(-)
-
+diff --git a/tools/testing/selftests/bpf/test_sockmap.c b/tools/testing/selftests/bpf/test_sockmap.c
+index 4a851513c842..779e11da979c 100644
+--- a/tools/testing/selftests/bpf/test_sockmap.c
++++ b/tools/testing/selftests/bpf/test_sockmap.c
+@@ -331,7 +331,7 @@ static int msg_loop_sendpage(int fd, int iov_length, int cnt,
+ 	FILE *file;
+ 	int i, fp;
+ 
+-	file = fopen(".sendpage_tst.tmp", "w+");
++	file = tmpfile();
+ 	if (!file) {
+ 		perror("create file for sendpage");
+ 		return 1;
+@@ -340,13 +340,8 @@ static int msg_loop_sendpage(int fd, int iov_length, int cnt,
+ 		fwrite(&k, sizeof(char), 1, file);
+ 	fflush(file);
+ 	fseek(file, 0, SEEK_SET);
+-	fclose(file);
+ 
+-	fp = open(".sendpage_tst.tmp", O_RDONLY);
+-	if (fp < 0) {
+-		perror("reopen file for sendpage");
+-		return 1;
+-	}
++	fp = fileno(file);
+ 
+ 	clock_gettime(CLOCK_MONOTONIC, &s->start);
+ 	for (i = 0; i < cnt; i++) {
+@@ -354,11 +349,11 @@ static int msg_loop_sendpage(int fd, int iov_length, int cnt,
+ 
+ 		if (!drop && sent < 0) {
+ 			perror("send loop error");
+-			close(fp);
++			fclose(file);
+ 			return sent;
+ 		} else if (drop && sent >= 0) {
+ 			printf("sendpage loop error expected: %i\n", sent);
+-			close(fp);
++			fclose(file);
+ 			return -EIO;
+ 		}
+ 
+@@ -366,7 +361,7 @@ static int msg_loop_sendpage(int fd, int iov_length, int cnt,
+ 			s->bytes_sent += sent;
+ 	}
+ 	clock_gettime(CLOCK_MONOTONIC, &s->end);
+-	close(fp);
++	fclose(file);
+ 	return 0;
+ }
+ 
 -- 
-1.9.1
+2.20.1
 
