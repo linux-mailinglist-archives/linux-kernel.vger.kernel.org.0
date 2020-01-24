@@ -2,182 +2,116 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2B622148E0F
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Jan 2020 19:53:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0323F148E16
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Jan 2020 19:54:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391668AbgAXSxn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 24 Jan 2020 13:53:43 -0500
-Received: from USAT19PA23.eemsg.mail.mil ([214.24.22.197]:59680 "EHLO
-        USAT19PA23.eemsg.mail.mil" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2391617AbgAXSxm (ORCPT
+        id S2391770AbgAXSyK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 24 Jan 2020 13:54:10 -0500
+Received: from mail-vk1-f193.google.com ([209.85.221.193]:37240 "EHLO
+        mail-vk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2391148AbgAXSyK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 24 Jan 2020 13:53:42 -0500
-X-EEMSG-check-017: 73189567|USAT19PA23_ESA_OUT04.csd.disa.mil
-X-IronPort-AV: E=Sophos;i="5.70,358,1574121600"; 
-   d="scan'208";a="73189567"
-Received: from emsm-gh1-uea10.ncsc.mil ([214.29.60.2])
-  by USAT19PA23.eemsg.mail.mil with ESMTP/TLS/DHE-RSA-AES256-SHA256; 24 Jan 2020 18:52:48 +0000
+        Fri, 24 Jan 2020 13:54:10 -0500
+Received: by mail-vk1-f193.google.com with SMTP id b129so845152vka.4
+        for <linux-kernel@vger.kernel.org>; Fri, 24 Jan 2020 10:54:09 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=tycho.nsa.gov; i=@tycho.nsa.gov; q=dns/txt;
-  s=tycho.nsa.gov; t=1579891968; x=1611427968;
-  h=subject:to:cc:references:from:message-id:date:
-   mime-version:in-reply-to:content-transfer-encoding;
-  bh=Rze7cn/GSJSTFQpc/Z8REuiFndHt8sF/HNqriHe3EXw=;
-  b=S7TmG+HDPRCD9ZpNvcjJSuDQz7bBjsdjXZr9DUxvSfeS1RrRNGxV0DcX
-   6wom1IjsUtgM5BZeql7qXjHxwgyFC5aQuRI8I5KKiYnFZgiWiqWJjIenS
-   uKWda0AfAEe56ma1tf/0SyxZTxo/LL7rqRghGDRsxxfBXFnqTxtE1No0Y
-   NqMUTEFoc0wYX3nYvZfkSFEcLWs5an+PfUSTEth8SeOUKRSNQgsphUGOo
-   jTyB6s/0ay/0SRkCsZtNeNGdBCH8XDKyWBg1pHa/xeatjPcoonGOD9vqb
-   5ID22ix+3a4LAYMn4B21SZjgMk9w1LmYeYHu5pj55sUPT3OC/hJDOsvnK
-   w==;
-X-IronPort-AV: E=Sophos;i="5.70,358,1574121600"; 
-   d="scan'208";a="32312420"
-IronPort-PHdr: =?us-ascii?q?9a23=3AuubD1xCus8mlfxm8AM1xUyQJP3N1i/DPJgcQr6?=
- =?us-ascii?q?AfoPdwSP36ocqwAkXT6L1XgUPTWs2DsrQY0raQ6fyrADVcqdbZ6TZeKccKD0?=
- =?us-ascii?q?dEwewt3CUYSPafDkP6KPO4JwcbJ+9lEGFfwnegLEJOE9z/bVCB6le77DoVBw?=
- =?us-ascii?q?mtfVEtfre9FYHdldm42P6v8JPPfQpImCC9YbRvJxmqsAndrMYbjZZtJ6or1B?=
- =?us-ascii?q?fErXREd/lLyW5nOFmfmwrw6tqq8JNs7ihdtegt+9JcXan/Yq81UaFWADM6Pm?=
- =?us-ascii?q?4v+cblrwPDTQyB5nsdVmUZjB9FCBXb4R/5Q5n8rDL0uvJy1yeGM8L2S6s0WS?=
- =?us-ascii?q?m54KdwVBDokiYHOCUn/2zRl8d9kbhUoBOlpxx43o7UfISYP+dwc6/BYd8XQ3?=
- =?us-ascii?q?dKU91PXCJdHIyzc4oPD/IAPelGqYn9u0AOpga6CQW1Ge/j1iNEinrw0KI0ye?=
- =?us-ascii?q?QhFRzN0hImEdwArX/YqMz5OakWXOywyqTD0DfNYO5M2Trl9YbGbB4hr/GPU7?=
- =?us-ascii?q?x+f8XexksgGB/KgFiLtYzoPCmY2vgRv2WV7edtU/+khW49qwF2pzii3toiip?=
- =?us-ascii?q?XXiYINylDL6yN5y5soK929UkF7ZdqkH4VQtiqHMIZ2Wd4tQ3pztSYmyrwJpZ?=
- =?us-ascii?q?67fC8QxJQh3B7QceaLc4eP4hL9TeucJypzinF9eL+nmhq//ketxvf8W8Wpyl?=
- =?us-ascii?q?pGsCVInsfWunwQ0RHY99KJReFn/ki73DaCzwXT6uZZLk8qjafbMJshwqIolp?=
- =?us-ascii?q?oUrETDAjf6mEXog6+ScUUp4vSo5P79YrXnu5+cLJV4igD4MqQgncy/Gvo3PR?=
- =?us-ascii?q?QUU2iH+eWzyL3j/UrjTLVMkvI2ibXWvIrfJcQaoq61Gw5V0oA95BajFzqqzd?=
- =?us-ascii?q?sVkHYdIF9FZR6LlZblNl7QLPziEPuzm1Gsny1qx/DCML3hGJLNLn3bnbf6YL?=
- =?us-ascii?q?l98FVRyBYzzN9D55JUDasNIPToWkDrrtDYARg5MxKsz+b9FNp9zp8eWX6IAq?=
- =?us-ascii?q?KBLKzSvl6J5uUpI+aSf48Yozn9K/8i5/7hiX82h1odcrOo3ZsTcny3AvNmI0?=
- =?us-ascii?q?CBa3r2ntgBCXsKvhY5TOHykF2NSyNTZ3KpUqIk/D47FYamAZ7GRoCqh7yBxj?=
- =?us-ascii?q?m0EodKaWBBD1CGCW3oeJmcW/cQdCKSJddsnSIcVbe7UY8h1AquuRTiy7V9NO?=
- =?us-ascii?q?rU+zYYtYrn1Ndv++Lciws+9TtuD8SSy2uNVX17nnsURz8q26ByuUt9ylKE0a?=
- =?us-ascii?q?hjhfxXD8Bc6O1SXwcgK5HT0ux6BMruWg7bYtiJT1OmSM28AT4tVtIx38MOY0?=
- =?us-ascii?q?FlFtW5kB/D2yuqA7kIl72EH5E07K3c0GbrJ8pnyHbJyrMhj184TctLL2Gmgb?=
- =?us-ascii?q?R/9wfLDY7Tj0qZj7qqdbgb3CPV8GeDzGyOvFxXUQJpUqXKQ2ofZk3IotT9/U?=
- =?us-ascii?q?7CUbCuBqo9Mgdbys6NNLFKatv3glVCXvvjP87eY23i01u3UD2I3LKXcIvjfV?=
- =?us-ascii?q?IyQjnBE0MEnkhH9nmUMg4zHQ+upGXRCDFrHFPrJUjr9L8thmm8SxoP0wySb0?=
- =?us-ascii?q?Bnn4Gw8xoRiO3UH+gfxZoYqSwhrHNyB1/70NXIXYnT7zF9dblRNItuqGxM0n?=
- =?us-ascii?q?jU4kkkZc2t?=
-X-IPAS-Result: =?us-ascii?q?A2BrAgAzPCte/wHyM5BlHAEBAQEBBwEBEQEEBAEBgXuBf?=
- =?us-ascii?q?YFtIBIqhBKJA4Z5BoE3iW+RSQkBAQEBAQEBAQE3AQGEQAKCRjgTAhABAQEEA?=
- =?us-ascii?q?QEBAQEFAwEBbIVDgjspAYJ6AQUjBAsBBUEQCxgCAiYCAlcGDQYCAQGCYz+CS?=
- =?us-ascii?q?wMJJa4jfzOFSoJJDWKBPoEOKowxeYEHgTgPgl0+ghuCCIM2gl4EllOBJ5deg?=
- =?us-ascii?q?kOCTJNlBhuafKt+IoFYKwgCGAghD4MnUBgNiA0XjkEjAzCLFIJCAQE?=
-Received: from tarius.tycho.ncsc.mil (HELO tarius.infosec.tycho.ncsc.mil) ([144.51.242.1])
-  by EMSM-GH1-UEA10.NCSC.MIL with ESMTP; 24 Jan 2020 18:52:47 +0000
-Received: from moss-pluto.infosec.tycho.ncsc.mil (moss-pluto [192.168.25.131])
-        by tarius.infosec.tycho.ncsc.mil (8.14.7/8.14.4) with ESMTP id 00OIq2GH101408;
-        Fri, 24 Jan 2020 13:52:04 -0500
-Subject: Re: [PATCH] selinux: allow kernfs symlinks to inherit parent
- directory context
-To:     =?UTF-8?Q?Christian_G=c3=b6ttsche?= <cgzones@googlemail.com>
-Cc:     Paul Moore <paul@paul-moore.com>,
-        Eric Paris <eparis@parisplace.org>,
-        Ondrej Mosnacek <omosnace@redhat.com>, selinux@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20200124184221.322248-1-cgzones@googlemail.com>
-From:   Stephen Smalley <sds@tycho.nsa.gov>
-Message-ID: <6e33cbcd-31fd-2d50-5d0f-70eb475f9811@tycho.nsa.gov>
-Date:   Fri, 24 Jan 2020 13:53:30 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.3.1
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=k9IbFX230h+2YJkS//36Bone21Vlk4mvmv7ukUtwlrg=;
+        b=DAXjtZMQxree0LJO6fobOGURErQ0ju/inC8/fsZF0REb/T72vFjS7K0OhD0Y+lf2gK
+         lMPRw+NUBnFlszUuo1F/uLO7RoYDcq6CWVZ5BnXUxTgouURwMS2+PEcc6JnpM+rHv1lO
+         Q+wAY4Fvcu1Tt5CmyotNaXTNXtiYUbF2NVpmLkfbcJaUW2KVvuXLwarJvxsy/CmqxCzc
+         lF0yf3bRXw9OsO6bwUqmrWWhymuzSbWXcS4C1Yxq5LfRRbxfXuwQcB+KudGLC8h6tVTk
+         XaEai9+ATEb46ZczpqDbhaWNgUERSjbEX/rDpyXjd+8ejWhSyzbE4tkDbrAZZHxu2to0
+         jFjw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=k9IbFX230h+2YJkS//36Bone21Vlk4mvmv7ukUtwlrg=;
+        b=SuiJHoLdMiRLZI97I37El/5Damuy1gmsJzRB2w0gVOQqNAGSz64LV6+Ib9xxGPjqJ+
+         MK6+yl/wY3PJ7tVUlJHjN0r5PKSUAsFomgduY6/wjrVtwaJ7QeKQHhXazjksB0FQO6AV
+         MrKaX/ktehBLeG1gbnFBPxoiS/c0bPHFEg+4qP6jysRUwExOVwmdYEP1EcZR4O7w8oxj
+         oDZdJp4hGry21CRRGCDLtFxIYAK3Px1wq8sSdQsQ+YeGguWltKuDWw/dUIq8E0juV0kK
+         6V03UlnPCmnt8PUHtK4Lr/EW2PXZI6Zz39Fwqr/Unni0O+k/e/jedFXS4QlvLI5lQEQe
+         Nv1A==
+X-Gm-Message-State: APjAAAUuCiADwQHeh2uZir8A0rRlj1BXyIYFw7I21kevECf6VvLMfLtz
+        WvGxXsDWC75RKViz+NmASLlIbiDWv3CB9xF4acxPY09grdklUg==
+X-Google-Smtp-Source: APXvYqw2YjgP0ld3PdNvgZHc2Qrs2rZ5eSmsUx2bHhYUETj9IyOKKofaCjFO6+esQ4rua8ianeDtcJVIAImimd5dRp4=
+X-Received: by 2002:a1f:db81:: with SMTP id s123mr2936809vkg.45.1579892048933;
+ Fri, 24 Jan 2020 10:54:08 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <20200124184221.322248-1-cgzones@googlemail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+References: <20200123180436.99487-1-bgardon@google.com> <20200123180436.99487-11-bgardon@google.com>
+ <aaf2afbb-1613-cc78-8b4f-6a7318acb22a@redhat.com>
+In-Reply-To: <aaf2afbb-1613-cc78-8b4f-6a7318acb22a@redhat.com>
+From:   Ben Gardon <bgardon@google.com>
+Date:   Fri, 24 Jan 2020 10:53:57 -0800
+Message-ID: <CANgfPd-cj4Bau4fYRoQY3hW0K4w19LaFr=6RjgyZGO65fZuq9g@mail.gmail.com>
+Subject: Re: [PATCH v4 10/10] KVM: selftests: Move memslot 0 above KVM
+ internal memslots
+To:     Paolo Bonzini <pbonzini@redhat.com>
+Cc:     linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
+        linux-kselftest@vger.kernel.org,
+        Cannon Matthews <cannonmatthews@google.com>,
+        Peter Xu <peterx@redhat.com>,
+        Andrew Jones <drjones@redhat.com>,
+        Peter Shier <pshier@google.com>,
+        Oliver Upton <oupton@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 1/24/20 1:42 PM, Christian Göttsche wrote:
-> Currently symlinks on kernel filesystems, like sysfs, are labeled on
-> creation with the parent fs root sid.
-> 
-> Allow symlinks to inherit the parent directory context, so fine-grained
-> kernfs labeling can be applied to symlinks too and checking contexts
-> doesn't complain about them.
-> 
-> For backward-compatibility this behavior is contained in a new policy
-> capability: kernfs_sovereign_symlinks
-> 
-> Signed-off-by: Christian Göttsche <cgzones@googlemail.com>
-> ---
->   security/selinux/hooks.c            | 5 ++++-
->   security/selinux/include/security.h | 8 ++++++++
->   security/selinux/ss/services.c      | 3 ++-
->   3 files changed, 14 insertions(+), 2 deletions(-)
-> 
-> diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
-> index d9e8b2131..1303bc8c4 100644
-> --- a/security/selinux/hooks.c
-> +++ b/security/selinux/hooks.c
-> @@ -1475,7 +1475,10 @@ static int inode_doinit_with_dentry(struct inode *inode, struct dentry *opt_dent
->   		/* Default to the fs superblock SID. */
->   		sid = sbsec->sid;
->   
-> -		if ((sbsec->flags & SE_SBGENFS) && !S_ISLNK(inode->i_mode)) {
-> +		if (((sbsec->flags & SE_SBGENFS) &&
-> +		     (!S_ISLNK(inode->i_mode))) ||
-> +		    (selinux_policycap_kernfs_sovereign_symlinks() &&
+On Fri, Jan 24, 2020 at 1:01 AM Paolo Bonzini <pbonzini@redhat.com> wrote:
+>
+> On 23/01/20 19:04, Ben Gardon wrote:
+> > KVM creates internal memslots between 3 and 4 GiB paddrs on the first
+> > vCPU creation. If memslot 0 is large enough it collides with these
+> > memslots an causes vCPU creation to fail. Instead of creating memslot 0
+> > at paddr 0, start it 4G into the guest physical address space.
+> >
+> > Signed-off-by: Ben Gardon <bgardon@google.com>
+> > ---
+> >  tools/testing/selftests/kvm/lib/kvm_util.c | 11 +++++++----
+> >  1 file changed, 7 insertions(+), 4 deletions(-)
+>
+> This breaks all tests for me:
+>
+>    $ ./state_test
+>    Testing guest mode: PA-bits:ANY, VA-bits:48,  4K pages
+>    Guest physical address width detected: 46
+>    ==== Test Assertion Failure ====
+>   lib/x86_64/processor.c:580: false
+>   pid=4873 tid=4873 - Success
+>      1  0x0000000000409996: addr_gva2gpa at processor.c:579
+>      2  0x0000000000406a38: addr_gva2hva at kvm_util.c:1636
+>      3  0x000000000041036c: kvm_vm_elf_load at elf.c:192
+>      4  0x0000000000409ea9: vm_create_default at processor.c:829
+>      5  0x0000000000400f6f: main at state_test.c:132
+>      6  0x00007f21bdf90494: ?? ??:0
+>      7  0x0000000000401287: _start at ??:?
+>   No mapping for vm virtual address, gva: 0x400000
 
-Not fond of the name.  1) kernfs is a kernel implementation detail, 
-shouldn't be exposed to policy; genfs is the policy construct 2) 
-sovereign doesn't seem to fit the meaning of this capability; seclabel 
-would be more appropriate.
+Uh oh, I obviously did not test this patch adequately. My apologies.
+I'll send another version of this patch after I've had time to test it
+better. The memslots between 3G and 4G are also somewhat x86 specific,
+so maybe this code should be elsewhere.
 
-> +		     (sbsec->flags & SE_SBGENFS_XATTR))) {
+>
+> Memslot 0 should not be too large, so this patch should not be needed.
 
-Why limit this to SE_SBGENFS_XATTR filesystems?  Why not just make the test:
-	if ((sbsec->flags & SE_SBGENFS) && (!S_ISLNK(inode->i_mode) || 
-selinux_policycap_genfs_symlinkseclabel()))
-or similar.
+I found that 3GB was not sufficient for memslot zero in my testing
+because it needs to contain both the stack for every vCPU and the page
+tables for the VM. When I ran with 416 vCPUs and of 1.6TB of total
+ram, memslot zero needed to be substantially larger than 3G. Just the
+4K guest PTEs required to map 4G per-vCPU for 416 vCPUs require (((416
+* (4<<30)) / 4096) * 8) / (1<<30) = 3.25GB of memory.
+I suppose another slot could be used for the page tables, but that
+would complicate the implementation of any tests that want to run
+large VMs substantially.
 
->   			/* We must have a dentry to determine the label on
->   			 * procfs inodes */
->   			if (opt_dentry) {
-> diff --git a/security/selinux/include/security.h b/security/selinux/include/security.h
-> index a39f9565d..cc8217848 100644
-> --- a/security/selinux/include/security.h
-> +++ b/security/selinux/include/security.h
-> @@ -79,6 +79,7 @@ enum {
->   	POLICYDB_CAPABILITY_ALWAYSNETWORK,
->   	POLICYDB_CAPABILITY_CGROUPSECLABEL,
->   	POLICYDB_CAPABILITY_NNP_NOSUID_TRANSITION,
-> +	POLICYDB_CAPABILITY_KERNFS_SOVEREIGN_SYMLINKS,
->   	__POLICYDB_CAPABILITY_MAX
->   };
->   #define POLICYDB_CAPABILITY_MAX (__POLICYDB_CAPABILITY_MAX - 1)
-> @@ -209,6 +210,13 @@ static inline bool selinux_policycap_nnp_nosuid_transition(void)
->   	return state->policycap[POLICYDB_CAPABILITY_NNP_NOSUID_TRANSITION];
->   }
->   
-> +static inline bool selinux_policycap_kernfs_sovereign_symlinks(void)
-> +{
-> +	struct selinux_state *state = &selinux_state;
-> +
-> +	return state->policycap[POLICYDB_CAPABILITY_KERNFS_SOVEREIGN_SYMLINKS];
-> +}
-> +
->   int security_mls_enabled(struct selinux_state *state);
->   int security_load_policy(struct selinux_state *state,
->   			 void *data, size_t len);
-> diff --git a/security/selinux/ss/services.c b/security/selinux/ss/services.c
-> index 216ce602a..b70380947 100644
-> --- a/security/selinux/ss/services.c
-> +++ b/security/selinux/ss/services.c
-> @@ -73,7 +73,8 @@ const char *selinux_policycap_names[__POLICYDB_CAPABILITY_MAX] = {
->   	"extended_socket_class",
->   	"always_check_network",
->   	"cgroup_seclabel",
-> -	"nnp_nosuid_transition"
-> +	"nnp_nosuid_transition",
-> +	"kernfs_sovereign_symlinks"
->   };
->   
->   static struct selinux_ss selinux_ss;
-> 
-
+>
+> Paolo
+>
