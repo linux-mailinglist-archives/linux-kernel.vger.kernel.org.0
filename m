@@ -2,99 +2,95 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D498B1489BE
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Jan 2020 15:37:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 88F4E148A30
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Jan 2020 15:43:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387626AbgAXOhP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 24 Jan 2020 09:37:15 -0500
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:35988 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387676AbgAXOhK (ORCPT
+        id S2387483AbgAXOnJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 24 Jan 2020 09:43:09 -0500
+Received: from us-smtp-2.mimecast.com ([205.139.110.61]:27252 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1729604AbgAXOnI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 24 Jan 2020 09:37:10 -0500
-Received: by mail-wm1-f68.google.com with SMTP id p17so1925289wma.1
-        for <linux-kernel@vger.kernel.org>; Fri, 24 Jan 2020 06:37:09 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=dzsZn5YGBm3wUhQPoMDUJ14zEU+MEc78x4rzaBDLSP0=;
-        b=G4PCXCZvqK2HNyrqpe/9EKycb+jQXw97AZkRxWS9FasZLV3pYn+fkJ1xa1QmczUANh
-         PZQWXmEaQFOnW9EpzrRP/J7zOtCN7iy2MIdoGWSpUPdIoxynMQ3KWZh6W9fxM1w55urS
-         oCRqjJmrd9DrJRcfO1teS8g8zNr/5XJJycB8t40LS4sHy9sVgls/wyDfKwVPK8sq4PbD
-         Z/n+2MMHuoCSzBI6hRHHirCQyy33Axe6x/gM7tn+Q96IKsdn7lOSybmec5hqZ29PRzSt
-         J4J3bpoBYjTnNWrT9kMH6N08+3+irqZ547Dx1GLy99S0ZVBl7v4cdRzBAvCaZYbKTJC6
-         NasA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=dzsZn5YGBm3wUhQPoMDUJ14zEU+MEc78x4rzaBDLSP0=;
-        b=IQ/CRyflM3WGmsrPFn0+BDO6trCfyLAdWhXBEjZDn+QRebXreCpq2r4yeyMgFA30XE
-         t3EtSqmdl0DqUoeV7vZsMroeOyKlYW8P3qjKzXVWaExd4oqQveHakKhvYlxjc2xahBwl
-         AC1NIjca146wJcQA6/Y1Tjk1SQpz0SPonwxYTyyYELbVuhVlc3lanKwxv1PHcnYhsJE3
-         yHWxVqVORJg9kaQgKcSUdxX6y/8qWREtqEXrW42cKPJ3JRwOjJy5YCt7ixCYQ1//WzVr
-         Yt8uC6jFPipn0CcnvI6cSwRsLIpGh2/KHutntV0JJBuenXcTd4i2FgUrwPQtYCHa2yKZ
-         FHMg==
-X-Gm-Message-State: APjAAAUpCdWUYsbadK6HEubMl9cqD3QWbj2J4/PQfzlU11OlCVhwFLok
-        WGARNsvr1jF01Cu1mCyme3cPe7oV9UrwTQ==
-X-Google-Smtp-Source: APXvYqyMVfaMhToiGNn5b34BkYqDXlqLtMg4JBeFdVJpPM+zLlKRZ/0/+kA99MsGFZbIep1CF9uRPA==
-X-Received: by 2002:a1c:9602:: with SMTP id y2mr3569784wmd.23.1579876628063;
-        Fri, 24 Jan 2020 06:37:08 -0800 (PST)
-Received: from google.com ([2a00:79e0:d:110:d6cc:2030:37c1:9964])
-        by smtp.gmail.com with ESMTPSA id s19sm6831173wmj.33.2020.01.24.06.37.07
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 24 Jan 2020 06:37:07 -0800 (PST)
-Date:   Fri, 24 Jan 2020 14:37:04 +0000
-From:   Quentin Perret <qperret@google.com>
-To:     Douglas Raillard <douglas.raillard@arm.com>
-Cc:     linux-kernel@vger.kernel.org, rjw@rjwysocki.net,
-        viresh.kumar@linaro.org, peterz@infradead.org,
-        juri.lelli@redhat.com, vincent.guittot@linaro.org,
-        dietmar.eggemann@arm.com, linux-pm@vger.kernel.org
-Subject: Re: [RFC PATCH v4 3/6] sched/cpufreq: Hook em_pd_get_higher_power()
- into get_next_freq()
-Message-ID: <20200124143704.GA215244@google.com>
-References: <20200122173538.1142069-1-douglas.raillard@arm.com>
- <20200122173538.1142069-4-douglas.raillard@arm.com>
- <20200123161644.GA144523@google.com>
- <5a2af4e7-f9eb-4f23-908a-fab2c7395a99@arm.com>
+        Fri, 24 Jan 2020 09:43:08 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1579876988;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=9l6POn3eu1T5wYGvqIrxXu86ud4cnXxoH7SZuURfrZw=;
+        b=BM65m3LyBYV97o3I8XEp4Zpt4hoEb/Fx0RssAf8yQFDdcWiFPVL6N7411M9X1Nqn4HQwAV
+        s3qrbEIJW3X90F0KPbLaPupjYmCCOh2PLq1bvVyqKVoT2E6EaH5ztn8HVniQ7z6FBR1rlD
+        EiL9oHE+Sl49gLC9vU88YwfwhAybtsE=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-106-NZHuf-WlOACiaqvI3HcN3A-1; Fri, 24 Jan 2020 09:43:03 -0500
+X-MC-Unique: NZHuf-WlOACiaqvI3HcN3A-1
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 9DAB4800D5B;
+        Fri, 24 Jan 2020 14:42:48 +0000 (UTC)
+Received: from llong.remote.csb (ovpn-124-92.rdu2.redhat.com [10.10.124.92])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 445F919C69;
+        Fri, 24 Jan 2020 14:42:42 +0000 (UTC)
+Subject: Re: [PATCH v8 4/5] locking/qspinlock: Introduce starvation avoidance
+ into CNA
+To:     Peter Zijlstra <peterz@infradead.org>,
+        Alex Kogan <alex.kogan@oracle.com>
+Cc:     linux@armlinux.org.uk, Ingo Molnar <mingo@redhat.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Arnd Bergmann <arnd@arndb.de>, linux-arch@vger.kernel.org,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
+        Borislav Petkov <bp@alien8.de>, hpa@zytor.com, x86@kernel.org,
+        Hanjun Guo <guohanjun@huawei.com>,
+        Jan Glauber <jglauber@marvell.com>,
+        Steven Sistare <steven.sistare@oracle.com>,
+        Daniel Jordan <daniel.m.jordan@oracle.com>,
+        dave.dice@oracle.com
+References: <20191230194042.67789-1-alex.kogan@oracle.com>
+ <20191230194042.67789-5-alex.kogan@oracle.com>
+ <20200121132949.GL14914@hirez.programming.kicks-ass.net>
+ <cfdf635d-be2e-9d4b-c4ca-6bcbddc6868f@redhat.com>
+ <3862F8A1-FF9B-40AD-A88E-2C0BA7AF6F58@oracle.com>
+ <20200124075235.GX14914@hirez.programming.kicks-ass.net>
+From:   Waiman Long <longman@redhat.com>
+Organization: Red Hat
+Message-ID: <2c6741c5-d89d-4b2c-cebe-a7c7f6eed884@redhat.com>
+Date:   Fri, 24 Jan 2020 09:42:42 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <5a2af4e7-f9eb-4f23-908a-fab2c7395a99@arm.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20200124075235.GX14914@hirez.programming.kicks-ass.net>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thursday 23 Jan 2020 at 17:52:53 (+0000), Douglas Raillard wrote:
-> We can't really move the call to em_pd_get_higher_freq() into
-> cpufreq_driver_resolve_freq() since that's a schedutil-specific feature,
-> and we would loose the !sg_policy->need_freq_update optimization.
+On 1/24/20 2:52 AM, Peter Zijlstra wrote:
+> On Thu, Jan 23, 2020 at 04:33:54PM -0500, Alex Kogan wrote:
+>> Let me put this question to you. What do you think the number should be?
+> I think it would be very good to keep the inter-node latency below 1ms.
+It is hard to guarantee that given that lock hold times can vary quite a
+lot depending on the workload. What we can control is just how many
+later lock waiters can jump ahead before a given waiter.
+> But to realize that we need data on the lock hold times. Specifically
+> for the heavily contended locks that make CNA worth it in the first
+> place.
+>
+> I don't see that data, so I don't see how we can argue about this let
+> alone call something reasonable.
+>
+In essence, CNA lock is for improving throughput on NUMA machines at the
+expense of increasing worst case latency. If low latency is important,
+it should be disabled. If CONFIG_PREEMPT_RT is on,
+CONFIG_NUMA_AWARE_SPINLOCKS should be off.
 
-Depends how you do it. You could add a new method to cpufreq_policy that
-is defined only for sugov or something along those lines. And you'd call
-that instead of cpufreq_frequency_table_target() when that makes sense.
+Cheers,
+Longman
 
-> Maybe we can add a flag to cpufreq_driver_resolve_freq() that promises
-> that the frequency is already a valid one. We have to be careful though,
-> since a number of things can make that untrue:
->  - em_pd_get_higher_freq() will return the passed freq verbatim if it's
-> higher than the max freq, so em_pd_get_higher_freq() will have to set
-> the flag itself in case that logic changes.
->  - policy limits can change the value
->  - future things could tinker with the freq and forget to reset the flag.
-> 
-> If you think it's worth it I can make these changes.
-
-The thing is, not only with the current patch we end up iterating the
-frequencies twice for nothing, but also I think it'd be interesting to
-use the EM for consistency with EAS. It'd be nice to use the same data
-structure for the predictions we do in compute_energy() and for the
-actual request.
-
-Thoughts ?
-
-Quentin
