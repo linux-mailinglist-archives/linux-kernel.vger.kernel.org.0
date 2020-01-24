@@ -2,89 +2,130 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A2583148DE4
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Jan 2020 19:39:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 17C3B148DE8
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Jan 2020 19:41:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2403885AbgAXSjs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 24 Jan 2020 13:39:48 -0500
-Received: from mail-oi1-f193.google.com ([209.85.167.193]:42055 "EHLO
+        id S2391432AbgAXSk6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 24 Jan 2020 13:40:58 -0500
+Received: from mail-oi1-f193.google.com ([209.85.167.193]:34031 "EHLO
         mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388138AbgAXSjs (ORCPT
+        with ESMTP id S2388064AbgAXSk6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 24 Jan 2020 13:39:48 -0500
-Received: by mail-oi1-f193.google.com with SMTP id 18so426947oin.9
-        for <linux-kernel@vger.kernel.org>; Fri, 24 Jan 2020 10:39:47 -0800 (PST)
+        Fri, 24 Jan 2020 13:40:58 -0500
+Received: by mail-oi1-f193.google.com with SMTP id l136so483056oig.1
+        for <linux-kernel@vger.kernel.org>; Fri, 24 Jan 2020 10:40:58 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
+        d=intel-com.20150623.gappssmtp.com; s=20150623;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=Ur5wn0jQUUm7psVtxYzvB782IVJQCdtTuuwvxJbzuK4=;
-        b=X0XBSqcNCxk9PTnmv5MWAedQ+6T4i53cVWfLpwz1c3deUfX8Cr6FZx55tbRy/FE2Xj
-         XCkDMkBOHkWzAxaz2jThEzrMq12iF7BAl+HXbHoDnuh3rSdhuX9Ei5I+0uZasJs/cwGa
-         vIeQbkoQfPe1B/oysaOerxWrTNsBpjpl0wleGNziPsxbH+L1jTuYhG61A1ri0f2nCuLN
-         ha1+lp5thUPnpXh7j5SRghbVAwkb5JkF8P3IN1chc0+llDqzr2kIC/cXOna9vaaYJtew
-         wH4qE54VTohWkCzb9BJd2Fv7XV3NFrVYBrJON/BWmyfV48nM9djYonAGr//PdVBjKkQv
-         cy8g==
+         :cc;
+        bh=EEX2XLRijeuSJZp7wwl6e4j7OXHV8hmVU5+FKRIFc14=;
+        b=ym0xVqEAP0KuLa714APgwQhngjsP5SlxeysbIHdrwcmxVd4/Rwftrvn/NQrwPWMlt3
+         LJMfVWS6NfBUr5Nw/0ppJmwirJbktnsXA50a3etaNsXoQ6IwvnG2IVkOa+Gh2fOmkQDg
+         RUY/vPr9u+NziVeFxWLeCUutwX13CzUOZyQ6KaBCiVYZpugcgzT9tX0ZwzJAKpTtRS/1
+         JJY68vgB9uDHGV4Dp2ukpTNPTFX0GiEg3XXJg5LZnBLkeh7yW6i5b57Jj1aJM7e2Whku
+         b1/xQcaC+hY6c99pvhc/DxCs8IHdc8ucsK1eII3a/8M/zQTsSb3F9Mv4m/PFiA1KvU/1
+         wakw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=Ur5wn0jQUUm7psVtxYzvB782IVJQCdtTuuwvxJbzuK4=;
-        b=mEELfb9DLFi9xjfOWCGHSU2J8q2KtG9iFd8U+ZuO9lHtpwCtmaa3TP6bHD47myJw4h
-         WLxr4jAqeMw6CDvJS8WNj+NSRYRmtoEDfnM4GXYAu6CBuiWXxQtlpmkTS5iWTuFak6VS
-         GWyMgT48NZHqBfJy/HtonVBM01OL19rxbLopc/an5AkZUhnTstaGAbgvcnCVevWd38iF
-         XVEorkKfz4yMbIvCRlFKMXpY6CqaydjHsR4tMkWuuHTIjdQ/2SvjkoHKC9WavmkM2X7t
-         7LGcsHKbygSQt1B7mybsjMZooG6XbKlYVdeTE09bioi8SyVQGTpJlfuCHHU57clHaJmt
-         5ySA==
-X-Gm-Message-State: APjAAAWEKXas/34w2xbpq4y1KLswiXHEPcyfA/5f3iq7AER2yhyziZOX
-        ROu1+X4UDYtkFejCtLwwFeDjdj+C8v2a/yK4FPA=
-X-Google-Smtp-Source: APXvYqwE2svQq9XxuHw0G4MW4VIcqvGyEo2etKveL2u1hVTbuluJ/3vyslNOBm1w8ygDsvsLJb15KLXoH+FzN0BmwPU=
-X-Received: by 2002:aca:f507:: with SMTP id t7mr129477oih.156.1579891187238;
- Fri, 24 Jan 2020 10:39:47 -0800 (PST)
+         :message-id:subject:to:cc;
+        bh=EEX2XLRijeuSJZp7wwl6e4j7OXHV8hmVU5+FKRIFc14=;
+        b=ZFloURkr2aqRUslJXb/vEtpqAPrfK1QUa205DkK2eBPoNl94Nkl9PTRc5xXi6RdcPi
+         kEzr8kuJBAgW8xxt1tXq7ImpHJWAwUGJKJ4TDQH2WFVqHueTFUEhr3crRNUsZftYQFjU
+         Pv4yrRanSuvEctPXA8qlSUT5RGhP+e/kuNlMvsPrOWhZBt5m4kOPPbbynuoGkI51ZGOq
+         HEK9E8aXc/0AiYyrx451bFcWS1W14fzSxSvEo3R81fK/GFrKaRgVgCOr9gCvAqpGzUSw
+         1Zv5SKdysd0strgrzCfRvOxNWYbkS77bWdhgFyj8djLymihi33ZLi5lqggCCyM+yJu1x
+         R/Tw==
+X-Gm-Message-State: APjAAAXEpWcpGukY6u5gZls6SmmRZBUZ01kw85QgOM4kapsWoaAQh8EO
+        b1vbdWHu52xXGlOd3usm/Nkj8hgZl/e+oZNBc42Arw==
+X-Google-Smtp-Source: APXvYqzVZg1E4IIVynRByvKw/cKwqHMFcil2qw+/FTTtW7F+ZuEguSI5seidRPRnfG7YWaV2IwZV81WCPgOxY3mcseQ=
+X-Received: by 2002:a05:6808:b37:: with SMTP id t23mr109404oij.149.1579891258032;
+ Fri, 24 Jan 2020 10:40:58 -0800 (PST)
 MIME-Version: 1.0
-References: <20200124181811.4780-1-hjl.tools@gmail.com> <E184715B-30CD-4951-BAF4-E95135AEE938@amacapital.net>
-In-Reply-To: <E184715B-30CD-4951-BAF4-E95135AEE938@amacapital.net>
-From:   "H.J. Lu" <hjl.tools@gmail.com>
-Date:   Fri, 24 Jan 2020 10:39:11 -0800
-Message-ID: <CAMe9rOov9pLYcDLcu2CR7-i5VJhWzz4n95MYiXZDd9p79nQFyQ@mail.gmail.com>
-Subject: Re: [PATCH] x86: Don't clare __force_order in kaslr_64.c
-To:     Andy Lutomirski <luto@amacapital.net>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H . Peter Anvin" <hpa@zytor.com>,
-        "the arch/x86 maintainers" <x86@kernel.org>,
-        Yu-cheng Yu <yu-cheng.yu@intel.com>
+References: <20200120104909.13991-1-david@redhat.com> <1580c2bb-5e94-121d-8153-c8a7230b764b@redhat.com>
+In-Reply-To: <1580c2bb-5e94-121d-8153-c8a7230b764b@redhat.com>
+From:   Dan Williams <dan.j.williams@intel.com>
+Date:   Fri, 24 Jan 2020 10:40:46 -0800
+Message-ID: <CAPcyv4gJRuk7pZFvqJNY3niJeoW6CtFwp_sZauBSTdWPP+i+wA@mail.gmail.com>
+Subject: Re: [PATCH v1] driver core: check for dead devices before onlining/offlining
+To:     David Hildenbrand <david@redhat.com>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Suzuki K Poulose <suzuki.poulose@arm.com>,
+        Saravana Kannan <saravanak@google.com>,
+        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+        Michal Hocko <mhocko@kernel.org>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jan 24, 2020 at 10:24 AM Andy Lutomirski <luto@amacapital.net> wrot=
-e:
+On Fri, Jan 24, 2020 at 9:14 AM David Hildenbrand <david@redhat.com> wrote:
 >
->
->
-> > On Jan 24, 2020, at 10:18 AM, H.J. Lu <hjl.tools@gmail.com> wrote:
+> On 20.01.20 11:49, David Hildenbrand wrote:
+> > We can have rare cases where the removal of a device races with
+> > somebody trying to online it (esp. via sysfs). We can simply check
+> > if the device is already removed or getting removed under the dev->lock.
 > >
-> > =EF=BB=BFGCC 10 changed the default to -fno-common, which leads to
+> > E.g., right now, if memory block devices are removed (remove_memory()),
+> > we do a:
 > >
-> >  LD      arch/x86/boot/compressed/vmlinux
-> > ld: arch/x86/boot/compressed/pgtable_64.o:(.bss+0x0): multiple definiti=
-on of `__force_order'; arch/x86/boot/compressed/kaslr_64.o:(.bss+0x0): firs=
-t defined here
-> > make[2]: *** [arch/x86/boot/compressed/Makefile:119: arch/x86/boot/comp=
-ressed/vmlinux] Error 1
+> > remove_memory() -> lock_device_hotplug() -> mem_hotplug_begin() ->
+> > lock_device() -> dev->dead = true
 > >
-> > Since __force_order is already provided in pgtable_64.c, there is no
-> > need to declare __force_order in kaslr_64.c.
+> > Somebody coming via sysfs (/sys/devices/system/memory/memoryX/online)
+> > triggers a:
+> >
+> > lock_device_hotplug_sysfs() -> device_online() -> lock_device() ...
+> >
+> > So if we made it just before the lock_device_hotplug_sysfs() but get
+> > delayed until remove_memory() released all locks, we will continue
+> > taking locks and trying to online the device - which is then a zombie
+> > device.
+> >
+> > Note that at least the memory onlining path seems to be protected by
+> > checking if all memory sections are still present (something we can then
+> > get rid of). We do have other sysfs attributes
+> > (e.g., /sys/devices/system/memory/memoryX/valid_zones) that don't do any
+> > such locking yet and might race with memory removal in a similar way. For
+> > these users, we can then do a
+> >
+> > device_lock(dev);
+> > if (!device_is_dead(dev)) {
+> >       /* magic /*
+> > }
+> > device_unlock(dev);
+> >
+> > Introduce and use device_is_dead() right away.
+> >
 >
-> Why does anything actually define that variable?  Surely any actual refer=
-ences are just an outright bug.  Is it needed for LTO?
+> So, I just added the following:
+>
+> diff --git a/drivers/base/core.c b/drivers/base/core.c
+> index 01cd06eeb513..49c4d8671073 100644
+> --- a/drivers/base/core.c
+> +++ b/drivers/base/core.c
+> @@ -1567,6 +1567,7 @@ static ssize_t online_store(struct device *dev,
+> struct device_attribute *attr,
+>         if (ret < 0)
+>                 return ret;
+>
+> +       msleep(10000);
+>         ret = lock_device_hotplug_sysfs();
+>         if (ret)
+>                 return ret;
+>
+> Then triggered
+>         echo 1 > /sys/devices/system/memory/memory51/online
+> And quickly afterwards unplugged the DIMM.
+>
+> Good news is that we get (after 10 seconds)
+>         sh: echo: write error: No such device
+>
+> Reason is that unplug will not finish before all sysfs attributes have
+> been exited by other threads.
 
-It is needed by GCC 10 without LTO.
-
---=20
-H.J.
+The unplug thread gets blocked for 10 seconds waiting for this thread
+in online_store() to exit?
