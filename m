@@ -2,101 +2,58 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3C94D1476A7
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Jan 2020 02:23:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 87B0F1476AA
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Jan 2020 02:24:14 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730050AbgAXBXL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 23 Jan 2020 20:23:11 -0500
-Received: from mail-qt1-f196.google.com ([209.85.160.196]:35766 "EHLO
-        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726584AbgAXBXK (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Jan 2020 20:23:10 -0500
-Received: by mail-qt1-f196.google.com with SMTP id e12so355451qto.2;
-        Thu, 23 Jan 2020 17:23:10 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=jms.id.au; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=+JCfN+nSKvj6z6tQnbylC4tnVuTXLYg++T8pHk3n1Rs=;
-        b=eFwuIq388GfKUC6GUKdGzBK6GS8QptU0z6snMlcCeYTB3OaEDOZ8Jp5i/8m/E4MMgs
-         +mu3AnfZEzmniI06Z8QY4BWKEfa1omxAnAQLDJEXq+X4QN1LQHxhyUK2ltD7Qfwep/vv
-         dpXNOopKQBKiOxQ4TmC2BZlLeLUJ4V8yvSHsU=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=+JCfN+nSKvj6z6tQnbylC4tnVuTXLYg++T8pHk3n1Rs=;
-        b=i+fznQ3VP0jOSvX+BOzacg2Ec2DFHX8YtJee1osp+3mkdAOe4TWs2szmYRUKiJTu/K
-         p+9OSc0RfFygJGky5AFxWXhsw/Mms5AM2k1SbKeTmsrxxtVL5BZ3QkgTEALaKoTuZ5KL
-         puGpoBMjDi7XlOxrUUe/JApwBHrBP7cEO7O3DBYM1tKGGx5PlnqKFg/aKarKBfr4hgfe
-         vLLvIQDk2FJPsJ6H1GwfDUS6EvI+7rQpT+1LCqtZgi2T8cddvrRzrczBuKZFq+fudoC2
-         3mYaDYUlSTKT9Fz3nvJx4Fao71IyAxBXooFTX7t/SwuRI5hZVskZFgP6A17MfkWWJtOX
-         eE5Q==
-X-Gm-Message-State: APjAAAWwAoGgR5MOcC1GE5Y6ohkVRwrscE9M7xNEZT8EhrlM5plpOGy0
-        JRB2ZTpbEAPwqdXLGK1UvqzXob5KpsUsPza8UfQ=
-X-Google-Smtp-Source: APXvYqxTqcFmlwZcBGSX8ZImKVjjr5b8leE8AoohXrep2/0vxHoDMlibAChu/aMO2jSWaB/SxV3cSnP5w6RVZVwCoT8=
-X-Received: by 2002:ac8:4244:: with SMTP id r4mr1014134qtm.169.1579828989644;
- Thu, 23 Jan 2020 17:23:09 -0800 (PST)
-MIME-Version: 1.0
-References: <20200124011801.18712-1-sashal@kernel.org> <20200124011801.18712-3-sashal@kernel.org>
-In-Reply-To: <20200124011801.18712-3-sashal@kernel.org>
-From:   Joel Stanley <joel@jms.id.au>
-Date:   Fri, 24 Jan 2020 01:22:57 +0000
-Message-ID: <CACPK8XdJ8=+SNws2NCjKeX8PRa2wV-J0wzAuWUiP6miL-TioNw@mail.gmail.com>
-Subject: Re: [PATCH AUTOSEL 4.14 3/5] ARM: config: aspeed-g5: Enable 8250_DW quirks
-To:     Sasha Levin <sashal@kernel.org>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        stable@vger.kernel.org,
-        =?UTF-8?Q?C=C3=A9dric_Le_Goater?= <clg@kaod.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        linux-aspeed <linux-aspeed@lists.ozlabs.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+        id S1730155AbgAXBXX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 23 Jan 2020 20:23:23 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36538 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729504AbgAXBXW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 23 Jan 2020 20:23:22 -0500
+Received: from localhost.localdomain (c-73-231-172-41.hsd1.ca.comcast.net [73.231.172.41])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id DDF94207FF;
+        Fri, 24 Jan 2020 01:23:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1579829002;
+        bh=08cTEu9ASs53hJjSSTAEYpZBVzWdSRM6CeG1YjlGUz4=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=cloRRdkkcIuenl6ECOeuogMUGj3Z2GxhDnn4EoZvXu16OBGU3R+BZjFbCu2w+HOri
+         JHw7AxqMvYYlCfK5OfcSaAH6ZZbDh7xzVQEawNmDlN4yB9+AJSuXNPmW6CdYEID5zG
+         +ee+QE8CF3IZg4nsO1bcvAeGND1q4HdKWGThrmEE=
+Date:   Thu, 23 Jan 2020 17:23:21 -0800
+From:   Andrew Morton <akpm@linux-foundation.org>
+To:     Pengcheng Yang <yangpc@wangsu.com>
+Cc:     gregkh@linuxfoundation.org, jannh@google.com,
+        viro@zeniv.linux.org.uk, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH RESEND] kernel/relay.c: fix read_pos error when multiple
+ readers
+Message-Id: <20200123172321.0ef6744e784692585f9843b3@linux-foundation.org>
+In-Reply-To: <1579691175-28949-1-git-send-email-yangpc@wangsu.com>
+References: <1579691175-28949-1-git-send-email-yangpc@wangsu.com>
+X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 24 Jan 2020 at 01:18, Sasha Levin <sashal@kernel.org> wrote:
->
-> From: Joel Stanley <joel@jms.id.au>
->
-> [ Upstream commit a5331a7a87ec81d5228b7421acf831b2d0c0de26 ]
->
-> This driver option is used by the AST2600 A0 boards to work around a
-> hardware issue.
+On Wed, 22 Jan 2020 19:06:15 +0800 Pengcheng Yang <yangpc@wangsu.com> wrote:
 
-This hardware was only supported from 5.4+, so I think we can drop this pat=
-ch.
+> When reading, read_pos should start with bytes_consumed,
+> not file->f_pos. Because when there is more than one reader,
+> the read_pos corresponding to file->f_pos may have been consumed,
+> which will cause the data that has been consumed to be read
+> and the bytes_consumed update error.
 
-Cheers,
+That sounds fairly serious.  Are you able to describe a userspace setup
+which will trigger this?  Do you have any test code which is able to
+demonstrate the bug?
 
-Joel
+We really should have a relay testcase in tools/testing, but relay came
+along before we became diligent about this.
 
->
-> Reviewed-by: C=C3=A9dric Le Goater <clg@kaod.org>
-> Acked-by: Arnd Bergmann <arnd@arndb.de>
-> Signed-off-by: Joel Stanley <joel@jms.id.au>
-> Signed-off-by: Sasha Levin <sashal@kernel.org>
-> ---
->  arch/arm/configs/aspeed_g5_defconfig | 1 +
->  1 file changed, 1 insertion(+)
->
-> diff --git a/arch/arm/configs/aspeed_g5_defconfig b/arch/arm/configs/aspe=
-ed_g5_defconfig
-> index c0ad7b82086bd..cb23f8ade3e2b 100644
-> --- a/arch/arm/configs/aspeed_g5_defconfig
-> +++ b/arch/arm/configs/aspeed_g5_defconfig
-> @@ -110,6 +110,7 @@ CONFIG_SERIAL_8250_RUNTIME_UARTS=3D6
->  CONFIG_SERIAL_8250_EXTENDED=3Dy
->  CONFIG_SERIAL_8250_ASPEED_VUART=3Dy
->  CONFIG_SERIAL_8250_SHARE_IRQ=3Dy
-> +CONFIG_SERIAL_8250_DW=3Dy
->  CONFIG_SERIAL_OF_PLATFORM=3Dy
->  CONFIG_ASPEED_BT_IPMI_BMC=3Dy
->  # CONFIG_HW_RANDOM is not set
-> --
-> 2.20.1
->
