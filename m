@@ -2,36 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9C13D147FE2
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Jan 2020 12:08:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E13D9147FC7
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Jan 2020 12:07:53 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388637AbgAXLF7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 24 Jan 2020 06:05:59 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40538 "EHLO mail.kernel.org"
+        id S2388752AbgAXLFA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 24 Jan 2020 06:05:00 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39224 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732644AbgAXLF5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 24 Jan 2020 06:05:57 -0500
+        id S2387981AbgAXLE7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 24 Jan 2020 06:04:59 -0500
 Received: from localhost (ip-213-127-102-57.ip.prioritytelecom.net [213.127.102.57])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C4B5A20663;
-        Fri, 24 Jan 2020 11:05:55 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3BD8C2071A;
+        Fri, 24 Jan 2020 11:04:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579863956;
-        bh=sW0JEfjDsZMoCmQzP96dh5i2+m/FbYoUPESR4+ht1uU=;
+        s=default; t=1579863898;
+        bh=MZybGdJlM213r2t3wD1EpjiuBzvm690e2krq9nvSH0w=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=MgdDTpYi9TWLNzf1hMo8chGRQpGH1G6wGiHxYfVe1B+WAfl11QjWcgnN+wZ7vPHkH
-         YKTUeeSKBhcpdmPTkHuYqkjxYi8i4Eel/9HcOHmBELCKo8oTaYAUfAuKeeV6Xg6zlM
-         PFxwuZjzaXwXv9sPbcItkMJqPK+gjVA7Hprca1gw=
+        b=szQ2m0Uw+s+UsZYbvC0XtDa56RqRAj6keXfq+8S26VdoazcCIrO3yeNG4LYYOKxAz
+         iRQkIzsGfTn52376NNHZMXfe/gwLBo4aOI7Ej7VlUEnXYnXnJDXeEK+XEW0C/1xG7L
+         TB+Osq/AsgcwF0U1nrbWPm6AU0fpoXk/N2HNQmNY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Yangtao Li <tiny.windzz@gmail.com>,
         Stephen Boyd <sboyd@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 108/639] clk: imx7d: fix refcount leak in imx7d_clocks_init()
-Date:   Fri, 24 Jan 2020 10:24:38 +0100
-Message-Id: <20200124093100.882561051@linuxfoundation.org>
+Subject: [PATCH 4.19 109/639] clk: vf610: fix refcount leak in vf610_clocks_init()
+Date:   Fri, 24 Jan 2020 10:24:39 +0100
+Message-Id: <20200124093101.002722045@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
 In-Reply-To: <20200124093047.008739095@linuxfoundation.org>
 References: <20200124093047.008739095@linuxfoundation.org>
@@ -46,32 +46,32 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Yangtao Li <tiny.windzz@gmail.com>
 
-[ Upstream commit 5f8c183a996b76bb09748073c856e4246fd4ce95 ]
+[ Upstream commit 567177024e0313e4f0dcba7ba10c0732e50e655d ]
 
 The of_find_compatible_node() returns a node pointer with refcount
 incremented, but there is the lack of use of the of_node_put() when
 done. Add the missing of_node_put() to release the refcount.
 
 Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
-Fixes: 8f6d8094b215 ("ARM: imx: add imx7d clk tree support")
+Fixes: 1f2c5fd5f048 ("ARM: imx: add VF610 clock support")
 Signed-off-by: Stephen Boyd <sboyd@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/clk/imx/clk-imx7d.c | 1 +
+ drivers/clk/imx/clk-vf610.c | 1 +
  1 file changed, 1 insertion(+)
 
-diff --git a/drivers/clk/imx/clk-imx7d.c b/drivers/clk/imx/clk-imx7d.c
-index 881b772c4ac97..83412bc36ebfb 100644
---- a/drivers/clk/imx/clk-imx7d.c
-+++ b/drivers/clk/imx/clk-imx7d.c
-@@ -413,6 +413,7 @@ static void __init imx7d_clocks_init(struct device_node *ccm_node)
- 	np = of_find_compatible_node(NULL, NULL, "fsl,imx7d-anatop");
- 	base = of_iomap(np, 0);
- 	WARN_ON(!base);
+diff --git a/drivers/clk/imx/clk-vf610.c b/drivers/clk/imx/clk-vf610.c
+index 6dae54325a91d..a334667c450a1 100644
+--- a/drivers/clk/imx/clk-vf610.c
++++ b/drivers/clk/imx/clk-vf610.c
+@@ -203,6 +203,7 @@ static void __init vf610_clocks_init(struct device_node *ccm_node)
+ 	np = of_find_compatible_node(NULL, NULL, "fsl,vf610-anatop");
+ 	anatop_base = of_iomap(np, 0);
+ 	BUG_ON(!anatop_base);
 +	of_node_put(np);
  
- 	clks[IMX7D_PLL_ARM_MAIN_SRC]  = imx_clk_mux("pll_arm_main_src", base + 0x60, 14, 2, pll_bypass_src_sel, ARRAY_SIZE(pll_bypass_src_sel));
- 	clks[IMX7D_PLL_DRAM_MAIN_SRC] = imx_clk_mux("pll_dram_main_src", base + 0x70, 14, 2, pll_bypass_src_sel, ARRAY_SIZE(pll_bypass_src_sel));
+ 	np = ccm_node;
+ 	ccm_base = of_iomap(np, 0);
 -- 
 2.20.1
 
