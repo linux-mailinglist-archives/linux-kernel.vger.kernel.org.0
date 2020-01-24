@@ -2,93 +2,157 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C1F1A14792F
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Jan 2020 09:06:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CFC20147926
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Jan 2020 09:05:07 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729652AbgAXIGv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 24 Jan 2020 03:06:51 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:49906 "EHLO
-        mx0b-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725821AbgAXIGv (ORCPT
+        id S1729963AbgAXIE7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 24 Jan 2020 03:04:59 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:64198 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726294AbgAXIE7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 24 Jan 2020 03:06:51 -0500
-Received: from pps.filterd (m0127361.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 00O86A6p186623
-        for <linux-kernel@vger.kernel.org>; Fri, 24 Jan 2020 03:06:50 -0500
-Received: from e06smtp03.uk.ibm.com (e06smtp03.uk.ibm.com [195.75.94.99])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2xkwqb4mq2-1
+        Fri, 24 Jan 2020 03:04:59 -0500
+Received: from pps.filterd (m0098413.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 00O84lSu136748
+        for <linux-kernel@vger.kernel.org>; Fri, 24 Jan 2020 03:04:58 -0500
+Received: from e06smtp02.uk.ibm.com (e06smtp02.uk.ibm.com [195.75.94.98])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2xqch3x5bp-1
         (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Fri, 24 Jan 2020 03:06:30 -0500
+        for <linux-kernel@vger.kernel.org>; Fri, 24 Jan 2020 03:04:57 -0500
 Received: from localhost
-        by e06smtp03.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        by e06smtp02.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
         for <linux-kernel@vger.kernel.org> from <ravi.bangoria@linux.ibm.com>;
-        Fri, 24 Jan 2020 08:04:53 -0000
-Received: from b06cxnps3075.portsmouth.uk.ibm.com (9.149.109.195)
-        by e06smtp03.uk.ibm.com (192.168.101.133) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        Fri, 24 Jan 2020 08:04:55 -0000
+Received: from b06avi18878370.portsmouth.uk.ibm.com (9.149.26.194)
+        by e06smtp02.uk.ibm.com (192.168.101.132) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
         (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Fri, 24 Jan 2020 08:04:50 -0000
+        Fri, 24 Jan 2020 08:04:52 -0000
 Received: from d06av22.portsmouth.uk.ibm.com (d06av22.portsmouth.uk.ibm.com [9.149.105.58])
-        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 00O84nT958392732
+        by b06avi18878370.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 00O84pRx36110622
         (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 24 Jan 2020 08:04:49 GMT
+        Fri, 24 Jan 2020 08:04:51 GMT
 Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 73B894C052;
+        by IMSVA (Postfix) with ESMTP id 27CAB4C04E;
+        Fri, 24 Jan 2020 08:04:51 +0000 (GMT)
+Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id B64E24C059;
         Fri, 24 Jan 2020 08:04:49 +0000 (GMT)
-Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 098F34C04A;
-        Fri, 24 Jan 2020 08:04:48 +0000 (GMT)
 Received: from bangoria.in.ibm.com (unknown [9.124.31.144])
         by d06av22.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Fri, 24 Jan 2020 08:04:47 +0000 (GMT)
+        Fri, 24 Jan 2020 08:04:49 +0000 (GMT)
 From:   Ravi Bangoria <ravi.bangoria@linux.ibm.com>
 To:     acme@kernel.org, jolsa@redhat.com
 Cc:     namhyung@kernel.org, irogers@google.com, songliubraving@fb.com,
         yao.jin@linux.intel.com, linux-kernel@vger.kernel.org,
         Ravi Bangoria <ravi.bangoria@linux.ibm.com>
-Subject: [PATCH v2 0/6] perf annotate: Misc fixes / improvements
-Date:   Fri, 24 Jan 2020 13:34:26 +0530
+Subject: [PATCH v2 1/6] perf annotate: Remove privsize from symbol__annotate() args
+Date:   Fri, 24 Jan 2020 13:34:27 +0530
 X-Mailer: git-send-email 2.24.1
+In-Reply-To: <20200124080432.8065-1-ravi.bangoria@linux.ibm.com>
+References: <20200124080432.8065-1-ravi.bangoria@linux.ibm.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-TM-AS-GCONF: 00
-x-cbid: 20012408-0012-0000-0000-00000380376D
+x-cbid: 20012408-0008-0000-0000-0000034C3E6C
 X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 20012408-0013-0000-0000-000021BC80AE
-Message-Id: <20200124080432.8065-1-ravi.bangoria@linux.ibm.com>
+x-cbparentid: 20012408-0009-0000-0000-00004A6CAD40
+Message-Id: <20200124080432.8065-2-ravi.bangoria@linux.ibm.com>
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.572
  definitions=2020-01-24_02:2020-01-24,2020-01-24 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 malwarescore=0
- suspectscore=0 phishscore=0 adultscore=0 priorityscore=1501 mlxscore=0
- lowpriorityscore=0 mlxlogscore=855 impostorscore=0 spamscore=0
- clxscore=1015 classifier=spam adjust=0 reason=mlx scancount=1
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 adultscore=0
+ priorityscore=1501 mlxlogscore=999 impostorscore=0 malwarescore=0
+ clxscore=1015 spamscore=0 lowpriorityscore=0 phishscore=0 bulkscore=0
+ suspectscore=2 classifier=spam adjust=0 reason=mlx scancount=1
  engine=8.12.0-1910280000 definitions=main-2001240065
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Few fixes / improvements related to perf annotate.
+privsize is passed as 0 from all the symbol__annotate() callers.
+Remove it from argument list.
 
-v1: http://lore.kernel.org/r/20200117092612.30874-1-ravi.bangoria@linux.ibm.com
+Signed-off-by: Ravi Bangoria <ravi.bangoria@linux.ibm.com>
+---
+ tools/perf/builtin-top.c     | 2 +-
+ tools/perf/ui/gtk/annotate.c | 2 +-
+ tools/perf/util/annotate.c   | 7 ++++---
+ tools/perf/util/annotate.h   | 2 +-
+ 4 files changed, 7 insertions(+), 6 deletions(-)
 
-v1->v2:
- - Split [PATCH v1 1/3] into two patches.
- - Patch 5 and patch 6 are new.
-
-Ravi Bangoria (6):
-  perf annotate: Remove privsize from symbol__annotate() args
-  perf annotate: Simplify disasm_line allocation and freeing code
-  perf annotate: Align struct annotate_args
-  perf annotate: Fix segfault with source toggle
-  perf annotate: Make few functions static
-  perf annotate: Get rid of annotation->nr_jumps
-
- tools/perf/builtin-top.c     |   2 +-
- tools/perf/ui/gtk/annotate.c |   2 +-
- tools/perf/util/annotate.c   | 116 +++++++++++++----------------------
- tools/perf/util/annotate.h   |   8 +--
- 4 files changed, 47 insertions(+), 81 deletions(-)
-
+diff --git a/tools/perf/builtin-top.c b/tools/perf/builtin-top.c
+index 8affcab75604..3e37747364e0 100644
+--- a/tools/perf/builtin-top.c
++++ b/tools/perf/builtin-top.c
+@@ -143,7 +143,7 @@ static int perf_top__parse_source(struct perf_top *top, struct hist_entry *he)
+ 		return err;
+ 	}
+ 
+-	err = symbol__annotate(&he->ms, evsel, 0, &top->annotation_opts, NULL);
++	err = symbol__annotate(&he->ms, evsel, &top->annotation_opts, NULL);
+ 	if (err == 0) {
+ 		top->sym_filter_entry = he;
+ 	} else {
+diff --git a/tools/perf/ui/gtk/annotate.c b/tools/perf/ui/gtk/annotate.c
+index 22cc240f7371..35f9641bf670 100644
+--- a/tools/perf/ui/gtk/annotate.c
++++ b/tools/perf/ui/gtk/annotate.c
+@@ -174,7 +174,7 @@ static int symbol__gtk_annotate(struct map_symbol *ms, struct evsel *evsel,
+ 	if (ms->map->dso->annotate_warned)
+ 		return -1;
+ 
+-	err = symbol__annotate(ms, evsel, 0, &annotation__default_options, NULL);
++	err = symbol__annotate(ms, evsel, &annotation__default_options, NULL);
+ 	if (err) {
+ 		char msg[BUFSIZ];
+ 		symbol__strerror_disassemble(ms, err, msg, sizeof(msg));
+diff --git a/tools/perf/util/annotate.c b/tools/perf/util/annotate.c
+index ca73fb74ad03..ea70bc050bce 100644
+--- a/tools/perf/util/annotate.c
++++ b/tools/perf/util/annotate.c
+@@ -2149,9 +2149,10 @@ void symbol__calc_percent(struct symbol *sym, struct evsel *evsel)
+ 	annotation__calc_percent(notes, evsel, symbol__size(sym));
+ }
+ 
+-int symbol__annotate(struct map_symbol *ms, struct evsel *evsel, size_t privsize,
++int symbol__annotate(struct map_symbol *ms, struct evsel *evsel,
+ 		     struct annotation_options *options, struct arch **parch)
+ {
++	size_t privsize = 0;
+ 	struct symbol *sym = ms->sym;
+ 	struct annotation *notes = symbol__annotation(sym);
+ 	struct annotate_args args = {
+@@ -2790,7 +2791,7 @@ int symbol__tty_annotate(struct map_symbol *ms, struct evsel *evsel,
+ 	struct symbol *sym = ms->sym;
+ 	struct rb_root source_line = RB_ROOT;
+ 
+-	if (symbol__annotate(ms, evsel, 0, opts, NULL) < 0)
++	if (symbol__annotate(ms, evsel, opts, NULL) < 0)
+ 		return -1;
+ 
+ 	symbol__calc_percent(sym, evsel);
+@@ -3070,7 +3071,7 @@ int symbol__annotate2(struct map_symbol *ms, struct evsel *evsel,
+ 	if (perf_evsel__is_group_event(evsel))
+ 		nr_pcnt = evsel->core.nr_members;
+ 
+-	err = symbol__annotate(ms, evsel, 0, options, parch);
++	err = symbol__annotate(ms, evsel, options, parch);
+ 	if (err)
+ 		goto out_free_offsets;
+ 
+diff --git a/tools/perf/util/annotate.h b/tools/perf/util/annotate.h
+index 455403e8fede..dade64781670 100644
+--- a/tools/perf/util/annotate.h
++++ b/tools/perf/util/annotate.h
+@@ -352,7 +352,7 @@ struct annotated_source *symbol__hists(struct symbol *sym, int nr_hists);
+ void symbol__annotate_zero_histograms(struct symbol *sym);
+ 
+ int symbol__annotate(struct map_symbol *ms,
+-		     struct evsel *evsel, size_t privsize,
++		     struct evsel *evsel,
+ 		     struct annotation_options *options,
+ 		     struct arch **parch);
+ int symbol__annotate2(struct map_symbol *ms,
 -- 
 2.24.1
 
