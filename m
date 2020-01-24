@@ -2,95 +2,71 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2A5F4149070
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Jan 2020 22:48:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 24C9A149072
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Jan 2020 22:48:30 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729037AbgAXVsW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 24 Jan 2020 16:48:22 -0500
-Received: from mail-io1-f67.google.com ([209.85.166.67]:40643 "EHLO
-        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726303AbgAXVsV (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 24 Jan 2020 16:48:21 -0500
-Received: by mail-io1-f67.google.com with SMTP id x1so3472270iop.7
-        for <linux-kernel@vger.kernel.org>; Fri, 24 Jan 2020 13:48:19 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=Ay0Osx6+91G60YFGW9rFqB7uUlKNz/NdTOizLiEzOMk=;
-        b=Sr6tuk44RcLyX1X2YNrcNt2R2ODlKVH21uOR1R8z8Hx5n/AwwMiQUcVqOWWBXuAmsq
-         6CCiRP0eq6supQv53NAB/m+k+Y/jaLBwgTqaFpCwBTnDwPkNfz0IvpPEL5IW8vR4bZLa
-         915irkan6Gfhmbsymmzy290AwLgC7b5i4+A0jdoPHEz2oTtJw6uz3eD1se71jIC4xUxT
-         XNuflWVrzoZMaOeU3FvoNZX4qL6qf4gYC6rJHNTI9iJwdOk27Z8MOhJ6YVRPyHmXVe78
-         7bJ5D2QAVTRWYhBfMCLChJ6z4gXSFspk3ETkaszF0t7bH43oZIzZA+vCXcy9t+PAd+f8
-         tHDg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=Ay0Osx6+91G60YFGW9rFqB7uUlKNz/NdTOizLiEzOMk=;
-        b=KMNl3PwE6Imj3ggQ/51hwkmADA85FcQsr2LlriMXgmE62KL/OIfgK9T4IDZN08c3Q2
-         T0mkDuAasWXyrCx6W5fQT9ZqcweKyFfbhShUAIaR6rc45bfBzfMy+6o+qfmus1ekt1l8
-         fajPG7nAJ767laLk/MCaGhJnfKMPg9FGZw1K0D37UNph9Dl1070c8WAg61vEnXmmzEDQ
-         h67wGUrLRGxTQT8Gga+xjuqN36UK8toejW1RQ4e4Qi/pC0bL81zUxJHGVpWeSG4VXiBa
-         +Tmzy/2GjR+wxlOVpsD44yE9bJvPgqVSbr3V68XOc09KqMJz8o/obJeeNPnKijnGNy4a
-         31Sw==
-X-Gm-Message-State: APjAAAX+tjrnBF7MN7N94PeDE9BwiDQdVNv0JyBV/foGDAGOdAuhAQDV
-        4ejRdM8e0QhwZoKETbye+McKqBpaSJvUxfD1/6Emkg==
-X-Google-Smtp-Source: APXvYqw1Zki/W2qIE4y/PpUXn/gDegm3/BDLChh7bzhZ3C1ywNVOQwtKOuhUuVj8L1quBWm3aFdvzHa2PDndvQ7QEEw=
-X-Received: by 2002:a5d:8989:: with SMTP id m9mr3929796iol.118.1579902499106;
- Fri, 24 Jan 2020 13:48:19 -0800 (PST)
+        id S1729083AbgAXVs2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 24 Jan 2020 16:48:28 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58866 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726303AbgAXVs2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 24 Jan 2020 16:48:28 -0500
+Received: from [192.168.1.112] (c-24-9-64-241.hsd1.co.comcast.net [24.9.64.241])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7F20D2077C;
+        Fri, 24 Jan 2020 21:48:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1579902508;
+        bh=7Yjq+vDxOYsrQQm3Kcl0cS81mS27ugwgb7t3BK6sV7o=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=0aAFfrhgbFUEYE/irU3nV2FO8uQJFPxin2DB1MC02mqduPw1AHt/gHrv9qZL0LtOM
+         /9bd3wmUyxatuS6/sU/t5VFKVoGPE2KE/AT/PQA0MagYIU57nv/q2OgUOcxF4mCKs/
+         ox9EiR9ph4Nha2UtrQXrIwZQ2uAVy/wXao7Nk6xE=
+Subject: Re: [PATCH 4.14 000/343] 4.14.168-stable review
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-kernel@vger.kernel.org
+Cc:     torvalds@linux-foundation.org, akpm@linux-foundation.org,
+        linux@roeck-us.net, patches@kernelci.org,
+        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
+        stable@vger.kernel.org, shuah <shuah@kernel.org>
+References: <20200124092919.490687572@linuxfoundation.org>
+From:   shuah <shuah@kernel.org>
+Message-ID: <eea5b549-9db8-726b-25b8-df92ad3ea25b@kernel.org>
+Date:   Fri, 24 Jan 2020 14:48:26 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.1
 MIME-Version: 1.0
-References: <20200124173302.2c3228b2@canb.auug.org.au> <38d53302-b700-b162-e766-2e2a461fc569@infradead.org>
- <20200124213027.GP2109@linux.intel.com>
-In-Reply-To: <20200124213027.GP2109@linux.intel.com>
-From:   Jim Mattson <jmattson@google.com>
-Date:   Fri, 24 Jan 2020 13:48:07 -0800
-Message-ID: <CALMp9eRvoZZ=7P3uCg3oqXzvV1WZc9mkzTJh8+=vmEh7xs5BTw@mail.gmail.com>
-Subject: Re: linux-next: Tree for Jan 24 (kvm)
-To:     Sean Christopherson <sean.j.christopherson@intel.com>
-Cc:     Randy Dunlap <rdunlap@infradead.org>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Vitaly Kuznetsov <vkuznets@redhat.com>,
-        Wanpeng Li <wanpengli@tencent.com>,
-        Joerg Roedel <joro@8bytes.org>, KVM <kvm@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20200124092919.490687572@linuxfoundation.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jan 24, 2020 at 1:30 PM Sean Christopherson
-<sean.j.christopherson@intel.com> wrote:
->
-> On Fri, Jan 24, 2020 at 12:51:31PM -0800, Randy Dunlap wrote:
-> > On 1/23/20 10:33 PM, Stephen Rothwell wrote:
-> > > Hi all,
-> > >
-> > > Changes since 20200123:
-> > >
-> > > The kvm tree gained a conflict against Linus' tree.
-> > >
-> >
-> > on i386:
-> >
-> > ../arch/x86/kvm/x86.h:363:16: warning: right shift count >= width of type [-Wshift-count-overflow]
->
-> Jim,
->
-> This is due to using "unsigned long data" for kvm_dr7_valid() along with
-> "return !(data >> 32);" to check for bits being set in 63:32.  Any
-> objection to fixing the issue by making @data a u64?  Part of me thinks
-> that's the proper behavior anyways, i.e. the helper is purely a reflection
-> of the architectural requirements, the caller is responsible for dropping
-> bits appropriately based on the current mode.
+On 1/24/20 2:26 AM, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 4.14.168 release.
+> There are 343 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+> 
+> Responses should be made by Sun, 26 Jan 2020 09:26:30 +0000.
+> Anything received after that time might be too late.
+> 
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.14.168-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.14.y
+> and the diffstat can be found below.
+> 
+> thanks,
+> 
+> greg k-h
+> 
 
-Why not just change that bad return statement to one of the
-alternatives you had suggested previously?
+Compiled and booted on my test system. No dmesg regressions.
 
-I think "return !(data >> 32)" was the only suggested alternative that
-doesn't work. :-)
+thanks,
+-- Shuah
