@@ -2,36 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3B256148471
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Jan 2020 12:44:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BC0F814846E
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Jan 2020 12:44:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389718AbgAXLI6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 24 Jan 2020 06:08:58 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44384 "EHLO mail.kernel.org"
+        id S2389688AbgAXLIo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 24 Jan 2020 06:08:44 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44138 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389717AbgAXLIy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 24 Jan 2020 06:08:54 -0500
+        id S1730131AbgAXLIl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 24 Jan 2020 06:08:41 -0500
 Received: from localhost (ip-213-127-102-57.ip.prioritytelecom.net [213.127.102.57])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 476FC20663;
-        Fri, 24 Jan 2020 11:08:53 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7DA5A20663;
+        Fri, 24 Jan 2020 11:08:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579864134;
-        bh=65oIQUbtDm3SrnohFcdeYGu2gUSsLPXvueJeKXNf02s=;
+        s=default; t=1579864120;
+        bh=DDsxKVxXv7FL/YgUG33n2aRrxtFLRmQ5rYlI6ESUtdw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=KpFzNHEibMvaQeRSJ5qK5EdS1ZlNRlHN94vjkSYMd+OOqlR4obTEO9HOzO5Xc6cX/
-         2LIN7O8O4xTKZQ4+oRdfaMbabGRENNRG6lr2Kx8Qqqek1lRFhcj3xVo7SCxQk2GB3Y
-         42eF9Eg2lXElgu24e/aqVOTAXbq5WJ7T5aiORBis=
+        b=oJI6tE6/9neQBDUiz2xzfs1tHO/DUZFH3kN6qCEcN2OWcDO8G5wNDaaqG5HweAQpH
+         fFVHwMN+NodcwA7L41dFSOA8Sc8CQBJelfW3h+zn4TbHEo7qM3Sy+UXEWTVdsh3QcS
+         RgsZVA0T+9W62RmNRwMZjy7fvN3cdDVrVsKhRh3M=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Liu Jian <liujian56@huawei.com>,
-        Hamish Martin <hamish.martin@alliedtelesis.co.nz>,
+        stable@vger.kernel.org,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 155/639] driver: uio: fix possible memory leak in __uio_register_device
-Date:   Fri, 24 Jan 2020 10:25:25 +0100
-Message-Id: <20200124093106.624509510@linuxfoundation.org>
+Subject: [PATCH 4.19 161/639] driver core: Fix handling of runtime PM flags in device_link_add()
+Date:   Fri, 24 Jan 2020 10:25:31 +0100
+Message-Id: <20200124093107.353605896@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
 In-Reply-To: <20200124093047.008739095@linuxfoundation.org>
 References: <20200124093047.008739095@linuxfoundation.org>
@@ -44,39 +44,220 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Liu Jian <liujian56@huawei.com>
+From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 
-[ Upstream commit 1a392b3de7c5747506b38fc14b2e79977d3c7770 ]
+[ Upstream commit e2f3cd831a280fc226118d9369bf3f77aab58c56 ]
 
-'idev' is malloced in __uio_register_device() and leak free it before
-leaving from the uio_get_minor() error handing case, it will cause
-memory leak.
+After commit ead18c23c263 ("driver core: Introduce device links
+reference counting"), if there is a link between the given supplier
+and the given consumer already, device_link_add() will refcount it
+and return it unconditionally without updating its flags.  It is
+possible, however, that the second (or any subsequent) caller of
+device_link_add() for the same consumer-supplier pair will pass
+DL_FLAG_PM_RUNTIME, possibly along with DL_FLAG_RPM_ACTIVE, in flags
+to it and the existing link may not behave as expected then.
 
-Fixes: a93e7b331568 ("uio: Prevent device destruction while fds are open")
-Signed-off-by: Liu Jian <liujian56@huawei.com>
-Reviewed-by: Hamish Martin <hamish.martin@alliedtelesis.co.nz>
+First, if DL_FLAG_PM_RUNTIME is not set in the existing link's flags
+at all, it needs to be set like during the original initialization of
+the link.
+
+Second, if DL_FLAG_RPM_ACTIVE is passed to device_link_add() in flags
+(in addition to DL_FLAG_PM_RUNTIME), the existing link should to be
+updated to reflect the "active" runtime PM configuration of the
+consumer-supplier pair and extra care must be taken here to avoid
+possible destructive races with runtime PM of the consumer.
+
+To that end, redefine the rpm_active field in struct device_link
+as a refcount, initialize it to 1 and make rpm_resume() (for the
+consumer) and device_link_add() increment it whenever they acquire
+a runtime PM reference on the supplier device.  Accordingly, make
+rpm_suspend() (for the consumer) and pm_runtime_clean_up_links()
+decrement it and drop runtime PM references to the supplier
+device in a loop until rpm_active becones 1 again.
+
+Fixes: ead18c23c263 ("driver core: Introduce device links reference counting")
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/uio/uio.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ drivers/base/core.c          | 45 ++++++++++++++++++++++++------------
+ drivers/base/power/runtime.c | 26 +++++++++------------
+ include/linux/device.h       |  2 +-
+ 3 files changed, 42 insertions(+), 31 deletions(-)
 
-diff --git a/drivers/uio/uio.c b/drivers/uio/uio.c
-index 2762148c169df..e4b418757017f 100644
---- a/drivers/uio/uio.c
-+++ b/drivers/uio/uio.c
-@@ -938,8 +938,10 @@ int __uio_register_device(struct module *owner,
- 	atomic_set(&idev->event, 0);
+diff --git a/drivers/base/core.c b/drivers/base/core.c
+index c228b4ebf554b..20ae18f44dcdf 100644
+--- a/drivers/base/core.c
++++ b/drivers/base/core.c
+@@ -165,6 +165,19 @@ void device_pm_move_to_tail(struct device *dev)
+ 	device_links_read_unlock(idx);
+ }
  
- 	ret = uio_get_minor(idev);
--	if (ret)
-+	if (ret) {
-+		kfree(idev);
- 		return ret;
++static void device_link_rpm_prepare(struct device *consumer,
++				    struct device *supplier)
++{
++	pm_runtime_new_link(consumer);
++	/*
++	 * If the link is being added by the consumer driver at probe time,
++	 * balance the decrementation of the supplier's runtime PM usage counter
++	 * after consumer probe in driver_probe_device().
++	 */
++	if (consumer->links.status == DL_DEV_PROBING)
++		pm_runtime_get_noresume(supplier);
++}
++
+ /**
+  * device_link_add - Create a link between two devices.
+  * @consumer: Consumer end of the link.
+@@ -201,7 +214,6 @@ struct device_link *device_link_add(struct device *consumer,
+ 				    struct device *supplier, u32 flags)
+ {
+ 	struct device_link *link;
+-	bool rpm_put_supplier = false;
+ 
+ 	if (!consumer || !supplier ||
+ 	    (flags & DL_FLAG_STATELESS &&
+@@ -213,7 +225,6 @@ struct device_link *device_link_add(struct device *consumer,
+ 			pm_runtime_put_noidle(supplier);
+ 			return NULL;
+ 		}
+-		rpm_put_supplier = true;
+ 	}
+ 
+ 	device_links_write_lock();
+@@ -249,6 +260,15 @@ struct device_link *device_link_add(struct device *consumer,
+ 		if (flags & DL_FLAG_AUTOREMOVE_SUPPLIER)
+ 			link->flags |= DL_FLAG_AUTOREMOVE_SUPPLIER;
+ 
++		if (flags & DL_FLAG_PM_RUNTIME) {
++			if (!(link->flags & DL_FLAG_PM_RUNTIME)) {
++				device_link_rpm_prepare(consumer, supplier);
++				link->flags |= DL_FLAG_PM_RUNTIME;
++			}
++			if (flags & DL_FLAG_RPM_ACTIVE)
++				refcount_inc(&link->rpm_active);
++		}
++
+ 		kref_get(&link->kref);
+ 		goto out;
+ 	}
+@@ -257,20 +277,15 @@ struct device_link *device_link_add(struct device *consumer,
+ 	if (!link)
+ 		goto out;
+ 
++	refcount_set(&link->rpm_active, 1);
++
+ 	if (flags & DL_FLAG_PM_RUNTIME) {
+-		if (flags & DL_FLAG_RPM_ACTIVE) {
+-			link->rpm_active = true;
+-			rpm_put_supplier = false;
+-		}
+-		pm_runtime_new_link(consumer);
+-		/*
+-		 * If the link is being added by the consumer driver at probe
+-		 * time, balance the decrementation of the supplier's runtime PM
+-		 * usage counter after consumer probe in driver_probe_device().
+-		 */
+-		if (consumer->links.status == DL_DEV_PROBING)
+-			pm_runtime_get_noresume(supplier);
++		if (flags & DL_FLAG_RPM_ACTIVE)
++			refcount_inc(&link->rpm_active);
++
++		device_link_rpm_prepare(consumer, supplier);
+ 	}
++
+ 	get_device(supplier);
+ 	link->supplier = supplier;
+ 	INIT_LIST_HEAD(&link->s_node);
+@@ -333,7 +348,7 @@ struct device_link *device_link_add(struct device *consumer,
+ 	device_pm_unlock();
+ 	device_links_write_unlock();
+ 
+-	if (rpm_put_supplier)
++	if ((flags & DL_FLAG_PM_RUNTIME && flags & DL_FLAG_RPM_ACTIVE) && !link)
+ 		pm_runtime_put(supplier);
+ 
+ 	return link;
+diff --git a/drivers/base/power/runtime.c b/drivers/base/power/runtime.c
+index beb85c31f3fa3..b914932d3ca1a 100644
+--- a/drivers/base/power/runtime.c
++++ b/drivers/base/power/runtime.c
+@@ -268,11 +268,8 @@ static int rpm_get_suppliers(struct device *dev)
+ 	list_for_each_entry_rcu(link, &dev->links.suppliers, c_node) {
+ 		int retval;
+ 
+-		if (!(link->flags & DL_FLAG_PM_RUNTIME))
+-			continue;
+-
+-		if (READ_ONCE(link->status) == DL_STATE_SUPPLIER_UNBIND ||
+-		    link->rpm_active)
++		if (!(link->flags & DL_FLAG_PM_RUNTIME) ||
++		    READ_ONCE(link->status) == DL_STATE_SUPPLIER_UNBIND)
+ 			continue;
+ 
+ 		retval = pm_runtime_get_sync(link->supplier);
+@@ -281,7 +278,7 @@ static int rpm_get_suppliers(struct device *dev)
+ 			pm_runtime_put_noidle(link->supplier);
+ 			return retval;
+ 		}
+-		link->rpm_active = true;
++		refcount_inc(&link->rpm_active);
+ 	}
+ 	return 0;
+ }
+@@ -290,12 +287,13 @@ static void rpm_put_suppliers(struct device *dev)
+ {
+ 	struct device_link *link;
+ 
+-	list_for_each_entry_rcu(link, &dev->links.suppliers, c_node)
+-		if (link->rpm_active &&
+-		    READ_ONCE(link->status) != DL_STATE_SUPPLIER_UNBIND) {
++	list_for_each_entry_rcu(link, &dev->links.suppliers, c_node) {
++		if (READ_ONCE(link->status) == DL_STATE_SUPPLIER_UNBIND)
++			continue;
++
++		while (refcount_dec_not_one(&link->rpm_active))
+ 			pm_runtime_put(link->supplier);
+-			link->rpm_active = false;
+-		}
 +	}
+ }
  
- 	idev->dev.devt = MKDEV(uio_major, idev->minor);
- 	idev->dev.class = &uio_class;
+ /**
+@@ -1531,7 +1529,7 @@ void pm_runtime_remove(struct device *dev)
+  *
+  * Check links from this device to any consumers and if any of them have active
+  * runtime PM references to the device, drop the usage counter of the device
+- * (once per link).
++ * (as many times as needed).
+  *
+  * Links with the DL_FLAG_STATELESS flag set are ignored.
+  *
+@@ -1553,10 +1551,8 @@ void pm_runtime_clean_up_links(struct device *dev)
+ 		if (link->flags & DL_FLAG_STATELESS)
+ 			continue;
+ 
+-		if (link->rpm_active) {
++		while (refcount_dec_not_one(&link->rpm_active))
+ 			pm_runtime_put_noidle(dev);
+-			link->rpm_active = false;
+-		}
+ 	}
+ 
+ 	device_links_read_unlock(idx);
+diff --git a/include/linux/device.h b/include/linux/device.h
+index 19dd8852602c4..b8fd2a1f859db 100644
+--- a/include/linux/device.h
++++ b/include/linux/device.h
+@@ -849,7 +849,7 @@ struct device_link {
+ 	struct list_head c_node;
+ 	enum device_link_state status;
+ 	u32 flags;
+-	bool rpm_active;
++	refcount_t rpm_active;
+ 	struct kref kref;
+ #ifdef CONFIG_SRCU
+ 	struct rcu_head rcu_head;
 -- 
 2.20.1
 
