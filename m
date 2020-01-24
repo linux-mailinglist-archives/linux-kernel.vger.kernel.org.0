@@ -2,37 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4219E14826B
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Jan 2020 12:28:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AFA7F148255
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Jan 2020 12:27:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2403813AbgAXL1z (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 24 Jan 2020 06:27:55 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43706 "EHLO mail.kernel.org"
+        id S2387983AbgAXL1H (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 24 Jan 2020 06:27:07 -0500
+Received: from mail.kernel.org ([198.145.29.99]:42268 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2391686AbgAXL1w (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 24 Jan 2020 06:27:52 -0500
+        id S2391616AbgAXL1A (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 24 Jan 2020 06:27:00 -0500
 Received: from localhost (ip-213-127-102-57.ip.prioritytelecom.net [213.127.102.57])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DEC4A214AF;
-        Fri, 24 Jan 2020 11:27:49 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4E1DB20718;
+        Fri, 24 Jan 2020 11:26:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579865270;
-        bh=gU8F7Tl6DvBKb/PH4OgLQKOtUUaB6PKZI6b+LjlOG2Q=;
+        s=default; t=1579865220;
+        bh=gTCTS9YOo2/EycsK2DHyJOhnQ/fkQKKNu4+lHyMCmg0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=1i98ZclKeSL8A2uv0NVrKrQ6iIftkRbxrXcwhnFaEt2ARs2uAADPz/5unNRPpe6pp
-         KY88/bp2fp8IqW2XX1yy7fORZm9T8KrQRCmcX/8YfridvCu8g3233WixMwEG1rVQwE
-         aXSdzaC2XtuJQGcX4vJdx8q2d9oJtLI9kEcUB+PM=
+        b=nXLxwFYy7h0SIQiTfKMlHxWKcQ9RwfFAOkW95ZrF8/ki+fduG+cPdTbA/OI3WyPwz
+         FQ0Ws0VihFUxkZ39IamTnyxQOI+uYUOkcFMaDlFwvQrXqwHHrjjw9nsa0XmIMnQkU7
+         j1xzvt4aN54Pc7DT2BN5fKyjpQc+FsocfZo/pu1U=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Olof Johansson <olof@lixom.net>,
+        stable@vger.kernel.org, Colin Ian King <colin.king@canonical.com>,
+        Hannes Reinecke <hare@suse.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 477/639] ARM: stm32: use "depends on" instead of "if" after prompt
-Date:   Fri, 24 Jan 2020 10:30:47 +0100
-Message-Id: <20200124093147.884676121@linuxfoundation.org>
+Subject: [PATCH 4.19 478/639] scsi: libfc: fix null pointer dereference on a null lport
+Date:   Fri, 24 Jan 2020 10:30:48 +0100
+Message-Id: <20200124093148.013849932@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
 In-Reply-To: <20200124093047.008739095@linuxfoundation.org>
 References: <20200124093047.008739095@linuxfoundation.org>
@@ -45,34 +45,37 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
+From: Colin Ian King <colin.king@canonical.com>
 
-[ Upstream commit 7e8a0f10899075ac2665c78c4e49dbaf32bf3346 ]
+[ Upstream commit 41a6bf6529edd10a6def42e3b2c34a7474bcc2f5 ]
 
-This appeared after the global fixups by commit e32465429490 ("ARM: use
-"depends on" for SoC configs instead of "if" after prompt"). Fix it now.
+Currently if lport is null then the null lport pointer is dereference when
+printing out debug via the FC_LPORT_DB macro. Fix this by using the more
+generic FC_LIBFC_DBG debug macro instead that does not use lport.
 
-Link: https://lore.kernel.org/r/20190710051320.8738-1-yamada.masahiro@socionext.com
-Fixes: e32465429490 ("ARM: use "depends on" for SoC configs instead of "if" after prompt")
-Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
-Signed-off-by: Olof Johansson <olof@lixom.net>
+Addresses-Coverity: ("Dereference after null check")
+Fixes: 7414705ea4ae ("libfc: Add runtime debugging with debug_logging module parameter")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Reviewed-by: Hannes Reinecke <hare@suse.com>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arm/mach-stm32/Kconfig | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/scsi/libfc/fc_exch.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/arm/mach-stm32/Kconfig b/arch/arm/mach-stm32/Kconfig
-index 713c068b953fb..adca4368d67c4 100644
---- a/arch/arm/mach-stm32/Kconfig
-+++ b/arch/arm/mach-stm32/Kconfig
-@@ -1,5 +1,6 @@
- menuconfig ARCH_STM32
--	bool "STMicroelectronics STM32 family" if ARM_SINGLE_ARMV7M || ARCH_MULTI_V7
-+	bool "STMicroelectronics STM32 family"
-+	depends on ARM_SINGLE_ARMV7M || ARCH_MULTI_V7
- 	select ARMV7M_SYSTICK if ARM_SINGLE_ARMV7M
- 	select HAVE_ARM_ARCH_TIMER if ARCH_MULTI_V7
- 	select ARM_GIC if ARCH_MULTI_V7
+diff --git a/drivers/scsi/libfc/fc_exch.c b/drivers/scsi/libfc/fc_exch.c
+index 42bcf7f3a0f90..6ba257cbc6d94 100644
+--- a/drivers/scsi/libfc/fc_exch.c
++++ b/drivers/scsi/libfc/fc_exch.c
+@@ -2603,7 +2603,7 @@ void fc_exch_recv(struct fc_lport *lport, struct fc_frame *fp)
+ 
+ 	/* lport lock ? */
+ 	if (!lport || lport->state == LPORT_ST_DISABLED) {
+-		FC_LPORT_DBG(lport, "Receiving frames for an lport that "
++		FC_LIBFC_DBG("Receiving frames for an lport that "
+ 			     "has not been initialized correctly\n");
+ 		fc_frame_free(fp);
+ 		return;
 -- 
 2.20.1
 
