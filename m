@@ -2,115 +2,88 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D06731483E4
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Jan 2020 12:41:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 565951482CC
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Jan 2020 12:30:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391976AbgAXLiE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 24 Jan 2020 06:38:04 -0500
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:38142 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2404132AbgAXL36 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 24 Jan 2020 06:29:58 -0500
-Received: by mail-wm1-f67.google.com with SMTP id u2so1378554wmc.3
-        for <linux-kernel@vger.kernel.org>; Fri, 24 Jan 2020 03:29:58 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cloudflare.com; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=cJ4TZV5cXZ/8q9QBQvb7gjQiJz0uB/MAQITB1sj0NIA=;
-        b=aGYdZJEshwF1cDJSP1sWdrNLBZhS7I1RyF6A+y71axz3sMiUBhYP2IE6Kd9mNUgg5W
-         IECZ+kHefZaSIFM+5Bg2JehMCd3qN0v0qS3ULjoDIz6rpsX8FxCiZGK6BXNJbtHF3X4T
-         sv57upHc3Gx34c2KFseWNntiHUPIsA2RuSJ9A=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=cJ4TZV5cXZ/8q9QBQvb7gjQiJz0uB/MAQITB1sj0NIA=;
-        b=iWO1M2YbucC4DsN4rvHl6zxgSCC7iW0x2T0cDG9BRCzcCl5vZkXTvBK9t/iMgBuXy2
-         ERzC6hHj08dGjkzR9DkbX8H2VzJnEH+mDQlv2UqoLU4n8AV8sq4P27AtlgFHvWd2POUE
-         PPG/+46fPxYCYClw4YBRQUJFdEa+SSvzzrWMoXzkGfyQkm70v//M+sIup/R1/NVbe31Y
-         4A4UhimPImBL0MAV7Yzm4f4XPQKsg861rpxjafLkL/Hyirkas9S0M5HeCm7A0GC7Sziy
-         TJNH2z6w3D3re3d23inVjS2RhuuU9XVbCIrky1SYiqzI4EJY4InbuJR1YBL2ljOrx0dR
-         Zuew==
-X-Gm-Message-State: APjAAAXDMQXjJwBxH+hVTh6c9TGXVBnPBvBg0H+T4oAOU5S0VP0wEba+
-        puxB+2AuAGkCr8pmxrj/6eNDIjM/dXklQA==
-X-Google-Smtp-Source: APXvYqxsibd4gK6MTr1ppba1secKSIQp1ayf0Ni0amvJDL4rkRNpwnjnQZ1jK6nkDlO+g5yIu8e9hQ==
-X-Received: by 2002:a7b:c450:: with SMTP id l16mr2846104wmi.166.1579865397394;
-        Fri, 24 Jan 2020 03:29:57 -0800 (PST)
-Received: from antares.lan (3.a.c.b.c.e.9.a.8.e.c.d.e.4.1.6.f.f.6.2.a.5.a.7.0.b.8.0.1.0.0.2.ip6.arpa. [2001:8b0:7a5a:26ff:614e:dce8:a9ec:bca3])
-        by smtp.gmail.com with ESMTPSA id n189sm6808688wme.33.2020.01.24.03.29.56
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 24 Jan 2020 03:29:56 -0800 (PST)
-From:   Lorenz Bauer <lmb@cloudflare.com>
-To:     Shuah Khan <shuah@kernel.org>, Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Martin KaFai Lau <kafai@fb.com>,
-        Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>,
-        Andrii Nakryiko <andriin@fb.com>
-Cc:     Lorenz Bauer <lmb@cloudflare.com>, linux-kselftest@vger.kernel.org,
-        netdev@vger.kernel.org, bpf@vger.kernel.org,
+        id S2404329AbgAXLa5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 24 Jan 2020 06:30:57 -0500
+Received: from foss.arm.com ([217.140.110.172]:50188 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2404317AbgAXLa4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 24 Jan 2020 06:30:56 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id B1A99328;
+        Fri, 24 Jan 2020 03:30:55 -0800 (PST)
+Received: from e107158-lin (e107158-lin.cambridge.arm.com [10.1.195.21])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id EAB613F68E;
+        Fri, 24 Jan 2020 03:30:53 -0800 (PST)
+Date:   Fri, 24 Jan 2020 11:30:51 +0000
+From:   Qais Yousef <qais.yousef@arm.com>
+To:     Valentin Schneider <valentin.schneider@arm.com>
+Cc:     Quentin Perret <qperret@google.com>, Wei Wang <wvw@google.com>,
+        wei.vince.wang@gmail.com, dietmar.eggemann@arm.com,
+        chris.redpath@arm.com, Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
         linux-kernel@vger.kernel.org
-Subject: [PATCH bpf-next v2 4/4] selftests: bpf: reset global state between reuseport test runs
-Date:   Fri, 24 Jan 2020 11:27:54 +0000
-Message-Id: <20200124112754.19664-5-lmb@cloudflare.com>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20200124112754.19664-1-lmb@cloudflare.com>
-References: <20200123165934.9584-1-lmb@cloudflare.com>
- <20200124112754.19664-1-lmb@cloudflare.com>
+Subject: Re: [PATCH] [RFC] sched: restrict iowait boost for boosted task only
+Message-ID: <20200124113050.i6ovkibcmutypm3q@e107158-lin>
+References: <20200124002811.228334-1-wvw@google.com>
+ <20200124025238.jsf36n6w4rrn2ehc@e107158-lin>
+ <20200124095125.GA121494@google.com>
+ <849cc9f0-f4ae-f2b6-8449-f55697928cf5@arm.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <849cc9f0-f4ae-f2b6-8449-f55697928cf5@arm.com>
+User-Agent: NeoMutt/20171215
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Currently, there is a lot of false positives if a single reuseport test
-fails. This is because expected_results and the result map are not cleared.
+On 01/24/20 11:01, Valentin Schneider wrote:
+> On 24/01/2020 09:51, Quentin Perret wrote:
+> >>> +static inline bool iowait_boosted(struct task_struct *p)
+> >>> +{
+> >>> +	return p->in_iowait && uclamp_eff_value(p, UCLAMP_MIN) > 0;
+> >>
+> >> I think this is overloading the usage of util clamp. You're basically using
+> >> cpu.uclamp.min to temporarily switch iowait boost on/off.
+> >>
+> >> Isn't it better to add a new cgroup attribute to toggle this feature?
+> >>
+> >> The problem does seem generic enough and could benefit other battery-powered
+> >> devices outside of the Android world. I don't think the dependency on uclamp &&
+> >> energy model are necessary to solve this.
+> > 
+> > I think using uclamp is not a bad idea here, but perhaps we could do
+> > things differently. As of today the iowait boost escapes the clamping
+> > mechanism, so one option would be to change that. That would let us set
+> > a low max clamp in the 'background' cgroup, which in turns would limit
+> > the frequency request for those tasks even if they're IO-intensive.
+> > 
+> 
+> So I'm pretty sure we *do* want tasks with the default clamps to get iowait
+> boost'd. What we don't want are background tasks driving up the frequency,
+> and that should be via uclamp.max (as Quentin is suggesting) rather than
+> uclamp.min (as is suggested in the patch).
+> 
+> Now, whether that is overloading the usage of uclamp... I'm not sure.
+> One of the argument for uclamp was actually frequency selection, so if
+> we just make iowait boost respect that, IOW not boost further than
+> uclamp.max (which is a bit better than a simple on/off switch), that
+> wouldn't be too crazy I think.
 
-Zero both after individual test runs, which fixes the mentioned false
-positives.
+Capping iowait boost value in schedutil based on uclamp makes sense indeed.
 
-Signed-off-by: Lorenz Bauer <lmb@cloudflare.com>
-Fixes: 91134d849a0e ("bpf: Test BPF_PROG_TYPE_SK_REUSEPORT")
----
- .../selftests/bpf/prog_tests/select_reuseport.c  | 16 ++++++++++++++--
- 1 file changed, 14 insertions(+), 2 deletions(-)
+What didn't make sense to me is the use of uclamp as a switch to toggle iowait
+boost on/off.
 
-diff --git a/tools/testing/selftests/bpf/prog_tests/select_reuseport.c b/tools/testing/selftests/bpf/prog_tests/select_reuseport.c
-index e7e56929751c..098bcae5f827 100644
---- a/tools/testing/selftests/bpf/prog_tests/select_reuseport.c
-+++ b/tools/testing/selftests/bpf/prog_tests/select_reuseport.c
-@@ -33,7 +33,7 @@
- #define REUSEPORT_ARRAY_SIZE 32
- 
- static int result_map, tmp_index_ovr_map, linum_map, data_check_map;
--static enum result expected_results[NR_RESULTS];
-+static __u32 expected_results[NR_RESULTS];
- static int sk_fds[REUSEPORT_ARRAY_SIZE];
- static int reuseport_array = -1, outer_map = -1;
- static int select_by_skb_data_prog;
-@@ -697,7 +697,19 @@ static void setup_per_test(int type, sa_family_t family, bool inany,
- 
- static void cleanup_per_test(bool no_inner_map)
- {
--	int i, err;
-+	int i, err, zero = 0;
-+
-+	memset(expected_results, 0, sizeof(expected_results));
-+
-+	for (i = 0; i < NR_RESULTS; i++) {
-+		err = bpf_map_update_elem(result_map, &i, &zero, BPF_ANY);
-+		RET_IF(err, "reset elem in result_map",
-+		       "i:%u err:%d errno:%d\n", i, err, errno);
-+	}
-+
-+	err = bpf_map_update_elem(linum_map, &zero, &zero, BPF_ANY);
-+	RET_IF(err, "reset line number in linum_map", "err:%d errno:%d\n",
-+	       err, errno);
- 
- 	for (i = 0; i < REUSEPORT_ARRAY_SIZE; i++)
- 		close(sk_fds[i]);
--- 
-2.20.1
+Cheers
 
+--
+Qais Yousef
