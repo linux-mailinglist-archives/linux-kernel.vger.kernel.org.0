@@ -2,61 +2,66 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EFE8D148DAE
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Jan 2020 19:18:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 91CD9148DB2
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Jan 2020 19:18:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390988AbgAXSSP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 24 Jan 2020 13:18:15 -0500
-Received: from mail-pj1-f65.google.com ([209.85.216.65]:35276 "EHLO
-        mail-pj1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387407AbgAXSSP (ORCPT
+        id S2391174AbgAXSSZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 24 Jan 2020 13:18:25 -0500
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:45324 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387407AbgAXSSY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 24 Jan 2020 13:18:15 -0500
-Received: by mail-pj1-f65.google.com with SMTP id q39so193462pjc.0
-        for <linux-kernel@vger.kernel.org>; Fri, 24 Jan 2020 10:18:14 -0800 (PST)
+        Fri, 24 Jan 2020 13:18:24 -0500
+Received: by mail-pg1-f194.google.com with SMTP id b9so1508113pgk.12
+        for <linux-kernel@vger.kernel.org>; Fri, 24 Jan 2020 10:18:24 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=VeYdzHBTXvWykrU+9dPvzQoIrSk/36JuoL4dl6ucfKw=;
-        b=fUE53ebrr8thaaisHxNd6ye4r1UTyIesGmw7CWE4nJB5glAzKUqHqhmPzZia8oZYz7
-         1A41t6GPozSzJuddkbiYVBl7yoi7QTn60s1Vaa7Hz06roL0d6YE1f0PE9Es88FOca2HP
-         IK4ai98U29vXovpGBzcD25Glq8Iz/U/KFJOuX7SHTMHQXGGeP6BfnRRvsZUBNM83ppFx
-         mNwgi5TFTA6Wt+rojcsz5dQt7PgjIoQ/9J37UilSy8C6KpDCYNTsMjALEseE1VgO94Q0
-         eJEcX9PcEJuK6bURK/4Nn4Y/5YPt9c4+XvwHqUuea1HwkwBznWKBolvQYFDvOySdRk3b
-         PwEg==
+        bh=DBEb0PGQ8rkprqzYuthrkHqrDnmF+gnYXnsoY61wfI8=;
+        b=Ds5ZrD9g+A+yQianbqzd9622ABXWWBTWdNrTwPhQxf+QCupBQSTA0cXV/L9BaSKNh/
+         UxvfFxIJmEZt8iL0AEFdTIPbSVcCQYcouEblBlZFsYHrKnBm8FzzWSRLIF31j+G+0Azd
+         CrzVwhUsiObuUI28RTP8nS0tarLSSpamB6P26EUsZCf6GXZdLgX+jtCz5WxIZGFFzZmR
+         +f/ewqlyrcRNloQsXoqrR9OoL4ZfIKIE8QsU4Fsf2vg/rRfVo7fTC4zuMgNJ0UiUy2VV
+         Jr6gaPBjKkkdtYfSECoWZl3BurEvyWYeF+jFp0SNuhSXXqsOFWRH+0WuUZd/Hialgvu4
+         /Jig==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=VeYdzHBTXvWykrU+9dPvzQoIrSk/36JuoL4dl6ucfKw=;
-        b=eDZvIQ/qFuZMm/2m0GnyEMwuoCVCCzRMBdxCXDOMwLwzPonV2q86mzdpGj/dn5W9t9
-         rnkKqnK4pE0F2v/4sOzn2N/boeTffAWN8WAU9SVy/Gbi9sw3clDIiYuc4UPi+MUqxtW7
-         XJrf+7Amjl7Q60RX8UZCDAS4nnnrnqbZkJhUloxrTOCK3WHeEn58d2EGE7RKIVU1Ovfv
-         31cRqkf9yzHGLS9aiTkX4iVYM4XN8iFbv+B069Ukjp5qkJdI8g+V+x+GjQCGX4dITtWQ
-         M+6E4Fw5KGGpDk6AF95tI7OUVUxXt3LqTY5Vy5JUTxpGX57XCxTfF/D40Xys4DG7nPo8
-         LE1A==
-X-Gm-Message-State: APjAAAVcno3iPHYuDt8uwy3l3f60eRhK/NvJe0HtG/tjMnvABBQ4ycbf
-        L91bQPEd/AkmWbvsRY8qXrc=
-X-Google-Smtp-Source: APXvYqwZSxsjR4PmU6D0ZxtGxQ2OweOomT3ELNRoPNWdaqCM4/yDGhldSxGE3VY2Osoi/5CguomjhA==
-X-Received: by 2002:a17:902:848f:: with SMTP id c15mr4837693plo.182.1579889894356;
-        Fri, 24 Jan 2020 10:18:14 -0800 (PST)
-Received: from gnu-efi-2.localdomain ([172.58.35.93])
-        by smtp.gmail.com with ESMTPSA id c22sm6967400pfo.50.2020.01.24.10.18.13
+        bh=DBEb0PGQ8rkprqzYuthrkHqrDnmF+gnYXnsoY61wfI8=;
+        b=lmvqfVu/8DASkmIR6Taz/KnmPqF3fwqWkvwVWj+uwSMNg/sAiJGYjp6lo2WTSf0JWc
+         lq37AqUut3lDxwhXcGrvoHe1jbcoZ691GMVA/OVfKXyDscZhStUee6oruxuesoYS/3e9
+         lx82VPf7m+nR7kBBQKTxM4OKzmfrCG8rK2r5Zcpl2myPR59uM0Gf9CV4oZx8mAuDk7OF
+         cYpDtln1tvEyPe3s3VKd3VYtgUJevwHnOwDQn/Nn2ojt/Nk9HpG31Z/GNr1OffJulrK7
+         y88gkic8QKyYIm59ANbSBdcK5L+WakXp46TwkqfbbNWrt5BLznS+2PF/SIx6PgatjzM6
+         AYpQ==
+X-Gm-Message-State: APjAAAVjhDOBWplvLZFHYeoCIQeTDUL49RA+MiBRjWYWAXZ+0c2GQJSU
+        4AoKSdYsxHnMM/hfSZf4kKs=
+X-Google-Smtp-Source: APXvYqwMDoDhsg5l4YfQxjQIzNo3s004MSDA+puBxj3+oWgcjOeT5GcvgvBnHalX+N8VYHvRfczYig==
+X-Received: by 2002:a05:6a00:45:: with SMTP id i5mr4353509pfk.252.1579889903358;
+        Fri, 24 Jan 2020 10:18:23 -0800 (PST)
+Received: from gnu-efi-2.localdomain ([2607:fb90:276d:92e7:da4f:90b0:c395:2435])
+        by smtp.gmail.com with ESMTPSA id m128sm7022264pfm.183.2020.01.24.10.18.22
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 24 Jan 2020 10:18:13 -0800 (PST)
+        Fri, 24 Jan 2020 10:18:22 -0800 (PST)
 Received: from gnu-efi-2.localdomain (localhost [IPv6:::1])
-        by gnu-efi-2.localdomain (Postfix) with ESMTP id 7E3FD100AB8;
-        Fri, 24 Jan 2020 10:18:11 -0800 (PST)
+        by gnu-efi-2.localdomain (Postfix) with ESMTP id 93E5D100AB8;
+        Fri, 24 Jan 2020 10:18:21 -0800 (PST)
 From:   "H.J. Lu" <hjl.tools@gmail.com>
 To:     linux-kernel@vger.kernel.org
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
+Cc:     Andy Lutomirski <luto@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Kees Cook <keescook@chromium.org>,
+        Thomas Lendacky <Thomas.Lendacky@amd.com>,
+        Sami Tolvanen <samitolvanen@google.com>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
         Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
         "H . Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
         Yu-cheng Yu <yu-cheng.yu@intel.com>
-Subject: [PATCH] x86: Don't clare __force_order in kaslr_64.c
-Date:   Fri, 24 Jan 2020 10:18:11 -0800
-Message-Id: <20200124181811.4780-1-hjl.tools@gmail.com>
+Subject: [PATCH 0/2] x86: Discard .note.gnu.property sections
+Date:   Fri, 24 Jan 2020 10:18:17 -0800
+Message-Id: <20200124181819.4840-1-hjl.tools@gmail.com>
 X-Mailer: git-send-email 2.24.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -65,35 +70,28 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-GCC 10 changed the default to -fno-common, which leads to
+With the command-line option, -mx86-used-note=yes, the x86 assembler
+in binutils 2.32 and above generates a program property note in a note
+section, .note.gnu.property, to encode used x86 ISAs and features.  But
+x86 kernel vmlinux and vDSO linker scripts only contain a signle NOTE
+segment which may not be incompatible with note.gnu.property sections.
+Since note.gnu.property section from kernel are unused, they should be
+discarded by adding
 
-  LD      arch/x86/boot/compressed/vmlinux
-ld: arch/x86/boot/compressed/pgtable_64.o:(.bss+0x0): multiple definition of `__force_order'; arch/x86/boot/compressed/kaslr_64.o:(.bss+0x0): first defined here
-make[2]: *** [arch/x86/boot/compressed/Makefile:119: arch/x86/boot/compressed/vmlinux] Error 1
+/DISCARD/ : {
+ *(.note.gnu.property)
+}
 
-Since __force_order is already provided in pgtable_64.c, there is no
-need to declare __force_order in kaslr_64.c.
+before .notes sections.
 
-Signed-off-by: H.J. Lu <hjl.tools@gmail.com>
-Signed-off-by: Yu-cheng Yu <yu-cheng.yu@intel.com>
----
- arch/x86/boot/compressed/kaslr_64.c | 3 ---
- 1 file changed, 3 deletions(-)
+H.J. Lu (2):
+  x86: Discard .note.gnu.property sections in vDSO
+  x86: Discard .note.gnu.property sections in vmlinux
 
-diff --git a/arch/x86/boot/compressed/kaslr_64.c b/arch/x86/boot/compressed/kaslr_64.c
-index 748456c365f4..9557c5a15b91 100644
---- a/arch/x86/boot/compressed/kaslr_64.c
-+++ b/arch/x86/boot/compressed/kaslr_64.c
-@@ -29,9 +29,6 @@
- #define __PAGE_OFFSET __PAGE_OFFSET_BASE
- #include "../../mm/ident_map.c"
- 
--/* Used by pgtable.h asm code to force instruction serialization. */
--unsigned long __force_order;
--
- /* Used to track our page table allocation area. */
- struct alloc_pgt_data {
- 	unsigned char *pgt_buf;
+ arch/x86/entry/vdso/vdso-layout.lds.S |  4 ++++
+ arch/x86/kernel/vmlinux.lds.S         | 11 +++++++++++
+ 2 files changed, 15 insertions(+)
+
 -- 
 2.24.1
 
