@@ -2,98 +2,187 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 06DB3148D6E
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Jan 2020 19:05:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EA946148D75
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Jan 2020 19:07:21 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391201AbgAXSFE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 24 Jan 2020 13:05:04 -0500
-Received: from mail-ot1-f66.google.com ([209.85.210.66]:40584 "EHLO
-        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389886AbgAXSFD (ORCPT
+        id S2391262AbgAXSHO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 24 Jan 2020 13:07:14 -0500
+Received: from mail25.static.mailgun.info ([104.130.122.25]:38582 "EHLO
+        mail25.static.mailgun.info" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S2389886AbgAXSHN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 24 Jan 2020 13:05:03 -0500
-Received: by mail-ot1-f66.google.com with SMTP id w21so2458416otj.7
-        for <linux-kernel@vger.kernel.org>; Fri, 24 Jan 2020 10:05:03 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=intel-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=jRTNXnXM7oz5Drw0JUEzLHf8Tl/lM2SK6ojzvbVm3Do=;
-        b=JPa2uVHTQnO/DXnNRVd8XmoPi8VpJuIDhI+MwREr6Mb8Ij5HVUDpA6TxomyZ+Lff6W
-         Y0DI9Cm0csX4gVNf0fT2szWUMfB8PaOM+JHgiQ6lHgp2HYGhZ1FLuEQr0mFTp/UHZGEJ
-         4+wmRzEAsVw/5tyikkUBaJSaYwn1dj9gvK9c5x/AxAQpvh0podrIffNwzqKp0EkArmJ1
-         oMwVvXtqQAlFZUlPokk+ed89Py3Hp2N12VOLnaJO0t5fYarr08YbsRzuILrxgeCojT/8
-         rcUiO4nPjlpm1y4ofxPB9A4MFUjfm6TIH4pRlXvUZhWjjbyJWGoW4+7jNw2e/p4KVf8Q
-         t5qw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=jRTNXnXM7oz5Drw0JUEzLHf8Tl/lM2SK6ojzvbVm3Do=;
-        b=hE7M51HD278fQ77kDjyEkaDXtll8ITd44Mku7rAJ90vDxQ4nm7OG2t60bh7MmErh5a
-         Ee3WODqKnUyXMlHjmsVpD5DF4SJpXeTQP+ugaYqknFQLv9WSAgMI1DLpbHu6Wo6Z7Tib
-         CKk8DKURFXnWJlzYFizGNsqA0zZ1H2AwlAeX5o40JjlCtPyVubTwDL1oD2h1aJPd7C5c
-         nhFhq5Wn/qggKe5jUM8UcKhu7tuS1bclBJ/BNJ6S3XpTcs+Q0n67KULNFiNq02QMXw8b
-         coslbNcnWilYMqirCyiHfOxIOS7FfwCEf5tTOFWvdJP3hJ1/q7mcc/DC3ZuFDSic1M66
-         wnVg==
-X-Gm-Message-State: APjAAAX3Yy/yBYOeNAPqatVImFNFDgH8ryVX/Oj3K3ibj1RqDejjBqr6
-        QRlsvLL8/RlHNDiHhfbxiUkPChf9/bCjvNkDg/YkGw==
-X-Google-Smtp-Source: APXvYqzFJoNGdvBkNazI2Gmjmm0Jg7CrgLUOGYJxHStstoF4GHQEZ08I0ffdQ1SOyeaigHkZmgGXPCfxHkNpYgjxS48=
-X-Received: by 2002:a9d:68d3:: with SMTP id i19mr3393231oto.71.1579889102817;
- Fri, 24 Jan 2020 10:05:02 -0800 (PST)
+        Fri, 24 Jan 2020 13:07:13 -0500
+DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
+ s=smtp; t=1579889232; h=Content-Transfer-Encoding: Content-Type:
+ In-Reply-To: MIME-Version: Date: Message-ID: From: References: Cc: To:
+ Subject: Sender; bh=9+wXY3l9oUGzzH+9Q9rfM50WnovWwoUmCINjjGPM7L0=; b=LzeSwWFSJHR4JEGmOJIpod675H0yi4byh0IbF5+uDMc8gE6ieNELPRRW3nhXGN69w8GWa8xf
+ +/QPTzufaR60QmTdNiOjtUZmx9aaRII/Jpb+2QA8nRBMzlt3uCCWo1hFnyV7VhIsCZdgh7QZ
+ ZMNFjO9rwpb6GgA0PDOv3s6WGDE=
+X-Mailgun-Sending-Ip: 104.130.122.25
+X-Mailgun-Sid: WyI0MWYwYSIsICJsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
+Received: from smtp.codeaurora.org (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171])
+ by mxa.mailgun.org with ESMTP id 5e2b323f.7f0d81001a08-smtp-out-n02;
+ Fri, 24 Jan 2020 18:06:55 -0000 (UTC)
+Received: by smtp.codeaurora.org (Postfix, from userid 1001)
+        id A3258C433CB; Fri, 24 Jan 2020 18:06:54 +0000 (UTC)
+X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
+        aws-us-west-2-caf-mail-1.web.codeaurora.org
+X-Spam-Level: 
+X-Spam-Status: No, score=-1.0 required=2.0 tests=ALL_TRUSTED,SPF_NONE
+        autolearn=ham autolearn_force=no version=3.4.0
+Received: from [10.46.161.159] (i-global254.qualcomm.com [199.106.103.254])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: asutoshd)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 76B8CC43383;
+        Fri, 24 Jan 2020 18:06:53 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 76B8CC43383
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=none smtp.mailfrom=asutoshd@codeaurora.org
+Subject: Re: [PATCH v4 6/8] scsi: ufs: Add dev ref clock gating wait time
+ support
+To:     Can Guo <cang@codeaurora.org>, nguyenb@codeaurora.org,
+        hongwus@codeaurora.org, rnayak@codeaurora.org,
+        linux-scsi@vger.kernel.org, kernel-team@android.com,
+        saravanak@google.com, salyzyn@google.com
+Cc:     Alim Akhtar <alim.akhtar@samsung.com>,
+        Avri Altman <avri.altman@wdc.com>,
+        Pedro Sousa <pedrom.sousa@synopsys.com>,
+        "James E.J. Bottomley" <jejb@linux.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        Tomas Winkler <tomas.winkler@intel.com>,
+        Stanley Chu <stanley.chu@mediatek.com>,
+        Venkat Gopalakrishnan <venkatg@codeaurora.org>,
+        open list <linux-kernel@vger.kernel.org>
+References: <1579764349-15578-1-git-send-email-cang@codeaurora.org>
+ <1579764349-15578-7-git-send-email-cang@codeaurora.org>
+From:   "Asutosh Das (asd)" <asutoshd@codeaurora.org>
+Message-ID: <328f4768-e986-8566-4929-17420f9dbbce@codeaurora.org>
+Date:   Fri, 24 Jan 2020 10:06:52 -0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.1
 MIME-Version: 1.0
-References: <e60e64f9-894b-4121-d97b-fb61459cbbe5@redhat.com>
- <CAPcyv4jm=fmP=-5vbo2jxzMe2qXqZP=zDYF8G_rs3X6_Om0wPg@mail.gmail.com>
- <4d0334e2-c4e7-6d3f-99ba-2ca0495e1549@redhat.com> <CAPcyv4jixmv8fJ5FiYE=97Jud3Mc+6QzRX1txceSYU+WY_0rQA@mail.gmail.com>
- <fc0cfb97-5a60-7e73-4f85-d8e6947c5e28@redhat.com> <CAPcyv4jVpN26RGQLRn4BewYtzHDoQfvh37DEdEBq1dd4-BP0kw@mail.gmail.com>
- <64902066-51dd-9693-53fc-4a5975c58409@redhat.com> <CAPcyv4hcDNeQO3CfnqTRou+6R5gZwyi4pVUMxp1DadAOp7kJGQ@mail.gmail.com>
- <516aa930-9b64-b377-557c-5413ed9fe336@redhat.com> <CAPcyv4iiYtN6iGt=rVuNR=O=H9YcY1b1yWp+5TuDhu0QoVqT_A@mail.gmail.com>
- <20200124124512.GT29276@dhcp22.suse.cz>
-In-Reply-To: <20200124124512.GT29276@dhcp22.suse.cz>
-From:   Dan Williams <dan.j.williams@intel.com>
-Date:   Fri, 24 Jan 2020 10:04:52 -0800
-Message-ID: <CAPcyv4jcCnfGy5HcYimxcyF6v_Anw4nMdaNHQt4tMrqUaN70Rg@mail.gmail.com>
-Subject: Re: [PATCH] mm/memory_hotplug: Fix remove_memory() lockdep splat
-To:     Michal Hocko <mhocko@kernel.org>
-Cc:     David Hildenbrand <david@redhat.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        stable <stable@vger.kernel.org>,
-        Vishal Verma <vishal.l.verma@intel.com>,
-        Pavel Tatashin <pasha.tatashin@soleen.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Linux MM <linux-mm@kvack.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <1579764349-15578-7-git-send-email-cang@codeaurora.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jan 24, 2020 at 4:56 AM Michal Hocko <mhocko@kernel.org> wrote:
->
-> On Fri 10-01-20 13:27:24, Dan Williams wrote:
-> > On Fri, Jan 10, 2020 at 9:42 AM David Hildenbrand <david@redhat.com> wrote:
-> [...]
-> > > For your reference (roughly 5 months ago, so not that old)
-> > >
-> > > https://lkml.kernel.org/r/20190724143017.12841-1-david@redhat.com
-> >
-> > Oh, now I see the problem. You need to add that lock so far away from
-> > the __add_memory() to avoid lock inversion problems with the
-> > acpi_scan_lock. The organization I was envisioning would not work
-> > without deeper refactoring.
->
-> Sorry to come back to this late. Has this been resolved?
+On 1/22/2020 11:25 PM, Can Guo wrote:
+> In UFS version 3.0, a newly added attribute bRefClkGatingWaitTime defines
+> the minimum time for which the reference clock is required by device during
+> transition to LS-MODE or HIBERN8 state. Make this change to reflect the new
+> requirement by adding delays before turning off the clock.
+> 
+> Signed-off-by: Can Guo <cang@codeaurora.org>
+> ---
 
-The mem_hotplug_lock lockdep splat fix in this patch has not landed.
-David and I have not quite come to consensus on how to resolve online
-racing removal. IIUC David wants that invalidation to be
-pages_correctly_probed(), I would prefer it to be directly tied to the
-object, struct memory_block, that remove_memory_block_devices() has
-modified, mem->section_count = 0.
+Reviewed-by: Asutosh Das <asutoshd@codeaurora.org>
 
-...or are you referring to the discussion about acpi_scan_lock()? I
-came around to agreeing with your position that documenting was better
-than adding superfluous locking especially because the
-acpi_scan_lock() is take so far away from where the device_hotplug
-lock is needed.
+>   drivers/scsi/ufs/ufs.h    |  3 +++
+>   drivers/scsi/ufs/ufshcd.c | 41 +++++++++++++++++++++++++++++++++++++++++
+>   2 files changed, 44 insertions(+)
+> 
+> diff --git a/drivers/scsi/ufs/ufs.h b/drivers/scsi/ufs/ufs.h
+> index 3327981..385bac8 100644
+> --- a/drivers/scsi/ufs/ufs.h
+> +++ b/drivers/scsi/ufs/ufs.h
+> @@ -168,6 +168,7 @@ enum attr_idn {
+>   	QUERY_ATTR_IDN_FFU_STATUS		= 0x14,
+>   	QUERY_ATTR_IDN_PSA_STATE		= 0x15,
+>   	QUERY_ATTR_IDN_PSA_DATA_SIZE		= 0x16,
+> +	QUERY_ATTR_IDN_REF_CLK_GATING_WAIT_TIME	= 0x17,
+>   };
+>   
+>   /* Descriptor idn for Query requests */
+> @@ -530,6 +531,8 @@ struct ufs_dev_info {
+>   	bool f_power_on_wp_en;
+>   	/* Keeps information if any of the LU is power on write protected */
+>   	bool is_lu_power_on_wp;
+> +	u16 spec_version;
+> +	u32 clk_gating_wait_us;
+>   };
+>   
+>   #define MAX_MODEL_LEN 16
+> diff --git a/drivers/scsi/ufs/ufshcd.c b/drivers/scsi/ufs/ufshcd.c
+> index c316a07..1ee2187 100644
+> --- a/drivers/scsi/ufs/ufshcd.c
+> +++ b/drivers/scsi/ufs/ufshcd.c
+> @@ -91,6 +91,9 @@
+>   /* default delay of autosuspend: 2000 ms */
+>   #define RPM_AUTOSUSPEND_DELAY_MS 2000
+>   
+> +/* Default value of wait time before gating device ref clock */
+> +#define UFSHCD_REF_CLK_GATING_WAIT_US 0xFF /* microsecs */
+> +
+>   #define ufshcd_toggle_vreg(_dev, _vreg, _on)				\
+>   	({                                                              \
+>   		int _ret;                                               \
+> @@ -3357,6 +3360,37 @@ static inline int ufshcd_read_unit_desc_param(struct ufs_hba *hba,
+>   				      param_offset, param_read_buf, param_size);
+>   }
+>   
+> +static int ufshcd_get_ref_clk_gating_wait(struct ufs_hba *hba)
+> +{
+> +	int err = 0;
+> +	u32 gating_wait = UFSHCD_REF_CLK_GATING_WAIT_US;
+> +
+> +	if (hba->dev_info.spec_version >= 0x300) {
+> +		err = ufshcd_query_attr_retry(hba, UPIU_QUERY_OPCODE_READ_ATTR,
+> +				QUERY_ATTR_IDN_REF_CLK_GATING_WAIT_TIME, 0, 0,
+> +				&gating_wait);
+> +		if (err)
+> +			dev_err(hba->dev, "Failed reading bRefClkGatingWait. err = %d, use default %uus\n",
+> +					 err, gating_wait);
+> +
+> +		if (gating_wait == 0) {
+> +			gating_wait = UFSHCD_REF_CLK_GATING_WAIT_US;
+> +			dev_err(hba->dev, "Undefined ref clk gating wait time, use default %uus\n",
+> +					 gating_wait);
+> +		}
+> +
+> +		/*
+> +		 * bRefClkGatingWaitTime defines the minimum time for which the
+> +		 * reference clock is required by device during transition from
+> +		 * HS-MODE to LS-MODE or HIBERN8 state. Give it more time to be
+> +		 * on the safe side.
+> +		 */
+> +		hba->dev_info.clk_gating_wait_us = gating_wait + 50;
+> +	}
+> +
+> +	return err;
+> +}
+> +
+>   /**
+>    * ufshcd_memory_alloc - allocate memory for host memory space data structures
+>    * @hba: per adapter instance
+> @@ -6628,6 +6662,10 @@ static int ufs_get_device_desc(struct ufs_hba *hba,
+>   	dev_desc->wmanufacturerid = desc_buf[DEVICE_DESC_PARAM_MANF_ID] << 8 |
+>   				     desc_buf[DEVICE_DESC_PARAM_MANF_ID + 1];
+>   
+> +	/* getting Specification Version in big endian format */
+> +	hba->dev_info.spec_version = desc_buf[DEVICE_DESC_PARAM_SPEC_VER] << 8 |
+> +				      desc_buf[DEVICE_DESC_PARAM_SPEC_VER + 1];
+> +
+>   	model_index = desc_buf[DEVICE_DESC_PARAM_PRDCT_NAME];
+>   	err = ufshcd_read_string_desc(hba, model_index,
+>   				      &dev_desc->model, SD_ASCII_STD);
+> @@ -7046,6 +7084,9 @@ static int ufshcd_probe_hba(struct ufs_hba *hba)
+>   
+>   		/* clear any previous UFS device information */
+>   		memset(&hba->dev_info, 0, sizeof(hba->dev_info));
+> +
+> +		ufshcd_get_ref_clk_gating_wait(hba);
+> +
+>   		if (!ufshcd_query_flag_retry(hba, UPIU_QUERY_OPCODE_READ_FLAG,
+>   				QUERY_FLAG_IDN_PWR_ON_WPE, &flag))
+>   			hba->dev_info.f_power_on_wp_en = flag;
+> 
+
+
+-- 
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+Linux Foundation Collaborative Project
