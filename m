@@ -2,36 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 67B981480D7
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Jan 2020 12:15:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4BBB11480DC
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Jan 2020 12:15:26 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390188AbgAXLPD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 24 Jan 2020 06:15:03 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51398 "EHLO mail.kernel.org"
+        id S2390247AbgAXLPM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 24 Jan 2020 06:15:12 -0500
+Received: from mail.kernel.org ([198.145.29.99]:51478 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731323AbgAXLO6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 24 Jan 2020 06:14:58 -0500
+        id S2389143AbgAXLPA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 24 Jan 2020 06:15:00 -0500
 Received: from localhost (ip-213-127-102-57.ip.prioritytelecom.net [213.127.102.57])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8092B20663;
-        Fri, 24 Jan 2020 11:14:56 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D12DA2075D;
+        Fri, 24 Jan 2020 11:14:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579864497;
-        bh=72QCrR6qXizsAjH+wzmpM16qXkayDUh90kShyfOb1dw=;
+        s=default; t=1579864500;
+        bh=X9i5C4/sC5uBnkoCnSFyPe6JepwPdQ+sVLyu9VPvxuI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=eGamyQ/+WME3vr9I8coqz9wz9bZkniy1IWyv/cKNFDN+E6hQVKRjn0m7lIt2mhv04
-         dUguJ9EqxZFansHw/nAORt6+Z6+PZo0Voyt9NylrInf1pBFFGWBQJ/cjiqxGj0k26q
-         JA5M/F5MEZ+b1gG+nHMl4aDQcRnxrBaW93vk0H6Y=
+        b=RiKWtfi6yLE3AOm9TerVN6nd8tDSPZ91cPYije+vkuJcBP9mPAQhhIVoU5K5XGcfF
+         yR5T6x7s25cxQZft48Rz7mBtE79RHsH+RKAUgj1EXHGTPgAoKs1xIW0ksDft4VHotx
+         fzjxVk2zsrmeJIfZFaT8LWasajIY6fVI9y3omqz4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Axel Lin <axel.lin@ingics.com>,
-        "Andrew F. Davis" <afd@ti.com>, Mark Brown <broonie@kernel.org>,
+        stable@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
+        Gilad Ben-Yossef <gilad@benyossef.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 268/639] regulator: tps65086: Fix tps65086_ldoa1_ranges for selector 0xB
-Date:   Fri, 24 Jan 2020 10:27:18 +0100
-Message-Id: <20200124093120.275967712@linuxfoundation.org>
+Subject: [PATCH 4.19 269/639] crypto: ccree - reduce kernel stack usage with clang
+Date:   Fri, 24 Jan 2020 10:27:19 +0100
+Message-Id: <20200124093120.395167362@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
 In-Reply-To: <20200124093047.008739095@linuxfoundation.org>
 References: <20200124093047.008739095@linuxfoundation.org>
@@ -44,43 +45,50 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Axel Lin <axel.lin@ingics.com>
+From: Arnd Bergmann <arnd@arndb.de>
 
-[ Upstream commit e69b394703e032e56a140172440ec4f9890b536d ]
+[ Upstream commit 5db46ac29a6797541943d3c4081821747e342732 ]
 
-selector 0xB (1011) should be 2.6V rather than 2.7V, fit ix.
+Building with clang for a 32-bit architecture runs over the stack
+frame limit in the setkey function:
 
-Table 5-4. LDOA1 Output Voltage Options
-VID Bits VOUT VID Bits VOUT VID Bits VOUT VID Bits VOUT
-0000     1.35 0100     1.8  1000     2.3  1100     2.85
-0001     1.5  0101     1.9  1001     2.4  1101     3.0
-0010     1.6  0110     2.0  1010     2.5  1110     3.3
-0011     1.7  0111     2.1  1011     2.6  1111     Not Used
+drivers/crypto/ccree/cc_cipher.c:318:12: error: stack frame size of 1152 bytes in function 'cc_cipher_setkey' [-Werror,-Wframe-larger-than=]
 
-Fixes: d2a2e729a666 ("regulator: tps65086: Add regulator driver for the TPS65086 PMIC")
-Signed-off-by: Axel Lin <axel.lin@ingics.com>
-Acked-by: Andrew F. Davis <afd@ti.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
+The problem is that there are two large variables: the temporary
+'tmp' array and the SHASH_DESC_ON_STACK() declaration. Moving
+the first into the block in which it is used reduces the
+total frame size to 768 bytes, which seems more reasonable
+and is under the warning limit.
+
+Fixes: 63ee04c8b491 ("crypto: ccree - add skcipher support")
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Acked-By: Gilad Ben-Yossef <gilad@benyossef.com>
+Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/regulator/tps65086-regulator.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/crypto/ccree/cc_cipher.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/regulator/tps65086-regulator.c b/drivers/regulator/tps65086-regulator.c
-index 45e96e1546900..5a5e9b5bf4bea 100644
---- a/drivers/regulator/tps65086-regulator.c
-+++ b/drivers/regulator/tps65086-regulator.c
-@@ -90,8 +90,8 @@ static const struct regulator_linear_range tps65086_buck345_25mv_ranges[] = {
- static const struct regulator_linear_range tps65086_ldoa1_ranges[] = {
- 	REGULATOR_LINEAR_RANGE(1350000, 0x0, 0x0, 0),
- 	REGULATOR_LINEAR_RANGE(1500000, 0x1, 0x7, 100000),
--	REGULATOR_LINEAR_RANGE(2300000, 0x8, 0xA, 100000),
--	REGULATOR_LINEAR_RANGE(2700000, 0xB, 0xD, 150000),
-+	REGULATOR_LINEAR_RANGE(2300000, 0x8, 0xB, 100000),
-+	REGULATOR_LINEAR_RANGE(2850000, 0xC, 0xD, 150000),
- 	REGULATOR_LINEAR_RANGE(3300000, 0xE, 0xE, 0),
- };
- 
+diff --git a/drivers/crypto/ccree/cc_cipher.c b/drivers/crypto/ccree/cc_cipher.c
+index 54a39164aab8f..28a5b8b38fa2f 100644
+--- a/drivers/crypto/ccree/cc_cipher.c
++++ b/drivers/crypto/ccree/cc_cipher.c
+@@ -306,7 +306,6 @@ static int cc_cipher_setkey(struct crypto_skcipher *sktfm, const u8 *key,
+ 	struct crypto_tfm *tfm = crypto_skcipher_tfm(sktfm);
+ 	struct cc_cipher_ctx *ctx_p = crypto_tfm_ctx(tfm);
+ 	struct device *dev = drvdata_to_dev(ctx_p->drvdata);
+-	u32 tmp[DES3_EDE_EXPKEY_WORDS];
+ 	struct cc_crypto_alg *cc_alg =
+ 			container_of(tfm->__crt_alg, struct cc_crypto_alg,
+ 				     skcipher_alg.base);
+@@ -332,6 +331,7 @@ static int cc_cipher_setkey(struct crypto_skcipher *sktfm, const u8 *key,
+ 	 * HW does the expansion on its own.
+ 	 */
+ 	if (ctx_p->flow_mode == S_DIN_to_DES) {
++		u32 tmp[DES3_EDE_EXPKEY_WORDS];
+ 		if (keylen == DES3_EDE_KEY_SIZE &&
+ 		    __des3_ede_setkey(tmp, &tfm->crt_flags, key,
+ 				      DES3_EDE_KEY_SIZE)) {
 -- 
 2.20.1
 
