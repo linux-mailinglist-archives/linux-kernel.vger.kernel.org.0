@@ -2,36 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D3D58148031
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Jan 2020 12:08:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 319B814803C
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Jan 2020 12:10:19 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389662AbgAXLI0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 24 Jan 2020 06:08:26 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43818 "EHLO mail.kernel.org"
+        id S2389730AbgAXLJA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 24 Jan 2020 06:09:00 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44446 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389653AbgAXLIV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 24 Jan 2020 06:08:21 -0500
+        id S1732762AbgAXLI5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 24 Jan 2020 06:08:57 -0500
 Received: from localhost (ip-213-127-102-57.ip.prioritytelecom.net [213.127.102.57])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6A771214DB;
-        Fri, 24 Jan 2020 11:08:20 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id AD07A2077C;
+        Fri, 24 Jan 2020 11:08:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579864100;
-        bh=46K0VE5yxeH0yjttC/EOtWHpEMUhqhBXZ0fviqaYDh8=;
+        s=default; t=1579864137;
+        bh=PFbsSZXlZx8BUpeeb4iYbhGgg1WAHLGn0S5otaYZcJs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=hchhxMUA4SSf4r7vob4VMr1yEr7EzwImkicHMITgInRpmcaWlEK+aWApbZjMO8Tj7
-         DxVpKF7Zvxo0sN5SzDfrGOV0FLR8TvwFOS+qahu5EDvJFyH4wJkZd6t7XK3m8DUGX2
-         NcfILsjB02ESjgSwRagJbfNLm/1gKapP2n9PiICA=
+        b=h8jIFbdR6xR3IGl4pEL3PRwbAkiX0bjHVsVSb7zjkLJeeH0J1VJeeXdwJ+sOLAk2j
+         mG5XtjqUi1aSQOqqEV449rfboqrrf8dqMg74U5YhrzcEawlQuw5cgnfUX75rORbFMd
+         O//O4ID+LN5tdtgJOxMqs3d+UJRuAo0wkAiIslqo=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Colin Ian King <colin.king@canonical.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        stable@vger.kernel.org, Niklas Cassel <niklas.cassel@linaro.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Amit Kucheria <amit.kucheria@linaro.org>,
+        Andy Gross <andy.gross@linaro.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 172/639] rtc: ds1672: fix unintended sign extension
-Date:   Fri, 24 Jan 2020 10:25:42 +0100
-Message-Id: <20200124093108.743673769@linuxfoundation.org>
+Subject: [PATCH 4.19 174/639] arm64: dts: msm8916: remove bogus argument to the cpu clock
+Date:   Fri, 24 Jan 2020 10:25:44 +0100
+Message-Id: <20200124093108.977466286@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
 In-Reply-To: <20200124093047.008739095@linuxfoundation.org>
 References: <20200124093047.008739095@linuxfoundation.org>
@@ -44,41 +46,66 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+From: Niklas Cassel <niklas.cassel@linaro.org>
 
-[ Upstream commit f0c04c276739ed8acbb41b4868e942a55b128dca ]
+[ Upstream commit e4f045ef38e61ba37aa4afc916fce4fc1b37aa19 ]
 
-Shifting a u8 by 24 will cause the value to be promoted to an integer. If
-the top bit of the u8 is set then the following conversion to an unsigned
-long will sign extend the value causing the upper 32 bits to be set in
-the result.
+The apcs node has #clock-cells = <0>, which means that those who
+references it should specify 0 arguments.
 
-Fix this by casting the u8 value to an unsigned long before the shift.
+The apcs reference in the cpu node incorrectly specifies an argument,
+remove this bogus argument.
 
-Detected by CoverityScan, CID#138801 ("Unintended sign extension")
-
-Fixes: edf1aaa31fc5 ("[PATCH] RTC subsystem: DS1672 driver")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
-Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
+Fixes: 65afdf458360 ("arm64: dts: qcom: msm8916: Add CPU frequency scaling support")
+Signed-off-by: Niklas Cassel <niklas.cassel@linaro.org>
+Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+Reviewed-by: Amit Kucheria <amit.kucheria@linaro.org>
+Signed-off-by: Andy Gross <andy.gross@linaro.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/rtc/rtc-ds1672.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ arch/arm64/boot/dts/qcom/msm8916.dtsi | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/rtc/rtc-ds1672.c b/drivers/rtc/rtc-ds1672.c
-index 9caaccccaa575..b1ebca099b0df 100644
---- a/drivers/rtc/rtc-ds1672.c
-+++ b/drivers/rtc/rtc-ds1672.c
-@@ -58,7 +58,8 @@ static int ds1672_get_datetime(struct i2c_client *client, struct rtc_time *tm)
- 		"%s: raw read data - counters=%02x,%02x,%02x,%02x\n",
- 		__func__, buf[0], buf[1], buf[2], buf[3]);
- 
--	time = (buf[3] << 24) | (buf[2] << 16) | (buf[1] << 8) | buf[0];
-+	time = ((unsigned long)buf[3] << 24) | (buf[2] << 16) |
-+	       (buf[1] << 8) | buf[0];
- 
- 	rtc_time_to_tm(time, tm);
- 
+diff --git a/arch/arm64/boot/dts/qcom/msm8916.dtsi b/arch/arm64/boot/dts/qcom/msm8916.dtsi
+index 7b32b8990d62f..8011e564a234b 100644
+--- a/arch/arm64/boot/dts/qcom/msm8916.dtsi
++++ b/arch/arm64/boot/dts/qcom/msm8916.dtsi
+@@ -114,7 +114,7 @@
+ 			next-level-cache = <&L2_0>;
+ 			enable-method = "psci";
+ 			cpu-idle-states = <&CPU_SPC>;
+-			clocks = <&apcs 0>;
++			clocks = <&apcs>;
+ 			operating-points-v2 = <&cpu_opp_table>;
+ 			#cooling-cells = <2>;
+ 		};
+@@ -126,7 +126,7 @@
+ 			next-level-cache = <&L2_0>;
+ 			enable-method = "psci";
+ 			cpu-idle-states = <&CPU_SPC>;
+-			clocks = <&apcs 0>;
++			clocks = <&apcs>;
+ 			operating-points-v2 = <&cpu_opp_table>;
+ 			#cooling-cells = <2>;
+ 		};
+@@ -138,7 +138,7 @@
+ 			next-level-cache = <&L2_0>;
+ 			enable-method = "psci";
+ 			cpu-idle-states = <&CPU_SPC>;
+-			clocks = <&apcs 0>;
++			clocks = <&apcs>;
+ 			operating-points-v2 = <&cpu_opp_table>;
+ 			#cooling-cells = <2>;
+ 		};
+@@ -150,7 +150,7 @@
+ 			next-level-cache = <&L2_0>;
+ 			enable-method = "psci";
+ 			cpu-idle-states = <&CPU_SPC>;
+-			clocks = <&apcs 0>;
++			clocks = <&apcs>;
+ 			operating-points-v2 = <&cpu_opp_table>;
+ 			#cooling-cells = <2>;
+ 		};
 -- 
 2.20.1
 
