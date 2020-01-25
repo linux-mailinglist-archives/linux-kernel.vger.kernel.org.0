@@ -2,91 +2,104 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 39C11149580
-	for <lists+linux-kernel@lfdr.de>; Sat, 25 Jan 2020 13:26:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B4B0A149567
+	for <lists+linux-kernel@lfdr.de>; Sat, 25 Jan 2020 13:02:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729107AbgAYM0X (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 25 Jan 2020 07:26:23 -0500
-Received: from 2.mo2.mail-out.ovh.net ([188.165.53.149]:37975 "EHLO
-        2.mo2.mail-out.ovh.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726191AbgAYM0X (ORCPT
+        id S1728827AbgAYMCC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 25 Jan 2020 07:02:02 -0500
+Received: from Galois.linutronix.de ([193.142.43.55]:44487 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726191AbgAYMCC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 25 Jan 2020 07:26:23 -0500
-X-Greylist: delayed 1201 seconds by postgrey-1.27 at vger.kernel.org; Sat, 25 Jan 2020 07:26:22 EST
-Received: from player159.ha.ovh.net (unknown [10.108.35.110])
-        by mo2.mail-out.ovh.net (Postfix) with ESMTP id 148091C305D
-        for <linux-kernel@vger.kernel.org>; Sat, 25 Jan 2020 12:47:12 +0100 (CET)
-Received: from sk2.org (nat-fit.net.vutbr.cz [147.229.117.36])
-        (Authenticated sender: steve@sk2.org)
-        by player159.ha.ovh.net (Postfix) with ESMTPSA id F2C3EE9AA732;
-        Sat, 25 Jan 2020 11:46:57 +0000 (UTC)
-From:   Stephen Kitt <steve@sk2.org>
-To:     Felix Kuehling <Felix.Kuehling@amd.com>,
-        Alex Deucher <alexander.deucher@amd.com>,
-        =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
-        David Zhou <David1.Zhou@amd.com>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Sumit Semwal <sumit.semwal@linaro.org>
-Cc:     amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
-        linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
-        Stephen Kitt <steve@sk2.org>
-Subject: [PATCH] amdgpu: use dma-resv API instead of manual kmalloc
-Date:   Sat, 25 Jan 2020 12:46:24 +0100
-Message-Id: <20200125114624.2093235-1-steve@sk2.org>
-X-Mailer: git-send-email 2.24.1
+        Sat, 25 Jan 2020 07:02:02 -0500
+Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tip-bot2@linutronix.de>)
+        id 1ivK8V-0001Ra-2G; Sat, 25 Jan 2020 13:01:59 +0100
+Received: from [127.0.1.1] (localhost [IPv6:::1])
+        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 7A0E01C1A7C;
+        Sat, 25 Jan 2020 13:01:58 +0100 (CET)
+Date:   Sat, 25 Jan 2020 12:01:58 -0000
+From:   "tip-bot2 for Borislav Petkov" <tip-bot2@linutronix.de>
+Reply-to: linux-kernel@vger.kernel.org
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip: x86/cleanups] x86/CPU/AMD: Remove amd_get_topology_early()
+Cc:     Borislav Petkov <bp@suse.de>, x86 <x86@kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+In-Reply-To: <20200123165811.5288-1-bp@alien8.de>
+References: <20200123165811.5288-1-bp@alien8.de>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Ovh-Tracer-Id: 3080180672509660668
-X-VR-SPAMSTATE: OK
-X-VR-SPAMSCORE: -100
-X-VR-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgedugedrvdejgdeffecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfqggfjpdevjffgvefmvefgnecuuegrihhlohhuthemucehtddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhvffufffkofgggfestdekredtredttdenucfhrhhomhepufhtvghphhgvnhcumfhithhtuceoshhtvghvvgesshhkvddrohhrgheqnecukfhppedtrddtrddtrddtpddugeejrddvvdelrdduudejrdefieenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhhouggvpehsmhhtphdqohhuthdphhgvlhhopehplhgrhigvrhduheelrdhhrgdrohhvhhdrnhgvthdpihhnvghtpedtrddtrddtrddtpdhmrghilhhfrhhomhepshhtvghvvgesshhkvddrohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrgh
+Message-ID: <157995371825.396.10029580328827655787.tip-bot2@tip-bot2>
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot2.linutronix.de>
+Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Instead of hand-coding the dma_resv_list allocation, use
-dma_resv_list_alloc, which masks the shared_max handling. While we're
-at it, since we only need shared_count fences, allocate shared_count
-fences rather than shared_max.
+The following commit has been merged into the x86/cleanups branch of tip:
 
-(This is the only place in the kernel, outside of dma-resv.c, which
-touches shared_max. This suggests we'd probably be better off without
-it!)
+Commit-ID:     3c749b81ee99ef1a01d342ee5e4bc01e4332eb75
+Gitweb:        https://git.kernel.org/tip/3c749b81ee99ef1a01d342ee5e4bc01e4332eb75
+Author:        Borislav Petkov <bp@suse.de>
+AuthorDate:    Thu, 23 Jan 2020 17:54:33 +01:00
+Committer:     Borislav Petkov <bp@suse.de>
+CommitterDate: Sat, 25 Jan 2020 12:59:46 +01:00
 
-Signed-off-by: Stephen Kitt <steve@sk2.org>
+x86/CPU/AMD: Remove amd_get_topology_early()
+
+... and fold its function body into its single call site.
+
+No functional changes:
+
+  # arch/x86/kernel/cpu/amd.o:
+
+   text    data     bss     dec     hex filename
+   5994     385       1    6380    18ec amd.o.before
+   5994     385       1    6380    18ec amd.o.after
+
+md5:
+   99ec6daa095b502297884e949c520f90  amd.o.before.asm
+   99ec6daa095b502297884e949c520f90  amd.o.after.asm
+
+Signed-off-by: Borislav Petkov <bp@suse.de>
+Link: https://lkml.kernel.org/r/20200123165811.5288-1-bp@alien8.de
 ---
- drivers/gpu/drm/amd/amdgpu/amdgpu_amdkfd_gpuvm.c | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
+ arch/x86/kernel/cpu/amd.c | 10 ++--------
+ 1 file changed, 2 insertions(+), 8 deletions(-)
 
-diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_amdkfd_gpuvm.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_amdkfd_gpuvm.c
-index 888209eb8cec..aec595752200 100644
---- a/drivers/gpu/drm/amd/amdgpu/amdgpu_amdkfd_gpuvm.c
-+++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_amdkfd_gpuvm.c
-@@ -234,12 +234,11 @@ static int amdgpu_amdkfd_remove_eviction_fence(struct amdgpu_bo *bo,
- 	if (!old)
- 		return 0;
+diff --git a/arch/x86/kernel/cpu/amd.c b/arch/x86/kernel/cpu/amd.c
+index 90f75e5..8a88d3f 100644
+--- a/arch/x86/kernel/cpu/amd.c
++++ b/arch/x86/kernel/cpu/amd.c
+@@ -319,13 +319,6 @@ static void legacy_fixup_core_id(struct cpuinfo_x86 *c)
+ 	c->cpu_core_id %= cus_per_node;
+ }
  
--	new = kmalloc(offsetof(typeof(*new), shared[old->shared_max]),
--		      GFP_KERNEL);
-+	new = dma_resv_list_alloc(old->shared_count);
- 	if (!new)
- 		return -ENOMEM;
- 
--	/* Go through all the shared fences in the resevation object and sort
-+	/* Go through all the shared fences in the reservation object and sort
- 	 * the interesting ones to the end of the list.
- 	 */
- 	for (i = 0, j = old->shared_count, k = 0; i < old->shared_count; ++i) {
-@@ -253,7 +252,6 @@ static int amdgpu_amdkfd_remove_eviction_fence(struct amdgpu_bo *bo,
- 		else
- 			RCU_INIT_POINTER(new->shared[k++], f);
+-
+-static void amd_get_topology_early(struct cpuinfo_x86 *c)
+-{
+-	if (cpu_has(c, X86_FEATURE_TOPOEXT))
+-		smp_num_siblings = ((cpuid_ebx(0x8000001e) >> 8) & 0xff) + 1;
+-}
+-
+ /*
+  * Fixup core topology information for
+  * (1) AMD multi-node processors
+@@ -717,7 +710,8 @@ static void early_init_amd(struct cpuinfo_x86 *c)
+ 		}
  	}
--	new->shared_max = old->shared_max;
- 	new->shared_count = k;
  
- 	/* Install the new fence list, seqcount provides the barriers */
--- 
-2.24.1
-
+-	amd_get_topology_early(c);
++	if (cpu_has(c, X86_FEATURE_TOPOEXT))
++		smp_num_siblings = ((cpuid_ebx(0x8000001e) >> 8) & 0xff) + 1;
+ }
+ 
+ static void init_amd_k8(struct cpuinfo_x86 *c)
