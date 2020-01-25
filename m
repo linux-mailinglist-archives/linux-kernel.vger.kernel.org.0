@@ -2,33 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7388A149473
-	for <lists+linux-kernel@lfdr.de>; Sat, 25 Jan 2020 11:44:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4D104149479
+	for <lists+linux-kernel@lfdr.de>; Sat, 25 Jan 2020 11:44:26 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729504AbgAYKnG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 25 Jan 2020 05:43:06 -0500
-Received: from Galois.linutronix.de ([193.142.43.55]:44178 "EHLO
+        id S1729816AbgAYKnV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 25 Jan 2020 05:43:21 -0500
+Received: from Galois.linutronix.de ([193.142.43.55]:44231 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729247AbgAYKm4 (ORCPT
+        with ESMTP id S1729420AbgAYKnD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 25 Jan 2020 05:42:56 -0500
+        Sat, 25 Jan 2020 05:43:03 -0500
 Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
         by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
         (Exim 4.80)
         (envelope-from <tip-bot2@linutronix.de>)
-        id 1ivItx-0008T7-OT; Sat, 25 Jan 2020 11:42:53 +0100
+        id 1ivItz-0008Uk-O2; Sat, 25 Jan 2020 11:42:55 +0100
 Received: from [127.0.1.1] (localhost [IPv6:::1])
-        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id E78AA1C1A7F;
-        Sat, 25 Jan 2020 11:42:46 +0100 (CET)
-Date:   Sat, 25 Jan 2020 10:42:46 -0000
+        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 1A6281C1A81;
+        Sat, 25 Jan 2020 11:42:48 +0100 (CET)
+Date:   Sat, 25 Jan 2020 10:42:47 -0000
 From:   "tip-bot2 for Paul E. McKenney" <tip-bot2@linutronix.de>
 Reply-to: linux-kernel@vger.kernel.org
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip: core/rcu] rcu: Add a hlist_nulls_unhashed_lockless() function
-Cc:     "Paul E. McKenney" <paulmck@kernel.org>, x86 <x86@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
+Subject: [tip: core/rcu] rcu: Remove rcu_swap_protected()
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        "Paul E. McKenney" <paulmck@kernel.org>,
+        Bart Van Assche <bart.vanassche@wdc.com>,
+        Christoph Hellwig <hch@lst.de>, Hannes Reinecke <hare@suse.de>,
+        Johannes Thumshirn <jthumshirn@suse.de>,
+        Shane M Seymour <shane.seymour@hpe.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        x86 <x86@kernel.org>, LKML <linux-kernel@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <157994896674.396.10350805017692383753.tip-bot2@tip-bot2>
+Message-ID: <157994896782.396.10070315148965985301.tip-bot2@tip-bot2>
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot2.linutronix.de>
 Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
@@ -44,60 +50,55 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The following commit has been merged into the core/rcu branch of tip:
 
-Commit-ID:     02b99b38f3d96c77cf0a368d99952aa372dfe58a
-Gitweb:        https://git.kernel.org/tip/02b99b38f3d96c77cf0a368d99952aa372dfe58a
+Commit-ID:     4414abf89158d734a83c99f6504f648417bd9550
+Gitweb:        https://git.kernel.org/tip/4414abf89158d734a83c99f6504f648417bd9550
 Author:        Paul E. McKenney <paulmck@kernel.org>
-AuthorDate:    Sat, 09 Nov 2019 10:45:47 -08:00
+AuthorDate:    Mon, 23 Sep 2019 16:31:42 -07:00
 Committer:     Paul E. McKenney <paulmck@kernel.org>
-CommitterDate: Fri, 10 Jan 2020 14:00:57 -08:00
+CommitterDate: Thu, 12 Dec 2019 10:24:52 -08:00
 
-rcu: Add a hlist_nulls_unhashed_lockless() function
+rcu: Remove rcu_swap_protected()
 
-This commit adds an hlist_nulls_unhashed_lockless() to allow lockless
-checking for whether or note an hlist_nulls_node is hashed or not.
-While in the area, this commit also adds a docbook comment to the existing
-hlist_nulls_unhashed() function.
+Now that the calls to rcu_swap_protected() have been replaced by
+rcu_replace_pointer(), this commit removes rcu_swap_protected().
 
+Link: https://lore.kernel.org/lkml/CAHk-=wiAsJLw1egFEE=Z7-GGtM6wcvtyytXZA1+BHqta4gg6Hw@mail.gmail.com/
+Reported-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
+Cc: Bart Van Assche <bart.vanassche@wdc.com>
+Cc: Christoph Hellwig <hch@lst.de>
+Cc: Hannes Reinecke <hare@suse.de>
+Cc: Johannes Thumshirn <jthumshirn@suse.de>
+Cc: Shane M Seymour <shane.seymour@hpe.com>
+Cc: Martin K. Petersen <martin.petersen@oracle.com>
 ---
- include/linux/list_nulls.h | 22 ++++++++++++++++++++++
- 1 file changed, 22 insertions(+)
+ include/linux/rcupdate.h | 16 ----------------
+ 1 file changed, 16 deletions(-)
 
-diff --git a/include/linux/list_nulls.h b/include/linux/list_nulls.h
-index 1ecd356..fa6e847 100644
---- a/include/linux/list_nulls.h
-+++ b/include/linux/list_nulls.h
-@@ -56,11 +56,33 @@ static inline unsigned long get_nulls_value(const struct hlist_nulls_node *ptr)
- 	return ((unsigned long)ptr) >> 1;
- }
+diff --git a/include/linux/rcupdate.h b/include/linux/rcupdate.h
+index 0b75063..fe47024 100644
+--- a/include/linux/rcupdate.h
++++ b/include/linux/rcupdate.h
+@@ -401,22 +401,6 @@ do {									      \
+ })
  
-+/**
-+ * hlist_nulls_unhashed - Has node been removed and reinitialized?
-+ * @h: Node to be checked
-+ *
-+ * Not that not all removal functions will leave a node in unhashed state.
-+ * For example, hlist_del_init_rcu() leaves the node in unhashed state,
-+ * but hlist_nulls_del() does not.
-+ */
- static inline int hlist_nulls_unhashed(const struct hlist_nulls_node *h)
- {
- 	return !h->pprev;
- }
- 
-+/**
-+ * hlist_nulls_unhashed_lockless - Has node been removed and reinitialized?
-+ * @h: Node to be checked
-+ *
-+ * Not that not all removal functions will leave a node in unhashed state.
-+ * For example, hlist_del_init_rcu() leaves the node in unhashed state,
-+ * but hlist_nulls_del() does not.  Unlike hlist_nulls_unhashed(), this
-+ * function may be used locklessly.
-+ */
-+static inline int hlist_nulls_unhashed_lockless(const struct hlist_nulls_node *h)
-+{
-+	return !READ_ONCE(h->pprev);
-+}
-+
- static inline int hlist_nulls_empty(const struct hlist_nulls_head *h)
- {
- 	return is_a_nulls(READ_ONCE(h->first));
+ /**
+- * rcu_swap_protected() - swap an RCU and a regular pointer
+- * @rcu_ptr: RCU pointer
+- * @ptr: regular pointer
+- * @c: the conditions under which the dereference will take place
+- *
+- * Perform swap(@rcu_ptr, @ptr) where @rcu_ptr is an RCU-annotated pointer and
+- * @c is the argument that is passed to the rcu_dereference_protected() call
+- * used to read that pointer.
+- */
+-#define rcu_swap_protected(rcu_ptr, ptr, c) do {			\
+-	typeof(ptr) __tmp = rcu_dereference_protected((rcu_ptr), (c));	\
+-	rcu_assign_pointer((rcu_ptr), (ptr));				\
+-	(ptr) = __tmp;							\
+-} while (0)
+-
+-/**
+  * rcu_access_pointer() - fetch RCU pointer with no dereferencing
+  * @p: The pointer to read
+  *
