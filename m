@@ -2,63 +2,91 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2BB0E1495E4
-	for <lists+linux-kernel@lfdr.de>; Sat, 25 Jan 2020 14:24:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 96E171495EC
+	for <lists+linux-kernel@lfdr.de>; Sat, 25 Jan 2020 14:29:33 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726729AbgAYNYG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 25 Jan 2020 08:24:06 -0500
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:37943 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725710AbgAYNYF (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 25 Jan 2020 08:24:05 -0500
-Received: by mail-lj1-f195.google.com with SMTP id w1so5719991ljh.5
-        for <linux-kernel@vger.kernel.org>; Sat, 25 Jan 2020 05:24:04 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:reply-to:from:date:message-id:subject:to;
-        bh=LG6M3v1Ls5eBU/Q++d4+2oMHdFC9KDBZ3pivntD6LNY=;
-        b=Gba0/m1NmXTeSmrowo+iH/7uQkDk1nlnS0lam2VHplH61uF6271oOJfhwMqn5bL6PD
-         O31XovENzIko+3MsyA2mfwe7OR6SuMar7KoB52UY1Zbb1cFYsE8KIfGkIxFmThium+XP
-         YIuAeotFTEsWKZl3AF8Wi9HG06kSbCpNd9LaggGZoT2/S0AmHqvxcYrBrhBbN9kLgRZO
-         lXiHAHzBkAdq+LVVq7kVrBThpsR+d8ka5ByLyfuKp/C5Qq/jVJj2kyvZuWdI+uwRS5hZ
-         krmS6gEE+kL8romD5X0dW43fUUSS0OtalUxApGjtg4LO/U7bJbF3yRhHU16qdtprFTNp
-         HAJw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
-         :subject:to;
-        bh=LG6M3v1Ls5eBU/Q++d4+2oMHdFC9KDBZ3pivntD6LNY=;
-        b=fP/3sbjK6HDZCalm++/ApY8gZEtIbIdHjdWaZWy22gbA3UlEvdEYtalKrjPlJj27kh
-         Fo4nWlhIotqRWnK3df/4X8chnXBy+Mv4C4tgrF5BfE/PKkiWMmM/xo9bhd6KeLUrlH0U
-         O/BitG7P8D91N8byL6JPQOPXrm5xMfeeEuUFKANH+ttIcHwwmQBvnwa43WW/tsMkIhLc
-         UaU2kgWOPcQuh2ifaiJylmmzy2Y07ef64qMFIOhsBO3xPZC97QOmlabPRLHjhqqjRtHD
-         4n8bq9lFlA0SubVpli9Mvx4Um/aD4XHcM7P+Cv/7tBsh0/3af5+PaK5+xL/NVXHRceHM
-         bhdA==
-X-Gm-Message-State: APjAAAVGfVgAJPwKPLeomjOOZC3ltx8NvYMHVmv9JUShip6MEbpXZyeI
-        oIQKADXAwiS/AeMqg84dJqrfDpRAqWMAYfGaors=
-X-Google-Smtp-Source: APXvYqzq2jMNwWQGYM4gv1kFpf8r18mBav+93tUl5VsUKhc8BnpymEYZZRwaSaU/+qCh9uuDfLY0IWEMkOhLDGOOpY4=
-X-Received: by 2002:a2e:9b03:: with SMTP id u3mr5150379lji.87.1579958643744;
- Sat, 25 Jan 2020 05:24:03 -0800 (PST)
+        id S1727235AbgAYN3c (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 25 Jan 2020 08:29:32 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40316 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725710AbgAYN3b (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 25 Jan 2020 08:29:31 -0500
+Received: from localhost (unknown [145.15.244.17])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 484E2206F0;
+        Sat, 25 Jan 2020 13:29:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1579958971;
+        bh=ZlARgGBv0efHgDPaj5HZbh4hEPn9xIvhPiiZnur8dEI=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=B33H/q9u6nNS8fgmrR+xa9fC0LuzjgUzLU49IWbQm3xmL5ZpLOuYL7uWBgZ5iCAHn
+         uNj2zoQd0jfz/sHHeNYBl4TRRRYykecoTvtmTT/foX9/2XHuIsoUPGLexAq/+vWD1k
+         AbZp4FkwgfWJotDe6rziQVLRSOH6S/LE2zrYOaMM=
+Date:   Sat, 25 Jan 2020 14:26:15 +0100
+From:   Greg KH <gregkh@linuxfoundation.org>
+To:     Jeffrey Hugo <jhugo@codeaurora.org>
+Cc:     Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+        arnd@arndb.de, smohanad@codeaurora.org, kvalo@codeaurora.org,
+        bjorn.andersson@linaro.org, hemantk@codeaurora.org,
+        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 02/16] bus: mhi: core: Add support for registering MHI
+ controllers
+Message-ID: <20200125132615.GA3516435@kroah.com>
+References: <20200123111836.7414-1-manivannan.sadhasivam@linaro.org>
+ <20200123111836.7414-3-manivannan.sadhasivam@linaro.org>
+ <20200124082939.GA2921617@kroah.com>
+ <42c79181-9d97-3542-c6b0-1e37f9b2ff39@codeaurora.org>
+ <20200124174707.GB3417153@kroah.com>
+ <e32b0a53-ce95-6d73-46c6-76d17af37146@codeaurora.org>
 MIME-Version: 1.0
-Received: by 2002:ac2:46cf:0:0:0:0:0 with HTTP; Sat, 25 Jan 2020 05:24:03
- -0800 (PST)
-Reply-To: barristerdinkarim09@gmail.com
-From:   Din Karim <generalsusanhelms68@gmail.com>
-Date:   Sat, 25 Jan 2020 13:24:03 +0000
-Message-ID: <CAK+Paz6Rh+-rE8z0cLpoOZWY6LC-pTG+sEsagRcttk4EoJREOA@mail.gmail.com>
-Subject: Hello
-To:     undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <e32b0a53-ce95-6d73-46c6-76d17af37146@codeaurora.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello dear,
+On Fri, Jan 24, 2020 at 11:12:57AM -0700, Jeffrey Hugo wrote:
+> On 1/24/2020 10:47 AM, Greg KH wrote:
+> > On Fri, Jan 24, 2020 at 07:24:43AM -0700, Jeffrey Hugo wrote:
+> > > > > +/**
+> > > > > + * struct mhi_result - Completed buffer information
+> > > > > + * @buf_addr: Address of data buffer
+> > > > > + * @dir: Channel direction
+> > > > > + * @bytes_xfer: # of bytes transferred
+> > > > > + * @transaction_status: Status of last transaction
+> > > > > + */
+> > > > > +struct mhi_result {
+> > > > > +	void *buf_addr;
+> > > > 
+> > > > Why void *?
+> > > 
+> > > Because its not possible to resolve this more clearly.  The client provides
+> > > the buffer and knows what the structure is.  The bus does not. Its just an
+> > > opaque pointer (hence void *) to the bus, and the client needs to decode it.
+> > > This is the struct that is handed to the client to allow them to decode the
+> > > activity (either a received buf, or a confirmation that a transmitted buf
+> > > has been consumed).
+> > 
+> > Then shouldn't this be a "u8 *" instead as you are saying how many bytes
+> > are here?
+> 
+> I'm sorry, I don't see the benefit of that.  Can you elaborate on why you
+> think that u8 * is a better type?
+> 
+> Sure, its an arbitrary byte stream from the perspective of the bus, but to
+> the client, 99% of the time its going to have some structure.
 
-I'm Barrister Din Karim, Please i wish to have a communication with you.
+So which side is in control here, the "bus" or the "client"?  For the
+bus to care, it's a bytestream and should be represented as such (like
+you have) with a number of bytes in the "packet".
 
-I am waiting for your answer,
+If you already know the structure types, just make a union of all of the
+valid ones and be done with it.  In other words, try to avoid using void
+* as much as is ever possible please.
 
-Barrister Din Karim(Esq)
+thanks,
+
+greg k-h
