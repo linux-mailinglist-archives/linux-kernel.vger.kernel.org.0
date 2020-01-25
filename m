@@ -2,33 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D49BF149461
-	for <lists+linux-kernel@lfdr.de>; Sat, 25 Jan 2020 11:42:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 80DD71494A4
+	for <lists+linux-kernel@lfdr.de>; Sat, 25 Jan 2020 11:47:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726858AbgAYKmo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 25 Jan 2020 05:42:44 -0500
-Received: from Galois.linutronix.de ([193.142.43.55]:44081 "EHLO
+        id S1729304AbgAYKm4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 25 Jan 2020 05:42:56 -0500
+Received: from Galois.linutronix.de ([193.142.43.55]:44160 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725710AbgAYKmo (ORCPT
+        with ESMTP id S1729222AbgAYKmy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 25 Jan 2020 05:42:44 -0500
+        Sat, 25 Jan 2020 05:42:54 -0500
 Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
         by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
         (Exim 4.80)
         (envelope-from <tip-bot2@linutronix.de>)
-        id 1ivItl-0008KH-Is; Sat, 25 Jan 2020 11:42:41 +0100
+        id 1ivItr-0008LB-6Q; Sat, 25 Jan 2020 11:42:47 +0100
 Received: from [127.0.1.1] (localhost [IPv6:::1])
-        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 631131C1A75;
-        Sat, 25 Jan 2020 11:42:40 +0100 (CET)
-Date:   Sat, 25 Jan 2020 10:42:40 -0000
-From:   "tip-bot2 for Paul E. McKenney" <tip-bot2@linutronix.de>
+        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id B5C411C1A73;
+        Sat, 25 Jan 2020 11:42:41 +0100 (CET)
+Date:   Sat, 25 Jan 2020 10:42:41 -0000
+From:   "tip-bot2 for Lai Jiangshan" <tip-bot2@linutronix.de>
 Reply-to: linux-kernel@vger.kernel.org
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip: core/rcu] rcu: Switch force_qs_rnp() to for_each_leaf_node_cpu_mask()
-Cc:     "Paul E. McKenney" <paulmck@kernel.org>, x86 <x86@kernel.org>,
+Subject: [tip: core/rcu] rcu: Fix tracepoint tracking RCU CPU kthread utilization
+Cc:     Lai Jiangshan <jiangshanlai@gmail.com>,
+        Lai Jiangshan <laijs@linux.alibaba.com>,
+        "Paul E. McKenney" <paulmck@kernel.org>, x86 <x86@kernel.org>,
         LKML <linux-kernel@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <157994896018.396.6105075370440132665.tip-bot2@tip-bot2>
+Message-ID: <157994896139.396.8043787419911538929.tip-bot2@tip-bot2>
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot2.linutronix.de>
 Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
@@ -44,48 +46,39 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The following commit has been merged into the core/rcu branch of tip:
 
-Commit-ID:     7441e7661d6586ae36329b7956e4d713d81e9903
-Gitweb:        https://git.kernel.org/tip/7441e7661d6586ae36329b7956e4d713d81e9903
-Author:        Paul E. McKenney <paulmck@kernel.org>
-AuthorDate:    Wed, 30 Oct 2019 09:37:11 -07:00
+Commit-ID:     2488a5e695564897a0f8ea42cd3af71647cd26d2
+Gitweb:        https://git.kernel.org/tip/2488a5e695564897a0f8ea42cd3af71647cd26d2
+Author:        Lai Jiangshan <jiangshanlai@gmail.com>
+AuthorDate:    Tue, 15 Oct 2019 10:23:57 
 Committer:     Paul E. McKenney <paulmck@kernel.org>
-CommitterDate: Fri, 24 Jan 2020 10:33:51 -08:00
+CommitterDate: Fri, 24 Jan 2020 10:33:31 -08:00
 
-rcu: Switch force_qs_rnp() to for_each_leaf_node_cpu_mask()
+rcu: Fix tracepoint tracking RCU CPU kthread utilization
 
-Currently, force_qs_rnp() uses a for_each_leaf_node_possible_cpu()
-loop containing a check of the current CPU's bit in ->qsmask.
-This works, but this commit saves three lines by instead using
-for_each_leaf_node_cpu_mask(), which combines the functionality of
-for_each_leaf_node_possible_cpu() and leaf_node_cpu_bit().  This commit
-also replaces the use of the local variable "bit" with rdp->grpmask.
+In the call to trace_rcu_utilization() at the start of the loop in
+rcu_cpu_kthread(), "rcu_wait" is incorrect, plus this trace event needs
+to be hoisted above the loop to balance with either the "rcu_wait" or
+"rcu_yield", depending on how the loop exits.  This commit therefore
+makes these changes.
 
+Signed-off-by: Lai Jiangshan <jiangshanlai@gmail.com>
+Signed-off-by: Lai Jiangshan <laijs@linux.alibaba.com>
 Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
 ---
- kernel/rcu/tree.c | 13 +++++--------
- 1 file changed, 5 insertions(+), 8 deletions(-)
+ kernel/rcu/tree.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/kernel/rcu/tree.c b/kernel/rcu/tree.c
-index bbb60ed..d950764 100644
+index dd8cfc3..ba154a3 100644
 --- a/kernel/rcu/tree.c
 +++ b/kernel/rcu/tree.c
-@@ -2298,14 +2298,11 @@ static void force_qs_rnp(int (*f)(struct rcu_data *rdp))
- 			raw_spin_unlock_irqrestore_rcu_node(rnp, flags);
- 			continue;
- 		}
--		for_each_leaf_node_possible_cpu(rnp, cpu) {
--			unsigned long bit = leaf_node_cpu_bit(rnp, cpu);
--			if ((rnp->qsmask & bit) != 0) {
--				rdp = per_cpu_ptr(&rcu_data, cpu);
--				if (f(rdp)) {
--					mask |= bit;
--					rcu_disable_urgency_upon_qs(rdp);
--				}
-+		for_each_leaf_node_cpu_mask(rnp, cpu, rnp->qsmask) {
-+			rdp = per_cpu_ptr(&rcu_data, cpu);
-+			if (f(rdp)) {
-+				mask |= rdp->grpmask;
-+				rcu_disable_urgency_upon_qs(rdp);
- 			}
- 		}
- 		if (mask != 0) {
+@@ -2474,8 +2474,8 @@ static void rcu_cpu_kthread(unsigned int cpu)
+ 	char work, *workp = this_cpu_ptr(&rcu_data.rcu_cpu_has_work);
+ 	int spincnt;
+ 
++	trace_rcu_utilization(TPS("Start CPU kthread@rcu_run"));
+ 	for (spincnt = 0; spincnt < 10; spincnt++) {
+-		trace_rcu_utilization(TPS("Start CPU kthread@rcu_wait"));
+ 		local_bh_disable();
+ 		*statusp = RCU_KTHREAD_RUNNING;
+ 		local_irq_disable();
