@@ -2,84 +2,96 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 97F3A1494E8
-	for <lists+linux-kernel@lfdr.de>; Sat, 25 Jan 2020 11:48:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 020C81494FC
+	for <lists+linux-kernel@lfdr.de>; Sat, 25 Jan 2020 11:56:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730302AbgAYKqb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 25 Jan 2020 05:46:31 -0500
-Received: from onstation.org ([52.200.56.107]:46808 "EHLO onstation.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729190AbgAYKq0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 25 Jan 2020 05:46:26 -0500
-Received: from localhost (c-98-239-145-235.hsd1.wv.comcast.net [98.239.145.235])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        (Authenticated sender: masneyb)
-        by onstation.org (Postfix) with ESMTPSA id C7F323EA42;
-        Sat, 25 Jan 2020 10:46:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=onstation.org;
-        s=default; t=1579949186;
-        bh=20OLpT9AQImoBtwxHWnQUH6B+FTQGj1F0WZXTR5Jw4U=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=K3SyMX5cFR0sr1VBUvV0khHYzaXHHW/So/Kx2ccr2Yv2fYzu7jfEfFzybpz850Oov
-         N5vmlOnIY3GOaFALeSK5M2fqmHFVBybX8GzsQhb5lsaQiq5c/jSRoAH0xGLFwEABuN
-         3ktfx6GbKoZhHN46ngr80N0fqG38WVmUDdSV49Ko=
-Date:   Sat, 25 Jan 2020 05:46:25 -0500
-From:   Brian Masney <masneyb@onstation.org>
-To:     Luca Weiss <luca@z3ntu.xyz>
-Cc:     linux-arm-msm@vger.kernel.org,
-        Russell King <linux@armlinux.org.uk>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Andy Gross <agross@kernel.org>,
-        Jordan Crouse <jcrouse@codeaurora.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/2] ARM: qcom_defconfig: Enable QRTR
-Message-ID: <20200125104625.GB5646@onstation.org>
-References: <20191104210943.101393-1-luca@z3ntu.xyz>
- <20191104210943.101393-2-luca@z3ntu.xyz>
+        id S1726612AbgAYK4K (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 25 Jan 2020 05:56:10 -0500
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:38067 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725996AbgAYK4K (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 25 Jan 2020 05:56:10 -0500
+Received: by mail-lj1-f196.google.com with SMTP id w1so5480981ljh.5
+        for <linux-kernel@vger.kernel.org>; Sat, 25 Jan 2020 02:56:08 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:from:date:message-id:subject:to:cc;
+        bh=SqbTjTM9cGAQLtR9udXUrVET7VibCzWALJm9pHODcU4=;
+        b=itKnjINOtfV/SlWBtsrVX+t0CqGRyh2YEz8ddbmAeOh/WSTFwY4y6Rtzx8uNBD097v
+         86kOFQLXBudCkEtN05tIk7kFdgJ2pvqebsWfbeHomXyATmRlhh2AuzQLcpidz1JtuHLD
+         tmllQ7xolnvwL7Ml7MJDDJ3oFx+7jEANC2j8y7P7crUUI2/td4wXQWwqP1uUM3V2Da5W
+         dQBj7SN73HMJLFhg74RzYTUDhZORPcg4XGO+nClmZriHILPzjsaIOm1TW2dEOJHQM3G5
+         2hgmqQFShEqr3IGg4SslsvEpDTaFOKEWRxkO4lb01ocLQMLI/aChBuEqWAfROx/NDxxH
+         p6LQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc;
+        bh=SqbTjTM9cGAQLtR9udXUrVET7VibCzWALJm9pHODcU4=;
+        b=e6u/Yqnoz/aNhBJnthvt/wSCqSOtPnxcy+K6Dkhf4VaF4h8X0MQJNzFWYjPgWq7zUs
+         z1qxDubCvikXkMP6YwNOuuRrQWdsuk6Xy13KmjrN7I1D5OQtc20abTdzR97tUbpSxbnL
+         la0purC7g4UjgMC4pONyAyO1HLvpzkg776Ry+8DAsrhOXwzyaUMzYooW6ogQAqY4uLcM
+         VkuySDvjVxJaPRX5UQP/eOoRwjV3p9e5AYslYhrSlm3dfk6E10LkWrRo+k3yYgKHKzem
+         ylSqDB053C+IVDKE/HcOOD5zNFPOJfaHoAzbZWwrHaFkCS4+Wo60NUo0R5HaVJv7E0Mq
+         UonA==
+X-Gm-Message-State: APjAAAX8veCEubCanaI/O4k1IgObMhjEI0vQcq890cdTBDcRUkxKUUnr
+        Xcuxf2hBgqewCZXfTOVvagQYpWFtONEpKtaMQRU94w==
+X-Google-Smtp-Source: APXvYqzcNibH5Fa8yhxwhQS5HqJwewF7GHTIcPvOKjg0p+55AdnHXaIqsA1B5JSLx+ifwZsMDZMMI6VZOQ81qugFysM=
+X-Received: by 2002:a2e:2a84:: with SMTP id q126mr4706282ljq.258.1579949768067;
+ Sat, 25 Jan 2020 02:56:08 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191104210943.101393-2-luca@z3ntu.xyz>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Sat, 25 Jan 2020 11:55:57 +0100
+Message-ID: <CACRpkdZ746gURHOeNf3Wj3_7BVHtxjd9Hz2n7QTmqxEroZ0N7A@mail.gmail.com>
+Subject: [GIT PULL] pin control fix for v5.5
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        Boyan Ding <boyan.j.ding@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Luca,
+Hi Linus,
 
-On Mon, Nov 04, 2019 at 10:09:41PM +0100, Luca Weiss wrote:
-> This option is useful on msm8974, so enable it.
-> 
-> Signed-off-by: Luca Weiss <luca@z3ntu.xyz>
-> ---
->  arch/arm/configs/qcom_defconfig | 2 ++
->  1 file changed, 2 insertions(+)
-> 
-> diff --git a/arch/arm/configs/qcom_defconfig b/arch/arm/configs/qcom_defconfig
-> index 94d5e1a8c61a..a71201fdc8c9 100644
-> --- a/arch/arm/configs/qcom_defconfig
-> +++ b/arch/arm/configs/qcom_defconfig
-> @@ -45,6 +45,8 @@ CONFIG_IP_ROUTE_VERBOSE=y
->  CONFIG_IP_PNP=y
->  CONFIG_IP_PNP_DHCP=y
->  # CONFIG_IPV6 is not set
-> +CONFIG_QRTR=y
-> +CONFIG_QRTR_SMD=y
+here is a hopefully last pin control fix for the v5.5
+series fixing up interrupts on the Sunrisepoint.
 
-Both of these should be modules. I verified on the Nexus 5 that booting
-the modem works in this configuration.
+Please pull it in!
 
-Thanks for your work on the modem!
+Yours,
+Linus Walleij
 
-Brian
+The following changes since commit b3a987b0264d3ddbb24293ebff10eddfc472f653:
 
->  CONFIG_CFG80211=m
->  CONFIG_MAC80211=m
->  CONFIG_RFKILL=y
-> -- 
-> 2.23.0
-> 
+  Linux 5.5-rc6 (2020-01-12 16:55:08 -0800)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git
+tags/pinctrl-v5.5-5
+
+for you to fetch changes up to 319d5cce728cd70897a1306591a252258fc1428d:
+
+  Merge tag 'intel-pinctrl-v5.5-3' of
+git://git.kernel.org/pub/scm/linux/kernel/git/pinctrl/intel into fixes
+(2020-01-17 09:07:26 +0100)
+
+----------------------------------------------------------------
+A single fix for the Intel Sunrisepoint pin controller
+that makes the interrupts work properly on it.
+
+----------------------------------------------------------------
+Boyan Ding (1):
+      pinctrl: sunrisepoint: Add missing Interrupt Status register offset
+
+Linus Walleij (1):
+      Merge tag 'intel-pinctrl-v5.5-3' of
+git://git.kernel.org/.../pinctrl/intel into fixes
+
+ drivers/pinctrl/intel/pinctrl-sunrisepoint.c | 1 +
+ 1 file changed, 1 insertion(+)
