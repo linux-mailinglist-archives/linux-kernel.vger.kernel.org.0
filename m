@@ -2,87 +2,100 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 395F114945D
-	for <lists+linux-kernel@lfdr.de>; Sat, 25 Jan 2020 11:34:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C762B1494F3
+	for <lists+linux-kernel@lfdr.de>; Sat, 25 Jan 2020 11:48:23 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726338AbgAYKeO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 25 Jan 2020 05:34:14 -0500
-Received: from bilbo.ozlabs.org ([203.11.71.1]:52565 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725710AbgAYKeN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 25 Jan 2020 05:34:13 -0500
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 484XS24lytz9sRf;
-        Sat, 25 Jan 2020 21:34:10 +1100 (AEDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ellerman.id.au;
-        s=201909; t=1579948451;
-        bh=AJPU8Hs6GFSApjSXAcOPRu/GO9Tc3s9+wbfyn6Clkrk=;
-        h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-        b=m6c5oEoKbKQhdcjjPmW9TkV+VkwNGbsJaGAeyyYLSgUf+heWju2xk7X6Ybz1yuZgN
-         2U3Tfgap8+AMnLMF5XCvsj7YU61913Rvo0eYQpUKQIOmLP5x/xqAVbNboD90wtkgFD
-         0L2EliyejJ1qcY/6lThw9dC64978raDnMgqHsMGcuN4Xw96ikCNghs45GkMOIKgsDN
-         BkdCVuROWMZCpqIj6jkobw/5VqAG+uKL/XdhqVqMcbAwTM6QILY4LsZGmvkNFHSXwR
-         FmvMEEYsJact3sNOequMRbv3BQr1lE9JnXyOVNPNHw2uQstSG/8a/1qY8ew6BaQBle
-         tAqc+igl/dFdw==
-From:   Michael Ellerman <mpe@ellerman.id.au>
-To:     Nick Desaulniers <ndesaulniers@google.com>,
-        Peter Zijlstra <peterz@infradead.org>
-Cc:     Will Deacon <will@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
-        linux-arch <linux-arch@vger.kernel.org>,
-        kernel-team <kernel-team@android.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Segher Boessenkool <segher@kernel.crashing.org>,
-        Christian Borntraeger <borntraeger@de.ibm.com>,
-        Luc Van Oostenryck <luc.vanoostenryck@gmail.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Peter Oberparleiter <oberpar@linux.ibm.com>,
-        Masahiro Yamada <masahiroy@kernel.org>
-Subject: Re: [PATCH v2 09/10] compiler/gcc: Raise minimum GCC version for kernel builds to 4.8
-In-Reply-To: <CAKwvOdmFMnCgr3rP5vNkj_H1SnBJ6drdBP1RSGxzfYzSiWGfLg@mail.gmail.com>
-References: <20200123153341.19947-1-will@kernel.org> <20200123153341.19947-10-will@kernel.org> <CAKwvOd=Bp+FWXHUKZnk+_dN=jTYZGdc_QVhErC3N-Frpk4mssQ@mail.gmail.com> <20200124082637.GZ14914@hirez.programming.kicks-ass.net> <CAKwvOdmFMnCgr3rP5vNkj_H1SnBJ6drdBP1RSGxzfYzSiWGfLg@mail.gmail.com>
-Date:   Sat, 25 Jan 2020 21:34:10 +1100
-Message-ID: <87tv4jhljx.fsf@mpe.ellerman.id.au>
+        id S1729679AbgAYKq4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 25 Jan 2020 05:46:56 -0500
+Received: from Galois.linutronix.de ([193.142.43.55]:44113 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729050AbgAYKms (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 25 Jan 2020 05:42:48 -0500
+Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tip-bot2@linutronix.de>)
+        id 1ivItk-0008KC-Sg; Sat, 25 Jan 2020 11:42:41 +0100
+Received: from [127.0.1.1] (localhost [IPv6:::1])
+        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 1A8C91C1A74;
+        Sat, 25 Jan 2020 11:42:40 +0100 (CET)
+Date:   Sat, 25 Jan 2020 10:42:39 -0000
+From:   "tip-bot2 for Paul E. McKenney" <tip-bot2@linutronix.de>
+Reply-to: linux-kernel@vger.kernel.org
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip: core/rcu] srcu: Apply *_ONCE() to ->srcu_last_gp_end
+Cc:     syzbot+08f3e9d26e5541e1ecf2@syzkaller.appspotmail.com,
+        Marco Elver <elver@google.com>,
+        "Paul E. McKenney" <paulmck@kernel.org>, x86 <x86@kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Message-ID: <157994895991.396.12412703935829811861.tip-bot2@tip-bot2>
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot2.linutronix.de>
+Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Nick Desaulniers <ndesaulniers@google.com> writes:
-> On Fri, Jan 24, 2020 at 12:26 AM Peter Zijlstra <peterz@infradead.org> wrote:
->> On Thu, Jan 23, 2020 at 10:36:37AM -0800, Nick Desaulniers wrote:
->> > On Thu, Jan 23, 2020 at 7:34 AM Will Deacon <will@kernel.org> wrote:
->> > > It is very rare to see versions of GCC prior to 4.8 being used to build
->> > > the mainline kernel. These old compilers are also know to have codegen
->> > > issues which can lead to silent miscompilation:
->> > >
->> > > https://gcc.gnu.org/bugzilla/show_bug.cgi?id=58145
->> > >
->> > > Raise the minimum GCC version for kernel build to 4.8 and remove some
->> > > tautological Kconfig dependencies as a consequence.
->> > >
->> > > Cc: Nick Desaulniers <ndesaulniers@google.com>
->> >
->> > Thanks for the patch.
->> > Reviewed-by: Nick Desaulniers <ndesaulniers@google.com>
->> > I wouldn't mind if this patch preceded the earlier one in the series
->> > adding the warning, should the series require a v2 and if folks are
->> > generally ok with bumping the min version.
->>
->> If I hadn't actually read your reply, I would have never spotted that
->> reviewed-by tag, hidden in a blob of text like that.
->>
->> Adding some whitespace before and after, such that it stands out a
->> little more, might avoid such issues.
->
-> Ack. Do maintainers have tools for fetching patch series and
-> automating collecting Reviewed-by tags, or is it all extremely manual?
+The following commit has been merged into the core/rcu branch of tip:
 
-Patchwork collects them for you. But not all maintainers use patchwork,
-it's a bit new and trendy ;)
+Commit-ID:     844a378de3372c923909681706d62336d702531e
+Gitweb:        https://git.kernel.org/tip/844a378de3372c923909681706d62336d702531e
+Author:        Paul E. McKenney <paulmck@kernel.org>
+AuthorDate:    Mon, 04 Nov 2019 08:08:30 -08:00
+Committer:     Paul E. McKenney <paulmck@kernel.org>
+CommitterDate: Fri, 24 Jan 2020 10:33:51 -08:00
 
-cheers
+srcu: Apply *_ONCE() to ->srcu_last_gp_end
+
+The ->srcu_last_gp_end field is accessed from any CPU at any time
+by synchronize_srcu(), so non-initialization references need to use
+READ_ONCE() and WRITE_ONCE().  This commit therefore makes that change.
+
+Reported-by: syzbot+08f3e9d26e5541e1ecf2@syzkaller.appspotmail.com
+Acked-by: Marco Elver <elver@google.com>
+Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
+---
+ kernel/rcu/srcutree.c | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
+
+diff --git a/kernel/rcu/srcutree.c b/kernel/rcu/srcutree.c
+index 5dffade..21acdff 100644
+--- a/kernel/rcu/srcutree.c
++++ b/kernel/rcu/srcutree.c
+@@ -530,7 +530,7 @@ static void srcu_gp_end(struct srcu_struct *ssp)
+ 	idx = rcu_seq_state(ssp->srcu_gp_seq);
+ 	WARN_ON_ONCE(idx != SRCU_STATE_SCAN2);
+ 	cbdelay = srcu_get_delay(ssp);
+-	ssp->srcu_last_gp_end = ktime_get_mono_fast_ns();
++	WRITE_ONCE(ssp->srcu_last_gp_end, ktime_get_mono_fast_ns());
+ 	rcu_seq_end(&ssp->srcu_gp_seq);
+ 	gpseq = rcu_seq_current(&ssp->srcu_gp_seq);
+ 	if (ULONG_CMP_LT(ssp->srcu_gp_seq_needed_exp, gpseq))
+@@ -762,6 +762,7 @@ static bool srcu_might_be_idle(struct srcu_struct *ssp)
+ 	unsigned long flags;
+ 	struct srcu_data *sdp;
+ 	unsigned long t;
++	unsigned long tlast;
+ 
+ 	/* If the local srcu_data structure has callbacks, not idle.  */
+ 	local_irq_save(flags);
+@@ -780,9 +781,9 @@ static bool srcu_might_be_idle(struct srcu_struct *ssp)
+ 
+ 	/* First, see if enough time has passed since the last GP. */
+ 	t = ktime_get_mono_fast_ns();
++	tlast = READ_ONCE(ssp->srcu_last_gp_end);
+ 	if (exp_holdoff == 0 ||
+-	    time_in_range_open(t, ssp->srcu_last_gp_end,
+-			       ssp->srcu_last_gp_end + exp_holdoff))
++	    time_in_range_open(t, tlast, tlast + exp_holdoff))
+ 		return false; /* Too soon after last GP. */
+ 
+ 	/* Next, check for probable idleness. */
