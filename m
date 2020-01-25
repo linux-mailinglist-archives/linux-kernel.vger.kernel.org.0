@@ -2,148 +2,88 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 134D91495E9
-	for <lists+linux-kernel@lfdr.de>; Sat, 25 Jan 2020 14:28:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9E4021495EF
+	for <lists+linux-kernel@lfdr.de>; Sat, 25 Jan 2020 14:30:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727084AbgAYN2I (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 25 Jan 2020 08:28:08 -0500
-Received: from ozlabs.org ([203.11.71.1]:51217 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725710AbgAYN2I (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 25 Jan 2020 08:28:08 -0500
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 484cJj1cFFz9sP6;
-        Sun, 26 Jan 2020 00:28:05 +1100 (AEDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ellerman.id.au;
-        s=201909; t=1579958885;
-        bh=hrN2cDvQml3IWViJQOWK0NfFHm1QM+DSycnJ6yh5o6Y=;
-        h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-        b=fBmBza3pY8IaqQVQIQIr1Goqw77sYg4IV8ExncGYSuzAr1Jic6QrQA8DuNBGNSXpB
-         fWZL96GDOtZXsC1dk2UZ76lURFiub+FFmIgPzlyI3disq2/i6gt6kGGik6bhpTJeQH
-         +51Ahks4PUegxHmwZ5rsfmfCEfsQ68xPZwK62rD6hCs6hdh5sgUW9FVYoefH6vM1Yt
-         EOftKAyiYji9KgchHK7X5neeoIwsjoIB7rpLQFHXpEUyiO5EUKD1y3nx5H3UPqv3Ma
-         HKqDFmkON+DPvdAuIwRrH/iY1h1CxWup6TIbsvfwWZbq9ZOE9yBkZKKQg4xbis3i2u
-         WymMNmxiRQT2g==
-From:   Michael Ellerman <mpe@ellerman.id.au>
-To:     Christophe Leroy <christophe.leroy@c-s.fr>
-Cc:     linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
-        Paul Mackerras <paulus@samba.org>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>
-Subject: Re: [PATCH] powerpc/32: Add missing context synchronisation with CONFIG_VMAP_STACK
-In-Reply-To: <20200125140052.Horde.0-n2_EcIdGahTxfDVj913w1@messagerie.si.c-s.fr>
-References: <872477f7c7552d3bb7baf0b302398fcd42c5fcfd.1579885334.git.christophe.leroy@c-s.fr> <87r1znhgvi.fsf@mpe.ellerman.id.au> <20200125140052.Horde.0-n2_EcIdGahTxfDVj913w1@messagerie.si.c-s.fr>
-Date:   Sun, 26 Jan 2020 00:28:04 +1100
-Message-ID: <87o8urhdi3.fsf@mpe.ellerman.id.au>
+        id S1728173AbgAYNaj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 25 Jan 2020 08:30:39 -0500
+Received: from jabberwock.ucw.cz ([46.255.230.98]:48662 "EHLO
+        jabberwock.ucw.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725710AbgAYNaj (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 25 Jan 2020 08:30:39 -0500
+Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
+        id 3EF881C25F4; Sat, 25 Jan 2020 14:30:37 +0100 (CET)
+Date:   Sat, 25 Jan 2020 14:30:36 +0100
+From:   Pavel Machek <pavel@denx.de>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     linux-kernel@vger.kernel.org, stable@vger.kernel.org,
+        Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
+        <u.kleine-koenig@pengutronix.de>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: Re: [PATCH 4.19 177/639] rtc: ds1307: rx8130: Fix alarm handling
+Message-ID: <20200125133036.GD14064@duo.ucw.cz>
+References: <20200124093047.008739095@linuxfoundation.org>
+ <20200124093109.349854130@linuxfoundation.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="sgneBHv3152wZ8jf"
+Content-Disposition: inline
+In-Reply-To: <20200124093109.349854130@linuxfoundation.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Christophe Leroy <christophe.leroy@c-s.fr> writes:
-> Michael Ellerman <mpe@ellerman.id.au> a =C3=A9crit=C2=A0:
->> Christophe Leroy <christophe.leroy@c-s.fr> writes:
-...
->>> diff --git a/arch/powerpc/kernel/head_32.h b/arch/powerpc/kernel/head_3=
-2.h
->>> index 73a035b40dbf..a6a5fbbf8504 100644
->>> --- a/arch/powerpc/kernel/head_32.h
->>> +++ b/arch/powerpc/kernel/head_32.h
->>> @@ -43,6 +43,7 @@
->>>  	.ifeq	\for_rtas
->>>  	li	r11, MSR_KERNEL & ~(MSR_IR | MSR_RI) /* can take DTLB miss */
->>>  	mtmsr	r11
->>> +	isync
->>
->> Actually this one leads to:
->>
->>   /home/michael/linux/arch/powerpc/kernel/head_8xx.S: Assembler messages:
->>   /home/michael/linux/arch/powerpc/kernel/head_8xx.S:151: Error:=20=20
->> attempt to move .org backwards
->>   make[3]: *** [/home/michael/linux/scripts/Makefile.build:348:=20=20
->> arch/powerpc/kernel/head_8xx.o] Error 1
->>
->> For mpc885_ads_defconfig.
->>
->> That's the alignment exception overflowing into the program check
->> handler:
->>
->> /* Alignment exception */
->> 	. =3D 0x600
->> Alignment:
->> 	EXCEPTION_PROLOG handle_dar_dsisr=3D1
->> 	save_dar_dsisr_on_stack r4, r5, r11
->> 	li	r6, RPN_PATTERN
->> 	mtspr	SPRN_DAR, r6	/* Tag DAR, to be used in DTLB Error */
->> 	addi	r3,r1,STACK_FRAME_OVERHEAD
->> 	EXC_XFER_STD(0x600, alignment_exception)
->>
->> /* Program check exception */
->> 	EXCEPTION(0x700, ProgramCheck, program_check_exception, EXC_XFER_STD)
->>
->>
->> Can't see an obvious/easy way to fix it.
->
-> Argh !
->
-> I think the easiest is to move the EXC_XFER_STD(0x600,=20=20
-> alignment_exception) somewhere else and branch to it. There is some=20=20
-> space at .0xa00
 
-That works, or builds at least. I'm not setup to boot test it.
+--sgneBHv3152wZ8jf
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Does this look OK?
+Hi!
 
-cheers
+> When the EXTENSION.WADA bit is set, register 0x19 contains a bitmap of
+> week days, not a day of month. As Linux only handles a single alarm
+> without repetition using day of month is more flexible, so clear this
+> bit. (Otherwise a value depending on time.tm_wday would have to be
+> written to register 0x19.)
 
+So the comment explains why WADA bit needs to be clear.
 
-From 40e7d671aa27cf4411188f978b2cd06b30a9cb6c Mon Sep 17 00:00:00 2001
-From: Michael Ellerman <mpe@ellerman.id.au>
-Date: Sun, 26 Jan 2020 00:20:16 +1100
-Subject: [PATCH] powerpc/8xx: Move tail of alignment exception out of line
+> @@ -749,8 +749,8 @@ static int rx8130_set_alarm(struct device *dev, struc=
+t rtc_wkalrm *t)
+>  	if (ret < 0)
+>  		return ret;
+> =20
+> -	ctl[0] &=3D ~RX8130_REG_EXTENSION_WADA;
+> +	ctl[0] &=3D RX8130_REG_EXTENSION_WADA;
 
-When we enable VMAP_STACK there will not be enough room for the
-alignment handler at 0x600 in head_8xx.S. For now move the tail of the
-alignment handler out of line, and branch to it.
+But then code is changed to preserve WADA bit while it was clearing it
+before.
 
-Suggested-by: Christophe Leroy <christophe.leroy@c-s.fr>
-Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
----
- arch/powerpc/kernel/head_8xx.S | 7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
+What is going on here?
 
-diff --git a/arch/powerpc/kernel/head_8xx.S b/arch/powerpc/kernel/head_8xx.S
-index 477933b36bde..9922306ae512 100644
---- a/arch/powerpc/kernel/head_8xx.S
-+++ b/arch/powerpc/kernel/head_8xx.S
-@@ -145,7 +145,7 @@ _ENTRY(_start);
- 	li	r6, RPN_PATTERN
- 	mtspr	SPRN_DAR, r6	/* Tag DAR, to be used in DTLB Error */
- 	addi	r3,r1,STACK_FRAME_OVERHEAD
--	EXC_XFER_STD(0x600, alignment_exception)
-+	b	.Lalignment_exception_ool
-=20
- /* Program check exception */
- 	EXCEPTION(0x700, ProgramCheck, program_check_exception, EXC_XFER_STD)
-@@ -153,6 +153,11 @@ _ENTRY(_start);
- /* Decrementer */
- 	EXCEPTION(0x900, Decrementer, timer_interrupt, EXC_XFER_LITE)
-=20
-+	/* With VMAP_STACK there's not enough room for this at 0x600 */
-+	. =3D 0xa00
-+.Lalignment_exception_ool:
-+	EXC_XFER_STD(0x600, alignment_exception)
-+
- /* System call */
- 	. =3D 0xc00
- SystemCall:
+Given WADA bit is already clear, is it -stable material?
+
+Best regards,
+									Pavel
+
 --=20
-2.21.1
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
 
+--sgneBHv3152wZ8jf
+Content-Type: application/pgp-signature; name="signature.asc"
 
+-----BEGIN PGP SIGNATURE-----
 
+iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCXixC/AAKCRAw5/Bqldv6
+8j5ZAKCoLBAKcnonc5k5CQeMZfSUgRMOtACfRADMVoC2UqdvBXpFyVPT9TXuvSM=
+=vnLk
+-----END PGP SIGNATURE-----
+
+--sgneBHv3152wZ8jf--
