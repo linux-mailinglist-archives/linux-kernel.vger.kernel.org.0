@@ -2,35 +2,34 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C762B1494F3
-	for <lists+linux-kernel@lfdr.de>; Sat, 25 Jan 2020 11:48:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C4E18149463
+	for <lists+linux-kernel@lfdr.de>; Sat, 25 Jan 2020 11:42:51 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729679AbgAYKq4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 25 Jan 2020 05:46:56 -0500
-Received: from Galois.linutronix.de ([193.142.43.55]:44113 "EHLO
+        id S1728890AbgAYKmq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 25 Jan 2020 05:42:46 -0500
+Received: from Galois.linutronix.de ([193.142.43.55]:44092 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729050AbgAYKms (ORCPT
+        with ESMTP id S1726204AbgAYKmp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 25 Jan 2020 05:42:48 -0500
+        Sat, 25 Jan 2020 05:42:45 -0500
 Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
         by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
         (Exim 4.80)
         (envelope-from <tip-bot2@linutronix.de>)
-        id 1ivItk-0008KC-Sg; Sat, 25 Jan 2020 11:42:41 +0100
+        id 1ivItl-0008K9-V9; Sat, 25 Jan 2020 11:42:42 +0100
 Received: from [127.0.1.1] (localhost [IPv6:::1])
-        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 1A8C91C1A74;
-        Sat, 25 Jan 2020 11:42:40 +0100 (CET)
+        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 4D73F1C0105;
+        Sat, 25 Jan 2020 11:42:39 +0100 (CET)
 Date:   Sat, 25 Jan 2020 10:42:39 -0000
 From:   "tip-bot2 for Paul E. McKenney" <tip-bot2@linutronix.de>
 Reply-to: linux-kernel@vger.kernel.org
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip: core/rcu] srcu: Apply *_ONCE() to ->srcu_last_gp_end
-Cc:     syzbot+08f3e9d26e5541e1ecf2@syzkaller.appspotmail.com,
-        Marco Elver <elver@google.com>,
+Subject: [tip: core/rcu] rcu: Remove unused stop-machine #include
+Cc:     Viresh Kumar <viresh.kumar@linaro.org>,
         "Paul E. McKenney" <paulmck@kernel.org>, x86 <x86@kernel.org>,
         LKML <linux-kernel@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <157994895991.396.12412703935829811861.tip-bot2@tip-bot2>
+Message-ID: <157994895908.396.10457171877689560364.tip-bot2@tip-bot2>
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot2.linutronix.de>
 Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
@@ -46,56 +45,48 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The following commit has been merged into the core/rcu branch of tip:
 
-Commit-ID:     844a378de3372c923909681706d62336d702531e
-Gitweb:        https://git.kernel.org/tip/844a378de3372c923909681706d62336d702531e
+Commit-ID:     f6105fc2a9c0ea5be6b9e5c19b2551af0b8b4eac
+Gitweb:        https://git.kernel.org/tip/f6105fc2a9c0ea5be6b9e5c19b2551af0b8b4eac
 Author:        Paul E. McKenney <paulmck@kernel.org>
-AuthorDate:    Mon, 04 Nov 2019 08:08:30 -08:00
+AuthorDate:    Wed, 27 Nov 2019 11:36:07 -08:00
 Committer:     Paul E. McKenney <paulmck@kernel.org>
-CommitterDate: Fri, 24 Jan 2020 10:33:51 -08:00
+CommitterDate: Fri, 24 Jan 2020 10:33:52 -08:00
 
-srcu: Apply *_ONCE() to ->srcu_last_gp_end
+rcu: Remove unused stop-machine #include
 
-The ->srcu_last_gp_end field is accessed from any CPU at any time
-by synchronize_srcu(), so non-initialization references need to use
-READ_ONCE() and WRITE_ONCE().  This commit therefore makes that change.
+Long ago, RCU used the stop-machine mechanism to implement expedited
+grace periods, but no longer does so.  This commit therefore removes
+the no-longer-needed #includes of linux/stop_machine.h.
 
-Reported-by: syzbot+08f3e9d26e5541e1ecf2@syzkaller.appspotmail.com
-Acked-by: Marco Elver <elver@google.com>
+Link: https://lwn.net/Articles/805317/
+Reported-by: Viresh Kumar <viresh.kumar@linaro.org>
 Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
 ---
- kernel/rcu/srcutree.c | 7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
+ kernel/rcu/tree.c | 1 -
+ kernel/rcu/tree.h | 1 -
+ 2 files changed, 2 deletions(-)
 
-diff --git a/kernel/rcu/srcutree.c b/kernel/rcu/srcutree.c
-index 5dffade..21acdff 100644
---- a/kernel/rcu/srcutree.c
-+++ b/kernel/rcu/srcutree.c
-@@ -530,7 +530,7 @@ static void srcu_gp_end(struct srcu_struct *ssp)
- 	idx = rcu_seq_state(ssp->srcu_gp_seq);
- 	WARN_ON_ONCE(idx != SRCU_STATE_SCAN2);
- 	cbdelay = srcu_get_delay(ssp);
--	ssp->srcu_last_gp_end = ktime_get_mono_fast_ns();
-+	WRITE_ONCE(ssp->srcu_last_gp_end, ktime_get_mono_fast_ns());
- 	rcu_seq_end(&ssp->srcu_gp_seq);
- 	gpseq = rcu_seq_current(&ssp->srcu_gp_seq);
- 	if (ULONG_CMP_LT(ssp->srcu_gp_seq_needed_exp, gpseq))
-@@ -762,6 +762,7 @@ static bool srcu_might_be_idle(struct srcu_struct *ssp)
- 	unsigned long flags;
- 	struct srcu_data *sdp;
- 	unsigned long t;
-+	unsigned long tlast;
+diff --git a/kernel/rcu/tree.c b/kernel/rcu/tree.c
+index d950764..878f62f 100644
+--- a/kernel/rcu/tree.c
++++ b/kernel/rcu/tree.c
+@@ -43,7 +43,6 @@
+ #include <uapi/linux/sched/types.h>
+ #include <linux/prefetch.h>
+ #include <linux/delay.h>
+-#include <linux/stop_machine.h>
+ #include <linux/random.h>
+ #include <linux/trace_events.h>
+ #include <linux/suspend.h>
+diff --git a/kernel/rcu/tree.h b/kernel/rcu/tree.h
+index 9d5986a..ce90c68 100644
+--- a/kernel/rcu/tree.h
++++ b/kernel/rcu/tree.h
+@@ -16,7 +16,6 @@
+ #include <linux/cpumask.h>
+ #include <linux/seqlock.h>
+ #include <linux/swait.h>
+-#include <linux/stop_machine.h>
+ #include <linux/rcu_node_tree.h>
  
- 	/* If the local srcu_data structure has callbacks, not idle.  */
- 	local_irq_save(flags);
-@@ -780,9 +781,9 @@ static bool srcu_might_be_idle(struct srcu_struct *ssp)
- 
- 	/* First, see if enough time has passed since the last GP. */
- 	t = ktime_get_mono_fast_ns();
-+	tlast = READ_ONCE(ssp->srcu_last_gp_end);
- 	if (exp_holdoff == 0 ||
--	    time_in_range_open(t, ssp->srcu_last_gp_end,
--			       ssp->srcu_last_gp_end + exp_holdoff))
-+	    time_in_range_open(t, tlast, tlast + exp_holdoff))
- 		return false; /* Too soon after last GP. */
- 
- 	/* Next, check for probable idleness. */
+ #include "rcu_segcblist.h"
