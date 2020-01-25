@@ -2,95 +2,158 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 54580149612
-	for <lists+linux-kernel@lfdr.de>; Sat, 25 Jan 2020 15:34:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3A2F7149614
+	for <lists+linux-kernel@lfdr.de>; Sat, 25 Jan 2020 15:34:48 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726454AbgAYOeG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 25 Jan 2020 09:34:06 -0500
-Received: from mail-yb1-f196.google.com ([209.85.219.196]:43237 "EHLO
-        mail-yb1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725710AbgAYOeF (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 25 Jan 2020 09:34:05 -0500
-Received: by mail-yb1-f196.google.com with SMTP id k15so2522427ybd.10;
-        Sat, 25 Jan 2020 06:34:05 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=CII6fgxbbjlcfCpxODLXxfNy5r0J8+wQSLmq3GYEul8=;
-        b=bCU7L5sVpBqdGp101C3t9B7mPY5AA86EIWEbjwzOBx7DLxkZH7t1SK7kR8d7E1d7Zk
-         76q7Sj/QVgHWs/y+psith8oD9iPNbbz6ErD8HjLmlPiVwUL4+2IXnf2qByLuw40R6sjF
-         KwX6Q09tMbE97pTFrc6CJ7AnyCWeRHxmVac56L4PC/dr5My5gJHevMkF2KvrxA4dlafo
-         Z50Wf2Yj0MKJlns9kBdROmBehotF9B7umAjGCFZtLmr7JZa7+7N6xpI4edzveC1rp0EL
-         R+1AIqOzbrqnsHqDzOdtBhuEZFVdzGpLlTwlMMTU/BOEHj9yp5ComC7W541do6cGB2jx
-         XuGw==
-X-Gm-Message-State: APjAAAUROxTT72gzEUuvPvfNKCccetpfnyk6fz/KlVx1+bpf8p2x3iPo
-        G0gfgjJqdAcMzTiOQokHd+E=
-X-Google-Smtp-Source: APXvYqyz8SWMF/sNYdsq9JDkVs9ZnyCPh+bhesv9tVDOFL94tGNrbROb3Dmgkdh4KJ03cU8P1sNnbA==
-X-Received: by 2002:a25:6184:: with SMTP id v126mr6092142ybb.427.1579962844821;
-        Sat, 25 Jan 2020 06:34:04 -0800 (PST)
-Received: from localhost.localdomain (h198-137-20-41.xnet.uga.edu. [198.137.20.41])
-        by smtp.gmail.com with ESMTPSA id w132sm3723295ywc.51.2020.01.25.06.34.03
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 25 Jan 2020 06:34:03 -0800 (PST)
-From:   Wenwen Wang <wenwen@cs.uga.edu>
-To:     Wenwen Wang <wenwen@cs.uga.edu>
-Cc:     Chas Williams <3chas3@gmail.com>,
-        linux-atm-general@lists.sourceforge.net (moderated list:ATM),
-        netdev@vger.kernel.org (open list:ATM),
-        linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH v2] firestream: fix memory leaks
-Date:   Sat, 25 Jan 2020 14:33:29 +0000
-Message-Id: <20200125143329.11766-1-wenwen@cs.uga.edu>
-X-Mailer: git-send-email 2.17.1
+        id S1726729AbgAYOej convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Sat, 25 Jan 2020 09:34:39 -0500
+Received: from pegase1.c-s.fr ([93.17.236.30]:60518 "EHLO pegase1.c-s.fr"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725710AbgAYOei (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 25 Jan 2020 09:34:38 -0500
+Received: from localhost (mailhub1-int [192.168.12.234])
+        by localhost (Postfix) with ESMTP id 484dnR3H6Kz9vCRl;
+        Sat, 25 Jan 2020 15:34:35 +0100 (CET)
+X-Virus-Scanned: Debian amavisd-new at c-s.fr
+Received: from pegase1.c-s.fr ([192.168.12.234])
+        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
+        with ESMTP id 3RI8PEMKEfJE; Sat, 25 Jan 2020 15:34:35 +0100 (CET)
+Received: from vm-hermes.si.c-s.fr (vm-hermes.si.c-s.fr [192.168.25.253])
+        by pegase1.c-s.fr (Postfix) with ESMTP id 484dnR2Dbnz9vCRk;
+        Sat, 25 Jan 2020 15:34:35 +0100 (CET)
+Received: by vm-hermes.si.c-s.fr (Postfix, from userid 33)
+        id AA7E8763; Sat, 25 Jan 2020 15:35:00 +0100 (CET)
+Received: from 37.173.164.116 ([37.173.164.116]) by messagerie.si.c-s.fr
+ (Horde Framework) with HTTP; Sat, 25 Jan 2020 15:35:00 +0100
+Date:   Sat, 25 Jan 2020 15:35:00 +0100
+Message-ID: <20200125153500.Horde.JTfP3wDEY-lCopNyg0xvuA4@messagerie.si.c-s.fr>
+From:   Christophe Leroy <christophe.leroy@c-s.fr>
+To:     Michael Ellerman <mpe@ellerman.id.au>
+Cc:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
+Subject: Re: [PATCH] powerpc/32: Add missing context synchronisation with
+ CONFIG_VMAP_STACK
+References: <872477f7c7552d3bb7baf0b302398fcd42c5fcfd.1579885334.git.christophe.leroy@c-s.fr>
+ <87r1znhgvi.fsf@mpe.ellerman.id.au>
+ <20200125140052.Horde.0-n2_EcIdGahTxfDVj913w1@messagerie.si.c-s.fr>
+ <87o8urhdi3.fsf@mpe.ellerman.id.au>
+In-Reply-To: <87o8urhdi3.fsf@mpe.ellerman.id.au>
+User-Agent: Internet Messaging Program (IMP) H5 (6.2.3)
+Content-Type: text/plain; charset=UTF-8; format=flowed; DelSp=Yes
+MIME-Version: 1.0
+Content-Disposition: inline
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In fs_open(), 'vcc' is allocated through kmalloc() and assigned to
-'atm_vcc->dev_data.' In the following execution, if an error occurs, e.g.,
-there is no more free channel, an error code EBUSY or ENOMEM will be
-returned. However, 'vcc' is not deallocated, leading to memory leaks. Note
-that, in normal cases where fs_open() returns 0, 'vcc' will be deallocated
-in fs_close(). But, if fs_open() fails, there is no guarantee that
-fs_close() will be invoked.
+Michael Ellerman <mpe@ellerman.id.au> a écrit :
 
-To fix this issue, deallocate 'vcc' before the error code is returned.
+> Christophe Leroy <christophe.leroy@c-s.fr> writes:
+>> Michael Ellerman <mpe@ellerman.id.au> a écrit :
+>>> Christophe Leroy <christophe.leroy@c-s.fr> writes:
+> ...
+>>>> diff --git a/arch/powerpc/kernel/head_32.h b/arch/powerpc/kernel/head_32.h
+>>>> index 73a035b40dbf..a6a5fbbf8504 100644
+>>>> --- a/arch/powerpc/kernel/head_32.h
+>>>> +++ b/arch/powerpc/kernel/head_32.h
+>>>> @@ -43,6 +43,7 @@
+>>>>  	.ifeq	\for_rtas
+>>>>  	li	r11, MSR_KERNEL & ~(MSR_IR | MSR_RI) /* can take DTLB miss */
+>>>>  	mtmsr	r11
+>>>> +	isync
+>>>
+>>> Actually this one leads to:
+>>>
+>>>   /home/michael/linux/arch/powerpc/kernel/head_8xx.S: Assembler messages:
+>>>   /home/michael/linux/arch/powerpc/kernel/head_8xx.S:151: Error:
+>>> attempt to move .org backwards
+>>>   make[3]: *** [/home/michael/linux/scripts/Makefile.build:348:
+>>> arch/powerpc/kernel/head_8xx.o] Error 1
+>>>
+>>> For mpc885_ads_defconfig.
+>>>
+>>> That's the alignment exception overflowing into the program check
+>>> handler:
+>>>
+>>> /* Alignment exception */
+>>> 	. = 0x600
+>>> Alignment:
+>>> 	EXCEPTION_PROLOG handle_dar_dsisr=1
+>>> 	save_dar_dsisr_on_stack r4, r5, r11
+>>> 	li	r6, RPN_PATTERN
+>>> 	mtspr	SPRN_DAR, r6	/* Tag DAR, to be used in DTLB Error */
+>>> 	addi	r3,r1,STACK_FRAME_OVERHEAD
+>>> 	EXC_XFER_STD(0x600, alignment_exception)
+>>>
+>>> /* Program check exception */
+>>> 	EXCEPTION(0x700, ProgramCheck, program_check_exception, EXC_XFER_STD)
+>>>
+>>>
+>>> Can't see an obvious/easy way to fix it.
+>>
+>> Argh !
+>>
+>> I think the easiest is to move the EXC_XFER_STD(0x600,
+>> alignment_exception) somewhere else and branch to it. There is some
+>> space at .0xa00
+>
+> That works, or builds at least. I'm not setup to boot test it.
+>
+> Does this look OK?
 
-Signed-off-by: Wenwen Wang <wenwen@cs.uga.edu>
----
- drivers/atm/firestream.c | 3 +++
- 1 file changed, 3 insertions(+)
+Yes it looks ok,
 
-diff --git a/drivers/atm/firestream.c b/drivers/atm/firestream.c
-index aad00d2b28f5..cc87004d5e2d 100644
---- a/drivers/atm/firestream.c
-+++ b/drivers/atm/firestream.c
-@@ -912,6 +912,7 @@ static int fs_open(struct atm_vcc *atm_vcc)
- 			}
- 			if (!to) {
- 				printk ("No more free channels for FS50..\n");
-+				kfree(vcc);
- 				return -EBUSY;
- 			}
- 			vcc->channo = dev->channo;
-@@ -922,6 +923,7 @@ static int fs_open(struct atm_vcc *atm_vcc)
- 			if (((DO_DIRECTION(rxtp) && dev->atm_vccs[vcc->channo])) ||
- 			    ( DO_DIRECTION(txtp) && test_bit (vcc->channo, dev->tx_inuse))) {
- 				printk ("Channel is in use for FS155.\n");
-+				kfree(vcc);
- 				return -EBUSY;
- 			}
- 		}
-@@ -935,6 +937,7 @@ static int fs_open(struct atm_vcc *atm_vcc)
- 			    tc, sizeof (struct fs_transmit_config));
- 		if (!tc) {
- 			fs_dprintk (FS_DEBUG_OPEN, "fs: can't alloc transmit_config.\n");
-+			kfree(vcc);
- 			return -ENOMEM;
- 		}
- 
--- 
-2.17.1
+Thanks
+Christophe
+
+>
+> cheers
+>
+>
+> From 40e7d671aa27cf4411188f978b2cd06b30a9cb6c Mon Sep 17 00:00:00 2001
+> From: Michael Ellerman <mpe@ellerman.id.au>
+> Date: Sun, 26 Jan 2020 00:20:16 +1100
+> Subject: [PATCH] powerpc/8xx: Move tail of alignment exception out of line
+>
+> When we enable VMAP_STACK there will not be enough room for the
+> alignment handler at 0x600 in head_8xx.S. For now move the tail of the
+> alignment handler out of line, and branch to it.
+>
+> Suggested-by: Christophe Leroy <christophe.leroy@c-s.fr>
+> Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+> ---
+>  arch/powerpc/kernel/head_8xx.S | 7 ++++++-
+>  1 file changed, 6 insertions(+), 1 deletion(-)
+>
+> diff --git a/arch/powerpc/kernel/head_8xx.S b/arch/powerpc/kernel/head_8xx.S
+> index 477933b36bde..9922306ae512 100644
+> --- a/arch/powerpc/kernel/head_8xx.S
+> +++ b/arch/powerpc/kernel/head_8xx.S
+> @@ -145,7 +145,7 @@ _ENTRY(_start);
+>  	li	r6, RPN_PATTERN
+>  	mtspr	SPRN_DAR, r6	/* Tag DAR, to be used in DTLB Error */
+>  	addi	r3,r1,STACK_FRAME_OVERHEAD
+> -	EXC_XFER_STD(0x600, alignment_exception)
+> +	b	.Lalignment_exception_ool
+>
+>  /* Program check exception */
+>  	EXCEPTION(0x700, ProgramCheck, program_check_exception, EXC_XFER_STD)
+> @@ -153,6 +153,11 @@ _ENTRY(_start);
+>  /* Decrementer */
+>  	EXCEPTION(0x900, Decrementer, timer_interrupt, EXC_XFER_LITE)
+>
+> +	/* With VMAP_STACK there's not enough room for this at 0x600 */
+> +	. = 0xa00
+> +.Lalignment_exception_ool:
+> +	EXC_XFER_STD(0x600, alignment_exception)
+> +
+>  /* System call */
+>  	. = 0xc00
+>  SystemCall:
+> --
+> 2.21.1
+
 
