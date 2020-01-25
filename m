@@ -2,199 +2,116 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3FCF4149287
-	for <lists+linux-kernel@lfdr.de>; Sat, 25 Jan 2020 02:24:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D9CEF149278
+	for <lists+linux-kernel@lfdr.de>; Sat, 25 Jan 2020 02:10:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729673AbgAYBX0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 24 Jan 2020 20:23:26 -0500
-Received: from mga01.intel.com ([192.55.52.88]:57666 "EHLO mga01.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725821AbgAYBX0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 24 Jan 2020 20:23:26 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga002.fm.intel.com ([10.253.24.26])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 24 Jan 2020 17:23:25 -0800
-X-IronPort-AV: E=Sophos;i="5.70,359,1574150400"; 
-   d="scan'208";a="260436197"
-Received: from dwillia2-desk3.jf.intel.com (HELO dwillia2-desk3.amr.corp.intel.com) ([10.54.39.16])
-  by fmsmga002-auth.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 24 Jan 2020 17:23:25 -0800
-Subject: [PATCH v5] mm/memory_hotplug: Fix remove_memory() lockdep splat
-From:   Dan Williams <dan.j.williams@intel.com>
-To:     akpm@linux-foundation.org
-Cc:     Vishal Verma <vishal.l.verma@intel.com>,
-        David Hildenbrand <david@redhat.com>,
-        Pavel Tatashin <pasha.tatashin@soleen.com>,
-        Michal Hocko <mhocko@suse.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-Date:   Fri, 24 Jan 2020 17:07:21 -0800
-Message-ID: <157991441887.2763922.4770790047389427325.stgit@dwillia2-desk3.amr.corp.intel.com>
-User-Agent: StGit/0.18-3-g996c
+        id S2387616AbgAYBKH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 24 Jan 2020 20:10:07 -0500
+Received: from kross.rwserver.com ([69.13.37.146]:43868 "EHLO
+        kross2019.rwserver.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S2387564AbgAYBKG (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 24 Jan 2020 20:10:06 -0500
+Received: from localhost (localhost [127.0.0.1])
+        by kross2019.rwserver.com (Postfix) with ESMTP id ADA55B3DC2;
+        Fri, 24 Jan 2020 19:10:05 -0600 (CST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=neuralgames.com;
+         h=user-agent:message-id:references:in-reply-to:subject:subject
+        :from:from:date:date:content-transfer-encoding:content-type
+        :content-type:mime-version; s=default; t=1579914605; x=
+        1581729006; bh=oobQmrNrtMrH5ic0QlZWtjmXlS2bin04onbQAnRpyJI=; b=g
+        1w1f5kv5ixK4UfVj48ni8bD3RCw1DXYJy8+YnATBfjEGqB7+wMPBm5d3kIcsaOBS
+        MEeRZDujLnNQIP/QVcKRCPUD1fIf260MmOsEJUlzojaejtbETzjCLfHYU/ISy84P
+        KyvzeG7ldpFXIES2zkKUcV/P7FgNrAGQnQH+zEr3es=
+X-Virus-Scanned: Debian amavisd-new at kross2019.rwserver.com
+Received: from kross2019.rwserver.com ([127.0.0.1])
+        by localhost (kross2019.rwserver.com [127.0.0.1]) (amavisd-new, port 10026)
+        with ESMTP id yE5rXoj6bgXT; Fri, 24 Jan 2020 19:10:05 -0600 (CST)
+Received: from rwserver.com (localhost [IPv6:::1])
+        (Authenticated sender: linux@neuralgames.com)
+        by kross2019.rwserver.com (Postfix) with ESMTPA id 30E46B3DC1;
+        Fri, 24 Jan 2020 19:10:05 -0600 (CST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
 Content-Transfer-Encoding: 7bit
+Date:   Fri, 24 Jan 2020 19:10:05 -0600
+From:   linux@neuralgames.com
+To:     Andrew Jeffery <andrew@aj.id.au>
+Cc:     Joel Stanley <joel@jms.id.au>, Matt Mackall <mpm@selenic.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Linux Crypto Mailing List <linux-crypto@vger.kernel.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        linux-aspeed <linux-aspeed@lists.ozlabs.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 1/2] hwrng: Add support for ASPEED RNG
+In-Reply-To: <575811fd-24ca-409c-8d33-c2152ee401d7@www.fastmail.com>
+References: <20200120150113.2565-1-linux@neuralgames.com>
+ <CACPK8XfuVN3Q=npEoOP-amQS0-wemxcx6LKaHHZEsBAHzq1wzA@mail.gmail.com>
+ <4446ffb694c7742ca9492c7360856789@neuralgames.com>
+ <575811fd-24ca-409c-8d33-c2152ee401d7@www.fastmail.com>
+Message-ID: <136bbab84d13d8d56a5ac297e415975e@neuralgames.com>
+X-Sender: linux@neuralgames.com
+User-Agent: Roundcube Webmail/1.3.8
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The daxctl unit test for the dax_kmem driver currently triggers the
-(false positive) lockdep splat below. It results from the fact that
-remove_memory_block_devices() is invoked under the mem_hotplug_lock()
-causing lockdep entanglements with cpu_hotplug_lock() and sysfs (kernfs
-active state tracking). It is a false positive because the sysfs
-attribute path triggering the memory remove is not the same attribute
-path associated with memory-block device.
+On 2020-01-22 19:53, Andrew Jeffery wrote:
+>> Thanks for reviewing the patch.
+>> 
+>> The RNG on Aspeed hardware allows eight different modes for combining
+>> its four internal Ring Oscillators that together generate a stream of
+>> random bits. However, the timeriomem-rng driver does not allow for 
+>> mode
+>> selection so, the Aspeed RNG with this generic driver runs always on
+>> mode 'seven' (The default value for mode according to the AspeedTech
+>> datasheets).
+>> 
+>> I've performed some testings on this Aspeed RNG using the NIST
+>> Statistical Test Suite (NIST 800-22r1a) and, the results I got show 
+>> that
+>> the default mode 'seven' isn't producing the best entropy and linear
+>> rank when compared against the other modes available on these SOCs.  
+>> On
+>> the other hand, the driver that I'm proposing here allows for mode
+>> selection which would help improve the random output for those looking
+>> to get the best out of this Aspeed RNG.
+> 
+> Have you published the data and results of this study somewhere? This
+> really should be mentioned in the commit message as justification for
+> not using timeriomem-rng.
+> 
+> Andrew
 
-sysfs_break_active_protection() is not applicable since there is no real
-deadlock conflict, instead move memory-block device removal outside the
-lock. The mem_hotplug_lock() is not needed to synchronize the
-memory-block device removal vs the page online state, that is already
-handled by lock_device_hotplug(). Specifically, lock_device_hotplug() is
-sufficient to allow try_remove_memory() to check the offline state of
-the memblocks and be assured that any in progress online attempts are
-flushed / blocked by kernfs_drain() / attribute removal.
+Hi Andrew,
 
-The add_memory() path safely creates memblock devices under the
-mem_hotplug_lock(). There is no kernfs active state synchronization in
-the memblock device_register() path, so nothing to fix there.
+I have uploaded the results of my tests to my GitHub, along with all the 
+binaries
+containing the random bits that I collected from this Aspeed RNG using 
+all 8 modes.
+You can also find in this repository a patch for the hw_random core 
+driver that
+I've been using to collect this data. Here is the link:
+   https://github.com/operezmuena/aspeed-rng-testing
 
-This change is only possible thanks to the recent change that refactored
-memory block device removal out of arch_remove_memory() (commit
-4c4b7f9ba948 mm/memory_hotplug: remove memory block devices before
-arch_remove_memory()), and David's due diligence tracking down the
-guarantees afforded by kernfs_drain(). Not flagged for -stable since
-this only impacts ongoing development and lockdep validation, not a
-runtime issue.
+You can see in the reports that when using large enough samples (40Mb in 
+size)
+this Aspeed RNG consistently fails the linear rank and entropy tests, no 
+matter
+what RNG mode is selected. However, modes 2, 4 and 6 produce better 
+entropy than
+the rest.
+I'm now collecting rng data from 2 other AST2520 SOCs that I have in 
+order to
+compare results.
 
-    ======================================================
-    WARNING: possible circular locking dependency detected
-    5.5.0-rc3+ #230 Tainted: G           OE
-    ------------------------------------------------------
-    lt-daxctl/6459 is trying to acquire lock:
-    ffff99c7f0003510 (kn->count#241){++++}, at: kernfs_remove_by_name_ns+0x41/0x80
-
-    but task is already holding lock:
-    ffffffffa76a5450 (mem_hotplug_lock.rw_sem){++++}, at: percpu_down_write+0x20/0xe0
-
-    which lock already depends on the new lock.
+Regards,
+Oscar
 
 
-    the existing dependency chain (in reverse order) is:
-
-    -> #2 (mem_hotplug_lock.rw_sem){++++}:
-           __lock_acquire+0x39c/0x790
-           lock_acquire+0xa2/0x1b0
-           get_online_mems+0x3e/0xb0
-           kmem_cache_create_usercopy+0x2e/0x260
-           kmem_cache_create+0x12/0x20
-           ptlock_cache_init+0x20/0x28
-           start_kernel+0x243/0x547
-           secondary_startup_64+0xb6/0xc0
-
-    -> #1 (cpu_hotplug_lock.rw_sem){++++}:
-           __lock_acquire+0x39c/0x790
-           lock_acquire+0xa2/0x1b0
-           cpus_read_lock+0x3e/0xb0
-           online_pages+0x37/0x300
-           memory_subsys_online+0x17d/0x1c0
-           device_online+0x60/0x80
-           state_store+0x65/0xd0
-           kernfs_fop_write+0xcf/0x1c0
-           vfs_write+0xdb/0x1d0
-           ksys_write+0x65/0xe0
-           do_syscall_64+0x5c/0xa0
-           entry_SYSCALL_64_after_hwframe+0x49/0xbe
-
-    -> #0 (kn->count#241){++++}:
-           check_prev_add+0x98/0xa40
-           validate_chain+0x576/0x860
-           __lock_acquire+0x39c/0x790
-           lock_acquire+0xa2/0x1b0
-           __kernfs_remove+0x25f/0x2e0
-           kernfs_remove_by_name_ns+0x41/0x80
-           remove_files.isra.0+0x30/0x70
-           sysfs_remove_group+0x3d/0x80
-           sysfs_remove_groups+0x29/0x40
-           device_remove_attrs+0x39/0x70
-           device_del+0x16a/0x3f0
-           device_unregister+0x16/0x60
-           remove_memory_block_devices+0x82/0xb0
-           try_remove_memory+0xb5/0x130
-           remove_memory+0x26/0x40
-           dev_dax_kmem_remove+0x44/0x6a [kmem]
-           device_release_driver_internal+0xe4/0x1c0
-           unbind_store+0xef/0x120
-           kernfs_fop_write+0xcf/0x1c0
-           vfs_write+0xdb/0x1d0
-           ksys_write+0x65/0xe0
-           do_syscall_64+0x5c/0xa0
-           entry_SYSCALL_64_after_hwframe+0x49/0xbe
-
-    other info that might help us debug this:
-
-    Chain exists of:
-      kn->count#241 --> cpu_hotplug_lock.rw_sem --> mem_hotplug_lock.rw_sem
-
-     Possible unsafe locking scenario:
-
-           CPU0                    CPU1
-           ----                    ----
-      lock(mem_hotplug_lock.rw_sem);
-                                   lock(cpu_hotplug_lock.rw_sem);
-                                   lock(mem_hotplug_lock.rw_sem);
-      lock(kn->count#241);
-
-     *** DEADLOCK ***
-
-No fixes tag as this has been a long standing issue that predated the
-addition of kernfs lockdep annotations.
-
-Cc: Vishal Verma <vishal.l.verma@intel.com>
-Cc: David Hildenbrand <david@redhat.com>
-Cc: Pavel Tatashin <pasha.tatashin@soleen.com>
-Cc: Michal Hocko <mhocko@suse.com>
-Cc: Dave Hansen <dave.hansen@linux.intel.com>
-Signed-off-by: Dan Williams <dan.j.williams@intel.com>
----
-Changes since v4 [1]:
-- Drop the unnecessary consideration of mem->section_count.
-  kernfs_drain() + lock_device_hotplug() is sufficient protection
-  (David)
-
-[1]: http://lore.kernel.org/r/157869128062.2451572.4093315441083744888.stgit@dwillia2-desk3.amr.corp.intel.com
-
- mm/memory_hotplug.c |    9 ++++++---
- 1 file changed, 6 insertions(+), 3 deletions(-)
-
-diff --git a/mm/memory_hotplug.c b/mm/memory_hotplug.c
-index 55ac23ef11c1..65ddaf3a2a12 100644
---- a/mm/memory_hotplug.c
-+++ b/mm/memory_hotplug.c
-@@ -1763,8 +1763,6 @@ static int __ref try_remove_memory(int nid, u64 start, u64 size)
- 
- 	BUG_ON(check_hotplug_memory_range(start, size));
- 
--	mem_hotplug_begin();
--
- 	/*
- 	 * All memory blocks must be offlined before removing memory.  Check
- 	 * whether all memory blocks in question are offline and return error
-@@ -1777,9 +1775,14 @@ static int __ref try_remove_memory(int nid, u64 start, u64 size)
- 	/* remove memmap entry */
- 	firmware_map_remove(start, start + size, "System RAM");
- 
--	/* remove memory block devices before removing memory */
-+	/*
-+	 * Memory block device removal under the device_hotplug_lock is
-+	 * a barrier against racing online attempts.
-+	 */
- 	remove_memory_block_devices(start, size);
- 
-+	mem_hotplug_begin();
-+
- 	arch_remove_memory(nid, start, size, NULL);
- 	memblock_free(start, size);
- 	memblock_remove(start, size);
 
