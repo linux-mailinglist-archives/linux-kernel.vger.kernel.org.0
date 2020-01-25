@@ -2,136 +2,98 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E43831492E7
-	for <lists+linux-kernel@lfdr.de>; Sat, 25 Jan 2020 03:11:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B90551492F7
+	for <lists+linux-kernel@lfdr.de>; Sat, 25 Jan 2020 03:12:27 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387744AbgAYCLY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 24 Jan 2020 21:11:24 -0500
-Received: from hqnvemgate24.nvidia.com ([216.228.121.143]:18992 "EHLO
-        hqnvemgate24.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387700AbgAYCLX (ORCPT
+        id S2387769AbgAYCMY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 24 Jan 2020 21:12:24 -0500
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:42140 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387458AbgAYCMY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 24 Jan 2020 21:11:23 -0500
-Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate24.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5e2ba39a0000>; Fri, 24 Jan 2020 18:10:34 -0800
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate102.nvidia.com (PGP Universal service);
-  Fri, 24 Jan 2020 18:11:21 -0800
-X-PGP-Universal: processed;
-        by hqpgpgate102.nvidia.com on Fri, 24 Jan 2020 18:11:21 -0800
-Received: from HQMAIL107.nvidia.com (172.20.187.13) by HQMAIL107.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Sat, 25 Jan
- 2020 02:11:21 +0000
-Received: from rnnvemgw01.nvidia.com (10.128.109.123) by HQMAIL107.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3 via Frontend
- Transport; Sat, 25 Jan 2020 02:11:20 +0000
-Received: from blueforge.nvidia.com (Not Verified[10.110.48.28]) by rnnvemgw01.nvidia.com with Trustwave SEG (v7,5,8,10121)
-        id <B5e2ba3c70000>; Fri, 24 Jan 2020 18:11:19 -0800
-From:   John Hubbard <jhubbard@nvidia.com>
-To:     Andrew Morton <akpm@linux-foundation.org>
-CC:     Al Viro <viro@zeniv.linux.org.uk>,
-        Christoph Hellwig <hch@infradead.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Dave Chinner <david@fromorbit.com>,
-        Ira Weiny <ira.weiny@intel.com>, Jan Kara <jack@suse.cz>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Jonathan Corbet <corbet@lwn.net>,
-        =?UTF-8?q?J=C3=A9r=C3=B4me=20Glisse?= <jglisse@redhat.com>,
-        "Kirill A . Shutemov" <kirill@shutemov.name>,
-        Michal Hocko <mhocko@suse.com>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Shuah Khan <shuah@kernel.org>,
-        Vlastimil Babka <vbabka@suse.cz>, <linux-doc@vger.kernel.org>,
-        <linux-fsdevel@vger.kernel.org>, <linux-kselftest@vger.kernel.org>,
-        <linux-rdma@vger.kernel.org>, <linux-mm@kvack.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        John Hubbard <jhubbard@nvidia.com>
-Subject: [PATCH 3/3] selftests/vm: run_vmtests: invoke gup_benchmark with basic FOLL_PIN coverage
-Date:   Fri, 24 Jan 2020 18:11:15 -0800
-Message-ID: <20200125021115.731629-4-jhubbard@nvidia.com>
-X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200125021115.731629-1-jhubbard@nvidia.com>
-References: <20200125021115.731629-1-jhubbard@nvidia.com>
+        Fri, 24 Jan 2020 21:12:24 -0500
+Received: by mail-pg1-f194.google.com with SMTP id s64so2044195pgb.9
+        for <linux-kernel@vger.kernel.org>; Fri, 24 Jan 2020 18:12:24 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=EXFe/vfnLkzT3mAWRy5NBHmIc8Oyyk9Ad0WMoNwuPt8=;
+        b=TkxDWTfMZU8Eqr69fjAxX4wvjaAyxwoq2CL2Bwlr1AgGV5D4EqkcCvbwxqxtk5oWQ7
+         Vu3iQLbxn7OwbKzTe4BtiWx7Bvvg/IeY5IAdi7Ep3DVIs6SknDPSxgtbYjPOKkFOA9vy
+         x1TB7CkGJlRbp0gzWpmXSkdZjh1hUhNKqoS0ZI9xK2qxCiNwtuYiAc1T7ywm7J2boTXa
+         Tv6qkmoVmv2ZmykEokMRBxmoaGc+RIaJSM0dV/GnsSeGscoWaVB3Y7CcmRsz4HdsSgGR
+         XWDLWKezF32jOsGs4kkhN3bUgl2Kd6ojl3ufz90tx6eQvHHL80yzoBsAUbi7t9WCXnAw
+         6Rkg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=EXFe/vfnLkzT3mAWRy5NBHmIc8Oyyk9Ad0WMoNwuPt8=;
+        b=dBjYOLAYQ5NVnLZI1THx1kv2cP946BKIJ4HG0hQf7AEDbu3jtXY4Hlw/IDb+gOEvy/
+         IbwwVRlhSahkUnI8IFgu1cllRFAmFTJkTPDV/iYwkJJlKIw0TCJMiXeCumJS1gkH2Jm9
+         Fr4Zd2eoCuplQn6hOOHBomvy8rf7AB7tCGGIAYVHbisjDrkLFrAe+IsyxxMntU86AfE7
+         uxV/FPWmkiQEJR2k0p32pRA2cPdvtcgJB3X8qsEzXKSAucTP9uqQ1iLBMrqa3k5tes6r
+         GjU8Altwv09cVvr0mdRByRNYNmlvaCBeEm47UBpQRjr2vCgBU6x78ijxpn3T/nLR877z
+         KCPA==
+X-Gm-Message-State: APjAAAXIJqzXBUko50ldwYJMblf19DfVhNJ+gJTUs7QMbioNZCzlNAzq
+        KH8kf1XjlrXy+0EFPvF7cIs4Fy6OumcbTaHJzLA7pA==
+X-Google-Smtp-Source: APXvYqyW0SmPK4KpuQbLoeF3vRxy+R+++4XuYWmuDeTZM4oxe/ppV3OLeGSF+O7JLzqqRY0RxLFKybydDDRXm7DDRfA=
+X-Received: by 2002:a63:cc4f:: with SMTP id q15mr7565027pgi.159.1579918343489;
+ Fri, 24 Jan 2020 18:12:23 -0800 (PST)
 MIME-Version: 1.0
-X-NVConfidentiality: public
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1579918234; bh=Q/jtf1QAQWUBdGa6x5cGwrQgIxtlzXz53YFDTgazJkU=;
-        h=X-PGP-Universal:From:To:CC:Subject:Date:Message-ID:X-Mailer:
-         In-Reply-To:References:MIME-Version:X-NVConfidentiality:
-         Content-Transfer-Encoding:Content-Type;
-        b=YRayoKwVWfcKD4eUMaQmPaMUzOn3k3p53WvmOC3mD8kcC9tG8ipSm3QY2AYmfpimP
-         G30FLgFM/n8OFc+ELkRXdpg4CVFeF4Db+7MZ8t+9rCJYTGgkgE7nkM+uQmNjjIESKv
-         K++LFcD1w8MRIanajdKRRI6TRSxoHU4sw5YS8BYyv3WuVM2X9HxdOMBb6tEUyA5q25
-         jIAaxS4VBkm7t15cy3eXQOGQyDQnb1Tj43T/DYGXJO24+gEkKxLy/uqWKL+yETfOcX
-         WELUvnoev8o4RAccDfka/sHfmg4DNthyYgpypJHix4p2C+hZDPiuNCZ+i461MllWUg
-         UFQJXN1SdQh6A==
+References: <20191211192742.95699-1-brendanhiggins@google.com>
+ <20191211192742.95699-3-brendanhiggins@google.com> <20200109162303.35f4f0a3@xps13>
+In-Reply-To: <20200109162303.35f4f0a3@xps13>
+From:   Brendan Higgins <brendanhiggins@google.com>
+Date:   Fri, 24 Jan 2020 18:12:12 -0800
+Message-ID: <CAFd5g47VLB6zOJsSySAYrJie8hj-OkvOC89-z2b9xMBZ2bxvYA@mail.gmail.com>
+Subject: Re: [PATCH v1 2/7] mtd: rawnand: add unspecified HAS_IOMEM dependency
+To:     Miquel Raynal <miquel.raynal@bootlin.com>
+Cc:     Jeff Dike <jdike@addtoit.com>, Richard Weinberger <richard@nod.at>,
+        Anton Ivanov <anton.ivanov@cambridgegreys.com>,
+        Vignesh Raghavendra <vigneshr@ti.com>,
+        Boris Brezillon <bbrezillon@kernel.org>,
+        Piotr Sroka <piotrs@cadence.com>,
+        linux-um <linux-um@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        David Gow <davidgow@google.com>, linux-mtd@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-It's good to have basic unit test coverage of the new FOLL_PIN
-behavior. Fortunately, the gup_benchmark unit test is extremely
-fast (a few milliseconds), so adding it the the run_vmtests suite
-is going to cause no noticeable change in running time.
+On Thu, Jan 9, 2020 at 7:23 AM Miquel Raynal <miquel.raynal@bootlin.com> wrote:
+>
+> Hi Brendan,
+>
+> Brendan Higgins <brendanhiggins@google.com> wrote on Wed, 11 Dec 2019
+> 11:27:37 -0800:
+>
+> > Currently CONFIG_MTD_NAND_CADENCE implicitly depends on
+> > CONFIG_HAS_IOMEM=y; consequently, on architectures without IOMEM we get
+> > the following build error:
+> >
+> > ld: drivers/mtd/nand/raw/cadence-nand-controller.o: in function `cadence_nand_dt_probe.cold.31':
+> > drivers/mtd/nand/raw/cadence-nand-controller.c:2969: undefined reference to `devm_platform_ioremap_resource'
+> > ld: drivers/mtd/nand/raw/cadence-nand-controller.c:2977: undefined reference to `devm_ioremap_resource'
+> >
+> > Fix the build error by adding the unspecified dependency.
+> >
+> > Reported-by: Brendan Higgins <brendanhiggins@google.com>
+> > Signed-off-by: Brendan Higgins <brendanhiggins@google.com>
+> > ---
+>
+> Sorry for the delay.
+>
+> Acked-by: Miquel Raynal <miquel.raynal@bootlin.com>
 
-So, add two new invocations to run_vmtests:
+It looks like my change has not been applied to nand/next; is this the
+branch it should be applied to? I have also verified that this patch
+isn't in linux-next as of Jan 24th.
 
-1) Run gup_benchmark with normal get_user_pages().
+Is mtd/linux the correct tree for this? Or do I need to reach out to
+someone else?
 
-2) Run gup_benchmark with pin_user_pages(). This is much like
-the first call, except that it sets FOLL_PIN.
-
-Running these two in quick succession also provide a visual
-comparison of the running times, which is convenient.
-
-The new invocations are fairly early in the run_vmtests script,
-because with test suites, it's usually preferable to put the
-shorter, faster tests first, all other things being equal.
-
-Reviewed-by: Ira Weiny <ira.weiny@intel.com>
-Signed-off-by: John Hubbard <jhubbard@nvidia.com>
----
- tools/testing/selftests/vm/run_vmtests | 22 ++++++++++++++++++++++
- 1 file changed, 22 insertions(+)
-
-diff --git a/tools/testing/selftests/vm/run_vmtests b/tools/testing/selftes=
-ts/vm/run_vmtests
-index a692ea828317..df6a6bf3f238 100755
---- a/tools/testing/selftests/vm/run_vmtests
-+++ b/tools/testing/selftests/vm/run_vmtests
-@@ -112,6 +112,28 @@ echo "NOTE: The above hugetlb tests provide minimal co=
-verage.  Use"
- echo "      https://github.com/libhugetlbfs/libhugetlbfs.git for"
- echo "      hugetlb regression testing."
-=20
-+echo "--------------------------------------------"
-+echo "running 'gup_benchmark -U' (normal/slow gup)"
-+echo "--------------------------------------------"
-+./gup_benchmark -U
-+if [ $? -ne 0 ]; then
-+	echo "[FAIL]"
-+	exitcode=3D1
-+else
-+	echo "[PASS]"
-+fi
-+
-+echo "------------------------------------------"
-+echo "running gup_benchmark -b (pin_user_pages)"
-+echo "------------------------------------------"
-+./gup_benchmark -b
-+if [ $? -ne 0 ]; then
-+	echo "[FAIL]"
-+	exitcode=3D1
-+else
-+	echo "[PASS]"
-+fi
-+
- echo "-------------------"
- echo "running userfaultfd"
- echo "-------------------"
---=20
-2.25.0
-
+Cheers
