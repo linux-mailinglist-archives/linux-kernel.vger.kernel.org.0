@@ -2,55 +2,114 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CE40214953D
-	for <lists+linux-kernel@lfdr.de>; Sat, 25 Jan 2020 12:27:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3390E14953C
+	for <lists+linux-kernel@lfdr.de>; Sat, 25 Jan 2020 12:27:18 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729030AbgAYL12 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 25 Jan 2020 06:27:28 -0500
-Received: from sonic311-56.consmr.mail.ne1.yahoo.com ([66.163.188.237]:34968
-        "EHLO sonic311-56.consmr.mail.ne1.yahoo.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725767AbgAYL11 (ORCPT
+        id S1727453AbgAYL1Q (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 25 Jan 2020 06:27:16 -0500
+Received: from hqnvemgate24.nvidia.com ([216.228.121.143]:12016 "EHLO
+        hqnvemgate24.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725767AbgAYL1P (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 25 Jan 2020 06:27:27 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1579951646; bh=CBFfKfYQJ1v6QAde5T6in9l6Yx4Vy07p7sq+yST4SHo=; h=Date:From:Reply-To:Subject:References:From:Subject; b=QrnSqEC73k3U5PUCLDswrFRSEh1v1kHezrOtJA4I6KKV5eqvq9SNdsPrEroz69w3nKJbsNfVoTj3yAJIDXXhJt6C00BWf0rrednrt+vhm1w/AWW7iG8fWaeIrcfTL+ebWkhmiMyxSKhCdwi/EOjPFgglfqJ8vghum5YDUoCj8RjHwfZI/sDQOTfKzSkRxMsRrVnLW0C5i4wI7dO2pYRRiOhdBaFbfYVPmP5RSGefuyLw5L+ucEe0oSLkvHzyCql0FgSDk15rH/CGk28Yko3bkFjX16xFRxXOktvrJHRTOqPodAYuy/cKgJwrSBMzH5px3cVU0atQqe2/j2vOX49SPA==
-X-YMail-OSG: 0PrPwJQVM1nMO9bQHdXuLA3VDg4rxWTCVmqGJg2dB1ALilEdQPqbYsXpqLbEQPa
- ekSpwREv0g9ryaZ7O0FZpioiI9mjIbvqdUdm69tQOG5nZu0tBegUNPw0CB7xcPGauKAZojTpyr6m
- _xU0vGeKUmxvmkG8vjJEdcpM1MLbgpfMqjJhjfC98AIMLKdjp7Il0kX5a2zFeqYCGLyCYo1wYw6b
- G11re7JhahijCoUNjgA7ScRfSSMFU3WSfJxVaeXT9AKoLzso1NFKVVFMclMS8.iKhSDgVlTCqsh8
- SxqQEngGb_Aa8u0eKXo51dtgiZ0eTG6L.aU9BmUYQkwtSXM6XOaX7Lz08Tr.YhqMeMlAQNM0_728
- 06gqPEIedgoZCM1fFhIartHnSd46LJ3diSQs5YP_zX4tNKuIcZ0UwniC0jAfZtciinxDu6j1FC_u
- tsoL31oWJ9Jug4HZevyDlEy1l16Rw2Ex_cOPko1QhPA3_czYauoh_6ZYsVGKSNRumZuzkiPka27B
- tSqjO8k43_oclO9j4zomlQH0RMAQ3637_lYa8f0M9TA0XeQIFLLAX8ZfnskjqQl7UG50QeG.l4OT
- j_2uiCF6Vi6zspIo_Hb6mtWQnxuw9X8e.Kp0Ci7b6g8LCIkHUCy9Ii5TdzvkLlJ9aqytAqR4AJO2
- OiqnzxZKVui6JYVIdj0UrApvYP2aYV_A7Cb60v_quobhKJfby9.7AsvN2F3D7DcRYClLPs3P19oD
- bj8yXG0YYlxpHtupzhxhCYHIPSm0Z0EhFsJSHx463_thGzQ8WYY4yrrA.Qbpv3FcGNoiel_ZxdVr
- HaNA98FS0rvLSxiISzguhAszGgoHcmwFtiso1_EAqxhayYEj7uS0XaeOTvjAjYWgUYq59G9v3id7
- yy.3ECS2gCVqqtH6D4..lRiN9_kCliCgjRyYvc5hPV_7cRYrW9JjLrttCK8u3xu_QcDX7MQJ4zgi
- 9gdMhMlGNe.5LwO_ucISorhQlfgaTLUrXJMhKdAEEYEWt7RM59_haJ0FCpBtZ6OJxyzOfLtzMBZb
- visIPvlLJaq1j95tyU1FJ49pq5zbBw4sE_9OmrCyoQSeXwTLdcmQ0rIqGvIbnTCtUqT2lEB.jBEX
- i3ilE10mi97BTrsM53KlZvr_F6nfO7Qst3CQ3j_GMsyOWweC_w0MrCnvHsrABeadqTVGUv7rQqfy
- fya1l_YE2YRJup.N1vSDHwVWz0DlkL22fC5GORTHsQeC3Ze7k8I98rCuW0x5TJxpmIibvacGnCGD
- q6xKJOyccDY9e3VhRFthyaAOJVL2XrhVPKmiEIm6O_BJvWIjfD1lxIA1GWuVz0HHqWwU6XNqFU6z
- F0y_iw0Wy3JN4d4xD_ce4EO3jlcpGJeDA3UMMBTPyZLIgYAS8M5d3ocA52fAOS4oewYBXR61KwuI
- 0
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic311.consmr.mail.ne1.yahoo.com with HTTP; Sat, 25 Jan 2020 11:27:26 +0000
-Date:   Sat, 25 Jan 2020 11:25:25 +0000 (UTC)
-From:   Capital Alliance <dxvcxbvcxvcxcx@ghamoko.com>
-Reply-To: capitalalliance01@accountant.com
-Message-ID: <28268311.223598.1579951525869@mail.yahoo.com>
-Subject: Business Loan/Personal Loan Offer Apply Now...
+        Sat, 25 Jan 2020 06:27:15 -0500
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate24.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5e2c25e30000>; Sat, 25 Jan 2020 03:26:28 -0800
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate101.nvidia.com (PGP Universal service);
+  Sat, 25 Jan 2020 03:27:14 -0800
+X-PGP-Universal: processed;
+        by hqpgpgate101.nvidia.com on Sat, 25 Jan 2020 03:27:14 -0800
+Received: from [10.26.11.150] (10.124.1.5) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Sat, 25 Jan
+ 2020 11:27:11 +0000
+Subject: Re: [PATCH 4.19 000/639] 4.19.99-stable review
+To:     Guenter Roeck <linux@roeck-us.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+CC:     <linux-kernel@vger.kernel.org>, <torvalds@linux-foundation.org>,
+        <akpm@linux-foundation.org>, <shuah@kernel.org>,
+        <patches@kernelci.org>, <ben.hutchings@codethink.co.uk>,
+        <lkft-triage@lists.linaro.org>, <stable@vger.kernel.org>
+References: <20200124093047.008739095@linuxfoundation.org>
+ <20200124235537.GB3467@roeck-us.net>
+ <cd504bb5-44b1-415b-edc7-21ee69e9d1fa@nvidia.com>
+ <f634b705-a561-33ee-0b6f-e3f5c1164b38@roeck-us.net>
+From:   Jon Hunter <jonathanh@nvidia.com>
+Message-ID: <5cd2fc9a-e77b-89e5-a752-f3e17615c3d3@nvidia.com>
+Date:   Sat, 25 Jan 2020 11:27:08 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-References: <28268311.223598.1579951525869.ref@mail.yahoo.com>
-X-Mailer: WebService/1.1.15116 YMailNodin Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/79.0.3945.130 Safari/537.36
-To:     unlisted-recipients:; (no To-header on input)
+In-Reply-To: <f634b705-a561-33ee-0b6f-e3f5c1164b38@roeck-us.net>
+X-Originating-IP: [10.124.1.5]
+X-ClientProxiedBy: HQMAIL105.nvidia.com (172.20.187.12) To
+ HQMAIL107.nvidia.com (172.20.187.13)
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: quoted-printable
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1579951588; bh=UbGH0wYqwHOi6cUko4B3d4ba7MgU1urGnUdIbx79At4=;
+        h=X-PGP-Universal:Subject:To:CC:References:From:Message-ID:Date:
+         User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
+         X-ClientProxiedBy:Content-Type:Content-Language:
+         Content-Transfer-Encoding;
+        b=YryjmoVRCeJCkG2eHnAzsuVVFWvYAI5IQSv78VK2w8Tdmwfmu3n1QaNzqOx8n6Rro
+         sPRqCvZI7ySTUTq0yF608a2HufDLjYOJfUMkn4LPa1DSYrYaaIzFxHesIsEMUT+jJg
+         JtTzKK2vNn+ZlAA7NHnvuqVq+Aw+B2jf+YtTFn6FFO3Qebjk9XxfIn44mTHlVk2h3p
+         ipstYAESbXkNw0rPqOMrsMKlWxwIaKh6boVc2ajYSpqCWypIkwAdAcpYjTHawa7nS/
+         hXuv2ATt1uyPSCBvzidKxzOhUXzuBy2aHN6XRab2a6ueSpb2Cr+c6VelVliKEGDRaY
+         jpKrGRs+9iGgw==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
+On 25/01/2020 09:25, Guenter Roeck wrote:
+> On 1/25/20 12:24 AM, Jon Hunter wrote:
+>> Hi Guenter,
+>>
+>> On 24/01/2020 23:55, Guenter Roeck wrote:
+>>> On Fri, Jan 24, 2020 at 10:22:50AM +0100, Greg Kroah-Hartman wrote:
+>>>> This is the start of the stable review cycle for the 4.19.99 release.
+>>>> There are 639 patches in this series, all will be posted as a response
+>>>> to this one.=C2=A0 If anyone has any issues with these being applied, =
+please
+>>>> let me know.
+>>>>
+>>>> Responses should be made by Sun, 26 Jan 2020 09:26:29 +0000.
+>>>> Anything received after that time might be too late.
+>>>>
+>>>
+>>> For v4.19.98-638-g24832ad2c623:
+>>
+>> This does not appear to be the correct tag/version for this review.
+>>
+>=20
+> It is the tip of v4.19.y.queue in my test system.
+>=20
+> $ git describe local-stable/linux-4.19.y.queue
+> v4.19.98-638-g24832ad2c623
+>=20
+> and the tip of the stable-queue repository as of right now.
+>=20
+> $ git describe stable-queue/linux-4.19.y
+> v4.19.98-638-g24832ad2c623
+> $ git remote -v | grep stable-queue
+> stable-queue=C2=A0=C2=A0=C2=A0
+> git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git
+> (fetch)
+> stable-queue=C2=A0=C2=A0=C2=A0
+> git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git
+> (push)
+>=20
+> What is wrong with it ?
 
+Ah you are right, there is nothing wrong now I look at the git describe
+output. At first glance I thought the tag was not correct.
 
-Does your firm,company or industry need financial assistance? Do you need finance to start your business? Do you need finance to expand your business? Do you need personal loan? we give out all times of secure loan and unsecure loan with good faith , it will just hit your account withing 24hrs,No stress No tension, just apply free feel and relax to receive your loan thanks, contact us at: capitalalliance01@accountant.com
+Sorry for the noise.
+
+Jon
+
+--=20
+nvpublic
