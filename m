@@ -2,33 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 529F0149462
-	for <lists+linux-kernel@lfdr.de>; Sat, 25 Jan 2020 11:42:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 09BAD1494EB
+	for <lists+linux-kernel@lfdr.de>; Sat, 25 Jan 2020 11:48:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727893AbgAYKmp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 25 Jan 2020 05:42:45 -0500
-Received: from Galois.linutronix.de ([193.142.43.55]:44091 "EHLO
+        id S1730487AbgAYKqg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 25 Jan 2020 05:46:36 -0500
+Received: from Galois.linutronix.de ([193.142.43.55]:44136 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726194AbgAYKmo (ORCPT
+        with ESMTP id S1729159AbgAYKmv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 25 Jan 2020 05:42:44 -0500
+        Sat, 25 Jan 2020 05:42:51 -0500
 Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
         by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
         (Exim 4.80)
         (envelope-from <tip-bot2@linutronix.de>)
-        id 1ivItm-0008Lg-Q8; Sat, 25 Jan 2020 11:42:42 +0100
+        id 1ivItq-0008NZ-R6; Sat, 25 Jan 2020 11:42:46 +0100
 Received: from [127.0.1.1] (localhost [IPv6:::1])
-        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 61DB61C0105;
-        Sat, 25 Jan 2020 11:42:42 +0100 (CET)
-Date:   Sat, 25 Jan 2020 10:42:42 -0000
-From:   "tip-bot2 for Paul E. McKenney" <tip-bot2@linutronix.de>
+        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id BA99A1C1A77;
+        Sat, 25 Jan 2020 11:42:43 +0100 (CET)
+Date:   Sat, 25 Jan 2020 10:42:43 -0000
+From:   "tip-bot2 for Lai Jiangshan" <tip-bot2@linutronix.de>
 Reply-to: linux-kernel@vger.kernel.org
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip: core/rcu] rcu: Avoid tick_dep_set_cpu() misordering
-Cc:     "Paul E. McKenney" <paulmck@kernel.org>, x86 <x86@kernel.org>,
+Subject: [tip: core/rcu] rcu: Rename some instance of CONFIG_PREEMPTION to
+ CONFIG_PREEMPT_RCU
+Cc:     Lai Jiangshan <jiangshanlai@gmail.com>,
+        Lai Jiangshan <laijs@linux.alibaba.com>,
+        "Paul E. McKenney" <paulmck@kernel.org>, x86 <x86@kernel.org>,
         LKML <linux-kernel@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <157994896211.396.14885465096262437698.tip-bot2@tip-bot2>
+Message-ID: <157994896357.396.12909607905434566210.tip-bot2@tip-bot2>
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot2.linutronix.de>
 Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
@@ -44,66 +47,78 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The following commit has been merged into the core/rcu branch of tip:
 
-Commit-ID:     5b14557b073c96a7cf79adc4d7b6c4a8c26b2a43
-Gitweb:        https://git.kernel.org/tip/5b14557b073c96a7cf79adc4d7b6c4a8c26b2a43
-Author:        Paul E. McKenney <paulmck@kernel.org>
-AuthorDate:    Tue, 26 Nov 2019 18:05:45 -08:00
+Commit-ID:     c130d2dc93cd03323494d82dbe7b5fb0d101ab62
+Gitweb:        https://git.kernel.org/tip/c130d2dc93cd03323494d82dbe7b5fb0d101ab62
+Author:        Lai Jiangshan <jiangshanlai@gmail.com>
+AuthorDate:    Tue, 15 Oct 2019 10:28:48 
 Committer:     Paul E. McKenney <paulmck@kernel.org>
-CommitterDate: Fri, 24 Jan 2020 10:27:33 -08:00
+CommitterDate: Fri, 24 Jan 2020 10:26:28 -08:00
 
-rcu: Avoid tick_dep_set_cpu() misordering
+rcu: Rename some instance of CONFIG_PREEMPTION to CONFIG_PREEMPT_RCU
 
-In the current code, rcu_nmi_enter_common() might decide to turn on
-the tick using tick_dep_set_cpu(), but be delayed just before doing so.
-Then the grace-period kthread might notice that the CPU in question had
-in fact gone through a quiescent state, thus turning off the tick using
-tick_dep_clear_cpu().  The later invocation of tick_dep_set_cpu() would
-then incorrectly leave the tick on.
+CONFIG_PREEMPTION and CONFIG_PREEMPT_RCU are always identical,
+but some code depends on CONFIG_PREEMPTION to access to
+rcu_preempt functionality. This patch changes CONFIG_PREEMPTION
+to CONFIG_PREEMPT_RCU in these cases.
 
-This commit therefore enlists the aid of the leaf rcu_node structure's
-->lock to ensure that decisions to enable or disable the tick are
-carried out before they can be reversed.
-
+Signed-off-by: Lai Jiangshan <jiangshanlai@gmail.com>
+Signed-off-by: Lai Jiangshan <laijs@linux.alibaba.com>
 Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
 ---
- kernel/rcu/tree.c | 12 +++++++++---
- 1 file changed, 9 insertions(+), 3 deletions(-)
+ kernel/rcu/tree.c       | 4 ++--
+ kernel/rcu/tree_stall.h | 6 +++---
+ 2 files changed, 5 insertions(+), 5 deletions(-)
 
 diff --git a/kernel/rcu/tree.c b/kernel/rcu/tree.c
-index 5445da2..b0e0612 100644
+index c9dbb05..5445da2 100644
 --- a/kernel/rcu/tree.c
 +++ b/kernel/rcu/tree.c
-@@ -800,8 +800,8 @@ void rcu_user_exit(void)
-  */
- static __always_inline void rcu_nmi_enter_common(bool irq)
- {
--	struct rcu_data *rdp = this_cpu_ptr(&rcu_data);
- 	long incby = 2;
-+	struct rcu_data *rdp = this_cpu_ptr(&rcu_data);
+@@ -1934,7 +1934,7 @@ rcu_report_unblock_qs_rnp(struct rcu_node *rnp, unsigned long flags)
+ 	struct rcu_node *rnp_p;
  
- 	/* Complain about underflow. */
- 	WARN_ON_ONCE(rdp->dynticks_nmi_nesting < 0);
-@@ -828,8 +828,13 @@ static __always_inline void rcu_nmi_enter_common(bool irq)
- 	} else if (tick_nohz_full_cpu(rdp->cpu) &&
- 		   rdp->dynticks_nmi_nesting == DYNTICK_IRQ_NONIDLE &&
- 		   READ_ONCE(rdp->rcu_urgent_qs) && !rdp->rcu_forced_tick) {
--		rdp->rcu_forced_tick = true;
--		tick_dep_set_cpu(rdp->cpu, TICK_DEP_BIT_RCU);
-+		raw_spin_lock_rcu_node(rdp->mynode);
-+		// Recheck under lock.
-+		if (rdp->rcu_urgent_qs && !rdp->rcu_forced_tick) {
-+			rdp->rcu_forced_tick = true;
-+			tick_dep_set_cpu(rdp->cpu, TICK_DEP_BIT_RCU);
-+		}
-+		raw_spin_unlock_rcu_node(rdp->mynode);
- 	}
- 	trace_rcu_dyntick(incby == 1 ? TPS("Endirq") : TPS("++="),
- 			  rdp->dynticks_nmi_nesting,
-@@ -898,6 +903,7 @@ void rcu_irq_enter_irqson(void)
-  */
- static void rcu_disable_urgency_upon_qs(struct rcu_data *rdp)
+ 	raw_lockdep_assert_held_rcu_node(rnp);
+-	if (WARN_ON_ONCE(!IS_ENABLED(CONFIG_PREEMPTION)) ||
++	if (WARN_ON_ONCE(!IS_ENABLED(CONFIG_PREEMPT_RCU)) ||
+ 	    WARN_ON_ONCE(rcu_preempt_blocked_readers_cgp(rnp)) ||
+ 	    rnp->qsmask != 0) {
+ 		raw_spin_unlock_irqrestore_rcu_node(rnp, flags);
+@@ -2294,7 +2294,7 @@ static void force_qs_rnp(int (*f)(struct rcu_data *rdp))
+ 		mask = 0;
+ 		raw_spin_lock_irqsave_rcu_node(rnp, flags);
+ 		if (rnp->qsmask == 0) {
+-			if (!IS_ENABLED(CONFIG_PREEMPTION) ||
++			if (!IS_ENABLED(CONFIG_PREEMPT_RCU) ||
+ 			    rcu_preempt_blocked_readers_cgp(rnp)) {
+ 				/*
+ 				 * No point in scanning bits because they
+diff --git a/kernel/rcu/tree_stall.h b/kernel/rcu/tree_stall.h
+index c0b8c45..a6652ef 100644
+--- a/kernel/rcu/tree_stall.h
++++ b/kernel/rcu/tree_stall.h
+@@ -163,7 +163,7 @@ static void rcu_iw_handler(struct irq_work *iwp)
+ //
+ // Printing RCU CPU stall warnings
+ 
+-#ifdef CONFIG_PREEMPTION
++#ifdef CONFIG_PREEMPT_RCU
+ 
+ /*
+  * Dump detailed information for all tasks blocking the current RCU
+@@ -215,7 +215,7 @@ static int rcu_print_task_stall(struct rcu_node *rnp)
+ 	return ndetected;
+ }
+ 
+-#else /* #ifdef CONFIG_PREEMPTION */
++#else /* #ifdef CONFIG_PREEMPT_RCU */
+ 
+ /*
+  * Because preemptible RCU does not exist, we never have to check for
+@@ -233,7 +233,7 @@ static int rcu_print_task_stall(struct rcu_node *rnp)
  {
-+	raw_lockdep_assert_held_rcu_node(rdp->mynode);
- 	WRITE_ONCE(rdp->rcu_urgent_qs, false);
- 	WRITE_ONCE(rdp->rcu_need_heavy_qs, false);
- 	if (tick_nohz_full_cpu(rdp->cpu) && rdp->rcu_forced_tick) {
+ 	return 0;
+ }
+-#endif /* #else #ifdef CONFIG_PREEMPTION */
++#endif /* #else #ifdef CONFIG_PREEMPT_RCU */
+ 
+ /*
+  * Dump stacks of all tasks running on stalled CPUs.  First try using
