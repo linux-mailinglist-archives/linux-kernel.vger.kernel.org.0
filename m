@@ -2,33 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6DCFD1494D2
-	for <lists+linux-kernel@lfdr.de>; Sat, 25 Jan 2020 11:48:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0173F1494DA
+	for <lists+linux-kernel@lfdr.de>; Sat, 25 Jan 2020 11:48:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730385AbgAYKpj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 25 Jan 2020 05:45:39 -0500
-Received: from Galois.linutronix.de ([193.142.43.55]:44275 "EHLO
+        id S1730433AbgAYKpz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 25 Jan 2020 05:45:55 -0500
+Received: from Galois.linutronix.de ([193.142.43.55]:44239 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729543AbgAYKnJ (ORCPT
+        with ESMTP id S1729463AbgAYKnF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 25 Jan 2020 05:43:09 -0500
+        Sat, 25 Jan 2020 05:43:05 -0500
 Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
         by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
         (Exim 4.80)
         (envelope-from <tip-bot2@linutronix.de>)
-        id 1ivIuB-00006j-H8; Sat, 25 Jan 2020 11:43:07 +0100
+        id 1ivIu5-00006L-TN; Sat, 25 Jan 2020 11:43:02 +0100
 Received: from [127.0.1.1] (localhost [IPv6:::1])
-        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 155BA1C1A86;
-        Sat, 25 Jan 2020 11:42:51 +0100 (CET)
+        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 6CCF71C1A7A;
+        Sat, 25 Jan 2020 11:42:50 +0100 (CET)
 Date:   Sat, 25 Jan 2020 10:42:50 -0000
-From:   "tip-bot2 for Paul E. McKenney" <tip-bot2@linutronix.de>
+From:   "tip-bot2 for Madhuparna Bhowmik" <tip-bot2@linutronix.de>
 Reply-to: linux-kernel@vger.kernel.org
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip: core/rcu] torture: Hoist calls to lscpu to higher-level kvm.sh script
-Cc:     "Paul E. McKenney" <paulmck@kernel.org>, x86 <x86@kernel.org>,
+Subject: [tip: core/rcu] doc: Converted NMI-RCU.txt to NMI-RCU.rst.
+Cc:     Madhuparna Bhowmik <madhuparnabhowmik04@gmail.com>,
+        Phong Tran <tranmanphong@gmail.com>,
+        "Paul E. McKenney" <paulmck@kernel.org>, x86 <x86@kernel.org>,
         LKML <linux-kernel@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <157994897084.396.6588052021936782800.tip-bot2@tip-bot2>
+Message-ID: <157994897017.396.17671881349411288806.tip-bot2@tip-bot2>
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot2.linutronix.de>
 Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
@@ -44,81 +46,296 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The following commit has been merged into the core/rcu branch of tip:
 
-Commit-ID:     b22eb7cefb9d31cf862542f9cef90f97c0294842
-Gitweb:        https://git.kernel.org/tip/b22eb7cefb9d31cf862542f9cef90f97c0294842
-Author:        Paul E. McKenney <paulmck@kernel.org>
-AuthorDate:    Mon, 25 Nov 2019 14:33:28 -08:00
+Commit-ID:     6705cae433cffc37b183ded6ca9fe5c6d8ae8a9d
+Gitweb:        https://git.kernel.org/tip/6705cae433cffc37b183ded6ca9fe5c6d8ae8a9d
+Author:        Madhuparna Bhowmik <madhuparnabhowmik04@gmail.com>
+AuthorDate:    Tue, 29 Oct 2019 03:12:52 +05:30
 Committer:     Paul E. McKenney <paulmck@kernel.org>
-CommitterDate: Mon, 09 Dec 2019 13:00:30 -08:00
+CommitterDate: Tue, 10 Dec 2019 18:51:52 -08:00
 
-torture: Hoist calls to lscpu to higher-level kvm.sh script
+doc: Converted NMI-RCU.txt to NMI-RCU.rst.
 
-On some kernels, concurrent calls to the lscpu command result in severe
-slowdowns.  For example, on v4.16, a single lscpu invocation takes about
-two milliseconds, four concurrent invocations more than two seconds,
-and 16 concurrent invocations more than 20 seconds.  Given that the only
-goal is to learn the number of CPUs, invoking lscpu but once suffices.
-This commit therefore invokes lscpu early in kvm.sh execution, setting
-the initial value of the TORTURE_ALLOTED_CPUS environment variable.
+This patch converts NMI-RCU from txt to rst format.
+Also adds NMI-RCU in the index.rst file.
 
+Signed-off-by: Madhuparna Bhowmik <madhuparnabhowmik04@gmail.com>
+[ paulmck: Apply feedback from Phong Tran. ]
+Tested-by: Phong Tran <tranmanphong@gmail.com>
 Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
 ---
- tools/testing/selftests/rcutorture/bin/kvm-test-1-run.sh |  7 +---
- tools/testing/selftests/rcutorture/bin/kvm.sh            | 11 +++++--
- 2 files changed, 11 insertions(+), 7 deletions(-)
+ Documentation/RCU/NMI-RCU.rst | 124 +++++++++++++++++++++++++++++++++-
+ Documentation/RCU/NMI-RCU.txt | 121 +--------------------------------
+ Documentation/RCU/index.rst   |   1 +-
+ 3 files changed, 125 insertions(+), 121 deletions(-)
+ create mode 100644 Documentation/RCU/NMI-RCU.rst
+ delete mode 100644 Documentation/RCU/NMI-RCU.txt
 
-diff --git a/tools/testing/selftests/rcutorture/bin/kvm-test-1-run.sh b/tools/testing/selftests/rcutorture/bin/kvm-test-1-run.sh
-index 1d98992..e035230 100755
---- a/tools/testing/selftests/rcutorture/bin/kvm-test-1-run.sh
-+++ b/tools/testing/selftests/rcutorture/bin/kvm-test-1-run.sh
-@@ -133,11 +133,10 @@ fi
- qemu_args="-enable-kvm -nographic $qemu_args"
- cpu_count=`configNR_CPUS.sh $resdir/ConfigFragment`
- cpu_count=`configfrag_boot_cpus "$boot_args" "$config_template" "$cpu_count"`
--vcpus=`identify_qemu_vcpus`
--if test $cpu_count -gt $vcpus
-+if test "$cpu_count" -gt "$TORTURE_ALLOTED_CPUS"
- then
--	echo CPU count limited from $cpu_count to $vcpus | tee -a $resdir/Warnings
--	cpu_count=$vcpus
-+	echo CPU count limited from $cpu_count to $TORTURE_ALLOTED_CPUS | tee -a $resdir/Warnings
-+	cpu_count=$TORTURE_ALLOTED_CPUS
- fi
- qemu_args="`specify_qemu_cpus "$QEMU" "$qemu_args" "$cpu_count"`"
- 
-diff --git a/tools/testing/selftests/rcutorture/bin/kvm.sh b/tools/testing/selftests/rcutorture/bin/kvm.sh
-index e19151c..78d18ab 100755
---- a/tools/testing/selftests/rcutorture/bin/kvm.sh
-+++ b/tools/testing/selftests/rcutorture/bin/kvm.sh
-@@ -24,7 +24,9 @@ dur=$((30*60))
- dryrun=""
- KVM="`pwd`/tools/testing/selftests/rcutorture"; export KVM
- PATH=${KVM}/bin:$PATH; export PATH
--TORTURE_ALLOTED_CPUS=""
-+. functions.sh
+diff --git a/Documentation/RCU/NMI-RCU.rst b/Documentation/RCU/NMI-RCU.rst
+new file mode 100644
+index 0000000..1809583
+--- /dev/null
++++ b/Documentation/RCU/NMI-RCU.rst
+@@ -0,0 +1,124 @@
++.. _NMI_rcu_doc:
 +
-+TORTURE_ALLOTED_CPUS="`identify_qemu_vcpus`"
- TORTURE_DEFCONFIG=defconfig
- TORTURE_BOOT_IMAGE=""
- TORTURE_INITRD="$KVM/initrd"; export TORTURE_INITRD
-@@ -40,8 +42,6 @@ cpus=0
- ds=`date +%Y.%m.%d-%H:%M:%S`
- jitter="-1"
- 
--. functions.sh
++Using RCU to Protect Dynamic NMI Handlers
++=========================================
++
++
++Although RCU is usually used to protect read-mostly data structures,
++it is possible to use RCU to provide dynamic non-maskable interrupt
++handlers, as well as dynamic irq handlers.  This document describes
++how to do this, drawing loosely from Zwane Mwaikambo's NMI-timer
++work in "arch/x86/oprofile/nmi_timer_int.c" and in
++"arch/x86/kernel/traps.c".
++
++The relevant pieces of code are listed below, each followed by a
++brief explanation::
++
++	static int dummy_nmi_callback(struct pt_regs *regs, int cpu)
++	{
++		return 0;
++	}
++
++The dummy_nmi_callback() function is a "dummy" NMI handler that does
++nothing, but returns zero, thus saying that it did nothing, allowing
++the NMI handler to take the default machine-specific action::
++
++	static nmi_callback_t nmi_callback = dummy_nmi_callback;
++
++This nmi_callback variable is a global function pointer to the current
++NMI handler::
++
++	void do_nmi(struct pt_regs * regs, long error_code)
++	{
++		int cpu;
++
++		nmi_enter();
++
++		cpu = smp_processor_id();
++		++nmi_count(cpu);
++
++		if (!rcu_dereference_sched(nmi_callback)(regs, cpu))
++			default_do_nmi(regs);
++
++		nmi_exit();
++	}
++
++The do_nmi() function processes each NMI.  It first disables preemption
++in the same way that a hardware irq would, then increments the per-CPU
++count of NMIs.  It then invokes the NMI handler stored in the nmi_callback
++function pointer.  If this handler returns zero, do_nmi() invokes the
++default_do_nmi() function to handle a machine-specific NMI.  Finally,
++preemption is restored.
++
++In theory, rcu_dereference_sched() is not needed, since this code runs
++only on i386, which in theory does not need rcu_dereference_sched()
++anyway.  However, in practice it is a good documentation aid, particularly
++for anyone attempting to do something similar on Alpha or on systems
++with aggressive optimizing compilers.
++
++Quick Quiz:
++		Why might the rcu_dereference_sched() be necessary on Alpha, given that the code referenced by the pointer is read-only?
++
++:ref:`Answer to Quick Quiz <answer_quick_quiz_NMI>`
++
++Back to the discussion of NMI and RCU::
++
++	void set_nmi_callback(nmi_callback_t callback)
++	{
++		rcu_assign_pointer(nmi_callback, callback);
++	}
++
++The set_nmi_callback() function registers an NMI handler.  Note that any
++data that is to be used by the callback must be initialized up -before-
++the call to set_nmi_callback().  On architectures that do not order
++writes, the rcu_assign_pointer() ensures that the NMI handler sees the
++initialized values::
++
++	void unset_nmi_callback(void)
++	{
++		rcu_assign_pointer(nmi_callback, dummy_nmi_callback);
++	}
++
++This function unregisters an NMI handler, restoring the original
++dummy_nmi_handler().  However, there may well be an NMI handler
++currently executing on some other CPU.  We therefore cannot free
++up any data structures used by the old NMI handler until execution
++of it completes on all other CPUs.
++
++One way to accomplish this is via synchronize_rcu(), perhaps as
++follows::
++
++	unset_nmi_callback();
++	synchronize_rcu();
++	kfree(my_nmi_data);
++
++This works because (as of v4.20) synchronize_rcu() blocks until all
++CPUs complete any preemption-disabled segments of code that they were
++executing.
++Since NMI handlers disable preemption, synchronize_rcu() is guaranteed
++not to return until all ongoing NMI handlers exit.  It is therefore safe
++to free up the handler's data as soon as synchronize_rcu() returns.
++
++Important note: for this to work, the architecture in question must
++invoke nmi_enter() and nmi_exit() on NMI entry and exit, respectively.
++
++.. _answer_quick_quiz_NMI:
++
++Answer to Quick Quiz:
++	Why might the rcu_dereference_sched() be necessary on Alpha, given that the code referenced by the pointer is read-only?
++
++	The caller to set_nmi_callback() might well have
++	initialized some data that is to be used by the new NMI
++	handler.  In this case, the rcu_dereference_sched() would
++	be needed, because otherwise a CPU that received an NMI
++	just after the new handler was set might see the pointer
++	to the new NMI handler, but the old pre-initialized
++	version of the handler's data.
++
++	This same sad story can happen on other CPUs when using
++	a compiler with aggressive pointer-value speculation
++	optimizations.
++
++	More important, the rcu_dereference_sched() makes it
++	clear to someone reading the code that the pointer is
++	being protected by RCU-sched.
+diff --git a/Documentation/RCU/NMI-RCU.txt b/Documentation/RCU/NMI-RCU.txt
+deleted file mode 100644
+index 881353f..0000000
+--- a/Documentation/RCU/NMI-RCU.txt
++++ /dev/null
+@@ -1,121 +0,0 @@
+-Using RCU to Protect Dynamic NMI Handlers
 -
- usage () {
- 	echo "Usage: $scriptname optional arguments:"
- 	echo "       --bootargs kernel-boot-arguments"
-@@ -93,6 +93,11 @@ do
- 		checkarg --cpus "(number)" "$#" "$2" '^[0-9]*$' '^--'
- 		cpus=$2
- 		TORTURE_ALLOTED_CPUS="$2"
-+		max_cpus="`identify_qemu_vcpus`"
-+		if test "$TORTURE_ALLOTED_CPUS" -gt "$max_cpus"
-+		then
-+			TORTURE_ALLOTED_CPUS=$max_cpus
-+		fi
- 		shift
- 		;;
- 	--datestamp)
+-
+-Although RCU is usually used to protect read-mostly data structures,
+-it is possible to use RCU to provide dynamic non-maskable interrupt
+-handlers, as well as dynamic irq handlers.  This document describes
+-how to do this, drawing loosely from Zwane Mwaikambo's NMI-timer
+-work in "arch/x86/oprofile/nmi_timer_int.c" and in
+-"arch/x86/kernel/traps.c".
+-
+-The relevant pieces of code are listed below, each followed by a
+-brief explanation.
+-
+-	static int dummy_nmi_callback(struct pt_regs *regs, int cpu)
+-	{
+-		return 0;
+-	}
+-
+-The dummy_nmi_callback() function is a "dummy" NMI handler that does
+-nothing, but returns zero, thus saying that it did nothing, allowing
+-the NMI handler to take the default machine-specific action.
+-
+-	static nmi_callback_t nmi_callback = dummy_nmi_callback;
+-
+-This nmi_callback variable is a global function pointer to the current
+-NMI handler.
+-
+-	void do_nmi(struct pt_regs * regs, long error_code)
+-	{
+-		int cpu;
+-
+-		nmi_enter();
+-
+-		cpu = smp_processor_id();
+-		++nmi_count(cpu);
+-
+-		if (!rcu_dereference_sched(nmi_callback)(regs, cpu))
+-			default_do_nmi(regs);
+-
+-		nmi_exit();
+-	}
+-
+-The do_nmi() function processes each NMI.  It first disables preemption
+-in the same way that a hardware irq would, then increments the per-CPU
+-count of NMIs.  It then invokes the NMI handler stored in the nmi_callback
+-function pointer.  If this handler returns zero, do_nmi() invokes the
+-default_do_nmi() function to handle a machine-specific NMI.  Finally,
+-preemption is restored.
+-
+-In theory, rcu_dereference_sched() is not needed, since this code runs
+-only on i386, which in theory does not need rcu_dereference_sched()
+-anyway.  However, in practice it is a good documentation aid, particularly
+-for anyone attempting to do something similar on Alpha or on systems
+-with aggressive optimizing compilers.
+-
+-Quick Quiz:  Why might the rcu_dereference_sched() be necessary on Alpha,
+-	     given that the code referenced by the pointer is read-only?
+-
+-
+-Back to the discussion of NMI and RCU...
+-
+-	void set_nmi_callback(nmi_callback_t callback)
+-	{
+-		rcu_assign_pointer(nmi_callback, callback);
+-	}
+-
+-The set_nmi_callback() function registers an NMI handler.  Note that any
+-data that is to be used by the callback must be initialized up -before-
+-the call to set_nmi_callback().  On architectures that do not order
+-writes, the rcu_assign_pointer() ensures that the NMI handler sees the
+-initialized values.
+-
+-	void unset_nmi_callback(void)
+-	{
+-		rcu_assign_pointer(nmi_callback, dummy_nmi_callback);
+-	}
+-
+-This function unregisters an NMI handler, restoring the original
+-dummy_nmi_handler().  However, there may well be an NMI handler
+-currently executing on some other CPU.  We therefore cannot free
+-up any data structures used by the old NMI handler until execution
+-of it completes on all other CPUs.
+-
+-One way to accomplish this is via synchronize_rcu(), perhaps as
+-follows:
+-
+-	unset_nmi_callback();
+-	synchronize_rcu();
+-	kfree(my_nmi_data);
+-
+-This works because (as of v4.20) synchronize_rcu() blocks until all
+-CPUs complete any preemption-disabled segments of code that they were
+-executing.
+-Since NMI handlers disable preemption, synchronize_rcu() is guaranteed
+-not to return until all ongoing NMI handlers exit.  It is therefore safe
+-to free up the handler's data as soon as synchronize_rcu() returns.
+-
+-Important note: for this to work, the architecture in question must
+-invoke nmi_enter() and nmi_exit() on NMI entry and exit, respectively.
+-
+-
+-Answer to Quick Quiz
+-
+-	Why might the rcu_dereference_sched() be necessary on Alpha, given
+-	that the code referenced by the pointer is read-only?
+-
+-	Answer: The caller to set_nmi_callback() might well have
+-		initialized some data that is to be used by the new NMI
+-		handler.  In this case, the rcu_dereference_sched() would
+-		be needed, because otherwise a CPU that received an NMI
+-		just after the new handler was set might see the pointer
+-		to the new NMI handler, but the old pre-initialized
+-		version of the handler's data.
+-
+-		This same sad story can happen on other CPUs when using
+-		a compiler with aggressive pointer-value speculation
+-		optimizations.
+-
+-		More important, the rcu_dereference_sched() makes it
+-		clear to someone reading the code that the pointer is
+-		being protected by RCU-sched.
+diff --git a/Documentation/RCU/index.rst b/Documentation/RCU/index.rst
+index 8d20d44..627128c 100644
+--- a/Documentation/RCU/index.rst
++++ b/Documentation/RCU/index.rst
+@@ -10,6 +10,7 @@ RCU concepts
+    arrayRCU
+    rcu
+    listRCU
++   NMI-RCU
+    UP
+ 
+    Design/Memory-Ordering/Tree-RCU-Memory-Ordering
