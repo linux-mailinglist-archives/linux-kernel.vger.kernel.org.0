@@ -2,39 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4D104149479
-	for <lists+linux-kernel@lfdr.de>; Sat, 25 Jan 2020 11:44:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E66BE149474
+	for <lists+linux-kernel@lfdr.de>; Sat, 25 Jan 2020 11:44:23 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729816AbgAYKnV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 25 Jan 2020 05:43:21 -0500
-Received: from Galois.linutronix.de ([193.142.43.55]:44231 "EHLO
+        id S1729557AbgAYKnJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 25 Jan 2020 05:43:09 -0500
+Received: from Galois.linutronix.de ([193.142.43.55]:44191 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729420AbgAYKnD (ORCPT
+        with ESMTP id S1729324AbgAYKm7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 25 Jan 2020 05:43:03 -0500
+        Sat, 25 Jan 2020 05:42:59 -0500
 Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
         by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
         (Exim 4.80)
         (envelope-from <tip-bot2@linutronix.de>)
-        id 1ivItz-0008Uk-O2; Sat, 25 Jan 2020 11:42:55 +0100
+        id 1ivItz-0008US-67; Sat, 25 Jan 2020 11:42:55 +0100
 Received: from [127.0.1.1] (localhost [IPv6:::1])
-        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 1A6281C1A81;
-        Sat, 25 Jan 2020 11:42:48 +0100 (CET)
+        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id B4C0A1C1A73;
+        Sat, 25 Jan 2020 11:42:47 +0100 (CET)
 Date:   Sat, 25 Jan 2020 10:42:47 -0000
 From:   "tip-bot2 for Paul E. McKenney" <tip-bot2@linutronix.de>
 Reply-to: linux-kernel@vger.kernel.org
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip: core/rcu] rcu: Remove rcu_swap_protected()
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+Subject: [tip: core/rcu] rcu: Mark non-global functions and variables as static
+Cc:     Ben Dooks <ben.dooks@codethink.co.uk>,
         "Paul E. McKenney" <paulmck@kernel.org>,
-        Bart Van Assche <bart.vanassche@wdc.com>,
-        Christoph Hellwig <hch@lst.de>, Hannes Reinecke <hare@suse.de>,
-        Johannes Thumshirn <jthumshirn@suse.de>,
-        Shane M Seymour <shane.seymour@hpe.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        "Joel Fernandes (Google)" <joel@joelfernandes.org>,
         x86 <x86@kernel.org>, LKML <linux-kernel@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <157994896782.396.10070315148965985301.tip-bot2@tip-bot2>
+Message-ID: <157994896754.396.1035985898715511278.tip-bot2@tip-bot2>
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot2.linutronix.de>
 Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
@@ -50,55 +46,78 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The following commit has been merged into the core/rcu branch of tip:
 
-Commit-ID:     4414abf89158d734a83c99f6504f648417bd9550
-Gitweb:        https://git.kernel.org/tip/4414abf89158d734a83c99f6504f648417bd9550
+Commit-ID:     c30fe541896440667bd9e9068aedd1d440fbbcd2
+Gitweb:        https://git.kernel.org/tip/c30fe541896440667bd9e9068aedd1d440fbbcd2
 Author:        Paul E. McKenney <paulmck@kernel.org>
-AuthorDate:    Mon, 23 Sep 2019 16:31:42 -07:00
+AuthorDate:    Fri, 11 Oct 2019 21:40:09 -07:00
 Committer:     Paul E. McKenney <paulmck@kernel.org>
 CommitterDate: Thu, 12 Dec 2019 10:24:52 -08:00
 
-rcu: Remove rcu_swap_protected()
+rcu: Mark non-global functions and variables as static
 
-Now that the calls to rcu_swap_protected() have been replaced by
-rcu_replace_pointer(), this commit removes rcu_swap_protected().
+Each of rcu_state, rcu_rnp_online_cpus(), rcu_dynticks_curr_cpu_in_eqs(),
+and rcu_dynticks_snap() are used only in the kernel/rcu/tree.o translation
+unit, and may thus be marked static.  This commit therefore makes this
+change.
 
-Link: https://lore.kernel.org/lkml/CAHk-=wiAsJLw1egFEE=Z7-GGtM6wcvtyytXZA1+BHqta4gg6Hw@mail.gmail.com/
-Reported-by: Linus Torvalds <torvalds@linux-foundation.org>
+Reported-by: Ben Dooks <ben.dooks@codethink.co.uk>
 Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
-Cc: Bart Van Assche <bart.vanassche@wdc.com>
-Cc: Christoph Hellwig <hch@lst.de>
-Cc: Hannes Reinecke <hare@suse.de>
-Cc: Johannes Thumshirn <jthumshirn@suse.de>
-Cc: Shane M Seymour <shane.seymour@hpe.com>
-Cc: Martin K. Petersen <martin.petersen@oracle.com>
+Reviewed-by: Joel Fernandes (Google) <joel@joelfernandes.org>
 ---
- include/linux/rcupdate.h | 16 ----------------
- 1 file changed, 16 deletions(-)
+ kernel/rcu/tree.c | 8 ++++----
+ kernel/rcu/tree.h | 2 --
+ 2 files changed, 4 insertions(+), 6 deletions(-)
 
-diff --git a/include/linux/rcupdate.h b/include/linux/rcupdate.h
-index 0b75063..fe47024 100644
---- a/include/linux/rcupdate.h
-+++ b/include/linux/rcupdate.h
-@@ -401,22 +401,6 @@ do {									      \
- })
- 
- /**
-- * rcu_swap_protected() - swap an RCU and a regular pointer
-- * @rcu_ptr: RCU pointer
-- * @ptr: regular pointer
-- * @c: the conditions under which the dereference will take place
-- *
-- * Perform swap(@rcu_ptr, @ptr) where @rcu_ptr is an RCU-annotated pointer and
-- * @c is the argument that is passed to the rcu_dereference_protected() call
-- * used to read that pointer.
-- */
--#define rcu_swap_protected(rcu_ptr, ptr, c) do {			\
--	typeof(ptr) __tmp = rcu_dereference_protected((rcu_ptr), (c));	\
--	rcu_assign_pointer((rcu_ptr), (ptr));				\
--	(ptr) = __tmp;							\
--} while (0)
--
--/**
-  * rcu_access_pointer() - fetch RCU pointer with no dereferencing
-  * @p: The pointer to read
+diff --git a/kernel/rcu/tree.c b/kernel/rcu/tree.c
+index 1694a6b..dd8cfc3 100644
+--- a/kernel/rcu/tree.c
++++ b/kernel/rcu/tree.c
+@@ -84,7 +84,7 @@ static DEFINE_PER_CPU_SHARED_ALIGNED(struct rcu_data, rcu_data) = {
+ 	.dynticks_nmi_nesting = DYNTICK_IRQ_NONIDLE,
+ 	.dynticks = ATOMIC_INIT(RCU_DYNTICK_CTRL_CTR),
+ };
+-struct rcu_state rcu_state = {
++static struct rcu_state rcu_state = {
+ 	.level = { &rcu_state.node[0] },
+ 	.gp_state = RCU_GP_IDLE,
+ 	.gp_seq = (0UL - 300UL) << RCU_SEQ_CTR_SHIFT,
+@@ -188,7 +188,7 @@ EXPORT_SYMBOL_GPL(rcu_get_gp_kthreads_prio);
+  * held, but the bit corresponding to the current CPU will be stable
+  * in most contexts.
+  */
+-unsigned long rcu_rnp_online_cpus(struct rcu_node *rnp)
++static unsigned long rcu_rnp_online_cpus(struct rcu_node *rnp)
+ {
+ 	return READ_ONCE(rnp->qsmaskinitnext);
+ }
+@@ -294,7 +294,7 @@ static void rcu_dynticks_eqs_online(void)
   *
+  * No ordering, as we are sampling CPU-local information.
+  */
+-bool rcu_dynticks_curr_cpu_in_eqs(void)
++static bool rcu_dynticks_curr_cpu_in_eqs(void)
+ {
+ 	struct rcu_data *rdp = this_cpu_ptr(&rcu_data);
+ 
+@@ -305,7 +305,7 @@ bool rcu_dynticks_curr_cpu_in_eqs(void)
+  * Snapshot the ->dynticks counter with full ordering so as to allow
+  * stable comparison of this counter with past and future snapshots.
+  */
+-int rcu_dynticks_snap(struct rcu_data *rdp)
++static int rcu_dynticks_snap(struct rcu_data *rdp)
+ {
+ 	int snap = atomic_add_return(0, &rdp->dynticks);
+ 
+diff --git a/kernel/rcu/tree.h b/kernel/rcu/tree.h
+index 055c317..e4dc5de 100644
+--- a/kernel/rcu/tree.h
++++ b/kernel/rcu/tree.h
+@@ -403,8 +403,6 @@ static const char *tp_rcu_varname __used __tracepoint_string = rcu_name;
+ #define RCU_NAME rcu_name
+ #endif /* #else #ifdef CONFIG_TRACING */
+ 
+-int rcu_dynticks_snap(struct rcu_data *rdp);
+-
+ /* Forward declarations for tree_plugin.h */
+ static void rcu_bootup_announce(void);
+ static void rcu_qs(void);
