@@ -2,34 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C058914947A
-	for <lists+linux-kernel@lfdr.de>; Sat, 25 Jan 2020 11:44:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5C1711494D9
+	for <lists+linux-kernel@lfdr.de>; Sat, 25 Jan 2020 11:48:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729864AbgAYKnZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 25 Jan 2020 05:43:25 -0500
-Received: from Galois.linutronix.de ([193.142.43.55]:44235 "EHLO
+        id S1730418AbgAYKpx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 25 Jan 2020 05:45:53 -0500
+Received: from Galois.linutronix.de ([193.142.43.55]:44228 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729433AbgAYKnH (ORCPT
+        with ESMTP id S1729417AbgAYKnF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 25 Jan 2020 05:43:07 -0500
+        Sat, 25 Jan 2020 05:43:05 -0500
 Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
         by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
         (Exim 4.80)
         (envelope-from <tip-bot2@linutronix.de>)
-        id 1ivIu5-00005p-Bk; Sat, 25 Jan 2020 11:43:01 +0100
+        id 1ivIu3-000050-PW; Sat, 25 Jan 2020 11:43:00 +0100
 Received: from [127.0.1.1] (localhost [IPv6:::1])
-        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id C6AFD1C1A83;
+        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 85CD01C1A82;
         Sat, 25 Jan 2020 11:42:49 +0100 (CET)
 Date:   Sat, 25 Jan 2020 10:42:49 -0000
 From:   "tip-bot2 for Amol Grover" <tip-bot2@linutronix.de>
 Reply-to: linux-kernel@vger.kernel.org
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip: core/rcu] doc: Convert to rcu_dereference.txt to rcu_dereference.rst
+Subject: [tip: core/rcu] doc: Convert to rcubarrier.txt to ReST
 Cc:     Amol Grover <frextrite@gmail.com>,
+        Phong Tran <tranmanphong@gmail.com>,
         "Paul E. McKenney" <paulmck@kernel.org>, x86 <x86@kernel.org>,
         LKML <linux-kernel@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <157994896963.396.6415171810873920714.tip-bot2@tip-bot2>
+Message-ID: <157994896932.396.10391053084053669787.tip-bot2@tip-bot2>
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot2.linutronix.de>
 Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
@@ -45,968 +46,732 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The following commit has been merged into the core/rcu branch of tip:
 
-Commit-ID:     b00aedf978aa5c9a3c2d734fda5e51acfbceb5d6
-Gitweb:        https://git.kernel.org/tip/b00aedf978aa5c9a3c2d734fda5e51acfbceb5d6
+Commit-ID:     4af498306ffd8e29ed5c1ae544d01bc8c09c3f8e
+Gitweb:        https://git.kernel.org/tip/4af498306ffd8e29ed5c1ae544d01bc8c09c3f8e
 Author:        Amol Grover <frextrite@gmail.com>
-AuthorDate:    Sat, 02 Nov 2019 13:31:07 +05:30
+AuthorDate:    Thu, 07 Nov 2019 12:02:41 +05:30
 Committer:     Paul E. McKenney <paulmck@kernel.org>
 CommitterDate: Tue, 10 Dec 2019 18:51:53 -08:00
 
-doc: Convert to rcu_dereference.txt to rcu_dereference.rst
+doc: Convert to rcubarrier.txt to ReST
 
-This patch converts rcu_dereference.txt to rcu_dereference.rst and
-adds it to index.rst
+Convert rcubarrier.txt to rcubarrier.rst and add it to index.rst.
+
+Format file according to reST
+- Add headings and sub-headings
+- Add code segments
+- Add cross-references to quizes and answers
 
 Signed-off-by: Amol Grover <frextrite@gmail.com>
+Tested-by: Phong Tran <tranmanphong@gmail.com>
 Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
 ---
- Documentation/RCU/index.rst           |   1 +-
- Documentation/RCU/rcu_dereference.rst | 463 +++++++++++++++++++++++++-
- Documentation/RCU/rcu_dereference.txt | 456 +-------------------------
- 3 files changed, 464 insertions(+), 456 deletions(-)
- create mode 100644 Documentation/RCU/rcu_dereference.rst
- delete mode 100644 Documentation/RCU/rcu_dereference.txt
+ Documentation/RCU/index.rst      |   1 +-
+ Documentation/RCU/rcubarrier.rst | 353 ++++++++++++++++++++++++++++++-
+ Documentation/RCU/rcubarrier.txt | 325 +----------------------------
+ 3 files changed, 354 insertions(+), 325 deletions(-)
+ create mode 100644 Documentation/RCU/rcubarrier.rst
+ delete mode 100644 Documentation/RCU/rcubarrier.txt
 
 diff --git a/Documentation/RCU/index.rst b/Documentation/RCU/index.rst
-index b9b1148..c81d0e4 100644
+index c81d0e4..81a0a1e 100644
 --- a/Documentation/RCU/index.rst
 +++ b/Documentation/RCU/index.rst
 @@ -8,6 +8,7 @@ RCU concepts
     :maxdepth: 3
  
     arrayRCU
-+   rcu_dereference
++   rcubarrier
+    rcu_dereference
     whatisRCU
     rcu
-    listRCU
-diff --git a/Documentation/RCU/rcu_dereference.rst b/Documentation/RCU/rcu_dereference.rst
+diff --git a/Documentation/RCU/rcubarrier.rst b/Documentation/RCU/rcubarrier.rst
 new file mode 100644
-index 0000000..c9667eb
+index 0000000..f64f441
 --- /dev/null
-+++ b/Documentation/RCU/rcu_dereference.rst
-@@ -0,0 +1,463 @@
-+.. _rcu_dereference_doc:
++++ b/Documentation/RCU/rcubarrier.rst
+@@ -0,0 +1,353 @@
++.. _rcu_barrier:
 +
-+PROPER CARE AND FEEDING OF RETURN VALUES FROM rcu_dereference()
-+===============================================================
++RCU and Unloadable Modules
++==========================
 +
-+Most of the time, you can use values from rcu_dereference() or one of
-+the similar primitives without worries.  Dereferencing (prefix "*"),
-+field selection ("->"), assignment ("="), address-of ("&"), addition and
-+subtraction of constants, and casts all work quite naturally and safely.
++[Originally published in LWN Jan. 14, 2007: http://lwn.net/Articles/217484/]
 +
-+It is nevertheless possible to get into trouble with other operations.
-+Follow these rules to keep your RCU code working properly:
++RCU (read-copy update) is a synchronization mechanism that can be thought
++of as a replacement for read-writer locking (among other things), but with
++very low-overhead readers that are immune to deadlock, priority inversion,
++and unbounded latency. RCU read-side critical sections are delimited
++by rcu_read_lock() and rcu_read_unlock(), which, in non-CONFIG_PREEMPT
++kernels, generate no code whatsoever.
 +
-+-	You must use one of the rcu_dereference() family of primitives
-+	to load an RCU-protected pointer, otherwise CONFIG_PROVE_RCU
-+	will complain.  Worse yet, your code can see random memory-corruption
-+	bugs due to games that compilers and DEC Alpha can play.
-+	Without one of the rcu_dereference() primitives, compilers
-+	can reload the value, and won't your code have fun with two
-+	different values for a single pointer!  Without rcu_dereference(),
-+	DEC Alpha can load a pointer, dereference that pointer, and
-+	return data preceding initialization that preceded the store of
-+	the pointer.
++This means that RCU writers are unaware of the presence of concurrent
++readers, so that RCU updates to shared data must be undertaken quite
++carefully, leaving an old version of the data structure in place until all
++pre-existing readers have finished. These old versions are needed because
++such readers might hold a reference to them. RCU updates can therefore be
++rather expensive, and RCU is thus best suited for read-mostly situations.
 +
-+	In addition, the volatile cast in rcu_dereference() prevents the
-+	compiler from deducing the resulting pointer value.  Please see
-+	the section entitled "EXAMPLE WHERE THE COMPILER KNOWS TOO MUCH"
-+	for an example where the compiler can in fact deduce the exact
-+	value of the pointer, and thus cause misordering.
++How can an RCU writer possibly determine when all readers are finished,
++given that readers might well leave absolutely no trace of their
++presence? There is a synchronize_rcu() primitive that blocks until all
++pre-existing readers have completed. An updater wishing to delete an
++element p from a linked list might do the following, while holding an
++appropriate lock, of course::
 +
-+-	You are only permitted to use rcu_dereference on pointer values.
-+	The compiler simply knows too much about integral values to
-+	trust it to carry dependencies through integer operations.
-+	There are a very few exceptions, namely that you can temporarily
-+	cast the pointer to uintptr_t in order to:
++	list_del_rcu(p);
++	synchronize_rcu();
++	kfree(p);
 +
-+	-	Set bits and clear bits down in the must-be-zero low-order
-+		bits of that pointer.  This clearly means that the pointer
-+		must have alignment constraints, for example, this does
-+		-not- work in general for char* pointers.
++But the above code cannot be used in IRQ context -- the call_rcu()
++primitive must be used instead. This primitive takes a pointer to an
++rcu_head struct placed within the RCU-protected data structure and
++another pointer to a function that may be invoked later to free that
++structure. Code to delete an element p from the linked list from IRQ
++context might then be as follows::
 +
-+	-	XOR bits to translate pointers, as is done in some
-+		classic buddy-allocator algorithms.
++	list_del_rcu(p);
++	call_rcu(&p->rcu, p_callback);
 +
-+	It is important to cast the value back to pointer before
-+	doing much of anything else with it.
++Since call_rcu() never blocks, this code can safely be used from within
++IRQ context. The function p_callback() might be defined as follows::
 +
-+-	Avoid cancellation when using the "+" and "-" infix arithmetic
-+	operators.  For example, for a given variable "x", avoid
-+	"(x-(uintptr_t)x)" for char* pointers.	The compiler is within its
-+	rights to substitute zero for this sort of expression, so that
-+	subsequent accesses no longer depend on the rcu_dereference(),
-+	again possibly resulting in bugs due to misordering.
-+
-+	Of course, if "p" is a pointer from rcu_dereference(), and "a"
-+	and "b" are integers that happen to be equal, the expression
-+	"p+a-b" is safe because its value still necessarily depends on
-+	the rcu_dereference(), thus maintaining proper ordering.
-+
-+-	If you are using RCU to protect JITed functions, so that the
-+	"()" function-invocation operator is applied to a value obtained
-+	(directly or indirectly) from rcu_dereference(), you may need to
-+	interact directly with the hardware to flush instruction caches.
-+	This issue arises on some systems when a newly JITed function is
-+	using the same memory that was used by an earlier JITed function.
-+
-+-	Do not use the results from relational operators ("==", "!=",
-+	">", ">=", "<", or "<=") when dereferencing.  For example,
-+	the following (quite strange) code is buggy::
-+
-+		int *p;
-+		int *q;
-+
-+		...
-+
-+		p = rcu_dereference(gp)
-+		q = &global_q;
-+		q += p > &oom_p;
-+		r1 = *q;  /* BUGGY!!! */
-+
-+	As before, the reason this is buggy is that relational operators
-+	are often compiled using branches.  And as before, although
-+	weak-memory machines such as ARM or PowerPC do order stores
-+	after such branches, but can speculate loads, which can again
-+	result in misordering bugs.
-+
-+-	Be very careful about comparing pointers obtained from
-+	rcu_dereference() against non-NULL values.  As Linus Torvalds
-+	explained, if the two pointers are equal, the compiler could
-+	substitute the pointer you are comparing against for the pointer
-+	obtained from rcu_dereference().  For example::
-+
-+		p = rcu_dereference(gp);
-+		if (p == &default_struct)
-+			do_default(p->a);
-+
-+	Because the compiler now knows that the value of "p" is exactly
-+	the address of the variable "default_struct", it is free to
-+	transform this code into the following::
-+
-+		p = rcu_dereference(gp);
-+		if (p == &default_struct)
-+			do_default(default_struct.a);
-+
-+	On ARM and Power hardware, the load from "default_struct.a"
-+	can now be speculated, such that it might happen before the
-+	rcu_dereference().  This could result in bugs due to misordering.
-+
-+	However, comparisons are OK in the following cases:
-+
-+	-	The comparison was against the NULL pointer.  If the
-+		compiler knows that the pointer is NULL, you had better
-+		not be dereferencing it anyway.  If the comparison is
-+		non-equal, the compiler is none the wiser.  Therefore,
-+		it is safe to compare pointers from rcu_dereference()
-+		against NULL pointers.
-+
-+	-	The pointer is never dereferenced after being compared.
-+		Since there are no subsequent dereferences, the compiler
-+		cannot use anything it learned from the comparison
-+		to reorder the non-existent subsequent dereferences.
-+		This sort of comparison occurs frequently when scanning
-+		RCU-protected circular linked lists.
-+
-+		Note that if checks for being within an RCU read-side
-+		critical section are not required and the pointer is never
-+		dereferenced, rcu_access_pointer() should be used in place
-+		of rcu_dereference().
-+
-+	-	The comparison is against a pointer that references memory
-+		that was initialized "a long time ago."  The reason
-+		this is safe is that even if misordering occurs, the
-+		misordering will not affect the accesses that follow
-+		the comparison.  So exactly how long ago is "a long
-+		time ago"?  Here are some possibilities:
-+
-+		-	Compile time.
-+
-+		-	Boot time.
-+
-+		-	Module-init time for module code.
-+
-+		-	Prior to kthread creation for kthread code.
-+
-+		-	During some prior acquisition of the lock that
-+			we now hold.
-+
-+		-	Before mod_timer() time for a timer handler.
-+
-+		There are many other possibilities involving the Linux
-+		kernel's wide array of primitives that cause code to
-+		be invoked at a later time.
-+
-+	-	The pointer being compared against also came from
-+		rcu_dereference().  In this case, both pointers depend
-+		on one rcu_dereference() or another, so you get proper
-+		ordering either way.
-+
-+		That said, this situation can make certain RCU usage
-+		bugs more likely to happen.  Which can be a good thing,
-+		at least if they happen during testing.  An example
-+		of such an RCU usage bug is shown in the section titled
-+		"EXAMPLE OF AMPLIFIED RCU-USAGE BUG".
-+
-+	-	All of the accesses following the comparison are stores,
-+		so that a control dependency preserves the needed ordering.
-+		That said, it is easy to get control dependencies wrong.
-+		Please see the "CONTROL DEPENDENCIES" section of
-+		Documentation/memory-barriers.txt for more details.
-+
-+	-	The pointers are not equal -and- the compiler does
-+		not have enough information to deduce the value of the
-+		pointer.  Note that the volatile cast in rcu_dereference()
-+		will normally prevent the compiler from knowing too much.
-+
-+		However, please note that if the compiler knows that the
-+		pointer takes on only one of two values, a not-equal
-+		comparison will provide exactly the information that the
-+		compiler needs to deduce the value of the pointer.
-+
-+-	Disable any value-speculation optimizations that your compiler
-+	might provide, especially if you are making use of feedback-based
-+	optimizations that take data collected from prior runs.  Such
-+	value-speculation optimizations reorder operations by design.
-+
-+	There is one exception to this rule:  Value-speculation
-+	optimizations that leverage the branch-prediction hardware are
-+	safe on strongly ordered systems (such as x86), but not on weakly
-+	ordered systems (such as ARM or Power).  Choose your compiler
-+	command-line options wisely!
-+
-+
-+EXAMPLE OF AMPLIFIED RCU-USAGE BUG
-+----------------------------------
-+
-+Because updaters can run concurrently with RCU readers, RCU readers can
-+see stale and/or inconsistent values.  If RCU readers need fresh or
-+consistent values, which they sometimes do, they need to take proper
-+precautions.  To see this, consider the following code fragment::
-+
-+	struct foo {
-+		int a;
-+		int b;
-+		int c;
-+	};
-+	struct foo *gp1;
-+	struct foo *gp2;
-+
-+	void updater(void)
++	static void p_callback(struct rcu_head *rp)
 +	{
-+		struct foo *p;
++		struct pstruct *p = container_of(rp, struct pstruct, rcu);
 +
-+		p = kmalloc(...);
-+		if (p == NULL)
-+			deal_with_it();
-+		p->a = 42;  /* Each field in its own cache line. */
-+		p->b = 43;
-+		p->c = 44;
-+		rcu_assign_pointer(gp1, p);
-+		p->b = 143;
-+		p->c = 144;
-+		rcu_assign_pointer(gp2, p);
++		kfree(p);
 +	}
 +
-+	void reader(void)
-+	{
-+		struct foo *p;
-+		struct foo *q;
-+		int r1, r2;
 +
-+		p = rcu_dereference(gp2);
-+		if (p == NULL)
-+			return;
-+		r1 = p->b;  /* Guaranteed to get 143. */
-+		q = rcu_dereference(gp1);  /* Guaranteed non-NULL. */
-+		if (p == q) {
-+			/* The compiler decides that q->c is same as p->c. */
-+			r2 = p->c; /* Could get 44 on weakly order system. */
-+		}
-+		do_something_with(r1, r2);
-+	}
++Unloading Modules That Use call_rcu()
++-------------------------------------
 +
-+You might be surprised that the outcome (r1 == 143 && r2 == 44) is possible,
-+but you should not be.  After all, the updater might have been invoked
-+a second time between the time reader() loaded into "r1" and the time
-+that it loaded into "r2".  The fact that this same result can occur due
-+to some reordering from the compiler and CPUs is beside the point.
++But what if p_callback is defined in an unloadable module?
 +
-+But suppose that the reader needs a consistent view?
++If we unload the module while some RCU callbacks are pending,
++the CPUs executing these callbacks are going to be severely
++disappointed when they are later invoked, as fancifully depicted at
++http://lwn.net/images/ns/kernel/rcu-drop.jpg.
 +
-+Then one approach is to use locking, for example, as follows::
++We could try placing a synchronize_rcu() in the module-exit code path,
++but this is not sufficient. Although synchronize_rcu() does wait for a
++grace period to elapse, it does not wait for the callbacks to complete.
 +
-+	struct foo {
-+		int a;
-+		int b;
-+		int c;
-+		spinlock_t lock;
-+	};
-+	struct foo *gp1;
-+	struct foo *gp2;
-+
-+	void updater(void)
-+	{
-+		struct foo *p;
-+
-+		p = kmalloc(...);
-+		if (p == NULL)
-+			deal_with_it();
-+		spin_lock(&p->lock);
-+		p->a = 42;  /* Each field in its own cache line. */
-+		p->b = 43;
-+		p->c = 44;
-+		spin_unlock(&p->lock);
-+		rcu_assign_pointer(gp1, p);
-+		spin_lock(&p->lock);
-+		p->b = 143;
-+		p->c = 144;
-+		spin_unlock(&p->lock);
-+		rcu_assign_pointer(gp2, p);
-+	}
-+
-+	void reader(void)
-+	{
-+		struct foo *p;
-+		struct foo *q;
-+		int r1, r2;
-+
-+		p = rcu_dereference(gp2);
-+		if (p == NULL)
-+			return;
-+		spin_lock(&p->lock);
-+		r1 = p->b;  /* Guaranteed to get 143. */
-+		q = rcu_dereference(gp1);  /* Guaranteed non-NULL. */
-+		if (p == q) {
-+			/* The compiler decides that q->c is same as p->c. */
-+			r2 = p->c; /* Locking guarantees r2 == 144. */
-+		}
-+		spin_unlock(&p->lock);
-+		do_something_with(r1, r2);
-+	}
-+
-+As always, use the right tool for the job!
++One might be tempted to try several back-to-back synchronize_rcu()
++calls, but this is still not guaranteed to work. If there is a very
++heavy RCU-callback load, then some of the callbacks might be deferred
++in order to allow other processing to proceed. Such deferral is required
++in realtime kernels in order to avoid excessive scheduling latencies.
 +
 +
-+EXAMPLE WHERE THE COMPILER KNOWS TOO MUCH
-+-----------------------------------------
++rcu_barrier()
++-------------
 +
-+If a pointer obtained from rcu_dereference() compares not-equal to some
-+other pointer, the compiler normally has no clue what the value of the
-+first pointer might be.  This lack of knowledge prevents the compiler
-+from carrying out optimizations that otherwise might destroy the ordering
-+guarantees that RCU depends on.  And the volatile cast in rcu_dereference()
-+should prevent the compiler from guessing the value.
++We instead need the rcu_barrier() primitive.  Rather than waiting for
++a grace period to elapse, rcu_barrier() waits for all outstanding RCU
++callbacks to complete.  Please note that rcu_barrier() does **not** imply
++synchronize_rcu(), in particular, if there are no RCU callbacks queued
++anywhere, rcu_barrier() is within its rights to return immediately,
++without waiting for a grace period to elapse.
 +
-+But without rcu_dereference(), the compiler knows more than you might
-+expect.  Consider the following code fragment::
++Pseudo-code using rcu_barrier() is as follows:
 +
-+	struct foo {
-+		int a;
-+		int b;
-+	};
-+	static struct foo variable1;
-+	static struct foo variable2;
-+	static struct foo *gp = &variable1;
++   1. Prevent any new RCU callbacks from being posted.
++   2. Execute rcu_barrier().
++   3. Allow the module to be unloaded.
 +
-+	void updater(void)
-+	{
-+		initialize_foo(&variable2);
-+		rcu_assign_pointer(gp, &variable2);
-+		/*
-+		 * The above is the only store to gp in this translation unit,
-+		 * and the address of gp is not exported in any way.
-+		 */
-+	}
++There is also an srcu_barrier() function for SRCU, and you of course
++must match the flavor of rcu_barrier() with that of call_rcu().  If your
++module uses multiple flavors of call_rcu(), then it must also use multiple
++flavors of rcu_barrier() when unloading that module.  For example, if
++it uses call_rcu(), call_srcu() on srcu_struct_1, and call_srcu() on
++srcu_struct_2, then the following three lines of code will be required
++when unloading::
 +
-+	int reader(void)
-+	{
-+		struct foo *p;
++ 1 rcu_barrier();
++ 2 srcu_barrier(&srcu_struct_1);
++ 3 srcu_barrier(&srcu_struct_2);
 +
-+		p = gp;
-+		barrier();
-+		if (p == &variable1)
-+			return p->a; /* Must be variable1.a. */
-+		else
-+			return p->b; /* Must be variable2.b. */
-+	}
++The rcutorture module makes use of rcu_barrier() in its exit function
++as follows::
 +
-+Because the compiler can see all stores to "gp", it knows that the only
-+possible values of "gp" are "variable1" on the one hand and "variable2"
-+on the other.  The comparison in reader() therefore tells the compiler
-+the exact value of "p" even in the not-equals case.  This allows the
-+compiler to make the return values independent of the load from "gp",
-+in turn destroying the ordering between this load and the loads of the
-+return values.  This can result in "p->b" returning pre-initialization
-+garbage values.
++ 1  static void
++ 2  rcu_torture_cleanup(void)
++ 3  {
++ 4    int i;
++ 5
++ 6    fullstop = 1;
++ 7    if (shuffler_task != NULL) {
++ 8     VERBOSE_PRINTK_STRING("Stopping rcu_torture_shuffle task");
++ 9     kthread_stop(shuffler_task);
++ 10   }
++ 11   shuffler_task = NULL;
++ 12
++ 13   if (writer_task != NULL) {
++ 14     VERBOSE_PRINTK_STRING("Stopping rcu_torture_writer task");
++ 15     kthread_stop(writer_task);
++ 16   }
++ 17   writer_task = NULL;
++ 18
++ 19   if (reader_tasks != NULL) {
++ 20     for (i = 0; i < nrealreaders; i++) {
++ 21       if (reader_tasks[i] != NULL) {
++ 22         VERBOSE_PRINTK_STRING(
++ 23           "Stopping rcu_torture_reader task");
++ 24         kthread_stop(reader_tasks[i]);
++ 25       }
++ 26       reader_tasks[i] = NULL;
++ 27     }
++ 28     kfree(reader_tasks);
++ 29     reader_tasks = NULL;
++ 30   }
++ 31   rcu_torture_current = NULL;
++ 32
++ 33   if (fakewriter_tasks != NULL) {
++ 34     for (i = 0; i < nfakewriters; i++) {
++ 35       if (fakewriter_tasks[i] != NULL) {
++ 36         VERBOSE_PRINTK_STRING(
++ 37           "Stopping rcu_torture_fakewriter task");
++ 38         kthread_stop(fakewriter_tasks[i]);
++ 39       }
++ 40       fakewriter_tasks[i] = NULL;
++ 41     }
++ 42     kfree(fakewriter_tasks);
++ 43     fakewriter_tasks = NULL;
++ 44   }
++ 45
++ 46   if (stats_task != NULL) {
++ 47     VERBOSE_PRINTK_STRING("Stopping rcu_torture_stats task");
++ 48     kthread_stop(stats_task);
++ 49   }
++ 50   stats_task = NULL;
++ 51
++ 52   /* Wait for all RCU callbacks to fire. */
++ 53   rcu_barrier();
++ 54
++ 55   rcu_torture_stats_print(); /* -After- the stats thread is stopped! */
++ 56
++ 57   if (cur_ops->cleanup != NULL)
++ 58     cur_ops->cleanup();
++ 59   if (atomic_read(&n_rcu_torture_error))
++ 60     rcu_torture_print_module_parms("End of test: FAILURE");
++ 61   else
++ 62     rcu_torture_print_module_parms("End of test: SUCCESS");
++ 63 }
 +
-+In short, rcu_dereference() is -not- optional when you are going to
-+dereference the resulting pointer.
++Line 6 sets a global variable that prevents any RCU callbacks from
++re-posting themselves. This will not be necessary in most cases, since
++RCU callbacks rarely include calls to call_rcu(). However, the rcutorture
++module is an exception to this rule, and therefore needs to set this
++global variable.
++
++Lines 7-50 stop all the kernel tasks associated with the rcutorture
++module. Therefore, once execution reaches line 53, no more rcutorture
++RCU callbacks will be posted. The rcu_barrier() call on line 53 waits
++for any pre-existing callbacks to complete.
++
++Then lines 55-62 print status and do operation-specific cleanup, and
++then return, permitting the module-unload operation to be completed.
++
++.. _rcubarrier_quiz_1:
++
++Quick Quiz #1:
++	Is there any other situation where rcu_barrier() might
++	be required?
++
++:ref:`Answer to Quick Quiz #1 <answer_rcubarrier_quiz_1>`
++
++Your module might have additional complications. For example, if your
++module invokes call_rcu() from timers, you will need to first cancel all
++the timers, and only then invoke rcu_barrier() to wait for any remaining
++RCU callbacks to complete.
++
++Of course, if you module uses call_rcu(), you will need to invoke
++rcu_barrier() before unloading.  Similarly, if your module uses
++call_srcu(), you will need to invoke srcu_barrier() before unloading,
++and on the same srcu_struct structure.  If your module uses call_rcu()
++**and** call_srcu(), then you will need to invoke rcu_barrier() **and**
++srcu_barrier().
 +
 +
-+WHICH MEMBER OF THE rcu_dereference() FAMILY SHOULD YOU USE?
-+------------------------------------------------------------
++Implementing rcu_barrier()
++--------------------------
 +
-+First, please avoid using rcu_dereference_raw() and also please avoid
-+using rcu_dereference_check() and rcu_dereference_protected() with a
-+second argument with a constant value of 1 (or true, for that matter).
-+With that caution out of the way, here is some guidance for which
-+member of the rcu_dereference() to use in various situations:
++Dipankar Sarma's implementation of rcu_barrier() makes use of the fact
++that RCU callbacks are never reordered once queued on one of the per-CPU
++queues. His implementation queues an RCU callback on each of the per-CPU
++callback queues, and then waits until they have all started executing, at
++which point, all earlier RCU callbacks are guaranteed to have completed.
 +
-+1.	If the access needs to be within an RCU read-side critical
-+	section, use rcu_dereference().  With the new consolidated
-+	RCU flavors, an RCU read-side critical section is entered
-+	using rcu_read_lock(), anything that disables bottom halves,
-+	anything that disables interrupts, or anything that disables
-+	preemption.
++The original code for rcu_barrier() was as follows::
 +
-+2.	If the access might be within an RCU read-side critical section
-+	on the one hand, or protected by (say) my_lock on the other,
-+	use rcu_dereference_check(), for example::
++ 1  void rcu_barrier(void)
++ 2  {
++ 3    BUG_ON(in_interrupt());
++ 4    /* Take cpucontrol mutex to protect against CPU hotplug */
++ 5    mutex_lock(&rcu_barrier_mutex);
++ 6    init_completion(&rcu_barrier_completion);
++ 7    atomic_set(&rcu_barrier_cpu_count, 0);
++ 8    on_each_cpu(rcu_barrier_func, NULL, 0, 1);
++ 9    wait_for_completion(&rcu_barrier_completion);
++ 10   mutex_unlock(&rcu_barrier_mutex);
++ 11 }
 +
-+		p1 = rcu_dereference_check(p->rcu_protected_pointer,
-+					   lockdep_is_held(&my_lock));
++Line 3 verifies that the caller is in process context, and lines 5 and 10
++use rcu_barrier_mutex to ensure that only one rcu_barrier() is using the
++global completion and counters at a time, which are initialized on lines
++6 and 7. Line 8 causes each CPU to invoke rcu_barrier_func(), which is
++shown below. Note that the final "1" in on_each_cpu()'s argument list
++ensures that all the calls to rcu_barrier_func() will have completed
++before on_each_cpu() returns. Line 9 then waits for the completion.
++
++This code was rewritten in 2008 and several times thereafter, but this
++still gives the general idea.
++
++The rcu_barrier_func() runs on each CPU, where it invokes call_rcu()
++to post an RCU callback, as follows::
++
++ 1  static void rcu_barrier_func(void *notused)
++ 2  {
++ 3    int cpu = smp_processor_id();
++ 4    struct rcu_data *rdp = &per_cpu(rcu_data, cpu);
++ 5    struct rcu_head *head;
++ 6
++ 7    head = &rdp->barrier;
++ 8    atomic_inc(&rcu_barrier_cpu_count);
++ 9    call_rcu(head, rcu_barrier_callback);
++ 10 }
++
++Lines 3 and 4 locate RCU's internal per-CPU rcu_data structure,
++which contains the struct rcu_head that needed for the later call to
++call_rcu(). Line 7 picks up a pointer to this struct rcu_head, and line
++8 increments a global counter. This counter will later be decremented
++by the callback. Line 9 then registers the rcu_barrier_callback() on
++the current CPU's queue.
++
++The rcu_barrier_callback() function simply atomically decrements the
++rcu_barrier_cpu_count variable and finalizes the completion when it
++reaches zero, as follows::
++
++ 1 static void rcu_barrier_callback(struct rcu_head *notused)
++ 2 {
++ 3   if (atomic_dec_and_test(&rcu_barrier_cpu_count))
++ 4     complete(&rcu_barrier_completion);
++ 5 }
++
++.. _rcubarrier_quiz_2:
++
++Quick Quiz #2:
++	What happens if CPU 0's rcu_barrier_func() executes
++	immediately (thus incrementing rcu_barrier_cpu_count to the
++	value one), but the other CPU's rcu_barrier_func() invocations
++	are delayed for a full grace period? Couldn't this result in
++	rcu_barrier() returning prematurely?
++
++:ref:`Answer to Quick Quiz #2 <answer_rcubarrier_quiz_2>`
++
++The current rcu_barrier() implementation is more complex, due to the need
++to avoid disturbing idle CPUs (especially on battery-powered systems)
++and the need to minimally disturb non-idle CPUs in real-time systems.
++However, the code above illustrates the concepts.
 +
 +
-+3.	If the access might be within an RCU read-side critical section
-+	on the one hand, or protected by either my_lock or your_lock on
-+	the other, again use rcu_dereference_check(), for example::
++rcu_barrier() Summary
++---------------------
 +
-+		p1 = rcu_dereference_check(p->rcu_protected_pointer,
-+					   lockdep_is_held(&my_lock) ||
-+					   lockdep_is_held(&your_lock));
-+
-+4.	If the access is on the update side, so that it is always protected
-+	by my_lock, use rcu_dereference_protected()::
-+
-+		p1 = rcu_dereference_protected(p->rcu_protected_pointer,
-+					       lockdep_is_held(&my_lock));
-+
-+	This can be extended to handle multiple locks as in #3 above,
-+	and both can be extended to check other conditions as well.
-+
-+5.	If the protection is supplied by the caller, and is thus unknown
-+	to this code, that is the rare case when rcu_dereference_raw()
-+	is appropriate.  In addition, rcu_dereference_raw() might be
-+	appropriate when the lockdep expression would be excessively
-+	complex, except that a better approach in that case might be to
-+	take a long hard look at your synchronization design.  Still,
-+	there are data-locking cases where any one of a very large number
-+	of locks or reference counters suffices to protect the pointer,
-+	so rcu_dereference_raw() does have its place.
-+
-+	However, its place is probably quite a bit smaller than one
-+	might expect given the number of uses in the current kernel.
-+	Ditto for its synonym, rcu_dereference_check( ... , 1), and
-+	its close relative, rcu_dereference_protected(... , 1).
++The rcu_barrier() primitive has seen relatively little use, since most
++code using RCU is in the core kernel rather than in modules. However, if
++you are using RCU from an unloadable module, you need to use rcu_barrier()
++so that your module may be safely unloaded.
 +
 +
-+SPARSE CHECKING OF RCU-PROTECTED POINTERS
-+-----------------------------------------
++Answers to Quick Quizzes
++------------------------
 +
-+The sparse static-analysis tool checks for direct access to RCU-protected
-+pointers, which can result in "interesting" bugs due to compiler
-+optimizations involving invented loads and perhaps also load tearing.
-+For example, suppose someone mistakenly does something like this::
++.. _answer_rcubarrier_quiz_1:
 +
-+	p = q->rcu_protected_pointer;
-+	do_something_with(p->a);
-+	do_something_else_with(p->b);
++Quick Quiz #1:
++	Is there any other situation where rcu_barrier() might
++	be required?
 +
-+If register pressure is high, the compiler might optimize "p" out
-+of existence, transforming the code to something like this::
++Answer: Interestingly enough, rcu_barrier() was not originally
++	implemented for module unloading. Nikita Danilov was using
++	RCU in a filesystem, which resulted in a similar situation at
++	filesystem-unmount time. Dipankar Sarma coded up rcu_barrier()
++	in response, so that Nikita could invoke it during the
++	filesystem-unmount process.
 +
-+	do_something_with(q->rcu_protected_pointer->a);
-+	do_something_else_with(q->rcu_protected_pointer->b);
++	Much later, yours truly hit the RCU module-unload problem when
++	implementing rcutorture, and found that rcu_barrier() solves
++	this problem as well.
 +
-+This could fatally disappoint your code if q->rcu_protected_pointer
-+changed in the meantime.  Nor is this a theoretical problem:  Exactly
-+this sort of bug cost Paul E. McKenney (and several of his innocent
-+colleagues) a three-day weekend back in the early 1990s.
++:ref:`Back to Quick Quiz #1 <rcubarrier_quiz_1>`
 +
-+Load tearing could of course result in dereferencing a mashup of a pair
-+of pointers, which also might fatally disappoint your code.
++.. _answer_rcubarrier_quiz_2:
 +
-+These problems could have been avoided simply by making the code instead
-+read as follows::
++Quick Quiz #2:
++	What happens if CPU 0's rcu_barrier_func() executes
++	immediately (thus incrementing rcu_barrier_cpu_count to the
++	value one), but the other CPU's rcu_barrier_func() invocations
++	are delayed for a full grace period? Couldn't this result in
++	rcu_barrier() returning prematurely?
 +
-+	p = rcu_dereference(q->rcu_protected_pointer);
-+	do_something_with(p->a);
-+	do_something_else_with(p->b);
++Answer: This cannot happen. The reason is that on_each_cpu() has its last
++	argument, the wait flag, set to "1". This flag is passed through
++	to smp_call_function() and further to smp_call_function_on_cpu(),
++	causing this latter to spin until the cross-CPU invocation of
++	rcu_barrier_func() has completed. This by itself would prevent
++	a grace period from completing on non-CONFIG_PREEMPT kernels,
++	since each CPU must undergo a context switch (or other quiescent
++	state) before the grace period can complete. However, this is
++	of no use in CONFIG_PREEMPT kernels.
 +
-+Unfortunately, these sorts of bugs can be extremely hard to spot during
-+review.  This is where the sparse tool comes into play, along with the
-+"__rcu" marker.  If you mark a pointer declaration, whether in a structure
-+or as a formal parameter, with "__rcu", which tells sparse to complain if
-+this pointer is accessed directly.  It will also cause sparse to complain
-+if a pointer not marked with "__rcu" is accessed using rcu_dereference()
-+and friends.  For example, ->rcu_protected_pointer might be declared as
-+follows::
++	Therefore, on_each_cpu() disables preemption across its call
++	to smp_call_function() and also across the local call to
++	rcu_barrier_func(). This prevents the local CPU from context
++	switching, again preventing grace periods from completing. This
++	means that all CPUs have executed rcu_barrier_func() before
++	the first rcu_barrier_callback() can possibly execute, in turn
++	preventing rcu_barrier_cpu_count from prematurely reaching zero.
 +
-+	struct foo __rcu *rcu_protected_pointer;
++	Currently, -rt implementations of RCU keep but a single global
++	queue for RCU callbacks, and thus do not suffer from this
++	problem. However, when the -rt RCU eventually does have per-CPU
++	callback queues, things will have to change. One simple change
++	is to add an rcu_read_lock() before line 8 of rcu_barrier()
++	and an rcu_read_unlock() after line 8 of this same function. If
++	you can think of a better change, please let me know!
 +
-+Use of "__rcu" is opt-in.  If you choose not to use it, then you should
-+ignore the sparse warnings.
-diff --git a/Documentation/RCU/rcu_dereference.txt b/Documentation/RCU/rcu_dereference.txt
++:ref:`Back to Quick Quiz #2 <rcubarrier_quiz_2>`
+diff --git a/Documentation/RCU/rcubarrier.txt b/Documentation/RCU/rcubarrier.txt
 deleted file mode 100644
-index bf699e8..0000000
---- a/Documentation/RCU/rcu_dereference.txt
+index a2782df..0000000
+--- a/Documentation/RCU/rcubarrier.txt
 +++ /dev/null
-@@ -1,456 +0,0 @@
--PROPER CARE AND FEEDING OF RETURN VALUES FROM rcu_dereference()
+@@ -1,325 +0,0 @@
+-RCU and Unloadable Modules
 -
--Most of the time, you can use values from rcu_dereference() or one of
--the similar primitives without worries.  Dereferencing (prefix "*"),
--field selection ("->"), assignment ("="), address-of ("&"), addition and
--subtraction of constants, and casts all work quite naturally and safely.
+-[Originally published in LWN Jan. 14, 2007: http://lwn.net/Articles/217484/]
 -
--It is nevertheless possible to get into trouble with other operations.
--Follow these rules to keep your RCU code working properly:
+-RCU (read-copy update) is a synchronization mechanism that can be thought
+-of as a replacement for read-writer locking (among other things), but with
+-very low-overhead readers that are immune to deadlock, priority inversion,
+-and unbounded latency. RCU read-side critical sections are delimited
+-by rcu_read_lock() and rcu_read_unlock(), which, in non-CONFIG_PREEMPT
+-kernels, generate no code whatsoever.
 -
--o	You must use one of the rcu_dereference() family of primitives
--	to load an RCU-protected pointer, otherwise CONFIG_PROVE_RCU
--	will complain.  Worse yet, your code can see random memory-corruption
--	bugs due to games that compilers and DEC Alpha can play.
--	Without one of the rcu_dereference() primitives, compilers
--	can reload the value, and won't your code have fun with two
--	different values for a single pointer!  Without rcu_dereference(),
--	DEC Alpha can load a pointer, dereference that pointer, and
--	return data preceding initialization that preceded the store of
--	the pointer.
+-This means that RCU writers are unaware of the presence of concurrent
+-readers, so that RCU updates to shared data must be undertaken quite
+-carefully, leaving an old version of the data structure in place until all
+-pre-existing readers have finished. These old versions are needed because
+-such readers might hold a reference to them. RCU updates can therefore be
+-rather expensive, and RCU is thus best suited for read-mostly situations.
 -
--	In addition, the volatile cast in rcu_dereference() prevents the
--	compiler from deducing the resulting pointer value.  Please see
--	the section entitled "EXAMPLE WHERE THE COMPILER KNOWS TOO MUCH"
--	for an example where the compiler can in fact deduce the exact
--	value of the pointer, and thus cause misordering.
+-How can an RCU writer possibly determine when all readers are finished,
+-given that readers might well leave absolutely no trace of their
+-presence? There is a synchronize_rcu() primitive that blocks until all
+-pre-existing readers have completed. An updater wishing to delete an
+-element p from a linked list might do the following, while holding an
+-appropriate lock, of course:
 -
--o	You are only permitted to use rcu_dereference on pointer values.
--	The compiler simply knows too much about integral values to
--	trust it to carry dependencies through integer operations.
--	There are a very few exceptions, namely that you can temporarily
--	cast the pointer to uintptr_t in order to:
+-	list_del_rcu(p);
+-	synchronize_rcu();
+-	kfree(p);
 -
--	o	Set bits and clear bits down in the must-be-zero low-order
--		bits of that pointer.  This clearly means that the pointer
--		must have alignment constraints, for example, this does
--		-not- work in general for char* pointers.
+-But the above code cannot be used in IRQ context -- the call_rcu()
+-primitive must be used instead. This primitive takes a pointer to an
+-rcu_head struct placed within the RCU-protected data structure and
+-another pointer to a function that may be invoked later to free that
+-structure. Code to delete an element p from the linked list from IRQ
+-context might then be as follows:
 -
--	o	XOR bits to translate pointers, as is done in some
--		classic buddy-allocator algorithms.
+-	list_del_rcu(p);
+-	call_rcu(&p->rcu, p_callback);
 -
--	It is important to cast the value back to pointer before
--	doing much of anything else with it.
+-Since call_rcu() never blocks, this code can safely be used from within
+-IRQ context. The function p_callback() might be defined as follows:
 -
--o	Avoid cancellation when using the "+" and "-" infix arithmetic
--	operators.  For example, for a given variable "x", avoid
--	"(x-(uintptr_t)x)" for char* pointers.	The compiler is within its
--	rights to substitute zero for this sort of expression, so that
--	subsequent accesses no longer depend on the rcu_dereference(),
--	again possibly resulting in bugs due to misordering.
--
--	Of course, if "p" is a pointer from rcu_dereference(), and "a"
--	and "b" are integers that happen to be equal, the expression
--	"p+a-b" is safe because its value still necessarily depends on
--	the rcu_dereference(), thus maintaining proper ordering.
--
--o	If you are using RCU to protect JITed functions, so that the
--	"()" function-invocation operator is applied to a value obtained
--	(directly or indirectly) from rcu_dereference(), you may need to
--	interact directly with the hardware to flush instruction caches.
--	This issue arises on some systems when a newly JITed function is
--	using the same memory that was used by an earlier JITed function.
--
--o	Do not use the results from relational operators ("==", "!=",
--	">", ">=", "<", or "<=") when dereferencing.  For example,
--	the following (quite strange) code is buggy:
--
--		int *p;
--		int *q;
--
--		...
--
--		p = rcu_dereference(gp)
--		q = &global_q;
--		q += p > &oom_p;
--		r1 = *q;  /* BUGGY!!! */
--
--	As before, the reason this is buggy is that relational operators
--	are often compiled using branches.  And as before, although
--	weak-memory machines such as ARM or PowerPC do order stores
--	after such branches, but can speculate loads, which can again
--	result in misordering bugs.
--
--o	Be very careful about comparing pointers obtained from
--	rcu_dereference() against non-NULL values.  As Linus Torvalds
--	explained, if the two pointers are equal, the compiler could
--	substitute the pointer you are comparing against for the pointer
--	obtained from rcu_dereference().  For example:
--
--		p = rcu_dereference(gp);
--		if (p == &default_struct)
--			do_default(p->a);
--
--	Because the compiler now knows that the value of "p" is exactly
--	the address of the variable "default_struct", it is free to
--	transform this code into the following:
--
--		p = rcu_dereference(gp);
--		if (p == &default_struct)
--			do_default(default_struct.a);
--
--	On ARM and Power hardware, the load from "default_struct.a"
--	can now be speculated, such that it might happen before the
--	rcu_dereference().  This could result in bugs due to misordering.
--
--	However, comparisons are OK in the following cases:
--
--	o	The comparison was against the NULL pointer.  If the
--		compiler knows that the pointer is NULL, you had better
--		not be dereferencing it anyway.  If the comparison is
--		non-equal, the compiler is none the wiser.  Therefore,
--		it is safe to compare pointers from rcu_dereference()
--		against NULL pointers.
--
--	o	The pointer is never dereferenced after being compared.
--		Since there are no subsequent dereferences, the compiler
--		cannot use anything it learned from the comparison
--		to reorder the non-existent subsequent dereferences.
--		This sort of comparison occurs frequently when scanning
--		RCU-protected circular linked lists.
--
--		Note that if checks for being within an RCU read-side
--		critical section are not required and the pointer is never
--		dereferenced, rcu_access_pointer() should be used in place
--		of rcu_dereference().
--
--	o	The comparison is against a pointer that references memory
--		that was initialized "a long time ago."  The reason
--		this is safe is that even if misordering occurs, the
--		misordering will not affect the accesses that follow
--		the comparison.  So exactly how long ago is "a long
--		time ago"?  Here are some possibilities:
--
--		o	Compile time.
--
--		o	Boot time.
--
--		o	Module-init time for module code.
--
--		o	Prior to kthread creation for kthread code.
--
--		o	During some prior acquisition of the lock that
--			we now hold.
--
--		o	Before mod_timer() time for a timer handler.
--
--		There are many other possibilities involving the Linux
--		kernel's wide array of primitives that cause code to
--		be invoked at a later time.
--
--	o	The pointer being compared against also came from
--		rcu_dereference().  In this case, both pointers depend
--		on one rcu_dereference() or another, so you get proper
--		ordering either way.
--
--		That said, this situation can make certain RCU usage
--		bugs more likely to happen.  Which can be a good thing,
--		at least if they happen during testing.  An example
--		of such an RCU usage bug is shown in the section titled
--		"EXAMPLE OF AMPLIFIED RCU-USAGE BUG".
--
--	o	All of the accesses following the comparison are stores,
--		so that a control dependency preserves the needed ordering.
--		That said, it is easy to get control dependencies wrong.
--		Please see the "CONTROL DEPENDENCIES" section of
--		Documentation/memory-barriers.txt for more details.
--
--	o	The pointers are not equal -and- the compiler does
--		not have enough information to deduce the value of the
--		pointer.  Note that the volatile cast in rcu_dereference()
--		will normally prevent the compiler from knowing too much.
--
--		However, please note that if the compiler knows that the
--		pointer takes on only one of two values, a not-equal
--		comparison will provide exactly the information that the
--		compiler needs to deduce the value of the pointer.
--
--o	Disable any value-speculation optimizations that your compiler
--	might provide, especially if you are making use of feedback-based
--	optimizations that take data collected from prior runs.  Such
--	value-speculation optimizations reorder operations by design.
--
--	There is one exception to this rule:  Value-speculation
--	optimizations that leverage the branch-prediction hardware are
--	safe on strongly ordered systems (such as x86), but not on weakly
--	ordered systems (such as ARM or Power).  Choose your compiler
--	command-line options wisely!
--
--
--EXAMPLE OF AMPLIFIED RCU-USAGE BUG
--
--Because updaters can run concurrently with RCU readers, RCU readers can
--see stale and/or inconsistent values.  If RCU readers need fresh or
--consistent values, which they sometimes do, they need to take proper
--precautions.  To see this, consider the following code fragment:
--
--	struct foo {
--		int a;
--		int b;
--		int c;
--	};
--	struct foo *gp1;
--	struct foo *gp2;
--
--	void updater(void)
+-	static void p_callback(struct rcu_head *rp)
 -	{
--		struct foo *p;
+-		struct pstruct *p = container_of(rp, struct pstruct, rcu);
 -
--		p = kmalloc(...);
--		if (p == NULL)
--			deal_with_it();
--		p->a = 42;  /* Each field in its own cache line. */
--		p->b = 43;
--		p->c = 44;
--		rcu_assign_pointer(gp1, p);
--		p->b = 143;
--		p->c = 144;
--		rcu_assign_pointer(gp2, p);
+-		kfree(p);
 -	}
 -
--	void reader(void)
--	{
--		struct foo *p;
--		struct foo *q;
--		int r1, r2;
 -
--		p = rcu_dereference(gp2);
--		if (p == NULL)
--			return;
--		r1 = p->b;  /* Guaranteed to get 143. */
--		q = rcu_dereference(gp1);  /* Guaranteed non-NULL. */
--		if (p == q) {
--			/* The compiler decides that q->c is same as p->c. */
--			r2 = p->c; /* Could get 44 on weakly order system. */
--		}
--		do_something_with(r1, r2);
--	}
+-Unloading Modules That Use call_rcu()
 -
--You might be surprised that the outcome (r1 == 143 && r2 == 44) is possible,
--but you should not be.  After all, the updater might have been invoked
--a second time between the time reader() loaded into "r1" and the time
--that it loaded into "r2".  The fact that this same result can occur due
--to some reordering from the compiler and CPUs is beside the point.
+-But what if p_callback is defined in an unloadable module?
 -
--But suppose that the reader needs a consistent view?
+-If we unload the module while some RCU callbacks are pending,
+-the CPUs executing these callbacks are going to be severely
+-disappointed when they are later invoked, as fancifully depicted at
+-http://lwn.net/images/ns/kernel/rcu-drop.jpg.
 -
--Then one approach is to use locking, for example, as follows:
+-We could try placing a synchronize_rcu() in the module-exit code path,
+-but this is not sufficient. Although synchronize_rcu() does wait for a
+-grace period to elapse, it does not wait for the callbacks to complete.
 -
--	struct foo {
--		int a;
--		int b;
--		int c;
--		spinlock_t lock;
--	};
--	struct foo *gp1;
--	struct foo *gp2;
--
--	void updater(void)
--	{
--		struct foo *p;
--
--		p = kmalloc(...);
--		if (p == NULL)
--			deal_with_it();
--		spin_lock(&p->lock);
--		p->a = 42;  /* Each field in its own cache line. */
--		p->b = 43;
--		p->c = 44;
--		spin_unlock(&p->lock);
--		rcu_assign_pointer(gp1, p);
--		spin_lock(&p->lock);
--		p->b = 143;
--		p->c = 144;
--		spin_unlock(&p->lock);
--		rcu_assign_pointer(gp2, p);
--	}
--
--	void reader(void)
--	{
--		struct foo *p;
--		struct foo *q;
--		int r1, r2;
--
--		p = rcu_dereference(gp2);
--		if (p == NULL)
--			return;
--		spin_lock(&p->lock);
--		r1 = p->b;  /* Guaranteed to get 143. */
--		q = rcu_dereference(gp1);  /* Guaranteed non-NULL. */
--		if (p == q) {
--			/* The compiler decides that q->c is same as p->c. */
--			r2 = p->c; /* Locking guarantees r2 == 144. */
--		}
--		spin_unlock(&p->lock);
--		do_something_with(r1, r2);
--	}
--
--As always, use the right tool for the job!
+-One might be tempted to try several back-to-back synchronize_rcu()
+-calls, but this is still not guaranteed to work. If there is a very
+-heavy RCU-callback load, then some of the callbacks might be deferred
+-in order to allow other processing to proceed. Such deferral is required
+-in realtime kernels in order to avoid excessive scheduling latencies.
 -
 -
--EXAMPLE WHERE THE COMPILER KNOWS TOO MUCH
+-rcu_barrier()
 -
--If a pointer obtained from rcu_dereference() compares not-equal to some
--other pointer, the compiler normally has no clue what the value of the
--first pointer might be.  This lack of knowledge prevents the compiler
--from carrying out optimizations that otherwise might destroy the ordering
--guarantees that RCU depends on.  And the volatile cast in rcu_dereference()
--should prevent the compiler from guessing the value.
+-We instead need the rcu_barrier() primitive.  Rather than waiting for
+-a grace period to elapse, rcu_barrier() waits for all outstanding RCU
+-callbacks to complete.  Please note that rcu_barrier() does -not- imply
+-synchronize_rcu(), in particular, if there are no RCU callbacks queued
+-anywhere, rcu_barrier() is within its rights to return immediately,
+-without waiting for a grace period to elapse.
 -
--But without rcu_dereference(), the compiler knows more than you might
--expect.  Consider the following code fragment:
+-Pseudo-code using rcu_barrier() is as follows:
 -
--	struct foo {
--		int a;
--		int b;
--	};
--	static struct foo variable1;
--	static struct foo variable2;
--	static struct foo *gp = &variable1;
+-   1. Prevent any new RCU callbacks from being posted.
+-   2. Execute rcu_barrier().
+-   3. Allow the module to be unloaded.
 -
--	void updater(void)
--	{
--		initialize_foo(&variable2);
--		rcu_assign_pointer(gp, &variable2);
--		/*
--		 * The above is the only store to gp in this translation unit,
--		 * and the address of gp is not exported in any way.
--		 */
--	}
+-There is also an srcu_barrier() function for SRCU, and you of course
+-must match the flavor of rcu_barrier() with that of call_rcu().  If your
+-module uses multiple flavors of call_rcu(), then it must also use multiple
+-flavors of rcu_barrier() when unloading that module.  For example, if
+-it uses call_rcu(), call_srcu() on srcu_struct_1, and call_srcu() on
+-srcu_struct_2(), then the following three lines of code will be required
+-when unloading:
 -
--	int reader(void)
--	{
--		struct foo *p;
+- 1 rcu_barrier();
+- 2 srcu_barrier(&srcu_struct_1);
+- 3 srcu_barrier(&srcu_struct_2);
 -
--		p = gp;
--		barrier();
--		if (p == &variable1)
--			return p->a; /* Must be variable1.a. */
--		else
--			return p->b; /* Must be variable2.b. */
--	}
+-The rcutorture module makes use of rcu_barrier() in its exit function
+-as follows:
 -
--Because the compiler can see all stores to "gp", it knows that the only
--possible values of "gp" are "variable1" on the one hand and "variable2"
--on the other.  The comparison in reader() therefore tells the compiler
--the exact value of "p" even in the not-equals case.  This allows the
--compiler to make the return values independent of the load from "gp",
--in turn destroying the ordering between this load and the loads of the
--return values.  This can result in "p->b" returning pre-initialization
--garbage values.
+- 1 static void
+- 2 rcu_torture_cleanup(void)
+- 3 {
+- 4   int i;
+- 5
+- 6   fullstop = 1;
+- 7   if (shuffler_task != NULL) {
+- 8     VERBOSE_PRINTK_STRING("Stopping rcu_torture_shuffle task");
+- 9     kthread_stop(shuffler_task);
+-10   }
+-11   shuffler_task = NULL;
+-12
+-13   if (writer_task != NULL) {
+-14     VERBOSE_PRINTK_STRING("Stopping rcu_torture_writer task");
+-15     kthread_stop(writer_task);
+-16   }
+-17   writer_task = NULL;
+-18
+-19   if (reader_tasks != NULL) {
+-20     for (i = 0; i < nrealreaders; i++) {
+-21       if (reader_tasks[i] != NULL) {
+-22         VERBOSE_PRINTK_STRING(
+-23           "Stopping rcu_torture_reader task");
+-24         kthread_stop(reader_tasks[i]);
+-25       }
+-26       reader_tasks[i] = NULL;
+-27     }
+-28     kfree(reader_tasks);
+-29     reader_tasks = NULL;
+-30   }
+-31   rcu_torture_current = NULL;
+-32
+-33   if (fakewriter_tasks != NULL) {
+-34     for (i = 0; i < nfakewriters; i++) {
+-35       if (fakewriter_tasks[i] != NULL) {
+-36         VERBOSE_PRINTK_STRING(
+-37           "Stopping rcu_torture_fakewriter task");
+-38         kthread_stop(fakewriter_tasks[i]);
+-39       }
+-40       fakewriter_tasks[i] = NULL;
+-41     }
+-42     kfree(fakewriter_tasks);
+-43     fakewriter_tasks = NULL;
+-44   }
+-45
+-46   if (stats_task != NULL) {
+-47     VERBOSE_PRINTK_STRING("Stopping rcu_torture_stats task");
+-48     kthread_stop(stats_task);
+-49   }
+-50   stats_task = NULL;
+-51
+-52   /* Wait for all RCU callbacks to fire. */
+-53   rcu_barrier();
+-54
+-55   rcu_torture_stats_print(); /* -After- the stats thread is stopped! */
+-56
+-57   if (cur_ops->cleanup != NULL)
+-58     cur_ops->cleanup();
+-59   if (atomic_read(&n_rcu_torture_error))
+-60     rcu_torture_print_module_parms("End of test: FAILURE");
+-61   else
+-62     rcu_torture_print_module_parms("End of test: SUCCESS");
+-63 }
 -
--In short, rcu_dereference() is -not- optional when you are going to
--dereference the resulting pointer.
+-Line 6 sets a global variable that prevents any RCU callbacks from
+-re-posting themselves. This will not be necessary in most cases, since
+-RCU callbacks rarely include calls to call_rcu(). However, the rcutorture
+-module is an exception to this rule, and therefore needs to set this
+-global variable.
+-
+-Lines 7-50 stop all the kernel tasks associated with the rcutorture
+-module. Therefore, once execution reaches line 53, no more rcutorture
+-RCU callbacks will be posted. The rcu_barrier() call on line 53 waits
+-for any pre-existing callbacks to complete.
+-
+-Then lines 55-62 print status and do operation-specific cleanup, and
+-then return, permitting the module-unload operation to be completed.
+-
+-Quick Quiz #1: Is there any other situation where rcu_barrier() might
+-	be required?
+-
+-Your module might have additional complications. For example, if your
+-module invokes call_rcu() from timers, you will need to first cancel all
+-the timers, and only then invoke rcu_barrier() to wait for any remaining
+-RCU callbacks to complete.
+-
+-Of course, if you module uses call_rcu(), you will need to invoke
+-rcu_barrier() before unloading.  Similarly, if your module uses
+-call_srcu(), you will need to invoke srcu_barrier() before unloading,
+-and on the same srcu_struct structure.  If your module uses call_rcu()
+--and- call_srcu(), then you will need to invoke rcu_barrier() -and-
+-srcu_barrier().
 -
 -
--WHICH MEMBER OF THE rcu_dereference() FAMILY SHOULD YOU USE?
+-Implementing rcu_barrier()
 -
--First, please avoid using rcu_dereference_raw() and also please avoid
--using rcu_dereference_check() and rcu_dereference_protected() with a
--second argument with a constant value of 1 (or true, for that matter).
--With that caution out of the way, here is some guidance for which
--member of the rcu_dereference() to use in various situations:
+-Dipankar Sarma's implementation of rcu_barrier() makes use of the fact
+-that RCU callbacks are never reordered once queued on one of the per-CPU
+-queues. His implementation queues an RCU callback on each of the per-CPU
+-callback queues, and then waits until they have all started executing, at
+-which point, all earlier RCU callbacks are guaranteed to have completed.
 -
--1.	If the access needs to be within an RCU read-side critical
--	section, use rcu_dereference().  With the new consolidated
--	RCU flavors, an RCU read-side critical section is entered
--	using rcu_read_lock(), anything that disables bottom halves,
--	anything that disables interrupts, or anything that disables
--	preemption.
+-The original code for rcu_barrier() was as follows:
 -
--2.	If the access might be within an RCU read-side critical section
--	on the one hand, or protected by (say) my_lock on the other,
--	use rcu_dereference_check(), for example:
+- 1 void rcu_barrier(void)
+- 2 {
+- 3   BUG_ON(in_interrupt());
+- 4   /* Take cpucontrol mutex to protect against CPU hotplug */
+- 5   mutex_lock(&rcu_barrier_mutex);
+- 6   init_completion(&rcu_barrier_completion);
+- 7   atomic_set(&rcu_barrier_cpu_count, 0);
+- 8   on_each_cpu(rcu_barrier_func, NULL, 0, 1);
+- 9   wait_for_completion(&rcu_barrier_completion);
+-10   mutex_unlock(&rcu_barrier_mutex);
+-11 }
 -
--		p1 = rcu_dereference_check(p->rcu_protected_pointer,
--					   lockdep_is_held(&my_lock));
+-Line 3 verifies that the caller is in process context, and lines 5 and 10
+-use rcu_barrier_mutex to ensure that only one rcu_barrier() is using the
+-global completion and counters at a time, which are initialized on lines
+-6 and 7. Line 8 causes each CPU to invoke rcu_barrier_func(), which is
+-shown below. Note that the final "1" in on_each_cpu()'s argument list
+-ensures that all the calls to rcu_barrier_func() will have completed
+-before on_each_cpu() returns. Line 9 then waits for the completion.
+-
+-This code was rewritten in 2008 and several times thereafter, but this
+-still gives the general idea.
+-
+-The rcu_barrier_func() runs on each CPU, where it invokes call_rcu()
+-to post an RCU callback, as follows:
+-
+- 1 static void rcu_barrier_func(void *notused)
+- 2 {
+- 3 int cpu = smp_processor_id();
+- 4 struct rcu_data *rdp = &per_cpu(rcu_data, cpu);
+- 5 struct rcu_head *head;
+- 6
+- 7 head = &rdp->barrier;
+- 8 atomic_inc(&rcu_barrier_cpu_count);
+- 9 call_rcu(head, rcu_barrier_callback);
+-10 }
+-
+-Lines 3 and 4 locate RCU's internal per-CPU rcu_data structure,
+-which contains the struct rcu_head that needed for the later call to
+-call_rcu(). Line 7 picks up a pointer to this struct rcu_head, and line
+-8 increments a global counter. This counter will later be decremented
+-by the callback. Line 9 then registers the rcu_barrier_callback() on
+-the current CPU's queue.
+-
+-The rcu_barrier_callback() function simply atomically decrements the
+-rcu_barrier_cpu_count variable and finalizes the completion when it
+-reaches zero, as follows:
+-
+- 1 static void rcu_barrier_callback(struct rcu_head *notused)
+- 2 {
+- 3 if (atomic_dec_and_test(&rcu_barrier_cpu_count))
+- 4 complete(&rcu_barrier_completion);
+- 5 }
+-
+-Quick Quiz #2: What happens if CPU 0's rcu_barrier_func() executes
+-	immediately (thus incrementing rcu_barrier_cpu_count to the
+-	value one), but the other CPU's rcu_barrier_func() invocations
+-	are delayed for a full grace period? Couldn't this result in
+-	rcu_barrier() returning prematurely?
+-
+-The current rcu_barrier() implementation is more complex, due to the need
+-to avoid disturbing idle CPUs (especially on battery-powered systems)
+-and the need to minimally disturb non-idle CPUs in real-time systems.
+-However, the code above illustrates the concepts.
 -
 -
--3.	If the access might be within an RCU read-side critical section
--	on the one hand, or protected by either my_lock or your_lock on
--	the other, again use rcu_dereference_check(), for example:
+-rcu_barrier() Summary
 -
--		p1 = rcu_dereference_check(p->rcu_protected_pointer,
--					   lockdep_is_held(&my_lock) ||
--					   lockdep_is_held(&your_lock));
--
--4.	If the access is on the update side, so that it is always protected
--	by my_lock, use rcu_dereference_protected():
--
--		p1 = rcu_dereference_protected(p->rcu_protected_pointer,
--					       lockdep_is_held(&my_lock));
--
--	This can be extended to handle multiple locks as in #3 above,
--	and both can be extended to check other conditions as well.
--
--5.	If the protection is supplied by the caller, and is thus unknown
--	to this code, that is the rare case when rcu_dereference_raw()
--	is appropriate.  In addition, rcu_dereference_raw() might be
--	appropriate when the lockdep expression would be excessively
--	complex, except that a better approach in that case might be to
--	take a long hard look at your synchronization design.  Still,
--	there are data-locking cases where any one of a very large number
--	of locks or reference counters suffices to protect the pointer,
--	so rcu_dereference_raw() does have its place.
--
--	However, its place is probably quite a bit smaller than one
--	might expect given the number of uses in the current kernel.
--	Ditto for its synonym, rcu_dereference_check( ... , 1), and
--	its close relative, rcu_dereference_protected(... , 1).
+-The rcu_barrier() primitive has seen relatively little use, since most
+-code using RCU is in the core kernel rather than in modules. However, if
+-you are using RCU from an unloadable module, you need to use rcu_barrier()
+-so that your module may be safely unloaded.
 -
 -
--SPARSE CHECKING OF RCU-PROTECTED POINTERS
+-Answers to Quick Quizzes
 -
--The sparse static-analysis tool checks for direct access to RCU-protected
--pointers, which can result in "interesting" bugs due to compiler
--optimizations involving invented loads and perhaps also load tearing.
--For example, suppose someone mistakenly does something like this:
+-Quick Quiz #1: Is there any other situation where rcu_barrier() might
+-	be required?
 -
--	p = q->rcu_protected_pointer;
--	do_something_with(p->a);
--	do_something_else_with(p->b);
+-Answer: Interestingly enough, rcu_barrier() was not originally
+-	implemented for module unloading. Nikita Danilov was using
+-	RCU in a filesystem, which resulted in a similar situation at
+-	filesystem-unmount time. Dipankar Sarma coded up rcu_barrier()
+-	in response, so that Nikita could invoke it during the
+-	filesystem-unmount process.
 -
--If register pressure is high, the compiler might optimize "p" out
--of existence, transforming the code to something like this:
+-	Much later, yours truly hit the RCU module-unload problem when
+-	implementing rcutorture, and found that rcu_barrier() solves
+-	this problem as well.
 -
--	do_something_with(q->rcu_protected_pointer->a);
--	do_something_else_with(q->rcu_protected_pointer->b);
+-Quick Quiz #2: What happens if CPU 0's rcu_barrier_func() executes
+-	immediately (thus incrementing rcu_barrier_cpu_count to the
+-	value one), but the other CPU's rcu_barrier_func() invocations
+-	are delayed for a full grace period? Couldn't this result in
+-	rcu_barrier() returning prematurely?
 -
--This could fatally disappoint your code if q->rcu_protected_pointer
--changed in the meantime.  Nor is this a theoretical problem:  Exactly
--this sort of bug cost Paul E. McKenney (and several of his innocent
--colleagues) a three-day weekend back in the early 1990s.
+-Answer: This cannot happen. The reason is that on_each_cpu() has its last
+-	argument, the wait flag, set to "1". This flag is passed through
+-	to smp_call_function() and further to smp_call_function_on_cpu(),
+-	causing this latter to spin until the cross-CPU invocation of
+-	rcu_barrier_func() has completed. This by itself would prevent
+-	a grace period from completing on non-CONFIG_PREEMPT kernels,
+-	since each CPU must undergo a context switch (or other quiescent
+-	state) before the grace period can complete. However, this is
+-	of no use in CONFIG_PREEMPT kernels.
 -
--Load tearing could of course result in dereferencing a mashup of a pair
--of pointers, which also might fatally disappoint your code.
+-	Therefore, on_each_cpu() disables preemption across its call
+-	to smp_call_function() and also across the local call to
+-	rcu_barrier_func(). This prevents the local CPU from context
+-	switching, again preventing grace periods from completing. This
+-	means that all CPUs have executed rcu_barrier_func() before
+-	the first rcu_barrier_callback() can possibly execute, in turn
+-	preventing rcu_barrier_cpu_count from prematurely reaching zero.
 -
--These problems could have been avoided simply by making the code instead
--read as follows:
--
--	p = rcu_dereference(q->rcu_protected_pointer);
--	do_something_with(p->a);
--	do_something_else_with(p->b);
--
--Unfortunately, these sorts of bugs can be extremely hard to spot during
--review.  This is where the sparse tool comes into play, along with the
--"__rcu" marker.  If you mark a pointer declaration, whether in a structure
--or as a formal parameter, with "__rcu", which tells sparse to complain if
--this pointer is accessed directly.  It will also cause sparse to complain
--if a pointer not marked with "__rcu" is accessed using rcu_dereference()
--and friends.  For example, ->rcu_protected_pointer might be declared as
--follows:
--
--	struct foo __rcu *rcu_protected_pointer;
--
--Use of "__rcu" is opt-in.  If you choose not to use it, then you should
--ignore the sparse warnings.
+-	Currently, -rt implementations of RCU keep but a single global
+-	queue for RCU callbacks, and thus do not suffer from this
+-	problem. However, when the -rt RCU eventually does have per-CPU
+-	callback queues, things will have to change. One simple change
+-	is to add an rcu_read_lock() before line 8 of rcu_barrier()
+-	and an rcu_read_unlock() after line 8 of this same function. If
+-	you can think of a better change, please let me know!
