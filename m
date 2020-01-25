@@ -2,37 +2,34 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 190A0149495
-	for <lists+linux-kernel@lfdr.de>; Sat, 25 Jan 2020 11:44:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5F065149487
+	for <lists+linux-kernel@lfdr.de>; Sat, 25 Jan 2020 11:44:33 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730255AbgAYKoc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 25 Jan 2020 05:44:32 -0500
-Received: from Galois.linutronix.de ([193.142.43.55]:44388 "EHLO
+        id S1730113AbgAYKns (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 25 Jan 2020 05:43:48 -0500
+Received: from Galois.linutronix.de ([193.142.43.55]:44368 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729866AbgAYKn0 (ORCPT
+        with ESMTP id S1729828AbgAYKnX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 25 Jan 2020 05:43:26 -0500
+        Sat, 25 Jan 2020 05:43:23 -0500
 Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
         by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
         (Exim 4.80)
         (envelope-from <tip-bot2@linutronix.de>)
-        id 1ivIuQ-0000HC-HW; Sat, 25 Jan 2020 11:43:22 +0100
+        id 1ivIuN-0000GB-Qq; Sat, 25 Jan 2020 11:43:19 +0100
 Received: from [127.0.1.1] (localhost [IPv6:::1])
-        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 1A9521C1A95;
-        Sat, 25 Jan 2020 11:42:59 +0100 (CET)
+        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 4737E1C1A74;
+        Sat, 25 Jan 2020 11:42:58 +0100 (CET)
 Date:   Sat, 25 Jan 2020 10:42:58 -0000
-From:   "tip-bot2 for Boqun Feng" <tip-bot2@linutronix.de>
+From:   "tip-bot2 for Neeraj Upadhyay" <tip-bot2@linutronix.de>
 Reply-to: linux-kernel@vger.kernel.org
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip: core/rcu] rcu: Avoid modifying mask_ofl_ipi in
- sync_rcu_exp_select_node_cpus()
-Cc:     Boqun Feng <boqun.feng@gmail.com>,
-        "Paul E. McKenney" <paulmck@kernel.org>,
-        "Joel Fernandes (Google)" <joel@joelfernandes.org>,
-        Marco Elver <elver@google.com>, x86 <x86@kernel.org>,
+Subject: [tip: core/rcu] rcu: Fix missed wakeup of exp_wq waiters
+Cc:     Neeraj Upadhyay <neeraju@codeaurora.org>,
+        "Paul E. McKenney" <paulmck@kernel.org>, x86 <x86@kernel.org>,
         LKML <linux-kernel@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <157994897887.396.17380984006682495096.tip-bot2@tip-bot2>
+Message-ID: <157994897807.396.7789560572541212936.tip-bot2@tip-bot2>
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot2.linutronix.de>
 Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
@@ -48,65 +45,101 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The following commit has been merged into the core/rcu branch of tip:
 
-Commit-ID:     9f08cf088676c12a5b53bd5a29cf04f00c787b5d
-Gitweb:        https://git.kernel.org/tip/9f08cf088676c12a5b53bd5a29cf04f00c787b5d
-Author:        Boqun Feng <boqun.feng@gmail.com>
-AuthorDate:    Tue, 08 Oct 2019 13:01:40 +08:00
+Commit-ID:     fd6bc19d7676a060a171d1cf3dcbf6fd797eb05f
+Gitweb:        https://git.kernel.org/tip/fd6bc19d7676a060a171d1cf3dcbf6fd797eb05f
+Author:        Neeraj Upadhyay <neeraju@codeaurora.org>
+AuthorDate:    Tue, 19 Nov 2019 03:17:07 
 Committer:     Paul E. McKenney <paulmck@kernel.org>
-CommitterDate: Mon, 09 Dec 2019 12:24:56 -08:00
+CommitterDate: Mon, 09 Dec 2019 12:24:57 -08:00
 
-rcu: Avoid modifying mask_ofl_ipi in sync_rcu_exp_select_node_cpus()
+rcu: Fix missed wakeup of exp_wq waiters
 
-The "mask_ofl_ipi" is used to track which CPUs get IPIed, however
-in the IPI sending loop, "mask_ofl_ipi" along with another variable
-"mask_ofl_test" might also get modified to record which CPUs' quiesent
-states must be reported by the sync_rcu_exp_select_node_cpus() at
-the end of sync_rcu_exp_select_node_cpus().  This overlap of roles
-can be confusing, so this patch cleans things a little by using
-"mask_ofl_ipi" solely for determining which CPUs must be IPIed  and
-"mask_ofl_test" for solely determining on behalf of  which CPUs
-sync_rcu_exp_select_node_cpus() must report a quiscent state.
+Tasks waiting within exp_funnel_lock() for an expedited grace period to
+elapse can be starved due to the following sequence of events:
 
-Signed-off-by: Boqun Feng <boqun.feng@gmail.com>
+1.	Tasks A and B both attempt to start an expedited grace
+	period at about the same time.	This grace period will have
+	completed when the lower four bits of the rcu_state structure's
+	->expedited_sequence field are 0b'0100', for example, when the
+	initial value of this counter is zero.	Task A wins, and thus
+	does the actual work of starting the grace period, including
+	acquiring the rcu_state structure's .exp_mutex and sets the
+	counter to 0b'0001'.
+
+2.	Because task B lost the race to start the grace period, it
+	waits on ->expedited_sequence to reach 0b'0100' inside of
+	exp_funnel_lock(). This task therefore blocks on the rcu_node
+	structure's ->exp_wq[1] field, keeping in mind that the
+	end-of-grace-period value of ->expedited_sequence (0b'0100')
+	is shifted down two bits before indexing the ->exp_wq[] field.
+
+3.	Task C attempts to start another expedited grace period,
+	but blocks on ->exp_mutex, which is still held by Task A.
+
+4.	The aforementioned expedited grace period completes, so that
+	->expedited_sequence now has the value 0b'0100'.  A kworker task
+	therefore acquires the rcu_state structure's ->exp_wake_mutex
+	and starts awakening any tasks waiting for this grace period.
+
+5.	One of the first tasks awakened happens to be Task A.  Task A
+	therefore releases the rcu_state structure's ->exp_mutex,
+	which allows Task C to start the next expedited grace period,
+	which causes the lower four bits of the rcu_state structure's
+	->expedited_sequence field to become 0b'0101'.
+
+6.	Task C's expedited grace period completes, so that the lower four
+	bits of the rcu_state structure's ->expedited_sequence field now
+	become 0b'1000'.
+
+7.	The kworker task from step 4 above continues its wakeups.
+	Unfortunately, the wake_up_all() refetches the rcu_state
+	structure's .expedited_sequence field:
+
+	wake_up_all(&rnp->exp_wq[rcu_seq_ctr(rcu_state.expedited_sequence) & 0x3]);
+
+	This results in the wakeup being applied to the rcu_node
+	structure's ->exp_wq[2] field, which is unfortunate given that
+	Task B is instead waiting on ->exp_wq[1].
+
+On a busy system, no harm is done (or at least no permanent harm is done).
+Some later expedited grace period will redo the wakeup.  But on a quiet
+system, such as many embedded systems, it might be a good long time before
+there was another expedited grace period.  On such embedded systems,
+this situation could therefore result in a system hang.
+
+This issue manifested as DPM device timeout during suspend (which
+usually qualifies as a quiet time) due to a SCSI device being stuck in
+_synchronize_rcu_expedited(), with the following stack trace:
+
+	schedule()
+	synchronize_rcu_expedited()
+	synchronize_rcu()
+	scsi_device_quiesce()
+	scsi_bus_suspend()
+	dpm_run_callback()
+	__device_suspend()
+
+This commit therefore prevents such delays, timeouts, and hangs by
+making rcu_exp_wait_wake() use its "s" argument consistently instead of
+refetching from rcu_state.expedited_sequence.
+
+Fixes: 3b5f668e715b ("rcu: Overlap wakeups with next expedited grace period")
+Signed-off-by: Neeraj Upadhyay <neeraju@codeaurora.org>
 Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
-Reviewed-by: Joel Fernandes (Google) <joel@joelfernandes.org>
-Acked-by: Marco Elver <elver@google.com>
 ---
- kernel/rcu/tree_exp.h | 13 ++++++-------
- 1 file changed, 6 insertions(+), 7 deletions(-)
+ kernel/rcu/tree_exp.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/kernel/rcu/tree_exp.h b/kernel/rcu/tree_exp.h
-index 69c5aa6..6a6f328 100644
+index 3b59c3e..fa143e4 100644
 --- a/kernel/rcu/tree_exp.h
 +++ b/kernel/rcu/tree_exp.h
-@@ -387,10 +387,10 @@ retry_ipi:
+@@ -557,7 +557,7 @@ static void rcu_exp_wait_wake(unsigned long s)
+ 			spin_unlock(&rnp->exp_lock);
  		}
- 		ret = smp_call_function_single(cpu, rcu_exp_handler, NULL, 0);
- 		put_cpu();
--		if (!ret) {
--			mask_ofl_ipi &= ~mask;
-+		/* The CPU will report the QS in response to the IPI. */
-+		if (!ret)
- 			continue;
--		}
-+
- 		/* Failed, raced with CPU hotplug operation. */
- 		raw_spin_lock_irqsave_rcu_node(rnp, flags);
- 		if ((rnp->qsmaskinitnext & mask) &&
-@@ -401,13 +401,12 @@ retry_ipi:
- 			schedule_timeout_uninterruptible(1);
- 			goto retry_ipi;
- 		}
--		/* CPU really is offline, so we can ignore it. */
--		if (!(rnp->expmask & mask))
--			mask_ofl_ipi &= ~mask;
-+		/* CPU really is offline, so we must report its QS. */
-+		if (rnp->expmask & mask)
-+			mask_ofl_test |= mask;
- 		raw_spin_unlock_irqrestore_rcu_node(rnp, flags);
+ 		smp_mb(); /* All above changes before wakeup. */
+-		wake_up_all(&rnp->exp_wq[rcu_seq_ctr(rcu_state.expedited_sequence) & 0x3]);
++		wake_up_all(&rnp->exp_wq[rcu_seq_ctr(s) & 0x3]);
  	}
- 	/* Report quiescent states for those that went offline. */
--	mask_ofl_test |= mask_ofl_ipi;
- 	if (mask_ofl_test)
- 		rcu_report_exp_cpu_mult(rnp, mask_ofl_test, false);
- }
+ 	trace_rcu_exp_grace_period(rcu_state.name, s, TPS("endwake"));
+ 	mutex_unlock(&rcu_state.exp_wake_mutex);
