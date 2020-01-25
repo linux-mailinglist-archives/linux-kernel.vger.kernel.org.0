@@ -2,155 +2,116 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 13C2214928C
-	for <lists+linux-kernel@lfdr.de>; Sat, 25 Jan 2020 02:35:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 85100149298
+	for <lists+linux-kernel@lfdr.de>; Sat, 25 Jan 2020 02:36:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729728AbgAYBff (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 24 Jan 2020 20:35:35 -0500
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:34049 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729195AbgAYBfe (ORCPT
+        id S1729900AbgAYBgK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 24 Jan 2020 20:36:10 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:36760 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387678AbgAYBf7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 24 Jan 2020 20:35:34 -0500
-Received: by mail-pg1-f194.google.com with SMTP id r11so2034291pgf.1;
-        Fri, 24 Jan 2020 17:35:34 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=6d0QvcR0leGd4wcUqGcNGh1VcTAtJHNYWWsnf4qfAso=;
-        b=Yhjgbw2e8a5r0TlVh8TKKQ/fbUrWMak2zONW5BxfIcHr/m9egxKNe+wpNLsTgBzawK
-         Ls6zqD/SKUju2TNKCfqYi6uIQa44C28DgnWI4W3RM6ZOZgEZSbqQNgFoeJnB9+sL5HG2
-         Vq0wr8xv+dEaUF3HthYIuk17VuEuqVRw3uD8PtygN1rPSgA3+wYlktowZ3bsdpOt4mZo
-         oDi+3LaUrhr98XaY4mF0mldLlFUFVT6I/kUmDuQfWRvKYFDzpLk79AhXpEDZ2MEUF8zL
-         fq7NOVmatfmgT1LN9iz1CmSjiNlrEQhTy0X7jHS5sT69z8G70KtWz3ahbWspp5xbn6+g
-         5++g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=6d0QvcR0leGd4wcUqGcNGh1VcTAtJHNYWWsnf4qfAso=;
-        b=VGeYxlZDD38aFEhW7NZYUeyqeMqGHfLkTUnmvPnfURqJlNmnN5yLLwSWRj4EfGtwNK
-         9s2RHs/QUbZsS4/4S7XEPaduwlZl7SNrgWfjqEIpb3o3VPlZdLaynZagA1rF5h2GAAnC
-         8L99SrK4YmRUpvoWlEV+gdVo3zG7Brcc5cB39PvgE7qeW2MclL6PxcS/1EM+Yjblfial
-         jfUBvRynJ30rC/8f+VvxuXy0mOUy8HzW5YGFCq1TkCZjIQMxM5ouLMZT6IFCJzX0Ygyi
-         CPY/chUcYGvWXdEGJBoDbo9qh/71i2iiba8A7bo/PsMdc64Y2Hm4QlsRaooShfoyZi9n
-         omlQ==
-X-Gm-Message-State: APjAAAVIOHoblRXSnogJVptTmevVk9sX+Im/U4P2aE4Ls6hhAKcTvRBn
-        XUa/AZZpBZ3tmccf4Yz9+Senfjfj
-X-Google-Smtp-Source: APXvYqxX7byGtZh2yK4qEWdK9zICH5Thh4YyWT/9fRYA8ci8Lo1/l/L7s3BCI8Eaul0rTai7ZEbZfQ==
-X-Received: by 2002:a62:1548:: with SMTP id 69mr6058157pfv.239.1579916133829;
-        Fri, 24 Jan 2020 17:35:33 -0800 (PST)
-Received: from [192.168.86.235] (c-73-241-150-58.hsd1.ca.comcast.net. [73.241.150.58])
-        by smtp.gmail.com with ESMTPSA id b4sm7630036pfd.18.2020.01.24.17.35.32
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 24 Jan 2020 17:35:33 -0800 (PST)
-Subject: Re: [PATCH net-next] net: systemport: Do not block interrupts in TX
- reclaim
-To:     Florian Fainelli <f.fainelli@gmail.com>, netdev@vger.kernel.org
-Cc:     kuba@kernel.org, edumazet@google.com,
-        "David S. Miller" <davem@davemloft.net>,
-        "open list:BROADCOM SYSTEMPORT ETHERNET DRIVER" 
-        <bcm-kernel-feedback-list@broadcom.com>,
-        open list <linux-kernel@vger.kernel.org>
-References: <20200124235930.640-1-f.fainelli@gmail.com>
-From:   Eric Dumazet <eric.dumazet@gmail.com>
-Message-ID: <de50408a-37db-e55e-57af-54574c7b5e42@gmail.com>
-Date:   Fri, 24 Jan 2020 17:35:31 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.2.2
+        Fri, 24 Jan 2020 20:35:59 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
+        MIME-Version:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
+        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+        Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=r6GOkDmHzXzhSVqOAD8xlLIM6J6vOicE1/PE/yHNhJg=; b=u/qkoarH8z0iijq33ZVQ9301v
+        9Rwk5QUWYJuir0JRz2g3gAvmwfEk2dveuO6cp6kOah1H+gU5RcgFpZyz8DOTwcq4u41wsYNesptA0
+        DXWwxdfd621h81YVmJJ6QyYt9XLzBwRj4Jjxdi+im2s9zwR/Mdkn5Xy9ag9DkFKXzAcHngeQJznAY
+        IH/oeFxaS/lqVzfpSuTithOrftDc8EsfLSUsRuMvpblcWkatJapDh1LX+b0NnrjN3vpcLlh3vxdyB
+        4FxYQxNjeDWA6ghvaA058mgMgNJpasVgaPd45I3lX1j0F1vfqg5aArs0bf9j0xFTI4zgAeO6rnM94
+        yjHIU1COw==;
+Received: from willy by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1ivAMd-0006VA-6E; Sat, 25 Jan 2020 01:35:55 +0000
+From:   Matthew Wilcox <willy@infradead.org>
+To:     linux-fsdevel@vger.kernel.org
+Cc:     "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        linux-btrfs@vger.kernel.org, linux-erofs@lists.ozlabs.org,
+        linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
+        linux-xfs@vger.kernel.org, cluster-devel@redhat.com,
+        ocfs2-devel@oss.oracle.com
+Subject: [PATCH 00/12] Change readahead API
+Date:   Fri, 24 Jan 2020 17:35:41 -0800
+Message-Id: <20200125013553.24899-1-willy@infradead.org>
+X-Mailer: git-send-email 2.21.1
 MIME-Version: 1.0
-In-Reply-To: <20200124235930.640-1-f.fainelli@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+From: "Matthew Wilcox (Oracle)" <willy@infradead.org>
 
+This series adds a readahead address_space operation to eventually
+replace the readpages operation.  The key difference is that
+pages are added to the page cache as they are allocated (and
+then looked up by the filesystem) instead of passing them on a
+list to the readpages operation and having the filesystem add
+them to the page cache.  It's a net reduction in code for each
+implementation, more efficient than walking a list, and solves
+the direct-write vs buffered-read problem reported by yu kuai at
+https://lore.kernel.org/linux-fsdevel/20200116063601.39201-1-yukuai3@huawei.com/
 
-On 1/24/20 3:59 PM, Florian Fainelli wrote:
-> There is no need to disable interrupts with a spin_lock_irqsave() in
-> bcm_sysport_tx_poll() since we are in softIRQ context already. Leave
-> interrupts enabled, thus giving a chance for the RX interrupts to be
-> processed.
-> 
-> This now makes bcm_sysport_tx_reclaim() equivalent to
-> bcm_sysport_tx_clean(), thus remove the former, and make
-> bcm_sysport_tx_reclaim_all() to use the latter.
-> 
-> Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
-> ---
->  drivers/net/ethernet/broadcom/bcmsysport.c | 30 ++++++----------------
->  1 file changed, 8 insertions(+), 22 deletions(-)
-> 
-> diff --git a/drivers/net/ethernet/broadcom/bcmsysport.c b/drivers/net/ethernet/broadcom/bcmsysport.c
-> index f07ac0e0af59..dfff0657ce8f 100644
-> --- a/drivers/net/ethernet/broadcom/bcmsysport.c
-> +++ b/drivers/net/ethernet/broadcom/bcmsysport.c
-> @@ -925,26 +925,6 @@ static unsigned int __bcm_sysport_tx_reclaim(struct bcm_sysport_priv *priv,
->  	return pkts_compl;
->  }
->  
-> -/* Locked version of the per-ring TX reclaim routine */
-> -static unsigned int bcm_sysport_tx_reclaim(struct bcm_sysport_priv *priv,
-> -					   struct bcm_sysport_tx_ring *ring)
-> -{
-> -	struct netdev_queue *txq;
-> -	unsigned int released;
-> -	unsigned long flags;
-> -
-> -	txq = netdev_get_tx_queue(priv->netdev, ring->index);
-> -
-> -	spin_lock_irqsave(&ring->lock, flags);
-> -	released = __bcm_sysport_tx_reclaim(priv, ring);
-> -	if (released)
-> -		netif_tx_wake_queue(txq);
-> -
-> -	spin_unlock_irqrestore(&ring->lock, flags);
-> -
-> -	return released;
-> -}
-> -
->  /* Locked version of the per-ring TX reclaim, but does not wake the queue */
->  static void bcm_sysport_tx_clean(struct bcm_sysport_priv *priv,
->  				 struct bcm_sysport_tx_ring *ring)
-> @@ -960,9 +940,15 @@ static int bcm_sysport_tx_poll(struct napi_struct *napi, int budget)
->  {
->  	struct bcm_sysport_tx_ring *ring =
->  		container_of(napi, struct bcm_sysport_tx_ring, napi);
-> +	struct bcm_sysport_priv *priv = ring->priv;
->  	unsigned int work_done = 0;
->  
-> -	work_done = bcm_sysport_tx_reclaim(ring->priv, ring);
-> +	spin_lock(&ring->lock);
-> +	work_done = __bcm_sysport_tx_reclaim(priv, ring);
-> +	if (work_done)
-> +		netif_tx_wake_queue(netdev_get_tx_queue(priv->netdev,
-> +							ring->index));
-> +	spin_unlock(&ring->lock);
->  
->  	if (work_done == 0) {
->  		napi_complete(napi);
-> @@ -984,7 +970,7 @@ static void bcm_sysport_tx_reclaim_all(struct bcm_sysport_priv *priv)
->  	unsigned int q;
->  
->  	for (q = 0; q < priv->netdev->num_tx_queues; q++)
-> -		bcm_sysport_tx_reclaim(priv, &priv->tx_rings[q]);
-> +		bcm_sysport_tx_clean(priv, &priv->tx_rings[q]);
->  }
->  
->  static int bcm_sysport_poll(struct napi_struct *napi, int budget)
-> 
+Matthew Wilcox (Oracle) (12):
+  mm: Fix the return type of __do_page_cache_readahead
+  readahead: Ignore return value of ->readpages
+  readahead: Put pages in cache earlier
+  mm: Add readahead address space operation
+  fs: Convert mpage_readpages to mpage_readahead
+  btrfs: Convert from readpages to readahead
+  erofs: Convert uncompressed files from readpages to readahead
+  erofs: Convert compressed files from readpages to readahead
+  ext4: Convert from readpages to readahead
+  f2fs: Convert from readpages to readahead
+  fuse: Convert from readpages to readahead
+  iomap: Convert from readpages to readahead
 
-I am a bit confused by this patch, the changelog mixes hard and soft irqs.
+ Documentation/filesystems/locking.rst |  7 ++-
+ Documentation/filesystems/vfs.rst     | 11 ++++
+ drivers/staging/exfat/exfat_super.c   |  9 ++--
+ fs/block_dev.c                        |  9 ++--
+ fs/btrfs/extent_io.c                  | 15 ++----
+ fs/btrfs/extent_io.h                  |  2 +-
+ fs/btrfs/inode.c                      | 18 +++----
+ fs/erofs/data.c                       | 34 +++++-------
+ fs/erofs/zdata.c                      | 21 +++-----
+ fs/ext2/inode.c                       | 12 ++---
+ fs/ext4/ext4.h                        |  2 +-
+ fs/ext4/inode.c                       | 24 ++++-----
+ fs/ext4/readpage.c                    | 20 +++----
+ fs/f2fs/data.c                        | 33 +++++-------
+ fs/fat/inode.c                        |  8 +--
+ fs/fuse/file.c                        | 35 ++++++------
+ fs/gfs2/aops.c                        | 20 ++++---
+ fs/hpfs/file.c                        |  8 +--
+ fs/iomap/buffered-io.c                | 74 ++++++--------------------
+ fs/iomap/trace.h                      |  2 +-
+ fs/isofs/inode.c                      |  9 ++--
+ fs/jfs/inode.c                        |  8 +--
+ fs/mpage.c                            | 38 +++++---------
+ fs/nilfs2/inode.c                     | 13 ++---
+ fs/ocfs2/aops.c                       | 32 +++++------
+ fs/omfs/file.c                        |  8 +--
+ fs/qnx6/inode.c                       |  8 +--
+ fs/reiserfs/inode.c                   | 10 ++--
+ fs/udf/inode.c                        |  8 +--
+ fs/xfs/xfs_aops.c                     | 10 ++--
+ include/linux/fs.h                    |  2 +
+ include/linux/iomap.h                 |  2 +-
+ include/linux/mpage.h                 |  2 +-
+ include/linux/pagemap.h               | 12 +++++
+ include/trace/events/erofs.h          |  6 +--
+ include/trace/events/f2fs.h           |  6 +--
+ mm/internal.h                         |  2 +-
+ mm/migrate.c                          |  2 +-
+ mm/readahead.c                        | 76 +++++++++++++++++----------
+ 39 files changed, 289 insertions(+), 329 deletions(-)
 
-This driver seems to call bcm_sysport_tx_reclaim_all() from hard irq handler 
-(INTRL2_0_TX_RING_FULL condition)
-
-So it looks you need to acquire ring->lock with some _irqsave() variant when
-bcm_sysport_tx_poll() is running (from BH context)
+-- 
+2.24.1
 
