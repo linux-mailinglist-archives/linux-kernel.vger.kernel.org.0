@@ -2,100 +2,121 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 96607149629
-	for <lists+linux-kernel@lfdr.de>; Sat, 25 Jan 2020 15:57:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 60C4B14962F
+	for <lists+linux-kernel@lfdr.de>; Sat, 25 Jan 2020 16:11:54 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726338AbgAYO4Y (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 25 Jan 2020 09:56:24 -0500
-Received: from mail-il1-f196.google.com ([209.85.166.196]:39914 "EHLO
-        mail-il1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725710AbgAYO4X (ORCPT
+        id S1726327AbgAYPLf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 25 Jan 2020 10:11:35 -0500
+Received: from mail-qk1-f195.google.com ([209.85.222.195]:45510 "EHLO
+        mail-qk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725821AbgAYPLf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 25 Jan 2020 09:56:23 -0500
-Received: by mail-il1-f196.google.com with SMTP id p18so1108541ils.6
-        for <linux-kernel@vger.kernel.org>; Sat, 25 Jan 2020 06:56:23 -0800 (PST)
+        Sat, 25 Jan 2020 10:11:35 -0500
+Received: by mail-qk1-f195.google.com with SMTP id x1so5163479qkl.12
+        for <linux-kernel@vger.kernel.org>; Sat, 25 Jan 2020 07:11:34 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=mime-version:from:date:message-id:subject:to:cc;
-        bh=azzlYV9p2BdWsb/G+vunmwq5xYwbi8a1Kds9SQOTNYk=;
-        b=iNm0Po0Vn8OnFRJrKJhtWkEGXtyQSksmqnjCk3bGXbOJmKnmON5nmDURF009dVsZQ7
-         G5NAO1Ff93tdYjTk9A6+o3gInvUHW4yc3ZlQskj7mu3AJAABTb0LTIiP4uaHY4atW3ie
-         tPLfadmg5NIQnuNVJDYiupfWkHmb1GcPkQvXOBJbZQaiCqlEXZN2/qxRpg6dlWDWc+Eg
-         J6VMtvHbuQbhwwItn02lfY2O+g2d8QOhUGKamrsuI9durlbNteAUcdgYWsMGYaGnWiJw
-         Os8F3yrdkShsSLjZCyHK8GEJo7OSRIWBBTKdU82iXj7PouxmShTvNZBI9xDLp0qROXX1
-         dTOQ==
+        h=mime-version:reply-to:from:date:message-id:subject:to;
+        bh=oa0bZQpkEyjcs7ABeeOu5qKY4d6etbTg8GwEpE2lwx4=;
+        b=T/Quzs5UdQpdEQXYUVq6lf3XNqPNRixQwZ3evXcxPPDpiCCQUo21HkK0+Y68vqRGka
+         CjqoLMlUsET5YDKoHdtJSYkqRczsXK5/qq0gtW5JVlVEiov7f1kBgW5mD3dWenbVaMc7
+         oUDycRDL0SaVRnmMSpneU4OmoIDZRAMWQU5kQSuyIUxut3jHmJjlMpr8bFcBYGohWN+e
+         NYjvdKxh1DftNouwX26Do3Bj3qriG359lSxvo87WC0BYyTQYSPwIQ49Pva8BhCOLrBrc
+         GbTm57aWNmpladaU8QFILEuhNCg++aAgk9/IcMELnt5RdbXpeypKSHp/enrNrCW8vgai
+         al5A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc;
-        bh=azzlYV9p2BdWsb/G+vunmwq5xYwbi8a1Kds9SQOTNYk=;
-        b=bnIB8ClrX9JLMmdt7ihxnXt5aTihv9XIjgw1uVObtvaLw/X3gShP7i5W+XPLAkS2vM
-         wEDHmSdAVEViZrY/Xj1yorxvow5Kkw3yDxXSz7bR267VMf0iPh8KMSIcO/yNv34G9sK0
-         vm7g2u4nF+PtvjKyr2AsjM/Adiq4ix7OFEnfJSA0GaQYEUyziqNW831I+rsHUZH61LM9
-         dqZLVYuX2v+ChxkxQeiIbmmDdbN6dW42D5F8vKw5mW3G4sv9FN99WfkPVv+q2xloumFq
-         xBfqVrlI2SBYvHjKgQlPzquhk365pgPNf54skhmUNjDWov91/tgTDCT0kJ/2mxUU1UHX
-         woPg==
-X-Gm-Message-State: APjAAAXIXoh3cHJklm5/cWdpHz728SUuZv4ZsNtzIA+LIpTOcNyAxDb3
-        rc2CicG1ugGQKNBWUCsGbDp/rDy+/CLpIOEBquu/oPAxoDQ=
-X-Google-Smtp-Source: APXvYqx0QGbCmvOyMmgmQEM5g8KrDtNO8Ec6dgMxpHE4LFRFG29XH+4kakeceWzFZopPebf8W//LV8SWKsJ1N51IzNY=
-X-Received: by 2002:a92:c990:: with SMTP id y16mr8035628iln.109.1579964182834;
- Sat, 25 Jan 2020 06:56:22 -0800 (PST)
+        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
+         :subject:to;
+        bh=oa0bZQpkEyjcs7ABeeOu5qKY4d6etbTg8GwEpE2lwx4=;
+        b=SyV27PR79DnFP6ar4S7wk20eBAJb6gCw33qoSPv0gI9zxbsraGdB9dh7PU/cWCiX8r
+         xReWocKXwlsmBnsIiQVjP4WYqxcXkzYqDbDLwJgEriutZ+Ek38SiEQy/ltesBpDDYrIn
+         50ej8PLFu8GVFUiY58AXD21EwXZS3mv+wZgzkAyx17+4jlL28aPORA6QjlnI3fYAQVRs
+         KWvoQj1yOUUsVNiBl/fF6FZthLqICRhwrFVbvdSe2WcF3wfzBs8Z3AVDn5ZEXcaevMXi
+         5EEL/pRSnhBHxHpFXNTc1dXzKYSrjbUnJf/nWg7hPnVFPDkdPttvS4sWn8uU0HQFWrVR
+         Hq7Q==
+X-Gm-Message-State: APjAAAV2WZnpiLrrj61ZqF1DSw0L46+rZ/18xbgUNenm1gwH8Xj2W0zR
+        dpcQrGYHM3yWgguzZ/uD1YUsYaZtAu/X5G7U/8E=
+X-Google-Smtp-Source: APXvYqz607WHV8/w9aQFNyJRWPKYdRZVKWLL5VsjN/7GqWmfLiwcr28J5nQX8TXi0m0jEY2iz85yR4nYoPr9y7AFJgU=
+X-Received: by 2002:a37:9ace:: with SMTP id c197mr8420439qke.482.1579965094402;
+ Sat, 25 Jan 2020 07:11:34 -0800 (PST)
 MIME-Version: 1.0
-From:   Sam Lunt <samueljlunt@gmail.com>
-Date:   Sat, 25 Jan 2020 08:56:12 -0600
-Message-ID: <CAGn10uXOj3n2u01bzhCkUVi-n5dDMVV+Mze3_uLV1K6RC6ebJQ@mail.gmail.com>
-Subject: [PATCH] perf: Support Python 3.8+ in Makefile
-To:     linux-kernel@vger.kernel.org, peterz@infradead.org,
-        mingo@redhat.com, acme@kernel.org
-Cc:     mark.rutland@arm.com, alexander.shishkin@linux.intel.com,
-        jolsa@redhat.com, namhyung@kernel.org, trivial@kernel.org
+Received: by 2002:ac8:2285:0:0:0:0:0 with HTTP; Sat, 25 Jan 2020 07:11:33
+ -0800 (PST)
+Reply-To: janvierlitse2019@gmail.com
+From:   Mr Janvier Litse <mrronanpectual@gmail.com>
+Date:   Sat, 25 Jan 2020 07:11:33 -0800
+Message-ID: <CAATtkqsJA1LSSi=345R8KHAphiL9gZ863HN4PrYY8ckjWfFy6w@mail.gmail.com>
+Subject: URGENT RESPOND FOR MORE DETAILS!
+To:     undisclosed-recipients:;
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Python 3.8 changed the output of 'python-config --ldflags' to no longer
-include the '-lpythonX.Y' flag (this apparently fixed an issue loading
-modules with a statically linked Python executable).  The libpython
-feature check in linux/build/feature fails if the Python library is not
-included in FEATURE_CHECK_LDFLAGS-libpython variable.
+From: Mr Janvier Litse.
+African Development Bank
+Burkina Faso (ADB)
+Ouagadougou - Burkina Faso.
 
-This adds a check in the Makefile to determine if PYTHON_CONFIG accepts
-the '--embed' flag and passes that flag alongside '--ldflags' if so.
+Dear friend, Good Day
 
-tools/perf is the only place the libpython feature check is used.
+I am writing to seek your cooperation over this business, Please due
+welcome this letter.
 
-Signed-off-by: Sam Lunt <samuel.j.lunt@gmail.com>
----
- tools/perf/Makefile.config | 11 ++++++++++-
- 1 file changed, 10 insertions(+), 1 deletion(-)
+I am Mr Janvier Litse.the director of the accounts & auditing dept .at
+the African Development Bank Ouagadougou-west Africa (A D B) With due
+respect, I have decided to contact you on a business transaction that
+will be beneficial to both of us.At the bank's lastaccounts/auditing
+evaluations, my staffs came across an old account which was being
+maintained by a foreign client who we learnt was among the deceased
+passengers of motor accident on November.. 2003, the deceased was
+unable to run this account since his death. The account has remained
+dormant without the knowledge of his family since it was put in a safe
+deposit account in the bank for future investment by the client.
 
-diff --git a/tools/perf/Makefile.config b/tools/perf/Makefile.config
-index c90f4146e5a2..ccf99351f058 100644
---- a/tools/perf/Makefile.config
-+++ b/tools/perf/Makefile.config
-@@ -228,8 +228,17 @@ strip-libs  = $(filter-out -l%,$(1))
+Since his demise, even the members of his family haven't applied for
+claims over this fund and it has been in the safe deposit accountuntil
+I discovered that it cannot be claimed since our client is a foreign
+national and we are sure that he has no next of kin here to file
+claims over the money. As the director of the department, this
+discovery was brought to my office so as to decide what is to be done.
+I decided to seek ways through which to transfer this money out of the
+bank and out of the country too.
 
- PYTHON_CONFIG_SQ := $(call shell-sq,$(PYTHON_CONFIG))
+The total amount in the account is twenty eight  million three hundred
+thousand dollars (USD 28,300,000.00).with my positions as a staffs of
+the bank, I am handicapped because I can not operate foreign accounts
+and cannot lay bonafide claim over this money.The client was a foreign
+national and you will only be asked to act as his next of kin and I
+will supply you with all the necessary information and bank data to
+assist you in being able to transfer this money to any bank of your
+choice where this money could be transferred into.
 
-+# Python 3.8 changed the output of `python-config --ldflags` to not include the
-+# '-lpythonX.Y' flag unless '--embed' is also passed. The feature check for
-+# libpython fails if that flag is not included in LDFLAGS
-+ifeq ($(shell $(PYTHON_CONFIG_SQ) --ldflags --embed 2>&1 1>/dev/null;
-echo $$?), 0)
-+  PYTHON_CONFIG_LDFLAGS := --ldflags --embed
-+else
-+  PYTHON_CONFIG_LDFLAGS := --ldflags
-+endif
-+
- ifdef PYTHON_CONFIG
--  PYTHON_EMBED_LDOPTS := $(shell $(PYTHON_CONFIG_SQ) --ldflags 2>/dev/null)
-+  PYTHON_EMBED_LDOPTS := $(shell $(PYTHON_CONFIG_SQ)
-$(PYTHON_CONFIG_LDFLAGS) 2>/dev/null)
-   PYTHON_EMBED_LDFLAGS := $(call strip-libs,$(PYTHON_EMBED_LDOPTS))
-   PYTHON_EMBED_LIBADD := $(call grep-libs,$(PYTHON_EMBED_LDOPTS)) -lutil
-   PYTHON_EMBED_CCOPTS := $(shell $(PYTHON_CONFIG_SQ) --includes 2>/dev/null)
+The total sum will be shared as follows: 50% for me, 50% for you and
+expenses incidental occur during the transfer will be  incured by both
+of us. The transfer is risk free on both sides hence you are going to
+follow my instruction till the fund transfer to your account.
 
-base-commit: d5d359b0ac3ffc319ca93c46a4cfd87093759ad6
--- 
-2.25.0
+Since I work in this bank that is why you should be confident in the
+success of this transaction because you will be updated with
+information as at when desired I will wish you to keep this
+transaction secret and confidential as I am hoping to retire with my
+share of this money at the end of transaction which will be when this
+money is safety in your account. I will then come over to your country
+for sharing according to the previously agreed percentages. You might
+even have to advise me on possibilities of investment in your country
+or elsewhere of our choice. May God help you to help me to a restive
+retirement, Amen.
+
+
+Please for further information and enquires feel free to contact me
+back immediately for more explanation and better  understanding.please
+contact me through this alternative email address
+(janvierlitse2019@gmail.com)
+
+I am waiting for your urgent response!!!
+Thanks and remain blessed
+ Mr Janvier Litse.
++226 54459253
