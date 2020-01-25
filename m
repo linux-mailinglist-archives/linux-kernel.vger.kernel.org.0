@@ -2,91 +2,71 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EA3D31497FB
-	for <lists+linux-kernel@lfdr.de>; Sat, 25 Jan 2020 22:42:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E6B0B1497FC
+	for <lists+linux-kernel@lfdr.de>; Sat, 25 Jan 2020 22:42:46 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728842AbgAYVmP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 25 Jan 2020 16:42:15 -0500
-Received: from mail.kernel.org ([198.145.29.99]:56868 "EHLO mail.kernel.org"
+        id S1728900AbgAYVme (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 25 Jan 2020 16:42:34 -0500
+Received: from mga17.intel.com ([192.55.52.151]:41904 "EHLO mga17.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726690AbgAYVmO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 25 Jan 2020 16:42:14 -0500
-Received: from localhost (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D473B20716;
-        Sat, 25 Jan 2020 21:42:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579988534;
-        bh=tm468yLK258z+vQZXxvZSvh8Ke8beUu1DDpbah1vEM0=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=GWnw1/hXdUba87olIdOt0wxcKWcWUcAk9eUpQJJCHimA79OKNS5wd0ESOUhM9GBhw
-         d0PeNYeuU/bU0csR07exNDMbWF2MQ5D4rN7c9amodJS2rCCKP6GD516LkCRok8SG7Z
-         mrpfMG1waiwUhBAxvVlS4qTxRbnHOuK2XnY4GMqs=
-Date:   Sat, 25 Jan 2020 16:42:12 -0500
-From:   Sasha Levin <sashal@kernel.org>
-To:     Michael Kelley <mikelley@microsoft.com>
-Cc:     Dexuan Cui <decui@microsoft.com>,
-        KY Srinivasan <kys@microsoft.com>,
-        Haiyang Zhang <haiyangz@microsoft.com>,
-        Stephen Hemminger <sthemmin@microsoft.com>,
-        "linux-hyperv@vger.kernel.org" <linux-hyperv@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Sasha Levin <Alexander.Levin@microsoft.com>,
-        Sunil Muthuswamy <sunilmut@microsoft.com>,
-        Andrea Parri <Andrea.Parri@microsoft.com>,
-        Wei Hu <weh@microsoft.com>
-Subject: Re: [PATCH v2] Drivers: hv: vmbus: Ignore
- CHANNELMSG_TL_CONNECT_RESULT(23)
-Message-ID: <20200125214212.GL1706@sasha-vm>
-References: <1579476562-125673-1-git-send-email-decui@microsoft.com>
- <MW2PR2101MB1052AEC27FF7287F5BA81C91D7320@MW2PR2101MB1052.namprd21.prod.outlook.com>
+        id S1726937AbgAYVme (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 25 Jan 2020 16:42:34 -0500
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+Received: from fmsmga008.fm.intel.com ([10.253.24.58])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 25 Jan 2020 13:42:34 -0800
+X-IronPort-AV: E=Sophos;i="5.70,363,1574150400"; 
+   d="scan'208";a="222914741"
+Received: from agluck-desk2.sc.intel.com (HELO agluck-desk2.amr.corp.intel.com) ([10.3.52.68])
+  by fmsmga008-auth.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 25 Jan 2020 13:42:34 -0800
+Date:   Sat, 25 Jan 2020 13:42:32 -0800
+From:   "Luck, Tony" <tony.luck@intel.com>
+To:     Borislav Petkov <bp@alien8.de>
+Cc:     Peter Zijlstra <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Arvind Sankar <nivedita@alum.mit.edu>,
+        "Christopherson, Sean J" <sean.j.christopherson@intel.com>,
+        Ingo Molnar <mingo@kernel.org>,
+        "Yu, Fenghua" <fenghua.yu@intel.com>,
+        Ingo Molnar <mingo@redhat.com>, H Peter Anvin <hpa@zytor.com>,
+        "Raj, Ashok" <ashok.raj@intel.com>,
+        "Shankar, Ravi V" <ravi.v.shankar@intel.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>, x86 <x86@kernel.org>
+Subject: Re: [PATCH v15] x86/split_lock: Enable split lock detection by kernel
+Message-ID: <20200125214232.GA17914@agluck-desk2.amr.corp.intel.com>
+References: <20200123004507.GA2403906@rani.riverdale.lan>
+ <20200123035359.GA23659@agluck-desk2.amr.corp.intel.com>
+ <20200123044514.GA2453000@rani.riverdale.lan>
+ <20200123231652.GA4457@agluck-desk2.amr.corp.intel.com>
+ <87h80kmta4.fsf@nanos.tec.linutronix.de>
+ <20200125024727.GA32483@agluck-desk2.amr.corp.intel.com>
+ <20200125104419.GA16136@zn.tnic>
+ <20200125195513.GA15834@agluck-desk2.amr.corp.intel.com>
+ <20200125201221.GZ11457@worktop.programming.kicks-ass.net>
+ <20200125203312.GE4369@zn.tnic>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <MW2PR2101MB1052AEC27FF7287F5BA81C91D7320@MW2PR2101MB1052.namprd21.prod.outlook.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20200125203312.GE4369@zn.tnic>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jan 20, 2020 at 12:51:51AM +0000, Michael Kelley wrote:
->From: Dexuan Cui <decui@microsoft.com> Sent: Sunday, January 19, 2020 3:29 PM
->>
->> When a Linux hv_sock app tries to connect to a Service GUID on which no
->> host app is listening, a recent host (RS3+) sends a
->> CHANNELMSG_TL_CONNECT_RESULT (23) message to Linux and this triggers such
->> a warning:
->>
->> unknown msgtype=23
->> WARNING: CPU: 2 PID: 0 at drivers/hv/vmbus_drv.c:1031 vmbus_on_msg_dpc
->>
->> Actually Linux can safely ignore the message because the Linux app's
->> connect() will time out in 2 seconds: see VSOCK_DEFAULT_CONNECT_TIMEOUT
->> and vsock_stream_connect(). We don't bother to make use of the message
->> because: 1) it's only supported on recent hosts; 2) a non-trivial effort
->> is required to use the message in Linux, but the benefit is small.
->>
->> So, let's not see the warning by silently ignoring the message.
->>
->> Signed-off-by: Dexuan Cui <decui@microsoft.com>
->> ---
->>
->> In v2 (followed Michael Kelley's suggestions):
->>     Removed the redundant code in vmbus_onmessage()
->>     Added the new enries into channel_message_table[].
->>
->>  drivers/hv/channel_mgmt.c | 21 +++++++--------------
->>  drivers/hv/vmbus_drv.c    |  4 ++++
->>  include/linux/hyperv.h    |  2 ++
->>  3 files changed, 13 insertions(+), 14 deletions(-)
->>
->
->Reviewed-by: Michael Kelley <mikelley@microsoft.com>
+On Sat, Jan 25, 2020 at 09:33:12PM +0100, Borislav Petkov wrote:
+> On Sat, Jan 25, 2020 at 09:12:21PM +0100, Peter Zijlstra wrote:
+> > My thinking was Virt, virt likes to mess up all msr expectations.
+> 
+> My only worry is to have it written down why we're doing this so that it
+> can be changed/removed later, when we've forgotten all about split lock.
+> Because pretty often we look at a comment-less chunk of code and wonder,
+> "why the hell did we add this in the first place."
 
-Queued up, thanks!
+Ok. I added a comment:
 
--- 
-Thanks,
-Sasha
+ * Use the "safe" versions of rdmsr/wrmsr here because although code
+ * checks CPUID and MSR bits to make sure the TEST_CTRL MSR should
+ * exist, there may be glitches in virtualization that leave a guest
+ * with an incorrect view of real h/w capabilities.
+
+-Tony
