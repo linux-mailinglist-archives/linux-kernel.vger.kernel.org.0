@@ -2,125 +2,199 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EDB0F149274
-	for <lists+linux-kernel@lfdr.de>; Sat, 25 Jan 2020 02:01:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3FCF4149287
+	for <lists+linux-kernel@lfdr.de>; Sat, 25 Jan 2020 02:24:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387603AbgAYBB4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 24 Jan 2020 20:01:56 -0500
-Received: from mail-pg1-f182.google.com ([209.85.215.182]:41724 "EHLO
-        mail-pg1-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387475AbgAYBB4 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 24 Jan 2020 20:01:56 -0500
-Received: by mail-pg1-f182.google.com with SMTP id x8so1985252pgk.8;
-        Fri, 24 Jan 2020 17:01:55 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
-         :user-agent;
-        bh=LkUPWh5kdl4Sg46sJyfitt6HLC6I557q2490DP7qh3M=;
-        b=dZZ3UTU4UOOlw606J6+uj+IkABJEPApFTlmhcoT0n6lu9OHkz1ziZqvbJNTEOebkaM
-         ZzwKG1IUL3AZK07M1F8Qg8B7BMwaN3SQoCvy9nirCrzrEs2utFvaXKht5HdttlldovxP
-         Hc2mgCFGckAiybUbdH1zq88owtW8V3rqT6rAxoxUKNwt9uGUy+t7fz2JO2zs7p4cz8lg
-         KEcylnv9u56hg9zEZf5LvQfRhGsMT4KX5Q/oev9cQl9r8OuDid18rVmaAtqqNrDK3d/C
-         wWEC7cuFKOu2hVfV7vOpj37Qox77SkqbZ9PhGGk+1+EmG/RPZwGgFgxDKJGAyXHHXJKH
-         HDTA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition:user-agent;
-        bh=LkUPWh5kdl4Sg46sJyfitt6HLC6I557q2490DP7qh3M=;
-        b=goaZj5OzRgnU+bQUKj69FhK++CIFOp83aN+LeJRDDaNvTCc26Pol0lq9XiHsO6wcVp
-         QYlLFjZUr1BxVLDlGVjVaRZMHJ/JMj6ndfx+zrG175TxlpBwhkDR+PXqECptIuGI4UgO
-         xuT7fQGblMeV/QWb3sGJQEXomAdKxBdq4GV3F79TidUxyhHUl1nxP954Vnat6vlDUfFH
-         3n/Kw8nSx0vI8zulERIfWAfCK5/HgVHRkq8q2wWTl7S0bqpsDjMgvm1VZ7fksfpqcBYt
-         SglAR0u4znwCy6Q0ln0jvOcTiAHj55Nmxrzem71rl/tRFVL8XLBwo5vJ10EFHHG370na
-         Q6yw==
-X-Gm-Message-State: APjAAAXT+3x+WoP7mosKqgRuBJNuwR6Y2FyFeIJkoiwiyIMYd61XyP7C
-        rp4aEP+oK3ZFYivFkoW3RrU=
-X-Google-Smtp-Source: APXvYqxDiDA5+kIDCFhEfVFU67Utzivxc1wCtaT/Q51DKRn9CC1Bi7/2Z2qQ9hNsj+8hA331vUjfzw==
-X-Received: by 2002:a63:d047:: with SMTP id s7mr6922468pgi.81.1579914115234;
-        Fri, 24 Jan 2020 17:01:55 -0800 (PST)
-Received: from dtor-ws ([2620:15c:202:201:3adc:b08c:7acc:b325])
-        by smtp.gmail.com with ESMTPSA id c184sm7662382pfa.39.2020.01.24.17.01.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 24 Jan 2020 17:01:54 -0800 (PST)
-Date:   Fri, 24 Jan 2020 17:01:52 -0800
-From:   Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     linux-kernel@vger.kernel.org, linux-input@vger.kernel.org
-Subject: [git pull] Input updates for v5.5-rc7
-Message-ID: <20200125010152.GA14053@dtor-ws>
+        id S1729673AbgAYBX0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 24 Jan 2020 20:23:26 -0500
+Received: from mga01.intel.com ([192.55.52.88]:57666 "EHLO mga01.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725821AbgAYBX0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 24 Jan 2020 20:23:26 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga002.fm.intel.com ([10.253.24.26])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 24 Jan 2020 17:23:25 -0800
+X-IronPort-AV: E=Sophos;i="5.70,359,1574150400"; 
+   d="scan'208";a="260436197"
+Received: from dwillia2-desk3.jf.intel.com (HELO dwillia2-desk3.amr.corp.intel.com) ([10.54.39.16])
+  by fmsmga002-auth.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 24 Jan 2020 17:23:25 -0800
+Subject: [PATCH v5] mm/memory_hotplug: Fix remove_memory() lockdep splat
+From:   Dan Williams <dan.j.williams@intel.com>
+To:     akpm@linux-foundation.org
+Cc:     Vishal Verma <vishal.l.verma@intel.com>,
+        David Hildenbrand <david@redhat.com>,
+        Pavel Tatashin <pasha.tatashin@soleen.com>,
+        Michal Hocko <mhocko@suse.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+Date:   Fri, 24 Jan 2020 17:07:21 -0800
+Message-ID: <157991441887.2763922.4770790047389427325.stgit@dwillia2-desk3.amr.corp.intel.com>
+User-Agent: StGit/0.18-3-g996c
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Linus,
+The daxctl unit test for the dax_kmem driver currently triggers the
+(false positive) lockdep splat below. It results from the fact that
+remove_memory_block_devices() is invoked under the mem_hotplug_lock()
+causing lockdep entanglements with cpu_hotplug_lock() and sysfs (kernfs
+active state tracking). It is a false positive because the sysfs
+attribute path triggering the memory remove is not the same attribute
+path associated with memory-block device.
 
-Please pull from:
+sysfs_break_active_protection() is not applicable since there is no real
+deadlock conflict, instead move memory-block device removal outside the
+lock. The mem_hotplug_lock() is not needed to synchronize the
+memory-block device removal vs the page online state, that is already
+handled by lock_device_hotplug(). Specifically, lock_device_hotplug() is
+sufficient to allow try_remove_memory() to check the offline state of
+the memblocks and be assured that any in progress online attempts are
+flushed / blocked by kernfs_drain() / attribute removal.
 
-	git://git.kernel.org/pub/scm/linux/kernel/git/dtor/input.git for-linus
+The add_memory() path safely creates memblock devices under the
+mem_hotplug_lock(). There is no kernfs active state synchronization in
+the memblock device_register() path, so nothing to fix there.
 
-to receive updates for the input subsystem. You will receive:
+This change is only possible thanks to the recent change that refactored
+memory block device removal out of arch_remove_memory() (commit
+4c4b7f9ba948 mm/memory_hotplug: remove memory block devices before
+arch_remove_memory()), and David's due diligence tracking down the
+guarantees afforded by kernfs_drain(). Not flagged for -stable since
+this only impacts ongoing development and lockdep validation, not a
+runtime issue.
 
-- patches adding sanoty checks to USB endpoints in various dirvers
-- max77650-onkey was missing a OF table which was preventing module
-  autoloading
-- a revert and a different fix for F54 handling in Synaptics dirver
-- a fixup for handling register in pm8xxx vibrator driver.
+    ======================================================
+    WARNING: possible circular locking dependency detected
+    5.5.0-rc3+ #230 Tainted: G           OE
+    ------------------------------------------------------
+    lt-daxctl/6459 is trying to acquire lock:
+    ffff99c7f0003510 (kn->count#241){++++}, at: kernfs_remove_by_name_ns+0x41/0x80
 
-Changelog:
----------
+    but task is already holding lock:
+    ffffffffa76a5450 (mem_hotplug_lock.rw_sem){++++}, at: percpu_down_write+0x20/0xe0
 
-Bartosz Golaszewski (1):
-      Input: max77650-onkey - add of_match table
-
-Chuhong Yuan (1):
-      Input: sun4i-ts - add a check for devm_thermal_zone_of_sensor_register
-
-Hans Verkuil (2):
-      Revert "Input: synaptics-rmi4 - don't increment rmiaddr for SMBus transfers"
-      Input: rmi_f54 - read from FIFO in 32 byte blocks
-
-Johan Hovold (8):
-      Input: pegasus_notetaker - fix endpoint sanity check
-      Input: aiptek - fix endpoint sanity check
-      Input: aiptek - use descriptors of current altsetting
-      Input: gtco - fix endpoint sanity check
-      Input: gtco - fix extra-descriptor debug message
-      Input: gtco - drop redundant variable reinit
-      Input: sur40 - fix interface sanity checks
-      Input: keyspan-remote - fix control-message timeouts
-
-Miles Chen (1):
-      Input: evdev - convert kzalloc()/vzalloc() to kvzalloc()
-
-Stephan Gerhold (1):
-      Input: pm8xxx-vib - fix handling of separate enable register
-
-Diffstat:
---------
-
- drivers/input/evdev.c                    |  5 +---
- drivers/input/misc/keyspan_remote.c      |  9 ++++---
- drivers/input/misc/max77650-onkey.c      |  7 ++++++
- drivers/input/misc/pm8xxx-vibrator.c     |  2 +-
- drivers/input/rmi4/rmi_f54.c             | 43 ++++++++++++++++++++------------
- drivers/input/rmi4/rmi_smbus.c           |  2 ++
- drivers/input/tablet/aiptek.c            |  8 +++---
- drivers/input/tablet/gtco.c              | 13 +++-------
- drivers/input/tablet/pegasus_notetaker.c |  2 +-
- drivers/input/touchscreen/sun4i-ts.c     |  6 ++++-
- drivers/input/touchscreen/sur40.c        |  2 +-
- 11 files changed, 59 insertions(+), 40 deletions(-)
-
-Thanks.
+    which lock already depends on the new lock.
 
 
--- 
-Dmitry
+    the existing dependency chain (in reverse order) is:
+
+    -> #2 (mem_hotplug_lock.rw_sem){++++}:
+           __lock_acquire+0x39c/0x790
+           lock_acquire+0xa2/0x1b0
+           get_online_mems+0x3e/0xb0
+           kmem_cache_create_usercopy+0x2e/0x260
+           kmem_cache_create+0x12/0x20
+           ptlock_cache_init+0x20/0x28
+           start_kernel+0x243/0x547
+           secondary_startup_64+0xb6/0xc0
+
+    -> #1 (cpu_hotplug_lock.rw_sem){++++}:
+           __lock_acquire+0x39c/0x790
+           lock_acquire+0xa2/0x1b0
+           cpus_read_lock+0x3e/0xb0
+           online_pages+0x37/0x300
+           memory_subsys_online+0x17d/0x1c0
+           device_online+0x60/0x80
+           state_store+0x65/0xd0
+           kernfs_fop_write+0xcf/0x1c0
+           vfs_write+0xdb/0x1d0
+           ksys_write+0x65/0xe0
+           do_syscall_64+0x5c/0xa0
+           entry_SYSCALL_64_after_hwframe+0x49/0xbe
+
+    -> #0 (kn->count#241){++++}:
+           check_prev_add+0x98/0xa40
+           validate_chain+0x576/0x860
+           __lock_acquire+0x39c/0x790
+           lock_acquire+0xa2/0x1b0
+           __kernfs_remove+0x25f/0x2e0
+           kernfs_remove_by_name_ns+0x41/0x80
+           remove_files.isra.0+0x30/0x70
+           sysfs_remove_group+0x3d/0x80
+           sysfs_remove_groups+0x29/0x40
+           device_remove_attrs+0x39/0x70
+           device_del+0x16a/0x3f0
+           device_unregister+0x16/0x60
+           remove_memory_block_devices+0x82/0xb0
+           try_remove_memory+0xb5/0x130
+           remove_memory+0x26/0x40
+           dev_dax_kmem_remove+0x44/0x6a [kmem]
+           device_release_driver_internal+0xe4/0x1c0
+           unbind_store+0xef/0x120
+           kernfs_fop_write+0xcf/0x1c0
+           vfs_write+0xdb/0x1d0
+           ksys_write+0x65/0xe0
+           do_syscall_64+0x5c/0xa0
+           entry_SYSCALL_64_after_hwframe+0x49/0xbe
+
+    other info that might help us debug this:
+
+    Chain exists of:
+      kn->count#241 --> cpu_hotplug_lock.rw_sem --> mem_hotplug_lock.rw_sem
+
+     Possible unsafe locking scenario:
+
+           CPU0                    CPU1
+           ----                    ----
+      lock(mem_hotplug_lock.rw_sem);
+                                   lock(cpu_hotplug_lock.rw_sem);
+                                   lock(mem_hotplug_lock.rw_sem);
+      lock(kn->count#241);
+
+     *** DEADLOCK ***
+
+No fixes tag as this has been a long standing issue that predated the
+addition of kernfs lockdep annotations.
+
+Cc: Vishal Verma <vishal.l.verma@intel.com>
+Cc: David Hildenbrand <david@redhat.com>
+Cc: Pavel Tatashin <pasha.tatashin@soleen.com>
+Cc: Michal Hocko <mhocko@suse.com>
+Cc: Dave Hansen <dave.hansen@linux.intel.com>
+Signed-off-by: Dan Williams <dan.j.williams@intel.com>
+---
+Changes since v4 [1]:
+- Drop the unnecessary consideration of mem->section_count.
+  kernfs_drain() + lock_device_hotplug() is sufficient protection
+  (David)
+
+[1]: http://lore.kernel.org/r/157869128062.2451572.4093315441083744888.stgit@dwillia2-desk3.amr.corp.intel.com
+
+ mm/memory_hotplug.c |    9 ++++++---
+ 1 file changed, 6 insertions(+), 3 deletions(-)
+
+diff --git a/mm/memory_hotplug.c b/mm/memory_hotplug.c
+index 55ac23ef11c1..65ddaf3a2a12 100644
+--- a/mm/memory_hotplug.c
++++ b/mm/memory_hotplug.c
+@@ -1763,8 +1763,6 @@ static int __ref try_remove_memory(int nid, u64 start, u64 size)
+ 
+ 	BUG_ON(check_hotplug_memory_range(start, size));
+ 
+-	mem_hotplug_begin();
+-
+ 	/*
+ 	 * All memory blocks must be offlined before removing memory.  Check
+ 	 * whether all memory blocks in question are offline and return error
+@@ -1777,9 +1775,14 @@ static int __ref try_remove_memory(int nid, u64 start, u64 size)
+ 	/* remove memmap entry */
+ 	firmware_map_remove(start, start + size, "System RAM");
+ 
+-	/* remove memory block devices before removing memory */
++	/*
++	 * Memory block device removal under the device_hotplug_lock is
++	 * a barrier against racing online attempts.
++	 */
+ 	remove_memory_block_devices(start, size);
+ 
++	mem_hotplug_begin();
++
+ 	arch_remove_memory(nid, start, size, NULL);
+ 	memblock_free(start, size);
+ 	memblock_remove(start, size);
+
