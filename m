@@ -2,197 +2,137 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7A8731492C4
-	for <lists+linux-kernel@lfdr.de>; Sat, 25 Jan 2020 02:42:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id ACDF11492C7
+	for <lists+linux-kernel@lfdr.de>; Sat, 25 Jan 2020 02:44:50 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387635AbgAYBmm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 24 Jan 2020 20:42:42 -0500
-Received: from mail-pj1-f65.google.com ([209.85.216.65]:37542 "EHLO
-        mail-pj1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387601AbgAYBmk (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 24 Jan 2020 20:42:40 -0500
-Received: by mail-pj1-f65.google.com with SMTP id m13so610292pjb.2
-        for <linux-kernel@vger.kernel.org>; Fri, 24 Jan 2020 17:42:40 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google;
-        h=subject:to:cc:references:from:autocrypt:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=tlFaD//BvBZv3xMn475Kee1Ktpmgh8PdbAcukkFkcZk=;
-        b=FKFao3/vBoD6gBdGn/A1bfmgaHYMK7YAgelnIVuBpEG8ZuvRp77moVXqR+i9VeLph1
-         IjGqumeDHzLyhQ2ok076w/2lhWeZqlcVHAKpamYkke+XuN7qcrInusYq+NBAGAxnRJtz
-         ujxIASjG7ecf9qW2DXodQbKE3AVXZzUZUrozc=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:autocrypt
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=tlFaD//BvBZv3xMn475Kee1Ktpmgh8PdbAcukkFkcZk=;
-        b=LFGpw00D/bdoLE3woGzkGoJkBEnT5iMsJYzVsGjQQF5v+4QfCfAgHwSpSQNnwj83EE
-         q3mF1IKXYyfqYkwV0EreFonS4u/YP614MrFz2sajBGT+lpgYOVnrmFAwO4ijpLd4a3Lf
-         gzD5sC7tdDlq0hTBFn0WWc8oPpnz+ZOpK8zg4SnrqxX6L3kP1sxyhYATVj60d++ld72v
-         aaJBhI7r/bQPHtfNtukfaQQ5ExJii8k8mCt87+TM8pF7bpiBbMdp2R+/6sD1ejOUJCRB
-         K2C6eGMFqABAELR7NiurAQ41VsWyWH0lAoHneEm0hdUFij75JmVTuArHrLQZpk3jEv3s
-         g70w==
-X-Gm-Message-State: APjAAAWDFEAeZLFeWnv8Znih49qdsAniDOBt7HOY8h3YWq1Wi21jVV3I
-        DemHw+VDr4oZw07zudX/gUd4bVMoAP699FWwlyvD5DNEmjCf/QDstwddlad8s5/XLmzxCAsRvw1
-        sVAAMHhlKCQnF+8G2KhoQ+PTjnBNnmQTX3MzKW7nTu6Lyke7lP3ik4xLhOIrOzlmPDV5XoZZaHx
-        AyG5DRTXLnaw==
-X-Google-Smtp-Source: APXvYqzcTplmxy+Fp0EM4pzo5ggzYAc1VJGxYEM0GGZv7D2MP/UkjtiILAh+DW8IK4zu9wJNLy1Uew==
-X-Received: by 2002:a17:90b:941:: with SMTP id dw1mr2403404pjb.21.1579916559059;
-        Fri, 24 Jan 2020 17:42:39 -0800 (PST)
-Received: from [192.168.1.3] (ip68-111-84-250.oc.oc.cox.net. [68.111.84.250])
-        by smtp.gmail.com with ESMTPSA id t1sm8075530pgq.23.2020.01.24.17.42.37
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 24 Jan 2020 17:42:38 -0800 (PST)
-Subject: Re: [PATCH net-next] net: systemport: Do not block interrupts in TX
- reclaim
-To:     Eric Dumazet <eric.dumazet@gmail.com>,
-        Florian Fainelli <f.fainelli@gmail.com>, netdev@vger.kernel.org
-Cc:     kuba@kernel.org, edumazet@google.com,
-        "David S. Miller" <davem@davemloft.net>,
-        "open list:BROADCOM SYSTEMPORT ETHERNET DRIVER" 
-        <bcm-kernel-feedback-list@broadcom.com>,
-        open list <linux-kernel@vger.kernel.org>
-References: <20200124235930.640-1-f.fainelli@gmail.com>
- <de50408a-37db-e55e-57af-54574c7b5e42@gmail.com>
-From:   Florian Fainelli <florian.fainelli@broadcom.com>
-Autocrypt: addr=florian.fainelli@broadcom.com; keydata=
- mQENBFPAG8ABCAC3EO02urEwipgbUNJ1r6oI2Vr/+uE389lSEShN2PmL3MVnzhViSAtrYxeT
- M0Txqn1tOWoIc4QUl6Ggqf5KP6FoRkCrgMMTnUAINsINYXK+3OLe7HjP10h2jDRX4Ajs4Ghs
- JrZOBru6rH0YrgAhr6O5gG7NE1jhly+EsOa2MpwOiXO4DE/YKZGuVe6Bh87WqmILs9KvnNrQ
- PcycQnYKTVpqE95d4M824M5cuRB6D1GrYovCsjA9uxo22kPdOoQRAu5gBBn3AdtALFyQj9DQ
- KQuc39/i/Kt6XLZ/RsBc6qLs+p+JnEuPJngTSfWvzGjpx0nkwCMi4yBb+xk7Hki4kEslABEB
- AAG0MEZsb3JpYW4gRmFpbmVsbGkgPGZsb3JpYW4uZmFpbmVsbGlAYnJvYWRjb20uY29tPokB
- xAQQAQgArgUCXJvPrRcKAAG/SMv+fS3xUQWa0NryPuoRGjsA3SAUAAAAAAAWAAFrZXktdXNh
- Z2UtbWFza0BwZ3AuY29tjDAUgAAAAAAgAAdwcmVmZXJyZWQtZW1haWwtZW5jb2RpbmdAcGdw
- LmNvbXBncG1pbWUICwkIBwMCAQoFF4AAAAAZGGxkYXA6Ly9rZXlzLmJyb2FkY29tLmNvbQUb
- AwAAAAMWAgEFHgEAAAAEFQgJCgAKCRCBMbXEKbxmoE4DB/9JySDRt/ArjeOHOwGA2sLR1DV6
- Mv6RuStiefNvJ14BRfMkt9EV/dBp9CsI+slwj9/ZlBotQXlAoGr4uivZvcnQ9dWDjTExXsRJ
- WcBwUlSUPYJc/kPWFnTxF8JFBNMIQSZSR2dBrDqRP0UWYJ5XaiTbVRpd8nka9BQu4QB8d/Bx
- VcEJEth3JF42LSF9DPZlyKUTHOj4l1iZ/Gy3AiP9jxN50qol9OT37adOJXGEbix8zxoCAn2W
- +grt1ickvUo95hYDxE6TSj4b8+b0N/XT5j3ds1wDd/B5ZzL9fgBjNCRzp8McBLM5tXIeTYu9
- mJ1F5OW89WvDTwUXtT19P1r+qRqKuQENBFPAG8EBCACsa+9aKnvtPjGAnO1mn1hHKUBxVML2
- C3HQaDp5iT8Q8A0ab1OS4akj75P8iXYfZOMVA0Lt65taiFtiPT7pOZ/yc/5WbKhsPE9dwysr
- vHjHL2gP4q5vZV/RJduwzx8v9KrMZsVZlKbvcvUvgZmjG9gjPSLssTFhJfa7lhUtowFof0fA
- q3Zy+vsy5OtEe1xs5kiahdPb2DZSegXW7DFg15GFlj+VG9WSRjSUOKk+4PCDdKl8cy0LJs+r
- W4CzBB2ARsfNGwRfAJHU4Xeki4a3gje1ISEf+TVxqqLQGWqNsZQ6SS7jjELaB/VlTbrsUEGR
- 1XfIn/sqeskSeQwJiFLeQgj3ABEBAAGJAkEEGAECASsFAlPAG8IFGwwAAADAXSAEGQEIAAYF
- AlPAG8EACgkQk2AGqJgvD1UNFQgAlpN5/qGxQARKeUYOkL7KYvZFl3MAnH2VeNTiGFoVzKHO
- e7LIwmp3eZ6GYvGyoNG8cOKrIPvXDYGdzzfwxVnDSnAE92dv+H05yanSUv/2HBIZa/LhrPmV
- hXKgD27XhQjOHRg0a7qOvSKx38skBsderAnBZazfLw9OukSnrxXqW/5pe3mBHTeUkQC8hHUD
- Cngkn95nnLXaBAhKnRfzFqX1iGENYRH3Zgtis7ZvodzZLfWUC6nN8LDyWZmw/U9HPUaYX8qY
- MP0n039vwh6GFZCqsFCMyOfYrZeS83vkecAwcoVh8dlHdke0rnZk/VytXtMe1u2uc9dUOr68
- 7hA+Z0L5IQAKCRCBMbXEKbxmoLoHCACXeRGHuijOmOkbyOk7x6fkIG1OXcb46kokr2ptDLN0
- Ky4nQrWp7XBk9ls/9j5W2apKCcTEHONK2312uMUEryWI9BlqWnawyVL1LtyxLLpwwsXVq5m5
- sBkSqma2ldqBu2BHXZg6jntF5vzcXkqG3DCJZ2hOldFPH+czRwe2OOsiY42E/w7NUyaN6b8H
- rw1j77+q3QXldOw/bON361EusWHdbhcRwu3WWFiY2ZslH+Xr69VtYAoMC1xtDxIvZ96ps9ZX
- pUPJUqHJr8QSrTG1/zioQH7j/4iMJ07MMPeQNkmj4kGQOdTcsFfDhYLDdCE5dj5WeE6fYRxE
- Q3up0ArDSP1L
-Message-ID: <36eea933-d30b-344b-1f29-d8e5959f27fd@broadcom.com>
-Date:   Fri, 24 Jan 2020 17:42:37 -0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.1
-MIME-Version: 1.0
-In-Reply-To: <de50408a-37db-e55e-57af-54574c7b5e42@gmail.com>
-Content-Type: text/plain; charset=utf-8
+        id S2387654AbgAYBor (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 24 Jan 2020 20:44:47 -0500
+Received: from mail-eopbgr1300137.outbound.protection.outlook.com ([40.107.130.137]:1883
+        "EHLO APC01-HK2-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S2387542AbgAYBoq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 24 Jan 2020 20:44:46 -0500
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=Ww05MQRLHX+bit+DT123lTTK88OFInVcp1O4msmCsUZIggglNGVUSK0qtY25GGpDBf2HJoIvj7Q2n5wHX6EUm+XZWYr5OB8Teo28Y4qsocI0k7v9T4Cmka3sh8WcENDetpY/uW3n6yOUDbj5oOolSw1+EYWkkPMKv/QD1iJE3uubaAsnl94l7VAOcOmYNEacJ70Uja+TT1JRFLgcdeIkITpm925g/Th3OTZWqc4OyQADENYKE1KlsYPw8ZkCaIwsucP869flCKvO6aVhDhfy4uzOVPlP8Rwc3XUgfMGiwxkB+Bh/al9/7sMgqtomL/YKJq4qlCSntl4fn/PIZKYPIw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=tN3lpDuKXJRxYPBFxbxHaV8NENsqzTZQN3gQOhisIXY=;
+ b=SO3wVTDf/0rQrqIjFNLDz4wFwWwO6yNIoYyTrHCKUrWNjanxThqJ5tEjAjcPk0F+W/i5ejjZKzhxuIKNh8xK5uQpuH097tgShePzG15ZuL7Fc0ogmNnhpV2uGxeg6I7UluXB9ykXXuFjHCn9pzqAIbFL6xXfSeKkwrLbwf04G3miHuzN65+nEKUoHcYYHyVDCYaU1Zocms4H7c4+XhrQbRKR90CEs8/xMzgaW9VXyrEkphUAQXeXxmD4jzdj0M3JV9EMZNFcUotTQoD5dTGlEgHKiCwp1qBRhKn4yCbXLvzsFHm3EBhCdHuF3VX/2TkoWkOGKnV13MfhNP0HgmuYPA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=microsoft.com; dmarc=pass action=none
+ header.from=microsoft.com; dkim=pass header.d=microsoft.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=tN3lpDuKXJRxYPBFxbxHaV8NENsqzTZQN3gQOhisIXY=;
+ b=X5GMJimdodAy1JSXdgaFDMnViG8d74GZq2ySomvUKCBfeNejoiz2k/NkHSzuAJw9AGpG4qnGKf1ImRQGQ94D2D7JAYrQ896yKyhQkRzmtY+P/AdWIytFZOb2lai3ZeoD3JQ2XPqqZvuZ4LNECaoFxjeRYHL+IHwIFC+eglAXOls=
+Received: from HK0P153MB0148.APCP153.PROD.OUTLOOK.COM (52.133.156.139) by
+ HK0P153MB0276.APCP153.PROD.OUTLOOK.COM (52.132.236.79) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2686.3; Sat, 25 Jan 2020 01:44:34 +0000
+Received: from HK0P153MB0148.APCP153.PROD.OUTLOOK.COM
+ ([fe80::58ea:c6ae:4ea3:8432]) by HK0P153MB0148.APCP153.PROD.OUTLOOK.COM
+ ([fe80::58ea:c6ae:4ea3:8432%4]) with mapi id 15.20.2707.000; Sat, 25 Jan 2020
+ 01:44:33 +0000
+From:   Dexuan Cui <decui@microsoft.com>
+To:     "arnd@arndb.de" <arnd@arndb.de>, "bp@alien8.de" <bp@alien8.de>,
+        "daniel.lezcano@linaro.org" <daniel.lezcano@linaro.org>,
+        Haiyang Zhang <haiyangz@microsoft.com>,
+        "hpa@zytor.com" <hpa@zytor.com>, KY Srinivasan <kys@microsoft.com>,
+        "linux-hyperv@vger.kernel.org" <linux-hyperv@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "mingo@redhat.com" <mingo@redhat.com>,
+        "sashal@kernel.org" <sashal@kernel.org>,
+        Stephen Hemminger <sthemmin@microsoft.com>,
+        "tglx@linutronix.de" <tglx@linutronix.de>,
+        "x86@kernel.org" <x86@kernel.org>,
+        Michael Kelley <mikelley@microsoft.com>,
+        Sasha Levin <Alexander.Levin@microsoft.com>,
+        vkuznets <vkuznets@redhat.com>
+CC:     "linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>
+Subject: RE: [PATCH v6][RESEND] x86/hyperv: Suspend/resume the hypercall page
+ for hibernation
+Thread-Topic: [PATCH v6][RESEND] x86/hyperv: Suspend/resume the hypercall page
+ for hibernation
+Thread-Index: AQHVxOKfKplvVmki0EiTTmOHhKt+Nqf6tz7w
+Date:   Sat, 25 Jan 2020 01:44:31 +0000
+Message-ID: <HK0P153MB0148ED41CE96B637019DF26ABF090@HK0P153MB0148.APCP153.PROD.OUTLOOK.COM>
+References: <1578350559-130275-1-git-send-email-decui@microsoft.com>
+In-Reply-To: <1578350559-130275-1-git-send-email-decui@microsoft.com>
+Accept-Language: en-US
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+msip_labels: MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Enabled=True;
+ MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_SiteId=72f988bf-86f1-41af-91ab-2d7cd011db47;
+ MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Owner=decui@microsoft.com;
+ MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_SetDate=2020-01-25T01:44:28.7104793Z;
+ MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Name=General;
+ MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Application=Microsoft Azure
+ Information Protection;
+ MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_ActionId=ce328d69-c3f1-469a-b636-a08c9d3f1dff;
+ MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Extended_MSFT_Method=Automatic
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=decui@microsoft.com; 
+x-originating-ip: [2601:600:a280:7f70:20cd:da83:19e9:3198]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-ht: Tenant
+x-ms-office365-filtering-correlation-id: e30ba3c5-a78a-4d91-e26f-08d7a1382088
+x-ms-traffictypediagnostic: HK0P153MB0276:|HK0P153MB0276:|HK0P153MB0276:
+x-ms-exchange-transport-forked: True
+x-ld-processed: 72f988bf-86f1-41af-91ab-2d7cd011db47,ExtAddr
+x-microsoft-antispam-prvs: <HK0P153MB0276D852B21FDF134CFAF62BBF090@HK0P153MB0276.APCP153.PROD.OUTLOOK.COM>
+x-ms-oob-tlc-oobclassifiers: OLM:8273;
+x-forefront-prvs: 0293D40691
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(4636009)(346002)(376002)(39860400002)(396003)(136003)(366004)(199004)(189003)(7696005)(71200400001)(6506007)(81156014)(5660300002)(81166006)(52536014)(186003)(10290500003)(76116006)(478600001)(9686003)(55016002)(966005)(66476007)(66946007)(66446008)(64756008)(66556008)(8676002)(8936002)(8990500004)(4326008)(4744005)(7416002)(86362001)(110136005)(33656002)(2906002)(316002)(921003)(1121003);DIR:OUT;SFP:1102;SCL:1;SRVR:HK0P153MB0276;H:HK0P153MB0148.APCP153.PROD.OUTLOOK.COM;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: microsoft.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: zhsUCS6zuEW3yh5RoCErOfR8G8y/WXFHkU/O7YPPBW+ersYzrlzrVA8LCCa0+oh/gbu2IManlJmiK0c7lOjnsCfu7E9C9eBIZ9+PpPW/P3OimVHXvkPMKFhOhxQG9Vr1CkT15Wc2WPMaaQEj2Ns45e3X2MSxHPnfVJRiYFr1rlJfx1OIrHm8DgCpj8FhyhAb3TvvxMSZRjL9XrkLX+tL4BF/VEz/GQVf+tfY3iUWcqJOLOkDdCziCbPNZq2LOZecPnhkNgl1r60LMXD8d5meyJ27DlqHFySVODWFxb10b6/wNFqc+u5xGIXFoQ2TwRhyhX/A6RQtCJskiQB3Su6cdiroBv6bBi2F5DoBoLZ9VP5BfVCdWy+/cTCLbzZA78lpV8ELkIfFsk7iY2rk7xuyOOFJEg0zM2dpNrew6eGkzT8d3zDgLDVC+xSRo9o2H1Epw4BqkHYQwh3sFNWVULjmp8ieXhThC2uPP7dTFWRfR6Zlzh4JIABFRqo7ckGQbwuCOsZ1GEKs/mVGyFsgGq6Q1gRMTCjzqtQ6Mie84CGq++Un1soM8fBCnh+5HfaCQWV2K3/nQlOJuyq7LNNr5/yEBg==
+x-ms-exchange-antispam-messagedata: akpUXhnEnMfQMR6JkqlDBD4VRgCUzXsFzNN4OGOSzK91nCGT5AhKFOeDrUp/sk5xQiKI3Nok4QrfnDEl5+mQPJzESDfZn3VlGpY4bAqB6gCUwemOjF1ftqpDAOcqXFgNvfIB4gyXeMY2A+EV1GRAlwfJZsHzwZNy9UdzkZW4MnxibGnovayJ2Vw9AjwuP5Y3lCPlCHLa7qEovHd9GR/XzQ==
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+X-OriginatorOrg: microsoft.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: e30ba3c5-a78a-4d91-e26f-08d7a1382088
+X-MS-Exchange-CrossTenant-originalarrivaltime: 25 Jan 2020 01:44:31.6535
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: ZgTRsSyTTv6NwNVtGtKn/QDSlkGItlRqzxFUagtpAGzpIOgt85MHb689KK4dkieX/G0+kB926pbJjMj4aCu/og==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: HK0P153MB0276
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+> From: Dexuan Cui <decui@microsoft.com>
+> Sent: Monday, January 6, 2020 2:43 PM
+>=20
+> This is needed for hibernation, e.g. when we resume the old kernel, we ne=
+ed
+> to disable the "current" kernel's hypercall page and then resume the old
+> kernel's.
+>=20
+> Signed-off-by: Dexuan Cui <decui@microsoft.com>
+> Reviewed-by: Michael Kelley <mikelley@microsoft.com>
+> ---
+>=20
+> This is a RESEND of https://lkml.org/lkml/2019/11/20/68
+>=20
+> Please review.
+>=20
+> If it looks good, can you please pick it up through the tip.git tree?
+>=20
+>  arch/x86/hyperv/hv_init.c | 48
+> +++++++++++++++++++++++++++++++++++++++
+>  1 file changed, 48 insertions(+)
 
+Hi, Vitaly and x86 maintainers,
+Can you please take a look at this patch?
 
-On 1/24/2020 5:35 PM, Eric Dumazet wrote:
-> 
-> 
-> On 1/24/20 3:59 PM, Florian Fainelli wrote:
->> There is no need to disable interrupts with a spin_lock_irqsave() in
->> bcm_sysport_tx_poll() since we are in softIRQ context already. Leave
->> interrupts enabled, thus giving a chance for the RX interrupts to be
->> processed.
->>
->> This now makes bcm_sysport_tx_reclaim() equivalent to
->> bcm_sysport_tx_clean(), thus remove the former, and make
->> bcm_sysport_tx_reclaim_all() to use the latter.
->>
->> Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
->> ---
->>  drivers/net/ethernet/broadcom/bcmsysport.c | 30 ++++++----------------
->>  1 file changed, 8 insertions(+), 22 deletions(-)
->>
->> diff --git a/drivers/net/ethernet/broadcom/bcmsysport.c b/drivers/net/ethernet/broadcom/bcmsysport.c
->> index f07ac0e0af59..dfff0657ce8f 100644
->> --- a/drivers/net/ethernet/broadcom/bcmsysport.c
->> +++ b/drivers/net/ethernet/broadcom/bcmsysport.c
->> @@ -925,26 +925,6 @@ static unsigned int __bcm_sysport_tx_reclaim(struct bcm_sysport_priv *priv,
->>  	return pkts_compl;
->>  }
->>  
->> -/* Locked version of the per-ring TX reclaim routine */
->> -static unsigned int bcm_sysport_tx_reclaim(struct bcm_sysport_priv *priv,
->> -					   struct bcm_sysport_tx_ring *ring)
->> -{
->> -	struct netdev_queue *txq;
->> -	unsigned int released;
->> -	unsigned long flags;
->> -
->> -	txq = netdev_get_tx_queue(priv->netdev, ring->index);
->> -
->> -	spin_lock_irqsave(&ring->lock, flags);
->> -	released = __bcm_sysport_tx_reclaim(priv, ring);
->> -	if (released)
->> -		netif_tx_wake_queue(txq);
->> -
->> -	spin_unlock_irqrestore(&ring->lock, flags);
->> -
->> -	return released;
->> -}
->> -
->>  /* Locked version of the per-ring TX reclaim, but does not wake the queue */
->>  static void bcm_sysport_tx_clean(struct bcm_sysport_priv *priv,
->>  				 struct bcm_sysport_tx_ring *ring)
->> @@ -960,9 +940,15 @@ static int bcm_sysport_tx_poll(struct napi_struct *napi, int budget)
->>  {
->>  	struct bcm_sysport_tx_ring *ring =
->>  		container_of(napi, struct bcm_sysport_tx_ring, napi);
->> +	struct bcm_sysport_priv *priv = ring->priv;
->>  	unsigned int work_done = 0;
->>  
->> -	work_done = bcm_sysport_tx_reclaim(ring->priv, ring);
->> +	spin_lock(&ring->lock);
->> +	work_done = __bcm_sysport_tx_reclaim(priv, ring);
->> +	if (work_done)
->> +		netif_tx_wake_queue(netdev_get_tx_queue(priv->netdev,
->> +							ring->index));
->> +	spin_unlock(&ring->lock);
->>  
->>  	if (work_done == 0) {
->>  		napi_complete(napi);
->> @@ -984,7 +970,7 @@ static void bcm_sysport_tx_reclaim_all(struct bcm_sysport_priv *priv)
->>  	unsigned int q;
->>  
->>  	for (q = 0; q < priv->netdev->num_tx_queues; q++)
->> -		bcm_sysport_tx_reclaim(priv, &priv->tx_rings[q]);
->> +		bcm_sysport_tx_clean(priv, &priv->tx_rings[q]);
->>  }
->>  
->>  static int bcm_sysport_poll(struct napi_struct *napi, int budget)
->>
-> 
-> I am a bit confused by this patch, the changelog mixes hard and soft irqs.
-> 
-> This driver seems to call bcm_sysport_tx_reclaim_all() from hard irq handler 
-> (INTRL2_0_TX_RING_FULL condition)
-> 
-> So it looks you need to acquire ring->lock with some _irqsave() variant when
-> bcm_sysport_tx_poll() is running (from BH context)
-
-You are right, I completely missed that path and the very reason why
-this is spin_lock_irqsave() in the first place... time to get some sleep.
-
-Thanks!
--- 
-Florian
+Thanks,
+-- Dexuan
