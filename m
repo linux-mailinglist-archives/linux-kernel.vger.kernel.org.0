@@ -2,111 +2,131 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DB8E7149772
-	for <lists+linux-kernel@lfdr.de>; Sat, 25 Jan 2020 20:29:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C46AF149775
+	for <lists+linux-kernel@lfdr.de>; Sat, 25 Jan 2020 20:30:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727322AbgAYT3A (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 25 Jan 2020 14:29:00 -0500
-Received: from esa5.microchip.iphmx.com ([216.71.150.166]:58892 "EHLO
-        esa5.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726448AbgAYT27 (ORCPT
+        id S1727440AbgAYTaf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 25 Jan 2020 14:30:35 -0500
+Received: from mail-wm1-f50.google.com ([209.85.128.50]:55182 "EHLO
+        mail-wm1-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726448AbgAYTaf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 25 Jan 2020 14:28:59 -0500
-Received-SPF: Pass (esa5.microchip.iphmx.com: domain of
-  Allan.Nielsen@microchip.com designates 198.175.253.82 as
-  permitted sender) identity=mailfrom;
-  client-ip=198.175.253.82; receiver=esa5.microchip.iphmx.com;
-  envelope-from="Allan.Nielsen@microchip.com";
-  x-sender="Allan.Nielsen@microchip.com";
-  x-conformance=spf_only; x-record-type="v=spf1";
-  x-record-text="v=spf1 mx a:ushub1.microchip.com
-  a:smtpout.microchip.com -exists:%{i}.spf.microchip.iphmx.com
-  include:servers.mcsv.net include:mktomail.com
-  include:spf.protection.outlook.com ~all"
-Received-SPF: None (esa5.microchip.iphmx.com: no sender
-  authenticity information available from domain of
-  postmaster@email.microchip.com) identity=helo;
-  client-ip=198.175.253.82; receiver=esa5.microchip.iphmx.com;
-  envelope-from="Allan.Nielsen@microchip.com";
-  x-sender="postmaster@email.microchip.com";
-  x-conformance=spf_only
-Authentication-Results: esa5.microchip.iphmx.com; dkim=none (message not signed) header.i=none; spf=Pass smtp.mailfrom=Allan.Nielsen@microchip.com; spf=None smtp.helo=postmaster@email.microchip.com; dmarc=pass (p=none dis=none) d=microchip.com
-IronPort-SDR: LmzuGqhttF/xfKlz3vN8UCSxVJmlEhupmImJsA7v4AzRU/HKQvQqYBREmoaEzf+fHW7WIsMl7d
- CJQdgDUnTp8T+WbR1g4LluoF3HR3zCJ7ZS99n26UVEIn0FbZK8bmD1e+kFjofsUYFwG9eFW0fq
- YSB+PhTunKvzHwEISleY9WBeDY944oDZV4e2oWUl8bJMVeei5KZm5G91QMePUXiW3RM+myr0qX
- RV2LMM1yghDqn02BzjkdGJHEtTxOxSjdOVElTsrCJjxcqXr1teKz1+mNmt078ke8Q6gaseFvj5
- 0CY=
-X-IronPort-AV: E=Sophos;i="5.70,362,1574146800"; 
-   d="scan'208";a="63107753"
-Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
-  by esa5.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 25 Jan 2020 12:28:58 -0700
-Received: from chn-vm-ex03.mchp-main.com (10.10.85.151) by
- chn-vm-ex02.mchp-main.com (10.10.85.144) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.1713.5; Sat, 25 Jan 2020 12:28:53 -0700
-Received: from localhost (10.10.85.251) by chn-vm-ex03.mchp-main.com
- (10.10.85.151) with Microsoft SMTP Server id 15.1.1713.5 via Frontend
- Transport; Sat, 25 Jan 2020 12:28:55 -0700
-Date:   Sat, 25 Jan 2020 20:28:54 +0100
-From:   "Allan W. Nielsen" <allan.nielsen@microchip.com>
-To:     Andrew Lunn <andrew@lunn.ch>
-CC:     Horatiu Vultur <horatiu.vultur@microchip.com>,
-        <linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>,
-        <bridge@lists.linux-foundation.org>, <jiri@resnulli.us>,
-        <ivecera@redhat.com>, <davem@davemloft.net>,
-        <roopa@cumulusnetworks.com>, <nikolay@cumulusnetworks.com>,
-        <anirudh.venkataramanan@intel.com>, <olteanv@gmail.com>,
-        <jeffrey.t.kirsher@intel.com>, <UNGLinuxDriver@microchip.com>
-Subject: Re: [RFC net-next v3 04/10] net: bridge: mrp: Add generic netlink
- interface to configure MRP
-Message-ID: <20200125192854.yi544iu2atvbbwey@lx-anielsen.microsemi.net>
-References: <20200124161828.12206-1-horatiu.vultur@microchip.com>
- <20200124161828.12206-5-horatiu.vultur@microchip.com>
- <20200125153403.GB18311@lunn.ch>
+        Sat, 25 Jan 2020 14:30:35 -0500
+Received: by mail-wm1-f50.google.com with SMTP id g1so2719651wmh.4
+        for <linux-kernel@vger.kernel.org>; Sat, 25 Jan 2020 11:30:34 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:reply-to:from:date:message-id:subject:to
+         :content-transfer-encoding;
+        bh=G5dzffZtNNGRT7lVWGOHjPj3bYG4hrF7ung2Ivf9PUs=;
+        b=g0AE0Poh9mjjKWJ/F7qXY7JUJ3DvqbvMuDXqmjJ/52uFHxFSgDn808ZbMF8VP66M8r
+         KKLMsXn6+lY6n7z3PnYxfcKb/gCSYJQdSvDDDPfAUy4RBr3XZlzzm7t2sVdeuGNazlTa
+         /mnWia4aCm29HnGdPN6avuzaT73uOHGyK2QuFgY14I6muJvHcXO7RE+bNaodnMo3YcpG
+         WYXp349GnsSGeOPeRqA5g/neI9qeXifdZZb/WkkiAdC2lzM7iIuQLPEuGtTu8TkjHFI5
+         g47QI3QsvkWxNgXdOw56M2LdIUK/o8cI3+pGnHYCtRozD7ZnIQ8hQgJ+/OOEWahrNEB7
+         3DBQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
+         :subject:to:content-transfer-encoding;
+        bh=G5dzffZtNNGRT7lVWGOHjPj3bYG4hrF7ung2Ivf9PUs=;
+        b=XHL/XGIEnvCvxkgXmD916qQ5RoY+EPHgKj7SaijDwsBEE/41CWq3Z4IT3dwyr2eCOW
+         zYnSmFDpbZDpUZ8hAf8v1+f3M+U+siYt8iHIkGzofXVohq6uVkzmLpXcc/fIDYR2eepA
+         +wiexeIVuxP/qwcjLldJ+qbMOySsF6g7TehyO92Ge5WuWkMmCM9rrtr1Rr9bH2mRHeI3
+         Hck+C/ldjDvwI2eFxLY1+81hmZSq6pqoajUN+gZkxeb/lXh28mcY0cWuzWI9X0/hjwvF
+         WbwwJ+CiJ8AO6szvPDo/ng0+kXL77Q2L+t13AV4OxabkPf+rvLQqd0UBx0ZC7g1U/Kl8
+         0XUQ==
+X-Gm-Message-State: APjAAAV6aaIorjY2YK7xY7TQA9Oel8DnbIDPq2BNAqvCJ1SEUExITew+
+        j6ySMN7bP2g2yJdQSctfvxoLH/SqlU8Iw0P1aRw=
+X-Google-Smtp-Source: APXvYqzFo2fhjgSrtaFi8B+3H0s8Bv29OSBlBn0w0c/OO3tEKcHJK6FI4fWuc/G7YiUq4zcpXptNbT46PG1QSiNSWhE=
+X-Received: by 2002:a05:600c:a:: with SMTP id g10mr5253704wmc.14.1579980633410;
+ Sat, 25 Jan 2020 11:30:33 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Disposition: inline
-In-Reply-To: <20200125153403.GB18311@lunn.ch>
+Received: by 2002:a5d:650d:0:0:0:0:0 with HTTP; Sat, 25 Jan 2020 11:30:32
+ -0800 (PST)
+Reply-To: ultimatewealthmanagementltd@gmail.com
+From:   "DR. STANLEY MARTINS" <stanleymartinsfinance@gmail.com>
+Date:   Sat, 25 Jan 2020 11:30:32 -0800
+Message-ID: <CAJrAjaPZFJcRUeupLLs8roDZf8HeheAwHcmZUhvCn3+79uuZAQ@mail.gmail.com>
+Subject: TRANSACTION PROCEDURE:
+To:     undisclosed-recipients:;
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 25.01.2020 16:34, Andrew Lunn wrote:
->EXTERNAL EMAIL: Do not click links or open attachments unless you know the content is safe
->
->On Fri, Jan 24, 2020 at 05:18:22PM +0100, Horatiu Vultur wrote:
->> Implement the generic netlink interface to configure MRP. The implementation
->> will do sanity checks over the attributes and then eventually call the MRP
->> interface which eventually will call the switchdev API.
->What was your thinking between adding a new generic netlink interface,
->and extending the current one?
->
->I've not looked at your user space code yet, but i assume it has to
->make use of both? It needs to create the bridge and add the
->interfaces. And then it needs to control the MRP state.
->
->Allan mentioned you might get around to implementing 802.1CB? Would
->that be another generic netlink interface, or would you extend the MRP
->interface?
-Horatiu, if you have given this any thoughts, then please share them.
+Pls read through our BG/SBLC Procedure bellow and see if it can work for yo=
+u.
 
-Here are my thoughts on 802.1CB: If we look at this with the traditional
-NIC/host POW, then it would be natural to look at the HSR interface as
-Vinicius suggested, and expose it as a new interface (HSR0). But when
-looking at how 802.1CB say a bridge should act, and also what the
-capabilities of the HW are, then it seem more natural to extend the TC
-system. In HW it is a TCAM classifying the traffic, and it has some
-actions to either replicate the matched frames, or eliminate the
-additional copies.
+TRANSACTION PROCEDURE:
 
-The HW also supports CFM (see [1]), which we need (partly) to complete
-the MRP implementation with MIM/MIC roles. This is also useful for none
-MRP users (like ERPS).
+1. Lessee submits signed letter of intent (LOI)/MOU, together with
+International passport scanned copy, full text of MT799 & MT760
+verbiages, Lessee and Beneficiary=E2=80=98s bank details, CIS, and Corporat=
+e
+Registration Copy.
 
-This seems like an argument for moving this to the existing netlink
-interfaces instead of having it as a generic netlink.
+2. Provider countersigns Agreement along with issuing bank=E2=80=99s full
+banking coordinates.
 
-[1] https://en.wikipedia.org/wiki/IEEE_802.1ag
+3. This LOI automatically becomes a full commercial recourse contract
+and will be notarized and authenticated to avoid contract breach and
+Lessee will be required to pay for the notary authentication cost of
+the contract documents here in UK. After the notary authentication of
+the contract documents here in the UK, both parties shall lodge the
+executed contract with their respective banks.
 
-/Allan
+4. The Lessor=E2=80=99s bank issues Pre-advice by SWIFT MT199 or MT-799 to
+Lessee Beneficiary=E2=80=99s nominated bank within 48-72 banking hours.
+Simultaneously a copy of the Pre-advice by SWIFT MT199 or MT-799 will
+be sent to the Lessee via email.
+
+5. Within 48-72 banking hours following issuance of Pre-advice by
+SWIFT MT199 or MT-799 and upon successful authentication, the Lessee=E2=80=
+=99s
+Beneficiary bank replies to the Provider/Issuing Bank via MT799
+confirming readiness to receive the BG/SBLC via SWIFT MT 760.
+Simultaneously a copy of the =E2=80=98readiness to receive=E2=80=99 by SWIF=
+T MT799
+will be sent to the Provider via email.
+
+6. Successive to the Lessee=E2=80=99s Beneficiary Bank reply confirming
+readiness to receive the BG/SBLC via MT760, Issuing Bank shall within
+24-48 banking hours deliver the bank instrument (BG/SBLC) via SWIFT
+M760 to Lessee=E2=80=99s Beneficiary=E2=80=98s nominated bank.
+
+7. Within 15-21 banking days Upon receipt of the SWIFT MT760 BG/SBLC
+and upon successful authentication and final confirmation by the
+Lessee Beneficiary=E2=80=98s nominated bank, Lessee agrees to pay by SWIFT
+MT103 wire transfer the total BG/SBLC Lease cost of 6%+2% of face
+value to the nominated banks accounts of Provider and facilitators.
+
+8. Within 7 banking days after receipt of funds (6%+2%), the hard copy
+will be sent to Lessee Beneficiary=E2=80=99s nominated bank by bank-bonded
+courier.
+
+According to the provider, review became necessary to bypass certain
+Prudential Banking protocols and to underwrite Provider/Stakeholders
+confidence in providing the BG/SBLC.
+
+REGARDS
+DR. STANLEY MARTINS
+
+Registered address: Unit 1, West Point Court
+Great Park Road, Bradley Stoke
+Bristol, BS32 4PY. United Kingdom.
+
+Tel/Fax: +44 (020) 8185 7409
+Email:  ultimatewealthmanagementltd@gmail.com
+Website Address: www.ultimatewealthmanagementltd.com
+
+*CONFIDENTIALITY NOTE:This communication and any attachments here to
+contain information that may be privileged, confidential and exempt from
+disclosure under applicable law. The information is intended solely for the
+use of the individual or entity to which it is addressed. If you are not
+the intended recipient or the employee or agent entrusted with the
+responsibility of delivering the  message to the intended recipient,
+be aware that any disclosure, copying or distribution of this transmission
+is strictly prohibited. Thank you.*
