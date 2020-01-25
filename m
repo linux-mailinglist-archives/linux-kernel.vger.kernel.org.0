@@ -2,33 +2,33 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 056211494D5
-	for <lists+linux-kernel@lfdr.de>; Sat, 25 Jan 2020 11:48:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 62F301494CE
+	for <lists+linux-kernel@lfdr.de>; Sat, 25 Jan 2020 11:48:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730191AbgAYKps (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 25 Jan 2020 05:45:48 -0500
-Received: from Galois.linutronix.de ([193.142.43.55]:44251 "EHLO
+        id S1730377AbgAYKpe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 25 Jan 2020 05:45:34 -0500
+Received: from Galois.linutronix.de ([193.142.43.55]:44273 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729486AbgAYKnG (ORCPT
+        with ESMTP id S1729536AbgAYKnK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 25 Jan 2020 05:43:06 -0500
+        Sat, 25 Jan 2020 05:43:10 -0500
 Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
         by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
         (Exim 4.80)
         (envelope-from <tip-bot2@linutronix.de>)
-        id 1ivIu7-00007L-W4; Sat, 25 Jan 2020 11:43:04 +0100
+        id 1ivIuA-000070-LZ; Sat, 25 Jan 2020 11:43:06 +0100
 Received: from [127.0.1.1] (localhost [IPv6:::1])
-        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id A5A2A1C1A88;
+        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 580841C1A87;
         Sat, 25 Jan 2020 11:42:51 +0100 (CET)
 Date:   Sat, 25 Jan 2020 10:42:51 -0000
 From:   "tip-bot2 for Paul E. McKenney" <tip-bot2@linutronix.de>
 Reply-to: linux-kernel@vger.kernel.org
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip: core/rcu] rcutorture: Dynamically allocate rcu_fwds structure
+Subject: [tip: core/rcu] torture: Allow "CFLIST" to specify default list of scenarios
 Cc:     "Paul E. McKenney" <paulmck@kernel.org>, x86 <x86@kernel.org>,
         LKML <linux-kernel@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <157994897148.396.4031348139577445630.tip-bot2@tip-bot2>
+Message-ID: <157994897114.396.4771544853246554716.tip-bot2@tip-bot2>
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot2.linutronix.de>
 Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
@@ -44,70 +44,82 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The following commit has been merged into the core/rcu branch of tip:
 
-Commit-ID:     5155be9994e557618a8312389fb4e52dfbf28a3c
-Gitweb:        https://git.kernel.org/tip/5155be9994e557618a8312389fb4e52dfbf28a3c
+Commit-ID:     25b4da74a955bf956428ab29e54aadf4fffab0a3
+Gitweb:        https://git.kernel.org/tip/25b4da74a955bf956428ab29e54aadf4fffab0a3
 Author:        Paul E. McKenney <paulmck@kernel.org>
-AuthorDate:    Wed, 06 Nov 2019 08:35:08 -08:00
+AuthorDate:    Fri, 22 Nov 2019 06:14:21 -08:00
 Committer:     Paul E. McKenney <paulmck@kernel.org>
 CommitterDate: Mon, 09 Dec 2019 13:00:29 -08:00
 
-rcutorture: Dynamically allocate rcu_fwds structure
+torture: Allow "CFLIST" to specify default list of scenarios
 
-This commit switches from static structure to dynamic allocation
-for rcu_fwds as another step towards providing multiple call_rcu()
-forward-progress kthreads.
+On a large system, it can be convenient to tell rcutorture to run
+several instances of the default scenarios.  Currently, this requires
+explicitly listing them, for example, "--configs '2*SRCU-N 2*SRCU-P...'".
+Although this works, it is rather inconvenient.
+
+This commit therefore allows "CFLIST" to be specified to indicate the
+default list of scenarios called out in the relevant CFLIST file, for
+example, for RCU, tools/testing/selftests/rcutorture/configs/rcu/CFLIST.
+In addition, multipliers may be used to run multiple instances of all
+the scenarios.  For example, on a 256-CPU system, "--configs '3*CFLIST'"
+would run three instances of each scenario concurrently with one CPU
+left over.  Thus "--configs '3*CFLIST TINY01'" would exactly consume all
+256 CPUs, which makes rcutorture's jitter feature more effective.
 
 Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
 ---
- kernel/rcu/rcutorture.c | 13 ++++++++-----
- 1 file changed, 8 insertions(+), 5 deletions(-)
+ tools/testing/selftests/rcutorture/bin/kvm.sh | 19 ++++++++++++------
+ 1 file changed, 13 insertions(+), 6 deletions(-)
 
-diff --git a/kernel/rcu/rcutorture.c b/kernel/rcu/rcutorture.c
-index 394baac..f77f4d8 100644
---- a/kernel/rcu/rcutorture.c
-+++ b/kernel/rcu/rcutorture.c
-@@ -1686,7 +1686,7 @@ struct rcu_fwd {
- 	unsigned long rcu_launder_gp_seq_start;
- };
+diff --git a/tools/testing/selftests/rcutorture/bin/kvm.sh b/tools/testing/selftests/rcutorture/bin/kvm.sh
+index 7251858..e19151c 100755
+--- a/tools/testing/selftests/rcutorture/bin/kvm.sh
++++ b/tools/testing/selftests/rcutorture/bin/kvm.sh
+@@ -198,9 +198,10 @@ fi
  
--struct rcu_fwd rcu_fwds;
-+struct rcu_fwd *rcu_fwds;
- bool rcu_fwd_emergency_stop;
+ CONFIGFRAG=${KVM}/configs/${TORTURE_SUITE}; export CONFIGFRAG
  
- static void rcu_torture_fwd_cb_hist(struct rcu_fwd *rfp)
-@@ -1952,7 +1952,7 @@ static void rcu_torture_fwd_prog_cr(struct rcu_fwd *rfp)
- static int rcutorture_oom_notify(struct notifier_block *self,
- 				 unsigned long notused, void *nfreed)
- {
--	struct rcu_fwd *rfp = &rcu_fwds;
-+	struct rcu_fwd *rfp = rcu_fwds;
++defaultconfigs="`tr '\012' ' ' < $CONFIGFRAG/CFLIST`"
+ if test -z "$configs"
+ then
+-	configs="`cat $CONFIGFRAG/CFLIST`"
++	configs=$defaultconfigs
+ fi
  
- 	WARN(1, "%s invoked upon OOM during forward-progress testing.\n",
- 	     __func__);
-@@ -2010,7 +2010,7 @@ static int rcu_torture_fwd_prog(void *args)
- /* If forward-progress checking is requested and feasible, spawn the thread. */
- static int __init rcu_torture_fwd_prog_init(void)
- {
--	struct rcu_fwd *rfp = &rcu_fwds;
-+	struct rcu_fwd *rfp;
+ if test -z "$resdir"
+@@ -209,7 +210,7 @@ then
+ fi
  
- 	if (!fwd_progress)
- 		return 0; /* Not requested, so don't do it. */
-@@ -2026,12 +2026,15 @@ static int __init rcu_torture_fwd_prog_init(void)
- 		WARN_ON(1); /* Make sure rcutorture notices conflict. */
- 		return 0;
- 	}
--	spin_lock_init(&rfp->rcu_fwd_lock);
--	rfp->rcu_fwd_cb_tail = &rfp->rcu_fwd_cb_head;
- 	if (fwd_progress_holdoff <= 0)
- 		fwd_progress_holdoff = 1;
- 	if (fwd_progress_div <= 0)
- 		fwd_progress_div = 4;
-+	rfp = kzalloc(sizeof(*rfp), GFP_KERNEL);
-+	if (!rfp)
-+		return -ENOMEM;
-+	spin_lock_init(&rfp->rcu_fwd_lock);
-+	rfp->rcu_fwd_cb_tail = &rfp->rcu_fwd_cb_head;
- 	return torture_create_kthread(rcu_torture_fwd_prog, rfp, fwd_prog_task);
- }
- 
+ # Create a file of test-name/#cpus pairs, sorted by decreasing #cpus.
+-touch $T/cfgcpu
++configs_derep=
+ for CF in $configs
+ do
+ 	case $CF in
+@@ -222,15 +223,21 @@ do
+ 		CF1=$CF
+ 		;;
+ 	esac
++	for ((cur_rep=0;cur_rep<$config_reps;cur_rep++))
++	do
++		configs_derep="$configs_derep $CF1"
++	done
++done
++touch $T/cfgcpu
++configs_derep="`echo $configs_derep | sed -e "s/\<CFLIST\>/$defaultconfigs/g"`"
++for CF1 in $configs_derep
++do
+ 	if test -f "$CONFIGFRAG/$CF1"
+ 	then
+ 		cpu_count=`configNR_CPUS.sh $CONFIGFRAG/$CF1`
+ 		cpu_count=`configfrag_boot_cpus "$TORTURE_BOOTARGS" "$CONFIGFRAG/$CF1" "$cpu_count"`
+ 		cpu_count=`configfrag_boot_maxcpus "$TORTURE_BOOTARGS" "$CONFIGFRAG/$CF1" "$cpu_count"`
+-		for ((cur_rep=0;cur_rep<$config_reps;cur_rep++))
+-		do
+-			echo $CF1 $cpu_count >> $T/cfgcpu
+-		done
++		echo $CF1 $cpu_count >> $T/cfgcpu
+ 	else
+ 		echo "The --configs file $CF1 does not exist, terminating."
+ 		exit 1
