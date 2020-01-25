@@ -2,91 +2,63 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id ADF9D1495E0
-	for <lists+linux-kernel@lfdr.de>; Sat, 25 Jan 2020 14:15:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2BB0E1495E4
+	for <lists+linux-kernel@lfdr.de>; Sat, 25 Jan 2020 14:24:10 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729085AbgAYNPm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 25 Jan 2020 08:15:42 -0500
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:43247 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725812AbgAYNPm (ORCPT
+        id S1726729AbgAYNYG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 25 Jan 2020 08:24:06 -0500
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:37943 "EHLO
+        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725710AbgAYNYF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 25 Jan 2020 08:15:42 -0500
-Received: by mail-pg1-f193.google.com with SMTP id u131so2623524pgc.10
-        for <linux-kernel@vger.kernel.org>; Sat, 25 Jan 2020 05:15:42 -0800 (PST)
+        Sat, 25 Jan 2020 08:24:05 -0500
+Received: by mail-lj1-f195.google.com with SMTP id w1so5719991ljh.5
+        for <linux-kernel@vger.kernel.org>; Sat, 25 Jan 2020 05:24:04 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
-         :user-agent;
-        bh=3QVXWFxwGX7QiCNvy96Dga4mKxwmEj2CJq1V24a5GDQ=;
-        b=utalDz0DtbPvdQB+fVEPFCD9uAV+diqbxtaE6nLAPAT4Rv551mgKHVL52z54ilOP+j
-         4NdcGGy4Iu8oF+pQNUPDtS2yL8kLE8H3HxIniwYOhxp/9iBOjDanzLIe8WSpyQbuWuFv
-         pQ1eFhZINDOMd9Y6XOi8/9/pWlyVR5D9FynQbAWlV1+2hE1YJqWkBT4hDHnastA81fhF
-         M2KvZwldi1zv1Srpm9cUteUYxO5Ylxvd5WbQhVX3I4wZfePzgtz0LZmb16gUguApSH5B
-         KKcGGB0tZHazknx1GB/9swxz927Sw3gZsZsQSpCirB9JeI8mUN3bxlxe1/GXAUNf6Snl
-         5bBQ==
+        h=mime-version:reply-to:from:date:message-id:subject:to;
+        bh=LG6M3v1Ls5eBU/Q++d4+2oMHdFC9KDBZ3pivntD6LNY=;
+        b=Gba0/m1NmXTeSmrowo+iH/7uQkDk1nlnS0lam2VHplH61uF6271oOJfhwMqn5bL6PD
+         O31XovENzIko+3MsyA2mfwe7OR6SuMar7KoB52UY1Zbb1cFYsE8KIfGkIxFmThium+XP
+         YIuAeotFTEsWKZl3AF8Wi9HG06kSbCpNd9LaggGZoT2/S0AmHqvxcYrBrhBbN9kLgRZO
+         lXiHAHzBkAdq+LVVq7kVrBThpsR+d8ka5ByLyfuKp/C5Qq/jVJj2kyvZuWdI+uwRS5hZ
+         krmS6gEE+kL8romD5X0dW43fUUSS0OtalUxApGjtg4LO/U7bJbF3yRhHU16qdtprFTNp
+         HAJw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition:user-agent;
-        bh=3QVXWFxwGX7QiCNvy96Dga4mKxwmEj2CJq1V24a5GDQ=;
-        b=XV500P8HxyGf4iCFgZIlo7G9rw+UOs1G9ZKjlIrvXMa1wm234JAt9WYNis6SRWHNbW
-         tA6PNlC6r80boBc44a54Gcm/DG6zvENL23YkMdwPxOFe56k77o3FbZOfeTx3yRQ/bMmS
-         zcNLzixho/eWtvFPWYqGXrkfNPOueAfg2BhkwP6I8m8yfUUgVGwLp5DPrtvZ6k4bHD9v
-         HC/q4ihefS4gcHjT0lLG7mN1gE8s4mUiv4Nk0FTtCGn6z8pcd77qm2m4Qq89ODPQt3Iy
-         VNnv9FjAI65SwhfSdl0gR5S0jzwmmdqIJ9IXvNQ/4NKVclAKNlyYNBtGV/qsMCrQTQYt
-         K6sw==
-X-Gm-Message-State: APjAAAV2+buzf5HySpHbSRrVJSVxz8d/St1pTe1CjUKcHa0lz44k0mpO
-        ihUDe7BvMYv4oN7KNObQYo0=
-X-Google-Smtp-Source: APXvYqz8fKPgyFBdtF4tRUmTiUa5qf+2L3gDnSZV4kLyc14yiXiCILJRmIvrCRDA3OsHpTeJ+oOfyQ==
-X-Received: by 2002:a63:34cc:: with SMTP id b195mr8099939pga.268.1579958141494;
-        Sat, 25 Jan 2020 05:15:41 -0800 (PST)
-Received: from google.com ([123.201.163.7])
-        by smtp.gmail.com with ESMTPSA id c34sm9859242pgc.61.2020.01.25.05.15.39
-        (version=TLS1_2 cipher=AES128-SHA bits=128/128);
-        Sat, 25 Jan 2020 05:15:41 -0800 (PST)
-Date:   Sat, 25 Jan 2020 18:45:35 +0530
-From:   Saurav Girepunje <saurav.girepunje@gmail.com>
-To:     hsweeten@visionengravers.com, gregkh@linuxfoundation.org,
-        saurav.girepunje@gmail.com, devel@driverdev.osuosl.org,
-        linux-kernel@vger.kernel.org
-Cc:     saurav.girepunje@hotmail.com
-Subject: [PATCH] staging: comedi: drivers: fix condition with no effect
-Message-ID: <20200125131535.GA4171@google.com>
+        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
+         :subject:to;
+        bh=LG6M3v1Ls5eBU/Q++d4+2oMHdFC9KDBZ3pivntD6LNY=;
+        b=fP/3sbjK6HDZCalm++/ApY8gZEtIbIdHjdWaZWy22gbA3UlEvdEYtalKrjPlJj27kh
+         Fo4nWlhIotqRWnK3df/4X8chnXBy+Mv4C4tgrF5BfE/PKkiWMmM/xo9bhd6KeLUrlH0U
+         O/BitG7P8D91N8byL6JPQOPXrm5xMfeeEuUFKANH+ttIcHwwmQBvnwa43WW/tsMkIhLc
+         UaU2kgWOPcQuh2ifaiJylmmzy2Y07ef64qMFIOhsBO3xPZC97QOmlabPRLHjhqqjRtHD
+         4n8bq9lFlA0SubVpli9Mvx4Um/aD4XHcM7P+Cv/7tBsh0/3af5+PaK5+xL/NVXHRceHM
+         bhdA==
+X-Gm-Message-State: APjAAAVGfVgAJPwKPLeomjOOZC3ltx8NvYMHVmv9JUShip6MEbpXZyeI
+        oIQKADXAwiS/AeMqg84dJqrfDpRAqWMAYfGaors=
+X-Google-Smtp-Source: APXvYqzq2jMNwWQGYM4gv1kFpf8r18mBav+93tUl5VsUKhc8BnpymEYZZRwaSaU/+qCh9uuDfLY0IWEMkOhLDGOOpY4=
+X-Received: by 2002:a2e:9b03:: with SMTP id u3mr5150379lji.87.1579958643744;
+ Sat, 25 Jan 2020 05:24:03 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
-User-Agent: Mutt/1.6.2-neo (NetBSD/sparc64)
+Received: by 2002:ac2:46cf:0:0:0:0:0 with HTTP; Sat, 25 Jan 2020 05:24:03
+ -0800 (PST)
+Reply-To: barristerdinkarim09@gmail.com
+From:   Din Karim <generalsusanhelms68@gmail.com>
+Date:   Sat, 25 Jan 2020 13:24:03 +0000
+Message-ID: <CAK+Paz6Rh+-rE8z0cLpoOZWY6LC-pTG+sEsagRcttk4EoJREOA@mail.gmail.com>
+Subject: Hello
+To:     undisclosed-recipients:;
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-fix warning reorted by coccicheck
-WARNING: possible condition with no effect (if == else)
+Hello dear,
 
-Signed-off-by: Saurav Girepunje <saurav.girepunje@gmail.com>
----
-  drivers/staging/comedi/drivers/das1800.c | 6 ------
-  1 file changed, 6 deletions(-)
+I'm Barrister Din Karim, Please i wish to have a communication with you.
 
-diff --git a/drivers/staging/comedi/drivers/das1800.c b/drivers/staging/comedi/drivers/das1800.c
-index f16aa7e9..7ab72e8 100644
---- a/drivers/staging/comedi/drivers/das1800.c
-+++ b/drivers/staging/comedi/drivers/das1800.c
-@@ -1299,12 +1299,6 @@ static int das1800_attach(struct comedi_device *dev,
-  			outb(DAC(i), dev->iobase + DAS1800_SELECT);
-  			outw(0, dev->iobase + DAS1800_DAC);
-  		}
--	} else if (board->id == DAS1800_ID_AO) {
--		/*
--		 * 'ao' boards have waveform analog outputs that are not
--		 * currently supported.
--		 */
--		s->type		= COMEDI_SUBD_UNUSED;
-  	} else {
-  		s->type		= COMEDI_SUBD_UNUSED;
-  	}
--- 
-1.9.1
+I am waiting for your answer,
 
+Barrister Din Karim(Esq)
