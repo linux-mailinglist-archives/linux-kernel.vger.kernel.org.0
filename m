@@ -2,111 +2,72 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 48DB6149C49
-	for <lists+linux-kernel@lfdr.de>; Sun, 26 Jan 2020 19:29:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3EA3A149C50
+	for <lists+linux-kernel@lfdr.de>; Sun, 26 Jan 2020 19:31:33 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728767AbgAZS3b (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 26 Jan 2020 13:29:31 -0500
-Received: from jabberwock.ucw.cz ([46.255.230.98]:49498 "EHLO
-        jabberwock.ucw.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726657AbgAZS3b (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 26 Jan 2020 13:29:31 -0500
-Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
-        id 309901C013C; Sun, 26 Jan 2020 19:29:29 +0100 (CET)
-Date:   Sun, 26 Jan 2020 19:29:18 +0100
-From:   Pavel Machek <pavel@denx.de>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     linux-kernel@vger.kernel.org, stable@vger.kernel.org,
-        Eric Dumazet <edumazet@google.com>,
-        Willem de Bruijn <willemb@google.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Sasha Levin <sashal@kernel.org>
-Subject: Re: [PATCH 4.19 625/639] packet: fix data-race in
- fanout_flow_is_huge()
-Message-ID: <20200126182917.GA26911@amd>
-References: <20200124093047.008739095@linuxfoundation.org>
- <20200124093207.912523612@linuxfoundation.org>
+        id S1727528AbgAZSai (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 26 Jan 2020 13:30:38 -0500
+Received: from mail.kernel.org ([198.145.29.99]:45380 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727233AbgAZSah (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 26 Jan 2020 13:30:37 -0500
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id BA16C206F0;
+        Sun, 26 Jan 2020 18:30:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1580063437;
+        bh=IeQGexIT5WZnRinFdIJYWHpbxRm7H11XzhptV9yLbpU=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=OyPqZHwyhFaf1WhFfb67oyG03LfqZktOW7s0kdsxcEOx7zEeXVF8nz0yXZJkBIoLA
+         +GB5nza4xPb4Ddkh/gzf9xNsoiMpp6kBYW/xBo8QGnUtT6/gfWQSJGrCeUG51U9lq+
+         sbbX8jgApxNQZ8Q8n9duXUENZPQ+m/FaBDP6Y4Go=
+Date:   Sun, 26 Jan 2020 19:30:34 +0100
+From:   Greg KH <gregkh@linuxfoundation.org>
+To:     Saurav Girepunje <saurav.girepunje@gmail.com>
+Cc:     vireshk@kernel.org, johan@kernel.org, elder@kernel.org,
+        greybus-dev@lists.linaro.org, devel@driverdev.osuosl.org,
+        linux-kernel@vger.kernel.org, saurav.girepunje@hotmail.com
+Subject: Re: [PATCH] staging: greybus: fix fw is NULL but dereferenced.
+Message-ID: <20200126183034.GA4086664@kroah.com>
+References: <20200126083130.GA17725@google.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="17pEHd4RhPHOinZp"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200124093207.912523612@linuxfoundation.org>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+In-Reply-To: <20200126083130.GA17725@google.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Sun, Jan 26, 2020 at 02:01:30PM +0530, Saurav Girepunje wrote:
+> Fix the warning reported by cocci check.
 
---17pEHd4RhPHOinZp
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+What is "cocci check"?
 
-Hi!
+> Changes:
+> 
 
-> From: Eric Dumazet <edumazet@google.com>
->=20
-> [ Upstream commit b756ad928d98e5ef0b74af7546a6a31a8dadde00 ]
->=20
-> KCSAN reported the following data-race [1]
->=20
-> Adding a couple of READ_ONCE()/WRITE_ONCE() should silence it.
->=20
-> Since the report hinted about multiple cpus using the history
-> concurrently, I added a test avoiding writing on it if the
-> victim slot already contains the desired value.
+Why add that line?
 
->  static bool fanout_flow_is_huge(struct packet_sock *po, struct sk_buff *=
-skb)
->  {
-> -	u32 rxhash;
-> +	u32 *history =3D po->rollover->history;
-> +	u32 victim, rxhash;
->  	int i, count =3D 0;
-> =20
->  	rxhash =3D skb_get_hash(skb);
->  	for (i =3D 0; i < ROLLOVER_HLEN; i++)
-> -		if (po->rollover->history[i] =3D=3D rxhash)
-> +		if (READ_ONCE(history[i]) =3D=3D rxhash)
->  			count++;
-> =20
-> -	po->rollover->history[prandom_u32() % ROLLOVER_HLEN] =3D rxhash;
-> +	victim =3D prandom_u32() % ROLLOVER_HLEN;
-> +
-> +	/* Avoid dirtying the cache line if possible */
-> +	if (READ_ONCE(history[victim]) !=3D rxhash)
-> +		WRITE_ONCE(history[victim], rxhash);
-> +
+> In queue_work fw dereference before it actually get assigned.
+> move queue_work before gb_bootrom_set_timeout.
+> 
+> As gb_bootrom_get_firmware () return NEXT_REQ_READY_TO_BOOT
+> only when there is no error and offset + size is actually equal
+> to fw->size. So initialized next_request to NEXT_REQ_GET_FIRMWARE
+> for return in other case.
+> 
+> Signed-off-by: Saurav Girepunje <saurav.girepunje@gmail.com>
+> ---
+>  drivers/staging/greybus/bootrom.c | 6 ++----
+>  1 file changed, 2 insertions(+), 4 deletions(-)
 
-Replacing simple asignment with if() is ... not nice and with all the
-"volatile" magic in _ONCE macros may not be win for
-everyone. [Actually, I don't think this is win here. This is not
-exactly hot path, is it? Is it likely that array aready contains
-required value?]
+As Johan said, there are a lot of really bad "static checking"
+tools out there that can not properly parse C code.  Always verify by
+hand what the tools said is wrong, really is an issue before sending a
+patch out for something that is not correct.  This looks like you need
+to use a better tool.
 
-If this is going to get more common, should we get
-WRITE_ONCE_NONDIRTY() macro hiding the uglyness?
-
-Best regards,
-								Pavel
-
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
-
---17pEHd4RhPHOinZp
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iEYEARECAAYFAl4t2n0ACgkQMOfwapXb+vKWZACfXGUxeWdbOxPidKjzXNS5xqcf
-llUAmwZqpQqfdyEY953YC5qnZziTVQa/
-=ckpY
------END PGP SIGNATURE-----
-
---17pEHd4RhPHOinZp--
+greg k-h
