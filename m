@@ -2,30 +2,32 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7841E149CB5
-	for <lists+linux-kernel@lfdr.de>; Sun, 26 Jan 2020 21:09:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 90BE5149CB6
+	for <lists+linux-kernel@lfdr.de>; Sun, 26 Jan 2020 21:10:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726545AbgAZUJ4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 26 Jan 2020 15:09:56 -0500
-Received: from foss.arm.com ([217.140.110.172]:37670 "EHLO foss.arm.com"
+        id S1726922AbgAZUJ7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 26 Jan 2020 15:09:59 -0500
+Received: from foss.arm.com ([217.140.110.172]:37686 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726087AbgAZUJ4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 26 Jan 2020 15:09:56 -0500
+        id S1726087AbgAZUJ5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 26 Jan 2020 15:09:57 -0500
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 58A2B1FB;
-        Sun, 26 Jan 2020 12:09:55 -0800 (PST)
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id BDAE5328;
+        Sun, 26 Jan 2020 12:09:56 -0800 (PST)
 Received: from e113632-lin.cambridge.arm.com (e113632-lin.cambridge.arm.com [10.1.194.46])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 212C93F68E;
-        Sun, 26 Jan 2020 12:09:54 -0800 (PST)
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 89F833F68E;
+        Sun, 26 Jan 2020 12:09:55 -0800 (PST)
 From:   Valentin Schneider <valentin.schneider@arm.com>
 To:     linux-kernel@vger.kernel.org
 Cc:     mingo@redhat.com, peterz@infradead.org, vincent.guittot@linaro.org,
         dietmar.eggemann@arm.com, morten.rasmussen@arm.com,
         qperret@google.com, adharmap@codeaurora.org
-Subject: [PATCH v3 0/3] sched/fair: Capacity aware wakeup rework
-Date:   Sun, 26 Jan 2020 20:09:31 +0000
-Message-Id: <20200126200934.18712-1-valentin.schneider@arm.com>
+Subject: [PATCH v3 1/3] sched/fair: Add asymmetric CPU capacity wakeup scan
+Date:   Sun, 26 Jan 2020 20:09:32 +0000
+Message-Id: <20200126200934.18712-2-valentin.schneider@arm.com>
 X-Mailer: git-send-email 2.24.0
+In-Reply-To: <20200126200934.18712-1-valentin.schneider@arm.com>
+References: <20200126200934.18712-1-valentin.schneider@arm.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -33,25 +35,42 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This series is about replacing the current wakeup logic for asymmetric CPU
-capacity topologies, i.e. wake_cap().
+From: Morten Rasmussen <morten.rasmussen@arm.com>
 
-Details are in patch 1, the TL;DR is that wake_cap() works fine for
-"legacy" big.LITTLE systems (e.g. Juno), since the Last Level Cache (LLC)
-domain of a CPU only spans CPUs of the same capacity, but somewhat broken
-for newer DynamIQ systems (e.g. Dragonboard 845C), since the LLC domain of
-a CPU can span all CPUs in the system. Both example boards are supported in
-mainline.
+Issue
+=====
 
-A bit of history
-================
+On asymmetric CPU capacity topologies, we currently rely on wake_cap() to
+drive select_task_rq_fair() towards either
+- its slow-path (find_idlest_cpu()) if either the previous or
+  current (waking) CPU has too little capacity for the waking task
+- its fast-path (select_idle_sibling()) otherwise
 
-Due to the old Energy Model (EM) used until Android Common Kernel v4.14
-which grafted itself onto the sched domain hierarchy, mobile topologies
-have been represented with "phantom domains"; IOW we'd make a DynamIQ
-topology look like a big.LITTLE one:
+Commit 3273163c6775 ("sched/fair: Let asymmetric CPU configurations balance
+at wake-up") points out that this relies on the assumption that "[...]the
+CPU capacities within an SD_SHARE_PKG_RESOURCES domain (sd_llc) are
+homogeneous".
 
-actual hardware:
+This assumption no longer holds on newer generations of big.LITTLE
+systems (DynamIQ), which can accommodate CPUs of different compute capacity
+within a single LLC domain. To hopefully paint a better picture, a regular
+big.LITTLE topology would look like this:
+
+  +---------+ +---------+
+  |   L2    | |   L2    |
+  +----+----+ +----+----+
+  |CPU0|CPU1| |CPU2|CPU3|
+  +----+----+ +----+----+
+      ^^^         ^^^
+    LITTLEs      bigs
+
+which would result in the following scheduler topology:
+
+  DIE [         ] <- sd_asym_cpucapacity
+  MC  [   ] [   ] <- sd_llc
+       0 1   2 3
+
+Conversely, a DynamIQ topology could look like:
 
   +-------------------+
   |        L3         |
@@ -63,164 +82,118 @@ actual hardware:
      ^^^^^     ^^^^^
     LITTLEs    bigs
 
-vanilla/mainline topology:
+which would result in the following scheduler topology:
 
-  MC [       ]
+  MC [       ] <- sd_llc, sd_asym_cpucapacity
       0 1 2 3
 
-phantom domains topology:
+What this means is that, on DynamIQ systems, we could pass the wake_cap()
+test (IOW presume the waking task fits on the CPU capacities of some LLC
+domain), thus go through select_idle_sibling().
+This function operates on an LLC domain, which here spans both bigs and
+LITTLEs, so it could very well pick a CPU of too small capacity for the
+task, despite there being fitting idle CPUs - it very much depends on the
+CPU iteration order, on which we have absolutely no guarantees
+capacity-wise.
 
-  DIE [        ]
-  MC  [   ][   ]
-       0 1  2 3
+Implementation
+==============
 
-With the newer, mainline EM this is no longer required, and wake_cap() is
-the last sticking point to getting rid of this legacy crud. More details
-and examples are in patch 1.
+Introduce yet another select_idle_sibling() helper function that takes CPU
+capacity into account. The policy is to pick the first idle CPU which is
+big enough for the task (task_util * margin < cpu_capacity). If no
+idle CPU is big enough, we pick the idle one with the highest capacity.
 
-Notes
-=====
+Unlike other select_idle_sibling() helpers, this one operates on the
+sd_asym_cpucapacity sched_domain pointer, which is guaranteed to span all
+known CPU capacities in the system. As such, this will work for both
+"legacy" big.LITTLE (LITTLEs & bigs split at MC, joined at DIE) and for
+newer DynamIQ systems (e.g. LITTLEs and bigs in the same MC domain).
 
-This removes the use of SD_BALANCE_WAKE for asymmetric CPU capacity
-topologies (which are the last mainline users of that flag), as such it
-shouldn't be a surprise that this comes with significant improvements to
-wake-intensive workloads: wakeups no longer go through the
-select_task_rq_fair() slow-path.
+Co-authored-by: Valentin Schneider <valentin.schneider@arm.com>
+Signed-off-by: Morten Rasmussen <morten.rasmussen@arm.com>
+Signed-off-by: Valentin Schneider <valentin.schneider@arm.com>
+---
+ kernel/sched/fair.c | 59 +++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 59 insertions(+)
 
-Testing
-=======
-
-I've picked sysbench --test=threads to mimic Peter's testing mentioned in
-
-  commit 182a85f8a119 ("sched: Disable wakeup balancing")
-
-Sysbench results are the number of events handled in a fixed amount of
-time, so higher is better. Hackbench results are the usual time taken for
-the thing, so lower is better.
-
-Note: the 'X%' stats are the percentiles, so 50% is the 50th percentile.
-
-Juno r0 ("legacy" big.LITTLE)
-+++++++++++++++++++++++++++++
-
-This is 2 bigs and 4 LITTLEs:
-
-  +---------------+ +-------+
-  |      L2       | |  L2   |
-  +---+---+---+---+ +---+---+
-  | L | L | L | L | | B | B |
-  +---+---+---+---+ +---+---+
-
-
-100 iterations of 'hackbench':
-
-|      |   -PATCH |   +PATCH | DELTA (%) |
-|------+----------+----------+-----------|
-| mean | 0.631040 | 0.617040 |    -2.219 |
-| std  | 0.025486 | 0.017176 |   -32.606 |
-| min  | 0.582000 | 0.580000 |    -0.344 |
-| 50%  | 0.628500 | 0.613500 |    -2.387 |
-| 75%  | 0.645500 | 0.625000 |    -3.176 |
-| 99%  | 0.697060 | 0.668020 |    -4.166 |
-| max  | 0.703000 | 0.670000 |    -4.694 |
-
-100 iterations of 'sysbench --max-time=5 --max-requests=-1 --test=threads --num-threads=6 run':
-
-|      |       -PATCH |       +PATCH | DELTA (%) |
-|------+--------------+--------------+-----------|
-| mean | 10267.760000 | 15767.580000 |   +53.564 |
-| std  |  3110.439815 |   151.040712 |   -95.144 |
-| min  |  7186.000000 | 15206.000000 |  +111.606 |
-| 50%  |  9019.500000 | 15778.500000 |   +74.938 |
-| 75%  | 12711.000000 | 15873.500000 |   +24.880 |
-| 99%  | 15749.290000 | 16042.100000 |    +1.859 |
-| max  | 15877.000000 | 16052.000000 |    +1.102 |
-
-Pixel3 (DynamIQ)
-++++++++++++++++
-
-Ideally I would have used a DB845C but had a few issues with mine, so I
-went with a mainline-ish Pixel3 instead [1]. It's still the same SoC under
-the hood (Snapdragon 845), which has 4 bigs and 4 LITTLEs:
-
-  +-------------------------------+
-  |               L3              |
-  +---+---+---+---+---+---+---+---+
-  | L2| L2| L2| L2| L2| L2| L2| L2|
-  +---+---+---+---+---+---+---+---+
-  | L | L | L | L | B | B | B | B |
-  +---+---+---+---+---+---+---+---+
-
-Default topology (single MC domain)
------------------------------------
-
-100 iterations of 'hackbench -l 200'
-
-|      |   -PATCH |   +PATCH | DELTA (%) |
-|------+----------+----------+-----------|
-| mean | 1.131360 | 1.127490 |    -0.342 |
-| std  | 0.116322 | 0.084154 |   -27.654 |
-| min  | 0.935000 | 0.984000 |    +5.241 |
-| 50%  | 1.099000 | 1.115500 |    +1.501 |
-| 75%  | 1.211250 | 1.182500 |    -2.374 |
-| 99%  | 1.401020 | 1.343070 |    -4.136 |
-| max  | 1.502000 | 1.350000 |   -10.120 |
-
-
-100 iterations of 'sysbench --max-time=5 --max-requests=-1 --test=threads --num-threads=8 run':
-
-|      |      -PATCH |      +PATCH | DELTA (%) |
-|------+-------------+-------------+-----------|
-| mean | 7108.310000 | 8724.770000 |   +22.740 |
-| std  |  199.431854 |  185.383188 |    -7.044 |
-| min  | 6655.000000 | 8288.000000 |   +24.538 |
-| 50%  | 7107.500000 | 8712.500000 |   +22.582 |
-| 75%  | 7255.500000 | 8846.250000 |   +21.925 |
-| 99%  | 7539.540000 | 9080.970000 |   +20.445 |
-| max  | 7593.000000 | 9177.000000 |   +20.861 |
-
-Phantom domains (MC + DIE)
---------------------------
-
-This is mostly included for the sake of completeness.
-
-100 iterations of 'sysbench --max-time=5 --max-requests=-1 --test=threads --num-threads=8 run':
-
-|      |      -PATCH |       +PATCH | DELTA (%) |
-|------+-------------+--------------+-----------|
-| mean | 7317.940000 |  9888.270000 |   +35.124 |
-| std  |  460.372682 |   225.019185 |   -51.122 |
-| min  | 5888.000000 |  9277.000000 |   +57.558 |
-| 50%  | 7271.000000 |  9879.500000 |   +35.875 |
-| 75%  | 7497.500000 | 10023.750000 |   +33.695 |
-| 99%  | 8464.390000 | 10318.320000 |   +21.903 |
-| max  | 8602.000000 | 10350.000000 |   +20.321 |
-
-Revisions
-=========
-
-v2 -> v3
---------
-o Added missing sync_entity_load_avg() (Quentin)
-o Added fallback CPU selection (maximize capacity)
-o Added special case for CPU hogs: task_fits_capacity() will always return 'false'
-  for tasks that are simply too big, due to the margin.
-
-v1 -> v2
---------
-o Removed unrelated select_idle_core() change
-
-[1]: https://git.linaro.org/people/amit.pundir/linux.git/log/?h=blueline-mainline-tracking
-
-Morten Rasmussen (3):
-  sched/fair: Add asymmetric CPU capacity wakeup scan
-  sched/topology: Remove SD_BALANCE_WAKE on asymmetric capacity systems
-  sched/fair: Kill wake_cap()
-
- kernel/sched/fair.c     | 89 +++++++++++++++++++++++++++--------------
- kernel/sched/topology.c | 15 ++-----
- 2 files changed, 63 insertions(+), 41 deletions(-)
-
---
+diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+index fe4e0d7753756..aebc2e0e6c8a1 100644
+--- a/kernel/sched/fair.c
++++ b/kernel/sched/fair.c
+@@ -5894,6 +5894,60 @@ static int select_idle_cpu(struct task_struct *p, struct sched_domain *sd, int t
+ 	return cpu;
+ }
+ 
++static inline int check_cpu_capacity(struct rq *rq, struct sched_domain *sd);
++
++/*
++ * Scan the asym_capacity domain for idle CPUs; pick the first idle one on which
++ * the task fits. If no CPU is big enough, but there are idle ones, try to
++ * maximize capacity.
++ */
++static int select_idle_capacity(struct task_struct *p, int target)
++{
++	unsigned long best_cap = 0;
++	struct sched_domain *sd;
++	struct cpumask *cpus;
++	int best_cpu = -1;
++	struct rq *rq;
++	int cpu;
++
++	if (!static_branch_unlikely(&sched_asym_cpucapacity))
++		return -1;
++
++	sd = rcu_dereference(per_cpu(sd_asym_cpucapacity, target));
++	if (!sd)
++		return -1;
++
++	sync_entity_load_avg(&p->se);
++
++	cpus = this_cpu_cpumask_var_ptr(select_idle_mask);
++	cpumask_and(cpus, sched_domain_span(sd), p->cpus_ptr);
++
++	for_each_cpu_wrap(cpu, cpus, target) {
++		rq = cpu_rq(cpu);
++
++		if (!available_idle_cpu(cpu))
++			continue;
++		if (task_fits_capacity(p, rq->cpu_capacity))
++			return cpu;
++
++		/*
++		 * It would be silly to keep looping when we've found a CPU
++		 * of highest available capacity. Just check that it's not been
++		 * too pressured lately.
++		 */
++		if (rq->cpu_capacity_orig == READ_ONCE(rq->rd->max_cpu_capacity) &&
++		    !check_cpu_capacity(rq, sd))
++			return cpu;
++
++		if (rq->cpu_capacity > best_cap) {
++			best_cap = rq->cpu_capacity;
++			best_cpu = cpu;
++		}
++	}
++
++	return best_cpu;
++}
++
+ /*
+  * Try and locate an idle core/thread in the LLC cache domain.
+  */
+@@ -5902,6 +5956,11 @@ static int select_idle_sibling(struct task_struct *p, int prev, int target)
+ 	struct sched_domain *sd;
+ 	int i, recent_used_cpu;
+ 
++	/* For asymmetric capacities, try to be smart about the placement */
++	i = select_idle_capacity(p, target);
++	if ((unsigned)i < nr_cpumask_bits)
++		return i;
++
+ 	if (available_idle_cpu(target) || sched_idle_cpu(target))
+ 		return target;
+ 
+-- 
 2.24.0
 
