@@ -2,118 +2,107 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2183B149A12
-	for <lists+linux-kernel@lfdr.de>; Sun, 26 Jan 2020 11:26:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7A640149A26
+	for <lists+linux-kernel@lfdr.de>; Sun, 26 Jan 2020 11:37:50 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729416AbgAZK0i (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 26 Jan 2020 05:26:38 -0500
-Received: from jabberwock.ucw.cz ([46.255.230.98]:48588 "EHLO
-        jabberwock.ucw.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729213AbgAZK0i (ORCPT
+        id S1729359AbgAZKhr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 26 Jan 2020 05:37:47 -0500
+Received: from mail25.static.mailgun.info ([104.130.122.25]:43246 "EHLO
+        mail25.static.mailgun.info" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1729107AbgAZKhp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 26 Jan 2020 05:26:38 -0500
-Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
-        id AEBE51C228F; Sun, 26 Jan 2020 11:26:35 +0100 (CET)
-Date:   Sun, 26 Jan 2020 11:26:35 +0100
-From:   Pavel Machek <pavel@denx.de>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     linux-kernel@vger.kernel.org, stable@vger.kernel.org,
-        Bruno Thomsen <bruno.thomsen@gmail.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: Re: [PATCH 4.19 521/639] rtc: pcf2127: bugfix: read rtc disables
- watchdog
-Message-ID: <20200126102634.GA19082@duo.ucw.cz>
-References: <20200124093047.008739095@linuxfoundation.org>
- <20200124093154.044998307@linuxfoundation.org>
+        Sun, 26 Jan 2020 05:37:45 -0500
+DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
+ s=smtp; t=1580035064; h=Date: Message-Id: Cc: To: References:
+ In-Reply-To: From: Subject: Content-Transfer-Encoding: MIME-Version:
+ Content-Type: Sender; bh=Z75vo15kFHSAjpOh8gqvQcI40tUdEQ8bAOEe2NzjOZg=;
+ b=BfBnDHcfAhE6zh0DCToqqMCT1A/LGh3GPWImW3D8ujlVj2ZaKPks8zh4iVY+tE+HMw64KhIi
+ UfK8JD4AOix5M0NqptHmBkpsO5id9LuP+1wEB/qykHNDLCbBkbWrXQ66TOnqJqZnay7G4RA+
+ wsbj3xMREJhYpO3Dx7A6xAvxBP0=
+X-Mailgun-Sending-Ip: 104.130.122.25
+X-Mailgun-Sid: WyI0MWYwYSIsICJsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
+Received: from smtp.codeaurora.org (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171])
+ by mxa.mailgun.org with ESMTP id 5e2d6bf7.7fb04d30e810-smtp-out-n02;
+ Sun, 26 Jan 2020 10:37:43 -0000 (UTC)
+Received: by smtp.codeaurora.org (Postfix, from userid 1001)
+        id 83EBBC433A2; Sun, 26 Jan 2020 10:37:43 +0000 (UTC)
+X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
+        aws-us-west-2-caf-mail-1.web.codeaurora.org
+X-Spam-Level: 
+X-Spam-Status: No, score=0.5 required=2.0 tests=ALL_TRUSTED,MISSING_DATE,
+        MISSING_MID,SPF_NONE autolearn=no autolearn_force=no version=3.4.0
+Received: from potku.adurom.net (88-114-240-156.elisa-laajakaista.fi [88.114.240.156])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        (Authenticated sender: kvalo)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id E43F3C433CB;
+        Sun, 26 Jan 2020 10:37:36 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org E43F3C433CB
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=none smtp.mailfrom=kvalo@codeaurora.org
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="qMm9M+Fa2AknHoGS"
-Content-Disposition: inline
-In-Reply-To: <20200124093154.044998307@linuxfoundation.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 7bit
+Subject: Re: [PATCH] ath11k: fix debugfs build failure
+From:   Kalle Valo <kvalo@codeaurora.org>
+In-Reply-To: <20200107215036.1333983-1-arnd@arndb.de>
+References: <20200107215036.1333983-1-arnd@arndb.de>
+To:     Arnd Bergmann <arnd@arndb.de>
+Cc:     Manikanta Pubbisetty <mpubbise@codeaurora.org>,
+        John Crispin <john@phrozen.org>,
+        Sven Eckelmann <seckelmann@datto.com>,
+        Bhagavathi Perumal S <bperumal@codeaurora.org>,
+        Anilkumar Kolli <akolli@codeaurora.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Ganesh Sesetti <gseset@codeaurora.org>,
+        Govindaraj Saminathan <gsamin@codeaurora.org>,
+        Julia Lawall <julia.lawall@lip6.fr>,
+        Karthikeyan Periyasamy <periyasa@codeaurora.org>,
+        kbuild test robot <lkp@intel.com>,
+        Maharaja Kennadyrajan <mkenna@codeaurora.org>,
+        Miles Hu <milehu@codeaurora.org>,
+        Muna Sinada <msinada@codeaurora.org>,
+        Pradeep Kumar Chitrapu <pradeepc@codeaurora.org>,
+        Rajkumar Manoharan <rmanohar@codeaurora.org>,
+        Sathishkumar Muruganandam <murugana@codeaurora.org>,
+        Shashidhar Lakkavalli <slakkavalli@datto.com>,
+        Sriram R <srirrama@codeaurora.org>,
+        Vasanthakumar Thiagarajan <vthiagar@codeaurora.org>,
+        Venkateswara Naralasetty <vnaralas@codeaurora.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Tamizh chelvam <tamizhr@codeaurora.org>,
+        ath11k@lists.infradead.org, linux-wireless@vger.kernel.org,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+User-Agent: pwcli/0.0.0-git (https://github.com/kvalo/pwcli/) Python/2.7.12
+Message-Id: <20200126103743.83EBBC433A2@smtp.codeaurora.org>
+Date:   Sun, 26 Jan 2020 10:37:43 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Arnd Bergmann <arnd@arndb.de> wrote:
 
---qMm9M+Fa2AknHoGS
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+> When CONFIG_ATH11K_DEBUGFS is disabled, but CONFIG_MAC80211_DEBUGFS
+> is turned on, the driver fails to build:
+> 
+> drivers/net/wireless/ath/ath11k/debugfs_sta.c: In function 'ath11k_dbg_sta_open_htt_peer_stats':
+> drivers/net/wireless/ath/ath11k/debugfs_sta.c:416:4: error: 'struct ath11k' has no member named 'debug'
+>   ar->debug.htt_stats.stats_req = stats_req;
+>     ^~
+> 
+> It appears that just using the former symbol is sufficient here,
+> adding a Kconfig dependency takes care of the corner cases.
+> 
+> Fixes: d5c65159f289 ("ath11k: driver for Qualcomm IEEE 802.11ax devices")
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
 
-On Fri 2020-01-24 10:31:31, Greg Kroah-Hartman wrote:
-> From: Bruno Thomsen <bruno.thomsen@gmail.com>
->=20
-> [ Upstream commit 7f43020e3bdb63d65661ed377682702f8b34d3ea ]
->=20
-> The previous fix listed bulk read of registers as root cause of
-> accendential disabling of watchdog, since the watchdog counter
-> register (WD_VAL) was zeroed.
->=20
-> Fixes: 3769a375ab83 rtc: pcf2127: bulk read only date and time registers.
->=20
-> Tested with the same PCF2127 chip as Sean reveled root cause
-> of WD_VAL register value zeroing was caused by reading CTRL2
-> register which is one of the watchdog feature control registers.
->=20
-> So the solution is to not read the first two control registers
-> (CTRL1 and CTRL2) in pcf2127_rtc_read_time as they are not
-> needed anyway. Size of local buf variable is kept to allow
-> easy usage of register defines to improve readability of code.
+Patch applied to ath-next branch of ath.git, thanks.
 
-Should the array be zeroed before or something? This way, one array
-contains both undefined values and valid data...
+a45ceea5015d ath11k: fix debugfs build failure
 
-> Debug trace line was updated after CTRL1 and CTRL2 are no longer
-> read from the chip. Also replaced magic numbers in buf access
-> with register defines.
+-- 
+https://patchwork.kernel.org/patch/11321921/
 
-That part is not an improvement. Previously the code was formatted so
-that you could parse what is being printed.
-
-Best regards,							Pavel
-
-> @@ -91,14 +85,12 @@ static int pcf2127_rtc_read_time(struct device *dev, =
-struct rtc_time *tm)
->  	}
-> =20
->  	dev_dbg(dev,
-> -		"%s: raw data is cr1=3D%02x, cr2=3D%02x, cr3=3D%02x, "
-> -		"sec=3D%02x, min=3D%02x, hr=3D%02x, "
-> +		"%s: raw data is cr3=3D%02x, sec=3D%02x, min=3D%02x, hr=3D%02x, "
->  		"mday=3D%02x, wday=3D%02x, mon=3D%02x, year=3D%02x\n",
-> -		__func__,
-> -		buf[0], buf[1], buf[2],
-> -		buf[3], buf[4], buf[5],
-> -		buf[6], buf[7], buf[8], buf[9]);
-> -
-> +		__func__, buf[PCF2127_REG_CTRL3], buf[PCF2127_REG_SC],
-> +		buf[PCF2127_REG_MN], buf[PCF2127_REG_HR],
-> +		buf[PCF2127_REG_DM], buf[PCF2127_REG_DW],
-> +		buf[PCF2127_REG_MO], buf[PCF2127_REG_YR]);
-> =20
->  	tm->tm_sec =3D bcd2bin(buf[PCF2127_REG_SC] & 0x7F);
->  	tm->tm_min =3D bcd2bin(buf[PCF2127_REG_MN] & 0x7F);
-> --=20
-> 2.20.1
->=20
->=20
-
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
-
---qMm9M+Fa2AknHoGS
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCXi1pWgAKCRAw5/Bqldv6
-8lXvAKCuBbJsd+Ad8O49Zkovk64+OagFnACfXDkYo06jdIlgrJvug0hvl1dpMuo=
-=GfFi
------END PGP SIGNATURE-----
-
---qMm9M+Fa2AknHoGS--
+https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
