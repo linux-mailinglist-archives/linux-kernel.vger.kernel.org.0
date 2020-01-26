@@ -2,54 +2,61 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 25844149CE1
-	for <lists+linux-kernel@lfdr.de>; Sun, 26 Jan 2020 21:45:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8BFCB149CEE
+	for <lists+linux-kernel@lfdr.de>; Sun, 26 Jan 2020 22:00:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727221AbgAZUpF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 26 Jan 2020 15:45:05 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43960 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726293AbgAZUpE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 26 Jan 2020 15:45:04 -0500
-Subject: Re: [GIT PULL] io_uring fixes for 5.5-final
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1580071504;
-        bh=e5whKQo48EZzSeDWtoewc73WrrEoPDPKZ4wqprbir9I=;
-        h=From:In-Reply-To:References:Date:To:Cc:From;
-        b=vTnvFR4rYfikTzAo+4tv7qhHZS6w8MW6W0kiF7pRWMSNS6J5Jf1S+WDYdDy+a4L0D
-         iord24zGDnNCd/lAseMuWVP1rtapH5PhD+frYoZIglBSbPdnmrr1Uui1hH+MTm5wyC
-         6WnugUON0prkwhQRA0gusrhrKMDSrew2QrCuFBDI=
-From:   pr-tracker-bot@kernel.org
-In-Reply-To: <97fc142a-5f87-57f5-67fd-a146996a7ff1@kernel.dk>
-References: <97fc142a-5f87-57f5-67fd-a146996a7ff1@kernel.dk>
-X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <97fc142a-5f87-57f5-67fd-a146996a7ff1@kernel.dk>
-X-PR-Tracked-Remote: git://git.kernel.dk/linux-block.git
- tags/io_uring-5.5-2020-01-26
-X-PR-Tracked-Commit-Id: ebe10026210f9ea740b9a050ee84a166690fddde
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 5cf9ad0e6b164a90581a59609dbf5bda3f5a089c
-Message-Id: <158007150415.2238.15200000410316601662.pr-tracker-bot@kernel.org>
-Date:   Sun, 26 Jan 2020 20:45:04 +0000
-To:     Jens Axboe <axboe@kernel.dk>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        io-uring <io-uring@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+        id S1726761AbgAZVAJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 26 Jan 2020 16:00:09 -0500
+Received: from [107.155.45.113] ([107.155.45.113]:44470 "EHLO yourdomain.com"
+        rhost-flags-FAIL-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726252AbgAZVAI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 26 Jan 2020 16:00:08 -0500
+X-Greylist: delayed 601 seconds by postgrey-1.27 at vger.kernel.org; Sun, 26 Jan 2020 16:00:07 EST
+Received: by yourdomain.com id h5nute0e97c2 for <linux-kernel@vger.kernel.org>; Mon, 27 Jan 2020 05:49:44 +0900 (envelope-from <yyftrot@foxmail.com>)
+Message-ID: <20200127044944504467@foxmail.com>
+From:   "jcb 22" <yyftrot@foxmail.com>
+To:     <linux-kernel@vger.kernel.org>
+Subject: =?iso-2022-jp?B?GyRCJCIkSiQ/JE4bKEJqY2IbJEIlKyE8JUkkSyRPJWolOSUvPGgweiQsJCIkahsoQg==?=
+        =?iso-2022-jp?B?GyRCJF4kOSROJEchIhsoQjMbJEJGfDBKRmIkSyVRJTklbyE8JUkkckpROTkkNyEiGyhC?=
+        =?iso-2022-jp?B?GyRCJWolOSUvJHIycj18JDckRiQvJEAkNSQkGyhC?=
+Date:   Mon, 27 Jan 2020 04:49:33 +0800
+MIME-Version: 1.0
+Content-Type: text/plain;
+        charset="iso-2022-jp"
+Content-Transfer-Encoding: base64
+X-mailer: Pop 4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The pull request you sent on Sun, 26 Jan 2020 13:02:16 -0700:
+GyRCIiMiIiIjKCwoLCgsKCwoLCgsKCwoLCgsKCwoLCgsKCwoLCgsKCwoLCgsKCwoLCgsKCwoLCgs
+KCwoLCgsKCwoLCgsKCwoLCgsGyhCDQobJEIiIiIjISEhIRsoQk15SkNCIEV4cHJlc3MgTmV3cxsk
+QiEhIU4bKEIyMDIwLzEvMjcbJEIhTxsoQg0KGyRCS1wlYSE8JWskTyVJJWElJCVzJE4xP01RIUol
+YSE8JWtBdzx1Py4kZCVbITwlYCVaITwlOCROST08KCFLJEs0WCRvJGsbKEINChskQiEhPUVNVyRK
+RExDTiRIJEokaiReJDkhIxsoQg0KGyRCIiMhISgsKCwoLCgsKCwoLCgsKCwoLCgsKCwoLCgsKCwo
+LCgsKCwoLCgsKCwoLCgsKCwoLCgsKCwoLCgsKCwoLCgsKCwoLCgsGyhCDQobJEIhISFoIUUiaCFF
+IWghRSJoIUUhaCFFIWghRSJoIUUhaCFFImghRSFoIUUhaCFFImghRSFoIUUiaCFFIWghRSFoIUUi
+aCFFIWgbKEINCiANChskQiQiJEokPyROJS8lbCU4JUMlSCUrITwlSTh9OkIkLEJoOzA8VCRLJGgk
+QyRGO0hNUSQ1JGwkRiQkJGskMyRIJHI4IUNOJDckPyROJEchIiQiJEokPyROOH06QiQsO3E2YiRO
+MEJBNCROJD8kYSRLRWA3ayQ1JGwkPyROJEckOSQsISIkOSQwJEsbKEJXRUIbJEIlNSE8JVMlORso
+QklEGyRCJEglUSU5JW8hPCVJJHI6RkVQTz8kNyRGISJAKThCJHIycj18JDckSiQxJGwkUCRKJGok
+XiQ7JHMbKEINCiANChskQkpROTkkciQ0GyhCIFdFQhskQiU1ITwlUyU5JGgkaiQqPz05fiRfJC8k
+QCQ1JCQhIxsoQg0KIA0KIA0KGyRCIiMbKEIgGyRCSlE5OSRyJDQbKEIgGyRCSn1LIRsoQg0KGyRC
+IicbKEJNeUpDQhskQiVtJTAlJCVzJE8kMyRBJGkbKEINCmh0dHBzOi8vb25lLXR3by50cHNkYXMu
+Y29tL2luZGV4L2xvZ2luL2luZGV4Lmh0bWwNCiANCiANCiANCiANChskQiFhIWEhYSFhIWEhYSFh
+IWEhYSFhIWEhYSFhIWEhYSFhIWEhYSFhIWEhYSFhIWEhYSFhIWEhYSFhIWEhYSFhIWEhYSFhGyhC
+DQobJEIhITN0PDAycTxSJTglJyE8JTchPCVTITwbKEIgDQobJEIhIUVsNX5FVDlBNmhGbkBEOzMb
+KEI1LTEtMjIbJEIhIUBEOzMlaSUkJTolOSUvJSglIiEhIikbKEIxMDctODY4Ng0KGyRCISEiKEtc
+JWEhPCVrJE9Bdz8uQGxNUSRHJDkhIxsoQg0KGyRCISEbKEIgIBskQiQqTGQkJDlnJG8kOyRPPmUk
+ThsoQlVSTBskQiROISJAbE1RJVUlKSE8JWAkaCRqJCo0aiQkJDckXiQ5ISMbKEINChskQiFhIWEh
+YSFhIWEhYSFhIWEhYSFhIWEhYSFhIWEhYSFhIWEhYSFhIWEhYSFhIWEhYSFhIWEhYSFhIWEhYSFh
+IWEhYSFhGyhCDQobJEIhISFWGyhCTXlKQ0IgRXhwcmVzcyBOZXdzGyRCIVckSzdHOlwkNSRsJEYk
+JCRrJDkkWSRGJE41LTt2ISIbKEINChskQiEhSjg+T0V5JE5MNUNHRT46XCRyNlg7XyQ3JF4kOSEj
+GyhCDQobJEIhIUN4Om44IiRPJDkkWSRGISIzdDwwMnE8UiU4JSchPCU3ITwlUyE8JEs1IkIwJDck
+XiQ5ISMbKEINChskQiEhGyhCQ29weXJpZ2h0IEpDQiBDby4sIEx0ZC4gMjAxOQ0KGyRCIWEhYSFh
+IWEhYSFhIWEhYSFhIWEhYSFhIWEhYSFhIWEhYSFhIWEhYSFhIWEhYSFhIWEhYSFhIWEhYSFhIWEh
+YSFhIWEbKEINChskQiEhISEhISEhISEhISEhISEhISEhISEhISEhISEhISEhISEhISEhISEhISEh
+ISEhISEhISEhISEhISEbKEIgRTE5MTAxMDI0Mg0K
 
-> git://git.kernel.dk/linux-block.git tags/io_uring-5.5-2020-01-26
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/5cf9ad0e6b164a90581a59609dbf5bda3f5a089c
-
-Thank you!
-
--- 
-Deet-doot-dot, I am a bot.
-https://korg.wiki.kernel.org/userdoc/prtracker
