@@ -2,24 +2,24 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6596B149CA7
-	for <lists+linux-kernel@lfdr.de>; Sun, 26 Jan 2020 21:02:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DE8E9149CAA
+	for <lists+linux-kernel@lfdr.de>; Sun, 26 Jan 2020 21:02:54 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727067AbgAZUAZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 26 Jan 2020 15:00:25 -0500
-Received: from mo4-p02-ob.smtp.rzone.de ([85.215.255.80]:16241 "EHLO
+        id S1727322AbgAZUA1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 26 Jan 2020 15:00:27 -0500
+Received: from mo4-p02-ob.smtp.rzone.de ([85.215.255.84]:25049 "EHLO
         mo4-p02-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726087AbgAZUAZ (ORCPT
+        with ESMTP id S1726145AbgAZUAZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Sun, 26 Jan 2020 15:00:25 -0500
 X-RZG-AUTH: ":JGIXVUS7cutRB/49FwqZ7WcJeFKiMhflhwDubTJ9o1OAA2UNf2AyPQjcv7w="
 X-RZG-CLASS-ID: mo00
 Received: from iMac.fritz.box
         by smtp.strato.de (RZmta 46.1.7 DYNA|AUTH)
-        with ESMTPSA id k0645aw0QK0EF2F
+        with ESMTPSA id k0645aw0QK0FF2G
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256 bits))
         (Client did not present a certificate);
-        Sun, 26 Jan 2020 21:00:14 +0100 (CET)
+        Sun, 26 Jan 2020 21:00:15 +0100 (CET)
 From:   "H. Nikolaus Schaller" <hns@goldelico.com>
 To:     Kalle Valo <kvalo@codeaurora.org>,
         Ulf Hansson <ulf.hansson@linaro.org>,
@@ -32,9 +32,9 @@ To:     Kalle Valo <kvalo@codeaurora.org>,
 Cc:     linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
         letux-kernel@openphoenux.org, kernel@pyra-handheld.com
-Subject: [PATCH v3 1/2] DTS: bindings: wl1251: mark ti,power-gpio as optional
-Date:   Sun, 26 Jan 2020 21:00:13 +0100
-Message-Id: <d34183026b1a46a082f73ab3d0888c92cf6286ec.1580068813.git.hns@goldelico.com>
+Subject: [PATCH v3 2/2] wl1251: remove ti,power-gpio for SDIO mode
+Date:   Sun, 26 Jan 2020 21:00:14 +0100
+Message-Id: <e77b49bb475f63dd7b07bfb76a75651e80bbace7.1580068813.git.hns@goldelico.com>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <cover.1580068813.git.hns@goldelico.com>
 References: <cover.1580068813.git.hns@goldelico.com>
@@ -45,33 +45,91 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-It is now only useful for SPI interface.
-Power control of SDIO mode is done through mmc core.
+Remove handling of this property from code.
+
+Note that wl->power_gpio is still needed in
+the header file for SPI mode (N900).
 
 Suggested by: Ulf Hansson <ulf.hansson@linaro.org>
 Signed-off-by: H. Nikolaus Schaller <hns@goldelico.com>
 ---
- Documentation/devicetree/bindings/net/wireless/ti,wl1251.txt | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/net/wireless/ti/wl1251/sdio.c | 32 ++-------------------------
+ 1 file changed, 2 insertions(+), 30 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/net/wireless/ti,wl1251.txt b/Documentation/devicetree/bindings/net/wireless/ti,wl1251.txt
-index f38950560982..88fd28d15eac 100644
---- a/Documentation/devicetree/bindings/net/wireless/ti,wl1251.txt
-+++ b/Documentation/devicetree/bindings/net/wireless/ti,wl1251.txt
-@@ -9,11 +9,12 @@ Required properties:
- - spi-max-frequency : Maximum SPI clocking speed of device in Hz
- - interrupts :        Should contain interrupt line
- - vio-supply :        phandle to regulator providing VIO
--- ti,power-gpio :     GPIO connected to chip's PMEN pin
+diff --git a/drivers/net/wireless/ti/wl1251/sdio.c b/drivers/net/wireless/ti/wl1251/sdio.c
+index 94569cd695c8..c9a4e9a43400 100644
+--- a/drivers/net/wireless/ti/wl1251/sdio.c
++++ b/drivers/net/wireless/ti/wl1251/sdio.c
+@@ -15,9 +15,7 @@
+ #include <linux/wl12xx.h>
+ #include <linux/irq.h>
+ #include <linux/pm_runtime.h>
+-#include <linux/gpio.h>
+ #include <linux/of.h>
+-#include <linux/of_gpio.h>
+ #include <linux/of_irq.h>
  
- Optional properties:
- - ti,wl1251-has-eeprom : boolean, the wl1251 has an eeprom connected, which
-                          provides configuration data (calibration, MAC, ...)
-+- ti,power-gpio :	 GPIO connected to chip's PMEN pin if operated in
-+			 SPI mode
- - Please consult Documentation/devicetree/bindings/spi/spi-bus.txt
-   for optional SPI connection related properties,
+ #include "wl1251.h"
+@@ -160,15 +158,6 @@ static int wl1251_sdio_set_power(struct wl1251 *wl, bool enable)
+ 	int ret;
  
+ 	if (enable) {
+-		/*
+-		 * Power is controlled by runtime PM, but we still call board
+-		 * callback in case it wants to do any additional setup,
+-		 * for example enabling clock buffer for the module.
+-		 */
+-		if (gpio_is_valid(wl->power_gpio))
+-			gpio_set_value(wl->power_gpio, true);
+-
+-
+ 		ret = pm_runtime_get_sync(&func->dev);
+ 		if (ret < 0) {
+ 			pm_runtime_put_sync(&func->dev);
+@@ -186,9 +175,6 @@ static int wl1251_sdio_set_power(struct wl1251 *wl, bool enable)
+ 		ret = pm_runtime_put_sync(&func->dev);
+ 		if (ret < 0)
+ 			goto out;
+-
+-		if (gpio_is_valid(wl->power_gpio))
+-			gpio_set_value(wl->power_gpio, false);
+ 	}
+ 
+ out:
+@@ -241,31 +227,17 @@ static int wl1251_sdio_probe(struct sdio_func *func,
+ 
+ 	wl1251_board_data = wl1251_get_platform_data();
+ 	if (!IS_ERR(wl1251_board_data)) {
+-		wl->power_gpio = wl1251_board_data->power_gpio;
+ 		wl->irq = wl1251_board_data->irq;
+ 		wl->use_eeprom = wl1251_board_data->use_eeprom;
+ 	} else if (np) {
+-		wl->use_eeprom = of_property_read_bool(np,
+-						       "ti,wl1251-has-eeprom");
+-		wl->power_gpio = of_get_named_gpio(np, "ti,power-gpio", 0);
++		wl->use_eeprom = of_property_read_bool(np, "ti,wl1251-has-eeprom");
+ 		wl->irq = of_irq_get(np, 0);
+-
+-		if (wl->power_gpio == -EPROBE_DEFER ||
+-		    wl->irq == -EPROBE_DEFER) {
++		if (wl->irq == -EPROBE_DEFER) {
+ 			ret = -EPROBE_DEFER;
+ 			goto disable;
+ 		}
+ 	}
+ 
+-	if (gpio_is_valid(wl->power_gpio)) {
+-		ret = devm_gpio_request(&func->dev, wl->power_gpio,
+-								"wl1251 power");
+-		if (ret) {
+-			wl1251_error("Failed to request gpio: %d\n", ret);
+-			goto disable;
+-		}
+-	}
+-
+ 	if (wl->irq) {
+ 		irq_set_status_flags(wl->irq, IRQ_NOAUTOEN);
+ 		ret = request_irq(wl->irq, wl1251_line_irq, 0, "wl1251", wl);
 -- 
 2.23.0
 
