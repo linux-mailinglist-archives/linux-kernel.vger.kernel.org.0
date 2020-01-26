@@ -2,118 +2,192 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9AA27149CD3
-	for <lists+linux-kernel@lfdr.de>; Sun, 26 Jan 2020 21:26:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id F1202149CDE
+	for <lists+linux-kernel@lfdr.de>; Sun, 26 Jan 2020 21:40:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726743AbgAZU0N (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 26 Jan 2020 15:26:13 -0500
-Received: from mail-ot1-f67.google.com ([209.85.210.67]:35910 "EHLO
-        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726087AbgAZU0M (ORCPT
+        id S1727084AbgAZUkC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 26 Jan 2020 15:40:02 -0500
+Received: from smtprelay0186.hostedemail.com ([216.40.44.186]:44314 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726144AbgAZUkC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 26 Jan 2020 15:26:12 -0500
-Received: by mail-ot1-f67.google.com with SMTP id g15so6545019otp.3;
-        Sun, 26 Jan 2020 12:26:12 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=bHSNnUzcI55cuh2B6E1Lu8th6RkgDQpPE0JKT7s64CI=;
-        b=SjOZLwAZbMj9UZ80mbvMlTbZWgu9VEXGCNXF73NNrKlC5pJe1dgwGwpVlbtQ6e4A0O
-         +p58mKbvVkbe0ExlHVVEtj/Q7d5VEOqm9iGcs4OgI+cZ4vQ5MHhm+lxjjmYziQE9OCKz
-         IH3nWVHgHNXgo0zbBELkCJiE4nZvTmcaxE7AXUgLHYdMJKOdb/CiIQlPMIb4prusBn7l
-         hxM0qTUxRMj9nNHMn4q8CEH8/miT77FQhJq4UN2oWo70WwFe5ES3d7cn4TCGmqhHS8Dz
-         PorEzOAai4kS/p7lLw6+Vhyul/SurMTMQqtDCEY4igUfaQufmyaLB3sEEiE15CjIQupl
-         GwqA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=bHSNnUzcI55cuh2B6E1Lu8th6RkgDQpPE0JKT7s64CI=;
-        b=hgCRdnOAlp84S0avw4wiDxZFRPmdrLuCrzx9/ZZW609puOX2jX94ZzlW1cLa/mKcw6
-         KAPz7wTlaLgzLjPYjY56n2dQUoG+rgqxnhgEjiNhySU4wZ6BIHokwR+q9AbwXUIKyaXu
-         SAeRgb9/v8s8zk4X9Tts1xHZc/PLQThTAeGKehgm+bs1hyNw7sQ76QmeD7qu0doTmcVv
-         F71L2X0fIUiN7+Dp30pw1iWAWTub2MtI7FOHVmYss9Neu8FehQgCWMjCk3Q747mqASFA
-         1cE4m5p8mVn8/PLlV6kbnK7kT4uGdcgDMGrMalNKUqw5i6fxeKRXVtPqvNh1n2+nIPrP
-         isuA==
-X-Gm-Message-State: APjAAAVNumIeKjotGa64Cf5eTJ4/JZWhuhf/VejAuKsniGu1ziJNWMQi
-        XNzSqpUAHnS66Gs422DEJGRh04flgZzgw4LDKW23oJGk7b4=
-X-Google-Smtp-Source: APXvYqzL0w+vJsuf+cfw4JDQOlgcTdka5oHPmUBhgIEIV/e0YTz6uRTvOpg8UGxF45TpYqTrdppwFZL3t/WrL6vIxvc=
-X-Received: by 2002:a9d:da2:: with SMTP id 31mr9838115ots.319.1580070372012;
- Sun, 26 Jan 2020 12:26:12 -0800 (PST)
+        Sun, 26 Jan 2020 15:40:02 -0500
+Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
+        by smtprelay05.hostedemail.com (Postfix) with ESMTP id 872C818029128;
+        Sun, 26 Jan 2020 20:40:00 +0000 (UTC)
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,:::::::::,RULES_HIT:2:41:355:379:599:800:960:966:968:973:988:989:1260:1277:1311:1313:1314:1345:1359:1437:1515:1516:1518:1535:1593:1594:1605:1606:1730:1747:1777:1792:2196:2199:2393:2559:2562:2828:2899:3138:3139:3140:3141:3142:3622:3865:3866:3867:3868:3870:3871:3872:3874:4117:4321:4385:5007:6119:7576:8603:9040:10004:10848:11026:11232:11473:11658:11914:12043:12294:12296:12297:12438:12555:12740:12760:12895:12986:13255:13439:14093:14097:14659:21080:21325:21451:21627:21990:30012:30029:30034:30054:30091,0,RBL:none,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:,MSBL:0,DNSBL:none,Custom_rules:0:0:0,LFtime:1,LUA_SUMMARY:none
+X-HE-Tag: sign60_1d0aeddd8281f
+X-Filterd-Recvd-Size: 6260
+Received: from XPS-9350.home (unknown [47.151.135.224])
+        (Authenticated sender: joe@perches.com)
+        by omf12.hostedemail.com (Postfix) with ESMTPA;
+        Sun, 26 Jan 2020 20:39:59 +0000 (UTC)
+Message-ID: <e70ff75e9712478704fad44ac6b66c86a45df6a6.camel@perches.com>
+Subject: Re: [for-next][PATCH 7/7] tracing: Use pr_err() instead of WARN()
+ for memory failures
+From:   Joe Perches <joe@perches.com>
+To:     Steven Rostedt <rostedt@goodmis.org>, linux-kernel@vger.kernel.org
+Cc:     Ingo Molnar <mingo@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Dmitry Vyukov <dvyukov@google.com>
+Date:   Sun, 26 Jan 2020 12:38:55 -0800
+In-Reply-To: <20200126192021.350763989@goodmis.org>
+References: <20200126191932.984391723@goodmis.org>
+         <20200126192021.350763989@goodmis.org>
+Content-Type: text/plain; charset="ISO-8859-1"
+User-Agent: Evolution 3.34.1-2 
 MIME-Version: 1.0
-References: <20200120222618.1456-1-xiyou.wangcong@gmail.com> <20200121190059.7ae9f7a9@gandalf.local.home>
-In-Reply-To: <20200121190059.7ae9f7a9@gandalf.local.home>
-From:   Cong Wang <xiyou.wangcong@gmail.com>
-Date:   Sun, 26 Jan 2020 12:26:00 -0800
-Message-ID: <CAM_iQpU_Z6CFZh2hBQLneqy6=EFSZCUGET+vh+d78YDrOgTj+w@mail.gmail.com>
-Subject: Re: [Patch v2] block: introduce block_rq_error tracepoint
-To:     Steven Rostedt <rostedt@goodmis.org>
-Cc:     LKML <linux-kernel@vger.kernel.org>, linux-block@vger.kernel.org,
-        Jens Axboe <axboe@kernel.dk>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jan 21, 2020 at 4:01 PM Steven Rostedt <rostedt@goodmis.org> wrote:
->
-> On Mon, 20 Jan 2020 14:26:18 -0800
-> Cong Wang <xiyou.wangcong@gmail.com> wrote:
-> > +/**
-> > + * block_rq_error - block IO operation error reported by device driver
-> > + * @rq: block operations request
-> > + * @error: status code
-> > + * @nr_bytes: number of completed bytes
-> > + *
-> > + * The block_rq_error tracepoint event indicates that some portion
-> > + * of operation request has failed as reported by the device driver.
-> > + */
-> > +TRACE_EVENT(block_rq_error,
-> > +
-> > +     TP_PROTO(struct request *rq, int error, unsigned int nr_bytes),
-> > +
-> > +     TP_ARGS(rq, error, nr_bytes),
-> > +
-> > +     TP_STRUCT__entry(
-> > +             __field(  dev_t,        dev                     )
-> > +             __dynamic_array( char,  name,   DISK_NAME_LEN   )
->
-> Hmm, looks like I need to go and do a clean up of the kernel, and
-> educate people on how to use dynamic arrays :-/
+On Sun, 2020-01-26 at 14:19 -0500, Steven Rostedt wrote:
+> From: "Steven Rostedt (VMware)" <rostedt@goodmis.org>
+> 
+> As warnings can trigger panics, especially when "panic_on_warn" is set,
+> memory failure warnings can cause panics and fail fuzz testers that are
+> stressing memory.
+> 
+> Create a MEM_FAIL() macro to use instead of WARN() in the tracing code
+> (perhaps this should be a kernel wide macro?), and use that for memory
+> failure issues. This should stop failing fuzz tests due to warnings.
 
-Yeah.
+It looks as if most of these could just be removed instead
+as there is an existing dump_stack() on failure.
 
->
-> The "len" field of a __dynamic_array() is to be a function to determine
-> the length needed for each instance of an event. By having a constant
-> there, it will be the same for every events, plus the meta data to hold
-> the "dynamic" part of the array. This would be much better to simple
-> use __array() instead.
->
-> But as you use "__assign_str()" below, then it's expected that name is
-> a nul terminated string. In which case, you want to define this as:
->
->                 __string( name, rq->rq_disk ? rq->rq_disk->disk_name : "?"  )
+> diff --git a/kernel/trace/ftrace.c b/kernel/trace/ftrace.c
+[]
+> @@ -5459,7 +5459,7 @@ static void __init set_ftrace_early_graph(char *buf, int enable)
+>  	struct ftrace_hash *hash;
+>  
+>  	hash = alloc_ftrace_hash(FTRACE_HASH_DEFAULT_BITS);
+> -	if (WARN_ON(!hash))
+> +	if (MEM_FAIL(!hash, "Failed to allocate hash\n"))
+>  		return;
 
-Ah, I wanted to use string() but all the existing users initialize/assign
-them twice: once in TP_STRUCT__entry() and once in TP_fast_assign().
+has dump_stack()
+ 
+>  	while (buf) {
+> @@ -6591,7 +6591,7 @@ static void add_to_clear_hash_list(struct list_head *clear_list,
+>  
+>  	func = kmalloc(sizeof(*func), GFP_KERNEL);
+>  	if (!func) {
+> -		WARN_ONCE(1, "alloc failure, ftrace filter could be stale\n");
+> +		MEM_FAIL(1, "alloc failure, ftrace filter could be stale\n");
 
+has dump_stack()
 
->
->
-> > +             __field(  sector_t,     sector                  )
-> > +             __field(  unsigned int, nr_sector               )
-> > +             __field(  int,          error                   )
-> > +             __array(  char,         rwbs,   RWBS_LEN        )
-> > +             __dynamic_array( char,  cmd,    1               )
->
-> Not sure what you are doing with cmd. It appears to be always hard
-> coded as an empty string?
+> diff --git a/kernel/trace/trace.c b/kernel/trace/trace.c
+[]
+> @@ -3126,7 +3126,7 @@ static int alloc_percpu_trace_buffer(void)
+>  	struct trace_buffer_struct *buffers;
+>  
+>  	buffers = alloc_percpu(struct trace_buffer_struct);
+> -	if (WARN(!buffers, "Could not allocate percpu trace_printk buffer"))
+> +	if (MEM_FAIL(!buffers, "Could not allocate percpu trace_printk buffer"))
+>  		return -ENOMEM;
 
-It is supposed to be a string of one-char commands. This is a
-copy-n-paste from existing block_rq_requeue(). I don't know why
-its length is 1, but yeah it looks wrong to me too.
+has dump_stack()
 
-Thanks!
+>  
+>  	trace_percpu_buffer = buffers;
+> @@ -7932,7 +7932,7 @@ static struct dentry *tracing_dentry_percpu(struct trace_array *tr, int cpu)
+>  
+>  	tr->percpu_dir = tracefs_create_dir("per_cpu", d_tracer);
+>  
+> -	WARN_ONCE(!tr->percpu_dir,
+> +	MEM_FAIL(!tr->percpu_dir,
+>  		  "Could not create tracefs directory 'per_cpu/%d'\n", cpu);
+
+keep?
+ 
+>  	return tr->percpu_dir;
+> @@ -8253,7 +8253,7 @@ create_trace_option_files(struct trace_array *tr, struct tracer *tracer)
+>  	for (cnt = 0; opts[cnt].name; cnt++) {
+>  		create_trace_option_file(tr, &topts[cnt], flags,
+>  					 &opts[cnt]);
+> -		WARN_ONCE(topts[cnt].entry == NULL,
+> +		MEM_FAIL(topts[cnt].entry == NULL,
+>  			  "Failed to create trace option: %s",
+>  			  opts[cnt].name);
+>  	}
+> @@ -8437,7 +8437,7 @@ static int allocate_trace_buffers(struct trace_array *tr, int size)
+>  #ifdef CONFIG_TRACER_MAX_TRACE
+>  	ret = allocate_trace_buffer(tr, &tr->max_buffer,
+>  				    allocate_snapshot ? size : 1);
+> -	if (WARN_ON(ret)) {
+> +	if (MEM_FAIL(ret, "Failed to allocate trace buffer\n")) {
+>  		ring_buffer_free(tr->array_buffer.buffer);
+>  		tr->array_buffer.buffer = NULL;
+>  		free_percpu(tr->array_buffer.data);
+> @@ -8726,7 +8726,7 @@ static __init void create_trace_instances(struct dentry *d_tracer)
+>  	trace_instance_dir = tracefs_create_instance_dir("instances", d_tracer,
+>  							 instance_mkdir,
+>  							 instance_rmdir);
+> -	if (WARN_ON(!trace_instance_dir))
+> +	if (MEM_FAIL(!trace_instance_dir, "Failed to create instances directory\n"))
+>  		return;
+>  }
+>  
+> @@ -8796,7 +8796,7 @@ init_tracer_tracefs(struct trace_array *tr, struct dentry *d_tracer)
+>  #endif
+>  
+>  	if (ftrace_create_function_files(tr, d_tracer))
+> -		WARN(1, "Could not allocate function filter files");
+> +		MEM_FAIL(1, "Could not allocate function filter files");
+>  
+>  #ifdef CONFIG_TRACER_SNAPSHOT
+>  	trace_create_file("snapshot", 0644, d_tracer,
+> @@ -9348,8 +9348,7 @@ __init static int tracer_alloc_buffers(void)
+>  
+>  	/* TODO: make the number of buffers hot pluggable with CPUS */
+>  	if (allocate_trace_buffers(&global_trace, ring_buf_size) < 0) {
+> -		printk(KERN_ERR "tracer: failed to allocate ring buffer!\n");
+> -		WARN_ON(1);
+> +		MEM_FAIL(1, "tracer: failed to allocate ring buffer!\n");
+
+has dump_stack()
+
+>  		goto out_free_savedcmd;
+>  	}
+>  
+> @@ -9422,7 +9421,8 @@ void __init early_trace_init(void)
+>  	if (tracepoint_printk) {
+>  		tracepoint_print_iter =
+>  			kmalloc(sizeof(*tracepoint_print_iter), GFP_KERNEL);
+> -		if (WARN_ON(!tracepoint_print_iter))
+> +		if (MEM_FAIL(!tracepoint_print_iter,
+> +			     "Failed to allocate trace iterator\n"))
+
+has dump_stack()
+
+>  			tracepoint_printk = 0;
+>  		else
+>  			static_key_enable(&tracepoint_printk_key.key);
+> diff --git a/kernel/trace/trace.h b/kernel/trace/trace.h
+> index 4812a36affac..6bb64d89c321 100644
+> --- a/kernel/trace/trace.h
+> +++ b/kernel/trace/trace.h
+> @@ -94,6 +94,18 @@ enum trace_type {
+>  
+>  #include "trace_entries.h"
+>  
+> +/* Use this for memory failure errors */
+> +#define MEM_FAIL(condition, fmt, ...) ({			\
+> +	static bool __section(.data.once) __warned;		\
+> +	int __ret_warn_once = !!(condition);			\
+> +								\
+> +	if (unlikely(__ret_warn_once && !__warned)) {		\
+> +		__warned = true;				\
+> +		pr_err("ERROR: " fmt, ##__VA_ARGS__);		\
+> +	}							\
+> +	unlikely(__ret_warn_once);				\
+> +})
+> +
+>  /*
+>   * syscalls are special, and need special handling, this is why
+>   * they are not included in trace_entries.h
+
