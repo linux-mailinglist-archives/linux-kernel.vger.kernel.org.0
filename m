@@ -2,32 +2,32 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 88EDF149C80
-	for <lists+linux-kernel@lfdr.de>; Sun, 26 Jan 2020 20:20:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4115E149C7B
+	for <lists+linux-kernel@lfdr.de>; Sun, 26 Jan 2020 20:20:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729239AbgAZTUk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 26 Jan 2020 14:20:40 -0500
-Received: from mail.kernel.org ([198.145.29.99]:53702 "EHLO mail.kernel.org"
+        id S1729180AbgAZTU1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 26 Jan 2020 14:20:27 -0500
+Received: from mail.kernel.org ([198.145.29.99]:53718 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728235AbgAZTUW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1728901AbgAZTUW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Sun, 26 Jan 2020 14:20:22 -0500
 Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3FEEB21556;
+        by mail.kernel.org (Postfix) with ESMTPSA id 631C821734;
         Sun, 26 Jan 2020 19:20:22 +0000 (UTC)
 Received: from rostedt by gandalf.local.home with local (Exim 4.93)
         (envelope-from <rostedt@goodmis.org>)
-        id 1ivnSH-000zs2-64; Sun, 26 Jan 2020 14:20:21 -0500
-Message-Id: <20200126192021.069996945@goodmis.org>
+        id 1ivnSH-000zsW-Aa; Sun, 26 Jan 2020 14:20:21 -0500
+Message-Id: <20200126192021.212605347@goodmis.org>
 User-Agent: quilt/0.65
-Date:   Sun, 26 Jan 2020 14:19:37 -0500
+Date:   Sun, 26 Jan 2020 14:19:38 -0500
 From:   Steven Rostedt <rostedt@goodmis.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Ingo Molnar <mingo@kernel.org>,
         Andrew Morton <akpm@linux-foundation.org>,
-        Hou Pengyang <houpengyang@huawei.com>
-Subject: [for-next][PATCH 5/7] tracing: Fix comments about trace/ftrace.h
+        Masami Hiramatsu <mhiramat@kernel.org>
+Subject: [for-next][PATCH 6/7] tracing: Decrement trace_array when bootconfig creates an instance
 References: <20200126191932.984391723@goodmis.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -36,59 +36,57 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Hou Pengyang <houpengyang@huawei.com>
+From: "Steven Rostedt (VMware)" <rostedt@goodmis.org>
 
-commit f42c85e74faa422cf0bc747ed808681145448f88 moved tracepoint's ftrace
-creation into include/trace/ftrace.h and trace/define_trace.h was deleted
-as a result. However some comment info does not adapt to the change, which
-is such a misguiding when reading related code.
+The trace_array_get_by_name() creates a ftrace instance and
+trace_array_put() is used to remove the reference. Even though the
+trace_array_get_by_name() creates the instance, it also adds a reference
+count to it, that prevents user space from removing it.
 
-This patch fix this by moving trace/trace_events.h to <trace/events/XXX.h>,
-since tracepoint headers have already been moved to tarce/events/.
+As the bootconfig just creates the instance on boot up, it should still be
+used where it can be deleted by user space after boot. A trace_array_put()
+is required to let that happen.
 
-Link: http://lkml.kernel.org/r/1425419298-61941-1-git-send-email-houpengyang@huawei.com
+Also, change the documentation on trace_array_get_by_name() to make this not
+be so confusing.
 
-Signed-off-by: Hou Pengyang <houpengyang@huawei.com>
-[ Pulled from the archeological digging of my INBOX ]
+Link: https://lore.kernel.org/r/20200124205927.76128804@rorschach.local.home
+
+Fixes: 4f712a4d04a4e ("tracing/boot: Add instance node support")
+Acked-by: Masami Hiramatsu <mhiramat@kernel.org>
 Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
 ---
- include/trace/trace_events.h | 9 ++++++---
- 1 file changed, 6 insertions(+), 3 deletions(-)
+ kernel/trace/trace.c      | 4 ++++
+ kernel/trace/trace_boot.c | 1 +
+ 2 files changed, 5 insertions(+)
 
-diff --git a/include/trace/trace_events.h b/include/trace/trace_events.h
-index 13a58d453992..831048507fef 100644
---- a/include/trace/trace_events.h
-+++ b/include/trace/trace_events.h
-@@ -2,7 +2,8 @@
- /*
-  * Stage 1 of the trace events.
+diff --git a/kernel/trace/trace.c b/kernel/trace/trace.c
+index 6fed9b0a8d58..0a5569b1cace 100644
+--- a/kernel/trace/trace.c
++++ b/kernel/trace/trace.c
+@@ -8602,6 +8602,10 @@ static int instance_mkdir(const char *name)
+  * NOTE: This function increments the reference counter associated with the
+  * trace array returned. This makes sure it cannot be freed while in use.
+  * Use trace_array_put() once the trace array is no longer needed.
++ * If the trace_array is to be freed, trace_array_destroy() needs to
++ * be called after the trace_array_put(), or simply let user space delete
++ * it from the tracefs instances directory. But until the
++ * trace_array_put() is called, user space can not delete it.
   *
-- * Override the macros in <trace/trace_events.h> to include the following:
-+ * Override the macros in the event tracepoint header <trace/events/XXX.h>
-+ * to include the following:
-  *
-  * struct trace_event_raw_<call> {
-  *	struct trace_entry		ent;
-@@ -223,7 +224,8 @@ TRACE_MAKE_SYSTEM_STR();
- /*
-  * Stage 3 of the trace events.
-  *
-- * Override the macros in <trace/trace_events.h> to include the following:
-+ * Override the macros in the event tracepoint header <trace/events/XXX.h>
-+ * to include the following:
-  *
-  * enum print_line_t
-  * trace_raw_output_<call>(struct trace_iterator *iter, int flags)
-@@ -555,7 +557,8 @@ static inline notrace int trace_event_get_offsets_##call(		\
- /*
-  * Stage 4 of the trace events.
-  *
-- * Override the macros in <trace/trace_events.h> to include the following:
-+ * Override the macros in the event tracepoint header <trace/events/XXX.h>
-+ * to include the following:
-  *
-  * For those macros defined with TRACE_EVENT:
-  *
+  */
+ struct trace_array *trace_array_get_by_name(const char *name)
+diff --git a/kernel/trace/trace_boot.c b/kernel/trace/trace_boot.c
+index cd541ac1cbc1..2f616cd926b0 100644
+--- a/kernel/trace/trace_boot.c
++++ b/kernel/trace/trace_boot.c
+@@ -327,6 +327,7 @@ trace_boot_init_instances(struct xbc_node *node)
+ 			continue;
+ 		}
+ 		trace_boot_init_one_instance(tr, inode);
++		trace_array_put(tr);
+ 	}
+ }
+ 
 -- 
 2.24.1
 
