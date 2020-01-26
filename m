@@ -2,32 +2,32 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 112F1149C81
-	for <lists+linux-kernel@lfdr.de>; Sun, 26 Jan 2020 20:20:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 88EDF149C80
+	for <lists+linux-kernel@lfdr.de>; Sun, 26 Jan 2020 20:20:48 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729262AbgAZTUo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 26 Jan 2020 14:20:44 -0500
-Received: from mail.kernel.org ([198.145.29.99]:53680 "EHLO mail.kernel.org"
+        id S1729239AbgAZTUk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 26 Jan 2020 14:20:40 -0500
+Received: from mail.kernel.org ([198.145.29.99]:53702 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727409AbgAZTUW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1728235AbgAZTUW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Sun, 26 Jan 2020 14:20:22 -0500
 Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1F58C214AF;
+        by mail.kernel.org (Postfix) with ESMTPSA id 3FEEB21556;
         Sun, 26 Jan 2020 19:20:22 +0000 (UTC)
 Received: from rostedt by gandalf.local.home with local (Exim 4.93)
         (envelope-from <rostedt@goodmis.org>)
-        id 1ivnSH-000zrY-1d; Sun, 26 Jan 2020 14:20:21 -0500
-Message-Id: <20200126192020.939296571@goodmis.org>
+        id 1ivnSH-000zs2-64; Sun, 26 Jan 2020 14:20:21 -0500
+Message-Id: <20200126192021.069996945@goodmis.org>
 User-Agent: quilt/0.65
-Date:   Sun, 26 Jan 2020 14:19:36 -0500
+Date:   Sun, 26 Jan 2020 14:19:37 -0500
 From:   Steven Rostedt <rostedt@goodmis.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Ingo Molnar <mingo@kernel.org>,
         Andrew Morton <akpm@linux-foundation.org>,
-        Dan Carpenter <dan.carpenter@oracle.com>
-Subject: [for-next][PATCH 4/7] tracing: Remove unneeded NULL check
+        Hou Pengyang <houpengyang@huawei.com>
+Subject: [for-next][PATCH 5/7] tracing: Fix comments about trace/ftrace.h
 References: <20200126191932.984391723@goodmis.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -36,32 +36,59 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
+From: Hou Pengyang <houpengyang@huawei.com>
 
-We checked "iter->trace" earlier so there is no need to check here.
+commit f42c85e74faa422cf0bc747ed808681145448f88 moved tracepoint's ftrace
+creation into include/trace/ftrace.h and trace/define_trace.h was deleted
+as a result. However some comment info does not adapt to the change, which
+is such a misguiding when reading related code.
 
-Link: http://lkml.kernel.org/r/20141122183012.GB6994@mwanda
+This patch fix this by moving trace/trace_events.h to <trace/events/XXX.h>,
+since tracepoint headers have already been moved to tarce/events/.
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Link: http://lkml.kernel.org/r/1425419298-61941-1-git-send-email-houpengyang@huawei.com
+
+Signed-off-by: Hou Pengyang <houpengyang@huawei.com>
 [ Pulled from the archeological digging of my INBOX ]
 Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
 ---
- kernel/trace/trace.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ include/trace/trace_events.h | 9 ++++++---
+ 1 file changed, 6 insertions(+), 3 deletions(-)
 
-diff --git a/kernel/trace/trace.c b/kernel/trace/trace.c
-index d1410b4462ac..6fed9b0a8d58 100644
---- a/kernel/trace/trace.c
-+++ b/kernel/trace/trace.c
-@@ -4224,7 +4224,7 @@ __tracing_open(struct inode *inode, struct file *file, bool snapshot)
- 	mutex_init(&iter->mutex);
- 
- 	/* Notify the tracer early; before we stop tracing. */
--	if (iter->trace && iter->trace->open)
-+	if (iter->trace->open)
- 		iter->trace->open(iter);
- 
- 	/* Annotate start of buffers if we had overruns */
+diff --git a/include/trace/trace_events.h b/include/trace/trace_events.h
+index 13a58d453992..831048507fef 100644
+--- a/include/trace/trace_events.h
++++ b/include/trace/trace_events.h
+@@ -2,7 +2,8 @@
+ /*
+  * Stage 1 of the trace events.
+  *
+- * Override the macros in <trace/trace_events.h> to include the following:
++ * Override the macros in the event tracepoint header <trace/events/XXX.h>
++ * to include the following:
+  *
+  * struct trace_event_raw_<call> {
+  *	struct trace_entry		ent;
+@@ -223,7 +224,8 @@ TRACE_MAKE_SYSTEM_STR();
+ /*
+  * Stage 3 of the trace events.
+  *
+- * Override the macros in <trace/trace_events.h> to include the following:
++ * Override the macros in the event tracepoint header <trace/events/XXX.h>
++ * to include the following:
+  *
+  * enum print_line_t
+  * trace_raw_output_<call>(struct trace_iterator *iter, int flags)
+@@ -555,7 +557,8 @@ static inline notrace int trace_event_get_offsets_##call(		\
+ /*
+  * Stage 4 of the trace events.
+  *
+- * Override the macros in <trace/trace_events.h> to include the following:
++ * Override the macros in the event tracepoint header <trace/events/XXX.h>
++ * to include the following:
+  *
+  * For those macros defined with TRACE_EVENT:
+  *
 -- 
 2.24.1
 
