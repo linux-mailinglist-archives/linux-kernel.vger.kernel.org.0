@@ -2,34 +2,34 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D2E42149D4F
-	for <lists+linux-kernel@lfdr.de>; Sun, 26 Jan 2020 23:18:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9688E149D50
+	for <lists+linux-kernel@lfdr.de>; Sun, 26 Jan 2020 23:18:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728765AbgAZWSI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 26 Jan 2020 17:18:08 -0500
-Received: from mga05.intel.com ([192.55.52.43]:27165 "EHLO mga05.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726252AbgAZWSH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1728321AbgAZWSH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
         Sun, 26 Jan 2020 17:18:07 -0500
+Received: from mga11.intel.com ([192.55.52.93]:8001 "EHLO mga11.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726670AbgAZWSG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 26 Jan 2020 17:18:06 -0500
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 26 Jan 2020 14:18:06 -0800
+Received: from fmsmga004.fm.intel.com ([10.253.24.48])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 26 Jan 2020 14:18:06 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.70,367,1574150400"; 
-   d="scan'208";a="246245710"
+   d="scan'208";a="251795106"
 Received: from lkp-server01.sh.intel.com (HELO lkp-server01) ([10.239.97.150])
-  by orsmga002.jf.intel.com with ESMTP; 26 Jan 2020 14:18:05 -0800
+  by fmsmga004.fm.intel.com with ESMTP; 26 Jan 2020 14:18:05 -0800
 Received: from kbuild by lkp-server01 with local (Exim 4.89)
         (envelope-from <lkp@intel.com>)
-        id 1ivqEG-0005hS-Ta; Mon, 27 Jan 2020 06:18:04 +0800
-Date:   Mon, 27 Jan 2020 06:17:30 +0800
+        id 1ivqEG-0005gf-SF; Mon, 27 Jan 2020 06:18:04 +0800
+Date:   Mon, 27 Jan 2020 06:17:34 +0800
 From:   kbuild test robot <lkp@intel.com>
 To:     "x86-ml" <x86@kernel.org>
 Cc:     linux-kernel@vger.kernel.org
-Subject: [tip:irq/core] BUILD INCOMPLETE
- 43ee74487bd2842cb4d37b5c62f074fbed2366b9
-Message-ID: <5e2e0ffa.XZoG4ikiv6Gjnbq+%lkp@intel.com>
+Subject: [tip:tip] BUILD INCOMPLETE
+ 184784900502ff46979929775ba9e773e193c34e
+Message-ID: <5e2e0ffe.ECsoS+UUqQXBFNNN%lkp@intel.com>
 User-Agent: Heirloom mailx 12.5 6/20/10
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
@@ -39,8 +39,8 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git  irq/core
-branch HEAD: 43ee74487bd2842cb4d37b5c62f074fbed2366b9  Merge tag 'irqchip-5.6' of git://git.kernel.org/pub/scm/linux/kernel/git/maz/arm-platforms into irq/core
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git  tip
+branch HEAD: 184784900502ff46979929775ba9e773e193c34e  Add smp/core branch
 
 TIMEOUT after 2882m
 
@@ -52,7 +52,7 @@ possible error reports when our build infrastructure is restored or catches up.
 There will be no more build success notification for this branch head, but you
 can expect reasonably good test coverage after waiting for 1 day.
 
-configs timed out: 77
+configs timed out: 65
 
 alpha                               defconfig
 arm                              allmodconfig
@@ -76,18 +76,13 @@ h8300                     edosk2674_defconfig
 h8300                    h8300h-sim_defconfig
 h8300                       h8s-sim_defconfig
 ia64                             alldefconfig
-ia64                             allmodconfig
 ia64                              allnoconfig
-ia64                             allyesconfig
-m68k                             allmodconfig
 m68k                       m5475evb_defconfig
 m68k                          multi_defconfig
 m68k                           sun3_defconfig
 mips                           32r2_defconfig
 mips                         64r6el_defconfig
-mips                             allmodconfig
 mips                              allnoconfig
-mips                             allyesconfig
 mips                      fuloong2e_defconfig
 mips                      malta_kvm_defconfig
 nds32                             allnoconfig
@@ -101,27 +96,20 @@ parisc                            allyesonfig
 parisc                         b180_defconfig
 parisc                        c3000_defconfig
 parisc                              defconfig
-riscv                            allmodconfig
 riscv                             allnoconfig
-riscv                            allyesconfig
 riscv                               defconfig
 riscv                    nommu_virt_defconfig
 riscv                          rv32_defconfig
 s390                             alldefconfig
-s390                             allmodconfig
 s390                              allnoconfig
-s390                             allyesconfig
 s390                          debug_defconfig
 s390                                defconfig
 s390                       zfcpdump_defconfig
-sh                               allmodconfig
 sh                                allnoconfig
 sh                          rsk7269_defconfig
 sh                  sh7785lcr_32bit_defconfig
 sh                            titan_defconfig
-sparc64                          allmodconfig
 sparc64                           allnoconfig
-sparc64                          allyesconfig
 sparc64                             defconfig
 x86_64                              fedora-25
 x86_64                                  kexec
@@ -133,7 +121,7 @@ xtensa                       common_defconfig
 xtensa                          iss_defconfig
 
 configs tested: 32
-configs skipped: 0
+configs skipped: 13
 
 ia64                                defconfig
 powerpc                             defconfig
