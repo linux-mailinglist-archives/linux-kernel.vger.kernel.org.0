@@ -2,144 +2,184 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 500E9149D3E
-	for <lists+linux-kernel@lfdr.de>; Sun, 26 Jan 2020 23:11:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A47F5149D52
+	for <lists+linux-kernel@lfdr.de>; Sun, 26 Jan 2020 23:18:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729324AbgAZWLZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 26 Jan 2020 17:11:25 -0500
-Received: from mx2.suse.de ([195.135.220.15]:43770 "EHLO mx2.suse.de"
+        id S1728884AbgAZWST (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 26 Jan 2020 17:18:19 -0500
+Received: from mga06.intel.com ([134.134.136.31]:22359 "EHLO mga06.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729159AbgAZWLW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 26 Jan 2020 17:11:22 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id 0415DAE2C;
-        Sun, 26 Jan 2020 22:11:19 +0000 (UTC)
-Received: by unicorn.suse.cz (Postfix, from userid 1000)
-        id A748EE06B1; Sun, 26 Jan 2020 23:11:19 +0100 (CET)
-Message-Id: <31ad6c1e5db5601cebf01a1f011cf39ea0ce9e4d.1580075977.git.mkubecek@suse.cz>
-In-Reply-To: <cover.1580075977.git.mkubecek@suse.cz>
-References: <cover.1580075977.git.mkubecek@suse.cz>
-From:   Michal Kubecek <mkubecek@suse.cz>
-Subject: [PATCH net-next 7/7] ethtool: add WOL_NTF notification
-To:     David Miller <davem@davemloft.net>, netdev@vger.kernel.org
-Cc:     Jakub Kicinski <kuba@kernel.org>, Jiri Pirko <jiri@resnulli.us>,
-        Andrew Lunn <andrew@lunn.ch>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        John Linville <linville@tuxdriver.com>,
-        Johannes Berg <johannes@sipsolutions.net>,
-        linux-kernel@vger.kernel.org
-Date:   Sun, 26 Jan 2020 23:11:19 +0100 (CET)
+        id S1726858AbgAZWSH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 26 Jan 2020 17:18:07 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga008.jf.intel.com ([10.7.209.65])
+  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 26 Jan 2020 14:18:06 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.70,367,1574150400"; 
+   d="scan'208";a="221577683"
+Received: from lkp-server01.sh.intel.com (HELO lkp-server01) ([10.239.97.150])
+  by orsmga008.jf.intel.com with ESMTP; 26 Jan 2020 14:18:05 -0800
+Received: from kbuild by lkp-server01 with local (Exim 4.89)
+        (envelope-from <lkp@intel.com>)
+        id 1ivqEG-0005f9-PR; Mon, 27 Jan 2020 06:18:04 +0800
+Date:   Mon, 27 Jan 2020 06:17:26 +0800
+From:   kbuild test robot <lkp@intel.com>
+To:     "Paul E. McKenney" <paulmck@kernel.org>
+Cc:     linux-kernel@vger.kernel.org
+Subject: [rcu:cna.2020.01.24a] BUILD INCOMPLETE
+ 440bde6e7dba84a26758e300504d7d6ca4053b99
+Message-ID: <5e2e0ff6.+XdCzbSgiEpmuWnS%lkp@intel.com>
+User-Agent: Heirloom mailx 12.5 6/20/10
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Send ETHTOOL_MSG_WOL_NTF notification whenever wake-on-lan settings of
-a device are modified using ETHTOOL_MSG_WOL_SET netlink message or
-ETHTOOL_SWOL ioctl request.
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/paulmck/linux-rcu.git  cna.2020.01.24a
+branch HEAD: 440bde6e7dba84a26758e300504d7d6ca4053b99  locking/qspinlock: Introduce the shuffle reduction optimization into CNA
 
-As notifications can be received by anyone, do not include SecureOn(tm)
-password in notification messages.
+TIMEOUT after 2894m
 
-Signed-off-by: Michal Kubecek <mkubecek@suse.cz>
+
+Sorry we cannot finish the testset for your branch within a reasonable time.
+It's our fault -- either some build server is down or some build worker is busy
+doing bisects for _other_ trees. The branch will get more complete coverage and
+possible error reports when our build infrastructure is restored or catches up.
+There will be no more build success notification for this branch head, but you
+can expect reasonably good test coverage after waiting for 1 day.
+
+configs timed out: 37
+
+alpha                               defconfig
+arm64                               defconfig
+h8300                     edosk2674_defconfig
+h8300                    h8300h-sim_defconfig
+h8300                       h8s-sim_defconfig
+m68k                             allmodconfig
+m68k                       m5475evb_defconfig
+m68k                          multi_defconfig
+m68k                           sun3_defconfig
+mips                           32r2_defconfig
+mips                         64r6el_defconfig
+mips                             allmodconfig
+mips                              allnoconfig
+mips                             allyesconfig
+mips                      fuloong2e_defconfig
+mips                      malta_kvm_defconfig
+nds32                               defconfig
+powerpc                       ppc64_defconfig
+powerpc                          rhel-kconfig
+s390                             alldefconfig
+s390                             allmodconfig
+s390                              allnoconfig
+s390                             allyesconfig
+s390                          debug_defconfig
+s390                                defconfig
+s390                       zfcpdump_defconfig
+sh                          rsk7269_defconfig
+sh                  sh7785lcr_32bit_defconfig
+um                                  defconfig
+um                             i386_defconfig
+um                           x86_64_defconfig
+x86_64                              fedora-25
+x86_64                                  kexec
+x86_64                                    lkp
+x86_64                                   rhel
+x86_64                         rhel-7.2-clear
+x86_64                               rhel-7.6
+
+configs tested: 84
+configs skipped: 1
+
+arm64                randconfig-a001-20200125
+ia64                 randconfig-a001-20200125
+arm                  randconfig-a001-20200125
+arc                  randconfig-a001-20200125
+sparc                randconfig-a001-20200125
+riscv                          rv32_defconfig
+riscv                             allnoconfig
+riscv                               defconfig
+riscv                            allmodconfig
+riscv                    nommu_virt_defconfig
+riscv                            allyesconfig
+arc                              allyesconfig
+powerpc                             defconfig
+microblaze                    nommu_defconfig
+microblaze                      mmu_defconfig
+arc                                 defconfig
+powerpc                           allnoconfig
+x86_64               randconfig-b002-20200126
+i386                 randconfig-b003-20200126
+i386                 randconfig-b001-20200126
+i386                 randconfig-b002-20200126
+x86_64               randconfig-b001-20200126
+x86_64               randconfig-b003-20200126
+xtensa                       common_defconfig
+openrisc                    or1ksim_defconfig
+nios2                         3c120_defconfig
+xtensa                          iss_defconfig
+c6x                        evmc6678_defconfig
+c6x                              allyesconfig
+nios2                         10m50_defconfig
+openrisc                 simple_smp_defconfig
+h8300                randconfig-a001-20200126
+nios2                randconfig-a001-20200126
+c6x                  randconfig-a001-20200126
+sparc64              randconfig-a001-20200126
+x86_64               randconfig-c003-20200127
+openrisc             randconfig-a001-20200126
+xtensa               randconfig-a001-20200126
+csky                 randconfig-a001-20200126
+s390                 randconfig-a001-20200126
+sh                   randconfig-a001-20200126
+i386                              allnoconfig
+i386                                defconfig
+i386                             allyesconfig
+i386                             alldefconfig
+ia64                             allmodconfig
+ia64                              allnoconfig
+ia64                             allyesconfig
+ia64                                defconfig
+ia64                             alldefconfig
+csky                                defconfig
+nds32                             allnoconfig
+arm                              allmodconfig
+arm                         at91_dt_defconfig
+arm                        multi_v5_defconfig
+arm                              allyesconfig
+arm64                            allyesconfig
+arm                               allnoconfig
+arm                           efm32_defconfig
+arm                           sunxi_defconfig
+arm64                             allnoconfig
+arm64                            allmodconfig
+arm                          exynos_defconfig
+arm                        shmobile_defconfig
+arm                        multi_v7_defconfig
+x86_64               randconfig-f003-20200127
+x86_64               randconfig-f001-20200127
+x86_64               randconfig-f002-20200127
+i386                 randconfig-f002-20200127
+i386                 randconfig-f003-20200127
+i386                 randconfig-f001-20200127
+sparc64                          allmodconfig
+sparc                            allyesconfig
+sparc64                          allyesconfig
+sparc                               defconfig
+sparc64                           allnoconfig
+sparc64                             defconfig
+sh                               allmodconfig
+sh                                allnoconfig
+sh                            titan_defconfig
+parisc                        c3000_defconfig
+parisc                         b180_defconfig
+parisc                              defconfig
+parisc                            allnoconfig
+
 ---
- Documentation/networking/ethtool-netlink.rst | 5 +++--
- include/uapi/linux/ethtool_netlink.h         | 1 +
- net/ethtool/ioctl.c                          | 1 +
- net/ethtool/netlink.c                        | 2 ++
- net/ethtool/wol.c                            | 4 +++-
- 5 files changed, 10 insertions(+), 3 deletions(-)
-
-diff --git a/Documentation/networking/ethtool-netlink.rst b/Documentation/networking/ethtool-netlink.rst
-index f16f74bbb546..f1f868479ceb 100644
---- a/Documentation/networking/ethtool-netlink.rst
-+++ b/Documentation/networking/ethtool-netlink.rst
-@@ -193,7 +193,7 @@ Userspace to kernel:
- 
- Kernel to userspace:
- 
--  ===================================== ================================
-+  ===================================== =================================
-   ``ETHTOOL_MSG_STRSET_GET_REPLY``      string set contents
-   ``ETHTOOL_MSG_LINKINFO_GET_REPLY``    link settings
-   ``ETHTOOL_MSG_LINKINFO_NTF``          link settings notification
-@@ -203,7 +203,8 @@ Kernel to userspace:
-   ``ETHTOOL_MSG_DEBUG_GET_REPLY``       debugging settings
-   ``ETHTOOL_MSG_DEBUG_NTF``             debugging settings notification
-   ``ETHTOOL_MSG_WOL_GET_REPLY``         wake-on-lan settings
--  ===================================== ================================
-+  ``ETHTOOL_MSG_WOL_NTF``               wake-on-lan settings notification
-+  ===================================== =================================
- 
- ``GET`` requests are sent by userspace applications to retrieve device
- information. They usually do not contain any message specific attributes.
-diff --git a/include/uapi/linux/ethtool_netlink.h b/include/uapi/linux/ethtool_netlink.h
-index 59de35695521..7e0b460f872c 100644
---- a/include/uapi/linux/ethtool_netlink.h
-+++ b/include/uapi/linux/ethtool_netlink.h
-@@ -42,6 +42,7 @@ enum {
- 	ETHTOOL_MSG_DEBUG_GET_REPLY,
- 	ETHTOOL_MSG_DEBUG_NTF,
- 	ETHTOOL_MSG_WOL_GET_REPLY,
-+	ETHTOOL_MSG_WOL_NTF,
- 
- 	/* add new constants above here */
- 	__ETHTOOL_MSG_KERNEL_CNT,
-diff --git a/net/ethtool/ioctl.c b/net/ethtool/ioctl.c
-index 46e0b31782fc..b88dd14e41c6 100644
---- a/net/ethtool/ioctl.c
-+++ b/net/ethtool/ioctl.c
-@@ -1316,6 +1316,7 @@ static int ethtool_set_wol(struct net_device *dev, char __user *useraddr)
- 		return ret;
- 
- 	dev->wol_enabled = !!wol.wolopts;
-+	ethtool_notify(dev, ETHTOOL_MSG_WOL_NTF, NULL);
- 
- 	return 0;
- }
-diff --git a/net/ethtool/netlink.c b/net/ethtool/netlink.c
-index 2c375f9095fe..180c194fab07 100644
---- a/net/ethtool/netlink.c
-+++ b/net/ethtool/netlink.c
-@@ -526,6 +526,7 @@ ethnl_default_notify_ops[ETHTOOL_MSG_KERNEL_MAX + 1] = {
- 	[ETHTOOL_MSG_LINKINFO_NTF]	= &ethnl_linkinfo_request_ops,
- 	[ETHTOOL_MSG_LINKMODES_NTF]	= &ethnl_linkmodes_request_ops,
- 	[ETHTOOL_MSG_DEBUG_NTF]		= &ethnl_debug_request_ops,
-+	[ETHTOOL_MSG_WOL_NTF]		= &ethnl_wol_request_ops,
- };
- 
- /* default notification handler */
-@@ -610,6 +611,7 @@ static const ethnl_notify_handler_t ethnl_notify_handlers[] = {
- 	[ETHTOOL_MSG_LINKINFO_NTF]	= ethnl_default_notify,
- 	[ETHTOOL_MSG_LINKMODES_NTF]	= ethnl_default_notify,
- 	[ETHTOOL_MSG_DEBUG_NTF]		= ethnl_default_notify,
-+	[ETHTOOL_MSG_WOL_NTF]		= ethnl_default_notify,
- };
- 
- void ethtool_notify(struct net_device *dev, unsigned int cmd, const void *data)
-diff --git a/net/ethtool/wol.c b/net/ethtool/wol.c
-index a2724378fac4..e1b8a65b64c4 100644
---- a/net/ethtool/wol.c
-+++ b/net/ethtool/wol.c
-@@ -41,7 +41,8 @@ static int wol_prepare_data(const struct ethnl_req_info *req_base,
- 		return ret;
- 	dev->ethtool_ops->get_wol(dev, &data->wol);
- 	ethnl_ops_complete(dev);
--	data->show_sopass = data->wol.supported & WAKE_MAGICSECURE;
-+	/* do not include password in notifications */
-+	data->show_sopass = info && (data->wol.supported & WAKE_MAGICSECURE);
- 
- 	return 0;
- }
-@@ -165,6 +166,7 @@ int ethnl_set_wol(struct sk_buff *skb, struct genl_info *info)
- 	if (ret)
- 		goto out_ops;
- 	dev->wol_enabled = !!wol.wolopts;
-+	ethtool_notify(dev, ETHTOOL_MSG_WOL_NTF, NULL);
- 
- out_ops:
- 	ethnl_ops_complete(dev);
--- 
-2.25.0
-
+0-DAY kernel test infrastructure                 Open Source Technology Center
+https://lists.01.org/hyperkitty/list/kbuild-all@lists.01.org Intel Corporation
