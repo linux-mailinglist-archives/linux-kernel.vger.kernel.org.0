@@ -2,74 +2,62 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 09885149A10
-	for <lists+linux-kernel@lfdr.de>; Sun, 26 Jan 2020 11:26:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 95015149A13
+	for <lists+linux-kernel@lfdr.de>; Sun, 26 Jan 2020 11:27:21 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729396AbgAZK0B (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 26 Jan 2020 05:26:01 -0500
-Received: from mail-io1-f68.google.com ([209.85.166.68]:43097 "EHLO
-        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729213AbgAZK0A (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 26 Jan 2020 05:26:00 -0500
-Received: by mail-io1-f68.google.com with SMTP id n21so6752668ioo.10
-        for <linux-kernel@vger.kernel.org>; Sun, 26 Jan 2020 02:26:00 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=I5ss2A9PhpaPL+Y6/Eq0fV6rb1bJtLZPNb/zRGwXMTE=;
-        b=D27wrEu/CsAGY5dRH3TN2ZKuFTn5laOBjvVfcM1Dw80HaP/96lJhwPSpGcphnf4P7l
-         /97PsAfIHisHOsXwN6XAWK49wscMV82zk/6WTQJMSi3HOOyDuvpDnwUizm4xOs7VHGkc
-         wzP59SUoBy/ZHhg49zAgQOuOsoioFYRyhYMv8opfli6+HZNEJzif+rukPRgpIQNPkxQz
-         NhlSEf+RqIWizq16mTNkzS1FBqlGGpDQ89Yp34/v8jD6wRCPc/DVdPtFND8l5QtBnfqU
-         xqJ6LtQxlBCVej/KSCDIENnA47d2Md0Q5ZYTT7zHH9NQKejWY6VqqYtusjqeG8Y1zKGB
-         +i4Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=I5ss2A9PhpaPL+Y6/Eq0fV6rb1bJtLZPNb/zRGwXMTE=;
-        b=PxCU/GKDrLg9Xar43A79mOkGafRT+xI9oDJCI/U+EzvrJEXAmfkN8h0HaSEOl0iJ2i
-         kSew5WG4FMCY3nA8OGTi3vZjwA52SdGGMvhhrrUXc7Ea0vbKGxdplx4qh4iq+l9tELB0
-         8pahBbIX6WZMsusHkpsox1weosAwwEMA9d/1Zh7uv1idt1LD63PlHO2vqEG2UaToPsHK
-         HFpAid+0Atbd7L0zIJ784c7rt8yx13KWxms8RNi9TsH7CaXuKXELj6iu/lsiabPBbcpx
-         nUJ/gBgd3ogqyF9BUquU5BPAaddxa3N69MYoXRseY/s/QlpnJle7qmmagXjspiKkQplj
-         Fn5g==
-X-Gm-Message-State: APjAAAUMVY15xwJ6TwPmSYxYr/WFbxADg/LbIXCflPwGj4Vf68xOsjUI
-        QCX8OuZ5HMF7nWa9UR8N+9edKGhqNiIcziPNPI2VXw==
-X-Google-Smtp-Source: APXvYqy/OgLhH2YrMUUnwdGcownsvFIpuD+QssaiI+S932cX8vLLDRtGbVAw6t5Xz6uzY5DtwPKwinFv6tqzMMZmNhg=
-X-Received: by 2002:a02:b615:: with SMTP id h21mr9013386jam.109.1580034359905;
- Sun, 26 Jan 2020 02:25:59 -0800 (PST)
-MIME-Version: 1.0
-References: <20200125162917.247485-1-yuhsuan@chromium.org>
-In-Reply-To: <20200125162917.247485-1-yuhsuan@chromium.org>
-From:   Tzung-Bi Shih <tzungbi@google.com>
-Date:   Sun, 26 Jan 2020 18:25:48 +0800
-Message-ID: <CA+Px+wU4kxGbZy7VpZ5hb==m7-BYPEOYd5EiWLpNvdD+h9vPOA@mail.gmail.com>
-Subject: Re: [PATCH v2] ASoC: cros_ec_codec: Support setting bclk ratio
-To:     Yu-Hsuan Hsu <yuhsuan@chromium.org>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Cheng-Yi Chiang <cychiang@chromium.org>,
-        Tzung-Bi Shih <tzungbi@chromium.org>,
-        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
-        Guenter Roeck <groeck@chromium.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>,
-        Benson Leung <bleung@chromium.org>,
-        ALSA development <alsa-devel@alsa-project.org>
-Content-Type: text/plain; charset="UTF-8"
+        id S2387409AbgAZK1S (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 26 Jan 2020 05:27:18 -0500
+Received: from mga17.intel.com ([192.55.52.151]:7005 "EHLO mga17.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729213AbgAZK1S (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 26 Jan 2020 05:27:18 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga006.fm.intel.com ([10.253.24.20])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 26 Jan 2020 02:27:17 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.70,365,1574150400"; 
+   d="scan'208";a="428720075"
+Received: from richard.sh.intel.com (HELO localhost) ([10.239.159.54])
+  by fmsmga006.fm.intel.com with ESMTP; 26 Jan 2020 02:27:16 -0800
+From:   Wei Yang <richardw.yang@linux.intel.com>
+To:     akpm@linux-foundation.org
+Cc:     mhocko@suse.com, yang.shi@linux.alibaba.com, rientjes@google.com,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        Wei Yang <richardw.yang@linux.intel.com>
+Subject: [Patch v3 0/4] cleanup on do_pages_move()
+Date:   Sun, 26 Jan 2020 18:26:19 +0800
+Message-Id: <20200126102623.9616-1-richardw.yang@linux.intel.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Jan 26, 2020 at 12:29 AM Yu-Hsuan Hsu <yuhsuan@chromium.org> wrote:
->
-> Support setting bclk ratio from machine drivers.
->
-> Signed-off-by: Yu-Hsuan Hsu <yuhsuan@chromium.org>
+The logic in do_pages_move() is a little mess for audience to read and has
+some potential error on handling the return value. Especially there are
+three calls on do_move_pages_to_node() and store_status() with almost the
+same form.
 
-Reviewed-by: Tzung-Bi Shih <tzungbi@google.com>
+This patch set tries to make the code a little friendly for audience by
+consolidate the calls.
+
+v3:
+  * rebase on top of Yang Shi's fix "mm: move_pages: report the number of
+    non-attempted pages"
+v2:
+  * remove some unnecessary cleanup
+
+
+Wei Yang (4):
+  mm/migrate.c: not necessary to check start and i
+  mm/migrate.c: wrap do_move_pages_to_node() and store_status()
+  mm/migrate.c: check pagelist in move_pages_and_store_status()
+  mm/migrate.c: handle same node and add failure in the same way
+
+ mm/migrate.c | 90 ++++++++++++++++++++++++----------------------------
+ 1 file changed, 42 insertions(+), 48 deletions(-)
+
+-- 
+2.17.1
+
