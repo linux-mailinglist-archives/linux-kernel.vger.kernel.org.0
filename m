@@ -2,134 +2,77 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DE8E9149CAA
-	for <lists+linux-kernel@lfdr.de>; Sun, 26 Jan 2020 21:02:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5DA9B149CAB
+	for <lists+linux-kernel@lfdr.de>; Sun, 26 Jan 2020 21:02:55 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727322AbgAZUA1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 26 Jan 2020 15:00:27 -0500
-Received: from mo4-p02-ob.smtp.rzone.de ([85.215.255.84]:25049 "EHLO
-        mo4-p02-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726145AbgAZUAZ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 26 Jan 2020 15:00:25 -0500
-X-RZG-AUTH: ":JGIXVUS7cutRB/49FwqZ7WcJeFKiMhflhwDubTJ9o1OAA2UNf2AyPQjcv7w="
-X-RZG-CLASS-ID: mo00
-Received: from iMac.fritz.box
-        by smtp.strato.de (RZmta 46.1.7 DYNA|AUTH)
-        with ESMTPSA id k0645aw0QK0FF2G
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256 bits))
-        (Client did not present a certificate);
-        Sun, 26 Jan 2020 21:00:15 +0100 (CET)
-From:   "H. Nikolaus Schaller" <hns@goldelico.com>
-To:     Kalle Valo <kvalo@codeaurora.org>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        "H. Nikolaus Schaller" <hns@goldelico.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Alexios Zavras <alexios.zavras@intel.com>
-Cc:     linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        letux-kernel@openphoenux.org, kernel@pyra-handheld.com
-Subject: [PATCH v3 2/2] wl1251: remove ti,power-gpio for SDIO mode
-Date:   Sun, 26 Jan 2020 21:00:14 +0100
-Message-Id: <e77b49bb475f63dd7b07bfb76a75651e80bbace7.1580068813.git.hns@goldelico.com>
-X-Mailer: git-send-email 2.23.0
-In-Reply-To: <cover.1580068813.git.hns@goldelico.com>
-References: <cover.1580068813.git.hns@goldelico.com>
+        id S1726443AbgAZUBw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 26 Jan 2020 15:01:52 -0500
+Received: from mga09.intel.com ([134.134.136.24]:51976 "EHLO mga09.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726144AbgAZUBw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 26 Jan 2020 15:01:52 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from orsmga007.jf.intel.com ([10.7.209.58])
+  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 26 Jan 2020 12:01:26 -0800
+X-IronPort-AV: E=Sophos;i="5.70,366,1574150400"; 
+   d="scan'208";a="217101369"
+Received: from agluck-desk2.sc.intel.com (HELO agluck-desk2.amr.corp.intel.com) ([10.3.52.68])
+  by orsmga007-auth.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 26 Jan 2020 12:01:25 -0800
+Date:   Sun, 26 Jan 2020 12:01:24 -0800
+From:   "Luck, Tony" <tony.luck@intel.com>
+To:     Andy Lutomirski <luto@kernel.org>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Arvind Sankar <nivedita@alum.mit.edu>,
+        "Christopherson, Sean J" <sean.j.christopherson@intel.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        "Yu, Fenghua" <fenghua.yu@intel.com>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        H Peter Anvin <hpa@zytor.com>,
+        "Raj, Ashok" <ashok.raj@intel.com>,
+        "Shankar, Ravi V" <ravi.v.shankar@intel.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        x86 <x86@kernel.org>, Andrew Cooper <andrew.cooper3@citrix.com>
+Subject: Re: [PATCH v16] x86/split_lock: Enable split lock detection by kernel
+Message-ID: <20200126200124.GA30377@agluck-desk2.amr.corp.intel.com>
+References: <3908561D78D1C84285E8C5FCA982C28F7F54887A@ORSMSX114.amr.corp.intel.com>
+ <20200123004507.GA2403906@rani.riverdale.lan>
+ <20200123035359.GA23659@agluck-desk2.amr.corp.intel.com>
+ <20200123044514.GA2453000@rani.riverdale.lan>
+ <20200123231652.GA4457@agluck-desk2.amr.corp.intel.com>
+ <87h80kmta4.fsf@nanos.tec.linutronix.de>
+ <20200125024727.GA32483@agluck-desk2.amr.corp.intel.com>
+ <875zgzmz5e.fsf@nanos.tec.linutronix.de>
+ <20200125220706.GA18290@agluck-desk2.amr.corp.intel.com>
+ <CALCETrXT9zo2yFN+iz-1ijayOKNNz-717pEJggU1kC79ZVf34g@mail.gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CALCETrXT9zo2yFN+iz-1ijayOKNNz-717pEJggU1kC79ZVf34g@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Remove handling of this property from code.
+On Sat, Jan 25, 2020 at 04:34:29PM -0800, Andy Lutomirski wrote:
+> Although I suppose the pile of wrmsrl_safes() in the existing patch
+> might be sufficient.
+> 
+> All this being said, the current code appears wrong if a CPU is in the
+> list but does have X86_FEATURE_CORE_CAPABILITIES.  Are there such
+> CPUs?  I think either the logic should be changed or a comment should
+> be added.
 
-Note that wl->power_gpio is still needed in
-the header file for SPI mode (N900).
+Is it really wrong? Code check the CPUID & CORE_CAPABILTIES first and
+believes what they say. Otherwise falls back to the x86_match_cpu()
+list.
 
-Suggested by: Ulf Hansson <ulf.hansson@linaro.org>
-Signed-off-by: H. Nikolaus Schaller <hns@goldelico.com>
----
- drivers/net/wireless/ti/wl1251/sdio.c | 32 ++-------------------------
- 1 file changed, 2 insertions(+), 30 deletions(-)
+I don't believe we put a CPU on that list that currently says
+it supports CORE_CAPABILITIES. That could theoretically change
+with a microcode update. I doubt we'd waste microcode space to do
+that, but if we did, I assume we'd include the split lock bit
+in the newly present MSR. So behavior would not change.
 
-diff --git a/drivers/net/wireless/ti/wl1251/sdio.c b/drivers/net/wireless/ti/wl1251/sdio.c
-index 94569cd695c8..c9a4e9a43400 100644
---- a/drivers/net/wireless/ti/wl1251/sdio.c
-+++ b/drivers/net/wireless/ti/wl1251/sdio.c
-@@ -15,9 +15,7 @@
- #include <linux/wl12xx.h>
- #include <linux/irq.h>
- #include <linux/pm_runtime.h>
--#include <linux/gpio.h>
- #include <linux/of.h>
--#include <linux/of_gpio.h>
- #include <linux/of_irq.h>
- 
- #include "wl1251.h"
-@@ -160,15 +158,6 @@ static int wl1251_sdio_set_power(struct wl1251 *wl, bool enable)
- 	int ret;
- 
- 	if (enable) {
--		/*
--		 * Power is controlled by runtime PM, but we still call board
--		 * callback in case it wants to do any additional setup,
--		 * for example enabling clock buffer for the module.
--		 */
--		if (gpio_is_valid(wl->power_gpio))
--			gpio_set_value(wl->power_gpio, true);
--
--
- 		ret = pm_runtime_get_sync(&func->dev);
- 		if (ret < 0) {
- 			pm_runtime_put_sync(&func->dev);
-@@ -186,9 +175,6 @@ static int wl1251_sdio_set_power(struct wl1251 *wl, bool enable)
- 		ret = pm_runtime_put_sync(&func->dev);
- 		if (ret < 0)
- 			goto out;
--
--		if (gpio_is_valid(wl->power_gpio))
--			gpio_set_value(wl->power_gpio, false);
- 	}
- 
- out:
-@@ -241,31 +227,17 @@ static int wl1251_sdio_probe(struct sdio_func *func,
- 
- 	wl1251_board_data = wl1251_get_platform_data();
- 	if (!IS_ERR(wl1251_board_data)) {
--		wl->power_gpio = wl1251_board_data->power_gpio;
- 		wl->irq = wl1251_board_data->irq;
- 		wl->use_eeprom = wl1251_board_data->use_eeprom;
- 	} else if (np) {
--		wl->use_eeprom = of_property_read_bool(np,
--						       "ti,wl1251-has-eeprom");
--		wl->power_gpio = of_get_named_gpio(np, "ti,power-gpio", 0);
-+		wl->use_eeprom = of_property_read_bool(np, "ti,wl1251-has-eeprom");
- 		wl->irq = of_irq_get(np, 0);
--
--		if (wl->power_gpio == -EPROBE_DEFER ||
--		    wl->irq == -EPROBE_DEFER) {
-+		if (wl->irq == -EPROBE_DEFER) {
- 			ret = -EPROBE_DEFER;
- 			goto disable;
- 		}
- 	}
- 
--	if (gpio_is_valid(wl->power_gpio)) {
--		ret = devm_gpio_request(&func->dev, wl->power_gpio,
--								"wl1251 power");
--		if (ret) {
--			wl1251_error("Failed to request gpio: %d\n", ret);
--			goto disable;
--		}
--	}
--
- 	if (wl->irq) {
- 		irq_set_status_flags(wl->irq, IRQ_NOAUTOEN);
- 		ret = request_irq(wl->irq, wl1251_line_irq, 0, "wl1251", wl);
--- 
-2.23.0
-
+-Tony
