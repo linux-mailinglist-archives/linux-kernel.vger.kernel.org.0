@@ -2,32 +2,32 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 940FB149C7D
-	for <lists+linux-kernel@lfdr.de>; Sun, 26 Jan 2020 20:20:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 112F1149C81
+	for <lists+linux-kernel@lfdr.de>; Sun, 26 Jan 2020 20:20:49 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729130AbgAZTUY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 26 Jan 2020 14:20:24 -0500
-Received: from mail.kernel.org ([198.145.29.99]:53658 "EHLO mail.kernel.org"
+        id S1729262AbgAZTUo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 26 Jan 2020 14:20:44 -0500
+Received: from mail.kernel.org ([198.145.29.99]:53680 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727235AbgAZTUW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1727409AbgAZTUW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Sun, 26 Jan 2020 14:20:22 -0500
 Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EFAAC2083E;
-        Sun, 26 Jan 2020 19:20:21 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1F58C214AF;
+        Sun, 26 Jan 2020 19:20:22 +0000 (UTC)
 Received: from rostedt by gandalf.local.home with local (Exim 4.93)
         (envelope-from <rostedt@goodmis.org>)
-        id 1ivnSG-000zr4-TV; Sun, 26 Jan 2020 14:20:20 -0500
-Message-Id: <20200126192020.793380330@goodmis.org>
+        id 1ivnSH-000zrY-1d; Sun, 26 Jan 2020 14:20:21 -0500
+Message-Id: <20200126192020.939296571@goodmis.org>
 User-Agent: quilt/0.65
-Date:   Sun, 26 Jan 2020 14:19:35 -0500
+Date:   Sun, 26 Jan 2020 14:19:36 -0500
 From:   Steven Rostedt <rostedt@goodmis.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Ingo Molnar <mingo@kernel.org>,
         Andrew Morton <akpm@linux-foundation.org>,
-        Josef Bacik <jbacik@fb.com>
-Subject: [for-next][PATCH 3/7] tracing: Set kernel_stacks caller size properly
+        Dan Carpenter <dan.carpenter@oracle.com>
+Subject: [for-next][PATCH 4/7] tracing: Remove unneeded NULL check
 References: <20200126191932.984391723@goodmis.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -36,38 +36,32 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Josef Bacik <jbacik@fb.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
 
-I noticed when trying to use the trace-cmd python interface that reading the raw
-buffer wasn't working for kernel_stack events.  This is because it uses a
-stubbed version of __dynamic_array that doesn't do the __data_loc trick and
-encode the length of the array into the field.  Instead it just shows up as a
-size of 0.  So change this to __array and set the len to FTRACE_STACK_ENTRIES
-since this is what we actually do in practice and matches how user_stack_trace
-works.
+We checked "iter->trace" earlier so there is no need to check here.
 
-Link: http://lkml.kernel.org/r/1411589652-1318-1-git-send-email-jbacik@fb.com
+Link: http://lkml.kernel.org/r/20141122183012.GB6994@mwanda
 
-Signed-off-by: Josef Bacik <jbacik@fb.com>
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 [ Pulled from the archeological digging of my INBOX ]
 Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
 ---
- kernel/trace/trace_entries.h | 2 +-
+ kernel/trace/trace.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/kernel/trace/trace_entries.h b/kernel/trace/trace_entries.h
-index fc8e97328e54..78c146efb862 100644
---- a/kernel/trace/trace_entries.h
-+++ b/kernel/trace/trace_entries.h
-@@ -174,7 +174,7 @@ FTRACE_ENTRY(kernel_stack, stack_entry,
+diff --git a/kernel/trace/trace.c b/kernel/trace/trace.c
+index d1410b4462ac..6fed9b0a8d58 100644
+--- a/kernel/trace/trace.c
++++ b/kernel/trace/trace.c
+@@ -4224,7 +4224,7 @@ __tracing_open(struct inode *inode, struct file *file, bool snapshot)
+ 	mutex_init(&iter->mutex);
  
- 	F_STRUCT(
- 		__field(	int,		size	)
--		__dynamic_array(unsigned long,	caller	)
-+		__array(	unsigned long,	caller,	FTRACE_STACK_ENTRIES	)
- 	),
+ 	/* Notify the tracer early; before we stop tracing. */
+-	if (iter->trace && iter->trace->open)
++	if (iter->trace->open)
+ 		iter->trace->open(iter);
  
- 	F_printk("\t=> %ps\n\t=> %ps\n\t=> %ps\n"
+ 	/* Annotate start of buffers if we had overruns */
 -- 
 2.24.1
 
