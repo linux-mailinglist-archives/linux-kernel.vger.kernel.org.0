@@ -2,102 +2,117 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 241AD149CB8
-	for <lists+linux-kernel@lfdr.de>; Sun, 26 Jan 2020 21:10:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9DFA9149CBC
+	for <lists+linux-kernel@lfdr.de>; Sun, 26 Jan 2020 21:12:19 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727349AbgAZUKC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 26 Jan 2020 15:10:02 -0500
-Received: from foss.arm.com ([217.140.110.172]:37714 "EHLO foss.arm.com"
+        id S1727212AbgAZUMR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 26 Jan 2020 15:12:17 -0500
+Received: from mga04.intel.com ([192.55.52.120]:34229 "EHLO mga04.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727107AbgAZUKA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 26 Jan 2020 15:10:00 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 9BC641063;
-        Sun, 26 Jan 2020 12:09:59 -0800 (PST)
-Received: from e113632-lin.cambridge.arm.com (e113632-lin.cambridge.arm.com [10.1.194.46])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 65FD33F68E;
-        Sun, 26 Jan 2020 12:09:58 -0800 (PST)
-From:   Valentin Schneider <valentin.schneider@arm.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     mingo@redhat.com, peterz@infradead.org, vincent.guittot@linaro.org,
-        dietmar.eggemann@arm.com, morten.rasmussen@arm.com,
-        qperret@google.com, adharmap@codeaurora.org
-Subject: [PATCH v3 3/3] sched/fair: Kill wake_cap()
-Date:   Sun, 26 Jan 2020 20:09:34 +0000
-Message-Id: <20200126200934.18712-4-valentin.schneider@arm.com>
-X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20200126200934.18712-1-valentin.schneider@arm.com>
-References: <20200126200934.18712-1-valentin.schneider@arm.com>
+        id S1726725AbgAZUMP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 26 Jan 2020 15:12:15 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from orsmga005.jf.intel.com ([10.7.209.41])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 26 Jan 2020 12:12:14 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.70,366,1574150400"; 
+   d="scan'208";a="401166249"
+Received: from lkp-server01.sh.intel.com (HELO lkp-server01) ([10.239.97.150])
+  by orsmga005.jf.intel.com with ESMTP; 26 Jan 2020 12:12:12 -0800
+Received: from kbuild by lkp-server01 with local (Exim 4.89)
+        (envelope-from <lkp@intel.com>)
+        id 1ivoGR-0006gg-Mg; Mon, 27 Jan 2020 04:12:11 +0800
+Date:   Mon, 27 Jan 2020 04:11:35 +0800
+From:   kbuild test robot <lkp@intel.com>
+To:     Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
+Cc:     kbuild-all@lists.01.org, gregkh@linuxfoundation.org,
+        linux-kernel@vger.kernel.org,
+        Nicolas Saenz Julienne <nsaenzjulienne@suse.de>,
+        bcm-kernel-feedback-list@broadcom.com,
+        linux-rpi-kernel@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, devel@driverdev.osuosl.org
+Subject: Re: [PATCH 06/22] staging: vc04_services: get rid of
+ vchiq_platform_use_suspend_timer()
+Message-ID: <202001270446.AI1Wgghb%lkp@intel.com>
+References: <20200124144617.2213-7-nsaenzjulienne@suse.de>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200124144617.2213-7-nsaenzjulienne@suse.de>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Morten Rasmussen <morten.rasmussen@arm.com>
+Hi Nicolas,
 
-Capacity-awareness in the wake-up path previously involved disabling
-wake_affine in certain scenarios. We have just made select_idle_sibling()
-capacity-aware, so this isn't needed anymore.
+I love your patch! Perhaps something to improve:
 
-Remove wake_cap() entirely.
+[auto build test WARNING on staging/staging-testing]
+[also build test WARNING on linux/master linus/master v5.5-rc7 next-20200121]
+[cannot apply to anholt/for-next]
+[if your patch is applied to the wrong git tree, please drop us a note to help
+improve the system. BTW, we also suggest to use '--base' option to specify the
+base tree in git format-patch, please see https://stackoverflow.com/a/37406982]
 
-Signed-off-by: Morten Rasmussen <morten.rasmussen@arm.com>
-[Changelog tweaks]
-Signed-off-by: Valentin Schneider <valentin.schneider@arm.com>
+url:    https://github.com/0day-ci/linux/commits/Nicolas-Saenz-Julienne/staging-vc04_services-suspend-resume-cleanup/20200125-193041
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/gregkh/staging.git fc157998b8257fb9cfe753e7f4af1411da995c9b
+reproduce:
+        # apt-get install sparse
+        # sparse version: v0.6.1-153-g47b6dfef-dirty
+        make ARCH=x86_64 allmodconfig
+        make C=1 CF='-fdiagnostic-prefix -D__CHECK_ENDIAN__'
+
+If you fix the issue, kindly add following tag
+Reported-by: kbuild test robot <lkp@intel.com>
+
+
+sparse warnings: (new ones prefixed by >>)
+
+   drivers/staging/vc04_services/interface/vchiq_arm/vchiq_arm.c:1239:60: sparse: sparse: incorrect type in assignment (different address spaces)
+   drivers/staging/vc04_services/interface/vchiq_arm/vchiq_arm.c:1239:60: sparse:    expected struct vchiq_header *header
+   drivers/staging/vc04_services/interface/vchiq_arm/vchiq_arm.c:1239:60: sparse:    got void [noderef] <asn:1> *[addressable] msgbuf
+   drivers/staging/vc04_services/interface/vchiq_arm/vchiq_arm.c:1508:13: sparse: sparse: incorrect type in assignment (different address spaces)
+   drivers/staging/vc04_services/interface/vchiq_arm/vchiq_arm.c:1508:13: sparse:    expected int enum vchiq_status ( *__pu_val )( ... )
+   drivers/staging/vc04_services/interface/vchiq_arm/vchiq_arm.c:1508:13: sparse:    got void [noderef] <asn:1> *
+   drivers/staging/vc04_services/interface/vchiq_arm/vchiq_arm.c:1510:13: sparse: sparse: incorrect type in assignment (different address spaces)
+   drivers/staging/vc04_services/interface/vchiq_arm/vchiq_arm.c:1510:13: sparse:    expected void *__pu_val
+   drivers/staging/vc04_services/interface/vchiq_arm/vchiq_arm.c:1510:13: sparse:    got void [noderef] <asn:1> *
+   drivers/staging/vc04_services/interface/vchiq_arm/vchiq_arm.c:1636:13: sparse: sparse: incorrect type in assignment (different address spaces)
+   drivers/staging/vc04_services/interface/vchiq_arm/vchiq_arm.c:1636:13: sparse:    expected void *__pu_val
+   drivers/staging/vc04_services/interface/vchiq_arm/vchiq_arm.c:1636:13: sparse:    got void [noderef] <asn:1> *
+   drivers/staging/vc04_services/interface/vchiq_arm/vchiq_arm.c:1638:13: sparse: sparse: incorrect type in assignment (different address spaces)
+   drivers/staging/vc04_services/interface/vchiq_arm/vchiq_arm.c:1638:13: sparse:    expected void *__pu_val
+   drivers/staging/vc04_services/interface/vchiq_arm/vchiq_arm.c:1638:13: sparse:    got void [noderef] <asn:1> *
+   drivers/staging/vc04_services/interface/vchiq_arm/vchiq_arm.c:1713:13: sparse: sparse: incorrect type in assignment (different address spaces)
+   drivers/staging/vc04_services/interface/vchiq_arm/vchiq_arm.c:1713:13: sparse:    expected struct vchiq_completion_data *__pu_val
+   drivers/staging/vc04_services/interface/vchiq_arm/vchiq_arm.c:1713:13: sparse:    got void [noderef] <asn:1> *
+   drivers/staging/vc04_services/interface/vchiq_arm/vchiq_arm.c:1716:13: sparse: sparse: incorrect type in assignment (different address spaces)
+   drivers/staging/vc04_services/interface/vchiq_arm/vchiq_arm.c:1716:13: sparse:    expected void **__pu_val
+   drivers/staging/vc04_services/interface/vchiq_arm/vchiq_arm.c:1716:13: sparse:    got void [noderef] <asn:1> *
+   drivers/staging/vc04_services/interface/vchiq_arm/vchiq_arm.c:1763:13: sparse: sparse: incorrect type in assignment (different address spaces)
+   drivers/staging/vc04_services/interface/vchiq_arm/vchiq_arm.c:1763:13: sparse:    expected struct vchiq_completion_data *__pu_val
+   drivers/staging/vc04_services/interface/vchiq_arm/vchiq_arm.c:1763:13: sparse:    got struct vchiq_completion_data [noderef] <asn:1> *[assigned] completion
+   drivers/staging/vc04_services/interface/vchiq_arm/vchiq_arm.c:1793:59: sparse: sparse: incorrect type in argument 1 (different address spaces)
+   drivers/staging/vc04_services/interface/vchiq_arm/vchiq_arm.c:1793:59: sparse:    expected void [noderef] <asn:1> *uptr
+   drivers/staging/vc04_services/interface/vchiq_arm/vchiq_arm.c:1793:59: sparse:    got struct vchiq_header *[addressable] header
+   drivers/staging/vc04_services/interface/vchiq_arm/vchiq_arm.c:1795:45: sparse: sparse: incorrect type in argument 1 (different address spaces)
+   drivers/staging/vc04_services/interface/vchiq_arm/vchiq_arm.c:1795:45: sparse:    expected void [noderef] <asn:1> *uptr
+   drivers/staging/vc04_services/interface/vchiq_arm/vchiq_arm.c:1795:45: sparse:    got void *[addressable] service_userdata
+   drivers/staging/vc04_services/interface/vchiq_arm/vchiq_arm.c:1797:45: sparse: sparse: incorrect type in argument 1 (different address spaces)
+   drivers/staging/vc04_services/interface/vchiq_arm/vchiq_arm.c:1797:45: sparse:    expected void [noderef] <asn:1> *uptr
+   drivers/staging/vc04_services/interface/vchiq_arm/vchiq_arm.c:1797:45: sparse:    got void *[addressable] bulk_userdata
+   drivers/staging/vc04_services/interface/vchiq_arm/vchiq_arm.c:1851:13: sparse: sparse: incorrect type in assignment (different address spaces)
+   drivers/staging/vc04_services/interface/vchiq_arm/vchiq_arm.c:1851:13: sparse:    expected void *__pu_val
+   drivers/staging/vc04_services/interface/vchiq_arm/vchiq_arm.c:1851:13: sparse:    got void [noderef] <asn:1> *
+   drivers/staging/vc04_services/interface/vchiq_arm/vchiq_arm.c:2257:1: sparse: sparse: symbol 'vchiq_videocore_wanted' was not declared. Should it be static?
+>> drivers/staging/vc04_services/interface/vchiq_arm/vchiq_arm.c:2879:1: sparse: sparse: symbol 'vchiq_dump_service_use_state' was not declared. Should it be static?
+
+Please review and possibly fold the followup patch.
+
 ---
- kernel/sched/fair.c | 30 +-----------------------------
- 1 file changed, 1 insertion(+), 29 deletions(-)
-
-diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index aebc2e0e6c8a1..0df85c32d69cd 100644
---- a/kernel/sched/fair.c
-+++ b/kernel/sched/fair.c
-@@ -6146,33 +6146,6 @@ static unsigned long cpu_util_without(int cpu, struct task_struct *p)
- 	return min_t(unsigned long, util, capacity_orig_of(cpu));
- }
- 
--/*
-- * Disable WAKE_AFFINE in the case where task @p doesn't fit in the
-- * capacity of either the waking CPU @cpu or the previous CPU @prev_cpu.
-- *
-- * In that case WAKE_AFFINE doesn't make sense and we'll let
-- * BALANCE_WAKE sort things out.
-- */
--static int wake_cap(struct task_struct *p, int cpu, int prev_cpu)
--{
--	long min_cap, max_cap;
--
--	if (!static_branch_unlikely(&sched_asym_cpucapacity))
--		return 0;
--
--	min_cap = min(capacity_orig_of(prev_cpu), capacity_orig_of(cpu));
--	max_cap = cpu_rq(cpu)->rd->max_cpu_capacity;
--
--	/* Minimum capacity is close to max, no need to abort wake_affine */
--	if (max_cap - min_cap < max_cap >> 3)
--		return 0;
--
--	/* Bring task utilization in sync with prev_cpu */
--	sync_entity_load_avg(&p->se);
--
--	return !task_fits_capacity(p, min_cap);
--}
--
- /*
-  * Predicts what cpu_util(@cpu) would return if @p was migrated (and enqueued)
-  * to @dst_cpu.
-@@ -6437,8 +6410,7 @@ select_task_rq_fair(struct task_struct *p, int prev_cpu, int sd_flag, int wake_f
- 			new_cpu = prev_cpu;
- 		}
- 
--		want_affine = !wake_wide(p) && !wake_cap(p, cpu, prev_cpu) &&
--			      cpumask_test_cpu(cpu, p->cpus_ptr);
-+		want_affine = !wake_wide(p) && cpumask_test_cpu(cpu, p->cpus_ptr);
- 	}
- 
- 	rcu_read_lock();
--- 
-2.24.0
-
+0-DAY kernel test infrastructure                 Open Source Technology Center
+https://lists.01.org/hyperkitty/list/kbuild-all@lists.01.org Intel Corporation
