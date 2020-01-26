@@ -2,73 +2,75 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D0DE8149B06
-	for <lists+linux-kernel@lfdr.de>; Sun, 26 Jan 2020 15:25:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B3C57149B18
+	for <lists+linux-kernel@lfdr.de>; Sun, 26 Jan 2020 15:29:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387405AbgAZOZS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 26 Jan 2020 09:25:18 -0500
-Received: from mail26.static.mailgun.info ([104.130.122.26]:52915 "EHLO
+        id S1729320AbgAZO3x (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 26 Jan 2020 09:29:53 -0500
+Received: from mail26.static.mailgun.info ([104.130.122.26]:51002 "EHLO
         mail26.static.mailgun.info" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726323AbgAZOZR (ORCPT
+        by vger.kernel.org with ESMTP id S1726323AbgAZO3x (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 26 Jan 2020 09:25:17 -0500
+        Sun, 26 Jan 2020 09:29:53 -0500
 DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
- s=smtp; t=1580048717; h=Content-Type: MIME-Version: Message-ID:
- In-Reply-To: Date: References: Subject: Cc: To: From: Sender;
- bh=DzhIXU+qv1ciGaNGzExa6n/8OGLjYzAcP3i90CedJAI=; b=mqNu5DZmTL6SqD2FTsiLaH0m0FMeYwLlCK28ngAmB+ylzKsgEBZCNGVpQJpcRzj+fJgw0KWk
- Qx2zfLZCWElxcuVyzxBEaGVB0az/rwSYdg+vUwkEGIOFnl4mJay8seqcborbUswpTjvcVd0w
- koeL11dVq3QPH+3ZjlSYX11wYo8=
+ s=smtp; t=1580048992; h=Date: Message-Id: Cc: To: References:
+ In-Reply-To: From: Subject: Content-Transfer-Encoding: MIME-Version:
+ Content-Type: Sender; bh=IIMDGd4zV+ZgbPiKxg03y4lXV+gjwEI2OaWScM763GA=;
+ b=kUXyMiP8ouGN/Xvx5b8VEju775/hUEE2lQyD/7RI66ozk144nmhAL0y4nJGre+nGZHNjBFOs
+ 34urMLa52hC11bkTWKMTu29SLzjpzn36dXvPj/AOdEK71OyT5xcjE45egRchXL+INliraz6t
+ TurOAZLVmDXvZlNjKg+L6z6tZZE=
 X-Mailgun-Sending-Ip: 104.130.122.26
 X-Mailgun-Sid: WyI0MWYwYSIsICJsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
 Received: from smtp.codeaurora.org (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171])
- by mxa.mailgun.org with ESMTP id 5e2da147.7f33070196c0-smtp-out-n03;
- Sun, 26 Jan 2020 14:25:11 -0000 (UTC)
+ by mxa.mailgun.org with ESMTP id 5e2da25e.7fe44d070928-smtp-out-n02;
+ Sun, 26 Jan 2020 14:29:50 -0000 (UTC)
 Received: by smtp.codeaurora.org (Postfix, from userid 1001)
-        id AB1CAC4479F; Sun, 26 Jan 2020 14:25:11 +0000 (UTC)
+        id A54F3C4479F; Sun, 26 Jan 2020 14:29:49 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
         aws-us-west-2-caf-mail-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=2.0 tests=ALL_TRUSTED,SPF_NONE
-        autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=0.5 required=2.0 tests=ALL_TRUSTED,MISSING_DATE,
+        MISSING_MID,SPF_NONE autolearn=no autolearn_force=no version=3.4.0
 Received: from potku.adurom.net (88-114-240-156.elisa-laajakaista.fi [88.114.240.156])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
         (Authenticated sender: kvalo)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id B35A3C43383;
-        Sun, 26 Jan 2020 14:25:09 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org B35A3C43383
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 0ACB1C433CB;
+        Sun, 26 Jan 2020 14:29:47 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 0ACB1C433CB
 Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=none smtp.mailfrom=kvalo@codeaurora.org
-From:   Kalle Valo <kvalo@codeaurora.org>
-To:     Justin Capella <justincapella@gmail.com>
-Cc:     Stephen Boyd <swboyd@chromium.org>, netdev@vger.kernel.org,
-        ath10k <ath10k@lists.infradead.org>,
-        linux-wireless <linux-wireless@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] ath10k: Use device_get_match_data() to simplify code
-References: <20200123232944.39247-1-swboyd@chromium.org>
-        <CAMrEMU-e55q7uvd220+1kuYJ4Xa-4ckz5CvYezCj2ahn_K8t9w@mail.gmail.com>
-Date:   Sun, 26 Jan 2020 16:25:07 +0200
-In-Reply-To: <CAMrEMU-e55q7uvd220+1kuYJ4Xa-4ckz5CvYezCj2ahn_K8t9w@mail.gmail.com>
-        (Justin Capella's message of "Sat, 25 Jan 2020 20:18:40 -0800")
-Message-ID: <87o8uqcn24.fsf@kamboji.qca.qualcomm.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/24.5 (gnu/linux)
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
+Subject: Re: [PATCH] ath10k: Add newlines to printk messages
+From:   Kalle Valo <kvalo@codeaurora.org>
+In-Reply-To: <20200123232456.36197-1-swboyd@chromium.org>
+References: <20200123232456.36197-1-swboyd@chromium.org>
+To:     Stephen Boyd <swboyd@chromium.org>
+Cc:     linux-kernel@vger.kernel.org, ath10k@lists.infradead.org,
+        linux-wireless@vger.kernel.org, netdev@vger.kernel.org
+User-Agent: pwcli/0.0.0-git (https://github.com/kvalo/pwcli/) Python/2.7.12
+Message-Id: <20200126142949.A54F3C4479F@smtp.codeaurora.org>
+Date:   Sun, 26 Jan 2020 14:29:49 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Justin Capella <justincapella@gmail.com> writes:
+Stephen Boyd <swboyd@chromium.org> wrote:
 
-> Maybe use dev here as well?
->
->>                 dev_err(&pdev->dev, "failed to find matching device tree id\n");
+> Some printks in here don't have newlines at the end, meaning the log
+> will be sort of hard to read. Add newlines.
+> 
+> Signed-off-by: Stephen Boyd <swboyd@chromium.org>
+> Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
 
-I changed that. And also fixed a checkpatch warning:
+Patch applied to ath-next branch of ath.git, thanks.
 
-drivers/net/wireless/ath/ath10k/snoc.c:1483: Please don't use multiple blank lines
+79a4b788451d ath10k: Add newlines to printk messages
 
 -- 
+https://patchwork.kernel.org/patch/11349347/
+
 https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
