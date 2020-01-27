@@ -2,88 +2,93 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5F34E14A2E7
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Jan 2020 12:20:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AE48D14A2F6
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Jan 2020 12:23:54 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729964AbgA0LUI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 27 Jan 2020 06:20:08 -0500
-Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:43547 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726761AbgA0LUH (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 27 Jan 2020 06:20:07 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1580124006;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=w0j/py8gkG2r+cYKJfB9pJxwgwWUNcELclm6DIYHEkk=;
-        b=JUdABVtwTST7sWMbhDGLtK/cTOXvCykOyBk4pjx2W4Ps/zVKQOM9nK2t3cwqOAZ0mfZEer
-        ql2DuRnVxfrcvOt8rp41jPCMpxqrQeyOkfmf7Z99fz0zm5Ov0ac84GSD628qT18YsmDyCF
-        /XV/IZJt+x3zpF2lPVr8zwr1vhmauI4=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-64-pJrGIMLuMM6FOFdt2B8JZQ-1; Mon, 27 Jan 2020 06:04:41 -0500
-X-MC-Unique: pJrGIMLuMM6FOFdt2B8JZQ-1
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 406621083E95;
-        Mon, 27 Jan 2020 11:04:40 +0000 (UTC)
-Received: from t480s.redhat.com (unknown [10.36.118.65])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id DC542863A4;
-        Mon, 27 Jan 2020 11:04:38 +0000 (UTC)
-From:   David Hildenbrand <david@redhat.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     linux-mm@kvack.org, David Hildenbrand <david@redhat.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Michal Hocko <mhocko@suse.com>
-Subject: [PATCH v1 3/3] mm/page_ext.c: drop pfn_present() check when onlining
-Date:   Mon, 27 Jan 2020 12:04:24 +0100
-Message-Id: <20200127110424.5757-4-david@redhat.com>
-In-Reply-To: <20200127110424.5757-1-david@redhat.com>
-References: <20200127110424.5757-1-david@redhat.com>
+        id S1729848AbgA0LXv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 27 Jan 2020 06:23:51 -0500
+Received: from mx2.suse.de ([195.135.220.15]:41032 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729530AbgA0LXt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 27 Jan 2020 06:23:49 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx2.suse.de (Postfix) with ESMTP id 51770AFF0;
+        Mon, 27 Jan 2020 11:06:25 +0000 (UTC)
+Received: by quack2.suse.cz (Postfix, from userid 1000)
+        id 356041E0E4E; Mon, 27 Jan 2020 12:06:24 +0100 (CET)
+Date:   Mon, 27 Jan 2020 12:06:24 +0100
+From:   Jan Kara <jack@suse.cz>
+To:     John Hubbard <jhubbard@nvidia.com>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Christoph Hellwig <hch@infradead.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Dave Chinner <david@fromorbit.com>,
+        Ira Weiny <ira.weiny@intel.com>, Jan Kara <jack@suse.cz>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Jonathan Corbet <corbet@lwn.net>,
+        =?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>,
+        "Kirill A . Shutemov" <kirill@shutemov.name>,
+        Michal Hocko <mhocko@suse.com>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Shuah Khan <shuah@kernel.org>,
+        Vlastimil Babka <vbabka@suse.cz>, linux-doc@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+        linux-rdma@vger.kernel.org, linux-mm@kvack.org,
+        LKML <linux-kernel@vger.kernel.org>,
+        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>
+Subject: Re: [PATCH 1/3] mm/gup: track FOLL_PIN pages
+Message-ID: <20200127110624.GD19414@quack2.suse.cz>
+References: <20200125021115.731629-1-jhubbard@nvidia.com>
+ <20200125021115.731629-2-jhubbard@nvidia.com>
 MIME-Version: 1.0
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200125021115.731629-2-jhubbard@nvidia.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Since commit c5e79ef561b0 ("mm/memory_hotplug.c: don't allow to
-online/offline memory blocks with holes") we disallow to offline any
-memory with holes. As all boot memory is online and hotplugged memory
-cannot contain holes, we never online memory with holes.
+On Fri 24-01-20 18:11:13, John Hubbard wrote:
+> +static __maybe_unused struct page *try_grab_compound_head(struct page *page,
+> +							  int refs,
+> +							  unsigned int flags)
+> +{
+> +	if (flags & FOLL_GET)
+> +		return try_get_compound_head(page, refs);
+> +	else if (flags & FOLL_PIN) {
+> +		int orig_refs = refs;
+> +
+> +		/*
+> +		 * When pinning a compound page of order > 1 (which is what
+> +		 * hpage_pincount_available() checks for), use an exact count to
+> +		 * track it, via hpage_pincount_inc/_dec().
+> +		 *
+> +		 * However, be sure to *also* increment the normal page refcount
+> +		 * field at least once, so that the page really is pinned.
+> +		 */
+> +		if (!hpage_pincount_available(page))
+> +			refs *= GUP_PIN_COUNTING_BIAS;
+> +
+> +		page = try_get_compound_head(page, refs);
+> +		if (!page)
+> +			return NULL;
+> +
+> +		if (hpage_pincount_available(page))
+> +			hpage_pincount_inc(page);
 
-This present check can be dropped.
+Umm, adding just 1 to pincount looks dangerous to me as
+try_grab_compound_head() would not compose - you could not release
+references acquired by try_grab_compound_head() with refs==2 by two calls
+to put_compound_head() with refs==1. So I'd rather have here:
+hpage_pincount_add(page, refs) and similarly in put_compound_head().
+Otherwise the patch looks good to me from a quick look.
 
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Cc: Michal Hocko <mhocko@suse.com>
-Signed-off-by: David Hildenbrand <david@redhat.com>
----
- mm/page_ext.c | 5 +----
- 1 file changed, 1 insertion(+), 4 deletions(-)
+								Honza
 
-diff --git a/mm/page_ext.c b/mm/page_ext.c
-index 4ade843ff588..a3616f7a0e9e 100644
---- a/mm/page_ext.c
-+++ b/mm/page_ext.c
-@@ -303,11 +303,8 @@ static int __meminit online_page_ext(unsigned long s=
-tart_pfn,
- 		VM_BUG_ON(!node_state(nid, N_ONLINE));
- 	}
-=20
--	for (pfn =3D start; !fail && pfn < end; pfn +=3D PAGES_PER_SECTION) {
--		if (!pfn_present(pfn))
--			continue;
-+	for (pfn =3D start; !fail && pfn < end; pfn +=3D PAGES_PER_SECTION)
- 		fail =3D init_section_page_ext(pfn, nid);
--	}
- 	if (!fail)
- 		return 0;
-=20
---=20
-2.24.1
-
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
