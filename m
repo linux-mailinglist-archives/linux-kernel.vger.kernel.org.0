@@ -2,77 +2,116 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F36C314A882
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Jan 2020 18:00:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C6CA414A8B6
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Jan 2020 18:09:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726054AbgA0RAP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 27 Jan 2020 12:00:15 -0500
-Received: from merlin.infradead.org ([205.233.59.134]:33008 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725893AbgA0RAO (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 27 Jan 2020 12:00:14 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=EJ85mn6woq34Qia8kElVSP/Mw4no/xQr3/rCKnqaAEM=; b=17x6lzuVhx51Td/62Le0ctgAM
-        PK6tV0i8OyXMtc/vA1dw/YRpwb71wuYVWHSs1x7nlysTUV6KF8gAJqCrcusIMJEYkCV9M4cwnzBhi
-        GEw2zV0gMzH9SgrKgpOWvFFAfn8HrAKk/8uUXUEUT7/x3mBjlupnxaRmFGEvRFQGR1T0GtyjvbCkO
-        sfyth4cx3mHRmiLvOBslcwmpvcxj4phn2BF5bu5F7ufu4QsFjyMeJ694cEUbH2GpKYQa9HXa880J/
-        EzR7OszuNOfcso1fxDBMwTtIbuchLTFR5S6/RbKVUzKNvepWw3vzh5SN0BaeuQgBEtObQGQDLiHd5
-        u+x6LhPHw==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
-        by merlin.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1iw7kB-0002Uz-Hl; Mon, 27 Jan 2020 17:00:11 +0000
-Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (Client did not present a certificate)
-        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 50AFE300739;
-        Mon, 27 Jan 2020 17:58:28 +0100 (CET)
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 46A8B201EBCA2; Mon, 27 Jan 2020 18:00:10 +0100 (CET)
-Date:   Mon, 27 Jan 2020 18:00:10 +0100
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Phil Auld <pauld@redhat.com>
-Cc:     Kirill Tkhai <ktkhai@virtuozzo.com>,
-        Juri Lelli <juri.lelli@gmail.com>, mingo@redhat.com,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3]sched/rt: Stop for_each_process_thread() iterations in
- tg_has_rt_tasks()
-Message-ID: <20200127170010.GK14879@hirez.programming.kicks-ass.net>
-References: <152415882713.2054.8734093066910722403.stgit@localhost.localdomain>
- <20180420092540.GG24599@localhost.localdomain>
- <0d7fbdab-b972-7f86-4090-b49f9315c868@virtuozzo.com>
- <854a5fb1-a9c1-023f-55ec-17fa14ad07d5@virtuozzo.com>
- <20180425194915.GH4064@hirez.programming.kicks-ass.net>
- <9f76872b-85e6-63bd-e503-fcaec69e28e3@virtuozzo.com>
- <20200123215616.GA14789@pauld.bos.csb>
- <20200127164315.GJ14879@hirez.programming.kicks-ass.net>
- <20200127165638.GC1295@pauld.bos.csb>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200127165638.GC1295@pauld.bos.csb>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        id S1726079AbgA0RJ3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 27 Jan 2020 12:09:29 -0500
+Received: from mga07.intel.com ([134.134.136.100]:48043 "EHLO mga07.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725845AbgA0RJ3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 27 Jan 2020 12:09:29 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga001.jf.intel.com ([10.7.209.18])
+  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 27 Jan 2020 08:54:56 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.70,370,1574150400"; 
+   d="scan'208";a="308813152"
+Received: from labuser-ice-lake-client-platform.jf.intel.com ([10.54.55.45])
+  by orsmga001.jf.intel.com with ESMTP; 27 Jan 2020 08:54:55 -0800
+From:   kan.liang@linux.intel.com
+To:     peterz@infradead.org, eranian@google.com, acme@redhat.com,
+        mingo@kernel.org, mpe@ellerman.id.au, linux-kernel@vger.kernel.org
+Cc:     jolsa@kernel.org, namhyung@kernel.org, vitaly.slobodskoy@intel.com,
+        pavel.gerasimov@intel.com, ak@linux.intel.com,
+        Kan Liang <kan.liang@linux.intel.com>
+Subject: [PATCH V6 0/2] Stitch LBR call stack (kernel)
+Date:   Mon, 27 Jan 2020 08:53:53 -0800
+Message-Id: <20200127165355.27495-1-kan.liang@linux.intel.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jan 27, 2020 at 11:56:38AM -0500, Phil Auld wrote:
-> On Mon, Jan 27, 2020 at 05:43:15PM +0100 Peter Zijlstra wrote:
-> > On Thu, Jan 23, 2020 at 04:56:19PM -0500, Phil Auld wrote:
-> > > Peter, is there any chance of taking something like this?
-> > 
-> > Whoopsy, looks like this fell on the floor. Can do I suppose.
-> > 
-> > Thanks!
-> > 
-> 
-> Thanks. Probably make sense at this point to use Konstantin's new version?
-> But they both do the trick.
+From: Kan Liang <kan.liang@linux.intel.com>
 
-Care to send it along?
+Changes since V5
+- Modify the changelog and comments
+- To match the struct perf_branch_stack order, output hw_idx before
+  entries[nr].
+
+Changes since V4
+- Only include the kernel patches
+- Abstract TOS to HW index, which can be used across hw platforms.
+  If we don't know the order of raw branch records, the hw_idx should be
+  -1ULL. Set hw_idx to -1ULL for IBM Power for now.
+- Move the new branch sample type back to bit 17
+
+Changes since V3
+- Add the new branch sample type at the end of enum
+  perf_branch_sample_type.
+- Rebase the user space patch on top of acme's perf/core branch
+
+Changes since V2
+- Move tos into struct perf_branch_stack
+
+Changes since V1
+- Add a new branch sample type for LBR TOS. Drop the sample type in V1.
+- Add check in perf header to detect unknown input bits in event attr
+- Save and use the LBR cursor nodes from previous sample to avoid
+  duplicate calculation of cursor nodes.
+- Add fast path for duplicate entries check. It benefits all call stack
+  parsing, not just for stitch LBR call stack. It can be merged
+  independetely.
+
+Start from Haswell, Linux perf can utilize the existing Last Branch
+Record (LBR) facility to record call stack. However, the depth of the
+reconstructed LBR call stack limits to the number of LBR registers.
+E.g. on skylake, the depth of reconstructed LBR call stack is <= 32
+That's because HW will overwrite the oldest LBR registers when it's
+full.
+
+However, the overwritten LBRs may still be retrieved from previous
+sample. At that moment, HW hasn't overwritten the LBR registers yet.
+Perf tools can stitch those overwritten LBRs on current call stacks to
+get a more complete call stack.
+
+To determine if LBRs can be stitched, the physical index of LBR
+registers is required. A new branch sample type is introduced to
+dump the LBR Top-of-Stack (TOS) information for perf tools.
+
+The stitching approach base on LBR call stack technology. The known
+limitations of LBR call stack technology still apply to the approach,
+e.g. Exception handing such as setjmp/longjmp will have calls/returns
+not match.
+This approach is not full proof. There can be cases where it creates
+incorrect call stacks from incorrect matches. There is no attempt
+to validate any matches in another way. So it is not enabled by default.
+However in many common cases with call stack overflows it can recreate
+better call stacks than the default lbr call stack output. So if there
+are problems with LBR overflows this is a possible workaround.
+
+Regression:
+Users may collect LBR call stack on a machine with new perf tool and
+new kernel (support LBR TOS). However, they may parse the perf.data with
+old perf tool (not support LBR TOS). The old tool doesn't check
+attr.branch_sample_type. Users probably get incorrect information
+without any warning.
+
+Kan Liang (2):
+  perf/core: Add new branch sample type for HW index of raw branch
+    records
+  perf/x86/intel: Output LBR TOS information
+
+ arch/powerpc/perf/core-book3s.c |  1 +
+ arch/x86/events/intel/lbr.c     |  9 +++++++++
+ include/linux/perf_event.h      | 12 ++++++++++++
+ include/uapi/linux/perf_event.h |  8 +++++++-
+ kernel/events/core.c            | 10 ++++++++++
+ 5 files changed, 39 insertions(+), 1 deletion(-)
+
+-- 
+2.17.1
+
