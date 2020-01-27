@@ -2,95 +2,203 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C56DE14A759
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Jan 2020 16:39:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7AF7E14A76A
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Jan 2020 16:41:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729589AbgA0Pj2 convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Mon, 27 Jan 2020 10:39:28 -0500
-Received: from eu-smtp-delivery-151.mimecast.com ([207.82.80.151]:26169 "EHLO
-        eu-smtp-delivery-151.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1729146AbgA0Pj2 (ORCPT
+        id S1729646AbgA0PlZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 27 Jan 2020 10:41:25 -0500
+Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:26923 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1729133AbgA0PlZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 27 Jan 2020 10:39:28 -0500
-Received: from AcuMS.aculab.com (156.67.243.126 [156.67.243.126]) (Using
- TLS) by relay.mimecast.com with ESMTP id
- uk-mta-150-8MnTs0AvPaqL8Lj0TxP4uA-1; Mon, 27 Jan 2020 15:39:24 +0000
-Received: from AcuMS.Aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) by
- AcuMS.aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) with Microsoft SMTP
- Server (TLS) id 15.0.1347.2; Mon, 27 Jan 2020 15:39:24 +0000
-Received: from AcuMS.Aculab.com ([fe80::43c:695e:880f:8750]) by
- AcuMS.aculab.com ([fe80::43c:695e:880f:8750%12]) with mapi id 15.00.1347.000;
- Mon, 27 Jan 2020 15:39:24 +0000
-From:   David Laight <David.Laight@ACULAB.COM>
-To:     'Steven Rostedt' <rostedt@goodmis.org>
-CC:     'linux-kernel' <linux-kernel@vger.kernel.org>
-Subject: sched/fair: Long delays starting RT processes on idle cpu.
-Thread-Topic: sched/fair: Long delays starting RT processes on idle cpu.
-Thread-Index: AdXVJQ5JxcyiG/NbTmiWGSKnntaALg==
-Date:   Mon, 27 Jan 2020 15:39:24 +0000
-Message-ID: <13797bbe87b64f34877b89a5bbdb6d03@AcuMS.aculab.com>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.202.205.107]
+        Mon, 27 Jan 2020 10:41:25 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1580139684;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=KMe88JVc9tII7Am1Y71dlrWYDD8KJ+sccLJZDP0Ma9A=;
+        b=NKIlB6757hulJ1Dkv3drMYQWuEMlE4kKkPnGsgCRQ+9yCBZ3u/pas0tplNn9kZgOfJaGan
+        rEJ9vNj7WWepC8sQM4uFrbcgt48E/6dqscAxSKMCaLtNj8I5YTn/gNwX5g5RGHgJ3uRbX5
+        sfHiQEY0HSDnhymQlxwCEjmFyXeai7I=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-124-tohGEYqBN1OjUY8RQUwvfA-1; Mon, 27 Jan 2020 10:41:18 -0500
+X-MC-Unique: tohGEYqBN1OjUY8RQUwvfA-1
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id B89F48017CC;
+        Mon, 27 Jan 2020 15:41:16 +0000 (UTC)
+Received: from krava (ovpn-205-125.brq.redhat.com [10.40.205.125])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 946FD5C21A;
+        Mon, 27 Jan 2020 15:41:13 +0000 (UTC)
+Date:   Mon, 27 Jan 2020 16:41:10 +0100
+From:   Jiri Olsa <jolsa@redhat.com>
+To:     Kajol Jain <kjain@linux.ibm.com>
+Cc:     acme@kernel.org, linux-kernel@vger.kernel.org,
+        linux-perf-users@vger.kernel.org,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Andi Kleen <ak@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>,
+        Kan Liang <kan.liang@linux.intel.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Jin Yao <yao.jin@linux.intel.com>,
+        Madhavan Srinivasan <maddy@linux.vnet.ibm.com>,
+        Anju T Sudhakar <anju@linux.vnet.ibm.com>,
+        Ravi Bangoria <ravi.bangoria@linux.ibm.com>
+Subject: Re: [PATCH v2] tools/perf/metricgroup: Fix printing event names of
+ metric group with multiple events incase of overlapping events
+Message-ID: <20200127154110.GF1114818@krava>
+References: <20200122064721.24276-1-kjain@linux.ibm.com>
 MIME-Version: 1.0
-X-MC-Unique: 8MnTs0AvPaqL8Lj0TxP4uA-1
-X-Mimecast-Spam-Score: 0
-X-Mimecast-Originator: aculab.com
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200122064721.24276-1-kjain@linux.ibm.com>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-I'm seeing long delays (eg up to 90us) between a process being scheduled on an idle cpu
-and the process actually executing.
+On Wed, Jan 22, 2020 at 12:17:21PM +0530, Kajol Jain wrote:
 
-This is an ivy bridge cpu:
-model name      : Intel(R) Core(TM) i7-3770 CPU @ 3.40GHz
+SNIP
 
-[    0.583178] intel_idle: MWAIT substates: 0x1120
-[    0.583178] intel_idle: v0.4.1 model 0x3A
-[    0.583293] intel_idle: lapic_timer_reliable_states 0xffffffff
+> Cc: Madhavan Srinivasan <maddy@linux.vnet.ibm.com>
+> Cc: Anju T Sudhakar <anju@linux.vnet.ibm.com>
+> Cc: Ravi Bangoria <ravi.bangoria@linux.ibm.com>
+> ---
+>  tools/perf/util/evlist.h      |  1 +
+>  tools/perf/util/metricgroup.c | 14 +++++++++++++-
+>  2 files changed, 14 insertions(+), 1 deletion(-)
+> 
+> ---
+> Changelog:
+> v1 -> v2
+> - Rather then adding static variable in metricgroup.c,
+>   add a new variable in evlist itself with name 'evlist_iter'
+> ---
+> diff --git a/tools/perf/util/evlist.h b/tools/perf/util/evlist.h
+> index f5bd5c386df1..255f872aee92 100644
+> --- a/tools/perf/util/evlist.h
+> +++ b/tools/perf/util/evlist.h
+> @@ -54,6 +54,7 @@ struct evlist {
+>  	bool		 enabled;
+>  	int		 id_pos;
+>  	int		 is_pos;
+> +	int		 evlist_iter;
+>  	u64		 combined_sample_type;
+>  	enum bkw_mmap_state bkw_mmap_state;
+>  	struct {
+> diff --git a/tools/perf/util/metricgroup.c b/tools/perf/util/metricgroup.c
+> index 02aee946b6c1..911fab4ac04b 100644
+> --- a/tools/perf/util/metricgroup.c
+> +++ b/tools/perf/util/metricgroup.c
+> @@ -96,10 +96,13 @@ static struct evsel *find_evsel_group(struct evlist *perf_evlist,
+>  				      struct evsel **metric_events)
+>  {
+>  	struct evsel *ev;
+> -	int i = 0;
+> +	int i = 0, j = 0;
+>  	bool leader_found;
+>  
+>  	evlist__for_each_entry (perf_evlist, ev) {
+> +		j++;
+> +		if (j <= perf_evlist->evlist_iter)
+> +			continue;
 
-I picked one wakeup out of some ftrace data.
-A short extract:
-Process 10318 (the one that is woken) goes to sleep.
-...
-          <idle>-0     [003] d... 945687.207448: sched_idle_set_state <-cpuidle_enter_state
-          <idle>-0     [003] d... 945687.207449: intel_idle <-cpuidle_enter_state
-          <idle>-0     [003] d... 945687.207449: leave_mm <-intel_idle
-          <idle>-0     [003] d... 945687.207449: switch_mm <-intel_idle
-          <idle>-0     [003] d... 945687.207449: switch_mm_irqs_off <-switch_mm
+hm, but that won't work when event does not match and all
+is rolled over in th next condition, no?
 
-I think cpu-3 is now executing the MWAIT from mwait_idle_with_hints()
-called from intel_idle() in drivers/idle/intel_idle.c.
+how about something like below.. I only checked I got same
+results as you did in the changelog, but haven't tested
+otherwise.. especially I think that the check I removed
+is redundant
 
-Not much happens on any of the cpu for 10ms until a process wakes up from a timed delay
-and then tries to wake up the other threads.
+could you please also add test for this testcase?
 
-    ProsodySServ-10319 [000] d... 945687.217414: sched_wakeup: comm=ProsodySServ pid=10318 prio=3 target_cpu=003
-    ProsodySServ-10319 [000] d... 945687.217414: task_woken_rt <-ttwu_do_wakeup
-    ProsodySServ-10319 [000] d... 945687.217414: _raw_spin_unlock_irqrestore <-try_to_wake_up
-    ProsodySServ-10319 [000] .... 945687.217414: drop_futex_key_refs.isra.14 <-futex_wake
+thanks,
+jirka
 
-I presume the above is supposed to have done a memory write that wakes the MWAIT.
 
-There is now a long delay (26us here) before anything happens.
-          <idle>-0     [003] dN.. 945687.217440: sched_idle_set_state <-cpuidle_enter_state
-...
-          <idle>-0     [003] d... 945687.217447: sched_switch: prev_comm=swapper/3 prev_pid=0 prev_prio=120 prev_state=R ==> next_comm=ProsodySServ next_pid=10318 next_prio=3
-
-I'd have thought that the processor should wake up much faster than that.
-I can't see the memory write that is paired with the monitor/mwait.
-Does it need a strong barrier?
-
-	David
-
+---
+diff --git a/tools/perf/util/metricgroup.c b/tools/perf/util/metricgroup.c
+index 02aee946b6c1..c12f3efccec8 100644
+--- a/tools/perf/util/metricgroup.c
++++ b/tools/perf/util/metricgroup.c
+@@ -93,13 +93,16 @@ struct egroup {
+ static struct evsel *find_evsel_group(struct evlist *perf_evlist,
+ 				      const char **ids,
+ 				      int idnum,
+-				      struct evsel **metric_events)
++				      struct evsel **metric_events,
++				      bool used[])
+ {
+ 	struct evsel *ev;
+-	int i = 0;
++	int i = 0, j = 0;
+ 	bool leader_found;
+ 
+ 	evlist__for_each_entry (perf_evlist, ev) {
++		if (used[j++])
++			continue;
+ 		if (!strcmp(ev->name, ids[i])) {
+ 			if (!metric_events[i])
+ 				metric_events[i] = ev;
+@@ -107,22 +110,11 @@ static struct evsel *find_evsel_group(struct evlist *perf_evlist,
+ 			if (i == idnum)
+ 				break;
+ 		} else {
+-			if (i + 1 == idnum) {
++			if (i) {
+ 				/* Discard the whole match and start again */
+ 				i = 0;
+ 				memset(metric_events, 0,
+ 				       sizeof(struct evsel *) * idnum);
+-				continue;
+-			}
 -
-Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1 1PT, UK
-Registration No: 1397386 (Wales)
+-			if (!strcmp(ev->name, ids[i]))
+-				metric_events[i] = ev;
+-			else {
+-				/* Discard the whole match and start again */
+-				i = 0;
+-				memset(metric_events, 0,
+-				       sizeof(struct evsel *) * idnum);
+-				continue;
+ 			}
+ 		}
+ 	}
+@@ -144,9 +136,11 @@ static struct evsel *find_evsel_group(struct evlist *perf_evlist,
+ 			    !strcmp(ev->name, metric_events[i]->name)) {
+ 				ev->metric_leader = metric_events[i];
+ 			}
++			j++;
+ 		}
++		ev = metric_events[i];
++		used[ev->idx] = true;
+ 	}
+-
+ 	return metric_events[0];
+ }
+ 
+@@ -160,6 +154,9 @@ static int metricgroup__setup_events(struct list_head *groups,
+ 	int ret = 0;
+ 	struct egroup *eg;
+ 	struct evsel *evsel;
++	bool used[perf_evlist->core.nr_entries];
++
++	memset(used, 0, perf_evlist->core.nr_entries);
+ 
+ 	list_for_each_entry (eg, groups, nd) {
+ 		struct evsel **metric_events;
+@@ -170,7 +167,7 @@ static int metricgroup__setup_events(struct list_head *groups,
+ 			break;
+ 		}
+ 		evsel = find_evsel_group(perf_evlist, eg->ids, eg->idnum,
+-					 metric_events);
++					 metric_events, used);
+ 		if (!evsel) {
+ 			pr_debug("Cannot resolve %s: %s\n",
+ 					eg->metric_name, eg->metric_expr);
 
