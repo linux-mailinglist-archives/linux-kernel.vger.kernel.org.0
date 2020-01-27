@@ -2,175 +2,102 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D423A14A9FA
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Jan 2020 19:44:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5769214AA05
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Jan 2020 19:46:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726438AbgA0Som (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 27 Jan 2020 13:44:42 -0500
-Received: from mx2.suse.de ([195.135.220.15]:53926 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725845AbgA0Som (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 27 Jan 2020 13:44:42 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id 9D599AD81;
-        Mon, 27 Jan 2020 18:44:39 +0000 (UTC)
-Date:   Mon, 27 Jan 2020 18:44:43 +0000
-From:   Luis Henriques <lhenriques@suse.com>
-To:     Ilya Dryomov <idryomov@gmail.com>
-Cc:     Jeff Layton <jlayton@kernel.org>, Sage Weil <sage@redhat.com>,
-        "Yan, Zheng" <zyan@redhat.com>,
-        Gregory Farnum <gfarnum@redhat.com>,
-        Ceph Development <ceph-devel@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [RFC PATCH 2/3] ceph: parallelize all copy-from requests in
- copy_file_range
-Message-ID: <20200127184443.GB22545@suse.com>
-References: <20200127164321.17468-1-lhenriques@suse.com>
- <20200127164321.17468-3-lhenriques@suse.com>
- <CAOi1vP9HB4dPTHrgn2bTZ3nM2HSpLkwRvjZ8za0KE4NNnHmmtw@mail.gmail.com>
+        id S1726164AbgA0Sqh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 27 Jan 2020 13:46:37 -0500
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:36264 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725955AbgA0Sqg (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 27 Jan 2020 13:46:36 -0500
+Received: by mail-pf1-f193.google.com with SMTP id 185so1532886pfv.3
+        for <linux-kernel@vger.kernel.org>; Mon, 27 Jan 2020 10:46:36 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=tOlByGG/z9eX7KBfPtN4oVs+iXd8DtbbVKWbuZoUZ0U=;
+        b=tLa6xUkjTP/8me30/6p48asiVEiDxQuOuwvCONFNDxS7bVdFoYW2mA1HX8L6owJouD
+         QguHw3C8P/5dfv8EHTh5k8yzEFJlBS2afuIk/bLw83xFZc334qvWmNcfiDztDuu2rw2a
+         AsXoXhUVpl4KmVOVXHDtHsoNF15G1M+NvmGZZFQYYo2VQUFZcVj3mb/pRwDuWWpWQNBk
+         2WuXuyEGnnb5nBcQyMBLinSkt8wFRXP7FOW4gDBWkPR7X2LgXcvK/FZpFzlpQbmTXsMm
+         9CY723KCiDecQxN/yw2k3BqIn0XugWIQzfSOV1jKecz5cuWgrvvLrgbuZe2+O2Phn2qH
+         ou9g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=tOlByGG/z9eX7KBfPtN4oVs+iXd8DtbbVKWbuZoUZ0U=;
+        b=DHQ8GFG1ZF2kGEa9Yz/4ebWzvFe5MSZjnRJDiDhdslGk3VS07PZ7M7SXsZrNf2ZzK3
+         jaF6O/ODo+orTgQirFCMa4agp8tqxKLxwK1D8eQLmUdqgvFDnlletsK4iQZvlD+C2uSg
+         3x25PYEgvvs0Mga5Sqw1bsMWWNw5P6WOFWFKUuQYMUyPQGhAJcLs5erJ9JVdEJy8EfSo
+         KlQWmp4LIdzxgL8efMLF5Y244vIrZ59UaxwvoxDhCCpzpF37PVaCfO7RbSAZ32oAVIw0
+         CR+szsY1TFG1WJFnMHNoc3PXA0b42TrgXoLSxlvPGKk/zH0JfCDQZJ0Gkccyb4E+umr6
+         STxQ==
+X-Gm-Message-State: APjAAAWkhAMBnTXHGMtIO8QLC0/9zttX1qGtIy21O/T6ChNzRLdX4iv+
+        ILtWpcUk3UmX2f/hjI2PnRirlfLckj8=
+X-Google-Smtp-Source: APXvYqwu0sbtWVgACK3oeP1zHft8Cu21lVg/Z5EAiACB+KnyO0D89XYQNS2eyhCO0OGMTzhqGcBvUw==
+X-Received: by 2002:a63:2a8b:: with SMTP id q133mr20323238pgq.72.1580150795811;
+        Mon, 27 Jan 2020 10:46:35 -0800 (PST)
+Received: from ?IPv6:2620:10d:c081:1133::11c2? ([2620:10d:c090:180::dec1])
+        by smtp.gmail.com with ESMTPSA id 136sm16741250pgg.74.2020.01.27.10.46.34
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 27 Jan 2020 10:46:35 -0800 (PST)
+Subject: Re: [PATCH liburing 1/1] test: add epoll test case
+To:     Stefano Garzarella <sgarzare@redhat.com>
+Cc:     io-uring@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20200127161701.153625-1-sgarzare@redhat.com>
+ <20200127161701.153625-2-sgarzare@redhat.com>
+ <b1b26e79-507a-b339-2850-d2686661e669@kernel.dk>
+ <20200127182534.5ljsj53vzpj6kkru@steredhat>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <646cbb04-9bef-0d99-64ec-322d1584abe7@kernel.dk>
+Date:   Mon, 27 Jan 2020 11:46:34 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAOi1vP9HB4dPTHrgn2bTZ3nM2HSpLkwRvjZ8za0KE4NNnHmmtw@mail.gmail.com>
+In-Reply-To: <20200127182534.5ljsj53vzpj6kkru@steredhat>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jan 27, 2020 at 06:58:46PM +0100, Ilya Dryomov wrote:
-> On Mon, Jan 27, 2020 at 5:43 PM Luis Henriques <lhenriques@suse.com> wrote:
-> >
-> > Right now the copy_file_range syscall serializes all the OSDs 'copy-from'
-> > operations, waiting for each request to complete before sending the next
-> > one.  This patch modifies copy_file_range so that all the 'copy-from'
-> > operations are sent in bulk and waits for its completion at the end.  This
-> > will allow significant speed-ups, specially when sending requests for
-> > different target OSDs.
-> >
-> > Signed-off-by: Luis Henriques <lhenriques@suse.com>
-> > ---
-> >  fs/ceph/file.c                  | 38 +++++++++++++++++++++++++++++++--
-> >  include/linux/ceph/osd_client.h |  2 ++
-> >  net/ceph/osd_client.c           |  1 +
-> >  3 files changed, 39 insertions(+), 2 deletions(-)
-> >
-> > diff --git a/fs/ceph/file.c b/fs/ceph/file.c
-> > index 1e6cdf2dfe90..5d8f0ba11719 100644
-> > --- a/fs/ceph/file.c
-> > +++ b/fs/ceph/file.c
-> > @@ -1931,6 +1931,28 @@ static int is_file_size_ok(struct inode *src_inode, struct inode *dst_inode,
-> >         return 0;
-> >  }
-> >
-> > +static int wait_copy_from_reqs(struct list_head *osd_reqs)
-> > +{
-> > +       struct ceph_osd_request *req;
-> > +       int ret = 0, err;
-> > +
-> > +       while (!list_empty(osd_reqs)) {
-> > +               req = list_first_entry(osd_reqs,
-> > +                                      struct ceph_osd_request,
-> > +                                      r_copy_item);
-> > +               list_del_init(&req->r_copy_item);
-> > +               err = ceph_osdc_wait_request(req->r_osdc, req);
-> > +               if (err) {
-> > +                       if (!ret)
-> > +                               ret = err;
-> > +                       dout("copy request failed (err=%d)\n", err);
-> > +               }
-> > +               ceph_osdc_put_request(req);
-> > +       }
-> > +
-> > +       return ret;
-> > +}
+On 1/27/20 11:25 AM, Stefano Garzarella wrote:
+> On Mon, Jan 27, 2020 at 09:32:43AM -0700, Jens Axboe wrote:
+>> On 1/27/20 9:17 AM, Stefano Garzarella wrote:
+>>> Signed-off-by: Stefano Garzarella <sgarzare@redhat.com>
+>>
+>> You're not reaping CQ events, and hence you overflow the ring. Once
+>> overflown, an attempt to submit new IO will returns in a -16/-EBUSY
+>> return value. This is io_uring telling you that it won't submit more
+>> IO until you've emptied the completion ring so io_uring can flush
+>> the overflown entries to the ring.
 > 
-> This should probably go into libceph, as ceph_osdc_wait_requests().
-
-Sure, that makes sense.
-
-> > +
-> >  static ssize_t __ceph_copy_file_range(struct file *src_file, loff_t src_off,
-> >                                       struct file *dst_file, loff_t dst_off,
-> >                                       size_t len, unsigned int flags)
-> > @@ -1943,12 +1965,14 @@ static ssize_t __ceph_copy_file_range(struct file *src_file, loff_t src_off,
-> >         struct ceph_fs_client *src_fsc = ceph_inode_to_client(src_inode);
-> >         struct ceph_object_locator src_oloc, dst_oloc;
-> >         struct ceph_object_id src_oid, dst_oid;
-> > +       struct ceph_osd_request *req;
-> >         loff_t endoff = 0, size;
-> >         ssize_t ret = -EIO;
-> >         u64 src_objnum, dst_objnum, src_objoff, dst_objoff;
-> >         u32 src_objlen, dst_objlen, object_size;
-> >         int src_got = 0, dst_got = 0, err, dirty;
-> >         bool do_final_copy = false;
-> > +       LIST_HEAD(osd_reqs);
-> >
-> >         if (src_inode->i_sb != dst_inode->i_sb) {
-> >                 struct ceph_fs_client *dst_fsc = ceph_inode_to_client(dst_inode);
-> > @@ -2097,7 +2121,7 @@ static ssize_t __ceph_copy_file_range(struct file *src_file, loff_t src_off,
-> >                 ceph_oid_printf(&dst_oid, "%llx.%08llx",
-> >                                 dst_ci->i_vino.ino, dst_objnum);
-> >                 /* Do an object remote copy */
-> > -               err = ceph_osdc_copy_from(
-> > +               req = ceph_osdc_copy_from_nowait(
-> >                         &src_fsc->client->osdc,
-> >                         src_ci->i_vino.snap, 0,
-> >                         &src_oid, &src_oloc,
-> > @@ -2108,7 +2132,8 @@ static ssize_t __ceph_copy_file_range(struct file *src_file, loff_t src_off,
-> >                         CEPH_OSD_OP_FLAG_FADVISE_DONTNEED,
-> >                         dst_ci->i_truncate_seq, dst_ci->i_truncate_size,
-> >                         CEPH_OSD_COPY_FROM_FLAG_TRUNCATE_SEQ);
-> > -               if (err) {
-> > +               if (IS_ERR(req)) {
-> > +                       err = PTR_ERR(req);
-> >                         if (err == -EOPNOTSUPP) {
-> >                                 src_fsc->have_copy_from2 = false;
-> >                                 pr_notice("OSDs don't support 'copy-from2'; "
-> > @@ -2117,14 +2142,23 @@ static ssize_t __ceph_copy_file_range(struct file *src_file, loff_t src_off,
-> >                         dout("ceph_osdc_copy_from returned %d\n", err);
-> >                         if (!ret)
-> >                                 ret = err;
-> > +                       /* wait for all queued requests */
-> > +                       wait_copy_from_reqs(&osd_reqs);
-> >                         goto out_caps;
-> >                 }
-> > +               list_add(&req->r_copy_item, &osd_reqs);
-> >                 len -= object_size;
-> >                 src_off += object_size;
-> >                 dst_off += object_size;
-> >                 ret += object_size;
-> >         }
-> >
-> > +       err = wait_copy_from_reqs(&osd_reqs);
-> > +       if (err) {
-> > +               if (!ret)
-> > +                       ret = err;
-> > +               goto out_caps;
-> > +       }
-> >         if (len)
-> >                 /* We still need one final local copy */
-> >                 do_final_copy = true;
-> > diff --git a/include/linux/ceph/osd_client.h b/include/linux/ceph/osd_client.h
-> > index 7916a178d137..2b4a14bc6154 100644
-> > --- a/include/linux/ceph/osd_client.h
-> > +++ b/include/linux/ceph/osd_client.h
-> > @@ -210,6 +210,8 @@ struct ceph_osd_request {
-> >         u64 r_data_offset;                    /* ditto */
-> >         bool r_linger;                        /* don't resend on failure */
-> >
-> > +       struct list_head r_copy_item;         /* used for copy-from operations */
-> > +
+> How can I reaping CQ events? (I was hoping the epoll would help me with that)
 > 
-> We have r_private_item for exactly this kind of ad-hoc lists, already
-> used in rbd and ceph_direct_read_write().
+> What I'm seeing is that the producer (EPOLLOUT) can fill the SQ without issues,
+> the consumer (read()) is receiving all the buffers produced, but the thread
+> that frees the buffers (EPOLLIN) is not woken up.
+> 
+> I tried to set a timeout to the epoll_wait(), but the io_uring_peek_cqe()
+> returns -EAGAIN.
+> 
+> If I'm using a ring with 16 entries, it seems to work better, but
+> sometimes I lose events and the thread that frees the buffer doesn't wake up.
+> 
+> Maybe I'm missing something...
 
-Ah!  I've actually considered using it, but thought that using the same
-field for different purposes may be a source of confusion and bugs in the
-future.  But sure, it can be used.  I'll add a comment in the struct
-definition regarding this ad-hoc usage.
+OK, so that helps in terms of understanding the issue you are seeing with
+it. I'll take a look at this, but it'll probably be a few days. You can
+try and enable tracing, I see events completed just fine. Maybe a race
+with your epoll wait and event reaping?
 
-Cheers,
---
-Luís
+-- 
+Jens Axboe
+
