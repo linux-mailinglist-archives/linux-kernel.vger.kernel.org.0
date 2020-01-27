@@ -2,181 +2,88 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 41BD8149E04
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Jan 2020 01:41:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E1533149E0A
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Jan 2020 01:42:53 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728689AbgA0AlR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 26 Jan 2020 19:41:17 -0500
-Received: from mga09.intel.com ([134.134.136.24]:63120 "EHLO mga09.intel.com"
+        id S1728831AbgA0Aml (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 26 Jan 2020 19:42:41 -0500
+Received: from ozlabs.org ([203.11.71.1]:50209 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727479AbgA0AlQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 26 Jan 2020 19:41:16 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 26 Jan 2020 16:41:15 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.70,367,1574150400"; 
-   d="scan'208";a="223116783"
-Received: from sjchrist-coffee.jf.intel.com ([10.54.74.202])
-  by fmsmga008.fm.intel.com with ESMTP; 26 Jan 2020 16:41:15 -0800
-From:   Sean Christopherson <sean.j.christopherson@intel.com>
-To:     Paolo Bonzini <pbonzini@redhat.com>
-Cc:     Sean Christopherson <sean.j.christopherson@intel.com>,
-        Vitaly Kuznetsov <vkuznets@redhat.com>,
-        Wanpeng Li <wanpengli@tencent.com>,
-        Jim Mattson <jmattson@google.com>,
-        Joerg Roedel <joro@8bytes.org>, kvm@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH 3/3] KVM: x86: Consolidate VM allocation and free for VMX and SVM
-Date:   Sun, 26 Jan 2020 16:41:13 -0800
-Message-Id: <20200127004113.25615-4-sean.j.christopherson@intel.com>
-X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20200127004113.25615-1-sean.j.christopherson@intel.com>
-References: <20200127004113.25615-1-sean.j.christopherson@intel.com>
+        id S1726654AbgA0Amk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 26 Jan 2020 19:42:40 -0500
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 485WDZ09G6z9sR1;
+        Mon, 27 Jan 2020 11:42:37 +1100 (AEDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1580085758;
+        bh=wO0ypkROhkUr4z3gWxp0SqLXy6Npy/RkH51sLbfQp8c=;
+        h=Date:From:To:Cc:Subject:From;
+        b=WpLmCC3wzrlNW+RqVdz2rWmXgDFPOwW+2KMkDrt35TlPUm3B6p8wzDyNidi3JmMdV
+         6MdbGSQl1aQDdsi6nppQ4Z0aIV8zyvFtG4P4ryd0NPX9DHhyOh1/sMw2HYdwUb23iv
+         kc1A6A7fkKW9Xfk7L+ADwblpVLN88p+Q7T3YcBLz+vWEIAW6CP7FatMIDOasYcQzt4
+         5QaLLe/b6p77txwV4slUoZuGkm/UI6+LdZ1oLPCIiKCS8YRbbYJ2cyswvdK/aBp12H
+         JOq4jRuo4U19IaUJCAe3RdOLnnSIww/I2hZz45S3r7PfQF+bD+kPe51gyzz7UjI13K
+         2Dl6IEHHvJpJA==
+Date:   Mon, 27 Jan 2020 11:42:21 +1100
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Kalle Valo <kvalo@codeaurora.org>,
+        Wireless <linux-wireless@vger.kernel.org>
+Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Rakesh Pillai <pillair@codeaurora.org>
+Subject: linux-next: Fixes tag needs some work in the wireless-drivers-next
+ tree
+Message-ID: <20200127114221.52ba6027@canb.auug.org.au>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; boundary="Sig_/qyN85kgIZux/DvSwoHyT/kD";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Move the VM allocation and free code to common x86 as the logic is
-more or less identical across SVM and VMX.
+--Sig_/qyN85kgIZux/DvSwoHyT/kD
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Note, although hyperv.hv_pa_pg is part of the common kvm->arch, it's
-(currently) only allocated by VMX VMs.  But, since kfree() plays nice
-when passed a NULL pointer, the superfluous call for SVM is harmless
-and avoids future churn if SVM gains support for HyperV's direct TLB
-flush.
+Hi all,
 
-Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
----
- arch/x86/include/asm/kvm_host.h | 12 ++++--------
- arch/x86/kvm/svm.c              | 13 +++----------
- arch/x86/kvm/vmx/vmx.c          | 14 +++-----------
- arch/x86/kvm/x86.c              |  7 +++++++
- 4 files changed, 17 insertions(+), 29 deletions(-)
+n commit
 
-diff --git a/arch/x86/include/asm/kvm_host.h b/arch/x86/include/asm/kvm_host.h
-index 77d206a93658..06f48d3efa0a 100644
---- a/arch/x86/include/asm/kvm_host.h
-+++ b/arch/x86/include/asm/kvm_host.h
-@@ -1053,8 +1053,7 @@ struct kvm_x86_ops {
- 	bool (*has_emulated_msr)(int index);
- 	void (*cpuid_update)(struct kvm_vcpu *vcpu);
- 
--	struct kvm *(*vm_alloc)(void);
--	void (*vm_free)(struct kvm *);
-+	unsigned int (*vm_size)(void);
- 	int (*vm_init)(struct kvm *kvm);
- 	void (*vm_destroy)(struct kvm *kvm);
- 
-@@ -1271,13 +1270,10 @@ extern struct kmem_cache *x86_fpu_cache;
- #define __KVM_HAVE_ARCH_VM_ALLOC
- static inline struct kvm *kvm_arch_alloc_vm(void)
- {
--	return kvm_x86_ops->vm_alloc();
--}
--
--static inline void kvm_arch_free_vm(struct kvm *kvm)
--{
--	return kvm_x86_ops->vm_free(kvm);
-+	return __vmalloc(kvm_x86_ops->vm_size(),
-+			 GFP_KERNEL_ACCOUNT | __GFP_ZERO, PAGE_KERNEL);
- }
-+void kvm_arch_free_vm(struct kvm *kvm);
- 
- #define __KVM_HAVE_ARCH_FLUSH_REMOTE_TLB
- static inline int kvm_arch_flush_remote_tlb(struct kvm *kvm)
-diff --git a/arch/x86/kvm/svm.c b/arch/x86/kvm/svm.c
-index 4fff99722487..e72e209e7254 100644
---- a/arch/x86/kvm/svm.c
-+++ b/arch/x86/kvm/svm.c
-@@ -1946,17 +1946,11 @@ static void __unregister_enc_region_locked(struct kvm *kvm,
- 	kfree(region);
- }
- 
--static struct kvm *svm_vm_alloc(void)
-+static unsigned int svm_vm_size(void)
- {
- 	BUILD_BUG_ON(offsetof(struct kvm_svm, kvm) != 0);
- 
--	return __vmalloc(sizeof(struct kvm_svm),
--			 GFP_KERNEL_ACCOUNT | __GFP_ZERO, PAGE_KERNEL);
--}
--
--static void svm_vm_free(struct kvm *kvm)
--{
--	vfree(kvm);
-+	return sizeof(struct kvm_svm);
- }
- 
- static void sev_vm_destroy(struct kvm *kvm)
-@@ -7385,8 +7379,7 @@ static struct kvm_x86_ops svm_x86_ops __ro_after_init = {
- 	.vcpu_free = svm_free_vcpu,
- 	.vcpu_reset = svm_vcpu_reset,
- 
--	.vm_alloc = svm_vm_alloc,
--	.vm_free = svm_vm_free,
-+	.vm_size = svm_vm_size,
- 	.vm_init = svm_vm_init,
- 	.vm_destroy = svm_vm_destroy,
- 
-diff --git a/arch/x86/kvm/vmx/vmx.c b/arch/x86/kvm/vmx/vmx.c
-index 17e449330c8a..17ae291122e5 100644
---- a/arch/x86/kvm/vmx/vmx.c
-+++ b/arch/x86/kvm/vmx/vmx.c
-@@ -6657,18 +6657,11 @@ static void vmx_vcpu_run(struct kvm_vcpu *vcpu)
- 	vmx_complete_interrupts(vmx);
- }
- 
--static struct kvm *vmx_vm_alloc(void)
-+static unsigned int vmx_vm_size(void)
- {
- 	BUILD_BUG_ON(offsetof(struct kvm_vmx, kvm) != 0);
- 
--	return __vmalloc(sizeof(struct kvm_vmx),
--			 GFP_KERNEL_ACCOUNT | __GFP_ZERO, PAGE_KERNEL);
--}
--
--static void vmx_vm_free(struct kvm *kvm)
--{
--	kfree(kvm->arch.hyperv.hv_pa_pg);
--	vfree(kvm);
-+	return sizeof(struct kvm_vmx);
- }
- 
- static void vmx_free_vcpu(struct kvm_vcpu *vcpu)
-@@ -7756,9 +7749,8 @@ static struct kvm_x86_ops vmx_x86_ops __ro_after_init = {
- 	.cpu_has_accelerated_tpr = report_flexpriority,
- 	.has_emulated_msr = vmx_has_emulated_msr,
- 
-+	.vm_size = vmx_vm_size,
- 	.vm_init = vmx_vm_init,
--	.vm_alloc = vmx_vm_alloc,
--	.vm_free = vmx_vm_free,
- 
- 	.vcpu_create = vmx_create_vcpu,
- 	.vcpu_free = vmx_free_vcpu,
-diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
-index 7e3f1d937224..f57a0bcd0e45 100644
---- a/arch/x86/kvm/x86.c
-+++ b/arch/x86/kvm/x86.c
-@@ -9653,6 +9653,13 @@ void kvm_arch_sched_in(struct kvm_vcpu *vcpu, int cpu)
- 	kvm_x86_ops->sched_in(vcpu, cpu);
- }
- 
-+void kvm_arch_free_vm(struct kvm *kvm)
-+{
-+	kfree(kvm->arch.hyperv.hv_pa_pg);
-+	vfree(kvm);
-+}
-+
-+
- int kvm_arch_init_vm(struct kvm *kvm, unsigned long type)
- {
- 	if (type)
--- 
-2.24.1
+  6ba8b3b6bd77 ("ath10k: Correct the DMA direction for management tx buffer=
+s")
 
+Fixes tag
+
+  Fixes: dc405152bb6 ("ath10k: handle mgmt tx completion event")
+
+has these problem(s):
+
+  - SHA1 should be at least 12 digits long
+    Can be fixed by setting core.abbrev to 12 (or more) or (for git v2.11
+    or later) just making sure it is not set (or set to "auto").
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/qyN85kgIZux/DvSwoHyT/kD
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl4uMe0ACgkQAVBC80lX
+0GwIvgf/bmddk0hzqop3e1BFKbeq+Gf8UHsKmVdjUQyxY93Tf3w/quahjL+6oK9c
+ht+QTLIlpJm7XjauCqP2d5zkysJ/07+x4pU7T7X1aB13MqyvjLVmUTTH6utzY6Ap
+0f/KuaVja5pQcBqfZS5aSUN+WkoaUVeAMLxe6/2x+xxWKIgSbN25dHRf7apwEd/j
+GYKRIoP5ECpapTYR4Ey9QA/rCLF+Ch32ECqhhFY4SmwBmxWtaH1LB3tbw5pEVw3t
+AecgI9DoWVUkf+joztQDznLxdx31GQMsRlsTQBYbGoj9dOu4gGl4TtzhQe7wx0gK
+uZ31CtU5+J0z+ibhGA7rgHDTVS6f6Q==
+=jnjF
+-----END PGP SIGNATURE-----
+
+--Sig_/qyN85kgIZux/DvSwoHyT/kD--
