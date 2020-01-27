@@ -2,80 +2,72 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D9F4414A0DB
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Jan 2020 10:31:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E0B5714A0DD
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Jan 2020 10:31:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729683AbgA0Jar (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 27 Jan 2020 04:30:47 -0500
-Received: from foss.arm.com ([217.140.110.172]:41562 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729602AbgA0Jar (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 27 Jan 2020 04:30:47 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id A967F106F;
-        Mon, 27 Jan 2020 01:30:46 -0800 (PST)
-Received: from ssg-dev-vb.kfn.arm.com (E111385.Arm.com [10.50.4.77])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id BC58F3F67D;
-        Mon, 27 Jan 2020 01:30:42 -0800 (PST)
-From:   Hadar Gat <hadar.gat@arm.com>
-To:     Matt Mackall <mpm@selenic.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Daniel Thompson <daniel.thompson@linaro.org>,
-        Tomer Maimon <tmaimon77@gmail.com>,
-        Stefan Wahren <wahrenst@gmx.net>,
-        Sumit Garg <sumit.garg@linaro.org>,
-        Zaibo Xu <xuzaibo@huawei.com>,
-        Weili Qian <qianweili@huawei.com>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Jonathan Cameron <Jonathan.Cameron@huawei.com>
-Cc:     linux-crypto@vger.kernel.org, devicetree@vger.kernel.org,
+        id S1729610AbgA0JbL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 27 Jan 2020 04:31:11 -0500
+Received: from baptiste.telenet-ops.be ([195.130.132.51]:52460 "EHLO
+        baptiste.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729506AbgA0JbL (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 27 Jan 2020 04:31:11 -0500
+Received: from ramsan ([84.195.182.253])
+        by baptiste.telenet-ops.be with bizsmtp
+        id vMX82100m5USYZQ01MX8js; Mon, 27 Jan 2020 10:31:09 +0100
+Received: from rox.of.borg ([192.168.97.57])
+        by ramsan with esmtp (Exim 4.90_1)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1iw0jc-0003G7-KQ; Mon, 27 Jan 2020 10:31:08 +0100
+Received: from geert by rox.of.borg with local (Exim 4.90_1)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1iw0jc-0006ua-Gi; Mon, 27 Jan 2020 10:31:08 +0100
+From:   Geert Uytterhoeven <geert+renesas@glider.be>
+To:     Jonathan Corbet <corbet@lwn.net>
+Cc:     Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Jani Nikula <jani.nikula@intel.com>, linux-doc@vger.kernel.org,
         linux-kernel@vger.kernel.org,
-        Gilad Ben-Yossef <gilad@benyossef.com>,
-        Ofir Drang <ofir.drang@arm.com>, Hadar Gat <hadar.gat@arm.com>
-Subject: [PATCH 3/3] MAINTAINERS: add HG as cctrng maintainer
-Date:   Mon, 27 Jan 2020 11:28:24 +0200
-Message-Id: <1580117304-12682-4-git-send-email-hadar.gat@arm.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1580117304-12682-1-git-send-email-hadar.gat@arm.com>
-References: <1580117304-12682-1-git-send-email-hadar.gat@arm.com>
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH] scripts/find-unused-docs: Fix massive false positives
+Date:   Mon, 27 Jan 2020 10:31:07 +0100
+Message-Id: <20200127093107.26401-1-geert+renesas@glider.be>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-I work for Arm on maintaining the TrustZone CryptoCell TRNG driver.
+scripts/find-unused-docs.sh invokes scripts/kernel-doc to find out if a
+source file contains kerneldoc or not.
 
-Signed-off-by: Hadar Gat <hadar.gat@arm.com>
+However, as it passes the no longer supported "-text" option to
+scripts/kernel-doc, the latter prints out its help text, causing all
+files to be considered containing kerneldoc.
+
+Get rid of these false positives by removing the no longer supported
+"-text" option from the scripts/kernel-doc invocation.
+
+Fixes: b05142675310d2ac ("scripts: kernel-doc: get rid of unused output formats")
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- MAINTAINERS | 9 +++++++++
- 1 file changed, 9 insertions(+)
+Triggered by https://lwn.net/Articles/810404/
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index a0c1618..654585a 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -3790,6 +3790,15 @@ S:	Supported
- F:	drivers/crypto/ccree/
- W:	https://developer.arm.com/products/system-ip/trustzone-cryptocell/cryptocell-700-family
- 
-+CCTRNG ARM TRUSTZONE CRYPTOCELL TRUE RANDOM NUMBER GENERATOR (TRNG) DRIVER
-+M:	Hadar Gat <hadar.gat@arm.com>
-+L:	linux-crypto@vger.kernel.org
-+S:	Supported
-+F:	drivers/char/hw_random/cctrng.c
-+F:	drivers/char/hw_random/cctrng.h
-+F:	Documentation/devicetree/bindings/rng/arm-cctrng.txt
-+W:	https://developer.arm.com/products/system-ip/trustzone-cryptocell/cryptocell-700-family
-+
- CEC FRAMEWORK
- M:	Hans Verkuil <hverkuil-cisco@xs4all.nl>
- L:	linux-media@vger.kernel.org
+ scripts/find-unused-docs.sh | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/scripts/find-unused-docs.sh b/scripts/find-unused-docs.sh
+index 3f46f8977dc4dc88..ee6a50e33aba805d 100755
+--- a/scripts/find-unused-docs.sh
++++ b/scripts/find-unused-docs.sh
+@@ -54,7 +54,7 @@ for file in `find $1 -name '*.c'`; do
+ 	if [[ ${FILES_INCLUDED[$file]+_} ]]; then
+ 	continue;
+ 	fi
+-	str=$(scripts/kernel-doc -text -export "$file" 2>/dev/null)
++	str=$(scripts/kernel-doc -export "$file" 2>/dev/null)
+ 	if [[ -n "$str" ]]; then
+ 	echo "$file"
+ 	fi
 -- 
-2.7.4
+2.17.1
 
