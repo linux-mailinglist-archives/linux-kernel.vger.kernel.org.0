@@ -2,186 +2,82 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EB26614A800
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Jan 2020 17:25:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C71E814A806
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Jan 2020 17:26:47 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726743AbgA0QZg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 27 Jan 2020 11:25:36 -0500
-Received: from mail-oi1-f194.google.com ([209.85.167.194]:34954 "EHLO
-        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726240AbgA0QZf (ORCPT
+        id S1728026AbgA0Q0o (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 27 Jan 2020 11:26:44 -0500
+Received: from mail-io1-f66.google.com ([209.85.166.66]:33008 "EHLO
+        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726205AbgA0Q0o (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 27 Jan 2020 11:25:35 -0500
-Received: by mail-oi1-f194.google.com with SMTP id b18so3255020oie.2;
-        Mon, 27 Jan 2020 08:25:35 -0800 (PST)
+        Mon, 27 Jan 2020 11:26:44 -0500
+Received: by mail-io1-f66.google.com with SMTP id z8so10676282ioh.0
+        for <linux-kernel@vger.kernel.org>; Mon, 27 Jan 2020 08:26:43 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=jnAf2ZCvKeR5KrFg81NL0b/pJXtuUM4gmcIbXki436s=;
+        b=J7SvJjKqvJbkbZjUVLEw8HGOfNBzK/t8L3zsFgV2DcjLemtkHVO0yC51wOouTl6oEf
+         Ofh4rkV0R9eoXe4W6+fuj+qy/cFtatuRyOVpo94bK68OTcaeWusODpB8MaeJdmWotUv2
+         QIJPytxZu+WLTDaG84hSrYfTS6MdYtMc8CoaJY0v6VYwRzGuyeqLtOQl7Gq0232yxgZW
+         dQajSdX0danP0r5U0BBJJRmwfIcM0FWO8zGozFIZo1MzEz8fWf47wNlqttuyN6ucCXmD
+         krFkQ2K+WX8m0cuiPEctMv+w83MIhGYSEC8qUzT0PE0oC0w4ThEz5cnv961zcFAjHypG
+         ngIQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=OJucG96FhGoPAsq3RuvwmFtMjR8zGUwV0tQ5FFG1jKc=;
-        b=BGFdiG35FSOnzlYq+tJT5yEg8TfLaQW06+rVlAonYE03kjCcakpZx3ZrhkVOx25Mvh
-         h0a/n7Q4Noib4nLg/tML4oGrGKbfwDoli6IUChb/bVObJ/S3vvnwiOJwNmXbSNCDedXH
-         Vk21KTkTVVv1L0YblHwXL6Dup3qZZIur/wChZosIY0MFvtytiL+0FLn98GYgk+3Fw4rv
-         ATx3yeW7nRV5ean675ASgKdDYZprEQ478oZ2tBJk4jxU697+Dg4du5PmmVzWsayDZCcG
-         gxaphlTCx7SaiXrQX+9MWWjjkV5GXvs+yeb20Z641TwpLQPjCIobvJjbXCTIe+aPuS6F
-         N2DQ==
-X-Gm-Message-State: APjAAAXPcdNwizD7eN9cWax+qRpWf0Nz7/AKxoeIb1YLYuS6HexiciCB
-        62Q4bgKTzvvglx+np3PMaw==
-X-Google-Smtp-Source: APXvYqw6dy/abosD5vhi2iH+JS6Mc0uw4qRSNJcVSFxxqV870nhHwoqdtCZhMnH8PG0ugCojlXjS6g==
-X-Received: by 2002:aca:4dd6:: with SMTP id a205mr7732517oib.43.1580142335070;
-        Mon, 27 Jan 2020 08:25:35 -0800 (PST)
-Received: from rob-hp-laptop (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id 15sm5719271otv.20.2020.01.27.08.25.33
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 27 Jan 2020 08:25:34 -0800 (PST)
-Received: (nullmailer pid 4529 invoked by uid 1000);
-        Mon, 27 Jan 2020 16:25:33 -0000
-Date:   Mon, 27 Jan 2020 10:25:33 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Yuti Amonkar <yamonkar@cadence.com>
-Cc:     linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        kishon@ti.com, mark.rutland@arm.com, maxime@cerno.tech,
-        jsarha@ti.com, tomi.valkeinen@ti.com, praneeth@ti.com,
-        mparab@cadence.com, sjakhade@cadence.com
-Subject: Re: [PATCH v3 01/14] dt-bindings: phy: Convert Cadence MHDP PHY
- bindings to YAML.
-Message-ID: <20200127162533.GA20343@bogus>
-References: <1579689918-7181-1-git-send-email-yamonkar@cadence.com>
- <1579689918-7181-2-git-send-email-yamonkar@cadence.com>
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=jnAf2ZCvKeR5KrFg81NL0b/pJXtuUM4gmcIbXki436s=;
+        b=TCVwGoYyf/3WKsLh1gIn9hsvRcRp6mbHhfsgcFqapxgRgmZzfNCL6jYY3E1uegfMcU
+         INEF/HwHiB+ycXWN5xefToeZ5I5FpxgyEL6ZcWpVdxaz94m0GHZGjO0PsHtuYgdVRVow
+         vuSICAidRtWG32lOCQ6C8QjjhB6Ct0yaaWJJM0DUAB1a+LATpZoAKTkbcToNjuuRWJgE
+         rQWyCXrkMPSzOnveTGFjkOGZ6Yw4yUXW73nrYciJ/zuENdQYkh6Zf63jSGOxIpb3tSRr
+         mUIwcTs5mFHJjHaCpCs9/iBUpayipGlyg9khr9N6opoBeaeEiMNaQVagh89kTfsF0noJ
+         z9tg==
+X-Gm-Message-State: APjAAAXGXZOxCn1dH+hro3wFxfMx1KjAUzwVeBe5PpD16DrWdZfGxH6l
+        XHk+4wHwgkBlcNu7TtbzoVu4b8ejC4A=
+X-Google-Smtp-Source: APXvYqyLeS0OYSK/chuIUny+PebIrVJGaZIYd4dwfdJS/YVsHj5RM6n3ZOjVo+TEeU1SM9jWNE58pA==
+X-Received: by 2002:a5d:9805:: with SMTP id a5mr12889195iol.80.1580142403376;
+        Mon, 27 Jan 2020 08:26:43 -0800 (PST)
+Received: from [192.168.1.159] ([65.144.74.34])
+        by smtp.gmail.com with ESMTPSA id b6sm1081212ioh.15.2020.01.27.08.26.42
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 27 Jan 2020 08:26:42 -0800 (PST)
+Subject: Re: [PATCH liburing 0/1] test: add epoll test case
+To:     Stefano Garzarella <sgarzare@redhat.com>
+Cc:     io-uring@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20200127161701.153625-1-sgarzare@redhat.com>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <d409ad33-2122-9500-51f4-37e9748f1d73@kernel.dk>
+Date:   Mon, 27 Jan 2020 09:26:41 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1579689918-7181-2-git-send-email-yamonkar@cadence.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20200127161701.153625-1-sgarzare@redhat.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jan 22, 2020 at 11:45:05AM +0100, Yuti Amonkar wrote:
-> - Convert the MHDP PHY devicetree bindings to yaml schemas.
-> - Rename DP PHY to have generic Torrent PHY nomrnclature.
-> - Add Torrent PHY reference clock bindings.
-> - Rename compatible string from "cdns,dp-phy" to "cdns,torrent-phy".
->   This will not affect ABI as the driver has never been functional,
->   and therefore do not exist in any active use case
+On 1/27/20 9:17 AM, Stefano Garzarella wrote:
+> Hi Jens,
+> I wrote the test case for epoll.
 > 
-> Signed-off-by: Yuti Amonkar <yamonkar@cadence.com>
-> ---
->  .../devicetree/bindings/phy/phy-cadence-dp.txt     | 30 --------
->  .../bindings/phy/phy-cadence-torrent.yaml          | 82 ++++++++++++++++++++++
->  2 files changed, 82 insertions(+), 30 deletions(-)
->  delete mode 100644 Documentation/devicetree/bindings/phy/phy-cadence-dp.txt
->  create mode 100644 Documentation/devicetree/bindings/phy/phy-cadence-torrent.yaml
-
-> diff --git a/Documentation/devicetree/bindings/phy/phy-cadence-torrent.yaml b/Documentation/devicetree/bindings/phy/phy-cadence-torrent.yaml
-> new file mode 100644
-> index 0000000..eb633d7
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/phy/phy-cadence-torrent.yaml
-> @@ -0,0 +1,82 @@
-
-Missing SPDX tag.
-
-As Cadence is the only contributor to the old doc, please relicense to 
-dual license:
-
-(GPL-2.0-only OR BSD-2-Clause)
-
-> +%YAML 1.2
-> +---
-> +$id: "http://devicetree.org/schemas/phy/phy-cadence-torrent.yaml#"
-> +$schema: "http://devicetree.org/meta-schemas/core.yaml#"
-> +
-> +title: Cadence Torrent SD0801 PHY binding for DisplayPort
-> +
-> +description:
-> +  This binding describes the Cadence SD0801 PHY (also known as Torrent PHY)
-> +  hardware included with the Cadence MHDP DisplayPort controller.
-> +
-> +maintainers:
-> +  - Swapnil Jakhade <sjakhade@cadence.com>
-> +  - Yuti Amonkar <yamonkar@cadence.com>
-> +
-> +properties:
-> +  compatible:
-> +    const: cdns,torrent-phy
-> +
-> +  clocks:
-> +    maxItems: 1
-> +    description:
-> +      PHY reference clock. Must contain an entry in clock-names.
-> +
-> +  clock-names:
-> +    const: refclk
-> +
-> +  reg:
-> +    minItems: 1
-> +    maxItems: 2
-> +    items:
-> +      - description: Offset of the Torrent PHY configuration registers.
-> +      - description: Offset of the DPTX PHY configuration registers.
-> +
-> +  reg-names:
-> +    minItems: 1
-> +    maxItems: 2
-> +    items:
-> +      - const: torrent_phy
-> +      - const: dptx_phy
-> +
-> +  "#phy-cells":
-> +    const: 0
-> +
-> +  num_lanes:
-
-Given you don't care about compatibility, please make this 'num-lanes'.
-
-> +    description:
-> +      Number of DisplayPort lanes.
-> +    allOf:
-> +      - $ref: /schemas/types.yaml#/definitions/uint32
-> +      - enum: [1, 2, 4]
-
-If optional, then define a default.
-
-> +
-> +  max_bit_rate:
-
-And this 'max-bit-rate-mbps'.
-
-> +    description:
-> +      Maximum DisplayPort link bit rate to use, in Mbps
-> +    allOf:
-> +      - $ref: /schemas/types.yaml#/definitions/uint32
-> +      - enum: [2160, 2430, 2700, 3240, 4320, 5400, 8100]
-
-default?
-
-> +
-> +required:
-> +  - compatible
-> +  - clocks
-> +  - clock-names
-> +  - reg
-> +  - reg-names
-> +  - "#phy-cells"
-> +
-> +additionalProperties: false
-> +
-> +examples:
-> +  - |
-> +    dp_phy: phy@f0fb500000 {
-> +          compatible = "cdns,torrent-phy";
-> +          reg = <0xf0 0xfb500000 0x0 0x00100000>,
-> +                <0xf0 0xfb030a00 0x0 0x00000040>;
-> +          reg-names = "torrent_phy", "dptx_phy";
-> +          num_lanes = <4>;
-> +          max_bit_rate = <8100>;
-> +          #phy-cells = <0>;
-> +          clocks = <&ref_clk>;
-> +          clock-names = "refclk";
-> +    };
-> +...
-> -- 
-> 2.4.5
+> Since it fails also without sqpoll (Linux 5.4.13-201.fc31.x86_64),
+> can you take a look to understand if the test is wrong?
 > 
+> Tomorrow I'll travel, but on Wednesday I'll try this test with the patch
+> that I sent and also with the upstream kernel.
+
+I'll take a look, but your patches are coming through garbled and don't
+apply.
+
+-- 
+Jens Axboe
+
