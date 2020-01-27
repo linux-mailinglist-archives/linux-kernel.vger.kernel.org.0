@@ -2,210 +2,104 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 083B614AB25
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Jan 2020 21:33:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2665114AB2D
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Jan 2020 21:34:45 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726293AbgA0UdO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 27 Jan 2020 15:33:14 -0500
-Received: from mail-eopbgr00066.outbound.protection.outlook.com ([40.107.0.66]:29573
-        "EHLO EUR02-AM5-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725944AbgA0UdO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 27 Jan 2020 15:33:14 -0500
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=M6lyFHrr1WOlWb1lmhVX+9TGK720UGdkmcbO6j3ow8HiT/2m/1+hn6d2+3oL8qw2+866VVG+XuOV0Gqqn+yhSw3JKqzAkC37oFS13uBJxShs4GhZCoW9njZkR6aNHnYRfUH+Uyd+J0JoyLw1kXD5Sz796zOHmS9v/dHsLRjUC/KKUc6CS6eOqi8VclljdO0F4bvhoCg4bG5khXQrUNlLMOfVcolmP7uHMre2FTHdNKwbmcbom5ZsEOoVvmen4XnGNNIxUugJvLZvgbk7AQTZJ66twKwAZ+Y+qluG23d4xuE9TNikDY6KGAT2ejLT65Uqu71nH65wu9dUmYABrRWATQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=F8J72gs7OIqGCxvKth4+8QmAalkpO2xoPCm/b6ee6qo=;
- b=OhTVzzl1mMRCmYgw+2ecfBfKgdE3z33luBsVZYVuBLkTF3dyLGXCQ3zE2aipFr+S0gpzGc5wKh7YRr6ciknvZ/rOUyMEpBJIqNv7QJerj1dr5v+ALveZowTAzkJ9hWH0GGwq0NUP95MCpBBovvloZUzwkg/VVCRNoieTySEpPKlLlkIDmZwZajbyT+Xc7qUfLK1AgH01OgOrBNU1pM3Zb4pe3ZgT3EI9SeGT68mo539okFTIpENqofRZzfMGtY6qLRK0kWVhgLP/ryyDbMffq/Gv9XuyyAP2fOW6x9Va6daBDJ7TjQZzwNdeNi8Juoj7MEUi7STCbISwLMYoO4iLjA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=F8J72gs7OIqGCxvKth4+8QmAalkpO2xoPCm/b6ee6qo=;
- b=V+ZqSaioRV436hv33gaikX5Ra005MQ4EyDAk9/Sanp133T718boglEHmJMeiFg8tXy2o33gk2VqFRBAXMuH1UZ8XbT82/pAjss1XB37sND6pCaQG2gAHNC3NyfJ+YSfNbbcHp7Ut7sW9r3dQtGb7ikZgMTv68G+2Xzk/rFvCbNA=
-Received: from VI1PR04MB7023.eurprd04.prod.outlook.com (10.186.159.144) by
- VI1PR04MB7184.eurprd04.prod.outlook.com (10.186.157.15) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2665.22; Mon, 27 Jan 2020 20:33:10 +0000
-Received: from VI1PR04MB7023.eurprd04.prod.outlook.com
- ([fe80::58c5:f02f:2211:4953]) by VI1PR04MB7023.eurprd04.prod.outlook.com
- ([fe80::58c5:f02f:2211:4953%7]) with mapi id 15.20.2665.026; Mon, 27 Jan 2020
- 20:33:10 +0000
-From:   Leonard Crestez <leonard.crestez@nxp.com>
-To:     Peng Fan <peng.fan@nxp.com>,
-        "shawnguo@kernel.org" <shawnguo@kernel.org>
-CC:     "sboyd@kernel.org" <sboyd@kernel.org>,
-        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
-        "festevam@gmail.com" <festevam@gmail.com>,
-        Abel Vesa <abel.vesa@nxp.com>,
-        "kernel@pengutronix.de" <kernel@pengutronix.de>,
-        dl-linux-imx <linux-imx@nxp.com>,
-        Aisheng Dong <aisheng.dong@nxp.com>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Anson Huang <anson.huang@nxp.com>,
-        Jacky Bai <ping.bai@nxp.com>,
-        "l.stach@pengutronix.de" <l.stach@pengutronix.de>
-Subject: Re: [PATCH V3 2/4] clk: imx: imx8mq: use imx8m_clk_hw_composite_core
-Thread-Topic: [PATCH V3 2/4] clk: imx: imx8mq: use imx8m_clk_hw_composite_core
-Thread-Index: AQHVzBLhUkGtl3RwMUeoFEsar3ylZA==
-Date:   Mon, 27 Jan 2020 20:33:10 +0000
-Message-ID: <VI1PR04MB7023DD8E3D07543FB8F5CD50EE0B0@VI1PR04MB7023.eurprd04.prod.outlook.com>
-References: <1579140562-8060-1-git-send-email-peng.fan@nxp.com>
- <1579140562-8060-3-git-send-email-peng.fan@nxp.com>
- <VI1PR04MB70239267F223F63918362DDCEE320@VI1PR04MB7023.eurprd04.prod.outlook.com>
- <AM0PR04MB4481A8AF4694F539FBED0D54880B0@AM0PR04MB4481.eurprd04.prod.outlook.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=leonard.crestez@nxp.com; 
-x-originating-ip: [89.37.124.34]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-ht: Tenant
-x-ms-office365-filtering-correlation-id: f1133360-afdb-4421-6cfc-08d7a3682020
-x-ms-traffictypediagnostic: VI1PR04MB7184:|VI1PR04MB7184:
-x-ms-exchange-transport-forked: True
-x-microsoft-antispam-prvs: <VI1PR04MB718444F99491A2FED9727E45EE0B0@VI1PR04MB7184.eurprd04.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:3968;
-x-forefront-prvs: 02951C14DC
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(346002)(376002)(136003)(396003)(39860400002)(366004)(189003)(199004)(316002)(478600001)(6506007)(4326008)(186003)(44832011)(53546011)(33656002)(81166006)(81156014)(66946007)(71200400001)(5660300002)(8936002)(55016002)(9686003)(52536014)(86362001)(7696005)(110136005)(66476007)(54906003)(2906002)(76116006)(91956017)(26005)(64756008)(66556008)(66446008)(8676002)(32563001);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR04MB7184;H:VI1PR04MB7023.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: sRrGomf6MyDZBZqkWESTBstJaJfDj88minrwseOESDgK+9N202tUbwZthTSp08OIiCROLPZtEesSeSzlkEHQXgP7bd9q4ssZqgboHJYeBLUv0OpjbcgsOUeffhGxHGqLZlrrxIc9g9uOMzgSfxRSwaXMyxLioaWPVfhaEuETGDLIRTgO105bsLrvw2071L/Cjdju/nk2E7yc+ZYUtSATn3lknYt41OOrQXJ/nCp4Cxxt5H1Ideb4LWksOG/YZbbDog3sja9Z3VEL5OpOCCOSLYSyYBV6s/j0/j6wafojLAVbY+gNmod7RQxiQO2cj9vUJ8SkEaSTfrxqNe7skpSFwf4aiVSYKceFIbjrkHlZXMDGX+LSz4jc4G3uJ1nfrD2Uedu9usGhM6rCPbIE7xUP1ZdooEzkP1oBb7GCRAW1WEm4EK01GzJksCDfTtZOFLW8FQTgev7oUdsBeEpd3dkHYR1OrYl6DfdEVBM617Zh4CGNGORGYzCP1zTbWS7MJAzY
-x-ms-exchange-antispam-messagedata: tyd55icAKZT86uJd/gTHY6C67JMiwqXlzIX+8eA34CTlvdW6TWcxuMqAiVj6vwFNsaMloZ9HCOAu5dBJ15BPLT7m4u6QWOh2ZzoRSaIuiYgCFcbu1xR66j56lRCw9HEBiLpkxVwvxE79yPKSmbDTUw==
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        id S1726541AbgA0Uej (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 27 Jan 2020 15:34:39 -0500
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:43094 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726164AbgA0Uej (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 27 Jan 2020 15:34:39 -0500
+Received: by mail-wr1-f67.google.com with SMTP id d16so13205546wre.10
+        for <linux-kernel@vger.kernel.org>; Mon, 27 Jan 2020 12:34:37 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=tessares-net.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=DPa0PjKTZtNUp0zt2H3olFTtXXWAHB5OFSk99SyqalU=;
+        b=CwZ1wF/kNjTbPxARQgUyyuvCrxwVKw1FRPcPOGsITxxMGHRcMx/pfUGKW/B78AIdkM
+         x6pDc+McoBi1xYs4Gqx8CZ5QHTj9vfNI4L3Lf/ezuR2iXaJcZqHhYTIJ0pH7Eg1XFPue
+         N/m3P2t2f1cxC5aeou66WWRNnXbtjcIFMBw6hDUZ1124P+QzrFZt6oEEsbD/qT/vlrGQ
+         JdyURIXx0U38BX7xUprWwAxDKYDlAYDodwl61HN1fl8F6sj7gmx0KQdVuD2qHqBpkK1N
+         eRKqPhyDhw7E1NOlj5i2zdKhia5DfmZhU8+l8/4q0jUjY3fC4w1yXWNs1kMymxFLb0oY
+         mLnw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=DPa0PjKTZtNUp0zt2H3olFTtXXWAHB5OFSk99SyqalU=;
+        b=RfPar/zUrMibB88zyZkhSbShOV7Zw8xzVTcly/8beq5Uvkbo3UQy5pmDgXYcM6848F
+         7TUQxLvg8DacD6/OmM9f6w3RmFH8MK/DpfdCZGVV27Ou6Hv5l83OqnAnpwto7ZaUYIB/
+         av3v0D1y/l6oJ84MpuGYA+CjhSlOrJbIQgbrLFU+4PQpLWMQdm+fmiEkPtKVjvk89d1v
+         DzkPQ8vl9Arku7G3lnHJnvQJvebTTvmM9oxvpHclR6kntqLCetTNHHNTaVstBLBr2D2u
+         /fYJ9bm2N1qqPp/wy8iQedN0dHA3l9LXZbcjMyXZvkvUKF8RrHA88rtqQAp/TeZdkB95
+         tvRA==
+X-Gm-Message-State: APjAAAX5zjK8g/ZdQ0TlJ/biPYAS3wPUlQ6WG+6HbYVc8+Fmc3/WfoXA
+        UAXhhKySBqMi57clh1NZbzxlww==
+X-Google-Smtp-Source: APXvYqzrQJt7qCQBkTdZWFibEn09J1oSTcAz90o21elCX0FYPMZm0ixzwULecEwJi/gjllScGCx2HA==
+X-Received: by 2002:a5d:49c3:: with SMTP id t3mr23503394wrs.113.1580157276790;
+        Mon, 27 Jan 2020 12:34:36 -0800 (PST)
+Received: from tsr-lap-08.nix.tessares.net (19.234-201-80.adsl-dyn.isp.belgacom.be. [80.201.234.19])
+        by smtp.gmail.com with ESMTPSA id o4sm22107974wrw.97.2020.01.27.12.34.35
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 27 Jan 2020 12:34:35 -0800 (PST)
+Subject: Re: [PATCH] selftests: settings: tests can be in subsubdirs
+To:     shuah <shuah@kernel.org>
+Cc:     Kees Cook <keescook@chromium.org>, linux-kselftest@vger.kernel.org,
+        linux-kernel@vger.kernel.org, mptcp <mptcp@lists.01.org>
+References: <20191022171223.27934-1-matthieu.baerts@tessares.net>
+ <c9ce5016-9e83-67c0-ae22-2d3c46427b25@tessares.net>
+ <201911211018.D6CD68AC5@keescook>
+ <602ab319-dcb9-4ac7-b2b8-f7b6072ddc03@tessares.net>
+ <bcce12e4-f122-10ae-dbc7-cc199d9716b6@kernel.org>
+From:   Matthieu Baerts <matthieu.baerts@tessares.net>
+Message-ID: <9bb525e5-12a1-9e27-81cd-cf7bc3d5dc2d@tessares.net>
+Date:   Mon, 27 Jan 2020 21:34:34 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.1
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: f1133360-afdb-4421-6cfc-08d7a3682020
-X-MS-Exchange-CrossTenant-originalarrivaltime: 27 Jan 2020 20:33:10.5444
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: W2rGFdWqMTPzIH7fowu/0+omf/fZfM+Y2HJDV3s056AxToIP2tRZ7wOP5oWcn5gv62FFYZldtDD9ie1X3jxAdQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR04MB7184
+In-Reply-To: <bcce12e4-f122-10ae-dbc7-cc199d9716b6@kernel.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 27.01.2020 07:00, Peng Fan wrote:=0A=
->> Subject: Re: [PATCH V3 2/4] clk: imx: imx8mq: use=0A=
->> imx8m_clk_hw_composite_core=0A=
->>=0A=
->> On 16.01.2020 04:15, Peng Fan wrote:=0A=
->>> From: Peng Fan <peng.fan@nxp.com>=0A=
->>>=0A=
->>> Use imx8m_clk_hw_composite_core to simplify code.=0A=
->>>=0A=
->>> Reviewed-by: Abel Vesa <abel.vesa@nxp.com>=0A=
->>> Signed-off-by: Peng Fan <peng.fan@nxp.com>=0A=
->>> ---=0A=
->>>    drivers/clk/imx/clk-imx8mq.c | 22 ++++++++--------------=0A=
->>>    1 file changed, 8 insertions(+), 14 deletions(-)=0A=
->>>=0A=
->>> diff --git a/drivers/clk/imx/clk-imx8mq.c=0A=
->>> b/drivers/clk/imx/clk-imx8mq.c index 4c0edca1a6d0..e928c1355ad8=0A=
->> 100644=0A=
->>> --- a/drivers/clk/imx/clk-imx8mq.c=0A=
->>> +++ b/drivers/clk/imx/clk-imx8mq.c=0A=
->>> @@ -403,22 +403,16 @@ static int imx8mq_clocks_probe(struct=0A=
->>> platform_device *pdev)=0A=
->>>=0A=
->>>    	/* CORE */=0A=
->>>    	hws[IMX8MQ_CLK_A53_SRC] =3D imx_clk_hw_mux2("arm_a53_src",=0A=
->> base + 0x8000, 24, 3, imx8mq_a53_sels, ARRAY_SIZE(imx8mq_a53_sels));=0A=
->>> -	hws[IMX8MQ_CLK_M4_SRC] =3D imx_clk_hw_mux2("arm_m4_src", base=0A=
->> + 0x8080, 24, 3, imx8mq_arm_m4_sels, ARRAY_SIZE(imx8mq_arm_m4_sels));=0A=
->>> -	hws[IMX8MQ_CLK_VPU_SRC] =3D imx_clk_hw_mux2("vpu_src", base +=0A=
->> 0x8100, 24, 3, imx8mq_vpu_sels, ARRAY_SIZE(imx8mq_vpu_sels));=0A=
->>> -	hws[IMX8MQ_CLK_GPU_CORE_SRC] =3D=0A=
->> imx_clk_hw_mux2("gpu_core_src", base + 0x8180, 24, 3,=0A=
->> imx8mq_gpu_core_sels, ARRAY_SIZE(imx8mq_gpu_core_sels));=0A=
->>> -	hws[IMX8MQ_CLK_GPU_SHADER_SRC] =3D=0A=
->> imx_clk_hw_mux2("gpu_shader_src", base + 0x8200, 24, 3,=0A=
->> imx8mq_gpu_shader_sels,  ARRAY_SIZE(imx8mq_gpu_shader_sels));=0A=
->>> -=0A=
->>>    	hws[IMX8MQ_CLK_A53_CG] =3D=0A=
->> imx_clk_hw_gate3_flags("arm_a53_cg", "arm_a53_src", base + 0x8000, 28,=
-=0A=
->> CLK_IS_CRITICAL);=0A=
->>> -	hws[IMX8MQ_CLK_M4_CG] =3D imx_clk_hw_gate3("arm_m4_cg",=0A=
->> "arm_m4_src", base + 0x8080, 28);=0A=
->>> -	hws[IMX8MQ_CLK_VPU_CG] =3D imx_clk_hw_gate3("vpu_cg", "vpu_src",=0A=
->> base + 0x8100, 28);=0A=
->>> -	hws[IMX8MQ_CLK_GPU_CORE_CG] =3D imx_clk_hw_gate3("gpu_core_cg",=0A=
->> "gpu_core_src", base + 0x8180, 28);=0A=
->>> -	hws[IMX8MQ_CLK_GPU_SHADER_CG] =3D=0A=
->> imx_clk_hw_gate3("gpu_shader_cg", "gpu_shader_src", base + 0x8200, 28);=
-=0A=
->>> -=0A=
->>>    	hws[IMX8MQ_CLK_A53_DIV] =3D=0A=
->> imx_clk_hw_divider2("arm_a53_div", "arm_a53_cg", base + 0x8000, 0, 3);=
-=0A=
->>> -	hws[IMX8MQ_CLK_M4_DIV] =3D imx_clk_hw_divider2("arm_m4_div",=0A=
->> "arm_m4_cg", base + 0x8080, 0, 3);=0A=
->>> -	hws[IMX8MQ_CLK_VPU_DIV] =3D imx_clk_hw_divider2("vpu_div",=0A=
->> "vpu_cg", base + 0x8100, 0, 3);=0A=
->>> -	hws[IMX8MQ_CLK_GPU_CORE_DIV] =3D=0A=
->> imx_clk_hw_divider2("gpu_core_div", "gpu_core_cg", base + 0x8180, 0, 3);=
-=0A=
->>> -	hws[IMX8MQ_CLK_GPU_SHADER_DIV] =3D=0A=
->> imx_clk_hw_divider2("gpu_shader_div", "gpu_shader_cg", base + 0x8200, 0,=
-=0A=
->> 3);=0A=
->>> +=0A=
->>> +	hws[IMX8MQ_CLK_M4_DIV] =3D=0A=
->> imx8m_clk_hw_composite_core("arm_m4_div", imx8mq_arm_m4_sels, base=0A=
->> + 0x8080);=0A=
->>> +	hws[IMX8MQ_CLK_VPU_DIV] =3D=0A=
->> imx8m_clk_hw_composite_core("vpu_div", imx8mq_vpu_sels, base +=0A=
->> 0x8100);=0A=
->>> +	hws[IMX8MQ_CLK_GPU_CORE_DIV] =3D=0A=
->> imx8m_clk_hw_composite_core("gpu_core_div", imx8mq_gpu_core_sels,=0A=
->> base + 0x8180);=0A=
->>> +	hws[IMX8MQ_CLK_GPU_SHADER_DIV] =3D=0A=
->>> +imx8m_clk_hw_composite("gpu_shader_div", imx8mq_gpu_shader_sels,=0A=
->> base=0A=
->>> ++ 0x8200);=0A=
->>=0A=
->>> +	/* For DTS which still assign parents for gpu core src clk */=0A=
->>> +	hws[IMX8MQ_CLK_GPU_CORE_SRC] =3D=0A=
->> hws[IMX8MQ_CLK_GPU_CORE_DIV];=0A=
->>> +	hws[IMX8MQ_CLK_GPU_SHADER_SRC] =3D=0A=
->> hws[IMX8MQ_CLK_GPU_SHADER_DIV];=0A=
->>=0A=
->> Why not assign to all the old clocks?=0A=
-> =0A=
-> Are those clocks expect the GPU ones needed?=0A=
-> =0A=
-> Currently only the gpu clocks are needed, others are not used in dts.=0A=
-> =0A=
-> For dts update to use the SRC clocks should be avoided in future for Linu=
-x,=0A=
-> DIV clocks should be used.=0A=
-> =0A=
-> How do you think?=0A=
-=0A=
-In theory backwards compatibility should be supported at the level of =0A=
-"DT bindings", not just hacked for a particular DT. In this case it's =0A=
-easy to add aliases for everything, just slightly verbose.=0A=
-=0A=
-It might also make sense to add new defines for the composite clock so =0A=
-that IMX8MQ_CLK_GPU_CORE looks like IMX8MQ_CLK_DSI_CORE and all the _SRC =
-=0A=
-_DIV _CG stuff is just aliases to the unsuffixed composite.=0A=
-=0A=
---=0A=
-Regards,=0A=
-Leonard=0A=
+Hi Shuah,
+
+On 27/01/2020 18:16, shuah wrote:
+> On 1/27/20 9:05 AM, Matthieu Baerts wrote:
+
+[...]
+
+>> Kees, Thank you for this review!
+>>
+>> Shuah, I am sorry to send you this new request. It is just to inform 
+>> you that the first selftests for MPTCP are now in "net-next" repo, 
+>> ready for the future Linux 5.6.
+>> We would then be very happy to see this patch here below for the 
+>> kselftest framework accepted to avoid timeouts. Locally we apply this 
+>> patch before running the selftests but we cannot ask everybody running 
+>> MPTCP' selftests to do the same :)
+>>
+>>
+> 
+> I am sorry for the delay. My bad. Looks like I just missed it. I will
+> make sure it gets into 5.6-rc1
+
+That's alright, thank you for having applied this patch in your "next" 
+branch!
+
+Cheers,
+Matt
+-- 
+Matthieu Baerts | R&D Engineer
+matthieu.baerts@tessares.net
+Tessares SA | Hybrid Access Solutions
+www.tessares.net
+1 Avenue Jean Monnet, 1348 Louvain-la-Neuve, Belgium
