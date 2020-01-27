@@ -2,144 +2,145 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 255FC14A7B6
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Jan 2020 17:02:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 85B3D14A7C0
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Jan 2020 17:04:54 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729729AbgA0QCT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 27 Jan 2020 11:02:19 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:62698 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1729347AbgA0QCT (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 27 Jan 2020 11:02:19 -0500
-Received: from pps.filterd (m0098396.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 00RFs1Ml134670
-        for <linux-kernel@vger.kernel.org>; Mon, 27 Jan 2020 11:02:18 -0500
-Received: from e06smtp04.uk.ibm.com (e06smtp04.uk.ibm.com [195.75.94.100])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2xrgvm4w0k-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Mon, 27 Jan 2020 11:02:17 -0500
-Received: from localhost
-        by e06smtp04.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <zohar@linux.ibm.com>;
-        Mon, 27 Jan 2020 16:02:15 -0000
-Received: from b06avi18626390.portsmouth.uk.ibm.com (9.149.26.192)
-        by e06smtp04.uk.ibm.com (192.168.101.134) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Mon, 27 Jan 2020 16:02:12 -0000
-Received: from d06av23.portsmouth.uk.ibm.com (d06av23.portsmouth.uk.ibm.com [9.149.105.59])
-        by b06avi18626390.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 00RG1KaJ43057476
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 27 Jan 2020 16:01:20 GMT
-Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 464FCA4040;
-        Mon, 27 Jan 2020 16:02:11 +0000 (GMT)
-Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 8CB36A404D;
-        Mon, 27 Jan 2020 16:02:10 +0000 (GMT)
-Received: from localhost.localdomain (unknown [9.85.185.238])
-        by d06av23.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Mon, 27 Jan 2020 16:02:10 +0000 (GMT)
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     linux-integrity@vger.kernel.org
-Cc:     Jerry Snitselaar <jsnitsel@redhat.com>,
-        James Bottomley <James.Bottomley@HansenPartnership.com>,
-        linux-kernel@vger.kernel.org, Mimi Zohar <zohar@linux.ibm.com>
-Subject: [PATCH 2/2] ima: support calculating the boot_aggregate based on different TPM banks
-Date:   Mon, 27 Jan 2020 11:01:59 -0500
-X-Mailer: git-send-email 2.7.5
-In-Reply-To: <1580140919-6127-1-git-send-email-zohar@linux.ibm.com>
-References: <1580140919-6127-1-git-send-email-zohar@linux.ibm.com>
-X-TM-AS-GCONF: 00
-x-cbid: 20012716-0016-0000-0000-000002E11ED7
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 20012716-0017-0000-0000-00003343DC02
-Message-Id: <1580140919-6127-2-git-send-email-zohar@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.572
- definitions=2020-01-27_05:2020-01-24,2020-01-27 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 suspectscore=1
- mlxlogscore=999 impostorscore=0 bulkscore=0 priorityscore=1501
- clxscore=1015 spamscore=0 phishscore=0 lowpriorityscore=0 mlxscore=0
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-1911200001 definitions=main-2001270134
+        id S1729749AbgA0QEw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 27 Jan 2020 11:04:52 -0500
+Received: from mail.kernel.org ([198.145.29.99]:49598 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729146AbgA0QEw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 27 Jan 2020 11:04:52 -0500
+Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 16894206A2;
+        Mon, 27 Jan 2020 16:04:51 +0000 (UTC)
+Date:   Mon, 27 Jan 2020 11:04:49 -0500
+From:   Steven Rostedt <rostedt@goodmis.org>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        stable@vger.kernel.org, Masami Hiramatsu <mhiramat@kernel.org>,
+        Thomas Richter <tmricht@linux.ibm.com>
+Subject: [GIT PULL][PATCH] tracing/kprobes: Have uname use __get_str() in
+ print_fmt
+Message-ID: <20200127110449.512c13a1@gandalf.local.home>
+X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Calculating the boot_aggregate attempts to read the TPM SHA1 bank,
-assuming it is always enabled.  With TPM 2.0 hash agility, TPM chips
-could support multiple TPM PCR banks, allowing firmware to configure and
-enable different banks.
 
-Instead of hard coding the TPM 2.0 bank hash algorithm used for calculating
-the boot-aggregate, see if the configured IMA_DEFAULT_HASH algorithm is
-an allocated TPM bank, otherwise use the first allocated TPM bank.
+Linus,
 
-For TPM 1.2 SHA1 is the only supported hash algorithm.
+[ This is not a merge window pull, I was waiting on a tested-by from
+  the reporter ]
 
-Reported-by: Jerry Snitselaar <jsnitsel@redhat.com>
-Signed-off-by: Mimi Zohar <zohar@linux.ibm.com>
----
- security/integrity/ima/ima_crypto.c | 37 ++++++++++++++++++++++++++++++++++++-
- 1 file changed, 36 insertions(+), 1 deletion(-)
+Kprobe events added "ustring" to distinguish reading strings
+from kernel space or user space. But the creating of the event format
+file only checks for "string" to display string formats. "ustring" must
+also be handled.
 
-diff --git a/security/integrity/ima/ima_crypto.c b/security/integrity/ima/ima_crypto.c
-index 7967a6904851..b1b26d61f174 100644
---- a/security/integrity/ima/ima_crypto.c
-+++ b/security/integrity/ima/ima_crypto.c
-@@ -656,8 +656,25 @@ static void __init ima_pcrread(u32 idx, struct tpm_digest *d)
- 		pr_err("Error Communicating to TPM chip\n");
- }
- 
-+/* tpm2_hash_map is the same as defined in tpm2-cmd.c and trusted_tpm2.c */
-+static struct tpm2_hash tpm2_hash_map[] = {
-+	{HASH_ALGO_SHA1, TPM_ALG_SHA1},
-+	{HASH_ALGO_SHA256, TPM_ALG_SHA256},
-+	{HASH_ALGO_SHA384, TPM_ALG_SHA384},
-+	{HASH_ALGO_SHA512, TPM_ALG_SHA512},
-+	{HASH_ALGO_SM3_256, TPM_ALG_SM3_256},
-+};
-+
- /*
-- * Calculate the boot aggregate hash
-+ * The boot_aggregate is a cumulative hash over TPM registers 0 - 7.  With
-+ * TPM 2.0 hash agility, TPM chips could support multiple TPM PCR banks,
-+ * allowing firmware to configure and enable different banks.
-+ *
-+ * Instead of hard coding the TPM bank hash algorithm used for calculating
-+ * the boot-aggregate, see if the configured IMA_DEFAULT_HASH algorithm is
-+ * an allocated TPM bank, otherwise use the first allocated TPM bank.
-+ *
-+ * For TPM 1.2 SHA1 is the only hash algorithm.
-  */
- static int __init ima_calc_boot_aggregate_tfm(char *digest,
- 					      struct crypto_shash *tfm)
-@@ -673,6 +690,24 @@ static int __init ima_calc_boot_aggregate_tfm(char *digest,
- 	if (rc != 0)
- 		return rc;
- 
-+	for (i = 0; i < ARRAY_SIZE(tpm2_hash_map); i++) {
-+		if (tpm2_hash_map[i].crypto_id == ima_hash_algo) {
-+			d.alg_id = tpm2_hash_map[i].tpm_id;
-+			break;
-+		}
-+	}
-+
-+	for (i = 0; i < ima_tpm_chip->nr_allocated_banks; i++) {
-+		if (ima_tpm_chip->allocated_banks[i].alg_id == d.alg_id)
-+			break;
-+	}
-+
-+	if (i == ima_tpm_chip->nr_allocated_banks)
-+		d.alg_id = ima_tpm_chip->allocated_banks[0].alg_id;
-+
-+	pr_info("Calculating the boot-aggregregate, reading TPM PCR bank: %04x",
-+		d.alg_id);
-+
- 	/* cumulative sha1 over tpm registers 0-7 */
- 	for (i = TPM_PCR0; i < TPM_PCR8; i++) {
- 		ima_pcrread(i, &d);
--- 
-2.7.5
 
+Please pull the latest trace-v5.5-rc7 tree, which can be found at:
+
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/rostedt/linux-trace.git
+trace-v5.5-rc7
+
+Tag SHA1: 83993af56b45a4c0b34401ee5bdd96c94180d77d
+Head SHA1: 20279420ae3a8ef4c5d9fedc360a2c37a1dbdf1b
+
+
+Steven Rostedt (VMware) (1):
+      tracing/kprobes: Have uname use __get_str() in print_fmt
+
+----
+ kernel/trace/trace_probe.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
+---------------------------
+commit 20279420ae3a8ef4c5d9fedc360a2c37a1dbdf1b
+Author: Steven Rostedt (VMware) <rostedt@goodmis.org>
+Date:   Fri Jan 24 10:07:42 2020 -0500
+
+    tracing/kprobes: Have uname use __get_str() in print_fmt
+    
+    Thomas Richter reported:
+    
+    > Test case 66 'Use vfs_getname probe to get syscall args filenames'
+    > is broken on s390, but works on x86. The test case fails with:
+    >
+    >  [root@m35lp76 perf]# perf test -F 66
+    >  66: Use vfs_getname probe to get syscall args filenames
+    >            :Recording open file:
+    >  [ perf record: Woken up 1 times to write data ]
+    >  [ perf record: Captured and wrote 0.004 MB /tmp/__perf_test.perf.data.TCdYj\
+    >        (20 samples) ]
+    >  Looking at perf.data file for vfs_getname records for the file we touched:
+    >   FAILED!
+    >   [root@m35lp76 perf]#
+    
+    The root cause was the print_fmt of the kprobe event that referenced the
+    "ustring"
+    
+    > Setting up the kprobe event using perf command:
+    >
+    >  # ./perf probe "vfs_getname=getname_flags:72 pathname=filename:ustring"
+    >
+    > generates this format file:
+    >   [root@m35lp76 perf]# cat /sys/kernel/debug/tracing/events/probe/\
+    >         vfs_getname/format
+    >   name: vfs_getname
+    >   ID: 1172
+    >   format:
+    >     field:unsigned short common_type; offset:0; size:2; signed:0;
+    >     field:unsigned char common_flags; offset:2; size:1; signed:0;
+    >     field:unsigned char common_preempt_count; offset:3; size:1; signed:0;
+    >     field:int common_pid; offset:4; size:4; signed:1;
+    >
+    >     field:unsigned long __probe_ip; offset:8; size:8; signed:0;
+    >     field:__data_loc char[] pathname; offset:16; size:4; signed:1;
+    >
+    >     print fmt: "(%lx) pathname=\"%s\"", REC->__probe_ip, REC->pathname
+    
+    Instead of using "__get_str(pathname)" it referenced it directly.
+    
+    Link: http://lkml.kernel.org/r/20200124100742.4050c15e@gandalf.local.home
+    
+    Cc: stable@vger.kernel.org
+    Fixes: 88903c464321 ("tracing/probe: Add ustring type for user-space string")
+    Acked-by: Masami Hiramatsu <mhiramat@kernel.org>
+    Reported-by: Thomas Richter <tmricht@linux.ibm.com>
+    Tested-by: Thomas Richter <tmricht@linux.ibm.com>
+    Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+
+diff --git a/kernel/trace/trace_probe.c b/kernel/trace/trace_probe.c
+index 9ae87be422f2..ab8b6436d53f 100644
+--- a/kernel/trace/trace_probe.c
++++ b/kernel/trace/trace_probe.c
+@@ -876,7 +876,8 @@ static int __set_print_fmt(struct trace_probe *tp, char *buf, int len,
+ 	for (i = 0; i < tp->nr_args; i++) {
+ 		parg = tp->args + i;
+ 		if (parg->count) {
+-			if (strcmp(parg->type->name, "string") == 0)
++			if ((strcmp(parg->type->name, "string") == 0) ||
++			    (strcmp(parg->type->name, "ustring") == 0))
+ 				fmt = ", __get_str(%s[%d])";
+ 			else
+ 				fmt = ", REC->%s[%d]";
+@@ -884,7 +885,8 @@ static int __set_print_fmt(struct trace_probe *tp, char *buf, int len,
+ 				pos += snprintf(buf + pos, LEN_OR_ZERO,
+ 						fmt, parg->name, j);
+ 		} else {
+-			if (strcmp(parg->type->name, "string") == 0)
++			if ((strcmp(parg->type->name, "string") == 0) ||
++			    (strcmp(parg->type->name, "ustring") == 0))
+ 				fmt = ", __get_str(%s)";
+ 			else
+ 				fmt = ", REC->%s";
