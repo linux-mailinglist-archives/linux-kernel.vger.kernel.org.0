@@ -2,98 +2,66 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 69AF714A2E4
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Jan 2020 12:19:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 73B4F14A30A
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Jan 2020 12:30:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729823AbgA0LTG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 27 Jan 2020 06:19:06 -0500
-Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:33353 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1729043AbgA0LTF (ORCPT
+        id S1730106AbgA0LaN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 27 Jan 2020 06:30:13 -0500
+Received: from youngberry.canonical.com ([91.189.89.112]:51995 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726428AbgA0LaN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 27 Jan 2020 06:19:05 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1580123944;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=BErR0RwzOsFrhtcTHHOPAGFQ2vAoXbVb7DYzS0T3Rg4=;
-        b=EEl7HxHBKJ/e9BmMVkvriTuDIpsTjwPLIF/E23lRd8e7EByZGiic9UCs/ulvFdChWS2rga
-        6kVDoJdM1ikHoOuNyOW64UI9aICfzzbQkbutrNfpnZ5eyibDLzavuvCOcoCOXOHY5jHXYX
-        DHdErWWnlL+NwG9uE8golLAWnzTHC7I=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-92-CAdF87FDMpmBX3H00_ZRLw-1; Mon, 27 Jan 2020 06:12:38 -0500
-X-MC-Unique: CAdF87FDMpmBX3H00_ZRLw-1
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 883A5107B272;
-        Mon, 27 Jan 2020 11:12:37 +0000 (UTC)
-Received: from krava (unknown [10.43.17.48])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 8E60D381;
-        Mon, 27 Jan 2020 11:12:36 +0000 (UTC)
-Date:   Mon, 27 Jan 2020 12:12:34 +0100
-From:   Jiri Olsa <jolsa@redhat.com>
-To:     Namhyung Kim <namhyung@kernel.org>
-Cc:     Arnaldo Carvalho de Melo <acme@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-perf-users@vger.kernel.org
-Subject: Re: [PATCH] tools lib api fs: Move cgroupsfs_find_mountpoint()
-Message-ID: <20200127111234.GA1114818@krava>
-References: <20200127100031.1368732-1-namhyung@kernel.org>
+        Mon, 27 Jan 2020 06:30:13 -0500
+Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
+        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.86_2)
+        (envelope-from <colin.king@canonical.com>)
+        id 1iw2Kn-0000lf-4X; Mon, 27 Jan 2020 11:13:37 +0000
+From:   Colin King <colin.king@canonical.com>
+To:     Michal Simek <michal.simek@xilinx.com>,
+        Wolfram Sang <wsa@the-dreams.de>,
+        Shubhrajyoti Datta <shubhrajyoti.datta@xilinx.com>,
+        linux-arm-kernel@lists.infradead.org, linux-i2c@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH][next][V3] i2c: xiic: fix indentation issue
+Date:   Mon, 27 Jan 2020 11:13:36 +0000
+Message-Id: <20200127111336.114501-1-colin.king@canonical.com>
+X-Mailer: git-send-email 2.24.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200127100031.1368732-1-namhyung@kernel.org>
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jan 27, 2020 at 07:00:31PM +0900, Namhyung Kim wrote:
+From: Colin Ian King <colin.king@canonical.com>
 
-SNIP
+There is a statement that is indented one level too deeply, remove
+the extraneous tab.
 
-> -
-> -	if (strlen(path) < maxlen) {
-> -		strcpy(buf, path);
-> -		return 0;
-> -	}
-> -	return -1;
-> -}
-> -
->  static int open_cgroup(const char *name)
->  {
->  	char path[PATH_MAX + 1];
-> @@ -79,7 +20,7 @@ static int open_cgroup(const char *name)
->  	int fd;
->  
->  
-> -	if (cgroupfs_find_mountpoint(mnt, PATH_MAX + 1))
-> +	if (cgroupfs_find_mountpoint(mnt, PATH_MAX + 1, "perf_event"))
+Fixes: b4c119dbc300 ("i2c: xiic: Add timeout to the rx fifo wait loop")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+V2: fix type in commit message
+V3: add fixes tag
+---
+ drivers/i2c/busses/i2c-xiic.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-nice, but could you please follow fs API names and change the
-name to cgroupfs__mountpoint
-
-I think we don't need to define the rest of the functions now,
-if they are not used
-
-	#define FS(name)                                \
-		const char *name##__mountpoint(void);   \
-		const char *name##__mount(void);        \
-		bool name##__configured(void);          \
-
-just follow the function name
-
-thanks,
-jirka
-
->  		return -1;
->  
->  	scnprintf(path, PATH_MAX, "%s/%s", mnt, name);
-> -- 
-> 2.25.0.341.g760bfbb309-goog
-> 
+diff --git a/drivers/i2c/busses/i2c-xiic.c b/drivers/i2c/busses/i2c-xiic.c
+index b17d30c9ab40..90c1c362394d 100644
+--- a/drivers/i2c/busses/i2c-xiic.c
++++ b/drivers/i2c/busses/i2c-xiic.c
+@@ -261,7 +261,7 @@ static int xiic_clear_rx_fifo(struct xiic_i2c *i2c)
+ 		xiic_getreg8(i2c, XIIC_DRR_REG_OFFSET);
+ 		if (time_after(jiffies, timeout)) {
+ 			dev_err(i2c->dev, "Failed to clear rx fifo\n");
+-				return -ETIMEDOUT;
++			return -ETIMEDOUT;
+ 		}
+ 	}
+ 
+-- 
+2.24.0
 
