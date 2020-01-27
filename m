@@ -2,53 +2,85 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4F5EC14AB83
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Jan 2020 22:20:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5124614AB8C
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Jan 2020 22:23:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726438AbgA0VUE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 27 Jan 2020 16:20:04 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48998 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725955AbgA0VUE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 27 Jan 2020 16:20:04 -0500
-Subject: Re: [GIT PULL] ioremap changes for 5.6
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1580160004;
-        bh=/W9JqbAAL4xbjXYRS2MdhH/akzoaltvXmz0YCCDr63U=;
-        h=From:In-Reply-To:References:Date:To:Cc:From;
-        b=xvKwQwbVXAl3xFQLPC/W6bASENQuwMYybUGD4Amcy2iPtuxpyuCRQlfgZyUdoBgmw
-         YcgeCjBhtLhTZHjjCApF8N1w/xb0HVvTzhUVn98wOU63vlzIVAA3y5o+LoDhddeQLW
-         xdn6jKLVXhIR49GpssHpN8SErSbnWlDf171QXi58=
-From:   pr-tracker-bot@kernel.org
-In-Reply-To: <20200127181827.GA929837@infradead.org>
-References: <20200127181827.GA929837@infradead.org>
-X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <20200127181827.GA929837@infradead.org>
-X-PR-Tracked-Remote: git://git.infradead.org/users/hch/ioremap.git
- tags/ioremap-5.6
-X-PR-Tracked-Commit-Id: 4bdc0d676a643140bdf17dbf7eafedee3d496a3c
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 6a1000bd27035bba17ede9dc915166276a811edb
-Message-Id: <158016000404.13304.15294418167247268316.pr-tracker-bot@kernel.org>
-Date:   Mon, 27 Jan 2020 21:20:04 +0000
-To:     Christoph Hellwig <hch@infradead.org>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-kernel@vger.kernel.org
+        id S1726303AbgA0VXB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 27 Jan 2020 16:23:01 -0500
+Received: from mail-pl1-f201.google.com ([209.85.214.201]:54457 "EHLO
+        mail-pl1-f201.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725955AbgA0VXB (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 27 Jan 2020 16:23:01 -0500
+Received: by mail-pl1-f201.google.com with SMTP id f10so4444803plr.21
+        for <linux-kernel@vger.kernel.org>; Mon, 27 Jan 2020 13:23:00 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=date:message-id:mime-version:subject:from:to:cc;
+        bh=M7uDook8T4JuFhQPKzSHd/4CKNgbM46H4EUNpVdKl20=;
+        b=nQCoMeg5/E+KDXBiPl89mZrX/Kg1XuVS5rl428w6rs8LyHFj8aVDYpYacV9NcKKeEg
+         I5vAbvKzZSe21rKyTDluGc9cKcpMpZvjlp/lhl0vvJ6wENBCcWLDosQ0+D9vhuClnUOI
+         upl33DmT7LzNNtkcaKyNxk3VTMVFyXpPXQkWxaHFDPqJj+kFbmmzDcjMseirRMpI0gfK
+         ah5uQV/ilEnZmwn2oOiwRRuVjHhWnzXvrDjF4LSsOr9bKaZP3HayadlgPM/BAdgn4TI6
+         R00A86ey46B9XNod6zeVEXD6N7ebi95rOqgYc410VknfnRFkZ80cF8yTiUZu9KFYK4zV
+         wX5A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:message-id:mime-version:subject:from:to:cc;
+        bh=M7uDook8T4JuFhQPKzSHd/4CKNgbM46H4EUNpVdKl20=;
+        b=VsV0y79rgv+MhXPxGMQJtwktrqRihtncLXQExtFZUX+Nhq3tagKEiFkEMWqPif9hlX
+         SO0JfruS7EMpL2ix5HjpVa/s+Qbg3q6Q8hH9lJNCOCrhuonR5Trpj4GWqHDX+jWgNmJJ
+         Wjxrmq7/mUQLYXEuCjKqw/BIHFsNdJRPTG//RHeaeh2yv3o5mlzHh8z/njQIfut3ZROi
+         ExeIYOLKKIy4cf+tnZ+iODxmIRPSMG/jsuIeiyWuvSWMsEC1CZpR2LtXR2EqFCzabdWY
+         1H/Nlmtxg4SQ1xvG2pWmbLEqR8ckvSTSluEQSi1igLHPl5q1jNQZBChyqgakZmS3bAnX
+         GQUQ==
+X-Gm-Message-State: APjAAAXersdYchgZUUrTHFan+zmYavxeBjctm1VhWQAXIzpxhZzMr5A6
+        XcqMR0z+dgVZaHQikzy1mXsmW/+ff8pR3Gc=
+X-Google-Smtp-Source: APXvYqztwCCBeFLwUdmvoDFFpxL4zFNAytONdjZTYtHWUot99zcOcBOoTdZdb7LJZVxpMkDMsscdqyNegKD5ym8=
+X-Received: by 2002:a63:1756:: with SMTP id 22mr21988920pgx.109.1580160180456;
+ Mon, 27 Jan 2020 13:23:00 -0800 (PST)
+Date:   Mon, 27 Jan 2020 13:22:56 -0800
+Message-Id: <20200127212256.194310-1-ehankland@google.com>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.25.0.341.g760bfbb309-goog
+Subject: [PATCH] KVM: x86: Fix perfctr WRMSR for running counters
+From:   Eric Hankland <ehankland@google.com>
+To:     Paolo Bonzini <pbonzini@redhat.com>,
+        Jim Mattson <jmattson@google.com>,
+        Peter Shier <pshier@google.com>
+Cc:     linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
+        Eric Hankland <ehankland@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The pull request you sent on Mon, 27 Jan 2020 19:18:27 +0100:
+Correct the logic in intel_pmu_set_msr() for fixed and general purpose
+counters. This was recently changed to set pmc->counter without taking
+in to account the value of pmc_read_counter() which will be incorrect if
+the counter is currently running and non-zero; this changes back to the
+old logic which accounted for the value of currently running counters.
 
-> git://git.infradead.org/users/hch/ioremap.git tags/ioremap-5.6
+Signed-off-by: Eric Hankland <ehankland@google.com>
+---
+ arch/x86/kvm/vmx/pmu_intel.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/6a1000bd27035bba17ede9dc915166276a811edb
+diff --git a/arch/x86/kvm/vmx/pmu_intel.c b/arch/x86/kvm/vmx/pmu_intel.c
+index 34a3a17bb6d7..9bdbe05b599c 100644
+--- a/arch/x86/kvm/vmx/pmu_intel.c
++++ b/arch/x86/kvm/vmx/pmu_intel.c
+@@ -264,9 +264,10 @@ static int intel_pmu_set_msr(struct kvm_vcpu *vcpu, struct msr_data *msr_info)
+ 				pmc->counter = data;
+ 			else
+ 				pmc->counter = (s32)data;
++			pmc->counter += pmc->counter - pmc_read_counter(pmc);
+ 			return 0;
+ 		} else if ((pmc = get_fixed_pmc(pmu, msr))) {
+-			pmc->counter = data;
++			pmc->counter += data - pmc_read_counter(pmc);
+ 			return 0;
+ 		} else if ((pmc = get_gp_pmc(pmu, msr, MSR_P6_EVNTSEL0))) {
+ 			if (data == pmc->eventsel)
 
-Thank you!
-
--- 
-Deet-doot-dot, I am a bot.
-https://korg.wiki.kernel.org/userdoc/prtracker
