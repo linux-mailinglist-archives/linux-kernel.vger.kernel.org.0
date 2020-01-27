@@ -2,102 +2,71 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CE83C14A845
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Jan 2020 17:43:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4A8E114A84A
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Jan 2020 17:45:47 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726911AbgA0Qnc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 27 Jan 2020 11:43:32 -0500
-Received: from mx2.suse.de ([195.135.220.15]:40704 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726205AbgA0QnW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 27 Jan 2020 11:43:22 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id 56CA2B15B;
-        Mon, 27 Jan 2020 16:43:20 +0000 (UTC)
-From:   Luis Henriques <lhenriques@suse.com>
-To:     Jeff Layton <jlayton@kernel.org>, Sage Weil <sage@redhat.com>,
-        Ilya Dryomov <idryomov@gmail.com>,
-        "Yan, Zheng" <zyan@redhat.com>, Gregory Farnum <gfarnum@redhat.com>
-Cc:     ceph-devel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Luis Henriques <lhenriques@suse.com>
-Subject: [RFC PATCH 3/3] ceph: add module param to throttle 'copy-from2' operations
-Date:   Mon, 27 Jan 2020 16:43:21 +0000
-Message-Id: <20200127164321.17468-4-lhenriques@suse.com>
-In-Reply-To: <20200127164321.17468-1-lhenriques@suse.com>
-References: <20200127164321.17468-1-lhenriques@suse.com>
+        id S1726026AbgA0Qpl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 27 Jan 2020 11:45:41 -0500
+Received: from mail-oi1-f196.google.com ([209.85.167.196]:37092 "EHLO
+        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725828AbgA0Qpl (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 27 Jan 2020 11:45:41 -0500
+Received: by mail-oi1-f196.google.com with SMTP id z64so7282015oia.4;
+        Mon, 27 Jan 2020 08:45:40 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=qjocpJAxA81IVt1bUmufDITg+GzjDlPdLwgQfGnaP7c=;
+        b=l2NrnwXB9Sw+uhjIEGB5+rkj9YDeI+zCBE30oDBsfXoF7tNAUmRqcoJ38G7kpqalgp
+         hIeyRG/A0OmH4Owo/fkk8qGZh9pT+8XzZ8ea3+nREuNj+RGRPts9jp0ALG3G4EIA6IYc
+         L3Up3fuGeE2g4diTBZJndqvkRVdjdgOMIRDXznWoz5QrOPzA/3X4H+yrrpN0sk9WmcZr
+         7gDXrWEJjGFO7E15P7uyIRYK2d8PKKARlO13U/J4OsQdDdAG7ngKnwE2YZvOaE53vD5S
+         RDXXlXTxjl6xm0OIWuwllBH1umKla/uazXDX0449gVgkEQYD50b6lDvmoNn+6KL6fYka
+         nzPA==
+X-Gm-Message-State: APjAAAWvipP81ViXNiHKl+3zR51ZlJTVwFlIQ8/7JBuAtycPtgv486sR
+        7FTxfPhtABdP6PDrnUifDQ==
+X-Google-Smtp-Source: APXvYqwz9akG8oXLqrPsCNC1PhlGDchvLiGOlcKR5KH6Pud9QkCqtorHesxJwSnXfGprXw/Lb4yibQ==
+X-Received: by 2002:a54:4e8d:: with SMTP id c13mr7972010oiy.27.1580143540313;
+        Mon, 27 Jan 2020 08:45:40 -0800 (PST)
+Received: from rob-hp-laptop (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id n27sm2316807oie.18.2020.01.27.08.45.38
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 27 Jan 2020 08:45:39 -0800 (PST)
+Received: (nullmailer pid 32076 invoked by uid 1000);
+        Mon, 27 Jan 2020 16:45:38 -0000
+Date:   Mon, 27 Jan 2020 10:45:38 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Yuti Amonkar <yamonkar@cadence.com>
+Cc:     linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        kishon@ti.com, mark.rutland@arm.com, maxime@cerno.tech,
+        jsarha@ti.com, tomi.valkeinen@ti.com, praneeth@ti.com,
+        mparab@cadence.com, sjakhade@cadence.com
+Subject: Re: [PATCH v3 13/14] dt-bindings: phy: phy-cadence-torrent: Add
+ subnode bindings.
+Message-ID: <20200127164538.GB7662@bogus>
+References: <1579689918-7181-1-git-send-email-yamonkar@cadence.com>
+ <1579689918-7181-14-git-send-email-yamonkar@cadence.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1579689918-7181-14-git-send-email-yamonkar@cadence.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch adds a ceph kernel module parameter that allows to throttle the
-amount of parallel requests that can be sent to the OSDs before waiting
-for the completion.  This allows to prevent DoS'ing the ODSs with too many
-requests at once when copying a big file.
+On Wed, Jan 22, 2020 at 11:45:17AM +0100, Yuti Amonkar wrote:
+> From: Swapnil Jakhade <sjakhade@cadence.com>
+> 
+> Add sub-node bindings for each group of PHY lanes based on PHY
+> type. Only PHY_TYPE_DP is supported currently. Each sub-node
+> includes properties such as master lane number, link reset, phy
+> type, number of lanes etc.
+> 
+> Signed-off-by: Swapnil Jakhade <sjakhade@cadence.com>
 
-Signed-off-by: Luis Henriques <lhenriques@suse.com>
----
- fs/ceph/file.c  | 10 ++++++++++
- fs/ceph/super.c |  4 ++++
- fs/ceph/super.h |  2 ++
- 3 files changed, 16 insertions(+)
-
-diff --git a/fs/ceph/file.c b/fs/ceph/file.c
-index 5d8f0ba11719..bf18712f3bd3 100644
---- a/fs/ceph/file.c
-+++ b/fs/ceph/file.c
-@@ -1973,6 +1973,7 @@ static ssize_t __ceph_copy_file_range(struct file *src_file, loff_t src_off,
- 	int src_got = 0, dst_got = 0, err, dirty;
- 	bool do_final_copy = false;
- 	LIST_HEAD(osd_reqs);
-+	unsigned int ncopies = cfr_throttle;
- 
- 	if (src_inode->i_sb != dst_inode->i_sb) {
- 		struct ceph_fs_client *dst_fsc = ceph_inode_to_client(dst_inode);
-@@ -2151,6 +2152,15 @@ static ssize_t __ceph_copy_file_range(struct file *src_file, loff_t src_off,
- 		src_off += object_size;
- 		dst_off += object_size;
- 		ret += object_size;
-+		if (cfr_throttle && (--ncopies == 0)) {
-+			err = wait_copy_from_reqs(&osd_reqs);
-+			if (err) {
-+				if (!ret)
-+					ret = err;
-+				goto out_caps;
-+			}
-+			ncopies = cfr_throttle;
-+		}
- 	}
- 
- 	err = wait_copy_from_reqs(&osd_reqs);
-diff --git a/fs/ceph/super.c b/fs/ceph/super.c
-index b62c487a53af..02e8b6f93d50 100644
---- a/fs/ceph/super.c
-+++ b/fs/ceph/super.c
-@@ -1238,6 +1238,10 @@ static void __exit exit_ceph(void)
- 	destroy_caches();
- }
- 
-+unsigned int cfr_throttle = 0;
-+module_param(cfr_throttle, uint, 0644);
-+MODULE_PARM_DESC(cfr_throttle, "copy_file_range throttle value.");
-+
- module_init(init_ceph);
- module_exit(exit_ceph);
- 
-diff --git a/fs/ceph/super.h b/fs/ceph/super.h
-index b2f86bed5c2c..fb98b4b1ec72 100644
---- a/fs/ceph/super.h
-+++ b/fs/ceph/super.h
-@@ -72,6 +72,8 @@
- #define CEPH_CAPS_WANTED_DELAY_MIN_DEFAULT      5  /* cap release delay */
- #define CEPH_CAPS_WANTED_DELAY_MAX_DEFAULT     60  /* cap release delay */
- 
-+extern unsigned int cfr_throttle;
-+
- struct ceph_mount_options {
- 	unsigned int flags;
- 
+Also, if you send patches from another author, your S-o-b should also be 
+present.
