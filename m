@@ -2,133 +2,92 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 47B3C14A2CB
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Jan 2020 12:16:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 84B4914A2D9
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Jan 2020 12:17:47 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729720AbgA0LQf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 27 Jan 2020 06:16:35 -0500
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:37973 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726771AbgA0LQd (ORCPT
+        id S1729414AbgA0LRq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 27 Jan 2020 06:17:46 -0500
+Received: from mail-ed1-f65.google.com ([209.85.208.65]:38356 "EHLO
+        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726323AbgA0LRp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 27 Jan 2020 06:16:33 -0500
-Received: by mail-wm1-f66.google.com with SMTP id a9so1662364wmj.3;
-        Mon, 27 Jan 2020 03:16:32 -0800 (PST)
+        Mon, 27 Jan 2020 06:17:45 -0500
+Received: by mail-ed1-f65.google.com with SMTP id p23so1612025edr.5;
+        Mon, 27 Jan 2020 03:17:45 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=ZHMvxWSExnfzvozzoiiK4wClMeOsgnVyBWHpemQRo9s=;
-        b=FHVm4rKfLNiJPHYWvzgfs/nn4g8yQNhrqD8j0c+2odMhabmoA2ddTaXXbP+V1BZOLG
-         qsuZ7oPKkyrzj5NwC49d32DvlQA5IKONDNtqQd+SfPbxr33FTffvfarVNe9XrY6eUKB9
-         F08iDak4HQuaL9qRSqbP4erHO13uByYKNentIdLtOCl9VhTD2j/m6tZtK2pE1rKfXht8
-         7Kx3yHkKChA3bJh22JcCrUOauM8+38NG3pZPDhEDQjb6xH3ZlqqcEEuNlb/JvTg8AMs1
-         PYyANTumkwCX+gSTcCzbEBmFf0zFnTRzTDPVEa/isvL1zpM/mctSr58NZtH86SU+Ug+x
-         u7OA==
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=URicdRNDSRXDR1lupXQbSUVybSg17tNT9soEhKW0QAo=;
+        b=pUTN0aoOns3aVn96Ine8HG45pYsXt0YaSdk0G7yHj/qcwFOgvU2c8xIhj4X2KTVC23
+         OiFJu4c/MZqkuay5j6cuhxcfsvVDsfGvIHEDn5hQ/DrRPjqxbEgRM6eiNuRhU04Y2zgb
+         pd5akd/gqBv83BFitRXcBQ71lGp1Wt7e08aPOMiz1L76mhxS8M9ISq2jV6f9ARZ9UgVJ
+         pDKTjHefte5tJAEqVx++qzchSPyudt7SxGQgX8AfLChWQlW7Q2B15QW8kbYl/jGNx0XG
+         +TbChqBLSA+HFqQBZYGJ6UVorpbdr1eSXg8Da4Na36nPe6DZX8qLIyKThIoeYhBiJgCp
+         aG9A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=ZHMvxWSExnfzvozzoiiK4wClMeOsgnVyBWHpemQRo9s=;
-        b=Cgs/qMp3Tn9YL32W14lE6gjZk2cawTgHA5T9siMauICDy5chTMkD5v0HTYCBUYzBv5
-         wuPeK/ph8BKh9ynvDcjH7/IsPgGiL7okJP+lCWDK+GnLxtOTkql52YqI6JGtfDi/7Lr8
-         cixgJneS/ZSSjwah2F9ZEZEP+McXE/6WWUTxVLs08OzXEj2/Svd3ID75DirVMcurAQ13
-         dKYjamcQqdWNmkBkkttrLRa8GZKYSnmaFhRIEq4UwPmSOwjmfabFuxr6FmT2E7v7TNMe
-         O/t2nI8wyVGfsHev08faPbcso5Hu0wvy+6T47Tuiu74umOd5nB5/HurgznVwfQyePDUf
-         Lqrg==
-X-Gm-Message-State: APjAAAX/G9k79+mmLiaV1AUj3LekVPmsY867Fqb4pngksUeKP7H5ICfz
-        2GfaO8pQYlpMyhwhhRio3f8=
-X-Google-Smtp-Source: APXvYqwR91RGkxftZpslELja6YtBXa5WMBKeTTjWXx5Zs4tXR3KM/KxQ3+hzLBWkRFSYQG+t2PP2Cg==
-X-Received: by 2002:a7b:c183:: with SMTP id y3mr13254610wmi.0.1580123791552;
-        Mon, 27 Jan 2020 03:16:31 -0800 (PST)
-Received: from pali ([2a02:2b88:2:1::5cc6:2f])
-        by smtp.gmail.com with ESMTPSA id w20sm17584910wmk.34.2020.01.27.03.16.30
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 27 Jan 2020 03:16:30 -0800 (PST)
-Date:   Mon, 27 Jan 2020 12:16:30 +0100
-From:   Pali =?utf-8?B?Um9ow6Fy?= <pali.rohar@gmail.com>
-To:     Sascha Hauer <s.hauer@pengutronix.de>
-Cc:     linux-ide@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Jens Axboe <axboe@kernel.dk>, kernel@pengutronix.de
-Subject: Re: [PATCH v2] libata: Fix retrieving of active qcs
-Message-ID: <20200127111630.bqqzhj57tzt7geds@pali>
-References: <20191213080408.27032-1-s.hauer@pengutronix.de>
- <20191225181840.ooo6mw5rffghbmu2@pali>
- <20200106081605.ffjz7xy6e24rfcgx@pengutronix.de>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=URicdRNDSRXDR1lupXQbSUVybSg17tNT9soEhKW0QAo=;
+        b=HkFiUCbo2QyhEp+JwIM8kQ5pqr+cuiBAwpcH0n2VDLuaKfzqQzzT7FAtTMZrDhTaNX
+         RJiNj4Jdixyv+vvp1+2MhEwbEfEntbzL2g+JSo0oRcgaVxVStTdqPfbOoLPF4t+cxgYZ
+         NR8JJJSInQauAKsce4lc6WK1jL/9p9TwI6vEsMgkbuq1QXciS45uPAFHr5MSh12NV+dY
+         bFOuUUixNnAbUKM3bynH7pJdbi68BW4khgNqdS8+fgzZ4vM3I5swEHBa0hZNTmyWYdgN
+         eI639ijfERBexo3qIp02oCLHE0/ofNmLSgJ7v4pl4wDSB/aI/yCLI2fW/DoaBq6bl/rJ
+         coUA==
+X-Gm-Message-State: APjAAAUMWLM51wkARrcXJWamGdI0E/gOhnvymRu97yHgJuZXdaBdCmeQ
+        Eh2ShQwNnklwKRWFDM76PnXknUArqb+i2RqX3BQ=
+X-Google-Smtp-Source: APXvYqziQE9LV2rl/8tkESiGWi9hkeo3170AZ/wKEoqTmy3Gmiki1HzT/6UUwf2yRfVFGg+MOn0gQka/qfkY0gHedrI=
+X-Received: by 2002:aa7:ccc7:: with SMTP id y7mr13298482edt.45.1580123864420;
+ Mon, 27 Jan 2020 03:17:44 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20200106081605.ffjz7xy6e24rfcgx@pengutronix.de>
-User-Agent: NeoMutt/20180716
+References: <20200127102303.44133-1-colin.king@canonical.com>
+In-Reply-To: <20200127102303.44133-1-colin.king@canonical.com>
+From:   Shubhrajyoti Datta <shubhrajyoti.datta@gmail.com>
+Date:   Mon, 27 Jan 2020 16:47:33 +0530
+Message-ID: <CAKfKVtHMbOvwppZcLN=J+2VvJ1GOFgZ2-DDAfav5w9zf1EjZKQ@mail.gmail.com>
+Subject: Re: [PATCH][next][V2] i2c: xiic: fix indentation issue
+To:     Colin King <colin.king@canonical.com>
+Cc:     Michal Simek <michal.simek@xilinx.com>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-i2c <linux-i2c@vger.kernel.org>,
+        kernel-janitors@vger.kernel.org,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Monday 06 January 2020 09:16:05 Sascha Hauer wrote:
-> On Wed, Dec 25, 2019 at 07:18:40PM +0100, Pali Rohár wrote:
-> > Hello Sascha!
-> > 
-> > On Friday 13 December 2019 09:04:08 Sascha Hauer wrote:
-> > > ata_qc_complete_multiple() is called with a mask of the still active
-> > > tags.
-> > > 
-> > > mv_sata doesn't have this information directly and instead calculates
-> > > the still active tags from the started tags (ap->qc_active) and the
-> > > finished tags as (ap->qc_active ^ done_mask)
-> > > 
-> > > Since 28361c40368 the hw_tag and tag are no longer the same and the
-> > > equation is no longer valid. In ata_exec_internal_sg() ap->qc_active is
-> > > initialized as 1ULL << ATA_TAG_INTERNAL, but in hardware tag 0 is
-> > > started and this will be in done_mask on completion. ap->qc_active ^
-> > > done_mask becomes 0x100000000 ^ 0x1 = 0x100000001 and thus tag 0 used as
-> > > the internal tag will never be reported as completed.
-> > > 
-> > > This is fixed by introducing ata_qc_get_active() which returns the
-> > > active hardware tags and calling it where appropriate.
-> > > 
-> > > This is tested on mv_sata, but sata_fsl and sata_nv suffer from the same
-> > > problem. There is another case in sata_nv that most likely needs fixing
-> > > as well, but this looks a little different, so I wasn't confident enough
-> > > to change that.
-> > 
-> > I can confirm that sata_nv.ko does not work in 4.18 (and new) kernel
-> > version correctly. More details are in email:
-> > 
-> > https://lore.kernel.org/linux-ide/20191225180824.bql2o5whougii4ch@pali/T/
-> > 
-> > I tried this patch and it fixed above problems with sata_nv.ko. It just
-> > needs small modification (see below).
-> > 
-> > So you can add my:
-> > 
-> > Tested-by: Pali Rohár <pali.rohar@gmail.com>
-> > 
-> > And I hope that patch would be backported to 4.18 and 4.19 stable
-> > branches soon as distributions kernels are broken for machines with
-> > these nvidia sata controllers.
-> > 
-> > Anyway, what is that another case in sata_nv which needs to be fixed
-> > too?
-> 
-> It's in nv_swncq_sdbfis(). Here we have:
-> 
-> 	sactive = readl(pp->sactive_block);
-> 	done_mask = pp->qc_active ^ sactive;
-> 
-> 	pp->qc_active &= ~done_mask;
-> 	pp->dhfis_bits &= ~done_mask;
-> 	pp->dmafis_bits &= ~done_mask;
-> 	pp->sdbfis_bits |= done_mask;
-> 	ata_qc_complete_multiple(ap, ap->qc_active ^ done_mask);
-> 
-> Sascha
-
-Ok. Are you going to fix also this case?
-
--- 
-Pali Rohár
-pali.rohar@gmail.com
+On Mon, Jan 27, 2020 at 4:46 PM Colin King <colin.king@canonical.com> wrote:
+>
+> From: Colin Ian King <colin.king@canonical.com>
+>
+> There is a statement that is indented one level too deeply, remove
+> the extraneous tab.
+>
+Reviewed-by: Shubhrajyoti Datta <shubhrajyoti.datta@gmail.com>
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> ---
+> V2: fix type in commit message
+> ---
+>  drivers/i2c/busses/i2c-xiic.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/i2c/busses/i2c-xiic.c b/drivers/i2c/busses/i2c-xiic.c
+> index b17d30c9ab40..90c1c362394d 100644
+> --- a/drivers/i2c/busses/i2c-xiic.c
+> +++ b/drivers/i2c/busses/i2c-xiic.c
+> @@ -261,7 +261,7 @@ static int xiic_clear_rx_fifo(struct xiic_i2c *i2c)
+>                 xiic_getreg8(i2c, XIIC_DRR_REG_OFFSET);
+>                 if (time_after(jiffies, timeout)) {
+>                         dev_err(i2c->dev, "Failed to clear rx fifo\n");
+> -                               return -ETIMEDOUT;
+> +                       return -ETIMEDOUT;
+>                 }
+>         }
+>
+> --
+> 2.24.0
+>
