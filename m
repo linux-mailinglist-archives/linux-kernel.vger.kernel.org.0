@@ -2,88 +2,112 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BAE2D14ACAD
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Jan 2020 00:42:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7814014ACBD
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Jan 2020 00:54:49 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726650AbgA0Xm2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 27 Jan 2020 18:42:28 -0500
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:40683 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726442AbgA0Xm1 (ORCPT
+        id S1726852AbgA0Xyj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 27 Jan 2020 18:54:39 -0500
+Received: from mail-pf1-f201.google.com ([209.85.210.201]:41196 "EHLO
+        mail-pf1-f201.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726323AbgA0Xyj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 27 Jan 2020 18:42:27 -0500
-Received: by mail-pl1-f196.google.com with SMTP id y1so826308plp.7
-        for <linux-kernel@vger.kernel.org>; Mon, 27 Jan 2020 15:42:27 -0800 (PST)
+        Mon, 27 Jan 2020 18:54:39 -0500
+Received: by mail-pf1-f201.google.com with SMTP id b62so6971042pfb.8
+        for <linux-kernel@vger.kernel.org>; Mon, 27 Jan 2020 15:54:39 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=4jR3NEZ7x+Jvx3U2TQ49TKGsznRacov85tgmCkWAaLs=;
-        b=KEEfsaPzSnHMeqMLqqLF/rKhOnk1MsLgBr28dnqCs8OF9PTkJ+kGeggRfhXfPW8AdM
-         5ignS2E0kGnVhslgsBP8y2I9j5uYqsgB/RjhpdR6fqQN3cHxjGgEp3OwCIYullOj2y5g
-         x1loPleyzV88AC/BVEIpNRNXMByZ94VY3QKAjX6PPGnMgCchseaNbLqYu9raH41h6jxu
-         qxpD3/1hqBM5jHPTxqKIHNdcOObFQsr7HrQo6E8lr2n1h2riX6kKDEq+FcaDAZLdUIYd
-         BGbZf2NJM0rhl/BD/e5neNmcLeRSrbC4bnz9hgkuxwxL4j2O4bk1WtwRxabeG082RSm9
-         ZDuA==
+        d=google.com; s=20161025;
+        h=date:message-id:mime-version:subject:from:to:cc;
+        bh=0WVlBZ9h/3UAmHAjFKk1i1lby5ArQALhCHp8vRDwf6s=;
+        b=B0D4GdH37zFLkAB6DLlyqBHlLmNEXHfnkYgFffeTOmOr475hSOENtNB8TIo3G4sGe0
+         FGQeW1LRFZFwEwZe0xYBNGSrbzuvSB/n522fs6/iqw0svGmiqpGIgfsGVIAnWpo0xe6b
+         BoM87ucGn23bNOQFBFwtOThLn+0+3twkPtHYFFqqNHT27mvPiaZYPxgu4N/l/e8eaXcg
+         7jQiGP//cNxEUu+McL7virtX6XQNY1Tl0esKP2c/WrVvCyn1rDqO+BVfbr+AnTAAodm8
+         8eaZUZJdgvoPLStiKNbl0DHxWBNzGU98A6D6t+uV4+grA51Z1w5tPzJYd+kP7DcwXnGr
+         FQyQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=4jR3NEZ7x+Jvx3U2TQ49TKGsznRacov85tgmCkWAaLs=;
-        b=G7op4knMzgJRo5IJsIUWdFhvR2GHrRwXOdFVdh8yMSwGaNi9MdZ/7WA+blf8SXGQ0x
-         AiL/3w0UrNsCyxLAti3C+iPNm4ctBVj8JWBhFtcEkzvcwjZLSyHig+r4tw8eRF1osft+
-         I4uWKH7S9nyNiloaNHSs1iVVP5icwaBVwmIMv3aMOsy1/qDucbvN2qU4SFbfqubYd9j5
-         RLN70OyiJfrzCRlcpLTv/CT+XYo+yty0xMSRUORKZD1DCKk/Z9H9Pch8d7RkQaRjFnQm
-         28ge1k/nWpwBvUF/eugIWeqOoWjRQHSKuJvMtyJPKwp4bE3DbgxKhIlQGOzIHOozc7gA
-         90Xw==
-X-Gm-Message-State: APjAAAX4aWjGeCGLEcLk8JvC0eROcTGfuNLCoNxnbdDrivYCyKxpca8M
-        Inz+C+ScZoB2jmVs9UQwVadyKw==
-X-Google-Smtp-Source: APXvYqz6tLIUsXV5Wb/Oi6Sc3Ql3UOYy6wK2oscK/U9I/+KHFO2ncIizEywoPt17c47xcms2lkjbpA==
-X-Received: by 2002:a17:90a:3aaf:: with SMTP id b44mr1344980pjc.9.1580168546572;
-        Mon, 27 Jan 2020 15:42:26 -0800 (PST)
-Received: from yoga (pat_11.qualcomm.com. [192.35.156.11])
-        by smtp.gmail.com with ESMTPSA id p18sm325420pjo.3.2020.01.27.15.42.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 27 Jan 2020 15:42:26 -0800 (PST)
-Date:   Mon, 27 Jan 2020 15:42:23 -0800
-From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     Stephen Boyd <sboyd@kernel.org>
-Cc:     Andy Gross <agross@kernel.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Kalle Valo <kvalo@codeaurora.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, ath10k@lists.infradead.org
-Subject: Re: [PATCH 0/2] ath10k: Enable QDSS clock on sm8150
-Message-ID: <20200127234223.GA202699@yoga>
-References: <20191223054855.3020665-1-bjorn.andersson@linaro.org>
- <20200127184037.3BFB620CC7@mail.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200127184037.3BFB620CC7@mail.kernel.org>
-User-Agent: Mutt/1.12.2 (2019-09-21)
+        h=x-gm-message-state:date:message-id:mime-version:subject:from:to:cc;
+        bh=0WVlBZ9h/3UAmHAjFKk1i1lby5ArQALhCHp8vRDwf6s=;
+        b=ArpQXaP10DjuSoDWYsmUKnDYFIGa+Fmym906r2hHKxXFMzKY59vyn1T+Srx4njsnTS
+         A7LwTWqXepbesXJJ1gdHV3uVY45YE+o2fv+/x2/R5ADoo8PlNz4vf0ix33PbExPMIdGi
+         a7tM41UdvuCPmQ4+Io1eHCADYoLqaVx/mfrnf9a8P7jhi1Wd3SVJuzUQIVm8VMBKxl3F
+         LzLxULHiSzZ1xkd4f6sru978SqpKToPrUhh+OONmeN5lVBpP2vA1Q1DGzjA4+FMUWJD/
+         h5AXi35CWgpLPsCLVBbY2LzcHt8AA2KnF0KKAp0FWyP7JYejxsCYDOnZ9OXFCuvieKIe
+         3oIg==
+X-Gm-Message-State: APjAAAUZ04FBwgl1Uiwg02fbNCvROiFCc59BMK1peisD0qqmYuWcN2jD
+        lEKhKDz5+U+egJeYfXmO60DXpHyTrAkUBiUBodj67Q==
+X-Google-Smtp-Source: APXvYqxuHlif8YoC09sMp36DADFxZKUEjmOezwoOELE8SswXmvcrc2Cpl4SiqOBpXxHMb1qSYM81/g2GJjm81WrtmsBS6w==
+X-Received: by 2002:a63:ea4c:: with SMTP id l12mr20867620pgk.29.1580169278383;
+ Mon, 27 Jan 2020 15:54:38 -0800 (PST)
+Date:   Mon, 27 Jan 2020 15:53:51 -0800
+Message-Id: <20200127235356.122031-1-brendanhiggins@google.com>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.25.0.341.g760bfbb309-goog
+Subject: [PATCH v1 0/5] uml: add more unspecified HAS_IOMEM dependencies
+From:   Brendan Higgins <brendanhiggins@google.com>
+To:     jdike@addtoit.com, richard@nod.at, anton.ivanov@cambridgegreys.com,
+        Kevin Hilman <khilman@kernel.org>, Nishanth Menon <nm@ti.com>,
+        Richard Cochran <richardcochran@gmail.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        "David S . Miller" <davem@davemloft.net>,
+        Michal Simek <michal.simek@xilinx.com>,
+        Andrew Lunn <andrew@lunn.ch>,
+        Robert Hancock <hancock@sedsystems.ca>,
+        Esben Haabendal <esben@geanix.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Radhey Shyam Pandey <radhey.shyam.pandey@xilinx.com>
+Cc:     linux-um@lists.infradead.org, linux-kernel@vger.kernel.org,
+        davidgow@google.com, heidifahim@google.com,
+        Brendan Higgins <brendanhiggins@google.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        netdev@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-pm@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon 27 Jan 10:40 PST 2020, Stephen Boyd wrote:
+# TL;DR
 
-> Quoting Bjorn Andersson (2019-12-22 21:48:53)
-> > On SM8150 the WiFi firmware depends on the QDSS clock ticking, or the system
-> > will reset due to an NoC error. So this adds an optional clock to the ath10k
-> > binding and makes sure it's enabled while the WiFi firmware needs it.
-> 
-> Hopefully this isn't a requirement in production firmware? Seems
-> wasteful to keep the debug clk enabled in the field when nobody is
-> debugging anything.
-> 
+This patchset adds a missing HAS_IOMEM dependency to several drivers in
+an attempt to get allyesconfig closer to working for ARCH=um. Although I
+had caught all the broken ones in early 5.5[1], some new ones have
+broken since then.
 
-I'm confused about this as well, but I'm told that it was fixed
-post-8150.
+# What am I trying to do?
 
-Regards,
-Bjorn
+This patchset is part of my attempt to get `make ARCH=um allyesconfig`
+to produce a config that will build *and* boot to init, so that I can
+use it as a mechanism to run tests[2].
+
+# Why won't allyesconfig break again after this series of fixes?
+
+Well, in short, it will break again; however, as I mentioned above, I am
+using UML for testing the kernel, and I am currently working on getting
+my tests to run on KernelCI. As part of our testing procedure for
+KernelCI, we are planning on building a UML kernel using allyesconfig
+and running our tests on it. Thus, we will find out very quickly once
+someone breaks allyesconfig again once we get this all working. So this
+will keep breaking until we have a build test on KernelCI running, but
+we will need to send out these fixes anyway.
+
+Brendan Higgins (5):
+  net: axienet: add unspecified HAS_IOMEM dependency
+  reset: brcmstb-rescal: add unspecified HAS_IOMEM dependency
+  reset: intel: add unspecified HAS_IOMEM dependency
+  ptp: 1588_clock_ines: add unspecified HAS_IOMEM dependency
+  power: avs: qcom-cpr: add unspecified HAS_IOMEM dependency
+
+ drivers/net/ethernet/xilinx/Kconfig | 1 +
+ drivers/power/avs/Kconfig           | 2 +-
+ drivers/ptp/Kconfig                 | 1 +
+ drivers/reset/Kconfig               | 3 ++-
+ 4 files changed, 5 insertions(+), 2 deletions(-)
+
+[1] https://lore.kernel.org/lkml/20191211192742.95699-1-brendanhiggins@google.com/
+[2] https://bugzilla.kernel.org/show_bug.cgi?id=205223
+
+-- 
+2.25.0.341.g760bfbb309-goog
+
