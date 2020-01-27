@@ -2,154 +2,332 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4935214A2D0
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Jan 2020 12:16:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 57FC614A2D5
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Jan 2020 12:17:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730378AbgA0LQw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 27 Jan 2020 06:16:52 -0500
-Received: from mail-io1-f67.google.com ([209.85.166.67]:35157 "EHLO
-        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729235AbgA0LQw (ORCPT
+        id S1730399AbgA0LR0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 27 Jan 2020 06:17:26 -0500
+Received: from mail-lf1-f65.google.com ([209.85.167.65]:46790 "EHLO
+        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726179AbgA0LRZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 27 Jan 2020 06:16:52 -0500
-Received: by mail-io1-f67.google.com with SMTP id h8so9512724iob.2
-        for <linux-kernel@vger.kernel.org>; Mon, 27 Jan 2020 03:16:51 -0800 (PST)
+        Mon, 27 Jan 2020 06:17:25 -0500
+Received: by mail-lf1-f65.google.com with SMTP id z26so5893635lfg.13
+        for <linux-kernel@vger.kernel.org>; Mon, 27 Jan 2020 03:17:23 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=B2jn7Up2+cD+eD0D5ROwEvtEdti9pDs97jpRUZiU808=;
-        b=TeflSVeClgOmybuUdraDwRDq9IBddwlPu0A697aG3aE5gp2/aIDp2vvWgEWA/XhPU5
-         DKrgrbvlYYAdAEyYGSHlCA3Lyu+tHHlgxKD4D17+p9Ty0j+YOIKzJpDWzCaU11xjS2ga
-         tAECbeUjD+qPWCI4YH854OjSrAxIK+z8wE4kY=
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=KH4ITOu8HFmfSpo3QTXooiDVcVciY0roscrgdBJW03E=;
+        b=lSd1hw3bvtfcQo8pFs3QYYkthwadopZSIwVADpKK+W6nkPuIAe63CgQ7PpwyUf+Qgw
+         qa0r+lqWUTIDzg6zgeQxkgooE+AYbyhW9u/44/GRi/A3eVfr0AcVNXAh08EN4r+XtAlV
+         Z6rjOggnzGO1YOBBCVbGeuWiRxfIPPzE9NLeUT0sLrI5CyV5ZmskrhxN9rjMvnGgE+3y
+         kC7vxbKci2NzH6AwFl4W4H66DN8VnGLMl1QNz9NyFPjFEpdSfa4PDURqvkyMwSlQXwiH
+         0VGkYYByXjbCv7fMhpdiaUQjdEXz/6WKciv9P6N0ObXOWgij/VlSD2C2VT0l3XXNSapy
+         SNVQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=B2jn7Up2+cD+eD0D5ROwEvtEdti9pDs97jpRUZiU808=;
-        b=IykOX0byjB07Stl/ndz90pBkblcpN6z52Ym6MhrQfobJDX/Dwn0vWbBB9JxOCTF0BS
-         4KOH/Yud2jPkzaLhm6tJ2tQykyPU7/STi37hN9k5rqNjuaBYyBJLLH03tA+VtzO1CbMM
-         bP4ULv59bkECk90G9/rqkM7bGMxHAR6PWdMqIZDCKan+4nFz4Np59vbs4sSxHelZwiaR
-         MMEAjm7e8E40MiVksoFRVQYq7ShnMcWebN1VjCQbUduKitJI5DZqyHr2tQ0whMda+Vbf
-         sxElG9voNZDFJVVkqDQ/fIPvGcrjqrf84UZp9RQjbnEoWILO2axgjvMOuHBLzn+PQOfL
-         C+2g==
-X-Gm-Message-State: APjAAAWr3AxjwjpLQN2VEJdO/Gu1S8tY8+ZI4X51t0xsHK9KQLjjmNJX
-        GuAaq3fzZy6S9Oezc8I5ZkwjSTDAhYTSjQbsMg76G22j6aM=
-X-Google-Smtp-Source: APXvYqxi9Al6EhVp6Fzs3kt7WGSSwQJ9MM7X9p2Zw11dLwUwgYfH+Qk893fJYujMv7QyZvGWxu7R2xASBb1OJ8GmRss=
-X-Received: by 2002:a92:bb08:: with SMTP id w8mr13902051ili.27.1580123446775;
- Mon, 27 Jan 2020 03:10:46 -0800 (PST)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=KH4ITOu8HFmfSpo3QTXooiDVcVciY0roscrgdBJW03E=;
+        b=byjv/T3epIYvsLCXEjJ0+Ly7jTvLTXNjd/MOfLcjt2fKDXQT/EyrvRDD6RwppeefUr
+         il6dE+MAO0T5LceWrNPmOAiLR/yCZC0+yKSGlxOy0bZzv63H7jCighkkVwCLdcmegNLP
+         ZaDACBd7xHk8PoslGb1vKcUNfXRaSb7uTST2S1onupQekDjMBHKFfPmb/SaUAugW7+B3
+         Pr4gkIk81ByLpYcQxuqhHEtBu3ZPhqWn3xx8ROhowwgzfcqUP7JYwZwHQclPFhkR8/24
+         vSlWs7ue1RnORS5wqxSzIQKT5P9gfQ3FQCC1fSs3x0WiqaDn+V2vs8rh+MesJ4jsuvTJ
+         +e2Q==
+X-Gm-Message-State: APjAAAVdSixEa2Fv/QJJmG6DJvDHCN/ZSoDunBxNgr/wrtsio1AT0NJX
+        gH6Iu3rWrpbEtwyumnNj9NIxf9j8BGk=
+X-Google-Smtp-Source: APXvYqzJ+59zUviNTBO9AYVWT3vL3Bg4IQ73sTDAa7FLq/UKF0kYBzfFKd7g+Q/bxubRZefL5khPMw==
+X-Received: by 2002:a2e:96c6:: with SMTP id d6mr10032819ljj.4.1580123495960;
+        Mon, 27 Jan 2020 03:11:35 -0800 (PST)
+Received: from localhost.localdomain (h-158-174-22-210.NA.cust.bahnhof.se. [158.174.22.210])
+        by smtp.gmail.com with ESMTPSA id u19sm7902087lfu.68.2020.01.27.03.11.34
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 27 Jan 2020 03:11:35 -0800 (PST)
+From:   Ulf Hansson <ulf.hansson@linaro.org>
+To:     Linus <torvalds@linux-foundation.org>, linux-mmc@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc:     Ulf Hansson <ulf.hansson@linaro.org>
+Subject: [GIT PULL] MMC updates for v5.6
+Date:   Mon, 27 Jan 2020 12:11:34 +0100
+Message-Id: <20200127111134.25963-1-ulf.hansson@linaro.org>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-References: <20200123130816.24815-1-kalimuthu.velappan@broadcom.com> <a7d6f51f-8c5c-9242-97a1-8fdea9fdbb7b@iogearbox.net>
-In-Reply-To: <a7d6f51f-8c5c-9242-97a1-8fdea9fdbb7b@iogearbox.net>
-From:   Kalimuthu Velappan <kalimuthu.velappan@broadcom.com>
-Date:   Mon, 27 Jan 2020 16:40:09 +0530
-Message-ID: <CAKA8wj0nLH7UV=Pnk6kbHbyx2sxbL+fOd7JC=o2KryZKRgPFYQ@mail.gmail.com>
-Subject: Re: [PATCH] Support for nlattr and nested_nlattr attribute search in
- EBPF filter
-To:     Daniel Borkmann <daniel@iogearbox.net>
-Cc:     Alexei Starovoitov <ast@kernel.org>,
-        Martin KaFai Lau <kafai@fb.com>,
-        Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>,
-        Andrii Nakryiko <andriin@fb.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Stanislav Fomichev <sdf@google.com>,
-        Quentin Monnet <quentin.monnet@netronome.com>,
-        Andrey Ignatov <rdna@fb.com>,
-        "open list:BPF (Safe dynamic programs and tools)" 
-        <netdev@vger.kernel.org>,
-        "open list:BPF (Safe dynamic programs and tools)" 
-        <bpf@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Daniel,
+Hi Linus,
 
-There are few network applications relying on Netlink subsystem to get
-notifications for net-device attribute changes like MTU, Speed,
-Oper-Status, Name, slave, slave info, etc. The Netlink subsystem
-notifies the application on every attribute change regardless of what
-is being needed for the application. The attribute search support in
-EBPF filter helps to filter the Netlink packets based on the specific
-set of attributes that are needed for the application.
+Here's the PR with the updates for MMC for v5.6. There are no updates for the
+MEMSTICK subsystem this time. Details about the highlights are as usual found
+in the signed tag.
 
-The classical BPF supports attribute search but that doesn't support
-MAPS. The extended BPF supports MAPS, but the attribute search is not
-enabled. Hence this patch enables the support for attribute search in
-EBPF.
+Note that, this time I am also carrying a patch from the pinctrl tree, which
+has been shared through an immutable branch.
 
-Thanks
-Kals
+Please pull this in!
+
+Kind regards
+Ulf Hansson
 
 
-On Thu, Jan 23, 2020 at 9:27 PM Daniel Borkmann <daniel@iogearbox.net> wrote:
->
-> On 1/23/20 2:08 PM, Kalimuthu Velappan wrote:
-> > Added attribute search and nested attribute support in EBPF filter
-> > functionality.
->
-> Your commit describes what the code does, but not the rationale why it's needed
-> resp. the use-case you're trying to solve with this.
->
-> Also, why it cannot be resolved in native BPF?
->
-> > Signed-off-by: Kalimuthu Velappan <kalimuthu.velappan@broadcom.com>
-> > ---
-> >   include/uapi/linux/bpf.h       |  5 ++++-
-> >   net/core/filter.c              | 22 ++++++++++++++++++++++
-> >   tools/include/uapi/linux/bpf.h |  4 +++-
-> >   3 files changed, 29 insertions(+), 2 deletions(-)
-> >
-> > diff --git a/include/uapi/linux/bpf.h b/include/uapi/linux/bpf.h
-> > index dbbcf0b..ac9794c 100644
-> > --- a/include/uapi/linux/bpf.h
-> > +++ b/include/uapi/linux/bpf.h
-> > @@ -2938,7 +2938,10 @@ union bpf_attr {
-> >       FN(probe_read_user),            \
-> >       FN(probe_read_kernel),          \
-> >       FN(probe_read_user_str),        \
-> > -     FN(probe_read_kernel_str),
-> > +     FN(probe_read_kernel_str),  \
-> > +     FN(skb_get_nlattr),     \
-> > +     FN(skb_get_nlattr_nest),
-> > +
->
-> This is not on latest bpf-next tree.
->
-> >   /* integer value in 'imm' field of BPF_CALL instruction selects which helper
-> >    * function eBPF program intends to call
-> > diff --git a/net/core/filter.c b/net/core/filter.c
-> > index 538f6a7..56a87e1 100644
-> > --- a/net/core/filter.c
-> > +++ b/net/core/filter.c
-> > @@ -2699,6 +2699,24 @@ static const struct bpf_func_proto bpf_set_hash_invalid_proto = {
-> >       .arg1_type      = ARG_PTR_TO_CTX,
-> >   };
-> >
-> > +static const struct bpf_func_proto bpf_skb_get_nlattr_proto = {
-> > +     .func           = bpf_skb_get_nlattr,
-> > +     .gpl_only       = false,
-> > +     .ret_type       = RET_INTEGER,
-> > +     .arg1_type      = ARG_PTR_TO_CTX,
-> > +     .arg2_type  = ARG_ANYTHING,
-> > +     .arg3_type  = ARG_ANYTHING,
-> > +};
-> > +
-> > +static const struct bpf_func_proto skb_get_nlattr_nest_proto = {
-> > +     .func           = bpf_skb_get_nlattr_nest,
-> > +     .gpl_only       = false,
-> > +     .ret_type       = RET_INTEGER,
-> > +     .arg1_type      = ARG_PTR_TO_CTX,
-> > +     .arg2_type  = ARG_ANYTHING,
-> > +     .arg3_type  = ARG_ANYTHING,
-> > +};
-> > +
-> >   BPF_CALL_2(bpf_set_hash, struct sk_buff *, skb, u32, hash)
+The following changes since commit 2a187d03352086e300daa2044051db00044cd171:
 
+  mmc: sdhci: fix minimum clock rate for v3 controller (2020-01-20 10:36:27 +0100)
 
+are available in the Git repository at:
 
--- 
-Thanks
-- Kals
+  git://git.kernel.org/pub/scm/linux/kernel/git/ulfh/mmc.git tags/mmc-v5.6
+
+for you to fetch changes up to 533a6cfe08f96a7b5c65e06d20916d552c11b256:
+
+  mmc: core: Default to generic_cmd6_time as timeout in __mmc_switch() (2020-01-24 12:17:05 +0100)
+
+----------------------------------------------------------------
+MMC core:
+ - Convert to reasonable timeouts for all CMD6 commands (updates for BKOPS,
+   CACHE_FLUSH and INAND_CMD38_ARG_EXT_CSD) for eMMC
+ - Respect f_max clock rate at card initialization
+ - Add gpiod_toggle_active_low() API
+ - Consolidate slot-gpio code by using gpiod_toggle_active_low()
+
+MMC host:
+ - Add pinctrl_select_default_state() API
+ - Consolidate pintctrl code by using pinctrl_select_default_state()
+ - mmci: Support any block sizes for SDIO for some variants
+ - mmci: Enable reset control for stm32_sdmmc
+ - mmc_spi: Toggle SPI_CS_HIGH polarity rather than hard-coding it
+ - renesas_sdhi: Add support for the r8a77961 variant
+ - renesas_sdhi: A few minor improvements
+ - rockchip-dw-mshc: Add support for the rk3308 variant
+ - sdhci: Enable support for external DMA controllers
+ - sdhci: Fixup error path when sending CMD12
+ - sdhci-brcmstb: Add support for 7216b0 variant
+ - sdhci-brcmstb: Add support for command queuing (CQHCI)
+ - sdhci-brcmstb: Add support for eMMC HS400ES mode
+ - sdhci-msm: Add support for the sc7180 variant
+ - sdhci-msm: Add support for command queuing (CQHCI)
+ - sdhci-of-at91: Add support for the SAM9x60 variant
+ - sdhci-of-at91: Improve support for tunings
+ - sdhci-of-esdhc: A few fixups for some clock related issues
+ - sdhci-omap: Add support for the am335x and the am437x variants
+ - sdhci-omap: Improve support for erase operations
+ - sdhci-omap: Add support for external DMA
+
+----------------------------------------------------------------
+Al Cooper (6):
+      dt-bindings: mmc: brcm,sdhci-brcmstb: Add support for 7216b0
+      mmc: sdhci-brcmstb: Add ability to use HS400ES transfer mode
+      mmc: sdhci-brcmstb: Fix driver to defer on clk_get defer
+      mmc: sdhci-brcmstb: Add shutdown callback
+      mmc: sdhci-brcmstb: Add support for Command Queuing (CQE)
+      mmc: sdhci-brcmstb: Fix incorrect switch to HS mode
+
+Anson Huang (1):
+      dt-bindings: mmc: fsl-imx-esdhc: add i.MX8MP compatible string
+
+Chuhong Yuan (1):
+      mmc: cavium: Add missed pci_release_regions
+
+Chunyan Zhang (4):
+      dt-bindings: sdhci-omap: Add properties for using external dma
+      mmc: sdhci: add support for using external DMA devices
+      mmc: sdhci-omap: Add using external dma
+      mmc: sdhci: fix an issue of mixing different types
+
+Faiz Abbas (8):
+      mmc: sdhci: Update the tuning failed messages to pr_debug level
+      mmc: sdhci: Factor out some operations set to their own functions
+      mmc: sdhci: Convert sdhci_set_timeout_irq() to non-static
+      mmc: sdhci: Refactor sdhci_set_timeout()
+      mmc: sdhci-omap: Disable data timeout interrupt during erase
+      dt-bindings: sdhci-omap: Add am335x and am437x specific bindings
+      mmc: sdhci-omap: Add am335x and am437x specific compatibles
+      mmc: sdhci-omap: Add special reset capability
+
+Geert Uytterhoeven (1):
+      dt-bindings: mmc: renesas_sdhi: Document r8a77961 support
+
+Johan Jonker (3):
+      dt-bindings: mmc: convert synopsys dw-mshc bindings to yaml
+      dt-bindings: mmc: convert rockchip dw-mshc bindings to yaml
+      dt-bindings: mmc: rockchip-dw-mshc: add description for rk3308
+
+Linus Walleij (2):
+      mmc: spi: Toggle SPI polarity, do not hardcode it
+      mmc: mmci: Support any block sizes for ux500v2 and qcom variant
+
+Ludovic Barre (1):
+      mmc: mmci: add threaded irq to abort DPSM of non-functional state
+
+Ludovic Desroches (2):
+      dt-bindings: sdhci-of-at91: new compatible string and update properties
+      mmc: sdhci-of-at91: rework clocks management to support SAM9x60 device
+
+Masahiro Yamada (1):
+      mmc: sdhci-cadence: remove unneeded 'inline' marker
+
+Michał Mirosław (7):
+      mmc: sdhci-s3c: remove unused ext_cd_gpio field
+      gpio: add gpiod_toggle_active_low()
+      mmc: core: Rework wp-gpio handling
+      mmc: core: Rework cd-gpio handling
+      mmc: core: Remove mmc_gpiod_request_*(invert_gpio)
+      mmc: sdhci-of-at91: fix memleak on clk_get failure
+      mmc: core: limit probe clock frequency to configured f_max
+
+Peter Ujfalusi (9):
+      mmc: dw_mmc: Use dma_request_chan() instead dma_request_slave_channel()
+      mmc: mmci: Use dma_request_chan() instead dma_request_slave_channel()
+      mmc: mxcmmc: Use dma_request_chan() instead dma_request_slave_channel()
+      mmc: mxs: Use dma_request_chan() instead dma_request_slave_channel()
+      mmc: owl-mmc: Use dma_request_chan() instead dma_request_slave_channel()
+      mmc: pxamci: Use dma_request_chan() instead dma_request_slave_channel()
+      mmc: sh_mmcif: Use dma_request_chan() instead dma_request_slave_channel()
+      mmc: usdhi6rol0: Use dma_request_chan() instead dma_request_slave_channel()
+      mmc: bcm2835: Use dma_request_chan() instead dma_request_slave_channel()
+
+Ritesh Harjani (1):
+      mmc: sdhci-msm: Add CQHCI support for sdhci-msm
+
+Ulf Hansson (18):
+      pinctrl: core: Add pinctrl_select_default_state() and export it
+      Merge branch 'fixes' into next
+      mmc: meson-gx: Convert to pinctrl_select_default_state()
+      mmc: mmci: Convert to pinctrl_select_default_state()
+      mmc: usdhi6rol0: Convert to pinctrl_select_default_state()
+      mmc: omap_hsmmc: Convert to pinctrl_select_default_state()
+      mmc: sdhci-esdhc-imx: Convert to pinctrl_select_default_state()
+      mmc: atmel-mci: Convert to pinctrl_select_default_state()
+      mmc: jz4740: Convert to pinctrl_select_default_state()
+      mmc: uniphier-sd: Convert to pinctrl_select_default_state()
+      Merge branch 'mmc_pinctrl' into next
+      Merge branch 'fixes' into next
+      Merge branch 'fixes' into next
+      Merge branch 'fixes' into next
+      Merge branch 'fixes' into next
+      mmc: core: Specify timeouts for BKOPS and CACHE_FLUSH for eMMC
+      mmc: block: Use generic_cmd6_time when modifying INAND_CMD38_ARG_EXT_CSD
+      mmc: core: Default to generic_cmd6_time as timeout in __mmc_switch()
+
+Veerabhadrarao Badiganti (2):
+      dt-bindings: mmc: sdhci-msm: Add compatible string for sc7180
+      mmc: sdhci: Let a vendor driver supply and update ADMA descriptor size
+
+Wolfram Sang (6):
+      mmc: renesas_sdhi: remove whitelist for internal DMAC
+      mmc: renesas_sdhi: keep sorting for quirk entries
+      mmc: renesas_sdhi: make warning more precise
+      mmc: renesas_sdhi: make quirks info accessible outside probe()
+      mmc: renesas_sdhi: remove 4taps as a TMIO flag
+      mmc: renesas_sdhi: use recent tap values for HS400
+
+Yangbo Lu (8):
+      mmc: sdhci: fix up CMD12 sending
+      mmc: sdhci-of-esdhc: use 1/2 periperhal clock for ls1088a
+      mmc: sdhci-of-esdhc: convert to use esdhc_tuning_window_ptr()
+      mmc: sdhci-of-esdhc: update tuning erratum A-008171
+      mmc: sdhci-of-esdhc: fix esdhc_reset() for different controller versions
+      mmc: sdhci-of-esdhc: fix clock setting for different controller versions
+      mmc: sdhci-of-esdhc: fix transfer mode register reading
+      mmc: sdhci-of-esdhc: fix serious issue clock is always disabled
+
+Yangtao Li (13):
+      mmc: sunxi-mmc: convert to devm_platform_ioremap_resource
+      mmc: tmio: convert to devm_platform_ioremap_resource
+      mmc: meson-mx-sdio: convert to devm_platform_ioremap_resource
+      mmc: sdhci-s3c: convert to devm_platform_ioremap_resource
+      mmc: sdhci-spear: convert to devm_platform_ioremap_resource
+      mmc: sh_mmcif: convert to devm_platform_ioremap_resource
+      mmc: sdhci_f_sdh30: convert to devm_platform_ioremap_resource
+      mmc: sdhci_am654: convert to devm_platform_ioremap_resource
+      mmc: sdhci-milbeaut: convert to devm_platform_ioremap_resource
+      mmc: sdhci-msm: convert to devm_platform_ioremap_resource
+      mmc: mvsdio: convert to devm_platform_ioremap_resource
+      mmc: mtk-sd: convert to devm_platform_ioremap_resource
+      mmc: au1xmmc: switch to platform_get_irq
+
+YueHaibing (1):
+      mmc: sdhci-milbeaut: Remove redundant platform_get_irq error message
+
+ .../devicetree/bindings/mmc/brcm,sdhci-brcmstb.txt |  41 ++-
+ .../devicetree/bindings/mmc/fsl-imx-esdhc.txt      |   1 +
+ .../devicetree/bindings/mmc/renesas,sdhi.txt       |   3 +-
+ .../devicetree/bindings/mmc/rockchip-dw-mshc.txt   |  49 ---
+ .../devicetree/bindings/mmc/rockchip-dw-mshc.yaml  | 125 +++++++
+ .../devicetree/bindings/mmc/sdhci-atmel.txt        |  13 +-
+ .../devicetree/bindings/mmc/sdhci-msm.txt          |   1 +
+ .../devicetree/bindings/mmc/sdhci-omap.txt         |  11 +
+ .../bindings/mmc/synopsys-dw-mshc-common.yaml      |  68 ++++
+ .../devicetree/bindings/mmc/synopsys-dw-mshc.txt   | 141 --------
+ .../devicetree/bindings/mmc/synopsys-dw-mshc.yaml  |  70 ++++
+ MAINTAINERS                                        |   1 +
+ drivers/gpio/gpiolib-of.c                          |  21 --
+ drivers/gpio/gpiolib.c                             |  11 +
+ drivers/mmc/core/block.c                           |   6 +-
+ drivers/mmc/core/core.c                            |  10 +-
+ drivers/mmc/core/host.c                            |  33 +-
+ drivers/mmc/core/mmc_ops.c                         |  34 +-
+ drivers/mmc/core/slot-gpio.c                       |  31 +-
+ drivers/mmc/host/Kconfig                           |   6 +
+ drivers/mmc/host/atmel-mci.c                       |   2 +-
+ drivers/mmc/host/au1xmmc.c                         |   7 +-
+ drivers/mmc/host/bcm2835.c                         |  12 +-
+ drivers/mmc/host/cavium-thunderx.c                 |  16 +-
+ drivers/mmc/host/davinci_mmc.c                     |   4 +-
+ drivers/mmc/host/dw_mmc.c                          |   8 +-
+ drivers/mmc/host/jz4740_mmc.c                      |   2 +-
+ drivers/mmc/host/meson-gx-mmc.c                    |  10 +-
+ drivers/mmc/host/meson-mx-sdio.c                   |   4 +-
+ drivers/mmc/host/mmc_spi.c                         |  15 +-
+ drivers/mmc/host/mmci.c                            | 114 ++++--
+ drivers/mmc/host/mmci.h                            |  10 +-
+ drivers/mmc/host/mtk-sd.c                          |   3 +-
+ drivers/mmc/host/mvsdio.c                          |   6 +-
+ drivers/mmc/host/mxcmmc.c                          |  11 +-
+ drivers/mmc/host/mxs-mmc.c                         |   6 +-
+ drivers/mmc/host/omap_hsmmc.c                      |  10 +-
+ drivers/mmc/host/owl-mmc.c                         |   6 +-
+ drivers/mmc/host/pxamci.c                          |  26 +-
+ drivers/mmc/host/renesas_sdhi.h                    |  10 +-
+ drivers/mmc/host/renesas_sdhi_core.c               |  22 +-
+ drivers/mmc/host/renesas_sdhi_internal_dmac.c      |  25 +-
+ drivers/mmc/host/s3cmci.c                          |   4 +-
+ drivers/mmc/host/sdhci-acpi.c                      |   2 +-
+ drivers/mmc/host/sdhci-brcmstb.c                   | 270 +++++++++++++-
+ drivers/mmc/host/sdhci-cadence.c                   |   2 +-
+ drivers/mmc/host/sdhci-esdhc-imx.c                 |  18 +-
+ drivers/mmc/host/sdhci-milbeaut.c                  |   8 +-
+ drivers/mmc/host/sdhci-msm.c                       | 139 +++++++-
+ drivers/mmc/host/sdhci-of-at91.c                   | 112 +++---
+ drivers/mmc/host/sdhci-of-esdhc.c                  | 248 ++++++++-----
+ drivers/mmc/host/sdhci-omap.c                      |  60 +++-
+ drivers/mmc/host/sdhci-pci-core.c                  |   4 +-
+ drivers/mmc/host/sdhci-s3c.c                       |   6 +-
+ drivers/mmc/host/sdhci-sirf.c                      |   2 +-
+ drivers/mmc/host/sdhci-spear.c                     |   6 +-
+ drivers/mmc/host/sdhci.c                           | 387 ++++++++++++++++-----
+ drivers/mmc/host/sdhci.h                           |  13 +-
+ drivers/mmc/host/sdhci_am654.c                     |   4 +-
+ drivers/mmc/host/sdhci_f_sdh30.c                   |   4 +-
+ drivers/mmc/host/sh_mmcif.c                        |  12 +-
+ drivers/mmc/host/sunxi-mmc.c                       |   3 +-
+ drivers/mmc/host/tmio_mmc_core.c                   |   6 +-
+ drivers/mmc/host/uniphier-sd.c                     |  14 +-
+ drivers/mmc/host/usdhi6rol0.c                      |  27 +-
+ drivers/pinctrl/core.c                             |  33 +-
+ include/linux/gpio/consumer.h                      |   7 +
+ include/linux/mfd/tmio.h                           |   3 -
+ include/linux/mmc/slot-gpio.h                      |   5 +-
+ include/linux/pinctrl/consumer.h                   |   6 +
+ 70 files changed, 1648 insertions(+), 762 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/mmc/rockchip-dw-mshc.txt
+ create mode 100644 Documentation/devicetree/bindings/mmc/rockchip-dw-mshc.yaml
+ create mode 100644 Documentation/devicetree/bindings/mmc/synopsys-dw-mshc-common.yaml
+ delete mode 100644 Documentation/devicetree/bindings/mmc/synopsys-dw-mshc.txt
+ create mode 100644 Documentation/devicetree/bindings/mmc/synopsys-dw-mshc.yaml
