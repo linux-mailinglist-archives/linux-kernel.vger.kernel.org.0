@@ -2,101 +2,122 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 68FE814A24D
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Jan 2020 11:55:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B284314A254
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Jan 2020 11:56:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730125AbgA0Kzj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 27 Jan 2020 05:55:39 -0500
-Received: from us-smtp-2.mimecast.com ([207.211.31.81]:60627 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727964AbgA0Kzj (ORCPT
+        id S1730155AbgA0K4N (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 27 Jan 2020 05:56:13 -0500
+Received: from fllv0016.ext.ti.com ([198.47.19.142]:55590 "EHLO
+        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730129AbgA0K4M (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 27 Jan 2020 05:55:39 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1580122538;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=C5GoHU21tITOeLGcgSeI5DCMeKnGmZHyFA/f49KFvg0=;
-        b=f3oZhnPuzps5Am2LaCzCkb4E3UhI9hSUAYy42buJLvfMh7E+6fSsaAJ+Wl6GHb6rHfGvcW
-        9AGsiM7Cl0R461B5s2P+BduH+ZM9sJ7I6RjZ3ycAUpoA3VP8A2IqRun+cQwf80z/5WeoXD
-        IkFi5FXt8eFwaVD/kZ0k6RE46+FJy3M=
-Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
- [209.85.128.71]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-385-N96kRo9eOSWJJRITvih0Fg-1; Mon, 27 Jan 2020 05:55:36 -0500
-X-MC-Unique: N96kRo9eOSWJJRITvih0Fg-1
-Received: by mail-wm1-f71.google.com with SMTP id f25so1352116wmb.1
-        for <linux-kernel@vger.kernel.org>; Mon, 27 Jan 2020 02:55:36 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=C5GoHU21tITOeLGcgSeI5DCMeKnGmZHyFA/f49KFvg0=;
-        b=WEgqtaMpL4gBg/SIjlOMqR0pk1viTHbx7VBTtUluZB6f+HC1KOD0j4xEo/91Cc60ON
-         21LPpcoL2LhhNrOYtPKqbK53OfvDsX0rJpf4vMo4SlDei6KpL9IsAeZBBnTmT2j+E8G1
-         DhZqRhc9ddjCQgjRs82XZKvGzMEhExdV8g4DLwcCG4hlmt8MpN0xY+CvVD7EGn+T3EOC
-         CyVN0+pgzfGXx5vaLSMKTjFKA/GacD3Y0x8BoQQugi1lx/W66hkrTJpI9xaUyZRjY3od
-         vrzd7WdmQcSC4bJlD0jVPWp1OZCE2S5f0CWHFa1cAre5t9166yCU86n5jL9tRou+14wK
-         pHEg==
-X-Gm-Message-State: APjAAAUagpfk31YhYRxoRIor5hMpHa9C2iUiBRj8NhCySiZoyCNbd87y
-        Z43/9g9XbUd7BBeKWaQuvNED2/04nAZJYLV0QHJVeV0XN8E9xa9GhUkvepn6Twdf9/qpykU5Ecx
-        2OLco1ynO3cOHYP6g2UXD2lA=
-X-Received: by 2002:adf:e58d:: with SMTP id l13mr21065277wrm.135.1580122535314;
-        Mon, 27 Jan 2020 02:55:35 -0800 (PST)
-X-Google-Smtp-Source: APXvYqxmXHDECwNyV4sc/J2dESQugTCA1QujhGGSTGYrOTm4ABN+g+mCYs8AGc58vXWnshCbjImijQ==
-X-Received: by 2002:adf:e58d:: with SMTP id l13mr21065242wrm.135.1580122535083;
-        Mon, 27 Jan 2020 02:55:35 -0800 (PST)
-Received: from localhost (cpc111743-lutn13-2-0-cust844.9-3.cable.virginm.net. [82.17.115.77])
-        by smtp.gmail.com with ESMTPSA id x14sm18076625wmj.42.2020.01.27.02.55.34
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 27 Jan 2020 02:55:34 -0800 (PST)
-Date:   Mon, 27 Jan 2020 10:55:33 +0000
-From:   Aaron Tomlin <atomlin@redhat.com>
-To:     Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-Cc:     Grzegorz Halat <ghalat@redhat.com>, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
-        linux-doc@vger.kernel.org, ssaner@redhat.com, oleksandr@redhat.com,
-        vbendel@redhat.com, kirill@shutemov.name,
-        khlebnikov@yandex-team.ru, borntraeger@de.ibm.com,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Iurii Zaikin <yzaikin@google.com>,
-        Kees Cook <keescook@chromium.org>,
-        Luis Chamberlain <mcgrof@kernel.org>,
-        Jonathan Corbet <corbet@lwn.net>
-Subject: Re: [PATCH 1/1] mm: sysctl: add panic_on_mm_error sysctl
-Message-ID: <20200127105533.azrlz2ff73vrhg6n@atomlin.usersys.com>
-References: <20200127101100.92588-1-ghalat@redhat.com>
- <063e702f-dc5f-b0ca-fe26-508a9f1e8e9a@I-love.SAKURA.ne.jp>
+        Mon, 27 Jan 2020 05:56:12 -0500
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 00RAtrIj121310;
+        Mon, 27 Jan 2020 04:55:53 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1580122553;
+        bh=TrRlOwLc/tdMiEvgIjVuZLGeEAB4WdRX1AogQQheS8A=;
+        h=From:To:CC:Subject:Date;
+        b=YKz8X54PMvkl6NmNNnRwgUQQDfm1ZzIkhsYMMrNLt9BF4gpk1qOlRqt6wdD1PUE5d
+         9yjhK0dQk396EzPq8jcf1uO+0DafyjiJyERCpK97Frx8ZqCj4GlNwl+vRYUQaLoYyB
+         P9xHMywnXERuBISBNp/K2MxDMsvyZe2/jm95Zxx0=
+Received: from DFLE103.ent.ti.com (dfle103.ent.ti.com [10.64.6.24])
+        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 00RAtrX6044123
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Mon, 27 Jan 2020 04:55:53 -0600
+Received: from DFLE115.ent.ti.com (10.64.6.36) by DFLE103.ent.ti.com
+ (10.64.6.24) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Mon, 27
+ Jan 2020 04:55:51 -0600
+Received: from lelv0327.itg.ti.com (10.180.67.183) by DFLE115.ent.ti.com
+ (10.64.6.36) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
+ Frontend Transport; Mon, 27 Jan 2020 04:55:51 -0600
+Received: from feketebors.ti.com (ileax41-snat.itg.ti.com [10.172.224.153])
+        by lelv0327.itg.ti.com (8.15.2/8.15.2) with ESMTP id 00RAtmOY079625;
+        Mon, 27 Jan 2020 04:55:48 -0600
+From:   Peter Ujfalusi <peter.ujfalusi@ti.com>
+To:     <airlied@linux.ie>, <daniel@ffwll.ch>, <robh+dt@kernel.org>,
+        <mark.rutland@arm.com>, <a.hajda@samsung.com>,
+        <narmstrong@baylibre.com>
+CC:     <tomi.valkeinen@ti.com>, <dri-devel@lists.freedesktop.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <Laurent.pinchart@ideasonboard.com>, <jonas@kwiboo.se>,
+        <jernej.skrabec@siol.net>
+Subject: [PATCH v3 0/2] drm/bridge: Support for Toshiba tc358768 RGB to DSI bridge
+Date:   Mon, 27 Jan 2020 12:56:32 +0200
+Message-ID: <20200127105634.7638-1-peter.ujfalusi@ti.com>
+X-Mailer: git-send-email 2.25.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <063e702f-dc5f-b0ca-fe26-508a9f1e8e9a@I-love.SAKURA.ne.jp>
-X-PGP-Key: http://pgp.mit.edu/pks/lookup?search=atomlin%40redhat.com
-X-PGP-Fingerprint: 7906 84EB FA8A 9638 8D1E  6E9B E2DE 9658 19CC 77D6
-User-Agent: NeoMutt/20180716-1637-ee8449
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon 2020-01-27 19:42 +0900, Tetsuo Handa wrote:
-> On 2020/01/27 19:11, Grzegorz Halat wrote:
-> > diff --git a/Documentation/admin-guide/sysctl/kernel.rst b/Documentation/admin-guide/sysctl/kernel.rst
-> > index def074807cee..2fecd6b2547e 100644
-> > --- a/Documentation/admin-guide/sysctl/kernel.rst
-> > +++ b/Documentation/admin-guide/sysctl/kernel.rst
-> > @@ -61,6 +61,7 @@ show up in /proc/sys/kernel:
-> >  - overflowgid
-> >  - overflowuid
-> >  - panic
-> > +- panic_on_mm_error
-> 
-> Maybe panic_on_inconsistent_mm is better, for an MM error sounds too generic
-> (e.g. is page allocation failure an error, is OOM killer an error,
-> is NULL pointer dereference an error, is use-after-free access an error) ?
+Hi,
 
-Fair enough; 'panic_on_inconsistent_mm' is more concise.
+Changes since v2:
+- Implement pre_enable and post_disbale callbacks and move code from enable and
+  disable callbacks.
+- hw_enable/disable is removed from tc358768_dsi_host_transfer()
+- Defines for DSI_CONFW accesses
+- breakout from the loops  (the check for it) is moved one level up in
+  tc358768_calc_pll()
+
+Changes since v1:
+DT bindings document:
+- Removed MaxItems for the regulators
+- additionalProperties: false added to port@1
+
+Driver:
+- Year is now 2020
+- Includes shorted
+- The three letter members of the private struct documented 0 they are named as
+  in the datasheet
+- Error handling for the IO functions is following what sil-sii8620.c does
+- regmap regcache is disabled along with refcache_sync() and volatile callback
+  for regmap
+- The hw enable and disable functions got separated
+- Taken the suggested simplifactions from Andrzej for tc358768_calc_pll() and
+  tc358768_dsi_host_transfer()
+- The driver no longer stores the drm_display_mode, it relies on
+  priv->bridge.encoder->crtc->state->adjusted_mode where it needs it
+- tc358768_calc_pll() can be used for verification only to not modify the state
+- refcounting added for hw enable state as a dsi transfer was shutting down the
+  bridge when it was already enabled.
+
+Tested on top of drm-next + LED backlight patches + DT patches on dra7-evm with
+osd101t2045 (panel-simple) and osd101t2587 panel drivers.
+
+Cover letter from v1:
+TC358768 is a parallel RGB to MIPI DSI bridge.
+
+The initial driver supports MIPI_DSI_MODE_VIDEO, MIPI_DSI_FMT_RGB888 and
+only write is implemented for mipi_dsi_host_ops.transfer due to lack of hardware
+where other modes can be tested.
+
+Regards,
+Peter
+---
+Peter Ujfalusi (2):
+  dt-bindings: display: bridge: Add documentation for Toshiba tc358768
+  drm/bridge: Add tc358768 driver
+
+ .../display/bridge/toshiba,tc358768.yaml      |  158 +++
+ drivers/gpu/drm/bridge/Kconfig                |   10 +
+ drivers/gpu/drm/bridge/Makefile               |    1 +
+ drivers/gpu/drm/bridge/tc358768.c             | 1040 +++++++++++++++++
+ 4 files changed, 1209 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/display/bridge/toshiba,tc358768.yaml
+ create mode 100644 drivers/gpu/drm/bridge/tc358768.c
 
 -- 
-Aaron Tomlin
+Peter
+
+Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
+Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
 
