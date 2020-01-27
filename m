@@ -2,34 +2,34 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2741314A85A
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Jan 2020 17:52:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8263A14A859
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Jan 2020 17:52:51 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726205AbgA0Qwr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 27 Jan 2020 11:52:47 -0500
+        id S1725985AbgA0Qwq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 27 Jan 2020 11:52:46 -0500
 Received: from mga02.intel.com ([134.134.136.20]:22311 "EHLO mga02.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725897AbgA0Qwq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 27 Jan 2020 11:52:46 -0500
+        id S1725893AbgA0Qwp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 27 Jan 2020 11:52:45 -0500
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from orsmga002.jf.intel.com ([10.7.209.21])
+Received: from orsmga008.jf.intel.com ([10.7.209.65])
   by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 27 Jan 2020 08:42:26 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.70,370,1574150400"; 
-   d="scan'208";a="246436989"
+   d="scan'208";a="221784229"
 Received: from lkp-server01.sh.intel.com (HELO lkp-server01) ([10.239.97.150])
-  by orsmga002.jf.intel.com with ESMTP; 27 Jan 2020 08:42:24 -0800
+  by orsmga008.jf.intel.com with ESMTP; 27 Jan 2020 08:42:21 -0800
 Received: from kbuild by lkp-server01 with local (Exim 4.89)
         (envelope-from <lkp@intel.com>)
-        id 1iw7Sx-0002Hi-Vp; Tue, 28 Jan 2020 00:42:23 +0800
-Date:   Tue, 28 Jan 2020 00:42:05 +0800
+        id 1iw7Sv-0001Xu-CN; Tue, 28 Jan 2020 00:42:21 +0800
+Date:   Tue, 28 Jan 2020 00:42:07 +0800
 From:   kbuild test robot <lkp@intel.com>
 To:     "x86-ml" <x86@kernel.org>
 Cc:     linux-kernel@vger.kernel.org
-Subject: [tip:x86/cleanups] BUILD SUCCESS
- 3c749b81ee99ef1a01d342ee5e4bc01e4332eb75
-Message-ID: <5e2f12dd.qVscyFsB+HgIFA8f%lkp@intel.com>
+Subject: [tip:efi/core] BUILD SUCCESS
+ ac6119e7f25b842fc061e8aec88c4f32d3bc28ef
+Message-ID: <5e2f12df.oi4d8yqygRYVt8iK%lkp@intel.com>
 User-Agent: Heirloom mailx 12.5 6/20/10
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
@@ -39,24 +39,19 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git  x86/cleanups
-branch HEAD: 3c749b81ee99ef1a01d342ee5e4bc01e4332eb75  x86/CPU/AMD: Remove amd_get_topology_early()
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git  efi/core
+branch HEAD: ac6119e7f25b842fc061e8aec88c4f32d3bc28ef  efi/x86: Disable instrumentation in the EFI runtime handling code
 
 elapsed time: 2883m
 
-configs tested: 170
-configs skipped: 3
+configs tested: 165
+configs skipped: 0
 
 The following configs have been built successfully.
 More configs may be tested in the coming days.
 
 ia64                                defconfig
 powerpc                             defconfig
-openrisc             randconfig-a001-20200127
-csky                 randconfig-a001-20200127
-xtensa               randconfig-a001-20200127
-s390                 randconfig-a001-20200127
-sh                   randconfig-a001-20200127
 i386                             allyesconfig
 arm64                               defconfig
 x86_64               randconfig-a001-20200126
@@ -86,9 +81,6 @@ s390                             allyesconfig
 s390                          debug_defconfig
 s390                                defconfig
 s390                       zfcpdump_defconfig
-um                           x86_64_defconfig
-um                             i386_defconfig
-um                                  defconfig
 sh                               allmodconfig
 sh                                allnoconfig
 sh                          rsk7269_defconfig
@@ -100,6 +92,12 @@ sparc64                          allmodconfig
 sparc64                           allnoconfig
 sparc64                          allyesconfig
 sparc64                             defconfig
+x86_64                              fedora-25
+x86_64                                  kexec
+x86_64                                    lkp
+x86_64                                   rhel
+x86_64                         rhel-7.2-clear
+x86_64                               rhel-7.6
 riscv                            allmodconfig
 riscv                             allnoconfig
 riscv                            allyesconfig
@@ -118,6 +116,12 @@ mips                 randconfig-a001-20200126
 nds32                randconfig-a001-20200126
 parisc               randconfig-a001-20200126
 riscv                randconfig-a001-20200126
+i386                             alldefconfig
+i386                              allnoconfig
+i386                                defconfig
+um                                  defconfig
+um                             i386_defconfig
+um                           x86_64_defconfig
 arm                               allnoconfig
 arm                              allyesconfig
 arm                         at91_dt_defconfig
@@ -133,12 +137,23 @@ ia64                             alldefconfig
 ia64                             allmodconfig
 ia64                              allnoconfig
 ia64                             allyesconfig
-x86_64                              fedora-25
-x86_64                                  kexec
-x86_64                                    lkp
-x86_64                                   rhel
-x86_64                         rhel-7.2-clear
-x86_64                               rhel-7.6
+arc                  randconfig-a001-20200126
+arm                  randconfig-a001-20200126
+arm64                randconfig-a001-20200126
+ia64                 randconfig-a001-20200126
+powerpc              randconfig-a001-20200126
+sparc                randconfig-a001-20200126
+alpha                               defconfig
+csky                                defconfig
+nds32                             allnoconfig
+nds32                               defconfig
+h8300                     edosk2674_defconfig
+h8300                    h8300h-sim_defconfig
+h8300                       h8s-sim_defconfig
+m68k                             allmodconfig
+m68k                       m5475evb_defconfig
+m68k                          multi_defconfig
+m68k                           sun3_defconfig
 x86_64               randconfig-h001-20200126
 x86_64               randconfig-h002-20200126
 x86_64               randconfig-h003-20200126
@@ -164,30 +179,6 @@ openrisc                    or1ksim_defconfig
 openrisc                 simple_smp_defconfig
 xtensa                       common_defconfig
 xtensa                          iss_defconfig
-i386                             alldefconfig
-csky                 randconfig-a001-20200126
-openrisc             randconfig-a001-20200126
-s390                 randconfig-a001-20200126
-sh                   randconfig-a001-20200126
-xtensa               randconfig-a001-20200126
-h8300                     edosk2674_defconfig
-h8300                    h8300h-sim_defconfig
-h8300                       h8s-sim_defconfig
-m68k                             allmodconfig
-m68k                       m5475evb_defconfig
-m68k                          multi_defconfig
-m68k                           sun3_defconfig
-c6x                  randconfig-a001-20200126
-h8300                randconfig-a001-20200126
-microblaze           randconfig-a001-20200126
-nios2                randconfig-a001-20200126
-sparc64              randconfig-a001-20200126
-arc                  randconfig-a001-20200126
-arm                  randconfig-a001-20200126
-arm64                randconfig-a001-20200126
-ia64                 randconfig-a001-20200126
-powerpc              randconfig-a001-20200126
-sparc                randconfig-a001-20200126
 arc                              allyesconfig
 arc                                 defconfig
 microblaze                      mmu_defconfig
@@ -195,8 +186,16 @@ microblaze                    nommu_defconfig
 powerpc                           allnoconfig
 powerpc                       ppc64_defconfig
 powerpc                          rhel-kconfig
-i386                              allnoconfig
-i386                                defconfig
+csky                 randconfig-a001-20200126
+openrisc             randconfig-a001-20200126
+s390                 randconfig-a001-20200126
+sh                   randconfig-a001-20200126
+xtensa               randconfig-a001-20200126
+c6x                  randconfig-a001-20200126
+h8300                randconfig-a001-20200126
+microblaze           randconfig-a001-20200126
+nios2                randconfig-a001-20200126
+sparc64              randconfig-a001-20200126
 x86_64               randconfig-e001-20200126
 x86_64               randconfig-e002-20200126
 x86_64               randconfig-e003-20200126
@@ -216,10 +215,6 @@ mips                              allnoconfig
 mips                             allyesconfig
 mips                      fuloong2e_defconfig
 mips                      malta_kvm_defconfig
-alpha                               defconfig
-csky                                defconfig
-nds32                             allnoconfig
-nds32                               defconfig
 
 ---
 0-DAY kernel test infrastructure                 Open Source Technology Center
