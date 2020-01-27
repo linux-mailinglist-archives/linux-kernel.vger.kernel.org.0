@@ -2,27 +2,27 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5425E14ACEE
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Jan 2020 01:06:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EE0A214ACEC
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Jan 2020 01:06:28 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727177AbgA1AGf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 27 Jan 2020 19:06:35 -0500
-Received: from Galois.linutronix.de ([193.142.43.55]:47601 "EHLO
+        id S1726725AbgA1AG1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 27 Jan 2020 19:06:27 -0500
+Received: from Galois.linutronix.de ([193.142.43.55]:47589 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726858AbgA1AGd (ORCPT
+        with ESMTP id S1725955AbgA1AG0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 27 Jan 2020 19:06:33 -0500
+        Mon, 27 Jan 2020 19:06:26 -0500
 Received: from localhost ([127.0.0.1] helo=nanos.tec.linutronix.de)
         by Galois.linutronix.de with esmtp (Exim 4.80)
         (envelope-from <tglx@linutronix.de>)
-        id 1iwEOk-00033Z-FF; Tue, 28 Jan 2020 01:06:30 +0100
+        id 1iwEOd-00033A-D1; Tue, 28 Jan 2020 01:06:23 +0100
 Date:   Mon, 27 Jan 2020 23:49:25 -0000
 From:   Thomas Gleixner <tglx@linutronix.de>
 To:     Linus Torvalds <torvalds@linux-foundation.org>
 Cc:     linux-kernel@vger.kernel.org, x86@kernel.org
-Subject: [GIT pull] core/debugobjects for
+Subject: [GIT pull] timers/urgent for 5.6-rc1
 References: <158016896586.31887.7695979159638645055.tglx@nanos.tec.linutronix.de>
-Message-ID: <158016896589.31887.18200732992760262654.tglx@nanos.tec.linutronix.de>
+Message-ID: <158016896587.31887.9884737771559149853.tglx@nanos.tec.linutronix.de>
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 Content-Disposition: inline
@@ -33,186 +33,145 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 Linus,
 
-please pull the latest core/debugobjects branch from:
+please pull the latest timers/urgent branch from:
 
-   git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git core-debugobjects-2020-01-28
+   git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git timers-urgent-2020-01-27
 
-up to:  35fd7a637c42: debugobjects: Fix various data races
+up to:  9f24c540f7f8: lib/vdso: Update coarse timekeeper unconditionally
 
 
-A single commit for debug objects which fixes a pile of potential data
-races detected by KCSAN.
+Two fixes for the generic VDSO code which missed 5.5:
 
+ - Make the update to the coarse timekeeper unconditional. This is required
+   because the coarse timekeeper interfaces in the VDSO do not depend on a
+   VDSO capable clocksource. If the system does not have a VDSO capable
+   clocksource and the update is depending on the VDSO capable clocksource,
+   the coarse VDSO interfaces would operate on stale data forever.
+
+ - Invert the logic of __arch_update_vdso_data() to avoid further head
+   scratching. Tripped over this several times while analyzing the update
+   problem above.
 
 Thanks,
 
 	tglx
 
 ------------------>
-Marco Elver (1):
-      debugobjects: Fix various data races
+Thomas Gleixner (2):
+      lib/vdso: Make __arch_update_vdso_data() logic understandable
+      lib/vdso: Update coarse timekeeper unconditionally
 
 
- lib/debugobjects.c | 46 +++++++++++++++++++++++++---------------------
- 1 file changed, 25 insertions(+), 21 deletions(-)
+ arch/arm/include/asm/vdso/vsyscall.h |  4 ++--
+ include/asm-generic/vdso/vsyscall.h  |  4 ++--
+ kernel/time/vsyscall.c               | 37 +++++++++++++++++-------------------
+ 3 files changed, 21 insertions(+), 24 deletions(-)
 
-diff --git a/lib/debugobjects.c b/lib/debugobjects.c
-index 61261195f5b6..48054dbf1b51 100644
---- a/lib/debugobjects.c
-+++ b/lib/debugobjects.c
-@@ -132,14 +132,18 @@ static void fill_pool(void)
- 	struct debug_obj *obj;
- 	unsigned long flags;
+diff --git a/arch/arm/include/asm/vdso/vsyscall.h b/arch/arm/include/asm/vdso/vsyscall.h
+index c4166f317071..cff87d8d30da 100644
+--- a/arch/arm/include/asm/vdso/vsyscall.h
++++ b/arch/arm/include/asm/vdso/vsyscall.h
+@@ -34,9 +34,9 @@ struct vdso_data *__arm_get_k_vdso_data(void)
+ #define __arch_get_k_vdso_data __arm_get_k_vdso_data
  
--	if (likely(obj_pool_free >= debug_objects_pool_min_level))
-+	if (likely(READ_ONCE(obj_pool_free) >= debug_objects_pool_min_level))
- 		return;
- 
- 	/*
- 	 * Reuse objs from the global free list; they will be reinitialized
- 	 * when allocating.
-+	 *
-+	 * Both obj_nr_tofree and obj_pool_free are checked locklessly; the
-+	 * READ_ONCE()s pair with the WRITE_ONCE()s in pool_lock critical
-+	 * sections.
- 	 */
--	while (obj_nr_tofree && (obj_pool_free < obj_pool_min_free)) {
-+	while (READ_ONCE(obj_nr_tofree) && (READ_ONCE(obj_pool_free) < obj_pool_min_free)) {
- 		raw_spin_lock_irqsave(&pool_lock, flags);
- 		/*
- 		 * Recheck with the lock held as the worker thread might have
-@@ -148,9 +152,9 @@ static void fill_pool(void)
- 		while (obj_nr_tofree && (obj_pool_free < obj_pool_min_free)) {
- 			obj = hlist_entry(obj_to_free.first, typeof(*obj), node);
- 			hlist_del(&obj->node);
--			obj_nr_tofree--;
-+			WRITE_ONCE(obj_nr_tofree, obj_nr_tofree - 1);
- 			hlist_add_head(&obj->node, &obj_pool);
--			obj_pool_free++;
-+			WRITE_ONCE(obj_pool_free, obj_pool_free + 1);
- 		}
- 		raw_spin_unlock_irqrestore(&pool_lock, flags);
- 	}
-@@ -158,7 +162,7 @@ static void fill_pool(void)
- 	if (unlikely(!obj_cache))
- 		return;
- 
--	while (obj_pool_free < debug_objects_pool_min_level) {
-+	while (READ_ONCE(obj_pool_free) < debug_objects_pool_min_level) {
- 		struct debug_obj *new[ODEBUG_BATCH_SIZE];
- 		int cnt;
- 
-@@ -174,7 +178,7 @@ static void fill_pool(void)
- 		while (cnt) {
- 			hlist_add_head(&new[--cnt]->node, &obj_pool);
- 			debug_objects_allocated++;
--			obj_pool_free++;
-+			WRITE_ONCE(obj_pool_free, obj_pool_free + 1);
- 		}
- 		raw_spin_unlock_irqrestore(&pool_lock, flags);
- 	}
-@@ -236,7 +240,7 @@ alloc_object(void *addr, struct debug_bucket *b, struct debug_obj_descr *descr)
- 	obj = __alloc_object(&obj_pool);
- 	if (obj) {
- 		obj_pool_used++;
--		obj_pool_free--;
-+		WRITE_ONCE(obj_pool_free, obj_pool_free - 1);
- 
- 		/*
- 		 * Looking ahead, allocate one batch of debug objects and
-@@ -255,7 +259,7 @@ alloc_object(void *addr, struct debug_bucket *b, struct debug_obj_descr *descr)
- 					       &percpu_pool->free_objs);
- 				percpu_pool->obj_free++;
- 				obj_pool_used++;
--				obj_pool_free--;
-+				WRITE_ONCE(obj_pool_free, obj_pool_free - 1);
- 			}
- 		}
- 
-@@ -309,8 +313,8 @@ static void free_obj_work(struct work_struct *work)
- 		obj = hlist_entry(obj_to_free.first, typeof(*obj), node);
- 		hlist_del(&obj->node);
- 		hlist_add_head(&obj->node, &obj_pool);
--		obj_pool_free++;
--		obj_nr_tofree--;
-+		WRITE_ONCE(obj_pool_free, obj_pool_free + 1);
-+		WRITE_ONCE(obj_nr_tofree, obj_nr_tofree - 1);
- 	}
- 	raw_spin_unlock_irqrestore(&pool_lock, flags);
- 	return;
-@@ -324,7 +328,7 @@ static void free_obj_work(struct work_struct *work)
- 	if (obj_nr_tofree) {
- 		hlist_move_list(&obj_to_free, &tofree);
- 		debug_objects_freed += obj_nr_tofree;
--		obj_nr_tofree = 0;
-+		WRITE_ONCE(obj_nr_tofree, 0);
- 	}
- 	raw_spin_unlock_irqrestore(&pool_lock, flags);
- 
-@@ -375,10 +379,10 @@ static void __free_object(struct debug_obj *obj)
- 	obj_pool_used--;
- 
- 	if (work) {
--		obj_nr_tofree++;
-+		WRITE_ONCE(obj_nr_tofree, obj_nr_tofree + 1);
- 		hlist_add_head(&obj->node, &obj_to_free);
- 		if (lookahead_count) {
--			obj_nr_tofree += lookahead_count;
-+			WRITE_ONCE(obj_nr_tofree, obj_nr_tofree + lookahead_count);
- 			obj_pool_used -= lookahead_count;
- 			while (lookahead_count) {
- 				hlist_add_head(&objs[--lookahead_count]->node,
-@@ -396,15 +400,15 @@ static void __free_object(struct debug_obj *obj)
- 			for (i = 0; i < ODEBUG_BATCH_SIZE; i++) {
- 				obj = __alloc_object(&obj_pool);
- 				hlist_add_head(&obj->node, &obj_to_free);
--				obj_pool_free--;
--				obj_nr_tofree++;
-+				WRITE_ONCE(obj_pool_free, obj_pool_free - 1);
-+				WRITE_ONCE(obj_nr_tofree, obj_nr_tofree + 1);
- 			}
- 		}
- 	} else {
--		obj_pool_free++;
-+		WRITE_ONCE(obj_pool_free, obj_pool_free + 1);
- 		hlist_add_head(&obj->node, &obj_pool);
- 		if (lookahead_count) {
--			obj_pool_free += lookahead_count;
-+			WRITE_ONCE(obj_pool_free, obj_pool_free + lookahead_count);
- 			obj_pool_used -= lookahead_count;
- 			while (lookahead_count) {
- 				hlist_add_head(&objs[--lookahead_count]->node,
-@@ -423,7 +427,7 @@ static void __free_object(struct debug_obj *obj)
- static void free_object(struct debug_obj *obj)
+ static __always_inline
+-int __arm_update_vdso_data(void)
++bool __arm_update_vdso_data(void)
  {
- 	__free_object(obj);
--	if (!obj_freeing && obj_nr_tofree) {
-+	if (!READ_ONCE(obj_freeing) && READ_ONCE(obj_nr_tofree)) {
- 		WRITE_ONCE(obj_freeing, true);
- 		schedule_delayed_work(&debug_obj_work, ODEBUG_FREE_WORK_DELAY);
- 	}
-@@ -982,7 +986,7 @@ static void __debug_check_no_obj_freed(const void *address, unsigned long size)
- 		debug_objects_maxchecked = objs_checked;
+-	return !cntvct_ok;
++	return cntvct_ok;
+ }
+ #define __arch_update_vdso_data __arm_update_vdso_data
  
- 	/* Schedule work to actually kmem_cache_free() objects */
--	if (!obj_freeing && obj_nr_tofree) {
-+	if (!READ_ONCE(obj_freeing) && READ_ONCE(obj_nr_tofree)) {
- 		WRITE_ONCE(obj_freeing, true);
- 		schedule_delayed_work(&debug_obj_work, ODEBUG_FREE_WORK_DELAY);
- 	}
-@@ -1008,12 +1012,12 @@ static int debug_stats_show(struct seq_file *m, void *v)
- 	seq_printf(m, "max_checked   :%d\n", debug_objects_maxchecked);
- 	seq_printf(m, "warnings      :%d\n", debug_objects_warnings);
- 	seq_printf(m, "fixups        :%d\n", debug_objects_fixups);
--	seq_printf(m, "pool_free     :%d\n", obj_pool_free + obj_percpu_free);
-+	seq_printf(m, "pool_free     :%d\n", READ_ONCE(obj_pool_free) + obj_percpu_free);
- 	seq_printf(m, "pool_pcp_free :%d\n", obj_percpu_free);
- 	seq_printf(m, "pool_min_free :%d\n", obj_pool_min_free);
- 	seq_printf(m, "pool_used     :%d\n", obj_pool_used - obj_percpu_free);
- 	seq_printf(m, "pool_max_used :%d\n", obj_pool_max_used);
--	seq_printf(m, "on_free_list  :%d\n", obj_nr_tofree);
-+	seq_printf(m, "on_free_list  :%d\n", READ_ONCE(obj_nr_tofree));
- 	seq_printf(m, "objs_allocated:%d\n", debug_objects_allocated);
- 	seq_printf(m, "objs_freed    :%d\n", debug_objects_freed);
- 	return 0;
+diff --git a/include/asm-generic/vdso/vsyscall.h b/include/asm-generic/vdso/vsyscall.h
+index ce4103208619..cec543d9e87b 100644
+--- a/include/asm-generic/vdso/vsyscall.h
++++ b/include/asm-generic/vdso/vsyscall.h
+@@ -12,9 +12,9 @@ static __always_inline struct vdso_data *__arch_get_k_vdso_data(void)
+ #endif /* __arch_get_k_vdso_data */
+ 
+ #ifndef __arch_update_vdso_data
+-static __always_inline int __arch_update_vdso_data(void)
++static __always_inline bool __arch_update_vdso_data(void)
+ {
+-	return 0;
++	return true;
+ }
+ #endif /* __arch_update_vdso_data */
+ 
+diff --git a/kernel/time/vsyscall.c b/kernel/time/vsyscall.c
+index 5ee0f7709410..9577c89179cd 100644
+--- a/kernel/time/vsyscall.c
++++ b/kernel/time/vsyscall.c
+@@ -28,11 +28,6 @@ static inline void update_vdso_data(struct vdso_data *vdata,
+ 	vdata[CS_RAW].mult			= tk->tkr_raw.mult;
+ 	vdata[CS_RAW].shift			= tk->tkr_raw.shift;
+ 
+-	/* CLOCK_REALTIME */
+-	vdso_ts		= &vdata[CS_HRES_COARSE].basetime[CLOCK_REALTIME];
+-	vdso_ts->sec	= tk->xtime_sec;
+-	vdso_ts->nsec	= tk->tkr_mono.xtime_nsec;
+-
+ 	/* CLOCK_MONOTONIC */
+ 	vdso_ts		= &vdata[CS_HRES_COARSE].basetime[CLOCK_MONOTONIC];
+ 	vdso_ts->sec	= tk->xtime_sec + tk->wall_to_monotonic.tv_sec;
+@@ -70,12 +65,6 @@ static inline void update_vdso_data(struct vdso_data *vdata,
+ 	vdso_ts		= &vdata[CS_HRES_COARSE].basetime[CLOCK_TAI];
+ 	vdso_ts->sec	= tk->xtime_sec + (s64)tk->tai_offset;
+ 	vdso_ts->nsec	= tk->tkr_mono.xtime_nsec;
+-
+-	/*
+-	 * Read without the seqlock held by clock_getres().
+-	 * Note: No need to have a second copy.
+-	 */
+-	WRITE_ONCE(vdata[CS_HRES_COARSE].hrtimer_res, hrtimer_resolution);
+ }
+ 
+ void update_vsyscall(struct timekeeper *tk)
+@@ -84,20 +73,17 @@ void update_vsyscall(struct timekeeper *tk)
+ 	struct vdso_timestamp *vdso_ts;
+ 	u64 nsec;
+ 
+-	if (__arch_update_vdso_data()) {
+-		/*
+-		 * Some architectures might want to skip the update of the
+-		 * data page.
+-		 */
+-		return;
+-	}
+-
+ 	/* copy vsyscall data */
+ 	vdso_write_begin(vdata);
+ 
+ 	vdata[CS_HRES_COARSE].clock_mode	= __arch_get_clock_mode(tk);
+ 	vdata[CS_RAW].clock_mode		= __arch_get_clock_mode(tk);
+ 
++	/* CLOCK_REALTIME also required for time() */
++	vdso_ts		= &vdata[CS_HRES_COARSE].basetime[CLOCK_REALTIME];
++	vdso_ts->sec	= tk->xtime_sec;
++	vdso_ts->nsec	= tk->tkr_mono.xtime_nsec;
++
+ 	/* CLOCK_REALTIME_COARSE */
+ 	vdso_ts		= &vdata[CS_HRES_COARSE].basetime[CLOCK_REALTIME_COARSE];
+ 	vdso_ts->sec	= tk->xtime_sec;
+@@ -110,7 +96,18 @@ void update_vsyscall(struct timekeeper *tk)
+ 	nsec		= nsec + tk->wall_to_monotonic.tv_nsec;
+ 	vdso_ts->sec	+= __iter_div_u64_rem(nsec, NSEC_PER_SEC, &vdso_ts->nsec);
+ 
+-	update_vdso_data(vdata, tk);
++	/*
++	 * Read without the seqlock held by clock_getres().
++	 * Note: No need to have a second copy.
++	 */
++	WRITE_ONCE(vdata[CS_HRES_COARSE].hrtimer_res, hrtimer_resolution);
++
++	/*
++	 * Architectures can opt out of updating the high resolution part
++	 * of the VDSO.
++	 */
++	if (__arch_update_vdso_data())
++		update_vdso_data(vdata, tk);
+ 
+ 	__arch_update_vsyscall(vdata, tk);
+ 
 
