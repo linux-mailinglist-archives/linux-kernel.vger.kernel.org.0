@@ -2,91 +2,57 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9D94014A313
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Jan 2020 12:33:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4394714A315
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Jan 2020 12:33:14 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730191AbgA0LdE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 27 Jan 2020 06:33:04 -0500
-Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:33738 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1730109AbgA0LdD (ORCPT
+        id S1730228AbgA0LdM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 27 Jan 2020 06:33:12 -0500
+Received: from mail-oi1-f193.google.com ([209.85.167.193]:35279 "EHLO
+        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726428AbgA0LdM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 27 Jan 2020 06:33:03 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1580124782;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=PlXx4GCmusHDyEhr1tc9UGO1kB0k8P75h0J2Af90Eb0=;
-        b=A9hPJ8RtIVEC8gjkpIoWwyV7FkbDcO9J57D5P1KR1dL8vCv79pwW8bSNsT1zp5CK4VbY/Q
-        H4eR15Ow2t54M1vOkJKRPL8cUGMbE0mA2NDljAhxZ4kBDLR6bCsD8bm1YMbJDNpbgMVsRg
-        c4Os02fKk4XsMcgke5iJPFnLy1Whzao=
-Received: from mail-oi1-f199.google.com (mail-oi1-f199.google.com
- [209.85.167.199]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-304-3_4QDrRxNJeYRh_Sehvrvw-1; Mon, 27 Jan 2020 06:33:01 -0500
-X-MC-Unique: 3_4QDrRxNJeYRh_Sehvrvw-1
-Received: by mail-oi1-f199.google.com with SMTP id o5so1629933oif.9
-        for <linux-kernel@vger.kernel.org>; Mon, 27 Jan 2020 03:33:00 -0800 (PST)
+        Mon, 27 Jan 2020 06:33:12 -0500
+Received: by mail-oi1-f193.google.com with SMTP id b18so2362626oie.2
+        for <linux-kernel@vger.kernel.org>; Mon, 27 Jan 2020 03:33:11 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:reply-to:from:date:message-id:subject:to;
+        bh=ICQqJ5nTQBj63/kFKTmwVgFzvoSrAgyXz/sQL2og8oc=;
+        b=Clgr9kFw2KmIq5Fr2duFINC2pkPoU3s3CBnwVO3fWNTJ9EiZ4APemSCogjPkJk1I7X
+         xjdBoBf7h3uOIatab+07qU4N/JnbH/s3PRtrUz8z16C14t/L/VzVzv7EhtZkq/QxfTOu
+         JgbCkptcCtQnZk45cbPTkw/eslNMGynWQVZmKjYjujh3ZcuOq28ktk3cdGNTYxWmb5fb
+         G+ZUN+vNsmAdH1i7F8qMVOgbtFCNzE4NocupnlwZDCznonZWaucCjsaWSSOzkW8aT2OW
+         ao/W+2bVtZuYZG865FcewXe4djThkAZWjY5oh/11CPafQSHEz7tYyDO2nXh2rDyPWXu9
+         RvkA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=PlXx4GCmusHDyEhr1tc9UGO1kB0k8P75h0J2Af90Eb0=;
-        b=nk5u3dVFqWnrVTipl0cZy92jMxEkmkaiKt4LEgUX29ImGZKVljLjmycABYT4SYwWX1
-         q0GvyhvMN+td0U6G9lSj8m79qb2YMMAedrPOGR+IGe8YpvUtpfm/SspMlWSh9mBwnxjY
-         87iXVcMVSXM88pSZPLJLEZr/D9Qy73eaWkasZSD3Fqu9Qa/JosGUKU/qcl20x35NiKJu
-         SeDo+JCf86+otLs+7N+UC1Qx997rzvWlOJXRdurb+Fg2LgxcatvqMERwWZxoAQpLHmOG
-         mIjM+1C8Fg3Wi80yw03cmQRSfBNgvW8iBW7LZ9EQgTq61RKEjYNZyGZT4oeEz9I61czy
-         OQGQ==
-X-Gm-Message-State: APjAAAWk1OF+mmzFgVa6oDbcOPkTWidypBBboposFe9EV/PM9NWwrlpy
-        EGuy2JXMW1d8Yi4sIs1IOVa4omQr51zJvgv/Vtqe4hFomYAw1q9PiJjpowO07Pu6RwgcHrfaKMT
-        nGhsO7gcKXjQNRtv84OpMAoiGyXeaYC2rrhpNWK74
-X-Received: by 2002:a9d:53c4:: with SMTP id i4mr12833307oth.48.1580124780170;
-        Mon, 27 Jan 2020 03:33:00 -0800 (PST)
-X-Google-Smtp-Source: APXvYqy2WCKL3TcEQWLEGBx1bgWgRFFUvo6KJVLgtkrNqpfuMHkeNAswCT3gA+Mrw2sEoru3XQgdgZuxdIpa/3I3A0I=
-X-Received: by 2002:a9d:53c4:: with SMTP id i4mr12833293oth.48.1580124779964;
- Mon, 27 Jan 2020 03:32:59 -0800 (PST)
+        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
+         :subject:to;
+        bh=ICQqJ5nTQBj63/kFKTmwVgFzvoSrAgyXz/sQL2og8oc=;
+        b=lRBKZ6t0VSgqPZ1LC/K5DWwkRangxk7CeHZxmAqyFzWefv6rNNOlJqfC1l8OsFwmUd
+         TIHx4VVrBS0CQgw68BGTcDVoHMCvmkwBU6RbUMREYQOToohtGrM9JvFfU9Kxc99M9Urg
+         PJBfqwcECK5LyvlMAy7cKL7CuZeU9sQfbcouR6fedGquVFaBcRH885t3wMwHvPQAt30x
+         RcKl7LqagV/PO0Cc+4jkbGJO9rxa0mFU9pYFQrI6SRRkGfppZfrAZGdfh1G2gud5io2x
+         UdwWkX+Ycxx1oRntDS1XfAx8MvnZe2v/xMa4IDfRRY/u68Pw89O2XjDn7rbZEtJ2ArPk
+         ywww==
+X-Gm-Message-State: APjAAAXla9w10e0F+TIj0Wkok8UJjEs/htuFHThDuYwumfF8a+Os/I9q
+        axK6zZLdSpazpIsMdqcSyBoq3K9Ms9ul9sEHhDg=
+X-Google-Smtp-Source: APXvYqy+UM/cn/NaNSFgBvDJRVHqVV5LSMj/b34EEJgqKOZWO1vNGd2W/d5R+1iq9Cs5ZE44rAXOVsirZIPo3QFNgKY=
+X-Received: by 2002:aca:6542:: with SMTP id j2mr1239150oiw.69.1580124791496;
+ Mon, 27 Jan 2020 03:33:11 -0800 (PST)
 MIME-Version: 1.0
-References: <20200127101100.92588-1-ghalat@redhat.com> <063e702f-dc5f-b0ca-fe26-508a9f1e8e9a@I-love.SAKURA.ne.jp>
-In-Reply-To: <063e702f-dc5f-b0ca-fe26-508a9f1e8e9a@I-love.SAKURA.ne.jp>
-From:   Grzegorz Halat <ghalat@redhat.com>
-Date:   Mon, 27 Jan 2020 12:32:48 +0100
-Message-ID: <CAKbGCsfyiLfvwi1iYuTu2Gg5=TXQwUQ3iv73PdNvY8o_NZJ7aQ@mail.gmail.com>
-Subject: Re: [PATCH 1/1] mm: sysctl: add panic_on_mm_error sysctl
-To:     Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-        Aaron Tomlin <atomlin@redhat.com>
-Cc:     linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        linux-fsdevel@vger.kernel.org, linux-doc@vger.kernel.org,
-        Stan Saner <ssaner@redhat.com>,
-        Oleksandr Natalenko <oleksandr@redhat.com>,
-        Vratislav Bendel <vbendel@redhat.com>, kirill@shutemov.name,
-        khlebnikov@yandex-team.ru, borntraeger@de.ibm.com,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Iurii Zaikin <yzaikin@google.com>,
-        Kees Cook <keescook@chromium.org>,
-        Luis Chamberlain <mcgrof@kernel.org>,
-        Jonathan Corbet <corbet@lwn.net>
+Received: by 2002:a4a:e5d7:0:0:0:0:0 with HTTP; Mon, 27 Jan 2020 03:33:10
+ -0800 (PST)
+Reply-To: yawa1.gafa@gmail.com
+From:   Yawo Gafa <vvra.martins@gmail.com>
+Date:   Mon, 27 Jan 2020 11:33:10 +0000
+Message-ID: <CAFyQ66hkH2N3tD+1y5G4ZPgG3TfLRGLv9yf=BcUP=4HM9NFVLQ@mail.gmail.com>
+Subject: Hello i have some good news for you,get back to me for more details
+To:     undisclosed-recipients:;
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 27 Jan 2020 at 11:43, Tetsuo Handa wrote:
->
-> Maybe panic_on_inconsistent_mm is better, for an MM error sounds too generic
-> (e.g. is page allocation failure an error, is OOM killer an error,
-> is NULL pointer dereference an error, is use-after-free access an error) ?
->
-yes, panic_on_inconsistent_mm is better
-
-> Also, should this be in /proc/sys/vm/ than /proc/sys/kernel/ ?
-Agreed
-
-I will wait a day or two for more feedback and send V2 with sysctl
-named as 'vm.panic_on_inconsistent_mm'.
-
-Thanks,
---
-Grzegorz Halat
-
+Hello i have some good news for you,get back to me for more details
