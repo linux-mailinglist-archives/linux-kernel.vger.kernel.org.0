@@ -2,76 +2,93 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6909614A130
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Jan 2020 10:50:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 212CD14A157
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Jan 2020 10:58:52 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729619AbgA0JuR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 27 Jan 2020 04:50:17 -0500
-Received: from foss.arm.com ([217.140.110.172]:41932 "EHLO foss.arm.com"
+        id S1729238AbgA0J6q (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 27 Jan 2020 04:58:46 -0500
+Received: from us.icdsoft.com ([192.252.146.184]:60904 "EHLO us.icdsoft.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726048AbgA0JuR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 27 Jan 2020 04:50:17 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 5390731B;
-        Mon, 27 Jan 2020 01:50:16 -0800 (PST)
-Received: from p8cg001049571a15.blr.arm.com (p8cg001049571a15.blr.arm.com [10.162.16.32])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id EF42C3F52E;
-        Mon, 27 Jan 2020 01:50:13 -0800 (PST)
-From:   Anshuman Khandual <anshuman.khandual@arm.com>
-To:     linux-arm-kernel@lists.infradead.org
-Cc:     Anshuman Khandual <anshuman.khandual@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>,
-        James Morse <james.morse@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
+        id S1725845AbgA0J6q (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 27 Jan 2020 04:58:46 -0500
+X-Greylist: delayed 398 seconds by postgrey-1.27 at vger.kernel.org; Mon, 27 Jan 2020 04:58:46 EST
+Received: (qmail 4371 invoked by uid 1001); 27 Jan 2020 09:52:05 -0000
+Received: from 45.98.145.213.in-addr.arpa (HELO ?213.145.98.45?) (gnikolov@icdsoft.com@213.145.98.45)
+  by 192.252.159.165 with ESMTPA; 27 Jan 2020 09:52:05 -0000
+To:     shli@kernel.org, linux-raid@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH] arm64: Drop do_el0_ia_bp_hardening() & do_sp_pc_abort() declarations
-Date:   Mon, 27 Jan 2020 15:19:35 +0530
-Message-Id: <1580118575-1705-1-git-send-email-anshuman.khandual@arm.com>
-X-Mailer: git-send-email 2.7.4
+From:   Georgi Nikolov <gnikolov@icdsoft.com>
+Subject: Pausing md check hangs
+Message-ID: <01ea67c2-244c-0427-0be7-c565fac97092@icdsoft.com>
+Date:   Mon, 27 Jan 2020 11:52:03 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.1
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-There is a redundant do_sp_pc_abort() declaration in exceptions.h which can
-be removed. Also do_el0_ia_bp_hardening() as been already been dropped with
-the commit bfe298745afc ("arm64: entry-common: don't touch daif before
-bp-hardening") and hence does not need a declaration any more. This should
-not introduce any functional change.
+Hi,
 
-Cc: Catalin Marinas <catalin.marinas@arm.com>
-Cc: Will Deacon <will@kernel.org>
-Cc: James Morse <james.morse@arm.com>
-Cc: Mark Rutland <mark.rutland@arm.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: linux-kernel@vger.kernel.org
-Signed-off-by: Anshuman Khandual <anshuman.khandual@arm.com>
----
- arch/arm64/include/asm/exception.h | 4 ----
- 1 file changed, 4 deletions(-)
+I posted a kernel bug about this a month ago but it did not receive any 
+attention: https://bugzilla.kernel.org/show_bug.cgi?id=205929
+Here is a copy of the bug report and I hope that this is the correct 
+place to discuss this:
 
-diff --git a/arch/arm64/include/asm/exception.h b/arch/arm64/include/asm/exception.h
-index b87c6e276ab1..7a6e81ca23a8 100644
---- a/arch/arm64/include/asm/exception.h
-+++ b/arch/arm64/include/asm/exception.h
-@@ -33,7 +33,6 @@ static inline u32 disr_to_esr(u64 disr)
- 
- asmlinkage void enter_from_user_mode(void);
- void do_mem_abort(unsigned long addr, unsigned int esr, struct pt_regs *regs);
--void do_sp_pc_abort(unsigned long addr, unsigned int esr, struct pt_regs *regs);
- void do_undefinstr(struct pt_regs *regs);
- asmlinkage void bad_mode(struct pt_regs *regs, int reason, unsigned int esr);
- void do_debug_exception(unsigned long addr_if_watchpoint, unsigned int esr,
-@@ -47,7 +46,4 @@ void bad_el0_sync(struct pt_regs *regs, int reason, unsigned int esr);
- void do_cp15instr(unsigned int esr, struct pt_regs *regs);
- void do_el0_svc(struct pt_regs *regs);
- void do_el0_svc_compat(struct pt_regs *regs);
--void do_el0_ia_bp_hardening(unsigned long addr,  unsigned int esr,
--			    struct pt_regs *regs);
--
- #endif	/* __ASM_EXCEPTION_H */
--- 
-2.20.1
+I have a Supermicro server with 10 md raid6 arrays each consisting of 8 SATA drives. SATA drives are Hitachi/HGST Ultrastar 7K4000 8T.
+When i try to pause array check with "echo idle > "/sys/block/<md_dev>/md/sync_action" it randomly hangs at different md device.
+Process "mdX_raid6" is at 100% cpu usage. cat /sys/block/mdX/md/journal_mode hungs forever.
+
+Here is the state at the moment of crash for one of the md devices:
+
+root@supermicro:/sys/block/mdX/md# find -mindepth 1 -maxdepth 1 -type f|sort|grep -v journal_mode|xargs -r egrep .
+./array_size:default
+./array_state:write-pending
+grep: ./bitmap_set_bits: Permission denied
+./chunk_size:524288
+./component_size:7813895168
+./consistency_policy:resync
+./degraded:0
+./group_thread_cnt:4
+./last_sync_action:check
+./layout:2
+./level:raid6
+./max_read_errors:20
+./metadata_version:1.2
+./mismatch_cnt:0
+grep: ./new_dev: Permission denied
+./preread_bypass_threshold:1
+./raid_disks:8
+./reshape_direction:forwards
+./reshape_position:none
+./resync_start:none
+./rmw_level:1
+./safe_mode_delay:0.204
+./skip_copy:0
+./stripe_cache_active:13173
+./stripe_cache_size:8192
+./suspend_hi:0
+./suspend_lo:0
+./sync_action:check
+./sync_completed:3566405120 / 15627790336
+./sync_force_parallel:0
+./sync_max:max
+./sync_min:1821385984
+./sync_speed:126
+./sync_speed_max:1000 (local)
+./sync_speed_min:1000 (system)
+
+root@supermicro:~# cat /proc/mdstat
+Personalities : [raid1] [linear] [multipath] [raid0] [raid6] [raid5] [raid4] [raid10]
+md4 : active raid6 sdaa[2] sdab[3] sdy[0] sdae[6] sdac[4] sdad[5] sdaf[7] sdz[1]
+       46883371008 blocks super 1.2 level 6, 512k chunk, algorithm 2 [8/8] [UUUUUUUU]
+       [====>................]  check = 22.8% (1784112640/7813895168) finish=20571.7min speed=4884K/sec
+
+
+Regards,
+Georgi Nikolov
 
