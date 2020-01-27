@@ -2,55 +2,62 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 231E214A1D5
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Jan 2020 11:18:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5C0F614A1DE
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Jan 2020 11:23:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729045AbgA0KSf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 27 Jan 2020 05:18:35 -0500
-Received: from shards.monkeyblade.net ([23.128.96.9]:37022 "EHLO
-        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725845AbgA0KSe (ORCPT
+        id S1728173AbgA0KXI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 27 Jan 2020 05:23:08 -0500
+Received: from youngberry.canonical.com ([91.189.89.112]:50971 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725845AbgA0KXI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 27 Jan 2020 05:18:34 -0500
-Received: from localhost (unknown [213.175.37.12])
-        (using TLSv1 with cipher AES256-SHA (256/256 bits))
-        (Client did not present a certificate)
-        (Authenticated sender: davem-davemloft)
-        by shards.monkeyblade.net (Postfix) with ESMTPSA id F2C061512895E;
-        Mon, 27 Jan 2020 02:18:31 -0800 (PST)
-Date:   Mon, 27 Jan 2020 11:18:30 +0100 (CET)
-Message-Id: <20200127.111830.1055640381586578614.davem@davemloft.net>
-To:     christophe.jaillet@wanadoo.fr
-Cc:     isubramanian@apm.com, keyur@os.amperecomputing.com,
-        quan@os.amperecomputing.com, tinamdar@apm.com, kdinh@apm.com,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] drivers: net: xgene: Fix the order
-From:   David Miller <davem@davemloft.net>
-In-Reply-To: <20200126104429.15156-1-christophe.jaillet@wanadoo.fr>
-References: <20200126104429.15156-1-christophe.jaillet@wanadoo.fr>
-X-Mailer: Mew version 6.8 on Emacs 26.3
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Mon, 27 Jan 2020 02:18:34 -0800 (PST)
+        Mon, 27 Jan 2020 05:23:08 -0500
+Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
+        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.86_2)
+        (envelope-from <colin.king@canonical.com>)
+        id 1iw1Xr-00047p-MK; Mon, 27 Jan 2020 10:23:03 +0000
+From:   Colin King <colin.king@canonical.com>
+To:     Michal Simek <michal.simek@xilinx.com>,
+        linux-arm-kernel@lists.infradead.org, linux-i2c@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH][next][V2] i2c: xiic: fix indentation issue
+Date:   Mon, 27 Jan 2020 10:23:03 +0000
+Message-Id: <20200127102303.44133-1-colin.king@canonical.com>
+X-Mailer: git-send-email 2.24.0
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Date: Sun, 26 Jan 2020 11:44:29 +0100
+From: Colin Ian King <colin.king@canonical.com>
 
-> 'alloc_etherdev_mqs()' expects first 'tx', then 'rx'. The semantic here
-> looks reversed.
-> 
-> Reorder the arguments passed to 'alloc_etherdev_mqs()' in order to keep
-> the correct semantic.
-> 
-> In fact, this is a no-op because both XGENE_NUM_[RT]X_RING are 8.
-> 
-> Fixes: 107dec2749fe ("drivers: net: xgene: Add support for multiple queues")
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+There is a statement that is indented one level too deeply, remove
+the extraneous tab.
 
-Applied, thanks.
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+V2: fix type in commit message
+---
+ drivers/i2c/busses/i2c-xiic.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/i2c/busses/i2c-xiic.c b/drivers/i2c/busses/i2c-xiic.c
+index b17d30c9ab40..90c1c362394d 100644
+--- a/drivers/i2c/busses/i2c-xiic.c
++++ b/drivers/i2c/busses/i2c-xiic.c
+@@ -261,7 +261,7 @@ static int xiic_clear_rx_fifo(struct xiic_i2c *i2c)
+ 		xiic_getreg8(i2c, XIIC_DRR_REG_OFFSET);
+ 		if (time_after(jiffies, timeout)) {
+ 			dev_err(i2c->dev, "Failed to clear rx fifo\n");
+-				return -ETIMEDOUT;
++			return -ETIMEDOUT;
+ 		}
+ 	}
+ 
+-- 
+2.24.0
+
