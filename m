@@ -2,27 +2,27 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EE0A214ACEC
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Jan 2020 01:06:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3B38114ACF3
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Jan 2020 01:06:57 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726725AbgA1AG1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 27 Jan 2020 19:06:27 -0500
-Received: from Galois.linutronix.de ([193.142.43.55]:47589 "EHLO
+        id S1727816AbgA1AGs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 27 Jan 2020 19:06:48 -0500
+Received: from Galois.linutronix.de ([193.142.43.55]:47617 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725955AbgA1AG0 (ORCPT
+        with ESMTP id S1725955AbgA1AGo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 27 Jan 2020 19:06:26 -0500
+        Mon, 27 Jan 2020 19:06:44 -0500
 Received: from localhost ([127.0.0.1] helo=nanos.tec.linutronix.de)
         by Galois.linutronix.de with esmtp (Exim 4.80)
         (envelope-from <tglx@linutronix.de>)
-        id 1iwEOd-00033A-D1; Tue, 28 Jan 2020 01:06:23 +0100
+        id 1iwEOs-00034u-SD; Tue, 28 Jan 2020 01:06:39 +0100
 Date:   Mon, 27 Jan 2020 23:49:25 -0000
 From:   Thomas Gleixner <tglx@linutronix.de>
 To:     Linus Torvalds <torvalds@linux-foundation.org>
 Cc:     linux-kernel@vger.kernel.org, x86@kernel.org
-Subject: [GIT pull] timers/urgent for 5.6-rc1
+Subject: [GIT pull] x86/pti for
 References: <158016896586.31887.7695979159638645055.tglx@nanos.tec.linutronix.de>
-Message-ID: <158016896587.31887.9884737771559149853.tglx@nanos.tec.linutronix.de>
+Message-ID: <158016896590.31887.13698042592919956648.tglx@nanos.tec.linutronix.de>
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 Content-Disposition: inline
@@ -33,145 +33,105 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 Linus,
 
-please pull the latest timers/urgent branch from:
+please pull the latest x86/pti branch from:
 
-   git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git timers-urgent-2020-01-27
+   git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git x86-pti-2020-01-28
 
-up to:  9f24c540f7f8: lib/vdso: Update coarse timekeeper unconditionally
+up to:  a84de2fa962c: x86/speculation/swapgs: Exclude Zhaoxin CPUs from SWAPGS vulnerability
 
 
-Two fixes for the generic VDSO code which missed 5.5:
+The performance deterioration departement provides a few non-scary fixes
+and improvements:
 
- - Make the update to the coarse timekeeper unconditional. This is required
-   because the coarse timekeeper interfaces in the VDSO do not depend on a
-   VDSO capable clocksource. If the system does not have a VDSO capable
-   clocksource and the update is depending on the VDSO capable clocksource,
-   the coarse VDSO interfaces would operate on stale data forever.
+ - Update the cached HLE state when the TSX state is changed via the new
+   control register. This ensures feature bit consistency.
 
- - Invert the logic of __arch_update_vdso_data() to avoid further head
-   scratching. Tripped over this several times while analyzing the update
-   problem above.
+ - Exclude the new Zhaoxin CPUs from Spectre V2 and SWAPGS vulnerabilities.
+
 
 Thanks,
 
 	tglx
 
 ------------------>
-Thomas Gleixner (2):
-      lib/vdso: Make __arch_update_vdso_data() logic understandable
-      lib/vdso: Update coarse timekeeper unconditionally
+Pawan Gupta (1):
+      x86/cpu: Update cached HLE state on write to TSX_CTRL_CPUID_CLEAR
+
+Tony W Wang-oc (2):
+      x86/speculation/spectre_v2: Exclude Zhaoxin CPUs from SPECTRE_V2
+      x86/speculation/swapgs: Exclude Zhaoxin CPUs from SWAPGS vulnerability
 
 
- arch/arm/include/asm/vdso/vsyscall.h |  4 ++--
- include/asm-generic/vdso/vsyscall.h  |  4 ++--
- kernel/time/vsyscall.c               | 37 +++++++++++++++++-------------------
- 3 files changed, 21 insertions(+), 24 deletions(-)
+ arch/x86/kernel/cpu/common.c |  9 ++++++++-
+ arch/x86/kernel/cpu/tsx.c    | 13 +++++++------
+ 2 files changed, 15 insertions(+), 7 deletions(-)
 
-diff --git a/arch/arm/include/asm/vdso/vsyscall.h b/arch/arm/include/asm/vdso/vsyscall.h
-index c4166f317071..cff87d8d30da 100644
---- a/arch/arm/include/asm/vdso/vsyscall.h
-+++ b/arch/arm/include/asm/vdso/vsyscall.h
-@@ -34,9 +34,9 @@ struct vdso_data *__arm_get_k_vdso_data(void)
- #define __arch_get_k_vdso_data __arm_get_k_vdso_data
+diff --git a/arch/x86/kernel/cpu/common.c b/arch/x86/kernel/cpu/common.c
+index 2e4d90294fe6..ca4a0d2cc88f 100644
+--- a/arch/x86/kernel/cpu/common.c
++++ b/arch/x86/kernel/cpu/common.c
+@@ -1023,6 +1023,7 @@ static void identify_cpu_without_cpuid(struct cpuinfo_x86 *c)
+ #define MSBDS_ONLY		BIT(5)
+ #define NO_SWAPGS		BIT(6)
+ #define NO_ITLB_MULTIHIT	BIT(7)
++#define NO_SPECTRE_V2		BIT(8)
  
- static __always_inline
--int __arm_update_vdso_data(void)
-+bool __arm_update_vdso_data(void)
- {
--	return !cntvct_ok;
-+	return cntvct_ok;
- }
- #define __arch_update_vdso_data __arm_update_vdso_data
- 
-diff --git a/include/asm-generic/vdso/vsyscall.h b/include/asm-generic/vdso/vsyscall.h
-index ce4103208619..cec543d9e87b 100644
---- a/include/asm-generic/vdso/vsyscall.h
-+++ b/include/asm-generic/vdso/vsyscall.h
-@@ -12,9 +12,9 @@ static __always_inline struct vdso_data *__arch_get_k_vdso_data(void)
- #endif /* __arch_get_k_vdso_data */
- 
- #ifndef __arch_update_vdso_data
--static __always_inline int __arch_update_vdso_data(void)
-+static __always_inline bool __arch_update_vdso_data(void)
- {
--	return 0;
-+	return true;
- }
- #endif /* __arch_update_vdso_data */
- 
-diff --git a/kernel/time/vsyscall.c b/kernel/time/vsyscall.c
-index 5ee0f7709410..9577c89179cd 100644
---- a/kernel/time/vsyscall.c
-+++ b/kernel/time/vsyscall.c
-@@ -28,11 +28,6 @@ static inline void update_vdso_data(struct vdso_data *vdata,
- 	vdata[CS_RAW].mult			= tk->tkr_raw.mult;
- 	vdata[CS_RAW].shift			= tk->tkr_raw.shift;
- 
--	/* CLOCK_REALTIME */
--	vdso_ts		= &vdata[CS_HRES_COARSE].basetime[CLOCK_REALTIME];
--	vdso_ts->sec	= tk->xtime_sec;
--	vdso_ts->nsec	= tk->tkr_mono.xtime_nsec;
--
- 	/* CLOCK_MONOTONIC */
- 	vdso_ts		= &vdata[CS_HRES_COARSE].basetime[CLOCK_MONOTONIC];
- 	vdso_ts->sec	= tk->xtime_sec + tk->wall_to_monotonic.tv_sec;
-@@ -70,12 +65,6 @@ static inline void update_vdso_data(struct vdso_data *vdata,
- 	vdso_ts		= &vdata[CS_HRES_COARSE].basetime[CLOCK_TAI];
- 	vdso_ts->sec	= tk->xtime_sec + (s64)tk->tai_offset;
- 	vdso_ts->nsec	= tk->tkr_mono.xtime_nsec;
--
--	/*
--	 * Read without the seqlock held by clock_getres().
--	 * Note: No need to have a second copy.
--	 */
--	WRITE_ONCE(vdata[CS_HRES_COARSE].hrtimer_res, hrtimer_resolution);
- }
- 
- void update_vsyscall(struct timekeeper *tk)
-@@ -84,20 +73,17 @@ void update_vsyscall(struct timekeeper *tk)
- 	struct vdso_timestamp *vdso_ts;
- 	u64 nsec;
- 
--	if (__arch_update_vdso_data()) {
--		/*
--		 * Some architectures might want to skip the update of the
--		 * data page.
--		 */
--		return;
--	}
--
- 	/* copy vsyscall data */
- 	vdso_write_begin(vdata);
- 
- 	vdata[CS_HRES_COARSE].clock_mode	= __arch_get_clock_mode(tk);
- 	vdata[CS_RAW].clock_mode		= __arch_get_clock_mode(tk);
- 
-+	/* CLOCK_REALTIME also required for time() */
-+	vdso_ts		= &vdata[CS_HRES_COARSE].basetime[CLOCK_REALTIME];
-+	vdso_ts->sec	= tk->xtime_sec;
-+	vdso_ts->nsec	= tk->tkr_mono.xtime_nsec;
+ #define VULNWL(_vendor, _family, _model, _whitelist)	\
+ 	{ X86_VENDOR_##_vendor, _family, _model, X86_FEATURE_ANY, _whitelist }
+@@ -1084,6 +1085,10 @@ static const __initconst struct x86_cpu_id cpu_vuln_whitelist[] = {
+ 	/* FAMILY_ANY must be last, otherwise 0x0f - 0x12 matches won't work */
+ 	VULNWL_AMD(X86_FAMILY_ANY,	NO_MELTDOWN | NO_L1TF | NO_MDS | NO_SWAPGS | NO_ITLB_MULTIHIT),
+ 	VULNWL_HYGON(X86_FAMILY_ANY,	NO_MELTDOWN | NO_L1TF | NO_MDS | NO_SWAPGS | NO_ITLB_MULTIHIT),
 +
- 	/* CLOCK_REALTIME_COARSE */
- 	vdso_ts		= &vdata[CS_HRES_COARSE].basetime[CLOCK_REALTIME_COARSE];
- 	vdso_ts->sec	= tk->xtime_sec;
-@@ -110,7 +96,18 @@ void update_vsyscall(struct timekeeper *tk)
- 	nsec		= nsec + tk->wall_to_monotonic.tv_nsec;
- 	vdso_ts->sec	+= __iter_div_u64_rem(nsec, NSEC_PER_SEC, &vdso_ts->nsec);
++	/* Zhaoxin Family 7 */
++	VULNWL(CENTAUR,	7, X86_MODEL_ANY,	NO_SPECTRE_V2 | NO_SWAPGS),
++	VULNWL(ZHAOXIN,	7, X86_MODEL_ANY,	NO_SPECTRE_V2 | NO_SWAPGS),
+ 	{}
+ };
  
--	update_vdso_data(vdata, tk);
-+	/*
-+	 * Read without the seqlock held by clock_getres().
-+	 * Note: No need to have a second copy.
-+	 */
-+	WRITE_ONCE(vdata[CS_HRES_COARSE].hrtimer_res, hrtimer_resolution);
+@@ -1116,7 +1121,9 @@ static void __init cpu_set_bug_bits(struct cpuinfo_x86 *c)
+ 		return;
+ 
+ 	setup_force_cpu_bug(X86_BUG_SPECTRE_V1);
+-	setup_force_cpu_bug(X86_BUG_SPECTRE_V2);
 +
-+	/*
-+	 * Architectures can opt out of updating the high resolution part
-+	 * of the VDSO.
-+	 */
-+	if (__arch_update_vdso_data())
-+		update_vdso_data(vdata, tk);
++	if (!cpu_matches(NO_SPECTRE_V2))
++		setup_force_cpu_bug(X86_BUG_SPECTRE_V2);
  
- 	__arch_update_vsyscall(vdata, tk);
+ 	if (!cpu_matches(NO_SSB) && !(ia32_cap & ARCH_CAP_SSB_NO) &&
+ 	   !cpu_has(c, X86_FEATURE_AMD_SSB_NO))
+diff --git a/arch/x86/kernel/cpu/tsx.c b/arch/x86/kernel/cpu/tsx.c
+index 3e20d322bc98..032509adf9de 100644
+--- a/arch/x86/kernel/cpu/tsx.c
++++ b/arch/x86/kernel/cpu/tsx.c
+@@ -115,11 +115,12 @@ void __init tsx_init(void)
+ 		tsx_disable();
  
+ 		/*
+-		 * tsx_disable() will change the state of the
+-		 * RTM CPUID bit.  Clear it here since it is now
+-		 * expected to be not set.
++		 * tsx_disable() will change the state of the RTM and HLE CPUID
++		 * bits. Clear them here since they are now expected to be not
++		 * set.
+ 		 */
+ 		setup_clear_cpu_cap(X86_FEATURE_RTM);
++		setup_clear_cpu_cap(X86_FEATURE_HLE);
+ 	} else if (tsx_ctrl_state == TSX_CTRL_ENABLE) {
+ 
+ 		/*
+@@ -131,10 +132,10 @@ void __init tsx_init(void)
+ 		tsx_enable();
+ 
+ 		/*
+-		 * tsx_enable() will change the state of the
+-		 * RTM CPUID bit.  Force it here since it is now
+-		 * expected to be set.
++		 * tsx_enable() will change the state of the RTM and HLE CPUID
++		 * bits. Force them here since they are now expected to be set.
+ 		 */
+ 		setup_force_cpu_cap(X86_FEATURE_RTM);
++		setup_force_cpu_cap(X86_FEATURE_HLE);
+ 	}
+ }
 
