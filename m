@@ -2,86 +2,71 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 914EC14A0B5
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Jan 2020 10:28:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 351FA14A0C9
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Jan 2020 10:30:19 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729527AbgA0J2F (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 27 Jan 2020 04:28:05 -0500
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:38039 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726191AbgA0J2F (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 27 Jan 2020 04:28:05 -0500
-Received: by mail-wm1-f67.google.com with SMTP id a9so1269483wmj.3
-        for <linux-kernel@vger.kernel.org>; Mon, 27 Jan 2020 01:28:03 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=0rrhtVNAh9PShHy/q9Ma9GVW1EfhEw69zS9XJ919ql0=;
-        b=Ry6MxWHzMuizNcrIXmJ+ILo+Ug7WUFj2cdd4Eac/fjorUhjJ2vLe5BblmPQiY93Ojy
-         ZalxLlJsMUzY5eE/JWqQaa48yat6sljaz/LQePrn8lUkDLo0e4xb0Yhfnsyi3I3dp1Xm
-         VXoU8+gImAEfDIYfovlDVgbs9va2kmsp5dOpps8YcCCzJruwdjxY0jNi7Z//uCkt4mNs
-         7QP/OTgqbl+7t2XJUf0KNj7wII9CH/3zuP7oS0U6piojruWjHIY2LdXiQ2ROqb1A8GCz
-         TYOOrRYslFYNPP27XVVKnsYZ5MirgESSHJvSmm0OYpM0Icbc+1htpRyckYSlwJtShVtE
-         AT0A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=0rrhtVNAh9PShHy/q9Ma9GVW1EfhEw69zS9XJ919ql0=;
-        b=ElJT0gEh5uzA76EK6ER2f5ZsWHv3Vj4PW54+mnSmmdP4YdMX3chpRy26yyhYezmOpv
-         4ETJFX5R/b/9+2MBly+6lAQqIuAB1kVCIRucl/8N0isbp98cXi7+QqydoNDC1uIRg7kP
-         tY6O0zvURAKNM2cCsFaLODNCbi9ddDNTlri9TKcoiyku1IE5pXgg3m9IXqvcS2ZhJvOX
-         kBGvMr9Pimf9hXeOraAJF8mufcXKTHhkUZh3OK3FJHn1DfdWdRpHD5CWPH/lUYUfK4Cd
-         yB5ikwObxVLxfEgL7JZJ3T3UgS1awq9bnkkTobnFe5WAxs1GIIJpnOrD6KVnFTt/ffC0
-         HheA==
-X-Gm-Message-State: APjAAAU9r61qoa+ajQQ9/e3wT+jPNSPtbGgdz5UtQ2Pv4mSbXm3kZMuL
-        W9HrdNs/4oUl64FFOMxpW6nJnw==
-X-Google-Smtp-Source: APXvYqzNHfraG8VHB52d4ZUiAtnUfeH8L+HhvLAOE6hLMkT3axNMdPiY+28wttfTyIVlaLSDOucCtQ==
-X-Received: by 2002:a1c:dcd5:: with SMTP id t204mr12654838wmg.34.1580117283232;
-        Mon, 27 Jan 2020 01:28:03 -0800 (PST)
-Received: from dell ([2.27.35.227])
-        by smtp.gmail.com with ESMTPSA id d14sm21424165wru.9.2020.01.27.01.28.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 27 Jan 2020 01:28:02 -0800 (PST)
-Date:   Mon, 27 Jan 2020 09:28:15 +0000
-From:   Lee Jones <lee.jones@linaro.org>
-To:     Andreas Kemnade <andreas@kemnade.info>
-Cc:     jic23@kernel.org, knaack.h@gmx.de, lars@metafoo.de,
-        pmeerw@pmeerw.net, b.galvani@gmail.com, linus.walleij@linaro.org,
-        linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org,
-        phh@phh.me, stefan@agner.ch, letux-kernel@openphoenux.org
-Subject: Re: [PATCH 2/5] mfd: rn5t618: add ADC subdevice for RC5T619
-Message-ID: <20200127092815.GA3548@dell>
-References: <20200117215926.15194-1-andreas@kemnade.info>
- <20200117215926.15194-3-andreas@kemnade.info>
- <20200120084934.GZ15507@dell>
- <20200124162818.0697f551@kemnade.info>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20200124162818.0697f551@kemnade.info>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        id S1729592AbgA0J3t (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 27 Jan 2020 04:29:49 -0500
+Received: from foss.arm.com ([217.140.110.172]:41462 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727872AbgA0J3s (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 27 Jan 2020 04:29:48 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id B5B3231B;
+        Mon, 27 Jan 2020 01:29:47 -0800 (PST)
+Received: from ssg-dev-vb.kfn.arm.com (E111385.Arm.com [10.50.4.77])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 9DDCA3F67D;
+        Mon, 27 Jan 2020 01:29:43 -0800 (PST)
+From:   Hadar Gat <hadar.gat@arm.com>
+To:     Matt Mackall <mpm@selenic.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Daniel Thompson <daniel.thompson@linaro.org>,
+        Tomer Maimon <tmaimon77@gmail.com>,
+        Stefan Wahren <wahrenst@gmx.net>,
+        Sumit Garg <sumit.garg@linaro.org>,
+        Zaibo Xu <xuzaibo@huawei.com>,
+        Weili Qian <qianweili@huawei.com>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Jonathan Cameron <Jonathan.Cameron@huawei.com>
+Cc:     linux-crypto@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Gilad Ben-Yossef <gilad@benyossef.com>,
+        Ofir Drang <ofir.drang@arm.com>, Hadar Gat <hadar.gat@arm.com>
+Subject: [PATCH 0/3] hw_random: introduce Arm CryptoCell TRNG driver
+Date:   Mon, 27 Jan 2020 11:28:21 +0200
+Message-Id: <1580117304-12682-1-git-send-email-hadar.gat@arm.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 24 Jan 2020, Andreas Kemnade wrote:
-> hmm, I cannot find this in any branch/repo I know of and not in linux-next,
-> just wondering...
-> I guess the iio part is something to go towards 5.7 unless 5.5
-> is delayed mucch.
+The Arm CryptoCell is a hardware security engine.
+This patch introduces driver for its TRNG (True Random Number Generator)
+engine.
 
-Oh, it looks like there was a conflict.  Could you collect any Acks
-(including mine) rebase and resend please?
+Hadar Gat (3):
+  dt-bindings: add device tree binding for Arm CryptoCell trng engine
+  hw_random: cctrng: introduce Arm CryptoCell driver
+  MAINTAINERS: add HG as cctrng maintainer
+
+ .../devicetree/bindings/rng/arm-cctrng.yaml        |  49 ++
+ MAINTAINERS                                        |   9 +
+ drivers/char/hw_random/Kconfig                     |  12 +
+ drivers/char/hw_random/Makefile                    |   1 +
+ drivers/char/hw_random/cctrng.c                    | 789 +++++++++++++++++++++
+ drivers/char/hw_random/cctrng.h                    |  69 ++
+ 6 files changed, 929 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/rng/arm-cctrng.yaml
+ create mode 100644 drivers/char/hw_random/cctrng.c
+ create mode 100644 drivers/char/hw_random/cctrng.h
 
 -- 
-Lee Jones [李琼斯]
-Linaro Services Technical Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+2.7.4
+
