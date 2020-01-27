@@ -2,155 +2,96 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A13BD14A8AD
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Jan 2020 18:07:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0147314A8B2
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Jan 2020 18:08:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727673AbgA0RHT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 27 Jan 2020 12:07:19 -0500
-Received: from lhrrgout.huawei.com ([185.176.76.210]:2308 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726099AbgA0RHR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 27 Jan 2020 12:07:17 -0500
-Received: from lhreml701-cah.china.huawei.com (unknown [172.18.7.106])
-        by Forcepoint Email with ESMTP id 7D538FE425EF68D12A98;
-        Mon, 27 Jan 2020 17:07:16 +0000 (GMT)
-Received: from lhreml710-chm.china.huawei.com (10.201.108.61) by
- lhreml701-cah.china.huawei.com (10.201.108.42) with Microsoft SMTP Server
- (TLS) id 14.3.408.0; Mon, 27 Jan 2020 17:07:15 +0000
-Received: from localhost (10.202.226.57) by lhreml710-chm.china.huawei.com
- (10.201.108.61) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1713.5; Mon, 27 Jan
- 2020 17:07:16 +0000
-Date:   Mon, 27 Jan 2020 17:07:13 +0000
-From:   Jonathan Cameron <Jonathan.Cameron@Huawei.com>
-To:     Cristian Marussi <cristian.marussi@arm.com>
-CC:     <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <james.quinlan@broadcom.com>, <lukasz.luba@arm.com>,
-        <sudeep.holla@arm.com>
-Subject: Re: [RFC PATCH 01/11] firmware: arm_scmi: Add receive buffer
- support for notifications
-Message-ID: <20200127170713.000013ee@Huawei.com>
-In-Reply-To: <20200120122333.46217-2-cristian.marussi@arm.com>
-References: <20200120122333.46217-1-cristian.marussi@arm.com>
-        <20200120122333.46217-2-cristian.marussi@arm.com>
-Organization: Huawei Technologies Research and Development (UK) Ltd.
-X-Mailer: Claws Mail 3.17.4 (GTK+ 2.24.32; i686-w64-mingw32)
+        id S1726360AbgA0RIE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 27 Jan 2020 12:08:04 -0500
+Received: from mail-ua1-f65.google.com ([209.85.222.65]:37548 "EHLO
+        mail-ua1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725845AbgA0RIE (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 27 Jan 2020 12:08:04 -0500
+Received: by mail-ua1-f65.google.com with SMTP id h32so3718232uah.4
+        for <linux-kernel@vger.kernel.org>; Mon, 27 Jan 2020 09:08:03 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=bOiV8nj2HZ+JtKcIVA5xQdznkVK/jM8PnqE9J+mRXqQ=;
+        b=YrB//b92fTsHkMw3bXM25KI/RYWOU7ymbAeVsjo+vGfk3HbEiKFvFYtASMzcTT0lUM
+         dyv2seW78v0VKay+qVrhTS3Jpn7Y7unPJ29rR2HvbrOOrPCQzDq7qdIqyFckjEDe7+Ap
+         aFRB4NmCvhUk0h4tMLr2fD0rmlmi8+LY4yxVs=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=bOiV8nj2HZ+JtKcIVA5xQdznkVK/jM8PnqE9J+mRXqQ=;
+        b=PE2WevuOSSoo8Dp7SB/eX83rHaUg7SgwWllLI3egBV4GGXJxxQHGbqoPj+pm5GDJWx
+         OGt8SW8AYlRTl2bVQ62WcKihUa7s+JNgFhWQ/XoXFdnGV8Qf2DrX97uoLCA+FcVvjLpC
+         BFJ/pgNyM5gCWYJqNd2kjQqNCTcf3tO+xLVAMO+n16igqynfSXDhdbgV0FvAX40bEigv
+         gUDovByK7aswg7ZLM4SUJJ+UvkVwtCL4kC88e0PvHRN0ZxO+mBTExaTppfa9JKqRDv/t
+         RChFMaraYJ+9/7HMt1KcSVX6D9vvWL5FrKdbyS+Lx33amlEVeHrAIbhKCu21JYWK6UqQ
+         n7NA==
+X-Gm-Message-State: APjAAAW+asWrjZZmJozqi3t1LqvO6+I2Gs1Ur3xZrZQwf/uWlmD4Jt2Q
+        oN+ti4MVfD/B8bs9z7z2NyhtOTz6K4I=
+X-Google-Smtp-Source: APXvYqzJ31qmrxLu31kjsWps9lm2BUxcgJvdvyovqEV7Sn8c9+J1cy8HfhqRdn+FZvSJU0PE+pFhNw==
+X-Received: by 2002:ab0:e16:: with SMTP id g22mr9927051uak.129.1580144883063;
+        Mon, 27 Jan 2020 09:08:03 -0800 (PST)
+Received: from mail-vs1-f54.google.com (mail-vs1-f54.google.com. [209.85.217.54])
+        by smtp.gmail.com with ESMTPSA id w28sm4758064vkm.36.2020.01.27.09.08.02
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 27 Jan 2020 09:08:02 -0800 (PST)
+Received: by mail-vs1-f54.google.com with SMTP id f26so6116989vsk.10
+        for <linux-kernel@vger.kernel.org>; Mon, 27 Jan 2020 09:08:02 -0800 (PST)
+X-Received: by 2002:a67:1ec5:: with SMTP id e188mr4925367vse.169.1580144881597;
+ Mon, 27 Jan 2020 09:08:01 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.202.226.57]
-X-ClientProxiedBy: lhreml737-chm.china.huawei.com (10.201.108.187) To
- lhreml710-chm.china.huawei.com (10.201.108.61)
-X-CFilter-Loop: Reflected
+References: <20200127082331.1.I402470e4a162d69fde47ee2ea708b15bde9751f9@changeid>
+ <20200127170457.GK2841@vkoul-mobl>
+In-Reply-To: <20200127170457.GK2841@vkoul-mobl>
+From:   Doug Anderson <dianders@chromium.org>
+Date:   Mon, 27 Jan 2020 09:07:49 -0800
+X-Gmail-Original-Message-ID: <CAD=FV=XKHy6FmkeyCNB+vb7Ws=uZWOQ-QpYOKPJZg9PhFcJf5A@mail.gmail.com>
+Message-ID: <CAD=FV=XKHy6FmkeyCNB+vb7Ws=uZWOQ-QpYOKPJZg9PhFcJf5A@mail.gmail.com>
+Subject: Re: [PATCH] arm64: dts: qcom: qcs404: Fix sdhci compat string
+To:     Vinod Koul <vkoul@kernel.org>
+Cc:     Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Matthias Kaehlcke <mka@chromium.org>,
+        Veerabhadrarao Badiganti <vbadigan@codeaurora.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Andy Gross <agross@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 20 Jan 2020 12:23:23 +0000
-Cristian Marussi <cristian.marussi@arm.com> wrote:
+Hi,
 
-> From: Sudeep Holla <sudeep.holla@arm.com>
-> 
-> With all the plumbing in place, let's just add the separate dedicated
-> receive buffers to handle notifications that can arrive asynchronously
-> from the platform firmware to OS.
-> 
-> Also add check to see if the platform supports any receive channels
-> before allocating the receive buffers.
+On Mon, Jan 27, 2020 at 9:05 AM Vinod Koul <vkoul@kernel.org> wrote:
+>
+> On 27-01-20, 08:23, Douglas Anderson wrote:
+> > As per the bindings, the SDHCI controller should have a SoC-specific
+> > compatible string in addition to the generic version-based one.  Add
+> > it.
+>
+> Thanks for spotting it Doug, Btw did some script catch it or manual
+> inspection?
+>
+>
+> Reviewed-by: Vinod Koul <vkoul@kernel.org>
 
-Perhaps hand hold the reader a tiny bit more by saying that we need
-to move the initialization later so that we can know *if* the receive
-channels are supported.  Took me a moment to figure out why you did that ;)
+It probably would have been spotted by "make dtbs_check", but I wasn't
+running that in this case.  I just happened to notice it while
+chatting with someone at Qualcomm about whether
+<https://crrev.com/c/2022985> was correct (still waiting for a
+response on that).
 
-One minor suggestion inline.
-
-> 
-> Signed-off-by: Sudeep Holla <sudeep.holla@arm.com>
-> ---
->  drivers/firmware/arm_scmi/driver.c | 24 ++++++++++++++++++------
->  1 file changed, 18 insertions(+), 6 deletions(-)
-> 
-> diff --git a/drivers/firmware/arm_scmi/driver.c b/drivers/firmware/arm_scmi/driver.c
-> index 2c96f6b5a7d8..9611e8037d77 100644
-> --- a/drivers/firmware/arm_scmi/driver.c
-> +++ b/drivers/firmware/arm_scmi/driver.c
-> @@ -123,6 +123,7 @@ struct scmi_chan_info {
->   * @version: SCMI revision information containing protocol version,
->   *	implementation version and (sub-)vendor identification.
->   * @tx_minfo: Universal Transmit Message management info
-> + * @rx_minfo: Universal Receive Message management info
->   * @tx_idr: IDR object to map protocol id to Tx channel info pointer
->   * @rx_idr: IDR object to map protocol id to Rx channel info pointer
->   * @protocols_imp: List of protocols implemented, currently maximum of
-> @@ -136,6 +137,7 @@ struct scmi_info {
->  	struct scmi_revision_info version;
->  	struct scmi_handle handle;
->  	struct scmi_xfers_info tx_minfo;
-> +	struct scmi_xfers_info rx_minfo;
->  	struct idr tx_idr;
->  	struct idr rx_idr;
->  	u8 *protocols_imp;
-> @@ -690,13 +692,13 @@ int scmi_handle_put(const struct scmi_handle *handle)
->  	return 0;
->  }
->  
-> -static int scmi_xfer_info_init(struct scmi_info *sinfo)
-> +static int __scmi_xfer_info_init(struct scmi_info *sinfo, bool tx)
->  {
->  	int i;
->  	struct scmi_xfer *xfer;
->  	struct device *dev = sinfo->dev;
->  	const struct scmi_desc *desc = sinfo->desc;
-> -	struct scmi_xfers_info *info = &sinfo->tx_minfo;
-> +	struct scmi_xfers_info *info = tx ? &sinfo->tx_minfo : &sinfo->rx_minfo;
-
-Perhaps cleaner to just pass in the relevant info structure rather than a boolean
-to pick it.  Saves people having to check if the boolean is saying it's
-tx or rx when reading the call sites.
-
->  
->  	/* Pre-allocated messages, no more than what hdr.seq can support */
->  	if (WARN_ON(desc->max_msg >= MSG_TOKEN_MAX)) {
-> @@ -731,6 +733,16 @@ static int scmi_xfer_info_init(struct scmi_info *sinfo)
->  	return 0;
->  }
->  
-> +static int scmi_xfer_info_init(struct scmi_info *sinfo)
-> +{
-> +	int ret = __scmi_xfer_info_init(sinfo, true);
-> +
-> +	if (!ret && idr_find(&sinfo->rx_idr, SCMI_PROTOCOL_BASE))
-> +		ret = __scmi_xfer_info_init(sinfo, false);
-> +
-> +	return ret;
-> +}
-> +
->  static int scmi_mailbox_check(struct device_node *np, int idx)
->  {
->  	return of_parse_phandle_with_args(np, "mboxes", "#mbox-cells",
-> @@ -908,10 +920,6 @@ static int scmi_probe(struct platform_device *pdev)
->  	info->desc = desc;
->  	INIT_LIST_HEAD(&info->node);
->  
-> -	ret = scmi_xfer_info_init(info);
-> -	if (ret)
-> -		return ret;
-> -
->  	platform_set_drvdata(pdev, info);
->  	idr_init(&info->tx_idr);
->  	idr_init(&info->rx_idr);
-> @@ -924,6 +932,10 @@ static int scmi_probe(struct platform_device *pdev)
->  	if (ret)
->  		return ret;
->  
-> +	ret = scmi_xfer_info_init(info);
-> +	if (ret)
-> +		return ret;
-> +
->  	ret = scmi_base_protocol_init(handle);
->  	if (ret) {
->  		dev_err(dev, "unable to communicate with SCMI(%d)\n", ret);
-
-
+-Doug
