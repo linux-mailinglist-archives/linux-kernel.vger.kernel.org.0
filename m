@@ -2,96 +2,137 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0147314A8B2
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Jan 2020 18:08:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CE50114A8BA
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Jan 2020 18:11:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726360AbgA0RIE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 27 Jan 2020 12:08:04 -0500
-Received: from mail-ua1-f65.google.com ([209.85.222.65]:37548 "EHLO
-        mail-ua1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725845AbgA0RIE (ORCPT
+        id S1726049AbgA0RLQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 27 Jan 2020 12:11:16 -0500
+Received: from mail-qt1-f195.google.com ([209.85.160.195]:46294 "EHLO
+        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725845AbgA0RLQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 27 Jan 2020 12:08:04 -0500
-Received: by mail-ua1-f65.google.com with SMTP id h32so3718232uah.4
-        for <linux-kernel@vger.kernel.org>; Mon, 27 Jan 2020 09:08:03 -0800 (PST)
+        Mon, 27 Jan 2020 12:11:16 -0500
+Received: by mail-qt1-f195.google.com with SMTP id e25so7907860qtr.13
+        for <linux-kernel@vger.kernel.org>; Mon, 27 Jan 2020 09:11:15 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
+        d=google.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=bOiV8nj2HZ+JtKcIVA5xQdznkVK/jM8PnqE9J+mRXqQ=;
-        b=YrB//b92fTsHkMw3bXM25KI/RYWOU7ymbAeVsjo+vGfk3HbEiKFvFYtASMzcTT0lUM
-         dyv2seW78v0VKay+qVrhTS3Jpn7Y7unPJ29rR2HvbrOOrPCQzDq7qdIqyFckjEDe7+Ap
-         aFRB4NmCvhUk0h4tMLr2fD0rmlmi8+LY4yxVs=
+        bh=XsWyww+QgbXklC8MxgHKR4SlweUpSlsMS025zYGjX0o=;
+        b=me+nHO+RJJ9pwknvGMxNKY4E+IIq2rfX81uDSJep64/JNvaqDYDa7kfwa5++7pg6Qc
+         9qBxYeCKnArlG4B9+YtIuqZL8vsEJ5u1Ve8INj+sdQMjZ986c8lrmZafuE4Lg5h/H5oS
+         tL1QvrBbFhgf9wPlM7BniGAn/nU7M9lQ70hdnBieA257ntb2JE3szZlI1EHsp6GoaV48
+         3w0ns7UQ+ky4syC0xGMztwp786ZkcVq6GNGSU7pqOEreCBgzFqIBxlqhZXZCHeaZjg72
+         A8cQzmR0i0cncpMm+ifTbo4l/ZMmlVWdFpgkrcBi/ceyOOx2NCTkZoGZbOvB4eSlgc/h
+         E7Qw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=bOiV8nj2HZ+JtKcIVA5xQdznkVK/jM8PnqE9J+mRXqQ=;
-        b=PE2WevuOSSoo8Dp7SB/eX83rHaUg7SgwWllLI3egBV4GGXJxxQHGbqoPj+pm5GDJWx
-         OGt8SW8AYlRTl2bVQ62WcKihUa7s+JNgFhWQ/XoXFdnGV8Qf2DrX97uoLCA+FcVvjLpC
-         BFJ/pgNyM5gCWYJqNd2kjQqNCTcf3tO+xLVAMO+n16igqynfSXDhdbgV0FvAX40bEigv
-         gUDovByK7aswg7ZLM4SUJJ+UvkVwtCL4kC88e0PvHRN0ZxO+mBTExaTppfa9JKqRDv/t
-         RChFMaraYJ+9/7HMt1KcSVX6D9vvWL5FrKdbyS+Lx33amlEVeHrAIbhKCu21JYWK6UqQ
-         n7NA==
-X-Gm-Message-State: APjAAAW+asWrjZZmJozqi3t1LqvO6+I2Gs1Ur3xZrZQwf/uWlmD4Jt2Q
-        oN+ti4MVfD/B8bs9z7z2NyhtOTz6K4I=
-X-Google-Smtp-Source: APXvYqzJ31qmrxLu31kjsWps9lm2BUxcgJvdvyovqEV7Sn8c9+J1cy8HfhqRdn+FZvSJU0PE+pFhNw==
-X-Received: by 2002:ab0:e16:: with SMTP id g22mr9927051uak.129.1580144883063;
-        Mon, 27 Jan 2020 09:08:03 -0800 (PST)
-Received: from mail-vs1-f54.google.com (mail-vs1-f54.google.com. [209.85.217.54])
-        by smtp.gmail.com with ESMTPSA id w28sm4758064vkm.36.2020.01.27.09.08.02
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 27 Jan 2020 09:08:02 -0800 (PST)
-Received: by mail-vs1-f54.google.com with SMTP id f26so6116989vsk.10
-        for <linux-kernel@vger.kernel.org>; Mon, 27 Jan 2020 09:08:02 -0800 (PST)
-X-Received: by 2002:a67:1ec5:: with SMTP id e188mr4925367vse.169.1580144881597;
- Mon, 27 Jan 2020 09:08:01 -0800 (PST)
+        bh=XsWyww+QgbXklC8MxgHKR4SlweUpSlsMS025zYGjX0o=;
+        b=NIVr1o+aRhh79MNI4g6M1pNlaEdBeeqqtBubfg09wTRT6xUQRvG6jHfTdb4Wk4AcYs
+         OUKdQYgVIkwd7jIYKElryZzWsl+r5Wk6Jgs3Y+PacoZMkcX7ZV3sBdmlR6URHHCLc92z
+         SqLzmMsMR38CjkIUSCNtmSgXcrCO2DwIENq+S3rROl5vQs/CHIM5eJIqKwoyW7cME5fm
+         eWxmQ+MelCb+rv/H59n/dZ+veNrzAGTf6ax2SEe7z3x2W1vjF2KTH08YGTUFLLNQ8XM3
+         bFViqvhw/JGmedLa+p8BuJH+4paRcK0Y+vSTlUcPGcn91hxZ6ofZBAL8yQxx10YsWUOA
+         Cuxg==
+X-Gm-Message-State: APjAAAUESAWxtKbDDU6Bh4/PL/iqoZhh0OdawJdBXFaIgu7QOBKQU8OH
+        MMzxIeZz0+uZBaf2TqaIjCwEN14o9RDUIcbAEurW8A==
+X-Google-Smtp-Source: APXvYqy5VT6LPP1sTcdJXPvGsFwol8OQElSUlAhWZheS+bJq22dM6OyWwO3nO6ssFpbLCp4wFxPtJv7ZkLGtKtOiTvg=
+X-Received: by 2002:ac8:340c:: with SMTP id u12mr16371700qtb.257.1580145074290;
+ Mon, 27 Jan 2020 09:11:14 -0800 (PST)
 MIME-Version: 1.0
-References: <20200127082331.1.I402470e4a162d69fde47ee2ea708b15bde9751f9@changeid>
- <20200127170457.GK2841@vkoul-mobl>
-In-Reply-To: <20200127170457.GK2841@vkoul-mobl>
-From:   Doug Anderson <dianders@chromium.org>
-Date:   Mon, 27 Jan 2020 09:07:49 -0800
-X-Gmail-Original-Message-ID: <CAD=FV=XKHy6FmkeyCNB+vb7Ws=uZWOQ-QpYOKPJZg9PhFcJf5A@mail.gmail.com>
-Message-ID: <CAD=FV=XKHy6FmkeyCNB+vb7Ws=uZWOQ-QpYOKPJZg9PhFcJf5A@mail.gmail.com>
-Subject: Re: [PATCH] arm64: dts: qcom: qcs404: Fix sdhci compat string
-To:     Vinod Koul <vkoul@kernel.org>
-Cc:     Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Matthias Kaehlcke <mka@chromium.org>,
-        Veerabhadrarao Badiganti <vbadigan@codeaurora.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+References: <CACT4Y+bg1UKXzZF4a9y+5CfNYRwBc5Gx+GjPS0Dhb1n-Qf50+g@mail.gmail.com>
+ <CACT4Y+bckC4k-EpWiCkD+BBo5ypmkcb2g8Axb62LnBbwJjcqdw@mail.gmail.com> <20200126095132.bq33azq7paqvedzx@wittgenstein>
+In-Reply-To: <20200126095132.bq33azq7paqvedzx@wittgenstein>
+From:   Dmitry Vyukov <dvyukov@google.com>
+Date:   Mon, 27 Jan 2020 18:11:02 +0100
+Message-ID: <CACT4Y+ZNJY9D3xmk21M7qaBjbD+1_GeigA1Z1FGHwC+3MNT-gw@mail.gmail.com>
+Subject: Re: binderfs interferes with syzkaller?
+To:     Christian Brauner <christian.brauner@ubuntu.com>
+Cc:     Christian Brauner <christian@brauner.io>,
+        Hridya Valsaraju <hridya@google.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        =?UTF-8?B?QXJ2ZSBIasO4bm5ldsOlZw==?= <arve@android.com>,
+        Todd Kjos <tkjos@android.com>,
+        Martijn Coenen <maco@android.com>,
+        Joel Fernandes <joel@joelfernandes.org>,
+        "open list:ANDROID DRIVERS" <devel@driverdev.osuosl.org>,
         LKML <linux-kernel@vger.kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Andy Gross <agross@kernel.org>
+        syzkaller <syzkaller@googlegroups.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+On Sun, Jan 26, 2020 at 10:51 AM Christian Brauner
+<christian.brauner@ubuntu.com> wrote:
+>
+> On Sat, Jan 25, 2020 at 07:13:03PM +0100, Dmitry Vyukov wrote:
+> > On Sat, Jan 25, 2020 at 6:49 PM Dmitry Vyukov <dvyukov@google.com> wrote:
+> > >
+> > > Hi binder maintainers,
+> > >
+> > > It seems that something has happened and now syzbot has 0 coverage in
+> > > drivers/android/binder.c:
+> > > https://storage.googleapis.com/syzkaller/cover/ci-upstream-kasan-gce-root.html
+> > > It covered at least something there before as it found some bugs in binder code.
+> > > I _suspect_ it may be related to introduction binderfs, but it's
+> > > purely based on the fact that binderfs changed lots of things there.
+> > > And I see it claims to be backward compatible.
+> > >
+> > > syzkaller strategy to reach binder devices is to use
+> > > CONFIG_ANDROID_BINDER_DEVICES to create a bunch of binderN devices (to
+> > > give each test process a private one):
+> > > https://github.com/google/syzkaller/blob/master/dashboard/config/upstream-kasan.config#L5671
+> > >
+> > > Then it knows how to open these /dev/binderN devices:
+> > > https://github.com/google/syzkaller/blob/master/sys/linux/dev_binder.txt#L22
+> > > and do stuff with them.
+> > >
+> > > Did these devices disappear or something?
+> >
+> > Oh, I see, it's backwards compatible if it's not enabled, right?
+>
+> It's backwards compatible.
+> Let me give a little more detail. The legacy binder interface would
+> create all devices listed in the module parameter
+> CONFIG_ANDROID_BINDER_DEVICES. These devices were created using
+> misc_register(&binder_device->miscdev);
+> in the host's devtmpfs mount.
+> If binderfs is enabled these devices are now created in the binderfs
+> instance instead.
+> For full backwards compatibility with old Android versions symlinks (or
+> bind mounts) can be provided in the host's devtmpfs. This is what I
+> recommended a few months ago.
+>
+> > And we enabled it because, well, enabling things generally gives more
+> > coverage. I guess I will disable CONFIG_ANDROID_BINDERFS for now to
+>
+> I would at least try to test both somehow. It's likely that binderfs
+> will replace legacy binder devices so if we could keep testing it
+> somehow that would be great.
+>
+> > restore coverage in the binder itself.
+>
+> I'm not completely sure what you mean here. The binder IPC codepaths are
+> nearly the same. The difference is mostly in how the device information
+> is cast out before actual binder-ipc operations take place.
+> In any case, testing both would obviously be preferred but binderfs
+> strikes me as more worthy of testing.
 
-On Mon, Jan 27, 2020 at 9:05 AM Vinod Koul <vkoul@kernel.org> wrote:
->
-> On 27-01-20, 08:23, Douglas Anderson wrote:
-> > As per the bindings, the SDHCI controller should have a SoC-specific
-> > compatible string in addition to the generic version-based one.  Add
-> > it.
->
-> Thanks for spotting it Doug, Btw did some script catch it or manual
-> inspection?
->
->
-> Reviewed-by: Vinod Koul <vkoul@kernel.org>
+I've reverted CONFIG_ANDROID_BINDERFS to "is not set" for now as the
+easiest option. We've got 35% coverage of binder.c again.
 
-It probably would have been spotted by "make dtbs_check", but I wasn't
-running that in this case.  I just happened to notice it while
-chatting with someone at Qualcomm about whether
-<https://crrev.com/c/2022985> was correct (still waiting for a
-response on that).
+By "restore coverage" I meant that even if the IPC codepaths are
+nearly the same tests knew to open /dev/binderN and these disappeared,
+so no test could open any binder device and get any coverage in binder
+code.
 
--Doug
+If anybody wants to try to test both, you are very welcome ;)
+If you are hinting that I should do it, a single person can't test all
+2000 subsystems in kernel, and testing each of them requires quite
+some domain expertise. This really requires involvement of developers
+of the code. I am sure there is lots to improve in the IPC codepaths
+as well.
