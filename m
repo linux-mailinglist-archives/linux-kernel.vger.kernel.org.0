@@ -2,63 +2,107 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1B77814A856
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Jan 2020 17:50:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0DAC314A85E
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Jan 2020 17:54:18 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725990AbgA0QuL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 27 Jan 2020 11:50:11 -0500
-Received: from linux.microsoft.com ([13.77.154.182]:60100 "EHLO
-        linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725845AbgA0QuK (ORCPT
+        id S1726036AbgA0QyO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 27 Jan 2020 11:54:14 -0500
+Received: from smtp-fw-9102.amazon.com ([207.171.184.29]:39036 "EHLO
+        smtp-fw-9102.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725893AbgA0QyN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 27 Jan 2020 11:50:10 -0500
-Received: from [10.137.112.111] (unknown [131.107.147.111])
-        by linux.microsoft.com (Postfix) with ESMTPSA id 3A12F2008819;
-        Mon, 27 Jan 2020 08:50:10 -0800 (PST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 3A12F2008819
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-        s=default; t=1580143810;
-        bh=7k4I5TR6svwojaafQlq2biwEquSFHairvhblaQP/HX4=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=GKmrRVPGRylTaUJkzQQYSUjlQYpJi+TeRZLqPRe5/kYiU3QKImNBE6fnHhOuIrhz6
-         c8KTLy1ZkhIW5srFxoJp0y200Nl+ibnTEywdcpeeR2kahsTs8LkNeLMJCs7FeqvXjg
-         Bfbb7p6lni2I+PKKYGD5fEFWPuLw5mcgbLkwKxm4=
-Subject: Re: [PATCH 2/2] ima: support calculating the boot_aggregate based on
- different TPM banks
-To:     Mimi Zohar <zohar@linux.ibm.com>, linux-integrity@vger.kernel.org
-Cc:     Jerry Snitselaar <jsnitsel@redhat.com>,
-        James Bottomley <James.Bottomley@HansenPartnership.com>,
-        linux-kernel@vger.kernel.org
-References: <1580140919-6127-1-git-send-email-zohar@linux.ibm.com>
- <1580140919-6127-2-git-send-email-zohar@linux.ibm.com>
-From:   Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
-Message-ID: <87e6b531-3596-4523-a6b0-629ae8fd6995@linux.microsoft.com>
-Date:   Mon, 27 Jan 2020 08:50:31 -0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.1
+        Mon, 27 Jan 2020 11:54:13 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
+  t=1580144054; x=1611680054;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   mime-version;
+  bh=0SviMkKcxANZUVYkfDAkB59AQTxTuaXQe+9xsrFF+KY=;
+  b=GmIZc3LAUR+A+2Z0jQf65iU9RrFqv61H+uISTDBj+/NEPKZCJ/CwrNR2
+   JF5gNAb2t4hTm+IROFAvHAi3VOyvy6+o6oGVeJe+SV8iNCSPYOn7liJjo
+   nNyNvok/Q9k+3GgX44B02U0dMpyZXfSp8VQUZKZQRKqyLD7E29zU3HYPE
+   Q=;
+IronPort-SDR: KQN/UHYdxS0e4lNPplrDxisvIUDa7mjblFbw4Kkbyi5rHwH8t6bvfdVvas6iUNGq4yglNWYZL8
+ BGXZ4gkuwxBw==
+X-IronPort-AV: E=Sophos;i="5.70,370,1574121600"; 
+   d="scan'208";a="21336953"
+Received: from sea32-co-svc-lb4-vlan3.sea.corp.amazon.com (HELO email-inbound-relay-1e-a70de69e.us-east-1.amazon.com) ([10.47.23.38])
+  by smtp-border-fw-out-9102.sea19.amazon.com with ESMTP; 27 Jan 2020 16:53:51 +0000
+Received: from EX13MTAUEA002.ant.amazon.com (iad55-ws-svc-p15-lb9-vlan2.iad.amazon.com [10.40.159.162])
+        by email-inbound-relay-1e-a70de69e.us-east-1.amazon.com (Postfix) with ESMTPS id 2D67CA1EED;
+        Mon, 27 Jan 2020 16:53:49 +0000 (UTC)
+Received: from EX13D31EUA001.ant.amazon.com (10.43.165.15) by
+ EX13MTAUEA002.ant.amazon.com (10.43.61.77) with Microsoft SMTP Server (TLS)
+ id 15.0.1236.3; Mon, 27 Jan 2020 16:53:48 +0000
+Received: from u886c93fd17d25d.ant.amazon.com (10.43.161.117) by
+ EX13D31EUA001.ant.amazon.com (10.43.165.15) with Microsoft SMTP Server (TLS)
+ id 15.0.1367.3; Mon, 27 Jan 2020 16:53:42 +0000
+From:   <sjpark@amazon.com>
+To:     SeongJae Park <sj38.park@gmail.com>
+CC:     "Kirill A. Shutemov" <kirill@shutemov.name>,
+        SeongJae Park <sjpark@amazon.com>, <akpm@linux-foundation.org>,
+        SeongJae Park <sjpark@amazon.de>, <acme@kernel.org>,
+        <brendan.d.gregg@gmail.com>, <corbet@lwn.net>, <mgorman@suse.de>,
+        <dwmw@amazon.com>, <amit@kernel.org>, <rostedt@goodmis.org>,
+        <linux-mm@kvack.org>, <linux-doc@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+Subject: Re: Re: Re: [PATCH 0/8] Introduce Data Access MONitor (DAMON)
+Date:   Mon, 27 Jan 2020 17:53:25 +0100
+Message-ID: <20200127165325.21279-1-sjpark@amazon.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20200120181440.7826-1-sj38.park@gmail.com> (raw)
 MIME-Version: 1.0
-In-Reply-To: <1580140919-6127-2-git-send-email-zohar@linux.ibm.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
+X-Originating-IP: [10.43.161.117]
+X-ClientProxiedBy: EX13D28UWC001.ant.amazon.com (10.43.162.166) To
+ EX13D31EUA001.ant.amazon.com (10.43.165.15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 1/27/2020 8:01 AM, Mimi Zohar wrote:
+On Mon, 20 Jan 2020 19:14:40 +0100 SeongJae Park <sj38.park@gmail.com> wrote:
 
-> +
-> +	for (i = 0; i < ima_tpm_chip->nr_allocated_banks; i++) {
-> +		if (ima_tpm_chip->allocated_banks[i].alg_id == d.alg_id)
-> +			break;
-> +	}
-> +
-> +	if (i == ima_tpm_chip->nr_allocated_banks)
-> +		d.alg_id = ima_tpm_chip->allocated_banks[0].alg_id;
-> +
+> On Mon, 20 Jan 2020 19:55:51 +0300 "Kirill A. Shutemov" <kirill@shutemov.name> wrote:
+> 
+> > On Mon, Jan 20, 2020 at 05:27:49PM +0100, SeongJae Park wrote:
+> > > This patchset introduces a new kernel module for practical monitoring of
+> > > data accesses, namely DAMON.
+> > 
+> > Looks like it's not integrated with perf at all right? Why?
+> > Correlating measurements from different domains would help to see the
+> > bigger picture.
+> 
+> Right, it's not integrated with perf.  DAMON provides only its debugfs
+> interface.  Also I agree that correlating measurments will be helpful.  I do
+> not integrate DAMON with perf with this patchset for following reasons.
+> 
+> First of all, I think I have no deep understanding of perf, yet.  Partly for
+> the reason, I couldn't figure out the best way to integrate DAMON with perf.
+> Especially, I couldn't straightforwardly classify DAMON providing information
+> into one of the categories of the perf events I know.
+> 
+> Therefore, rather than integrating DAMON with perf in my arguable way and
+> increasing the complexity of the code, I decided to keep the interface as
+> simple and flexible as it can be for the first stage.  That said, I believe it
+> would be not too hard to integrate DAMON with perf in a future.
 
-Can the number of allocated banks (ima_tpm_chip->nr_allocated_banks) be 
-zero? Should that be checked before accessing "allocated_banks"?
+I think I was unnecessarily worry about the best way.  I added a tracepoint to
+the monitoring result writing logic of DAMON.  Other tracers including perf
+would easily integrate DAMON using it, though the tracepoint is not highly
+optimized yet.  Will post next version soon.
 
-  -lakshmi
+
+Thanks,
+SeongJae Park
+
+> 
+> 
+> Thanks,
+> SeongJae Park
+> 
+> > 
+> > -- 
+> >  Kirill A. Shutemov
+> > 
+> > 
