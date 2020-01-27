@@ -2,148 +2,150 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6C0E814A94E
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Jan 2020 18:56:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8115B14A955
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Jan 2020 18:58:48 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726210AbgA0R4c (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 27 Jan 2020 12:56:32 -0500
-Received: from pandora.armlinux.org.uk ([78.32.30.218]:39428 "EHLO
-        pandora.armlinux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725845AbgA0R4c (ORCPT
+        id S1726294AbgA0R6i (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 27 Jan 2020 12:58:38 -0500
+Received: from esa5.hc3370-68.iphmx.com ([216.71.155.168]:63089 "EHLO
+        esa5.hc3370-68.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725845AbgA0R6h (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 27 Jan 2020 12:56:32 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=+pgM004QYnoz29dLdl6cQI6MAMztJHbXMIE6Mk2wd9E=; b=hrmN0Jqo5RN46j8mJrWc0QFxt
-        i0o1dz1saSXn0aEOLYzyy+sxzAZT8OkIzKZoPM+U/9IVSJ/Gibx6ztmXNulZyzder7F16lY6y88vm
-        j2fOgw0H+uYYgnl7sNvtMaMB1x6KHI1QXguengDBwkTLETebOvpt5xb4r3qGezpJb3jsT1Ptafy6K
-        hc2GF9Fz9geX+wrFTzLQtEktiC+US7EHLFWmhCMFHyD77kBWCNXig6IhSXLlnu6XVDeXQ0WpKjUJC
-        9FPM+8xe5L6RkT3i8IlRznv/IpRnpdoUST+t5R/SYZ2uTU7IPd/25n1J6gIpnBG8msYo2t6uGx7Ia
-        dOsUXx+qw==;
-Received: from shell.armlinux.org.uk ([2001:4d48:ad52:3201:5054:ff:fe00:4ec]:60650)
-        by pandora.armlinux.org.uk with esmtpsa (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256)
-        (Exim 4.90_1)
-        (envelope-from <linux@armlinux.org.uk>)
-        id 1iw8cW-0002lu-E0; Mon, 27 Jan 2020 17:56:20 +0000
-Received: from linux by shell.armlinux.org.uk with local (Exim 4.92)
-        (envelope-from <linux@shell.armlinux.org.uk>)
-        id 1iw8cS-0001bc-5y; Mon, 27 Jan 2020 17:56:16 +0000
-Date:   Mon, 27 Jan 2020 17:56:16 +0000
-From:   Russell King - ARM Linux admin <linux@armlinux.org.uk>
-To:     Andrew Lunn <andrew@lunn.ch>
-Cc:     Jose Abreu <Jose.Abreu@synopsys.com>,
-        Joao Pinto <Joao.Pinto@synopsys.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-stm32@st-md-mailman.stormreply.com" 
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Giuseppe Cavallaro <peppe.cavallaro@st.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        Heiner Kallweit <hkallweit1@gmail.com>
-Subject: Re: [RFC net-next 6/8] net: phylink: Configure MAC/PCS when link is
- up without PHY
-Message-ID: <20200127175616.GZ25745@shell.armlinux.org.uk>
-References: <cover.1580122909.git.Jose.Abreu@synopsys.com>
- <9a2136885d9a892ff170be88fdffeda82c778a10.1580122909.git.Jose.Abreu@synopsys.com>
- <20200127112102.GT25745@shell.armlinux.org.uk>
- <BN8PR12MB3266714AE9EC1A97218120B3D30B0@BN8PR12MB3266.namprd12.prod.outlook.com>
- <20200127114600.GU25745@shell.armlinux.org.uk>
- <20200127140038.GD13647@lunn.ch>
- <20200127140834.GW25745@shell.armlinux.org.uk>
- <20200127145107.GE13647@lunn.ch>
- <20200127161132.GX25745@shell.armlinux.org.uk>
- <20200127163241.GK13647@lunn.ch>
+        Mon, 27 Jan 2020 12:58:37 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=citrix.com; s=securemail; t=1580147917;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=FwbLXdWY0RyMSAi5xQvRzB4aT15grkDm1I/a0Bt/5Gc=;
+  b=aYWMN1o2jGuejnxbbSn3EfzlzX09bNFYQj0mgJjb6BNckz7uOtibTreT
+   8dx2uizlALAaQYz9w7faNbLtSOhi4tKo/bJtB0XFCyAZU9+dXPC/hOLnd
+   g2WQtM6I4k4Q/WdT1/7CJsbwB7u7pmepYTKVAtT4FDoGnaFDFCBJoiFHF
+   M=;
+Authentication-Results: esa5.hc3370-68.iphmx.com; dkim=none (message not signed) header.i=none; spf=None smtp.pra=roger.pau@citrix.com; spf=Pass smtp.mailfrom=roger.pau@citrix.com; spf=None smtp.helo=postmaster@mail.citrix.com
+Received-SPF: None (esa5.hc3370-68.iphmx.com: no sender
+  authenticity information available from domain of
+  roger.pau@citrix.com) identity=pra; client-ip=162.221.158.21;
+  receiver=esa5.hc3370-68.iphmx.com;
+  envelope-from="roger.pau@citrix.com";
+  x-sender="roger.pau@citrix.com";
+  x-conformance=sidf_compatible
+Received-SPF: Pass (esa5.hc3370-68.iphmx.com: domain of
+  roger.pau@citrix.com designates 162.221.158.21 as permitted
+  sender) identity=mailfrom; client-ip=162.221.158.21;
+  receiver=esa5.hc3370-68.iphmx.com;
+  envelope-from="roger.pau@citrix.com";
+  x-sender="roger.pau@citrix.com";
+  x-conformance=sidf_compatible; x-record-type="v=spf1";
+  x-record-text="v=spf1 ip4:209.167.231.154 ip4:178.63.86.133
+  ip4:195.66.111.40/30 ip4:85.115.9.32/28 ip4:199.102.83.4
+  ip4:192.28.146.160 ip4:192.28.146.107 ip4:216.52.6.88
+  ip4:216.52.6.188 ip4:162.221.158.21 ip4:162.221.156.83
+  ip4:168.245.78.127 ~all"
+Received-SPF: None (esa5.hc3370-68.iphmx.com: no sender
+  authenticity information available from domain of
+  postmaster@mail.citrix.com) identity=helo;
+  client-ip=162.221.158.21; receiver=esa5.hc3370-68.iphmx.com;
+  envelope-from="roger.pau@citrix.com";
+  x-sender="postmaster@mail.citrix.com";
+  x-conformance=sidf_compatible
+IronPort-SDR: uj+4RS1hKmLfjuk11faSeJrrZbKwuImFcTkMqwRk2cqoTlT3UO6vXVtLg0Ifd5MFXNqMOpakYB
+ STgPzpd4zv6EDT+FzK0C6KmFYz7WtD+4oltpwo9LFSsUuSA4Qc9rWe8f15Xpc13nT7aUxYocFc
+ m+y9laS86rYv0HWp/wqG0AffOZaBZYFFseBtxWj26jNkf0Pej9VeSu0nI3uJ4JlZqUhpd1fw30
+ nDTfadenMgEjdgAkdamwLhjFIyBx3H7UHYGyVrypxT26Lvp7B5gd85C1bCUNZ06MGYsWJMM7mS
+ roo=
+X-SBRS: 2.7
+X-MesageID: 11875374
+X-Ironport-Server: esa5.hc3370-68.iphmx.com
+X-Remote-IP: 162.221.158.21
+X-Policy: $RELAYED
+X-IronPort-AV: E=Sophos;i="5.70,370,1574139600"; 
+   d="scan'208";a="11875374"
+From:   Roger Pau Monne <roger.pau@citrix.com>
+To:     <linux-kernel@vger.kernel.org>
+CC:     Roger Pau Monne <roger.pau@citrix.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>, <x86@kernel.org>,
+        "Peter Zijlstra" <peterz@infradead.org>,
+        Tony Luck <tony.luck@intel.com>,
+        Jacob Pan <jacob.jun.pan@linux.intel.com>,
+        Kefeng Wang <wangkefeng.wang@huawei.com>,
+        Jan Beulich <jbeulich@suse.com>,
+        Sean Christopherson <sean.j.christopherson@intel.com>
+Subject: [PATCH] x86/apic: simplify disconnect_bsp_APIC setup of LVT{0/1}
+Date:   Mon, 27 Jan 2020 18:57:58 +0100
+Message-ID: <20200127175758.82410-1-roger.pau@citrix.com>
+X-Mailer: git-send-email 2.25.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200127163241.GK13647@lunn.ch>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jan 27, 2020 at 05:32:41PM +0100, Andrew Lunn wrote:
-> > Presumably, all these should be visible on the ZII rev B as well?
-> 
-> Maybe. The two SFF mounted on most rev B are connected to ports which
-> only do SGMII, not 1000Base X. They tend to work by chance, and as
-> such, i've never taken them seriously.
-> 
-> If i remember correctly, you modified your board, moved the SFF over
-> to the normally unpopulated slots, and removed a resistor. That setup
-> then has the SFF connected to the 6352, which can do both SGMII and
-> 1000BaseX.
+There's no need to read the current values of LVT{0/1} for the
+purposes of the function, which seem to be to save the currently
+selected vector: in the destination modes used (ExtINT and NMI) the
+vector field is ignored and hence can be set to 0.
 
-Yes, I modified the board to fix a design mistake - removing R412.
-The SFF are where they are when they were delivered:
+Note that clear_local_APIC as called by init_bsp_APIC would have
+already wiped those registers by writing APIC_LVT_MASKED, and hence
+there's nothing useful to preserve if that was the intent. Also note
+that there are other places where LVT{0/1} is written to without doing
+a read-modify-write (init_bsp_APIC and clear_local_APIC), so if
+writing 0s to the reserved parts would cause issues they would be also
+triggered by writes elsewhere.
 
-OPT P1 - no module fitted, and the serdes signals are not routed.
-	 This might as well not exist.
+Signed-off-by: Roger Pau Monné <roger.pau@citrix.com>
+---
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Ingo Molnar <mingo@redhat.com>
+Cc: Borislav Petkov <bp@alien8.de>
+Cc: "H. Peter Anvin" <hpa@zytor.com>
+Cc: x86@kernel.org
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Tony Luck <tony.luck@intel.com>
+Cc: Jacob Pan <jacob.jun.pan@linux.intel.com>
+Cc: Kefeng Wang <wangkefeng.wang@huawei.com>
+Cc: Jan Beulich <jbeulich@suse.com>
+Cc: Sean Christopherson <sean.j.christopherson@intel.com>
+---
+ arch/x86/kernel/apic/apic.c | 14 ++------------
+ 1 file changed, 2 insertions(+), 12 deletions(-)
 
-OPT P2 - Cotsworks SFBG53DRAP.
-	 This is connected to port 4 of switch 0, one of the 88E6352.
-
-The 88E6352 can have the serdes block associated with either port 4 or
-port 5 depending on the state of the S_SEL signal.  The serdes will be
-associated with port 4 if S_SEL is low at reset, and with port 5 if
-S_SEL is high at reset.
-
-88E6352 Port 4 RGMII signals are not used.  Port 5 RGMII is used to
-connect to the next 88E6352 switch.  So, if the serdes is associated
-with port 5, and if RGMII is used, it prevents the use of the serdes.
-
-With R412 fitted, S_SEL is pulled high, and assocates the serdes with
-port 5, and hence is unusable.  When R412 is removed, the serdes is
-associated with port 4, and can be configured for either SGMII or
-1000baseX mode via the PHY detect bit.
-
-So, the ZII rev B, OPT P2 only becomes useful if R412 is removed.
-
-OPT P3 - Cotsworks SFBG53DRAP
-	 This is connected to port 3 of switch 2, one of the 88E6185.
-OPT P4 - AVAGO AFBR-59R5ALZ
-	 This is connected to port 4 of switch 2, one of the 88E6185.
-
-The 88E6185 can only have ports 7, 8 or 9 configured for 1000BASE-X
-mode.  These two ports end up configured for cross-chip serdes mode
-which is 1000BASE-X but with manually controlled link status, as
-this mode is designed to link two 88E6185 to each other (hence
-"cross-chip").  There appears to be no accessible serdes block on this
-device to give us any interrupts.
-
-With my suggestion for a polling mode in phylink, it may be possible
-to get OPT P3 and OPT P4 working.
-
-> It could also be that the 6352 does have pass through from the PCS to
-> the MAC, where as the 6390 does not? The 6390 is much more capable,
-> having 2.5G and 10G support. The SERDES registers are very different,
-> C45 vs C22 of the 6352.
-
-My feeling is that the issues you're seeing with the ZII rev C come
-down to the phylink implementation for MV88E6xxx lacking some of the
-necessary support, and this has probably been broken ever since
-phylink was introduced into the mainline MV88E6xxx driver.
-
-Try
-
-http://git.armlinux.org.uk/cgit/linux-arm.git/patch/?id=eb717ca455b1ae425a4d4b60615ba3e4d0ba35d4
-
-which will be 5.4 based; I haven't pushed out my 5.5 based tree yet
-as I'm busy writing emails rather than testing it, and running out
-of time to do so before tomorrow!
-
+diff --git a/arch/x86/kernel/apic/apic.c b/arch/x86/kernel/apic/apic.c
+index 28446fa6bf18..ce0c65340b4c 100644
+--- a/arch/x86/kernel/apic/apic.c
++++ b/arch/x86/kernel/apic/apic.c
+@@ -2292,12 +2292,7 @@ void disconnect_bsp_APIC(int virt_wire_setup)
+ 		 * For LVT0 make it edge triggered, active high,
+ 		 * external and enabled
+ 		 */
+-		value = apic_read(APIC_LVT0);
+-		value &= ~(APIC_MODE_MASK | APIC_SEND_PENDING |
+-			APIC_INPUT_POLARITY | APIC_LVT_REMOTE_IRR |
+-			APIC_LVT_LEVEL_TRIGGER | APIC_LVT_MASKED);
+-		value |= APIC_LVT_REMOTE_IRR | APIC_SEND_PENDING;
+-		value = SET_APIC_DELIVERY_MODE(value, APIC_MODE_EXTINT);
++		value = APIC_LVT_REMOTE_IRR | APIC_SEND_PENDING | APIC_DM_EXTINT;
+ 		apic_write(APIC_LVT0, value);
+ 	} else {
+ 		/* Disable LVT0 */
+@@ -2308,12 +2303,7 @@ void disconnect_bsp_APIC(int virt_wire_setup)
+ 	 * For LVT1 make it edge triggered, active high,
+ 	 * nmi and enabled
+ 	 */
+-	value = apic_read(APIC_LVT1);
+-	value &= ~(APIC_MODE_MASK | APIC_SEND_PENDING |
+-			APIC_INPUT_POLARITY | APIC_LVT_REMOTE_IRR |
+-			APIC_LVT_LEVEL_TRIGGER | APIC_LVT_MASKED);
+-	value |= APIC_LVT_REMOTE_IRR | APIC_SEND_PENDING;
+-	value = SET_APIC_DELIVERY_MODE(value, APIC_MODE_NMI);
++	value = APIC_LVT_REMOTE_IRR | APIC_SEND_PENDING | APIC_DM_NMI;
+ 	apic_write(APIC_LVT1, value);
+ }
+ 
 -- 
-RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-FTTC broadband for 0.8mile line in suburbia: sync at 12.1Mbps down 622kbps up
-According to speedtest.net: 11.9Mbps down 500kbps up
+2.25.0
+
