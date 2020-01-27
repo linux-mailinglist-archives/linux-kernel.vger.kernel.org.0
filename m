@@ -2,92 +2,94 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8341014A781
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Jan 2020 16:50:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1EDFE14A787
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Jan 2020 16:51:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729670AbgA0PuZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 27 Jan 2020 10:50:25 -0500
-Received: from mail-ot1-f68.google.com ([209.85.210.68]:34618 "EHLO
-        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728783AbgA0PuY (ORCPT
+        id S1729671AbgA0PvS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 27 Jan 2020 10:51:18 -0500
+Received: from mail-qk1-f178.google.com ([209.85.222.178]:42405 "EHLO
+        mail-qk1-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729203AbgA0PvS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 27 Jan 2020 10:50:24 -0500
-Received: by mail-ot1-f68.google.com with SMTP id a15so8806053otf.1;
-        Mon, 27 Jan 2020 07:50:24 -0800 (PST)
+        Mon, 27 Jan 2020 10:51:18 -0500
+Received: by mail-qk1-f178.google.com with SMTP id q15so10037657qke.9
+        for <linux-kernel@vger.kernel.org>; Mon, 27 Jan 2020 07:51:17 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=2bynkYO/VfrflNCUOpdCEBQtWE9uevrxves93+nkBNg=;
+        b=QKQOioEPrUVeKSj7Lk3b6riyhYFvcUoN9UrIRxyVKhPk6si/ExnvFLr7SfVnfG+0eT
+         kdPIDRiseXehUgtuwLNOJ6RdynHXa2HPOYPta2ivqOmnLIfiU7TcYg0x352BSMaCnQd5
+         jKFnCxrXe3lDYI5TNtiiVmDkqOP++3c0nHBwczGhJ/0ce6lTDNgy6wzwSklyT9f8iOMy
+         euLEQ8YyP4vtpI4Xi72cQ5ZJvIU6qvaE2ijgo68//OrnzIVFfxMw4VH14ZaeX1DgLY4J
+         Y7HQhL72QaEbY66iRVcma/UtbK3Kw6HxA8AiT2tXwRN/Qwu2wFE25usgOpDILFlrCnqW
+         OUaw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=beqY/DCoJ59EhwodDnm/pkcRiaCO+zbELfu5AXa7uk4=;
-        b=TXXFCw9+jMWKAavB9RkhUdFuk+bN5PCWEGWja2zUXCZv/PDRdNaOeRbaH0ojgWUitF
-         4uL11ZiaP/VFkCjWRuzAVP7DG0pmtcBhFkut2CmX8R8N1xPG51CKHmL39KN4/ZAyD8iQ
-         2dKx0CBEC7C+YBcN9iE67c9+n0N1j08GKGjcr2a6qCvJtzjk5SAIW7mMj3g3O/UXNJAU
-         ZTr1drABsZ1d7C9OQLhsQMZJWDwYvQ2vPgZ4J8WisEom+8LyVoCtnS7Iaz241+cRhcuV
-         R/wv0OrTd41yGy62almCt6ZIHQC+2hEOiHhNeAv4H1f3Lh1tM2Hm3nFENBvU3gztD9yR
-         C3BQ==
-X-Gm-Message-State: APjAAAUZmUbo6f7Fq7tyxheyyDwsxkokK3qiOi49nJjLXx8G6wp5oK1a
-        EptXgoaUs9/J85CqHWCE2Q==
-X-Google-Smtp-Source: APXvYqyn0BH6mGOr5Sh0ZRs/MHfVUVRkxZjQe26RelsSGtz2sJEWvA4FuKGh6M47f/plr8u4qbEHcg==
-X-Received: by 2002:a05:6830:1094:: with SMTP id y20mr5291444oto.12.1580140223624;
-        Mon, 27 Jan 2020 07:50:23 -0800 (PST)
-Received: from rob-hp-laptop (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id t203sm4894791oig.39.2020.01.27.07.50.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 27 Jan 2020 07:50:22 -0800 (PST)
-Received: (nullmailer pid 19844 invoked by uid 1000);
-        Mon, 27 Jan 2020 15:50:21 -0000
-Date:   Mon, 27 Jan 2020 09:50:21 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Kalyani Akula <kalyani.akula@xilinx.com>
-Cc:     herbert@gondor.apana.org.au, davem@davemloft.net, monstr@seznam.cz,
-        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, git-dev <git-dev@xilinx.com>,
-        Mohan Marutirao Dhanawade <mohand@xilinx.com>,
-        Sarat Chand Savitala <saratcha@xilinx.com>,
-        Harsh Jain <harshj@xilinx.com>,
-        Michal Simek <michal.simek@xilinx.com>,
-        Kalyani Akula <kalyania@xilinx.com>
-Subject: Re: [PATCH V5 2/4] dt-bindings: crypto: Add bindings for ZynqMP
- AES-GCM driver
-Message-ID: <20200127155021.GA16897@bogus>
-References: <1579777877-10553-1-git-send-email-kalyani.akula@xilinx.com>
- <1579777877-10553-3-git-send-email-kalyani.akula@xilinx.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=2bynkYO/VfrflNCUOpdCEBQtWE9uevrxves93+nkBNg=;
+        b=p3ir1Xwaborc5VnoB9WetwV/mP9VcFQnaUGuORZ4izDO+VaF7CzI0R+VDF8C1RQXI0
+         +1dPCvNQHbJisJyyVZEfOYwP90WCx+OtpBLmDNAAwU3acrZGgLuhPTmRT221f3mIUI45
+         hb+o+YCAs+BLKi25RZpnVknaB6gkhX/vIMPLQZ1k30XrVb2XwE7vO7HD8hhhgCridQAf
+         dK75KKQiTmUvzqymdzDyAJcr3rnlBqhsQxErhl9WyHGhjW6LiVb7xoi9ZLgGkWdA1Xrb
+         kUFea6tVIkGpowhycm8W44Q7qDsQ2qFOvJBT/TcbWrFlnd9B4TlbiQBi04vnEA+KERx6
+         /E1A==
+X-Gm-Message-State: APjAAAVHyOTH8H5YBr3e0IBFxWJhPixkMd0OTNG2zVEnh+tkgVjiMyta
+        x/zNGAkX0TsmlsLO0PRDGQ8+pHA/PO/zN6sEDrg5zg==
+X-Google-Smtp-Source: APXvYqyW/Dv+r7IzLVHyn5vKXp9eLH03u8Oq1EucWp83Jstsj4ATT35HA7fr3z/q5ImHk9D4Fcu5s28HtcVbBYCRrgs=
+X-Received: by 2002:ae9:e50c:: with SMTP id w12mr15641083qkf.407.1580140276809;
+ Mon, 27 Jan 2020 07:51:16 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1579777877-10553-3-git-send-email-kalyani.akula@xilinx.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <0000000000004dbaf2059c193a36@google.com> <20200126024957.11392-1-hdanton@sina.com>
+ <20200127092850.GX1847@kadam> <CACT4Y+ag59G4p=DO3Dg7jnFt3wQb=dtjzBujADtGHKn-97O8_g@mail.gmail.com>
+ <20200127151135.GM1870@kadam>
+In-Reply-To: <20200127151135.GM1870@kadam>
+From:   Dmitry Vyukov <dvyukov@google.com>
+Date:   Mon, 27 Jan 2020 16:51:05 +0100
+Message-ID: <CACT4Y+Ya-GEPAezCceKadsXGD0WdAHMeNH=hkkGaM50nP7S6ww@mail.gmail.com>
+Subject: Re: KASAN: use-after-free Read in hiddev_disconnect
+To:     Dan Carpenter <dan.carpenter@oracle.com>
+Cc:     syzkaller <syzkaller@googlegroups.com>,
+        Hillf Danton <hdanton@sina.com>,
+        syzbot <syzbot+106b378813251e52fc5e@syzkaller.appspotmail.com>,
+        Andrey Konovalov <andreyknvl@google.com>,
+        Benjamin Tissoires <benjamin.tissoires@redhat.com>,
+        Jiri Kosina <jikos@kernel.org>,
+        "open list:HID CORE LAYER" <linux-input@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        USB list <linux-usb@vger.kernel.org>,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jan 23, 2020 at 04:41:15PM +0530, Kalyani Akula wrote:
-> Add documentation to describe Xilinx ZynqMP AES-GCM driver bindings.
-> 
-> Signed-off-by: Kalyani Akula <kalyani.akula@xilinx.com>
-> ---
-> 
-> V5 Changes:
-> - Moved dt-bindings patch from 1/4 to 2/4
-> - Converted dt-bindings from .txt to .yaml format.
-> 
->  .../bindings/crypto/xlnx,zynqmp-aes.yaml           | 37 ++++++++++++++++++++++
->  1 file changed, 37 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/crypto/xlnx,zynqmp-aes.yaml
-> 
-> diff --git a/Documentation/devicetree/bindings/crypto/xlnx,zynqmp-aes.yaml b/Documentation/devicetree/bindings/crypto/xlnx,zynqmp-aes.yaml
-> new file mode 100644
-> index 0000000..b2bca4b
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/crypto/xlnx,zynqmp-aes.yaml
-> @@ -0,0 +1,37 @@
-> +# SPDX-License-Identifier: GPL-2.0
+On Mon, Jan 27, 2020 at 4:12 PM Dan Carpenter <dan.carpenter@oracle.com> wrote:
+>
+> One possible option would be to list the similar bugs at the start of
+> the bug report.
+>
+> See also:
+>
+>         KASAN: use-after-free Write in hiddev_disconnect
+>         https://syzkaller.appspot.com/bug?extid=784ccb935f9900cc7c9e
+>
+> Then we could just copy and paste to the "#syz dup:" command.  The
+> bitmap_port_list() stuff was reported something like 15 times so it was
+> really complicated to track.  Hopefully if it were easier to mark things
+> as duplicate that would help.
+>
+> regards,
+> dan carpenter
 
-Dual license new bindings:
-
-(GPL-2.0-only OR BSD-2-Clause)
-
-With that,
-
-Reviewed-by: Rob Herring <robh@kernel.org>
+Interesting. This should be doable. I've filed
+https://github.com/google/syzkaller/issues/1575 to keep track of this.
+If it detects potential dups, then it could auto-dup as well, but it's
+not completely trivial (some things are mentioned on the issue).
+But note it won't help if the bug happens in different functions (e.g.
+I think lots of bitmap_port_list were actually in different
+functions). And this is also common for racy bugs -- a racy free
+catches use in another thread at different locations.
