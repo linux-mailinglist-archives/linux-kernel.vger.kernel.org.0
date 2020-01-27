@@ -2,110 +2,80 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EEBB714A86A
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Jan 2020 17:57:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7405C14A867
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Jan 2020 17:56:52 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726541AbgA0Q5J (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 27 Jan 2020 11:57:09 -0500
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:35700 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725845AbgA0Q5H (ORCPT
+        id S1726205AbgA0Q4s (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 27 Jan 2020 11:56:48 -0500
+Received: from us-smtp-1.mimecast.com ([207.211.31.81]:25296 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1725845AbgA0Q4s (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 27 Jan 2020 11:57:07 -0500
-Received: by mail-pf1-f194.google.com with SMTP id i23so5180010pfo.2;
-        Mon, 27 Jan 2020 08:57:06 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=PRvyPinTl56WwRZm2jsRHtlpDEBNkMeEQKYla1GuCIw=;
-        b=b/0JK8rLW0meh5MIeuVFHvWBBpCn1O29dxZ03qSEmxyll1+Gc6RA5Me90MYDUBFVsc
-         VbETHo0zOMkTQzUUI22zwbKXZiXcAcZ0vsao/8V98Ykai6kvARj/JsS3DXgIKRXQH9ic
-         YjHPPkk1Ga6FKSq0bJI2jIqQkXifeoG32YQjLrRmEzmy3XCElhKbTk3monR/QRQr+KdY
-         IB9dqWNadIYPxFQ3KCmPEIGs+W+NQJezHgDeUeyOLcOsIh/oDDNJJLdYKbmY6dF8lkQs
-         /6obPj6nAREV1wkRCf0mRQble+phLko1xBy5t2O4qzPwHxImIuEKUjxCRPgpXkVdiv0N
-         dVUA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=PRvyPinTl56WwRZm2jsRHtlpDEBNkMeEQKYla1GuCIw=;
-        b=AbjqNJrzx+iKkIH90TM1Y/Al5DVyLhqkx8kkp29+WoWomDEaQTJ5/8CHE5ZPUw2NDj
-         CDo+MyXouX5mdJscz0UhMfk/oO7mv0UcWuqzKpN/OKIjv7pKrB0RyLMSgJkTvQxHicE8
-         otExeLie9IeAsKKF5EL+sr9iYK/iBPCDPZJqlb4kGV5slre41340G2Zsvs1RWHCrr3Aa
-         ApdJ8luUxmxyuRL7NWQygfHI43XxSCDLIlsgLLicFHsAA4QhdY+mJgQwCTKaD4unQYpP
-         1ashDhAX25MtQFqTV76M8qxPFcpEtt1fCp2jfFmIi3qM3cMnkNye/ORLX4OV9OBw6keg
-         wP/w==
-X-Gm-Message-State: APjAAAVwV5aiIYDTPOn7ybZrw6XVzpR8y3r8+FwrPy+5tkDoRkWbTYKq
-        Hl7dLV5IQY7OjZipHyIleoXc3rPm
-X-Google-Smtp-Source: APXvYqyXsf4V2K/sgqhMu7zKf/lgK1gLTBOUt2bvgQzvui+PFHJq4tiRWQR+BilWnYd0eETdexVbew==
-X-Received: by 2002:a63:3487:: with SMTP id b129mr20431160pga.320.1580144226195;
-        Mon, 27 Jan 2020 08:57:06 -0800 (PST)
-Received: from localhost.localdomain (c-67-165-113-11.hsd1.wa.comcast.net. [67.165.113.11])
-        by smtp.gmail.com with ESMTPSA id u23sm16368642pfm.29.2020.01.27.08.57.04
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 27 Jan 2020 08:57:05 -0800 (PST)
-From:   Andrey Smirnov <andrew.smirnov@gmail.com>
-To:     linux-crypto@vger.kernel.org
-Cc:     Andrey Smirnov <andrew.smirnov@gmail.com>,
-        Chris Healy <cphealy@gmail.com>,
-        Lucas Stach <l.stach@pengutronix.de>,
-        =?UTF-8?q?Horia=20Geant=C4=83?= <horia.geanta@nxp.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        Iuliana Prodan <iuliana.prodan@nxp.com>, linux-imx@nxp.com,
+        Mon, 27 Jan 2020 11:56:48 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1580144206;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=4HSLSFcK67NxSxIqNgVdsWkaP8xObe9Q1wx/FTvVGVE=;
+        b=XeJhgG7fe0Hmu/ZdvR/EPuQx1SkMfqt8SOBK0rFNB8KwZ51jwlH9NuJblGZeVO6SVKeNAf
+        HzDB6nJQPNnwDh/UktethDPOFMYzdFqiaw3GD/RwCHUaJodgCMV0dQzSL8Ypm2jEhJ8FyD
+        4+uksyheJ1O6jCMKIS8y7woi8LLY62w=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-349-AKeFL_hLPUyCRJsomxPg0w-1; Mon, 27 Jan 2020 11:56:42 -0500
+X-MC-Unique: AKeFL_hLPUyCRJsomxPg0w-1
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id EBAF2800D41;
+        Mon, 27 Jan 2020 16:56:40 +0000 (UTC)
+Received: from pauld.bos.csb (dhcp-17-51.bos.redhat.com [10.18.17.51])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 5B1A05D9CA;
+        Mon, 27 Jan 2020 16:56:40 +0000 (UTC)
+Date:   Mon, 27 Jan 2020 11:56:38 -0500
+From:   Phil Auld <pauld@redhat.com>
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     Kirill Tkhai <ktkhai@virtuozzo.com>,
+        Juri Lelli <juri.lelli@gmail.com>, mingo@redhat.com,
         linux-kernel@vger.kernel.org
-Subject: [PATCH v7 1/9] crypto: caam - allocate RNG instantiation descriptor with GFP_DMA
-Date:   Mon, 27 Jan 2020 08:56:38 -0800
-Message-Id: <20200127165646.19806-2-andrew.smirnov@gmail.com>
-X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20200127165646.19806-1-andrew.smirnov@gmail.com>
-References: <20200127165646.19806-1-andrew.smirnov@gmail.com>
+Subject: Re: [PATCH v3]sched/rt: Stop for_each_process_thread() iterations in
+ tg_has_rt_tasks()
+Message-ID: <20200127165638.GC1295@pauld.bos.csb>
+References: <152415882713.2054.8734093066910722403.stgit@localhost.localdomain>
+ <20180420092540.GG24599@localhost.localdomain>
+ <0d7fbdab-b972-7f86-4090-b49f9315c868@virtuozzo.com>
+ <854a5fb1-a9c1-023f-55ec-17fa14ad07d5@virtuozzo.com>
+ <20180425194915.GH4064@hirez.programming.kicks-ass.net>
+ <9f76872b-85e6-63bd-e503-fcaec69e28e3@virtuozzo.com>
+ <20200123215616.GA14789@pauld.bos.csb>
+ <20200127164315.GJ14879@hirez.programming.kicks-ass.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200127164315.GJ14879@hirez.programming.kicks-ass.net>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Be consistent with the rest of the codebase and use GFP_DMA when
-allocating memory for a CAAM JR descriptor.
+On Mon, Jan 27, 2020 at 05:43:15PM +0100 Peter Zijlstra wrote:
+> On Thu, Jan 23, 2020 at 04:56:19PM -0500, Phil Auld wrote:
+> > Peter, is there any chance of taking something like this?
+> 
+> Whoopsy, looks like this fell on the floor. Can do I suppose.
+> 
+> Thanks!
+> 
 
-Signed-off-by: Andrey Smirnov <andrew.smirnov@gmail.com>
-Cc: Chris Healy <cphealy@gmail.com>
-Cc: Lucas Stach <l.stach@pengutronix.de>
-Cc: Horia Geantă <horia.geanta@nxp.com>
-Cc: Herbert Xu <herbert@gondor.apana.org.au>
-Cc: Iuliana Prodan <iuliana.prodan@nxp.com>
-Cc: linux-imx@nxp.com
-Cc: linux-crypto@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
----
- drivers/crypto/caam/ctrl.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Thanks. Probably make sense at this point to use Konstantin's new version?
+But they both do the trick.
 
-diff --git a/drivers/crypto/caam/ctrl.c b/drivers/crypto/caam/ctrl.c
-index 6659c8d9672e..a11c13a89ef8 100644
---- a/drivers/crypto/caam/ctrl.c
-+++ b/drivers/crypto/caam/ctrl.c
-@@ -194,7 +194,7 @@ static int deinstantiate_rng(struct device *ctrldev, int state_handle_mask)
- 	u32 *desc, status;
- 	int sh_idx, ret = 0;
- 
--	desc = kmalloc(CAAM_CMD_SZ * 3, GFP_KERNEL);
-+	desc = kmalloc(CAAM_CMD_SZ * 3, GFP_KERNEL | GFP_DMA);
- 	if (!desc)
- 		return -ENOMEM;
- 
-@@ -271,7 +271,7 @@ static int instantiate_rng(struct device *ctrldev, int state_handle_mask,
- 	int ret = 0, sh_idx;
- 
- 	ctrl = (struct caam_ctrl __iomem *)ctrlpriv->ctrl;
--	desc = kmalloc(CAAM_CMD_SZ * 7, GFP_KERNEL);
-+	desc = kmalloc(CAAM_CMD_SZ * 7, GFP_KERNEL | GFP_DMA);
- 	if (!desc)
- 		return -ENOMEM;
- 
+
+Cheers,
+Phil
+
 -- 
-2.21.0
 
