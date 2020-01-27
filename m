@@ -2,53 +2,84 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 117AE14A916
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Jan 2020 18:35:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D5F3614A91C
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Jan 2020 18:35:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728843AbgA0RfM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 27 Jan 2020 12:35:12 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36254 "EHLO mail.kernel.org"
+        id S1728992AbgA0Rff convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Mon, 27 Jan 2020 12:35:35 -0500
+Received: from mga11.intel.com ([192.55.52.93]:56628 "EHLO mga11.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726327AbgA0RfG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 27 Jan 2020 12:35:06 -0500
-Subject: Re: [GIT PULL] x86/microcode for 5.6
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1580146506;
-        bh=hqzU+k91YplbYcFktJyLQioGAqZazvT3yznS3wfsK8Y=;
-        h=From:In-Reply-To:References:Date:To:Cc:From;
-        b=zw2A3fZxKpOEEhgXbmxwf4KR8bFo7lrHh8XtDhEsBrTW+geld0aXJIuxT9BYC6Coq
-         s+qj56vNqvtp6o2e2A+03sx6aqQOUIN+R+ksfXR0J9egKQ2WeOeWEax3Bn8rU+6lvd
-         cF3ZTdt5n5X/E0c6PEx5C8vxtu4Gn8wFjhewrW08=
-From:   pr-tracker-bot@kernel.org
-In-Reply-To: <20200127113903.GD24228@zn.tnic>
-References: <20200127113903.GD24228@zn.tnic>
-X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <20200127113903.GD24228@zn.tnic>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git
- x86-microcode-for-linus
-X-PR-Tracked-Commit-Id: 82c881b28aa89215a760e39c5f6bcde2d6ce4918
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 067ba54c7a7d4cb76da4c8434bd6f117b61ac8ee
-Message-Id: <158014650624.9177.7484134068206327534.pr-tracker-bot@kernel.org>
-Date:   Mon, 27 Jan 2020 17:35:06 +0000
-To:     Borislav Petkov <bp@suse.de>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        x86-ml <x86@kernel.org>, lkml <linux-kernel@vger.kernel.org>
+        id S1726303AbgA0Rff (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 27 Jan 2020 12:35:35 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga005.jf.intel.com ([10.7.209.41])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 27 Jan 2020 09:35:34 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.70,370,1574150400"; 
+   d="scan'208";a="401394432"
+Received: from orsmsx106.amr.corp.intel.com ([10.22.225.133])
+  by orsmga005.jf.intel.com with ESMTP; 27 Jan 2020 09:35:34 -0800
+Received: from orsmsx156.amr.corp.intel.com (10.22.240.22) by
+ ORSMSX106.amr.corp.intel.com (10.22.225.133) with Microsoft SMTP Server (TLS)
+ id 14.3.439.0; Mon, 27 Jan 2020 09:35:34 -0800
+Received: from orsmsx114.amr.corp.intel.com ([169.254.8.4]) by
+ ORSMSX156.amr.corp.intel.com ([169.254.8.118]) with mapi id 14.03.0439.000;
+ Mon, 27 Jan 2020 09:35:34 -0800
+From:   "Luck, Tony" <tony.luck@intel.com>
+To:     Peter Zijlstra <peterz@infradead.org>
+CC:     Arvind Sankar <nivedita@alum.mit.edu>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "Christopherson, Sean J" <sean.j.christopherson@intel.com>,
+        Ingo Molnar <mingo@kernel.org>,
+        "Yu, Fenghua" <fenghua.yu@intel.com>,
+        Ingo Molnar <mingo@redhat.com>,
+        "Borislav Petkov" <bp@alien8.de>, H Peter Anvin <hpa@zytor.com>,
+        "Raj, Ashok" <ashok.raj@intel.com>,
+        "Shankar, Ravi V" <ravi.v.shankar@intel.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>, x86 <x86@kernel.org>
+Subject: RE: [PATCH v15] x86/split_lock: Enable split lock detection by
+ kernel
+Thread-Topic: [PATCH v15] x86/split_lock: Enable split lock detection by
+ kernel
+Thread-Index: AQHV0ynJ1/MagQqLD0a5ZArbKBEXmKf8a7KA//+AyICAAsQPgIAAGKGg
+Date:   Mon, 27 Jan 2020 17:35:33 +0000
+Message-ID: <3908561D78D1C84285E8C5FCA982C28F7F54F399@ORSMSX114.amr.corp.intel.com>
+References: <20200122224245.GA2331824@rani.riverdale.lan>
+ <3908561D78D1C84285E8C5FCA982C28F7F54887A@ORSMSX114.amr.corp.intel.com>
+ <20200123004507.GA2403906@rani.riverdale.lan>
+ <20200123035359.GA23659@agluck-desk2.amr.corp.intel.com>
+ <20200123044514.GA2453000@rani.riverdale.lan>
+ <20200123231652.GA4457@agluck-desk2.amr.corp.intel.com>
+ <87h80kmta4.fsf@nanos.tec.linutronix.de>
+ <20200125024727.GA32483@agluck-desk2.amr.corp.intel.com>
+ <20200125212524.GA538225@rani.riverdale.lan>
+ <20200125215003.GB17914@agluck-desk2.amr.corp.intel.com>
+ <20200127080419.GG14914@hirez.programming.kicks-ass.net>
+In-Reply-To: <20200127080419.GG14914@hirez.programming.kicks-ass.net>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+dlp-product: dlpe-windows
+dlp-version: 11.2.0.6
+dlp-reaction: no-action
+x-originating-ip: [10.22.254.138]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
+MIME-Version: 1.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The pull request you sent on Mon, 27 Jan 2020 12:39:03 +0100:
+> Have you found any actual bad software ? The only way I could trigger
+> was by explicitly writing a program to tickle it.
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git x86-microcode-for-linus
+No application or library issues found so far (though I'm not running the kind of multi-threaded
+applications that might be using atomic operations for synchronization).
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/067ba54c7a7d4cb76da4c8434bd6f117b61ac8ee
+Only Linux kernel seems to have APIs that make it easy for programmers to accidently split
+an atomic operation between cache lines.
 
-Thank you!
-
--- 
-Deet-doot-dot, I am a bot.
-https://korg.wiki.kernel.org/userdoc/prtracker
+-Tony
