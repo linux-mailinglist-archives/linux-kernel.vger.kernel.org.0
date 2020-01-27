@@ -2,74 +2,89 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 687EE14AB1B
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Jan 2020 21:23:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 68BF814AB27
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Jan 2020 21:33:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726294AbgA0UXL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 27 Jan 2020 15:23:11 -0500
-Received: from mail-qk1-f196.google.com ([209.85.222.196]:45634 "EHLO
-        mail-qk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726101AbgA0UXL (ORCPT
+        id S1726442AbgA0UdR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 27 Jan 2020 15:33:17 -0500
+Received: from mail-ed1-f66.google.com ([209.85.208.66]:40902 "EHLO
+        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725944AbgA0UdR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 27 Jan 2020 15:23:11 -0500
-Received: by mail-qk1-f196.google.com with SMTP id x1so10972174qkl.12
-        for <linux-kernel@vger.kernel.org>; Mon, 27 Jan 2020 12:23:11 -0800 (PST)
+        Mon, 27 Jan 2020 15:33:17 -0500
+Received: by mail-ed1-f66.google.com with SMTP id p3so10434320edx.7
+        for <linux-kernel@vger.kernel.org>; Mon, 27 Jan 2020 12:33:16 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=lca.pw; s=google;
-        h=content-transfer-encoding:from:mime-version:subject:date:message-id
-         :references:cc:in-reply-to:to;
-        bh=8qKqO01LjJEV2xvyFnaCmO2+7pGkQQVcqgngFOI0Bdg=;
-        b=ai2eNXCfULQ9MIfNUuFSqGlNe1UjEeX7vW60s4LzStmubnbO2lXRJ7erZvzrftbU/D
-         t7Af6knAjRi8ykaakXoT8ykGkFSj4yRgs87Y6sSKXFic6KZnBPbgYp8xygd0tofVRTqf
-         RCik9aE3Jb3pv2RNkwlhY4DcmV/N7zanhAyfriSLr92w+nBAXxdC7HSLA1zuq/9ryxdZ
-         Qg0TGIjf6abZH9a/Xbwsl5B9QlNKIa8GtkTcYIolvTmIthTTKR/z0Xe/yCA8hVR1Idh+
-         5NIjzYGbhjTYE5ka+aLtUcuwKTTf2wv/I3oUZCV1B3P2HRbAoORmFY3XneMSQsUSMfo+
-         PSCA==
+        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:from:date:message-id:subject:to:cc;
+        bh=dEVQQBZ4iTYdQIjstHziIMop+sy3GzjT/sdtf1Lx2G4=;
+        b=rjrZyBBqFmeRybNHcQ8nJSLGzHw9Mif1z3KYN+1rVNnaU1Dl7A0VlkGCdKRKADcUN8
+         caggBCH0SW6pb3YkZQP75PjhiIEz2qCuEiuwMEvJ6wFyzurGsuSsjBXcyMIEZF3BHS0R
+         P2rwwQ+jf2VjwYQp3Mp3Ggg5VQHPy57mxsj7uYQfBbW5/LrtV2LQem+nIJsYD2hfAx3A
+         TOrDNqqMUmR2yem15IAr3iPc332THF4u8AKL7n+joXUQEW8zn8eUO10LUsFdTVkE/Wf3
+         eGwWq8gIRNgENYrQumdViWgE5kZW0jKJmkmsoiBEZxM1DsXIIWHESOv9kBq71LsCaZMs
+         Xdtg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:content-transfer-encoding:from:mime-version
-         :subject:date:message-id:references:cc:in-reply-to:to;
-        bh=8qKqO01LjJEV2xvyFnaCmO2+7pGkQQVcqgngFOI0Bdg=;
-        b=YK15un1bD4f6q2sCi1rHOMUmDFw+/Gix7raeAJEeMQ1knnjvQwMFNf+2tCJ5ovJADm
-         Qd/pdXVjfqYEIQOMJNVnQ+vwJCQ88bDhSpETAj/PaR571cREoGim2vQKbTZ4KlgnBuz8
-         AQSDmFsACsgKpDPd7mZWSq3vVvgrcGDVFjnueB+tqCuOR9scvh8OPinA19osoJWx59zg
-         eLwuP2fJ5FbyKriSskItMo20sKBwp/gha/QBmfg5O7T3oTXhslSzhzubfzbC2OjHk1ni
-         Qw4VjPXwKHf0xWCsFiZ64rGnsjOmfu/7R8cRnR7HqdivGzgX9QSoheA1yV2VWpG4hbF1
-         h5Og==
-X-Gm-Message-State: APjAAAUnGsd0twD0nTdv+7idmQJrYyfgA/KdAQADLvE3XBDeibW6iKPe
-        QArxxzKJcE8dwwkboKc7yY82CJbPrTC09A==
-X-Google-Smtp-Source: APXvYqyqwzq9ivF63rt/+NSgs5OiwHgE68E9GTg3XAmC8qmv9oon15bYYFEUopxowFGMR0UBU7Nzew==
-X-Received: by 2002:a37:4dc1:: with SMTP id a184mr18702854qkb.62.1580156590526;
-        Mon, 27 Jan 2020 12:23:10 -0800 (PST)
-Received: from [192.168.1.183] (pool-71-184-117-43.bstnma.fios.verizon.net. [71.184.117.43])
-        by smtp.gmail.com with ESMTPSA id d20sm9039726qto.2.2020.01.27.12.23.09
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 27 Jan 2020 12:23:09 -0800 (PST)
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: quoted-printable
-From:   Qian Cai <cai@lca.pw>
-Mime-Version: 1.0 (1.0)
-Subject: Re: [PATCH] mm: mempolicy: use VM_BUG_ON_VMA in queue_pages_test_walk()
-Date:   Mon, 27 Jan 2020 15:23:08 -0500
-Message-Id: <89FF2013-1B59-4702-BF1B-A200C6785B37@lca.pw>
-References: <d6c1a434-8670-97f4-345c-28c8007a25ce@linux.alibaba.com>
-Cc:     akpm@linux-foundation.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-In-Reply-To: <d6c1a434-8670-97f4-345c-28c8007a25ce@linux.alibaba.com>
-To:     Yang Shi <yang.shi@linux.alibaba.com>
-X-Mailer: iPhone Mail (17C54)
+        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc;
+        bh=dEVQQBZ4iTYdQIjstHziIMop+sy3GzjT/sdtf1Lx2G4=;
+        b=WV9fjAWLyFOFumCaKidbAF/VSVD6Zlb0Lw5BZq6sBzMDrpd5ZOked6ZEXsjnh/P5lz
+         xooq5Ksy5vXEM1srMOZwiMcuji0gi6eHbQiuKq9oKpBbNhvRhEvXwQH5fIGFcCPABU3E
+         /EvMLsa67G9mFb+V4D8QN2GQDomH4TnLH3JiIn6oWbqBzUKsqJR0zgYMG0M13tfJKVlE
+         /ftluBeeTYDFRvmaDBQBj12QbDqgL8S7S14umzDEPGL0VFqUx0TgVhz23xRQTEDFt8HL
+         0zs5GFOMEe4GsAOaYZN92JPZWkcbwM/WltfpWalXdioL9LYteYeux7BwzqrZ3g4GGhpP
+         MqPw==
+X-Gm-Message-State: APjAAAVj+W6uIPFnEsHe6gZ0t+75YD8v9b8Btfx+G0X6iDJXFt9bA5Fe
+        FfXY9WouSaDX4q4QuYUOoeXVnZeA3Fb8+z7vSwsk
+X-Google-Smtp-Source: APXvYqyjOgNl/c9yixRA7xgRUSiMq5N0amWowrz3+VD4I8riDv2I6jMSb+8HRzixXT8AUuubV/L4e+GVyOqhQfKb4W4=
+X-Received: by 2002:a17:906:c299:: with SMTP id r25mr388723ejz.272.1580157195274;
+ Mon, 27 Jan 2020 12:33:15 -0800 (PST)
+MIME-Version: 1.0
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Mon, 27 Jan 2020 15:33:04 -0500
+Message-ID: <CAHC9VhRm1dAsc+_eH7iKj4C6RVdzYeZLLqShcOjvMMbEaB4VQA@mail.gmail.com>
+Subject: [GIT PULL] Audit patch for v5.6
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     linux-audit@redhat.com, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Linus,
 
+One small audit patch for the Linux v5.6 merge window, and
+unsurprisingly it passes our test suite with flying colors.  Please
+merge.
 
-> On Jan 27, 2020, at 2:57 PM, Yang Shi <yang.shi@linux.alibaba.com> wrote:
->=20
-> Dumping more information to help debugging. I don't run into related bug p=
-ersonally.
+Thanks,
+-Paul
 
-This is a relatively weak justification for merging. If we are keeping accep=
-ting those mindless debugging patches, the workload will be unbearable for a=
-ll.=
+--
+The following changes since commit e42617b825f8073569da76dc4510bfa019b1c35a:
+
+ Linux 5.5-rc1 (2019-12-08 14:57:55 -0800)
+
+are available in the Git repository at:
+
+ git://git.kernel.org/pub/scm/linux/kernel/git/pcmoore/audit.git
+   tags/audit-pr-20200127
+
+for you to fetch changes up to cb5172d96d16df72db8b55146b0ec00bfd97f079:
+
+ audit: Add __rcu annotation to RCU pointer (2019-12-09 15:19:03 -0500)
+
+----------------------------------------------------------------
+audit/stable-5.6 PR 20200127
+
+----------------------------------------------------------------
+Amol Grover (1):
+     audit: Add __rcu annotation to RCU pointer
+
+kernel/audit.c | 5 +++--
+1 file changed, 3 insertions(+), 2 deletions(-)
+
+-- 
+paul moore
+www.paul-moore.com
