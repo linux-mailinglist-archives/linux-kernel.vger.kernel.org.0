@@ -2,102 +2,216 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9221A14A5A1
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Jan 2020 15:02:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 749F614A599
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Jan 2020 15:00:43 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728690AbgA0OCI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 27 Jan 2020 09:02:08 -0500
-Received: from mail.andi.de1.cc ([85.214.55.253]:35176 "EHLO mail.andi.de1.cc"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727177AbgA0OCH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 27 Jan 2020 09:02:07 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=kemnade.info; s=20180802; h=Content-Type:MIME-Version:References:
-        In-Reply-To:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=LQaQHhSfH+sdElaYG2t4bwuZkno397hqKjUJr+Nywhc=; b=FYZZT5KIWLuwe4lfQSfO73bGe
-        hvlKQKtQk3udLJjRRhOELpAITa8OIkXy5c/hXlYC8c9suhPUnSJ4AEnUVZMsatemtSvzI7iyf2NYt
-        tW+4H990JTXdA8gspRMYjRUgqwToHu04XYeDx5yhO/tfzDPSNOEkDAqc+XoBerBhkN7WU=;
-Received: from [2a02:790:ff:1019:7ee9:d3ff:fe1f:a246] (helo=localhost)
-        by mail.andi.de1.cc with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <andreas@kemnade.info>)
-        id 1iw4xg-0000LB-0N; Mon, 27 Jan 2020 15:01:57 +0100
-Received: from [::1] (helo=localhost)
-        by eeepc with esmtp (Exim 4.89)
-        (envelope-from <andreas@kemnade.info>)
-        id 1iw2MQ-0007E3-54; Mon, 27 Jan 2020 12:15:18 +0100
-Date:   Mon, 27 Jan 2020 12:15:11 +0100
-From:   Andreas Kemnade <andreas@kemnade.info>
-To:     Lee Jones <lee.jones@linaro.org>
-Cc:     jic23@kernel.org, knaack.h@gmx.de, lars@metafoo.de,
-        pmeerw@pmeerw.net, b.galvani@gmail.com, linus.walleij@linaro.org,
-        linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org,
-        phh@phh.me, stefan@agner.ch, letux-kernel@openphoenux.org
-Subject: Re: [PATCH 2/5] mfd: rn5t618: add ADC subdevice for RC5T619
-Message-ID: <20200127121422.66f4f3e8@kemnade.info>
-In-Reply-To: <20200127092815.GA3548@dell>
-References: <20200117215926.15194-1-andreas@kemnade.info>
-        <20200117215926.15194-3-andreas@kemnade.info>
-        <20200120084934.GZ15507@dell>
-        <20200124162818.0697f551@kemnade.info>
-        <20200127092815.GA3548@dell>
-X-Mailer: Claws Mail 3.14.1 (GTK+ 2.24.31; i686-pc-linux-gnu)
+        id S1729019AbgA0OAk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 27 Jan 2020 09:00:40 -0500
+Received: from mail-pg1-f176.google.com ([209.85.215.176]:35671 "EHLO
+        mail-pg1-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726303AbgA0OAj (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 27 Jan 2020 09:00:39 -0500
+Received: by mail-pg1-f176.google.com with SMTP id l24so5209631pgk.2
+        for <linux-kernel@vger.kernel.org>; Mon, 27 Jan 2020 06:00:39 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=networkplumber-org.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:subject:message-id:mime-version
+         :content-transfer-encoding;
+        bh=L7Swk08fDn0q02CuFDvWGnowF6kp/zWJM+jTeXKEQiI=;
+        b=zs4EC9COzjnVg+/OOtvpnyHxs4mihszy8jyg9Q7yNLaNNZjA3x0sRz+cFD73bs0ali
+         WYWj5XrWaQB2IrHiZF+9uaYC4m/h/JCTV511eSRFb97Sm5V4Xk1rir5SN9z+votqv4q5
+         LiamPJQvH4bQ1pdIYDmlOSIcfN57XM9FFNYBCkTz7YBS9qJ30Zk62CvBNui1DKR5bvKe
+         NlgrkzGH8gYs5rhoa2aOuqTcl34iM87q5HZINlLgKplgKuF0bi8XXv3PCdSXiw9jD5zl
+         J0yA6BbllWLvCXntnEsRsSvJeabFVSO/eetsfmXmmPouyxk6fc2Nznsoeac9HzHo9AYq
+         VLjw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:subject:message-id:mime-version
+         :content-transfer-encoding;
+        bh=L7Swk08fDn0q02CuFDvWGnowF6kp/zWJM+jTeXKEQiI=;
+        b=BH/UvGTv0T4xbU/ogJ2g1riX3YoabjelSLPe/qyhxp4jx+dhGUjFtqiY8eNWv9VIzp
+         GgJhFYkAuhWv/w9Qg7NXKDsgdmfB+NVHqpuu2NaBqnmemAujOMTxkaMGBefgOpSUJ+kk
+         YKSyoxm9CsC7IIjOaoP8skWM8Lx5Or6rM9OOhkz8t3odWspWqQAMwwRPQEAluH7+nTwq
+         2gOcKPBvlX7sd/SR2ykRhc7Vqy83coKpWEAsr/gaqbDbK7monyUlCO+iexOjsmpliCyX
+         lBOODRvdHdhL/nRG4iT2wh4low23NamTyusWKLR6rc0abQzlZw1DNcBcR6zhKEpd+6CP
+         9ekw==
+X-Gm-Message-State: APjAAAX54FUrvm8NdLX7yu0a37EK3s4OeG2iqLwj0KggYX8MinmxBark
+        5H7HAcF3I0we+f2UWHXZFtxmZCyfrcA=
+X-Google-Smtp-Source: APXvYqzeiF0HhQ3LAzj7j95yOsA/7t58ZPXhUMYNnniaQZv0N6TBnGZg9Or+zPWKu2Au/wlcfviE3A==
+X-Received: by 2002:a65:4b89:: with SMTP id t9mr5485900pgq.102.1580133638677;
+        Mon, 27 Jan 2020 06:00:38 -0800 (PST)
+Received: from hermes.lan (204-195-22-127.wavecable.com. [204.195.22.127])
+        by smtp.gmail.com with ESMTPSA id v4sm15949428pff.174.2020.01.27.06.00.38
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 27 Jan 2020 06:00:38 -0800 (PST)
+Date:   Mon, 27 Jan 2020 06:00:30 -0800
+From:   Stephen Hemminger <stephen@networkplumber.org>
+To:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [ANNOUNCE] iproute2 5.5 release
+Message-ID: <20200127060030.292e7626@hermes.lan>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/AnyB9TPe_XHn_KVZv1oPKe_"; protocol="application/pgp-signature"
-X-Spam-Score: -1.0 (-)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/AnyB9TPe_XHn_KVZv1oPKe_
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+The 5.5 kernel has been released, and the last patches have
+been applied to iproute2. Most of the fixes have been related
+to single (and json) formatting. Thank you to Aya, Jakub, Jiri, and Ron
+for the work to get devlink improved.
 
-On Mon, 27 Jan 2020 09:28:15 +0000
-Lee Jones <lee.jones@linaro.org> wrote:
+Download:
+    https://www.kernel.org/pub/linux/utils/net/iproute2/iproute2-5.5.0.tar.gz
 
-> On Fri, 24 Jan 2020, Andreas Kemnade wrote:
-> > hmm, I cannot find this in any branch/repo I know of and not in linux-n=
-ext,
-> > just wondering...
-> > I guess the iio part is something to go towards 5.7 unless 5.5
-> > is delayed mucch. =20
->=20
-> Oh, it looks like there was a conflict.  Could you collect any Acks
-> (including mine) rebase and resend please?
->=20
-on what? It is based on top of my RTC v5 patch series. The ADC series
-as a whole depends on that build-time and runtime as documented in
-the cover letter. Maybe I should have put it into the patches itself.
-I have hopefully addressed every comment in the v5 series.
+Repository for upcoming release:
+    git://git.kernel.org/pub/scm/network/iproute2/iproute2.git
 
-Regards,
-Andreas
+And future release (net-next):
+    git://git.kernel.org/pub/scm/network/iproute2/iproute2-next.git
 
---Sig_/AnyB9TPe_XHn_KVZv1oPKe_
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
+Thanks for all the contributions.
 
------BEGIN PGP SIGNATURE-----
+Report problems (or enhancements) to the netdev@vger.kernel.org mailing list.
 
-iQIzBAEBCAAdFiEEPIWxmAFyOaBcwCpFl4jFM1s/ye8FAl4uxj8ACgkQl4jFM1s/
-ye9Trg/8DZtbTzYhniGrVYebXsC7fhf62BAwRTbAFR/7TnyrgurRe2CZT01DFIYJ
-gO0ZlaH0A+ouoxen85wdKyNIZfEvRJjZFjg3XNfXCQ1xk7oz0Zn7abzTDsoJFNFC
-iOnSYVSmBehBsRtza0vodN4KadAFqLKiPYca/3/TnzCBdnWJukOzYgmSRvjHKqqo
-h99XAKlr6Sw1oYjxUwyTt4Gl0ynvf7CaLSJoHcKsVaAeSONAcsyq/hQjDGf5Fygy
-Fm1RNTvUtf1jXnYiskLgKreHulRy7b303N6CW8KdWbe/NF1UTULloaudmneCcsrJ
-PvtNQW5U6JxOHNARJe+6J5X+VaT13hnVjxwzSUYA/l7qF30y94b5YrUkV6AVkgGn
-Qxhhk9bnY8/S1d25KQqBzQRur++d6sdr3yB7WA0jF7zB+u0CU7xY+Z5wtKHHbvBU
-UUBkC7HfCRLIh6WH3PuU1XR6zQA+IFDH2RScYr9fYWgQHzHbGHaGTycs2xjj304j
-mjHgn+06tB40lE8Ixw9aNMURU+wdNJPYSJLKTHsoI2HZHxMAAODSgZk1czYV/xkz
-WpkBoQ6AzmxptY61PhMgR1YB/Hu2tNJyR9I5Z9NuJro7exYeVEU77T5qUCSgHY8D
-FWmJA4LmlWNZ1lqhZUbQVE+w7UZQjHqDVOlyjdbh889RhrcWUZE=
-=Ssrt
------END PGP SIGNATURE-----
+---
+Antony Antony (1):
+      ip: xfrm if_id -ve value is error
 
---Sig_/AnyB9TPe_XHn_KVZv1oPKe_--
+Aya Levin (3):
+      devlink: Print health reporter's dump time-stamp in a helper function
+      devlink: Add a new time-stamp format for health reporter's dump
+      devlink: Fix fmsg nesting in non JSON output
+
+Benjamin Poirier (8):
+      json_print: Remove declaration without implementation
+      testsuite: Fix line count test
+      bridge: Fix typo in error messages
+      bridge: Fix src_vni argument in man page
+      bridge: Fix BRIDGE_VLAN_TUNNEL attribute sizes
+      bridge: Fix vni printing
+      bridge: Deduplicate vlan show functions
+      bridge: Fix tunnelshow json output
+
+Bjarni Ingi Gislason (1):
+      man: Fix unequal number of .RS and .RE macros
+
+Brian Vazquez (3):
+      tc: fix warning in tc/m_ct.c
+      tc: fix warning in tc/q_pie.c
+      ss: fix end-of-line printing in misc/ss.c
+
+Danit Goldberg (1):
+      ip link: Add support to get SR-IOV VF node GUID and port GUID
+
+David Ahern (5):
+      ip vrf: Add json support for show command
+      Update kernel headers
+      Update kernel headers and import tls.h
+      Update kernel headers
+      Update kernel headers
+
+Davide Caratti (1):
+      ss: allow dumping kTLS info
+
+Eli Britstein (3):
+      tc: flower: add u16 big endian parse option
+      tc_util: add functions for big endian masked numbers
+      tc: flower: support masked port destination and source match
+
+Erez Alfasi (2):
+      rdma: Add "stat show mr" support
+      rdma: Document MR statistics
+
+Eric Dumazet (1):
+      tc_util: support TCA_STATS_PKT64 attribute
+
+Ethan Sommer (1):
+      make yacc usage POSIX compatible
+
+Gautam Ramakrishnan (1):
+      tc: pie: add dq_rate_estimator option
+
+Guillaume Nault (5):
+      ipnetns: treat NETNSA_NSID and NETNSA_CURRENT_NSID as signed
+      ipnetns: fix misleading comment about 'ip monitor nsid'
+      ipnetns: harden helper functions wrt. negative netns ids
+      ipnetns: don't print unassigned nsid in json export
+      ipnetns: remove blank lines printed by invarg() messages
+
+Ido Kalir (1):
+      rdma: Rewrite custom JSON and prints logic to use common API
+
+Jakub Kicinski (4):
+      devlink: fix referencing namespace by PID
+      devlink: catch missing strings in dl_args_required
+      devlink: allow full range of resource sizes
+      devlink: fix requiring either handle
+
+Jan Engelhardt (1):
+      build: fix build failure with -fno-common
+
+Jiri Pirko (5):
+      devlink: introduce cmdline option to switch to a different namespace
+      devlink: extend reload command to add support for network namespace change
+      lib/ll_map: cache alternative names
+      ip: add support for alternative name addition/deletion/list
+      ip: allow to use alternative names as handle
+
+Julien Fortin (1):
+      ip: fix ip route show json output for multipath nexthops
+
+Leon Romanovsky (1):
+      rdma: Relax requirement to have PID for HW objects
+
+Leslie Monis (10):
+      tc: cbs: add support for JSON output
+      tc: choke: add support for JSON output
+      tc: codel: add support for JSON output
+      tc: fq: add support for JSON output
+      tc: hhf: add support for JSON output
+      tc: pie: add support for JSON output
+      tc: sfb: add support for JSON output
+      tc: sfq: add support for JSON output
+      tc: tbf: add support for JSON output
+      tc: fq_codel: fix missing statistic in JSON output
+
+Moshe Shemesh (1):
+      ip: fix oneline output
+
+Roi Dayan (1):
+      tc: flower: fix print with oneline option
+
+Ron Diskin (6):
+      json_print: Introduce print_#type_name_value
+      json_print: Add new json object function not as array item
+      devlink: Replace json prints by common library functions
+      devlink: Replace pr_out_str wrapper function with common function
+      devlink: Replace pr_#type_value wrapper functions with common functions
+      devlink: Replace pr_out_bool/uint() wrappers with common print functions
+
+Roopa Prabhu (2):
+      bridge: fdb get support
+      ipneigh: neigh get support
+
+Stephen Hemminger (7):
+      uapi: update to magic.h
+      tc_util: break long lines
+      utils: fix indentation
+      tc: prio: fix space in JSON tag
+      tc: skbprio: add support for JSON output
+      ip: use print_nl() to handle one line mode
+      v5.5.0
+
+Tuong Lien (2):
+      tipc: add new commands to set TIPC AEAD key
+      tipc: fix clang warning in tipc/node.c
+
+Vlad Buslov (1):
+      tc: implement support for action flags
+
+Vladis Dronov (1):
+      ip: fix link type and vlan oneline output
+
