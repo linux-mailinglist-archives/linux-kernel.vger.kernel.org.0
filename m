@@ -2,211 +2,193 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 766AE14A565
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Jan 2020 14:48:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8FC7614A56B
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Jan 2020 14:50:33 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728236AbgA0Nsx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 27 Jan 2020 08:48:53 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48648 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726164AbgA0Nsx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 27 Jan 2020 08:48:53 -0500
-Received: from devnote2 (NE2965lan1.rev.em-net.ne.jp [210.141.244.193])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BA6E420716;
-        Mon, 27 Jan 2020 13:48:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1580132932;
-        bh=nHi/YUzGUCuratHwiOmc3Q8G3EswlHxPtofNzsOAzkM=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=kbf9uxSb48wx/B5aCcBDNhei3Zk8UP2/ICpM/fNVWC73DCZJILSFYXnijddbVVVqC
-         V+OU7zF4kRLrr6Cf5Mr07yojkH8Z1r919KJpJm6JoFx/8AAA2bRwxVlM9iH9yZlrZ1
-         hMnENtPQCYxKHNRs9Ged4naxHPlihhSgBhWnvSAw=
-Date:   Mon, 27 Jan 2020 22:48:47 +0900
-From:   Masami Hiramatsu <mhiramat@kernel.org>
-To:     Tom Zanussi <zanussi@kernel.org>
-Cc:     rostedt@goodmis.org, artem.bityutskiy@linux.intel.com,
-        mhiramat@kernel.org, linux-kernel@vger.kernel.org,
-        linux-rt-users@vger.kernel.org, ndesaulniers@google.com
-Subject: Re: [PATCH v3 00/12] tracing: Add support for in-kernel dynamic
- event API
-Message-Id: <20200127224847.54ad704c08785b85a63c18a5@kernel.org>
-In-Reply-To: <cover.1579904761.git.zanussi@kernel.org>
-References: <cover.1579904761.git.zanussi@kernel.org>
-X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        id S1728884AbgA0NuZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 27 Jan 2020 08:50:25 -0500
+Received: from mx08-00178001.pphosted.com ([91.207.212.93]:53702 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726179AbgA0NuY (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 27 Jan 2020 08:50:24 -0500
+Received: from pps.filterd (m0046661.ppops.net [127.0.0.1])
+        by mx07-00178001.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 00RDmTkX028171;
+        Mon, 27 Jan 2020 14:50:13 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=st.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=STMicroelectronics;
+ bh=oVMu/aYe8poIVG/cV7ynwO9nXyfdyRvPhcSDKSxQctA=;
+ b=Q3bSE2TOtY5znfF/Jp9rhIVBx2jBb07bvgiWU226WE3gRRElotRNZ7/pvPXzcUr/LPvE
+ dCheMlSPWnAUJAq6NWg/Qk4K4GDGqzYw67hgacKdYDpjrCW9UaQkMCbQ+3ZwHIGaRL0Y
+ G/vuWmdYB7HCGO8UYA+KPA8dK/axBC+jk3EHlxHHI6u4rnyCdBwJg1D/xrI2p0mawWjC
+ uz9LmjOEgfah/FhOjjt6ESEBPNtop+j7TQqmW9eHQMo4lJyTF/decPHWcGaiLUTVfylY
+ LbBE6QiPpH+9NUPwW3LHnrPG3neC6iB7Cweb95+EsjU9YuUTuVg21xqJuxe3L9PwRjDX Wg== 
+Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
+        by mx07-00178001.pphosted.com with ESMTP id 2xrdek90ma-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 27 Jan 2020 14:50:13 +0100
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 3A79F100038;
+        Mon, 27 Jan 2020 14:50:09 +0100 (CET)
+Received: from Webmail-eu.st.com (sfhdag6node1.st.com [10.75.127.16])
+        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 290492B2F1F;
+        Mon, 27 Jan 2020 14:50:09 +0100 (CET)
+Received: from lmecxl0923.lme.st.com (10.75.127.51) by SFHDAG6NODE1.st.com
+ (10.75.127.16) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Mon, 27 Jan
+ 2020 14:50:08 +0100
+Subject: Re: [PATCH 8/9] mmc: mmci: sdmmc: add voltage switch functions
+To:     Ulf Hansson <ulf.hansson@linaro.org>
+CC:     Rob Herring <robh+dt@kernel.org>,
+        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        DTML <devicetree@vger.kernel.org>,
+        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>
+References: <20200110134823.14882-1-ludovic.barre@st.com>
+ <20200110134823.14882-9-ludovic.barre@st.com>
+ <CAPDyKFp1Qsb3yCoTJevHF+SEt5thVVriLfL-4UZSYsNTc0rdMQ@mail.gmail.com>
+From:   Ludovic BARRE <ludovic.barre@st.com>
+Message-ID: <fd005f72-aa74-5650-e8b4-66cf3ff625dd@st.com>
+Date:   Mon, 27 Jan 2020 14:50:07 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.1.0
+MIME-Version: 1.0
+In-Reply-To: <CAPDyKFp1Qsb3yCoTJevHF+SEt5thVVriLfL-4UZSYsNTc0rdMQ@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: fr
+Content-Transfer-Encoding: 8bit
+X-Originating-IP: [10.75.127.51]
+X-ClientProxiedBy: SFHDAG7NODE2.st.com (10.75.127.20) To SFHDAG6NODE1.st.com
+ (10.75.127.16)
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.572
+ definitions=2020-01-27_02:2020-01-24,2020-01-27 signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Tom,
+hi Ulf
 
-On Fri, 24 Jan 2020 16:56:11 -0600
-Tom Zanussi <zanussi@kernel.org> wrote:
-
-> Hi,
+Le 1/24/20 à 2:16 PM, Ulf Hansson a écrit :
+> On Fri, 10 Jan 2020 at 14:49, Ludovic Barre <ludovic.barre@st.com> wrote:
+>>
+>> To prepare the voltage switch procedure, the VSWITCHEN bit must be
+>> set before sending the cmd11.
+>> To confirm completion of voltage switch, the VSWEND flag must be
+>> checked.
+>>
+>> Signed-off-by: Ludovic Barre <ludovic.barre@st.com>
+>> ---
+>>   drivers/mmc/host/mmci.h             |  4 +++
+>>   drivers/mmc/host/mmci_stm32_sdmmc.c | 40 ++++++++++++++++++++++++++++-
+>>   2 files changed, 43 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/mmc/host/mmci.h b/drivers/mmc/host/mmci.h
+>> index c04a144259a2..3634f98ad2d8 100644
+>> --- a/drivers/mmc/host/mmci.h
+>> +++ b/drivers/mmc/host/mmci.h
+>> @@ -165,6 +165,7 @@
+>>   /* Extended status bits for the STM32 variants */
+>>   #define MCI_STM32_BUSYD0       BIT(20)
+>>   #define MCI_STM32_BUSYD0END    BIT(21)
+>> +#define MCI_STM32_VSWEND       BIT(25)
+>>
+>>   #define MMCICLEAR              0x038
+>>   #define MCI_CMDCRCFAILCLR      (1 << 0)
+>> @@ -182,6 +183,9 @@
+>>   #define MCI_ST_SDIOITC         (1 << 22)
+>>   #define MCI_ST_CEATAENDC       (1 << 23)
+>>   #define MCI_ST_BUSYENDC                (1 << 24)
+>> +/* Extended clear bits for the STM32 variants */
+>> +#define MCI_STM32_VSWENDC      BIT(25)
+>> +#define MCI_STM32_CKSTOPC      BIT(26)
+>>
+>>   #define MMCIMASK0              0x03c
+>>   #define MCI_CMDCRCFAILMASK     (1 << 0)
+>> diff --git a/drivers/mmc/host/mmci_stm32_sdmmc.c b/drivers/mmc/host/mmci_stm32_sdmmc.c
+>> index 10059fa19f4a..9f43cf947c5f 100644
+>> --- a/drivers/mmc/host/mmci_stm32_sdmmc.c
+>> +++ b/drivers/mmc/host/mmci_stm32_sdmmc.c
+>> @@ -263,7 +263,9 @@ static void mmci_sdmmc_set_pwrreg(struct mmci_host *host, unsigned int pwr)
+>>          struct mmc_ios ios = host->mmc->ios;
+>>          struct sdmmc_dlyb *dlyb = host->variant_priv;
+>>
+>> -       pwr = host->pwr_reg_add;
+>> +       /* adds OF options and preserves voltage switch bits */
+>> +       pwr = host->pwr_reg_add |
+>> +               (host->pwr_reg & (MCI_STM32_VSWITCHEN | MCI_STM32_VSWITCH));
+>>
+>>          sdmmc_dlyb_input_ck(dlyb);
+>>
+>> @@ -454,6 +456,40 @@ static int sdmmc_execute_tuning(struct mmc_host *mmc, u32 opcode)
+>>          return sdmmc_dlyb_phase_tuning(host, opcode);
+>>   }
+>>
+>> +static void sdmmc_prep_vswitch(struct mmci_host *host)
+>> +{
+>> +       /* clear the voltage switch completion flag */
+>> +       writel_relaxed(MCI_STM32_VSWENDC, host->base + MMCICLEAR);
+>> +       /* enable Voltage switch procedure */
+>> +       mmci_write_pwrreg(host, host->pwr_reg | MCI_STM32_VSWITCHEN);
+>> +}
+>> +
+>> +static int sdmmc_vswitch(struct mmci_host *host, struct mmc_ios *ios)
+>> +{
+>> +       unsigned long flags;
+>> +       u32 status;
+>> +       int ret = 0;
+>> +
+>> +       if (ios->signal_voltage == MMC_SIGNAL_VOLTAGE_180) {
+>> +               spin_lock_irqsave(&host->lock, flags);
+>> +               mmci_write_pwrreg(host, host->pwr_reg | MCI_STM32_VSWITCH);
+>> +               spin_unlock_irqrestore(&host->lock, flags);
+>> +
+>> +               /* wait voltage switch completion while 10ms */
+>> +               ret = readl_relaxed_poll_timeout(host->base + MMCISTATUS,
+>> +                                                status,
+>> +                                                (status & MCI_STM32_VSWEND),
+>> +                                                10, 10000);
+>> +
+>> +               writel_relaxed(MCI_STM32_VSWENDC | MCI_STM32_CKSTOPC,
+>> +                              host->base + MMCICLEAR);
+>> +               mmci_write_pwrreg(host, host->pwr_reg &
+>> +                                 ~(MCI_STM32_VSWITCHEN | MCI_STM32_VSWITCH));
+>> +       }
 > 
-> This is v3 of 'tracing: Add support for in-kernel dynamic event API',
-> incorporating changes based on suggestions from Masami and Steven.
-> 
->   - Rebased to trace/for-next
-> 
->   - Regularized the entire API to use synth_event_*, kprobe_event_*,
->     dynevent_*, and added some new macros and functions to make things
->     more consistent
-> 
->   - Introduced trace_array_find_get() and used it in
->     trace_array_get_file() as suggested
->   
->   - Removed exports from dynevent_cmd functions that didn't need to be
->     exported
-> 
->   - Switched the param order of __kprobe_event_gen_cmd_start() to fix
->     a problem found building with clang.  Apparently varargs and
->     implicit promotion of types like bool don't mix.  Thanks to Nick
->     Desaulniers for pointing that out.
-> 
->   - Updated the documentation for all of the above
-> 
-> Text from the v2 posting:
-> 
-> This is v2 of the previous 'tracing: Add support for in-kernel
-> synthetic event API', and is largely a rewrite based on suggestions
-> from Masami to expand the scope to include other types of dynamic
-> events such as kprobe events, in addition to the original sythetic
-> event focus.
-
-Yeah, v3 basically looks good to me now :)
-Please see my comment on [4/12]. Others are good. You can put my
-Acked-by to those patches. 
-
-Acked-by: Masami Hiramatsu <mhiramat@kernel.org>
-except for [04/12].
-
-Thank you!
-
-> 
-> The functionality of the original API remains available, though it's
-> in a slightly different form due to the use of the new dynevent_cmd
-> API it's now based on.  The dynevent_cmd API provides a common dynamic
-> event command generation capability that both the synthetic event API
-> and the kprobe event API are now based on, and there are now test
-> modules demonstrating both the synthetic event and kprobes APIs.
-> 
-> A couple of the patches are snippets from Masami's 'tracing:
-> bootconfig: Boot-time tracing and Extra boot config' series, and the
-> patch implementing the dynevent_cmd API includes some of the
-> spnprintf() generating code from that patchset.
-> 
-> Because I used Masami's gen_*_cmd() naming suggestion for generating
-> the commands, the previous patchset's generate_*() functions were
-> renamed to trace_*() to avoid confusion, and probably is better naming
-> anyway.
-> 
-> An overview of the user-visible changes in comparison to v1:
-> 
->   - create_synth_event() using an array of synth_desc_fields remains
->     unchanged and works the same way as previously
-> 
->   - gen_synth_cmd() takes a variable-length number of args which
->     represent 'type field;' pairs.  Using this with no field args
->     basically replaces the previous 'create_empty_synth_event()'
-> 
->   - The 'add_synth_field()' and 'add_synth_fields()' function from v1
->     are essentially the same except that they now take a dynevent_cmd
->     instead of a synth_event pointer
-> 
->   - The finalize_synth_event() from v1 is replaced by
->     create_dynevent() in the new version.
->   
->   - The new v2 API includes some additional functions to initialize
->     the dynevent_cmd - synth_dynevent_cmd() is used to do that.  While
->     it's an extra step, it makes it easier to do error handling.
-> 
->   - There's a new trace_synth_event() function that traces a synthetic
->     event using a variable-arg list of values.
-> 
->   - The original generate_synth_event() using an array of values is
->     now called trace_synth_event_array().
-> 
->   - For piecewise event tracing, the original
->     generate_synth_event_start() and generate_synth_event_end() have
->     now been renamed to trace_synth_event_end().
-> 
->   - add_next_synth_val() and add_synth_val() remain the same.
-> 
->   - A similar API and test module demonstrating the API has been added
->     for kprobe events
-> 
->   - Both the synthetic events and kprobe events API is based on the
->     dynevent_cmd API, newly added
-> 
->   - The Documentation for all of the above has been updated
-> 
-> Text from the orginal v1 posting:
-> 
-> I've recently had several requests and suggestions from users to add
-> support for the creation and generation of synthetic events from
-> kernel code such as modules, and not just from the available command
-> line commands.
-> 
-> This patchset adds support for that.  The first three patches add some
-> minor preliminary setup, followed by the two main patches that add the
-> ability to create and generate synthetic events from the kernel.  The
-> next patch adds a test module that demonstrates actual use of the API
-> and verifies that it works as intended, followed by Documentation.
-> 
-> Special thanks to Artem Bityutskiy, who worked with me over several
-> iterations of the API, and who had many great suggestions on the
-> details of the interface, and pointed out several problems with the
-> code itself.
-> 
-> The following changes since commit 659ded30272d67a04b3692f0bfa12263be20d790:
-> 
->   trace/kprobe: Remove unused MAX_KPROBE_CMDLINE_SIZE (2020-01-22 07:07:38 -0500)
-> 
-> are available in the git repository at:
-> 
->   git://git.kernel.org/pub/scm/linux/kernel/git/zanussi/linux-trace.git ftrace/synth-event-gen-v3
-> 
-> Tom Zanussi (12):
->   tracing: Add trace_array_find/_get() to find instance trace arrays
->   tracing: Add trace_get/put_event_file()
->   tracing: Add synth_event_delete()
->   tracing: Add dynamic event command creation interface
->   tracing: Add synthetic event command generation functions
->   tracing: Change trace_boot to use synth_event interface
->   tracing: Add synth_event_trace() and related functions
->   tracing: Add synth event generation test module
->   tracing: Add kprobe event command generation functions
->   tracing: Change trace_boot to use kprobe_event interface
->   tracing: Add kprobe event command generation test module
->   tracing: Documentation for in-kernel synthetic event API
-> 
->  Documentation/trace/events.rst       | 515 ++++++++++++++++++++
->  include/linux/trace_events.h         | 124 +++++
->  kernel/trace/Kconfig                 |  25 +
->  kernel/trace/Makefile                |   2 +
->  kernel/trace/kprobe_event_gen_test.c | 225 +++++++++
->  kernel/trace/synth_event_gen_test.c  | 523 ++++++++++++++++++++
->  kernel/trace/trace.c                 |  43 +-
->  kernel/trace/trace.h                 |  36 ++
->  kernel/trace/trace_boot.c            |  66 ++-
->  kernel/trace/trace_events.c          | 325 +++++++++++++
->  kernel/trace/trace_events_hist.c     | 896 ++++++++++++++++++++++++++++++++++-
->  kernel/trace/trace_kprobe.c          | 160 ++++++-
->  12 files changed, 2868 insertions(+), 72 deletions(-)
->  create mode 100644 kernel/trace/kprobe_event_gen_test.c
->  create mode 100644 kernel/trace/synth_event_gen_test.c
-> 
-> -- 
-> 2.14.1
+> Don't you need to manage things when resetting to
+> MMC_SIGNAL_VOLTAGE_330, which for example happens during a card
+> removal or at system suspend/resume?
 > 
 
+The VSWITCH sequence is used only for 3.3V to 1.8V.
+If there are: card remove | suspend/resume.
+The power cycle of sdmmc must be reinitialised
+and the reset is mandatory.
 
--- 
-Masami Hiramatsu <mhiramat@kernel.org>
+>> +
+>> +       return ret;
+>> +}
+>> +
+>>   static struct mmci_host_ops sdmmc_variant_ops = {
+>>          .validate_data = sdmmc_idma_validate_data,
+>>          .prep_data = sdmmc_idma_prep_data,
+>> @@ -465,6 +501,8 @@ static struct mmci_host_ops sdmmc_variant_ops = {
+>>          .set_clkreg = mmci_sdmmc_set_clkreg,
+>>          .set_pwrreg = mmci_sdmmc_set_pwrreg,
+>>          .busy_complete = sdmmc_busy_complete,
+>> +       .prep_volt_switch = sdmmc_prep_vswitch,
+>> +       .volt_switch = sdmmc_vswitch,
+>>   };
+>>
+>>   void sdmmc_variant_init(struct mmci_host *host)
+>> --
+>> 2.17.1
+>>
+> 
+> Kind regards
+> Uffe
+> 
