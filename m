@@ -2,179 +2,66 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 99D6014A8C2
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Jan 2020 18:15:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AC80814A8C6
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Jan 2020 18:15:48 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725990AbgA0RPB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 27 Jan 2020 12:15:01 -0500
-Received: from mail-oi1-f196.google.com ([209.85.167.196]:35956 "EHLO
-        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725893AbgA0RPA (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 27 Jan 2020 12:15:00 -0500
-Received: by mail-oi1-f196.google.com with SMTP id c16so7381599oic.3;
-        Mon, 27 Jan 2020 09:15:00 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=k4ey/v184CvKWYOReTk6RsIuynmUBFRFgYAqJjPcrR4=;
-        b=oYnTFROH3KjFqanxyA3baGhgecDF3aTA3wCli2AB/MUVgHrzZOxgXk3QQuiuE5ZJmK
-         FHCewuj3718BTJ1ieQbEz8pNVO4YpMdkm2JSO007FMosQCc2ikeGiQfQajxA+8FTlnvk
-         8KEpSyDGGDbUOHeNsIVHqR2TIxH6tblYUKYwz611UgzWmIXiHVfp5dwJPVhZwXRtsfn3
-         YX7bJgN9n3v5XwUAzTD7BGQVV4xwsAjgryhjE1c1HVmqX08y6IlGkyZv1VDI6v8UF9Fp
-         U8hE3fb3Cfi8uaV3sZp9PWJoR1VMlk3j1cwibwtSeIYCTD9AYSA2gKz1kLaJwl0PwU2i
-         U40w==
-X-Gm-Message-State: APjAAAWW4Q9XTRnpFzO2yizhc5Bfs9jiCV0PIKz5jdbhHnJWUREXyqeQ
-        uf2M3tIAgkpc9S0yhN8aej6s0c4=
-X-Google-Smtp-Source: APXvYqziCDKOQq2CX3TlOi7pNha+sxl3OTQ8qLhFGhkhv0aU4a8izXXCeClJ1npkU1amNVWiRslj3Q==
-X-Received: by 2002:aca:e146:: with SMTP id y67mr39769oig.93.1580145299818;
-        Mon, 27 Jan 2020 09:14:59 -0800 (PST)
-Received: from rob-hp-laptop (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id 6sm4930858oil.43.2020.01.27.09.14.58
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 27 Jan 2020 09:14:59 -0800 (PST)
-Received: (nullmailer pid 8334 invoked by uid 1000);
-        Mon, 27 Jan 2020 17:14:57 -0000
-Date:   Mon, 27 Jan 2020 11:14:57 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Yuti Amonkar <yamonkar@cadence.com>
-Cc:     linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        devicetree@vger.kernel.org, maxime@cerno.tech, airlied@linux.ie,
-        daniel@ffwll.ch, mark.rutland@arm.com, a.hajda@samsung.com,
-        narmstrong@baylibre.com, Laurent.pinchart@ideasonboard.com,
-        jonas@kwiboo.se, jernej.skrabec@siol.net, praneeth@ti.com,
-        jsarha@ti.com, tomi.valkeinen@ti.com, mparab@cadence.com,
-        sjakhade@cadence.com
-Subject: Re: [PATCH v3 1/3] dt-bindings: drm/bridge: Document Cadence MHDP
- bridge bindings in yaml format
-Message-ID: <20200127171457.GA32507@bogus>
-References: <1579690501-10698-1-git-send-email-yamonkar@cadence.com>
- <1579690501-10698-2-git-send-email-yamonkar@cadence.com>
+        id S1726240AbgA0RPp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 27 Jan 2020 12:15:45 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58178 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725828AbgA0RPo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 27 Jan 2020 12:15:44 -0500
+Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 35E0B22527;
+        Mon, 27 Jan 2020 17:15:44 +0000 (UTC)
+Date:   Mon, 27 Jan 2020 12:15:42 -0500
+From:   Steven Rostedt <rostedt@goodmis.org>
+To:     David Laight <David.Laight@ACULAB.COM>
+Cc:     'linux-kernel' <linux-kernel@vger.kernel.org>
+Subject: Re: sched/fair: Long delays starting RT processes on idle cpu.
+Message-ID: <20200127121542.05a124d7@gandalf.local.home>
+In-Reply-To: <a23fe4c769364ab49865e4c46aa73830@AcuMS.aculab.com>
+References: <13797bbe87b64f34877b89a5bbdb6d03@AcuMS.aculab.com>
+        <20200127104948.59eac75a@gandalf.local.home>
+        <a23fe4c769364ab49865e4c46aa73830@AcuMS.aculab.com>
+X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1579690501-10698-2-git-send-email-yamonkar@cadence.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jan 22, 2020 at 11:54:59AM +0100, Yuti Amonkar wrote:
-> Document the bindings used for the Cadence MHDP DPI/DP bridge in
-> yaml format.
+On Mon, 27 Jan 2020 16:56:12 +0000
+David Laight <David.Laight@ACULAB.COM> wrote:
+
+> >From Steven Rostedt
+> > Sent: 27 January 2020 15:50
+> > On Mon, 27 Jan 2020 15:39:24 +0000
+> > David Laight <David.Laight@ACULAB.COM> wrote:
+> >   
+> > > I'd have thought that the processor should wake up much faster than that.
+> > > I can't see the memory write that is paired with the monitor/mwait.
+> > > Does it need a strong barrier?  
+> > 
+> > You may want to prevent the CPU from going into a deep C state. 90us is
+> > something I would expect if the CPU is in a deep C state (I've seen
+> > much longer wake up times due to deep C state).
+> > 
+> > Boot the kernel with idle=poll and see if you can trigger the same
+> > latency. If not, then you know it's the CPU going into a deep C state
+> > that is causing your latency.  
 > 
-> Signed-off-by: Yuti Amonkar <yamonkar@cadence.com>
-> ---
->  .../bindings/display/bridge/cdns,mhdp.yaml         | 131 +++++++++++++++++++++
->  1 file changed, 131 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/display/bridge/cdns,mhdp.yaml
+> With idle=poll the delays seem to be minimal.
 > 
-> diff --git a/Documentation/devicetree/bindings/display/bridge/cdns,mhdp.yaml b/Documentation/devicetree/bindings/display/bridge/cdns,mhdp.yaml
-> new file mode 100644
-> index 0000000..696418a
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/display/bridge/cdns,mhdp.yaml
-> @@ -0,0 +1,131 @@
+> Is there any way to limit the C state entered by mwait?
 
-Missing SPDX tag. Dual license please.
+I believe you can dynamically change C state. There's a pdf about it:
 
-> +%YAML 1.2
-> +---
-> +$id: "http://devicetree.org/schemas/display/bridge/cdns,mhdp.yaml#"
-> +$schema: "http://devicetree.org/meta-schemas/core.yaml#"
-> +
-> +title: Cadence MHDP bridge
-> +
-> +maintainers:
-> +  - Swapnil Jakhade <sjakhade@cadence.com>
-> +  - Yuti Amonkar <yamonkar@cadence.com>
-> +
-> +properties:
-> +  compatible:
-> +    enum:
-> +      - cdns,mhdp8546
-> +      - ti,j721e-mhdp8546
-> +
-> +  reg:
-> +    minItems: 1
-> +    maxItems: 2
-> +    items:
-> +      - description:
-> +          Register block of mhdptx apb registers upto PHY mapped area(AUX_CONFIG_P).
-> +          The AUX and PMA registers are mapped to associated phy driver.
-> +      - description:
-> +          Register block for DSS_EDP0_INTG_CFG_VP registers in case of TI J7 SoCs.
-> +
-> +  reg-names:
-> +    minItems: 1
-> +    maxItems: 2
-> +    items:
-> +      - const: mhdptx
-> +      - const: j721e-intg
-> +
-> +  clocks:
-> +    maxItems: 1
-> +    description:
-> +      DP bridge clock, it's used by the IP to know how to translate a number of
-> +      clock cycles into a time (which is used to comply with DP standard timings
-> +      and delays).
-> +
-> +  phys:
-> +    description: Phandle to the DisplyPort phy.
-> +
-> +  phy-names:
-> +    const: dpphy
-> +
-> +  ports:
-> +    type: object
-> +    description:
-> +      Ports as described in Documentation/devicetree/bindings/graph.txt
-> +
-> +    properties:
-> +       '#address-cells':
+  https://wiki.ntb.ch/infoportal/_media/embedded_systems/ethercat/controlling_processor_c-state_usage_in_linux_v1.1_nov2013.pdf
 
-Wrong indentation.
+-- Steve
 
-> +         const: 1
-> +
-> +       '#size-cells':
-> +         const: 0
-> +
-> +       port@0:
-> +         type: object
-> +         description:
-> +           input port representing the DP bridge input
-> +
-> +       port@1:
-> +         type: object
-> +         description:
-> +           output port representing the DP bridge output.
-> +
-> +    required:
-> +      - port@0
-> +      - port@1
-> +      - '#address-cells'
-> +      - '#size-cells'
-> +
-> +allOf:
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          contains:
-> +            const: ti,j721e-mhdp8546
-> +    then:
-> +      properties:
-> +        reg:
-> +          minItems: 2
-> +          maxItems: 2
-> +        reg-names:
-> +          minItems: 2
-> +          maxItems: 2
-
-As we've already defined the max, you can drop maxItems on these 2.
-
-With those 2 changes,
-
-Reviewed-by: Rob Herring <robh@kernel.org>
