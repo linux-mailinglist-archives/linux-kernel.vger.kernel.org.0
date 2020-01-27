@@ -2,84 +2,156 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0B07B14A767
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Jan 2020 16:41:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4723814A76D
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Jan 2020 16:42:10 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729606AbgA0PlQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 27 Jan 2020 10:41:16 -0500
-Received: from mail-ot1-f65.google.com ([209.85.210.65]:36436 "EHLO
-        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729133AbgA0PlQ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 27 Jan 2020 10:41:16 -0500
-Received: by mail-ot1-f65.google.com with SMTP id g15so8795436otp.3;
-        Mon, 27 Jan 2020 07:41:15 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=SSAka/+unOWdID+dlGzjX+fU3/o5RpQNSVZW5gnH3WE=;
-        b=UlpyH7xThF7e1EYysadA9L2V2vXr1nkFatKIQ1TjP1FT7lrVkoQECL2VLMmtvuUyqo
-         /BP3SYJtFyM1F7siuTvj0ObQJvpQOv0REFnWioXRqT3LmfAnnzj75RDKpvWw2Sgt61Uv
-         0pL84X3+nLckUa3XUxiTdAs78pBmaZUs9puqxwO6NLiwkrWp3tl3iGAY4OMiKUcDprCH
-         wJAQri32q/ZlrEQJ/55TsOwlXfn/E71LE1i4egik3xto7O8AQ3obrNNQgw8yJBG81Ql4
-         V7MrQYqIz7jR2Tpy8202RYjwt1Gjk0n/HIbeORciom35cemdbTxZAviF04SD0FiceZxA
-         cbPA==
-X-Gm-Message-State: APjAAAVS6urqASPpWWr7gDyz2cXmCIV2neyciQpo1jbTo93AIZ2Mj8vJ
-        er3GwspdAzwM1xRG7ZCtqg==
-X-Google-Smtp-Source: APXvYqyFSBoR7e0fQ95loR0phVN8/LbKEX99IjMFvGvg6Ft5a0R3Rhk1dKI6rdHuGUXnQJKSH+UUPA==
-X-Received: by 2002:a9d:68d1:: with SMTP id i17mr12360581oto.367.1580139675043;
-        Mon, 27 Jan 2020 07:41:15 -0800 (PST)
-Received: from rob-hp-laptop (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id l207sm247662oih.25.2020.01.27.07.41.13
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 27 Jan 2020 07:41:14 -0800 (PST)
-Received: (nullmailer pid 6960 invoked by uid 1000);
-        Mon, 27 Jan 2020 15:41:13 -0000
-Date:   Mon, 27 Jan 2020 09:41:13 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Sricharan R <sricharan@codeaurora.org>
-Cc:     agross@kernel.org, devicetree@vger.kernel.org,
-        linus.walleij@linaro.org, linux-arm-kernel@lists.infradead.org,
-        linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-soc@vger.kernel.org,
-        robh+dt@kernel.org, sivaprak@codeaurora.org,
-        sricharan@codeaurora.org,
-        Rajkumar Ayyasamy <arajkuma@codeaurora.org>,
-        Selvam Sathappan Periakaruppan <speriaka@codeaurora.org>
-Subject: Re: [PATCH V6 1/5] dt-bindings: pinctrl: qcom: Add ipq6018 pinctrl
- bindings
-Message-ID: <20200127154113.GA6904@bogus>
-References: <1579439601-14810-1-git-send-email-sricharan@codeaurora.org>
- <1579439601-14810-2-git-send-email-sricharan@codeaurora.org>
+        id S1729682AbgA0PmG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 27 Jan 2020 10:42:06 -0500
+Received: from mail.kernel.org ([198.145.29.99]:37584 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729473AbgA0PmG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 27 Jan 2020 10:42:06 -0500
+Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id C435521739;
+        Mon, 27 Jan 2020 15:42:04 +0000 (UTC)
+Date:   Mon, 27 Jan 2020 10:42:03 -0500
+From:   Steven Rostedt <rostedt@goodmis.org>
+To:     Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        Linux Trace Devel <linux-trace-devel@vger.kernel.org>,
+        Ingo Molnar <mingo@kernel.org>, Jiri Olsa <jolsa@redhat.com>,
+        Qu Wenruo <wqu@suse.com>, Nikolay Borisov <nborisov@suse.com>
+Subject: [PATCH] tools/lib/traceevent, perf tools: Handle %pU format
+ correctly
+Message-ID: <20200127104203.7ae4c35f@gandalf.local.home>
+X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1579439601-14810-2-git-send-email-sricharan@codeaurora.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, 19 Jan 2020 18:43:17 +0530, Sricharan R wrote:
-> Add device tree binding Documentation details for ipq6018
-> pinctrl driver.
-> 
-> Co-developed-by: Rajkumar Ayyasamy <arajkuma@codeaurora.org>
-> Signed-off-by: Rajkumar Ayyasamy <arajkuma@codeaurora.org>
-> Co-developed-by: Selvam Sathappan Periakaruppan <speriaka@codeaurora.org>
-> Signed-off-by: Selvam Sathappan Periakaruppan <speriaka@codeaurora.org>
-> Co-developed-by: Sivaprakash Murugesan <sivaprak@codeaurora.org>
-> Signed-off-by: Sivaprakash Murugesan <sivaprak@codeaurora.org>
-> Signed-off-by: Sricharan R <sricharan@codeaurora.org>
-> Signed-off-by: Sivaprakash Murugesan <sivaprak@codeaurora.org>
-> ---
-> [V6] 
->   * Addressed review comments form Rob.
->  .../bindings/pinctrl/qcom,ipq6018-pinctrl.yaml     | 153 +++++++++++++++++++++
->  1 file changed, 153 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/pinctrl/qcom,ipq6018-pinctrl.yaml
-> 
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+From: Qu Wenruo <wqu@suse.com>
+
+[BUG]
+For btrfs related events, there is a field for fsid, but perf never
+parse it correctly.
+
+ # perf trace -e btrfs:qgroup_meta_convert xfs_io -f -c "pwrite 0 4k" \
+   /mnt/btrfs/file1
+     0.000 xfs_io/77915 btrfs:qgroup_meta_reserve:(nil)U: refroot=5(FS_TREE) type=0x0 diff=2
+                                                  ^^^^^^ Not a correct UUID
+     ...
+
+[CAUSE]
+The pretty_print() function doesn't handle the %pU format correctly.
+In fact it doesn't handle %pU as uuid at all.
+
+[FIX]
+Add a new function, print_uuid_arg(), to handle %pU correctly.
+
+Now perf trace can at least print fsid correctly:
+     0.000 xfs_io/79619 btrfs:qgroup_meta_reserve:23ad1511-dd83-47d4-a79c-e96625a15a6e refroot=5(FS_TREE) type=0x0 diff=2
+
+Link: http://lkml.kernel.org/r/20191021094730.57332-1-wqu@suse.com
+
+Signed-off-by: Qu Wenruo <wqu@suse.com>
+[ Change if statement from (1 <= i && i >= 4) to (i >= 1 && i >= 4) ]
+Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+---
+
+Arnaldo,
+
+This patch was stuck on a completion that never happened. My comment on
+the if statement never was addressed, so I just made the change myself.
+
+-- Steve
+
+
+ tools/lib/traceevent/event-parse.c | 51 ++++++++++++++++++++++++++++++
+ 1 file changed, 51 insertions(+)
+
+diff --git a/tools/lib/traceevent/event-parse.c b/tools/lib/traceevent/event-parse.c
+index beaa8b8c08ff..a3b87a12bef2 100644
+--- a/tools/lib/traceevent/event-parse.c
++++ b/tools/lib/traceevent/event-parse.c
+@@ -18,6 +18,7 @@
+ #include <errno.h>
+ #include <stdint.h>
+ #include <limits.h>
++#include <linux/uuid.h>
+ #include <linux/time64.h>
+ 
+ #include <netinet/in.h>
+@@ -4510,6 +4511,40 @@ get_bprint_format(void *data, int size __maybe_unused,
+ 	return format;
+ }
+ 
++static void print_uuid_arg(struct trace_seq *s, void *data, int size,
++			   struct tep_event *event, struct tep_print_arg *arg)
++{
++	unsigned char *buf;
++	int i;
++
++	if (arg->type != TEP_PRINT_FIELD) {
++		trace_seq_printf(s, "ARG TYPE NOT FIELID but %d", arg->type);
++		return;
++	}
++
++	if (!arg->field.field) {
++		arg->field.field = tep_find_any_field(event, arg->field.name);
++		if (!arg->field.field) {
++			do_warning("%s: field %s not found",
++				   __func__, arg->field.name);
++			return;
++		}
++	}
++	if (arg->field.field->size < 16) {
++		trace_seq_printf(s, "INVALID UUID: size have %u expect 16",
++				arg->field.field->size);
++		return;
++	}
++	buf = data + arg->field.field->offset;
++
++	for (i = 0; i < 8; i++) {
++		trace_seq_printf(s, "%02x", buf[2 * i]);
++		trace_seq_printf(s, "%02x", buf[2 * i + 1]);
++		if (i >= 1 && i <= 4)
++			trace_seq_putc(s, '-');
++	}
++}
++
+ static void print_mac_arg(struct trace_seq *s, int mac, void *data, int size,
+ 			  struct tep_event *event, struct tep_print_arg *arg)
+ {
+@@ -5076,6 +5111,22 @@ static void pretty_print(struct trace_seq *s, void *data, int size, struct tep_e
+ 						arg = arg->next;
+ 						break;
+ 					}
++				} else if (*ptr == 'U') {
++					/*
++					 * %pU has several finetunings variants
++					 * like %pUb and %pUL.
++					 * Here we ignore them, default to
++					 * byte-order no endian, lower case
++					 * letters.
++					 */
++					if (isalpha(ptr[1]))
++						ptr += 2;
++					else
++						ptr++;
++
++					print_uuid_arg(s, data, size, event, arg);
++					arg = arg->next;
++					break;
+ 				}
+ 
+ 				/* fall through */
+-- 
+2.20.1
+
