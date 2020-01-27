@@ -2,84 +2,55 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D5F3614A91C
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Jan 2020 18:35:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 98F4814A924
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Jan 2020 18:39:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728992AbgA0Rff convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Mon, 27 Jan 2020 12:35:35 -0500
-Received: from mga11.intel.com ([192.55.52.93]:56628 "EHLO mga11.intel.com"
+        id S1726275AbgA0RjC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 27 Jan 2020 12:39:02 -0500
+Received: from mx2.suse.de ([195.135.220.15]:37074 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726303AbgA0Rff (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 27 Jan 2020 12:35:35 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 27 Jan 2020 09:35:34 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.70,370,1574150400"; 
-   d="scan'208";a="401394432"
-Received: from orsmsx106.amr.corp.intel.com ([10.22.225.133])
-  by orsmga005.jf.intel.com with ESMTP; 27 Jan 2020 09:35:34 -0800
-Received: from orsmsx156.amr.corp.intel.com (10.22.240.22) by
- ORSMSX106.amr.corp.intel.com (10.22.225.133) with Microsoft SMTP Server (TLS)
- id 14.3.439.0; Mon, 27 Jan 2020 09:35:34 -0800
-Received: from orsmsx114.amr.corp.intel.com ([169.254.8.4]) by
- ORSMSX156.amr.corp.intel.com ([169.254.8.118]) with mapi id 14.03.0439.000;
- Mon, 27 Jan 2020 09:35:34 -0800
-From:   "Luck, Tony" <tony.luck@intel.com>
-To:     Peter Zijlstra <peterz@infradead.org>
-CC:     Arvind Sankar <nivedita@alum.mit.edu>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "Christopherson, Sean J" <sean.j.christopherson@intel.com>,
-        Ingo Molnar <mingo@kernel.org>,
-        "Yu, Fenghua" <fenghua.yu@intel.com>,
-        Ingo Molnar <mingo@redhat.com>,
-        "Borislav Petkov" <bp@alien8.de>, H Peter Anvin <hpa@zytor.com>,
-        "Raj, Ashok" <ashok.raj@intel.com>,
-        "Shankar, Ravi V" <ravi.v.shankar@intel.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>, x86 <x86@kernel.org>
-Subject: RE: [PATCH v15] x86/split_lock: Enable split lock detection by
- kernel
-Thread-Topic: [PATCH v15] x86/split_lock: Enable split lock detection by
- kernel
-Thread-Index: AQHV0ynJ1/MagQqLD0a5ZArbKBEXmKf8a7KA//+AyICAAsQPgIAAGKGg
-Date:   Mon, 27 Jan 2020 17:35:33 +0000
-Message-ID: <3908561D78D1C84285E8C5FCA982C28F7F54F399@ORSMSX114.amr.corp.intel.com>
-References: <20200122224245.GA2331824@rani.riverdale.lan>
- <3908561D78D1C84285E8C5FCA982C28F7F54887A@ORSMSX114.amr.corp.intel.com>
- <20200123004507.GA2403906@rani.riverdale.lan>
- <20200123035359.GA23659@agluck-desk2.amr.corp.intel.com>
- <20200123044514.GA2453000@rani.riverdale.lan>
- <20200123231652.GA4457@agluck-desk2.amr.corp.intel.com>
- <87h80kmta4.fsf@nanos.tec.linutronix.de>
- <20200125024727.GA32483@agluck-desk2.amr.corp.intel.com>
- <20200125212524.GA538225@rani.riverdale.lan>
- <20200125215003.GB17914@agluck-desk2.amr.corp.intel.com>
- <20200127080419.GG14914@hirez.programming.kicks-ass.net>
-In-Reply-To: <20200127080419.GG14914@hirez.programming.kicks-ass.net>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-dlp-product: dlpe-windows
-dlp-version: 11.2.0.6
-dlp-reaction: no-action
-x-originating-ip: [10.22.254.138]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+        id S1725893AbgA0RjB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 27 Jan 2020 12:39:01 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx2.suse.de (Postfix) with ESMTP id DD8DFAC5F;
+        Mon, 27 Jan 2020 17:38:59 +0000 (UTC)
+Date:   Mon, 27 Jan 2020 18:38:52 +0100
+From:   Borislav Petkov <bp@suse.de>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     x86-ml <x86@kernel.org>, lkml <linux-kernel@vger.kernel.org>
+Subject: Re: [GIT PULL] x86/microcode for 5.6
+Message-ID: <20200127173852.GF24228@zn.tnic>
+References: <20200127113903.GD24228@zn.tnic>
+ <CAHk-=wgedtBiFok8twm499FmNCJ6icWdG7Deb7f4jcDYS4Y_Lg@mail.gmail.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAHk-=wgedtBiFok8twm499FmNCJ6icWdG7Deb7f4jcDYS4Y_Lg@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> Have you found any actual bad software ? The only way I could trigger
-> was by explicitly writing a program to tickle it.
+On Mon, Jan 27, 2020 at 09:21:45AM -0800, Linus Torvalds wrote:
+> No problem with boring, but I'm trying to figure out why one of your
+> three pulls had a signed tag, and the other two didn't?
+>
+> Is it just that the shared tip tree doesn't use tags, or what?
 
-No application or library issues found so far (though I'm not running the kind of multi-threaded
-applications that might be using atomic operations for synchronization).
+Yap, you asked that the last time too:
 
-Only Linux kernel seems to have APIs that make it easy for programmers to accidently split
-an atomic operation between cache lines.
+https://lkml.kernel.org/r/20190308173529.GB15033@zn.tnic
 
--Tony
+So I can stop signing the EDAC pull or I can start signing them all -
+I'm fine with whatever you prefer.
+
+Thx.
+
+-- 
+Regards/Gruss,
+    Boris.
+
+SUSE Software Solutions Germany GmbH, GF: Felix Imendörffer, HRB 36809, AG Nürnberg
