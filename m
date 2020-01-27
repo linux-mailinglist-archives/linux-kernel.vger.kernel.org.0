@@ -2,51 +2,50 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C667514A911
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Jan 2020 18:35:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 929BC14A915
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Jan 2020 18:35:24 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727453AbgA0RfG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 27 Jan 2020 12:35:06 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36162 "EHLO mail.kernel.org"
+        id S1728760AbgA0RfJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 27 Jan 2020 12:35:09 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36236 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725930AbgA0RfE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 27 Jan 2020 12:35:04 -0500
-Subject: Re: [GIT PULL] arm64 updates for 5.6
+        id S1728241AbgA0RfG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 27 Jan 2020 12:35:06 -0500
+Subject: Re: [GIT PULL] RAS pile for 5.6
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1580146504;
-        bh=cjfur9AiQSYJG7/kuFMrRsyfZ/9CjVj9F15dx1YSkSw=;
+        s=default; t=1580146505;
+        bh=b9/Bm00Vd9nhuu6buL4my2Mo3wrRU8i+vANEpvHosO8=;
         h=From:In-Reply-To:References:Date:To:Cc:From;
-        b=ubphHoS/Ib53yM7z/q02rH95apGNimiTuD3eJy+dNdFeKeCuuceGu2eH1wtqPpcZF
-         oYzA+G4dTbDXQuW7gGpWwixgUdbYE1nevq9nVhTK2Iy4Id5Dt43RhTIc3cmDVWO7/s
-         bUxKkdq1R4XUBAFPTYKxNcNuJW0P5qrwMNtL9E40=
+        b=yP8aqEt//6oO9VURt+sA6y1AN2r3TmnM6FDlyBCpKX83N/0LBUeD69z9fx927PHQk
+         1VALc9nlKtVrKIgMicw7s4LMndPKU3MkA+ulvhq9tduZc32fUOpAz7SekR7PuqxtMw
+         KXAQit1AT4iXsfw6/aOi+JqGSWBjooOBoaxGmVlE=
 From:   pr-tracker-bot@kernel.org
-In-Reply-To: <20200123165828.GB20126@willie-the-truck>
-References: <20200123165828.GB20126@willie-the-truck>
+In-Reply-To: <20200127111755.GC24228@zn.tnic>
+References: <20200127111755.GC24228@zn.tnic>
 X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <20200123165828.GB20126@willie-the-truck>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git
- tags/arm64-upstream
-X-PR-Tracked-Commit-Id: e533dbe9dcb199bb637a2c465f3a6e70564994fe
+X-PR-Tracked-Message-Id: <20200127111755.GC24228@zn.tnic>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git ras-core-for-linus
+X-PR-Tracked-Commit-Id: 86e9f9d60eb5e0c5d99ddf6b79f4d308d6453bd0
 X-PR-Merge-Tree: torvalds/linux.git
 X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 0238d3c75303d63839ca20e71e4993fdab3fec7b
-Message-Id: <158014650400.9177.7880650520096434822.pr-tracker-bot@kernel.org>
-Date:   Mon, 27 Jan 2020 17:35:04 +0000
-To:     Will Deacon <will@kernel.org>
-Cc:     torvalds@linux-foundation.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        catalin.marinas@arm.com, kernel-team@android.com
+X-PR-Merge-Commit-Id: 30f5a75640998900d995e099e060e920e72790b2
+Message-Id: <158014650575.9177.11918923915378996339.pr-tracker-bot@kernel.org>
+Date:   Mon, 27 Jan 2020 17:35:05 +0000
+To:     Borislav Petkov <bp@suse.de>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        x86-ml <x86@kernel.org>, linux-edac <linux-edac@vger.kernel.org>,
+        lkml <linux-kernel@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The pull request you sent on Thu, 23 Jan 2020 16:58:28 +0000:
+The pull request you sent on Mon, 27 Jan 2020 12:17:55 +0100:
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git tags/arm64-upstream
+> git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git ras-core-for-linus
 
 has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/0238d3c75303d63839ca20e71e4993fdab3fec7b
+https://git.kernel.org/torvalds/c/30f5a75640998900d995e099e060e920e72790b2
 
 Thank you!
 
