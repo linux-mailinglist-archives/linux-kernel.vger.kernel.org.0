@@ -2,90 +2,108 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 59AD8149F8B
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Jan 2020 09:10:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EC2E1149F8F
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Jan 2020 09:12:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728665AbgA0IKN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 27 Jan 2020 03:10:13 -0500
-Received: from userp2120.oracle.com ([156.151.31.85]:36198 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725955AbgA0IKN (ORCPT
+        id S1728797AbgA0IMJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 27 Jan 2020 03:12:09 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:40326 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727093AbgA0IMI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 27 Jan 2020 03:10:13 -0500
-Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
-        by userp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id 00R88NjO020434;
-        Mon, 27 Jan 2020 08:10:05 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2019-08-05;
- bh=jd96EvBODZ1OmeCFJuFhnzEFmdqOYHBsCDn6ZgiV2sM=;
- b=CIjLD+pwa9IzEDfXQCAqWpdKiOFqijZCfhU2KNk3fovQVdIwTp+HghTtUvRxrqHKlkpj
- 57Tl42SK0fVvDfndHCaAV/L6xHDpirawDsUg9dkGWYK6jFoN0o249KbMD4DhZSQGx08z
- k4wewgfYZjPwsYdgBSe6hLXuP6JZQn6AoTQN/LJMlfGYywFLozwZkaTqwO+gfV7brELi
- aXiET5/Q2ZYJKEguC8pXqKsJoosPvTAh4ugw1OX/J8Vclg9VhZfFjehVm/1eN+ti3cLV
- QjA8Tw0yFpA7tv4OXPF4SWci3nhqzdasG1bysc9QedomQreIMB04Y8c+98bGbZzqrOBP SA== 
-Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
-        by userp2120.oracle.com with ESMTP id 2xreaqwkab-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 27 Jan 2020 08:10:05 +0000
-Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
-        by aserp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id 00R88gXq069886;
-        Mon, 27 Jan 2020 08:10:04 GMT
-Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
-        by aserp3030.oracle.com with ESMTP id 2xryu8v17p-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 27 Jan 2020 08:10:04 +0000
-Received: from abhmp0004.oracle.com (abhmp0004.oracle.com [141.146.116.10])
-        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id 00R8A2ca014877;
-        Mon, 27 Jan 2020 08:10:02 GMT
-Received: from kadam (/129.205.23.165)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Mon, 27 Jan 2020 00:10:02 -0800
-Date:   Mon, 27 Jan 2020 11:09:53 +0300
-From:   Dan Carpenter <dan.carpenter@oracle.com>
-To:     Saurav Girepunje <saurav.girepunje@gmail.com>
-Cc:     vireshk@kernel.org, johan@kernel.org, elder@kernel.org,
-        gregkh@linuxfoundation.org, greybus-dev@lists.linaro.org,
-        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
-        saurav.girepunje@hotmail.com
-Subject: Re: [PATCH] staging: greybus: bootrom: fix uninitialized variables
-Message-ID: <20200127080953.GQ1847@kadam>
-References: <20200125084403.GA3386@google.com>
+        Mon, 27 Jan 2020 03:12:08 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=IUm93oOamnFo5hv3nJSbaylh1DDwQYJBt4Fpf5TYElU=; b=jTFjC7I67Cn2qeRKe1K6/I5jT
+        yvg1vVFv5/oMehurUQgdtZgH4P1zAgC7IEs/6W4kcTxi86ngyic/hviSfjT5kLXfIM94MNeDRePVF
+        suzzEIMOHDLZiJxHBCoWtpUqssbdXyP4KXWOLn8vbMsuZAUYuRAJZ9PmLOpBlTYHjK0zrKGtdHvGS
+        AMGOSLfYnWMydVEwDDwURS295o9cLVcvZEpnRM4vW1IcTrPns9y77JpoypCxFTt/ouF4kko/cJOvq
+        YSQxKkAUuPH8pvIoHRc0/aEvhhLUXVqU+mCFMlPwbg2d3WCFP2gOQcQRQaG4mKDcYhzRarLqY99+c
+        9o4VxNdlQ==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
+        by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1ivzUg-00074m-49; Mon, 27 Jan 2020 08:11:38 +0000
+Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (Client did not present a certificate)
+        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id B8214300F4B;
+        Mon, 27 Jan 2020 09:09:52 +0100 (CET)
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 3C2F8203CF5D4; Mon, 27 Jan 2020 09:11:34 +0100 (CET)
+Date:   Mon, 27 Jan 2020 09:11:34 +0100
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Guenter Roeck <linux@roeck-us.net>
+Cc:     Will Deacon <will@kernel.org>,
+        "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Nick Piggin <npiggin@gmail.com>, linux-arch@vger.kernel.org,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        Yoshinori Sato <ysato@users.sourceforge.jp>,
+        Rich Felker <dalias@libc.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Helge Deller <deller@gmx.de>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Paul Burton <paulburton@kernel.org>,
+        Tony Luck <tony.luck@intel.com>,
+        Richard Henderson <rth@twiddle.net>,
+        Nick Hu <nickhu@andestech.com>,
+        Paul Walmsley <paul.walmsley@sifive.com>
+Subject: Re: [PATCH mk-II 08/17] asm-generic/tlb: Provide
+ MMU_GATHER_TABLE_FREE
+Message-ID: <20200127081134.GI14914@hirez.programming.kicks-ass.net>
+References: <20191211120713.360281197@infradead.org>
+ <20191211122956.112607298@infradead.org>
+ <20191212093205.GU2827@hirez.programming.kicks-ass.net>
+ <20200126155205.GA19169@roeck-us.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200125084403.GA3386@google.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9512 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1911140001 definitions=main-2001270070
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9512 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1911140001
- definitions=main-2001270070
+In-Reply-To: <20200126155205.GA19169@roeck-us.net>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Jan 25, 2020 at 02:14:03PM +0530, Saurav Girepunje wrote:
-> fix uninitialized variables issue found using static code analysis tool
+On Sun, Jan 26, 2020 at 07:52:05AM -0800, Guenter Roeck wrote:
+> On Thu, Dec 12, 2019 at 10:32:05AM +0100, Peter Zijlstra wrote:
+> > As described in the comment, the correct order for freeing pages is:
+> > 
+> >  1) unhook page
+> >  2) TLB invalidate page
+> >  3) free page
+> > 
+> > This order equally applies to page directories.
+> > 
+> > Currently there are two correct options:
+> > 
+> >  - use tlb_remove_page(), when all page directores are full pages and
+> >    there are no futher contraints placed by things like software
+> >    walkers (HAVE_FAST_GUP).
+> > 
+> >  - use MMU_GATHER_RCU_TABLE_FREE and tlb_remove_table() when the
+> >    architecture does not do IPI based TLB invalidate and has
+> >    HAVE_FAST_GUP (or software TLB fill).
+> > 
+> > This however leaves architectures that don't have page based
+> > directories but don't need RCU in a bind. For those, provide
+> > MMU_GATHER_TABLE_FREE, which provides the independent batching for
+> > directories without the additional RCU freeing.
+> > 
+> > Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+> > ---
 > 
-> (error) Uninitialized variable: offset
-> (error) Uninitialized variable: size
+> Various sparc64 builds (allnoconfig, tinyconfig, as well as builds
+> with SMP disabled):
 > 
+> mm/mmu_gather.c: In function '__tlb_remove_table_free':
+> mm/mmu_gather.c:101:3: error: implicit declaration of function '__tlb_remove_table'; did you mean 'tlb_remove_table'?
 
-These are false positives as Johan said.  Don't change the code just to
-make the static analysis tool happy, fix the tools instead.
+Thanks; I'll respin these patches against Aneesh' pile and make sure to
+look into this when I do so.
 
-Also the patch doesn't apply.  Read the first paragraph of
-Documentation/process/email-clients.rst and figure out why it's not
-working.
-
-regards,
-dan carpenter
 
