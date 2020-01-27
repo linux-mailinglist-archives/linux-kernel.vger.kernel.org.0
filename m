@@ -2,50 +2,51 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2DC0814ACC5
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Jan 2020 00:55:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1D18014ACD2
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Jan 2020 00:55:43 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727747AbgA0XzG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 27 Jan 2020 18:55:06 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54400 "EHLO mail.kernel.org"
+        id S1728139AbgA0XzK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 27 Jan 2020 18:55:10 -0500
+Received: from mail.kernel.org ([198.145.29.99]:54348 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727453AbgA0XzF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1726565AbgA0XzF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 27 Jan 2020 18:55:05 -0500
-Subject: Re: [GIT PULL] cgroup changes for v5.6-rc1
+Subject: Re: [GIT PULL] SELinux patches for v5.6
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1580169304;
-        bh=3SdWewBVSvuzKWiEBla4as+SFpY0eD1WuP00fFQYtUI=;
+        s=default; t=1580169305;
+        bh=/RHbzCKM561zYe8Wjo0KSVUZ77qX9Vyf1BOcLlnjz/Q=;
         h=From:In-Reply-To:References:Date:To:Cc:From;
-        b=mFuWS+WCkneVMbDiNrDHkPoU7x2RP6ptgT3kdguTPMzvlPVXv/xcR6VQM9r5RC2+I
-         uq8YpnulaUgJtsthyZQC9hJ8x5rjy4E5Ep6GEcHB3boEc3SI0TKyZsEMskwenWnCeK
-         HlfhOsutCv9S0JUgJy+QRaMoeWsMxGLgb5XmAJWQ=
+        b=QBSWodMLhwQyJ6CUCjO0ksG0WuSjc1emxTEFfmkt2BILXwhNXOO7qxJOe3ZZ78zhi
+         tFDYdf5MOeVLAJObvZQjkMN6v86xyJcHh1XBY7BwMId80gl0GgjnerMndGLWMiTcXL
+         fJjAP1XUrk+M98FqR7XuXAoMnHXcf1QdNbqucBMg=
 From:   pr-tracker-bot@kernel.org
-In-Reply-To: <20200127214749.GC180576@mtj.thefacebook.com>
-References: <20200127214749.GC180576@mtj.thefacebook.com>
+In-Reply-To: <CAHC9VhR_5564up7u1V-PRXOz_RRfTLj16m508qgNvdWC8gcRTA@mail.gmail.com>
+References: <CAHC9VhR_5564up7u1V-PRXOz_RRfTLj16m508qgNvdWC8gcRTA@mail.gmail.com>
 X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <20200127214749.GC180576@mtj.thefacebook.com>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/tj/cgroup.git for-5.6
-X-PR-Tracked-Commit-Id: 9ea37e24d4a95dd934a0600d65caa25e409705bb
+X-PR-Tracked-Message-Id: <CAHC9VhR_5564up7u1V-PRXOz_RRfTLj16m508qgNvdWC8gcRTA@mail.gmail.com>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/pcmoore/selinux.git
+ tags/selinux-pr-20200127
+X-PR-Tracked-Commit-Id: 98aa00345de54b8340dc2ddcd87f446d33387b5e
 X-PR-Merge-Tree: torvalds/linux.git
 X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 03aa8c8cfaec1aab6b1ea7fde656bbc893f6cff8
-Message-Id: <158016930470.17044.11355481776759878357.pr-tracker-bot@kernel.org>
-Date:   Mon, 27 Jan 2020 23:55:04 +0000
-To:     Tejun Heo <tj@kernel.org>
+X-PR-Merge-Commit-Id: b1dba2473114588be3df916bf629a61bdcc83737
+Message-Id: <158016930519.17044.11033207196664253320.pr-tracker-bot@kernel.org>
+Date:   Mon, 27 Jan 2020 23:55:05 +0000
+To:     Paul Moore <paul@paul-moore.com>
 Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-kernel@vger.kernel.org, Li Zefan <lizefan@huawei.com>,
-        Johannes Weiner <hannes@cmpxchg.org>, cgroups@vger.kernel.org
+        selinux@vger.kernel.org, linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The pull request you sent on Mon, 27 Jan 2020 16:47:49 -0500:
+The pull request you sent on Mon, 27 Jan 2020 17:26:18 -0500:
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/tj/cgroup.git for-5.6
+> git://git.kernel.org/pub/scm/linux/kernel/git/pcmoore/selinux.git tags/selinux-pr-20200127
 
 has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/03aa8c8cfaec1aab6b1ea7fde656bbc893f6cff8
+https://git.kernel.org/torvalds/c/b1dba2473114588be3df916bf629a61bdcc83737
 
 Thank you!
 
