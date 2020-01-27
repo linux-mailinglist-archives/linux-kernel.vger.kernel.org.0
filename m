@@ -2,92 +2,99 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 84B4914A2D9
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Jan 2020 12:17:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3A47314A2DF
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Jan 2020 12:18:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729414AbgA0LRq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 27 Jan 2020 06:17:46 -0500
-Received: from mail-ed1-f65.google.com ([209.85.208.65]:38356 "EHLO
-        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726323AbgA0LRp (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 27 Jan 2020 06:17:45 -0500
-Received: by mail-ed1-f65.google.com with SMTP id p23so1612025edr.5;
-        Mon, 27 Jan 2020 03:17:45 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=URicdRNDSRXDR1lupXQbSUVybSg17tNT9soEhKW0QAo=;
-        b=pUTN0aoOns3aVn96Ine8HG45pYsXt0YaSdk0G7yHj/qcwFOgvU2c8xIhj4X2KTVC23
-         OiFJu4c/MZqkuay5j6cuhxcfsvVDsfGvIHEDn5hQ/DrRPjqxbEgRM6eiNuRhU04Y2zgb
-         pd5akd/gqBv83BFitRXcBQ71lGp1Wt7e08aPOMiz1L76mhxS8M9ISq2jV6f9ARZ9UgVJ
-         pDKTjHefte5tJAEqVx++qzchSPyudt7SxGQgX8AfLChWQlW7Q2B15QW8kbYl/jGNx0XG
-         +TbChqBLSA+HFqQBZYGJ6UVorpbdr1eSXg8Da4Na36nPe6DZX8qLIyKThIoeYhBiJgCp
-         aG9A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=URicdRNDSRXDR1lupXQbSUVybSg17tNT9soEhKW0QAo=;
-        b=HkFiUCbo2QyhEp+JwIM8kQ5pqr+cuiBAwpcH0n2VDLuaKfzqQzzT7FAtTMZrDhTaNX
-         RJiNj4Jdixyv+vvp1+2MhEwbEfEntbzL2g+JSo0oRcgaVxVStTdqPfbOoLPF4t+cxgYZ
-         NR8JJJSInQauAKsce4lc6WK1jL/9p9TwI6vEsMgkbuq1QXciS45uPAFHr5MSh12NV+dY
-         bFOuUUixNnAbUKM3bynH7pJdbi68BW4khgNqdS8+fgzZ4vM3I5swEHBa0hZNTmyWYdgN
-         eI639ijfERBexo3qIp02oCLHE0/ofNmLSgJ7v4pl4wDSB/aI/yCLI2fW/DoaBq6bl/rJ
-         coUA==
-X-Gm-Message-State: APjAAAUMWLM51wkARrcXJWamGdI0E/gOhnvymRu97yHgJuZXdaBdCmeQ
-        Eh2ShQwNnklwKRWFDM76PnXknUArqb+i2RqX3BQ=
-X-Google-Smtp-Source: APXvYqziQE9LV2rl/8tkESiGWi9hkeo3170AZ/wKEoqTmy3Gmiki1HzT/6UUwf2yRfVFGg+MOn0gQka/qfkY0gHedrI=
-X-Received: by 2002:aa7:ccc7:: with SMTP id y7mr13298482edt.45.1580123864420;
- Mon, 27 Jan 2020 03:17:44 -0800 (PST)
+        id S1729611AbgA0LSE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 27 Jan 2020 06:18:04 -0500
+Received: from mx2.suse.de ([195.135.220.15]:38440 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726079AbgA0LSD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 27 Jan 2020 06:18:03 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx2.suse.de (Postfix) with ESMTP id E36B6AAB8;
+        Mon, 27 Jan 2020 11:18:01 +0000 (UTC)
+Date:   Mon, 27 Jan 2020 12:17:55 +0100
+From:   Borislav Petkov <bp@suse.de>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     x86-ml <x86@kernel.org>, linux-edac <linux-edac@vger.kernel.org>,
+        lkml <linux-kernel@vger.kernel.org>
+Subject: [GIT PULL] RAS pile for 5.6
+Message-ID: <20200127111755.GC24228@zn.tnic>
 MIME-Version: 1.0
-References: <20200127102303.44133-1-colin.king@canonical.com>
-In-Reply-To: <20200127102303.44133-1-colin.king@canonical.com>
-From:   Shubhrajyoti Datta <shubhrajyoti.datta@gmail.com>
-Date:   Mon, 27 Jan 2020 16:47:33 +0530
-Message-ID: <CAKfKVtHMbOvwppZcLN=J+2VvJ1GOFgZ2-DDAfav5w9zf1EjZKQ@mail.gmail.com>
-Subject: Re: [PATCH][next][V2] i2c: xiic: fix indentation issue
-To:     Colin King <colin.king@canonical.com>
-Cc:     Michal Simek <michal.simek@xilinx.com>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-i2c <linux-i2c@vger.kernel.org>,
-        kernel-janitors@vger.kernel.org,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jan 27, 2020 at 4:46 PM Colin King <colin.king@canonical.com> wrote:
->
-> From: Colin Ian King <colin.king@canonical.com>
->
-> There is a statement that is indented one level too deeply, remove
-> the extraneous tab.
->
-Reviewed-by: Shubhrajyoti Datta <shubhrajyoti.datta@gmail.com>
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
-> V2: fix type in commit message
-> ---
->  drivers/i2c/busses/i2c-xiic.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/i2c/busses/i2c-xiic.c b/drivers/i2c/busses/i2c-xiic.c
-> index b17d30c9ab40..90c1c362394d 100644
-> --- a/drivers/i2c/busses/i2c-xiic.c
-> +++ b/drivers/i2c/busses/i2c-xiic.c
-> @@ -261,7 +261,7 @@ static int xiic_clear_rx_fifo(struct xiic_i2c *i2c)
->                 xiic_getreg8(i2c, XIIC_DRR_REG_OFFSET);
->                 if (time_after(jiffies, timeout)) {
->                         dev_err(i2c->dev, "Failed to clear rx fifo\n");
-> -                               return -ETIMEDOUT;
-> +                       return -ETIMEDOUT;
->                 }
->         }
->
-> --
-> 2.24.0
->
+Hi Linus,
+
+please pull the below branch to receive the following RAS updates:
+
+* Misc fixes to the MCA code all over the place, by Jan H. Schönherr.
+
+* Initial support for AMD F19h and other cleanups to amd64_edac, by Yazen
+Ghannam.
+
+* Other small cleanups.
+
+Thx.
+
+---
+
+The following changes since commit 7de7de7ca0ae0fc70515ee3154af33af75edae2c:
+
+  Fix root mounting with no mount options (2019-12-16 08:42:39 -0800)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git ras-core-for-linus
+
+for you to fetch changes up to 86e9f9d60eb5e0c5d99ddf6b79f4d308d6453bd0:
+
+  EDAC/mce_amd: Make fam_ops static global (2020-01-16 21:52:48 +0100)
+
+----------------------------------------------------------------
+Arnd Bergmann (1):
+      x86/mce/therm_throt: Mark throttle_active_work() as __maybe_unused
+
+Borislav Petkov (1):
+      EDAC/mce_amd: Make fam_ops static global
+
+Jan H. Schönherr (5):
+      x86/mce: Pass MCE message to mce_panic() on failed kernel recovery
+      x86/mce: Remove mce_inject_log() in favor of mce_log()
+      x86/mce: Take action on UCNA/Deferred errors again
+      x86/mce: Fix mce=nobootlog
+      x86/mce: Fix use of uninitialized MCE message string
+
+Yazen Ghannam (5):
+      x86/MCE/AMD, EDAC/mce_amd: Add new Load Store unit McaType
+      EDAC/mce_amd: Always load on SMCA systems
+      x86/amd_nb: Add Family 19h PCI IDs
+      EDAC/amd64: Add family ops for Family 19h Models 00h-0Fh
+      EDAC/amd64: Drop some family checks for newer systems
+
+ arch/x86/include/asm/mce.h            |   3 +-
+ arch/x86/kernel/amd_nb.c              |   3 +
+ arch/x86/kernel/cpu/mce/amd.c         |   2 +
+ arch/x86/kernel/cpu/mce/core.c        |  70 ++++++++++-------------
+ arch/x86/kernel/cpu/mce/inject.c      |   2 +-
+ arch/x86/kernel/cpu/mce/internal.h    |   2 -
+ arch/x86/kernel/cpu/mce/therm_throt.c |   2 +-
+ drivers/edac/amd64_edac.c             |  62 +++++++++++---------
+ drivers/edac/amd64_edac.h             |   3 +
+ drivers/edac/mce_amd.c                | 105 ++++++++++++++++++++--------------
+ include/linux/pci_ids.h               |   1 +
+ 11 files changed, 141 insertions(+), 114 deletions(-)
+
+-- 
+Regards/Gruss,
+    Boris.
+
+SUSE Software Solutions Germany GmbH, GF: Felix Imendörffer, HRB 36809, AG Nürnberg
