@@ -2,92 +2,166 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 97A3A14A863
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Jan 2020 17:56:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 41F1714A869
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Jan 2020 17:57:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726083AbgA0Q4R convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Mon, 27 Jan 2020 11:56:17 -0500
-Received: from eu-smtp-delivery-151.mimecast.com ([207.82.80.151]:49685 "EHLO
-        eu-smtp-delivery-151.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725845AbgA0Q4R (ORCPT
+        id S1726327AbgA0Q5G (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 27 Jan 2020 11:57:06 -0500
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:43907 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725845AbgA0Q5G (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 27 Jan 2020 11:56:17 -0500
-Received: from AcuMS.aculab.com (156.67.243.126 [156.67.243.126]) (Using
- TLS) by relay.mimecast.com with ESMTP id
- uk-mta-142-AM_IIyULNle_IOOLINe5hw-1; Mon, 27 Jan 2020 16:56:13 +0000
-Received: from AcuMS.Aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) by
- AcuMS.aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) with Microsoft SMTP
- Server (TLS) id 15.0.1347.2; Mon, 27 Jan 2020 16:56:12 +0000
-Received: from AcuMS.Aculab.com ([fe80::43c:695e:880f:8750]) by
- AcuMS.aculab.com ([fe80::43c:695e:880f:8750%12]) with mapi id 15.00.1347.000;
- Mon, 27 Jan 2020 16:56:12 +0000
-From:   David Laight <David.Laight@ACULAB.COM>
-To:     'Steven Rostedt' <rostedt@goodmis.org>
-CC:     'linux-kernel' <linux-kernel@vger.kernel.org>
-Subject: RE: sched/fair: Long delays starting RT processes on idle cpu.
-Thread-Topic: sched/fair: Long delays starting RT processes on idle cpu.
-Thread-Index: AQHV1SlucH1Za6AdTkOqbnnXEpKS/qf+tfxQ
-Date:   Mon, 27 Jan 2020 16:56:12 +0000
-Message-ID: <a23fe4c769364ab49865e4c46aa73830@AcuMS.aculab.com>
-References: <13797bbe87b64f34877b89a5bbdb6d03@AcuMS.aculab.com>
- <20200127104948.59eac75a@gandalf.local.home>
-In-Reply-To: <20200127104948.59eac75a@gandalf.local.home>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.202.205.107]
+        Mon, 27 Jan 2020 11:57:06 -0500
+Received: by mail-pf1-f194.google.com with SMTP id s1so4566663pfh.10;
+        Mon, 27 Jan 2020 08:57:05 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=bv9qjL9p/yTO8gI2IwvUm3d5y0oyhFWSWAgOHXsx4wg=;
+        b=idxvBz2w+aDPboH83G0TRCoZR93M3a2oRwDAmVMg1dLJzwz3N4Gz6UO/P3zpwkJguc
+         df25uXyjtvEgHVSz/1zgE3ApQoCjgbFPxwublu9lT7bjTeQM01xOhE/5b++tQC2pFnwg
+         tsQoG8HgK5eYDV80f1Yr5oGvE5XMoPr8uLId9pWNyAbls3JUcTo8TFO6ZhpFS9nOU8Rp
+         zVQBmJqpKq7fnlYpqwoDO0oGq4xmkRqqD/FUsoBwFM/rptFa81G1cw4f5uwPtN/seKEO
+         Nv9vdsIHPDB//SNwZS/EADC8AoJuP8P16Ak73jJxRQyfcNFWPwNCrUVd9Is0EbR0cFGQ
+         Krxw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=bv9qjL9p/yTO8gI2IwvUm3d5y0oyhFWSWAgOHXsx4wg=;
+        b=bAi5eI4oNy4V2ZpGVZvDRehhNST5e1hGm6D6oB7TkW0Va3didNYtUWYBlMyfSTZB42
+         HMJPST7HKhHyhOKXrEdbKjGCTw+McAgVD7GmhLkYj/Sub73N8lEOJRgVxiUo5MhTh1vm
+         DiIH7Vl06moRJMeDW3xrBhZrkfQWx5AIe536oYFjUjKpbUCics5B/RT+0bjsEHMxUyPJ
+         KfohdzxzTIsaR5x6ZK59xZTg7FKntQ+wW3spTd/1S7BXvtrjspRTWlUGzrn/nEyY5gU5
+         WIxI2PHtoc2r1WND1B3o+1u1T917Uzkk/5CAUbBUkZiw6cCqlaJ000r1RrK/PzymMlug
+         kMtg==
+X-Gm-Message-State: APjAAAW21bwvYf7zhZDaUy9NHu/3mfNZSKedUknYwaOIoCCxo5qcujxI
+        ZtriSfgFnwZfZ/9wTKZnKFKsR1vM
+X-Google-Smtp-Source: APXvYqx3i4UK2TRjRn6wDnlzBZRK6VspL+auphc16edtcsB/OENNnTGMJ8MeaR8r+W+gKdTyE+tX+A==
+X-Received: by 2002:a62:5213:: with SMTP id g19mr12705647pfb.188.1580144224832;
+        Mon, 27 Jan 2020 08:57:04 -0800 (PST)
+Received: from localhost.localdomain (c-67-165-113-11.hsd1.wa.comcast.net. [67.165.113.11])
+        by smtp.gmail.com with ESMTPSA id u23sm16368642pfm.29.2020.01.27.08.57.03
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 27 Jan 2020 08:57:03 -0800 (PST)
+From:   Andrey Smirnov <andrew.smirnov@gmail.com>
+To:     linux-crypto@vger.kernel.org
+Cc:     Andrey Smirnov <andrew.smirnov@gmail.com>,
+        Chris Healy <cphealy@gmail.com>,
+        Lucas Stach <l.stach@pengutronix.de>,
+        =?UTF-8?q?Horia=20Geant=C4=83?= <horia.geanta@nxp.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        Iuliana Prodan <iuliana.prodan@nxp.com>,
+        linux-kernel@vger.kernel.org, linux-imx@nxp.com
+Subject: [PATCH v7 0/9] enable CAAM's HWRNG as default
+Date:   Mon, 27 Jan 2020 08:56:37 -0800
+Message-Id: <20200127165646.19806-1-andrew.smirnov@gmail.com>
+X-Mailer: git-send-email 2.21.0
 MIME-Version: 1.0
-X-MC-Unique: AM_IIyULNle_IOOLINe5hw-1
-X-Mimecast-Spam-Score: 0
-X-Mimecast-Originator: aculab.com
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From Steven Rostedt
-> Sent: 27 January 2020 15:50
-> On Mon, 27 Jan 2020 15:39:24 +0000
-> David Laight <David.Laight@ACULAB.COM> wrote:
-> 
-> > I'd have thought that the processor should wake up much faster than that.
-> > I can't see the memory write that is paired with the monitor/mwait.
-> > Does it need a strong barrier?
-> 
-> You may want to prevent the CPU from going into a deep C state. 90us is
-> something I would expect if the CPU is in a deep C state (I've seen
-> much longer wake up times due to deep C state).
-> 
-> Boot the kernel with idle=poll and see if you can trigger the same
-> latency. If not, then you know it's the CPU going into a deep C state
-> that is causing your latency.
+Everyone:
 
-With idle=poll the delays seem to be minimal.
+This series is a continuation of original [discussion]. I don't know
+if what's in the series is enough to use CAAMs HWRNG system wide, but
+I am hoping that with enough iterations and feedback it will be.
 
-Is there any way to limit the C state entered by mwait?
-Or to try the check that monitor/mwait is being triggered properly.
-Is there a clfulsh() in the writing side?
-If not, might one help??
+Changes since [v1]:
 
-I see almost repeatable delays eg for 6 processes being scheduled (more or less in sequence).
-10us waking cpu 2.
-60us waking cpu 1.
-40us waking cpu 0 and 40us waking cpu3.
-20us waking cpu 2.
-20us waking cpu 0.
-None of the processes runs for anything like the delays.
-The whole thing repeats every 10ms.
-Note that the first process is actually signalling a CV that 4 of the other 5
-are waiting on.
-So there are cumulative delays of around 140us before the 4th is woken.
+    - Original hw_random replaced with the one using output of TRNG directly
 
-	David
+    - SEC4 DRNG IP block exposed via crypto API
 
--
-Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1 1PT, UK
-Registration No: 1397386 (Wales)
+    - Small fix regarding use of GFP_DMA added to the series
 
+Chagnes since [v2]:
+
+    - msleep in polling loop to avoid wasting CPU cycles
+
+    - caam_trng_read() bails out early if 'wait' is set to 'false'
+
+    - fixed typo in ZII's name
+
+Changes since [v3]:
+
+    - DRNG's .cra_name is now "stdrng"
+
+    - collected Reviewd-by tag from Lucas
+
+    - typo fixes in commit messages of the series
+
+Changes since [v4]:
+
+    - Dropped "crypto: caam - RNG4 TRNG errata" and "crypto: caam -
+      enable prediction resistance in HRWNG" to limit the scope of the
+      series. Those two patches are not yet ready and can be submitted
+      separately later.
+
+    - Collected Tested-by from Chris
+
+Changes since [v5]:
+
+    - Series is converted back to implementing HWRNG using a job ring
+      as per feedback from Horia.
+
+Changes since [v6]:
+
+    - "crypto: caam - drop global context pointer and init_done"
+      changed to use devres group to allow freeing HWRNG resource
+      independently of the parent device lifecycle. Code to deal with
+      circular deallocation dependency is added as well
+
+    - Removed worker self-scheduling in "crypto: caam - simplify RNG
+      implementation". It didn't bring much value, but meant that
+      simple cleanup with just a call to flush_work() wasn't good
+      enough.
+
+    - Added a simple function with a FIXME item for MC firmware check in
+      "crypto: caam - enable prediction resistance in HRWNG"
+
+    - "crypto: caam - limit single JD RNG output to maximum of 16
+      bytes" now shrinks async FIFO size from 32K to 64 bytes, since
+      having a buffer that big doesn't seem to do any good given that
+      througput of TRNG
+
+Feedback is welcome!
+
+Thanks,
+Andrey Smirnov
+
+[discussion] https://patchwork.kernel.org/patch/9850669/
+[v1] https://lore.kernel.org/lkml/20191029162916.26579-1-andrew.smirnov@gmail.com
+[v2] https://lore.kernel.org/lkml/20191118153843.28136-1-andrew.smirnov@gmail.com
+[v3] https://lore.kernel.org/lkml/20191120165341.32669-1-andrew.smirnov@gmail.com
+[v4] https://lore.kernel.org/lkml/20191121155554.1227-1-andrew.smirnov@gmail.com
+[v5] https://lore.kernel.org/lkml/20191203162357.21942-1-andrew.smirnov@gmail.com
+[v6] https://lore.kernel.org/lkml/20200108154047.12526-1-andrew.smirnov@gmail.com
+
+
+Andrey Smirnov (9):
+  crypto: caam - allocate RNG instantiation descriptor with GFP_DMA
+  crypto: caam - use struct hwrng's .init for initialization
+  crypto: caam - use devm_kzalloc to allocate JR data
+  crypto: caam - drop global context pointer and init_done
+  crypto: caam - simplify RNG implementation
+  crypto: caam - check if RNG job failed
+  crypto: caam - invalidate entropy register during RNG initialization
+  crypto: caam - enable prediction resistance in HRWNG
+  crypto: caam - limit single JD RNG output to maximum of 16 bytes
+
+ drivers/crypto/caam/caamrng.c | 395 +++++++++++++---------------------
+ drivers/crypto/caam/ctrl.c    |  56 +++--
+ drivers/crypto/caam/desc.h    |   2 +
+ drivers/crypto/caam/intern.h  |   7 +-
+ drivers/crypto/caam/jr.c      |  13 +-
+ drivers/crypto/caam/regs.h    |   7 +-
+ 6 files changed, 209 insertions(+), 271 deletions(-)
+
+--
+2.21.0
