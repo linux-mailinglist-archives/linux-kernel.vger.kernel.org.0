@@ -2,117 +2,91 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9A9BB14A0D2
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Jan 2020 10:30:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BE86714A0BE
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Jan 2020 10:29:30 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729658AbgA0JaT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 27 Jan 2020 04:30:19 -0500
-Received: from foss.arm.com ([217.140.110.172]:41504 "EHLO foss.arm.com"
+        id S1729567AbgA0J2w (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 27 Jan 2020 04:28:52 -0500
+Received: from foss.arm.com ([217.140.110.172]:41436 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729568AbgA0JaS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 27 Jan 2020 04:30:18 -0500
+        id S1729378AbgA0J2v (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 27 Jan 2020 04:28:51 -0500
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 20EF3101E;
-        Mon, 27 Jan 2020 01:30:18 -0800 (PST)
-Received: from ssg-dev-vb.kfn.arm.com (E111385.Arm.com [10.50.4.77])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 2BF4F3F67D;
-        Mon, 27 Jan 2020 01:30:14 -0800 (PST)
-From:   Hadar Gat <hadar.gat@arm.com>
-To:     Matt Mackall <mpm@selenic.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Daniel Thompson <daniel.thompson@linaro.org>,
-        Tomer Maimon <tmaimon77@gmail.com>,
-        Stefan Wahren <wahrenst@gmx.net>,
-        Sumit Garg <sumit.garg@linaro.org>,
-        Zaibo Xu <xuzaibo@huawei.com>,
-        Weili Qian <qianweili@huawei.com>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Jonathan Cameron <Jonathan.Cameron@huawei.com>
-Cc:     linux-crypto@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Gilad Ben-Yossef <gilad@benyossef.com>,
-        Ofir Drang <ofir.drang@arm.com>, Hadar Gat <hadar.gat@arm.com>
-Subject: [PATCH 1/3] dt-bindings: add device tree binding for Arm CryptoCell trng engine
-Date:   Mon, 27 Jan 2020 11:28:22 +0200
-Message-Id: <1580117304-12682-2-git-send-email-hadar.gat@arm.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1580117304-12682-1-git-send-email-hadar.gat@arm.com>
-References: <1580117304-12682-1-git-send-email-hadar.gat@arm.com>
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 7515A31B;
+        Mon, 27 Jan 2020 01:28:51 -0800 (PST)
+Received: from [192.168.0.7] (unknown [172.31.20.19])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 837493F67D;
+        Mon, 27 Jan 2020 01:28:49 -0800 (PST)
+Subject: Re: [Patch v8 1/7] sched/pelt: Add support to track thermal pressure
+To:     Thara Gopinath <thara.gopinath@linaro.org>,
+        Peter Zijlstra <peterz@infradead.org>
+Cc:     mingo@redhat.com, ionela.voinescu@arm.com,
+        vincent.guittot@linaro.org, rui.zhang@intel.com,
+        qperret@google.com, daniel.lezcano@linaro.org,
+        viresh.kumar@linaro.org, linux-kernel@vger.kernel.org,
+        amit.kachhap@gmail.com, javi.merino@kernel.org,
+        amit.kucheria@verdurent.com
+References: <1579031859-18692-1-git-send-email-thara.gopinath@linaro.org>
+ <1579031859-18692-2-git-send-email-thara.gopinath@linaro.org>
+ <20200116151724.GR2827@hirez.programming.kicks-ass.net>
+ <e5ecad29-11d8-e7ff-27ff-b63ca44fdcd3@arm.com> <5E2B405A.7040405@linaro.org>
+From:   Dietmar Eggemann <dietmar.eggemann@arm.com>
+Message-ID: <6232d91d-2603-06ca-0e7c-66ec2a137759@arm.com>
+Date:   Mon, 27 Jan 2020 10:28:34 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.1
+MIME-Version: 1.0
+In-Reply-To: <5E2B405A.7040405@linaro.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The Arm CryptoCell is a hardware security engine. This patch adds DT
-bindings for its TRNG (True Random Number Generator) engine.
+On 24/01/2020 20:07, Thara Gopinath wrote:
+> On 01/23/2020 02:15 PM, Dietmar Eggemann wrote:
+>> On 16/01/2020 16:17, Peter Zijlstra wrote:
+>>> On Tue, Jan 14, 2020 at 02:57:33PM -0500, Thara Gopinath wrote:
 
-Signed-off-by: Hadar Gat <hadar.gat@arm.com>
----
- .../devicetree/bindings/rng/arm-cctrng.yaml        | 49 ++++++++++++++++++++++
- 1 file changed, 49 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/rng/arm-cctrng.yaml
+[...]
 
-diff --git a/Documentation/devicetree/bindings/rng/arm-cctrng.yaml b/Documentation/devicetree/bindings/rng/arm-cctrng.yaml
-new file mode 100644
-index 0000000..d68693f
---- /dev/null
-+++ b/Documentation/devicetree/bindings/rng/arm-cctrng.yaml
-@@ -0,0 +1,49 @@
-+# SPDX-License-Identifier: GPL-2.0
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/crypto/arm-cctrng.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Arm ZrustZone CryptoCell TRNG engine
-+
-+maintainers:
-+  - Hadar Gat <hadar.gat@arm.com>
-+
-+description: |+
-+  Arm ZrustZone CryptoCell TRNG (True Random Number Generator) engine.
-+
-+properties:
-+  compatible:
-+    description: Should be "arm,cryptocell-7x3-trng"
-+
-+  interrupts:
-+    description: Interrupt number for the device.
-+    maxItems: 1
-+
-+  reg:
-+    description: Base physical address of the engine and length of memory
-+                 mapped region.
-+    maxItems: 1
-+
-+  rosc-ratio:
-+    description: Sampling ratio values from calibration for 4 ring oscillators.
-+    maxItems: 1
-+
-+  clocks:
-+    description: Reference to the crypto engine clock.
-+
-+required:
-+  - compatible
-+  - interrupts
-+  - reg
-+  - rosc-ratio
-+
-+examples:
-+  arm_cctrng: arm_cctrng@60000000 {
-+    compatible = "arm,cryptocell-7x3-trng";
-+    interrupts = <0 29 4>;
-+    reg = <0x60000000 0x10000>;
-+    rosc-ratio = <5000 1000 500 0>;
-+  };
-+
-+additionalProperties: false
--- 
-2.7.4
+>>>> +#ifdef CONFIG_HAVE_SCHED_THERMAL_PRESSURE
+>>
+>> I assume your plan is to enable this for Arm and Arm64? Otherwise the
+>> code in 3/7 should also be guarded by this.
+> 
+> Yes. I think it should be enabled for arm and arm64. I can submit a
+> patch after this series is accepted to enable it.
+> Nevertheless , I don't understand why is patch 3/7 tied with this.
+> This portion is the averaging of thermal pressure. Patch 3/7 is to store
+> and retrieve the instantaneous value.
 
+3/7 is the code which overwrites the scheduler default
+arch_cpu_thermal_pressure() [include/linux/sched/topology.h]. I see it
+more of the engine to drive  thermal pressure tracking in the scheduler.
+
+So all the code in 3/7 only makes sense if HAVE_SCHED_THERMAL_PRESSURE
+is selected by the arch. IMHO, 3/7 and enabling it for Arm/Arm64 should
+go in together.
+
+>> diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
+>> index e688dfad0b72..9eb414b2c8b9 100644
+>> --- a/arch/arm64/Kconfig
+>> +++ b/arch/arm64/Kconfig
+>> @@ -164,6 +164,7 @@ config ARM64
+>>         select HAVE_FUNCTION_ARG_ACCESS_API
+>>         select HAVE_RCU_TABLE_FREE
+>>         select HAVE_RSEQ
+>> +       select HAVE_SCHED_THERMAL_PRESSURE
+>>         select HAVE_STACKPROTECTOR
+>>         select HAVE_SYSCALL_TRACEPOINTS
+>>
+>> Currently it lives in the 'CPU/Task time and stats accounting' of
+>> .config which doesn't feel right to me.
+> 
+> It is cpu statistics if you think about it. It is also the same .config
+> where CONFIG_HAVE_SCHED_AVG_IRQ is defined.
+
+OK, makes sense.
