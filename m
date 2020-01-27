@@ -2,127 +2,122 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7EF4214A871
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Jan 2020 17:57:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C5BD014A87E
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Jan 2020 17:58:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727326AbgA0Q5W (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 27 Jan 2020 11:57:22 -0500
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:39432 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727278AbgA0Q5T (ORCPT
+        id S1727964AbgA0Q6B (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 27 Jan 2020 11:58:01 -0500
+Received: from out30-132.freemail.mail.aliyun.com ([115.124.30.132]:59686 "EHLO
+        out30-132.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725930AbgA0Q6B (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 27 Jan 2020 11:57:19 -0500
-Received: by mail-pl1-f196.google.com with SMTP id g6so3952301plp.6;
-        Mon, 27 Jan 2020 08:57:19 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=gBX0rF+FM22EQWDgrCOhfsho6eL33Pl7f2z/Wb05rxk=;
-        b=V6vcvtVNGL1dkzbEEu5edrSulsfvxMusZPHTKrlqP1YctbYITDoWl4FcIrt3OagBqs
-         cRz9R1ag1kwmkqpe88XQu0chXEwdmZGBiBynw97aoo/7IkN8V2LQuOaByn/X97MVJ/mv
-         yhGQyesxee/3u2b5zTUzfQN4uUxB8n7zkuJClVUwBLJyViiBoq+k1qy+G2VeGjtk0sbb
-         aHqv+oOXHfidda6SJIuj9AOMuG0DywQMxZyrfREGxOFh0oYkoiuxdWUzst7DjKzXxxVY
-         JLHmlZWJ2t5WGJrnKJvbppOXHaZUXylNb6yE7JznH+wOgURycPrjWfeZQXsI2+3xqf5n
-         9fwg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=gBX0rF+FM22EQWDgrCOhfsho6eL33Pl7f2z/Wb05rxk=;
-        b=fGetXjQ26hD0D3O848VckdKaOTWVLauqsFBwss5XWR7wCOm6QYcvo8949y7NoJ29f7
-         dU8MOgDDrn4WrIHDgNORtmlhfqONtWadnCtJgEWAW35aX6wShvvhNlujeTADXm1J6usn
-         PrDJ/sXc9PEXLl3p/6/vXGPR7QUTaL/JWmt1T0XI5EfNDBVvCOyc/bTGr6Uxl7B4ezo1
-         LcQaIH1mJzUpcvhiiVh9b+Vuz21wXjiPsDSunfiaDNCF+ujyBnwgfAag7kj0ZMBsh4AN
-         6GPZXdfsocQ7FrZ3bPYLHWVnHKDpTcljVIvMS+CvddR0Po2sUxJeSS1kp2aUshWvL8Jv
-         ZLXw==
-X-Gm-Message-State: APjAAAU7VmaviQdEAxKxZTO6vAgZCI1vmgUZvjPsQ2Fs9n2Dx7wXftA3
-        2rS/eH42vKFHdqRQh6R/zWmD/Aig
-X-Google-Smtp-Source: APXvYqy4pV0aoh/I0RzG7st8QuqEadZ9OoF6E4Td9jxqCEaH3yBPrehQHMfoI9YELup/g23o06vIdA==
-X-Received: by 2002:a17:902:7d8c:: with SMTP id a12mr17548169plm.47.1580144238429;
-        Mon, 27 Jan 2020 08:57:18 -0800 (PST)
-Received: from localhost.localdomain (c-67-165-113-11.hsd1.wa.comcast.net. [67.165.113.11])
-        by smtp.gmail.com with ESMTPSA id u23sm16368642pfm.29.2020.01.27.08.57.16
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 27 Jan 2020 08:57:17 -0800 (PST)
-From:   Andrey Smirnov <andrew.smirnov@gmail.com>
-To:     linux-crypto@vger.kernel.org
-Cc:     Andrey Smirnov <andrew.smirnov@gmail.com>,
-        Chris Healy <cphealy@gmail.com>,
-        Lucas Stach <l.stach@pengutronix.de>,
-        =?UTF-8?q?Horia=20Geant=C4=83?= <horia.geanta@nxp.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        Iuliana Prodan <iuliana.prodan@nxp.com>,
-        linux-kernel@vger.kernel.org, linux-imx@nxp.com
-Subject: [PATCH v7 9/9] crypto: caam - limit single JD RNG output to maximum of 16 bytes
-Date:   Mon, 27 Jan 2020 08:56:46 -0800
-Message-Id: <20200127165646.19806-10-andrew.smirnov@gmail.com>
-X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20200127165646.19806-1-andrew.smirnov@gmail.com>
-References: <20200127165646.19806-1-andrew.smirnov@gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+        Mon, 27 Jan 2020 11:58:01 -0500
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R111e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04426;MF=yang.shi@linux.alibaba.com;NM=1;PH=DS;RN=7;SR=0;TI=SMTPD_---0TocxOzG_1580144268;
+Received: from localhost(mailfrom:yang.shi@linux.alibaba.com fp:SMTPD_---0TocxOzG_1580144268)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Tue, 28 Jan 2020 00:57:56 +0800
+From:   Yang Shi <yang.shi@linux.alibaba.com>
+To:     mhocko@suse.com, richardw.yang@linux.intel.com,
+        akpm@linux-foundation.org
+Cc:     yang.shi@linux.alibaba.com, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Subject: [v3 PATCH] mm: move_pages: report the number of non-attempted pages
+Date:   Tue, 28 Jan 2020 00:57:48 +0800
+Message-Id: <1580144268-79620-1-git-send-email-yang.shi@linux.alibaba.com>
+X-Mailer: git-send-email 1.8.3.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In order to follow recommendation in SP800-90C (section "9.4 The
-Oversampling-NRBG Construction") limit the output of "generate" JD
-submitted to CAAM. See
-https://lore.kernel.org/linux-crypto/VI1PR0402MB3485EF10976A4A69F90E5B0F98580@VI1PR0402MB3485.eurprd04.prod.outlook.com/
-for more details.
+Since commit 49bd4d71637 ("mm, numa: rework do_pages_move"),
+the semantic of move_pages() has changed to return the number of
+non-migrated pages if they were result of a non-fatal reasons (usually a
+busy page).  This was an unintentional change that hasn't been noticed
+except for LTP tests which checked for the documented behavior.
 
-This change should make CAAM's hwrng driver good enough to have 1024
-quality rating.
+There are two ways to go around this change.  We can even get back to the
+original behavior and return -EAGAIN whenever migrate_pages is not able
+to migrate pages due to non-fatal reasons.  Another option would be to
+simply continue with the changed semantic and extend move_pages
+documentation to clarify that -errno is returned on an invalid input or
+when migration simply cannot succeed (e.g. -ENOMEM, -EBUSY) or the
+number of pages that couldn't have been migrated due to ephemeral
+reasons (e.g. page is pinned or locked for other reasons).
 
-Signed-off-by: Andrey Smirnov <andrew.smirnov@gmail.com>
-Cc: Chris Healy <cphealy@gmail.com>
-Cc: Lucas Stach <l.stach@pengutronix.de>
-Cc: Horia Geantă <horia.geanta@nxp.com>
-Cc: Herbert Xu <herbert@gondor.apana.org.au>
-Cc: Iuliana Prodan <iuliana.prodan@nxp.com>
-Cc: linux-crypto@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
-Cc: linux-imx@nxp.com
+This patch implements the second option because this behavior is in
+place for some time without anybody complaining and possibly new users
+depending on it.  Also it allows to have a slightly easier error handling
+as the caller knows that it is worth to retry when err > 0.
+
+But since the new semantic would be aborted immediately if migration is
+failed due to ephemeral reasons, need include the number of non-attempted
+pages in the return value too.
+
+Fixes: a49bd4d71637 ("mm, numa: rework do_pages_move")
+Suggested-by: Michal Hocko <mhocko@suse.com>
+Acked-by: Michal Hocko <mhocko@suse.com>
+Cc: Wei Yang <richardw.yang@linux.intel.com>
+Cc: <stable@vger.kernel.org>    [4.17+]
+Signed-off-by: Yang Shi <yang.shi@linux.alibaba.com>
 ---
- drivers/crypto/caam/caamrng.c | 7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
+v3: Rephrased the commit log per Michal and added Michal's Acked-by
+v2: Rebased on top of the latest mainline kernel per Andrew
 
-diff --git a/drivers/crypto/caam/caamrng.c b/drivers/crypto/caam/caamrng.c
-index 62f3a69ae837..c0981fce68b7 100644
---- a/drivers/crypto/caam/caamrng.c
-+++ b/drivers/crypto/caam/caamrng.c
-@@ -23,9 +23,9 @@
- #include "error.h"
+ mm/migrate.c | 24 ++++++++++++++++++++++--
+ 1 file changed, 22 insertions(+), 2 deletions(-)
+
+diff --git a/mm/migrate.c b/mm/migrate.c
+index 86873b6..9b8eb5d 100644
+--- a/mm/migrate.c
++++ b/mm/migrate.c
+@@ -1627,8 +1627,18 @@ static int do_pages_move(struct mm_struct *mm, nodemask_t task_nodes,
+ 			start = i;
+ 		} else if (node != current_node) {
+ 			err = do_move_pages_to_node(mm, &pagelist, current_node);
+-			if (err)
++			if (err) {
++				/*
++				 * Possitive err means the number of failed
++				 * pages to migrate.  Since we are going to
++				 * abort and return the number of non-migrated
++				 * pages, so need incude the rest of the
++				 * nr_pages that have not attempted as well.
++				 */
++				if (err > 0)
++					err += nr_pages - i - 1;
+ 				goto out;
++			}
+ 			err = store_status(status, start, current_node, i - start);
+ 			if (err)
+ 				goto out;
+@@ -1659,8 +1669,11 @@ static int do_pages_move(struct mm_struct *mm, nodemask_t task_nodes,
+ 			goto out_flush;
  
- /* length of descriptors */
--#define CAAM_RNG_MAX_FIFO_STORE_SIZE	U16_MAX
-+#define CAAM_RNG_MAX_FIFO_STORE_SIZE	16
+ 		err = do_move_pages_to_node(mm, &pagelist, current_node);
+-		if (err)
++		if (err) {
++			if (err > 0)
++				err += nr_pages - i - 1;
+ 			goto out;
++		}
+ 		if (i > start) {
+ 			err = store_status(status, start, current_node, i - start);
+ 			if (err)
+@@ -1674,6 +1687,13 @@ static int do_pages_move(struct mm_struct *mm, nodemask_t task_nodes,
  
--#define CAAM_RNG_FIFO_LEN		SZ_32K /* Must be a multiple of 2 */
-+#define CAAM_RNG_FIFO_LEN		64 /* Must be a multiple of 2 */
- 
- /*
-  * See caam_init_desc()
-@@ -128,7 +128,7 @@ static void caam_rng_fill_async(struct caam_rng_ctx *ctx)
- 
- 	sg_init_table(sg, ARRAY_SIZE(sg));
- 	nents = kfifo_dma_in_prepare(&ctx->fifo, sg, ARRAY_SIZE(sg),
--				     CAAM_RNG_FIFO_LEN);
-+				     CAAM_RNG_MAX_FIFO_STORE_SIZE);
- 	if (!nents)
- 		return;
- 
-@@ -246,6 +246,7 @@ int caam_rng_init(struct device *ctrldev)
- 	ctx->rng.init    = caam_init;
- 	ctx->rng.cleanup = caam_cleanup;
- 	ctx->rng.read    = caam_read;
-+	ctx->rng.quality = 1024;
- 
- 	dev_info(ctrldev, "registering rng-caam\n");
- 
+ 	/* Make sure we do not overwrite the existing error */
+ 	err1 = do_move_pages_to_node(mm, &pagelist, current_node);
++	/*
++	 * Don't have to report non-attempted pages here since:
++	 *     - If the above loop is done gracefully there is not non-attempted
++	 *       page.
++	 *     - If the above loop is aborted to it means more fatal error
++	 *       happened, should return err.
++	 */   
+ 	if (!err1)
+ 		err1 = store_status(status, start, current_node, i - start);
+ 	if (!err)
 -- 
-2.21.0
+1.8.3.1
 
