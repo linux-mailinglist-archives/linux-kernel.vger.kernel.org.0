@@ -2,106 +2,320 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0D2F014A569
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Jan 2020 14:50:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DB34414A570
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Jan 2020 14:52:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728266AbgA0NuV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 27 Jan 2020 08:50:21 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49118 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726179AbgA0NuV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 27 Jan 2020 08:50:21 -0500
-Received: from localhost (173-25-83-245.client.mchsi.com [173.25.83.245])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EAFAB20716;
-        Mon, 27 Jan 2020 13:50:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1580133020;
-        bh=atKi/hig5oa208QWZFD8TZszOxZ5B4cSJZX4YGxigSY=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:From;
-        b=Ppwnn+C0bHwhyX5YuUuKPtr8x6i/aljl9+E29gLmAB9RItz+McXL26DzXO9ILhWqG
-         hVG7tz8x3mV1sD90WcZUsdkvKcpVvnCCe66twlpkOXYlW3DuI7sh2afv1MmnVEL8H/
-         OtaGynkdEJq1v9t/S5y7gZyKiQYz1X+eNG3/2bTM=
-Date:   Mon, 27 Jan 2020 07:50:17 -0600
-From:   Bjorn Helgaas <helgaas@kernel.org>
-To:     Kuppuswamy Sathyanarayanan 
-        <sathyanarayanan.kuppuswamy@linux.intel.com>
-Cc:     linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
-        ashok.raj@intel.com, Keith Busch <keith.busch@intel.com>,
-        Huong Nguyen <huong.nguyen@dell.com>,
-        Austin Bolen <Austin.Bolen@dell.com>
-Subject: Re: [PATCH v13 4/8] PCI/DPC: Add Error Disconnect Recover (EDR)
- support
-Message-ID: <20200127135017.GA260782@google.com>
+        id S1727586AbgA0NwF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 27 Jan 2020 08:52:05 -0500
+Received: from mail-yw1-f66.google.com ([209.85.161.66]:34938 "EHLO
+        mail-yw1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726303AbgA0NwE (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 27 Jan 2020 08:52:04 -0500
+Received: by mail-yw1-f66.google.com with SMTP id i190so4744085ywc.2;
+        Mon, 27 Jan 2020 05:52:03 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=U+4tlbg+5b0f0SEB/qwqbokPD/ku3jCQrVSjB/lGf8w=;
+        b=clFzisZWm2lSrM1eSwt+2B6GRe74ll4/3nkskoUhpPM/azftS7wthDg/zStL6pNH0k
+         T8Np7x16Nnn4aKXm2uVVPr0Dhkja1v4exizxH1C7a8A0c+7/gQ6CqJpEXzhy1WyXhUHj
+         0E3n5Fs+/Y7bcvTrPlM+DPll4NA7TbY0x+K8ztehSRamqyrl8QzM4PiUbnPP1mDBTeX1
+         jTDn9MkSqXn4TDzSr0JO0HRNajvfX9JNkJ8OiyDPEiOMmRXjWmyheN68a9g4YPxLlVaL
+         HhQMWgDq/UB8zaEdtt0zrQq0il/HIJUd98TLkBLUIVOmQk1oBJ456Vmc5OCABjPYhLBx
+         eEcQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:subject:to:cc:references:from:message-id
+         :date:user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=U+4tlbg+5b0f0SEB/qwqbokPD/ku3jCQrVSjB/lGf8w=;
+        b=XfMZalKzsRROPQC2wHuurcl1FX3UoW4R146woSFvMZNDciNCHUBcF5ik7pyyWTTVaA
+         WRUyAUGW/ygLwIs9zpdren0WQ5TQAyCWNmBFauDbCEnse8zKEbtkYaW9rXqd3zsabfC3
+         OkjVKdbUhSvaFWVBIgc1KRRqdGYR1/j37Oj1YMGAH3rUthwS6z/8jngTHNZMDgQ5w9i9
+         C/e339FVLHcNjLHUWYf9S5iMqlp7yMIHy9jA6IoXktfNT6bsUHCvDDtQyB1T5jNOK4fU
+         XAHDuBNOTIMhPIN/ZbiqwPejBxFa64iavw3U+n43WYO2QMWBHJI8jd8ZZSj7snwI6WyA
+         h6UQ==
+X-Gm-Message-State: APjAAAWWoo6fQtAtH0dpwaX6lkRKKEU3KyaUz9Uewi6mq2GW0qxRuBSP
+        ZK1FtNx9fD9IBqF52H3ouuM0rNK4
+X-Google-Smtp-Source: APXvYqxSKgBxI3+lmjDfN+gqTCL3PZaclcgqgJgoLNHvmkUVJd2ZwpgIs57l5kYL5C5Cy6q85/Tbuw==
+X-Received: by 2002:a0d:cb48:: with SMTP id n69mr11810322ywd.48.1580133123239;
+        Mon, 27 Jan 2020 05:52:03 -0800 (PST)
+Received: from server.roeck-us.net ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id g190sm6635492ywd.85.2020.01.27.05.52.01
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 27 Jan 2020 05:52:02 -0800 (PST)
+Subject: Re: [PATCH V1 2/2] hwmon: (powr1220) add scaled voltage support
+To:     Oleksij Rempel <o.rempel@pengutronix.de>,
+        Jean Delvare <jdelvare@suse.com>,
+        Markus Pietrek <mpie@msc-ge.com>
+Cc:     kernel@pengutronix.de, linux-hwmon@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20200127102540.31742-1-o.rempel@pengutronix.de>
+ <20200127102540.31742-2-o.rempel@pengutronix.de>
+From:   Guenter Roeck <linux@roeck-us.net>
+Message-ID: <f7a357d3-c8c3-a71a-ebc8-bc2d37c7c086@roeck-us.net>
+Date:   Mon, 27 Jan 2020 05:52:00 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.2.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200125232500.GA112031@skuppusw-desk.amr.corp.intel.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20200127102540.31742-2-o.rempel@pengutronix.de>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Jan 25, 2020 at 03:25:00PM -0800, Kuppuswamy Sathyanarayanan wrote:
-> On Fri, Jan 24, 2020 at 09:04:50AM -0600, Bjorn Helgaas wrote:
-> > On Sat, Jan 18, 2020 at 08:00:33PM -0800, sathyanarayanan.kuppuswamy@linux.intel.com wrote:
-> > > From: Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>
-> > > 
-> > > As per ACPI specification r6.3, sec 5.6.6, when firmware owns Downstream
-> > > Port Containment (DPC), its expected to use the "Error Disconnect
-> > > Recover" (EDR) notification to alert OSPM of a DPC event and if OS
-> > > supports EDR, its expected to handle the software state invalidation and
-> > > port recovery in OS, and also let firmware know the recovery status via
-> > > _OST ACPI call. Related _OST status codes can be found in ACPI
-> > > specification r6.3, sec 6.3.5.2.
-> > > 
-> > > Also, as per PCI firmware specification r3.2 Downstream Port Containment
-> > > Related Enhancements ECN, sec 4.5.1, table 4-6, If DPC is controlled by
-> > > firmware (firmware first mode), firmware is responsible for
-> > > configuring the DPC and OS is responsible for error recovery. Also, OS
-> > > is allowed to modify DPC registers only during the EDR notification
-> > > window. So with EDR support, OS should provide DPC port services even in
-> > > firmware first mode.
-> ...
-
-> > > +		acpi_status astatus;
-> > > +
-> > > +		dpc->adev = adev;
-> > > +
-> > > +		astatus = acpi_install_notify_handler(adev->handle,
-> > > +						      ACPI_SYSTEM_NOTIFY,
-> > > +						      edr_handle_event,
-> > > +						      dpc);
-> > 
-> > I think there are a couple issues with the ECN here:
-> > 
-> >   - The ECN allows EDR notifications on host bridges (sec 4.5.1, table
-> >     4-4), but it does not allow the "Locate" _DSM under host bridges
-> >     (sec 4.6.13).
-> > 
-> >   - The ECN allows EDR notifications on root ports or switch ports
-> >     that do not support DPC (sec 4.5.1), but it does not allow the
-> >     "Locate" _DSM on those ports (sec 4.6.13).
+On 1/27/20 2:25 AM, Oleksij Rempel wrote:
+> From: Markus Pietrek <mpie@msc-ge.com>
 > 
-> Can you please give more details on where its mentioned? Following is
-> the copy of "Locate" _DSM location related specification. All it says is,
-> this object can be placed under any object representing root port or
-> switch port. It does not seem to add any restrictions. Please let me  know
-> your comments.
+> On some (or may be all?) boards, voltage measured by powr1220 do not
+> reflect real system configuration. This patch provides scale option to
+> set board specific configuration.
 > 
-> Location:
-> This object can be placed under any object representing a DPC capable
-> PCI Express Root Port or Switch Downstream Port. If a port implements
-> this DSM, its child devices cannot instantiate this DSM function
+> Signed-off-by: Markus Pietrek <mpie@msc-ge.com>
+> Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
+> ---
 
-You quoted it: "This object [the 'Locate' _DSM] can be placed under
-any object representing a *DPC capable* PCI Express Root Port or Switch
-Downstream Port."
+NACK; scaling is what sensors3.conf is for. Also, we most definintely
+won't permit out-of-ABI attributes for something like this.
 
-If the intention was to allow the Locate _DSM for *any* root ports or
-switch downstream ports, the spec should not include the "DPC capable"
-restriction.
+Guenter
 
-Bjorn
+>   drivers/hwmon/powr1220.c | 155 +++++++++++++++++++++++++++++++++++++++
+>   1 file changed, 155 insertions(+)
+> 
+> diff --git a/drivers/hwmon/powr1220.c b/drivers/hwmon/powr1220.c
+> index ad7a82f132e6..7cb2a6d3b3d8 100644
+> --- a/drivers/hwmon/powr1220.c
+> +++ b/drivers/hwmon/powr1220.c
+> @@ -74,6 +74,14 @@ enum powr1220_adc_values {
+>   	MAX_POWR1220_ADC_VALUES
+>   };
+>   
+> +/* Real value = (measured-value * factor) / divisor.
+> + * A divisor of 0 disables scaling and is identical to factor==1 && divisor==1.
+> + */
+> +struct adc_scale {
+> +	int factor;
+> +	int divisor;
+> +};
+> +
+>   struct powr1220_data {
+>   	struct i2c_client *client;
+>   	struct mutex update_lock;
+> @@ -84,6 +92,7 @@ struct powr1220_data {
+>   	/* values */
+>   	int adc_maxes[MAX_POWR1220_ADC_VALUES];
+>   	int adc_values[MAX_POWR1220_ADC_VALUES];
+> +	struct adc_scale adc_scales[MAX_POWR1220_ADC_VALUES];
+>   };
+>   
+>   static const char * const input_names[] = {
+> @@ -184,6 +193,29 @@ static ssize_t powr1220_voltage_show(struct device *dev,
+>   	return sprintf(buf, "%d\n", adc_val);
+>   }
+>   
+> +static ssize_t powr1220_scaled_voltage_show(struct device *dev,
+> +	struct device_attribute *dev_attr, char *buf)
+> +{
+> +	struct sensor_device_attribute *attr = to_sensor_dev_attr(dev_attr);
+> +	struct powr1220_data *data = dev_get_drvdata(dev);
+> +	int adc_val = powr1220_read_adc(dev, attr->index);
+> +	struct adc_scale *scale;
+> +
+> +	if (adc_val < 0)
+> +		return adc_val;
+> +
+> +	scale = &data->adc_scales[attr->index];
+> +	if (scale->divisor) {
+> +		int64_t lscaled = adc_val;
+> +
+> +		lscaled *= scale->factor;
+> +		lscaled /= scale->divisor;
+> +		adc_val = (int) lscaled;
+> +	}
+> +
+> +	return sprintf(buf, "%d\n", adc_val);
+> +}
+> +
+>   /* Shows the maximum setting associated with the specified ADC channel */
+>   static ssize_t powr1220_max_show(struct device *dev,
+>   				 struct device_attribute *dev_attr, char *buf)
+> @@ -204,6 +236,38 @@ static ssize_t powr1220_label_show(struct device *dev,
+>   	return sprintf(buf, "%s\n", input_names[attr->index]);
+>   }
+>   
+> +/* Shows the scale for the read value.
+> + * real value = (measured value * factor) / divisor. n/0 means scaling disabled
+> + * and raw values are printed.
+> + */
+> +static ssize_t powr1220_scale_show(struct device *dev,
+> +	struct device_attribute *dev_attr, char *buf)
+> +{
+> +	struct sensor_device_attribute *attr = to_sensor_dev_attr(dev_attr);
+> +	struct powr1220_data *data = dev_get_drvdata(dev);
+> +
+> +	return sprintf(buf, "%d/%d\n", data->adc_scales[attr->index].factor,
+> +		       data->adc_scales[attr->index].divisor);
+> +}
+> +
+> +static ssize_t powr1220_scale_store(struct device *dev,
+> +				    struct device_attribute *dev_attr,
+> +				    const char *buf, size_t count)
+> +{
+> +	struct sensor_device_attribute *attr = to_sensor_dev_attr(dev_attr);
+> +	struct powr1220_data *data = dev_get_drvdata(dev);
+> +	int factor;
+> +	int divisor;
+> +
+> +	if (sscanf(buf, "%d/%d", &factor, &divisor) != 2)
+> +		return -EINVAL;
+> +
+> +	data->adc_scales[attr->index].factor = factor;
+> +	data->adc_scales[attr->index].divisor = divisor;
+> +
+> +	return count;
+> +}
+> +
+>   static SENSOR_DEVICE_ATTR_RO(in0_input, powr1220_voltage, VMON1);
+>   static SENSOR_DEVICE_ATTR_RO(in1_input, powr1220_voltage, VMON2);
+>   static SENSOR_DEVICE_ATTR_RO(in2_input, powr1220_voltage, VMON3);
+> @@ -219,6 +283,26 @@ static SENSOR_DEVICE_ATTR_RO(in11_input, powr1220_voltage, VMON12);
+>   static SENSOR_DEVICE_ATTR_RO(in12_input, powr1220_voltage, VCCA);
+>   static SENSOR_DEVICE_ATTR_RO(in13_input, powr1220_voltage, VCCINP);
+>   
+> +static SENSOR_DEVICE_ATTR_RO(in0_scaled_input, powr1220_scaled_voltage, VMON1);
+> +static SENSOR_DEVICE_ATTR_RO(in1_scaled_input, powr1220_scaled_voltage, VMON2);
+> +static SENSOR_DEVICE_ATTR_RO(in2_scaled_input, powr1220_scaled_voltage, VMON3);
+> +static SENSOR_DEVICE_ATTR_RO(in3_scaled_input, powr1220_scaled_voltage, VMON4);
+> +static SENSOR_DEVICE_ATTR_RO(in4_scaled_input, powr1220_scaled_voltage, VMON5);
+> +static SENSOR_DEVICE_ATTR_RO(in5_scaled_input, powr1220_scaled_voltage, VMON6);
+> +static SENSOR_DEVICE_ATTR_RO(in6_scaled_input, powr1220_scaled_voltage, VMON7);
+> +static SENSOR_DEVICE_ATTR_RO(in7_scaled_input, powr1220_scaled_voltage, VMON8);
+> +static SENSOR_DEVICE_ATTR_RO(in8_scaled_input, powr1220_scaled_voltage, VMON9);
+> +static SENSOR_DEVICE_ATTR_RO(in9_scaled_input, powr1220_scaled_voltage,
+> +			     VMON10);
+> +static SENSOR_DEVICE_ATTR_RO(in10_scaled_input, powr1220_scaled_voltage,
+> +			     VMON11);
+> +static SENSOR_DEVICE_ATTR_RO(in11_scaled_input, powr1220_scaled_voltage,
+> +			     VMON12);
+> +static SENSOR_DEVICE_ATTR_RO(in12_scaled_input, powr1220_scaled_voltage,
+> +			     VCCA);
+> +static SENSOR_DEVICE_ATTR_RO(in13_scaled_input, powr1220_scaled_voltage,
+> +			     VCCINP);
+> +
+>   static SENSOR_DEVICE_ATTR_RO(in0_highest, powr1220_max, VMON1);
+>   static SENSOR_DEVICE_ATTR_RO(in1_highest, powr1220_max, VMON2);
+>   static SENSOR_DEVICE_ATTR_RO(in2_highest, powr1220_max, VMON3);
+> @@ -249,6 +333,21 @@ static SENSOR_DEVICE_ATTR_RO(in11_label, powr1220_label, VMON12);
+>   static SENSOR_DEVICE_ATTR_RO(in12_label, powr1220_label, VCCA);
+>   static SENSOR_DEVICE_ATTR_RO(in13_label, powr1220_label, VCCINP);
+>   
+> +static SENSOR_DEVICE_ATTR_RW(in0_scale, powr1220_scale, VMON1);
+> +static SENSOR_DEVICE_ATTR_RW(in1_scale, powr1220_scale, VMON2);
+> +static SENSOR_DEVICE_ATTR_RW(in2_scale, powr1220_scale, VMON3);
+> +static SENSOR_DEVICE_ATTR_RW(in3_scale, powr1220_scale, VMON4);
+> +static SENSOR_DEVICE_ATTR_RW(in4_scale, powr1220_scale, VMON5);
+> +static SENSOR_DEVICE_ATTR_RW(in5_scale, powr1220_scale, VMON6);
+> +static SENSOR_DEVICE_ATTR_RW(in6_scale, powr1220_scale, VMON7);
+> +static SENSOR_DEVICE_ATTR_RW(in7_scale, powr1220_scale, VMON8);
+> +static SENSOR_DEVICE_ATTR_RW(in8_scale, powr1220_scale, VMON9);
+> +static SENSOR_DEVICE_ATTR_RW(in9_scale, powr1220_scale, VMON10);
+> +static SENSOR_DEVICE_ATTR_RW(in10_scale, powr1220_scale, VMON11);
+> +static SENSOR_DEVICE_ATTR_RW(in11_scale, powr1220_scale, VMON12);
+> +static SENSOR_DEVICE_ATTR_RW(in12_scale, powr1220_scale, VCCA);
+> +static SENSOR_DEVICE_ATTR_RW(in13_scale, powr1220_scale, VCCINP);
+> +
+>   static struct attribute *powr1014_attrs[] = {
+>   	&sensor_dev_attr_in0_input.dev_attr.attr,
+>   	&sensor_dev_attr_in1_input.dev_attr.attr,
+> @@ -263,6 +362,19 @@ static struct attribute *powr1014_attrs[] = {
+>   	&sensor_dev_attr_in12_input.dev_attr.attr,
+>   	&sensor_dev_attr_in13_input.dev_attr.attr,
+>   
+> +	&sensor_dev_attr_in0_scaled_input.dev_attr.attr,
+> +	&sensor_dev_attr_in1_scaled_input.dev_attr.attr,
+> +	&sensor_dev_attr_in2_scaled_input.dev_attr.attr,
+> +	&sensor_dev_attr_in3_scaled_input.dev_attr.attr,
+> +	&sensor_dev_attr_in4_scaled_input.dev_attr.attr,
+> +	&sensor_dev_attr_in5_scaled_input.dev_attr.attr,
+> +	&sensor_dev_attr_in6_scaled_input.dev_attr.attr,
+> +	&sensor_dev_attr_in7_scaled_input.dev_attr.attr,
+> +	&sensor_dev_attr_in8_scaled_input.dev_attr.attr,
+> +	&sensor_dev_attr_in9_scaled_input.dev_attr.attr,
+> +	&sensor_dev_attr_in12_scaled_input.dev_attr.attr,
+> +	&sensor_dev_attr_in13_scaled_input.dev_attr.attr,
+> +
+>   	&sensor_dev_attr_in0_highest.dev_attr.attr,
+>   	&sensor_dev_attr_in1_highest.dev_attr.attr,
+>   	&sensor_dev_attr_in2_highest.dev_attr.attr,
+> @@ -289,6 +401,19 @@ static struct attribute *powr1014_attrs[] = {
+>   	&sensor_dev_attr_in12_label.dev_attr.attr,
+>   	&sensor_dev_attr_in13_label.dev_attr.attr,
+>   
+> +	&sensor_dev_attr_in0_scale.dev_attr.attr,
+> +	&sensor_dev_attr_in1_scale.dev_attr.attr,
+> +	&sensor_dev_attr_in2_scale.dev_attr.attr,
+> +	&sensor_dev_attr_in3_scale.dev_attr.attr,
+> +	&sensor_dev_attr_in4_scale.dev_attr.attr,
+> +	&sensor_dev_attr_in5_scale.dev_attr.attr,
+> +	&sensor_dev_attr_in6_scale.dev_attr.attr,
+> +	&sensor_dev_attr_in7_scale.dev_attr.attr,
+> +	&sensor_dev_attr_in8_scale.dev_attr.attr,
+> +	&sensor_dev_attr_in9_scale.dev_attr.attr,
+> +	&sensor_dev_attr_in12_scale.dev_attr.attr,
+> +	&sensor_dev_attr_in13_scale.dev_attr.attr,
+> +
+>   	NULL
+>   };
+>   
+> @@ -310,6 +435,21 @@ static struct attribute *powr1220_attrs[] = {
+>   	&sensor_dev_attr_in12_input.dev_attr.attr,
+>   	&sensor_dev_attr_in13_input.dev_attr.attr,
+>   
+> +	&sensor_dev_attr_in0_scaled_input.dev_attr.attr,
+> +	&sensor_dev_attr_in1_scaled_input.dev_attr.attr,
+> +	&sensor_dev_attr_in2_scaled_input.dev_attr.attr,
+> +	&sensor_dev_attr_in3_scaled_input.dev_attr.attr,
+> +	&sensor_dev_attr_in4_scaled_input.dev_attr.attr,
+> +	&sensor_dev_attr_in5_scaled_input.dev_attr.attr,
+> +	&sensor_dev_attr_in6_scaled_input.dev_attr.attr,
+> +	&sensor_dev_attr_in7_scaled_input.dev_attr.attr,
+> +	&sensor_dev_attr_in8_scaled_input.dev_attr.attr,
+> +	&sensor_dev_attr_in9_scaled_input.dev_attr.attr,
+> +	&sensor_dev_attr_in10_scaled_input.dev_attr.attr,
+> +	&sensor_dev_attr_in11_scaled_input.dev_attr.attr,
+> +	&sensor_dev_attr_in12_scaled_input.dev_attr.attr,
+> +	&sensor_dev_attr_in13_scaled_input.dev_attr.attr,
+> +
+>   	&sensor_dev_attr_in0_highest.dev_attr.attr,
+>   	&sensor_dev_attr_in1_highest.dev_attr.attr,
+>   	&sensor_dev_attr_in2_highest.dev_attr.attr,
+> @@ -340,6 +480,21 @@ static struct attribute *powr1220_attrs[] = {
+>   	&sensor_dev_attr_in12_label.dev_attr.attr,
+>   	&sensor_dev_attr_in13_label.dev_attr.attr,
+>   
+> +	&sensor_dev_attr_in0_scale.dev_attr.attr,
+> +	&sensor_dev_attr_in1_scale.dev_attr.attr,
+> +	&sensor_dev_attr_in2_scale.dev_attr.attr,
+> +	&sensor_dev_attr_in3_scale.dev_attr.attr,
+> +	&sensor_dev_attr_in4_scale.dev_attr.attr,
+> +	&sensor_dev_attr_in5_scale.dev_attr.attr,
+> +	&sensor_dev_attr_in6_scale.dev_attr.attr,
+> +	&sensor_dev_attr_in7_scale.dev_attr.attr,
+> +	&sensor_dev_attr_in8_scale.dev_attr.attr,
+> +	&sensor_dev_attr_in9_scale.dev_attr.attr,
+> +	&sensor_dev_attr_in10_scale.dev_attr.attr,
+> +	&sensor_dev_attr_in11_scale.dev_attr.attr,
+> +	&sensor_dev_attr_in12_scale.dev_attr.attr,
+> +	&sensor_dev_attr_in13_scale.dev_attr.attr,
+> +
+>   	NULL
+>   };
+>   
+> 
+
