@@ -2,97 +2,85 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4B42C14A0BD
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Jan 2020 10:29:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3F67F14A0C5
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Jan 2020 10:30:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729550AbgA0J2o (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 27 Jan 2020 04:28:44 -0500
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:40165 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729378AbgA0J2n (ORCPT
+        id S1729572AbgA0J3n (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 27 Jan 2020 04:29:43 -0500
+Received: from aserp2120.oracle.com ([141.146.126.78]:34940 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727872AbgA0J3n (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 27 Jan 2020 04:28:43 -0500
-Received: by mail-wr1-f66.google.com with SMTP id c14so10263879wrn.7;
-        Mon, 27 Jan 2020 01:28:42 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=KXG6VZGoAkKQHrL/ylxA7tULnj1W6vTa353gWJTyxzk=;
-        b=CsCSCk2ND5UFSKICKQwOORGUz9z7+F97lzzzuo4+kriRQX1p+r59VkgU0YHy2pHbxV
-         dvCBD0PYvmlvz2oggWwl+85MLA0TxEkOWwDeDWGs21CYe9oJlA4kUmpTlB0jv7c3VgZt
-         xZbaX1o/cUlxZ6JTUZWXDhmqTUx73gnvr2rx96+8V/1DsXlb3I5yDmZ2LMFMgK3/B8ly
-         fmnryhJjtPRU9Mm2guIbdouISX6+L92Y5EqKVIWqkO3pCua/Zt0+XCjHa1vRtE5DWpaj
-         Pk7ki9bG0ZNXEiu2sg3fP03UwBsnr0tkbJ3aQKtOo20DswK8fDmkTISqEnOcE9cIouE4
-         Ja3w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=KXG6VZGoAkKQHrL/ylxA7tULnj1W6vTa353gWJTyxzk=;
-        b=r2G8pQ6RHUuLhFwm1hn8dyWhV1gc8XILKu+xS05R+pq2JlN+8ngPShPEXPqGluCIqs
-         7CYCai17/fHOZFgbGLPw/+Xt6xpZMAGT+BiAbyIdqFdk2mpNqOGLkvbhIY1Wve+czZYt
-         2mVNXa27i1KQhNe1MbWPbAxd2tPQJg8tZy148BJ2RHxXdoNH8pEloO+pPlR/jO7dGZ/n
-         0sSuKdeB6MqgGq5+XpBKeYtL6GGIXRIWDkjITed6NTXuZtetzJ7JqehBxiguxlVYUzLg
-         45z6zd43lG1mWLEd4G01F4yaveMAi/0kkM5K70+ROGsCQoWO8Qe+c9Ma0W5WxrYQSv58
-         5YNw==
-X-Gm-Message-State: APjAAAXO+VO2iEr7Dch1seDCJJJVuBOhBv3cUF6WOVj5NyuND1PbDZq1
-        OFu9d7ssnj0NpxYISbZx0HTIoNaM
-X-Google-Smtp-Source: APXvYqz5jUY4u90xZBIdhV79gdwz4DRVY0lq3vWbO4GcBy/p7ISsCbOeFGIWDcjdpYhSxeWD6+AEog==
-X-Received: by 2002:adf:ec41:: with SMTP id w1mr20105851wrn.212.1580117321742;
-        Mon, 27 Jan 2020 01:28:41 -0800 (PST)
-Received: from pali ([2a02:2b88:2:1::5cc6:2f])
-        by smtp.gmail.com with ESMTPSA id w13sm20377606wru.38.2020.01.27.01.28.40
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 27 Jan 2020 01:28:41 -0800 (PST)
-Date:   Mon, 27 Jan 2020 10:28:40 +0100
-From:   Pali =?utf-8?B?Um9ow6Fy?= <pali.rohar@gmail.com>
-To:     Greg KH <gregkh@linuxfoundation.org>
-Cc:     Christoph Hellwig <hch@lst.de>, Namjae Jeon <linkinjeon@gmail.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        valdis.kletnieks@vt.edu, sj1557.seo@samsung.com, arnd@arndb.de,
-        namjae.jeon@samsung.com, viro@zeniv.linux.org.uk
-Subject: Re: [PATCH v13 00/13] add the latest exfat driver
-Message-ID: <20200127092840.gogcrq3pozgfayiy@pali>
-References: <20200121125727.24260-1-linkinjeon@gmail.com>
- <20200125213228.GA5518@lst.de>
- <20200127090409.vvv7sd2uohmliwk5@pali>
- <20200127092343.GB392535@kroah.com>
+        Mon, 27 Jan 2020 04:29:43 -0500
+Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
+        by aserp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id 00R9DDEP054968;
+        Mon, 27 Jan 2020 09:29:06 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2019-08-05;
+ bh=dqtak0Ip1v1fu40eyS07aEJt+TSWkVxnjJJIK8PU5JU=;
+ b=FehyzrEO2zhzN5U4IqRc/54MG6VUkpCZQxx5DJKM2lyXsufyEqZHzUOS7Q7JH7IcXeZp
+ hP5NIOXHbi9UoNufThTJ5/vt3vRAd5OlBpFe3/86+dv0y4Y64hOCBZyGdPRfTRBfRuut
+ Ds7nY0xZFvYbA13ZT5rBbuANyxTZFKyNhJIwLtw4Db+zYF0IvQTmyT09C27V/eOSG6Ke
+ 3YjWgfxu4NRmImfF5D4UptRorAZO0dDaqOvqi9knfYpaZO5MfUDFCHb6cRKjm1r4Zgey
+ uUeJ9PSAFRQTNHz972N8q2UNshZ8jzvdB9BzpPcleSuOuzaNrFINkaDWYzHNMJBPk2Jf 5Q== 
+Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
+        by aserp2120.oracle.com with ESMTP id 2xrdmq61kc-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 27 Jan 2020 09:29:06 +0000
+Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
+        by aserp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id 00R9Dev7147737;
+        Mon, 27 Jan 2020 09:29:05 GMT
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+        by aserp3020.oracle.com with ESMTP id 2xry6rrt2a-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 27 Jan 2020 09:29:05 +0000
+Received: from abhmp0002.oracle.com (abhmp0002.oracle.com [141.146.116.8])
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id 00R9T3fq014947;
+        Mon, 27 Jan 2020 09:29:03 GMT
+Received: from kadam (/129.205.23.165)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Mon, 27 Jan 2020 01:29:02 -0800
+Date:   Mon, 27 Jan 2020 12:28:50 +0300
+From:   Dan Carpenter <dan.carpenter@oracle.com>
+To:     Hillf Danton <hdanton@sina.com>
+Cc:     syzbot <syzbot+106b378813251e52fc5e@syzkaller.appspotmail.com>,
+        andreyknvl@google.com, benjamin.tissoires@redhat.com,
+        jikos@kernel.org, linux-input@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com
+Subject: Re: KASAN: use-after-free Read in hiddev_disconnect
+Message-ID: <20200127092850.GX1847@kadam>
+References: <0000000000004dbaf2059c193a36@google.com>
+ <20200126024957.11392-1-hdanton@sina.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20200127092343.GB392535@kroah.com>
-User-Agent: NeoMutt/20180716
+In-Reply-To: <20200126024957.11392-1-hdanton@sina.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9512 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=2 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=309
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1911140001 definitions=main-2001270081
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9512 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=2 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=388 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1911140001
+ definitions=main-2001270081
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Monday 27 January 2020 10:23:43 Greg KH wrote:
-> On Mon, Jan 27, 2020 at 10:04:09AM +0100, Pali Rohár wrote:
-> > On Saturday 25 January 2020 22:32:28 Christoph Hellwig wrote:
-> > > The RCU changes looks sensible to me:
-> > > 
-> > > Reviewed-by: Christoph Hellwig <hch@lst.de>
-> > 
-> > Great! Are there any other issues with this last version?
-> > 
-> > If not, Greg would you take this patch series?
-> 
-> Me?  I'm not the vfs/fs maintainer.
+I already fixed this bug in an earlier thread.
 
-You took exfat driver (into staging), so I thought that exfat handled by you.
+Syzbot always reports a use after free as two separate bugs, a read
+after free and a write after free.  It's too much hassle to mark all
+the duplicates.
 
-> And even if I was, it's _just_ too late as anything for 5.6-rc1 would
-> have needed to be in linux-next already for usually at least a week.
-> 
-> thanks,
-> 
-> greg k-h
+regards,
+dan carpenter
 
--- 
-Pali Rohár
-pali.rohar@gmail.com
+
