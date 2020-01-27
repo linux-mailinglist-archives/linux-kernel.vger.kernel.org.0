@@ -2,154 +2,74 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E629F14A99E
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Jan 2020 19:16:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3955614A9A7
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Jan 2020 19:17:24 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726338AbgA0SQK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 27 Jan 2020 13:16:10 -0500
-Received: from mail-io1-f68.google.com ([209.85.166.68]:45089 "EHLO
-        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725893AbgA0SQK (ORCPT
+        id S1726443AbgA0SRV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 27 Jan 2020 13:17:21 -0500
+Received: from mail-qt1-f193.google.com ([209.85.160.193]:35916 "EHLO
+        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725828AbgA0SRV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 27 Jan 2020 13:16:10 -0500
-Received: by mail-io1-f68.google.com with SMTP id i11so11066652ioi.12;
-        Mon, 27 Jan 2020 10:16:10 -0800 (PST)
+        Mon, 27 Jan 2020 13:17:21 -0500
+Received: by mail-qt1-f193.google.com with SMTP id t13so7722858qto.3
+        for <linux-kernel@vger.kernel.org>; Mon, 27 Jan 2020 10:17:20 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=6d8iK1MnMs1MUcRP0ixKsozU/LQP2hJZIf8aV/HUojg=;
-        b=oP2hJQjxqq25nVhwP7jAi6G/Pg6hv00lTpQ1Qod1Zpwzk2ZBr6lHHdsdIGlNxeT6pK
-         dkqT4uuUIb/qDfC3JKfi9FHontYPZwz22geG3dCTW8p1KronfgB+1USRWps4p6i5EPwf
-         eOnpD8BD8pISAAxJvlqkKvPVfHT9hN97cu31Kzp5NTTQg2ZExfG03f0uJASJfAMZPSH2
-         nKzXKJ7C76R6d0CFB0b/twhY7jH6U2XONx8+IaG6oPY3h+Gh+18t/DSutxc9uwTv0CDN
-         zMUgf8uu0C7UKj1RRLk/R4hHD9mynN7acUifqTbqBgcE1C0q3UlxtidmyFvZQLcXmIWU
-         YMuQ==
+        d=lca.pw; s=google;
+        h=content-transfer-encoding:from:mime-version:subject:date:message-id
+         :references:cc:in-reply-to:to;
+        bh=H0vXK67+oGRk9o9l8RLmztHaP5aIkeAR8XI0InnlAdw=;
+        b=VmkxZx7rR4jyhk3oNN0A4XJ3rXz9icpoNz5NRQqSunNYTLzjySAkZditLPRjzsNx/z
+         0QtE+umERJcVZZv7JdGx3Ucx9aDG5kZAtt7csozqHZBjKkqMbUiCxSCMpmPqGuYWdGXP
+         6rA8e5L09NP2PjkfzBtDcbx3sVG+KwS3yw6FsWaRrIQ43qYFJLyy+kv2dWYkJlxzTiKG
+         Q9/QfRAfLEAwbMvdLoc+dFrgrw+wX7snqTkF81Qa56TR2XVa69b3FZcyyly9aw0pZg+H
+         GlrV4CRld2aR5IfXD6T2uKNgTQACWerD6ldeSPHYEC2fGcESHImD89zLpzGUbtfst2mc
+         qWoA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=6d8iK1MnMs1MUcRP0ixKsozU/LQP2hJZIf8aV/HUojg=;
-        b=QwkRD+16tYnB3OAYWlpMr02O5q4CEotpkDlyx6e3cS0ntt7k6/u0WYA3szsQzIV7ao
-         hb8AC4L1V8P/hzzHGf5gVffwVQ7DtEyBU0jgiBPeHFfEFqsIWQXxakCNObd6hW2XvDj1
-         jrcbQzVDt/+GOHZJeYxWvS7XMGU5WCuFy4g/uLpbmqRohBuDGAJSw4llrNqDNnMhFfrf
-         jA5N/9rG/8gMXau4+BLvAZCvjSZLaWwWTOTNfyFm4NVBxKtSb/hZwWMetl5DaYR1HPtX
-         w98VXj7fLERRHnCLfVNEiEqrYh0bkETDi1GKQf0PtM9I+Nqvy7QfGfgEao9be2NgwhGO
-         +dbw==
-X-Gm-Message-State: APjAAAUzmfdV7lmIK1jZgLWZjX6Ws1hLNuBlxpg/JORLFV9Jbq52lVSq
-        z7THyauX425lhT91xC/usXymPDOd8PURseD8/Kw=
-X-Google-Smtp-Source: APXvYqylFbd3WaXxHx8TO06JVlUQjPqQj3vZq4mBStIup0QsMIklaBbFCanSiIP9IUcQaOr9iXwiJ5+zPgnIkwPAVhY=
-X-Received: by 2002:a6b:7215:: with SMTP id n21mr13908236ioc.131.1580148969772;
- Mon, 27 Jan 2020 10:16:09 -0800 (PST)
-MIME-Version: 1.0
-References: <20200127164321.17468-1-lhenriques@suse.com>
-In-Reply-To: <20200127164321.17468-1-lhenriques@suse.com>
-From:   Ilya Dryomov <idryomov@gmail.com>
-Date:   Mon, 27 Jan 2020 19:16:17 +0100
-Message-ID: <CAOi1vP9RBBX9RtnZExk_9JX9-H-8B_2R6TQ6-iR3sRw047PfoQ@mail.gmail.com>
-Subject: Re: [RFC PATCH 0/3] parallel 'copy-from' Ops in copy_file_range
-To:     Luis Henriques <lhenriques@suse.com>
-Cc:     Jeff Layton <jlayton@kernel.org>, Sage Weil <sage@redhat.com>,
-        "Yan, Zheng" <zyan@redhat.com>,
-        Gregory Farnum <gfarnum@redhat.com>,
-        Ceph Development <ceph-devel@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        h=x-gm-message-state:content-transfer-encoding:from:mime-version
+         :subject:date:message-id:references:cc:in-reply-to:to;
+        bh=H0vXK67+oGRk9o9l8RLmztHaP5aIkeAR8XI0InnlAdw=;
+        b=KFPZBVWCJtjdz6GIncNUhF+1iCXzRx5G8T+QXHUbHib/gSyDr4R74fiXiRaKvnhovC
+         FXfVGrPfhtw2TcAFwmbnb5E1/luzC19iCK2YAvH56dPCLybehWR0Kv3Yqh5cZGrietl6
+         03bywJTFIUFZ3JD4f9JlubPWuYafdgVxX0j4RpO6oBVoVmj+UIAVehA2oHwXbsVm/P9w
+         8/Pum5KYpmK00lCL4CykLDl+iQQJIEt3/rtCwd6fp4DKmihTNqaRQk+UkMXP6Fl0llBP
+         oonh0uMVIyAqEcvLeyOlq6vaT1PeFwXEz/16dkZp7pEM9RzgEzm5edVb2A8xPllgumw6
+         KV8g==
+X-Gm-Message-State: APjAAAUhbpEJLui0PUAAU6Ksqx1BWcyRAcPp2JGYqnEp1m5Jl871FOd1
+        ZTQJMtMHBw+tNslEFG2sBnv5k5ZlqwtZbg==
+X-Google-Smtp-Source: APXvYqwefJtTiBmdzBaof1Ae/agBKz2BgRCUSBP1dePt3x+Aq3NQY7KIeICOMGBb6HN28GdJ1MvWLA==
+X-Received: by 2002:aed:3e53:: with SMTP id m19mr17288476qtf.387.1580149040133;
+        Mon, 27 Jan 2020 10:17:20 -0800 (PST)
+Received: from [192.168.1.183] (pool-71-184-117-43.bstnma.fios.verizon.net. [71.184.117.43])
+        by smtp.gmail.com with ESMTPSA id o6sm9945160qkk.53.2020.01.27.10.17.19
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 27 Jan 2020 10:17:19 -0800 (PST)
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+From:   Qian Cai <cai@lca.pw>
+Mime-Version: 1.0 (1.0)
+Subject: Re: [PATCH] mm: mempolicy: use VM_BUG_ON_VMA in queue_pages_test_walk()
+Date:   Mon, 27 Jan 2020 13:17:18 -0500
+Message-Id: <1221B3C6-6A3B-4427-92DD-25AD54FF6BB5@lca.pw>
+References: <1579068565-110432-1-git-send-email-yang.shi@linux.alibaba.com>
+Cc:     akpm@linux-foundation.org, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+In-Reply-To: <1579068565-110432-1-git-send-email-yang.shi@linux.alibaba.com>
+To:     Yang Shi <yang.shi@linux.alibaba.com>
+X-Mailer: iPhone Mail (17C54)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jan 27, 2020 at 5:43 PM Luis Henriques <lhenriques@suse.com> wrote:
->
-> Hi,
->
-> As discussed here[1] I'm sending an RFC patchset that does the
-> parallelization of the requests sent to the OSDs during a copy_file_range
-> syscall in CephFS.
->
->   [1] https://lore.kernel.org/lkml/20200108100353.23770-1-lhenriques@suse.com/
->
-> I've also some performance numbers that I wanted to share. Here's a
-> description of the very simple tests I've run:
->
->  - create a file with 200 objects in it
->    * i.e. tests with different object sizes mean different file sizes
->  - drop all caches and umount the filesystem
->  - Measure:
->    * mount filesystem
->    * full file copy (with copy_file_range)
->    * umount filesystem
->
-> Tests were repeated several times and the average value was used for
-> comparison.
->
->   DISCLAIMER:
->   These numbers are only indicative, and different clusters and client
->   configs will for sure show different performance!  More rigorous tests
->   would be require to validate these results.
->
-> Having as baseline a full read+write (basically, a copy_file_range
-> operation within a filesystem mounted without the 'copyfrom' option),
-> here's some values for different object sizes:
->
->                           8M      4M      1M      65k
-> read+write              100%    100%    100%     100%
-> sequential               51%     52%     83%    >100%
-> parallel (throttle=1)    51%     52%     83%    >100%
-> parallel (throttle=0)    17%     17%     83%    >100%
->
-> Notes:
->
-> - 'parallel (throttle=0)' was a test where *all* the requests (i.e. 200
->   requests to copy the 200 objects in the file) were sent to the OSDs and
->   the wait for requests completion is done at the end only.
->
-> - 'parallel (throttle=1)' was just a control test, where the wait for
->   completion is done immediately after a request is sent.  It was expected
->   to be very similar to the non-optimized ('sequential') tests.
->
-> - These tests were executed on a cluster with 40 OSDs, spread across 5
->   (bare-metal) nodes.
->
-> - The tests with object size of 65k show that copy_file_range definitely
->   doesn't scale to files with small object sizes.  '> 100%' actually means
->   more than 10x slower.
->
-> Measuring the mount+copy+umount masks the actual difference between
-> different throttle values due to the time spent in mount+umount.  Thus,
-> there was no real difference between throttle=0 (send all and wait) and
-> throttle=20 (send 20, wait, send 20, ...).  But here's what I observed
-> when measuring only the copy operation (4M object size):
->
-> read+write              100%
-> parallel (throttle=1)    56%
-> parallel (throttle=5)    23%
-> parallel (throttle=10)   14%
-> parallel (throttle=20)    9%
-> parallel (throttle=5)     5%
 
-Was this supposed to be throttle=50?
 
->
-> Anyway, I'll still need to revisit patch 0003 as it doesn't follow the
-> suggestion done by Jeff to *not* add another knob to fine-tune the
-> throttle value -- this patch adds a kernel parameter for a knob that I
-> wanted to use in my testing to observe different values of this throttle
-> limit.
->
-> The goal is to probably to drop this patch and do the throttling in patch
-> 0002.  I just need to come up with a decent heuristic.  Jeff's suggestion
-> was to use rsize/wsize, which are set to 64M by default IIRC.  Somehow I
-> feel that it should be related to the number of OSDs in the cluster
-> instead, but I'm not sure how.  And testing these sort of heuristics would
-> require different clusters, which isn't particularly easy to get.  Anyway,
-> comments are welcome!
+> On Jan 15, 2020, at 1:09 AM, Yang Shi <yang.shi@linux.alibaba.com> wrote:
+>=20
+> The VM_BUG_ON() is already used by queue_pages_test_walk(), it sounds
+> better to dump more debug information by using VM_BUG_ON_VMA() to help
+> debugging.
 
-I agree with Jeff, this throttle is certainly not worth a module
-parameter (or a mount option).  I would start with something like
-C * (wsize / object size) and pick C between 1 and 4.
-
-Thanks,
-
-                Ilya
+What=E2=80=99s the problem this is trying to resolve? Was there an existing b=
+ug would trigger this?=
