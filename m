@@ -2,93 +2,134 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2330B14A2D6
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Jan 2020 12:17:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B7DC814A2E0
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Jan 2020 12:18:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730387AbgA0LRZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 27 Jan 2020 06:17:25 -0500
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:42261 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725845AbgA0LRY (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 27 Jan 2020 06:17:24 -0500
-Received: by mail-wr1-f65.google.com with SMTP id q6so10703284wro.9;
-        Mon, 27 Jan 2020 03:17:23 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=0rZPGktF2ABAmRfi1HI1eeGD5Kif6zMVt4/e43jHA6U=;
-        b=Qv7d3k9l9cFgJgWSvOW4gMkjNRDPYG2p/tZkFy1wal6BW1vENy9nVn+9Abo+YtmOmf
-         ncvvPt0C5uaOZE9KoqGLYhOFoDdmDSvdCK6EYOsbHW48UlNgdicCACuIdSUfzjl5W0CS
-         2s6bSJQ7AMcSG4mU70eTV6AdMUf1oQwGbmNxtOXmrDuwILYEcti2JdmLqwOow0bDRf3L
-         q812f+f4y6s73avGQU+T2AD7oxQNzGao86d63NP+BJSWa/hCzJS0bqpAm9r/rFKZObS/
-         BfeS1t061wH4HBGtsTcOIMEyT7adEvvmDH8YiNyqs0T+CAgkSOJ1kCy/g9DwSFdEL8+5
-         msOA==
-X-Gm-Message-State: APjAAAU7nk/0fiA9y5xYnzVG8IJPItgGOhJrxfxAxZ0Zmq1Je9mG9/7y
-        pI/Rl216+DanbG0cyw3SxtYfOea2
-X-Google-Smtp-Source: APXvYqwgWvkTL1IKXo000lnYqYpXBg2xCDKYF89b3jcQxtCQVDjbbED/2bKHBBe0Tx24hb03q4kTfw==
-X-Received: by 2002:a2e:7311:: with SMTP id o17mr10016012ljc.197.1580123502746;
-        Mon, 27 Jan 2020 03:11:42 -0800 (PST)
-Received: from xi.terra (c-14b8e655.07-184-6d6c6d4.bbcust.telenor.se. [85.230.184.20])
-        by smtp.gmail.com with ESMTPSA id a11sm7907961lfb.34.2020.01.27.03.11.41
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 27 Jan 2020 03:11:41 -0800 (PST)
-Received: from johan by xi.terra with local (Exim 4.92.3)
-        (envelope-from <johan@kernel.org>)
-        id 1iw2Ix-0003X2-QL; Mon, 27 Jan 2020 12:11:43 +0100
-Date:   Mon, 27 Jan 2020 12:11:43 +0100
-From:   Johan Hovold <johan@kernel.org>
-To:     Michal Simek <michal.simek@xilinx.com>
-Cc:     Colin King <colin.king@canonical.com>,
-        linux-arm-kernel@lists.infradead.org, linux-i2c@vger.kernel.org,
-        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH][next][V2] i2c: xiic: fix indentation issue
-Message-ID: <20200127111143.GM8375@localhost>
-References: <20200127102303.44133-1-colin.king@canonical.com>
- <2dd84ab2-a7a3-fdd8-6bd6-07f1b3d5cd00@xilinx.com>
+        id S1729761AbgA0LSE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 27 Jan 2020 06:18:04 -0500
+Received: from foss.arm.com ([217.140.110.172]:43024 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726210AbgA0LSE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 27 Jan 2020 06:18:04 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 3A2BC30E;
+        Mon, 27 Jan 2020 03:12:12 -0800 (PST)
+Received: from [10.1.196.63] (e123195-lin.cambridge.arm.com [10.1.196.63])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 4C52A3F52E;
+        Mon, 27 Jan 2020 03:12:11 -0800 (PST)
+Subject: Re: [PATCH] KVM: arm64: Treat emulated TVAL TimerValue as a signed
+ 32-bit integer
+To:     Marc Zyngier <maz@kernel.org>
+Cc:     linux-arm-kernel@lists.infradead.org, kvmarm@lists.cs.columbia.edu,
+        linux-kernel@vger.kernel.org, james.morse@arm.com,
+        julien.thierry.kdev@gmail.com, suzuki.poulose@arm.com
+References: <20200127103652.2326-1-alexandru.elisei@arm.com>
+ <5f633dfb2abe63059d75c0da58c69241@kernel.org>
+From:   Alexandru Elisei <alexandru.elisei@arm.com>
+Message-ID: <de0621e2-3920-3897-bde4-fecf36c9c348@arm.com>
+Date:   Mon, 27 Jan 2020 11:12:08 +0000
+User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <2dd84ab2-a7a3-fdd8-6bd6-07f1b3d5cd00@xilinx.com>
+In-Reply-To: <5f633dfb2abe63059d75c0da58c69241@kernel.org>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jan 27, 2020 at 12:03:02PM +0100, Michal Simek wrote:
-> On 27. 01. 20 11:23, Colin King wrote:
-> > From: Colin Ian King <colin.king@canonical.com>
-> > 
-> > There is a statement that is indented one level too deeply, remove
-> > the extraneous tab.
-> > 
-> > Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> > ---
-> > V2: fix type in commit message
-> > ---
-> >  drivers/i2c/busses/i2c-xiic.c | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> > 
-> > diff --git a/drivers/i2c/busses/i2c-xiic.c b/drivers/i2c/busses/i2c-xiic.c
-> > index b17d30c9ab40..90c1c362394d 100644
-> > --- a/drivers/i2c/busses/i2c-xiic.c
-> > +++ b/drivers/i2c/busses/i2c-xiic.c
-> > @@ -261,7 +261,7 @@ static int xiic_clear_rx_fifo(struct xiic_i2c *i2c)
-> >  		xiic_getreg8(i2c, XIIC_DRR_REG_OFFSET);
-> >  		if (time_after(jiffies, timeout)) {
-> >  			dev_err(i2c->dev, "Failed to clear rx fifo\n");
-> > -				return -ETIMEDOUT;
-> > +			return -ETIMEDOUT;
-> >  		}
-> >  	}
-> >  
-> > 
-> 
-> As was suggested by Peter you should also add Fixes: <sha1> ("patch
-> subject")
+Hi,
 
-Please stop this silliness. This is not a bug fix and does not need a
-Fixes tag.
+On 1/27/20 11:07 AM, Marc Zyngier wrote:
+> Hi Alexandru,
+>
+> On 2020-01-27 10:36, Alexandru Elisei wrote:
+>> According to the ARM ARM, registers CNT{P,V}_TVAL_EL0 have bits [63:32]
+>> RES0 [1]. When reading the register, the value is truncated to the least
+>> significant 32 bits [2], and on writes, TimerValue is treated as a signed
+>> 32-bit integer [1, 2].
+>>
+>> When the guest behaves correctly and writes 32-bit values, treating TVAL
+>> as an unsigned 64 bit register works as expected. However, things start
+>> to break down when the guest writes larger values, because
+>> (u64)0x1_ffff_ffff = 8589934591. but (s32)0x1_ffff_ffff = -1, and the
+>> former will cause the timer interrupt to be asserted in the future, but
+>> the latter will cause it to be asserted now.  Let's treat TVAL as a
+>> signed 32-bit register on writes, to match the behaviour described in
+>> the architecture, and the behaviour experimentally exhibited by the
+>> virtual timer on a non-vhe host.
+>>
+>> [1] Arm DDI 0487E.a, section D13.8.18
+>> [2] Arm DDI 0487E.a, section D11.2.4
+>>
+>> Signed-off-by: Alexandru Elisei <alexandru.elisei@arm.com>
+>
+> Huhuh... Nice catch!
+>
+> Fixes: 8fa761624871 ("KVM: arm/arm64: arch_timer: Fix CNTP_TVAL calculation")
+>
+> (how many times are we doing to fix this???)
+>
+>> ---
+>>  include/kvm/arm_arch_timer.h | 2 ++
+>>  virt/kvm/arm/arch_timer.c    | 3 ++-
+>>  2 files changed, 4 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/include/kvm/arm_arch_timer.h b/include/kvm/arm_arch_timer.h
+>> index d120e6c323e7..be912176b7a3 100644
+>> --- a/include/kvm/arm_arch_timer.h
+>> +++ b/include/kvm/arm_arch_timer.h
+>> @@ -10,6 +10,8 @@
+>>  #include <linux/clocksource.h>
+>>  #include <linux/hrtimer.h>
+>>
+>> +#define ARCH_TIMER_TVAL_MASK    ((1ULL << 32) - 1)
+>> +
+>>  enum kvm_arch_timers {
+>>      TIMER_PTIMER,
+>>      TIMER_VTIMER,
+>> diff --git a/virt/kvm/arm/arch_timer.c b/virt/kvm/arm/arch_timer.c
+>> index f182b2380345..5d40f17f7024 100644
+>> --- a/virt/kvm/arm/arch_timer.c
+>> +++ b/virt/kvm/arm/arch_timer.c
+>> @@ -805,6 +805,7 @@ static u64 kvm_arm_timer_read(struct kvm_vcpu *vcpu,
+>>      switch (treg) {
+>>      case TIMER_REG_TVAL:
+>>          val = timer->cnt_cval - kvm_phys_timer_read() + timer->cntvoff;
+>> +        val &= ARCH_TIMER_TVAL_MASK;
+>
+> nit: Do we really need this mask? I'd rather see it written as
+>
+>                 val = lower_32_bits(val);
 
-Johan
+I didn't really like using the mask either, but I couldn't think of anything
+better. This looks very good.
+
+>
+>
+>>          break;
+>>
+>>      case TIMER_REG_CTL:
+>> @@ -850,7 +851,7 @@ static void kvm_arm_timer_write(struct kvm_vcpu *vcpu,
+>>  {
+>>      switch (treg) {
+>>      case TIMER_REG_TVAL:
+>> -        timer->cnt_cval = kvm_phys_timer_read() - timer->cntvoff + val;
+>> +        timer->cnt_cval = kvm_phys_timer_read() - timer->cntvoff + (s32)val;
+>>          break;
+>>
+>>      case TIMER_REG_CTL:
+>
+> Otherwise, looks good to me. If you're OK with the above change, I'll
+> take it as a fix.
+
+Yes, I'm very much OK with the change.
+
+Thanks,
+Alex
+>
+> Thanks,
+>
+>         M.
