@@ -2,98 +2,82 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C71C314A8B8
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 Jan 2020 18:09:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5D11A14A886
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 Jan 2020 18:03:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726590AbgA0RJd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 27 Jan 2020 12:09:33 -0500
-Received: from mga07.intel.com ([134.134.136.100]:48043 "EHLO mga07.intel.com"
+        id S1726080AbgA0RDh convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Mon, 27 Jan 2020 12:03:37 -0500
+Received: from unicorn.mansr.com ([81.2.72.234]:34980 "EHLO unicorn.mansr.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725845AbgA0RJa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 27 Jan 2020 12:09:30 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 27 Jan 2020 08:54:58 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.70,370,1574150400"; 
-   d="scan'208";a="308813167"
-Received: from labuser-ice-lake-client-platform.jf.intel.com ([10.54.55.45])
-  by orsmga001.jf.intel.com with ESMTP; 27 Jan 2020 08:54:58 -0800
-From:   kan.liang@linux.intel.com
-To:     peterz@infradead.org, eranian@google.com, acme@redhat.com,
-        mingo@kernel.org, mpe@ellerman.id.au, linux-kernel@vger.kernel.org
-Cc:     jolsa@kernel.org, namhyung@kernel.org, vitaly.slobodskoy@intel.com,
-        pavel.gerasimov@intel.com, ak@linux.intel.com,
-        Kan Liang <kan.liang@linux.intel.com>
-Subject: [PATCH V6 2/2] perf/x86/intel: Output LBR TOS information
-Date:   Mon, 27 Jan 2020 08:53:55 -0800
-Message-Id: <20200127165355.27495-3-kan.liang@linux.intel.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20200127165355.27495-1-kan.liang@linux.intel.com>
-References: <20200127165355.27495-1-kan.liang@linux.intel.com>
+        id S1725845AbgA0RDf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 27 Jan 2020 12:03:35 -0500
+X-Greylist: delayed 437 seconds by postgrey-1.27 at vger.kernel.org; Mon, 27 Jan 2020 12:03:34 EST
+Received: by unicorn.mansr.com (Postfix, from userid 51770)
+        id EB3581B0D9; Mon, 27 Jan 2020 16:56:15 +0000 (GMT)
+From:   =?iso-8859-1?Q?M=E5ns_Rullg=E5rd?= <mans@mansr.com>
+To:     Rob Herring <robh@kernel.org>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Mark Rutland <mark.rutland@arm.com>, linux-usb@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [RESEND][PATCH 1/2] dt-bindings: usb: add non-removable-ports hub property
+References: <20200124152504.23411-1-mans@mansr.com>
+        <20200127153506.GA4589@bogus>
+Date:   Mon, 27 Jan 2020 16:56:15 +0000
+In-Reply-To: <20200127153506.GA4589@bogus> (Rob Herring's message of "Mon, 27
+        Jan 2020 09:35:06 -0600")
+Message-ID: <yw1xy2tsvnww.fsf@mansr.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.3 (gnu/linux)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Kan Liang <kan.liang@linux.intel.com>
+Rob Herring <robh@kernel.org> writes:
 
-For Intel LBR, the LBR Top-of-Stack (TOS) information is the HW index of
-raw branch record for the most recent branch.
+> On Fri, Jan 24, 2020 at 03:25:03PM +0000, Mans Rullgard wrote:
+>> Add a non-removable-ports property that lists the hardwired downstream
+>> ports of a hub.  Although hubs can provide this information, they are
+>> not always configured correctly.  An alternate means of indicating this
+>> for built-in USB devices is thus useful.
+>> 
+>> Signed-off-by: Mans Rullgard <mans@mansr.com>
+>
+> I reviewed this already, but since you didn't add my reviewed-by, I'm 
+> looking at it again and having 2nd thoughts.
+>
+>> ---
+>>  Documentation/devicetree/bindings/usb/usb-device.txt | 4 ++++
+>>  1 file changed, 4 insertions(+)
+>> 
+>> diff --git a/Documentation/devicetree/bindings/usb/usb-device.txt b/Documentation/devicetree/bindings/usb/usb-device.txt
+>> index 036be172b1ae..92d863cc96b6 100644
+>> --- a/Documentation/devicetree/bindings/usb/usb-device.txt
+>> +++ b/Documentation/devicetree/bindings/usb/usb-device.txt
+>> @@ -66,6 +66,10 @@ Required properties for host-controller nodes with device nodes:
+>>  - #size-cells: shall be 0
+>>  
+>>  
+>> +Optional properties for hub and host-controller nodes:
+>> +- non-removable-ports: list of hardwired downstream ports
+>
+> If you have a hardwired device and need to know that, doesn't that imply 
+> there's some other stuff you need to describe beyond what a standard USB 
+> device has. Such as a power supply that's not Vbus from the hub.
 
-For non-adaptive PEBS and non-PEBS, the TOS information can be directly
-retrieved from TOS MSR read in intel_pmu_lbr_read().
+I suppose there could be, but there isn't in my actual situation.
 
-For adaptive PEBS, the LBR information stored in PEBS record doesn't
-include the TOS information. For single PEBS, TOS can be directly read
-from MSR, because the PMI is triggered immediately after PEBS is
-written. TOS MSR is still unchanged.
-For large PEBS, TOS MSR has stale value. Set -1ULL to indicate that the
-TOS information is not available.
+> At a minimum, I think this should be a per port property.
 
-Signed-off-by: Kan Liang <kan.liang@linux.intel.com>
----
- arch/x86/events/intel/lbr.c | 12 +++++++++---
- 1 file changed, 9 insertions(+), 3 deletions(-)
+That's what I suggested first.  Greg told me to do it like this instead.
 
-diff --git a/arch/x86/events/intel/lbr.c b/arch/x86/events/intel/lbr.c
-index 7639e2097101..65113b16804a 100644
---- a/arch/x86/events/intel/lbr.c
-+++ b/arch/x86/events/intel/lbr.c
-@@ -585,7 +585,7 @@ static void intel_pmu_lbr_read_32(struct cpu_hw_events *cpuc)
- 		cpuc->lbr_entries[i].reserved	= 0;
- 	}
- 	cpuc->lbr_stack.nr = i;
--	cpuc->lbr_stack.hw_idx = -1ULL;
-+	cpuc->lbr_stack.hw_idx = tos;
- }
- 
- /*
-@@ -681,7 +681,7 @@ static void intel_pmu_lbr_read_64(struct cpu_hw_events *cpuc)
- 		out++;
- 	}
- 	cpuc->lbr_stack.nr = out;
--	cpuc->lbr_stack.hw_idx = -1ULL;
-+	cpuc->lbr_stack.hw_idx = tos;
- }
- 
- void intel_pmu_lbr_read(void)
-@@ -1122,7 +1122,13 @@ void intel_pmu_store_pebs_lbrs(struct pebs_lbr *lbr)
- 	int i;
- 
- 	cpuc->lbr_stack.nr = x86_pmu.lbr_nr;
--	cpuc->lbr_stack.hw_idx = -1ULL;
-+
-+	/* Cannot get TOS for large PEBS */
-+	if (cpuc->n_pebs == cpuc->n_large_pebs)
-+		cpuc->lbr_stack.hw_idx = -1ULL;
-+	else
-+		cpuc->lbr_stack.hw_idx = intel_pmu_lbr_tos();
-+
- 	for (i = 0; i < x86_pmu.lbr_nr; i++) {
- 		u64 info = lbr->lbr[i].info;
- 		struct perf_branch_entry *e = &cpuc->lbr_entries[i];
+> Though really, I think this should just be implied by describing the
+> device in DT. I'm not sure if there's a case for hotpluggable devices
+> described in DT.  Maybe with overlays.
+
+That's also an option.  Greg, what do you think?
+
 -- 
-2.17.1
-
+Måns Rullgård
