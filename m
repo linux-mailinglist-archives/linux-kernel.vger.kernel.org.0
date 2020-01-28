@@ -2,42 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C99C314BB2E
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Jan 2020 15:44:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D3FB714B9EB
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Jan 2020 15:37:24 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729191AbgA1OKm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 28 Jan 2020 09:10:42 -0500
-Received: from mail.kernel.org ([198.145.29.99]:59432 "EHLO mail.kernel.org"
+        id S1731031AbgA1OWp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 28 Jan 2020 09:22:45 -0500
+Received: from mail.kernel.org ([198.145.29.99]:48496 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726057AbgA1OKe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 Jan 2020 09:10:34 -0500
+        id S1731651AbgA1OWj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 28 Jan 2020 09:22:39 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DDE8924688;
-        Tue, 28 Jan 2020 14:10:33 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 206892468F;
+        Tue, 28 Jan 2020 14:22:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1580220634;
-        bh=UwibSSP19Nk7c0068KV+c2LMs1N3jXG8jD/+vJPtPHU=;
+        s=default; t=1580221358;
+        bh=eZbzZl63CocdykNF/izWkPuPePlfNVXqsFtH/f2204E=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=RoljT13jXLu7tIpbIFLZe1B3FCmXHblUaeNcgpio3xTOUypIEZliSxA/QG7knpl/8
-         bs1TK3K14SIWFUgxJSr32wHOp6q2lGCs6bFbXOd6agOAPuqeJry7ikUQHjSeWVi5A9
-         Jol6bAuADcpMRpRWmlJwyo88xVW9Jx0V/l4IOFEE=
+        b=Nz/Kv89RDDNX1qHWPz1DOwKruusXMuDUdfp9vjVYE9l/BWtwQibUiOafOuVBg7e6y
+         JdNIaGbDZJMw7Ze2APimE6hbYZEr1E2YWkcYGCKI+xGLlPJ7J7+dZ/H6Mnxzv1J1Em
+         wnc+VbXvGlAyv2slDYqM5de97XZaUzT5Av0dsQQw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Ashok Raj <ashok.raj@intel.com>,
-        Jacob Pan <jacob.jun.pan@linux.intel.com>,
-        Kevin Tian <kevin.tian@intel.com>,
-        Lu Baolu <baolu.lu@linux.intel.com>,
-        Zhenyu Wang <zhenyuw@linux.intel.com>,
-        Joerg Roedel <jroedel@suse.de>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.4 086/183] iommu/vt-d: Make kernel parameter igfx_off work with vIOMMU
+        stable@vger.kernel.org, Julian Wiedmann <jwi@linux.ibm.com>,
+        Ursula Braun <ubraun@linux.ibm.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.9 156/271] net/af_iucv: always register net_device notifier
 Date:   Tue, 28 Jan 2020 15:05:05 +0100
-Message-Id: <20200128135838.584494547@linuxfoundation.org>
+Message-Id: <20200128135904.180380061@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200128135829.486060649@linuxfoundation.org>
-References: <20200128135829.486060649@linuxfoundation.org>
+In-Reply-To: <20200128135852.449088278@linuxfoundation.org>
+References: <20200128135852.449088278@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -47,47 +45,82 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Lu Baolu <baolu.lu@linux.intel.com>
+From: Julian Wiedmann <jwi@linux.ibm.com>
 
-[ Upstream commit 5daab58043ee2bca861068e2595564828f3bc663 ]
+[ Upstream commit 06996c1d4088a0d5f3e7789d7f96b4653cc947cc ]
 
-The kernel parameter igfx_off is used by users to disable
-DMA remapping for the Intel integrated graphic device. It
-was designed for bare metal cases where a dedicated IOMMU
-is used for graphic. This doesn't apply to virtual IOMMU
-case where an include-all IOMMU is used.  This makes the
-kernel parameter work with virtual IOMMU as well.
+Even when running as VM guest (ie pr_iucv != NULL), af_iucv can still
+open HiperTransport-based connections. For robust operation these
+connections require the af_iucv_netdev_notifier, so register it
+unconditionally.
 
-Cc: Ashok Raj <ashok.raj@intel.com>
-Cc: Jacob Pan <jacob.jun.pan@linux.intel.com>
-Suggested-by: Kevin Tian <kevin.tian@intel.com>
-Fixes: c0771df8d5297 ("intel-iommu: Export a flag indicating that the IOMMU is used for iGFX.")
-Signed-off-by: Lu Baolu <baolu.lu@linux.intel.com>
-Tested-by: Zhenyu Wang <zhenyuw@linux.intel.com>
-Signed-off-by: Joerg Roedel <jroedel@suse.de>
+Also handle any error that register_netdevice_notifier() returns.
+
+Fixes: 9fbd87d41392 ("af_iucv: handle netdev events")
+Signed-off-by: Julian Wiedmann <jwi@linux.ibm.com>
+Reviewed-by: Ursula Braun <ubraun@linux.ibm.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/iommu/intel-iommu.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ net/iucv/af_iucv.c | 27 ++++++++++++++++++++-------
+ 1 file changed, 20 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/iommu/intel-iommu.c b/drivers/iommu/intel-iommu.c
-index b965561a41627..a2005b82ec8ff 100644
---- a/drivers/iommu/intel-iommu.c
-+++ b/drivers/iommu/intel-iommu.c
-@@ -3259,9 +3259,12 @@ static int __init init_dmars(void)
- 		iommu_identity_mapping |= IDENTMAP_ALL;
+diff --git a/net/iucv/af_iucv.c b/net/iucv/af_iucv.c
+index c2dfc32eb9f21..02e10deef5b45 100644
+--- a/net/iucv/af_iucv.c
++++ b/net/iucv/af_iucv.c
+@@ -2431,6 +2431,13 @@ out:
+ 	return err;
+ }
  
- #ifdef CONFIG_INTEL_IOMMU_BROKEN_GFX_WA
--	iommu_identity_mapping |= IDENTMAP_GFX;
-+	dmar_map_gfx = 0;
- #endif
- 
-+	if (!dmar_map_gfx)
-+		iommu_identity_mapping |= IDENTMAP_GFX;
++static void afiucv_iucv_exit(void)
++{
++	device_unregister(af_iucv_dev);
++	driver_unregister(&af_iucv_driver);
++	pr_iucv->iucv_unregister(&af_iucv_handler, 0);
++}
 +
- 	check_tylersburg_isoch();
+ static int __init afiucv_init(void)
+ {
+ 	int err;
+@@ -2464,11 +2471,18 @@ static int __init afiucv_init(void)
+ 		err = afiucv_iucv_init();
+ 		if (err)
+ 			goto out_sock;
+-	} else
+-		register_netdevice_notifier(&afiucv_netdev_notifier);
++	}
++
++	err = register_netdevice_notifier(&afiucv_netdev_notifier);
++	if (err)
++		goto out_notifier;
++
+ 	dev_add_pack(&iucv_packet_type);
+ 	return 0;
  
- 	if (iommu_identity_mapping) {
++out_notifier:
++	if (pr_iucv)
++		afiucv_iucv_exit();
+ out_sock:
+ 	sock_unregister(PF_IUCV);
+ out_proto:
+@@ -2482,12 +2496,11 @@ out:
+ static void __exit afiucv_exit(void)
+ {
+ 	if (pr_iucv) {
+-		device_unregister(af_iucv_dev);
+-		driver_unregister(&af_iucv_driver);
+-		pr_iucv->iucv_unregister(&af_iucv_handler, 0);
++		afiucv_iucv_exit();
+ 		symbol_put(iucv_if);
+-	} else
+-		unregister_netdevice_notifier(&afiucv_netdev_notifier);
++	}
++
++	unregister_netdevice_notifier(&afiucv_netdev_notifier);
+ 	dev_remove_pack(&iucv_packet_type);
+ 	sock_unregister(PF_IUCV);
+ 	proto_unregister(&iucv_proto);
 -- 
 2.20.1
 
