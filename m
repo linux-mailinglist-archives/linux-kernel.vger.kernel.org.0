@@ -2,40 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7133E14B6EC
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Jan 2020 15:10:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1573514B6F9
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Jan 2020 15:10:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729012AbgA1OJi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 28 Jan 2020 09:09:38 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58014 "EHLO mail.kernel.org"
+        id S1727999AbgA1OKG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 28 Jan 2020 09:10:06 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58610 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728962AbgA1OJe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 Jan 2020 09:09:34 -0500
+        id S1729075AbgA1OKC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 28 Jan 2020 09:10:02 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D85F224685;
-        Tue, 28 Jan 2020 14:09:33 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 525F724685;
+        Tue, 28 Jan 2020 14:10:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1580220574;
-        bh=rlYwmC/Any2rfFQWoXj69Ke1st0Pwj5WetSEPFAZnvM=;
+        s=default; t=1580220601;
+        bh=FjKs7kj1QyIdMdGW6JMz6tb12uo0pJoik3pgWS1XT2M=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=dvb1XfaGXdosRV8hH1br76UyHtCpXAKF2zN9FcSWO1qSt5U0TTNrrO9MOXWbD7ReJ
-         upxpZM9a99nvAUqL2HM2tYUjxn+P/UCvrOkCEmLunS/NRO1CDD/8lWfxlbPyt6h00d
-         LNQprTXKlVhmt8ZJ2boj8z1ionlsZY9RwZaSGQqY=
+        b=mPyGn1qJH7Zdm69iOGFH3P0OO7wgyr4rsiRWQhmS80VU5m5p4M6GWJT5PpQtqXWZZ
+         tum0G4CWQHbn7mSanbHduZw21oyFrogLIEe5saCdssqFXIMKrxDZ5FKM2+JWIPHqnY
+         X/QvdZbKQGjQEt2DTIUGsOibc0V5eKkV8rHATgms=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Pawe? Chmiel <pawel.mikolaj.chmiel@gmail.com>,
-        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        stable@vger.kernel.org, Eric Biggers <ebiggers@google.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.4 034/183] media: s5p-jpeg: Correct step and max values for V4L2_CID_JPEG_RESTART_INTERVAL
-Date:   Tue, 28 Jan 2020 15:04:13 +0100
-Message-Id: <20200128135833.425652334@linuxfoundation.org>
+Subject: [PATCH 4.4 035/183] crypto: tgr192 - fix unaligned memory access
+Date:   Tue, 28 Jan 2020 15:04:14 +0100
+Message-Id: <20200128135833.524246053@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
 In-Reply-To: <20200128135829.486060649@linuxfoundation.org>
 References: <20200128135829.486060649@linuxfoundation.org>
@@ -48,42 +44,48 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Pawe? Chmiel <pawel.mikolaj.chmiel@gmail.com>
+From: Eric Biggers <ebiggers@google.com>
 
-[ Upstream commit 19c624c6b29e244c418f8b44a711cbf5e82e3cd4 ]
+[ Upstream commit f990f7fb58ac8ac9a43316f09a48cff1a49dda42 ]
 
-This commit corrects max and step values for v4l2 control for
-V4L2_CID_JPEG_RESTART_INTERVAL. Max should be 0xffff and step should be 1.
-It was found by using v4l2-compliance tool and checking result of
-VIDIOC_QUERY_EXT_CTRL/QUERYMENU test.
-Previously it was complaining that step was bigger than difference
-between max and min.
+Fix an unaligned memory access in tgr192_transform() by using the
+unaligned access helpers.
 
-Fixes: 15f4bc3b1f42 ("[media] s5p-jpeg: Add JPEG controls support")
-
-Signed-off-by: Pawe? Chmiel <pawel.mikolaj.chmiel@gmail.com>
-Reviewed-by: Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Reviewed-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Signed-off-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
-Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+Fixes: 06ace7a9bafe ("[CRYPTO] Use standard byte order macros wherever possible")
+Signed-off-by: Eric Biggers <ebiggers@google.com>
+Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/media/platform/s5p-jpeg/jpeg-core.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ crypto/tgr192.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/media/platform/s5p-jpeg/jpeg-core.c b/drivers/media/platform/s5p-jpeg/jpeg-core.c
-index 0d981bbf38bcd..255f70999ee8a 100644
---- a/drivers/media/platform/s5p-jpeg/jpeg-core.c
-+++ b/drivers/media/platform/s5p-jpeg/jpeg-core.c
-@@ -1952,7 +1952,7 @@ static int s5p_jpeg_controls_create(struct s5p_jpeg_ctx *ctx)
+diff --git a/crypto/tgr192.c b/crypto/tgr192.c
+index 321bc6ff2a9d1..904c8444aa0a2 100644
+--- a/crypto/tgr192.c
++++ b/crypto/tgr192.c
+@@ -25,8 +25,9 @@
+ #include <linux/init.h>
+ #include <linux/module.h>
+ #include <linux/mm.h>
+-#include <asm/byteorder.h>
+ #include <linux/types.h>
++#include <asm/byteorder.h>
++#include <asm/unaligned.h>
  
- 		v4l2_ctrl_new_std(&ctx->ctrl_handler, &s5p_jpeg_ctrl_ops,
- 				  V4L2_CID_JPEG_RESTART_INTERVAL,
--				  0, 3, 0xffff, 0);
-+				  0, 0xffff, 1, 0);
- 		if (ctx->jpeg->variant->version == SJPEG_S5P)
- 			mask = ~0x06; /* 422, 420 */
- 	}
+ #define TGR192_DIGEST_SIZE 24
+ #define TGR160_DIGEST_SIZE 20
+@@ -468,10 +469,9 @@ static void tgr192_transform(struct tgr192_ctx *tctx, const u8 * data)
+ 	u64 a, b, c, aa, bb, cc;
+ 	u64 x[8];
+ 	int i;
+-	const __le64 *ptr = (const __le64 *)data;
+ 
+ 	for (i = 0; i < 8; i++)
+-		x[i] = le64_to_cpu(ptr[i]);
++		x[i] = get_unaligned_le64(data + i * sizeof(__le64));
+ 
+ 	/* save */
+ 	a = aa = tctx->a;
 -- 
 2.20.1
 
