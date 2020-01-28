@@ -2,456 +2,144 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C2F5714B523
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Jan 2020 14:35:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4081E14B526
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Jan 2020 14:35:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726913AbgA1Nfk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 28 Jan 2020 08:35:40 -0500
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:58899 "EHLO
-        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726363AbgA1NeP (ORCPT
+        id S1726699AbgA1Nfu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 28 Jan 2020 08:35:50 -0500
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:52325 "EHLO
+        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726294AbgA1NeO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 Jan 2020 08:34:15 -0500
+        Tue, 28 Jan 2020 08:34:14 -0500
 Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
-        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20200128133412euoutp0142ca05324efadd9f2c982e29bb36d45a~uEE9oNdEN0286702867euoutp01Q
+        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20200128133412euoutp026181afcc32a43047477852f77017a11b~uEE9_AKd-2932529325euoutp02H
         for <linux-kernel@vger.kernel.org>; Tue, 28 Jan 2020 13:34:12 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20200128133412euoutp0142ca05324efadd9f2c982e29bb36d45a~uEE9oNdEN0286702867euoutp01Q
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20200128133412euoutp026181afcc32a43047477852f77017a11b~uEE9_AKd-2932529325euoutp02H
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
         s=mail20170921; t=1580218452;
-        bh=RLgi3xyOZziUdWyXtNMjMVsiVYVnGbMcgDPO7LvqSCQ=;
+        bh=H4QrtVL61FUm03xLuWQqA31QHy5dP4mqpTAK4yNgYiU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=B8Ot9EhlHE9lNHBQm5Hu8knSmfv66dwjI3/znCy/Z/j98wsqSxZJ5Eue/aaYzFDQL
-         MDixy7ThEh81In2ONh68JaqccDnnTA4EvmmABFT6r9tI2vu/qJvua66vTer2mKXqAl
-         HpOaSJV1Ogd6XobnsWBuIjcv+ADvHEZQcGZeFTeM=
-Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
-        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
-        20200128133412eucas1p16bb8d8118a38e262142c0f84e9a39985~uEE9Wkm5v0713407134eucas1p1m;
+        b=lJfh/2TnO9ri6N6FXG5TF7Yg2nreU0sG+O3B+r/ezH+isuhPVQH/5/1B+hLfAX/JB
+         hPeBaNCy4Z6UFN0m1JrDSOXyM2E6xDWRV9VBMfJfn1NvGX7yj9gNRM12dWVZwcKo+D
+         0ZgGKXNTkWUzMCFA9OyLVfYJt6KqqpiTpeqk15KA=
+Received: from eusmges3new.samsung.com (unknown [203.254.199.245]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
+        20200128133412eucas1p2591cc02d579aab2c4e4bbb8f95ed73e3~uEE9liTEM2264122641eucas1p2-;
         Tue, 28 Jan 2020 13:34:12 +0000 (GMT)
 Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
-        eusmges1new.samsung.com (EUCPMTA) with SMTP id 8B.CA.61286.458303E5; Tue, 28
+        eusmges3new.samsung.com (EUCPMTA) with SMTP id A5.DA.60698.458303E5; Tue, 28
         Jan 2020 13:34:12 +0000 (GMT)
 Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
-        eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
-        20200128133411eucas1p1671c280eb6f5d2ca2d10743eea6c96e5~uEE827OfJ0680006800eucas1p1m;
-        Tue, 28 Jan 2020 13:34:11 +0000 (GMT)
+        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
+        20200128133412eucas1p2c79626824fcadc63c133548cd2e7d8cf~uEE9Ow2xZ0474204742eucas1p2O;
+        Tue, 28 Jan 2020 13:34:12 +0000 (GMT)
 Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
         eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20200128133411eusmtrp21fea6dacd033589ada9357901e954c37~uEE82Uhv_0330103301eusmtrp2n;
-        Tue, 28 Jan 2020 13:34:11 +0000 (GMT)
-X-AuditID: cbfec7f2-f0bff7000001ef66-75-5e303854d09f
+        20200128133412eusmtrp28a80fb3382759d075c0ed3a6243050ed~uEE9OLG3V0330003300eusmtrp2r;
+        Tue, 28 Jan 2020 13:34:12 +0000 (GMT)
+X-AuditID: cbfec7f5-a29ff7000001ed1a-b0-5e303854941c
 Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
-        eusmgms2.samsung.com (EUCPMTA) with SMTP id 5D.72.07950.358303E5; Tue, 28
+        eusmgms2.samsung.com (EUCPMTA) with SMTP id 8E.72.07950.358303E5; Tue, 28
         Jan 2020 13:34:11 +0000 (GMT)
 Received: from AMDC3058.digital.local (unknown [106.120.51.71]) by
         eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
-        20200128133411eusmtip20abd6e2f6735eb7b31e252fa758dff9e~uEE8bflkm0685506855eusmtip2T;
+        20200128133411eusmtip2d0054da31de363afae1c6eada367454b~uEE8zeF0J3275932759eusmtip2k;
         Tue, 28 Jan 2020 13:34:11 +0000 (GMT)
 From:   Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 To:     Jens Axboe <axboe@kernel.dk>
 Cc:     Michael Schmitz <schmitzmic@gmail.com>,
         Geert Uytterhoeven <geert@linux-m68k.org>,
         linux-ide@vger.kernel.org, linux-kernel@vger.kernel.org,
-        b.zolnierkie@samsung.com,
-        "James E.J. Bottomley" <jejb@linux.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>
-Subject: [PATCH 03/28] ata: make SATA_PMP option selectable only if any SATA
- host driver is enabled
-Date:   Tue, 28 Jan 2020 14:33:18 +0100
-Message-Id: <20200128133343.29905-4-b.zolnierkie@samsung.com>
+        b.zolnierkie@samsung.com, Mikael Pettersson <mikpelinux@gmail.com>
+Subject: [PATCH 04/28] sata_promise: use ata_cable_sata()
+Date:   Tue, 28 Jan 2020 14:33:19 +0100
+Message-Id: <20200128133343.29905-5-b.zolnierkie@samsung.com>
 X-Mailer: git-send-email 2.24.1
 In-Reply-To: <20200128133343.29905-1-b.zolnierkie@samsung.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrLKsWRmVeSWpSXmKPExsWy7djP87ohFgZxBu87uCxW3+1ns9g4Yz2r
-        xbNbe5ksFt3YxmRxbMcjJovLu+awWSw//o/JYm7rdHYHDo+ds+6ye1w+W+px6HAHo8eERQcY
-        PT4+vcXi0bdlFaPH501yAexRXDYpqTmZZalF+nYJXBnNV3YyFzwLqfg+9xpjA+N0py5GTg4J
-        AROJGROvM3YxcnEICaxglDi8bgUrhPOFUeLJyk4o5zOjxJUjS5i6GDnAWqZtEIeIL2eUmHah
-        GaGj59NudpC5bAJWEhPbVzGC2CICChI9v1eygRQxC0xgkviyfgULSEJYIFVia08bM4jNIqAq
-        cWX/QiYQm1fAVmLt/EZWiAPlJbZ++8QKsplTwE6iZ685RImgxMmZT8DGMAOVNG+dzQwyX0Jg
-        GbvE/dsL2SF6XSSWzp/MBGELS7w6vgUqLiPxf+d8JoiGdYwSfzteQHVvZ5RYPvkfG0SVtcSd
-        c7/YQDYzC2hKrN+lDxF2lFi+cxorJCj4JG68FYQ4gk9i0rbpzBBhXomONiGIajWJDcs2sMGs
-        7dq5khnC9pDYvGgF0wRGxVlI3pmF5J1ZCHsXMDKvYhRPLS3OTU8tNsxLLdcrTswtLs1L10vO
-        z93ECExEp/8d/7SD8eulpEOMAhyMSjy8M1QM4oRYE8uKK3MPMUpwMCuJ8HYyAYV4UxIrq1KL
-        8uOLSnNSiw8xSnOwKInzGi96GSskkJ5YkpqdmlqQWgSTZeLglGpg3Nj8+sIeY409k56t2Ce4
-        TJhbhzNyVeX3iqRGo4xFuSU2njt8DObeW/r30r/MDQoHs/5z2JyYWOoZwcUk+UxbPft0xqHq
-        lfryyz6WsZ2J3HhtfbFmVJ29UM/qd+nigTquFoaph8Qflr40X6EyRfPRfZ4y4WIR9iXabeW7
-        /KNzDC7GiixTsz6pxFKckWioxVxUnAgAyvjPYkADAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprBIsWRmVeSWpSXmKPExsVy+t/xe7rBFgZxBgevK1usvtvPZrFxxnpW
-        i2e39jJZLLqxjcni2I5HTBaXd81hs1h+/B+TxdzW6ewOHB47Z91l97h8ttTj0OEORo8Jiw4w
-        enx8eovFo2/LKkaPz5vkAtij9GyK8ktLUhUy8otLbJWiDS2M9AwtLfSMTCz1DI3NY62MTJX0
-        7WxSUnMyy1KL9O0S9DKar+xkLngWUvF97jXGBsbpTl2MHBwSAiYS0zaIdzFycggJLGWUOPcq
-        AiIsI3F8fRlIWEJAWOLPtS62LkYuoJJPjBJ39p1nA0mwCVhJTGxfxQhiiwgoSPT8XglWxCww
-        hUli4vtrYEXCAskSk9onsoPYLAKqElf2L2QCsXkFbCXWzm9khdggL7H12ydWkMWcAnYSPXvN
-        Ie6xlVh/5ikrRLmgxMmZT1hAbGag8uats5knMArMQpKahSS1gJFpFaNIamlxbnpusZFecWJu
-        cWleul5yfu4mRmCsbDv2c8sOxq53wYcYBTgYlXh4HZQM4oRYE8uKK3MPMUpwMCuJ8HYyAYV4
-        UxIrq1KL8uOLSnNSiw8xmgL9MJFZSjQ5HxjHeSXxhqaG5haWhubG5sZmFkrivB0CB2OEBNIT
-        S1KzU1MLUotg+pg4OKUaGONvCk/4lsAgKW74fOldGeV8yysbVk+5ftZQULj6cOjX7DqrRL2y
-        eXeCzqs+kH2ao8CytGupSrHuq+K68/snvHxskKiRVKu3f9avzriPy6S29p1s6JF87TTvvJWI
-        ZtyXOYcjFOWWPX6il3FSz7rWTdzxgNyET7ZlD77YbtLKkxG27PJj/BxTpMRSnJFoqMVcVJwI
-        AHvSQlqrAgAA
-X-CMS-MailID: 20200128133411eucas1p1671c280eb6f5d2ca2d10743eea6c96e5
+X-Brightmail-Tracker: H4sIAAAAAAAAA01Sa0hTYRju29nOzqwjn1PwxaJyZGCYLjRcN7HSGNSPiIKMtJYeLzQvbM6c
+        /ZG0snnPcDoTxR95A53mZRMnNEMLNSOlpiilRakl0XTi3dyOlv+e97nwvC+8FCEs53lQcQnJ
+        jCJBJheRTty2nqXBo1cl4ghx/xpI6sfzSUlTSSNP8n3UxJH0GCY5kqGO56Qkt7qNkJQ/1PKD
+        +VKjbpwvHRpQSc3dWUia11KHpHPN+y/zbjidjmLkcSmMwi/otlPsq0oNJ+nz7lTLSHQ6+iXQ
+        IAEFOAD08zakQU6UENcgmMj+yGeHeQSjpjWCHeYQ5Bt/ou1Iee4fBxbiagTmzKB/iYHOMcIu
+        kPgkFD6uc5jc8EHIWakl7SYCWxB0mwtIu+CKT8DQSLcDc7EXTL62dwsoGp+BB7aZrbYD0Lpg
+        5WkQRQlwEOSYAlmLC7wt/ca1Y2LTktFa5tgUcD4fbHM6ks2GwGJeO5fFrjDT28Jn8T7YMFZw
+        2EADgrWsqa10O4LqovWt9CkYe7dM2psJ7A2NHX4sfRaG5+sdNGBnsMy6sEs4w9M2LcHSNGQ9
+        ErLuw6B/oSe3azXGWoLFUrDaCskC5KnbcY5uxzm6/72ViKhD7oxKGR/DKP0TmHu+Slm8UpUQ
+        4xuZGN+MNp+mb73XZkBdq3fMCFNItIcOFokjhDxZilIdb0ZAESI3+glnk6KjZOo0RpF4S6GS
+        M0oz2ktxRe60f9V0uBDHyJKZuwyTxCi2VQ4l8EhHXd4+0z44cPCrunTYedTL9/4nwxe5x4ew
+        VL/fxyOjbQ1W6eIFsQ95pZjObKq8vrCrhn5vzC+6WWaZ7qcO+QcYMypwpcePpbDZEkOwVXzu
+        0stwfalfWuZUqDp0Iz2k1LSatCi/VkV6nleY2rXPJlo7Rdq+5ZleeHMx21K8IqZFXGWs7NgR
+        QqGU/QXEa81uMAMAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFupkkeLIzCtJLcpLzFFi42I5/e/4Pd1gC4M4g3X9Vhar7/azWWycsZ7V
+        4tmtvUwWx3Y8YrK4vGsOm0Xv8m3MFnNbp7M7sHvsnHWX3ePy2VKPQ4c7GD36tqxi9Pi8SS6A
+        NUrPpii/tCRVISO/uMRWKdrQwkjP0NJCz8jEUs/Q2DzWyshUSd/OJiU1J7MstUjfLkEv4+CC
+        LqaC+9wVN26mNTC+4exi5OSQEDCRmNv7kbGLkYtDSGApo8SlG+uYuxg5gBIyEsfXl0HUCEv8
+        udbFBmILCXxilNhyQAzEZhOwkpjYvooRxBYRUJDo+b2SDWQOs8AdRomWJROYQRLCApYSl28e
+        BmtmEVCVeHTkGjuIzStgK9H09RUjxAJ5ia3fPrGC7OUUsJPo2WsOsctWYv2Zp6wQ5YISJ2c+
+        YQGxmYHKm7fOZp7AKDALSWoWktQCRqZVjCKppcW56bnFRnrFibnFpXnpesn5uZsYgdGw7djP
+        LTsYu94FH2IU4GBU4uF1UDKIE2JNLCuuzD3EKMHBrCTC28kEFOJNSaysSi3Kjy8qzUktPsRo
+        CvTDRGYp0eR8YKTmlcQbmhqaW1gamhubG5tZKInzdggcjBESSE8sSc1OTS1ILYLpY+LglGpg
+        bGbfpnT1SWb5oVuJ/XcdLvfm/d6pKdaVvPdCf7ZTu6tlnEjcj55piiKLdk/l+nprayLLy/m7
+        zLWuiJtmVgdEfT1af/vy2pawpO23k9LqC1YV3WpOU2LX/r018ntz6OxQaeW6cyUWOW9q/sZI
+        cs333rNhycHHyk4MUtwnkxwv+9jLPeY+ZrxOiaU4I9FQi7moOBEAKsLVBZwCAAA=
+X-CMS-MailID: 20200128133412eucas1p2c79626824fcadc63c133548cd2e7d8cf
 X-Msg-Generator: CA
 Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20200128133411eucas1p1671c280eb6f5d2ca2d10743eea6c96e5
+X-RootMTR: 20200128133412eucas1p2c79626824fcadc63c133548cd2e7d8cf
 X-EPHeader: CA
 CMS-TYPE: 201P
-X-CMS-RootMailID: 20200128133411eucas1p1671c280eb6f5d2ca2d10743eea6c96e5
+X-CMS-RootMailID: 20200128133412eucas1p2c79626824fcadc63c133548cd2e7d8cf
 References: <20200128133343.29905-1-b.zolnierkie@samsung.com>
-        <CGME20200128133411eucas1p1671c280eb6f5d2ca2d10743eea6c96e5@eucas1p1.samsung.com>
+        <CGME20200128133412eucas1p2c79626824fcadc63c133548cd2e7d8cf@eucas1p2.samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-There is no reason to expose SATA_PMP config option when no SATA
-host drivers are enabled. To fix it add SATA_HOST config option,
-make all SATA host drivers select it and finally make SATA_PMP
-config options depend on it.
+Use core helper instead of open-coding it.
 
-This also serves as a preparation for the future changes which
-optimize libata core code size on PATA only setups.
-
-Cc: "James E.J. Bottomley" <jejb@linux.ibm.com>
-Cc: "Martin K. Petersen" <martin.petersen@oracle.com>
+Cc: Mikael Pettersson <mikpelinux@gmail.com>
 Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 ---
- drivers/ata/Kconfig         | 40 +++++++++++++++++++++++++++++++++++++
- drivers/scsi/Kconfig        |  1 +
- drivers/scsi/libsas/Kconfig |  1 +
- 3 files changed, 42 insertions(+)
+ drivers/ata/sata_promise.c | 8 +-------
+ 1 file changed, 1 insertion(+), 7 deletions(-)
 
-diff --git a/drivers/ata/Kconfig b/drivers/ata/Kconfig
-index a6beb2c5a692..ad7760656f71 100644
---- a/drivers/ata/Kconfig
-+++ b/drivers/ata/Kconfig
-@@ -34,6 +34,9 @@ if ATA
- config ATA_NONSTANDARD
-        bool
+diff --git a/drivers/ata/sata_promise.c b/drivers/ata/sata_promise.c
+index c451d7d1c817..8729f78cef5f 100644
+--- a/drivers/ata/sata_promise.c
++++ b/drivers/ata/sata_promise.c
+@@ -157,7 +157,6 @@ static int pdc_sata_hardreset(struct ata_link *link, unsigned int *class,
+ static void pdc_error_handler(struct ata_port *ap);
+ static void pdc_post_internal_cmd(struct ata_queued_cmd *qc);
+ static int pdc_pata_cable_detect(struct ata_port *ap);
+-static int pdc_sata_cable_detect(struct ata_port *ap);
  
-+config SATA_HOST
-+	bool
-+
- config ATA_VERBOSE_ERROR
- 	bool "Verbose ATA error reporting"
- 	default y
-@@ -73,6 +76,7 @@ config SATA_ZPODD
+ static struct scsi_host_template pdc_ata_sht = {
+ 	ATA_BASE_SHT(DRV_NAME),
+@@ -183,7 +182,7 @@ static const struct ata_port_operations pdc_common_ops = {
  
- config SATA_PMP
- 	bool "SATA Port Multiplier support"
-+	depends on SATA_HOST
- 	default y
- 	help
- 	  This option adds support for SATA Port Multipliers
-@@ -85,6 +89,7 @@ comment "Controllers with non-SFF native interface"
- config SATA_AHCI
- 	tristate "AHCI SATA support"
- 	depends on PCI
-+	select SATA_HOST
- 	help
- 	  This option enables support for AHCI Serial ATA.
+ static struct ata_port_operations pdc_sata_ops = {
+ 	.inherits		= &pdc_common_ops,
+-	.cable_detect		= pdc_sata_cable_detect,
++	.cable_detect		= ata_cable_sata,
+ 	.freeze			= pdc_sata_freeze,
+ 	.thaw			= pdc_sata_thaw,
+ 	.scr_read		= pdc_sata_scr_read,
+@@ -459,11 +458,6 @@ static int pdc_pata_cable_detect(struct ata_port *ap)
+ 	return ATA_CBL_PATA80;
+ }
  
-@@ -111,6 +116,7 @@ config SATA_MOBILE_LPM_POLICY
- 
- config SATA_AHCI_PLATFORM
- 	tristate "Platform AHCI SATA support"
-+	select SATA_HOST
- 	help
- 	  This option enables support for Platform AHCI Serial ATA
- 	  controllers.
-@@ -121,6 +127,7 @@ config AHCI_BRCM
- 	tristate "Broadcom AHCI SATA support"
- 	depends on ARCH_BRCMSTB || BMIPS_GENERIC || ARCH_BCM_NSP || \
- 		   ARCH_BCM_63XX
-+	select SATA_HOST
- 	help
- 	  This option enables support for the AHCI SATA3 controller found on
- 	  Broadcom SoC's.
-@@ -130,6 +137,7 @@ config AHCI_BRCM
- config AHCI_DA850
- 	tristate "DaVinci DA850 AHCI SATA support"
- 	depends on ARCH_DAVINCI_DA850
-+	select SATA_HOST
- 	help
- 	  This option enables support for the DaVinci DA850 SoC's
- 	  onboard AHCI SATA.
-@@ -139,6 +147,7 @@ config AHCI_DA850
- config AHCI_DM816
- 	tristate "DaVinci DM816 AHCI SATA support"
- 	depends on ARCH_OMAP2PLUS
-+	select SATA_HOST
- 	help
- 	  This option enables support for the DaVinci DM816 SoC's
- 	  onboard AHCI SATA controller.
-@@ -148,6 +157,7 @@ config AHCI_DM816
- config AHCI_ST
- 	tristate "ST AHCI SATA support"
- 	depends on ARCH_STI
-+	select SATA_HOST
- 	help
- 	  This option enables support for ST AHCI SATA controller.
- 
-@@ -157,6 +167,7 @@ config AHCI_IMX
- 	tristate "Freescale i.MX AHCI SATA support"
- 	depends on MFD_SYSCON && (ARCH_MXC || COMPILE_TEST)
- 	depends on (HWMON && (THERMAL || !THERMAL_OF)) || !HWMON
-+	select SATA_HOST
- 	help
- 	  This option enables support for the Freescale i.MX SoC's
- 	  onboard AHCI SATA.
-@@ -166,6 +177,7 @@ config AHCI_IMX
- config AHCI_CEVA
- 	tristate "CEVA AHCI SATA support"
- 	depends on OF
-+	select SATA_HOST
- 	help
- 	  This option enables support for the CEVA AHCI SATA.
- 	  It can be found on the Xilinx Zynq UltraScale+ MPSoC.
-@@ -176,6 +188,7 @@ config AHCI_MTK
- 	tristate "MediaTek AHCI SATA support"
- 	depends on ARCH_MEDIATEK
- 	select MFD_SYSCON
-+	select SATA_HOST
- 	help
- 	  This option enables support for the MediaTek SoC's
- 	  onboard AHCI SATA controller.
-@@ -185,6 +198,7 @@ config AHCI_MTK
- config AHCI_MVEBU
- 	tristate "Marvell EBU AHCI SATA support"
- 	depends on ARCH_MVEBU
-+	select SATA_HOST
- 	help
- 	  This option enables support for the Marvebu EBU SoC's
- 	  onboard AHCI SATA.
-@@ -203,6 +217,7 @@ config AHCI_OCTEON
- config AHCI_SUNXI
- 	tristate "Allwinner sunxi AHCI SATA support"
- 	depends on ARCH_SUNXI
-+	select SATA_HOST
- 	help
- 	  This option enables support for the Allwinner sunxi SoC's
- 	  onboard AHCI SATA.
-@@ -212,6 +227,7 @@ config AHCI_SUNXI
- config AHCI_TEGRA
- 	tristate "NVIDIA Tegra AHCI SATA support"
- 	depends on ARCH_TEGRA
-+	select SATA_HOST
- 	help
- 	  This option enables support for the NVIDIA Tegra SoC's
- 	  onboard AHCI SATA.
-@@ -221,12 +237,14 @@ config AHCI_TEGRA
- config AHCI_XGENE
- 	tristate "APM X-Gene 6.0Gbps AHCI SATA host controller support"
- 	depends on PHY_XGENE
-+	select SATA_HOST
- 	help
- 	 This option enables support for APM X-Gene SoC SATA host controller.
- 
- config AHCI_QORIQ
- 	tristate "Freescale QorIQ AHCI SATA support"
- 	depends on OF
-+	select SATA_HOST
- 	help
- 	  This option enables support for the Freescale QorIQ AHCI SoC's
- 	  onboard AHCI SATA.
-@@ -236,6 +254,7 @@ config AHCI_QORIQ
- config SATA_FSL
- 	tristate "Freescale 3.0Gbps SATA support"
- 	depends on FSL_SOC
-+	select SATA_HOST
- 	help
- 	  This option enables support for Freescale 3.0Gbps SATA controller.
- 	  It can be found on MPC837x and MPC8315.
-@@ -245,6 +264,7 @@ config SATA_FSL
- config SATA_GEMINI
- 	tristate "Gemini SATA bridge support"
- 	depends on ARCH_GEMINI || COMPILE_TEST
-+	select SATA_HOST
- 	default ARCH_GEMINI
- 	help
- 	  This enabled support for the FTIDE010 to SATA bridge
-@@ -255,6 +275,7 @@ config SATA_GEMINI
- config SATA_AHCI_SEATTLE
- 	tristate "AMD Seattle 6.0Gbps AHCI SATA host controller support"
- 	depends on ARCH_SEATTLE
-+	select SATA_HOST
- 	help
- 	 This option enables support for AMD Seattle SATA host controller.
- 
-@@ -263,12 +284,14 @@ config SATA_AHCI_SEATTLE
- config SATA_INIC162X
- 	tristate "Initio 162x SATA support (Very Experimental)"
- 	depends on PCI
-+	select SATA_HOST
- 	help
- 	  This option enables support for Initio 162x Serial ATA.
- 
- config SATA_ACARD_AHCI
- 	tristate "ACard AHCI variant (ATP 8620)"
- 	depends on PCI
-+	select SATA_HOST
- 	help
- 	  This option enables support for Acard.
- 
-@@ -277,6 +300,7 @@ config SATA_ACARD_AHCI
- config SATA_SIL24
- 	tristate "Silicon Image 3124/3132 SATA support"
- 	depends on PCI
-+	select SATA_HOST
- 	help
- 	  This option enables support for Silicon Image 3124/3132 Serial ATA.
- 
-@@ -326,6 +350,7 @@ config PATA_OCTEON_CF
- config SATA_QSTOR
- 	tristate "Pacific Digital SATA QStor support"
- 	depends on PCI
-+	select SATA_HOST
- 	help
- 	  This option enables support for Pacific Digital Serial ATA QStor.
- 
-@@ -334,6 +359,7 @@ config SATA_QSTOR
- config SATA_SX4
- 	tristate "Promise SATA SX4 support (Experimental)"
- 	depends on PCI
-+	select SATA_HOST
- 	help
- 	  This option enables support for Promise Serial ATA SX4.
- 
-@@ -357,6 +383,7 @@ comment "SATA SFF controllers with BMDMA"
- config ATA_PIIX
- 	tristate "Intel ESB, ICH, PIIX3, PIIX4 PATA/SATA support"
- 	depends on PCI
-+	select SATA_HOST
- 	help
- 	  This option enables support for ICH5/6/7/8 Serial ATA
- 	  and support for PATA on the Intel ESB/ICH/PIIX3/PIIX4 series
-@@ -368,6 +395,7 @@ config SATA_DWC
- 	tristate "DesignWare Cores SATA support"
- 	depends on DMADEVICES
- 	select GENERIC_PHY
-+	select SATA_HOST
- 	help
- 	  This option enables support for the on-chip SATA controller of the
- 	  AppliedMicro processor 460EX.
-@@ -398,6 +426,7 @@ config SATA_DWC_VDEBUG
- config SATA_HIGHBANK
- 	tristate "Calxeda Highbank SATA support"
- 	depends on ARCH_HIGHBANK || COMPILE_TEST
-+	select SATA_HOST
- 	help
- 	  This option enables support for the Calxeda Highbank SoC's
- 	  onboard SATA.
-@@ -409,6 +438,7 @@ config SATA_MV
- 	depends on PCI || ARCH_DOVE || ARCH_MV78XX0 || \
- 		   ARCH_MVEBU || ARCH_ORION5X || COMPILE_TEST
- 	select GENERIC_PHY
-+	select SATA_HOST
- 	help
- 	  This option enables support for the Marvell Serial ATA family.
- 	  Currently supports 88SX[56]0[48][01] PCI(-X) chips,
-@@ -419,6 +449,7 @@ config SATA_MV
- config SATA_NV
- 	tristate "NVIDIA SATA support"
- 	depends on PCI
-+	select SATA_HOST
- 	help
- 	  This option enables support for NVIDIA Serial ATA.
- 
-@@ -427,6 +458,7 @@ config SATA_NV
- config SATA_PROMISE
- 	tristate "Promise SATA TX2/TX4 support"
- 	depends on PCI
-+	select SATA_HOST
- 	help
- 	  This option enables support for Promise Serial ATA TX2/TX4.
- 
-@@ -435,6 +467,7 @@ config SATA_PROMISE
- config SATA_RCAR
- 	tristate "Renesas R-Car SATA support"
- 	depends on ARCH_RENESAS || COMPILE_TEST
-+	select SATA_HOST
- 	help
- 	  This option enables support for Renesas R-Car Serial ATA.
- 
-@@ -443,6 +476,7 @@ config SATA_RCAR
- config SATA_SIL
- 	tristate "Silicon Image SATA support"
- 	depends on PCI
-+	select SATA_HOST
- 	help
- 	  This option enables support for Silicon Image Serial ATA.
- 
-@@ -452,6 +486,7 @@ config SATA_SIS
- 	tristate "SiS 964/965/966/180 SATA support"
- 	depends on PCI
- 	select PATA_SIS
-+	select SATA_HOST
- 	help
- 	  This option enables support for SiS Serial ATA on
- 	  SiS 964/965/966/180 and Parallel ATA on SiS 180.
-@@ -462,6 +497,7 @@ config SATA_SIS
- config SATA_SVW
- 	tristate "ServerWorks Frodo / Apple K2 SATA support"
- 	depends on PCI
-+	select SATA_HOST
- 	help
- 	  This option enables support for Broadcom/Serverworks/Apple K2
- 	  SATA support.
-@@ -471,6 +507,7 @@ config SATA_SVW
- config SATA_ULI
- 	tristate "ULi Electronics SATA support"
- 	depends on PCI
-+	select SATA_HOST
- 	help
- 	  This option enables support for ULi Electronics SATA.
- 
-@@ -479,6 +516,7 @@ config SATA_ULI
- config SATA_VIA
- 	tristate "VIA SATA support"
- 	depends on PCI
-+	select SATA_HOST
- 	help
- 	  This option enables support for VIA Serial ATA.
- 
-@@ -487,6 +525,7 @@ config SATA_VIA
- config SATA_VITESSE
- 	tristate "VITESSE VSC-7174 / INTEL 31244 SATA support"
- 	depends on PCI
-+	select SATA_HOST
- 	help
- 	  This option enables support for Vitesse VSC7174 and Intel 31244 Serial ATA.
- 
-@@ -1113,6 +1152,7 @@ config PATA_ACPI
- config ATA_GENERIC
- 	tristate "Generic ATA support"
- 	depends on PCI && ATA_BMDMA
-+	select SATA_HOST
- 	help
- 	  This option enables support for generic BIOS configured
- 	  ATA controllers via the new ATA layer
-diff --git a/drivers/scsi/Kconfig b/drivers/scsi/Kconfig
-index a7881f8eb05e..1b6eaf8da5fa 100644
---- a/drivers/scsi/Kconfig
-+++ b/drivers/scsi/Kconfig
-@@ -989,6 +989,7 @@ config SCSI_SYM53C8XX_MMIO
- config SCSI_IPR
- 	tristate "IBM Power Linux RAID adapter support"
- 	depends on PCI && SCSI && ATA
-+	select SATA_HOST
- 	select FW_LOADER
- 	select IRQ_POLL
- 	select SGL_ALLOC
-diff --git a/drivers/scsi/libsas/Kconfig b/drivers/scsi/libsas/Kconfig
-index 5c6a5eff2f8e..052ee3a26f6e 100644
---- a/drivers/scsi/libsas/Kconfig
-+++ b/drivers/scsi/libsas/Kconfig
-@@ -19,6 +19,7 @@ config SCSI_SAS_ATA
- 	bool "ATA support for libsas (requires libata)"
- 	depends on SCSI_SAS_LIBSAS
- 	depends on ATA = y || ATA = SCSI_SAS_LIBSAS
-+	select SATA_HOST
- 	help
- 		Builds in ATA support into libsas.  Will necessitate
- 		the loading of libata along with libsas.
+-static int pdc_sata_cable_detect(struct ata_port *ap)
+-{
+-	return ATA_CBL_SATA;
+-}
+-
+ static int pdc_sata_scr_read(struct ata_link *link,
+ 			     unsigned int sc_reg, u32 *val)
+ {
 -- 
 2.24.1
 
