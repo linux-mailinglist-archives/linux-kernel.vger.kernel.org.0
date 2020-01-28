@@ -2,37 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9306814B961
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Jan 2020 15:33:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CBB6914B933
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Jan 2020 15:33:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727955AbgA1ObH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 28 Jan 2020 09:31:07 -0500
-Received: from mail.kernel.org ([198.145.29.99]:56324 "EHLO mail.kernel.org"
+        id S1730486AbgA1O2m (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 28 Jan 2020 09:28:42 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56444 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387481AbgA1O2V (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 Jan 2020 09:28:21 -0500
+        id S1732859AbgA1O20 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 28 Jan 2020 09:28:26 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7073620716;
-        Tue, 28 Jan 2020 14:28:20 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 506F220716;
+        Tue, 28 Jan 2020 14:28:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1580221700;
-        bh=B2fvCv8i+LxBDIg8WI21HrzwIXyf7tintpgAoAddjm8=;
+        s=default; t=1580221705;
+        bh=ygjneiEoBbzlYEknfO+oMFQwtwIwd3+S8CIjfv4BJto=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=SN3xr2w81LToGiUjQUsEaiRG8NL3f/QecyYeYRwZhLsbdDXz9XmwzHULZc+qhGjon
-         j1XM0v9tvibi+asmthzQXAWmXbYQpMguyitsKf6N7V2EH4ZaNXPF9MijmBvwEMjgVj
-         PtfA1rV+W+p4jiY51k6dXU5Trz9zRy5a1xelkWNg=
+        b=c2TWZm/wfSsyDBO02kweT4dbYzP7/Zn1evMeuJGE/br4RNlZEn8wrLonudohgsrLx
+         ss+1jIrMoBZUpWTibzLKmbxXnxpWNadJmIkvBVqPR+3PY147pIiOI/OJtMMN8JFrEd
+         1nYrJ3MhARPpzu8oBVjdF6z4q/VVqR+/wbeB4e0M=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        syzbot+cf23983d697c26c34f60@syzkaller.appspotmail.com,
-        Florian Westphal <fw@strlen.de>,
-        Pablo Neira Ayuso <pablo@netfilter.org>
-Subject: [PATCH 4.19 39/92] netfilter: nft_osf: add missing check for DREG attribute
-Date:   Tue, 28 Jan 2020 15:08:07 +0100
-Message-Id: <20200128135814.094432237@linuxfoundation.org>
+        stable@vger.kernel.org, Rahul Kundu <rahul.kundu@chelsio.com>,
+        Bart Van Assche <bvanassche@acm.org>,
+        Mike Marciniszyn <mike.marciniszyn@intel.com>,
+        Sagi Grimberg <sagi@grimberg.me>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>
+Subject: [PATCH 4.19 41/92] scsi: RDMA/isert: Fix a recently introduced regression related to logout
+Date:   Tue, 28 Jan 2020 15:08:09 +0100
+Message-Id: <20200128135814.331976841@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
 In-Reply-To: <20200128135809.344954797@linuxfoundation.org>
 References: <20200128135809.344954797@linuxfoundation.org>
@@ -45,34 +46,79 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Florian Westphal <fw@strlen.de>
+From: Bart Van Assche <bvanassche@acm.org>
 
-commit 7eaecf7963c1c8f62d62c6a8e7c439b0e7f2d365 upstream.
+commit 04060db41178c7c244f2c7dcd913e7fd331de915 upstream.
 
-syzbot reports just another NULL deref crash because of missing test
-for presence of the attribute.
+iscsit_close_connection() calls isert_wait_conn(). Due to commit
+e9d3009cb936 both functions call target_wait_for_sess_cmds() although that
+last function should be called only once. Fix this by removing the
+target_wait_for_sess_cmds() call from isert_wait_conn() and by only calling
+isert_wait_conn() after target_wait_for_sess_cmds().
 
-Reported-by: syzbot+cf23983d697c26c34f60@syzkaller.appspotmail.com
-Fixes:  b96af92d6eaf9fadd ("netfilter: nf_tables: implement Passive OS fingerprint module in nft_osf")
-Signed-off-by: Florian Westphal <fw@strlen.de>
-Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
+Fixes: e9d3009cb936 ("scsi: target: iscsi: Wait for all commands to finish before freeing a session").
+Link: https://lore.kernel.org/r/20200116044737.19507-1-bvanassche@acm.org
+Reported-by: Rahul Kundu <rahul.kundu@chelsio.com>
+Signed-off-by: Bart Van Assche <bvanassche@acm.org>
+Tested-by: Mike Marciniszyn <mike.marciniszyn@intel.com>
+Acked-by: Sagi Grimberg <sagi@grimberg.me>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- net/netfilter/nft_osf.c |    3 +++
- 1 file changed, 3 insertions(+)
+ drivers/infiniband/ulp/isert/ib_isert.c |   12 ------------
+ drivers/target/iscsi/iscsi_target.c     |    6 +++---
+ 2 files changed, 3 insertions(+), 15 deletions(-)
 
---- a/net/netfilter/nft_osf.c
-+++ b/net/netfilter/nft_osf.c
-@@ -47,6 +47,9 @@ static int nft_osf_init(const struct nft
- 	struct nft_osf *priv = nft_expr_priv(expr);
- 	int err;
+--- a/drivers/infiniband/ulp/isert/ib_isert.c
++++ b/drivers/infiniband/ulp/isert/ib_isert.c
+@@ -2584,17 +2584,6 @@ isert_wait4logout(struct isert_conn *ise
+ 	}
+ }
  
-+	if (!tb[NFTA_OSF_DREG])
-+		return -EINVAL;
+-static void
+-isert_wait4cmds(struct iscsi_conn *conn)
+-{
+-	isert_info("iscsi_conn %p\n", conn);
+-
+-	if (conn->sess) {
+-		target_sess_cmd_list_set_waiting(conn->sess->se_sess);
+-		target_wait_for_sess_cmds(conn->sess->se_sess);
+-	}
+-}
+-
+ /**
+  * isert_put_unsol_pending_cmds() - Drop commands waiting for
+  *     unsolicitate dataout
+@@ -2642,7 +2631,6 @@ static void isert_wait_conn(struct iscsi
+ 
+ 	ib_drain_qp(isert_conn->qp);
+ 	isert_put_unsol_pending_cmds(conn);
+-	isert_wait4cmds(conn);
+ 	isert_wait4logout(isert_conn);
+ 
+ 	queue_work(isert_release_wq, &isert_conn->release_work);
+--- a/drivers/target/iscsi/iscsi_target.c
++++ b/drivers/target/iscsi/iscsi_target.c
+@@ -4123,9 +4123,6 @@ int iscsit_close_connection(
+ 	iscsit_stop_nopin_response_timer(conn);
+ 	iscsit_stop_nopin_timer(conn);
+ 
+-	if (conn->conn_transport->iscsit_wait_conn)
+-		conn->conn_transport->iscsit_wait_conn(conn);
+-
+ 	/*
+ 	 * During Connection recovery drop unacknowledged out of order
+ 	 * commands for this connection, and prepare the other commands
+@@ -4211,6 +4208,9 @@ int iscsit_close_connection(
+ 	target_sess_cmd_list_set_waiting(sess->se_sess);
+ 	target_wait_for_sess_cmds(sess->se_sess);
+ 
++	if (conn->conn_transport->iscsit_wait_conn)
++		conn->conn_transport->iscsit_wait_conn(conn);
 +
- 	priv->dreg = nft_parse_register(tb[NFTA_OSF_DREG]);
- 	err = nft_validate_register_store(ctx, priv->dreg, NULL,
- 					  NFT_DATA_VALUE, NFT_OSF_MAXGENRELEN);
+ 	ahash_request_free(conn->conn_tx_hash);
+ 	if (conn->conn_rx_hash) {
+ 		struct crypto_ahash *tfm;
 
 
