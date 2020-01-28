@@ -2,211 +2,113 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5148F14B54A
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Jan 2020 14:44:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id F088C14B555
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Jan 2020 14:47:53 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726320AbgA1Noc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 28 Jan 2020 08:44:32 -0500
-Received: from USAT19PA25.eemsg.mail.mil ([214.24.22.199]:42853 "EHLO
-        USAT19PA25.eemsg.mail.mil" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725997AbgA1Noc (ORCPT
+        id S1726323AbgA1Nrw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 28 Jan 2020 08:47:52 -0500
+Received: from out01.mta.xmission.com ([166.70.13.231]:54264 "EHLO
+        out01.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725852AbgA1Nrv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 Jan 2020 08:44:32 -0500
-X-EEMSG-check-017: 74207058|USAT19PA25_ESA_OUT06.csd.disa.mil
-X-IronPort-AV: E=Sophos;i="5.70,374,1574121600"; 
-   d="scan'208";a="74207058"
-Received: from emsm-gh1-uea11.ncsc.mil ([214.29.60.3])
-  by USAT19PA25.eemsg.mail.mil with ESMTP/TLS/DHE-RSA-AES256-SHA256; 28 Jan 2020 13:44:28 +0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=tycho.nsa.gov; i=@tycho.nsa.gov; q=dns/txt;
-  s=tycho.nsa.gov; t=1580219068; x=1611755068;
-  h=subject:to:cc:references:from:message-id:date:
-   mime-version:in-reply-to:content-transfer-encoding;
-  bh=vB6IilCRAF6GntAWS1GUu2QfsgfVGmXIapM/6fK3Y/E=;
-  b=HAhasMi1XQazsU9OgNyNcKvLq9G5IJmsFcRBhP+rYjV9dJK+zvx1kmtq
-   ABXBshKQ5P+bollNV51X9tI93y/rNGSEBWxupmjMB7ZB3jAA7vF/qjtkS
-   XhaFKtvrfsLkrPaaNc0CtFdEDwze4qN0eHvziWJck6BWEsV8OmvVCcKId
-   enXn8ydHZMWBaJUi6Y2MTBNCiyCADAGdAWIm4i+24UFJ5aPqldjgtnJkh
-   uzGjlmWld1lVBz41te/SZk6Q7TsxW86JzsAXeU9wS0rJBt/2mOCfQNGBB
-   lXTWdvE4QNsyJ5UUHWh0vTIee4nZ9q/FX/HIw2Qpfzwgd3uq/MqnhMk+5
-   A==;
-X-IronPort-AV: E=Sophos;i="5.70,374,1574121600"; 
-   d="scan'208";a="38329237"
-IronPort-PHdr: =?us-ascii?q?9a23=3AlA9ofRSYkO8IsljnImRmOfNaQNpsv+yvbD5Q0Y?=
- =?us-ascii?q?Iujvd0So/mwa67YhWBt8tkgFKBZ4jH8fUM07OQ7/m8Hzdcqsvd+DBaKdoQDk?=
- =?us-ascii?q?RD0Z1X1yUbQ+e9QXXhK/DrayFoVO9jb3RCu0+BDE5OBczlbEfTqHDhpRQbGx?=
- =?us-ascii?q?H4KBYnbr+tQt2agMu4zf299IPOaAtUmjW9falyLBKrpgnNq8Uam4RvJrs+xx?=
- =?us-ascii?q?fTrHZFdOtayGNnKFmOmxrw+tq88IRs/ihNtf8t7dJMXbn/c68lUbFWETMqPn?=
- =?us-ascii?q?wv6sb2rxfDVwyP5nUdUmUSjBVFBhXO4Q/5UJnsrCb0r/Jx1yaGM8L4S7A0Qi?=
- =?us-ascii?q?mi4LxwSBD0kicHNiU2/3/Rh8dtka9UuhOhpxh4w47JfIGYMed1c63Bcd8GQ2?=
- =?us-ascii?q?dKQ91cXDJdDIyic4QPDvIBPedGoIn7u1sOtga1CQ21CO/y1jNEmnr60Ks93O?=
- =?us-ascii?q?o8DAHGxxQgEMwSv3TIotv1M6ISXvq0zKnO0D7Pa/xb1DP45IXOfB8hu/WMVq?=
- =?us-ascii?q?9uf8TXx0ckCgfJgkyepIHhOj+Y0PkGvWqG4Op6Te+hlnApqw9xrDasyMkjhI?=
- =?us-ascii?q?bGiYAJxV7L7ih53IQ4KMekREJnb9OpEp1dvDyaOYtsRcMiRnlltjsmyrIYoZ?=
- =?us-ascii?q?67fDYFyJI6zBDCbvyIaYyI4hb9W+eRPDx1g2lld6+khxup7UihyvHzVsmz0F?=
- =?us-ascii?q?pQqCpFicPDumoC1xzU9MiKU/1w9Vqv1zaI0gDc8OBEIUYsmKXBM54h2qUwlo?=
- =?us-ascii?q?IUsUTfBCP5hEL2jKqQe045+eao8/zqbqjpq5KTLYN5ihzyPr4wlsGwH+g0KB?=
- =?us-ascii?q?UCUm6G8uqmzrLj51f2QLBSg/0zlanWrY7VKNwApq68Hw9VyoEj6wujDzu+0N?=
- =?us-ascii?q?QXg30HLFVddRKblYfpIVDOIO3jDfulglSsljlrx/fdPrL/HprBNGTDkbf9cr?=
- =?us-ascii?q?Z97E5Q0gwzwsxE551IEL0BJfPzWkvpuNzZCB82LRC0zv76BNhy2Y4SQ2KCDr?=
- =?us-ascii?q?KDPK/MvlKE+PgjL/SUaI8Qojn9Kvwl5/D0jX8+nF8QZbKp0oYMaH2jAvRnI1?=
- =?us-ascii?q?mWYXrrgtsbF2cKpRAxQPbliF2FTz5ff2yyUL4k5jEnFIKmCp/ORpi3j7yc2C?=
- =?us-ascii?q?e2BYVWaXpbClCICHvocoKEW/AWaC2MOMNujjsEVb25QY87yR6urBP6y6ZgLu?=
- =?us-ascii?q?fM+C0Xq5zj1NZr5+DImhEy8jt0D8uZ026TVW17gmQIRzou1qBlvUN90kuD0b?=
- =?us-ascii?q?R/g/FAEtxT4vRJUhw8NZHG0+N1Fcv/WhjfcdiUSFapWMmmDSstQdI2xt8Ee1?=
- =?us-ascii?q?x9FMm6jhDfwyqqBKcYmKKTBJMu6KLc3mPxKt1ly3nczqkhjkImQtNLNWK8mq?=
- =?us-ascii?q?Fw6RLfB4nTk0WWj6yqb7gT3DbR9GefymqDpENYXxR2UaXDXXASfUTWrdP+5k?=
- =?us-ascii?q?PNS7+hF64rPRdGyc6HMqFKcMHmjU1aRPf/P9TTe2GxlHmuChaT2ryMa43qe2?=
- =?us-ascii?q?YG0SrBCEgEiQcT/XOHNQgjAyetuWXeDCZhFVj3eUPj7fF+qG+nTk8z1wyKa0?=
- =?us-ascii?q?xh17yo+h8anPCcSO0c3qgCuCg/rzV5B0i9393IBNqavQZhf7tTYck74FhZ0W?=
- =?us-ascii?q?LVrQt9PoavL6p6nF4Rbxx3v1/y1xVwEohAidIlrG4uzAp3Na2Y00hMdzCG0p?=
- =?us-ascii?q?DqPL3YNG3y8Aqoa67M1VHUyMyW9bsX6PQkt1XjuxmkFlE8/HVj0tlV1Wac55?=
- =?us-ascii?q?rRAQoMXpL+TFw3+wJ5p77EeCk94Z3b1Xl2PamzqD/C1MojBPE5xRa4Y9dfLK?=
- =?us-ascii?q?SEGRfpE8waBsmuK/Ylm1ytbh0aJuBe7bU7P96pd/udw6OrM+FgnDWpjWRD/o?=
- =?us-ascii?q?993ViM9y1hSu7QxJYJ2e2X3gyCVz3klleurtj3mZxYZTEVBme/0ijlBY9Kaa?=
- =?us-ascii?q?11YYYHDmajL9CrydplnZHgW2JU+VCtClwYxsOlZRifY0Lg0gBRyEgaomCrlC?=
- =?us-ascii?q?qjwjxvkzAor6mf0zbKw+TmahUHIHRHS3N6jVf0Ooi0l9caXFStbwczlRul4V?=
- =?us-ascii?q?z2yLRcpKR6fCHvRhJwdjXyZ0RlVbG9/u6aatNLwIshrCESVeO7e13cQbn49V?=
- =?us-ascii?q?9S0S7tEXV2yzc8eDWn/J7+mlgyj2eaN3B6p3fxY8x8xR7DotfbQK1/xD0DER?=
- =?us-ascii?q?JkhCHXC170BNyg+dGZht+Xqeylf36wXZ1UNy/wxMWPszXttj4iOgG2g/3mwo?=
- =?us-ascii?q?6vKgM9yyKukogyWA=3D=3D?=
-X-IPAS-Result: =?us-ascii?q?A2D6AwAKOTBe/wHyM5BlEwEBCAEBAQkBEQUFAYF7gX2BG?=
- =?us-ascii?q?FQhEiqEFIkDhnoDBoE3iW+KJYckCQEBAQEBAQEBASsMAQGEQAKCSjgTAhABA?=
- =?us-ascii?q?QEEAQEBAQEFAwEBbIU3DII7KYJ7AQUjBBE0CgMQCxgCAiYCAlcGAQwGAgEBg?=
- =?us-ascii?q?mM/AYJWJQ+tD38zhUqDPoE4BoEOKow4eYEHgREnD4JdPoJkBBqBR4MQgl4Ej?=
- =?us-ascii?q?VyJWEaXXoJDgkyEdoVEiSsGG4JIiAoFkCUtjjOIZIMOkSwigVgrCAIYCCEPg?=
- =?us-ascii?q?ydQGA2SEIpxIwMwAo4uAQE?=
-Received: from tarius.tycho.ncsc.mil (HELO tarius.infosec.tycho.ncsc.mil) ([144.51.242.1])
-  by emsm-gh1-uea11.NCSC.MIL with ESMTP; 28 Jan 2020 13:44:22 +0000
-Received: from moss-pluto.infosec.tycho.ncsc.mil (moss-pluto [192.168.25.131])
-        by tarius.infosec.tycho.ncsc.mil (8.14.7/8.14.4) with ESMTP id 00SDhZXR092356;
-        Tue, 28 Jan 2020 08:43:36 -0500
-Subject: Re: possible deadlock in sidtab_sid2str_put
-To:     Paul Moore <paul@paul-moore.com>, jeffv@google.com,
-        omosnace@redhat.com
-Cc:     Eric Paris <eparis@parisplace.org>, jannh@google.com,
-        keescook@chromium.org, linux-kernel@vger.kernel.org,
-        paulmck@kernel.org, selinux@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com,
-        syzbot <syzbot+61cba5033e2072d61806@syzkaller.appspotmail.com>
-References: <000000000000143de7059d2ba3e5@google.com>
- <000000000000fdbd71059d32a906@google.com>
- <CAHC9VhS_Bfywhp+6H03bY7LrQsBz+io672pSS0DpiZKFiz4L6g@mail.gmail.com>
-From:   Stephen Smalley <sds@tycho.nsa.gov>
-Message-ID: <850873b8-8a30-58e5-ad3c-86fb35296130@tycho.nsa.gov>
-Date:   Tue, 28 Jan 2020 08:45:14 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.1
+        Tue, 28 Jan 2020 08:47:51 -0500
+Received: from in01.mta.xmission.com ([166.70.13.51])
+        by out01.mta.xmission.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.90_1)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1iwRDY-00020G-C5; Tue, 28 Jan 2020 06:47:48 -0700
+Received: from ip68-227-160-95.om.om.cox.net ([68.227.160.95] helo=x220.xmission.com)
+        by in01.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.87)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1iwRDX-0006bg-Ma; Tue, 28 Jan 2020 06:47:48 -0700
+From:   ebiederm@xmission.com (Eric W. Biederman)
+To:     Christian Brauner <christian.brauner@ubuntu.com>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        Christian Brauner <christian@brauner.io>,
+        Hridya Valsaraju <hridya@google.com>,
+        Arve =?utf-8?B?SGrDuG5uZXbDpWc=?= <arve@android.com>,
+        Todd Kjos <tkjos@android.com>,
+        Martijn Coenen <maco@android.com>,
+        Joel Fernandes <joel@joelfernandes.org>,
+        "open list\:ANDROID DRIVERS" <devel@driverdev.osuosl.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        syzkaller <syzkaller@googlegroups.com>
+References: <CACT4Y+bg1UKXzZF4a9y+5CfNYRwBc5Gx+GjPS0Dhb1n-Qf50+g@mail.gmail.com>
+        <20200126085535.GA3533171@kroah.com>
+        <20200126093506.oa2ee5kbptur4zhz@wittgenstein>
+Date:   Tue, 28 Jan 2020 07:46:08 -0600
+In-Reply-To: <20200126093506.oa2ee5kbptur4zhz@wittgenstein> (Christian
+        Brauner's message of "Sun, 26 Jan 2020 10:35:07 +0100")
+Message-ID: <87blqn3d9b.fsf@x220.int.ebiederm.org>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
 MIME-Version: 1.0
-In-Reply-To: <CAHC9VhS_Bfywhp+6H03bY7LrQsBz+io672pSS0DpiZKFiz4L6g@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
+X-XM-SPF: eid=1iwRDX-0006bg-Ma;;;mid=<87blqn3d9b.fsf@x220.int.ebiederm.org>;;;hst=in01.mta.xmission.com;;;ip=68.227.160.95;;;frm=ebiederm@xmission.com;;;spf=neutral
+X-XM-AID: U2FsdGVkX19TaqhwtfnOs4J3o+rZtj2FKDMPKZsQpjA=
+X-SA-Exim-Connect-IP: 68.227.160.95
+X-SA-Exim-Mail-From: ebiederm@xmission.com
+X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on sa02.xmission.com
+X-Spam-Level: 
+X-Spam-Status: No, score=-2.8 required=8.0 tests=ALL_TRUSTED,BAYES_00,
+        DCC_CHECK_NEGATIVE,T_TM2_M_HEADER_IN_MSG,XM_Multi_Part_URI
+        autolearn=disabled version=3.4.2
+X-Spam-Virus: No
+X-Spam-Report: * -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
+        * -3.0 BAYES_00 BODY: Bayes spam probability is 0 to 1%
+        *      [score: 0.0019]
+        *  0.0 T_TM2_M_HEADER_IN_MSG BODY: No description available.
+        *  1.2 XM_Multi_Part_URI URI: Long-Multi-Part URIs
+        * -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
+        *      [sa02 1397; Body=1 Fuz1=1 Fuz2=1]
+X-Spam-DCC: XMission; sa02 1397; Body=1 Fuz1=1 Fuz2=1 
+X-Spam-Combo: ;Christian Brauner <christian.brauner@ubuntu.com>
+X-Spam-Relay-Country: 
+X-Spam-Timing: total 232 ms - load_scoreonly_sql: 0.02 (0.0%),
+        signal_user_changed: 2.3 (1.0%), b_tie_ro: 1.68 (0.7%), parse: 0.62
+        (0.3%), extract_message_metadata: 8 (3.3%), get_uri_detail_list: 0.76
+        (0.3%), tests_pri_-1000: 8 (3.5%), tests_pri_-950: 0.89 (0.4%),
+        tests_pri_-900: 0.74 (0.3%), tests_pri_-90: 18 (7.8%), check_bayes: 17
+        (7.4%), b_tokenize: 4.1 (1.8%), b_tok_get_all: 6 (2.5%), b_comp_prob:
+        1.26 (0.5%), b_tok_touch_all: 4.5 (1.9%), b_finish: 0.53 (0.2%),
+        tests_pri_0: 185 (79.7%), check_dkim_signature: 0.34 (0.1%),
+        check_dkim_adsp: 2.1 (0.9%), poll_dns_idle: 0.38 (0.2%), tests_pri_10:
+        1.48 (0.6%), tests_pri_500: 4.8 (2.1%), rewrite_mail: 0.00 (0.0%)
+Subject: Re: binderfs interferes with syzkaller?
+X-Spam-Flag: No
+X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
+X-SA-Exim-Scanned: Yes (on in01.mta.xmission.com)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 1/28/20 8:39 AM, Paul Moore wrote:
-> On Tue, Jan 28, 2020 at 7:50 AM syzbot
-> <syzbot+61cba5033e2072d61806@syzkaller.appspotmail.com> wrote:
->>
->> syzbot has found a reproducer for the following crash on:
->>
->> HEAD commit:    b0be0eff Merge tag 'x86-pti-2020-01-28' of git://git.kerne..
->> git tree:       upstream
->> console output: https://syzkaller.appspot.com/x/log.txt?x=1432aebee00000
->> kernel config:  https://syzkaller.appspot.com/x/.config?x=9784e57c96a92f20
->> dashboard link: https://syzkaller.appspot.com/bug?extid=61cba5033e2072d61806
->> compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
->> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=10088e95e00000
->> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=13fa605ee00000
->>
->> IMPORTANT: if you fix the bug, please add the following tag to the commit:
->> Reported-by: syzbot+61cba5033e2072d61806@syzkaller.appspotmail.com
->>
->> =====================================================
->> WARNING: SOFTIRQ-safe -> SOFTIRQ-unsafe lock order detected
->> 5.5.0-syzkaller #0 Not tainted
->> -----------------------------------------------------
->> syz-executor305/10624 [HC0[0]:SC0[2]:HE1:SE0] is trying to acquire:
->> ffff888098c14098 (&(&s->cache_lock)->rlock){+.+.}, at: spin_lock include/linux/spinlock.h:338 [inline]
->> ffff888098c14098 (&(&s->cache_lock)->rlock){+.+.}, at: sidtab_sid2str_put.part.0+0x36/0x880 security/selinux/ss/sidtab.c:533
->>
->> and this task is already holding:
->> ffffffff89865770 (&(&nf_conntrack_locks[i])->rlock){+.-.}, at: spin_lock include/linux/spinlock.h:338 [inline]
->> ffffffff89865770 (&(&nf_conntrack_locks[i])->rlock){+.-.}, at: nf_conntrack_lock+0x17/0x70 net/netfilter/nf_conntrack_core.c:91
->> which would create a new lock dependency:
->>   (&(&nf_conntrack_locks[i])->rlock){+.-.} -> (&(&s->cache_lock)->rlock){+.+.}
->>
->> but this new dependency connects a SOFTIRQ-irq-safe lock:
->>   (&(&nf_conntrack_locks[i])->rlock){+.-.}
->>
->> ... which became SOFTIRQ-irq-safe at:
->>    lock_acquire+0x190/0x410 kernel/locking/lockdep.c:4484
->>    __raw_spin_lock include/linux/spinlock_api_smp.h:142 [inline]
->>    _raw_spin_lock+0x2f/0x40 kernel/locking/spinlock.c:151
->>    spin_lock include/linux/spinlock.h:338 [inline]
->>    nf_conntrack_lock+0x17/0x70 net/netfilter/nf_conntrack_core.c:91
-> 
-> ...
-> 
->> to a SOFTIRQ-irq-unsafe lock:
->>   (&(&s->cache_lock)->rlock){+.+.}
->>
->> ... which became SOFTIRQ-irq-unsafe at:
->> ...
->>    lock_acquire+0x190/0x410 kernel/locking/lockdep.c:4484
->>    __raw_spin_lock include/linux/spinlock_api_smp.h:142 [inline]
->>    _raw_spin_lock+0x2f/0x40 kernel/locking/spinlock.c:151
->>    spin_lock include/linux/spinlock.h:338 [inline]
->>    sidtab_sid2str_put.part.0+0x36/0x880 security/selinux/ss/sidtab.c:533
->>    sidtab_sid2str_put+0xa0/0xc0 security/selinux/ss/sidtab.c:566
->>    sidtab_entry_to_string security/selinux/ss/services.c:1279 [inline]
->>    sidtab_entry_to_string+0xf2/0x110 security/selinux/ss/services.c:1266
->>    security_sid_to_context_core+0x2c6/0x3c0 security/selinux/ss/services.c:1361
->>    security_sid_to_context+0x34/0x40 security/selinux/ss/services.c:1384
->>    avc_audit_post_callback+0x102/0x790 security/selinux/avc.c:709
->>    common_lsm_audit+0x5ac/0x1e00 security/lsm_audit.c:466
->>    slow_avc_audit+0x16a/0x1f0 security/selinux/avc.c:782
->>    avc_audit security/selinux/include/avc.h:140 [inline]
->>    avc_has_perm+0x543/0x610 security/selinux/avc.c:1185
->>    inode_has_perm+0x1a8/0x230 security/selinux/hooks.c:1631
->>    selinux_mmap_file+0x10a/0x1d0 security/selinux/hooks.c:3701
->>    security_mmap_file+0xa4/0x1e0 security/security.c:1482
->>    vm_mmap_pgoff+0xf0/0x230 mm/util.c:502
-> 
-> ...
-> 
->> other info that might help us debug this:
->>
->>   Possible interrupt unsafe locking scenario:
->>
->>         CPU0                    CPU1
->>         ----                    ----
->>    lock(&(&s->cache_lock)->rlock);
->>                                 local_irq_disable();
->>                                 lock(&(&nf_conntrack_locks[i])->rlock);
->>                                 lock(&(&s->cache_lock)->rlock);
->>    <Interrupt>
->>      lock(&(&nf_conntrack_locks[i])->rlock);
->>
->>   *** DEADLOCK ***
->>
->> 4 locks held by syz-executor305/10624:
->>   #0: ffffffff8c1acc68 (&table[i].mutex){+.+.}, at: nfnl_lock net/netfilter/nfnetlink.c:62 [inline]
->>   #0: ffffffff8c1acc68 (&table[i].mutex){+.+.}, at: nfnetlink_rcv_msg+0x9ee/0xfb0 net/netfilter/nfnetlink.c:224
->>   #1: ffff8880836415d8 (nlk_cb_mutex-NETFILTER){+.+.}, at: netlink_dump+0xe7/0xfb0 net/netlink/af_netlink.c:2199
->>   #2: ffffffff89865770 (&(&nf_conntrack_locks[i])->rlock){+.-.}, at: spin_lock include/linux/spinlock.h:338 [inline]
->>   #2: ffffffff89865770 (&(&nf_conntrack_locks[i])->rlock){+.-.}, at: nf_conntrack_lock+0x17/0x70 net/netfilter/nf_conntrack_core.c:91
->>   #3: ffffffff8b7df008 (&selinux_ss.policy_rwlock){.+.?}, at: security_sid_to_context_core+0x1ca/0x3c0 security/selinux/ss/services.c:1344
-> 
-> I think this is going to be tricky to fix due to the differing
-> contexts from which sidtab_sid2str_put() may be called.  We already
-> have a check for !in_task() in sidtab_sid2str_put(), do we want to add
-> a check for !in_serving_softirq() too?
+Christian Brauner <christian.brauner@ubuntu.com> writes:
 
-No, we should just use spin_lock_irqsave/unlock_irqrestore() IMHO, but 
-that then means we need to re-evaluate the performance gain of this change.
+> On Sun, Jan 26, 2020 at 09:55:35AM +0100, Greg Kroah-Hartman wrote:
+>> On Sat, Jan 25, 2020 at 06:49:49PM +0100, Dmitry Vyukov wrote:
+>> > Hi binder maintainers,
+>> > 
+>> > It seems that something has happened and now syzbot has 0 coverage in
+>> > drivers/android/binder.c:
+>> > https://storage.googleapis.com/syzkaller/cover/ci-upstream-kasan-gce-root.html
+>> > It covered at least something there before as it found some bugs in binder code.
+>> > I _suspect_ it may be related to introduction binderfs, but it's
+>> > purely based on the fact that binderfs changed lots of things there.
+>> > And I see it claims to be backward compatible.
+>> 
+>> It is backwards compatible if you mount binderfs, right?
+>
+> Yes, it is backwards compatible. The devices that would usually be
+> created in devtmpfs are now created in binderfs. The core
+> binder-codepaths are the same.
 
+Any chance you can add code to the binderfs case to automatically
+create the symlinks to the standard mount location in devtmpfs?
+
+That way existing userspace might not need to care how the kernel is
+configured.
+
+Eric
 
