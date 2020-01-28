@@ -2,145 +2,57 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1D10A14C27D
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Jan 2020 23:00:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 018AD14C28E
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Jan 2020 23:04:46 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726571AbgA1WAw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 28 Jan 2020 17:00:52 -0500
-Received: from mail25.static.mailgun.info ([104.130.122.25]:15103 "EHLO
-        mail25.static.mailgun.info" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726514AbgA1WAr (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 Jan 2020 17:00:47 -0500
-DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
- s=smtp; t=1580248847; h=References: In-Reply-To: Message-Id: Date:
- Subject: Cc: To: From: Sender;
- bh=yghdhlFiZU77aOY7g/N4Y1I7xkAvDvSkr40c3b2zObg=; b=TKQn8HaRqmypMp+deD4iWphGTwkdCjE3dHlT/H5NGaFUuFNaxEAzZzOKGGhKWjSvLNgoglWR
- gQJVH8viykjnRLsLYZzu0llURVnCO1WwOYw8BBjD6Qug3M0GBswAeFI3I1w/4fjdopM0kuNL
- SHg2b2eQ6KQS7lse0Wg7+iMwkbo=
-X-Mailgun-Sending-Ip: 104.130.122.25
-X-Mailgun-Sid: WyI0MWYwYSIsICJsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
-Received: from smtp.codeaurora.org (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171])
- by mxa.mailgun.org with ESMTP id 5e30af0e.7f05fe318ae8-smtp-out-n02;
- Tue, 28 Jan 2020 22:00:46 -0000 (UTC)
-Received: by smtp.codeaurora.org (Postfix, from userid 1001)
-        id E1D3BC433A2; Tue, 28 Jan 2020 22:00:43 +0000 (UTC)
-X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
-        aws-us-west-2-caf-mail-1.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=2.0 tests=ALL_TRUSTED,SPF_NONE,
-        URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
-Received: from jcrouse1-lnx.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
+        id S1726383AbgA1WEm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 28 Jan 2020 17:04:42 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60786 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726211AbgA1WEm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 28 Jan 2020 17:04:42 -0500
+Received: from kernel.org (unknown [104.132.0.74])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        (Authenticated sender: jcrouse)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 14A37C4479C;
-        Tue, 28 Jan 2020 22:00:40 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 14A37C4479C
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=none smtp.mailfrom=jcrouse@codeaurora.org
-From:   Jordan Crouse <jcrouse@codeaurora.org>
-To:     iommu@lists.linux-foundation.org
-Cc:     robin.murphy@arm.com, will@kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-arm-msm@vger.kernel.org, Sean Paul <sean@poorly.run>,
-        Sharat Masetty <smasetty@codeaurora.org>,
-        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-        Rob Clark <robdclark@gmail.com>,
-        David Airlie <airlied@linux.ie>,
-        freedreno@lists.freedesktop.org, Daniel Vetter <daniel@ffwll.ch>
-Subject: [PATCH v5 5/5] drm/msm/a6xx: Support split pagetables
-Date:   Tue, 28 Jan 2020 15:00:19 -0700
-Message-Id: <1580248819-12644-6-git-send-email-jcrouse@codeaurora.org>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1580248819-12644-1-git-send-email-jcrouse@codeaurora.org>
-References: <1580248819-12644-1-git-send-email-jcrouse@codeaurora.org>
+        by mail.kernel.org (Postfix) with ESMTPSA id B5B9C207FD;
+        Tue, 28 Jan 2020 22:04:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1580249081;
+        bh=j/NUJ+MdfToDuN75xJKIJE1vjW8I5zQX5YuatxjDXZU=;
+        h=In-Reply-To:References:From:Subject:To:Cc:Date:From;
+        b=IwrA1qm7xqnE0s03KSqSfbTXcN2YGudcmBfUNBES+roQHqn3SvoPyjHkCeUeAZtGM
+         9r4MwROQs+ty97TJr9BKMAx14VrFEF6WKxsZ7aph3Sb3k8kJQdH4i+d83kxcEvEemO
+         EujjbRpjo6VMDtCIoxdA6yXPRrNRiwOLq3yhpoAk=
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20200102231101.11834-1-michael@walle.cc>
+References: <20200102231101.11834-1-michael@walle.cc>
+From:   Stephen Boyd <sboyd@kernel.org>
+Subject: Re: [PATCH v3 1/3] clk: composite: add _register_composite_pdata() variants
+To:     Michael Walle <michael@walle.cc>, devicetree@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Michael Walle <michael@walle.cc>
+User-Agent: alot/0.8.1
+Date:   Tue, 28 Jan 2020 14:04:40 -0800
+Message-Id: <20200128220441.B5B9C207FD@mail.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Attempt to enable split pagetables if the arm-smmu driver supports it.
-This will move the default address space from the default region to
-the address range assigned to TTBR1. The behavior should be transparent
-to the driver for now but it gets the default buffers out of the way
-when we want to start swapping TTBR0 for context-specific pagetables.
+Quoting Michael Walle (2020-01-02 15:10:59)
+> Add support for the new way of specifying the clock parents. Add the
+> two new functions
+>     clk_hw_register_composite_pdata()
+>     clk_register_composite_pdata()
+> to let the driver provide parent_data instead of the parent_names.
+>=20
+> Signed-off-by: Michael Walle <michael@walle.cc>
+> ---
 
-Signed-off-by: Jordan Crouse <jcrouse@codeaurora.org>
----
+Applied to clk-next
 
- drivers/gpu/drm/msm/adreno/a6xx_gpu.c | 52 ++++++++++++++++++++++++++++++++++-
- 1 file changed, 51 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/gpu/drm/msm/adreno/a6xx_gpu.c b/drivers/gpu/drm/msm/adreno/a6xx_gpu.c
-index a2c5412..9bec603c 100644
---- a/drivers/gpu/drm/msm/adreno/a6xx_gpu.c
-+++ b/drivers/gpu/drm/msm/adreno/a6xx_gpu.c
-@@ -878,6 +878,56 @@ static unsigned long a6xx_gpu_busy(struct msm_gpu *gpu)
- 	return (unsigned long)busy_time;
- }
- 
-+static struct msm_gem_address_space *
-+a6xx_create_address_space(struct msm_gpu *gpu, struct platform_device *pdev)
-+{
-+	struct iommu_domain *iommu = iommu_domain_alloc(&platform_bus_type);
-+	struct msm_gem_address_space *aspace;
-+	struct msm_mmu *mmu;
-+	u64 start, size;
-+	u32 val = 1;
-+	int ret;
-+
-+	if (!iommu)
-+		return ERR_PTR(-ENOMEM);
-+
-+	/*
-+	 * Try to request split pagetables - the request has to be made before
-+	 * the domian is attached
-+	 */
-+	iommu_domain_set_attr(iommu, DOMAIN_ATTR_SPLIT_TABLES, &val);
-+
-+	mmu = msm_iommu_new(&pdev->dev, iommu);
-+	if (IS_ERR(mmu)) {
-+		iommu_domain_free(iommu);
-+		return ERR_CAST(mmu);
-+	}
-+
-+	/*
-+	 * After the domain is attached, see if the split tables were actually
-+	 * successful.
-+	 */
-+	ret = iommu_domain_get_attr(iommu, DOMAIN_ATTR_SPLIT_TABLES, &val);
-+	if (!ret && val) {
-+		/*
-+		 * The aperture start will be at the beginning of the TTBR1
-+		 * space so use that as a base
-+		 */
-+		start = iommu->geometry.aperture_start;
-+		size = 0xffffffff;
-+	} else {
-+		/* Otherwise use the legacy 32 bit region */
-+		start = SZ_16M;
-+		size = 0xffffffff - SZ_16M;
-+	}
-+
-+	aspace = msm_gem_address_space_create(mmu, "gpu", start, size);
-+	if (IS_ERR(aspace))
-+		iommu_domain_free(iommu);
-+
-+	return aspace;
-+}
-+
- static const struct adreno_gpu_funcs funcs = {
- 	.base = {
- 		.get_param = adreno_get_param,
-@@ -900,7 +950,7 @@ static const struct adreno_gpu_funcs funcs = {
- 		.gpu_state_get = a6xx_gpu_state_get,
- 		.gpu_state_put = a6xx_gpu_state_put,
- #endif
--		.create_address_space = adreno_iommu_create_address_space,
-+		.create_address_space = a6xx_create_address_space,
- 	},
- 	.get_timestamp = a6xx_get_timestamp,
- };
--- 
-2.7.4
