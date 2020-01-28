@@ -2,39 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A8FDA14B7E9
+	by mail.lfdr.de (Postfix) with ESMTP id 3F23014B7E8
 	for <lists+linux-kernel@lfdr.de>; Tue, 28 Jan 2020 15:20:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730550AbgA1OSo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 28 Jan 2020 09:18:44 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42676 "EHLO mail.kernel.org"
+        id S1729947AbgA1OSl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 28 Jan 2020 09:18:41 -0500
+Received: from mail.kernel.org ([198.145.29.99]:42742 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727673AbgA1OSh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 Jan 2020 09:18:37 -0500
+        id S1730497AbgA1OSk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 28 Jan 2020 09:18:40 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AB9FF24688;
-        Tue, 28 Jan 2020 14:18:36 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2B6EF2468D;
+        Tue, 28 Jan 2020 14:18:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1580221117;
-        bh=dZTUZ43rZtLVx6WjxbjKYrBOrk1kquAKKQ3mzcwZK8c=;
+        s=default; t=1580221119;
+        bh=ycQ23ixeaeOqETre0ofxhlGMc8IkGjaBNi7nKZ5gf5c=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=EEkzv1pbqMLUjPhsX+PoGF/gikgj80gfAWYC+ViYbjFJA9pZo0yC0gzwzwF7HVk0/
-         soe0KZfEsMs92OVL3vCR4EAhBprJT2Udd2TxLD3krY8lRhVgh2fsLGQvcQ4E+PrjfS
-         plLwqQJUhSabWmxFQXnm/zxE/EVXHI+S77/RKmHQ=
+        b=fcV70F7xAT+z4hflFsG9tMHaFBkbXFLYy0PtproEiVH0/LWDyA3zYQS8k7IX5tO1K
+         ueBdo9c2oJLjDS1cjIFoSvHddKSyj8GEqbpa9M2ngNO06vkF/vaFDgDZOq1uXl4IDs
+         MaLvAfu9J8OnRxH7rxSnDY9iO02qFucwKIyAJXDM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Matt Porter <mporter@kernel.crashing.org>,
-        Alexandre Bounine <alexandre.bounine@idt.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
+        Juergen Gross <jgross@suse.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 095/271] drivers/rapidio/rio_cm.c: fix potential oops in riocm_ch_listen()
-Date:   Tue, 28 Jan 2020 15:04:04 +0100
-Message-Id: <20200128135859.668659525@linuxfoundation.org>
+Subject: [PATCH 4.9 096/271] xen, cpu_hotplug: Prevent an out of bounds access
+Date:   Tue, 28 Jan 2020 15:04:05 +0100
+Message-Id: <20200128135859.742312623@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
 In-Reply-To: <20200128135852.449088278@linuxfoundation.org>
 References: <20200128135852.449088278@linuxfoundation.org>
@@ -49,40 +46,34 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Dan Carpenter <dan.carpenter@oracle.com>
 
-[ Upstream commit 5ac188b12e7cbdd92dee60877d1fac913fc1d074 ]
+[ Upstream commit 201676095dda7e5b31a5e1d116d10fc22985075e ]
 
-If riocm_get_channel() fails, then we should just return -EINVAL.
-Calling riocm_put_channel() will trigger a NULL dereference and
-generally we should call put() if the get() didn't succeed.
+The "cpu" variable comes from the sscanf() so Smatch marks it as
+untrusted data.  We can't pass a higher value than "nr_cpu_ids" to
+cpu_possible() or it results in an out of bounds access.
 
-Link: http://lkml.kernel.org/r/20190110130230.GB27017@kadam
-Fixes: b6e8d4aa1110 ("rapidio: add RapidIO channelized messaging driver")
+Fixes: d68d82afd4c8 ("xen: implement CPU hotplugging")
 Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-Reviewed-by: Andrew Morton <akpm@linux-foundation.org>
-Cc: Matt Porter <mporter@kernel.crashing.org>
-Cc: Alexandre Bounine <alexandre.bounine@idt.com>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Reviewed-by: Juergen Gross <jgross@suse.com>
+Signed-off-by: Juergen Gross <jgross@suse.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/rapidio/rio_cm.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ drivers/xen/cpu_hotplug.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/rapidio/rio_cm.c b/drivers/rapidio/rio_cm.c
-index ef989a15aefc4..b29fc258eeba4 100644
---- a/drivers/rapidio/rio_cm.c
-+++ b/drivers/rapidio/rio_cm.c
-@@ -1215,7 +1215,9 @@ static int riocm_ch_listen(u16 ch_id)
- 	riocm_debug(CHOP, "(ch_%d)", ch_id);
+diff --git a/drivers/xen/cpu_hotplug.c b/drivers/xen/cpu_hotplug.c
+index f4e59c445964d..17054d6954117 100644
+--- a/drivers/xen/cpu_hotplug.c
++++ b/drivers/xen/cpu_hotplug.c
+@@ -53,7 +53,7 @@ static int vcpu_online(unsigned int cpu)
+ }
+ static void vcpu_hotplug(unsigned int cpu)
+ {
+-	if (!cpu_possible(cpu))
++	if (cpu >= nr_cpu_ids || !cpu_possible(cpu))
+ 		return;
  
- 	ch = riocm_get_channel(ch_id);
--	if (!ch || !riocm_cmp_exch(ch, RIO_CM_CHAN_BOUND, RIO_CM_LISTEN))
-+	if (!ch)
-+		return -EINVAL;
-+	if (!riocm_cmp_exch(ch, RIO_CM_CHAN_BOUND, RIO_CM_LISTEN))
- 		ret = -EINVAL;
- 	riocm_put_channel(ch);
- 	return ret;
+ 	switch (vcpu_online(cpu)) {
 -- 
 2.20.1
 
