@@ -2,39 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id ABF1114B73C
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Jan 2020 15:12:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 15E0014B863
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Jan 2020 15:24:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729273AbgA1OMb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 28 Jan 2020 09:12:31 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33762 "EHLO mail.kernel.org"
+        id S1731921AbgA1OXC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 28 Jan 2020 09:23:02 -0500
+Received: from mail.kernel.org ([198.145.29.99]:48984 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729485AbgA1OM2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 Jan 2020 09:12:28 -0500
+        id S1731830AbgA1OW6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 28 Jan 2020 09:22:58 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D02592468D;
-        Tue, 28 Jan 2020 14:12:27 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B17882468F;
+        Tue, 28 Jan 2020 14:22:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1580220748;
-        bh=DmRJo0p4TExwlSUs+a2X+E6ya8Q/AADkX/YVkV2Pce4=;
+        s=default; t=1580221378;
+        bh=ekdJKSY213rrBSgGE32mQdGAsL2Tc03YxMWSFqu5LVU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=UAk+cX+lokXklwfq3bSxuJjDSuTkigxWyrsdDMTpKKcsoRjXrwukN/3Z2YKWMsDOf
-         W3JZo7kS0b0MAbgjOkrECWLraECM1W8cteyCYUgeNHgAqyWQWuzb38aKUo1aBJCXCf
-         ZeWYZxclKo4efGnzaRbvnldkMnOeprnkp0Q6oxa4=
+        b=C06S8D5WRoXow+jy/FGvs/NXqztBGFBRGlH/WCLc6AaWWpVsK5AERGfFKf3+dk57n
+         dpdHvHoQKxQ89+clbtoQ1K5HiAdi5NgizTZ+nrBFO2wLRHg1DJHfmiyCkVbzKaPLP4
+         zwuQHy4G+AO6evCDeXSUVof7ylt970gwHQCDotWE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Colin Ian King <colin.king@canonical.com>,
-        Kalle Valo <kvalo@codeaurora.org>,
+        stable@vger.kernel.org, Gerd Rausch <gerd.rausch@oracle.com>,
+        Santosh Shilimkar <santosh.shilimkar@oracle.com>,
+        "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.4 131/183] bcma: fix incorrect update of BCMA_CORE_PCI_MDIO_DATA
+Subject: [PATCH 4.9 201/271] net/rds: Fix ib_evt_handler_call element in rds_ib_stat_names
 Date:   Tue, 28 Jan 2020 15:05:50 +0100
-Message-Id: <20200128135842.930716701@linuxfoundation.org>
+Message-Id: <20200128135907.533936274@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200128135829.486060649@linuxfoundation.org>
-References: <20200128135829.486060649@linuxfoundation.org>
+In-Reply-To: <20200128135852.449088278@linuxfoundation.org>
+References: <20200128135852.449088278@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,46 +45,38 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+From: Gerd Rausch <gerd.rausch@oracle.com>
 
-[ Upstream commit 420c20be08a4597404d272ae9793b642401146eb ]
+[ Upstream commit 05a82481a3024b94db00b8c816bb3d526b5209e0 ]
 
-An earlier commit re-worked the setting of the bitmask and is now
-assigning v with some bit flags rather than bitwise or-ing them
-into v, consequently the earlier bit-settings of v are being lost.
-Fix this by replacing an assignment with the bitwise or instead.
+All entries in 'rds_ib_stat_names' are stringified versions
+of the corresponding "struct rds_ib_statistics" element
+without the "s_"-prefix.
 
-Addresses-Coverity: ("Unused value")
-Fixes: 2be25cac8402 ("bcma: add constants for PCI and use them")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
-Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
+Fix entry 'ib_evt_handler_call' to do the same.
+
+Fixes: f4f943c958a2 ("RDS: IB: ack more receive completions to improve performance")
+Signed-off-by: Gerd Rausch <gerd.rausch@oracle.com>
+Acked-by: Santosh Shilimkar <santosh.shilimkar@oracle.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/bcma/driver_pci.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ net/rds/ib_stats.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/bcma/driver_pci.c b/drivers/bcma/driver_pci.c
-index f499a469e66d0..12b2cc9a3fbe8 100644
---- a/drivers/bcma/driver_pci.c
-+++ b/drivers/bcma/driver_pci.c
-@@ -78,7 +78,7 @@ static u16 bcma_pcie_mdio_read(struct bcma_drv_pci *pc, u16 device, u8 address)
- 		v |= (address << BCMA_CORE_PCI_MDIODATA_REGADDR_SHF_OLD);
- 	}
- 
--	v = BCMA_CORE_PCI_MDIODATA_START;
-+	v |= BCMA_CORE_PCI_MDIODATA_START;
- 	v |= BCMA_CORE_PCI_MDIODATA_READ;
- 	v |= BCMA_CORE_PCI_MDIODATA_TA;
- 
-@@ -121,7 +121,7 @@ static void bcma_pcie_mdio_write(struct bcma_drv_pci *pc, u16 device,
- 		v |= (address << BCMA_CORE_PCI_MDIODATA_REGADDR_SHF_OLD);
- 	}
- 
--	v = BCMA_CORE_PCI_MDIODATA_START;
-+	v |= BCMA_CORE_PCI_MDIODATA_START;
- 	v |= BCMA_CORE_PCI_MDIODATA_WRITE;
- 	v |= BCMA_CORE_PCI_MDIODATA_TA;
- 	v |= data;
+diff --git a/net/rds/ib_stats.c b/net/rds/ib_stats.c
+index 7e78dca1f252c..aaf4b3d102039 100644
+--- a/net/rds/ib_stats.c
++++ b/net/rds/ib_stats.c
+@@ -42,7 +42,7 @@ DEFINE_PER_CPU_SHARED_ALIGNED(struct rds_ib_statistics, rds_ib_stats);
+ static const char *const rds_ib_stat_names[] = {
+ 	"ib_connect_raced",
+ 	"ib_listen_closed_stale",
+-	"s_ib_evt_handler_call",
++	"ib_evt_handler_call",
+ 	"ib_tasklet_call",
+ 	"ib_tx_cq_event",
+ 	"ib_tx_ring_full",
 -- 
 2.20.1
 
