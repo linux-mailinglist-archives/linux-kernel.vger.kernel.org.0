@@ -2,38 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 76E8714B744
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Jan 2020 15:13:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5277814B86C
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Jan 2020 15:24:16 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729575AbgA1OMw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 28 Jan 2020 09:12:52 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34278 "EHLO mail.kernel.org"
+        id S1732198AbgA1OX0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 28 Jan 2020 09:23:26 -0500
+Received: from mail.kernel.org ([198.145.29.99]:49430 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728847AbgA1OMt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 Jan 2020 09:12:49 -0500
+        id S1731512AbgA1OXV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 28 Jan 2020 09:23:21 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8F8DC2468D;
-        Tue, 28 Jan 2020 14:12:48 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 58CD12071E;
+        Tue, 28 Jan 2020 14:23:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1580220769;
-        bh=DIl9R+19J49vh/sxpIbMjuZ4xZRcXQT7Ob5x1jG0enc=;
+        s=default; t=1580221400;
+        bh=/188A5AV3dmrQIx72hiPDcmOUbywvXgwVDruUKUM3fk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=N8yiXRS3Rgnmz2QRrxZ5ID25yOiTNJfd1QX2FqcRCCSb/vBcxspWd1t2uV7mYhCSw
-         +nkLaw/eqBjQoeKeX6RnfnLSZVwe/uiKr816jcoFab0jpDjMQYsqMgxFwDGiI+3Lyl
-         BBnRXwzXYNVyF6VRpDNmaD2ZN+0GMRzLX1mqb51c=
+        b=oaRYo8V+9jxc3zx+y4rS1Sfa45JpK+O+wSUhdrJjpzvBKtjMebqrIlcdfddmy6Ia5
+         8WI8whnVGVKPS9oPRQ+/ZSFK+M+OnRinDguZ+XqmMYdOVn8qkoQIng3+5js7d0HfE4
+         OzZN9HB+pSjtjvX5Tx/EMZC7yoNCw1TT4U9g+mPs=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Filippo Sironi <sironi@amazon.de>,
-        Joerg Roedel <jroedel@suse.de>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.4 139/183] iommu/amd: Wait for completion of IOTLB flush in attach_device
+        stable@vger.kernel.org, Jose Abreu <Jose.Abreu@synopsys.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.9 209/271] net: stmmac: gmac4+: Not all Unicast addresses may be available
 Date:   Tue, 28 Jan 2020 15:05:58 +0100
-Message-Id: <20200128135843.633421896@linuxfoundation.org>
+Message-Id: <20200128135908.100101957@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200128135829.486060649@linuxfoundation.org>
-References: <20200128135829.486060649@linuxfoundation.org>
+In-Reply-To: <20200128135852.449088278@linuxfoundation.org>
+References: <20200128135852.449088278@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,35 +44,34 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Filippo Sironi <sironi@amazon.de>
+From: Jose Abreu <Jose.Abreu@synopsys.com>
 
-[ Upstream commit 0b15e02f0cc4fb34a9160de7ba6db3a4013dc1b7 ]
+[ Upstream commit 25683bab09a70542b9f8e3e28f79b3369e56701f ]
 
-To make sure the domain tlb flush completes before the
-function returns, explicitly wait for its completion.
+Some setups may not have all Unicast addresses filters available. Check
+the number of available filters before trying to setup it.
 
-Signed-off-by: Filippo Sironi <sironi@amazon.de>
-Fixes: 42a49f965a8d ("amd-iommu: flush domain tlb when attaching a new device")
-[joro: Added commit message and fixes tag]
-Signed-off-by: Joerg Roedel <jroedel@suse.de>
+Fixes: 477286b53f55 ("stmmac: add GMAC4 core support")
+Signed-off-by: Jose Abreu <Jose.Abreu@synopsys.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/iommu/amd_iommu.c | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/net/ethernet/stmicro/stmmac/dwmac4_core.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/iommu/amd_iommu.c b/drivers/iommu/amd_iommu.c
-index 0ad8b7c78a438..66a406e87e117 100644
---- a/drivers/iommu/amd_iommu.c
-+++ b/drivers/iommu/amd_iommu.c
-@@ -2184,6 +2184,8 @@ static int attach_device(struct device *dev,
- 	 */
- 	domain_flush_tlb_pde(domain);
+diff --git a/drivers/net/ethernet/stmicro/stmmac/dwmac4_core.c b/drivers/net/ethernet/stmicro/stmmac/dwmac4_core.c
+index f46f2bfc2cc09..4216c0a5eaf5a 100644
+--- a/drivers/net/ethernet/stmicro/stmmac/dwmac4_core.c
++++ b/drivers/net/ethernet/stmicro/stmmac/dwmac4_core.c
+@@ -168,7 +168,7 @@ static void dwmac4_set_filter(struct mac_device_info *hw,
+ 	}
  
-+	domain_flush_complete(domain);
-+
- 	return ret;
- }
- 
+ 	/* Handle multiple unicast addresses */
+-	if (netdev_uc_count(dev) > GMAC_MAX_PERFECT_ADDRESSES) {
++	if (netdev_uc_count(dev) > hw->unicast_filter_entries) {
+ 		/* Switch to promiscuous mode if more than 128 addrs
+ 		 * are required
+ 		 */
 -- 
 2.20.1
 
