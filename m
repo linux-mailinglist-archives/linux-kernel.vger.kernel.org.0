@@ -2,50 +2,50 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C0B8B14AE20
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Jan 2020 03:28:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2032014AE23
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Jan 2020 03:28:46 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727496AbgA1C2M (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 27 Jan 2020 21:28:12 -0500
-Received: from esa3.hgst.iphmx.com ([216.71.153.141]:43171 "EHLO
+        id S1728241AbgA1C2T (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 27 Jan 2020 21:28:19 -0500
+Received: from esa3.hgst.iphmx.com ([216.71.153.141]:43178 "EHLO
         esa3.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727278AbgA1C2L (ORCPT
+        with ESMTP id S1727066AbgA1C2M (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 27 Jan 2020 21:28:11 -0500
+        Mon, 27 Jan 2020 21:28:12 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
   d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1580178491; x=1611714491;
+  t=1580178492; x=1611714492;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=wOT0GpSheCPVLbOmRrlnI5gyIs5vHfMHgSdRZXC7csg=;
-  b=Xt++/MG37b4/Fci7+gwAWrpoIjUSVZQcie9O90oL2JB9TxBqPniUKugD
-   R0Mc1dGtwBekZlw+Tcfg4L94L2IPVUf34qmXIEoYAJPOkNZB8zDsbx+vL
-   4thBxJZm/d9gAR3fSSnzJWgyeMqDpezwXp86R+BzeIT76ldyEHqZLXBbz
-   4YQzJrGZFeK4xL5mBlOOcmlx1rLKMO7wXlucFagYnmAXdFyuwi+UoCMBl
-   37OlbWz/uw+8McwMxAHqmuYiDCUY/uOZCVWm41odUcwQmMa2sgDdw4Nht
-   46TDkwoWN38J2YtAuxNuwpdxHSNPtBdrJB2hCtt9oZHMkyBsh5r4oZb+N
-   g==;
-IronPort-SDR: mQ1LlaevmqKTejr43j8v8pxEdPATWgl7cCFt7/fbirYGD60xO3d4ELbYICoBg3m311fRf/tzkw
- /6n3AjIn+tmn3RmFJul69oLjmcrlBm+RY3UWh0SGBn6YJYgREJm57pJhfCau/NNPKgp0S8MeYf
- uofOiDTy9xZolYwC9yY6BvFA5N7VHyrdyzQBe1+uQWoKXUFUQrkvXoYHV1PmKb3DeLOpv99IPN
- XM/IV8I9mEzBD3N7IDZiwqzBgjQFI82/VZ6P6bKENYfYOu07M43GUV3nbY27TATah1XRv0hcVd
- QlA=
+  bh=9/4+D4chKrcwV4CoOuuG7G2FPWLBcuIllOhB7t6PGOY=;
+  b=LIgLV08RLif9JE0H93kY2We98+YoxLzVFujVeFq0YB+kYIkYqC1h2zqj
+   zZxdbve8d96zpTFskLWZmdbSEMCnlyBhXeegW3Y8QBkjD0O1jR+Aj06Vr
+   gue9Y2CQbRDfGTqyYH5GVBdUII5heZ6wsWTs37BsFQjLBVY34X7aJS/jF
+   M8k64LHkGRkRPUG4G/7D/tGFaqr8gVRL7paQYA94RiddhN2xaKjhDb5x5
+   OKMQrW1Oo2CXLzT7RTh0bHClI8zIB9op4HLQsbOK2SlHMou0PmgNbzFRS
+   ysEoVnHBQKX0b9Y4ZOdP40vhuU47g4MXV5umhogxMs9qbbBoa8UN0H6CU
+   A==;
+IronPort-SDR: lgKogYmfC9p241VSpCU37QIJHQdtL0TaW8Wig5cLJ8XKriC+zNKGhBVBNV4PGJobZCy+NEw7Hu
+ psmH63nc0l57VO2j4G4BsYVlo4WTuLW6ASMzPpdkno7F90/gk9uwe9r3Xt0rp2MOvGR0VV/xKH
+ bFpn9B1YROXvidnLDnxElsk3ASfK3PYlqbSqns+eNch3VLuIe9sdapJtR+julgqV+GxnZUWvv6
+ y5UvMqlc04jjE1KFMprqfxw+5u+GQ8EfRMQlNBu7h8/1DVTyveKZPUCmRK5jrDJS/wpIU/Le9S
+ j+8=
 X-IronPort-AV: E=Sophos;i="5.70,372,1574092800"; 
-   d="scan'208";a="132899426"
+   d="scan'208";a="132899438"
 Received: from h199-255-45-14.hgst.com (HELO uls-op-cesaep01.wdc.com) ([199.255.45.14])
   by ob1.hgst.iphmx.com with ESMTP; 28 Jan 2020 10:28:11 +0800
-IronPort-SDR: QWZE+bZ9YQRIjzvkMwLTKeQ9LXwNroPVuPzVZJDrfq9RK7JLABqSDLJQBui9RB4bhdgtmvtrEw
- vdzD230X1STHK70F3Ztr98lsww8QvMZMZnC6GZBCTZiLFNzjgA3/XKqMJFfHPWVy+Z7wprvqLN
- wN9tN1w0Dezrt4+Z+QYVAG8VNn42MNK31V6JzENr2r+uW+9tvqaVRl3u+ebpWxD2S6rS9ZYMtR
- O/gAeyZF494uxsdjQ19WjO4UVJNxNvRGLAHyTjlz110PvPbE2St7ATzq5PvfMsU+QE5WqKMt/3
- OXUmCZI9D7/P3Lm1ij7NUjiu
+IronPort-SDR: kEY1WUG8xzEten53ulog+TmXOJZ2laQgPfK0qGtfeWW8f4YZIHgj0Xfzd6TBv2Pu/BrCzFyp9L
+ gOcCihyvq6HK1JX8m9QhmtxMI2Fs+kqG3Gt/fX51PtpinzvRwbSg/6aT8pkaNp/yEe81TNLKaS
+ FGTrE62RU2tBNOSfPcy3V4g6QbwOGzHvmQZbhZXqhT/VQu58ehYoe7RMjQghBFZCdhZUsAIpX/
+ fFdadgubR9R12+Oikpa6INiDLED+OZO3O27OjFgX3UfiGd9vG+aFl9/RY4ILmQ2jAHgCPStdoZ
+ E+5l5VUqEQ++gB+MjQF9vdmQ
 Received: from uls-op-cesaip01.wdc.com ([10.248.3.36])
   by uls-op-cesaep01.wdc.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Jan 2020 18:21:26 -0800
-IronPort-SDR: KmBB4o+GAva8xuNpVPdKmg65LCOZCD/n8DiFz2BxNyWv3O6SWMjKzwx94nCo2d3GXdUotTm5YN
- OOCOjBieAvzw8XA4Z5yUk3+wKeNW8uXXAD/uujTEogCOh9P7ICby1x/t06efknvXq/Dyn2GNm9
- Ewc5cNkS4ubdzlVCa47lbpNZpiT9CrzHfgjHQiduuHmeipXr0fiGJl69Rg45Bjc0tYQoJNt7Mn
- PKFt6QjdUnW/U2Yq3dfDk4KDhLUOCyi/dqbkVP2MxlByk4YYdBIVIC2gdTo63hw0lSxoU0i63S
- zus=
+IronPort-SDR: L5w45/D70nhTLbCM68m93MH+z7Ithd6pTtaen98yHchkqQi1Gb85CnBL37T4Fz9F+NWCEKWau3
+ sUqYKhIm3odCScr0S2X6l0gd85Wu+yoH7/4dgR+IT98AMMlG8k0o39O9PrMgSQQ7/j2C8cXvC4
+ wCwoxxOOfpx67v+lqZVry+RAIEoJdQXjIi3P7ZTB1+xj9S/1eh9K3kbuYSyxVsca78WL7QL4m9
+ HXLNJl3heH8wnvMNj4p3SnJuSnJ3vI0w+CQoYY+QFz2oyA2bXbgtxVpoA4PAMAplG2duuc8Dis
+ OH8=
 WDCIronportException: Internal
 Received: from jedi-01.sdcorp.global.sandisk.com (HELO jedi-01.int.fusionio.com) ([10.11.143.218])
   by uls-op-cesaip01.wdc.com with ESMTP; 27 Jan 2020 18:28:11 -0800
@@ -68,9 +68,9 @@ Cc:     Atish Patra <atish.patra@wdc.com>,
         Vincent Chen <vincent.chen@sifive.com>, abner.chang@hpe.com,
         clin@suse.com, nickhu@andestech.com,
         Palmer Dabbelt <palmerdabbelt@google.com>
-Subject: [PATCH v7 08/10] RISC-V: Add SBI HSM extension
-Date:   Mon, 27 Jan 2020 18:27:35 -0800
-Message-Id: <20200128022737.15371-9-atish.patra@wdc.com>
+Subject: [PATCH v7 09/10] RISC-V: Add supported for ordered booting method using HSM
+Date:   Mon, 27 Jan 2020 18:27:36 -0800
+Message-Id: <20200128022737.15371-10-atish.patra@wdc.com>
 X-Mailer: git-send-email 2.24.0
 In-Reply-To: <20200128022737.15371-1-atish.patra@wdc.com>
 References: <20200128022737.15371-1-atish.patra@wdc.com>
@@ -81,156 +81,170 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-SBI specification defines HSM extension that allows to start/stop a hart
-by a supervisor anytime. The specification is available at
+Currently, all harts have to jump Linux in RISC-V. This complicates the
+multi-stage boot process as every transient stage also has to ensure all
+harts enter to that stage and jump to Linux afterwards. It also obstructs
+a clean Kexec implementation.
 
-https://github.com/riscv/riscv-sbi-doc/blob/master/riscv-sbi.adoc
+SBI HSM extension provides alternate solutions where only a single hart
+need to boot and enter Linux. The booting hart can bring up secondary
+harts one by one afterwards.
 
-Implement SBI HSM extension.
+Add SBI HSM based cpu_ops that implements an ordered booting method in
+RISC-V. This change is also backward compatible with older firmware not
+implementing HSM extension. If a latest kernel is used with older
+firmware, it will continue to use the default spinning booting method.
 
 Signed-off-by: Atish Patra <atish.patra@wdc.com>
 ---
- arch/riscv/include/asm/sbi.h | 22 ++++++++++++++++
- arch/riscv/kernel/sbi.c      | 51 ++++++++++++++++++++++++++++++++++++
- 2 files changed, 73 insertions(+)
+ arch/riscv/kernel/cpu_ops.c | 41 ++++++++++++++++++++++++++++++++++++-
+ arch/riscv/kernel/head.S    | 25 ++++++++++++++++++++++
+ arch/riscv/kernel/smpboot.c |  2 +-
+ arch/riscv/kernel/traps.c   |  2 +-
+ 4 files changed, 67 insertions(+), 3 deletions(-)
 
-diff --git a/arch/riscv/include/asm/sbi.h b/arch/riscv/include/asm/sbi.h
-index d55d8090ab5c..bed6fa26ec84 100644
---- a/arch/riscv/include/asm/sbi.h
-+++ b/arch/riscv/include/asm/sbi.h
-@@ -26,6 +26,7 @@ enum sbi_ext_id {
- 	SBI_EXT_TIME = 0x54494D45,
- 	SBI_EXT_IPI = 0x735049,
- 	SBI_EXT_RFENCE = 0x52464E43,
-+	SBI_EXT_HSM = 0x48534D,
- };
+diff --git a/arch/riscv/kernel/cpu_ops.c b/arch/riscv/kernel/cpu_ops.c
+index 099dbb6ff9f0..454df032066f 100644
+--- a/arch/riscv/kernel/cpu_ops.c
++++ b/arch/riscv/kernel/cpu_ops.c
+@@ -17,9 +17,13 @@ const struct cpu_operations *cpu_ops[NR_CPUS] __ro_after_init;
  
- enum sbi_ext_base_fid {
-@@ -56,6 +57,12 @@ enum sbi_ext_rfence_fid {
- 	SBI_EXT_RFENCE_REMOTE_HFENCE_VVMA_ASID,
- };
+ void *__cpu_up_stack_pointer[NR_CPUS];
+ void *__cpu_up_task_pointer[NR_CPUS];
++extern char secondary_start_sbi[];
  
-+enum sbi_ext_hsm_fid {
-+	SBI_EXT_HSM_HART_START = 0,
-+	SBI_EXT_HSM_HART_STOP,
-+	SBI_EXT_HSM_HART_STATUS,
-+};
++const struct cpu_operations cpu_sbi_ops;
+ const struct cpu_operations cpu_spinwait_ops;
+ 
++#define RISCV_HART_FIRMWARE_STOPPED 0
 +
- #define SBI_SPEC_VERSION_DEFAULT	0x1
- #define SBI_SPEC_VERSION_MAJOR_SHIFT	24
- #define SBI_SPEC_VERSION_MAJOR_MASK	0x7f
-@@ -70,6 +77,7 @@ enum sbi_ext_rfence_fid {
- #define SBI_ERR_INVALID_ADDRESS -5
- 
- extern unsigned long sbi_spec_version;
-+extern bool sbi_hsm_avail;
- struct sbiret {
- 	long error;
- 	long value;
-@@ -110,8 +118,18 @@ int sbi_remote_hfence_vvma_asid(const unsigned long *hart_mask,
- 				unsigned long start,
- 				unsigned long size,
- 				unsigned long asid);
-+int sbi_hsm_hart_start(unsigned long hartid, unsigned long saddr,
-+		       unsigned long priv);
-+int sbi_hsm_hart_stop(void);
-+int sbi_hsm_hart_get_status(unsigned long hartid);
-+
- int sbi_probe_extension(int ext);
- 
-+static inline bool sbi_hsm_is_available(void)
-+{
-+	return sbi_hsm_avail;
-+}
-+
- /* Check if current SBI specification version is 0.1 or not */
- static inline int sbi_spec_is_0_1(void)
+ static int spinwait_cpu_prepare(unsigned int cpuid)
  {
-@@ -137,5 +155,9 @@ void sbi_clear_ipi(void);
- void sbi_send_ipi(const unsigned long *hart_mask);
- void sbi_remote_fence_i(const unsigned long *hart_mask);
- void sbi_init(void);
-+static inline bool sbi_hsm_is_available(void)
-+{
-+	return false;
-+}
- #endif /* CONFIG_RISCV_SBI */
- #endif /* _ASM_RISCV_SBI_H */
-diff --git a/arch/riscv/kernel/sbi.c b/arch/riscv/kernel/sbi.c
-index 3c34aba30f6f..9bdc9801784d 100644
---- a/arch/riscv/kernel/sbi.c
-+++ b/arch/riscv/kernel/sbi.c
-@@ -12,6 +12,8 @@
- 
- /* default SBI version is 0.1 */
- unsigned long sbi_spec_version = SBI_SPEC_VERSION_DEFAULT;
-+bool sbi_hsm_avail;
-+
- EXPORT_SYMBOL(sbi_spec_version);
- 
- static void (*__sbi_set_timer)(uint64_t stime);
-@@ -496,6 +498,54 @@ static void sbi_power_off(void)
- 	sbi_shutdown();
- }
- 
-+int sbi_hsm_hart_stop(void)
-+{
-+	struct sbiret ret;
-+
-+	ret = sbi_ecall(SBI_EXT_HSM, SBI_EXT_HSM_HART_STOP, 0, 0, 0, 0, 0, 0);
-+
-+	if (!ret.error)
-+		return ret.value;
-+	else
-+		return sbi_err_map_linux_errno(ret.error);
-+}
-+EXPORT_SYMBOL(sbi_hsm_hart_stop);
-+
-+int sbi_hsm_hart_start(unsigned long hartid, unsigned long saddr,
-+		       unsigned long priv)
-+{
-+	struct sbiret ret;
-+
-+	ret = sbi_ecall(SBI_EXT_HSM, SBI_EXT_HSM_HART_START,
-+			      hartid, saddr, priv, 0, 0, 0);
-+	if (!ret.error)
-+		return ret.value;
-+	else
-+		return sbi_err_map_linux_errno(ret.error);
-+}
-+EXPORT_SYMBOL(sbi_hsm_hart_start);
-+
-+int sbi_hsm_hart_get_status(unsigned long hartid)
-+{
-+	struct sbiret ret;
-+
-+	ret = sbi_ecall(SBI_EXT_HSM, SBI_EXT_HSM_HART_STATUS,
-+			      hartid, 0, 0, 0, 0, 0);
-+	if (!ret.error)
-+		return ret.value;
-+	else
-+		return sbi_err_map_linux_errno(ret.error);
-+}
-+EXPORT_SYMBOL(sbi_hsm_hart_get_status);
-+
-+void __init sbi_hsm_ext_init(void)
-+{
-+	if (sbi_probe_extension(SBI_EXT_HSM) > 0) {
-+		pr_info("SBI v0.2 HSM extension detected\n");
-+		sbi_hsm_avail = true;
-+	}
-+}
-+
- int __init sbi_init(void)
- {
- 	int ret;
-@@ -532,5 +582,6 @@ int __init sbi_init(void)
- 		__sbi_rfence	= __sbi_rfence_v01;
- 	}
- 
-+	sbi_hsm_ext_init();
+ 	if (!cpu_spinwait_ops.cpu_start) {
+@@ -29,6 +33,32 @@ static int spinwait_cpu_prepare(unsigned int cpuid)
  	return 0;
  }
+ 
++static int sbi_cpu_prepare(unsigned int cpuid)
++{
++	if (!cpu_sbi_ops.cpu_start) {
++		pr_err("cpu start method not defined for CPU [%d]\n", cpuid);
++		return -ENODEV;
++	}
++	return 0;
++}
++
++static int sbi_cpu_start(unsigned int cpuid, struct task_struct *tidle)
++{
++	int rc;
++	int hartid = cpuid_to_hartid_map(cpuid);
++	unsigned long boot_addr = __pa_symbol(secondary_start_sbi);
++
++	/* Make sure tidle is updated */
++	smp_mb();
++	WRITE_ONCE(__cpu_up_stack_pointer[hartid],
++		  task_stack_page(tidle) + THREAD_SIZE);
++	WRITE_ONCE(__cpu_up_task_pointer[hartid], tidle);
++
++	rc = sbi_hsm_hart_start(hartid, boot_addr, 0);
++
++	return rc;
++}
++
+ static int spinwait_cpu_start(unsigned int cpuid, struct task_struct *tidle)
+ {
+ 	int hartid = cpuid_to_hartid_map(cpuid);
+@@ -48,6 +78,12 @@ static int spinwait_cpu_start(unsigned int cpuid, struct task_struct *tidle)
+ 	return 0;
+ }
+ 
++const struct cpu_operations cpu_sbi_ops = {
++	.name		= "sbi",
++	.cpu_prepare	= sbi_cpu_prepare,
++	.cpu_start	= sbi_cpu_start,
++};
++
+ const struct cpu_operations cpu_spinwait_ops = {
+ 	.name		= "spinwait",
+ 	.cpu_prepare	= spinwait_cpu_prepare,
+@@ -56,6 +92,9 @@ const struct cpu_operations cpu_spinwait_ops = {
+ 
+ int __init cpu_set_ops(int cpuid)
+ {
+-	cpu_ops[cpuid] = &cpu_spinwait_ops;
++	if (sbi_hsm_is_available())
++		cpu_ops[cpuid] = &cpu_sbi_ops;
++	else
++		cpu_ops[cpuid] = &cpu_spinwait_ops;
+ 	return 0;
+ }
+diff --git a/arch/riscv/kernel/head.S b/arch/riscv/kernel/head.S
+index 9d7f084a50cc..3c93973667c8 100644
+--- a/arch/riscv/kernel/head.S
++++ b/arch/riscv/kernel/head.S
+@@ -210,11 +210,36 @@ relocate:
+ 	ret
+ #endif /* CONFIG_MMU */
+ #ifdef CONFIG_SMP
++	.global secondary_start_sbi
++secondary_start_sbi:
++	/* Mask all interrupts */
++	csrw CSR_IE, zero
++	csrw CSR_IP, zero
++
++	/* Load the global pointer */
++	.option push
++	.option norelax
++		la gp, __global_pointer$
++	.option pop
++
++	/*
++	 * Disable FPU to detect illegal usage of
++	 * floating point in kernel space
++	 */
++	li t0, SR_FS
++	csrc CSR_STATUS, t0
++
+ 	/* Set trap vector to spin forever to help debug */
+ 	la a3, .Lsecondary_park
+ 	csrw CSR_TVEC, a3
+ 
+ 	slli a3, a0, LGREG
++	la a4, __cpu_up_stack_pointer
++	la a5, __cpu_up_task_pointer
++	add a4, a3, a4
++	add a5, a3, a5
++	REG_L sp, (a4)
++	REG_L tp, (a5)
+ 	.global secondary_start_common
+ secondary_start_common:
+ 
+diff --git a/arch/riscv/kernel/smpboot.c b/arch/riscv/kernel/smpboot.c
+index f2cf541bc895..8ac9115001b9 100644
+--- a/arch/riscv/kernel/smpboot.c
++++ b/arch/riscv/kernel/smpboot.c
+@@ -144,7 +144,7 @@ void __init smp_cpus_done(unsigned int max_cpus)
+ /*
+  * C entry point for a secondary processor.
+  */
+-asmlinkage __visible void __init smp_callin(void)
++asmlinkage __visible void smp_callin(void)
+ {
+ 	struct mm_struct *mm = &init_mm;
+ 
+diff --git a/arch/riscv/kernel/traps.c b/arch/riscv/kernel/traps.c
+index f4cad5163bf2..0063dd7318d6 100644
+--- a/arch/riscv/kernel/traps.c
++++ b/arch/riscv/kernel/traps.c
+@@ -147,7 +147,7 @@ int is_valid_bugaddr(unsigned long pc)
+ }
+ #endif /* CONFIG_GENERIC_BUG */
+ 
+-void __init trap_init(void)
++void trap_init(void)
+ {
+ 	/*
+ 	 * Set sup0 scratch register to 0, indicating to exception vector
 -- 
 2.24.0
 
