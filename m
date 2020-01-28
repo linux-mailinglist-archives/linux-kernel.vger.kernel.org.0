@@ -2,107 +2,130 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7E4F614AE5F
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Jan 2020 04:29:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D1CA814AE6C
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Jan 2020 04:33:50 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726296AbgA1D2Q (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 27 Jan 2020 22:28:16 -0500
-Received: from conssluserg-03.nifty.com ([210.131.2.82]:42408 "EHLO
-        conssluserg-03.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726080AbgA1D2Q (ORCPT
+        id S1726670AbgA1Ddp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 27 Jan 2020 22:33:45 -0500
+Received: from userp2130.oracle.com ([156.151.31.86]:38514 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726164AbgA1Ddp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 27 Jan 2020 22:28:16 -0500
-Received: from mail-vs1-f50.google.com (mail-vs1-f50.google.com [209.85.217.50]) (authenticated)
-        by conssluserg-03.nifty.com with ESMTP id 00S3S3Tm020546
-        for <linux-kernel@vger.kernel.org>; Tue, 28 Jan 2020 12:28:04 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-03.nifty.com 00S3S3Tm020546
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1580182084;
-        bh=jPg30W9Wd4V1k+r19IZv85tXWHy/WeE9O1ipLqP4Wa0=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=dPj6ubQBmkVGjEEQKh3kQ5BMIKfaMjT4WjNc2VVZ+e/FixOuiozeJbLJ5G7tIufSa
-         7E4cM/QmC389xoRBRUhqtw2zKPfwrlo4Xzaz3WuxrfpVfxMnIf3/hqdZqw5tlXQwel
-         V6IX6Bf8fkrXR+uJlC5KKjaW2LTEwRNgAlNgHXwJeAaHe1JHQccDYn/JlmBTtF+uS8
-         BsBUazz29Twp6bHjHEk6fhuykfDUFXLo+EdU25wLJQgz+03fQIQE05CESWLLSF4THA
-         tWYzIQWDginPR1NK9FSYn8DINIfU7roeNvQP9sF6ltlR7w4JGhJDFXIlEp6IurNAz4
-         STy4TyIxJaDHA==
-X-Nifty-SrcIP: [209.85.217.50]
-Received: by mail-vs1-f50.google.com with SMTP id r18so7181941vso.5
-        for <linux-kernel@vger.kernel.org>; Mon, 27 Jan 2020 19:28:04 -0800 (PST)
-X-Gm-Message-State: APjAAAVAal2hb2tQsi4Lan+hKTe1vZuVFqgYM/w/6YCm76L5FHM53cha
-        NJdICzJeaFIFRP1Qf1FJ8Qkqv/andIJhOMMdiig=
-X-Google-Smtp-Source: APXvYqwGIUxHJH2LBGc/TLAR3nkqL69dSib07JC9anxXOAaH117GDjLj548pzb7bFWOb8NNbUUp9rV4BKO6PMGnMkfQ=
-X-Received: by 2002:a05:6102:48b:: with SMTP id n11mr12542394vsa.181.1580182083009;
- Mon, 27 Jan 2020 19:28:03 -0800 (PST)
+        Mon, 27 Jan 2020 22:33:45 -0500
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id 00S3S5Ns001927;
+        Tue, 28 Jan 2020 03:33:01 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : mime-version : content-type : in-reply-to;
+ s=corp-2019-08-05; bh=Nr7BQpdUONE47IibUeMZ7q+ndlt/7dgoh1WHBUaOUEE=;
+ b=Mq0qwbm+JIcGdVF1wAk4kMmoNoIJQGo8DLETTDyojDh/2SvOjCv5q44ISCYRQDnivZ4X
+ hc89sY8knzZGDkhBQNkH8RD53WBqjy5/jB35ppGP3NPA3vVyLM9KkQEUkKfAbOqjlZtY
+ wVgdatpJqcHozD61VIo4CZm9xXNLI0YzdLWH9aGhIWt55/wdCBIGoMWxxA/IKMHqwNew
+ 9qAVRWTTgL+yCumVzJrCnk0M/DgikpZWUyhRUoTEcAV0PUNfOFpKDjcTZHYzG8IeTBHD
+ da/2rHL/P4X7WShZDRUsBfHu1W+pFJPmGzWJyZHODHuFTnV/yKmYb8uOg82oLRzgr3V7 nw== 
+Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
+        by userp2130.oracle.com with ESMTP id 2xrd3u3db6-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 28 Jan 2020 03:33:01 +0000
+Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
+        by aserp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id 00S3SgiB022942;
+        Tue, 28 Jan 2020 03:33:00 GMT
+Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
+        by aserp3030.oracle.com with ESMTP id 2xryuar7cx-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 28 Jan 2020 03:33:00 +0000
+Received: from abhmp0004.oracle.com (abhmp0004.oracle.com [141.146.116.10])
+        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id 00S3WuGE008383;
+        Tue, 28 Jan 2020 03:32:56 GMT
+Received: from kadam (/129.205.23.165)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Mon, 27 Jan 2020 19:32:52 -0800
+Date:   Tue, 28 Jan 2020 06:32:15 +0300
+From:   Dan Carpenter <dan.carpenter@oracle.com>
+To:     kbuild@lists.01.org, Jason Wang <jasowang@redhat.com>
+Cc:     kbuild-all@lists.01.org, mst@redhat.com, jasowang@redhat.com,
+        linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
+        virtualization@lists.linux-foundation.org, netdev@vger.kernel.org,
+        tiwei.bie@intel.com, jgg@mellanox.com, maxime.coquelin@redhat.com,
+        cunming.liang@intel.com, zhihong.wang@intel.com,
+        rob.miller@broadcom.com, xiao.w.wang@intel.com,
+        haotian.wang@sifive.com, lingshan.zhu@intel.com,
+        eperezma@redhat.com, lulu@redhat.com, parav@mellanox.com,
+        kevin.tian@intel.com, stefanha@redhat.com, rdunlap@infradead.org,
+        hch@infradead.org, aadam@redhat.com, jakub.kicinski@netronome.com,
+        jiri@mellanox.com, shahafs@mellanox.com, hanand@xilinx.com,
+        mhabets@solarflare.com
+Subject: Re: [PATCH 5/5] vdpasim: vDPA device simulator
+Message-ID: <20200128033215.GO1870@kadam>
 MIME-Version: 1.0
-References: <20200127193549.187419-1-brendanhiggins@google.com> <20200127193549.187419-2-brendanhiggins@google.com>
-In-Reply-To: <20200127193549.187419-2-brendanhiggins@google.com>
-From:   Masahiro Yamada <masahiroy@kernel.org>
-Date:   Tue, 28 Jan 2020 12:27:26 +0900
-X-Gmail-Original-Message-ID: <CAK7LNASR13WjasKPmq-8gURhNUpOsrsCN2ODUh56fpM9DKWq7A@mail.gmail.com>
-Message-ID: <CAK7LNASR13WjasKPmq-8gURhNUpOsrsCN2ODUh56fpM9DKWq7A@mail.gmail.com>
-Subject: Re: [RFC v1 1/2] kbuild: add arch specific dependency for BTF support
-To:     Brendan Higgins <brendanhiggins@google.com>
-Cc:     Jeff Dike <jdike@addtoit.com>, Richard Weinberger <richard@nod.at>,
-        Anton Ivanov <anton.ivanov@cambridgegreys.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Changbin Du <changbin.du@intel.com>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Kees Cook <keescook@chromium.org>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        linux-um@lists.infradead.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        davidgow@google.com, heidifahim@google.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200116124231.20253-6-jasowang@redhat.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9513 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1911140001 definitions=main-2001280026
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9513 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1911140001
+ definitions=main-2001280026
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi.
+Hi Jason,
 
-On Tue, Jan 28, 2020 at 4:36 AM Brendan Higgins
-<brendanhiggins@google.com> wrote:
->
-> Some archs (like UM) do not build with CONFIG_DEBUG_INFO_BTF=y, so add
-> an options for archs to select to opt-in or out of BTF typeinfo support.
+url:    https://github.com/0day-ci/linux/commits/Jason-Wang/vDPA-support/20200117-170243
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/mst/vhost.git linux-next
 
+If you fix the issue, kindly add following tag
+Reported-by: kbuild test robot <lkp@intel.com>
+Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Could you use a different subject prefix (e.g. "btf:") ?
+smatch warnings:
+drivers/virtio/vdpa/vdpa_sim.c:288 vdpasim_alloc_coherent() warn: returning freed memory 'addr'
 
-This is unrelated to kbuild.
+# https://github.com/0day-ci/linux/commit/55047769b3e974d68b2aab5ce0022459b172a23f
+git remote add linux-review https://github.com/0day-ci/linux
+git remote update linux-review
+git checkout 55047769b3e974d68b2aab5ce0022459b172a23f
+vim +/addr +288 drivers/virtio/vdpa/vdpa_sim.c
 
-Thanks.
+55047769b3e974 Jason Wang 2020-01-16  263  static void *vdpasim_alloc_coherent(struct device *dev, size_t size,
+55047769b3e974 Jason Wang 2020-01-16  264  				    dma_addr_t *dma_addr, gfp_t flag,
+55047769b3e974 Jason Wang 2020-01-16  265  				    unsigned long attrs)
+55047769b3e974 Jason Wang 2020-01-16  266  {
+55047769b3e974 Jason Wang 2020-01-16  267  	struct vdpa_device *vdpa = dev_to_vdpa(dev);
+55047769b3e974 Jason Wang 2020-01-16  268  	struct vdpasim *vdpasim = vdpa_to_sim(vdpa);
+55047769b3e974 Jason Wang 2020-01-16  269  	struct vhost_iotlb *iommu = vdpasim->iommu;
+55047769b3e974 Jason Wang 2020-01-16  270  	void *addr = kmalloc(size, flag);
+55047769b3e974 Jason Wang 2020-01-16  271  	int ret;
+55047769b3e974 Jason Wang 2020-01-16  272  
+55047769b3e974 Jason Wang 2020-01-16  273  	if (!addr)
+55047769b3e974 Jason Wang 2020-01-16  274  		*dma_addr = DMA_MAPPING_ERROR;
+55047769b3e974 Jason Wang 2020-01-16  275  	else {
+55047769b3e974 Jason Wang 2020-01-16  276  		u64 pa = virt_to_phys(addr);
+55047769b3e974 Jason Wang 2020-01-16  277  
+55047769b3e974 Jason Wang 2020-01-16  278  		ret = vhost_iotlb_add_range(iommu, (u64)pa,
+55047769b3e974 Jason Wang 2020-01-16  279  					    (u64)pa + size - 1,
+55047769b3e974 Jason Wang 2020-01-16  280  					    pa, VHOST_MAP_RW);
+55047769b3e974 Jason Wang 2020-01-16  281  		if (ret) {
+55047769b3e974 Jason Wang 2020-01-16  282  			kfree(addr);
+                                                                ^^^^^^^^^^^
+55047769b3e974 Jason Wang 2020-01-16  283  			*dma_addr = DMA_MAPPING_ERROR;
+55047769b3e974 Jason Wang 2020-01-16  284  		} else
+55047769b3e974 Jason Wang 2020-01-16  285  			*dma_addr = (dma_addr_t)pa;
+55047769b3e974 Jason Wang 2020-01-16  286  	}
+55047769b3e974 Jason Wang 2020-01-16  287  
+55047769b3e974 Jason Wang 2020-01-16 @288  	return addr;
+                                                ^^^^^^^^^^^^
+55047769b3e974 Jason Wang 2020-01-16  289  }
 
-
-> Signed-off-by: Brendan Higgins <brendanhiggins@google.com>
-> ---
->  lib/Kconfig.debug | 5 ++++-
->  1 file changed, 4 insertions(+), 1 deletion(-)
->
-> diff --git a/lib/Kconfig.debug b/lib/Kconfig.debug
-> index e4676b992eae9..f5bcb391f1b7d 100644
-> --- a/lib/Kconfig.debug
-> +++ b/lib/Kconfig.debug
-> @@ -238,9 +238,12 @@ config DEBUG_INFO_DWARF4
->           But it significantly improves the success of resolving
->           variables in gdb on optimized code.
->
-> +config ARCH_NO_BTF_TYPEINFO
-> +       bool
-> +
->  config DEBUG_INFO_BTF
->         bool "Generate BTF typeinfo"
-> -       depends on DEBUG_INFO
-> +       depends on DEBUG_INFO && !ARCH_NO_BTF_TYPEINFO
->         help
->           Generate deduplicated BTF type information from DWARF debug info.
->           Turning this on expects presence of pahole tool, which will convert
-> --
-> 2.25.0.341.g760bfbb309-goog
->
-
-
--- 
-Best Regards
-Masahiro Yamada
+---
+0-DAY kernel test infrastructure                 Open Source Technology Center
+https://lists.01.org/hyperkitty/list/kbuild-all@lists.01.org Intel Corporation
