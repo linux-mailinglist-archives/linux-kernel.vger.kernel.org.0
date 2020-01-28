@@ -2,128 +2,127 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DCC7614B417
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Jan 2020 13:20:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4ED5014B41E
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Jan 2020 13:24:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726067AbgA1MUZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 28 Jan 2020 07:20:25 -0500
-Received: from mail-oi1-f194.google.com ([209.85.167.194]:39906 "EHLO
-        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725948AbgA1MUY (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 Jan 2020 07:20:24 -0500
-Received: by mail-oi1-f194.google.com with SMTP id z2so10078949oih.6
-        for <linux-kernel@vger.kernel.org>; Tue, 28 Jan 2020 04:20:24 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=hdMgsrTiGncdYOgcbUb9mlCe9olQ7xYagcxpFIcd6+E=;
-        b=j8Uvap6kQWXoH1g7T0rcgZ04DrKktnfIlbnAjWMfP6Xff15gUkzPDQyaJudmsL1yDt
-         Pb+vDR13QDZ1Ao2bxVflMcVglbNMcWn9vAZMCrxHoLBYDoD6bY2lDG7asXPOG50omDI8
-         dk5DIW0lN8yO+3QsjLezBreSJU6k/SztMUCNHfHgKIc2Cg5MDJi/GcJ/7WIZcrVJi1kh
-         0zHT2ERZ9mrZaEMn2TbChsjOz7VewVpcBB1/Yf2BzW2fvghPbhLKD4ANgvNUlOkS8sa8
-         /8X4lSS3iRshCXuyTobDjzOHPqKpmwm1o88j0yDlyTev/lDOnbA4duQ/Ybwk7zHH2N3s
-         UmpA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=hdMgsrTiGncdYOgcbUb9mlCe9olQ7xYagcxpFIcd6+E=;
-        b=k5Rxh+su/EZ7gey4bnjY723gVPz94CzlM6oXdH8+jiMkq1MN03Gh1CYCCm/ORjNfb5
-         SsifWrUl/BigYLZeeN0FhoF4Czrcb6jH0qg8lns07vfyx3DGVeGOXTwBaFIfii8zI3R7
-         S8d/2aQpmCt+FeBb1dVX0W9fUzLyW9dUb8jfAiO2tI/UdmRaIuaSuyUYE6KMB5+5rkPf
-         dla+pEKXjlwoJgmSpLtOIkfUTboesJ4ddxFHJH2RIlhGo0q2x8rp6k6QJOvZowuWVP/P
-         srBU6kZ9S+XDk9lYfj8fm/m2gW+29v7aDweIOrYsdrOqS2o3A87xvCTtLeJ2anSiLBXy
-         cbkA==
-X-Gm-Message-State: APjAAAWGw66yYLrZ1ICRa55n/r75Ww0J9nujW/+G8BjRpDzjeXNUwIpq
-        0NHBbG0NsUrlhau+/KEY3nKlizD61e/hLGRj/DrI2w==
-X-Google-Smtp-Source: APXvYqwwSdhkpILefSxxqrnVL+VKYNPBwrpZU6sJ2/ZVOmEzczQj7qFdKeGZ86K4BmlSR3uvTKTfV/rKVZTC9oqDg/Y=
-X-Received: by 2002:a54:4716:: with SMTP id k22mr2625237oik.39.1580214023416;
- Tue, 28 Jan 2020 04:20:23 -0800 (PST)
+        id S1726143AbgA1MYV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 28 Jan 2020 07:24:21 -0500
+Received: from mail.kernel.org ([198.145.29.99]:48234 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725948AbgA1MYU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 28 Jan 2020 07:24:20 -0500
+Received: from localhost (unknown [223.226.101.206])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0041C24685;
+        Tue, 28 Jan 2020 12:24:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1580214259;
+        bh=BtqscQvFbrm9Hvfh2uW51lnqhOWg/ZKqqk/HxI4Up1A=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=qdUQmUtqdRw+9h3xCJxZPnmgPE0w88p/uvrqPvpdpQY2NVJgCVCuG2L2bjiWb+6Ya
+         +esNf2jMmYgrO4zO0hnY9k3ICW/kPZa3jeUI5V2DENTSts4MCG59r2ICpRGBtdpHx+
+         95VeNeU3w44aK9YXEnraPxKQQRWuZOoQoSWmKgBU=
+Date:   Tue, 28 Jan 2020 17:54:15 +0530
+From:   Vinod Koul <vkoul@kernel.org>
+To:     Michael Ellerman <mpe@ellerman.id.au>
+Cc:     peter.ujfalusi@ti.com, dma <dmaengine@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>, corbet@lwn.net,
+        linux-doc@vger.kernel.org,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Subject: Re: Docs build broken by driver-api/dmaengine/client.rst ? (was Re:
+ [GIT PULL]: dmaengine updates for v5.6-rc1)
+Message-ID: <20200128122415.GU2841@vkoul-mobl>
+References: <20200127145835.GI2841@vkoul-mobl>
+ <87imkvhkaq.fsf@mpe.ellerman.id.au>
 MIME-Version: 1.0
-References: <20200128072740.21272-1-frextrite@gmail.com> <CAG48ez3ZcO+kVPJVG6XpCPyGUKF2o4UJ6AVdgZXGQ6XJJpcdmg@mail.gmail.com>
- <20200128114818.GA17943@redhat.com>
-In-Reply-To: <20200128114818.GA17943@redhat.com>
-From:   Jann Horn <jannh@google.com>
-Date:   Tue, 28 Jan 2020 13:19:56 +0100
-Message-ID: <CAG48ez2rJZGQyhOcgWe7NwLOxk-CBJugUFMM0Oa9JyuPamRwCg@mail.gmail.com>
-Subject: Re: [PATCH] cred: Use RCU primitives to access RCU pointers
-To:     Oleg Nesterov <oleg@redhat.com>
-Cc:     Amol Grover <frextrite@gmail.com>,
-        David Howells <dhowells@redhat.com>,
-        Shakeel Butt <shakeelb@google.com>,
-        James Morris <jamorris@linux.microsoft.com>,
-        Kees Cook <keescook@chromium.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        kernel list <linux-kernel@vger.kernel.org>,
-        linux-kernel-mentees@lists.linuxfoundation.org,
-        Joel Fernandes <joel@joelfernandes.org>,
-        Madhuparna Bhowmik <madhuparnabhowmik04@gmail.com>,
-        "Paul E . McKenney" <paulmck@kernel.org>,
-        Casey Schaufler <casey@schaufler-ca.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <87imkvhkaq.fsf@mpe.ellerman.id.au>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jan 28, 2020 at 12:48 PM Oleg Nesterov <oleg@redhat.com> wrote:
-> On 01/28, Jann Horn wrote:
-> > On Tue, Jan 28, 2020 at 8:28 AM Amol Grover <frextrite@gmail.com> wrote:
-> > > task_struct.cred and task_struct.real_cred are annotated by __rcu,
+Hi Michael,
+
+On 28-01-20, 22:50, Michael Ellerman wrote:
+> Hi Vinod,
+> 
+> Vinod Koul <vkoul@kernel.org> writes:
+> > Hello Linus,
 > >
-> > task_struct.cred doesn't actually have RCU semantics though, see
-> > commit d7852fbd0f0423937fa287a598bfde188bb68c22. For task_struct.cred,
-> > it would probably be more correct to remove the __rcu annotation?
->
-> Yes, but get_task_cred() assumes it has RCU semantics...
+> > Please pull to receive the dmaengine updates for v5.6-rc1. This time we
+> > have a bunch of core changes to support dynamic channels, hotplug of
+> > controllers, new apis for metadata ops etc along with new drivers for
+> > Intel data accelerators, TI K3 UDMA, PLX DMA engine and hisilicon
+> > Kunpeng DMA engine. Also usual assorted updates to drivers.
+> >
+> > The following changes since commit e42617b825f8073569da76dc4510bfa019b1c35a:
+> >
+> >   Linux 5.5-rc1 (2019-12-08 14:57:55 -0800)
+> >
+> > are available in the Git repository at:
+> >
+> >   git://git.infradead.org/users/vkoul/slave-dma.git tags/dmaengine-5.6-rc1
+> >
+> > for you to fetch changes up to 71723a96b8b1367fefc18f60025dae792477d602:
+> >
+> >   dmaengine: Create symlinks between DMA channels and slaves (2020-01-24 11:41:32 +0530)
+> >
+> > ----------------------------------------------------------------
+> > dmaengine updates for v5.6-rc1
+> ...
+> >
+> > Peter Ujfalusi (9):
+> >       dmaengine: doc: Add sections for per descriptor metadata support
+> 
+> This broke the docs build for me with:
+> 
+>   Sphinx parallel build error:
+>   docutils.utils.SystemMessage: /linux/Documentation/driver-api/dmaengine/client.rst:155: (SEVERE/4) Unexpected section title.
 
-Oh, huh. AFAICS get_task_cred() makes no sense semantically, and I
-think it ought to be deleted.
+Thanks for the report.
 
+>   Optional: per descriptor metadata
+>   ---------------------------------
+> 
+> 
+> The patch below fixes the build. It may not produce the output you
+> intended, it just makes it bold rather than a heading, but it doesn't
+> really make sense to have a heading inside a numbered list.
+> 
+> diff --git a/Documentation/driver-api/dmaengine/client.rst b/Documentation/driver-api/dmaengine/client.rst
+> index a9a7a3c84c63..343df26e73e8 100644
+> --- a/Documentation/driver-api/dmaengine/client.rst
+> +++ b/Documentation/driver-api/dmaengine/client.rst
+> @@ -151,8 +151,8 @@ DMA usage
+>       Note that callbacks will always be invoked from the DMA
+>       engines tasklet, never from interrupt context.
+>  
+> -  Optional: per descriptor metadata
+> -  ---------------------------------
+> +  **Optional: per descriptor metadata**
+> +
 
-There are the following users at the moment:
+I have modified this to below as this:
 
-rdtgroup_task_write_permission() - uses it for acting on a task as
-object, should be using objective credentials instead.
+--- a/Documentation/driver-api/dmaengine/client.rst
++++ b/Documentation/driver-api/dmaengine/client.rst
+@@ -151,8 +151,8 @@ The details of these operations are:
+      Note that callbacks will always be invoked from the DMA
+      engines tasklet, never from interrupt context.
+ 
+-  Optional: per descriptor metadata
+-  ---------------------------------
++Optional: per descriptor metadata
++---------------------------------
+   DMAengine provides two ways for metadata support.
+ 
+   DESC_METADATA_CLIENT
 
-__cgroup1_procs_write() - same thing.
+And I will add this as fixes and it should be in linux-next tomorrow
 
-task_state() - should also be using objective credentials instead, you
-wouldn't want a task to show up as belonging to root in there just
-because it's in the middle of some overlayfs filesystem method or
-something like that.
-
-apparmor_getprocattr() - same thing as for task_state()
-
-rpcauth_bind_root_cred() - should also be using objective credentials
-instead, if init is in overlayfs or whatever, you probably wouldn't
-want that to have an effect here
-
-prepare_kernel_cred() - most callers pass NULL and don't hit this
-codepath, and those that don't pass NULL use `current`, so there can
-be no concurrent modification. Maybe this could be rewritten to
-something like this:
-
-if (daemon) {
-  BUG_ON(daemon != current);
-  old = get_current_cred();
-} else {
- ...
-}
-
-or maybe it could just use the objective creds, it shouldn't matter
-here, I think.
-
-> To be honest I didn't know we have this helper.
-
-Same here.
-
-> Can't it race with revert_creds() in
-> do_faccessat() ?
-
-Yeah, I think you can probably trigger use-after-free reads with that.
-I also remember seeing something fishy in Smack at some point that had
-similar issues... smack_file_send_sigiotask() does
-smk_of_task(smack_cred(tsk->cred)), which looks very wrong.
+Thanks
+-- 
+~Vinod
