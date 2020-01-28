@@ -2,174 +2,82 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E153814ACEA
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Jan 2020 01:06:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 97AB214ACF5
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Jan 2020 01:07:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726360AbgA1AGF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 27 Jan 2020 19:06:05 -0500
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:39306 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725955AbgA1AGF (ORCPT
+        id S1727925AbgA1AHm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 27 Jan 2020 19:07:42 -0500
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:52519 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725955AbgA1AHl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 27 Jan 2020 19:06:05 -0500
-Received: by mail-wr1-f66.google.com with SMTP id y11so13902096wrt.6
-        for <linux-kernel@vger.kernel.org>; Mon, 27 Jan 2020 16:06:02 -0800 (PST)
+        Mon, 27 Jan 2020 19:07:41 -0500
+Received: by mail-wm1-f66.google.com with SMTP id p9so584892wmc.2;
+        Mon, 27 Jan 2020 16:07:39 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=DjVrjeD3QJ+6PJ6qKZcWEoHjMRPEf3uOEfUKJ8JnHLI=;
-        b=jgylNYI7FFPqPl0yj8XLVgEzfctkkIK1IgEcYRwwP0urotQmY6b1+D0B4p5fz50qyk
-         pqvqBZhIvuAPBLybcLTvgXwi8xJK5DqnIYila8oWZlL1mnJsgr8/6IrHpJwjq/CUTrtb
-         rEsc6LloiI6vjH+s/ob2yHadqW7/XTvB5ZFQe6GrVz4DZk9Lj0QKlTXTo8Y8ZItdmvol
-         VLh9PoXSR4AH8n9sj6MMSvs1W+E3xvYrsJbk349ogXmvotRZ2OqsvrHJ4Vfv1yVJ91qL
-         GtP3GvOO/lw4RKyew/krYJZO1hPtz/JvOG82GcMrBHJA8ikNNHFWC6lq6aTgdh/6le4/
-         4m2Q==
+        d=gmail.com; s=20161025;
+        h=from:to:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=uTXjr8tVOQkfJHSo0XVMrHJqxoUMxLgLf0oJacyLO7A=;
+        b=jtfW+GqMm/Mvc/t2CEymMRh5dGbQuxyxifXIfOMTYelP5m+D/2VolhId6Su50/h1Ja
+         6DzL1xOgWy8KHf4ckuBH8Gx3GqPkLtYnT0ypSac/sCJyyVOn512Bfxg9dTqRtEFTM+b2
+         xphFCgTiQX8r+TDvfBQZwZDN647xrsVCQ9aSEUlwQNsbW6lKjjSJEBH2AUAm4o/FfdON
+         ye6H7cVT8KBYhrmkdAHlZ087P2IAnYgfZTqz6u6hr4892C2ss2FRp+uecjhUw9uj2nKt
+         z+3jKhS0kYx5Xlai6Kl+P4OnhQ2g7HEmr6lN4XyWQp93mOhzQKu1m0rGsrnas7qqFTUY
+         ECNA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=DjVrjeD3QJ+6PJ6qKZcWEoHjMRPEf3uOEfUKJ8JnHLI=;
-        b=VNRsGrfO18vOsGibmhyhdm/JZ3xqeOX+EmKXOabbu9PpRQq72vUQJZRlHSddw6Ct8b
-         zvN+8P6D6+lNN3t47VFNH3zou1627TgooVI6xV/zO5FVRE4gjQflGUYGr4TmNTDTgcDb
-         aciOhpJtsEBQ0relEI0g5ZYQ0CKBpjxfEV1VIR54KN23IyTlmEp37U17qqWefuWzaCso
-         o/IOEO9gSdbsYkH50Qqo8QBUpUCtQC3ftEzGFtnvWfrnhHIGvn27QgVXXIzJuj9Yf+8p
-         roHRYNBmTHChYRIydYIBMZeeitRV+M4gl7G4zqjW+KWRA878dwm5YT8OX2QTXSdBEQc3
-         TiKQ==
-X-Gm-Message-State: APjAAAX3Os2L2j3bayMDEMK6qOc+XEXvXAPi82oldwS16qciXWYFSOM1
-        8sa+ILRsDy8QJ6L3RMKX5Wsc0gX4mpuYV0g/Cv58DQ==
-X-Google-Smtp-Source: APXvYqwxaQhqrgUqe/+ObXlT0KOHI2eBR504o0ZIi+HYSd8zO7ktcKNPRVp+Yvr8uwipS/G4h6OW7T0ou+wEi8SHI58=
-X-Received: by 2002:adf:f508:: with SMTP id q8mr25440974wro.334.1580169961494;
- Mon, 27 Jan 2020 16:06:01 -0800 (PST)
+        h=x-gm-message-state:from:to:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=uTXjr8tVOQkfJHSo0XVMrHJqxoUMxLgLf0oJacyLO7A=;
+        b=H8wk1oK4Gu4FOzmcnBP1cAI8ovGErg54AsiRL0RN/NruV3Uk6LZGuzf7TxOrp7La3N
+         oi06vy7mb+sExXcYCgRciOlMjsBjtKG8sBJ+jdOgwU1WqvKD6rVre3ZVDzSl8fT4tv2V
+         cvK7P6CAlEqNv6xmqo13d6pxkvbJDcB2aKA68ZMnVjBkVOYWavr69iNab8AqiahgbhXy
+         eKplTB0e3MnRei48lzTz/t5x9i/YfaNSEmLRN2mTh+6sbIPiWP66UYjg02u82fhJr2ND
+         t6wm8mF2fNuABA/lhwPNq5aigpOD/q7OkZRh9ZW32djW5IjMooEX6QSa/3ne42D3v5s7
+         YFeQ==
+X-Gm-Message-State: APjAAAWsS7OZ2y2rCgCYYid8iMfjauOy23d78U5XqHqbqA3P8lNBoJqT
+        e0zCX0REE64IOBE/oQMZGWg=
+X-Google-Smtp-Source: APXvYqx2UKoDfaskogAMKvMcI4rOKS1mQc/PBTe02SfAoz5FVpNjyJLR4KTxhg9pyAJYK0M2GG38/g==
+X-Received: by 2002:a05:600c:2150:: with SMTP id v16mr1163280wml.156.1580170058994;
+        Mon, 27 Jan 2020 16:07:38 -0800 (PST)
+Received: from localhost.localdomain ([109.126.145.157])
+        by smtp.gmail.com with ESMTPSA id y20sm577193wmj.23.2020.01.27.16.07.37
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 27 Jan 2020 16:07:38 -0800 (PST)
+From:   Pavel Begunkov <asml.silence@gmail.com>
+To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH 0/2] io-wq sharing
+Date:   Tue, 28 Jan 2020 03:06:50 +0300
+Message-Id: <cover.1580169415.git.asml.silence@gmail.com>
+X-Mailer: git-send-email 2.24.0
 MIME-Version: 1.0
-References: <20200127210014.5207-1-tkjos@google.com> <CAJWu+orT-A5HVi97ccKwMvs9MvXWV0MZhsKcZDNS8r-gqRmcDA@mail.gmail.com>
- <CAHRSSEw67bY9V7un_t1oV2dsfE72BCAtOj_OH4wyQLpuEAjUfg@mail.gmail.com>
-In-Reply-To: <CAHRSSEw67bY9V7un_t1oV2dsfE72BCAtOj_OH4wyQLpuEAjUfg@mail.gmail.com>
-From:   Suren Baghdasaryan <surenb@google.com>
-Date:   Mon, 27 Jan 2020 16:05:50 -0800
-Message-ID: <CAJuCfpEYUsBt2iNixkOd9L0Wd4+0tNDquC3_fgRKtN63ZU=sjg@mail.gmail.com>
-Subject: Re: [PATCH] staging: android: ashmem: Disallow ashmem memory from
- being remapped
-To:     Todd Kjos <tkjos@google.com>
-Cc:     Joel Fernandes <joelaf@google.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Arve Hjonnevag <arve@android.com>,
-        "open list:ANDROID DRIVERS" <devel@driverdev.osuosl.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Martijn Coenen <maco@google.com>,
-        "Joel Fernandes (Google)" <joel@joelfernandes.org>,
-        "Cc: Android Kernel" <kernel-team@android.com>,
-        Jann Horn <jannh@google.com>, stable <stable@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jan 27, 2020 at 3:57 PM 'Todd Kjos' via kernel-team
-<kernel-team@android.com> wrote:
->
-> On Mon, Jan 27, 2020 at 2:30 PM Joel Fernandes <joelaf@google.com> wrote:
-> >
-> > On Mon, Jan 27, 2020 at 1:00 PM 'Todd Kjos' via kernel-team
-> > <kernel-team@android.com> wrote:
-> > >
-> > > From: Suren Baghdasaryan <surenb@google.com>
-> > >
-> > > When ashmem file is being mmapped the resulting vma->vm_file points to the
-> > > backing shmem file with the generic fops that do not check ashmem
-> > > permissions like fops of ashmem do. Fix that by disallowing mapping
-> > > operation for backing shmem file.
-> >
-> > Looks good, but I think the commit message is confusing. I had to read
-> > the code a couple times to understand what's going on since there are
-> > no links to a PoC for the security issue, in the commit message. I
-> > think a better message could have been:
-> >
-> >  When ashmem file is mmapped, the resulting vma->vm_file points to the
-> >  backing shmem file with the generic fops that do not check ashmem
-> >  permissions like fops of ashmem do. If an mremap is done on the ashmem
-> >  region, then the permission checks will be skipped. Fix that by disallowing
-> >  mapping operation on the backing shmem file.
->
-> Sent v2 with the suggested change.
+rip-off of Jens io-wq sharing patches allowing multiple io_uring
+instances to be bound to a single io-wq. The differences are:
+- io-wq, which we would like to be shared, is passed as io_uring fd
+- fail, if can't share. IMHO, it's always better to fail fast and loud
 
-Sorry for the delay. The suggestion makes sense to me. Thanks!
+I didn't tested it after rebasing, but hopefully won't be a problem.
 
->
-> >
-> > Or did I miss something?
-> >
-> > thanks!
-> >
-> > - Joel
-> >
-> >
-> >
-> > >
-> > > Reported-by: Jann Horn <jannh@google.com>
-> > > Signed-off-by: Suren Baghdasaryan <surenb@google.com>
-> > > Cc: stable <stable@vger.kernel.org> # 4.4,4.9,4.14,4.18,5.4
-> > > Signed-off-by: Todd Kjos <tkjos@google.com>
-> > > ---
-> > >  drivers/staging/android/ashmem.c | 28 ++++++++++++++++++++++++++++
-> > >  1 file changed, 28 insertions(+)
-> > >
-> > > diff --git a/drivers/staging/android/ashmem.c b/drivers/staging/android/ashmem.c
-> > > index 74d497d39c5a..c6695354b123 100644
-> > > --- a/drivers/staging/android/ashmem.c
-> > > +++ b/drivers/staging/android/ashmem.c
-> > > @@ -351,8 +351,23 @@ static inline vm_flags_t calc_vm_may_flags(unsigned long prot)
-> > >                _calc_vm_trans(prot, PROT_EXEC,  VM_MAYEXEC);
-> > >  }
-> > >
-> > > +static int ashmem_vmfile_mmap(struct file *file, struct vm_area_struct *vma)
-> > > +{
-> > > +       /* do not allow to mmap ashmem backing shmem file directly */
-> > > +       return -EPERM;
-> > > +}
-> > > +
-> > > +static unsigned long
-> > > +ashmem_vmfile_get_unmapped_area(struct file *file, unsigned long addr,
-> > > +                               unsigned long len, unsigned long pgoff,
-> > > +                               unsigned long flags)
-> > > +{
-> > > +       return current->mm->get_unmapped_area(file, addr, len, pgoff, flags);
-> > > +}
-> > > +
-> > >  static int ashmem_mmap(struct file *file, struct vm_area_struct *vma)
-> > >  {
-> > > +       static struct file_operations vmfile_fops;
-> > >         struct ashmem_area *asma = file->private_data;
-> > >         int ret = 0;
-> > >
-> > > @@ -393,6 +408,19 @@ static int ashmem_mmap(struct file *file, struct vm_area_struct *vma)
-> > >                 }
-> > >                 vmfile->f_mode |= FMODE_LSEEK;
-> > >                 asma->file = vmfile;
-> > > +               /*
-> > > +                * override mmap operation of the vmfile so that it can't be
-> > > +                * remapped which would lead to creation of a new vma with no
-> > > +                * asma permission checks. Have to override get_unmapped_area
-> > > +                * as well to prevent VM_BUG_ON check for f_ops modification.
-> > > +                */
-> > > +               if (!vmfile_fops.mmap) {
-> > > +                       vmfile_fops = *vmfile->f_op;
-> > > +                       vmfile_fops.mmap = ashmem_vmfile_mmap;
-> > > +                       vmfile_fops.get_unmapped_area =
-> > > +                                       ashmem_vmfile_get_unmapped_area;
-> > > +               }
-> > > +               vmfile->f_op = &vmfile_fops;
-> > >         }
-> > >         get_file(asma->file);
-> > >
-> > > --
-> > > 2.25.0.341.g760bfbb309-goog
-> > >
-> > > --
-> > > To unsubscribe from this group and stop receiving emails from it, send an email to kernel-team+unsubscribe@android.com.
-> > >
->
-> --
-> To unsubscribe from this group and stop receiving emails from it, send an email to kernel-team+unsubscribe@android.com.
->
+p.s. on top of ("io_uring/io-wq: don't use static creds/mm assignments")
+
+Pavel Begunkov (2):
+  io-wq: allow grabbing existing io-wq
+  io_uring: add io-wq workqueue sharing
+
+ fs/io-wq.c                    | 10 ++++++
+ fs/io-wq.h                    |  1 +
+ fs/io_uring.c                 | 67 +++++++++++++++++++++++++++--------
+ include/uapi/linux/io_uring.h |  4 ++-
+ 4 files changed, 67 insertions(+), 15 deletions(-)
+
+-- 
+2.24.0
+
