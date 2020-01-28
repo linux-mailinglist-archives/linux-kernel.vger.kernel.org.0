@@ -2,52 +2,52 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EBB5414C03E
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Jan 2020 19:50:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A85A614C047
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Jan 2020 19:50:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726842AbgA1SuA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 28 Jan 2020 13:50:00 -0500
-Received: from mail-qk1-f201.google.com ([209.85.222.201]:42127 "EHLO
-        mail-qk1-f201.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726821AbgA1St5 (ORCPT
+        id S1726922AbgA1SuG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 28 Jan 2020 13:50:06 -0500
+Received: from mail-qt1-f202.google.com ([209.85.160.202]:54224 "EHLO
+        mail-qt1-f202.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726833AbgA1SuA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 Jan 2020 13:49:57 -0500
-Received: by mail-qk1-f201.google.com with SMTP id m13so9004283qka.9
-        for <linux-kernel@vger.kernel.org>; Tue, 28 Jan 2020 10:49:56 -0800 (PST)
+        Tue, 28 Jan 2020 13:50:00 -0500
+Received: by mail-qt1-f202.google.com with SMTP id m8so9085820qta.20
+        for <linux-kernel@vger.kernel.org>; Tue, 28 Jan 2020 10:49:59 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20161025;
         h=date:in-reply-to:message-id:mime-version:references:subject:from:to
          :cc;
-        bh=SyMS6kTKxjGvSfy1yskMuy1o1NPxNd1pRRReN/eh/Yw=;
-        b=iDoWJGqwVEP2tHMWm4+bS9TCXvecvsiZmIGPR2wyOSJfmTsLMvUaQm2ursorFU3Ra7
-         NuHDNghwRgHXAAk9m9KAPMbK4uTyIcT9xr9wE2QiZ1dUFfX57GqHyiEoehb3XJLjS98N
-         YFNOY7pkup2SOO21fY5am9qSl3hqr7M+8fKeSXR1JT8QJuNrKvAgik306CX6uTTelKVO
-         jSwC4WXDfkQ4RkIwPUjXYeg4cRSfyvTDlYYopLdqGGEns5H+6Co2aSHsmd2TRUBwb4ST
-         Jn0rsT+JOm35IDm2DnWe8BFGBEW8Lny+TWpjqr/yQiw7tMRlFt978M/BMe3aSyd1G4ZY
-         ck+Q==
+        bh=bNCXRmM/yr4GL3yZ1bhHRJc0r5YpsDoQ2qXNiKtbIjQ=;
+        b=o7KYQScaTc5r0bWGyHvOSj2qDSparI8nM7EV2GGaR8zJgb85Unw1bAkclg2/3gkVjV
+         sWiP8fvXbxWaFa/3ylPd3mUT0DJXJwDNPclKGR0BQxZ4Cc2/1/tkupECkGjVL+qym1xJ
+         Ae3JulKZHCqg8uCAc0O9oxR71IRgfwLYrHi5idXDY3EpdKDxL0ypLNFgS5UoGwYlvaVK
+         coXWpBTQvrtoEim7i5jhgtRDRSCIEyXek1a+HFz3DKK+zmjORBlTmey8aAdNXMqQeIAI
+         9YEW0BDh4vOazWGWstuyBaqYyWx5H8LIDc1PihTJnexHB7ha5NBdEF0GBHhBS0eIc4XK
+         0rfg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:in-reply-to:message-id:mime-version
          :references:subject:from:to:cc;
-        bh=SyMS6kTKxjGvSfy1yskMuy1o1NPxNd1pRRReN/eh/Yw=;
-        b=fg6JM4pWuQjKVeYtUIuG0eQDgKwoP9WbJm1Re4gTFpOyKOSri/Kdh7B2AOQLh1S7oN
-         HJ8EsQluLkoIYB0MkqHpNVVv38RfANANN4RkdIdSPmD67eAoX8+UIQ3+bTew/9oANxnu
-         Xi3AAY3MjRjVTl/PVUvodDucJhmftZPEbD/eJfkmjezcwgd1+KfElmIeeR+MYoR5Y087
-         olaapKIuTfog5Futgo1JurWr+gKZR83/huJQ8ugfMIM4pcIIG2qN6pG6UA/YOKpJO9+l
-         0nSo2usiEbBhgpcGsskR8dVCJhqtC7Ho4IY47Bl4EwYeAnX84hFYnC3xKMS1Ad+p8G7B
-         zj/Q==
-X-Gm-Message-State: APjAAAX23ZRiThGAnuyMtADtCcKcNmYpysOemynHonQcM+83mtsSCuX9
-        80eRu11gQZ7hFDjdtz14ab/us2qRWCJrNg317ng=
-X-Google-Smtp-Source: APXvYqwBDfyzeAgl4Hbq75PkVeA00YwL16x26LdN4T6C4RXjAAHG16RhCosHW83/V2HMDMrDJF1ZlFrzqFIRTexeGxM=
-X-Received: by 2002:a0c:eacb:: with SMTP id y11mr24452398qvp.68.1580237396348;
- Tue, 28 Jan 2020 10:49:56 -0800 (PST)
-Date:   Tue, 28 Jan 2020 10:49:30 -0800
+        bh=bNCXRmM/yr4GL3yZ1bhHRJc0r5YpsDoQ2qXNiKtbIjQ=;
+        b=mG1EYUV3zFE5TqARmVwuVwQDKltUcB9Nw0MfQ6SlaPJt7Xe7TZGuXS9zMWhP7FQiMi
+         ZE9tdFuK7dcXP46xFHcNHU5yCF9EcnZCmQncm3QAzxzd3iKFFIyhc7IYjBdnQpNkRFg7
+         58f6cwfPyCJoVNenAdlh5Fm8tRDjPIibvXDb3xqwgR3Epnul+lEmoUpWJm+RZ+Q9Lb+N
+         MIOk0nAs7iIoCKsqv/jcLA0VOSQclYzfNT1n4cEvuhQzGAFkT0EndLguPiDYNOQ/FGRy
+         xerKJeNNXwuMmoi2E0rb1Ntin5XUhOv7NktCCC9JhUyyEgYb0Nzda0z1jclrOyP8YF3R
+         3SVw==
+X-Gm-Message-State: APjAAAWaVJ1hr5ydZNHHSY8goDgqLAVQQAs1e3aUlBm36oc3IMJ/y7hJ
+        Zn06sdXnzf6BTyCbEVSp1HXas1vWt5+D9NsnJOc=
+X-Google-Smtp-Source: APXvYqx+U9CfKO16wIXNBeeO96dJ60XaZ+hhyoe8kAoit2FdttoilLWi0KpO3nWQj2EBXb7JYYq1XAJT8FXWdsvdaLA=
+X-Received: by 2002:aed:2783:: with SMTP id a3mr7863657qtd.284.1580237398897;
+ Tue, 28 Jan 2020 10:49:58 -0800 (PST)
+Date:   Tue, 28 Jan 2020 10:49:31 -0800
 In-Reply-To: <20200128184934.77625-1-samitolvanen@google.com>
-Message-Id: <20200128184934.77625-8-samitolvanen@google.com>
+Message-Id: <20200128184934.77625-9-samitolvanen@google.com>
 Mime-Version: 1.0
 References: <20191018161033.261971-1-samitolvanen@google.com> <20200128184934.77625-1-samitolvanen@google.com>
 X-Mailer: git-send-email 2.25.0.341.g760bfbb309-goog
-Subject: [PATCH v7 07/11] arm64: efi: restore x18 if it was corrupted
+Subject: [PATCH v7 08/11] arm64: vdso: disable Shadow Call Stack
 From:   Sami Tolvanen <samitolvanen@google.com>
 To:     Will Deacon <will@kernel.org>,
         Catalin Marinas <catalin.marinas@arm.com>,
@@ -73,37 +73,31 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-If we detect a corrupted x18, restore the register before jumping back
-to potentially SCS instrumented code. This is safe, because the wrapper
-is called with preemption disabled and a separate shadow stack is used
-for interrupt handling.
+Shadow stacks are only available in the kernel, so disable SCS
+instrumentation for the vDSO.
 
 Signed-off-by: Sami Tolvanen <samitolvanen@google.com>
+Reviewed-by: Nick Desaulniers <ndesaulniers@google.com>
 Reviewed-by: Kees Cook <keescook@chromium.org>
+Reviewed-by: Mark Rutland <mark.rutland@arm.com>
+Acked-by: Will Deacon <will@kernel.org>
 ---
- arch/arm64/kernel/efi-rt-wrapper.S | 11 ++++++++++-
- 1 file changed, 10 insertions(+), 1 deletion(-)
+ arch/arm64/kernel/vdso/Makefile | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/arm64/kernel/efi-rt-wrapper.S b/arch/arm64/kernel/efi-rt-wrapper.S
-index 3fc71106cb2b..6ca6c0dc11a1 100644
---- a/arch/arm64/kernel/efi-rt-wrapper.S
-+++ b/arch/arm64/kernel/efi-rt-wrapper.S
-@@ -34,5 +34,14 @@ ENTRY(__efi_rt_asm_wrapper)
- 	ldp	x29, x30, [sp], #32
- 	b.ne	0f
- 	ret
--0:	b	efi_handle_corrupted_x18	// tail call
-+0:
-+	/*
-+	 * With CONFIG_SHADOW_CALL_STACK, the kernel uses x18 to store a
-+	 * shadow stack pointer, which we need to restore before returning to
-+	 * potentially instrumented code. This is safe because the wrapper is
-+	 * called with preemption disabled and a separate shadow stack is used
-+	 * for interrupts.
-+	 */
-+	mov	x18, x2
-+	b	efi_handle_corrupted_x18	// tail call
- ENDPROC(__efi_rt_asm_wrapper)
+diff --git a/arch/arm64/kernel/vdso/Makefile b/arch/arm64/kernel/vdso/Makefile
+index dd2514bb1511..a87a4f11724e 100644
+--- a/arch/arm64/kernel/vdso/Makefile
++++ b/arch/arm64/kernel/vdso/Makefile
+@@ -25,7 +25,7 @@ ccflags-y += -DDISABLE_BRANCH_PROFILING
+ 
+ VDSO_LDFLAGS := -Bsymbolic
+ 
+-CFLAGS_REMOVE_vgettimeofday.o = $(CC_FLAGS_FTRACE) -Os
++CFLAGS_REMOVE_vgettimeofday.o = $(CC_FLAGS_FTRACE) -Os $(CC_FLAGS_SCS)
+ KBUILD_CFLAGS			+= $(DISABLE_LTO)
+ KASAN_SANITIZE			:= n
+ UBSAN_SANITIZE			:= n
 -- 
 2.25.0.341.g760bfbb309-goog
 
