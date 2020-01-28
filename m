@@ -2,36 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1E6A514B88E
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Jan 2020 15:26:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E0B7D14B8A0
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Jan 2020 15:26:14 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731703AbgA1OYy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 28 Jan 2020 09:24:54 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51710 "EHLO mail.kernel.org"
+        id S1733075AbgA1OZq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 28 Jan 2020 09:25:46 -0500
+Received: from mail.kernel.org ([198.145.29.99]:52774 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732766AbgA1OYv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 Jan 2020 09:24:51 -0500
+        id S1730811AbgA1OZn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 28 Jan 2020 09:25:43 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 70D542468A;
-        Tue, 28 Jan 2020 14:24:49 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5F0A62071E;
+        Tue, 28 Jan 2020 14:25:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1580221489;
-        bh=krkpRTJjaq0aPRrGNgYXqjuGQlifAOUX/tNFEfRm/jU=;
+        s=default; t=1580221542;
+        bh=MAl6iOkGqFidVtqHKpXauQzj8NI3g/vtUUpZCrgxORo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Fj9F/5kwalY8V1+oj8vzJqab96lw7EXIdnmlPNMFEWqsCUAtBJXiVPd0S8yL83cyM
-         o+QNpHbyVbZQpKh7O+VsAHIlfmyQOvn19zEEXM+0ucooVysKJRVoBGQAYKefVoqYRm
-         z+g8wO258hiE7nCGAoIEX0NoLiYe5Sq5GBdoGErQ=
+        b=raw+LoLDgXJPJSKvbY03yokoMrxkgwjh+4oS44IcCgtPluUZDA3jbJfxMQSL6igua
+         a1mp7SIxoN5X0doQf4X1HduzV+psbAc8IpDabQ2+ZiwijrTt3QDqn3joOngwIKvBPE
+         /e/YCUpuLcHbxefqyrg8h3r/xHzFAJG0G57bNFtI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Sam Bobroff <sbobroff@linux.ibm.com>,
-        Alex Deucher <alexander.deucher@amd.com>,
+        stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>,
+        Israel Rukshin <israelr@mellanox.com>,
+        Max Gurtovoy <maxg@mellanox.com>,
+        Sagi Grimberg <sagi@grimberg.me>,
+        Jason Gunthorpe <jgg@mellanox.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 228/271] drm/radeon: fix bad DMA from INTERRUPT_CNTL2
-Date:   Tue, 28 Jan 2020 15:06:17 +0100
-Message-Id: <20200128135909.551165717@linuxfoundation.org>
+Subject: [PATCH 4.9 230/271] IB/iser: Fix dma_nents type definition
+Date:   Tue, 28 Jan 2020 15:06:19 +0100
+Message-Id: <20200128135909.696358742@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
 In-Reply-To: <20200128135852.449088278@linuxfoundation.org>
 References: <20200128135852.449088278@linuxfoundation.org>
@@ -44,75 +47,39 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Sam Bobroff <sbobroff@linux.ibm.com>
+From: Max Gurtovoy <maxg@mellanox.com>
 
-[ Upstream commit 62d91dd2851e8ae2ca552f1b090a3575a4edf759 ]
+[ Upstream commit c1545f1a200f4adc4ef8dd534bf33e2f1aa22c2f ]
 
-The INTERRUPT_CNTL2 register expects a valid DMA address, but is
-currently set with a GPU MC address.  This can cause problems on
-systems that detect the resulting DMA read from an invalid address
-(found on a Power8 guest).
+The retured value from ib_dma_map_sg saved in dma_nents variable. To avoid
+future mismatch between types, define dma_nents as an integer instead of
+unsigned.
 
-Instead, use the DMA address of the dummy page because it will always
-be safe.
-
-Fixes: d8f60cfc9345 ("drm/radeon/kms: Add support for interrupts on r6xx/r7xx chips (v3)")
-Fixes: 25a857fbe973 ("drm/radeon/kms: add support for interrupts on SI")
-Fixes: a59781bbe528 ("drm/radeon: add support for interrupts on CIK (v5)")
-Signed-off-by: Sam Bobroff <sbobroff@linux.ibm.com>
-Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
+Fixes: 57b26497fabe ("IB/iser: Pass the correct number of entries for dma mapped SGL")
+Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
+Reviewed-by: Israel Rukshin <israelr@mellanox.com>
+Signed-off-by: Max Gurtovoy <maxg@mellanox.com>
+Acked-by: Sagi Grimberg <sagi@grimberg.me>
+Reviewed-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpu/drm/radeon/cik.c  | 4 ++--
- drivers/gpu/drm/radeon/r600.c | 4 ++--
- drivers/gpu/drm/radeon/si.c   | 4 ++--
- 3 files changed, 6 insertions(+), 6 deletions(-)
+ drivers/infiniband/ulp/iser/iscsi_iser.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/radeon/cik.c b/drivers/gpu/drm/radeon/cik.c
-index b99f3e59011c1..5fcb5869a4891 100644
---- a/drivers/gpu/drm/radeon/cik.c
-+++ b/drivers/gpu/drm/radeon/cik.c
-@@ -7026,8 +7026,8 @@ static int cik_irq_init(struct radeon_device *rdev)
- 	}
+diff --git a/drivers/infiniband/ulp/iser/iscsi_iser.h b/drivers/infiniband/ulp/iser/iscsi_iser.h
+index cb48e22afff72..a3614f7f00073 100644
+--- a/drivers/infiniband/ulp/iser/iscsi_iser.h
++++ b/drivers/infiniband/ulp/iser/iscsi_iser.h
+@@ -197,7 +197,7 @@ struct iser_data_buf {
+ 	struct scatterlist *sg;
+ 	int                size;
+ 	unsigned long      data_len;
+-	unsigned int       dma_nents;
++	int                dma_nents;
+ };
  
- 	/* setup interrupt control */
--	/* XXX this should actually be a bus address, not an MC address. same on older asics */
--	WREG32(INTERRUPT_CNTL2, rdev->ih.gpu_addr >> 8);
-+	/* set dummy read address to dummy page address */
-+	WREG32(INTERRUPT_CNTL2, rdev->dummy_page.addr >> 8);
- 	interrupt_cntl = RREG32(INTERRUPT_CNTL);
- 	/* IH_DUMMY_RD_OVERRIDE=0 - dummy read disabled with msi, enabled without msi
- 	 * IH_DUMMY_RD_OVERRIDE=1 - dummy read controlled by IH_DUMMY_RD_EN
-diff --git a/drivers/gpu/drm/radeon/r600.c b/drivers/gpu/drm/radeon/r600.c
-index f2eac6b6c46a3..9569c35f8766a 100644
---- a/drivers/gpu/drm/radeon/r600.c
-+++ b/drivers/gpu/drm/radeon/r600.c
-@@ -3697,8 +3697,8 @@ int r600_irq_init(struct radeon_device *rdev)
- 	}
- 
- 	/* setup interrupt control */
--	/* set dummy read address to ring address */
--	WREG32(INTERRUPT_CNTL2, rdev->ih.gpu_addr >> 8);
-+	/* set dummy read address to dummy page address */
-+	WREG32(INTERRUPT_CNTL2, rdev->dummy_page.addr >> 8);
- 	interrupt_cntl = RREG32(INTERRUPT_CNTL);
- 	/* IH_DUMMY_RD_OVERRIDE=0 - dummy read disabled with msi, enabled without msi
- 	 * IH_DUMMY_RD_OVERRIDE=1 - dummy read controlled by IH_DUMMY_RD_EN
-diff --git a/drivers/gpu/drm/radeon/si.c b/drivers/gpu/drm/radeon/si.c
-index b75d809c292e3..919d389869ceb 100644
---- a/drivers/gpu/drm/radeon/si.c
-+++ b/drivers/gpu/drm/radeon/si.c
-@@ -6018,8 +6018,8 @@ static int si_irq_init(struct radeon_device *rdev)
- 	}
- 
- 	/* setup interrupt control */
--	/* set dummy read address to ring address */
--	WREG32(INTERRUPT_CNTL2, rdev->ih.gpu_addr >> 8);
-+	/* set dummy read address to dummy page address */
-+	WREG32(INTERRUPT_CNTL2, rdev->dummy_page.addr >> 8);
- 	interrupt_cntl = RREG32(INTERRUPT_CNTL);
- 	/* IH_DUMMY_RD_OVERRIDE=0 - dummy read disabled with msi, enabled without msi
- 	 * IH_DUMMY_RD_OVERRIDE=1 - dummy read controlled by IH_DUMMY_RD_EN
+ /* fwd declarations */
 -- 
 2.20.1
 
