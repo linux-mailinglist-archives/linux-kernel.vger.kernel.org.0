@@ -2,156 +2,76 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8E2F714C210
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Jan 2020 22:20:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EBFFB14C22D
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Jan 2020 22:25:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726583AbgA1VUL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 28 Jan 2020 16:20:11 -0500
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:33704 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726211AbgA1VUL (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 Jan 2020 16:20:11 -0500
-Received: by mail-wr1-f67.google.com with SMTP id b6so17806466wrq.0;
-        Tue, 28 Jan 2020 13:20:08 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=zI+cNUNLF3kaXSaB95jriRVjzozM0k40b3VUnBQ2hL4=;
-        b=cr1Eugxz1jDRTs5xXm0mdslOFP/LW6r93aHJoQ549mVFWqHrC7WNncFStX/6Q9ce9v
-         nz/ilbtGXaVqmwnuUOtPzEEhhnZbi3G+ArTMvX9t3TNlebra7xCRIRaoIySvpHIHToPn
-         ZIniEsnYZOL+8NM4M6/QoQ7Yn43VBVyPuanKM45xtbmRasmAHJluexqc8RsEXCiIJ2Y5
-         ULKgK92O+HRsoauqf+y8qkpWo0+kSEedvad0oMmKLIq8QKCz2+K4HunTYzUN4LPIveRF
-         yFnleba3CQRXqMwll04l9z6s5L9y3Xgoqx8P/n6lFGMEIWPn1inGG3AfqJtGjWK0k+K2
-         q6ng==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=zI+cNUNLF3kaXSaB95jriRVjzozM0k40b3VUnBQ2hL4=;
-        b=gedW94dCJU+2a0/7HDXn16HWENtZUHvyApJ2/Ydd4agQafEfcqug7BENFNJ9PcOVa8
-         LNkg2P4G84KgWzxBLFMFikTlGACe43z3gCxJVBNOhFfoAY3t2VpAMrVxDArJUFqwPjZN
-         G986DsGB8SElwpFfgAfZLZUrDYMynvsbo+AXVrIpncdW/8UOzyGqnofDDNYzPo6Uh6Ct
-         rUCc5yzWCOx0SXxWgn5KyvwSJ2eBm4v2iqAsmROZvq69K94iosaj7656M2vIoMT2VboF
-         /QFuBkZ1eF8smFj9eluVguMwzLpO+7w+2UTM77xjRnYFx9roN/3dvLG/ycJsxPy/Dmf2
-         6WYw==
-X-Gm-Message-State: APjAAAVe3WYKf2agc8uMbcbof+5wF825cDBU4CupHi3/DuSsuilv8ALk
-        a6ojWrWjLx+qacwIUOh3mb38mH1E32YG2b9oekI=
-X-Google-Smtp-Source: APXvYqzxeqjTVGWhGxKoLAamd10Qlofs6anWK7unOqW4V0Q59Aa6fL+sO2cRfdjqYiyhrmbqNf2yQCOAN4GC6qOHll4=
-X-Received: by 2002:adf:f2c1:: with SMTP id d1mr30178824wrp.111.1580246408308;
- Tue, 28 Jan 2020 13:20:08 -0800 (PST)
+        id S1726320AbgA1VY7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 28 Jan 2020 16:24:59 -0500
+Received: from namei.org ([65.99.196.166]:60576 "EHLO namei.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726211AbgA1VY7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 28 Jan 2020 16:24:59 -0500
+Received: from localhost (localhost [127.0.0.1])
+        by namei.org (8.14.4/8.14.4) with ESMTP id 00SLOtER004936;
+        Tue, 28 Jan 2020 21:24:55 GMT
+Date:   Wed, 29 Jan 2020 08:24:55 +1100 (AEDT)
+From:   James Morris <jmorris@namei.org>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+cc:     linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [GIT PULL] Security subsystem changes for v5.6
+Message-ID: <alpine.LRH.2.21.2001290823510.4816@namei.org>
+User-Agent: Alpine 2.21 (LRH 202 2017-01-01)
 MIME-Version: 1.0
-References: <20200128112827.43682-1-colin.king@canonical.com>
-In-Reply-To: <20200128112827.43682-1-colin.king@canonical.com>
-From:   Alex Deucher <alexdeucher@gmail.com>
-Date:   Tue, 28 Jan 2020 16:19:56 -0500
-Message-ID: <CADnq5_O=W6TFFCGZsdvtuLPijanxX4vdkdmedh2OxZauG6M58w@mail.gmail.com>
-Subject: Re: [PATCH] drm/amd/display: fix spelling mistake link_integiry_check
- -> link_integrity_check
-To:     Colin King <colin.king@canonical.com>
-Cc:     Harry Wentland <harry.wentland@amd.com>,
-        Leo Li <sunpeng.li@amd.com>,
-        Alex Deucher <alexander.deucher@amd.com>,
-        =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
-        David Zhou <David1.Zhou@amd.com>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Bhawanpreet Lakha <Bhawanpreet.Lakha@amd.com>,
-        amd-gfx list <amd-gfx@lists.freedesktop.org>,
-        Maling list - DRI developers 
-        <dri-devel@lists.freedesktop.org>, kernel-janitors@vger.kernel.org,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jan 28, 2020 at 6:28 AM Colin King <colin.king@canonical.com> wrote:
->
-> From: Colin Ian King <colin.king@canonical.com>
->
-> There is a spelling mistake on the struct field name link_integiry_check,
-> fix this by renaming it.
->
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Just one minor fix this time. Please pull.
 
-Applied.  Thanks!
+The following changes since commit 219d54332a09e8d8741c1e1982f5eae56099de85:
 
-Alex
+  Linux 5.4 (2019-11-24 16:32:01 -0800)
 
-> ---
->  drivers/gpu/drm/amd/display/modules/hdcp/hdcp.h           | 2 +-
->  .../gpu/drm/amd/display/modules/hdcp/hdcp1_execution.c    | 8 ++++----
->  .../gpu/drm/amd/display/modules/hdcp/hdcp1_transition.c   | 4 ++--
->  3 files changed, 7 insertions(+), 7 deletions(-)
->
-> diff --git a/drivers/gpu/drm/amd/display/modules/hdcp/hdcp.h b/drivers/gpu/drm/amd/display/modules/hdcp/hdcp.h
-> index f98d3d9ecb6d..af78e4f1be68 100644
-> --- a/drivers/gpu/drm/amd/display/modules/hdcp/hdcp.h
-> +++ b/drivers/gpu/drm/amd/display/modules/hdcp/hdcp.h
-> @@ -63,7 +63,7 @@ struct mod_hdcp_transition_input_hdcp1 {
->         uint8_t hdcp_capable_dp;
->         uint8_t binfo_read_dp;
->         uint8_t r0p_available_dp;
-> -       uint8_t link_integiry_check;
-> +       uint8_t link_integrity_check;
->         uint8_t reauth_request_check;
->         uint8_t stream_encryption_dp;
->  };
-> diff --git a/drivers/gpu/drm/amd/display/modules/hdcp/hdcp1_execution.c b/drivers/gpu/drm/amd/display/modules/hdcp/hdcp1_execution.c
-> index 04845e43df15..37670db64855 100644
-> --- a/drivers/gpu/drm/amd/display/modules/hdcp/hdcp1_execution.c
-> +++ b/drivers/gpu/drm/amd/display/modules/hdcp/hdcp1_execution.c
-> @@ -283,8 +283,8 @@ static enum mod_hdcp_status wait_for_ready(struct mod_hdcp *hdcp,
->                                 hdcp, "bstatus_read"))
->                         goto out;
->                 if (!mod_hdcp_execute_and_set(check_link_integrity_dp,
-> -                               &input->link_integiry_check, &status,
-> -                               hdcp, "link_integiry_check"))
-> +                               &input->link_integrity_check, &status,
-> +                               hdcp, "link_integrity_check"))
->                         goto out;
->                 if (!mod_hdcp_execute_and_set(check_no_reauthentication_request_dp,
->                                 &input->reauth_request_check, &status,
-> @@ -431,8 +431,8 @@ static enum mod_hdcp_status authenticated_dp(struct mod_hdcp *hdcp,
->                         hdcp, "bstatus_read"))
->                 goto out;
->         if (!mod_hdcp_execute_and_set(check_link_integrity_dp,
-> -                       &input->link_integiry_check, &status,
-> -                       hdcp, "link_integiry_check"))
-> +                       &input->link_integrity_check, &status,
-> +                       hdcp, "link_integrity_check"))
->                 goto out;
->         if (!mod_hdcp_execute_and_set(check_no_reauthentication_request_dp,
->                         &input->reauth_request_check, &status,
-> diff --git a/drivers/gpu/drm/amd/display/modules/hdcp/hdcp1_transition.c b/drivers/gpu/drm/amd/display/modules/hdcp/hdcp1_transition.c
-> index 21ebc62bb9d9..76edcbe51f71 100644
-> --- a/drivers/gpu/drm/amd/display/modules/hdcp/hdcp1_transition.c
-> +++ b/drivers/gpu/drm/amd/display/modules/hdcp/hdcp1_transition.c
-> @@ -241,7 +241,7 @@ enum mod_hdcp_status mod_hdcp_hdcp1_dp_transition(struct mod_hdcp *hdcp,
->                 }
->                 break;
->         case D1_A4_AUTHENTICATED:
-> -               if (input->link_integiry_check != PASS ||
-> +               if (input->link_integrity_check != PASS ||
->                                 input->reauth_request_check != PASS) {
->                         /* 1A-07: restart hdcp on a link integrity failure */
->                         fail_and_restart_in_ms(0, &status, output);
-> @@ -249,7 +249,7 @@ enum mod_hdcp_status mod_hdcp_hdcp1_dp_transition(struct mod_hdcp *hdcp,
->                 }
->                 break;
->         case D1_A6_WAIT_FOR_READY:
-> -               if (input->link_integiry_check == FAIL ||
-> +               if (input->link_integrity_check == FAIL ||
->                                 input->reauth_request_check == FAIL) {
->                         fail_and_restart_in_ms(0, &status, output);
->                         break;
-> --
-> 2.24.0
->
-> _______________________________________________
-> dri-devel mailing list
-> dri-devel@lists.freedesktop.org
-> https://lists.freedesktop.org/mailman/listinfo/dri-devel
+are available in the Git repository at:
+
+  git://git.kernel.org:/pub/scm/linux/kernel/git/jmorris/linux-security for-v5.6
+
+for you to fetch changes up to 10c2d111c906599942efd13109061885631c4a0c:
+
+  security: remove EARLY_LSM_COUNT which never used (2020-01-27 11:19:41 -0800)
+
+----------------------------------------------------------------
+Alex Shi (1):
+      security: remove EARLY_LSM_COUNT which never used
+
+ security/security.c | 1 -
+ 1 file changed, 1 deletion(-)
+
+---
+commit 10c2d111c906599942efd13109061885631c4a0c
+Author: Alex Shi <alex.shi@linux.alibaba.com>
+Date:   Tue Jan 21 16:50:03 2020 +0800
+
+    security: remove EARLY_LSM_COUNT which never used
+    
+    This macro is never used from it was introduced in commit e6b1db98cf4d5
+    ("security: Support early LSMs"), better to remove it.
+    
+    Signed-off-by: Alex Shi <alex.shi@linux.alibaba.com>
+    Acked-by: Serge Hallyn <serge@hallyn.com>
+    Signed-off-by: James Morris <jmorris@namei.org>
+
+diff --git a/security/security.c b/security/security.c
+index 1bc000f834e2..344bf1327d7e 100644
+--- a/security/security.c
++++ b/security/security.c
+@@ -33,7 +33,6 @@
+ 
+ /* How many LSMs were built into the kernel? */
+ #define LSM_COUNT (__end_lsm_info - __start_lsm_info)
+-#define EARLY_LSM_COUNT (__end_early_lsm_info - __start_early_lsm_info)
+ 
+ struct security_hook_heads security_hook_heads __lsm_ro_after_init;
+ static BLOCKING_NOTIFIER_HEAD(blocking_lsm_notifier_chain);
