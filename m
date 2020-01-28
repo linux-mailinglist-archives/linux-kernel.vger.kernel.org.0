@@ -2,124 +2,165 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B810C14B900
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Jan 2020 15:29:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 32BEC14B7F8
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Jan 2020 15:20:49 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387677AbgA1O3g (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 28 Jan 2020 09:29:36 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58180 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387507AbgA1O3e (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 Jan 2020 09:29:34 -0500
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DAE6A2468F;
-        Tue, 28 Jan 2020 14:29:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1580221773;
-        bh=sbUtdqQ70k6dULsK6EFRiFeRzi1RS4x+BpqnYqMhc9k=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ksc02caMglDJVUUtdf8TVqaoWnVLJE9K0vVnGPIFWz/fL9t4NGKYukTN/Tiq7heyQ
-         DuteDP/C7zjVDb6p3WDQeFdCoGa4uLyLRJy0ZgohwyefjSWQj5Dh3YveOo1SfWA+yJ
-         MMjYVe/nFcueoAyBLJNLe7n56L79HPHwF2VtL9eI=
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Baoquan He <bhe@redhat.com>, Michal Hocko <mhocko@suse.com>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-        Mukesh Ojha <mojha@codeaurora.org>,
-        Oscar Salvador <osalvador@suse.de>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        David Hildenbrand <david@redhat.com>
-Subject: [PATCH 4.19 75/92] drivers/base/memory.c: clean up relics in function parameters
-Date:   Tue, 28 Jan 2020 15:08:43 +0100
-Message-Id: <20200128135819.027417564@linuxfoundation.org>
-X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200128135809.344954797@linuxfoundation.org>
-References: <20200128135809.344954797@linuxfoundation.org>
-User-Agent: quilt/0.66
+        id S1730843AbgA1OTP convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Tue, 28 Jan 2020 09:19:15 -0500
+Received: from lhrrgout.huawei.com ([185.176.76.210]:2317 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1730828AbgA1OTL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 28 Jan 2020 09:19:11 -0500
+Received: from lhreml704-cah.china.huawei.com (unknown [172.18.7.107])
+        by Forcepoint Email with ESMTP id B52AA4558B5B07A8D235;
+        Tue, 28 Jan 2020 14:19:08 +0000 (GMT)
+Received: from fraeml706-chm.china.huawei.com (10.206.15.55) by
+ lhreml704-cah.china.huawei.com (10.201.108.45) with Microsoft SMTP Server
+ (TLS) id 14.3.408.0; Tue, 28 Jan 2020 14:19:07 +0000
+Received: from fraeml714-chm.china.huawei.com (10.206.15.33) by
+ fraeml706-chm.china.huawei.com (10.206.15.55) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
+ 15.1.1713.5; Tue, 28 Jan 2020 15:19:07 +0100
+Received: from fraeml714-chm.china.huawei.com ([10.206.15.33]) by
+ fraeml714-chm.china.huawei.com ([10.206.15.33]) with mapi id 15.01.1713.004;
+ Tue, 28 Jan 2020 15:19:07 +0100
+From:   Roberto Sassu <roberto.sassu@huawei.com>
+To:     Mimi Zohar <zohar@linux.ibm.com>,
+        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>
+CC:     Jerry Snitselaar <jsnitsel@redhat.com>,
+        James Bottomley <James.Bottomley@HansenPartnership.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Silviu Vlasceanu <Silviu.Vlasceanu@huawei.com>
+Subject: RE: [PATCH 2/2] ima: support calculating the boot_aggregate based on
+ different TPM banks
+Thread-Topic: [PATCH 2/2] ima: support calculating the boot_aggregate based on
+ different TPM banks
+Thread-Index: AQHV1SsuUuwpXjLewk6D/BEn4qmmH6gAHIeg
+Date:   Tue, 28 Jan 2020 14:19:07 +0000
+Message-ID: <465015d0c9ca4e278ed32f78eb3eb4a4@huawei.com>
+References: <1580140919-6127-1-git-send-email-zohar@linux.ibm.com>
+ <1580140919-6127-2-git-send-email-zohar@linux.ibm.com>
+In-Reply-To: <1580140919-6127-2-git-send-email-zohar@linux.ibm.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.220.96.108]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Baoquan He <bhe@redhat.com>
+> -----Original Message-----
+> From: linux-integrity-owner@vger.kernel.org [mailto:linux-integrity-
+> owner@vger.kernel.org] On Behalf Of Mimi Zohar
+> Sent: Monday, January 27, 2020 5:02 PM
+> To: linux-integrity@vger.kernel.org
+> Cc: Jerry Snitselaar <jsnitsel@redhat.com>; James Bottomley
+> <James.Bottomley@HansenPartnership.com>; linux-
+> kernel@vger.kernel.org; Mimi Zohar <zohar@linux.ibm.com>
+> Subject: [PATCH 2/2] ima: support calculating the boot_aggregate based on
+> different TPM banks
+> 
+> Calculating the boot_aggregate attempts to read the TPM SHA1 bank,
+> assuming it is always enabled.  With TPM 2.0 hash agility, TPM chips
+> could support multiple TPM PCR banks, allowing firmware to configure and
+> enable different banks.
+> 
+> Instead of hard coding the TPM 2.0 bank hash algorithm used for calculating
+> the boot-aggregate, see if the configured IMA_DEFAULT_HASH algorithm is
+> an allocated TPM bank, otherwise use the first allocated TPM bank.
+> 
+> For TPM 1.2 SHA1 is the only supported hash algorithm.
+> 
+> Reported-by: Jerry Snitselaar <jsnitsel@redhat.com>
+> Signed-off-by: Mimi Zohar <zohar@linux.ibm.com>
+> ---
+>  security/integrity/ima/ima_crypto.c | 37
+> ++++++++++++++++++++++++++++++++++++-
+>  1 file changed, 36 insertions(+), 1 deletion(-)
+> 
+> diff --git a/security/integrity/ima/ima_crypto.c
+> b/security/integrity/ima/ima_crypto.c
+> index 7967a6904851..b1b26d61f174 100644
+> --- a/security/integrity/ima/ima_crypto.c
+> +++ b/security/integrity/ima/ima_crypto.c
+> @@ -656,8 +656,25 @@ static void __init ima_pcrread(u32 idx, struct
+> tpm_digest *d)
+>  		pr_err("Error Communicating to TPM chip\n");
+>  }
+> 
+> +/* tpm2_hash_map is the same as defined in tpm2-cmd.c and
+> trusted_tpm2.c */
+> +static struct tpm2_hash tpm2_hash_map[] = {
+> +	{HASH_ALGO_SHA1, TPM_ALG_SHA1},
+> +	{HASH_ALGO_SHA256, TPM_ALG_SHA256},
+> +	{HASH_ALGO_SHA384, TPM_ALG_SHA384},
+> +	{HASH_ALGO_SHA512, TPM_ALG_SHA512},
+> +	{HASH_ALGO_SM3_256, TPM_ALG_SM3_256},
+> +};
+> +
+>  /*
+> - * Calculate the boot aggregate hash
+> + * The boot_aggregate is a cumulative hash over TPM registers 0 - 7.  With
+> + * TPM 2.0 hash agility, TPM chips could support multiple TPM PCR banks,
+> + * allowing firmware to configure and enable different banks.
+> + *
+> + * Instead of hard coding the TPM bank hash algorithm used for calculating
+> + * the boot-aggregate, see if the configured IMA_DEFAULT_HASH
+> algorithm is
+> + * an allocated TPM bank, otherwise use the first allocated TPM bank.
+> + *
+> + * For TPM 1.2 SHA1 is the only hash algorithm.
+>   */
+>  static int __init ima_calc_boot_aggregate_tfm(char *digest,
+>  					      struct crypto_shash *tfm)
+> @@ -673,6 +690,24 @@ static int __init ima_calc_boot_aggregate_tfm(char
+> *digest,
+>  	if (rc != 0)
+>  		return rc;
+> 
+> +	for (i = 0; i < ARRAY_SIZE(tpm2_hash_map); i++) {
+> +		if (tpm2_hash_map[i].crypto_id == ima_hash_algo) {
 
-commit 063b8a4cee8088224bcdb79bcd08db98df16178e upstream.
+It is not necessary to define a new map. ima_tpm_chip->allocated_banks
+has a crypto_id field.
 
-The input parameter 'phys_index' of memory_block_action() is actually the
-section number, but not the phys_index of memory_block.  This is a relic
-from the past when one memory block could only contain one section.
-Rename it to start_section_nr.
+> +			d.alg_id = tpm2_hash_map[i].tpm_id;
+> +			break;
+> +		}
+> +	}
+> +
+> +	for (i = 0; i < ima_tpm_chip->nr_allocated_banks; i++) {
+> +		if (ima_tpm_chip->allocated_banks[i].alg_id == d.alg_id)
+> +			break;
+> +	}
+> +
+> +	if (i == ima_tpm_chip->nr_allocated_banks)
+> +		d.alg_id = ima_tpm_chip->allocated_banks[0].alg_id;
 
-And also in remove_memory_section(), the 'node_id' and 'phys_device'
-arguments are not used by anyone.  Remove them.
+This code assumes that the algorithm used to calculate boot_aggregate and
+the algorithm of the PCR bank can be different. I don't know if it is possible to
+communicate to the verifier which bank has been selected (it depends on
+the local configuration).
 
-Link: http://lkml.kernel.org/r/20190329144250.14315-2-bhe@redhat.com
-Signed-off-by: Baoquan He <bhe@redhat.com>
-Acked-by: Michal Hocko <mhocko@suse.com>
-Reviewed-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-Reviewed-by: Mukesh Ojha <mojha@codeaurora.org>
-Reviewed-by: Oscar Salvador <osalvador@suse.de>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
-Signed-off-by: David Hildenbrand <david@redhat.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- drivers/base/memory.c |   12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+In my opinion the safest approach would be to use the same algorithm for the
+digest and the PCR bank. If you agree to this, then the code above must be
+moved to ima_calc_boot_aggregate() so that the algorithm of the selected
+PCR bank can be passed to ima_alloc_tfm().
 
---- a/drivers/base/memory.c
-+++ b/drivers/base/memory.c
-@@ -230,13 +230,14 @@ static bool pages_correctly_probed(unsig
-  * OK to have direct references to sparsemem variables in here.
-  */
- static int
--memory_block_action(unsigned long phys_index, unsigned long action, int online_type)
-+memory_block_action(unsigned long start_section_nr, unsigned long action,
-+		    int online_type)
- {
- 	unsigned long start_pfn;
- 	unsigned long nr_pages = PAGES_PER_SECTION * sections_per_block;
- 	int ret;
- 
--	start_pfn = section_nr_to_pfn(phys_index);
-+	start_pfn = section_nr_to_pfn(start_section_nr);
- 
- 	switch (action) {
- 	case MEM_ONLINE:
-@@ -250,7 +251,7 @@ memory_block_action(unsigned long phys_i
- 		break;
- 	default:
- 		WARN(1, KERN_WARNING "%s(%ld, %ld) unknown action: "
--		     "%ld\n", __func__, phys_index, action, action);
-+		     "%ld\n", __func__, start_section_nr, action, action);
- 		ret = -EINVAL;
- 	}
- 
-@@ -747,8 +748,7 @@ unregister_memory(struct memory_block *m
- 	device_unregister(&memory->dev);
- }
- 
--static int remove_memory_section(unsigned long node_id,
--			       struct mem_section *section, int phys_device)
-+static int remove_memory_section(struct mem_section *section)
- {
- 	struct memory_block *mem;
- 
-@@ -780,7 +780,7 @@ int unregister_memory_section(struct mem
- 	if (!present_section(section))
- 		return -EINVAL;
- 
--	return remove_memory_section(0, section, 0);
-+	return remove_memory_section(section);
- }
- #endif /* CONFIG_MEMORY_HOTREMOVE */
- 
+The selected PCR bank might be not the first, if the algorithm is unknown to
+the crypto subsystem.
 
+> +	pr_info("Calculating the boot-aggregregate, reading TPM PCR
 
+Typo.
+
+Roberto
+
+HUAWEI TECHNOLOGIES Duesseldorf GmbH, HRB 56063
+Managing Director: Li Peng, Li Jian, Shi Yanli
