@@ -2,78 +2,75 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CB97814B1D9
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Jan 2020 10:41:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3490814B1C2
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Jan 2020 10:30:53 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726057AbgA1JlT convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Tue, 28 Jan 2020 04:41:19 -0500
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:41415 "EHLO
-        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725271AbgA1JlT (ORCPT
+        id S1725941AbgA1Jas (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 28 Jan 2020 04:30:48 -0500
+Received: from mail-ot1-f67.google.com ([209.85.210.67]:45760 "EHLO
+        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725271AbgA1Jas (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 Jan 2020 04:41:19 -0500
-Received: from lupine.hi.pengutronix.de ([2001:67c:670:100:3ad5:47ff:feaf:1a17] helo=lupine)
-        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <p.zabel@pengutronix.de>)
-        id 1iwN4U-00038f-Iu; Tue, 28 Jan 2020 10:22:10 +0100
-Received: from pza by lupine with local (Exim 4.92)
-        (envelope-from <p.zabel@pengutronix.de>)
-        id 1iwN4S-00034Z-Jb; Tue, 28 Jan 2020 10:22:08 +0100
-Message-ID: <01d73961207b5110c2edc72d4964582b12bcc8f7.camel@pengutronix.de>
-Subject: Re: [PATCH v1 2/5] reset: brcmstb-rescal: add unspecified HAS_IOMEM
- dependency
-From:   Philipp Zabel <p.zabel@pengutronix.de>
-To:     Brendan Higgins <brendanhiggins@google.com>, jdike@addtoit.com,
-        richard@nod.at, anton.ivanov@cambridgegreys.com
-Cc:     linux-um@lists.infradead.org, linux-kernel@vger.kernel.org,
-        davidgow@google.com, heidifahim@google.com
-Date:   Tue, 28 Jan 2020 10:22:08 +0100
-In-Reply-To: <20200127235356.122031-3-brendanhiggins@google.com>
-References: <20200127235356.122031-1-brendanhiggins@google.com>
-         <20200127235356.122031-3-brendanhiggins@google.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8BIT
-User-Agent: Evolution 3.30.5-1.1 
+        Tue, 28 Jan 2020 04:30:48 -0500
+Received: by mail-ot1-f67.google.com with SMTP id 59so11329578otp.12
+        for <linux-kernel@vger.kernel.org>; Tue, 28 Jan 2020 01:30:47 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=yh41YjQOL6v5qPkhPRLG/JO3Fw/88a695J6NKkJZrX0=;
+        b=VzGyPT+yQnMZWoX1YeBN9u8Fx5p+Am8kWrm005R45IP8atXD3C+oTdtHxSOA5v9BRE
+         3Nig17W/n+ysFLzSZAFhSx3yjCeq+JLnmIcBu3dJ8nsNKx/4Q/bYUFTUbDjmze6metaP
+         Hy3VRvHtnNsmHjt8W/xS4mDccKPlw8UL4hwQmxuQ9DzABpDaJE7b3DR9Jd1v58JmVsv0
+         MVNYjHw494rtK0iFkHcOGuIPm6dyRgOvqti7c5R/MbBVHMaBNSSwoscjG2dlDlnKGPgN
+         vLy4PB4tKkgZ3053449rUXz2ZNMb53RTi2tkML4hNLrxnFwbpBW75aMMsRkM+v+X0Y+A
+         36mQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=yh41YjQOL6v5qPkhPRLG/JO3Fw/88a695J6NKkJZrX0=;
+        b=RNIyhk18bYYvVRk2Cs6mf73yqZyuU5NzHvRBcj9AhmLNgjfFCGZ7OeOvia5I95dHRx
+         kAYA0QnPrByW7lsLLu3wBiDh3bFWrHXtP4VGN7hUMOlPIdpuvA5YRNNz1P1nB8u5kRzM
+         QaR4NDFBo8lhXEmF4ZV2r6cHuJg2crahkydi3+xbVRKNcS/ywZewPaSCd0rvvj++Wv0J
+         0f+yd8+7WkJSk/KPyYxH+ARYh2avrK+dEFi5qHMZ3WVImLoaDjPCc/UUIAuAabFzbgIB
+         dRex/oTJ3ZkKRXyYQOkz6SAeytwJmhGfj8kCIIh3hJs+ixO5Oeeg6PFHexG98o3u4swA
+         VA4g==
+X-Gm-Message-State: APjAAAUM5b4OHtoLbeX0FWWMiRdotR9C+nCXRX4IlPKR9dnlwus12lkK
+        bSleQOsfgXkmRN6dA5JXDLKmFYqjvw2tD8/gza+cyQ==
+X-Google-Smtp-Source: APXvYqymR8w/Jv0Wq2tNhPnRAIsBKyqe0PLz5bMDnxBePf0GK0M2eqKuON/UlhLLm577QR6m4J2QrKzRKeI22A+nyXA=
+X-Received: by 2002:a05:6830:1d6e:: with SMTP id l14mr15362244oti.32.1580203847077;
+ Tue, 28 Jan 2020 01:30:47 -0800 (PST)
 MIME-Version: 1.0
-X-SA-Exim-Connect-IP: 2001:67c:670:100:3ad5:47ff:feaf:1a17
-X-SA-Exim-Mail-From: p.zabel@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+References: <20200128072740.21272-1-frextrite@gmail.com>
+In-Reply-To: <20200128072740.21272-1-frextrite@gmail.com>
+From:   Jann Horn <jannh@google.com>
+Date:   Tue, 28 Jan 2020 10:30:19 +0100
+Message-ID: <CAG48ez3ZcO+kVPJVG6XpCPyGUKF2o4UJ6AVdgZXGQ6XJJpcdmg@mail.gmail.com>
+Subject: Re: [PATCH] cred: Use RCU primitives to access RCU pointers
+To:     Amol Grover <frextrite@gmail.com>
+Cc:     David Howells <dhowells@redhat.com>,
+        Shakeel Butt <shakeelb@google.com>,
+        James Morris <jamorris@linux.microsoft.com>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Kees Cook <keescook@chromium.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        kernel list <linux-kernel@vger.kernel.org>,
+        linux-kernel-mentees@lists.linuxfoundation.org,
+        Joel Fernandes <joel@joelfernandes.org>,
+        Madhuparna Bhowmik <madhuparnabhowmik04@gmail.com>,
+        "Paul E . McKenney" <paulmck@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 2020-01-27 at 15:53 -0800, Brendan Higgins wrote:
-> Currently CONFIG_RESET_BRCMSTB_RESCAL=y implicitly depends on
-> CONFIG_HAS_IOMEM=y; consequently, on architectures without IOMEM we get
-> the following build error:
-> 
-> /usr/bin/ld: drivers/reset/reset-brcmstb-rescal.o: in function `brcm_rescal_reset_probe':
-> drivers/reset/reset-brcmstb-rescal.c:76: undefined reference to `devm_ioremap_resource'
-> 
-> Fix the build error by adding the unspecified dependency.
-> 
-> Signed-off-by: Brendan Higgins <brendanhiggins@google.com>
-> ---
->  drivers/reset/Kconfig | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/drivers/reset/Kconfig b/drivers/reset/Kconfig
-> index 461b0e506a26f..a19bd303f31a9 100644
-> --- a/drivers/reset/Kconfig
-> +++ b/drivers/reset/Kconfig
-> @@ -51,6 +51,7 @@ config RESET_BRCMSTB
->  
->  config RESET_BRCMSTB_RESCAL
->  	bool "Broadcom STB RESCAL reset controller"
-> +	depends on HAS_IOMEM
->  	default ARCH_BRCMSTB || COMPILE_TEST
->  	help
->  	  This enables the RESCAL reset controller for SATA, PCIe0, or PCIe1 on
+On Tue, Jan 28, 2020 at 8:28 AM Amol Grover <frextrite@gmail.com> wrote:
+> task_struct.cred and task_struct.real_cred are annotated by __rcu,
 
-Thank you, I'll pick up the reset patches 2 and 3.
+task_struct.cred doesn't actually have RCU semantics though, see
+commit d7852fbd0f0423937fa287a598bfde188bb68c22. For task_struct.cred,
+it would probably be more correct to remove the __rcu annotation?
 
-regards
-Philipp
+> hence use rcu_access_pointer to access them.
