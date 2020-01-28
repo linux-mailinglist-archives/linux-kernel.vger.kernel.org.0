@@ -2,49 +2,49 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 888ED14B51F
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Jan 2020 14:35:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2601514B517
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Jan 2020 14:35:28 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726880AbgA1Nfb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 28 Jan 2020 08:35:31 -0500
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:52353 "EHLO
-        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726466AbgA1NeQ (ORCPT
+        id S1726833AbgA1NfR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 28 Jan 2020 08:35:17 -0500
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:58943 "EHLO
+        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726497AbgA1NeS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 Jan 2020 08:34:16 -0500
+        Tue, 28 Jan 2020 08:34:18 -0500
 Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
-        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20200128133415euoutp0297c6fbcf0e9e1ea4941760c4024f2908~uEFAvirhX2858228582euoutp02-
-        for <linux-kernel@vger.kernel.org>; Tue, 28 Jan 2020 13:34:15 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20200128133415euoutp0297c6fbcf0e9e1ea4941760c4024f2908~uEFAvirhX2858228582euoutp02-
+        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20200128133416euoutp0168d68aba1af2e6678ce272192c5fc997~uEFBA_BDO0195601956euoutp01H
+        for <linux-kernel@vger.kernel.org>; Tue, 28 Jan 2020 13:34:16 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20200128133416euoutp0168d68aba1af2e6678ce272192c5fc997~uEFBA_BDO0195601956euoutp01H
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1580218455;
-        bh=Ark+fkMgLf1ZNUCc5wzMzdsqKRNjN891oQ1Cqnnqj+0=;
+        s=mail20170921; t=1580218456;
+        bh=YJuztuDcbtIa1CTQmlrIwWwmuUQVBn+CSkuRet1nkR8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ft/2pzy0E7qOKRZOjsk3Me2pJ2sFjHHzuDiwI5RmuiGaHzr/YjOOk9z9Xzk5xRCDx
-         7bjjfYYL345fCfbjt5ezb8rk5oWezkygkQbfPOxrQxXOiiqv6uFgvuImPwe2D7H4dY
-         IJ/A0zD3wIgZf6r2xC5UC+wDWAmaoERc8hGJCq2E=
+        b=AS5HJMu8y1zv72dmiZLal3rxhpOhbK/1NnaztVv+l7HyRdyBVMQcfxlvVVeY/xYDt
+         UM/rceEbn6aCWezx6btP3QJ3IYNKOFjKSxv/ZOjCWk70QTpW8kvPy8bamoRnkNnF/S
+         i1AaFQPPeX7QSNhsFwHzUtQuxBpvt0JdChGKqYT0=
 Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
         eucas1p2.samsung.com (KnoxPortal) with ESMTP id
-        20200128133415eucas1p21456bb04fd2cbfdd63f1d9ade02c6b66~uEFAVY3xO1867618676eucas1p2c;
+        20200128133415eucas1p24a251a44e423d3382f722c7a2bf472d7~uEFAzRnRQ1867618676eucas1p2e;
         Tue, 28 Jan 2020 13:34:15 +0000 (GMT)
 Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
-        eusmges1new.samsung.com (EUCPMTA) with SMTP id BE.CA.61286.758303E5; Tue, 28
+        eusmges1new.samsung.com (EUCPMTA) with SMTP id 8F.CA.61286.758303E5; Tue, 28
         Jan 2020 13:34:15 +0000 (GMT)
 Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
-        20200128133415eucas1p258c0d5c313e2ae42a05508b67eec16ef~uEFABo90w1871818718eucas1p2I;
+        eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
+        20200128133415eucas1p1cd35ec3ee9783b76c1a32de63796ce30~uEFAUmukq0087500875eucas1p1-;
         Tue, 28 Jan 2020 13:34:15 +0000 (GMT)
-Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
+Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
         eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20200128133415eusmtrp248656553bccf58a04aa8f5a33d7a6b05~uEFABHKpH0330003300eusmtrp20;
+        20200128133415eusmtrp2326360a694214c3d920da348f5247054~uEFAT_xGq0330003300eusmtrp21;
         Tue, 28 Jan 2020 13:34:15 +0000 (GMT)
-X-AuditID: cbfec7f2-ef1ff7000001ef66-80-5e3038571d9a
+X-AuditID: cbfec7f2-ef1ff7000001ef66-84-5e303857529c
 Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
-        eusmgms2.samsung.com (EUCPMTA) with SMTP id E0.82.07950.658303E5; Tue, 28
-        Jan 2020 13:34:14 +0000 (GMT)
+        eusmgms1.samsung.com (EUCPMTA) with SMTP id 93.92.08375.758303E5; Tue, 28
+        Jan 2020 13:34:15 +0000 (GMT)
 Received: from AMDC3058.digital.local (unknown [106.120.51.71]) by
         eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
-        20200128133414eusmtip2ac44a4cec89001bf562317e2180daeb9~uEE-rYOv10657406574eusmtip2f;
+        20200128133415eusmtip2980e30d713ad90fcf10fd3e1397f9405~uEE--HvAl0685506855eusmtip2X;
         Tue, 28 Jan 2020 13:34:14 +0000 (GMT)
 From:   Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 To:     Jens Axboe <axboe@kernel.dk>
@@ -52,111 +52,218 @@ Cc:     Michael Schmitz <schmitzmic@gmail.com>,
         Geert Uytterhoeven <geert@linux-m68k.org>,
         linux-ide@vger.kernel.org, linux-kernel@vger.kernel.org,
         b.zolnierkie@samsung.com
-Subject: [PATCH 13/28] ata: move ata_do_link_spd_horkage() to
- libata-core-sata.c
-Date:   Tue, 28 Jan 2020 14:33:28 +0100
-Message-Id: <20200128133343.29905-14-b.zolnierkie@samsung.com>
+Subject: [PATCH 14/28] ata: move ata_dev_config_ncq*() to libata-core-sata.c
+Date:   Tue, 28 Jan 2020 14:33:29 +0100
+Message-Id: <20200128133343.29905-15-b.zolnierkie@samsung.com>
 X-Mailer: git-send-email 2.24.1
 In-Reply-To: <20200128133343.29905-1-b.zolnierkie@samsung.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprFKsWRmVeSWpSXmKPExsWy7djPc7rhFgZxBpvniVmsvtvPZrFxxnpW
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprOKsWRmVeSWpSXmKPExsWy7djPc7rhFgZxBg++mlisvtvPZrFxxnpW
         i2e39jJZHNvxiMni8q45bBZzW6ezO7B57Jx1l93j8tlSj0OHOxg9+rasYvT4vEkugDWKyyYl
-        NSezLLVI3y6BK+P/rSdsBTvlKpb+usnUwHhFoouRk0NCwESif8kv1i5GLg4hgRWMEm07X7FD
-        OF8YJdbseMcI4XxmlHjw+DgzTMuMFX3MEInljBLXNlxihmv5v/UfG0gVm4CVxMT2VYwgtoiA
-        gkTP75VsIEXMAmsYJVYdbgJLCAsESXyatBHMZhFQlejsessCYvMK2El8eP+eEWKdvMTWb5+A
-        LuTg4ASK9+w1hygRlDg58wlYOTNQSfPW2WBHSAi0s0ssWjudFaLXReLT+/0sELawxKvjW9gh
-        bBmJ/zvnM0E0rGOU+NvxAqp7O6PE8skQL0gIWEvcOfeLDWQzs4CmxPpd+hBhR4nvG2aDhSUE
-        +CRuvBWEOIJPYtK26cwQYV6JjjYhiGo1iQ3LNrDBrO3auRIaih4ST2ZdYpzAqDgLyTuzkLwz
-        C2HvAkbmVYziqaXFuempxYZ5qeV6xYm5xaV56XrJ+bmbGIEp5vS/4592MH69lHSIUYCDUYmH
-        d4aKQZwQa2JZcWXuIUYJDmYlEd5OJqAQb0piZVVqUX58UWlOavEhRmkOFiVxXuNFL2OFBNIT
-        S1KzU1MLUotgskwcnFINjFo+dy61XvplE2QqIfvI+FTMrG9Xms/scfq3/dOl36VsL/mWeUwz
-        rVu/q8XNZdMch8WRNQuCNzQZrP59ZeWnR41B8tOu9Tf4fg/9kLXtyoUTRcHageXfzY/w3Jf5
-        MMtMNXV9VIJNo/qtabsuWjJfd9bYVHzinuzf7dv47d9tPiPFv939qHgvV5MSS3FGoqEWc1Fx
-        IgDGwjdCLQMAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFmpjkeLIzCtJLcpLzFFi42I5/e/4Pd0wC4M4g5+Nthar7/azWWycsZ7V
-        4tmtvUwWx3Y8YrK4vGsOm8Xc1unsDmweO2fdZfe4fLbU49DhDkaPvi2rGD0+b5ILYI3SsynK
-        Ly1JVcjILy6xVYo2tDDSM7S00DMysdQzNDaPtTIyVdK3s0lJzcksSy3St0vQy/h/6wlbwU65
-        iqW/bjI1MF6R6GLk5JAQMJGYsaKPuYuRi0NIYCmjRPO6RsYuRg6ghIzE8fVlEDXCEn+udbFB
-        1HxilHjStpIJJMEmYCUxsX0VI4gtIqAg0fN7JVgRs8AGRolXN7+wgCSEBQIkzjWfB7NZBFQl
-        Orvegtm8AnYSH96/Z4TYIC+x9dsnVpDFnEDxnr3mIGEhAVuJ9WeeskKUC0qcnPkErJUZqLx5
-        62zmCYwCs5CkZiFJLWBkWsUoklpanJueW2ykV5yYW1yal66XnJ+7iREYB9uO/dyyg7HrXfAh
-        RgEORiUeXgclgzgh1sSy4srcQ4wSHMxKIrydTEAh3pTEyqrUovz4otKc1OJDjKZAP0xklhJN
-        zgfGaF5JvKGpobmFpaG5sbmxmYWSOG+HwMEYIYH0xJLU7NTUgtQimD4mDk6pBkbza/Nb+Xm2
-        5RtMXuZz4J31IhW3bTwV/y9Frzkh1596Yp7O6ntx1xdOTurJ+j7RKT730+0DB0/fX90ss7b+
-        9+cL116+PW8X6GJxctutqTmMu1cFzrS5s9umtUfzR7Z/aK69rmlF6On051Kx86TS9dJND+pW
-        du4pPP1BL3XfwlXlf3p63Q8sLl6rxFKckWioxVxUnAgARIMkgpkCAAA=
-X-CMS-MailID: 20200128133415eucas1p258c0d5c313e2ae42a05508b67eec16ef
+        NSezLLVI3y6BK2Nak1vBybCK6bPWMzYwLnbtYuTgkBAwkbg5W6mLkYtDSGAFo8Tjv1dYIZwv
+        jBKHtvUzQzifGSXmblgBlOEE6zjwfR1U1XJGicMXXjLDtfzYvZUFpIpNwEpiYvsqRhBbREBB
+        ouf3SjaQImaBNYwSqw43gSWEBXwkNs+4yw5iswioSrzrfswOchSvgJ1E4x4hiG3yElu/fWIF
+        CXMChXv2moOEeQUEJU7OfAK2ihmopHnrbLAbJAS62SU2nNjHBtHrIvF9/WdmCFtY4tXxLewQ
+        tozE/53zmSAa1jFK/O14AdW9nVFi+eR/UN3WEnfO/WID2cwsoCmxfpc+RNhRYvedB6yQwOOT
+        uPFWEOIIPolJ26YzQ4R5JTraoM5Xk9iwbAMbzNqunSuhzvGQuDxzG/sERsVZSN6ZheSdWQh7
+        FzAyr2IUTy0tzk1PLTbMSy3XK07MLS7NS9dLzs/dxAhMLqf/Hf+0g/HrpaRDjAIcjEo8vDNU
+        DOKEWBPLiitzDzFKcDArifB2MgGFeFMSK6tSi/Lji0pzUosPMUpzsCiJ8xovehkrJJCeWJKa
+        nZpakFoEk2Xi4JRqYCyM5ue6XfVymaq75tbkCTY6K4SyHxjNM/nRdi5YcL7/pn/H5/ySFc9i
+        W6B4ee7UEJuOHC2e62E5b3gfqE/jvBHce5h9Scf5CQWpN1at+nJhnprKln8cfgUxuwRPsly5
+        r7vgEOts4dRAy4VvNDqfChpoVjzTUPRraXEKErIXzatbF6FRkeV0QImlOCPRUIu5qDgRAK3Y
+        JVMqAwAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFmpmkeLIzCtJLcpLzFFi42I5/e/4Pd1wC4M4gymLRCxW3+1ns9g4Yz2r
+        xbNbe5ksju14xGRxedccNou5rdPZHdg8ds66y+5x+Wypx6HDHYwefVtWMXp83iQXwBqlZ1OU
+        X1qSqpCRX1xiqxRtaGGkZ2hpoWdkYqlnaGwea2VkqqRvZ5OSmpNZllqkb5eglzGtya3gZFjF
+        9FnrGRsYF7t2MXJySAiYSBz4vo61i5GLQ0hgKaPE8dapjF2MHEAJGYnj68sgaoQl/lzrYgOx
+        hQQ+MUp82+MAYrMJWElMbF/FCGKLCChI9PxeyQYyh1lgA6PEq5tfWEASwgI+Eptn3GUHsVkE
+        VCXedT9mB5nPK2An0bhHCGK+vMTWb59YQcKcQOGeveYQq2wl1p95ygpi8woISpyc+QRsIjNQ
+        efPW2cwTGAVmIUnNQpJawMi0ilEktbQ4Nz232FCvODG3uDQvXS85P3cTIzACth37uXkH46WN
+        wYcYBTgYlXh4Z6gYxAmxJpYVV+YeYpTgYFYS4e1kAgrxpiRWVqUW5ccXleakFh9iNAV6YSKz
+        lGhyPjA680riDU0NzS0sDc2NzY3NLJTEeTsEDsYICaQnlqRmp6YWpBbB9DFxcEo1MCo+iS+Y
+        Ud+psa3jYpyNK7/y+8b/JpOSbu98KJDGWi708ewPxd2flQ5nzzISzk/hmbff+GqNrOGy7FNB
+        C9zfP9j0/bv+/Fm6i3KmsBRK3zt9/HAds22g8fL8r/I3Xn76Zt15eUbzhAtT9ff+2pf+6uc8
+        vR/MtT+5qu79rg9TPJps9qLjh/yvxHVKLMUZiYZazEXFiQAMSQwPlgIAAA==
+X-CMS-MailID: 20200128133415eucas1p1cd35ec3ee9783b76c1a32de63796ce30
 X-Msg-Generator: CA
 Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20200128133415eucas1p258c0d5c313e2ae42a05508b67eec16ef
+X-RootMTR: 20200128133415eucas1p1cd35ec3ee9783b76c1a32de63796ce30
 X-EPHeader: CA
 CMS-TYPE: 201P
-X-CMS-RootMailID: 20200128133415eucas1p258c0d5c313e2ae42a05508b67eec16ef
+X-CMS-RootMailID: 20200128133415eucas1p1cd35ec3ee9783b76c1a32de63796ce30
 References: <20200128133343.29905-1-b.zolnierkie@samsung.com>
-        <CGME20200128133415eucas1p258c0d5c313e2ae42a05508b67eec16ef@eucas1p2.samsung.com>
+        <CGME20200128133415eucas1p1cd35ec3ee9783b76c1a32de63796ce30@eucas1p1.samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-* move ata_do_link_spd_horkage() to libata-core-sata.c
+* move ata_log_supported() to libata.h and make it inline
 
-* add static inline for CONFIG_SATA_HOST=n case
+* move ata_dev_config_ncq*() to libata-core-sata.c
+
+* add static inline version of ata_dev_config_ncq() for
+  CONFIG_SATA_HOST=n case
 
 Code size savings on m68k arch using atari_defconfig:
 
    text    data     bss     dec     hex filename
 before:
-  36762     572      40   37374    91fe drivers/ata/libata-core.o
-after:
   36627     572      40   37239    9177 drivers/ata/libata-core.o
+after:
+  35499     572      40   36111    8d0f drivers/ata/libata-core.o
 
 Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 ---
- drivers/ata/libata-core-sata.c | 33 +++++++++++++++++++++++++++++++++
- drivers/ata/libata-core.c      | 33 ---------------------------------
- drivers/ata/libata.h           |  7 +++++++
- 3 files changed, 40 insertions(+), 33 deletions(-)
+ drivers/ata/libata-core-sata.c | 138 ++++++++++++++++++++++++++++++
+ drivers/ata/libata-core.c      | 148 ---------------------------------
+ drivers/ata/libata.h           |  18 ++++
+ 3 files changed, 156 insertions(+), 148 deletions(-)
 
 diff --git a/drivers/ata/libata-core-sata.c b/drivers/ata/libata-core-sata.c
-index 8b939d2db0a6..fed8009981c0 100644
+index fed8009981c0..f2629e069a55 100644
 --- a/drivers/ata/libata-core-sata.c
 +++ b/drivers/ata/libata-core-sata.c
-@@ -87,6 +87,39 @@ void ata_tf_from_fis(const u8 *fis, struct ata_taskfile *tf)
+@@ -120,6 +120,144 @@ int ata_do_link_spd_horkage(struct ata_device *dev)
+ 	return 0;
  }
- EXPORT_SYMBOL_GPL(ata_tf_from_fis);
  
-+int ata_do_link_spd_horkage(struct ata_device *dev)
++static void ata_dev_config_ncq_send_recv(struct ata_device *dev)
 +{
-+	struct ata_link *plink = ata_dev_phys_link(dev);
-+	u32 target, target_limit;
++	struct ata_port *ap = dev->link->ap;
++	unsigned int err_mask;
 +
-+	if (!sata_scr_valid(plink))
-+		return 0;
-+
-+	if (dev->horkage & ATA_HORKAGE_1_5_GBPS)
-+		target = 1;
-+	else
-+		return 0;
-+
-+	target_limit = (1 << target) - 1;
-+
-+	/* if already on stricter limit, no need to push further */
-+	if (plink->sata_spd_limit <= target_limit)
-+		return 0;
-+
-+	plink->sata_spd_limit = target_limit;
-+
-+	/* Request another EH round by returning -EAGAIN if link is
-+	 * going faster than the target speed.  Forward progress is
-+	 * guaranteed by setting sata_spd_limit to target_limit above.
-+	 */
-+	if (plink->sata_spd > target) {
-+		ata_dev_info(dev, "applying link speed limit horkage to %s\n",
-+			     sata_spd_string(target));
-+		return -EAGAIN;
++	if (!ata_log_supported(dev, ATA_LOG_NCQ_SEND_RECV)) {
++		ata_dev_warn(dev, "NCQ Send/Recv Log not supported\n");
++		return;
 +	}
++	err_mask = ata_read_log_page(dev, ATA_LOG_NCQ_SEND_RECV,
++				     0, ap->sector_buf, 1);
++	if (err_mask) {
++		ata_dev_dbg(dev,
++			    "failed to get NCQ Send/Recv Log Emask 0x%x\n",
++			    err_mask);
++	} else {
++		u8 *cmds = dev->ncq_send_recv_cmds;
++
++		dev->flags |= ATA_DFLAG_NCQ_SEND_RECV;
++		memcpy(cmds, ap->sector_buf, ATA_LOG_NCQ_SEND_RECV_SIZE);
++
++		if (dev->horkage & ATA_HORKAGE_NO_NCQ_TRIM) {
++			ata_dev_dbg(dev, "disabling queued TRIM support\n");
++			cmds[ATA_LOG_NCQ_SEND_RECV_DSM_OFFSET] &=
++				~ATA_LOG_NCQ_SEND_RECV_DSM_TRIM;
++		}
++	}
++}
++
++static void ata_dev_config_ncq_non_data(struct ata_device *dev)
++{
++	struct ata_port *ap = dev->link->ap;
++	unsigned int err_mask;
++
++	if (!ata_log_supported(dev, ATA_LOG_NCQ_NON_DATA)) {
++		ata_dev_warn(dev,
++			     "NCQ Send/Recv Log not supported\n");
++		return;
++	}
++	err_mask = ata_read_log_page(dev, ATA_LOG_NCQ_NON_DATA,
++				     0, ap->sector_buf, 1);
++	if (err_mask) {
++		ata_dev_dbg(dev,
++			    "failed to get NCQ Non-Data Log Emask 0x%x\n",
++			    err_mask);
++	} else {
++		u8 *cmds = dev->ncq_non_data_cmds;
++
++		memcpy(cmds, ap->sector_buf, ATA_LOG_NCQ_NON_DATA_SIZE);
++	}
++}
++
++static void ata_dev_config_ncq_prio(struct ata_device *dev)
++{
++	struct ata_port *ap = dev->link->ap;
++	unsigned int err_mask;
++
++	if (!(dev->flags & ATA_DFLAG_NCQ_PRIO_ENABLE)) {
++		dev->flags &= ~ATA_DFLAG_NCQ_PRIO;
++		return;
++	}
++
++	err_mask = ata_read_log_page(dev,
++				     ATA_LOG_IDENTIFY_DEVICE,
++				     ATA_LOG_SATA_SETTINGS,
++				     ap->sector_buf,
++				     1);
++	if (err_mask) {
++		ata_dev_dbg(dev,
++			    "failed to get Identify Device data, Emask 0x%x\n",
++			    err_mask);
++		return;
++	}
++
++	if (ap->sector_buf[ATA_LOG_NCQ_PRIO_OFFSET] & BIT(3)) {
++		dev->flags |= ATA_DFLAG_NCQ_PRIO;
++	} else {
++		dev->flags &= ~ATA_DFLAG_NCQ_PRIO;
++		ata_dev_dbg(dev, "SATA page does not support priority\n");
++	}
++
++}
++
++int ata_dev_config_ncq(struct ata_device *dev, char *desc, size_t desc_sz)
++{
++	struct ata_port *ap = dev->link->ap;
++	int hdepth = 0, ddepth = ata_id_queue_depth(dev->id);
++	unsigned int err_mask;
++	char *aa_desc = "";
++
++	if (!ata_id_has_ncq(dev->id)) {
++		desc[0] = '\0';
++		return 0;
++	}
++	if (dev->horkage & ATA_HORKAGE_NONCQ) {
++		snprintf(desc, desc_sz, "NCQ (not used)");
++		return 0;
++	}
++	if (ap->flags & ATA_FLAG_NCQ) {
++		hdepth = min(ap->scsi_host->can_queue, ATA_MAX_QUEUE);
++		dev->flags |= ATA_DFLAG_NCQ;
++	}
++
++	if (!(dev->horkage & ATA_HORKAGE_BROKEN_FPDMA_AA) &&
++		(ap->flags & ATA_FLAG_FPDMA_AA) &&
++		ata_id_has_fpdma_aa(dev->id)) {
++		err_mask = ata_dev_set_feature(dev, SETFEATURES_SATA_ENABLE,
++			SATA_FPDMA_AA);
++		if (err_mask) {
++			ata_dev_err(dev,
++				    "failed to enable AA (error_mask=0x%x)\n",
++				    err_mask);
++			if (err_mask != AC_ERR_DEV) {
++				dev->horkage |= ATA_HORKAGE_BROKEN_FPDMA_AA;
++				return -EIO;
++			}
++		} else
++			aa_desc = ", AA";
++	}
++
++	if (hdepth >= ddepth)
++		snprintf(desc, desc_sz, "NCQ (depth %d)%s", ddepth, aa_desc);
++	else
++		snprintf(desc, desc_sz, "NCQ (depth %d/%d)%s", hdepth,
++			ddepth, aa_desc);
++
++	if ((ap->flags & ATA_FLAG_FPDMA_AUX)) {
++		if (ata_id_has_ncq_send_and_recv(dev->id))
++			ata_dev_config_ncq_send_recv(dev);
++		if (ata_id_has_ncq_non_data(dev->id))
++			ata_dev_config_ncq_non_data(dev);
++		if (ata_id_has_ncq_prio(dev->id))
++			ata_dev_config_ncq_prio(dev);
++	}
++
 +	return 0;
 +}
 +
@@ -164,67 +271,214 @@ index 8b939d2db0a6..fed8009981c0 100644
   *	sata_link_scr_lpm - manipulate SControl IPM and SPM fields
   *	@link: ATA link to manipulate SControl for
 diff --git a/drivers/ata/libata-core.c b/drivers/ata/libata-core.c
-index 24b8ee668e6f..52bd81bad484 100644
+index 52bd81bad484..0a90e0e65f0b 100644
 --- a/drivers/ata/libata-core.c
 +++ b/drivers/ata/libata-core.c
-@@ -2074,39 +2074,6 @@ static bool ata_identify_page_supported(struct ata_device *dev, u8 page)
- 	return false;
+@@ -2034,15 +2034,6 @@ unsigned int ata_read_log_page(struct ata_device *dev, u8 log,
+ 	return err_mask;
  }
  
--static int ata_do_link_spd_horkage(struct ata_device *dev)
+-static bool ata_log_supported(struct ata_device *dev, u8 log)
 -{
--	struct ata_link *plink = ata_dev_phys_link(dev);
--	u32 target, target_limit;
+-	struct ata_port *ap = dev->link->ap;
 -
--	if (!sata_scr_valid(plink))
--		return 0;
+-	if (ata_read_log_page(dev, ATA_LOG_DIRECTORY, 0, ap->sector_buf, 1))
+-		return false;
+-	return get_unaligned_le16(&ap->sector_buf[log * 2]) ? true : false;
+-}
 -
--	if (dev->horkage & ATA_HORKAGE_1_5_GBPS)
--		target = 1;
--	else
--		return 0;
+ static bool ata_identify_page_supported(struct ata_device *dev, u8 page)
+ {
+ 	struct ata_port *ap = dev->link->ap;
+@@ -2084,145 +2075,6 @@ static inline u8 ata_dev_knobble(struct ata_device *dev)
+ 	return ((ap->cbl == ATA_CBL_SATA) && (!ata_id_is_sata(dev->id)));
+ }
+ 
+-static void ata_dev_config_ncq_send_recv(struct ata_device *dev)
+-{
+-	struct ata_port *ap = dev->link->ap;
+-	unsigned int err_mask;
 -
--	target_limit = (1 << target) - 1;
--
--	/* if already on stricter limit, no need to push further */
--	if (plink->sata_spd_limit <= target_limit)
--		return 0;
--
--	plink->sata_spd_limit = target_limit;
--
--	/* Request another EH round by returning -EAGAIN if link is
--	 * going faster than the target speed.  Forward progress is
--	 * guaranteed by setting sata_spd_limit to target_limit above.
--	 */
--	if (plink->sata_spd > target) {
--		ata_dev_info(dev, "applying link speed limit horkage to %s\n",
--			     sata_spd_string(target));
--		return -EAGAIN;
+-	if (!ata_log_supported(dev, ATA_LOG_NCQ_SEND_RECV)) {
+-		ata_dev_warn(dev, "NCQ Send/Recv Log not supported\n");
+-		return;
 -	}
+-	err_mask = ata_read_log_page(dev, ATA_LOG_NCQ_SEND_RECV,
+-				     0, ap->sector_buf, 1);
+-	if (err_mask) {
+-		ata_dev_dbg(dev,
+-			    "failed to get NCQ Send/Recv Log Emask 0x%x\n",
+-			    err_mask);
+-	} else {
+-		u8 *cmds = dev->ncq_send_recv_cmds;
+-
+-		dev->flags |= ATA_DFLAG_NCQ_SEND_RECV;
+-		memcpy(cmds, ap->sector_buf, ATA_LOG_NCQ_SEND_RECV_SIZE);
+-
+-		if (dev->horkage & ATA_HORKAGE_NO_NCQ_TRIM) {
+-			ata_dev_dbg(dev, "disabling queued TRIM support\n");
+-			cmds[ATA_LOG_NCQ_SEND_RECV_DSM_OFFSET] &=
+-				~ATA_LOG_NCQ_SEND_RECV_DSM_TRIM;
+-		}
+-	}
+-}
+-
+-static void ata_dev_config_ncq_non_data(struct ata_device *dev)
+-{
+-	struct ata_port *ap = dev->link->ap;
+-	unsigned int err_mask;
+-
+-	if (!ata_log_supported(dev, ATA_LOG_NCQ_NON_DATA)) {
+-		ata_dev_warn(dev,
+-			     "NCQ Send/Recv Log not supported\n");
+-		return;
+-	}
+-	err_mask = ata_read_log_page(dev, ATA_LOG_NCQ_NON_DATA,
+-				     0, ap->sector_buf, 1);
+-	if (err_mask) {
+-		ata_dev_dbg(dev,
+-			    "failed to get NCQ Non-Data Log Emask 0x%x\n",
+-			    err_mask);
+-	} else {
+-		u8 *cmds = dev->ncq_non_data_cmds;
+-
+-		memcpy(cmds, ap->sector_buf, ATA_LOG_NCQ_NON_DATA_SIZE);
+-	}
+-}
+-
+-static void ata_dev_config_ncq_prio(struct ata_device *dev)
+-{
+-	struct ata_port *ap = dev->link->ap;
+-	unsigned int err_mask;
+-
+-	if (!(dev->flags & ATA_DFLAG_NCQ_PRIO_ENABLE)) {
+-		dev->flags &= ~ATA_DFLAG_NCQ_PRIO;
+-		return;
+-	}
+-
+-	err_mask = ata_read_log_page(dev,
+-				     ATA_LOG_IDENTIFY_DEVICE,
+-				     ATA_LOG_SATA_SETTINGS,
+-				     ap->sector_buf,
+-				     1);
+-	if (err_mask) {
+-		ata_dev_dbg(dev,
+-			    "failed to get Identify Device data, Emask 0x%x\n",
+-			    err_mask);
+-		return;
+-	}
+-
+-	if (ap->sector_buf[ATA_LOG_NCQ_PRIO_OFFSET] & BIT(3)) {
+-		dev->flags |= ATA_DFLAG_NCQ_PRIO;
+-	} else {
+-		dev->flags &= ~ATA_DFLAG_NCQ_PRIO;
+-		ata_dev_dbg(dev, "SATA page does not support priority\n");
+-	}
+-
+-}
+-
+-static int ata_dev_config_ncq(struct ata_device *dev,
+-			       char *desc, size_t desc_sz)
+-{
+-	struct ata_port *ap = dev->link->ap;
+-	int hdepth = 0, ddepth = ata_id_queue_depth(dev->id);
+-	unsigned int err_mask;
+-	char *aa_desc = "";
+-
+-	if (!ata_id_has_ncq(dev->id)) {
+-		desc[0] = '\0';
+-		return 0;
+-	}
+-	if (dev->horkage & ATA_HORKAGE_NONCQ) {
+-		snprintf(desc, desc_sz, "NCQ (not used)");
+-		return 0;
+-	}
+-	if (ap->flags & ATA_FLAG_NCQ) {
+-		hdepth = min(ap->scsi_host->can_queue, ATA_MAX_QUEUE);
+-		dev->flags |= ATA_DFLAG_NCQ;
+-	}
+-
+-	if (!(dev->horkage & ATA_HORKAGE_BROKEN_FPDMA_AA) &&
+-		(ap->flags & ATA_FLAG_FPDMA_AA) &&
+-		ata_id_has_fpdma_aa(dev->id)) {
+-		err_mask = ata_dev_set_feature(dev, SETFEATURES_SATA_ENABLE,
+-			SATA_FPDMA_AA);
+-		if (err_mask) {
+-			ata_dev_err(dev,
+-				    "failed to enable AA (error_mask=0x%x)\n",
+-				    err_mask);
+-			if (err_mask != AC_ERR_DEV) {
+-				dev->horkage |= ATA_HORKAGE_BROKEN_FPDMA_AA;
+-				return -EIO;
+-			}
+-		} else
+-			aa_desc = ", AA";
+-	}
+-
+-	if (hdepth >= ddepth)
+-		snprintf(desc, desc_sz, "NCQ (depth %d)%s", ddepth, aa_desc);
+-	else
+-		snprintf(desc, desc_sz, "NCQ (depth %d/%d)%s", hdepth,
+-			ddepth, aa_desc);
+-
+-	if ((ap->flags & ATA_FLAG_FPDMA_AUX)) {
+-		if (ata_id_has_ncq_send_and_recv(dev->id))
+-			ata_dev_config_ncq_send_recv(dev);
+-		if (ata_id_has_ncq_non_data(dev->id))
+-			ata_dev_config_ncq_non_data(dev);
+-		if (ata_id_has_ncq_prio(dev->id))
+-			ata_dev_config_ncq_prio(dev);
+-	}
+-
 -	return 0;
 -}
 -
- static inline u8 ata_dev_knobble(struct ata_device *dev)
+ static void ata_dev_config_sense_reporting(struct ata_device *dev)
  {
- 	struct ata_port *ap = dev->link->ap;
+ 	unsigned int err_mask;
 diff --git a/drivers/ata/libata.h b/drivers/ata/libata.h
-index cd8090ad43e5..9eebe4e0be39 100644
+index 9eebe4e0be39..24b08efd79a3 100644
 --- a/drivers/ata/libata.h
 +++ b/drivers/ata/libata.h
-@@ -87,6 +87,13 @@ extern unsigned int ata_read_log_page(struct ata_device *dev, u8 log,
+@@ -15,6 +15,8 @@
+ #define DRV_NAME	"libata"
+ #define DRV_VERSION	"3.00"	/* must be exactly four chars */
  
++#include <asm/unaligned.h>
++
+ /* libata-core.c */
+ enum {
+ 	/* flags for ata_dev_read_id() */
+@@ -85,13 +87,29 @@ extern void __ata_port_probe(struct ata_port *ap);
+ extern unsigned int ata_read_log_page(struct ata_device *dev, u8 log,
+ 				      u8 page, void *buf, unsigned int sectors);
+ 
++static inline bool ata_log_supported(struct ata_device *dev, u8 log)
++{
++	struct ata_port *ap = dev->link->ap;
++
++	if (ata_read_log_page(dev, ATA_LOG_DIRECTORY, 0, ap->sector_buf, 1))
++		return false;
++	return get_unaligned_le16(&ap->sector_buf[log * 2]) ? true : false;
++}
++
  #define to_ata_port(d) container_of(d, struct ata_port, tdev)
  
-+/* libata-core-sata.c */
-+#ifdef CONFIG_SATA_HOST
-+int ata_do_link_spd_horkage(struct ata_device *dev);
-+#else
-+static inline int ata_do_link_spd_horkage(struct ata_device *dev) { return 0; }
-+#endif
-+
+ /* libata-core-sata.c */
+ #ifdef CONFIG_SATA_HOST
+ int ata_do_link_spd_horkage(struct ata_device *dev);
++int ata_dev_config_ncq(struct ata_device *dev, char *desc, size_t desc_sz);
+ #else
+ static inline int ata_do_link_spd_horkage(struct ata_device *dev) { return 0; }
++static inline int ata_dev_config_ncq(struct ata_device *dev, char *desc,
++				     size_t desc_sz)
++{
++	desc[0] = '\0';
++	return 0;
++}
+ #endif
+ 
  /* libata-acpi.c */
- #ifdef CONFIG_ATA_ACPI
- extern unsigned int ata_acpi_gtf_filter;
 -- 
 2.24.1
 
