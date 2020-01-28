@@ -2,27 +2,27 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7C88714BAA8
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Jan 2020 15:41:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 464E714B984
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Jan 2020 15:34:01 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729994AbgA1OO7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 28 Jan 2020 09:14:59 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37288 "EHLO mail.kernel.org"
+        id S1733079AbgA1OZs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 28 Jan 2020 09:25:48 -0500
+Received: from mail.kernel.org ([198.145.29.99]:52848 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729987AbgA1OO4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 Jan 2020 09:14:56 -0500
+        id S1733041AbgA1OZq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 28 Jan 2020 09:25:46 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5D4A624681;
-        Tue, 28 Jan 2020 14:14:55 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D311821739;
+        Tue, 28 Jan 2020 14:25:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1580220895;
-        bh=aC5VW/qKkn4kh3r7S9fZ8bjjN6fXPJxaeVna9gSpC8k=;
+        s=default; t=1580221545;
+        bh=zgPX/dYDENy6FN9CemxqLGD0IXsXIPjkGrFJO+dGelQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=MvLjK41/eNvMvhW7n2pTiTYcRxS0aUJ5yBVqbDkamHjL30XyYe6tu3gpE/VX0TyCH
-         4X84kdpElbZR49ZYY8zONJApdp6HYmdwfoJrhxa3+/1jXWG9mO04vLelqILkWjwbaU
-         8cmPbX38A/8+7kPBU7s5liNbuu7cqTZncGffQOLc=
+        b=koLiHPrVvgfMwVpMBl03xr3zFlAQcByI/wf5Faml0rnkuRwF15owXOxmrd//fElXe
+         IADnkno8nr478U2yEBG+07i2mtpm1KE+R22zhh4DeVT2MXylbFImRa4jmIVZxnGFfn
+         bd0BPoYhsZesRsTG4XYVy7WubU2QudLGyyM5aXiI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -30,12 +30,12 @@ Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Finn Thain <fthain@telegraphics.com.au>,
         Geert Uytterhoeven <geert@linux-m68k.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.4 159/183] m68k: Call timer_interrupt() with interrupts disabled
-Date:   Tue, 28 Jan 2020 15:06:18 +0100
-Message-Id: <20200128135845.601422176@linuxfoundation.org>
+Subject: [PATCH 4.9 231/271] m68k: Call timer_interrupt() with interrupts disabled
+Date:   Tue, 28 Jan 2020 15:06:20 +0100
+Message-Id: <20200128135909.766879770@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200128135829.486060649@linuxfoundation.org>
-References: <20200128135829.486060649@linuxfoundation.org>
+In-Reply-To: <20200128135852.449088278@linuxfoundation.org>
+References: <20200128135852.449088278@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -156,10 +156,10 @@ index c549b48174ec8..972181c1fe4b7 100644
  }
  
 diff --git a/arch/m68k/bvme6000/config.c b/arch/m68k/bvme6000/config.c
-index 478623dbb2092..62054c01ecb45 100644
+index 611d4d9ea2bd8..3978d71d250b4 100644
 --- a/arch/m68k/bvme6000/config.c
 +++ b/arch/m68k/bvme6000/config.c
-@@ -46,11 +46,6 @@ extern int bvme6000_set_clock_mmss (unsigned long);
+@@ -45,11 +45,6 @@ extern int bvme6000_set_clock_mmss (unsigned long);
  extern void bvme6000_reset (void);
  void bvme6000_set_vectors (void);
  
@@ -171,7 +171,7 @@ index 478623dbb2092..62054c01ecb45 100644
  
  int __init bvme6000_parse_bootinfo(const struct bi_record *bi)
  {
-@@ -160,12 +155,18 @@ irqreturn_t bvme6000_abort_int (int irq, void *dev_id)
+@@ -159,12 +154,18 @@ irqreturn_t bvme6000_abort_int (int irq, void *dev_id)
  
  static irqreturn_t bvme6000_timer_int (int irq, void *dev_id)
  {
@@ -192,7 +192,7 @@ index 478623dbb2092..62054c01ecb45 100644
  }
  
  /*
-@@ -184,9 +185,8 @@ void bvme6000_sched_init (irq_handler_t timer_routine)
+@@ -183,9 +184,8 @@ void bvme6000_sched_init (irq_handler_t timer_routine)
  
      rtc->msr = 0;	/* Ensure timer registers accessible */
  
@@ -231,7 +231,7 @@ index 749543b425a4b..03c83b8f90328 100644
  
  u32 hp300_gettimeoffset(void)
 diff --git a/arch/m68k/mac/via.c b/arch/m68k/mac/via.c
-index 2d687518c76fe..49f9fa4529a83 100644
+index c27bf9a906be4..a435aced6e439 100644
 --- a/arch/m68k/mac/via.c
 +++ b/arch/m68k/mac/via.c
 @@ -397,6 +397,8 @@ void via_nubus_irq_shutdown(int irq)
@@ -266,10 +266,10 @@ index 2d687518c76fe..49f9fa4529a83 100644
  	irq_bit = 1;
  	do {
 diff --git a/arch/m68k/mvme147/config.c b/arch/m68k/mvme147/config.c
-index e6a3b56c6481d..152fbde234243 100644
+index c11d38dfad08f..1a095443790b9 100644
 --- a/arch/m68k/mvme147/config.c
 +++ b/arch/m68k/mvme147/config.c
-@@ -47,11 +47,6 @@ extern void mvme147_reset (void);
+@@ -46,11 +46,6 @@ extern void mvme147_reset (void);
  
  static int bcd2int (unsigned char b);
  
@@ -281,7 +281,7 @@ index e6a3b56c6481d..152fbde234243 100644
  
  int __init mvme147_parse_bootinfo(const struct bi_record *bi)
  {
-@@ -107,16 +102,23 @@ void __init config_mvme147(void)
+@@ -106,16 +101,23 @@ void __init config_mvme147(void)
  
  static irqreturn_t mvme147_timer_int (int irq, void *dev_id)
  {
@@ -309,10 +309,10 @@ index e6a3b56c6481d..152fbde234243 100644
  
  	/* Init the clock with a value */
 diff --git a/arch/m68k/mvme16x/config.c b/arch/m68k/mvme16x/config.c
-index a53803cc66cde..0d43bfb3324d7 100644
+index 58e240939d265..ac49fa7ec46b4 100644
 --- a/arch/m68k/mvme16x/config.c
 +++ b/arch/m68k/mvme16x/config.c
-@@ -52,11 +52,6 @@ extern void mvme16x_reset (void);
+@@ -51,11 +51,6 @@ extern void mvme16x_reset (void);
  
  int bcd2int (unsigned char b);
  
@@ -324,7 +324,7 @@ index a53803cc66cde..0d43bfb3324d7 100644
  
  unsigned short mvme16x_config;
  EXPORT_SYMBOL(mvme16x_config);
-@@ -355,8 +350,15 @@ static irqreturn_t mvme16x_abort_int (int irq, void *dev_id)
+@@ -354,8 +349,15 @@ static irqreturn_t mvme16x_abort_int (int irq, void *dev_id)
  
  static irqreturn_t mvme16x_timer_int (int irq, void *dev_id)
  {
@@ -342,7 +342,7 @@ index a53803cc66cde..0d43bfb3324d7 100644
  }
  
  void mvme16x_sched_init (irq_handler_t timer_routine)
-@@ -364,14 +366,13 @@ void mvme16x_sched_init (irq_handler_t timer_routine)
+@@ -363,14 +365,13 @@ void mvme16x_sched_init (irq_handler_t timer_routine)
      uint16_t brdno = be16_to_cpu(mvme_bdid.brdno);
      int irq;
  
@@ -430,7 +430,7 @@ index 6bbca30c91884..a5824abb4a39c 100644
  }
  
 diff --git a/arch/m68k/sun3x/time.c b/arch/m68k/sun3x/time.c
-index c8eb08add6b08..7a195313ff4ff 100644
+index 431d3c4306dd8..a4f6a44d34189 100644
 --- a/arch/m68k/sun3x/time.c
 +++ b/arch/m68k/sun3x/time.c
 @@ -77,15 +77,19 @@ u32 sun3x_gettimeoffset(void)
