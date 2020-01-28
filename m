@@ -2,61 +2,90 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A51BF14B120
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Jan 2020 09:52:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 642F314B119
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Jan 2020 09:50:45 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726027AbgA1IwK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 28 Jan 2020 03:52:10 -0500
-Received: from mail.kernel.org ([198.145.29.99]:55170 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725848AbgA1IwK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 Jan 2020 03:52:10 -0500
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6CEA9207FD;
-        Tue, 28 Jan 2020 08:52:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1580201529;
-        bh=us07uZW8EJ9u1Hp+jw1ztONC0owP/dKwna4F23Rp9O0=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=Nmf9FvANumFL5eGxuQ8NuY1/ZqMRyB2zwsiS2IQm709O1XK4uwudz1OEZv3ZeB1Gr
-         m2m3EG2wDYyApgJcZ9Imicra1rnIwXxtbRNjOCVjX3E+KApQm8c3r41K4ybGFMncKW
-         bCe0nhntIpSTjt39JSsUe228SXqH6mYSomPFjqwI=
-Date:   Tue, 28 Jan 2020 09:05:40 +0100
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     Florian Fainelli <f.fainelli@gmail.com>
-Cc:     stable@vger.kernel.org, jeremy.linton@arm.com, sashal@kernel.org,
-        Jonathan Corbet <corbet@lwn.net>,
-        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH stable-4.9] Documentation: Document arm64 kpti control
-Message-ID: <20200128080540.GH2105706@kroah.com>
-References: <20200128015415.2276-1-f.fainelli@gmail.com>
+        id S1725927AbgA1Ium (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 28 Jan 2020 03:50:42 -0500
+Received: from ivanoab7.miniserver.com ([37.128.132.42]:40220 "EHLO
+        www.kot-begemot.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725848AbgA1Ium (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 28 Jan 2020 03:50:42 -0500
+X-Greylist: delayed 2285 seconds by postgrey-1.27 at vger.kernel.org; Tue, 28 Jan 2020 03:50:41 EST
+Received: from tun252.jain.kot-begemot.co.uk ([192.168.18.6] helo=jain.kot-begemot.co.uk)
+        by www.kot-begemot.co.uk with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <anton.ivanov@cambridgegreys.com>)
+        id 1iwLz6-0007ql-Fw; Tue, 28 Jan 2020 08:12:32 +0000
+Received: from jain.kot-begemot.co.uk ([192.168.3.3])
+        by jain.kot-begemot.co.uk with esmtp (Exim 4.92)
+        (envelope-from <anton.ivanov@cambridgegreys.com>)
+        id 1iwLz2-00039A-Mv; Tue, 28 Jan 2020 08:12:31 +0000
+Subject: Re: [RFC v1 2/2] arch: um: turn BTF_TYPEINFO support off
+To:     Brendan Higgins <brendanhiggins@google.com>, jdike@addtoit.com,
+        richard@nod.at, akpm@linux-foundation.org, changbin.du@intel.com,
+        yamada.masahiro@socionext.com, rdunlap@infradead.org,
+        keescook@chromium.org, andriy.shevchenko@linux.intel.com
+Cc:     linux-um@lists.infradead.org, linux-kernel@vger.kernel.org,
+        davidgow@google.com, heidifahim@google.com
+References: <20200127193549.187419-1-brendanhiggins@google.com>
+ <20200127193549.187419-3-brendanhiggins@google.com>
+From:   Anton Ivanov <anton.ivanov@cambridgegreys.com>
+Message-ID: <b49a0bf2-eaf7-b2b3-a7f2-db0f280d42ff@cambridgegreys.com>
+Date:   Tue, 28 Jan 2020 08:12:28 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200128015415.2276-1-f.fainelli@gmail.com>
+In-Reply-To: <20200127193549.187419-3-brendanhiggins@google.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Spam-Score: -1.0
+X-Spam-Score: -1.0
+X-Clacks-Overhead: GNU Terry Pratchett
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jan 27, 2020 at 05:54:14PM -0800, Florian Fainelli wrote:
-> From: Jeremy Linton <jeremy.linton@arm.com>
-> 
-> commit de19055564c8f8f9d366f8db3395836da0b2176c upstream
-> 
-> For a while Arm64 has been capable of force enabling
-> or disabling the kpti mitigations. Lets make sure the
-> documentation reflects that.
-> 
-> Signed-off-by: Jeremy Linton <jeremy.linton@arm.com>
-> Reviewed-by: Andre Przywara <andre.przywara@arm.com>
-> Signed-off-by: Jonathan Corbet <corbet@lwn.net>
-> [florian: patch the correct file]
-> Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
 
-Thanks for the backport, now applied.
 
-greg k-h
+On 27/01/2020 19:35, Brendan Higgins wrote:
+> Currently CONFIG_DEBUG_INFO_BTF=y doesn't work on UML:
+> 
+> scripts/link-vmlinux.sh: line 106: 17463 Segmentation fault      LLVM_OBJCOPY=${OBJCOPY} ${PAHOLE} -J ${1}
+> objcopy: --change-section-vma .BTF=0x0000000000000000 never used
+> objcopy: --change-section-lma .BTF=0x0000000000000000 never used
+> objcopy: error: the input file '.btf.vmlinux.bin' is empty
+> Failed to generate BTF for vmlinux
+> Try to disable CONFIG_DEBUG_INFO_BTF
+> make: *** [Makefile:1078: vmlinux] Error 1
+> 
+> So turn off ARCH_HAS_BTF_TYPEINFO support off for the UM architecture.
+> 
+> Signed-off-by: Brendan Higgins <brendanhiggins@google.com>
+> ---
+>   arch/um/Kconfig | 1 +
+>   1 file changed, 1 insertion(+)
+> 
+> diff --git a/arch/um/Kconfig b/arch/um/Kconfig
+> index 0917f8443c285..53e13d8b210e0 100644
+> --- a/arch/um/Kconfig
+> +++ b/arch/um/Kconfig
+> @@ -6,6 +6,7 @@ config UML
+>   	bool
+>   	default y
+>   	select ARCH_HAS_KCOV
+> +	select ARCH_NO_BTF_TYPEINFO
+>   	select ARCH_NO_PREEMPT
+>   	select HAVE_ARCH_AUDITSYSCALL
+>   	select HAVE_ARCH_SECCOMP_FILTER
+> 
+
+Acked-by: Anton Ivanov <anton.ivanov@cambridgegreys.com>
+
+-- 
+Anton R. Ivanov
+Cambridgegreys Limited. Registered in England. Company Number 10273661
+https://www.cambridgegreys.com/
