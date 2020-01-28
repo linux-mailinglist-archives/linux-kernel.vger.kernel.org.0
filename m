@@ -2,164 +2,131 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3AD1D14B033
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Jan 2020 08:20:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 16B7114B039
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Jan 2020 08:20:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725920AbgA1HUH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 28 Jan 2020 02:20:07 -0500
-Received: from mail-ed1-f68.google.com ([209.85.208.68]:36101 "EHLO
-        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725825AbgA1HUH (ORCPT
+        id S1726027AbgA1HUR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 28 Jan 2020 02:20:17 -0500
+Received: from mail-pl1-f202.google.com ([209.85.214.202]:35070 "EHLO
+        mail-pl1-f202.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725974AbgA1HUQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 Jan 2020 02:20:07 -0500
-Received: by mail-ed1-f68.google.com with SMTP id j17so13616866edp.3
-        for <linux-kernel@vger.kernel.org>; Mon, 27 Jan 2020 23:20:05 -0800 (PST)
+        Tue, 28 Jan 2020 02:20:16 -0500
+Received: by mail-pl1-f202.google.com with SMTP id v24so5186318plo.2
+        for <linux-kernel@vger.kernel.org>; Mon, 27 Jan 2020 23:20:16 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=Sb+8J/7DuRGfGudhsScfamBXEMs+Mce/hybB6WnCHb0=;
-        b=cBBOlTfYKE9YToJ7LwFQXUs38A+ojqRBnM0kt+rHMyNahEoDFA6easCZ0aFYOPtke3
-         92ch4PzsGSCY5aLRhqTT/Efcfd4whgm9Naygy4kaj/kYGeA0+wOB21kgR8n0MWKNEDG5
-         1uI51gw21EMHkPLWo/gWWMfXNCjXDlc2AC+1s=
+        d=google.com; s=20161025;
+        h=date:message-id:mime-version:subject:from:to:cc;
+        bh=geIt7NTj15qXn0Pd7vHPLbcleORDZqpFgUWoIN42PEM=;
+        b=QvEXh6vx1uu5+MqSyqNpYaqM0+WH+gnl/II2vETCPrUPXtj+INkYpNvum2xVSiePqx
+         t2/NWdcygIobxjQwa6b1OnLgvNTscgcCzwk3Kw36NhrFIWMkNB+UMzrLz77/vEJkezdN
+         15guaSPb7ab1mnGvB+LtN0ErleZfv4RBuk2g7w4q3DMM5WCH/e9o2GfN///ZX1kp+P2k
+         9OtN5uEDF4qS+QZEf323rO0sMLIeC/Xw2+dPQ0tCmivr5rQ4PxRJoq7SiQXxSHuWxBpw
+         M/ivCrQQeOhdoSDO7BN4ynNQSAV+TGlgrrSPB/kV0uDwtRpyqiwvZ/W28+FQICH5XA89
+         pVVA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=Sb+8J/7DuRGfGudhsScfamBXEMs+Mce/hybB6WnCHb0=;
-        b=b06Ee+0mojvBns3jSBeKEbVOzPtWHcW7IxsH82PG3yhMbBIzEuFxU3QKvIg7ajhJun
-         QXAWgT27SM4Eyoi5UwQl603aQ9GkGRS050taOlQhOVzrxBzWbSsxvCEdtia46bXwUcEg
-         wQQgM3wHh3yZBFeXKE9yfS1WDfwEnSRKFetLR7rojKRps7x7679JDeMx1Zfoj4wB2aSw
-         tyYzaqs5Rf1z6LxHjsiIEhHTgESvVLjXDrowD/jPt8ED/snN8e1muf6RpOGC9Lu/UCZv
-         PED1RDHYqbns8x+f4F9AcaUevrqKziExghMiAutaowWlxb/CvnbU27fAREQ5qmQcAlUw
-         86fA==
-X-Gm-Message-State: APjAAAXeCeixzMUAeYAgE0rPhBCDghbLV4JO6UQmZ9DnhWWkQsK8fxNu
-        oHb5mJ0nCytp6IaB/wfgnahx58RZSR3IAg==
-X-Google-Smtp-Source: APXvYqx+DCa/mVzHJX9RIUHASmsoPwzllGj4qx61ZF+o9UrkCqSlJwpXqfLivvylG5YHpr7yaiLqGg==
-X-Received: by 2002:a05:6402:74a:: with SMTP id p10mr1943618edy.377.1580196004421;
-        Mon, 27 Jan 2020 23:20:04 -0800 (PST)
-Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com. [209.85.128.41])
-        by smtp.gmail.com with ESMTPSA id qh18sm339052ejb.23.2020.01.27.23.20.01
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 27 Jan 2020 23:20:02 -0800 (PST)
-Received: by mail-wm1-f41.google.com with SMTP id t14so1282224wmi.5
-        for <linux-kernel@vger.kernel.org>; Mon, 27 Jan 2020 23:20:01 -0800 (PST)
-X-Received: by 2002:a05:600c:294a:: with SMTP id n10mr3195790wmd.11.1580196001394;
- Mon, 27 Jan 2020 23:20:01 -0800 (PST)
-MIME-Version: 1.0
-References: <20191217032034.54897-1-senozhatsky@chromium.org>
- <20191217032034.54897-14-senozhatsky@chromium.org> <2d0e1a9b-6c5e-ff70-9862-32c8b8aaf65f@xs4all.nl>
- <20200122050515.GB49953@google.com> <57f711a0-6183-74f6-ab24-ebe414cb6881@xs4all.nl>
-In-Reply-To: <57f711a0-6183-74f6-ab24-ebe414cb6881@xs4all.nl>
-From:   Tomasz Figa <tfiga@chromium.org>
-Date:   Tue, 28 Jan 2020 16:19:50 +0900
-X-Gmail-Original-Message-ID: <CAAFQd5Dbw=B7kb-p8nkPN3GxwL0O-5q=y1HRAVUVOwv4eEAv-Q@mail.gmail.com>
-Message-ID: <CAAFQd5Dbw=B7kb-p8nkPN3GxwL0O-5q=y1HRAVUVOwv4eEAv-Q@mail.gmail.com>
-Subject: Re: [RFC][PATCH 13/15] videobuf2: do not sync buffers for DMABUF queues
-To:     Hans Verkuil <hverkuil@xs4all.nl>
-Cc:     Sergey Senozhatsky <senozhatsky@chromium.org>,
-        Hans Verkuil <hans.verkuil@cisco.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Sakari Ailus <sakari.ailus@iki.fi>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Pawel Osciak <posciak@chromium.org>,
-        Linux Media Mailing List <linux-media@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+        h=x-gm-message-state:date:message-id:mime-version:subject:from:to:cc;
+        bh=geIt7NTj15qXn0Pd7vHPLbcleORDZqpFgUWoIN42PEM=;
+        b=rlF0elF/7gGoeQ9dX1jgENT+zfL/D/wg6ZB0xE9ixC/QhK0OW3OzTa5RibzV/pUUSU
+         8DWRv5ADMn8Y5oxpO6ZwtS6O0CXulmrX5fWUcnQ44BfLLuRsVzJ3j7UrC+Em+pR6pCtS
+         88i6CXY2O9FdwJJK9U7YpLl3ZBswezV+pao/wj5tR3S3LRpP6p4qUaxYdmJFiM1sH+jx
+         bsURCdC0MMYlPb+4J0bMdMUXcJBBl36RvHG4ZzrZQI1WpyanTRjEAAhAYIPEj8E0MC7l
+         LLEzyzL9HrD+BHiwi7zUH7J74f6HfcPbNiGCIMeg+qa20FTd8gopr3bMaker4ovgPwol
+         BikQ==
+X-Gm-Message-State: APjAAAVewQ3AJsr5IaN++qMT7jMKkDbuHeOs0jVSiXJjrDlrWFLiZpof
+        fsHcskWm0woRIzBggZXohKZ13c6RXVjZujfKNe3ORw==
+X-Google-Smtp-Source: APXvYqzxUoPIpd2+KXb0X0NAkTjM1rpz5agpoINUJNKoxT6jjwLdIPKlYS+TLWvc+a1bwy5Pu70qMjsB/y7aNJ72Gg23zw==
+X-Received: by 2002:a65:4b89:: with SMTP id t9mr9307336pgq.102.1580196015485;
+ Mon, 27 Jan 2020 23:20:15 -0800 (PST)
+Date:   Mon, 27 Jan 2020 23:19:55 -0800
+Message-Id: <20200128072002.79250-1-brendanhiggins@google.com>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.25.0.341.g760bfbb309-goog
+Subject: [PATCH v1 0/7] kunit: create a centralized executor to dispatch all
+ KUnit tests
+From:   Brendan Higgins <brendanhiggins@google.com>
+To:     jdike@addtoit.com, richard@nod.at, anton.ivanov@cambridgegreys.com,
+        arnd@arndb.de, keescook@chromium.org, skhan@linuxfoundation.org,
+        alan.maguire@oracle.com, yzaikin@google.com, davidgow@google.com,
+        akpm@linux-foundation.org, rppt@linux.ibm.com,
+        frowand.list@gmail.com
+Cc:     gregkh@linuxfoundation.org, sboyd@kernel.org, logang@deltatee.com,
+        mcgrof@kernel.org, knut.omang@oracle.com,
+        linux-um@lists.infradead.org, linux-arch@vger.kernel.org,
+        linux-kselftest@vger.kernel.org, kunit-dev@googlegroups.com,
+        linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
+        Brendan Higgins <brendanhiggins@google.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jan 23, 2020 at 8:35 PM Hans Verkuil <hverkuil@xs4all.nl> wrote:
->
-> On 1/22/20 6:05 AM, Sergey Senozhatsky wrote:
-> > On (20/01/10 11:30), Hans Verkuil wrote:
-> > [..]
-> >>> diff --git a/drivers/media/common/videobuf2/videobuf2-v4l2.c b/drivers/media/common/videobuf2/videobuf2-v4l2.c
-> >>> index 1762849288ae..2b9d3318e6fb 100644
-> >>> --- a/drivers/media/common/videobuf2/videobuf2-v4l2.c
-> >>> +++ b/drivers/media/common/videobuf2/videobuf2-v4l2.c
-> >>> @@ -341,8 +341,22 @@ static void set_buffer_cache_hints(struct vb2_queue *q,
-> >>>                                struct vb2_buffer *vb,
-> >>>                                struct v4l2_buffer *b)
-> >>>  {
-> >>> -   vb->need_cache_sync_on_prepare = 1;
-> >>> +   /*
-> >>> +    * DMA exporter should take care of cache syncs, so we can avoid
-> >>> +    * explicit ->prepare()/->finish() syncs.
-> >>> +    */
-> >>> +   if (q->memory == VB2_MEMORY_DMABUF) {
-> >>> +           vb->need_cache_sync_on_finish = 0;
-> >>> +           vb->need_cache_sync_on_prepare = 0;
-> >>> +           return;
-> >>> +   }
-> >>>
-> >>> +   /*
-> >>> +    * For other ->memory types we always need ->prepare() cache
-> >>> +    * sync. ->finish() cache sync, however, can be avoided when queue
-> >>> +    * direction is TO_DEVICE.
-> >>> +    */
-> >>> +   vb->need_cache_sync_on_prepare = 1;
-> >>
-> >> I'm trying to remember: what needs to be done in prepare()
-> >> for a capture buffer? I thought that for capture you only
-> >> needed to invalidate the cache in finish(), but nothing needs
-> >> to be done in the prepare().
-> >
-> > Hmm. Not sure. A precaution in case if user-space wrote to that buffer?
->
-> But whatever was written in the buffer is going to be overwritten anyway.
->
-> Unless I am mistaken the current situation is that the cache syncs are done
-> in both prepare and finish, regardless of the DMA direction.
->
-> I would keep that behavior to avoid introducing any unexpected regressions.
->
+## TL;DR
 
-It wouldn't be surprising if the buffer was first filled with default
-values (e.g. all zeroes) on the CPU. That would make the cache lines
-dirty and they could overwrite what the device writes. So we need to
-flush (aka clean) the write-back caches on prepare for CAPTURE
-buffers.
+This patchset adds a centralized executor to dispatch tests rather than
+relying on late_initcall to schedule each test suite separately along
+with a couple of new features that depend on it.
 
-> Then, if q->allow_cache_hint is set, then default to a cache sync (cache clean)
-> in the prepare for OUTPUT buffers and a cache sync (cache invalidate) in the
-> finish for CAPTURE buffers.
+## What am I trying to do?
 
-I'd still default to the existing behavior even if allow_cache_hint is
-set, because of what I wrote above. Then if the userspace doesn't ever
-write to the buffers, it can request no flush/clean by setting the
-V4L2_BUF_FLAG_NO_CACHE_CLEAN flag when queuing the buffer.
+Conceptually, I am trying to provide a mechanism by which test suites
+can be grouped together so that they can be reasoned about collectively.
+The last two of three patches in this series add features which depend
+on this:
 
->
-> This also means that any drivers that want to access a buffer in between the
-> prepare...finish calls will need to do a begin/end_cpu_access. But that's a
-> separate matter.
+PATCH 5/7 Prints out a test plan right before KUnit tests are run[1];
+          this is valuable because it makes it possible for a test
+          harness to detect whether the number of tests run matches the
+          number of tests expected to be run, ensuring that no tests
+          silently failed.
 
-AFAIR with current design of the series, the drivers can opt-in for
-userspace cache sync hints, so by default even if the userspace
-requests sync to be skipped, it wouldn't have any effect unless the
-driver allows so. Then I'd imagine migrating all the drivers to
-request clean/invalidate explicitly. Note that the DMA-buf
-begin/end_cpu_access isn't enough here. We'd need something like
-vb2_begin/end_cpu_access() which also takes care of syncing
-inconsistent MMAP and USERPTR buffers.
+PATCH 6/7 Add a new kernel command-line option which allows the user to
+          specify that the kernel poweroff, halt, or reboot after
+          completing all KUnit tests; this is very handy for running
+          KUnit tests on UML or a VM so that the UML/VM process exits
+          cleanly immediately after running all tests without needing a
+          special initramfs.
 
->
-> Regards,
->
->         Hans
->
-> >
-> > +     if (q->dma_dir == DMA_FROM_DEVICE)
-> > +             q->need_cache_sync_on_prepare = 0;
-> >
-> > ?
-> >
-> >       -ss
-> >
->
+In addition, by dispatching tests from a single location, we can
+guarantee that all KUnit tests run after late_init is complete, which
+was a concern during the initial KUnit patchset review (this has not
+been a problem in practice, but resolving with certainty is nevertheless
+desirable).
+
+Other use cases for this exist, but the above features should provide an
+idea of the value that this could provide.
+
+Alan Maguire (1):
+  kunit: test: create a single centralized executor for all tests
+
+Brendan Higgins (5):
+  vmlinux.lds.h: add linker section for KUnit test suites
+  arch: um: add linker section for KUnit test suites
+  init: main: add KUnit to kernel init
+  kunit: test: add test plan to KUnit TAP format
+  Documentation: Add kunit_shutdown to kernel-parameters.txt
+
+David Gow (1):
+  kunit: Add 'kunit_shutdown' option
+
+ .../admin-guide/kernel-parameters.txt         |  7 ++
+ arch/um/include/asm/common.lds.S              |  4 +
+ include/asm-generic/vmlinux.lds.h             |  8 ++
+ include/kunit/test.h                          | 82 ++++++++++++-------
+ init/main.c                                   |  4 +
+ lib/kunit/Makefile                            |  3 +-
+ lib/kunit/executor.c                          | 71 ++++++++++++++++
+ lib/kunit/test.c                              | 11 ---
+ tools/testing/kunit/kunit_kernel.py           |  2 +-
+ tools/testing/kunit/kunit_parser.py           | 76 ++++++++++++++---
+ .../test_is_test_passed-all_passed.log        |  1 +
+ .../test_data/test_is_test_passed-crash.log   |  1 +
+ .../test_data/test_is_test_passed-failure.log |  1 +
+ 13 files changed, 217 insertions(+), 54 deletions(-)
+ create mode 100644 lib/kunit/executor.c
+
+-- 
+2.25.0.341.g760bfbb309-goog
+
