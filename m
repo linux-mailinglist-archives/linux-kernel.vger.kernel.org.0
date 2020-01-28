@@ -2,152 +2,135 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 91FD314B3B7
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Jan 2020 12:46:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 73FA814B398
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Jan 2020 12:40:47 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726139AbgA1Lqk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 28 Jan 2020 06:46:40 -0500
-Received: from mail-ot1-f66.google.com ([209.85.210.66]:33548 "EHLO
-        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725941AbgA1Lqj (ORCPT
+        id S1726142AbgA1Lkm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 28 Jan 2020 06:40:42 -0500
+Received: from mailout2.samsung.com ([203.254.224.25]:13351 "EHLO
+        mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725941AbgA1Lkm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 Jan 2020 06:46:39 -0500
-Received: by mail-ot1-f66.google.com with SMTP id b18so11709884otp.0
-        for <linux-kernel@vger.kernel.org>; Tue, 28 Jan 2020 03:46:38 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=1m2tU4RYYXkdt6z78fcFtsSj6N8xIeX/v5Mckd3HuOk=;
-        b=ZttBa79gzBgDbPkfBP8sPfD3BF/YLjtcdJXxEzmIHNFa8Wh+qbLdybQfy2wxyv9REZ
-         T7zNoMa8hcPdXW/VJYqpZ0d0ot9PIg4Khkl3MS0y5FHewWqmfvJ6zDT6cGLe+IBpRdsb
-         SeEmBHvk2/y0emlzZaZmvdmXK+iEDHBFjIiZnp0RNn3Yoh6ZBKQIbhM8ACNI2djVuDm1
-         RvUsUhQyH8G5EQ2P9hkeq8+purJGvlDSuRDtZqMPZA+gbR51rEOMvk94+ka/lITSVHPR
-         lFkEZ2aSolxL7jgRBQhOF/Qi2Wk8sGGX8JIOFVr8OHXAggzc3ifG8TJaoDR0C30xyVPO
-         e5OA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=1m2tU4RYYXkdt6z78fcFtsSj6N8xIeX/v5Mckd3HuOk=;
-        b=kZ1zi7njO3tWudqAv8AazLulbJN0g3h4QOskrj5gKmAkZwwxtGr/93J/8O9DUHFwoC
-         Dc2tod7L3c7DIFIGEofO6AQd7IAH5j0SaLvsA97UqhHy5trcgIBpgs9f12eEUG4WFCRp
-         dhLS8Vycu5ZfobYtcW9kgupVE5deiwjNkrwpQQa3nGkwUepECIa1FRgA2qfY0EmyZe/g
-         b8Fhul9Tu7jQ6sSRvluyL/s/2jPG9/uRSXnMWDgO1hkMK0hzX9nILg95EM6gsi1hMZxu
-         uiBPHpSjJKfVNHd+QGsjRkvFhYUzeVsVAz+Q30e3GztwNU1lL9Z2L89JHpM2EK7v1Njo
-         8zSQ==
-X-Gm-Message-State: APjAAAVf9shJp6kgEP5jKIP+3cUzWSQtb598UgwEv6j58ncVhFbfQlyX
-        hYaoXS++HYHRbJMGtoVhK1uCxrMcbMoLwyc0U5W3ag==
-X-Google-Smtp-Source: APXvYqxOEXCf2VKOm8lc1lfUFjyefZVbf3PuAE3Myn0xbv/LYIZp5H2xnMKr9uSVMo1zbgqkLUZ2zOND8+m8OwWqXi8=
-X-Received: by 2002:a05:6830:1d7b:: with SMTP id l27mr14982490oti.251.1580211998038;
- Tue, 28 Jan 2020 03:46:38 -0800 (PST)
+        Tue, 28 Jan 2020 06:40:42 -0500
+Received: from epcas1p1.samsung.com (unknown [182.195.41.45])
+        by mailout2.samsung.com (KnoxPortal) with ESMTP id 20200128114039epoutp0233d276028c9b78818c36fd713ffc75c5~uCh0fb7Yc1031410314epoutp02V
+        for <linux-kernel@vger.kernel.org>; Tue, 28 Jan 2020 11:40:39 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20200128114039epoutp0233d276028c9b78818c36fd713ffc75c5~uCh0fb7Yc1031410314epoutp02V
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1580211639;
+        bh=QMDrmWXt12RXGyvNEtNunXcHhgnQQMkNaxgiR4Sx83o=;
+        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
+        b=K087k7CVlKB371XpMFsggZ68YnnPh8x424lPBI3vKR3oplADSySFl/qmFh0ZfetZq
+         xktPEhaZafN7Y7S8kaNhMI8gcpDC1Av3RZqIkkfEqHNdSqdJwKSxdwLANN0KUGkMZV
+         JLYwzTOZ8FcbQ5JMlEa8sP+SsahFWqjZa3iKWc1c=
+Received: from epsnrtp4.localdomain (unknown [182.195.42.165]) by
+        epcas1p4.samsung.com (KnoxPortal) with ESMTP id
+        20200128114038epcas1p47e7a3ab1d06ad20f9843406e6050f122~uCh0AaOIS2730027300epcas1p45;
+        Tue, 28 Jan 2020 11:40:38 +0000 (GMT)
+Received: from epsmges1p1.samsung.com (unknown [182.195.40.156]) by
+        epsnrtp4.localdomain (Postfix) with ESMTP id 486PnJ5KHSzMqYkV; Tue, 28 Jan
+        2020 11:40:36 +0000 (GMT)
+Received: from epcas1p2.samsung.com ( [182.195.41.46]) by
+        epsmges1p1.samsung.com (Symantec Messaging Gateway) with SMTP id
+        66.99.57028.4BD103E5; Tue, 28 Jan 2020 20:40:36 +0900 (KST)
+Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
+        epcas1p2.samsung.com (KnoxPortal) with ESMTPA id
+        20200128114036epcas1p2fa1cce9a08f35b1857f21c830f62c499~uChxjRILF0279102791epcas1p2J;
+        Tue, 28 Jan 2020 11:40:36 +0000 (GMT)
+Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
+        epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
+        20200128114036epsmtrp14a4f00ec90c70195b97b889fe421f1dc~uChxiS5h51860118601epsmtrp1j;
+        Tue, 28 Jan 2020 11:40:36 +0000 (GMT)
+X-AuditID: b6c32a35-974d39c00001dec4-09-5e301db4b7da
+Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
+        epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        6C.2C.10238.4BD103E5; Tue, 28 Jan 2020 20:40:36 +0900 (KST)
+Received: from [10.113.221.102] (unknown [10.113.221.102]) by
+        epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
+        20200128114036epsmtip1472fc24ea5995afcbc8a91c9c0aa4336~uChxV3tk30196101961epsmtip18;
+        Tue, 28 Jan 2020 11:40:36 +0000 (GMT)
+Subject: Re: [PATCH] PM / devfreq: use constant name of userspace governor
+To:     pierre Kuo <vichy.kuo@gmail.com>, myungjoo.ham@samsung.com,
+        kyungmin.park@samsung.com
+Cc:     linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
+From:   Chanwoo Choi <cw00.choi@samsung.com>
+Organization: Samsung Electronics
+Message-ID: <33eac5f8-4cdd-3315-cf82-c5f859dffce7@samsung.com>
+Date:   Tue, 28 Jan 2020 20:48:15 +0900
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:59.0) Gecko/20100101
+        Thunderbird/59.0
 MIME-Version: 1.0
-References: <20200122165938.GA16974@willie-the-truck> <A5114711-B8DE-48DA-AFD0-62128AC08270@lca.pw>
- <20200122223851.GA45602@google.com> <A90E2B85-77CB-4743-AEC3-90D7836C4D47@lca.pw>
- <20200123093905.GU14914@hirez.programming.kicks-ass.net> <E722E6E0-26CB-440F-98D7-D182B57D1F43@lca.pw>
-In-Reply-To: <E722E6E0-26CB-440F-98D7-D182B57D1F43@lca.pw>
-From:   Marco Elver <elver@google.com>
-Date:   Tue, 28 Jan 2020 12:46:26 +0100
-Message-ID: <CANpmjNNo6yW-y-Af7JgvWi3t==+=02hE4-pFU4OiH8yvbT3Byg@mail.gmail.com>
-Subject: Re: [PATCH] locking/osq_lock: fix a data race in osq_wait_next
-To:     Qian Cai <cai@lca.pw>
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        Will Deacon <will@kernel.org>, Ingo Molnar <mingo@redhat.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "paul E. McKenney" <paulmck@kernel.org>,
-        kasan-dev <kasan-dev@googlegroups.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20200123155912.22160-1-vichy.kuo@gmail.com>
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFupjk+LIzCtJLcpLzFFi42LZdlhTT3eLrEGcwdz56hZnm96wW1zeNYfN
+        4nPvEUaL240r2CxezlvB6sDqsXPWXXaPvi2rGD0+b5ILYI7KtslITUxJLVJIzUvOT8nMS7dV
+        8g6Od443NTMw1DW0tDBXUshLzE21VXLxCdB1y8wBWqmkUJaYUwoUCkgsLlbSt7Mpyi8tSVXI
+        yC8usVVKLUjJKbAs0CtOzC0uzUvXS87PtTI0MDAyBSpMyM6YtF6i4Ah7xdGZF9kbGBexdTFy
+        ckgImEj82bOcpYuRi0NIYAejxJxPX9kgnE+MEptefgarEhL4xijx7YslTMekC4/ZIYr2Mkps
+        m9HBBFH0HsjZowNiCwt4SWw8/JgRxBYRiJb4ce4KC4jNLGAl8fpjNzuIzSagJbH/xQ2wBfwC
+        ihJXf0DU8wrYSWz5dR0sziKgKvFu5XWwelGBMImT21qgagQlTs58AjSTg4NTwFLi4ctYiPHi
+        EreezGeCsOUltr+dwwxyp4TAGTaJ7vMvmSAecJH4d2ExlC0s8er4FnYIW0riZX8blF0tsfLk
+        ETaI5g5GiS37L7BCJIwl9i+dzASymFlAU2L9Ln2IsKLEzt9zGSEW80m8+9rDClIiIcAr0dEm
+        BFGiLHH5wV2otZISi9s72SYwKs1C8s0sJC/MQvLCLIRlCxhZVjGKpRYU56anFhsWGCJH9SZG
+        cFrUMt3BOOWczyFGAQ5GJR5eict6cUKsiWXFlbmHGCU4mJVEeDuZDOKEeFMSK6tSi/Lji0pz
+        UosPMZoCA3sis5Rocj4wZeeVxBuaGhkbG1uYGJqZGhoqifM+jNSMExJITyxJzU5NLUgtgulj
+        4uCUamBcGXDf4Dav15LDr32VLoq/36CYquA5YX/Q9Ut2W2PWxax4vCDk6rfX/Zx1rXO0lv75
+        2Jx1ZcpVs9NfVt9b0aLC+ItRX7fDNnFb0SOrp4xb9q07l2IstJTv2fc1Jw4VJy9gzPiwb9lB
+        Zk1ZO5/eXU0/NmmKbNNZ+T6QY0X4gd4VVxQvHDfYZnBDXomlOCPRUIu5qDgRAHvsFyShAwAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrJLMWRmVeSWpSXmKPExsWy7bCSnO4WWYM4g0mHOC3ONr1ht7i8aw6b
+        xefeI4wWtxtXsFm8nLeC1YHVY+esu+wefVtWMXp83iQXwBzFZZOSmpNZllqkb5fAlTFpvUTB
+        EfaKozMvsjcwLmLrYuTkkBAwkZh04TF7FyMXh5DAbkaJA+uvsUMkJCWmXTzK3MXIAWQLSxw+
+        XAxR85ZRYtHk5YwgNcICXhIbDz8Gs0UEoiXWTZjKCmIzC1hJvP7YDTZHSKCHUeL8DzCbTUBL
+        Yv+LG2CL+QUUJa7+gOjlFbCT2PLrOlicRUBV4t3K62D1ogJhEjuXPGaCqBGUODnzCQvIPZwC
+        lhIPX8ZCrFKX+DPvEjOELS5x68l8JghbXmL72znMExiFZyHpnoWkZRaSlllIWhYwsqxilEwt
+        KM5Nzy02LDDMSy3XK07MLS7NS9dLzs/dxAiOEC3NHYyXl8QfYhTgYFTi4ZW4rBcnxJpYVlyZ
+        e4hRgoNZSYS3k8kgTog3JbGyKrUoP76oNCe1+BCjNAeLkjjv07xjkUIC6YklqdmpqQWpRTBZ
+        Jg5OqQbGiuoM8/PNu89/Nv52SaHaZ8LS05Yptv/P8Xxf8o7ZUW7u7AkS9XZRO5OsV13w5933
+        786xjWcd3qnuMjW4bM3T4OEXsnGx8ly9A3Kfp5W87Y0wi555SFfk/7zoiaxq6ScPsR1teqqV
+        /ryxouIII/vFghePHgjcPTJ37VNu0dTpXZtvpS8WVZ7+WImlOCPRUIu5qDgRAMB//CiMAgAA
+X-CMS-MailID: 20200128114036epcas1p2fa1cce9a08f35b1857f21c830f62c499
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: SVC_REQ_APPROVE
+CMS-TYPE: 101P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20200123155931epcas1p21de0db0e53438c6f326a5b75bbb69307
+References: <CGME20200123155931epcas1p21de0db0e53438c6f326a5b75bbb69307@epcas1p2.samsung.com>
+        <20200123155912.22160-1-vichy.kuo@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 28 Jan 2020 at 04:11, Qian Cai <cai@lca.pw> wrote:
->
-> > On Jan 23, 2020, at 4:39 AM, Peter Zijlstra <peterz@infradead.org> wrote:
-> >
-> > On Wed, Jan 22, 2020 at 06:54:43PM -0500, Qian Cai wrote:
-> >> diff --git a/kernel/locking/osq_lock.c b/kernel/locking/osq_lock.c
-> >> index 1f7734949ac8..832e87966dcf 100644
-> >> --- a/kernel/locking/osq_lock.c
-> >> +++ b/kernel/locking/osq_lock.c
-> >> @@ -75,7 +75,7 @@ osq_wait_next(struct optimistic_spin_queue *lock,
-> >>                 * wait for either @lock to point to us, through its Step-B, or
-> >>                 * wait for a new @node->next from its Step-C.
-> >>                 */
-> >> -               if (node->next) {
-> >> +               if (READ_ONCE(node->next)) {
-> >>                        next = xchg(&node->next, NULL);
-> >>                        if (next)
-> >>                                break;
-> >
-> > This could possibly trigger the warning, but is a false positive. The
-> > above doesn't fix anything in that even if that load is shattered the
-> > code will function correctly -- it checks for any !0 value, any byte
-> > composite that is !0 is sufficient.
-> >
-> > This is in fact something KCSAN compiler infrastructure could deduce.
+On 1/24/20 12:59 AM, pierre Kuo wrote:
+> Based on commit aa7c352f9841 ("PM / devfreq: Define the constant governor
+> name"), use constant name for userspace governor.
+> 
+> Signed-off-by: pierre Kuo <vichy.kuo@gmail.com>
+> ---
+>  drivers/devfreq/governor_userspace.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/devfreq/governor_userspace.c b/drivers/devfreq/governor_userspace.c
+> index af94942fcf95..0fd6c4851071 100644
+> --- a/drivers/devfreq/governor_userspace.c
+> +++ b/drivers/devfreq/governor_userspace.c
+> @@ -131,7 +131,7 @@ static int devfreq_userspace_handler(struct devfreq *devfreq,
+>  }
+>  
+>  static struct devfreq_governor devfreq_userspace = {
+> -	.name = "userspace",
+> +	.name = DEVFREQ_GOV_USERSPACE,
+>  	.get_target_freq = devfreq_userspace_func,
+>  	.event_handler = devfreq_userspace_handler,
+>  };
+> 
 
-Not in the general case. As far as I can tell, this if-statement is
-purely optional and an optimization to avoid false sharing. This is
-specific knowledge about the logic that (without conveying more
-details about the logic) the tool couldn't safely deduce. Consider the
-case:
+Applied it. Thanks.
 
-T0:
-if ( (x = READ_ONCE(ptr)) ) use_ptr_value(*x);
-
-T1:
-WRITE_ONCE(ptr, valid_ptr);
-
-Here, unlike the case above, reading ptr without READ_ONCE can clearly
-be dangerous.
-
-The false sharing scenario came up before, and maybe it's worth
-telling the tool about the logic. In fact, the 'data_race()' macro is
-perfectly well suited to do this.
-
->
-> Marco, any thought on improving KCSAN for this to reduce the false
-> positives?
-
-Define 'false positive'.
-
-From what I can tell, all 'false positives' that have come up are data
-races where the consequences on the behaviour of the code is
-inconsequential. In other words, all of them would require
-understanding of the intended logic of the code, and understanding if
-the worst possible outcome of a data race changes the behaviour of the
-code in such a way that we may end up with an erroneously behaving
-system.
-
-As I have said before, KCSAN (or any data race detector) by definition
-only works at the language level. Any semantic analysis, beyond simple
-rules (such as ignore same-value stores) and annotations, is simply
-impossible since the tool can't know about the logic that the
-programmer intended.
-
-That being said, if there are simple rules (like ignore same-value
-stores) or other minimal annotations that can help reduce such 'false
-positives', more than happy to add them.
-
-Qian: firstly I suggest you try
-CONFIG_KCSAN_REPORT_ONCE_IN_MS=1000000000 as mentioned before so your
-system doesn't get spammed, considering you do not use the default
-config but want to use all debugging tools at once which seems to
-trigger certain data races more than usual.
-
-Secondly, what are your expectations? If you expect the situation to
-be perfect tomorrow, you'll be disappointed. This is inherent, given
-the problem we face (safe concurrency). Consider the various parts to
-this story: concurrent kernel code, the LKMM, people's preferences and
-opinions, and KCSAN (which is late to the party). All of them are
-still evolving, hopefully together. At least that's my expectation.
-
-What to do about osq_lock here? If people agree that no further
-annotations are wanted, and the reasoning above concludes there are no
-bugs, we can blacklist the file. That would, however, miss new data
-races in future.
-
-Thanks,
--- Marco
+-- 
+Best Regards,
+Chanwoo Choi
+Samsung Electronics
