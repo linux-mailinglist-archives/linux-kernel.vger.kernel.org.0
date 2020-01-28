@@ -2,170 +2,126 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DE06B14ACED
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Jan 2020 01:06:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id F06E814ACE6
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Jan 2020 01:03:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727046AbgA1AGc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 27 Jan 2020 19:06:32 -0500
-Received: from Galois.linutronix.de ([193.142.43.55]:47597 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726758AbgA1AGb (ORCPT
+        id S1726296AbgA1ADB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 27 Jan 2020 19:03:01 -0500
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:41094 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725955AbgA1ADB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 27 Jan 2020 19:06:31 -0500
-Received: from localhost ([127.0.0.1] helo=nanos.tec.linutronix.de)
-        by Galois.linutronix.de with esmtp (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1iwEOh-00033R-QF; Tue, 28 Jan 2020 01:06:28 +0100
-Date:   Mon, 27 Jan 2020 23:49:25 -0000
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     linux-kernel@vger.kernel.org, x86@kernel.org
-Subject: [GIT pull] core/core for
-References: <158016896586.31887.7695979159638645055.tglx@nanos.tec.linutronix.de>
-Message-ID: <158016896589.31887.11649925452756898441.tglx@nanos.tec.linutronix.de>
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Content-Disposition: inline
+        Mon, 27 Jan 2020 19:03:01 -0500
+Received: by mail-pf1-f193.google.com with SMTP id w62so5677356pfw.8
+        for <linux-kernel@vger.kernel.org>; Mon, 27 Jan 2020 16:03:00 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=l/+22tuCgv/c7pzmNa8hMOqSD4cnYp/OANcRNx6S0OE=;
+        b=gfeoTWeeEpelq2VhnCxceWKTgALWOfvaDYWNXG3I3R+mR60voLJm2xVMRyEQ61FmMG
+         /zmvCPAW3FXmZlOCpzGJmlT3H8XVJ1HNtAq7EJ+7cfVI/4/EvouJfNllrUiqfWodaVAJ
+         eoo/iwDocujDURl/NjLnM9iRzs+gDxRmV5Zxa8fEoyx+H4/wN97Jh5xDq1TdNwajO7yC
+         HyhNSs6EJ/MQlXYgYuyJ5DzA6F9gOLwQBlbSVH/56G+ERq0eF3AnCdtwZUvaHzEfHmA+
+         FvlQA0K9iI4aJBPKMxLfbGZtGcUAMKt3+R8gzNeDFGXU2HZHfLkio7yyG59acg1Q41Sw
+         n/Qg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=l/+22tuCgv/c7pzmNa8hMOqSD4cnYp/OANcRNx6S0OE=;
+        b=C0DAE8n41f7D1Kg94Jm61ZpRTuzPfCRGAhVsNBJRPfyUHzoK17zB7y3e+c7erlNgTO
+         p/XubULRYw2CZ6pUguxHlbysTPK73p2AudpID7VysrRJFH6YDllip3set+FIh7qDeFDE
+         e8rnDdzRCu+NaVAuvTgVeHk2D8X4HLNRfbRboOKe5EAh+ZwiS2mQ3JuOCWVZslBkLeDH
+         AQ2sr0KI5P1GXE/7irFHfMy67HMmnjTsKdhBo8BYkZuQQjxsnqxuc74jxpT/hN79RWzS
+         rKe8BOe8I/Yev/dgdXWfg4p9hJH5otGrBE9bjcts/gazz4kEHJJwURCKiPbFL8SSS93+
+         yb7A==
+X-Gm-Message-State: APjAAAWcr8oGlEEmHTzYrM/YLnF8/4WUB/ukWM517FvEMSigx/bcesFd
+        CB9dHdUBICAo79xxoXMXbh1RwfWc8k09PjMZX2ygXA==
+X-Google-Smtp-Source: APXvYqz/hjm742JY6RjWU2IOn2Ej9B6rcY0LoAXJ2VgFjuz+q8joZGQ/0HiGIAuKCITVgNP9RIrNn8FDBLLA1vMjcqs=
+X-Received: by 2002:aa7:961b:: with SMTP id q27mr1155291pfg.23.1580169780179;
+ Mon, 27 Jan 2020 16:03:00 -0800 (PST)
+MIME-Version: 1.0
+References: <20200126015924.4198-1-sj38.park@gmail.com>
+In-Reply-To: <20200126015924.4198-1-sj38.park@gmail.com>
+From:   Brendan Higgins <brendanhiggins@google.com>
+Date:   Mon, 27 Jan 2020 16:02:48 -0800
+Message-ID: <CAFd5g46v-RyNMP7GROn4bUEAATOPZ=w5AyO+tvuTG25aqt6oAg@mail.gmail.com>
+Subject: Re: [PATCH] kunit/kunit_kernel: Rebuild .config if .kunitconfig is modified
+To:     SeongJae Park <sj38.park@gmail.com>
+Cc:     "open list:KERNEL SELFTEST FRAMEWORK" 
+        <linux-kselftest@vger.kernel.org>,
+        KUnit Development <kunit-dev@googlegroups.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        SeongJae Park <sjpark@amazon.de>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Linus,
+On Sat, Jan 25, 2020 at 5:59 PM <sj38.park@gmail.com> wrote:
+>
+> From: SeongJae Park <sjpark@amazon.de>
+>
+> Deletions of configs in the '.kunitconfig' is not applied because kunit
+> rebuilds '.config' only if the '.config' is not a subset of the
+> '.kunitconfig'.  To allow the deletions to applied, this commit modifies
+> the '.config' rebuild condition to addtionally check the modified times
+> of those files.
 
-please pull the latest core/core branch from:
+The reason it only checks that .kunitconfig is a subset of .config is
+because we don't want the .kunitconfig to remove options just because
+it doesn't recognize them.
 
-   git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git core-core-2020-01-28
+It runs `make ARCH=um olddefconfig` on the .config that it generates
+from the .kunitconfig, and most of the time that means you will get a
+.config with lots of things in it that aren't in the .kunitconfig.
+Consequently, nothing should ever be deleted from the .config just
+because it was deleted in the .kunitconfig (unless, of course, you
+change a =y to a =n or # ... is not set), so I don't see what this
+change would do.
 
-up to:  11e31f608b49: watchdog/softlockup: Enforce that timestamp is valid on boot
+Can you maybe provide an example?
 
-A set of watchdog/softlockup related improvements:
-
- - Enforce that the watchdog timestamp is always valid on boot. The
-   original implementation caused a watchdog disabled gap of one second in
-   the boot process due to truncation of the underlying sched clock. The
-   sched clock is divided by 1e9 to convert nanoseconds to seconds. So for
-   the first second of the boot process the result is 0 which is at the
-   same time the indicator to disable the watchdog. The trivial fix is to
-   change the disabled indicator to ULONG_MAX.
-
- - Two cleanup patches removing unused and redundant code which got
-   forgotten to be cleaned up in previous changes.
-
-Thanks,
-
-	tglx
-
------------------->
-Jisheng Zhang (1):
-      watchdog: Remove soft_lockup_hrtimer_cnt and related code
-
-Petr Mladek (1):
-      watchdog/softlockup: Remove obsolete check of last reported task
-
-Thomas Gleixner (1):
-      watchdog/softlockup: Enforce that timestamp is valid on boot
-
-
- kernel/watchdog.c | 31 +++++++------------------------
- 1 file changed, 7 insertions(+), 24 deletions(-)
-
-diff --git a/kernel/watchdog.c b/kernel/watchdog.c
-index f41334ef0971..b6b1f54a7837 100644
---- a/kernel/watchdog.c
-+++ b/kernel/watchdog.c
-@@ -161,6 +161,8 @@ static void lockup_detector_update_enable(void)
- 
- #ifdef CONFIG_SOFTLOCKUP_DETECTOR
- 
-+#define SOFTLOCKUP_RESET	ULONG_MAX
-+
- /* Global variables, exported for sysctl */
- unsigned int __read_mostly softlockup_panic =
- 			CONFIG_BOOTPARAM_SOFTLOCKUP_PANIC_VALUE;
-@@ -173,8 +175,6 @@ static DEFINE_PER_CPU(struct hrtimer, watchdog_hrtimer);
- static DEFINE_PER_CPU(bool, softlockup_touch_sync);
- static DEFINE_PER_CPU(bool, soft_watchdog_warn);
- static DEFINE_PER_CPU(unsigned long, hrtimer_interrupts);
--static DEFINE_PER_CPU(unsigned long, soft_lockup_hrtimer_cnt);
--static DEFINE_PER_CPU(struct task_struct *, softlockup_task_ptr_saved);
- static DEFINE_PER_CPU(unsigned long, hrtimer_interrupts_saved);
- static unsigned long soft_lockup_nmi_warn;
- 
-@@ -274,7 +274,7 @@ notrace void touch_softlockup_watchdog_sched(void)
- 	 * Preemption can be enabled.  It doesn't matter which CPU's timestamp
- 	 * gets zeroed here, so use the raw_ operation.
- 	 */
--	raw_cpu_write(watchdog_touch_ts, 0);
-+	raw_cpu_write(watchdog_touch_ts, SOFTLOCKUP_RESET);
- }
- 
- notrace void touch_softlockup_watchdog(void)
-@@ -298,14 +298,14 @@ void touch_all_softlockup_watchdogs(void)
- 	 * the softlockup check.
- 	 */
- 	for_each_cpu(cpu, &watchdog_allowed_mask)
--		per_cpu(watchdog_touch_ts, cpu) = 0;
-+		per_cpu(watchdog_touch_ts, cpu) = SOFTLOCKUP_RESET;
- 	wq_watchdog_touch(-1);
- }
- 
- void touch_softlockup_watchdog_sync(void)
- {
- 	__this_cpu_write(softlockup_touch_sync, true);
--	__this_cpu_write(watchdog_touch_ts, 0);
-+	__this_cpu_write(watchdog_touch_ts, SOFTLOCKUP_RESET);
- }
- 
- static int is_softlockup(unsigned long touch_ts)
-@@ -350,8 +350,6 @@ static DEFINE_PER_CPU(struct cpu_stop_work, softlockup_stop_work);
-  */
- static int softlockup_fn(void *data)
- {
--	__this_cpu_write(soft_lockup_hrtimer_cnt,
--			 __this_cpu_read(hrtimer_interrupts));
- 	__touch_watchdog();
- 	complete(this_cpu_ptr(&softlockup_completion));
- 
-@@ -383,7 +381,7 @@ static enum hrtimer_restart watchdog_timer_fn(struct hrtimer *hrtimer)
- 	/* .. and repeat */
- 	hrtimer_forward_now(hrtimer, ns_to_ktime(sample_period));
- 
--	if (touch_ts == 0) {
-+	if (touch_ts == SOFTLOCKUP_RESET) {
- 		if (unlikely(__this_cpu_read(softlockup_touch_sync))) {
- 			/*
- 			 * If the time stamp was touched atomically
-@@ -416,22 +414,8 @@ static enum hrtimer_restart watchdog_timer_fn(struct hrtimer *hrtimer)
- 			return HRTIMER_RESTART;
- 
- 		/* only warn once */
--		if (__this_cpu_read(soft_watchdog_warn) == true) {
--			/*
--			 * When multiple processes are causing softlockups the
--			 * softlockup detector only warns on the first one
--			 * because the code relies on a full quiet cycle to
--			 * re-arm.  The second process prevents the quiet cycle
--			 * and never gets reported.  Use task pointers to detect
--			 * this.
--			 */
--			if (__this_cpu_read(softlockup_task_ptr_saved) !=
--			    current) {
--				__this_cpu_write(soft_watchdog_warn, false);
--				__touch_watchdog();
--			}
-+		if (__this_cpu_read(soft_watchdog_warn) == true)
- 			return HRTIMER_RESTART;
--		}
- 
- 		if (softlockup_all_cpu_backtrace) {
- 			/* Prevent multiple soft-lockup reports if one cpu is already
-@@ -447,7 +431,6 @@ static enum hrtimer_restart watchdog_timer_fn(struct hrtimer *hrtimer)
- 		pr_emerg("BUG: soft lockup - CPU#%d stuck for %us! [%s:%d]\n",
- 			smp_processor_id(), duration,
- 			current->comm, task_pid_nr(current));
--		__this_cpu_write(softlockup_task_ptr_saved, current);
- 		print_modules();
- 		print_irqtrace_events(current);
- 		if (regs)
-
+> Signed-off-by: SeongJae Park <sjpark@amazon.de>
+> ---
+>  tools/testing/kunit/kunit_kernel.py | 17 +++++++++++------
+>  1 file changed, 11 insertions(+), 6 deletions(-)
+>
+> diff --git a/tools/testing/kunit/kunit_kernel.py b/tools/testing/kunit/kunit_kernel.py
+> index cc5d844ecca1..a3a5d6c7e66d 100644
+> --- a/tools/testing/kunit/kunit_kernel.py
+> +++ b/tools/testing/kunit/kunit_kernel.py
+> @@ -111,17 +111,22 @@ class LinuxSourceTree(object):
+>                 return True
+>
+>         def build_reconfig(self, build_dir):
+> -               """Creates a new .config if it is not a subset of the .kunitconfig."""
+> +               """Creates a new .config if it is not a subset of, or older than the .kunitconfig."""
+>                 kconfig_path = get_kconfig_path(build_dir)
+>                 if os.path.exists(kconfig_path):
+>                         existing_kconfig = kunit_config.Kconfig()
+>                         existing_kconfig.read_from_file(kconfig_path)
+> -                       if not self._kconfig.is_subset_of(existing_kconfig):
+> -                               print('Regenerating .config ...')
+> -                               os.remove(kconfig_path)
+> -                               return self.build_config(build_dir)
+> -                       else:
+> +                       subset = self._kconfig.is_subset_of(existing_kconfig)
+> +
+> +                       kunitconfig_mtime = os.path.getmtime(kunitconfig_path)
+> +                       kconfig_mtime = os.path.getmtime(kconfig_path)
+> +                       older = kconfig_mtime < kunitconfig_mtime
+> +
+> +                       if subset and not older:
+>                                 return True
+> +                       print('Regenerating .config ...')
+> +                       os.remove(kconfig_path)
+> +                       return self.build_config(build_dir)
+>                 else:
+>                         print('Generating .config ...')
+>                         return self.build_config(build_dir)
+> --
+> 2.17.1
+>
