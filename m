@@ -2,129 +2,133 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E0F0E14BCEF
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Jan 2020 16:38:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EC72714BCFB
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Jan 2020 16:39:00 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726694AbgA1PiC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 28 Jan 2020 10:38:02 -0500
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:40483 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726141AbgA1PiC (ORCPT
+        id S1727135AbgA1Pix (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 28 Jan 2020 10:38:53 -0500
+Received: from mx07-00178001.pphosted.com ([62.209.51.94]:1491 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726708AbgA1Pij (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 Jan 2020 10:38:02 -0500
-Received: by mail-pl1-f196.google.com with SMTP id y1so1697971plp.7
-        for <linux-kernel@vger.kernel.org>; Tue, 28 Jan 2020 07:38:02 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-transfer-encoding:content-language;
-        bh=p/deCH70MeRzW576JyUqvHOFrulpoT9ELP3wElLzEto=;
-        b=RwoHxlEidVrtaVNrBr0sHELF0cy8c6FVzBJXx6cAvJrkquD1+CKsZJV/qXjli3jaNM
-         XWfhnmy9vVl5o7cYuwmpa41NoXIxNCrXMAbs1T57v8ur4xmaxoQacltl9Yr9DcnNRteZ
-         Ay/vGiN+8oFIJ4IlX9jQVMbOrRfAW5hsMA6pQblkf68Fe5wOiq3vF4wJeGWTU/JlD4TW
-         yf5ChdcfN6f1GHP/SjbVIiQMwDmlkFgTw3t4Ul3dhRb56MFabj4LPxs8KKuqG0i5fO/t
-         K9587nBMg+bN0IcRYOh+m2tUNxzbNw8U/MrvBApvpMbSU9bPMlQyDvwJRU0Ez/ovDgRk
-         hAFg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-transfer-encoding
-         :content-language;
-        bh=p/deCH70MeRzW576JyUqvHOFrulpoT9ELP3wElLzEto=;
-        b=iuE306YD+wPad/gWTGmveVcIzQAE8Jz813RvLNZAeOrdqz4waAZVA4VoWGuVGr3o2c
-         KcrwIoznSc0LzzQtDh4IDM7pwtnFJgO3ticYJeR3iFTJJFDpN1Jf2qIJb7icTjJ8WLYx
-         a89mi+1uNtOXYUt7D3qihY8Flijil1h5zKzr6zzcPgsTIpTyy36LVhzSe4AzKU/r6gpA
-         Coorxnh8ociMD+kJtrsaFrF/LxJXI/SZhpUI5b/Vj/IDKxOiEMLhJVbnNgZ3+56H5+k2
-         TYpjgt5acIKGhw28VdohLTEkkPz6etIHy0xXXmYv68xb3kuTOhzf4gsdSY4mzOYupM/6
-         1s3g==
-X-Gm-Message-State: APjAAAVW+Aqx+kZ9vaTUtvW8840FDysF0dWqm9WqZ4O5OMy+KRDJWtLg
-        UiryfP5CPI48k5iq3qXHJyE=
-X-Google-Smtp-Source: APXvYqwBn8D27wICUe37lf5NXst8djpr0iBEhkYpFsi2bs9ag/G61zrnPtOlL9fv1XtWOce3rhCfmQ==
-X-Received: by 2002:a17:90a:8043:: with SMTP id e3mr5270015pjw.24.1580225881520;
-        Tue, 28 Jan 2020 07:38:01 -0800 (PST)
-Received: from [192.168.0.16] (97-115-104-237.ptld.qwest.net. [97.115.104.237])
-        by smtp.gmail.com with ESMTPSA id r6sm19887749pfh.91.2020.01.28.07.37.59
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 28 Jan 2020 07:38:00 -0800 (PST)
-Subject: Re: [PATCH] kbuild: Include external modules compile flags
-To:     Masahiro Yamada <masahiroy@kernel.org>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        dev@openvswitch.org, dsahern@gmail.com
-References: <1580161806-8037-1-git-send-email-gvrose8192@gmail.com>
- <CAK7LNAQyh9CFgKd1DtAPFW8DuHNp1gn8YABuP8-LsF=hHK2DFw@mail.gmail.com>
-From:   Gregory Rose <gvrose8192@gmail.com>
-Message-ID: <f6ffa0d0-8214-8fc0-4fe9-4b70a1581d3e@gmail.com>
-Date:   Tue, 28 Jan 2020 07:37:58 -0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.2
+        Tue, 28 Jan 2020 10:38:39 -0500
+Received: from pps.filterd (m0046037.ppops.net [127.0.0.1])
+        by mx07-00178001.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 00SFX6td021997;
+        Tue, 28 Jan 2020 16:38:21 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=st.com; h=from : to : cc : subject
+ : date : message-id : mime-version : content-type; s=STMicroelectronics;
+ bh=mizgnvruNb3pP6RjBqNnV58jqve6OZmR65T5OWriiZI=;
+ b=dXSOaGJtRyoHa5muquJxJJeTJ+6Z3QybKURz6IzRIHfROdSwNRT85M0xTkzJWDr5xtUH
+ LpPpvCPDfhxAk7nMZxy1Cl9HBS/3p7kf9vqOdqPONkK9nfHNuqIoM8Uri9FHPofsHImm
+ 1knkNG43iserOUngjyUNGGgKj7DTCssR6WJJ+rrOvqwNREbaHMySpF6jT/vUuxW3YHDr
+ CxMeOx3tzn3okOAzfHurTMesa0/jsONnRykE05rrXWUR4XlT2z5+YD2aW9WAIk3fgQ2Q
+ nlCVIpniqp6KXjM96/dVisVgCU/k1ZP+q/jtmgH0AF9HnzJFR2iM/NNpFdNyNXmRUI6h 9g== 
+Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
+        by mx07-00178001.pphosted.com with ESMTP id 2xrcaxxmdb-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 28 Jan 2020 16:38:21 +0100
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 5D10E10002A;
+        Tue, 28 Jan 2020 16:38:19 +0100 (CET)
+Received: from Webmail-eu.st.com (sfhdag3node3.st.com [10.75.127.9])
+        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 1F86B2BF9CF;
+        Tue, 28 Jan 2020 16:38:19 +0100 (CET)
+Received: from localhost (10.75.127.47) by SFHDAG3NODE3.st.com (10.75.127.9)
+ with Microsoft SMTP Server (TLS) id 15.0.1347.2; Tue, 28 Jan 2020 16:38:18
+ +0100
+From:   Benjamin Gaignard <benjamin.gaignard@st.com>
+To:     <broonie@kernel.org>, <robh@kernel.org>, <arnd@arndb.de>,
+        <shawnguo@kernel.org>, <s.hauer@pengutronix.de>,
+        <fabio.estevam@nxp.com>, <sudeep.holla@arm.com>, <lkml@metux.net>
+CC:     <loic.pallardy@st.com>, <gregkh@linuxfoundation.org>,
+        <linux-kernel@vger.kernel.org>, <linux-imx@nxp.com>,
+        <kernel@pengutronix.de>, <linux-arm-kernel@lists.infradead.org>,
+        <devicetree@vger.kernel.org>, <system-dt@lists.openampproject.org>,
+        <stefano.stabellini@xilinx.com>,
+        Benjamin Gaignard <benjamin.gaignard@st.com>
+Subject: [PATCH v2 0/7] Introduce bus firewall controller framework
+Date:   Tue, 28 Jan 2020 16:37:59 +0100
+Message-ID: <20200128153806.7780-1-benjamin.gaignard@st.com>
+X-Mailer: git-send-email 2.15.0
 MIME-Version: 1.0
-In-Reply-To: <CAK7LNAQyh9CFgKd1DtAPFW8DuHNp1gn8YABuP8-LsF=hHK2DFw@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+Content-Type: text/plain
+X-Originating-IP: [10.75.127.47]
+X-ClientProxiedBy: SFHDAG2NODE2.st.com (10.75.127.5) To SFHDAG3NODE3.st.com
+ (10.75.127.9)
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.572
+ definitions=2020-01-28_05:2020-01-28,2020-01-28 signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 1/27/2020 7:35 PM, Masahiro Yamada wrote:
-> On Tue, Jan 28, 2020 at 6:50 AM Greg Rose <gvrose8192@gmail.com> wrote:
->> Since this commit:
->> 'commit 9b9a3f20cbe0 ("kbuild: split final module linking out into Makefile.modfinal")'
->> at least one out-of-tree external kernel module build fails
->> during the modfinal make phase because Makefile.modfinal does
->> not include the ccflags-y variable from the exernal module's Kbuild.
-> ccflags-y is passed only for compiling C files in that directory.
->
-> It is not used for compiling *.mod.c
-> This is true for both in-kernel and external modules.
->
-> So, ccflags-y is not a good choice
-> for passing such flags that should be globally effective.
->
->
-> Maybe, KCFLAGS should work.
->
->
-> module:
->         $(MAKE) KCFLAGS=...  M=$(PWD) -C /lib/modules/$(uname -r)/build modules
->
+Bus firewall framework aims to provide a kernel API to set the configuration
+of the harware blocks in charge of busses access control.
 
-Thanks,
+Framework architecture is inspirated by pinctrl framework:
+- a default configuration could be applied before bind the driver.
+  If a configuration could not be applied the driver is not bind
+  to avoid doing accesses on prohibited regions.
+- configurations could be apllied dynamically by drivers.
+- device node provides the bus firewall configurations.
 
-I'll see if I can get that to work.
+An example of bus firewall controller is STM32 ETZPC hardware block
+which got 3 possible configurations:
+- trust: hardware blocks are only accessible by software running on trust
+  zone (i.e op-tee firmware).
+- non-secure: hardware blocks are accessible by non-secure software (i.e.
+  linux kernel).
+- coprocessor: hardware blocks are only accessible by the coprocessor.
+Up to 94 hardware blocks of the soc could be managed by ETZPC.
 
-- Greg
+At least two other hardware blocks can take benefits of this:
+- ARM TZC-400: http://infocenter.arm.com/help/topic/com.arm.doc.100325_0001_02_en/arm_corelink_tzc400_trustzone_address_space_controller_trm_100325_0001_02_en.pdf
+  which is able to manage up to 8 regions in address space.
+- IMX Ressource Domain Controller (RDC): supports four domains and up to eight regions 
 
+Version 2 has been rebased on top of v5.5
+- Change framework name to "firewall" because the targeted hardware block
+  are acting like firewall on the busses.
+- Mark Brown had reviewed the previous version but it was on kernel 5.1 and I change
+  the name framework so I have decided to remove it.
+- Use yaml file to describe the bindings
 
->
->> Make sure to include the external kernel module's Kbuild so that the
->> necessary command line flags from the external module are set.
->>
->> Reported-by: David Ahern <dsahern@gmail.com>
->> CC: Masahiro Yamada <yamada.masahiro@socionext.com>
->> Signed-off-by: Greg Rose <gvrose8192@gmail.com>
->> ---
->>   scripts/Makefile.modfinal | 4 ++++
->>   1 file changed, 4 insertions(+)
->>
->> diff --git a/scripts/Makefile.modfinal b/scripts/Makefile.modfinal
->> index 411c1e60..a645ba6 100644
->> --- a/scripts/Makefile.modfinal
->> +++ b/scripts/Makefile.modfinal
->> @@ -21,6 +21,10 @@ __modfinal: $(modules)
->>   modname = $(notdir $(@:.mod.o=))
->>   part-of-module = y
->>
->> +# Include the module's Makefile to find KBUILD_EXTRA_SYMBOLS
->> +include $(if $(wildcard $(KBUILD_EXTMOD)/Kbuild), \
->> +             $(KBUILD_EXTMOD)/Kbuild)
->> +
->>   quiet_cmd_cc_o_c = CC [M]  $@
->>         cmd_cc_o_c = $(CC) $(c_flags) -c -o $@ $<
->>
->> --
->> 1.8.3.1
->>
->
+Benjamin
+
+Benjamin Gaignard (7):
+  dt-bindings: bus: Add firewall bindings
+  bus: Introduce firewall controller framework
+  base: Add calls to firewall controller
+  dt-bindings: bus: Add STM32 ETZPC firewall controller
+  bus: firewall: Add driver for STM32 ETZPC controller
+  ARM: dts: stm32: Add firewall node for stm32mp157 SoC
+  ARM: dts: stm32: enable firewall controller node on stm32mp157c-ed1
+
+ .../bindings/bus/firewall/firewall-consumer.yaml   |  25 ++
+ .../bindings/bus/firewall/firewall-provider.yaml   |  18 ++
+ .../bindings/bus/firewall/st,stm32-etzpc.yaml      |  41 ++++
+ arch/arm/boot/dts/stm32mp157c-ev1.dts              |   2 +
+ arch/arm/boot/dts/stm32mp157c.dtsi                 |   7 +
+ drivers/base/dd.c                                  |   9 +
+ drivers/bus/Kconfig                                |   2 +
+ drivers/bus/Makefile                               |   2 +
+ drivers/bus/firewall/Kconfig                       |  14 ++
+ drivers/bus/firewall/Makefile                      |   2 +
+ drivers/bus/firewall/firewall.c                    | 264 +++++++++++++++++++++
+ drivers/bus/firewall/stm32-etzpc.c                 | 140 +++++++++++
+ include/dt-bindings/bus/firewall/stm32-etzpc.h     |  90 +++++++
+ include/linux/firewall.h                           |  70 ++++++
+ 14 files changed, 686 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/bus/firewall/firewall-consumer.yaml
+ create mode 100644 Documentation/devicetree/bindings/bus/firewall/firewall-provider.yaml
+ create mode 100644 Documentation/devicetree/bindings/bus/firewall/st,stm32-etzpc.yaml
+ create mode 100644 drivers/bus/firewall/Kconfig
+ create mode 100644 drivers/bus/firewall/Makefile
+ create mode 100644 drivers/bus/firewall/firewall.c
+ create mode 100644 drivers/bus/firewall/stm32-etzpc.c
+ create mode 100644 include/dt-bindings/bus/firewall/stm32-etzpc.h
+ create mode 100644 include/linux/firewall.h
+
+-- 
+2.15.0
 
