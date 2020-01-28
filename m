@@ -2,27 +2,27 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 70F5B14BA06
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Jan 2020 15:37:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1A34814BAFA
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Jan 2020 15:43:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733223AbgA1Oet (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 28 Jan 2020 09:34:49 -0500
-Received: from mail.kernel.org ([198.145.29.99]:50142 "EHLO mail.kernel.org"
+        id S1729675AbgA1ONY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 28 Jan 2020 09:13:24 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34878 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726710AbgA1OXs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 Jan 2020 09:23:48 -0500
+        id S1729644AbgA1ONR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 28 Jan 2020 09:13:17 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8B7A524690;
-        Tue, 28 Jan 2020 14:23:47 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id DCA5824688;
+        Tue, 28 Jan 2020 14:13:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1580221428;
-        bh=JlBcrsMyqtkte5MzpILC6IwTloc/Cakizcl6i2FH4jI=;
+        s=default; t=1580220796;
+        bh=RZ1sODP1ldMC06iwda+M+fbSP1+nZXkoTs5hhf0lzt8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=MH+SsTdzOJ4RfjELI+fgTVDWmYWJHXBW/TYNLQX5kP+vTUzZE9zf8geBfPLjveTcy
-         L1e0SwNxVE+si0LJw8LC72OS2NqD+hX8AKk4al6S0Z3XnOTNDVL9rV8+WpGrJU78NS
-         to0NJ2sqbDx3bbZchaRRxlnTD1lm8oFWzwt57NEM=
+        b=KvSFiK2FSyPfPN+QYnw+Rf+JXS/p5Hzu5dcCMJxgCvoqaGJ2sjutr+zW1YiHTeiNu
+         Pxuvtx1r7ZNMvQ/5KnP9U3JCN4hKg3A6iMXCPd+gR656y5pZ/LI7I/RN1fiWWfv2ir
+         P4N4mpC+GEC/XyGb5ro8+4ZykcJQc5O/EnlMoQsY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -30,12 +30,12 @@ Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Stefan Wahren <wahrenst@gmx.net>,
         "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 219/271] net: qca_spi: Move reset_count to struct qcaspi
+Subject: [PATCH 4.4 149/183] net: qca_spi: Move reset_count to struct qcaspi
 Date:   Tue, 28 Jan 2020 15:06:08 +0100
-Message-Id: <20200128135908.848301624@linuxfoundation.org>
+Message-Id: <20200128135844.615158035@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200128135852.449088278@linuxfoundation.org>
-References: <20200128135852.449088278@linuxfoundation.org>
+In-Reply-To: <20200128135829.486060649@linuxfoundation.org>
+References: <20200128135829.486060649@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -64,7 +64,7 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  2 files changed, 5 insertions(+), 5 deletions(-)
 
 diff --git a/drivers/net/ethernet/qualcomm/qca_spi.c b/drivers/net/ethernet/qualcomm/qca_spi.c
-index 21f546587e3d5..31583d6f044f4 100644
+index 7886a8a5b55b3..fb944e65c6324 100644
 --- a/drivers/net/ethernet/qualcomm/qca_spi.c
 +++ b/drivers/net/ethernet/qualcomm/qca_spi.c
 @@ -438,7 +438,6 @@ qcaspi_qca7k_sync(struct qcaspi *qca, int event)
