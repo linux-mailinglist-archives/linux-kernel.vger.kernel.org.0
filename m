@@ -2,40 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0A88A14BB96
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Jan 2020 15:48:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A7A8614BBAA
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Jan 2020 15:49:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727731AbgA1OCt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 28 Jan 2020 09:02:49 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49144 "EHLO mail.kernel.org"
+        id S1726182AbgA1OBf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 28 Jan 2020 09:01:35 -0500
+Received: from mail.kernel.org ([198.145.29.99]:47622 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727706AbgA1OCp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 Jan 2020 09:02:45 -0500
+        id S1727468AbgA1OBc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 28 Jan 2020 09:01:32 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DE18F2468D;
-        Tue, 28 Jan 2020 14:02:43 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 78BF6205F4;
+        Tue, 28 Jan 2020 14:01:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1580220164;
-        bh=UYePmV8CUdNFim5tIHubVgaS5KfCFYt1aT7JaIs8DwA=;
+        s=default; t=1580220091;
+        bh=l+s3jAlkmBILkB9oTKFVMq390ksNdWRrM2SzmM0zX1U=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=mJBlfvo0tlv+raspp27FnaRoZErjwJrrZPT52Ler72pPh+5IIkCDvSibD3J5555K5
-         dFMULclQquJl+ZHtXsHpOonhqFLCS3k5ty7k54ZC5vTAx8U2EWBzWqtTKHAdpEQbDT
-         n0MxN8ct3tW9vQqUdYUGpaPnZmnUvjAow8ontWP0=
+        b=pJjbLEC3JxWZsQ4lVyo0DBNUbNukFlw0ae2LBMXX5Vs4ULYxlt/Usk6RqmWyUOQLU
+         SA+bJm3Zd76K8iox/MdN6aXLPyMieoZsQTUi5Q+veUWzfdkOOBzJVSJ0swwJ/PaHwC
+         OnA9B3I6+cY8alGwVU/UBGoh7ss8jrPmZI9fhK64=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        syzbot+2f07903a5b05e7f36410@syzkaller.appspotmail.com,
-        Eric Dumazet <eric.dumazet@gmail.com>,
-        Cong Wang <xiyou.wangcong@gmail.com>,
+        James Hughes <james.hughes@raspberrypi.org>,
         Eric Dumazet <edumazet@google.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        syzbot+5af9a90dad568aa9f611@syzkaller.appspotmail.com
-Subject: [PATCH 5.4 011/104] net_sched: fix datalen for ematch
-Date:   Tue, 28 Jan 2020 14:59:32 +0100
-Message-Id: <20200128135818.800068165@linuxfoundation.org>
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 5.4 014/104] net: usb: lan78xx: Add .ndo_features_check
+Date:   Tue, 28 Jan 2020 14:59:35 +0100
+Message-Id: <20200128135819.209454935@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
 In-Reply-To: <20200128135817.238524998@linuxfoundation.org>
 References: <20200128135817.238524998@linuxfoundation.org>
@@ -48,47 +45,62 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Cong Wang <xiyou.wangcong@gmail.com>
+From: James Hughes <james.hughes@raspberrypi.org>
 
-[ Upstream commit 61678d28d4a45ef376f5d02a839cc37509ae9281 ]
+[ Upstream commit ce896476c65d72b4b99fa09c2f33436b4198f034 ]
 
-syzbot reported an out-of-bound access in em_nbyte. As initially
-analyzed by Eric, this is because em_nbyte sets its own em->datalen
-in em_nbyte_change() other than the one specified by user, but this
-value gets overwritten later by its caller tcf_em_validate().
-We should leave em->datalen untouched to respect their choices.
+As reported by Eric Dumazet, there are still some outstanding
+cases where the driver does not handle TSO correctly when skb's
+are over a certain size. Most cases have been fixed, this patch
+should ensure that forwarded SKB's that are greater than
+MAX_SINGLE_PACKET_SIZE - TX_OVERHEAD are software segmented
+and handled correctly.
 
-I audit all the in-tree ematch users, all of those implement
-->change() set em->datalen, so we can just avoid setting it twice
-in this case.
-
-Reported-and-tested-by: syzbot+5af9a90dad568aa9f611@syzkaller.appspotmail.com
-Reported-by: syzbot+2f07903a5b05e7f36410@syzkaller.appspotmail.com
-Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
-Cc: Eric Dumazet <eric.dumazet@gmail.com>
-Signed-off-by: Cong Wang <xiyou.wangcong@gmail.com>
+Signed-off-by: James Hughes <james.hughes@raspberrypi.org>
 Reviewed-by: Eric Dumazet <edumazet@google.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/sched/ematch.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/net/usb/lan78xx.c |   15 +++++++++++++++
+ 1 file changed, 15 insertions(+)
 
---- a/net/sched/ematch.c
-+++ b/net/sched/ematch.c
-@@ -263,12 +263,12 @@ static int tcf_em_validate(struct tcf_pr
- 				}
- 				em->data = (unsigned long) v;
- 			}
-+			em->datalen = data_len;
- 		}
- 	}
+--- a/drivers/net/usb/lan78xx.c
++++ b/drivers/net/usb/lan78xx.c
+@@ -20,6 +20,7 @@
+ #include <linux/mdio.h>
+ #include <linux/phy.h>
+ #include <net/ip6_checksum.h>
++#include <net/vxlan.h>
+ #include <linux/interrupt.h>
+ #include <linux/irqdomain.h>
+ #include <linux/irq.h>
+@@ -3668,6 +3669,19 @@ static void lan78xx_tx_timeout(struct ne
+ 	tasklet_schedule(&dev->bh);
+ }
  
- 	em->matchid = em_hdr->matchid;
- 	em->flags = em_hdr->flags;
--	em->datalen = data_len;
- 	em->net = net;
++static netdev_features_t lan78xx_features_check(struct sk_buff *skb,
++						struct net_device *netdev,
++						netdev_features_t features)
++{
++	if (skb->len + TX_OVERHEAD > MAX_SINGLE_PACKET_SIZE)
++		features &= ~NETIF_F_GSO_MASK;
++
++	features = vlan_features_check(skb, features);
++	features = vxlan_features_check(skb, features);
++
++	return features;
++}
++
+ static const struct net_device_ops lan78xx_netdev_ops = {
+ 	.ndo_open		= lan78xx_open,
+ 	.ndo_stop		= lan78xx_stop,
+@@ -3681,6 +3695,7 @@ static const struct net_device_ops lan78
+ 	.ndo_set_features	= lan78xx_set_features,
+ 	.ndo_vlan_rx_add_vid	= lan78xx_vlan_rx_add_vid,
+ 	.ndo_vlan_rx_kill_vid	= lan78xx_vlan_rx_kill_vid,
++	.ndo_features_check	= lan78xx_features_check,
+ };
  
- 	err = 0;
+ static void lan78xx_stat_monitor(struct timer_list *t)
 
 
