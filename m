@@ -2,42 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2251014BA15
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Jan 2020 15:37:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 229F714BB3A
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Jan 2020 15:44:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387537AbgA1OfY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 28 Jan 2020 09:35:24 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36430 "EHLO mail.kernel.org"
+        id S1726880AbgA1OKV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 28 Jan 2020 09:10:21 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58960 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1733226AbgA1OfV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 Jan 2020 09:35:21 -0500
+        id S1729126AbgA1OKP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 28 Jan 2020 09:10:15 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 618A221739;
-        Tue, 28 Jan 2020 14:35:20 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D267F24688;
+        Tue, 28 Jan 2020 14:10:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1580222120;
-        bh=uU60ciiTrDJ9OmBJPBS8Wl7CIQw1suWbyJQyUdYfXqM=;
+        s=default; t=1580220614;
+        bh=4tsbLvzpH6KACgrSusRTvQLdfeOm9HSCRWokT2heKuA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=rtEiGJNAwssHukqnFMM2EjX0sgdjS900txpkDYKEEHtOcE5HXyk6TlgiYOC0/rx5L
-         DMvZ/enIJoGYHHYIVKiEoOHUuzBX4/rR31Go4mRMGndvnxs1QBT2ICXkhKBWEyOxGC
-         Zdfj7XJWnIwu8/RY1DYiYVU38yBGRtuPwFSOTBo8=
+        b=bbK3X02aJ/YZPNhaR0e5gJViLd7cYTV6NW3Ojo0O1T33NBA7sfz2xyz1wl0iONBdL
+         esiyzCXEDgiJfmr5u67K16O7aldI9iTTNZaog1AuCKUE3g51ppn//Nhvnk91U1fo/6
+         nmogmQchJHr3HC/+ACqw+N8HcIMd1rawMBunkHP0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
-        Nathan Chancellor <natechancellor@gmail.com>,
-        "Lad, Prabhakar" <prabhakar.csengg@gmail.com>,
-        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        stable@vger.kernel.org, Colin Ian King <colin.king@canonical.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 107/271] media: davinci-isif: avoid uninitialized variable use
-Date:   Tue, 28 Jan 2020 15:04:16 +0100
-Message-Id: <20200128135900.546687585@linuxfoundation.org>
+Subject: [PATCH 4.4 040/183] rtc: 88pm860x: fix unintended sign extension
+Date:   Tue, 28 Jan 2020 15:04:19 +0100
+Message-Id: <20200128135834.007102906@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200128135852.449088278@linuxfoundation.org>
-References: <20200128135852.449088278@linuxfoundation.org>
+In-Reply-To: <20200128135829.486060649@linuxfoundation.org>
+References: <20200128135829.486060649@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -47,76 +44,88 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Arnd Bergmann <arnd@arndb.de>
+From: Colin Ian King <colin.king@canonical.com>
 
-[ Upstream commit 0e633f97162c1c74c68e2eb20bbd9259dce87cd9 ]
+[ Upstream commit dc9e47160626cdb58d5c39a4f43dcfdb27a5c004 ]
 
-clang warns about a possible variable use that gcc never
-complained about:
+Shifting a u8 by 24 will cause the value to be promoted to an integer. If
+the top bit of the u8 is set then the following conversion to an unsigned
+long will sign extend the value causing the upper 32 bits to be set in
+the result.
 
-drivers/media/platform/davinci/isif.c:982:32: error: variable 'frame_size' is uninitialized when used here
-      [-Werror,-Wuninitialized]
-                dm365_vpss_set_pg_frame_size(frame_size);
-                                             ^~~~~~~~~~
-drivers/media/platform/davinci/isif.c:887:2: note: variable 'frame_size' is declared here
-        struct vpss_pg_frame_size frame_size;
-        ^
-1 error generated.
+Fix this by casting the u8 value to an unsigned long before the shift.
 
-There is no initialization for this variable at all, and there
-has never been one in the mainline kernel, so we really should
-not put that stack data into an mmio register.
+Detected by CoverityScan, CID#144925-144928 ("Unintended sign extension")
 
-On the other hand, I suspect that gcc checks the condition
-more closely and notices that the global
-isif_cfg.bayer.config_params.test_pat_gen flag is initialized
-to zero and never written to from any code path, so anything
-depending on it can be eliminated.
-
-To shut up the clang warning, just remove the dead code manually,
-it has probably never been used because any attempt to do so
-would have resulted in undefined behavior.
-
-Fixes: 63e3ab142fa3 ("V4L/DVB: V4L - vpfe capture - source for ISIF driver on DM365")
-
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-Reviewed-by: Nathan Chancellor <natechancellor@gmail.com>
-Acked-by: Lad, Prabhakar <prabhakar.csengg@gmail.com>
-Signed-off-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
-Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+Fixes: 008b30408c40 ("mfd: Add rtc support to 88pm860x")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/media/platform/davinci/isif.c | 9 ---------
- 1 file changed, 9 deletions(-)
+ drivers/rtc/rtc-88pm860x.c | 21 ++++++++++++++-------
+ 1 file changed, 14 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/media/platform/davinci/isif.c b/drivers/media/platform/davinci/isif.c
-index 78e37cf3470f2..b51b875c5a612 100644
---- a/drivers/media/platform/davinci/isif.c
-+++ b/drivers/media/platform/davinci/isif.c
-@@ -890,9 +890,7 @@ static int isif_set_hw_if_params(struct vpfe_hw_if_param *params)
- static int isif_config_ycbcr(void)
- {
- 	struct isif_ycbcr_config *params = &isif_cfg.ycbcr;
--	struct vpss_pg_frame_size frame_size;
- 	u32 modeset = 0, ccdcfg = 0;
--	struct vpss_sync_pol sync;
+diff --git a/drivers/rtc/rtc-88pm860x.c b/drivers/rtc/rtc-88pm860x.c
+index 166faae3a59cd..7d3e5168fcefc 100644
+--- a/drivers/rtc/rtc-88pm860x.c
++++ b/drivers/rtc/rtc-88pm860x.c
+@@ -115,11 +115,13 @@ static int pm860x_rtc_read_time(struct device *dev, struct rtc_time *tm)
+ 	pm860x_page_bulk_read(info->i2c, REG0_ADDR, 8, buf);
+ 	dev_dbg(info->dev, "%x-%x-%x-%x-%x-%x-%x-%x\n", buf[0], buf[1],
+ 		buf[2], buf[3], buf[4], buf[5], buf[6], buf[7]);
+-	base = (buf[1] << 24) | (buf[3] << 16) | (buf[5] << 8) | buf[7];
++	base = ((unsigned long)buf[1] << 24) | (buf[3] << 16) |
++		(buf[5] << 8) | buf[7];
  
- 	dev_dbg(isif_cfg.dev, "\nStarting isif_config_ycbcr...");
+ 	/* load 32-bit read-only counter */
+ 	pm860x_bulk_read(info->i2c, PM8607_RTC_COUNTER1, 4, buf);
+-	data = (buf[3] << 24) | (buf[2] << 16) | (buf[1] << 8) | buf[0];
++	data = ((unsigned long)buf[3] << 24) | (buf[2] << 16) |
++		(buf[1] << 8) | buf[0];
+ 	ticks = base + data;
+ 	dev_dbg(info->dev, "get base:0x%lx, RO count:0x%lx, ticks:0x%lx\n",
+ 		base, data, ticks);
+@@ -145,7 +147,8 @@ static int pm860x_rtc_set_time(struct device *dev, struct rtc_time *tm)
  
-@@ -980,13 +978,6 @@ static int isif_config_ycbcr(void)
- 		/* two fields are interleaved in memory */
- 		regw(0x00000249, SDOFST);
+ 	/* load 32-bit read-only counter */
+ 	pm860x_bulk_read(info->i2c, PM8607_RTC_COUNTER1, 4, buf);
+-	data = (buf[3] << 24) | (buf[2] << 16) | (buf[1] << 8) | buf[0];
++	data = ((unsigned long)buf[3] << 24) | (buf[2] << 16) |
++		(buf[1] << 8) | buf[0];
+ 	base = ticks - data;
+ 	dev_dbg(info->dev, "set base:0x%lx, RO count:0x%lx, ticks:0x%lx\n",
+ 		base, data, ticks);
+@@ -170,10 +173,12 @@ static int pm860x_rtc_read_alarm(struct device *dev, struct rtc_wkalrm *alrm)
+ 	pm860x_page_bulk_read(info->i2c, REG0_ADDR, 8, buf);
+ 	dev_dbg(info->dev, "%x-%x-%x-%x-%x-%x-%x-%x\n", buf[0], buf[1],
+ 		buf[2], buf[3], buf[4], buf[5], buf[6], buf[7]);
+-	base = (buf[1] << 24) | (buf[3] << 16) | (buf[5] << 8) | buf[7];
++	base = ((unsigned long)buf[1] << 24) | (buf[3] << 16) |
++		(buf[5] << 8) | buf[7];
  
--	/* Setup test pattern if enabled */
--	if (isif_cfg.bayer.config_params.test_pat_gen) {
--		sync.ccdpg_hdpol = params->hd_pol;
--		sync.ccdpg_vdpol = params->vd_pol;
--		dm365_vpss_set_sync_pol(sync);
--		dm365_vpss_set_pg_frame_size(frame_size);
--	}
- 	return 0;
- }
+ 	pm860x_bulk_read(info->i2c, PM8607_RTC_EXPIRE1, 4, buf);
+-	data = (buf[3] << 24) | (buf[2] << 16) | (buf[1] << 8) | buf[0];
++	data = ((unsigned long)buf[3] << 24) | (buf[2] << 16) |
++		(buf[1] << 8) | buf[0];
+ 	ticks = base + data;
+ 	dev_dbg(info->dev, "get base:0x%lx, RO count:0x%lx, ticks:0x%lx\n",
+ 		base, data, ticks);
+@@ -198,11 +203,13 @@ static int pm860x_rtc_set_alarm(struct device *dev, struct rtc_wkalrm *alrm)
+ 	pm860x_page_bulk_read(info->i2c, REG0_ADDR, 8, buf);
+ 	dev_dbg(info->dev, "%x-%x-%x-%x-%x-%x-%x-%x\n", buf[0], buf[1],
+ 		buf[2], buf[3], buf[4], buf[5], buf[6], buf[7]);
+-	base = (buf[1] << 24) | (buf[3] << 16) | (buf[5] << 8) | buf[7];
++	base = ((unsigned long)buf[1] << 24) | (buf[3] << 16) |
++		(buf[5] << 8) | buf[7];
  
+ 	/* load 32-bit read-only counter */
+ 	pm860x_bulk_read(info->i2c, PM8607_RTC_COUNTER1, 4, buf);
+-	data = (buf[3] << 24) | (buf[2] << 16) | (buf[1] << 8) | buf[0];
++	data = ((unsigned long)buf[3] << 24) | (buf[2] << 16) |
++		(buf[1] << 8) | buf[0];
+ 	ticks = base + data;
+ 	dev_dbg(info->dev, "get base:0x%lx, RO count:0x%lx, ticks:0x%lx\n",
+ 		base, data, ticks);
 -- 
 2.20.1
 
