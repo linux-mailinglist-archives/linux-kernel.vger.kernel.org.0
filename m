@@ -2,105 +2,115 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EA33314B4AF
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Jan 2020 14:08:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6F45714B4C4
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Jan 2020 14:21:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726275AbgA1NIK convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Tue, 28 Jan 2020 08:08:10 -0500
-Received: from mout.kundenserver.de ([217.72.192.75]:50073 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725852AbgA1NIK (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 Jan 2020 08:08:10 -0500
-Received: from mail-qv1-f47.google.com ([209.85.219.47]) by
- mrelayeu.kundenserver.de (mreue109 [212.227.15.145]) with ESMTPSA (Nemesis)
- id 1N2V8T-1jijaR3rLT-013uS8 for <linux-kernel@vger.kernel.org>; Tue, 28 Jan
- 2020 14:08:09 +0100
-Received: by mail-qv1-f47.google.com with SMTP id db9so2587937qvb.3
-        for <linux-kernel@vger.kernel.org>; Tue, 28 Jan 2020 05:08:08 -0800 (PST)
-X-Gm-Message-State: APjAAAURzhIhdz4K1PIjCzvwoPA4opIz+b19iu5CtyG58vZX7jVOYCLo
-        IegHkwpvFrH/GnXvKe75vtACSuGDttvmhG+JCNM=
-X-Google-Smtp-Source: APXvYqwbF70fulmMWpYsvgtwTwVOULgFhaykqGynP3TsqaWJatV/77WMv6RcxE8VKIM0b3GG4JzZReLAuPl6Qcio2Zw=
-X-Received: by 2002:a0c:d788:: with SMTP id z8mr20752657qvi.211.1580216887804;
- Tue, 28 Jan 2020 05:08:07 -0800 (PST)
+        id S1726129AbgA1NVD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 28 Jan 2020 08:21:03 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58080 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725852AbgA1NVD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 28 Jan 2020 08:21:03 -0500
+Received: from disco-boy.misterjones.org (disco-boy.misterjones.org [51.254.78.96])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 722502467B;
+        Tue, 28 Jan 2020 13:21:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1580217662;
+        bh=6yMPyzyzgayEIhWQisn5URP1nsUaexkHHx5nPCWZHxE=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=m/qnAjAWjKa7ujJV4+9bpIdnM8mieHm/wpjVEvkvRm9L3PYJnE5/FmP+1SvRPtqBR
+         Tr6tDlVON4RnWc0Q/zVwJ2TH8GGOHQ0Z/AQT2Zyb7H/gS7g2HcGKX1gUmwAPkHvQTu
+         b8olEF31GK411fPrGLjVPuPn58DV+ShN/oweXQ50=
+Received: from disco-boy.misterjones.org ([51.254.78.96] helo=www.loen.fr)
+        by disco-boy.misterjones.org with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.92)
+        (envelope-from <maz@kernel.org>)
+        id 1iwQnc-001ofc-Hp; Tue, 28 Jan 2020 13:21:00 +0000
 MIME-Version: 1.0
-References: <20200121114553.2667556-1-arnd@arndb.de> <20200121125546.GA71415@bogon.m.sigxcpu.org>
- <1971902c68ff805ee0b4a66f558afe06e6edf0c5.camel@pengutronix.de>
- <CAK8P3a2E__zHPPEL37JwK=uHb_v-=C+-+zGaL3XoW5PZ+BUN5g@mail.gmail.com>
- <20200122103034.GA67385@bogon.m.sigxcpu.org> <20200122103553.GN25745@shell.armlinux.org.uk>
- <20200124085616.GA5680@bogon.m.sigxcpu.org>
-In-Reply-To: <20200124085616.GA5680@bogon.m.sigxcpu.org>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Tue, 28 Jan 2020 14:07:51 +0100
-X-Gmail-Original-Message-ID: <CAK8P3a36b6OVW1izkmwML_iWof1BWcPSuh=zV5D=9Jx5Q+MRFg@mail.gmail.com>
-Message-ID: <CAK8P3a36b6OVW1izkmwML_iWof1BWcPSuh=zV5D=9Jx5Q+MRFg@mail.gmail.com>
-Subject: Re: [PATCH] drm/etnaviv: only reject timeouts with tv_nsec >= 2 seconds
-To:     =?UTF-8?Q?Guido_G=C3=BCnther?= <agx@sigxcpu.org>
-Cc:     Russell King - ARM Linux admin <linux@armlinux.org.uk>,
-        Lucas Stach <l.stach@pengutronix.de>,
-        Christian Gmeiner <christian.gmeiner@gmail.com>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Sam Ravnborg <sam@ravnborg.org>, Rob Herring <robh@kernel.org>,
-        Emil Velikov <emil.velikov@collabora.com>,
-        The etnaviv authors <etnaviv@lists.freedesktop.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8BIT
-X-Provags-ID: V03:K1:OSdX+6i7GT66CAFwQ+vhxHK4bua8rOrudPhf7fhYfMGMxN9B6EX
- fqidXcTQLWSwpKs38T6HxM9m3mZGewm85sPs5p4rrKiXUKh/rVxeTXvRDBoxLCPofXBN0Oy
- z2iLCY+lzoyXzr92WaCa2RcKyxhndbZrDdMSOukLZ2R6GgfthbDx3Vp/LNI4otWnL5Onn4o
- OOReDPWj6hh7aZoqbzbXA==
-X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:Xz9Cq3YR54Q=:eHF9kt6GuEyao/lu52FkNw
- XYjjNXa7PimYFfIut8n/maixe7zmw6GcceJUpWW/UcBkxfQy7a/cXJ7uaFHm/NYjTCfuJkzEj
- +VtgXbOR/hvrnLdkFVK0UWBiMryxbytlVup73MTt6I3obvxB4v7RkgDxrjIReimOGcYTTHkjU
- qyf0JmRC25Pog2EuJBFw4uYgSnbVwa2M6VvUY8yR3sQx6T7cuV1ZHrBI7qd9brS6+QtRYsQa4
- 40/ZhKoX2bcEkQSgQ64hxhSIQRc0vstV00Q5QrpPIHOmDmc/90iIDa6iCj7gb+eCvYrFqAVD9
- SegrjkpqX4cSPASy2pg2Ga216oBh7d8sbIs5Tk5vUtO9Yy6MSQL0QrIVlKrx5PvteQEy8diUv
- PGxV+svMOYkBE8aJFt/AlNmKN6qHwL9bqKKdm1mHimfJ5Fu8XwawPZDSGGwxzMW0ofw6xyU6p
- k3ZcxnhxrYwLLF50Bcnsz5fRTUUl/MXo5fJlNzY5o93oBP7PbgmzY+NP1MmshdWEwziHvP22I
- Lh93RvmKHM5X+2xcHb+mlDS35RQQee2tZSUOdSjn3EhRJFIfoTButh/pWTqfMnPCP8NQWeXIh
- EhD0GZ0U61bmMXien1un/12WvcGWtA/eBc+Igl98P287yE97gA0Ba8pMrcrwPCYNO46tORwCz
- y/jTvo/mXIpIiQSVnQmr1FlhupThF/LHPgOkFLKrMy9jcmCO8wwdNmo/f+JlcTAR+T0hy6PXd
- 9jKPYCsBw/mnRsbn79Yr+62/EqRoXxpOQ0aV+8zZEi5J7h+FXzdzNqAiFAwLq2BCYcxXh7N+U
- cjtP3a3lcl/9rb10ZNF9KqRIjWYXw3D8/x2awdGiAp4k4EWDOo=
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Date:   Tue, 28 Jan 2020 13:21:00 +0000
+From:   Marc Zyngier <maz@kernel.org>
+To:     Yash Shah <yash.shah@sifive.com>
+Cc:     linus.walleij@linaro.org, bgolaszewski@baylibre.com,
+        palmer@dabbelt.com, paul.walmsley@sifive.com, wesley@sifive.com,
+        atish.patra@wdc.com, linux-gpio@vger.kernel.org,
+        linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
+        sachin.ghadi@sifive.com
+Subject: Re: [PATCH] gpio/sifive: fix static checker warning
+In-Reply-To: <1580189061-14091-1-git-send-email-yash.shah@sifive.com>
+References: <1580189061-14091-1-git-send-email-yash.shah@sifive.com>
+Message-ID: <ecb0e9404a3f6256a7ba1fe48b5a1471@kernel.org>
+X-Sender: maz@kernel.org
+User-Agent: Roundcube Webmail/1.3.8
+X-SA-Exim-Connect-IP: 51.254.78.96
+X-SA-Exim-Rcpt-To: yash.shah@sifive.com, linus.walleij@linaro.org, bgolaszewski@baylibre.com, palmer@dabbelt.com, paul.walmsley@sifive.com, wesley@sifive.com, atish.patra@wdc.com, linux-gpio@vger.kernel.org, linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org, sachin.ghadi@sifive.com
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jan 24, 2020 at 9:56 AM Guido Günther <agx@sigxcpu.org> wrote:
-> On Wed, Jan 22, 2020 at 10:35:53AM +0000, Russell King - ARM Linux admin wrote:
-> > On Wed, Jan 22, 2020 at 11:30:34AM +0100, Guido Günther wrote:
+On 2020-01-28 05:24, Yash Shah wrote:
+> Typcasting "irq_state" leads to the below static checker warning:
+> The fix is to declare "irq_state" as unsigned long instead of u32.
+> 
+> 	drivers/gpio/gpio-sifive.c:97 sifive_gpio_irq_enable()
+> 	warn: passing casted pointer '&chip->irq_state' to
+> 	'assign_bit()' 32 vs 64.
+> 
+> Fixes: 96868dce644d ("gpio/sifive: Add GPIO driver for SiFive SoCs")
+> Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
+> Signed-off-by: Yash Shah <yash.shah@sifive.com>
+> ---
+>  drivers/gpio/gpio-sifive.c | 6 +++---
+>  1 file changed, 3 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/gpio/gpio-sifive.c b/drivers/gpio/gpio-sifive.c
+> index 147a1bd..c54dd08 100644
+> --- a/drivers/gpio/gpio-sifive.c
+> +++ b/drivers/gpio/gpio-sifive.c
+> @@ -35,7 +35,7 @@ struct sifive_gpio {
+>  	void __iomem		*base;
+>  	struct gpio_chip	gc;
+>  	struct regmap		*regs;
+> -	u32			irq_state;
+> +	unsigned long		irq_state;
+>  	unsigned int		trigger[SIFIVE_GPIO_MAX];
+>  	unsigned int		irq_parent[SIFIVE_GPIO_MAX];
+>  };
+> @@ -94,7 +94,7 @@ static void sifive_gpio_irq_enable(struct irq_data 
+> *d)
+>  	spin_unlock_irqrestore(&gc->bgpio_lock, flags);
+> 
+>  	/* Enable interrupts */
+> -	assign_bit(offset, (unsigned long *)&chip->irq_state, 1);
+> +	assign_bit(offset, &chip->irq_state, 1);
+>  	sifive_gpio_set_ie(chip, offset);
+>  }
+> 
+> @@ -104,7 +104,7 @@ static void sifive_gpio_irq_disable(struct irq_data 
+> *d)
+>  	struct sifive_gpio *chip = gpiochip_get_data(gc);
+>  	int offset = irqd_to_hwirq(d) % SIFIVE_GPIO_MAX;
+> 
+> -	assign_bit(offset, (unsigned long *)&chip->irq_state, 0);
+> +	assign_bit(offset, &chip->irq_state, 0);
+>  	sifive_gpio_set_ie(chip, offset);
+>  	irq_chip_disable_parent(d);
+>  }
 
-> > I think it would probably be better for the kernel to print a
-> > warning once when noticing over-large nsec values, suggesting a
-> > userspace upgrade is in order, but continue the existing behaviour.
->
-> That makes sense to me. This also makes sure we don't break other (non
-> mesa using) stuff accidentally. We have
->
->   https://gitlab.freedesktop.org/mesa/mesa/commit/d817f2c69615cf37b78f484a25b7831ebe9dbe6f
->
-> and
->
->   https://gitlab.freedesktop.org/mesa/mesa/merge_requests/3534
->
-> to normalize nsec to [0..999999999] now.
->
+Yup, nice one. Should have spotted it.
 
-I have reverted my patch that adds the range check now, so I can send the rest
-of the series for inclusion.
+Reviewed-by: Marc Zyngier <maz@kernel.org>
 
-I've played around with ways to add a ratelimited warning message and to
-make sure that a malicious application cannot cause a long stall, but haven't
-managed to get a version I'm actually happy with.
+Linus, do you want me to queue this via the irqchip tree (given that
+it is where the original bug came from)? Or would you rather take it?
 
-I'll follow up once the series is merged, and then we can add a better
-workaround
-later through the drm tree.
-
-      Arnd
+         M.
+-- 
+Jazz is not dead. It just smells funny...
