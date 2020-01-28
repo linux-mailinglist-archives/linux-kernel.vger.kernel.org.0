@@ -2,39 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1648B14BBAD
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Jan 2020 15:49:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D0EEC14BBC5
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Jan 2020 15:49:53 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727498AbgA1OBk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 28 Jan 2020 09:01:40 -0500
-Received: from mail.kernel.org ([198.145.29.99]:47708 "EHLO mail.kernel.org"
+        id S1726700AbgA1OtF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 28 Jan 2020 09:49:05 -0500
+Received: from mail.kernel.org ([198.145.29.99]:47928 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727164AbgA1OBh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 Jan 2020 09:01:37 -0500
+        id S1727506AbgA1OBr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 28 Jan 2020 09:01:47 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AF22D205F4;
-        Tue, 28 Jan 2020 14:01:36 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 91A8324688;
+        Tue, 28 Jan 2020 14:01:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1580220097;
-        bh=i9hNblF3nTcbkxYRaheT+L8fzmM/LUqzgDjnFimAaDE=;
+        s=default; t=1580220107;
+        bh=+0D6euA8CE4WjqA7DLQwotiII8Xa0lgFqvviyeObp8I=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=1ZvRgM+LIzg8Xd2STWEl9SsSSZRwUGd7yo8c3fo3LOq22lfae/TQ4tnAAVYxuHHqR
-         xN6GdpYxLqvsOcv7ZWzhFCMNDwy7RrdDPfZRbLEL57ry0TrufmrnYlK9S6MED+Y/ni
-         LVLL9AcKeQ92KOD2FeeHXeRVUuap3lLthX2PYcVo=
+        b=AQFbVbRtNgYnR2iJo5xwz4s+SvjuKyrWC59O/k+/pC+SN2OivQP4LYdnQmeqO5NpM
+         j+pYVYznf89If2ikI2Hf44U1iLPY0byj3g0h7Y82hBG7AJyEOY4kVvRG+VqDAC1rOP
+         9gWFA2lIRaxZ5r/ZpIzjX382xnJLs4IMzg8w3/8c=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Wen Yang <wenyang@linux.alibaba.com>,
-        Eric Dumazet <edumazet@google.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>,
-        Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>,
-        netdev@vger.kernel.org
-Subject: [PATCH 5.4 016/104] tcp_bbr: improve arithmetic division in bbr_update_bw()
-Date:   Tue, 28 Jan 2020 14:59:37 +0100
-Message-Id: <20200128135819.488809136@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Ilja Van Sprundel <ivansprundel@ioactive.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 5.4 020/104] airo: Add missing CAP_NET_ADMIN check in AIROOLDIOCTL/SIOCDEVPRIVATE
+Date:   Tue, 28 Jan 2020 14:59:41 +0100
+Message-Id: <20200128135820.041283682@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
 In-Reply-To: <20200128135817.238524998@linuxfoundation.org>
 References: <20200128135817.238524998@linuxfoundation.org>
@@ -47,39 +45,78 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Wen Yang <wenyang@linux.alibaba.com>
+From: Michael Ellerman <mpe@ellerman.id.au>
 
-[ Upstream commit 5b2f1f3070b6447b76174ea8bfb7390dc6253ebd ]
+[ Upstream commit 78f7a7566f5eb59321e99b55a6fdb16ea05b37d1 ]
 
-do_div() does a 64-by-32 division. Use div64_long() instead of it
-if the divisor is long, to avoid truncation to 32-bit.
-And as a nice side effect also cleans up the function a bit.
+The driver for Cisco Aironet 4500 and 4800 series cards (airo.c),
+implements AIROOLDIOCTL/SIOCDEVPRIVATE in airo_ioctl().
 
-Signed-off-by: Wen Yang <wenyang@linux.alibaba.com>
-Cc: Eric Dumazet <edumazet@google.com>
-Cc: "David S. Miller" <davem@davemloft.net>
-Cc: Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>
-Cc: Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>
-Cc: netdev@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
-Signed-off-by: Eric Dumazet <edumazet@google.com>
+The ioctl handler copies an aironet_ioctl struct from userspace, which
+includes a command. Some of the commands are handled in readrids(),
+where the user controlled command is converted into a driver-internal
+value called "ridcode".
+
+There are two command values, AIROGWEPKTMP and AIROGWEPKNV, which
+correspond to ridcode values of RID_WEP_TEMP and RID_WEP_PERM
+respectively. These commands both have checks that the user has
+CAP_NET_ADMIN, with the comment that "Only super-user can read WEP
+keys", otherwise they return -EPERM.
+
+However there is another command value, AIRORRID, that lets the user
+specify the ridcode value directly, with no other checks. This means
+the user can bypass the CAP_NET_ADMIN check on AIROGWEPKTMP and
+AIROGWEPKNV.
+
+Fix it by moving the CAP_NET_ADMIN check out of the command handling
+and instead do it later based on the ridcode. That way regardless of
+whether the ridcode is set via AIROGWEPKTMP or AIROGWEPKNV, or passed
+in using AIRORID, we always do the CAP_NET_ADMIN check.
+
+Found by Ilja by code inspection, not tested as I don't have the
+required hardware.
+
+Reported-by: Ilja Van Sprundel <ivansprundel@ioactive.com>
+Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/ipv4/tcp_bbr.c |    3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ drivers/net/wireless/cisco/airo.c |   18 ++++++++----------
+ 1 file changed, 8 insertions(+), 10 deletions(-)
 
---- a/net/ipv4/tcp_bbr.c
-+++ b/net/ipv4/tcp_bbr.c
-@@ -779,8 +779,7 @@ static void bbr_update_bw(struct sock *s
- 	 * bandwidth sample. Delivered is in packets and interval_us in uS and
- 	 * ratio will be <<1 for most connections. So delivered is first scaled.
- 	 */
--	bw = (u64)rs->delivered * BW_UNIT;
--	do_div(bw, rs->interval_us);
-+	bw = div64_long((u64)rs->delivered * BW_UNIT, rs->interval_us);
+--- a/drivers/net/wireless/cisco/airo.c
++++ b/drivers/net/wireless/cisco/airo.c
+@@ -7790,16 +7790,8 @@ static int readrids(struct net_device *d
+ 	case AIROGVLIST:    ridcode = RID_APLIST;       break;
+ 	case AIROGDRVNAM:   ridcode = RID_DRVNAME;      break;
+ 	case AIROGEHTENC:   ridcode = RID_ETHERENCAP;   break;
+-	case AIROGWEPKTMP:  ridcode = RID_WEP_TEMP;
+-		/* Only super-user can read WEP keys */
+-		if (!capable(CAP_NET_ADMIN))
+-			return -EPERM;
+-		break;
+-	case AIROGWEPKNV:   ridcode = RID_WEP_PERM;
+-		/* Only super-user can read WEP keys */
+-		if (!capable(CAP_NET_ADMIN))
+-			return -EPERM;
+-		break;
++	case AIROGWEPKTMP:  ridcode = RID_WEP_TEMP;	break;
++	case AIROGWEPKNV:   ridcode = RID_WEP_PERM;	break;
+ 	case AIROGSTAT:     ridcode = RID_STATUS;       break;
+ 	case AIROGSTATSD32: ridcode = RID_STATSDELTA;   break;
+ 	case AIROGSTATSC32: ridcode = RID_STATS;        break;
+@@ -7813,6 +7805,12 @@ static int readrids(struct net_device *d
+ 		return -EINVAL;
+ 	}
  
- 	/* If this sample is application-limited, it is likely to have a very
- 	 * low delivered count that represents application behavior rather than
++	if (ridcode == RID_WEP_TEMP || ridcode == RID_WEP_PERM) {
++		/* Only super-user can read WEP keys */
++		if (!capable(CAP_NET_ADMIN))
++			return -EPERM;
++	}
++
+ 	if ((iobuf = kzalloc(RIDSIZE, GFP_KERNEL)) == NULL)
+ 		return -ENOMEM;
+ 
 
 
