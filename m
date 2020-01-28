@@ -2,217 +2,138 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E06D614AE04
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Jan 2020 03:15:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0CC8D14ADDC
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Jan 2020 03:11:58 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728234AbgA1CPJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 27 Jan 2020 21:15:09 -0500
-Received: from mail-pl1-f193.google.com ([209.85.214.193]:42977 "EHLO
-        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727773AbgA1CPF (ORCPT
+        id S1726599AbgA1CL5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 27 Jan 2020 21:11:57 -0500
+Received: from mail-qv1-f66.google.com ([209.85.219.66]:41710 "EHLO
+        mail-qv1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726294AbgA1CL4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 27 Jan 2020 21:15:05 -0500
-Received: by mail-pl1-f193.google.com with SMTP id p9so4473838plk.9
-        for <linux-kernel@vger.kernel.org>; Mon, 27 Jan 2020 18:15:05 -0800 (PST)
+        Mon, 27 Jan 2020 21:11:56 -0500
+Received: by mail-qv1-f66.google.com with SMTP id x1so5529457qvr.8
+        for <linux-kernel@vger.kernel.org>; Mon, 27 Jan 2020 18:11:55 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=subject:date:message-id:mime-version:content-transfer-encoding:cc
-         :from:to:in-reply-to:references;
-        bh=LUiKWI3Cf+9+n0Mf0T0uSDtpI14DkFl6R/zPz6oE4kA=;
-        b=t6Fkbs2B6XQQ1FJjHeJszTkGjc450EaIRq1KZfmbn8O4NYMZcq6AXMS7pmHbUboObC
-         +++s+jeLdsA6RQB08P9Q5Ack/z09JhMpcwAH9ll/D/MNh2PF/l8bN+H59x2KdWIZQaGJ
-         V6rLY45e1nmA4dzti6zKLzfbfSQH01wh1Pq+jqMqsvZxpHPcSUIN8yopf38iePTDe4Fn
-         PnNN2/5p6w6AcizSaS4T/xDwCmkQr+gZ6sexRbfAK34zFGsth0Z8GT9lZrcVKfKxscsF
-         FNGp79tHt13MmqPXpQkiJlgMycGe4X09ATmdUeh59o7i1ed82t9JibgA5r1Fh0RysWRj
-         6HTw==
+        d=lca.pw; s=google;
+        h=content-transfer-encoding:from:mime-version:subject:date:message-id
+         :references:cc:in-reply-to:to;
+        bh=7Y+cJY1xhd0yBpcec7AzD+9evfVDrwqprX0erT9gNQ8=;
+        b=jZmBH73pillRBQpbX84TZ57nVUbP8l/pwzyrT6F1TLbL143seIWhzMHM+f433HkTJ5
+         4+74y+cXEGlf05IjEqB0rGqFVcscYw+GLhSFsx8WaySmYsTRfGWpPzerjlys6mf9W6z9
+         7MQu28uGR+vExcu4XcFzxZsCEsEyIZnW5XYihpKw20TjtS/g7K7vcnSmLO9Y2I2ACMbR
+         UKd7mEwngqjuWYnzl9qMnEhgnX2KVdsQpg9XPqLIZZY/9EZaReISvH0tgX5LHWCxTzuH
+         Sdb0djgaeTc7Y2XT2pWCZ+vec+pYHc73GLTjZ8LH4FVsFHxU1dJtwXiD8faH/K6Piqjx
+         Qz+Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:date:message-id:mime-version
-         :content-transfer-encoding:cc:from:to:in-reply-to:references;
-        bh=LUiKWI3Cf+9+n0Mf0T0uSDtpI14DkFl6R/zPz6oE4kA=;
-        b=rbPkP+bjkvskL3m6aEeRC2pQ/9jGhwUsJIoC1YTA3F9LJQunLZKX8RJpLmW6a/4XOa
-         p2nH7XW5Occ1f0seozGT9nY0Wt+fN3IR5prrI9Csf/3iN0crCfoon7xlrwxdyvsJ3VBT
-         SieqmCGkJsVBGAI8mEwL0zbu+Ttnur2NrhAdoASz5WPNYqxmo6l5CtDrFrltTmrTHLON
-         TZodYhM6c+i84HgpLNup2otou6MrnL4vpiiAgVBihouQzkEGgDI4UvL+PwxxbwYXGzaW
-         ltiCLZZwj2qJI4UaANgDE0nczTzXdwOh9uD+tqeb/8Cg/39i8basfpFfNwellXKyfopQ
-         QqHA==
-X-Gm-Message-State: APjAAAXab1VB+QoeA8AmIgm36fPV3ojEuhk3VX3hlfRbgU9xyjmuSLlX
-        igdm1pYv4610vyNWMGs+VJa82A==
-X-Google-Smtp-Source: APXvYqxlXoEawlGrjKe7Dg0dTNaImpBzNfwMgpu5Qd3tYpex5PzlG+tN2FelRoSSzPaUPamCbr5Lgw==
-X-Received: by 2002:a17:902:9a09:: with SMTP id v9mr19976280plp.341.1580177704696;
-        Mon, 27 Jan 2020 18:15:04 -0800 (PST)
-Received: from localhost ([216.9.110.11])
-        by smtp.gmail.com with ESMTPSA id o17sm393828pjq.1.2020.01.27.18.15.03
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 27 Jan 2020 18:15:04 -0800 (PST)
-Subject: [PATCH 4/4] arm64: bpf: Elide some moves to a0 after calls
-Date:   Mon, 27 Jan 2020 18:11:45 -0800
-Message-Id: <20200128021145.36774-5-palmerdabbelt@google.com>
-X-Mailer: git-send-email 2.25.0.341.g760bfbb309-goog
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Cc:     daniel@iogearbox.net, ast@kernel.org, zlim.lnx@gmail.com,
-        catalin.marinas@arm.com, will@kernel.org, kafai@fb.com,
-        songliubraving@fb.com, yhs@fb.com, andriin@fb.com,
-        shuah@kernel.org, Palmer Dabbelt <palmerdabbelt@google.com>,
-        netdev@vger.kernel.org, bpf@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-kselftest@vger.kernel.org,
-        clang-built-linux@googlegroups.com, kernel-team@android.com
-From:   Palmer Dabbelt <palmerdabbelt@google.com>
-To:     Bjorn Topel <bjorn.topel@gmail.com>
-In-Reply-To: <20200128021145.36774-1-palmerdabbelt@google.com>
-References: <20200128021145.36774-1-palmerdabbelt@google.com>
+        h=x-gm-message-state:content-transfer-encoding:from:mime-version
+         :subject:date:message-id:references:cc:in-reply-to:to;
+        bh=7Y+cJY1xhd0yBpcec7AzD+9evfVDrwqprX0erT9gNQ8=;
+        b=aHQFmYG3QOBVWi52k7nW0InydMHf0cEMIHjYrmgDmnG0czVrZSMS+tCnIujsV6tfiS
+         QU5Vry+1ETzm9DreuMEtQDhx91UXEvttFjFm69nbmArUHv5UKmBg8B8Om2E/fzPRjLXx
+         ONGMXvina2uVrFF+OQzf62spoK0DnRxxja2X7ttL7nb9uTM0tgdIbc0MHzkLpIOXYtUU
+         OHGUv0Kzhs7yfVjIF1oV215kjFJaO23gUh3PfpIccyYW1GoYwFTYsAr0gC+Hb3ooqXXF
+         SWUrE4bB9KYZlCWC+P3bTbv+cmD8HEwh3EYCFrZgcVl8J8oQdiBQEjtrpKPgC6Mocu0k
+         Y+EA==
+X-Gm-Message-State: APjAAAVYKEuO8NFE9plQKDmMUA13GCY0BDaRsEbORUvmngFbdhbQyAhY
+        faontXs/PVIhJk9tlp/go3yyqQ==
+X-Google-Smtp-Source: APXvYqzg/cYWhjYHl3Ki3ZAih+ex/42KJTx6ZAw8WelCuco+qFvVUewpgAxMMsdmClIjS/CcngZCgg==
+X-Received: by 2002:a05:6214:9d2:: with SMTP id dp18mr19624941qvb.98.1580177515237;
+        Mon, 27 Jan 2020 18:11:55 -0800 (PST)
+Received: from [192.168.1.183] (pool-71-184-117-43.bstnma.fios.verizon.net. [71.184.117.43])
+        by smtp.gmail.com with ESMTPSA id m21sm11036189qka.117.2020.01.27.18.11.54
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 27 Jan 2020 18:11:54 -0800 (PST)
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+From:   Qian Cai <cai@lca.pw>
+Mime-Version: 1.0 (1.0)
+Subject: Re: [PATCH V12] mm/debug: Add tests validating architecture page table helpers
+Date:   Mon, 27 Jan 2020 21:11:53 -0500
+Message-Id: <14882A91-17DE-4ABD-ABF2-08E7CCEDF660@lca.pw>
+References: <1580174873-18117-1-git-send-email-anshuman.khandual@arm.com>
+Cc:     linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Michal Hocko <mhocko@kernel.org>,
+        Mark Rutland <Mark.Rutland@arm.com>,
+        Mark Brown <broonie@kernel.org>,
+        Steven Price <Steven.Price@arm.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Kees Cook <keescook@chromium.org>,
+        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        Matthew Wilcox <willy@infradead.org>,
+        Sri Krishna chowdary <schowdary@nvidia.com>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Russell King - ARM Linux <linux@armlinux.org.uk>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Paul Mackerras <paulus@samba.org>,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Vineet Gupta <vgupta@synopsys.com>,
+        James Hogan <jhogan@kernel.org>,
+        Paul Burton <paul.burton@mips.com>,
+        Ralf Baechle <ralf@linux-mips.org>,
+        "Kirill A . Shutemov" <kirill@shutemov.name>,
+        Gerald Schaefer <gerald.schaefer@de.ibm.com>,
+        Christophe Leroy <christophe.leroy@c-s.fr>,
+        Ingo Molnar <mingo@kernel.org>,
+        linux-snps-arc@lists.infradead.org, linux-mips@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-ia64@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org, linux-s390@vger.kernel.org,
+        linux-sh@vger.kernel.org, sparclinux@vger.kernel.org,
+        x86@kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <1580174873-18117-1-git-send-email-anshuman.khandual@arm.com>
+To:     Anshuman Khandual <Anshuman.Khandual@arm.com>
+X-Mailer: iPhone Mail (17C54)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On arm64, the BPF function ABI doesn't match the C function ABI.  Specifically,
-arm64 encodes calls as `a0 = f(a0, a1, ...)` while BPF encodes calls as
-`BPF_REG_0 = f(BPF_REG_1, BPF_REG_2, ...)`.  This discrepancy results in
-function calls being encoded as a two operations sequence that first does a C
-ABI calls and then moves the return register into the right place.  This
-results in one extra instruction for every function call.
 
-This patch adds an optimization to the arm64 BPF JIT backend that aims to avoid
-some of these moves.
 
-I've done no benchmarking to determine if this is correct.  I ran the BPF
-selftests before and after the change on arm64 in QEMU and found that I had a
-single failure both before and after.  I'm not at all confident this code
-actually works as it's my first time doing anything with both ARM64 and BPF and
-I didn't even open the documentation for either of these.  I was particularly
-surprised that the code didn't fail any tests -- I was kind of assuming this
-would fail the tests, get put on the backburner, sit long enough for me to stop
-caring, and then get deleted.
+> On Jan 27, 2020, at 8:28 PM, Anshuman Khandual <Anshuman.Khandual@arm.com>=
+ wrote:
+>=20
+> This adds tests which will validate architecture page table helpers and
+> other accessors in their compliance with expected generic MM semantics.
+> This will help various architectures in validating changes to existing
+> page table helpers or addition of new ones.
+>=20
+> This test covers basic page table entry transformations including but not
+> limited to old, young, dirty, clean, write, write protect etc at various
+> level along with populating intermediate entries with next page table page=
 
-Signed-off-by: Palmer Dabbelt <palmerdabbelt@google.com>
----
- arch/arm64/net/bpf_jit_comp.c | 71 +++++++++++++++++++++++++++++++++--
- 1 file changed, 68 insertions(+), 3 deletions(-)
+> and validating them.
+>=20
+> Test page table pages are allocated from system memory with required size
+> and alignments. The mapped pfns at page table levels are derived from a
+> real pfn representing a valid kernel text symbol. This test gets called
+> right after page_alloc_init_late().
+>=20
+> This gets build and run when CONFIG_DEBUG_VM_PGTABLE is selected along wit=
+h
+> CONFIG_VM_DEBUG. Architectures willing to subscribe this test also need to=
 
-diff --git a/arch/arm64/net/bpf_jit_comp.c b/arch/arm64/net/bpf_jit_comp.c
-index fba5b1b00cd7..48d900cc7258 100644
---- a/arch/arm64/net/bpf_jit_comp.c
-+++ b/arch/arm64/net/bpf_jit_comp.c
-@@ -58,10 +58,14 @@ struct jit_ctx {
- 	int *offset;
- 	__le32 *image;
- 	u32 stack_size;
-+	int reg0_in_reg1;
- };
- 
- static inline int bpf2a64(struct jit_ctx *ctx, int bpf_reg)
- {
-+	if (ctx->reg0_in_reg1 && bpf_reg == BPF_REG_0)
-+		bpf_reg = BPF_REG_1;
-+
- 	return bpf2a64_default[bpf_reg];
- }
- 
-@@ -338,6 +342,47 @@ static void build_epilogue(struct jit_ctx *ctx)
- 	emit(A64_RET(A64_LR), ctx);
- }
- 
-+static int dead_register(const struct jit_ctx *ctx, int offset, int bpf_reg)
-+{
-+	const struct bpf_prog *prog = ctx->prog;
-+	int i;
-+
-+	for (i = offset; i < prog->len; ++i) {
-+		const struct bpf_insn *insn = &prog->insnsi[i];
-+		const u8 code = insn->code;
-+		const u8 bpf_dst = insn->dst_reg;
-+		const u8 bpf_src = insn->src_reg;
-+		const int writes_dst = !((code & BPF_ST) || (code & BPF_STX)
-+					 || (code & BPF_JMP32) || (code & BPF_JMP));
-+		const int reads_dst  = !((code & BPF_LD));
-+		const int reads_src  = true;
-+
-+		/* Calls are a bit special in that they clobber a bunch of regisers. */
-+		if ((code & (BPF_JMP | BPF_CALL)) || (code & (BPF_JMP | BPF_TAIL_CALL)))
-+			if ((bpf_reg >= BPF_REG_0) && (bpf_reg <= BPF_REG_5))
-+				return false;
-+
-+		/* Registers that are read before they're written are alive.
-+		 * Most opcodes are of the form DST = DEST op SRC, but there
-+		 * are some exceptions.*/
-+		if (bpf_src == bpf_reg && reads_src)
-+			return false;
-+
-+		if (bpf_dst == bpf_reg && reads_dst)
-+			return false;
-+		
-+		if (bpf_dst == bpf_reg && writes_dst)
-+			return true;
-+
-+		/* Most BPF instructions are 8 bits long, but some ar 16 bits
-+		 * long. */
-+		if (code & (BPF_LD | BPF_IMM | BPF_DW))
-+			++i;
-+	}
-+
-+	return true;
-+}
-+
- /* JITs an eBPF instruction.
-  * Returns:
-  * 0  - successfully JITed an 8-byte eBPF instruction.
-@@ -348,7 +393,7 @@ static int build_insn(const struct bpf_insn *insn, struct jit_ctx *ctx,
- 		      bool extra_pass)
- {
- 	const u8 code = insn->code;
--	const u8 dstw = bpf2a64(ctx, insn->dst_reg);
-+	u8 dstw;
- 	const u8 dstr = bpf2a64(ctx, insn->dst_reg);
- 	const u8 src = bpf2a64(ctx, insn->src_reg);
- 	const u8 tmp = bpf2a64(ctx, TMP_REG_1);
-@@ -374,6 +419,27 @@ static int build_insn(const struct bpf_insn *insn, struct jit_ctx *ctx,
- #define check_imm19(imm) check_imm(19, imm)
- #define check_imm26(imm) check_imm(26, imm)
- 
-+	/* Handle BPF_REG_0, which may be in the wrong place because the ARM64
-+	 * ABI doesn't match the BPF ABI for function calls. */
-+	if (ctx->reg0_in_reg1) {
-+		/* If we're writing BPF_REG_0 then we don't need to do any
-+		 * extra work to get the registers back in their correct
-+		 * locations. */
-+		if (insn->dst_reg == BPF_REG_0)
-+			ctx->reg0_in_reg1 = false;
-+
-+		/* If we're writing to BPF_REG_1 then we need to save BPF_REG_0
-+		 * into the correct location if it's still alive, as otherwise
-+		 * it will be clobbered. */
-+		if (insn->dst_reg == BPF_REG_1) {
-+			if (!dead_register(ctx, off + 1, BPF_REG_0))
-+				emit(A64_MOV(1, A64_R(7), A64_R(0)), ctx);
-+			ctx->reg0_in_reg1 = false;
-+		}
-+	}
-+
-+	dstw = bpf2a64(ctx, insn->dst_reg);
-+
- 	switch (code) {
- 	/* dst = src */
- 	case BPF_ALU | BPF_MOV | BPF_X:
-@@ -640,7 +706,6 @@ static int build_insn(const struct bpf_insn *insn, struct jit_ctx *ctx,
- 	/* function call */
- 	case BPF_JMP | BPF_CALL:
- 	{
--		const u8 r0 = bpf2a64(ctx, BPF_REG_0);
- 		bool func_addr_fixed;
- 		u64 func_addr;
- 		int ret;
-@@ -651,7 +716,7 @@ static int build_insn(const struct bpf_insn *insn, struct jit_ctx *ctx,
- 			return ret;
- 		emit_addr_mov_i64(tmp, func_addr, ctx);
- 		emit(A64_BLR(tmp), ctx);
--		emit(A64_MOV(1, r0, A64_R(0)), ctx);
-+		ctx->reg0_in_reg1 = true;
- 		break;
- 	}
- 	/* tail call */
--- 
-2.25.0.341.g760bfbb309-goog
+> select CONFIG_ARCH_HAS_DEBUG_VM_PGTABLE which for now is limited to x86 an=
+d
+> arm64. Going forward, other architectures too can enable this after fixing=
 
+> build or runtime problems (if any) with their page table helpers.
+
+What=E2=80=99s the value of this block of new code? It only supports x86 and=
+ arm64 which are supposed to be good now. Did those tests ever find any regr=
+ession or this is almost only useful for new architectures which only happen=
+ed once in a few years? The worry if not many people will use this config an=
+d code those that much in the future because it is inefficient to find bugs,=
+ it will simply be rotten like a few other debugging options out there we ha=
+ve in the mainline that will be a pain to remove later on.=
