@@ -2,115 +2,103 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3C86414B2F9
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Jan 2020 11:49:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7E11F14B302
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Jan 2020 11:50:16 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725997AbgA1Ks7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 28 Jan 2020 05:48:59 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:40928 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725901AbgA1Ks7 (ORCPT
+        id S1726143AbgA1KuL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 28 Jan 2020 05:50:11 -0500
+Received: from smtp-fw-2101.amazon.com ([72.21.196.25]:37368 "EHLO
+        smtp-fw-2101.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725901AbgA1KuK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 Jan 2020 05:48:59 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=CNzsEssv2U2BQoZ0e4P2mdfZ/WHkr2kZtAUOWkDXCNQ=; b=m2rW2+a8mL4KRYTAsWcx1j7fw
-        e3NPpzDimNhAUDZ+MRcWP+PGxRghb8bvBratooFlxaiVaIjUl+ifcXG4aIkAwFIFB+yFJs+STiqMx
-        hRpPPu9JMQullMsYfFDl1khUbqKBLSBciKo8h30y+XPR/1wkewFlto3AKByVqBmVkcEiNTZfmxKdt
-        osE5oCdW2uVSSOG14peWoJT5IdgsQg0JRBo8aU3Wi1LZvR5BY5bUNHR7ctHnvZuoveQ38hOnDsESV
-        OLbFKWfymwepmkL/j4uO5HZSp2W8bLJ1H/OU6ns8W+Qe75IjrjpCgkzULEZZeNeiRtNkI7+YAqVbq
-        tiYAH+Y+A==;
-Received: from willy by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1iwOQT-0008Mh-IC; Tue, 28 Jan 2020 10:48:57 +0000
-Date:   Tue, 28 Jan 2020 02:48:57 -0800
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Michal Hocko <mhocko@kernel.org>
-Cc:     Cong Wang <xiyou.wangcong@gmail.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        linux-mm <linux-mm@kvack.org>, Mel Gorman <mgorman@suse.de>,
-        Vlastimil Babka <vbabka@suse.cz>
-Subject: Re: [PATCH] mm: avoid blocking lock_page() in kcompactd
-Message-ID: <20200128104857.GC6615@bombadil.infradead.org>
-References: <20200110073822.GC29802@dhcp22.suse.cz>
- <CAM_iQpVN4MNhcK0TXvhmxsCdkVOqQ4gZBzkDHykLocPC6Va7LQ@mail.gmail.com>
- <20200121090048.GG29276@dhcp22.suse.cz>
- <CAM_iQpU0p7JLyQ4mQ==Kd7+0ugmricsEAp1ST2ShAZar2BLAWg@mail.gmail.com>
- <20200126233935.GA11536@bombadil.infradead.org>
- <20200127150024.GN1183@dhcp22.suse.cz>
- <20200127190653.GA8708@bombadil.infradead.org>
- <20200128081712.GA18145@dhcp22.suse.cz>
- <20200128083044.GB6615@bombadil.infradead.org>
- <20200128091352.GC18145@dhcp22.suse.cz>
+        Tue, 28 Jan 2020 05:50:10 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
+  t=1580208609; x=1611744609;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   mime-version;
+  bh=WYtCBgBVN8ObAntGrLP9PSwj39O1B410LMI+5OpI30E=;
+  b=nTDNH8XYvUKl0hzaXfJUaJG7iblk5gCxNUulLYXN2goLXts0pgEpZlFz
+   xpoUdDptLQ6d3NdcRvX66fHJIDz470gq997a2s8jwnNETxOzqU3uSlONQ
+   +jOl2EQSJEuBKOGD4nfrGlbUeKCgZS6h0HW1w5j8MrhzVABWQLP4TQ29u
+   A=;
+IronPort-SDR: 0Hsb+qv42wSiM41C93C4a1LfhcjySaLvJzM+hKrBuLySIDMN7FQIj68NhS/Pw2n8brqfJ6m+/6
+ U5kUDS2M0P6g==
+X-IronPort-AV: E=Sophos;i="5.70,373,1574121600"; 
+   d="scan'208";a="14547675"
+Received: from iad12-co-svc-p1-lb1-vlan2.amazon.com (HELO email-inbound-relay-2b-5bdc5131.us-west-2.amazon.com) ([10.43.8.2])
+  by smtp-border-fw-out-2101.iad2.amazon.com with ESMTP; 28 Jan 2020 10:50:06 +0000
+Received: from EX13MTAUEA002.ant.amazon.com (pdx4-ws-svc-p6-lb7-vlan3.pdx.amazon.com [10.170.41.166])
+        by email-inbound-relay-2b-5bdc5131.us-west-2.amazon.com (Postfix) with ESMTPS id 3B6FFA24EE;
+        Tue, 28 Jan 2020 10:50:05 +0000 (UTC)
+Received: from EX13D31EUA001.ant.amazon.com (10.43.165.15) by
+ EX13MTAUEA002.ant.amazon.com (10.43.61.77) with Microsoft SMTP Server (TLS)
+ id 15.0.1236.3; Tue, 28 Jan 2020 10:50:04 +0000
+Received: from u886c93fd17d25d.ant.amazon.com (10.43.161.74) by
+ EX13D31EUA001.ant.amazon.com (10.43.165.15) with Microsoft SMTP Server (TLS)
+ id 15.0.1367.3; Tue, 28 Jan 2020 10:49:56 +0000
+From:   <sjpark@amazon.com>
+To:     Qian Cai <cai@lca.pw>
+CC:     <sjpark@amazon.com>, <akpm@linux-foundation.org>,
+        SeongJae Park <sjpark@amazon.de>, <sj38.park@gmail.com>,
+        <acme@kernel.org>, <amit@kernel.org>, <brendan.d.gregg@gmail.com>,
+        <corbet@lwn.net>, <dwmw@amazon.com>, <mgorman@suse.de>,
+        <rostedt@goodmis.org>, <kirill@shutemov.name>,
+        <brendanhiggins@google.com>, <colin.king@canonical.com>,
+        <minchan@kernel.org>, <vdavydov.dev@gmail.com>,
+        <vdavydov@parallels.com>, <linux-mm@kvack.org>,
+        <linux-doc@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: Re: Re: [PATCH v2 0/9] Introduce Data Access MONitor (DAMON)
+Date:   Tue, 28 Jan 2020 11:49:42 +0100
+Message-ID: <20200128104942.11419-1-sjpark@amazon.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <D20B234E-04EE-4410-9B27-FF63AB3E1808@lca.pw> (raw)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200128091352.GC18145@dhcp22.suse.cz>
+Content-Type: text/plain
+X-Originating-IP: [10.43.161.74]
+X-ClientProxiedBy: EX13D39UWA001.ant.amazon.com (10.43.160.54) To
+ EX13D31EUA001.ant.amazon.com (10.43.165.15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jan 28, 2020 at 10:13:52AM +0100, Michal Hocko wrote:
-> On Tue 28-01-20 00:30:44, Matthew Wilcox wrote:
-> > On Tue, Jan 28, 2020 at 09:17:12AM +0100, Michal Hocko wrote:
-> > > On Mon 27-01-20 11:06:53, Matthew Wilcox wrote:
-> > > > On Mon, Jan 27, 2020 at 04:00:24PM +0100, Michal Hocko wrote:
-> > > > > On Sun 26-01-20 15:39:35, Matthew Wilcox wrote:
-> > > > > > On Sun, Jan 26, 2020 at 11:53:55AM -0800, Cong Wang wrote:
-> > > > > > > I suspect the process gets stuck in the retry loop in try_charge(), as
-> > > > > > > the _shortest_ stacktrace of the perf samples indicated:
-> > > > > > > 
-> > > > > > > cycles:ppp:
-> > > > > > >         ffffffffa72963db mem_cgroup_iter
-> > > > > > >         ffffffffa72980ca mem_cgroup_oom_unlock
-> > > > > > >         ffffffffa7298c15 try_charge
-> > > > > > >         ffffffffa729a886 mem_cgroup_try_charge
-> > > > > > >         ffffffffa720ec03 __add_to_page_cache_locked
-> > > > > > >         ffffffffa720ee3a add_to_page_cache_lru
-> > > > > > >         ffffffffa7312ddb iomap_readpages_actor
-> > > > > > >         ffffffffa73133f7 iomap_apply
-> > > > > > >         ffffffffa73135da iomap_readpages
-> > > > > > >         ffffffffa722062e read_pages
-> > > > > > >         ffffffffa7220b3f __do_page_cache_readahead
-> > > > > > >         ffffffffa7210554 filemap_fault
-> > > > > > >         ffffffffc039e41f __xfs_filemap_fault
-> > > > > > >         ffffffffa724f5e7 __do_fault
-> > > > > > >         ffffffffa724c5f2 __handle_mm_fault
-> > > > > > >         ffffffffa724cbc6 handle_mm_fault
-> > > > > > >         ffffffffa70a313e __do_page_fault
-> > > > > > >         ffffffffa7a00dfe page_fault
-> > > 
-> > > I am not deeply familiar with the readahead code. But is there really a
-> > > high oerder allocation (order > 1) that would trigger compaction in the
-> > > phase when pages are locked?
-> > 
-> > Thanks to sl*b, yes:
-> > 
-> > radix_tree_node    80890 102536    584   28    4 : tunables    0    0    0 : slabdata   3662   3662      0
-> > 
-> > so it's allocating 4 pages for an allocation of a 576 byte node.
+On Tue, 28 Jan 2020 05:20:35 -0500 Qian Cai <cai@lca.pw> wrote:
+
 > 
-> I am not really sure that we do sync migration for costly orders.
-
-Doesn't the stack trace above indicate that we're doing migration as
-the result of an allocation in add_to_page_cache_lru()?
-
-> > > Btw. the compaction rejects to consider file backed pages when __GFP_FS
-> > > is not present AFAIR.
-> > 
-> > Ah, that would save us.
 > 
-> So the NOFS comes from the mapping GFP mask, right? That is something I
-> was hoping to get rid of eventually :/ Anyway it would be better to have
-> an explicit NOFS with a comment explaining why we need that. If for
-> nothing else then for documentation.
+> > On Jan 28, 2020, at 3:58 AM, sjpark@amazon.com wrote:
+> > 
+> > This patchset introduces a new kernel module for practical monitoring of data
+> > accesses, namely DAMON.
+> > 
+> > The patches are organized in the following sequence.  The first four patches
+> > implements the core logic of DAMON one by one.  After that, the fifth patch
+> > implements DAMON's debugfs interface for users.  To provide a minimal reference
+> > to the low level interface and for more convenient use/tests of the DAMON, the
+> > sixth patch implements an user space tool.  The seventh patch adds a document
+> > for administrators of DAMON, and the eightth patch provides DAMON's kunit
+> > tests.  Finally, the ninth patch implements a tracepoint for DAMON.  As the
+> > tracepoint prints every monitoring results, it will be easily integrated with
+> > other tracers supporting tracepoints including perf.
+> 
+> I am a bit surprised that this patchset did not include perf maintainers which makes me wonder if there is any attempt to discuss first if we actually need a whole new subsystem for it or a existing tool can be enhanced.
 
-I'd also like to see the mapping GFP mask go away, but rather than seeing
-an explicit GFP_NOFS here, I'd rather see the memalloc_nofs API used.
-I just don't understand the whole problem space well enough to know
-where to put the call for best effect.
+For the comments from perf maintainers, I added Steven Rostedt and Arnaldo
+Carvalho de Melo first, but I might missed someone.  If you recommend some more
+people, I will add them to recipients.
+
+I made DAMON as a new subsystem because I think no existing subsystem fits well
+to be a base of DAMON, due to DAMON's unique goals and mechanisms described
+below in the original cover letter.
+
+The existing subsystem that most similar to DAMON might be 'mm/page_idle.c'.
+However, there are many conceptual differences with DAMON.  One biggest
+difference I think is the target.  'page_idle' deals with physical page frames
+while DAMON deals with virtual address of specific processes.
+
+Nevertheless, if you have some different opinion, please let me know.
+
+
+Thanks,
+SeongJae Park
