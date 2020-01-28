@@ -2,36 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CD42B14B880
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Jan 2020 15:24:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BC42414B884
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Jan 2020 15:24:27 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731418AbgA1OYQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 28 Jan 2020 09:24:16 -0500
-Received: from mail.kernel.org ([198.145.29.99]:50816 "EHLO mail.kernel.org"
+        id S1731940AbgA1OYY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 28 Jan 2020 09:24:24 -0500
+Received: from mail.kernel.org ([198.145.29.99]:50896 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731405AbgA1OYN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 Jan 2020 09:24:13 -0500
+        id S1730619AbgA1OYP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 28 Jan 2020 09:24:15 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4860621739;
-        Tue, 28 Jan 2020 14:24:12 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id BA45821739;
+        Tue, 28 Jan 2020 14:24:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1580221452;
-        bh=5YYtm9ma19c214WP3Vz1E0GoAaNZU29FxW2eDLaO3UI=;
+        s=default; t=1580221455;
+        bh=DmRJo0p4TExwlSUs+a2X+E6ya8Q/AADkX/YVkV2Pce4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Ov0VIQwndMtRm4q57rK1Yu386ySAeoukLXNPavYY4HAaCcXaP/8tDYZUlel+Dh2DW
-         b1JDUi0Yl+hVgJi7Yzi11bqVy5Om79P5hRPU1IOiCm/h6JKHdr245KlCzMVL95mnUw
-         YfD3Ec9SSQX6lTRMS7idC7ZzTEJ7qOFv3D6zIQpc=
+        b=UEV1HTxj2ODyQBj9ZF7wEoW1Q61x/5VmXGcc6xJApDsk1uDxKo0f/sxSnKAICCW84
+         J9RaysjcAVRVDI4vnngzfeM1cuOmchx69j2FR3mOdPSJ3eyi2QtV2q5jgIMuaEscgB
+         pYMolc7VC/awg9JFgJ05RtC/Bq9TFMfBvywiKjVw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>,
-        Rui Miguel Silva <rmfrfs@gmail.com>,
+        stable@vger.kernel.org, Colin Ian King <colin.king@canonical.com>,
+        Kalle Valo <kvalo@codeaurora.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 193/271] staging: greybus: light: fix a couple double frees
-Date:   Tue, 28 Jan 2020 15:05:42 +0100
-Message-Id: <20200128135906.949065403@linuxfoundation.org>
+Subject: [PATCH 4.9 194/271] bcma: fix incorrect update of BCMA_CORE_PCI_MDIO_DATA
+Date:   Tue, 28 Jan 2020 15:05:43 +0100
+Message-Id: <20200128135907.025416043@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
 In-Reply-To: <20200128135852.449088278@linuxfoundation.org>
 References: <20200128135852.449088278@linuxfoundation.org>
@@ -44,67 +44,46 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
+From: Colin Ian King <colin.king@canonical.com>
 
-[ Upstream commit 329101244f214952606359d254ae883b7109e1a5 ]
+[ Upstream commit 420c20be08a4597404d272ae9793b642401146eb ]
 
-The problem is in gb_lights_request_handler().  If we get a request to
-change the config then we release the light with gb_lights_light_release()
-and re-allocated it.  However, if the allocation fails part way through
-then we call gb_lights_light_release() again.  This can lead to a couple
-different double frees where we haven't cleared out the original values:
+An earlier commit re-worked the setting of the bitmask and is now
+assigning v with some bit flags rather than bitwise or-ing them
+into v, consequently the earlier bit-settings of v are being lost.
+Fix this by replacing an assignment with the bitwise or instead.
 
-	gb_lights_light_v4l2_unregister(light);
-	...
-	kfree(light->channels);
-	kfree(light->name);
-
-I also made a small change to how we set "light->channels_count = 0;".
-The original code handled this part fine and did not cause a use after
-free but it was sort of complicated to read.
-
-Fixes: 2870b52bae4c ("greybus: lights: add lights implementation")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-Acked-by: Rui Miguel Silva <rmfrfs@gmail.com>
-Link: https://lore.kernel.org/r/20190829122839.GA20116@mwanda
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Addresses-Coverity: ("Unused value")
+Fixes: 2be25cac8402 ("bcma: add constants for PCI and use them")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/staging/greybus/light.c | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+ drivers/bcma/driver_pci.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/staging/greybus/light.c b/drivers/staging/greybus/light.c
-index 9f01427f35f91..1cb82cc28aa76 100644
---- a/drivers/staging/greybus/light.c
-+++ b/drivers/staging/greybus/light.c
-@@ -1102,21 +1102,21 @@ static void gb_lights_channel_release(struct gb_channel *channel)
- static void gb_lights_light_release(struct gb_light *light)
- {
- 	int i;
--	int count;
+diff --git a/drivers/bcma/driver_pci.c b/drivers/bcma/driver_pci.c
+index f499a469e66d0..12b2cc9a3fbe8 100644
+--- a/drivers/bcma/driver_pci.c
++++ b/drivers/bcma/driver_pci.c
+@@ -78,7 +78,7 @@ static u16 bcma_pcie_mdio_read(struct bcma_drv_pci *pc, u16 device, u8 address)
+ 		v |= (address << BCMA_CORE_PCI_MDIODATA_REGADDR_SHF_OLD);
+ 	}
  
- 	light->ready = false;
+-	v = BCMA_CORE_PCI_MDIODATA_START;
++	v |= BCMA_CORE_PCI_MDIODATA_START;
+ 	v |= BCMA_CORE_PCI_MDIODATA_READ;
+ 	v |= BCMA_CORE_PCI_MDIODATA_TA;
  
--	count = light->channels_count;
--
- 	if (light->has_flash)
- 		gb_lights_light_v4l2_unregister(light);
-+	light->has_flash = false;
+@@ -121,7 +121,7 @@ static void bcma_pcie_mdio_write(struct bcma_drv_pci *pc, u16 device,
+ 		v |= (address << BCMA_CORE_PCI_MDIODATA_REGADDR_SHF_OLD);
+ 	}
  
--	for (i = 0; i < count; i++) {
-+	for (i = 0; i < light->channels_count; i++)
- 		gb_lights_channel_release(&light->channels[i]);
--		light->channels_count--;
--	}
-+	light->channels_count = 0;
-+
- 	kfree(light->channels);
-+	light->channels = NULL;
- 	kfree(light->name);
-+	light->name = NULL;
- }
- 
- static void gb_lights_release(struct gb_lights *glights)
+-	v = BCMA_CORE_PCI_MDIODATA_START;
++	v |= BCMA_CORE_PCI_MDIODATA_START;
+ 	v |= BCMA_CORE_PCI_MDIODATA_WRITE;
+ 	v |= BCMA_CORE_PCI_MDIODATA_TA;
+ 	v |= data;
 -- 
 2.20.1
 
