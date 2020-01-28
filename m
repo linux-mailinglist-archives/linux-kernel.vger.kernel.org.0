@@ -2,40 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E179814B155
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Jan 2020 10:07:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2965F14B168
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Jan 2020 10:07:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726150AbgA1JHA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 28 Jan 2020 04:07:00 -0500
-Received: from mx08-00178001.pphosted.com ([91.207.212.93]:8612 "EHLO
+        id S1726428AbgA1JHT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 28 Jan 2020 04:07:19 -0500
+Received: from mx08-00178001.pphosted.com ([91.207.212.93]:8790 "EHLO
         mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1725959AbgA1JG6 (ORCPT
+        by vger.kernel.org with ESMTP id S1725959AbgA1JHC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 Jan 2020 04:06:58 -0500
+        Tue, 28 Jan 2020 04:07:02 -0500
 Received: from pps.filterd (m0046660.ppops.net [127.0.0.1])
-        by mx07-00178001.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 00S93bVd014413;
-        Tue, 28 Jan 2020 10:06:49 +0100
+        by mx07-00178001.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 00S93bVg014413;
+        Tue, 28 Jan 2020 10:06:51 +0100
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=st.com; h=from : to : cc : subject
  : date : message-id : in-reply-to : references : mime-version :
  content-type; s=STMicroelectronics;
- bh=uwVKjFIFlaDhQtYabxIoz0B6CJflTfSuEcRda3jxomk=;
- b=POcqSICWxXBkWXwU3yLBQ4gMYEIjmvGMVpDFsQm0QJ1SuIRpDWyS8fTq2D41GMXsJXXh
- ByPep/f8kaPqPvMxhXFxveXNTwOVN0yxXNR7W4EFCbDOW0cTnzZBkjmHLGiX6qDrhMQl
- EfXz+2E3Z/StkbpnGnyZhWaqcAocPmgW6we8pQ7tyFIQof8DBOlj70ctqesWfP6mrQe1
- efQQU5+mwgaYQ+jA7ahIOdGW1rc0ai+76/CsMNZoXeEoKMuOik63c+G1kXvRtNUPX2rI
- x3CmD5fcoKghtVufNh4Yl4OZBtjTl/NzferOfwyuAOAqhN1oqEZC/exmP6itvHYvXAZ+ 1g== 
+ bh=2rv368pE4g4zz6kp57DPDD0CXhY4gWUUealEUKO5UXo=;
+ b=MjTccmsswg7XdUI+bIb23dLtsJ/i1ae3KT+vW+spslVJmeQADEbcVu0S9lO6LJEkbF/0
+ IxTMr5kh5sihtLS+gTRP8SiQcJfwwO1wKb3bQh2MWLbPjtU8OtMl3uyFur6kqKanv+4i
+ qOzImuTRnu7h43EyjsBvWzLx1+3EhBJ/XXf6ce3+UNQU4VjHdT/+3pRdFqHPx7/rLlUi
+ 1FOU074lKe3ShOGyGkGuP1ISdYEd1jbsRLWUiHHLmpNuCxKBr+GwKPzcCfnfyhK5gUpi
+ szx3TeDZkfmOU4SJpFhEfj33aX718Kd2NvtBlBnHrE5mQqBglmbxntFXNduwDnE8YZXV BQ== 
 Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx07-00178001.pphosted.com with ESMTP id 2xrbpaw4sv-1
+        by mx07-00178001.pphosted.com with ESMTP id 2xrbpaw4t4-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 28 Jan 2020 10:06:49 +0100
+        Tue, 28 Jan 2020 10:06:50 +0100
 Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 88D6B100044;
-        Tue, 28 Jan 2020 10:06:42 +0100 (CET)
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 95F3D10004B;
+        Tue, 28 Jan 2020 10:06:43 +0100 (CET)
 Received: from Webmail-eu.st.com (sfhdag6node1.st.com [10.75.127.16])
-        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 7A0A4212A35;
-        Tue, 28 Jan 2020 10:06:42 +0100 (CET)
-Received: from localhost (10.75.127.47) by SFHDAG6NODE1.st.com (10.75.127.16)
- with Microsoft SMTP Server (TLS) id 15.0.1473.3; Tue, 28 Jan 2020 10:06:42
+        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 84D7B212A38;
+        Tue, 28 Jan 2020 10:06:43 +0100 (CET)
+Received: from localhost (10.75.127.46) by SFHDAG6NODE1.st.com (10.75.127.16)
+ with Microsoft SMTP Server (TLS) id 15.0.1473.3; Tue, 28 Jan 2020 10:06:43
  +0100
 From:   Ludovic Barre <ludovic.barre@st.com>
 To:     Ulf Hansson <ulf.hansson@linaro.org>,
@@ -48,16 +48,16 @@ CC:     <srinivas.kandagatla@linaro.org>,
         <linux-mmc@vger.kernel.org>,
         <linux-stm32@st-md-mailman.stormreply.com>,
         Ludovic Barre <ludovic.barre@st.com>
-Subject: [PATCH V2 3/9] mmc: mmci: add a reference at mmc_host_ops in mmci struct
-Date:   Tue, 28 Jan 2020 10:06:30 +0100
-Message-ID: <20200128090636.13689-4-ludovic.barre@st.com>
+Subject: [PATCH V2 4/9] mmc: mmci: add private pointer for variant
+Date:   Tue, 28 Jan 2020 10:06:31 +0100
+Message-ID: <20200128090636.13689-5-ludovic.barre@st.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20200128090636.13689-1-ludovic.barre@st.com>
 References: <20200128090636.13689-1-ludovic.barre@st.com>
 MIME-Version: 1.0
 Content-Type: text/plain
-X-Originating-IP: [10.75.127.47]
-X-ClientProxiedBy: SFHDAG8NODE2.st.com (10.75.127.23) To SFHDAG6NODE1.st.com
+X-Originating-IP: [10.75.127.46]
+X-ClientProxiedBy: SFHDAG4NODE2.st.com (10.75.127.11) To SFHDAG6NODE1.st.com
  (10.75.127.16)
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.572
  definitions=2020-01-28_02:2020-01-24,2020-01-28 signatures=0
@@ -66,51 +66,28 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The variant init function may need to add a mmc_host_ops,
-for example to add the execute_tuning support if this feature
-is available.
-This patch adds mmc_host_ops pointer in mmci struct.
+In variant init function, some references may be allocated for
+variant specific usage. Add a private void* to mmci_host struct
+allows at variant functions to access on this references by
+mmci_host structure.
 
 Signed-off-by: Ludovic Barre <ludovic.barre@st.com>
 ---
- drivers/mmc/host/mmci.c | 4 ++--
  drivers/mmc/host/mmci.h | 1 +
- 2 files changed, 3 insertions(+), 2 deletions(-)
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/mmc/host/mmci.c b/drivers/mmc/host/mmci.c
-index e9ffce8d41ea..d0a041c9e6cd 100644
---- a/drivers/mmc/host/mmci.c
-+++ b/drivers/mmc/host/mmci.c
-@@ -1933,6 +1933,8 @@ static int mmci_probe(struct amba_device *dev,
- 
- 	host = mmc_priv(mmc);
- 	host->mmc = mmc;
-+	host->mmc_ops = &mmci_ops;
-+	mmc->ops = &mmci_ops;
- 
- 	/*
- 	 * Some variant (STM32) doesn't have opendrain bit, nevertheless
-@@ -2072,8 +2074,6 @@ static int mmci_probe(struct amba_device *dev,
- 	host->stop_abort.arg = 0;
- 	host->stop_abort.flags = MMC_RSP_R1B | MMC_CMD_AC;
- 
--	mmc->ops = &mmci_ops;
--
- 	/* We support these PM capabilities. */
- 	mmc->pm_caps |= MMC_PM_KEEP_POWER;
- 
 diff --git a/drivers/mmc/host/mmci.h b/drivers/mmc/host/mmci.h
-index ea6a0b5779d4..55acc0971a44 100644
+index 55acc0971a44..ddcdfb827996 100644
 --- a/drivers/mmc/host/mmci.h
 +++ b/drivers/mmc/host/mmci.h
-@@ -407,6 +407,7 @@ struct mmci_host {
- 	u32			mask1_reg;
- 	u8			vqmmc_enabled:1;
- 	struct mmci_platform_data *plat;
-+	struct mmc_host_ops	*mmc_ops;
+@@ -410,6 +410,7 @@ struct mmci_host {
+ 	struct mmc_host_ops	*mmc_ops;
  	struct mmci_host_ops	*ops;
  	struct variant_data	*variant;
++	void			*variant_priv;
  	struct pinctrl		*pinctrl;
+ 	struct pinctrl_state	*pins_opendrain;
+ 
 -- 
 2.17.1
 
