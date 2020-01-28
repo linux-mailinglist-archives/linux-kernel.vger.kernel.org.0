@@ -2,149 +2,281 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5685114B256
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Jan 2020 11:13:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3C97814B25F
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Jan 2020 11:15:14 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725965AbgA1KNi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 28 Jan 2020 05:13:38 -0500
-Received: from lelv0143.ext.ti.com ([198.47.23.248]:48280 "EHLO
-        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725882AbgA1KNh (ORCPT
+        id S1726257AbgA1KPM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 28 Jan 2020 05:15:12 -0500
+Received: from mx07-00178001.pphosted.com ([62.209.51.94]:2814 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725926AbgA1KPK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 Jan 2020 05:13:37 -0500
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 00SADID0118110;
-        Tue, 28 Jan 2020 04:13:18 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1580206398;
-        bh=+C6eAOrqKoHaKj+enDAIeqTSENNe2U0bzKRvVZeWNHA=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=dQIiCreocT+01MqIJWtH6uYJvxVSEgMvgkg3OYg3HkzsmI0GycsfMv4V4JLyaWwMO
-         l8Lz+WJ/GsmUPkZIh7qQ7bBhrrR8dT/W7ux6sAlBO30UdaB1SkJZMPZpacKLPU03F+
-         erZLFbYbpVVmFIPD5qEC2hNeHNE/DdBzEpwTwDtM=
-Received: from DLEE100.ent.ti.com (dlee100.ent.ti.com [157.170.170.30])
-        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 00SADIvw127549
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Tue, 28 Jan 2020 04:13:18 -0600
-Received: from DLEE105.ent.ti.com (157.170.170.35) by DLEE100.ent.ti.com
- (157.170.170.30) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Tue, 28
- Jan 2020 04:13:17 -0600
-Received: from fllv0039.itg.ti.com (10.64.41.19) by DLEE105.ent.ti.com
- (157.170.170.35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
- Frontend Transport; Tue, 28 Jan 2020 04:13:17 -0600
-Received: from [192.168.2.6] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by fllv0039.itg.ti.com (8.15.2/8.15.2) with ESMTP id 00SADEG4107748;
-        Tue, 28 Jan 2020 04:13:15 -0600
-Subject: Re: [PATCH v3 1/2] dt-bindings: display: bridge: Add documentation
- for Toshiba tc358768
-To:     Rob Herring <robh@kernel.org>
-CC:     <airlied@linux.ie>, <daniel@ffwll.ch>, <mark.rutland@arm.com>,
-        <a.hajda@samsung.com>, <narmstrong@baylibre.com>,
-        <tomi.valkeinen@ti.com>, <dri-devel@lists.freedesktop.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <Laurent.pinchart@ideasonboard.com>, <jonas@kwiboo.se>,
-        <jernej.skrabec@siol.net>
-References: <20200127105634.7638-1-peter.ujfalusi@ti.com>
- <20200127105634.7638-2-peter.ujfalusi@ti.com> <20200127184939.GA4237@bogus>
-From:   Peter Ujfalusi <peter.ujfalusi@ti.com>
-Message-ID: <17fbdcd2-48fa-1b09-683d-cef7e1e40046@ti.com>
-Date:   Tue, 28 Jan 2020 12:14:02 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        Tue, 28 Jan 2020 05:15:10 -0500
+Received: from pps.filterd (m0046668.ppops.net [127.0.0.1])
+        by mx07-00178001.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 00SA4Bsx006239;
+        Tue, 28 Jan 2020 11:15:01 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=st.com; h=from : to : cc : subject
+ : date : message-id : mime-version : content-type :
+ content-transfer-encoding; s=STMicroelectronics;
+ bh=XPDA0YgYv7szrLllt+wbRgbm7tyir48cuHVcJnA9Q/c=;
+ b=Urb2AZSyG2CvPWwNfyY6Ynk1ANzLuRA0K+Hlf3NPhAiStpTUdf3+05RVjgWyaQZMZ6fI
+ dlt5u7/kUeYb6j0JbgfSxseSUgvRRVEjDcztwPjx3PoKMxdIgXfXC1PUE9upBqXrZUwg
+ bvKXTUqaK+/u7WvYCy0Esmu7OxiH2Rb2oSOkYYuBjn4pj3css1H9F9iObU5xwVK+GUsF
+ Jxas4tMPpPlgoPByWFjAZ8JWZ+iG4sqF+vZsmT1vhRBZMDfhEZqMSlq329RiVvKR8V+q
+ 4AebQvCMm8dpnv405Rnm9HrchH6ewKJ1aG3ibq7QRNgCaIf6VqElVulIi4AS30RCIP+E Fg== 
+Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
+        by mx07-00178001.pphosted.com with ESMTP id 2xrc1359ch-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 28 Jan 2020 11:15:01 +0100
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 6A6F110002A;
+        Tue, 28 Jan 2020 11:15:00 +0100 (CET)
+Received: from Webmail-eu.st.com (sfhdag3node3.st.com [10.75.127.9])
+        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 3A49F21ED06;
+        Tue, 28 Jan 2020 11:15:00 +0100 (CET)
+Received: from localhost (10.75.127.46) by SFHDAG3NODE3.st.com (10.75.127.9)
+ with Microsoft SMTP Server (TLS) id 15.0.1347.2; Tue, 28 Jan 2020 11:14:59
+ +0100
+From:   Benjamin Gaignard <benjamin.gaignard@st.com>
+To:     <dmitry.torokhov@gmail.com>, <robh+dt@kernel.org>,
+        <mark.rutland@arm.com>, <megous@megous.com>,
+        <mylene.josserand@bootlin.com>
+CC:     <linux-input@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>,
+        Benjamin Gaignard <benjamin.gaignard@st.com>
+Subject: [PATCH] dt-bindings: touchscreen: Convert edt-ft5x06 to json-schema
+Date:   Tue, 28 Jan 2020 11:14:55 +0100
+Message-ID: <20200128101455.4635-1-benjamin.gaignard@st.com>
+X-Mailer: git-send-email 2.15.0
 MIME-Version: 1.0
-In-Reply-To: <20200127184939.GA4237@bogus>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 8bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+X-Originating-IP: [10.75.127.46]
+X-ClientProxiedBy: SFHDAG2NODE2.st.com (10.75.127.5) To SFHDAG3NODE3.st.com
+ (10.75.127.9)
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.572
+ definitions=2020-01-28_02:2020-01-24,2020-01-28 signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Rob,
+Convert the EDT-FT5x06 to DT schema using json-schema.
 
-On 27/01/2020 20.49, Rob Herring wrote:
-> On Mon, Jan 27, 2020 at 12:56:33PM +0200, Peter Ujfalusi wrote:
->> TC358768/TC358778 is a Parallel RGB to MIPI DSI bridge.
->>
->> Signed-off-by: Peter Ujfalusi <peter.ujfalusi@ti.com>
->> ---
->>  .../display/bridge/toshiba,tc358768.yaml      | 158 ++++++++++++++++++
->>  1 file changed, 158 insertions(+)
->>  create mode 100644 Documentation/devicetree/bindings/display/bridge/toshiba,tc358768.yaml
->>
->> diff --git a/Documentation/devicetree/bindings/display/bridge/toshiba,tc358768.yaml b/Documentation/devicetree/bindings/display/bridge/toshiba,tc358768.yaml
->> new file mode 100644
->> index 000000000000..8dd8cca39a77
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/display/bridge/toshiba,tc358768.yaml
->> +examples:
->> +  - |
->> +    i2c1 {
->> +      #address-cells = <1>;
->> +      #size-cells = <0>;
->> +
->> +      dsi_bridge: tc358768@0e {
-> 
-> Generic node names and no leading 0s:
-> 
-> dsi-bridge@e
+Signed-off-by: Benjamin Gaignard <benjamin.gaignard@st.com>
+---
+ .../bindings/input/touchscreen/edt-ft5x06.txt      |  75 -------------
+ .../bindings/input/touchscreen/edt-ft5x06.yaml     | 119 +++++++++++++++++++++
+ 2 files changed, 119 insertions(+), 75 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/input/touchscreen/edt-ft5x06.txt
+ create mode 100644 Documentation/devicetree/bindings/input/touchscreen/edt-ft5x06.yaml
 
-Right, I'll correct it.
+diff --git a/Documentation/devicetree/bindings/input/touchscreen/edt-ft5x06.txt b/Documentation/devicetree/bindings/input/touchscreen/edt-ft5x06.txt
+deleted file mode 100644
+index 0f6950073d6f..000000000000
+--- a/Documentation/devicetree/bindings/input/touchscreen/edt-ft5x06.txt
++++ /dev/null
+@@ -1,75 +0,0 @@
+-FocalTech EDT-FT5x06 Polytouch driver
+-=====================================
+-
+-There are 5 variants of the chip for various touch panel sizes
+-FT5206GE1  2.8" .. 3.8"
+-FT5306DE4  4.3" .. 7"
+-FT5406EE8  7"   .. 8.9"
+-FT5506EEG  7"   .. 8.9"
+-FT5726NEI  5.7” .. 11.6"
+-
+-The software interface is identical for all those chips, so that
+-currently there is no need for the driver to distinguish between the
+-different chips. Nevertheless distinct compatible strings are used so
+-that a distinction can be added if necessary without changing the DT
+-bindings.
+-
+-
+-Required properties:
+- - compatible:  "edt,edt-ft5206"
+-           or:  "edt,edt-ft5306"
+-           or:  "edt,edt-ft5406"
+-           or:  "edt,edt-ft5506"
+-           or:  "evervision,ev-ft5726"
+-           or:  "focaltech,ft6236"
+-
+- - reg:         I2C slave address of the chip (0x38)
+- - interrupts:       interrupt specification for the touchdetect
+-                     interrupt
+-
+-Optional properties:
+- - reset-gpios: GPIO specification for the RESET input
+- - wake-gpios:  GPIO specification for the WAKE input
+- - vcc-supply:  Regulator that supplies the touchscreen
+-
+- - pinctrl-names: should be "default"
+- - pinctrl-0:   a phandle pointing to the pin settings for the
+-                control gpios
+-
+- - threshold:   allows setting the "click"-threshold in the range
+-                from 0 to 80.
+-
+- - gain:        allows setting the sensitivity in the range from 0 to
+-                31. Note that lower values indicate higher
+-                sensitivity.
+-
+- - offset:      allows setting the edge compensation in the range from
+-                0 to 31.
+-
+- - offset-x:    Same as offset, but applies only to the horizontal position.
+-                Range from 0 to 80, only supported by evervision,ev-ft5726
+-                devices.
+-
+- - offset-y:    Same as offset, but applies only to the vertical position.
+-                Range from 0 to 80, only supported by evervision,ev-ft5726
+-                devices.
+-
+- - touchscreen-size-x	   : See touchscreen.txt
+- - touchscreen-size-y	   : See touchscreen.txt
+- - touchscreen-fuzz-x      : See touchscreen.txt
+- - touchscreen-fuzz-y      : See touchscreen.txt
+- - touchscreen-inverted-x  : See touchscreen.txt
+- - touchscreen-inverted-y  : See touchscreen.txt
+- - touchscreen-swapped-x-y : See touchscreen.txt
+-
+-Example:
+-	polytouch: edt-ft5x06@38 {
+-		compatible = "edt,edt-ft5406", "edt,edt-ft5x06";
+-		reg = <0x38>;
+-		pinctrl-names = "default";
+-		pinctrl-0 = <&edt_ft5x06_pins>;
+-		interrupt-parent = <&gpio2>;
+-		interrupts = <5 IRQ_TYPE_EDGE_FALLING>;
+-		reset-gpios = <&gpio2 6 GPIO_ACTIVE_LOW>;
+-		wake-gpios = <&gpio4 9 GPIO_ACTIVE_HIGH>;
+-	};
+diff --git a/Documentation/devicetree/bindings/input/touchscreen/edt-ft5x06.yaml b/Documentation/devicetree/bindings/input/touchscreen/edt-ft5x06.yaml
+new file mode 100644
+index 000000000000..178b7aea0f83
+--- /dev/null
++++ b/Documentation/devicetree/bindings/input/touchscreen/edt-ft5x06.yaml
+@@ -0,0 +1,119 @@
++# SPDX-License-Identifier: GPL-2.0
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/input/touchscreen/edt-ft5x06.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: FocalTech EDT-FT5x06 Polytouch Bindings
++
++description: There are 5 variants of the chip for various touch panel sizes
++             FT5206GE1  2.8" .. 3.8"
++             FT5306DE4  4.3" .. 7"
++             FT5406EE8  7"   .. 8.9"
++             FT5506EEG  7"   .. 8.9"
++             FT5726NEI  5.7” .. 11.6"
++
++maintainers:
++  - Dmitry Torokhov <dmitry.torokhov@gmail.com>
++
++allOf:
++  - $ref: touchscreen.yaml#
++  - if:
++     properties:
++       compatible:
++         contains:
++           enum:
++             - evervision,ev-ft5726
++
++    then:
++      properties:
++        offset-x: true
++        offset-y: true
++
++properties:
++  compatible:
++    enum:
++      - edt,edt-ft5206
++      - edt,edt-ft5306
++      - edt,edt-ft5406
++      - edt,edt-ft5506
++      - evervision,ev-ft5726
++      - focaltech,ft6236
++
++  reg:
++    enum: [ 0x38 ]
++
++  interrupts:
++    maxItems: 1
++
++  reset-gpios:
++    maxItems: 1
++
++  wake-gpios:
++    maxItems: 1
++
++  vcc-supply:
++    maxItems: 1
++
++  gain:
++    description: Allows setting the sensitivity in the range from 0 to 31.
++                 Note that lower values indicate higher sensitivity.
++    $ref: /schemas/types.yaml#/definitions/uint32
++    minimum: 0
++    maximum: 31
++
++  offset:
++    description: Allows setting the edge compensation in the range from 0 to 31.
++    $ref: /schemas/types.yaml#/definitions/uint32
++    minimum: 0
++    maximum: 31
++
++  offset-x:
++    description: Same as offset, but applies only to the horizontal position.
++                 Range from 0 to 80, only supported by evervision,ev-ft5726 devices.
++    $ref: /schemas/types.yaml#/definitions/uint32
++    minimum: 0
++    maximum: 80
++
++  offset-y:
++    description: Same as offset, but applies only to the vertical position.
++                 Range from 0 to 80, only supported by evervision,ev-ft5726 devices.
++    $ref: /schemas/types.yaml#/definitions/uint32
++    minimum: 0
++    maximum: 80
++
++  touchscreen-size-x: true
++  touchscreen-size-y: true
++  touchscreen-fuzz-x: true
++  touchscreen-fuzz-y: true
++  touchscreen-inverted-x: true
++  touchscreen-inverted-y: true
++  touchscreen-swapped-x-y: true
++  interrupt-controller: true
++
++additionalProperties: false
++
++required:
++  - compatible
++  - reg
++  - interrupts
++
++examples:
++  - |
++    #include <dt-bindings/gpio/gpio.h>
++    #include <dt-bindings/interrupt-controller/arm-gic.h>
++    i2c@00000000 {
++      #address-cells = <1>;
++      #size-cells = <0>;
++      edt-ft5x06@38 {
++        compatible = "edt,edt-ft5406";
++        reg = <0x38>;
++        interrupt-parent = <&gpio2>;
++        interrupts = <5 IRQ_TYPE_EDGE_FALLING>;
++        reset-gpios = <&gpio2 6 GPIO_ACTIVE_LOW>;
++        wake-gpios = <&gpio4 9 GPIO_ACTIVE_HIGH>;
++      };
++    };
++
++...
++
+-- 
+2.15.0
 
->> +        compatible = "toshiba,tc358768";
->> +        reg = <0x0e>;
->> +
->> +        clocks = <&tc358768_refclk>;
->> +        clock-names = "refclk";
->> +
->> +        /* GPIO line is inverted before going to the bridge */
->> +        reset-gpios = <&pcf_display_board 0 1 /* GPIO_ACTIVE_LOW */>;
-> 
-> You just need to add the include for the define to work.
-
-You are right, it compiles fine with the include added.
-
-Thank you,
-- Péter
-
->> +
->> +        vddc-supply = <&v1_2d>;
->> +        vddmipi-supply = <&v1_2d>;
->> +        vddio-supply = <&v3_3d>;
->> +
->> +        dsi_bridge_ports: ports {
->> +          #address-cells = <1>;
->> +          #size-cells = <0>;
->> +
->> +          port@0 {
->> +            reg = <0>;
->> +            rgb_in: endpoint {
->> +              remote-endpoint = <&dpi_out>;
->> +              data-lines = <24>;
->> +            };
->> +          };
->> +
->> +          port@1 {
->> +            reg = <1>;
->> +            dsi_out: endpoint {
->> +              remote-endpoint = <&lcd_in>;
->> +            };
->> +          };
->> +        };
->> +      };
->> +    };
->> +    
->> -- 
->> Peter
->>
->> Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
->> Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
->>
-
-
-Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
-Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
