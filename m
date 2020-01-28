@@ -2,122 +2,149 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F3A6414BF30
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Jan 2020 19:08:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5122414BF43
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Jan 2020 19:10:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726764AbgA1SIW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 28 Jan 2020 13:08:22 -0500
-Received: from pandora.armlinux.org.uk ([78.32.30.218]:55994 "EHLO
-        pandora.armlinux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726276AbgA1SIW (ORCPT
+        id S1726905AbgA1SK0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 28 Jan 2020 13:10:26 -0500
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:45596 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726521AbgA1SKZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 Jan 2020 13:08:22 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=27BCOIqr/wU+I4IrmORaozwu+T70UyCl4JtrDd+CI94=; b=gdIevUZ2qK6OpxHho3MufWbPt
-        BAR6uXvIytSdD3mS/dJD8OEbTCxNlo+SuFbDltAklslGG5ORJQI5oY0XhpLsmd41S+k3JOAcWaEBW
-        +qrs0ZAor9GYpxnR9GXp6+VIP6VwicXFHpu/bPZZmkew4W+jAgYv9X4UqMX5avJH7sy+8WApdAnFL
-        En6RDgB4j2zlk+EkA6R0xyPLLJZqEc3UNI75Vo0tYLiFCVfyoRfE9aQqS05qpyloeFTQTOMXZtiiz
-        1Y9ORiDoYgTq8sE0nA1dSdYKIMr/AkfSgmVM+LTMQA4iTk/YzC6rFA2cLC6PqkAthxzzpXk1QGI0b
-        5aCCeNOaA==;
-Received: from shell.armlinux.org.uk ([2001:4d48:ad52:3201:5054:ff:fe00:4ec]:32880)
-        by pandora.armlinux.org.uk with esmtpsa (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256)
-        (Exim 4.90_1)
-        (envelope-from <linux@armlinux.org.uk>)
-        id 1iwVHT-0000c0-EH; Tue, 28 Jan 2020 18:08:10 +0000
-Received: from linux by shell.armlinux.org.uk with local (Exim 4.92)
-        (envelope-from <linux@shell.armlinux.org.uk>)
-        id 1iwVHP-0002ak-1h; Tue, 28 Jan 2020 18:08:03 +0000
-Date:   Tue, 28 Jan 2020 18:08:03 +0000
-From:   Russell King - ARM Linux admin <linux@armlinux.org.uk>
-To:     Andrew Lunn <andrew@lunn.ch>
-Cc:     Jose Abreu <Jose.Abreu@synopsys.com>,
-        Joao Pinto <Joao.Pinto@synopsys.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-stm32@st-md-mailman.stormreply.com" 
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Giuseppe Cavallaro <peppe.cavallaro@st.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        Heiner Kallweit <hkallweit1@gmail.com>
-Subject: Re: [RFC net-next 6/8] net: phylink: Configure MAC/PCS when link is
- up without PHY
-Message-ID: <20200128180802.GD25745@shell.armlinux.org.uk>
-References: <cover.1580122909.git.Jose.Abreu@synopsys.com>
- <9a2136885d9a892ff170be88fdffeda82c778a10.1580122909.git.Jose.Abreu@synopsys.com>
- <20200127112102.GT25745@shell.armlinux.org.uk>
- <BN8PR12MB3266714AE9EC1A97218120B3D30B0@BN8PR12MB3266.namprd12.prod.outlook.com>
- <20200127114600.GU25745@shell.armlinux.org.uk>
- <20200127140038.GD13647@lunn.ch>
- <20200127140834.GW25745@shell.armlinux.org.uk>
- <20200127145107.GE13647@lunn.ch>
+        Tue, 28 Jan 2020 13:10:25 -0500
+Received: by mail-wr1-f67.google.com with SMTP id a6so2556080wrx.12;
+        Tue, 28 Jan 2020 10:10:23 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=THXIcxAQ+jRZ9p0oqCi3Nel8bF5n2Oj6LcOlDPsztjs=;
+        b=AWYfWF6oKD17pcdtJ5MPRnS4jNaFxgWz+hrGuMK8EveAfoNAkLX3ICr7Azw79XCVPO
+         G77K5lfouDTtVlRpWTG9Yx1ZYCSUNCU4dqeVlLsgriStyOEP1KzaG/Op3HEZskuEzoQd
+         7Eqy+B86FPY+cq/BrQ5NBc8iYm+UcQi9WLS/FW1DcBFM0lQrOQhuT6PSsNbZX3RhWXlR
+         RnLj5HoL9EN01j1aFVcJLzr5jF97WkJO2c3CUTML1ldStKQgJ4yNOiPkgsYt7bEBM/Rq
+         km2yigkmrASSnebhXhH5/HvkARTQsWKjRZ33OPPzRz7dgjbzemmX/SZj7GYssp9k8Vpg
+         UD7A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=THXIcxAQ+jRZ9p0oqCi3Nel8bF5n2Oj6LcOlDPsztjs=;
+        b=fC2bjBpTvcmncLQATKC3IPV9pnGKam1enJ04LDmbgxsh65TT/pj9kjeJcL3qDbuXFw
+         wijT9bGpusP3ULwNLs4vNA06M2UUbR3EG6MpR94RReecUDE0h4LHCgeyxPWHd5Sb9dED
+         vHU42PS9GbVPKtdU5StQ0kGso5S1EPMrm2QFb1TF2Cvj3q/k980tmhKXi9/c7OLOGA3t
+         CF5KhCfW6ZzCEl7614BVWqu3UQOwylIZboYJ9H6gTq0iN2oCOBa93flYlOAHiMNIefo7
+         8fjRx8nLidBJAIJVRYDSXhcjwZe/aNE+IfSXIonEXtH1m4qictBqCd7kPss7IkZ3jVfk
+         OCcw==
+X-Gm-Message-State: APjAAAWpXFOiNoNBgM5uDawCOVOcalBqWeYQVZ0/JCgyGlG+bE4Ai896
+        0WWD6KNU259uWZiJ2F2H4os=
+X-Google-Smtp-Source: APXvYqxKqo1EPLOMRvFiZxIKnf+uw/hGtB+hSgdZoNS0pddIbQOsu66CPHcFIrm4EC3y5yr/lDD8Lg==
+X-Received: by 2002:adf:f3cd:: with SMTP id g13mr30628170wrp.54.1580235022924;
+        Tue, 28 Jan 2020 10:10:22 -0800 (PST)
+Received: from localhost (p2E5BEF3F.dip0.t-ipconnect.de. [46.91.239.63])
+        by smtp.gmail.com with ESMTPSA id b67sm4206059wmc.38.2020.01.28.10.10.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 28 Jan 2020 10:10:21 -0800 (PST)
+Date:   Tue, 28 Jan 2020 19:10:20 +0100
+From:   Thierry Reding <thierry.reding@gmail.com>
+To:     Nagarjuna Kristam <nkristam@nvidia.com>
+Cc:     balbi@kernel.org, gregkh@linuxfoundation.org, jonathanh@nvidia.com,
+        mark.rutland@arm.com, robh+dt@kernel.org, kishon@ti.com,
+        devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [Patch V3 12/18] usb: gadget: tegra-xudc: support multiple
+ device modes
+Message-ID: <20200128181020.GJ2293590@ulmo>
+References: <1577704195-2535-1-git-send-email-nkristam@nvidia.com>
+ <1577704195-2535-13-git-send-email-nkristam@nvidia.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="1ou9v+QBCNysIXaH"
 Content-Disposition: inline
-In-Reply-To: <20200127145107.GE13647@lunn.ch>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <1577704195-2535-13-git-send-email-nkristam@nvidia.com>
+User-Agent: Mutt/1.13.1 (2019-12-14)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jan 27, 2020 at 03:51:07PM +0100, Andrew Lunn wrote:
-> I've also had issues with the DSA links, also being configured to
-> 10/Half. That seems to be related to having a phy-mode property in
-> device tree. I need to add a fixed-link property to set the correct
-> speed. Something is broken here, previously the fixed-link was only
-> needed if the speed needed to be lower than the ports maximum. I think
-> that is a separate issue i need to dig into, not part of the PCS to
-> MAC transfer.
 
-I think I understand what is happening on this one more fully.
+--1ou9v+QBCNysIXaH
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-When DSA initialises, the DSA and CPU ports are initially configured to
-maximum speed via mv88e6xxx_setup_port(), called via mv88e6xxx_setup(),
-the .setup method, dsa_switch_setup(), and dsa_tree_setup_switches().
+On Mon, Dec 30, 2019 at 04:39:49PM +0530, Nagarjuna Kristam wrote:
+> This change supports limited multiple device modes by:
+> - At most 4 ports contains OTG/Device capability.
+> - One port run as device mode at a time.
+>=20
+> Signed-off-by: Nagarjuna Kristam <nkristam@nvidia.com>
+> ---
+> V3:
+>  - No changes in this version
+> ---
+> V2:
+>  - Updated err variable on failure to get usbphy.
+>  - Corrected identation after tegra_xudc_phy_get API call in tegra_xudc_p=
+robe.
+> ---
+>  drivers/usb/gadget/udc/tegra-xudc.c | 228 ++++++++++++++++++++++++++----=
+------
+>  1 file changed, 167 insertions(+), 61 deletions(-)
+>=20
+> diff --git a/drivers/usb/gadget/udc/tegra-xudc.c b/drivers/usb/gadget/udc=
+/tegra-xudc.c
+> index 283c320..bf80fae 100644
+> --- a/drivers/usb/gadget/udc/tegra-xudc.c
+> +++ b/drivers/usb/gadget/udc/tegra-xudc.c
+> @@ -483,14 +483,15 @@ struct tegra_xudc {
+>  	bool device_mode;
+>  	struct work_struct usb_role_sw_work;
+> =20
+> -	struct phy *usb3_phy;
+> -	struct phy *utmi_phy;
+> +	struct phy **usb3_phy;
+> +	struct phy **utmi_phy;
+> =20
+>  	struct tegra_xudc_save_regs saved_regs;
+>  	bool suspended;
+>  	bool powergated;
+> =20
+> -	struct usb_phy *usbphy;
+> +	struct usb_phy **usbphy;
+> +	int current_phy_index;
 
-dsa_tree_setup_switches() then moves on to calling dsa_port_setup().
-dsa_port_setup() calls dsa_port_link_register_of() for the DSA and CPU
-ports, which calls into dsa_port_phylink_register().
+Can be unsigned int. It's also very long. It might be better to choose a
+shorter name so that when you use it, the lines don't get excessively
+long. Alternatively you could keep this field name and instead declare
+local variables to reference the current PHY to make lines shorter.
 
-That calls phylink_create(), and then attempts to attach a PHY using
-phylink_of_phy_connect() - which itself is rather weird - since when
-has a DSA or CPU port been allowed to have a PHY in its DT node?
+Actually, looking at this a bit more, I don't see current_phy_index ever
+used by itself (other than the assignment and one check to see if a PHY
+has been selected). So why not just store a pointer to the current PHY
+and avoid all the dereferencing?
 
-The upshot is, phylink_create() will (and always has) treated a node
-without a fixed-link or in-band specification as a "phy" mode link.
-Moving on, phylink_start() will be called.
+Thierry
 
-phylink_start() attempts to set an initial configuration.  As there
-is no PHY attached, phylink has no idea what parameters to set, but
-it needs to set an initial configuration, so it does so.  The result
-is, dsa_port_phylink_mac_config() gets called without the speed and
-duplex being set as one would expect.
+--1ou9v+QBCNysIXaH
+Content-Type: application/pgp-signature; name="signature.asc"
 
-That hasn't changed in phylink yet - so it's a bug that dates back
-to the phylink integration into the DSA core, and is a regression
-resulting from that.
+-----BEGIN PGP SIGNATURE-----
 
-The reason my patch above appears to solve it is because I'm ignoring
-calls to mac_config() with mode == MLO_AN_PHY in various circumstances,
-which results in the initial configuration by mv88e6xxx_setup_port()
-remaining.
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl4weQwACgkQ3SOs138+
+s6FiDw/9FkKjqK/pE5MWAXa2YCYVvNyJ+tKDD6xQh1/co/QYHOLWNSNyrJL/ECmZ
+GRJpJYS/BTn+9WPnbOYWEiDVXhoQ+3evAEYFiir3DF23endG5IN5ZA58pLRP7vQD
+T0Z6z5JcltLVESbX3hitWHdJkPKfqJHLFqQYZXHQTUWmpUAVgOt2lNtiaew5bEmE
+yYOb/CPUHOeJfzespeepeCiJh9aNkVhW6bTX8vsmmdgnmAA7WJeNlZiR5tVXKumJ
+nCOk7bOUti9v3FGUJotCCYe1pB/YdVw9wQU3dHh12LBiOP7hUHfhQql6UqEkfkBj
+su0GpKqOo15/c6vXVlW5+JaJGSPdpQ52KrsAhh8ckfa5hJbkYkKn60CucJ+0X09k
+APKUjF4ZyTgx6aKTsWK8NfOUaaGUmpbtivtIhQJLobss5pA5Vd2KBPXn9BsU+X7o
+jQrgBhauACy3YceIosSYm7furIYwE87/zG0p6bGoKcq1TOvRmNXjsvB9AQywsbCQ
+UHXFM+PBi3n7w8hUldDvoLhCZgwKN/ivosMBfva/VOlWBKI15BBdv4Q6biu/ULGh
+Y+WpJPap/Rb2uhjQOccr2j7ERlQJw/0iT+lJUGRNgDxccmLTrRbCjhKPhbVNN/69
++O7NOHvGHW9zu+aNHKFCKy7GLVVhNTBPocoOCSuk4gIaQeukQow=
+=nZc6
+-----END PGP SIGNATURE-----
 
-I'm not yet sure what to do about that; and I'm out of time to think
-about that anymore today - but I thought I'd post my analysis so far
-in the hope that it helps.
-
--- 
-RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-FTTC broadband for 0.8mile line in suburbia: sync at 12.1Mbps down 622kbps up
-According to speedtest.net: 11.9Mbps down 500kbps up
+--1ou9v+QBCNysIXaH--
