@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 13C7F14B6D0
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Jan 2020 15:08:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7D14014B7FB
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Jan 2020 15:20:50 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728512AbgA1OI3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 28 Jan 2020 09:08:29 -0500
-Received: from mail.kernel.org ([198.145.29.99]:56404 "EHLO mail.kernel.org"
+        id S1730864AbgA1OTW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 28 Jan 2020 09:19:22 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43628 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727552AbgA1OIW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 Jan 2020 09:08:22 -0500
+        id S1730443AbgA1OTR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 28 Jan 2020 09:19:17 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5F72E2468F;
-        Tue, 28 Jan 2020 14:08:21 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5C3ED2468E;
+        Tue, 28 Jan 2020 14:19:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1580220501;
-        bh=1AE2Z7je6fHaZKtxxnoogY/Y797SKVl8mnTWazMwgy4=;
+        s=default; t=1580221156;
+        bh=S8RUh6caaVmUQTWFOdyGCO7xCLkl7xkIopaXRG2sUqg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=f28UGLQbo+7lFqZ//rJbtMLEfMa1H09t9ksB4WJKB+JhGQO/5jxISC5pWV8gvIqKj
-         UeMcsvMZQatVb+94JhMDD/WYhZ8xQJhVInmFqlr7yG7aVILHvvsD7oAh3CybKhL9Ds
-         PCpep6pAXiil9wALsOXncZ5ydlm8jeK0uxrZeeKc=
+        b=VCWOAvi2rjExyoXXjvs6cM+p4Ay0ewaCoeRbh7ajdZIOqG4V+OWDYrwE+CPutLiQt
+         LxDS1KOElCdhsDtb8t6TBjn9Zpit8uodoADvZ/VLRUEDWRxVAfuq1vsGE6n1qrtndy
+         6+FhhKar2Gkam1TF3vgnLo5uUAxZcx53NKHtykr0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>,
-        Gerd Hoffmann <kraxel@redhat.com>,
+        stable@vger.kernel.org, David Howells <dhowells@redhat.com>,
+        James Morris <james.morris@microsoft.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.4 004/183] drm/virtio: fix bounds check in virtio_gpu_cmd_get_capset()
+Subject: [PATCH 4.9 074/271] keys: Timestamp new keys
 Date:   Tue, 28 Jan 2020 15:03:43 +0100
-Message-Id: <20200128135829.996022414@linuxfoundation.org>
+Message-Id: <20200128135858.082424709@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200128135829.486060649@linuxfoundation.org>
-References: <20200128135829.486060649@linuxfoundation.org>
+In-Reply-To: <20200128135852.449088278@linuxfoundation.org>
+References: <20200128135852.449088278@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,53 +44,32 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
+From: David Howells <dhowells@redhat.com>
 
-[ Upstream commit 09c4b49457434fa74749ad6194ef28464d9f5df9 ]
+[ Upstream commit 7c1857bdbdf1e4c541e45eab477ee23ed4333ea4 ]
 
-This doesn't affect runtime because in the current code "idx" is always
-valid.
+Set the timestamp on new keys rather than leaving it unset.
 
-First, we read from "vgdev->capsets[idx].max_size" before checking
-whether "idx" is within bounds.  And secondly the bounds check is off by
-one so we could end up reading one element beyond the end of the
-vgdev->capsets[] array.
-
-Fixes: 62fb7a5e1096 ("virtio-gpu: add 3d/virgl support")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-Link: http://patchwork.freedesktop.org/patch/msgid/20180704094250.m7sgvvzg3dhcvv3h@kili.mountain
-Signed-off-by: Gerd Hoffmann <kraxel@redhat.com>
+Fixes: 31d5a79d7f3d ("KEYS: Do LRU discard in full keyrings")
+Signed-off-by: David Howells <dhowells@redhat.com>
+Signed-off-by: James Morris <james.morris@microsoft.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpu/drm/virtio/virtgpu_vq.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ security/keys/key.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/gpu/drm/virtio/virtgpu_vq.c b/drivers/gpu/drm/virtio/virtgpu_vq.c
-index a1b3ea1ccb65b..772a5a3b0ce1a 100644
---- a/drivers/gpu/drm/virtio/virtgpu_vq.c
-+++ b/drivers/gpu/drm/virtio/virtgpu_vq.c
-@@ -681,11 +681,11 @@ int virtio_gpu_cmd_get_capset(struct virtio_gpu_device *vgdev,
- {
- 	struct virtio_gpu_get_capset *cmd_p;
- 	struct virtio_gpu_vbuffer *vbuf;
--	int max_size = vgdev->capsets[idx].max_size;
-+	int max_size;
- 	struct virtio_gpu_drv_cap_cache *cache_ent;
- 	void *resp_buf;
+diff --git a/security/keys/key.c b/security/keys/key.c
+index 7276d1a009d49..280b4feccdc00 100644
+--- a/security/keys/key.c
++++ b/security/keys/key.c
+@@ -296,6 +296,7 @@ struct key *key_alloc(struct key_type *type, const char *desc,
+ 	key->gid = gid;
+ 	key->perm = perm;
+ 	key->restrict_link = restrict_link;
++	key->last_used_at = ktime_get_real_seconds();
  
--	if (idx > vgdev->num_capsets)
-+	if (idx >= vgdev->num_capsets)
- 		return -EINVAL;
- 
- 	if (version > vgdev->capsets[idx].max_version)
-@@ -695,6 +695,7 @@ int virtio_gpu_cmd_get_capset(struct virtio_gpu_device *vgdev,
- 	if (!cache_ent)
- 		return -ENOMEM;
- 
-+	max_size = vgdev->capsets[idx].max_size;
- 	cache_ent->caps_cache = kmalloc(max_size, GFP_KERNEL);
- 	if (!cache_ent->caps_cache) {
- 		kfree(cache_ent);
+ 	if (!(flags & KEY_ALLOC_NOT_IN_QUOTA))
+ 		key->flags |= 1 << KEY_FLAG_IN_QUOTA;
 -- 
 2.20.1
 
