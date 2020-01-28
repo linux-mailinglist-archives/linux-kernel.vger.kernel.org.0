@@ -2,75 +2,113 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3490814B1C2
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Jan 2020 10:30:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 997EA14B1C4
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Jan 2020 10:31:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725941AbgA1Jas (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 28 Jan 2020 04:30:48 -0500
-Received: from mail-ot1-f67.google.com ([209.85.210.67]:45760 "EHLO
-        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725271AbgA1Jas (ORCPT
+        id S1725977AbgA1JbJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 28 Jan 2020 04:31:09 -0500
+Received: from mail-vs1-f68.google.com ([209.85.217.68]:37496 "EHLO
+        mail-vs1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725880AbgA1JbI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 Jan 2020 04:30:48 -0500
-Received: by mail-ot1-f67.google.com with SMTP id 59so11329578otp.12
-        for <linux-kernel@vger.kernel.org>; Tue, 28 Jan 2020 01:30:47 -0800 (PST)
+        Tue, 28 Jan 2020 04:31:08 -0500
+Received: by mail-vs1-f68.google.com with SMTP id x18so7645319vsq.4
+        for <linux-kernel@vger.kernel.org>; Tue, 28 Jan 2020 01:31:07 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
+        d=benyossef-com.20150623.gappssmtp.com; s=20150623;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=yh41YjQOL6v5qPkhPRLG/JO3Fw/88a695J6NKkJZrX0=;
-        b=VzGyPT+yQnMZWoX1YeBN9u8Fx5p+Am8kWrm005R45IP8atXD3C+oTdtHxSOA5v9BRE
-         3Nig17W/n+ysFLzSZAFhSx3yjCeq+JLnmIcBu3dJ8nsNKx/4Q/bYUFTUbDjmze6metaP
-         Hy3VRvHtnNsmHjt8W/xS4mDccKPlw8UL4hwQmxuQ9DzABpDaJE7b3DR9Jd1v58JmVsv0
-         MVNYjHw494rtK0iFkHcOGuIPm6dyRgOvqti7c5R/MbBVHMaBNSSwoscjG2dlDlnKGPgN
-         vLy4PB4tKkgZ3053449rUXz2ZNMb53RTi2tkML4hNLrxnFwbpBW75aMMsRkM+v+X0Y+A
-         36mQ==
+        bh=drtFf4BYqD16KtABSK9GXNjl2syyckGlTVrDm3GnTCM=;
+        b=sKfibvDGOGsQEi8+DU56KeTpeAqC6oMr2xZa51isMZyqL3h5FmoUB4gAOKzWFxBhz3
+         KOdDZBEJ8xNxwGwPU+oOyS7zsccP5/K/gsw/oPig30OKQkDizpEBFwGx/f2oSBwD5Q0m
+         0Irwc7cDuUtmQf1byT/PmmPMH5UrVXt0BaFsUDCdEFUiulf/b94FyJb4yE5MV36g9cfh
+         6UtVr3UbZI5HgqkKC0mA1UTZA2DTNpKdsbVqsAHnLoQlkYFdF1FQeKJBEzhaeUJgsUhd
+         Y72Sto6VKJ9dLhyj1LPsxny83/6I1VNgsFzZzT2ZyZVyVBHxfAcnoN5j5DT6cDjLfCGu
+         UW6g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=yh41YjQOL6v5qPkhPRLG/JO3Fw/88a695J6NKkJZrX0=;
-        b=RNIyhk18bYYvVRk2Cs6mf73yqZyuU5NzHvRBcj9AhmLNgjfFCGZ7OeOvia5I95dHRx
-         kAYA0QnPrByW7lsLLu3wBiDh3bFWrHXtP4VGN7hUMOlPIdpuvA5YRNNz1P1nB8u5kRzM
-         QaR4NDFBo8lhXEmF4ZV2r6cHuJg2crahkydi3+xbVRKNcS/ywZewPaSCd0rvvj++Wv0J
-         0f+yd8+7WkJSk/KPyYxH+ARYh2avrK+dEFi5qHMZ3WVImLoaDjPCc/UUIAuAabFzbgIB
-         dRex/oTJ3ZkKRXyYQOkz6SAeytwJmhGfj8kCIIh3hJs+ixO5Oeeg6PFHexG98o3u4swA
-         VA4g==
-X-Gm-Message-State: APjAAAUM5b4OHtoLbeX0FWWMiRdotR9C+nCXRX4IlPKR9dnlwus12lkK
-        bSleQOsfgXkmRN6dA5JXDLKmFYqjvw2tD8/gza+cyQ==
-X-Google-Smtp-Source: APXvYqymR8w/Jv0Wq2tNhPnRAIsBKyqe0PLz5bMDnxBePf0GK0M2eqKuON/UlhLLm577QR6m4J2QrKzRKeI22A+nyXA=
-X-Received: by 2002:a05:6830:1d6e:: with SMTP id l14mr15362244oti.32.1580203847077;
- Tue, 28 Jan 2020 01:30:47 -0800 (PST)
+        bh=drtFf4BYqD16KtABSK9GXNjl2syyckGlTVrDm3GnTCM=;
+        b=VU3J0sAtkkOH1DHZQWpAQf3Zt+5clSQSbWYzooIrCzqF3Xha9UmvU0V1gim15RYWlx
+         00g7aP1WCkTKmEmwQIqzccTQmWdnmWQ9MMYCoe8QVcrtwHoTWMYGY64IUyDO1ikLzGwb
+         /WfNZgvp+cSDcmRvQcoc8/kValrmRNFelXACnxvkiu1LKraHzbywapbyqUKe2baI96fz
+         BRgo+wATdqYogUrAXuYGsn9e8TJuTrjHeeGwv+37DnBizBi2N2LHBuryJVdOfIrfq8my
+         OFQeSG01xKqhKvzcKDFr8OvzYhd0//mY4TIJRbtcpF9rz+mIpjHWC8vtSKalnLcSGCg3
+         mLhA==
+X-Gm-Message-State: APjAAAWmAfLAXP+ghisXlIPGwNVsCctZyZwEFTFJYb5s5ILUfVaurYZ6
+        sYVcXMAvOFiBsV6PBJc/ck2bzFn5GKTTZ0q6DclUcQ==
+X-Google-Smtp-Source: APXvYqxA5k/EGtUP6+d0kpO1feBId8g2JtzAgi/OYJYmYTvogHvW3SfxtiVoopXd9Oyp80KBxIM2MM57ebbafrpjpsQ=
+X-Received: by 2002:a67:c90d:: with SMTP id w13mr12308705vsk.164.1580203867395;
+ Tue, 28 Jan 2020 01:31:07 -0800 (PST)
 MIME-Version: 1.0
-References: <20200128072740.21272-1-frextrite@gmail.com>
-In-Reply-To: <20200128072740.21272-1-frextrite@gmail.com>
-From:   Jann Horn <jannh@google.com>
-Date:   Tue, 28 Jan 2020 10:30:19 +0100
-Message-ID: <CAG48ez3ZcO+kVPJVG6XpCPyGUKF2o4UJ6AVdgZXGQ6XJJpcdmg@mail.gmail.com>
-Subject: Re: [PATCH] cred: Use RCU primitives to access RCU pointers
-To:     Amol Grover <frextrite@gmail.com>
-Cc:     David Howells <dhowells@redhat.com>,
-        Shakeel Butt <shakeelb@google.com>,
-        James Morris <jamorris@linux.microsoft.com>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Kees Cook <keescook@chromium.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        kernel list <linux-kernel@vger.kernel.org>,
-        linux-kernel-mentees@lists.linuxfoundation.org,
-        Joel Fernandes <joel@joelfernandes.org>,
-        Madhuparna Bhowmik <madhuparnabhowmik04@gmail.com>,
-        "Paul E . McKenney" <paulmck@kernel.org>
+References: <20200127150822.12126-1-gilad@benyossef.com> <CAMuHMdVFcsS9K=7+LfT_Tmmpz4LMS69=+EO+8_BkJoXCOfPzPA@mail.gmail.com>
+ <20200128030107.GF960@sol.localdomain> <CAMuHMdWjUoHrqLqUV9F4LfRfSOxBoFONxjH=2HYMFfjf6cSZ6A@mail.gmail.com>
+In-Reply-To: <CAMuHMdWjUoHrqLqUV9F4LfRfSOxBoFONxjH=2HYMFfjf6cSZ6A@mail.gmail.com>
+From:   Gilad Ben-Yossef <gilad@benyossef.com>
+Date:   Tue, 28 Jan 2020 11:30:54 +0200
+Message-ID: <CAOtvUMeHiLUoRqOHWFfx=bZMjCEra2o3UbBa0baoB_ec_0ihhw@mail.gmail.com>
+Subject: Re: [RFC v3] crypto: ccree - protect against short scatterlists
+To:     Geert Uytterhoeven <geert@linux-m68k.org>
+Cc:     Eric Biggers <ebiggers@kernel.org>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S. Miller" <davem@davemloft.net>,
+        Ofir Drang <ofir.drang@arm.com>,
+        Linux Crypto Mailing List <linux-crypto@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jan 28, 2020 at 8:28 AM Amol Grover <frextrite@gmail.com> wrote:
-> task_struct.cred and task_struct.real_cred are annotated by __rcu,
+On Tue, Jan 28, 2020 at 10:30 AM Geert Uytterhoeven
+<geert@linux-m68k.org> wrote:
+>
+> Hi Eric,
+>
+> On Tue, Jan 28, 2020 at 4:01 AM Eric Biggers <ebiggers@kernel.org> wrote:
+> > On Mon, Jan 27, 2020 at 04:22:53PM +0100, Geert Uytterhoeven wrote:
+> > > On Mon, Jan 27, 2020 at 4:08 PM Gilad Ben-Yossef <gilad@benyossef.com> wrote:
+> > > > Deal gracefully with the event of being handed a scatterlist
+> > > > which is shorter than expected.
+> > > >
+> > > > This mitigates a crash in some cases due to
+> > > > attempt to map empty (but not NULL) scatterlists with none
+> > > > zero lengths.
+> > > >
+> > > > Signed-off-by: Gilad Ben-Yossef <gilad@benyossef.com>
+> > > > Reported-by: Geert Uytterhoeven <geert@linux-m68k.org>
+> > >
+> > > Thank you, boots fine on Salvator-XS with R-Car H3ES2.0, and
+> > > CONFIG_CRYPTO_MANAGER_DISABLE_TESTS=y.
+> > >
+> > > Tested-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> >
+> > Note that you need to *unset* CONFIG_CRYPTO_MANAGER_DISABLE_TESTS to enable the
+> > self-tests.
+>
+> Sorry, that's what I meant (too used to type "=y" to enable something ;-)
+>
+> > So to run the full tests, the following is needed:
+> >
+> > # CONFIG_CRYPTO_MANAGER_DISABLE_TESTS is not set
+>
+> With just this, it no longer crashes.
+>
+> > CONFIG_CRYPTO_MANAGER_EXTRA_TESTS=y
+>
+> With the extra tests enabled, it still crashes :-(
+>
 
-task_struct.cred doesn't actually have RCU semantics though, see
-commit d7852fbd0f0423937fa287a598bfde188bb68c22. For task_struct.cred,
-it would probably be more correct to remove the __rcu annotation?
+That's fine - this is the second issue I was talking about.
+The patch I sent before was not really a fix - more a stop gap
+designed to see if I understand the issue you are seeing.
 
-> hence use rcu_access_pointer to access them.
+I will send out a patch fixing the root cause of both and this should
+resolve both issues.
+I just want to run it through some internal tests to make sure it did
+not break something else first.
+
+Thanks!
+Gilad
