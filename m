@@ -2,125 +2,82 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5CE4414B8A8
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Jan 2020 15:26:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C6BBD14B8E5
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Jan 2020 15:28:43 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733133AbgA1O0E (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 28 Jan 2020 09:26:04 -0500
-Received: from mx0a-00128a01.pphosted.com ([148.163.135.77]:59696 "EHLO
-        mx0a-00128a01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1733098AbgA1O0C (ORCPT
+        id S2387510AbgA1O23 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 28 Jan 2020 09:28:29 -0500
+Received: from mail-qt1-f193.google.com ([209.85.160.193]:43327 "EHLO
+        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1733167AbgA1O2Y (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 Jan 2020 09:26:02 -0500
-Received: from pps.filterd (m0167089.ppops.net [127.0.0.1])
-        by mx0a-00128a01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 00SEHZhb008962;
-        Tue, 28 Jan 2020 09:25:48 -0500
-Received: from nwd2mta3.analog.com ([137.71.173.56])
-        by mx0a-00128a01.pphosted.com with ESMTP id 2xrkfah3e8-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 28 Jan 2020 09:25:47 -0500
-Received: from ASHBMBX9.ad.analog.com (ashbmbx9.ad.analog.com [10.64.17.10])
-        by nwd2mta3.analog.com (8.14.7/8.14.7) with ESMTP id 00SEPkJo028606
-        (version=TLSv1/SSLv3 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=FAIL);
-        Tue, 28 Jan 2020 09:25:46 -0500
-Received: from SCSQMBX11.ad.analog.com (10.77.17.10) by ASHBMBX9.ad.analog.com
- (10.64.17.10) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1779.2; Tue, 28 Jan
- 2020 09:25:45 -0500
-Received: from zeus.spd.analog.com (10.64.82.11) by SCSQMBX11.ad.analog.com
- (10.77.17.10) with Microsoft SMTP Server id 15.1.1779.2 via Frontend
- Transport; Tue, 28 Jan 2020 06:25:45 -0800
-Received: from mircea-Precision-5530-2-in-1.ad.analog.com ([10.48.65.114])
-        by zeus.spd.analog.com (8.15.1/8.15.1) with ESMTP id 00SEPgIx007832;
-        Tue, 28 Jan 2020 09:25:42 -0500
-From:   Mircea Caprioru <mircea.caprioru@analog.com>
-To:     <jic23@kernel.org>
-CC:     <Michael.Hennerich@analog.com>, <alexandru.ardelean@analog.com>,
-        <lars@metafoo.de>, <gregkh@linuxfoundation.org>,
-        <linux-kernel@vger.kernel.org>, <linux-iio@vger.kernel.org>,
-        Mircea <mircea.caprioru@analog.com>
-Subject: [PATCH] iio: adc: ad7124: Add direct reg access
-Date:   Tue, 28 Jan 2020 16:25:49 +0200
-Message-ID: <20200128142549.1370-1-mircea.caprioru@analog.com>
-X-Mailer: git-send-email 2.17.1
+        Tue, 28 Jan 2020 09:28:24 -0500
+Received: by mail-qt1-f193.google.com with SMTP id d18so10373502qtj.10;
+        Tue, 28 Jan 2020 06:28:24 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=Yqk1C8lrdb1DLZld5pSoFu2cPtA+P5GkIV0KjhIeFLk=;
+        b=kjxIEoKg7/lM1dYRY7dMYZWFhLw7CXiG/2RzEle7ozn+Bbh1YTvzzuu5w1W5yaGIvf
+         s0LMpj9VKu5qYKZqF7FIl1CDGSZnpG1d3rTFV5f3gf7C6KpTPqcI2DWzno27Vqx8hfeZ
+         uOFUN8TDRnHidIXo/6JuAOdvYaQQJC4yp5u0TXwyWOFxD62J6EW5C0aSokL3gR/RBnzK
+         Lm3BM+96Xu8x0oVCBFIfI3vITJAq4pmb2B0Tayb/I9ocAb8s2WDvKUyypQfQDVe5alJo
+         ho9ncw42EdtEOrggMysKX324UQnXwldzRCC5k4Jnw5DFDgMtP4aTbX77NYVX0kk+14B5
+         gLUg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to;
+        bh=Yqk1C8lrdb1DLZld5pSoFu2cPtA+P5GkIV0KjhIeFLk=;
+        b=lGmz4tM0Ox934aFVTw9V4Rxhf6i+b7UEPqQjql6iE64hQ4yrNeW6S8cG0NIo4ppm3v
+         5r3Two5cbDRTEGfQZvBce32TwJTb5cJspvLh7DbRE/Krcul6D3iNhbEZpZNC/6ldSS6t
+         bRcZu1NFFvz4SOQrh8jGCyAEpH4fQpe1RbebotNRUdKfGzf5S8zx0RrucSd63ZP6hgrT
+         XDLSelzHZoH18DsIpHZxFeGj4t80GPl5WjD4+hv8kWRhAwE7pXCH9QLZJ+NttT+2k7+Y
+         HBqvhiBBx6KimwZI48wDRVGaVkDi558T/YETWEATQkf5u0gx3eO9+Eob+wCdL/iQ6T6i
+         o6gw==
+X-Gm-Message-State: APjAAAVjx+2a5WTk+U36oG541ojPb0THFqneGISpgsVlHttDU72IBg0l
+        ill3Ow+uBTQdom/LPpbvRjY=
+X-Google-Smtp-Source: APXvYqzup1fp+i+JnWooocuItDd8YhwjZJebyMt1IdjaR/2bX5lUVpHSb/AIFej5XajdmTGSiOcnkA==
+X-Received: by 2002:aed:3765:: with SMTP id i92mr17267845qtb.373.1580221703523;
+        Tue, 28 Jan 2020 06:28:23 -0800 (PST)
+Received: from localhost ([2620:10d:c091:500::3:99c])
+        by smtp.gmail.com with ESMTPSA id h12sm6197278qtn.56.2020.01.28.06.28.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 28 Jan 2020 06:28:23 -0800 (PST)
+Date:   Tue, 28 Jan 2020 09:28:22 -0500
+From:   Tejun Heo <tj@kernel.org>
+To:     Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Cc:     Jens Axboe <axboe@kernel.dk>,
+        Michael Schmitz <schmitzmic@gmail.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        linux-ide@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 01/28] ata: remove stale maintainership information from
+ core code
+Message-ID: <20200128142822.GD180576@mtj.thefacebook.com>
+References: <20200128133343.29905-1-b.zolnierkie@samsung.com>
+ <CGME20200128133410eucas1p271284329b9b63c2c48167308809c569c@eucas1p2.samsung.com>
+ <20200128133343.29905-2-b.zolnierkie@samsung.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-ADIRoutedOnPrem: True
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.572
- definitions=2020-01-28_03:2020-01-28,2020-01-28 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 malwarescore=0
- suspectscore=1 mlxlogscore=818 clxscore=1011 phishscore=0 spamscore=0
- adultscore=0 priorityscore=1501 bulkscore=0 lowpriorityscore=0
- impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-1911200001 definitions=main-2001280115
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200128133343.29905-2-b.zolnierkie@samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Mircea <mircea.caprioru@analog.com>
+On Tue, Jan 28, 2020 at 02:33:16PM +0100, Bartlomiej Zolnierkiewicz wrote:
+> In commit 7634ccd2da97 ("libata: maintainership update") from 2018
+> Jens has officially taken over libata maintainership from Tejun so
+> remove stale information from core libata code.
+> 
+> Cc: Tejun Heo <tj@kernel.org>
+> Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 
-This patch adds the posibility do read and write registers from userspace
-using the kernel debug direct register access option.
+Acked-by: Tejun Heo <tj@kernel.org>
 
-Signed-off-by: Mircea <mircea.caprioru@analog.com>
----
- drivers/iio/adc/ad7124.c | 28 ++++++++++++++++++++++++++++
- 1 file changed, 28 insertions(+)
+Thanks.
 
-diff --git a/drivers/iio/adc/ad7124.c b/drivers/iio/adc/ad7124.c
-index 52f45b13da4a..38e67e08a79a 100644
---- a/drivers/iio/adc/ad7124.c
-+++ b/drivers/iio/adc/ad7124.c
-@@ -93,6 +93,14 @@ static const unsigned int ad7124_gain[8] = {
- 	1, 2, 4, 8, 16, 32, 64, 128
- };
- 
-+static const unsigned int ad7124_reg_size[] = {
-+	1, 2, 3, 3, 2, 1, 3, 3, 1, 2, 2, 2, 2,
-+	2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2,
-+	2, 2, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3, 3,
-+	3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3,
-+	3, 3, 3, 3, 3
-+};
-+
- static const int ad7124_master_clk_freq_hz[3] = {
- 	[AD7124_LOW_POWER] = 76800,
- 	[AD7124_MID_POWER] = 153600,
-@@ -360,6 +368,25 @@ static int ad7124_write_raw(struct iio_dev *indio_dev,
- 	}
- }
- 
-+static int ad7124_reg_access(struct iio_dev *indio_dev,
-+			     unsigned int reg,
-+			     unsigned int writeval,
-+			     unsigned int *readval)
-+{
-+	struct ad7124_state *st = iio_priv(indio_dev);
-+	int ret;
-+
-+
-+	if (readval)
-+		ret = ad_sd_read_reg(&st->sd, reg, ad7124_reg_size[reg],
-+				     readval);
-+	else
-+		ret = ad_sd_write_reg(&st->sd, reg, ad7124_reg_size[reg],
-+				      writeval);
-+
-+	return ret;
-+}
-+
- static IIO_CONST_ATTR(in_voltage_scale_available,
- 	"0.000001164 0.000002328 0.000004656 0.000009313 0.000018626 0.000037252 0.000074505 0.000149011 0.000298023");
- 
-@@ -375,6 +402,7 @@ static const struct attribute_group ad7124_attrs_group = {
- static const struct iio_info ad7124_info = {
- 	.read_raw = ad7124_read_raw,
- 	.write_raw = ad7124_write_raw,
-+	.debugfs_reg_access = &ad7124_reg_access,
- 	.validate_trigger = ad_sd_validate_trigger,
- 	.attrs = &ad7124_attrs_group,
- };
 -- 
-2.17.1
-
+tejun
