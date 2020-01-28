@@ -2,109 +2,86 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6545A14B238
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Jan 2020 11:03:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C545514B22E
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Jan 2020 11:02:26 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726293AbgA1KDF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 28 Jan 2020 05:03:05 -0500
-Received: from mga09.intel.com ([134.134.136.24]:16797 "EHLO mga09.intel.com"
+        id S1726205AbgA1KCS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 28 Jan 2020 05:02:18 -0500
+Received: from gloria.sntech.de ([185.11.138.130]:34236 "EHLO gloria.sntech.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726211AbgA1KDE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 Jan 2020 05:03:04 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 28 Jan 2020 01:52:37 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.70,373,1574150400"; 
-   d="scan'208";a="217569900"
-Received: from smile.fi.intel.com (HELO smile) ([10.237.68.40])
-  by orsmga007.jf.intel.com with ESMTP; 28 Jan 2020 01:52:36 -0800
-Received: from andy by smile with local (Exim 4.93)
-        (envelope-from <andriy.shevchenko@linux.intel.com>)
-        id 1iwNXx-0007OL-MW; Tue, 28 Jan 2020 11:52:37 +0200
-Date:   Tue, 28 Jan 2020 11:52:37 +0200
-From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To:     Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
-Cc:     Petr Mladek <pmladek@suse.com>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 4/5] console: Avoid positive return code from
- unregister_console()
-Message-ID: <20200128095237.GZ32742@smile.fi.intel.com>
-References: <20200127114719.69114-1-andriy.shevchenko@linux.intel.com>
- <20200127114719.69114-4-andriy.shevchenko@linux.intel.com>
- <20200128044332.GA115889@google.com>
- <20200128092235.GX32742@smile.fi.intel.com>
- <20200128093726.GE115889@google.com>
+        id S1725922AbgA1KCR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 28 Jan 2020 05:02:17 -0500
+Received: from p57b77a13.dip0.t-ipconnect.de ([87.183.122.19] helo=phil.fritz.box)
+        by gloria.sntech.de with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.89)
+        (envelope-from <heiko@sntech.de>)
+        id 1iwNhE-0008Lk-1T; Tue, 28 Jan 2020 11:02:12 +0100
+From:   Heiko Stuebner <heiko@sntech.de>
+To:     linux-clk@vger.kernel.org
+Cc:     linux-arm-kernel@lists.infradead.org,
+        linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
+        mturquette@baylibre.com, sboyd@kernel.org, heiko@sntech.de,
+        christoph.muellner@theobroma-systems.com, zhangqing@rock-chips.com,
+        Heiko Stuebner <heiko.stuebner@theobroma-systems.com>
+Subject: [PATCH 1/3] clk: rockchip: convert rk3399 pll type to use readl_poll_timeout
+Date:   Tue, 28 Jan 2020 11:02:01 +0100
+Message-Id: <20200128100204.1318450-1-heiko@sntech.de>
+X-Mailer: git-send-email 2.24.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200128093726.GE115889@google.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jan 28, 2020 at 06:37:26PM +0900, Sergey Senozhatsky wrote:
-> On (20/01/28 11:22), Andy Shevchenko wrote:
-> > On Tue, Jan 28, 2020 at 01:43:32PM +0900, Sergey Senozhatsky wrote:
-> > > On (20/01/27 13:47), Andy Shevchenko wrote:
-> > > [..]
-> > > >  	res = _braille_unregister_console(console);
-> > > > -	if (res)
-> > > > +	if (res < 0)
-> > > >  		return res;
-> > > > +	if (res > 0)
-> > > > +		return 0;
-> > > >  
-> > > > -	res = 1;
-> > > > +	res = -ENODEV;
-> > > >  	console_lock();
-> > > >  	if (console_drivers == console) {
-> > > >  		console_drivers=console->next;
-> > > > @@ -2838,6 +2840,9 @@ int unregister_console(struct console *console)
-> > > >  	if (!res && (console->flags & CON_EXTENDED))
-> > > >  		nr_ext_console_drivers--;
-> > > >  
-> > > > +	if (res && !(console->flags & CON_ENABLED))
-> > > > +		res = 0;
-> > > 
-> > > Console is not on the console_drivers list. Why does !ENABLED case
-> > > require extra handling?
-> > 
-> > It's mirroring (to some extend) the register_console() abort conditions.
-> 
-> Could you please explain?
-> 
-> I see the "newcon->flags & CON_ENABLED" error out path. I'm guessing,
-> that the expectation is that this is how we filter out consoles which
-> were not matched (there is that "newcon->flags |= CON_ENABLED" several
-> lines earlier.) So this looks like the assumption is that consoles don't
-> have CON_ENABLED bit set prior to register_console(), as far as I understand.
+From: Heiko Stuebner <heiko.stuebner@theobroma-systems.com>
 
-I put it to cover the case when register_console() fails (since it has no
-return code caller is not able to say this anyhow) somebody may call
-unregister_console() on it unconditionally (and I guess many do like this).
-In such case we shouldn't return an error code.
+Instead of open coding the polling of the lock status, use the
+handy readl_poll_timeout for this. As the pll locking is normally
+blazingly fast and we don't want to incur additional delays, we're
+not doing any sleeps similar to for example the imx clk-pllv4
+and define a very safe but still short timeout of 1ms.
 
-> Well, look at these
-> ...
-> drivers/net/netconsole.c:       .flags  = CON_ENABLED,
-> drivers/tty/ehv_bytechan.c:     .flags  = CON_PRINTBUFFER | CON_ENABLED,
-> drivers/tty/serial/mux.c:	.flags = CON_ENABLED | CON_PRINTBUFFER,
-> ...
+Suggested-by: Stephen Boyd <sboyd@kernel.org>
+Signed-off-by: Heiko Stuebner <heiko.stuebner@theobroma-systems.com>
+---
+ drivers/clk/rockchip/clk-pll.c | 21 ++++++++++-----------
+ 1 file changed, 10 insertions(+), 11 deletions(-)
 
-The code there (I meant register_console() and unregister_console() and
-their usage) is quite twisted and probably abused, so, I have definitely
-miss something.
-
+diff --git a/drivers/clk/rockchip/clk-pll.c b/drivers/clk/rockchip/clk-pll.c
+index 198417d56300..43c9fd0086a2 100644
+--- a/drivers/clk/rockchip/clk-pll.c
++++ b/drivers/clk/rockchip/clk-pll.c
+@@ -585,19 +585,18 @@ static const struct clk_ops rockchip_rk3066_pll_clk_ops = {
+ static int rockchip_rk3399_pll_wait_lock(struct rockchip_clk_pll *pll)
+ {
+ 	u32 pllcon;
+-	int delay = 24000000;
++	int ret;
+ 
+-	/* poll check the lock status in rk3399 xPLLCON2 */
+-	while (delay > 0) {
+-		pllcon = readl_relaxed(pll->reg_base + RK3399_PLLCON(2));
+-		if (pllcon & RK3399_PLLCON2_LOCK_STATUS)
+-			return 0;
++	/*
++	 * Lock time typical 250, max 500 input clock cycles @24MHz
++	 * So define a very safe maximum of 1000us, meaning 24000 cycles.
++	 */
++	ret = readl_poll_timeout(pll->reg_base + RK3399_PLLCON(2), pllcon,
++				 pllcon & RK3399_PLLCON2_LOCK_STATUS, 0, 1000);
++	if (ret)
++		pr_err("%s: timeout waiting for pll to lock\n", __func__);
+ 
+-		delay--;
+-	}
+-
+-	pr_err("%s: timeout waiting for pll to lock\n", __func__);
+-	return -ETIMEDOUT;
++	return ret;
+ }
+ 
+ static void rockchip_rk3399_pll_get_params(struct rockchip_clk_pll *pll,
 -- 
-With Best Regards,
-Andy Shevchenko
-
+2.24.1
 
