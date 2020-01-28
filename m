@@ -2,37 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 466FD14BB1C
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Jan 2020 15:43:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4D1D514BB18
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Jan 2020 15:43:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727649AbgA1OLW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 28 Jan 2020 09:11:22 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60406 "EHLO mail.kernel.org"
+        id S1729817AbgA1On0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 28 Jan 2020 09:43:26 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60772 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727659AbgA1OLR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 Jan 2020 09:11:17 -0500
+        id S1728350AbgA1OLi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 28 Jan 2020 09:11:38 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 887012468E;
-        Tue, 28 Jan 2020 14:11:16 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D34CB20678;
+        Tue, 28 Jan 2020 14:11:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1580220677;
-        bh=a3b8GTGMrmfY7nhd+ivfJZYIfMPdm75bJRxBWlYuFWQ=;
+        s=default; t=1580220697;
+        bh=tPSxCTXcktM2lbrk4Lrl5eUcbYzTi+LQsSkYBIuEiqI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=YTYPRN2LMi7IiWYHnfjpbNo+CgR/kMl//NKShmX5g9pKzrVRlBn0o/5wuvyGw3BP7
-         PX+qQ/jAm8ruUNal9lfEC/y+4nx4v4wDMwQf2r6Bw8BgxFFoIlR6aNW+843Yjj1KWG
-         TsKtSo2WgFHYztGplg8vFjca8rAj0CLEatSW0baA=
+        b=ZL4BkSbSrDZ+u0W6fGZmjBpt3txvIAkLCfeJebbWZLTuiOl6MYUqXqBZ/kHtlhiFJ
+         +tUDKRQIfPOSZGCfA3E/gdEbOMRxTEwlwesV2hO/KnfdsXYjmlq9pVoIaQBn3kqC4A
+         My4Xb4y3KGmudTa5IC2YthYIb/mE/Lcu7OFj8JiY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Nathan Lynch <nathanl@linux.ibm.com>,
-        "Gautham R. Shenoy" <ego@linux.vnet.ibm.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.4 101/183] powerpc/cacheinfo: add cacheinfo_teardown, cacheinfo_rebuild
-Date:   Tue, 28 Jan 2020 15:05:20 +0100
-Message-Id: <20200128135840.116104290@linuxfoundation.org>
+        stable@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Sasha Levin <sashal@kernel.org>,
+        Enrico Weigelt <info@metux.net>
+Subject: [PATCH 4.4 109/183] devres: allow const resource arguments
+Date:   Tue, 28 Jan 2020 15:05:28 +0100
+Message-Id: <20200128135840.804264930@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
 In-Reply-To: <20200128135829.486060649@linuxfoundation.org>
 References: <20200128135829.486060649@linuxfoundation.org>
@@ -45,69 +45,61 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Nathan Lynch <nathanl@linux.ibm.com>
+From: Arnd Bergmann <arnd@arndb.de>
 
-[ Upstream commit d4aa219a074a5abaf95a756b9f0d190b5c03a945 ]
+[ Upstream commit 9dea44c91469512d346e638694c22c30a5273992 ]
 
-Allow external callers to force the cacheinfo code to release all its
-references to cache nodes, e.g. before processing device tree updates
-post-migration, and to rebuild the hierarchy afterward.
+devm_ioremap_resource() does not currently take 'const' arguments,
+which results in a warning from the first driver trying to do it
+anyway:
 
-CPU online/offline must be blocked by callers; enforce this.
+drivers/gpio/gpio-amd-fch.c: In function 'amd_fch_gpio_probe':
+drivers/gpio/gpio-amd-fch.c:171:49: error: passing argument 2 of 'devm_ioremap_resource' discards 'const' qualifier from pointer target type [-Werror=discarded-qualifiers]
+  priv->base = devm_ioremap_resource(&pdev->dev, &amd_fch_gpio_iores);
+                                                 ^~~~~~~~~~~~~~~~~~~
 
-Fixes: 410bccf97881 ("powerpc/pseries: Partition migration in the kernel")
-Signed-off-by: Nathan Lynch <nathanl@linux.ibm.com>
-Reviewed-by: Gautham R. Shenoy <ego@linux.vnet.ibm.com>
-Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+Change the prototype to allow it, as there is no real reason not to.
+
+Fixes: 9bb2e0452508 ("gpio: amd: Make resource struct const")
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Link: https://lore.kernel.org/r/20190628150049.1108048-1-arnd@arndb.de
+Acked-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Reviwed-By: Enrico Weigelt <info@metux.net>
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/powerpc/kernel/cacheinfo.c | 21 +++++++++++++++++++++
- arch/powerpc/kernel/cacheinfo.h |  4 ++++
- 2 files changed, 25 insertions(+)
+ include/linux/device.h | 3 ++-
+ lib/devres.c           | 3 ++-
+ 2 files changed, 4 insertions(+), 2 deletions(-)
 
-diff --git a/arch/powerpc/kernel/cacheinfo.c b/arch/powerpc/kernel/cacheinfo.c
-index c641983bbdd68..0122d5ce0637d 100644
---- a/arch/powerpc/kernel/cacheinfo.c
-+++ b/arch/powerpc/kernel/cacheinfo.c
-@@ -867,4 +867,25 @@ void cacheinfo_cpu_offline(unsigned int cpu_id)
- 	if (cache)
- 		cache_cpu_clear(cache, cpu_id);
- }
-+
-+void cacheinfo_teardown(void)
-+{
-+	unsigned int cpu;
-+
-+	lockdep_assert_cpus_held();
-+
-+	for_each_online_cpu(cpu)
-+		cacheinfo_cpu_offline(cpu);
-+}
-+
-+void cacheinfo_rebuild(void)
-+{
-+	unsigned int cpu;
-+
-+	lockdep_assert_cpus_held();
-+
-+	for_each_online_cpu(cpu)
-+		cacheinfo_cpu_online(cpu);
-+}
-+
- #endif /* (CONFIG_PPC_PSERIES && CONFIG_SUSPEND) || CONFIG_HOTPLUG_CPU */
-diff --git a/arch/powerpc/kernel/cacheinfo.h b/arch/powerpc/kernel/cacheinfo.h
-index a7b74d36acd71..2cdee87a482c5 100644
---- a/arch/powerpc/kernel/cacheinfo.h
-+++ b/arch/powerpc/kernel/cacheinfo.h
-@@ -5,4 +5,8 @@
- extern void cacheinfo_cpu_online(unsigned int cpu_id);
- extern void cacheinfo_cpu_offline(unsigned int cpu_id);
+diff --git a/include/linux/device.h b/include/linux/device.h
+index 834000903525d..eb891c9c4b620 100644
+--- a/include/linux/device.h
++++ b/include/linux/device.h
+@@ -677,7 +677,8 @@ extern unsigned long devm_get_free_pages(struct device *dev,
+ 					 gfp_t gfp_mask, unsigned int order);
+ extern void devm_free_pages(struct device *dev, unsigned long addr);
  
-+/* Allow migration/suspend to tear down and rebuild the hierarchy. */
-+extern void cacheinfo_teardown(void);
-+extern void cacheinfo_rebuild(void);
-+
- #endif /* _PPC_CACHEINFO_H */
+-void __iomem *devm_ioremap_resource(struct device *dev, struct resource *res);
++void __iomem *devm_ioremap_resource(struct device *dev,
++				    const struct resource *res);
+ 
+ /* allows to add/remove a custom action to devres stack */
+ int devm_add_action(struct device *dev, void (*action)(void *), void *data);
+diff --git a/lib/devres.c b/lib/devres.c
+index 8c85672639d3e..9d18ccd00df52 100644
+--- a/lib/devres.c
++++ b/lib/devres.c
+@@ -131,7 +131,8 @@ EXPORT_SYMBOL(devm_iounmap);
+  *	if (IS_ERR(base))
+  *		return PTR_ERR(base);
+  */
+-void __iomem *devm_ioremap_resource(struct device *dev, struct resource *res)
++void __iomem *devm_ioremap_resource(struct device *dev,
++				    const struct resource *res)
+ {
+ 	resource_size_t size;
+ 	const char *name;
 -- 
 2.20.1
 
