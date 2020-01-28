@@ -2,457 +2,624 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AA51014AE22
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Jan 2020 03:28:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6F4C514AE2E
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Jan 2020 03:34:28 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727966AbgA1C2Q (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 27 Jan 2020 21:28:16 -0500
-Received: from esa3.hgst.iphmx.com ([216.71.153.141]:43171 "EHLO
-        esa3.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727326AbgA1C2M (ORCPT
+        id S1726296AbgA1Ce0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 27 Jan 2020 21:34:26 -0500
+Received: from mail-yw1-f66.google.com ([209.85.161.66]:46353 "EHLO
+        mail-yw1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726101AbgA1Ce0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 27 Jan 2020 21:28:12 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1580178492; x=1611714492;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=hTSqiqeL2/EozjiPkmP8vvNpZCNVxLDKqvRRmVXpK58=;
-  b=rFn+/2HROgvsbUiabuu7vlnqZB7J+zf1wFBLUdpYbBK7HwD+C1z+4nZj
-   6ZA6+k13++RWfM39tk/hK50o4uZqKO2OMkxb0kE4AfODsWIDdGSZlkjZH
-   ph+Kvl2ET7a3V/gH/9RDTdu7Wx7XG4t4B1THmSNzwnymJzE5wRzbCGmHq
-   giVy6Wa7c2G7oWCW6jzF5PtQdGx4s8HCwTqik0v3/munfiIfWgPywPVxj
-   GLzLO9TB+rLbQYFFGUJrwz8ezFyy0LLBwjcKx5qbxdldm66x4+SkRQnBx
-   ws4IcHr2no92rO6VYOASqJcghEMIC63mhP7/yLQ9usl835x4y7FXGFUhC
-   A==;
-IronPort-SDR: Uez56EV2cgpX7pWT1k6bWSqHFoC5tgDV/upFdbojviEWA4GhageIB7hXokTQ0K//6wJeJAu9gT
- fT5Aj3W5VP4ylaEn9Xjbq3tawvy2Y4hl0f1ATyw38NLAHnB0qdEAqNoK0QTaQprSBQQV6Dw7dw
- xc3/gGaFm/0XYT0u5OjC2g+x2Z7JXmIpGJVcVqoUCswdi+P0sHXXguSJ+w8ZYH62un381RFd7v
- Bdw/9/45LHadrNmDqAc2/HArfy6oM8cjAOBtsP3Xhpht2qFAzXVPUZgkyLdvxmMBI29NUyPAQe
- 5xM=
-X-IronPort-AV: E=Sophos;i="5.70,372,1574092800"; 
-   d="scan'208";a="132899444"
-Received: from h199-255-45-14.hgst.com (HELO uls-op-cesaep01.wdc.com) ([199.255.45.14])
-  by ob1.hgst.iphmx.com with ESMTP; 28 Jan 2020 10:28:12 +0800
-IronPort-SDR: ATSUV3DvdK5ySChXO2YlaSdxCJuOT0Poseqj/IxoK8v6MG+FZ3uqj92fGYKgZULkUfadoBoih8
- pHLhdOS/y4HyBl3/4glXGkIHyOGaIT3wvscO5633RKdYd6OBUUSQMsRDCnvo9H0EaEy3KU09Gk
- 4WK613MhlCcukMQ9n7pWC/aNtVhlAOtJimF52xrMrqXzajunhG0Ry+Lnsjx96dJdPBzlycqH+2
- kG1kVGUaEbwc2sEAp0kF1ucbLE8Zxb4FYVTOtN6UNcndRx4xJjYBDV89PHC4StSZxZ+D23rYtK
- yIXbrbHexpoog8rL+xSwcx4S
-Received: from uls-op-cesaip01.wdc.com ([10.248.3.36])
-  by uls-op-cesaep01.wdc.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Jan 2020 18:21:26 -0800
-IronPort-SDR: c2BFc7nNVRyDbyLFhN1M3NUrb8xcXShYNzPmY4hb0qt+pjbxQAmyVTMiSIfTF4Zq919ew0WS7g
- r7LUlXIb8UgpO0rGMb4KvFUTw05o5QKvXg9DV8yvCpOBnnu5+ZLG4Nl2HH6XLO9oc++jyHVd5J
- iDakVacjojhF8+gIPnZt5ugfaor3Gv0Mi9jdqlGFEYpbsVid+Bkd5fAZ444uW469WtDdGTE0VX
- 2762iFnvmAU0+N/N6hVV9ogo0MkEijKIdjwmSlkHzN5rXrtsKK/Li/9qBzDZCIMc/VRKK6uFvt
- 5NY=
-WDCIronportException: Internal
-Received: from jedi-01.sdcorp.global.sandisk.com (HELO jedi-01.int.fusionio.com) ([10.11.143.218])
-  by uls-op-cesaip01.wdc.com with ESMTP; 27 Jan 2020 18:28:12 -0800
-From:   Atish Patra <atish.patra@wdc.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     Atish Patra <atish.patra@wdc.com>,
-        Albert Ou <aou@eecs.berkeley.edu>,
-        Anup Patel <anup@brainfault.org>, Borislav Petkov <bp@suse.de>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Greentime Hu <greentime.hu@sifive.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>,
-        Kees Cook <keescook@chromium.org>,
-        linux-riscv@lists.infradead.org, Mao Han <han_mao@c-sky.com>,
-        Mike Rapoport <rppt@linux.ibm.com>,
-        Palmer Dabbelt <palmer@dabbelt.com>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Vincent Chen <vincent.chen@sifive.com>, abner.chang@hpe.com,
-        clin@suse.com, nickhu@andestech.com,
-        Palmer Dabbelt <palmerdabbelt@google.com>
-Subject: [PATCH v7 10/10] RISC-V: Support cpu hotplug
-Date:   Mon, 27 Jan 2020 18:27:37 -0800
-Message-Id: <20200128022737.15371-11-atish.patra@wdc.com>
-X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20200128022737.15371-1-atish.patra@wdc.com>
-References: <20200128022737.15371-1-atish.patra@wdc.com>
+        Mon, 27 Jan 2020 21:34:26 -0500
+Received: by mail-yw1-f66.google.com with SMTP id u139so5816291ywf.13;
+        Mon, 27 Jan 2020 18:34:24 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=BLZjKbQqw8/vSRAvqhbH57wjg371XNFVEXKJoHOqB1Q=;
+        b=VFjmvWLtMi2Fqocf1Hf6TR6EqnuQwonR5MHPvRo860vNpgJ4fxvqOBWUXu79Yggs4y
+         dSt8LZU9d9hXCDg5xzin5L6m96sNS6BXbhpz3OYGprcENlOESpxFBqHtRyPZLuJPdDIR
+         gkaMEJDdPBctlO/yqgfNFm9WBkP+K7K0kp2vtIkbSf9UQiUQlqwdT0q/loP7NTErPJlM
+         0vtWJT1fU4zk0BUuivgBy0dvHSMGC8CKVkj/xOxbuucwPjZTuIeD+Cb+Y9P5tGSY1FQP
+         Cx24KOBQXbX01muxOxQXE/gwYuK8LMzZOt3RNnNBQEwqBwXDMQoXOVMFOcGMV6iov77E
+         i/ag==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=BLZjKbQqw8/vSRAvqhbH57wjg371XNFVEXKJoHOqB1Q=;
+        b=YZ9Ad2ZubDr+Kqvdz8SPMyIqzg4aH5UTwY/499ys0O6e2HtnGzFrzTnkEpEDqe+kVU
+         wg77ctQ1+XwXCkGhZbyFLDhjef2Jp1Bv3c2AdUnskMwrkclCKSkkqKswnea9m9f+KATd
+         dVxvAZ1aPP9avpLJ2PqB4+fb4xZoS/uUPjnqcKjj4ubluyJ1dOfc1uZR+IxXEXh9qcwU
+         uIB/hPcGBvAsSgp+Vr4j7Gaeza+jy+d+q39mXos652Wj+dMCx0LfV2cCRTtf5d5TFD06
+         lyAhSEa+h17Hh0GmtzrgQyWoVu9p/wvLqoZP1p6K3Q4gXfJB63+J3fqZz/GJeXnlmkp8
+         1JJg==
+X-Gm-Message-State: APjAAAWMH4Pu9UfopMZPa+IwES/Yqib83ArAN376NCeARfKJaFyZ/zNL
+        nWPdtLLV6pe92nZI+PKAeQ4=
+X-Google-Smtp-Source: APXvYqylFQxYAaGxx59fkWKNN1Jm72KLPV6wfBtWKL+MnUQzFHO9kWVUbYqZaveHVueXYdbtSAfIzQ==
+X-Received: by 2002:a81:780b:: with SMTP id t11mr14048540ywc.117.1580178863447;
+        Mon, 27 Jan 2020 18:34:23 -0800 (PST)
+Received: from [192.168.1.46] (c-73-88-245-53.hsd1.tn.comcast.net. [73.88.245.53])
+        by smtp.gmail.com with ESMTPSA id s3sm7947576ywf.22.2020.01.27.18.34.22
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 27 Jan 2020 18:34:22 -0800 (PST)
+Subject: Re: [RFC PATCH 1/2] of: unittest: add overlay gpio test to catch gpio
+ hog problem
+To:     Rob Herring <robh@kernel.org>
+Cc:     Geert Uytterhoeven <geert+renesas@glider.be>,
+        pantelis.antoniou@konsulko.com,
+        Pantelis Antoniou <panto@antoniou-consulting.com>,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Alan Tull <atull@kernel.org>
+References: <1579070828-18221-1-git-send-email-frowand.list@gmail.com>
+ <1579070828-18221-2-git-send-email-frowand.list@gmail.com>
+ <20200121230210.GA3193@bogus>
+From:   Frank Rowand <frowand.list@gmail.com>
+Message-ID: <f7bb7365-1664-7850-55b4-2dac11799c46@gmail.com>
+Date:   Mon, 27 Jan 2020 20:34:21 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20200121230210.GA3193@bogus>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch enable support for cpu hotplug in RISC-V. It uses SBI HSM
-extension to online/offline any hart. As a result, the harts are
-returned to firmware once they are offline. If the harts are brought
-online afterwards, they re-enter Linux kernel as if a secondary hart
-booted for the first time. All booting requirements are honored during
-this process.
+On 1/21/20 5:02 PM, Rob Herring wrote:
+> On Wed, Jan 15, 2020 at 12:47:07AM -0600, frowand.list@gmail.com wrote:
+>> From: Frank Rowand <frank.rowand@sony.com>
+>>
+>> Geert reports that gpio hog nodes are not properly processed when
+>> the gpio hog node is added via an overlay reply and provides an
+>> RFC patch to fix the problem [1].
+>>
+>> Add a unittest that shows the problem.  Unittest will report "1 failed"
+>> test before applying Geert's RFC patch and "0 failed" after applying
+>> Geert's RFC patch.
+>>
+>> [1] https://lore.kernel.org/linux-devicetree/20191230133852.5890-1-geert+renesas@glider.be/
+>>
+>> Signed-off-by: Frank Rowand <frank.rowand@sony.com>
+>> ---
+>>
+>> There are checkpatch warnings.
+>>   - The lines over 80 characters are consistent with unittest.c style
+>>   - The undocumented compatibles are restricted to use by unittest
+>>     and should not be documented under Documentation
+>>
+>> This unittest was also valuable in that it allowed me to explore
+>> possible issues related to the proposed solution to the gpio hog
+>> problem.
+>>
+>>  drivers/of/unittest-data/Makefile             |   8 +-
+>>  drivers/of/unittest-data/overlay_gpio_01.dts  |  23 +++
+>>  drivers/of/unittest-data/overlay_gpio_02a.dts |  16 ++
+>>  drivers/of/unittest-data/overlay_gpio_02b.dts |  16 ++
+>>  drivers/of/unittest-data/overlay_gpio_03.dts  |  23 +++
+>>  drivers/of/unittest-data/overlay_gpio_04a.dts |  16 ++
+>>  drivers/of/unittest-data/overlay_gpio_04b.dts |  16 ++
+>>  drivers/of/unittest.c                         | 257 ++++++++++++++++++++++++++
+>>  8 files changed, 374 insertions(+), 1 deletion(-)
+>>  create mode 100644 drivers/of/unittest-data/overlay_gpio_01.dts
+>>  create mode 100644 drivers/of/unittest-data/overlay_gpio_02a.dts
+>>  create mode 100644 drivers/of/unittest-data/overlay_gpio_02b.dts
+>>  create mode 100644 drivers/of/unittest-data/overlay_gpio_03.dts
+>>  create mode 100644 drivers/of/unittest-data/overlay_gpio_04a.dts
+>>  create mode 100644 drivers/of/unittest-data/overlay_gpio_04b.dts
+>>
+>> diff --git a/drivers/of/unittest-data/Makefile b/drivers/of/unittest-data/Makefile
+>> index 9b6807065827..009f4045c8e4 100644
+>> --- a/drivers/of/unittest-data/Makefile
+>> +++ b/drivers/of/unittest-data/Makefile
+>> @@ -21,7 +21,13 @@ obj-$(CONFIG_OF_OVERLAY) += overlay.dtb.o \
+>>  			    overlay_bad_add_dup_prop.dtb.o \
+>>  			    overlay_bad_phandle.dtb.o \
+>>  			    overlay_bad_symbol.dtb.o \
+>> -			    overlay_base.dtb.o
+>> +			    overlay_base.dtb.o \
+>> +			    overlay_gpio_01.dtb.o \
+>> +			    overlay_gpio_02a.dtb.o \
+>> +			    overlay_gpio_02b.dtb.o \
+>> +			    overlay_gpio_03.dtb.o \
+>> +			    overlay_gpio_04a.dtb.o \
+>> +			    overlay_gpio_04b.dtb.o
+>>  
+>>  # enable creation of __symbols__ node
+>>  DTC_FLAGS_overlay += -@
+>> diff --git a/drivers/of/unittest-data/overlay_gpio_01.dts b/drivers/of/unittest-data/overlay_gpio_01.dts
+>> new file mode 100644
+>> index 000000000000..f039e8bce3b6
+>> --- /dev/null
+>> +++ b/drivers/of/unittest-data/overlay_gpio_01.dts
+>> @@ -0,0 +1,23 @@
+>> +// SPDX-License-Identifier: GPL-2.0
+>> +/dts-v1/;
+>> +/plugin/;
+>> +
+>> +&unittest_test_bus {
+>> +	#address-cells = <1>;
+>> +	#size-cells = <0>;
+>> +	gpio_01 {
+> 
+> gpio@0
+> 
+>> +		compatible = "unittest-gpio";
+> 
+> There's a mock GPIO driver and I think there was a binding proposed at 
+> some point for some sort of GPIO testing device binding. Maybe that can 
+> save another test driver.
 
-Tested both on QEMU and HighFive Unleashed board with. Test result follows.
+I did not reply to this comment in my first reply.
 
----------------------------------------------------
-Offline cpu 2
----------------------------------------------------
-$ echo 0 > /sys/devices/system/cpu/cpu2/online
-[   32.828684] CPU2: off
-$ cat /proc/cpuinfo
-processor       : 0
-hart            : 0
-isa             : rv64imafdcsu
-mmu             : sv48
+Thanks for pointing out that driver, I was not aware of it.
 
-processor       : 1
-hart            : 1
-isa             : rv64imafdcsu
-mmu             : sv48
+The existing driver is way larger and more complicated than the one that
+is in this patch.
 
-processor       : 3
-hart            : 3
-isa             : rv64imafdcsu
-mmu             : sv48
+I needed to add global (to unittest.c) variables to count how many times
+some gpio driver functions are called to be able to determine whether
+the gpio infrastructure was calling the specific functions as gpio and
+gpio hog nodes were being added.  It would be pretty ugly to put those
+counters in the more generic gpio test driver.
 
-processor       : 4
-hart            : 4
-isa             : rv64imafdcsu
-mmu             : sv48
+-Frank
 
-processor       : 5
-hart            : 5
-isa             : rv64imafdcsu
-mmu             : sv48
-
-processor       : 6
-hart            : 6
-isa             : rv64imafdcsu
-mmu             : sv48
-
-processor       : 7
-hart            : 7
-isa             : rv64imafdcsu
-mmu             : sv48
-
----------------------------------------------------
-online cpu 2
----------------------------------------------------
-$ echo 1 > /sys/devices/system/cpu/cpu2/online
-$ cat /proc/cpuinfo
-processor       : 0
-hart            : 0
-isa             : rv64imafdcsu
-mmu             : sv48
-
-processor       : 1
-hart            : 1
-isa             : rv64imafdcsu
-mmu             : sv48
-
-processor       : 2
-hart            : 2
-isa             : rv64imafdcsu
-mmu             : sv48
-
-processor       : 3
-hart            : 3
-isa             : rv64imafdcsu
-mmu             : sv48
-
-processor       : 4
-hart            : 4
-isa             : rv64imafdcsu
-mmu             : sv48
-
-processor       : 5
-hart            : 5
-isa             : rv64imafdcsu
-mmu             : sv48
-
-processor       : 6
-hart            : 6
-isa             : rv64imafdcsu
-mmu             : sv48
-
-processor       : 7
-hart            : 7
-isa             : rv64imafdcsu
-mmu             : sv48
-
-Signed-off-by: Atish Patra <atish.patra@wdc.com>
----
- arch/riscv/Kconfig               | 12 ++++-
- arch/riscv/include/asm/cpu_ops.h |  5 ++
- arch/riscv/include/asm/smp.h     |  7 +++
- arch/riscv/kernel/Makefile       |  1 +
- arch/riscv/kernel/cpu-hotplug.c  | 84 ++++++++++++++++++++++++++++++++
- arch/riscv/kernel/cpu_ops.c      | 34 +++++++++++++
- arch/riscv/kernel/setup.c        | 26 ++++++++++
- 7 files changed, 168 insertions(+), 1 deletion(-)
- create mode 100644 arch/riscv/kernel/cpu-hotplug.c
-
-diff --git a/arch/riscv/Kconfig b/arch/riscv/Kconfig
-index 518da42be545..99fb481dc805 100644
---- a/arch/riscv/Kconfig
-+++ b/arch/riscv/Kconfig
-@@ -22,7 +22,6 @@ config RISCV
- 	select CLONE_BACKWARDS
- 	select COMMON_CLK
- 	select GENERIC_CLOCKEVENTS
--	select GENERIC_CPU_DEVICES
- 	select GENERIC_IRQ_SHOW
- 	select GENERIC_PCI_IOMAP
- 	select GENERIC_SCHED_CLOCK
-@@ -247,6 +246,17 @@ config NR_CPUS
- 	depends on SMP
- 	default "8"
- 
-+config HOTPLUG_CPU
-+	bool "Support for hot-pluggable CPUs"
-+	depends on SMP
-+	select GENERIC_IRQ_MIGRATION
-+	help
-+
-+	  Say Y here to experiment with turning CPUs off and on.  CPUs
-+	  can be controlled through /sys/devices/system/cpu.
-+
-+	  Say N if you want to disable CPU hotplug.
-+
- choice
- 	prompt "CPU Tuning"
- 	default TUNE_GENERIC
-diff --git a/arch/riscv/include/asm/cpu_ops.h b/arch/riscv/include/asm/cpu_ops.h
-index 27e9dfee5460..d53d7086f627 100644
---- a/arch/riscv/include/asm/cpu_ops.h
-+++ b/arch/riscv/include/asm/cpu_ops.h
-@@ -23,6 +23,11 @@ struct cpu_operations {
- 	int		(*cpu_prepare)(unsigned int cpu);
- 	int		(*cpu_start)(unsigned int cpu,
- 				     struct task_struct *tidle);
-+#ifdef CONFIG_HOTPLUG_CPU
-+	int		(*cpu_disable)(unsigned int cpu);
-+	void		(*cpu_stop)(void);
-+	int		(*cpu_is_stopped)(unsigned int cpu);
-+#endif
- };
- 
- extern const struct cpu_operations *cpu_ops[NR_CPUS];
-diff --git a/arch/riscv/include/asm/smp.h b/arch/riscv/include/asm/smp.h
-index 023f74fb8b3b..8d9c50c0f91c 100644
---- a/arch/riscv/include/asm/smp.h
-+++ b/arch/riscv/include/asm/smp.h
-@@ -43,6 +43,13 @@ void riscv_cpuid_to_hartid_mask(const struct cpumask *in, struct cpumask *out);
-  */
- #define raw_smp_processor_id() (current_thread_info()->cpu)
- 
-+#if defined CONFIG_HOTPLUG_CPU
-+int __cpu_disable(void);
-+void __cpu_die(unsigned int cpu);
-+void cpu_stop(void);
-+#else
-+#endif /* CONFIG_HOTPLUG_CPU */
-+
- #else
- 
- static inline void show_ipi_stats(struct seq_file *p, int prec)
-diff --git a/arch/riscv/kernel/Makefile b/arch/riscv/kernel/Makefile
-index d77def5b4e87..6fe35a719de1 100644
---- a/arch/riscv/kernel/Makefile
-+++ b/arch/riscv/kernel/Makefile
-@@ -43,5 +43,6 @@ obj-$(CONFIG_PERF_EVENTS)	+= perf_event.o
- obj-$(CONFIG_PERF_EVENTS)	+= perf_callchain.o
- obj-$(CONFIG_HAVE_PERF_REGS)	+= perf_regs.o
- obj-$(CONFIG_RISCV_SBI)		+= sbi.o
-+obj-$(CONFIG_HOTPLUG_CPU)	+= cpu-hotplug.o
- 
- clean:
-diff --git a/arch/riscv/kernel/cpu-hotplug.c b/arch/riscv/kernel/cpu-hotplug.c
-new file mode 100644
-index 000000000000..835b0747803e
---- /dev/null
-+++ b/arch/riscv/kernel/cpu-hotplug.c
-@@ -0,0 +1,84 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Copyright (C) 2018 Western Digital Corporation or its affiliates.
-+ */
-+
-+#include <linux/kernel.h>
-+#include <linux/mm.h>
-+#include <linux/sched.h>
-+#include <linux/err.h>
-+#include <linux/irq.h>
-+#include <linux/cpu.h>
-+#include <linux/sched/hotplug.h>
-+#include <asm/irq.h>
-+#include <asm/cpu_ops.h>
-+#include <asm/sbi.h>
-+
-+void cpu_stop(void);
-+bool can_hotplug_cpu(void)
-+{
-+	return true;
-+}
-+
-+void arch_cpu_idle_dead(void)
-+{
-+	cpu_stop();
-+}
-+
-+/*
-+ * __cpu_disable runs on the processor to be shutdown.
-+ */
-+int __cpu_disable(void)
-+{
-+	int ret = 0;
-+	unsigned int cpu = smp_processor_id();
-+
-+	if (!cpu_ops[cpu] || !cpu_ops[cpu]->cpu_stop)
-+		return -EOPNOTSUPP;
-+
-+	if (cpu_ops[cpu]->cpu_disable)
-+		ret = cpu_ops[cpu]->cpu_disable(cpu);
-+
-+	if (ret)
-+		return ret;
-+
-+	remove_cpu_topology(cpu);
-+	set_cpu_online(cpu, false);
-+	irq_migrate_all_off_this_cpu();
-+
-+	return ret;
-+}
-+
-+/*
-+ * Called on the thread which is asking for a CPU to be shutdown.
-+ */
-+void __cpu_die(unsigned int cpu)
-+{
-+	int ret = 0;
-+
-+	if (!cpu_wait_death(cpu, 5)) {
-+		pr_err("CPU %u: didn't die\n", cpu);
-+		return;
-+	}
-+	pr_notice("CPU%u: off\n", cpu);
-+
-+	/* Verify from the firmware if the cpu is really stopped*/
-+	if (cpu_ops[cpu]->cpu_is_stopped)
-+		ret = cpu_ops[cpu]->cpu_is_stopped(cpu);
-+	if (ret)
-+		pr_warn("CPU%d may not have stopped: %d\n", cpu, ret);
-+}
-+
-+/*
-+ * Called from the idle thread for the CPU which has been shutdown.
-+ */
-+void cpu_stop(void)
-+{
-+	idle_task_exit();
-+
-+	(void)cpu_report_death();
-+
-+	cpu_ops[smp_processor_id()]->cpu_stop();
-+	/* It should never reach here */
-+	BUG();
-+}
-diff --git a/arch/riscv/kernel/cpu_ops.c b/arch/riscv/kernel/cpu_ops.c
-index 454df032066f..9b315137b945 100644
---- a/arch/riscv/kernel/cpu_ops.c
-+++ b/arch/riscv/kernel/cpu_ops.c
-@@ -59,6 +59,34 @@ static int sbi_cpu_start(unsigned int cpuid, struct task_struct *tidle)
- 	return rc;
- }
- 
-+#ifdef CONFIG_HOTPLUG_CPU
-+static int sbi_cpu_disable(unsigned int cpuid)
-+{
-+	if (!cpu_sbi_ops.cpu_stop)
-+		return -EOPNOTSUPP;
-+	return 0;
-+}
-+
-+static void sbi_cpu_stop(void)
-+{
-+	int ret;
-+
-+	ret = sbi_hsm_hart_stop();
-+	pr_crit("Unable to stop the cpu %u (%d)\n", smp_processor_id(), ret);
-+}
-+
-+static int sbi_cpu_is_stopped(unsigned int cpuid)
-+{
-+	int rc;
-+	int hartid = cpuid_to_hartid_map(cpuid);
-+
-+	rc = sbi_hsm_hart_get_status(hartid);
-+
-+	if (rc == RISCV_HART_FIRMWARE_STOPPED)
-+		return 0;
-+	return rc;
-+}
-+#endif
- static int spinwait_cpu_start(unsigned int cpuid, struct task_struct *tidle)
- {
- 	int hartid = cpuid_to_hartid_map(cpuid);
-@@ -82,6 +110,11 @@ const struct cpu_operations cpu_sbi_ops = {
- 	.name		= "sbi",
- 	.cpu_prepare	= sbi_cpu_prepare,
- 	.cpu_start	= sbi_cpu_start,
-+#ifdef CONFIG_HOTPLUG_CPU
-+	.cpu_disable	= sbi_cpu_disable,
-+	.cpu_stop	= sbi_cpu_stop,
-+	.cpu_is_stopped	= sbi_cpu_is_stopped,
-+#endif
- };
- 
- const struct cpu_operations cpu_spinwait_ops = {
-@@ -90,6 +123,7 @@ const struct cpu_operations cpu_spinwait_ops = {
- 	.cpu_start	= spinwait_cpu_start,
- };
- 
-+
- int __init cpu_set_ops(int cpuid)
- {
- 	if (sbi_hsm_is_available())
-diff --git a/arch/riscv/kernel/setup.c b/arch/riscv/kernel/setup.c
-index 8208d1109ddb..dfab3bd40f2a 100644
---- a/arch/riscv/kernel/setup.c
-+++ b/arch/riscv/kernel/setup.c
-@@ -43,6 +43,7 @@ struct screen_info screen_info = {
- /* The lucky hart to first increment this variable will boot the other cores */
- atomic_t hart_lottery;
- unsigned long boot_cpu_hartid;
-+static DEFINE_PER_CPU(struct cpu, cpu_devices);
- 
- void __init parse_dtb(void)
- {
-@@ -90,3 +91,28 @@ void __init setup_arch(char **cmdline_p)
- 
- 	riscv_fill_hwcap();
- }
-+
-+static inline bool can_hotplug_cpu(unsigned int cpu)
-+{
-+#ifdef CONFIG_HOTPLUG_CPU
-+	if (cpu_ops[cpu]->cpu_stop)
-+		return true;
-+#endif
-+	return false;
-+}
-+
-+static int __init topology_init(void)
-+{
-+	int i;
-+
-+	pr_err("%s: In\n", __func__);
-+	for_each_possible_cpu(i) {
-+		struct cpu *cpu = &per_cpu(cpu_devices, i);
-+
-+		cpu->hotpluggable = can_hotplug_cpu(i);
-+		register_cpu(cpu, i);
-+	}
-+
-+	return 0;
-+}
-+subsys_initcall(topology_init);
--- 
-2.24.0
+> 
+>> +		reg = <0>;
+>> +		gpio-controller;
+>> +		#gpio-cells = <2>;
+>> +		ngpios = <2>;
+>> +		gpio-line-names = "line-A", "line-B";
+>> +
+>> +		line_b {
+> 
+> line-b
+> 
+>> +			gpio-hog;
+>> +			gpios = <2 0>;
+>> +			input;
+>> +			line-name = "line-B-input";
+>> +		};
+>> +	};
+>> +};
+>> diff --git a/drivers/of/unittest-data/overlay_gpio_02a.dts b/drivers/of/unittest-data/overlay_gpio_02a.dts
+>> new file mode 100644
+>> index 000000000000..cdafab604793
+>> --- /dev/null
+>> +++ b/drivers/of/unittest-data/overlay_gpio_02a.dts
+>> @@ -0,0 +1,16 @@
+>> +// SPDX-License-Identifier: GPL-2.0
+>> +/dts-v1/;
+>> +/plugin/;
+>> +
+>> +&unittest_test_bus {
+>> +	#address-cells = <1>;
+>> +	#size-cells = <0>;
+>> +	gpio_02 {
+>> +		compatible = "unittest-gpio";
+>> +		reg = <1>;
+>> +		gpio-controller;
+>> +		#gpio-cells = <2>;
+>> +		ngpios = <2>;
+>> +		gpio-line-names = "line-A", "line-B";
+>> +	};
+>> +};
+>> diff --git a/drivers/of/unittest-data/overlay_gpio_02b.dts b/drivers/of/unittest-data/overlay_gpio_02b.dts
+>> new file mode 100644
+>> index 000000000000..0cea0dccafba
+>> --- /dev/null
+>> +++ b/drivers/of/unittest-data/overlay_gpio_02b.dts
+>> @@ -0,0 +1,16 @@
+>> +// SPDX-License-Identifier: GPL-2.0
+>> +/dts-v1/;
+>> +/plugin/;
+>> +
+>> +&unittest_test_bus {
+>> +	#address-cells = <1>;
+>> +	#size-cells = <0>;
+>> +	gpio_02 {
+>> +		line_a {
+>> +			gpio-hog;
+>> +			gpios = <1 0>;
+>> +			input;
+>> +			line-name = "line-A-input";
+>> +		};
+>> +	};
+>> +};
+>> diff --git a/drivers/of/unittest-data/overlay_gpio_03.dts b/drivers/of/unittest-data/overlay_gpio_03.dts
+>> new file mode 100644
+>> index 000000000000..1d5c680fa254
+>> --- /dev/null
+>> +++ b/drivers/of/unittest-data/overlay_gpio_03.dts
+>> @@ -0,0 +1,23 @@
+>> +// SPDX-License-Identifier: GPL-2.0
+>> +/dts-v1/;
+>> +/plugin/;
+>> +
+>> +&unittest_test_bus {
+>> +	#address-cells = <1>;
+>> +	#size-cells = <0>;
+>> +	gpio_03 {
+>> +		compatible = "unittest-gpio";
+>> +		reg = <0>;
+>> +		gpio-controller;
+>> +		#gpio-cells = <2>;
+>> +		ngpios = <2>;
+>> +		gpio-line-names = "line-A", "line-B", "line-C", "line-D";
+>> +
+>> +		line_d {
+>> +			gpio-hog;
+>> +			gpios = <4 0>;
+>> +			input;
+>> +			line-name = "line-D-input";
+>> +		};
+>> +	};
+>> +};
+>> diff --git a/drivers/of/unittest-data/overlay_gpio_04a.dts b/drivers/of/unittest-data/overlay_gpio_04a.dts
+>> new file mode 100644
+>> index 000000000000..d2482cde310e
+>> --- /dev/null
+>> +++ b/drivers/of/unittest-data/overlay_gpio_04a.dts
+>> @@ -0,0 +1,16 @@
+>> +// SPDX-License-Identifier: GPL-2.0
+>> +/dts-v1/;
+>> +/plugin/;
+>> +
+>> +&unittest_test_bus {
+>> +	#address-cells = <1>;
+>> +	#size-cells = <0>;
+>> +	gpio_04 {
+>> +		compatible = "unittest-gpio";
+>> +		reg = <1>;
+>> +		gpio-controller;
+>> +		#gpio-cells = <2>;
+>> +		ngpios = <2>;
+>> +		gpio-line-names = "line-A", "line-B", "line-C", "line-D";
+>> +	};
+>> +};
+>> diff --git a/drivers/of/unittest-data/overlay_gpio_04b.dts b/drivers/of/unittest-data/overlay_gpio_04b.dts
+>> new file mode 100644
+>> index 000000000000..70ad05d759f9
+>> --- /dev/null
+>> +++ b/drivers/of/unittest-data/overlay_gpio_04b.dts
+>> @@ -0,0 +1,16 @@
+>> +// SPDX-License-Identifier: GPL-2.0
+>> +/dts-v1/;
+>> +/plugin/;
+>> +
+>> +&unittest_test_bus {
+>> +	#address-cells = <1>;
+>> +	#size-cells = <0>;
+>> +	gpio_04 {
+>> +		line_c {
+>> +			gpio-hog;
+>> +			gpios = <3 0>;
+>> +			input;
+>> +			line-name = "line-C-input";
+>> +		};
+>> +	};
+>> +};
+>> diff --git a/drivers/of/unittest.c b/drivers/of/unittest.c
+>> index 68b87587b2ef..db0a6f4103a4 100644
+>> --- a/drivers/of/unittest.c
+>> +++ b/drivers/of/unittest.c
+>> @@ -24,6 +24,7 @@
+>>  
+>>  #include <linux/i2c.h>
+>>  #include <linux/i2c-mux.h>
+>> +#include <linux/gpio/driver.h>
+>>  
+>>  #include <linux/bitops.h>
+>>  
+>> @@ -46,6 +47,101 @@
+>>  	failed; \
+>>  })
+>>  
+>> +/*
+>> + * Expected message may have a message level other than KERN_INFO.
+>> + * Print the expected message only if the current loglevel will allow
+>> + * the actual message to print.
+>> + */
+>> +#define EXPECT_BEGIN(level, fmt, ...) \
+>> +	printk(level pr_fmt("EXPECT \\ : ") fmt, ##__VA_ARGS__)
+>> +
+>> +#define EXPECT_END(level, fmt, ...) \
+>> +	printk(level pr_fmt("EXPECT / : ") fmt, ##__VA_ARGS__)
+> 
+> When I first saw this, I thought of kunit...
+> 
+> Just wondering if this is a standard way to express this, and if not, is 
+> there?
+> 
+>> +
+>> +struct unittest_gpio_dev {
+>> +	void __iomem *base;
+>> +	struct gpio_chip chip;
+>> +	spinlock_t gpio_lock;
+> 
+> base and gpio_lock aren't used.
+> 
+>> +};
+>> +
+>> +static int unittest_gpio_chip_request_count;
+>> +static int unittest_gpio_probe_count;
+>> +static int unittest_gpio_probe_pass_count;
+>> +
+>> +static int unittest_gpio_chip_request(struct gpio_chip *chip, unsigned int offset)
+>> +{
+>> +	unittest_gpio_chip_request_count++;
+>> +
+>> +	pr_debug("%s(): %s %d %d\n", __func__, chip->label, offset,
+>> +		 unittest_gpio_chip_request_count);
+>> +	return 0;
+>> +}
+>> +
+>> +static int unittest_gpio_probe(struct platform_device *pdev)
+>> +{
+>> +	struct unittest_gpio_dev *devptr;
+>> +	int ret;
+>> +
+>> +	unittest_gpio_probe_count++;
+>> +
+>> +	devptr = kzalloc(sizeof(*devptr), GFP_KERNEL);
+>> +	if (!devptr)
+>> +		return -ENOMEM;
+>> +
+>> +	spin_lock_init(&devptr->gpio_lock);
+>> +
+>> +	platform_set_drvdata(pdev, devptr);
+>> +
+>> +	devptr->chip.of_node = pdev->dev.of_node;
+>> +	devptr->chip.label = "of-unittest-gpio";
+>> +	devptr->chip.base = -1; /* dynamic allocation */
+>> +	devptr->chip.ngpio = 5;
+>> +	devptr->chip.request = unittest_gpio_chip_request;
+>> +
+>> +	ret = gpiochip_add_data(&devptr->chip, NULL);
+>> +
+>> +	unittest(!ret,
+>> +		 "gpiochip_add_data() for node @%pOF failed, ret = %d\n", devptr->chip.of_node, ret);
+>> +
+>> +	if (!ret)
+>> +		unittest_gpio_probe_pass_count++;
+>> +	return ret;
+>> +}
+>> +
+>> +static int unittest_gpio_remove(struct platform_device *pdev)
+>> +{
+>> +	struct unittest_gpio_dev *gdev = platform_get_drvdata(pdev);
+>> +	struct device *dev = &pdev->dev;
+>> +	struct device_node *np = pdev->dev.of_node;
+>> +
+>> +	dev_dbg(dev, "%s for node @%pOF\n", __func__, np);
+>> +
+>> +	if (!gdev)
+>> +		return -EINVAL;
+>> +
+>> +	if (gdev->chip.base != -1)
+>> +		gpiochip_remove(&gdev->chip);
+>> +
+>> +	platform_set_drvdata(pdev, NULL);
+>> +	kfree(pdev);
+>> +
+>> +	return 0;
+>> +}
+>> +
+>> +static const struct of_device_id unittest_gpio_id[] = {
+>> +	{ .compatible = "unittest-gpio", },
+>> +	{}
+>> +};
+>> +
+>> +static struct platform_driver unittest_gpio_driver = {
+>> +	.probe	= unittest_gpio_probe,
+>> +	.remove	= unittest_gpio_remove,
+>> +	.driver	= {
+>> +		.name		= "unittest-gpio",
+>> +		.of_match_table	= of_match_ptr(unittest_gpio_id),
+>> +	},
+>> +};
+>> +
+>>  static void __init of_unittest_find_node_by_name(void)
+>>  {
+>>  	struct device_node *np;
+>> @@ -2183,6 +2279,153 @@ static inline void of_unittest_overlay_i2c_15(void) { }
+>>  
+>>  #endif
+>>  
+>> +static void __init of_unittest_overlay_gpio(void)
+>> +{
+>> +	int chip_request_count;
+>> +	int probe_pass_count;
+>> +	int ret;
+>> +
+>> +	/*
+>> +	 * tests: apply overlays before registering driver
+>> +	 * Similar to installing a driver as a module, the
+>> +	 * driver is registered after applying the overlays.
+>> +	 *
+>> +	 * - apply overlay_gpio_01
+>> +	 * - apply overlay_gpio_02a
+>> +	 * - apply overlay_gpio_02b
+>> +	 * - register driver
+>> +	 *
+>> +	 * register driver will result in
+>> +	 *   - probe and processing gpio hog for overlay_gpio_01
+>> +	 *   - probe for overlay_gpio_02a
+>> +	 *   - processing gpio for overlay_gpio_02b
+>> +	 */
+>> +
+>> +	probe_pass_count = unittest_gpio_probe_pass_count;
+>> +	chip_request_count = unittest_gpio_chip_request_count;
+>> +
+>> +	/*
+>> +	 * overlay_gpio_01 contains gpio node and child gpio hog node
+>> +	 * overlay_gpio_02a contains gpio node
+>> +	 * overlay_gpio_02b contains child gpio hog node
+>> +	 */
+>> +
+>> +	unittest(overlay_data_apply("overlay_gpio_01", NULL),
+>> +		 "Adding overlay 'overlay_gpio_01' failed\n");
+>> +
+>> +	unittest(overlay_data_apply("overlay_gpio_02a", NULL),
+>> +		 "Adding overlay 'overlay_gpio_02a' failed\n");
+>> +
+>> +	unittest(overlay_data_apply("overlay_gpio_02b", NULL),
+>> +		 "Adding overlay 'overlay_gpio_02b' failed\n");
+>> +
+>> +	/*
+>> +	 * messages are the result of the probes, after the
+>> +	 * driver is registered
+>> +	 */
+>> +
+>> +	EXPECT_BEGIN(KERN_INFO,
+>> +		     "GPIO line <<int>> (line-B-input) hogged as input\n");
+>> +
+>> +	EXPECT_BEGIN(KERN_INFO,
+>> +		     "GPIO line <<int>> (line-A-input) hogged as input\n");
+>> +
+>> +	ret = platform_driver_register(&unittest_gpio_driver);
+>> +	if (unittest(ret == 0, "could not register unittest gpio driver\n"))
+>> +		return;
+>> +
+>> +	EXPECT_END(KERN_INFO,
+>> +		   "GPIO line <<int>> (line-A-input) hogged as input\n");
+>> +	EXPECT_END(KERN_INFO,
+>> +		   "GPIO line <<int>> (line-B-input) hogged as input\n");
+>> +
+>> +	unittest(probe_pass_count + 2 == unittest_gpio_probe_pass_count,
+>> +		 "unittest_gpio_probe() failed or not called\n");
+>> +
+>> +	unittest(chip_request_count + 2 == unittest_gpio_chip_request_count,
+>> +		 "unittest_gpio_chip_request() called %d times (expected 1 time)\n",
+>> +		 unittest_gpio_chip_request_count - chip_request_count);
+>> +
+>> +	/*
+>> +	 * tests: apply overlays after registering driver
+>> +	 *
+>> +	 * Similar to a driver built-in to the kernel, the
+>> +	 * driver is registered before applying the overlays.
+>> +	 *
+>> +	 * overlay_gpio_03 contains gpio node and child gpio hog node
+>> +	 *
+>> +	 * - apply overlay_gpio_03
+>> +	 *
+>> +	 * apply overlay will result in
+>> +	 *   - probe and processing gpio hog.
+>> +	 */
+>> +
+>> +	probe_pass_count = unittest_gpio_probe_pass_count;
+>> +	chip_request_count = unittest_gpio_chip_request_count;
+>> +
+>> +	EXPECT_BEGIN(KERN_INFO,
+>> +		     "GPIO line <<int>> (line-D-input) hogged as input\n");
+>> +
+>> +	/* overlay_gpio_03 contains gpio node and child gpio hog node */
+>> +
+>> +	unittest(overlay_data_apply("overlay_gpio_03", NULL),
+>> +		 "Adding overlay 'overlay_gpio_03' failed\n");
+>> +
+>> +	EXPECT_END(KERN_INFO,
+>> +		   "GPIO line <<int>> (line-D-input) hogged as input\n");
+>> +
+>> +	unittest(probe_pass_count + 1 == unittest_gpio_probe_pass_count,
+>> +		 "unittest_gpio_probe() failed or not called\n");
+>> +
+>> +	unittest(chip_request_count + 1 == unittest_gpio_chip_request_count,
+>> +		 "unittest_gpio_chip_request() called %d times (expected 1 time)\n",
+>> +		 unittest_gpio_chip_request_count - chip_request_count);
+>> +
+>> +	/*
+>> +	 * overlay_gpio_04a contains gpio node
+>> +	 *
+>> +	 * - apply overlay_gpio_04a
+>> +	 *
+>> +	 * apply the overlay will result in
+>> +	 *   - probe for overlay_gpio_04a
+>> +	 */
+>> +
+>> +	probe_pass_count = unittest_gpio_probe_pass_count;
+>> +	chip_request_count = unittest_gpio_chip_request_count;
+>> +
+>> +	/* overlay_gpio_04a contains gpio node */
+>> +
+>> +	unittest(overlay_data_apply("overlay_gpio_04a", NULL),
+>> +		 "Adding overlay 'overlay_gpio_04a' failed\n");
+>> +
+>> +	unittest(probe_pass_count + 1 == unittest_gpio_probe_pass_count,
+>> +		 "unittest_gpio_probe() failed or not called\n");
+>> +
+>> +	/*
+>> +	 * overlay_gpio_04b contains child gpio hog node
+>> +	 *
+>> +	 * - apply overlay_gpio_04b
+>> +	 *
+>> +	 * apply the overlay will result in
+>> +	 *   - processing gpio for overlay_gpio_04b
+>> +	 */
+>> +
+>> +	EXPECT_BEGIN(KERN_INFO,
+>> +		     "GPIO line <<int>> (line-C-input) hogged as input\n");
+>> +
+>> +	/* overlay_gpio_04b contains child gpio hog node */
+>> +
+>> +	unittest(overlay_data_apply("overlay_gpio_04b", NULL),
+>> +		 "Adding overlay 'overlay_gpio_04b' failed\n");
+>> +
+>> +	EXPECT_END(KERN_INFO,
+>> +		   "GPIO line <<int>> (line-C-input) hogged as input\n");
+>> +
+>> +	unittest(chip_request_count + 1 == unittest_gpio_chip_request_count,
+>> +		 "unittest_gpio_chip_request() called %d times (expected 1 time)\n",
+>> +		 unittest_gpio_chip_request_count - chip_request_count);
+>> +}
+>> +
+>>  static void __init of_unittest_overlay(void)
+>>  {
+>>  	struct device_node *bus_np = NULL;
+>> @@ -2242,6 +2485,8 @@ static void __init of_unittest_overlay(void)
+>>  	of_unittest_overlay_i2c_cleanup();
+>>  #endif
+>>  
+>> +	of_unittest_overlay_gpio();
+>> +
+>>  	of_unittest_destroy_tracked_overlays();
+>>  
+>>  out:
+>> @@ -2295,6 +2540,12 @@ struct overlay_info {
+>>  OVERLAY_INFO_EXTERN(overlay_12);
+>>  OVERLAY_INFO_EXTERN(overlay_13);
+>>  OVERLAY_INFO_EXTERN(overlay_15);
+>> +OVERLAY_INFO_EXTERN(overlay_gpio_01);
+>> +OVERLAY_INFO_EXTERN(overlay_gpio_02a);
+>> +OVERLAY_INFO_EXTERN(overlay_gpio_02b);
+>> +OVERLAY_INFO_EXTERN(overlay_gpio_03);
+>> +OVERLAY_INFO_EXTERN(overlay_gpio_04a);
+>> +OVERLAY_INFO_EXTERN(overlay_gpio_04b);
+>>  OVERLAY_INFO_EXTERN(overlay_bad_add_dup_node);
+>>  OVERLAY_INFO_EXTERN(overlay_bad_add_dup_prop);
+>>  OVERLAY_INFO_EXTERN(overlay_bad_phandle);
+>> @@ -2319,6 +2570,12 @@ struct overlay_info {
+>>  	OVERLAY_INFO(overlay_12, 0),
+>>  	OVERLAY_INFO(overlay_13, 0),
+>>  	OVERLAY_INFO(overlay_15, 0),
+>> +	OVERLAY_INFO(overlay_gpio_01, 0),
+>> +	OVERLAY_INFO(overlay_gpio_02a, 0),
+>> +	OVERLAY_INFO(overlay_gpio_02b, 0),
+>> +	OVERLAY_INFO(overlay_gpio_03, 0),
+>> +	OVERLAY_INFO(overlay_gpio_04a, 0),
+>> +	OVERLAY_INFO(overlay_gpio_04b, 0),
+>>  	OVERLAY_INFO(overlay_bad_add_dup_node, -EINVAL),
+>>  	OVERLAY_INFO(overlay_bad_add_dup_prop, -EINVAL),
+>>  	OVERLAY_INFO(overlay_bad_phandle, -EINVAL),
+>> -- 
+>> Frank Rowand <frank.rowand@sony.com>
+>>
+> 
 
