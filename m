@@ -2,38 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 64C8D14B891
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Jan 2020 15:26:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1ABE514B776
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Jan 2020 15:16:58 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732766AbgA1OZD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 28 Jan 2020 09:25:03 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51870 "EHLO mail.kernel.org"
+        id S1729899AbgA1OOf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 28 Jan 2020 09:14:35 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36558 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732431AbgA1OY6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 Jan 2020 09:24:58 -0500
+        id S1729878AbgA1OO0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 28 Jan 2020 09:14:26 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 33CCF2468A;
-        Tue, 28 Jan 2020 14:24:57 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 53F8624688;
+        Tue, 28 Jan 2020 14:14:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1580221497;
-        bh=FIIZiQrPCFTJOTi6y0n20X+dQYu6x1A+iUeRhJ0vEQI=;
+        s=default; t=1580220865;
+        bh=fu4wqLbPL+aKJazrdbjtc6Hl+sEof0ASsHNobQZx5RE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=WNQlTV/q8A0ccIYRy0VBHDHucPX7J+tiCH73Pu+d/r3f+rlsM7liZfs71OAYir2fd
-         UT/3cXh+0cgwv5an9KXYegi4xV4bb9hjSsSuMbpF8EQS6Chkgi2d5CXwnkBVUZuZGv
-         uagHB/e9XmdpNbCD2yiWkTl2/sEagTGz6YmHQ7D4=
+        b=FNYe4dCSWaAGoOvE2n0DPzCGmVBmqFJeTEOXLe75gKcwbmxfrxCp+tYHZc/8mfCXB
+         0fnz0wSIXsHPadxPiq1J07IpJZ703QjkFB9Th4yEBu11qI27B3uKSlOZ/TocU22+2k
+         eC5oArCY4Awr10V35hP2OmHJ26syAgIxdUushKqw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Johan Hovold <johan@kernel.org>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Subject: [PATCH 4.9 248/271] Input: keyspan-remote - fix control-message timeouts
+        stable@vger.kernel.org, Bo Wu <wubo40@huawei.com>,
+        Zhiqiang Liu <liuzhiqiang26@huawei.com>,
+        Lee Duncan <lduncan@suse.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>
+Subject: [PATCH 4.4 178/183] scsi: iscsi: Avoid potential deadlock in iscsi_if_rx func
 Date:   Tue, 28 Jan 2020 15:06:37 +0100
-Message-Id: <20200128135911.000726358@linuxfoundation.org>
+Message-Id: <20200128135847.525818453@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200128135852.449088278@linuxfoundation.org>
-References: <20200128135852.449088278@linuxfoundation.org>
+In-Reply-To: <20200128135829.486060649@linuxfoundation.org>
+References: <20200128135829.486060649@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,63 +45,109 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Johan Hovold <johan@kernel.org>
+From: Bo Wu <wubo40@huawei.com>
 
-commit ba9a103f40fc4a3ec7558ec9b0b97d4f92034249 upstream.
+commit bba340c79bfe3644829db5c852fdfa9e33837d6d upstream.
 
-The driver was issuing synchronous uninterruptible control requests
-without using a timeout. This could lead to the driver hanging on probe
-due to a malfunctioning (or malicious) device until the device is
-physically disconnected. While sleeping in probe the driver prevents
-other devices connected to the same hub from being added to (or removed
-from) the bus.
+In iscsi_if_rx func, after receiving one request through
+iscsi_if_recv_msg func, iscsi_if_send_reply will be called to try to
+reply to the request in a do-while loop.  If the iscsi_if_send_reply
+function keeps returning -EAGAIN, a deadlock will occur.
 
-The USB upper limit of five seconds per request should be more than
-enough.
+For example, a client only send msg without calling recvmsg func, then
+it will result in the watchdog soft lockup.  The details are given as
+follows:
 
-Fixes: 99f83c9c9ac9 ("[PATCH] USB: add driver for Keyspan Digital Remote")
-Signed-off-by: Johan Hovold <johan@kernel.org>
-Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: stable <stable@vger.kernel.org>     # 2.6.13
-Link: https://lore.kernel.org/r/20200113171715.30621-1-johan@kernel.org
-Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+	sock_fd = socket(AF_NETLINK, SOCK_RAW, NETLINK_ISCSI);
+	retval = bind(sock_fd, (struct sock addr*) & src_addr, sizeof(src_addr);
+	while (1) {
+		state_msg = sendmsg(sock_fd, &msg, 0);
+		//Note: recvmsg(sock_fd, &msg, 0) is not processed here.
+	}
+	close(sock_fd);
+
+watchdog: BUG: soft lockup - CPU#7 stuck for 22s! [netlink_test:253305] Sample time: 4000897528 ns(HZ: 250) Sample stat:
+curr: user: 675503481560, nice: 321724050, sys: 448689506750, idle: 4654054240530, iowait: 40885550700, irq: 14161174020, softirq: 8104324140, st: 0
+deta: user: 0, nice: 0, sys: 3998210100, idle: 0, iowait: 0, irq: 1547170, softirq: 242870, st: 0 Sample softirq:
+         TIMER:        992
+         SCHED:          8
+Sample irqstat:
+         irq    2: delta       1003, curr:    3103802, arch_timer
+CPU: 7 PID: 253305 Comm: netlink_test Kdump: loaded Tainted: G           OE
+Hardware name: QEMU KVM Virtual Machine, BIOS 0.0.0 02/06/2015
+pstate: 40400005 (nZcv daif +PAN -UAO)
+pc : __alloc_skb+0x104/0x1b0
+lr : __alloc_skb+0x9c/0x1b0
+sp : ffff000033603a30
+x29: ffff000033603a30 x28: 00000000000002dd
+x27: ffff800b34ced810 x26: ffff800ba7569f00
+x25: 00000000ffffffff x24: 0000000000000000
+x23: ffff800f7c43f600 x22: 0000000000480020
+x21: ffff0000091d9000 x20: ffff800b34eff200
+x19: ffff800ba7569f00 x18: 0000000000000000
+x17: 0000000000000000 x16: 0000000000000000
+x15: 0000000000000000 x14: 0001000101000100
+x13: 0000000101010000 x12: 0101000001010100
+x11: 0001010101010001 x10: 00000000000002dd
+x9 : ffff000033603d58 x8 : ffff800b34eff400
+x7 : ffff800ba7569200 x6 : ffff800b34eff400
+x5 : 0000000000000000 x4 : 00000000ffffffff
+x3 : 0000000000000000 x2 : 0000000000000001
+x1 : ffff800b34eff2c0 x0 : 0000000000000300 Call trace:
+__alloc_skb+0x104/0x1b0
+iscsi_if_rx+0x144/0x12bc [scsi_transport_iscsi]
+netlink_unicast+0x1e0/0x258
+netlink_sendmsg+0x310/0x378
+sock_sendmsg+0x4c/0x70
+sock_write_iter+0x90/0xf0
+__vfs_write+0x11c/0x190
+vfs_write+0xac/0x1c0
+ksys_write+0x6c/0xd8
+__arm64_sys_write+0x24/0x30
+el0_svc_common+0x78/0x130
+el0_svc_handler+0x38/0x78
+el0_svc+0x8/0xc
+
+Link: https://lore.kernel.org/r/EDBAAA0BBBA2AC4E9C8B6B81DEEE1D6915E3D4D2@dggeml505-mbx.china.huawei.com
+Signed-off-by: Bo Wu <wubo40@huawei.com>
+Reviewed-by: Zhiqiang Liu <liuzhiqiang26@huawei.com>
+Reviewed-by: Lee Duncan <lduncan@suse.com>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/input/misc/keyspan_remote.c |    9 ++++++---
- 1 file changed, 6 insertions(+), 3 deletions(-)
+ drivers/scsi/scsi_transport_iscsi.c |    7 +++++++
+ 1 file changed, 7 insertions(+)
 
---- a/drivers/input/misc/keyspan_remote.c
-+++ b/drivers/input/misc/keyspan_remote.c
-@@ -344,7 +344,8 @@ static int keyspan_setup(struct usb_devi
- 	int retval = 0;
+--- a/drivers/scsi/scsi_transport_iscsi.c
++++ b/drivers/scsi/scsi_transport_iscsi.c
+@@ -37,6 +37,8 @@
  
- 	retval = usb_control_msg(dev, usb_sndctrlpipe(dev, 0),
--				 0x11, 0x40, 0x5601, 0x0, NULL, 0, 0);
-+				 0x11, 0x40, 0x5601, 0x0, NULL, 0,
-+				 USB_CTRL_SET_TIMEOUT);
- 	if (retval) {
- 		dev_dbg(&dev->dev, "%s - failed to set bit rate due to error: %d\n",
- 			__func__, retval);
-@@ -352,7 +353,8 @@ static int keyspan_setup(struct usb_devi
+ #define ISCSI_TRANSPORT_VERSION "2.0-870"
+ 
++#define ISCSI_SEND_MAX_ALLOWED  10
++
+ static int dbg_session;
+ module_param_named(debug_session, dbg_session, int,
+ 		   S_IRUGO | S_IWUSR);
+@@ -3695,6 +3697,7 @@ iscsi_if_rx(struct sk_buff *skb)
+ 		struct nlmsghdr	*nlh;
+ 		struct iscsi_uevent *ev;
+ 		uint32_t group;
++		int retries = ISCSI_SEND_MAX_ALLOWED;
+ 
+ 		nlh = nlmsg_hdr(skb);
+ 		if (nlh->nlmsg_len < sizeof(*nlh) + sizeof(*ev) ||
+@@ -3725,6 +3728,10 @@ iscsi_if_rx(struct sk_buff *skb)
+ 				break;
+ 			err = iscsi_if_send_reply(group, nlh->nlmsg_seq,
+ 				nlh->nlmsg_type, 0, 0, ev, sizeof(*ev));
++			if (err == -EAGAIN && --retries < 0) {
++				printk(KERN_WARNING "Send reply failed, error %d\n", err);
++				break;
++			}
+ 		} while (err < 0 && err != -ECONNREFUSED && err != -ESRCH);
+ 		skb_pull(skb, rlen);
  	}
- 
- 	retval = usb_control_msg(dev, usb_sndctrlpipe(dev, 0),
--				 0x44, 0x40, 0x0, 0x0, NULL, 0, 0);
-+				 0x44, 0x40, 0x0, 0x0, NULL, 0,
-+				 USB_CTRL_SET_TIMEOUT);
- 	if (retval) {
- 		dev_dbg(&dev->dev, "%s - failed to set resume sensitivity due to error: %d\n",
- 			__func__, retval);
-@@ -360,7 +362,8 @@ static int keyspan_setup(struct usb_devi
- 	}
- 
- 	retval = usb_control_msg(dev, usb_sndctrlpipe(dev, 0),
--				 0x22, 0x40, 0x0, 0x0, NULL, 0, 0);
-+				 0x22, 0x40, 0x0, 0x0, NULL, 0,
-+				 USB_CTRL_SET_TIMEOUT);
- 	if (retval) {
- 		dev_dbg(&dev->dev, "%s - failed to turn receive on due to error: %d\n",
- 			__func__, retval);
 
 
