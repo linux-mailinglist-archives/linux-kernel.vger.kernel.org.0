@@ -2,123 +2,155 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 17AE914C0B8
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Jan 2020 20:13:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6CC7114C0CB
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Jan 2020 20:17:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726546AbgA1TNK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 28 Jan 2020 14:13:10 -0500
-Received: from mail-yw1-f67.google.com ([209.85.161.67]:40839 "EHLO
-        mail-yw1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726002AbgA1TNJ (ORCPT
+        id S1726411AbgA1TRj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 28 Jan 2020 14:17:39 -0500
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:35942 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726002AbgA1TRi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 Jan 2020 14:13:09 -0500
-Received: by mail-yw1-f67.google.com with SMTP id i126so7057651ywe.7;
-        Tue, 28 Jan 2020 11:13:09 -0800 (PST)
+        Tue, 28 Jan 2020 14:17:38 -0500
+Received: by mail-wr1-f66.google.com with SMTP id z3so17414470wru.3;
+        Tue, 28 Jan 2020 11:17:37 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=8wKVDbM8dSna8Ek2WmGu0py3hsOW6aws0CcQ8clzPl0=;
-        b=Q/F/VGHs771LlF1sjpTuRXeCsaknt7LaVzk9pUl2TOuBLJKDMJjHKjv+kuemKIB4Is
-         EnNcCLglXHnJq/BfgID3gmBwQECKvqDtuMWSx6gounOTn7i/dvNewI1n0UXoeEblKkZb
-         MxWyBHs52ZcrpWAcYodUux65b0Vo5J6N9bOpgsZOfSg4Qwp4p4M83iNvC5R63iMxjQCK
-         pZUiI8Yja10ywMtKlCnw/Q3HU7ViguP3DkZnQGSwwtWUePT8sA5I3Fpeo6UJ6oUYAIVt
-         GqQ+QXszEh/kuz/FXkWoCY53rkL4IJhNwairL+Tji8xHQoZ221t2GWlUXCUcQyAZsNGG
-         PFWg==
+        d=googlemail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=WsY0o1WCtR1XmaldyV3SQwecjlyaZIqArEZxV+TtXA4=;
+        b=JB+V0lKVuyeZ0hCcwVapGgSN7/biYqKjzXDYuqAUFKIEpMUBwihS4nzYko5HXyjtLQ
+         ygl3I6hGJ10ju+njtm8p+wAdamPzxigr5iz7U1oV12ID6UruxNdh3KIU7MO4N3b8gZhP
+         Gmy0WE5TYTqb5UotTpimd3X6BysE8AyiLmBPrQhNNONZn6ees1/rxfvhWYJMi9l3sGzV
+         /pbMs2H3i0Ihde6q1SjICiGzFUSABY5/WUMtBnWzw7K+oxqqxMk6kcVOWVa7k8qGPu3w
+         RHI2TppZE3IOvL7WOU5TAD4M17V/Id5c/14Frf6mFLnavy3hJJwKGSkTgLsGG4A9F9xb
+         YyLQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=8wKVDbM8dSna8Ek2WmGu0py3hsOW6aws0CcQ8clzPl0=;
-        b=RUhMSBlJmp8d6Iku5Rsq3zlBQiLenfNGMl0TuVuRumAad/G+q45fYScE2LjcZdkZmM
-         s0Debtk30bBdJuoCIXUhIecZPWjRbQkh5uE8U6nYLfhzxzvBSO/Kb70f98O9rn/VrAll
-         R6qPEe1qFjGO9YCP4kOp5poaD4J/Za9Wq+Bxj87Yt58YgZjfinAM2k3c8mhqCWFngSyp
-         +v2AxhM7eekxxy1inCpu4jQFY4+RemivS8znho1Dw7zj/05xyOZmG0r6nx0q0GneHH87
-         QKHxVgXI/ZSUTvtseVETt69fT5fgccbWMB5113TnU1zaVA7DPSnDQM/duTu1zlG7FtfB
-         tmGA==
-X-Gm-Message-State: APjAAAXhA5O953bf+mNvvvupXUoUWn0VUswaqt67jlZNfgLShzx8TswN
-        9b8FOYyOSLW8yoCZiT8OgRs=
-X-Google-Smtp-Source: APXvYqza0X/mYL4koOr7/goYIqRMeCTiHeRZYJxKgArDvNT+gdKCvpmjm3KyIxsxUHv0uaUooVE3hQ==
-X-Received: by 2002:a81:3d42:: with SMTP id k63mr16490295ywa.366.1580238788668;
-        Tue, 28 Jan 2020 11:13:08 -0800 (PST)
-Received: from localhost ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id g65sm8473961ywd.109.2020.01.28.11.13.07
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 28 Jan 2020 11:13:08 -0800 (PST)
-Date:   Tue, 28 Jan 2020 11:13:06 -0800
-From:   Guenter Roeck <linux@roeck-us.net>
-To:     Mike Jones <michael-a1.jones@analog.com>
-Cc:     linux-hwmon@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        jdelvare@suse.com, robh+dt@kernel.org, corbet@lwn.net
-Subject: Re: [PATCH 2/3] hwmon: (pmbus/ltc2978): Fix PMBus polling of
- MFR_COMMON definitions.
-Message-ID: <20200128191306.GA32672@roeck-us.net>
-References: <1580234400-2829-1-git-send-email-michael-a1.jones@analog.com>
- <1580234400-2829-2-git-send-email-michael-a1.jones@analog.com>
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=WsY0o1WCtR1XmaldyV3SQwecjlyaZIqArEZxV+TtXA4=;
+        b=YtBDsbBpBOEImMkPEFoMyc9A68NozdMUjtpj3qUKPhNTW52xwpWfE4Evz8tNxbMJ6U
+         SeB0brDxCDmX1ayVkac1H1JHs9i8rfNPAKLN1i+Xsha6b3QpUmrAUHHlxSP77MkH8JCL
+         e8KHJFqHyZlBZ1ovI48Akr4WvE/8MzjJYkU58qUoxuTjy+VGl/txUz9VvrFjZ3Tk5OkZ
+         Y6mkfIitL72nWHdYD9S6/DX4ywPydqx0N/q7k5CH5JKQ/9DrQ3kbcSUjss/oaNQHbeDL
+         XvX0e1/1B5dnNyt4V5/RhH49lLnheFT47XG4dBDNNMoymCCs5ZfaVKGH+iLg2U7aWusK
+         /cdw==
+X-Gm-Message-State: APjAAAUB1Of+5DQurEaQBhtxZCbYbeYlkUdfhZLClLJeSfxNecuRUjLH
+        bgMkl5r1XJo55BJJuB3Wh6KcAVEfoU46XQ==
+X-Google-Smtp-Source: APXvYqzCe4O9Qb4ytT6ZR+d3xgIGmBUkeNuIjsg7p8dGl0kOmjIEHugSdRrFZV6eEgHR8IvNHXbcXw==
+X-Received: by 2002:adf:c446:: with SMTP id a6mr29813538wrg.218.1580239056836;
+        Tue, 28 Jan 2020 11:17:36 -0800 (PST)
+Received: from desktopdebian.localdomain (x4d005f5e.dyn.telefonica.de. [77.0.95.94])
+        by smtp.gmail.com with ESMTPSA id f18sm3446114wrt.75.2020.01.28.11.17.35
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 28 Jan 2020 11:17:36 -0800 (PST)
+From:   =?UTF-8?q?Christian=20G=C3=B6ttsche?= <cgzones@googlemail.com>
+Cc:     cgzones@googlemail.com, Paul Moore <paul@paul-moore.com>,
+        Stephen Smalley <sds@tycho.nsa.gov>,
+        Eric Paris <eparis@parisplace.org>,
+        Ondrej Mosnacek <omosnace@redhat.com>,
+        Kees Cook <keescook@chromium.org>,
+        Joshua Brindle <joshua.brindle@crunchydata.com>,
+        David Howells <dhowells@redhat.com>,
+        Jeff Vander Stoep <jeffv@google.com>,
+        Richard Guy Briggs <rgb@redhat.com>,
+        YueHaibing <yuehaibing@huawei.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Kent Overstreet <kent.overstreet@gmail.com>,
+        selinux@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v2] selinux: allow kernfs symlinks to inherit parent directory context
+Date:   Tue, 28 Jan 2020 20:16:48 +0100
+Message-Id: <20200128191656.111902-1-cgzones@googlemail.com>
+X-Mailer: git-send-email 2.25.0
+In-Reply-To: <20200124184221.322248-1-cgzones@googlemail.com>
+References: <20200124184221.322248-1-cgzones@googlemail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1580234400-2829-2-git-send-email-michael-a1.jones@analog.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jan 28, 2020 at 10:59:59AM -0700, Mike Jones wrote:
-> Change 21537dc driver PMBus polling of MFR_COMMON from bits 5/4 to
-> bits 6/5. This fixs a LTC297X family bug where polling always returns
-> not busy even when the part is busy. This fixes a LTC388X and
-> LTM467X bug where polling used PEND and NOT_IN_TRANS, and BUSY was
-> not polled, which can lead to NACKing of commands. LTC388X and
-> LTM467X modules now poll BUSY and PEND, increasing reliability by
-> eliminating NACKing of commands.
-> 
-> Signed-off-by: Mike Jones <michael-a1.jones@analog.com>
+Currently symlinks on kernel filesystems, like sysfs, are labeled on
+creation with the parent filesystem root sid.
 
-Fixes: e04d1ce9bbb49 ("hwmon: (ltc2978) Add polling for chips requiring it")
+Allow symlinks to inherit the parent directory context, so fine-grained
+kernfs labeling can be applied to symlinks too and checking contexts
+doesn't complain about them.
 
-> ---
->  drivers/hwmon/pmbus/ltc2978.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/hwmon/pmbus/ltc2978.c b/drivers/hwmon/pmbus/ltc2978.c
-> index f01f488..a91ed01 100644
-> --- a/drivers/hwmon/pmbus/ltc2978.c
-> +++ b/drivers/hwmon/pmbus/ltc2978.c
-> @@ -82,8 +82,8 @@ enum chips { ltc2974, ltc2975, ltc2977, ltc2978, ltc2980, ltc3880, ltc3882,
->  
->  #define LTC_POLL_TIMEOUT		100	/* in milli-seconds */
->  
-> -#define LTC_NOT_BUSY			BIT(5)
-> -#define LTC_NOT_PENDING			BIT(4)
-> +#define LTC_NOT_BUSY			BIT(6)
-> +#define LTC_NOT_PENDING			BIT(5)
->  
+For backward-compatibility this behavior is contained in a new policy
+capability: genfs_seclabel_symlinks
 
-In ltc_wait_ready(), we have:
+Signed-off-by: Christian Göttsche <cgzones@googlemail.com>
+---
+v2:
+incorporate feedback from Stephen Smalley
+  - changed polcap name
+  - extended affected filesystems from SE_SBGENFS_XATTR to SE_SBGENFS
 
-	/*
-         * LTC3883 does not support LTC_NOT_PENDING, even though
-         * the datasheet claims that it does.
-         */
-        mask = LTC_NOT_BUSY;
-        if (data->id != ltc3883)
-                mask |= LTC_NOT_PENDING;
+ security/selinux/hooks.c            | 4 +++-
+ security/selinux/include/security.h | 8 ++++++++
+ security/selinux/ss/services.c      | 3 ++-
+ 3 files changed, 13 insertions(+), 2 deletions(-)
 
-The semantics of this code is now different: It means that on
-LTC3883 only bit 6 is checked; previously, it was bit 5. I agree
-that the above change makes sense, but it doesn't seem correct
-to drop the check for bit 5 on LTC3883. Maybe remove the if() above
-and always check for bit 5 and 6 ? Or should bit 4 be checked
-on parts other than LTC3883 ?
+diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
+index d9e8b2131a65..60a0b3553c70 100644
+--- a/security/selinux/hooks.c
++++ b/security/selinux/hooks.c
+@@ -1475,7 +1475,9 @@ static int inode_doinit_with_dentry(struct inode *inode, struct dentry *opt_dent
+ 		/* Default to the fs superblock SID. */
+ 		sid = sbsec->sid;
+ 
+-		if ((sbsec->flags & SE_SBGENFS) && !S_ISLNK(inode->i_mode)) {
++		if ((sbsec->flags & SE_SBGENFS) &&
++		     (!S_ISLNK(inode->i_mode) ||
++		      selinux_policycap_genfs_seclabel_symlinks())) {
+ 			/* We must have a dentry to determine the label on
+ 			 * procfs inodes */
+ 			if (opt_dentry) {
+diff --git a/security/selinux/include/security.h b/security/selinux/include/security.h
+index a39f9565d80b..863ccf2bb629 100644
+--- a/security/selinux/include/security.h
++++ b/security/selinux/include/security.h
+@@ -79,6 +79,7 @@ enum {
+ 	POLICYDB_CAPABILITY_ALWAYSNETWORK,
+ 	POLICYDB_CAPABILITY_CGROUPSECLABEL,
+ 	POLICYDB_CAPABILITY_NNP_NOSUID_TRANSITION,
++	POLICYDB_CAPABILITY_GENFS_SECLABEL_SYMLINKS,
+ 	__POLICYDB_CAPABILITY_MAX
+ };
+ #define POLICYDB_CAPABILITY_MAX (__POLICYDB_CAPABILITY_MAX - 1)
+@@ -209,6 +210,13 @@ static inline bool selinux_policycap_nnp_nosuid_transition(void)
+ 	return state->policycap[POLICYDB_CAPABILITY_NNP_NOSUID_TRANSITION];
+ }
+ 
++static inline bool selinux_policycap_genfs_seclabel_symlinks(void)
++{
++	struct selinux_state *state = &selinux_state;
++
++	return state->policycap[POLICYDB_CAPABILITY_GENFS_SECLABEL_SYMLINKS];
++}
++
+ int security_mls_enabled(struct selinux_state *state);
+ int security_load_policy(struct selinux_state *state,
+ 			 void *data, size_t len);
+diff --git a/security/selinux/ss/services.c b/security/selinux/ss/services.c
+index 216ce602a2b5..d9306f489060 100644
+--- a/security/selinux/ss/services.c
++++ b/security/selinux/ss/services.c
+@@ -73,7 +73,8 @@ const char *selinux_policycap_names[__POLICYDB_CAPABILITY_MAX] = {
+ 	"extended_socket_class",
+ 	"always_check_network",
+ 	"cgroup_seclabel",
+-	"nnp_nosuid_transition"
++	"nnp_nosuid_transition",
++	"genfs_seclabel_symlinks"
+ };
+ 
+ static struct selinux_ss selinux_ss;
+-- 
+2.25.0
 
-#define LTC_NOT_TRANSITIONING		BIT(4)
-...
-        mask = LTC_NOT_BUSY | LTC_NOT_PENDING;
-        if (data->id != ltc3883)
-                mask |= LTC_NOT_TRANSITIONING;
-
-Thanks,
-Guenter
