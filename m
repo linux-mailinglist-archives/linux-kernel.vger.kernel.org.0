@@ -2,119 +2,139 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 08F6A14B3D9
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Jan 2020 12:58:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5CBC014B419
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Jan 2020 13:21:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726139AbgA1L6U (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 28 Jan 2020 06:58:20 -0500
-Received: from foss.arm.com ([217.140.110.172]:55802 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725903AbgA1L6T (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 Jan 2020 06:58:19 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 5AC31101E;
-        Tue, 28 Jan 2020 03:58:18 -0800 (PST)
-Received: from localhost (unknown [10.37.6.21])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id D65B03F52E;
-        Tue, 28 Jan 2020 03:58:17 -0800 (PST)
-Date:   Tue, 28 Jan 2020 11:58:16 +0000
-From:   Mark Brown <broonie@kernel.org>
-To:     Qian Cai <cai@lca.pw>
-Cc:     Christophe Leroy <christophe.leroy@c-s.fr>,
-        Anshuman Khandual <Anshuman.Khandual@arm.com>,
-        Linux-MM <linux-mm@kvack.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Mike Rapoport <rppt@linux.vnet.ibm.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Michal Hocko <mhocko@kernel.org>,
-        Mark Rutland <Mark.Rutland@arm.com>,
-        Steven Price <Steven.Price@arm.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Kees Cook <keescook@chromium.org>,
-        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-        Matthew Wilcox <willy@infradead.org>,
-        Sri Krishna chowdary <schowdary@nvidia.com>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Russell King - ARM Linux <linux@armlinux.org.uk>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Paul Mackerras <paulus@samba.org>,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Vineet Gupta <vgupta@synopsys.com>,
-        James Hogan <jhogan@kernel.org>,
-        Paul Burton <paul.burton@mips.com>,
-        Ralf Baechle <ralf@linux-mips.org>,
-        "Kirill A . Shutemov" <kirill@shutemov.name>,
-        Gerald Schaefer <gerald.schaefer@de.ibm.com>,
-        Ingo Molnar <mingo@kernel.org>,
-        linux-snps-arc@lists.infradead.org, linux-mips@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-ia64@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org, linux-s390@vger.kernel.org,
-        linux-sh@vger.kernel.org, sparclinux@vger.kernel.org,
-        x86@kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH V12] mm/debug: Add tests validating architecture page
- table helpers
-Message-ID: <20200128115816.GA4689@sirena.org.uk>
-References: <a7ba6d8a-6443-5994-6a34-2824aa9b054b@c-s.fr>
- <144F3894-7934-4EC7-A9F9-C6A84CA08C65@lca.pw>
+        id S1726186AbgA1MVB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 28 Jan 2020 07:21:01 -0500
+Received: from disco-boy.misterjones.org ([51.254.78.96]:52158 "EHLO
+        disco-boy.misterjones.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725948AbgA1MVB (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 28 Jan 2020 07:21:01 -0500
+X-Greylist: delayed 1943 seconds by postgrey-1.27 at vger.kernel.org; Tue, 28 Jan 2020 07:21:00 EST
+Received: from disco-boy.misterjones.org ([51.254.78.96] helo=www.loen.fr)
+        by disco-boy.misterjones.org with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.92)
+        (envelope-from <maz@misterjones.org>)
+        id 1iwPM8-001o2H-Sm; Tue, 28 Jan 2020 11:48:33 +0000
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="5mCyUwZo2JvN/JJP"
-Content-Disposition: inline
-In-Reply-To: <144F3894-7934-4EC7-A9F9-C6A84CA08C65@lca.pw>
-X-Cookie: Doing gets it done.
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset=UTF-8;
+ format=flowed
+Content-Transfer-Encoding: 8bit
+Date:   Tue, 28 Jan 2020 11:48:32 +0000
+From:   Marc Zyngier <maz@misterjones.org>
+To:     Boqun Feng <boqun.feng@gmail.com>
+Cc:     Vincenzo Frascino <vincenzo.frascino@arm.com>,
+        Sasha Levin <sashal@kernel.org>, linux-hyperv@vger.kernel.org,
+        Stefano Stabellini <sstabellini@kernel.org>,
+        Stephen Hemminger <sthemmin@microsoft.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Haiyang Zhang <haiyangz@microsoft.com>,
+        linux-kernel@vger.kernel.org,
+        Michael Kelley <mikelley@microsoft.com>,
+        xen-devel@lists.xenproject.org,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "K. Y. Srinivasan" <kys@microsoft.com>,
+        Will Deacon <will@kernel.org>,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [RFC 0/6] vDSO support for Hyper-V guest on ARM64
+In-Reply-To: <20200128055846.GA83200@debian-boqun.qqnc3lrjykvubdpftowmye0fmh.lx.internal.cloudapp.net>
+References: <20191216001922.23008-1-boqun.feng@gmail.com>
+ <ef6cb7ba-b448-cfa5-abbb-1d99d1396ce5@arm.com>
+ <20200124063215.GA93938@debian-boqun.qqnc3lrjykvubdpftowmye0fmh.lx.internal.cloudapp.net>
+ <4cdf2188-8909-4b90-ca78-92cef520b23d@arm.com>
+ <20200128055846.GA83200@debian-boqun.qqnc3lrjykvubdpftowmye0fmh.lx.internal.cloudapp.net>
+Message-ID: <58c453d060066ebaed24cd13e22de1c5@misterjones.org>
+X-Sender: maz@misterjones.org
+User-Agent: Roundcube Webmail/1.3.8
+X-SA-Exim-Connect-IP: 51.254.78.96
+X-SA-Exim-Rcpt-To: boqun.feng@gmail.com, vincenzo.frascino@arm.com, sashal@kernel.org, linux-hyperv@vger.kernel.org, sstabellini@kernel.org, sthemmin@microsoft.com, catalin.marinas@arm.com, haiyangz@microsoft.com, linux-kernel@vger.kernel.org, mikelley@microsoft.com, xen-devel@lists.xenproject.org, tglx@linutronix.de, kys@microsoft.com, will@kernel.org, linux-arm-kernel@lists.infradead.org
+X-SA-Exim-Mail-From: maz@misterjones.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 2020-01-28 05:58, Boqun Feng wrote:
+> On Fri, Jan 24, 2020 at 10:24:44AM +0000, Vincenzo Frascino wrote:
+>> Hi Boqun Feng,
+>> 
+>> On 24/01/2020 06:32, Boqun Feng wrote:
+>> > Hi Vincenzo,
+>> >
+>> 
+>> [...]
+>> 
+>> >>
+>> >> I had a look to your patches and overall, I could not understand why we can't
+>> >> use the arch_timer to do the same things you are doing with the one you
+>> >> introduced in this series. What confuses me is that KVM works just fine with the
+>> >> arch_timer which was designed with virtualization in mind. Why do we need
+>> >> another one? Could you please explain?
+>> >>
+>> >
+>> > Please note that the guest VM on Hyper-V for ARM64 doesn't use
+>> > arch_timer as the clocksource. See:
+>> >
+>> > 	https://lore.kernel.org/linux-arm-kernel/1570129355-16005-7-git-send-email-mikelley@microsoft.com/
+>> >
+>> > ,  ACPI_SIG_GTDT is used for setting up Hyper-V synthetic clocksource
+>> > and other initialization work.
+>> >
+>> 
+>> I had a look a look at it and my question stands, why do we need 
+>> another timer
+>> on arm64?
+>> 
+> 
+> Sorry for the late response. It's weekend and Chinese New Year, so I 
+> got
+> to spend some time making (and mostly eating) dumplings ;-)
 
---5mCyUwZo2JvN/JJP
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+And you haven't been sharing! ;-)
 
-On Tue, Jan 28, 2020 at 02:12:56AM -0500, Qian Cai wrote:
-> > On Jan 28, 2020, at 1:13 AM, Christophe Leroy <christophe.leroy@c-s.fr> wrote:
+> After discussion with Michael, here is some explanation why we need
+> another timer:
+> 
+> The synthetic clocks that Hyper-V presents in a guest VM were 
+> originally
+> created for the x86 architecture. They provide a level of abstraction
+> that solves problems like continuity across live migrations where the
+> hardware clock (i.e., TSC in the case x86) frequency may be different
+> across the migration. When Hyper-V was brought to ARM64, this
+> abstraction was maintained to provide consistency across the x86 and
+> ARM64 architectures, and for both Windows and Linux guest VMs.   The
+> core Linux code for the Hyper-V clocks (in
+> drivers/clocksource/hyperv_timer.c) is architecture neutral and works 
+> on
+> both x86 and ARM64. As you can see, this part is done in Michael's
+> patchset.
+> 
+> Arguably, Hyper-V for ARM64 should have optimized for consistency with
+> the ARM64 community rather with the existing x86 implementation and
+> existing guest code in Windows. But at this point, it is what it is,
+> and the Hyper-V clocks do solve problems like migration that aren’t
+> addressed in ARM64 until v8.4 of the architecture with the addition of
+> the counter hardware scaling feature. Hyper-V doesn’t currently map the
+> ARM arch timer interrupts into guest VMs, so we need to use the 
+> existing
+> Hyper-V clocks and the common code that already exists.
 
-> > ppc32 an indecent / legacy platform ? Are you kidying ?
+The migration thing is a bit of a red herring. Do you really anticipate
+VM migration across systems that have their timers running at different
+frequencies *today*? And even if you did, there are ways to deal with it
+with the arch timers (patches to that effect were posted on the list, 
+and
+there was even a bit of an ARM spec for it).
 
-> > Powerquicc II PRO for instance is fully supported by the
-> > manufacturer and widely used in many small networking devices.
+I find it odd to try and make arm64 "just another x86", while the 
+architecture
+gives you most of what you need already. I guess I'm tainted.
 
-> Of course I forgot about embedded devices. The problem is that how
-> many developers are actually going to run this debug option on
-> embedded devices?
+Thanks,
 
-Much fewer if the code isn't upstream than if it is.  This isn't
-something that every developer is going to enable all the time but that
-doesn't mean it's not useful, it's more for people doing work on the
-architectures or on memory management (or who suspect they're running
-into a relevant problem), and I'm sure some of the automated testing
-people will enable it.  The more barriers there are in place to getting
-the testsuite up and running the less likely it is that any of these
-groups will run it regularly.
-
---5mCyUwZo2JvN/JJP
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl4wIdcACgkQJNaLcl1U
-h9Dslgf+KrZOvdjyO1AcLfLIlE2wA+hRmygG3Gh1YQ9wI6n+03XnA4v7f+7zZaQd
-9nylNBzkErkupokycsWYhTEFN7o/tfjVGWte16XdQ1QHQE7npjULPGC5NcVVPfyc
-qwaW2i5J5TeAuYArz3YCqLvUY6IAJefbxhZbLXTTBnwINIazuBDiAUzsAd/Uy27Y
-x0YHtX4gXucyNEepoozxS07544hKbMvjTO0tt7P8egTTGwNHz+Uz6sMfUA/Muri7
-hIJbxM03+cRn9ZKlTca/PzsXJN87ZLvWwcB0TGz+xI3Bjx2D2Q7Dn+OROr2O8e0z
-WXNLV2W9WAaBOwArY4IHdeORokpCzg==
-=j0+e
------END PGP SIGNATURE-----
-
---5mCyUwZo2JvN/JJP--
+         M.
+-- 
+Who you jivin' with that Cosmik Debris?
