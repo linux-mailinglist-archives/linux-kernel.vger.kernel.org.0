@@ -2,121 +2,90 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EE1AB14AFFB
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Jan 2020 08:02:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8BEE514B001
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Jan 2020 08:04:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725926AbgA1G66 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 28 Jan 2020 01:58:58 -0500
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:36810 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725799AbgA1G65 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 Jan 2020 01:58:57 -0500
-Received: by mail-wm1-f66.google.com with SMTP id p17so1272528wma.1
-        for <linux-kernel@vger.kernel.org>; Mon, 27 Jan 2020 22:58:56 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition:user-agent;
-        bh=zeoNiP/MAHm1Rz5XV/EHtvjjwHfOqzXxOt0twtHj+4E=;
-        b=HBQMMX5MM3RuZnZ4VkxzOBHmFtCfLJYJ606waSKp0unwsBpsLmXNhnPv9EFmFWuHqf
-         OV81DgDrOB4Ak7O0UqkgBPJmok0jWAFyLfvKVeQFJwtaFCxxtgdLojjQb2Nft+dEXzVZ
-         5ihH/lIPOeP0EQdXLUVIwHNgSlu5CHCNPJlVM8uTVNKT+EpGtbTWDtNuqbr1vfJir58t
-         Oct/cm+JMaYShCxzxirry3TLi4od81byJ2nwm/HbWNoNMTTPKMD31kz4gic9llZELOZl
-         lYfnZhRF9d47U9Z+XsC3RfkuhCBoJ8jGhtavbq57vwWHVjU1CYrxCU5AM09qqxDt5TSs
-         Xxfg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :mime-version:content-disposition:user-agent;
-        bh=zeoNiP/MAHm1Rz5XV/EHtvjjwHfOqzXxOt0twtHj+4E=;
-        b=BzwrasOZJUOWepsG0hr7VlXTHq0wilk2zVAl5kFh7CICyidze1JyBEJ+TFp6yYAU3T
-         GVPNPGbMv/hPmrkVzXksBzlop66vkS88hwxTsyI1cnZPr/I0kl3fJGyEA0DREdj5rPAb
-         PZHaZJnqqTG1+nF0XrKH87p08TSuub9no2aNqIT4YJKBS1/Odd+2XdXYBLyYR0G5f6uD
-         HphURV6X9xDlM7CFMiUBnxlPotKO5neUsCg8QcSgMJ6SqapUgfHpcvptGABxuWQRRSsj
-         OJmtsNF5bxmshWG9NfigMa+KmZPFG5Wv/DQ/5JJvaJXUgc89PNuhHMUIXdpi0ympzRap
-         iOrg==
-X-Gm-Message-State: APjAAAWjr4F6L95pJj1EQYaWdiJsNBd4AhJLpjTBb1g41SrgOTZU72RC
-        nrQVlig/CqcEvWGS09OH1rs=
-X-Google-Smtp-Source: APXvYqwp/Pz0LEGfED+7KWtMKAYDSOns2cCisnuy/Me6Ld0EqpEvSxAx8rJGMAyrKdu4aqjXDdWjwg==
-X-Received: by 2002:a05:600c:2507:: with SMTP id d7mr3145721wma.28.1580194735506;
-        Mon, 27 Jan 2020 22:58:55 -0800 (PST)
-Received: from gmail.com (54033286.catv.pool.telekom.hu. [84.3.50.134])
-        by smtp.gmail.com with ESMTPSA id k8sm23462105wrl.3.2020.01.27.22.58.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 27 Jan 2020 22:58:54 -0800 (PST)
-Date:   Tue, 28 Jan 2020 07:58:52 +0100
-From:   Ingo Molnar <mingo@kernel.org>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
-        Borislav Petkov <bp@alien8.de>,
-        Peter Zijlstra <a.p.zijlstra@chello.nl>,
-        Andrew Morton <akpm@linux-foundation.org>
-Subject: [GIT PULL] core/headers: Clean up x86 header interactions
-Message-ID: <20200128065852.GA18416@gmail.com>
+        id S1726010AbgA1HEA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 28 Jan 2020 02:04:00 -0500
+Received: from foss.arm.com ([217.140.110.172]:52830 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725797AbgA1HD7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 28 Jan 2020 02:03:59 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id A2F6331B;
+        Mon, 27 Jan 2020 23:03:58 -0800 (PST)
+Received: from [10.163.1.151] (unknown [10.163.1.151])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 9A5A43F67D;
+        Mon, 27 Jan 2020 23:07:21 -0800 (PST)
+Subject: Re: [PATCH V12] mm/debug: Add tests validating architecture page
+ table helpers
+To:     Qian Cai <cai@lca.pw>, Christophe Leroy <christophe.leroy@c-s.fr>
+Cc:     Linux-MM <linux-mm@kvack.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Michal Hocko <mhocko@kernel.org>,
+        Mark Rutland <Mark.Rutland@arm.com>,
+        Mark Brown <broonie@kernel.org>,
+        Steven Price <Steven.Price@arm.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Kees Cook <keescook@chromium.org>,
+        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        Matthew Wilcox <willy@infradead.org>,
+        Sri Krishna chowdary <schowdary@nvidia.com>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Russell King - ARM Linux <linux@armlinux.org.uk>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Paul Mackerras <paulus@samba.org>,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Vineet Gupta <vgupta@synopsys.com>,
+        James Hogan <jhogan@kernel.org>,
+        Paul Burton <paul.burton@mips.com>,
+        Ralf Baechle <ralf@linux-mips.org>,
+        "Kirill A . Shutemov" <kirill@shutemov.name>,
+        Gerald Schaefer <gerald.schaefer@de.ibm.com>,
+        Ingo Molnar <mingo@kernel.org>,
+        linux-snps-arc@lists.infradead.org, linux-mips@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-ia64@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org, linux-s390@vger.kernel.org,
+        linux-sh@vger.kernel.org, sparclinux@vger.kernel.org,
+        x86@kernel.org, linux-kernel@vger.kernel.org
+References: <115c187b-73ce-30b2-0694-999db1f2183b@c-s.fr>
+ <F90DA0AA-4D27-4346-8D8D-D9A7871E2C07@lca.pw>
+From:   Anshuman Khandual <anshuman.khandual@arm.com>
+Message-ID: <ba5a836a-b594-f846-1734-71dcd5d089e6@arm.com>
+Date:   Tue, 28 Jan 2020 12:33:41 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <F90DA0AA-4D27-4346-8D8D-D9A7871E2C07@lca.pw>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Linus,
-
-Please pull the latest core-headers-for-linus git tree from:
-
-   git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git core-headers-for-linus
-
-   # HEAD: 960786422fe90a86e81131f5dbd902cb5ebf8760 x86/ACPI/sleep: Move acpi_get_wakeup_address() into sleep.c, remove <asm/realmode.h> from <asm/acpi.h>
-
-This is a treewide cleanup, mostly (but not exclusively) with x86 impact, 
-which breaks implicit dependencies on the asm/realtime.h header and 
-finally removes it from asm/acpi.h.
 
 
- Thanks,
+On 01/28/2020 12:06 PM, Qian Cai wrote:
+> 
+> 
+>> On Jan 28, 2020, at 1:17 AM, Christophe Leroy <christophe.leroy@c-s.fr> wrote:
+>>
+>> It is 'default y' so there is no much risk that it is forgotten, at least all test suites run with 'allyes_defconfig' will trigger the test, so I think it is really a good feature.
+> 
+> This thing depends on DEBUG_VM which I don’t see it is selected by any defconfig. Am I missing anything?
+> 
 
-	Ingo
-
------------------->
-Ingo Molnar (3):
-      x86/setup: Clean up the header portion of setup.c
-      x86/setup: Enhance the comments
-      x86/platform/intel/quark: Explicitly include linux/io.h for virt_to_phys()
-
-Sean Christopherson (12):
-      x86/efi: Explicitly include realmode.h to handle RM trampoline quirk
-      x86/boot: Explicitly include realmode.h to handle RM reservations
-      x86/ftrace: Explicitly include vmalloc.h for set_vm_flush_reset_perms()
-      x86/kprobes: Explicitly include vmalloc.h for set_vm_flush_reset_perms()
-      perf/x86/intel: Explicitly include asm/io.h to use virt_to_phys()
-      efi/capsule-loader: Explicitly include linux/io.h for page_to_phys()
-      virt: vbox: Explicitly include linux/io.h to pick up various defs
-      vmw_balloon: Explicitly include linux/io.h for virt_to_phys()
-      ASoC: Intel: Skylake: Explicitly include linux/io.h for virt_to_phys()
-      x86/ACPI/sleep: Remove an unnecessary include of asm/realmode.h
-      ACPI/sleep: Convert acpi_wakeup_address into a function
-      x86/ACPI/sleep: Move acpi_get_wakeup_address() into sleep.c, remove <asm/realmode.h> from <asm/acpi.h>
-
-
- arch/ia64/include/asm/acpi.h                 |   5 +-
- arch/ia64/kernel/acpi.c                      |   2 -
- arch/x86/events/intel/ds.c                   |   1 +
- arch/x86/include/asm/acpi.h                  |   3 +-
- arch/x86/kernel/acpi/sleep.c                 |  11 ++
- arch/x86/kernel/acpi/sleep.h                 |   2 +-
- arch/x86/kernel/ftrace.c                     |   1 +
- arch/x86/kernel/kprobes/core.c               |   1 +
- arch/x86/kernel/setup.c                      | 164 ++++++++-------------------
- arch/x86/platform/efi/quirks.c               |   1 +
- arch/x86/platform/intel-quark/imr.c          |   2 +
- arch/x86/platform/intel-quark/imr_selftest.c |   2 +
- drivers/acpi/sleep.c                         |   3 +
- drivers/firmware/efi/capsule-loader.c        |   1 +
- drivers/misc/vmw_balloon.c                   |   1 +
- drivers/virt/vboxguest/vboxguest_core.c      |   1 +
- drivers/virt/vboxguest/vboxguest_utils.c     |   1 +
- sound/soc/intel/skylake/skl-sst-cldma.c      |   1 +
- 18 files changed, 81 insertions(+), 122 deletions(-)
+'allyesconfig' makes 'DEBUG_VM = y' which in turn will enable 'DEBUG_VM_PGTABLE = y'
+on platforms that subscribe ARCH_HAS_DEBUG_VM_PGTABLE.
