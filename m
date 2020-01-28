@@ -2,36 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8138614BA57
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Jan 2020 15:39:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0B27214BA58
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Jan 2020 15:39:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730582AbgA1ORz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 28 Jan 2020 09:17:55 -0500
-Received: from mail.kernel.org ([198.145.29.99]:41614 "EHLO mail.kernel.org"
+        id S1730594AbgA1OR5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 28 Jan 2020 09:17:57 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41566 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727339AbgA1ORr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 Jan 2020 09:17:47 -0500
+        id S1730562AbgA1ORp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 28 Jan 2020 09:17:45 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A9F462071E;
-        Tue, 28 Jan 2020 14:17:46 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 373562468D;
+        Tue, 28 Jan 2020 14:17:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1580221067;
-        bh=swb8ylO3whG6oEYMtfBN6kOtQsnU8P5uHHFFwn02onw=;
+        s=default; t=1580221064;
+        bh=DMawGORGw/GHzM9qUcSUjMhFK4aAx1nQqfwLv03Q3sA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ik9YDhfINZ7CQEwagon1e5vQjRScEnSnMltY2WCr8gYilly1dLoPsIkZF6GLGY0iA
-         eNvgrM5IFlJDyb8Jqn8xDktyOecxFZLS/YYDM8okGEztunDM1KJC/kRyl+wQahQ1qD
-         oy7qkGfBb6StvJO1lb4m1N5Bll/I9E80wQWtvOgw=
+        b=x0FEviZ7BsAX+dQ7U2YygIIjt5WJeY3656rbNsPXw9ogc1npprGDXwUPuToRfZP/E
+         MP+9V7KNF/w4seLtPIaOO8+X82/Wwk8SHdDVMUlQoy89Ryr/1scLCSikfAkvIic0Xj
+         wOAKUgrxWpZYi7L5nyxozSKHwmIdrlu0WMU1uyAw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Yangtao Li <tiny.windzz@gmail.com>,
+        Gregory CLEMENT <gregory.clement@bootlin.com>,
         Stephen Boyd <sboyd@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 028/271] clk: socfpga: fix refcount leak
-Date:   Tue, 28 Jan 2020 15:02:57 +0100
-Message-Id: <20200128135854.774931855@linuxfoundation.org>
+Subject: [PATCH 4.9 037/271] clk: dove: fix refcount leak in dove_clk_init()
+Date:   Tue, 28 Jan 2020 15:03:06 +0100
+Message-Id: <20200128135855.436158530@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
 In-Reply-To: <20200128135852.449088278@linuxfoundation.org>
 References: <20200128135852.449088278@linuxfoundation.org>
@@ -46,46 +47,43 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Yangtao Li <tiny.windzz@gmail.com>
 
-[ Upstream commit 7f9705beeb3759e69165e7aff588f6488ff6c1ac ]
+[ Upstream commit 8d726c5128298386b907963033be93407b0c4275 ]
 
 The of_find_compatible_node() returns a node pointer with refcount
 incremented, but there is the lack of use of the of_node_put() when
 done. Add the missing of_node_put() to release the refcount.
 
 Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
-Fixes: 5343325ff3dd ("clk: socfpga: add a clock driver for the Arria 10 platform")
-Fixes: a30d27ed739b ("clk: socfpga: fix clock driver for 3.15")
+Reviewed-by: Gregory CLEMENT <gregory.clement@bootlin.com>
+Fixes: 8f7fc5450b64 ("clk: mvebu: dove: maintain clock init order")
+Fixes: 63b8d92c793f ("clk: add Dove PLL divider support for GPU, VMeta and AXI clocks")
 Signed-off-by: Stephen Boyd <sboyd@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/clk/socfpga/clk-pll-a10.c | 1 +
- drivers/clk/socfpga/clk-pll.c     | 1 +
- 2 files changed, 2 insertions(+)
+ drivers/clk/mvebu/dove.c | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/clk/socfpga/clk-pll-a10.c b/drivers/clk/socfpga/clk-pll-a10.c
-index 35fabe1a32c30..269467e8e07e1 100644
---- a/drivers/clk/socfpga/clk-pll-a10.c
-+++ b/drivers/clk/socfpga/clk-pll-a10.c
-@@ -95,6 +95,7 @@ static struct clk * __init __socfpga_pll_init(struct device_node *node,
+diff --git a/drivers/clk/mvebu/dove.c b/drivers/clk/mvebu/dove.c
+index 59fad9546c847..5f258c9bb68bf 100644
+--- a/drivers/clk/mvebu/dove.c
++++ b/drivers/clk/mvebu/dove.c
+@@ -190,10 +190,14 @@ static void __init dove_clk_init(struct device_node *np)
  
- 	clkmgr_np = of_find_compatible_node(NULL, NULL, "altr,clk-mgr");
- 	clk_mgr_a10_base_addr = of_iomap(clkmgr_np, 0);
-+	of_node_put(clkmgr_np);
- 	BUG_ON(!clk_mgr_a10_base_addr);
- 	pll_clk->hw.reg = clk_mgr_a10_base_addr + reg;
+ 	mvebu_coreclk_setup(np, &dove_coreclks);
  
-diff --git a/drivers/clk/socfpga/clk-pll.c b/drivers/clk/socfpga/clk-pll.c
-index c7f463172e4b9..b4b44e9b59011 100644
---- a/drivers/clk/socfpga/clk-pll.c
-+++ b/drivers/clk/socfpga/clk-pll.c
-@@ -100,6 +100,7 @@ static __init struct clk *__socfpga_pll_init(struct device_node *node,
+-	if (ddnp)
++	if (ddnp) {
+ 		dove_divider_clk_init(ddnp);
++		of_node_put(ddnp);
++	}
  
- 	clkmgr_np = of_find_compatible_node(NULL, NULL, "altr,clk-mgr");
- 	clk_mgr_base_addr = of_iomap(clkmgr_np, 0);
-+	of_node_put(clkmgr_np);
- 	BUG_ON(!clk_mgr_base_addr);
- 	pll_clk->hw.reg = clk_mgr_base_addr + reg;
- 
+-	if (cgnp)
++	if (cgnp) {
+ 		mvebu_clk_gating_setup(cgnp, dove_gating_desc);
++		of_node_put(cgnp);
++	}
+ }
+ CLK_OF_DECLARE(dove_clk, "marvell,dove-core-clock", dove_clk_init);
 -- 
 2.20.1
 
