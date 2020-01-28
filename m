@@ -2,138 +2,162 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0CC8D14ADDC
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Jan 2020 03:11:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 46B6214AE1A
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Jan 2020 03:28:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726599AbgA1CL5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 27 Jan 2020 21:11:57 -0500
-Received: from mail-qv1-f66.google.com ([209.85.219.66]:41710 "EHLO
-        mail-qv1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726294AbgA1CL4 (ORCPT
+        id S1726296AbgA1C2I (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 27 Jan 2020 21:28:08 -0500
+Received: from esa3.hgst.iphmx.com ([216.71.153.141]:43151 "EHLO
+        esa3.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726099AbgA1C2I (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 27 Jan 2020 21:11:56 -0500
-Received: by mail-qv1-f66.google.com with SMTP id x1so5529457qvr.8
-        for <linux-kernel@vger.kernel.org>; Mon, 27 Jan 2020 18:11:55 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=lca.pw; s=google;
-        h=content-transfer-encoding:from:mime-version:subject:date:message-id
-         :references:cc:in-reply-to:to;
-        bh=7Y+cJY1xhd0yBpcec7AzD+9evfVDrwqprX0erT9gNQ8=;
-        b=jZmBH73pillRBQpbX84TZ57nVUbP8l/pwzyrT6F1TLbL143seIWhzMHM+f433HkTJ5
-         4+74y+cXEGlf05IjEqB0rGqFVcscYw+GLhSFsx8WaySmYsTRfGWpPzerjlys6mf9W6z9
-         7MQu28uGR+vExcu4XcFzxZsCEsEyIZnW5XYihpKw20TjtS/g7K7vcnSmLO9Y2I2ACMbR
-         UKd7mEwngqjuWYnzl9qMnEhgnX2KVdsQpg9XPqLIZZY/9EZaReISvH0tgX5LHWCxTzuH
-         Sdb0djgaeTc7Y2XT2pWCZ+vec+pYHc73GLTjZ8LH4FVsFHxU1dJtwXiD8faH/K6Piqjx
-         Qz+Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:content-transfer-encoding:from:mime-version
-         :subject:date:message-id:references:cc:in-reply-to:to;
-        bh=7Y+cJY1xhd0yBpcec7AzD+9evfVDrwqprX0erT9gNQ8=;
-        b=aHQFmYG3QOBVWi52k7nW0InydMHf0cEMIHjYrmgDmnG0czVrZSMS+tCnIujsV6tfiS
-         QU5Vry+1ETzm9DreuMEtQDhx91UXEvttFjFm69nbmArUHv5UKmBg8B8Om2E/fzPRjLXx
-         ONGMXvina2uVrFF+OQzf62spoK0DnRxxja2X7ttL7nb9uTM0tgdIbc0MHzkLpIOXYtUU
-         OHGUv0Kzhs7yfVjIF1oV215kjFJaO23gUh3PfpIccyYW1GoYwFTYsAr0gC+Hb3ooqXXF
-         SWUrE4bB9KYZlCWC+P3bTbv+cmD8HEwh3EYCFrZgcVl8J8oQdiBQEjtrpKPgC6Mocu0k
-         Y+EA==
-X-Gm-Message-State: APjAAAVYKEuO8NFE9plQKDmMUA13GCY0BDaRsEbORUvmngFbdhbQyAhY
-        faontXs/PVIhJk9tlp/go3yyqQ==
-X-Google-Smtp-Source: APXvYqzg/cYWhjYHl3Ki3ZAih+ex/42KJTx6ZAw8WelCuco+qFvVUewpgAxMMsdmClIjS/CcngZCgg==
-X-Received: by 2002:a05:6214:9d2:: with SMTP id dp18mr19624941qvb.98.1580177515237;
-        Mon, 27 Jan 2020 18:11:55 -0800 (PST)
-Received: from [192.168.1.183] (pool-71-184-117-43.bstnma.fios.verizon.net. [71.184.117.43])
-        by smtp.gmail.com with ESMTPSA id m21sm11036189qka.117.2020.01.27.18.11.54
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 27 Jan 2020 18:11:54 -0800 (PST)
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-From:   Qian Cai <cai@lca.pw>
-Mime-Version: 1.0 (1.0)
-Subject: Re: [PATCH V12] mm/debug: Add tests validating architecture page table helpers
-Date:   Mon, 27 Jan 2020 21:11:53 -0500
-Message-Id: <14882A91-17DE-4ABD-ABF2-08E7CCEDF660@lca.pw>
-References: <1580174873-18117-1-git-send-email-anshuman.khandual@arm.com>
-Cc:     linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>,
-        Vlastimil Babka <vbabka@suse.cz>,
+        Mon, 27 Jan 2020 21:28:08 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
+  t=1580178488; x=1611714488;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=2nWGxJNu5AaNrPUR9Ax2z2U4KExulXxbW7We38PzOCE=;
+  b=hIa5AhvfGmBeEB8Ljnf7PcTfrPdMZUwV1dmHROxDDzQUokJz03GGqWnk
+   oQ4wKvwslWenHyG7coiZ1q9ae8Eh9DafHHbuVcpSCY/pxTsOoiytb99vm
+   mAUiWFiIo0q9rrun/sznpvxFMJHspxoYTTCplVRgmz3p//+Qcu3/YjFCT
+   5bEEMLn0iWxn1m4FSOFd670ZbG1rJmWDnq0XrE1SPONQ5AHxjk0Q1kxjl
+   kypt/DYzXww+Ams5BD0ckSVikrdBEtQb6GEzblUc0pnbrAMa1KJNH7Cfv
+   ay1XYMfsUBSbOYoimCEyJi3gTO2y5dIsEk74ny1cB/RGCIseezau9MM9Q
+   A==;
+IronPort-SDR: CdBLYpEvVbZhbWXdOgESpkOB/uRHq1FdV3gZEZCha4MR83bKi5u/kJBC+l1U3yfq+Q3mKj78+j
+ fmQprAkiR8LCOervpsfwfiAT51Acv6+diyQYNjkGorP53ign1Jy8sDf5vAfN7jhz2TL954fbeA
+ 26A5Gf8bfIPI4dBhBnnrhLlKftHPAJP+JNMV7XM5i1xuXnjIySd0Z5ZllkX7+anrYKh00o8Xoh
+ /g9FqnpJo2yrkQsFeY5hftITbQBGenS7qvJlPx1NcC/+fwMV150tHBtIJyCMfSX28Lb7oxDsGE
+ QOk=
+X-IronPort-AV: E=Sophos;i="5.70,372,1574092800"; 
+   d="scan'208";a="132899358"
+Received: from h199-255-45-14.hgst.com (HELO uls-op-cesaep01.wdc.com) ([199.255.45.14])
+  by ob1.hgst.iphmx.com with ESMTP; 28 Jan 2020 10:28:07 +0800
+IronPort-SDR: XzwBdj0DuqDhxTv5WzgXqqZ7kouJ1jjjauXCX6WKMVEQfViKoRV6KceSStoAY57ILEKQU708IQ
+ kCh5kbRvqBVhMuguE1BxzDnfRINokbAsVkRBSjtI+eeGnXtymn8La9BDRu03VsDpjE7D5MOvjV
+ IS8+6TTvjEciu5yh+rUjWKmbq1vqwBVmwAC/Pq3jVD0deqqZ8dO5t4awsGGazi9ItwhlwJQb18
+ Km3EBjNgiGofxn1dR6z69u2NRW6WwjRjno/iiEIqlOhnNtK6+/NgI2ImZDyuof5nF5azIjQyuk
+ H5+butDMq3aXgFamz5MqqyOM
+Received: from uls-op-cesaip01.wdc.com ([10.248.3.36])
+  by uls-op-cesaep01.wdc.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Jan 2020 18:21:22 -0800
+IronPort-SDR: 34puJ9SRsX/BV5rJp7+tSp1HSuXrV64X9EzBR/aH2/qxzQo7VHZYIgTjcmYQVPq7DmptsyF5CX
+ zyK7biyrpqgd3yx9MAdeQPA7r1KYCciJRAkLxzb4KZZ2NY83A5V6woAC1bj9Pb23frcDLTCCfl
+ BkEvKftbbaEdN86TIlmI0fbh+ivOizrvm09IFWYcznEi8CORqANXu0UhJOtSA8yqOFGsd2M9YQ
+ GNlI8/0SghWhwwq+2QJR4kKRrMXxFdYOBrO2ROLhwuyap6cCawgS1D2t2G3bsZeDOGJZ1hAKyB
+ cFs=
+WDCIronportException: Internal
+Received: from jedi-01.sdcorp.global.sandisk.com (HELO jedi-01.int.fusionio.com) ([10.11.143.218])
+  by uls-op-cesaip01.wdc.com with ESMTP; 27 Jan 2020 18:28:07 -0800
+From:   Atish Patra <atish.patra@wdc.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     Atish Patra <atish.patra@wdc.com>,
+        Albert Ou <aou@eecs.berkeley.edu>,
+        Anup Patel <anup@brainfault.org>, Borislav Petkov <bp@suse.de>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Greentime Hu <greentime.hu@sifive.com>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Mike Rapoport <rppt@linux.vnet.ibm.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Michal Hocko <mhocko@kernel.org>,
-        Mark Rutland <Mark.Rutland@arm.com>,
-        Mark Brown <broonie@kernel.org>,
-        Steven Price <Steven.Price@arm.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Kees Cook <keescook@chromium.org>,
-        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-        Matthew Wilcox <willy@infradead.org>,
-        Sri Krishna chowdary <schowdary@nvidia.com>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Russell King - ARM Linux <linux@armlinux.org.uk>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Paul Mackerras <paulus@samba.org>,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>,
         Heiko Carstens <heiko.carstens@de.ibm.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Vineet Gupta <vgupta@synopsys.com>,
-        James Hogan <jhogan@kernel.org>,
-        Paul Burton <paul.burton@mips.com>,
-        Ralf Baechle <ralf@linux-mips.org>,
-        "Kirill A . Shutemov" <kirill@shutemov.name>,
-        Gerald Schaefer <gerald.schaefer@de.ibm.com>,
-        Christophe Leroy <christophe.leroy@c-s.fr>,
-        Ingo Molnar <mingo@kernel.org>,
-        linux-snps-arc@lists.infradead.org, linux-mips@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-ia64@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org, linux-s390@vger.kernel.org,
-        linux-sh@vger.kernel.org, sparclinux@vger.kernel.org,
-        x86@kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <1580174873-18117-1-git-send-email-anshuman.khandual@arm.com>
-To:     Anshuman Khandual <Anshuman.Khandual@arm.com>
-X-Mailer: iPhone Mail (17C54)
+        Kees Cook <keescook@chromium.org>,
+        linux-riscv@lists.infradead.org, Mao Han <han_mao@c-sky.com>,
+        Mike Rapoport <rppt@linux.ibm.com>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Vincent Chen <vincent.chen@sifive.com>, abner.chang@hpe.com,
+        clin@suse.com, nickhu@andestech.com,
+        Palmer Dabbelt <palmerdabbelt@google.com>
+Subject: [PATCH v7 00/10] Add support for SBI v0.2 and CPU hotplug
+Date:   Mon, 27 Jan 2020 18:27:27 -0800
+Message-Id: <20200128022737.15371-1-atish.patra@wdc.com>
+X-Mailer: git-send-email 2.24.0
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+The Supervisor Binary Interface(SBI) specification[1] now defines a
+base extension that provides extendability to add future extensions
+while maintaining backward compatibility with previous versions.
+The new version is defined as 0.2 and older version is marked as 0.1.
 
+This series adds support v0.2 and a unified calling convention
+implementation between 0.1 and 0.2. It also add other SBI v0.2
+functionality defined in [2]. The base support for SBI v0.2 is already
+available in OpenSBI v0.5. It also adds SBI HSM extension and cpu-hotplug
+support for RISC-V which requires additional patches[3] in OpenSBI.
 
-> On Jan 27, 2020, at 8:28 PM, Anshuman Khandual <Anshuman.Khandual@arm.com>=
- wrote:
->=20
-> This adds tests which will validate architecture page table helpers and
-> other accessors in their compliance with expected generic MM semantics.
-> This will help various architectures in validating changes to existing
-> page table helpers or addition of new ones.
->=20
-> This test covers basic page table entry transformations including but not
-> limited to old, young, dirty, clean, write, write protect etc at various
-> level along with populating intermediate entries with next page table page=
+[1] https://github.com/riscv/riscv-sbi-doc/blob/master/riscv-sbi.adoc
+[2] https://github.com/riscv/riscv-sbi-doc/pull/27
+[3] http://lists.infradead.org/pipermail/opensbi/2020-January/001050.html
 
-> and validating them.
->=20
-> Test page table pages are allocated from system memory with required size
-> and alignments. The mapped pfns at page table levels are derived from a
-> real pfn representing a valid kernel text symbol. This test gets called
-> right after page_alloc_init_late().
->=20
-> This gets build and run when CONFIG_DEBUG_VM_PGTABLE is selected along wit=
-h
-> CONFIG_VM_DEBUG. Architectures willing to subscribe this test also need to=
+The patches are also available in following github repositery.
 
-> select CONFIG_ARCH_HAS_DEBUG_VM_PGTABLE which for now is limited to x86 an=
-d
-> arm64. Going forward, other architectures too can enable this after fixing=
+OpenSBI     : https://github.com/atishp04/opensbi/tree/sbi_hsm_v1
+Linux Kernel: https://github.com/atishp04/linux/tree/sbi_v0.2_v7
 
-> build or runtime problems (if any) with their page table helpers.
+Changes from v6-v7:
+1. Rebased on v5.5
+2. Fixed few compilation issues for !CONFIG_SMP and !CONFIG_RISCV_SBI
+3. Added SBI HSM extension
+4. Add CPU hotplug support
 
-What=E2=80=99s the value of this block of new code? It only supports x86 and=
- arm64 which are supposed to be good now. Did those tests ever find any regr=
-ession or this is almost only useful for new architectures which only happen=
-ed once in a few years? The worry if not many people will use this config an=
-d code those that much in the future because it is inefficient to find bugs,=
- it will simply be rotten like a few other debugging options out there we ha=
-ve in the mainline that will be a pain to remove later on.=
+Changes from v5->v6
+1. Fixed few compilation issues around config.
+2. Fixed hart mask generation issues for RFENCE & IPI extensions.
+
+Changes from v4->v5
+1. Fixed few minor comments related to static & inline.
+2. Make sure that every patch is boot tested individually.
+
+Changes from v3->v4.
+1. Rebased on for-next.
+2. Fixed issuses with checkpatch --strict.
+3. Unfied all IPI/fence related functions.
+4. Added Hfence related SBI calls.
+
+Changes from v2->v3.
+1. Moved v0.1 extensions to a new config.
+2. Added support for relacement extensions of v0.1 extensions.
+
+Changes from v1->v2
+1. Removed the legacy calling convention.
+2. Moved all SBI related calls to sbi.c.
+3. Moved all SBI related macros to uapi.
+
+Atish Patra (10):
+RISC-V: Mark existing SBI as 0.1 SBI.
+RISC-V: Add basic support for SBI v0.2
+RISC-V: Add SBI v0.2 extension definitions
+RISC-V: Introduce a new config for SBI v0.1
+RISC-V: Implement new SBI v0.2 extensions
+RISC-V: Add cpu_ops and modify default booting method
+RISC-V: Move relocate and few other functions out of __init
+RISC-V: Add SBI HSM extension
+RISC-V: Add supported for ordered booting method using HSM
+RISC-V: Support cpu hotplug
+
+arch/riscv/Kconfig               |  18 +-
+arch/riscv/include/asm/cpu_ops.h |  36 ++
+arch/riscv/include/asm/sbi.h     | 197 +++++++----
+arch/riscv/include/asm/smp.h     |  14 +
+arch/riscv/kernel/Makefile       |   2 +
+arch/riscv/kernel/cpu-hotplug.c  |  84 +++++
+arch/riscv/kernel/cpu_ops.c      | 134 ++++++++
+arch/riscv/kernel/head.S         |  98 ++++--
+arch/riscv/kernel/sbi.c          | 574 ++++++++++++++++++++++++++++++-
+arch/riscv/kernel/setup.c        |  34 +-
+arch/riscv/kernel/smpboot.c      |  54 +--
+arch/riscv/kernel/traps.c        |   2 +-
+arch/riscv/kernel/vmlinux.lds.S  |   9 +-
+13 files changed, 1128 insertions(+), 128 deletions(-)
+create mode 100644 arch/riscv/include/asm/cpu_ops.h
+create mode 100644 arch/riscv/kernel/cpu-hotplug.c
+create mode 100644 arch/riscv/kernel/cpu_ops.c
+
+--
+2.24.0
+
