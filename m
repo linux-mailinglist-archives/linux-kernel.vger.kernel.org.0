@@ -2,40 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 61B7E14B70A
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Jan 2020 15:11:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1300214B82F
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Jan 2020 15:23:47 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729184AbgA1OKn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 28 Jan 2020 09:10:43 -0500
-Received: from mail.kernel.org ([198.145.29.99]:59518 "EHLO mail.kernel.org"
+        id S1731217AbgA1OVL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 28 Jan 2020 09:21:11 -0500
+Received: from mail.kernel.org ([198.145.29.99]:46340 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728221AbgA1OKh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 Jan 2020 09:10:37 -0500
+        id S1730964AbgA1OVJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 28 Jan 2020 09:21:09 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7263322522;
-        Tue, 28 Jan 2020 14:10:36 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3EAFB2071E;
+        Tue, 28 Jan 2020 14:21:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1580220636;
-        bh=LKiMuTIVEY/+zw/FO2kiHhJx5KEHLNwlCEuiVe1so8s=;
+        s=default; t=1580221268;
+        bh=wr7vc4SoJLBtIjyAhanGPbbBAnDcXjvvJ5Y3dM69tAc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Rk0ziGdFPkcygAEOVRsra/rb48CFy0l0jjNsDHLWxlRm/Y6KMNov1eCeGvr9MKUAL
-         6VLharrnu0nxeFnWlWURHbSNRvcEImUX+XGIomyiqpEWDe0/xZPaKoif7r+VRAyzyc
-         cORBnUJQzXs/YKwKfjsq7JF4d5ZiU9dvfkQCN74s=
+        b=CYCs1ogD3WTm2DUjKN7gAfZEuiPLBU3LFo8kR7+BDRhTErZAMKWycs8PqjQx9k+Nl
+         g6JyT0Z5prjvHOq2fMZoMRDhe3Mf9+hgk39JCnlx7Z9Y6HMOj/jQFdYxRrl1qlrrUI
+         Oyh+CxFnd+WGz1k5OMP2uH38JrpsHw7cmQlkYpuY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>,
-        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        stable@vger.kernel.org, Peter Ujfalusi <peter.ujfalusi@ti.com>,
+        Mark Brown <broonie@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.4 087/183] media: omap_vout: potential buffer overflow in vidioc_dqbuf()
+Subject: [PATCH 4.9 157/271] ASoC: ti: davinci-mcasp: Fix slot mask settings when using multiple AXRs
 Date:   Tue, 28 Jan 2020 15:05:06 +0100
-Message-Id: <20200128135838.702805691@linuxfoundation.org>
+Message-Id: <20200128135904.255212099@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200128135829.486060649@linuxfoundation.org>
-References: <20200128135829.486060649@linuxfoundation.org>
+In-Reply-To: <20200128135852.449088278@linuxfoundation.org>
+References: <20200128135852.449088278@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,66 +44,48 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
+From: Peter Ujfalusi <peter.ujfalusi@ti.com>
 
-[ Upstream commit dd6e2a981bfe83aa4a493143fd8cf1edcda6c091 ]
+[ Upstream commit fd14f4436fd47d5418023c90e933e66d3645552e ]
 
-The "b->index" is a u32 the comes from the user in the ioctl.  It hasn't
-been checked.  We aren't supposed to use it but we're instead supposed
-to use the value that gets written to it when we call videobuf_dqbuf().
+If multiple serializers are connected in the system and the number of
+channels will need to use more than one serializer the mask to enable the
+serializers were left to 0 if tdm_mask is provided
 
-The videobuf_dqbuf() first memsets it to zero and then re-initializes it
-inside the videobuf_status() function.  It's this final value which we
-want.
+Fixes: dd55ff8346a97 ("ASoC: davinci-mcasp: Add set_tdm_slots() support")
 
-Hans Verkuil pointed out that we need to check the return from
-videobuf_dqbuf().  I ended up doing a little cleanup related to that as
-well.
-
-Fixes: 72915e851da9 ("[media] V4L2: OMAP: VOUT: dma map and unmap v4l2 buffers in qbuf and dqbuf")
-
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-Signed-off-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
-Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+Signed-off-by: Peter Ujfalusi <peter.ujfalusi@ti.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/media/platform/omap/omap_vout.c | 15 ++++++---------
- 1 file changed, 6 insertions(+), 9 deletions(-)
+ sound/soc/davinci/davinci-mcasp.c | 13 ++++++-------
+ 1 file changed, 6 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/media/platform/omap/omap_vout.c b/drivers/media/platform/omap/omap_vout.c
-index 5963595761096..cf015bfc559bb 100644
---- a/drivers/media/platform/omap/omap_vout.c
-+++ b/drivers/media/platform/omap/omap_vout.c
-@@ -1580,23 +1580,20 @@ static int vidioc_dqbuf(struct file *file, void *fh, struct v4l2_buffer *b)
- 	unsigned long size;
- 	struct videobuf_buffer *vb;
- 
--	vb = q->bufs[b->index];
--
- 	if (!vout->streaming)
- 		return -EINVAL;
- 
--	if (file->f_flags & O_NONBLOCK)
--		/* Call videobuf_dqbuf for non blocking mode */
--		ret = videobuf_dqbuf(q, (struct v4l2_buffer *)b, 1);
--	else
--		/* Call videobuf_dqbuf for  blocking mode */
--		ret = videobuf_dqbuf(q, (struct v4l2_buffer *)b, 0);
-+	ret = videobuf_dqbuf(q, b, !!(file->f_flags & O_NONBLOCK));
-+	if (ret)
-+		return ret;
-+
-+	vb = q->bufs[b->index];
- 
- 	addr = (unsigned long) vout->buf_phy_addr[vb->i];
- 	size = (unsigned long) vb->size;
- 	dma_unmap_single(vout->vid_dev->v4l2_dev.dev,  addr,
- 				size, DMA_TO_DEVICE);
--	return ret;
-+	return 0;
- }
- 
- static int vidioc_streamon(struct file *file, void *fh, enum v4l2_buf_type i)
+diff --git a/sound/soc/davinci/davinci-mcasp.c b/sound/soc/davinci/davinci-mcasp.c
+index 624c209c94981..d1935c5c3602b 100644
+--- a/sound/soc/davinci/davinci-mcasp.c
++++ b/sound/soc/davinci/davinci-mcasp.c
+@@ -882,14 +882,13 @@ static int mcasp_i2s_hw_param(struct davinci_mcasp *mcasp, int stream,
+ 		active_slots = hweight32(mcasp->tdm_mask[stream]);
+ 		active_serializers = (channels + active_slots - 1) /
+ 			active_slots;
+-		if (active_serializers == 1) {
++		if (active_serializers == 1)
+ 			active_slots = channels;
+-			for (i = 0; i < total_slots; i++) {
+-				if ((1 << i) & mcasp->tdm_mask[stream]) {
+-					mask |= (1 << i);
+-					if (--active_slots <= 0)
+-						break;
+-				}
++		for (i = 0; i < total_slots; i++) {
++			if ((1 << i) & mcasp->tdm_mask[stream]) {
++				mask |= (1 << i);
++				if (--active_slots <= 0)
++					break;
+ 			}
+ 		}
+ 	} else {
 -- 
 2.20.1
 
