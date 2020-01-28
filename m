@@ -2,126 +2,79 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0F00414B65F
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Jan 2020 15:04:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E37AE14B6E0
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Jan 2020 15:09:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728105AbgA1OEc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 28 Jan 2020 09:04:32 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51638 "EHLO mail.kernel.org"
+        id S1727429AbgA1OJD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 28 Jan 2020 09:09:03 -0500
+Received: from mail.kernel.org ([198.145.29.99]:57082 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728070AbgA1OE1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 Jan 2020 09:04:27 -0500
-Received: from localhost (173-25-83-245.client.mchsi.com [173.25.83.245])
+        id S1728583AbgA1OIw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 28 Jan 2020 09:08:52 -0500
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 212012468F;
-        Tue, 28 Jan 2020 14:04:26 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7850F2468D;
+        Tue, 28 Jan 2020 14:08:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1580220266;
-        bh=ub4UwKqrZMgy6+sqrMhH+mrNyxJs1wj0mog/wg3Wxx0=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:From;
-        b=2UXpA6vi6H0YSp/fpxanVwcpc42jUmIi3kYBrYYIq/in9lxz55IcxTVto6yR3Qns0
-         zTf0Qdk2pZcJzQ+ZCjDYagC9ZENOLyQudDxjhQc0n4CwKAJ38zq+TdHLcBE/OuOwMK
-         askCzG5zDppDZuwGYKJ+jhu/ibUp1dTtJS5tGHcA=
-Date:   Tue, 28 Jan 2020 08:04:24 -0600
-From:   Bjorn Helgaas <helgaas@kernel.org>
-To:     Bharat Kumar Gogada <bharat.kumar.gogada@xilinx.com>
-Cc:     linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
-        rgummal@xilinx.com
-Subject: Re: [PATCH v4 2/2] PCI: xilinx-cpm: Add Versal CPM Root Port driver
-Message-ID: <20200128140424.GA150109@google.com>
+        s=default; t=1580220531;
+        bh=WjEpRz12C9cCpyFWPKhpFphlyEXN/4W5dysrJJDEsqE=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=1RPCrqgX2pkWbZo+0LSzcPrbPp2SXQLTHJ13f9z+ME/EQFIroaYpyQhHzp3g+D7tU
+         436pW47+EqQEcn1IS+Oj38unIPURl7/3zUCb3wPhO8Es4i5KuQ0NCyxoJqD34QSVAM
+         8Pgl+YBslw21bEVO1GiZKJC4zFUMw0IJZudbXBqc=
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Simon Horman <horms+renesas@verge.net.au>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.4 045/183] pinctrl: sh-pfc: r8a7791: Fix scifb2_data_c pin group
+Date:   Tue, 28 Jan 2020 15:04:24 +0100
+Message-Id: <20200128135834.467899123@linuxfoundation.org>
+X-Mailer: git-send-email 2.25.0
+In-Reply-To: <20200128135829.486060649@linuxfoundation.org>
+References: <20200128135829.486060649@linuxfoundation.org>
+User-Agent: quilt/0.66
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1580215483-8835-3-git-send-email-bharat.kumar.gogada@xilinx.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jan 28, 2020 at 06:14:43PM +0530, Bharat Kumar Gogada wrote:
-> - Add support for Versal CPM as Root Port.
-> - The Versal ACAP devices include CCIX-PCIe Module (CPM). The integrated
->   block for CPM along with the integrated bridge can function
->   as PCIe Root Port.
-> - CPM Versal uses GICv3 ITS feature for achieving assigning MSI/MSI-X
->   vectors and handling MSI/MSI-X interrupts.
-> - Bridge error and legacy interrupts in Versal CPM are handled using
->   Versal CPM specific MISC interrupt line.
-> 
-> Changes v4:
-> - change commit subject.
-> - Remove unnecessary comments and type cast.
-> - Added comments for CPM block register access using readl/writel.
-> 
-> Signed-off-by: Bharat Kumar Gogada <bharat.kumar.gogada@xilinx.com>
-> ...
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-> +static bool xilinx_cpm_pcie_valid_device(struct pci_bus *bus,
-> +					 unsigned int devfn)
-> +{
-> +	struct xilinx_cpm_pcie_port *port = bus->sysdata;
-> +
-> +	/* Only one device down on each root port */
-> +	if (bus->number == port->root_busno && devfn > 0)
-> +		return false;
+[ Upstream commit a4b0350047f1b10207e25e72d7cd3f7826e93769 ]
 
-This whole *_valid_device() thing is a mess.  We shouldn't need it at
-all.  But if we *do* need it, I don't think you should check the
-entire devfn because that means you can't attach a multifunction
-device.
+The entry for "scifb2_data_c" in the SCIFB2 pin group array contains a
+typo, thus the group cannot be selected.
 
-Several other drivers with similar *_valid_device() implementations
-check only PCI_SLOT():
+Fixes: 5088451962389924 ("pinctrl: sh-pfc: r8a7791 PFC support")
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ drivers/pinctrl/sh-pfc/pfc-r8a7791.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-  dw_pcie_valid_device()
-  advk_pcie_valid_device()
-  pci_dw_valid_device()
-  altera_pcie_valid_device()
-  mobiveil_pcie_valid_device()
-  rockchip_pcie_valid_device()
+diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a7791.c b/drivers/pinctrl/sh-pfc/pfc-r8a7791.c
+index f94e34e7f0b01..b2f8898ddb2c8 100644
+--- a/drivers/pinctrl/sh-pfc/pfc-r8a7791.c
++++ b/drivers/pinctrl/sh-pfc/pfc-r8a7791.c
+@@ -4967,7 +4967,7 @@ static const char * const scifb2_groups[] = {
+ 	"scifb2_data_b",
+ 	"scifb2_clk_b",
+ 	"scifb2_ctrl_b",
+-	"scifb0_data_c",
++	"scifb2_data_c",
+ 	"scifb2_clk_c",
+ 	"scifb2_data_d",
+ };
+-- 
+2.20.1
 
-Even checking just PCI_SLOT() is problematic because I think an ARI
-device with more than 8 functions will not work correctly.
 
-What exactly happens if you omit this function, i.e., if we just go
-ahead and attempt config accesses when the device is not present?  We
-*should* get something like an Unsupported Request completion, and
-that *should* be a recoverable error.  Most hardware turns this error
-into read data of 0xffffffff.  The OS should be able to figure out
-that there's no device there and continue with no ill effects.
 
-> +	return true;
-> +}
-> +
-> +/**
-> + * xilinx_cpm_pcie_map_bus - Get configuration base
-> + * @bus: PCI Bus structure
-> + * @devfn: Device/function
-> + * @where: Offset from base
-> + *
-> + * Return: Base address of the configuration space needed to be
-> + *	   accessed.
-> + */
-> +static void __iomem *xilinx_cpm_pcie_map_bus(struct pci_bus *bus,
-> +					     unsigned int devfn, int where)
-> +{
-> +	struct xilinx_cpm_pcie_port *port = bus->sysdata;
-> +	int relbus;
-> +
-> +	if (!xilinx_cpm_pcie_valid_device(bus, devfn))
-> +		return NULL;
-> +
-> +	relbus = (bus->number << ECAM_BUS_NUM_SHIFT) |
-> +		 (devfn << ECAM_DEV_NUM_SHIFT);
-> +
-> +	return port->reg_base + relbus + where;
-> +}
-> +
-> +/* PCIe operations */
-> +static struct pci_ops xilinx_cpm_pcie_ops = {
-> +	.map_bus = xilinx_cpm_pcie_map_bus,
-> +	.read	= pci_generic_config_read,
-> +	.write	= pci_generic_config_write,
-> +};
