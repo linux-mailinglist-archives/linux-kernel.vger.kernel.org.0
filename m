@@ -2,370 +2,390 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F1EB714B133
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Jan 2020 09:58:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DB02414B139
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Jan 2020 10:00:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726143AbgA1I6w (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 28 Jan 2020 03:58:52 -0500
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:40205 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725880AbgA1I6w (ORCPT
+        id S1725941AbgA1JAJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 28 Jan 2020 04:00:09 -0500
+Received: from smtp-fw-2101.amazon.com ([72.21.196.25]:11464 "EHLO
+        smtp-fw-2101.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725879AbgA1JAJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 Jan 2020 03:58:52 -0500
-Received: by mail-wr1-f66.google.com with SMTP id c14so15033768wrn.7;
-        Tue, 28 Jan 2020 00:58:48 -0800 (PST)
+        Tue, 28 Jan 2020 04:00:09 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=zinQcYMRE/SNMf15Pj7wpG6LsP6EuMItxuApajbJrNU=;
-        b=D2H6dgrLV7dsFVDtH/xMgtSQY/bnclyNUVSIink8fvlwX6VfoEzSGLC3iINRa0GWeC
-         65LhW1sktUo7cs0sYNOG1OWvH5xdKPpe6bxkiYFUr5iWF8h15qceBxlXgHeaV2m9Cxva
-         ArNfFPjmv/YHZDHnSc2XWp6GAhUhkSZQG/3UPn4XfIsihCd/wyUw3x3UP1pprx+OEued
-         epKKYhS+Ezm9RzTVx5h+n8pl6IgvSN8yMKu03SnqgCgVIOlm2ZtTfces2cLOdpO2RBrQ
-         BgtaocLZKu6m5BLmjy5KRJ5SR9FG09/BvAUb7wtJNl3ZzVtS1w0pYAZ1KEAyjZsBZ9Dn
-         Lwlw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=zinQcYMRE/SNMf15Pj7wpG6LsP6EuMItxuApajbJrNU=;
-        b=tE6+/f6bJoldKfuKO2OD0cA3WK+rUI8K1RrIhZSZDNe2PVNMCX6g+WKWHXwJ/H7ByO
-         QvgQdnJOo5ufDZQzBcr3JZg4OHuVCHjWardnaUnK//2C5Ys2KuYM67P2FZyA21eyEAyi
-         bdgxIkn7gAKiJfDmFpwVuaedfbk4D3fU6gYg6RJyoa5/6tVJI74Xnl/tI78f23BBrIFo
-         VPDPBf2ExlKqFpUtsN3cRda5PmhAxNzc8TGmN5SiHevfQUYkQkEvdqcbZxhH0iov94dE
-         3wUWynj3ISgHHt2mgOuzl+C6YKdK5Q7jAnaccgoxe6wWvSWneROLCIStCvrkr+XDOIXX
-         cs5Q==
-X-Gm-Message-State: APjAAAUJozDc4i0gSvTP9lWbrBWJDgQYzlkbePGCZ56ONlcJVxZBhtFS
-        w1HUIM5X8a/BzGkKxkbKHdg=
-X-Google-Smtp-Source: APXvYqx1FBLFta38/FBrFiEq/AhsS/VtEA2iqwtyh6CGsHIf4/X4B4PQLpSk9K5Gn2gxobOHCQ2Zgg==
-X-Received: by 2002:a5d:4687:: with SMTP id u7mr26259464wrq.176.1580201927932;
-        Tue, 28 Jan 2020 00:58:47 -0800 (PST)
-Received: from Red ([2a01:cb1d:3d5:a100:2e56:dcff:fed2:c6d6])
-        by smtp.googlemail.com with ESMTPSA id e12sm24698773wrn.56.2020.01.28.00.58.46
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 28 Jan 2020 00:58:47 -0800 (PST)
-Date:   Tue, 28 Jan 2020 09:58:45 +0100
-From:   Corentin Labbe <clabbe.montjoie@gmail.com>
-To:     Iuliana Prodan <iuliana.prodan@nxp.com>
-Cc:     Herbert Xu <herbert@gondor.apana.org.au>,
-        Baolin Wang <baolin.wang@linaro.org>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Horia Geanta <horia.geanta@nxp.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Aymen Sghaier <aymen.sghaier@nxp.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Silvano Di Ninno <silvano.dininno@nxp.com>,
-        Franck Lenormand <franck.lenormand@nxp.com>,
-        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-imx <linux-imx@nxp.com>
-Subject: Re: [PATCH] crypto: engine - support for parallel requests
-Message-ID: <20200128085845.GB10493@Red>
-References: <1580163425-13266-1-git-send-email-iuliana.prodan@nxp.com>
+  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
+  t=1580202007; x=1611738007;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version;
+  bh=kG+IDFK4OXO6aZLC6Cd/97NvvV3xo5evH+2ZtPB+0EI=;
+  b=ODA3qR9+36QsU2lb9lQ4YtcmFPCmYhAGfeuoX2TJcA676ENEZLVGXvmt
+   2bgr6TODQTqG7d1Rc3lpn4jck+cDf0oBLPZITHzkI8KRtbAAKtkl/26Z0
+   YCzlAo+nLbUaENtPuXmzeBCeh8SSr5B2oF3QHOlsB90KylLxYMwVilxI7
+   0=;
+IronPort-SDR: Sql4K5xDVLqXyeo/QjmwloF3Sbqruz/c/+56sfaFWLmv/RONKySHn5Obd9fKWYQx2JNBU5QOfC
+ x/0qLWOC531g==
+X-IronPort-AV: E=Sophos;i="5.70,373,1574121600"; 
+   d="scan'208";a="14531791"
+Received: from iad12-co-svc-p1-lb1-vlan2.amazon.com (HELO email-inbound-relay-2a-90c42d1d.us-west-2.amazon.com) ([10.43.8.2])
+  by smtp-border-fw-out-2101.iad2.amazon.com with ESMTP; 28 Jan 2020 09:00:05 +0000
+Received: from EX13MTAUEA002.ant.amazon.com (pdx4-ws-svc-p6-lb7-vlan3.pdx.amazon.com [10.170.41.166])
+        by email-inbound-relay-2a-90c42d1d.us-west-2.amazon.com (Postfix) with ESMTPS id 747E9A1242;
+        Tue, 28 Jan 2020 09:00:03 +0000 (UTC)
+Received: from EX13D31EUA001.ant.amazon.com (10.43.165.15) by
+ EX13MTAUEA002.ant.amazon.com (10.43.61.77) with Microsoft SMTP Server (TLS)
+ id 15.0.1236.3; Tue, 28 Jan 2020 09:00:02 +0000
+Received: from u886c93fd17d25d.ant.amazon.com (10.43.162.133) by
+ EX13D31EUA001.ant.amazon.com (10.43.165.15) with Microsoft SMTP Server (TLS)
+ id 15.0.1367.3; Tue, 28 Jan 2020 08:59:55 +0000
+From:   <sjpark@amazon.com>
+To:     <akpm@linux-foundation.org>
+CC:     SeongJae Park <sjpark@amazon.de>, <sj38.park@gmail.com>,
+        <acme@kernel.org>, <amit@kernel.org>, <brendan.d.gregg@gmail.com>,
+        <corbet@lwn.net>, <dwmw@amazon.com>, <mgorman@suse.de>,
+        <rostedt@goodmis.org>, <kirill@shutemov.name>,
+        <brendanhiggins@google.com>, <colin.king@canonical.com>,
+        <minchan@kernel.org>, <vdavydov.dev@gmail.com>,
+        <vdavydov@parallels.com>, <linux-mm@kvack.org>,
+        <linux-doc@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: [PATCH v2 5/9] mm/damon: Add debugfs interface
+Date:   Tue, 28 Jan 2020 09:59:40 +0100
+Message-ID: <20200128085940.15099-1-sjpark@amazon.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20200128085742.14566-1-sjpark@amazon.com>
+References: <20200128085742.14566-1-sjpark@amazon.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1580163425-13266-1-git-send-email-iuliana.prodan@nxp.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain
+X-Originating-IP: [10.43.162.133]
+X-ClientProxiedBy: EX13D22UWB002.ant.amazon.com (10.43.161.28) To
+ EX13D31EUA001.ant.amazon.com (10.43.165.15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jan 28, 2020 at 12:17:05AM +0200, Iuliana Prodan wrote:
-> Added support for executing multiple requests, in parallel,
-> for crypto engine.
-> A new callback is added, can_enqueue_hardware, which asks the
-> driver if the hardware has free space, to enqueue a new request.
-> The new crypto_engine_alloc_init_and_set function, initialize
-> crypto-engine, sets the maximum size for crypto-engine software
-> queue (not hardcoded anymore) and the can_enqueue_hardware callback.
-> On crypto_pump_requests, if can_enqueue_hardware callback returns true,
-> a new request is send to hardware, until there is no space and the
-> callback returns false.
-> 
-> Signed-off-by: Iuliana Prodan <iuliana.prodan@nxp.com>
-> 
-> ---
-> Changes since V0 (RFC):
-> 	- removed max_no_req and no_req, as the number of request that
-> 	  can be processed in parallel;
-> 	- added a new callback, can_enqueue_hardware, to check whether
-> 	  the hardware can process a new request. 
-> ---
-> 
->  crypto/crypto_engine.c  | 105 ++++++++++++++++++++++++++++++------------------
->  include/crypto/engine.h |  10 +++--
->  2 files changed, 71 insertions(+), 44 deletions(-)
-> 
-> diff --git a/crypto/crypto_engine.c b/crypto/crypto_engine.c
-> index eb029ff..ee3a610 100644
-> --- a/crypto/crypto_engine.c
-> +++ b/crypto/crypto_engine.c
-> @@ -22,32 +22,18 @@
->   * @err: error number
->   */
->  static void crypto_finalize_request(struct crypto_engine *engine,
-> -			     struct crypto_async_request *req, int err)
-> +				    struct crypto_async_request *req, int err)
->  {
-> -	unsigned long flags;
-> -	bool finalize_cur_req = false;
->  	int ret;
->  	struct crypto_engine_ctx *enginectx;
->  
-> -	spin_lock_irqsave(&engine->queue_lock, flags);
-> -	if (engine->cur_req == req)
-> -		finalize_cur_req = true;
-> -	spin_unlock_irqrestore(&engine->queue_lock, flags);
-> -
-> -	if (finalize_cur_req) {
-> -		enginectx = crypto_tfm_ctx(req->tfm);
-> -		if (engine->cur_req_prepared &&
-> -		    enginectx->op.unprepare_request) {
-> -			ret = enginectx->op.unprepare_request(engine, req);
-> -			if (ret)
-> -				dev_err(engine->dev, "failed to unprepare request\n");
-> -		}
-> -		spin_lock_irqsave(&engine->queue_lock, flags);
-> -		engine->cur_req = NULL;
-> -		engine->cur_req_prepared = false;
-> -		spin_unlock_irqrestore(&engine->queue_lock, flags);
-> +	enginectx = crypto_tfm_ctx(req->tfm);
-> +	if (enginectx->op.prepare_request &&
-> +	    enginectx->op.unprepare_request) {
-> +		ret = enginectx->op.unprepare_request(engine, req);
-> +		if (ret)
-> +			dev_err(engine->dev, "failed to unprepare request\n");
->  	}
-> -
->  	req->complete(req, err);
->  
->  	kthread_queue_work(engine->kworker, &engine->pump_requests);
-> @@ -73,10 +59,6 @@ static void crypto_pump_requests(struct crypto_engine *engine,
->  
->  	spin_lock_irqsave(&engine->queue_lock, flags);
->  
-> -	/* Make sure we are not already running a request */
-> -	if (engine->cur_req)
-> -		goto out;
-> -
->  	/* If another context is idling then defer */
->  	if (engine->idling) {
->  		kthread_queue_work(engine->kworker, &engine->pump_requests);
-> @@ -108,13 +90,18 @@ static void crypto_pump_requests(struct crypto_engine *engine,
->  		goto out;
->  	}
->  
-> +start_request:
-> +	/* If hw is busy, do not send any request */
-> +	if (engine->can_enqueue_hardware &&
-> +	    !engine->can_enqueue_hardware(engine->dev))
-> +		goto out;
-> +
->  	/* Get the fist request from the engine queue to handle */
->  	backlog = crypto_get_backlog(&engine->queue);
->  	async_req = crypto_dequeue_request(&engine->queue);
->  	if (!async_req)
->  		goto out;
->  
-> -	engine->cur_req = async_req;
->  	if (backlog)
->  		backlog->complete(backlog, -EINPROGRESS);
->  
-> @@ -130,7 +117,7 @@ static void crypto_pump_requests(struct crypto_engine *engine,
->  		ret = engine->prepare_crypt_hardware(engine);
->  		if (ret) {
->  			dev_err(engine->dev, "failed to prepare crypt hardware\n");
-> -			goto req_err;
-> +			goto req_err_2;
->  		}
->  	}
->  
-> @@ -141,26 +128,38 @@ static void crypto_pump_requests(struct crypto_engine *engine,
->  		if (ret) {
->  			dev_err(engine->dev, "failed to prepare request: %d\n",
->  				ret);
-> -			goto req_err;
-> +			goto req_err_2;
->  		}
-> -		engine->cur_req_prepared = true;
->  	}
->  	if (!enginectx->op.do_one_request) {
->  		dev_err(engine->dev, "failed to do request\n");
->  		ret = -EINVAL;
-> -		goto req_err;
-> +		goto req_err_1;
->  	}
-> +
->  	ret = enginectx->op.do_one_request(engine, async_req);
->  	if (ret) {
->  		dev_err(engine->dev, "Failed to do one request from queue: %d\n", ret);
-> -		goto req_err;
-> +		goto req_err_1;
->  	}
-> -	return;
->  
-> -req_err:
-> -	crypto_finalize_request(engine, async_req, ret);
-> -	return;
-> +	goto retry;
-> +
-> +req_err_1:
-> +	if (enginectx->op.unprepare_request) {
-> +		ret = enginectx->op.unprepare_request(engine, async_req);
-> +		if (ret)
-> +			dev_err(engine->dev, "failed to unprepare request\n");
-> +	}
-> +req_err_2:
-> +	async_req->complete(async_req, ret);
->  
-> +retry:
-> +	if (engine->can_enqueue_hardware) {
-> +		spin_lock_irqsave(&engine->queue_lock, flags);
-> +		goto start_request;
-> +	}
-> +	return;
->  out:
->  	spin_unlock_irqrestore(&engine->queue_lock, flags);
->  }
-> @@ -386,15 +385,25 @@ int crypto_engine_stop(struct crypto_engine *engine)
->  EXPORT_SYMBOL_GPL(crypto_engine_stop);
->  
->  /**
-> - * crypto_engine_alloc_init - allocate crypto hardware engine structure and
-> - * initialize it.
-> + * crypto_engine_alloc_init_and_set - allocate crypto hardware engine structure
-> + * and initialize it by setting the maximum number of entries in the software
-> + * crypto-engine queue.
->   * @dev: the device attached with one hardware engine
-> + * @cbk: pointer to a callback function to be invoked when pumping requests
-> + *       to check whether the hardware can process a new request.
-> + *       This has the form:
-> + *       callback(struct device *dev)
-> + *       where:
-> + *       @dev: contains the device that processed this response.
->   * @rt: whether this queue is set to run as a realtime task
-> + * @qlen: maximum size of the crypto-engine queue
->   *
->   * This must be called from context that can sleep.
->   * Return: the crypto engine structure on success, else NULL.
->   */
-> -struct crypto_engine *crypto_engine_alloc_init(struct device *dev, bool rt)
-> +struct crypto_engine *crypto_engine_alloc_init_and_set(struct device *dev,
-> +						       bool (*cbk)(struct device *dev),
-> +						       bool rt, int qlen)
->  {
->  	struct sched_param param = { .sched_priority = MAX_RT_PRIO / 2 };
->  	struct crypto_engine *engine;
-> @@ -411,12 +420,12 @@ struct crypto_engine *crypto_engine_alloc_init(struct device *dev, bool rt)
->  	engine->running = false;
->  	engine->busy = false;
->  	engine->idling = false;
-> -	engine->cur_req_prepared = false;
->  	engine->priv_data = dev;
-> +	engine->can_enqueue_hardware = cbk;
->  	snprintf(engine->name, sizeof(engine->name),
->  		 "%s-engine", dev_name(dev));
->  
-> -	crypto_init_queue(&engine->queue, CRYPTO_ENGINE_MAX_QLEN);
-> +	crypto_init_queue(&engine->queue, qlen);
->  	spin_lock_init(&engine->queue_lock);
->  
->  	engine->kworker = kthread_create_worker(0, "%s", engine->name);
-> @@ -433,6 +442,22 @@ struct crypto_engine *crypto_engine_alloc_init(struct device *dev, bool rt)
->  
->  	return engine;
->  }
-> +EXPORT_SYMBOL_GPL(crypto_engine_alloc_init_and_set);
-> +
-> +/**
-> + * crypto_engine_alloc_init - allocate crypto hardware engine structure and
-> + * initialize it.
-> + * @dev: the device attached with one hardware engine
-> + * @rt: whether this queue is set to run as a realtime task
-> + *
-> + * This must be called from context that can sleep.
-> + * Return: the crypto engine structure on success, else NULL.
-> + */
-> +struct crypto_engine *crypto_engine_alloc_init(struct device *dev, bool rt)
-> +{
-> +	return crypto_engine_alloc_init_and_set(dev, NULL, rt,
-> +						CRYPTO_ENGINE_MAX_QLEN);
-> +}
->  EXPORT_SYMBOL_GPL(crypto_engine_alloc_init);
->  
->  /**
-> diff --git a/include/crypto/engine.h b/include/crypto/engine.h
-> index e29cd67..15d1150 100644
-> --- a/include/crypto/engine.h
-> +++ b/include/crypto/engine.h
-> @@ -24,7 +24,6 @@
->   * @idling: the engine is entering idle state
->   * @busy: request pump is busy
->   * @running: the engine is on working
-> - * @cur_req_prepared: current request is prepared
->   * @list: link with the global crypto engine list
->   * @queue_lock: spinlock to syncronise access to request queue
->   * @queue: the crypto queue of the engine
-> @@ -35,17 +34,17 @@
->   * @unprepare_crypt_hardware: there are currently no more requests on the
->   * queue so the subsystem notifies the driver that it may relax the
->   * hardware by issuing this call
-> + * @can_enqueue_hardware: callback to check whether the hardware can process
-> + * a new request
->   * @kworker: kthread worker struct for request pump
->   * @pump_requests: work struct for scheduling work to the request pump
->   * @priv_data: the engine private data
-> - * @cur_req: the current request which is on processing
->   */
->  struct crypto_engine {
->  	char			name[ENGINE_NAME_LEN];
->  	bool			idling;
->  	bool			busy;
->  	bool			running;
-> -	bool			cur_req_prepared;
->  
->  	struct list_head	list;
->  	spinlock_t		queue_lock;
-> @@ -56,12 +55,12 @@ struct crypto_engine {
->  
->  	int (*prepare_crypt_hardware)(struct crypto_engine *engine);
->  	int (*unprepare_crypt_hardware)(struct crypto_engine *engine);
-> +	bool (*can_enqueue_hardware)(struct device *dev);
->  
->  	struct kthread_worker           *kworker;
->  	struct kthread_work             pump_requests;
->  
->  	void				*priv_data;
-> -	struct crypto_async_request	*cur_req;
->  };
->  
->  /*
-> @@ -102,6 +101,9 @@ void crypto_finalize_skcipher_request(struct crypto_engine *engine,
->  int crypto_engine_start(struct crypto_engine *engine);
->  int crypto_engine_stop(struct crypto_engine *engine);
->  struct crypto_engine *crypto_engine_alloc_init(struct device *dev, bool rt);
-> +struct crypto_engine *crypto_engine_alloc_init_and_set(struct device *dev,
-> +						       bool (*cbk)(struct device *dev),
-> +						       bool rt, int qlen);
->  int crypto_engine_exit(struct crypto_engine *engine);
->  
->  #endif /* _CRYPTO_ENGINE_H */
-> -- 
-> 2.1.0
-> 
+From: SeongJae Park <sjpark@amazon.de>
 
+This commit adds a debugfs interface for DAMON.
 
-Hello
+DAMON exports three files, ``attrs``, ``pids``, and ``monitor_on`` under
+its debugfs directory, ``<debugfs>/damon/``.
 
-For someone which said "I'm planning to improve crypto-engine incrementally", this is lot of change in one.
-You could have used my first 4 patchs which clean crypto_engine (for getting rid of cur_req_prepared/cur_req for example).
+Attributes
+----------
 
-Furthermore, the callback should not be registred at init, but should be part of the struct crypto_engine_op.
-And the callback need to have the crypto engine itself as parameter, in case the driver own more than one crypto engine.
-In my serie I added also the current request for giving more hint on the current state and let the driver do the right decision.
+Users can read and write the ``sampling interval``, ``aggregation
+interval``, ``regions update interval``, min/max number of regions, and
+the path to ``result file`` by reading from and writing to the ``attrs``
+file.  For example, below commands set those values to 5 ms, 100 ms,
+1,000 ms, 10, 1000, and ``/damon.data`` and check it again::
 
-Regards
+    # cd <debugfs>/damon
+    # echo 5000 100000 1000000 10 1000 /damon.data > attrs
+    # cat attrs
+    5000 100000 1000000 10 1000 /damon.data
+
+Target PIDs
+-----------
+
+Users can read and write the pids of current monitoring target processes
+by reading from and writing to the `pids` file.  For example, below
+commands set processes having pids 42 and 4242 as the processes to be
+monitored and check it again::
+
+    # cd <debugfs>/damon
+    # echo 42 4242 > pids
+    # cat pids
+    42 4242
+
+Note that setting the pids doesn't starts the monitoring.
+
+Turning On/Off
+--------------
+
+You can check current status, start and stop the monitoring by reading
+from and writing to the ``monitor_on`` file.  Writing ``on`` to the file
+starts DAMON to monitor the target processes with the attributes.
+Writing ``off`` to the file stops DAMON.  DAMON also stops if every
+target processes is be terminated.  Below example commands turn on, off,
+and check status of DAMON::
+
+    # cd <debugfs>/damon
+    # echo on > monitor_on
+    # echo off > monitor_on
+    # cat monitor_on
+    off
+
+Please note that you cannot write to the ``attrs`` and ``pids`` files
+while the monitoring is turned on.  If you write to the files while
+DAMON is running, ``-EINVAL`` will be returned.
+
+Signed-off-by: SeongJae Park <sjpark@amazon.de>
+---
+ mm/damon.c | 232 ++++++++++++++++++++++++++++++++++++++++++++++++++++-
+ 1 file changed, 231 insertions(+), 1 deletion(-)
+
+diff --git a/mm/damon.c b/mm/damon.c
+index e7f07c9e3333..3e1b5eb945ea 100644
+--- a/mm/damon.c
++++ b/mm/damon.c
+@@ -9,6 +9,7 @@
+ 
+ #define pr_fmt(fmt) "damon: " fmt
+ 
++#include <linux/debugfs.h>
+ #include <linux/delay.h>
+ #include <linux/kthread.h>
+ #include <linux/mm.h>
+@@ -1037,6 +1038,233 @@ static long damon_set_attrs(unsigned long sample_int,
+ 	return 0;
+ }
+ 
++/*
++ * debugfs functions
++ */
++
++static ssize_t debugfs_monitor_on_read(struct file *file,
++		char __user *buf, size_t count, loff_t *ppos)
++{
++	char monitor_on_buf[5];
++	bool monitor_on;
++
++	spin_lock(&kdamond_lock);
++	monitor_on = kdamond != NULL;
++	spin_unlock(&kdamond_lock);
++
++	snprintf(monitor_on_buf, 5, monitor_on ? "on\n" : "off\n");
++
++	return simple_read_from_buffer(buf, count, ppos, monitor_on_buf,
++			monitor_on ? 3 : 4);
++}
++
++static ssize_t debugfs_monitor_on_write(struct file *file,
++		const char __user *buf, size_t count, loff_t *ppos)
++{
++	ssize_t ret;
++	bool on = false;
++	char cmdbuf[5];
++
++	ret = simple_write_to_buffer(cmdbuf, 5, ppos, buf, count);
++	if (ret < 0)
++		return ret;
++
++	if (sscanf(cmdbuf, "%s", cmdbuf) != 1)
++		return -EINVAL;
++	if (!strncmp(cmdbuf, "on", 5))
++		on = true;
++	else if (!strncmp(cmdbuf, "off", 5))
++		on = false;
++	else
++		return -EINVAL;
++
++	if (damon_turn_kdamond(on))
++		return -EINVAL;
++
++	return ret;
++}
++
++static ssize_t damon_sprint_pids(char *buf, ssize_t len)
++{
++	char *cursor = buf;
++	struct damon_task *t;
++
++	damon_for_each_task(t) {
++		snprintf(cursor, len, "%lu ", t->pid);
++		cursor += strnlen(cursor, len);
++	}
++	if (cursor != buf)
++		cursor--;
++	snprintf(cursor, len, "\n");
++	return strnlen(buf, len);
++}
++
++static ssize_t debugfs_pids_read(struct file *file,
++		char __user *buf, size_t count, loff_t *ppos)
++{
++	ssize_t len;
++	char pids_buf[512];
++
++	len = damon_sprint_pids(pids_buf, 512);
++
++	return simple_read_from_buffer(buf, count, ppos, pids_buf, len);
++}
++
++/*
++ * Converts a string into an array of unsigned long integers
++ *
++ * Returns an array of unsigned long integers that converted, or NULL if the
++ * input is wrong.
++ */
++static unsigned long *str_to_pids(const char *str, ssize_t len,
++				ssize_t *nr_pids)
++{
++	unsigned long *pids;
++	unsigned long pid;
++	int pos = 0, parsed, ret;
++
++	*nr_pids = 0;
++	pids = kmalloc_array(256, sizeof(unsigned long), GFP_KERNEL);
++	while (*nr_pids < 256 && pos < len) {
++		ret = sscanf(&str[pos], "%lu%n", &pid, &parsed);
++		pos += parsed;
++		if (ret != 1)
++			break;
++		pids[*nr_pids] = pid;
++		*nr_pids += 1;
++	}
++	if (*nr_pids == 0) {
++		kfree(pids);
++		pids = NULL;
++	}
++
++	return pids;
++}
++
++static ssize_t debugfs_pids_write(struct file *file,
++		const char __user *buf, size_t count, loff_t *ppos)
++{
++	ssize_t ret;
++	unsigned long *targets;
++	ssize_t nr_targets;
++	char pids_buf[512];
++
++	ret = simple_write_to_buffer(pids_buf, 512, ppos, buf, count);
++	if (ret < 0)
++		return ret;
++
++	targets = str_to_pids(pids_buf, ret, &nr_targets);
++
++	spin_lock(&kdamond_lock);
++	if (kdamond)
++		goto monitor_running;
++
++	damon_set_pids(targets, nr_targets);
++	spin_unlock(&kdamond_lock);
++	kfree(targets);
++
++	return ret;
++
++monitor_running:
++	spin_unlock(&kdamond_lock);
++	pr_err("%s: kdamond is running. Turn it off first.\n", __func__);
++	return -EINVAL;
++}
++
++static ssize_t debugfs_attrs_read(struct file *file,
++		char __user *buf, size_t count, loff_t *ppos)
++{
++	char attrs_buf[512];
++
++	snprintf(attrs_buf, 512, "%lu %lu %lu %lu %lu %s\n",
++			sample_interval, aggr_interval,
++			regions_update_interval, min_nr_regions,
++			max_nr_regions, rfile_path);
++
++	return simple_read_from_buffer(buf, count, ppos, attrs_buf,
++			strnlen(attrs_buf, 512));
++}
++
++static ssize_t debugfs_attrs_write(struct file *file,
++		const char __user *buf, size_t count, loff_t *ppos)
++{
++	unsigned long s, a, r, minr, maxr;
++	char attrs_buf[512];
++	char res_file_path[LEN_RES_FILE_PATH];
++	ssize_t ret;
++
++	if (count > 512) {
++		pr_err("attributes stream is too large: %s\n", buf);
++		return -ENOMEM;
++	}
++
++	ret = simple_write_to_buffer(attrs_buf, 512, ppos, buf, count);
++	if (ret < 0)
++		return ret;
++
++	if (sscanf(attrs_buf, "%lu %lu %lu %lu %lu %s",
++				&s, &a, &r, &minr, &maxr, res_file_path) != 6)
++		return -EINVAL;
++
++	spin_lock(&kdamond_lock);
++	if (kdamond)
++		goto monitor_running;
++
++	damon_set_attrs(s, a, r, minr, maxr, res_file_path);
++	spin_unlock(&kdamond_lock);
++
++	return ret;
++
++monitor_running:
++	spin_unlock(&kdamond_lock);
++	pr_err("%s: kdamond is running. Turn it off first.\n", __func__);
++	return -EINVAL;
++}
++
++static const struct file_operations monitor_on_fops = {
++	.owner = THIS_MODULE,
++	.read = debugfs_monitor_on_read,
++	.write = debugfs_monitor_on_write,
++};
++
++static const struct file_operations pids_fops = {
++	.owner = THIS_MODULE,
++	.read = debugfs_pids_read,
++	.write = debugfs_pids_write,
++};
++
++static const struct file_operations attrs_fops = {
++	.owner = THIS_MODULE,
++	.read = debugfs_attrs_read,
++	.write = debugfs_attrs_write,
++};
++
++static struct dentry *debugfs_root;
++
++static int __init debugfs_init(void)
++{
++	const char * const file_names[] = {"attrs", "pids", "monitor_on"};
++	const struct file_operations *fops[] = {&attrs_fops, &pids_fops,
++		&monitor_on_fops};
++	int i;
++
++	debugfs_root = debugfs_create_dir("damon", NULL);
++	if (!debugfs_root) {
++		pr_err("failed to create the debugfs dir\n");
++		return -ENOMEM;
++	}
++
++	for (i = 0; i < ARRAY_SIZE(file_names); i++) {
++		if (!debugfs_create_file(file_names[i], 0600, debugfs_root,
++					NULL, fops[i])) {
++			pr_err("failed to create %s file\n", file_names[i]);
++			return -ENOMEM;
++		}
++	}
++
++	return 0;
++}
++
+ static int __init damon_init(void)
+ {
+ 	pr_info("init\n");
+@@ -1044,12 +1272,14 @@ static int __init damon_init(void)
+ 	prandom_seed_state(&rndseed, 42);
+ 	ktime_get_coarse_ts64(&last_aggregate_time);
+ 	last_regions_update_time = last_aggregate_time;
+-	return 0;
++
++	return debugfs_init();
+ }
+ 
+ static void __exit damon_exit(void)
+ {
+ 	damon_turn_kdamond(false);
++	debugfs_remove_recursive(debugfs_root);
+ 	pr_info("exit\n");
+ }
+ 
+-- 
+2.17.1
+
