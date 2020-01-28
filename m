@@ -2,39 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 01A2F14B7DC
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Jan 2020 15:20:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6CC8314B6BB
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Jan 2020 15:07:55 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730566AbgA1OSM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 28 Jan 2020 09:18:12 -0500
-Received: from mail.kernel.org ([198.145.29.99]:41982 "EHLO mail.kernel.org"
+        id S1727559AbgA1OHg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 28 Jan 2020 09:07:36 -0500
+Received: from mail.kernel.org ([198.145.29.99]:55294 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730621AbgA1OSF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 Jan 2020 09:18:05 -0500
+        id S1727326AbgA1OHe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 28 Jan 2020 09:07:34 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 28BEA2071E;
-        Tue, 28 Jan 2020 14:18:04 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id F1A7C22522;
+        Tue, 28 Jan 2020 14:07:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1580221084;
-        bh=MN5SoSpRDTZYg4p45Ic50aDKFkzbON1FF6+o9HI5cN0=;
+        s=default; t=1580220454;
+        bh=DpCe9HucovYhSWsBD1zsub9erCe8PIdYbLkyporGqsg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ddOlpuV25sgwJqKco5Jg8yRO22PEiIu3LjqfOzCU4lxIQ/YgjAgDXiCXRAVEyYMsE
-         RQ7zjlEB8te6AR54KSgkqdzNVnosuDq7gZNq0vnRvFxfqiFwsV+RLJv5TmeBDr05b2
-         eQ8RNBuig13D+Jj8SY05U1hOczVS2Jhi8fCuuo7c=
+        b=E+imTDGG9ivE5iyyZ3DsxIMWvdiA3s1Mr7MMDnpwWGYDAlInYILdGuRjCgb5AT8Bo
+         krzRFVAK/rKEyagd7YSXETlQ3pb7X7wApOMbqL9XRIKNYFrXr4LQDKvcTuLXOH9cdv
+         Eshzhj8nKGk1A2/AMhXTe0V5P5w59hRgAlep1i54=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Colin Ian King <colin.king@canonical.com>,
-        Ben Skeggs <bskeggs@redhat.com>,
+        stable@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Simon Horman <horms+renesas@verge.net.au>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 083/271] drm/nouveau/pmu: dont print reply values if exec is false
-Date:   Tue, 28 Jan 2020 15:03:52 +0100
-Message-Id: <20200128135858.736277392@linuxfoundation.org>
+Subject: [PATCH 4.4 014/183] pinctrl: sh-pfc: r8a7791: Remove bogus marks from vin1_b_data18 group
+Date:   Tue, 28 Jan 2020 15:03:53 +0100
+Message-Id: <20200128135831.197265589@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200128135852.449088278@linuxfoundation.org>
-References: <20200128135852.449088278@linuxfoundation.org>
+In-Reply-To: <20200128135829.486060649@linuxfoundation.org>
+References: <20200128135829.486060649@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,42 +45,45 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-[ Upstream commit b1d03fc36ec9834465a08c275c8d563e07f6f6bf ]
+[ Upstream commit 0d6256cb880166a4111bebce35790019e56b6e1b ]
 
-Currently the uninitialized values in the array reply are printed out
-when exec is false and nvkm_pmu_send has not updated the array. Avoid
-confusion by only dumping out these values if they have been actually
-updated.
+The vin1_b_data18_mux[] arrays contains pin marks for the 2 LSB bits of
+the color components.  The vin1_b_data18_pins[] array rightfully does
+not include the corresponding pin numbers, as RGB18 is subset of RGB24,
+containing only the 6 MSB bits of each component.
 
-Detected by CoverityScan, CID#1271291 ("Uninitialized scaler variable")
-Fixes: ebb58dc2ef8c ("drm/nouveau/pmu: rename from pwr (no binary change)")
-
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
-Signed-off-by: Ben Skeggs <bskeggs@redhat.com>
+Fixes: 8e32c9671f84acd8 ("pinctrl: sh-pfc: r8a7791: Add VIN pins")
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpu/drm/nouveau/nvkm/subdev/pmu/memx.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/pinctrl/sh-pfc/pfc-r8a7791.c | 3 ---
+ 1 file changed, 3 deletions(-)
 
-diff --git a/drivers/gpu/drm/nouveau/nvkm/subdev/pmu/memx.c b/drivers/gpu/drm/nouveau/nvkm/subdev/pmu/memx.c
-index e6f74168238c7..2ef9e942f43a2 100644
---- a/drivers/gpu/drm/nouveau/nvkm/subdev/pmu/memx.c
-+++ b/drivers/gpu/drm/nouveau/nvkm/subdev/pmu/memx.c
-@@ -87,10 +87,10 @@ nvkm_memx_fini(struct nvkm_memx **pmemx, bool exec)
- 	if (exec) {
- 		nvkm_pmu_send(pmu, reply, PROC_MEMX, MEMX_MSG_EXEC,
- 			      memx->base, finish);
-+		nvkm_debug(subdev, "Exec took %uns, PMU_IN %08x\n",
-+			   reply[0], reply[1]);
- 	}
- 
--	nvkm_debug(subdev, "Exec took %uns, PMU_IN %08x\n",
--		   reply[0], reply[1]);
- 	kfree(memx);
- 	return 0;
- }
+diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a7791.c b/drivers/pinctrl/sh-pfc/pfc-r8a7791.c
+index 4fbd6d8067196..f94e34e7f0b01 100644
+--- a/drivers/pinctrl/sh-pfc/pfc-r8a7791.c
++++ b/drivers/pinctrl/sh-pfc/pfc-r8a7791.c
+@@ -4170,17 +4170,14 @@ static const unsigned int vin1_b_data18_pins[] = {
+ };
+ static const unsigned int vin1_b_data18_mux[] = {
+ 	/* B */
+-	VI1_DATA0_B_MARK, VI1_DATA1_B_MARK,
+ 	VI1_DATA2_B_MARK, VI1_DATA3_B_MARK,
+ 	VI1_DATA4_B_MARK, VI1_DATA5_B_MARK,
+ 	VI1_DATA6_B_MARK, VI1_DATA7_B_MARK,
+ 	/* G */
+-	VI1_G0_B_MARK, VI1_G1_B_MARK,
+ 	VI1_G2_B_MARK, VI1_G3_B_MARK,
+ 	VI1_G4_B_MARK, VI1_G5_B_MARK,
+ 	VI1_G6_B_MARK, VI1_G7_B_MARK,
+ 	/* R */
+-	VI1_R0_B_MARK, VI1_R1_B_MARK,
+ 	VI1_R2_B_MARK, VI1_R3_B_MARK,
+ 	VI1_R4_B_MARK, VI1_R5_B_MARK,
+ 	VI1_R6_B_MARK, VI1_R7_B_MARK,
 -- 
 2.20.1
 
