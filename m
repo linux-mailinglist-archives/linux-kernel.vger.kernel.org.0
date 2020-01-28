@@ -2,38 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6135614BA90
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Jan 2020 15:40:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BB28C14BA80
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Jan 2020 15:39:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730331AbgA1OQf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 28 Jan 2020 09:16:35 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39980 "EHLO mail.kernel.org"
+        id S1730524AbgA1Ojb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 28 Jan 2020 09:39:31 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40774 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730323AbgA1OQd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 Jan 2020 09:16:33 -0500
+        id S1728212AbgA1ORH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 28 Jan 2020 09:17:07 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2220021739;
-        Tue, 28 Jan 2020 14:16:31 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id CFFA82071E;
+        Tue, 28 Jan 2020 14:17:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1580220992;
-        bh=SgJWTW4n7ASg2yHjYEkALQkHjY6x8z5LrjxxF7dd860=;
+        s=default; t=1580221027;
+        bh=pddlwd+yZz8Np8BgmC0uvxaGjvNjT0t57Be+WRiok4k=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=zhYcfPJRX+7Lfye1XwMqlRKaXBk56BKCWkYK1a3eia7ysSqHM0/kZOhLJEvOsfu++
-         aXxR9Q0ww03N+UkZ9wSN6BpVevN58POv4FpOK2471AMTFeBk0Xp086g2dTNGXI0sUy
-         n2LZZKCAeDReh0HvHFSCjANOkFT0y+5Xfz4o3Cf8=
+        b=RUW9582OrkGpEUzLz3kDRLCg8aCg21AgxqUh6YlEP8GWZND5UW4x/bLLT/hRHRejB
+         G1F7vA2nXDA9V9nGimXXTqpmbrCVDdOjGPGQFoEKN2+xPAl/MPYCX0AO/d7mkR4mlp
+         N35lpVEEV4THRjOWZTMuih2g4h8UVDLVj/EsQOX0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Israel Rukshin <israelr@mellanox.com>,
-        Max Gurtovoy <maxg@mellanox.com>,
-        Sagi Grimberg <sagi@grimberg.me>,
-        Jason Gunthorpe <jgg@mellanox.com>,
+        stable@vger.kernel.org, Colin Ian King <colin.king@canonical.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 046/271] IB/iser: Pass the correct number of entries for dma mapped SGL
-Date:   Tue, 28 Jan 2020 15:03:15 +0100
-Message-Id: <20200128135856.072520674@linuxfoundation.org>
+Subject: [PATCH 4.9 058/271] staging: most: cdev: add missing check for cdev_add failure
+Date:   Tue, 28 Jan 2020 15:03:27 +0100
+Message-Id: <20200128135856.957905403@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
 In-Reply-To: <20200128135852.449088278@linuxfoundation.org>
 References: <20200128135852.449088278@linuxfoundation.org>
@@ -46,59 +43,47 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Israel Rukshin <israelr@mellanox.com>
+From: Colin Ian King <colin.king@canonical.com>
 
-[ Upstream commit 57b26497fabe1b9379b59fbc7e35e608e114df16 ]
+[ Upstream commit 5ae890780e1b4d08f2c0c5d4ea96fc3928fc0ee9 ]
 
-ib_dma_map_sg() augments the SGL into a 'dma mapped SGL'. This process may
-change the number of entries and the lengths of each entry.
+Currently the call to cdev_add is missing a check for failure. Fix this by
+checking for failure and exiting via a new error path that ensures the
+allocated comp_channel struct is kfree'd.
 
-Code that touches dma_address is iterating over the 'dma mapped SGL' and
-must use dma_nents which returned from ib_dma_map_sg().
+Detected by CoverityScan, CID#1462359 ("Unchecked return value")
 
-ib_sg_to_pages() and ib_map_mr_sg() are using dma_address so they must use
-dma_nents.
-
-Fixes: 39405885005a ("IB/iser: Port to new fast registration API")
-Fixes: bfe066e256d5 ("IB/iser: Reuse ib_sg_to_pages")
-Signed-off-by: Israel Rukshin <israelr@mellanox.com>
-Reviewed-by: Max Gurtovoy <maxg@mellanox.com>
-Acked-by: Sagi Grimberg <sagi@grimberg.me>
-Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
+Fixes: 9bc79bbcd0c5 ("Staging: most: add MOST driver's aim-cdev module")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/infiniband/ulp/iser/iser_memory.c | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
+ drivers/staging/most/aim-cdev/cdev.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/infiniband/ulp/iser/iser_memory.c b/drivers/infiniband/ulp/iser/iser_memory.c
-index 9c3e9ab53a415..759c2fe033e71 100644
---- a/drivers/infiniband/ulp/iser/iser_memory.c
-+++ b/drivers/infiniband/ulp/iser/iser_memory.c
-@@ -240,8 +240,8 @@ int iser_fast_reg_fmr(struct iscsi_iser_task *iser_task,
- 	page_vec->npages = 0;
- 	page_vec->fake_mr.page_size = SIZE_4K;
- 	plen = ib_sg_to_pages(&page_vec->fake_mr, mem->sg,
--			      mem->size, NULL, iser_set_page);
--	if (unlikely(plen < mem->size)) {
-+			      mem->dma_nents, NULL, iser_set_page);
-+	if (unlikely(plen < mem->dma_nents)) {
- 		iser_err("page vec too short to hold this SG\n");
- 		iser_data_buf_dump(mem, device->ib_device);
- 		iser_dump_page_vec(page_vec);
-@@ -450,10 +450,10 @@ static int iser_fast_reg_mr(struct iscsi_iser_task *iser_task,
- 
- 	ib_update_fast_reg_key(mr, ib_inc_rkey(mr->rkey));
- 
--	n = ib_map_mr_sg(mr, mem->sg, mem->size, NULL, SIZE_4K);
--	if (unlikely(n != mem->size)) {
-+	n = ib_map_mr_sg(mr, mem->sg, mem->dma_nents, NULL, SIZE_4K);
-+	if (unlikely(n != mem->dma_nents)) {
- 		iser_err("failed to map sg (%d/%d)\n",
--			 n, mem->size);
-+			 n, mem->dma_nents);
- 		return n < 0 ? n : -EINVAL;
- 	}
- 
+diff --git a/drivers/staging/most/aim-cdev/cdev.c b/drivers/staging/most/aim-cdev/cdev.c
+index 7f51024dc5ebb..e87b9ed4f37de 100644
+--- a/drivers/staging/most/aim-cdev/cdev.c
++++ b/drivers/staging/most/aim-cdev/cdev.c
+@@ -451,7 +451,9 @@ static int aim_probe(struct most_interface *iface, int channel_id,
+ 	c->devno = MKDEV(major, current_minor);
+ 	cdev_init(&c->cdev, &channel_fops);
+ 	c->cdev.owner = THIS_MODULE;
+-	cdev_add(&c->cdev, c->devno, 1);
++	retval = cdev_add(&c->cdev, c->devno, 1);
++	if (retval < 0)
++		goto err_free_c;
+ 	c->iface = iface;
+ 	c->cfg = cfg;
+ 	c->channel_id = channel_id;
+@@ -487,6 +489,7 @@ error_create_device:
+ 	list_del(&c->list);
+ error_alloc_kfifo:
+ 	cdev_del(&c->cdev);
++err_free_c:
+ 	kfree(c);
+ error_alloc_channel:
+ 	ida_simple_remove(&minor_id, current_minor);
 -- 
 2.20.1
 
