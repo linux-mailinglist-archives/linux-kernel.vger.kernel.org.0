@@ -2,157 +2,87 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 82C7614B9A7
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Jan 2020 15:34:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id F238714B977
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Jan 2020 15:33:54 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732662AbgA1OYh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 28 Jan 2020 09:24:37 -0500
-Received: from outbound-smtp20.blacknight.com ([46.22.139.247]:53950 "EHLO
-        outbound-smtp20.blacknight.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1732560AbgA1OYd (ORCPT
+        id S2387594AbgA1OcS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 28 Jan 2020 09:32:18 -0500
+Received: from mail-ot1-f65.google.com ([209.85.210.65]:34341 "EHLO
+        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1733222AbgA1O0t (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 Jan 2020 09:24:33 -0500
-Received: from mail.blacknight.com (pemlinmail03.blacknight.ie [81.17.254.16])
-        by outbound-smtp20.blacknight.com (Postfix) with ESMTPS id 551B61C2386
-        for <linux-kernel@vger.kernel.org>; Tue, 28 Jan 2020 14:24:30 +0000 (GMT)
-Received: (qmail 7133 invoked from network); 28 Jan 2020 14:24:30 -0000
-Received: from unknown (HELO techsingularity.net) (mgorman@techsingularity.net@[84.203.18.57])
-  by 81.17.254.9 with ESMTPSA (AES256-SHA encrypted, authenticated); 28 Jan 2020 14:24:30 -0000
-Date:   Tue, 28 Jan 2020 14:24:27 +0000
-From:   Mel Gorman <mgorman@techsingularity.net>
-To:     Dave Chinner <david@fromorbit.com>
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>, Tejun Heo <tj@kernel.org>,
-        Jan Kara <jack@suse.cz>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Phil Auld <pauld@redhat.com>, Ming Lei <ming.lei@redhat.com>,
-        linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] sched, fair: Allow a per-cpu kthread waking a task to
- stack on the same CPU
-Message-ID: <20200128142427.GC3466@techsingularity.net>
-References: <20200127143608.GX3466@techsingularity.net>
- <20200127223256.GA18610@dread.disaster.area>
+        Tue, 28 Jan 2020 09:26:49 -0500
+Received: by mail-ot1-f65.google.com with SMTP id a15so12128834otf.1;
+        Tue, 28 Jan 2020 06:26:48 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=qQkCUlHSeSutqpYYYEuSpgaq1CGRr1gMxP5zgQMXFLE=;
+        b=Wq+obXxqJ9znep3ys52HEXDRa6pIXxgvGSmGG/a/Rbt+m/OqOaTsd36lI/jJwWickN
+         EiTSe2xFQyhIuJYESExZg+K6a1yli7B+RauIVWvatU81dv7PbkXL2DPuHChAIVKEe0ZO
+         UEM4WvdTSGufNlTmCMfNlVQtxWYyK8oZNFsO6ajMp25aAe6QfxUcMLGOgUdp2GYtcbCD
+         BYC21o8itI+MjFUthDEHwxm7oKg9onLm7XxJwNa9205U2EiApWIJ5v9ioPmp6vF1FpHI
+         95DHEbh9GWzM9PkOznPq+tOVfGl7eTwZO8s1zAR/smnWIf05UZjxWCDLokkY9VTlN8S0
+         Hj2g==
+X-Gm-Message-State: APjAAAWmY9f2+dSBL0q6dsDJ6oShPbHjHy/Fcp1y7/o1l2iKbq/bUjQ1
+        eST/082WKWO/mCrV2BYueg==
+X-Google-Smtp-Source: APXvYqwFJVk0FJAugT05thhhxD8ynpQt6Xxwj2dYD7xIOhRcGHbVx5Pc86KH1o6GE7zkGGtDMoAw+w==
+X-Received: by 2002:a05:6830:1116:: with SMTP id w22mr16929063otq.63.1580221607750;
+        Tue, 28 Jan 2020 06:26:47 -0800 (PST)
+Received: from rob-hp-laptop (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id f37sm5770746otb.33.2020.01.28.06.26.46
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 28 Jan 2020 06:26:46 -0800 (PST)
+Received: (nullmailer pid 18064 invoked by uid 1000);
+        Tue, 28 Jan 2020 14:26:46 -0000
+Date:   Tue, 28 Jan 2020 08:26:46 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Michael Ellerman <mpe@ellerman.id.au>
+Cc:     robh+dt@kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, hch@lst.de, ulf.hansson@linaro.org,
+        chzigotzky@xenosoft.de, linuxppc-dev@ozlabs.org
+Subject: Re: [PATCH] of: Add OF_DMA_DEFAULT_COHERENT & select it on powerpc
+Message-ID: <20200128142646.GA17341@bogus>
+References: <20200126115247.13402-1-mpe@ellerman.id.au>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-15
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200127223256.GA18610@dread.disaster.area>
+In-Reply-To: <20200126115247.13402-1-mpe@ellerman.id.au>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-I'm adding Jan Kara to the cc as he was looking into the workqueue
-implemention in depth this morning and helped me better understand what
-is going on.
-
-Phil and Ming are still cc'd as an independent test would still be nice.
-
-> <light bulb illumination>
+On Sun, 26 Jan 2020 22:52:47 +1100, Michael Ellerman wrote:
+> There's an OF helper called of_dma_is_coherent(), which checks if a
+> device has a "dma-coherent" property to see if the device is coherent
+> for DMA.
 > 
-> Is this actually ping-ponging the CIL flush and journal IO
-> completion because xlog_bio_end_io() always punts journal IO
-> completion to the log workqueue, which is:
+> But on some platforms devices are coherent by default, and on some
+> platforms it's not possible to update existing device trees to add the
+> "dma-coherent" property.
 > 
-> 	log->l_ioend_workqueue = alloc_workqueue("xfs-log/%s",
-> 			WQ_MEM_RECLAIM | WQ_FREEZABLE | WQ_HIGHPRI, 0,
-> 			mp->m_super->s_id);
+> So add a Kconfig symbol to allow arch code to tell
+> of_dma_is_coherent() that devices are coherent by default, regardless
+> of the presence of the property.
 > 
-> i.e. it uses per-cpu kthreads for processing journal IO completion
-> similar to DIO io completion and thereby provides a vector for
-> the same issue?
+> Select that symbol on powerpc when NOT_COHERENT_CACHE is not set, ie.
+> when the system has a coherent cache.
+> 
+> Fixes: 92ea637edea3 ("of: introduce of_dma_is_coherent() helper")
+> Cc: stable@vger.kernel.org # v3.16+
+> Reported-by: Christian Zigotzky <chzigotzky@xenosoft.de>
+> Tested-by: Christian Zigotzky <chzigotzky@xenosoft.de>
+> Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+> ---
+>  arch/powerpc/Kconfig | 1 +
+>  drivers/of/Kconfig   | 4 ++++
+>  drivers/of/address.c | 6 +++++-
+>  3 files changed, 10 insertions(+), 1 deletion(-)
 > 
 
-Your light bulb is on point. The XFS unbound workqueue does run near the
-task and does not directly cause the migration but the IO completions
-matter. As it turned out, it was the IO completions I was looking at
-in the old traces but there was insufficient detail to see the exact
-sequence. I only observed that a bound wq at the end was causing the
-migration and it was a consistent pattern.
+Applied, thanks.
 
-I did a more detailed trace that included workqueue tracepoints. I limited
-the run to 1 and 2 dbench clients and compared with and without the
-patch. I still did not dig deep into the specifics of how XFS interacts
-with workqueues because I'm focused on how the scheduler reacts.
-
-The patch is still having an impact with bound workqueues as expected
-because;
-
-# zgrep sched_migrate_task 5.5.0-rc7-tipsched-20200124/iter-0/ftrace-dbench4.gz | wc -l
-556259
-# zgrep sched_migrate_task 5.5.0-rc7-kworkerstack-v1r2/iter-0/ftrace-dbench4.gz | wc -l
-11736
-
-There are still migrations happening but there also was a lot of logging
-going on for this run so it's not directly comparable what I originally
-reported.
-
-This is an example sequence of what's happening from a scheduler
-perspective on the vanilla kernel. It's editted a bit because there
-were a lot of other IOs going on, mostly logging related which confuse
-the picture.
-
-          dbench-25633 [004] d...   194.998648: workqueue_queue_work: work struct=000000001cccdc2d function=xlog_cil_push_work [xfs] workqueue=00000000d90239c9 req_cpu=512 cpu=4294967295
-          dbench-25633 [004] d...   194.998650: sched_waking: comm=kworker/u161:6 pid=718 prio=120 target_cpu=006
-          dbench-25633 [004] d...   194.998655: sched_wakeup: comm=kworker/u161:6 pid=718 prio=120 target_cpu=006
-  kworker/u161:6-718   [006] ....   194.998692: workqueue_execute_start: work struct 000000001cccdc2d: function xlog_cil_push_work [xfs]
-  kworker/u161:6-718   [006] ....   194.998706: workqueue_execute_end: work struct 000000001cccdc2d
-
-Dbench is on CPU 4, it queues xlog_cil_push_work on an UNBOUND
-workqueue. An unbound kworker wakes on CPU 6 and finishes quickly.
-
-  kworker/u161:6-718   [006] ....   194.998707: workqueue_execute_start: work struct 0000000046fbf8d5: function wq_barrier_func
-  kworker/u161:6-718   [006] d...   194.998708: sched_waking: comm=dbench pid=25633 prio=120 target_cpu=004
-  kworker/u161:6-718   [006] d...   194.998712: sched_wakeup: comm=dbench pid=25633 prio=120 target_cpu=004
-  kworker/u161:6-718   [006] ....   194.998713: workqueue_execute_end: work struct 0000000046fbf8d5
-
-The kworker wakes dbench and finding that CPU 4 is still free, dbench
-uses its previous CPU and no migration occurs.
-
-          dbench-25633 [004] d...   194.998727: workqueue_queue_work: work struct=00000000442434a7 function=blk_mq_requeue_work workqueue=00000000df918933 req_cpu=512 cpu=4
-          dbench-25633 [004] d...   194.998728: sched_waking: comm=kworker/4:1H pid=991 prio=100 target_cpu=004
-          dbench-25633 [004] dN..   194.998731: sched_wakeup: comm=kworker/4:1H pid=991 prio=100 target_cpu=004
-
-Dbench queues blk_mq_requeue_work. This is a BOUND workqueue with a
-mandatory CPU target of 4 so no migration..
-
-    kworker/4:1H-991   [004] ....   194.998736: workqueue_execute_start: work struct 00000000442434a7: function blk_mq_requeue_work
-    kworker/4:1H-991   [004] ....   194.998742: workqueue_execute_end: work struct 00000000442434a7
-
-blk_mq_requeue_work is done
-
-          <idle>-0     [004] d.s.   194.998859: workqueue_queue_work: work struct=00000000442434a7 function=blk_mq_requeue_work workqueue=00000000df918933 req_cpu=512 cpu=4
-          <idle>-0     [004] d.s.   194.998861: sched_waking: comm=kworker/4:1H pid=991 prio=100 target_cpu=004
-          <idle>-0     [004] dNs.   194.998862: sched_wakeup: comm=kworker/4:1H pid=991 prio=100 target_cpu=004
-    kworker/4:1H-991   [004] ....   194.998866: workqueue_execute_start: work struct 00000000442434a7: function blk_mq_requeue_work
-    kworker/4:1H-991   [004] ....   194.998870: workqueue_execute_end: work struct 00000000442434a7
-          <idle>-0     [004] d.s.   194.998911: workqueue_queue_work: work struct=0000000072f39adb function=xlog_ioend_work [xfs] workqueue=00000000008f3d7f req_cpu=512 cpu=4
-          <idle>-0     [004] d.s.   194.998912: sched_waking: comm=kworker/4:1H pid=991 prio=100 target_cpu=004
-          <idle>-0     [004] dNs.   194.998913: sched_wakeup: comm=kworker/4:1H pid=991 prio=100 target_cpu=004
-
-Ok, this looks like an IRQ delivered for IO completion and the
-xlog_ioend_work is reached. The BOUND kworker is woken again by the IRQ
-handler on CPU 4 because it has no choice.
-
-    kworker/4:1H-991   [004] ....   194.998918: workqueue_execute_start: work struct 0000000072f39adb: function xlog_ioend_work [xfs]
-    kworker/4:1H-991   [004] d...   194.998943: sched_waking: comm=dbench pid=25633 prio=120 target_cpu=004
-    kworker/4:1H-991   [004] d...   194.998945: sched_migrate_task: comm=dbench pid=25633 prio=120 orig_cpu=4 dest_cpu=5
-    kworker/4:1H-991   [004] d...   194.998947: sched_wakeup: comm=dbench pid=25633 prio=120 target_cpu=005
-    kworker/4:1H-991   [004] ....   194.998948: workqueue_execute_end: work struct 0000000072f39adb
-
-The IO completion handler finishes, the bound workqueue tries to wake
-dbench on its old CPU. The BOUND kworker is on CPU 4, the task wants
-CPU 4 but the CPU is busy with the kworker so the scheduler function
-select_idle_sibling picks CPU 5 instead and now the task is migrated
-and we have started our round-trip of all CPUs sharing a LLC. It's not a
-perfect round-robin because p->recent_used_cpu often works.  Looking at
-the traces, dbench bounces back and forth between CPUs 4 and 5 for 7 IO
-completions before bouncing between CPUs 6/7 and so on.
-
-The patch alters the very last stage. The IO completion is a bound kworker
-and allows the wakee task to use the same CPU and avoid the migration.
-
--- 
-Mel Gorman
-SUSE Labs
+Rob
