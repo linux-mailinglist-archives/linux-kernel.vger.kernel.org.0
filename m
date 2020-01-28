@@ -2,136 +2,138 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 38A4B14B395
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Jan 2020 12:40:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 971B114B3B1
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Jan 2020 12:44:55 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726107AbgA1Lj5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 28 Jan 2020 06:39:57 -0500
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:40325 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725937AbgA1Lj5 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 Jan 2020 06:39:57 -0500
-Received: by mail-wr1-f68.google.com with SMTP id c14so15632728wrn.7
-        for <linux-kernel@vger.kernel.org>; Tue, 28 Jan 2020 03:39:55 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=T3Wbgf30Ii+VOg2FGlTD1Ulg3uZcieH89u7q/gSMF7Q=;
-        b=b2ke8Tb8inNAk094ut1CQvIywQNw2arDJ9gFUncf6F3JZf6IDiUawbauNAij/hqy0F
-         T7yzXhmayuXVjjBA5+6os1ewu8qYnm8cYdIA36XepvwARk/DnyWlAigAAtFZi+Fxo+fO
-         hC7vgirRV58aeG7NhDEzKzXIW3bUq//I7lg222gvvzlsB3f65T12+5vMht0p/BxbsiTV
-         HVHKKK1a50tewrlq7dprwOMNxZxssAulsGxXpIIQpDqCK6rsMqw+lm849gpnf8THbdqq
-         PC1aAHfTRMEvw19XOHBH2mNOy3WJEuDqphiTusZGzdw6VleMkVRWjQcPMMO0CLnQEk3R
-         eMOA==
-X-Gm-Message-State: APjAAAVevgZ6/WZ/tFVxWa1dsSwfx3CTRvRffv7BsGqcmU8muF7juDUK
-        R91UBohO1EfAdNR5W5EXdcA=
-X-Google-Smtp-Source: APXvYqzgecilxTYzirylIKzVzYuY4fsPh3O0daKMkdvqtSLa+z+JrNZ6MnR+WnRBbY9ZDtMGNtZvHw==
-X-Received: by 2002:a5d:56ca:: with SMTP id m10mr29266505wrw.313.1580211595104;
-        Tue, 28 Jan 2020 03:39:55 -0800 (PST)
-Received: from localhost (prg-ext-pat.suse.com. [213.151.95.130])
-        by smtp.gmail.com with ESMTPSA id r6sm25656024wrq.92.2020.01.28.03.39.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 28 Jan 2020 03:39:54 -0800 (PST)
-Date:   Tue, 28 Jan 2020 12:39:53 +0100
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     Cong Wang <xiyou.wangcong@gmail.com>,
-        LKML <linux-kernel@vger.kernel.org>,
+        id S1726142AbgA1Loy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 28 Jan 2020 06:44:54 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38778 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725941AbgA1Lox (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 28 Jan 2020 06:44:53 -0500
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0283224684;
+        Tue, 28 Jan 2020 11:44:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1580211892;
+        bh=E7sSxi9rEy9lj8TVZnfhNZG9e0AVuStsXP4sldUxT4Y=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=ijsPN1f6iteMPvBro/SwB7dEVl3seXEWeB2zfYTOVkE1nDJtOwJjS23a1CkDbQ3ZO
+         A7wtuCSmPJO2W0fJ08rbudp+K20sw0w0JIFUMtWNGYg+1Xqzk/zZb45aRAwF0GIxgO
+         KHKecvvnQLkBroKWsOysi+JR6xpIBT/6ApGqxrio=
+Date:   Tue, 28 Jan 2020 12:44:50 +0100
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Naresh Kamboju <naresh.kamboju@linaro.org>
+Cc:     Sasha Levin <sashal@kernel.org>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Alasdair Kergon <agk@redhat.com>,
+        Mike Snitzer <snitzer@redhat.com>, dm-devel@redhat.com,
+        Shaohua Li <shli@kernel.org>, linux-raid@vger.kernel.org,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        linux-input@vger.kernel.org,
         Andrew Morton <akpm@linux-foundation.org>,
-        linux-mm <linux-mm@kvack.org>, Mel Gorman <mgorman@suse.de>,
-        Vlastimil Babka <vbabka@suse.cz>
-Subject: Re: [PATCH] mm: avoid blocking lock_page() in kcompactd
-Message-ID: <20200128113953.GA24244@dhcp22.suse.cz>
-References: <CAM_iQpVN4MNhcK0TXvhmxsCdkVOqQ4gZBzkDHykLocPC6Va7LQ@mail.gmail.com>
- <20200121090048.GG29276@dhcp22.suse.cz>
- <CAM_iQpU0p7JLyQ4mQ==Kd7+0ugmricsEAp1ST2ShAZar2BLAWg@mail.gmail.com>
- <20200126233935.GA11536@bombadil.infradead.org>
- <20200127150024.GN1183@dhcp22.suse.cz>
- <20200127190653.GA8708@bombadil.infradead.org>
- <20200128081712.GA18145@dhcp22.suse.cz>
- <20200128083044.GB6615@bombadil.infradead.org>
- <20200128091352.GC18145@dhcp22.suse.cz>
- <20200128104857.GC6615@bombadil.infradead.org>
+        Yury Norov <ynorov@caviumnetworks.com>,
+        open list <linux-kernel@vger.kernel.org>,
+        mika.westerberg@linux.intel.com, Joe Perches <joe@perches.com>,
+        linux- stable <stable@vger.kernel.org>,
+        lkft-triage@lists.linaro.org
+Subject: Re: [PATCH v4 3/5] bitmap: Add bitmap_alloc(), bitmap_zalloc() and
+ bitmap_free()
+Message-ID: <20200128114450.GA2672297@kroah.com>
+References: <20180630201750.2588-1-andriy.shevchenko@linux.intel.com>
+ <20180630201750.2588-4-andriy.shevchenko@linux.intel.com>
+ <CA+G9fYs3GPid5fcHEWp2i9NKR1hQGc5h0zKaUK5xr1RGJ83xLg@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200128104857.GC6615@bombadil.infradead.org>
+In-Reply-To: <CA+G9fYs3GPid5fcHEWp2i9NKR1hQGc5h0zKaUK5xr1RGJ83xLg@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue 28-01-20 02:48:57, Matthew Wilcox wrote:
-> On Tue, Jan 28, 2020 at 10:13:52AM +0100, Michal Hocko wrote:
-> > On Tue 28-01-20 00:30:44, Matthew Wilcox wrote:
-> > > On Tue, Jan 28, 2020 at 09:17:12AM +0100, Michal Hocko wrote:
-> > > > On Mon 27-01-20 11:06:53, Matthew Wilcox wrote:
-> > > > > On Mon, Jan 27, 2020 at 04:00:24PM +0100, Michal Hocko wrote:
-> > > > > > On Sun 26-01-20 15:39:35, Matthew Wilcox wrote:
-> > > > > > > On Sun, Jan 26, 2020 at 11:53:55AM -0800, Cong Wang wrote:
-> > > > > > > > I suspect the process gets stuck in the retry loop in try_charge(), as
-> > > > > > > > the _shortest_ stacktrace of the perf samples indicated:
-> > > > > > > > 
-> > > > > > > > cycles:ppp:
-> > > > > > > >         ffffffffa72963db mem_cgroup_iter
-> > > > > > > >         ffffffffa72980ca mem_cgroup_oom_unlock
-> > > > > > > >         ffffffffa7298c15 try_charge
-> > > > > > > >         ffffffffa729a886 mem_cgroup_try_charge
-> > > > > > > >         ffffffffa720ec03 __add_to_page_cache_locked
-> > > > > > > >         ffffffffa720ee3a add_to_page_cache_lru
-> > > > > > > >         ffffffffa7312ddb iomap_readpages_actor
-> > > > > > > >         ffffffffa73133f7 iomap_apply
-> > > > > > > >         ffffffffa73135da iomap_readpages
-> > > > > > > >         ffffffffa722062e read_pages
-> > > > > > > >         ffffffffa7220b3f __do_page_cache_readahead
-> > > > > > > >         ffffffffa7210554 filemap_fault
-> > > > > > > >         ffffffffc039e41f __xfs_filemap_fault
-> > > > > > > >         ffffffffa724f5e7 __do_fault
-> > > > > > > >         ffffffffa724c5f2 __handle_mm_fault
-> > > > > > > >         ffffffffa724cbc6 handle_mm_fault
-> > > > > > > >         ffffffffa70a313e __do_page_fault
-> > > > > > > >         ffffffffa7a00dfe page_fault
-> > > > 
-> > > > I am not deeply familiar with the readahead code. But is there really a
-> > > > high oerder allocation (order > 1) that would trigger compaction in the
-> > > > phase when pages are locked?
-> > > 
-> > > Thanks to sl*b, yes:
-> > > 
-> > > radix_tree_node    80890 102536    584   28    4 : tunables    0    0    0 : slabdata   3662   3662      0
-> > > 
-> > > so it's allocating 4 pages for an allocation of a 576 byte node.
-> > 
-> > I am not really sure that we do sync migration for costly orders.
+On Tue, Jan 28, 2020 at 05:08:27PM +0530, Naresh Kamboju wrote:
+> On Sun, 1 Jul 2018 at 01:49, Andy Shevchenko
+> <andriy.shevchenko@linux.intel.com> wrote:
+> >
+> > A lot of code become ugly because of open coding allocations for bitmaps.
+> >
+> > Introduce three helpers to allow users be more clear of intention
+> > and keep their code neat.
+> >
+> > Note, due to multiple circular dependencies we may not provide
+> > the helpers as inliners. For now we keep them exported and, perhaps,
+> > at some point in the future we will sort out header inclusion and
+> > inheritance.
+> >
+> > Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> > ---
+> >  include/linux/bitmap.h |  8 ++++++++
+> >  lib/bitmap.c           | 19 +++++++++++++++++++
+> >  2 files changed, 27 insertions(+)
+> >
+> > diff --git a/include/linux/bitmap.h b/include/linux/bitmap.h
+> > index 1ee46f492267..acf5e8df3504 100644
+> > --- a/include/linux/bitmap.h
+> > +++ b/include/linux/bitmap.h
+> > @@ -104,6 +104,14 @@
+> >   * contain all bit positions from 0 to 'bits' - 1.
+> >   */
+> >
+> > +/*
+> > + * Allocation and deallocation of bitmap.
+> > + * Provided in lib/bitmap.c to avoid circular dependency.
+> > + */
+> > +extern unsigned long *bitmap_alloc(unsigned int nbits, gfp_t flags);
+> > +extern unsigned long *bitmap_zalloc(unsigned int nbits, gfp_t flags);
+> > +extern void bitmap_free(const unsigned long *bitmap);
+> > +
+> >  /*
+> >   * lib/bitmap.c provides these functions:
+> >   */
+> > diff --git a/lib/bitmap.c b/lib/bitmap.c
+> > index 33e95cd359a2..09acf2fd6a35 100644
+> > --- a/lib/bitmap.c
+> > +++ b/lib/bitmap.c
+> > @@ -13,6 +13,7 @@
+> >  #include <linux/bitops.h>
+> >  #include <linux/bug.h>
+> >  #include <linux/kernel.h>
+> > +#include <linux/slab.h>
+> >  #include <linux/string.h>
+> >  #include <linux/uaccess.h>
+> >
+> > @@ -1125,6 +1126,24 @@ void bitmap_copy_le(unsigned long *dst, const unsigned long *src, unsigned int n
+> >  EXPORT_SYMBOL(bitmap_copy_le);
+> >  #endif
+> >
+> > +unsigned long *bitmap_alloc(unsigned int nbits, gfp_t flags)
+> > +{
+> > +       return kmalloc_array(BITS_TO_LONGS(nbits), sizeof(unsigned long), flags);
+> > +}
+> > +EXPORT_SYMBOL(bitmap_alloc);
+> > +
+> > +unsigned long *bitmap_zalloc(unsigned int nbits, gfp_t flags)
+> > +{
+> > +       return bitmap_alloc(nbits, flags | __GFP_ZERO);
+> > +}
+> > +EXPORT_SYMBOL(bitmap_zalloc);
+> > +
+> > +void bitmap_free(const unsigned long *bitmap)
+> > +{
+> > +       kfree(bitmap);
+> > +}
+> > +EXPORT_SYMBOL(bitmap_free);
+> > +
+> >  #if BITS_PER_LONG == 64
+> >  /**
+> >   * bitmap_from_arr32 - copy the contents of u32 array of bits to bitmap
 > 
-> Doesn't the stack trace above indicate that we're doing migration as
-> the result of an allocation in add_to_page_cache_lru()?
+> stable-rc 4.14 build failed due to these build error,
 
-Which stack trace do you refer to? Because the one above doesn't show
-much more beyond mem_cgroup_iter and likewise others in this email
-thread. I do not really remember any stack with lock_page on the trace.
-> 
-> > > > Btw. the compaction rejects to consider file backed pages when __GFP_FS
-> > > > is not present AFAIR.
-> > > 
-> > > Ah, that would save us.
-> > 
-> > So the NOFS comes from the mapping GFP mask, right? That is something I
-> > was hoping to get rid of eventually :/ Anyway it would be better to have
-> > an explicit NOFS with a comment explaining why we need that. If for
-> > nothing else then for documentation.
-> 
-> I'd also like to see the mapping GFP mask go away, but rather than seeing
-> an explicit GFP_NOFS here, I'd rather see the memalloc_nofs API used.
+Yeah, sorry, I noticed this right before I had to leave for a few hours.
+I'll go fix this up now...
 
-Completely agreed agree here. The proper place for the scope would be
-the place where pages are locked with an explanation that there are
-other allocations down the line which might invoke sync migration and
-that would be dangerous. Having that explicitly documented is clearly an
-improvement.
-
--- 
-Michal Hocko
-SUSE Labs
+greg k-h
