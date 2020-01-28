@@ -2,48 +2,48 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AEAA714C30A
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Jan 2020 23:36:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BF94F14C306
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Jan 2020 23:36:51 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726680AbgA1Wgk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 28 Jan 2020 17:36:40 -0500
-Received: from mail-qt1-f196.google.com ([209.85.160.196]:39206 "EHLO
-        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726257AbgA1WgQ (ORCPT
+        id S1726571AbgA1WgY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 28 Jan 2020 17:36:24 -0500
+Received: from mail-qk1-f194.google.com ([209.85.222.194]:36487 "EHLO
+        mail-qk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726467AbgA1WgR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 Jan 2020 17:36:16 -0500
-Received: by mail-qt1-f196.google.com with SMTP id c5so2144527qtj.6
-        for <linux-kernel@vger.kernel.org>; Tue, 28 Jan 2020 14:36:15 -0800 (PST)
+        Tue, 28 Jan 2020 17:36:17 -0500
+Received: by mail-qk1-f194.google.com with SMTP id w25so9452401qki.3
+        for <linux-kernel@vger.kernel.org>; Tue, 28 Jan 2020 14:36:17 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=u9mCgdnpZfGRVNnvDxmPL1ZG+dTFUtvF99vlLoJ4Ggg=;
-        b=IClkZ/hLgC7SwCLqpIoPYAz9jFaEt/IIv+1LuiDVhB0FGq5ZuoEcygORFfustFkDIO
-         pBZRpvB2TChsx2uh8L1vspFgUj3CRfXqzZJUKHEfSZMXPwJynuXBwUabZVOzevuH3oI6
-         I/je+Ysq4mSQq1nGJjh0HgDyJUGXxDRuN/GEiPLSDSFXb4pNB3sTjPN71ylXKvyP1pGq
-         XJJWNHAJLgf2SJP8rJcWzYfQn16/xpy0ueVLVDUhqTCNAlPwdqFylQRNNCvITMJu3kmT
-         hQtJLwQcmnJ1x6XPyL6GAldPmRee8fh90IUUxv/bZacKmiMaJtyMi/whygezkTol5jY1
-         qMuA==
+        bh=sINAUo2AMmS2CvfWX14jb7B4+XN4TP06PCpwgnlE4uQ=;
+        b=ehLXECDHvJg5B1S2iemghebvLkwXAkmCBefa415il0PjOJqpYr3w3sn783FBLraZVp
+         P8FsFELd4utpxFcCdjkMrxsUnUNHANttxo7oop9ahcU0BmtgJ/hUJbo2pM4kPP2mdG64
+         HGMg5O3O3Yxx43hLdzSsOMWErtauwQI3B21aDEgCe6QVOnJPT5a0Av8mPwdtrrQCl/Fm
+         0BpyPQg+A/HqWjSoshW9iMJxqVtEhBxmGfjr9KUB8p/CLmmy8qGTiwstMhLVWoEoJzK5
+         MCeeH6wFNr21/2LeQFfLSJJ7AwgiV5OLQ0lBULjU/pVdIgAin4C1k19ojKBv1rGYHX3o
+         p9Mg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=u9mCgdnpZfGRVNnvDxmPL1ZG+dTFUtvF99vlLoJ4Ggg=;
-        b=Lml6Gqv2ksgtGPp0q5K4SW7Q2QWrNfsvDfDtNVMM+IbYgYZP16wsb6lhC0VTBkI+4W
-         JrfmYDZdIlDXORnWxvH/i6N3pKBmM8olGKjJaSOHZRElH5yrxvo0lzQUM8HZG4wLiGMi
-         w0+n6idGM38sxsxOTvJFjMqsNAUGiTDeH+mNshfcWTbCOCWewgHXjYA+BsPBz686cyh2
-         l+rV3f1pIsNjw0rDJEscTUQuDMgfq7SlO7E9mAAWZsr9iPmLYogbxpEbbMaTLiJXGlvt
-         rMU9VSbXnrkEcD3E/+R3C2bZT4z7jtJD4LZhDxQH9eZq2jG6umLhMVqPWMuC9MXcJU1p
-         lRoQ==
-X-Gm-Message-State: APjAAAWu3wSq2c8q62koJYTO9xmqYwrKM+wPOgMlssoDnwH+6ax9Vs5C
-        3/tVIbwRBdh1VxUDRT0VM5kwcg==
-X-Google-Smtp-Source: APXvYqzzOBYCGms055i6xvvLLh0hL4srZ1uYunhTpABKsq1QqkMCl+g5h4pYPCE8746imZREScSDXw==
-X-Received: by 2002:ac8:74cb:: with SMTP id j11mr10080790qtr.304.1580250974910;
-        Tue, 28 Jan 2020 14:36:14 -0800 (PST)
+        bh=sINAUo2AMmS2CvfWX14jb7B4+XN4TP06PCpwgnlE4uQ=;
+        b=WlgEJfWqeDykfGFJgby5HYmkxQGZgrs4zgejkaeZLxm/t4zoSi7AEsW4pAJR2aP2ud
+         m5gc/ozeGq9AyqxjKOzPsaJz9TiWo/dU0FeIC0Efm1x+3IYVnxFf3JntznHHpK5RUxVE
+         UA4qNfcTAkNcnyzbpY0lAnf9VfrUnLw47U6dAKxrWxVLdUEdsBlqTyDiX1vGkmJoap8N
+         8DXXd+eqpbJz9iVRgTdXVHQ2FbaFAgYYvqvkKh/LOSKScwmQsvYKoGSuSxMFaWYfqa1+
+         An0nhrXr4+mzCmz8Lr0AHDc9YAM+GyiI2S3ixr+RuBi7CmAtYvjJCV4y1jkjOhI2bg19
+         VPzQ==
+X-Gm-Message-State: APjAAAXCBYkAC37LEpfNQ9aaaPpFSm2tWX7OB5LM8CAnbalTSiLM2N3U
+        s5L8SJIOHEunYNdcd26s2z7ELw==
+X-Google-Smtp-Source: APXvYqxiVRwxjeo9k/cV0WxRsnp0wE2/ZalIGx3HH7y4BNRgZ52ZwI2FvT49RW+kLagcGRdIIkvkzQ==
+X-Received: by 2002:a37:64d5:: with SMTP id y204mr24334150qkb.459.1580250976571;
+        Tue, 28 Jan 2020 14:36:16 -0800 (PST)
 Received: from Thara-Work-Ubuntu.fios-router.home (pool-71-255-246-27.washdc.fios.verizon.net. [71.255.246.27])
-        by smtp.googlemail.com with ESMTPSA id 124sm13014259qko.11.2020.01.28.14.36.13
+        by smtp.googlemail.com with ESMTPSA id 124sm13014259qko.11.2020.01.28.14.36.15
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Tue, 28 Jan 2020 14:36:14 -0800 (PST)
+        Tue, 28 Jan 2020 14:36:15 -0800 (PST)
 From:   Thara Gopinath <thara.gopinath@linaro.org>
 To:     mingo@redhat.com, peterz@infradead.org, ionela.voinescu@arm.com,
         vincent.guittot@linaro.org, dietmar.eggemann@arm.com,
@@ -53,9 +53,9 @@ To:     mingo@redhat.com, peterz@infradead.org, ionela.voinescu@arm.com,
         juri.lelli@redhat.com, corbet@lwn.net
 Cc:     linux-kernel@vger.kernel.org, amit.kachhap@gmail.com,
         javi.merino@kernel.org, amit.kucheria@verdurent.com
-Subject: [Patch v9 3/8] arm,arm64,drivers:Add infrastructure to store and update instantaneous thermal pressure
-Date:   Tue, 28 Jan 2020 17:36:02 -0500
-Message-Id: <1580250967-4386-4-git-send-email-thara.gopinath@linaro.org>
+Subject: [Patch v9 4/8] sched/fair: Enable periodic update of average thermal pressure
+Date:   Tue, 28 Jan 2020 17:36:03 -0500
+Message-Id: <1580250967-4386-5-git-send-email-thara.gopinath@linaro.org>
 X-Mailer: git-send-email 2.1.4
 In-Reply-To: <1580250967-4386-1-git-send-email-thara.gopinath@linaro.org>
 References: <1580250967-4386-1-git-send-email-thara.gopinath@linaro.org>
@@ -64,110 +64,72 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add architecture specific APIs to update and track thermal pressure on a
-per cpu basis. A per cpu variable thermal_pressure is introduced to keep
-track of instantaneous per cpu thermal pressure. Thermal pressure is the
-delta between maximum capacity and capped capacity due to a thermal event.
-
-topology_get_thermal_pressure can be hooked into the scheduler specified
-arch_cpu_thermal_capacity to retrieve instantaneous thermal pressure of a
-cpu.
-
-arch_set_thermal_pressure can be used to update the thermal pressure.
-
-Considering topology_get_thermal_pressure reads thermal_pressure and
-arch_set_thermal_pressure writes into thermal_pressure, one can argue for
-some sort of locking mechanism to avoid a stale value.  But considering
-topology_get_thermal_pressure can be called from a system critical path
-like scheduler tick function, a locking mechanism is not ideal. This means
-that it is possible the thermal_pressure value used to calculate average
-thermal pressure for a cpu can be stale for upto 1 tick period.
+Introduce support in scheduler periodic tick and other CFS bookkeeping
+apis to trigger the process of computing average thermal pressure for a
+cpu. Also consider avg_thermal.load_avg in others_have_blocked which
+allows for decay of pelt signals.
 
 Signed-off-by: Thara Gopinath <thara.gopinath@linaro.org>
 ---
 
-v6->v7:
-	- Changed the input argument in arch_set_thermal_pressure from
-	  capped capacity to delta capacity(thermal pressure) as per
-	  Ionela's review comments.
+v8->v9:
+	- Moved periodic triggering of thermal pressure averaging from CFS
+	  tick function to generic scheduler core tick function.
 
- arch/arm/include/asm/topology.h   |  3 +++
- arch/arm64/include/asm/topology.h |  3 +++
- drivers/base/arch_topology.c      | 11 +++++++++++
- include/linux/arch_topology.h     | 10 ++++++++++
- 4 files changed, 27 insertions(+)
+ kernel/sched/core.c | 3 +++
+ kernel/sched/fair.c | 5 +++++
+ 2 files changed, 8 insertions(+)
 
-diff --git a/arch/arm/include/asm/topology.h b/arch/arm/include/asm/topology.h
-index 8a0fae9..3a50a19 100644
---- a/arch/arm/include/asm/topology.h
-+++ b/arch/arm/include/asm/topology.h
-@@ -16,6 +16,9 @@
- /* Enable topology flag updates */
- #define arch_update_cpu_topology topology_update_cpu_topology
+diff --git a/kernel/sched/core.c b/kernel/sched/core.c
+index fc1dfc0..b921795 100644
+--- a/kernel/sched/core.c
++++ b/kernel/sched/core.c
+@@ -3594,12 +3594,15 @@ void scheduler_tick(void)
+ 	struct rq *rq = cpu_rq(cpu);
+ 	struct task_struct *curr = rq->curr;
+ 	struct rq_flags rf;
++	unsigned long thermal_pressure;
  
-+/* Replace task scheduler's default thermal pressure retrieve API */
-+#define arch_cpu_thermal_pressure topology_get_thermal_pressure
-+
- #else
+ 	sched_clock_tick();
  
- static inline void init_cpu_topology(void) { }
-diff --git a/arch/arm64/include/asm/topology.h b/arch/arm64/include/asm/topology.h
-index a4d945d..a70896f 100644
---- a/arch/arm64/include/asm/topology.h
-+++ b/arch/arm64/include/asm/topology.h
-@@ -25,6 +25,9 @@ int pcibus_to_node(struct pci_bus *bus);
- /* Enable topology flag updates */
- #define arch_update_cpu_topology topology_update_cpu_topology
+ 	rq_lock(rq, &rf);
  
-+/* Replace task scheduler's default thermal pressure retrieve API */
-+#define arch_cpu_thermal_pressure topology_get_thermal_pressure
-+
- #include <asm-generic/topology.h>
+ 	update_rq_clock(rq);
++	thermal_pressure = arch_cpu_thermal_pressure(cpu_of(rq));
++	update_thermal_load_avg(rq_clock_task(rq), rq, thermal_pressure);
+ 	curr->sched_class->task_tick(rq, curr, 0);
+ 	calc_global_load_tick(rq);
+ 	psi_task_tick(rq);
+diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+index ebf5095..5f58c03 100644
+--- a/kernel/sched/fair.c
++++ b/kernel/sched/fair.c
+@@ -7491,6 +7491,9 @@ static inline bool others_have_blocked(struct rq *rq)
+ 	if (READ_ONCE(rq->avg_dl.util_avg))
+ 		return true;
  
- #endif /* _ASM_ARM_TOPOLOGY_H */
-diff --git a/drivers/base/arch_topology.c b/drivers/base/arch_topology.c
-index 6119e11..68dfa49 100644
---- a/drivers/base/arch_topology.c
-+++ b/drivers/base/arch_topology.c
-@@ -42,6 +42,17 @@ void topology_set_cpu_scale(unsigned int cpu, unsigned long capacity)
- 	per_cpu(cpu_scale, cpu) = capacity;
- }
++	if (thermal_load_avg(rq))
++		return true;
++
+ #ifdef CONFIG_HAVE_SCHED_AVG_IRQ
+ 	if (READ_ONCE(rq->avg_irq.util_avg))
+ 		return true;
+@@ -7516,6 +7519,7 @@ static bool __update_blocked_others(struct rq *rq, bool *done)
+ {
+ 	const struct sched_class *curr_class;
+ 	u64 now = rq_clock_pelt(rq);
++	unsigned long thermal_pressure = arch_cpu_thermal_pressure(cpu_of(rq));
+ 	bool decayed;
  
-+DEFINE_PER_CPU(unsigned long, thermal_pressure);
-+
-+void arch_set_thermal_pressure(struct cpumask *cpus,
-+			       unsigned long th_pressure)
-+{
-+	int cpu;
-+
-+	for_each_cpu(cpu, cpus)
-+		WRITE_ONCE(per_cpu(thermal_pressure, cpu), th_pressure);
-+}
-+
- static ssize_t cpu_capacity_show(struct device *dev,
- 				 struct device_attribute *attr,
- 				 char *buf)
-diff --git a/include/linux/arch_topology.h b/include/linux/arch_topology.h
-index 3015ecb..88a115e 100644
---- a/include/linux/arch_topology.h
-+++ b/include/linux/arch_topology.h
-@@ -33,6 +33,16 @@ unsigned long topology_get_freq_scale(int cpu)
- 	return per_cpu(freq_scale, cpu);
- }
+ 	/*
+@@ -7526,6 +7530,7 @@ static bool __update_blocked_others(struct rq *rq, bool *done)
  
-+DECLARE_PER_CPU(unsigned long, thermal_pressure);
-+
-+static inline unsigned long topology_get_thermal_pressure(int cpu)
-+{
-+	return per_cpu(thermal_pressure, cpu);
-+}
-+
-+void arch_set_thermal_pressure(struct cpumask *cpus,
-+			       unsigned long th_pressure);
-+
- struct cpu_topology {
- 	int thread_id;
- 	int core_id;
+ 	decayed = update_rt_rq_load_avg(now, rq, curr_class == &rt_sched_class) |
+ 		  update_dl_rq_load_avg(now, rq, curr_class == &dl_sched_class) |
++		  update_thermal_load_avg(rq_clock_task(rq), rq, thermal_pressure) |
+ 		  update_irq_load_avg(rq, 0);
+ 
+ 	if (others_have_blocked(rq))
 -- 
 2.1.4
 
