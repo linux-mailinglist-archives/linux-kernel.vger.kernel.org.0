@@ -2,117 +2,106 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C1A5414BCF1
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Jan 2020 16:38:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3F1CE14BD0A
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Jan 2020 16:40:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726767AbgA1PiK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 28 Jan 2020 10:38:10 -0500
-Received: from foss.arm.com ([217.140.110.172]:59562 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726708AbgA1PiK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 Jan 2020 10:38:10 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 4304C31B;
-        Tue, 28 Jan 2020 07:38:09 -0800 (PST)
-Received: from [10.1.195.43] (e107049-lin.cambridge.arm.com [10.1.195.43])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 0B7193F68E;
-        Tue, 28 Jan 2020 07:38:07 -0800 (PST)
-Subject: Re: [RFC PATCH v4 4/6] sched/cpufreq: Introduce sugov_cpu_ramp_boost
-To:     "Rafael J. Wysocki" <rafael@kernel.org>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        qperret@google.com, Linux PM <linux-pm@vger.kernel.org>
-References: <20200122173538.1142069-1-douglas.raillard@arm.com>
- <20200122173538.1142069-5-douglas.raillard@arm.com>
- <CAJZ5v0gP5v3LzU-uGyHpoJV8z+E2heR1PEQp+c=L7RZS3FzCWg@mail.gmail.com>
- <9b5afae9-0cf5-6c3a-b94b-0796da4e6a71@arm.com>
- <CAJZ5v0h8=Kh-xutPMf110UOrRfEQtjjOTneZaWoZLaYO=Bfm1A@mail.gmail.com>
-From:   Douglas Raillard <douglas.raillard@arm.com>
-Organization: ARM
-Message-ID: <a509ed51-6bd9-5e66-6259-94f4fe46077a@arm.com>
-Date:   Tue, 28 Jan 2020 15:38:06 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.3.1
+        id S1726907AbgA1Pim (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 28 Jan 2020 10:38:42 -0500
+Received: from mail-eopbgr750053.outbound.protection.outlook.com ([40.107.75.53]:20133
+        "EHLO NAM02-BL2-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726829AbgA1Pil (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 28 Jan 2020 10:38:41 -0500
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=JtZW/HbWaJphMsno//sfK1o4jLtjy75AXJcRi6q30HB8npEelrXh439JuanKIdMaVO8FD0ytfJrtzWsmrZJz+WWrSjYg46h1C+lz1UmaCYJ9evRaatSXL1XoV05HqCgrFW9HZjtCDiDXLoAZLdmcq4Qw6m6IZlsgM6ol+eUWqtNnubWE2/80Flgvfc4Bnr7PIUle+gfbPaTaFC1k8ojNLflvF5aUIyTlSbge2WPaMYZfBLMcqREPAzsrPY2MF18ua8PxVZhXrpWujbJlQwbR/ryUDf9tdQFYO8og3/FhKbsy2RHvRNQ4uqFUrZ89pTzUoY+L4woyQ71XuXFNOV8xcQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Y1Ebke6eveyxao7m6TM2J+k5u29xj8tTIql2r8ll4bY=;
+ b=AbAe4p4mYdM7OW71LpwkN16xOdiYIAPZ2vDsAuh9quPpQhjhC1t+Rm7hRyudGd1zA4ZkxYFKScYFfe9SzSPaUPXmbnCyNHD5shubjM3dnNgsOuKc/n94OYGHlUy3RwxBCD2AA5dmGvT3hlbbJ4jE74WCtwqjSimQbGBfNWDSfKLDl96Okh5/P1VTyLyIGMOH+LIvOIQFs4RUmYpZuXFSL39v/ZPVJK+W4V7ThiPW+Il8+yKZ9iI8h803yhaZR8wUiiHfqOFGlHcRMSw2dyGIl+YOmdYtkVsd/M1sdldUD8OlPvE+e7QL07Ubea0YVnYLRjdV7FWs3UFsgsXt8tiVOQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=micron.com; dmarc=pass action=none header.from=micron.com;
+ dkim=pass header.d=micron.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=micron.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Y1Ebke6eveyxao7m6TM2J+k5u29xj8tTIql2r8ll4bY=;
+ b=pKpikirxO6t+XQFv/XlaFpGY9PpbXvzFJNvcOT+wSAg4iFgAHO8mHApIDi23rbV5oLn3Ts9kGTmm0yuvm6z50MD/zMFVENYwokp/tUWOKK4bAF1GI/nUkJlXbS8g+C5I1GP52bLSSyah3xqR48uWYf6bIUeNoHSILwJUpFQpEPU=
+Received: from BN7PR08MB5684.namprd08.prod.outlook.com (20.176.179.87) by
+ BN7PR08MB4324.namprd08.prod.outlook.com (52.135.251.143) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2665.22; Tue, 28 Jan 2020 15:38:38 +0000
+Received: from BN7PR08MB5684.namprd08.prod.outlook.com
+ ([fe80::981f:90d7:d45f:fd11]) by BN7PR08MB5684.namprd08.prod.outlook.com
+ ([fe80::981f:90d7:d45f:fd11%7]) with mapi id 15.20.2665.026; Tue, 28 Jan 2020
+ 15:38:38 +0000
+From:   "Bean Huo (beanhuo)" <beanhuo@micron.com>
+To:     Stanley Chu <stanley.chu@mediatek.com>,
+        "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
+        "martin.petersen@oracle.com" <martin.petersen@oracle.com>,
+        "avri.altman@wdc.com" <avri.altman@wdc.com>,
+        "alim.akhtar@samsung.com" <alim.akhtar@samsung.com>,
+        "jejb@linux.ibm.com" <jejb@linux.ibm.com>
+CC:     "asutoshd@codeaurora.org" <asutoshd@codeaurora.org>,
+        "cang@codeaurora.org" <cang@codeaurora.org>,
+        "matthias.bgg@gmail.com" <matthias.bgg@gmail.com>,
+        "bvanassche@acm.org" <bvanassche@acm.org>,
+        "linux-mediatek@lists.infradead.org" 
+        <linux-mediatek@lists.infradead.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "kuohong.wang@mediatek.com" <kuohong.wang@mediatek.com>,
+        "peter.wang@mediatek.com" <peter.wang@mediatek.com>,
+        "chun-hung.wu@mediatek.com" <chun-hung.wu@mediatek.com>,
+        "andy.teng@mediatek.com" <andy.teng@mediatek.com>
+Subject: RE: [EXT] [PATCH v2 3/5] scsi: ufs: add
+ ufshcd_is_auto_hibern8_enabled facility
+Thread-Topic: [EXT] [PATCH v2 3/5] scsi: ufs: add
+ ufshcd_is_auto_hibern8_enabled facility
+Thread-Index: AQHV0sgOxlbzOPcdrkKbef6h38DLDqgAOCsw
+Date:   Tue, 28 Jan 2020 15:38:38 +0000
+Message-ID: <BN7PR08MB5684D9F9D37F3031F3FEDAC7DB0A0@BN7PR08MB5684.namprd08.prod.outlook.com>
+References: <20200124150743.15110-1-stanley.chu@mediatek.com>
+ <20200124150743.15110-4-stanley.chu@mediatek.com>
+In-Reply-To: <20200124150743.15110-4-stanley.chu@mediatek.com>
+Accept-Language: en-150, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=beanhuo@micron.com; 
+x-originating-ip: [165.225.81.21]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 8b574952-6181-4547-cfe8-08d7a408253b
+x-ms-traffictypediagnostic: BN7PR08MB4324:|BN7PR08MB4324:|BN7PR08MB4324:
+x-microsoft-antispam-prvs: <BN7PR08MB4324B61BCE1F54DF75E686D2DB0A0@BN7PR08MB4324.namprd08.prod.outlook.com>
+x-ms-exchange-transport-forked: True
+x-ms-oob-tlc-oobclassifiers: OLM:400;
+x-forefront-prvs: 029651C7A1
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(376002)(366004)(346002)(396003)(39860400002)(136003)(189003)(199004)(7696005)(478600001)(55236004)(64756008)(66446008)(66476007)(66556008)(7416002)(316002)(76116006)(186003)(66946007)(6506007)(8936002)(558084003)(8676002)(81166006)(81156014)(26005)(54906003)(71200400001)(2906002)(55016002)(9686003)(110136005)(52536014)(86362001)(33656002)(4326008)(5660300002);DIR:OUT;SFP:1101;SCL:1;SRVR:BN7PR08MB4324;H:BN7PR08MB5684.namprd08.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: micron.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: BCeAsdyQracZ4gx9LOV9/M6dXjFHgc4HvZFyIB6wJKZ7KJBvaYrUG/njEb8GbLTQuRodyX3eMjHPOFav27RGxxeRg4zIdQCDzj/IUVCZV52bcDZJ6lLKwdqetQ619RFDpMqKil0rhPdzfLHZNBXacHOmxTFaPD8YDAOws5RUlliZ0ILudLyPySisNyHF5UhBt2HlndWiC1zIendc9Sqs9gGTC7mXz3jJQmYS5+MdSYVdmCc5NKaXGprdivIXWWTzNYbZPY4RpEe0SW+kdfH8JZ6XxAnvVvAqzERLI8EOCRbFVZnWa2zqM+cQAk3pN2WRLvarqjAUsvduIbmwuwHls2coMyy+QR2q80WLHt15CQ3YLBFV2zUGeKS2xEyTn6JS3gPaQ6kd1EVx3Q1iks9/x6pDeA0OdmejxFI08T49FOd5km/lelg3XqOjUKM+10WI
+x-ms-exchange-antispam-messagedata: ZY0/V0+/aP8/Nvw2+RGe4ngsKTKQ8D7NKnubTXiYPu6vphgp40DWSHRtaCPQ30jEWBDvSFj40qCrYAaisQ+MESCLBmVMQOtog2JRU/UUVSEap3vhXq6kyl5W5RgkTM1IJZK9CFsrUZTnGcsewSe/5g==
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-In-Reply-To: <CAJZ5v0h8=Kh-xutPMf110UOrRfEQtjjOTneZaWoZLaYO=Bfm1A@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB-large
-Content-Transfer-Encoding: 7bit
+X-OriginatorOrg: micron.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 8b574952-6181-4547-cfe8-08d7a408253b
+X-MS-Exchange-CrossTenant-originalarrivaltime: 28 Jan 2020 15:38:38.5646
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: f38a5ecd-2813-4862-b11b-ac1d563c806f
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: vWrtZB/D9EB8lEQWXO5q33XsKm53aIXqCfyXrSCZ3IbS+SSqfjSu3fNSTPKjFFEhM8FeKqVcE5Cg6agmyBfvLQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN7PR08MB4324
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On 1/23/20 9:02 PM, Rafael J. Wysocki wrote:
-> On Thu, Jan 23, 2020 at 6:21 PM Douglas Raillard
-> <douglas.raillard@arm.com> wrote:
->>
->>
->>
->> On 1/23/20 3:55 PM, Rafael J. Wysocki wrote:
->>> On Wed, Jan 22, 2020 at 6:36 PM Douglas RAILLARD
->>> <douglas.raillard@arm.com> wrote:
->>>>
->>>> Use the utilization signals dynamic to detect when the utilization of a
->>>> set of tasks starts increasing because of a change in tasks' behavior.
->>>> This allows detecting when spending extra power for faster frequency
->>>> ramp up response would be beneficial to the reactivity of the system.
->>>>
->>>> This ramp boost is computed as the difference between util_avg and
->>>> util_est_enqueued. This number somehow represents a lower bound of how
->>>> much extra utilization this tasks is actually using, compared to our
->>>> best current stable knowledge of it (which is util_est_enqueued).
->>>>
->>>> When the set of runnable tasks changes, the boost is disabled as the
->>>> impact of blocked utilization on util_avg will make the delta with
->>>> util_est_enqueued not very informative.
->>>>
->>>> Signed-off-by: Douglas RAILLARD <douglas.raillard@arm.com>
->>>> ---
->>>>  kernel/sched/cpufreq_schedutil.c | 43 ++++++++++++++++++++++++++++++++
->>>>  1 file changed, 43 insertions(+)
->>>>
->>>> diff --git a/kernel/sched/cpufreq_schedutil.c b/kernel/sched/cpufreq_schedutil.c
->>>> index 608963da4916..25a410a1ff6a 100644
->>>> --- a/kernel/sched/cpufreq_schedutil.c
->>>> +++ b/kernel/sched/cpufreq_schedutil.c
->>>> @@ -61,6 +61,10 @@ struct sugov_cpu {
->>>>         unsigned long           bw_dl;
->>>>         unsigned long           max;
->>>>
->>>> +       unsigned long           ramp_boost;
->>>> +       unsigned long           util_est_enqueued;
->>>> +       unsigned long           util_avg;
->>>> +
->>>>         /* The field below is for single-CPU policies only: */
->>>>  #ifdef CONFIG_NO_HZ_COMMON
->>>>         unsigned long           saved_idle_calls;
->>>> @@ -183,6 +187,42 @@ static void sugov_deferred_update(struct sugov_policy *sg_policy, u64 time,
->>>>         }
->>>>  }
->>>>
->>>> +static unsigned long sugov_cpu_ramp_boost(struct sugov_cpu *sg_cpu)
->>>> +{
->>>> +       return READ_ONCE(sg_cpu->ramp_boost);
->>>> +}
->>>
->>> Where exactly is this function used?
->>
->> In the next commit where the boost value is actually used to do
->> something. The function is introduced here to keep the
->> WRITE_ONCE/READ_ONCE pair together.
-> 
-> But ramp_boost itself is not really used in this patch too AFAICS.
-
-I'll squash that patch with the next one where it's actually used then:
-sched/cpufreq: Boost schedutil frequency ramp up
-
-Thanks,
-Douglas
+> Signed-off-by: Stanley Chu <stanley.chu@mediatek.com>
+Reviewed-by: Bean Huo <beanhuo@micron.com>
