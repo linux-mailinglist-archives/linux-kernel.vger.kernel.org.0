@@ -2,36 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0B58C14B90B
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Jan 2020 15:33:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CB36914B90E
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Jan 2020 15:33:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732784AbgA1O0D (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 28 Jan 2020 09:26:03 -0500
-Received: from mail.kernel.org ([198.145.29.99]:53224 "EHLO mail.kernel.org"
+        id S1730321AbgA1O0H (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 28 Jan 2020 09:26:07 -0500
+Received: from mail.kernel.org ([198.145.29.99]:53362 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730514AbgA1O0A (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 Jan 2020 09:26:00 -0500
+        id S1729644AbgA1O0F (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 28 Jan 2020 09:26:05 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id ED01720716;
-        Tue, 28 Jan 2020 14:25:59 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id F019624685;
+        Tue, 28 Jan 2020 14:26:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1580221560;
-        bh=4VyhmAZkT+dM03W/pxTczHQWhzVYTW6AxR3LgFMf4AA=;
+        s=default; t=1580221565;
+        bh=KNT/RIVk/x73NLpD9nQB6BYohuSfGeNeCr1xlG9FM20=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=jHsVP3vFItOlJPyiDOwwu0f1gF7+oUKeEbSI+Kj9SXjA1wq4V3cVQgcKUtNpnfcfy
-         ZrcwPS0Q1TfVh9PqckSmu3xV3DtbC+K3v6avJ/CfOwnuRXur9fLCAcTUAuORThflcR
-         Zt588l6EiMRAb5CHYcDjAQuWtsvwgsNEE7WiHwF0=
+        b=mRUhbgaHn21dsudhAo+VSYJn1RNtKNAF8uzLgYUN9umJMMU62WfFfwFBilyjXwHit
+         fhb7Ww0SCpOLXJWSTnEhfZNqvRqz8v1PyAnc/iFLyi43zjTQodpfqguJFXj+qaQ5xL
+         ps+GgXVk4aBhXLwTKTsOgBnNeoe1/zN/2m4casPI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>,
-        Coly Li <colyli@suse.de>, Jens Axboe <axboe@kernel.dk>,
-        Lee Jones <lee.jones@linaro.org>
-Subject: [PATCH 4.9 266/271] bcache: silence static checker warning
-Date:   Tue, 28 Jan 2020 15:06:55 +0100
-Message-Id: <20200128135912.394932405@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Shaohua Li <shli@kernel.org>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Subject: [PATCH 4.9 268/271] md: Avoid namespace collision with bitmap API
+Date:   Tue, 28 Jan 2020 15:06:57 +0100
+Message-Id: <20200128135912.548904600@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
 In-Reply-To: <20200128135852.449088278@linuxfoundation.org>
 References: <20200128135852.449088278@linuxfoundation.org>
@@ -44,36 +45,64 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 
-commit da22f0eea555baf9b0a84b52afe56db2052cfe8d upstream.
+commit e64e4018d572710c44f42c923d4ac059f0a23320 upstream.
 
-In olden times, closure_return() used to have a hidden return built in.
-We removed the hidden return but forgot to add a new return here.  If
-"c" were NULL we would oops on the next line, but fortunately "c" is
-never NULL.  Let's just remove the if statement.
+bitmap API (include/linux/bitmap.h) has 'bitmap' prefix for its methods.
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-Reviewed-by: Coly Li <colyli@suse.de>
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
-Signed-off-by: Lee Jones <lee.jones@linaro.org>
+On the other hand MD bitmap API is special case.
+Adding 'md' prefix to it to avoid name space collision.
+
+No functional changes intended.
+
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Acked-by: Shaohua Li <shli@kernel.org>
+Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+[only take the bitmap_free change for stable - gregkh]
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/md/bcache/super.c |    3 ---
- 1 file changed, 3 deletions(-)
+ drivers/md/bitmap.c |    8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
---- a/drivers/md/bcache/super.c
-+++ b/drivers/md/bcache/super.c
-@@ -1398,9 +1398,6 @@ static void cache_set_flush(struct closu
- 	struct btree *b;
- 	unsigned i;
+--- a/drivers/md/bitmap.c
++++ b/drivers/md/bitmap.c
+@@ -1699,7 +1699,7 @@ void bitmap_flush(struct mddev *mddev)
+ /*
+  * free memory that was allocated
+  */
+-static void bitmap_free(struct bitmap *bitmap)
++static void md_bitmap_free(struct bitmap *bitmap)
+ {
+ 	unsigned long k, pages;
+ 	struct bitmap_page *bp;
+@@ -1749,7 +1749,7 @@ void bitmap_destroy(struct mddev *mddev)
+ 	if (mddev->thread)
+ 		mddev->thread->timeout = MAX_SCHEDULE_TIMEOUT;
  
--	if (!c)
--		closure_return(cl);
--
- 	bch_cache_accounting_destroy(&c->accounting);
+-	bitmap_free(bitmap);
++	md_bitmap_free(bitmap);
+ }
  
- 	kobject_put(&c->internal);
+ /*
+@@ -1834,7 +1834,7 @@ struct bitmap *bitmap_create(struct mdde
+ 
+ 	return bitmap;
+  error:
+-	bitmap_free(bitmap);
++	md_bitmap_free(bitmap);
+ 	return ERR_PTR(err);
+ }
+ 
+@@ -1936,7 +1936,7 @@ int bitmap_copy_from_slot(struct mddev *
+ 	*low = lo;
+ 	*high = hi;
+ err:
+-	bitmap_free(bitmap);
++	md_bitmap_free(bitmap);
+ 	return rv;
+ }
+ EXPORT_SYMBOL_GPL(bitmap_copy_from_slot);
 
 
