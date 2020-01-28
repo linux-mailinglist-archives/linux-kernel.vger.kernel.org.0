@@ -2,113 +2,101 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F088C14B555
+	by mail.lfdr.de (Postfix) with ESMTP id 7E04D14B554
 	for <lists+linux-kernel@lfdr.de>; Tue, 28 Jan 2020 14:47:53 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726323AbgA1Nrw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 28 Jan 2020 08:47:52 -0500
-Received: from out01.mta.xmission.com ([166.70.13.231]:54264 "EHLO
-        out01.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725852AbgA1Nrv (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 Jan 2020 08:47:51 -0500
-Received: from in01.mta.xmission.com ([166.70.13.51])
-        by out01.mta.xmission.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.90_1)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1iwRDY-00020G-C5; Tue, 28 Jan 2020 06:47:48 -0700
-Received: from ip68-227-160-95.om.om.cox.net ([68.227.160.95] helo=x220.xmission.com)
-        by in01.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.87)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1iwRDX-0006bg-Ma; Tue, 28 Jan 2020 06:47:48 -0700
-From:   ebiederm@xmission.com (Eric W. Biederman)
-To:     Christian Brauner <christian.brauner@ubuntu.com>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        Christian Brauner <christian@brauner.io>,
-        Hridya Valsaraju <hridya@google.com>,
-        Arve =?utf-8?B?SGrDuG5uZXbDpWc=?= <arve@android.com>,
-        Todd Kjos <tkjos@android.com>,
-        Martijn Coenen <maco@android.com>,
-        Joel Fernandes <joel@joelfernandes.org>,
-        "open list\:ANDROID DRIVERS" <devel@driverdev.osuosl.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        syzkaller <syzkaller@googlegroups.com>
-References: <CACT4Y+bg1UKXzZF4a9y+5CfNYRwBc5Gx+GjPS0Dhb1n-Qf50+g@mail.gmail.com>
-        <20200126085535.GA3533171@kroah.com>
-        <20200126093506.oa2ee5kbptur4zhz@wittgenstein>
-Date:   Tue, 28 Jan 2020 07:46:08 -0600
-In-Reply-To: <20200126093506.oa2ee5kbptur4zhz@wittgenstein> (Christian
-        Brauner's message of "Sun, 26 Jan 2020 10:35:07 +0100")
-Message-ID: <87blqn3d9b.fsf@x220.int.ebiederm.org>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
+        id S1726290AbgA1Nru (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 28 Jan 2020 08:47:50 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38402 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725852AbgA1Nrt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 28 Jan 2020 08:47:49 -0500
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3DD0A24683;
+        Tue, 28 Jan 2020 13:47:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1580219267;
+        bh=FAiIYynFKBuECEDgOwJSnnC0Hg3xYnzoyPy4Ysdo0HU=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=ZLZiPPEJ3KZYFeEODDcAdKm12adgwJTR1qNu8E+/VB6oWCwBJucsQAZthyd25GaSm
+         jGHTqGPMfkhPC6+DP+HPoE6IHThhQiRXLcdyB7gkdtyywbpx1/t5r0aAVmnkRXDC2v
+         FoBHpKTogtOd0WgKUquetU0/w7h5gM/Rcd86KiYE=
+Date:   Tue, 28 Jan 2020 14:47:45 +0100
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     =?iso-8859-1?Q?M=E5ns_Rullg=E5rd?= <mans@mansr.com>
+Cc:     Rob Herring <robh@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        linux-usb@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [RESEND][PATCH 1/2] dt-bindings: usb: add non-removable-ports
+ hub property
+Message-ID: <20200128134745.GA3048749@kroah.com>
+References: <20200124152504.23411-1-mans@mansr.com>
+ <20200127153506.GA4589@bogus>
+ <yw1xy2tsvnww.fsf@mansr.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-XM-SPF: eid=1iwRDX-0006bg-Ma;;;mid=<87blqn3d9b.fsf@x220.int.ebiederm.org>;;;hst=in01.mta.xmission.com;;;ip=68.227.160.95;;;frm=ebiederm@xmission.com;;;spf=neutral
-X-XM-AID: U2FsdGVkX19TaqhwtfnOs4J3o+rZtj2FKDMPKZsQpjA=
-X-SA-Exim-Connect-IP: 68.227.160.95
-X-SA-Exim-Mail-From: ebiederm@xmission.com
-X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on sa02.xmission.com
-X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=8.0 tests=ALL_TRUSTED,BAYES_00,
-        DCC_CHECK_NEGATIVE,T_TM2_M_HEADER_IN_MSG,XM_Multi_Part_URI
-        autolearn=disabled version=3.4.2
-X-Spam-Virus: No
-X-Spam-Report: * -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
-        * -3.0 BAYES_00 BODY: Bayes spam probability is 0 to 1%
-        *      [score: 0.0019]
-        *  0.0 T_TM2_M_HEADER_IN_MSG BODY: No description available.
-        *  1.2 XM_Multi_Part_URI URI: Long-Multi-Part URIs
-        * -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
-        *      [sa02 1397; Body=1 Fuz1=1 Fuz2=1]
-X-Spam-DCC: XMission; sa02 1397; Body=1 Fuz1=1 Fuz2=1 
-X-Spam-Combo: ;Christian Brauner <christian.brauner@ubuntu.com>
-X-Spam-Relay-Country: 
-X-Spam-Timing: total 232 ms - load_scoreonly_sql: 0.02 (0.0%),
-        signal_user_changed: 2.3 (1.0%), b_tie_ro: 1.68 (0.7%), parse: 0.62
-        (0.3%), extract_message_metadata: 8 (3.3%), get_uri_detail_list: 0.76
-        (0.3%), tests_pri_-1000: 8 (3.5%), tests_pri_-950: 0.89 (0.4%),
-        tests_pri_-900: 0.74 (0.3%), tests_pri_-90: 18 (7.8%), check_bayes: 17
-        (7.4%), b_tokenize: 4.1 (1.8%), b_tok_get_all: 6 (2.5%), b_comp_prob:
-        1.26 (0.5%), b_tok_touch_all: 4.5 (1.9%), b_finish: 0.53 (0.2%),
-        tests_pri_0: 185 (79.7%), check_dkim_signature: 0.34 (0.1%),
-        check_dkim_adsp: 2.1 (0.9%), poll_dns_idle: 0.38 (0.2%), tests_pri_10:
-        1.48 (0.6%), tests_pri_500: 4.8 (2.1%), rewrite_mail: 0.00 (0.0%)
-Subject: Re: binderfs interferes with syzkaller?
-X-Spam-Flag: No
-X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
-X-SA-Exim-Scanned: Yes (on in01.mta.xmission.com)
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <yw1xy2tsvnww.fsf@mansr.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Christian Brauner <christian.brauner@ubuntu.com> writes:
+On Mon, Jan 27, 2020 at 04:56:15PM +0000, Måns Rullgård wrote:
+> Rob Herring <robh@kernel.org> writes:
+> 
+> > On Fri, Jan 24, 2020 at 03:25:03PM +0000, Mans Rullgard wrote:
+> >> Add a non-removable-ports property that lists the hardwired downstream
+> >> ports of a hub.  Although hubs can provide this information, they are
+> >> not always configured correctly.  An alternate means of indicating this
+> >> for built-in USB devices is thus useful.
+> >> 
+> >> Signed-off-by: Mans Rullgard <mans@mansr.com>
+> >
+> > I reviewed this already, but since you didn't add my reviewed-by, I'm 
+> > looking at it again and having 2nd thoughts.
+> >
+> >> ---
+> >>  Documentation/devicetree/bindings/usb/usb-device.txt | 4 ++++
+> >>  1 file changed, 4 insertions(+)
+> >> 
+> >> diff --git a/Documentation/devicetree/bindings/usb/usb-device.txt b/Documentation/devicetree/bindings/usb/usb-device.txt
+> >> index 036be172b1ae..92d863cc96b6 100644
+> >> --- a/Documentation/devicetree/bindings/usb/usb-device.txt
+> >> +++ b/Documentation/devicetree/bindings/usb/usb-device.txt
+> >> @@ -66,6 +66,10 @@ Required properties for host-controller nodes with device nodes:
+> >>  - #size-cells: shall be 0
+> >>  
+> >>  
+> >> +Optional properties for hub and host-controller nodes:
+> >> +- non-removable-ports: list of hardwired downstream ports
+> >
+> > If you have a hardwired device and need to know that, doesn't that imply 
+> > there's some other stuff you need to describe beyond what a standard USB 
+> > device has. Such as a power supply that's not Vbus from the hub.
+> 
+> I suppose there could be, but there isn't in my actual situation.
+> 
+> > At a minimum, I think this should be a per port property.
+> 
+> That's what I suggested first.  Greg told me to do it like this instead.
 
-> On Sun, Jan 26, 2020 at 09:55:35AM +0100, Greg Kroah-Hartman wrote:
->> On Sat, Jan 25, 2020 at 06:49:49PM +0100, Dmitry Vyukov wrote:
->> > Hi binder maintainers,
->> > 
->> > It seems that something has happened and now syzbot has 0 coverage in
->> > drivers/android/binder.c:
->> > https://storage.googleapis.com/syzkaller/cover/ci-upstream-kasan-gce-root.html
->> > It covered at least something there before as it found some bugs in binder code.
->> > I _suspect_ it may be related to introduction binderfs, but it's
->> > purely based on the fact that binderfs changed lots of things there.
->> > And I see it claims to be backward compatible.
->> 
->> It is backwards compatible if you mount binderfs, right?
->
-> Yes, it is backwards compatible. The devices that would usually be
-> created in devtmpfs are now created in binderfs. The core
-> binder-codepaths are the same.
+I said that?  I do not remember discussing this at all, when did that
+happen?
 
-Any chance you can add code to the binderfs case to automatically
-create the symlinks to the standard mount location in devtmpfs?
+> > Though really, I think this should just be implied by describing the
+> > device in DT. I'm not sure if there's a case for hotpluggable devices
+> > described in DT.  Maybe with overlays.
+> 
+> That's also an option.  Greg, what do you think?
 
-That way existing userspace might not need to care how the kernel is
-configured.
+I have no idea, sorry, I'm totally lost here...
 
-Eric
+greg k-h
 
+> 
+> -- 
+> Måns Rullgård
