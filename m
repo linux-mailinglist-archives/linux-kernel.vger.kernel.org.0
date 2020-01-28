@@ -2,37 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E3CC914B998
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Jan 2020 15:34:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7E45214B995
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Jan 2020 15:34:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731821AbgA1OZI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 28 Jan 2020 09:25:08 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51980 "EHLO mail.kernel.org"
+        id S1731819AbgA1OZK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 28 Jan 2020 09:25:10 -0500
+Received: from mail.kernel.org ([198.145.29.99]:52010 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731420AbgA1OZD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 Jan 2020 09:25:03 -0500
+        id S1732835AbgA1OZG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 28 Jan 2020 09:25:06 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 674822071E;
-        Tue, 28 Jan 2020 14:25:02 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E5A3E21739;
+        Tue, 28 Jan 2020 14:25:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1580221502;
-        bh=RoZ81vHe5oOwSF4DrAOn7tSXN8FoDE6hUlYToDbbnkw=;
+        s=default; t=1580221505;
+        bh=j3dOkO7BzEnopBMaA6mmgyr9Jea+DWcgOpZMXirfMnE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=pykOWZBrIIj5YjmYBOik1Q+ulvJqKl6cvccVEQpYovxv9q5jc1oX5CpX5akmd5ncD
-         A3yp3ub1Hm+dA3R1B5K0IWL0xdFuBmLVKCqgl8X3UnogQpcZreWHbhjEiqwUG9wKSm
-         Wu2JRZ40pAhYaO4LwR/+2DlliOJScuko/6KSbW5s=
+        b=b2PHh8CFp+4gY+CvLDMNlNK5aG0bumMNkwdrh9FYXq46p3yfpMZX879eOb0Q6Sb12
+         mIOcCqotOqaNr/HXBntctfnFeBFvWTsznklHS1cv6tfTB89KLfrTcvPDfksmB/fZ7C
+         OgmK+4Ioe9lX3Nx4noFvEFzYbZgAca3KLAKxmOm8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Adrian Hunter <adrian.hunter@intel.com>,
-        Thierry Reding <treding@nvidia.com>,
+        stable@vger.kernel.org,
         =?UTF-8?q?Micha=C5=82=20Miros=C5=82aw?= <mirq-linux@rere.qmqm.pl>,
+        Adrian Hunter <adrian.hunter@intel.com>,
         Ulf Hansson <ulf.hansson@linaro.org>
-Subject: [PATCH 4.9 250/271] mmc: tegra: fix SDR50 tuning override
-Date:   Tue, 28 Jan 2020 15:06:39 +0100
-Message-Id: <20200128135911.176417016@linuxfoundation.org>
+Subject: [PATCH 4.9 251/271] mmc: sdhci: fix minimum clock rate for v3 controller
+Date:   Tue, 28 Jan 2020 15:06:40 +0100
+Message-Id: <20200128135911.255683005@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
 In-Reply-To: <20200128135852.449088278@linuxfoundation.org>
 References: <20200128135852.449088278@linuxfoundation.org>
@@ -47,35 +47,50 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Michał Mirosław <mirq-linux@rere.qmqm.pl>
 
-commit f571389c0b015e76f91c697c4c1700aba860d34f upstream.
+commit 2a187d03352086e300daa2044051db00044cd171 upstream.
 
-Commit 7ad2ed1dfcbe inadvertently mixed up a quirk flag's name and
-broke SDR50 tuning override. Use correct NVQUIRK_ name.
+For SDHCIv3+ with programmable clock mode, minimal clock frequency is
+still base clock / max(divider). Minimal programmable clock frequency is
+always greater than minimal divided clock frequency. Without this patch,
+SDHCI uses out-of-spec initial frequency when multiplier is big enough:
 
-Fixes: 7ad2ed1dfcbe ("mmc: tegra: enable UHS-I modes")
+mmc1: mmc_rescan_try_freq: trying to init card at 468750 Hz
+[for 480 MHz source clock divided by 1024]
+
+The code in sdhci_calc_clk() already chooses a correct SDCLK clock mode.
+
+Fixes: c3ed3877625f ("mmc: sdhci: add support for programmable clock mode")
+Cc: <stable@vger.kernel.org> # 4f6aa3264af4: mmc: tegra: Only advertise UHS modes if IO regulator is present
 Cc: <stable@vger.kernel.org>
-Acked-by: Adrian Hunter <adrian.hunter@intel.com>
-Reviewed-by: Thierry Reding <treding@nvidia.com>
-Tested-by: Thierry Reding <treding@nvidia.com>
 Signed-off-by: Michał Mirosław <mirq-linux@rere.qmqm.pl>
-Link: https://lore.kernel.org/r/9aff1d859935e59edd81e4939e40d6c55e0b55f6.1578390388.git.mirq-linux@rere.qmqm.pl
+Acked-by: Adrian Hunter <adrian.hunter@intel.com>
+Link: https://lore.kernel.org/r/ffb489519a446caffe7a0a05c4b9372bd52397bb.1579082031.git.mirq-linux@rere.qmqm.pl
 Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/mmc/host/sdhci-tegra.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/mmc/host/sdhci.c |   10 ++++++----
+ 1 file changed, 6 insertions(+), 4 deletions(-)
 
---- a/drivers/mmc/host/sdhci-tegra.c
-+++ b/drivers/mmc/host/sdhci-tegra.c
-@@ -174,7 +174,7 @@ static void tegra_sdhci_reset(struct sdh
- 			misc_ctrl |= SDHCI_MISC_CTRL_ENABLE_DDR50;
- 		if (soc_data->nvquirks & NVQUIRK_ENABLE_SDR104)
- 			misc_ctrl |= SDHCI_MISC_CTRL_ENABLE_SDR104;
--		if (soc_data->nvquirks & SDHCI_MISC_CTRL_ENABLE_SDR50)
-+		if (soc_data->nvquirks & NVQUIRK_ENABLE_SDR50)
- 			clk_ctrl |= SDHCI_CLOCK_CTRL_SDR50_TUNING_OVERRIDE;
- 	}
+--- a/drivers/mmc/host/sdhci.c
++++ b/drivers/mmc/host/sdhci.c
+@@ -3243,11 +3243,13 @@ int sdhci_setup_host(struct sdhci_host *
+ 	if (host->ops->get_min_clock)
+ 		mmc->f_min = host->ops->get_min_clock(host);
+ 	else if (host->version >= SDHCI_SPEC_300) {
+-		if (host->clk_mul) {
+-			mmc->f_min = (host->max_clk * host->clk_mul) / 1024;
++		if (host->clk_mul)
+ 			max_clk = host->max_clk * host->clk_mul;
+-		} else
+-			mmc->f_min = host->max_clk / SDHCI_MAX_DIV_SPEC_300;
++		/*
++		 * Divided Clock Mode minimum clock rate is always less than
++		 * Programmable Clock Mode minimum clock rate.
++		 */
++		mmc->f_min = host->max_clk / SDHCI_MAX_DIV_SPEC_300;
+ 	} else
+ 		mmc->f_min = host->max_clk / SDHCI_MAX_DIV_SPEC_200;
  
 
 
