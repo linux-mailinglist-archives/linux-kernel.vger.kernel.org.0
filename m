@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EA78E14B741
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Jan 2020 15:13:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5F5F814B86A
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Jan 2020 15:24:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729566AbgA1OMn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 28 Jan 2020 09:12:43 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34080 "EHLO mail.kernel.org"
+        id S1731520AbgA1OXV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 28 Jan 2020 09:23:21 -0500
+Received: from mail.kernel.org ([198.145.29.99]:49308 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729550AbgA1OMl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 Jan 2020 09:12:41 -0500
+        id S1726438AbgA1OXQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 28 Jan 2020 09:23:16 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8039F2468A;
-        Tue, 28 Jan 2020 14:12:40 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5C50C21739;
+        Tue, 28 Jan 2020 14:23:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1580220761;
-        bh=BAuGnV6ApDLBskZlToVXtsrcdU/YeZu3hnzsSO+iKSU=;
+        s=default; t=1580221395;
+        bh=UiW39lYgdoZFJAbb1FpAYzUdP5r50q48I0pq1VDKp70=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=lTNkn6LSKCBtmb/l9Cp43a77F7zAyi0XGs3KIEUl/ykQb+qinsoiQUPj0s+r8ql1m
-         ro6TQI7uxFN279KkIMhLtHrWD0nprNSTO2pz94dCVwHv4lENfflGXIFNQ8mfmitUl7
-         5WgGd6S51GBXlIAPL+XEoh/gzu503tbholCUad3k=
+        b=I6RCkiMzwQtdPHi54ihiidCOOYTwfR/Xs8darqAqJ1xmB6sZGlLwqBq3ob5vo+b7g
+         N0PFnPwdwH5iaZ0KUgj/JatE9PYoao7ZN43tFOt7IhxJ+RM2CIEt2q93gz29tecwbr
+         zRLEfnvuVsLrZ0DUA6gfpVqCvUUudtXY+CjT1Pz0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dan Robertson <dan@dlrobertson.com>,
-        Guenter Roeck <linux@roeck-us.net>,
+        stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>,
+        "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.4 136/183] hwmon: (shtc1) fix shtc1 and shtw1 id mask
-Date:   Tue, 28 Jan 2020 15:05:55 +0100
-Message-Id: <20200128135843.348731806@linuxfoundation.org>
+Subject: [PATCH 4.9 207/271] net: ethernet: stmmac: Fix signedness bug in ipq806x_gmac_of_parse()
+Date:   Tue, 28 Jan 2020 15:05:56 +0100
+Message-Id: <20200128135907.958181762@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200128135829.486060649@linuxfoundation.org>
-References: <20200128135829.486060649@linuxfoundation.org>
+In-Reply-To: <20200128135852.449088278@linuxfoundation.org>
+References: <20200128135852.449088278@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,37 +44,35 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Dan Robertson <dan@dlrobertson.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
 
-[ Upstream commit fdc7d8e829ec755c5cfb2f5a8d8c0cdfb664f895 ]
+[ Upstream commit 231042181dc9d6122c6faba64e99ccb25f13cc6c ]
 
-Fix an error in the bitmaskfor the shtc1 and shtw1 bitmask used to
-retrieve the chip ID from the ID register. See section 5.7 of the shtw1
-or shtc1 datasheet for details.
+The "gmac->phy_mode" variable is an enum and in this context GCC will
+treat it as an unsigned int so the error handling will never be
+triggered.
 
-Fixes: 1a539d372edd9832444e7a3daa710c444c014dc9 ("hwmon: add support for Sensirion SHTC1 sensor")
-Signed-off-by: Dan Robertson <dan@dlrobertson.com>
-Link: https://lore.kernel.org/r/20190905014554.21658-3-dan@dlrobertson.com
-[groeck: Reordered to be first in series and adjusted accordingly]
-Signed-off-by: Guenter Roeck <linux@roeck-us.net>
+Fixes: b1c17215d718 ("stmmac: add ipq806x glue layer")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/hwmon/shtc1.c | 2 +-
+ drivers/net/ethernet/stmicro/stmmac/dwmac-ipq806x.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/hwmon/shtc1.c b/drivers/hwmon/shtc1.c
-index decd7df995abf..2a18539591eaf 100644
---- a/drivers/hwmon/shtc1.c
-+++ b/drivers/hwmon/shtc1.c
-@@ -38,7 +38,7 @@ static const unsigned char shtc1_cmd_read_id_reg[]	       = { 0xef, 0xc8 };
+diff --git a/drivers/net/ethernet/stmicro/stmmac/dwmac-ipq806x.c b/drivers/net/ethernet/stmicro/stmmac/dwmac-ipq806x.c
+index 866444b6c82fa..11a4a81b0397c 100644
+--- a/drivers/net/ethernet/stmicro/stmmac/dwmac-ipq806x.c
++++ b/drivers/net/ethernet/stmicro/stmmac/dwmac-ipq806x.c
+@@ -203,7 +203,7 @@ static int ipq806x_gmac_of_parse(struct ipq806x_gmac *gmac)
+ 	struct device *dev = &gmac->pdev->dev;
  
- /* constants for reading the ID register */
- #define SHTC1_ID	  0x07
--#define SHTC1_ID_REG_MASK 0x1f
-+#define SHTC1_ID_REG_MASK 0x3f
- 
- /* delays for non-blocking i2c commands, both in us */
- #define SHTC1_NONBLOCKING_WAIT_TIME_HPM  14400
+ 	gmac->phy_mode = of_get_phy_mode(dev->of_node);
+-	if (gmac->phy_mode < 0) {
++	if ((int)gmac->phy_mode < 0) {
+ 		dev_err(dev, "missing phy mode property\n");
+ 		return -EINVAL;
+ 	}
 -- 
 2.20.1
 
