@@ -2,39 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6FF2D14B733
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Jan 2020 15:12:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C04BF14B882
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Jan 2020 15:24:26 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729431AbgA1OMM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 28 Jan 2020 09:12:12 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33302 "EHLO mail.kernel.org"
+        id S1731929AbgA1OYU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 28 Jan 2020 09:24:20 -0500
+Received: from mail.kernel.org ([198.145.29.99]:50940 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729418AbgA1OMJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 Jan 2020 09:12:09 -0500
+        id S1729965AbgA1OYS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 28 Jan 2020 09:24:18 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6553124688;
-        Tue, 28 Jan 2020 14:12:08 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 33CAC21739;
+        Tue, 28 Jan 2020 14:24:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1580220728;
-        bh=mTwtuZvVxps8eIkJHJpDXzBUnlJ1jEz84g0HQIu4pU8=;
+        s=default; t=1580221457;
+        bh=BWXwgTC96yH7/4lNOVVuyOOwuCEhDNyxq4OtgQUKj9s=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Zue7+O71TlppKPzz5tIex0k7uqKEbilvcy3Xeia50Z7Bbc8xKy7aIKuxRLdibVCPX
-         lXheGTLi3dyHLrs/ugHU8C3QawvY34ZalVDSxX86OEdtIh4EKHrHTJztQM40RQu3sS
-         vVfkJTL9yla4BWNbVQqKAuNpPRPwjfD96lGxPhmE=
+        b=gFWa/Q/3VFDXnbT9zsycq27pleR4oTR20asAWzNnUN1IW2UwuVxaAx8AC5tzedLxl
+         ikgh5oXTaIP5YspNiU1hMTvZD97bEH2GvEG+Y6FhKc5cut+MSaeTdFj0XaiRAqjf99
+         pk9SGe8JLrLAniUs2q5sdeHVAgsgeaDLnoO5cVo4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Vinod Koul <vkoul@kernel.org>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.4 124/183] dmaengine: dw: platform: Switch to acpi_dma_controller_register()
-Date:   Tue, 28 Jan 2020 15:05:43 +0100
-Message-Id: <20200128135842.295272635@linuxfoundation.org>
+        stable@vger.kernel.org, Colin Ian King <colin.king@canonical.com>,
+        Alexandru Ardelean <alexandru.ardelean@analog.com>,
+        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.9 195/271] iio: dac: ad5380: fix incorrect assignment to val
+Date:   Tue, 28 Jan 2020 15:05:44 +0100
+Message-Id: <20200128135907.099083521@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200128135829.486060649@linuxfoundation.org>
-References: <20200128135829.486060649@linuxfoundation.org>
+In-Reply-To: <20200128135852.449088278@linuxfoundation.org>
+References: <20200128135852.449088278@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,62 +45,37 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+From: Colin Ian King <colin.king@canonical.com>
 
-[ Upstream commit e7b8514e4d68bec21fc6385fa0a66797ddc34ac9 ]
+[ Upstream commit b1e18768ef1214c0a8048327918a182cabe09f9d ]
 
-There is a possibility to have registered ACPI DMA controller
-while it has been gone already.
+Currently the pointer val is being incorrectly incremented
+instead of the value pointed to by val. Fix this by adding
+in the missing * indirection operator.
 
-To avoid the potential crash, move to non-managed
-acpi_dma_controller_register().
-
-Fixes: 42c91ee71d6d ("dw_dmac: add ACPI support")
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Link: https://lore.kernel.org/r/20190820131546.75744-8-andriy.shevchenko@linux.intel.com
-Signed-off-by: Vinod Koul <vkoul@kernel.org>
+Addresses-Coverity: ("Unused value")
+Fixes: c03f2c536818 ("staging:iio:dac: Add AD5380 driver")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Reviewed-by: Alexandru Ardelean <alexandru.ardelean@analog.com>
+Signed-off-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/dma/dw/platform.c | 14 ++++++++++++--
- 1 file changed, 12 insertions(+), 2 deletions(-)
+ drivers/iio/dac/ad5380.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/dma/dw/platform.c b/drivers/dma/dw/platform.c
-index 68a4815750b51..22d0cc1855b5f 100644
---- a/drivers/dma/dw/platform.c
-+++ b/drivers/dma/dw/platform.c
-@@ -87,13 +87,20 @@ static void dw_dma_acpi_controller_register(struct dw_dma *dw)
- 	dma_cap_set(DMA_SLAVE, info->dma_cap);
- 	info->filter_fn = dw_dma_acpi_filter;
- 
--	ret = devm_acpi_dma_controller_register(dev, acpi_dma_simple_xlate,
--						info);
-+	ret = acpi_dma_controller_register(dev, acpi_dma_simple_xlate, info);
- 	if (ret)
- 		dev_err(dev, "could not register acpi_dma_controller\n");
- }
-+
-+static void dw_dma_acpi_controller_free(struct dw_dma *dw)
-+{
-+	struct device *dev = dw->dma.dev;
-+
-+	acpi_dma_controller_free(dev);
-+}
- #else /* !CONFIG_ACPI */
- static inline void dw_dma_acpi_controller_register(struct dw_dma *dw) {}
-+static inline void dw_dma_acpi_controller_free(struct dw_dma *dw) {}
- #endif /* !CONFIG_ACPI */
- 
- #ifdef CONFIG_OF
-@@ -225,6 +232,9 @@ static int dw_remove(struct platform_device *pdev)
- {
- 	struct dw_dma_chip *chip = platform_get_drvdata(pdev);
- 
-+	if (ACPI_HANDLE(&pdev->dev))
-+		dw_dma_acpi_controller_free(chip->dw);
-+
- 	if (pdev->dev.of_node)
- 		of_dma_controller_free(pdev->dev.of_node);
- 
+diff --git a/drivers/iio/dac/ad5380.c b/drivers/iio/dac/ad5380.c
+index 97d2c5111f438..8bf7fc626a9d4 100644
+--- a/drivers/iio/dac/ad5380.c
++++ b/drivers/iio/dac/ad5380.c
+@@ -221,7 +221,7 @@ static int ad5380_read_raw(struct iio_dev *indio_dev,
+ 		if (ret)
+ 			return ret;
+ 		*val >>= chan->scan_type.shift;
+-		val -= (1 << chan->scan_type.realbits) / 2;
++		*val -= (1 << chan->scan_type.realbits) / 2;
+ 		return IIO_VAL_INT;
+ 	case IIO_CHAN_INFO_SCALE:
+ 		*val = 2 * st->vref;
 -- 
 2.20.1
 
