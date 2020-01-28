@@ -2,174 +2,88 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C389814B115
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Jan 2020 09:47:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 232B514B11B
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Jan 2020 09:51:01 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726063AbgA1Irt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 28 Jan 2020 03:47:49 -0500
-Received: from lb1-smtp-cloud7.xs4all.net ([194.109.24.24]:42873 "EHLO
-        lb1-smtp-cloud7.xs4all.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725879AbgA1Irs (ORCPT
+        id S1726007AbgA1Iu6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 28 Jan 2020 03:50:58 -0500
+Received: from relay1-d.mail.gandi.net ([217.70.183.193]:13567 "EHLO
+        relay1-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725848AbgA1Iu5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 Jan 2020 03:47:48 -0500
-Received: from [IPv6:2001:983:e9a7:1:6d16:ffdc:f7c6:fc6f]
- ([IPv6:2001:983:e9a7:1:6d16:ffdc:f7c6:fc6f])
-        by smtp-cloud7.xs4all.net with ESMTPA
-        id wMX9iIoYkrNgywMXCiShaY; Tue, 28 Jan 2020 09:47:46 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=xs4all.nl; s=s1;
-        t=1580201266; bh=zsZ23T0yizz0IYOVWOZiX2msSNRRWXrfdJvBnFGECWI=;
-        h=Subject:To:From:Message-ID:Date:MIME-Version:Content-Type:From:
-         Subject;
-        b=lJIhX869O3CwbGYTgExssJ8JRG50kLhXbIv6zfQ6CwduZPbsIN2uDmHKSBdAK09xy
-         UzB3x0CA4d2Q5oUWqM5cvmMsZSHlgCRgf8hR7NXQA5O8bnV5z7BjEgYOS4PoX/EVBL
-         h2JnjtbsSeXhoLq7yQbukm7F73e5eFZJ4YS4N5eWatWz2ySey1G9eZsyZcQ88K7zRt
-         MFkPWPiTYkg7YbKgNcWowyfBHP3SUKIHJqOs5SxSeEoN6lcmwwxBc86IkV3ecpC3u7
-         9Gdes9MmPtt3a5M2V5e+ZalciOuJPmTqjOIif3KmU924WT408g1mDWruACvyMWbTAs
-         hxEPEtmWW1h+g==
-Subject: Re: [RFC][PATCH 13/15] videobuf2: do not sync buffers for DMABUF
- queues
-To:     Tomasz Figa <tfiga@chromium.org>
-Cc:     Sergey Senozhatsky <senozhatsky@chromium.org>,
-        Hans Verkuil <hans.verkuil@cisco.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Sakari Ailus <sakari.ailus@iki.fi>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Pawel Osciak <posciak@chromium.org>,
-        Linux Media Mailing List <linux-media@vger.kernel.org>,
+        Tue, 28 Jan 2020 03:50:57 -0500
+X-Originating-IP: 90.65.102.129
+Received: from localhost (lfbn-lyo-1-1670-129.w90-65.abo.wanadoo.fr [90.65.102.129])
+        (Authenticated sender: alexandre.belloni@bootlin.com)
+        by relay1-d.mail.gandi.net (Postfix) with ESMTPSA id 01A9624000D;
+        Tue, 28 Jan 2020 08:50:54 +0000 (UTC)
+Date:   Tue, 28 Jan 2020 09:50:54 +0100
+From:   Alexandre Belloni <alexandre.belloni@bootlin.com>
+To:     Geert Uytterhoeven <geert@linux-m68k.org>
+Cc:     Alessandro Zummo <a.zummo@towertech.it>,
+        Akinobu Mita <akinobu.mita@gmail.com>,
+        Joe Perches <joe@perches.com>, linux-rtc@vger.kernel.org,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-References: <20191217032034.54897-1-senozhatsky@chromium.org>
- <20191217032034.54897-14-senozhatsky@chromium.org>
- <2d0e1a9b-6c5e-ff70-9862-32c8b8aaf65f@xs4all.nl>
- <20200122050515.GB49953@google.com>
- <57f711a0-6183-74f6-ab24-ebe414cb6881@xs4all.nl>
- <CAAFQd5Dbw=B7kb-p8nkPN3GxwL0O-5q=y1HRAVUVOwv4eEAv-Q@mail.gmail.com>
-From:   Hans Verkuil <hverkuil@xs4all.nl>
-Message-ID: <84606676-9b24-5feb-0451-7db0527da3f0@xs4all.nl>
-Date:   Tue, 28 Jan 2020 09:47:43 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+Subject: Re: [PATCH] rtc: i2c/spi: Avoid inclusion of REGMAP support when not
+ needed
+Message-ID: <20200128085054.GA3398@piout.net>
+References: <20200112171349.22268-1-geert@linux-m68k.org>
+ <20200127224549.GC3273@piout.net>
+ <CAMuHMdXFkcAn8c+rPixkN0W5G14j039shhOZcvtLP_RHA9CFtQ@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <CAAFQd5Dbw=B7kb-p8nkPN3GxwL0O-5q=y1HRAVUVOwv4eEAv-Q@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-CMAE-Envelope: MS4wfOciQBP+VSXqRJdF55dcRHxvsSaKepY4n6NTV5Ab1qk06A8yXGHwjj4M5sh3TVcBt3ea5jpADtBE3JdxB52R6Zwg7OIm4NkxPYiuMJxu8tG4nzTh0m4V
- okuYHQldwnhIdQ1ydKvbviaqmGDAWzvlfMUYFcHroXszxlrwCu4ZA1hxePTILAYcxLdcLnuNy+1QAimguvx9PEHoEaiOKfS64CZvl+T69SyPYVR3yTcO3gZR
- p/MQflRIKSM9MOAXscdUKZWVr3I1asJTiod+LEi4ehYbX4D53Z+mbanwlEtB3Mwi8eUbxaRfeKXcmyvBn6NnNx6blsckfOogj5ewlv0v7wj9++1BspjH2bOV
- LOMqgUF5z8LT5a/pQZNeS20dHifIqwC8KD8aEy3vkEVqLqAVSyp+M1NkRigHJohhqFYzsmMCWjZRstfd9ExfYTnE33Ktqi3Eq++4K4EFANN1qsgCdRQGcfIk
- MLoDGQza2tF+gCSrAbw2r5bFunUu6SCm+jfazrnjIanvqDD417cAqJGtuMpPVWMWlCWhFvyCGrs24+R/kECEBz7FtJI0KPlRc/sL1COfYo8TBywJEkWkKiuH
- rzN00FwD//Ytm9KPViK6+n5y86YiUyR3G3j40t2lO4zW2w==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAMuHMdXFkcAn8c+rPixkN0W5G14j039shhOZcvtLP_RHA9CFtQ@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 1/28/20 8:19 AM, Tomasz Figa wrote:
-> On Thu, Jan 23, 2020 at 8:35 PM Hans Verkuil <hverkuil@xs4all.nl> wrote:
->>
->> On 1/22/20 6:05 AM, Sergey Senozhatsky wrote:
->>> On (20/01/10 11:30), Hans Verkuil wrote:
->>> [..]
->>>>> diff --git a/drivers/media/common/videobuf2/videobuf2-v4l2.c b/drivers/media/common/videobuf2/videobuf2-v4l2.c
->>>>> index 1762849288ae..2b9d3318e6fb 100644
->>>>> --- a/drivers/media/common/videobuf2/videobuf2-v4l2.c
->>>>> +++ b/drivers/media/common/videobuf2/videobuf2-v4l2.c
->>>>> @@ -341,8 +341,22 @@ static void set_buffer_cache_hints(struct vb2_queue *q,
->>>>>                                struct vb2_buffer *vb,
->>>>>                                struct v4l2_buffer *b)
->>>>>  {
->>>>> -   vb->need_cache_sync_on_prepare = 1;
->>>>> +   /*
->>>>> +    * DMA exporter should take care of cache syncs, so we can avoid
->>>>> +    * explicit ->prepare()/->finish() syncs.
->>>>> +    */
->>>>> +   if (q->memory == VB2_MEMORY_DMABUF) {
->>>>> +           vb->need_cache_sync_on_finish = 0;
->>>>> +           vb->need_cache_sync_on_prepare = 0;
->>>>> +           return;
->>>>> +   }
->>>>>
->>>>> +   /*
->>>>> +    * For other ->memory types we always need ->prepare() cache
->>>>> +    * sync. ->finish() cache sync, however, can be avoided when queue
->>>>> +    * direction is TO_DEVICE.
->>>>> +    */
->>>>> +   vb->need_cache_sync_on_prepare = 1;
->>>>
->>>> I'm trying to remember: what needs to be done in prepare()
->>>> for a capture buffer? I thought that for capture you only
->>>> needed to invalidate the cache in finish(), but nothing needs
->>>> to be done in the prepare().
->>>
->>> Hmm. Not sure. A precaution in case if user-space wrote to that buffer?
->>
->> But whatever was written in the buffer is going to be overwritten anyway.
->>
->> Unless I am mistaken the current situation is that the cache syncs are done
->> in both prepare and finish, regardless of the DMA direction.
->>
->> I would keep that behavior to avoid introducing any unexpected regressions.
->>
+Hi,
+
+On 28/01/2020 09:33:28+0100, Geert Uytterhoeven wrote:
+> Hi Alexandre,
 > 
-> It wouldn't be surprising if the buffer was first filled with default
-> values (e.g. all zeroes) on the CPU. That would make the cache lines
-> dirty and they could overwrite what the device writes. So we need to
-> flush (aka clean) the write-back caches on prepare for CAPTURE
-> buffers.
-
-Very true, I'd forgotten about that. This should be documented in the userspace
-documentation. And possible in this function as well.
-
-I think these issues are complex enough that there is no such things as too
-much documentation :-)
-
+> On Mon, Jan 27, 2020 at 11:45 PM Alexandre Belloni
+> <alexandre.belloni@bootlin.com> wrote:
+> > On 12/01/2020 18:13:49+0100, Geert Uytterhoeven wrote:
+> > > Merely enabling I2C and RTC selects REGMAP_I2C and REGMAP_SPI, even when
+> > > no driver needs it.  While the former can be moduler, the latter cannot,
+> > > and thus becomes built-in.
+> > >
+> > > Fix this by moving the select statements for REGMAP_I2C and REGMAP_SPI
+> > > from the RTC_I2C_AND_SPI helper to the individual drivers that depend on
+> > > it.
+> > >
+> > > Note that the comment for RTC_I2C_AND_SPI refers to SND_SOC_I2C_AND_SPI
+> > > for more information, but the latter does not select REGMAP_{I2C,SPI}
+> > > itself, and defers that to the individual drivers, too.
+> > >
+> > > Fixes: 080481f54ef62121 ("rtc: merge ds3232 and ds3234")
+> > > Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
+> > > ---
+> > > Joe: When merging addresses, scripts/get_maintainer.pl replaces
+> > >      Alexandre's authoritative email address from MAINTAINERS by the
+> > >      obsolete address in the SoB-line of the commit referred to by the
+> > >      Fixes-line.
+> > >
+> > >  drivers/rtc/Kconfig | 8 ++++++--
+> > >  1 file changed, 6 insertions(+), 2 deletions(-)
+> > >
+> > Applied, thanks.
 > 
->> Then, if q->allow_cache_hint is set, then default to a cache sync (cache clean)
->> in the prepare for OUTPUT buffers and a cache sync (cache invalidate) in the
->> finish for CAPTURE buffers.
+> According to the reports from kbuild test report, some drivers are still
+> missing some selects, which is exposed by this patch.
+> But perhaps you have already fixed those in your tree?
 > 
-> I'd still default to the existing behavior even if allow_cache_hint is
-> set, because of what I wrote above. Then if the userspace doesn't ever
-> write to the buffers, it can request no flush/clean by setting the
-> V4L2_BUF_FLAG_NO_CACHE_CLEAN flag when queuing the buffer.
-> 
->>
->> This also means that any drivers that want to access a buffer in between the
->> prepare...finish calls will need to do a begin/end_cpu_access. But that's a
->> separate matter.
-> 
-> AFAIR with current design of the series, the drivers can opt-in for
-> userspace cache sync hints, so by default even if the userspace
-> requests sync to be skipped, it wouldn't have any effect unless the
-> driver allows so. Then I'd imagine migrating all the drivers to
-> request clean/invalidate explicitly. Note that the DMA-buf
-> begin/end_cpu_access isn't enough here. We'd need something like
-> vb2_begin/end_cpu_access() which also takes care of syncing
-> inconsistent MMAP and USERPTR buffers.
 
-I did just that in my old git branch for this:
+I did fix a bunch of those in
+https://git.kernel.org/pub/scm/linux/kernel/git/abelloni/linux.git/commit/?h=rtc-next&id=578c2b661e2b1b474ea3571a3c3c6d57bae89e8d
 
-https://git.linuxtv.org/hverkuil/media_tree.git/log/?h=vb2-cpu-access
+kbuild reported that it successfully built a few configuration with that
+patch applied so I'm hoping it is enough.
 
-Regards,
-
-	Hans
-
-> 
->>
->> Regards,
->>
->>         Hans
->>
->>>
->>> +     if (q->dma_dir == DMA_FROM_DEVICE)
->>> +             q->need_cache_sync_on_prepare = 0;
->>>
->>> ?
->>>
->>>       -ss
->>>
->>
-
+-- 
+Alexandre Belloni, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
