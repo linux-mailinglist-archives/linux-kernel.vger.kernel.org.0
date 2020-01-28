@@ -2,40 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 29F8414B73D
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Jan 2020 15:12:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0803214B865
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Jan 2020 15:24:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727499AbgA1OMf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 28 Jan 2020 09:12:35 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33862 "EHLO mail.kernel.org"
+        id S1731991AbgA1OXJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 28 Jan 2020 09:23:09 -0500
+Received: from mail.kernel.org ([198.145.29.99]:49118 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727345AbgA1OMb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 Jan 2020 09:12:31 -0500
+        id S1731940AbgA1OXG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 28 Jan 2020 09:23:06 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 540932468D;
-        Tue, 28 Jan 2020 14:12:30 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 67B172468D;
+        Tue, 28 Jan 2020 14:23:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1580220750;
-        bh=BWXwgTC96yH7/4lNOVVuyOOwuCEhDNyxq4OtgQUKj9s=;
+        s=default; t=1580221385;
+        bh=I9QF16T1RB8KtQQlUk02ivaRSDOJiMRfX7DO32BOe1s=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=k+hhK53KsIwsDp1jeZrOjd1EMzdJ5r0yueraTVxw7pxwMFF8TZjwWKrvaippp/zr8
-         W+lr5l2HqTbQRdrRu6SRkHkMyNBAbcr+P2B9NKDKorV5l2kF+3ONlBx143hg5RXnx3
-         TdKEcSKiTxpp832S3VoEfijMl8cp0+nDbj0WRhBQ=
+        b=vW64iHrYpK+Pr/yks9sBWtVQ24E4KHgPfxSqAatF5WtORW/xgNxjkf5Rq0vSF/CNp
+         aSmCTc+fIVSDP94/c3f+6oaERd3loLY0atHSOBLONx3/XEylLZwXbfLVeOX67N3k6b
+         mGTD0Cssb8a420PglVX6jL0hiTrZ8krYPNl2HQjY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Colin Ian King <colin.king@canonical.com>,
-        Alexandru Ardelean <alexandru.ardelean@analog.com>,
-        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+        stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.4 132/183] iio: dac: ad5380: fix incorrect assignment to val
-Date:   Tue, 28 Jan 2020 15:05:51 +0100
-Message-Id: <20200128135843.006986780@linuxfoundation.org>
+Subject: [PATCH 4.9 204/271] net: broadcom/bcmsysport: Fix signedness in bcm_sysport_probe()
+Date:   Tue, 28 Jan 2020 15:05:53 +0100
+Message-Id: <20200128135907.745239721@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200128135829.486060649@linuxfoundation.org>
-References: <20200128135829.486060649@linuxfoundation.org>
+In-Reply-To: <20200128135852.449088278@linuxfoundation.org>
+References: <20200128135852.449088278@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,37 +45,36 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
 
-[ Upstream commit b1e18768ef1214c0a8048327918a182cabe09f9d ]
+[ Upstream commit 25a584955f020d6ec499c513923fb220f3112d2b ]
 
-Currently the pointer val is being incorrectly incremented
-instead of the value pointed to by val. Fix this by adding
-in the missing * indirection operator.
+The "priv->phy_interface" variable is an enum and in this context GCC
+will treat it as unsigned so the error handling will never be
+triggered.
 
-Addresses-Coverity: ("Unused value")
-Fixes: c03f2c536818 ("staging:iio:dac: Add AD5380 driver")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
-Reviewed-by: Alexandru Ardelean <alexandru.ardelean@analog.com>
-Signed-off-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+Fixes: 80105befdb4b ("net: systemport: add Broadcom SYSTEMPORT Ethernet MAC driver")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Acked-by: Florian Fainelli <f.fainelli@gmail.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/iio/dac/ad5380.c | 2 +-
+ drivers/net/ethernet/broadcom/bcmsysport.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/iio/dac/ad5380.c b/drivers/iio/dac/ad5380.c
-index 97d2c5111f438..8bf7fc626a9d4 100644
---- a/drivers/iio/dac/ad5380.c
-+++ b/drivers/iio/dac/ad5380.c
-@@ -221,7 +221,7 @@ static int ad5380_read_raw(struct iio_dev *indio_dev,
- 		if (ret)
- 			return ret;
- 		*val >>= chan->scan_type.shift;
--		val -= (1 << chan->scan_type.realbits) / 2;
-+		*val -= (1 << chan->scan_type.realbits) / 2;
- 		return IIO_VAL_INT;
- 	case IIO_CHAN_INFO_SCALE:
- 		*val = 2 * st->vref;
+diff --git a/drivers/net/ethernet/broadcom/bcmsysport.c b/drivers/net/ethernet/broadcom/bcmsysport.c
+index 95874c10c23b6..e3b41af65d188 100644
+--- a/drivers/net/ethernet/broadcom/bcmsysport.c
++++ b/drivers/net/ethernet/broadcom/bcmsysport.c
+@@ -1773,7 +1773,7 @@ static int bcm_sysport_probe(struct platform_device *pdev)
+ 
+ 	priv->phy_interface = of_get_phy_mode(dn);
+ 	/* Default to GMII interface mode */
+-	if (priv->phy_interface < 0)
++	if ((int)priv->phy_interface < 0)
+ 		priv->phy_interface = PHY_INTERFACE_MODE_GMII;
+ 
+ 	/* In the case of a fixed PHY, the DT node associated
 -- 
 2.20.1
 
