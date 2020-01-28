@@ -2,40 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1AE7C14B6CC
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Jan 2020 15:08:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id F3EAD14B7EC
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Jan 2020 15:20:43 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728476AbgA1OIX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 28 Jan 2020 09:08:23 -0500
-Received: from mail.kernel.org ([198.145.29.99]:56326 "EHLO mail.kernel.org"
+        id S1730095AbgA1OSy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 28 Jan 2020 09:18:54 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43032 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728202AbgA1OIT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 Jan 2020 09:08:19 -0500
+        id S1730740AbgA1OSw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 28 Jan 2020 09:18:52 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D8B4422522;
-        Tue, 28 Jan 2020 14:08:18 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B7A292071E;
+        Tue, 28 Jan 2020 14:18:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1580220499;
-        bh=45d2iO0H2cOy137iGO3K3lbg8WV9KCUgEqKusADk4l0=;
+        s=default; t=1580221132;
+        bh=ADnRa4oNoXPIoll2MpgGv4g0MHmPBHVYvmPDaUp5uPw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=LqWFJK02qAlA9sKWy9Enw6Dbk0oFw/suGHoDyvcG/S1OXO7wEGc5SDFrwvrsRI1Gk
-         z3INl8XWurCgpV4J/i8tUWj1+09WsjukaEPk4L2/fVzcLO172+unnDboTlOLYsr2bK
-         0/4TBCYVONEiXeBvZ+HGVEtKkB5MmUSUGBvGTBm4=
+        b=LNvtESskIb/LIbIMni20o4KXClmYTI7bgao/jKeAw+V+AizQ2oO3VQodjmZ3YIz+2
+         r+g75aGKmHCV3gmpRgJxT1MVlYEPejlWa5edO30sgEqgH3uD77fYSLaB0z1ED21KSR
+         gQm33J/1ejJMRa/P9Jlsn8Gkl49XEs48624UjYgU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Yangtao Li <tiny.windzz@gmail.com>,
-        Gregory CLEMENT <gregory.clement@bootlin.com>,
-        Stephen Boyd <sboyd@kernel.org>,
+        stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>,
+        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.4 030/183] clk: kirkwood: fix refcount leak in kirkwood_clk_init()
+Subject: [PATCH 4.9 100/271] media: wl128x: Fix an error code in fm_download_firmware()
 Date:   Tue, 28 Jan 2020 15:04:09 +0100
-Message-Id: <20200128135833.037000115@linuxfoundation.org>
+Message-Id: <20200128135900.040243747@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200128135829.486060649@linuxfoundation.org>
-References: <20200128135829.486060649@linuxfoundation.org>
+In-Reply-To: <20200128135852.449088278@linuxfoundation.org>
+References: <20200128135852.449088278@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,36 +45,38 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Yangtao Li <tiny.windzz@gmail.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
 
-[ Upstream commit e7beeab9c61591cd0e690d8733d534c3f4278ff8 ]
+[ Upstream commit ef4bb63dc1f7213c08e13f6943c69cd27f69e4a3 ]
 
-The of_find_compatible_node() returns a node pointer with refcount
-incremented, but there is the lack of use of the of_node_put() when
-done. Add the missing of_node_put() to release the refcount.
+We forgot to set "ret" on this error path.
 
-Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
-Reviewed-by: Gregory CLEMENT <gregory.clement@bootlin.com>
-Fixes: 58d516ae95cb ("clk: mvebu: kirkwood: maintain clock init order")
-Signed-off-by: Stephen Boyd <sboyd@kernel.org>
+Fixes: e8454ff7b9a4 ("[media] drivers:media:radio: wl128x: FM Driver Common sources")
+
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
+Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/clk/mvebu/kirkwood.c | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/media/radio/wl128x/fmdrv_common.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/clk/mvebu/kirkwood.c b/drivers/clk/mvebu/kirkwood.c
-index 99550f25975ea..1d2b9a1a96094 100644
---- a/drivers/clk/mvebu/kirkwood.c
-+++ b/drivers/clk/mvebu/kirkwood.c
-@@ -335,6 +335,8 @@ static void __init kirkwood_clk_init(struct device_node *np)
- 	if (cgnp) {
- 		mvebu_clk_gating_setup(cgnp, kirkwood_gating_desc);
- 		kirkwood_clk_muxing_setup(cgnp, kirkwood_mux_desc);
-+
-+		of_node_put(cgnp);
- 	}
- }
- CLK_OF_DECLARE(kirkwood_clk, "marvell,kirkwood-core-clock",
+diff --git a/drivers/media/radio/wl128x/fmdrv_common.c b/drivers/media/radio/wl128x/fmdrv_common.c
+index c1457cf466981..db987dda356e0 100644
+--- a/drivers/media/radio/wl128x/fmdrv_common.c
++++ b/drivers/media/radio/wl128x/fmdrv_common.c
+@@ -1278,8 +1278,9 @@ static int fm_download_firmware(struct fmdev *fmdev, const u8 *fw_name)
+ 
+ 		switch (action->type) {
+ 		case ACTION_SEND_COMMAND:	/* Send */
+-			if (fmc_send_cmd(fmdev, 0, 0, action->data,
+-						action->size, NULL, NULL))
++			ret = fmc_send_cmd(fmdev, 0, 0, action->data,
++					   action->size, NULL, NULL);
++			if (ret)
+ 				goto rel_fw;
+ 
+ 			cmd_cnt++;
 -- 
 2.20.1
 
