@@ -2,144 +2,126 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 31DDB14B822
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Jan 2020 15:21:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0F00414B65F
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Jan 2020 15:04:52 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731171AbgA1OU5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 28 Jan 2020 09:20:57 -0500
-Received: from mail.kernel.org ([198.145.29.99]:45974 "EHLO mail.kernel.org"
+        id S1728105AbgA1OEc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 28 Jan 2020 09:04:32 -0500
+Received: from mail.kernel.org ([198.145.29.99]:51638 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731144AbgA1OUz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 Jan 2020 09:20:55 -0500
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        id S1728070AbgA1OE1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 28 Jan 2020 09:04:27 -0500
+Received: from localhost (173-25-83-245.client.mchsi.com [173.25.83.245])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3C0DF24688;
-        Tue, 28 Jan 2020 14:20:53 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 212012468F;
+        Tue, 28 Jan 2020 14:04:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1580221253;
-        bh=VlTm21CudXxI9MsRLV27o43q5O6M17krNLwXLviJQBk=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ZdKMuQZlSbORErhb1WjPRzQJHAUI08LuelemlJzrSXWhMtYoCyRg38mVqIiFAmTyl
-         GfmuHkT2MTl2NtCGeRwcqw8pQj2jGQXFcQXqcHp77uG6yJYY/Ekmuq8BpsuZYmqDPe
-         RvqD7dcQ30TcGbbfBkqf6P0PicAG+VQA8vI+rb38=
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Himanshu Madhani <hmadhani@marvell.com>,
-        Giridhar Malavali <giridhar.malavali@qlogic.com>,
-        Bart Van Assche <bvanassche@acm.org>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 114/271] scsi: qla2xxx: Unregister chrdev if module initialization fails
-Date:   Tue, 28 Jan 2020 15:04:23 +0100
-Message-Id: <20200128135901.063091208@linuxfoundation.org>
-X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200128135852.449088278@linuxfoundation.org>
-References: <20200128135852.449088278@linuxfoundation.org>
-User-Agent: quilt/0.66
+        s=default; t=1580220266;
+        bh=ub4UwKqrZMgy6+sqrMhH+mrNyxJs1wj0mog/wg3Wxx0=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:From;
+        b=2UXpA6vi6H0YSp/fpxanVwcpc42jUmIi3kYBrYYIq/in9lxz55IcxTVto6yR3Qns0
+         zTf0Qdk2pZcJzQ+ZCjDYagC9ZENOLyQudDxjhQc0n4CwKAJ38zq+TdHLcBE/OuOwMK
+         askCzG5zDppDZuwGYKJ+jhu/ibUp1dTtJS5tGHcA=
+Date:   Tue, 28 Jan 2020 08:04:24 -0600
+From:   Bjorn Helgaas <helgaas@kernel.org>
+To:     Bharat Kumar Gogada <bharat.kumar.gogada@xilinx.com>
+Cc:     linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
+        rgummal@xilinx.com
+Subject: Re: [PATCH v4 2/2] PCI: xilinx-cpm: Add Versal CPM Root Port driver
+Message-ID: <20200128140424.GA150109@google.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1580215483-8835-3-git-send-email-bharat.kumar.gogada@xilinx.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Bart Van Assche <bvanassche@acm.org>
+On Tue, Jan 28, 2020 at 06:14:43PM +0530, Bharat Kumar Gogada wrote:
+> - Add support for Versal CPM as Root Port.
+> - The Versal ACAP devices include CCIX-PCIe Module (CPM). The integrated
+>   block for CPM along with the integrated bridge can function
+>   as PCIe Root Port.
+> - CPM Versal uses GICv3 ITS feature for achieving assigning MSI/MSI-X
+>   vectors and handling MSI/MSI-X interrupts.
+> - Bridge error and legacy interrupts in Versal CPM are handled using
+>   Versal CPM specific MISC interrupt line.
+> 
+> Changes v4:
+> - change commit subject.
+> - Remove unnecessary comments and type cast.
+> - Added comments for CPM block register access using readl/writel.
+> 
+> Signed-off-by: Bharat Kumar Gogada <bharat.kumar.gogada@xilinx.com>
+> ...
 
-[ Upstream commit c794d24ec9eb6658909955772e70f34bef5b5b91 ]
+> +static bool xilinx_cpm_pcie_valid_device(struct pci_bus *bus,
+> +					 unsigned int devfn)
+> +{
+> +	struct xilinx_cpm_pcie_port *port = bus->sysdata;
+> +
+> +	/* Only one device down on each root port */
+> +	if (bus->number == port->root_busno && devfn > 0)
+> +		return false;
 
-If module initialization fails after the character device has been
-registered, unregister the character device. Additionally, avoid
-duplicating error path code.
+This whole *_valid_device() thing is a mess.  We shouldn't need it at
+all.  But if we *do* need it, I don't think you should check the
+entire devfn because that means you can't attach a multifunction
+device.
 
-Cc: Himanshu Madhani <hmadhani@marvell.com>
-Cc: Giridhar Malavali <giridhar.malavali@qlogic.com>
-Fixes: 6a03b4cd78f3 ("[SCSI] qla2xxx: Add char device to increase driver use count") # v2.6.35.
-Signed-off-by: Bart Van Assche <bvanassche@acm.org>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- drivers/scsi/qla2xxx/qla_os.c | 34 +++++++++++++++++++++-------------
- 1 file changed, 21 insertions(+), 13 deletions(-)
+Several other drivers with similar *_valid_device() implementations
+check only PCI_SLOT():
 
-diff --git a/drivers/scsi/qla2xxx/qla_os.c b/drivers/scsi/qla2xxx/qla_os.c
-index 3bae56b202f87..e730aabc26d0d 100644
---- a/drivers/scsi/qla2xxx/qla_os.c
-+++ b/drivers/scsi/qla2xxx/qla_os.c
-@@ -6055,8 +6055,7 @@ qla2x00_module_init(void)
- 	/* Initialize target kmem_cache and mem_pools */
- 	ret = qlt_init();
- 	if (ret < 0) {
--		kmem_cache_destroy(srb_cachep);
--		return ret;
-+		goto destroy_cache;
- 	} else if (ret > 0) {
- 		/*
- 		 * If initiator mode is explictly disabled by qlt_init(),
-@@ -6075,11 +6074,10 @@ qla2x00_module_init(void)
- 	qla2xxx_transport_template =
- 	    fc_attach_transport(&qla2xxx_transport_functions);
- 	if (!qla2xxx_transport_template) {
--		kmem_cache_destroy(srb_cachep);
- 		ql_log(ql_log_fatal, NULL, 0x0002,
- 		    "fc_attach_transport failed...Failing load!.\n");
--		qlt_exit();
--		return -ENODEV;
-+		ret = -ENODEV;
-+		goto qlt_exit;
- 	}
- 
- 	apidev_major = register_chrdev(0, QLA2XXX_APIDEV, &apidev_fops);
-@@ -6091,27 +6089,37 @@ qla2x00_module_init(void)
- 	qla2xxx_transport_vport_template =
- 	    fc_attach_transport(&qla2xxx_transport_vport_functions);
- 	if (!qla2xxx_transport_vport_template) {
--		kmem_cache_destroy(srb_cachep);
--		qlt_exit();
--		fc_release_transport(qla2xxx_transport_template);
- 		ql_log(ql_log_fatal, NULL, 0x0004,
- 		    "fc_attach_transport vport failed...Failing load!.\n");
--		return -ENODEV;
-+		ret = -ENODEV;
-+		goto unreg_chrdev;
- 	}
- 	ql_log(ql_log_info, NULL, 0x0005,
- 	    "QLogic Fibre Channel HBA Driver: %s.\n",
- 	    qla2x00_version_str);
- 	ret = pci_register_driver(&qla2xxx_pci_driver);
- 	if (ret) {
--		kmem_cache_destroy(srb_cachep);
--		qlt_exit();
--		fc_release_transport(qla2xxx_transport_template);
--		fc_release_transport(qla2xxx_transport_vport_template);
- 		ql_log(ql_log_fatal, NULL, 0x0006,
- 		    "pci_register_driver failed...ret=%d Failing load!.\n",
- 		    ret);
-+		goto release_vport_transport;
- 	}
- 	return ret;
-+
-+release_vport_transport:
-+	fc_release_transport(qla2xxx_transport_vport_template);
-+
-+unreg_chrdev:
-+	if (apidev_major >= 0)
-+		unregister_chrdev(apidev_major, QLA2XXX_APIDEV);
-+	fc_release_transport(qla2xxx_transport_template);
-+
-+qlt_exit:
-+	qlt_exit();
-+
-+destroy_cache:
-+	kmem_cache_destroy(srb_cachep);
-+	return ret;
- }
- 
- /**
--- 
-2.20.1
+  dw_pcie_valid_device()
+  advk_pcie_valid_device()
+  pci_dw_valid_device()
+  altera_pcie_valid_device()
+  mobiveil_pcie_valid_device()
+  rockchip_pcie_valid_device()
 
+Even checking just PCI_SLOT() is problematic because I think an ARI
+device with more than 8 functions will not work correctly.
 
+What exactly happens if you omit this function, i.e., if we just go
+ahead and attempt config accesses when the device is not present?  We
+*should* get something like an Unsupported Request completion, and
+that *should* be a recoverable error.  Most hardware turns this error
+into read data of 0xffffffff.  The OS should be able to figure out
+that there's no device there and continue with no ill effects.
 
+> +	return true;
+> +}
+> +
+> +/**
+> + * xilinx_cpm_pcie_map_bus - Get configuration base
+> + * @bus: PCI Bus structure
+> + * @devfn: Device/function
+> + * @where: Offset from base
+> + *
+> + * Return: Base address of the configuration space needed to be
+> + *	   accessed.
+> + */
+> +static void __iomem *xilinx_cpm_pcie_map_bus(struct pci_bus *bus,
+> +					     unsigned int devfn, int where)
+> +{
+> +	struct xilinx_cpm_pcie_port *port = bus->sysdata;
+> +	int relbus;
+> +
+> +	if (!xilinx_cpm_pcie_valid_device(bus, devfn))
+> +		return NULL;
+> +
+> +	relbus = (bus->number << ECAM_BUS_NUM_SHIFT) |
+> +		 (devfn << ECAM_DEV_NUM_SHIFT);
+> +
+> +	return port->reg_base + relbus + where;
+> +}
+> +
+> +/* PCIe operations */
+> +static struct pci_ops xilinx_cpm_pcie_ops = {
+> +	.map_bus = xilinx_cpm_pcie_map_bus,
+> +	.read	= pci_generic_config_read,
+> +	.write	= pci_generic_config_write,
+> +};
