@@ -2,40 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8EDBB14B8B3
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Jan 2020 15:27:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 810B214B8B5
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Jan 2020 15:27:10 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733186AbgA1O0d (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 28 Jan 2020 09:26:33 -0500
-Received: from mail.kernel.org ([198.145.29.99]:53954 "EHLO mail.kernel.org"
+        id S1733198AbgA1O0h (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 28 Jan 2020 09:26:37 -0500
+Received: from mail.kernel.org ([198.145.29.99]:54060 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1733177AbgA1O0b (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 Jan 2020 09:26:31 -0500
+        id S1732570AbgA1O0g (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 28 Jan 2020 09:26:36 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C717E2468F;
-        Tue, 28 Jan 2020 14:26:29 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 08EB12468D;
+        Tue, 28 Jan 2020 14:26:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1580221590;
-        bh=g98h9zgHGfmJG7qp7shi05vz6GMzSl3GulPJVilvKv0=;
+        s=default; t=1580221595;
+        bh=QHFduYetVXp18KqrwLRNczgW2umXofVRO1RGBi7dz+8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=dyXO3naSgRkhM74YmulaDE2HRsVCgE4WTYwAxRddBlUyAe6/ZJUO3RRI90JoPGkI0
-         yVlxFB/6jjdmsG4yN2ofEomUvT7HFsKXEpaCKNlkjiQw+vOWDOSKYCBi5ndEY7HN4R
-         PI1BYwi+1umhRMsrAW01VEO57Bq372ROQH03WA2c=
+        b=m6fWFlbggikSAV10uBJwufuRISd1TUcQcVMao/csKzFTp1XnXwA/8QssZrk5ua8Ce
+         MfWfvA8zgykz7MIG61ENKm+V3L9BSC7Q6KDE1cdOAX5/FAEEo4e9J7zHdJ/LRlPAO+
+         x+0mPpdobDVreSzwR1UYNA+sEIsZSZWs+MECyqKE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        syzbot+2f07903a5b05e7f36410@syzkaller.appspotmail.com,
-        Eric Dumazet <eric.dumazet@gmail.com>,
-        Cong Wang <xiyou.wangcong@gmail.com>,
-        Eric Dumazet <edumazet@google.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        syzbot+5af9a90dad568aa9f611@syzkaller.appspotmail.com
-Subject: [PATCH 4.19 11/92] net_sched: fix datalen for ematch
-Date:   Tue, 28 Jan 2020 15:07:39 +0100
-Message-Id: <20200128135810.628462755@linuxfoundation.org>
+        stable@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
+        Jouni Hogander <jouni.hogander@unikie.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.19 13/92] net-sysfs: fix netdev_queue_add_kobject() breakage
+Date:   Tue, 28 Jan 2020 15:07:41 +0100
+Message-Id: <20200128135810.897145079@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
 In-Reply-To: <20200128135809.344954797@linuxfoundation.org>
 References: <20200128135809.344954797@linuxfoundation.org>
@@ -48,47 +44,31 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Cong Wang <xiyou.wangcong@gmail.com>
+From: Eric Dumazet <edumazet@google.com>
 
-[ Upstream commit 61678d28d4a45ef376f5d02a839cc37509ae9281 ]
+commit 48a322b6f9965b2f1e4ce81af972f0e287b07ed0 upstream.
 
-syzbot reported an out-of-bound access in em_nbyte. As initially
-analyzed by Eric, this is because em_nbyte sets its own em->datalen
-in em_nbyte_change() other than the one specified by user, but this
-value gets overwritten later by its caller tcf_em_validate().
-We should leave em->datalen untouched to respect their choices.
+kobject_put() should only be called in error path.
 
-I audit all the in-tree ematch users, all of those implement
-->change() set em->datalen, so we can just avoid setting it twice
-in this case.
-
-Reported-and-tested-by: syzbot+5af9a90dad568aa9f611@syzkaller.appspotmail.com
-Reported-by: syzbot+2f07903a5b05e7f36410@syzkaller.appspotmail.com
-Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
-Cc: Eric Dumazet <eric.dumazet@gmail.com>
-Signed-off-by: Cong Wang <xiyou.wangcong@gmail.com>
-Reviewed-by: Eric Dumazet <edumazet@google.com>
+Fixes: b8eb718348b8 ("net-sysfs: Fix reference count leak in rx|netdev_queue_add_kobject")
+Signed-off-by: Eric Dumazet <edumazet@google.com>
+Cc: Jouni Hogander <jouni.hogander@unikie.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- net/sched/ematch.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/net/sched/ematch.c
-+++ b/net/sched/ematch.c
-@@ -267,12 +267,12 @@ static int tcf_em_validate(struct tcf_pr
- 				}
- 				em->data = (unsigned long) v;
- 			}
-+			em->datalen = data_len;
- 		}
- 	}
+---
+ net/core/net-sysfs.c |    1 +
+ 1 file changed, 1 insertion(+)
+
+--- a/net/core/net-sysfs.c
++++ b/net/core/net-sysfs.c
+@@ -1484,6 +1484,7 @@ static int netdev_queue_add_kobject(stru
+ #endif
  
- 	em->matchid = em_hdr->matchid;
- 	em->flags = em_hdr->flags;
--	em->datalen = data_len;
- 	em->net = net;
+ 	kobject_uevent(kobj, KOBJ_ADD);
++	return 0;
  
- 	err = 0;
+ err:
+ 	kobject_put(kobj);
 
 
