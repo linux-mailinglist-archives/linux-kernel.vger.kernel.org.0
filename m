@@ -2,148 +2,160 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1184D14BB93
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Jan 2020 15:48:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E1D9914BC44
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Jan 2020 15:51:48 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727250AbgA1OsG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 28 Jan 2020 09:48:06 -0500
-Received: from mail-eopbgr70089.outbound.protection.outlook.com ([40.107.7.89]:6314
-        "EHLO EUR04-HE1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726296AbgA1OsC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 Jan 2020 09:48:02 -0500
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=gIeHtMwWIxYm639DNzTuUcJsCmjFh0+5P09SBXAz7fKznCgWhOvEaRLv3xfAAwAd4uc8GAJ6GTzT2q2q30wzoYMIcuJXD1LjkqpbEUJ7kVBY9+JVmSH5D9ChmBrsErp+UNPjpzQgVVHGGMyGWLOTMZrheD3V/nN3BgakzXVFG6+jOmeKb70ickVthzL8ZiMsaPj2vM60cSwrnQSkVlGTU6ViP95hj2GBytM0+r8d3P2l0YAqgrgtkl8uM0beDDI2j7D0GaZY4mfD3X14QIFQrqx9qVjsK8WrKzoJWY69dZXmTTXx5Xf5s6wfABUR4LuBIEuyssQvE12ivy/XFqDmWQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=DiyDTYxr1XOqgjnvzJaRqcWcUU92825C3UPpV3vUFjU=;
- b=IybQ6fZ4N1hOn96ikrhgHAwArAuCo45ws1ZbWozmaPH4wDcYrTUxR5GZa+/pRQv/s25pZi3kyExsNZprM9zx/Er3wROmrPycgW42PrkSo1/0dzp5wkvuS9eW2yluYcFNajYS1IYh6eSXiYQN5VX+K7JDMvyWVl7ajYeLBwUcei7WDcP0FNAG1LP9SMy3u1u0tdv7tjy7v7w64lNJ5h/kvT97Gni+zUCkrZgMNH35GcWoSpD+qCikxtVOhUVcgEtC7TPm3c98yKxLWDpGI5c6EDQFckGC9Y9Il+aZAog8Y0wi11mweCLDMxz/D+CKUV75TIoW62SVzwoUCsH4DtHEOQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=DiyDTYxr1XOqgjnvzJaRqcWcUU92825C3UPpV3vUFjU=;
- b=DG/6lxICmLRtLA5+J1w6azrJ1UyqeulVoyVlRklpTj8vwvVWNFwbCmrzt1NotsYIU88TqO33ZYmOiAokvwH2ZwfqEu+xWF1F62YM9f93bRhMPaXdF+C941UTrjE62IpmD6yP0TkPfPN0IZ0MSwyuInwiGAJfS9RQzeKVHWAJkIE=
-Received: from VI1PR04MB7023.eurprd04.prod.outlook.com (10.186.159.144) by
- VI1PR04MB5967.eurprd04.prod.outlook.com (20.178.121.27) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2665.26; Tue, 28 Jan 2020 14:47:59 +0000
-Received: from VI1PR04MB7023.eurprd04.prod.outlook.com
- ([fe80::58c5:f02f:2211:4953]) by VI1PR04MB7023.eurprd04.prod.outlook.com
- ([fe80::58c5:f02f:2211:4953%7]) with mapi id 15.20.2665.026; Tue, 28 Jan 2020
- 14:47:59 +0000
-From:   Leonard Crestez <leonard.crestez@nxp.com>
-To:     Peng Fan <peng.fan@nxp.com>
-CC:     "sboyd@kernel.org" <sboyd@kernel.org>,
-        "shawnguo@kernel.org" <shawnguo@kernel.org>,
-        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
-        "festevam@gmail.com" <festevam@gmail.com>,
-        Abel Vesa <abel.vesa@nxp.com>,
-        "kernel@pengutronix.de" <kernel@pengutronix.de>,
-        dl-linux-imx <linux-imx@nxp.com>,
-        Aisheng Dong <aisheng.dong@nxp.com>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Anson Huang <anson.huang@nxp.com>,
-        Jacky Bai <ping.bai@nxp.com>,
-        "l.stach@pengutronix.de" <l.stach@pengutronix.de>
-Subject: Re: [PATCH V4 0/4] clk: imx: imx8m: introduce
- imx8m_clk_hw_composite_core
-Thread-Topic: [PATCH V4 0/4] clk: imx: imx8m: introduce
- imx8m_clk_hw_composite_core
-Thread-Index: AQHV1ZvHklheOLKStkK+igJOK/WgpA==
-Date:   Tue, 28 Jan 2020 14:47:59 +0000
-Message-ID: <VI1PR04MB7023201D8DF545198F1B6CB6EE0A0@VI1PR04MB7023.eurprd04.prod.outlook.com>
-References: <1580189015-5744-1-git-send-email-peng.fan@nxp.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=leonard.crestez@nxp.com; 
-x-originating-ip: [89.37.124.34]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-ht: Tenant
-x-ms-office365-filtering-correlation-id: ad4081eb-d4c4-4209-fc29-08d7a40111ce
-x-ms-traffictypediagnostic: VI1PR04MB5967:|VI1PR04MB5967:
-x-ms-exchange-transport-forked: True
-x-microsoft-antispam-prvs: <VI1PR04MB5967907B8EBBDE392CBA3B10EE0A0@VI1PR04MB5967.eurprd04.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:8273;
-x-forefront-prvs: 029651C7A1
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(366004)(39860400002)(376002)(136003)(346002)(396003)(199004)(189003)(33656002)(44832011)(26005)(6636002)(186003)(53546011)(8936002)(6506007)(316002)(478600001)(2906002)(54906003)(86362001)(81166006)(7696005)(6862004)(4326008)(71200400001)(55016002)(9686003)(8676002)(81156014)(91956017)(66556008)(76116006)(66946007)(5660300002)(66446008)(66476007)(52536014)(64756008)(32563001)(15585785002);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR04MB5967;H:VI1PR04MB7023.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: z12dsSMbbKmP0r+XCPGDfPXMWBwu0hXF9gbd5U3KNvUvcMI5CVCKBZt3hp1WaeJuYlNh/y2XkKIH9FeNpHUumgxQog+6eOS5bWtjIxZ03/pYzBfsjnhrhrRWydrtgkSC2f2xJgMQK+xFj6x+Bj/prS8XvX19cKIYK9XdepIal5BQehDCgQAvJpm8Im5a1nJFA0syW/1d0nMIVq5eO5WM3PxL4mEb06vzgxxGlPweFlO2KVDauvK3D+oc0w2RXU/l9txF1vCEAhrlut2te6FPjF/8TM+JqHCrWMDzBQBAmBx2X0a8Q9H8BCwyUSmk93RevfCSlNCLY6ID4kKBZt2yvCF3SXQ6eUBVFt0HY7335d78kYsCjpMJ+RZ7qwxirLi+lYacX7RYDJXe+lveoGk9QOCmShyht92BMedEX2qSnafQV7GLP248ZXnEP7r1bHyaZkzyF2a8hS3u4wysuAVrjiXbHI3CZVBOzKFe8b6QfTVqJeo2GM2HMbr5BuA+FIQeCytOW3cX7zkmCmMbOsxAow==
-x-ms-exchange-antispam-messagedata: i+iP59Zfn9iSwCsalRtfHaVxaNu6E/LuKTX3cfIQIcbbKIaUjz23wkw6n0AI/RkTkMMWbdQGO/LUJSW+8bUWnqzFP5JiuAKiAWkBfNq39IJSvb1U6M2diEbtUIjFrYSNyYzUIofj+Oz3IpRFHuT/Xw==
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        id S1726750AbgA1Ovq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 28 Jan 2020 09:51:46 -0500
+Received: from mail-lf1-f65.google.com ([209.85.167.65]:33952 "EHLO
+        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726762AbgA1Ove (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 28 Jan 2020 09:51:34 -0500
+Received: by mail-lf1-f65.google.com with SMTP id l18so9322587lfc.1;
+        Tue, 28 Jan 2020 06:51:31 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=eFQApFkHfSijVKTUUrUwJVn0wlaUnmghVVpOTatZBc0=;
+        b=i1eWOouQAS7TnZdny1CCxPmzkOsNL514kyDso/tgHDC9ht6uZ4x5lkco1i1S/K04gd
+         qRThOaBSQ2DgIkOGQ1UHav+qKuX2xP0eSCk9bCFrXG9yt33qrW1iDm0XTvdi/wChIWX1
+         ErAIZZ3pzbztHsEeSfSnGSX/1WJbTICOcTN0Suln1Ce7TYawxIZY7AhiJV1CYm+ztNMV
+         9vl9lNzxf0/w1AABEVWAnMlNviFSr/oOZ512zLn3dPXrIweLVqajI2wANbEBG9m1Xpk6
+         ntCF9xDgpavJHRCBBNsvJRnCWZBlNTdKo8aBnIa2Rg4tUZS+C9phUNST5D+NsHp14v7j
+         Xejg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=eFQApFkHfSijVKTUUrUwJVn0wlaUnmghVVpOTatZBc0=;
+        b=lRcAcN0NjvVW4ajUTKCy4rfFB3N1QT7OQuvGfcGNhVgrGtTSODdJ2QtYeX/28C6zbz
+         VSmJEvfUr06XnGbOXD3U7NCaBz+SKN+TJpS6lC+ajVawaXFWgxVuCUiCgvFCB/Lh5n7C
+         Xu0gWkMVLa2svNbiV1jO9hoLvcXtZEhv4aFsNcfHkpGhAzcZYQboU1oZvFOzaWOWSCju
+         NA+cJzraTVxVewD8fHuhJfmR82p1Fd4buAQ9sr/RH+bXaQGISiX2ThNo1ofuE9Wdj3Uz
+         PQyx3D/t0fgJpL2VSMdUDD1o+g9RPI0cAkRBYl8Vbg+05/kZV2bmarEA3z1dlsDtmLMo
+         QFWg==
+X-Gm-Message-State: APjAAAUksn5nHzyKmf/ioZluIme/6p0kH3ek7s6zFqIsOXK4j9MVxoJK
+        ZaGwdJ/az70mD96nM+s9Q7keHik+
+X-Google-Smtp-Source: APXvYqzutaBEYTWQbmXBikAIIpfSDGxe+iBkX/mtL9YJnlopi80AjM/us3OPXhD3Q2kkipwoNJ0hkw==
+X-Received: by 2002:ac2:5e2e:: with SMTP id o14mr2662509lfg.198.1580223090891;
+        Tue, 28 Jan 2020 06:51:30 -0800 (PST)
+Received: from [192.168.2.145] (79-139-233-37.dynamic.spd-mgts.ru. [79.139.233.37])
+        by smtp.googlemail.com with ESMTPSA id u9sm9737575lji.49.2020.01.28.06.51.29
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 28 Jan 2020 06:51:30 -0800 (PST)
+Subject: Re: [PATCH v4 01/14] dmaengine: tegra-apb: Fix use-after-free
+To:     Jon Hunter <jonathanh@nvidia.com>,
+        Laxman Dewangan <ldewangan@nvidia.com>,
+        Vinod Koul <vkoul@kernel.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>
+Cc:     dmaengine@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20200112173006.29863-1-digetx@gmail.com>
+ <20200112173006.29863-2-digetx@gmail.com>
+ <4c1b9e48-5468-0c03-2108-158ee814eea8@nvidia.com>
+ <1327bb21-0364-da26-e6ed-ff6c19df03e6@gmail.com>
+ <e39ef31d-4cff-838a-0fc1-73a39a8d6120@nvidia.com>
+ <b0c85ca7-d8ac-5f9d-2c57-79543c1f9b5d@gmail.com>
+ <5bbe9e3e-a64f-53be-e7f6-63e36cbae77d@nvidia.com>
+From:   Dmitry Osipenko <digetx@gmail.com>
+Message-ID: <be7addff-9f5c-e40a-923f-db895ce89fa2@gmail.com>
+Date:   Tue, 28 Jan 2020 17:51:23 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.3.0
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: ad4081eb-d4c4-4209-fc29-08d7a40111ce
-X-MS-Exchange-CrossTenant-originalarrivaltime: 28 Jan 2020 14:47:59.5640
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: 7WN22ZnQr1aSk0pszp9Hz5gHf//oBWodo9/56Y7X1fePuzULqj6+u2S5Si1qni9iC2E9GhG0bem6FwG/77BVfQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR04MB5967
+In-Reply-To: <5bbe9e3e-a64f-53be-e7f6-63e36cbae77d@nvidia.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 28.01.2020 07:28, Peng Fan wrote:=0A=
-> From: Peng Fan <peng.fan@nxp.com>=0A=
-=0A=
-Reviewed-by: Leonard Crestez <leonard.crestez@nxp.com>=0A=
-=0A=
-> V4:=0A=
->   Per Leonard's comments, added new definitions and  _SRC/CG/DIV are=0A=
->   alias to the new definition.=0A=
->   Did boot test on i.MX8MQ/M/N-EVK=0A=
-> =0A=
-> V3:=0A=
->   Add CLK_SET_RATE_NO_REPARENT and CLK_OPS_PARENT_ENABLE for core=0A=
->   Avoid break DT for i.MX8MQ=0A=
-> =0A=
-> V2:=0A=
->   Rename imx8m_clk_hw_core_composite to imx8m_clk_hw_composite_core=0A=
->   Add Abel's tag=0A=
-> =0A=
-> To i.MX8M family, there are different types of clock slices,=0A=
-> bus/core/ip and etc. Currently, the imx8m_clk_hw_composite=0A=
-> api could only handle bus and ip clock slice, it could=0A=
-> not handle core slice. The difference is core slice not have=0A=
-> pre divider and the width of post divider is 3 bits.=0A=
-> =0A=
-> To simplify code and reuse imx8m_clk_hw_composite, introduce a=0A=
-> flag IMX_COMPOSITE_CORE to differentiate the slices.=0A=
-> =0A=
-> With this new helper, we could simplify i.MX8M SoC clk drivers.=0A=
-> =0A=
-> =0A=
-> Peng Fan (4):=0A=
->    clk: imx: composite-8m: add imx8m_clk_hw_composite_core=0A=
->    clk: imx: imx8mq: use imx8m_clk_hw_composite_core=0A=
->    clk: imx: imx8mm: use imx8m_clk_hw_composite_core=0A=
->    clk: imx: imx8mn: use imx8m_clk_hw_composite_core=0A=
-> =0A=
->   drivers/clk/imx/clk-composite-8m.c       | 18 ++++++++++++----=0A=
->   drivers/clk/imx/clk-imx8mm.c             | 35 +++++++++++++++++++------=
--------=0A=
->   drivers/clk/imx/clk-imx8mn.c             | 19 +++++++++--------=0A=
->   drivers/clk/imx/clk-imx8mq.c             | 34 +++++++++++++++++--------=
-------=0A=
->   drivers/clk/imx/clk.h                    | 13 ++++++++++--=0A=
->   include/dt-bindings/clock/imx8mm-clock.h |  7 ++++++-=0A=
->   include/dt-bindings/clock/imx8mn-clock.h |  5 ++++-=0A=
->   include/dt-bindings/clock/imx8mq-clock.h |  7 ++++++-=0A=
->   8 files changed, 92 insertions(+), 46 deletions(-)=0A=
-> =0A=
-=0A=
+28.01.2020 17:02, Jon Hunter пишет:
+> 
+> On 16/01/2020 20:10, Dmitry Osipenko wrote:
+>> 15.01.2020 12:00, Jon Hunter пишет:
+>>>
+>>> On 14/01/2020 20:33, Dmitry Osipenko wrote:
+>>>> 14.01.2020 18:09, Jon Hunter пишет:
+>>>>>
+>>>>> On 12/01/2020 17:29, Dmitry Osipenko wrote:
+>>>>>> I was doing some experiments with I2C and noticed that Tegra APB DMA
+>>>>>> driver crashes sometime after I2C DMA transfer termination. The crash
+>>>>>> happens because tegra_dma_terminate_all() bails out immediately if pending
+>>>>>> list is empty, thus it doesn't release the half-completed descriptors
+>>>>>> which are getting re-used before ISR tasklet kicks-in.
+>>>>>
+>>>>> Can you elaborate a bit more on how these are getting re-used? What is
+>>>>> the sequence of events which results in the panic? I believe that this
+>>>>> was also reported in the past [0] and so I don't doubt there is an issue
+>>>>> here, but would like to completely understand this.
+>>>>>
+>>>>> Thanks!
+>>>>> Jon
+>>>>>
+>>>>> [0] https://lore.kernel.org/patchwork/patch/675349/
+>>>>>
+>>>>
+>>>> In my case it happens in the touchscreen driver during of the
+>>>> touchscreen's interrupt handling (in a threaded IRQ handler) + CPU is
+>>>> under load and there is other interrupts activity. So what happens here
+>>>> is that the TS driver issues one I2C transfer, which fails with
+>>>> (apparently bogus) timeout (because DMA descriptor is completed and
+>>>> removed from the pending list, but tasklet not executed yet), and then
+>>>> TS immediately issues another I2C transfer that re-uses the
+>>>> yet-incompleted descriptor. That's my understanding.
+>>>
+>>> OK, but what is the exact sequence that it allowing it to re-use the
+>>> incompleted descriptor?
+>>
+>>    TDMA driver                      DMA Client
+>>
+>> 1.
+>>                                     dmaengine_prep()
+>>
+>> 2.
+>>    tegra_dma_desc_get()
+>>    dma_desc = kzalloc()
+>>    ...
+>>    tegra_dma_prep_slave_sg()
+>>    INIT_LIST_HEAD(&dma_desc->tx_list);
+>>    INIT_LIST_HEAD(&dma_desc->cb_node);
+>>    list_add_tail(sgreq->node,
+>>                  dma_desc->tx_list)
+>>
+>> 3.
+>>                                     dma_async_issue_pending()
+>>
+>> 4.
+>>    tegra_dma_tx_submit()
+>>    list_splice_tail_init(dma_desc->tx_list,
+>>                          tdc->pending_sg_req)
+>>
+>> 5.
+>>    tegra_dma_isr()
+>>    ...
+>>    handle_once_dma_done()
+>>    ...
+>>    sgreq = list_first_entry(tdc->pending_sg_req)
+>>    list_del(sgreq->node);
+>>    ...
+>>    list_add_tail(dma_desc->cb_node,
+>>                  tdc->cb_desc);
+>>    list_add_tail(dma_desc->node,
+>>                  tdc->free_dma_desc);
+> 
+> Isn't this the problem here, that we have placed this on the free list
+> before we are actually done?
+> 
+> It seems to me that there could still be a potential race condition
+> between the ISR and the tasklet running.
+
+Yes, this should be addressed by the patch #3 "dmaengine: tegra-apb:
+Prevent race conditions of tasklet vs free list".
