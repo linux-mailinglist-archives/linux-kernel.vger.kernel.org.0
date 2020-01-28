@@ -2,39 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6460414B888
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Jan 2020 15:26:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DEC1F14B769
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Jan 2020 15:16:51 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732579AbgA1OYd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 28 Jan 2020 09:24:33 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51170 "EHLO mail.kernel.org"
+        id S1729801AbgA1OOF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 28 Jan 2020 09:14:05 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35816 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730145AbgA1OY2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 Jan 2020 09:24:28 -0500
+        id S1727132AbgA1ON7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 28 Jan 2020 09:13:59 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1B94724686;
-        Tue, 28 Jan 2020 14:24:26 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C1FA324688;
+        Tue, 28 Jan 2020 14:13:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1580221467;
-        bh=U7KFAaLtlV+YU5BPWP95GtvN00quRSfQ7ja0XbUw8LA=;
+        s=default; t=1580220838;
+        bh=Kvkgkb5mnTt25Oki9qI+QISRp3PgEVETwq7w9zPKpXY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=08uIz6wFbmsYWecjIRQPFOUOns7Xrw5KOS0A0VoaTvvvAcCS4ua/ZDZ4GxH1S9LHW
-         p51GVBedYzkNmH9a5qDak2B6vUgj0Z4PgJRGekBU/k2lwIjykjSkF8DaJXDRPTBMEH
-         aGuse9UDepQX4FD5YLk0svfcHXziPH6q9aQlgwq4=
+        b=YbcvcxB2wBJx0oi3+Xecaj+D7+mjS1qlZbd7KVoNpnib8Zx+E8zeAJptQagwTaLbt
+         YN/XcfFGykjSmv4yHgTSjKUBzPm5tVa+iOyu44hEUpfBhm8JMI8KLwTas/vszGm5uw
+         Eh8qcAHGM0kQwoeMyjZQiRpbduSXPbo9ZeuL8Hmo=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, William Dauchy <w.dauchy@criteo.com>,
-        Nicolas Dichtel <nicolas.dichtel@6wind.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.9 237/271] net, ip6_tunnel: fix namespaces move
-Date:   Tue, 28 Jan 2020 15:06:26 +0100
-Message-Id: <20200128135910.191879594@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Alexander Sverdlin <alexander.sverdlin@nokia.com>,
+        "Steven Rostedt (VMware)" <rostedt@goodmis.org>,
+        Russell King <rmk+kernel@armlinux.org.uk>
+Subject: [PATCH 4.4 168/183] ARM: 8950/1: ftrace/recordmcount: filter relocation types
+Date:   Tue, 28 Jan 2020 15:06:27 +0100
+Message-Id: <20200128135846.531711559@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200128135852.449088278@linuxfoundation.org>
-References: <20200128135852.449088278@linuxfoundation.org>
+In-Reply-To: <20200128135829.486060649@linuxfoundation.org>
+References: <20200128135829.486060649@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,37 +45,129 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: William Dauchy <w.dauchy@criteo.com>
+From: Alex Sverdlin <alexander.sverdlin@nokia.com>
 
-[ Upstream commit 5311a69aaca30fa849c3cc46fb25f75727fb72d0 ]
+commit 927d780ee371d7e121cea4fc7812f6ef2cea461c upstream.
 
-in the same manner as commit d0f418516022 ("net, ip_tunnel: fix
-namespaces move"), fix namespace moving as it was broken since commit
-8d79266bc48c ("ip6_tunnel: add collect_md mode to IPv6 tunnel"), but for
-ipv6 this time; there is no reason to keep it for ip6_tunnel.
+Scenario 1, ARMv7
+=================
 
-Fixes: 8d79266bc48c ("ip6_tunnel: add collect_md mode to IPv6 tunnel")
-Signed-off-by: William Dauchy <w.dauchy@criteo.com>
-Acked-by: Nicolas Dichtel <nicolas.dichtel@6wind.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+If code in arch/arm/kernel/ftrace.c would operate on mcount() pointer
+the following may be generated:
+
+00000230 <prealloc_fixed_plts>:
+ 230:   b5f8            push    {r3, r4, r5, r6, r7, lr}
+ 232:   b500            push    {lr}
+ 234:   f7ff fffe       bl      0 <__gnu_mcount_nc>
+                        234: R_ARM_THM_CALL     __gnu_mcount_nc
+ 238:   f240 0600       movw    r6, #0
+                        238: R_ARM_THM_MOVW_ABS_NC      __gnu_mcount_nc
+ 23c:   f8d0 1180       ldr.w   r1, [r0, #384]  ; 0x180
+
+FTRACE currently is not able to deal with it:
+
+WARNING: CPU: 0 PID: 0 at .../kernel/trace/ftrace.c:1979 ftrace_bug+0x1ad/0x230()
+...
+CPU: 0 PID: 0 Comm: swapper/0 Not tainted 4.4.116-... #1
+...
+[<c0314e3d>] (unwind_backtrace) from [<c03115e9>] (show_stack+0x11/0x14)
+[<c03115e9>] (show_stack) from [<c051a7f1>] (dump_stack+0x81/0xa8)
+[<c051a7f1>] (dump_stack) from [<c0321c5d>] (warn_slowpath_common+0x69/0x90)
+[<c0321c5d>] (warn_slowpath_common) from [<c0321cf3>] (warn_slowpath_null+0x17/0x1c)
+[<c0321cf3>] (warn_slowpath_null) from [<c038ee9d>] (ftrace_bug+0x1ad/0x230)
+[<c038ee9d>] (ftrace_bug) from [<c038f1f9>] (ftrace_process_locs+0x27d/0x444)
+[<c038f1f9>] (ftrace_process_locs) from [<c08915bd>] (ftrace_init+0x91/0xe8)
+[<c08915bd>] (ftrace_init) from [<c0885a67>] (start_kernel+0x34b/0x358)
+[<c0885a67>] (start_kernel) from [<00308095>] (0x308095)
+---[ end trace cb88537fdc8fa200 ]---
+ftrace failed to modify [<c031266c>] prealloc_fixed_plts+0x8/0x60
+ actual: 44:f2:e1:36
+ftrace record flags: 0
+ (0)   expected tramp: c03143e9
+
+Scenario 2, ARMv4T
+==================
+
+ftrace: allocating 14435 entries in 43 pages
+------------[ cut here ]------------
+WARNING: CPU: 0 PID: 0 at kernel/trace/ftrace.c:2029 ftrace_bug+0x204/0x310
+CPU: 0 PID: 0 Comm: swapper Not tainted 4.19.5 #1
+Hardware name: Cirrus Logic EDB9302 Evaluation Board
+[<c0010a24>] (unwind_backtrace) from [<c000ecb0>] (show_stack+0x20/0x2c)
+[<c000ecb0>] (show_stack) from [<c03c72e8>] (dump_stack+0x20/0x30)
+[<c03c72e8>] (dump_stack) from [<c0021c18>] (__warn+0xdc/0x104)
+[<c0021c18>] (__warn) from [<c0021d7c>] (warn_slowpath_null+0x4c/0x5c)
+[<c0021d7c>] (warn_slowpath_null) from [<c0095360>] (ftrace_bug+0x204/0x310)
+[<c0095360>] (ftrace_bug) from [<c04dabac>] (ftrace_init+0x3b4/0x4d4)
+[<c04dabac>] (ftrace_init) from [<c04cef4c>] (start_kernel+0x20c/0x410)
+[<c04cef4c>] (start_kernel) from [<00000000>] (  (null))
+---[ end trace 0506a2f5dae6b341 ]---
+ftrace failed to modify
+[<c000c350>] perf_trace_sys_exit+0x5c/0xe8
+ actual:   1e:ff:2f:e1
+Initializing ftrace call sites
+ftrace record flags: 0
+ (0)
+ expected tramp: c000fb24
+
+The analysis for this problem has been already performed previously,
+refer to the link below.
+
+Fix the above problems by allowing only selected reloc types in
+__mcount_loc. The list itself comes from the legacy recordmcount.pl
+script.
+
+Link: https://lore.kernel.org/lkml/56961010.6000806@pengutronix.de/
+Cc: stable@vger.kernel.org
+Fixes: ed60453fa8f8 ("ARM: 6511/1: ftrace: add ARM support for C version of recordmcount")
+Signed-off-by: Alexander Sverdlin <alexander.sverdlin@nokia.com>
+Acked-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+Signed-off-by: Russell King <rmk+kernel@armlinux.org.uk>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- net/ipv6/ip6_tunnel.c |    4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
 
---- a/net/ipv6/ip6_tunnel.c
-+++ b/net/ipv6/ip6_tunnel.c
-@@ -1861,10 +1861,8 @@ static int ip6_tnl_dev_init(struct net_d
- 	if (err)
- 		return err;
- 	ip6_tnl_link_config(t);
--	if (t->parms.collect_md) {
--		dev->features |= NETIF_F_NETNS_LOCAL;
-+	if (t->parms.collect_md)
- 		netif_keep_dst(dev);
--	}
- 	return 0;
- }
+---
+ scripts/recordmcount.c |   17 +++++++++++++++++
+ 1 file changed, 17 insertions(+)
+
+--- a/scripts/recordmcount.c
++++ b/scripts/recordmcount.c
+@@ -53,6 +53,10 @@
+ #define R_AARCH64_ABS64	257
+ #endif
  
++#define R_ARM_PC24		1
++#define R_ARM_THM_CALL		10
++#define R_ARM_CALL		28
++
+ static int fd_map;	/* File descriptor for file being modified. */
+ static int mmap_failed; /* Boolean flag. */
+ static char gpfx;	/* prefix for global symbol name (sometimes '_') */
+@@ -372,6 +376,18 @@ is_mcounted_section_name(char const *con
+ #define RECORD_MCOUNT_64
+ #include "recordmcount.h"
+ 
++static int arm_is_fake_mcount(Elf32_Rel const *rp)
++{
++	switch (ELF32_R_TYPE(w(rp->r_info))) {
++	case R_ARM_THM_CALL:
++	case R_ARM_CALL:
++	case R_ARM_PC24:
++		return 0;
++	}
++
++	return 1;
++}
++
+ /* 64-bit EM_MIPS has weird ELF64_Rela.r_info.
+  * http://techpubs.sgi.com/library/manuals/4000/007-4658-001/pdf/007-4658-001.pdf
+  * We interpret Table 29 Relocation Operation (Elf64_Rel, Elf64_Rela) [p.40]
+@@ -461,6 +477,7 @@ do_file(char const *const fname)
+ 		break;
+ 	case EM_ARM:	 reltype = R_ARM_ABS32;
+ 			 altmcount = "__gnu_mcount_nc";
++			 is_fake_mcount32 = arm_is_fake_mcount;
+ 			 break;
+ 	case EM_AARCH64:
+ 			reltype = R_AARCH64_ABS64;
 
 
