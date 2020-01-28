@@ -2,39 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E422A14B72A
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Jan 2020 15:12:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 96AA714B838
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Jan 2020 15:23:51 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728277AbgA1OL4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 28 Jan 2020 09:11:56 -0500
-Received: from mail.kernel.org ([198.145.29.99]:32806 "EHLO mail.kernel.org"
+        id S1731334AbgA1OVg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 28 Jan 2020 09:21:36 -0500
+Received: from mail.kernel.org ([198.145.29.99]:46928 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729361AbgA1OLu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 Jan 2020 09:11:50 -0500
+        id S1731311AbgA1OVe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 28 Jan 2020 09:21:34 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2950424685;
-        Tue, 28 Jan 2020 14:11:49 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2471424686;
+        Tue, 28 Jan 2020 14:21:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1580220709;
-        bh=C+pc8y2pEMMfOnYaCwAgQSs53kmqKNheVu3WOtWPoJQ=;
+        s=default; t=1580221293;
+        bh=82oBk3V6XH8DMTqOHW/rTRzWb1gZ1spYcwkITJN6/pI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=y1Wfb8eaYV2wA4RYySgugp3tlaz7x8A87M/udf64/JWUL5bHxzzbZn2+7eQI0WZKT
-         Q+y7TSzAT4aHkM1+vPcrze/dRNLBl7tGsRcJ8P/PMftlFiEZ9RiaFPTiBRQm/9xwZg
-         o02FAjlAOnjmdgBqI/zBu4xDSM2BF+iogA1Rvoos=
+        b=wHrC2akmTIxLz98Hpn75zmkdFWVvdEyaby7hYEVAWZkY/aobzTlKQn44nMwcRAstK
+         c+3uJERr+1YS6g7iEUSl1k27DIorNBpCBDMnDGVGSzAdyPz0zxIVxvnFZX268k0u6j
+         6rv1JJIFrwxyuhN24MbI/gmTe2wc0NT5mnbkH6ug=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Ben Hutchings <ben@decadent.org.uk>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.4 078/183] powerpc: vdso: Make vdso32 installation conditional in vdso_install
-Date:   Tue, 28 Jan 2020 15:04:57 +0100
-Message-Id: <20200128135837.727519035@linuxfoundation.org>
+        stable@vger.kernel.org, Lu Baolu <baolu.lu@linux.intel.com>,
+        Joerg Roedel <jroedel@suse.de>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.9 149/271] iommu: Use right function to get group for device
+Date:   Tue, 28 Jan 2020 15:04:58 +0100
+Message-Id: <20200128135903.643607538@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200128135829.486060649@linuxfoundation.org>
-References: <20200128135829.486060649@linuxfoundation.org>
+In-Reply-To: <20200128135852.449088278@linuxfoundation.org>
+References: <20200128135852.449088278@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,37 +43,40 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Ben Hutchings <ben@decadent.org.uk>
+From: Lu Baolu <baolu.lu@linux.intel.com>
 
-[ Upstream commit ff6d27823f619892ab96f7461764840e0d786b15 ]
+[ Upstream commit 57274ea25736496ee019a5c40479855b21888839 ]
 
-The 32-bit vDSO is not needed and not normally built for 64-bit
-little-endian configurations.  However, the vdso_install target still
-builds and installs it.  Add the same config condition as is normally
-used for the build.
+The iommu_group_get_for_dev() will allocate a group for a
+device if it isn't in any group. This isn't the use case
+in iommu_request_dm_for_dev(). Let's use iommu_group_get()
+instead.
 
-Fixes: e0d005916994 ("powerpc/vdso: Disable building the 32-bit VDSO ...")
-Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
-Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+Fixes: d290f1e70d85a ("iommu: Introduce iommu_request_dm_for_dev()")
+Signed-off-by: Lu Baolu <baolu.lu@linux.intel.com>
+Signed-off-by: Joerg Roedel <jroedel@suse.de>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/powerpc/Makefile | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/iommu/iommu.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/arch/powerpc/Makefile b/arch/powerpc/Makefile
-index d7eb035a9c960..65cb22541c660 100644
---- a/arch/powerpc/Makefile
-+++ b/arch/powerpc/Makefile
-@@ -350,7 +350,9 @@ vdso_install:
- ifeq ($(CONFIG_PPC64),y)
- 	$(Q)$(MAKE) $(build)=arch/$(ARCH)/kernel/vdso64 $@
- endif
-+ifdef CONFIG_VDSO32
- 	$(Q)$(MAKE) $(build)=arch/$(ARCH)/kernel/vdso32 $@
-+endif
+diff --git a/drivers/iommu/iommu.c b/drivers/iommu/iommu.c
+index 71b89e47e9521..dbcc13efaf3c8 100644
+--- a/drivers/iommu/iommu.c
++++ b/drivers/iommu/iommu.c
+@@ -1582,9 +1582,9 @@ int iommu_request_dm_for_dev(struct device *dev)
+ 	int ret;
  
- archclean:
- 	$(Q)$(MAKE) $(clean)=$(boot)
+ 	/* Device must already be in a group before calling this function */
+-	group = iommu_group_get_for_dev(dev);
+-	if (IS_ERR(group))
+-		return PTR_ERR(group);
++	group = iommu_group_get(dev);
++	if (!group)
++		return -EINVAL;
+ 
+ 	mutex_lock(&group->mutex);
+ 
 -- 
 2.20.1
 
