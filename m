@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1F23514BA2C
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Jan 2020 15:37:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8DAD514BB56
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Jan 2020 15:46:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731040AbgA1OUO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 28 Jan 2020 09:20:14 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44948 "EHLO mail.kernel.org"
+        id S1729375AbgA1Oon (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 28 Jan 2020 09:44:43 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58354 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730811AbgA1OUM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 Jan 2020 09:20:12 -0500
+        id S1727931AbgA1OJv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 28 Jan 2020 09:09:51 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D74DF2071E;
-        Tue, 28 Jan 2020 14:20:10 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 739A922522;
+        Tue, 28 Jan 2020 14:09:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1580221211;
-        bh=+8X1MENOY7tI9xG5PPzTrYYKY96vWn3iZaaJ4qyL2kM=;
+        s=default; t=1580220589;
+        bh=1qWJPyzphTh1OOTJy5ScY1oDDqbdQp1LVK9ycxiBvGE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Z7kKD7Q9z2AMB03Zp4+DYnWU1BldtH9I+3bKzvWTEwHuvqnZ/TipsJ+f/6QpSR5Nj
-         zCCOob/tNASEyCwnULcguHVLDX1cL9l7McLiNX88YS5wJCRsTfk+7gk9jbPj3mx/Rb
-         P5dBbpmuv1OLgR8QVB3oa9fKlrATof22bD5GG2tM=
+        b=OAb3NcjddDkRKnq8D/7748OPHR8hzULgKOQvdEzIwxPducBmaK14mMVaK0D0RaU3M
+         lt35Cevmjp6kJ9ulzFeayTfYi2opA4srfhHwT+p1mE/Mgeb94F/of0w1uZygsdguRU
+         z7NG2F83JYkV8dJiNawzhfxGel5RwJh2ZNZobmhU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Sameer Pujar <spujar@nvidia.com>,
-        Jon Hunter <jonathanh@nvidia.com>,
-        Vinod Koul <vkoul@kernel.org>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 133/271] dmaengine: tegra210-adma: restore channel status
-Date:   Tue, 28 Jan 2020 15:04:42 +0100
-Message-Id: <20200128135902.499662626@linuxfoundation.org>
+        stable@vger.kernel.org, Finn Thain <fthain@telegraphics.com.au>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.4 066/183] m68k: mac: Fix VIA timer counter accesses
+Date:   Tue, 28 Jan 2020 15:04:45 +0100
+Message-Id: <20200128135836.593132765@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200128135852.449088278@linuxfoundation.org>
-References: <20200128135852.449088278@linuxfoundation.org>
+In-Reply-To: <20200128135829.486060649@linuxfoundation.org>
+References: <20200128135829.486060649@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,122 +44,154 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Sameer Pujar <spujar@nvidia.com>
+From: Finn Thain <fthain@telegraphics.com.au>
 
-[ Upstream commit f33e7bb3eb922618612a90f0a828c790e8880773 ]
+[ Upstream commit 0ca7ce7db771580433bf24454f7a1542bd326078 ]
 
-Status of ADMA channel registers is not saved and restored during system
-suspend. During active playback if system enters suspend, this results in
-wrong state of channel registers during system resume and playback fails
-to resume properly. Fix this by saving following channel registers in
-runtime suspend and restore during runtime resume.
- * ADMA_CH_LOWER_SRC_ADDR
- * ADMA_CH_LOWER_TRG_ADDR
- * ADMA_CH_FIFO_CTRL
- * ADMA_CH_CONFIG
- * ADMA_CH_CTRL
- * ADMA_CH_CMD
- * ADMA_CH_TC
-Runtime PM calls will be inovked during system resume path if a playback
-or capture needs to be resumed. Hence above changes work fine for system
-suspend case.
+This resolves some bugs that affect VIA timer counter accesses.
+Avoid lost interrupts caused by reading the counter low byte register.
+Make allowance for the fact that the counter will be decremented to
+0xFFFF before being reloaded.
 
-Fixes: f46b195799b5 ("dmaengine: tegra-adma: Add support for Tegra210 ADMA")
-Signed-off-by: Sameer Pujar <spujar@nvidia.com>
-Reviewed-by: Jon Hunter <jonathanh@nvidia.com>
-Signed-off-by: Vinod Koul <vkoul@kernel.org>
+Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
+Signed-off-by: Finn Thain <fthain@telegraphics.com.au>
+Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/dma/tegra210-adma.c | 46 ++++++++++++++++++++++++++++++++++++-
- 1 file changed, 45 insertions(+), 1 deletion(-)
+ arch/m68k/mac/via.c | 102 +++++++++++++++++++++++---------------------
+ 1 file changed, 53 insertions(+), 49 deletions(-)
 
-diff --git a/drivers/dma/tegra210-adma.c b/drivers/dma/tegra210-adma.c
-index e9e46a5207452..8c3cab463354f 100644
---- a/drivers/dma/tegra210-adma.c
-+++ b/drivers/dma/tegra210-adma.c
-@@ -98,6 +98,7 @@ struct tegra_adma_chan_regs {
- 	unsigned int src_addr;
- 	unsigned int trg_addr;
- 	unsigned int fifo_ctrl;
-+	unsigned int cmd;
- 	unsigned int tc;
- };
+diff --git a/arch/m68k/mac/via.c b/arch/m68k/mac/via.c
+index ce56e04386e70..2d687518c76fe 100644
+--- a/arch/m68k/mac/via.c
++++ b/arch/m68k/mac/via.c
+@@ -53,16 +53,6 @@ static __u8 rbv_clear;
  
-@@ -127,6 +128,7 @@ struct tegra_adma_chan {
- 	enum dma_transfer_direction	sreq_dir;
- 	unsigned int			sreq_index;
- 	bool				sreq_reserved;
-+	struct tegra_adma_chan_regs	ch_regs;
+ static int gIER,gIFR,gBufA,gBufB;
  
- 	/* Transfer count and position info */
- 	unsigned int			tx_buf_count;
-@@ -635,8 +637,30 @@ static struct dma_chan *tegra_dma_of_xlate(struct of_phandle_args *dma_spec,
- static int tegra_adma_runtime_suspend(struct device *dev)
- {
- 	struct tegra_adma *tdma = dev_get_drvdata(dev);
-+	struct tegra_adma_chan_regs *ch_reg;
-+	struct tegra_adma_chan *tdc;
-+	int i;
- 
- 	tdma->global_cmd = tdma_read(tdma, ADMA_GLOBAL_CMD);
-+	if (!tdma->global_cmd)
-+		goto clk_disable;
-+
-+	for (i = 0; i < tdma->nr_channels; i++) {
-+		tdc = &tdma->channels[i];
-+		ch_reg = &tdc->ch_regs;
-+		ch_reg->cmd = tdma_ch_read(tdc, ADMA_CH_CMD);
-+		/* skip if channel is not active */
-+		if (!ch_reg->cmd)
-+			continue;
-+		ch_reg->tc = tdma_ch_read(tdc, ADMA_CH_TC);
-+		ch_reg->src_addr = tdma_ch_read(tdc, ADMA_CH_LOWER_SRC_ADDR);
-+		ch_reg->trg_addr = tdma_ch_read(tdc, ADMA_CH_LOWER_TRG_ADDR);
-+		ch_reg->ctrl = tdma_ch_read(tdc, ADMA_CH_CTRL);
-+		ch_reg->fifo_ctrl = tdma_ch_read(tdc, ADMA_CH_FIFO_CTRL);
-+		ch_reg->config = tdma_ch_read(tdc, ADMA_CH_CONFIG);
-+	}
-+
-+clk_disable:
- 	clk_disable_unprepare(tdma->ahub_clk);
- 
- 	return 0;
-@@ -645,7 +669,9 @@ static int tegra_adma_runtime_suspend(struct device *dev)
- static int tegra_adma_runtime_resume(struct device *dev)
- {
- 	struct tegra_adma *tdma = dev_get_drvdata(dev);
--	int ret;
-+	struct tegra_adma_chan_regs *ch_reg;
-+	struct tegra_adma_chan *tdc;
-+	int ret, i;
- 
- 	ret = clk_prepare_enable(tdma->ahub_clk);
- 	if (ret) {
-@@ -654,6 +680,24 @@ static int tegra_adma_runtime_resume(struct device *dev)
+-/*
+- * Timer defs.
+- */
+-
+-#define TICK_SIZE		10000
+-#define MAC_CLOCK_TICK		(783300/HZ)		/* ticks per HZ */
+-#define MAC_CLOCK_LOW		(MAC_CLOCK_TICK&0xFF)
+-#define MAC_CLOCK_HIGH		(MAC_CLOCK_TICK>>8)
+-
+-
+ /*
+  * On Macs with a genuine VIA chip there is no way to mask an individual slot
+  * interrupt. This limitation also seems to apply to VIA clone logic cores in
+@@ -277,22 +267,6 @@ void __init via_init(void)
  	}
- 	tdma_write(tdma, ADMA_GLOBAL_CMD, tdma->global_cmd);
- 
-+	if (!tdma->global_cmd)
-+		return 0;
-+
-+	for (i = 0; i < tdma->nr_channels; i++) {
-+		tdc = &tdma->channels[i];
-+		ch_reg = &tdc->ch_regs;
-+		/* skip if channel was not active earlier */
-+		if (!ch_reg->cmd)
-+			continue;
-+		tdma_ch_write(tdc, ADMA_CH_TC, ch_reg->tc);
-+		tdma_ch_write(tdc, ADMA_CH_LOWER_SRC_ADDR, ch_reg->src_addr);
-+		tdma_ch_write(tdc, ADMA_CH_LOWER_TRG_ADDR, ch_reg->trg_addr);
-+		tdma_ch_write(tdc, ADMA_CH_CTRL, ch_reg->ctrl);
-+		tdma_ch_write(tdc, ADMA_CH_FIFO_CTRL, ch_reg->fifo_ctrl);
-+		tdma_ch_write(tdc, ADMA_CH_CONFIG, ch_reg->config);
-+		tdma_ch_write(tdc, ADMA_CH_CMD, ch_reg->cmd);
-+	}
-+
- 	return 0;
  }
  
+-/*
+- * Start the 100 Hz clock
+- */
+-
+-void __init via_init_clock(irq_handler_t func)
+-{
+-	via1[vACR] |= 0x40;
+-	via1[vT1LL] = MAC_CLOCK_LOW;
+-	via1[vT1LH] = MAC_CLOCK_HIGH;
+-	via1[vT1CL] = MAC_CLOCK_LOW;
+-	via1[vT1CH] = MAC_CLOCK_HIGH;
+-
+-	if (request_irq(IRQ_MAC_TIMER_1, func, 0, "timer", func))
+-		pr_err("Couldn't register %s interrupt\n", "timer");
+-}
+-
+ /*
+  * Debugging dump, used in various places to see what's going on.
+  */
+@@ -320,29 +294,6 @@ void via_debug_dump(void)
+ 	}
+ }
+ 
+-/*
+- * This is always executed with interrupts disabled.
+- *
+- * TBI: get time offset between scheduling timer ticks
+- */
+-
+-u32 mac_gettimeoffset(void)
+-{
+-	unsigned long ticks, offset = 0;
+-
+-	/* read VIA1 timer 2 current value */
+-	ticks = via1[vT1CL] | (via1[vT1CH] << 8);
+-	/* The probability of underflow is less than 2% */
+-	if (ticks > MAC_CLOCK_TICK - MAC_CLOCK_TICK / 50)
+-		/* Check for pending timer interrupt in VIA1 IFR */
+-		if (via1[vIFR] & 0x40) offset = TICK_SIZE;
+-
+-	ticks = MAC_CLOCK_TICK - ticks;
+-	ticks = ticks * 10000L / MAC_CLOCK_TICK;
+-
+-	return (ticks + offset) * 1000;
+-}
+-
+ /*
+  * Flush the L2 cache on Macs that have it by flipping
+  * the system into 24-bit mode for an instant.
+@@ -619,3 +570,56 @@ int via2_scsi_drq_pending(void)
+ 	return via2[gIFR] & (1 << IRQ_IDX(IRQ_MAC_SCSIDRQ));
+ }
+ EXPORT_SYMBOL(via2_scsi_drq_pending);
++
++/* timer and clock source */
++
++#define VIA_CLOCK_FREQ     783360                /* VIA "phase 2" clock in Hz */
++#define VIA_TIMER_INTERVAL (1000000 / HZ)        /* microseconds per jiffy */
++#define VIA_TIMER_CYCLES   (VIA_CLOCK_FREQ / HZ) /* clock cycles per jiffy */
++
++#define VIA_TC             (VIA_TIMER_CYCLES - 2) /* including 0 and -1 */
++#define VIA_TC_LOW         (VIA_TC & 0xFF)
++#define VIA_TC_HIGH        (VIA_TC >> 8)
++
++void __init via_init_clock(irq_handler_t timer_routine)
++{
++	if (request_irq(IRQ_MAC_TIMER_1, timer_routine, 0, "timer", NULL)) {
++		pr_err("Couldn't register %s interrupt\n", "timer");
++		return;
++	}
++
++	via1[vT1LL] = VIA_TC_LOW;
++	via1[vT1LH] = VIA_TC_HIGH;
++	via1[vT1CL] = VIA_TC_LOW;
++	via1[vT1CH] = VIA_TC_HIGH;
++	via1[vACR] |= 0x40;
++}
++
++u32 mac_gettimeoffset(void)
++{
++	unsigned long flags;
++	u8 count_high;
++	u16 count, offset = 0;
++
++	/*
++	 * Timer counter wrap-around is detected with the timer interrupt flag
++	 * but reading the counter low byte (vT1CL) would reset the flag.
++	 * Also, accessing both counter registers is essentially a data race.
++	 * These problems are avoided by ignoring the low byte. Clock accuracy
++	 * is 256 times worse (error can reach 0.327 ms) but CPU overhead is
++	 * reduced by avoiding slow VIA register accesses.
++	 */
++
++	local_irq_save(flags);
++	count_high = via1[vT1CH];
++	if (count_high == 0xFF)
++		count_high = 0;
++	if (count_high > 0 && (via1[vIFR] & VIA_TIMER_1_INT))
++		offset = VIA_TIMER_CYCLES;
++	local_irq_restore(flags);
++
++	count = count_high << 8;
++	count = VIA_TIMER_CYCLES - count + offset;
++
++	return ((count * VIA_TIMER_INTERVAL) / VIA_TIMER_CYCLES) * 1000;
++}
 -- 
 2.20.1
 
