@@ -2,66 +2,105 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 90E9414BD4D
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Jan 2020 16:52:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id F1B9414BD5B
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Jan 2020 16:58:14 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726837AbgA1Pwr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 28 Jan 2020 10:52:47 -0500
-Received: from mail.kernel.org ([198.145.29.99]:41908 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726240AbgA1Pwq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 Jan 2020 10:52:46 -0500
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 51C9C21739;
-        Tue, 28 Jan 2020 15:52:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1580226765;
-        bh=RRwCxgpLdHkrA1x1Cq1vksuhcqtVADvwrAno3KEpW8s=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=D4zqX/9twXacyeGJunZmmr41v53JOZvXG0C8CuKm1TOkkPn5q4goYdWIusJrk6JoE
-         eVpbyyjBJErpsGSbVYJ1E8dG5A37CLUHF1TGV1mHu9upJjkwLuOVwagOKh+P+SrMwG
-         BAudZwrf6V2YFadLZFwf+DD/9NUHpd04cUU+cypI=
-Date:   Tue, 28 Jan 2020 16:52:43 +0100
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     Benjamin Gaignard <benjamin.gaignard@st.com>
-Cc:     broonie@kernel.org, robh@kernel.org, arnd@arndb.de,
-        shawnguo@kernel.org, s.hauer@pengutronix.de, fabio.estevam@nxp.com,
-        sudeep.holla@arm.com, lkml@metux.net, loic.pallardy@st.com,
-        linux-kernel@vger.kernel.org, linux-imx@nxp.com,
-        kernel@pengutronix.de, linux-arm-kernel@lists.infradead.org,
-        devicetree@vger.kernel.org, system-dt@lists.openampproject.org,
-        stefano.stabellini@xilinx.com
-Subject: Re: [PATCH v2 2/7] bus: Introduce firewall controller framework
-Message-ID: <20200128155243.GC3438643@kroah.com>
-References: <20200128153806.7780-1-benjamin.gaignard@st.com>
- <20200128153806.7780-3-benjamin.gaignard@st.com>
+        id S1726710AbgA1P6F (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 28 Jan 2020 10:58:05 -0500
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:41178 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725959AbgA1P6F (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 28 Jan 2020 10:58:05 -0500
+Received: by mail-wr1-f66.google.com with SMTP id c9so16614300wrw.8;
+        Tue, 28 Jan 2020 07:58:03 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=FWPp9fyEDHyhawe1t49VObba7gl1SqL8FrQT/ryGVAI=;
+        b=q/wO+PfO+FJAbmdRbe5TTat4LCNumuP61pWivJVRm4UlO1Pt0jyE78fSz472H6vaIp
+         vZpw3Jd0LJoMKK725DxMrorGozM8U96NJjgdnd0eUGu3ljsSvzkYdA3Cn/+MqU3/sAm2
+         NhPmiQ9I95+MPKFKtvtUTAoJBDSb5R8vgatIF/i/GVHV1+31qX8jfvOEWGcwX3tkqQxt
+         LihRqy6Pa5vsqcpLbvDpfbjloAxEPKem41hE3tGf3+zb8NghFfBRz0+s2EHga/CfqVDO
+         E1QishhiZp9Cn34ts67GZES4qZ4ncyIIEspmxfvb34wyMvXAYn8hsghiUL8NHQ6Y5BDj
+         X4Kg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=FWPp9fyEDHyhawe1t49VObba7gl1SqL8FrQT/ryGVAI=;
+        b=KQXMswxfyCSJJ7ZgyJsPdLVyOECOt+0XzGIr2R0Lu/BfIH9wnI3saNqBLEPWHIp01p
+         JrhuHBT9av7n+SH+/KcjM+OJDupjew2+H8pLnAi6j35E9QOlFH4umDEfBWbC07ULvkSz
+         AHDu96QZbRl6GYgW+BySL88g9M3J/OiIZqhDaiqs3shT9hqQ4ObGTAp9pvRgdxYKTP+Q
+         Ob0iFDr2CAmVWIV2LemsS/4lzU5gNxninXwyieWbf4VdDMgR7hxkh2fAkUimT8fF6tk8
+         uC8pxqYF3b8iI2wbaAouduQRBVlZ2MAeaGi7lfxKB1979pLq8Jf39AR7kAZSwlbs6i/g
+         aKMQ==
+X-Gm-Message-State: APjAAAW3Kzt/Q54g+tgaj+F8b2BuDFqYbnC5d/7glzmIGg0YpIIh3Uac
+        qbLymmAvZTkqddH3w5P0vjU=
+X-Google-Smtp-Source: APXvYqzAo+vH+VwcOVJsIvK6o+ainqPBvzuhLyEHXWg4iWVQoesQZk1f9TDSxMN1ghStxMRWhTiHzQ==
+X-Received: by 2002:a5d:6151:: with SMTP id y17mr28941387wrt.110.1580227083068;
+        Tue, 28 Jan 2020 07:58:03 -0800 (PST)
+Received: from Red ([2a01:cb1d:3d5:a100:2e56:dcff:fed2:c6d6])
+        by smtp.googlemail.com with ESMTPSA id i8sm26328713wro.47.2020.01.28.07.58.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 28 Jan 2020 07:58:02 -0800 (PST)
+Date:   Tue, 28 Jan 2020 16:58:00 +0100
+From:   Corentin Labbe <clabbe.montjoie@gmail.com>
+To:     Horia Geanta <horia.geanta@nxp.com>
+Cc:     "davem@davemloft.net" <davem@davemloft.net>,
+        "herbert@gondor.apana.org.au" <herbert@gondor.apana.org.au>,
+        "mripard@kernel.org" <mripard@kernel.org>,
+        "wens@csie.org" <wens@csie.org>,
+        Iuliana Prodan <iuliana.prodan@nxp.com>,
+        "linux-sunxi@googlegroups.com" <linux-sunxi@googlegroups.com>,
+        "linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 1/9] crypto: engine: workqueue can only be processed one
+ by one
+Message-ID: <20200128155800.GB17295@Red>
+References: <20200122104528.30084-1-clabbe.montjoie@gmail.com>
+ <20200122104528.30084-2-clabbe.montjoie@gmail.com>
+ <VI1PR0402MB3485B787EA6BCDD5A5600BAA980A0@VI1PR0402MB3485.eurprd04.prod.outlook.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200128153806.7780-3-benjamin.gaignard@st.com>
+In-Reply-To: <VI1PR0402MB3485B787EA6BCDD5A5600BAA980A0@VI1PR0402MB3485.eurprd04.prod.outlook.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jan 28, 2020 at 04:38:01PM +0100, Benjamin Gaignard wrote:
-> The goal of this framework is to offer an interface for the
-> hardware blocks controlling bus accesses rights.
+On Tue, Jan 28, 2020 at 03:50:14PM +0000, Horia Geanta wrote:
+> On 1/22/2020 12:46 PM, Corentin Labbe wrote:
+> > Some bykeshedding are unnecessary since a workqueue can only be executed
+> > one by one.
+> > This behaviour is documented in:
+> > - kernel/kthread.c: comment of kthread_worker_fn()
+> > - Documentation/core-api/workqueue.rst: the functions associated with the work items one after the other
+> [...]
+> > @@ -73,16 +73,6 @@ static void crypto_pump_requests(struct crypto_engine *engine,
+> >  
+> >  	spin_lock_irqsave(&engine->queue_lock, flags);
+> >  
+> > -	/* Make sure we are not already running a request */
+> > -	if (engine->cur_req)
+> > -		goto out;
+> > -
+> This check is here for a good reason, namely because crypto engine
+> cannot currently handle multiple crypto requests being in "flight"
+> in parallel.
 > 
-> Bus firewall controllers are typically used to control if a
-> hardware block can perform read or write operations on bus.
+> More exactly, if this check is removed the following sequence could occur:
+> crypto_pump_work() -> crypto_pump_requests() -> .do_one_request(areq1)
+> crypto_pump_work() -> crypto_pump_requests() -> .do_one_request(areq2)
+> crypto_finalize_request(areq1)
+> crypto_finalize_request(areq2)
+> 
 
-So put this in the bus-specific code that controls the bus that these
-devices live on.  Why put it in the driver core when this is only on one
-"bus" (i.e. the catch-all-and-a-bag-of-chips platform bus)?
+As explained in the commitlog, crypto_pump_work() cannot be ran twice.
 
-And really, this should just be a totally new bus type, right?  And any
-devices on this bus should be changed to be on this new bus, and the
-drivers changed to support them, instead of trying to overload the
-platform bus with more stuff.
-
-thanks,
-
-greg k-h
+Regards
