@@ -2,163 +2,80 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 87F5C14BDD7
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Jan 2020 17:35:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0119714BDDB
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Jan 2020 17:36:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726384AbgA1Qff (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 28 Jan 2020 11:35:35 -0500
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:39722 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726034AbgA1Qff (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 Jan 2020 11:35:35 -0500
-Received: by mail-wr1-f67.google.com with SMTP id y11so16764161wrt.6
-        for <linux-kernel@vger.kernel.org>; Tue, 28 Jan 2020 08:35:33 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition:user-agent;
-        bh=QdZd1fqKDA6uO2e3P5Ih6oOtyLcTyX2n5VKSCXawdk8=;
-        b=Tz+LmmoT/IXlPktI+4+H5uQ3EOHAuyktEzd7GEIzmd9WuRba3JKCptW6LHmGhp20tl
-         KSIQL55aa/cM0nMis6a+TnvfTSw+1oRCgkaklmcIubQkz8Pi1tg8e55xO1XLqAgGhIj4
-         Xr4Q9h0hasfoIplPcnb4HtbSDbj2M6IR3PBOrJhC5eT7hQapj1wMsA+PrJjzNKS2JhQH
-         Sz+mUzetnHERgpJudBYWZCIyT6k3zwpii9xYA8yxLE8+EzwvrVit1TEPYcqkuYvWyshh
-         gHL8DGWMXOHfb5DSvmdFgvaK44k8C6PTsRPNkaZcpBLaLhX5nhU6pQbtXH5cZOrukynZ
-         2EOA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :mime-version:content-disposition:user-agent;
-        bh=QdZd1fqKDA6uO2e3P5Ih6oOtyLcTyX2n5VKSCXawdk8=;
-        b=f4jY9bbpYXrbx+KQj4dwpNvwtYP11GDCFLPZufe0XXkcXVg9N4xCvA483LMV4CgSRk
-         nEEkUoW0GbhHVa23TdGKnOW9SyHUC1ZZ+c2pjgY0qpTQEgiubrvdDbm8DDz5ktcK9ipk
-         5WJ9+uUTkVfSrYnkr3tEb5TOAHUouPb/YE/FXghWRfecfda5+NMMIrA45F07EJpBugs8
-         DeRMgs1aAiXYkpeFc8VXHBwpBuD/lmL83Uyw7uu2TeHwx89zj+MuYtYdRa7RWdC5a6+p
-         qbRweOwhZgRr7qq7gqm0LIxO6LsFf2lLNYYOkOo242yK0T06GwDGYfyBgsX/0VQk7taX
-         S9IQ==
-X-Gm-Message-State: APjAAAUekyhvpy5giWVAoNcTTCzCOIfo1B3dqJo0QEK3t+AsYcZpDNZc
-        X/RJWNcmggB2izYX7VbhaMQ=
-X-Google-Smtp-Source: APXvYqxc1Z9g3kH3ab62qePsgEpDOIrOFT8btRqNUXYQTWeEoARaI3cssOOcHVMpfxWO+XA2n0448A==
-X-Received: by 2002:adf:fac8:: with SMTP id a8mr2566368wrs.81.1580229333000;
-        Tue, 28 Jan 2020 08:35:33 -0800 (PST)
-Received: from gmail.com (54033286.catv.pool.telekom.hu. [84.3.50.134])
-        by smtp.gmail.com with ESMTPSA id s16sm27048263wrn.78.2020.01.28.08.35.31
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 28 Jan 2020 08:35:32 -0800 (PST)
-Date:   Tue, 28 Jan 2020 17:35:30 +0100
-From:   Ingo Molnar <mingo@kernel.org>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
-        Borislav Petkov <bp@alien8.de>,
-        Peter Zijlstra <a.p.zijlstra@chello.nl>,
-        Andrew Morton <akpm@linux-foundation.org>
-Subject: [GIT PULL] x86/apic fix
-Message-ID: <20200128163530.GA122391@gmail.com>
+        id S1726564AbgA1Qge (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 28 Jan 2020 11:36:34 -0500
+Received: from foss.arm.com ([217.140.110.172]:60324 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726034AbgA1Qgd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 28 Jan 2020 11:36:33 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 1D4D71FB;
+        Tue, 28 Jan 2020 08:36:33 -0800 (PST)
+Received: from bogus (e103737-lin.cambridge.arm.com [10.1.197.49])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id E072A3F68E;
+        Tue, 28 Jan 2020 08:36:30 -0800 (PST)
+Date:   Tue, 28 Jan 2020 16:36:28 +0000
+From:   Sudeep Holla <sudeep.holla@arm.com>
+To:     Benjamin Gaignard <benjamin.gaignard@st.com>
+Cc:     broonie@kernel.org, robh@kernel.org, arnd@arndb.de,
+        shawnguo@kernel.org, s.hauer@pengutronix.de, fabio.estevam@nxp.com,
+        lkml@metux.net, loic.pallardy@st.com, gregkh@linuxfoundation.org,
+        linux-kernel@vger.kernel.org, linux-imx@nxp.com,
+        kernel@pengutronix.de, linux-arm-kernel@lists.infradead.org,
+        devicetree@vger.kernel.org, system-dt@lists.openampproject.org,
+        stefano.stabellini@xilinx.com, Sudeep Holla <sudeep.holla@arm.com>
+Subject: Re: [PATCH v2 0/7] Introduce bus firewall controller framework
+Message-ID: <20200128163628.GB30489@bogus>
+References: <20200128153806.7780-1-benjamin.gaignard@st.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20200128153806.7780-1-benjamin.gaignard@st.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Linus,
+On Tue, Jan 28, 2020 at 04:37:59PM +0100, Benjamin Gaignard wrote:
+> Bus firewall framework aims to provide a kernel API to set the configuration
+> of the harware blocks in charge of busses access control.
+>
+> Framework architecture is inspirated by pinctrl framework:
+> - a default configuration could be applied before bind the driver.
+>   If a configuration could not be applied the driver is not bind
+>   to avoid doing accesses on prohibited regions.
+> - configurations could be apllied dynamically by drivers.
+> - device node provides the bus firewall configurations.
+>
+> An example of bus firewall controller is STM32 ETZPC hardware block
+> which got 3 possible configurations:
+> - trust: hardware blocks are only accessible by software running on trust
+>   zone (i.e op-tee firmware).
+> - non-secure: hardware blocks are accessible by non-secure software (i.e.
+>   linux kernel).
+> - coprocessor: hardware blocks are only accessible by the coprocessor.
+> Up to 94 hardware blocks of the soc could be managed by ETZPC.
+>
 
-Please pull the latest x86-apic-for-linus git tree from:
+/me confused. Is ETZPC accessible from the non-secure kernel space to
+begin with ? If so, is it allowed to configure hardware blocks as secure
+or trusted ? I am failing to understand the overall design of a system
+with ETZPC controller.
 
-   git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git x86-apic-for-linus
+> At least two other hardware blocks can take benefits of this:
+> - ARM TZC-400: http://infocenter.arm.com/help/topic/com.arm.doc.100325_0001_02_en/arm_corelink_tzc400_trustzone_address_space_controller_trm_100325_0001_02_en.pdf
+>   which is able to manage up to 8 regions in address space.
 
-   # HEAD: d0b7788804482b2689946cd8d910ac3e03126c8d x86/apic/uv: Avoid unused variable warning
+I strongly have to disagree with the above and NACK any patch trying
+to do so. AFAIK, no system designed has TZC with non-secure access.
+So we simply can't access this in the kernel and hence need no driver
+for the same. Please avoid adding above misleading information in future.
 
-A single commit that simplifies the code and gets rid of a compiler 
-warning.
+--
+Regards,
+Sudeep
 
- Thanks,
-
-	Ingo
-
------------------->
-Arnd Bergmann (1):
-      x86/apic/uv: Avoid unused variable warning
-
-
- arch/x86/kernel/apic/x2apic_uv_x.c | 43 ++++++--------------------------------
- 1 file changed, 6 insertions(+), 37 deletions(-)
-
-diff --git a/arch/x86/kernel/apic/x2apic_uv_x.c b/arch/x86/kernel/apic/x2apic_uv_x.c
-index d5b51a740524..ad53b2abc859 100644
---- a/arch/x86/kernel/apic/x2apic_uv_x.c
-+++ b/arch/x86/kernel/apic/x2apic_uv_x.c
-@@ -1493,65 +1493,34 @@ static void check_efi_reboot(void)
- }
- 
- /* Setup user proc fs files */
--static int proc_hubbed_show(struct seq_file *file, void *data)
-+static int __maybe_unused proc_hubbed_show(struct seq_file *file, void *data)
- {
- 	seq_printf(file, "0x%x\n", uv_hubbed_system);
- 	return 0;
- }
- 
--static int proc_hubless_show(struct seq_file *file, void *data)
-+static int __maybe_unused proc_hubless_show(struct seq_file *file, void *data)
- {
- 	seq_printf(file, "0x%x\n", uv_hubless_system);
- 	return 0;
- }
- 
--static int proc_oemid_show(struct seq_file *file, void *data)
-+static int __maybe_unused proc_oemid_show(struct seq_file *file, void *data)
- {
- 	seq_printf(file, "%s/%s\n", oem_id, oem_table_id);
- 	return 0;
- }
- 
--static int proc_hubbed_open(struct inode *inode, struct file *file)
--{
--	return single_open(file, proc_hubbed_show, (void *)NULL);
--}
--
--static int proc_hubless_open(struct inode *inode, struct file *file)
--{
--	return single_open(file, proc_hubless_show, (void *)NULL);
--}
--
--static int proc_oemid_open(struct inode *inode, struct file *file)
--{
--	return single_open(file, proc_oemid_show, (void *)NULL);
--}
--
--/* (struct is "non-const" as open function is set at runtime) */
--static struct file_operations proc_version_fops = {
--	.read		= seq_read,
--	.llseek		= seq_lseek,
--	.release	= single_release,
--};
--
--static const struct file_operations proc_oemid_fops = {
--	.open		= proc_oemid_open,
--	.read		= seq_read,
--	.llseek		= seq_lseek,
--	.release	= single_release,
--};
--
- static __init void uv_setup_proc_files(int hubless)
- {
- 	struct proc_dir_entry *pde;
--	char *name = hubless ? "hubless" : "hubbed";
- 
- 	pde = proc_mkdir(UV_PROC_NODE, NULL);
--	proc_create("oemid", 0, pde, &proc_oemid_fops);
--	proc_create(name, 0, pde, &proc_version_fops);
-+	proc_create_single("oemid", 0, pde, proc_oemid_show);
- 	if (hubless)
--		proc_version_fops.open = proc_hubless_open;
-+		proc_create_single("hubless", 0, pde, proc_hubless_show);
- 	else
--		proc_version_fops.open = proc_hubbed_open;
-+		proc_create_single("hubbed", 0, pde, proc_hubbed_show);
- }
- 
- /* Initialize UV hubless systems */
