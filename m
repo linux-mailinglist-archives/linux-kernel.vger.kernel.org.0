@@ -2,84 +2,82 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9426B14B11E
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Jan 2020 09:51:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0DE8914B122
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Jan 2020 09:53:54 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726097AbgA1IvL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 28 Jan 2020 03:51:11 -0500
-Received: from mx2.suse.de ([195.135.220.15]:40980 "EHLO mx2.suse.de"
+        id S1726032AbgA1Ixv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 28 Jan 2020 03:53:51 -0500
+Received: from smtp-out.kfki.hu ([148.6.0.48]:39983 "EHLO smtp-out.kfki.hu"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725848AbgA1IvL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 Jan 2020 03:51:11 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id 8745BAEC1;
-        Tue, 28 Jan 2020 08:51:09 +0000 (UTC)
-Date:   Tue, 28 Jan 2020 09:51:07 +0100
-From:   Michal =?iso-8859-1?Q?Koutn=FD?= <mkoutny@suse.com>
-To:     Christopher Lameter <cl@linux.com>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Michal Hocko <mhocko@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>, linux-mm@kvack.org
-Subject: Re: SLUB: purpose of sysfs events on cache creation/removal
-Message-ID: <20200128085107.GF17425@blackbody.suse.cz>
-References: <alpine.DEB.2.21.1912041652410.29709@www.lameter.com>
- <20191204173224.GN25242@dhcp22.suse.cz>
- <20200106115733.GH12699@dhcp22.suse.cz>
- <alpine.DEB.2.21.2001061550270.23163@www.lameter.com>
- <20200109145236.GS4951@dhcp22.suse.cz>
- <20200109114415.cf01bd3ad30c5c4aec981653@linux-foundation.org>
- <20200117171331.GA17179@blackbody.suse.cz>
- <20200118161528.94dc18c074aeaa384200486b@linux-foundation.org>
- <20200127173336.GB17425@blackbody.suse.cz>
- <alpine.DEB.2.21.2001272304080.25307@www.lameter.com>
+        id S1725903AbgA1Ixu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 28 Jan 2020 03:53:50 -0500
+Received: from localhost (localhost [127.0.0.1])
+        by smtp2.kfki.hu (Postfix) with ESMTP id C3A4ACC00F3;
+        Tue, 28 Jan 2020 09:53:48 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        blackhole.kfki.hu; h=mime-version:user-agent:references
+        :message-id:in-reply-to:from:from:date:date:received:received
+        :received; s=20151130; t=1580201626; x=1582016027; bh=aEm/fnpwIz
+        WLBFMzwB9RT2bfWnCXazD/1uWSPnX+jGU=; b=m/K75uwD9E6PxpckwbYoABDtqk
+        llryMXTa73E+TcBIeB5ABpidFTO6asepGDrlldSOfDx4JgEnIYlZm5aIoMaeSjDj
+        13lG1epV8GOvRQ3cWHiFYO2PjH3mx5ItQqjRtk5XsSVsqiEQTj3cq1gjgUHxtlP+
+        WNmga9TFXsshmBeDQ=
+X-Virus-Scanned: Debian amavisd-new at smtp2.kfki.hu
+Received: from smtp2.kfki.hu ([127.0.0.1])
+        by localhost (smtp2.kfki.hu [127.0.0.1]) (amavisd-new, port 10026)
+        with ESMTP; Tue, 28 Jan 2020 09:53:46 +0100 (CET)
+Received: from blackhole.kfki.hu (blackhole.kfki.hu [148.6.240.2])
+        by smtp2.kfki.hu (Postfix) with ESMTP id 68DDACC00F2;
+        Tue, 28 Jan 2020 09:53:45 +0100 (CET)
+Received: by blackhole.kfki.hu (Postfix, from userid 1000)
+        id 4211F21A72; Tue, 28 Jan 2020 09:53:45 +0100 (CET)
+Date:   Tue, 28 Jan 2020 09:53:45 +0100 (CET)
+From:   =?UTF-8?Q?Kadlecsik_J=C3=B3zsef?= <kadlec@blackhole.kfki.hu>
+To:     Hillf Danton <hdanton@sina.com>
+cc:     syzbot <syzbot+68a806795ac89df3aa1c@syzkaller.appspotmail.com>,
+        x86@kernel.org, tony.luck@intel.com, peterz@infradead.org,
+        netdev@vger.kernel.org, hpa@zytor.com,
+        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com,
+        coreteam@netfilter.org, bp@alien8.de,
+        netfilter-devel@vger.kernel.org, tglx@linutronix.de,
+        mingo@redhat.com, davem@davemloft.net
+Subject: Re: [netfilter-core] INFO: rcu detected stall in hash_ip4_gc
+In-Reply-To: <20200128022601.15116-1-hdanton@sina.com>
+Message-ID: <alpine.DEB.2.20.2001280948480.5190@blackhole.kfki.hu>
+References: <20200127042315.10456-1-hdanton@sina.com> <20200128022601.15116-1-hdanton@sina.com>
+User-Agent: Alpine 2.20 (DEB 67 2015-01-07)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="hK8Uo4Yp55NZU70L"
-Content-Disposition: inline
-In-Reply-To: <alpine.DEB.2.21.2001272304080.25307@www.lameter.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Tue, 28 Jan 2020, Hillf Danton wrote:
 
---hK8Uo4Yp55NZU70L
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+> 
+> On Mon, 27 Jan 2020 23:14:03 +0100 (CET) Kadlecsik Jozsef wrote:
+> > 
+> > Thanks for the patch, but it does not fix completely the issue: the same 
+> > error message can pop up in ip_set_uadd(), because it calls the gc 
+> > function as well when the set is full but there can be timed out entries. 
+> 
+> Why is trylock-based gc going to make hassle again?
 
-On Mon, Jan 27, 2020 at 11:04:53PM +0000, Christopher Lameter <cl@linux.com> wrote:
-> The patch exposes details of cgroup caches? Which patch are we talking
-> about?
-Sorry, that's misunderstanding. I mean the current state (sending
-uevents) exposes the internals (creation of caches per cgroup). The
-patch [1] removing uevent notifications is rectifying it.
+Because mtype_expire() which scans the whole set to find and evict 
+expired entries is called not only from the gc function but from add as 
+well (to reclaim space since last gc) and list too (to get the number of 
+elements). One locks out the another and that reported in the error 
+message.
 
-Michal
+> > I'm going to work on a solution with covers that case too.
 
-[1] https://lore.kernel.org/lkml/alpine.DEB.2.21.1912041652410.29709@www.lameter.com/
+Region-locking seems to be the best way to go.
 
-
---hK8Uo4Yp55NZU70L
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCAAdFiEEEoQaUCWq8F2Id1tNia1+riC5qSgFAl4v9fsACgkQia1+riC5
-qShawg/+LW2OYgM6w1QE6LO/MoUzffOfLBRZVBJlt7R5ZMG7bgHB4ApxugB2S3U8
-KD3fzUb8J2fOT6xxPrF2A927JjkFlwIGfldD6Z1FsoKvtmcWpHiCOPDRuNAd5fKq
-3r54hXzXgnIHIOOIGEvQpztRfRR0kKAdXPNFX5isLmbB4K7n+J8Pc3oRsxmjBehZ
-fSzUTU5PjVyYtHkopFB80q+3pcPsfl45TBvZD3azU2p3/KMxuuNI6inGM477WJhl
-UlY8p/bnA9p4wV6Cw6g0LPNGBmyw7WFl2WxAu4fIsHnR8RXu4A4qxKh22d+N6QuM
-cVDERVcVS6FiqqzXlQcGLR6X1KOBIhS7aG8kKj5ewYvUuBApTonhjDfdlwbfJdnr
-lzyAXMlzV3sEuyxOtPxH71oLPYGfPThADjtohnnaJGUg0We7881zsi1evUIG7mYB
-BJFnJsKYZPJqq8H/c28vbUR2Mztgaz3o9RqXyS4OTZEfp51Q3R6MOaQxsrkP46cs
-yD0MdyWFHnveoJRUWGz+u8HwxSvG7Jrvjhd0ob2s5imBsc6HxpTuVfuvVfJGGB3t
-bKBj2lTjS44iKi2tNLMC0I2OVoF60kA6kDW7JECj7sK++7LF37AIC996uzQ/mODZ
-naZ/G/dZMUvAl0mt5MYZrK0WYURLbEn5IXgldMhtzc7s9a7cDl8=
-=/YoQ
------END PGP SIGNATURE-----
-
---hK8Uo4Yp55NZU70L--
+Best regards,
+Jozsef
+-
+E-mail  : kadlec@blackhole.kfki.hu, kadlecsik.jozsef@wigner.mta.hu
+PGP key : http://www.kfki.hu/~kadlec/pgp_public_key.txt
+Address : Wigner Research Centre for Physics
+          H-1525 Budapest 114, POB. 49, Hungary
