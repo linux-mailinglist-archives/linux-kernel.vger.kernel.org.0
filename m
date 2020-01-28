@@ -2,36 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A015914BB8A
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Jan 2020 15:48:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A195514BB4A
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Jan 2020 15:46:30 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727090AbgA1OrH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 28 Jan 2020 09:47:07 -0500
-Received: from mail.kernel.org ([198.145.29.99]:56152 "EHLO mail.kernel.org"
+        id S1728701AbgA1OJT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 28 Jan 2020 09:09:19 -0500
+Received: from mail.kernel.org ([198.145.29.99]:57432 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727792AbgA1OIM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 Jan 2020 09:08:12 -0500
+        id S1728663AbgA1OJH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 28 Jan 2020 09:09:07 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 76EAB22522;
-        Tue, 28 Jan 2020 14:08:11 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 316BE24694;
+        Tue, 28 Jan 2020 14:09:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1580220491;
-        bh=iUtRt/4A0EKtUxFN7POXi60okHJXln+goaL3CNV6aQo=;
+        s=default; t=1580220546;
+        bh=PiuDZQEdnw3N7o/vAV/LH4ff4l5jO2NrHYVYvMt/9SI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=pZavAVhOX8aoBNNB3P6BlAgcK9NcLCP/xn+uU0h5K0dsOIh8q19Ry+7yMzaEOWsgx
-         hp7c7G1rNAfsgY/e/eTSuzP8IfAWwjHeALOcfx8j3gGYCWn/JZ6LIKEOGLbdtK6VhT
-         qU86Afgo/hcrxN5wdVj5VeYaRhNe5p+jKguY6Aec=
+        b=ymrXuggjMmIFHl44mP+BE0r8GSrQlyq41dJXmjGN/AMRTn8f0l8xSn+LAOdnMILRh
+         jWmGWtc7vcIlx7uFdiZz/82r5xfs66uFd8oRXCxx7p++m3fOtlwNUctzhJNy1mbZGN
+         KbStmYS/eBwD+HOG5MDnUzZbNGRLwVGq59Xw/NsY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Yangtao Li <tiny.windzz@gmail.com>,
-        Stephen Boyd <sboyd@kernel.org>,
+        stable@vger.kernel.org, Gal Pressman <galpress@amazon.com>,
+        Jason Gunthorpe <jgg@mellanox.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.4 028/183] clk: vf610: fix refcount leak in vf610_clocks_init()
-Date:   Tue, 28 Jan 2020 15:04:07 +0100
-Message-Id: <20200128135832.847402064@linuxfoundation.org>
+Subject: [PATCH 4.4 033/183] RDMA/ocrdma: Fix out of bounds index check in query pkey
+Date:   Tue, 28 Jan 2020 15:04:12 +0100
+Message-Id: <20200128135833.317143595@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
 In-Reply-To: <20200128135829.486060649@linuxfoundation.org>
 References: <20200128135829.486060649@linuxfoundation.org>
@@ -44,34 +44,34 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Yangtao Li <tiny.windzz@gmail.com>
+From: Gal Pressman <galpress@amazon.com>
 
-[ Upstream commit 567177024e0313e4f0dcba7ba10c0732e50e655d ]
+[ Upstream commit b188940796c7be31c1b8c25a9a0e0842c2e7a49e ]
 
-The of_find_compatible_node() returns a node pointer with refcount
-incremented, but there is the lack of use of the of_node_put() when
-done. Add the missing of_node_put() to release the refcount.
+The pkey table size is one element, index should be tested for > 0 instead
+of > 1.
 
-Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
-Fixes: 1f2c5fd5f048 ("ARM: imx: add VF610 clock support")
-Signed-off-by: Stephen Boyd <sboyd@kernel.org>
+Fixes: fe2caefcdf58 ("RDMA/ocrdma: Add driver for Emulex OneConnect IBoE RDMA adapter")
+Signed-off-by: Gal Pressman <galpress@amazon.com>
+Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/clk/imx/clk-vf610.c | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/infiniband/hw/ocrdma/ocrdma_verbs.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/clk/imx/clk-vf610.c b/drivers/clk/imx/clk-vf610.c
-index 0a94d9661d912..2c92a2706fdd0 100644
---- a/drivers/clk/imx/clk-vf610.c
-+++ b/drivers/clk/imx/clk-vf610.c
-@@ -155,6 +155,7 @@ static void __init vf610_clocks_init(struct device_node *ccm_node)
- 	np = of_find_compatible_node(NULL, NULL, "fsl,vf610-anatop");
- 	anatop_base = of_iomap(np, 0);
- 	BUG_ON(!anatop_base);
-+	of_node_put(np);
+diff --git a/drivers/infiniband/hw/ocrdma/ocrdma_verbs.c b/drivers/infiniband/hw/ocrdma/ocrdma_verbs.c
+index 76e96f97b3f64..6385448b22c5a 100644
+--- a/drivers/infiniband/hw/ocrdma/ocrdma_verbs.c
++++ b/drivers/infiniband/hw/ocrdma/ocrdma_verbs.c
+@@ -55,7 +55,7 @@
  
- 	np = ccm_node;
- 	ccm_base = of_iomap(np, 0);
+ int ocrdma_query_pkey(struct ib_device *ibdev, u8 port, u16 index, u16 *pkey)
+ {
+-	if (index > 1)
++	if (index > 0)
+ 		return -EINVAL;
+ 
+ 	*pkey = 0xffff;
 -- 
 2.20.1
 
