@@ -2,40 +2,43 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9AA5414B8F1
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Jan 2020 15:29:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 54DB614B8FD
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Jan 2020 15:29:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387609AbgA1O3E (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 28 Jan 2020 09:29:04 -0500
-Received: from mail.kernel.org ([198.145.29.99]:57260 "EHLO mail.kernel.org"
+        id S1729028AbgA1O3a (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 28 Jan 2020 09:29:30 -0500
+Received: from mail.kernel.org ([198.145.29.99]:57886 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387593AbgA1O3B (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 Jan 2020 09:29:01 -0500
+        id S1733283AbgA1O30 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 28 Jan 2020 09:29:26 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9AFBB2468D;
-        Tue, 28 Jan 2020 14:28:59 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 059FB20716;
+        Tue, 28 Jan 2020 14:29:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1580221740;
-        bh=pmH3pqwquri/97YKTJEYZAwFtUYiOj88w6HvPfcMfoE=;
+        s=default; t=1580221765;
+        bh=HFhmV/HKV9aCser5rs1DVz4NhpEaXn7uDj7uLe4G3HY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=mj68Uz43xckdoOdHWxNKPV6ks2YXfT1Yqt83PjSqW9otV5B2im9fu1HCIkKjHcudp
-         7ZbLp3rtqIAc+pZJE7WMwCGi40ZAj6ddBweEkPiyMYh4A4h/PALZhBot8M9Q1IqL7r
-         LY+3/WS+PsPxBC7SuhIrkErnSVVWpuMmKtq68LL0=
+        b=lw1rAqFvIFbkGrHiR2DeSCoOULo88AD34pEeo3EYi6eh9uRUgKesJDNoONY3IOr5p
+         EuY6LG/AAF+eBzZvW3lCQk0FBMdOidZsXPEOTx6tw862sDhCrlzzgok6TTO4XzXlLC
+         D9avwCdPsoKw1DY8WVi+YyDqJ2KbvtLEphksp9Vo=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Wei Yang <richard.weiyang@gmail.com>,
-        David Hildenbrand <david@redhat.com>,
-        Michal Hocko <mhocko@suse.com>,
-        Dave Hansen <dave.hansen@intel.com>,
         Oscar Salvador <osalvador@suse.de>,
+        David Hildenbrand <david@redhat.com>,
+        Pavel Tatashin <pasha.tatashin@soleen.com>,
+        Michal Hocko <mhocko@suse.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Jerome Glisse <jglisse@redhat.com>,
+        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
         Andrew Morton <akpm@linux-foundation.org>,
         Linus Torvalds <torvalds@linux-foundation.org>
-Subject: [PATCH 4.19 71/92] mm, sparse: pass nid instead of pgdat to sparse_add_one_section()
-Date:   Tue, 28 Jan 2020 15:08:39 +0100
-Message-Id: <20200128135818.493866712@linuxfoundation.org>
+Subject: [PATCH 4.19 73/92] mm, memory_hotplug: add nid parameter to arch_remove_memory
+Date:   Tue, 28 Jan 2020 15:08:41 +0100
+Message-Id: <20200128135818.772522977@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
 In-Reply-To: <20200128135809.344954797@linuxfoundation.org>
 References: <20200128135809.344954797@linuxfoundation.org>
@@ -48,83 +51,207 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Wei Yang <richard.weiyang@gmail.com>
+From: Oscar Salvador <osalvador@suse.com>
 
-commit 4e0d2e7ef14d9e1c900dac909db45263822b824f upstream.
+commit 2c2a5af6fed20cf74401c9d64319c76c5ff81309 upstream.
 
-Since the information needed in sparse_add_one_section() is node id to
-allocate proper memory, it is not necessary to pass its pgdat.
+-- snip --
 
-This patch changes the prototype of sparse_add_one_section() to pass node
-id directly.  This is intended to reduce misleading that
-sparse_add_one_section() would touch pgdat.
+Missing unification of mm/hmm.c and kernel/memremap.c
 
-Link: http://lkml.kernel.org/r/20181204085657.20472-2-richard.weiyang@gmail.com
-Signed-off-by: Wei Yang <richard.weiyang@gmail.com>
+-- snip --
+
+Patch series "Do not touch pages in hot-remove path", v2.
+
+This patchset aims for two things:
+
+ 1) A better definition about offline and hot-remove stage
+ 2) Solving bugs where we can access non-initialized pages
+    during hot-remove operations [2] [3].
+
+This is achieved by moving all page/zone handling to the offline
+stage, so we do not need to access pages when hot-removing memory.
+
+[1] https://patchwork.kernel.org/cover/10691415/
+[2] https://patchwork.kernel.org/patch/10547445/
+[3] https://www.spinics.net/lists/linux-mm/msg161316.html
+
+This patch (of 5):
+
+This is a preparation for the following-up patches.  The idea of passing
+the nid is that it will allow us to get rid of the zone parameter
+afterwards.
+
+Link: http://lkml.kernel.org/r/20181127162005.15833-2-osalvador@suse.de
+Signed-off-by: Oscar Salvador <osalvador@suse.de>
 Reviewed-by: David Hildenbrand <david@redhat.com>
-Acked-by: Michal Hocko <mhocko@suse.com>
-Cc: Dave Hansen <dave.hansen@intel.com>
-Cc: Oscar Salvador <osalvador@suse.de>
+Reviewed-by: Pavel Tatashin <pasha.tatashin@soleen.com>
+Cc: Michal Hocko <mhocko@suse.com>
+Cc: Dan Williams <dan.j.williams@intel.com>
+Cc: Jerome Glisse <jglisse@redhat.com>
+Cc: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>
+
 Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
 Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: David Hildenbrand <david@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
+ arch/ia64/mm/init.c            |    2 +-
+ arch/powerpc/mm/mem.c          |    3 ++-
+ arch/s390/mm/init.c            |    2 +-
+ arch/sh/mm/init.c              |    2 +-
+ arch/x86/mm/init_32.c          |    2 +-
+ arch/x86/mm/init_64.c          |    3 ++-
  include/linux/memory_hotplug.h |    4 ++--
+ kernel/memremap.c              |    5 ++++-
+ mm/hmm.c                       |    4 +++-
  mm/memory_hotplug.c            |    2 +-
- mm/sparse.c                    |    8 ++++----
- 3 files changed, 7 insertions(+), 7 deletions(-)
+ 10 files changed, 18 insertions(+), 11 deletions(-)
 
+--- a/arch/ia64/mm/init.c
++++ b/arch/ia64/mm/init.c
+@@ -662,7 +662,7 @@ int arch_add_memory(int nid, u64 start,
+ }
+ 
+ #ifdef CONFIG_MEMORY_HOTREMOVE
+-int arch_remove_memory(u64 start, u64 size, struct vmem_altmap *altmap)
++int arch_remove_memory(int nid, u64 start, u64 size, struct vmem_altmap *altmap)
+ {
+ 	unsigned long start_pfn = start >> PAGE_SHIFT;
+ 	unsigned long nr_pages = size >> PAGE_SHIFT;
+--- a/arch/powerpc/mm/mem.c
++++ b/arch/powerpc/mm/mem.c
+@@ -140,7 +140,8 @@ int __meminit arch_add_memory(int nid, u
+ }
+ 
+ #ifdef CONFIG_MEMORY_HOTREMOVE
+-int __meminit arch_remove_memory(u64 start, u64 size, struct vmem_altmap *altmap)
++int __meminit arch_remove_memory(int nid, u64 start, u64 size,
++					struct vmem_altmap *altmap)
+ {
+ 	unsigned long start_pfn = start >> PAGE_SHIFT;
+ 	unsigned long nr_pages = size >> PAGE_SHIFT;
+--- a/arch/s390/mm/init.c
++++ b/arch/s390/mm/init.c
+@@ -240,7 +240,7 @@ int arch_add_memory(int nid, u64 start,
+ }
+ 
+ #ifdef CONFIG_MEMORY_HOTREMOVE
+-int arch_remove_memory(u64 start, u64 size, struct vmem_altmap *altmap)
++int arch_remove_memory(int nid, u64 start, u64 size, struct vmem_altmap *altmap)
+ {
+ 	/*
+ 	 * There is no hardware or firmware interface which could trigger a
+--- a/arch/sh/mm/init.c
++++ b/arch/sh/mm/init.c
+@@ -444,7 +444,7 @@ EXPORT_SYMBOL_GPL(memory_add_physaddr_to
+ #endif
+ 
+ #ifdef CONFIG_MEMORY_HOTREMOVE
+-int arch_remove_memory(u64 start, u64 size, struct vmem_altmap *altmap)
++int arch_remove_memory(int nid, u64 start, u64 size, struct vmem_altmap *altmap)
+ {
+ 	unsigned long start_pfn = PFN_DOWN(start);
+ 	unsigned long nr_pages = size >> PAGE_SHIFT;
+--- a/arch/x86/mm/init_32.c
++++ b/arch/x86/mm/init_32.c
+@@ -861,7 +861,7 @@ int arch_add_memory(int nid, u64 start,
+ }
+ 
+ #ifdef CONFIG_MEMORY_HOTREMOVE
+-int arch_remove_memory(u64 start, u64 size, struct vmem_altmap *altmap)
++int arch_remove_memory(int nid, u64 start, u64 size, struct vmem_altmap *altmap)
+ {
+ 	unsigned long start_pfn = start >> PAGE_SHIFT;
+ 	unsigned long nr_pages = size >> PAGE_SHIFT;
+--- a/arch/x86/mm/init_64.c
++++ b/arch/x86/mm/init_64.c
+@@ -1142,7 +1142,8 @@ kernel_physical_mapping_remove(unsigned
+ 	remove_pagetable(start, end, true, NULL);
+ }
+ 
+-int __ref arch_remove_memory(u64 start, u64 size, struct vmem_altmap *altmap)
++int __ref arch_remove_memory(int nid, u64 start, u64 size,
++				struct vmem_altmap *altmap)
+ {
+ 	unsigned long start_pfn = start >> PAGE_SHIFT;
+ 	unsigned long nr_pages = size >> PAGE_SHIFT;
 --- a/include/linux/memory_hotplug.h
 +++ b/include/linux/memory_hotplug.h
-@@ -335,8 +335,8 @@ extern void move_pfn_range_to_zone(struc
- 		unsigned long nr_pages, struct vmem_altmap *altmap);
- extern int offline_pages(unsigned long start_pfn, unsigned long nr_pages);
- extern bool is_memblock_offlined(struct memory_block *mem);
--extern int sparse_add_one_section(struct pglist_data *pgdat,
--		unsigned long start_pfn, struct vmem_altmap *altmap);
-+extern int sparse_add_one_section(int nid, unsigned long start_pfn,
-+				  struct vmem_altmap *altmap);
- extern void sparse_remove_one_section(struct zone *zone, struct mem_section *ms,
- 		unsigned long map_offset, struct vmem_altmap *altmap);
- extern struct page *sparse_decode_mem_map(unsigned long coded_mem_map,
+@@ -109,8 +109,8 @@ static inline bool movable_node_is_enabl
+ }
+ 
+ #ifdef CONFIG_MEMORY_HOTREMOVE
+-extern int arch_remove_memory(u64 start, u64 size,
+-		struct vmem_altmap *altmap);
++extern int arch_remove_memory(int nid, u64 start, u64 size,
++				struct vmem_altmap *altmap);
+ extern int __remove_pages(struct zone *zone, unsigned long start_pfn,
+ 	unsigned long nr_pages, struct vmem_altmap *altmap);
+ #endif /* CONFIG_MEMORY_HOTREMOVE */
+--- a/kernel/memremap.c
++++ b/kernel/memremap.c
+@@ -121,6 +121,7 @@ static void devm_memremap_pages_release(
+ 	struct resource *res = &pgmap->res;
+ 	resource_size_t align_start, align_size;
+ 	unsigned long pfn;
++	int nid;
+ 
+ 	pgmap->kill(pgmap->ref);
+ 	for_each_device_pfn(pfn, pgmap)
+@@ -131,13 +132,15 @@ static void devm_memremap_pages_release(
+ 	align_size = ALIGN(res->start + resource_size(res), SECTION_SIZE)
+ 		- align_start;
+ 
++	nid = page_to_nid(pfn_to_page(align_start >> PAGE_SHIFT));
++
+ 	mem_hotplug_begin();
+ 	if (pgmap->type == MEMORY_DEVICE_PRIVATE) {
+ 		pfn = align_start >> PAGE_SHIFT;
+ 		__remove_pages(page_zone(pfn_to_page(pfn)), pfn,
+ 				align_size >> PAGE_SHIFT, NULL);
+ 	} else {
+-		arch_remove_memory(align_start, align_size,
++		arch_remove_memory(nid, align_start, align_size,
+ 				pgmap->altmap_valid ? &pgmap->altmap : NULL);
+ 		kasan_remove_zero_shadow(__va(align_start), align_size);
+ 	}
+--- a/mm/hmm.c
++++ b/mm/hmm.c
+@@ -999,6 +999,7 @@ static void hmm_devmem_release(void *dat
+ 	unsigned long start_pfn, npages;
+ 	struct zone *zone;
+ 	struct page *page;
++	int nid;
+ 
+ 	/* pages are dead and unused, undo the arch mapping */
+ 	start_pfn = (resource->start & ~(PA_SECTION_SIZE - 1)) >> PAGE_SHIFT;
+@@ -1006,12 +1007,13 @@ static void hmm_devmem_release(void *dat
+ 
+ 	page = pfn_to_page(start_pfn);
+ 	zone = page_zone(page);
++	nid = page_to_nid(page);
+ 
+ 	mem_hotplug_begin();
+ 	if (resource->desc == IORES_DESC_DEVICE_PRIVATE_MEMORY)
+ 		__remove_pages(zone, start_pfn, npages, NULL);
+ 	else
+-		arch_remove_memory(start_pfn << PAGE_SHIFT,
++		arch_remove_memory(nid, start_pfn << PAGE_SHIFT,
+ 				   npages << PAGE_SHIFT, NULL);
+ 	mem_hotplug_done();
+ 
 --- a/mm/memory_hotplug.c
 +++ b/mm/memory_hotplug.c
-@@ -255,7 +255,7 @@ static int __meminit __add_section(int n
- 	if (pfn_valid(phys_start_pfn))
- 		return -EEXIST;
+@@ -1916,7 +1916,7 @@ void __ref __remove_memory(int nid, u64
+ 	memblock_free(start, size);
+ 	memblock_remove(start, size);
  
--	ret = sparse_add_one_section(NODE_DATA(nid), phys_start_pfn, altmap);
-+	ret = sparse_add_one_section(nid, phys_start_pfn, altmap);
- 	if (ret < 0)
- 		return ret;
+-	arch_remove_memory(start, size, NULL);
++	arch_remove_memory(nid, start, size, NULL);
  
---- a/mm/sparse.c
-+++ b/mm/sparse.c
-@@ -661,8 +661,8 @@ static void free_map_bootmem(struct page
-  * set.  If this is <=0, then that means that the passed-in
-  * map was not consumed and must be freed.
-  */
--int __meminit sparse_add_one_section(struct pglist_data *pgdat,
--		unsigned long start_pfn, struct vmem_altmap *altmap)
-+int __meminit sparse_add_one_section(int nid, unsigned long start_pfn,
-+				     struct vmem_altmap *altmap)
- {
- 	unsigned long section_nr = pfn_to_section_nr(start_pfn);
- 	struct mem_section *ms;
-@@ -674,11 +674,11 @@ int __meminit sparse_add_one_section(str
- 	 * no locking for this, because it does its own
- 	 * plus, it does a kmalloc
- 	 */
--	ret = sparse_index_init(section_nr, pgdat->node_id);
-+	ret = sparse_index_init(section_nr, nid);
- 	if (ret < 0 && ret != -EEXIST)
- 		return ret;
- 	ret = 0;
--	memmap = kmalloc_section_memmap(section_nr, pgdat->node_id, altmap);
-+	memmap = kmalloc_section_memmap(section_nr, nid, altmap);
- 	if (!memmap)
- 		return -ENOMEM;
- 	usemap = __kmalloc_section_usemap();
+ 	try_offline_node(nid);
+ 
 
 
