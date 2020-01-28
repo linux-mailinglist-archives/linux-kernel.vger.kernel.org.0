@@ -2,48 +2,48 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4C84014C305
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Jan 2020 23:36:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3EC3D14C307
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Jan 2020 23:36:52 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726546AbgA1WgV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 28 Jan 2020 17:36:21 -0500
-Received: from mail-qk1-f193.google.com ([209.85.222.193]:45492 "EHLO
-        mail-qk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726401AbgA1WgT (ORCPT
+        id S1726605AbgA1Wg1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 28 Jan 2020 17:36:27 -0500
+Received: from mail-qv1-f68.google.com ([209.85.219.68]:44384 "EHLO
+        mail-qv1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726466AbgA1WgV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 Jan 2020 17:36:19 -0500
-Received: by mail-qk1-f193.google.com with SMTP id x1so15106788qkl.12
-        for <linux-kernel@vger.kernel.org>; Tue, 28 Jan 2020 14:36:18 -0800 (PST)
+        Tue, 28 Jan 2020 17:36:21 -0500
+Received: by mail-qv1-f68.google.com with SMTP id n8so7075757qvg.11
+        for <linux-kernel@vger.kernel.org>; Tue, 28 Jan 2020 14:36:20 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=YJHWah+Fmu6VB7l8k5EqA83O5eUGrSI3jHksR1KtXQQ=;
-        b=XmaI5cMcHYY17M8XnRh24LRsGFvd4mB9lTrWmU6hds4+MUtCB1X3kGbJWz+npkyC8+
-         nfNI0wyOB7uACWKKc66XDCbeZVO95QXleW4Y43WGT1JZvm1Ew6/0GLWcwYWmp7AMECw6
-         +hWE6e4OVK+jQrEFYdfMHtD46GcNWBK1fQ1myhJR/ygvKxF88T+ENvRYxTSjD2XWfVgk
-         j+bCcu4YQg7karjvnLJnxb1teWP/+DMXhFYKAyi7peBfpbTHxLWAiilSwMy8ixTkEw+d
-         CU+QSTzwPKu0hYI7yJ8oT+cTabvtL0Ab+Vci8NAjngiwakuEXJ+r1TdQRhr/lzbIds1T
-         FLzQ==
+        bh=OghplwU/tPhbSguv+TUOhHr2qr6XCiHT707bOgXEuSc=;
+        b=O0RdzrwmfEH8uV6RdRU4C4h2M1E/wqsv11ZV3zenr2bD1mpDgnrxullmq3C1wF5tGu
+         IiMrSYRWA/s18yzBA2U1EQDCzg8BLLeOahc9JivymAYeEG8DDQpKnjgqUy9iglV54qv3
+         ckBJez1p2rhSu527bd/DXm8xqBhOjufU9J9oMRLn+wQzBGMTo58nRwWJCXoqN4+ihvMO
+         tNplAuPjc8GkoJZerog/r5/XdPWjYH6ykEuFLeb8v8YqhEfHcOsFvGpWXv3qN97/e74n
+         yYb31KMeNxeIw5xT/cLoZstD7THgaeTFQb5v43F8D8Dm5UmcEoNbamDjTXGCNJzaQJTe
+         e6TA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=YJHWah+Fmu6VB7l8k5EqA83O5eUGrSI3jHksR1KtXQQ=;
-        b=Fo9hxjMfT5rnoA7leEOujLR130PF5zJBL1p9sTnTtgEdug0CdDJGVbGYZhUDr1U7US
-         K6VJw+k0D0znZqgYQAhNC8TQOzOYYbghpyVJJ086TiZYffpyEbVfxxF5eUOP40QiaepD
-         O8n21OjDhrngn187HNxziiHidNpJD/LpNKHjE9wo5ZY2DYO4Yp6YwOeQMMMbg3bDiWwR
-         1jln7qeHWz5yX0z7E4tVaIgFuB2ju7waRuOl8l85GdFkOICwKTiR1PndkryDANRJrrJ1
-         4pChBaezvpOY/SodZvxatErrNVE8Ctab+DZfGj5nkcsrEwRgPNGjlPzteYqd/8yx+rUU
-         V7/A==
-X-Gm-Message-State: APjAAAUdu60puRepo2oRnCl17xNv9JCocpCWNZhcbOFlmgOi0CFKxp3v
-        i6Q5U1hLc/mqeqrHPseJaIXk8Q==
-X-Google-Smtp-Source: APXvYqwFbdMGJW7S1EOnEkuedwALEyLHObRbDc7PLKf0GKrL04UVIEsEssZZc8ZyPUtg4QbMbJ89cw==
-X-Received: by 2002:a05:620a:13e3:: with SMTP id h3mr24325310qkl.319.1580250978395;
-        Tue, 28 Jan 2020 14:36:18 -0800 (PST)
+        bh=OghplwU/tPhbSguv+TUOhHr2qr6XCiHT707bOgXEuSc=;
+        b=InD6U/qm7ZWbG7ESfag/K1/EFGVBu140u5RVj0sBowXYjIeAeEiG9gi0KVlC3N/3Od
+         ar9KCepL9ST8uLNeD/1OO3AYu1KYPU9/C/W1DFS4LkLViycSPYMfE/bpp1j516O+PO/t
+         zMsymcZyxxyNTRKvS5hK4FVMeGzd24FLkhgrFPd9x5E3HE8gCWwZIHEaDxOWT2V4NaNV
+         Zn8ZnQswCrYXTZ5rybm0IrZTG61ulX9ALktacnOLpBmwmw6AZf4+U+BWrxwwdp5HK3ax
+         IcpV0q2ieNFIgl1WDICwlt1bR2iFrvUnnOSmZESaR9YJprCPjICSa0MFtgyzB3PlPNoD
+         m1mg==
+X-Gm-Message-State: APjAAAWEitrk0+HhyX2sTHWkFxmM4i/ZHNLCdrqAiUd+3xnRzDfV+jzQ
+        rCkbyYpvYQ4skWCU1OHtUlokIQ==
+X-Google-Smtp-Source: APXvYqwNXRE2Jx9Q8G0Z1gI7LMYYb3v1Z+iO1SHbRzn+/LiMnHF+yluwec0nkednp9lpRme8JmKy1Q==
+X-Received: by 2002:a0c:ef0f:: with SMTP id t15mr25139569qvr.123.1580250980156;
+        Tue, 28 Jan 2020 14:36:20 -0800 (PST)
 Received: from Thara-Work-Ubuntu.fios-router.home (pool-71-255-246-27.washdc.fios.verizon.net. [71.255.246.27])
-        by smtp.googlemail.com with ESMTPSA id 124sm13014259qko.11.2020.01.28.14.36.16
+        by smtp.googlemail.com with ESMTPSA id 124sm13014259qko.11.2020.01.28.14.36.18
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Tue, 28 Jan 2020 14:36:17 -0800 (PST)
+        Tue, 28 Jan 2020 14:36:19 -0800 (PST)
 From:   Thara Gopinath <thara.gopinath@linaro.org>
 To:     mingo@redhat.com, peterz@infradead.org, ionela.voinescu@arm.com,
         vincent.guittot@linaro.org, dietmar.eggemann@arm.com,
@@ -53,9 +53,9 @@ To:     mingo@redhat.com, peterz@infradead.org, ionela.voinescu@arm.com,
         juri.lelli@redhat.com, corbet@lwn.net
 Cc:     linux-kernel@vger.kernel.org, amit.kachhap@gmail.com,
         javi.merino@kernel.org, amit.kucheria@verdurent.com
-Subject: [Patch v9 5/8] sched/fair: update cpu_capacity to reflect thermal pressure
-Date:   Tue, 28 Jan 2020 17:36:04 -0500
-Message-Id: <1580250967-4386-6-git-send-email-thara.gopinath@linaro.org>
+Subject: [Patch v9 6/8] thermal/cpu-cooling: Update thermal pressure in case of a maximum frequency capping
+Date:   Tue, 28 Jan 2020 17:36:05 -0500
+Message-Id: <1580250967-4386-7-git-send-email-thara.gopinath@linaro.org>
 X-Mailer: git-send-email 2.1.4
 In-Reply-To: <1580250967-4386-1-git-send-email-thara.gopinath@linaro.org>
 References: <1580250967-4386-1-git-send-email-thara.gopinath@linaro.org>
@@ -64,41 +64,62 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-cpu_capacity initially reflects the maximum possible capacity of a cpu.
-Thermal pressure on a cpu means this maximum possible capacity is
-unavailable due to thermal events. This patch subtracts the average thermal
-pressure for a cpu from its maximum possible capacity so that cpu_capacity
-reflects the actual maximum currently available capacity.
+Thermal governors can request for a cpu's maximum supported frequency to
+be capped in case of an overheat event. This in turn means that the
+maximum capacity available for tasks to run on the particular cpu is
+reduced. Delta between the original maximum capacity and capped maximum
+capacity is known as thermal pressure. Enable cpufreq cooling device to
+update the thermal pressure in event of a capped maximum frequency.
 
 Signed-off-by: Thara Gopinath <thara.gopinath@linaro.org>
 ---
 
-v8->v9:
-	- Use thermal_load_avg to read rq->avg_thermal.load_avg.
+v6->v7
+	- Changed the input argument in arch_set_thermal_pressure from
+	  capped capacity to delta capacity(thermal pressure) as per
+	  Ionela's review comments. Hence the calculation for delta
+	  capacity(thermal pressure) is moved to cpufreq_cooling.c.
 
- kernel/sched/fair.c | 7 +++++++
- 1 file changed, 7 insertions(+)
+ drivers/thermal/cpufreq_cooling.c | 19 +++++++++++++++++--
+ 1 file changed, 17 insertions(+), 2 deletions(-)
 
-diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index 5f58c03..d879077 100644
---- a/kernel/sched/fair.c
-+++ b/kernel/sched/fair.c
-@@ -7753,8 +7753,15 @@ static unsigned long scale_rt_capacity(struct sched_domain *sd, int cpu)
- 	if (unlikely(irq >= max))
- 		return 1;
+diff --git a/drivers/thermal/cpufreq_cooling.c b/drivers/thermal/cpufreq_cooling.c
+index fe83d7a..4ae8c85 100644
+--- a/drivers/thermal/cpufreq_cooling.c
++++ b/drivers/thermal/cpufreq_cooling.c
+@@ -431,6 +431,10 @@ static int cpufreq_set_cur_state(struct thermal_cooling_device *cdev,
+ 				 unsigned long state)
+ {
+ 	struct cpufreq_cooling_device *cpufreq_cdev = cdev->devdata;
++	struct cpumask *cpus;
++	unsigned int frequency;
++	unsigned long max_capacity, capacity;
++	int ret;
  
-+	/*
-+	 * avg_rt.util avg and avg_dl.util track binary signals
-+	 * (running and not running) with weights 0 and 1024 respectively.
-+	 * avg_thermal.load_avg tracks thermal pressure and the weighted
-+	 * average uses the actual delta max capacity(load).
-+	 */
- 	used = READ_ONCE(rq->avg_rt.util_avg);
- 	used += READ_ONCE(rq->avg_dl.util_avg);
-+	used += thermal_load_avg(rq);
+ 	/* Request state should be less than max_level */
+ 	if (WARN_ON(state > cpufreq_cdev->max_level))
+@@ -442,8 +446,19 @@ static int cpufreq_set_cur_state(struct thermal_cooling_device *cdev,
  
- 	if (unlikely(used >= max))
- 		return 1;
+ 	cpufreq_cdev->cpufreq_state = state;
+ 
+-	return freq_qos_update_request(&cpufreq_cdev->qos_req,
+-				get_state_freq(cpufreq_cdev, state));
++	frequency = get_state_freq(cpufreq_cdev, state);
++
++	ret = freq_qos_update_request(&cpufreq_cdev->qos_req, frequency);
++
++	if (ret > 0) {
++		cpus = cpufreq_cdev->policy->cpus;
++		max_capacity = arch_scale_cpu_capacity(cpumask_first(cpus));
++		capacity = frequency * max_capacity;
++		capacity /= cpufreq_cdev->policy->cpuinfo.max_freq;
++		arch_set_thermal_pressure(cpus, max_capacity - capacity);
++	}
++
++	return ret;
+ }
+ 
+ /* Bind cpufreq callbacks to thermal cooling device ops */
 -- 
 2.1.4
 
