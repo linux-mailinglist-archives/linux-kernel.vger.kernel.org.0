@@ -2,92 +2,128 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B44EB14B0AE
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Jan 2020 09:09:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1699714B0B8
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Jan 2020 09:12:16 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725995AbgA1II7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 28 Jan 2020 03:08:59 -0500
-Received: from mail-wr1-f48.google.com ([209.85.221.48]:33891 "EHLO
-        mail-wr1-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725825AbgA1II7 (ORCPT
+        id S1725941AbgA1IMK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 28 Jan 2020 03:12:10 -0500
+Received: from mail-lf1-f67.google.com ([209.85.167.67]:43969 "EHLO
+        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725853AbgA1IMJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 Jan 2020 03:08:59 -0500
-Received: by mail-wr1-f48.google.com with SMTP id t2so14866805wrr.1
-        for <linux-kernel@vger.kernel.org>; Tue, 28 Jan 2020 00:08:58 -0800 (PST)
+        Tue, 28 Jan 2020 03:12:09 -0500
+Received: by mail-lf1-f67.google.com with SMTP id 9so8375183lfq.10
+        for <linux-kernel@vger.kernel.org>; Tue, 28 Jan 2020 00:12:08 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition:user-agent;
-        bh=7lIcQfWVmCBP6bQ4+rU2Pi10xllyLCUnOsAfZ2ytPfM=;
-        b=YaVyiAbaWy5ecroOYJh3XirYEvqtTxo67kgJEwXvyMz2XiRnAT43UkHEckTxOrNxm2
-         7SFzNNNOy6lzCs949AeZ4YlPMhaMX80poxW1zpFQdf+PHb7/KCHX77IHFsll4I1edRQ8
-         mjEoXn9tkFS+O9PQOZQm8/IEs6I4dxbAiRZmGMboEvKbCaJCDXKvIB8WRzXGlI3wAit1
-         jWbzlZ/s3aDDi/KM0pv7eKr9w6NssyZMri8FiDX45my86xwdwFWSe0mvtkmSLbnFBY5F
-         C8W0iIqICYiuMFL9i1cFOhNxTVidNdu5mgH0Teu04YIEH9nbJr2JrUFpa/MC/vzw75sN
-         uUoQ==
+        d=rasmusvillemoes.dk; s=google;
+        h=subject:from:to:cc:references:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=YtcRS1L5k8wBwwPdgRKCV0zDBNlxax9vadneAgBCrDM=;
+        b=YsPuHSyJhbIqoeJPTniUj3/nc9kroQ5qUmdrzSLMXulbuST72e/qK6II+7d2ypcXnL
+         WQoSVOv4y9f3Ov9svBNHmkQ16+V+HhE5ezmG18N673upe2+lor6gIHHtJd3a7p1v4qA+
+         Fsxg2JFNAHVGCkVHzFvd7NiYxfQgKUd9XmN1g=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :mime-version:content-disposition:user-agent;
-        bh=7lIcQfWVmCBP6bQ4+rU2Pi10xllyLCUnOsAfZ2ytPfM=;
-        b=i3xR0FajMvGN/OrhvYr0KF/cUIbHHLDdMEY6B1VyIxTuxLq/Vk3/6nP99umzjnu7TM
-         /uiFYdT7Nz//hmjUGCsMygCL6R2tRB1tnQ8Fr2CjRTVVIcNvAuHKkmVEqeNeAs0GO6Pg
-         pk8Ds3ipr+U5Oal8bkrB1WRJbu+knN/Usqp4UArZKqJHJDkZsxGPkljHPXuTpSVdG+MW
-         sBpRYWkYWuGc2jeDqwI2HJPYE39OisAxlJXsFpACywtUijfQOHRh/bZ6nUzpsrDN1jl4
-         aB9iNUp2a3ZrHrfu4CINjTtueM5rZPyQeVzETn3jGZwGX7/4UKmeO8dAS9ddHNzCcwCD
-         oUtg==
-X-Gm-Message-State: APjAAAXXUSWGM+C8gRfYIW5kVLlvgEN6qKrA/mUSAJqw1ZzjM97pZ/yC
-        Ex8RKjf4uBALo/Kqe8c4MTeByvzi
-X-Google-Smtp-Source: APXvYqxvv1Ht+0eKgyFuBeOjd8Txi9emYdB08zjq7SUuP3sXzlU/v+kyXn7+lg5yDhqZccp30BKQLw==
-X-Received: by 2002:a05:6000:1044:: with SMTP id c4mr28685986wrx.204.1580198937576;
-        Tue, 28 Jan 2020 00:08:57 -0800 (PST)
-Received: from gmail.com (54033286.catv.pool.telekom.hu. [84.3.50.134])
-        by smtp.gmail.com with ESMTPSA id n12sm2028171wmi.18.2020.01.28.00.08.56
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 28 Jan 2020 00:08:57 -0800 (PST)
-Date:   Tue, 28 Jan 2020 09:08:55 +0100
-From:   Ingo Molnar <mingo@kernel.org>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     linux-kernel@vger.kernel.org,
-        Peter Zijlstra <a.p.zijlstra@chello.nl>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Andrew Morton <akpm@linux-foundation.org>
-Subject: [GIT PULL] locking changes for v5.6
-Message-ID: <20200128080855.GA105098@gmail.com>
+        h=x-gm-message-state:subject:from:to:cc:references:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=YtcRS1L5k8wBwwPdgRKCV0zDBNlxax9vadneAgBCrDM=;
+        b=SR3Zxjnv1ktN5aKm/1Fib/T5NPUtnHg5L41yN3CH4PYeas86+KAGJ4Qw3ncWwP87wI
+         lCUwQnS4pw8pbmcSlEYYCgTFy0nV1C5tXnEwNyheYlCHobJfpV5oTfx3S1PPdEr89cGf
+         cIubSAmLff5QdaTHaeKMJxKkjIA4P/w4WfxXXNh+Q8w1wmNRFn+t+dlUM1wSKA77JTgp
+         vDtRyh9GROWCntJjx0Pm0Xba+lw6f3GQO3C0fldScxtFsZPbHgoLZtpzDxI65rGaUsMa
+         6yk0YZj8EjMu97V0ohnPWCOCxhXC8xU5T1FLnYcHzYswfclYRzodu5qxxKaod4Z3Vdeo
+         +Zqw==
+X-Gm-Message-State: APjAAAV8rckdSeJOeubTXaQB4/0MDduDsFwBfHZaTUpYt31vh7LQLNxg
+        7wRdGPUOV9ADFB+ML2ZLXAE5CQ==
+X-Google-Smtp-Source: APXvYqxHAUbMIrGBLdv8Yti7EDHcHua1MWBUehPXejuLPYcnKyCX57FpmTzajDy4Sg/aAffBMQXHgA==
+X-Received: by 2002:ac2:5964:: with SMTP id h4mr1665454lfp.213.1580199127298;
+        Tue, 28 Jan 2020 00:12:07 -0800 (PST)
+Received: from [172.16.11.50] ([81.216.59.226])
+        by smtp.gmail.com with ESMTPSA id i13sm9246212ljg.89.2020.01.28.00.12.06
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 28 Jan 2020 00:12:06 -0800 (PST)
+Subject: Re: vmlinux ELF header sometimes corrupt
+From:   Rasmus Villemoes <linux@rasmusvillemoes.dk>
+To:     LKML <linux-kernel@vger.kernel.org>
+Cc:     Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
+        "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
+        linux-ext4@vger.kernel.org
+References: <71aa76d0-a3b8-b4f3-a7c3-766cfb75412f@rasmusvillemoes.dk>
+Message-ID: <5997e9b6-95fd-405b-05f8-16f9e34d9d87@rasmusvillemoes.dk>
+Date:   Tue, 28 Jan 2020 09:12:05 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <71aa76d0-a3b8-b4f3-a7c3-766cfb75412f@rasmusvillemoes.dk>
+Content-Type: text/plain; charset=windows-1252
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Linus,
+On 22/01/2020 18.52, Rasmus Villemoes wrote:
+> I'm building for a ppc32 (mpc8309) target using Yocto, and I'm hitting a
+> very hard to debug problem that maybe someone else has encountered. This
+> doesn't happen always, perhaps 1 in 8 times or something like that.
+> 
+> The issue is that when the build gets to do "${CROSS}objcopy -O binary
+> ... vmlinux", vmlinux is not (no longer) a proper ELF file, so naturally
+> that fails with
+> 
+>   powerpc-oe-linux-objcopy:vmlinux: file format not recognized
+> 
+> So I hacked link-vmlinux.sh to stash copies of vmlinux before and after
+> sortextable vmlinux. Both of those are proper ELF files, and comparing
+> the corrupted vmlinux to vmlinux.after_sort they are identical after the
+> first 52 bytes; in vmlinux, those first 52 bytes are all 0.
+> 
+> I also saved stat(1) info to see if vmlinux is being replaced or
+> modified in-place.
+> 
+> $ cat vmlinux.stat.after_sort
+>   File: 'vmlinux'
+>   Size: 8608456     Blocks: 16696      IO Block: 4096   regular file
+> Device: 811h/2065d  Inode: 21919132    Links: 1
+> Access: (0755/-rwxr-xr-x)  Uid: ( 1000/    user)   Gid: ( 1001/    user)
+> Access: 2020-01-22 10:52:38.946703081 +0000
+> Modify: 2020-01-22 10:52:38.954703105 +0000
+> Change: 2020-01-22 10:52:38.954703105 +0000
+> 
+> $ stat vmlinux
+>   File: 'vmlinux'
+>   Size: 8608456         Blocks: 16688      IO Block: 4096   regular file
+> Device: 811h/2065d      Inode: 21919132    Links: 1
+> Access: (0755/-rwxr-xr-x)  Uid: ( 1000/    user)   Gid: ( 1001/    user)
+> Access: 2020-01-22 17:20:00.650379057 +0000
+> Modify: 2020-01-22 10:52:38.954703105 +0000
+> Change: 2020-01-22 10:52:38.954703105 +0000
+> 
+> So the inode number and mtime/ctime are exactly the same, but for some
+> reason Blocks: has changed? This is on an ext4 filesystem, but I don't
+> suspect the filesystem to be broken, because it's always just vmlinux
+> that ends up corrupt, and always in exactly this way with the first 52
+> bytes having been wiped.
 
-Please pull the latest locking-core-for-linus git tree from:
+So, I think I take that last part back. I just hit a case where I built
+the kernel manually, made a copy of vmlinux to vmlinux.copy, and file(1)
+said both were fine (and cmp(1) agreed they were identical). Then I went
+off and did work elsewhere with a lot of I/O. When I came back to the
+linux build dir, vmlinux was broken, exactly as before. So I now suspect
+it to be some kind of "while the file is in the pagecache, everything is
+fine, but when it's read back from disk it's broken".
 
-   git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git locking-core-for-linus
+My ext4 fs does have inline_data enabled, which could explain why the
+corruption happens in the beginning. It's just very odd that it only
+ever seems to trigger for vmlinux and not other files, but perhaps the
+I/O patterns that ld and/or sortextable does are exactly what are needed
+to trigger the bug.
 
-   # HEAD: f5bfdc8e3947a7ae489cf8ae9cfd6b3fb357b952 locking/osq: Use optimized spinning loop for arm64
+I've done a long overdue kernel update, and there are quite a few
+fs/ext4/ -stable patches in there, so now I'll see if it still happens.
+And if anything more comes of this, I'll remove the kbuild and ppc lists
+from cc, sorry for the noise.
 
-Just a handful of changes in this cycle: an ARM64 performance 
-optimization, a comment fix and a debug output fix.
-
- Thanks,
-
-	Ingo
-
------------------->
-Waiman Long (3):
-      locking/lockdep: Fix lockdep_stats indentation problem
-      locking/qspinlock: Fix inaccessible URL of MCS lock paper
-      locking/osq: Use optimized spinning loop for arm64
-
-
- arch/arm64/include/asm/spinlock.h |  9 +++++++++
- kernel/locking/lockdep_proc.c     |  4 ++--
- kernel/locking/osq_lock.c         | 23 ++++++++++-------------
- kernel/locking/qspinlock.c        | 13 +++++++------
- 4 files changed, 28 insertions(+), 21 deletions(-)
-
+Rasmus
