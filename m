@@ -2,37 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 15E0014B863
+	by mail.lfdr.de (Postfix) with ESMTP id 8903514B864
 	for <lists+linux-kernel@lfdr.de>; Tue, 28 Jan 2020 15:24:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731921AbgA1OXC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 28 Jan 2020 09:23:02 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48984 "EHLO mail.kernel.org"
+        id S1731942AbgA1OXG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 28 Jan 2020 09:23:06 -0500
+Received: from mail.kernel.org ([198.145.29.99]:49036 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731830AbgA1OW6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 Jan 2020 09:22:58 -0500
+        id S1731893AbgA1OXB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 28 Jan 2020 09:23:01 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B17882468F;
-        Tue, 28 Jan 2020 14:22:57 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 374E024681;
+        Tue, 28 Jan 2020 14:23:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1580221378;
-        bh=ekdJKSY213rrBSgGE32mQdGAsL2Tc03YxMWSFqu5LVU=;
+        s=default; t=1580221380;
+        bh=jYUgY8SpWe77pPCfGwFT/2abOKo2SKlAk05poolCS2Y=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=C06S8D5WRoXow+jy/FGvs/NXqztBGFBRGlH/WCLc6AaWWpVsK5AERGfFKf3+dk57n
-         dpdHvHoQKxQ89+clbtoQ1K5HiAdi5NgizTZ+nrBFO2wLRHg1DJHfmiyCkVbzKaPLP4
-         zwuQHy4G+AO6evCDeXSUVof7ylt970gwHQCDotWE=
+        b=0MwtFERLrFmKOqlR4/L2C+98FzU41SsY7RYKFZL73zeLbI6OF8F/tRFhs04mF/xmd
+         5WhTTerfSSnzbw045ks3YwOXkUYG5clCjLr/1PpZW454El5Wnklf6XheIPcwhmyem8
+         CMGfMYsBG8RduS11x2XY6lsDGnmcek5yRjeMoByU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Gerd Rausch <gerd.rausch@oracle.com>,
-        Santosh Shilimkar <santosh.shilimkar@oracle.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 201/271] net/rds: Fix ib_evt_handler_call element in rds_ib_stat_names
-Date:   Tue, 28 Jan 2020 15:05:50 +0100
-Message-Id: <20200128135907.533936274@linuxfoundation.org>
+        stable@vger.kernel.org, Filippo Sironi <sironi@amazon.de>,
+        Joerg Roedel <jroedel@suse.de>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.9 202/271] iommu/amd: Wait for completion of IOTLB flush in attach_device
+Date:   Tue, 28 Jan 2020 15:05:51 +0100
+Message-Id: <20200128135907.604031189@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
 In-Reply-To: <20200128135852.449088278@linuxfoundation.org>
 References: <20200128135852.449088278@linuxfoundation.org>
@@ -45,38 +43,35 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Gerd Rausch <gerd.rausch@oracle.com>
+From: Filippo Sironi <sironi@amazon.de>
 
-[ Upstream commit 05a82481a3024b94db00b8c816bb3d526b5209e0 ]
+[ Upstream commit 0b15e02f0cc4fb34a9160de7ba6db3a4013dc1b7 ]
 
-All entries in 'rds_ib_stat_names' are stringified versions
-of the corresponding "struct rds_ib_statistics" element
-without the "s_"-prefix.
+To make sure the domain tlb flush completes before the
+function returns, explicitly wait for its completion.
 
-Fix entry 'ib_evt_handler_call' to do the same.
-
-Fixes: f4f943c958a2 ("RDS: IB: ack more receive completions to improve performance")
-Signed-off-by: Gerd Rausch <gerd.rausch@oracle.com>
-Acked-by: Santosh Shilimkar <santosh.shilimkar@oracle.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Filippo Sironi <sironi@amazon.de>
+Fixes: 42a49f965a8d ("amd-iommu: flush domain tlb when attaching a new device")
+[joro: Added commit message and fixes tag]
+Signed-off-by: Joerg Roedel <jroedel@suse.de>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/rds/ib_stats.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/iommu/amd_iommu.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/net/rds/ib_stats.c b/net/rds/ib_stats.c
-index 7e78dca1f252c..aaf4b3d102039 100644
---- a/net/rds/ib_stats.c
-+++ b/net/rds/ib_stats.c
-@@ -42,7 +42,7 @@ DEFINE_PER_CPU_SHARED_ALIGNED(struct rds_ib_statistics, rds_ib_stats);
- static const char *const rds_ib_stat_names[] = {
- 	"ib_connect_raced",
- 	"ib_listen_closed_stale",
--	"s_ib_evt_handler_call",
-+	"ib_evt_handler_call",
- 	"ib_tasklet_call",
- 	"ib_tx_cq_event",
- 	"ib_tx_ring_full",
+diff --git a/drivers/iommu/amd_iommu.c b/drivers/iommu/amd_iommu.c
+index c898c70472bb2..bb0448c91f672 100644
+--- a/drivers/iommu/amd_iommu.c
++++ b/drivers/iommu/amd_iommu.c
+@@ -2113,6 +2113,8 @@ skip_ats_check:
+ 	 */
+ 	domain_flush_tlb_pde(domain);
+ 
++	domain_flush_complete(domain);
++
+ 	return ret;
+ }
+ 
 -- 
 2.20.1
 
