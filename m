@@ -2,147 +2,70 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 08B4814B97B
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Jan 2020 15:33:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8CE0514BA02
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Jan 2020 15:37:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387520AbgA1Ocs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 28 Jan 2020 09:32:48 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34028 "EHLO mail.kernel.org"
+        id S2387401AbgA1Oeb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 28 Jan 2020 09:34:31 -0500
+Received: from mga04.intel.com ([192.55.52.120]:32996 "EHLO mga04.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727837AbgA1Ocp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 Jan 2020 09:32:45 -0500
-Received: from mail-qt1-f182.google.com (mail-qt1-f182.google.com [209.85.160.182])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D073324685;
-        Tue, 28 Jan 2020 14:32:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1580221965;
-        bh=fA/B9G2d55+a4zcXyCidgiM1scGvdikipkUh8OpG4sQ=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=aPc+8DJ44URecMpBKGA6Krd3ddBfgQoZQELTra5XX16oVB7gKPIPj22Dgxj7CBf5+
-         rpbV5ocO+1J1Jqo8qz3lO1l5WRi3Q7YuuN8Pki1c8JryD3JLjWYaJkH0WjhOWyA8Wp
-         ZnFz0sndRQgZ6zjI5/XVlCDCnk3CLh39+RLlbn3A=
-Received: by mail-qt1-f182.google.com with SMTP id h12so10398693qtu.1;
-        Tue, 28 Jan 2020 06:32:44 -0800 (PST)
-X-Gm-Message-State: APjAAAXcCl0cBqxAbZ3M1+xVS11dVuHk1GzgmjWiObYKYEX6tzLK2mWw
-        27PWbFyYcHC9b5CggRe2gPEc5xLWeJt80hVk8Q==
-X-Google-Smtp-Source: APXvYqzxJnZDHkxRQDe9t+Eah8Fx57BBszoCD+dphD/GZrMOT/aXuj/TVsyJGpZsYv/1fLKoBTwELyq9kDRKgm/tJlU=
-X-Received: by 2002:aed:2344:: with SMTP id i4mr21770697qtc.136.1580221963861;
- Tue, 28 Jan 2020 06:32:43 -0800 (PST)
+        id S1733177AbgA1Oe3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 28 Jan 2020 09:34:29 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga005.jf.intel.com ([10.7.209.41])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 28 Jan 2020 06:34:29 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.70,374,1574150400"; 
+   d="scan'208";a="401673803"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by orsmga005.jf.intel.com with ESMTP; 28 Jan 2020 06:34:27 -0800
+Received: by black.fi.intel.com (Postfix, from userid 1003)
+        id 89BF513F; Tue, 28 Jan 2020 16:34:26 +0200 (EET)
+From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To:     Petr Mladek <pmladek@suse.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        linux-kernel@vger.kernel.org,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>
+Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Subject: [PATCH v1] MAINTAINERS: Sort entries in database for VSPRINTF
+Date:   Tue, 28 Jan 2020 16:34:25 +0200
+Message-Id: <20200128143425.47283-1-andriy.shevchenko@linux.intel.com>
+X-Mailer: git-send-email 2.24.1
 MIME-Version: 1.0
-References: <20191229204421.337612-1-alexandre.belloni@bootlin.com> <20191229204421.337612-2-alexandre.belloni@bootlin.com>
-In-Reply-To: <20191229204421.337612-2-alexandre.belloni@bootlin.com>
-From:   Rob Herring <robh+dt@kernel.org>
-Date:   Tue, 28 Jan 2020 08:32:32 -0600
-X-Gmail-Original-Message-ID: <CAL_Jsq+nQbZkY_oDhCCTGr02xWxUXvCVaWZ8KZHkDhsgawM_wA@mail.gmail.com>
-Message-ID: <CAL_Jsq+nQbZkY_oDhCCTGr02xWxUXvCVaWZ8KZHkDhsgawM_wA@mail.gmail.com>
-Subject: Re: [PATCH 2/9] dt-bindings: rtc: at91rm9200: convert bindings to json-schema
-To:     Alexandre Belloni <alexandre.belloni@bootlin.com>
-Cc:     "open list:REAL TIME CLOCK (RTC) SUBSYSTEM" 
-        <linux-rtc@vger.kernel.org>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Eugen Hristev <Eugen.Hristev@microchip.com>,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Dec 29, 2019 at 2:45 PM Alexandre Belloni
-<alexandre.belloni@bootlin.com> wrote:
->
-> Convert Real Time Clock for Atmel/Microchip SoCs bindings documentation
-> to json-schema.
->
-> Cc: Rob Herring <robh+dt@kernel.org>
-> Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
-> ---
->  .../bindings/rtc/atmel,at91rm9200-rtc.txt     | 17 --------
->  .../bindings/rtc/atmel,at91rm9200-rtc.yaml    | 42 +++++++++++++++++++
->  2 files changed, 42 insertions(+), 17 deletions(-)
->  delete mode 100644 Documentation/devicetree/bindings/rtc/atmel,at91rm9200-rtc.txt
->  create mode 100644 Documentation/devicetree/bindings/rtc/atmel,at91rm9200-rtc.yaml
->
-> diff --git a/Documentation/devicetree/bindings/rtc/atmel,at91rm9200-rtc.txt b/Documentation/devicetree/bindings/rtc/atmel,at91rm9200-rtc.txt
-> deleted file mode 100644
-> index 5d3791e789c6..000000000000
-> --- a/Documentation/devicetree/bindings/rtc/atmel,at91rm9200-rtc.txt
-> +++ /dev/null
-> @@ -1,17 +0,0 @@
-> -Atmel AT91RM9200 Real Time Clock
-> -
-> -Required properties:
-> -- compatible: should be: "atmel,at91rm9200-rtc" or "atmel,at91sam9x5-rtc"
-> -- reg: physical base address of the controller and length of memory mapped
-> -  region.
-> -- interrupts: rtc alarm/event interrupt
-> -- clocks: phandle to input clock.
-> -
-> -Example:
-> -
-> -rtc@fffffe00 {
-> -       compatible = "atmel,at91rm9200-rtc";
-> -       reg = <0xfffffe00 0x100>;
-> -       interrupts = <1 4 7>;
-> -       clocks = <&clk32k>;
-> -};
-> diff --git a/Documentation/devicetree/bindings/rtc/atmel,at91rm9200-rtc.yaml b/Documentation/devicetree/bindings/rtc/atmel,at91rm9200-rtc.yaml
-> new file mode 100644
-> index 000000000000..55bd87e884d3
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/rtc/atmel,at91rm9200-rtc.yaml
-> @@ -0,0 +1,42 @@
-> +# SPDX-License-Identifier: GPL-2.0
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/rtc/atmel,at91rm9200-rtc.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Atmel AT91 RTC Device Tree Bindings
-> +
-> +allOf:
-> +  - $ref: "rtc.yaml#"
-> +
-> +maintainers:
-> +  - Alexandre Belloni <alexandre.belloni@bootlin.com>
-> +
-> +properties:
-> +  compatible:
-> +    enum:
-> +      - atmel,at91rm9200-rtc
-> +      - atmel,at91sam9x5-rtc
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  interrupts:
-> +    maxItems: 1
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - interrupts
-> +
-> +additionalProperties: false
-> +
-> +examples:
-> +  - |
-> +    rtc@fffffe00 {
-> +        compatible = "atmel,at91rm9200-rtc";
-> +        reg = <0xfffffe00 0x100>;
-> +        interrupts = <1 4 7>;
-> +        clocks = <&clk32k>;
+Run parse-maintainers.pl and choose VSPRINTF record. Fix it accordingly.
 
-clocks is not documented.
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+---
+ MAINTAINERS | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-Looks like this landed in linux-next now and breaks 'make dt_binding_check':
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 211043d91cd0..4791757ba1ef 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -17932,11 +17932,11 @@ M:	Steven Rostedt <rostedt@goodmis.org>
+ M:	Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
+ R:	Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+ R:	Rasmus Villemoes <linux@rasmusvillemoes.dk>
+-T:	git git://git.kernel.org/pub/scm/linux/kernel/git/pmladek/printk.git
+ S:	Maintained
+-F:	lib/vsprintf.c
+-F:	lib/test_printf.c
++T:	git git://git.kernel.org/pub/scm/linux/kernel/git/pmladek/printk.git
+ F:	Documentation/core-api/printk-formats.rst
++F:	lib/test_printf.c
++F:	lib/vsprintf.c
+ 
+ VT1211 HARDWARE MONITOR DRIVER
+ M:	Juerg Haefliger <juergh@gmail.com>
+-- 
+2.24.1
 
-/builds/robherring/linux-dt-bindings/Documentation/devicetree/bindings/rtc/atmel,at91rm9200-rtc.example.dt.yaml:
-rtc@fffffe00: 'clocks' does not match any of the regexes:
-'pinctrl-[0-9]+'
-
-Rob
