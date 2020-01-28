@@ -2,36 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5397014B9EC
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Jan 2020 15:37:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AC63414BA0F
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Jan 2020 15:37:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731394AbgA1OW4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 28 Jan 2020 09:22:56 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48844 "EHLO mail.kernel.org"
+        id S1733276AbgA1OfV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 28 Jan 2020 09:35:21 -0500
+Received: from mail.kernel.org ([198.145.29.99]:49088 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731753AbgA1OWx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 Jan 2020 09:22:53 -0500
+        id S1731192AbgA1OXE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 28 Jan 2020 09:23:04 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B3CBA24686;
-        Tue, 28 Jan 2020 14:22:52 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id F392D24681;
+        Tue, 28 Jan 2020 14:23:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1580221373;
-        bh=BAuGnV6ApDLBskZlToVXtsrcdU/YeZu3hnzsSO+iKSU=;
+        s=default; t=1580221383;
+        bh=VfFWYzYApvPLBIHMHdg2/fG56TcV+/zFg71lTUvwlDk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=DdiMJxu+9xgkJ22CLB8TG7ZfHGlVVynwq1sZmzZQDZw58JHaWQWDF1qL6Gs7VdJfc
-         hEulzUC1aKSJs7ktm+/U0zkbpRks1PuY+/sc2JrkH0DLsCSwhg5bsFWdBHYdkue7qH
-         pKgj8nmKzJaWBdyyBFawl6nZlOAmNSy6Q/NzaJw8=
+        b=L/TLYwt318xq1K4kijXvmfO3DVm1vUtim7n8EKAYtQcHI+qPlhtgbNref4tXXPEhw
+         m8fs5/rCAE3kxI+kOaN5r4q1YePdVOde6S6mg1XobJ/MofqK0AHe2JL4tZQcE2wnNx
+         +SfJI5fP/gCN/KBqtvt1wMf/JgqXvEUtzqFbmIuY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dan Robertson <dan@dlrobertson.com>,
-        Guenter Roeck <linux@roeck-us.net>,
+        stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>,
+        "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 199/271] hwmon: (shtc1) fix shtc1 and shtw1 id mask
-Date:   Tue, 28 Jan 2020 15:05:48 +0100
-Message-Id: <20200128135907.392010581@linuxfoundation.org>
+Subject: [PATCH 4.9 203/271] net: hisilicon: Fix signedness bug in hix5hd2_dev_probe()
+Date:   Tue, 28 Jan 2020 15:05:52 +0100
+Message-Id: <20200128135907.674070948@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
 In-Reply-To: <20200128135852.449088278@linuxfoundation.org>
 References: <20200128135852.449088278@linuxfoundation.org>
@@ -44,37 +44,34 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Dan Robertson <dan@dlrobertson.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
 
-[ Upstream commit fdc7d8e829ec755c5cfb2f5a8d8c0cdfb664f895 ]
+[ Upstream commit 002dfe8085255b7bf1e0758c3d195c5412d35be9 ]
 
-Fix an error in the bitmaskfor the shtc1 and shtw1 bitmask used to
-retrieve the chip ID from the ID register. See section 5.7 of the shtw1
-or shtc1 datasheet for details.
+The "priv->phy_mode" variable is an enum and in this context GCC will
+treat it as unsigned to the error handling will never trigger.
 
-Fixes: 1a539d372edd9832444e7a3daa710c444c014dc9 ("hwmon: add support for Sensirion SHTC1 sensor")
-Signed-off-by: Dan Robertson <dan@dlrobertson.com>
-Link: https://lore.kernel.org/r/20190905014554.21658-3-dan@dlrobertson.com
-[groeck: Reordered to be first in series and adjusted accordingly]
-Signed-off-by: Guenter Roeck <linux@roeck-us.net>
+Fixes: 57c5bc9ad7d7 ("net: hisilicon: add hix5hd2 mac driver")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/hwmon/shtc1.c | 2 +-
+ drivers/net/ethernet/hisilicon/hix5hd2_gmac.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/hwmon/shtc1.c b/drivers/hwmon/shtc1.c
-index decd7df995abf..2a18539591eaf 100644
---- a/drivers/hwmon/shtc1.c
-+++ b/drivers/hwmon/shtc1.c
-@@ -38,7 +38,7 @@ static const unsigned char shtc1_cmd_read_id_reg[]	       = { 0xef, 0xc8 };
+diff --git a/drivers/net/ethernet/hisilicon/hix5hd2_gmac.c b/drivers/net/ethernet/hisilicon/hix5hd2_gmac.c
+index e69a6bed31a95..dd24c352b2000 100644
+--- a/drivers/net/ethernet/hisilicon/hix5hd2_gmac.c
++++ b/drivers/net/ethernet/hisilicon/hix5hd2_gmac.c
+@@ -929,7 +929,7 @@ static int hix5hd2_dev_probe(struct platform_device *pdev)
+ 		goto err_free_mdio;
  
- /* constants for reading the ID register */
- #define SHTC1_ID	  0x07
--#define SHTC1_ID_REG_MASK 0x1f
-+#define SHTC1_ID_REG_MASK 0x3f
- 
- /* delays for non-blocking i2c commands, both in us */
- #define SHTC1_NONBLOCKING_WAIT_TIME_HPM  14400
+ 	priv->phy_mode = of_get_phy_mode(node);
+-	if (priv->phy_mode < 0) {
++	if ((int)priv->phy_mode < 0) {
+ 		netdev_err(ndev, "not find phy-mode\n");
+ 		ret = -EINVAL;
+ 		goto err_mdiobus;
 -- 
 2.20.1
 
