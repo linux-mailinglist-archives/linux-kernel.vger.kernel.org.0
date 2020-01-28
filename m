@@ -2,40 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F194414B6C0
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Jan 2020 15:07:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7FBD314B7E4
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Jan 2020 15:20:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727091AbgA1OHu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 28 Jan 2020 09:07:50 -0500
-Received: from mail.kernel.org ([198.145.29.99]:55596 "EHLO mail.kernel.org"
+        id S1730679AbgA1OSa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 28 Jan 2020 09:18:30 -0500
+Received: from mail.kernel.org ([198.145.29.99]:42426 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727468AbgA1OHr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 Jan 2020 09:07:47 -0500
+        id S1730473AbgA1OS1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 28 Jan 2020 09:18:27 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BD8FC22522;
-        Tue, 28 Jan 2020 14:07:46 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4E7012071E;
+        Tue, 28 Jan 2020 14:18:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1580220467;
-        bh=NC3dZgOeHXT8jwvLacTEiOdKp1Ydqbb3jX8WPcrPsQg=;
+        s=default; t=1580221106;
+        bh=sBOmsTByakk8KKA7ILbP/W5S02VAFz9A7cTKeuS7gGE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=TiZKSKhytuKk6RXA6ebXgrwmKGdVqJelgRtxbvHHS42MWjhqbdH7eejeVUdvvM4HY
-         Gvn4EqkQncaKoZ4siupNv19wgmIlfGhaELeI40IWpPc9sGzToM6E/ppCwf84GRQGYA
-         39ug0XEp7MzxD4+N+vDgMBJIsPm5OvL7EOkOBdNE=
+        b=scwViIiRegJdJyyxZl2+PV7kK0dv8XxXaK0yXYUeSXM8sdWE2Wf0Zew7U91+2bfgy
+         Y01IlVid/+t1cQzlSFjaN5QR7XdfMl1KD0raZtoQoozbhOQKR1HOBEG/CZgr8YvxNy
+         10rNJgi5cWCb5W7d+ClRzyUTa93ubkE1yJPzAoow=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Simon Horman <horms+renesas@verge.net.au>,
+        stable@vger.kernel.org, Vladimir Murzin <vladimir.murzin@arm.com>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Russell King <rmk+kernel@armlinux.org.uk>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.4 019/183] pinctrl: sh-pfc: sh7734: Remove bogus IPSR10 value
-Date:   Tue, 28 Jan 2020 15:03:58 +0100
-Message-Id: <20200128135831.799018183@linuxfoundation.org>
+Subject: [PATCH 4.9 091/271] ARM: 8848/1: virt: Align GIC version check with arm64 counterpart
+Date:   Tue, 28 Jan 2020 15:04:00 +0100
+Message-Id: <20200128135859.362889084@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200128135829.486060649@linuxfoundation.org>
-References: <20200128135829.486060649@linuxfoundation.org>
+In-Reply-To: <20200128135852.449088278@linuxfoundation.org>
+References: <20200128135852.449088278@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,40 +45,38 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Geert Uytterhoeven <geert+renesas@glider.be>
+From: Vladimir Murzin <vladimir.murzin@arm.com>
 
-[ Upstream commit 4d374bacd7c9665179f9752a52d5d602c45d8190 ]
+[ Upstream commit 9db043d36bd379f4cc99054c079de0dabfc38d03 ]
 
-The IP10[5:3] field in Peripheral Function Select Register 10 has a
-width of 3 bits, i.e. it allows programming one out of 8 different
-configurations.
-However, 9 values are provided instead of 8, overflowing into the
-subsequent field in the register, and thus breaking the configuration of
-the latter.
+arm64 has got relaxation on GIC version check at early boot stage due
+to update of the GIC architecture let's align ARM with that.
 
-Fix this by dropping a bogus zero value.
-
-Fixes: ac1ebc2190f575fc ("sh-pfc: Add sh7734 pinmux support")
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
+To help backports (even though the code was correct at the time of writing)
+Fixes: e59941b9b381 ("ARM: 8527/1: virt: enable GICv3 system registers")
+Signed-off-by: Vladimir Murzin <vladimir.murzin@arm.com>
+Reviewed-by: Marc Zyngier <marc.zyngier@arm.com>
+Signed-off-by: Russell King <rmk+kernel@armlinux.org.uk>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/pinctrl/sh-pfc/pfc-sh7734.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/arm/kernel/hyp-stub.S | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/pinctrl/sh-pfc/pfc-sh7734.c b/drivers/pinctrl/sh-pfc/pfc-sh7734.c
-index a0835306f76eb..ce543f3c39b2d 100644
---- a/drivers/pinctrl/sh-pfc/pfc-sh7734.c
-+++ b/drivers/pinctrl/sh-pfc/pfc-sh7734.c
-@@ -2236,7 +2236,7 @@ static const struct pinmux_cfg_reg pinmux_config_regs[] = {
- 		FN_LCD_CL1_B, 0, 0,
- 	    /* IP10_5_3 [3] */
- 		FN_SSI_WS23, FN_VI1_5_B, FN_TX1_D, FN_HSCK0_C, FN_FALE_B,
--		FN_LCD_DON_B, 0, 0, 0,
-+		FN_LCD_DON_B, 0, 0,
- 	    /* IP10_2_0 [3] */
- 		FN_SSI_SCK23, FN_VI1_4_B, FN_RX1_D, FN_FCLE_B,
- 		FN_LCD_DATA15_B, 0, 0, 0 }
+diff --git a/arch/arm/kernel/hyp-stub.S b/arch/arm/kernel/hyp-stub.S
+index 15d073ae5da2a..f5e5e3e196592 100644
+--- a/arch/arm/kernel/hyp-stub.S
++++ b/arch/arm/kernel/hyp-stub.S
+@@ -179,8 +179,8 @@ ARM_BE8(orr	r7, r7, #(1 << 25))     @ HSCTLR.EE
+ 	@ Check whether GICv3 system registers are available
+ 	mrc	p15, 0, r7, c0, c1, 1	@ ID_PFR1
+ 	ubfx	r7, r7, #28, #4
+-	cmp	r7, #1
+-	bne	2f
++	teq	r7, #0
++	beq	2f
+ 
+ 	@ Enable system register accesses
+ 	mrc	p15, 4, r7, c12, c9, 5	@ ICC_HSRE
 -- 
 2.20.1
 
