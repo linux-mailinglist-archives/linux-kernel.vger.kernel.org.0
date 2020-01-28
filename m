@@ -2,139 +2,116 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5CBC014B419
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Jan 2020 13:21:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DCE8814B3E3
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Jan 2020 13:01:10 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726186AbgA1MVB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 28 Jan 2020 07:21:01 -0500
-Received: from disco-boy.misterjones.org ([51.254.78.96]:52158 "EHLO
-        disco-boy.misterjones.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725948AbgA1MVB (ORCPT
+        id S1726073AbgA1MBH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 28 Jan 2020 07:01:07 -0500
+Received: from smtp-fw-6001.amazon.com ([52.95.48.154]:41605 "EHLO
+        smtp-fw-6001.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725903AbgA1MBG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 Jan 2020 07:21:01 -0500
-X-Greylist: delayed 1943 seconds by postgrey-1.27 at vger.kernel.org; Tue, 28 Jan 2020 07:21:00 EST
-Received: from disco-boy.misterjones.org ([51.254.78.96] helo=www.loen.fr)
-        by disco-boy.misterjones.org with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.92)
-        (envelope-from <maz@misterjones.org>)
-        id 1iwPM8-001o2H-Sm; Tue, 28 Jan 2020 11:48:33 +0000
+        Tue, 28 Jan 2020 07:01:06 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
+  t=1580212866; x=1611748866;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   mime-version;
+  bh=G4XawBinOQE3v9IrgHKbrUqOdbum+3a/Cn7jH1Qi8Yw=;
+  b=aSc5fKvB8YePM3uNCu1NRKIj2hhFv7p3skrYTQ2WuyOdXOiM1RHgyeB5
+   Q8NXhVc4ZedCJNtphX7IlP+b8Psa6i9hFAQvrywf7ANJtTdUFqtf8O5NL
+   +eObG9FEDbYZg6VlTXHL3S7Yl8poCzNgUltNoMf+wLy1JZiFEc/PZG1ui
+   U=;
+IronPort-SDR: eKQ9cgKWSjxfguOEiVl1w4CH1plajgwFhyokzCeQzCrOWS6XGUcwATYiT8fVCgmuR6xPMSMWRk
+ OwuzHAQstfbQ==
+X-IronPort-AV: E=Sophos;i="5.70,373,1574121600"; 
+   d="scan'208";a="15092337"
+Received: from iad12-co-svc-p1-lb1-vlan3.amazon.com (HELO email-inbound-relay-1d-9ec21598.us-east-1.amazon.com) ([10.43.8.6])
+  by smtp-border-fw-out-6001.iad6.amazon.com with ESMTP; 28 Jan 2020 12:01:04 +0000
+Received: from EX13MTAUEA002.ant.amazon.com (iad55-ws-svc-p15-lb9-vlan3.iad.amazon.com [10.40.159.166])
+        by email-inbound-relay-1d-9ec21598.us-east-1.amazon.com (Postfix) with ESMTPS id E9ED3A1F50;
+        Tue, 28 Jan 2020 12:00:56 +0000 (UTC)
+Received: from EX13D31EUA001.ant.amazon.com (10.43.165.15) by
+ EX13MTAUEA002.ant.amazon.com (10.43.61.77) with Microsoft SMTP Server (TLS)
+ id 15.0.1236.3; Tue, 28 Jan 2020 12:00:56 +0000
+Received: from u886c93fd17d25d.ant.amazon.com (10.43.161.117) by
+ EX13D31EUA001.ant.amazon.com (10.43.165.15) with Microsoft SMTP Server (TLS)
+ id 15.0.1367.3; Tue, 28 Jan 2020 12:00:46 +0000
+From:   <sjpark@amazon.com>
+CC:     <sjpark@amazon.com>, <akpm@linux-foundation.org>,
+        SeongJae Park <sjpark@amazon.de>, <sj38.park@gmail.com>,
+        <acme@kernel.org>, <amit@kernel.org>, <brendan.d.gregg@gmail.com>,
+        <corbet@lwn.net>, <dwmw@amazon.com>, <mgorman@suse.de>,
+        <rostedt@goodmis.org>, <kirill@shutemov.name>,
+        <brendanhiggins@google.com>, <colin.king@canonical.com>,
+        <minchan@kernel.org>, <vdavydov.dev@gmail.com>,
+        <vdavydov@parallels.com>, <linux-mm@kvack.org>,
+        <linux-doc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        "Ingo Molnar" <mingo@redhat.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        "Alexander Shishkin" <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>
+Subject: Re: Re: [PATCH v2 0/9] Introduce Data Access MONitor (DAMON)
+Date:   Tue, 28 Jan 2020 13:00:33 +0100
+Message-ID: <20200128120033.27016-1-sjpark@amazon.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <41BBD985-4B3D-4F87-B69D-D8CFE6EC0EBE@lca.pw> (raw)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8;
- format=flowed
-Content-Transfer-Encoding: 8bit
-Date:   Tue, 28 Jan 2020 11:48:32 +0000
-From:   Marc Zyngier <maz@misterjones.org>
-To:     Boqun Feng <boqun.feng@gmail.com>
-Cc:     Vincenzo Frascino <vincenzo.frascino@arm.com>,
-        Sasha Levin <sashal@kernel.org>, linux-hyperv@vger.kernel.org,
-        Stefano Stabellini <sstabellini@kernel.org>,
-        Stephen Hemminger <sthemmin@microsoft.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Haiyang Zhang <haiyangz@microsoft.com>,
-        linux-kernel@vger.kernel.org,
-        Michael Kelley <mikelley@microsoft.com>,
-        xen-devel@lists.xenproject.org,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "K. Y. Srinivasan" <kys@microsoft.com>,
-        Will Deacon <will@kernel.org>,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [RFC 0/6] vDSO support for Hyper-V guest on ARM64
-In-Reply-To: <20200128055846.GA83200@debian-boqun.qqnc3lrjykvubdpftowmye0fmh.lx.internal.cloudapp.net>
-References: <20191216001922.23008-1-boqun.feng@gmail.com>
- <ef6cb7ba-b448-cfa5-abbb-1d99d1396ce5@arm.com>
- <20200124063215.GA93938@debian-boqun.qqnc3lrjykvubdpftowmye0fmh.lx.internal.cloudapp.net>
- <4cdf2188-8909-4b90-ca78-92cef520b23d@arm.com>
- <20200128055846.GA83200@debian-boqun.qqnc3lrjykvubdpftowmye0fmh.lx.internal.cloudapp.net>
-Message-ID: <58c453d060066ebaed24cd13e22de1c5@misterjones.org>
-X-Sender: maz@misterjones.org
-User-Agent: Roundcube Webmail/1.3.8
-X-SA-Exim-Connect-IP: 51.254.78.96
-X-SA-Exim-Rcpt-To: boqun.feng@gmail.com, vincenzo.frascino@arm.com, sashal@kernel.org, linux-hyperv@vger.kernel.org, sstabellini@kernel.org, sthemmin@microsoft.com, catalin.marinas@arm.com, haiyangz@microsoft.com, linux-kernel@vger.kernel.org, mikelley@microsoft.com, xen-devel@lists.xenproject.org, tglx@linutronix.de, kys@microsoft.com, will@kernel.org, linux-arm-kernel@lists.infradead.org
-X-SA-Exim-Mail-From: maz@misterjones.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+Content-Type: text/plain
+X-Originating-IP: [10.43.161.117]
+X-ClientProxiedBy: EX13D37UWA004.ant.amazon.com (10.43.160.23) To
+ EX13D31EUA001.ant.amazon.com (10.43.165.15)
+To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2020-01-28 05:58, Boqun Feng wrote:
-> On Fri, Jan 24, 2020 at 10:24:44AM +0000, Vincenzo Frascino wrote:
->> Hi Boqun Feng,
->> 
->> On 24/01/2020 06:32, Boqun Feng wrote:
->> > Hi Vincenzo,
->> >
->> 
->> [...]
->> 
->> >>
->> >> I had a look to your patches and overall, I could not understand why we can't
->> >> use the arch_timer to do the same things you are doing with the one you
->> >> introduced in this series. What confuses me is that KVM works just fine with the
->> >> arch_timer which was designed with virtualization in mind. Why do we need
->> >> another one? Could you please explain?
->> >>
->> >
->> > Please note that the guest VM on Hyper-V for ARM64 doesn't use
->> > arch_timer as the clocksource. See:
->> >
->> > 	https://lore.kernel.org/linux-arm-kernel/1570129355-16005-7-git-send-email-mikelley@microsoft.com/
->> >
->> > ,  ACPI_SIG_GTDT is used for setting up Hyper-V synthetic clocksource
->> > and other initialization work.
->> >
->> 
->> I had a look a look at it and my question stands, why do we need 
->> another timer
->> on arm64?
->> 
+To: Qian Cai <cai@lca.pw>
+
+On Tue, 28 Jan 2020 06:20:29 -0500 Qian Cai <cai@lca.pw> wrote:
+
 > 
-> Sorry for the late response. It's weekend and Chinese New Year, so I 
-> got
-> to spend some time making (and mostly eating) dumplings ;-)
-
-And you haven't been sharing! ;-)
-
-> After discussion with Michael, here is some explanation why we need
-> another timer:
 > 
-> The synthetic clocks that Hyper-V presents in a guest VM were 
-> originally
-> created for the x86 architecture. They provide a level of abstraction
-> that solves problems like continuity across live migrations where the
-> hardware clock (i.e., TSC in the case x86) frequency may be different
-> across the migration. When Hyper-V was brought to ARM64, this
-> abstraction was maintained to provide consistency across the x86 and
-> ARM64 architectures, and for both Windows and Linux guest VMs.   The
-> core Linux code for the Hyper-V clocks (in
-> drivers/clocksource/hyperv_timer.c) is architecture neutral and works 
-> on
-> both x86 and ARM64. As you can see, this part is done in Michael's
-> patchset.
+> > On Jan 28, 2020, at 5:50 AM, sjpark@amazon.com wrote:
+> > 
+> > For the comments from perf maintainers, I added Steven Rostedt and Arnaldo
+> > Carvalho de Melo first, but I might missed someone.  If you recommend some more
+> > people, I will add them to recipients.
+> > 
+> > I made DAMON as a new subsystem because I think no existing subsystem fits well
+> > to be a base of DAMON, due to DAMON's unique goals and mechanisms described
+> > below in the original cover letter.
+> > 
+> > The existing subsystem that most similar to DAMON might be 'mm/page_idle.c'.
+> > However, there are many conceptual differences with DAMON.  One biggest
+> > difference I think is the target.  'page_idle' deals with physical page frames
+> > while DAMON deals with virtual address of specific processes.
+> > 
+> > Nevertheless, if you have some different opinion, please let me know.
 > 
-> Arguably, Hyper-V for ARM64 should have optimized for consistency with
-> the ARM64 community rather with the existing x86 implementation and
-> existing guest code in Windows. But at this point, it is what it is,
-> and the Hyper-V clocks do solve problems like migration that aren’t
-> addressed in ARM64 until v8.4 of the architecture with the addition of
-> the counter hardware scaling feature. Hyper-V doesn’t currently map the
-> ARM arch timer interrupts into guest VMs, so we need to use the 
-> existing
-> Hyper-V clocks and the common code that already exists.
+> I thought everyone should know to go to the MAINTAINERS file and search PERFORMANCE EVENTS SUBSYSTEM.
 
-The migration thing is a bit of a red herring. Do you really anticipate
-VM migration across systems that have their timers running at different
-frequencies *today*? And even if you did, there are ways to deal with it
-with the arch timers (patches to that effect were posted on the list, 
-and
-there was even a bit of an ARM spec for it).
+I worried whether it could be a bother to send the mail to everyone in the
+section, but seems it was an unnecessary worry.  Adding those to recipients.
+You can get the original thread of this patchset from
+https://lore.kernel.org/linux-mm/20200128085742.14566-1-sjpark@amazon.com/
 
-I find it odd to try and make arm64 "just another x86", while the 
-architecture
-gives you most of what you need already. I guess I'm tainted.
+> 
+> It might be difficult but there is a perf subcommand for some subsystems like sched: tracing/measuring of scheduler actions and latencies.
+
+Seems like you are suggesting to implement the DAMON's core logic as a
+subcommand of perf in user space.  Because DAMON's logic inherently require
+frequent interaction with privileged features that need to be done inside the
+kernel space, I think it will incur frequent context switch and might not
+fulfill its performance requirement.
+
+As far as I understand, we normally add a data source in the kernel and
+implement sophisticated handlings or visualizations in the perf.  I think DAMON
+is a source of a new primitive data (data access pattern).
+
 
 Thanks,
-
-         M.
--- 
-Who you jivin' with that Cosmik Debris?
+SeongJae Park
