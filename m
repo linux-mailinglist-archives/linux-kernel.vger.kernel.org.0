@@ -2,124 +2,351 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E1B1314BE35
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Jan 2020 17:59:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6986E14BE3E
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Jan 2020 18:03:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726789AbgA1Q7L (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 28 Jan 2020 11:59:11 -0500
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:35428 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725881AbgA1Q7K (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 Jan 2020 11:59:10 -0500
-Received: by mail-wm1-f66.google.com with SMTP id b2so3396490wma.0
-        for <linux-kernel@vger.kernel.org>; Tue, 28 Jan 2020 08:59:09 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition:user-agent;
-        bh=cMsku35KnhtsQSwbUm1n8nvP2YJfD1rdyE47G4aUm3g=;
-        b=izHDJTgvFVddJUg7MKINWtE6PVAcC7MFKP8ZCvEcc3XPv3W5NLYZeSiyLElstECuwm
-         WDRrE5/bS5b0uTC1kJ5t1k0Q4/AotIYIHLm64ryHoSNr6tlkN7nFR7Hjm/y75y4dC9ca
-         t7mmOohwD3GUy8V/rlQVaE7lyvYyd9yz5+YQhcKwOBs7mg3Szzu9tVi9jdl4UN2p5E1f
-         LBZ63BL/dQyNUWXTZ9UEvns3ucassLa5WZHP8BlK+MA8IeyEjK5SLLqZuplUWsMCjxyh
-         2DR3XsYo/KxC0NWTMBxt2SxHT3aNJ2lJtjYaTPcMQxsogREbx/MuxvJ6iLX6wj4AOZcf
-         EbdA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :mime-version:content-disposition:user-agent;
-        bh=cMsku35KnhtsQSwbUm1n8nvP2YJfD1rdyE47G4aUm3g=;
-        b=PatvOF44cpoX2zDrggNFI6wFwweTKWrvxBihB0vhnhpTqM2AelgmfD592nCSbF6tpr
-         9Ww4T8/Dsmgr7YoJPqtsZsY/Hd2bwV70icglqttPzhNL9hNCpEK0LJ750CeEH7oQOIc9
-         2c8EVuzvnT0yEDIhSDBmUF3UUOjdLBiWffXT+bHjuMR+ieKJH0LW7m3IB3wMwgP4cg9D
-         IgKWWFtVVakJ1faiU3wGGdpvr9TWcEAS/yhliLEE2sp/VUWy79B0FvzIlEayNnJ7gZdZ
-         XNxP2jAvFvmR8qv0SgxeHlKPyMbV5pkgCDZXigLQRd7qtjOccbvq54DkJER+BXkIdFcQ
-         juYw==
-X-Gm-Message-State: APjAAAW96YYkM2xBRZ93yJ21o0WTLiBxHT0D0pCn+0Bw51VtlnnDr+b0
-        XDm3IB0ELtlEmJ+9IbZ4NuA=
-X-Google-Smtp-Source: APXvYqwIBSXctCjIPEkCWLGqwr95oKrbpHSfUS2I1WdTdYcGuWgf19mwIkPNtQmlG1EO7EBGDGslhA==
-X-Received: by 2002:a05:600c:224a:: with SMTP id a10mr6123052wmm.143.1580230748475;
-        Tue, 28 Jan 2020 08:59:08 -0800 (PST)
-Received: from gmail.com (54033286.catv.pool.telekom.hu. [84.3.50.134])
-        by smtp.gmail.com with ESMTPSA id d8sm25374041wrx.71.2020.01.28.08.59.07
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 28 Jan 2020 08:59:08 -0800 (PST)
-Date:   Tue, 28 Jan 2020 17:59:06 +0100
-From:   Ingo Molnar <mingo@kernel.org>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
-        Borislav Petkov <bp@alien8.de>,
-        Peter Zijlstra <a.p.zijlstra@chello.nl>,
-        Andrew Morton <akpm@linux-foundation.org>
-Subject: [GIT PULL] x86/asm changes for v5.6
-Message-ID: <20200128165906.GA67781@gmail.com>
+        id S1726736AbgA1RDJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 28 Jan 2020 12:03:09 -0500
+Received: from mx2.suse.de ([195.135.220.15]:37460 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725881AbgA1RDJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 28 Jan 2020 12:03:09 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx2.suse.de (Postfix) with ESMTP id 4FAC9AE9A;
+        Tue, 28 Jan 2020 17:03:06 +0000 (UTC)
+Received: by ds.suse.cz (Postfix, from userid 10065)
+        id 02BD5DA730; Tue, 28 Jan 2020 18:02:47 +0100 (CET)
+Date:   Tue, 28 Jan 2020 18:02:47 +0100
+From:   David Sterba <dsterba@suse.cz>
+To:     Marcos Paulo de Souza <marcos.souza.org@gmail.com>
+Cc:     linux-kernel@vger.kernel.org, dsterba@suse.com,
+        josef@toxicpanda.com, linux-btrfs@vger.kernel.org,
+        Marcos Paulo de Souza <mpdesouza@suse.com>
+Subject: Re: [PATCHv2] btrfs: Introduce new BTRFS_IOC_SNAP_DESTROY_V2 ioctl
+Message-ID: <20200128170247.GZ3929@twin.jikos.cz>
+Reply-To: dsterba@suse.cz
+Mail-Followup-To: dsterba@suse.cz,
+        Marcos Paulo de Souza <marcos.souza.org@gmail.com>,
+        linux-kernel@vger.kernel.org, dsterba@suse.com,
+        josef@toxicpanda.com, linux-btrfs@vger.kernel.org,
+        Marcos Paulo de Souza <mpdesouza@suse.com>
+References: <20200127024817.15587-1-marcos.souza.org@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20200127024817.15587-1-marcos.souza.org@gmail.com>
+User-Agent: Mutt/1.5.23.1-rc1 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Linus,
+On Sun, Jan 26, 2020 at 11:48:17PM -0300, Marcos Paulo de Souza wrote:
+> From: Marcos Paulo de Souza <mpdesouza@suse.com>
+> 
+> This ioctl will be responsible for deleting a subvolume using it's id.
+> This can be used when a system has a file system mounted from a
+> subvolume, rather than the root file system, like below:
+> 
+> /
+> |- @subvol1
+> |- @subvol2
+> \- @subvol_default
+> If only @subvol_default is mounted, we have no path to reach
+> @subvol1 and @subvol2, thus no way to delete them.
 
-Please pull the latest x86-asm-for-linus git tree from:
+Here I'd expect a brief overview how is the "we have no path to reach"
+problem solved. This is the "invisible" part,
 
-   git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git x86-asm-for-linus
+> This patch introduces a new flag to allow BTRFS_IOC_SNAP_DESTORY_V2
+> to delete subvolume using subvolid.
 
-   # HEAD: 183ef7adf4ed638ac0fb0c3c9a71fc00e8512b61 x86/boot: Simplify calculation of output address
+and this is the visible interface part, so some details are lacking.
 
-Misc updates: 
+> Also in this patch, export some functions, add BTRFS_SUBVOL_BY_ID flag
+> and add subvolid as a union member of name in struct btrfs_ioctl_vol_args_v2.
+> 
+> Signed-off-by: Marcos Paulo de Souza <mpdesouza@suse.com>
+> ---
+>  Changes from v1:
+>  * make btrfs_ioctl_snap_destroy handle both SNAP_DESTROY and SNAP_DESTROY_V2
+>    (suggested by Josef)
+>  * Change BTRFS_SUBVOL_DELETE_BY_ID to BTRFS_SUBVOL_BY_ID (David)
+>  * Send patches for btrfs-progs and xfstests along this change
+> 
+>  fs/btrfs/ctree.h           |  2 +
+>  fs/btrfs/export.c          |  4 +-
+>  fs/btrfs/export.h          |  5 ++
+>  fs/btrfs/ioctl.c           | 97 +++++++++++++++++++++++++++++++-------
+>  fs/btrfs/super.c           |  4 +-
+>  include/uapi/linux/btrfs.h | 12 ++++-
+>  6 files changed, 101 insertions(+), 23 deletions(-)
+> 
+> diff --git a/fs/btrfs/ctree.h b/fs/btrfs/ctree.h
+> index f90b82050d2d..5847a34b5146 100644
+> --- a/fs/btrfs/ctree.h
+> +++ b/fs/btrfs/ctree.h
+> @@ -3010,6 +3010,8 @@ int btrfs_defrag_leaves(struct btrfs_trans_handle *trans,
+>  int btrfs_parse_options(struct btrfs_fs_info *info, char *options,
+>  			unsigned long new_flags);
+>  int btrfs_sync_fs(struct super_block *sb, int wait);
+> +char *btrfs_get_subvol_name_from_objectid(struct btrfs_fs_info *fs_info,
+> +					   u64 subvol_objectid);
+>  
+>  static inline __printf(2, 3) __cold
+>  void btrfs_no_printk(const struct btrfs_fs_info *fs_info, const char *fmt, ...)
+> diff --git a/fs/btrfs/export.c b/fs/btrfs/export.c
+> index 72e312cae69d..027411cdbae7 100644
+> --- a/fs/btrfs/export.c
+> +++ b/fs/btrfs/export.c
+> @@ -57,7 +57,7 @@ static int btrfs_encode_fh(struct inode *inode, u32 *fh, int *max_len,
+>  	return type;
+>  }
+>  
+> -static struct dentry *btrfs_get_dentry(struct super_block *sb, u64 objectid,
+> +struct dentry *btrfs_get_dentry(struct super_block *sb, u64 objectid,
+>  				       u64 root_objectid, u32 generation,
+>  				       int check_generation)
+>  {
+> @@ -152,7 +152,7 @@ static struct dentry *btrfs_fh_to_dentry(struct super_block *sb, struct fid *fh,
+>  	return btrfs_get_dentry(sb, objectid, root_objectid, generation, 1);
+>  }
+>  
+> -static struct dentry *btrfs_get_parent(struct dentry *child)
+> +struct dentry *btrfs_get_parent(struct dentry *child)
+>  {
+>  	struct inode *dir = d_inode(child);
+>  	struct btrfs_fs_info *fs_info = btrfs_sb(dir->i_sb);
+> diff --git a/fs/btrfs/export.h b/fs/btrfs/export.h
+> index 57488ecd7d4e..f981e8103d64 100644
+> --- a/fs/btrfs/export.h
+> +++ b/fs/btrfs/export.h
+> @@ -18,4 +18,9 @@ struct btrfs_fid {
+>  	u64 parent_root_objectid;
+>  } __attribute__ ((packed));
+>  
+> +struct dentry *btrfs_get_dentry(struct super_block *sb, u64 objectid,
+> +				       u64 root_objectid, u32 generation,
+> +				       int check_generation);
+> +struct dentry *btrfs_get_parent(struct dentry *child);
+> +
+>  #endif
+> diff --git a/fs/btrfs/ioctl.c b/fs/btrfs/ioctl.c
+> index 1b1b6ff855aa..889cb43149f9 100644
+> --- a/fs/btrfs/ioctl.c
+> +++ b/fs/btrfs/ioctl.c
+> @@ -28,6 +28,7 @@
+>  #include <linux/iversion.h>
+>  #include "ctree.h"
+>  #include "disk-io.h"
+> +#include "export.h"
+>  #include "transaction.h"
+>  #include "btrfs_inode.h"
+>  #include "print-tree.h"
+> @@ -2836,7 +2837,8 @@ static int btrfs_ioctl_get_subvol_rootref(struct file *file, void __user *argp)
+>  }
+>  
+>  static noinline int btrfs_ioctl_snap_destroy(struct file *file,
+> -					     void __user *arg)
+> +					     void __user *arg,
+> +					     bool destroy_v2)
+>  {
+>  	struct dentry *parent = file->f_path.dentry;
+>  	struct btrfs_fs_info *fs_info = btrfs_sb(parent->d_sb);
+> @@ -2845,34 +2847,87 @@ static noinline int btrfs_ioctl_snap_destroy(struct file *file,
+>  	struct inode *inode;
+>  	struct btrfs_root *root = BTRFS_I(dir)->root;
+>  	struct btrfs_root *dest = NULL;
+> -	struct btrfs_ioctl_vol_args *vol_args;
+> +	struct btrfs_ioctl_vol_args *vol_args = NULL;
+> +	struct btrfs_ioctl_vol_args_v2 *vol_args2 = NULL;
+> +	char *name, *name_ptr = NULL;
+>  	int namelen;
+>  	int err = 0;
+>  
+> -	if (!S_ISDIR(dir->i_mode))
+> -		return -ENOTDIR;
+> +	if (destroy_v2) {
+> +		vol_args2 = memdup_user(arg, sizeof(*vol_args2));
+> +		if (IS_ERR(vol_args2))
+> +			return PTR_ERR(vol_args2);
+>  
+> -	vol_args = memdup_user(arg, sizeof(*vol_args));
+> -	if (IS_ERR(vol_args))
+> -		return PTR_ERR(vol_args);
+> +		if (vol_args2->subvolid == 0) {
+> +			err = -EINVAL;
+> +			goto out;
+> +		}
+>  
+> -	vol_args->name[BTRFS_PATH_NAME_MAX] = '\0';
+> -	namelen = strlen(vol_args->name);
+> -	if (strchr(vol_args->name, '/') ||
+> -	    strncmp(vol_args->name, "..", namelen) == 0) {
+> -		err = -EINVAL;
+> -		goto out;
+> +		if (!(vol_args2->flags & BTRFS_SUBVOL_BY_ID)) {
+> +			err = -EINVAL;
+> +			goto out;
+> +		}
+> +
+> +		dentry = btrfs_get_dentry(fs_info->sb, BTRFS_FIRST_FREE_OBJECTID,
+> +					vol_args2->subvolid, 0, 0);
+> +		if (IS_ERR(dentry)) {
+> +			err = PTR_ERR(dentry);
+> +			goto out;
+> +		}
+> +
+> +		/* 
+> +		 * change the default parent since the subvolume being deleted
+> +		 * can be outside of the current mount point
+> +		 */
+> +		parent = btrfs_get_parent(dentry);
+> +
+> +		/* 
+> +		 * the only use of dentry was to get the parent, so we can
+> +		 * release it now. Later on the dentry will be queried again to
+> +		 * make sure the dentry will reside in the dentry cache
+> +		 */
+> +		dput(dentry);
+> +		if (IS_ERR(parent)) {
+> +			err = PTR_ERR(parent);
+> +			goto out;
+> +		}
+> +		dir = d_inode(parent);
+> +
+> +		name_ptr = btrfs_get_subvol_name_from_objectid(fs_info, vol_args2->subvolid);
+> +		if (IS_ERR(name_ptr)) {
+> +			err = PTR_ERR(name_ptr);
+> +			goto free_parent;
+> +		}
+> +		name = (char *)kbasename(name_ptr);
+> +		namelen = strlen(name);
+> +	} else {
+> +		vol_args = memdup_user(arg, sizeof(*vol_args));
+> +		if (IS_ERR(vol_args))
+> +			return PTR_ERR(vol_args);
+> +
+> +		vol_args->name[BTRFS_PATH_NAME_MAX] = '\0';
+> +		namelen = strlen(vol_args->name);
+> +		if (strchr(vol_args->name, '/') ||
+> +		    strncmp(vol_args->name, "..", namelen) == 0) {
+> +			err = -EINVAL;
+> +			goto out;
+> +		}
+> +		name = vol_args->name;
+> +	}
+> +
+> +	if (!S_ISDIR(dir->i_mode)) {
+> +		err = -ENOTDIR;
+> +		goto free_subvol_name;
+>  	}
+>  
+>  	err = mnt_want_write_file(file);
+>  	if (err)
+> -		goto out;
+> -
+> +		goto free_subvol_name;
+>  
+>  	err = down_write_killable_nested(&dir->i_rwsem, I_MUTEX_PARENT);
+>  	if (err == -EINTR)
+>  		goto out_drop_write;
+> -	dentry = lookup_one_len(vol_args->name, parent, namelen);
+> +	dentry = lookup_one_len(name, parent, namelen);
+>  	if (IS_ERR(dentry)) {
+>  		err = PTR_ERR(dentry);
+>  		goto out_unlock_dir;
+> @@ -2943,7 +2998,13 @@ static noinline int btrfs_ioctl_snap_destroy(struct file *file,
+>  	inode_unlock(dir);
+>  out_drop_write:
+>  	mnt_drop_write_file(file);
+> +free_subvol_name:
+> +	kfree(name_ptr);
+> +free_parent:
+> +	if (destroy_v2)
+> +		dput(parent);
+>  out:
+> +	kfree(vol_args2);
+>  	kfree(vol_args);
+>  	return err;
+>  }
+> @@ -5464,7 +5525,9 @@ long btrfs_ioctl(struct file *file, unsigned int
+>  	case BTRFS_IOC_SUBVOL_CREATE_V2:
+>  		return btrfs_ioctl_snap_create_v2(file, argp, 1);
+>  	case BTRFS_IOC_SNAP_DESTROY:
+> -		return btrfs_ioctl_snap_destroy(file, argp);
+> +		return btrfs_ioctl_snap_destroy(file, argp, false);
+> +	case BTRFS_IOC_SNAP_DESTROY_V2:
+> +		return btrfs_ioctl_snap_destroy(file, argp, true);
+>  	case BTRFS_IOC_SUBVOL_GETFLAGS:
+>  		return btrfs_ioctl_subvol_getflags(file, argp);
+>  	case BTRFS_IOC_SUBVOL_SETFLAGS:
+> diff --git a/fs/btrfs/super.c b/fs/btrfs/super.c
+> index a906315efd19..4a8ce475d906 100644
+> --- a/fs/btrfs/super.c
+> +++ b/fs/btrfs/super.c
+> @@ -1024,7 +1024,7 @@ static int btrfs_parse_subvol_options(const char *options, char **subvol_name,
+>  	return error;
+>  }
+>  
+> -static char *get_subvol_name_from_objectid(struct btrfs_fs_info *fs_info,
+> +char *btrfs_get_subvol_name_from_objectid(struct btrfs_fs_info *fs_info,
+>  					   u64 subvol_objectid)
+>  {
+>  	struct btrfs_root *root = fs_info->tree_root;
+> @@ -1438,7 +1438,7 @@ static struct dentry *mount_subvol(const char *subvol_name, u64 subvol_objectid,
+>  				goto out;
+>  			}
+>  		}
+> -		subvol_name = get_subvol_name_from_objectid(btrfs_sb(mnt->mnt_sb),
+> +		subvol_name = btrfs_get_subvol_name_from_objectid(btrfs_sb(mnt->mnt_sb),
+>  							    subvol_objectid);
+>  		if (IS_ERR(subvol_name)) {
+>  			root = ERR_CAST(subvol_name);
+> diff --git a/include/uapi/linux/btrfs.h b/include/uapi/linux/btrfs.h
+> index 7a8bc8b920f5..d8619245f0dc 100644
+> --- a/include/uapi/linux/btrfs.h
+> +++ b/include/uapi/linux/btrfs.h
+> @@ -42,11 +42,14 @@ struct btrfs_ioctl_vol_args {
+>  
+>  #define BTRFS_DEVICE_SPEC_BY_ID		(1ULL << 3)
+>  
+> +#define BTRFS_SUBVOL_BY_ID	(1ULL << 4)
+> +
+>  #define BTRFS_VOL_ARG_V2_FLAGS_SUPPORTED		\
+>  			(BTRFS_SUBVOL_CREATE_ASYNC |	\
+>  			BTRFS_SUBVOL_RDONLY |		\
+>  			BTRFS_SUBVOL_QGROUP_INHERIT |	\
+> -			BTRFS_DEVICE_SPEC_BY_ID)
+> +			BTRFS_DEVICE_SPEC_BY_ID |	\
+> +			BTRFS_SUBVOL_BY_ID)
 
- - Remove last remaining calls to exception_enter/exception_exit() and 
-   simplify the entry code some more.
+			BTRFS_SUBVOL_SPEC_BY_ID
 
- - Remove force_iret()
+> @@ -119,7 +122,10 @@ struct btrfs_ioctl_vol_args_v2 {
+>  		__u64 unused[4];
+>  	};
+>  	union {
+> -		char name[BTRFS_SUBVOL_NAME_MAX + 1];
+> +		union {
+> +			char name[BTRFS_SUBVOL_NAME_MAX + 1];
+> +			__u64 subvolid;
+> +		};
 
- - Add support for "Fast Short Rep Mov", which is available starting with 
-   Ice Lake Intel CPUs - and make the x86 assembly version of memmove() 
-   use REP MOV for all sizes when FSRM is available.
+The subvolid can be added t othe first union just fine and duplicating
+the name does not make sense to me.
 
- - Micro-optimize/simplify the 32-bit boot code a bit.
+  	union {
+		char name[BTRFS_SUBVOL_NAME_MAX + 1];
+		__u64 subvolid;
+  		__u64 devid;
+	};
 
- - Use a more future-proof SYSRET instruction mnemonic
-
- Thanks,
-
-	Ingo
-
------------------->
-Arvind Sankar (1):
-      x86/boot: Simplify calculation of output address
-
-Brian Gerst (1):
-      x86: Remove force_iret()
-
-Frederic Weisbecker (2):
-      x86/context-tracking: Remove exception_enter/exit() from do_page_fault()
-      x86/context-tracking: Remove exception_enter/exit() from KVM_PV_REASON_PAGE_NOT_PRESENT async page fault
-
-Jan Beulich (1):
-      x86/entry/64: Add instruction suffix to SYSRET
-
-Tony Luck (1):
-      x86/cpufeatures: Add support for fast short REP; MOVSB
+The argument structure is common for device and subvolume ioctls but I'm
+not aware of any context were we would need both at the same time.
+Which makes the SPEC_BY_ID bits mutually exclusive.
 
 
- arch/x86/boot/compressed/head_32.S |  8 +++-----
- arch/x86/entry/entry_64.S          |  2 +-
- arch/x86/ia32/ia32_signal.c        |  2 --
- arch/x86/include/asm/cpufeatures.h |  1 +
- arch/x86/include/asm/ptrace.h      | 16 ----------------
- arch/x86/include/asm/thread_info.h |  9 ---------
- arch/x86/kernel/kvm.c              |  4 ----
- arch/x86/kernel/process_32.c       |  1 -
- arch/x86/kernel/process_64.c       |  1 -
- arch/x86/kernel/signal.c           |  2 --
- arch/x86/kernel/vm86_32.c          |  1 -
- arch/x86/lib/memmove_64.S          |  7 ++++---
- arch/x86/mm/fault.c                | 39 ++++++++++++--------------------------
- 13 files changed, 21 insertions(+), 72 deletions(-)
-
+>  		__u64 devid;
+>  	};
