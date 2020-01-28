@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1321114B7FA
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Jan 2020 15:20:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 13C7F14B6D0
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Jan 2020 15:08:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730859AbgA1OTU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 28 Jan 2020 09:19:20 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43550 "EHLO mail.kernel.org"
+        id S1728512AbgA1OI3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 28 Jan 2020 09:08:29 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56404 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729866AbgA1OTO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 Jan 2020 09:19:14 -0500
+        id S1727552AbgA1OIW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 28 Jan 2020 09:08:22 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EC17724681;
-        Tue, 28 Jan 2020 14:19:13 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5F72E2468F;
+        Tue, 28 Jan 2020 14:08:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1580221154;
-        bh=a7hZ0I9DVi8FQ2vUmwYlY7OO1gbwxmdrjRY9e4lKIj4=;
+        s=default; t=1580220501;
+        bh=1AE2Z7je6fHaZKtxxnoogY/Y797SKVl8mnTWazMwgy4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=a18755Vb178SkAtxCkIeE1ybA5KhadM5M/CpwL+fBLvHb+BEZ6WAHZoRreyB6Sk5r
-         DEEV4BIDD6B+lri9fAmA86sUmDeeTZAug+/rbWM9KKO7Q2IQ9w/hSP1PBLUc7S/mDf
-         2xbDq32WqZE8Kj14N93GqSpxuKUUF57Ot7z0Ry48=
+        b=f28UGLQbo+7lFqZ//rJbtMLEfMa1H09t9ksB4WJKB+JhGQO/5jxISC5pWV8gvIqKj
+         UeMcsvMZQatVb+94JhMDD/WYhZ8xQJhVInmFqlr7yG7aVILHvvsD7oAh3CybKhL9Ds
+         PCpep6pAXiil9wALsOXncZ5ydlm8jeK0uxrZeeKc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Omar Sandoval <osandov@fb.com>,
-        Christoph Hellwig <hch@lst.de>, Ming Lei <ming.lei@redhat.com>,
-        Jens Axboe <axboe@kernel.dk>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 073/271] block: dont use bio->bi_vcnt to figure out segment number
-Date:   Tue, 28 Jan 2020 15:03:42 +0100
-Message-Id: <20200128135858.012132990@linuxfoundation.org>
+        stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>,
+        Gerd Hoffmann <kraxel@redhat.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.4 004/183] drm/virtio: fix bounds check in virtio_gpu_cmd_get_capset()
+Date:   Tue, 28 Jan 2020 15:03:43 +0100
+Message-Id: <20200128135829.996022414@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200128135852.449088278@linuxfoundation.org>
-References: <20200128135852.449088278@linuxfoundation.org>
+In-Reply-To: <20200128135829.486060649@linuxfoundation.org>
+References: <20200128135829.486060649@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,48 +44,53 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Ming Lei <ming.lei@redhat.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
 
-[ Upstream commit 1a67356e9a4829da2935dd338630a550c59c8489 ]
+[ Upstream commit 09c4b49457434fa74749ad6194ef28464d9f5df9 ]
 
-It is wrong to use bio->bi_vcnt to figure out how many segments
-there are in the bio even though CLONED flag isn't set on this bio,
-because this bio may be splitted or advanced.
+This doesn't affect runtime because in the current code "idx" is always
+valid.
 
-So always use bio_segments() in blk_recount_segments(), and it shouldn't
-cause any performance loss now because the physical segment number is figured
-out in blk_queue_split() and BIO_SEG_VALID is set meantime since
-bdced438acd83ad83a6c ("block: setup bi_phys_segments after splitting").
+First, we read from "vgdev->capsets[idx].max_size" before checking
+whether "idx" is within bounds.  And secondly the bounds check is off by
+one so we could end up reading one element beyond the end of the
+vgdev->capsets[] array.
 
-Reviewed-by: Omar Sandoval <osandov@fb.com>
-Reviewed-by: Christoph Hellwig <hch@lst.de>
-Fixes: 76d8137a3113 ("blk-merge: recaculate segment if it isn't less than max segments")
-Signed-off-by: Ming Lei <ming.lei@redhat.com>
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
+Fixes: 62fb7a5e1096 ("virtio-gpu: add 3d/virgl support")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Link: http://patchwork.freedesktop.org/patch/msgid/20180704094250.m7sgvvzg3dhcvv3h@kili.mountain
+Signed-off-by: Gerd Hoffmann <kraxel@redhat.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- block/blk-merge.c | 8 +-------
- 1 file changed, 1 insertion(+), 7 deletions(-)
+ drivers/gpu/drm/virtio/virtgpu_vq.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-diff --git a/block/blk-merge.c b/block/blk-merge.c
-index 2642e5fc8b69a..66795cca662a3 100644
---- a/block/blk-merge.c
-+++ b/block/blk-merge.c
-@@ -305,13 +305,7 @@ void blk_recalc_rq_segments(struct request *rq)
- 
- void blk_recount_segments(struct request_queue *q, struct bio *bio)
+diff --git a/drivers/gpu/drm/virtio/virtgpu_vq.c b/drivers/gpu/drm/virtio/virtgpu_vq.c
+index a1b3ea1ccb65b..772a5a3b0ce1a 100644
+--- a/drivers/gpu/drm/virtio/virtgpu_vq.c
++++ b/drivers/gpu/drm/virtio/virtgpu_vq.c
+@@ -681,11 +681,11 @@ int virtio_gpu_cmd_get_capset(struct virtio_gpu_device *vgdev,
  {
--	unsigned short seg_cnt;
--
--	/* estimate segment number by bi_vcnt for non-cloned bio */
--	if (bio_flagged(bio, BIO_CLONED))
--		seg_cnt = bio_segments(bio);
--	else
--		seg_cnt = bio->bi_vcnt;
-+	unsigned short seg_cnt = bio_segments(bio);
+ 	struct virtio_gpu_get_capset *cmd_p;
+ 	struct virtio_gpu_vbuffer *vbuf;
+-	int max_size = vgdev->capsets[idx].max_size;
++	int max_size;
+ 	struct virtio_gpu_drv_cap_cache *cache_ent;
+ 	void *resp_buf;
  
- 	if (test_bit(QUEUE_FLAG_NO_SG_MERGE, &q->queue_flags) &&
- 			(seg_cnt < queue_max_segments(q)))
+-	if (idx > vgdev->num_capsets)
++	if (idx >= vgdev->num_capsets)
+ 		return -EINVAL;
+ 
+ 	if (version > vgdev->capsets[idx].max_version)
+@@ -695,6 +695,7 @@ int virtio_gpu_cmd_get_capset(struct virtio_gpu_device *vgdev,
+ 	if (!cache_ent)
+ 		return -ENOMEM;
+ 
++	max_size = vgdev->capsets[idx].max_size;
+ 	cache_ent->caps_cache = kmalloc(max_size, GFP_KERNEL);
+ 	if (!cache_ent->caps_cache) {
+ 		kfree(cache_ent);
 -- 
 2.20.1
 
