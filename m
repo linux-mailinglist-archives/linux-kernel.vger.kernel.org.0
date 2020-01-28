@@ -2,69 +2,99 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1998B14BCA0
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Jan 2020 16:12:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 547BC14BC94
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Jan 2020 16:08:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726485AbgA1PMJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 28 Jan 2020 10:12:09 -0500
-Received: from Galois.linutronix.de ([193.142.43.55]:49191 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726111AbgA1PMJ (ORCPT
+        id S1726551AbgA1PH7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 28 Jan 2020 10:07:59 -0500
+Received: from lelv0142.ext.ti.com ([198.47.23.249]:36746 "EHLO
+        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726057AbgA1PH7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 Jan 2020 10:12:09 -0500
-Received: from p5b06da22.dip0.t-ipconnect.de ([91.6.218.34] helo=nanos.tec.linutronix.de)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1iwSWt-0000xt-UP; Tue, 28 Jan 2020 16:11:52 +0100
-Received: by nanos.tec.linutronix.de (Postfix, from userid 1000)
-        id 491F1101227; Tue, 28 Jan 2020 16:11:51 +0100 (CET)
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     vipul kumar <vipulk0511@gmail.com>
-Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        linux-kernel@vger.kernel.org, Stable <stable@vger.kernel.org>,
-        Srikanth Krishnakar <Srikanth_Krishnakar@mentor.com>,
-        Cedric Hombourger <Cedric_Hombourger@mentor.com>,
-        x86@kernel.org, Len Brown <len.brown@intel.com>,
-        Vipul Kumar <vipul_kumar@mentor.com>,
-        Hans de Goede <hdegoede@redhat.com>
-Subject: Re: [v3] x86/tsc: Unset TSC_KNOWN_FREQ and TSC_RELIABLE flags on Intel Bay Trail SoC
-In-Reply-To: <CADdC98To8VKOUWnR+8zAJ04vgdc4vJoh2h96588+5XFer9YTJw@mail.gmail.com>
-References: <1579617717-4098-1-git-send-email-vipulk0511@gmail.com> <87eevs7lfd.fsf@nanos.tec.linutronix.de> <CADdC98RJpsvu_zWehNGDDN=W11rD11NSPaodg-zuaXsHuOJYTQ@mail.gmail.com> <878slzeeim.fsf@nanos.tec.linutronix.de> <CADdC98TE4oNWZyEsqXzr+zJtfdTTOyeeuHqu1u04X_ktLHo-Hg@mail.gmail.com> <20200123144108.GU32742@smile.fi.intel.com> <df04f43d-8c6d-7602-cb50-535b85cf2aaa@redhat.com> <87iml11ccf.fsf@nanos.tec.linutronix.de> <c06260e3-bd19-bf3c-89f7-d36bdb9a5b20@redhat.com> <87ftg5131x.fsf@nanos.tec.linutronix.de> <37321319-e110-81f5-2488-cedf000da04d@redhat.com> <CADdC98To8VKOUWnR+8zAJ04vgdc4vJoh2h96588+5XFer9YTJw@mail.gmail.com>
-Date:   Tue, 28 Jan 2020 16:11:51 +0100
-Message-ID: <87ftfz62fc.fsf@nanos.tec.linutronix.de>
+        Tue, 28 Jan 2020 10:07:59 -0500
+Received: from lelv0266.itg.ti.com ([10.180.67.225])
+        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id 00SF7oWR034095;
+        Tue, 28 Jan 2020 09:07:50 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1580224070;
+        bh=jbYsyBATnWNLSVZAeRBkfyc/NJi7c27Wjd5pbcwonRY=;
+        h=Date:From:To:CC:Subject:References:In-Reply-To;
+        b=Po/tjph2LFzrkh67QNSTb4Zl8k+0+x35YOglAw8MXAvWO4hbhV/rmjXe2APC9YsaY
+         D9hjuhQnC9O5O6Wa1ufLmweB2rpeWhG/DyAgnCUe951B2Za07HLGz+63XXKId7iPga
+         IbFPlYChy6Uu5XVSezZSxBIXESFrCPIIiMulV6CM=
+Received: from DLEE108.ent.ti.com (dlee108.ent.ti.com [157.170.170.38])
+        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 00SF7osj098670
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Tue, 28 Jan 2020 09:07:50 -0600
+Received: from DLEE110.ent.ti.com (157.170.170.21) by DLEE108.ent.ti.com
+ (157.170.170.38) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Tue, 28
+ Jan 2020 09:07:50 -0600
+Received: from lelv0326.itg.ti.com (10.180.67.84) by DLEE110.ent.ti.com
+ (157.170.170.21) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
+ Frontend Transport; Tue, 28 Jan 2020 09:07:50 -0600
+Received: from ti.com (ileax41-snat.itg.ti.com [10.172.224.153])
+        by lelv0326.itg.ti.com (8.15.2/8.15.2) with SMTP id 00SF7oqN010472;
+        Tue, 28 Jan 2020 09:07:50 -0600
+Date:   Tue, 28 Jan 2020 09:11:56 -0600
+From:   Benoit Parrot <bparrot@ti.com>
+To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+CC:     <linux-media@vger.kernel.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        <linux-kernel@vger.kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Subject: Re: [PATCH v1] MAINTAINERS: Sort entries in database for TI VPE/CAL
+Message-ID: <20200128151156.jk4oxl3ts3sdeg23@ti.com>
+References: <20200128145828.74161-1-andriy.shevchenko@linux.intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20200128145828.74161-1-andriy.shevchenko@linux.intel.com>
+User-Agent: NeoMutt/20171215
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Vipul,
+Andy Shevchenko <andriy.shevchenko@linux.intel.com> wrote on Tue [2020-Jan-28 16:58:28 +0200]:
+> Run parse-maintainers.pl and choose TI VPE/CAL record. Fix it accordingly.
+> 
+> Note, this is urgent fix, without which parse-maintainers.pl throws
+> an exception:
+> 
+> Odd non-pattern line '  Documentation/devicetree/bindings/media/ti,cal.yaml
+> ' for 'TI VPE/CAL DRIVERS' at scripts/parse-maintainers.pl line 147, <$file> line 16770.
+> 
+> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 
-vipul kumar <vipulk0511@gmail.com> writes:
+Acked-by: Benoit Parrot <bparrot@ti.com>
 
-Please see https://people.kernel.org/tglx/notes-about-netiquette
-and search for Top-posting.
-
-> Please find attached logs with mainline kernel version 5.4.15 with
-> patch.
-
-Which patch? I'm not seing any of the debug prints from my patch in that
-dmesg.
-
-I assume it's your patch, right?
-
-> [    5.736689] tsc: Refined TSC clocksource calibration: 1833.333 MHz
-
-Otherwise this would not show up.
-
-Try again please with your patch removed an my debug patch applied.
-
-Thanks,
-
-        tglx
+> ---
+>  MAINTAINERS | 6 +++---
+>  1 file changed, 3 insertions(+), 3 deletions(-)
+> 
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 9fbe2a19b8a3..f04b1c6508fe 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -16761,12 +16761,12 @@ F:	sound/soc/codecs/twl4030*
+>  TI VPE/CAL DRIVERS
+>  M:	Benoit Parrot <bparrot@ti.com>
+>  L:	linux-media@vger.kernel.org
+> +S:	Maintained
+>  W:	http://linuxtv.org/
+>  Q:	http://patchwork.linuxtv.org/project/linux-media/list/
+> -S:	Maintained
+> -F:	drivers/media/platform/ti-vpe/
+> +F:	Documentation/devicetree/bindings/media/ti,cal.yaml
+>  F:	Documentation/devicetree/bindings/media/ti,vpe.yaml
+> -	Documentation/devicetree/bindings/media/ti,cal.yaml
+> +F:	drivers/media/platform/ti-vpe/
+>  
+>  TI WILINK WIRELESS DRIVERS
+>  L:	linux-wireless@vger.kernel.org
+> -- 
+> 2.24.1
+> 
