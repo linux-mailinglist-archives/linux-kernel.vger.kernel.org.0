@@ -2,56 +2,89 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5882C14B932
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Jan 2020 15:33:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6ED6214B97E
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Jan 2020 15:33:58 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733123AbgA1O2j (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 28 Jan 2020 09:28:39 -0500
-Received: from mx2.suse.de ([195.135.220.15]:50006 "EHLO mx2.suse.de"
+        id S2387692AbgA1Oc7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 28 Jan 2020 09:32:59 -0500
+Received: from mga07.intel.com ([134.134.136.100]:38430 "EHLO mga07.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732487AbgA1O2b (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 Jan 2020 09:28:31 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id C4A50AAA6;
-        Tue, 28 Jan 2020 14:28:29 +0000 (UTC)
-Date:   Tue, 28 Jan 2020 15:28:26 +0100
-From:   Petr Tesarik <ptesarik@suse.cz>
-To:     Al Viro <viro@zeniv.linux.org.uk>
-Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] fs/Kconfig: default to no mandatory locking
-Message-ID: <20200128152826.48fc71a6@ezekiel.suse.cz>
-Organization: SUSE Linux, s.r.o.
-X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-suse-linux-gnu)
+        id S2387604AbgA1Oc4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 28 Jan 2020 09:32:56 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga007.jf.intel.com ([10.7.209.58])
+  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 28 Jan 2020 06:29:59 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.70,374,1574150400"; 
+   d="scan'208";a="217626888"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by orsmga007.jf.intel.com with ESMTP; 28 Jan 2020 06:29:58 -0800
+Received: by black.fi.intel.com (Postfix, from userid 1003)
+        id 0DB3313F; Tue, 28 Jan 2020 16:29:56 +0200 (EET)
+From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To:     linux-kernel@vger.kernel.org,
+        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+        linux-usb@vger.kernel.org, Hans de Goede <hdegoede@redhat.com>
+Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Subject: [PATCH v1] MAINTAINERS: Sort entries in database for USB TYPEC
+Date:   Tue, 28 Jan 2020 16:29:56 +0200
+Message-Id: <20200128142956.39604-1-andriy.shevchenko@linux.intel.com>
+X-Mailer: git-send-email 2.24.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-If the help text says this code is dead, the option itself should
-not default to y.
+Run parse-maintainers.pl and choose USB TYPEC records. Fix them accordingly.
 
-Signed-off-by: Petr Tesarik <ptesarik@suse.com>
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 ---
- fs/Kconfig | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ MAINTAINERS | 18 +++++++++---------
+ 1 file changed, 9 insertions(+), 9 deletions(-)
 
-diff --git a/fs/Kconfig b/fs/Kconfig
-index 7b623e9fc1b0..fc60b8bbebc2 100644
---- a/fs/Kconfig
-+++ b/fs/Kconfig
-@@ -103,7 +103,7 @@ config FILE_LOCKING
- config MANDATORY_FILE_LOCKING
- 	bool "Enable Mandatory file locking"
- 	depends on FILE_LOCKING
--	default y
-+	default n
- 	help
- 	  This option enables files appropriately marked files on appropriely
- 	  mounted filesystems to support mandatory locking.
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 1e7bb6da3ea3..0608e3195bb1 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -17407,11 +17407,14 @@ F:	drivers/usb/
+ F:	include/linux/usb.h
+ F:	include/linux/usb/
+ 
+-USB TYPEC PI3USB30532 MUX DRIVER
+-M:	Hans de Goede <hdegoede@redhat.com>
++USB TYPEC BUS FOR ALTERNATE MODES
++M:	Heikki Krogerus <heikki.krogerus@linux.intel.com>
+ L:	linux-usb@vger.kernel.org
+ S:	Maintained
+-F:	drivers/usb/typec/mux/pi3usb30532.c
++F:	Documentation/ABI/testing/sysfs-bus-typec
++F:	Documentation/driver-api/usb/typec_bus.rst
++F:	drivers/usb/typec/altmodes/
++F:	include/linux/usb/typec_altmode.h
+ 
+ USB TYPEC CLASS
+ M:	Heikki Krogerus <heikki.krogerus@linux.intel.com>
+@@ -17422,14 +17425,11 @@ F:	Documentation/driver-api/usb/typec.rst
+ F:	drivers/usb/typec/
+ F:	include/linux/usb/typec.h
+ 
+-USB TYPEC BUS FOR ALTERNATE MODES
+-M:	Heikki Krogerus <heikki.krogerus@linux.intel.com>
++USB TYPEC PI3USB30532 MUX DRIVER
++M:	Hans de Goede <hdegoede@redhat.com>
+ L:	linux-usb@vger.kernel.org
+ S:	Maintained
+-F:	Documentation/ABI/testing/sysfs-bus-typec
+-F:	Documentation/driver-api/usb/typec_bus.rst
+-F:	drivers/usb/typec/altmodes/
+-F:	include/linux/usb/typec_altmode.h
++F:	drivers/usb/typec/mux/pi3usb30532.c
+ 
+ USB TYPEC PORT CONTROLLER DRIVERS
+ M:	Guenter Roeck <linux@roeck-us.net>
 -- 
-2.16.4
+2.24.1
 
