@@ -2,36 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8DAD514BB56
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Jan 2020 15:46:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3940814BA0E
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Jan 2020 15:37:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729375AbgA1Oon (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 28 Jan 2020 09:44:43 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58354 "EHLO mail.kernel.org"
+        id S1733068AbgA1OfT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 28 Jan 2020 09:35:19 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36300 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727931AbgA1OJv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 Jan 2020 09:09:51 -0500
+        id S1726346AbgA1OfR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 28 Jan 2020 09:35:17 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 739A922522;
-        Tue, 28 Jan 2020 14:09:49 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5DA712469A;
+        Tue, 28 Jan 2020 14:35:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1580220589;
-        bh=1qWJPyzphTh1OOTJy5ScY1oDDqbdQp1LVK9ycxiBvGE=;
+        s=default; t=1580222115;
+        bh=uU60ciiTrDJ9OmBJPBS8Wl7CIQw1suWbyJQyUdYfXqM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=OAb3NcjddDkRKnq8D/7748OPHR8hzULgKOQvdEzIwxPducBmaK14mMVaK0D0RaU3M
-         lt35Cevmjp6kJ9ulzFeayTfYi2opA4srfhHwT+p1mE/Mgeb94F/of0w1uZygsdguRU
-         z7NG2F83JYkV8dJiNawzhfxGel5RwJh2ZNZobmhU=
+        b=yaLB2y0z7lbJCRs+bbJIiwZvODQW1w9jvpmI+FmMT2XOV8W6MmiFkg0bI/cCBackX
+         MXeLHyGM5fK6Eh2sslqqgjLZXxaNgrnWocjPywUYfctpLxDSwF+h0cq/JK866z/R6i
+         XSStsXujQZAXIs6j265Inuw6xHRROkj4t+5ZePc8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Finn Thain <fthain@telegraphics.com.au>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
+        stable@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
+        Nathan Chancellor <natechancellor@gmail.com>,
+        "Lad, Prabhakar" <prabhakar.csengg@gmail.com>,
+        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.4 066/183] m68k: mac: Fix VIA timer counter accesses
-Date:   Tue, 28 Jan 2020 15:04:45 +0100
-Message-Id: <20200128135836.593132765@linuxfoundation.org>
+Subject: [PATCH 4.4 068/183] media: davinci-isif: avoid uninitialized variable use
+Date:   Tue, 28 Jan 2020 15:04:47 +0100
+Message-Id: <20200128135836.824989053@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
 In-Reply-To: <20200128135829.486060649@linuxfoundation.org>
 References: <20200128135829.486060649@linuxfoundation.org>
@@ -44,154 +47,76 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Finn Thain <fthain@telegraphics.com.au>
+From: Arnd Bergmann <arnd@arndb.de>
 
-[ Upstream commit 0ca7ce7db771580433bf24454f7a1542bd326078 ]
+[ Upstream commit 0e633f97162c1c74c68e2eb20bbd9259dce87cd9 ]
 
-This resolves some bugs that affect VIA timer counter accesses.
-Avoid lost interrupts caused by reading the counter low byte register.
-Make allowance for the fact that the counter will be decremented to
-0xFFFF before being reloaded.
+clang warns about a possible variable use that gcc never
+complained about:
 
-Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
-Signed-off-by: Finn Thain <fthain@telegraphics.com.au>
-Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
+drivers/media/platform/davinci/isif.c:982:32: error: variable 'frame_size' is uninitialized when used here
+      [-Werror,-Wuninitialized]
+                dm365_vpss_set_pg_frame_size(frame_size);
+                                             ^~~~~~~~~~
+drivers/media/platform/davinci/isif.c:887:2: note: variable 'frame_size' is declared here
+        struct vpss_pg_frame_size frame_size;
+        ^
+1 error generated.
+
+There is no initialization for this variable at all, and there
+has never been one in the mainline kernel, so we really should
+not put that stack data into an mmio register.
+
+On the other hand, I suspect that gcc checks the condition
+more closely and notices that the global
+isif_cfg.bayer.config_params.test_pat_gen flag is initialized
+to zero and never written to from any code path, so anything
+depending on it can be eliminated.
+
+To shut up the clang warning, just remove the dead code manually,
+it has probably never been used because any attempt to do so
+would have resulted in undefined behavior.
+
+Fixes: 63e3ab142fa3 ("V4L/DVB: V4L - vpfe capture - source for ISIF driver on DM365")
+
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Reviewed-by: Nathan Chancellor <natechancellor@gmail.com>
+Acked-by: Lad, Prabhakar <prabhakar.csengg@gmail.com>
+Signed-off-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
+Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/m68k/mac/via.c | 102 +++++++++++++++++++++++---------------------
- 1 file changed, 53 insertions(+), 49 deletions(-)
+ drivers/media/platform/davinci/isif.c | 9 ---------
+ 1 file changed, 9 deletions(-)
 
-diff --git a/arch/m68k/mac/via.c b/arch/m68k/mac/via.c
-index ce56e04386e70..2d687518c76fe 100644
---- a/arch/m68k/mac/via.c
-+++ b/arch/m68k/mac/via.c
-@@ -53,16 +53,6 @@ static __u8 rbv_clear;
+diff --git a/drivers/media/platform/davinci/isif.c b/drivers/media/platform/davinci/isif.c
+index 78e37cf3470f2..b51b875c5a612 100644
+--- a/drivers/media/platform/davinci/isif.c
++++ b/drivers/media/platform/davinci/isif.c
+@@ -890,9 +890,7 @@ static int isif_set_hw_if_params(struct vpfe_hw_if_param *params)
+ static int isif_config_ycbcr(void)
+ {
+ 	struct isif_ycbcr_config *params = &isif_cfg.ycbcr;
+-	struct vpss_pg_frame_size frame_size;
+ 	u32 modeset = 0, ccdcfg = 0;
+-	struct vpss_sync_pol sync;
  
- static int gIER,gIFR,gBufA,gBufB;
+ 	dev_dbg(isif_cfg.dev, "\nStarting isif_config_ycbcr...");
  
--/*
-- * Timer defs.
-- */
--
--#define TICK_SIZE		10000
--#define MAC_CLOCK_TICK		(783300/HZ)		/* ticks per HZ */
--#define MAC_CLOCK_LOW		(MAC_CLOCK_TICK&0xFF)
--#define MAC_CLOCK_HIGH		(MAC_CLOCK_TICK>>8)
--
--
- /*
-  * On Macs with a genuine VIA chip there is no way to mask an individual slot
-  * interrupt. This limitation also seems to apply to VIA clone logic cores in
-@@ -277,22 +267,6 @@ void __init via_init(void)
- 	}
+@@ -980,13 +978,6 @@ static int isif_config_ycbcr(void)
+ 		/* two fields are interleaved in memory */
+ 		regw(0x00000249, SDOFST);
+ 
+-	/* Setup test pattern if enabled */
+-	if (isif_cfg.bayer.config_params.test_pat_gen) {
+-		sync.ccdpg_hdpol = params->hd_pol;
+-		sync.ccdpg_vdpol = params->vd_pol;
+-		dm365_vpss_set_sync_pol(sync);
+-		dm365_vpss_set_pg_frame_size(frame_size);
+-	}
+ 	return 0;
  }
  
--/*
-- * Start the 100 Hz clock
-- */
--
--void __init via_init_clock(irq_handler_t func)
--{
--	via1[vACR] |= 0x40;
--	via1[vT1LL] = MAC_CLOCK_LOW;
--	via1[vT1LH] = MAC_CLOCK_HIGH;
--	via1[vT1CL] = MAC_CLOCK_LOW;
--	via1[vT1CH] = MAC_CLOCK_HIGH;
--
--	if (request_irq(IRQ_MAC_TIMER_1, func, 0, "timer", func))
--		pr_err("Couldn't register %s interrupt\n", "timer");
--}
--
- /*
-  * Debugging dump, used in various places to see what's going on.
-  */
-@@ -320,29 +294,6 @@ void via_debug_dump(void)
- 	}
- }
- 
--/*
-- * This is always executed with interrupts disabled.
-- *
-- * TBI: get time offset between scheduling timer ticks
-- */
--
--u32 mac_gettimeoffset(void)
--{
--	unsigned long ticks, offset = 0;
--
--	/* read VIA1 timer 2 current value */
--	ticks = via1[vT1CL] | (via1[vT1CH] << 8);
--	/* The probability of underflow is less than 2% */
--	if (ticks > MAC_CLOCK_TICK - MAC_CLOCK_TICK / 50)
--		/* Check for pending timer interrupt in VIA1 IFR */
--		if (via1[vIFR] & 0x40) offset = TICK_SIZE;
--
--	ticks = MAC_CLOCK_TICK - ticks;
--	ticks = ticks * 10000L / MAC_CLOCK_TICK;
--
--	return (ticks + offset) * 1000;
--}
--
- /*
-  * Flush the L2 cache on Macs that have it by flipping
-  * the system into 24-bit mode for an instant.
-@@ -619,3 +570,56 @@ int via2_scsi_drq_pending(void)
- 	return via2[gIFR] & (1 << IRQ_IDX(IRQ_MAC_SCSIDRQ));
- }
- EXPORT_SYMBOL(via2_scsi_drq_pending);
-+
-+/* timer and clock source */
-+
-+#define VIA_CLOCK_FREQ     783360                /* VIA "phase 2" clock in Hz */
-+#define VIA_TIMER_INTERVAL (1000000 / HZ)        /* microseconds per jiffy */
-+#define VIA_TIMER_CYCLES   (VIA_CLOCK_FREQ / HZ) /* clock cycles per jiffy */
-+
-+#define VIA_TC             (VIA_TIMER_CYCLES - 2) /* including 0 and -1 */
-+#define VIA_TC_LOW         (VIA_TC & 0xFF)
-+#define VIA_TC_HIGH        (VIA_TC >> 8)
-+
-+void __init via_init_clock(irq_handler_t timer_routine)
-+{
-+	if (request_irq(IRQ_MAC_TIMER_1, timer_routine, 0, "timer", NULL)) {
-+		pr_err("Couldn't register %s interrupt\n", "timer");
-+		return;
-+	}
-+
-+	via1[vT1LL] = VIA_TC_LOW;
-+	via1[vT1LH] = VIA_TC_HIGH;
-+	via1[vT1CL] = VIA_TC_LOW;
-+	via1[vT1CH] = VIA_TC_HIGH;
-+	via1[vACR] |= 0x40;
-+}
-+
-+u32 mac_gettimeoffset(void)
-+{
-+	unsigned long flags;
-+	u8 count_high;
-+	u16 count, offset = 0;
-+
-+	/*
-+	 * Timer counter wrap-around is detected with the timer interrupt flag
-+	 * but reading the counter low byte (vT1CL) would reset the flag.
-+	 * Also, accessing both counter registers is essentially a data race.
-+	 * These problems are avoided by ignoring the low byte. Clock accuracy
-+	 * is 256 times worse (error can reach 0.327 ms) but CPU overhead is
-+	 * reduced by avoiding slow VIA register accesses.
-+	 */
-+
-+	local_irq_save(flags);
-+	count_high = via1[vT1CH];
-+	if (count_high == 0xFF)
-+		count_high = 0;
-+	if (count_high > 0 && (via1[vIFR] & VIA_TIMER_1_INT))
-+		offset = VIA_TIMER_CYCLES;
-+	local_irq_restore(flags);
-+
-+	count = count_high << 8;
-+	count = VIA_TIMER_CYCLES - count + offset;
-+
-+	return ((count * VIA_TIMER_INTERVAL) / VIA_TIMER_CYCLES) * 1000;
-+}
 -- 
 2.20.1
 
