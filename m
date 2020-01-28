@@ -2,147 +2,133 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 19AED14C168
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Jan 2020 21:07:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 98E7C14C16A
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Jan 2020 21:08:55 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726442AbgA1UHI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 28 Jan 2020 15:07:08 -0500
-Received: from lhrrgout.huawei.com ([185.176.76.210]:2325 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726143AbgA1UHI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 Jan 2020 15:07:08 -0500
-Received: from lhreml701-cah.china.huawei.com (unknown [172.18.7.107])
-        by Forcepoint Email with ESMTP id CA9D9A9543D69BE1C047;
-        Tue, 28 Jan 2020 20:07:06 +0000 (GMT)
-Received: from lhreml724-chm.china.huawei.com (10.201.108.75) by
- lhreml701-cah.china.huawei.com (10.201.108.42) with Microsoft SMTP Server
- (TLS) id 14.3.408.0; Tue, 28 Jan 2020 20:07:06 +0000
-Received: from [127.0.0.1] (10.210.167.110) by lhreml724-chm.china.huawei.com
- (10.201.108.75) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1713.5; Tue, 28 Jan
- 2020 20:07:05 +0000
-Subject: Re: [PATCH RFC 0/2] Add basic generic ACPI soc driver
-To:     Jeremy Linton <jeremy.linton@arm.com>, <rjw@rjwysocki.net>,
-        <lenb@kernel.org>
-CC:     <arnd@arndb.de>, <olof@lixom.net>, <linux-kernel@vger.kernel.org>,
-        <linux-acpi@vger.kernel.org>, <guohanjun@huawei.com>,
-        <gregkh@linuxfoundation.org>
-References: <1580210059-199540-1-git-send-email-john.garry@huawei.com>
- <bb87efe5-d0be-498a-25a1-008a7bebd452@arm.com>
- <5ab3a97d-bbc4-6d5a-fd06-f8da324339ab@huawei.com>
- <6be8d175-477d-d163-3fe0-3ab562874ce4@arm.com>
-From:   John Garry <john.garry@huawei.com>
-Message-ID: <b4d00a0a-1bf9-9ccd-c734-f532cac523d1@huawei.com>
-Date:   Tue, 28 Jan 2020 20:07:04 +0000
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.1.2
+        id S1726411AbgA1UIs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 28 Jan 2020 15:08:48 -0500
+Received: from youngberry.canonical.com ([91.189.89.112]:36939 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726143AbgA1UIs (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 28 Jan 2020 15:08:48 -0500
+Received: from 1.general.cking.uk.vpn ([10.172.193.212])
+        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.86_2)
+        (envelope-from <colin.king@canonical.com>)
+        id 1iwXAC-0004NW-Qx; Tue, 28 Jan 2020 20:08:44 +0000
+To:     Chin-Yen Lee <timlee@realtek.com>,
+        Yan-Hsuan Chuang <yhchuang@realtek.com>,
+        Kalle Valo <kvalo@codeaurora.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>
+Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+From:   Colin Ian King <colin.king@canonical.com>
+Autocrypt: addr=colin.king@canonical.com; prefer-encrypt=mutual; keydata=
+ mQINBE6TJCgBEACo6nMNvy06zNKj5tiwDsXXS+LhT+LwtEsy9EnraKYXAf2xwazcICSjX06e
+ fanlyhB0figzQO0n/tP7BcfMVNG7n1+DC71mSyRK1ZERcG1523ajvdZOxbBCTvTitYOy3bjs
+ +LXKqeVMhK3mRvdTjjmVpWnWqJ1LL+Hn12ysDVVfkbtuIm2NoaSEC8Ae8LSSyCMecd22d9Pn
+ LR4UeFgrWEkQsqROq6ZDJT9pBLGe1ZS0pVGhkRyBP9GP65oPev39SmfAx9R92SYJygCy0pPv
+ BMWKvEZS/7bpetPNx6l2xu9UvwoeEbpzUvH26PHO3DDAv0ynJugPCoxlGPVf3zcfGQxy3oty
+ dNTWkP6Wh3Q85m+AlifgKZudjZLrO6c+fAw/jFu1UMjNuyhgShtFU7NvEzL3RqzFf9O1qM2m
+ uj83IeFQ1FZ65QAiCdTa3npz1vHc7N4uEQBUxyXgXfCI+A5yDnjHwzU0Y3RYS52TA3nfa08y
+ LGPLTf5wyAREkFYou20vh5vRvPASoXx6auVf1MuxokDShVhxLpryBnlKCobs4voxN54BUO7m
+ zuERXN8kadsxGFzItAyfKYzEiJrpUB1yhm78AecDyiPlMjl99xXk0zs9lcKriaByVUv/NsyJ
+ FQj/kmdxox3XHi9K29kopFszm1tFiDwCFr/xumbZcMY17Yi2bQARAQABtCVDb2xpbiBLaW5n
+ IDxjb2xpbi5raW5nQGNhbm9uaWNhbC5jb20+iQI2BBMBCAAhBQJOkyQoAhsDBQsJCAcDBRUK
+ CQgLBRYCAwEAAh4BAheAAAoJEGjCh9/GqAImsBcP9i6C/qLewfi7iVcOwqF9avfGzOPf7CVr
+ n8CayQnlWQPchmGKk6W2qgnWI2YLIkADh53TS0VeSQ7Tetj8f1gV75eP0Sr/oT/9ovn38QZ2
+ vN8hpZp0GxOUrzkvvPjpH+zdmKSaUsHGp8idfPpZX7XeBO0yojAs669+3BrnBcU5wW45SjSV
+ nfmVj1ZZj3/yBunb+hgNH1QRcm8ZPICpjvSsGFClTdB4xu2AR28eMiL/TTg9k8Gt72mOvhf0
+ fS0/BUwcP8qp1TdgOFyiYpI8CGyzbfwwuGANPSupGaqtIRVf+/KaOdYUM3dx/wFozZb93Kws
+ gXR4z6tyvYCkEg3x0Xl9BoUUyn9Jp5e6FOph2t7TgUvv9dgQOsZ+V9jFJplMhN1HPhuSnkvP
+ 5/PrX8hNOIYuT/o1AC7K5KXQmr6hkkxasjx16PnCPLpbCF5pFwcXc907eQ4+b/42k+7E3fDA
+ Erm9blEPINtt2yG2UeqEkL+qoebjFJxY9d4r8PFbEUWMT+t3+dmhr/62NfZxrB0nTHxDVIia
+ u8xM+23iDRsymnI1w0R78yaa0Eea3+f79QsoRW27Kvu191cU7QdW1eZm05wO8QUvdFagVVdW
+ Zg2DE63Fiin1AkGpaeZG9Dw8HL3pJAJiDe0KOpuq9lndHoGHs3MSa3iyQqpQKzxM6sBXWGfk
+ EkK5Ag0ETpMkKAEQAMX6HP5zSoXRHnwPCIzwz8+inMW7mJ60GmXSNTOCVoqExkopbuUCvinN
+ 4Tg+AnhnBB3R1KTHreFGoz3rcV7fmJeut6CWnBnGBtsaW5Emmh6gZbO5SlcTpl7QDacgIUuT
+ v1pgewVHCcrKiX0zQDJkcK8FeLUcB2PXuJd6sJg39kgsPlI7R0OJCXnvT/VGnd3XPSXXoO4K
+ cr5fcjsZPxn0HdYCvooJGI/Qau+imPHCSPhnX3WY/9q5/WqlY9cQA8tUC+7mgzt2VMjFft1h
+ rp/CVybW6htm+a1d4MS4cndORsWBEetnC6HnQYwuC4bVCOEg9eXMTv88FCzOHnMbE+PxxHzW
+ 3Gzor/QYZGcis+EIiU6hNTwv4F6fFkXfW6611JwfDUQCAHoCxF3B13xr0BH5d2EcbNB6XyQb
+ IGngwDvnTyKHQv34wE+4KtKxxyPBX36Z+xOzOttmiwiFWkFp4c2tQymHAV70dsZTBB5Lq06v
+ 6nJs601Qd6InlpTc2mjd5mRZUZ48/Y7i+vyuNVDXFkwhYDXzFRotO9VJqtXv8iqMtvS4xPPo
+ 2DtJx6qOyDE7gnfmk84IbyDLzlOZ3k0p7jorXEaw0bbPN9dDpw2Sh9TJAUZVssK119DJZXv5
+ 2BSc6c+GtMqkV8nmWdakunN7Qt/JbTcKlbH3HjIyXBy8gXDaEto5ABEBAAGJAh8EGAEIAAkF
+ Ak6TJCgCGwwACgkQaMKH38aoAiZ4lg/+N2mkx5vsBmcsZVd3ys3sIsG18w6RcJZo5SGMxEBj
+ t1UgyIXWI9lzpKCKIxKx0bskmEyMy4tPEDSRfZno/T7p1mU7hsM4owi/ic0aGBKP025Iok9G
+ LKJcooP/A2c9dUV0FmygecRcbIAUaeJ27gotQkiJKbi0cl2gyTRlolKbC3R23K24LUhYfx4h
+ pWj8CHoXEJrOdHO8Y0XH7059xzv5oxnXl2SD1dqA66INnX+vpW4TD2i+eQNPgfkECzKzGj+r
+ KRfhdDZFBJj8/e131Y0t5cu+3Vok1FzBwgQqBnkA7dhBsQm3V0R8JTtMAqJGmyOcL+JCJAca
+ 3Yi81yLyhmYzcRASLvJmoPTsDp2kZOdGr05Dt8aGPRJL33Jm+igfd8EgcDYtG6+F8MCBOult
+ TTAu+QAijRPZv1KhEJXwUSke9HZvzo1tNTlY3h6plBsBufELu0mnqQvHZmfa5Ay99dF+dL1H
+ WNp62+mTeHsX6v9EACH4S+Cw9Q1qJElFEu9/1vFNBmGY2vDv14gU2xEiS2eIvKiYl/b5Y85Q
+ QLOHWV8up73KK5Qq/6bm4BqVd1rKGI9un8kezUQNGBKre2KKs6wquH8oynDP/baoYxEGMXBg
+ GF/qjOC6OY+U7kNUW3N/A7J3M2VdOTLu3hVTzJMZdlMmmsg74azvZDV75dUigqXcwjE=
+Subject: re: rtw88: support wowlan feature for 8822c
+Message-ID: <3ec2e7e0-cb21-f1ae-af6f-00eedc296235@canonical.com>
+Date:   Tue, 28 Jan 2020 20:08:44 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.1
 MIME-Version: 1.0
-In-Reply-To: <6be8d175-477d-d163-3fe0-3ab562874ce4@arm.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.210.167.110]
-X-ClientProxiedBy: lhreml712-chm.china.huawei.com (10.201.108.63) To
- lhreml724-chm.china.huawei.com (10.201.108.75)
-X-CFilter-Loop: Reflected
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Jeremy,
+Hi
 
->> I did consider DMI, but I want something more generic, i.e. could 
->> cover embedded/DT systems also.
->>
->> And I need to double check if DMI really has the info I require. Last 
->> time I checked, it didn't for my dev board, but I know that some 
->> fields are simply not filled in.
-> 
-> Well the info is probably there, but that doesn't mean it should be used 
-> programmatically. As your board shows, its not that reliable. And 
-> looking at the linked patch I see you mention that.
+Static analysis with Coverity has found an issue with an uninitialized
+variable in the following linux-next commit:
 
-Right, I am trying to stay away from that.
+commit 44bc17f7f5b3b2cc4084eba6307ba750078a8a73
+Author: Chin-Yen Lee <timlee@realtek.com>
+Date:   Thu Dec 19 16:58:14 2019 +0800
 
-> 
-> 
->>
->>>
->>> But, quickly looking at the use case, I can't help but think you 
->>> don't really want any of the above, or the PPTT id. It seems the 
->>> mapping should actually be tied directly to the uncore PMU 
->>> definition, rather than a soc/machine/whatever identifier. Which 
->>> would imply keying off one of the ACPI object identifiers for the PMU 
->>> itself.
->>
->> So a PMU device (/sys/bus/event_source/devices) does not have a link 
->> to the ACPI object identifiers or uncore PMU platform device etc.
->>
->> And even if it did, there is no clear link between that ACPI object 
->> and the events it supports for that implementation.
-> 
-> Having a direct link isn't ideal either. It seems you do mention the pmu 
-> naming conventions, which can be controlled based on ACPI object 
-> identifiers.
+    rtw88: support wowlan feature for 8822c
 
-Not necessarily.
+Anaysis is as follows:
 
-  Something like "uncore_dmc_hsi1" where the appended bits
-> could for example vary on _CID+_UID or DT name.
+284 static bool rtw_wow_check_fw_status(struct rtw_dev *rtwdev, bool
+wow_enable)
+285 {
 
-We already do include some naming from ACPI tables in naming (see 
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/drivers/perf/hisilicon/hisi_uncore_ddrc_pmu.c?h=v5.5#n377), 
-but this is not good enough. I'll explain below.
+   1. var_decl: Declaring variable ret without initializer.
+286        bool ret;
+287
+288        /* wait 100ms for wow firmware to finish work */
+289        msleep(100);
+290
 
-> 
-> Not sure that is a particularly good suggestion either, but I do think 
-> its a better idea to tie the mapping to the pmu type/man/version concept 
-> than the SOC it appears in. The sysfs-bus-event_source-devices-* ABI 
-> docs are noticeably silent on the format of the pmu name (is that 
-> somewhere else?).
+   2. Condition wow_enable, taking true branch.
+291        if (wow_enable) {
 
-I would say that there is a lack of PMU naming convention, which I did 
-note in my referenced patchset.
+   3. Condition !rtw_read8(rtwdev, 455), taking false branch.
+292                if (!rtw_read8(rtwdev, REG_WOWLAN_WAKE_REASON))
+293                        ret = 0;
 
-Apart from that, I think that this problem can be better explained with 
-the SMMUv3 PMCG example.
+   4. Falling through to end of if statement.
+294        } else {
+295                if (rtw_read32_mask(rtwdev, REG_FE1IMR,
+BIT_FS_RXDONE) == 0 &&
+296                    rtw_read32_mask(rtwdev, REG_RXPKT_NUM,
+BIT_RW_RELEASE) == 0)
+297                        ret = 0;
+298        }
+299
 
-So this PMU has support for a number of IMP DEF events. The SMMUv3 PMCG 
-has no method to identify the implementation, so we cannot know which 
-IMP DEF events are supported for a specific implementation.
+Uninitialized scalar variable (UNINIT)5. uninit_use: Using uninitialized
+value ret.
 
-The PMCG PMU naming is fixed, and is in the form smmuv3_pmcg_XXXX - so 
-we cannot use some special naming. And the XXXX does not tell us 
-anything about the implementation to help know the IMP DEF events.
+300        if (ret)
+301                rtw_err(rtwdev, "failed to check wow status %s\n",
+302                        wow_enable ? "enabled" : "disabled");
+303
+304        return ret;
 
-Now the perf tool has support to know which CPU+uncore events are 
-supported for a particular CPU through pmu-events feature - see 
-tools/perf/pmu-events/README
-
-The perf tool includes a number of per-CPU event tables.
-
-The matching of per-CPU event table the perf tool uses is based on 
-knowing the host CPUID - this is easy to retrieve this via some special 
-arch-specific CPU reg, etc. So once it knows the CPUID, "perf list" 
-command can show all the events for that CPU.
-
-Now we can extend this idea for the PMCG PMU to support the IMP DEF 
-events. For this, we add support for a table of "system" PMU events per 
-SoC - similar to the CPU tables - containing the PMCG events. We cannot 
-use the CPUID to match the event table for SoC, as a CPUID is not always 
-specific to a SoC - that's definite for ARM world and definite for 
-SMMUv3 PMCG. So then perf tool needs to know some SoC identifier to 
-match the per-SoC events table. That's why I want the SoC id in readable 
-form in sysfs.
-
-To add a final note on uncore PMUs, for ARM this is bit of grey area. So 
-currently we match uncore PMUs on CPUID. However I figure some SoC 
-implementer could take, for example, an A72, and add some uncore PMUs. 
-As such, we cannot always match on CPUID, so being able to match on a 
-SoC identifier would be better also.
-
-Hope it explains.
-
-Thanks,
-John
+Colin
