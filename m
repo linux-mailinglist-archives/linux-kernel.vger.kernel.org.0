@@ -2,72 +2,87 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BCC5814C3C8
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Jan 2020 00:56:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E67AC14C3CB
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Jan 2020 00:57:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726438AbgA1X4S (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 28 Jan 2020 18:56:18 -0500
-Received: from mga07.intel.com ([134.134.136.100]:16527 "EHLO mga07.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726293AbgA1X4S (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 Jan 2020 18:56:18 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga005.fm.intel.com ([10.253.24.32])
-  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 28 Jan 2020 15:53:47 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.70,375,1574150400"; 
-   d="scan'208";a="427801068"
-Received: from sjchrist-coffee.jf.intel.com ([10.54.74.202])
-  by fmsmga005.fm.intel.com with ESMTP; 28 Jan 2020 15:53:46 -0800
-From:   Sean Christopherson <sean.j.christopherson@intel.com>
-To:     Paolo Bonzini <pbonzini@redhat.com>
-Cc:     Sean Christopherson <sean.j.christopherson@intel.com>,
-        Vitaly Kuznetsov <vkuznets@redhat.com>,
-        Wanpeng Li <wanpengli@tencent.com>,
-        Jim Mattson <jmattson@google.com>,
-        Joerg Roedel <joro@8bytes.org>, kvm@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] KVM: x86: Mark CR4.UMIP as reserved based on associated CPUID bit
-Date:   Tue, 28 Jan 2020 15:53:44 -0800
-Message-Id: <20200128235344.29581-1-sean.j.christopherson@intel.com>
-X-Mailer: git-send-email 2.24.1
+        id S1726510AbgA1X5H (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 28 Jan 2020 18:57:07 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:34950 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726293AbgA1X5G (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 28 Jan 2020 18:57:06 -0500
+Received: from pps.filterd (m0098394.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 00SNd1uv039837;
+        Tue, 28 Jan 2020 18:56:59 -0500
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2xrk2fxqk4-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 28 Jan 2020 18:56:58 -0500
+Received: from m0098394.ppops.net (m0098394.ppops.net [127.0.0.1])
+        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 00SNt1EF134993;
+        Tue, 28 Jan 2020 18:56:58 -0500
+Received: from ppma02wdc.us.ibm.com (aa.5b.37a9.ip4.static.sl-reverse.com [169.55.91.170])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2xrk2fxqjq-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 28 Jan 2020 18:56:58 -0500
+Received: from pps.filterd (ppma02wdc.us.ibm.com [127.0.0.1])
+        by ppma02wdc.us.ibm.com (8.16.0.27/8.16.0.27) with SMTP id 00SNtIva020067;
+        Tue, 28 Jan 2020 23:56:57 GMT
+Received: from b03cxnp08027.gho.boulder.ibm.com (b03cxnp08027.gho.boulder.ibm.com [9.17.130.19])
+        by ppma02wdc.us.ibm.com with ESMTP id 2xrda6nnwv-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 28 Jan 2020 23:56:57 +0000
+Received: from b03ledav006.gho.boulder.ibm.com (b03ledav006.gho.boulder.ibm.com [9.17.130.237])
+        by b03cxnp08027.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 00SNuuco58982910
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 28 Jan 2020 23:56:56 GMT
+Received: from b03ledav006.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 69928C6059;
+        Tue, 28 Jan 2020 23:56:56 +0000 (GMT)
+Received: from b03ledav006.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 4A611C6055;
+        Tue, 28 Jan 2020 23:56:56 +0000 (GMT)
+Received: from localhost (unknown [9.41.179.160])
+        by b03ledav006.gho.boulder.ibm.com (Postfix) with ESMTP;
+        Tue, 28 Jan 2020 23:56:56 +0000 (GMT)
+From:   Nathan Lynch <nathanl@linux.ibm.com>
+To:     Scott Cheloha <cheloha@linux.ibm.com>
+Cc:     Nathan Fontenont <ndfont@gmail.com>,
+        Rick Lindsley <ricklind@linux.vnet.ibm.com>,
+        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
+        Michael Ellerman <mpe@ellerman.id.au>
+Subject: Re: [PATCH] powerpc/drmem: cache LMBs in xarray to accelerate lookup
+In-Reply-To: <20200128221113.17158-1-cheloha@linux.ibm.com>
+References: <20200128221113.17158-1-cheloha@linux.ibm.com>
+Date:   Tue, 28 Jan 2020 17:56:55 -0600
+Message-ID: <87pnf3i188.fsf@linux.ibm.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-TM-AS-GCONF: 00
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.572
+ definitions=2020-01-28_09:2020-01-28,2020-01-28 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 clxscore=1015
+ lowpriorityscore=0 impostorscore=0 malwarescore=0 suspectscore=1
+ mlxscore=0 adultscore=0 bulkscore=0 mlxlogscore=758 priorityscore=1501
+ spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-1911200001 definitions=main-2001280175
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Re-add code to mark CR4.UMIP as reserved if UMIP is not supported by the
-host.  The UMIP handling was unintentionally dropped during a recent
-refactoring.
+Scott Cheloha <cheloha@linux.ibm.com> writes:
+> LMB lookup is currently an O(n) linear search.  This scales poorly when
+> there are many LMBs.
+>
+> If we cache each LMB by both its base address and its DRC index
+> in an xarray we can cut lookups to O(log n), greatly accelerating
+> drmem initialization and memory hotplug.
+>
+> This patch introduces two xarrays of of LMBs and fills them during
+> drmem initialization.  The patch also adds two interfaces for LMB
+> lookup.
 
-Not flagging CR4.UMIP allows the guest to set its CR4.UMIP regardless of
-host support or userspace desires.  On CPUs with UMIP support, including
-emulated UMIP, this allows the guest to enable UMIP against the wishes
-of the userspace VMM.  On CPUs without any form of UMIP, this results in
-a failed VM-Enter due to invalid guest state.
-
-Fixes: 345599f9a2928 ("KVM: x86: Add macro to ensure reserved cr4 bits checks stay in sync")
-Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
----
- arch/x86/kvm/x86.c | 2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
-index 7e3f1d937224..e70d1215638a 100644
---- a/arch/x86/kvm/x86.c
-+++ b/arch/x86/kvm/x86.c
-@@ -898,6 +898,8 @@ EXPORT_SYMBOL_GPL(kvm_set_xcr);
- 		__reserved_bits |= X86_CR4_PKE;		\
- 	if (!__cpu_has(__c, X86_FEATURE_LA57))		\
- 		__reserved_bits |= X86_CR4_LA57;	\
-+	if (!__cpu_has(__c, X86_FEATURE_UMIP))		\
-+		__reserved_bits |= X86_CR4_UMIP;	\
- 	__reserved_bits;				\
- })
- 
--- 
-2.24.1
-
+Good but can you replace the array of LMBs altogether
+(drmem_info->lmbs)? xarray allows iteration over the members if needed.
