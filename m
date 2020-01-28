@@ -2,36 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9D27114B9F3
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Jan 2020 15:37:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1C7FD14B9F4
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Jan 2020 15:37:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731354AbgA1OXU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 28 Jan 2020 09:23:20 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49274 "EHLO mail.kernel.org"
+        id S1731048AbgA1OXZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 28 Jan 2020 09:23:25 -0500
+Received: from mail.kernel.org ([198.145.29.99]:49374 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731441AbgA1OXO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 Jan 2020 09:23:14 -0500
+        id S1731005AbgA1OXS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 28 Jan 2020 09:23:18 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DC59221739;
-        Tue, 28 Jan 2020 14:23:12 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D690521739;
+        Tue, 28 Jan 2020 14:23:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1580221393;
-        bh=2B2rA3l6uPgjItINxruWP2VXIZ5diO+y9uVKKp1FoeE=;
+        s=default; t=1580221398;
+        bh=CBaszSDNlm5NoSx/zARR8prZi4DXJ4Y5llwvvqesr1I=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Z34+qZwoteK4Or6SMNR3NkZi+4XAoZEoDmZPQIfonzFhvX6G/7Nlhjq+3CAfF6j/r
-         GVwYQKJgvE0UifChskYJzHaTZz8HQ16t8Tzo64mvfn0ShsNLk0qv56vAQWQx6v761B
-         F1pi5PVKgCyeL4c8o/dpOlAaaCqlUWFRjkWhTL+g=
+        b=Cp8JPPY/oQGF4HleYDubjK5g8RTJSxDg6NLrCiEF4LS12vDZ8r0i8gQVik74Ix2/k
+         /++iN5wrLYZMheD9cmCaniE/RD85K+cMeApGf9f0IPwTDQW7U1WJ1qvzAz8R60XmOq
+         uPyZ8ZRwOcd+GQPu6OVuj04tvJqxcVWKiul5VkFc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>,
-        "David S. Miller" <davem@davemloft.net>,
+        stable@vger.kernel.org, Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Sagi Grimberg <sagi@grimberg.me>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 206/271] of: mdio: Fix a signedness bug in of_phy_get_and_connect()
-Date:   Tue, 28 Jan 2020 15:05:55 +0100
-Message-Id: <20200128135907.887472260@linuxfoundation.org>
+Subject: [PATCH 4.9 208/271] nvme: retain split access workaround for capability reads
+Date:   Tue, 28 Jan 2020 15:05:57 +0100
+Message-Id: <20200128135908.029090090@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
 In-Reply-To: <20200128135852.449088278@linuxfoundation.org>
 References: <20200128135852.449088278@linuxfoundation.org>
@@ -44,34 +44,55 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
+From: Ard Biesheuvel <ard.biesheuvel@linaro.org>
 
-[ Upstream commit d7eb651212fdbafa82d485d8e76095ac3b14c193 ]
+[ Upstream commit 3a8ecc935efabdad106b5e06d07b150c394b4465 ]
 
-The "iface" variable is an enum and in this context GCC treats it as
-an unsigned int so the error handling is never triggered.
+Commit 7fd8930f26be4
 
-Fixes: b78624125304 ("of_mdio: Abstract a general interface for phy connect")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+  "nvme: add a common helper to read Identify Controller data"
+
+has re-introduced an issue that we have attempted to work around in the
+past, in commit a310acd7a7ea ("NVMe: use split lo_hi_{read,write}q").
+
+The problem is that some PCIe NVMe controllers do not implement 64-bit
+outbound accesses correctly, which is why the commit above switched
+to using lo_hi_[read|write]q for all 64-bit BAR accesses occuring in
+the code.
+
+In the mean time, the NVMe subsystem has been refactored, and now calls
+into the PCIe support layer for NVMe via a .reg_read64() method, which
+fails to use lo_hi_readq(), and thus reintroduces the problem that the
+workaround above aimed to address.
+
+Given that, at the moment, .reg_read64() is only used to read the
+capability register [which is known to tolerate split reads], let's
+switch .reg_read64() to lo_hi_readq() as well.
+
+This fixes a boot issue on some ARM boxes with NVMe behind a Synopsys
+DesignWare PCIe host controller.
+
+Fixes: 7fd8930f26be4 ("nvme: add a common helper to read Identify Controller data")
+Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Signed-off-by: Sagi Grimberg <sagi@grimberg.me>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/of/of_mdio.c | 2 +-
+ drivers/nvme/host/pci.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/of/of_mdio.c b/drivers/of/of_mdio.c
-index 262281bd68fa3..1e70851b15308 100644
---- a/drivers/of/of_mdio.c
-+++ b/drivers/of/of_mdio.c
-@@ -353,7 +353,7 @@ struct phy_device *of_phy_get_and_connect(struct net_device *dev,
- 	struct phy_device *phy;
+diff --git a/drivers/nvme/host/pci.c b/drivers/nvme/host/pci.c
+index 1ac4cec5f4f7c..e2bce9385eda6 100644
+--- a/drivers/nvme/host/pci.c
++++ b/drivers/nvme/host/pci.c
+@@ -1863,7 +1863,7 @@ static int nvme_pci_reg_write32(struct nvme_ctrl *ctrl, u32 off, u32 val)
  
- 	iface = of_get_phy_mode(np);
--	if (iface < 0)
-+	if ((int)iface < 0)
- 		return NULL;
+ static int nvme_pci_reg_read64(struct nvme_ctrl *ctrl, u32 off, u64 *val)
+ {
+-	*val = readq(to_nvme_dev(ctrl)->bar + off);
++	*val = lo_hi_readq(to_nvme_dev(ctrl)->bar + off);
+ 	return 0;
+ }
  
- 	phy_np = of_parse_phandle(np, "phy-handle", 0);
 -- 
 2.20.1
 
