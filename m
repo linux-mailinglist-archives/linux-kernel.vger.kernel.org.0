@@ -2,35 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DEE5914C1E9
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Jan 2020 22:15:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C05CB14C1EB
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Jan 2020 22:15:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726303AbgA1VPF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 28 Jan 2020 16:15:05 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43574 "EHLO mail.kernel.org"
+        id S1726442AbgA1VPH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 28 Jan 2020 16:15:07 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43614 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726143AbgA1VPF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 Jan 2020 16:15:05 -0500
-Subject: Re: [GIT PULL] x86/apic fix
+        id S1726143AbgA1VPG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 28 Jan 2020 16:15:06 -0500
+Subject: Re: [GIT PULL] x86/boot changes for v5.6
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1580246104;
-        bh=SSlxifBdAKf3yqLV5UqVb1+/rphQVJ1iZrau1mVanfE=;
+        s=default; t=1580246105;
+        bh=sxgy58+Y1lGP9u7dSaQCmkRswWNF5lmHnxZRGPN7kbg=;
         h=From:In-Reply-To:References:Date:To:Cc:From;
-        b=Njua0Wqr4nJRhfFgrcX6yw6KKdeu3BJEveU0NvHDbEVuMDqjkeXfm31N9jF2UOFrN
-         zbJtgT/chYdyWdgTAr9D6Lr6134uqlXJYfQyPGDSDahs50QAfLoE9AOpy/YcLDLQmV
-         SNsO/QLFNTRoCLTTus1aP6UVSR2nt8pHD03GzT0s=
+        b=w0HzZXCYtQ0Z5/1FsWF7FRiS07833alkDLRywZ1wrrmZ5VBlfp1jZQMxOV0Vi1riY
+         m0+NLivtf1okAByTyLM50HWASGSAoC2j0KA+VBJOZwLzrfoLv0Gpde83YvR9JXzKyN
+         R6R4ARILbLs0f8lRFtLx/LXSlLPaWrhKhoPM5QvA=
 From:   pr-tracker-bot@kernel.org
-In-Reply-To: <20200128163530.GA122391@gmail.com>
-References: <20200128163530.GA122391@gmail.com>
+In-Reply-To: <20200128171213.GA11313@gmail.com>
+References: <20200128171213.GA11313@gmail.com>
 X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <20200128163530.GA122391@gmail.com>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git x86-apic-for-linus
-X-PR-Tracked-Commit-Id: d0b7788804482b2689946cd8d910ac3e03126c8d
+X-PR-Tracked-Message-Id: <20200128171213.GA11313@gmail.com>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git x86-boot-for-linus
+X-PR-Tracked-Commit-Id: dacc9092336be20b01642afe1a51720b31f60369
 X-PR-Merge-Tree: torvalds/linux.git
 X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 435dd727a411004d9402ad0c868c958408271a48
-Message-Id: <158024610490.20407.8232767933881946579.pr-tracker-bot@kernel.org>
-Date:   Tue, 28 Jan 2020 21:15:04 +0000
+X-PR-Merge-Commit-Id: 6b90e71a472be131186276a5fd19d319fa2125d9
+Message-Id: <158024610592.20407.13456645059358204941.pr-tracker-bot@kernel.org>
+Date:   Tue, 28 Jan 2020 21:15:05 +0000
 To:     Ingo Molnar <mingo@kernel.org>
 Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
         linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
@@ -42,12 +42,12 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The pull request you sent on Tue, 28 Jan 2020 17:35:30 +0100:
+The pull request you sent on Tue, 28 Jan 2020 18:12:13 +0100:
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git x86-apic-for-linus
+> git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git x86-boot-for-linus
 
 has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/435dd727a411004d9402ad0c868c958408271a48
+https://git.kernel.org/torvalds/c/6b90e71a472be131186276a5fd19d319fa2125d9
 
 Thank you!
 
