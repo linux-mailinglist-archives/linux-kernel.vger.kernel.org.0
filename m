@@ -2,39 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DFC0E14BBFA
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Jan 2020 15:51:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8369614BC06
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Jan 2020 15:51:18 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726916AbgA1N73 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 28 Jan 2020 08:59:29 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44796 "EHLO mail.kernel.org"
+        id S1727330AbgA1Oun (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 28 Jan 2020 09:50:43 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43970 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726721AbgA1N7Z (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 Jan 2020 08:59:25 -0500
+        id S1726497AbgA1N6v (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 28 Jan 2020 08:58:51 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E065024685;
-        Tue, 28 Jan 2020 13:59:24 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A61AD2173E;
+        Tue, 28 Jan 2020 13:58:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1580219965;
-        bh=zZf8c5U7fLLNQMm+qitPFQ+bq0WSO61rPIjPlrn69Mk=;
+        s=default; t=1580219931;
+        bh=SFR2d31pGBWYC5sDAQbVOFXbyWhqJ2hBoTVTx7MidMY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=NJGF/wPjJWvRs4xJAWSV1B9VkEdMIigmUcDAwjtJJxvfJvBpYjQJzEPY4vVkLdV5H
-         fDOQ6bucQXkrxIBI2MYNzJr2SRuc63E36rjXUY7UK7sowCW/V0ouZHXO7IBqxkQez4
-         hLWc00mexKh/R4mULMeLk9M9GHaqKZpkWrotXAtA=
+        b=J3eXcurjfp7sYcj0xwaUDV5P4Ey4Zk4cHVTjwYEB5/q/4rsmiNNlw5/T20bet2FWw
+         mRMnNZ8t9p1fb25dUXz/BxKulI0sqOlzjfkwLnB6KGilJSG3rv9SKrY/zPEy0AC7TO
+         wBDLjVe8UzPUH9v1u2YT5ZCbhgC2MV0ZFzbfGXy0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Wen Yang <wenyang@linux.alibaba.com>,
-        Eric Dumazet <edumazet@google.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>,
-        Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>,
-        netdev@vger.kernel.org
-Subject: [PATCH 4.14 15/46] tcp_bbr: improve arithmetic division in bbr_update_bw()
-Date:   Tue, 28 Jan 2020 14:57:49 +0100
-Message-Id: <20200128135751.969497560@linuxfoundation.org>
+        stable@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>,
+        Guenter Roeck <linux@roeck-us.net>
+Subject: [PATCH 4.14 18/46] hwmon: Deal with errors from the thermal subsystem
+Date:   Tue, 28 Jan 2020 14:57:52 +0100
+Message-Id: <20200128135752.300771628@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
 In-Reply-To: <20200128135749.822297911@linuxfoundation.org>
 References: <20200128135749.822297911@linuxfoundation.org>
@@ -47,39 +43,78 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Wen Yang <wenyang@linux.alibaba.com>
+From: Linus Walleij <linus.walleij@linaro.org>
 
-[ Upstream commit 5b2f1f3070b6447b76174ea8bfb7390dc6253ebd ]
+commit 47c332deb8e89f6c59b0bb2615945c6e7fad1a60 upstream.
 
-do_div() does a 64-by-32 division. Use div64_long() instead of it
-if the divisor is long, to avoid truncation to 32-bit.
-And as a nice side effect also cleans up the function a bit.
+If the thermal subsystem returne -EPROBE_DEFER or any other error
+when hwmon calls devm_thermal_zone_of_sensor_register(), this is
+silently ignored.
 
-Signed-off-by: Wen Yang <wenyang@linux.alibaba.com>
-Cc: Eric Dumazet <edumazet@google.com>
-Cc: "David S. Miller" <davem@davemloft.net>
-Cc: Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>
-Cc: Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>
-Cc: netdev@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
-Signed-off-by: Eric Dumazet <edumazet@google.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+I ran into this with an incorrectly defined thermal zone, making
+it non-existing and thus this call failed with -EPROBE_DEFER
+assuming it would appear later. The sensor was still added
+which is incorrect: sensors must strictly be added after the
+thermal zones, so deferred probe must be respected.
+
+Fixes: d560168b5d0f ("hwmon: (core) New hwmon registration API")
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+Signed-off-by: Guenter Roeck <linux@roeck-us.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- net/ipv4/tcp_bbr.c |    3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
 
---- a/net/ipv4/tcp_bbr.c
-+++ b/net/ipv4/tcp_bbr.c
-@@ -678,8 +678,7 @@ static void bbr_update_bw(struct sock *s
- 	 * bandwidth sample. Delivered is in packets and interval_us in uS and
- 	 * ratio will be <<1 for most connections. So delivered is first scaled.
- 	 */
--	bw = (u64)rs->delivered * BW_UNIT;
--	do_div(bw, rs->interval_us);
-+	bw = div64_long((u64)rs->delivered * BW_UNIT, rs->interval_us);
+---
+ drivers/hwmon/hwmon.c |   21 +++++++++++++++++----
+ 1 file changed, 17 insertions(+), 4 deletions(-)
+
+--- a/drivers/hwmon/hwmon.c
++++ b/drivers/hwmon/hwmon.c
+@@ -143,6 +143,7 @@ static int hwmon_thermal_add_sensor(stru
+ 				    struct hwmon_device *hwdev, int index)
+ {
+ 	struct hwmon_thermal_data *tdata;
++	struct thermal_zone_device *tzd;
  
- 	/* If this sample is application-limited, it is likely to have a very
- 	 * low delivered count that represents application behavior rather than
+ 	tdata = devm_kzalloc(dev, sizeof(*tdata), GFP_KERNEL);
+ 	if (!tdata)
+@@ -151,8 +152,14 @@ static int hwmon_thermal_add_sensor(stru
+ 	tdata->hwdev = hwdev;
+ 	tdata->index = index;
+ 
+-	devm_thermal_zone_of_sensor_register(&hwdev->dev, index, tdata,
+-					     &hwmon_thermal_ops);
++	tzd = devm_thermal_zone_of_sensor_register(&hwdev->dev, index, tdata,
++						   &hwmon_thermal_ops);
++	/*
++	 * If CONFIG_THERMAL_OF is disabled, this returns -ENODEV,
++	 * so ignore that error but forward any other error.
++	 */
++	if (IS_ERR(tzd) && (PTR_ERR(tzd) != -ENODEV))
++		return PTR_ERR(tzd);
+ 
+ 	return 0;
+ }
+@@ -621,14 +628,20 @@ __hwmon_device_register(struct device *d
+ 				if (!chip->ops->is_visible(drvdata, hwmon_temp,
+ 							   hwmon_temp_input, j))
+ 					continue;
+-				if (info[i]->config[j] & HWMON_T_INPUT)
+-					hwmon_thermal_add_sensor(dev, hwdev, j);
++				if (info[i]->config[j] & HWMON_T_INPUT) {
++					err = hwmon_thermal_add_sensor(dev,
++								hwdev, j);
++					if (err)
++						goto free_device;
++				}
+ 			}
+ 		}
+ 	}
+ 
+ 	return hdev;
+ 
++free_device:
++	device_unregister(hdev);
+ free_hwmon:
+ 	kfree(hwdev);
+ ida_remove:
 
 
