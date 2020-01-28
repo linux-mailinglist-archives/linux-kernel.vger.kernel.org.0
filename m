@@ -2,118 +2,109 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 968F114B350
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Jan 2020 12:09:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 633D214B35D
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Jan 2020 12:11:16 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726024AbgA1LJ1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 28 Jan 2020 06:09:27 -0500
-Received: from foss.arm.com ([217.140.110.172]:55288 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725903AbgA1LJ1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 Jan 2020 06:09:27 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 09CAE30E;
-        Tue, 28 Jan 2020 03:09:24 -0800 (PST)
-Received: from e121166-lin.cambridge.arm.com (e121166-lin.cambridge.arm.com [10.1.196.255])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 147EF3F52E;
-        Tue, 28 Jan 2020 03:09:20 -0800 (PST)
-Date:   Tue, 28 Jan 2020 11:09:16 +0000
-From:   Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-To:     Makarand Pawagi <makarand.pawagi@nxp.com>
-Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-acpi@vger.kernel.org,
-        linux@armlinux.org.uk, jon@solid-run.com,
-        cristian.sovaiala@nxp.com, laurentiu.tudor@nxp.com,
-        ioana.ciornei@nxp.com, V.Sethi@nxp.com, calvin.johnson@nxp.com,
-        pankaj.bansal@nxp.com, guohanjun@huawei.com, sudeep.holla@arm.com,
-        rjw@rjwysocki.net, lenb@kernel.org, stuyoder@gmail.com,
-        tglx@linutronix.de, jason@lakedaemon.net, maz@kernel.org,
-        shameerali.kolothum.thodi@huawei.com, will@kernel.org,
-        robin.murphy@arm.com, nleeder@codeaurora.org
-Subject: Re: [PATCH] bus: fsl-mc: Add ACPI support for fsl-mc
-Message-ID: <20200128110916.GA491@e121166-lin.cambridge.arm.com>
-References: <1580198925-50411-1-git-send-email-makarand.pawagi@nxp.com>
+        id S1726273AbgA1LLM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 28 Jan 2020 06:11:12 -0500
+Received: from bmailout2.hostsharing.net ([83.223.78.240]:52717 "EHLO
+        bmailout2.hostsharing.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725901AbgA1LLK (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 28 Jan 2020 06:11:10 -0500
+Received: from h08.hostsharing.net (h08.hostsharing.net [IPv6:2a01:37:1000::53df:5f1c:0])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (Client CN "*.hostsharing.net", Issuer "COMODO RSA Domain Validation Secure Server CA" (not verified))
+        by bmailout2.hostsharing.net (Postfix) with ESMTPS id E34B32800935A;
+        Tue, 28 Jan 2020 12:11:07 +0100 (CET)
+Received: by h08.hostsharing.net (Postfix, from userid 100393)
+        id B35AE1EB443; Tue, 28 Jan 2020 12:11:07 +0100 (CET)
+Date:   Tue, 28 Jan 2020 12:11:07 +0100
+From:   Lukas Wunner <lukas@wunner.de>
+To:     Nicolas Pitre <nico@fluxnic.net>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jiri Slaby <jslaby@suse.com>,
+        Mikulas Patocka <mpatocka@redhat.com>,
+        Matthew Whitehead <tedheadster@gmail.com>,
+        Daniel Vetter <daniel.vetter@ffwll.ch>,
+        Arvind Sankar <nivedita@alum.mit.edu>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] vt: Fix non-blinking cursor regression
+Message-ID: <20200128111107.ppqeebsctffmk7n6@wunner.de>
+References: <575cb82102aa59a7a8e34248821b78e1dd844777.1579701673.git.lukas@wunner.de>
+ <nycvar.YSQ.7.76.2001221032210.1655@knanqh.ubzr>
+ <20200126124834.ea7uxyprz2uaek5x@wunner.de>
+ <nycvar.YSQ.7.76.2001261208030.1655@knanqh.ubzr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1580198925-50411-1-git-send-email-makarand.pawagi@nxp.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <nycvar.YSQ.7.76.2001261208030.1655@knanqh.ubzr>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jan 28, 2020 at 01:38:45PM +0530, Makarand Pawagi wrote:
-> ACPI support is added in the fsl-mc driver. Driver will parse
-> MC DSDT table to extract memory and other resorces.
+On Sun, Jan 26, 2020 at 12:32:10PM -0500, Nicolas Pitre wrote:
+> On Sun, 26 Jan 2020, Lukas Wunner wrote:
+> > On Wed, Jan 22, 2020 at 11:40:38AM -0500, Nicolas Pitre wrote:
+> > > On Wed, 22 Jan 2020, Lukas Wunner wrote:
+> > > > Since commit a6dbe4427559 ("vt: perform safe console erase in the right
+> > > > order"), when userspace clears both the scrollback buffer and the screen
+> > > > by writing "\e[3J" to an fbdev virtual console, the cursor stops blinking
+> > > > if that virtual console is not in the foreground.  I'm witnessing this
+> > > > on every boot of Raspbian since updating to v4.19.37+ because agetty
+> > > > writes the sequence to /dev/tty6 while the console is still switched to
+> > > > /dev/tty1.  Switching consoles once makes the cursor blink again.
+> > > > 
+> > > > The commit added an invocation of ->con_switch() to flush_scrollback().
+> > > > Normally this is only invoked from switch_screen() to switch consoles.
+> > > > switch_screen() updates *vc->vc_display_fg to the new console and
+> > > > fbcon_switch() updates ops->currcon.  Because the commit only invokes
+> > > > fbcon_switch() but doesn't update *vc->vc_display_fg, it performs an
+> > > > incomplete console switch.
+> > > > 
+> > > > When fb_flashcursor() subsequently blinks the cursor, it retrieves the
+> > > > foreground console from ops->currcon.  Because *vc->vc_display_fg wasn't
+> > > > updated, con_is_visible() incorrectly returns false and as a result,
+> > > > fb_flashcursor() bails out without blinking the cursor.
+> > > > 
+> > > > The invocation of ->con_switch() appears to have been erroneous.  After
+> > > > all, why should a console switch be performed when clearing the screen?
+> > > > The commit message doesn't provide a rationale either.  So delete it.
+> > > 
+> > > The problem here is that only vgacon provides a con_flush_scrollback 
+> > > method. When not provided, the only way to flush the scrollback buffer 
+> > > is to invoke the switch method. If you remove it the scrollback buffer 
+> > > of the foreground console won't be flushed in the fb case and possibly 
+> > > others.
+[...]
+> Still, I'd prefer to get back to the same functional state from before 
+> commit a6dbe44275 with the switch method first. Can you confirm that the 
+> patch I propose does fix it for you?
+
+Yes, your patch is
+
+Reported-and-tested-by: Lukas Wunner <lukas@wunner.de>
+
+I'm withdrawing my own patch because further testing has shown that while it
+fixes the non-blinking cursor issue, it doesn't flush scrollback if "\e[3J"
+is written to the foreground console.
+
+Would you prefer me to submit your patch with your Signed-off-by or rather
+submit it yourself with my Tested-by?  If the latter, please include a code
+comment explaining that ->con_switch() has the side effect of flushing
+scrollback.  That seems quite non-obvious to me.
+
+
+> > A dumb question perhaps, but why is it necessary to hide the cursor?
 > 
-> Interrupt (GIC ITS) information will be extracted from MADT table
-> by drivers/irqchip/irq-gic-v3-its-fsl-mc-msi.c.
-> 
-> IORT table will be parsed to configure DMA.
-> 
-> Signed-off-by: Makarand Pawagi <makarand.pawagi@nxp.com>
-> ---
->  drivers/acpi/arm64/iort.c                   | 53 +++++++++++++++++++++
->  drivers/bus/fsl-mc/dprc-driver.c            |  3 +-
->  drivers/bus/fsl-mc/fsl-mc-bus.c             | 48 +++++++++++++------
->  drivers/bus/fsl-mc/fsl-mc-msi.c             | 10 +++-
->  drivers/bus/fsl-mc/fsl-mc-private.h         |  4 +-
->  drivers/irqchip/irq-gic-v3-its-fsl-mc-msi.c | 71 ++++++++++++++++++++++++++++-
->  include/linux/acpi_iort.h                   |  5 ++
->  7 files changed, 174 insertions(+), 20 deletions(-)
-> 
-> diff --git a/drivers/acpi/arm64/iort.c b/drivers/acpi/arm64/iort.c
-> index 33f7198..beb9cd5 100644
-> --- a/drivers/acpi/arm64/iort.c
-> +++ b/drivers/acpi/arm64/iort.c
-> @@ -15,6 +15,7 @@
->  #include <linux/kernel.h>
->  #include <linux/list.h>
->  #include <linux/pci.h>
-> +#include <linux/fsl/mc.h>
->  #include <linux/platform_device.h>
->  #include <linux/slab.h>
->  
-> @@ -622,6 +623,29 @@ static int iort_dev_find_its_id(struct device *dev, u32 req_id,
->  }
->  
->  /**
-> + * iort_get_fsl_mc_device_domain() - Find MSI domain related to a device
-> + * @dev: The device.
-> + * @mc_icid: ICID for the fsl_mc device.
-> + *
-> + * Returns: the MSI domain for this device, NULL otherwise
-> + */
-> +struct irq_domain *iort_get_fsl_mc_device_domain(struct device *dev,
-> +							u32 mc_icid)
-> +{
-> +	struct fwnode_handle *handle;
-> +	int its_id;
-> +
-> +	if (iort_dev_find_its_id(dev, mc_icid, 0, &its_id))
-> +		return NULL;
-> +
-> +	handle = iort_find_domain_token(its_id);
-> +	if (!handle)
-> +		return NULL;
-> +
-> +	return irq_find_matching_fwnode(handle, DOMAIN_BUS_FSL_MC_MSI);
-> +}
+> Many console implements the cursor by changing the background color of 
+> the cursor position. If the switch occurs while the cursor is in its 
+> visible period, the rest of the code will assume that the cursor is the 
+> actual background color, effectively leaving the drawn cursor there 
+> after it moved.
 
-NAK
+I see, thanks for the explanation.
 
-I am not willing to take platform specific code in the generic IORT
-layer.
-
-ACPI on ARM64 works on platforms that comply with SBSA/SBBR guidelines:
-
-https://developer.arm.com/architectures/platform-design/server-systems
-
-Deviating from those requires butchering ACPI specifications (ie IORT)
-and related kernel code which goes totally against what ACPI is meant
-for on ARM64 systems, so there is no upstream pathway for this code
-I am afraid.
-
-Thanks,
-Lorenzo
+Lukas
