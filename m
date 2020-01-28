@@ -2,145 +2,87 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9EFA714AD65
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Jan 2020 02:02:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id F0F0014AD69
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Jan 2020 02:05:54 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726275AbgA1BC0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 27 Jan 2020 20:02:26 -0500
-Received: from ozlabs.org ([203.11.71.1]:34687 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726083AbgA1BCZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 27 Jan 2020 20:02:25 -0500
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 4867cr75J5z9sP3;
-        Tue, 28 Jan 2020 12:02:20 +1100 (AEDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1580173342;
-        bh=Wkr8ksztdFnzpNY0uZjxXq/vQG8DOZMe0OVzHE236G8=;
-        h=Date:From:To:Cc:Subject:From;
-        b=GZzeSHPW5c1t/GMK2/diXN8HcGNe0cf6+Kvw898RyR3gYJA3B9RqXMEQcgIMQW2Ld
-         SVrFoJ9zt3QqLCQDORfEmcvc8Qv6r3boQuxTxQaMQb6IFGBIywrmdMciCpo6KZolcz
-         kGPB1SA4Ll6V1amB8olWqY58ZvJmhvPO97Uf5QmjmfUsI4og9xol4bZW7MyvmS7YdR
-         KOFTXPueBfOmRovU0tWur+InfV3VFf6TT6InmYxOqEMtzLL9zsVpFJ1UCGIszrzyFK
-         xt9m75/BLh8bBzN0HjoLnM5GtHNEUqUa9bNnDfJKDdpgnm+i6uau+7QrbSPLw3H2Q9
-         RlF5RHIbrc1Tg==
-Date:   Tue, 28 Jan 2020 12:02:20 +1100
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Lee Jones <lee.jones@linaro.org>, Mark Brown <broonie@kernel.org>,
-        Liam Girdwood <lgirdwood@gmail.com>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
-        Axel Lin <axel.lin@ingics.com>
-Subject: linux-next: manual merge of the mfd tree with the regulator-fixes
- tree
-Message-ID: <20200128120220.53494c29@canb.auug.org.au>
-MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/uEAyqUdHDuR2=EIxfTmmBgw";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+        id S1726605AbgA1BFs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 27 Jan 2020 20:05:48 -0500
+Received: from wout1-smtp.messagingengine.com ([64.147.123.24]:51093 "EHLO
+        wout1-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726083AbgA1BFs (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 27 Jan 2020 20:05:48 -0500
+Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
+        by mailout.west.internal (Postfix) with ESMTP id DB72A539;
+        Mon, 27 Jan 2020 20:05:46 -0500 (EST)
+Received: from imap2 ([10.202.2.52])
+  by compute4.internal (MEProxy); Mon, 27 Jan 2020 20:05:47 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=aj.id.au; h=
+        mime-version:message-id:in-reply-to:references:date:from:to:cc
+        :subject:content-type; s=fm1; bh=p44JX6UjfFs1gkO+lyEnsqEIVLu+Il9
+        jCbYlJgqj58A=; b=WkKctAqqqXR7qokRVYOeEduPKDCdutwcHQsIqoHj+dpoXmu
+        AjzwPeuQmHUoAI6mEeTi0Fr9ktxqFOYCTz4XH/CL+k3Mswi9HHQn+EddmS1Q2BzQ
+        rCtBqOkh/OEuli3flwNXCOrMdPJp+kp2uokPZpMXl3P7pjQtEcVY1iji2VufQmmo
+        N0yLQLj9P1hxOucDc54Z1QytRrdjfArbQh5PQDKnpbccylglkQsrncfU1fKrGiPI
+        GFq/BzsYC/+OuG4DXXb0eAtt7pedKFo5AARxamRgxbb3rFfPvmc/XYATX1gdY+JR
+        iWBAvR6VlSPpJty94MYQ2z8ScQUH2O1KrG45X2w==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-type:date:from:in-reply-to
+        :message-id:mime-version:references:subject:to:x-me-proxy
+        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; bh=p44JX6
+        UjfFs1gkO+lyEnsqEIVLu+Il9jCbYlJgqj58A=; b=O9gxMthRUr+pNgi7X8OQLA
+        XvLVS1o6OrWfFfPndNZAPCUBwNDfU1k+TxnxG3/V3RAl4+Xa9YvxhXWs5ECdL4Iu
+        S56ZPv1m6p4XidsmwcKL8cb8CkVx/apMX7HiRgIgWkqy64VO2tFDKYyBtE9PdPuP
+        7lCUvWKGe2AY/BEJVfIgQ6UddaE45a2wvwd7uftG0UWV8TMUwaWFUwTaSgT3zrIV
+        hMKE+RwBWAB5B9+UajfMIJ3sfRbML5QojF1u9DTSlsPGn8dLH/msiWTdOwcOIWlD
+        0WYy3f72Xv3KbnhlYw0zt4dnuEULnNVggkhB5mP6WCEHVNqcKhhZ2ATNq/+bV8OA
+        ==
+X-ME-Sender: <xms:6IgvXsp0bkEMaGfdUJnId3Gxr3ePV1cJVI91DJvTnHYCYvfwS5jd-A>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedugedrfeefgddvlecutefuodetggdotefrodftvf
+    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
+    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
+    fjughrpefofgggkfgjfhffhffvufgtsehttdertderredtnecuhfhrohhmpedftehnughr
+    vgifucflvghffhgvrhihfdcuoegrnhgurhgvfiesrghjrdhiugdrrghuqeenucevlhhush
+    htvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegrnhgurhgvfiesrghj
+    rdhiugdrrghu
+X-ME-Proxy: <xmx:6IgvXsVDf-VIrMHtC3vD7s2zEkB1TduObJsc_31o8_te_1ClHcdA0Q>
+    <xmx:6IgvXoK4Jxl1LJCe6qvtk3vkIbI1sj4tE_dCBbccmbem8iE0mN_oCw>
+    <xmx:6IgvXn94vt32ccAeUBA3jBr-sj3GZwRTuceyphL1XaU2LtZiKpL1cw>
+    <xmx:6ogvXlFGGeRb9E1O7EZkl_h36sxzc6ZP2BQ9TixOzx5noq905TcI2A>
+Received: by mailuser.nyi.internal (Postfix, from userid 501)
+        id 9BA03E00A2; Mon, 27 Jan 2020 20:05:44 -0500 (EST)
+X-Mailer: MessagingEngine.com Webmail Interface
+User-Agent: Cyrus-JMAP/3.1.7-781-gfc16016-fmstable-20200127v1
+Mime-Version: 1.0
+Message-Id: <78f934a3-ec7a-479e-9f63-4df7c4428ae5@www.fastmail.com>
+In-Reply-To: <20200121103722.1781-4-geert+renesas@glider.be>
+References: <20200121103413.1337-1-geert+renesas@glider.be>
+ <20200121103722.1781-1-geert+renesas@glider.be>
+ <20200121103722.1781-4-geert+renesas@glider.be>
+Date:   Tue, 28 Jan 2020 11:35:27 +1030
+From:   "Andrew Jeffery" <andrew@aj.id.au>
+To:     "Geert Uytterhoeven" <geert+renesas@glider.be>,
+        "Arnd Bergmann" <arnd@arndb.de>,
+        "Kevin Hilman" <khilman@kernel.org>,
+        "Olof Johansson" <olof@lixom.net>
+Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        "Joel Stanley" <joel@jms.id.au>
+Subject: Re: [PATCH 04/20] ARM: aspeed: Drop unneeded select of HAVE_SMP
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/uEAyqUdHDuR2=EIxfTmmBgw
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
 
-Hi all,
 
-Today's linux-next merge of the mfd tree got a conflict in:
+On Tue, 21 Jan 2020, at 21:07, Geert Uytterhoeven wrote:
+> Support for the 6th generation Aspeed SoCs depends on ARCH_MULTI_V7.
+> As the latter selects HAVE_SMP, there is no need for MACH_ASPEED_G6 to
+> select HAVE_SMP.
+> 
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> Cc: Joel Stanley <joel@jms.id.au>
+> Cc: Andrew Jeffery <andrew@aj.id.au>
 
-  drivers/regulator/bd718x7-regulator.c
-
-between commit:
-
-  b389ceae4a8f ("regulator: bd718x7: Simplify the code by removing struct b=
-d718xx_pmic_inits")
-
-from the regulator-fixes tree and commit:
-
-  1b1c26b24a6e ("mfd: Rohm PMICs: Use platform_device_id to match MFD sub-d=
-evices")
-
-from the mfd tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
---=20
-Cheers,
-Stephen Rothwell
-
-diff --cc drivers/regulator/bd718x7-regulator.c
-index 8f9b2d8eaf10,55decb58c777..000000000000
---- a/drivers/regulator/bd718x7-regulator.c
-+++ b/drivers/regulator/bd718x7-regulator.c
-@@@ -1146,10 -1078,20 +1073,11 @@@ static int bd718xx_probe(struct platfor
-  {
-  	struct bd718xx *mfd;
-  	struct regulator_config config =3D { 0 };
- -	struct bd718xx_pmic_inits pmic_regulators[ROHM_CHIP_TYPE_AMOUNT] =3D {
- -		[ROHM_CHIP_TYPE_BD71837] =3D {
- -			.r_datas =3D bd71837_regulators,
- -			.r_amount =3D ARRAY_SIZE(bd71837_regulators),
- -		},
- -		[ROHM_CHIP_TYPE_BD71847] =3D {
- -			.r_datas =3D bd71847_regulators,
- -			.r_amount =3D ARRAY_SIZE(bd71847_regulators),
- -		},
- -	};
- -
-  	int i, j, err;
-  	bool use_snvs;
- +	const struct bd718xx_regulator_data *reg_data;
- +	unsigned int num_reg_data;
-+ 	enum rohm_chip_type chip =3D platform_get_device_id(pdev)->driver_data;
- =20
-  	mfd =3D dev_get_drvdata(pdev->dev.parent);
-  	if (!mfd) {
-@@@ -1158,16 -1100,8 +1086,16 @@@
-  		goto err;
-  	}
- =20
-- 	switch (mfd->chip.chip_type) {
- -	if (chip >=3D ROHM_CHIP_TYPE_AMOUNT || chip < 0 ||
- -	    !pmic_regulators[chip].r_datas) {
-++	switch (chip) {
- +	case ROHM_CHIP_TYPE_BD71837:
- +		reg_data =3D bd71837_regulators;
- +		num_reg_data =3D ARRAY_SIZE(bd71837_regulators);
- +		break;
- +	case ROHM_CHIP_TYPE_BD71847:
- +		reg_data =3D bd71847_regulators;
- +		num_reg_data =3D ARRAY_SIZE(bd71847_regulators);
- +		break;
- +	default:
-  		dev_err(&pdev->dev, "Unsupported chip type\n");
-  		err =3D -EINVAL;
-  		goto err;
-
---Sig_/uEAyqUdHDuR2=EIxfTmmBgw
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl4viBwACgkQAVBC80lX
-0GwnAQf+MScNX4DXx7hNGB8XwpLtDOAo+3EBttQeTy+bTa3ZptIx5Rw4Jo8w0ap/
-SBSN7zxW9NRtgqTDUqT4cX+STwAojxOiD0VxDB+yT46jLSbE2P3/7DVcWSgB6KrI
-G5nQsd3R42g0b41TzsF1/r/OcXcLU3EYUukuxa3ny9aZsKbYzCJXogf3jVdhuAIY
-70uFJPP8T0BGWZuPHLo05ZzN9BUr8Ph8vBjMdMYRV9WEjPThiTq1dgbC6zpF9AAm
-quqRXvKshSJxzWvbNIeBCDDTPxNcxHAxwUfKRDP49P1toIYNwLFdZKYC17xPkYoj
-KbLS8JG1i8aQYUbCsHPThpy0xzQYGQ==
-=oWFg
------END PGP SIGNATURE-----
-
---Sig_/uEAyqUdHDuR2=EIxfTmmBgw--
+Reviewed-by: Andrew Jeffery <andrew@aj.id.au>
