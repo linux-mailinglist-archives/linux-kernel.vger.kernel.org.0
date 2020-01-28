@@ -2,143 +2,117 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EC9F014BE7A
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Jan 2020 18:26:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2A31614BE7F
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Jan 2020 18:27:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726323AbgA1R0n (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 28 Jan 2020 12:26:43 -0500
-Received: from foss.arm.com ([217.140.110.172]:60968 "EHLO foss.arm.com"
+        id S1726594AbgA1R1w (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 28 Jan 2020 12:27:52 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35648 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726066AbgA1R0n (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 Jan 2020 12:26:43 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 496B9328;
-        Tue, 28 Jan 2020 09:26:42 -0800 (PST)
-Received: from [10.1.197.1] (ewhatever.cambridge.arm.com [10.1.197.1])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 47B503F52E;
-        Tue, 28 Jan 2020 09:26:40 -0800 (PST)
-Subject: Re: [PATCH v2 3/6] arm64/kvm: disable access to AMU registers from
- kvm guests
-To:     Valentin Schneider <valentin.schneider@arm.com>,
-        Ionela Voinescu <ionela.voinescu@arm.com>,
-        catalin.marinas@arm.com, will@kernel.org, mark.rutland@arm.com,
-        maz@kernel.org, sudeep.holla@arm.com, dietmar.eggemann@arm.com
-Cc:     peterz@infradead.org, mingo@redhat.com, ggherdovich@suse.cz,
-        vincent.guittot@linaro.org, linux-arm-kernel@lists.infradead.org,
-        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        James Morse <james.morse@arm.com>,
-        Julien Thierry <julien.thierry.kdev@gmail.com>
-References: <20191218182607.21607-1-ionela.voinescu@arm.com>
- <20191218182607.21607-4-ionela.voinescu@arm.com>
- <bc3f582c-9aed-8052-d0cb-b39c76c8ce73@arm.com>
-From:   Suzuki Kuruppassery Poulose <suzuki.poulose@arm.com>
-Message-ID: <0690745f-fa38-f623-30a5-42d0eadfb668@arm.com>
-Date:   Tue, 28 Jan 2020 17:26:39 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.3.1
+        id S1726066AbgA1R1w (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 28 Jan 2020 12:27:52 -0500
+Received: from mail-qk1-f174.google.com (mail-qk1-f174.google.com [209.85.222.174])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id A42CE2467E;
+        Tue, 28 Jan 2020 17:27:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1580232470;
+        bh=2r7YfbL9UUbs/P7wgljyb0t694akOrvI4j3adZdefA4=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=W0wgul/caH/Yc+effaSlwkpSvk4pKuOoE2OHFoCUiNSrffgDE9XIgUNFVS0TSC+gD
+         M7EXVFuFbJYfPEjS6CkOh7J39YWxDe4lM1QBnpqOGexAUcHSvN1Qr54sU0t03/omCi
+         2oUXeUBIKZxIiGcRnljzNAzTL5x8fw9OUkv+PA7Y=
+Received: by mail-qk1-f174.google.com with SMTP id s187so14138996qke.8;
+        Tue, 28 Jan 2020 09:27:50 -0800 (PST)
+X-Gm-Message-State: APjAAAWJYROtQT+P+LQNQi3IZudd4GuQXWFOTIWM8Oka+FV56pWtrymR
+        nR1q3+Yjfpe1dNdpOzncUBzHhrxSQ/38S0RXgw==
+X-Google-Smtp-Source: APXvYqxWnBqpx/z38JlVgWNF4cQ9OxBTlrKB37T1Va9nNc30arKtXukF/RW57qRkfaYEVw9/c+JiqeGTUuaobBybgTI=
+X-Received: by 2002:a05:620a:9c7:: with SMTP id y7mr23200508qky.393.1580232469721;
+ Tue, 28 Jan 2020 09:27:49 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <bc3f582c-9aed-8052-d0cb-b39c76c8ce73@arm.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <20200124152504.23411-1-mans@mansr.com> <20200127153506.GA4589@bogus>
+ <yw1xy2tsvnww.fsf@mansr.com> <20200128134745.GA3048749@kroah.com>
+ <yw1xpnf3vchs.fsf@mansr.com> <20200128152818.GB3437093@kroah.com>
+In-Reply-To: <20200128152818.GB3437093@kroah.com>
+From:   Rob Herring <robh@kernel.org>
+Date:   Tue, 28 Jan 2020 11:27:38 -0600
+X-Gmail-Original-Message-ID: <CAL_JsqLiELcXaAJAaD5jk05ifjVvgrRqGtEQJmg5iKxptZi5dw@mail.gmail.com>
+Message-ID: <CAL_JsqLiELcXaAJAaD5jk05ifjVvgrRqGtEQJmg5iKxptZi5dw@mail.gmail.com>
+Subject: Re: [RESEND][PATCH 1/2] dt-bindings: usb: add non-removable-ports hub property
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     =?UTF-8?B?TcOlbnMgUnVsbGfDpXJk?= <mans@mansr.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Linux USB List <linux-usb@vger.kernel.org>,
+        devicetree@vger.kernel.org,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 27/01/2020 15:33, Valentin Schneider wrote:
-> On 18/12/2019 18:26, Ionela Voinescu wrote:
->> diff --git a/arch/arm64/include/asm/kvm_arm.h b/arch/arm64/include/asm/kvm_arm.h
->> index 6e5d839f42b5..dd20fb185d56 100644
->> --- a/arch/arm64/include/asm/kvm_arm.h
->> +++ b/arch/arm64/include/asm/kvm_arm.h
->> @@ -266,10 +266,11 @@
->>   #define CPTR_EL2_TFP_SHIFT 10
->>   
->>   /* Hyp Coprocessor Trap Register */
->> -#define CPTR_EL2_TCPAC	(1 << 31)
->> -#define CPTR_EL2_TTA	(1 << 20)
->> -#define CPTR_EL2_TFP	(1 << CPTR_EL2_TFP_SHIFT)
->>   #define CPTR_EL2_TZ	(1 << 8)
->> +#define CPTR_EL2_TFP	(1 << CPTR_EL2_TFP_SHIFT)
->> +#define CPTR_EL2_TTA	(1 << 20)
->> +#define CPTR_EL2_TAM	(1 << 30)
->> +#define CPTR_EL2_TCPAC	(1 << 31)
-> 
-> Nit: why the #define movement? Couldn't that just be added beneath
-> CPTR_EL2_TCPAC?
-> 
->>   #define CPTR_EL2_RES1	0x000032ff /* known RES1 bits in CPTR_EL2 */
->>   #define CPTR_EL2_DEFAULT	CPTR_EL2_RES1
->>   
->> diff --git a/arch/arm64/kvm/hyp/switch.c b/arch/arm64/kvm/hyp/switch.c
->> index 72fbbd86eb5e..0bca87a2621f 100644
->> --- a/arch/arm64/kvm/hyp/switch.c
->> +++ b/arch/arm64/kvm/hyp/switch.c
->> @@ -90,6 +90,17 @@ static void activate_traps_vhe(struct kvm_vcpu *vcpu)
->>   	val = read_sysreg(cpacr_el1);
->>   	val |= CPACR_EL1_TTA;
->>   	val &= ~CPACR_EL1_ZEN;
->> +
->> +	/*
->> +	 * With VHE enabled, we have HCR_EL2.{E2H,TGE} = {1,1}. Note that in
->> +	 * this case CPACR_EL1 has the same bit layout as CPTR_EL2, and
->> +	 * CPACR_EL1 accessing instructions are redefined to access CPTR_EL2.
->> +	 * Therefore use CPTR_EL2.TAM bit reference to activate AMU register
->> +	 * traps.
->> +	 */
->> +
->> +	val |= CPTR_EL2_TAM;
->> +
-> 
-> Hmm so this is a bit confusing for me, I've rewritten that part of the
-> email too many times (didn't help that I'm far from being a virt guru).
-> Rectifications are most welcome.
-> 
-> 
-> First, AFAICT we *don't* have HCR_EL2.TGE set anymore at this point, it's
-> cleared just a bit earlier in __activate_traps().
-> 
-> 
-> Then, your comment suggests that when we're running this code, CPACR_EL1
-> accesses are rerouted to CPTR_EL2. Annoyingly this isn't mentioned in
-> the doc of CPACR_EL1, but D5.6.3 does say
-> 
-> """
-> When ARMv8.1-VHE is implemented, and HCR_EL2.E2H is set to 1, when executing
-> at EL2, some EL1 System register access instructions are redefined to access
-> the equivalent EL2 register.
-> """
-> 
-> And CPACR_EL1 is part of these, so far so good. Now, the thing is
-> the doc for CPACR_EL1 *doesn't* mention any TAM bit - but CPTR_EL2 does.
-> I believe what *do* want here is to set CPTR_EL2.TAM (which IIUC we end
-> up doing via the rerouting).
-> 
-> So, providing I didn't get completely lost on the way, I have to ask:
-> why do we use CPACR_EL1 here? Couldn't we use CPTR_EL2 directly?
+On Tue, Jan 28, 2020 at 9:28 AM Greg Kroah-Hartman
+<gregkh@linuxfoundation.org> wrote:
+>
+> On Tue, Jan 28, 2020 at 03:15:11PM +0000, M=C3=A5ns Rullg=C3=A5rd wrote:
+> > Greg Kroah-Hartman <gregkh@linuxfoundation.org> writes:
+> >
+> > > On Mon, Jan 27, 2020 at 04:56:15PM +0000, M=C3=A5ns Rullg=C3=A5rd wro=
+te:
+> > >> Rob Herring <robh@kernel.org> writes:
+> > >>
+> > >> > On Fri, Jan 24, 2020 at 03:25:03PM +0000, Mans Rullgard wrote:
+> > >> >> Add a non-removable-ports property that lists the hardwired downs=
+tream
+> > >> >> ports of a hub.  Although hubs can provide this information, they=
+ are
+> > >> >> not always configured correctly.  An alternate means of indicatin=
+g this
+> > >> >> for built-in USB devices is thus useful.
+> > >> >>
+> > >> >> Signed-off-by: Mans Rullgard <mans@mansr.com>
+> > >> >
+> > >> > I reviewed this already, but since you didn't add my reviewed-by, =
+I'm
+> > >> > looking at it again and having 2nd thoughts.
+> > >> >
+> > >> >> ---
+> > >> >>  Documentation/devicetree/bindings/usb/usb-device.txt | 4 ++++
+> > >> >>  1 file changed, 4 insertions(+)
+> > >> >>
+> > >> >> diff --git a/Documentation/devicetree/bindings/usb/usb-device.txt=
+ b/Documentation/devicetree/bindings/usb/usb-device.txt
+> > >> >> index 036be172b1ae..92d863cc96b6 100644
+> > >> >> --- a/Documentation/devicetree/bindings/usb/usb-device.txt
+> > >> >> +++ b/Documentation/devicetree/bindings/usb/usb-device.txt
+> > >> >> @@ -66,6 +66,10 @@ Required properties for host-controller nodes =
+with device nodes:
+> > >> >>  - #size-cells: shall be 0
+> > >> >>
+> > >> >>
+> > >> >> +Optional properties for hub and host-controller nodes:
+> > >> >> +- non-removable-ports: list of hardwired downstream ports
+> > >> >
+> > >> > If you have a hardwired device and need to know that, doesn't that=
+ imply
+> > >> > there's some other stuff you need to describe beyond what a standa=
+rd USB
+> > >> > device has. Such as a power supply that's not Vbus from the hub.
+> > >>
+> > >> I suppose there could be, but there isn't in my actual situation.
+> > >>
+> > >> > At a minimum, I think this should be a per port property.
+> > >>
+> > >> That's what I suggested first.  Greg told me to do it like this inst=
+ead.
+> > >
+> > > I said that?  I do not remember discussing this at all, when did that
+> > > happen?
+> >
+> > https://lore.kernel.org/lkml/20190228155241.GC12050@kroah.com/
+>
+> Almost a full year ago!  Hah, I can't remember what I wrote last week.
 
-Part of the reason is, CPTR_EL2 has different layout depending on
-whether HCR_EL2.E2H == 1. e.g, CPTR_EL2.TTA move from Bit[28] to Bit[20].
-
-So, to keep it simple, CPTR_EL2 is used for non-VHE code with the shifts
-as defined by the "CPTR_EL2 when E2H=0"
-
-if E2H == 1, CPTR_EL2 takes the layout of CPACR_EL1 and "overrides" some
-of the RES0 bits in CPACR_EL1 with EL2 controls (e.g: TAM, TCPAC).
-Thus we use CPACR_EL1 to keep the "shifts" non-conflicting (e.g, ZEN)
-and is the right thing to do.
-
-It is a bit confusing, but we are doing the right thing. May be we could 
-improve the comment like :
-
-	/*
-	 * With VHE (HCR.E2H == 1), CPTR_EL2 has the same layout as
-	 * CPACR_EL1, except for some missing controls, such as TAM.
-	 * And accesses to CPACR_EL1 are routed to CPTR_EL2.
-	 * Also CPTR_EL2.TAM has the same position with or without
-	 * HCR.E2H == 1. Therefore, use CPTR_EL2.TAM here for
-	 * trapping the AMU accesses.
-	 */
-
-Suzuki
+I was typing up the same thing... :)
