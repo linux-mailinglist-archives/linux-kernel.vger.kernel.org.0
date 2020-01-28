@@ -2,40 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6219214B6DB
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Jan 2020 15:09:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4A31A14B7EF
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Jan 2020 15:20:45 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726276AbgA1OIv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 28 Jan 2020 09:08:51 -0500
-Received: from mail.kernel.org ([198.145.29.99]:56808 "EHLO mail.kernel.org"
+        id S1730791AbgA1OTA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 28 Jan 2020 09:19:00 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43176 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728575AbgA1OIk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 Jan 2020 09:08:40 -0500
+        id S1730772AbgA1OS5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 28 Jan 2020 09:18:57 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id F2FF22468A;
-        Tue, 28 Jan 2020 14:08:38 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C3D7C24698;
+        Tue, 28 Jan 2020 14:18:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1580220519;
-        bh=NJ7xs43QwIvqL/GyfrBjI9MfIpNBCWxkCJxaSIUNzPo=;
+        s=default; t=1580221137;
+        bh=7QA7qgFZCNdK9gpFujJdT8gQYE0kxWucy0+YdY9HZzE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=rfQfE1affEl6EHAapUummPm8o9xaCA9a2jhLhILWnWon8AEuzbqbE2UBGmmq0d19Y
-         NwXEUcFd7txJUoB5m/FeMllxMv+Z1C0GRyg2YhP4mQOQpUNFuHmQUltATfJDYi3dpB
-         TNEbd4oc5xNWkWFyiD7DunBVM1iQd6vSupQ6jlA4=
+        b=g20n700f4d8PA7BhKpmarffjWIk5nNVSbZdtb38UTX/ejG7vjwI4yHIDY+d6FlC5F
+         lRwbN/UE/p6GTRibSQw3IyxeVFjFs0/H6I/D/egHHULTosJnRoLz3L/5DTjJTJ0HcJ
+         E4WqaenfbYnYqnGW7DrqjQ8r/rRuNNEJCMa7bNMA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Gal Pressman <galpress@amazon.com>,
-        Parvi Kaustubhi <pkaustub@cisco.com>,
-        Jason Gunthorpe <jgg@mellanox.com>,
+        stable@vger.kernel.org, Axel Lin <axel.lin@ingics.com>,
+        "Andrew F. Davis" <afd@ti.com>, Mark Brown <broonie@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.4 032/183] IB/usnic: Fix out of bounds index check in query pkey
+Subject: [PATCH 4.9 102/271] regulator: tps65086: Fix tps65086_ldoa1_ranges for selector 0xB
 Date:   Tue, 28 Jan 2020 15:04:11 +0100
-Message-Id: <20200128135833.219237145@linuxfoundation.org>
+Message-Id: <20200128135900.185717220@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200128135829.486060649@linuxfoundation.org>
-References: <20200128135829.486060649@linuxfoundation.org>
+In-Reply-To: <20200128135852.449088278@linuxfoundation.org>
+References: <20200128135852.449088278@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,35 +44,43 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Gal Pressman <galpress@amazon.com>
+From: Axel Lin <axel.lin@ingics.com>
 
-[ Upstream commit 4959d5da5737dd804255c75b8cea0a2929ce279a ]
+[ Upstream commit e69b394703e032e56a140172440ec4f9890b536d ]
 
-The pkey table size is one element, index should be tested for > 0 instead
-of > 1.
+selector 0xB (1011) should be 2.6V rather than 2.7V, fit ix.
 
-Fixes: e3cf00d0a87f ("IB/usnic: Add Cisco VIC low-level hardware driver")
-Signed-off-by: Gal Pressman <galpress@amazon.com>
-Acked-by: Parvi Kaustubhi <pkaustub@cisco.com>
-Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
+Table 5-4. LDOA1 Output Voltage Options
+VID Bits VOUT VID Bits VOUT VID Bits VOUT VID Bits VOUT
+0000     1.35 0100     1.8  1000     2.3  1100     2.85
+0001     1.5  0101     1.9  1001     2.4  1101     3.0
+0010     1.6  0110     2.0  1010     2.5  1110     3.3
+0011     1.7  0111     2.1  1011     2.6  1111     Not Used
+
+Fixes: d2a2e729a666 ("regulator: tps65086: Add regulator driver for the TPS65086 PMIC")
+Signed-off-by: Axel Lin <axel.lin@ingics.com>
+Acked-by: Andrew F. Davis <afd@ti.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/infiniband/hw/usnic/usnic_ib_verbs.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/regulator/tps65086-regulator.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/infiniband/hw/usnic/usnic_ib_verbs.c b/drivers/infiniband/hw/usnic/usnic_ib_verbs.c
-index f8e3211689a34..8e18bfca55166 100644
---- a/drivers/infiniband/hw/usnic/usnic_ib_verbs.c
-+++ b/drivers/infiniband/hw/usnic/usnic_ib_verbs.c
-@@ -427,7 +427,7 @@ int usnic_ib_query_gid(struct ib_device *ibdev, u8 port, int index,
- int usnic_ib_query_pkey(struct ib_device *ibdev, u8 port, u16 index,
- 				u16 *pkey)
- {
--	if (index > 1)
-+	if (index > 0)
- 		return -EINVAL;
+diff --git a/drivers/regulator/tps65086-regulator.c b/drivers/regulator/tps65086-regulator.c
+index 6dbf3cf3951e2..12d26261394f1 100644
+--- a/drivers/regulator/tps65086-regulator.c
++++ b/drivers/regulator/tps65086-regulator.c
+@@ -89,8 +89,8 @@ static const struct regulator_linear_range tps65086_buck345_25mv_ranges[] = {
+ static const struct regulator_linear_range tps65086_ldoa1_ranges[] = {
+ 	REGULATOR_LINEAR_RANGE(1350000, 0x0, 0x0, 0),
+ 	REGULATOR_LINEAR_RANGE(1500000, 0x1, 0x7, 100000),
+-	REGULATOR_LINEAR_RANGE(2300000, 0x8, 0xA, 100000),
+-	REGULATOR_LINEAR_RANGE(2700000, 0xB, 0xD, 150000),
++	REGULATOR_LINEAR_RANGE(2300000, 0x8, 0xB, 100000),
++	REGULATOR_LINEAR_RANGE(2850000, 0xC, 0xD, 150000),
+ 	REGULATOR_LINEAR_RANGE(3300000, 0xE, 0xE, 0),
+ };
  
- 	*pkey = 0xffff;
 -- 
 2.20.1
 
