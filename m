@@ -2,127 +2,111 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DDAE514B15B
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Jan 2020 10:07:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 73BBD14B17E
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Jan 2020 10:08:54 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726215AbgA1JHD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 28 Jan 2020 04:07:03 -0500
-Received: from mx08-00178001.pphosted.com ([91.207.212.93]:8774 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726066AbgA1JHB (ORCPT
+        id S1726059AbgA1JIv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 28 Jan 2020 04:08:51 -0500
+Received: from mail-qv1-f68.google.com ([209.85.219.68]:37397 "EHLO
+        mail-qv1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725882AbgA1JIu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 Jan 2020 04:07:01 -0500
-Received: from pps.filterd (m0046660.ppops.net [127.0.0.1])
-        by mx07-00178001.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 00S93bqm014416;
-        Tue, 28 Jan 2020 10:06:51 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=st.com; h=from : to : cc : subject
- : date : message-id : in-reply-to : references : mime-version :
- content-type; s=STMicroelectronics;
- bh=QftCa2QNdW6rIV5je6s8Ii1o876osqtCa/ZGy3adzdg=;
- b=eylPeeVdxuO9MnFZu/EcJ2OZ/Jg63rvH+r7WaNa4/LIMc7dfZPaI9ZjE5xptrko2FKGT
- jQUxz995mhMnB4biA4RSOVNOE0u6BlYQkudc7ZxLuMBTYmhMb49lLudfQKz818XvOSSV
- YoOX163GH5KX6wQfvgA4Fh+/2uMh7LyzjIis6AhDY+15AWcHayRqPSVxMKfgxFHB2TAM
- ZgF3FjtqXsXQ2SMN2bUKSfTlKxzI1+QtJTqT6KDVxlabrP+FDkOC+f9iLJsNFXOSJJ1L
- RX27JHa6CMm8oopWpK858mPeSCzvD3d/xw7omSgl8H7OpVQtnNW15bSLyUxyZCGM8T0W oA== 
-Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx07-00178001.pphosted.com with ESMTP id 2xrbpaw4ta-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 28 Jan 2020 10:06:51 +0100
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 616A710005A;
-        Tue, 28 Jan 2020 10:06:49 +0100 (CET)
-Received: from Webmail-eu.st.com (sfhdag6node1.st.com [10.75.127.16])
-        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 536E1212A3A;
-        Tue, 28 Jan 2020 10:06:49 +0100 (CET)
-Received: from localhost (10.75.127.45) by SFHDAG6NODE1.st.com (10.75.127.16)
- with Microsoft SMTP Server (TLS) id 15.0.1473.3; Tue, 28 Jan 2020 10:06:48
- +0100
-From:   Ludovic Barre <ludovic.barre@st.com>
-To:     Ulf Hansson <ulf.hansson@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>
-CC:     <srinivas.kandagatla@linaro.org>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-mmc@vger.kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        Ludovic Barre <ludovic.barre@st.com>
-Subject: [PATCH V2 9/9] mmc: mmci: add sdmmc variant revision 2.0
-Date:   Tue, 28 Jan 2020 10:06:36 +0100
-Message-ID: <20200128090636.13689-10-ludovic.barre@st.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20200128090636.13689-1-ludovic.barre@st.com>
-References: <20200128090636.13689-1-ludovic.barre@st.com>
+        Tue, 28 Jan 2020 04:08:50 -0500
+Received: by mail-qv1-f68.google.com with SMTP id m5so2771590qvv.4
+        for <linux-kernel@vger.kernel.org>; Tue, 28 Jan 2020 01:08:50 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=V9xAyfYvshxDtwWMgT0zgZJ0j7N3J44CYOXm6ENX55s=;
+        b=UBM+ALw8CpI4ev4pjKDHghR0t6BBgD/1R2c9dxpJJ6uPN9cRyxne6hUg5PZwNOH19H
+         hALAbYYOUfFDKSm9eXlQN/NN9tzITc8DjLZasBqt0hIvKjly0Ib0N0yaoST95Mz7bcOH
+         yHUd/Ry/FDID53tCKpDPzxkj2EC5C/cx2d3fJ5OCFyt/5hV84RF+AVzLtLlKjUUmLdPv
+         PIDvbbRM4Azq4pGaUJRRihjz1nnK1UZxiMh5EIoaA2yPIjBtT0ylGPpHdc8NExuKyL76
+         3FToEHAO9Du/AIujx4S9AAJSMPjihk4fOihEnKx8WkOM42Nx51bgYn4zoo+7/j+a0o2i
+         B/ig==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=V9xAyfYvshxDtwWMgT0zgZJ0j7N3J44CYOXm6ENX55s=;
+        b=uI3UG419wYo0GAbcyVjLzxN3tF/lmDNNUiWcP1bFVeRrxAVopUPMyMpkiBgAKm3odh
+         1Z8RQHhtlXtlTu9HOBkU3XhUpH0hlhNRooFcDHRY0rXUU+2etbUk+sGSjkB/OxgO9Bkw
+         q0pQW2xWL1h1XlZePCHNfwLBcFqm8XjectQCbwXEZX8RpIUukaeVCvRccKQGGMaHoVCa
+         P6ehxzXOBiFkjPNpGjVA4ZBUxg6qoTCZ6Fe3kH/P+C2b4ob7vPBNX2P7rPW2OhuPSpq9
+         ZOZWR6Z4RWAXkDX0I168eZ0UfM5gmJorkpZA5QXXaA/xqWxW2SX1y5ogKizTRZ5pI8TK
+         J7vg==
+X-Gm-Message-State: APjAAAVVkTh695L0JulYgHiyo5sJYhZ6nimx7TxAqgsP7yj2PDu3oSWd
+        uCaGG+6rEt88VX7ReMWSGU77M7GQm0cX4X2GAeu7iA==
+X-Google-Smtp-Source: APXvYqyLGSeVtyPa6QvM+kGBBxvn+S/PP0KC3EUV34HcvopeZQfmGmHJBrOqaSvVp0ThT/bYujA9Vllz/L/0apuA1W4=
+X-Received: by 2002:a05:6214:1874:: with SMTP id eh20mr21684750qvb.122.1580202529263;
+ Tue, 28 Jan 2020 01:08:49 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.75.127.45]
-X-ClientProxiedBy: SFHDAG7NODE1.st.com (10.75.127.19) To SFHDAG6NODE1.st.com
- (10.75.127.16)
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.572
- definitions=2020-01-28_02:2020-01-24,2020-01-28 signatures=0
+References: <CAKv+Gu8ZcO3jRMuMJL_eTmWtuzJ+=qEA9muuN5DpdpikFLwamg@mail.gmail.com>
+ <E600649B-A8CA-48D3-AD86-A2BAAE0BCA25@lca.pw> <CACT4Y+a5q1dWrm+PhWH3uQRfLWZ0HOyHA6Er4V3bn9tk85TKYA@mail.gmail.com>
+ <CAKv+Gu8ZRjqvQvOJ5JXpAQXyApMQNAFz7cRO9NSjq9u=WnjkTA@mail.gmail.com>
+In-Reply-To: <CAKv+Gu8ZRjqvQvOJ5JXpAQXyApMQNAFz7cRO9NSjq9u=WnjkTA@mail.gmail.com>
+From:   Dmitry Vyukov <dvyukov@google.com>
+Date:   Tue, 28 Jan 2020 10:08:37 +0100
+Message-ID: <CACT4Y+Z+vYF=6h0+ioMXGX6OHVnAXyHqOQLNFmngT9TqNwAgKA@mail.gmail.com>
+Subject: Re: mmotm 2020-01-23-21-12 uploaded (efi)
+To:     Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Cc:     Qian Cai <cai@lca.pw>, Randy Dunlap <rdunlap@infradead.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Mark Brown <broonie@kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux-MM <linux-mm@kvack.org>,
+        Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Michal Hocko <mhocko@suse.cz>, mm-commits@vger.kernel.org,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        Ard Biesheuvel <ardb@kernel.org>,
+        linux-efi <linux-efi@vger.kernel.org>,
+        kasan-dev <kasan-dev@googlegroups.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch adds a sdmmc variant revision 2.0.
-This revision is backward compatible with 1.1, and adds dma
-link list support.
+On Tue, Jan 28, 2020 at 8:33 AM Ard Biesheuvel
+<ard.biesheuvel@linaro.org> wrote:
+> > > > Should be fixed by
+> > > >
+> > > > https://lore.kernel.org/linux-efi/20200121093912.5246-1-ardb@kernel.org/
+> > >
+> > > Cc kasan-devel@
+> > >
+> > > If everyone has to disable KASAN for the whole subdirectories like this, I am worried about we are losing testing coverage fairly quickly. Is there a bug in compiler?
+> >
+> > My understanding is that this is invalid C code in the first place,
+> > no? It just happened to compile with some compilers, some options and
+> > probably only with high optimization level.
+>
+> No, this is not true. The whole point of favoring IS_ENABLED(...) over
+> #ifdef ... has always been that the code remains visible to the
+> compiler, regardless of whether the option is selected or not, but
+> that it gets optimized away entirely. The linker errors prove that
+> there is dead code remaining in the object files, which means we can
+> no longer rely on IS_ENABLED() to work as intended.
 
-Signed-off-by: Ludovic Barre <ludovic.barre@st.com>
----
- drivers/mmc/host/mmci.c | 30 ++++++++++++++++++++++++++++++
- 1 file changed, 30 insertions(+)
+I agree that exposing more code to compiler is good, I prefer to do it
+as well. But I don't see how this proves anything wrt this particular
+code being invalid C. Called functions still need to be defined. There
+is no notion of dead code in C. Yes, this highly depends on compiler,
+options, optimization level, etc. Some combinations may work, some
+won't. E.g. my compiler compiles it just fine (clang 10) without
+disabling instrumentation... what does it prove? I don't know.
 
-diff --git a/drivers/mmc/host/mmci.c b/drivers/mmc/host/mmci.c
-index 24e630183ed4..a774c329c212 100644
---- a/drivers/mmc/host/mmci.c
-+++ b/drivers/mmc/host/mmci.c
-@@ -275,6 +275,31 @@ static struct variant_data variant_stm32_sdmmc = {
- 	.init			= sdmmc_variant_init,
- };
- 
-+static struct variant_data variant_stm32_sdmmcv2 = {
-+	.fifosize		= 16 * 4,
-+	.fifohalfsize		= 8 * 4,
-+	.f_max			= 208000000,
-+	.stm32_clkdiv		= true,
-+	.cmdreg_cpsm_enable	= MCI_CPSM_STM32_ENABLE,
-+	.cmdreg_lrsp_crc	= MCI_CPSM_STM32_LRSP_CRC,
-+	.cmdreg_srsp_crc	= MCI_CPSM_STM32_SRSP_CRC,
-+	.cmdreg_srsp		= MCI_CPSM_STM32_SRSP,
-+	.cmdreg_stop		= MCI_CPSM_STM32_CMDSTOP,
-+	.data_cmd_enable	= MCI_CPSM_STM32_CMDTRANS,
-+	.irq_pio_mask		= MCI_IRQ_PIO_STM32_MASK,
-+	.datactrl_first		= true,
-+	.datacnt_useless	= true,
-+	.datalength_bits	= 25,
-+	.datactrl_blocksz	= 14,
-+	.datactrl_any_blocksz	= true,
-+	.stm32_idmabsize_mask	= GENMASK(16, 5),
-+	.dma_lli		= true,
-+	.busy_timeout		= true,
-+	.busy_detect_flag	= MCI_STM32_BUSYD0,
-+	.busy_detect_mask	= MCI_STM32_BUSYD0ENDMASK,
-+	.init			= sdmmc_variant_init,
-+};
-+
- static struct variant_data variant_qcom = {
- 	.fifosize		= 16 * 4,
- 	.fifohalfsize		= 8 * 4,
-@@ -2343,6 +2368,11 @@ static const struct amba_id mmci_ids[] = {
- 		.mask	= 0xf0ffffff,
- 		.data	= &variant_stm32_sdmmc,
- 	},
-+	{
-+		.id     = 0x00253180,
-+		.mask	= 0xf0ffffff,
-+		.data	= &variant_stm32_sdmmcv2,
-+	},
- 	/* Qualcomm variants */
- 	{
- 		.id     = 0x00051180,
--- 
-2.17.1
+To clarify: I completely don't object to patching this case in gcc
+with -O2, it just may be hard to find anybody willing to do this work
+if we are talking about fixing compilation of invalid code.
 
+
+
+> > There is a known, simple fix that is used throughout the kernel -
+> > provide empty static inline stub, or put whole calls under ifdef.
+>
+> No, sorry, that doesn't work for me. I think it is great that we have
+> diagnostic features that are as powerful as KASAN, but if they require
+> code changes beyond enable/disable, I am not going to rely on them.
