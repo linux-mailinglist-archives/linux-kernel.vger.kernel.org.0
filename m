@@ -2,37 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3923C14BC30
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Jan 2020 15:51:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BD8FA14BC51
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Jan 2020 15:52:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726608AbgA1N6p (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 28 Jan 2020 08:58:45 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43472 "EHLO mail.kernel.org"
+        id S1727535AbgA1Ovx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 28 Jan 2020 09:51:53 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43568 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726467AbgA1N6i (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 Jan 2020 08:58:38 -0500
+        id S1726548AbgA1N6o (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 28 Jan 2020 08:58:44 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 85FEF24683;
-        Tue, 28 Jan 2020 13:58:37 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id F292224683;
+        Tue, 28 Jan 2020 13:58:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1580219918;
-        bh=bf8pkmbJpEHqDv7s3fu/qvPCTiz3zP6jWmeERtoHOZM=;
+        s=default; t=1580219923;
+        bh=H8gV40MUF4wX28yO9j3qAumV1vhdC0yOeApCL0d5jGg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=qtm3rtp6b+VcOjIl5Ni0rx0ESDWZnx8cE8wK3WDbAj1TxOfFWE0QG2MvI4cEC/rj4
-         y/Kh/oQNXcg9yULyQomKE0TDRQn5Qd1+xsgDLzecnLI0gpkz4rSPZQxeGPOWa2D7hE
-         17g3YHvV34m9DfH1vJuKw5umA/bfa9wyKPzWmogs=
+        b=cDRHg2edQu7/QpdMtrfUFA1e1swfzlFXtkGJ7rkXsMd9nUn+KQBRy8ynr6hmMsTPf
+         vz1xnr2hCq9/EMG6rU9VjkrVI/xrjH/vi9rxvVHCU/iGsIEuat9HWQmU1/rPzDIRKn
+         H7492W0WEZRCHchca7imIfv1iruU2FBaxg64FusE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Ilja Van Sprundel <ivansprundel@ioactive.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
+        stable@vger.kernel.org, William Dauchy <w.dauchy@criteo.com>,
+        Nicolas Dichtel <nicolas.dichtel@6wind.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.14 05/46] net: cxgb3_main: Add CAP_NET_ADMIN check to CHELSIO_GET_MEM
-Date:   Tue, 28 Jan 2020 14:57:39 +0100
-Message-Id: <20200128135750.777558206@linuxfoundation.org>
+Subject: [PATCH 4.14 07/46] net, ip_tunnel: fix namespaces move
+Date:   Tue, 28 Jan 2020 14:57:41 +0100
+Message-Id: <20200128135751.118463219@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
 In-Reply-To: <20200128135749.822297911@linuxfoundation.org>
 References: <20200128135749.822297911@linuxfoundation.org>
@@ -45,45 +44,40 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Michael Ellerman <mpe@ellerman.id.au>
+From: William Dauchy <w.dauchy@criteo.com>
 
-[ Upstream commit 3546d8f1bbe992488ed91592cf6bf76e7114791a =
+[ Upstream commit d0f418516022c32ecceaf4275423e5bd3f8743a9 ]
 
-The cxgb3 driver for "Chelsio T3-based gigabit and 10Gb Ethernet
-adapters" implements a custom ioctl as SIOCCHIOCTL/SIOCDEVPRIVATE in
-cxgb_extension_ioctl().
+in the same manner as commit 690afc165bb3 ("net: ip6_gre: fix moving
+ip6gre between namespaces"), fix namespace moving as it was broken since
+commit 2e15ea390e6f ("ip_gre: Add support to collect tunnel metadata.").
+Indeed, the ip6_gre commit removed the local flag for collect_md
+condition, so there is no reason to keep it for ip_gre/ip_tunnel.
 
-One of the subcommands of the ioctl is CHELSIO_GET_MEM, which appears
-to read memory directly out of the adapter and return it to userspace.
-It's not entirely clear what the contents of the adapter memory
-contains, but the assumption is that it shouldn't be accessible to all
-users.
+this patch will fix both ip_tunnel and ip_gre modules.
 
-So add a CAP_NET_ADMIN check to the CHELSIO_GET_MEM case. Put it after
-the is_offload() check, which matches two of the other subcommands in
-the same function which also check for is_offload() and CAP_NET_ADMIN.
-
-Found by Ilja by code inspection, not tested as I don't have the
-required hardware.
-
-Reported-by: Ilja Van Sprundel <ivansprundel@ioactive.com>
-Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+Fixes: 2e15ea390e6f ("ip_gre: Add support to collect tunnel metadata.")
+Signed-off-by: William Dauchy <w.dauchy@criteo.com>
+Acked-by: Nicolas Dichtel <nicolas.dichtel@6wind.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/chelsio/cxgb3/cxgb3_main.c |    2 ++
- 1 file changed, 2 insertions(+)
+ net/ipv4/ip_tunnel.c |    4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
---- a/drivers/net/ethernet/chelsio/cxgb3/cxgb3_main.c
-+++ b/drivers/net/ethernet/chelsio/cxgb3/cxgb3_main.c
-@@ -2449,6 +2449,8 @@ static int cxgb_extension_ioctl(struct n
+--- a/net/ipv4/ip_tunnel.c
++++ b/net/ipv4/ip_tunnel.c
+@@ -1202,10 +1202,8 @@ int ip_tunnel_init(struct net_device *de
+ 	iph->version		= 4;
+ 	iph->ihl		= 5;
  
- 		if (!is_offload(adapter))
- 			return -EOPNOTSUPP;
-+		if (!capable(CAP_NET_ADMIN))
-+			return -EPERM;
- 		if (!(adapter->flags & FULL_INIT_DONE))
- 			return -EIO;	/* need the memory controllers */
- 		if (copy_from_user(&t, useraddr, sizeof(t)))
+-	if (tunnel->collect_md) {
+-		dev->features |= NETIF_F_NETNS_LOCAL;
++	if (tunnel->collect_md)
+ 		netif_keep_dst(dev);
+-	}
+ 	return 0;
+ }
+ EXPORT_SYMBOL_GPL(ip_tunnel_init);
 
 
