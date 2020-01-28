@@ -2,201 +2,202 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F120E14BD16
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Jan 2020 16:40:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 28C6314BD1E
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Jan 2020 16:41:16 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726948AbgA1Pka (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 28 Jan 2020 10:40:30 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39988 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726389AbgA1Pka (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 Jan 2020 10:40:30 -0500
-Received: from mail-qk1-f173.google.com (mail-qk1-f173.google.com [209.85.222.173])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 380E02468A;
-        Tue, 28 Jan 2020 15:40:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1580226029;
-        bh=vIQFlgFBXBFq03FtrTUcYLipjkKDm0tJv3h8aZx/qh4=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=VE88acMmglXD5DNpUqw6gBfh7OAT6VN26cGhD6BTnko4ya3ck8v2LEaIo7jwAjPi7
-         M0n15l6uLrj64WmJsAFgx4SWdbbxYXQprIBUfKNhMxtLIQFXkYHpoSNzFg4GGdWD+l
-         ZAEH5QVvdcQw/WhBWVlXPf00pVqLGBMdrTGw8mPM=
-Received: by mail-qk1-f173.google.com with SMTP id d10so13779871qke.1;
-        Tue, 28 Jan 2020 07:40:29 -0800 (PST)
-X-Gm-Message-State: APjAAAUa02KlhuFWtcwXDjdrmsOG7EloisJUN2ABH+fscVXRmF1unmh/
-        ZT5w6yn7XbnnAJX0SrNm9EpECg85Tx6Kdm3tng==
-X-Google-Smtp-Source: APXvYqwwiFahkoxmuc163fTarevKuM1kql9XD48hlQ7trUe56xmd3XOmWMviv3V7Mu7y1iKxkwylIC3mc3ktXc5v1t4=
-X-Received: by 2002:ae9:f205:: with SMTP id m5mr23193589qkg.152.1580226028149;
- Tue, 28 Jan 2020 07:40:28 -0800 (PST)
-MIME-Version: 1.0
-References: <1579689918-7181-1-git-send-email-yamonkar@cadence.com>
- <1579689918-7181-14-git-send-email-yamonkar@cadence.com> <20200127164235.GA7662@bogus>
- <3e5d7620-d1ec-ba37-0b5b-e28ed74e49d9@ti.com>
-In-Reply-To: <3e5d7620-d1ec-ba37-0b5b-e28ed74e49d9@ti.com>
-From:   Rob Herring <robh@kernel.org>
-Date:   Tue, 28 Jan 2020 09:40:16 -0600
-X-Gmail-Original-Message-ID: <CAL_Jsq+UrxAL9DEB3E-o0fWEK3QNhWiYQnGDZ3asRoQLb61Cjg@mail.gmail.com>
-Message-ID: <CAL_Jsq+UrxAL9DEB3E-o0fWEK3QNhWiYQnGDZ3asRoQLb61Cjg@mail.gmail.com>
-Subject: Re: [PATCH v3 13/14] dt-bindings: phy: phy-cadence-torrent: Add
- subnode bindings.
-To:     Jyri Sarha <jsarha@ti.com>
-Cc:     Yuti Amonkar <yamonkar@cadence.com>,
+        id S1727069AbgA1Pkx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 28 Jan 2020 10:40:53 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:32272 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726865AbgA1Pkv (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 28 Jan 2020 10:40:51 -0500
+Received: from pps.filterd (m0098409.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 00SFb0ef110406
+        for <linux-kernel@vger.kernel.org>; Tue, 28 Jan 2020 10:40:50 -0500
+Received: from e06smtp07.uk.ibm.com (e06smtp07.uk.ibm.com [195.75.94.103])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2xrhv1vw3y-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Tue, 28 Jan 2020 10:40:50 -0500
+Received: from localhost
+        by e06smtp07.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <zohar@linux.ibm.com>;
+        Tue, 28 Jan 2020 15:40:48 -0000
+Received: from b06cxnps4074.portsmouth.uk.ibm.com (9.149.109.196)
+        by e06smtp07.uk.ibm.com (192.168.101.137) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Tue, 28 Jan 2020 15:40:44 -0000
+Received: from d06av23.portsmouth.uk.ibm.com (d06av23.portsmouth.uk.ibm.com [9.149.105.59])
+        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 00SFeiUM42467494
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 28 Jan 2020 15:40:44 GMT
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 0570BA4040;
+        Tue, 28 Jan 2020 15:40:44 +0000 (GMT)
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 36FCFA4053;
+        Tue, 28 Jan 2020 15:40:43 +0000 (GMT)
+Received: from localhost.localdomain (unknown [9.85.138.98])
+        by d06av23.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Tue, 28 Jan 2020 15:40:43 +0000 (GMT)
+Subject: Re: [PATCH 2/2] ima: support calculating the boot_aggregate based
+ on different TPM banks
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     Roberto Sassu <roberto.sassu@huawei.com>,
+        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>
+Cc:     Jerry Snitselaar <jsnitsel@redhat.com>,
+        James Bottomley <James.Bottomley@HansenPartnership.com>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        devicetree@vger.kernel.org, Kishon Vijay Abraham I <kishon@ti.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Maxime Ripard <maxime@cerno.tech>,
-        Tomi Valkeinen <tomi.valkeinen@ti.com>,
-        Praneeth Bajjuri <praneeth@ti.com>,
-        Milind Parab <mparab@cadence.com>,
-        Swapnil Kashinath Jakhade <sjakhade@cadence.com>
+        Silviu Vlasceanu <Silviu.Vlasceanu@huawei.com>
+Date:   Tue, 28 Jan 2020 10:40:42 -0500
+In-Reply-To: <465015d0c9ca4e278ed32f78eb3eb4a4@huawei.com>
+References: <1580140919-6127-1-git-send-email-zohar@linux.ibm.com>
+         <1580140919-6127-2-git-send-email-zohar@linux.ibm.com>
+         <465015d0c9ca4e278ed32f78eb3eb4a4@huawei.com>
 Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+x-cbid: 20012815-0028-0000-0000-000003D5363D
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 20012815-0029-0000-0000-000024997E80
+Message-Id: <1580226042.5088.90.camel@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.572
+ definitions=2020-01-28_05:2020-01-28,2020-01-28 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
+ adultscore=0 mlxlogscore=999 clxscore=1015 phishscore=0 suspectscore=0
+ priorityscore=1501 bulkscore=0 malwarescore=0 mlxscore=0 impostorscore=0
+ spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-1911200001 definitions=main-2001280123
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jan 28, 2020 at 4:04 AM Jyri Sarha <jsarha@ti.com> wrote:
->
-> On 27/01/2020 18:42, Rob Herring wrote:
-> > On Wed, Jan 22, 2020 at 11:45:17AM +0100, Yuti Amonkar wrote:
-> >> From: Swapnil Jakhade <sjakhade@cadence.com>
-> >>
-> >> Add sub-node bindings for each group of PHY lanes based on PHY
-> >> type. Only PHY_TYPE_DP is supported currently. Each sub-node
-> >
-> > What the driver supports is not relevant to the binding. Define all
-> > modes.
-> >
-> >> includes properties such as master lane number, link reset, phy
-> >> type, number of lanes etc.
-> >
-> > Given the conversion and this have no compatibility, just make the
-> > commits delete the old binding and add this new binding. I'd rather not
-> > have reviewed what just gets deleted here.
-> >
-> >>
-> >> Signed-off-by: Swapnil Jakhade <sjakhade@cadence.com>
-> >> ---
-> >>  .../bindings/phy/phy-cadence-torrent.yaml          | 90 ++++++++++++++++++----
-> >>  1 file changed, 73 insertions(+), 17 deletions(-)
-> >>
-> >> diff --git a/Documentation/devicetree/bindings/phy/phy-cadence-torrent.yaml b/Documentation/devicetree/bindings/phy/phy-cadence-torrent.yaml
-> >> index dbb8aa5..eb21615 100644
-> >> --- a/Documentation/devicetree/bindings/phy/phy-cadence-torrent.yaml
-> >> +++ b/Documentation/devicetree/bindings/phy/phy-cadence-torrent.yaml
-> >> @@ -19,6 +19,12 @@ properties:
-> >>        - cdns,torrent-phy
-> >>        - ti,j721e-serdes-10g
-> >>
-> >> +  '#address-cells':
-> >> +    const: 1
-> >> +
-> >> +  '#size-cells':
-> >> +    const: 0
-> >> +
-> >>    clocks:
-> >>      maxItems: 1
-> >>      description:
-> >> @@ -41,44 +47,94 @@ properties:
-> >>        - const: torrent_phy
-> >>        - const: dptx_phy
-> >>
-> >> -  "#phy-cells":
-> >> -    const: 0
-> >> +  resets:
-> >> +    description:
-> >> +      Must contain an entry for each in reset-names.
-> >> +      See Documentation/devicetree/bindings/reset/reset.txt
-> >
-> > How many reset entries? Needs a 'maxItems: 1' or an 'items' list if more
-> > than 1.
-> >
-> >>
-> >> -  num_lanes:
-> >> +  reset-names:
-> >>      description:
-> >> -      Number of DisplayPort lanes.
-> >> -    allOf:
-> >> -      - $ref: /schemas/types.yaml#/definitions/uint32
-> >> -      - enum: [1, 2, 4]
-> >> +      Must be "torrent_reset". It controls the reset to the
-> >
-> > Should be a schema, not freeform text. However, not really a useful name
-> > as there's only 1, so I'd just remove 'reset-names'.
-> >
->
-> This binding is trying to follow "cdns,sierra-phy-t0" binding [1] when
-> it makes sense. Sierra defines two resets here. But if we can not name
-> the other reset now (at least I can not), I guess we can just drop the
-> reset-names here.
->
-> >> +      torrent PHY.
-> >>
-> >> -  max_bit_rate:
-> >> +patternProperties:
-> >> +  '^torrent-phy@[0-7]+$':
-> >> +    type: object
-> >>      description:
-> >> -      Maximum DisplayPort link bit rate to use, in Mbps
-> >> -    allOf:
-> >> -      - $ref: /schemas/types.yaml#/definitions/uint32
-> >> -      - enum: [2160, 2430, 2700, 3240, 4320, 5400, 8100]
-> >> +      Each group of PHY lanes with a single master lane should be represented as a sub-node.
-> >> +    properties:
-> >> +      reg:
-> >> +        description:
-> >> +          The master lane number. This is the lowest numbered lane in the lane group.
-> >
-> > Why not make it the list of lane numbers. Then you don't need num-lanes.
-> >
->
-> Sierra binding already defines this method [1] and my plan was to rely
-> on this method when selecting the lane types in the
-> "ti,phy-j721e-wiz"-driver [2].
->
-> IOW, I would like the both Sierra and Torrent bindings (which both are
-> wrapped by the wiz wrapper IP) to be compatible enough for wiz driver to
-> peek the lane types from the wrapped phy-node.
+On Tue, 2020-01-28 at 14:19 +0000, Roberto Sassu wrote:
+> > -----Original Message-----
+> > From: linux-integrity-owner@vger.kernel.org [mailto:linux-integrity-
+> > owner@vger.kernel.org] On Behalf Of Mimi Zohar
+> > Sent: Monday, January 27, 2020 5:02 PM
+> > To: linux-integrity@vger.kernel.org
+> > Cc: Jerry Snitselaar <jsnitsel@redhat.com>; James Bottomley
+> > <James.Bottomley@HansenPartnership.com>; linux-
+> > kernel@vger.kernel.org; Mimi Zohar <zohar@linux.ibm.com>
+> > Subject: [PATCH 2/2] ima: support calculating the boot_aggregate based on
+> > different TPM banks
+> > 
+> > Calculating the boot_aggregate attempts to read the TPM SHA1 bank,
+> > assuming it is always enabled.  With TPM 2.0 hash agility, TPM chips
+> > could support multiple TPM PCR banks, allowing firmware to configure and
+> > enable different banks.
+> > 
+> > Instead of hard coding the TPM 2.0 bank hash algorithm used for calculating
+> > the boot-aggregate, see if the configured IMA_DEFAULT_HASH algorithm is
+> > an allocated TPM bank, otherwise use the first allocated TPM bank.
+> > 
+> > For TPM 1.2 SHA1 is the only supported hash algorithm.
+> > 
+> > Reported-by: Jerry Snitselaar <jsnitsel@redhat.com>
+> > Signed-off-by: Mimi Zohar <zohar@linux.ibm.com>
+> > ---
+> >  security/integrity/ima/ima_crypto.c | 37
+> > ++++++++++++++++++++++++++++++++++++-
+> >  1 file changed, 36 insertions(+), 1 deletion(-)
+> > 
+> > diff --git a/security/integrity/ima/ima_crypto.c
+> > b/security/integrity/ima/ima_crypto.c
+> > index 7967a6904851..b1b26d61f174 100644
+> > --- a/security/integrity/ima/ima_crypto.c
+> > +++ b/security/integrity/ima/ima_crypto.c
+> > @@ -656,8 +656,25 @@ static void __init ima_pcrread(u32 idx, struct
+> > tpm_digest *d)
+> >  		pr_err("Error Communicating to TPM chip\n");
+> >  }
+> > 
+> > +/* tpm2_hash_map is the same as defined in tpm2-cmd.c and
+> > trusted_tpm2.c */
+> > +static struct tpm2_hash tpm2_hash_map[] = {
+> > +	{HASH_ALGO_SHA1, TPM_ALG_SHA1},
+> > +	{HASH_ALGO_SHA256, TPM_ALG_SHA256},
+> > +	{HASH_ALGO_SHA384, TPM_ALG_SHA384},
+> > +	{HASH_ALGO_SHA512, TPM_ALG_SHA512},
+> > +	{HASH_ALGO_SM3_256, TPM_ALG_SM3_256},
+> > +};
+> > +
+> >  /*
+> > - * Calculate the boot aggregate hash
+> > + * The boot_aggregate is a cumulative hash over TPM registers 0 - 7.  With
+> > + * TPM 2.0 hash agility, TPM chips could support multiple TPM PCR banks,
+> > + * allowing firmware to configure and enable different banks.
+> > + *
+> > + * Instead of hard coding the TPM bank hash algorithm used for calculating
+> > + * the boot-aggregate, see if the configured IMA_DEFAULT_HASH
+> > algorithm is
+> > + * an allocated TPM bank, otherwise use the first allocated TPM bank.
+> > + *
+> > + * For TPM 1.2 SHA1 is the only hash algorithm.
+> >   */
+> >  static int __init ima_calc_boot_aggregate_tfm(char *digest,
+> >  					      struct crypto_shash *tfm)
+> > @@ -673,6 +690,24 @@ static int __init ima_calc_boot_aggregate_tfm(char
+> > *digest,
+> >  	if (rc != 0)
+> >  		return rc;
+> > 
+> > +	for (i = 0; i < ARRAY_SIZE(tpm2_hash_map); i++) {
+> > +		if (tpm2_hash_map[i].crypto_id == ima_hash_algo) {
+> 
+> It is not necessary to define a new map. ima_tpm_chip->allocated_banks
+> has a crypto_id field.
 
-Okay.
+Ok, thanks.
 
-> >> +      resets:
-> >> +        description:
-> >> +          Contains list of resets to get all the link lanes out of reset.
-> >
-> > Needs a schema for how many? 1 per lane?
-> >
->
-> That is what the current implementation is, but do we have to lock it
-> down in the binding? There can hardly be more than 1 / lane, but I can
-> imagine it to be just one for a number of lanes.
+> 
+> > +			d.alg_id = tpm2_hash_map[i].tpm_id;
+> > +			break;
+> > +		}
+> > +	}
+> > +
+> > +	for (i = 0; i < ima_tpm_chip->nr_allocated_banks; i++) {
+> > +		if (ima_tpm_chip->allocated_banks[i].alg_id == d.alg_id)
+> > +			break;
+> > +	}
+> > +
+> > +	if (i == ima_tpm_chip->nr_allocated_banks)
+> > +		d.alg_id = ima_tpm_chip->allocated_banks[0].alg_id;
+> 
+> This code assumes that the algorithm used to calculate boot_aggregate and
+> the algorithm of the PCR bank can be different. I don't know if it is possible to
+> communicate to the verifier which bank has been selected (it depends on
+> the local configuration).
 
-Yes, you have to define it in the schema. If not, there's really no
-point in doing schemas.
+Agreed, but defaulting to the first bank would only happen if the IMA
+default hash algorithm is not a configured TPM algorithm.
 
-> >> +      "#phy-cells":
-> >> +        description:
-> >> +          Generic PHY binding.
-> >
-> > Not a useful description. Remove.
-> >
-> >> +        const: 0
-> >> +
-> >> +      cdns,phy-type:
-> >> +        description:
-> >> +          Should be PHY_TYPE_DP.
-> >
-> > Sounds like a constraint.
-> >
->
-> I do not think there is point to limit this to PHY_TYPE_DP only. The
-> current implementation may not support anything else but DP, but we
-> should not limit the binding because of it. I think referring to the
-> include/dt-bindings/phy/phy.h header here would be appropriate.
+> 
+> In my opinion the safest approach would be to use the same algorithm for the
+> digest and the PCR bank. If you agree to this, then the code above must be
+> moved to ima_calc_boot_aggregate() so that the algorithm of the selected
+> PCR bank can be passed to ima_alloc_tfm().
 
-Referring to the include is still not a constraint. You need const,
-enum, or minimum/maximum.
+Using the same hash algorithm, preferably the IMA hash default
+algorithm, for reading the TPM PCR bank and calculating the
+boot_aggregate makes sense.
 
-Rob
+> 
+> The selected PCR bank might be not the first, if the algorithm is unknown to
+> the crypto subsystem.
+
+It sounds like you're suggesting finding a common configured hash
+algorithm between the TPM and the kernel. 
+
+> 
+> > +	pr_info("Calculating the boot-aggregregate, reading TPM PCR
+> 
+> Typo.
+
+thanks
+
+Mimi
+
