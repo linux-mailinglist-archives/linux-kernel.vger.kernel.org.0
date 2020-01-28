@@ -2,40 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 88DE314B7EB
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Jan 2020 15:20:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D781314B6C8
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Jan 2020 15:08:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730753AbgA1OSv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 28 Jan 2020 09:18:51 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42998 "EHLO mail.kernel.org"
+        id S1728453AbgA1OIQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 28 Jan 2020 09:08:16 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56216 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730740AbgA1OSu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 Jan 2020 09:18:50 -0500
+        id S1728431AbgA1OIO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 28 Jan 2020 09:08:14 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 49BA624690;
-        Tue, 28 Jan 2020 14:18:49 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E3D8A22522;
+        Tue, 28 Jan 2020 14:08:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1580221129;
-        bh=/s9ACbFT8qMDpDRwayydE1Jt32U6UwpIRX67EL52aKs=;
+        s=default; t=1580220494;
+        bh=xyUGEFXpyzNFtWfdd8thjkylmfAJL4ZvM6xvi4QDHHo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=CtHtVwrPVhW7H0l9uLiqqMuhYCZ2TaADYTbS0Se0LfXnWwF5Rv12e6U5soyTnuG2R
-         zMFhujCMasmRUTU10EKhnBhBoIsDPWLqaeKBL/V3WZ9lUeTXNJpUG30o58zUL8eIqW
-         N1Nqe++gDQxfUbat3BvyktZc8PNsFoAh0aL7A2sY=
+        b=nofYpB16Fa6RChfc0OlumFaiIK844oxKmrsQNSoZbTO96YBzfqQ/3/MzzYskmb5ru
+         iMKsvTUvIfeilmcfvimL/r9TzC+fHPSSh7t8J151Libl8vaTKi8Iou3iup6n1QXoNm
+         EAiI+qS2oC1v7EjVHtr7CcN6LZDOajx/8ZApQG50=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>,
-        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        stable@vger.kernel.org, Yangtao Li <tiny.windzz@gmail.com>,
+        Gregory CLEMENT <gregory.clement@bootlin.com>,
+        Stephen Boyd <sboyd@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 099/271] media: cx18: update *pos correctly in cx18_read_pos()
+Subject: [PATCH 4.4 029/183] clk: armada-370: fix refcount leak in a370_clk_init()
 Date:   Tue, 28 Jan 2020 15:04:08 +0100
-Message-Id: <20200128135859.964229110@linuxfoundation.org>
+Message-Id: <20200128135832.950495130@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200128135852.449088278@linuxfoundation.org>
-References: <20200128135852.449088278@linuxfoundation.org>
+In-Reply-To: <20200128135829.486060649@linuxfoundation.org>
+References: <20200128135829.486060649@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,34 +45,38 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
+From: Yangtao Li <tiny.windzz@gmail.com>
 
-[ Upstream commit 7afb0df554292dca7568446f619965fb8153085d ]
+[ Upstream commit a3c24050bdf70c958a8d98c2823b66ea761e6a31 ]
 
-We should be updating *pos.  The current code is a no-op.
+The of_find_compatible_node() returns a node pointer with refcount
+incremented, but there is the lack of use of the of_node_put() when
+done. Add the missing of_node_put() to release the refcount.
 
-Fixes: 1c1e45d17b66 ("V4L/DVB (7786): cx18: new driver for the Conexant CX23418 MPEG encoder chip")
-
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-Signed-off-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
-Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
+Reviewed-by: Gregory CLEMENT <gregory.clement@bootlin.com>
+Fixes: 07ad6836fa21 ("clk: mvebu: armada-370: maintain clock init order")
+Signed-off-by: Stephen Boyd <sboyd@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/media/pci/cx18/cx18-fileops.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/clk/mvebu/armada-370.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/media/pci/cx18/cx18-fileops.c b/drivers/media/pci/cx18/cx18-fileops.c
-index df837408efd59..0171dc5b8809e 100644
---- a/drivers/media/pci/cx18/cx18-fileops.c
-+++ b/drivers/media/pci/cx18/cx18-fileops.c
-@@ -490,7 +490,7 @@ static ssize_t cx18_read_pos(struct cx18_stream *s, char __user *ubuf,
+diff --git a/drivers/clk/mvebu/armada-370.c b/drivers/clk/mvebu/armada-370.c
+index 2c7c1085f8830..8fdfa97900cd8 100644
+--- a/drivers/clk/mvebu/armada-370.c
++++ b/drivers/clk/mvebu/armada-370.c
+@@ -177,8 +177,10 @@ static void __init a370_clk_init(struct device_node *np)
  
- 	CX18_DEBUG_HI_FILE("read %zd from %s, got %zd\n", count, s->name, rc);
- 	if (rc > 0)
--		pos += rc;
-+		*pos += rc;
- 	return rc;
+ 	mvebu_coreclk_setup(np, &a370_coreclks);
+ 
+-	if (cgnp)
++	if (cgnp) {
+ 		mvebu_clk_gating_setup(cgnp, a370_gating_desc);
++		of_node_put(cgnp);
++	}
  }
+ CLK_OF_DECLARE(a370_clk, "marvell,armada-370-core-clock", a370_clk_init);
  
 -- 
 2.20.1
