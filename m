@@ -2,97 +2,112 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8018514ADD9
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Jan 2020 03:09:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 10A8F14ADEF
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Jan 2020 03:14:48 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726485AbgA1CJU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 27 Jan 2020 21:09:20 -0500
-Received: from mail-io1-f67.google.com ([209.85.166.67]:41095 "EHLO
-        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726080AbgA1CJT (ORCPT
+        id S1726670AbgA1COq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 27 Jan 2020 21:14:46 -0500
+Received: from mail-pf1-f173.google.com ([209.85.210.173]:41391 "EHLO
+        mail-pf1-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726080AbgA1COq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 27 Jan 2020 21:09:19 -0500
-Received: by mail-io1-f67.google.com with SMTP id m25so12450837ioo.8;
-        Mon, 27 Jan 2020 18:09:19 -0800 (PST)
+        Mon, 27 Jan 2020 21:14:46 -0500
+Received: by mail-pf1-f173.google.com with SMTP id w62so5819767pfw.8
+        for <linux-kernel@vger.kernel.org>; Mon, 27 Jan 2020 18:14:46 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=Jqeka4BRN4QCngINzPSMLmJvVtJZ+1civQXaHl9LEDU=;
-        b=C2nySqPo3DP5zUI8IHxkiPq3mjvT9ZQJ2FWeALKWoafxbpxXKAbIzhv3ZNS55XAx36
-         L5jUaL3lhl9wM2FZJSY9jOPEJU9DrAaTWlNu/uJzhcUEOD1uI07VSn/rz4Sx1HVEM+SX
-         rUOhFR0QiCRR7vb9Toywv7Eg3nSJp02dUIZ7PsBhqTHjjlI46gGYrP/jKBxRHcD+t6Ny
-         iTErSIWGrSxsmE4hV6bsPiHhW9+99BM3BbX/kWWWeNAT06b4zYLKx83/XdVFWrYzdn2v
-         xLRtABKiTjYUnx2T7CihXALM2CACMml8iUqpyuuDGGYTHZEIe7xpsOVk77b79SYqbcFT
-         qpRA==
+        d=google.com; s=20161025;
+        h=subject:date:message-id:mime-version:content-transfer-encoding:cc
+         :from:to;
+        bh=DrrSxaqg+xMHJET+xxCFd4AzKeXkcnr9cON2fZed2UM=;
+        b=RF9nMOM9cUcTpHOes6fCDFot2ORVBBSCK8xX151vp4yLYwGKEqjk1LuTUbuy/rYMUo
+         OB7cLFZX3tiVGf3mh7j55tR2V/wRiwGIYn0Pp4DcnTb7qRrxNvUo99NGQVrNzDg5pkK/
+         sSYcAjedIPNO4Uerbz8D6UaaqPtAyKJk0C0pm8A3nO3nfWqjC6PdUCrzye4Xbkpikeg8
+         UOjEUmWm5kuJ9uwJphYlQDPai4Dm0JE5K5m3CgLTreFAFGEF7ZvE2dYE1D33MvPeCtik
+         jcrDB1UucvsBipSDT9pfMlydmZVMDbaV1fws6wYK9YgRq8dTq5Il0or6opZDw4YxWxwf
+         oYYg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=Jqeka4BRN4QCngINzPSMLmJvVtJZ+1civQXaHl9LEDU=;
-        b=cBbCseaOXkt6lYPxD+Qvrkd0IUVNX5uhj+IWnARJhPcE/nNEUJp/5IcSYDb+sbZb7P
-         VF5kqVWYVYDop87/OxLzIwGx8ubwanM+Wczu3wfRa0cE2MvXcyVPGxTMP6KYDUkAE6+g
-         jvwtIay2qOa2uW7r7nP2LZeM9xfTvUWKBBfFaf2L7rTy7o8gp7yU0VFj8ztvEPjRRZvc
-         2cHpudfsOtkqqxiT2OiI53AvJ9dMvE2IJD8kMqK2t4Ffx7fQMPSlK7/jE7j7rru44h7k
-         1CLg5gAIeH8MNRtlBc0920Fz716RzT3+PfMzxSdZIrQP5san3MbuGxeRsxB6uyWXCaj6
-         KsYQ==
-X-Gm-Message-State: APjAAAWBMEanF74XCMmplbI3UTMYCmLvMBuGnJN1WJhEVIAakaWhvN50
-        AzwC+PT7K3/qXFLHSsYES+TTT3O28SLyj5YEpmfadg==
-X-Google-Smtp-Source: APXvYqzlDUE7G1Cuqxvk6DspgP0RYK+1bgmqnUAa+UnGxlsbxG55exqQISC752x7GdmlfCj/k3BIaeo+bpCjBIQ2KXI=
-X-Received: by 2002:a6b:4e1a:: with SMTP id c26mr13878144iob.154.1580177358558;
- Mon, 27 Jan 2020 18:09:18 -0800 (PST)
+        h=x-gm-message-state:subject:date:message-id:mime-version
+         :content-transfer-encoding:cc:from:to;
+        bh=DrrSxaqg+xMHJET+xxCFd4AzKeXkcnr9cON2fZed2UM=;
+        b=U1QNPMKMGVzj0RN+5wuFAgQAquuuU4Bq0ufSAc1ynWh0tPq618BeALAjY8lF3ai6/B
+         fEZHeUh81YgR4gSOmTNUOMNLV5+QFIiuULg6OByXu2s2b7z+09LQ7rAa3UwydjAWrajp
+         WDLsjaT10J7f6MI+0QtryF4Ns2Trnct/CebiP2V0hngqJyoKPuhsEMmC/Twdzh33Ja8k
+         JHkrilUPneYWWyeLkcYbS8UHLx5rwuEKuc+o1xpCJi1KFfV/jXnY4nhDup+KAA4zWEuT
+         42bm7t5G0klFZRBGHuNBTe3C2heVfK/liSoMQFbtrYpk2zjsA13liosniiMHv8Wcgex0
+         o0qA==
+X-Gm-Message-State: APjAAAVC6cEpkOzC63D3fWfalGk/nV7eQhdYWMUuXc9p7FgRrscO1+1k
+        kmWAGDvN/9ge4LGzMcHR7MXq7Q==
+X-Google-Smtp-Source: APXvYqzQaE82BkrwN8enKVWh7LhvYVblBpdtkI68w4zgo2qGK/PKGkjLJeYUCgcwMaQr9ym7GELY6A==
+X-Received: by 2002:a63:ff5c:: with SMTP id s28mr22418848pgk.196.1580177685323;
+        Mon, 27 Jan 2020 18:14:45 -0800 (PST)
+Received: from localhost ([216.9.110.8])
+        by smtp.gmail.com with ESMTPSA id b15sm17010169pft.58.2020.01.27.18.14.43
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 27 Jan 2020 18:14:44 -0800 (PST)
+Subject: arm64: bpf: Elide some moves to a0 after calls
+Date:   Mon, 27 Jan 2020 18:11:41 -0800
+Message-Id: <20200128021145.36774-1-palmerdabbelt@google.com>
+X-Mailer: git-send-email 2.25.0.341.g760bfbb309-goog
 MIME-Version: 1.0
-References: <20200124144248.11719-1-yu.c.chen@intel.com> <20200124192743.GL4675@bombadil.infradead.org>
-In-Reply-To: <20200124192743.GL4675@bombadil.infradead.org>
-From:   Chen Yu <yu.chen.surf@gmail.com>
-Date:   Tue, 28 Jan 2020 10:09:07 +0800
-Message-ID: <CADjb_WTBuhtKpko4dSh3Rj9D3=ie3hyh-nU6ib-XsCu9br1XZQ@mail.gmail.com>
-Subject: Re: [PATCH][RFC] PCI: Add "pci=blacklist_dev=" parameter to blacklist
- specific devices
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     Chen Yu <yu.c.chen@intel.com>, linux-pci@vger.kernel.org,
-        Jonathan Corbet <corbet@lwn.net>,
-        Bjorn Helgaas <bhelgaas@google.com>, linux-doc@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Len Brown <lenb@kernel.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+Cc:     daniel@iogearbox.net, ast@kernel.org, zlim.lnx@gmail.com,
+        catalin.marinas@arm.com, will@kernel.org, kafai@fb.com,
+        songliubraving@fb.com, yhs@fb.com, andriin@fb.com,
+        shuah@kernel.org, Palmer Dabbelt <palmerdabbelt@google.com>,
+        netdev@vger.kernel.org, bpf@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-kselftest@vger.kernel.org,
+        clang-built-linux@googlegroups.com, kernel-team@android.com
+From:   Palmer Dabbelt <palmerdabbelt@google.com>
+To:     Bjorn Topel <bjorn.topel@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Matthew,
-Thanks for repy.
-On Sat, Jan 25, 2020 at 5:01 AM Matthew Wilcox <willy@infradead.org> wrote:
->
-> On Fri, Jan 24, 2020 at 10:42:48PM +0800, Chen Yu wrote:
-> > It was found that on some platforms the bogus pci device might bring
-> > troubles to the system. For example, on a MacBookPro the system could
-> > not be power off or suspended due to internal pci resource confliction
-> > between bogus pci device and [io 0x1804]. Another case is that, once
-> > resumed from hibernation on a VM, the pci config space of a pci device
-> > is corrupt.
-> >
-> > To narrow down and benefit future debugging for such kind of issues,
-> > introduce the command line blacklist_dev=<vendor:device_id>> to blacklist
-> > such pci devices thus they will not be scanned thus not visible after
-> > bootup. For example,
-> >
-> >  pci.blacklist_dev=8086:293e
-> >
-> > forbid the audio device to be exposed to the OS.
->
-> This feels really unsafe to me.  Just because Linux ignores the device
-> doesn't mean the device will ignore I/O requests.  I think we should
-> call this pci.disable_dev and clear the device's I/O Space Enable,
-> Memory Space Enable and Bus Master Enable bits (in the Command register,
-> config space offset 4).
-Oh right, the BIOS might already has enabled Memory/IO space
-in the config during boot up and thus has already claimed the resource range
-for this pci device.
-I'll summarize the problem I found currently in Bjorn's reply and let's
-discuss it there.
+There's four patches here, but only one of them actually does anything.  The
+first patch fixes a BPF selftests build failure on my machine and has already
+been sent to the list separately.  The next three are just staged such that
+there are some patches that avoid changing any functionality pulled out from
+the whole point of those refactorings, with two cleanups and then the idea.
 
-Thanks,
-chenyu
+Maybe this is an odd thing to say in a cover letter, but I'm not actually sure
+this patch set is a good idea.  The issue of extra moves after calls came up as
+I was reviewing some unrelated performance optimizations to the RISC-V BPF JIT.
+I figured I'd take a whack at performing the optimization in the context of the
+arm64 port just to get a breath of fresh air, and I'm not convinced I like the
+results.
+
+That said, I think I would accept something like this for the RISC-V port
+because we're already doing a multi-pass optimization for shrinking function
+addresses so it's not as much extra complexity over there.  If we do that we
+should probably start puling some of this code into the shared BPF compiler,
+but we're also opening the doors to more complicated BPF JIT optimizations.
+Given that the BPF JIT appears to have been designed explicitly to be
+simple/fast as opposed to perform complex optimization, I'm not sure this is a
+sane way to move forward.
+
+I figured I'd send the patch set out as more of a question than anything else.
+Specifically:
+
+* How should I go about measuring the performance of these sort of
+  optimizations?  I'd like to balance the time it takes to run the JIT with the
+  time spent executing the program, but I don't have any feel for what real BPF
+  programs look like or have any benchmark suite to run.  Is there something
+  out there this should be benchmarked against?  (I'd also like to know that to
+  run those benchmarks on the RISC-V port.)
+* Is this the sort of thing that makes sense in a BPF JIT?  I guess I've just
+  realized I turned "review this patch" into a way bigger rabbit hole than I
+  really want to go down...
+
+I worked on top of 5.4 for these, but trivially different versions of the
+patches applied on Linus' master a few days ago when I tried.  LMK if those
+aren't sane places to start from over here, I'm new to both arm64 and BPF so I
+might be a bit lost.
+
+[PATCH 1/4] selftests/bpf: Elide a check for LLVM versions that can't
+[PATCH 2/4] arm64: bpf: Convert bpf2a64 to a function
+[PATCH 3/4] arm64: bpf: Split the read and write halves of dst
+[PATCH 4/4] arm64: bpf: Elide some moves to a0 after calls
+
