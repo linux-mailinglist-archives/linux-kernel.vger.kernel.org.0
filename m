@@ -2,36 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8043F14B8C0
+	by mail.lfdr.de (Postfix) with ESMTP id E958514B8C1
 	for <lists+linux-kernel@lfdr.de>; Tue, 28 Jan 2020 15:27:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731064AbgA1O07 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 28 Jan 2020 09:26:59 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54538 "EHLO mail.kernel.org"
+        id S1733262AbgA1O1E (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 28 Jan 2020 09:27:04 -0500
+Received: from mail.kernel.org ([198.145.29.99]:54608 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1733239AbgA1O0z (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 Jan 2020 09:26:55 -0500
+        id S1733243AbgA1O06 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 28 Jan 2020 09:26:58 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D81C024688;
-        Tue, 28 Jan 2020 14:26:54 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4CEE724688;
+        Tue, 28 Jan 2020 14:26:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1580221615;
-        bh=vFwKv6+IOjYUGHyaQxM/vTaosCbWrV9HShRB2gnc7yg=;
+        s=default; t=1580221617;
+        bh=bf8pkmbJpEHqDv7s3fu/qvPCTiz3zP6jWmeERtoHOZM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=bcz730kajifunjxn5Q/JNlfgj3kaZ+peqP08rDd+x3grV3NLu4wnRUCe210Mez0vW
-         ChtwOx3FQtEhdVN3leNwJwI9k6wpOPGe8HGUx2RnpEtyKgn/jRWC6h4TgPZA9/NsUo
-         +Kd+8dZHmkUHJKEMmqwV1Yyb8KErbduBhwK9jBc0=
+        b=AJxK2MwVrarx03iqTubBSyMpPFiUm84LmVCyZVJmIZ9xdBT9jROPpFm0lDt55HB5T
+         bFdgLliAomzYgPjtq3hF3IsYsD05UrrjJbR6i5YDoX9gKN3U7nbjHOPapss3kBoRGI
+         iiWw5IBFpd1+5FX/F/gQKFocnYMw1mZZ6RcAtVuc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Florian Fainelli <f.fainelli@gmail.com>,
-        Doug Berger <opendmb@gmail.com>,
+        stable@vger.kernel.org,
+        Ilja Van Sprundel <ivansprundel@ioactive.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.19 05/92] net: bcmgenet: Use netif_tx_napi_add() for TX NAPI
-Date:   Tue, 28 Jan 2020 15:07:33 +0100
-Message-Id: <20200128135809.992532654@linuxfoundation.org>
+Subject: [PATCH 4.19 06/92] net: cxgb3_main: Add CAP_NET_ADMIN check to CHELSIO_GET_MEM
+Date:   Tue, 28 Jan 2020 15:07:34 +0100
+Message-Id: <20200128135810.088405796@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
 In-Reply-To: <20200128135809.344954797@linuxfoundation.org>
 References: <20200128135809.344954797@linuxfoundation.org>
@@ -44,36 +45,45 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Florian Fainelli <f.fainelli@gmail.com>
+From: Michael Ellerman <mpe@ellerman.id.au>
 
-[ Upstream commit 148965df1a990af98b2c84092c2a2274c7489284 ]
+[ Upstream commit 3546d8f1bbe992488ed91592cf6bf76e7114791a =
 
-Before commit 7587935cfa11 ("net: bcmgenet: move NAPI initialization to
-ring initialization") moved the code, this used to be
-netif_tx_napi_add(), but we lost that small semantic change in the
-process, restore that.
+The cxgb3 driver for "Chelsio T3-based gigabit and 10Gb Ethernet
+adapters" implements a custom ioctl as SIOCCHIOCTL/SIOCDEVPRIVATE in
+cxgb_extension_ioctl().
 
-Fixes: 7587935cfa11 ("net: bcmgenet: move NAPI initialization to ring initialization")
-Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
-Acked-by: Doug Berger <opendmb@gmail.com>
+One of the subcommands of the ioctl is CHELSIO_GET_MEM, which appears
+to read memory directly out of the adapter and return it to userspace.
+It's not entirely clear what the contents of the adapter memory
+contains, but the assumption is that it shouldn't be accessible to all
+users.
+
+So add a CAP_NET_ADMIN check to the CHELSIO_GET_MEM case. Put it after
+the is_offload() check, which matches two of the other subcommands in
+the same function which also check for is_offload() and CAP_NET_ADMIN.
+
+Found by Ilja by code inspection, not tested as I don't have the
+required hardware.
+
+Reported-by: Ilja Van Sprundel <ivansprundel@ioactive.com>
+Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/broadcom/genet/bcmgenet.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/net/ethernet/chelsio/cxgb3/cxgb3_main.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
---- a/drivers/net/ethernet/broadcom/genet/bcmgenet.c
-+++ b/drivers/net/ethernet/broadcom/genet/bcmgenet.c
-@@ -2166,8 +2166,8 @@ static void bcmgenet_init_tx_ring(struct
- 				  DMA_END_ADDR);
+--- a/drivers/net/ethernet/chelsio/cxgb3/cxgb3_main.c
++++ b/drivers/net/ethernet/chelsio/cxgb3/cxgb3_main.c
+@@ -2449,6 +2449,8 @@ static int cxgb_extension_ioctl(struct n
  
- 	/* Initialize Tx NAPI */
--	netif_napi_add(priv->dev, &ring->napi, bcmgenet_tx_poll,
--		       NAPI_POLL_WEIGHT);
-+	netif_tx_napi_add(priv->dev, &ring->napi, bcmgenet_tx_poll,
-+			  NAPI_POLL_WEIGHT);
- }
- 
- /* Initialize a RDMA ring */
+ 		if (!is_offload(adapter))
+ 			return -EOPNOTSUPP;
++		if (!capable(CAP_NET_ADMIN))
++			return -EPERM;
+ 		if (!(adapter->flags & FULL_INIT_DONE))
+ 			return -EIO;	/* need the memory controllers */
+ 		if (copy_from_user(&t, useraddr, sizeof(t)))
 
 
