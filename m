@@ -2,42 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E557E14B826
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Jan 2020 15:21:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9275B14B6E4
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Jan 2020 15:09:33 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730939AbgA1OVE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 28 Jan 2020 09:21:04 -0500
-Received: from mail.kernel.org ([198.145.29.99]:46188 "EHLO mail.kernel.org"
+        id S1727750AbgA1OJL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 28 Jan 2020 09:09:11 -0500
+Received: from mail.kernel.org ([198.145.29.99]:57252 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731190AbgA1OVB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 Jan 2020 09:21:01 -0500
+        id S1728607AbgA1OI7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 28 Jan 2020 09:08:59 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A068D24690;
-        Tue, 28 Jan 2020 14:21:00 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D195922522;
+        Tue, 28 Jan 2020 14:08:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1580221261;
-        bh=rO20ReY0D17Z08+D6hDKugrRpVERf/wymJFyg4vn6yo=;
+        s=default; t=1580220539;
+        bh=wdwwvVSenVt6N8xdd9g8pLjeeMvBztVrT/ceq7bgBaM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=cRRN2OTb75EHwJoO8HW5jr6I2gGFjfCrA9yD+83PL/XYqkwd8oqQyVwnFA/un1vrx
-         W8ze/frwsLfndivc5kFpGH+ob947u5xhUTm8pFYVHG/1+2iPDYBIYivPRqTsRBHsM7
-         Y0nRsoPwb2/anCEQmKvhd3eavVy8zSmMO/281rFg=
+        b=UfwPWkqSQUZoNUq7pB8rbUO1tZ0t8RUjhJCUl6obQJg/ZyjANagdLHNM0aUA8gViI
+         na1TIqtt0OMfqKCrmzNTt7mDelWQcf6CWpvf2tI3MsqQzhgu02lWaNWNafppYDr8ZJ
+         7eDhYD9GhT4Q9/zTzh7bdNPZ7nkQ+ixQfIgN/0zo=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jie Liu <liujie165@huawei.com>,
-        Qiang Ning <ningqiang1@huawei.com>,
-        Zhiqiang Liu <liuzhiqiang26@huawei.com>,
-        Miaohe Lin <linmiaohe@huawei.com>,
-        "David S. Miller" <davem@davemloft.net>,
+        stable@vger.kernel.org, Eric Auger <eric.auger@redhat.com>,
+        Alex Williamson <alex.williamson@redhat.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 117/271] tipc: set sysctl_tipc_rmem and named_timeout right range
-Date:   Tue, 28 Jan 2020 15:04:26 +0100
-Message-Id: <20200128135901.298365269@linuxfoundation.org>
+Subject: [PATCH 4.4 048/183] vfio_pci: Enable memory accesses before calling pci_map_rom
+Date:   Tue, 28 Jan 2020 15:04:27 +0100
+Message-Id: <20200128135834.766684922@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200128135852.449088278@linuxfoundation.org>
-References: <20200128135852.449088278@linuxfoundation.org>
+In-Reply-To: <20200128135829.486060649@linuxfoundation.org>
+References: <20200128135829.486060649@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -47,58 +44,67 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jie Liu <liujie165@huawei.com>
+From: Eric Auger <eric.auger@redhat.com>
 
-[ Upstream commit 4bcd4ec1017205644a2697bccbc3b5143f522f5f ]
+[ Upstream commit 0cfd027be1d6def4a462cdc180c055143af24069 ]
 
-We find that sysctl_tipc_rmem and named_timeout do not have the right minimum
-setting. sysctl_tipc_rmem should be larger than zero, like sysctl_tcp_rmem.
-And named_timeout as a timeout setting should be not less than zero.
+pci_map_rom/pci_get_rom_size() performs memory access in the ROM.
+In case the Memory Space accesses were disabled, readw() is likely
+to trigger a synchronous external abort on some platforms.
 
-Fixes: cc79dd1ba9c10 ("tipc: change socket buffer overflow control to respect sk_rcvbuf")
-Fixes: a5325ae5b8bff ("tipc: add name distributor resiliency queue")
-Signed-off-by: Jie Liu <liujie165@huawei.com>
-Reported-by: Qiang Ning <ningqiang1@huawei.com>
-Reviewed-by: Zhiqiang Liu <liuzhiqiang26@huawei.com>
-Reviewed-by: Miaohe Lin <linmiaohe@huawei.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+In case memory accesses were disabled, re-enable them before the
+call and disable them back again just after.
+
+Fixes: 89e1f7d4c66d ("vfio: Add PCI device driver")
+Signed-off-by: Eric Auger <eric.auger@redhat.com>
+Suggested-by: Alex Williamson <alex.williamson@redhat.com>
+Signed-off-by: Alex Williamson <alex.williamson@redhat.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/tipc/sysctl.c | 8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
+ drivers/vfio/pci/vfio_pci.c | 19 ++++++++++++++-----
+ 1 file changed, 14 insertions(+), 5 deletions(-)
 
-diff --git a/net/tipc/sysctl.c b/net/tipc/sysctl.c
-index 1a779b1e85100..40f6d82083d7b 100644
---- a/net/tipc/sysctl.c
-+++ b/net/tipc/sysctl.c
-@@ -37,6 +37,8 @@
+diff --git a/drivers/vfio/pci/vfio_pci.c b/drivers/vfio/pci/vfio_pci.c
+index 4b62eb3b59233..7a82735d53087 100644
+--- a/drivers/vfio/pci/vfio_pci.c
++++ b/drivers/vfio/pci/vfio_pci.c
+@@ -496,6 +496,7 @@ static long vfio_pci_ioctl(void *device_data,
+ 		{
+ 			void __iomem *io;
+ 			size_t size;
++			u16 orig_cmd;
  
- #include <linux/sysctl.h>
+ 			info.offset = VFIO_PCI_INDEX_TO_OFFSET(info.index);
+ 			info.flags = 0;
+@@ -505,15 +506,23 @@ static long vfio_pci_ioctl(void *device_data,
+ 			if (!info.size)
+ 				break;
  
-+static int zero;
-+static int one = 1;
- static struct ctl_table_header *tipc_ctl_hdr;
+-			/* Is it really there? */
++			/*
++			 * Is it really there?  Enable memory decode for
++			 * implicit access in pci_map_rom().
++			 */
++			pci_read_config_word(pdev, PCI_COMMAND, &orig_cmd);
++			pci_write_config_word(pdev, PCI_COMMAND,
++					      orig_cmd | PCI_COMMAND_MEMORY);
++
+ 			io = pci_map_rom(pdev, &size);
+-			if (!io || !size) {
++			if (io) {
++				info.flags = VFIO_REGION_INFO_FLAG_READ;
++				pci_unmap_rom(pdev, io);
++			} else {
+ 				info.size = 0;
+-				break;
+ 			}
+-			pci_unmap_rom(pdev, io);
  
- static struct ctl_table tipc_table[] = {
-@@ -45,14 +47,16 @@ static struct ctl_table tipc_table[] = {
- 		.data		= &sysctl_tipc_rmem,
- 		.maxlen		= sizeof(sysctl_tipc_rmem),
- 		.mode		= 0644,
--		.proc_handler	= proc_dointvec,
-+		.proc_handler	= proc_dointvec_minmax,
-+		.extra1         = &one,
- 	},
- 	{
- 		.procname	= "named_timeout",
- 		.data		= &sysctl_tipc_named_timeout,
- 		.maxlen		= sizeof(sysctl_tipc_named_timeout),
- 		.mode		= 0644,
--		.proc_handler	= proc_dointvec,
-+		.proc_handler	= proc_dointvec_minmax,
-+		.extra1         = &zero,
- 	},
- 	{}
- };
+-			info.flags = VFIO_REGION_INFO_FLAG_READ;
++			pci_write_config_word(pdev, PCI_COMMAND, orig_cmd);
+ 			break;
+ 		}
+ 		case VFIO_PCI_VGA_REGION_INDEX:
 -- 
 2.20.1
 
