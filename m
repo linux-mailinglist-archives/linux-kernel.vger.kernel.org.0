@@ -2,49 +2,49 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A7FC114B516
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Jan 2020 14:35:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8EDFC14B4FF
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Jan 2020 14:34:57 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726821AbgA1NfO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 28 Jan 2020 08:35:14 -0500
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:58899 "EHLO
+        id S1726613AbgA1NeV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 28 Jan 2020 08:34:21 -0500
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:58912 "EHLO
         mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726346AbgA1NeS (ORCPT
+        with ESMTP id S1726510AbgA1NeS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 28 Jan 2020 08:34:18 -0500
-Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
-        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20200128133416euoutp01f91a9a05c46e07147d73836b3588b441~uEFBYVmlj0195601956euoutp01I
+Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
+        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20200128133416euoutp0100a66b203754566886d922f7d0f6e7e5~uEFBezb4y0195601956euoutp01J
         for <linux-kernel@vger.kernel.org>; Tue, 28 Jan 2020 13:34:16 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20200128133416euoutp01f91a9a05c46e07147d73836b3588b441~uEFBYVmlj0195601956euoutp01I
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20200128133416euoutp0100a66b203754566886d922f7d0f6e7e5~uEFBezb4y0195601956euoutp01J
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
         s=mail20170921; t=1580218456;
-        bh=9GC41GZxsu9pE/kEPtcdNoCfP8ZZpAvDx72nJ/t5b5M=;
+        bh=+nhl2QgmqdoNH5vOKvOoBGGKQG+7lMuwayVmJW3tto0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ErSftcT7fuYEpEulBSvxDYwH1zck4TT9hjY1SMJX2Tn6lX60JQMTwtImEb9INpCYF
-         Aevd7X8duTooH/L2EkEhFLkeIuvhIyn0OJeyI5JKuAqOK5kw5qrpzg39IqiRwUDk7F
-         t6pU2zV/i6Rbuo/kqAK/PigWBJ5MsJjDLG3o1/cU=
-Received: from eusmges3new.samsung.com (unknown [203.254.199.245]) by
-        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
-        20200128133416eucas1p170536042e847b1d13cd09fc51ec308ae~uEFBGrF7S1372113721eucas1p1F;
+        b=qJfMuVY9ja+nGsnGXnyt2fAljvNE4D2tdtx6hbw+lM9B/yOZPER/tmjS7SBZLODqX
+         peiC7YlvssdiCvOJzz5/fBxLSbtXBlHFQTLaewC4ThXz3WE7E6TaWNwNHOz4HJj/LS
+         XlN2m1j7+9TMbWG4+upWgZJsKySnhUH4j60LTPCE=
+Received: from eusmges2new.samsung.com (unknown [203.254.199.244]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
+        20200128133416eucas1p279457a2cb05080fbee9c0a223a21eb07~uEFBRnDd70683706837eucas1p2H;
         Tue, 28 Jan 2020 13:34:16 +0000 (GMT)
-Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
-        eusmges3new.samsung.com (EUCPMTA) with SMTP id F8.DA.60698.858303E5; Tue, 28
+Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
+        eusmges2new.samsung.com (EUCPMTA) with SMTP id F3.5A.60679.858303E5; Tue, 28
         Jan 2020 13:34:16 +0000 (GMT)
 Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
         eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
-        20200128133415eucas1p12cc620dd5f19e6a26f1deeba083ea82f~uEFAwye7t0714007140eucas1p1j;
-        Tue, 28 Jan 2020 13:34:15 +0000 (GMT)
-Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
+        20200128133416eucas1p1eb121384be2323aed1fc63a6d1ebe14f~uEFA8EeCh0713407134eucas1p1u;
+        Tue, 28 Jan 2020 13:34:16 +0000 (GMT)
+Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
         eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20200128133415eusmtrp2be066cc50ecb226b9de5031f609a3522~uEFAq2Mvj0330103301eusmtrp2z;
-        Tue, 28 Jan 2020 13:34:15 +0000 (GMT)
-X-AuditID: cbfec7f5-a29ff7000001ed1a-bc-5e3038589b4c
+        20200128133416eusmtrp24985406fc97da71716c231976f5997ad~uEFA7h93J0330003300eusmtrp22;
+        Tue, 28 Jan 2020 13:34:16 +0000 (GMT)
+X-AuditID: cbfec7f4-0e5ff7000001ed07-51-5e3038581b88
 Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
-        eusmgms2.samsung.com (EUCPMTA) with SMTP id 71.82.07950.758303E5; Tue, 28
+        eusmgms1.samsung.com (EUCPMTA) with SMTP id 04.92.08375.758303E5; Tue, 28
         Jan 2020 13:34:15 +0000 (GMT)
 Received: from AMDC3058.digital.local (unknown [106.120.51.71]) by
         eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
-        20200128133415eusmtip270e3d36fdc14666da25e0e6e36854a2f~uEFAS4n1z0657106571eusmtip2i;
+        20200128133415eusmtip26f0b06ff629847adfb1ecdfafdf3de9a~uEFAm5fAM0113601136eusmtip2F;
         Tue, 28 Jan 2020 13:34:15 +0000 (GMT)
 From:   Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 To:     Jens Axboe <axboe@kernel.dk>
@@ -52,55 +52,56 @@ Cc:     Michael Schmitz <schmitzmic@gmail.com>,
         Geert Uytterhoeven <geert@linux-m68k.org>,
         linux-ide@vger.kernel.org, linux-kernel@vger.kernel.org,
         b.zolnierkie@samsung.com
-Subject: [PATCH 15/28] ata: move sata_print_link_status() to
- libata-core-sata.c
-Date:   Tue, 28 Jan 2020 14:33:30 +0100
-Message-Id: <20200128133343.29905-16-b.zolnierkie@samsung.com>
+Subject: [PATCH 16/28] ata: move sata_down_spd_limit() to libata-core-sata.c
+Date:   Tue, 28 Jan 2020 14:33:31 +0100
+Message-Id: <20200128133343.29905-17-b.zolnierkie@samsung.com>
 X-Mailer: git-send-email 2.24.1
 In-Reply-To: <20200128133343.29905-1-b.zolnierkie@samsung.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprBKsWRmVeSWpSXmKPExsWy7djP87oRFgZxBuv/cVmsvtvPZrFxxnpW
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprJKsWRmVeSWpSXmKPExsWy7djPc7oRFgZxBj+2i1usvtvPZrFxxnpW
         i2e39jJZHNvxiMni8q45bBZzW6ezO7B57Jx1l93j8tlSj0OHOxg9+rasYvT4vEkugDWKyyYl
-        NSezLLVI3y6BK+PU9DtMBcdlK/Zu72ZqYHwt3sXIySEhYCJxdf5Uxi5GLg4hgRWMEnu+LWKB
-        cL4wSlzrmw2V+cwo0f6gnQWmZfXeXcwgtpDAckaJD/uL4Dqm9j0BK2ITsJKY2L6KEcQWEVCQ
-        6Pm9kg2kiFlgDaPEqsNNYAlhgUCJ210bmUBsFgFViRfdu8CaeQXsJL6ffgi1TV5i67dPrF2M
-        HBycQPGeveYQJYISJ2dC7GIGKmneOpsZorydXeLskWoI20Vi5atGJghbWOLV8S3sELaMxP+d
-        85lA7pEQWMco8bfjBTOEs51RYvnkf2wQVdYSd879YgNZzCygKbF+lz5E2FFi5vfT7CBhCQE+
-        iRtvBSFu4JOYtG06M0SYV6KjTQiiWk1iw7INbDBru3auhDrTQ+Ll6TbWCYyKs5B8MwvJN7MQ
-        9i5gZF7FKJ5aWpybnlpsnJdarlecmFtcmpeul5yfu4kRmF5O/zv+dQfjvj9JhxgFOBiVeHgd
-        lAzihFgTy4orcw8xSnAwK4nwdjIBhXhTEiurUovy44tKc1KLDzFKc7AoifMaL3oZKySQnliS
-        mp2aWpBaBJNl4uCUamA8/2pZc2n4V68DnTq7/0ipS29r3Dq16qnbvrz1Fy4enfyme780Z+4/
-        k3xdyQNB7N2BGTGBUZcskjgufdr/bZnTKzmp1we8u4PiuhZ59z2Smy5fqrh2LdeZYN6kCKk5
-        eRImbkntrWJxp37oXIv6XbKkYGa9UNbrWYprTk1/ZXprvdefJsNbtxqVWIozEg21mIuKEwHk
-        OXu+KwMAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFmpjkeLIzCtJLcpLzFFi42I5/e/4Pd1wC4M4gwWPNSxW3+1ns9g4Yz2r
+        NSezLLVI3y6BK+Pf0Q/MBT/sKy5cbmZuYFxn1MXIySEhYCIxu2UeSxcjF4eQwApGiVVfdzJC
+        OF8YJZ4t7oXKfGaU+LO3hRWmZeOz3ewQieWMEg8mH2eGa5l6fBsbSBWbgJXExPZVjCC2iICC
+        RM/vlWwgRcwCa4CWHG4CSwgL+EicnnWPCcRmEVCV6D40DczmFbCTWL31IRvEOnmJrd8+Aa3m
+        4OAEivfsNYcoEZQ4OfMJC4jNDFTSvHU22BESAu3sEr9//IA61UXi84kJLBC2sMSr41vYIWwZ
+        if875zNBNKxjlPjb8QKqezujxPLJ/6A2W0vcOfeLDWQzs4CmxPpd+iCmhICjxKfbghAmn8SN
+        t4IQN/BJTNo2nRkizCvR0SYEMUNNYsOyDWwwW7t2rmSGsD0kJlw4xjqBUXEWkm9mIflmFsLa
+        BYzMqxjFU0uLc9NTi43yUsv1ihNzi0vz0vWS83M3MQITzOl/x7/sYNz1J+kQowAHoxIP7wwV
+        gzgh1sSy4srcQ4wSHMxKIrydTEAh3pTEyqrUovz4otKc1OJDjNIcLErivMaLXsYKCaQnlqRm
+        p6YWpBbBZJk4OKUaGAMvi1QKq/FMvbtO5iKb76ep26a5vo5gts+6n7dIxFj4L8/nu4vuGx7q
+        mS2l9u7S0lMXHqr8YPgTJNup+vXrtgWSvuK32id1+V5eXZFUOe02u0WcZjWf5dP8gHVqAQ7h
+        hVvYHp0o6Vms/dnXz6WtS9zP6JHeuZAnd38tytn13Vv6xxEPzsqb2UosxRmJhlrMRcWJAC44
+        2a0sAwAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFmpjkeLIzCtJLcpLzFFi42I5/e/4Pd1wC4M4g/NvbCxW3+1ns9g4Yz2r
         xbNbe5ksju14xGRxedccNou5rdPZHdg8ds66y+5x+Wypx6HDHYwefVtWMXp83iQXwBqlZ1OU
-        X1qSqpCRX1xiqxRtaGGkZ2hpoWdkYqlnaGwea2VkqqRvZ5OSmpNZllqkb5egl3Fq+h2mguOy
-        FXu3dzM1ML4W72Lk5JAQMJFYvXcXcxcjF4eQwFJGic2rTrB3MXIAJWQkjq8vg6gRlvhzrYsN
-        ouYTo8Tk9cuZQRJsAlYSE9tXMYLYIgIKEj2/V4IVMQtsYJR4dfMLC0hCWMBfYv/++2A2i4Cq
-        xIvuXWA2r4CdxPfTD1kgNshLbP32iRVkMSdQvGevOUhYSMBWYv2Zp6wQ5YISJ2c+AStnBipv
-        3jqbeQKjwCwkqVlIUgsYmVYxiqSWFuem5xYb6RUn5haX5qXrJefnbmIExsG2Yz+37GDsehd8
-        iFGAg1GJh9dBySBOiDWxrLgy9xCjBAezkghvJxNQiDclsbIqtSg/vqg0J7X4EKMp0A8TmaVE
-        k/OBMZpXEm9oamhuYWlobmxubGahJM7bIXAwRkggPbEkNTs1tSC1CKaPiYNTqoGxearq3HYG
-        jhd2591M1so8UOq++Sr0q9KaoI8HtJ/nyj6Qn+JZuHpX/YxV19m61ctyv81o6PcL9Nugm5Tl
-        cj6j+G1r1DIxpbMPX27u36jHLCkctyztgCdn6KtP+jJfPq8XnrnceV2h+px6lUUTV50OCWnq
-        ObLQ3O7HguBL+pNcJ3jMEqoOO2ioxFKckWioxVxUnAgAp50g2JkCAAA=
-X-CMS-MailID: 20200128133415eucas1p12cc620dd5f19e6a26f1deeba083ea82f
+        X1qSqpCRX1xiqxRtaGGkZ2hpoWdkYqlnaGwea2VkqqRvZ5OSmpNZllqkb5egl/Hv6Afmgh/2
+        FRcuNzM3MK4z6mLk5JAQMJHY+Gw3excjF4eQwFJGiemHJjF3MXIAJWQkjq8vg6gRlvhzrYsN
+        ouYTo8SMUxNZQRJsAlYSE9tXMYLYIgIKEj2/V4IVMQtsYJR4dfMLC0hCWMBH4vSse0wgNouA
+        qkT3oWlgNq+AncTqrQ/ZIDbIS2z99okVZDEnULxnrzlIWEjAVmL9maesEOWCEidnPgEbyQxU
+        3rx1NvMERoFZSFKzkKQWMDKtYhRJLS3OTc8tNtQrTswtLs1L10vOz93ECIyDbcd+bt7BeGlj
+        8CFGAQ5GJR7eGSoGcUKsiWXFlbmHGCU4mJVEeDuZgEK8KYmVValF+fFFpTmpxYcYTYF+mMgs
+        JZqcD4zRvJJ4Q1NDcwtLQ3Njc2MzCyVx3g6BgzFCAumJJanZqakFqUUwfUwcnFINjJWr9/K4
+        aYWItWhblL8V///h6teprhcuWucH//dewHlHe6Lfo0YeJp9tT0rXSJi5vuSbp+yTt/Hu3I39
+        pVV9C9bxPZ5bGPBPzXzZmqwFdk/exshsmnatVM5qtyXDxuNhoiuXF27qezPHgtF8wl+HDeVW
+        4qpfm1sXLrFvPqT3Ur1LVuMXg55RpRJLcUaioRZzUXEiAADOLQyZAgAA
+X-CMS-MailID: 20200128133416eucas1p1eb121384be2323aed1fc63a6d1ebe14f
 X-Msg-Generator: CA
 Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20200128133415eucas1p12cc620dd5f19e6a26f1deeba083ea82f
+X-RootMTR: 20200128133416eucas1p1eb121384be2323aed1fc63a6d1ebe14f
 X-EPHeader: CA
 CMS-TYPE: 201P
-X-CMS-RootMailID: 20200128133415eucas1p12cc620dd5f19e6a26f1deeba083ea82f
+X-CMS-RootMailID: 20200128133416eucas1p1eb121384be2323aed1fc63a6d1ebe14f
 References: <20200128133343.29905-1-b.zolnierkie@samsung.com>
-        <CGME20200128133415eucas1p12cc620dd5f19e6a26f1deeba083ea82f@eucas1p1.samsung.com>
+        <CGME20200128133416eucas1p1eb121384be2323aed1fc63a6d1ebe14f@eucas1p1.samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-* move sata_print_link_status() to libata-core-sata.c
+* move ata_sstatus_online() to libata.h and make it inline
+
+* move sata_down_spd_limit() to libata-core-sata.c
 
 * add static inline for CONFIG_SATA_HOST=n case
 
@@ -108,110 +109,251 @@ Code size savings on m68k arch using atari_defconfig:
 
    text    data     bss     dec     hex filename
 before:
-  35499     572      40   36111    8d0f drivers/ata/libata-core.o
-after:
   35276     572      40   35888    8c30 drivers/ata/libata-core.o
+after:
+  34996     572      40   35608    8b18 drivers/ata/libata-core.o
 
 Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 ---
- drivers/ata/libata-core-sata.c | 27 +++++++++++++++++++++++++++
- drivers/ata/libata-core.c      | 27 ---------------------------
- drivers/ata/libata.h           |  2 ++
- 3 files changed, 29 insertions(+), 27 deletions(-)
+ drivers/ata/libata-core-sata.c | 80 ++++++++++++++++++++++++++++++++
+ drivers/ata/libata-core.c      | 85 ----------------------------------
+ drivers/ata/libata.h           | 11 ++++-
+ 3 files changed, 90 insertions(+), 86 deletions(-)
 
 diff --git a/drivers/ata/libata-core-sata.c b/drivers/ata/libata-core-sata.c
-index f2629e069a55..8ad8f97660df 100644
+index 8ad8f97660df..fb956c8aee9a 100644
 --- a/drivers/ata/libata-core-sata.c
 +++ b/drivers/ata/libata-core-sata.c
-@@ -258,6 +258,33 @@ int ata_dev_config_ncq(struct ata_device *dev, char *desc, size_t desc_sz)
- 	return 0;
+@@ -285,6 +285,86 @@ void sata_print_link_status(struct ata_link *link)
+ 	}
  }
  
 +/**
-+ *	sata_print_link_status - Print SATA link status
-+ *	@link: SATA link to printk link status about
++ *	sata_down_spd_limit - adjust SATA spd limit downward
++ *	@link: Link to adjust SATA spd limit for
++ *	@spd_limit: Additional limit
 + *
-+ *	This function prints link speed and status of a SATA link.
++ *	Adjust SATA spd limit of @link downward.  Note that this
++ *	function only adjusts the limit.  The change must be applied
++ *	using sata_set_spd().
++ *
++ *	If @spd_limit is non-zero, the speed is limited to equal to or
++ *	lower than @spd_limit if such speed is supported.  If
++ *	@spd_limit is slower than any supported speed, only the lowest
++ *	supported speed is allowed.
 + *
 + *	LOCKING:
-+ *	None.
++ *	Inherited from caller.
++ *
++ *	RETURNS:
++ *	0 on success, negative errno on failure
 + */
-+void sata_print_link_status(struct ata_link *link)
++int sata_down_spd_limit(struct ata_link *link, u32 spd_limit)
 +{
-+	u32 sstatus, scontrol, tmp;
++	u32 sstatus, spd, mask;
++	int rc, bit;
 +
-+	if (sata_scr_read(link, SCR_STATUS, &sstatus))
-+		return;
-+	sata_scr_read(link, SCR_CONTROL, &scontrol);
++	if (!sata_scr_valid(link))
++		return -EOPNOTSUPP;
 +
-+	if (ata_phys_link_online(link)) {
-+		tmp = (sstatus >> 4) & 0xf;
-+		ata_link_info(link, "SATA link up %s (SStatus %X SControl %X)\n",
-+			      sata_spd_string(tmp), sstatus, scontrol);
-+	} else {
-+		ata_link_info(link, "SATA link down (SStatus %X SControl %X)\n",
-+			      sstatus, scontrol);
++	/* If SCR can be read, use it to determine the current SPD.
++	 * If not, use cached value in link->sata_spd.
++	 */
++	rc = sata_scr_read(link, SCR_STATUS, &sstatus);
++	if (rc == 0 && ata_sstatus_online(sstatus))
++		spd = (sstatus >> 4) & 0xf;
++	else
++		spd = link->sata_spd;
++
++	mask = link->sata_spd_limit;
++	if (mask <= 1)
++		return -EINVAL;
++
++	/* unconditionally mask off the highest bit */
++	bit = fls(mask) - 1;
++	mask &= ~(1 << bit);
++
++	/*
++	 * Mask off all speeds higher than or equal to the current one.  At
++	 * this point, if current SPD is not available and we previously
++	 * recorded the link speed from SStatus, the driver has already
++	 * masked off the highest bit so mask should already be 1 or 0.
++	 * Otherwise, we should not force 1.5Gbps on a link where we have
++	 * not previously recorded speed from SStatus.  Just return in this
++	 * case.
++	 */
++	if (spd > 1)
++		mask &= (1 << (spd - 1)) - 1;
++	else
++		return -EINVAL;
++
++	/* were we already at the bottom? */
++	if (!mask)
++		return -EINVAL;
++
++	if (spd_limit) {
++		if (mask & ((1 << spd_limit) - 1))
++			mask &= (1 << spd_limit) - 1;
++		else {
++			bit = ffs(mask) - 1;
++			mask = 1 << bit;
++		}
 +	}
++
++	link->sata_spd_limit = mask;
++
++	ata_link_warn(link, "limiting SATA link speed to %s\n",
++		      sata_spd_string(fls(mask)));
++
++	return 0;
 +}
 +
  /**
   *	sata_link_scr_lpm - manipulate SControl IPM and SPM fields
   *	@link: ATA link to manipulate SControl for
 diff --git a/drivers/ata/libata-core.c b/drivers/ata/libata-core.c
-index 0a90e0e65f0b..73f732a32261 100644
+index 73f732a32261..1d0744f18754 100644
 --- a/drivers/ata/libata-core.c
 +++ b/drivers/ata/libata-core.c
-@@ -2742,33 +2742,6 @@ int ata_bus_probe(struct ata_port *ap)
- 	goto retry;
- }
+@@ -167,11 +167,6 @@ MODULE_LICENSE("GPL");
+ MODULE_VERSION(DRV_VERSION);
  
--/**
-- *	sata_print_link_status - Print SATA link status
-- *	@link: SATA link to printk link status about
-- *
-- *	This function prints link speed and status of a SATA link.
-- *
-- *	LOCKING:
-- *	None.
-- */
--static void sata_print_link_status(struct ata_link *link)
+ 
+-static bool ata_sstatus_online(u32 sstatus)
 -{
--	u32 sstatus, scontrol, tmp;
--
--	if (sata_scr_read(link, SCR_STATUS, &sstatus))
--		return;
--	sata_scr_read(link, SCR_CONTROL, &scontrol);
--
--	if (ata_phys_link_online(link)) {
--		tmp = (sstatus >> 4) & 0xf;
--		ata_link_info(link, "SATA link up %s (SStatus %X SControl %X)\n",
--			      sata_spd_string(tmp), sstatus, scontrol);
--	} else {
--		ata_link_info(link, "SATA link down (SStatus %X SControl %X)\n",
--			      sstatus, scontrol);
--	}
+-	return (sstatus & 0xf) == 0x3;
 -}
 -
  /**
-  *	ata_dev_pair		-	return other device on cable
-  *	@adev: device
+  *	ata_link_next - link iteration helper
+  *	@link: the previous link, NULL to start
+@@ -2760,86 +2755,6 @@ struct ata_device *ata_dev_pair(struct ata_device *adev)
+ }
+ EXPORT_SYMBOL_GPL(ata_dev_pair);
+ 
+-/**
+- *	sata_down_spd_limit - adjust SATA spd limit downward
+- *	@link: Link to adjust SATA spd limit for
+- *	@spd_limit: Additional limit
+- *
+- *	Adjust SATA spd limit of @link downward.  Note that this
+- *	function only adjusts the limit.  The change must be applied
+- *	using sata_set_spd().
+- *
+- *	If @spd_limit is non-zero, the speed is limited to equal to or
+- *	lower than @spd_limit if such speed is supported.  If
+- *	@spd_limit is slower than any supported speed, only the lowest
+- *	supported speed is allowed.
+- *
+- *	LOCKING:
+- *	Inherited from caller.
+- *
+- *	RETURNS:
+- *	0 on success, negative errno on failure
+- */
+-int sata_down_spd_limit(struct ata_link *link, u32 spd_limit)
+-{
+-	u32 sstatus, spd, mask;
+-	int rc, bit;
+-
+-	if (!sata_scr_valid(link))
+-		return -EOPNOTSUPP;
+-
+-	/* If SCR can be read, use it to determine the current SPD.
+-	 * If not, use cached value in link->sata_spd.
+-	 */
+-	rc = sata_scr_read(link, SCR_STATUS, &sstatus);
+-	if (rc == 0 && ata_sstatus_online(sstatus))
+-		spd = (sstatus >> 4) & 0xf;
+-	else
+-		spd = link->sata_spd;
+-
+-	mask = link->sata_spd_limit;
+-	if (mask <= 1)
+-		return -EINVAL;
+-
+-	/* unconditionally mask off the highest bit */
+-	bit = fls(mask) - 1;
+-	mask &= ~(1 << bit);
+-
+-	/*
+-	 * Mask off all speeds higher than or equal to the current one.  At
+-	 * this point, if current SPD is not available and we previously
+-	 * recorded the link speed from SStatus, the driver has already
+-	 * masked off the highest bit so mask should already be 1 or 0.
+-	 * Otherwise, we should not force 1.5Gbps on a link where we have
+-	 * not previously recorded speed from SStatus.  Just return in this
+-	 * case.
+-	 */
+-	if (spd > 1)
+-		mask &= (1 << (spd - 1)) - 1;
+-	else
+-		return -EINVAL;
+-
+-	/* were we already at the bottom? */
+-	if (!mask)
+-		return -EINVAL;
+-
+-	if (spd_limit) {
+-		if (mask & ((1 << spd_limit) - 1))
+-			mask &= (1 << spd_limit) - 1;
+-		else {
+-			bit = ffs(mask) - 1;
+-			mask = 1 << bit;
+-		}
+-	}
+-
+-	link->sata_spd_limit = mask;
+-
+-	ata_link_warn(link, "limiting SATA link speed to %s\n",
+-		      sata_spd_string(fls(mask)));
+-
+-	return 0;
+-}
+-
+ static int __sata_set_spd_needed(struct ata_link *link, u32 *scontrol)
+ {
+ 	struct ata_link *host_link = &link->ap->link;
 diff --git a/drivers/ata/libata.h b/drivers/ata/libata.h
-index 24b08efd79a3..909c2cae52a0 100644
+index 909c2cae52a0..518a8e08a26d 100644
 --- a/drivers/ata/libata.h
 +++ b/drivers/ata/libata.h
-@@ -102,6 +102,7 @@ static inline bool ata_log_supported(struct ata_device *dev, u8 log)
- #ifdef CONFIG_SATA_HOST
+@@ -64,7 +64,6 @@ extern int ata_dev_reread_id(struct ata_device *dev, unsigned int readid_flags);
+ extern int ata_dev_revalidate(struct ata_device *dev, unsigned int new_class,
+ 			      unsigned int readid_flags);
+ extern int ata_dev_configure(struct ata_device *dev);
+-extern int sata_down_spd_limit(struct ata_link *link, u32 spd_limit);
+ extern int ata_down_xfermask_limit(struct ata_device *dev, unsigned int sel);
+ extern unsigned int ata_dev_set_feature(struct ata_device *dev,
+ 					u8 enable, u8 feature);
+@@ -87,6 +86,11 @@ extern void __ata_port_probe(struct ata_port *ap);
+ extern unsigned int ata_read_log_page(struct ata_device *dev, u8 log,
+ 				      u8 page, void *buf, unsigned int sectors);
+ 
++static inline bool ata_sstatus_online(u32 sstatus)
++{
++	return (sstatus & 0xf) == 0x3;
++}
++
+ static inline bool ata_log_supported(struct ata_device *dev, u8 log)
+ {
+ 	struct ata_port *ap = dev->link->ap;
+@@ -103,6 +107,7 @@ static inline bool ata_log_supported(struct ata_device *dev, u8 log)
  int ata_do_link_spd_horkage(struct ata_device *dev);
  int ata_dev_config_ncq(struct ata_device *dev, char *desc, size_t desc_sz);
-+void sata_print_link_status(struct ata_link *link);
+ void sata_print_link_status(struct ata_link *link);
++int sata_down_spd_limit(struct ata_link *link, u32 spd_limit);
  #else
  static inline int ata_do_link_spd_horkage(struct ata_device *dev) { return 0; }
  static inline int ata_dev_config_ncq(struct ata_device *dev, char *desc,
-@@ -110,6 +111,7 @@ static inline int ata_dev_config_ncq(struct ata_device *dev, char *desc,
- 	desc[0] = '\0';
+@@ -112,6 +117,10 @@ static inline int ata_dev_config_ncq(struct ata_device *dev, char *desc,
  	return 0;
  }
-+static inline void sata_print_link_status(struct ata_link *link) { }
+ static inline void sata_print_link_status(struct ata_link *link) { }
++static inline int sata_down_spd_limit(struct ata_link *link, u32 spd_limit)
++{
++	return -EOPNOTSUPP;
++}
  #endif
  
  /* libata-acpi.c */
