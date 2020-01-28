@@ -2,203 +2,197 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D030414B103
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Jan 2020 09:39:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8EAEB14B10A
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Jan 2020 09:40:48 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726027AbgA1Ijn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 28 Jan 2020 03:39:43 -0500
-Received: from mail-il1-f194.google.com ([209.85.166.194]:46362 "EHLO
-        mail-il1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725867AbgA1Ijm (ORCPT
+        id S1726150AbgA1Ikq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 28 Jan 2020 03:40:46 -0500
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:51695 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725881AbgA1Ikq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 Jan 2020 03:39:42 -0500
-Received: by mail-il1-f194.google.com with SMTP id t17so9907143ilm.13;
-        Tue, 28 Jan 2020 00:39:42 -0800 (PST)
+        Tue, 28 Jan 2020 03:40:46 -0500
+Received: by mail-wm1-f66.google.com with SMTP id t23so1532734wmi.1;
+        Tue, 28 Jan 2020 00:40:44 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=dEoW6trIyGpD4Kvb30x1mKGZZhALEZWIqSY8XIzBoOo=;
-        b=e85SRB11bQ6yaIcLY6N76MEgqAVOPwm3CKsT7JHEZ9gQ0UY5DA3LhIk95uMWjhaZ1m
-         vX9/GcMcuJMZTqpU0gCutCjN6lbqZeq6bQtI9zqbBPd5m8JOoWdP/L0bVBVW5tn+9wo2
-         jpwuccaBz1Kj7HY4sA2eYNrvqbNItAlBMrXawztWTyaOMrfETkuDB/OhecUKheZbKz59
-         rn0mak+BTN0SyKw39isrL3Y07ErN8PV68HyKU47MQDcqABH1spJr/fVdXAp+F3qt4I2h
-         I0+JPd3hLRQ8b02UJ59Ulfts2o4+6OzAoPYvd6xZpJhlr6ydP+uQB+tzqFGdn0uulhHF
-         8SFg==
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=CY0t0Jh4KmNVk3ml8hjXW8Vdas/J0r5nTkeZF74pSy0=;
+        b=s/LpWYEIcfGMYj16YRbqin5Jwv6iYr8gbOvilsGF5E0NS2RZAtMwaA1QgmEQYJer9l
+         4ljNiptvd8t9Ch8FcAtJMGOpsZC7Bk7cAq3uEWy1XgHr05QqOkG6/Z6FAc7pG4YfH7/f
+         y9qhiHNjmpiPoEq73qxiikV+5Ddl2RuzTXiI9MNBrQpPAQtdZb+B3rJl8wIXq8z0Nx3E
+         +sVt1BFSfbt6uPe8R6WoRQ2YkRtvFsJmeyPNmYHYoRXj1G+qvKS6+DUj+TcOhTLsJ5IF
+         nErwzIEFNvxk5WUgdwfBJoaDEgVql8oToASv3JMQT5Ey6g/Pgpv9BMAeN6vhVLAV2gW/
+         5xkg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=dEoW6trIyGpD4Kvb30x1mKGZZhALEZWIqSY8XIzBoOo=;
-        b=W+mDBCxkgCug3PtZPpyROpHNzXFqWI69WmaSt4C4tpHOHPupkBr9euXHVUGCrDmMlT
-         BX1riTOVKYQDTnj9RzpwTOLymSA+4NtAzUWJrMx0n84Fd9uJAbJJYYyc2+Krp885u4rI
-         iUKMdWZyuwJqcB33TV5+SoechoGlhjnZbXEQaIxlYwVY9FpeEGGH8vZegpWfNHk66Hls
-         XkeJ2/SWm2irds/P6G34U+Xk/KY2YfmejQuvK+PPmzuRMgjHmHtvKanqc8H/ptQDGEvV
-         M1VPTCKpdkrMIfUWlO9vPvTMkMAMZdR9frsOQTCvUIqzgc08MYnBH90mEXHZxm0FmoPM
-         Vqig==
-X-Gm-Message-State: APjAAAXPxWrK18YDKETJ5TeR5RdfO/ETaYK8PwroBixB1Uzsj59IbNIB
-        W+Gwkz3x6qp5+Qa41BL2r1t15GoVuzBW1ccxDrM=
-X-Google-Smtp-Source: APXvYqxbItAFVdwg3ATF3Xor4sPSAzsaOAhPbWgZNPkv+WJS+rcJLCIRUcjb4McWxsDYzO5E+micOxmgrzDrunXbwM0=
-X-Received: by 2002:a92:ccd0:: with SMTP id u16mr17521848ilq.215.1580200781833;
- Tue, 28 Jan 2020 00:39:41 -0800 (PST)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=CY0t0Jh4KmNVk3ml8hjXW8Vdas/J0r5nTkeZF74pSy0=;
+        b=Mf10ywzAQdNJO3INEn/+Ala9PeqQQcwGOXsXV2j6ibB29EPvhjXzYZ4jUmMqSaWD77
+         cOXU7PoiFlqJSQd5py6InFJ9jmmkHR3+6OpPSOAZvWBffxDZc0kjKcCynkROQByR/pky
+         qkad1pv+V+uesDMmCjidFs1JIrO36C0MZO5HR2r6Wp/7s2EQVgQwbkdoj4xSxd42wdqh
+         wHd9V3yVaVUs4fpC2hF9S0oliSsB6itGUKr1ubePE2BqaZI9Snj2lWkkdhBimy4W3KFG
+         U8L4Xb5DBa809UxfZn/AMa+d7cqLkbnDuKHNke+C4uY/Lb2npCMw256Sm2XMJi+7/JqI
+         3SSg==
+X-Gm-Message-State: APjAAAUzXWzulactpAFu6YPesyiPG4ng5e5BUiPPP25Tu7VXI40hPbqr
+        7YAdKz2NceVxzvQpmg3VCWE=
+X-Google-Smtp-Source: APXvYqydtAPMTd8VYXMiKc/zqY0XzwWworu4R59xBUl28EjN007x2C/d4Omf/55dw5k8RxiP/TVZCQ==
+X-Received: by 2002:a1c:81d3:: with SMTP id c202mr3533111wmd.14.1580200843638;
+        Tue, 28 Jan 2020 00:40:43 -0800 (PST)
+Received: from Red ([2a01:cb1d:3d5:a100:2e56:dcff:fed2:c6d6])
+        by smtp.googlemail.com with ESMTPSA id d16sm28065304wrg.27.2020.01.28.00.40.42
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 28 Jan 2020 00:40:42 -0800 (PST)
+Date:   Tue, 28 Jan 2020 09:40:41 +0100
+From:   Corentin Labbe <clabbe.montjoie@gmail.com>
+To:     Iuliana Prodan <iuliana.prodan@nxp.com>
+Cc:     "davem@davemloft.net" <davem@davemloft.net>,
+        "herbert@gondor.apana.org.au" <herbert@gondor.apana.org.au>,
+        "mripard@kernel.org" <mripard@kernel.org>,
+        "wens@csie.org" <wens@csie.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-sunxi@googlegroups.com" <linux-sunxi@googlegroups.com>
+Subject: Re: [PATCH 5/9] crypto: engine: add enqueue_request/can_do_more
+Message-ID: <20200128084041.GA10493@Red>
+References: <20200122104528.30084-1-clabbe.montjoie@gmail.com>
+ <20200122104528.30084-6-clabbe.montjoie@gmail.com>
+ <AM0PR04MB717155300E3575C07D31E1D08C0B0@AM0PR04MB7171.eurprd04.prod.outlook.com>
 MIME-Version: 1.0
-References: <20200127164321.17468-1-lhenriques@suse.com> <20200127164321.17468-3-lhenriques@suse.com>
- <CAOi1vP9HB4dPTHrgn2bTZ3nM2HSpLkwRvjZ8za0KE4NNnHmmtw@mail.gmail.com> <20200127184443.GB22545@suse.com>
-In-Reply-To: <20200127184443.GB22545@suse.com>
-From:   Ilya Dryomov <idryomov@gmail.com>
-Date:   Tue, 28 Jan 2020 09:39:49 +0100
-Message-ID: <CAOi1vP8sBN6cx+aOtZwJ3FLZHRiZ6_3=cpCD3C5DTRgpE=TmhA@mail.gmail.com>
-Subject: Re: [RFC PATCH 2/3] ceph: parallelize all copy-from requests in copy_file_range
-To:     Luis Henriques <lhenriques@suse.com>
-Cc:     Jeff Layton <jlayton@kernel.org>, Sage Weil <sage@redhat.com>,
-        "Yan, Zheng" <zyan@redhat.com>,
-        Gregory Farnum <gfarnum@redhat.com>,
-        Ceph Development <ceph-devel@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <AM0PR04MB717155300E3575C07D31E1D08C0B0@AM0PR04MB7171.eurprd04.prod.outlook.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jan 27, 2020 at 7:44 PM Luis Henriques <lhenriques@suse.com> wrote:
->
-> On Mon, Jan 27, 2020 at 06:58:46PM +0100, Ilya Dryomov wrote:
-> > On Mon, Jan 27, 2020 at 5:43 PM Luis Henriques <lhenriques@suse.com> wrote:
-> > >
-> > > Right now the copy_file_range syscall serializes all the OSDs 'copy-from'
-> > > operations, waiting for each request to complete before sending the next
-> > > one.  This patch modifies copy_file_range so that all the 'copy-from'
-> > > operations are sent in bulk and waits for its completion at the end.  This
-> > > will allow significant speed-ups, specially when sending requests for
-> > > different target OSDs.
-> > >
-> > > Signed-off-by: Luis Henriques <lhenriques@suse.com>
-> > > ---
-> > >  fs/ceph/file.c                  | 38 +++++++++++++++++++++++++++++++--
-> > >  include/linux/ceph/osd_client.h |  2 ++
-> > >  net/ceph/osd_client.c           |  1 +
-> > >  3 files changed, 39 insertions(+), 2 deletions(-)
-> > >
-> > > diff --git a/fs/ceph/file.c b/fs/ceph/file.c
-> > > index 1e6cdf2dfe90..5d8f0ba11719 100644
-> > > --- a/fs/ceph/file.c
-> > > +++ b/fs/ceph/file.c
-> > > @@ -1931,6 +1931,28 @@ static int is_file_size_ok(struct inode *src_inode, struct inode *dst_inode,
-> > >         return 0;
-> > >  }
-> > >
-> > > +static int wait_copy_from_reqs(struct list_head *osd_reqs)
-> > > +{
-> > > +       struct ceph_osd_request *req;
-> > > +       int ret = 0, err;
-> > > +
-> > > +       while (!list_empty(osd_reqs)) {
-> > > +               req = list_first_entry(osd_reqs,
-> > > +                                      struct ceph_osd_request,
-> > > +                                      r_copy_item);
-> > > +               list_del_init(&req->r_copy_item);
-> > > +               err = ceph_osdc_wait_request(req->r_osdc, req);
-> > > +               if (err) {
-> > > +                       if (!ret)
-> > > +                               ret = err;
-> > > +                       dout("copy request failed (err=%d)\n", err);
-> > > +               }
-> > > +               ceph_osdc_put_request(req);
-> > > +       }
-> > > +
-> > > +       return ret;
-> > > +}
-> >
-> > This should probably go into libceph, as ceph_osdc_wait_requests().
->
-> Sure, that makes sense.
->
-> > > +
-> > >  static ssize_t __ceph_copy_file_range(struct file *src_file, loff_t src_off,
-> > >                                       struct file *dst_file, loff_t dst_off,
-> > >                                       size_t len, unsigned int flags)
-> > > @@ -1943,12 +1965,14 @@ static ssize_t __ceph_copy_file_range(struct file *src_file, loff_t src_off,
-> > >         struct ceph_fs_client *src_fsc = ceph_inode_to_client(src_inode);
-> > >         struct ceph_object_locator src_oloc, dst_oloc;
-> > >         struct ceph_object_id src_oid, dst_oid;
-> > > +       struct ceph_osd_request *req;
-> > >         loff_t endoff = 0, size;
-> > >         ssize_t ret = -EIO;
-> > >         u64 src_objnum, dst_objnum, src_objoff, dst_objoff;
-> > >         u32 src_objlen, dst_objlen, object_size;
-> > >         int src_got = 0, dst_got = 0, err, dirty;
-> > >         bool do_final_copy = false;
-> > > +       LIST_HEAD(osd_reqs);
-> > >
-> > >         if (src_inode->i_sb != dst_inode->i_sb) {
-> > >                 struct ceph_fs_client *dst_fsc = ceph_inode_to_client(dst_inode);
-> > > @@ -2097,7 +2121,7 @@ static ssize_t __ceph_copy_file_range(struct file *src_file, loff_t src_off,
-> > >                 ceph_oid_printf(&dst_oid, "%llx.%08llx",
-> > >                                 dst_ci->i_vino.ino, dst_objnum);
-> > >                 /* Do an object remote copy */
-> > > -               err = ceph_osdc_copy_from(
-> > > +               req = ceph_osdc_copy_from_nowait(
-> > >                         &src_fsc->client->osdc,
-> > >                         src_ci->i_vino.snap, 0,
-> > >                         &src_oid, &src_oloc,
-> > > @@ -2108,7 +2132,8 @@ static ssize_t __ceph_copy_file_range(struct file *src_file, loff_t src_off,
-> > >                         CEPH_OSD_OP_FLAG_FADVISE_DONTNEED,
-> > >                         dst_ci->i_truncate_seq, dst_ci->i_truncate_size,
-> > >                         CEPH_OSD_COPY_FROM_FLAG_TRUNCATE_SEQ);
-> > > -               if (err) {
-> > > +               if (IS_ERR(req)) {
-> > > +                       err = PTR_ERR(req);
-> > >                         if (err == -EOPNOTSUPP) {
-> > >                                 src_fsc->have_copy_from2 = false;
-> > >                                 pr_notice("OSDs don't support 'copy-from2'; "
-> > > @@ -2117,14 +2142,23 @@ static ssize_t __ceph_copy_file_range(struct file *src_file, loff_t src_off,
-> > >                         dout("ceph_osdc_copy_from returned %d\n", err);
-> > >                         if (!ret)
-> > >                                 ret = err;
-> > > +                       /* wait for all queued requests */
-> > > +                       wait_copy_from_reqs(&osd_reqs);
-> > >                         goto out_caps;
-> > >                 }
-> > > +               list_add(&req->r_copy_item, &osd_reqs);
-> > >                 len -= object_size;
-> > >                 src_off += object_size;
-> > >                 dst_off += object_size;
-> > >                 ret += object_size;
-> > >         }
-> > >
-> > > +       err = wait_copy_from_reqs(&osd_reqs);
-> > > +       if (err) {
-> > > +               if (!ret)
-> > > +                       ret = err;
-> > > +               goto out_caps;
-> > > +       }
-> > >         if (len)
-> > >                 /* We still need one final local copy */
-> > >                 do_final_copy = true;
-> > > diff --git a/include/linux/ceph/osd_client.h b/include/linux/ceph/osd_client.h
-> > > index 7916a178d137..2b4a14bc6154 100644
-> > > --- a/include/linux/ceph/osd_client.h
-> > > +++ b/include/linux/ceph/osd_client.h
-> > > @@ -210,6 +210,8 @@ struct ceph_osd_request {
-> > >         u64 r_data_offset;                    /* ditto */
-> > >         bool r_linger;                        /* don't resend on failure */
-> > >
-> > > +       struct list_head r_copy_item;         /* used for copy-from operations */
-> > > +
-> >
-> > We have r_private_item for exactly this kind of ad-hoc lists, already
-> > used in rbd and ceph_direct_read_write().
->
-> Ah!  I've actually considered using it, but thought that using the same
-> field for different purposes may be a source of confusion and bugs in the
-> future.  But sure, it can be used.  I'll add a comment in the struct
-> definition regarding this ad-hoc usage.
+On Mon, Jan 27, 2020 at 10:58:36PM +0000, Iuliana Prodan wrote:
+> On 1/22/2020 12:45 PM, Corentin Labbe wrote:
+> > This patchs adds two new function wrapper in crypto_engine.
+> > - enqueue_request() for drivers enqueuing request to hardware.
+> > - can_queue_more() for letting drivers to tell if they can
+> > enqueue/prepare more.
+> > 
+> > Since some drivers (like caam) only enqueue request without "doing"
+> > them, do_one_request() is now optional.
+> > 
+> > Signed-off-by: Corentin Labbe <clabbe.montjoie@gmail.com>
+> > ---
+> >   crypto/crypto_engine.c  | 25 ++++++++++++++++++++++---
+> >   include/crypto/engine.h | 14 ++++++++------
+> >   2 files changed, 30 insertions(+), 9 deletions(-)
+> > 
+> > diff --git a/crypto/crypto_engine.c b/crypto/crypto_engine.c
+> > index 5bcb1e740fd9..4a28548c49aa 100644
+> > --- a/crypto/crypto_engine.c
+> > +++ b/crypto/crypto_engine.c
+> > @@ -83,6 +83,7 @@ static void crypto_pump_requests(struct crypto_engine *engine,
+> >   		goto out;
+> >   	}
+> >   
+> > +retry:
+> >   	/* Get the fist request from the engine queue to handle */
+> >   	backlog = crypto_get_backlog(&engine->queue);
+> >   	async_req = crypto_dequeue_request(&engine->queue);
+> > @@ -118,10 +119,28 @@ static void crypto_pump_requests(struct crypto_engine *engine,
+> >   			goto req_err2;
+> >   		}
+> >   	}
+> > +
+> > +	if (enginectx->op.enqueue_request) {
+> > +		ret = enginectx->op.enqueue_request(engine, async_req);
+> > +		if (ret) {
+> > +			dev_err(engine->dev, "failed to enqueue request: %d\n",
+> > +				ret);
+> > +			goto req_err;
+> > +		}
+> > +	}
+> > +	if (enginectx->op.can_queue_more && engine->queue.qlen > 0) {
+> > +		ret = enginectx->op.can_queue_more(engine, async_req);
+> > +		if (ret > 0) {
+> > +			spin_lock_irqsave(&engine->queue_lock, flags);
+> > +			goto retry;
+> > +		}
+> > +		if (ret < 0) {
+> > +			dev_err(engine->dev, "failed to call can_queue_more\n");
+> > +			/* TODO */
+> > +		}
+> > +	}
+> >   	if (!enginectx->op.do_one_request) {
+> > -		dev_err(engine->dev, "failed to do request\n");
+> > -		ret = -EINVAL;
+> > -		goto req_err;
+> > +		return;
+> >   	}
+> >   	ret = enginectx->op.do_one_request(engine, async_req);
+> >   	if (ret) {
+> > diff --git a/include/crypto/engine.h b/include/crypto/engine.h
+> > index 03d9f9ec1cea..8ab9d26e30fe 100644
+> > --- a/include/crypto/engine.h
+> > +++ b/include/crypto/engine.h
+> > @@ -63,14 +63,16 @@ struct crypto_engine {
+> >    * @prepare__request: do some prepare if need before handle the current request
+> >    * @unprepare_request: undo any work done by prepare_request()
+> >    * @do_one_request: do encryption for current request
+> > + * @enqueue_request:	Enqueue the request in the hardware
+> > + * @can_queue_more:	if this function return > 0, it will tell the crypto
+> > + * 	engine that more space are availlable for prepare/enqueue request
+> >    */
+> >   struct crypto_engine_op {
+> > -	int (*prepare_request)(struct crypto_engine *engine,
+> > -			       void *areq);
+> > -	int (*unprepare_request)(struct crypto_engine *engine,
+> > -				 void *areq);
+> > -	int (*do_one_request)(struct crypto_engine *engine,
+> > -			      void *areq);
+> > +	int (*prepare_request)(struct crypto_engine *engine, void *areq);
+> > +	int (*unprepare_request)(struct crypto_engine *engine, void *areq);
+> > +	int (*do_one_request)(struct crypto_engine *engine, void *areq);
+> > +	int (*enqueue_request)(struct crypto_engine *engine, void *areq);
+> > +	int (*can_queue_more)(struct crypto_engine *engine, void *areq);
+> >   };
+> 
+> As I mentioned in another thread [1], these crypto-engine patches (#1 - 
+> #5) imply modifications in all the drivers that use crypto-engine.
+> It's not backwards compatible.
 
-It's a means to pass some state through libceph, just like r_priv
-pointer.  The comment is already there, it says "for use by callbacks"
-meaning that libceph won't touch these fields.
+This is wrong. This is false.
+AS I HAVE ALREADY SAID, I have tested and didnt see any behavour change in the current user of crypto engine.
+I have tested my serie with omap, virtio, amlogic, sun8i-ss, sun8i-ce and didnt see any change in behavour WITHOUT CHANGING them.
+I resaid, I didnt touch omap, virtio, etc...
+Only stm32 is not tested because simply there are not board with this driver enabled.
 
-Thanks,
+I have also tested your serie which adds support for crypto engine to caam, and the crash is the same with/without my serie.
+So no behavour change.
 
-                Ilya
+> Your changes imply that do_one_request executes the request & waits for 
+> completion and enqueue_request sends it to hardware. That means that all 
+> the other drivers need to be modify, to implement enqueue_request, 
+> instead of do_one_request. They need to be compliant with the new 
+> changes, new API. Otherwise, they are not using crypto-engine right, 
+> don't you think?
+> 
+
+My change imply nothing, current user work the same.
+But if they want, they COULD switch to enqueue_request().
+
+> Also, do_one_request it shouldn’t be blocking. We got this confirmation 
+> from Herbert [2].
+
+Re-read what Herbert said, "It certainly shouldn't be blocking in the general case." But that means it could.
+But this wont change my patch since both behavour are supported.
+
+> 
+> [1] 
+> https://lore.kernel.org/lkml/VI1PR04MB44455343230CBA7400D21C998C0C0@VI1PR04MB4445.eurprd04.prod.outlook.com/
+> [2] 
+> https://lore.kernel.org/lkml/20200122144134.axqpwx65j7xysyy3@gondor.apana.org.au/
