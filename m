@@ -2,125 +2,221 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3B75414B101
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Jan 2020 09:38:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C387A14B106
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Jan 2020 09:40:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726010AbgA1Iie (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 28 Jan 2020 03:38:34 -0500
-Received: from lb2-smtp-cloud7.xs4all.net ([194.109.24.28]:54143 "EHLO
-        lb2-smtp-cloud7.xs4all.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725867AbgA1Iid (ORCPT
+        id S1726114AbgA1IkQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 28 Jan 2020 03:40:16 -0500
+Received: from mx07-00178001.pphosted.com ([62.209.51.94]:38999 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725867AbgA1IkQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 Jan 2020 03:38:33 -0500
-Received: from [IPv6:2001:983:e9a7:1:6d16:ffdc:f7c6:fc6f]
- ([IPv6:2001:983:e9a7:1:6d16:ffdc:f7c6:fc6f])
-        by smtp-cloud7.xs4all.net with ESMTPA
-        id wMOEiIkz7rNgywMOFiSdnm; Tue, 28 Jan 2020 09:38:31 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=xs4all.nl; s=s1;
-        t=1580200711; bh=IV9O/g4Kf0NmuJ/UEFAYcx5nb57xh717LTJtJ7iiERY=;
-        h=Subject:To:From:Message-ID:Date:MIME-Version:Content-Type:From:
-         Subject;
-        b=TFndPTPXRuMwwNo9Xd2LuBMFrNO3fT0IEbD2rbN3hfbTyj+Q5vk6lNyCsMz8m4Zmu
-         VZMvVKjo8tEQL9U79xT1Nvd/2/VFyonkddRzVLbEI4957OA5b5bxCKn2HZtaM/tQRf
-         Q/VYb73UEWH4OM/OvGB1VTFAKZR3juKGQuiRv0Iw5/ZR/50DUDTn8OnBqPRF0owxlb
-         REo2XDKXspBE8VxVcCxL3UmWtIs+HPfkCewn0Wsg8+qg+Edgjn9/M0ATuKc05rPPiq
-         r6GPOKW2Mc4c3+hAWzmHn/a++MTF3zofvfbU6YC4qljetjvLdhDe3sgOWiL0E83F64
-         Q26qq9d0zwO2w==
-Subject: Re: [RFC][PATCH 05/15] videobuf2: handle
- V4L2_FLAG_MEMORY_NON_CONSISTENT in REQBUFS
-To:     Tomasz Figa <tfiga@chromium.org>
-Cc:     Sergey Senozhatsky <senozhatsky@chromium.org>,
-        Hans Verkuil <hans.verkuil@cisco.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Sakari Ailus <sakari.ailus@iki.fi>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Pawel Osciak <posciak@chromium.org>,
-        Linux Media Mailing List <linux-media@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-References: <20191217032034.54897-1-senozhatsky@chromium.org>
- <20191217032034.54897-6-senozhatsky@chromium.org>
- <8d0c95c3-64a2-ec14-0ac2-204b0430b2b4@xs4all.nl>
- <20200122021805.GE149602@google.com> <20200122034826.GA49953@google.com>
- <7c4accc6-56f2-ecd0-1549-a4114b339ce8@xs4all.nl>
- <CAAFQd5C=Zj7h5Xe1w=0czX5ge1Kh=2cj6yEkN6binPgmmpj6Wg@mail.gmail.com>
-From:   Hans Verkuil <hverkuil@xs4all.nl>
-Message-ID: <be0b79dc-c92f-cbb5-2baa-b058a944435d@xs4all.nl>
-Date:   Tue, 28 Jan 2020 09:38:29 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        Tue, 28 Jan 2020 03:40:16 -0500
+Received: from pps.filterd (m0046037.ppops.net [127.0.0.1])
+        by mx07-00178001.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 00S8WtBS008580;
+        Tue, 28 Jan 2020 09:40:00 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=st.com; h=from : to : cc : subject
+ : date : message-id : mime-version : content-type; s=STMicroelectronics;
+ bh=wYVLtBQDsVpHpQf/7yE70/hiuInLMKJGmpFUxExoUkk=;
+ b=YjhOSP9P4lWFFyr1VBF94DHLOUzMLuRFiOnYnD5ZYvkd3f46cKSVYS8nd69wZumylxN/
+ li3GFgUJB8pA6h6mWv8zX+iW5sS1FcgcHBci0jv65sqaaDEULF9NmiJZdmDNEOdOEQmR
+ fFHIUKvfvPhsnhzL6rEc0LPkQ/R+j5sj+iD0hJeLICCWf7uO1ECeJnBGCXm4i8dFfRis
+ Ma2/gHmdtJzR/5+7CUqUP6vo3aaI9B69fUA3GgOTgYcfr/RJ+1ADV+hemNK3ROOYiQdM
+ hVMsqVlb8FLHeUgLYFjcti62DGR3/wMiJQfIoKiQNe195XoX7R+mkiSl9ypLuN6fwkBT lw== 
+Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
+        by mx07-00178001.pphosted.com with ESMTP id 2xrcaxvrv1-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 28 Jan 2020 09:40:00 +0100
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id C422210002A;
+        Tue, 28 Jan 2020 09:39:55 +0100 (CET)
+Received: from Webmail-eu.st.com (sfhdag5node3.st.com [10.75.127.15])
+        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 7D5A8211F3F;
+        Tue, 28 Jan 2020 09:39:55 +0100 (CET)
+Received: from localhost (10.75.127.44) by SFHDAG5NODE3.st.com (10.75.127.15)
+ with Microsoft SMTP Server (TLS) id 15.0.1473.3; Tue, 28 Jan 2020 09:39:54
+ +0100
+From:   Christophe Roullier <christophe.roullier@st.com>
+To:     <davem@davemloft.net>, <joabreu@synopsys.com>,
+        <mcoquelin.stm32@gmail.com>, <alexandre.torgue@st.com>,
+        <peppe.cavallaro@st.com>
+CC:     <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <netdev@vger.kernel.org>, <christophe.roullier@st.com>
+Subject: [PATCH  1/1] net: ethernet: stmmac: simplify phy modes management for stm32
+Date:   Tue, 28 Jan 2020 09:39:42 +0100
+Message-ID: <20200128083942.17823-1-christophe.roullier@st.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-In-Reply-To: <CAAFQd5C=Zj7h5Xe1w=0czX5ge1Kh=2cj6yEkN6binPgmmpj6Wg@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-CMAE-Envelope: MS4wfKhEKfdXAdA81HiQ4zgKXjWpzuc1aiNifsOOV1m3LmCz/4IKJlloa5zdoRcxZbCSUQrnY0MAlFMtbdmbqFumT0EcI+bVtzG+r5NS1DLOh/LwW8BpM3GU
- oXt0dUpdn+Lod8HiKhoGdxMskahQN3fVNR0AXeK/sstlhbjVagvJ4DNLk/rzLc5juWPdDIjqAOt4ZrjAyFiQkLl+I+aboXk5oivLErmzpUB/6qPhI1sQ3Hgp
- ym+nbdFiULGbqK21+UcVM0U7I6t+XKvwT2mppESmeRWMqvIRPYkNfkqK5TtYiGykDYWjGTPh+K+Co5jh8E77viyZcdWgcXFVr+8QUMp7xHuFEfk2UqlEovtQ
- enASxPymsBn6hH0piaWtU2LzrAOpSegXNZR/I8Mvn9671sb9KZhl0R9mlexhKQJmsNGuxMX8cNgj/7d4PeVL/tSkVJjN2rAto/n+Na/jx9ED6fQga+cADLsd
- 1nLBnkm1/7f85cFkYlWZ7HILdH4kUudd25vaav1Hf4XqULX1BaZhLYhW7GGnkZNYjapAN8eNmZCSxVbLSZtkLaOSgMfUw5/+/xqg+8+8fcmeJDDvQXK9BPei
- reOAdRBVcW/eG08q4X+pPN3UmzHX27QJHpIquqDoHCijag==
+Content-Type: text/plain
+X-Originating-IP: [10.75.127.44]
+X-ClientProxiedBy: SFHDAG6NODE2.st.com (10.75.127.17) To SFHDAG5NODE3.st.com
+ (10.75.127.15)
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.572
+ definitions=2020-01-28_02:2020-01-24,2020-01-28 signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 1/28/20 5:45 AM, Tomasz Figa wrote:
-> On Thu, Jan 23, 2020 at 8:08 PM Hans Verkuil <hverkuil@xs4all.nl> wrote:
->>
->> On 1/22/20 4:48 AM, Sergey Senozhatsky wrote:
->>> On (20/01/22 11:18), Sergey Senozhatsky wrote:
->>> [..]
->>>>>> +    * -
->>>>>> +      - __u32
->>>>>>        - ``reserved``\ [1]
->>>>>>        - A place holder for future extensions. Drivers and applications
->>>>>> -  must set the array to zero.
->>>>>> +  must set the array to zero, unless application wants to specify
->>>>>> +        buffer management ``flags``.
->>>>>
->>>>> I think support for this flag should be signaled as a V4L2_BUF_CAP capability.
->>>>> If the capability is not set, then vb2 should set 'flags' to 0 to preserve the
->>>>> old 'Drivers and applications must set the array to zero' behavior.
->>>>
->>>> The patch set adds V4L2_BUF_CAP_SUPPORTS_CACHE_HINTS towards the end of the
->>>> series, I guess I can shuffle the patches and change the wording here.
->>>
->>> Or I can add separate queue flag and V4L2_BUF_CAP:
->>>
->>> struct vb2_queue {
->>> ...
->>>       allow_cache_hints:1
->>> +     allow_consistency_hints:1
->>> ...
->>> }
->>>
->>> and then have CAP_SUPPORTS_CACHE_HINTS/CAP_SUPPORTS_CONSISTENCY_HINTS.
->>
->> Don't these two go hand-in-hand? I.e. either neither are supported, or
->> both are supported? If so, then one queue flag is sufficient.
-> 
-> Cache sync hints are already part of the standard UAPI, so I think
-> there isn't any capability bit needed for them.
+No new feature, just to simplify stm32 part to be easier to use.
+Add by default all Ethernet clocks in DT, and activate or not in function
+of phy mode, clock frequency, if property "st,ext-phyclk" is set or not.
+Keep backward compatibility
+-----------------------------------------------------------------------
+|PHY_MODE | Normal | PHY wo crystal|   PHY wo crystal   |  No 125Mhz  |
+|         |        |      25MHz    |        50MHz       |  from PHY   |
+-----------------------------------------------------------------------
+|  MII    |	 -    |     eth-ck    |       n/a          |	    n/a  |
+|         |        | st,ext-phyclk |                    |             |
+-----------------------------------------------------------------------
+|  GMII   |	 -    |     eth-ck    |       n/a          |	    n/a  |
+|         |        | st,ext-phyclk |                    |             |
+-----------------------------------------------------------------------
+| RGMII   |	 -    |     eth-ck    |       n/a          |      eth-ck  |
+|         |        | st,ext-phyclk |                    |st,eth-clk-sel|
+|         |        |               |                    |       or     |
+|         |        |               |                    | st,ext-phyclk|
+------------------------------------------------------------------------
+| RMII    |	 -    |     eth-ck    |      eth-ck        |	     n/a  |
+|         |        | st,ext-phyclk | st,eth-ref-clk-sel |              |
+|         |        |               | or st,ext-phyclk   |              |
+------------------------------------------------------------------------
 
-These hints may exist, but they never worked. So I think a capability would
-be very useful.
+Signed-off-by: Christophe Roullier <christophe.roullier@st.com>
 
- That said, they aren't
-> really tied to non-consistent MMAP buffers. Userspace using USERPTR
-> can also use them.
+---
+ .../net/ethernet/stmicro/stmmac/dwmac-stm32.c | 58 +++++++++++--------
+ 1 file changed, 34 insertions(+), 24 deletions(-)
 
-OK, two separate capability bits is fine.
-
-Regards,
-
-	Hans
-
-> 
-> MMAP buffer consistency hint deserves a capability bit indeed.
-> 
-> Best regards,
-> Tomasz
-> 
+diff --git a/drivers/net/ethernet/stmicro/stmmac/dwmac-stm32.c b/drivers/net/ethernet/stmicro/stmmac/dwmac-stm32.c
+index 9b7be996d07b..866251eac868 100644
+--- a/drivers/net/ethernet/stmicro/stmmac/dwmac-stm32.c
++++ b/drivers/net/ethernet/stmicro/stmmac/dwmac-stm32.c
+@@ -29,6 +29,11 @@
+ #define SYSCFG_PMCR_ETH_CLK_SEL		BIT(16)
+ #define SYSCFG_PMCR_ETH_REF_CLK_SEL	BIT(17)
+ 
++/* CLOCK feed to PHY*/
++#define ETH_CK_F_25M	25000000
++#define ETH_CK_F_50M	50000000
++#define ETH_CK_F_125M	125000000
++
+ /*  Ethernet PHY interface selection in register SYSCFG Configuration
+  *------------------------------------------
+  * src	 |BIT(23)| BIT(22)| BIT(21)|BIT(20)|
+@@ -58,33 +63,20 @@
+  *|         |        |      25MHz    |        50MHz       |                  |
+  * ---------------------------------------------------------------------------
+  *|  MII    |	 -   |     eth-ck    |	      n/a	  |	  n/a        |
+- *|         |        |		     |                    |		     |
++ *|         |        | st,ext-phyclk |                    |		     |
+  * ---------------------------------------------------------------------------
+  *|  GMII   |	 -   |     eth-ck    |	      n/a	  |	  n/a        |
+- *|         |        |               |                    |		     |
++ *|         |        | st,ext-phyclk |                    |		     |
+  * ---------------------------------------------------------------------------
+- *| RGMII   |	 -   |     eth-ck    |	      n/a	  |  eth-ck (no pin) |
+- *|         |        |               |                    |  st,eth-clk-sel  |
++ *| RGMII   |	 -   |     eth-ck    |	      n/a	  |      eth-ck      |
++ *|         |        | st,ext-phyclk |                    | st,eth-clk-sel or|
++ *|         |        |               |                    | st,ext-phyclk    |
+  * ---------------------------------------------------------------------------
+  *| RMII    |	 -   |     eth-ck    |	    eth-ck        |	  n/a        |
+- *|         |        |		     | st,eth-ref-clk-sel |		     |
++ *|         |        | st,ext-phyclk | st,eth-ref-clk-sel |		     |
++ *|         |        |               | or st,ext-phyclk   |		     |
+  * ---------------------------------------------------------------------------
+  *
+- * BIT(17) : set this bit in RMII mode when you have PHY without crystal 50MHz
+- * BIT(16) : set this bit in GMII/RGMII PHY when you do not want use 125Mhz
+- * from PHY
+- *-----------------------------------------------------
+- * src	 |         BIT(17)       |       BIT(16)      |
+- *-----------------------------------------------------
+- * MII   |           n/a	 |         n/a        |
+- *-----------------------------------------------------
+- * GMII  |           n/a         |   st,eth-clk-sel   |
+- *-----------------------------------------------------
+- * RGMII |           n/a         |   st,eth-clk-sel   |
+- *-----------------------------------------------------
+- * RMII  |   st,eth-ref-clk-sel	 |         n/a        |
+- *-----------------------------------------------------
+- *
+  */
+ 
+ struct stm32_dwmac {
+@@ -93,6 +85,8 @@ struct stm32_dwmac {
+ 	struct clk *clk_eth_ck;
+ 	struct clk *clk_ethstp;
+ 	struct clk *syscfg_clk;
++	int ext_phyclk;
++	int enable_eth_ck;
+ 	int eth_clk_sel_reg;
+ 	int eth_ref_clk_sel_reg;
+ 	int irq_pwr_wakeup;
+@@ -170,24 +164,34 @@ static int stm32mp1_clk_prepare(struct stm32_dwmac *dwmac, bool prepare)
+ static int stm32mp1_set_mode(struct plat_stmmacenet_data *plat_dat)
+ {
+ 	struct stm32_dwmac *dwmac = plat_dat->bsp_priv;
+-	u32 reg = dwmac->mode_reg;
++	u32 reg = dwmac->mode_reg, clk_rate;
+ 	int val;
+ 
++	clk_rate = clk_get_rate(dwmac->clk_eth_ck);
++	dwmac->enable_eth_ck = false;
+ 	switch (plat_dat->interface) {
+ 	case PHY_INTERFACE_MODE_MII:
++		if (clk_rate == ETH_CK_F_25M && dwmac->ext_phyclk)
++			dwmac->enable_eth_ck = true;
+ 		val = SYSCFG_PMCR_ETH_SEL_MII;
+ 		pr_debug("SYSCFG init : PHY_INTERFACE_MODE_MII\n");
+ 		break;
+ 	case PHY_INTERFACE_MODE_GMII:
+ 		val = SYSCFG_PMCR_ETH_SEL_GMII;
+-		if (dwmac->eth_clk_sel_reg)
++		if (clk_rate == ETH_CK_F_25M &&
++		    (dwmac->eth_clk_sel_reg || dwmac->ext_phyclk)) {
++			dwmac->enable_eth_ck = true;
+ 			val |= SYSCFG_PMCR_ETH_CLK_SEL;
++		}
+ 		pr_debug("SYSCFG init : PHY_INTERFACE_MODE_GMII\n");
+ 		break;
+ 	case PHY_INTERFACE_MODE_RMII:
+ 		val = SYSCFG_PMCR_ETH_SEL_RMII;
+-		if (dwmac->eth_ref_clk_sel_reg)
++		if ((clk_rate == ETH_CK_F_25M || clk_rate == ETH_CK_F_50M) &&
++		    (dwmac->eth_ref_clk_sel_reg || dwmac->ext_phyclk)) {
++			dwmac->enable_eth_ck = true;
+ 			val |= SYSCFG_PMCR_ETH_REF_CLK_SEL;
++		}
+ 		pr_debug("SYSCFG init : PHY_INTERFACE_MODE_RMII\n");
+ 		break;
+ 	case PHY_INTERFACE_MODE_RGMII:
+@@ -195,8 +199,11 @@ static int stm32mp1_set_mode(struct plat_stmmacenet_data *plat_dat)
+ 	case PHY_INTERFACE_MODE_RGMII_RXID:
+ 	case PHY_INTERFACE_MODE_RGMII_TXID:
+ 		val = SYSCFG_PMCR_ETH_SEL_RGMII;
+-		if (dwmac->eth_clk_sel_reg)
++		if ((clk_rate == ETH_CK_F_25M || clk_rate == ETH_CK_F_125M) &&
++		    (dwmac->eth_clk_sel_reg || dwmac->ext_phyclk)) {
++			dwmac->enable_eth_ck = true;
+ 			val |= SYSCFG_PMCR_ETH_CLK_SEL;
++		}
+ 		pr_debug("SYSCFG init : PHY_INTERFACE_MODE_RGMII\n");
+ 		break;
+ 	default:
+@@ -294,6 +301,9 @@ static int stm32mp1_parse_data(struct stm32_dwmac *dwmac,
+ 	struct device_node *np = dev->of_node;
+ 	int err = 0;
+ 
++	/* Ethernet PHY have no crystal */
++	dwmac->ext_phyclk = of_property_read_bool(np, "st,ext-phyclk");
++
+ 	/* Gigabit Ethernet 125MHz clock selection. */
+ 	dwmac->eth_clk_sel_reg = of_property_read_bool(np, "st,eth-clk-sel");
+ 
+-- 
+2.17.1
 
