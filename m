@@ -2,40 +2,44 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6EB2D14B72F
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Jan 2020 15:12:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D06E214B87E
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Jan 2020 15:24:24 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729398AbgA1OME (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 28 Jan 2020 09:12:04 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33106 "EHLO mail.kernel.org"
+        id S1731484AbgA1OYM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 28 Jan 2020 09:24:12 -0500
+Received: from mail.kernel.org ([198.145.29.99]:50666 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726387AbgA1OMB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 Jan 2020 09:12:01 -0500
+        id S1732478AbgA1OYI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 28 Jan 2020 09:24:08 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E56E52468E;
-        Tue, 28 Jan 2020 14:12:00 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 69DB92468A;
+        Tue, 28 Jan 2020 14:24:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1580220721;
-        bh=CnGkaSMz/zk4syJhnne+IejjD2dw4lERZ99EBJxNJyw=;
+        s=default; t=1580221447;
+        bh=PSD4RbVSO0zobmFR8fcfHskmIxH8NTErBAtGouN9zxM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=iqA78m4UZ9jPOvi3MO52gKq2lz2LJfMwIjFkkcX94n/6VznN2UQbU/uzlGEw341gR
-         84TyBkF3d2iDE/pAucZzMI9i8hnP9KtmT1t8DT7Jb+76mfoP54N2szIhx2iyIu+j0B
-         JFb+xdzkd2QK4feM+cdl+Oj3DrkKxDFO+7mI3zfI=
+        b=gtZR/VQ4IZBD13k+KanoXpX7BXsFk0koMWGsP+fBxRVI0awS765JBR3/y6pVpYlJL
+         LORzQhYT/WcSF/syQCwRoCHlvSc932kXvd5oEG/vPqr71+9lf2doR8u8NVLUCPoreN
+         kDpJeXgBaiYZHYErCvgUhW5MjRTyTkZVTuszU3UU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Hulk Robot <hulkci@huawei.com>,
-        YueHaibing <yuehaibing@huawei.com>,
-        Mark Brown <broonie@kernel.org>,
+        stable@vger.kernel.org, Tri Vo <trong@android.com>,
+        Kalesh Singh <kaleshsingh@google.com>,
+        Ravi Chandra Sadineni <ravisadineni@chromium.org>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Stephen Boyd <swboyd@chromium.org>,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+        Sebastian Reichel <sebastian.reichel@collabora.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.4 121/183] ASoC: cs4349: Use PM ops cs4349_runtime_pm
+Subject: [PATCH 4.9 191/271] power: supply: Init device wakeup after device_add()
 Date:   Tue, 28 Jan 2020 15:05:40 +0100
-Message-Id: <20200128135842.009701430@linuxfoundation.org>
+Message-Id: <20200128135906.797802182@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200128135829.486060649@linuxfoundation.org>
-References: <20200128135829.486060649@linuxfoundation.org>
+In-Reply-To: <20200128135852.449088278@linuxfoundation.org>
+References: <20200128135852.449088278@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,38 +49,67 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: YueHaibing <yuehaibing@huawei.com>
+From: Stephen Boyd <swboyd@chromium.org>
 
-[ Upstream commit 9b4275c415acca6264a3d7f1182589959c93d530 ]
+[ Upstream commit 8288022284859acbcc3cf1a073a1e2692d6c2543 ]
 
-sound/soc/codecs/cs4349.c:358:32: warning:
- cs4349_runtime_pm defined but not used [-Wunused-const-variable=]
+We may want to use the device pointer in device_init_wakeup() with
+functions that expect the device to already be added with device_add().
+For example, if we were to link the device initializing wakeup to
+something in sysfs such as a class for wakeups we'll run into an error.
+It looks like this code was written with the assumption that the device
+would be added before initializing wakeup due to the order of operations
+in power_supply_unregister().
 
-cs4349_runtime_pm ops already defined, it seems
-we should enable it.
+Let's change the order of operations so we don't run into problems here.
 
-Reported-by: Hulk Robot <hulkci@huawei.com>
-Fixes: e40da86 ("ASoC: cs4349: Add support for Cirrus Logic CS4349")
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
-Link: https://lore.kernel.org/r/20190815090157.70036-1-yuehaibing@huawei.com
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Fixes: 948dcf966228 ("power_supply: Prevent suspend until power supply events are processed")
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Tri Vo <trong@android.com>
+Cc: Kalesh Singh <kaleshsingh@google.com>
+Cc: Ravi Chandra Sadineni <ravisadineni@chromium.org>
+Cc: Viresh Kumar <viresh.kumar@linaro.org>
+Signed-off-by: Stephen Boyd <swboyd@chromium.org>
+Acked-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+Signed-off-by: Sebastian Reichel <sebastian.reichel@collabora.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- sound/soc/codecs/cs4349.c | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/power/supply/power_supply_core.c | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
-diff --git a/sound/soc/codecs/cs4349.c b/sound/soc/codecs/cs4349.c
-index 0ac8fc5ed4ae4..9ebd500ecf38d 100644
---- a/sound/soc/codecs/cs4349.c
-+++ b/sound/soc/codecs/cs4349.c
-@@ -379,6 +379,7 @@ static struct i2c_driver cs4349_i2c_driver = {
- 	.driver = {
- 		.name		= "cs4349",
- 		.of_match_table	= cs4349_of_match,
-+		.pm = &cs4349_runtime_pm,
- 	},
- 	.id_table	= cs4349_i2c_id,
- 	.probe		= cs4349_i2c_probe,
+diff --git a/drivers/power/supply/power_supply_core.c b/drivers/power/supply/power_supply_core.c
+index 9e05ae0430a99..cb0b3d3d132fc 100644
+--- a/drivers/power/supply/power_supply_core.c
++++ b/drivers/power/supply/power_supply_core.c
+@@ -764,14 +764,14 @@ __power_supply_register(struct device *parent,
+ 	}
+ 
+ 	spin_lock_init(&psy->changed_lock);
+-	rc = device_init_wakeup(dev, ws);
+-	if (rc)
+-		goto wakeup_init_failed;
+-
+ 	rc = device_add(dev);
+ 	if (rc)
+ 		goto device_add_failed;
+ 
++	rc = device_init_wakeup(dev, ws);
++	if (rc)
++		goto wakeup_init_failed;
++
+ 	rc = psy_register_thermal(psy);
+ 	if (rc)
+ 		goto register_thermal_failed;
+@@ -808,8 +808,8 @@ register_cooler_failed:
+ 	psy_unregister_thermal(psy);
+ register_thermal_failed:
+ 	device_del(dev);
+-device_add_failed:
+ wakeup_init_failed:
++device_add_failed:
+ check_supplies_failed:
+ dev_set_name_failed:
+ 	put_device(dev);
 -- 
 2.20.1
 
