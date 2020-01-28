@@ -2,160 +2,62 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A6CAF14BF39
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Jan 2020 19:10:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 88CA914BF3E
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Jan 2020 19:10:24 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726823AbgA1SKF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        id S1726793AbgA1SKF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
         Tue, 28 Jan 2020 13:10:05 -0500
-Received: from [65.157.77.67] ([65.157.77.67]:62511 "HELO ubuntu.localdomain"
+Received: from [65.157.77.67] ([65.157.77.67]:62512 "HELO ubuntu.localdomain"
         rhost-flags-FAIL-FAIL-OK-FAIL) by vger.kernel.org with SMTP
-        id S1726520AbgA1SKE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1726276AbgA1SKE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 28 Jan 2020 13:10:04 -0500
+X-Greylist: delayed 567 seconds by postgrey-1.27 at vger.kernel.org; Tue, 28 Jan 2020 13:09:53 EST
 Received: by ubuntu.localdomain (Postfix, from userid 1000)
-        id DB239461A3C; Tue, 28 Jan 2020 11:00:25 -0700 (MST)
+        id 2FE37465314; Tue, 28 Jan 2020 11:00:36 -0700 (MST)
 From:   Mike Jones <michael-a1.jones@analog.com>
 To:     linux-hwmon@vger.kernel.org, devicetree@vger.kernel.org,
         linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
 Cc:     linux@roeck-us.net, jdelvare@suse.com, robh+dt@kernel.org,
         corbet@lwn.net, Mike Jones <michael-a1.jones@analog.com>
-Subject: [PATCH 1/3] docs: hwmon: (pmbus/ltc2978): Update datasheet URLs to analog.com.
-Date:   Tue, 28 Jan 2020 10:59:58 -0700
-Message-Id: <1580234400-2829-1-git-send-email-michael-a1.jones@analog.com>
+Subject: [PATCH 2/3] hwmon: (pmbus/ltc2978): Fix PMBus polling of MFR_COMMON definitions.
+Date:   Tue, 28 Jan 2020 10:59:59 -0700
+Message-Id: <1580234400-2829-2-git-send-email-michael-a1.jones@analog.com>
 X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1580234400-2829-1-git-send-email-michael-a1.jones@analog.com>
+References: <1580234400-2829-1-git-send-email-michael-a1.jones@analog.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Change 21537dc driver PMBus polling of MFR_COMMON from bits 5/4 to
+bits 6/5. This fixs a LTC297X family bug where polling always returns
+not busy even when the part is busy. This fixes a LTC388X and
+LTM467X bug where polling used PEND and NOT_IN_TRANS, and BUSY was
+not polled, which can lead to NACKing of commands. LTC388X and
+LTM467X modules now poll BUSY and PEND, increasing reliability by
+eliminating NACKing of commands.
+
 Signed-off-by: Mike Jones <michael-a1.jones@analog.com>
 ---
- Documentation/hwmon/ltc2978.rst | 28 ++++++++++++++--------------
- 1 file changed, 14 insertions(+), 14 deletions(-)
+ drivers/hwmon/pmbus/ltc2978.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/Documentation/hwmon/ltc2978.rst b/Documentation/hwmon/ltc2978.rst
-index 01a24fd..42fd841 100644
---- a/Documentation/hwmon/ltc2978.rst
-+++ b/Documentation/hwmon/ltc2978.rst
-@@ -9,7 +9,7 @@ Supported chips:
+diff --git a/drivers/hwmon/pmbus/ltc2978.c b/drivers/hwmon/pmbus/ltc2978.c
+index f01f488..a91ed01 100644
+--- a/drivers/hwmon/pmbus/ltc2978.c
++++ b/drivers/hwmon/pmbus/ltc2978.c
+@@ -82,8 +82,8 @@ enum chips { ltc2974, ltc2975, ltc2977, ltc2978, ltc2980, ltc3880, ltc3882,
  
-     Addresses scanned: -
+ #define LTC_POLL_TIMEOUT		100	/* in milli-seconds */
  
--    Datasheet: http://www.linear.com/product/ltc2974
-+    Datasheet: https://www.analog.com/en/products/ltc2974
+-#define LTC_NOT_BUSY			BIT(5)
+-#define LTC_NOT_PENDING			BIT(4)
++#define LTC_NOT_BUSY			BIT(6)
++#define LTC_NOT_PENDING			BIT(5)
  
-   * Linear Technology LTC2975
- 
-@@ -17,7 +17,7 @@ Supported chips:
- 
-     Addresses scanned: -
- 
--    Datasheet: http://www.linear.com/product/ltc2975
-+    Datasheet: https://www.analog.com/en/products/ltc2975
- 
-   * Linear Technology LTC2977
- 
-@@ -25,7 +25,7 @@ Supported chips:
- 
-     Addresses scanned: -
- 
--    Datasheet: http://www.linear.com/product/ltc2977
-+    Datasheet: https://www.analog.com/en/products/ltc2977
- 
-   * Linear Technology LTC2978, LTC2978A
- 
-@@ -33,9 +33,9 @@ Supported chips:
- 
-     Addresses scanned: -
- 
--    Datasheet: http://www.linear.com/product/ltc2978
-+    Datasheet: https://www.analog.com/en/products/ltc2978
- 
--	       http://www.linear.com/product/ltc2978a
-+	       https://www.analog.com/en/products/ltc2978a
- 
-   * Linear Technology LTC2980
- 
-@@ -43,7 +43,7 @@ Supported chips:
- 
-     Addresses scanned: -
- 
--    Datasheet: http://www.linear.com/product/ltc2980
-+    Datasheet: https://www.analog.com/en/products/ltc2980
- 
-   * Linear Technology LTC3880
- 
-@@ -51,7 +51,7 @@ Supported chips:
- 
-     Addresses scanned: -
- 
--    Datasheet: http://www.linear.com/product/ltc3880
-+    Datasheet: https://www.analog.com/en/products/ltc3880
- 
-   * Linear Technology LTC3882
- 
-@@ -59,7 +59,7 @@ Supported chips:
- 
-     Addresses scanned: -
- 
--    Datasheet: http://www.linear.com/product/ltc3882
-+    Datasheet: https://www.analog.com/en/products/ltc3882
- 
-   * Linear Technology LTC3883
- 
-@@ -67,7 +67,7 @@ Supported chips:
- 
-     Addresses scanned: -
- 
--    Datasheet: http://www.linear.com/product/ltc3883
-+    Datasheet: https://www.analog.com/en/products/ltc3883
- 
-   * Linear Technology LTC3886
- 
-@@ -75,7 +75,7 @@ Supported chips:
- 
-     Addresses scanned: -
- 
--    Datasheet: http://www.linear.com/product/ltc3886
-+    Datasheet: https://www.analog.com/en/products/ltc3886
- 
-   * Linear Technology LTC3887
- 
-@@ -83,7 +83,7 @@ Supported chips:
- 
-     Addresses scanned: -
- 
--    Datasheet: http://www.linear.com/product/ltc3887
-+    Datasheet: https://www.analog.com/en/products/ltc3887
- 
-   * Linear Technology LTM2987
- 
-@@ -91,7 +91,7 @@ Supported chips:
- 
-     Addresses scanned: -
- 
--    Datasheet: http://www.linear.com/product/ltm2987
-+    Datasheet: https://www.analog.com/en/products/ltm2987
- 
-   * Linear Technology LTM4675
- 
-@@ -99,7 +99,7 @@ Supported chips:
- 
-     Addresses scanned: -
- 
--    Datasheet: http://www.linear.com/product/ltm4675
-+    Datasheet: https://www.analog.com/en/products/ltm4675
- 
-   * Linear Technology LTM4676
- 
-@@ -107,7 +107,7 @@ Supported chips:
- 
-     Addresses scanned: -
- 
--    Datasheet: http://www.linear.com/product/ltm4676
-+    Datasheet: https://www.analog.com/en/products/ltm4676
- 
-   * Analog Devices LTM4686
- 
+ /*
+  * LTC2978 clears peak data whenever the CLEAR_FAULTS command is executed, which
 -- 
 2.7.4
 
