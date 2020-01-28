@@ -2,162 +2,109 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0BE3614B21D
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Jan 2020 10:58:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6545A14B238
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Jan 2020 11:03:07 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726057AbgA1J63 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 28 Jan 2020 04:58:29 -0500
-Received: from esa3.microchip.iphmx.com ([68.232.153.233]:53076 "EHLO
-        esa3.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725853AbgA1J62 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 Jan 2020 04:58:28 -0500
-Received-SPF: Pass (esa3.microchip.iphmx.com: domain of
-  Allan.Nielsen@microchip.com designates 198.175.253.82 as
-  permitted sender) identity=mailfrom;
-  client-ip=198.175.253.82; receiver=esa3.microchip.iphmx.com;
-  envelope-from="Allan.Nielsen@microchip.com";
-  x-sender="Allan.Nielsen@microchip.com";
-  x-conformance=spf_only; x-record-type="v=spf1";
-  x-record-text="v=spf1 mx a:ushub1.microchip.com
-  a:smtpout.microchip.com -exists:%{i}.spf.microchip.iphmx.com
-  include:servers.mcsv.net include:mktomail.com
-  include:spf.protection.outlook.com ~all"
-Received-SPF: None (esa3.microchip.iphmx.com: no sender
-  authenticity information available from domain of
-  postmaster@email.microchip.com) identity=helo;
-  client-ip=198.175.253.82; receiver=esa3.microchip.iphmx.com;
-  envelope-from="Allan.Nielsen@microchip.com";
-  x-sender="postmaster@email.microchip.com";
-  x-conformance=spf_only
-Authentication-Results: esa3.microchip.iphmx.com; dkim=none (message not signed) header.i=none; spf=Pass smtp.mailfrom=Allan.Nielsen@microchip.com; spf=None smtp.helo=postmaster@email.microchip.com; dmarc=pass (p=none dis=none) d=microchip.com
-IronPort-SDR: 3ooP4EUi7o1dd/qLIe/RQWggY6ulveshOV6z0oFTdLuv+xQl1pxCsPDcLnaH+oRnFtC3URKFXe
- 7zttOz4rd1/6TVfswOU28bHNKukny7Y57ki9GnCrgjYxIBMQ4MpinzUtc4zu/3HhL3iVPUH+OS
- digIMVKDca5tLyVB4JSJvObkOPqNl4I8X2CQ9vNeD8zZKHdY6Igrc8IHrAdqTAMs+fgfLI6Qu+
- jIwKc9POznwPlLhTlbHf85X8gjVdGh7YkRGEkYez4BTNfURhfgmylqoKwo0p4fgd86bi5B/xUM
- gAE=
-X-IronPort-AV: E=Sophos;i="5.70,373,1574146800"; 
-   d="scan'208";a="64719401"
-Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
-  by esa3.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 28 Jan 2020 02:58:25 -0700
-Received: from chn-vm-ex02.mchp-main.com (10.10.85.144) by
- chn-vm-ex03.mchp-main.com (10.10.85.151) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.1713.5; Tue, 28 Jan 2020 02:58:24 -0700
-Received: from localhost (10.10.85.251) by chn-vm-ex02.mchp-main.com
- (10.10.85.144) with Microsoft SMTP Server id 15.1.1713.5 via Frontend
- Transport; Tue, 28 Jan 2020 02:58:24 -0700
-Date:   Tue, 28 Jan 2020 10:58:23 +0100
-From:   "Allan W. Nielsen" <allan.nielsen@microchip.com>
-To:     =?utf-8?Q?J=C3=BCrgen?= Lambrecht <j.lambrecht@televic.com>
-CC:     Andrew Lunn <andrew@lunn.ch>,
-        Horatiu Vultur <horatiu.vultur@microchip.com>,
-        <linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>,
-        <bridge@lists.linux-foundation.org>, <jiri@resnulli.us>,
-        <ivecera@redhat.com>, <davem@davemloft.net>,
-        <roopa@cumulusnetworks.com>, <nikolay@cumulusnetworks.com>,
-        <anirudh.venkataramanan@intel.com>, <olteanv@gmail.com>,
-        <jeffrey.t.kirsher@intel.com>, <UNGLinuxDriver@microchip.com>
-Subject: Re: [RFC net-next v3 06/10] net: bridge: mrp: switchdev: Extend
- switchdev API to offload MRP
-Message-ID: <20200128095823.limui36nes7e2hqh@lx-anielsen.microsemi.net>
-References: <20200124161828.12206-1-horatiu.vultur@microchip.com>
- <20200124161828.12206-7-horatiu.vultur@microchip.com>
- <20200125163504.GF18311@lunn.ch>
- <20200126132213.fmxl5mgol5qauwym@soft-dev3.microsemi.net>
- <20200126155911.GJ18311@lunn.ch>
- <13ac391c-61f5-cb77-69a0-416b0390f50d@televic.com>
- <20200127122752.g4eanjl2naazyfh3@lx-anielsen.microsemi.net>
- <8561814d-bfae-5e23-b0e8-a0e3adf800b4@televic.com>
+        id S1726293AbgA1KDF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 28 Jan 2020 05:03:05 -0500
+Received: from mga09.intel.com ([134.134.136.24]:16797 "EHLO mga09.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726211AbgA1KDE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 28 Jan 2020 05:03:04 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from orsmga007.jf.intel.com ([10.7.209.58])
+  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 28 Jan 2020 01:52:37 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.70,373,1574150400"; 
+   d="scan'208";a="217569900"
+Received: from smile.fi.intel.com (HELO smile) ([10.237.68.40])
+  by orsmga007.jf.intel.com with ESMTP; 28 Jan 2020 01:52:36 -0800
+Received: from andy by smile with local (Exim 4.93)
+        (envelope-from <andriy.shevchenko@linux.intel.com>)
+        id 1iwNXx-0007OL-MW; Tue, 28 Jan 2020 11:52:37 +0200
+Date:   Tue, 28 Jan 2020 11:52:37 +0200
+From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To:     Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
+Cc:     Petr Mladek <pmladek@suse.com>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 4/5] console: Avoid positive return code from
+ unregister_console()
+Message-ID: <20200128095237.GZ32742@smile.fi.intel.com>
+References: <20200127114719.69114-1-andriy.shevchenko@linux.intel.com>
+ <20200127114719.69114-4-andriy.shevchenko@linux.intel.com>
+ <20200128044332.GA115889@google.com>
+ <20200128092235.GX32742@smile.fi.intel.com>
+ <20200128093726.GE115889@google.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <8561814d-bfae-5e23-b0e8-a0e3adf800b4@televic.com>
+In-Reply-To: <20200128093726.GE115889@google.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 27.01.2020 15:39, Jürgen Lambrecht wrote:
->EXTERNAL EMAIL: Do not click links or open attachments unless you know the content is safe
->
->On 1/27/20 1:27 PM, Allan W. Nielsen wrote:
->> Hi Jürgen,
->>
->> On 27.01.2020 12:29, Jürgen Lambrecht wrote:
->>> EXTERNAL EMAIL: Do not click links or open attachments unless you know the content is safe
->>>
->>> On 1/26/20 4:59 PM, Andrew Lunn wrote:
->>>> Given the design of the protocol, if the hardware decides the OS etc
->>>> is dead, it should stop sending MRP_TEST frames and unblock the ports.
->>>> If then becomes a 'dumb switch', and for a short time there will be a
->>>> broadcast storm. Hopefully one of the other nodes will then take over
->>>> the role and block a port.
->This can probably be a configuration option in the hardware, how to fall-back.
->>
->>> In my experience a closed loop should never happen. It can make
->>> software crash and give other problems.  An other node should first
->>> take over before unblocking the ring ports. (If this is possible - I
->>> only follow this discussion halfly)
->>>
->>> What is your opinion?
->> Having loops in the network is never a good thing - but to be honest, I
->> think it is more important that we ensure the design can survive and
->> recover from loops.
->Indeed
->>
->> With the current design, it will be really hard to void loops when the
->> network boot. MRP will actually start with the ports blocked, but they
->> will be unblocked in the period from when the bridge is created and
->> until MRP is enabled. If we want to change this (which I'm not too keen
->> on), then we need to be able to block the ports while the bridge is
->> down.
->Our ring network is part of a bigger network. Loops are really not allowed.
-That is understood, and should be avoided. But I assume that switches
-which crashes is not allowed either ;-)
+On Tue, Jan 28, 2020 at 06:37:26PM +0900, Sergey Senozhatsky wrote:
+> On (20/01/28 11:22), Andy Shevchenko wrote:
+> > On Tue, Jan 28, 2020 at 01:43:32PM +0900, Sergey Senozhatsky wrote:
+> > > On (20/01/27 13:47), Andy Shevchenko wrote:
+> > > [..]
+> > > >  	res = _braille_unregister_console(console);
+> > > > -	if (res)
+> > > > +	if (res < 0)
+> > > >  		return res;
+> > > > +	if (res > 0)
+> > > > +		return 0;
+> > > >  
+> > > > -	res = 1;
+> > > > +	res = -ENODEV;
+> > > >  	console_lock();
+> > > >  	if (console_drivers == console) {
+> > > >  		console_drivers=console->next;
+> > > > @@ -2838,6 +2840,9 @@ int unregister_console(struct console *console)
+> > > >  	if (!res && (console->flags & CON_EXTENDED))
+> > > >  		nr_ext_console_drivers--;
+> > > >  
+> > > > +	if (res && !(console->flags & CON_ENABLED))
+> > > > +		res = 0;
+> > > 
+> > > Console is not on the console_drivers list. Why does !ENABLED case
+> > > require extra handling?
+> > 
+> > It's mirroring (to some extend) the register_console() abort conditions.
+> 
+> Could you please explain?
+> 
+> I see the "newcon->flags & CON_ENABLED" error out path. I'm guessing,
+> that the expectation is that this is how we filter out consoles which
+> were not matched (there is that "newcon->flags |= CON_ENABLED" several
+> lines earlier.) So this looks like the assumption is that consoles don't
+> have CON_ENABLED bit set prior to register_console(), as far as I understand.
 
-We will consider if we somehow can block the ports before/after a
-user-space protocol kicks in. I can not promise anything, but we will
-see what can be done.
+I put it to cover the case when register_console() fails (since it has no
+return code caller is not able to say this anyhow) somebody may call
+unregister_console() on it unconditionally (and I guess many do like this).
+In such case we shouldn't return an error code.
 
->> And even if we do this, then we can not guarantee to avoid loops. Lets
->> assume we have a small ring with just 2 nodes: a MRM and a MRC. Lets
->> assume the MRM boots first. It will unblock both ports as the ring is
->> open. Now the MRC boots, and make the ring closed, and create a loop.
->> This will take some time (milliseconds) before the MRM notice this and
->> block one of the ports.
->In my view there is a bring-up and tear-down module needed. I don't
->know if it should be part of MRP or not? Probably not, so something on
->top of the mrp daemon.
-If we need this kind of policies, then I agree it should be on top of or
-out-side the user-space MRP daemon.
+> Well, look at these
+> ...
+> drivers/net/netconsole.c:       .flags  = CON_ENABLED,
+> drivers/tty/ehv_bytechan.c:     .flags  = CON_PRINTBUFFER | CON_ENABLED,
+> drivers/tty/serial/mux.c:	.flags = CON_ENABLED | CON_PRINTBUFFER,
+> ...
 
->> But while we are at this topic, we need to add some functionality to
->> the user-space application such that it can set the priority of the MRP
->> frames. We will get that fixed.
->Indeed! In my old design I had to give high priority, else the loop was
->wrongly closed at high network load.
-Yes, I'm not surprised to hear that.
+The code there (I meant register_console() and unregister_console() and
+their usage) is quite twisted and probably abused, so, I have definitely
+miss something.
 
->I guess you mean the priority in the VLAN header?
->I think to remember one talked about the bride code being VLAN-agnostic.
-Yes, if it has a VLAN header (which is optional). But even without the
-VLAN header these frames needs to be classified to a high priority
-queue.
+-- 
+With Best Regards,
+Andy Shevchenko
 
->>> (FYI: I made that mistake once doing a proof-of-concept ring design:
->>> during testing, when a "broken" Ethernet cable was "fixed" I had for a
->>> short time a loop, and then it happened often that that port of the
->>> (Marvell 88E6063) switch was blocked.  (To unblock, only solution was
->>> to bring that port down and up again, and then all "lost" packets came
->>> out in a burst.) That problem was caused by flow control (with pause
->>> frames), and disabling flow control fixed it, but flow-control is
->>> default on as far as I know.)
->> I see. It could be fun to see if what we have proposed so far will with
->> with such a switch.
->
->Depending on the projects I could work on it later this year (or only next year or not..)
-Sounds good - no hurry.
 
-/Allan
