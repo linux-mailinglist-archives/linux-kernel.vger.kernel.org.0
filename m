@@ -2,35 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5496814B89A
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Jan 2020 15:26:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 32A0214B89C
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Jan 2020 15:26:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732937AbgA1OZb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 28 Jan 2020 09:25:31 -0500
-Received: from mail.kernel.org ([198.145.29.99]:52432 "EHLO mail.kernel.org"
+        id S1733013AbgA1OZi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 28 Jan 2020 09:25:38 -0500
+Received: from mail.kernel.org ([198.145.29.99]:52626 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730486AbgA1OZ2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 Jan 2020 09:25:28 -0500
+        id S1732959AbgA1OZf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 28 Jan 2020 09:25:35 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1DF7824681;
-        Tue, 28 Jan 2020 14:25:26 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 03F4D24686;
+        Tue, 28 Jan 2020 14:25:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1580221527;
-        bh=vRgmqPjzXZxTazayl2hBXX8S1fu0Gnzq5eN1LZUL/FU=;
+        s=default; t=1580221535;
+        bh=WZKi91Qb+hIqQzuLMjQLrerJQVMOSj3EzXxFrKloU1o=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=flTe77NYgQduSPnAnKO3rOC7FGHk/oSnPnGpg+xGh9qGfNwuJkeIGjcI6U4JZMZXh
-         Ca/Af2uY/nD6mhvL6h+8Jv+QyNysqZRHb2ITUGwj3C4UglEysKDctk9OxUp5aybmw9
-         v5djNliJIauK8kooC66qrKkluobmRxm7BFYR2uUQ=
+        b=pQv9aVtKvqY9vDcTRwdJ1FUJhAggwrWD5FY0HK3V+OWO4k8ThWCnG4MvWhkW3Qkz5
+         Ix1XojhJZcYi9SZD+N7TZbWg7Wi99RmuFIMmUz708pH1kcMQ6ALRrGdmFdBCE7TJSq
+         r2/S2ay1MxCixamIF3azt85pisITHWclAVLWIcZM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Changbin Du <changbin.du@gmail.com>,
-        "Steven Rostedt (VMware)" <rostedt@goodmis.org>
-Subject: [PATCH 4.9 259/271] tracing: xen: Ordered comparison of function pointers
-Date:   Tue, 28 Jan 2020 15:06:48 +0100
-Message-Id: <20200128135911.874878599@linuxfoundation.org>
+        stable@vger.kernel.org, Will Deacon <will.deacon@arm.com>,
+        Florian Fainelli <f.fainelli@gmail.com>
+Subject: [PATCH 4.9 262/271] arm64: kpti: Whitelist Cortex-A CPUs that dont implement the CSV3 field
+Date:   Tue, 28 Jan 2020 15:06:51 +0100
+Message-Id: <20200128135912.099755783@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
 In-Reply-To: <20200128135852.449088278@linuxfoundation.org>
 References: <20200128135852.449088278@linuxfoundation.org>
@@ -43,53 +43,39 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Changbin Du <changbin.du@gmail.com>
+From: Will Deacon <will.deacon@arm.com>
 
-commit d0695e2351102affd8efae83989056bc4b275917 upstream.
+commit 2a355ec25729053bb9a1a89b6c1d1cdd6c3b3fb1 upstream.
 
-Just as commit 0566e40ce7 ("tracing: initcall: Ordered comparison of
-function pointers"), this patch fixes another remaining one in xen.h
-found by clang-9.
+While the CSV3 field of the ID_AA64_PFR0 CPU ID register can be checked
+to see if a CPU is susceptible to Meltdown and therefore requires kpti
+to be enabled, existing CPUs do not implement this field.
 
-In file included from arch/x86/xen/trace.c:21:
-In file included from ./include/trace/events/xen.h:475:
-In file included from ./include/trace/define_trace.h:102:
-In file included from ./include/trace/trace_events.h:473:
-./include/trace/events/xen.h:69:7: warning: ordered comparison of function \
-pointers ('xen_mc_callback_fn_t' (aka 'void (*)(void *)') and 'xen_mc_callback_fn_t') [-Wordered-compare-function-pointers]
-                    __field(xen_mc_callback_fn_t, fn)
-                    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-./include/trace/trace_events.h:421:29: note: expanded from macro '__field'
-                                ^
-./include/trace/trace_events.h:407:6: note: expanded from macro '__field_ext'
-                                 is_signed_type(type), filter_type);    \
-                                 ^
-./include/linux/trace_events.h:554:44: note: expanded from macro 'is_signed_type'
-                                              ^
+We therefore whitelist all unaffected Cortex-A CPUs that do not implement
+the CSV3 field.
 
-Fixes: c796f213a6934 ("xen/trace: add multicall tracing")
-Signed-off-by: Changbin Du <changbin.du@gmail.com>
-Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+Signed-off-by: Will Deacon <will.deacon@arm.com>
+[florian: adjust whilelist location and table to stable-4.9.y]
+Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- include/trace/events/xen.h |    6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+ arch/arm64/kernel/cpufeature.c |    5 +++++
+ 1 file changed, 5 insertions(+)
 
---- a/include/trace/events/xen.h
-+++ b/include/trace/events/xen.h
-@@ -63,7 +63,11 @@ TRACE_EVENT(xen_mc_callback,
- 	    TP_PROTO(xen_mc_callback_fn_t fn, void *data),
- 	    TP_ARGS(fn, data),
- 	    TP_STRUCT__entry(
--		    __field(xen_mc_callback_fn_t, fn)
-+		    /*
-+		     * Use field_struct to avoid is_signed_type()
-+		     * comparison of a function pointer.
-+		     */
-+		    __field_struct(xen_mc_callback_fn_t, fn)
- 		    __field(void *, data)
- 		    ),
- 	    TP_fast_assign(
+--- a/arch/arm64/kernel/cpufeature.c
++++ b/arch/arm64/kernel/cpufeature.c
+@@ -789,6 +789,11 @@ static bool unmap_kernel_at_el0(const st
+ 	switch (read_cpuid_id() & MIDR_CPU_MODEL_MASK) {
+ 	case MIDR_CAVIUM_THUNDERX2:
+ 	case MIDR_BRCM_VULCAN:
++	case MIDR_CORTEX_A53:
++	case MIDR_CORTEX_A55:
++	case MIDR_CORTEX_A57:
++	case MIDR_CORTEX_A72:
++	case MIDR_CORTEX_A73:
+ 		return false;
+ 	}
+ 
 
 
