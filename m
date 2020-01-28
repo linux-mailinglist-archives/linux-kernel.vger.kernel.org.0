@@ -2,39 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C981914BB27
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Jan 2020 15:44:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CD3E514BB25
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Jan 2020 15:44:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729263AbgA1OLF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 28 Jan 2020 09:11:05 -0500
-Received: from mail.kernel.org ([198.145.29.99]:59920 "EHLO mail.kernel.org"
+        id S1729260AbgA1OLD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 28 Jan 2020 09:11:03 -0500
+Received: from mail.kernel.org ([198.145.29.99]:59984 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729247AbgA1OK5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 Jan 2020 09:10:57 -0500
+        id S1727845AbgA1OK7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 28 Jan 2020 09:10:59 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7F1FD2468E;
-        Tue, 28 Jan 2020 14:10:56 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 06B9E20678;
+        Tue, 28 Jan 2020 14:10:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1580220657;
-        bh=hfMSIEhrEdw1IN71cdDTkdMr00ySuylu7hx2F/qVbAo=;
+        s=default; t=1580220659;
+        bh=a8iVCfyzuC8lx0lPKI/m4kCpKXomju8FoDjyN1TUv28=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=uyLm4GRT0f0IEOYrzWe6u/kor5g6kS48DAvry7gnASpgthg3Re2vEktnkbQeggJHA
-         0t01PC8TTv4kHSJIYMIEufQurO6RLwMn3ariFmmgPgNAfSLk17uQ6J2GVV9yp8rNkK
-         VXKpJclgm424JrUqWXqSbc/pczyJ+1bzTGuVTlqs=
+        b=pSF7xLbbcPzFfKpoCOQ1bcHZ1Y15B/mPGQCqcVTp6kRutVB3EIsa8I2S/1U/vzA62
+         lmaNzQB5o9worjx5QV1qD5u5TIIEvzHw0BsB+ybHDXHyUvWIRU6/Rfiemb4Xx1e3TV
+         4IbVlOjqjH9A005qRBfTvaguX2Eaq88OY2MW4EmI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Matthias Kaehlcke <mka@chromium.org>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Javi Merino <javi.merino@kernel.org>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Eduardo Valentin <edubezval@gmail.com>,
+        stable@vger.kernel.org, Christophe Leroy <christophe.leroy@c-s.fr>,
+        Mark Brown <broonie@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.4 094/183] thermal: cpu_cooling: Actually trace CPU load in thermal_power_cpu_get_power
-Date:   Tue, 28 Jan 2020 15:05:13 +0100
-Message-Id: <20200128135839.487789507@linuxfoundation.org>
+Subject: [PATCH 4.4 095/183] spi: spi-fsl-spi: call spi_finalize_current_message() at the end
+Date:   Tue, 28 Jan 2020 15:05:14 +0100
+Message-Id: <20200128135839.585207090@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
 In-Reply-To: <20200128135829.486060649@linuxfoundation.org>
 References: <20200128135829.486060649@linuxfoundation.org>
@@ -47,56 +44,42 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Matthias Kaehlcke <mka@chromium.org>
+From: Christophe Leroy <christophe.leroy@c-s.fr>
 
-[ Upstream commit bf45ac18b78038e43af3c1a273cae4ab5704d2ce ]
+[ Upstream commit 44a042182cb1e9f7916e015c836967bf638b33c4 ]
 
-The CPU load values passed to the thermal_power_cpu_get_power
-tracepoint are zero for all CPUs, unless, unless the
-thermal_power_cpu_limit tracepoint is enabled too:
+spi_finalize_current_message() shall be called once all
+actions are finished, otherwise the last actions might
+step over a newly started transfer.
 
-  irq/41-rockchip-98    [000] ....   290.972410: thermal_power_cpu_get_power:
-  cpus=0000000f freq=1800000 load={{0x0,0x0,0x0,0x0}} dynamic_power=4815
-
-vs
-
-  irq/41-rockchip-96    [000] ....    95.773585: thermal_power_cpu_get_power:
-  cpus=0000000f freq=1800000 load={{0x56,0x64,0x64,0x5e}} dynamic_power=4959
-  irq/41-rockchip-96    [000] ....    95.773596: thermal_power_cpu_limit:
-  cpus=0000000f freq=408000 cdev_state=10 power=416
-
-There seems to be no good reason for omitting the CPU load information
-depending on another tracepoint. My guess is that the intention was to
-check whether thermal_power_cpu_get_power is (still) enabled, however
-'load_cpu != NULL' already indicates that it was at least enabled when
-cpufreq_get_requested_power() was entered, there seems little gain
-from omitting the assignment if the tracepoint was just disabled, so
-just remove the check.
-
-Fixes: 6828a4711f99 ("thermal: add trace events to the power allocator governor")
-Signed-off-by: Matthias Kaehlcke <mka@chromium.org>
-Reviewed-by: Daniel Lezcano <daniel.lezcano@linaro.org>
-Acked-by: Javi Merino <javi.merino@kernel.org>
-Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
-Signed-off-by: Eduardo Valentin <edubezval@gmail.com>
+Fixes: c592becbe704 ("spi: fsl-(e)spi: migrate to generic master queueing")
+Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/thermal/cpu_cooling.c | 2 +-
+ drivers/spi/spi-fsl-spi.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/thermal/cpu_cooling.c b/drivers/thermal/cpu_cooling.c
-index 87d87ac1c8a04..96567b4a4f201 100644
---- a/drivers/thermal/cpu_cooling.c
-+++ b/drivers/thermal/cpu_cooling.c
-@@ -607,7 +607,7 @@ static int cpufreq_get_requested_power(struct thermal_cooling_device *cdev,
- 			load = 0;
+diff --git a/drivers/spi/spi-fsl-spi.c b/drivers/spi/spi-fsl-spi.c
+index 8b290d9d79350..5419de19859a0 100644
+--- a/drivers/spi/spi-fsl-spi.c
++++ b/drivers/spi/spi-fsl-spi.c
+@@ -408,7 +408,6 @@ static int fsl_spi_do_one_msg(struct spi_master *master,
+ 	}
  
- 		total_load += load;
--		if (trace_thermal_power_cpu_limit_enabled() && load_cpu)
-+		if (load_cpu)
- 			load_cpu[i] = load;
+ 	m->status = status;
+-	spi_finalize_current_message(master);
  
- 		i++;
+ 	if (status || !cs_change) {
+ 		ndelay(nsecs);
+@@ -416,6 +415,7 @@ static int fsl_spi_do_one_msg(struct spi_master *master,
+ 	}
+ 
+ 	fsl_spi_setup_transfer(spi, NULL);
++	spi_finalize_current_message(master);
+ 	return 0;
+ }
+ 
 -- 
 2.20.1
 
