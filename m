@@ -2,117 +2,178 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 21EF714B25D
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Jan 2020 11:15:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6E82A14B267
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Jan 2020 11:17:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726007AbgA1KPF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 28 Jan 2020 05:15:05 -0500
-Received: from lelv0142.ext.ti.com ([198.47.23.249]:35468 "EHLO
-        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725882AbgA1KPE (ORCPT
+        id S1726028AbgA1KRI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 28 Jan 2020 05:17:08 -0500
+Received: from esa5.microchip.iphmx.com ([216.71.150.166]:26363 "EHLO
+        esa5.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725882AbgA1KRH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 Jan 2020 05:15:04 -0500
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id 00SAEwN4095092;
-        Tue, 28 Jan 2020 04:14:58 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1580206498;
-        bh=mWUZieK6VsDsxDGqbbUR433/WEuy/vg/QgAzz5vfMug=;
-        h=Subject:From:To:CC:References:Date:In-Reply-To;
-        b=sKgYgrRteNIehHg8xpRo+9MSHKvrA0wgASmKce80BcF9/djWJwwn3NEfwnKYLNG6J
-         Zo8YS+McVIhcFCwiKQtkYSNdWe3Ew+5pGHYLn/1mNe1V5U0PMtgHQgk3xQcW5Dwn1J
-         wfziPuLo9cuAg4rB6Me9C4Qp6Ok68yHK7sr7avrA=
-Received: from DLEE114.ent.ti.com (dlee114.ent.ti.com [157.170.170.25])
-        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 00SAEwEo130116
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Tue, 28 Jan 2020 04:14:58 -0600
-Received: from DLEE114.ent.ti.com (157.170.170.25) by DLEE114.ent.ti.com
- (157.170.170.25) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Tue, 28
- Jan 2020 04:14:56 -0600
-Received: from fllv0040.itg.ti.com (10.64.41.20) by DLEE114.ent.ti.com
- (157.170.170.25) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
- Frontend Transport; Tue, 28 Jan 2020 04:14:56 -0600
-Received: from [192.168.2.6] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by fllv0040.itg.ti.com (8.15.2/8.15.2) with ESMTP id 00SAEtsp084177;
-        Tue, 28 Jan 2020 04:14:55 -0600
-Subject: Re: [PATCH for-next 0/4] dmaengine: ti: k3-udma: Updates for next
-From:   Peter Ujfalusi <peter.ujfalusi@ti.com>
-To:     <vkoul@kernel.org>
-CC:     <dmaengine@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <dan.j.williams@intel.com>, <grygorii.strashko@ti.com>,
-        <vigneshr@ti.com>
-References: <20200127132111.20464-1-peter.ujfalusi@ti.com>
-Message-ID: <41c53cc4-fa3e-1ab1-32b8-1d516cda7341@ti.com>
-Date:   Tue, 28 Jan 2020 12:15:42 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        Tue, 28 Jan 2020 05:17:07 -0500
+Received-SPF: Pass (esa5.microchip.iphmx.com: domain of
+  Allan.Nielsen@microchip.com designates 198.175.253.82 as
+  permitted sender) identity=mailfrom;
+  client-ip=198.175.253.82; receiver=esa5.microchip.iphmx.com;
+  envelope-from="Allan.Nielsen@microchip.com";
+  x-sender="Allan.Nielsen@microchip.com";
+  x-conformance=spf_only; x-record-type="v=spf1";
+  x-record-text="v=spf1 mx a:ushub1.microchip.com
+  a:smtpout.microchip.com -exists:%{i}.spf.microchip.iphmx.com
+  include:servers.mcsv.net include:mktomail.com
+  include:spf.protection.outlook.com ~all"
+Received-SPF: None (esa5.microchip.iphmx.com: no sender
+  authenticity information available from domain of
+  postmaster@email.microchip.com) identity=helo;
+  client-ip=198.175.253.82; receiver=esa5.microchip.iphmx.com;
+  envelope-from="Allan.Nielsen@microchip.com";
+  x-sender="postmaster@email.microchip.com";
+  x-conformance=spf_only
+Authentication-Results: esa5.microchip.iphmx.com; dkim=none (message not signed) header.i=none; spf=Pass smtp.mailfrom=Allan.Nielsen@microchip.com; spf=None smtp.helo=postmaster@email.microchip.com; dmarc=pass (p=none dis=none) d=microchip.com
+IronPort-SDR: 9jdNgCZGuP6bJohSpAGjTFqulzRwrCR6WykVri09mT96SVtGibejsxkw6Y5OJmjLqei5kFDQfK
+ aGJN429epJRrfeu6OqgZ+95w6Qyz9XoSqdSZPIS8ekKn4VvXxB5s05bbqaz3Wk0dn5HcYtTdLk
+ Hyo6Ldu153cVwziRkmLI81CE9JhadQQO/K6yu076Ec6eeq63okYRQaBEo9sgQafVIT7/ncmYbt
+ p3EMGwpsawXo51xKFlWfZ30LCpga72VxRTuWm+AQr0sAHQEikD2ZZNEFCmMp0cppmP+ESzKBH5
+ p6M=
+X-IronPort-AV: E=Sophos;i="5.70,373,1574146800"; 
+   d="scan'208";a="63312956"
+Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
+  by esa5.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 28 Jan 2020 03:17:07 -0700
+Received: from chn-vm-ex01.mchp-main.com (10.10.85.143) by
+ chn-vm-ex03.mchp-main.com (10.10.85.151) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.1713.5; Tue, 28 Jan 2020 03:17:06 -0700
+Received: from localhost (10.10.85.251) by chn-vm-ex01.mchp-main.com
+ (10.10.85.143) with Microsoft SMTP Server id 15.1.1713.5 via Frontend
+ Transport; Tue, 28 Jan 2020 03:17:07 -0700
+Date:   Tue, 28 Jan 2020 11:17:04 +0100
+From:   "Allan W. Nielsen" <allan.nielsen@microchip.com>
+To:     Andrew Lunn <andrew@lunn.ch>
+CC:     Horatiu Vultur <horatiu.vultur@microchip.com>,
+        <linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>,
+        <bridge@lists.linux-foundation.org>, <jiri@resnulli.us>,
+        <ivecera@redhat.com>, <davem@davemloft.net>,
+        <roopa@cumulusnetworks.com>, <nikolay@cumulusnetworks.com>,
+        <anirudh.venkataramanan@intel.com>, <olteanv@gmail.com>,
+        <jeffrey.t.kirsher@intel.com>, <UNGLinuxDriver@microchip.com>
+Subject: Re: [RFC net-next v3 09/10] net: bridge: mrp: Integrate MRP into the
+ bridge
+Message-ID: <20200128101704.kjqok4lvpgo73pzz@lx-anielsen.microsemi.net>
+References: <20200124161828.12206-1-horatiu.vultur@microchip.com>
+ <20200124161828.12206-10-horatiu.vultur@microchip.com>
+ <20200125161615.GD18311@lunn.ch>
+ <20200126130111.o75gskwe2fmfd4g5@soft-dev3.microsemi.net>
+ <20200126171251.GK18311@lunn.ch>
+ <20200127105746.i2txggfnql4povje@lx-anielsen.microsemi.net>
+ <20200127134053.GG12816@lunn.ch>
 MIME-Version: 1.0
-In-Reply-To: <20200127132111.20464-1-peter.ujfalusi@ti.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+In-Reply-To: <20200127134053.GG12816@lunn.ch>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Vinod,
+On 27.01.2020 14:40, Andrew Lunn wrote:
+>EXTERNAL EMAIL: Do not click links or open attachments unless you know the content is safe
+>
+>> > 'Thinking allowed' here.
+>> >
+>> >     +------------------------------------------+
+>> >     |                                          |
+>> >     +-->|H1|<---------->|H2|<---------->|H3|<--+
+>> >     eth0    eth1    eth0    eth1    eth0    eth1
+>> >      ^
+>> >      |
+>> >   Blocked
+>> >
+>> >
+>> > There are three major classes of user case here:
+>> >
+>> > 1) Pure software solution
+>> > You need the software bridge in the client to forward these frames
+>> > from the left side to the right side.
+>
+>> As far as I understand it is not the bridge which forward these frames -
+>> it is the user-space tool. This was to put as much functionality in
+>> user-space and only use the kernel to configure the HW. We can (and
+>> should) discuss if this is the right decision.
+>
+>So i need to flip the point around. How does the software switch know
+>not to forward the frames? Are you adding an MDB?
+In the current implementation (patch v3) this is done here:
+https://github.com/microchip-ung/mrp/blob/patch-v3/kernel-patches/v3-0009-net-bridge-mrp-Integrate-MRP-into-the-bridge.patch#L112
 
-On 27/01/2020 15.21, Peter Ujfalusi wrote:
-> Hi Vinod,
-> 
-> Based on customer reports we have identified two issues with the UDMA driver:
-> 
-> TX completion (1st patch):
-> The scheduled work based workaround for checking for completion worked well for
-> UART, but it had significant impact on SPI performance.
-> The underlying issue is coming from the fact that we have split data movement
-> architecture.
-> In order to know that the transfer is really done we need to check the remote
-> end's (PDMA) byte counter.
-> 
-> RX channel teardown with stale data in PDMA (2nd patch):
-> If we try to stop the RX DMA channel (teardown) then PDMA is trying to flush the
-> data is might received from a peripheral, but if UDMA does not have a packet to
-> use for this draining than it is going to push back on the PDMA and the flush
-> will never completes.
-> The workaround is to use a dummy descriptor for flush purposes when the channel
-> is terminated and we did not have active transfer (no descriptor for UDMA).
-> This allows UDMA to drain the data and the teardown can complete.
-> 
-> The last two patch is to use common code to set up the TR parameters for
-> slave_sg, cyclic and memcpy. The setup code is the same as we used for memcpy
-> with the change we can handle 4.2GB sg elements and periods in case of cyclic.
-> It is also nice that we have single function to do the configuration.
+We simply ask the bridge not to forward any MRP frames, on MRP enabled
+ports, and let "someone" else do that.
 
-I have marked these patches as for-next as 5.5 was not released yet.
-Would it be possible to have these as fixes for 5.6?
+>> We would properly have better performance if we do this in kernel-space.
+>
+>Yes, that is what i think. And if you can do it without any additional
+>code, using the forwarding tables, so much the better.
+I understand the motivation of using the existing forwarding mechanism,
+but I do not think we have all the hooks needed. But we can certainly
+limit the impact on the existing code as much as possible.
 
-Thanks,
-- Péter
+>> BTW: It is not only from left to right, it is also from right to left.
+>> The MRM will inject packets on both ring ports, and monitor both.
+>
+>Using the same MAC address in both directions? I need to think what
+>that implies for MDB entries. It probably just works, since you never
+>flood back out the ingress port.
+Seems to work fine :-D
 
-> 
-> Regards,
-> Peter
-> ---
-> Peter Ujfalusi (3):
->   dmaengine: ti: k3-udma: Workaround for RX teardown with stale data in
->     peer
->   dmaengine: ti: k3-udma: Move the TR counter calculation to helper
->     function
->   dmaengine: ti: k3-udma: Use the TR counter helper for slave_sg and
->     cyclic
-> 
-> Vignesh Raghavendra (1):
->   dmaengine: ti: k3-udma: Use ktime/usleep_range based TX completion
->     check
-> 
->  drivers/dma/ti/k3-udma.c | 452 +++++++++++++++++++++++++++++----------
->  1 file changed, 343 insertions(+), 109 deletions(-)
-> 
+>> Again, I do not know how other HW is designed, but all the SOC's we are
+>> working with, does allow us to add a TCAM rule which can redirect these
+>> frames to the CPU even on a blocked port.
+>
+>It is not in scope for what you are doing, but i wonder how we
+>describe this in a generic Linux way? And then how we push it down to
+>the hardware?
+>
+>For the Marvell Switches, it might be possible to do this without the
+>TCAM. You can add forwarding DB entries marked as Management. It is
+>unclear if this overrides the blocked state, but it would be a bit odd
+>if it did not.
+Based on this, and also on the input from Jürgen, I think there is a
+good chnage we can make this work for existing silicon from several
+vendors.
 
-Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
-Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
+>> > You could avoid this by adding MDB entries to the bridge. However,
+>> > this does not scale to more then one ring.
+>> I would prefer a solution where the individual drivers can do what is
+>> best on the given HW.
+>The nice thing about adding MDB is that it is making use of the
+>software bridge facilities. In general, the software bridge and
+>hardware bridges are pretty similar. If you can solve the problem
+>using generic software bridge features, not additional special cases
+>in code, you have good chance of being able to offload it to a
+>hardware bridge which is not MRP aware. The switchdev API for MRP
+>specific features should then allow you to make use of any additional
+>features the hardware might have.
+Yes, but the issues in using the MDB API for this is that it does not
+allow to look at source ports, and it does not allow to update the
+priority of the frames.
+
+>> Yes, the solution Horatiu has chosen, is not to forward MRP frames,
+>> received in MRP ring ports at all. This is done by the user-space tool.
+>>
+>> Again, not sure if this is the right way to do it, but it is what patch
+>> v3 does.
+>>
+>> The alternative to this would be to learn the bridge how to forward MRP
+>> frames when it is a MRC. The user-space tool then never needs to do
+>> this, it know that the kernel will take care of this part (either in SW
+>> or in HW).
+>I think that should be considered. I'm not saying it is the best way,
+>just that some thought should be put into it to figure out what it
+>actually implies.
+Sounds good - I will try to explain and illustrate this a bit better,
+such that we all have the same understanding of the problem we need to
+solve.
+
+/Allan
+
