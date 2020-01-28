@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5F7EB14B7E6
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Jan 2020 15:20:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 889AF14B6C5
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Jan 2020 15:08:14 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730702AbgA1OSg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 28 Jan 2020 09:18:36 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42548 "EHLO mail.kernel.org"
+        id S1728409AbgA1OIF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 28 Jan 2020 09:08:05 -0500
+Received: from mail.kernel.org ([198.145.29.99]:55918 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730692AbgA1OSc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 Jan 2020 09:18:32 -0500
+        id S1728356AbgA1OIC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 28 Jan 2020 09:08:02 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5B75B2071E;
-        Tue, 28 Jan 2020 14:18:31 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 682D222522;
+        Tue, 28 Jan 2020 14:08:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1580221111;
-        bh=BUju0Wx30sPMwP56BcCcBb6OikCck+XYZB+oJtZUH1s=;
+        s=default; t=1580220481;
+        bh=6QPJnlWiwIuhPmfIE+phg+GH1Dc6EoYBLQGTnVyj/sM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=MF0a7LctiJvF+msgA5UZfkfAosWqbu++CAHy0wDpVnBzabXq4ja4lTp5inM4ZqSlo
-         +JHNc1UC2RZuYwIAr8OXj19D5zUyFOwIbdGCbUAS752i5t/8yIYq+5SCgu5SG6Whof
-         X5DxmVzv6mW0ayRmsv1bTNozPGX6doS4WjBd539g=
+        b=X9WQnV2R9Me8i9IcqNR7KBAnEa/Nq7ZwzsdnrGK4SVNvebanINqR+K0AIWYVi3rT6
+         LeIXEsg8fSwski9PZQx1mB6VxQoMVbvZ/6DXRh7QJL5Otgg95xTXY9AJ06EMTr/qzn
+         DrgI/bS4mMGYmPB6VPGkIxk/cqWHRekcME+iWW2Q=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Guenter Roeck <linux@roeck-us.net>,
-        Ley Foon Tan <ley.foon.tan@intel.com>,
+        stable@vger.kernel.org, Yangtao Li <tiny.windzz@gmail.com>,
+        Stephen Boyd <sboyd@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 093/271] nios2: ksyms: Add missing symbol exports
-Date:   Tue, 28 Jan 2020 15:04:02 +0100
-Message-Id: <20200128135859.516344561@linuxfoundation.org>
+Subject: [PATCH 4.4 024/183] clk: samsung: exynos4: fix refcount leak in exynos4_get_xom()
+Date:   Tue, 28 Jan 2020 15:04:03 +0100
+Message-Id: <20200128135832.408251819@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200128135852.449088278@linuxfoundation.org>
-References: <20200128135852.449088278@linuxfoundation.org>
+In-Reply-To: <20200128135829.486060649@linuxfoundation.org>
+References: <20200128135829.486060649@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,65 +44,34 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Guenter Roeck <linux@roeck-us.net>
+From: Yangtao Li <tiny.windzz@gmail.com>
 
-[ Upstream commit 0f8ed994575429d6042cf5d7ef70081c94091587 ]
+[ Upstream commit cee82eb9532090cd1dc953e845d71f9b1445c84e ]
 
-Building nios2:allmodconfig fails as follows (each symbol is only listed
-once).
+The of_find_compatible_node() returns a node pointer with refcount
+incremented, but there is the lack of use of the of_node_put() when
+done. Add the missing of_node_put() to release the refcount.
 
-ERROR: "__ashldi3" [drivers/md/dm-writecache.ko] undefined!
-ERROR: "__ashrdi3" [fs/xfs/xfs.ko] undefined!
-ERROR: "__ucmpdi2" [drivers/media/i2c/adv7842.ko] undefined!
-ERROR: "__lshrdi3" [drivers/md/dm-zoned.ko] undefined!
-ERROR: "flush_icache_range" [drivers/misc/lkdtm/lkdtm.ko] undefined!
-ERROR: "empty_zero_page" [drivers/md/dm-mod.ko] undefined!
-
-The problem is seen with gcc 7.3.0.
-
-Export the missing symbols.
-
-Fixes: 2fc8483fdcde ("nios2: Build infrastructure")
-Signed-off-by: Guenter Roeck <linux@roeck-us.net>
-Signed-off-by: Ley Foon Tan <ley.foon.tan@intel.com>
+Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
+Fixes: e062b571777f ("clk: exynos4: register clocks using common clock framework")
+Signed-off-by: Stephen Boyd <sboyd@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/nios2/kernel/nios2_ksyms.c | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
+ drivers/clk/samsung/clk-exynos4.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/arch/nios2/kernel/nios2_ksyms.c b/arch/nios2/kernel/nios2_ksyms.c
-index bf2f55d10a4d8..4e704046a150c 100644
---- a/arch/nios2/kernel/nios2_ksyms.c
-+++ b/arch/nios2/kernel/nios2_ksyms.c
-@@ -9,12 +9,20 @@
- #include <linux/export.h>
- #include <linux/string.h>
+diff --git a/drivers/clk/samsung/clk-exynos4.c b/drivers/clk/samsung/clk-exynos4.c
+index 7f370d3e09837..6c8e45e007c84 100644
+--- a/drivers/clk/samsung/clk-exynos4.c
++++ b/drivers/clk/samsung/clk-exynos4.c
+@@ -1224,6 +1224,7 @@ static unsigned long exynos4_get_xom(void)
+ 			xom = readl(chipid_base + 8);
  
-+#include <asm/cacheflush.h>
-+#include <asm/pgtable.h>
-+
- /* string functions */
+ 		iounmap(chipid_base);
++		of_node_put(np);
+ 	}
  
- EXPORT_SYMBOL(memcpy);
- EXPORT_SYMBOL(memset);
- EXPORT_SYMBOL(memmove);
- 
-+/* memory management */
-+
-+EXPORT_SYMBOL(empty_zero_page);
-+EXPORT_SYMBOL(flush_icache_range);
-+
- /*
-  * libgcc functions - functions that are used internally by the
-  * compiler...  (prototypes are not correct though, but that
-@@ -31,3 +39,7 @@ DECLARE_EXPORT(__udivsi3);
- DECLARE_EXPORT(__umoddi3);
- DECLARE_EXPORT(__umodsi3);
- DECLARE_EXPORT(__muldi3);
-+DECLARE_EXPORT(__ucmpdi2);
-+DECLARE_EXPORT(__lshrdi3);
-+DECLARE_EXPORT(__ashldi3);
-+DECLARE_EXPORT(__ashrdi3);
+ 	return xom;
 -- 
 2.20.1
 
