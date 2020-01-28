@@ -2,111 +2,78 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DED0B14B1C0
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Jan 2020 10:28:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CB97814B1D9
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Jan 2020 10:41:23 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726067AbgA1J2N (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 28 Jan 2020 04:28:13 -0500
-Received: from mx2.suse.de ([195.135.220.15]:33168 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725920AbgA1J2N (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 Jan 2020 04:28:13 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id 3B8B7ADA1;
-        Tue, 28 Jan 2020 09:28:10 +0000 (UTC)
-Date:   Tue, 28 Jan 2020 10:28:07 +0100 (CET)
-From:   Miroslav Benes <mbenes@suse.cz>
-To:     Josh Poimboeuf <jpoimboe@redhat.com>
-cc:     Peter Zijlstra <peterz@infradead.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Joe Lawrence <joe.lawrence@redhat.com>,
-        Jessica Yu <jeyu@kernel.org>, x86@kernel.org,
-        linux-kernel@vger.kernel.org, mhiramat@kernel.org,
-        bristot@redhat.com, jbaron@akamai.com,
-        torvalds@linux-foundation.org, tglx@linutronix.de,
-        mingo@kernel.org, namit@vmware.com, hpa@zytor.com, luto@kernel.org,
-        ard.biesheuvel@linaro.org, live-patching@vger.kernel.org,
-        Randy Dunlap <rdunlap@infradead.org>
-Subject: Re: [PATCH v3 5/6] x86/ftrace: Use text_poke()
-In-Reply-To: <20200122214239.ivnebi7hiabi5tbs@treble>
-Message-ID: <alpine.LSU.2.21.2001281014280.14030@pobox.suse.cz>
-References: <88bab814-ea24-ece9-2bc0-7a1e10a62f12@redhat.com> <20191015153120.GA21580@linux-8ccs> <7e9c7dd1-809e-f130-26a3-3d3328477437@redhat.com> <20191015182705.1aeec284@gandalf.local.home> <20191016074217.GL2328@hirez.programming.kicks-ass.net>
- <20191021150549.bitgqifqk2tbd3aj@treble> <20200120165039.6hohicj5o52gdghu@treble> <alpine.LSU.2.21.2001210922060.6036@pobox.suse.cz> <20200121161045.dhihqibnpyrk2lsu@treble> <alpine.LSU.2.21.2001221052331.15957@pobox.suse.cz>
- <20200122214239.ivnebi7hiabi5tbs@treble>
-User-Agent: Alpine 2.21 (LSU 202 2017-01-01)
+        id S1726057AbgA1JlT convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Tue, 28 Jan 2020 04:41:19 -0500
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:41415 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725271AbgA1JlT (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 28 Jan 2020 04:41:19 -0500
+Received: from lupine.hi.pengutronix.de ([2001:67c:670:100:3ad5:47ff:feaf:1a17] helo=lupine)
+        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <p.zabel@pengutronix.de>)
+        id 1iwN4U-00038f-Iu; Tue, 28 Jan 2020 10:22:10 +0100
+Received: from pza by lupine with local (Exim 4.92)
+        (envelope-from <p.zabel@pengutronix.de>)
+        id 1iwN4S-00034Z-Jb; Tue, 28 Jan 2020 10:22:08 +0100
+Message-ID: <01d73961207b5110c2edc72d4964582b12bcc8f7.camel@pengutronix.de>
+Subject: Re: [PATCH v1 2/5] reset: brcmstb-rescal: add unspecified HAS_IOMEM
+ dependency
+From:   Philipp Zabel <p.zabel@pengutronix.de>
+To:     Brendan Higgins <brendanhiggins@google.com>, jdike@addtoit.com,
+        richard@nod.at, anton.ivanov@cambridgegreys.com
+Cc:     linux-um@lists.infradead.org, linux-kernel@vger.kernel.org,
+        davidgow@google.com, heidifahim@google.com
+Date:   Tue, 28 Jan 2020 10:22:08 +0100
+In-Reply-To: <20200127235356.122031-3-brendanhiggins@google.com>
+References: <20200127235356.122031-1-brendanhiggins@google.com>
+         <20200127235356.122031-3-brendanhiggins@google.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8BIT
+User-Agent: Evolution 3.30.5-1.1 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+X-SA-Exim-Connect-IP: 2001:67c:670:100:3ad5:47ff:feaf:1a17
+X-SA-Exim-Mail-From: p.zabel@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 22 Jan 2020, Josh Poimboeuf wrote:
+On Mon, 2020-01-27 at 15:53 -0800, Brendan Higgins wrote:
+> Currently CONFIG_RESET_BRCMSTB_RESCAL=y implicitly depends on
+> CONFIG_HAS_IOMEM=y; consequently, on architectures without IOMEM we get
+> the following build error:
+> 
+> /usr/bin/ld: drivers/reset/reset-brcmstb-rescal.o: in function `brcm_rescal_reset_probe':
+> drivers/reset/reset-brcmstb-rescal.c:76: undefined reference to `devm_ioremap_resource'
+> 
+> Fix the build error by adding the unspecified dependency.
+> 
+> Signed-off-by: Brendan Higgins <brendanhiggins@google.com>
+> ---
+>  drivers/reset/Kconfig | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/drivers/reset/Kconfig b/drivers/reset/Kconfig
+> index 461b0e506a26f..a19bd303f31a9 100644
+> --- a/drivers/reset/Kconfig
+> +++ b/drivers/reset/Kconfig
+> @@ -51,6 +51,7 @@ config RESET_BRCMSTB
+>  
+>  config RESET_BRCMSTB_RESCAL
+>  	bool "Broadcom STB RESCAL reset controller"
+> +	depends on HAS_IOMEM
+>  	default ARCH_BRCMSTB || COMPILE_TEST
+>  	help
+>  	  This enables the RESCAL reset controller for SATA, PCIe0, or PCIe1 on
 
-> On Wed, Jan 22, 2020 at 11:09:56AM +0100, Miroslav Benes wrote:
-> > 
-> > > > > At this point, I only see downsides of -flive-patching, at least until
-> > > > > we actually have real upstream code which needs it.
-> > > > 
-> > > > Can you explain this? The option makes GCC to avoid optimizations which 
-> > > > are difficult to detect and would make live patching unsafe. I consider it 
-> > > > useful as it is, so if you shared the other downsides and what you meant 
-> > > > by real upstream code, we could discuss it.
-> > > 
-> > > Only SLES needs it right?  Why inflict it on other livepatch users?  By
-> > > "real upstream code" I mean there's no (documented) way to create live
-> > > patches using the method which relies on this flag.  So I don't see any
-> > > upstream benefits for having it enabled.
-> > 
-> > I'd put it differently. SLES and upstream need it, RHEL does not need it. 
-> > Or anyone using kpatch-build.
-> 
-> I'm confused about why you think upstream needs it.
-> 
-> Is all the tooling available somewhere?  Is there documentation
-> available which describes how to build patches using that method from
-> start to finish?  Are there actual users other than SUSE?
-> 
-> BTW, kpatch-build has a *lot* of users other than RHEL.  All its tooling
-> and documentation are available on Github.
-> 
-> > It is perfectly fine to prepare live patches just from the source code
-> > using upstream live patching infrastructure. 
-> 
-> Do you mean the dangerous method used by the livepatch sample code which
-> completely ignores interprocedural optimizations?  I wouldn't call that
-> perfectly fine.
-> 
-> > After all, SLES is nothing else than upstream here. We were creating live 
-> > patches manually for quite a long time and only recently we have been 
-> > using Nicolai's klp-ccp automation (https://github.com/SUSE/klp-ccp).
-> > 
-> > So, everyone using upstream directly relies on the flag, which seems to be 
-> > a clear benefit to me. Reverting the patch would be a step back.
-> 
-> Who exactly is "everyone using upstream"?
-> 
-> >From what I can tell, kpatch-build is the only known way (to those
-> outside of SUSE) to make safe patches for an upstream kernel.  And it
-> doesn't need this flag and the problems associated with it: performance,
-> LTO incompatibility, clang incompatibility (I think?), the GCC dead code
-> issue.
+Thank you, I'll pick up the reset patches 2 and 3.
 
-I don't think we have something special at SUSE not generally available...
-
-...and I don't think it is really important to discuss that and replying 
-to the above, because there is a legitimate use case which relies on the 
-flag. We decided to support different use cases right at the beginning.
-
-I understand it currently complicates things for objtool, but objtool is 
-sensitive to GCC code generation by definition. "Issues" appear with every 
-new GCC version. I see no difference here and luckily it is not so 
-difficult to fix it.
-
-I am happy to help with acting on those objtool warning reports you 
-mentioned in the other email. Just Cc me where appropriate. We will take a 
-look.
-
-Regards
-Miroslav
+regards
+Philipp
