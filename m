@@ -2,38 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D31BC14BB2B
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Jan 2020 15:44:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5143214BB16
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Jan 2020 15:43:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729509AbgA1OoE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 28 Jan 2020 09:44:04 -0500
-Received: from mail.kernel.org ([198.145.29.99]:59714 "EHLO mail.kernel.org"
+        id S1729537AbgA1OnT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 28 Jan 2020 09:43:19 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60864 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727393AbgA1OKr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 Jan 2020 09:10:47 -0500
+        id S1727920AbgA1OLm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 28 Jan 2020 09:11:42 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5948C20678;
-        Tue, 28 Jan 2020 14:10:46 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B72CF20678;
+        Tue, 28 Jan 2020 14:11:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1580220646;
-        bh=Be7YZYuRAIF1ZEaBBc/ejqKf+IaBvfiPVz5XS2N1jU8=;
+        s=default; t=1580220702;
+        bh=gTb6kW3GnDiTwRyBC3U1q9NvZgaOYOeM03IU4gcL/s0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=OOgZaCOIZPJgBfvaVlKDrOQXsGHbZQHPHRQ8qSanQgCpWzynFngefI9Ly+aqgMP0Y
-         Hnck63kE1Pl/CFOY0cRxXBSSM++GN1vt/vT510KzupcMrW1F4jo3PRgln8A8sz2Nig
-         EjUMNh61lxKqqRqUYug2UZJS+cWtVnCi0R5U7MYc=
+        b=0fRCg1dyRHJb4A3R3P7EscAQ1I0V522qKmFjsvTTEeqoGkW+vIkL2V6HmF4nSXmXh
+         +OPI6Y+jP2t8kOAA2e+YggLP5+UrPOGaB1xLTBcgx0LzMNXBb4NOFEYGemuM2nY5ag
+         fiVU6L7TfLz8C7zPwXqPNWGDp+PsZYg44eD9BAq4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Hulk Robot <hulkci@huawei.com>,
-        YueHaibing <yuehaibing@huawei.com>,
-        Mukesh Ojha <mojha@codeaurora.org>,
-        "David S. Miller" <davem@davemloft.net>,
+        stable@vger.kernel.org, YueHaibing <yuehaibing@huawei.com>,
+        Robert Jarzmik <robert.jarzmik@free.fr>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.4 073/183] ehea: Fix a copy-paste err in ehea_init_port_res
-Date:   Tue, 28 Jan 2020 15:04:52 +0100
-Message-Id: <20200128135837.292617994@linuxfoundation.org>
+Subject: [PATCH 4.4 075/183] ARM: pxa: ssp: Fix "WARNING: invalid free of devm_ allocated data"
+Date:   Tue, 28 Jan 2020 15:04:54 +0100
+Message-Id: <20200128135837.467747307@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
 In-Reply-To: <20200128135829.486060649@linuxfoundation.org>
 References: <20200128135829.486060649@linuxfoundation.org>
@@ -48,34 +46,43 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: YueHaibing <yuehaibing@huawei.com>
 
-[ Upstream commit c8f191282f819ab4e9b47b22a65c6c29734cefce ]
+[ Upstream commit 9ee8578d953023cc57e7e736ae48502c707c0210 ]
 
-pr->tx_bytes should be assigned to tx_bytes other than
-rx_bytes.
+Since commit 1c459de1e645 ("ARM: pxa: ssp: use devm_ functions")
+kfree, iounmap, clk_put etc are not needed anymore in remove path.
 
-Reported-by: Hulk Robot <hulkci@huawei.com>
-Fixes: ce45b873028f ("ehea: Fixing statistics")
+Fixes: 1c459de1e645 ("ARM: pxa: ssp: use devm_ functions")
 Signed-off-by: YueHaibing <yuehaibing@huawei.com>
-Reviewed-by: Mukesh Ojha <mojha@codeaurora.org>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+[ commit message spelling fix ]
+Signed-off-by: Robert Jarzmik <robert.jarzmik@free.fr>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/ibm/ehea/ehea_main.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/arm/plat-pxa/ssp.c | 6 ------
+ 1 file changed, 6 deletions(-)
 
-diff --git a/drivers/net/ethernet/ibm/ehea/ehea_main.c b/drivers/net/ethernet/ibm/ehea/ehea_main.c
-index 1a56de06b0140..fdbba588c6dba 100644
---- a/drivers/net/ethernet/ibm/ehea/ehea_main.c
-+++ b/drivers/net/ethernet/ibm/ehea/ehea_main.c
-@@ -1477,7 +1477,7 @@ static int ehea_init_port_res(struct ehea_port *port, struct ehea_port_res *pr,
+diff --git a/arch/arm/plat-pxa/ssp.c b/arch/arm/plat-pxa/ssp.c
+index 6748827c2ec8b..b6b0979e3cf94 100644
+--- a/arch/arm/plat-pxa/ssp.c
++++ b/arch/arm/plat-pxa/ssp.c
+@@ -231,18 +231,12 @@ static int pxa_ssp_probe(struct platform_device *pdev)
  
- 	memset(pr, 0, sizeof(struct ehea_port_res));
+ static int pxa_ssp_remove(struct platform_device *pdev)
+ {
+-	struct resource *res;
+ 	struct ssp_device *ssp;
  
--	pr->tx_bytes = rx_bytes;
-+	pr->tx_bytes = tx_bytes;
- 	pr->tx_packets = tx_packets;
- 	pr->rx_bytes = rx_bytes;
- 	pr->rx_packets = rx_packets;
+ 	ssp = platform_get_drvdata(pdev);
+ 	if (ssp == NULL)
+ 		return -ENODEV;
+ 
+-	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-	release_mem_region(res->start, resource_size(res));
+-
+-	clk_put(ssp->clk);
+-
+ 	mutex_lock(&ssp_lock);
+ 	list_del(&ssp->node);
+ 	mutex_unlock(&ssp_lock);
 -- 
 2.20.1
 
