@@ -2,119 +2,105 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 54EEF14B4AA
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Jan 2020 14:06:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EA33314B4AF
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Jan 2020 14:08:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726107AbgA1NGw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 28 Jan 2020 08:06:52 -0500
-Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:55068 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1725283AbgA1NGw (ORCPT
+        id S1726275AbgA1NIK convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Tue, 28 Jan 2020 08:08:10 -0500
+Received: from mout.kundenserver.de ([217.72.192.75]:50073 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725852AbgA1NIK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 Jan 2020 08:06:52 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1580216812;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=PVCZBoWITEVn0ar0L5LRVeQOwBalysgHCJ5R42wZfYg=;
-        b=aKKGxSDsN79xFOg8vcf9IlKtLbHaBK9ZrZSFYeOS0vv5m8Jaj5LCkJX2D/Ch7mV+6F0h12
-        3QoxANEWeopJcP2aO/L1XCAG+4TCBpUMMgTC/8BiVHdp+xRk0kEbygVP8h0koDe8B1LnUZ
-        y+raXxSb67A2zp4PiXerKmgndzn0nJ8=
-Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
- [209.85.128.70]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-341-PaIKuNKXNAyBk2kvY5Du7A-1; Tue, 28 Jan 2020 08:06:50 -0500
-X-MC-Unique: PaIKuNKXNAyBk2kvY5Du7A-1
-Received: by mail-wm1-f70.google.com with SMTP id b202so903284wmb.2
-        for <linux-kernel@vger.kernel.org>; Tue, 28 Jan 2020 05:06:49 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to;
-        bh=PVCZBoWITEVn0ar0L5LRVeQOwBalysgHCJ5R42wZfYg=;
-        b=pvW8Wj6rxqAdLqlJNfJ2sdDxpFn11lVx89T3UnpqDdhsOl5mxFu74BURFgHUnGZk9K
-         lfzr2KMWjvMMlKxlaIcnlySj2Et+BAolxD1z8qgHQX9HdEIXUAkHRQoqofA1C4RbdfoD
-         T5cFlHaNTkEriQ+ZCSzS3I/J7ZcrmHoF8DMPZZvTloPHZw/FhmD2YAWvJSm3+MUz+E7E
-         ju/kx6MtueHwvo1k2UBA/8QarGn2oh00KBD6CozRBRtGmqSDRXu2TosJlV1vGjZVynlX
-         O3FkJSA6YnR30JTciokfgUFrpW274c+v5wzB9GuxuHQAxMJy+ha5KD8BRkIkgsgYwEzb
-         UrlQ==
-X-Gm-Message-State: APjAAAXLCOFE/e4ikL2iICl29DZFl3YpaHcGPBTyLZC+R//t3SLQLUz5
-        QA0IYN8HD7r0whKGzKCN1NEFCHx5tFBukt77x2S9yH1RuSh2igCDovdhFczvJF0OiKC+D7J2qec
-        +Rlvsmz9dwudKLkxg9zSZw7tY
-X-Received: by 2002:a5d:4d4a:: with SMTP id a10mr30027650wru.220.1580216808937;
-        Tue, 28 Jan 2020 05:06:48 -0800 (PST)
-X-Google-Smtp-Source: APXvYqzFnkEhBvvJuJtmNLUvHluChe4Bv8Ikr8QxAm5+P07CiOQneEKsGEiAF0zCN6YWxKDXkUk42Q==
-X-Received: by 2002:a5d:4d4a:: with SMTP id a10mr30027618wru.220.1580216808670;
-        Tue, 28 Jan 2020 05:06:48 -0800 (PST)
-Received: from steredhat (85-207-217-101.static.bluetone.cz. [85.207.217.101])
-        by smtp.gmail.com with ESMTPSA id v17sm25046478wrt.91.2020.01.28.05.06.47
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 28 Jan 2020 05:06:48 -0800 (PST)
-Date:   Tue, 28 Jan 2020 14:06:46 +0100
-From:   Stefano Garzarella <sgarzare@redhat.com>
-To:     Jens Axboe <axboe@kernel.dk>
-Cc:     io-uring@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH liburing 1/1] test: add epoll test case
-Message-ID: <20200128130646.n3x5co7n3m7gbyzy@steredhat>
-References: <20200127161701.153625-1-sgarzare@redhat.com>
- <20200127161701.153625-2-sgarzare@redhat.com>
- <b1b26e79-507a-b339-2850-d2686661e669@kernel.dk>
- <20200127182534.5ljsj53vzpj6kkru@steredhat>
- <646cbb04-9bef-0d99-64ec-322d1584abe7@kernel.dk>
+        Tue, 28 Jan 2020 08:08:10 -0500
+Received: from mail-qv1-f47.google.com ([209.85.219.47]) by
+ mrelayeu.kundenserver.de (mreue109 [212.227.15.145]) with ESMTPSA (Nemesis)
+ id 1N2V8T-1jijaR3rLT-013uS8 for <linux-kernel@vger.kernel.org>; Tue, 28 Jan
+ 2020 14:08:09 +0100
+Received: by mail-qv1-f47.google.com with SMTP id db9so2587937qvb.3
+        for <linux-kernel@vger.kernel.org>; Tue, 28 Jan 2020 05:08:08 -0800 (PST)
+X-Gm-Message-State: APjAAAURzhIhdz4K1PIjCzvwoPA4opIz+b19iu5CtyG58vZX7jVOYCLo
+        IegHkwpvFrH/GnXvKe75vtACSuGDttvmhG+JCNM=
+X-Google-Smtp-Source: APXvYqwbF70fulmMWpYsvgtwTwVOULgFhaykqGynP3TsqaWJatV/77WMv6RcxE8VKIM0b3GG4JzZReLAuPl6Qcio2Zw=
+X-Received: by 2002:a0c:d788:: with SMTP id z8mr20752657qvi.211.1580216887804;
+ Tue, 28 Jan 2020 05:08:07 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <646cbb04-9bef-0d99-64ec-322d1584abe7@kernel.dk>
+References: <20200121114553.2667556-1-arnd@arndb.de> <20200121125546.GA71415@bogon.m.sigxcpu.org>
+ <1971902c68ff805ee0b4a66f558afe06e6edf0c5.camel@pengutronix.de>
+ <CAK8P3a2E__zHPPEL37JwK=uHb_v-=C+-+zGaL3XoW5PZ+BUN5g@mail.gmail.com>
+ <20200122103034.GA67385@bogon.m.sigxcpu.org> <20200122103553.GN25745@shell.armlinux.org.uk>
+ <20200124085616.GA5680@bogon.m.sigxcpu.org>
+In-Reply-To: <20200124085616.GA5680@bogon.m.sigxcpu.org>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Tue, 28 Jan 2020 14:07:51 +0100
+X-Gmail-Original-Message-ID: <CAK8P3a36b6OVW1izkmwML_iWof1BWcPSuh=zV5D=9Jx5Q+MRFg@mail.gmail.com>
+Message-ID: <CAK8P3a36b6OVW1izkmwML_iWof1BWcPSuh=zV5D=9Jx5Q+MRFg@mail.gmail.com>
+Subject: Re: [PATCH] drm/etnaviv: only reject timeouts with tv_nsec >= 2 seconds
+To:     =?UTF-8?Q?Guido_G=C3=BCnther?= <agx@sigxcpu.org>
+Cc:     Russell King - ARM Linux admin <linux@armlinux.org.uk>,
+        Lucas Stach <l.stach@pengutronix.de>,
+        Christian Gmeiner <christian.gmeiner@gmail.com>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Sam Ravnborg <sam@ravnborg.org>, Rob Herring <robh@kernel.org>,
+        Emil Velikov <emil.velikov@collabora.com>,
+        The etnaviv authors <etnaviv@lists.freedesktop.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8BIT
+X-Provags-ID: V03:K1:OSdX+6i7GT66CAFwQ+vhxHK4bua8rOrudPhf7fhYfMGMxN9B6EX
+ fqidXcTQLWSwpKs38T6HxM9m3mZGewm85sPs5p4rrKiXUKh/rVxeTXvRDBoxLCPofXBN0Oy
+ z2iLCY+lzoyXzr92WaCa2RcKyxhndbZrDdMSOukLZ2R6GgfthbDx3Vp/LNI4otWnL5Onn4o
+ OOReDPWj6hh7aZoqbzbXA==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:Xz9Cq3YR54Q=:eHF9kt6GuEyao/lu52FkNw
+ XYjjNXa7PimYFfIut8n/maixe7zmw6GcceJUpWW/UcBkxfQy7a/cXJ7uaFHm/NYjTCfuJkzEj
+ +VtgXbOR/hvrnLdkFVK0UWBiMryxbytlVup73MTt6I3obvxB4v7RkgDxrjIReimOGcYTTHkjU
+ qyf0JmRC25Pog2EuJBFw4uYgSnbVwa2M6VvUY8yR3sQx6T7cuV1ZHrBI7qd9brS6+QtRYsQa4
+ 40/ZhKoX2bcEkQSgQ64hxhSIQRc0vstV00Q5QrpPIHOmDmc/90iIDa6iCj7gb+eCvYrFqAVD9
+ SegrjkpqX4cSPASy2pg2Ga216oBh7d8sbIs5Tk5vUtO9Yy6MSQL0QrIVlKrx5PvteQEy8diUv
+ PGxV+svMOYkBE8aJFt/AlNmKN6qHwL9bqKKdm1mHimfJ5Fu8XwawPZDSGGwxzMW0ofw6xyU6p
+ k3ZcxnhxrYwLLF50Bcnsz5fRTUUl/MXo5fJlNzY5o93oBP7PbgmzY+NP1MmshdWEwziHvP22I
+ Lh93RvmKHM5X+2xcHb+mlDS35RQQee2tZSUOdSjn3EhRJFIfoTButh/pWTqfMnPCP8NQWeXIh
+ EhD0GZ0U61bmMXien1un/12WvcGWtA/eBc+Igl98P287yE97gA0Ba8pMrcrwPCYNO46tORwCz
+ y/jTvo/mXIpIiQSVnQmr1FlhupThF/LHPgOkFLKrMy9jcmCO8wwdNmo/f+JlcTAR+T0hy6PXd
+ 9jKPYCsBw/mnRsbn79Yr+62/EqRoXxpOQ0aV+8zZEi5J7h+FXzdzNqAiFAwLq2BCYcxXh7N+U
+ cjtP3a3lcl/9rb10ZNF9KqRIjWYXw3D8/x2awdGiAp4k4EWDOo=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jan 27, 2020 at 11:46:34AM -0700, Jens Axboe wrote:
-> On 1/27/20 11:25 AM, Stefano Garzarella wrote:
-> > On Mon, Jan 27, 2020 at 09:32:43AM -0700, Jens Axboe wrote:
-> >> On 1/27/20 9:17 AM, Stefano Garzarella wrote:
-> >>> Signed-off-by: Stefano Garzarella <sgarzare@redhat.com>
-> >>
-> >> You're not reaping CQ events, and hence you overflow the ring. Once
-> >> overflown, an attempt to submit new IO will returns in a -16/-EBUSY
-> >> return value. This is io_uring telling you that it won't submit more
-> >> IO until you've emptied the completion ring so io_uring can flush
-> >> the overflown entries to the ring.
-> > 
-> > How can I reaping CQ events? (I was hoping the epoll would help me with that)
-> > 
-> > What I'm seeing is that the producer (EPOLLOUT) can fill the SQ without issues,
-> > the consumer (read()) is receiving all the buffers produced, but the thread
-> > that frees the buffers (EPOLLIN) is not woken up.
-> > 
-> > I tried to set a timeout to the epoll_wait(), but the io_uring_peek_cqe()
-> > returns -EAGAIN.
-> > 
-> > If I'm using a ring with 16 entries, it seems to work better, but
-> > sometimes I lose events and the thread that frees the buffer doesn't wake up.
-> > 
-> > Maybe I'm missing something...
-> 
-> OK, so that helps in terms of understanding the issue you are seeing with
-> it. I'll take a look at this, but it'll probably be a few days. You can
-> try and enable tracing, I see events completed just fine. Maybe a race
-> with your epoll wait and event reaping?
+On Fri, Jan 24, 2020 at 9:56 AM Guido Günther <agx@sigxcpu.org> wrote:
+> On Wed, Jan 22, 2020 at 10:35:53AM +0000, Russell King - ARM Linux admin wrote:
+> > On Wed, Jan 22, 2020 at 11:30:34AM +0100, Guido Günther wrote:
 
-(discard previous email wrongly sent by my phone, sorry for the noise)
+> > I think it would probably be better for the kernel to print a
+> > warning once when noticing over-large nsec values, suggesting a
+> > userspace upgrade is in order, but continue the existing behaviour.
+>
+> That makes sense to me. This also makes sure we don't break other (non
+> mesa using) stuff accidentally. We have
+>
+>   https://gitlab.freedesktop.org/mesa/mesa/commit/d817f2c69615cf37b78f484a25b7831ebe9dbe6f
+>
+> and
+>
+>   https://gitlab.freedesktop.org/mesa/mesa/merge_requests/3534
+>
+> to normalize nsec to [0..999999999] now.
+>
 
-Okay, the issue was that my kernel doesn’t support IORING_FEAT_NODROP,
-so for this reason I missed the CQ events.
+I have reverted my patch that adds the range check now, so I can send the rest
+of the series for inclusion.
 
-Avoiding the CQ overflow keeping this condition true
-(submitted - completed < n_entries), solves the issue.
+I've played around with ways to add a ratelimited warning message and to
+make sure that a malicious application cannot cause a long stall, but haven't
+managed to get a version I'm actually happy with.
 
-I’ll try with a mainline kernel, handling also the -EBUSY returned by
-io_uring_submit().
+I'll follow up once the series is merged, and then we can add a better
+workaround
+later through the drm tree.
 
-Thanks,
-Stefano
-
+      Arnd
