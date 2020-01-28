@@ -2,40 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 94FF914B875
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Jan 2020 15:24:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0445614B750
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Jan 2020 15:13:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732387AbgA1OXq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 28 Jan 2020 09:23:46 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49956 "EHLO mail.kernel.org"
+        id S1727982AbgA1ONS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 28 Jan 2020 09:13:18 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34732 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726710AbgA1OXl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 Jan 2020 09:23:41 -0500
+        id S1729113AbgA1ONJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 28 Jan 2020 09:13:09 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2C09624686;
-        Tue, 28 Jan 2020 14:23:40 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4292A2468A;
+        Tue, 28 Jan 2020 14:13:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1580221420;
-        bh=WwZHyOY2VemlvryYFlEoA2dm0HI2D0kYuVp0LfkO2Zo=;
+        s=default; t=1580220788;
+        bh=cXhWVoe8l7SesCfbvpKHyaadgu/BrM44Hjki1zDwezM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=FPEMN7Ds6LnTeW119sB7rHV88+M0S/YhMbHdb5/RiIkdwPRUOINvuMa9xROS0KA22
-         WVx08OsFmkaRByRMA4CGPkrWQeZH7xQUwL0q3AhffUqC4oLDeCv4lx5N4nsSrV/kr/
-         F/+gI95USi5E9Ubi2aSsnmb8J0836gNyGLDXN3Vg=
+        b=zL2TP4ug485Eueab8DY7W+BV89oLPJu+dL/ZTBe9AJ7SchYvyey/5PLE6eXbZKXmP
+         Mocji6R4iHTkig83YSTdsVSuw0Etmc5POs/wfGCj8Lg5xLR39dFZIY2wuBKZ3kpBlI
+         jGBERp3/TciZM076lSSpL64ST5WDVMdepEUkA2pw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, stable@vger.kernel,
-        Robin Gong <yibin.gong@nxp.com>,
-        Jurgen Lambrecht <J.Lambrecht@TELEVIC.com>,
-        Vinod Koul <vkoul@kernel.org>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 216/271] dmaengine: imx-sdma: fix size check for sdma script_number
+        stable@vger.kernel.org, Antonio Borneo <antonio.borneo@st.com>,
+        Jakub Kicinski <jakub.kicinski@netronome.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.4 146/183] net: stmmac: fix length of PTP clocks name string
 Date:   Tue, 28 Jan 2020 15:06:05 +0100
-Message-Id: <20200128135908.614440216@linuxfoundation.org>
+Message-Id: <20200128135844.326536543@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200128135852.449088278@linuxfoundation.org>
-References: <20200128135852.449088278@linuxfoundation.org>
+In-Reply-To: <20200128135829.486060649@linuxfoundation.org>
+References: <20200128135829.486060649@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,71 +44,49 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Robin Gong <yibin.gong@nxp.com>
+From: Antonio Borneo <antonio.borneo@st.com>
 
-[ Upstream commit bd73dfabdda280fc5f05bdec79b6721b4b2f035f ]
+[ Upstream commit 5da202c88f8c355ad79bc2e8eb582e6d433060e7 ]
 
-Illegal memory will be touch if SDMA_SCRIPT_ADDRS_ARRAY_SIZE_V3
-(41) exceed the size of structure sdma_script_start_addrs(40),
-thus cause memory corrupt such as slob block header so that kernel
-trap into while() loop forever in slob_free(). Please refer to below
-code piece in imx-sdma.c:
-for (i = 0; i < sdma->script_number; i++)
-	if (addr_arr[i] > 0)
-		saddr_arr[i] = addr_arr[i]; /* memory corrupt here */
-That issue was brought by commit a572460be9cf ("dmaengine: imx-sdma: Add
-support for version 3 firmware") because SDMA_SCRIPT_ADDRS_ARRAY_SIZE_V3
-(38->41 3 scripts added) not align with script number added in
-sdma_script_start_addrs(2 scripts).
+The field "name" in struct ptp_clock_info has a fixed size of 16
+chars and is used as zero terminated string by clock_name_show()
+in drivers/ptp/ptp_sysfs.c
+The current initialization value requires 17 chars to fit also the
+null termination, and this causes overflow to the next bytes in
+the struct when the string is read as null terminated:
+	hexdump -C /sys/class/ptp/ptp0/clock_name
+	00000000  73 74 6d 6d 61 63 5f 70  74 70 5f 63 6c 6f 63 6b  |stmmac_ptp_clock|
+	00000010  a0 ac b9 03 0a                                    |.....|
+where the extra 4 bytes (excluding the newline) after the string
+represent the integer 0x03b9aca0 = 62500000 assigned to the field
+"max_adj" that follows "name" in the same struct.
 
-Fixes: a572460be9cf ("dmaengine: imx-sdma: Add support for version 3 firmware")
-Cc: stable@vger.kernel
-Link: https://www.spinics.net/lists/arm-kernel/msg754895.html
-Signed-off-by: Robin Gong <yibin.gong@nxp.com>
-Reported-by: Jurgen Lambrecht <J.Lambrecht@TELEVIC.com>
-Link: https://lore.kernel.org/r/1569347584-3478-1-git-send-email-yibin.gong@nxp.com
-[vkoul: update the patch title]
-Signed-off-by: Vinod Koul <vkoul@kernel.org>
+There is no strict requirement for the "name" content and in the
+comment in ptp_clock_kernel.h it's reported it should just be 'A
+short "friendly name" to identify the clock'.
+Replace it with "stmmac ptp".
+
+Signed-off-by: Antonio Borneo <antonio.borneo@st.com>
+Fixes: 92ba6888510c ("stmmac: add the support for PTP hw clock driver")
+Signed-off-by: Jakub Kicinski <jakub.kicinski@netronome.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/dma/imx-sdma.c                     | 8 ++++++++
- include/linux/platform_data/dma-imx-sdma.h | 3 +++
- 2 files changed, 11 insertions(+)
+ drivers/net/ethernet/stmicro/stmmac/stmmac_ptp.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/dma/imx-sdma.c b/drivers/dma/imx-sdma.c
-index 9f240b2d85a54..558d509b7d855 100644
---- a/drivers/dma/imx-sdma.c
-+++ b/drivers/dma/imx-sdma.c
-@@ -1441,6 +1441,14 @@ static void sdma_add_scripts(struct sdma_engine *sdma,
- 	if (!sdma->script_number)
- 		sdma->script_number = SDMA_SCRIPT_ADDRS_ARRAY_SIZE_V1;
- 
-+	if (sdma->script_number > sizeof(struct sdma_script_start_addrs)
-+				  / sizeof(s32)) {
-+		dev_err(sdma->dev,
-+			"SDMA script number %d not match with firmware.\n",
-+			sdma->script_number);
-+		return;
-+	}
-+
- 	for (i = 0; i < sdma->script_number; i++)
- 		if (addr_arr[i] > 0)
- 			saddr_arr[i] = addr_arr[i];
-diff --git a/include/linux/platform_data/dma-imx-sdma.h b/include/linux/platform_data/dma-imx-sdma.h
-index 2d08816720f6d..5bb0a119f39a3 100644
---- a/include/linux/platform_data/dma-imx-sdma.h
-+++ b/include/linux/platform_data/dma-imx-sdma.h
-@@ -50,7 +50,10 @@ struct sdma_script_start_addrs {
- 	/* End of v2 array */
- 	s32 zcanfd_2_mcu_addr;
- 	s32 zqspi_2_mcu_addr;
-+	s32 mcu_2_ecspi_addr;
- 	/* End of v3 array */
-+	s32 mcu_2_zqspi_addr;
-+	/* End of v4 array */
- };
- 
- /**
+diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_ptp.c b/drivers/net/ethernet/stmicro/stmmac/stmmac_ptp.c
+index 170a18b61281d..147c9f8cee7f7 100644
+--- a/drivers/net/ethernet/stmicro/stmmac/stmmac_ptp.c
++++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_ptp.c
+@@ -157,7 +157,7 @@ static int stmmac_enable(struct ptp_clock_info *ptp,
+ /* structure describing a PTP hardware clock */
+ static struct ptp_clock_info stmmac_ptp_clock_ops = {
+ 	.owner = THIS_MODULE,
+-	.name = "stmmac_ptp_clock",
++	.name = "stmmac ptp",
+ 	.max_adj = 62500000,
+ 	.n_alarm = 0,
+ 	.n_ext_ts = 0,
 -- 
 2.20.1
 
