@@ -2,79 +2,206 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8613614B4D1
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Jan 2020 14:24:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AB6CF14B4D5
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Jan 2020 14:25:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726141AbgA1NYL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 28 Jan 2020 08:24:11 -0500
-Received: from mail-ot1-f65.google.com ([209.85.210.65]:33439 "EHLO
-        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725852AbgA1NYL (ORCPT
+        id S1726240AbgA1NZN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 28 Jan 2020 08:25:13 -0500
+Received: from alexa-out-blr-02.qualcomm.com ([103.229.18.198]:10099 "EHLO
+        alexa-out-blr-02.qualcomm.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725852AbgA1NZN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 Jan 2020 08:24:11 -0500
-Received: by mail-ot1-f65.google.com with SMTP id b18so11966547otp.0
-        for <linux-kernel@vger.kernel.org>; Tue, 28 Jan 2020 05:24:11 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:reply-to:from:date:message-id:subject:to;
-        bh=Vmp2eIWBoGfoE5AJe9mEVSHcwJbt7oIxX2AhMEggjgM=;
-        b=g8qH3/GqSq6NqYCYpO6Ww1IjZiGoSahYbbqiJvWvhp0m7OPcmJb5MQPPHqmUHe7txy
-         mWh7yxcnDVNOfMw5R50fNNbhoQ3PrwBJQPKEVZEAt3enKSHSDArT+gp4YIZNQWGLT7mb
-         63ccrSRHvDmTZKnWBvemWSGQe2A93QpoeRJxPKS47hzmXM0ZHRrHREmtgGHbuc/jsPXk
-         tZ5AJBXTyuPBkDZxTAb0zGOyghWjwlB8VKSvWmSZ1uwWDj6VU84ZNpmjNQSPuVyPB2U/
-         SPa/nkT/sfP6lClTBzkPOoyol5VpUaMOnjp23my1TOSy9infKbG95Gw7UITrrNIvnJcp
-         XupA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
-         :subject:to;
-        bh=Vmp2eIWBoGfoE5AJe9mEVSHcwJbt7oIxX2AhMEggjgM=;
-        b=rJ09YlT/fkTzRutyDeXNfOPrygveHwDbafxsdBUvGN7Mpy8eevHTLpU3RXX098heI4
-         Vx/pyuc0DS1BXOYfQhVZtE+OnqXo6Bx5JBz9Gm888V4jvJUfZ/uK5gi5yKCZ8XpMy0qL
-         5TcWg+FHAEKEHV4Kawr+w3J9xmrT2tPDb6DhpSx06f+evko7nrk5+xBD/uwKsIJ/lP+b
-         hxfpME6JoZGtZkeObG0kn7rBprQ7LTnYmq1Xy5O3npgf2fhx7JhumED3j6nenrMtGB30
-         UcBaPmZBf+/UKn4BdNBEjZTlFNRP0OLJNmBXeMVfx9oD1/Zl2ODG0DAk+6X72AAGGdT6
-         EePQ==
-X-Gm-Message-State: APjAAAVIjPQllGXB31RKlROUaANRYiJYSoJV7+Djzs9c9s3pNDeeZdXq
-        nJrJ/0ehe91yFJjuc1xfEXOc8ggTO7/cCrHtRNg=
-X-Google-Smtp-Source: APXvYqwAXmepugX9yf/bXrK/ZjOa9A0x0d4Ah+ZWbp718LYTBi5j/1kCLmJkF9THNwGAbhu3THQlWToNDevm7+LH7oY=
-X-Received: by 2002:a9d:7ada:: with SMTP id m26mr16878673otn.111.1580217850959;
- Tue, 28 Jan 2020 05:24:10 -0800 (PST)
-MIME-Version: 1.0
-Received: by 2002:a4a:1d85:0:0:0:0:0 with HTTP; Tue, 28 Jan 2020 05:24:10
- -0800 (PST)
-Reply-To: davidabulatg1@gmail.com
-From:   David Abula <agtdonnascottfbi11@gmail.com>
-Date:   Tue, 28 Jan 2020 14:24:10 +0100
-Message-ID: <CA+DB4f2MeU+XExn10UZc2kwb=aQdjyE7pdFR6ZHu148uQKcMnA@mail.gmail.com>
-Subject: RE
-To:     undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
+        Tue, 28 Jan 2020 08:25:13 -0500
+Received: from ironmsg02-blr.qualcomm.com ([10.86.208.131])
+  by alexa-out-blr-02.qualcomm.com with ESMTP/TLS/AES256-SHA; 28 Jan 2020 18:55:08 +0530
+Received: from harigovi-linux.qualcomm.com ([10.204.66.157])
+  by ironmsg02-blr.qualcomm.com with ESMTP; 28 Jan 2020 18:54:48 +0530
+Received: by harigovi-linux.qualcomm.com (Postfix, from userid 2332695)
+        id D02882830; Tue, 28 Jan 2020 18:54:46 +0530 (IST)
+From:   Harigovindan P <harigovi@codeaurora.org>
+To:     dri-devel@lists.freedesktop.org, linux-arm-msm@vger.kernel.org,
+        freedreno@lists.freedesktop.org, devicetree@vger.kernel.org
+Cc:     Harigovindan P <harigovi@codeaurora.org>,
+        linux-kernel@vger.kernel.org, robdclark@gmail.com,
+        seanpaul@chromium.org, hoegsberg@chromium.org,
+        kalyan_t@codeaurora.org, nganji@codeaurora.org
+Subject: [v4] arm64: dts: sc7180: add display dt nodes
+Date:   Tue, 28 Jan 2020 18:54:44 +0530
+Message-Id: <1580217884-21932-1-git-send-email-harigovi@codeaurora.org>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
-Good day,
-Please accept my sincere congratulations and I know this message may
-come to you as a surprise, but I advise you to read with good
-understanding. I am Barrister David Abula, from Togo. Therefore, there
-is a certain amount of funds $ 11.7 million that was left by my late
-client, is a citizen of your country, who died a few years ago here in
-my country; can I trust you to work with you to transfer the total
-amount of $ 11.7 million into your account in your country? and after
-we will share the total fund 50 % to 50 %.Moreover, my wife is sick
-and I need to fly her to Hospital in Abroad, therefore, i want to get
-to success of this transaction so that i can go further with the
-treatment of my wife so If you are interested to cooperate with me, I
-will advise you to respond back to me in my email address or you
-provide to me your email address to enable me send you the full
-details about the transaction, so that you can read and come to a good
-understanding with me. Reply me on my email address
-(davidabulatg1@gmail.com) Thank you and I wait for your immediate
-response.
-Sincerely,
-Lawyer David Abula
-Phone: +22890712188
-davidabulatg1@gmail.com
+Add display, DSI hardware DT nodes for sc7180.
+
+Signed-off-by: Harigovindan P <harigovi@codeaurora.org>
+---
+
+Changes in v1:
+	-Added display DT nodes for sc7180
+Changes in v2:
+	-Renamed node names
+	-Corrected code alignments
+	-Removed extra new line
+	-Added DISP AHB clock for register access
+	under display_subsystem node for global settings
+Changes in v3:
+	-Modified node names
+	-Modified hard coded values
+	-Removed mdss reg entry
+Changes in v4:
+	-Reverting mdp node name
+	-Setting status to disabled in main SOC dtsi file
+	-Replacing _ to - for node names
+	-Adding clock dependency patch link
+	-Splitting idp dt file to a separate patch
+
+This patch has dependency on the below series
+https://lkml.org/lkml/2019/12/27/73
+ arch/arm64/boot/dts/qcom/sc7180.dtsi | 128 +++++++++++++++++++++++++++++++++++
+ 1 file changed, 128 insertions(+)
+
+diff --git a/arch/arm64/boot/dts/qcom/sc7180.dtsi b/arch/arm64/boot/dts/qcom/sc7180.dtsi
+index 3bc3f64..c3883af 100644
+--- a/arch/arm64/boot/dts/qcom/sc7180.dtsi
++++ b/arch/arm64/boot/dts/qcom/sc7180.dtsi
+@@ -1184,6 +1184,134 @@
+ 			#power-domain-cells = <1>;
+ 		};
+ 
++		mdss: mdss@ae00000 {
++			compatible = "qcom,sc7180-mdss";
++			reg = <0 0x0ae00000 0 0x1000>;
++			reg-names = "mdss";
++
++			power-domains = <&dispcc MDSS_GDSC>;
++
++			clocks = <&gcc GCC_DISP_AHB_CLK>,
++				 <&gcc GCC_DISP_HF_AXI_CLK>,
++				 <&dispcc DISP_CC_MDSS_AHB_CLK>,
++				 <&dispcc DISP_CC_MDSS_MDP_CLK>;
++			clock-names = "iface", "gcc_bus", "ahb", "core";
++
++			assigned-clocks = <&dispcc DISP_CC_MDSS_MDP_CLK>;
++			assigned-clock-rates = <300000000>;
++
++			interrupts = <GIC_SPI 83 IRQ_TYPE_LEVEL_HIGH>;
++			interrupt-controller;
++			#interrupt-cells = <1>;
++
++			iommus = <&apps_smmu 0x800 0x2>;
++
++			#address-cells = <2>;
++			#size-cells = <2>;
++			ranges;
++
++			mdss_mdp: mdp@ae01000 {
++				compatible = "qcom,sc7180-dpu";
++				reg = <0 0x0ae01000 0 0x8f000>,
++				      <0 0x0aeb0000 0 0x2008>,
++				      <0 0x0af03000 0 0x16>;
++				reg-names = "mdp", "vbif", "disp_cc";
++
++				clocks = <&dispcc DISP_CC_MDSS_AHB_CLK>,
++					 <&dispcc DISP_CC_MDSS_ROT_CLK>,
++					 <&dispcc DISP_CC_MDSS_MDP_LUT_CLK>,
++					 <&dispcc DISP_CC_MDSS_MDP_CLK>,
++					 <&dispcc DISP_CC_MDSS_VSYNC_CLK>;
++				clock-names = "iface", "rot", "lut", "core",
++					      "vsync";
++				assigned-clocks = <&dispcc DISP_CC_MDSS_MDP_CLK>,
++						  <&dispcc DISP_CC_MDSS_VSYNC_CLK>;
++				assigned-clock-rates = <300000000>,
++						       <19200000>;
++
++				interrupt-parent = <&mdss>;
++				interrupts = <0 IRQ_TYPE_LEVEL_HIGH>;
++
++				ports {
++					#address-cells = <1>;
++					#size-cells = <0>;
++
++					port@0 {
++						reg = <0>;
++						dpu_intf1_out: endpoint {
++							remote-endpoint = <&dsi0_in>;
++						};
++					};
++				};
++			};
++
++			dsi_controller: dsi-controller@ae94000 {
++				compatible = "qcom,mdss-dsi-ctrl";
++				reg = <0 0x0ae94000 0 0x400>;
++				reg-names = "dsi_ctrl";
++
++				interrupt-parent = <&mdss>;
++				interrupts = <4 IRQ_TYPE_LEVEL_HIGH>;
++
++				clocks = <&dispcc DISP_CC_MDSS_BYTE0_CLK>,
++					 <&dispcc DISP_CC_MDSS_BYTE0_INTF_CLK>,
++					 <&dispcc DISP_CC_MDSS_PCLK0_CLK>,
++					 <&dispcc DISP_CC_MDSS_ESC0_CLK>,
++					 <&dispcc DISP_CC_MDSS_AHB_CLK>,
++					 <&gcc GCC_DISP_HF_AXI_CLK>;
++				clock-names = "byte",
++					      "byte_intf",
++					      "pixel",
++					      "core",
++					      "iface",
++					      "bus";
++
++				phys = <&dsi_phy>;
++				phy-names = "dsi";
++
++				#address-cells = <1>;
++				#size-cells = <0>;
++
++				status = "disabled";
++
++				ports {
++					#address-cells = <1>;
++					#size-cells = <0>;
++
++					port@0 {
++						reg = <0>;
++						dsi0_in: endpoint {
++							remote-endpoint = <&dpu_intf1_out>;
++						};
++					};
++
++					port@1 {
++						reg = <1>;
++						dsi0_out: endpoint {
++						};
++					};
++				};
++			};
++
++			dsi_phy: dsi-phy@ae94400 {
++				compatible = "qcom,dsi-phy-10nm";
++				reg = <0 0x0ae94400 0 0x200>,
++				      <0 0x0ae94600 0 0x280>,
++				      <0 0x0ae94a00 0 0x1e0>;
++				reg-names = "dsi_phy",
++					    "dsi_phy_lane",
++					    "dsi_pll";
++
++				#clock-cells = <1>;
++				#phy-cells = <0>;
++
++				clocks = <&dispcc DISP_CC_MDSS_AHB_CLK>;
++				clock-names = "iface";
++
++				status = "disabled";
++			};
++		};
++
+ 		pdc: interrupt-controller@b220000 {
+ 			compatible = "qcom,sc7180-pdc", "qcom,pdc";
+ 			reg = <0 0x0b220000 0 0x30000>;
+-- 
+2.7.4
+
