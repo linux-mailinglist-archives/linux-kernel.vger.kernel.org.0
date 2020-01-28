@@ -2,225 +2,82 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 00EE814B678
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Jan 2020 15:05:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A330714B83C
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Jan 2020 15:23:53 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728271AbgA1OF1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 28 Jan 2020 09:05:27 -0500
-Received: from hqnvemgate24.nvidia.com ([216.228.121.143]:3966 "EHLO
-        hqnvemgate24.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728247AbgA1OFW (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 Jan 2020 09:05:22 -0500
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate24.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5e303f6f0000>; Tue, 28 Jan 2020 06:04:31 -0800
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate101.nvidia.com (PGP Universal service);
-  Tue, 28 Jan 2020 06:05:21 -0800
-X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Tue, 28 Jan 2020 06:05:21 -0800
-Received: from [10.21.133.51] (10.124.1.5) by HQMAIL107.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Tue, 28 Jan
- 2020 14:05:19 +0000
-Subject: Re: [PATCH v4 08/14] dmaengine: tegra-apb: Fix coding style problems
-To:     Dmitry Osipenko <digetx@gmail.com>,
-        Laxman Dewangan <ldewangan@nvidia.com>,
-        Vinod Koul <vkoul@kernel.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>
-CC:     <dmaengine@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-References: <20200112173006.29863-1-digetx@gmail.com>
- <20200112173006.29863-9-digetx@gmail.com>
- <844c4ace-d043-a908-823d-545b5b753008@nvidia.com>
- <134adcfb-83fb-4bb7-986e-65217bc4f821@gmail.com>
-From:   Jon Hunter <jonathanh@nvidia.com>
-Message-ID: <bab1eec0-8b1d-6005-e9eb-05e93da844aa@nvidia.com>
-Date:   Tue, 28 Jan 2020 14:05:17 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.1
+        id S1731378AbgA1OVp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 28 Jan 2020 09:21:45 -0500
+Received: from mail.kernel.org ([198.145.29.99]:47114 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1731362AbgA1OVm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 28 Jan 2020 09:21:42 -0500
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id AA00C24686;
+        Tue, 28 Jan 2020 14:21:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1580221301;
+        bh=Ko9j2RnJHDSnhuDL5FBd/0ONSRujyE5lU0vvIsuBk20=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=wVsqXAlLFPD5qfABMMKVrSPmHaEqfBDRN1gaagPq+APRbUgNbwGwHEmRgBQSv9oBu
+         tcVjzrDIZsNp8D7LrW+kgNC/nP5QXrGvNxWJpmOGgd5iBnDkIiTpdOpyXI1s1aLX+/
+         UsCuLz8uXMXDN0kVNLzWuihc4bvDt7/XHhOUNgvw=
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, Colin Ian King <colin.king@canonical.com>,
+        Hannes Reinecke <hare@suse.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.9 169/271] scsi: libfc: fix null pointer dereference on a null lport
+Date:   Tue, 28 Jan 2020 15:05:18 +0100
+Message-Id: <20200128135905.156121550@linuxfoundation.org>
+X-Mailer: git-send-email 2.25.0
+In-Reply-To: <20200128135852.449088278@linuxfoundation.org>
+References: <20200128135852.449088278@linuxfoundation.org>
+User-Agent: quilt/0.66
 MIME-Version: 1.0
-In-Reply-To: <134adcfb-83fb-4bb7-986e-65217bc4f821@gmail.com>
-X-Originating-IP: [10.124.1.5]
-X-ClientProxiedBy: HQMAIL101.nvidia.com (172.20.187.10) To
- HQMAIL107.nvidia.com (172.20.187.13)
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: quoted-printable
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1580220271; bh=u1ctu0oWZJcamSgw2+pnsbCaxQfAI44s/dGExveBizg=;
-        h=X-PGP-Universal:Subject:To:CC:References:From:Message-ID:Date:
-         User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
-         X-ClientProxiedBy:Content-Type:Content-Language:
-         Content-Transfer-Encoding;
-        b=eVgQh1zfQ7RrhGVXxvr2G+pSNmOZDoGd7LXT5tlBXtcjR1uWhfns4UN0tibEUP9QE
-         8IzZ6/Pn6J2EKUg8ECvS6Eo9VsNBXzT6gltnB5I0l3dW5GlI2JNARFjwGf4MQbgbrd
-         tqpJWbedTce69ZKcQm2qEVFrzhg8wzQU42MGkCNS1by1iUjgNCZzz2kMna+EiWArqF
-         sbkyglNnCE6uiqcHprEwEOYFS05Yh4uXqtnjWNrISGhFgPxc8/8EA+FToi0ple5TXs
-         n21DrZjMRpsP4fA4z0yDuVe/7n5K8kSkorrtijVIvBPc0vLfDk/ldQjgnjLo15mjAU
-         t1dBzYwWnmXgg==
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+From: Colin Ian King <colin.king@canonical.com>
 
-On 16/01/2020 17:37, Dmitry Osipenko wrote:
-> 15.01.2020 12:49, Jon Hunter =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
->>
->>
->> On 12/01/2020 17:30, Dmitry Osipenko wrote:
->>> This patch fixes few dozens of coding style problems reported by
->>> checkpatch and prettifies code where makes sense.
->>>
->>> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
->>> ---
->>>  drivers/dma/tegra20-apb-dma.c | 276 ++++++++++++++++++----------------
->>>  1 file changed, 144 insertions(+), 132 deletions(-)
->>>
->>> diff --git a/drivers/dma/tegra20-apb-dma.c b/drivers/dma/tegra20-apb-dm=
-a.c
->>> index dff21e80ffa4..7158bd3145c4 100644
->>> --- a/drivers/dma/tegra20-apb-dma.c
->>> +++ b/drivers/dma/tegra20-apb-dma.c
->>
->> ...
->>
->>> @@ -1003,20 +1014,23 @@ static void tegra_dma_prep_wcount(struct tegra_=
-dma_channel *tdc,
->>>  		ch_regs->csr |=3D len_field;
->>>  }
->>> =20
->>> -static struct dma_async_tx_descriptor *tegra_dma_prep_slave_sg(
->>> -	struct dma_chan *dc, struct scatterlist *sgl, unsigned int sg_len,
->>> -	enum dma_transfer_direction direction, unsigned long flags,
->>> -	void *context)
->>> +static struct dma_async_tx_descriptor *
->>> +tegra_dma_prep_slave_sg(struct dma_chan *dc,
->>> +			struct scatterlist *sgl,
->>> +			unsigned int sg_len,
->>> +			enum dma_transfer_direction direction,
->>> +			unsigned long flags,
->>> +			void *context)
->>>  {
->>>  	struct tegra_dma_channel *tdc =3D to_tegra_dma_chan(dc);
->>> +	struct tegra_dma_sg_req *sg_req =3D NULL;
->>> +	u32 csr, ahb_seq, apb_ptr, apb_seq;
->>> +	enum dma_slave_buswidth slave_bw;
->>>  	struct tegra_dma_desc *dma_desc;
->>> -	unsigned int i;
->>> -	struct scatterlist *sg;
->>> -	unsigned long csr, ahb_seq, apb_ptr, apb_seq;
->>>  	struct list_head req_list;
->>> -	struct tegra_dma_sg_req  *sg_req =3D NULL;
->>> -	u32 burst_size;
->>> -	enum dma_slave_buswidth slave_bw;
->>> +	struct scatterlist *sg;
->>> +	unsigned int burst_size;
->>> +	unsigned int i;
->>
->> This is not really consistent with the rest of the changes by having 'i'
->> and 'burst_size' on separate lines.
->=20
-> The goal wasn't to squash everything into a single line, but to make
-> code more readable. In this particular case the separated lines look
-> better to me.
->=20
->>> =20
->>>  	if (!tdc->config_init) {
->>>  		dev_err(tdc2dev(tdc), "DMA channel is not configured\n");
->>> @@ -1028,7 +1042,7 @@ static struct dma_async_tx_descriptor *tegra_dma_=
-prep_slave_sg(
->>>  	}
->>> =20
->>>  	if (get_transfer_param(tdc, direction, &apb_ptr, &apb_seq, &csr,
->>> -				&burst_size, &slave_bw) < 0)
->>> +			       &burst_size, &slave_bw) < 0)
->>>  		return NULL;
->>> =20
->>>  	INIT_LIST_HEAD(&req_list);
->>> @@ -1074,7 +1088,7 @@ static struct dma_async_tx_descriptor *tegra_dma_=
-prep_slave_sg(
->>>  		len =3D sg_dma_len(sg);
->>> =20
->>>  		if ((len & 3) || (mem & 3) ||
->>> -				(len > tdc->tdma->chip_data->max_dma_count)) {
->>> +		    len > tdc->tdma->chip_data->max_dma_count) {
->>>  			dev_err(tdc2dev(tdc),
->>>  				"DMA length/memory address is not supported\n");
->>>  			tegra_dma_desc_put(tdc, dma_desc);
->>> @@ -1126,20 +1140,21 @@ static struct dma_async_tx_descriptor *tegra_dm=
-a_prep_slave_sg(
->>>  	return &dma_desc->txd;
->>>  }
->>> =20
->>> -static struct dma_async_tx_descriptor *tegra_dma_prep_dma_cyclic(
->>> -	struct dma_chan *dc, dma_addr_t buf_addr, size_t buf_len,
->>> -	size_t period_len, enum dma_transfer_direction direction,
->>> -	unsigned long flags)
->>> +static struct dma_async_tx_descriptor *
->>> +tegra_dma_prep_dma_cyclic(struct dma_chan *dc, dma_addr_t buf_addr,
->>> +			  size_t buf_len,
->>> +			  size_t period_len,
->>> +			  enum dma_transfer_direction direction,
->>> +			  unsigned long flags)
->>>  {
->>>  	struct tegra_dma_channel *tdc =3D to_tegra_dma_chan(dc);
->>> -	struct tegra_dma_desc *dma_desc =3D NULL;
->>>  	struct tegra_dma_sg_req *sg_req =3D NULL;
->>> -	unsigned long csr, ahb_seq, apb_ptr, apb_seq;
->>> -	int len;
->>> -	size_t remain_len;
->>> -	dma_addr_t mem =3D buf_addr;
->>> -	u32 burst_size;
->>> +	u32 csr, ahb_seq, apb_ptr, apb_seq;
->>>  	enum dma_slave_buswidth slave_bw;
->>> +	struct tegra_dma_desc *dma_desc;
->>> +	dma_addr_t mem =3D buf_addr;
->>> +	unsigned int burst_size;
->>> +	size_t len, remain_len;
->>> =20
->>>  	if (!buf_len || !period_len) {
->>>  		dev_err(tdc2dev(tdc), "Invalid buffer/period len\n");
->>> @@ -1173,13 +1188,13 @@ static struct dma_async_tx_descriptor *tegra_dm=
-a_prep_dma_cyclic(
->>> =20
->>>  	len =3D period_len;
->>>  	if ((len & 3) || (buf_addr & 3) ||
->>> -			(len > tdc->tdma->chip_data->max_dma_count)) {
->>> +	    len > tdc->tdma->chip_data->max_dma_count) {
->>>  		dev_err(tdc2dev(tdc), "Req len/mem address is not correct\n");
->>>  		return NULL;
->>>  	}
->>> =20
->>>  	if (get_transfer_param(tdc, direction, &apb_ptr, &apb_seq, &csr,
->>> -				&burst_size, &slave_bw) < 0)
->>> +			       &burst_size, &slave_bw) < 0)
->>>  		return NULL;
->>> =20
->>>  	ahb_seq =3D TEGRA_APBDMA_AHBSEQ_INTR_ENB;
->>> @@ -1269,7 +1284,6 @@ static int tegra_dma_alloc_chan_resources(struct =
-dma_chan *dc)
->>>  	int ret;
->>> =20
->>>  	dma_cookie_init(&tdc->dma_chan);
->>> -	tdc->config_init =3D false;
->>
->> Why is this removed? Does not seem to belong in this patch.
->=20
-> Because initially, on driver's probe, the tdc->config_init is false for
-> all channels and then tegra_dma_free_chan_resources() also sets it to
-> false. Thus there is no need to re-initilize the already initialized
-> variable. It's not a very good coding style if variables are
-> unnecessarily initialized, you probably noticed that there are few other
-> cases of removing the unneeded initializations of local variables in
-> this patch.
+[ Upstream commit 41a6bf6529edd10a6def42e3b2c34a7474bcc2f5 ]
 
-OK, but I don't really consider this coding-style and would prefer a
-separate patch for this.
+Currently if lport is null then the null lport pointer is dereference when
+printing out debug via the FC_LPORT_DB macro. Fix this by using the more
+generic FC_LIBFC_DBG debug macro instead that does not use lport.
 
-Jon
+Addresses-Coverity: ("Dereference after null check")
+Fixes: 7414705ea4ae ("libfc: Add runtime debugging with debug_logging module parameter")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Reviewed-by: Hannes Reinecke <hare@suse.com>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ drivers/scsi/libfc/fc_exch.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---=20
-nvpublic
+diff --git a/drivers/scsi/libfc/fc_exch.c b/drivers/scsi/libfc/fc_exch.c
+index 16ca31ad5ec0a..d0a86ef806522 100644
+--- a/drivers/scsi/libfc/fc_exch.c
++++ b/drivers/scsi/libfc/fc_exch.c
+@@ -2506,7 +2506,7 @@ void fc_exch_recv(struct fc_lport *lport, struct fc_frame *fp)
+ 
+ 	/* lport lock ? */
+ 	if (!lport || lport->state == LPORT_ST_DISABLED) {
+-		FC_LPORT_DBG(lport, "Receiving frames for an lport that "
++		FC_LIBFC_DBG("Receiving frames for an lport that "
+ 			     "has not been initialized correctly\n");
+ 		fc_frame_free(fp);
+ 		return;
+-- 
+2.20.1
+
+
+
