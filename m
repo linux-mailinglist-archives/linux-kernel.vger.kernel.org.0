@@ -2,39 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1292D14B6F5
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Jan 2020 15:10:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A77DF14B812
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Jan 2020 15:20:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727835AbgA1OJz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 28 Jan 2020 09:09:55 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58290 "EHLO mail.kernel.org"
+        id S1727758AbgA1OUS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 28 Jan 2020 09:20:18 -0500
+Received: from mail.kernel.org ([198.145.29.99]:45048 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727901AbgA1OJr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 Jan 2020 09:09:47 -0500
+        id S1731062AbgA1OUQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 28 Jan 2020 09:20:16 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B7C322468A;
-        Tue, 28 Jan 2020 14:09:46 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id BE7F424681;
+        Tue, 28 Jan 2020 14:20:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1580220587;
-        bh=jtqMy6ATgTfI9cuLYEB8Nv9vnN6mjYtUcw08ByTMsL8=;
+        s=default; t=1580221216;
+        bh=NHoTf5rvIIxQ+XdG5L5X27wxDUmDxpGxFArljZZqXAY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=lW2iEx84RHqCYI+q6FDX34g+d88YZEKzS74qST82BTGfed60MxK0BZ9lec3oPkw0Q
-         tfNW6UjvhVB8ieXabp1yY8l8EXqkbwcRJvU49hIE6QbZUSvBAZRxLbF6FGT1rIHOvT
-         i2TEmbTLjW9ucsTHZ5UXKO/LBFn9kP+wOfx98nOU=
+        b=pO58YtCshLGDg99Oxl5Gd1ISNMHirCJwPKICywwlRxKqrZBkNuUDBOCaXbfiaV4cF
+         MgIhJCdgnJjKo5pwKcBu4BKnxXqjHDNF/t8qHeAjj2vr5bSjMAFFc7PIa0Ifx3HSBB
+         /oK+D23hHRdzlxmwIceH/FSPWLZjvEAkhej7z4c4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
-        Dave Kleikamp <dave.kleikamp@oracle.com>,
+        stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>,
+        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.4 065/183] jfs: fix bogus variable self-initialization
+Subject: [PATCH 4.9 135/271] media: omap_vout: potential buffer overflow in vidioc_dqbuf()
 Date:   Tue, 28 Jan 2020 15:04:44 +0100
-Message-Id: <20200128135836.496090438@linuxfoundation.org>
+Message-Id: <20200128135902.641259559@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200128135829.486060649@linuxfoundation.org>
-References: <20200128135829.486060649@linuxfoundation.org>
+In-Reply-To: <20200128135852.449088278@linuxfoundation.org>
+References: <20200128135852.449088278@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,43 +45,66 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Arnd Bergmann <arnd@arndb.de>
+From: Dan Carpenter <dan.carpenter@oracle.com>
 
-[ Upstream commit a5fdd713d256887b5f012608701149fa939e5645 ]
+[ Upstream commit dd6e2a981bfe83aa4a493143fd8cf1edcda6c091 ]
 
-A statement was originally added in 2006 to shut up a gcc warning,
-now but now clang warns about it:
+The "b->index" is a u32 the comes from the user in the ioctl.  It hasn't
+been checked.  We aren't supposed to use it but we're instead supposed
+to use the value that gets written to it when we call videobuf_dqbuf().
 
-fs/jfs/jfs_txnmgr.c:1932:15: error: variable 'pxd' is uninitialized when used within its own initialization
-      [-Werror,-Wuninitialized]
-                pxd_t pxd = pxd;        /* truncated extent of xad */
-                      ~~~   ^~~
+The videobuf_dqbuf() first memsets it to zero and then re-initializes it
+inside the videobuf_status() function.  It's this final value which we
+want.
 
-Modern versions of gcc are fine without the silly assignment, so just
-drop it. Tested with gcc-4.6 (released 2011), 4.7, 4.8, and 4.9.
+Hans Verkuil pointed out that we need to check the return from
+videobuf_dqbuf().  I ended up doing a little cleanup related to that as
+well.
 
-Fixes: c9e3ad6021e5 ("JFS: Get rid of "may be used uninitialized" warnings")
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-Signed-off-by: Dave Kleikamp <dave.kleikamp@oracle.com>
+Fixes: 72915e851da9 ("[media] V4L2: OMAP: VOUT: dma map and unmap v4l2 buffers in qbuf and dqbuf")
+
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
+Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/jfs/jfs_txnmgr.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ drivers/media/platform/omap/omap_vout.c | 15 ++++++---------
+ 1 file changed, 6 insertions(+), 9 deletions(-)
 
-diff --git a/fs/jfs/jfs_txnmgr.c b/fs/jfs/jfs_txnmgr.c
-index d595856453b24..de6351c1c8db2 100644
---- a/fs/jfs/jfs_txnmgr.c
-+++ b/fs/jfs/jfs_txnmgr.c
-@@ -1928,8 +1928,7 @@ static void xtLog(struct jfs_log * log, struct tblock * tblk, struct lrd * lrd,
- 	 * header ?
- 	 */
- 	if (tlck->type & tlckTRUNCATE) {
--		/* This odd declaration suppresses a bogus gcc warning */
--		pxd_t pxd = pxd;	/* truncated extent of xad */
-+		pxd_t pxd;	/* truncated extent of xad */
- 		int twm;
+diff --git a/drivers/media/platform/omap/omap_vout.c b/drivers/media/platform/omap/omap_vout.c
+index a31b95cb3b09c..77ec70f5fef66 100644
+--- a/drivers/media/platform/omap/omap_vout.c
++++ b/drivers/media/platform/omap/omap_vout.c
+@@ -1526,23 +1526,20 @@ static int vidioc_dqbuf(struct file *file, void *fh, struct v4l2_buffer *b)
+ 	unsigned long size;
+ 	struct videobuf_buffer *vb;
  
- 		/*
+-	vb = q->bufs[b->index];
+-
+ 	if (!vout->streaming)
+ 		return -EINVAL;
+ 
+-	if (file->f_flags & O_NONBLOCK)
+-		/* Call videobuf_dqbuf for non blocking mode */
+-		ret = videobuf_dqbuf(q, (struct v4l2_buffer *)b, 1);
+-	else
+-		/* Call videobuf_dqbuf for  blocking mode */
+-		ret = videobuf_dqbuf(q, (struct v4l2_buffer *)b, 0);
++	ret = videobuf_dqbuf(q, b, !!(file->f_flags & O_NONBLOCK));
++	if (ret)
++		return ret;
++
++	vb = q->bufs[b->index];
+ 
+ 	addr = (unsigned long) vout->buf_phy_addr[vb->i];
+ 	size = (unsigned long) vb->size;
+ 	dma_unmap_single(vout->vid_dev->v4l2_dev.dev,  addr,
+ 				size, DMA_TO_DEVICE);
+-	return ret;
++	return 0;
+ }
+ 
+ static int vidioc_streamon(struct file *file, void *fh, enum v4l2_buf_type i)
 -- 
 2.20.1
 
