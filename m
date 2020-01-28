@@ -2,190 +2,152 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 39CA814C1A6
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Jan 2020 21:32:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5008914C19F
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Jan 2020 21:32:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726477AbgA1Ucs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 28 Jan 2020 15:32:48 -0500
-Received: from mga09.intel.com ([134.134.136.24]:19718 "EHLO mga09.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726182AbgA1Ucs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 Jan 2020 15:32:48 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 28 Jan 2020 12:19:46 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.70,375,1574150400"; 
-   d="scan'208";a="311217350"
-Received: from linux.intel.com ([10.54.29.200])
-  by fmsmga001.fm.intel.com with ESMTP; 28 Jan 2020 12:19:46 -0800
-Received: from [10.251.18.141] (kliang2-mobl.ccr.corp.intel.com [10.251.18.141])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by linux.intel.com (Postfix) with ESMTPS id DDC955802B1;
-        Tue, 28 Jan 2020 12:19:44 -0800 (PST)
-Subject: =?UTF-8?Q?Re=3a_=5bPATCH_v4_2/2=5d_perf_x86=3a_Exposing_an_Uncore_u?=
- =?UTF-8?Q?nit_to_PMON_for_Intel_Xeon=c2=ae_server_platform?=
-To:     "Sudarikov, Roman" <roman.sudarikov@linux.intel.com>,
-        Greg KH <gregkh@linuxfoundation.org>
-Cc:     Andi Kleen <ak@linux.intel.com>, peterz@infradead.org,
-        mingo@redhat.com, acme@kernel.org, mark.rutland@arm.com,
-        alexander.shishkin@linux.intel.com, jolsa@redhat.com,
-        namhyung@kernel.org, linux-kernel@vger.kernel.org,
-        eranian@google.com, bgregg@netflix.com, alexander.antonov@intel.com
-References: <20200117133759.5729-1-roman.sudarikov@linux.intel.com>
- <20200117133759.5729-3-roman.sudarikov@linux.intel.com>
- <20200117141944.GC1856891@kroah.com>
- <20200117162357.GK302770@tassilo.jf.intel.com>
- <20200117165406.GA1937954@kroah.com>
- <f62a14a4-4fea-84f7-4cab-8bef74cf9e8a@linux.intel.com>
- <20200121171547.GA632898@kroah.com>
- <db0a1fca-536e-8106-0e7d-fbcca82d7a15@linux.intel.com>
-From:   "Liang, Kan" <kan.liang@linux.intel.com>
-Message-ID: <a513868f-addf-3774-2a43-b65262b7db4e@linux.intel.com>
-Date:   Tue, 28 Jan 2020 15:19:43 -0500
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.2
+        id S1726340AbgA1UcY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 28 Jan 2020 15:32:24 -0500
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:40821 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726182AbgA1UcY (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 28 Jan 2020 15:32:24 -0500
+Received: by mail-pg1-f193.google.com with SMTP id k25so7617064pgt.7
+        for <linux-kernel@vger.kernel.org>; Tue, 28 Jan 2020 12:32:24 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=ou5WOu7VfwZ76/Tpb4nFYplCE03cb+mvprqzOSe8BeY=;
+        b=Fq9IgoEGk1XnnT33IfofL6cze71y8yseMo4RTglFvYjfOiiFEHohk3X2ZwzW6obsSQ
+         JGLTF9Wwo/azBiJ72vO/K8fXg05WMJzqe89NKs9eYC5HmfjEtN8R3aty9yUewttbOA2k
+         y2Z1/UBWU7klja4flHnxu2Il/S5jBz7DTgQeU=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=ou5WOu7VfwZ76/Tpb4nFYplCE03cb+mvprqzOSe8BeY=;
+        b=Udd8ng2x5C7Ek+ALP5zQGzP8K7SLS9B7EhgDQZdmFnk8QSB4G6rScykPoA9HH0DPR4
+         DXxcgw7V6Nl+axCppul1Hi3HqztOkyQBAKKoZhGW/vC3PK7lqFL5CkakA70U/Q03EhHh
+         GX6acUMK79eNj5zyhtGHLZ0Id/C/rxk9A2g0GBSsTu53TTSE6PQxvcDCZ1GGYox1qCVP
+         oprhgOFQOauiOA1jO9KKpNUW/jZagUrLS4Fu+LbITDClxieSgl9IERXFYjynKmoH3cnK
+         uvasgYjYU9/aJwN90ov+fsoiVh2vXXlszaNLiFqBCWoL8LT58p2uMby2vTtpFsJ8ZNj8
+         eduw==
+X-Gm-Message-State: APjAAAXEuuPIQoEhwGQWiJ40o5gff60sEMzthBljjl+BtFbJu2vSXiSh
+        a03aXz56rQ0K7CSiXGbl7tfr8Q==
+X-Google-Smtp-Source: APXvYqzk/RCeSgih6aYRRZY6EYuOxyQ3AHi0iBRGvjfg9rwaUzCUjS6yYJBDVRHFkAOT5eesEFor9A==
+X-Received: by 2002:a63:d40d:: with SMTP id a13mr27443204pgh.9.1580243543869;
+        Tue, 28 Jan 2020 12:32:23 -0800 (PST)
+Received: from localhost ([2620:15c:202:1:4fff:7a6b:a335:8fde])
+        by smtp.gmail.com with ESMTPSA id b12sm16516982pfr.26.2020.01.28.12.32.22
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 28 Jan 2020 12:32:23 -0800 (PST)
+Date:   Tue, 28 Jan 2020 12:32:22 -0800
+From:   Matthias Kaehlcke <mka@chromium.org>
+To:     Harigovindan P <harigovi@codeaurora.org>
+Cc:     dri-devel@lists.freedesktop.org, linux-arm-msm@vger.kernel.org,
+        freedreno@lists.freedesktop.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, robdclark@gmail.com,
+        seanpaul@chromium.org, hoegsberg@chromium.org,
+        kalyan_t@codeaurora.org, nganji@codeaurora.org
+Subject: Re: [v4] arm64: dts: sc7180: add display dt nodes
+Message-ID: <20200128203222.GD46072@google.com>
+References: <1580217884-21932-1-git-send-email-harigovi@codeaurora.org>
 MIME-Version: 1.0
-In-Reply-To: <db0a1fca-536e-8106-0e7d-fbcca82d7a15@linux.intel.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <1580217884-21932-1-git-send-email-harigovi@codeaurora.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi,
 
-
-On 1/28/2020 9:55 AM, Sudarikov, Roman wrote:
-> On 21.01.2020 20:15, Greg KH wrote:
->> On Tue, Jan 21, 2020 at 07:15:56PM +0300, Sudarikov, Roman wrote:
->>> On 17.01.2020 19:54, Greg KH wrote:
->>>> On Fri, Jan 17, 2020 at 08:23:57AM -0800, Andi Kleen wrote:
->>>>>> I thought I was nice and gentle last time and said that this was a
->>>>>> really bad idea and you would fix it up.  That didn't happen, so I am
->>>>>> being explicit here, THIS IS NOT AN ACCEPTABLE FILE OUTPUT FOR A 
->>>>>> SYSFS
->>>>>> FILE.
->>>>> Could you suggest how such a 1:N mapping should be expressed 
->>>>> instead in
->>>>> sysfs?
->>>> I have yet to figure out what it is you all are trying to express here
->>>> given a lack of Documentation/ABI/ file :)
->>>>
->>>> But again, sysfs is ONE VALUE PER FILE.  You have a list of items here,
->>>> that is bounded only by the number of devices in the system at the
->>>> moment.  That number will go up in time, as we all know.  So this is
->>>> just not going to work at all as-is.
->>>>
->>>> greg k-h
->>> Hi Greg,
->>>
->>> Technically, the motivation behind this patch is to enable Linux perf 
->>> tool
->>> to attribute IO traffic to IO device.
->>>
->>> Currently, perf tool provides interface to configure IO PMUs only 
->>> without
->>> any
->>> context.
->>>
->>> Understanding IIO stack concept to find which IIO stack that particular
->>> IO device is connected to, or to identify an IIO PMON block to program
->>> for monitoring specific IIO stack assumes a lot of implicit knowledge
->>> about given Intel server platform architecture.
->> Is "IIO" being used here the same way that drivers/iio/ is in the
->> kernel, or is this some other term?  If it is the same, why isn't the
->> iio developers involved in this?  If it is some other term, please
->> always define it and perhaps pick a different name :)
-> The term "IIO" (Integrated IO) in that context refers to set of PMUs 
-> which are
-> responsible for monitoring traffic crossing PCIe domain boundaries. It's 
-> specific
-> for Intel Xeon server line and supported by Linux kernel perf tool 
-> starting v4.9.
-> So I'm just referring to what's already in the kernel :)
->>> Please consider the following mapping schema:
->>>
->>> 1. new "mapping" directory is to be added under each uncore_iio_N 
->>> directory
->> What is uncore_iio_N?  A struct device?  Or something else?
-> It's interface to corresponding IIO PMU, should be struct device
->>> 2. that "mapping" directory is supposed to contain symlinks named "dieN"
->>> which are pointed to corresponding root bus.
->>> Below is how it looks like for 2S machine:
->>>
->>> # ll uncore_iio_0/mapping/
->>> lrwxrwxrwx 1 root root 0 Jan 20 23:55 die0 ->
->>> ../../pci0000:00/pci_bus/0000:00
->> Where did "pci_bus" come from in there?  I don't see under /sys/devices/
->> for my pci bridges.
->>
->>> lrwxrwxrwx 1 root root 0 Jan 20 23:55 die1 ->
->>> ../../pci0000:80/pci_bus/0000:80
->>>
->>> # ll uncore_iio_1/mapping/
->>> lrwxrwxrwx 1 root root 0 Jan 20 23:55 die0 ->
->>> ../../pci0000:17/pci_bus/0000:17
->>> lrwxrwxrwx 1 root root 0 Jan 20 23:55 die1 ->
->>> ../../pci0000:85/pci_bus/0000:85
->>>
->>> # ll uncore_iio_2/mapping/
->>> lrwxrwxrwx 1 root root 0 Jan 20 23:55 die0 ->
->>> ../../pci0000:3a/pci_bus/0000:3a
->>> lrwxrwxrwx 1 root root 0 Jan 20 23:55 die1 ->
->>> ../../pci0000:ae/pci_bus/0000:ae
->>>
->>> # ll uncore_iio_3/mapping/
->>> lrwxrwxrwx 1 root root 0 Jan 20 23:55 die0 ->
->>> ../../pci0000:5d/pci_bus/0000:5d
->>> lrwxrwxrwx 1 root root 0 Jan 20 23:55 die1 ->
->>> ../../pci0000:d7/pci_bus/0000:d7
->> Why have a subdir here?
-> Just for convenience. I can put it the same level as other attributes 
-> (cpumask etc).
-> Please let me know which layout to choose.
->> Anyway, yes, that would make sense, if userspace can actually do
->> something with that, can it?
-> Sure! The linux perf tool will use it to attribute IO traffic to devices.
-> Initially the feature was sent for review containing both kernel[1] and
-> user space[2] parts, but later it was decided to finalize kernel part first
-> and then proceed with user space.
+On Tue, Jan 28, 2020 at 06:54:44PM +0530, Harigovindan P wrote:
+> Add display, DSI hardware DT nodes for sc7180.
 > 
-> [1] 
-> https://lore.kernel.org/lkml/20191126163630.17300-2-roman.sudarikov@linux.intel.com/ 
+> Signed-off-by: Harigovindan P <harigovi@codeaurora.org>
+> ---
 > 
-> [2] 
-> https://lore.kernel.org/lkml/20191126163630.17300-5-roman.sudarikov@linux.intel.com/ 
+> Changes in v1:
+> 	-Added display DT nodes for sc7180
+> Changes in v2:
+> 	-Renamed node names
+> 	-Corrected code alignments
+> 	-Removed extra new line
+> 	-Added DISP AHB clock for register access
+> 	under display_subsystem node for global settings
+> Changes in v3:
+> 	-Modified node names
+> 	-Modified hard coded values
+> 	-Removed mdss reg entry
+> Changes in v4:
+> 	-Reverting mdp node name
+> 	-Setting status to disabled in main SOC dtsi file
+> 	-Replacing _ to - for node names
+> 	-Adding clock dependency patch link
+> 	-Splitting idp dt file to a separate patch
 > 
->>
->> Also, what tears those symlinks down when you remove those pci devices
->> from the system?  Shouldn't you have an entry in the pci device itself
->> for this type of thing?  And if so, isn't this really just a "normal"
->> class type driver you are writing?  That should handle all of the
->> symlinks and stuff for you automatically, right?
-> The IIO PMUs by design monitors traffic crossing integrated pci root ports.
-> For each IIO PMU the feature creates symlinks to its  pci root port on 
-> each node.
-
-
-Can we just simply assign the BUS# to it as below?
-# cat uncore_iio_1/mapping/die0
-0000:00
-I'm not sure why we need a symlink here.
-
-Also, if the BUS is removed, I think we may want to update mapping as well.
-
-Thanks,
-Kan
-
-> Those pci devices, by its nature, can not be "just removed". If the SOC is
-> designed the way that some integrated root port is not present
-> then the case will be correctly handled by the feature.
->> thanks,
->>
->> greg k-h
+> This patch has dependency on the below series
+> https://lkml.org/lkml/2019/12/27/73
+>  arch/arm64/boot/dts/qcom/sc7180.dtsi | 128 +++++++++++++++++++++++++++++++++++
+>  1 file changed, 128 insertions(+)
 > 
-> 
+> diff --git a/arch/arm64/boot/dts/qcom/sc7180.dtsi b/arch/arm64/boot/dts/qcom/sc7180.dtsi
+> index 3bc3f64..c3883af 100644
+> --- a/arch/arm64/boot/dts/qcom/sc7180.dtsi
+> +++ b/arch/arm64/boot/dts/qcom/sc7180.dtsi
+> @@ -1184,6 +1184,134 @@
+>  			#power-domain-cells = <1>;
+>  		};
+>  
+> +		mdss: mdss@ae00000 {
+> +			compatible = "qcom,sc7180-mdss";
+> +			reg = <0 0x0ae00000 0 0x1000>;
+> +			reg-names = "mdss";
+> +
+> +			power-domains = <&dispcc MDSS_GDSC>;
+> +
+> +			clocks = <&gcc GCC_DISP_AHB_CLK>,
+> +				 <&gcc GCC_DISP_HF_AXI_CLK>,
+> +				 <&dispcc DISP_CC_MDSS_AHB_CLK>,
+> +				 <&dispcc DISP_CC_MDSS_MDP_CLK>;
+> +			clock-names = "iface", "gcc_bus", "ahb", "core";
+> +
+> +			assigned-clocks = <&dispcc DISP_CC_MDSS_MDP_CLK>;
+> +			assigned-clock-rates = <300000000>;
+> +
+> +			interrupts = <GIC_SPI 83 IRQ_TYPE_LEVEL_HIGH>;
+> +			interrupt-controller;
+> +			#interrupt-cells = <1>;
+> +
+> +			iommus = <&apps_smmu 0x800 0x2>;
+> +
+> +			#address-cells = <2>;
+> +			#size-cells = <2>;
+> +			ranges;
+> +
+> +			mdss_mdp: mdp@ae01000 {
+> +				compatible = "qcom,sc7180-dpu";
+> +				reg = <0 0x0ae01000 0 0x8f000>,
+> +				      <0 0x0aeb0000 0 0x2008>,
+> +				      <0 0x0af03000 0 0x16>;
+> +				reg-names = "mdp", "vbif", "disp_cc";
+> +
+> +				clocks = <&dispcc DISP_CC_MDSS_AHB_CLK>,
+> +					 <&dispcc DISP_CC_MDSS_ROT_CLK>,
+> +					 <&dispcc DISP_CC_MDSS_MDP_LUT_CLK>,
+> +					 <&dispcc DISP_CC_MDSS_MDP_CLK>,
+> +					 <&dispcc DISP_CC_MDSS_VSYNC_CLK>;
+> +				clock-names = "iface", "rot", "lut", "core",
+> +					      "vsync";
+> +				assigned-clocks = <&dispcc DISP_CC_MDSS_MDP_CLK>,
+> +						  <&dispcc DISP_CC_MDSS_VSYNC_CLK>;
+> +				assigned-clock-rates = <300000000>,
+> +						       <19200000>;
+
+The clock rate for DISP_CC_MDSS_MDP_CLK is already specified in the
+parent node, do we really want/need to specify it twice?
+
