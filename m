@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9275B14B6E4
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Jan 2020 15:09:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C839D14B7FE
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Jan 2020 15:20:51 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727750AbgA1OJL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 28 Jan 2020 09:09:11 -0500
-Received: from mail.kernel.org ([198.145.29.99]:57252 "EHLO mail.kernel.org"
+        id S1730034AbgA1OTg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 28 Jan 2020 09:19:36 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43940 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728607AbgA1OI7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 Jan 2020 09:08:59 -0500
+        id S1730900AbgA1OTc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 28 Jan 2020 09:19:32 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D195922522;
-        Tue, 28 Jan 2020 14:08:58 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 211AA24695;
+        Tue, 28 Jan 2020 14:19:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1580220539;
-        bh=wdwwvVSenVt6N8xdd9g8pLjeeMvBztVrT/ceq7bgBaM=;
+        s=default; t=1580221171;
+        bh=07CHsY02F5oVnFJd4YI45/MEKIfIKYkc+rgYTBg0unA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=UfwPWkqSQUZoNUq7pB8rbUO1tZ0t8RUjhJCUl6obQJg/ZyjANagdLHNM0aUA8gViI
-         na1TIqtt0OMfqKCrmzNTt7mDelWQcf6CWpvf2tI3MsqQzhgu02lWaNWNafppYDr8ZJ
-         7eDhYD9GhT4Q9/zTzh7bdNPZ7nkQ+ixQfIgN/0zo=
+        b=Z7iJVGmnhBGJR/Rw/YRum9uDgeMQYt5F3CDPQiZy84nEWVgiETg3JWKmmYzN0PPQs
+         7Xocq7gtXcFdQRt9gMPw72KD7AGxEExI43SHv6l8NA+j4SsGfbC1BSv45moEtpMu7o
+         FLNE4D4e6/2Kx55vX3uHLlsE264I4O8oTG9f8v+k=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Eric Auger <eric.auger@redhat.com>,
-        Alex Williamson <alex.williamson@redhat.com>,
+        stable@vger.kernel.org, Ben Hutchings <ben@decadent.org.uk>,
+        Michael Ellerman <mpe@ellerman.id.au>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.4 048/183] vfio_pci: Enable memory accesses before calling pci_map_rom
+Subject: [PATCH 4.9 118/271] powerpc: vdso: Make vdso32 installation conditional in vdso_install
 Date:   Tue, 28 Jan 2020 15:04:27 +0100
-Message-Id: <20200128135834.766684922@linuxfoundation.org>
+Message-Id: <20200128135901.374763027@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200128135829.486060649@linuxfoundation.org>
-References: <20200128135829.486060649@linuxfoundation.org>
+In-Reply-To: <20200128135852.449088278@linuxfoundation.org>
+References: <20200128135852.449088278@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,67 +44,37 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Eric Auger <eric.auger@redhat.com>
+From: Ben Hutchings <ben@decadent.org.uk>
 
-[ Upstream commit 0cfd027be1d6def4a462cdc180c055143af24069 ]
+[ Upstream commit ff6d27823f619892ab96f7461764840e0d786b15 ]
 
-pci_map_rom/pci_get_rom_size() performs memory access in the ROM.
-In case the Memory Space accesses were disabled, readw() is likely
-to trigger a synchronous external abort on some platforms.
+The 32-bit vDSO is not needed and not normally built for 64-bit
+little-endian configurations.  However, the vdso_install target still
+builds and installs it.  Add the same config condition as is normally
+used for the build.
 
-In case memory accesses were disabled, re-enable them before the
-call and disable them back again just after.
-
-Fixes: 89e1f7d4c66d ("vfio: Add PCI device driver")
-Signed-off-by: Eric Auger <eric.auger@redhat.com>
-Suggested-by: Alex Williamson <alex.williamson@redhat.com>
-Signed-off-by: Alex Williamson <alex.williamson@redhat.com>
+Fixes: e0d005916994 ("powerpc/vdso: Disable building the 32-bit VDSO ...")
+Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
+Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/vfio/pci/vfio_pci.c | 19 ++++++++++++++-----
- 1 file changed, 14 insertions(+), 5 deletions(-)
+ arch/powerpc/Makefile | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/vfio/pci/vfio_pci.c b/drivers/vfio/pci/vfio_pci.c
-index 4b62eb3b59233..7a82735d53087 100644
---- a/drivers/vfio/pci/vfio_pci.c
-+++ b/drivers/vfio/pci/vfio_pci.c
-@@ -496,6 +496,7 @@ static long vfio_pci_ioctl(void *device_data,
- 		{
- 			void __iomem *io;
- 			size_t size;
-+			u16 orig_cmd;
+diff --git a/arch/powerpc/Makefile b/arch/powerpc/Makefile
+index a60c9c6e5cc17..de29b88c0e700 100644
+--- a/arch/powerpc/Makefile
++++ b/arch/powerpc/Makefile
+@@ -373,7 +373,9 @@ vdso_install:
+ ifeq ($(CONFIG_PPC64),y)
+ 	$(Q)$(MAKE) $(build)=arch/$(ARCH)/kernel/vdso64 $@
+ endif
++ifdef CONFIG_VDSO32
+ 	$(Q)$(MAKE) $(build)=arch/$(ARCH)/kernel/vdso32 $@
++endif
  
- 			info.offset = VFIO_PCI_INDEX_TO_OFFSET(info.index);
- 			info.flags = 0;
-@@ -505,15 +506,23 @@ static long vfio_pci_ioctl(void *device_data,
- 			if (!info.size)
- 				break;
- 
--			/* Is it really there? */
-+			/*
-+			 * Is it really there?  Enable memory decode for
-+			 * implicit access in pci_map_rom().
-+			 */
-+			pci_read_config_word(pdev, PCI_COMMAND, &orig_cmd);
-+			pci_write_config_word(pdev, PCI_COMMAND,
-+					      orig_cmd | PCI_COMMAND_MEMORY);
-+
- 			io = pci_map_rom(pdev, &size);
--			if (!io || !size) {
-+			if (io) {
-+				info.flags = VFIO_REGION_INFO_FLAG_READ;
-+				pci_unmap_rom(pdev, io);
-+			} else {
- 				info.size = 0;
--				break;
- 			}
--			pci_unmap_rom(pdev, io);
- 
--			info.flags = VFIO_REGION_INFO_FLAG_READ;
-+			pci_write_config_word(pdev, PCI_COMMAND, orig_cmd);
- 			break;
- 		}
- 		case VFIO_PCI_VGA_REGION_INDEX:
+ archclean:
+ 	$(Q)$(MAKE) $(clean)=$(boot)
 -- 
 2.20.1
 
