@@ -2,36 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B516914B894
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Jan 2020 15:26:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9573B14B896
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Jan 2020 15:26:10 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732888AbgA1OZQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 28 Jan 2020 09:25:16 -0500
-Received: from mail.kernel.org ([198.145.29.99]:52110 "EHLO mail.kernel.org"
+        id S1728070AbgA1OZT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 28 Jan 2020 09:25:19 -0500
+Received: from mail.kernel.org ([198.145.29.99]:52172 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732471AbgA1OZN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 Jan 2020 09:25:13 -0500
+        id S1730397AbgA1OZP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 28 Jan 2020 09:25:15 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4BA572071E;
-        Tue, 28 Jan 2020 14:25:12 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C49EA21739;
+        Tue, 28 Jan 2020 14:25:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1580221512;
-        bh=6Zf7WpmE37b/Hbx0ZBYx+MP+UHtZ5PHCF50LJoYk9ZQ=;
+        s=default; t=1580221515;
+        bh=TQM9MwrWosBxaOXUgZjjsrwBjU237+BVRe82b9oiL+Q=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=RJRCAClgeh+HR9u/Xx9kng1cxVMCU9U+BHzDZmWDGOFOHc7aOJXGaaaFzfYZWGySr
-         AjWcznaT0j1eTTuHmzjSQUdQIwpQqqGxNzkeyS03rfRVIOrbXJAA/dmzH7eOs6p3+u
-         cTTI2xyhvVxwhWU5wdwLbcOYUsM1sG30oAObYieo=
+        b=QbCyC02114iEaIRhek2BxHZlarj//VuERl7LNkl888XjY6JiWt9BHinmUVIj7ci8k
+         Hl+zxuMMorfG+lvjN8UT8a2vdszM7mYOuDt8WROdiei1FY6BtCKNMF5KBq4tImtdmB
+         secptJyJAa4zU08ACCNDtRzROXAYwh6EtJbvZFxg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Johan Hovold <johan@kernel.org>,
+        Martin Kepplinger <martink@posteo.de>,
         Vladis Dronov <vdronov@redhat.com>,
         Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Subject: [PATCH 4.9 254/271] Input: aiptek - fix endpoint sanity check
-Date:   Tue, 28 Jan 2020 15:06:43 +0100
-Message-Id: <20200128135911.487974997@linuxfoundation.org>
+Subject: [PATCH 4.9 255/271] Input: pegasus_notetaker - fix endpoint sanity check
+Date:   Tue, 28 Jan 2020 15:06:44 +0100
+Message-Id: <20200128135911.576746222@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
 In-Reply-To: <20200128135852.449088278@linuxfoundation.org>
 References: <20200128135852.449088278@linuxfoundation.org>
@@ -46,45 +47,35 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Johan Hovold <johan@kernel.org>
 
-commit 3111491fca4f01764e0c158c5e0f7ced808eef51 upstream.
+commit bcfcb7f9b480dd0be8f0df2df17340ca92a03b98 upstream.
 
 The driver was checking the number of endpoints of the first alternate
-setting instead of the current one, something which could lead to the
-driver binding to an invalid interface.
+setting instead of the current one, something which could be used by a
+malicious device (or USB descriptor fuzzer) to trigger a NULL-pointer
+dereference.
 
-This in turn could cause the driver to misbehave or trigger a WARN() in
-usb_submit_urb() that kernels with panic_on_warn set would choke on.
-
-Fixes: 8e20cf2bce12 ("Input: aiptek - fix crash on detecting device without endpoints")
+Fixes: 1afca2b66aac ("Input: add Pegasus Notetaker tablet driver")
 Signed-off-by: Johan Hovold <johan@kernel.org>
+Acked-by: Martin Kepplinger <martink@posteo.de>
 Acked-by: Vladis Dronov <vdronov@redhat.com>
-Link: https://lore.kernel.org/r/20191210113737.4016-3-johan@kernel.org
+Link: https://lore.kernel.org/r/20191210113737.4016-2-johan@kernel.org
 Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/input/tablet/aiptek.c |    6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/input/tablet/pegasus_notetaker.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/input/tablet/aiptek.c
-+++ b/drivers/input/tablet/aiptek.c
-@@ -1822,14 +1822,14 @@ aiptek_probe(struct usb_interface *intf,
- 	input_set_abs_params(inputdev, ABS_WHEEL, AIPTEK_WHEEL_MIN, AIPTEK_WHEEL_MAX - 1, 0, 0);
+--- a/drivers/input/tablet/pegasus_notetaker.c
++++ b/drivers/input/tablet/pegasus_notetaker.c
+@@ -260,7 +260,7 @@ static int pegasus_probe(struct usb_inte
+ 		return -ENODEV;
  
- 	/* Verify that a device really has an endpoint */
+ 	/* Sanity check that the device has an endpoint */
 -	if (intf->altsetting[0].desc.bNumEndpoints < 1) {
 +	if (intf->cur_altsetting->desc.bNumEndpoints < 1) {
- 		dev_err(&intf->dev,
- 			"interface has %d endpoints, but must have minimum 1\n",
--			intf->altsetting[0].desc.bNumEndpoints);
-+			intf->cur_altsetting->desc.bNumEndpoints);
- 		err = -EINVAL;
- 		goto fail3;
+ 		dev_err(&intf->dev, "Invalid number of endpoints\n");
+ 		return -EINVAL;
  	}
--	endpoint = &intf->altsetting[0].endpoint[0].desc;
-+	endpoint = &intf->cur_altsetting->endpoint[0].desc;
- 
- 	/* Go set up our URB, which is called when the tablet receives
- 	 * input.
 
 
