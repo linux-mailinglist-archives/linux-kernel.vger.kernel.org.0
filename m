@@ -2,39 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EDE5A14B867
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Jan 2020 15:24:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1476A14B755
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Jan 2020 15:13:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732083AbgA1OXO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 28 Jan 2020 09:23:14 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49242 "EHLO mail.kernel.org"
+        id S1729242AbgA1ONb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 28 Jan 2020 09:13:31 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35098 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731395AbgA1OXL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 Jan 2020 09:23:11 -0500
+        id S1727949AbgA1ON3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 28 Jan 2020 09:13:29 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 72FF921739;
-        Tue, 28 Jan 2020 14:23:10 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3A5922468F;
+        Tue, 28 Jan 2020 14:13:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1580221390;
-        bh=lBK6d0D+N3IVETzNEOxlFQv92qi85SKaeOxJzbSKrl0=;
+        s=default; t=1580220808;
+        bh=EoCZegduvs6m+jj4UlGAqFHpvD2Z3fCOya/GVTD5pG4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=IYIkEIQeIP+EvqCcpCl5ZfJQbTk38HlMzGZZfMQDmqwNCR7r7COkDaQMj6SQRykIG
-         yNSkKmU3UngBqvGW3MJl14pGz0d7Td2f82/uyLur38Avd03JluYGMoCpNsX38qsBST
-         NT/8s53ajinR8xg5xWQz4yekPTjw0rB2M29db1xU=
+        b=wtRoAHGF2L4+pJK5BtbBhYVDQqFUA/J6d68zQN2YmnZZMXlmrUcCG1+aSp8CyZPaP
+         AQnEHsGMfaZ41be6+g4dVzuWxnBxfm3G6g9AtmpvAZDahnTtgS4IdP1caSIDce8Ffu
+         1ALGQOMiXoGl7MGDvl7flkglj1hk8OJyLPlrSO8Q=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Chuansheng Liu <chuansheng.liu@intel.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Jens Axboe <axboe@kernel.dk>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 188/271] ahci: Do not export local variable ahci_em_messages
-Date:   Tue, 28 Jan 2020 15:05:37 +0100
-Message-Id: <20200128135906.565874802@linuxfoundation.org>
+        stable@vger.kernel.org, Colin Ian King <colin.king@canonical.com>,
+        Theodore Tso <tytso@mit.edu>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.4 119/183] ext4: set error return correctly when ext4_htree_store_dirent fails
+Date:   Tue, 28 Jan 2020 15:05:38 +0100
+Message-Id: <20200128135841.833220521@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200128135852.449088278@linuxfoundation.org>
-References: <20200128135852.449088278@linuxfoundation.org>
+In-Reply-To: <20200128135829.486060649@linuxfoundation.org>
+References: <20200128135829.486060649@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,39 +43,37 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+From: Colin Ian King <colin.king@canonical.com>
 
-[ Upstream commit 60fc35f327e0a9e60b955c0f3c3ed623608d1baa ]
+[ Upstream commit 7a14826ede1d714f0bb56de8167c0e519041eeda ]
 
-The commit ed08d40cdec4
-  ("ahci: Changing two module params with static and __read_mostly")
-moved ahci_em_messages to be static while missing the fact of exporting it.
+Currently when the call to ext4_htree_store_dirent fails the error return
+variable 'ret' is is not being set to the error code and variable count is
+instead, hence the error code is not being returned.  Fix this by assigning
+ret to the error return code.
 
-WARNING: "ahci_em_messages" [vmlinux] is a static EXPORT_SYMBOL_GPL
-
-Drop export for the local variable ahci_em_messages.
-
-Fixes: ed08d40cdec4 ("ahci: Changing two module params with static and __read_mostly")
-Cc: Chuansheng Liu <chuansheng.liu@intel.com>
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
+Addresses-Coverity: ("Unused value")
+Fixes: 8af0f0822797 ("ext4: fix readdir error in the case of inline_data+dir_index")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Signed-off-by: Theodore Ts'o <tytso@mit.edu>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/ata/libahci.c | 1 -
- 1 file changed, 1 deletion(-)
+ fs/ext4/inline.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/ata/libahci.c b/drivers/ata/libahci.c
-index f233ce60a6781..1610fff19bb39 100644
---- a/drivers/ata/libahci.c
-+++ b/drivers/ata/libahci.c
-@@ -190,7 +190,6 @@ struct ata_port_operations ahci_pmp_retry_srst_ops = {
- EXPORT_SYMBOL_GPL(ahci_pmp_retry_srst_ops);
- 
- static bool ahci_em_messages __read_mostly = true;
--EXPORT_SYMBOL_GPL(ahci_em_messages);
- module_param(ahci_em_messages, bool, 0444);
- /* add other LED protocol types when they become supported */
- MODULE_PARM_DESC(ahci_em_messages,
+diff --git a/fs/ext4/inline.c b/fs/ext4/inline.c
+index 0dcd33f626376..00f9433eea23a 100644
+--- a/fs/ext4/inline.c
++++ b/fs/ext4/inline.c
+@@ -1418,7 +1418,7 @@ int htree_inlinedir_to_tree(struct file *dir_file,
+ 		err = ext4_htree_store_dirent(dir_file, hinfo->hash,
+ 					      hinfo->minor_hash, de, &tmp_str);
+ 		if (err) {
+-			count = err;
++			ret = err;
+ 			goto out;
+ 		}
+ 		count++;
 -- 
 2.20.1
 
