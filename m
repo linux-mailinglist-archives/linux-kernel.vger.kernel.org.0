@@ -2,40 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D021E14B77F
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Jan 2020 15:17:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1E6A514B88E
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Jan 2020 15:26:07 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729988AbgA1OO4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 28 Jan 2020 09:14:56 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37250 "EHLO mail.kernel.org"
+        id S1731703AbgA1OYy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 28 Jan 2020 09:24:54 -0500
+Received: from mail.kernel.org ([198.145.29.99]:51710 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729612AbgA1OOx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 Jan 2020 09:14:53 -0500
+        id S1732766AbgA1OYv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 28 Jan 2020 09:24:51 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E33A624693;
-        Tue, 28 Jan 2020 14:14:52 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 70D542468A;
+        Tue, 28 Jan 2020 14:24:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1580220893;
-        bh=t5GZ5N/LopTk45JDVCHyBPgByYjTUsskcBljJRjATUE=;
+        s=default; t=1580221489;
+        bh=krkpRTJjaq0aPRrGNgYXqjuGQlifAOUX/tNFEfRm/jU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=k9M5gnTK4rm2el7vtZXn5x2kJLynUGr0/Qfe1M/xkOSxzkYJusraAL9hFYXVh6e/Y
-         rgJyb6oaip3T4gO/0H3Lfg9J6F3DgadYOnK/lOw4tGYPJxDsYzLH0wMWEouowWeRki
-         zZ406TDgtCj0SZdCLlvuEDk+Ootg2s08+XDZowNA=
+        b=Fj9F/5kwalY8V1+oj8vzJqab96lw7EXIdnmlPNMFEWqsCUAtBJXiVPd0S8yL83cyM
+         o+QNpHbyVbZQpKh7O+VsAHIlfmyQOvn19zEEXM+0ucooVysKJRVoBGQAYKefVoqYRm
+         z+g8wO258hiE7nCGAoIEX0NoLiYe5Sq5GBdoGErQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Andre Przywara <andre.przywara@arm.com>,
-        Liviu Dudau <liviu.dudau@arm.com>,
-        Sudeep Holla <sudeep.holla@arm.com>,
+        stable@vger.kernel.org, Sam Bobroff <sbobroff@linux.ibm.com>,
+        Alex Deucher <alexander.deucher@amd.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.4 158/183] arm64: dts: juno: Fix UART frequency
+Subject: [PATCH 4.9 228/271] drm/radeon: fix bad DMA from INTERRUPT_CNTL2
 Date:   Tue, 28 Jan 2020 15:06:17 +0100
-Message-Id: <20200128135845.503087743@linuxfoundation.org>
+Message-Id: <20200128135909.551165717@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200128135829.486060649@linuxfoundation.org>
-References: <20200128135829.486060649@linuxfoundation.org>
+In-Reply-To: <20200128135852.449088278@linuxfoundation.org>
+References: <20200128135852.449088278@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,52 +44,75 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Andre Przywara <andre.przywara@arm.com>
+From: Sam Bobroff <sbobroff@linux.ibm.com>
 
-[ Upstream commit 39a1a8941b27c37f79508426e27a2ec29829d66c ]
+[ Upstream commit 62d91dd2851e8ae2ca552f1b090a3575a4edf759 ]
 
-Older versions of the Juno *SoC* TRM [1] recommended that the UART clock
-source should be 7.2738 MHz, whereas the *system* TRM [2] stated a more
-correct value of 7.3728 MHz. Somehow the wrong value managed to end up in
-our DT.
+The INTERRUPT_CNTL2 register expects a valid DMA address, but is
+currently set with a GPU MC address.  This can cause problems on
+systems that detect the resulting DMA read from an invalid address
+(found on a Power8 guest).
 
-Doing a prime factorisation, a modulo divide by 115200 and trying
-to buy a 7.2738 MHz crystal at your favourite electronics dealer suggest
-that the old value was actually a typo. The actual UART clock is driven
-by a PLL, configured via a parameter in some board.txt file in the
-firmware, which reads 7.37 MHz (sic!).
+Instead, use the DMA address of the dummy page because it will always
+be safe.
 
-Fix this to correct the baud rate divisor calculation on the Juno board.
-
-[1] http://infocenter.arm.com/help/topic/com.arm.doc.ddi0515b.b/DDI0515B_b_juno_arm_development_platform_soc_trm.pdf
-[2] http://infocenter.arm.com/help/topic/com.arm.doc.100113_0000_07_en/arm_versatile_express_juno_development_platform_(v2m_juno)_technical_reference_manual_100113_0000_07_en.pdf
-
-Fixes: 71f867ec130e ("arm64: Add Juno board device tree.")
-Signed-off-by: Andre Przywara <andre.przywara@arm.com>
-Acked-by: Liviu Dudau <liviu.dudau@arm.com>
-Signed-off-by: Sudeep Holla <sudeep.holla@arm.com>
+Fixes: d8f60cfc9345 ("drm/radeon/kms: Add support for interrupts on r6xx/r7xx chips (v3)")
+Fixes: 25a857fbe973 ("drm/radeon/kms: add support for interrupts on SI")
+Fixes: a59781bbe528 ("drm/radeon: add support for interrupts on CIK (v5)")
+Signed-off-by: Sam Bobroff <sbobroff@linux.ibm.com>
+Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arm64/boot/dts/arm/juno-clocks.dtsi | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/gpu/drm/radeon/cik.c  | 4 ++--
+ drivers/gpu/drm/radeon/r600.c | 4 ++--
+ drivers/gpu/drm/radeon/si.c   | 4 ++--
+ 3 files changed, 6 insertions(+), 6 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/arm/juno-clocks.dtsi b/arch/arm64/boot/dts/arm/juno-clocks.dtsi
-index 25352ed943e6e..00bcbf7688c77 100644
---- a/arch/arm64/boot/dts/arm/juno-clocks.dtsi
-+++ b/arch/arm64/boot/dts/arm/juno-clocks.dtsi
-@@ -8,10 +8,10 @@
-  */
+diff --git a/drivers/gpu/drm/radeon/cik.c b/drivers/gpu/drm/radeon/cik.c
+index b99f3e59011c1..5fcb5869a4891 100644
+--- a/drivers/gpu/drm/radeon/cik.c
++++ b/drivers/gpu/drm/radeon/cik.c
+@@ -7026,8 +7026,8 @@ static int cik_irq_init(struct radeon_device *rdev)
+ 	}
  
- 	/* SoC fixed clocks */
--	soc_uartclk: refclk7273800hz {
-+	soc_uartclk: refclk7372800hz {
- 		compatible = "fixed-clock";
- 		#clock-cells = <0>;
--		clock-frequency = <7273800>;
-+		clock-frequency = <7372800>;
- 		clock-output-names = "juno:uartclk";
- 	};
+ 	/* setup interrupt control */
+-	/* XXX this should actually be a bus address, not an MC address. same on older asics */
+-	WREG32(INTERRUPT_CNTL2, rdev->ih.gpu_addr >> 8);
++	/* set dummy read address to dummy page address */
++	WREG32(INTERRUPT_CNTL2, rdev->dummy_page.addr >> 8);
+ 	interrupt_cntl = RREG32(INTERRUPT_CNTL);
+ 	/* IH_DUMMY_RD_OVERRIDE=0 - dummy read disabled with msi, enabled without msi
+ 	 * IH_DUMMY_RD_OVERRIDE=1 - dummy read controlled by IH_DUMMY_RD_EN
+diff --git a/drivers/gpu/drm/radeon/r600.c b/drivers/gpu/drm/radeon/r600.c
+index f2eac6b6c46a3..9569c35f8766a 100644
+--- a/drivers/gpu/drm/radeon/r600.c
++++ b/drivers/gpu/drm/radeon/r600.c
+@@ -3697,8 +3697,8 @@ int r600_irq_init(struct radeon_device *rdev)
+ 	}
  
+ 	/* setup interrupt control */
+-	/* set dummy read address to ring address */
+-	WREG32(INTERRUPT_CNTL2, rdev->ih.gpu_addr >> 8);
++	/* set dummy read address to dummy page address */
++	WREG32(INTERRUPT_CNTL2, rdev->dummy_page.addr >> 8);
+ 	interrupt_cntl = RREG32(INTERRUPT_CNTL);
+ 	/* IH_DUMMY_RD_OVERRIDE=0 - dummy read disabled with msi, enabled without msi
+ 	 * IH_DUMMY_RD_OVERRIDE=1 - dummy read controlled by IH_DUMMY_RD_EN
+diff --git a/drivers/gpu/drm/radeon/si.c b/drivers/gpu/drm/radeon/si.c
+index b75d809c292e3..919d389869ceb 100644
+--- a/drivers/gpu/drm/radeon/si.c
++++ b/drivers/gpu/drm/radeon/si.c
+@@ -6018,8 +6018,8 @@ static int si_irq_init(struct radeon_device *rdev)
+ 	}
+ 
+ 	/* setup interrupt control */
+-	/* set dummy read address to ring address */
+-	WREG32(INTERRUPT_CNTL2, rdev->ih.gpu_addr >> 8);
++	/* set dummy read address to dummy page address */
++	WREG32(INTERRUPT_CNTL2, rdev->dummy_page.addr >> 8);
+ 	interrupt_cntl = RREG32(INTERRUPT_CNTL);
+ 	/* IH_DUMMY_RD_OVERRIDE=0 - dummy read disabled with msi, enabled without msi
+ 	 * IH_DUMMY_RD_OVERRIDE=1 - dummy read controlled by IH_DUMMY_RD_EN
 -- 
 2.20.1
 
