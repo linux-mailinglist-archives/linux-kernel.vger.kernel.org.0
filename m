@@ -2,51 +2,51 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A2B2814C3AE
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Jan 2020 00:40:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 29D9C14C3A3
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Jan 2020 00:40:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726841AbgA1XkR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 28 Jan 2020 18:40:17 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49346 "EHLO mail.kernel.org"
+        id S1726828AbgA1XkL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 28 Jan 2020 18:40:11 -0500
+Received: from mail.kernel.org ([198.145.29.99]:49328 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726788AbgA1XkG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 Jan 2020 18:40:06 -0500
-Subject: Re: [GIT PULL] SMB3 Fixes
+        id S1726303AbgA1XkF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 28 Jan 2020 18:40:05 -0500
+Subject: Re: [GIT PULL] fs: Deduplication ioctl fix
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
         s=default; t=1580254805;
-        bh=t2KBhxLlzR26P92snPvSso37bkIr9FDpyXy4784d0Os=;
+        bh=tUhXcy5ta6IIU8tmwDqL/iRBsLFREm3taAO1DytlLAg=;
         h=From:In-Reply-To:References:Date:To:Cc:From;
-        b=aR72bIdadi/TEf+fP+fnnEXPsT+aSekz4yHYpKoh7ZK8F7i4zzxxuuU3dGJnqWIcn
-         Fi2DzSX4YCfIQ+cKXWwy2wKuu/sNNfe3/wHOvdnpLe7dqSZlv3/0CgFp4WCDXSAlPo
-         BzfXpSJdKEovRD4Ma3Y4xq26id08nZD0MgZ/yzIM=
+        b=VTFIwDPQnC7wXIFqKXQ6vGoBwhZkGiQeXpxaeZNXgVq4l0p6phULPaVbL882PX82v
+         /5HgDrJ0QQpo8DhBBijslnMwaN4BvVzUgk4qSGkrK7rcIC94Yg6xB7BP8UfiVBjple
+         gXRq7S3x8BypMYYwv4GwCfqqKwBMaps3Gl7WQiIQ=
 From:   pr-tracker-bot@kernel.org
-In-Reply-To: <CAH2r5ms5g+iVOJzQorgSws9tK+aNY7MzsNaMVO_Yx_NYgS9nRQ@mail.gmail.com>
-References: <CAH2r5ms5g+iVOJzQorgSws9tK+aNY7MzsNaMVO_Yx_NYgS9nRQ@mail.gmail.com>
+In-Reply-To: <cover.1580142827.git.dsterba@suse.com>
+References: <cover.1580142827.git.dsterba@suse.com>
 X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <CAH2r5ms5g+iVOJzQorgSws9tK+aNY7MzsNaMVO_Yx_NYgS9nRQ@mail.gmail.com>
-X-PR-Tracked-Remote: git://git.samba.org/sfrench/cifs-2.6.git
- tags/5.6-smb3-fixes-and-dfs-and-readdir-improvements
-X-PR-Tracked-Commit-Id: f1f27ad74557e39f67a8331a808b860f89254f2d
+X-PR-Tracked-Message-Id: <cover.1580142827.git.dsterba@suse.com>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/kdave/linux.git
+ fs-dedupe-last-block-tag
+X-PR-Tracked-Commit-Id: 831d2fa25ab8e27592b1b0268dae6f2dfaf7cc43
 X-PR-Merge-Tree: torvalds/linux.git
 X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 68353984d63d8d7ea728819dbdb7aecc5f32d360
-Message-Id: <158025480568.16364.10674114982000260724.pr-tracker-bot@kernel.org>
+X-PR-Merge-Commit-Id: b5f7ab6b1c4ed967fb76258f79251193cb1ad41d
+Message-Id: <158025480536.16364.16698686040672279236.pr-tracker-bot@kernel.org>
 Date:   Tue, 28 Jan 2020 23:40:05 +0000
-To:     Steve French <smfrench@gmail.com>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        CIFS <linux-cifs@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
+To:     David Sterba <dsterba@suse.com>
+Cc:     torvalds@linux-foundation.org, David Sterba <dsterba@suse.com>,
+        linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org,
+        "Darrick J . Wong" <darrick.wong@oracle.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The pull request you sent on Tue, 28 Jan 2020 12:31:30 -0600:
+The pull request you sent on Mon, 27 Jan 2020 18:19:15 +0100:
 
-> git://git.samba.org/sfrench/cifs-2.6.git tags/5.6-smb3-fixes-and-dfs-and-readdir-improvements
+> git://git.kernel.org/pub/scm/linux/kernel/git/kdave/linux.git fs-dedupe-last-block-tag
 
 has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/68353984d63d8d7ea728819dbdb7aecc5f32d360
+https://git.kernel.org/torvalds/c/b5f7ab6b1c4ed967fb76258f79251193cb1ad41d
 
 Thank you!
 
