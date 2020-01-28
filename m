@@ -2,40 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CB36914B90E
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Jan 2020 15:33:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 83C6814B91C
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Jan 2020 15:33:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730321AbgA1O0H (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 28 Jan 2020 09:26:07 -0500
-Received: from mail.kernel.org ([198.145.29.99]:53362 "EHLO mail.kernel.org"
+        id S1733081AbgA1O1C (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 28 Jan 2020 09:27:02 -0500
+Received: from mail.kernel.org ([198.145.29.99]:54460 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729644AbgA1O0F (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 Jan 2020 09:26:05 -0500
+        id S1733067AbgA1O0x (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 28 Jan 2020 09:26:53 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id F019624685;
-        Tue, 28 Jan 2020 14:26:04 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6C54420716;
+        Tue, 28 Jan 2020 14:26:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1580221565;
-        bh=KNT/RIVk/x73NLpD9nQB6BYohuSfGeNeCr1xlG9FM20=;
+        s=default; t=1580221612;
+        bh=bKRE5mSFY1bAGSEyekelZnv63qvYTAjK9lidtNV4oTM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=mRUhbgaHn21dsudhAo+VSYJn1RNtKNAF8uzLgYUN9umJMMU62WfFfwFBilyjXwHit
-         fhb7Ww0SCpOLXJWSTnEhfZNqvRqz8v1PyAnc/iFLyi43zjTQodpfqguJFXj+qaQ5xL
-         ps+GgXVk4aBhXLwTKTsOgBnNeoe1/zN/2m4casPI=
+        b=fQIGYm/9e1/JhNLoLDAtoC2ePGk0K+BMjC3/btIC6e0UvryOZpm3oQEpfzw2gWc3a
+         RNngHQyZZEc0HXEFBbisqJGLsrqTwmPB4vJL4RIPcaXV7s3kf547iLVI55XX2SbBSJ
+         bWnhid8SJ/43ggDdQvrRD4vWxQ6pxf21jGbe5lB4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Shaohua Li <shli@kernel.org>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Subject: [PATCH 4.9 268/271] md: Avoid namespace collision with bitmap API
-Date:   Tue, 28 Jan 2020 15:06:57 +0100
-Message-Id: <20200128135912.548904600@linuxfoundation.org>
+        stable@vger.kernel.org, Yuki Taguchi <tagyounit@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.19 04/92] ipv6: sr: remove SKB_GSO_IPXIP6 on End.D* actions
+Date:   Tue, 28 Jan 2020 15:07:32 +0100
+Message-Id: <20200128135809.875908879@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200128135852.449088278@linuxfoundation.org>
-References: <20200128135852.449088278@linuxfoundation.org>
+In-Reply-To: <20200128135809.344954797@linuxfoundation.org>
+References: <20200128135809.344954797@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,64 +43,53 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+From: Yuki Taguchi <tagyounit@gmail.com>
 
-commit e64e4018d572710c44f42c923d4ac059f0a23320 upstream.
+[ Upstream commit 62ebaeaedee7591c257543d040677a60e35c7aec ]
 
-bitmap API (include/linux/bitmap.h) has 'bitmap' prefix for its methods.
+After LRO/GRO is applied, SRv6 encapsulated packets have
+SKB_GSO_IPXIP6 feature flag, and this flag must be removed right after
+decapulation procedure.
 
-On the other hand MD bitmap API is special case.
-Adding 'md' prefix to it to avoid name space collision.
+Currently, SKB_GSO_IPXIP6 flag is not removed on End.D* actions, which
+creates inconsistent packet state, that is, a normal TCP/IP packets
+have the SKB_GSO_IPXIP6 flag. This behavior can cause unexpected
+fallback to GSO on routing to netdevices that do not support
+SKB_GSO_IPXIP6. For example, on inter-VRF forwarding, decapsulated
+packets separated into small packets by GSO because VRF devices do not
+support TSO for packets with SKB_GSO_IPXIP6 flag, and this degrades
+forwarding performance.
 
-No functional changes intended.
+This patch removes encapsulation related GSO flags from the skb right
+after the End.D* action is applied.
 
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Acked-by: Shaohua Li <shli@kernel.org>
-Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-[only take the bitmap_free change for stable - gregkh]
+Fixes: d7a669dd2f8b ("ipv6: sr: add helper functions for seg6local")
+Signed-off-by: Yuki Taguchi <tagyounit@gmail.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- drivers/md/bitmap.c |    8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ net/ipv6/seg6_local.c |    4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
---- a/drivers/md/bitmap.c
-+++ b/drivers/md/bitmap.c
-@@ -1699,7 +1699,7 @@ void bitmap_flush(struct mddev *mddev)
- /*
-  * free memory that was allocated
-  */
--static void bitmap_free(struct bitmap *bitmap)
-+static void md_bitmap_free(struct bitmap *bitmap)
- {
- 	unsigned long k, pages;
- 	struct bitmap_page *bp;
-@@ -1749,7 +1749,7 @@ void bitmap_destroy(struct mddev *mddev)
- 	if (mddev->thread)
- 		mddev->thread->timeout = MAX_SCHEDULE_TIMEOUT;
+--- a/net/ipv6/seg6_local.c
++++ b/net/ipv6/seg6_local.c
+@@ -28,6 +28,7 @@
+ #include <net/addrconf.h>
+ #include <net/ip6_route.h>
+ #include <net/dst_cache.h>
++#include <net/ip_tunnels.h>
+ #ifdef CONFIG_IPV6_SEG6_HMAC
+ #include <net/seg6_hmac.h>
+ #endif
+@@ -135,7 +136,8 @@ static bool decap_and_validate(struct sk
  
--	bitmap_free(bitmap);
-+	md_bitmap_free(bitmap);
+ 	skb_reset_network_header(skb);
+ 	skb_reset_transport_header(skb);
+-	skb->encapsulation = 0;
++	if (iptunnel_pull_offloads(skb))
++		return false;
+ 
+ 	return true;
  }
- 
- /*
-@@ -1834,7 +1834,7 @@ struct bitmap *bitmap_create(struct mdde
- 
- 	return bitmap;
-  error:
--	bitmap_free(bitmap);
-+	md_bitmap_free(bitmap);
- 	return ERR_PTR(err);
- }
- 
-@@ -1936,7 +1936,7 @@ int bitmap_copy_from_slot(struct mddev *
- 	*low = lo;
- 	*high = hi;
- err:
--	bitmap_free(bitmap);
-+	md_bitmap_free(bitmap);
- 	return rv;
- }
- EXPORT_SYMBOL_GPL(bitmap_copy_from_slot);
 
 
