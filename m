@@ -2,38 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B614714BB75
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Jan 2020 15:48:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6533B14BA47
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Jan 2020 15:38:07 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727348AbgA1OHx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 28 Jan 2020 09:07:53 -0500
-Received: from mail.kernel.org ([198.145.29.99]:55664 "EHLO mail.kernel.org"
+        id S1731379AbgA1OiE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 28 Jan 2020 09:38:04 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43690 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726670AbgA1OHu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 Jan 2020 09:07:50 -0500
+        id S1730608AbgA1OTT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 28 Jan 2020 09:19:19 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3CEE022522;
-        Tue, 28 Jan 2020 14:07:49 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id BF2A324681;
+        Tue, 28 Jan 2020 14:19:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1580220469;
-        bh=TvamCyUd28R9hJdhA5UPtzhsrUyhV0i/yZDmMMumUAg=;
+        s=default; t=1580221159;
+        bh=4hGTtZ/hLdp2L12t5xiXK0BvSF3xpnX6O+7aCaXLxFg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=xSU5ShH+75nzQXRST/DIqJpDPkdgdMvnrW83lOPUCz7VHSD9FqNgzjkZ2OQqWmKd7
-         d3hA89iHG2NFVCP8knCUPWcuMPzZleFTUzvyPkOco0aWh8UhfYIwTqp/e3KE4RxUIL
-         WVrg/c/UeaXOPfBstUN1nih8LiNeHN/d2pMBNB0w=
+        b=sI19/nPd28BhthTKKQ5gnDVlUhpVzPWOmQdil0EIilrIsK/3C2B49rnAbdJq8bzLK
+         7eiJWtXucdxV3L5VUTeIIKIZhWwdCMTuthH13L3mkGpKmjf7q3I2NVBnlJOjPYrkA1
+         OmaBpWqHxBQan7yuf3N/fsBmaBG5+GAvx0QJHQYo=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Ard Biesheuvel <ardb@kernel.org>,
-        Michael Ellerman <mpe@ellerman.id.au>
-Subject: [PATCH 4.4 002/183] powerpc/archrandom: fix arch_get_random_seed_int()
-Date:   Tue, 28 Jan 2020 15:03:41 +0100
-Message-Id: <20200128135829.777248003@linuxfoundation.org>
+        stable@vger.kernel.org, Eric Auger <eric.auger@redhat.com>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.9 075/271] vfio_pci: Enable memory accesses before calling pci_map_rom
+Date:   Tue, 28 Jan 2020 15:03:44 +0100
+Message-Id: <20200128135858.152820233@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200128135829.486060649@linuxfoundation.org>
-References: <20200128135829.486060649@linuxfoundation.org>
+In-Reply-To: <20200128135852.449088278@linuxfoundation.org>
+References: <20200128135852.449088278@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,43 +44,69 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Ard Biesheuvel <ardb@kernel.org>
+From: Eric Auger <eric.auger@redhat.com>
 
-commit b6afd1234cf93aa0d71b4be4788c47534905f0be upstream.
+[ Upstream commit 0cfd027be1d6def4a462cdc180c055143af24069 ]
 
-Commit 01c9348c7620ec65
+pci_map_rom/pci_get_rom_size() performs memory access in the ROM.
+In case the Memory Space accesses were disabled, readw() is likely
+to trigger a synchronous external abort on some platforms.
 
-  powerpc: Use hardware RNG for arch_get_random_seed_* not arch_get_random_*
+In case memory accesses were disabled, re-enable them before the
+call and disable them back again just after.
 
-updated arch_get_random_[int|long]() to be NOPs, and moved the hardware
-RNG backing to arch_get_random_seed_[int|long]() instead. However, it
-failed to take into account that arch_get_random_int() was implemented
-in terms of arch_get_random_long(), and so we ended up with a version
-of the former that is essentially a NOP as well.
-
-Fix this by calling arch_get_random_seed_long() from
-arch_get_random_seed_int() instead.
-
-Fixes: 01c9348c7620ec65 ("powerpc: Use hardware RNG for arch_get_random_seed_* not arch_get_random_*")
-Signed-off-by: Ard Biesheuvel <ardb@kernel.org>
-Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
-Link: https://lore.kernel.org/r/20191204115015.18015-1-ardb@kernel.org
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Fixes: 89e1f7d4c66d ("vfio: Add PCI device driver")
+Signed-off-by: Eric Auger <eric.auger@redhat.com>
+Suggested-by: Alex Williamson <alex.williamson@redhat.com>
+Signed-off-by: Alex Williamson <alex.williamson@redhat.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/powerpc/include/asm/archrandom.h |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/vfio/pci/vfio_pci.c | 19 ++++++++++++++-----
+ 1 file changed, 14 insertions(+), 5 deletions(-)
 
---- a/arch/powerpc/include/asm/archrandom.h
-+++ b/arch/powerpc/include/asm/archrandom.h
-@@ -27,7 +27,7 @@ static inline int arch_get_random_seed_i
- 	unsigned long val;
- 	int rc;
+diff --git a/drivers/vfio/pci/vfio_pci.c b/drivers/vfio/pci/vfio_pci.c
+index da3f0ed18c769..c94167d871789 100644
+--- a/drivers/vfio/pci/vfio_pci.c
++++ b/drivers/vfio/pci/vfio_pci.c
+@@ -729,6 +729,7 @@ static long vfio_pci_ioctl(void *device_data,
+ 		{
+ 			void __iomem *io;
+ 			size_t size;
++			u16 orig_cmd;
  
--	rc = arch_get_random_long(&val);
-+	rc = arch_get_random_seed_long(&val);
- 	if (rc)
- 		*v = val;
+ 			info.offset = VFIO_PCI_INDEX_TO_OFFSET(info.index);
+ 			info.flags = 0;
+@@ -744,15 +745,23 @@ static long vfio_pci_ioctl(void *device_data,
+ 					break;
+ 			}
  
+-			/* Is it really there? */
++			/*
++			 * Is it really there?  Enable memory decode for
++			 * implicit access in pci_map_rom().
++			 */
++			pci_read_config_word(pdev, PCI_COMMAND, &orig_cmd);
++			pci_write_config_word(pdev, PCI_COMMAND,
++					      orig_cmd | PCI_COMMAND_MEMORY);
++
+ 			io = pci_map_rom(pdev, &size);
+-			if (!io || !size) {
++			if (io) {
++				info.flags = VFIO_REGION_INFO_FLAG_READ;
++				pci_unmap_rom(pdev, io);
++			} else {
+ 				info.size = 0;
+-				break;
+ 			}
+-			pci_unmap_rom(pdev, io);
+ 
+-			info.flags = VFIO_REGION_INFO_FLAG_READ;
++			pci_write_config_word(pdev, PCI_COMMAND, orig_cmd);
+ 			break;
+ 		}
+ 		case VFIO_PCI_VGA_REGION_INDEX:
+-- 
+2.20.1
+
 
 
