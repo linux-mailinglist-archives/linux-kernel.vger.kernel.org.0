@@ -2,40 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9D90F14BB54
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Jan 2020 15:46:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AD0DD14BA29
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Jan 2020 15:37:53 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728043AbgA1OKB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 28 Jan 2020 09:10:01 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58500 "EHLO mail.kernel.org"
+        id S1731034AbgA1OhU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 28 Jan 2020 09:37:20 -0500
+Received: from mail.kernel.org ([198.145.29.99]:45472 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729075AbgA1OJ5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 Jan 2020 09:09:57 -0500
+        id S1730396AbgA1OUb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 28 Jan 2020 09:20:31 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5773A24681;
-        Tue, 28 Jan 2020 14:09:56 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D9DE72071E;
+        Tue, 28 Jan 2020 14:20:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1580220596;
-        bh=JKu0dhzvjzrLtzvtJGee9t8K2qFBno9QeXygxZ12YYs=;
+        s=default; t=1580221231;
+        bh=5Z6EN6VJq3DfDOLKKD91wpew8hlqtMfujy9PSyL+YbI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=EJCrP8zB8jdV+tFVKb9PWTXtC86ezVkuBYVBPKR61eM/FOvnmdhMD10HReXdcZ2H7
-         PBb8jzE7UUsH8/NsA20cxiOhSYrUwbTorX539L8rPSkXXj57WO5I17Y62nbHzJ9I3D
-         y2UEpR7DRsSjGIEJx9zW+coaTSV63VEIlzytWvCg=
+        b=T1rkYRwLW/yahy9siUHnEHdra5PomPhw0hK0X1wtFJlNtqZvOVLEArNiyRAKUy+NN
+         Qz8oJtUz8UWtOfIpnPG19FiH+OiRuRqZAzFwCmzRh1T1SXVMMAMQ1Qp9Kj3uimOhWk
+         Cc5vrnE+tUNCIhFTALoW35ql/wTKVwVHfAj6Kwrg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Sowjanya Komatineni <skomatineni@nvidia.com>,
-        Mark Brown <broonie@kernel.org>,
+        stable@vger.kernel.org, Russell King <rmk+kernel@armlinux.org.uk>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.4 069/183] spi: tegra114: clear packed bit for unpacked mode
-Date:   Tue, 28 Jan 2020 15:04:48 +0100
-Message-Id: <20200128135836.919265338@linuxfoundation.org>
+Subject: [PATCH 4.9 140/271] ARM: riscpc: fix lack of keyboard interrupts after irq conversion
+Date:   Tue, 28 Jan 2020 15:04:49 +0100
+Message-Id: <20200128135902.996682639@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200128135829.486060649@linuxfoundation.org>
-References: <20200128135829.486060649@linuxfoundation.org>
+In-Reply-To: <20200128135852.449088278@linuxfoundation.org>
+References: <20200128135852.449088278@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,36 +43,40 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Sowjanya Komatineni <skomatineni@nvidia.com>
+From: Russell King <rmk+kernel@armlinux.org.uk>
 
-[ Upstream commit 7b3d10cdf54b8bc1dc0da21faed9789ac4da3684 ]
+[ Upstream commit 63a0666bca9311f35017be454587f3ba903644b8 ]
 
-Fixes: Clear packed bit when not using packed mode.
+Fix lack of keyboard interrupts for RiscPC due to incorrect conversion.
 
-Packed bit is not cleared when not using packed mode. This results
-in transfer timeouts for the unpacked mode transfers followed by the
-packed mode transfers.
-
-Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Fixes: e8d36d5dbb6a ("ARM: kill off set_irq_flags usage")
+Signed-off-by: Russell King <rmk+kernel@armlinux.org.uk>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/spi/spi-tegra114.c | 2 ++
- 1 file changed, 2 insertions(+)
+ arch/arm/mach-rpc/irq.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/spi/spi-tegra114.c b/drivers/spi/spi-tegra114.c
-index 705f515863d4f..d98c502a9c478 100644
---- a/drivers/spi/spi-tegra114.c
-+++ b/drivers/spi/spi-tegra114.c
-@@ -730,6 +730,8 @@ static int tegra_spi_start_transfer_one(struct spi_device *spi,
+diff --git a/arch/arm/mach-rpc/irq.c b/arch/arm/mach-rpc/irq.c
+index 66502e6207fea..fce7fecbd8fa4 100644
+--- a/arch/arm/mach-rpc/irq.c
++++ b/arch/arm/mach-rpc/irq.c
+@@ -117,7 +117,7 @@ extern unsigned char rpc_default_fiq_start, rpc_default_fiq_end;
  
- 	if (tspi->is_packed)
- 		command1 |= SPI_PACKED;
-+	else
-+		command1 &= ~SPI_PACKED;
+ void __init rpc_init_irq(void)
+ {
+-	unsigned int irq, clr, set = 0;
++	unsigned int irq, clr, set;
  
- 	command1 &= ~(SPI_CS_SEL_MASK | SPI_TX_EN | SPI_RX_EN);
- 	tspi->cur_direction = 0;
+ 	iomd_writeb(0, IOMD_IRQMASKA);
+ 	iomd_writeb(0, IOMD_IRQMASKB);
+@@ -129,6 +129,7 @@ void __init rpc_init_irq(void)
+ 
+ 	for (irq = 0; irq < NR_IRQS; irq++) {
+ 		clr = IRQ_NOREQUEST;
++		set = 0;
+ 
+ 		if (irq <= 6 || (irq >= 9 && irq <= 15))
+ 			clr |= IRQ_NOPROBE;
 -- 
 2.20.1
 
