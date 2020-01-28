@@ -2,41 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1876514B7D9
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Jan 2020 15:20:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CC38314B6B7
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Jan 2020 15:07:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730624AbgA1OSF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 28 Jan 2020 09:18:05 -0500
-Received: from mail.kernel.org ([198.145.29.99]:41878 "EHLO mail.kernel.org"
+        id S1727525AbgA1OH3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 28 Jan 2020 09:07:29 -0500
+Received: from mail.kernel.org ([198.145.29.99]:55150 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730602AbgA1OR7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 Jan 2020 09:17:59 -0500
+        id S1727934AbgA1OH1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 28 Jan 2020 09:07:27 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 100062071E;
-        Tue, 28 Jan 2020 14:17:58 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A06EB24688;
+        Tue, 28 Jan 2020 14:07:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1580221079;
-        bh=znnOsdGetlEllZIX25wHMUIdX9foOB5SC+8CsdfWSUA=;
+        s=default; t=1580220447;
+        bh=+3GpBimjzAKPWV+KaOZccxvrUXDJ6S0eTN8o2EqLO5A=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=fSx2t2WHgYSguPKR2vmee6BZf7dB+sAzuoLpOAJ0Q7wfQrmDlHukfhNs21reLTDEe
-         cx/rs8JshmSlHCAu+hP/1Zdly4R9Pzs936R2WZDVkrOpw/6GyNNeCJ02vPgu3Zvh88
-         Ag8vYolHsgnsj57TKulNGjOgMt/1gyGjeYJ39tds=
+        b=1TxCXMeYbDVzn333uyokrs3LG/z4PSN9+rWpf5mSfMmG3PdDHIArByPS+es5uckXV
+         sx14Ee1ZNuT3ltpB5s3X8mKz/rY1qroHWN0lZaX6GaURJu8rG1z3XneXt7xkEPs7BW
+         nqoZ6h7r719EyekJnNHuBd/9VEAgLGkEoO7HILfw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        =?UTF-8?q?Michal=20Vok=C3=A1=C4=8D?= <michal.vokac@ysoft.com>,
-        Vinod Koul <vkoul@kernel.org>, Andrew Lunn <andrew@lunn.ch>,
-        "David S. Miller" <davem@davemloft.net>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Simon Horman <horms+renesas@verge.net.au>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 081/271] net: dsa: qca8k: Enable delay for RGMII_ID mode
+Subject: [PATCH 4.4 011/183] pinctrl: sh-pfc: r8a7740: Add missing REF125CK pin to gether_gmii group
 Date:   Tue, 28 Jan 2020 15:03:50 +0100
-Message-Id: <20200128135858.584187520@linuxfoundation.org>
+Message-Id: <20200128135830.823481791@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200128135852.449088278@linuxfoundation.org>
-References: <20200128135852.449088278@linuxfoundation.org>
+In-Reply-To: <20200128135829.486060649@linuxfoundation.org>
+References: <20200128135829.486060649@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,59 +45,34 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Vinod Koul <vkoul@kernel.org>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-[ Upstream commit a968b5e9d5879f9535d6099505f9e14abcafb623 ]
+[ Upstream commit 1ebc589a7786f17f97b9e87b44e0fb4d0290d8f8 ]
 
-RGMII_ID specifies that we should have internal delay, so resurrect the
-delay addition routine but under the RGMII_ID mode.
+The gether_gmii_mux[] array contains the REF125CK pin mark, but the
+gether_gmii_pins[] array lacks the corresponding pin number.
 
-Fixes: 40269aa9f40a ("net: dsa: qca8k: disable delay for RGMII mode")
-Tested-by: Michal Vokáč <michal.vokac@ysoft.com>
-Signed-off-by: Vinod Koul <vkoul@kernel.org>
-Reviewed-by: Andrew Lunn <andrew@lunn.ch>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Fixes: bae11d30d0cafdc5 ("sh-pfc: r8a7740: Add GETHER pin groups and functions")
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/dsa/qca8k.c | 12 ++++++++++++
- drivers/net/dsa/qca8k.h |  1 +
- 2 files changed, 13 insertions(+)
+ drivers/pinctrl/sh-pfc/pfc-r8a7740.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/net/dsa/qca8k.c b/drivers/net/dsa/qca8k.c
-index ebfbaf8597f40..3bbe85aae49bb 100644
---- a/drivers/net/dsa/qca8k.c
-+++ b/drivers/net/dsa/qca8k.c
-@@ -460,6 +460,18 @@ qca8k_set_pad_ctrl(struct qca8k_priv *priv, int port, int mode)
- 		qca8k_write(priv, QCA8K_REG_PORT5_PAD_CTRL,
- 			    QCA8K_PORT_PAD_RGMII_RX_DELAY_EN);
- 		break;
-+	case PHY_INTERFACE_MODE_RGMII_ID:
-+		/* RGMII_ID needs internal delay. This is enabled through
-+		 * PORT5_PAD_CTRL for all ports, rather than individual port
-+		 * registers
-+		 */
-+		qca8k_write(priv, reg,
-+			    QCA8K_PORT_PAD_RGMII_EN |
-+			    QCA8K_PORT_PAD_RGMII_TX_DELAY(QCA8K_MAX_DELAY) |
-+			    QCA8K_PORT_PAD_RGMII_RX_DELAY(QCA8K_MAX_DELAY));
-+		qca8k_write(priv, QCA8K_REG_PORT5_PAD_CTRL,
-+			    QCA8K_PORT_PAD_RGMII_RX_DELAY_EN);
-+		break;
- 	case PHY_INTERFACE_MODE_SGMII:
- 		qca8k_write(priv, reg, QCA8K_PORT_PAD_SGMII_EN);
- 		break;
-diff --git a/drivers/net/dsa/qca8k.h b/drivers/net/dsa/qca8k.h
-index 9c22bc3210cdf..db95168ca111d 100644
---- a/drivers/net/dsa/qca8k.h
-+++ b/drivers/net/dsa/qca8k.h
-@@ -40,6 +40,7 @@
- 						((0x8 + (x & 0x3)) << 22)
- #define   QCA8K_PORT_PAD_RGMII_RX_DELAY(x)		\
- 						((0x10 + (x & 0x3)) << 20)
-+#define   QCA8K_MAX_DELAY				3
- #define   QCA8K_PORT_PAD_RGMII_RX_DELAY_EN		BIT(24)
- #define   QCA8K_PORT_PAD_SGMII_EN			BIT(7)
- #define QCA8K_REG_MODULE_EN				0x030
+diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a7740.c b/drivers/pinctrl/sh-pfc/pfc-r8a7740.c
+index 279e9dd442e44..aa7c346dff6d0 100644
+--- a/drivers/pinctrl/sh-pfc/pfc-r8a7740.c
++++ b/drivers/pinctrl/sh-pfc/pfc-r8a7740.c
+@@ -1983,7 +1983,7 @@ static const unsigned int gether_gmii_pins[] = {
+ 	 */
+ 	185, 186, 187, 188, 189, 190, 191, 192, 174, 161, 204,
+ 	171, 170, 169, 168, 167, 166, 173, 172, 176, 184, 183, 203,
+-	205, 163, 206, 207,
++	205, 163, 206, 207, 158,
+ };
+ static const unsigned int gether_gmii_mux[] = {
+ 	ET_ERXD0_MARK, ET_ERXD1_MARK, ET_ERXD2_MARK, ET_ERXD3_MARK,
 -- 
 2.20.1
 
