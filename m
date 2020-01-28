@@ -2,35 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A49D414B9B4
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Jan 2020 15:34:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A6ACE14B98F
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Jan 2020 15:34:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733248AbgA1OeP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 28 Jan 2020 09:34:15 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51046 "EHLO mail.kernel.org"
+        id S1732894AbgA1OZY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 28 Jan 2020 09:25:24 -0500
+Received: from mail.kernel.org ([198.145.29.99]:52240 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731008AbgA1OYX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 Jan 2020 09:24:23 -0500
+        id S1732896AbgA1OZS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 28 Jan 2020 09:25:18 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 10B7B24686;
-        Tue, 28 Jan 2020 14:24:21 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4952A24688;
+        Tue, 28 Jan 2020 14:25:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1580221462;
-        bh=/yaIGJR8g7JpUUo36HIPU/CJouScglCaGh4k906XL64=;
+        s=default; t=1580221517;
+        bh=t5GZ5N/LopTk45JDVCHyBPgByYjTUsskcBljJRjATUE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=IUPpaKTRuiF1+402co8EgpnoTfHDKaJFnrqNpfFY+6X1vdXONUYV8Di131Qa5n/I9
-         M/OahVkpPdoz6skT2/nmjKvUQsD3Ry0HTiHYYjTTy2Z1iV5yqi7rSklcQZOFshsbgS
-         PpRXUL+KsISxhWavFM2jLillvMe0ZwIQ1Jo29yXo=
+        b=qMjIQBcAxOS1ifX4WLUIv9afxsYMuRxcCEJxL6I+lPl7ZGH6JSYoXM17mKHB9AXDX
+         QAEoUR/GwEr3WU7eAJxKpFRyip7cb/ZgMPlKy3PSzgF2stZZ+9KGFcjZdnm21gJjWi
+         5/nxZdAEOA55M9Nk1PebcGVxIHhAiIHD88F3k46c=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Chuhong Yuan <hslester96@gmail.com>,
-        Vinod Koul <vkoul@kernel.org>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 227/271] dmaengine: ti: edma: fix missed failure handling
-Date:   Tue, 28 Jan 2020 15:06:16 +0100
-Message-Id: <20200128135909.474403550@linuxfoundation.org>
+        stable@vger.kernel.org, Andre Przywara <andre.przywara@arm.com>,
+        Liviu Dudau <liviu.dudau@arm.com>,
+        Sudeep Holla <sudeep.holla@arm.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.9 229/271] arm64: dts: juno: Fix UART frequency
+Date:   Tue, 28 Jan 2020 15:06:18 +0100
+Message-Id: <20200128135909.624406632@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
 In-Reply-To: <20200128135852.449088278@linuxfoundation.org>
 References: <20200128135852.449088278@linuxfoundation.org>
@@ -43,39 +45,52 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Chuhong Yuan <hslester96@gmail.com>
+From: Andre Przywara <andre.przywara@arm.com>
 
-[ Upstream commit 340049d453682a9fe8d91fe794dd091730f4bb25 ]
+[ Upstream commit 39a1a8941b27c37f79508426e27a2ec29829d66c ]
 
-When devm_kcalloc fails, it forgets to call edma_free_slot.
-Replace direct return with failure handler to fix it.
+Older versions of the Juno *SoC* TRM [1] recommended that the UART clock
+source should be 7.2738 MHz, whereas the *system* TRM [2] stated a more
+correct value of 7.3728 MHz. Somehow the wrong value managed to end up in
+our DT.
 
-Fixes: 1be5336bc7ba ("dmaengine: edma: New device tree binding")
-Signed-off-by: Chuhong Yuan <hslester96@gmail.com>
-Link: https://lore.kernel.org/r/20191118073802.28424-1-hslester96@gmail.com
-Signed-off-by: Vinod Koul <vkoul@kernel.org>
+Doing a prime factorisation, a modulo divide by 115200 and trying
+to buy a 7.2738 MHz crystal at your favourite electronics dealer suggest
+that the old value was actually a typo. The actual UART clock is driven
+by a PLL, configured via a parameter in some board.txt file in the
+firmware, which reads 7.37 MHz (sic!).
+
+Fix this to correct the baud rate divisor calculation on the Juno board.
+
+[1] http://infocenter.arm.com/help/topic/com.arm.doc.ddi0515b.b/DDI0515B_b_juno_arm_development_platform_soc_trm.pdf
+[2] http://infocenter.arm.com/help/topic/com.arm.doc.100113_0000_07_en/arm_versatile_express_juno_development_platform_(v2m_juno)_technical_reference_manual_100113_0000_07_en.pdf
+
+Fixes: 71f867ec130e ("arm64: Add Juno board device tree.")
+Signed-off-by: Andre Przywara <andre.przywara@arm.com>
+Acked-by: Liviu Dudau <liviu.dudau@arm.com>
+Signed-off-by: Sudeep Holla <sudeep.holla@arm.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/dma/edma.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ arch/arm64/boot/dts/arm/juno-clocks.dtsi | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/dma/edma.c b/drivers/dma/edma.c
-index 72f31e837b1d5..56ec724687456 100644
---- a/drivers/dma/edma.c
-+++ b/drivers/dma/edma.c
-@@ -2340,8 +2340,10 @@ static int edma_probe(struct platform_device *pdev)
+diff --git a/arch/arm64/boot/dts/arm/juno-clocks.dtsi b/arch/arm64/boot/dts/arm/juno-clocks.dtsi
+index 25352ed943e6e..00bcbf7688c77 100644
+--- a/arch/arm64/boot/dts/arm/juno-clocks.dtsi
++++ b/arch/arm64/boot/dts/arm/juno-clocks.dtsi
+@@ -8,10 +8,10 @@
+  */
  
- 		ecc->tc_list = devm_kcalloc(dev, ecc->num_tc,
- 					    sizeof(*ecc->tc_list), GFP_KERNEL);
--		if (!ecc->tc_list)
--			return -ENOMEM;
-+		if (!ecc->tc_list) {
-+			ret = -ENOMEM;
-+			goto err_reg1;
-+		}
+ 	/* SoC fixed clocks */
+-	soc_uartclk: refclk7273800hz {
++	soc_uartclk: refclk7372800hz {
+ 		compatible = "fixed-clock";
+ 		#clock-cells = <0>;
+-		clock-frequency = <7273800>;
++		clock-frequency = <7372800>;
+ 		clock-output-names = "juno:uartclk";
+ 	};
  
- 		for (i = 0;; i++) {
- 			ret = of_parse_phandle_with_fixed_args(node, "ti,tptcs",
 -- 
 2.20.1
 
