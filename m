@@ -2,117 +2,64 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 63A5714B37E
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Jan 2020 12:28:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D0E8114B3A1
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Jan 2020 12:43:26 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726059AbgA1L2d (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 28 Jan 2020 06:28:33 -0500
-Received: from youngberry.canonical.com ([91.189.89.112]:54669 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725901AbgA1L2d (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 Jan 2020 06:28:33 -0500
-Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
-        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.86_2)
-        (envelope-from <colin.king@canonical.com>)
-        id 1iwP2i-0002MT-7V; Tue, 28 Jan 2020 11:28:28 +0000
-From:   Colin King <colin.king@canonical.com>
-To:     Harry Wentland <harry.wentland@amd.com>,
-        Leo Li <sunpeng.li@amd.com>,
-        Alex Deucher <alexander.deucher@amd.com>,
-        =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
-        David Zhou <David1.Zhou@amd.com>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Bhawanpreet Lakha <Bhawanpreet.Lakha@amd.com>,
-        amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] drm/amd/display: fix spelling mistake link_integiry_check -> link_integrity_check
-Date:   Tue, 28 Jan 2020 11:28:27 +0000
-Message-Id: <20200128112827.43682-1-colin.king@canonical.com>
-X-Mailer: git-send-email 2.24.0
+        id S1726209AbgA1LnQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 28 Jan 2020 06:43:16 -0500
+Received: from viti.kaiser.cx ([85.214.81.225]:39090 "EHLO viti.kaiser.cx"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726096AbgA1LnO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 28 Jan 2020 06:43:14 -0500
+Received: from dslb-088-068-095-017.088.068.pools.vodafone-ip.de ([88.68.95.17] helo=martin-debian-1.paytec.ch)
+        by viti.kaiser.cx with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.89)
+        (envelope-from <martin@kaiser.cx>)
+        id 1iwOcQ-0008Dy-Mq; Tue, 28 Jan 2020 12:01:18 +0100
+From:   Martin Kaiser <martin@kaiser.cx>
+To:     Herbert Xu <herbert@gondor.apana.org.au>,
+        PrasannaKumar Muralidharan <prasannatsmkumar@gmail.com>,
+        NXP Linux Team <linux-imx@nxp.com>
+Cc:     linux-crypto@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, Martin Kaiser <martin@kaiser.cx>
+Subject: [PATCH 0/6] imx-rngc - several small fixes
+Date:   Tue, 28 Jan 2020 12:00:56 +0100
+Message-Id: <20200128110102.11522-1-martin@kaiser.cx>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+This is a set of small fixes for the imx-rngc driver.
 
-There is a spelling mistake on the struct field name link_integiry_check,
-fix this by renaming it.
+I tried to clarify the approach for masking/unmasking the interrupt from
+the rngc.
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/gpu/drm/amd/display/modules/hdcp/hdcp.h           | 2 +-
- .../gpu/drm/amd/display/modules/hdcp/hdcp1_execution.c    | 8 ++++----
- .../gpu/drm/amd/display/modules/hdcp/hdcp1_transition.c   | 4 ++--
- 3 files changed, 7 insertions(+), 7 deletions(-)
+The rngc should be set to auto-seed mode, where it creates a new seed
+when required.
 
-diff --git a/drivers/gpu/drm/amd/display/modules/hdcp/hdcp.h b/drivers/gpu/drm/amd/display/modules/hdcp/hdcp.h
-index f98d3d9ecb6d..af78e4f1be68 100644
---- a/drivers/gpu/drm/amd/display/modules/hdcp/hdcp.h
-+++ b/drivers/gpu/drm/amd/display/modules/hdcp/hdcp.h
-@@ -63,7 +63,7 @@ struct mod_hdcp_transition_input_hdcp1 {
- 	uint8_t hdcp_capable_dp;
- 	uint8_t binfo_read_dp;
- 	uint8_t r0p_available_dp;
--	uint8_t link_integiry_check;
-+	uint8_t link_integrity_check;
- 	uint8_t reauth_request_check;
- 	uint8_t stream_encryption_dp;
- };
-diff --git a/drivers/gpu/drm/amd/display/modules/hdcp/hdcp1_execution.c b/drivers/gpu/drm/amd/display/modules/hdcp/hdcp1_execution.c
-index 04845e43df15..37670db64855 100644
---- a/drivers/gpu/drm/amd/display/modules/hdcp/hdcp1_execution.c
-+++ b/drivers/gpu/drm/amd/display/modules/hdcp/hdcp1_execution.c
-@@ -283,8 +283,8 @@ static enum mod_hdcp_status wait_for_ready(struct mod_hdcp *hdcp,
- 				hdcp, "bstatus_read"))
- 			goto out;
- 		if (!mod_hdcp_execute_and_set(check_link_integrity_dp,
--				&input->link_integiry_check, &status,
--				hdcp, "link_integiry_check"))
-+				&input->link_integrity_check, &status,
-+				hdcp, "link_integrity_check"))
- 			goto out;
- 		if (!mod_hdcp_execute_and_set(check_no_reauthentication_request_dp,
- 				&input->reauth_request_check, &status,
-@@ -431,8 +431,8 @@ static enum mod_hdcp_status authenticated_dp(struct mod_hdcp *hdcp,
- 			hdcp, "bstatus_read"))
- 		goto out;
- 	if (!mod_hdcp_execute_and_set(check_link_integrity_dp,
--			&input->link_integiry_check, &status,
--			hdcp, "link_integiry_check"))
-+			&input->link_integrity_check, &status,
-+			hdcp, "link_integrity_check"))
- 		goto out;
- 	if (!mod_hdcp_execute_and_set(check_no_reauthentication_request_dp,
- 			&input->reauth_request_check, &status,
-diff --git a/drivers/gpu/drm/amd/display/modules/hdcp/hdcp1_transition.c b/drivers/gpu/drm/amd/display/modules/hdcp/hdcp1_transition.c
-index 21ebc62bb9d9..76edcbe51f71 100644
---- a/drivers/gpu/drm/amd/display/modules/hdcp/hdcp1_transition.c
-+++ b/drivers/gpu/drm/amd/display/modules/hdcp/hdcp1_transition.c
-@@ -241,7 +241,7 @@ enum mod_hdcp_status mod_hdcp_hdcp1_dp_transition(struct mod_hdcp *hdcp,
- 		}
- 		break;
- 	case D1_A4_AUTHENTICATED:
--		if (input->link_integiry_check != PASS ||
-+		if (input->link_integrity_check != PASS ||
- 				input->reauth_request_check != PASS) {
- 			/* 1A-07: restart hdcp on a link integrity failure */
- 			fail_and_restart_in_ms(0, &status, output);
-@@ -249,7 +249,7 @@ enum mod_hdcp_status mod_hdcp_hdcp1_dp_transition(struct mod_hdcp *hdcp,
- 		}
- 		break;
- 	case D1_A6_WAIT_FOR_READY:
--		if (input->link_integiry_check == FAIL ||
-+		if (input->link_integrity_check == FAIL ||
- 				input->reauth_request_check == FAIL) {
- 			fail_and_restart_in_ms(0, &status, output);
- 			break;
+In the probe function, we should check that the rng type is supported by
+this driver.
+
+Thanks for reviewing the patches,
+
+   Martin
+
+
+Martin Kaiser (6):
+  hwrng: imx-rngc - fix an error path
+  hwrng: imx-rngc - use automatic seeding
+  hwrng: imx-rngc - use devres for registration
+  hwrng: imx-rngc - (trivial) simplify error prints
+  hwrng: imx-rngc - check the rng type
+  hwrng: imx-rngc - simplify interrupt mask/unmask
+
+ drivers/char/hw_random/imx-rngc.c | 89 ++++++++++++++++++++++++-------
+ 1 file changed, 70 insertions(+), 19 deletions(-)
+
 -- 
-2.24.0
+2.20.1
 
