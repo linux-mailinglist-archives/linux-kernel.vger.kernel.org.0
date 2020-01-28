@@ -2,122 +2,106 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7F0D614B07A
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Jan 2020 08:35:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B7F8014B07D
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Jan 2020 08:38:53 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725988AbgA1HfA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 28 Jan 2020 02:35:00 -0500
-Received: from mail-pj1-f65.google.com ([209.85.216.65]:39841 "EHLO
-        mail-pj1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725810AbgA1He6 (ORCPT
+        id S1725912AbgA1Hiu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 28 Jan 2020 02:38:50 -0500
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:50176 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725825AbgA1Hit (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 Jan 2020 02:34:58 -0500
-Received: by mail-pj1-f65.google.com with SMTP id e9so625046pjr.4
-        for <linux-kernel@vger.kernel.org>; Mon, 27 Jan 2020 23:34:58 -0800 (PST)
+        Tue, 28 Jan 2020 02:38:49 -0500
+Received: by mail-wm1-f67.google.com with SMTP id a5so1350751wmb.0
+        for <linux-kernel@vger.kernel.org>; Mon, 27 Jan 2020 23:38:48 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
+        d=linaro.org; s=google;
         h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=CQgtos6gVXtQDMK7WmwCsXfSvCY2uCU1KZAKWAc3CIg=;
-        b=P9e0Kdarb9HU/R4jyBXu0ELCXOnKWoyCdO28ibit/UvII7D1Ejvp2NlWrmR3ugjbSB
-         MEqZUiWmVgVEX1cArwhO7c78ZBDpnds+coC29Tcc2lhbo6r0q8xxzizOqRDJFmL3U0LA
-         pTekCxsV4OBncs/dt7P5surmwuS1ts7K14+oY=
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=7GokS7CdGeZZPn1PrPOCpSW46TjRecT73s9cRiHualM=;
+        b=Aq5w/piHruuGbRmgv2bptrp+x3Rne0Dds30PKNJDd+TQX6uSVzfNvVGDZ5dGmxw06n
+         ka7bPmWRge0gXpL7diWJGs4suptUJBHoUjL2JILNDtKmDb7RtAZoAgmbuXttgYRsjMSv
+         y8YRti/wIOZ5TE5fTYdDFqDSGH/UkZDiFHRDvKnBiaXWd2i3uTXG14V+DLJMvRsXFq0H
+         u4K/4d4TKrH8J6SdWziqPMVN20kBc8KyvvCIU41/1y7mmbOdKaO521gnsck3mCQNsC5p
+         ltwoUPfpgXITfVZcvW8G2jgOIhBas+jV7K08IKXtL8MyShFp0TigB0Dh6bCC0G+J0d4p
+         yf+A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=CQgtos6gVXtQDMK7WmwCsXfSvCY2uCU1KZAKWAc3CIg=;
-        b=uCioHnkOsPxFPCaUUMvdcJLQ62Kdc5cYglHY/6q43dIT0SSWFgZRBnmaOMv88WH2LI
-         P8Z4NlgSGJZGI9z0sw5KjS/9B5/tpzxL5wxg9sNxwTB2AsIGHJhaRjTYSl02CF9nzZaH
-         3M3gh6FVC/CUUwmT1366xsrRnXdNZocGgbkofMGQHzZOlTvEbigSz4nWx08n/jOeRbfB
-         m3of5jlWMTW+J2ZQtgZiTbtcta9pC4za0gvpSYbG1+cXL+oJplqu93891RvTAyLDc36A
-         aRFEYmJnXXxKMU12pKrwTF+9eCVQgBwgHgiWIEJawB+Wh/lA4E1Zjar9LYnSR7KQLuOy
-         utTA==
-X-Gm-Message-State: APjAAAUZKM7aoRAwwtwtZ2ms8QLblwm8vv1RzL6O+TeC3R04V7xxkzuu
-        IqwLp33yGJQhR/DwXPBkx6ZSnQ==
-X-Google-Smtp-Source: APXvYqwnDA0iYOKIIQNgt8FJolaV0NtoS6CQPFynT/FuSlzm3IpYMTk1lgQWV99sBsjSkoBRQ5j/bw==
-X-Received: by 2002:a17:90a:31cf:: with SMTP id j15mr3239618pjf.120.1580196897974;
-        Mon, 27 Jan 2020 23:34:57 -0800 (PST)
-Received: from localhost ([2401:fa00:8f:203:5bbb:c872:f2b1:f53b])
-        by smtp.gmail.com with ESMTPSA id i4sm18626553pgc.51.2020.01.27.23.34.56
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=7GokS7CdGeZZPn1PrPOCpSW46TjRecT73s9cRiHualM=;
+        b=cwNOo8jcMF/4iggX4lI92T9skZS0QXjhQlpfby66llfirM26AlPmHWn75ABF2PqjzF
+         mWMkNPvoTQtABCj8/vBLpxzmAdjLpNlY7qlLMrzMQ06ypuObaH0j8i8TBbKeq47n0YcB
+         EobpbFfROUSct6R19a5I9szUofv2cxWf1QWqi63j6tOgFJayjNxmnf5GsbidVTc5HBBm
+         PDDVSXH11jpW03W996YSjhoF16yuMzPZ95iEJPLu1rg1oIk+X3w/HMoeV1vuKx2BIlE5
+         hdepfkU83ZcB1Tt7xzyadTS2+fWRMLtfAUFiNdh2ON6cp0rDf3LuMiGyslAPT3TD5+CM
+         dNcA==
+X-Gm-Message-State: APjAAAVVsC3Z9IsFd3/bN1YvwT1qESPNmLG55lpu3pEGsNg+AaYGITsb
+        fVY8nVPtz2HxnCdAGxAFbLJrIQ==
+X-Google-Smtp-Source: APXvYqwrMMc5NSaCSwiz7Idymm7eGqj7dO9/KFj2t5izUkAQHpe5nczm+vvnroV1+xYW6bFEoBrFuw==
+X-Received: by 2002:a7b:c93a:: with SMTP id h26mr3417536wml.83.1580197128140;
+        Mon, 27 Jan 2020 23:38:48 -0800 (PST)
+Received: from dell ([2.27.35.227])
+        by smtp.gmail.com with ESMTPSA id c17sm23961385wrr.87.2020.01.27.23.38.47
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 27 Jan 2020 23:34:57 -0800 (PST)
-Date:   Tue, 28 Jan 2020 16:34:55 +0900
-From:   Sergey Senozhatsky <senozhatsky@chromium.org>
-To:     Tomasz Figa <tfiga@chromium.org>
-Cc:     Sergey Senozhatsky <senozhatsky@chromium.org>,
-        Hans Verkuil <hverkuil@xs4all.nl>,
-        Hans Verkuil <hans.verkuil@cisco.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Sakari Ailus <sakari.ailus@iki.fi>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Pawel Osciak <posciak@chromium.org>,
-        Linux Media Mailing List <linux-media@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [RFC][PATCH 13/15] videobuf2: do not sync buffers for DMABUF
- queues
-Message-ID: <20200128073455.GC115889@google.com>
-References: <20191217032034.54897-1-senozhatsky@chromium.org>
- <20191217032034.54897-14-senozhatsky@chromium.org>
- <2d0e1a9b-6c5e-ff70-9862-32c8b8aaf65f@xs4all.nl>
- <20200122050515.GB49953@google.com>
- <57f711a0-6183-74f6-ab24-ebe414cb6881@xs4all.nl>
- <20200124022544.GD158382@google.com>
- <20200124073250.GA100275@google.com>
- <CAAFQd5Dx50nt=yOCj-ufDDey=Zur_F5yE34a9OQP630A1opBSQ@mail.gmail.com>
+        Mon, 27 Jan 2020 23:38:47 -0800 (PST)
+Date:   Tue, 28 Jan 2020 07:39:01 +0000
+From:   Lee Jones <lee.jones@linaro.org>
+To:     Stephen Rothwell <sfr@canb.auug.org.au>
+Cc:     Mark Brown <broonie@kernel.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
+        Axel Lin <axel.lin@ingics.com>
+Subject: Re: linux-next: manual merge of the mfd tree with the
+ regulator-fixes tree
+Message-ID: <20200128073901.GB3548@dell>
+References: <20200128120220.53494c29@canb.auug.org.au>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <CAAFQd5Dx50nt=yOCj-ufDDey=Zur_F5yE34a9OQP630A1opBSQ@mail.gmail.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20200128120220.53494c29@canb.auug.org.au>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On (20/01/28 16:22), Tomasz Figa wrote:
-[..]
-> > > > Then, if q->allow_cache_hint is set, then default to a cache sync (cache clean)
-> > > > in the prepare for OUTPUT buffers and a cache sync (cache invalidate) in the
-> > > > finish for CAPTURE buffers.
-> > >
-> > > We alter default cache sync behaviour based both on queue ->memory
-> > > type and queue ->dma_dir. Shall both of those cases depend on
-> > > ->allow_cache_hints, or q->memory can be independent?
-> > >
-> > > static void set_buffer_cache_hints(struct vb2_queue *q,
-> > >                                  struct vb2_buffer *vb,
-> > >                                  struct v4l2_buffer *b)
-> > > {
-> > >       if (!q->allow_cache_hints)
-> > >               return;
-> > >
-> > >       /*
-> > >        * DMA exporter should take care of cache syncs, so we can avoid
-> > >        * explicit ->prepare()/->finish() syncs. For other ->memory types
-> > >        * we always need ->prepare() or/and ->finish() cache sync.
-> > >        */
-> > >       if (q->memory == VB2_MEMORY_DMABUF) {
-> > >               vb->need_cache_sync_on_finish = 0;
-> > >               vb->need_cache_sync_on_prepare = 0;
-> > >               return;
-> > >       }
-> >
-> > I personally would prefer this to be above ->allow_cache_hints check,
-> > IOW to be independent. Because we need to skip flush/invalidation for
-> > DMABUF anyway, that's what allocators do in ->prepare() and ->finish()
-> > currently.
->
-> I think it's even more than personal preference. We shouldn't even
-> attempt to sync imported DMA-bufs, so the code above may result in
-> incorrect behavior.
+On Tue, 28 Jan 2020, Stephen Rothwell wrote:
 
-Sure. Allocators test buf->db_attach in prepare()/finish(). This patchset
-removes that logic, because we move it to the core code. But if the
-conclusion will be to clear ->need_cache_sync_on_finish/prepare only
-when ->allow_cache_hints was set, then buf->db_attach bail out must stay
-in allocators. And this is where I have preferences :)
+> Hi all,
+> 
+> Today's linux-next merge of the mfd tree got a conflict in:
+> 
+>   drivers/regulator/bd718x7-regulator.c
+> 
+> between commit:
+> 
+>   b389ceae4a8f ("regulator: bd718x7: Simplify the code by removing struct bd718xx_pmic_inits")
+> 
+> from the regulator-fixes tree and commit:
+> 
+>   1b1c26b24a6e ("mfd: Rohm PMICs: Use platform_device_id to match MFD sub-devices")
+> 
+> from the mfd tree.
+> 
+> I fixed it up (see below) and can carry the fix as necessary. This
+> is now fixed as far as linux-next is concerned, but any non trivial
+> conflicts should be mentioned to your upstream maintainer when your tree
+> is submitted for merging.  You may also want to consider cooperating
+> with the maintainer of the conflicting tree to minimise any particularly
+> complex conflicts.
 
-	-ss
+A pull-request was sent out to avoid this.
+
+If Mark pulls it, this should just go away.
+
+-- 
+Lee Jones [李琼斯]
+Linaro Services Technical Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
