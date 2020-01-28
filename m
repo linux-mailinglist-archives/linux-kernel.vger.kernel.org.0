@@ -2,35 +2,34 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0A20414B994
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Jan 2020 15:34:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CF53B14B989
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Jan 2020 15:34:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731830AbgA1Odb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 28 Jan 2020 09:33:31 -0500
-Received: from mail.kernel.org ([198.145.29.99]:52312 "EHLO mail.kernel.org"
+        id S1730525AbgA1OZh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 28 Jan 2020 09:25:37 -0500
+Received: from mail.kernel.org ([198.145.29.99]:52484 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731809AbgA1OZX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 Jan 2020 09:25:23 -0500
+        id S1732925AbgA1OZa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 28 Jan 2020 09:25:30 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 318242071E;
-        Tue, 28 Jan 2020 14:25:22 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C27A721739;
+        Tue, 28 Jan 2020 14:25:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1580221522;
-        bh=jxyCRKHd0fDIu343tBn5ZNUxn+VXjYVhvW/u9UIssOc=;
+        s=default; t=1580221530;
+        bh=47W4q7AmdlxRLf2E1aFmx2eD2JLU1vA6j0yeFfY5Y1o=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=f5gunr2solUcwoXkzMItHYM1m7D8SD2IB4ZF2wHJ4csYuGKMPc5SzJpgJYn6780M2
-         li/ugcrDZG5t0Cmw3XY1HXn0vBB2KX50dItCYYyLAI2tfI1MacwJHnHUztzVBgiH8Q
-         5etZRyTtkQb/zdNM7wxCgEJlMWOqbO0oidekNw1E=
+        b=QkMrmzV2RkSfpHQl4hGHWxbvSgu4lI2E0UeNUTs9LjPgbfGeFolt7GJNIMILOJCC2
+         X2rmpw9RXcvv0ZRtoPtcm/NkwjskOcb2ucK4c5s+jiifYN+EiCQWA15G7Uon5TTkoW
+         qp/nbR3CvIxhMUrrzmuCtkhhu9Yk1kT0n1yBBUj0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Gilles Buloz <gilles.buloz@kontron.com>,
-        Guenter Roeck <linux@roeck-us.net>
-Subject: [PATCH 4.9 257/271] hwmon: (nct7802) Fix voltage limits to wrong registers
-Date:   Tue, 28 Jan 2020 15:06:46 +0100
-Message-Id: <20200128135911.727902491@linuxfoundation.org>
+        stable@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>
+Subject: [PATCH 4.9 260/271] do_last(): fetch directory ->i_mode and ->i_uid before its too late
+Date:   Tue, 28 Jan 2020 15:06:49 +0100
+Message-Id: <20200128135911.951103077@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
 In-Reply-To: <20200128135852.449088278@linuxfoundation.org>
 References: <20200128135852.449088278@linuxfoundation.org>
@@ -43,37 +42,74 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Gilles Buloz <gilles.buloz@kontron.com>
+From: Al Viro <viro@zeniv.linux.org.uk>
 
-commit 7713e62c8623c54dac88d1fa724aa487a38c3efb upstream.
+commit d0cb50185ae942b03c4327be322055d622dc79f6 upstream.
 
-in0 thresholds are written to the in2 thresholds registers
-in2 thresholds to in3 thresholds
-in3 thresholds to in4 thresholds
-in4 thresholds to in0 thresholds
+may_create_in_sticky() call is done when we already have dropped the
+reference to dir.
 
-Signed-off-by: Gilles Buloz <gilles.buloz@kontron.com>
-Link: https://lore.kernel.org/r/5de0f509.rc0oEvPOMjbfPW1w%gilles.buloz@kontron.com
-Fixes: 3434f3783580 ("hwmon: Driver for Nuvoton NCT7802Y")
-Signed-off-by: Guenter Roeck <linux@roeck-us.net>
+Fixes: 30aba6656f61e (namei: allow restricted O_CREAT of FIFOs and regular files)
+Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/hwmon/nct7802.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ fs/namei.c |   17 ++++++++++-------
+ 1 file changed, 10 insertions(+), 7 deletions(-)
 
---- a/drivers/hwmon/nct7802.c
-+++ b/drivers/hwmon/nct7802.c
-@@ -32,8 +32,8 @@
- static const u8 REG_VOLTAGE[5] = { 0x09, 0x0a, 0x0c, 0x0d, 0x0e };
+--- a/fs/namei.c
++++ b/fs/namei.c
+@@ -1011,7 +1011,8 @@ static int may_linkat(struct path *link)
+  * may_create_in_sticky - Check whether an O_CREAT open in a sticky directory
+  *			  should be allowed, or not, on files that already
+  *			  exist.
+- * @dir: the sticky parent directory
++ * @dir_mode: mode bits of directory
++ * @dir_uid: owner of directory
+  * @inode: the inode of the file to open
+  *
+  * Block an O_CREAT open of a FIFO (or a regular file) when:
+@@ -1027,18 +1028,18 @@ static int may_linkat(struct path *link)
+  *
+  * Returns 0 if the open is allowed, -ve on error.
+  */
+-static int may_create_in_sticky(struct dentry * const dir,
++static int may_create_in_sticky(umode_t dir_mode, kuid_t dir_uid,
+ 				struct inode * const inode)
+ {
+ 	if ((!sysctl_protected_fifos && S_ISFIFO(inode->i_mode)) ||
+ 	    (!sysctl_protected_regular && S_ISREG(inode->i_mode)) ||
+-	    likely(!(dir->d_inode->i_mode & S_ISVTX)) ||
+-	    uid_eq(inode->i_uid, dir->d_inode->i_uid) ||
++	    likely(!(dir_mode & S_ISVTX)) ||
++	    uid_eq(inode->i_uid, dir_uid) ||
+ 	    uid_eq(current_fsuid(), inode->i_uid))
+ 		return 0;
  
- static const u8 REG_VOLTAGE_LIMIT_LSB[2][5] = {
--	{ 0x40, 0x00, 0x42, 0x44, 0x46 },
--	{ 0x3f, 0x00, 0x41, 0x43, 0x45 },
-+	{ 0x46, 0x00, 0x40, 0x42, 0x44 },
-+	{ 0x45, 0x00, 0x3f, 0x41, 0x43 },
- };
- 
- static const u8 REG_VOLTAGE_LIMIT_MSB[5] = { 0x48, 0x00, 0x47, 0x47, 0x48 };
+-	if (likely(dir->d_inode->i_mode & 0002) ||
+-	    (dir->d_inode->i_mode & 0020 &&
++	if (likely(dir_mode & 0002) ||
++	    (dir_mode & 0020 &&
+ 	     ((sysctl_protected_fifos >= 2 && S_ISFIFO(inode->i_mode)) ||
+ 	      (sysctl_protected_regular >= 2 && S_ISREG(inode->i_mode))))) {
+ 		return -EACCES;
+@@ -3259,6 +3260,8 @@ static int do_last(struct nameidata *nd,
+ 		   int *opened)
+ {
+ 	struct dentry *dir = nd->path.dentry;
++	kuid_t dir_uid = dir->d_inode->i_uid;
++	umode_t dir_mode = dir->d_inode->i_mode;
+ 	int open_flag = op->open_flag;
+ 	bool will_truncate = (open_flag & O_TRUNC) != 0;
+ 	bool got_write = false;
+@@ -3401,7 +3404,7 @@ finish_open:
+ 		error = -EISDIR;
+ 		if (d_is_dir(nd->path.dentry))
+ 			goto out;
+-		error = may_create_in_sticky(dir,
++		error = may_create_in_sticky(dir_mode, dir_uid,
+ 					     d_backing_inode(nd->path.dentry));
+ 		if (unlikely(error))
+ 			goto out;
 
 
