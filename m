@@ -2,37 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 861F714BAB0
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Jan 2020 15:41:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5800A14BAB6
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Jan 2020 15:41:07 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730104AbgA1OPa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 28 Jan 2020 09:15:30 -0500
-Received: from mail.kernel.org ([198.145.29.99]:38142 "EHLO mail.kernel.org"
+        id S1730183AbgA1OPq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 28 Jan 2020 09:15:46 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38546 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726384AbgA1OP0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 Jan 2020 09:15:26 -0500
+        id S1730158AbgA1OPn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 28 Jan 2020 09:15:43 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 24BC120678;
-        Tue, 28 Jan 2020 14:15:25 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 90E5C20678;
+        Tue, 28 Jan 2020 14:15:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1580220925;
-        bh=PGmNPiL5hMFxFMpTlKmrdEz3b+5gbAEKuPO59Hgo7TQ=;
+        s=default; t=1580220943;
+        bh=SJ5RdmOGfQs5mLEPAX0sUe3M8Uc/nvXTm72BCGqymo8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=JRex3j7991Rx5WiICCHp2Gr+/9McbicHBfXybrOJrJLxWde8tcgNQhhoAtE/plshZ
-         IBVWzqhzeXeuytH1Jk85F94SqbaucBr3nybvc6VK6vQaubaF85RGvqvNaKVd9XUhmJ
-         frv5H/NtSRH7Z+HeWndTocW7ViecaHZYwdjatPpg=
+        b=BgC+sctN4NBONc0rcZuYv5R3tUY6Ywq8ZzPLtCHLku8TOAem29yRlxhVB5KPysbwD
+         5Xn1PhPt9LD7P92taVQGwg8A9hto/Y1GwewtSr2TCixYbVHAQl7AjZjKOx0kbZdRpc
+         R3fV0UJFpo3VCyS2T44CB5DFJzLyTP4ilARov97I=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Simon Horman <horms+renesas@verge.net.au>,
+        stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 019/271] pinctrl: sh-pfc: r8a7791: Remove bogus marks from vin1_b_data18 group
-Date:   Tue, 28 Jan 2020 15:02:48 +0100
-Message-Id: <20200128135854.100891102@linuxfoundation.org>
+Subject: [PATCH 4.9 025/271] Input: nomadik-ske-keypad - fix a loop timeout test
+Date:   Tue, 28 Jan 2020 15:02:54 +0100
+Message-Id: <20200128135854.542869074@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
 In-Reply-To: <20200128135852.449088278@linuxfoundation.org>
 References: <20200128135852.449088278@linuxfoundation.org>
@@ -45,45 +44,33 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Geert Uytterhoeven <geert+renesas@glider.be>
+From: Dan Carpenter <dan.carpenter@oracle.com>
 
-[ Upstream commit 0d6256cb880166a4111bebce35790019e56b6e1b ]
+[ Upstream commit 4d8f727b83bcd6702c2d210330872c9122d2d360 ]
 
-The vin1_b_data18_mux[] arrays contains pin marks for the 2 LSB bits of
-the color components.  The vin1_b_data18_pins[] array rightfully does
-not include the corresponding pin numbers, as RGB18 is subset of RGB24,
-containing only the 6 MSB bits of each component.
+The loop exits with "timeout" set to -1 not to 0.
 
-Fixes: 8e32c9671f84acd8 ("pinctrl: sh-pfc: r8a7791: Add VIN pins")
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
+Fixes: 1158f0f16224 ("Input: add support for Nomadik SKE keypad controller")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/pinctrl/sh-pfc/pfc-r8a7791.c | 3 ---
- 1 file changed, 3 deletions(-)
+ drivers/input/keyboard/nomadik-ske-keypad.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a7791.c b/drivers/pinctrl/sh-pfc/pfc-r8a7791.c
-index fcf731994811f..1e7f32b5dce8c 100644
---- a/drivers/pinctrl/sh-pfc/pfc-r8a7791.c
-+++ b/drivers/pinctrl/sh-pfc/pfc-r8a7791.c
-@@ -4264,17 +4264,14 @@ static const unsigned int vin1_b_data18_pins[] = {
- };
- static const unsigned int vin1_b_data18_mux[] = {
- 	/* B */
--	VI1_DATA0_B_MARK, VI1_DATA1_B_MARK,
- 	VI1_DATA2_B_MARK, VI1_DATA3_B_MARK,
- 	VI1_DATA4_B_MARK, VI1_DATA5_B_MARK,
- 	VI1_DATA6_B_MARK, VI1_DATA7_B_MARK,
- 	/* G */
--	VI1_G0_B_MARK, VI1_G1_B_MARK,
- 	VI1_G2_B_MARK, VI1_G3_B_MARK,
- 	VI1_G4_B_MARK, VI1_G5_B_MARK,
- 	VI1_G6_B_MARK, VI1_G7_B_MARK,
- 	/* R */
--	VI1_R0_B_MARK, VI1_R1_B_MARK,
- 	VI1_R2_B_MARK, VI1_R3_B_MARK,
- 	VI1_R4_B_MARK, VI1_R5_B_MARK,
- 	VI1_R6_B_MARK, VI1_R7_B_MARK,
+diff --git a/drivers/input/keyboard/nomadik-ske-keypad.c b/drivers/input/keyboard/nomadik-ske-keypad.c
+index 8567ee47761e1..ae3b045570740 100644
+--- a/drivers/input/keyboard/nomadik-ske-keypad.c
++++ b/drivers/input/keyboard/nomadik-ske-keypad.c
+@@ -100,7 +100,7 @@ static int __init ske_keypad_chip_init(struct ske_keypad *keypad)
+ 	while ((readl(keypad->reg_base + SKE_RIS) != 0x00000000) && timeout--)
+ 		cpu_relax();
+ 
+-	if (!timeout)
++	if (timeout == -1)
+ 		return -EINVAL;
+ 
+ 	/*
 -- 
 2.20.1
 
