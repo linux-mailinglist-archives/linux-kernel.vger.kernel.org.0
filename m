@@ -2,99 +2,89 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 32E8B14B681
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Jan 2020 15:05:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B90D814B5ED
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Jan 2020 15:01:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727722AbgA1OFl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 28 Jan 2020 09:05:41 -0500
-Received: from mail.kernel.org ([198.145.29.99]:53246 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727675AbgA1OFf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 Jan 2020 09:05:35 -0500
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D373724688;
-        Tue, 28 Jan 2020 14:05:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1580220335;
-        bh=p1bznxppQ8v2ql/W4sqG7SE5ypuX4taSUTHF6+WPVK8=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=wNHqneGyX50fNqhA5lDbTLwMcJFiKrdnySG2A7WcW3kyrWTsD4KCNke9p8X9msE0l
-         3qeIlWl/2ipdS1GDF/Km3YdlMEeZ3p45cnaIK2TeVCCtzGIFr5SrVgw6N8K0iI6i6a
-         7RbSu5LrBb0bLA0Yvp+er8XM2qZFuaRCfuGW0dFQ=
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Subject: [PATCH 5.4 086/104] readdir: be more conservative with directory entry names
-Date:   Tue, 28 Jan 2020 15:00:47 +0100
-Message-Id: <20200128135829.029117938@linuxfoundation.org>
-X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200128135817.238524998@linuxfoundation.org>
-References: <20200128135817.238524998@linuxfoundation.org>
-User-Agent: quilt/0.66
+        id S1727361AbgA1OBE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 28 Jan 2020 09:01:04 -0500
+Received: from mail-oi1-f194.google.com ([209.85.167.194]:42784 "EHLO
+        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726307AbgA1OBA (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 28 Jan 2020 09:01:00 -0500
+Received: by mail-oi1-f194.google.com with SMTP id j132so9263829oih.9;
+        Tue, 28 Jan 2020 06:00:59 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=OCFuL8nkr5blWlcwOVW49/EKio8n2sFV+etyZ2EpR94=;
+        b=lPbY9TtFDDjxQo9DADRzjMXzxtZYwhpBMgms8SHM1wbOWF7PUOcHU5jzA3daN7MVkB
+         T2eKeTBuijJ5DmfbRl3RVwtHE8K3vfU10sV/7by1c3F8Y+PiVRCUoKZarf/bYXDyXE/g
+         YBARftlCdMqZgysnB/j2h8vmGPtEOC/juBei90CwKrXGhsLRzSpzT+pvJEZl2+mbLqzs
+         ryimnpcJqJC+NTYfMaaNquE18/acvXtn0NcMM8oGqd7z94UUsLiS8ZE5Y8hIF9RVZspJ
+         OkJYpVzuyH3wkxRpf32yaPwC+YyMnl9pz6M/lAE1XAIGV2CrjlwLiEHHZb4nmkJS6+wp
+         +J9w==
+X-Gm-Message-State: APjAAAVqq+hNFT5EcHTPI37v8pd1Ry3+SGZ+OKz4byFj1dWYNGVcoWng
+        t1HIeD9ymSpTggwVXcMyT69ohboNpl0l/3vev9E6nIeS
+X-Google-Smtp-Source: APXvYqxrHnIsrRlmUTpiBsG79AVEhNTd/CViP1DeJLvEwZ7XUcGo4ohWp0QXGaIEAI242T0kOYFgmJFOWCMQh7kKbxw=
+X-Received: by 2002:aca:1a06:: with SMTP id a6mr2770347oia.148.1580220058752;
+ Tue, 28 Jan 2020 06:00:58 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <CGME20200128133410eucas1p19fb97c9696596da07181e0c630fb6c6b@eucas1p1.samsung.com>
+ <20200128133343.29905-1-b.zolnierkie@samsung.com>
+In-Reply-To: <20200128133343.29905-1-b.zolnierkie@samsung.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Tue, 28 Jan 2020 15:00:47 +0100
+Message-ID: <CAMuHMdWRRRNh2kkDt2KAOQoQgh36Fh_axQXYSYdq5dAhfs++fA@mail.gmail.com>
+Subject: Re: [PATCH 00/28] ata: optimize core code size on PATA only setups
+To:     Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Cc:     Jens Axboe <axboe@kernel.dk>,
+        Michael Schmitz <schmitzmic@gmail.com>,
+        linux-ide@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-m68k <linux-m68k@lists.linux-m68k.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Linus Torvalds <torvalds@linux-foundation.org>
+Hi Bartlomiej,
 
-commit 2c6b7bcd747201441923a0d3062577a8d1fbd8f8 upstream.
+CC linux-m68k
 
-Commit 8a23eb804ca4 ("Make filldir[64]() verify the directory entry
-filename is valid") added some minimal validity checks on the directory
-entries passed to filldir[64]().  But they really were pretty minimal.
+On Tue, Jan 28, 2020 at 2:34 PM Bartlomiej Zolnierkiewicz
+<b.zolnierkie@samsung.com> wrote:
+> There have been reports in the past of libata core code size
+> being a problem in migration from deprecated IDE subsystem on
+> legacy PATA only systems, i.e.:
+>
+> https://lore.kernel.org/linux-ide/db2838b7-4862-785b-3a1d-3bf09811340a@gmail.com/
+>
+> This patchset re-organizes libata core code to exclude SATA
+> specific code from being built for PATA only setups.
+>
+> The end result is up to 17% (by 17246 bytes, from 101787 bytes to
+> 84541 bytes) smaller libata core code size (as measured for m68k
+> arch using atari_defconfig) on affected setups.
+>
+> I've tested this patchset using pata_falcon driver under ARAnyM
+> emulator.
 
-This fleshes out at least the name length check: we used to disallow
-zero-length names, but really, negative lengths or oevr-long names
-aren't ok either.  Both could happen if there is some filesystem
-corruption going on.
+Thanks a lot!
 
-Now, most filesystems tend to use just an "unsigned char" or similar for
-the length of a directory entry name, so even with a corrupt filesystem
-you should never see anything odd like that.  But since we then use the
-name length to create the directory entry record length, let's make sure
-it actually is half-way sensible.
+[...]
 
-Note how POSIX states that the size of a path component is limited by
-NAME_MAX, but we actually use PATH_MAX for the check here.  That's
-because while NAME_MAX is generally the correct maximum name length
-(it's 255, for the same old "name length is usually just a byte on
-disk"), there's nothing in the VFS layer that really cares.
+https://lore.kernel.org/lkml/20200128133343.29905-1-b.zolnierkie@samsung.com/
 
-So the real limitation at a VFS layer is the total pathname length you
-can pass as a filename: PATH_MAX.
+Gr{oetje,eeting}s,
 
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+                        Geert
 
----
- fs/readdir.c |    6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
---- a/fs/readdir.c
-+++ b/fs/readdir.c
-@@ -102,10 +102,14 @@ EXPORT_SYMBOL(iterate_dir);
-  * filename length, and the above "soft error" worry means
-  * that it's probably better left alone until we have that
-  * issue clarified.
-+ *
-+ * Note the PATH_MAX check - it's arbitrary but the real
-+ * kernel limit on a possible path component, not NAME_MAX,
-+ * which is the technical standard limit.
-  */
- static int verify_dirent_name(const char *name, int len)
- {
--	if (!len)
-+	if (len <= 0 || len >= PATH_MAX)
- 		return -EIO;
- 	if (memchr(name, '/', len))
- 		return -EIO;
-
-
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
