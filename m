@@ -2,40 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id ADD0A14B722
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Jan 2020 15:11:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C707814B849
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Jan 2020 15:23:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727333AbgA1OLm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 28 Jan 2020 09:11:42 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60744 "EHLO mail.kernel.org"
+        id S1731514AbgA1OWK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 28 Jan 2020 09:22:10 -0500
+Received: from mail.kernel.org ([198.145.29.99]:47820 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728847AbgA1OLf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 Jan 2020 09:11:35 -0500
+        id S1730349AbgA1OWI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 28 Jan 2020 09:22:08 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5F5F120678;
-        Tue, 28 Jan 2020 14:11:34 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id DAAC824693;
+        Tue, 28 Jan 2020 14:22:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1580220694;
-        bh=HHLxh9P3K2FMKxdhD3Kdtx6EDWE6eLoWsvssFaiUe3g=;
+        s=default; t=1580221328;
+        bh=CXO6h2xAGZyx4FtgKjFFYu1WcNncHM/wuNBucRm0MOk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=DjooNHpTSEFhPfXd+LB8HL68RURZSTmCUwutcOx9Apf7cBPNR0IZL82o/YOb22DCF
-         bTk48Fe4B5UcrpCn17Wj9C3qoGT7zoTfJv5VXDotBZ2TNFAzFxvQOmZdT8f0SIUBes
-         KoCPMcc/J+AR3vFhW0Bh+QEwwsETokTnHdRcJr6M=
+        b=mZ7nq1+VLknF0YxZRiPy4ICbqbPPHP5uqZ854YRCSIzudeA3FmkE8Yv5ZUaAfiz2V
+         5E4pPXTRDz0T/99Im+rfEbKRIPsi1yjQ71z66A2+VTnmGUfr/6YK9Qy1Zsf00zSE6W
+         ia30Aq0+xlbJVQAfACQ9QoTnAx3Jahw0PcPnY3uM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Lee Jones <lee.jones@linaro.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.4 108/183] mfd: intel-lpss: Release IDA resources
-Date:   Tue, 28 Jan 2020 15:05:27 +0100
-Message-Id: <20200128135840.719577124@linuxfoundation.org>
+        stable@vger.kernel.org, Colin Ian King <colin.king@canonical.com>,
+        Theodore Tso <tytso@mit.edu>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.9 179/271] ext4: set error return correctly when ext4_htree_store_dirent fails
+Date:   Tue, 28 Jan 2020 15:05:28 +0100
+Message-Id: <20200128135905.866524195@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200128135829.486060649@linuxfoundation.org>
-References: <20200128135829.486060649@linuxfoundation.org>
+In-Reply-To: <20200128135852.449088278@linuxfoundation.org>
+References: <20200128135852.449088278@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,34 +43,37 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+From: Colin Ian King <colin.king@canonical.com>
 
-[ Upstream commit 02f36911c1b41fcd8779fa0c135aab0554333fa5 ]
+[ Upstream commit 7a14826ede1d714f0bb56de8167c0e519041eeda ]
 
-ida instances allocate some internal memory for ->free_bitmap
-in addition to the base 'struct ida'. Use ida_destroy() to release
-that memory at module_exit().
+Currently when the call to ext4_htree_store_dirent fails the error return
+variable 'ret' is is not being set to the error code and variable count is
+instead, hence the error code is not being returned.  Fix this by assigning
+ret to the error return code.
 
-Fixes: 4b45efe85263 ("mfd: Add support for Intel Sunrisepoint LPSS devices")
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Signed-off-by: Lee Jones <lee.jones@linaro.org>
+Addresses-Coverity: ("Unused value")
+Fixes: 8af0f0822797 ("ext4: fix readdir error in the case of inline_data+dir_index")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Signed-off-by: Theodore Ts'o <tytso@mit.edu>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/mfd/intel-lpss.c | 1 +
- 1 file changed, 1 insertion(+)
+ fs/ext4/inline.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/mfd/intel-lpss.c b/drivers/mfd/intel-lpss.c
-index 4988751933867..adbb23b6595f6 100644
---- a/drivers/mfd/intel-lpss.c
-+++ b/drivers/mfd/intel-lpss.c
-@@ -525,6 +525,7 @@ module_init(intel_lpss_init);
- 
- static void __exit intel_lpss_exit(void)
- {
-+	ida_destroy(&intel_lpss_devid_ida);
- 	debugfs_remove(intel_lpss_debugfs);
- }
- module_exit(intel_lpss_exit);
+diff --git a/fs/ext4/inline.c b/fs/ext4/inline.c
+index 9a13f86fed626..4df4d31057b36 100644
+--- a/fs/ext4/inline.c
++++ b/fs/ext4/inline.c
+@@ -1417,7 +1417,7 @@ int htree_inlinedir_to_tree(struct file *dir_file,
+ 		err = ext4_htree_store_dirent(dir_file, hinfo->hash,
+ 					      hinfo->minor_hash, de, &tmp_str);
+ 		if (err) {
+-			count = err;
++			ret = err;
+ 			goto out;
+ 		}
+ 		count++;
 -- 
 2.20.1
 
