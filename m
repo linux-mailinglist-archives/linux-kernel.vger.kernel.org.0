@@ -2,42 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 63D4614B782
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Jan 2020 15:17:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4653914B78F
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Jan 2020 15:17:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730021AbgA1OPC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 28 Jan 2020 09:15:02 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37432 "EHLO mail.kernel.org"
+        id S1730122AbgA1OPb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 28 Jan 2020 09:15:31 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38204 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730006AbgA1OPB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 Jan 2020 09:15:01 -0500
+        id S1729852AbgA1OP2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 28 Jan 2020 09:15:28 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 579AF24692;
-        Tue, 28 Jan 2020 14:15:00 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8D35224681;
+        Tue, 28 Jan 2020 14:15:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1580220900;
-        bh=N4bj3wWm2MzQ/QSbYY4EoGmJ+L24lq7RFP9c2ISdy7c=;
+        s=default; t=1580220928;
+        bh=TvamCyUd28R9hJdhA5UPtzhsrUyhV0i/yZDmMMumUAg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ZWfleGKFhVcUHK8+K1izuopxEQLzTVQC0lbviJ4ok/6XZ8LjaL7OU3dNzXsiuK1Gp
-         FxjYRRYV9ybSZvP8lTG6MabHhx9CFETNVqtkQ8Hp8ifv5mQICLEtp4neK/VbWRQSup
-         IKyY7gs+MBsFbpIW0GXMhRgJzuWKAO370axpdPdo=
+        b=cZjWtpKaEU+gtNs+xoy35E3RVgzxMj1NtZW24DTuLMzJ4RFNl4+AVmjWCHh1fuLxw
+         5fTU9NJb/3/qpYpKlm5o5acU9qBUzVfJRAkaOwPaqsbItHsJc4xfjsjeCqcQ6WdYIE
+         HBC5OzLN3YVrXQmpnZl44ieKAcx2BvnjRXLOHFRA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Yang Xu <xuyang2018.jy@cn.fujitsu.com>,
-        Jan Kara <jack@suse.cz>, Eric Sandeen <sandeen@redhat.com>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>
-Subject: [PATCH 4.9 001/271] xfs: Sanity check flags of Q_XQUOTARM call
-Date:   Tue, 28 Jan 2020 15:02:30 +0100
-Message-Id: <20200128135852.546610656@linuxfoundation.org>
+        stable@vger.kernel.org, Ard Biesheuvel <ardb@kernel.org>,
+        Michael Ellerman <mpe@ellerman.id.au>
+Subject: [PATCH 4.9 002/271] powerpc/archrandom: fix arch_get_random_seed_int()
+Date:   Tue, 28 Jan 2020 15:02:31 +0100
+Message-Id: <20200128135852.601343291@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
 In-Reply-To: <20200128135852.449088278@linuxfoundation.org>
 References: <20200128135852.449088278@linuxfoundation.org>
 User-Agent: quilt/0.66
-X-stable: review
-X-Patchwork-Hint: ignore
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
@@ -46,36 +43,43 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jan Kara <jack@suse.cz>
+From: Ard Biesheuvel <ardb@kernel.org>
 
-commit 3dd4d40b420846dd35869ccc8f8627feef2cff32 upstream.
+commit b6afd1234cf93aa0d71b4be4788c47534905f0be upstream.
 
-Flags passed to Q_XQUOTARM were not sanity checked for invalid values.
-Fix that.
+Commit 01c9348c7620ec65
 
-Fixes: 9da93f9b7cdf ("xfs: fix Q_XQUOTARM ioctl")
-Reported-by: Yang Xu <xuyang2018.jy@cn.fujitsu.com>
-Signed-off-by: Jan Kara <jack@suse.cz>
-Reviewed-by: Eric Sandeen <sandeen@redhat.com>
-Reviewed-by: Darrick J. Wong <darrick.wong@oracle.com>
-Signed-off-by: Darrick J. Wong <darrick.wong@oracle.com>
+  powerpc: Use hardware RNG for arch_get_random_seed_* not arch_get_random_*
+
+updated arch_get_random_[int|long]() to be NOPs, and moved the hardware
+RNG backing to arch_get_random_seed_[int|long]() instead. However, it
+failed to take into account that arch_get_random_int() was implemented
+in terms of arch_get_random_long(), and so we ended up with a version
+of the former that is essentially a NOP as well.
+
+Fix this by calling arch_get_random_seed_long() from
+arch_get_random_seed_int() instead.
+
+Fixes: 01c9348c7620ec65 ("powerpc: Use hardware RNG for arch_get_random_seed_* not arch_get_random_*")
+Signed-off-by: Ard Biesheuvel <ardb@kernel.org>
+Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+Link: https://lore.kernel.org/r/20191204115015.18015-1-ardb@kernel.org
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/xfs/xfs_quotaops.c |    3 +++
- 1 file changed, 3 insertions(+)
+ arch/powerpc/include/asm/archrandom.h |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/fs/xfs/xfs_quotaops.c
-+++ b/fs/xfs/xfs_quotaops.c
-@@ -214,6 +214,9 @@ xfs_fs_rm_xquota(
- 	if (XFS_IS_QUOTA_ON(mp))
- 		return -EINVAL;
+--- a/arch/powerpc/include/asm/archrandom.h
++++ b/arch/powerpc/include/asm/archrandom.h
+@@ -27,7 +27,7 @@ static inline int arch_get_random_seed_i
+ 	unsigned long val;
+ 	int rc;
  
-+	if (uflags & ~(FS_USER_QUOTA | FS_GROUP_QUOTA | FS_PROJ_QUOTA))
-+		return -EINVAL;
-+
- 	if (uflags & FS_USER_QUOTA)
- 		flags |= XFS_DQ_USER;
- 	if (uflags & FS_GROUP_QUOTA)
+-	rc = arch_get_random_long(&val);
++	rc = arch_get_random_seed_long(&val);
+ 	if (rc)
+ 		*v = val;
+ 
 
 
