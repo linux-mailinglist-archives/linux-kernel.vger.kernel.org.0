@@ -2,37 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C191B14B98B
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Jan 2020 15:34:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0B58C14B90B
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Jan 2020 15:33:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732955AbgA1OZf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 28 Jan 2020 09:25:35 -0500
-Received: from mail.kernel.org ([198.145.29.99]:52546 "EHLO mail.kernel.org"
+        id S1732784AbgA1O0D (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 28 Jan 2020 09:26:03 -0500
+Received: from mail.kernel.org ([198.145.29.99]:53224 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727406AbgA1OZd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 Jan 2020 09:25:33 -0500
+        id S1730514AbgA1O0A (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 28 Jan 2020 09:26:00 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4245B24688;
-        Tue, 28 Jan 2020 14:25:32 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id ED01720716;
+        Tue, 28 Jan 2020 14:25:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1580221532;
-        bh=d6t38KmNhUDEuUvcJNktAouqmu9+LhdyI+BO0ertFG8=;
+        s=default; t=1580221560;
+        bh=4VyhmAZkT+dM03W/pxTczHQWhzVYTW6AxR3LgFMf4AA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=gPCqlqR/7J4Z2r7whlE2bzoaKkcylGtcwUDa3xYXzWEsB08IAspH4rLOMx50oxaIz
-         9HX9nvvmgcTnyzy46b8ub3KwfULpitrKefNiYGB7NzcpgiUUiW0mfx2PKVI7tIunBk
-         pthvBjZQ8mo4akP+4DVJsWmuoZRp2KR3+3nlEAgM=
+        b=jHsVP3vFItOlJPyiDOwwu0f1gF7+oUKeEbSI+Kj9SXjA1wq4V3cVQgcKUtNpnfcfy
+         ZrcwPS0Q1TfVh9PqckSmu3xV3DtbC+K3v6avJ/CfOwnuRXur9fLCAcTUAuORThflcR
+         Zt588l6EiMRAb5CHYcDjAQuWtsvwgsNEE7WiHwF0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jeremy Linton <jeremy.linton@arm.com>,
-        Andre Przywara <andre.przywara@arm.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Florian Fainelli <f.fainelli@gmail.com>
-Subject: [PATCH 4.9 261/271] Documentation: Document arm64 kpti control
-Date:   Tue, 28 Jan 2020 15:06:50 +0100
-Message-Id: <20200128135912.026352539@linuxfoundation.org>
+        stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>,
+        Coly Li <colyli@suse.de>, Jens Axboe <axboe@kernel.dk>,
+        Lee Jones <lee.jones@linaro.org>
+Subject: [PATCH 4.9 266/271] bcache: silence static checker warning
+Date:   Tue, 28 Jan 2020 15:06:55 +0100
+Message-Id: <20200128135912.394932405@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
 In-Reply-To: <20200128135852.449088278@linuxfoundation.org>
 References: <20200128135852.449088278@linuxfoundation.org>
@@ -45,39 +44,36 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jeremy Linton <jeremy.linton@arm.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
 
-commit de19055564c8f8f9d366f8db3395836da0b2176c upstream.
+commit da22f0eea555baf9b0a84b52afe56db2052cfe8d upstream.
 
-For a while Arm64 has been capable of force enabling
-or disabling the kpti mitigations. Lets make sure the
-documentation reflects that.
+In olden times, closure_return() used to have a hidden return built in.
+We removed the hidden return but forgot to add a new return here.  If
+"c" were NULL we would oops on the next line, but fortunately "c" is
+never NULL.  Let's just remove the if statement.
 
-Signed-off-by: Jeremy Linton <jeremy.linton@arm.com>
-Reviewed-by: Andre Przywara <andre.przywara@arm.com>
-Signed-off-by: Jonathan Corbet <corbet@lwn.net>
-[florian: patch the correct file]
-Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Reviewed-by: Coly Li <colyli@suse.de>
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
+Signed-off-by: Lee Jones <lee.jones@linaro.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- Documentation/kernel-parameters.txt |    6 ++++++
- 1 file changed, 6 insertions(+)
+ drivers/md/bcache/super.c |    3 ---
+ 1 file changed, 3 deletions(-)
 
---- a/Documentation/kernel-parameters.txt
-+++ b/Documentation/kernel-parameters.txt
-@@ -1965,6 +1965,12 @@ bytes respectively. Such letter suffixes
- 			kmemcheck=2 (one-shot mode)
- 			Default: 2 (one-shot mode)
+--- a/drivers/md/bcache/super.c
++++ b/drivers/md/bcache/super.c
+@@ -1398,9 +1398,6 @@ static void cache_set_flush(struct closu
+ 	struct btree *b;
+ 	unsigned i;
  
-+	kpti=		[ARM64] Control page table isolation of user
-+			and kernel address spaces.
-+			Default: enabled on cores which need mitigation.
-+			0: force disabled
-+			1: force enabled
-+
- 	kstack=N	[X86] Print N words from the kernel stack
- 			in oops dumps.
+-	if (!c)
+-		closure_return(cl);
+-
+ 	bch_cache_accounting_destroy(&c->accounting);
  
+ 	kobject_put(&c->internal);
 
 
