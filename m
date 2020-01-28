@@ -2,39 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BA93114B948
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Jan 2020 15:33:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EEB2214B940
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Jan 2020 15:33:28 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387702AbgA1O3w (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 28 Jan 2020 09:29:52 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58932 "EHLO mail.kernel.org"
+        id S2387683AbgA1O3k (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 28 Jan 2020 09:29:40 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58252 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387479AbgA1O3v (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 Jan 2020 09:29:51 -0500
+        id S1729239AbgA1O3g (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 28 Jan 2020 09:29:36 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 620BD246A1;
-        Tue, 28 Jan 2020 14:29:50 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5B54324690;
+        Tue, 28 Jan 2020 14:29:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1580221790;
-        bh=6lpWIcc88biLNAPyYFo1TaYDUDDhUz3rViWY/n2XOkY=;
+        s=default; t=1580221775;
+        bh=bwUcbKsiuk1GFcZnsPPhemtK+4GzzRGmIVt+Y1sHx1c=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=eOL7jM06OcD1Kd2Lnd5a9HlAOCFul8+v2Cc7cJOrJN0aerEOoYrdskGSRVya0IFNE
-         4FC7aztm22c4eZwDeBEnvokndKcNA2wVsFQ+cAgYc2swkE2E7b9lsnhRC6fpU+J5kq
-         bgkIB51jzAnvqLVSM/ypLdGPYYRRV32/fkyrf5JM=
+        b=AdVYyVKvJaFnr9xbfaQxD88VHyMqDaejAaFJ02jERp2PPxg4Ui4GdBkylUlnrlx+4
+         NDZBxCpBg616vrUaed/gkA/phyZ4XkxhpCF523WNdmQMKp/PZ8ebFb/XfCFZGa7Q8L
+         SKNXHlueDFOh3ZaE2M4H+6tcGcSnLcl4rOLnNB2k=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Wei Yang <richard.weiyang@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Seth Jennings <sjenning@redhat.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
+        Dan Carpenter <dan.carpenter@oracle.com>,
         David Hildenbrand <david@redhat.com>
-Subject: [PATCH 4.19 72/92] drivers/base/memory.c: remove an unnecessary check on NR_MEM_SECTIONS
-Date:   Tue, 28 Jan 2020 15:08:40 +0100
-Message-Id: <20200128135818.638247131@linuxfoundation.org>
+Subject: [PATCH 4.19 76/92] mm, memory_hotplug: update a comment in unregister_memory()
+Date:   Tue, 28 Jan 2020 15:08:44 +0100
+Message-Id: <20200128135819.174078183@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
 In-Reply-To: <20200128135809.344954797@linuxfoundation.org>
 References: <20200128135809.344954797@linuxfoundation.org>
@@ -47,35 +43,16 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Wei Yang <richard.weiyang@gmail.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
 
-commit 3b6fd6ffb27c2efa003c6d4d15ca72c054b71d7c upstream.
+commit 16df1456aa858a86f398dbc7d27649eb6662b0cc upstream.
 
-In cb5e39b8038b ("drivers: base: refactor add_memory_section() to
-add_memory_block()"), add_memory_block() is introduced, which is only
-invoked in memory_dev_init().
+The remove_memory_block() function was renamed to in commit
+cc292b0b4302 ("drivers/base/memory.c: rename remove_memory_block() to
+remove_memory_section()").
 
-When combining these two loops in memory_dev_init() and
-add_memory_block(), they looks like this:
-
-    for (i = 0; i < NR_MEM_SECTIONS; i += sections_per_block)
-        for (j = i;
-	    (j < i + sections_per_block) && j < NR_MEM_SECTIONS;
-	    j++)
-
-Since it is sure the (i < NR_MEM_SECTIONS) and j sits in its own memory
-block, the check of (j < NR_MEM_SECTIONS) is not necessary.
-
-This patch just removes this check.
-
-Link: http://lkml.kernel.org/r/20181123222811.18216-1-richard.weiyang@gmail.com
-Signed-off-by: Wei Yang <richard.weiyang@gmail.com>
-Reviewed-by: Andrew Morton <akpm@linux-foundation.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>
-Cc: Seth Jennings <sjenning@redhat.com>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: David Hildenbrand <david@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
@@ -84,14 +61,14 @@ Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 --- a/drivers/base/memory.c
 +++ b/drivers/base/memory.c
-@@ -691,7 +691,7 @@ static int add_memory_block(int base_sec
- 	int i, ret, section_count = 0, section_nr;
+@@ -743,7 +743,7 @@ unregister_memory(struct memory_block *m
+ {
+ 	BUG_ON(memory->dev.bus != &memory_subsys);
  
- 	for (i = base_section_nr;
--	     (i < base_section_nr + sections_per_block) && i < NR_MEM_SECTIONS;
-+	     i < base_section_nr + sections_per_block;
- 	     i++) {
- 		if (!present_section_nr(i))
- 			continue;
+-	/* drop the ref. we got in remove_memory_block() */
++	/* drop the ref. we got in remove_memory_section() */
+ 	put_device(&memory->dev);
+ 	device_unregister(&memory->dev);
+ }
 
 
