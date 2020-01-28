@@ -2,36 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E0D3E14BBC3
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Jan 2020 15:49:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EC23114BBB1
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Jan 2020 15:49:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727334AbgA1Os7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 28 Jan 2020 09:48:59 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48026 "EHLO mail.kernel.org"
+        id S1726482AbgA1OCB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 28 Jan 2020 09:02:01 -0500
+Received: from mail.kernel.org ([198.145.29.99]:48190 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727210AbgA1OBw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 Jan 2020 09:01:52 -0500
+        id S1727124AbgA1OB7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 28 Jan 2020 09:01:59 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7234E24685;
-        Tue, 28 Jan 2020 14:01:51 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C9C012468A;
+        Tue, 28 Jan 2020 14:01:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1580220111;
-        bh=intayEvlwG5iSgRRqpJXqWohS2b+wWvz59B9dftJtAE=;
+        s=default; t=1580220119;
+        bh=5U/qTJZ9hKV8uZcz6cF61Xy7FyZJKlPLbrzhNYoQQoo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=0zg391c7GFC62/t3Y80OajSf5lrzWlONcZfwC03dZbBso2BA6j9xQfIqc2rIHGK50
-         6BByKj3yy0Tj/4jI5dBJ6S6XH6tdjYXrDB1PJUUO4H+zwePWnLBvuDRi38sdt6Jknl
-         sjNnuBjgnqUYhUj2ez10/Ia/s/T90AqXCfUIqc00=
+        b=k7XpsI6ysnG6XESNWEO81+xrZOwRDDCGmEzDnedxI3ru+CVizKS0/z2mZuCqzJvUA
+         Ii1NDsWn7jLRY3kY8252cOjNJtPHGVkEH3037im22ZVSjDIQDI97CSEErBHttTze9p
+         9oUC0MQRfP1xE0ttCcDwkOtlvvNvmN/vd3ffd9Xg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dmitry Vyukov <dvyukov@google.com>,
-        Kristian Evensen <kristian.evensen@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 5.4 022/104] fou: Fix IPv6 netlink policy
-Date:   Tue, 28 Jan 2020 14:59:43 +0100
-Message-Id: <20200128135820.333512491@linuxfoundation.org>
+        stable@vger.kernel.org, Paul Blakey <paulb@mellanox.com>,
+        Roi Dayan <roid@mellanox.com>,
+        Saeed Mahameed <saeedm@mellanox.com>
+Subject: [PATCH 5.4 024/104] net/mlx5: Fix lowest FDB pool size
+Date:   Tue, 28 Jan 2020 14:59:45 +0100
+Message-Id: <20200128135820.633225472@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
 In-Reply-To: <20200128135817.238524998@linuxfoundation.org>
 References: <20200128135817.238524998@linuxfoundation.org>
@@ -44,37 +44,37 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Kristian Evensen <kristian.evensen@gmail.com>
+From: Paul Blakey <paulb@mellanox.com>
 
-[ Upstream commit bb48eb9b12a95db9d679025927269d4adda6dbd1 ]
+commit 93b8a7ecb7287cc9b0196f12a25b57c2462d11dc upstream.
 
-When submitting v2 of "fou: Support binding FoU socket" (1713cb37bf67),
-I accidentally sent the wrong version of the patch and one fix was
-missing. In the initial version of the patch, as well as the version 2
-that I submitted, I incorrectly used ".type" for the two V6-attributes.
-The correct is to use ".len".
+The pool sizes represent the pool sizes in the fw. when we request
+a pool size from fw, it will return the next possible group.
+We track how many pools the fw has left and start requesting groups
+from the big to the small.
+When we start request 4k group, which doesn't exists in fw, fw
+wants to allocate the next possible size, 64k, but will fail since
+its exhausted. The correct smallest pool size in fw is 128 and not 4k.
 
-Reported-by: Dmitry Vyukov <dvyukov@google.com>
-Fixes: 1713cb37bf67 ("fou: Support binding FoU socket")
-Signed-off-by: Kristian Evensen <kristian.evensen@gmail.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Fixes: e52c28024008 ("net/mlx5: E-Switch, Add chains and priorities")
+Signed-off-by: Paul Blakey <paulb@mellanox.com>
+Reviewed-by: Roi Dayan <roid@mellanox.com>
+Signed-off-by: Saeed Mahameed <saeedm@mellanox.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/ipv4/fou.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/net/ethernet/mellanox/mlx5/core/eswitch_offloads.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/net/ipv4/fou.c
-+++ b/net/ipv4/fou.c
-@@ -662,8 +662,8 @@ static const struct nla_policy fou_nl_po
- 	[FOU_ATTR_REMCSUM_NOPARTIAL]	= { .type = NLA_FLAG, },
- 	[FOU_ATTR_LOCAL_V4]		= { .type = NLA_U32, },
- 	[FOU_ATTR_PEER_V4]		= { .type = NLA_U32, },
--	[FOU_ATTR_LOCAL_V6]		= { .type = sizeof(struct in6_addr), },
--	[FOU_ATTR_PEER_V6]		= { .type = sizeof(struct in6_addr), },
-+	[FOU_ATTR_LOCAL_V6]		= { .len = sizeof(struct in6_addr), },
-+	[FOU_ATTR_PEER_V6]		= { .len = sizeof(struct in6_addr), },
- 	[FOU_ATTR_PEER_PORT]		= { .type = NLA_U16, },
- 	[FOU_ATTR_IFINDEX]		= { .type = NLA_S32, },
- };
+--- a/drivers/net/ethernet/mellanox/mlx5/core/eswitch_offloads.c
++++ b/drivers/net/ethernet/mellanox/mlx5/core/eswitch_offloads.c
+@@ -858,7 +858,7 @@ out:
+  */
+ #define ESW_SIZE (16 * 1024 * 1024)
+ const unsigned int ESW_POOLS[4] = { 4 * 1024 * 1024, 1 * 1024 * 1024,
+-				    64 * 1024, 4 * 1024 };
++				    64 * 1024, 128 };
+ 
+ static int
+ get_sz_from_pool(struct mlx5_eswitch *esw)
 
 
