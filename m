@@ -2,165 +2,126 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9483314B4F1
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Jan 2020 14:33:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B838114B530
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Jan 2020 14:37:33 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726264AbgA1Ndw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 28 Jan 2020 08:33:52 -0500
-Received: from lhrrgout.huawei.com ([185.176.76.210]:2315 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725852AbgA1Ndw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 Jan 2020 08:33:52 -0500
-Received: from lhreml706-cah.china.huawei.com (unknown [172.18.7.107])
-        by Forcepoint Email with ESMTP id 3CA825C12289569A1C47;
-        Tue, 28 Jan 2020 13:33:50 +0000 (GMT)
-Received: from lhreml724-chm.china.huawei.com (10.201.108.75) by
- lhreml706-cah.china.huawei.com (10.201.108.47) with Microsoft SMTP Server
- (TLS) id 14.3.408.0; Tue, 28 Jan 2020 13:33:49 +0000
-Received: from [127.0.0.1] (10.202.226.43) by lhreml724-chm.china.huawei.com
- (10.201.108.75) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1713.5; Tue, 28 Jan
- 2020 13:33:49 +0000
-Subject: Re: [PATCH RFC 2/2] soc: Add a basic ACPI generic driver
-To:     Greg KH <gregkh@linuxfoundation.org>
-CC:     <rjw@rjwysocki.net>, <lenb@kernel.org>, <jeremy.linton@arm.com>,
-        <arnd@arndb.de>, <olof@lixom.net>, <linux-kernel@vger.kernel.org>,
-        <linux-acpi@vger.kernel.org>, <guohanjun@huawei.com>
-References: <1580210059-199540-1-git-send-email-john.garry@huawei.com>
- <1580210059-199540-3-git-send-email-john.garry@huawei.com>
- <20200128115629.GB2680602@kroah.com>
-From:   John Garry <john.garry@huawei.com>
-Message-ID: <ae2c9384-4fb9-b3ea-d6a8-aaa652ffdafc@huawei.com>
-Date:   Tue, 28 Jan 2020 13:33:48 +0000
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.1.2
-MIME-Version: 1.0
-In-Reply-To: <20200128115629.GB2680602@kroah.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.202.226.43]
-X-ClientProxiedBy: lhreml732-chm.china.huawei.com (10.201.108.83) To
- lhreml724-chm.china.huawei.com (10.201.108.75)
-X-CFilter-Loop: Reflected
+        id S1726281AbgA1NhX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 28 Jan 2020 08:37:23 -0500
+Received: from alexa-out-blr-02.qualcomm.com ([103.229.18.198]:65165 "EHLO
+        alexa-out-blr-02.qualcomm.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725974AbgA1NhX (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 28 Jan 2020 08:37:23 -0500
+Received: from ironmsg01-blr.qualcomm.com ([10.86.208.130])
+  by alexa-out-blr-02.qualcomm.com with ESMTP/TLS/AES256-SHA; 28 Jan 2020 19:07:19 +0530
+Received: from harigovi-linux.qualcomm.com ([10.204.66.157])
+  by ironmsg01-blr.qualcomm.com with ESMTP; 28 Jan 2020 19:06:58 +0530
+Received: by harigovi-linux.qualcomm.com (Postfix, from userid 2332695)
+        id 3F74E282F; Tue, 28 Jan 2020 19:06:58 +0530 (IST)
+From:   Harigovindan P <harigovi@codeaurora.org>
+To:     dri-devel@lists.freedesktop.org, linux-arm-msm@vger.kernel.org,
+        freedreno@lists.freedesktop.org, devicetree@vger.kernel.org
+Cc:     Harigovindan P <harigovi@codeaurora.org>,
+        linux-kernel@vger.kernel.org, robdclark@gmail.com,
+        seanpaul@chromium.org, hoegsberg@chromium.org,
+        kalyan_t@codeaurora.org, nganji@codeaurora.org
+Subject: [v1] arm64: dts: sc7180: add dsi controller and phy entries for idp dts
+Date:   Tue, 28 Jan 2020 19:06:57 +0530
+Message-Id: <1580218617-30293-1-git-send-email-harigovi@codeaurora.org>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Adding dsi controller and phy entries for idp dt.
 
-Hi Greg,
+Signed-off-by: Harigovindan P <harigovi@codeaurora.org>
+---
+ arch/arm64/boot/dts/qcom/sc7180-idp.dts | 56 +++++++++++++++++++++++++++++++++
+ 1 file changed, 56 insertions(+)
 
->> +
->> +#define pr_fmt(fmt) "SOC ACPI GENERIC: " fmt
-> 
-> You have a device, why do you need pr_fmt()?
-> 
+diff --git a/arch/arm64/boot/dts/qcom/sc7180-idp.dts b/arch/arm64/boot/dts/qcom/sc7180-idp.dts
+index 388f50a..9f42367 100644
+--- a/arch/arm64/boot/dts/qcom/sc7180-idp.dts
++++ b/arch/arm64/boot/dts/qcom/sc7180-idp.dts
+@@ -7,6 +7,7 @@
+ 
+ /dts-v1/;
+ 
++#include <dt-bindings/gpio/gpio.h>
+ #include <dt-bindings/regulator/qcom,rpmh-regulator.h>
+ #include "sc7180.dtsi"
+ #include "pm6150.dtsi"
+@@ -232,6 +233,50 @@
+ 	};
+ };
+ 
++&dsi_controller {
++	status = "okay";
++
++	vdda-supply = <&vreg_l3c_1p2>;
++
++	panel@0 {
++		compatible = "visionox,rm69299-1080p-display";
++		reg = <0>;
++
++		vdda-supply = <&vreg_l8c_1p8>;
++		vdd3p3-supply = <&vreg_l18a_2p8>;
++
++		pinctrl-names = "default", "suspend";
++		pinctrl-0 = <&disp_pins_default>;
++		pinctrl-1 = <&disp_pins_default>;
++
++		reset-gpios = <&pm6150l_gpio 3 GPIO_ACTIVE_HIGH>;
++
++		ports {
++			#address-cells = <1>;
++			#size-cells = <0>;
++			port@0 {
++				reg = <0>;
++				panel0_in: endpoint {
++					remote-endpoint = <&dsi0_out>;
++				};
++			};
++		};
++	};
++
++	ports {
++		port@1 {
++			endpoint {
++				remote-endpoint = <&panel0_in>;
++				data-lanes = <0 1 2 3>;
++			};
++		};
++	};
++};
++
++&dsi_phy {
++	status = "okay";
++};
++
+ &qspi {
+ 	status = "okay";
+ 	pinctrl-names = "default";
+@@ -289,6 +334,17 @@
+ 
+ /* PINCTRL - additions to nodes defined in sc7180.dtsi */
+ 
++&pm6150l_gpio {
++	disp_pins_default: disp-pins-default{
++		pins = "gpio3";
++		function = "func1";
++		qcom,drive-strength = <2>;
++		power-source = <0>;
++		bias-disable;
++		output-low;
++	};
++};
++
+ &qspi_clk {
+ 	pinconf {
+ 		pins = "gpio63";
+-- 
+2.7.4
 
-The only print in the code can be removed, below, so I need not worry 
-about this, i.e. remove it.
-
->> +
->> +#include <linux/acpi.h>
->> +#include <linux/sys_soc.h>
->> +
->> +/*
->> + * Known platforms that fill in PPTT package ID structures according to
->> + * ACPI spec examples, that being:
->> + * - Custom driver attribute is in ID Type Structure VENDOR_ID member
->> + * - SoC id is in ID Type Structure LEVEL_2_ID member
->> + *    See ACPI SPEC 6.2 Table 5-154 for PPTT ID Type Structure
->> + */
->> +static struct acpi_platform_list plat_list[] = {
->> +	{"HISI  ", "HIP08   ", 0, ACPI_SIG_PPTT, all_versions},
->> +	{ } /* End */
->> +};
->> +
->> +struct acpi_generic_soc_struct {
->> +	struct soc_device_attribute dev_attr;
->> +	u32 vendor;
->> +};
->> +
->> +static ssize_t vendor_show(struct device *dev,
->> +			   struct device_attribute *attr,
->> +			   char *buf)
->> +{
->> +	struct acpi_generic_soc_struct *soc = dev_get_drvdata(dev);
->> +	u8 vendor_id[5] = {};
->> +
->> +	*(u32 *)vendor_id = soc->vendor;
->> +
->> +	return sprintf(buf, "%s\n", vendor_id);
->> +}
->> +
->> +static DEVICE_ATTR_RO(vendor);
->> +
->> +static __init int soc_acpi_generic_init(void)
->> +{
->> +	int index;
->> +
->> +	index = acpi_match_platform_list(plat_list);
->> +	if (index < 0)
->> +		return -ENOENT;
->> +
->> +	index = 0;
->> +	while (true) {
->> +		struct acpi_pptt_package_info info;
->> +
->> +		if (!acpi_pptt_get_package_info(index, &info)) {
->> +			struct soc_device_attribute *soc_dev_attr;
->> +			struct acpi_generic_soc_struct *soc;
->> +			struct soc_device *soc_dev;
->> +			u8 soc_id[9] = {};
->> +
->> +			*(u64 *)soc_id = info.LEVEL_2_ID;
->> +
->> +			soc = kzalloc(sizeof(*soc), GFP_KERNEL);
->> +			if (!soc)
->> +				return -ENOMEM;
->> +
->> +			soc_dev_attr = &soc->dev_attr;
->> +			soc_dev_attr->soc_id = kasprintf(GFP_KERNEL, "%s",
->> +							 soc_id);
->> +			if (!soc_dev_attr->soc_id) {
->> +				kfree(soc);
->> +				return -ENOMEM;
->> +			}
->> +			soc->vendor = info.vendor_id;
->> +
->> +			soc_dev = soc_device_register(soc_dev_attr);
->> +			if (IS_ERR(soc_dev)) {
->> +				int ret = PTR_ERR(soc_dev);
->> +
->> +				pr_info("could not register soc (%d) index=%d\n",
->> +					ret, index);
-> 
-> pr_err()?
-
-Yes, more appropriate.
-
-> 
-> And shouldn't the core print out the error, not the person who calls it?
-
-Sure, that would sounds reasonable, but I just wanted to get the index 
-at which we fail. I could live without it.
-
-> 
-> 
->> +				kfree(soc_dev_attr->soc_id);
->> +				kfree(soc);
->> +				return ret;
->> +			}
->> +			dev_set_drvdata(soc_device_to_device(soc_dev), soc);
->> +			device_create_file(soc_device_to_device(soc_dev),
->> +					   &dev_attr_vendor);
-> 
-> You just raced with userspace and lost.  Use the built-in api that I
-> made _just_ because of SOC drivers to do this correctly.
-> 
-
-Fine, there is the soc device custom attr group which I can use. But, as 
-Arnd said, maybe we can drop this custom file.
-
-Cheers,
-John
