@@ -2,36 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7196F14B662
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Jan 2020 15:04:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D043414B62A
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Jan 2020 15:03:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727290AbgA1OEg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 28 Jan 2020 09:04:36 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51754 "EHLO mail.kernel.org"
+        id S1726303AbgA1ODC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 28 Jan 2020 09:03:02 -0500
+Received: from mail.kernel.org ([198.145.29.99]:49518 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728087AbgA1OEa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 Jan 2020 09:04:30 -0500
+        id S1727771AbgA1OC7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 28 Jan 2020 09:02:59 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 63BAB24694;
-        Tue, 28 Jan 2020 14:04:29 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B0DE6205F4;
+        Tue, 28 Jan 2020 14:02:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1580220269;
-        bh=iPd/z60B6zp/AWzCXYB+uhw1cWKMiDj4+ysvjc7Ci74=;
+        s=default; t=1580220179;
+        bh=UI4qpDBPZWL60iebMjsOsFxDjVRgMXoR9HmhwXFonz0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=BiwU0K+VfEM2uThHJjNuAZTHuw0TeuCnSmTzToL9cmYSxEvH1M7DwgoLbMPyfviTQ
-         922HGDb5wmwd2b1UXA8GYctcZDfUZ5SFiCdAH5gsKcU8aKMuYJ60577AYYZ6kFXSc/
-         vjtBko880jYSLRUCSjn3G5t7yNp68uGVZ26X1G9w=
+        b=GXICbPpTXkwd1TEWBrEhP4iJE3g5X3y0aD9n5Mi8LKTdoTA/XepYaZ8gvhdfseX33
+         Tsf6a6VetfIa0XdwCBmWfSDCXcjcVFKQu5aAlICcbxC/1QBdM9SmdvnK5Xp3IGXrly
+         yoSc8bkGdC5tYMqcav+QqSZebGm633bbMoK1jAqk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Frederic Barrat <fbarrat@linux.ibm.com>,
-        =?UTF-8?q?C=C3=A9dric=20Le=20Goater?= <clg@kaod.org>,
-        Michael Ellerman <mpe@ellerman.id.au>
-Subject: [PATCH 5.4 047/104] powerpc/xive: Discard ESB load value when interrupt is invalid
-Date:   Tue, 28 Jan 2020 15:00:08 +0100
-Message-Id: <20200128135824.216683362@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Emmanuel Grumbach <emmanuel.grumbach@intel.com>,
+        Kalle Valo <kvalo@codeaurora.org>
+Subject: [PATCH 5.4 049/104] iwlwifi: mvm: dont send the IWL_MVM_RXQ_NSSN_SYNC notif to Rx queues
+Date:   Tue, 28 Jan 2020 15:00:10 +0100
+Message-Id: <20200128135824.452356310@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
 In-Reply-To: <20200128135817.238524998@linuxfoundation.org>
 References: <20200128135817.238524998@linuxfoundation.org>
@@ -44,68 +44,74 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Frederic Barrat <fbarrat@linux.ibm.com>
+From: Emmanuel Grumbach <emmanuel.grumbach@intel.com>
 
-commit 17328f218fb760c9c6accc5b52494889243a6b98 upstream.
+commit d829229e35f302fd49c052b5c5906c90ecf9911d upstream.
 
-A load on an ESB page returning all 1's means that the underlying
-device has invalidated the access to the PQ state of the interrupt
-through mmio. It may happen, for example when querying a PHB interrupt
-while the PHB is in an error state.
+The purpose of this was to keep all the queues updated with
+the Rx sequence numbers because unlikely yet possible
+situations where queues can't understand if a specific
+packet needs to be dropped or not.
 
-In that case, we should consider the interrupt to be invalid when
-checking its state in the irq_get_irqchip_state() handler.
+Unfortunately, it was reported that this caused issues in
+our DMA engine. We don't fully understand how this is related,
+but this is being currently debugged. For now, just don't send
+this notification to the Rx queues. This de-facto reverts my
+commit 3c514bf831ac12356b695ff054bef641b9e99593:
 
-Fixes: da15c03b047d ("powerpc/xive: Implement get_irqchip_state method for XIVE to fix shutdown race")
-Cc: stable@vger.kernel.org # v5.4+
-Signed-off-by: Frederic Barrat <fbarrat@linux.ibm.com>
-[clg: wrote a commit log, introduced XIVE_ESB_INVALID ]
-Signed-off-by: Cédric Le Goater <clg@kaod.org>
-Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
-Link: https://lore.kernel.org/r/20200113130118.27969-1-clg@kaod.org
+iwlwifi: mvm: add a loose synchronization of the NSSN across Rx queues
+
+This issue was reported here:
+https://bugzilla.kernel.org/show_bug.cgi?id=204873
+https://bugzilla.kernel.org/show_bug.cgi?id=205001
+and others maybe.
+
+Fixes: 3c514bf831ac ("iwlwifi: mvm: add a loose synchronization of the NSSN across Rx queues")
+CC: <stable@vger.kernel.org> # 5.3+
+Signed-off-by: Emmanuel Grumbach <emmanuel.grumbach@intel.com>
+Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/powerpc/include/asm/xive-regs.h |    1 +
- arch/powerpc/sysdev/xive/common.c    |   15 ++++++++++++---
- 2 files changed, 13 insertions(+), 3 deletions(-)
+ drivers/net/wireless/intel/iwlwifi/mvm/constants.h |    1 +
+ drivers/net/wireless/intel/iwlwifi/mvm/rxmq.c      |   17 ++++++++++-------
+ 2 files changed, 11 insertions(+), 7 deletions(-)
 
---- a/arch/powerpc/include/asm/xive-regs.h
-+++ b/arch/powerpc/include/asm/xive-regs.h
-@@ -39,6 +39,7 @@
+--- a/drivers/net/wireless/intel/iwlwifi/mvm/constants.h
++++ b/drivers/net/wireless/intel/iwlwifi/mvm/constants.h
+@@ -154,5 +154,6 @@
+ #define IWL_MVM_D3_DEBUG			false
+ #define IWL_MVM_USE_TWT				false
+ #define IWL_MVM_AMPDU_CONSEC_DROPS_DELBA	10
++#define IWL_MVM_USE_NSSN_SYNC			0
  
- #define XIVE_ESB_VAL_P		0x2
- #define XIVE_ESB_VAL_Q		0x1
-+#define XIVE_ESB_INVALID	0xFF
+ #endif /* __MVM_CONSTANTS_H */
+--- a/drivers/net/wireless/intel/iwlwifi/mvm/rxmq.c
++++ b/drivers/net/wireless/intel/iwlwifi/mvm/rxmq.c
+@@ -514,14 +514,17 @@ static bool iwl_mvm_is_sn_less(u16 sn1,
  
- /*
-  * Thread Management (aka "TM") registers
---- a/arch/powerpc/sysdev/xive/common.c
-+++ b/arch/powerpc/sysdev/xive/common.c
-@@ -972,12 +972,21 @@ static int xive_get_irqchip_state(struct
- 				  enum irqchip_irq_state which, bool *state)
+ static void iwl_mvm_sync_nssn(struct iwl_mvm *mvm, u8 baid, u16 nssn)
  {
- 	struct xive_irq_data *xd = irq_data_get_irq_handler_data(data);
-+	u8 pq;
+-	struct iwl_mvm_rss_sync_notif notif = {
+-		.metadata.type = IWL_MVM_RXQ_NSSN_SYNC,
+-		.metadata.sync = 0,
+-		.nssn_sync.baid = baid,
+-		.nssn_sync.nssn = nssn,
+-	};
++	if (IWL_MVM_USE_NSSN_SYNC) {
++		struct iwl_mvm_rss_sync_notif notif = {
++			.metadata.type = IWL_MVM_RXQ_NSSN_SYNC,
++			.metadata.sync = 0,
++			.nssn_sync.baid = baid,
++			.nssn_sync.nssn = nssn,
++		};
  
- 	switch (which) {
- 	case IRQCHIP_STATE_ACTIVE:
--		*state = !xd->stale_p &&
--			 (xd->saved_p ||
--			  !!(xive_esb_read(xd, XIVE_ESB_GET) & XIVE_ESB_VAL_P));
-+		pq = xive_esb_read(xd, XIVE_ESB_GET);
-+
-+		/*
-+		 * The esb value being all 1's means we couldn't get
-+		 * the PQ state of the interrupt through mmio. It may
-+		 * happen, for example when querying a PHB interrupt
-+		 * while the PHB is in an error state. We consider the
-+		 * interrupt to be inactive in that case.
-+		 */
-+		*state = (pq != XIVE_ESB_INVALID) && !xd->stale_p &&
-+			(xd->saved_p || !!(pq & XIVE_ESB_VAL_P));
- 		return 0;
- 	default:
- 		return -EINVAL;
+-	iwl_mvm_sync_rx_queues_internal(mvm, (void *)&notif, sizeof(notif));
++		iwl_mvm_sync_rx_queues_internal(mvm, (void *)&notif,
++						sizeof(notif));
++	}
+ }
+ 
+ #define RX_REORDER_BUF_TIMEOUT_MQ (HZ / 10)
 
 
