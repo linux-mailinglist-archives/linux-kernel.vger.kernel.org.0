@@ -2,37 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B192814BC00
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Jan 2020 15:51:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DFC0E14BBFA
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Jan 2020 15:51:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727125AbgA1OuZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 28 Jan 2020 09:50:25 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44578 "EHLO mail.kernel.org"
+        id S1726916AbgA1N73 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 28 Jan 2020 08:59:29 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44796 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726802AbgA1N7Q (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 Jan 2020 08:59:16 -0500
+        id S1726721AbgA1N7Z (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 28 Jan 2020 08:59:25 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 20AE424685;
-        Tue, 28 Jan 2020 13:59:14 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E065024685;
+        Tue, 28 Jan 2020 13:59:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1580219955;
-        bh=sWoF9hko6XibnWvONH+6UswkDcJ+wiVAoNYyJHi8Cyw=;
+        s=default; t=1580219965;
+        bh=zZf8c5U7fLLNQMm+qitPFQ+bq0WSO61rPIjPlrn69Mk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=UpzZh9dkqR3H+OW07YpUQ5lmUFMuVqMhn7cNzxX4LzRInHJs1fACjZf61N7otK4ZK
-         1HGQy5CZ7NVGUU28ScsiuqVBTw7VfNzlZqRYK7zL6DQ4Y7TNUB8rU0j/2a2LSmp6RH
-         yijbVGqm9ztGk5VpEXfvDGfLMLStCIv8Xu2+1ru0=
+        b=NJGF/wPjJWvRs4xJAWSV1B9VkEdMIigmUcDAwjtJJxvfJvBpYjQJzEPY4vVkLdV5H
+         fDOQ6bucQXkrxIBI2MYNzJr2SRuc63E36rjXUY7UK7sowCW/V0ouZHXO7IBqxkQez4
+         hLWc00mexKh/R4mULMeLk9M9GHaqKZpkWrotXAtA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Hulk Robot <hulkci@huawei.com>,
-        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
-        David Miller <davem@davemloft.net>,
-        Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Subject: [PATCH 4.14 11/46] net-sysfs: Call dev_hold always in netdev_queue_add_kobject
-Date:   Tue, 28 Jan 2020 14:57:45 +0100
-Message-Id: <20200128135751.545271071@linuxfoundation.org>
+        stable@vger.kernel.org, Wen Yang <wenyang@linux.alibaba.com>,
+        Eric Dumazet <edumazet@google.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>,
+        Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>,
+        netdev@vger.kernel.org
+Subject: [PATCH 4.14 15/46] tcp_bbr: improve arithmetic division in bbr_update_bw()
+Date:   Tue, 28 Jan 2020 14:57:49 +0100
+Message-Id: <20200128135751.969497560@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
 In-Reply-To: <20200128135749.822297911@linuxfoundation.org>
 References: <20200128135749.822297911@linuxfoundation.org>
@@ -45,47 +47,39 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jouni Hogander <jouni.hogander@unikie.com>
+From: Wen Yang <wenyang@linux.alibaba.com>
 
-commit e0b60903b434a7ee21ba8d8659f207ed84101e89 upstream.
+[ Upstream commit 5b2f1f3070b6447b76174ea8bfb7390dc6253ebd ]
 
-Dev_hold has to be called always in netdev_queue_add_kobject.
-Otherwise usage count drops below 0 in case of failure in
-kobject_init_and_add.
+do_div() does a 64-by-32 division. Use div64_long() instead of it
+if the divisor is long, to avoid truncation to 32-bit.
+And as a nice side effect also cleans up the function a bit.
 
-Fixes: b8eb718348b8 ("net-sysfs: Fix reference count leak in rx|netdev_queue_add_kobject")
-Reported-by: Hulk Robot <hulkci@huawei.com>
-Cc: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-Cc: David Miller <davem@davemloft.net>
-Cc: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Signed-off-by: Wen Yang <wenyang@linux.alibaba.com>
+Cc: Eric Dumazet <edumazet@google.com>
+Cc: "David S. Miller" <davem@davemloft.net>
+Cc: Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>
+Cc: Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>
+Cc: netdev@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+Signed-off-by: Eric Dumazet <edumazet@google.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- net/core/net-sysfs.c |    7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
+ net/ipv4/tcp_bbr.c |    3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
---- a/net/core/net-sysfs.c
-+++ b/net/core/net-sysfs.c
-@@ -1324,14 +1324,17 @@ static int netdev_queue_add_kobject(stru
- 	struct kobject *kobj = &queue->kobj;
- 	int error = 0;
+--- a/net/ipv4/tcp_bbr.c
++++ b/net/ipv4/tcp_bbr.c
+@@ -678,8 +678,7 @@ static void bbr_update_bw(struct sock *s
+ 	 * bandwidth sample. Delivered is in packets and interval_us in uS and
+ 	 * ratio will be <<1 for most connections. So delivered is first scaled.
+ 	 */
+-	bw = (u64)rs->delivered * BW_UNIT;
+-	do_div(bw, rs->interval_us);
++	bw = div64_long((u64)rs->delivered * BW_UNIT, rs->interval_us);
  
-+	/* Kobject_put later will trigger netdev_queue_release call
-+	 * which decreases dev refcount: Take that reference here
-+	 */
-+	dev_hold(queue->dev);
-+
- 	kobj->kset = dev->queues_kset;
- 	error = kobject_init_and_add(kobj, &netdev_queue_ktype, NULL,
- 				     "tx-%u", index);
- 	if (error)
- 		goto err;
- 
--	dev_hold(queue->dev);
--
- #ifdef CONFIG_BQL
- 	error = sysfs_create_group(kobj, &dql_group);
- 	if (error)
+ 	/* If this sample is application-limited, it is likely to have a very
+ 	 * low delivered count that represents application behavior rather than
 
 
