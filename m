@@ -2,146 +2,127 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C314814B39E
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Jan 2020 12:43:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 37D5A14B383
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Jan 2020 12:30:33 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726034AbgA1LnJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 28 Jan 2020 06:43:09 -0500
-Received: from viti.kaiser.cx ([85.214.81.225]:38742 "EHLO viti.kaiser.cx"
+        id S1726028AbgA1Laa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 28 Jan 2020 06:30:30 -0500
+Received: from foss.arm.com ([217.140.110.172]:55464 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725903AbgA1LnJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 Jan 2020 06:43:09 -0500
-X-Greylist: delayed 2496 seconds by postgrey-1.27 at vger.kernel.org; Tue, 28 Jan 2020 06:43:07 EST
-Received: from dslb-088-068-095-017.088.068.pools.vodafone-ip.de ([88.68.95.17] helo=martin-debian-1.paytec.ch)
-        by viti.kaiser.cx with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.89)
-        (envelope-from <martin@kaiser.cx>)
-        id 1iwOcl-0008Dy-Sz; Tue, 28 Jan 2020 12:01:39 +0100
-From:   Martin Kaiser <martin@kaiser.cx>
-To:     Herbert Xu <herbert@gondor.apana.org.au>,
-        PrasannaKumar Muralidharan <prasannatsmkumar@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>
-Cc:     linux-crypto@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, Martin Kaiser <martin@kaiser.cx>
-Subject: [PATCH 6/6] hwrng: imx-rngc - simplify interrupt mask/unmask
-Date:   Tue, 28 Jan 2020 12:01:02 +0100
-Message-Id: <20200128110102.11522-7-martin@kaiser.cx>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20200128110102.11522-1-martin@kaiser.cx>
-References: <20200128110102.11522-1-martin@kaiser.cx>
+        id S1725901AbgA1La3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 28 Jan 2020 06:30:29 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id DB9CB101E;
+        Tue, 28 Jan 2020 03:30:28 -0800 (PST)
+Received: from [10.1.194.46] (e113632-lin.cambridge.arm.com [10.1.194.46])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 721D13F52E;
+        Tue, 28 Jan 2020 03:30:27 -0800 (PST)
+Subject: Re: [PATCH v3 1/3] sched/fair: Add asymmetric CPU capacity wakeup
+ scan
+To:     Pavan Kondeti <pkondeti@codeaurora.org>
+Cc:     linux-kernel@vger.kernel.org, mingo@redhat.com,
+        peterz@infradead.org, vincent.guittot@linaro.org,
+        dietmar.eggemann@arm.com, morten.rasmussen@arm.com,
+        qperret@google.com, adharmap@codeaurora.org
+References: <20200126200934.18712-1-valentin.schneider@arm.com>
+ <20200126200934.18712-2-valentin.schneider@arm.com>
+ <20200128062245.GA27398@codeaurora.org>
+From:   Valentin Schneider <valentin.schneider@arm.com>
+Message-ID: <1ed322d6-0325-ecac-cc68-326a14b8c1dd@arm.com>
+Date:   Tue, 28 Jan 2020 11:30:26 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20200128062245.GA27398@codeaurora.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Use a simpler approach for masking / unmasking the rngc interrupt:
-The interrupt is unmasked while self-test is running and when the rngc
-driver is used by the hwrng core.
+Hi Pavan,
 
-Mask the interrupt again when self test is finished, regardless of
-self test success or failure.
+On 28/01/2020 06:22, Pavan Kondeti wrote:
+> Hi Valentin,
+> 
+> On Sun, Jan 26, 2020 at 08:09:32PM +0000, Valentin Schneider wrote:
+>>  
+>> +static inline int check_cpu_capacity(struct rq *rq, struct sched_domain *sd);
+>> +
+>> +/*
+>> + * Scan the asym_capacity domain for idle CPUs; pick the first idle one on which
+>> + * the task fits. If no CPU is big enough, but there are idle ones, try to
+>> + * maximize capacity.
+>> + */
+>> +static int select_idle_capacity(struct task_struct *p, int target)
+>> +{
+>> +	unsigned long best_cap = 0;
+>> +	struct sched_domain *sd;
+>> +	struct cpumask *cpus;
+>> +	int best_cpu = -1;
+>> +	struct rq *rq;
+>> +	int cpu;
+>> +
+>> +	if (!static_branch_unlikely(&sched_asym_cpucapacity))
+>> +		return -1;
+>> +
+>> +	sd = rcu_dereference(per_cpu(sd_asym_cpucapacity, target));
+>> +	if (!sd)
+>> +		return -1;
+>> +
+>> +	sync_entity_load_avg(&p->se);
+>> +
+>> +	cpus = this_cpu_cpumask_var_ptr(select_idle_mask);
+>> +	cpumask_and(cpus, sched_domain_span(sd), p->cpus_ptr);
+>> +
+>> +	for_each_cpu_wrap(cpu, cpus, target) {
+>> +		rq = cpu_rq(cpu);
+>> +
+>> +		if (!available_idle_cpu(cpu))
+>> +			continue;
+>> +		if (task_fits_capacity(p, rq->cpu_capacity))
+>> +			return cpu;
+> 
+> I have couple of questions.
+> 
+> (1) Any particular reason for not checking sched_idle_cpu() as a backup
+> for the case where all eligible CPUs are busy? select_idle_cpu() does
+> that.
+> 
 
-Unmask the interrupt in the init function. Add a cleanup function where
-the rngc interrupt is masked again.
+No particular reason other than we didn't consider it, I think. I don't see
+any harm in folding it in, I'll do that for v4. I am curious however; are
+you folks making use of SCHED_IDLE? AFAIA Android isn't making use of it
+yet, though Viresh paved the way for that to happen.
 
-Signed-off-by: Martin Kaiser <martin@kaiser.cx>
----
- drivers/char/hw_random/imx-rngc.c | 43 ++++++++++++++++++++-----------
- 1 file changed, 28 insertions(+), 15 deletions(-)
+> (2) Assuming all CPUs are busy, we return -1 from here and end up
+> calling select_idle_cpu(). The traversal in select_idle_cpu() may be
+> waste in cases where sd_llc == sd_asym_cpucapacity . For example SDM845.
+> Should we worry about this?
+> 
 
-diff --git a/drivers/char/hw_random/imx-rngc.c b/drivers/char/hw_random/imx-rngc.c
-index 27d85fced30b..3363cbe18a8d 100644
---- a/drivers/char/hw_random/imx-rngc.c
-+++ b/drivers/char/hw_random/imx-rngc.c
-@@ -111,17 +111,11 @@ static int imx_rngc_self_test(struct imx_rngc *rngc)
- 	writel(cmd | RNGC_CMD_SELF_TEST, rngc->base + RNGC_COMMAND);
- 
- 	ret = wait_for_completion_timeout(&rngc->rng_op_done, RNGC_TIMEOUT);
--	if (!ret) {
--		imx_rngc_irq_mask_clear(rngc);
-+	imx_rngc_irq_mask_clear(rngc);
-+	if (!ret)
- 		return -ETIMEDOUT;
--	}
--
--	if (rngc->err_reg != 0) {
--		imx_rngc_irq_mask_clear(rngc);
--		return -EIO;
--	}
- 
--	return 0;
-+	return rngc->err_reg ? -EIO : 0;
- }
- 
- static int imx_rngc_read(struct hwrng *rng, void *data, size_t max, bool wait)
-@@ -185,10 +179,10 @@ static int imx_rngc_init(struct hwrng *rng)
- 	cmd = readl(rngc->base + RNGC_COMMAND);
- 	writel(cmd | RNGC_CMD_CLR_ERR, rngc->base + RNGC_COMMAND);
- 
-+	imx_rngc_irq_unmask(rngc);
-+
- 	/* create seed, repeat while there is some statistical error */
- 	do {
--		imx_rngc_irq_unmask(rngc);
--
- 		/* seed creation */
- 		cmd = readl(rngc->base + RNGC_COMMAND);
- 		writel(cmd | RNGC_CMD_SEED, rngc->base + RNGC_COMMAND);
-@@ -197,14 +191,16 @@ static int imx_rngc_init(struct hwrng *rng)
- 				RNGC_TIMEOUT);
- 
- 		if (!ret) {
--			imx_rngc_irq_mask_clear(rngc);
--			return -ETIMEDOUT;
-+			ret = -ETIMEDOUT;
-+			goto err;
- 		}
- 
- 	} while (rngc->err_reg == RNGC_ERROR_STATUS_STAT_ERR);
- 
--	if (rngc->err_reg)
--		return -EIO;
-+	if (rngc->err_reg) {
-+		ret = -EIO;
-+		goto err;
-+	}
- 
- 	/*
- 	 * enable automatic seeding, the rngc creates a new seed automatically
-@@ -214,7 +210,23 @@ static int imx_rngc_init(struct hwrng *rng)
- 	ctrl |= RNGC_CTRL_AUTO_SEED;
- 	writel(ctrl, rngc->base + RNGC_CONTROL);
- 
-+	/*
-+	 * if initialisation was successful, we keep the interrupt
-+	 * unmasked until imx_rngc_cleanup is called
-+	 * we mask the interrupt ourselves if we return an error
-+	 */
- 	return 0;
-+
-+err:
-+	imx_rngc_irq_mask_clear(rngc);
-+	return ret;
-+}
-+
-+static void imx_rngc_cleanup(struct hwrng *rng)
-+{
-+	struct imx_rngc *rngc = container_of(rng, struct imx_rngc, rng);
-+
-+	imx_rngc_irq_mask_clear(rngc);
- }
- 
- static int imx_rngc_probe(struct platform_device *pdev)
-@@ -272,6 +284,7 @@ static int imx_rngc_probe(struct platform_device *pdev)
- 	rngc->rng.name = pdev->name;
- 	rngc->rng.init = imx_rngc_init;
- 	rngc->rng.read = imx_rngc_read;
-+	rngc->rng.cleanup = imx_rngc_cleanup;
- 
- 	rngc->dev = &pdev->dev;
- 	platform_set_drvdata(pdev, rngc);
--- 
-2.20.1
+Before v3, since we didn't have the fallback CPU selection within
+select_idle_capacity(), we would need the fall-through to select_idle_cpu()
+(we could've skipped an idle CPU just because its capacity wasn't high
+enough).
 
+That's not the case anymore, so indeed we may be able to bail out of
+select_idle_sibling() right after select_idle_capacity() (or after the
+prev / recent_used_cpu checks). Our only requirement here is that sd_llc
+remains a subset of sd_asym_cpucapacity.
+
+So far for Arm topologies we can have:
+- sd_llc < sd_asym_cpucapacity (e.g. legacy big.LITTLE like Juno)
+- sd_llc == sd_asym_cpucapacity (e.g. DynamIQ like SDM845)
+
+I'm slightly worried about sd_llc > sd_asym_cpucapacity ever being an
+actual thing - I don't believe it makes much sense, but that's not stopping
+anyone.
+
+AFAIA we (Arm) *currently* don't allow that with big.LITTLE or DynamIQ, nor
+do I think it can happen with the default scheduler topology where MC is
+the last possible level we can have as sd_llc.
+
+So it *might* be a safe assumption - and I can still add a SCHED_WARN_ON().
