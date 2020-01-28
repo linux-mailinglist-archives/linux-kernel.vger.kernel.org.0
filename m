@@ -2,39 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9BD4A14B823
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Jan 2020 15:21:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6C69314B6E1
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Jan 2020 15:09:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731185AbgA1OU7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 28 Jan 2020 09:20:59 -0500
-Received: from mail.kernel.org ([198.145.29.99]:46044 "EHLO mail.kernel.org"
+        id S1728652AbgA1OJF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 28 Jan 2020 09:09:05 -0500
+Received: from mail.kernel.org ([198.145.29.99]:57134 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731162AbgA1OU4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 Jan 2020 09:20:56 -0500
+        id S1728139AbgA1OIz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 28 Jan 2020 09:08:55 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AFE7821739;
-        Tue, 28 Jan 2020 14:20:55 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id ED9432468E;
+        Tue, 28 Jan 2020 14:08:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1580221256;
-        bh=dfvrLCjUuNwlPrEBLjqxka2nipU725v7isZIiKzbVn0=;
+        s=default; t=1580220534;
+        bh=66TyLEf87qx8niwUpUx7Ly1GZpafg2y1sUW55dSL/9o=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=wbMAICB/scYzExCppyvu1HcfmL4NzvSAlti5srVCWv7sVNgs1SVekykQBOAp36D3S
-         TWONJBIyOGQzRO5sqd5RXbZNHqM8DqaAmCsCXWvgckdKnaZ9S08iVfJHusnOKxLj6R
-         LFLeySy1q/wiZZBS1Zz+7rwLZ6Lm6MwhKP7laDlA=
+        b=Hy8iKuwM3RgaEtu9hFKJY6rhHUlcG0awV8DHqwV0Xk7Gjx/lzlptdnk6FPbKlVBMn
+         Uet1gli6ix7IrXr5wZSSSv87Fvx6SGHZ+gzTgaF1SFYOdkBsqZi8Qf6b9R7H4wvd80
+         14ze0fBQx5qesbg3kR5bR5WNVK5ktwx6QAar+4sM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, YueHaibing <yuehaibing@huawei.com>,
-        Robert Jarzmik <robert.jarzmik@free.fr>,
+        stable@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Simon Horman <horms+renesas@verge.net.au>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 115/271] ARM: pxa: ssp: Fix "WARNING: invalid free of devm_ allocated data"
-Date:   Tue, 28 Jan 2020 15:04:24 +0100
-Message-Id: <20200128135901.136665929@linuxfoundation.org>
+Subject: [PATCH 4.4 046/183] pinctrl: sh-pfc: sh73a0: Fix fsic_spdif pin groups
+Date:   Tue, 28 Jan 2020 15:04:25 +0100
+Message-Id: <20200128135834.568820294@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200128135852.449088278@linuxfoundation.org>
-References: <20200128135852.449088278@linuxfoundation.org>
+In-Reply-To: <20200128135829.486060649@linuxfoundation.org>
+References: <20200128135829.486060649@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,45 +45,35 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: YueHaibing <yuehaibing@huawei.com>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-[ Upstream commit 9ee8578d953023cc57e7e736ae48502c707c0210 ]
+[ Upstream commit 0e6e448bdcf896d001a289a6112a704542d51516 ]
 
-Since commit 1c459de1e645 ("ARM: pxa: ssp: use devm_ functions")
-kfree, iounmap, clk_put etc are not needed anymore in remove path.
+There are two pin groups for the FSIC SPDIF signal, but the FSIC pin
+group array lists only one, and it refers to a nonexistent group.
 
-Fixes: 1c459de1e645 ("ARM: pxa: ssp: use devm_ functions")
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
-[ commit message spelling fix ]
-Signed-off-by: Robert Jarzmik <robert.jarzmik@free.fr>
+Fixes: 2ecd4154c906b7d6 ("sh-pfc: sh73a0: Add FSI pin groups and functions")
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arm/plat-pxa/ssp.c | 6 ------
- 1 file changed, 6 deletions(-)
+ drivers/pinctrl/sh-pfc/pfc-sh73a0.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/arch/arm/plat-pxa/ssp.c b/arch/arm/plat-pxa/ssp.c
-index b92673efffffb..97bd43c16cd87 100644
---- a/arch/arm/plat-pxa/ssp.c
-+++ b/arch/arm/plat-pxa/ssp.c
-@@ -230,18 +230,12 @@ static int pxa_ssp_probe(struct platform_device *pdev)
+diff --git a/drivers/pinctrl/sh-pfc/pfc-sh73a0.c b/drivers/pinctrl/sh-pfc/pfc-sh73a0.c
+index ea5da5dcad2c5..b173bd759ee19 100644
+--- a/drivers/pinctrl/sh-pfc/pfc-sh73a0.c
++++ b/drivers/pinctrl/sh-pfc/pfc-sh73a0.c
+@@ -2895,7 +2895,8 @@ static const char * const fsic_groups[] = {
+ 	"fsic_sclk_out",
+ 	"fsic_data_in",
+ 	"fsic_data_out",
+-	"fsic_spdif",
++	"fsic_spdif_0",
++	"fsic_spdif_1",
+ };
  
- static int pxa_ssp_remove(struct platform_device *pdev)
- {
--	struct resource *res;
- 	struct ssp_device *ssp;
- 
- 	ssp = platform_get_drvdata(pdev);
- 	if (ssp == NULL)
- 		return -ENODEV;
- 
--	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
--	release_mem_region(res->start, resource_size(res));
--
--	clk_put(ssp->clk);
--
- 	mutex_lock(&ssp_lock);
- 	list_del(&ssp->node);
- 	mutex_unlock(&ssp_lock);
+ static const char * const fsid_groups[] = {
 -- 
 2.20.1
 
