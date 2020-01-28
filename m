@@ -2,42 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4F1E714BB6C
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Jan 2020 15:48:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D017714BA76
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Jan 2020 15:39:54 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727177AbgA1OH2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 28 Jan 2020 09:07:28 -0500
-Received: from mail.kernel.org ([198.145.29.99]:55084 "EHLO mail.kernel.org"
+        id S1729664AbgA1Oiu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 28 Jan 2020 09:38:50 -0500
+Received: from mail.kernel.org ([198.145.29.99]:42032 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727933AbgA1OHZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 Jan 2020 09:07:25 -0500
+        id S1729903AbgA1OSH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 28 Jan 2020 09:18:07 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4357022522;
-        Tue, 28 Jan 2020 14:07:24 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 960D021739;
+        Tue, 28 Jan 2020 14:18:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1580220444;
-        bh=UPpOQv8TcPyjsQb6FhvUjCbVkkQduXCWqwZvAxggsWY=;
+        s=default; t=1580221087;
+        bh=PcEUpSz1l1Agv5M26s4TsmTinViyWnuAaUguPsE67hI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=WqgWb2gA3M2CP7+q2euW1rEFRoHUg6+dmj2PqbdN9P1fppqLE6uPAGTGRdckuLjXD
-         aFQzHGPXdF50wAcWXfb/J4TOo7YdFfYPTMu0x2M/CEBi+MU43eFXgwhYLo2498Lsu8
-         jkIhvZliCHhaP58CgexPtpf/L85lowSpUmjFvEX4=
+        b=RdfxLvyo5ydQ1MqRABImDWxb/WVijjgwbJ8c6USlokFbO283lbCsPdus39K6hdbUp
+         nx+xVxNXTZ7S7kv4r1LQfWZkNdkV/ZIXhVhsO9JZDyF2qQ3VMhuJtGHRj9XBIOhZt9
+         8hdYyndMyTuREJzdfEJoAGoucE1Z+Wczf9NmQF7s=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Lyude Paul <lyude@redhat.com>,
-        Jerry Zuo <Jerry.Zuo@amd.com>,
-        Harry Wentland <Harry.Wentland@amd.com>,
-        Dave Airlie <airlied@redhat.com>,
-        Sean Paul <seanpaul@chromium.org>,
+        stable@vger.kernel.org, Patrick Lai <plai@codeaurora.org>,
+        Banajit Goswami <bgoswami@codeaurora.org>,
+        Takashi Iwai <tiwai@suse.de>, Mark Brown <broonie@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.4 010/183] drm/dp_mst: Skip validating ports during destruction, just ref
-Date:   Tue, 28 Jan 2020 15:03:49 +0100
-Message-Id: <20200128135830.698209468@linuxfoundation.org>
+Subject: [PATCH 4.9 084/271] ASoC: qcom: Fix of-node refcount unbalance in apq8016_sbc_parse_of()
+Date:   Tue, 28 Jan 2020 15:03:53 +0100
+Message-Id: <20200128135858.823917481@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200128135829.486060649@linuxfoundation.org>
-References: <20200128135829.486060649@linuxfoundation.org>
+In-Reply-To: <20200128135852.449088278@linuxfoundation.org>
+References: <20200128135852.449088278@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -47,88 +45,88 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Lyude Paul <lyude@redhat.com>
+From: Takashi Iwai <tiwai@suse.de>
 
-[ Upstream commit c54c7374ff44de5e609506aca7c0deae4703b6d1 ]
+[ Upstream commit 8d1667200850f8753c0265fa4bd25c9a6e5f94ce ]
 
-Jerry Zuo pointed out a rather obscure hotplugging issue that it seems I
-accidentally introduced into DRM two years ago.
+The apq8016 driver leaves the of-node refcount at aborting from the
+loop of for_each_child_of_node() in the error path.  Not only the
+iterator node of for_each_child_of_node(), the children nodes referred
+from it for codec and cpu have to be properly unreferenced.
 
-Pretend we have a topology like this:
-
-|- DP-1: mst_primary
-   |- DP-4: active display
-   |- DP-5: disconnected
-   |- DP-6: active hub
-      |- DP-7: active display
-      |- DP-8: disconnected
-      |- DP-9: disconnected
-
-If we unplug DP-6, the topology starting at DP-7 will be destroyed but
-it's payloads will live on in DP-1's VCPI allocations and thus require
-removal. However, this removal currently fails because
-drm_dp_update_payload_part1() will (rightly so) try to validate the port
-before accessing it, fail then abort. If we keep going, eventually we
-run the MST hub out of bandwidth and all new allocations will start to
-fail (or in my case; all new displays just start flickering a ton).
-
-We could just teach drm_dp_update_payload_part1() not to drop the port
-ref in this case, but then we also need to teach
-drm_dp_destroy_payload_step1() to do the same thing, then hope no one
-ever adds anything to the that requires a validated port reference in
-drm_dp_destroy_connector_work(). Kind of sketchy.
-
-So let's go with a more clever solution: any port that
-drm_dp_destroy_connector_work() interacts with is guaranteed to still
-exist in memory until we say so. While said port might not be valid we
-don't really care: that's the whole reason we're destroying it in the
-first place! So, teach drm_dp_get_validated_port_ref() to use the all
-mighty current_work() function to avoid attempting to validate ports
-from the context of mgr->destroy_connector_work. I can't see any
-situation where this wouldn't be safe, and this avoids having to play
-whack-a-mole in the future of trying to work around port validation.
-
-Signed-off-by: Lyude Paul <lyude@redhat.com>
-Fixes: 263efde31f97 ("drm/dp/mst: Get validated port ref in drm_dp_update_payload_part1()")
-Reported-by: Jerry Zuo <Jerry.Zuo@amd.com>
-Cc: Jerry Zuo <Jerry.Zuo@amd.com>
-Cc: Harry Wentland <Harry.Wentland@amd.com>
-Cc: <stable@vger.kernel.org> # v4.6+
-Reviewed-by: Dave Airlie <airlied@redhat.com>
-Link: https://patchwork.freedesktop.org/patch/msgid/20181113224613.28809-1-lyude@redhat.com
-Signed-off-by: Sean Paul <seanpaul@chromium.org>
+Fixes: bdb052e81f62 ("ASoC: qcom: add apq8016 sound card support")
+Cc: Patrick Lai <plai@codeaurora.org>
+Cc: Banajit Goswami <bgoswami@codeaurora.org>
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpu/drm/drm_dp_mst_topology.c | 15 +++++++++++++--
- 1 file changed, 13 insertions(+), 2 deletions(-)
+ sound/soc/qcom/apq8016_sbc.c | 21 ++++++++++++++++-----
+ 1 file changed, 16 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/gpu/drm/drm_dp_mst_topology.c b/drivers/gpu/drm/drm_dp_mst_topology.c
-index 2cb924ffd5a3c..4d0f77f0edad1 100644
---- a/drivers/gpu/drm/drm_dp_mst_topology.c
-+++ b/drivers/gpu/drm/drm_dp_mst_topology.c
-@@ -975,9 +975,20 @@ static struct drm_dp_mst_port *drm_dp_mst_get_port_ref_locked(struct drm_dp_mst_
- static struct drm_dp_mst_port *drm_dp_get_validated_port_ref(struct drm_dp_mst_topology_mgr *mgr, struct drm_dp_mst_port *port)
- {
- 	struct drm_dp_mst_port *rport = NULL;
+diff --git a/sound/soc/qcom/apq8016_sbc.c b/sound/soc/qcom/apq8016_sbc.c
+index 07f91e918b234..754742018515a 100644
+--- a/sound/soc/qcom/apq8016_sbc.c
++++ b/sound/soc/qcom/apq8016_sbc.c
+@@ -114,13 +114,15 @@ static struct apq8016_sbc_data *apq8016_sbc_parse_of(struct snd_soc_card *card)
+ 
+ 		if (!cpu || !codec) {
+ 			dev_err(dev, "Can't find cpu/codec DT node\n");
+-			return ERR_PTR(-EINVAL);
++			ret = -EINVAL;
++			goto error;
+ 		}
+ 
+ 		link->cpu_of_node = of_parse_phandle(cpu, "sound-dai", 0);
+ 		if (!link->cpu_of_node) {
+ 			dev_err(card->dev, "error getting cpu phandle\n");
+-			return ERR_PTR(-EINVAL);
++			ret = -EINVAL;
++			goto error;
+ 		}
+ 
+ 		link->codec_of_node = of_parse_phandle(codec, "sound-dai", 0);
+@@ -132,28 +134,37 @@ static struct apq8016_sbc_data *apq8016_sbc_parse_of(struct snd_soc_card *card)
+ 		ret = snd_soc_of_get_dai_name(cpu, &link->cpu_dai_name);
+ 		if (ret) {
+ 			dev_err(card->dev, "error getting cpu dai name\n");
+-			return ERR_PTR(ret);
++			goto error;
+ 		}
+ 
+ 		ret = snd_soc_of_get_dai_name(codec, &link->codec_dai_name);
+ 		if (ret) {
+ 			dev_err(card->dev, "error getting codec dai name\n");
+-			return ERR_PTR(ret);
++			goto error;
+ 		}
+ 
+ 		link->platform_of_node = link->cpu_of_node;
+ 		ret = of_property_read_string(np, "link-name", &link->name);
+ 		if (ret) {
+ 			dev_err(card->dev, "error getting codec dai_link name\n");
+-			return ERR_PTR(ret);
++			goto error;
+ 		}
+ 
+ 		link->stream_name = link->name;
+ 		link->init = apq8016_sbc_dai_init;
+ 		link++;
 +
- 	mutex_lock(&mgr->lock);
--	if (mgr->mst_primary)
--		rport = drm_dp_mst_get_port_ref_locked(mgr->mst_primary, port);
-+	/*
-+	 * Port may or may not be 'valid' but we don't care about that when
-+	 * destroying the port and we are guaranteed that the port pointer
-+	 * will be valid until we've finished
-+	 */
-+	if (current_work() == &mgr->destroy_connector_work) {
-+		kref_get(&port->kref);
-+		rport = port;
-+	} else if (mgr->mst_primary) {
-+		rport = drm_dp_mst_get_port_ref_locked(mgr->mst_primary,
-+						       port);
-+	}
- 	mutex_unlock(&mgr->lock);
- 	return rport;
++		of_node_put(cpu);
++		of_node_put(codec);
+ 	}
+ 
+ 	return data;
++
++ error:
++	of_node_put(np);
++	of_node_put(cpu);
++	of_node_put(codec);
++	return ERR_PTR(ret);
  }
+ 
+ static const struct snd_soc_dapm_widget apq8016_sbc_dapm_widgets[] = {
 -- 
 2.20.1
 
