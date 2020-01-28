@@ -2,37 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9499C14B8F3
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Jan 2020 15:29:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 035AF14B8F6
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Jan 2020 15:29:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387615AbgA1O3I (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 28 Jan 2020 09:29:08 -0500
-Received: from mail.kernel.org ([198.145.29.99]:57384 "EHLO mail.kernel.org"
+        id S2387473AbgA1O3Q (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 28 Jan 2020 09:29:16 -0500
+Received: from mail.kernel.org ([198.145.29.99]:57578 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387593AbgA1O3G (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 Jan 2020 09:29:06 -0500
+        id S2387601AbgA1O3N (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 28 Jan 2020 09:29:13 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8D8F424691;
-        Tue, 28 Jan 2020 14:29:04 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7E6E724688;
+        Tue, 28 Jan 2020 14:29:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1580221745;
-        bh=eycd+sZi3O1twm6Uaq9slvBCns8jEhQ/fIQWbP71Iwk=;
+        s=default; t=1580221753;
+        bh=DGkn0T8um9aUZbLl16ewYz61FG8Hvju4fsmee5CFgaE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Y5gg3suAv6Ix25ZR3iKKX8J7TbVpcjLdkc5uYDJj3Je5z1TdfbbmPI9bzKpAzB0en
-         AVYALrvbUntoTojf6TbrSoDEknz5MyRjdRZgv43CoAyM+lVSxjalDmEpxS2qjw5kul
-         d6LaT89vFBAEOY2mViFtlmhmSYE3IRkqU5unCo6o=
+        b=u+cuqlJbW0R1vcEVX4SnbYneB6p+TGqhS2mUAe86GlkdbH/fuM3kzX6IH7YVrZYIP
+         c1rxWJ5Sv1YZzG/u/YgoR+R6yFtVZY7lEM5mztdbCasVtt8rYotx+TAJXyjYaPE0CO
+         m7yw4u7DWVCq+t4Hr59oNnHOyetCv+qvLWlTcNmw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Namhyung Kim <namhyung@kernel.org>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Tom Zanussi <tom.zanussi@linux.intel.com>,
-        "Steven Rostedt (VMware)" <rostedt@goodmis.org>
-Subject: [PATCH 4.19 57/92] tracing: Remove open-coding of hist trigger var_ref management
-Date:   Tue, 28 Jan 2020 15:08:25 +0100
-Message-Id: <20200128135816.530516255@linuxfoundation.org>
+        stable@vger.kernel.org, Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Florian Bezdeka <florian@bezdeka.de>,
+        Herbert Xu <herbert@gondor.apana.org.au>
+Subject: [PATCH 4.19 60/92] crypto: geode-aes - switch to skcipher for cbc(aes) fallback
+Date:   Tue, 28 Jan 2020 15:08:28 +0100
+Message-Id: <20200128135816.937763211@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
 In-Reply-To: <20200128135809.344954797@linuxfoundation.org>
 References: <20200128135809.344954797@linuxfoundation.org>
@@ -45,210 +44,180 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Tom Zanussi <tom.zanussi@linux.intel.com>
+From: Ard Biesheuvel <ard.biesheuvel@linaro.org>
 
-commit de40f033d4e84e843d6a12266e3869015ea9097c upstream.
+commit 504582e8e40b90b8f8c58783e2d1e4f6a2b71a3a upstream.
 
-Have create_var_ref() manage the hist trigger's var_ref list, rather
-than having similar code doing it in multiple places.  This cleans up
-the code and makes sure var_refs are always accounted properly.
+Commit 79c65d179a40e145 ("crypto: cbc - Convert to skcipher") updated
+the generic CBC template wrapper from a blkcipher to a skcipher algo,
+to get away from the deprecated blkcipher interface. However, as a side
+effect, drivers that instantiate CBC transforms using the blkcipher as
+a fallback no longer work, since skciphers can wrap blkciphers but not
+the other way around. This broke the geode-aes driver.
 
-Also, document the var_ref-related functions to make what their
-purpose clearer.
+So let's fix it by moving to the sync skcipher interface when allocating
+the fallback. At the same time, align with the generic API for ECB and
+CBC by rejecting inputs that are not a multiple of the AES block size.
 
-Link: http://lkml.kernel.org/r/05ddae93ff514e66fc03897d6665231892939913.1545161087.git.tom.zanussi@linux.intel.com
-
-Acked-by: Namhyung Kim <namhyung@kernel.org>
-Reviewed-by: Masami Hiramatsu <mhiramat@kernel.org>
-Signed-off-by: Tom Zanussi <tom.zanussi@linux.intel.com>
-Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+Fixes: 79c65d179a40e145 ("crypto: cbc - Convert to skcipher")
+Cc: <stable@vger.kernel.org> # v4.20+ ONLY
+Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Signed-off-by: Florian Bezdeka <florian@bezdeka.de>
+Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
+Signed-off-by: Florian Bezdeka <florian@bezdeka.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- kernel/trace/trace_events_hist.c |   93 +++++++++++++++++++++++++++++++--------
- 1 file changed, 75 insertions(+), 18 deletions(-)
+ drivers/crypto/geode-aes.c |   57 ++++++++++++++++++++++++++-------------------
+ drivers/crypto/geode-aes.h |    2 -
+ 2 files changed, 35 insertions(+), 24 deletions(-)
 
---- a/kernel/trace/trace_events_hist.c
-+++ b/kernel/trace/trace_events_hist.c
-@@ -1274,6 +1274,17 @@ static u64 hist_field_cpu(struct hist_fi
- 	return cpu;
- }
+--- a/drivers/crypto/geode-aes.c
++++ b/drivers/crypto/geode-aes.c
+@@ -14,6 +14,7 @@
+ #include <linux/spinlock.h>
+ #include <crypto/algapi.h>
+ #include <crypto/aes.h>
++#include <crypto/skcipher.h>
  
-+/**
-+ * check_field_for_var_ref - Check if a VAR_REF field references a variable
-+ * @hist_field: The VAR_REF field to check
-+ * @var_data: The hist trigger that owns the variable
-+ * @var_idx: The trigger variable identifier
-+ *
-+ * Check the given VAR_REF field to see whether or not it references
-+ * the given variable associated with the given trigger.
-+ *
-+ * Return: The VAR_REF field if it does reference the variable, NULL if not
-+ */
- static struct hist_field *
- check_field_for_var_ref(struct hist_field *hist_field,
- 			struct hist_trigger_data *var_data,
-@@ -1324,6 +1335,18 @@ check_field_for_var_refs(struct hist_tri
- 	return found;
- }
+ #include <linux/io.h>
+ #include <linux/delay.h>
+@@ -170,13 +171,15 @@ static int geode_setkey_blk(struct crypt
+ 	/*
+ 	 * The requested key size is not supported by HW, do a fallback
+ 	 */
+-	op->fallback.blk->base.crt_flags &= ~CRYPTO_TFM_REQ_MASK;
+-	op->fallback.blk->base.crt_flags |= (tfm->crt_flags & CRYPTO_TFM_REQ_MASK);
++	crypto_skcipher_clear_flags(op->fallback.blk, CRYPTO_TFM_REQ_MASK);
++	crypto_skcipher_set_flags(op->fallback.blk,
++				  tfm->crt_flags & CRYPTO_TFM_REQ_MASK);
  
-+/**
-+ * find_var_ref - Check if a trigger has a reference to a trigger variable
-+ * @hist_data: The hist trigger that might have a reference to the variable
-+ * @var_data: The hist trigger that owns the variable
-+ * @var_idx: The trigger variable identifier
-+ *
-+ * Check the list of var_refs[] on the first hist trigger to see
-+ * whether any of them are references to the variable on the second
-+ * trigger.
-+ *
-+ * Return: The VAR_REF field referencing the variable if so, NULL if not
-+ */
- static struct hist_field *find_var_ref(struct hist_trigger_data *hist_data,
- 				       struct hist_trigger_data *var_data,
- 				       unsigned int var_idx)
-@@ -1350,6 +1373,20 @@ static struct hist_field *find_var_ref(s
- 	return found;
- }
- 
-+/**
-+ * find_any_var_ref - Check if there is a reference to a given trigger variable
-+ * @hist_data: The hist trigger
-+ * @var_idx: The trigger variable identifier
-+ *
-+ * Check to see whether the given variable is currently referenced by
-+ * any other trigger.
-+ *
-+ * The trigger the variable is defined on is explicitly excluded - the
-+ * assumption being that a self-reference doesn't prevent a trigger
-+ * from being removed.
-+ *
-+ * Return: The VAR_REF field referencing the variable if so, NULL if not
-+ */
- static struct hist_field *find_any_var_ref(struct hist_trigger_data *hist_data,
- 					   unsigned int var_idx)
- {
-@@ -1368,6 +1405,19 @@ static struct hist_field *find_any_var_r
- 	return found;
- }
- 
-+/**
-+ * check_var_refs - Check if there is a reference to any of trigger's variables
-+ * @hist_data: The hist trigger
-+ *
-+ * A trigger can define one or more variables.  If any one of them is
-+ * currently referenced by any other trigger, this function will
-+ * determine that.
-+
-+ * Typically used to determine whether or not a trigger can be removed
-+ * - if there are any references to a trigger's variables, it cannot.
-+ *
-+ * Return: True if there is a reference to any of trigger's variables
-+ */
- static bool check_var_refs(struct hist_trigger_data *hist_data)
- {
- 	struct hist_field *field;
-@@ -2392,7 +2442,23 @@ static int init_var_ref(struct hist_fiel
- 	goto out;
- }
- 
--static struct hist_field *create_var_ref(struct hist_field *var_field,
-+/**
-+ * create_var_ref - Create a variable reference and attach it to trigger
-+ * @hist_data: The trigger that will be referencing the variable
-+ * @var_field: The VAR field to create a reference to
-+ * @system: The optional system string
-+ * @event_name: The optional event_name string
-+ *
-+ * Given a variable hist_field, create a VAR_REF hist_field that
-+ * represents a reference to it.
-+ *
-+ * This function also adds the reference to the trigger that
-+ * now references the variable.
-+ *
-+ * Return: The VAR_REF field if successful, NULL if not
-+ */
-+static struct hist_field *create_var_ref(struct hist_trigger_data *hist_data,
-+					 struct hist_field *var_field,
- 					 char *system, char *event_name)
- {
- 	unsigned long flags = HIST_FIELD_FL_VAR_REF;
-@@ -2404,6 +2470,9 @@ static struct hist_field *create_var_ref
- 			destroy_hist_field(ref_field, 0);
- 			return NULL;
- 		}
-+
-+		hist_data->var_refs[hist_data->n_var_refs] = ref_field;
-+		ref_field->var_ref_idx = hist_data->n_var_refs++;
+-	ret = crypto_blkcipher_setkey(op->fallback.blk, key, len);
++	ret = crypto_skcipher_setkey(op->fallback.blk, key, len);
+ 	if (ret) {
+ 		tfm->crt_flags &= ~CRYPTO_TFM_RES_MASK;
+-		tfm->crt_flags |= (op->fallback.blk->base.crt_flags & CRYPTO_TFM_RES_MASK);
++		tfm->crt_flags |= crypto_skcipher_get_flags(op->fallback.blk) &
++				  CRYPTO_TFM_RES_MASK;
  	}
- 
- 	return ref_field;
-@@ -2477,7 +2546,8 @@ static struct hist_field *parse_var_ref(
- 
- 	var_field = find_event_var(hist_data, system, event_name, var_name);
- 	if (var_field)
--		ref_field = create_var_ref(var_field, system, event_name);
-+		ref_field = create_var_ref(hist_data, var_field,
-+					   system, event_name);
- 
- 	if (!ref_field)
- 		hist_err_event("Couldn't find variable: $",
-@@ -2597,8 +2667,6 @@ static struct hist_field *parse_atom(str
- 	if (!s) {
- 		hist_field = parse_var_ref(hist_data, ref_system, ref_event, ref_var);
- 		if (hist_field) {
--			hist_data->var_refs[hist_data->n_var_refs] = hist_field;
--			hist_field->var_ref_idx = hist_data->n_var_refs++;
- 			if (var_name) {
- 				hist_field = create_alias(hist_data, hist_field, var_name);
- 				if (!hist_field) {
-@@ -3376,7 +3444,6 @@ static int onmax_create(struct hist_trig
- 	unsigned int var_ref_idx = hist_data->n_var_refs;
- 	struct field_var *field_var;
- 	char *onmax_var_str, *param;
--	unsigned long flags;
- 	unsigned int i;
- 	int ret = 0;
- 
-@@ -3393,18 +3460,10 @@ static int onmax_create(struct hist_trig
- 		return -EINVAL;
- 	}
- 
--	flags = HIST_FIELD_FL_VAR_REF;
--	ref_field = create_hist_field(hist_data, NULL, flags, NULL);
-+	ref_field = create_var_ref(hist_data, var_field, NULL, NULL);
- 	if (!ref_field)
- 		return -ENOMEM;
- 
--	if (init_var_ref(ref_field, var_field, NULL, NULL)) {
--		destroy_hist_field(ref_field, 0);
--		ret = -ENOMEM;
--		goto out;
--	}
--	hist_data->var_refs[hist_data->n_var_refs] = ref_field;
--	ref_field->var_ref_idx = hist_data->n_var_refs++;
- 	data->onmax.var = ref_field;
- 
- 	data->fn = onmax_save;
-@@ -3595,9 +3654,6 @@ static void save_synth_var_ref(struct hi
- 			 struct hist_field *var_ref)
+ 	return ret;
+ }
+@@ -185,33 +188,28 @@ static int fallback_blk_dec(struct blkci
+ 		struct scatterlist *dst, struct scatterlist *src,
+ 		unsigned int nbytes)
  {
- 	hist_data->synth_var_refs[hist_data->n_synth_var_refs++] = var_ref;
+-	unsigned int ret;
+-	struct crypto_blkcipher *tfm;
+ 	struct geode_aes_op *op = crypto_blkcipher_ctx(desc->tfm);
++	SKCIPHER_REQUEST_ON_STACK(req, op->fallback.blk);
+ 
+-	tfm = desc->tfm;
+-	desc->tfm = op->fallback.blk;
 -
--	hist_data->var_refs[hist_data->n_var_refs] = var_ref;
--	var_ref->var_ref_idx = hist_data->n_var_refs++;
+-	ret = crypto_blkcipher_decrypt_iv(desc, dst, src, nbytes);
++	skcipher_request_set_tfm(req, op->fallback.blk);
++	skcipher_request_set_callback(req, 0, NULL, NULL);
++	skcipher_request_set_crypt(req, src, dst, nbytes, desc->info);
+ 
+-	desc->tfm = tfm;
+-	return ret;
++	return crypto_skcipher_decrypt(req);
+ }
++
+ static int fallback_blk_enc(struct blkcipher_desc *desc,
+ 		struct scatterlist *dst, struct scatterlist *src,
+ 		unsigned int nbytes)
+ {
+-	unsigned int ret;
+-	struct crypto_blkcipher *tfm;
+ 	struct geode_aes_op *op = crypto_blkcipher_ctx(desc->tfm);
++	SKCIPHER_REQUEST_ON_STACK(req, op->fallback.blk);
+ 
+-	tfm = desc->tfm;
+-	desc->tfm = op->fallback.blk;
+-
+-	ret = crypto_blkcipher_encrypt_iv(desc, dst, src, nbytes);
++	skcipher_request_set_tfm(req, op->fallback.blk);
++	skcipher_request_set_callback(req, 0, NULL, NULL);
++	skcipher_request_set_crypt(req, src, dst, nbytes, desc->info);
+ 
+-	desc->tfm = tfm;
+-	return ret;
++	return crypto_skcipher_encrypt(req);
  }
  
- static int check_synth_field(struct synth_event *event,
-@@ -3752,7 +3808,8 @@ static int onmatch_create(struct hist_tr
- 		}
+ static void
+@@ -311,6 +309,9 @@ geode_cbc_decrypt(struct blkcipher_desc
+ 	struct blkcipher_walk walk;
+ 	int err, ret;
  
- 		if (check_synth_field(event, hist_field, field_pos) == 0) {
--			var_ref = create_var_ref(hist_field, system, event_name);
-+			var_ref = create_var_ref(hist_data, hist_field,
-+						 system, event_name);
- 			if (!var_ref) {
- 				kfree(p);
- 				ret = -ENOMEM;
++	if (nbytes % AES_BLOCK_SIZE)
++		return -EINVAL;
++
+ 	if (unlikely(op->keylen != AES_KEYSIZE_128))
+ 		return fallback_blk_dec(desc, dst, src, nbytes);
+ 
+@@ -343,6 +344,9 @@ geode_cbc_encrypt(struct blkcipher_desc
+ 	struct blkcipher_walk walk;
+ 	int err, ret;
+ 
++	if (nbytes % AES_BLOCK_SIZE)
++		return -EINVAL;
++
+ 	if (unlikely(op->keylen != AES_KEYSIZE_128))
+ 		return fallback_blk_enc(desc, dst, src, nbytes);
+ 
+@@ -370,8 +374,9 @@ static int fallback_init_blk(struct cryp
+ 	const char *name = crypto_tfm_alg_name(tfm);
+ 	struct geode_aes_op *op = crypto_tfm_ctx(tfm);
+ 
+-	op->fallback.blk = crypto_alloc_blkcipher(name, 0,
+-			CRYPTO_ALG_ASYNC | CRYPTO_ALG_NEED_FALLBACK);
++	op->fallback.blk = crypto_alloc_skcipher(name, 0,
++						 CRYPTO_ALG_ASYNC |
++						 CRYPTO_ALG_NEED_FALLBACK);
+ 
+ 	if (IS_ERR(op->fallback.blk)) {
+ 		printk(KERN_ERR "Error allocating fallback algo %s\n", name);
+@@ -385,7 +390,7 @@ static void fallback_exit_blk(struct cry
+ {
+ 	struct geode_aes_op *op = crypto_tfm_ctx(tfm);
+ 
+-	crypto_free_blkcipher(op->fallback.blk);
++	crypto_free_skcipher(op->fallback.blk);
+ 	op->fallback.blk = NULL;
+ }
+ 
+@@ -424,6 +429,9 @@ geode_ecb_decrypt(struct blkcipher_desc
+ 	struct blkcipher_walk walk;
+ 	int err, ret;
+ 
++	if (nbytes % AES_BLOCK_SIZE)
++		return -EINVAL;
++
+ 	if (unlikely(op->keylen != AES_KEYSIZE_128))
+ 		return fallback_blk_dec(desc, dst, src, nbytes);
+ 
+@@ -454,6 +462,9 @@ geode_ecb_encrypt(struct blkcipher_desc
+ 	struct blkcipher_walk walk;
+ 	int err, ret;
+ 
++	if (nbytes % AES_BLOCK_SIZE)
++		return -EINVAL;
++
+ 	if (unlikely(op->keylen != AES_KEYSIZE_128))
+ 		return fallback_blk_enc(desc, dst, src, nbytes);
+ 
+--- a/drivers/crypto/geode-aes.h
++++ b/drivers/crypto/geode-aes.h
+@@ -64,7 +64,7 @@ struct geode_aes_op {
+ 	u8 *iv;
+ 
+ 	union {
+-		struct crypto_blkcipher *blk;
++		struct crypto_skcipher *blk;
+ 		struct crypto_cipher *cip;
+ 	} fallback;
+ 	u32 keylen;
 
 
