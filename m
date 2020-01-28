@@ -2,36 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 314C714B923
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Jan 2020 15:33:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9306814B961
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Jan 2020 15:33:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727812AbgA1O1l (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 28 Jan 2020 09:27:41 -0500
-Received: from mail.kernel.org ([198.145.29.99]:55290 "EHLO mail.kernel.org"
+        id S1727955AbgA1ObH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 28 Jan 2020 09:31:07 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56324 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727672AbgA1O1b (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 Jan 2020 09:27:31 -0500
+        id S2387481AbgA1O2V (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 28 Jan 2020 09:28:21 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9991721739;
-        Tue, 28 Jan 2020 14:27:29 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7073620716;
+        Tue, 28 Jan 2020 14:28:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1580221650;
-        bh=C80hO95fUlhePgToChD8CSc4I8Aj6cloQwLGUMaNs+s=;
+        s=default; t=1580221700;
+        bh=B2fvCv8i+LxBDIg8WI21HrzwIXyf7tintpgAoAddjm8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=rRppznM6IfOaTizomRUIj1hBnBqkJHjnO0ZPppUxDbUAHE83Du4FiXm71TRBSvlMX
-         78Psahx9AUFGQpoMJRfrlWWlwBZh8XyDuLSeCq7sgj4EC0zVDwVnYfw+24P0nqh3zA
-         8WNS0saTrf3pOI1MbxlxOD9hJcxiiRQhcQbNrSfg=
+        b=SN3xr2w81LToGiUjQUsEaiRG8NL3f/QecyYeYRwZhLsbdDXz9XmwzHULZc+qhGjon
+         j1XM0v9tvibi+asmthzQXAWmXbYQpMguyitsKf6N7V2EH4ZaNXPF9MijmBvwEMjgVj
+         PtfA1rV+W+p4jiY51k6dXU5Trz9zRy5a1xelkWNg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Johan Hovold <johan@kernel.org>,
-        Vladis Dronov <vdronov@redhat.com>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Subject: [PATCH 4.19 35/92] Input: gtco - fix endpoint sanity check
-Date:   Tue, 28 Jan 2020 15:08:03 +0100
-Message-Id: <20200128135813.593172472@linuxfoundation.org>
+        stable@vger.kernel.org,
+        syzbot+cf23983d697c26c34f60@syzkaller.appspotmail.com,
+        Florian Westphal <fw@strlen.de>,
+        Pablo Neira Ayuso <pablo@netfilter.org>
+Subject: [PATCH 4.19 39/92] netfilter: nft_osf: add missing check for DREG attribute
+Date:   Tue, 28 Jan 2020 15:08:07 +0100
+Message-Id: <20200128135814.094432237@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
 In-Reply-To: <20200128135809.344954797@linuxfoundation.org>
 References: <20200128135809.344954797@linuxfoundation.org>
@@ -44,59 +45,34 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Johan Hovold <johan@kernel.org>
+From: Florian Westphal <fw@strlen.de>
 
-commit a8eeb74df5a6bdb214b2b581b14782c5f5a0cf83 upstream.
+commit 7eaecf7963c1c8f62d62c6a8e7c439b0e7f2d365 upstream.
 
-The driver was checking the number of endpoints of the first alternate
-setting instead of the current one, something which could lead to the
-driver binding to an invalid interface.
+syzbot reports just another NULL deref crash because of missing test
+for presence of the attribute.
 
-This in turn could cause the driver to misbehave or trigger a WARN() in
-usb_submit_urb() that kernels with panic_on_warn set would choke on.
-
-Fixes: 162f98dea487 ("Input: gtco - fix crash on detecting device without endpoints")
-Signed-off-by: Johan Hovold <johan@kernel.org>
-Acked-by: Vladis Dronov <vdronov@redhat.com>
-Link: https://lore.kernel.org/r/20191210113737.4016-5-johan@kernel.org
-Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Reported-by: syzbot+cf23983d697c26c34f60@syzkaller.appspotmail.com
+Fixes:  b96af92d6eaf9fadd ("netfilter: nf_tables: implement Passive OS fingerprint module in nft_osf")
+Signed-off-by: Florian Westphal <fw@strlen.de>
+Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/input/tablet/gtco.c |   10 +++-------
- 1 file changed, 3 insertions(+), 7 deletions(-)
+ net/netfilter/nft_osf.c |    3 +++
+ 1 file changed, 3 insertions(+)
 
---- a/drivers/input/tablet/gtco.c
-+++ b/drivers/input/tablet/gtco.c
-@@ -875,18 +875,14 @@ static int gtco_probe(struct usb_interfa
- 	}
+--- a/net/netfilter/nft_osf.c
++++ b/net/netfilter/nft_osf.c
+@@ -47,6 +47,9 @@ static int nft_osf_init(const struct nft
+ 	struct nft_osf *priv = nft_expr_priv(expr);
+ 	int err;
  
- 	/* Sanity check that a device has an endpoint */
--	if (usbinterface->altsetting[0].desc.bNumEndpoints < 1) {
-+	if (usbinterface->cur_altsetting->desc.bNumEndpoints < 1) {
- 		dev_err(&usbinterface->dev,
- 			"Invalid number of endpoints\n");
- 		error = -EINVAL;
- 		goto err_free_urb;
- 	}
- 
--	/*
--	 * The endpoint is always altsetting 0, we know this since we know
--	 * this device only has one interrupt endpoint
--	 */
--	endpoint = &usbinterface->altsetting[0].endpoint[0].desc;
-+	endpoint = &usbinterface->cur_altsetting->endpoint[0].desc;
- 
- 	/* Some debug */
- 	dev_dbg(&usbinterface->dev, "gtco # interfaces: %d\n", usbinterface->num_altsetting);
-@@ -973,7 +969,7 @@ static int gtco_probe(struct usb_interfa
- 	input_dev->dev.parent = &usbinterface->dev;
- 
- 	/* Setup the URB, it will be posted later on open of input device */
--	endpoint = &usbinterface->altsetting[0].endpoint[0].desc;
-+	endpoint = &usbinterface->cur_altsetting->endpoint[0].desc;
- 
- 	usb_fill_int_urb(gtco->urbinfo,
- 			 udev,
++	if (!tb[NFTA_OSF_DREG])
++		return -EINVAL;
++
+ 	priv->dreg = nft_parse_register(tb[NFTA_OSF_DREG]);
+ 	err = nft_validate_register_store(ctx, priv->dreg, NULL,
+ 					  NFT_DATA_VALUE, NFT_OSF_MAXGENRELEN);
 
 
