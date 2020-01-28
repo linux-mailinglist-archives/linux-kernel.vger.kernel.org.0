@@ -2,27 +2,27 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0160014B78C
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Jan 2020 15:17:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AEFA014B790
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Jan 2020 15:17:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730099AbgA1OPY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 28 Jan 2020 09:15:24 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37900 "EHLO mail.kernel.org"
+        id S1730131AbgA1OPd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 28 Jan 2020 09:15:33 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38250 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726384AbgA1OPS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 Jan 2020 09:15:18 -0500
+        id S1730112AbgA1OPb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 28 Jan 2020 09:15:31 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D197E24681;
-        Tue, 28 Jan 2020 14:15:17 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0534A20678;
+        Tue, 28 Jan 2020 14:15:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1580220918;
-        bh=NkNf3aHS1upQgjgQ3AQuK+g2qELN1J0voucf72zHYP4=;
+        s=default; t=1580220930;
+        bh=2H0OlEXUigJTXu7tQLf7/KBOB9u+oISf7XJnwBADS0Y=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=O2qAS/0FVJTe881U5/XbJ1F7WqM2bRdw1U7y/iKrxaB1D09d6iQaUff4eUWyJ0q35
-         LElyWFFcbWIeVy6ArbCD8pM9h2BsWD2z8ez7b+eTrS3oSpS2jGvIhfD7fuuI6j45VE
-         GsaihpxNhNvLugOvaCBWl3JphPWKXBCoXzopWSqE=
+        b=xeGBH9hQ/KmQ5JqyLYiNyYSucQIisq5WHie7nmPRlbejWBnFYutTJBtfPqvTIiy2W
+         tL7BfXC2/GtqTpDqjLsEJu1klppcltzXYdJwlfgbPM5RX3QqOhZbJROLPYJP9Jdu71
+         FZuZsrTZXVa9fninL4abiQw7MvLQK44zbASYL338=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -30,9 +30,9 @@ Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
         Simon Horman <horms+renesas@verge.net.au>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 016/271] pinctrl: sh-pfc: r8a7740: Add missing REF125CK pin to gether_gmii group
-Date:   Tue, 28 Jan 2020 15:02:45 +0100
-Message-Id: <20200128135853.734034501@linuxfoundation.org>
+Subject: [PATCH 4.9 020/271] pinctrl: sh-pfc: sh73a0: Add missing TO pin to tpu4_to3 group
+Date:   Tue, 28 Jan 2020 15:02:49 +0100
+Message-Id: <20200128135854.174407753@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
 In-Reply-To: <20200128135852.449088278@linuxfoundation.org>
 References: <20200128135852.449088278@linuxfoundation.org>
@@ -47,32 +47,33 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-[ Upstream commit 1ebc589a7786f17f97b9e87b44e0fb4d0290d8f8 ]
+[ Upstream commit 124cde98f856b6206b804acbdec3b7c80f8c3427 ]
 
-The gether_gmii_mux[] array contains the REF125CK pin mark, but the
-gether_gmii_pins[] array lacks the corresponding pin number.
+The tpu4_to3_mux[] array contains the TPU4TO3 pin mark, but the
+tpu4_to3_pins[] array lacks the corresponding pin number.
 
-Fixes: bae11d30d0cafdc5 ("sh-pfc: r8a7740: Add GETHER pin groups and functions")
+Add the missing pin number, for non-GPIO pin F26.
+
+Fixes: 5da4eb049de803c7 ("sh-pfc: sh73a0: Add TPU pin groups and functions")
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/pinctrl/sh-pfc/pfc-r8a7740.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/pinctrl/sh-pfc/pfc-sh73a0.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a7740.c b/drivers/pinctrl/sh-pfc/pfc-r8a7740.c
-index 35f436bcb8491..d8077065636e3 100644
---- a/drivers/pinctrl/sh-pfc/pfc-r8a7740.c
-+++ b/drivers/pinctrl/sh-pfc/pfc-r8a7740.c
-@@ -1982,7 +1982,7 @@ static const unsigned int gether_gmii_pins[] = {
- 	 */
- 	185, 186, 187, 188, 189, 190, 191, 192, 174, 161, 204,
- 	171, 170, 169, 168, 167, 166, 173, 172, 176, 184, 183, 203,
--	205, 163, 206, 207,
-+	205, 163, 206, 207, 158,
+diff --git a/drivers/pinctrl/sh-pfc/pfc-sh73a0.c b/drivers/pinctrl/sh-pfc/pfc-sh73a0.c
+index d25e6f674d0ab..f8fbedb46585d 100644
+--- a/drivers/pinctrl/sh-pfc/pfc-sh73a0.c
++++ b/drivers/pinctrl/sh-pfc/pfc-sh73a0.c
+@@ -3086,6 +3086,7 @@ static const unsigned int tpu4_to2_mux[] = {
  };
- static const unsigned int gether_gmii_mux[] = {
- 	ET_ERXD0_MARK, ET_ERXD1_MARK, ET_ERXD2_MARK, ET_ERXD3_MARK,
+ static const unsigned int tpu4_to3_pins[] = {
+ 	/* TO */
++	PIN_NUMBER(6, 26),
+ };
+ static const unsigned int tpu4_to3_mux[] = {
+ 	TPU4TO3_MARK,
 -- 
 2.20.1
 
