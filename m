@@ -2,41 +2,42 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E902A14B9D6
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Jan 2020 15:37:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C981914BB27
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Jan 2020 15:44:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731278AbgA1OVY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 28 Jan 2020 09:21:24 -0500
-Received: from mail.kernel.org ([198.145.29.99]:46656 "EHLO mail.kernel.org"
+        id S1729263AbgA1OLF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 28 Jan 2020 09:11:05 -0500
+Received: from mail.kernel.org ([198.145.29.99]:59920 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731263AbgA1OVV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 Jan 2020 09:21:21 -0500
+        id S1729247AbgA1OK5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 28 Jan 2020 09:10:57 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8B37C24688;
-        Tue, 28 Jan 2020 14:21:20 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7F1FD2468E;
+        Tue, 28 Jan 2020 14:10:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1580221281;
-        bh=OTeWlAW6PZtaqRBtsNH6XkHqXJ96und1zA/mIcCi+T4=;
+        s=default; t=1580220657;
+        bh=hfMSIEhrEdw1IN71cdDTkdMr00ySuylu7hx2F/qVbAo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Ro9Lt6n8gDJVCPkNaIGhN2y1TGVCXQ57JVcy5gu67zYCXYDEYqr+lrmbJoC69ZQEZ
-         YBQ2I6o+wslnB8mdOow6bYIP9sqX/HosZY9YGueEncsOvsVdhJmmk/15j9sq73Nw7H
-         8vUsZb0B18ywKp332RBgDYFTpofKRdonbLjDY4vw=
+        b=uyLm4GRT0f0IEOYrzWe6u/kor5g6kS48DAvry7gnASpgthg3Re2vEktnkbQeggJHA
+         0t01PC8TTv4kHSJIYMIEufQurO6RLwMn3ariFmmgPgNAfSLk17uQ6J2GVV9yp8rNkK
+         VXKpJclgm424JrUqWXqSbc/pczyJ+1bzTGuVTlqs=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, clang-built-linux@googlegroups.com,
-        Nathan Chancellor <natechancellor@gmail.com>,
-        Nathan Huckleberry <nhuck@google.com>,
-        Stephen Boyd <sboyd@kernel.org>,
+        stable@vger.kernel.org, Matthias Kaehlcke <mka@chromium.org>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Javi Merino <javi.merino@kernel.org>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Eduardo Valentin <edubezval@gmail.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 162/271] clk: qcom: Fix -Wunused-const-variable
-Date:   Tue, 28 Jan 2020 15:05:11 +0100
-Message-Id: <20200128135904.640096317@linuxfoundation.org>
+Subject: [PATCH 4.4 094/183] thermal: cpu_cooling: Actually trace CPU load in thermal_power_cpu_get_power
+Date:   Tue, 28 Jan 2020 15:05:13 +0100
+Message-Id: <20200128135839.487789507@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200128135852.449088278@linuxfoundation.org>
-References: <20200128135852.449088278@linuxfoundation.org>
+In-Reply-To: <20200128135829.486060649@linuxfoundation.org>
+References: <20200128135829.486060649@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,96 +47,56 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Nathan Huckleberry <nhuck@google.com>
+From: Matthias Kaehlcke <mka@chromium.org>
 
-[ Upstream commit da642427bd7710ec4f4140f693f59aa8521a358c ]
+[ Upstream commit bf45ac18b78038e43af3c1a273cae4ab5704d2ce ]
 
-Clang produces the following warning
+The CPU load values passed to the thermal_power_cpu_get_power
+tracepoint are zero for all CPUs, unless, unless the
+thermal_power_cpu_limit tracepoint is enabled too:
 
-drivers/clk/qcom/gcc-msm8996.c:133:32: warning: unused variable
-'gcc_xo_gpll0_gpll2_gpll3_gpll0_early_div_map' [-Wunused-const-variable]
-static const struct
-parent_map gcc_xo_gpll0_gpll2_gpll3_gpll0_early_div_map[] =
-{ ^drivers/clk/qcom/gcc-msm8996.c:141:27: warning: unused variable
-'gcc_xo_gpll0_gpll2_gpll3_gpll0_early_div' [-Wunused-const-variable] static
-const char * const gcc_xo_gpll0_gpll2_gpll3_gpll0_early_div[] = { ^
-drivers/clk/qcom/gcc-msm8996.c:187:32: warning: unused variable
-'gcc_xo_gpll0_gpll2_gpll3_gpll1_gpll4_gpll0_early_div_map'
-[-Wunused-const-variable] static const struct parent_map
-gcc_xo_gpll0_gpll2_gpll3_gpll1_gpll4_gpll0_early_div_map[] = { ^
-drivers/clk/qcom/gcc-msm8996.c:197:27: warning: unused variable
-'gcc_xo_gpll0_gpll2_gpll3_gpll1_gpll4_gpll0_early_div'
-[-Wunused-const-variable] static const char * const
-gcc_xo_gpll0_gpll2_gpll3_gpll1_gpll4_gpll0_early_div[] = {
+  irq/41-rockchip-98    [000] ....   290.972410: thermal_power_cpu_get_power:
+  cpus=0000000f freq=1800000 load={{0x0,0x0,0x0,0x0}} dynamic_power=4815
 
-It looks like these were never used.
+vs
 
-Fixes: b1e010c0730a ("clk: qcom: Add MSM8996 Global Clock Control (GCC) driver")
-Cc: clang-built-linux@googlegroups.com
-Link: https://github.com/ClangBuiltLinux/linux/issues/518
-Suggested-by: Nathan Chancellor <natechancellor@gmail.com>
-Signed-off-by: Nathan Huckleberry <nhuck@google.com>
-Reviewed-by: Nathan Chancellor <natechancellor@gmail.com>
-Signed-off-by: Stephen Boyd <sboyd@kernel.org>
+  irq/41-rockchip-96    [000] ....    95.773585: thermal_power_cpu_get_power:
+  cpus=0000000f freq=1800000 load={{0x56,0x64,0x64,0x5e}} dynamic_power=4959
+  irq/41-rockchip-96    [000] ....    95.773596: thermal_power_cpu_limit:
+  cpus=0000000f freq=408000 cdev_state=10 power=416
+
+There seems to be no good reason for omitting the CPU load information
+depending on another tracepoint. My guess is that the intention was to
+check whether thermal_power_cpu_get_power is (still) enabled, however
+'load_cpu != NULL' already indicates that it was at least enabled when
+cpufreq_get_requested_power() was entered, there seems little gain
+from omitting the assignment if the tracepoint was just disabled, so
+just remove the check.
+
+Fixes: 6828a4711f99 ("thermal: add trace events to the power allocator governor")
+Signed-off-by: Matthias Kaehlcke <mka@chromium.org>
+Reviewed-by: Daniel Lezcano <daniel.lezcano@linaro.org>
+Acked-by: Javi Merino <javi.merino@kernel.org>
+Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
+Signed-off-by: Eduardo Valentin <edubezval@gmail.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/clk/qcom/gcc-msm8996.c | 36 ----------------------------------
- 1 file changed, 36 deletions(-)
+ drivers/thermal/cpu_cooling.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/clk/qcom/gcc-msm8996.c b/drivers/clk/qcom/gcc-msm8996.c
-index fe03e6fbc7df5..ea6c227331fcf 100644
---- a/drivers/clk/qcom/gcc-msm8996.c
-+++ b/drivers/clk/qcom/gcc-msm8996.c
-@@ -140,22 +140,6 @@ static const char * const gcc_xo_gpll0_gpll4_gpll0_early_div[] = {
- 	"gpll0_early_div"
- };
+diff --git a/drivers/thermal/cpu_cooling.c b/drivers/thermal/cpu_cooling.c
+index 87d87ac1c8a04..96567b4a4f201 100644
+--- a/drivers/thermal/cpu_cooling.c
++++ b/drivers/thermal/cpu_cooling.c
+@@ -607,7 +607,7 @@ static int cpufreq_get_requested_power(struct thermal_cooling_device *cdev,
+ 			load = 0;
  
--static const struct parent_map gcc_xo_gpll0_gpll2_gpll3_gpll0_early_div_map[] = {
--	{ P_XO, 0 },
--	{ P_GPLL0, 1 },
--	{ P_GPLL2, 2 },
--	{ P_GPLL3, 3 },
--	{ P_GPLL0_EARLY_DIV, 6 }
--};
--
--static const char * const gcc_xo_gpll0_gpll2_gpll3_gpll0_early_div[] = {
--	"xo",
--	"gpll0",
--	"gpll2",
--	"gpll3",
--	"gpll0_early_div"
--};
--
- static const struct parent_map gcc_xo_gpll0_gpll1_early_div_gpll1_gpll4_gpll0_early_div_map[] = {
- 	{ P_XO, 0 },
- 	{ P_GPLL0, 1 },
-@@ -194,26 +178,6 @@ static const char * const gcc_xo_gpll0_gpll2_gpll3_gpll1_gpll2_early_gpll0_early
- 	"gpll0_early_div"
- };
+ 		total_load += load;
+-		if (trace_thermal_power_cpu_limit_enabled() && load_cpu)
++		if (load_cpu)
+ 			load_cpu[i] = load;
  
--static const struct parent_map gcc_xo_gpll0_gpll2_gpll3_gpll1_gpll4_gpll0_early_div_map[] = {
--	{ P_XO, 0 },
--	{ P_GPLL0, 1 },
--	{ P_GPLL2, 2 },
--	{ P_GPLL3, 3 },
--	{ P_GPLL1, 4 },
--	{ P_GPLL4, 5 },
--	{ P_GPLL0_EARLY_DIV, 6 }
--};
--
--static const char * const gcc_xo_gpll0_gpll2_gpll3_gpll1_gpll4_gpll0_early_div[] = {
--	"xo",
--	"gpll0",
--	"gpll2",
--	"gpll3",
--	"gpll1",
--	"gpll4",
--	"gpll0_early_div"
--};
--
- static struct clk_fixed_factor xo = {
- 	.mult = 1,
- 	.div = 1,
+ 		i++;
 -- 
 2.20.1
 
