@@ -2,36 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2495C14B798
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Jan 2020 15:17:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 483EC14B7A5
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Jan 2020 15:17:19 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730202AbgA1OPv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 28 Jan 2020 09:15:51 -0500
-Received: from mail.kernel.org ([198.145.29.99]:38678 "EHLO mail.kernel.org"
+        id S1730014AbgA1OQO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 28 Jan 2020 09:16:14 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39240 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729864AbgA1OPs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 Jan 2020 09:15:48 -0500
+        id S1729729AbgA1OQK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 28 Jan 2020 09:16:10 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 715472070E;
-        Tue, 28 Jan 2020 14:15:47 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id DB8622468E;
+        Tue, 28 Jan 2020 14:16:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1580220947;
-        bh=SDqW5Iph+lI9dhyYY8ABmTB0TCq8uR/gTZCPBN8GEXo=;
+        s=default; t=1580220970;
+        bh=BpwmAvZ1JO0E7rs6YrQFj7My2ZAGpx9o6wDXseEp+Oo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=cR/iYU5fo3X5f80YzNJerjo31WnUquHVGcDYzRYZAkMF9sFHLPRJEQ4hXRUTEnWrh
-         V7f7N4hcPwYbiQ+vroZeY3sn+KMSj9SdaISywuqZuutHrakSagDTFUcknEZGXzzM/P
-         y/vQ6sEhqDcQZ3bqalk8SByE1gCx43Hq/ry9v2FI=
+        b=I/WngtWVF4lz0GF+URe8flb7kxSFzs1iuX5uWN7ASnLYNzukBqukMoFUCPzQZnOK0
+         V7BEpS/q46ILaiH4jqVoSpKXZhC9yiM15kbzW0hbR6irv4tS/XeQjZqh+wBARISdOD
+         PXpjcrwj3/vzXAJfmpBC/ULmvzGPTTdCp/il0P0s=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Yangtao Li <tiny.windzz@gmail.com>,
         Stephen Boyd <sboyd@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 027/271] clk: qoriq: fix refcount leak in clockgen_init()
-Date:   Tue, 28 Jan 2020 15:02:56 +0100
-Message-Id: <20200128135854.697426763@linuxfoundation.org>
+Subject: [PATCH 4.9 029/271] clk: samsung: exynos4: fix refcount leak in exynos4_get_xom()
+Date:   Tue, 28 Jan 2020 15:02:58 +0100
+Message-Id: <20200128135854.850009059@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
 In-Reply-To: <20200128135852.449088278@linuxfoundation.org>
 References: <20200128135852.449088278@linuxfoundation.org>
@@ -46,32 +46,32 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Yangtao Li <tiny.windzz@gmail.com>
 
-[ Upstream commit 70af6c5b5270e8101f318c4b69cc98a726edfab9 ]
+[ Upstream commit cee82eb9532090cd1dc953e845d71f9b1445c84e ]
 
 The of_find_compatible_node() returns a node pointer with refcount
 incremented, but there is the lack of use of the of_node_put() when
 done. Add the missing of_node_put() to release the refcount.
 
 Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
-Fixes: 0dfc86b3173f ("clk: qoriq: Move chip-specific knowledge into driver")
+Fixes: e062b571777f ("clk: exynos4: register clocks using common clock framework")
 Signed-off-by: Stephen Boyd <sboyd@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/clk/clk-qoriq.c | 1 +
+ drivers/clk/samsung/clk-exynos4.c | 1 +
  1 file changed, 1 insertion(+)
 
-diff --git a/drivers/clk/clk-qoriq.c b/drivers/clk/clk-qoriq.c
-index cdce49f6476aa..65876ff6df411 100644
---- a/drivers/clk/clk-qoriq.c
-+++ b/drivers/clk/clk-qoriq.c
-@@ -1245,6 +1245,7 @@ static void __init clockgen_init(struct device_node *np)
- 				pr_err("%s: Couldn't map %s regs\n", __func__,
- 				       guts->full_name);
- 			}
-+			of_node_put(guts);
- 		}
+diff --git a/drivers/clk/samsung/clk-exynos4.c b/drivers/clk/samsung/clk-exynos4.c
+index faab9b31baf5b..91f9b79e39411 100644
+--- a/drivers/clk/samsung/clk-exynos4.c
++++ b/drivers/clk/samsung/clk-exynos4.c
+@@ -1225,6 +1225,7 @@ static unsigned long __init exynos4_get_xom(void)
+ 			xom = readl(chipid_base + 8);
  
+ 		iounmap(chipid_base);
++		of_node_put(np);
  	}
+ 
+ 	return xom;
 -- 
 2.20.1
 
