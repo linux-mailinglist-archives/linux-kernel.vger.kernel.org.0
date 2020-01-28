@@ -2,36 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 27D8514BAF8
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Jan 2020 15:43:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0F84A14BB02
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Jan 2020 15:43:07 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729649AbgA1ONP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 28 Jan 2020 09:13:15 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34664 "EHLO mail.kernel.org"
+        id S1730016AbgA1OmZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 28 Jan 2020 09:42:25 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34830 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729624AbgA1ONG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 Jan 2020 09:13:06 -0500
+        id S1729207AbgA1ONO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 28 Jan 2020 09:13:14 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C405520678;
-        Tue, 28 Jan 2020 14:13:05 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 388C920678;
+        Tue, 28 Jan 2020 14:13:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1580220786;
-        bh=sD5JA99T2jbDhqjq/2YkM6MoGEkyglXfYER3WHOlp9k=;
+        s=default; t=1580220793;
+        bh=/VLrlyOP3aW7VmKKpylXx4uG78qDbxT43JAHOyjHMBg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=K3AivzzyGD98xWT2LKK/njyUC8JmR9+PKIa0+GuMIAtf7z+bUZ3ohqhf5Zmg1c+BZ
-         baCCyuEcEvDk6MB9s+JJbxquKRNbf70+nhUtSDX7eLGUF9nHlvaTddxZvLTaGjZJ+B
-         MucM459zqrtPf4Wn+5nRW3n9JkLFIHG7vctqsmJ4=
+        b=ZGV3xDDnklH8gVCjpL531IohZ1eAFzKkXMJwLMSR27bf87gItKhm2TnP6BaQ5Hv2w
+         snaTkb7LexpGI9wkz3LN/65LvjAZVvOrATkolsfNamnGoMV/5cGO5ajc2x2zEEfT7W
+         2PjHWZpntbYDgfUW9eTwnsTQV7Jl0iQlMwiseytM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Eric Biggers <ebiggers@google.com>,
-        Jakub Kicinski <jakub.kicinski@netronome.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.4 145/183] llc: fix sk_buff refcounting in llc_conn_state_process()
-Date:   Tue, 28 Jan 2020 15:06:04 +0100
-Message-Id: <20200128135844.233791933@linuxfoundation.org>
+        stable@vger.kernel.org, stable@vger.kernel,
+        Robin Gong <yibin.gong@nxp.com>,
+        Jurgen Lambrecht <J.Lambrecht@TELEVIC.com>,
+        Vinod Koul <vkoul@kernel.org>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.4 148/183] dmaengine: imx-sdma: fix size check for sdma script_number
+Date:   Tue, 28 Jan 2020 15:06:07 +0100
+Message-Id: <20200128135844.521185059@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
 In-Reply-To: <20200128135829.486060649@linuxfoundation.org>
 References: <20200128135829.486060649@linuxfoundation.org>
@@ -44,123 +45,71 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Eric Biggers <ebiggers@google.com>
+From: Robin Gong <yibin.gong@nxp.com>
 
-[ Upstream commit 36453c852816f19947ca482a595dffdd2efa4965 ]
+[ Upstream commit bd73dfabdda280fc5f05bdec79b6721b4b2f035f ]
 
-If llc_conn_state_process() sees that llc_conn_service() put the skb on
-a list, it will drop one fewer references to it.  This is wrong because
-the current behavior is that llc_conn_service() never consumes a
-reference to the skb.
+Illegal memory will be touch if SDMA_SCRIPT_ADDRS_ARRAY_SIZE_V3
+(41) exceed the size of structure sdma_script_start_addrs(40),
+thus cause memory corrupt such as slob block header so that kernel
+trap into while() loop forever in slob_free(). Please refer to below
+code piece in imx-sdma.c:
+for (i = 0; i < sdma->script_number; i++)
+	if (addr_arr[i] > 0)
+		saddr_arr[i] = addr_arr[i]; /* memory corrupt here */
+That issue was brought by commit a572460be9cf ("dmaengine: imx-sdma: Add
+support for version 3 firmware") because SDMA_SCRIPT_ADDRS_ARRAY_SIZE_V3
+(38->41 3 scripts added) not align with script number added in
+sdma_script_start_addrs(2 scripts).
 
-The code also makes the number of skb references being dropped
-conditional on which of ind_prim and cfm_prim are nonzero, yet neither
-of these affects how many references are *acquired*.  So there is extra
-code that tries to fix this up by sometimes taking another reference.
-
-Remove the unnecessary/broken refcounting logic and instead just add an
-skb_get() before the only two places where an extra reference is
-actually consumed.
-
-Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
-Signed-off-by: Eric Biggers <ebiggers@google.com>
-Signed-off-by: Jakub Kicinski <jakub.kicinski@netronome.com>
+Fixes: a572460be9cf ("dmaengine: imx-sdma: Add support for version 3 firmware")
+Cc: stable@vger.kernel
+Link: https://www.spinics.net/lists/arm-kernel/msg754895.html
+Signed-off-by: Robin Gong <yibin.gong@nxp.com>
+Reported-by: Jurgen Lambrecht <J.Lambrecht@TELEVIC.com>
+Link: https://lore.kernel.org/r/1569347584-3478-1-git-send-email-yibin.gong@nxp.com
+[vkoul: update the patch title]
+Signed-off-by: Vinod Koul <vkoul@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/llc/llc_conn.c | 33 ++++++---------------------------
- 1 file changed, 6 insertions(+), 27 deletions(-)
+ drivers/dma/imx-sdma.c                     | 8 ++++++++
+ include/linux/platform_data/dma-imx-sdma.h | 3 +++
+ 2 files changed, 11 insertions(+)
 
-diff --git a/net/llc/llc_conn.c b/net/llc/llc_conn.c
-index 5d653f5261c55..3b002ab68b290 100644
---- a/net/llc/llc_conn.c
-+++ b/net/llc/llc_conn.c
-@@ -64,12 +64,6 @@ int llc_conn_state_process(struct sock *sk, struct sk_buff *skb)
- 	struct llc_sock *llc = llc_sk(skb->sk);
- 	struct llc_conn_state_ev *ev = llc_conn_ev(skb);
+diff --git a/drivers/dma/imx-sdma.c b/drivers/dma/imx-sdma.c
+index dd97dbf6618cd..1dc06e0e890f4 100644
+--- a/drivers/dma/imx-sdma.c
++++ b/drivers/dma/imx-sdma.c
+@@ -1411,6 +1411,14 @@ static void sdma_add_scripts(struct sdma_engine *sdma,
+ 	if (!sdma->script_number)
+ 		sdma->script_number = SDMA_SCRIPT_ADDRS_ARRAY_SIZE_V1;
  
--	/*
--	 * We have to hold the skb, because llc_conn_service will kfree it in
--	 * the sending path and we need to look at the skb->cb, where we encode
--	 * llc_conn_state_ev.
--	 */
--	skb_get(skb);
- 	ev->ind_prim = ev->cfm_prim = 0;
- 	/*
- 	 * Send event to state machine
-@@ -77,21 +71,12 @@ int llc_conn_state_process(struct sock *sk, struct sk_buff *skb)
- 	rc = llc_conn_service(skb->sk, skb);
- 	if (unlikely(rc != 0)) {
- 		printk(KERN_ERR "%s: llc_conn_service failed\n", __func__);
--		goto out_kfree_skb;
--	}
--
--	if (unlikely(!ev->ind_prim && !ev->cfm_prim)) {
--		/* indicate or confirm not required */
--		if (!skb->next)
--			goto out_kfree_skb;
- 		goto out_skb_put;
- 	}
++	if (sdma->script_number > sizeof(struct sdma_script_start_addrs)
++				  / sizeof(s32)) {
++		dev_err(sdma->dev,
++			"SDMA script number %d not match with firmware.\n",
++			sdma->script_number);
++		return;
++	}
++
+ 	for (i = 0; i < sdma->script_number; i++)
+ 		if (addr_arr[i] > 0)
+ 			saddr_arr[i] = addr_arr[i];
+diff --git a/include/linux/platform_data/dma-imx-sdma.h b/include/linux/platform_data/dma-imx-sdma.h
+index 2d08816720f6d..5bb0a119f39a3 100644
+--- a/include/linux/platform_data/dma-imx-sdma.h
++++ b/include/linux/platform_data/dma-imx-sdma.h
+@@ -50,7 +50,10 @@ struct sdma_script_start_addrs {
+ 	/* End of v2 array */
+ 	s32 zcanfd_2_mcu_addr;
+ 	s32 zqspi_2_mcu_addr;
++	s32 mcu_2_ecspi_addr;
+ 	/* End of v3 array */
++	s32 mcu_2_zqspi_addr;
++	/* End of v4 array */
+ };
  
--	if (unlikely(ev->ind_prim && ev->cfm_prim)) /* Paranoia */
--		skb_get(skb);
--
- 	switch (ev->ind_prim) {
- 	case LLC_DATA_PRIM:
-+		skb_get(skb);
- 		llc_save_primitive(sk, skb, LLC_DATA_PRIM);
- 		if (unlikely(sock_queue_rcv_skb(sk, skb))) {
- 			/*
-@@ -108,6 +93,7 @@ int llc_conn_state_process(struct sock *sk, struct sk_buff *skb)
- 		 * skb->sk pointing to the newly created struct sock in
- 		 * llc_conn_handler. -acme
- 		 */
-+		skb_get(skb);
- 		skb_queue_tail(&sk->sk_receive_queue, skb);
- 		sk->sk_state_change(sk);
- 		break;
-@@ -123,7 +109,6 @@ int llc_conn_state_process(struct sock *sk, struct sk_buff *skb)
- 				sk->sk_state_change(sk);
- 			}
- 		}
--		kfree_skb(skb);
- 		sock_put(sk);
- 		break;
- 	case LLC_RESET_PRIM:
-@@ -132,14 +117,11 @@ int llc_conn_state_process(struct sock *sk, struct sk_buff *skb)
- 		 * RESET is not being notified to upper layers for now
- 		 */
- 		printk(KERN_INFO "%s: received a reset ind!\n", __func__);
--		kfree_skb(skb);
- 		break;
- 	default:
--		if (ev->ind_prim) {
-+		if (ev->ind_prim)
- 			printk(KERN_INFO "%s: received unknown %d prim!\n",
- 				__func__, ev->ind_prim);
--			kfree_skb(skb);
--		}
- 		/* No indication */
- 		break;
- 	}
-@@ -181,15 +163,12 @@ int llc_conn_state_process(struct sock *sk, struct sk_buff *skb)
- 		printk(KERN_INFO "%s: received a reset conf!\n", __func__);
- 		break;
- 	default:
--		if (ev->cfm_prim) {
-+		if (ev->cfm_prim)
- 			printk(KERN_INFO "%s: received unknown %d prim!\n",
- 					__func__, ev->cfm_prim);
--			break;
--		}
--		goto out_skb_put; /* No confirmation */
-+		/* No confirmation */
-+		break;
- 	}
--out_kfree_skb:
--	kfree_skb(skb);
- out_skb_put:
- 	kfree_skb(skb);
- 	return rc;
+ /**
 -- 
 2.20.1
 
