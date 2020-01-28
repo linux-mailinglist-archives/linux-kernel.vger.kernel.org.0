@@ -2,37 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A7A8614BBAA
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Jan 2020 15:49:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1648B14BBAD
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Jan 2020 15:49:43 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726182AbgA1OBf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 28 Jan 2020 09:01:35 -0500
-Received: from mail.kernel.org ([198.145.29.99]:47622 "EHLO mail.kernel.org"
+        id S1727498AbgA1OBk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 28 Jan 2020 09:01:40 -0500
+Received: from mail.kernel.org ([198.145.29.99]:47708 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727468AbgA1OBc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 Jan 2020 09:01:32 -0500
+        id S1727164AbgA1OBh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 28 Jan 2020 09:01:37 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 78BF6205F4;
-        Tue, 28 Jan 2020 14:01:31 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id AF22D205F4;
+        Tue, 28 Jan 2020 14:01:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1580220091;
-        bh=l+s3jAlkmBILkB9oTKFVMq390ksNdWRrM2SzmM0zX1U=;
+        s=default; t=1580220097;
+        bh=i9hNblF3nTcbkxYRaheT+L8fzmM/LUqzgDjnFimAaDE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=pJjbLEC3JxWZsQ4lVyo0DBNUbNukFlw0ae2LBMXX5Vs4ULYxlt/Usk6RqmWyUOQLU
-         SA+bJm3Zd76K8iox/MdN6aXLPyMieoZsQTUi5Q+veUWzfdkOOBzJVSJ0swwJ/PaHwC
-         OnA9B3I6+cY8alGwVU/UBGoh7ss8jrPmZI9fhK64=
+        b=1ZvRgM+LIzg8Xd2STWEl9SsSSZRwUGd7yo8c3fo3LOq22lfae/TQ4tnAAVYxuHHqR
+         xN6GdpYxLqvsOcv7ZWzhFCMNDwy7RrdDPfZRbLEL57ry0TrufmrnYlK9S6MED+Y/ni
+         LVLL9AcKeQ92KOD2FeeHXeRVUuap3lLthX2PYcVo=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        James Hughes <james.hughes@raspberrypi.org>,
+        stable@vger.kernel.org, Wen Yang <wenyang@linux.alibaba.com>,
         Eric Dumazet <edumazet@google.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 5.4 014/104] net: usb: lan78xx: Add .ndo_features_check
-Date:   Tue, 28 Jan 2020 14:59:35 +0100
-Message-Id: <20200128135819.209454935@linuxfoundation.org>
+        "David S. Miller" <davem@davemloft.net>,
+        Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>,
+        Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>,
+        netdev@vger.kernel.org
+Subject: [PATCH 5.4 016/104] tcp_bbr: improve arithmetic division in bbr_update_bw()
+Date:   Tue, 28 Jan 2020 14:59:37 +0100
+Message-Id: <20200128135819.488809136@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
 In-Reply-To: <20200128135817.238524998@linuxfoundation.org>
 References: <20200128135817.238524998@linuxfoundation.org>
@@ -45,62 +47,39 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: James Hughes <james.hughes@raspberrypi.org>
+From: Wen Yang <wenyang@linux.alibaba.com>
 
-[ Upstream commit ce896476c65d72b4b99fa09c2f33436b4198f034 ]
+[ Upstream commit 5b2f1f3070b6447b76174ea8bfb7390dc6253ebd ]
 
-As reported by Eric Dumazet, there are still some outstanding
-cases where the driver does not handle TSO correctly when skb's
-are over a certain size. Most cases have been fixed, this patch
-should ensure that forwarded SKB's that are greater than
-MAX_SINGLE_PACKET_SIZE - TX_OVERHEAD are software segmented
-and handled correctly.
+do_div() does a 64-by-32 division. Use div64_long() instead of it
+if the divisor is long, to avoid truncation to 32-bit.
+And as a nice side effect also cleans up the function a bit.
 
-Signed-off-by: James Hughes <james.hughes@raspberrypi.org>
-Reviewed-by: Eric Dumazet <edumazet@google.com>
+Signed-off-by: Wen Yang <wenyang@linux.alibaba.com>
+Cc: Eric Dumazet <edumazet@google.com>
+Cc: "David S. Miller" <davem@davemloft.net>
+Cc: Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>
+Cc: Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>
+Cc: netdev@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+Signed-off-by: Eric Dumazet <edumazet@google.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/usb/lan78xx.c |   15 +++++++++++++++
- 1 file changed, 15 insertions(+)
+ net/ipv4/tcp_bbr.c |    3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
---- a/drivers/net/usb/lan78xx.c
-+++ b/drivers/net/usb/lan78xx.c
-@@ -20,6 +20,7 @@
- #include <linux/mdio.h>
- #include <linux/phy.h>
- #include <net/ip6_checksum.h>
-+#include <net/vxlan.h>
- #include <linux/interrupt.h>
- #include <linux/irqdomain.h>
- #include <linux/irq.h>
-@@ -3668,6 +3669,19 @@ static void lan78xx_tx_timeout(struct ne
- 	tasklet_schedule(&dev->bh);
- }
+--- a/net/ipv4/tcp_bbr.c
++++ b/net/ipv4/tcp_bbr.c
+@@ -779,8 +779,7 @@ static void bbr_update_bw(struct sock *s
+ 	 * bandwidth sample. Delivered is in packets and interval_us in uS and
+ 	 * ratio will be <<1 for most connections. So delivered is first scaled.
+ 	 */
+-	bw = (u64)rs->delivered * BW_UNIT;
+-	do_div(bw, rs->interval_us);
++	bw = div64_long((u64)rs->delivered * BW_UNIT, rs->interval_us);
  
-+static netdev_features_t lan78xx_features_check(struct sk_buff *skb,
-+						struct net_device *netdev,
-+						netdev_features_t features)
-+{
-+	if (skb->len + TX_OVERHEAD > MAX_SINGLE_PACKET_SIZE)
-+		features &= ~NETIF_F_GSO_MASK;
-+
-+	features = vlan_features_check(skb, features);
-+	features = vxlan_features_check(skb, features);
-+
-+	return features;
-+}
-+
- static const struct net_device_ops lan78xx_netdev_ops = {
- 	.ndo_open		= lan78xx_open,
- 	.ndo_stop		= lan78xx_stop,
-@@ -3681,6 +3695,7 @@ static const struct net_device_ops lan78
- 	.ndo_set_features	= lan78xx_set_features,
- 	.ndo_vlan_rx_add_vid	= lan78xx_vlan_rx_add_vid,
- 	.ndo_vlan_rx_kill_vid	= lan78xx_vlan_rx_kill_vid,
-+	.ndo_features_check	= lan78xx_features_check,
- };
- 
- static void lan78xx_stat_monitor(struct timer_list *t)
+ 	/* If this sample is application-limited, it is likely to have a very
+ 	 * low delivered count that represents application behavior rather than
 
 
