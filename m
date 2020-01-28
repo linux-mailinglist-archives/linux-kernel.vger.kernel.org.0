@@ -2,78 +2,88 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EF10F14B97D
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Jan 2020 15:33:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3923C14BC30
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Jan 2020 15:51:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387628AbgA1Oc4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 28 Jan 2020 09:32:56 -0500
-Received: from mx2.suse.de ([195.135.220.15]:53960 "EHLO mx2.suse.de"
+        id S1726608AbgA1N6p (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 28 Jan 2020 08:58:45 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43472 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732916AbgA1Ocw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 Jan 2020 09:32:52 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id 40FF1ACF2;
-        Tue, 28 Jan 2020 14:32:51 +0000 (UTC)
-Date:   Tue, 28 Jan 2020 14:53:47 +0100
-From:   Petr Tesarik <ptesarik@suse.cz>
-To:     Al Viro <viro@zeniv.linux.org.uk>
-Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] fs/Kconfig: default to no mandatory locking
-Message-ID: <20200128145347.5e4fc5db@ezekiel.suse.cz>
-Organization: SUSE Linux, s.r.o.
-X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-suse-linux-gnu)
+        id S1726467AbgA1N6i (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 28 Jan 2020 08:58:38 -0500
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 85FEF24683;
+        Tue, 28 Jan 2020 13:58:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1580219918;
+        bh=bf8pkmbJpEHqDv7s3fu/qvPCTiz3zP6jWmeERtoHOZM=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=qtm3rtp6b+VcOjIl5Ni0rx0ESDWZnx8cE8wK3WDbAj1TxOfFWE0QG2MvI4cEC/rj4
+         y/Kh/oQNXcg9yULyQomKE0TDRQn5Qd1+xsgDLzecnLI0gpkz4rSPZQxeGPOWa2D7hE
+         17g3YHvV34m9DfH1vJuKw5umA/bfa9wyKPzWmogs=
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org,
+        Ilja Van Sprundel <ivansprundel@ioactive.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.14 05/46] net: cxgb3_main: Add CAP_NET_ADMIN check to CHELSIO_GET_MEM
+Date:   Tue, 28 Jan 2020 14:57:39 +0100
+Message-Id: <20200128135750.777558206@linuxfoundation.org>
+X-Mailer: git-send-email 2.25.0
+In-Reply-To: <20200128135749.822297911@linuxfoundation.org>
+References: <20200128135749.822297911@linuxfoundation.org>
+User-Agent: quilt/0.66
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/xwm0zxcQyAV=8Dm=KND=wlp"; protocol="application/pgp-signature"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/xwm0zxcQyAV=8Dm=KND=wlp
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+From: Michael Ellerman <mpe@ellerman.id.au>
 
-If the help text says this code is dead, the option itself should
-not default to y.
+[ Upstream commit 3546d8f1bbe992488ed91592cf6bf76e7114791a =
 
-Signed-off-by: Petr Tesarik <ptesarik@suse.com>
+The cxgb3 driver for "Chelsio T3-based gigabit and 10Gb Ethernet
+adapters" implements a custom ioctl as SIOCCHIOCTL/SIOCDEVPRIVATE in
+cxgb_extension_ioctl().
+
+One of the subcommands of the ioctl is CHELSIO_GET_MEM, which appears
+to read memory directly out of the adapter and return it to userspace.
+It's not entirely clear what the contents of the adapter memory
+contains, but the assumption is that it shouldn't be accessible to all
+users.
+
+So add a CAP_NET_ADMIN check to the CHELSIO_GET_MEM case. Put it after
+the is_offload() check, which matches two of the other subcommands in
+the same function which also check for is_offload() and CAP_NET_ADMIN.
+
+Found by Ilja by code inspection, not tested as I don't have the
+required hardware.
+
+Reported-by: Ilja Van Sprundel <ivansprundel@ioactive.com>
+Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- fs/Kconfig | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/net/ethernet/chelsio/cxgb3/cxgb3_main.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/fs/Kconfig b/fs/Kconfig
-index 7b623e9fc1b0..fc60b8bbebc2 100644
---- a/fs/Kconfig
-+++ b/fs/Kconfig
-@@ -103,7 +103,7 @@ config FILE_LOCKING
- config MANDATORY_FILE_LOCKING
- 	bool "Enable Mandatory file locking"
- 	depends on FILE_LOCKING
--	default y
-+	default n
- 	help
- 	  This option enables files appropriately marked files on appropriely
- 	  mounted filesystems to support mandatory locking.
---=20
-2.16.4
+--- a/drivers/net/ethernet/chelsio/cxgb3/cxgb3_main.c
++++ b/drivers/net/ethernet/chelsio/cxgb3/cxgb3_main.c
+@@ -2449,6 +2449,8 @@ static int cxgb_extension_ioctl(struct n
+ 
+ 		if (!is_offload(adapter))
+ 			return -EOPNOTSUPP;
++		if (!capable(CAP_NET_ADMIN))
++			return -EPERM;
+ 		if (!(adapter->flags & FULL_INIT_DONE))
+ 			return -EIO;	/* need the memory controllers */
+ 		if (copy_from_user(&t, useraddr, sizeof(t)))
 
 
---Sig_/xwm0zxcQyAV=8Dm=KND=wlp
-Content-Type: application/pgp-signature
-Content-Description: Digitální podpis OpenPGP
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEEHl2YIZkIo5VO2MxYqlA7ya4PR6cFAl4wPOsACgkQqlA7ya4P
-R6dv8ggAjkoehufY1utaFFX3CabNFkNCMx/T5zH/RQ6yheefCUP9M4gveQo9sttu
-eV/km+EpZzPK4KH7h61rbG+OTtWXDvjsmKtXp4F4zBQm9sC2KzlStvgVLOzirQjh
-1oPSkDC4QSSQop7ZTAUvSF6gnU5HbZch9HiD6aLfUWt7lm2qPGf/vfCVINCLBTCj
-BIMhiTJBbcwT/AbADoHVyIt1S/GbslFay5RxD00g9Gv4zLY8B1EHlof8yx+URdA7
-1Am7oKp2/0mpwcmzPUZyyxCKkzghN9mDZVQNzh1X1XXQkrYYjRVVck/0+oGUao3L
-uqeZZOvgaoFQTcjxyqGfJNJGBG/nfA==
-=d6jB
------END PGP SIGNATURE-----
-
---Sig_/xwm0zxcQyAV=8Dm=KND=wlp--
