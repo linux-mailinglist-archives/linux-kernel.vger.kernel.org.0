@@ -2,168 +2,335 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 06DB714BA19
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Jan 2020 15:37:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 715E114BA79
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Jan 2020 15:39:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732678AbgA1Ofq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 28 Jan 2020 09:35:46 -0500
-Received: from mail-eopbgr30083.outbound.protection.outlook.com ([40.107.3.83]:55641
-        "EHLO EUR03-AM5-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1731737AbgA1Ofp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 Jan 2020 09:35:45 -0500
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=niaNENZxhKCfe3dgV/jlpMUUgcS8PZ1lYdkxqJfkhhV5jdjt1p5tnrQUKGAogtKTPFj/IMCU1OJp9sP5LkztS9vyVc0xhNMdnJjyAeLIMnm7QE63Qg9KFJcqpyWPcX17mZdHt+qjGK+DUS4oktyk2icYdTT+f7BtvVPWL6tBusx9pIxYyA/RRdcFEet6Kbni1fc+HiC74tS+ClViU9uSyMQECShFqVadYPqoGqjYFRENQ93+lTMsEIkxQtiXFIdl73jBpchShwKod2kIDxOFi/RpYe2SqEl55rRDuUS01fOX7xgR5QParkuOHlN0y6eFC818a1Gs1WaQyqSl3LSR3Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=8FI25x3oaRWs1en9uz1ETd6l5xdxCixn30IJA0XIHi8=;
- b=exN14uVXpL+Ce6HsV5k2B+8Fdd3HQ/NxNFdNH6u009a9yK/mwcMMdUknHpI5ZHA2QXP3rAfYTUPNal1EPNmsvbAf5KLBv78y23H9TDu72KJ1jLzbvIw6UhhpucueGDIfrvd/fCFdFmoj31xoZ+XC2bxY/WhDBbNspEvnv7HaN+LkW8JZKL6sTLQi3FzaxZlTRkd6pgpjeiyWhmO2AwKQ0e7jheg3P0cxlqk0QC6e1EAm+2ZwhPz9MhDqedz/OyB93xEEvhVmSp6tkN3dtDPcaGlGmbh1IvtLkGBOdLiCcgMmrNW7Apa3bu8ZoHlfDvDmGfXrJl+6CN5SHOE6CE3tqQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=8FI25x3oaRWs1en9uz1ETd6l5xdxCixn30IJA0XIHi8=;
- b=IR8j1bQOMYxTxNybq8e8RnOPd6HRPR3vBPSvPtO88qbfeZgWFHKjHx0qqbtGUvwqftg9/rmEBEpjKKl5ZwaJTQK3OFT8zBwjYB45aWznYfP9anp1KZ55PjU4UNozeTfWIlNk+rs0dtCoZiNCguewDXVV8/qA6mxOk138ONo7v6A=
-Received: from VI1PR04MB7023.eurprd04.prod.outlook.com (10.186.159.144) by
- VI1PR04MB5599.eurprd04.prod.outlook.com (20.178.125.147) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2665.23; Tue, 28 Jan 2020 14:35:42 +0000
-Received: from VI1PR04MB7023.eurprd04.prod.outlook.com
- ([fe80::58c5:f02f:2211:4953]) by VI1PR04MB7023.eurprd04.prod.outlook.com
- ([fe80::58c5:f02f:2211:4953%7]) with mapi id 15.20.2665.026; Tue, 28 Jan 2020
- 14:35:42 +0000
-From:   Leonard Crestez <leonard.crestez@nxp.com>
-To:     Peng Fan <peng.fan@nxp.com>,
-        "shawnguo@kernel.org" <shawnguo@kernel.org>,
-        "arnd@arndb.de" <arnd@arndb.de>
-CC:     "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
-        "festevam@gmail.com" <festevam@gmail.com>,
-        "kernel@pengutronix.de" <kernel@pengutronix.de>,
-        dl-linux-imx <linux-imx@nxp.com>,
-        "olof@lixom.net" <olof@lixom.net>,
-        Aisheng Dong <aisheng.dong@nxp.com>,
-        Abel Vesa <abel.vesa@nxp.com>,
-        "krzk@kernel.org" <krzk@kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH V3 2/2] soc: imx: increase build coverage for imx8m soc
- driver
-Thread-Topic: [PATCH V3 2/2] soc: imx: increase build coverage for imx8m soc
- driver
-Thread-Index: AQHV1aCjGc6WVJY+NES5jeQSOsfpxg==
-Date:   Tue, 28 Jan 2020 14:35:41 +0000
-Message-ID: <VI1PR04MB70231AC9140BD13FD0539678EE0A0@VI1PR04MB7023.eurprd04.prod.outlook.com>
-References: <1580191098-5886-1-git-send-email-peng.fan@nxp.com>
- <1580191098-5886-3-git-send-email-peng.fan@nxp.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=leonard.crestez@nxp.com; 
-x-originating-ip: [89.37.124.34]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-ht: Tenant
-x-ms-office365-filtering-correlation-id: bc1f9f5e-cf20-4698-d8fe-08d7a3ff5a29
-x-ms-traffictypediagnostic: VI1PR04MB5599:|VI1PR04MB5599:
-x-ms-exchange-transport-forked: True
-x-microsoft-antispam-prvs: <VI1PR04MB5599DF16EB1921747573E155EE0A0@VI1PR04MB5599.eurprd04.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:6430;
-x-forefront-prvs: 029651C7A1
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(396003)(136003)(39860400002)(366004)(376002)(346002)(199004)(189003)(8676002)(81166006)(55016002)(5660300002)(66556008)(186003)(8936002)(66476007)(26005)(76116006)(66946007)(64756008)(110136005)(478600001)(9686003)(316002)(66446008)(86362001)(44832011)(54906003)(91956017)(7696005)(53546011)(33656002)(71200400001)(6506007)(4326008)(2906002)(52536014)(81156014)(32563001);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR04MB5599;H:VI1PR04MB7023.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: WO86M7YQQ87T5V2oMKp0PrDRqEX/VGGmmubYLqSy/Ouc2g43xJq0UvihcwHfNFx/b/7kjNFl7p/C1NeAoL/nvk4tA4sKH1NpSCGSlv6q4FiTdRhi9QWomHoPMf4eQyzgtD22zgS8LfLzzHb+8VrBoXd2Gfd2r+BtdnvNVHjsp1PvssfOOLXBRr70clw+epNm+woSnyla5gbeifM3eNJN9JNZYA+sg8ajsGuYU4RbQdwORhGbgAGwjK5hmdQ/XxQD7A1GCR/eKAfoEpLPUWcATXVeRSnInZIYqqSBYnh1xh4C7mr4Q4CpJWJhUtGuXQRMj+dLuvO9DWWtjLHY1rJM0xoh85rtyMKJ0d5rywm2HnMG6NpknD+POAZKWpPjAdTtIQMQ9FeNzY3zSkslkOwJkVmDarJOgJLAUXaTtKIjjhHVNOYovUCgCXGh8bTFHtmF8VvcDwpY3NHvLmaCUkUdQT28b6XWm80259QQ/s0UPeUHfmX5oN+7lAXv5QLGI+iP
-x-ms-exchange-antispam-messagedata: 6K6iGvB0I+H1chba2UnxmVZBdbsGYQlA3HQ+Bqbqt+UfFfi/l7sKY5RK6Uiy6yiFtxM1I7R+We5YX37yH681k5Tbdddu1KaE5v4t7/gcEOMoAMbwnACs01eT+Iswd4ip58G3M7WcTT8Fu6A9zKvE3A==
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        id S1731226AbgA1Oi5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 28 Jan 2020 09:38:57 -0500
+Received: from Galois.linutronix.de ([193.142.43.55]:49078 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729903AbgA1Oiz (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 28 Jan 2020 09:38:55 -0500
+Received: from p5b06da22.dip0.t-ipconnect.de ([91.6.218.34] helo=nanos.tec.linutronix.de)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tglx@linutronix.de>)
+        id 1iwS0v-0008IY-Nj; Tue, 28 Jan 2020 15:38:50 +0100
+Received: by nanos.tec.linutronix.de (Postfix, from userid 1000)
+        id D12F2101227; Tue, 28 Jan 2020 15:38:48 +0100 (CET)
+From:   Thomas Gleixner <tglx@linutronix.de>
+To:     Evan Green <evgreen@chromium.org>
+Cc:     Rajat Jain <rajatja@google.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        linux-pci <linux-pci@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        x86@kernel.org, Marc Zyngier <maz@kernel.org>
+Subject: Re: [PATCH v2] PCI/MSI: Avoid torn updates to MSI pairs
+In-Reply-To: <878slwmpu9.fsf@nanos.tec.linutronix.de>
+References: <20200117162444.v2.1.I9c7e72144ef639cc135ea33ef332852a6b33730f@changeid> <CACK8Z6Ft95qj4e_fsA32r_bcz2SsHOW1xxqZJt3_DBAJw=NMGA@mail.gmail.com> <CAE=gft6fKQWExW-=xjZGzXs30XohfpA5SKggvL2WtYXAHmzMew@mail.gmail.com> <87y2tytv5i.fsf@nanos.tec.linutronix.de> <87eevqkpgn.fsf@nanos.tec.linutronix.de> <CAE=gft6YiM5S1A7iJYJTd5zmaAa8=nhLE3B94JtWa+XW-qVSqQ@mail.gmail.com> <CAE=gft5xta4XCJtctWe=R3w=kVr598JCbk9VSRue04nzKAk3CQ@mail.gmail.com> <CAE=gft7MqQ3Mej5oCT=gw6ZLMSTHoSyMGOFz=-hae-eRZvXLxA@mail.gmail.com> <87d0b82a9o.fsf@nanos.tec.linutronix.de> <CAE=gft7C5HTmcTLsXqXbCtcYDeKG6bCJ0gmgwVNc0PDHLJ5y_A@mail.gmail.com> <878slwmpu9.fsf@nanos.tec.linutronix.de>
+Date:   Tue, 28 Jan 2020 15:38:48 +0100
+Message-ID: <87imkv63yf.fsf@nanos.tec.linutronix.de>
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: bc1f9f5e-cf20-4698-d8fe-08d7a3ff5a29
-X-MS-Exchange-CrossTenant-originalarrivaltime: 28 Jan 2020 14:35:41.9142
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: zWtMO3SEnmqZ3QGKtZDmmVApdcInF4P6zzFHf+daNdH3nvhYJPIzmoD/EEG6ct54Iw5vAXBTNw0FvO/4WQyxWw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR04MB5599
+Content-Type: text/plain
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 28.01.2020 08:03, Peng Fan wrote:=0A=
-> From: Peng Fan <peng.fan@nxp.com>=0A=
-> =0A=
-> The soc-imx8.c driver is actually for i.MX8M family, so rename it=0A=
-> to soc-imx8m.c.=0A=
-> =0A=
-> Use CONFIG_SOC_IMX8M as build gate, not CONFIG_ARCH_MXC, to control=0A=
-> whether build this driver, also make it possible for compile test.=0A=
-> =0A=
-> Default set it to y for ARCH_MXC && ARM64=0A=
-> =0A=
-> Signed-off-by: Peng Fan <peng.fan@nxp.com>=0A=
-=0A=
-Reviewed-by: Leonard Crestez <leonard.crestez@nxp.com>=0A=
-=0A=
-> ---=0A=
->   drivers/soc/Makefile                        | 2 +-=0A=
->   drivers/soc/imx/Kconfig                     | 9 +++++++++=0A=
->   drivers/soc/imx/Makefile                    | 2 +-=0A=
->   drivers/soc/imx/{soc-imx8.c =3D> soc-imx8m.c} | 0=0A=
->   4 files changed, 11 insertions(+), 2 deletions(-)=0A=
->   rename drivers/soc/imx/{soc-imx8.c =3D> soc-imx8m.c} (100%)=0A=
-> =0A=
-> diff --git a/drivers/soc/Makefile b/drivers/soc/Makefile=0A=
-> index 2ec355003524..614986cd1713 100644=0A=
-> --- a/drivers/soc/Makefile=0A=
-> +++ b/drivers/soc/Makefile=0A=
-> @@ -11,7 +11,7 @@ obj-$(CONFIG_ARCH_DOVE)		+=3D dove/=0A=
->   obj-$(CONFIG_MACH_DOVE)		+=3D dove/=0A=
->   obj-y				+=3D fsl/=0A=
->   obj-$(CONFIG_ARCH_GEMINI)	+=3D gemini/=0A=
-> -obj-$(CONFIG_ARCH_MXC)		+=3D imx/=0A=
-> +obj-y				+=3D imx/=0A=
->   obj-$(CONFIG_ARCH_IXP4XX)	+=3D ixp4xx/=0A=
->   obj-$(CONFIG_SOC_XWAY)		+=3D lantiq/=0A=
->   obj-y				+=3D mediatek/=0A=
-> diff --git a/drivers/soc/imx/Kconfig b/drivers/soc/imx/Kconfig=0A=
-> index 0281ef9a1800..70019cefa617 100644=0A=
-> --- a/drivers/soc/imx/Kconfig=0A=
-> +++ b/drivers/soc/imx/Kconfig=0A=
-> @@ -17,4 +17,13 @@ config IMX_SCU_SOC=0A=
->   	  Controller Unit SoC info module, it will provide the SoC info=0A=
->   	  like SoC family, ID and revision etc.=0A=
->   =0A=
-> +config SOC_IMX8M=0A=
-> +	bool "i.MX8M SoC family support"=0A=
-> +	depends on ARCH_MXC || COMPILE_TEST=0A=
-> +	default ARCH_MXC && ARM64=0A=
-> +	help=0A=
-> +	  If you say yes here you get support for the NXP i.MX8M family=0A=
-> +	  support, it will provide the SoC info like SoC family,=0A=
-> +	  ID and revision etc.=0A=
-> +=0A=
->   endmenu=0A=
-> diff --git a/drivers/soc/imx/Makefile b/drivers/soc/imx/Makefile=0A=
-> index cf9ca42ff739..103e2c93c342 100644=0A=
-> --- a/drivers/soc/imx/Makefile=0A=
-> +++ b/drivers/soc/imx/Makefile=0A=
-> @@ -1,5 +1,5 @@=0A=
->   # SPDX-License-Identifier: GPL-2.0-only=0A=
->   obj-$(CONFIG_HAVE_IMX_GPC) +=3D gpc.o=0A=
->   obj-$(CONFIG_IMX_GPCV2_PM_DOMAINS) +=3D gpcv2.o=0A=
-> -obj-$(CONFIG_ARCH_MXC) +=3D soc-imx8.o=0A=
-> +obj-$(CONFIG_SOC_IMX8M) +=3D soc-imx8m.o=0A=
->   obj-$(CONFIG_IMX_SCU_SOC) +=3D soc-imx-scu.o=0A=
-> diff --git a/drivers/soc/imx/soc-imx8.c b/drivers/soc/imx/soc-imx8m.c=0A=
-> similarity index 100%=0A=
-> rename from drivers/soc/imx/soc-imx8.c=0A=
-> rename to drivers/soc/imx/soc-imx8m.c=0A=
-=0A=
+Evan,
+
+Thomas Gleixner <tglx@linutronix.de> writes:
+> It's worthwhile, but that needs some deep thoughts about locking and
+> ordering plus the inevitable race conditions this creates. If it would
+> be trivial, I surely wouldn't have hacked up the retrigger mess.
+
+So after staring at it for a while, I came up with the patch below.
+
+Your idea of going through some well defined transition vector is just
+not feasible due to locking and life-time issues.
+
+I'm taking a similar but easier to handle approach.
+
+    1) Move the interrupt to the new vector on the old (local) CPU
+
+    2) Move it to the new CPU
+
+    3) Check if the new vector is pending on the local CPU. If yes
+       retrigger it on the new CPU.
+
+That might give a spurious interrupt if the new vector on the local CPU
+is in use. But as I said before this is nothing to worry about. If the
+affected device driver fails to handle that spurious interrupt then it
+is broken anyway.
+
+In theory we could teach the vector allocation logic to search for an
+unused pair of vectors on both CPUs, but the required code for that is
+hardly worth the trouble. In the end the situation that no pair is found
+has to be handled anyway. So rather than making this the corner case
+which is never tested and then leads to hard to debug issues, I prefer
+to make it more likely to happen.
+
+The patch is only lightly tested, but so far it survived.
+
+Thanks,
+
+        tglx
+
+8<----------------
+ arch/x86/include/asm/apic.h |    8 +++
+ arch/x86/kernel/apic/msi.c  |  115 ++++++++++++++++++++++++++++++++++++++++++--
+ include/linux/irq.h         |   18 ++++++
+ include/linux/irqdomain.h   |    7 ++
+ kernel/irq/debugfs.c        |    1 
+ kernel/irq/msi.c            |    5 +
+ 6 files changed, 150 insertions(+), 4 deletions(-)
+
+--- a/arch/x86/include/asm/apic.h
++++ b/arch/x86/include/asm/apic.h
+@@ -452,6 +452,14 @@ static inline void ack_APIC_irq(void)
+ 	apic_eoi();
+ }
+ 
++
++static inline bool lapic_vector_set_in_irr(unsigned int vector)
++{
++	u32 irr = apic_read(APIC_IRR + (vector / 32 * 0x10));
++
++	return !!(irr & (1U << (vector % 32)));
++}
++
+ static inline unsigned default_get_apic_id(unsigned long x)
+ {
+ 	unsigned int ver = GET_APIC_VERSION(apic_read(APIC_LVR));
+--- a/arch/x86/kernel/apic/msi.c
++++ b/arch/x86/kernel/apic/msi.c
+@@ -23,10 +23,8 @@
+ 
+ static struct irq_domain *msi_default_domain;
+ 
+-static void irq_msi_compose_msg(struct irq_data *data, struct msi_msg *msg)
++static void __irq_msi_compose_msg(struct irq_cfg *cfg, struct msi_msg *msg)
+ {
+-	struct irq_cfg *cfg = irqd_cfg(data);
+-
+ 	msg->address_hi = MSI_ADDR_BASE_HI;
+ 
+ 	if (x2apic_enabled())
+@@ -47,6 +45,114 @@ static void irq_msi_compose_msg(struct i
+ 		MSI_DATA_VECTOR(cfg->vector);
+ }
+ 
++static void irq_msi_compose_msg(struct irq_data *data, struct msi_msg *msg)
++{
++	__irq_msi_compose_msg(irqd_cfg(data), msg);
++}
++
++static void irq_msi_update_msg(struct irq_data *irqd, struct irq_cfg *cfg)
++{
++	struct msi_msg msg[2] = { [1] = { }, };
++
++	__irq_msi_compose_msg(cfg, msg);
++	irq_data_get_irq_chip(irqd)->irq_write_msi_msg(irqd, msg);
++}
++
++static int
++msi_set_affinity(struct irq_data *irqd, const struct cpumask *mask, bool force)
++{
++	struct irq_cfg old_cfg, *cfg = irqd_cfg(irqd);
++	struct irq_data *parent = irqd->parent_data;
++	unsigned int cpu;
++	int ret;
++
++	/* Save the current configuration */
++	cpu = cpumask_first(irq_data_get_effective_affinity_mask(irqd));
++	old_cfg = *cfg;
++
++	/* Allocate a new target vector */
++	ret = parent->chip->irq_set_affinity(parent, mask, force);
++	if (ret < 0 || ret == IRQ_SET_MASK_OK_DONE)
++		return ret;
++
++	/*
++	 * For non-maskable and non-remapped MSI interrupts the migration
++	 * to a different destination CPU and a different vector has to be
++	 * done careful to handle the possible stray interrupt which can be
++	 * caused by the non-atomic update of the address/data pair.
++	 *
++	 * Direct update is possible when:
++	 * - The MSI is maskable (remapped MSI does not use this code path)).
++	 *   The quirk bit is not set in this case.
++	 * - The new vector is the same as the old vector
++	 * - The old vector is MANAGED_IRQ_SHUTDOWN_VECTOR (interrupt starts up)
++	 * - The new destination CPU is the same as the old destination CPU
++	 */
++	if (!irqd_msi_nomask_quirk(irqd) ||
++	    cfg->vector == old_cfg.vector ||
++	    old_cfg.vector == MANAGED_IRQ_SHUTDOWN_VECTOR ||
++	    cfg->dest_apicid == old_cfg.dest_apicid) {
++		irq_msi_update_msg(irqd, cfg);
++		return ret;
++	}
++
++	/*
++	 * Paranoia: Validate that the interrupt target is the local
++	 * CPU.
++	 */
++	if (WARN_ON_ONCE(cpu != smp_processor_id())) {
++		irq_msi_update_msg(irqd, cfg);
++		return ret;
++	}
++
++	/*
++	 * Redirect the interrupt to the new vector on the current CPU
++	 * first. This might cause a spurious interrupt on this vector if
++	 * the device raises an interrupt right between this update and the
++	 * update to the final destination CPU.
++	 *
++	 * If the vector is in use then the installed device handler will
++	 * denote it as spurious which is no harm as this is a rare event
++	 * and interrupt handlers have to cope with spurious interrupts
++	 * anyway. If the vector is unused, then it is marked so it won't
++	 * trigger the 'No irq handler for vector' warning in do_IRQ().
++	 *
++	 * This requires to hold vector lock to prevent concurrent updates to
++	 * the affected vector.
++	 */
++	lock_vector_lock();
++
++	/*
++	 * Mark the new target vector on the local CPU if it is currently
++	 * unused. Reuse the VECTOR_RETRIGGERED state which is also used in
++	 * the CPU hotplug path for a similar purpose. This cannot be
++	 * undone here as the current CPU has interrupts disabled and
++	 * cannot handle the interrupt before the whole set_affinity()
++	 * section is done. In the CPU unplug case, the current CPU is
++	 * about to vanish and will not handle any interrupts anymore. The
++	 * vector is cleaned up when the CPU comes online again.
++	 */
++	if (IS_ERR_OR_NULL(this_cpu_read(vector_irq[cfg->vector])))
++		this_cpu_write(vector_irq[cfg->vector], VECTOR_RETRIGGERED);
++
++	/* Redirect it to the new vector on the local CPU temporarily */
++	old_cfg.vector = cfg->vector;
++	irq_msi_update_msg(irqd, &old_cfg);
++
++	/* Now transition it to the target CPU */
++	irq_msi_update_msg(irqd, cfg);
++
++	/*
++	 * All interrupts after this point are now targeted at the new
++	 * vector/CPU. Check whether the transition raced with a device
++	 * interrupt and is pending in the local APICs IRR.
++	 */
++	if (lapic_vector_set_in_irr(cfg->vector))
++		irq_data_get_irq_chip(irqd)->irq_retrigger(irqd);
++	unlock_vector_lock();
++	return ret;
++}
++
+ /*
+  * IRQ Chip for MSI PCI/PCI-X/PCI-Express Devices,
+  * which implement the MSI or MSI-X Capability Structure.
+@@ -58,6 +164,7 @@ static struct irq_chip pci_msi_controlle
+ 	.irq_ack		= irq_chip_ack_parent,
+ 	.irq_retrigger		= irq_chip_retrigger_hierarchy,
+ 	.irq_compose_msi_msg	= irq_msi_compose_msg,
++	.irq_set_affinity	= msi_set_affinity,
+ 	.flags			= IRQCHIP_SKIP_SET_WAKE,
+ };
+ 
+@@ -146,6 +253,8 @@ void __init arch_init_msi_domain(struct
+ 	}
+ 	if (!msi_default_domain)
+ 		pr_warn("failed to initialize irqdomain for MSI/MSI-x.\n");
++	else
++		msi_default_domain->flags |= IRQ_DOMAIN_MSI_NOMASK_QUIRK;
+ }
+ 
+ #ifdef CONFIG_IRQ_REMAP
+--- a/include/linux/irq.h
++++ b/include/linux/irq.h
+@@ -209,6 +209,8 @@ struct irq_data {
+  * IRQD_SINGLE_TARGET		- IRQ allows only a single affinity target
+  * IRQD_DEFAULT_TRIGGER_SET	- Expected trigger already been set
+  * IRQD_CAN_RESERVE		- Can use reservation mode
++ * IRQD_MSI_NOMASK_QUIRK	- Non-maskable MSI quirk for affinity change
++ *				  required
+  */
+ enum {
+ 	IRQD_TRIGGER_MASK		= 0xf,
+@@ -231,6 +233,7 @@ enum {
+ 	IRQD_SINGLE_TARGET		= (1 << 24),
+ 	IRQD_DEFAULT_TRIGGER_SET	= (1 << 25),
+ 	IRQD_CAN_RESERVE		= (1 << 26),
++	IRQD_MSI_NOMASK_QUIRK		= (1 << 27),
+ };
+ 
+ #define __irqd_to_state(d) ACCESS_PRIVATE((d)->common, state_use_accessors)
+@@ -390,6 +393,21 @@ static inline bool irqd_can_reserve(stru
+ 	return __irqd_to_state(d) & IRQD_CAN_RESERVE;
+ }
+ 
++static inline void irqd_set_msi_nomask_quirk(struct irq_data *d)
++{
++	__irqd_to_state(d) |= IRQD_MSI_NOMASK_QUIRK;
++}
++
++static inline void irqd_clr_msi_nomask_quirk(struct irq_data *d)
++{
++	__irqd_to_state(d) &= ~IRQD_MSI_NOMASK_QUIRK;
++}
++
++static inline bool irqd_msi_nomask_quirk(struct irq_data *d)
++{
++	return __irqd_to_state(d) & IRQD_MSI_NOMASK_QUIRK;
++}
++
+ #undef __irqd_to_state
+ 
+ static inline irq_hw_number_t irqd_to_hwirq(struct irq_data *d)
+--- a/include/linux/irqdomain.h
++++ b/include/linux/irqdomain.h
+@@ -207,6 +207,13 @@ enum {
+ 	IRQ_DOMAIN_FLAG_MSI_REMAP	= (1 << 5),
+ 
+ 	/*
++	 * Quirk to handle MSI implementations which do not provide
++	 * masking. Currently known to affect x86, but partially
++	 * handled in core code.
++	 */
++	IRQ_DOMAIN_MSI_NOMASK_QUIRK	= (1 << 6),
++
++	/*
+ 	 * Flags starting from IRQ_DOMAIN_FLAG_NONCORE are reserved
+ 	 * for implementation specific purposes and ignored by the
+ 	 * core code.
+--- a/kernel/irq/debugfs.c
++++ b/kernel/irq/debugfs.c
+@@ -114,6 +114,7 @@ static const struct irq_bit_descr irqdat
+ 	BIT_MASK_DESCR(IRQD_AFFINITY_MANAGED),
+ 	BIT_MASK_DESCR(IRQD_MANAGED_SHUTDOWN),
+ 	BIT_MASK_DESCR(IRQD_CAN_RESERVE),
++	BIT_MASK_DESCR(IRQD_MSI_NOMASK_QUIRK),
+ 
+ 	BIT_MASK_DESCR(IRQD_FORWARDED_TO_VCPU),
+ 
+--- a/kernel/irq/msi.c
++++ b/kernel/irq/msi.c
+@@ -453,8 +453,11 @@ int msi_domain_alloc_irqs(struct irq_dom
+ 			continue;
+ 
+ 		irq_data = irq_domain_get_irq_data(domain, desc->irq);
+-		if (!can_reserve)
++		if (!can_reserve) {
+ 			irqd_clr_can_reserve(irq_data);
++			if (domain->flags & IRQ_DOMAIN_MSI_NOMASK_QUIRK)
++				irqd_set_msi_nomask_quirk(irq_data);
++		}
+ 		ret = irq_domain_activate_irq(irq_data, can_reserve);
+ 		if (ret)
+ 			goto cleanup;
