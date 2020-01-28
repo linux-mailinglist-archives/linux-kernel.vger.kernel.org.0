@@ -2,37 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1D52E14B835
+	by mail.lfdr.de (Postfix) with ESMTP id 9A65B14B836
 	for <lists+linux-kernel@lfdr.de>; Tue, 28 Jan 2020 15:23:50 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731305AbgA1OV3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 28 Jan 2020 09:21:29 -0500
-Received: from mail.kernel.org ([198.145.29.99]:46768 "EHLO mail.kernel.org"
+        id S1731312AbgA1OVb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 28 Jan 2020 09:21:31 -0500
+Received: from mail.kernel.org ([198.145.29.99]:46830 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731272AbgA1OV0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 Jan 2020 09:21:26 -0500
+        id S1731301AbgA1OV3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 28 Jan 2020 09:21:29 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6BC7124681;
-        Tue, 28 Jan 2020 14:21:25 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id EC4B824686;
+        Tue, 28 Jan 2020 14:21:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1580221285;
-        bh=fbz50UvltV7L5z12zkYmwND53mguKXWQP2DHuEXL1A0=;
+        s=default; t=1580221288;
+        bh=EdvVBJhwRTeRMjm+D0sLSZ6CA6OkV4G8o+N9TY6pga8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=CyyOO+nknEpeRNPTNpK5zCQ8306YyoP8fSBSJlj/7dhYtrwiFBTI9yAOlGri4QV6a
-         FpThsW0ZBMmBdoOAxfnKzZHvcDI8IO1ueGb3IoP5kMcvRkBrak11yUJz7vSfM4qAJ3
-         kXWXwF5JOXfabTyZbeCy8spkvNazPVTur0AHAwn4=
+        b=Cwma8GF8ydeI99zI3gXs7YojGOTtPuWsy2PeyX8YOmbVyviVvuE5GKw/lE62Owbpm
+         3R2MM3m/LboHv9l6HV5L3U1h228rTV26vy4bs8Nr6xZrnNBsWUWEXNEiySXK7SV7QY
+         gls7esCRWO+yA4F5Z3Xm5Xju0VPpFIGpwm7mvxyM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Lee Jones <lee.jones@linaro.org>,
+        stable@vger.kernel.org, Geert Uytterhoeven <geert@linux-m68k.org>,
+        David Howells <dhowells@redhat.com>,
+        "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 164/271] mfd: intel-lpss: Release IDA resources
-Date:   Tue, 28 Jan 2020 15:05:13 +0100
-Message-Id: <20200128135904.792844046@linuxfoundation.org>
+Subject: [PATCH 4.9 165/271] rxrpc: Fix uninitialized error code in rxrpc_send_data_packet()
+Date:   Tue, 28 Jan 2020 15:05:14 +0100
+Message-Id: <20200128135904.866216477@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
 In-Reply-To: <20200128135852.449088278@linuxfoundation.org>
 References: <20200128135852.449088278@linuxfoundation.org>
@@ -45,34 +45,47 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+From: David Howells <dhowells@redhat.com>
 
-[ Upstream commit 02f36911c1b41fcd8779fa0c135aab0554333fa5 ]
+[ Upstream commit 3427beb6375d04e9627c67343872e79341a684ea ]
 
-ida instances allocate some internal memory for ->free_bitmap
-in addition to the base 'struct ida'. Use ida_destroy() to release
-that memory at module_exit().
+With gcc 4.1:
 
-Fixes: 4b45efe85263 ("mfd: Add support for Intel Sunrisepoint LPSS devices")
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Signed-off-by: Lee Jones <lee.jones@linaro.org>
+    net/rxrpc/output.c: In function ‘rxrpc_send_data_packet’:
+    net/rxrpc/output.c:338: warning: ‘ret’ may be used uninitialized in this function
+
+Indeed, if the first jump to the send_fragmentable label is made, and
+the address family is not handled in the switch() statement, ret will be
+used uninitialized.
+
+Fix this by BUG()'ing as is done in other places in rxrpc where internal
+support for future address families will need adding.  It should not be
+possible to reach this normally as the address families are checked
+up-front.
+
+Fixes: 5a924b8951f835b5 ("rxrpc: Don't store the rxrpc header in the Tx queue sk_buffs")
+Reported-by: Geert Uytterhoeven <geert@linux-m68k.org>
+Signed-off-by: David Howells <dhowells@redhat.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/mfd/intel-lpss.c | 1 +
- 1 file changed, 1 insertion(+)
+ net/rxrpc/output.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/drivers/mfd/intel-lpss.c b/drivers/mfd/intel-lpss.c
-index 22dd8c055048c..71cecd7aeea0c 100644
---- a/drivers/mfd/intel-lpss.c
-+++ b/drivers/mfd/intel-lpss.c
-@@ -533,6 +533,7 @@ module_init(intel_lpss_init);
+diff --git a/net/rxrpc/output.c b/net/rxrpc/output.c
+index 59d3286033120..64389f493bb28 100644
+--- a/net/rxrpc/output.c
++++ b/net/rxrpc/output.c
+@@ -400,6 +400,9 @@ send_fragmentable:
+ 		}
+ 		break;
+ #endif
++
++	default:
++		BUG();
+ 	}
  
- static void __exit intel_lpss_exit(void)
- {
-+	ida_destroy(&intel_lpss_devid_ida);
- 	debugfs_remove(intel_lpss_debugfs);
- }
- module_exit(intel_lpss_exit);
+ 	up_write(&conn->params.local->defrag_sem);
 -- 
 2.20.1
 
