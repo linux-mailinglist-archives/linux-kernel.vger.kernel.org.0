@@ -2,103 +2,146 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B1A8114BC67
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Jan 2020 15:56:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EE0B314BC6F
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Jan 2020 15:58:23 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726756AbgA1O4Q (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 28 Jan 2020 09:56:16 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:29038 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726497AbgA1O4Q (ORCPT
+        id S1726645AbgA1O6L (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 28 Jan 2020 09:58:11 -0500
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:58643 "EHLO
+        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726292AbgA1O6L (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 Jan 2020 09:56:16 -0500
-Received: from pps.filterd (m0098417.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 00SEtsVT011817
-        for <linux-kernel@vger.kernel.org>; Tue, 28 Jan 2020 09:56:14 -0500
-Received: from e06smtp07.uk.ibm.com (e06smtp07.uk.ibm.com [195.75.94.103])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2xrjea8drm-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Tue, 28 Jan 2020 09:56:14 -0500
-Received: from localhost
-        by e06smtp07.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <oberpar@linux.ibm.com>;
-        Tue, 28 Jan 2020 14:56:12 -0000
-Received: from b06cxnps4074.portsmouth.uk.ibm.com (9.149.109.196)
-        by e06smtp07.uk.ibm.com (192.168.101.137) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Tue, 28 Jan 2020 14:56:08 -0000
-Received: from d06av21.portsmouth.uk.ibm.com (d06av21.portsmouth.uk.ibm.com [9.149.105.232])
-        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 00SEu7Ti47579278
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 28 Jan 2020 14:56:07 GMT
-Received: from d06av21.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 5E9BE52050;
-        Tue, 28 Jan 2020 14:56:07 +0000 (GMT)
-Received: from [9.152.212.29] (unknown [9.152.212.29])
-        by d06av21.portsmouth.uk.ibm.com (Postfix) with ESMTP id F253D52051;
-        Tue, 28 Jan 2020 14:56:06 +0000 (GMT)
-Subject: Re: [PATCH v2 10/10] gcov: Remove old GCC 3.4 support
-To:     Will Deacon <will@kernel.org>, linux-kernel@vger.kernel.org
-Cc:     linux-arch@vger.kernel.org, kernel-team@android.com,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Segher Boessenkool <segher@kernel.crashing.org>,
-        Christian Borntraeger <borntraeger@de.ibm.com>,
-        Luc Van Oostenryck <luc.vanoostenryck@gmail.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Masahiro Yamada <masahiroy@kernel.org>,
-        Nick Desaulniers <ndesaulniers@google.com>
-References: <20200123153341.19947-1-will@kernel.org>
- <20200123153341.19947-11-will@kernel.org>
-From:   Peter Oberparleiter <oberpar@linux.ibm.com>
-Date:   Tue, 28 Jan 2020 15:56:06 +0100
+        Tue, 28 Jan 2020 09:58:11 -0500
+Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
+        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20200128145808euoutp0228d07cec8c86e7c58f3906ec37a52de8~uFOP-qiih1915619156euoutp02P
+        for <linux-kernel@vger.kernel.org>; Tue, 28 Jan 2020 14:58:08 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20200128145808euoutp0228d07cec8c86e7c58f3906ec37a52de8~uFOP-qiih1915619156euoutp02P
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1580223488;
+        bh=NoGRo3q31xRJmf8hvOu7cNIzqn2A9IS+PVrSFMvLol0=;
+        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
+        b=KUk3wyK9raVpE6GHjfIiVNwrDoqMgnSrwafNqa97zrKYN5RNCody7bFHF7/36CLLY
+         287Fnx5kn192hCzndOJ0D73DdZ2GWxXpc4DDvh7cMY95apjGiDQoWdgJ2UVwyIJCA8
+         dy62VGaKo3k8cWWVt8Ag64sISWvNIP+wfobPSr/4=
+Received: from eusmges2new.samsung.com (unknown [203.254.199.244]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
+        20200128145808eucas1p29c5b0b3fa0a09c8fb0bef3746ea47b3b~uFOP0P5NC1328213282eucas1p2q;
+        Tue, 28 Jan 2020 14:58:08 +0000 (GMT)
+Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
+        eusmges2new.samsung.com (EUCPMTA) with SMTP id 39.68.60679.00C403E5; Tue, 28
+        Jan 2020 14:58:08 +0000 (GMT)
+Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
+        20200128145808eucas1p2e0de9fc3d007c682251ce1a320b6906d~uFOPZJD_j1335013350eucas1p2j;
+        Tue, 28 Jan 2020 14:58:08 +0000 (GMT)
+Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
+        eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
+        20200128145808eusmtrp1a11fb64eb06bfbdff6dd5a5544a335b1~uFOPYa9551035610356eusmtrp1_;
+        Tue, 28 Jan 2020 14:58:08 +0000 (GMT)
+X-AuditID: cbfec7f4-0e5ff7000001ed07-7f-5e304c00e71d
+Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
+        eusmgms2.samsung.com (EUCPMTA) with SMTP id B2.2F.07950.FFB403E5; Tue, 28
+        Jan 2020 14:58:08 +0000 (GMT)
+Received: from [106.120.51.71] (unknown [106.120.51.71]) by
+        eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
+        20200128145807eusmtip15afd24a045c541970b6de3867ad42202~uFOO8Xsfb3227432274eusmtip1W;
+        Tue, 28 Jan 2020 14:58:07 +0000 (GMT)
+Subject: Re: KASAN: slab-out-of-bounds Write in vgacon_scroll
+To:     Petr Mladek <pmladek@suse.com>, anon anon <742991625abc@gmail.com>
+Cc:     wangkefeng.wang@huawei.com, sergey.senozhatsky@gmail.com,
+        syzkaller@googlegroups.com, linux-kernel@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, linux-fbdev@vger.kernel.org
+From:   Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Message-ID: <4ab69855-6112-52f4-bee2-3358664d0c20@samsung.com>
+Date:   Tue, 28 Jan 2020 15:58:04 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+        Thunderbird/60.8.0
 MIME-Version: 1.0
-In-Reply-To: <20200123153341.19947-11-will@kernel.org>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <20200128124912.chttagasucdpydhk@pathway.suse.cz>
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-x-cbid: 20012814-0028-0000-0000-000003D53311
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 20012814-0029-0000-0000-000024997B2E
-Message-Id: <28e3e35c-1a26-5f87-064e-39f8a1fc9105@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.572
- definitions=2020-01-28_03:2020-01-28,2020-01-28 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 adultscore=0
- malwarescore=0 lowpriorityscore=0 impostorscore=0 priorityscore=1501
- bulkscore=0 suspectscore=1 clxscore=1011 spamscore=0 mlxscore=0
- mlxlogscore=966 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-1911200001 definitions=main-2001280119
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrGKsWRmVeSWpSXmKPExsWy7djP87oMPgZxBt/3Sls87O1htbjy9T2b
+        xYm+D6wWl3fNYbP4//grq8Xaz4/ZLY686Wa2aPx8n9GBw2PnrLvsHnsmnmTzaDnyltXjfvdx
+        Jo/1W66yeHzeJBfAFsVlk5Kak1mWWqRvl8CVcXetc8EWroq+2cvZGxjXc3QxcnJICJhIzP3X
+        ydTFyMUhJLCCUWJKy0Q2COcLo8SPwyugnM+MEm+fLWSCaXnZtYQVIrGcUWLy+1NQVW8ZJc4/
+        +MAIUiUsYCtxsKmBGcQWEXCT2PGmA6yDWWAHo8Su/zfBitgErCQmtq8Cs3kF7CQOrzgAtoJF
+        QFVi4tceNhBbVCBC4tODw6wQNYISJ2c+YQGxOYHqX896B2YzC4hL3HoynwnClpfY/nYOM8gy
+        CYFD7BJ7ft5ihrjbReLl9QUsELawxKvjW9ghbBmJ05N7WCAa1jFK/O14AdW9nVFi+eR/bBBV
+        1hJ3zv0CsjmAVmhKrN+lDxF2lNjVMBEsLCHAJ3HjrSDEEXwSk7ZNZ4YI80p0tAlBVKtJbFi2
+        gQ1mbdfOlcwTGJVmIXltFpJ3ZiF5ZxbC3gWMLKsYxVNLi3PTU4uN8lLL9YoTc4tL89L1kvNz
+        NzECU9Ppf8e/7GDc9SfpEKMAB6MSD+8MFYM4IdbEsuLK3EOMEhzMSiK8nUxAId6UxMqq1KL8
+        +KLSnNTiQ4zSHCxK4rzGi17GCgmkJ5akZqemFqQWwWSZODilGhjXrLwYxP4qvEvpuc7l9w19
+        8/deMTA4d2jahcL6/M1KPRteyn7x2WXHoDBrmXvWp0ennmcYc060+qUYteiJbSjH1TlyIvGJ
+        x/7aZXkbVwVUh79dln0xeJm5+t8ve/Z+OjY//uGu1d6FMou54nrLFD/u2bz5Q9fiy9rRGz9d
+        q3q+Ilp6U1sfh95tJZbijERDLeai4kQA9rYmqUkDAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrKIsWRmVeSWpSXmKPExsVy+t/xu7oMPgZxBvNjLR729rBaXPn6ns3i
+        RN8HVovLu+awWfx//JXVYu3nx+wWR950M1s0fr7P6MDhsXPWXXaPPRNPsnm0HHnL6nG/+ziT
+        x/otV1k8Pm+SC2CL0rMpyi8tSVXIyC8usVWKNrQw0jO0tNAzMrHUMzQ2j7UyMlXSt7NJSc3J
+        LEst0rdL0Mu4u9a5YAtXRd/s5ewNjOs5uhg5OSQETCRedi1hBbGFBJYySvzZytPFyAEUl5E4
+        vr4MokRY4s+1LrYuRi6gkteMEnsXfwGrFxawlTjY1MAMYosIuEnseNPBClLELLCDUeJHxyEW
+        iI4bjBIrb68A62ATsJKY2L6KEcTmFbCTOLziABOIzSKgKjHxaw8biC0qECFxeMcsqBpBiZMz
+        n7CA2JxA9a9nvQOzmQXUJf7Mu8QMYYtL3HoynwnClpfY/nYO8wRGoVlI2mchaZmFpGUWkpYF
+        jCyrGEVSS4tz03OLjfSKE3OLS/PS9ZLzczcxAqNw27GfW3Ywdr0LPsQowMGoxMProGQQJ8Sa
+        WFZcmXuIUYKDWUmEt5MJKMSbklhZlVqUH19UmpNafIjRFOi5icxSosn5wASRVxJvaGpobmFp
+        aG5sbmxmoSTO2yFwMEZIID2xJDU7NbUgtQimj4mDU6qBsfftHNkTtdqqTzNu8KWpCi5+0Do3
+        ZIug7r6levtMjvm+EFnjkfh1tVe8zYG5U75eXefe/mu204l8Z22JBZ+33WHgfnbI9Eey0rX7
+        3QstRZcUsZ5aWMKj7H1R5E2HBAf3l2Pm3vWTm057pj3UOG+/Tueg3Mqfz1/PfeMY9LjsmmyL
+        ofJyz2dPDyuxFGckGmoxFxUnAgCwvaoz2AIAAA==
+X-CMS-MailID: 20200128145808eucas1p2e0de9fc3d007c682251ce1a320b6906d
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20200128124918eucas1p1f0ce2b2b7b33a5d63d33f876ef30f454
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20200128124918eucas1p1f0ce2b2b7b33a5d63d33f876ef30f454
+References: <CAA=061EoW8AmjUrBLsJy5nTDz-1jeArLeB+z6HJuyZud0zZXug@mail.gmail.com>
+        <CGME20200128124918eucas1p1f0ce2b2b7b33a5d63d33f876ef30f454@eucas1p1.samsung.com>
+        <20200128124912.chttagasucdpydhk@pathway.suse.cz>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 23.01.2020 16:33, Will Deacon wrote:
-> The kernel requires at least GCC 4.8 in order to build, and so there is
-> no need to cater for the pre-4.7 gcov format.
+
+On 1/28/20 1:49 PM, Petr Mladek wrote:
+> On Tue 2020-01-28 18:23:46, anon anon wrote:
+>> Dear Linux kernel developers,
+>>
+>> I found the crash "KASAN: slab-out-of-bounds Write in vgacon_scroll"
+>> when running syzkaller, hope it's unknown:
+>>
+>> Linux version: Linux v4.17-rc4 (75bc37fefc44)
+>> Branch: master
+>>
+>> This crash still exists on the latest linux kernel Linux v5.5-rc6.
+>> Please get C repo and crash log generated by syzkaller, as well as the
+>> .config I used for linux kernel from the attachment. Thanks.
 > 
-> Remove the obsolete code.
+> The out-of-bound access seems to be in vgacon_scroll() and thus
+> in vgacon code.
 > 
-> Cc: Peter Oberparleiter <oberpar@linux.ibm.com>
-> Signed-off-by: Will Deacon <will@kernel.org>
-> ---
->  kernel/gcov/Kconfig   |  24 --
->  kernel/gcov/Makefile  |   3 +-
->  kernel/gcov/gcc_3_4.c | 573 ------------------------------------------
->  3 files changed, 1 insertion(+), 599 deletions(-)
->  delete mode 100644 kernel/gcov/gcc_3_4.c
+> Unfortunately, most people in CC are printk-guys. They were mentioned
+> by ./scripts/get_maintainer.pl -f drivers/video/console/vgacon.c
+> just because the very last comment (tree wide pr_warning() clean up).
+> 
+> Bartolomej seems to be the only relevant name.
+> 
+> Bartolomej,
+> 
+> are you going to look at it? Or should we add more people or some list
 
-Acked-by: Peter Oberparleiter <oberpar@linux.ibm.com>
+Help is welcomed as I'm not going to look at it in the foreseeable future
+(I'm busy enough with other things).
 
-Compiles, boots, produces coverage output on a s390 system with a
-recent-ish GCC version, so that change is fine by me.
+> (dri-devel@lists.freedesktop.org or linux-fbdev@vger.kernel.org) into CC?
 
-There's a final reference to the gcc_3_4.c file in the gcc_4_7.c header
-comment, but its probably not worth the extra effort to adjust that as well.
+Added to Cc:, thanks.
 
--- 
-Peter Oberparleiter
-Linux on Z Development - IBM Germany
+> Thanks,
+> Petr
 
+Best regards,
+--
+Bartlomiej Zolnierkiewicz
+Samsung R&D Institute Poland
+Samsung Electronics
