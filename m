@@ -2,27 +2,27 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AEC0E14B7D6
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Jan 2020 15:20:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 43EBB14B7D3
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Jan 2020 15:20:33 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730573AbgA1ORv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 28 Jan 2020 09:17:51 -0500
-Received: from mail.kernel.org ([198.145.29.99]:41472 "EHLO mail.kernel.org"
+        id S1730040AbgA1ORr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 28 Jan 2020 09:17:47 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41512 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730555AbgA1ORk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 Jan 2020 09:17:40 -0500
+        id S1730314AbgA1ORm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 28 Jan 2020 09:17:42 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4B4DE24681;
-        Tue, 28 Jan 2020 14:17:39 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B85E62071E;
+        Tue, 28 Jan 2020 14:17:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1580221059;
-        bh=HJTSdxSXE3y+qH72vPnmbrNx69BkL7Zw3zo9k9sjUPQ=;
+        s=default; t=1580221062;
+        bh=6Fz8xjv9nZBw1/1d96jNOMkJO+3yPvlTXHgJXrMglNI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=GWyYzAUtOIsvBidEvMjKW4LISnMnPHSe7TmNTWYJBj1okSVZG3qpzmh0mmFvz0ZoR
-         SgSutxkJms8b4AXGbknGqMEtMJfRegHNNsGRXqLXYlSbpKdCj+CVwVbYnNXu2ULwOG
-         nKE3wc0RNWEXIl6zpF8wdTUfVawXDeqczGqdUZpU=
+        b=LGGKhPHsA0/Z1nQaj7gELFyj1P62phJOVdfkVyIlwQCds6NY8ZfVl//t9jWSzouoa
+         f4+3+p7h7YbYRWWeyJR9tAsY24DvZhQUpUXNH0w4pCTC4JPsTHTo9oH+SFEs0csCLz
+         Jcv+bWW7MLcJy6tqAWmc45ZKG+FEi1n7Uz3+q9wc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -30,9 +30,9 @@ Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Gregory CLEMENT <gregory.clement@bootlin.com>,
         Stephen Boyd <sboyd@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 035/271] clk: kirkwood: fix refcount leak in kirkwood_clk_init()
-Date:   Tue, 28 Jan 2020 15:03:04 +0100
-Message-Id: <20200128135855.292545938@linuxfoundation.org>
+Subject: [PATCH 4.9 036/271] clk: armada-xp: fix refcount leak in axp_clk_init()
+Date:   Tue, 28 Jan 2020 15:03:05 +0100
+Message-Id: <20200128135855.365455374@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
 In-Reply-To: <20200128135852.449088278@linuxfoundation.org>
 References: <20200128135852.449088278@linuxfoundation.org>
@@ -47,7 +47,7 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Yangtao Li <tiny.windzz@gmail.com>
 
-[ Upstream commit e7beeab9c61591cd0e690d8733d534c3f4278ff8 ]
+[ Upstream commit db20a90a4b6745dad62753f8bd2f66afdd5abc84 ]
 
 The of_find_compatible_node() returns a node pointer with refcount
 incremented, but there is the lack of use of the of_node_put() when
@@ -55,26 +55,28 @@ done. Add the missing of_node_put() to release the refcount.
 
 Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
 Reviewed-by: Gregory CLEMENT <gregory.clement@bootlin.com>
-Fixes: 58d516ae95cb ("clk: mvebu: kirkwood: maintain clock init order")
+Fixes: 0a11a6ae9437 ("clk: mvebu: armada-xp: maintain clock init order")
 Signed-off-by: Stephen Boyd <sboyd@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/clk/mvebu/kirkwood.c | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/clk/mvebu/armada-xp.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/clk/mvebu/kirkwood.c b/drivers/clk/mvebu/kirkwood.c
-index a2a8d614039da..890ebf623261b 100644
---- a/drivers/clk/mvebu/kirkwood.c
-+++ b/drivers/clk/mvebu/kirkwood.c
-@@ -333,6 +333,8 @@ static void __init kirkwood_clk_init(struct device_node *np)
- 	if (cgnp) {
- 		mvebu_clk_gating_setup(cgnp, kirkwood_gating_desc);
- 		kirkwood_clk_muxing_setup(cgnp, kirkwood_mux_desc);
-+
+diff --git a/drivers/clk/mvebu/armada-xp.c b/drivers/clk/mvebu/armada-xp.c
+index b3094315a3c0f..2fa15a2747190 100644
+--- a/drivers/clk/mvebu/armada-xp.c
++++ b/drivers/clk/mvebu/armada-xp.c
+@@ -202,7 +202,9 @@ static void __init axp_clk_init(struct device_node *np)
+ 
+ 	mvebu_coreclk_setup(np, &axp_coreclks);
+ 
+-	if (cgnp)
++	if (cgnp) {
+ 		mvebu_clk_gating_setup(cgnp, axp_gating_desc);
 +		of_node_put(cgnp);
- 	}
++	}
  }
- CLK_OF_DECLARE(kirkwood_clk, "marvell,kirkwood-core-clock",
+ CLK_OF_DECLARE(axp_clk, "marvell,armada-xp-core-clock", axp_clk_init);
 -- 
 2.20.1
 
