@@ -2,36 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4BB6614B621
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Jan 2020 15:02:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3FFEE14B623
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Jan 2020 15:02:54 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727681AbgA1OCk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 28 Jan 2020 09:02:40 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49016 "EHLO mail.kernel.org"
+        id S1727742AbgA1OCu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 28 Jan 2020 09:02:50 -0500
+Received: from mail.kernel.org ([198.145.29.99]:49212 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727196AbgA1OCh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 Jan 2020 09:02:37 -0500
+        id S1726733AbgA1OCs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 28 Jan 2020 09:02:48 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7974A2468A;
-        Tue, 28 Jan 2020 14:02:36 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5A2AB24690;
+        Tue, 28 Jan 2020 14:02:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1580220156;
-        bh=iikyDeTcnk5mV34AtN/hyjswYWiMptLtzK/jcLMufKs=;
+        s=default; t=1580220166;
+        bh=Ch9YBjU79Ys/nbghlzg8QCFHjX8KPmmFLde/BTwlU7c=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=daNjCBinc6Le/JePvmTPFbrr42Wlq6/HfaNW7E3M/iTOVGLQvuBHuRcEzmBXC9J4j
-         xlTWXwyPxZJPoho6b/HyRUE/Pik3anSFHld1NpkjhDATFNZjg9kOFILDB5hULg+Ngh
-         +XKvUX2F16w6zdXwwadXwTv0y4OZwjxZZ2Hc2a2U=
+        b=DrUYEcGVgVR1be9UphZPWYw4TYLB8eZ7vd/Col2sCIvk0rJ13qU5sJFT9YJ/FQ75c
+         yWjwZwiLx9Zk2FbcdFqzY+c3C/89JRMcp57rAKwO8Un9mlO9esiVq+X9a8dj9ZFNNH
+         WJlBkHw4mMlj2CTDcVklXpYLZRNVQN9AlhiwRdOE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, William Dauchy <w.dauchy@criteo.com>,
-        Nicolas Dichtel <nicolas.dichtel@6wind.com>,
+        stable@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
+        syzbot <syzkaller@googlegroups.com>,
+        Cong Wang <xiyou.wangcong@gmail.com>,
+        Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>,
+        Jamal Hadi Salim <jhs@mojatatu.com>,
+        Jiri Pirko <jiri@resnulli.us>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 5.4 008/104] net, ip6_tunnel: fix namespaces move
-Date:   Tue, 28 Jan 2020 14:59:29 +0100
-Message-Id: <20200128135818.376261816@linuxfoundation.org>
+Subject: [PATCH 5.4 012/104] net_sched: use validated TCA_KIND attribute in tc_new_tfilter()
+Date:   Tue, 28 Jan 2020 14:59:33 +0100
+Message-Id: <20200128135818.937721268@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
 In-Reply-To: <20200128135817.238524998@linuxfoundation.org>
 References: <20200128135817.238524998@linuxfoundation.org>
@@ -44,37 +48,103 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: William Dauchy <w.dauchy@criteo.com>
+From: Eric Dumazet <edumazet@google.com>
 
-[ Upstream commit 5311a69aaca30fa849c3cc46fb25f75727fb72d0 ]
+[ Upstream commit 36d79af7fb59d6d9106feb9c1855eb93d6d53fe6 ]
 
-in the same manner as commit d0f418516022 ("net, ip_tunnel: fix
-namespaces move"), fix namespace moving as it was broken since commit
-8d79266bc48c ("ip6_tunnel: add collect_md mode to IPv6 tunnel"), but for
-ipv6 this time; there is no reason to keep it for ip6_tunnel.
+sysbot found another issue in tc_new_tfilter().
+We probably should use @name which contains the sanitized
+version of TCA_KIND.
 
-Fixes: 8d79266bc48c ("ip6_tunnel: add collect_md mode to IPv6 tunnel")
-Signed-off-by: William Dauchy <w.dauchy@criteo.com>
-Acked-by: Nicolas Dichtel <nicolas.dichtel@6wind.com>
+BUG: KMSAN: uninit-value in string_nocheck lib/vsprintf.c:608 [inline]
+BUG: KMSAN: uninit-value in string+0x522/0x690 lib/vsprintf.c:689
+CPU: 1 PID: 10753 Comm: syz-executor.1 Not tainted 5.5.0-rc5-syzkaller #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
+Call Trace:
+ __dump_stack lib/dump_stack.c:77 [inline]
+ dump_stack+0x1c9/0x220 lib/dump_stack.c:118
+ kmsan_report+0xf7/0x1e0 mm/kmsan/kmsan_report.c:118
+ __msan_warning+0x58/0xa0 mm/kmsan/kmsan_instr.c:215
+ string_nocheck lib/vsprintf.c:608 [inline]
+ string+0x522/0x690 lib/vsprintf.c:689
+ vsnprintf+0x207d/0x31b0 lib/vsprintf.c:2574
+ __request_module+0x2ad/0x11c0 kernel/kmod.c:143
+ tcf_proto_lookup_ops+0x241/0x720 net/sched/cls_api.c:139
+ tcf_proto_create net/sched/cls_api.c:262 [inline]
+ tc_new_tfilter+0x2a4e/0x5010 net/sched/cls_api.c:2058
+ rtnetlink_rcv_msg+0xcb7/0x1570 net/core/rtnetlink.c:5415
+ netlink_rcv_skb+0x451/0x650 net/netlink/af_netlink.c:2477
+ rtnetlink_rcv+0x50/0x60 net/core/rtnetlink.c:5442
+ netlink_unicast_kernel net/netlink/af_netlink.c:1302 [inline]
+ netlink_unicast+0xf9e/0x1100 net/netlink/af_netlink.c:1328
+ netlink_sendmsg+0x1248/0x14d0 net/netlink/af_netlink.c:1917
+ sock_sendmsg_nosec net/socket.c:639 [inline]
+ sock_sendmsg net/socket.c:659 [inline]
+ ____sys_sendmsg+0x12b6/0x1350 net/socket.c:2330
+ ___sys_sendmsg net/socket.c:2384 [inline]
+ __sys_sendmsg+0x451/0x5f0 net/socket.c:2417
+ __do_sys_sendmsg net/socket.c:2426 [inline]
+ __se_sys_sendmsg+0x97/0xb0 net/socket.c:2424
+ __x64_sys_sendmsg+0x4a/0x70 net/socket.c:2424
+ do_syscall_64+0xb8/0x160 arch/x86/entry/common.c:296
+ entry_SYSCALL_64_after_hwframe+0x44/0xa9
+RIP: 0033:0x45b349
+Code: ad b6 fb ff c3 66 2e 0f 1f 84 00 00 00 00 00 66 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 0f 83 7b b6 fb ff c3 66 2e 0f 1f 84 00 00 00 00
+RSP: 002b:00007f88b3948c78 EFLAGS: 00000246 ORIG_RAX: 000000000000002e
+RAX: ffffffffffffffda RBX: 00007f88b39496d4 RCX: 000000000045b349
+RDX: 0000000000000000 RSI: 00000000200001c0 RDI: 0000000000000003
+RBP: 000000000075bfc8 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 00000000ffffffff
+R13: 000000000000099f R14: 00000000004cb163 R15: 000000000075bfd4
+
+Uninit was created at:
+ kmsan_save_stack_with_flags mm/kmsan/kmsan.c:144 [inline]
+ kmsan_internal_poison_shadow+0x66/0xd0 mm/kmsan/kmsan.c:127
+ kmsan_slab_alloc+0x8a/0xe0 mm/kmsan/kmsan_hooks.c:82
+ slab_alloc_node mm/slub.c:2774 [inline]
+ __kmalloc_node_track_caller+0xb40/0x1200 mm/slub.c:4382
+ __kmalloc_reserve net/core/skbuff.c:141 [inline]
+ __alloc_skb+0x2fd/0xac0 net/core/skbuff.c:209
+ alloc_skb include/linux/skbuff.h:1049 [inline]
+ netlink_alloc_large_skb net/netlink/af_netlink.c:1174 [inline]
+ netlink_sendmsg+0x7d3/0x14d0 net/netlink/af_netlink.c:1892
+ sock_sendmsg_nosec net/socket.c:639 [inline]
+ sock_sendmsg net/socket.c:659 [inline]
+ ____sys_sendmsg+0x12b6/0x1350 net/socket.c:2330
+ ___sys_sendmsg net/socket.c:2384 [inline]
+ __sys_sendmsg+0x451/0x5f0 net/socket.c:2417
+ __do_sys_sendmsg net/socket.c:2426 [inline]
+ __se_sys_sendmsg+0x97/0xb0 net/socket.c:2424
+ __x64_sys_sendmsg+0x4a/0x70 net/socket.c:2424
+ do_syscall_64+0xb8/0x160 arch/x86/entry/common.c:296
+ entry_SYSCALL_64_after_hwframe+0x44/0xa9
+
+Fixes: 6f96c3c6904c ("net_sched: fix backward compatibility for TCA_KIND")
+Signed-off-by: Eric Dumazet <edumazet@google.com>
+Reported-by: syzbot <syzkaller@googlegroups.com>
+Cc: Cong Wang <xiyou.wangcong@gmail.com>
+Cc: Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>
+Cc: Jamal Hadi Salim <jhs@mojatatu.com>
+Cc: Jiri Pirko <jiri@resnulli.us>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/ipv6/ip6_tunnel.c |    4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+ net/sched/cls_api.c |    5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
---- a/net/ipv6/ip6_tunnel.c
-+++ b/net/ipv6/ip6_tunnel.c
-@@ -1877,10 +1877,8 @@ static int ip6_tnl_dev_init(struct net_d
- 	if (err)
- 		return err;
- 	ip6_tnl_link_config(t);
--	if (t->parms.collect_md) {
--		dev->features |= NETIF_F_NETNS_LOCAL;
-+	if (t->parms.collect_md)
- 		netif_keep_dst(dev);
--	}
- 	return 0;
- }
+--- a/net/sched/cls_api.c
++++ b/net/sched/cls_api.c
+@@ -2055,9 +2055,8 @@ replay:
+ 							       &chain_info));
  
+ 		mutex_unlock(&chain->filter_chain_lock);
+-		tp_new = tcf_proto_create(nla_data(tca[TCA_KIND]),
+-					  protocol, prio, chain, rtnl_held,
+-					  extack);
++		tp_new = tcf_proto_create(name, protocol, prio, chain,
++					  rtnl_held, extack);
+ 		if (IS_ERR(tp_new)) {
+ 			err = PTR_ERR(tp_new);
+ 			goto errout_tp;
 
 
