@@ -2,84 +2,148 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E86BF14B80E
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Jan 2020 15:20:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A074D14B873
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Jan 2020 15:24:19 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731029AbgA1OUJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 28 Jan 2020 09:20:09 -0500
-Received: from bmailout2.hostsharing.net ([83.223.78.240]:58897 "EHLO
-        bmailout2.hostsharing.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730339AbgA1OUB (ORCPT
+        id S1732381AbgA1OXk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 28 Jan 2020 09:23:40 -0500
+Received: from us-smtp-2.mimecast.com ([207.211.31.81]:58461 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727097AbgA1OXf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 Jan 2020 09:20:01 -0500
-Received: from h08.hostsharing.net (h08.hostsharing.net [IPv6:2a01:37:1000::53df:5f1c:0])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (Client CN "*.hostsharing.net", Issuer "COMODO RSA Domain Validation Secure Server CA" (not verified))
-        by bmailout2.hostsharing.net (Postfix) with ESMTPS id D4A1A2800BC20;
-        Tue, 28 Jan 2020 15:19:58 +0100 (CET)
-Received: by h08.hostsharing.net (Postfix, from userid 100393)
-        id 9B1141EB447; Tue, 28 Jan 2020 15:19:58 +0100 (CET)
-Date:   Tue, 28 Jan 2020 15:19:58 +0100
-From:   Lukas Wunner <lukas@wunner.de>
-To:     Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
-Cc:     Matthias Brugger <matthias.bgg@gmail.com>, matthias.bgg@kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Matthias Brugger <mbrugger@suse.com>,
-        Scott Branden <sbranden@broadcom.com>,
-        gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org,
-        Ray Jui <rjui@broadcom.com>,
-        Stephen Boyd <swboyd@chromium.org>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        bcm-kernel-feedback-list@broadcom.com,
-        linux-rpi-kernel@lists.infradead.org, linux-serial@vger.kernel.org,
-        jslaby@suse.com
-Subject: Re: [PATCH] serial: 8250_early: Add earlycon for BCM2835 aux uart
-Message-ID: <20200128141958.vwbxoqglt5gw4xj5@wunner.de>
-References: <88af0fca-90d1-58ff-406d-73f185eb8b7e@gmail.com>
- <C07FL64L9QNN.357K7JAUOSNA2@linux-9qgx>
+        Tue, 28 Jan 2020 09:23:35 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1580221414;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=PoorEe3BgUIDWbZrCh3DXrBZXbNmAisrYa8c3ofYrmk=;
+        b=jMkIfWiQAbnV+J4YyQxn09/sPidarpAjSJHoE6nCnldXRRD4zXMMwr/Xck9Jlwn7FLyhFY
+        /n2grw5vXnL39f8MKBfVrZQfE11FtxhC0mkcBfOKYvGRhYkM3DjUb3eFxHWUbJGc54VA3t
+        95n4vk/nd5WuuUAC/eRo0QebB0UFMZQ=
+Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com
+ [209.85.221.72]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-323-_nAqYHhBOiypkNJq-COWqg-1; Tue, 28 Jan 2020 09:23:32 -0500
+X-MC-Unique: _nAqYHhBOiypkNJq-COWqg-1
+Received: by mail-wr1-f72.google.com with SMTP id s13so645483wru.7
+        for <linux-kernel@vger.kernel.org>; Tue, 28 Jan 2020 06:23:32 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:subject:to:cc:references:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=PoorEe3BgUIDWbZrCh3DXrBZXbNmAisrYa8c3ofYrmk=;
+        b=SaX/9t3YTJzIrNIdsbLRSQFsEKymG4RT5sZsCFhYz+pp/HGW6yGXo5dQ0/Uy5TzRTl
+         rmdAckdiYrMW5sUtdpNieJGRxoV668aa4/Z6FHj44fzHjlB9w/Jgmo9lJkJf4pKwrJRF
+         nnrx9lTXcrQKbGI9pazt6Kpp3XXd7Oi4RXadaPTem4zxSZJf1sBr8C8jMGI7hi/PnetW
+         DU/zfm1Q69zgTuyNxBjBkOW6+AKUtJ+TNApLEk1bHDWbFs2KMrQWIlTWc/skqIHsbzAn
+         g1hKVjTcPMXuSMRTQvgkwsbTUIkWO3DLgenl9YxEbifm+DQFDbdX1iV2ayXcX3leOyTw
+         uESw==
+X-Gm-Message-State: APjAAAXNWU6OL9Yn8MsbW9pMkRBghAOIB2qfG3Hfdyi/8G5A9qoy4eGu
+        qAwjO5j3MtKXa+/G9LTfcl0JJWyw4mfaVSj3sCAd+6QCJkiH5ZMTV+sc7p54y8O3bgwpDCDom+O
+        aHNdGkZDRSxq4IedHtyykK0qs
+X-Received: by 2002:a5d:4983:: with SMTP id r3mr27273084wrq.134.1580221411397;
+        Tue, 28 Jan 2020 06:23:31 -0800 (PST)
+X-Google-Smtp-Source: APXvYqxYw2chTdDz/2/YZKa8hws0FseLlswooyyiI+PyGP3EMBgoFWXFLA6gKBHI6Dwbt8wiSXVkSA==
+X-Received: by 2002:a5d:4983:: with SMTP id r3mr27273066wrq.134.1580221411179;
+        Tue, 28 Jan 2020 06:23:31 -0800 (PST)
+Received: from shalem.localdomain (2001-1c00-0c0c-fe00-7e79-4dac-39d0-9c14.cable.dynamic.v6.ziggo.nl. [2001:1c00:c0c:fe00:7e79:4dac:39d0:9c14])
+        by smtp.gmail.com with ESMTPSA id s65sm3348672wmf.48.2020.01.28.06.23.29
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 28 Jan 2020 06:23:30 -0800 (PST)
+From:   Hans de Goede <hdegoede@redhat.com>
+Subject: Re: [v3] x86/tsc: Unset TSC_KNOWN_FREQ and TSC_RELIABLE flags on
+ Intel Bay Trail SoC
+To:     vipul kumar <vipulk0511@gmail.com>,
+        Thomas Gleixner <tglx@linutronix.de>
+Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        linux-kernel@vger.kernel.org, Stable <stable@vger.kernel.org>,
+        Srikanth Krishnakar <Srikanth_Krishnakar@mentor.com>,
+        Cedric Hombourger <Cedric_Hombourger@mentor.com>,
+        x86@kernel.org, Len Brown <len.brown@intel.com>,
+        Vipul Kumar <vipul_kumar@mentor.com>
+References: <1579617717-4098-1-git-send-email-vipulk0511@gmail.com>
+ <87eevs7lfd.fsf@nanos.tec.linutronix.de>
+ <CADdC98RJpsvu_zWehNGDDN=W11rD11NSPaodg-zuaXsHuOJYTQ@mail.gmail.com>
+ <878slzeeim.fsf@nanos.tec.linutronix.de>
+ <CADdC98TE4oNWZyEsqXzr+zJtfdTTOyeeuHqu1u04X_ktLHo-Hg@mail.gmail.com>
+ <20200123144108.GU32742@smile.fi.intel.com>
+ <df04f43d-8c6d-7602-cb50-535b85cf2aaa@redhat.com>
+ <87iml11ccf.fsf@nanos.tec.linutronix.de>
+ <c06260e3-bd19-bf3c-89f7-d36bdb9a5b20@redhat.com>
+ <87ftg5131x.fsf@nanos.tec.linutronix.de>
+ <37321319-e110-81f5-2488-cedf000da04d@redhat.com>
+ <CADdC98To8VKOUWnR+8zAJ04vgdc4vJoh2h96588+5XFer9YTJw@mail.gmail.com>
+Message-ID: <329a2f7d-c5ed-6376-ec78-f00fa1ba41cd@redhat.com>
+Date:   Tue, 28 Jan 2020 15:23:29 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <C07FL64L9QNN.357K7JAUOSNA2@linux-9qgx>
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <CADdC98To8VKOUWnR+8zAJ04vgdc4vJoh2h96588+5XFer9YTJw@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jan 28, 2020 at 01:42:21PM +0100, Nicolas Saenz Julienne wrote:
-> I'm testing this by booting directly from RPi4's bootloader. And it
-> works as long as I add this to config.txt:
+Hi,
+
+On 28-01-2020 12:47, vipul kumar wrote:
+> Hi Thomas,
 > 
-> enable_uart=1
-> gpu_freq=500
+> Please find attached logs with mainline kernel version 5.4.15 with patch.
+
+So the suggested change seems to not work, that is strange.
+
+Can you double check you are running the correct kernel and
+add the following change and gather debug output ? :
+
+--- a/arch/x86/kernel/tsc_msr.c
++++ b/arch/x86/kernel/tsc_msr.c
+@@ -102,6 +103,8 @@ unsigned long cpu_khz_from_msr(void)
+         /* Get FSB FREQ ID */
+
++ pr_err("tsc msr id match %ld lo 0x%02x\n", id - tsc_msr_cpu_ids, lo);
++
+         /* Map CPU reference clock freq ID(0-7) to CPU reference clock freq(KHz) */
+         freq = freq_desc->freqs[lo & 0x7];
+
+Regards,
+
+Hans
+
+
+
+> On Fri, Jan 24, 2020 at 9:24 PM Hans de Goede <hdegoede@redhat.com <mailto:hdegoede@redhat.com>> wrote:
 > 
-> Which AFAIK blocks frequency scalin on the GPU and fixes the clock to a
-> point where the serial is set at 115200 bauds.
+>     Hi,
 > 
-> Ideally it'd be nice to be able to query the clock frequency, and
-> recalculate the divisors based on that. But I don't know if it's
-> feasible at that point in the boot process.
+>     On 1/24/20 12:55 PM, Thomas Gleixner wrote:
+>      > Hans,
+>      >
+>      > Hans de Goede <hdegoede@redhat.com <mailto:hdegoede@redhat.com>> writes:
+>      >> On 1/24/20 9:35 AM, Thomas Gleixner wrote:
+>      >>> Where does that number come from? Just math?
+>      >>
+>      >> Yes just math, but perhaps the Intel folks can see if they can find some
+>      >> datasheet to back this up ?
+>      >
+>      > Can you observe the issue on one of the machines in your zoo as well?
+> 
+>     I haven't tried yet. Looking at the thread sofar the problem was noticed on
+>     a system with a Celeron N2930, I don't have access to one of those, I
+>     do have access to a system with a closely related N2840 I will give that
+>     a try as well as see if I can reproduce this on one of the tablet
+>     oriented Z3735x SoCs.
+> 
+>     I'll report back when I have had a chance to test this.
+> 
+>     Regards,
+> 
+>     Hans
+> 
 
-Well, we don't even support adjusting the baudrate *after* the kernel
-has booted.
-
-The problem is that in mainline, bcm2835_defconfig contains:
-CONFIG_CPU_FREQ_DEFAULT_GOV_CONSERVATIVE=y
-
-Likewise in the Foundation's downstream tree, bcmrpi_defconfig as well
-as bcm2711_defconfig and bcm2709_defconfig contain:
-CONFIG_CPU_FREQ_DEFAULT_GOV_POWERSAVE=y
-
-In contrast to this, we set the following on Revolution Pi devices:
-CONFIG_CPU_FREQ_DEFAULT_GOV_PERFORMANCE=y
-
-Downclocking influences not only the uart1 baud rate but also the
-spi0 clock.  We attach Ethernet chips to spi0, throughput was
-significantly worse with the ondemand governor (which is what we
-used previously).  We felt that maximum Ethernet performance
-outweighs the relatively small powersaving gains.
-
-Thanks,
-
-Lukas
