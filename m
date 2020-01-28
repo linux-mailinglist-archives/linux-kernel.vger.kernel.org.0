@@ -2,35 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2B91C14B9A1
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Jan 2020 15:34:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 62D8714B999
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Jan 2020 15:34:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733217AbgA1Odw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 28 Jan 2020 09:33:52 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51654 "EHLO mail.kernel.org"
+        id S1732839AbgA1OZG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 28 Jan 2020 09:25:06 -0500
+Received: from mail.kernel.org ([198.145.29.99]:51928 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729827AbgA1OYs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 Jan 2020 09:24:48 -0500
+        id S1732826AbgA1OZA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 28 Jan 2020 09:25:00 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 046B524696;
-        Tue, 28 Jan 2020 14:24:46 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A1B742469B;
+        Tue, 28 Jan 2020 14:24:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1580221487;
-        bh=2AoDdejech8Pc1SzonmLabQ+qCGiH5x9p8y24qqZy0k=;
+        s=default; t=1580221500;
+        bh=yrkzuQLtBjcqycYZGfBIaMYVhUulDyg+nPbXXZm5KEM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=pqSA7Eyo9BIPkvooVhNlx4ePmn6/1o6pYRdQMnAAKTiBBRcC+em63ORD0ZTyvcf9G
-         125h7/cPQubWI+Ii5Ep0Ag+OScvbssXeUZd2UfJjfHU/gh2VX5wINucCnnBSQapo6C
-         yzr0tWCL4sUnxm98seO9/VoHTyLCclRqzhOvdJwY=
+        b=O/MEhx2CFyjYg/KMTECiAD0Mc4XFfBN/XoP5jnUSBy0TX6hXZmBbVGBIbjfdm18uo
+         ueq0NyelkYr2aDWrmknGi+lSghZ6+kjrq4X+QSQBMFtPSIgtTzZCKXFZ6MBU8HOhn2
+         hQIb2L+uen257MmWWLvEeNf4tnwHWNKfctKyNEmA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>,
-        Guenter Roeck <linux@roeck-us.net>
-Subject: [PATCH 4.9 245/271] hwmon: Deal with errors from the thermal subsystem
-Date:   Tue, 28 Jan 2020 15:06:34 +0100
-Message-Id: <20200128135910.760531414@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Alexander Sverdlin <alexander.sverdlin@nokia.com>,
+        "Steven Rostedt (VMware)" <rostedt@goodmis.org>,
+        Russell King <rmk+kernel@armlinux.org.uk>
+Subject: [PATCH 4.9 249/271] ARM: 8950/1: ftrace/recordmcount: filter relocation types
+Date:   Tue, 28 Jan 2020 15:06:38 +0100
+Message-Id: <20200128135911.090815558@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
 In-Reply-To: <20200128135852.449088278@linuxfoundation.org>
 References: <20200128135852.449088278@linuxfoundation.org>
@@ -43,78 +45,129 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Linus Walleij <linus.walleij@linaro.org>
+From: Alex Sverdlin <alexander.sverdlin@nokia.com>
 
-commit 47c332deb8e89f6c59b0bb2615945c6e7fad1a60 upstream.
+commit 927d780ee371d7e121cea4fc7812f6ef2cea461c upstream.
 
-If the thermal subsystem returne -EPROBE_DEFER or any other error
-when hwmon calls devm_thermal_zone_of_sensor_register(), this is
-silently ignored.
+Scenario 1, ARMv7
+=================
 
-I ran into this with an incorrectly defined thermal zone, making
-it non-existing and thus this call failed with -EPROBE_DEFER
-assuming it would appear later. The sensor was still added
-which is incorrect: sensors must strictly be added after the
-thermal zones, so deferred probe must be respected.
+If code in arch/arm/kernel/ftrace.c would operate on mcount() pointer
+the following may be generated:
 
-Fixes: d560168b5d0f ("hwmon: (core) New hwmon registration API")
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
-Signed-off-by: Guenter Roeck <linux@roeck-us.net>
+00000230 <prealloc_fixed_plts>:
+ 230:   b5f8            push    {r3, r4, r5, r6, r7, lr}
+ 232:   b500            push    {lr}
+ 234:   f7ff fffe       bl      0 <__gnu_mcount_nc>
+                        234: R_ARM_THM_CALL     __gnu_mcount_nc
+ 238:   f240 0600       movw    r6, #0
+                        238: R_ARM_THM_MOVW_ABS_NC      __gnu_mcount_nc
+ 23c:   f8d0 1180       ldr.w   r1, [r0, #384]  ; 0x180
+
+FTRACE currently is not able to deal with it:
+
+WARNING: CPU: 0 PID: 0 at .../kernel/trace/ftrace.c:1979 ftrace_bug+0x1ad/0x230()
+...
+CPU: 0 PID: 0 Comm: swapper/0 Not tainted 4.4.116-... #1
+...
+[<c0314e3d>] (unwind_backtrace) from [<c03115e9>] (show_stack+0x11/0x14)
+[<c03115e9>] (show_stack) from [<c051a7f1>] (dump_stack+0x81/0xa8)
+[<c051a7f1>] (dump_stack) from [<c0321c5d>] (warn_slowpath_common+0x69/0x90)
+[<c0321c5d>] (warn_slowpath_common) from [<c0321cf3>] (warn_slowpath_null+0x17/0x1c)
+[<c0321cf3>] (warn_slowpath_null) from [<c038ee9d>] (ftrace_bug+0x1ad/0x230)
+[<c038ee9d>] (ftrace_bug) from [<c038f1f9>] (ftrace_process_locs+0x27d/0x444)
+[<c038f1f9>] (ftrace_process_locs) from [<c08915bd>] (ftrace_init+0x91/0xe8)
+[<c08915bd>] (ftrace_init) from [<c0885a67>] (start_kernel+0x34b/0x358)
+[<c0885a67>] (start_kernel) from [<00308095>] (0x308095)
+---[ end trace cb88537fdc8fa200 ]---
+ftrace failed to modify [<c031266c>] prealloc_fixed_plts+0x8/0x60
+ actual: 44:f2:e1:36
+ftrace record flags: 0
+ (0)   expected tramp: c03143e9
+
+Scenario 2, ARMv4T
+==================
+
+ftrace: allocating 14435 entries in 43 pages
+------------[ cut here ]------------
+WARNING: CPU: 0 PID: 0 at kernel/trace/ftrace.c:2029 ftrace_bug+0x204/0x310
+CPU: 0 PID: 0 Comm: swapper Not tainted 4.19.5 #1
+Hardware name: Cirrus Logic EDB9302 Evaluation Board
+[<c0010a24>] (unwind_backtrace) from [<c000ecb0>] (show_stack+0x20/0x2c)
+[<c000ecb0>] (show_stack) from [<c03c72e8>] (dump_stack+0x20/0x30)
+[<c03c72e8>] (dump_stack) from [<c0021c18>] (__warn+0xdc/0x104)
+[<c0021c18>] (__warn) from [<c0021d7c>] (warn_slowpath_null+0x4c/0x5c)
+[<c0021d7c>] (warn_slowpath_null) from [<c0095360>] (ftrace_bug+0x204/0x310)
+[<c0095360>] (ftrace_bug) from [<c04dabac>] (ftrace_init+0x3b4/0x4d4)
+[<c04dabac>] (ftrace_init) from [<c04cef4c>] (start_kernel+0x20c/0x410)
+[<c04cef4c>] (start_kernel) from [<00000000>] (  (null))
+---[ end trace 0506a2f5dae6b341 ]---
+ftrace failed to modify
+[<c000c350>] perf_trace_sys_exit+0x5c/0xe8
+ actual:   1e:ff:2f:e1
+Initializing ftrace call sites
+ftrace record flags: 0
+ (0)
+ expected tramp: c000fb24
+
+The analysis for this problem has been already performed previously,
+refer to the link below.
+
+Fix the above problems by allowing only selected reloc types in
+__mcount_loc. The list itself comes from the legacy recordmcount.pl
+script.
+
+Link: https://lore.kernel.org/lkml/56961010.6000806@pengutronix.de/
+Cc: stable@vger.kernel.org
+Fixes: ed60453fa8f8 ("ARM: 6511/1: ftrace: add ARM support for C version of recordmcount")
+Signed-off-by: Alexander Sverdlin <alexander.sverdlin@nokia.com>
+Acked-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+Signed-off-by: Russell King <rmk+kernel@armlinux.org.uk>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/hwmon/hwmon.c |   21 +++++++++++++++++----
- 1 file changed, 17 insertions(+), 4 deletions(-)
+ scripts/recordmcount.c |   17 +++++++++++++++++
+ 1 file changed, 17 insertions(+)
 
---- a/drivers/hwmon/hwmon.c
-+++ b/drivers/hwmon/hwmon.c
-@@ -143,6 +143,7 @@ static int hwmon_thermal_add_sensor(stru
- 				    struct hwmon_device *hwdev, int index)
- {
- 	struct hwmon_thermal_data *tdata;
-+	struct thermal_zone_device *tzd;
+--- a/scripts/recordmcount.c
++++ b/scripts/recordmcount.c
+@@ -53,6 +53,10 @@
+ #define R_AARCH64_ABS64	257
+ #endif
  
- 	tdata = devm_kzalloc(dev, sizeof(*tdata), GFP_KERNEL);
- 	if (!tdata)
-@@ -151,8 +152,14 @@ static int hwmon_thermal_add_sensor(stru
- 	tdata->hwdev = hwdev;
- 	tdata->index = index;
++#define R_ARM_PC24		1
++#define R_ARM_THM_CALL		10
++#define R_ARM_CALL		28
++
+ static int fd_map;	/* File descriptor for file being modified. */
+ static int mmap_failed; /* Boolean flag. */
+ static char gpfx;	/* prefix for global symbol name (sometimes '_') */
+@@ -374,6 +378,18 @@ is_mcounted_section_name(char const *con
+ #define RECORD_MCOUNT_64
+ #include "recordmcount.h"
  
--	devm_thermal_zone_of_sensor_register(&hwdev->dev, index, tdata,
--					     &hwmon_thermal_ops);
-+	tzd = devm_thermal_zone_of_sensor_register(&hwdev->dev, index, tdata,
-+						   &hwmon_thermal_ops);
-+	/*
-+	 * If CONFIG_THERMAL_OF is disabled, this returns -ENODEV,
-+	 * so ignore that error but forward any other error.
-+	 */
-+	if (IS_ERR(tzd) && (PTR_ERR(tzd) != -ENODEV))
-+		return PTR_ERR(tzd);
- 
- 	return 0;
- }
-@@ -586,14 +593,20 @@ __hwmon_device_register(struct device *d
- 				if (!chip->ops->is_visible(drvdata, hwmon_temp,
- 							   hwmon_temp_input, j))
- 					continue;
--				if (info[i]->config[j] & HWMON_T_INPUT)
--					hwmon_thermal_add_sensor(dev, hwdev, j);
-+				if (info[i]->config[j] & HWMON_T_INPUT) {
-+					err = hwmon_thermal_add_sensor(dev,
-+								hwdev, j);
-+					if (err)
-+						goto free_device;
-+				}
- 			}
- 		}
- 	}
- 
- 	return hdev;
- 
-+free_device:
-+	device_unregister(hdev);
- free_hwmon:
- 	kfree(hwdev);
- ida_remove:
++static int arm_is_fake_mcount(Elf32_Rel const *rp)
++{
++	switch (ELF32_R_TYPE(w(rp->r_info))) {
++	case R_ARM_THM_CALL:
++	case R_ARM_CALL:
++	case R_ARM_PC24:
++		return 0;
++	}
++
++	return 1;
++}
++
+ /* 64-bit EM_MIPS has weird ELF64_Rela.r_info.
+  * http://techpubs.sgi.com/library/manuals/4000/007-4658-001/pdf/007-4658-001.pdf
+  * We interpret Table 29 Relocation Operation (Elf64_Rel, Elf64_Rela) [p.40]
+@@ -463,6 +479,7 @@ do_file(char const *const fname)
+ 		break;
+ 	case EM_ARM:	 reltype = R_ARM_ABS32;
+ 			 altmcount = "__gnu_mcount_nc";
++			 is_fake_mcount32 = arm_is_fake_mcount;
+ 			 break;
+ 	case EM_AARCH64:
+ 			reltype = R_AARCH64_ABS64;
 
 
