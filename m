@@ -2,128 +2,111 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CFE3114B0DC
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Jan 2020 09:30:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 882C814B0DF
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Jan 2020 09:31:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725947AbgA1Iaq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 28 Jan 2020 03:30:46 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:44982 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725914AbgA1Iaq (ORCPT
+        id S1726010AbgA1Ibf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 28 Jan 2020 03:31:35 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:60286 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1725848AbgA1Ibf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 Jan 2020 03:30:46 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=2+/gVAvYBlL8oa7wpkNriFT1H6VzmpxQUtsVLdvG6Cc=; b=aIujI3AsJjriPqpzupdhhnRXz
-        UUFvER1bBH0La9gdj+2YsNdKPPdu5iTfbBwnk4y4a5cFNSqAnxRejXiLkOyBL26hZgudMUFTlSUWQ
-        +rTsPIKpNWClT3HHWFb69fqVW1cau4wR7Ym5zYCkQEmGwVhy3EWKQ9Ri7v06pdv6XaztcYOnRG24+
-        V7A5m+eNM3V4zV7a3ZWCjSvcGaj+rc1zaL4nvo04uzpWEK/IptxmJrr2aMEz4CCEFAK/LTGoSbggw
-        K/20Pr0Jj0ZyWT0LamCAsMj8+pwW7//aI7F457wwSG0vjTBsm/6+QXHA7vbROW2MpSvI9lQA9fnxz
-        P0aMTF4OA==;
-Received: from willy by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1iwMGi-00068o-Tb; Tue, 28 Jan 2020 08:30:44 +0000
-Date:   Tue, 28 Jan 2020 00:30:44 -0800
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Michal Hocko <mhocko@kernel.org>
-Cc:     Cong Wang <xiyou.wangcong@gmail.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        linux-mm <linux-mm@kvack.org>, Mel Gorman <mgorman@suse.de>,
-        Vlastimil Babka <vbabka@suse.cz>
-Subject: Re: [PATCH] mm: avoid blocking lock_page() in kcompactd
-Message-ID: <20200128083044.GB6615@bombadil.infradead.org>
-References: <20200109225646.22983-1-xiyou.wangcong@gmail.com>
- <20200110073822.GC29802@dhcp22.suse.cz>
- <CAM_iQpVN4MNhcK0TXvhmxsCdkVOqQ4gZBzkDHykLocPC6Va7LQ@mail.gmail.com>
- <20200121090048.GG29276@dhcp22.suse.cz>
- <CAM_iQpU0p7JLyQ4mQ==Kd7+0ugmricsEAp1ST2ShAZar2BLAWg@mail.gmail.com>
- <20200126233935.GA11536@bombadil.infradead.org>
- <20200127150024.GN1183@dhcp22.suse.cz>
- <20200127190653.GA8708@bombadil.infradead.org>
- <20200128081712.GA18145@dhcp22.suse.cz>
+        Tue, 28 Jan 2020 03:31:35 -0500
+Received: from pps.filterd (m0098416.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 00S8OUxC106145
+        for <linux-kernel@vger.kernel.org>; Tue, 28 Jan 2020 03:31:33 -0500
+Received: from e06smtp07.uk.ibm.com (e06smtp07.uk.ibm.com [195.75.94.103])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2xrg633gju-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Tue, 28 Jan 2020 03:31:33 -0500
+Received: from localhost
+        by e06smtp07.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <svens@linux.ibm.com>;
+        Tue, 28 Jan 2020 08:31:31 -0000
+Received: from b06cxnps4076.portsmouth.uk.ibm.com (9.149.109.198)
+        by e06smtp07.uk.ibm.com (192.168.101.137) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Tue, 28 Jan 2020 08:31:29 -0000
+Received: from d06av24.portsmouth.uk.ibm.com (mk.ibm.com [9.149.105.60])
+        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 00S8VSME45940884
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 28 Jan 2020 08:31:28 GMT
+Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 374BE42042;
+        Tue, 28 Jan 2020 08:31:28 +0000 (GMT)
+Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 027014203F;
+        Tue, 28 Jan 2020 08:31:28 +0000 (GMT)
+Received: from tuxmaker.boeblingen.de.ibm.com (unknown [9.152.85.9])
+        by d06av24.portsmouth.uk.ibm.com (Postfix) with SMTP;
+        Tue, 28 Jan 2020 08:31:27 +0000 (GMT)
+Date:   Tue, 28 Jan 2020 09:31:27 +0100
+From:   Sven Schnelle <svens@linux.ibm.com>
+To:     Shuah Khan <shuahkhan@gmail.com>
+Cc:     shuah@kernel.org, linux-kselftest@vger.kernel.org,
+        Steven Rostedt <rostedt@goodmis.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v3] selftests/ftrace: fix glob selftest
+References: <20200108074043.21580-1-svens@linux.ibm.com>
+ <20200108091155.4af8a2c5@gandalf.local.home>
+ <20200127132255.GA75877@tuxmaker.boeblingen.de.ibm.com>
+ <CAKocOOM1zNgzY8_LE41HpiYLWNkoWQA7z-DC2ZL1sFHpbVxkkA@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200128081712.GA18145@dhcp22.suse.cz>
+In-Reply-To: <CAKocOOM1zNgzY8_LE41HpiYLWNkoWQA7z-DC2ZL1sFHpbVxkkA@mail.gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-TM-AS-GCONF: 00
+x-cbid: 20012808-0028-0000-0000-000003D514CB
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 20012808-0029-0000-0000-000024995B62
+Message-Id: <20200128083127.GB31706@tuxmaker.boeblingen.de.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.572
+ definitions=2020-01-28_02:2020-01-24,2020-01-28 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 mlxlogscore=973
+ malwarescore=0 suspectscore=0 phishscore=0 adultscore=0 mlxscore=0
+ lowpriorityscore=0 clxscore=1015 bulkscore=0 impostorscore=0
+ priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-1911200001 definitions=main-2001280069
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jan 28, 2020 at 09:17:12AM +0100, Michal Hocko wrote:
-> On Mon 27-01-20 11:06:53, Matthew Wilcox wrote:
-> > On Mon, Jan 27, 2020 at 04:00:24PM +0100, Michal Hocko wrote:
-> > > On Sun 26-01-20 15:39:35, Matthew Wilcox wrote:
-> > > > On Sun, Jan 26, 2020 at 11:53:55AM -0800, Cong Wang wrote:
-> > > > > I suspect the process gets stuck in the retry loop in try_charge(), as
-> > > > > the _shortest_ stacktrace of the perf samples indicated:
-> > > > > 
-> > > > > cycles:ppp:
-> > > > >         ffffffffa72963db mem_cgroup_iter
-> > > > >         ffffffffa72980ca mem_cgroup_oom_unlock
-> > > > >         ffffffffa7298c15 try_charge
-> > > > >         ffffffffa729a886 mem_cgroup_try_charge
-> > > > >         ffffffffa720ec03 __add_to_page_cache_locked
-> > > > >         ffffffffa720ee3a add_to_page_cache_lru
-> > > > >         ffffffffa7312ddb iomap_readpages_actor
-> > > > >         ffffffffa73133f7 iomap_apply
-> > > > >         ffffffffa73135da iomap_readpages
-> > > > >         ffffffffa722062e read_pages
-> > > > >         ffffffffa7220b3f __do_page_cache_readahead
-> > > > >         ffffffffa7210554 filemap_fault
-> > > > >         ffffffffc039e41f __xfs_filemap_fault
-> > > > >         ffffffffa724f5e7 __do_fault
-> > > > >         ffffffffa724c5f2 __handle_mm_fault
-> > > > >         ffffffffa724cbc6 handle_mm_fault
-> > > > >         ffffffffa70a313e __do_page_fault
-> > > > >         ffffffffa7a00dfe page_fault
-> > > > > 
-> > > > > But I don't see how it could be, the only possible case is when
-> > > > > mem_cgroup_oom() returns OOM_SUCCESS. However I can't
-> > > > > find any clue in dmesg pointing to OOM. These processes in the
-> > > > > same memcg are either running or sleeping (that is not exiting or
-> > > > > coredump'ing), I don't see how and why they could be selected as
-> > > > > a victim of OOM killer. I don't see any signal pending either from
-> > > > > their /proc/X/status.
-> > > > 
-> > > > I think this is a situation where we might end up with a genuine deadlock
-> > > > if we're not trylocking the pages.  readahead allocates a batch of
-> > > > locked pages and adds them to the pagecache.  If it has allocated,
-> > > > say, 5 pages, successfully inserted the first three into i_pages, then
-> > > > needs to allocate memory to insert the fourth one into i_pages, and
-> > > > the process then attempts to migrate the pages which are still locked,
-> > > > they will never come unlocked because they haven't yet been submitted
-> > > > to the filesystem for reading.
-> > > 
-> > > Just to make sure I understand. Do you mean this?
-> > > lock_page(A)
-> > > alloc_pages
-> > >   try_to_compact_pages
-> > >     compact_zone_order
-> > >       compact_zone(MIGRATE_SYNC_LIGHT)
-> > >         migrate_pages
-> > > 	  unmap_and_move
-> > > 	    __unmap_and_move
-> > > 	      lock_page(A)
-> > 
-> > Yes.  There's a little more to it than that, eg slab is involved, but
-> > you have it in a nutshell.
+Hi Shuah,
+
+On Mon, Jan 27, 2020 at 07:49:17AM -0700, Shuah Khan wrote:
+> On Mon, Jan 27, 2020 at 6:23 AM Sven Schnelle <svens@linux.ibm.com> wrote:
+> >
+> > Hi Steve,
+> >
+> > On Wed, Jan 08, 2020 at 09:11:55AM -0500, Steven Rostedt wrote:
+> > >
+> > > Shuah,
+> > >
+> > > Want to take this through your tree?
+> > >
+> > >  https://lore.kernel.org/r/20200108074043.21580-1-svens@linux.ibm.com
+> > >
+> > > Reviewed-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+> >
+> > As Shuah didn't reply, can you push that through your tree?
+> >
 > 
-> I am not deeply familiar with the readahead code. But is there really a
-> high oerder allocation (order > 1) that would trigger compaction in the
-> phase when pages are locked?
+> Hi Sven,
+> 
+> Did you run getmaintainers of this patch? You didn't send this to my
+> email address listed in the get maintainers file and also didn't cc
+> linux-kselftest.
 
-Thanks to sl*b, yes:
+My fault, sorry.
 
-radix_tree_node    80890 102536    584   28    4 : tunables    0    0    0 : slabdata   3662   3662      0
+> I just happen to notice this now. Please resend with steve's
+> Reviewed-by tag to the recipients suggested by get_maintainers.pl
+> I will take this through ksleftest tree.
 
-so it's allocating 4 pages for an allocation of a 576 byte node.
+Ok, thanks.
 
-> Btw. the compaction rejects to consider file backed pages when __GFP_FS
-> is not present AFAIR.
+Regards
+Sven
 
-Ah, that would save us.
