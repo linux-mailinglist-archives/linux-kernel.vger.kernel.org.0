@@ -2,59 +2,173 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B08D414C55A
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Jan 2020 05:49:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DD0BA14C55D
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Jan 2020 05:50:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726623AbgA2Etl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 28 Jan 2020 23:49:41 -0500
-Received: from mail-qk1-f194.google.com ([209.85.222.194]:45617 "EHLO
-        mail-qk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726598AbgA2Etl (ORCPT
+        id S1726645AbgA2Eui (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 28 Jan 2020 23:50:38 -0500
+Received: from mail-lf1-f67.google.com ([209.85.167.67]:33561 "EHLO
+        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726466AbgA2Eui (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 Jan 2020 23:49:41 -0500
-Received: by mail-qk1-f194.google.com with SMTP id x1so15780752qkl.12
-        for <linux-kernel@vger.kernel.org>; Tue, 28 Jan 2020 20:49:40 -0800 (PST)
+        Tue, 28 Jan 2020 23:50:38 -0500
+Received: by mail-lf1-f67.google.com with SMTP id n25so10897472lfl.0
+        for <linux-kernel@vger.kernel.org>; Tue, 28 Jan 2020 20:50:37 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:reply-to:from:date:message-id:subject:to;
-        bh=KhIk8bt+9SSBsktvOnFPMm3JCUsAz7dzjkA0ENZ5ZaA=;
-        b=BfRCX4BAHbRs50XTUqpOaYrB3UnMeMZIA3jxmDS1IDAyNZjMI6R1VcmRqH8pjoTQzy
-         TtYsYLHziXyuSyrXzI5cAbzgBpAFPq4R9JVQLUWNdi8GaAzitKZ8Dy56gj0ok8fee9F/
-         ByeTzhkfSQgWX9SAoQhUsK+0aO2JuNTVepHDFDWAkoIRFSNn/Huo+aJwyQtCkVBCZsPx
-         GIlKT7kaIjnWJ2mtzftet+EDBYYYdIcnmX61g8EVq7fklLcmX5i0Sww0AEwqWenz9Xrk
-         4BDTSlzP9DQhWxVNm3QyCdhkP3uujFuZ5F8nJsDKKJD4iruwkpUVpvrPK9M/teoIyXKL
-         M9Xw==
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=Wim94widKA03iNuJRk9so3EwVNvjN2LdiRVfz6nHdGg=;
+        b=Ut1dDBrReZ+s/c2Hff6XjuKCaDzlAw9J91bOdU7BFhTfc/vBYOqLFZ86XVwda6x4vd
+         JyPMXJ529/CgY17ePJ3MN+6xdlCCt9AIvQX8hxxOtby6rDb2vN3hmVfJ3chgOZ0B9qin
+         SpAF5PzNOiwA+lAZVoPYAGXQLRwpe8wu2x5VPCUNhKXzfCVkw+6v0DV7/wywrcdYjfe+
+         3gRwq7idDemW2u9T3ajMoDB4kAm9eR6mzfcGWbaDeN+8uXIKD8toohKy4i6l1v49NplP
+         bQkXF5M9PPfeNuIptYshYiHPe6HPTIPkjqeEyk6lUMadXCUMdLknBvAKlPcRg0Tjfibd
+         tJDA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
-         :subject:to;
-        bh=KhIk8bt+9SSBsktvOnFPMm3JCUsAz7dzjkA0ENZ5ZaA=;
-        b=XON2n8mXBMH0HwQrj7P6rKgzExKmr8hpn6WNSsktkajj4wb7bO3Tox7nZDoNKqUZX5
-         EdEQsbncKc83HagtIPsfYT10Oos1ORbtoV/2blcJGd/eNJLXu4pjB/hf6GA9OetHuKJ4
-         YvffpUtX8Ku5CWrnSTbLciRfsu1a58smBsEpj8KEyTjDY3e8gGuV290yXoQOqXXHFebT
-         R4yJfknjWbAk+eTfLE1otIr5vhVHxu9m0UHIxPv57zOxczv1Kku/9QiqBA7FkHyVvJJH
-         ppGWrqupLuG9/yog4kzU3LRHXb1ddhzL4sxFtCuv4odfVPf/gxI1Xp1CojO3BCH1LacN
-         5R7w==
-X-Gm-Message-State: APjAAAUf82eoWbs299W3e059zPq2efKCh6uAsV4LajFSHK6LZJBQ81ur
-        ZmMA1tSRfg9ciQ7ihoXl4DKatz51VmIBz/1GsHM=
-X-Google-Smtp-Source: APXvYqwFHnwJLqpuagfEzRO6F8c7umJFQZy/m+9OC5eD7DurPtGIoB8hDD7bfcSp3VTbFCOpbWyKhwoFV7tcqJ70vbk=
-X-Received: by 2002:a37:9245:: with SMTP id u66mr26926667qkd.102.1580273380443;
- Tue, 28 Jan 2020 20:49:40 -0800 (PST)
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=Wim94widKA03iNuJRk9so3EwVNvjN2LdiRVfz6nHdGg=;
+        b=eovjdP33s/BrqOWeqpBrclhPdepex6SN73eQkvt0AflfssP6BkdtXyeUE1dBn8hbz/
+         ZMzrUUKRxDggzqRPnkXhz9VFPvw+AiXKWLQ+6595rlpz19vr/TDNOmnzt0bTJ12gMRy0
+         xyIVvbXIaDJydVCFvYT6Pztpfp49iLpZkPAu/fsVWo3YVaoOOANZ6Kvb/ZGTNDy+Le3o
+         CRF0DCy+xalXKF8UTlA57swcXXmIipPhwGzQrbSKfokGvNZRRbnwZ5npikEVkYuvt55O
+         yG2g3v18xYKNk+MXWN2pjx7StISX4Lm8oKXoq09wLWScclUnLbNgNqtRMLIPwLOiasAG
+         M9kQ==
+X-Gm-Message-State: APjAAAULKGIg5eASu5PKf/I/AddOWnNfoJOQznI7IIhvCMQXRo7Jf5Kn
+        B497RRSNzaa/1/OGBkjGFPU5g1Zs+E95SpmqkxLfjEIxpWU=
+X-Google-Smtp-Source: APXvYqxFX4aCqNvA5hqlXrgKCF20fYm8bkSYUTXShZmJ31tdAOSiXRf+BHB0BP8xgJ9VKlTZDiZiI4qbyMOtbW5pBLo=
+X-Received: by 2002:ac2:5e7a:: with SMTP id a26mr4469755lfr.167.1580273436449;
+ Tue, 28 Jan 2020 20:50:36 -0800 (PST)
 MIME-Version: 1.0
-Received: by 2002:a05:6214:184f:0:0:0:0 with HTTP; Tue, 28 Jan 2020 20:49:40
- -0800 (PST)
-Reply-To: execbenmoore@gmail.com
-From:   Caroll Benmoore <peaceafa.1@gmail.com>
-Date:   Wed, 29 Jan 2020 05:49:40 +0100
-Message-ID: <CALkP74z9hNL9jwN=CcmbdPsCmeFxFXKwJ+TEJqncqr=SAwPCRw@mail.gmail.com>
-Subject: partnership investment
-To:     undisclosed-recipients:;
+References: <20200128135852.449088278@linuxfoundation.org>
+In-Reply-To: <20200128135852.449088278@linuxfoundation.org>
+From:   Naresh Kamboju <naresh.kamboju@linaro.org>
+Date:   Wed, 29 Jan 2020 10:20:25 +0530
+Message-ID: <CA+G9fYs=Fd27J7==VEYc_0=7=xH4sS003EwXMQHCRs0zL3iANw@mail.gmail.com>
+Subject: Re: [PATCH 4.9 000/271] 4.9.212-stable review
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     open list <linux-kernel@vger.kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Shuah Khan <shuah@kernel.org>, patches@kernelci.org,
+        Ben Hutchings <ben.hutchings@codethink.co.uk>,
+        lkft-triage@lists.linaro.org,
+        linux- stable <stable@vger.kernel.org>,
+        LTP List <ltp@lists.linux.it>,
+        Jan Stancek <jstancek@redhat.com>, rpalethorpe@suse.de
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
--- 
-I wish to go into partnership with you on investment grounds, respond
-for more details.
+On Tue, 28 Jan 2020 at 19:46, Greg Kroah-Hartman
+<gregkh@linuxfoundation.org> wrote:
+>
+> This is the start of the stable review cycle for the 4.9.212 release.
+> There are 271 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+>
+> Responses should be made by Thu, 30 Jan 2020 13:57:09 +0000.
+> Anything received after that time might be too late.
+>
+> The whole patch series can be found in one patch at:
+>         https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-=
+4.9.212-rc1.gz
+> or in the git tree and branch at:
+>         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
+-rc.git linux-4.9.y
+> and the diffstat can be found below.
+>
+> thanks,
+>
+> greg k-h
+
+This is 4.9.212-rc2 test report.
+
+Results from Linaro=E2=80=99s test farm.
+No regressions on arm64, arm, x86_64, and i386.
+
+
+NOTE:
+LTP fs test read_all_proc fails intermittently on 4.9 and 4.14 branches.
+
+Summary
+------------------------------------------------------------------------
+
+kernel: 4.9.212-rc2
+git repo: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stab=
+le-rc.git
+git branch: linux-4.9.y
+git commit: 91ff8226a074449fcd2b96214d1927fd3e8d8114
+git describe: v4.9.211-272-g91ff8226a074
+Test details: https://qa-reports.linaro.org/lkft/linux-stable-rc-4.9-oe/bui=
+ld/v4.9.211-272-g91ff8226a074
+
+No regressions (compared to build v4.9.211)
+
+No fixes (compared to build v4.9.211)
+
+Ran 23560 total tests in the following environments and test suites.
+
+Environments
+--------------
+- dragonboard-410c - arm64
+- hi6220-hikey - arm64
+- i386
+- juno-r2 - arm64
+- qemu_arm
+- qemu_arm64
+- qemu_i386
+- qemu_x86_64
+- x15 - arm
+- x86_64
+
+Test Suites
+-----------
+* build
+* install-android-platform-tools-r2600
+* kselftest
+* libhugetlbfs
+* linux-log-parser
+* ltp-cap_bounds-tests
+* ltp-commands-tests
+* ltp-containers-tests
+* ltp-cpuhotplug-tests
+* ltp-cve-tests
+* ltp-dio-tests
+* ltp-fcntl-locktests-tests
+* ltp-filecaps-tests
+* ltp-fs-tests
+* ltp-fs_bind-tests
+* ltp-fs_perms_simple-tests
+* ltp-fsx-tests
+* ltp-hugetlb-tests
+* ltp-io-tests
+* ltp-ipc-tests
+* ltp-math-tests
+* ltp-mm-tests
+* ltp-nptl-tests
+* ltp-pty-tests
+* ltp-sched-tests
+* ltp-securebits-tests
+* ltp-syscalls-tests
+* perf
+* spectre-meltdown-checker-test
+* v4l2-compliance
+* network-basic-tests
+* ltp-open-posix-tests
+* prep-tmp-disk
+* kvm-unit-tests
+* kselftest-vsyscall-mode-native
+* kselftest-vsyscall-mode-none
+* ssuite
+
+--=20
+Linaro LKFT
+https://lkft.linaro.org
