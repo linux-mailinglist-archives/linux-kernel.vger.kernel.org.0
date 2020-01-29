@@ -2,107 +2,135 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5445814C9AF
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Jan 2020 12:33:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 19A7D14C9CF
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Jan 2020 12:35:18 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726856AbgA2LdU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 29 Jan 2020 06:33:20 -0500
-Received: from Galois.linutronix.de ([193.142.43.55]:51126 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726795AbgA2LdQ (ORCPT
+        id S1726443AbgA2LfO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 29 Jan 2020 06:35:14 -0500
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:37067 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726140AbgA2LfN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 Jan 2020 06:33:16 -0500
-Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tip-bot2@linutronix.de>)
-        id 1iwlaj-0007op-1Y; Wed, 29 Jan 2020 12:33:05 +0100
-Received: from [127.0.1.1] (localhost [IPv6:::1])
-        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 9EFB71C1C1E;
-        Wed, 29 Jan 2020 12:33:00 +0100 (CET)
-Date:   Wed, 29 Jan 2020 11:33:00 -0000
-From:   "tip-bot2 for Scott Wood" <tip-bot2@linutronix.de>
-Reply-to: linux-kernel@vger.kernel.org
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip: sched/core] sched/core: Don't skip remote tick for idle CPUs
-Cc:     Scott Wood <swood@redhat.com>,
-        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
-        Ingo Molnar <mingo@kernel.org>, x86 <x86@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-In-Reply-To: <1578736419-14628-2-git-send-email-swood@redhat.com>
-References: <1578736419-14628-2-git-send-email-swood@redhat.com>
+        Wed, 29 Jan 2020 06:35:13 -0500
+Received: by mail-wr1-f68.google.com with SMTP id w15so19816521wru.4
+        for <linux-kernel@vger.kernel.org>; Wed, 29 Jan 2020 03:35:12 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=EvhTSqKe0KTZSxbOIZ3ttCfoqhIVfAMnz2yZe7ho1Gg=;
+        b=FFSuItjdKrntW2osVDwsEpGbFPCjQIlrfCBXderoGApcvG9bX/dr5jdLEwSAIR/j1W
+         p2zYMlE9r4cpS2cSTpYBDP2OpusV9LcAUaoHGHEJn2aeZlHCNcsvV0nH67PRufpFrmbf
+         z7a1W/l/YecEJWkKJfMFdyOeS3HGskV/nXsmMoqndcFduee60Y8jrBJm5V+cTx+ZVOxg
+         AjRKGmFd3cgYk64BLHV4Da7Tewj605eY7UZxbSJvZTr6JprcwuZCXbe8JVsExWjr6dFh
+         kA97BTRkKadpa5g4quvzUvxtk8f6ThC2ctgNJkWLDuAUi2+npcyeE9Bbkc7wu5oD/pAd
+         FxQg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=EvhTSqKe0KTZSxbOIZ3ttCfoqhIVfAMnz2yZe7ho1Gg=;
+        b=DsypbE2OA+nKNBgTIVKIbIm3oIcV0BimBpSw+hrVnRZogTiPDnzgBOp9XX/VYHcefq
+         6v5dBGd7SzuaGvqAR3W6683wWfbkxHacEY7xqGm7307Z2HcMr2GXTa5+u5+RWfpEVbbQ
+         kv1h0oRcbwbLwcmXoUYHlKzqChZUCUu+iUqveEKC0PO8BN642aZM78DglZqsY3Z6tIjz
+         FwmrVygdiY7k9sc+EyDfdHNmwW5j/jhOUgWcKeY2+ArCsPKc1UDkbOLI7lxxwfq7EJhS
+         JqP3WDH+1kU2FxgNbuj1yCFxOjWGbKUzEerq8nNUXNLtDxd4yFd1r28Y03U6m/MS5HMK
+         uP8Q==
+X-Gm-Message-State: APjAAAWzZ70te1X21h8O6/2CZpBo+iuJROpb31HoZzcH7Da8FgKJFNYI
+        VedLEQBhsJzoYe8/RyZPElTYp19n
+X-Google-Smtp-Source: APXvYqzeKHKlvJowSv5C3aWR0q0arCg96YOaG598FXB2raKvWKP4WEjHJetfsraj4Pau+rwIa47lqA==
+X-Received: by 2002:a05:6000:1183:: with SMTP id g3mr6698716wrx.374.1580297712119;
+        Wed, 29 Jan 2020 03:35:12 -0800 (PST)
+Received: from gmail.com (54033286.catv.pool.telekom.hu. [84.3.50.134])
+        by smtp.gmail.com with ESMTPSA id q124sm9978903wme.2.2020.01.29.03.35.10
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 29 Jan 2020 03:35:11 -0800 (PST)
+Date:   Wed, 29 Jan 2020 12:35:09 +0100
+From:   Ingo Molnar <mingo@kernel.org>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Borislav Petkov <bp@alien8.de>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Peter Zijlstra <a.p.zijlstra@chello.nl>,
+        Andrew Morton <akpm@linux-foundation.org>
+Subject: Re: [GIT PULL] x86/cpu changes for v5.6
+Message-ID: <20200129113509.GB89586@gmail.com>
+References: <20200128175751.GA35649@gmail.com>
+ <CAHk-=wjoZfKFHL0wSsfnm32zv=zWNxtJcPob+1z2+P-tMcdoCg@mail.gmail.com>
 MIME-Version: 1.0
-Message-ID: <158029758043.396.4187118276137508123.tip-bot2@tip-bot2>
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot2.linutronix.de>
-Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Linutronix-Spam-Score: 1.5
-X-Linutronix-Spam-Level: +
-X-Linutronix-Spam-Status: No , 1.5 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001,URIBL_DBL_ABUSE_MALW=2.5
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAHk-=wjoZfKFHL0wSsfnm32zv=zWNxtJcPob+1z2+P-tMcdoCg@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The following commit has been merged into the sched/core branch of tip:
 
-Commit-ID:     488603b815a7514c7009e6fc339d74ed4a30f343
-Gitweb:        https://git.kernel.org/tip/488603b815a7514c7009e6fc339d74ed4a30f343
-Author:        Scott Wood <swood@redhat.com>
-AuthorDate:    Sat, 11 Jan 2020 04:53:38 -05:00
-Committer:     Ingo Molnar <mingo@kernel.org>
-CommitterDate: Tue, 28 Jan 2020 21:36:16 +01:00
+* Linus Torvalds <torvalds@linux-foundation.org> wrote:
 
-sched/core: Don't skip remote tick for idle CPUs
+> On Tue, Jan 28, 2020 at 9:57 AM Ingo Molnar <mingo@kernel.org> wrote:
+> >
+> >    git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git x86-cpu-for-linus
+> 
+> No diffstat in the pull request?
+> 
+> The shortlog does match, and the diffstat I get looks sane, so I'm
+> pulling it, but please fix whatever thing that caused the diffstat to
+> not show in the email..
+> 
+>                  Linus
 
-This will be used in the next patch to get a loadavg update from
-nohz cpus.  The delta check is skipped because idle_sched_class
-doesn't update se.exec_start.
+My bad: I erased the patch part manually and went too far accidentally. :-/
 
-Signed-off-by: Scott Wood <swood@redhat.com>
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
-Link: https://lkml.kernel.org/r/1578736419-14628-2-git-send-email-swood@redhat.com
----
- kernel/sched/core.c | 18 ++++++++++--------
- 1 file changed, 10 insertions(+), 8 deletions(-)
+Just for the record, this looks good:
 
-diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-index fc1dfc0..cf8b33d 100644
---- a/kernel/sched/core.c
-+++ b/kernel/sched/core.c
-@@ -3669,22 +3669,24 @@ static void sched_tick_remote(struct work_struct *work)
- 	 * statistics and checks timeslices in a time-independent way, regardless
- 	 * of when exactly it is running.
- 	 */
--	if (idle_cpu(cpu) || !tick_nohz_tick_stopped_cpu(cpu))
-+	if (!tick_nohz_tick_stopped_cpu(cpu))
- 		goto out_requeue;
- 
- 	rq_lock_irq(rq, &rf);
- 	curr = rq->curr;
--	if (is_idle_task(curr) || cpu_is_offline(cpu))
-+	if (cpu_is_offline(cpu))
- 		goto out_unlock;
- 
- 	update_rq_clock(rq);
--	delta = rq_clock_task(rq) - curr->se.exec_start;
- 
--	/*
--	 * Make sure the next tick runs within a reasonable
--	 * amount of time.
--	 */
--	WARN_ON_ONCE(delta > (u64)NSEC_PER_SEC * 3);
-+	if (!is_idle_task(curr)) {
-+		/*
-+		 * Make sure the next tick runs within a reasonable
-+		 * amount of time.
-+		 */
-+		delta = rq_clock_task(rq) - curr->se.exec_start;
-+		WARN_ON_ONCE(delta > (u64)NSEC_PER_SEC * 3);
-+	}
- 	curr->sched_class->task_tick(rq, curr, 0);
- 
- out_unlock:
+   commit c0275ae758f8ce72306da200b195d1e1d66d0a8d
+   Merge: f6170f0afbe2 283bab980978
+   Author: Linus Torvalds <torvalds@linux-foundation.org>
+   Date:   Tue Jan 28 12:46:42 2020 -0800
+
+And the missing diffstat is attached below.
+
+Thanks,
+
+	Ingo
+
+=============>
+
+ MAINTAINERS                                            |   2 +-
+ arch/x86/Kconfig.cpu                                   |   8 ++
+ arch/x86/boot/mkcpustr.c                               |   1 +
+ arch/x86/include/asm/cpufeatures.h                     |   1 +
+ arch/x86/include/asm/msr-index.h                       |  14 +--
+ arch/x86/include/asm/perf_event.h                      |  22 +++--
+ arch/x86/include/asm/processor.h                       |  11 +--
+ arch/x86/include/asm/vmx.h                             | 105 ++++++++++----------
+ arch/x86/include/asm/vmxfeatures.h                     |  86 ++++++++++++++++
+ arch/x86/kernel/cpu/Makefile                           |   6 +-
+ arch/x86/kernel/cpu/bugs.c                             |   7 ++
+ arch/x86/kernel/cpu/centaur.c                          |  37 +------
+ arch/x86/kernel/cpu/common.c                           |   3 +
+ arch/x86/kernel/cpu/cpu.h                              |   4 +
+ arch/x86/kernel/cpu/feat_ctl.c                         | 145 +++++++++++++++++++++++++++
+ arch/x86/kernel/cpu/intel.c                            |  49 +--------
+ arch/x86/kernel/cpu/mce/intel.c                        |  15 +--
+ arch/x86/kernel/cpu/mkcapflags.sh                      |  15 ++-
+ arch/x86/kernel/cpu/proc.c                             |  15 +++
+ arch/x86/kernel/cpu/tsx.c                              |   5 +-
+ arch/x86/kernel/cpu/zhaoxin.c                          |  37 +------
+ arch/x86/kvm/Kconfig                                   |  10 +-
+ arch/x86/kvm/vmx/nested.c                              |   4 +-
+ arch/x86/kvm/vmx/vmx.c                                 |  67 ++++---------
+ arch/x86/kvm/vmx/vmx.h                                 |   2 +-
+ arch/x86/kvm/x86.c                                     |   2 +-
+ drivers/idle/intel_idle.c                              |   2 +-
+ tools/arch/x86/include/asm/msr-index.h                 |  14 +--
+ tools/power/x86/turbostat/turbostat.c                  |   4 +-
+ tools/testing/selftests/kvm/Makefile                   |   4 +-
+ tools/testing/selftests/kvm/include/x86_64/processor.h | 726 +------------------------------------------------------------------------------------------------------------------------------------
+ tools/testing/selftests/kvm/lib/x86_64/vmx.c           |   8 +-
+ 32 files changed, 432 insertions(+), 999 deletions(-)
+ create mode 100644 arch/x86/include/asm/vmxfeatures.h
+ create mode 100644 arch/x86/kernel/cpu/feat_ctl.c
