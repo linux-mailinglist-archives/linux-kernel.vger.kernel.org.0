@@ -2,44 +2,47 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4BC7314C59A
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Jan 2020 06:19:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D677514C599
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Jan 2020 06:19:18 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726900AbgA2FSW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 29 Jan 2020 00:18:22 -0500
-Received: from bilbo.ozlabs.org ([203.11.71.1]:40783 "EHLO ozlabs.org"
+        id S1726865AbgA2FSU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 29 Jan 2020 00:18:20 -0500
+Received: from ozlabs.org ([203.11.71.1]:33283 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726124AbgA2FR3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1726251AbgA2FR3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 29 Jan 2020 00:17:29 -0500
 Received: by ozlabs.org (Postfix, from userid 1034)
-        id 486sDl4nWCz9sRk; Wed, 29 Jan 2020 16:17:27 +1100 (AEDT)
+        id 486sDm0x6Cz9sRl; Wed, 29 Jan 2020 16:17:28 +1100 (AEDT)
 X-powerpc-patch-notification: thanks
-X-powerpc-patch-commit: 39bccfd164970557c5cfc60b2db029f70542549f
-In-Reply-To: <22469e78230edea3dbd0c79a555d73124f6c6d93.1576916812.git.christophe.leroy@c-s.fr>
+X-powerpc-patch-commit: 0f9aee0cb9da7db7d96f63cfa2dc5e4f1bffeb87
+In-Reply-To: <0728849e826ba16f1fbd6fa7f5c6cc87bd64e097.1577087627.git.christophe.leroy@c-s.fr>
 To:     Christophe Leroy <christophe.leroy@c-s.fr>,
         Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>, dja@axtens.net
+        Paul Mackerras <paulus@samba.org>
 From:   Michael Ellerman <patch-notifications@ellerman.id.au>
-Cc:     linux-mm@kvack.org, linuxppc-dev@lists.ozlabs.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v5 01/17] powerpc/32: replace MTMSRD() by mtmsr
-Message-Id: <486sDl4nWCz9sRk@ozlabs.org>
-Date:   Wed, 29 Jan 2020 16:17:27 +1100 (AEDT)
+Cc:     linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] powerpc/mm: don't log user reads to 0xffffffff
+Message-Id: <486sDm0x6Cz9sRl@ozlabs.org>
+Date:   Wed, 29 Jan 2020 16:17:28 +1100 (AEDT)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, 2019-12-21 at 08:32:22 UTC, Christophe Leroy wrote:
-> On PPC32, MTMSRD() is simply defined as mtmsr.
+On Mon, 2019-12-23 at 07:54:22 UTC, Christophe Leroy wrote:
+> Running vdsotest leaves many times the following log:
 > 
-> Replace MTMSRD(reg) by mtmsr reg in files dedicated to PPC32,
-> this makes the code less obscure.
+> [   79.629901] vdsotest[396]: User access of kernel address (ffffffff) - exploit attempt? (uid: 0)
+> 
+> A pointer set to (-1) is likely a programming error similar to
+> a NULL pointer and is not worth logging as an exploit attempt.
+> 
+> Don't log user accesses to 0xffffffff.
 > 
 > Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
 
-Series applied to powerpc next, thanks.
+Applied to powerpc next, thanks.
 
-https://git.kernel.org/powerpc/c/39bccfd164970557c5cfc60b2db029f70542549f
+https://git.kernel.org/powerpc/c/0f9aee0cb9da7db7d96f63cfa2dc5e4f1bffeb87
 
 cheers
