@@ -2,154 +2,120 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BD78514C6D0
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Jan 2020 08:23:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7299514C6D6
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Jan 2020 08:25:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726157AbgA2HXO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 29 Jan 2020 02:23:14 -0500
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:35813 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726037AbgA2HXO (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 Jan 2020 02:23:14 -0500
-Received: by mail-lj1-f195.google.com with SMTP id q8so13195288ljb.2;
-        Tue, 28 Jan 2020 23:23:12 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:from:to:cc:subject:in-reply-to:references:date:message-id
-         :mime-version;
-        bh=ajTpJw8s/37Cus5fl/uIutwpXiwHjopTPE9k9TATV7c=;
-        b=WdjdY9WL1OKraIcN0u0FHgoCUazSAXAn4pAa/CUOms5Ky2mhZDfSqqYMWfjTe/3Srt
-         Ycwe2H3S3x8WdcdCz5DOiFEaDaKgArqOjdlU9f0ZvOsBbHnA6OB411z1Ky+b+ebJShA1
-         faHHoGkhDwiWTpLbWRPiOgRaAs0OTdMz+plY5t3c1HmEzVDJDyWu+hiwoNLIMoc+iMCk
-         OmUfyos4Q25+xKB8qL+mXSgmKfHGFfNKTeuZUTQgybK32PcQCjMmQlvCR4ax7+W1XmVf
-         o2cPu5Aw5K8SlmQgNxzgGNJDvvufOF5+sfW8dlUoVZcnktEDeUS5Rfcp9K57r9td32YE
-         RisA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:from:to:cc:subject:in-reply-to:references
-         :date:message-id:mime-version;
-        bh=ajTpJw8s/37Cus5fl/uIutwpXiwHjopTPE9k9TATV7c=;
-        b=RJ7ZkzxablKbtMsu16jIrQ9/XPw0a1eNygqFYdUY3AtVucPIi9c4bDmV5XOLqGiedT
-         DFMigyOrgut4lwVuYKGBvA2iAh6BbOQHlfK4AWNuvnRlC/t1VmG+RgGZ+UlxkxeVTf4e
-         QF4R8XeCVt3G54QIBbt4khLZ6mBQeC5GqjQFS3yqQUb9aO6v660ZxBsbbn2kNNRcW0M6
-         ADi2aMfL5+W7Ab7WgXafJ6MvzQISMv63cOUy4hg1FkjiQAWmPD1b6puo9/EmA2Qp2cb+
-         7doCSvY95qL0eL9fzoPtAj5YyH1ooXOrISEeEmTN7QmY1+uOyRAooLHmsaRwgtHxwksZ
-         gfBQ==
-X-Gm-Message-State: APjAAAWUQj/ibysMjizBB3NbEjIAa14AMrOegX4QH6/Sfht6tLaEP/kZ
-        Mf1QwXoqxZ0z3Sxk7eeC8qE=
-X-Google-Smtp-Source: APXvYqyfQYCOJXPWx/EvBSsGy6PMLwVhkeOmmrWvy4VJR+Ogg/O1s31zNwexHaI5e+dTUHGY/53udQ==
-X-Received: by 2002:a2e:3619:: with SMTP id d25mr15123834lja.231.1580282591487;
-        Tue, 28 Jan 2020 23:23:11 -0800 (PST)
-Received: from saruman (88-113-215-33.elisa-laajakaista.fi. [88.113.215.33])
-        by smtp.gmail.com with ESMTPSA id a22sm403225ljp.96.2020.01.28.23.23.10
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 28 Jan 2020 23:23:10 -0800 (PST)
-From:   Felipe Balbi <balbi@kernel.org>
-To:     John Stultz <john.stultz@linaro.org>,
-        lkml <linux-kernel@vger.kernel.org>
-Cc:     Anurag Kumar Vulisha <anurag.kumar.vulisha@xilinx.com>,
-        Yang Fei <fei.yang@intel.com>,
-        Thinh Nguyen <thinhn@synopsys.com>,
-        Tejas Joglekar <tejas.joglekar@synopsys.com>,
-        Andrzej Pietrasiewicz <andrzej.p@collabora.com>,
-        Jack Pham <jackp@codeaurora.org>, Todd Kjos <tkjos@google.com>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        Linux USB List <linux-usb@vger.kernel.org>,
-        stable <stable@vger.kernel.org>,
-        John Stultz <john.stultz@linaro.org>
-Subject: Re: [PATCH v2] usb: dwc3: gadget: Check for IOC/LST bit in TRB->ctrl fields
-In-Reply-To: <20200127193046.110258-1-john.stultz@linaro.org>
-References: <20200127193046.110258-1-john.stultz@linaro.org>
-Date:   Wed, 29 Jan 2020 09:23:06 +0200
-Message-ID: <87lfpq915x.fsf@kernel.org>
-MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="=-=-=";
-        micalg=pgp-sha256; protocol="application/pgp-signature"
+        id S1726258AbgA2HZ2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 29 Jan 2020 02:25:28 -0500
+Received: from mga07.intel.com ([134.134.136.100]:7883 "EHLO mga07.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726037AbgA2HZ2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 Jan 2020 02:25:28 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga003.jf.intel.com ([10.7.209.27])
+  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 28 Jan 2020 23:25:00 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.70,376,1574150400"; 
+   d="scan'208";a="229536242"
+Received: from sgsxdev004.isng.intel.com (HELO localhost) ([10.226.88.13])
+  by orsmga003.jf.intel.com with ESMTP; 28 Jan 2020 23:24:57 -0800
+From:   "Ramuthevar,Vadivel MuruganX" 
+        <vadivel.muruganx.ramuthevar@linux.intel.com>
+To:     broonie@kernel.org, vigneshr@ti.com, linux-spi@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc:     robh+dt@kernel.org, dan.carpenter@oracle.com,
+        cheol.yong.kim@intel.com, qi-ming.wu@intel.com,
+        "Ramuthevar,Vadivel MuruganX" 
+        <vadivel.muruganx.ramuthevar@linux.intel.com>
+Subject: [PATCH v8 0/2] spi: cadence-quadpsi: Add support for the Cadence QSPI controller
+Date:   Wed, 29 Jan 2020 15:24:53 +0800
+Message-Id: <20200129072455.35807-1-vadivel.muruganx.ramuthevar@linux.intel.com>
+X-Mailer: git-send-email 2.11.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---=-=-=
-Content-Type: text/plain
-Content-Transfer-Encoding: quoted-printable
+Add support for the Cadence QSPI controller. This controller is
+present in the Intel Lightning Mountain(LGM) SoCs, Altera and TI SoCs.
+This driver has been tested on the Intel LGM SoCs.
 
+This driver does not support generic SPI and also the implementation
+only supports spi-mem interface to replace the existing driver in
+mtd/spi-nor/cadence-quadspi.c, the existing driver only support SPI-NOR
+flash memory.
 
-Hi,
+Thanks Vignesh for the review, modify, test and confirm the patch
+which is based on spi-mem based cadence driver working on TI's platform.
+after few changes started working on Intel's platform as well.
 
-John Stultz <john.stultz@linaro.org> writes:
-> From: Anurag Kumar Vulisha <anurag.kumar.vulisha@xilinx.com>
->
-> The current code in dwc3_gadget_ep_reclaim_completed_trb() will
-> check for IOC/LST bit in the event->status and returns if
-> IOC/LST bit is set. This logic doesn't work if multiple TRBs
-> are queued per request and the IOC/LST bit is set on the last
-> TRB of that request.
->
-> Consider an example where a queued request has multiple queued
-> TRBs and IOC/LST bit is set only for the last TRB. In this case,
-> the core generates XferComplete/XferInProgress events only for
-> the last TRB (since IOC/LST are set only for the last TRB). As
-> per the logic in dwc3_gadget_ep_reclaim_completed_trb()
-> event->status is checked for IOC/LST bit and returns on the
-> first TRB. This leaves the remaining TRBs left unhandled.
->
-> Similarly, if the gadget function enqueues an unaligned request
-> with sglist already in it, it should fail the same way, since we
-> will append another TRB to something that already uses more than
-> one TRB.
->
-> To aviod this, this patch changes the code to check for IOC/LST
-> bits in TRB->ctrl instead.
->
-> At a practical level, this patch resolves USB transfer stalls seen
-> with adb on dwc3 based HiKey960 after functionfs gadget added
-> scatter-gather support around v4.20.
->
-> Cc: Felipe Balbi <balbi@kernel.org>
-> Cc: Yang Fei <fei.yang@intel.com>
-> Cc: Thinh Nguyen <thinhn@synopsys.com>
-> Cc: Tejas Joglekar <tejas.joglekar@synopsys.com>
-> Cc: Andrzej Pietrasiewicz <andrzej.p@collabora.com>
-> Cc: Jack Pham <jackp@codeaurora.org>
-> Cc: Todd Kjos <tkjos@google.com>
-> Cc: Greg KH <gregkh@linuxfoundation.org>
-> Cc: Linux USB List <linux-usb@vger.kernel.org>
-> Cc: stable <stable@vger.kernel.org>
-> Tested-by: Tejas Joglekar <tejas.joglekar@synopsys.com>
-> Reviewed-by: Thinh Nguyen <thinhn@synopsys.com>
-> Signed-off-by: Anurag Kumar Vulisha <anurag.kumar.vulisha@xilinx.com>
-> [jstultz: forward ported to mainline, reworded commit log, reworked
->  to only check trb->ctrl as suggested by Felipe]
-> Signed-off-by: John Stultz <john.stultz@linaro.org>
+changes from v7:
+ -- remove addr_buf kept like as original
+ -- drop bus-num, chipselect variable
+ -- add soc_selection varible to differetiate the features
+ -- replace dev->ddev in dma function
+ -- add seperate function to handle the 24bit slave device address 
+    translation for lgm soc
+ -- correct sentence seems incomplete in Kconfig
+ -- add cqspi->soc_selection check to keep the original TI platform
+    working code.
+    
+changes from v6:
+ -- Add the Signed-off-by Vignesh in commit message
+ -- bus_num, num_chipselect added to avoid the garbage bus number
+    during the probe and spi_register.
+ -- master mode bits updated
+ -- address sequence is different from TI and Intel SoC Ip handling
+    so modified as per Intel and differentiating by use_dac_mode variable.
+ -- dummy cycles also different b/w two platforms, so keeping separate check
+ -- checkpatch errors which are intentional left as is for better readability
 
-since v5.5 is already merged, I'll send this to Greg once -rc1 is
-tagged. It's already in my testing/fixes branch waiting for a pull
-request.
+changes from v5:
+ -- kbuild test robot warnings fixed
+ -- Add Reported-By: Dan Carpenter <dan.carpenter@oracle.com>
 
-cheers
+changes from v4:
+ -- kbuild test robot warnings fixed
+ -- Add Reborted-by: tag
 
-=2D-=20
-balbi
+changes from v3:
+spi-cadence-quadspi.c
+ -- static to all functions wrt to local to the file.
+ -- Prefix cqspi_ and make the function static
+ -- cmd_ops, data_ops and dummy_ops dropped
+ -- addr_ops kept since it is required for address calculation.
+ -- devm_ used for supported functions , removed legacy API's
+ -- removed "indirect" name from functions
+ -- replaced by master->mode_bits = SPI_RX_QUAD | SPI_TX_DUAL | SPI_RX_DUAL | SPI_RX_OCTAL;
+    as per Vignesh susggestion
+ -- removed free functions since devm_ handles automatically.
+ -- dropped all unused Macros
 
---=-=-=
-Content-Type: application/pgp-signature; name="signature.asc"
+YAML file update:
+ -- cadence,qspi.yaml file name replace by cdns,qspi-nor.yaml
+ -- compatible string updated as per Vignesh suggestion
+ -- for single entry, removed descriptions
+ -- removed optional parameters
+  Build Result:
+   linux$ make DT_SCHEMA_FILES=Documentation/devicetree/bindings/spi/cdns,qspi-nor.yaml dt_binding_check
+    CHKDT   Documentation/devicetree/bindings/spi/cdns,qspi-nor.yaml
+    SCHEMA  Documentation/devicetree/bindings/processed-schema.yaml
+    DTC     Documentation/devicetree/bindings/spi/cdns,qspi-nor.example.dt.yaml
+    CHECK   Documentation/devicetree/bindings/spi/cdns,qspi-nor.example.dt.yaml
 
------BEGIN PGP SIGNATURE-----
+Ramuthevar Vadivel Murugan (2):
+  dt-bindings: spi: Add schema for Cadence QSPI Controller driver
+  spi: cadence-quadpsi: Add support for the Cadence QSPI controller
 
-iQIzBAEBCAAdFiEElLzh7wn96CXwjh2IzL64meEamQYFAl4xMtoACgkQzL64meEa
-mQa/nA//VGdZMiehyCvAAfGLm+MKvptDhZ8CkqSLlyLBsHceA5FNizlO80iJPgEX
-cYG7EefYWfUU7JPhIvlHWm0BbZ6gfj3raCqsbjdSdidy0rpCsjxEpaiDpmDrjeIw
-jzwz5s/GdQF2xUXTEuH4Tw0XraYZaI0YWzAyVxnzeQzXQxXw0Oy+odD87QVjm40u
-t2JPNyC8si26lGGtBBnx4ZK3HsV+bXEtLgaeW5Xdei8sFpOuVqXDCDKEhBwu+YMh
-7XkKPlWUuuRBv4fWDivR6RkTkShvtLqQCz9Pu80qwIHRKjoowm1ELRA1u/DL1NIa
-sSQB35txyJJ7YW5xAizOyrpMJytZ2qULPlhYlUncBfxTx+twoeDMskT+JEw1+q0B
-mL2F+bmx3HwSzDaOPDGjEMd2dPrDMuliteTCcnsAUi48TjMNFv4f19PB5PlGJQEh
-9r49ZBCuYCGnfmpOdRzaDeP5ytJ4MFRzlv/uuVqM/W4TlnLxqIwqol0u5ukCQylI
-0UIjbL6RRLIDGV4gY7MBclmkMIqFoDxmPMWh7oXHmgmTjxVHIegqvHzWoxiMXayD
-wQh0SZKuzMA5uf1bvFilmoaKHgZqSJzgwyVbyCk4V1XvrTC858+T7yzXt5OOWJ0c
-sPPaiGmcNsDL2cfZPy7AC2gtxxpi7KH9pUqK4Dhw0xwaOCYR1aA=
-=JwUK
------END PGP SIGNATURE-----
---=-=-=--
+ .../devicetree/bindings/spi/cdns,qspi-nor.yaml     |  147 ++
+ drivers/spi/Kconfig                                |    9 +
+ drivers/spi/Makefile                               |    1 +
+ drivers/spi/spi-cadence-quadspi.c                  | 1510 ++++++++++++++++++++
+ 4 files changed, 1667 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/spi/cdns,qspi-nor.yaml
+ create mode 100644 drivers/spi/spi-cadence-quadspi.c
+
+-- 
+2.11.0
+
