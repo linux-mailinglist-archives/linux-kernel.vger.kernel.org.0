@@ -2,721 +2,733 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4567B14CE6D
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Jan 2020 17:30:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 25BE914CE75
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Jan 2020 17:34:57 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727152AbgA2QaS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 29 Jan 2020 11:30:18 -0500
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:38460 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726863AbgA2QaR (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 Jan 2020 11:30:17 -0500
-Received: by mail-pl1-f196.google.com with SMTP id t6so133114plj.5
-        for <linux-kernel@vger.kernel.org>; Wed, 29 Jan 2020 08:30:17 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=5vFN4LOVUABs28014H2hcKB6fkBzK5sBG8GB9eBblEU=;
-        b=WcpJLMGP7vC0FAKNnmNlKCJvLYNzcZAp7JTvPW5D2toLVOO6PlR8Jefh5Tg8T0bbQo
-         VuuHIt2SN037IEJi4ikXLiBLEeRJb0AxMZXtqAX3+9qEsqqf5SUFiN0bkdWTLqzLhv2S
-         vJK1AeP4pGk1iUgEtPoWf8Bg4avv5tKKfy6QKzFWLuZnhVusCQZjZ1fH2cXQ+rCjf+NG
-         trqMEWZvmU38Z9/7s9pz+HqgQsVSAOU/sXR5bj7zQMOAe7i+82B8C+GbQZzwu74PSf2c
-         DQCqUnHo+jtkBM37AOpr75NWIZisscpwsTwclOBMXSbEFunaoHZfKkwfWHKnMO77lnvr
-         yHOg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=5vFN4LOVUABs28014H2hcKB6fkBzK5sBG8GB9eBblEU=;
-        b=pDKUw8bHJca+dNU37SpLdXnItF7r2bVK1R5HkNT44w74TXpewJE5CT4TZt6GkDHme2
-         twCBOpg4lK4AsQJwrC+GbqrZeIQUfhz+PeIN8GvFNSk5U1svQLgQlkPql+6prKmflTNf
-         IjcDA6fuFnRvjRdccd1QiUrI6jeMUdCZyuJIR95FhUAl/sqBbmT9yTFwHnkUEgYSHGSA
-         6rObHPQ/x96FRiMXj8kGCPv9XtNrCIUMDTY77OXMTA1sDj/eyLrWMLymc38drAqzZhRi
-         pVne7Hi5cTRh+EgnB3ogTpBFerJKJP6qi8x8vm5MWZPYFKqRpPOuK/Y+3gt5Y5Fbsb5g
-         SRvw==
-X-Gm-Message-State: APjAAAX8uD4Ep5+MnVCV6x+R5ycewQ15NLUggpcVKIIcrlm5m1NCqvcS
-        0S+obb1tq+ABWNyiFfoQY+1qlg==
-X-Google-Smtp-Source: APXvYqzJsSyxuMTzegG9I2XDMIKFeBtY/nIoVfrP3cDTYYEw/pM052xzGFMPWoapca/zI5GDg+ogBg==
-X-Received: by 2002:a17:902:ff11:: with SMTP id f17mr129480plj.273.1580315416228;
-        Wed, 29 Jan 2020 08:30:16 -0800 (PST)
-Received: from xps15 (S0106002369de4dac.cg.shawcable.net. [68.147.8.254])
-        by smtp.gmail.com with ESMTPSA id k29sm3570175pfh.77.2020.01.29.08.30.14
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 29 Jan 2020 08:30:15 -0800 (PST)
-Date:   Wed, 29 Jan 2020 09:30:13 -0700
-From:   Mathieu Poirier <mathieu.poirier@linaro.org>
-To:     =?iso-8859-1?Q?Cl=E9ment?= Leger <cleger@kalray.eu>
-Cc:     Ohad Ben-Cohen <ohad@wizery.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        linux-remoteproc <linux-remoteproc@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Arnaud Pouliquen <arnaud.pouliquen@st.com>,
-        Loic PALLARDY <loic.pallardy@st.com>, s-anna <s-anna@ti.com>
-Subject: Re: [PATCH v2] remoteproc: Add elf64 support in elf loader
-Message-ID: <20200129163013.GA16538@xps15>
-References: <20190819114516.28665-1-cleger@kalray.eu>
- <20191004184220.24817-1-cleger@kalray.eu>
- <20200124005309.GA30148@xps15>
- <416367983.521160.1579854256209.JavaMail.zimbra@kalray.eu>
- <20200124215841.GA29774@xps15>
- <831166982.775903.1580114011889.JavaMail.zimbra@kalray.eu>
- <CANLsYkyCGKOh=6rucjtUb1w0qHzGJ4bm1f_pn3yVPVjs4uHkeg@mail.gmail.com>
- <2103721910.1185467.1580288117275.JavaMail.zimbra@kalray.eu>
+        id S1726922AbgA2Qex (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 29 Jan 2020 11:34:53 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41124 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726498AbgA2Qew (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 Jan 2020 11:34:52 -0500
+Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id CE1DA2082E
+        for <linux-kernel@vger.kernel.org>; Wed, 29 Jan 2020 16:34:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1580315690;
+        bh=as+FHRcpxUqoZnekcq/AO7MrXtguGQSlW9YRdNMwiZE=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=gBwuT2sGW56HZP4xomRpErcFAPDDJ7OnbZ0a1Cyi+H3WvNyN7lmSmFx130aK9h0Wq
+         hF5b5r566OvNqGuLc4XcnXjuoy7XE+pVSuLq0+O0M+bPZQ9qFGgF3+UF1G1y4SrKD5
+         KSPR03GQHur1+WX7aA8ZwuMRdz2MxivI+Vlqrjl4=
+Received: by mail-wm1-f48.google.com with SMTP id f129so478835wmf.2
+        for <linux-kernel@vger.kernel.org>; Wed, 29 Jan 2020 08:34:49 -0800 (PST)
+X-Gm-Message-State: APjAAAXG1Jmxq+/h4aLvvOf29NQ+mZIKmOUwL+9PyjdAkTz7tBFWOpbd
+        RIVweWXVIsEpc8pdMqlICV0wnWiwpzUs7TJd+Pk=
+X-Google-Smtp-Source: APXvYqwnbnsiWVOxojjVERSEDRLtLsSRyV/JHo8JODVgQp7XSXaZmw9gjgTFoHX44Y+9O+dshNDpgiU5hG3qJlm6U28=
+X-Received: by 2002:a1c:dc85:: with SMTP id t127mr139105wmg.16.1580315688029;
+ Wed, 29 Jan 2020 08:34:48 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <2103721910.1185467.1580288117275.JavaMail.zimbra@kalray.eu>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20200128140642.8404-1-stefan@olimex.com> <20200128140642.8404-2-stefan@olimex.com>
+In-Reply-To: <20200128140642.8404-2-stefan@olimex.com>
+From:   Chen-Yu Tsai <wens@kernel.org>
+Date:   Thu, 30 Jan 2020 00:34:35 +0800
+X-Gmail-Original-Message-ID: <CAGb2v66kEACD0oOqoL2sx8JJJAnZzZc+EwEK8+74bZx48L-Z5A@mail.gmail.com>
+Message-ID: <CAGb2v66kEACD0oOqoL2sx8JJJAnZzZc+EwEK8+74bZx48L-Z5A@mail.gmail.com>
+Subject: Re: [linux-sunxi] [PATCH v3 1/1] drm: sun4i: hdmi: Add support for
+ sun4i HDMI encoder audio
+To:     Stefan Mavrodiev <stefan@olimex.com>
+Cc:     Maxime Ripard <mripard@kernel.org>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        open list <linux-kernel@vger.kernel.org>,
+        "open list:DRM DRIVERS FOR ALLWINNER A10" 
+        <dri-devel@lists.freedesktop.org>,
+        "moderated list:ARM/Allwinner sunXi SoC support" 
+        <linux-arm-kernel@lists.infradead.org>,
+        linux-sunxi <linux-sunxi@googlegroups.com>,
+        Takashi Iwai <tiwai@suse.com>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Linux-ALSA <alsa-devel@alsa-project.org>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>, Chen-Yu Tsai <wens@csie.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jan 29, 2020 at 09:55:17AM +0100, Clément Leger wrote:
-> Ok, here is the example to be more clear:
-> 
-> Content of elfxx_loader.h:
-> 
-> int elf##ELF_TYPE##_load(...) {
-> 	struct elf##ELF_TYPE##_shdr *shdr = data;
-> 	...
-> }
-> 
-> Then in elf_loader.c file:
-> 
-> #define ELF_TYPE 32
-> #include "elfxx_loader.h"
-> #undef ELF_TYPE
-> #define ELF_TYPE 64
-> #include "elfxx_loader.h"
-> 
-> int elf_load(...) {
-> 	if (class == elf64)
-> 		elf64_load(...);
-> 	else
-> 		elf32_load(...);
-> }
-> 
-> This is used for syscall_table.c in arch for instance.
-> A macro must be defined and then the ehader is included and
-> "generates" code.
-> 
-> #undef __SYSCALL
-> #define __SYSCALL(nr, call)	[nr] = (call),
-> 
-> void *sys_call_table[__NR_syscalls] = {
-> 	[0 ... __NR_syscalls - 1] = sys_ni_syscall,
-> #include <asm/unistd.h>
-> };
-> 
-> Hope this shed some light on my suggestion.
+On Tue, Jan 28, 2020 at 10:07 PM Stefan Mavrodiev <stefan@olimex.com> wrote:
+>
+> Add HDMI audio support for the sun4i-hdmi encoder, used on
+> the older Allwinner chips - A10, A20, A31.
+>
+> Most of the code is based on the BSP implementation. In it
+> dditional formats are supported (S20_3LE and S24_LE), however
+> there where some problems with them and only S16_LE is left.
+>
+> Signed-off-by: Stefan Mavrodiev <stefan@olimex.com>
+> ---
+> Changes for v3:
+>  - Instead of platfrom_driver dynammicly register/unregister card
+>  - Add Kconfig dependencies
+>  - Restrore drvdata after card unregistering
+>
+> Changes for v2:
+>  - Create a new platform driver instead of using the HDMI encoder
+>  - Expose a new kcontrol to the userspace holding the ELD data
+>  - Wrap all macro arguments in parentheses
+>
+>  drivers/gpu/drm/sun4i/Kconfig            |  11 +
+>  drivers/gpu/drm/sun4i/Makefile           |   3 +
+>  drivers/gpu/drm/sun4i/sun4i_hdmi.h       |  37 ++
+>  drivers/gpu/drm/sun4i/sun4i_hdmi_audio.c | 450 +++++++++++++++++++++++
+>  drivers/gpu/drm/sun4i/sun4i_hdmi_enc.c   |  14 +
+>  5 files changed, 515 insertions(+)
+>  create mode 100644 drivers/gpu/drm/sun4i/sun4i_hdmi_audio.c
 
-Thank you for taking the time to do this.
+Since this is actually an audio driver, please include all the ALSA / ASoC
+maintainers and mailing lists (CC-ed).
 
-I fear elfxx_loader.h would become very cryptic and hard to debug.  I think your
-original approach strikes the right balance between readabiliy and code
-duplication. 
+> diff --git a/drivers/gpu/drm/sun4i/Kconfig b/drivers/gpu/drm/sun4i/Kconfig
+> index 37e90e42943f..ca2ab5d53dd4 100644
+> --- a/drivers/gpu/drm/sun4i/Kconfig
+> +++ b/drivers/gpu/drm/sun4i/Kconfig
+> @@ -23,6 +23,17 @@ config DRM_SUN4I_HDMI
+>           Choose this option if you have an Allwinner SoC with an HDMI
+>           controller.
+>
+> +config DRM_SUN4I_HDMI_AUDIO
+> +       bool "Allwinner A10 HDMI Audio Support"
+> +       default y
+> +       depends on DRM_SUN4I_HDMI
+> +       depends on SND_SOC=y || SND_SOC=DRM_SUN4I_HDMI
+> +       select SND_PCM_ELD
+> +       select SND_SOC_GENERIC_DMAENGINE_PCM
+> +       help
+> +         Choose this option if you have an Allwinner SoC with an HDMI
+> +         controller and want to use audio.
+> +
+>  config DRM_SUN4I_HDMI_CEC
+>         bool "Allwinner A10 HDMI CEC Support"
+>         depends on DRM_SUN4I_HDMI
+> diff --git a/drivers/gpu/drm/sun4i/Makefile b/drivers/gpu/drm/sun4i/Makefile
+> index 0d04f2447b01..492bfd28ad2e 100644
+> --- a/drivers/gpu/drm/sun4i/Makefile
+> +++ b/drivers/gpu/drm/sun4i/Makefile
+> @@ -5,6 +5,9 @@ sun4i-frontend-y                += sun4i_frontend.o
+>  sun4i-drm-y                    += sun4i_drv.o
+>  sun4i-drm-y                    += sun4i_framebuffer.o
+>
+> +ifdef CONFIG_DRM_SUN4I_HDMI_AUDIO
+> +sun4i-drm-hdmi-y               += sun4i_hdmi_audio.o
+> +endif
+>  sun4i-drm-hdmi-y               += sun4i_hdmi_ddc_clk.o
+>  sun4i-drm-hdmi-y               += sun4i_hdmi_enc.o
+>  sun4i-drm-hdmi-y               += sun4i_hdmi_i2c.o
+> diff --git a/drivers/gpu/drm/sun4i/sun4i_hdmi.h b/drivers/gpu/drm/sun4i/sun4i_hdmi.h
+> index 7ad3f06c127e..28621d289655 100644
+> --- a/drivers/gpu/drm/sun4i/sun4i_hdmi.h
+> +++ b/drivers/gpu/drm/sun4i/sun4i_hdmi.h
+> @@ -42,7 +42,32 @@
+>  #define SUN4I_HDMI_VID_TIMING_POL_VSYNC                BIT(1)
+>  #define SUN4I_HDMI_VID_TIMING_POL_HSYNC                BIT(0)
+>
+> +#define SUN4I_HDMI_AUDIO_CTRL_REG      0x040
+> +#define SUN4I_HDMI_AUDIO_CTRL_ENABLE           BIT(31)
+> +#define SUN4I_HDMI_AUDIO_CTRL_RESET            BIT(30)
+> +
+> +#define SUN4I_HDMI_AUDIO_FMT_REG       0x048
+> +#define SUN4I_HDMI_AUDIO_FMT_SRC               BIT(31)
+> +#define SUN4I_HDMI_AUDIO_FMT_LAYOUT            BIT(3)
+> +#define SUN4I_HDMI_AUDIO_FMT_CH_CFG(n)         ((n) - 1)
+> +#define SUN4I_HDMI_AUDIO_FMT_CH_CFG_MASK       GENMASK(2, 0)
+> +
+> +#define SUN4I_HDMI_AUDIO_PCM_REG       0x4c
+> +#define SUN4I_HDMI_AUDIO_PCM_CH_MAP(n, m)      (((m) - 1) << ((n) * 4))
+> +#define SUN4I_HDMI_AUDIO_PCM_CH_MAP_MASK(n)    (GENMASK(2, 0) << ((n) * 4))
+> +
+> +#define SUN4I_HDMI_AUDIO_CTS_REG       0x050
+> +#define SUN4I_HDMI_AUDIO_CTS(n)                        ((n) & GENMASK(19, 0))
+> +
+> +#define SUN4I_HDMI_AUDIO_N_REG         0x054
+> +#define SUN4I_HDMI_AUDIO_N(n)                  ((n) & GENMASK(19, 0))
+> +
+> +#define SUN4I_HDMI_AUDIO_STAT0_REG     0x58
+> +#define SUN4I_HDMI_AUDIO_STAT0_FREQ(n)         ((n) << 24)
+> +#define SUN4I_HDMI_AUDIO_STAT0_FREQ_MASK       GENMASK(27, 24)
+> +
+>  #define SUN4I_HDMI_AVI_INFOFRAME_REG(n)        (0x080 + (n))
+> +#define SUN4I_HDMI_AUDIO_INFOFRAME_REG(n)      (0x0a0 + (n))
+>
+>  #define SUN4I_HDMI_PAD_CTRL0_REG       0x200
+>  #define SUN4I_HDMI_PAD_CTRL0_BIASEN            BIT(31)
+> @@ -242,6 +267,11 @@ struct sun4i_hdmi_variant {
+>         bool                    ddc_fifo_has_dir;
+>  };
+>
+> +struct sun4i_hdmi_audio {
+> +       struct snd_soc_card             *card;
+> +       u8                              channels;
+> +};
+> +
+>  struct sun4i_hdmi {
+>         struct drm_connector    connector;
+>         struct drm_encoder      encoder;
+> @@ -283,9 +313,14 @@ struct sun4i_hdmi {
+>         struct regmap_field     *field_ddc_sda_en;
+>         struct regmap_field     *field_ddc_sck_en;
+>
+> +
+>         struct sun4i_drv        *drv;
+>
+>         bool                    hdmi_monitor;
+> +       bool                    hdmi_audio;
+> +
+> +       struct sun4i_hdmi_audio audio;
+> +
+>         struct cec_adapter      *cec_adap;
+>
+>         const struct sun4i_hdmi_variant *variant;
+> @@ -294,5 +329,7 @@ struct sun4i_hdmi {
+>  int sun4i_ddc_create(struct sun4i_hdmi *hdmi, struct clk *clk);
+>  int sun4i_tmds_create(struct sun4i_hdmi *hdmi);
+>  int sun4i_hdmi_i2c_create(struct device *dev, struct sun4i_hdmi *hdmi);
+> +int sun4i_hdmi_audio_create(struct sun4i_hdmi *hdmi);
+> +void sun4i_hdmi_audio_destroy(struct sun4i_hdmi *hdmi);
+>
+>  #endif /* _SUN4I_HDMI_H_ */
+> diff --git a/drivers/gpu/drm/sun4i/sun4i_hdmi_audio.c b/drivers/gpu/drm/sun4i/sun4i_hdmi_audio.c
+> new file mode 100644
+> index 000000000000..f42f2cea4e9e
+> --- /dev/null
+> +++ b/drivers/gpu/drm/sun4i/sun4i_hdmi_audio.c
+> @@ -0,0 +1,450 @@
+> +// SPDX-License-Identifier: GPL-2.0-or-later
+> +/*
+> + * Copyright (C) 2020 Olimex Ltd.
+> + *   Author: Stefan Mavrodiev <stefan@olimex.com>
+> + */
+> +#include <linux/dma-mapping.h>
+> +#include <linux/dmaengine.h>
+> +#include <linux/module.h>
+> +#include <linux/of_dma.h>
+> +#include <linux/regmap.h>
+> +
+> +#include <drm/drm_print.h>
+> +
+> +#include <sound/dmaengine_pcm.h>
+> +#include <sound/pcm_drm_eld.h>
+> +#include <sound/pcm_params.h>
+> +#include <sound/soc.h>
+> +
+> +#include "sun4i_hdmi.h"
+> +
+> +static int sun4i_hdmi_audio_ctl_eld_info(struct snd_kcontrol *kcontrol,
+> +                                        struct snd_ctl_elem_info *uinfo)
+> +{
+> +       uinfo->type = SNDRV_CTL_ELEM_TYPE_BYTES;
+> +       uinfo->count = MAX_ELD_BYTES;
+> +       return 0;
+> +}
+> +
+> +static int sun4i_hdmi_audio_ctl_eld_get(struct snd_kcontrol *kcontrol,
+> +                                       struct snd_ctl_elem_value *ucontrol)
+> +{
+> +       struct snd_soc_component *component = snd_kcontrol_chip(kcontrol);
+> +       struct snd_soc_card *card = snd_soc_component_get_drvdata(component);
+> +       struct sun4i_hdmi *hdmi = snd_soc_card_get_drvdata(card);
+> +
+> +       memcpy(ucontrol->value.bytes.data,
+> +              hdmi->connector.eld,
+> +              MAX_ELD_BYTES);
+> +
+> +       return 0;
+> +}
+> +
+> +static const struct snd_kcontrol_new sun4i_hdmi_audio_controls[] = {
+> +       {
+> +               .access = SNDRV_CTL_ELEM_ACCESS_READ |
+> +                         SNDRV_CTL_ELEM_ACCESS_VOLATILE,
+> +               .iface = SNDRV_CTL_ELEM_IFACE_PCM,
+> +               .name = "ELD",
+> +               .info = sun4i_hdmi_audio_ctl_eld_info,
+> +               .get = sun4i_hdmi_audio_ctl_eld_get,
+> +       },
+> +};
+> +
+> +static const struct snd_soc_dapm_widget sun4i_hdmi_audio_widgets[] = {
+> +       SND_SOC_DAPM_OUTPUT("TX"),
+> +};
+> +
+> +static const struct snd_soc_dapm_route sun4i_hdmi_audio_routes[] = {
+> +       { "TX", NULL, "Playback" },
+> +};
+> +
+> +static const struct snd_soc_component_driver sun4i_hdmi_audio_component = {
+> +       .controls               = sun4i_hdmi_audio_controls,
+> +       .num_controls           = ARRAY_SIZE(sun4i_hdmi_audio_controls),
+> +       .dapm_widgets           = sun4i_hdmi_audio_widgets,
+> +       .num_dapm_widgets       = ARRAY_SIZE(sun4i_hdmi_audio_widgets),
+> +       .dapm_routes            = sun4i_hdmi_audio_routes,
+> +       .num_dapm_routes        = ARRAY_SIZE(sun4i_hdmi_audio_routes),
+> +};
+> +
+> +static int sun4i_hdmi_audio_startup(struct snd_pcm_substream *substream,
+> +                                   struct snd_soc_dai *dai)
+> +{
+> +       struct snd_soc_card *card = snd_soc_dai_get_drvdata(dai);
+> +       struct sun4i_hdmi *hdmi = snd_soc_card_get_drvdata(card);
+> +       u32 reg;
+> +       int ret;
+> +
+> +       regmap_write(hdmi->regmap, SUN4I_HDMI_AUDIO_CTRL_REG, 0);
+> +       regmap_write(hdmi->regmap,
+> +                    SUN4I_HDMI_AUDIO_CTRL_REG,
+> +                    SUN4I_HDMI_AUDIO_CTRL_RESET);
+> +       ret = regmap_read_poll_timeout(hdmi->regmap,
+> +                                      SUN4I_HDMI_AUDIO_CTRL_REG,
+> +                                      reg, !reg, 100, 50000);
+> +       if (ret < 0) {
+> +               DRM_ERROR("Failed to reset HDMI Audio\n");
+> +               return ret;
+> +       }
+> +
+> +       regmap_write(hdmi->regmap,
+> +                    SUN4I_HDMI_AUDIO_CTRL_REG,
+> +                    SUN4I_HDMI_AUDIO_CTRL_ENABLE);
+> +
+> +       return snd_pcm_hw_constraint_eld(substream->runtime,
+> +                                       hdmi->connector.eld);
+> +}
+> +
+> +static void sun4i_hdmi_audio_shutdown(struct snd_pcm_substream *substream,
+> +                                     struct snd_soc_dai *dai)
+> +{
+> +       struct snd_soc_card *card = snd_soc_dai_get_drvdata(dai);
+> +       struct sun4i_hdmi *hdmi = snd_soc_card_get_drvdata(card);
+> +
+> +       regmap_write(hdmi->regmap, SUN4I_HDMI_AUDIO_CTRL_REG, 0);
+> +}
+> +
+> +static int sun4i_hdmi_setup_audio_infoframes(struct sun4i_hdmi *hdmi)
+> +{
+> +       union hdmi_infoframe frame;
+> +       u8 buffer[14];
+> +       int i, ret;
+> +
+> +       ret = hdmi_audio_infoframe_init(&frame.audio);
+> +       if (ret < 0) {
+> +               DRM_ERROR("Failed to init HDMI audio infoframe\n");
+> +               return ret;
+> +       }
+> +
+> +       frame.audio.coding_type = HDMI_AUDIO_CODING_TYPE_STREAM;
+> +       frame.audio.sample_frequency = HDMI_AUDIO_SAMPLE_FREQUENCY_STREAM;
+> +       frame.audio.sample_size = HDMI_AUDIO_SAMPLE_SIZE_STREAM;
+> +       frame.audio.channels = hdmi->audio.channels;
+> +
+> +       ret = hdmi_infoframe_pack(&frame, buffer, sizeof(buffer));
+> +       if (ret < 0) {
+> +               DRM_ERROR("Failed to pack HDMI audio infoframe\n");
+> +               return ret;
+> +       }
+> +
+> +       for (i = 0; i < sizeof(buffer); i++)
+> +               writeb(buffer[i],
+> +                      hdmi->base + SUN4I_HDMI_AUDIO_INFOFRAME_REG(i));
+> +
+> +       return 0;
+> +}
+> +
+> +static void sun4i_hdmi_audio_set_cts_n(struct sun4i_hdmi *hdmi,
+> +                                      struct snd_pcm_hw_params *params)
+> +{
+> +       struct drm_encoder *encoder = &hdmi->encoder;
+> +       struct drm_crtc *crtc = encoder->crtc;
+> +       const struct drm_display_mode *mode = &crtc->state->adjusted_mode;
+> +       u32 rate = params_rate(params);
+> +       u32 n, cts;
+> +       u64 tmp;
+> +
+> +       /**
+> +        * Calculate Cycle Time Stamp (CTS) and Numerator (N):
+> +        *
+> +        * N = 128 * Samplerate / 1000
+> +        * CTS = (Ftdms * N) / (128 * Samplerate)
+> +        */
+> +
+> +       n = 128 * rate / 1000;
+> +       tmp = (u64)(mode->clock * 1000) * n;
+> +       do_div(tmp, 128 * rate);
+> +       cts = tmp;
+> +
+> +       regmap_write(hdmi->regmap,
+> +                    SUN4I_HDMI_AUDIO_CTS_REG,
+> +                    SUN4I_HDMI_AUDIO_CTS(cts));
+> +
+> +       regmap_write(hdmi->regmap,
+> +                    SUN4I_HDMI_AUDIO_N_REG,
+> +                    SUN4I_HDMI_AUDIO_N(n));
+> +}
+> +
+> +static int sun4i_hdmi_audio_set_hw_rate(struct sun4i_hdmi *hdmi,
+> +                                       struct snd_pcm_hw_params *params)
+> +{
+> +       u32 rate = params_rate(params);
+> +       u32 val;
+> +
+> +       switch (rate) {
+> +       case 44100:
+> +               val = 0x0;
+> +               break;
+> +       case 48000:
+> +               val = 0x2;
+> +               break;
+> +       case 32000:
+> +               val = 0x3;
+> +               break;
+> +       case 88200:
+> +               val = 0x8;
+> +               break;
+> +       case 96000:
+> +               val = 0x9;
+> +               break;
+> +       case 176400:
+> +               val = 0xc;
+> +               break;
+> +       case 192000:
+> +               val = 0xe;
+> +               break;
+> +       default:
+> +               return -EINVAL;
+> +       }
+> +
+> +       regmap_update_bits(hdmi->regmap,
+> +                          SUN4I_HDMI_AUDIO_STAT0_REG,
+> +                          SUN4I_HDMI_AUDIO_STAT0_FREQ_MASK,
+> +                          SUN4I_HDMI_AUDIO_STAT0_FREQ(val));
+> +
+> +       return 0;
+> +}
+> +
+> +static int sun4i_hdmi_audio_set_hw_channels(struct sun4i_hdmi *hdmi,
+> +                                           struct snd_pcm_hw_params *params)
+> +{
+> +       u32 channels = params_channels(params);
+> +
+> +       if (channels > 8)
+> +               return -EINVAL;
+> +
+> +       hdmi->audio.channels = channels;
+> +
+> +       regmap_update_bits(hdmi->regmap,
+> +                          SUN4I_HDMI_AUDIO_FMT_REG,
+> +                          SUN4I_HDMI_AUDIO_FMT_LAYOUT,
+> +                          (channels > 2) ? SUN4I_HDMI_AUDIO_FMT_LAYOUT : 0);
+> +
+> +       regmap_update_bits(hdmi->regmap,
+> +                          SUN4I_HDMI_AUDIO_FMT_REG,
+> +                          SUN4I_HDMI_AUDIO_FMT_CH_CFG_MASK,
+> +                          SUN4I_HDMI_AUDIO_FMT_CH_CFG(channels));
+> +
+> +       regmap_write(hdmi->regmap, SUN4I_HDMI_AUDIO_PCM_REG, 0x76543210);
+> +
+> +       /**
+> +        * If only one channel is required, send the same sample
+> +        * to the sink device as a left and right channel.
+> +        */
+> +       if (channels == 1)
+> +               regmap_update_bits(hdmi->regmap,
+> +                                  SUN4I_HDMI_AUDIO_PCM_REG,
+> +                                  SUN4I_HDMI_AUDIO_PCM_CH_MAP_MASK(1),
+> +                                  SUN4I_HDMI_AUDIO_PCM_CH_MAP(1, 1));
+> +
+> +       return 0;
+> +}
+> +
+> +static int sun4i_hdmi_audio_hw_params(struct snd_pcm_substream *substream,
+> +                                     struct snd_pcm_hw_params *params,
+> +                                     struct snd_soc_dai *dai)
+> +{
+> +       struct snd_soc_card *card = snd_soc_dai_get_drvdata(dai);
+> +       struct sun4i_hdmi *hdmi = snd_soc_card_get_drvdata(card);
+> +       int ret;
+> +
+> +       ret = sun4i_hdmi_audio_set_hw_rate(hdmi, params);
+> +       if (ret < 0)
+> +               return ret;
+> +
+> +       ret = sun4i_hdmi_audio_set_hw_channels(hdmi, params);
+> +       if (ret < 0)
+> +               return ret;
+> +
+> +       sun4i_hdmi_audio_set_cts_n(hdmi, params);
+> +
+> +       return 0;
+> +}
+> +
+> +static int sun4i_hdmi_audio_trigger(struct snd_pcm_substream *substream,
+> +                                   int cmd,
+> +                                   struct snd_soc_dai *dai)
+> +{
+> +       struct snd_soc_card *card = snd_soc_dai_get_drvdata(dai);
+> +       struct sun4i_hdmi *hdmi = snd_soc_card_get_drvdata(card);
+> +       int ret = 0;
+> +
+> +       switch (cmd) {
+> +       case SNDRV_PCM_TRIGGER_START:
+> +               ret = sun4i_hdmi_setup_audio_infoframes(hdmi);
+> +               break;
+> +       default:
+> +               break;
+> +       }
+> +
+> +       return ret;
+> +}
+> +
+> +static const struct snd_soc_dai_ops sun4i_hdmi_audio_dai_ops = {
+> +       .startup = sun4i_hdmi_audio_startup,
+> +       .shutdown = sun4i_hdmi_audio_shutdown,
+> +       .hw_params = sun4i_hdmi_audio_hw_params,
+> +       .trigger = sun4i_hdmi_audio_trigger,
+> +};
+> +
+> +static int sun4i_hdmi_audio_dai_probe(struct snd_soc_dai *dai)
+> +{
+> +       struct snd_dmaengine_dai_dma_data *dma_data;
+> +
+> +       dma_data = devm_kzalloc(dai->dev, sizeof(*dma_data), GFP_KERNEL);
+> +       if (!dma_data)
+> +               return -ENOMEM;
+> +
+> +       dma_data->addr_width = DMA_SLAVE_BUSWIDTH_4_BYTES;
+> +       dma_data->maxburst = 8;
+> +
+> +       snd_soc_dai_init_dma_data(dai, dma_data, NULL);
+> +
+> +       return 0;
+> +}
+> +
+> +static struct snd_soc_dai_driver sun4i_hdmi_audio_dai = {
+> +       .name = "HDMI",
+> +       .ops = &sun4i_hdmi_audio_dai_ops,
+> +       .probe = sun4i_hdmi_audio_dai_probe,
+> +       .playback = {
+> +               .stream_name    = "Playback",
+> +               .channels_min   = 1,
+> +               .channels_max   = 8,
+> +               .formats        = SNDRV_PCM_FMTBIT_S16_LE,
+> +               .rates          = SNDRV_PCM_RATE_8000_192000,
+> +       },
+> +};
+> +
+> +static const struct snd_pcm_hardware sun4i_hdmi_audio_pcm_hardware = {
+> +       .info                   = SNDRV_PCM_INFO_INTERLEAVED |
+> +                                 SNDRV_PCM_INFO_BLOCK_TRANSFER |
+> +                                 SNDRV_PCM_INFO_MMAP |
+> +                                 SNDRV_PCM_INFO_MMAP_VALID |
+> +                                 SNDRV_PCM_INFO_PAUSE |
+> +                                 SNDRV_PCM_INFO_RESUME,
+> +       .formats                = SNDRV_PCM_FMTBIT_S16_LE,
+> +       .rates                  = SNDRV_PCM_RATE_8000_192000,
+> +       .rate_min               = 8000,
+> +       .rate_max               = 192000,
+> +       .channels_min           = 1,
+> +       .channels_max           = 8,
+> +       .buffer_bytes_max       = 128 * 1024,
+> +       .period_bytes_min       = 4 * 1024,
+> +       .period_bytes_max       = 32 * 1024,
+> +       .periods_min            = 2,
+> +       .periods_max            = 8,
+> +       .fifo_size              = 128,
+> +};
+> +
+> +static const struct snd_dmaengine_pcm_config sun4i_hdmi_audio_pcm_config = {
+> +       .chan_names[SNDRV_PCM_STREAM_PLAYBACK] = "audio-tx",
+> +       .pcm_hardware = &sun4i_hdmi_audio_pcm_hardware,
+> +       .prealloc_buffer_size = 128 * 1024,
+> +       .prepare_slave_config = snd_dmaengine_pcm_prepare_slave_config,
+> +};
+> +
+> +struct snd_soc_card sun4i_hdmi_audio_card = {
+> +       .name = "sun4i-hdmi",
+> +};
+> +
+> +int sun4i_hdmi_audio_create(struct sun4i_hdmi *hdmi)
+> +{
+> +       struct snd_soc_card *card = &sun4i_hdmi_audio_card;
+> +       struct snd_soc_dai_link_component *comp;
+> +       struct snd_soc_dai_link *link;
+> +       int ret;
+> +
+> +       ret = snd_dmaengine_pcm_register(hdmi->dev,
+> +                                        &sun4i_hdmi_audio_pcm_config, 0);
+> +       if (ret < 0) {
+> +               DRM_ERROR("Could not register PCM\n");
+> +               return ret;
+> +       }
+> +
+> +       ret = snd_soc_register_component(hdmi->dev,
+> +                                        &sun4i_hdmi_audio_component,
+> +                                        &sun4i_hdmi_audio_dai, 1);
+> +       if (ret < 0) {
+> +               DRM_ERROR("Could not register DAI\n");
+> +               goto unregister_pcm;
+> +       }
+> +
+> +       link = devm_kzalloc(hdmi->dev, sizeof(*link), GFP_KERNEL);
+> +       if (!link) {
+> +               ret = -ENOMEM;
+> +               goto unregister_component;
+> +       }
+> +
+> +       comp = devm_kzalloc(hdmi->dev, sizeof(*comp) * 3, GFP_KERNEL);
+> +       if (!comp) {
+> +               ret = -ENOMEM;
+> +               goto unregister_component;
+> +       }
+> +
+> +       link->cpus = &comp[0];
+> +       link->codecs = &comp[1];
+> +       link->platforms = &comp[2];
+> +
+> +       link->num_cpus = 1;
+> +       link->num_codecs = 1;
+> +       link->num_platforms = 1;
+> +
+> +       link->playback_only = 1;
+> +
+> +       link->name = "SUN4I-HDMI";
+> +       link->stream_name = "SUN4I-HDMI PCM";
+> +
+> +       link->codecs->name = dev_name(hdmi->dev);
+> +       link->codecs->dai_name  = sun4i_hdmi_audio_dai.name;
+> +
+> +       link->cpus->dai_name = dev_name(hdmi->dev);
+> +
+> +       link->platforms->name = dev_name(hdmi->dev);
+> +
+> +       link->dai_fmt = SND_SOC_DAIFMT_I2S;
+> +
+> +       card->dai_link = link;
+> +       card->num_links = 1;
+> +       card->dev = hdmi->dev;
+> +
+> +       hdmi->audio.card = card;
+> +
+> +       /**
+> +        * snd_soc_register_card() will overwrite the driver_data pointer.
+> +        * So before registering the card, store the original pointer in
+> +        * card->drvdata.
+> +        */
+> +       snd_soc_card_set_drvdata(card, hdmi);
+> +       ret = snd_soc_register_card(card);
+> +       if (ret)
+> +               goto unregister_component;
 
-> 
-> Clément
-> 
-> ----- On 28 Jan, 2020, at 18:14, Mathieu Poirier mathieu.poirier@linaro.org wrote:
-> 
-> > On Mon, 27 Jan 2020 at 01:33, Clément Leger <cleger@kalray.eu> wrote:
-> >>
-> >> Hi Mathieu,
-> >>
-> >> Thanks for your thorough review. While thinking about it,there is at least
-> >> another option which would consist in splitting all elf specific functions into
-> >> a separate .h file and then include it in a .c to "instantiate" the functions
-> >> with correct types. For instance, it would look like this:
-> >>
-> >> #define ELF_TYPE 32
-> >> #include "elf_functions.h"
-> >> #undef ELF_TYPE
-> >> #define ELF_TYPE 64
-> >> #include "elf_functions.h"
-> >>
-> >> pros: More readable and type-checking ok
-> >> cons: A bit hackish
-> >>
-> >> I would say this might be a better optino than my current patch.
-> >> However, I'm not sure this kind of thing of well accepted in the kernel.
-> > 
-> > I won't claim to fully understand your suggestion above, but if it is
-> > suspicious enough to look hackish to you than it will probably look
-> > hackish to other people.  Nonetheless there might be a case for
-> > exception if the approach yields clear advantages.  Can you point me
-> > to an example somewhere in the kernel code where something similar
-> > would have been done?
-> > 
-> >>
-> >> Clément
-> >>
-> >> ----- On 24 Jan, 2020, at 22:58, Mathieu Poirier mathieu.poirier@linaro.org
-> >> wrote:
-> >>
-> >> > On Fri, Jan 24, 2020 at 09:24:16AM +0100, Clément Leger wrote:
-> >> >> Hi Mathieu,
-> >> >>
-> >> >> ----- On 24 Jan, 2020, at 01:53, Mathieu Poirier mathieu.poirier@linaro.org
-> >> >> wrote:
-> >> >>
-> >> >> > Hi Clement,
-> >> >> >
-> >> >> > On Fri, Oct 04, 2019 at 08:42:20PM +0200, Clement Leger wrote:
-> >> >> >> elf32 and elf64 mainly differ by their types. In order to avoid
-> >> >> >> copy/pasting the whole loader code, generate static inline functions
-> >> >> >> which will access values according to the elf class. It allows to keep a
-> >> >> >> common loader basis.
-> >> >> >> In order to accomodate both elf types sizes, the maximum size for a
-> >> >> >> elf header member is chosen using the maximum value of both elf class.
-> >> >> >>
-> >> >> >> Signed-off-by: Clement Leger <cleger@kalray.eu>
-> >> >> >> Tested-by: Arnaud POULIQUEN <arnaud.pouliquen@st.com>
-> >> >> >> ---
-> >> >> >> Changes in v2:
-> >> >> >>  - Add ELF64 support in documentation
-> >> >> >>
-> >> >> >
-> >> >> > First and foremost please address the complaints from checkpatch.
-> >> >>
-> >> >> I fixed one typo in accommodate. The other checkpatch complaint is
-> >> >> about missing parenthesis for macros with complex values which is
-> >> >> unfortunately not possible since I'm generating inline functions.
-> >> >>
-> >> >> Did you have any other one ?
-> >> >>
-> >> >> >
-> >> >> >> ---
-> >> >> >>  Documentation/remoteproc.txt               |   2 +-
-> >> >> >>  drivers/remoteproc/remoteproc_elf_loader.c | 135 ++++++++++++++++++-----------
-> >> >> >>  drivers/remoteproc/remoteproc_elf_loader.h |  69 +++++++++++++++
-> >> >> >>  drivers/remoteproc/remoteproc_internal.h   |   2 +-
-> >> >> >>  drivers/remoteproc/st_remoteproc.c         |   2 +-
-> >> >> >>  include/linux/remoteproc.h                 |   4 +-
-> >> >> >>  6 files changed, 157 insertions(+), 57 deletions(-)
-> >> >> >>  create mode 100644 drivers/remoteproc/remoteproc_elf_loader.h
-> >> >> >>
-> >> >> >> diff --git a/Documentation/remoteproc.txt b/Documentation/remoteproc.txt
-> >> >> >> index 77fb03acdbb4..bf4f0c41ec4e 100644
-> >> >> >> --- a/Documentation/remoteproc.txt
-> >> >> >> +++ b/Documentation/remoteproc.txt
-> >> >> >> @@ -230,7 +230,7 @@ in the used rings.
-> >> >> >>  Binary Firmware Structure
-> >> >> >>  =========================
-> >> >> >>
-> >> >> >> -At this point remoteproc only supports ELF32 firmware binaries. However,
-> >> >> >> +At this point remoteproc supports ELF32 and ELF64 firmware binaries. However,
-> >> >> >>  it is quite expected that other platforms/devices which we'd want to
-> >> >> >>  support with this framework will be based on different binary formats.
-> >> >> >>
-> >> >> >> diff --git a/drivers/remoteproc/remoteproc_elf_loader.c
-> >> >> >> b/drivers/remoteproc/remoteproc_elf_loader.c
-> >> >> >> index b17d72ec8603..6a2d31d6092c 100644
-> >> >> >> --- a/drivers/remoteproc/remoteproc_elf_loader.c
-> >> >> >> +++ b/drivers/remoteproc/remoteproc_elf_loader.c
-> >> >> >> @@ -31,6 +31,7 @@
-> >> >> >>  #include <linux/elf.h>
-> >> >> >>
-> >> >> >>  #include "remoteproc_internal.h"
-> >> >> >> +#include "remoteproc_elf_loader.h"
-> >> >> >>
-> >> >> >>  /**
-> >> >> >>   * rproc_elf_sanity_check() - Sanity Check ELF firmware image
-> >> >> >> @@ -43,8 +44,16 @@ int rproc_elf_sanity_check(struct rproc *rproc, const struct
-> >> >> >> firmware *fw)
-> >> >> >>  {
-> >> >> >>   const char *name = rproc->firmware;
-> >> >> >>   struct device *dev = &rproc->dev;
-> >> >> >> + /*
-> >> >> >> +  * Elf files are beginning with the same structure. Thus, to simplify
-> >> >> >> +  * header parsing, we can use the elf32_hdr one for both elf64 and
-> >> >> >> +  * elf32.
-> >> >> >> +  */
-> >> >> >>   struct elf32_hdr *ehdr;
-> >> >> >> + u32 elf_shdr_size;
-> >> >> >> + u64 phoff, shoff;
-> >> >> >>   char class;
-> >> >> >> + u16 phnum;
-> >> >> >>
-> >> >> >>   if (!fw) {
-> >> >> >>           dev_err(dev, "failed to load %s\n", name);
-> >> >> >> @@ -58,9 +67,13 @@ int rproc_elf_sanity_check(struct rproc *rproc, const struct
-> >> >> >> firmware *fw)
-> >> >> >
-> >> >> > In the current code [1] fw->size is compared against the size of an elf32_hdr.
-> >> >> > If support for elf64 is added that code needs to be modified to check for the
-> >> >> > right header size using fw_elf_get_class().
-> >> >>
-> >> >> Actually, the elf32 header is smaller than the elf64 one so this check is
-> >> >> there to ensure that we have at least a minimal elf header (elf32).
-> >> >> And since the class is derived from the header, you better have to check the
-> >> >> header size before accessing it.
-> >> >>
-> >> >> To be more clear, I could compare it to min(sizeof(struct elf32_hdr),
-> >> >> sizeof(struct elf64_hdr)) or add a comment at least stating that since
-> >> >> elf header contains the same fields for identification, we can use the
-> >> >> elf32 one.
-> >> >>
-> >> >> >
-> >> >> > [1]
-> >> >> > https://elixir.bootlin.com/linux/v5.5-rc6/source/drivers/remoteproc/remoteproc_elf_loader.c#L46
-> >> >> >
-> >> >> >>
-> >> >> >>   ehdr = (struct elf32_hdr *)fw->data;
-> >> >> >>
-> >> >> >> - /* We only support ELF32 at this point */
-> >> >> >> + if (memcmp(ehdr->e_ident, ELFMAG, SELFMAG)) {
-> >> >> >> +         dev_err(dev, "Image is corrupted (bad magic)\n");
-> >> >> >> +         return -EINVAL;
-> >> >> >> + }
-> >> >> >> +
-> >> >> >
-> >> >> > Is there a reason to move this check up where?  If not please bring it back to
-> >> >> > its original location, that is below:
-> >> >> >
-> >> >> > "if (fw->size < ehdr->e_shoff + sizeof(structelf32_shdr))"
-> >> >> >
-> >> >>
-> >> >> This is because the new check for size uses elf_shdr_size which is derived from
-> >> >> the class. And since the class is extracted from the elf header, we need to
-> >> >> check
-> >> >> the header to be correct first.
-> >> >>
-> >> >> >>   class = ehdr->e_ident[EI_CLASS];
-> >> >> >> - if (class != ELFCLASS32) {
-> >> >> >> + if (class != ELFCLASS32 && class != ELFCLASS64) {
-> >> >> >>           dev_err(dev, "Unsupported class: %d\n", class);
-> >> >> >>           return -EINVAL;
-> >> >> >>   }
-> >> >> >> @@ -75,26 +88,29 @@ int rproc_elf_sanity_check(struct rproc *rproc, const struct
-> >> >> >> firmware *fw)
-> >> >> >>           return -EINVAL;
-> >> >> >>   }
-> >> >> >>
-> >> >> >> - if (fw->size < ehdr->e_shoff + sizeof(struct elf32_shdr)) {
-> >> >> >> -         dev_err(dev, "Image is too small\n");
-> >> >> >> -         return -EINVAL;
-> >> >> >> - }
-> >> >> >> + phoff = elf_hdr_e_phoff(class, fw->data);
-> >> >> >> + shoff = elf_hdr_e_shoff(class, fw->data);
-> >> >> >> + phnum =  elf_hdr_e_phnum(class, fw->data);
-> >> >> >> + elf_shdr_size = elf_size_of_shdr(class);
-> >> >> >>
-> >> >> >> - if (memcmp(ehdr->e_ident, ELFMAG, SELFMAG)) {
-> >> >> >> -         dev_err(dev, "Image is corrupted (bad magic)\n");
-> >> >> >> + if (fw->size < shoff + elf_shdr_size) {
-> >> >> >> +         dev_err(dev, "Image is too small\n");
-> >> >> >>           return -EINVAL;
-> >> >> >>   }
-> >> >> >>
-> >> >> >> - if (ehdr->e_phnum == 0) {
-> >> >> >> + if (phnum == 0) {
-> >> >> >>           dev_err(dev, "No loadable segments\n");
-> >> >> >>           return -EINVAL;
-> >> >> >>   }
-> >> >> >>
-> >> >> >> - if (ehdr->e_phoff > fw->size) {
-> >> >> >> + if (phoff > fw->size) {
-> >> >> >>           dev_err(dev, "Firmware size is too small\n");
-> >> >> >>           return -EINVAL;
-> >> >> >>   }
-> >> >> >>
-> >> >> >> + dev_dbg(dev, "Firmware is an elf%d file\n",
-> >> >> >> +         class == ELFCLASS32 ? 32 : 64);
-> >> >> >> +
-> >> >> >
-> >> >> > Yes, this is useful.
-> >> >> >
-> >> >> >>   return 0;
-> >> >> >>  }
-> >> >> >>  EXPORT_SYMBOL(rproc_elf_sanity_check);
-> >> >> >> @@ -110,11 +126,9 @@ EXPORT_SYMBOL(rproc_elf_sanity_check);
-> >> >> >>   * Note that the boot address is not a configurable property of all remote
-> >> >> >>   * processors. Some will always boot at a specific hard-coded address.
-> >> >> >>   */
-> >> >> >> -u32 rproc_elf_get_boot_addr(struct rproc *rproc, const struct firmware *fw)
-> >> >> >> +u64 rproc_elf_get_boot_addr(struct rproc *rproc, const struct firmware *fw)
-> >> >> >>  {
-> >> >> >> - struct elf32_hdr *ehdr  = (struct elf32_hdr *)fw->data;
-> >> >> >> -
-> >> >> >> - return ehdr->e_entry;
-> >> >> >> + return elf_hdr_e_entry(fw_elf_get_class(fw), fw->data);
-> >> >> >>  }
-> >> >> >>  EXPORT_SYMBOL(rproc_elf_get_boot_addr);
-> >> >> >>
-> >> >> >> @@ -145,37 +159,41 @@ EXPORT_SYMBOL(rproc_elf_get_boot_addr);
-> >> >> >>  int rproc_elf_load_segments(struct rproc *rproc, const struct firmware *fw)
-> >> >> >>  {
-> >> >> >>   struct device *dev = &rproc->dev;
-> >> >> >> - struct elf32_hdr *ehdr;
-> >> >> >> - struct elf32_phdr *phdr;
-> >> >> >> + const void *ehdr, *phdr;
-> >> >> >>   int i, ret = 0;
-> >> >> >> + u16 phnum;
-> >> >> >>   const u8 *elf_data = fw->data;
-> >> >> >> + u8 class = fw_elf_get_class(fw);
-> >> >> >> + u32 elf_phdr_size = elf_size_of_phdr(class);
-> >> >> >>
-> >> >> >> - ehdr = (struct elf32_hdr *)elf_data;
-> >> >> >> - phdr = (struct elf32_phdr *)(elf_data + ehdr->e_phoff);
-> >> >> >> + ehdr = elf_data;
-> >> >> >> + phnum = elf_hdr_e_phnum(class, ehdr);
-> >> >> >> + phdr = elf_data + elf_hdr_e_phoff(class, ehdr);
-> >> >> >>
-> >> >> >>   /* go through the available ELF segments */
-> >> >> >> - for (i = 0; i < ehdr->e_phnum; i++, phdr++) {
-> >> >> >> -         u32 da = phdr->p_paddr;
-> >> >> >> -         u32 memsz = phdr->p_memsz;
-> >> >> >> -         u32 filesz = phdr->p_filesz;
-> >> >> >> -         u32 offset = phdr->p_offset;
-> >> >> >> + for (i = 0; i < phnum; i++, phdr += elf_phdr_size) {
-> >> >> >> +         u64 da = elf_phdr_p_paddr(class, phdr);
-> >> >> >> +         u64 memsz = elf_phdr_p_memsz(class, phdr);
-> >> >> >> +         u64 filesz = elf_phdr_p_filesz(class, phdr);
-> >> >> >> +         u64 offset = elf_phdr_p_offset(class, phdr);
-> >> >> >> +         u32 type = elf_phdr_p_type(class, phdr);
-> >> >> >>           void *ptr;
-> >> >> >>
-> >> >> >> -         if (phdr->p_type != PT_LOAD)
-> >> >> >> +         if (type != PT_LOAD)
-> >> >> >>                   continue;
-> >> >> >>
-> >> >> >> -         dev_dbg(dev, "phdr: type %d da 0x%x memsz 0x%x filesz 0x%x\n",
-> >> >> >> -                 phdr->p_type, da, memsz, filesz);
-> >> >> >> +         dev_dbg(dev, "phdr: type %d da 0x%llx memsz 0x%llx filesz 0x%llx\n",
-> >> >> >> +                 type, da, memsz, filesz);
-> >> >> >>
-> >> >> >>           if (filesz > memsz) {
-> >> >> >> -                 dev_err(dev, "bad phdr filesz 0x%x memsz 0x%x\n",
-> >> >> >> +                 dev_err(dev, "bad phdr filesz 0x%llx memsz 0x%llx\n",
-> >> >> >>                           filesz, memsz);
-> >> >> >>                   ret = -EINVAL;
-> >> >> >>                   break;
-> >> >> >>           }
-> >> >> >>
-> >> >> >>           if (offset + filesz > fw->size) {
-> >> >> >> -                 dev_err(dev, "truncated fw: need 0x%x avail 0x%zx\n",
-> >> >> >> +                 dev_err(dev, "truncated fw: need 0x%llx avail 0x%zx\n",
-> >> >> >>                           offset + filesz, fw->size);
-> >> >> >>                   ret = -EINVAL;
-> >> >> >>                   break;
-> >> >> >> @@ -184,14 +202,15 @@ int rproc_elf_load_segments(struct rproc *rproc, const
-> >> >> >> struct firmware *fw)
-> >> >> >>           /* grab the kernel address for this device address */
-> >> >> >>           ptr = rproc_da_to_va(rproc, da, memsz);
-> >> >> >>           if (!ptr) {
-> >> >> >> -                 dev_err(dev, "bad phdr da 0x%x mem 0x%x\n", da, memsz);
-> >> >> >> +                 dev_err(dev, "bad phdr da 0x%llx mem 0x%llx\n", da,
-> >> >> >> +                         memsz);
-> >> >> >>                   ret = -EINVAL;
-> >> >> >>                   break;
-> >> >> >>           }
-> >> >> >>
-> >> >> >>           /* put the segment where the remote processor expects it */
-> >> >> >> -         if (phdr->p_filesz)
-> >> >> >> -                 memcpy(ptr, elf_data + phdr->p_offset, filesz);
-> >> >> >> +         if (filesz)
-> >> >> >> +                 memcpy(ptr, elf_data + offset, filesz);
-> >> >> >>
-> >> >> >>           /*
-> >> >> >>            * Zero out remaining memory for this segment.
-> >> >> >> @@ -208,24 +227,32 @@ int rproc_elf_load_segments(struct rproc *rproc, const
-> >> >> >> struct firmware *fw)
-> >> >> >>  }
-> >> >> >>  EXPORT_SYMBOL(rproc_elf_load_segments);
-> >> >> >>
-> >> >> >> -static struct elf32_shdr *
-> >> >> >> -find_table(struct device *dev, struct elf32_hdr *ehdr, size_t fw_size)
-> >> >> >> +static const void *
-> >> >> >
-> >> >> > Not sure I understand the "const" - was the compiler complaining?
-> >> >>
-> >> >> It's actually caused by the fact I used a const void* shdr in the caller.
-> >> >> I will check if this is mandatory.
-> >> >>
-> >> >> >
-> >> >> >> +find_table(struct device *dev, const struct firmware *fw)
-> >> >> >>  {
-> >> >> >> - struct elf32_shdr *shdr;
-> >> >> >> + const void *shdr, *name_table_shdr;
-> >> >> >>   int i;
-> >> >> >>   const char *name_table;
-> >> >> >>   struct resource_table *table = NULL;
-> >> >> >> - const u8 *elf_data = (void *)ehdr;
-> >> >> >> + const u8 *elf_data = (void *)fw->data;
-> >> >> >> + u8 class = fw_elf_get_class(fw);
-> >> >> >> + size_t fw_size = fw->size;
-> >> >> >> + const void *ehdr = elf_data;
-> >> >> >> + u16 shnum = elf_hdr_e_shnum(class, ehdr);
-> >> >> >> + u32 elf_shdr_size = elf_size_of_shdr(class);
-> >> >> >> + u16 shstrndx = elf_hdr_e_shstrndx(class, ehdr);
-> >> >> >>
-> >> >> >>   /* look for the resource table and handle it */
-> >> >> >> - shdr = (struct elf32_shdr *)(elf_data + ehdr->e_shoff);
-> >> >> >> - name_table = elf_data + shdr[ehdr->e_shstrndx].sh_offset;
-> >> >> >> + shdr = elf_data + elf_hdr_e_shoff(class, ehdr);
-> >> >> >> + name_table_shdr = shdr + (shstrndx * elf_shdr_size);
-> >> >> >> + name_table = elf_data + elf_shdr_sh_offset(class, name_table_shdr);
-> >> >> >
-> >> >> > It took me a while but I figured out what is happening here.  To save me (and
-> >> >> > other people) from going through the same mental process every time I look at
-> >> >> > this code, please add a comment for each of the above 3 lines.
-> >> >>
-> >> >> Indeed.
-> >> >>
-> >> >> >
-> >> >> >>
-> >> >> >> - for (i = 0; i < ehdr->e_shnum; i++, shdr++) {
-> >> >> >> -         u32 size = shdr->sh_size;
-> >> >> >> -         u32 offset = shdr->sh_offset;
-> >> >> >> + for (i = 0; i < shnum; i++, shdr += elf_shdr_size) {
-> >> >> >> +         u64 size = elf_shdr_sh_size(class, shdr);
-> >> >> >> +         u64 offset = elf_shdr_sh_offset(class, shdr);
-> >> >> >> +         u32 name = elf_shdr_sh_name(class, shdr);
-> >> >> >>
-> >> >> >> -         if (strcmp(name_table + shdr->sh_name, ".resource_table"))
-> >> >> >> +         if (strcmp(name_table + name, ".resource_table"))
-> >> >> >>                   continue;
-> >> >> >>
-> >> >> >>           table = (struct resource_table *)(elf_data + offset);
-> >> >> >> @@ -279,21 +306,21 @@ find_table(struct device *dev, struct elf32_hdr *ehdr,
-> >> >> >> size_t fw_size)
-> >> >> >>   */
-> >> >> >>  int rproc_elf_load_rsc_table(struct rproc *rproc, const struct firmware *fw)
-> >> >> >>  {
-> >> >> >> - struct elf32_hdr *ehdr;
-> >> >> >> - struct elf32_shdr *shdr;
-> >> >> >> + const void *shdr;
-> >> >> >>   struct device *dev = &rproc->dev;
-> >> >> >>   struct resource_table *table = NULL;
-> >> >> >>   const u8 *elf_data = fw->data;
-> >> >> >>   size_t tablesz;
-> >> >> >> + u8 class = fw_elf_get_class(fw);
-> >> >> >> + u64 sh_offset;
-> >> >> >>
-> >> >> >> - ehdr = (struct elf32_hdr *)elf_data;
-> >> >> >> -
-> >> >> >> - shdr = find_table(dev, ehdr, fw->size);
-> >> >> >> + shdr = find_table(dev, fw);
-> >> >> >>   if (!shdr)
-> >> >> >>           return -EINVAL;
-> >> >> >>
-> >> >> >> - table = (struct resource_table *)(elf_data + shdr->sh_offset);
-> >> >> >> - tablesz = shdr->sh_size;
-> >> >> >> + sh_offset = elf_shdr_sh_offset(class, shdr);
-> >> >> >> + table = (struct resource_table *)(elf_data + sh_offset);
-> >> >> >> + tablesz = elf_shdr_sh_size(class, shdr);
-> >> >> >>
-> >> >> >>   /*
-> >> >> >>    * Create a copy of the resource table. When a virtio device starts
-> >> >> >> @@ -326,13 +353,17 @@ EXPORT_SYMBOL(rproc_elf_load_rsc_table);
-> >> >> >>  struct resource_table *rproc_elf_find_loaded_rsc_table(struct rproc *rproc,
-> >> >> >>                                                  const struct firmware *fw)
-> >> >> >>  {
-> >> >> >> - struct elf32_hdr *ehdr = (struct elf32_hdr *)fw->data;
-> >> >> >> - struct elf32_shdr *shdr;
-> >> >> >> + const void *shdr;
-> >> >> >> + u64 sh_addr, sh_size;
-> >> >> >> + u8 class = fw_elf_get_class(fw);
-> >> >> >>
-> >> >> >> - shdr = find_table(&rproc->dev, ehdr, fw->size);
-> >> >> >> + shdr = find_table(&rproc->dev, fw);
-> >> >> >>   if (!shdr)
-> >> >> >>           return NULL;
-> >> >> >>
-> >> >> >> - return rproc_da_to_va(rproc, shdr->sh_addr, shdr->sh_size);
-> >> >> >> + sh_addr = elf_shdr_sh_addr(class, shdr);
-> >> >> >> + sh_size = elf_shdr_sh_size(class, shdr);
-> >> >> >> +
-> >> >> >> + return rproc_da_to_va(rproc, sh_addr, sh_size);
-> >> >> >
-> >> >> > The prototype for the above is as follow:
-> >> >> >
-> >> >> > void *rproc_da_to_va(struct rproc *rproc, u64 da, int len)
-> >> >> >
-> >> >> > But sh_size is a u64, which will cause problem that are hard to debug.  I think
-> >> >> > it is better to move 'len' to an 8 byte type along with the refactoring of the
-> >> >> > existing code that is implied.  I suggest to split this work in a preparatory
-> >> >> > patch (that will still be part of this set).
-> >> >>
-> >> >> Nice catch ! I will do that.
-> >> >>
-> >> >> >
-> >> >> >>  }
-> >> >> >>  EXPORT_SYMBOL(rproc_elf_find_loaded_rsc_table);
-> >> >> >> diff --git a/drivers/remoteproc/remoteproc_elf_loader.h
-> >> >> >> b/drivers/remoteproc/remoteproc_elf_loader.h
-> >> >> >> new file mode 100644
-> >> >> >> index 000000000000..fac3565734f9
-> >> >> >> --- /dev/null
-> >> >> >> +++ b/drivers/remoteproc/remoteproc_elf_loader.h
-> >> >> >> @@ -0,0 +1,69 @@
-> >> >> >> +/* SPDX-License-Identifier: GPL-2.0 */
-> >> >> >> +/*
-> >> >> >> + * Remote processor elf loader defines
-> >> >> >> + *
-> >> >> >> + * Copyright (C) 2019 Kalray, Inc.
-> >> >> >> + */
-> >> >> >> +
-> >> >> >> +#ifndef REMOTEPROC_ELF_LOADER_H
-> >> >> >> +#define REMOTEPROC_ELF_LOADER_H
-> >> >> >> +
-> >> >> >> +#include <linux/elf.h>
-> >> >> >> +#include <linux/types.h>
-> >> >> >> +
-> >> >> >> +/**
-> >> >> >> + * fw_elf_get_class - Get elf class
-> >> >> >> + * @fw: the ELF firmware image
-> >> >> >> + *
-> >> >> >> + * Note that we use and elf32_hdr to access the class since the start of the
-> >> >> >> + * struct is the same for both elf class
-> >> >> >> + *
-> >> >> >> + * Return: elf class of the firmware
-> >> >> >> + */
-> >> >> >> +static inline u8 fw_elf_get_class(const struct firmware *fw)
-> >> >> >> +{
-> >> >> >> + struct elf32_hdr *ehdr = (struct elf32_hdr *)fw->data;
-> >> >> >> +
-> >> >> >> + return ehdr->e_ident[EI_CLASS];
-> >> >> >> +}
-> >> >> >> +
-> >> >> >> +#define ELF_GET_FIELD(__s, __field, __type) \
-> >> >> >> +static inline __type elf_##__s##_##__field(u8 class, const void *arg) \
-> >> >> >> +{ \
-> >> >> >> + if (class == ELFCLASS32) \
-> >> >> >> +         return (__type) ((const struct elf32_##__s *) arg)->__field; \
-> >> >> >> + else \
-> >> >> >> +         return (__type) ((const struct elf64_##__s *) arg)->__field; \
-> >> >> >> +}
-> >> >> >> +
-> >> >> >> +ELF_GET_FIELD(hdr, e_entry, u64)
-> >> >> >> +ELF_GET_FIELD(hdr, e_phnum, u16)
-> >> >> >> +ELF_GET_FIELD(hdr, e_shnum, u16)
-> >> >> >> +ELF_GET_FIELD(hdr, e_phoff, u64)
-> >> >> >> +ELF_GET_FIELD(hdr, e_shoff, u64)
-> >> >> >> +ELF_GET_FIELD(hdr, e_shstrndx, u16)
-> >> >> >> +
-> >> >> >> +ELF_GET_FIELD(phdr, p_paddr, u64)
-> >> >> >> +ELF_GET_FIELD(phdr, p_filesz, u64)
-> >> >> >> +ELF_GET_FIELD(phdr, p_memsz, u64)
-> >> >> >> +ELF_GET_FIELD(phdr, p_type, u32)
-> >> >> >> +ELF_GET_FIELD(phdr, p_offset, u64)
-> >> >> >> +
-> >> >> >> +ELF_GET_FIELD(shdr, sh_size, u64)
-> >> >> >> +ELF_GET_FIELD(shdr, sh_offset, u64)
-> >> >> >> +ELF_GET_FIELD(shdr, sh_name, u32)
-> >> >> >> +ELF_GET_FIELD(shdr, sh_addr, u64)
-> >> >> >
-> >> >> > I like how you did this.
-> >> >> >
-> >> >> >> +
-> >> >> >> +#define ELF_STRUCT_SIZE(__s) \
-> >> >> >> +static inline unsigned long elf_size_of_##__s(u8 class) \
-> >> >> >> +{ \
-> >> >> >> + if (class == ELFCLASS32)\
-> >> >> >> +         return sizeof(struct elf32_##__s); \
-> >> >> >> + else \
-> >> >> >> +         return sizeof(struct elf64_##__s); \
-> >> >> >> +}
-> >> >> >> +
-> >> >> >> +ELF_STRUCT_SIZE(shdr)
-> >> >> >> +ELF_STRUCT_SIZE(phdr)
-> >> >> >> +
-> >> >> >> +#endif /* REMOTEPROC_ELF_LOADER_H */
-> >> >> >> diff --git a/drivers/remoteproc/remoteproc_internal.h
-> >> >> >> b/drivers/remoteproc/remoteproc_internal.h
-> >> >> >> index 45ff76a06c72..4ef745e3a1bc 100644
-> >> >> >> --- a/drivers/remoteproc/remoteproc_internal.h
-> >> >> >> +++ b/drivers/remoteproc/remoteproc_internal.h
-> >> >> >> @@ -63,7 +63,7 @@ phys_addr_t rproc_va_to_pa(void *cpu_addr);
-> >> >> >>  int rproc_trigger_recovery(struct rproc *rproc);
-> >> >> >>
-> >> >> >>  int rproc_elf_sanity_check(struct rproc *rproc, const struct firmware *fw);
-> >> >> >> -u32 rproc_elf_get_boot_addr(struct rproc *rproc, const struct firmware *fw);
-> >> >> >> +u64 rproc_elf_get_boot_addr(struct rproc *rproc, const struct firmware *fw);
-> >> >> >>  int rproc_elf_load_segments(struct rproc *rproc, const struct firmware *fw);
-> >> >> >>  int rproc_elf_load_rsc_table(struct rproc *rproc, const struct firmware *fw);
-> >> >> >>  struct resource_table *rproc_elf_find_loaded_rsc_table(struct rproc *rproc,
-> >> >> >> diff --git a/drivers/remoteproc/st_remoteproc.c
-> >> >> >> b/drivers/remoteproc/st_remoteproc.c
-> >> >> >> index 51049d17b1e5..e23abd8a96b0 100644
-> >> >> >> --- a/drivers/remoteproc/st_remoteproc.c
-> >> >> >> +++ b/drivers/remoteproc/st_remoteproc.c
-> >> >> >> @@ -193,7 +193,7 @@ static int st_rproc_start(struct rproc *rproc)
-> >> >> >>           }
-> >> >> >>   }
-> >> >> >>
-> >> >> >> - dev_info(&rproc->dev, "Started from 0x%x\n", rproc->bootaddr);
-> >> >> >> + dev_info(&rproc->dev, "Started from 0x%llx\n", rproc->bootaddr);
-> >> >> >>
-> >> >> >>   return 0;
-> >> >> >>
-> >> >> >> diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
-> >> >> >> index 04d04709f2bd..512de9a2590c 100644
-> >> >> >> --- a/include/linux/remoteproc.h
-> >> >> >> +++ b/include/linux/remoteproc.h
-> >> >> >> @@ -362,7 +362,7 @@ struct rproc_ops {
-> >> >> >>                           struct rproc *rproc, const struct firmware *fw);
-> >> >> >>   int (*load)(struct rproc *rproc, const struct firmware *fw);
-> >> >> >>   int (*sanity_check)(struct rproc *rproc, const struct firmware *fw);
-> >> >> >> - u32 (*get_boot_addr)(struct rproc *rproc, const struct firmware *fw);
-> >> >> >> + u64 (*get_boot_addr)(struct rproc *rproc, const struct firmware *fw);
-> >> >> >>  };
-> >> >> >>
-> >> >> >>  /**
-> >> >> >> @@ -478,7 +478,7 @@ struct rproc {
-> >> >> >>   int num_traces;
-> >> >> >>   struct list_head carveouts;
-> >> >> >>   struct list_head mappings;
-> >> >> >> - u32 bootaddr;
-> >> >> >> + u64 bootaddr;
-> >> >> >>   struct list_head rvdevs;
-> >> >> >>   struct list_head subdevs;
-> >> >> >>   struct idr notifyids;
-> >> >> >
-> >> >> > Please hold off before doing another respin of this patch.  While doing
-> >> >> > something completely different I noticed TI also did some work in this area.
-> >> >> > I'd like to take some time to look at their implementation and see if they carry
-> >> >> > features that haven't been included here.  I intend to do this tomorrow.
-> >> >>
-> >> >> Ok,
-> >> >>
-> >> >> Thanks for your review,
-> >> >
-> >> > As promised I looked at what Suman had done on his side [1] to support 64-bit
-> >> > ELF
-> >> > files. His approach to offer the same functionality but for 64 bit in a new file
-> >> > is quick, simple and flexible.  On the flip side it introduces code duplication,
-> >> > something that is seriously frowned upon upstream.
-> >> >
-> >> > I did some soul searching in the kernel code and found very little in terms of
-> >> > implementation that deals with both 32 and 64 bit ELF format.  The most
-> >> > convincing approach was set forth by the MIPS guys [2].  They too have decided
-> >> > to support both types in the same functions, but I don't see us adding an if()
-> >> > statement (and the code duplication that comes with it) every time we need to
-> >> > deal with file types.
-> >> >
-> >> > Given the above I'm in favour of moving forward with your approach.  One could
-> >> > rightly argue the macros make the code harder to read but given the
-> >> > alternatives, it seems to be the best solution.
-> >> >
-> >> > Mathieu
-> >> >
-> >> > [1]. https://bit.ly/2Rpmb4E
-> >> > [2]. https://elixir.bootlin.com/linux/v5.5-rc6/source/arch/mips/kernel/elf.c#L75
-> >> >>
-> >> >> Clément
-> >> >>
-> >> >> >
-> >> >> > Thanks,
-> >> >> > Mathieu
-> >> >> >
-> >> >> >> --
-> > > > > >> 2.15.0.276.g89ea799
+So using ASoC with all the components IMHO is just adding dead weight. The
+audio interface for this particular hardware is just a FIFO that needs to
+be written to by an external DMA engine, and a bunch of controls to setup
+the parameters of the HDMI audio stream. There's no power sequencing to do,
+and no actual individual components to control. There's no reason you couldn't
+use just the ALSA DMAENGINE helpers to create a simple ALSA sound card.
+
+(Maybe we could clean it up after it's merged? Would there be any issues
+ with backward compatibility?)
+
+I think the only example of this besides ASoC is the PXA2xx sound library
+and AC97 driver:
+
+  - sound/arm/pxa2xx-pcm-lib.c
+  - sound/arm/pxa2xx-ac97.c
+
+Regards
+ChenYu
+
+
+
+> +
+> +       return 0;
+> +
+> +unregister_component:
+> +       snd_soc_unregister_component(hdmi->dev);
+> +unregister_pcm:
+> +       snd_dmaengine_pcm_unregister(hdmi->dev);
+> +       return ret;
+> +}
+> +
+> +void sun4i_hdmi_audio_destroy(struct sun4i_hdmi *hdmi)
+> +{
+> +       struct snd_soc_card *card = hdmi->audio.card;
+> +       void *data;
+> +
+> +       /**
+> +        * Before removing the card, restore the previously stored driver_data.
+> +        * This will ensure proper removal of the sun4i-hdmi module, since it
+> +        * uses dev_get_drvdata() in the unbind function.
+> +        */
+> +       data = snd_soc_card_get_drvdata(card);
+> +
+> +       snd_soc_unregister_card(card);
+> +       snd_soc_unregister_component(hdmi->dev);
+> +       snd_dmaengine_pcm_unregister(hdmi->dev);
+> +
+> +       dev_set_drvdata(hdmi->dev, data);
+> +}
+> diff --git a/drivers/gpu/drm/sun4i/sun4i_hdmi_enc.c b/drivers/gpu/drm/sun4i/sun4i_hdmi_enc.c
+> index 68d4644ac2dc..4cd35c97c503 100644
+> --- a/drivers/gpu/drm/sun4i/sun4i_hdmi_enc.c
+> +++ b/drivers/gpu/drm/sun4i/sun4i_hdmi_enc.c
+> @@ -23,6 +23,8 @@
+>  #include <drm/drm_print.h>
+>  #include <drm/drm_probe_helper.h>
+>
+> +#include <sound/soc.h>
+> +
+>  #include "sun4i_backend.h"
+>  #include "sun4i_crtc.h"
+>  #include "sun4i_drv.h"
+> @@ -87,6 +89,10 @@ static void sun4i_hdmi_disable(struct drm_encoder *encoder)
+>
+>         DRM_DEBUG_DRIVER("Disabling the HDMI Output\n");
+>
+> +#ifdef CONFIG_DRM_SUN4I_HDMI_AUDIO
+> +       sun4i_hdmi_audio_destroy(hdmi);
+> +#endif
+> +
+>         val = readl(hdmi->base + SUN4I_HDMI_VID_CTRL_REG);
+>         val &= ~SUN4I_HDMI_VID_CTRL_ENABLE;
+>         writel(val, hdmi->base + SUN4I_HDMI_VID_CTRL_REG);
+> @@ -114,6 +120,11 @@ static void sun4i_hdmi_enable(struct drm_encoder *encoder)
+>                 val |= SUN4I_HDMI_VID_CTRL_HDMI_MODE;
+>
+>         writel(val, hdmi->base + SUN4I_HDMI_VID_CTRL_REG);
+> +
+> +#ifdef CONFIG_DRM_SUN4I_HDMI_AUDIO
+> +       if (hdmi->hdmi_audio && sun4i_hdmi_audio_create(hdmi))
+> +               DRM_ERROR("Couldn't create the HDMI audio adapter\n");
+> +#endif
+>  }
+>
+>  static void sun4i_hdmi_mode_set(struct drm_encoder *encoder,
+> @@ -218,6 +229,9 @@ static int sun4i_hdmi_get_modes(struct drm_connector *connector)
+>         if (!edid)
+>                 return 0;
+>
+> +#ifdef CONFIG_DRM_SUN4I_HDMI_AUDIO
+> +       hdmi->hdmi_audio = drm_detect_monitor_audio(edid);
+> +#endif
+>         hdmi->hdmi_monitor = drm_detect_hdmi_monitor(edid);
+>         DRM_DEBUG_DRIVER("Monitor is %s monitor\n",
+>                          hdmi->hdmi_monitor ? "an HDMI" : "a DVI");
+> --
+> 2.17.1
+>
+> --
+> You received this message because you are subscribed to the Google Groups "linux-sunxi" group.
+> To unsubscribe from this group and stop receiving emails from it, send an email to linux-sunxi+unsubscribe@googlegroups.com.
+> To view this discussion on the web, visit https://groups.google.com/d/msgid/linux-sunxi/20200128140642.8404-2-stefan%40olimex.com.
