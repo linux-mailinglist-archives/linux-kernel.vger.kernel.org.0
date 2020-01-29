@@ -2,106 +2,106 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 98AFB14C9E5
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Jan 2020 12:49:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E784C14CA01
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Jan 2020 12:59:37 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726256AbgA2LtG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 29 Jan 2020 06:49:06 -0500
-Received: from mail26.static.mailgun.info ([104.130.122.26]:31886 "EHLO
-        mail26.static.mailgun.info" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726067AbgA2LtG (ORCPT
+        id S1726314AbgA2L7d (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 29 Jan 2020 06:59:33 -0500
+Received: from esa1.mentor.iphmx.com ([68.232.129.153]:34584 "EHLO
+        esa1.mentor.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726068AbgA2L7d (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 Jan 2020 06:49:06 -0500
-DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
- s=smtp; t=1580298545; h=Content-Transfer-Encoding: Content-Type:
- In-Reply-To: MIME-Version: Date: Message-ID: From: References: Cc: To:
- Subject: Sender; bh=7ZWaYAxSy8lntsFBFvZAXk81ogRHgObujRrr9xFKq2Y=; b=PU78b82HCCDHjcfPcaN9t1ooxM+w+SZ5MshKLFF/fLk28Njiqt0OU3icxBEyBcxAWa5CBdFV
- XvUW9vFnoYuRsJsBiZmqPukDAVxdW+4QHHHEZu5ma2ziAUgU4o2YKeowydqIST7wqcyKwFgR
- pJvb/nr3CDQmChZrQ9ZsHMnAU+o=
-X-Mailgun-Sending-Ip: 104.130.122.26
-X-Mailgun-Sid: WyI0MWYwYSIsICJsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
-Received: from smtp.codeaurora.org (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171])
- by mxa.mailgun.org with ESMTP id 5e31712a.7f4c2c332c38-smtp-out-n01;
- Wed, 29 Jan 2020 11:48:58 -0000 (UTC)
-Received: by smtp.codeaurora.org (Postfix, from userid 1001)
-        id AC7E8C4479F; Wed, 29 Jan 2020 11:48:58 +0000 (UTC)
-X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
-        aws-us-west-2-caf-mail-1.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=2.0 tests=ALL_TRUSTED,SPF_NONE
-        autolearn=unavailable autolearn_force=no version=3.4.0
-Received: from [10.204.79.159] (blr-c-bdr-fw-01_GlobalNAT_AllZones-Outside.qualcomm.com [103.229.19.19])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: sramana)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 40D9EC43383;
-        Wed, 29 Jan 2020 11:48:55 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 40D9EC43383
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=none smtp.mailfrom=sramana@codeaurora.org
-Subject: Re: [PATCH] arm64: Set SSBS for user threads while creation
-To:     Catalin Marinas <catalin.marinas@arm.com>
-Cc:     will@kernel.org, maz@kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org
-References: <1577106146-8999-1-git-send-email-sramana@codeaurora.org>
- <20200102180145.GE27940@arrakis.emea.arm.com>
-From:   Srinivas Ramana <sramana@codeaurora.org>
-Message-ID: <0c5cd234-5cfb-d093-06e4-a0edb5c68bf8@codeaurora.org>
-Date:   Wed, 29 Jan 2020 17:18:53 +0530
+        Wed, 29 Jan 2020 06:59:33 -0500
+X-Greylist: delayed 427 seconds by postgrey-1.27 at vger.kernel.org; Wed, 29 Jan 2020 06:59:32 EST
+IronPort-SDR: +iI0BjRVuvOjgbvcqHgxxLfxwDgAXPVWZhdrY8CEHBgdr4PZyqOjLtt3y3yVsie9tKn+gIfNK/
+ UuRd0/zNEg/zSSgXY+UUfT+E7RD/Zz3jcuZ+t2tQ46Q42NnQm039uOVUTv7qv2UiiMuKk9keK6
+ Vf0b8bWlMXfiHyULVzwM9R8L0ohVHoM3i0BxDv7DeiePTDw4NdJM9jgwZ27xAavhclRAPZYze7
+ wqjD9qxbnM1BjgJvJ1yVkVVqfde78pQJma/134RAnkccqv0yRYpGsTp0SPyEH01iihWJpd6XJn
+ svg=
+X-IronPort-AV: E=Sophos;i="5.70,377,1574150400"; 
+   d="scan'208";a="47219317"
+Received: from orw-gwy-02-in.mentorg.com ([192.94.38.167])
+  by esa1.mentor.iphmx.com with ESMTP; 29 Jan 2020 03:52:25 -0800
+IronPort-SDR: 6DT1J8DgygeSeODfXba2E5y98oSykhyivTsvkj6BwLSUzh5+AQ4vPRkCXrywWnrzEGqG5tjAIk
+ zIivE0J87TqQ==
+Subject: Re: [PATCH v6 24/48] Input: atmel_mxt_ts - make bootloader interrupt
+ driven
+To:     Bartosz Szczepanek <bsz@semihalf.com>, <nick.dyer@itdev.co.uk>
+CC:     <Andrew_Gabbasov@mentor.com>, <benjamin.tissoires@redhat.com>,
+        <dmitry.torokhov@gmail.com>, <erosca@de.adit-jv.com>,
+        <jikos@kernel.org>, <linux-input@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <nick@shmanahar.org>,
+        <rydberg@bitmath.org>, <levinale@google.com>, <rad@semihalf.com>
+References: <20191122082402.18173-25-jiada_wang@mentor.com>
+ <20200127174127.25522-1-bsz@semihalf.com>
+From:   "Wang, Jiada (ESD)" <jiada_wang@mentor.com>
+Message-ID: <4665e505-4f33-2a29-fc95-cacd40767e43@mentor.com>
+Date:   Wed, 29 Jan 2020 20:52:19 +0900
 User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.3.1
+ Thunderbird/68.4.1
 MIME-Version: 1.0
-In-Reply-To: <20200102180145.GE27940@arrakis.emea.arm.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+In-Reply-To: <20200127174127.25522-1-bsz@semihalf.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: svr-orw-mbx-08.mgc.mentorg.com (147.34.90.208) To
+ svr-orw-mbx-01.mgc.mentorg.com (147.34.90.201)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 1/2/2020 11:31 PM, Catalin Marinas wrote:
-> On Mon, Dec 23, 2019 at 06:32:26PM +0530, Srinivas Ramana wrote:
->> Current SSBS implementation takes care of setting the
->> SSBS bit in start_thread() for user threads. While this works
->> for tasks launched with fork/clone followed by execve, for cases
->> where userspace would just call fork (eg, Java applications) this
->> leaves the SSBS bit unset. This results in performance
->> regression for such tasks.
->>
->> It is understood that commit cbdf8a189a66 ("arm64: Force SSBS
->> on context switch") masks this issue, but that was done for a
->> different reason where heterogeneous CPUs(both SSBS supported
->> and unsupported) are present. It is appropriate to take care
->> of the SSBS bit for all threads while creation itself.
->>
->> Fixes: 8f04e8e6e29c ("arm64: ssbd: Add support for PSTATE.SSBS rather than trapping to EL3")
->> Signed-off-by: Srinivas Ramana <sramana@codeaurora.org>
-> 
-> I suppose the parent process cleared SSBS explicitly. Isn't the child
+Hi Bartosz
 
-Actually we observe that parent(in case of android, zygote that launches 
-the app) does have SSBS bit set. However child doesn't have the bit set.
-
-> after fork() supposed to be nearly identical to the parent? If we did as
-> you suggest, someone else might complain that SSBS has been set in the
-> child after fork().
-
-I am also wondering why would a userspace process clear SSBS bit loosing 
-the performance benefit.
-> 
-> I think the fix is for user space to set SSBS in the child if it no
-> longer needs it.
-> 
-
-Sorry for the late response on this.
+thanks for the report,
+I will test firmware update on my chromebook
 
 Thanks,
--- Srinivas R
+Jiada
 
-
--- 
-Qualcomm India Private Limited, on behalf of Qualcomm Innovation
-Center, Inc., is a member of Code Aurora Forum, a Linux Foundation
-Collaborative Project
+On 2020/01/28 2:41, Bartosz Szczepanek wrote:
+> Hi,
+> 
+> I've been testing this patchset on Chromebook equipped with Atmel touchscreen &
+> touchpad. In my setup, this particular patch seems to introduce a regression
+> on firmware update:
+> 
+>> localhost /sys/devices/pci0000:00/0000:00:15.0/i2c_designware.0/i2c-6/i2c-ATML0001:00 # echo maxtouch-ts.fw > update_fw
+>> bash: echo: write error: Remote I/O error
+> 
+> Kernel logs show that the reason is failed I2C transfer:
+> 
+>> [ 111.632131] atmel_mxt_ts i2c-ATML0001:00: Found bootloader addr:27 ID:21 version:4
+>> [ 111.637711] atmel_mxt_ts i2c-ATML0001:00: Unlocking bootloader
+>> [ 129.155091] atmel_mxt_ts i2c-ATML0001:00: Sent 1356 frames, 212224 bytes
+>> [ 129.263269] atmel_mxt_ts i2c-ATML0001:00: The firmware update succeeded
+>> [ 129.263952] atmel_mxt_ts i2c-ATML0001:00: __mxt_read_chunk: i2c transfer failed (-121)
+>> [ 129.265072] atmel_mxt_ts i2c-ATML0001:00: mxt_bootloader_read: i2c recv failed (-121)
+>> [ 129.265588] atmel_mxt_ts i2c-ATML0001:00: Trying alternate bootloader address
+>> [ 129.266375] atmel_mxt_ts i2c-ATML0001:00: mxt_bootloader_read: i2c recv failed (-121)
+> 
+> Surprisingly, only touchscreen device is affected. When I checked out to
+> 119e1b7e8481 ("Input: atmel_mxt_ts - refactor code to enter bootloader into
+> separate func") all worked fine. In between these commits I got some mixed
+> results, including timeout while waiting for completion:
+> 
+>> [ 190.006174] atmel_mxt_ts i2c-ATML0001:00: Found bootloader addr:27 ID:21 version:4
+>> [ 190.317819] atmel_mxt_ts i2c-ATML0001:00: Wait for completion timed out.
+>> [ 190.318267] atmel_mxt_ts i2c-ATML0001:00: Update wait error -110
+>> [ 190.319310] atmel_mxt_ts i2c-ATML0001:00: Unlocking bootloader
+>> [ 208.369825] atmel_mxt_ts i2c-ATML0001:00: Sent 1356 frames, 212224 bytes
+>> [ 208.536942] atmel_mxt_ts i2c-ATML0001:00: The firmware update succeeded
+>> [ 208.544835] atmel_mxt_ts i2c-ATML0001:00: Family: 164 Variant: 14 Firmware V2.3.AA Objects: 40
+>> [ 208.547623] atmel_mxt_ts i2c-ATML0001:00: Touchscreen size X4095Y2729
+> 
+> Some more details - the touchscreen device reports itself as:
+> 
+>> atmel_mxt_ts i2c-ATML0001:00: Family: 164 Variant: 14 Firmware V2.3.AA Objects: 40
+> 
+> Due to Chromebook limitations on kernel version, I'm running 4.19 kernel
+> with patches backported from master (so that atmel_mxt_ts is aligned between
+> master and 4.19). The platform is Samsung Chromebook Pro.
+> 
+> Best regards,
+> Bartosz
+> 
