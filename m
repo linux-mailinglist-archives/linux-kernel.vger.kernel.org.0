@@ -2,112 +2,54 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 11CE014C4AE
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Jan 2020 03:37:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 66C2914C4B3
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Jan 2020 03:45:23 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726595AbgA2Chg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 28 Jan 2020 21:37:36 -0500
-Received: from userp2120.oracle.com ([156.151.31.85]:49842 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726467AbgA2Chg (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 Jan 2020 21:37:36 -0500
-Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
-        by userp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id 00T2Y8hn111870;
-        Wed, 29 Jan 2020 02:37:25 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=to : cc : subject :
- from : references : date : in-reply-to : message-id : mime-version :
- content-type; s=corp-2019-08-05;
- bh=HfW61FK9uk+WkM9utdU/THqOxC9th3YYTgHs+EIQeWA=;
- b=HwSQEdJz8ERKqdgeKVO2dXoa9kMNvLpkEu6cdCurXG+LlvlafNLsMMATd2Kuwcq37qVx
- eaNayazE7jeMY0K6JMlB1KHdnpM9zbbndfltl1uLhUWvEfKYr4FGAEW+mbd/LXBXJ1g8
- b6MD7FoxiU3RTUl5OOEPIfPgQgmMQfMKeUEMJu2FkkM/aP/Mg8YRKMMdndS0M585wpvi
- SUaCCFymv/keIaXrAuYyf4m8RiKMdGKNmnoqiq3wQZ2HzQCWZrw9TE8/k+XGtyem2gua
- ZapSMoZ/skWIlVD+2Ss3zlfZIKhGU2sHKGrwwPZdSzHBQTT1k0IRzqhcbJQtJNA2P7t4 2A== 
-Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
-        by userp2120.oracle.com with ESMTP id 2xreara2ve-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 29 Jan 2020 02:37:24 +0000
-Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
-        by userp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id 00T2Y3N5033622;
-        Wed, 29 Jan 2020 02:35:24 GMT
-Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
-        by userp3030.oracle.com with ESMTP id 2xth5j3de0-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 29 Jan 2020 02:35:24 +0000
-Received: from abhmp0009.oracle.com (abhmp0009.oracle.com [141.146.116.15])
-        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 00T2ZMox032109;
-        Wed, 29 Jan 2020 02:35:22 GMT
-Received: from ca-mkp.ca.oracle.com (/10.159.214.123)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Tue, 28 Jan 2020 18:35:22 -0800
-To:     Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Cc:     Jens Axboe <axboe@kernel.dk>,
-        Michael Schmitz <schmitzmic@gmail.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        linux-ide@vger.kernel.org, linux-kernel@vger.kernel.org,
-        "James E.J. Bottomley" <jejb@linux.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>
-Subject: Re: [PATCH 03/28] ata: make SATA_PMP option selectable only if any SATA host driver is enabled
-From:   "Martin K. Petersen" <martin.petersen@oracle.com>
-Organization: Oracle Corporation
-References: <20200128133343.29905-1-b.zolnierkie@samsung.com>
-        <CGME20200128133411eucas1p1671c280eb6f5d2ca2d10743eea6c96e5@eucas1p1.samsung.com>
-        <20200128133343.29905-4-b.zolnierkie@samsung.com>
-Date:   Tue, 28 Jan 2020 21:35:19 -0500
-In-Reply-To: <20200128133343.29905-4-b.zolnierkie@samsung.com> (Bartlomiej
-        Zolnierkiewicz's message of "Tue, 28 Jan 2020 14:33:18 +0100")
-Message-ID: <yq1zhe76lco.fsf@oracle.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1.92 (gnu/linux)
-MIME-Version: 1.0
-Content-Type: text/plain
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9514 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=926
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1911140001 definitions=main-2001290020
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9514 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=993 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1911140001
- definitions=main-2001290020
+        id S1726618AbgA2CpH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 28 Jan 2020 21:45:07 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60774 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726496AbgA2CpG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 28 Jan 2020 21:45:06 -0500
+Subject: Re: [GIT PULL] uml updates for 5.6-rc1
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1580265905;
+        bh=bb6Unxg9OUmrUkSHwUqeiee1T9xhm2drQELfuj87QZI=;
+        h=From:In-Reply-To:References:Date:To:Cc:From;
+        b=vM2YQy+6ULmaVqRnHE6j3RGeUjaRmm8FqEc83yeuJ+/Zyhy2LW26sxfT/i3VAFiu/
+         doRdmab2OM+m43eOA+CZFV6wxnNx4vbJBJnJGNWcFI3mv1HK3ckSxJhoYt8PL307Ox
+         BDTWGL6TlyACo0OummU0D+5cX0OSa15z6Opvglwo=
+From:   pr-tracker-bot@kernel.org
+In-Reply-To: <aaf07936-6fd2-be40-15dc-f87e8e84091d@cambridgegreys.com>
+References: <aaf07936-6fd2-be40-15dc-f87e8e84091d@cambridgegreys.com>
+X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
+X-PR-Tracked-Message-Id: <aaf07936-6fd2-be40-15dc-f87e8e84091d@cambridgegreys.com>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/rw/uml.git
+ tags/for-linus-5.6-rc1
+X-PR-Tracked-Commit-Id: d65197ad52494bed3b5e64708281b8295f76c391
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: fad7bdc9b054a3dc2f5e77a8061c07aead6f5a5e
+Message-Id: <158026590586.23129.18144901503354575122.pr-tracker-bot@kernel.org>
+Date:   Wed, 29 Jan 2020 02:45:05 +0000
+To:     Anton Ivanov <anton.ivanov@cambridgegreys.com>
+Cc:     torvalds@linux-foundation.org, linux-kernel@vger.kernel.org,
+        Richard Weinberger <richard@nod.at>, johannes@sipsolutions.net,
+        linux-um@lists.infradead.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+The pull request you sent on Tue, 28 Jan 2020 09:24:07 +0000:
 
-Bartlomiej,
+> git://git.kernel.org/pub/scm/linux/kernel/git/rw/uml.git tags/for-linus-5.6-rc1
 
-> diff --git a/drivers/scsi/Kconfig b/drivers/scsi/Kconfig
-> index a7881f8eb05e..1b6eaf8da5fa 100644
-> --- a/drivers/scsi/Kconfig
-> +++ b/drivers/scsi/Kconfig
-> @@ -989,6 +989,7 @@ config SCSI_SYM53C8XX_MMIO
->  config SCSI_IPR
->  	tristate "IBM Power Linux RAID adapter support"
->  	depends on PCI && SCSI && ATA
-> +	select SATA_HOST
->  	select FW_LOADER
->  	select IRQ_POLL
->  	select SGL_ALLOC
-> diff --git a/drivers/scsi/libsas/Kconfig b/drivers/scsi/libsas/Kconfig
-> index 5c6a5eff2f8e..052ee3a26f6e 100644
-> --- a/drivers/scsi/libsas/Kconfig
-> +++ b/drivers/scsi/libsas/Kconfig
-> @@ -19,6 +19,7 @@ config SCSI_SAS_ATA
->  	bool "ATA support for libsas (requires libata)"
->  	depends on SCSI_SAS_LIBSAS
->  	depends on ATA = y || ATA = SCSI_SAS_LIBSAS
-> +	select SATA_HOST
->  	help
->  		Builds in ATA support into libsas.  Will necessitate
->  		the loading of libata along with libsas.
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/fad7bdc9b054a3dc2f5e77a8061c07aead6f5a5e
 
-SCSI bits look fine.
-
-Reviewed-by: Martin K. Petersen <martin.petersen@oracle.com>
+Thank you!
 
 -- 
-Martin K. Petersen	Oracle Linux Engineering
+Deet-doot-dot, I am a bot.
+https://korg.wiki.kernel.org/userdoc/prtracker
