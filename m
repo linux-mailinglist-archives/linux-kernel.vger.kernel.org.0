@@ -2,86 +2,155 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4A33714CE1F
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Jan 2020 17:20:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A275114CE26
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Jan 2020 17:22:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727084AbgA2QUl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 29 Jan 2020 11:20:41 -0500
-Received: from mx2.suse.de ([195.135.220.15]:53096 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726645AbgA2QUl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 Jan 2020 11:20:41 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id ADD1CAEE9;
-        Wed, 29 Jan 2020 16:20:35 +0000 (UTC)
-Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id DD1531E0D4F; Wed, 29 Jan 2020 17:20:34 +0100 (CET)
-Date:   Wed, 29 Jan 2020 17:20:34 +0100
-From:   Jan Kara <jack@suse.cz>
-To:     Liu Song <fishland@aliyun.com>
-Cc:     tytso@mit.edu, jack@suse.com, linux-ext4@vger.kernel.org,
-        linux-kernel@vger.kernel.org, liu.song11@zte.com.cn
-Subject: Re: [RFC PATCH] jbd2: no need to repeat in
- jbd2_journal_add_journal_head
-Message-ID: <20200129162034.GB8591@quack2.suse.cz>
-References: <20200129095700.3043-1-fishland@aliyun.com>
+        id S1726893AbgA2QWO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 29 Jan 2020 11:22:14 -0500
+Received: from ssl.serverraum.org ([176.9.125.105]:47951 "EHLO
+        ssl.serverraum.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726645AbgA2QWO (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 Jan 2020 11:22:14 -0500
+Received: from ssl.serverraum.org (web.serverraum.org [172.16.0.2])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ssl.serverraum.org (Postfix) with ESMTPSA id 3E07E23E62;
+        Wed, 29 Jan 2020 17:22:07 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=walle.cc; s=mail2016061301;
+        t=1580314931;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=sW0QA5hhkf7I3N3KjWQhrGatYUrwYHEsrUcrrXuwzR4=;
+        b=nGONfZBo+MF8xCLtL+W9xgTLviPkQ+YDRjN+oRs6Tn1xY19psXusVp50c7JK9RFxA10UBl
+        b56t/s+eKqvLn47ys13ldz1LMXHNuCqEX2BkSKYnucZvCVoizVI/xFNRv38YAwoY5o03aV
+        PSnFrGTI9QaP8nmrRYNOQYhMF+cj4HY=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200129095700.3043-1-fishland@aliyun.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Date:   Wed, 29 Jan 2020 17:22:07 +0100
+From:   Michael Walle <michael@walle.cc>
+To:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Shawn Guo <shawnguo@kernel.org>, Li Yang <leoyang.li@nxp.com>,
+        Yuantian Tang <andy.tang@nxp.com>
+Subject: Re: [PATCH v2 0/5] ls1028a: dts fixes and new board support
+In-Reply-To: <20191209234350.18994-1-michael@walle.cc>
+References: <20191209234350.18994-1-michael@walle.cc>
+Message-ID: <d5a729321220f35bd0ea377a8ec2f852@walle.cc>
+X-Sender: michael@walle.cc
+User-Agent: Roundcube Webmail/1.3.8
+X-Spamd-Bar: +
+X-Spam-Level: *
+X-Rspamd-Server: web
+X-Spam-Status: No, score=1.40
+X-Spam-Score: 1.40
+X-Rspamd-Queue-Id: 3E07E23E62
+X-Spamd-Result: default: False [1.40 / 15.00];
+         ARC_NA(0.00)[];
+         FROM_HAS_DN(0.00)[];
+         TO_DN_SOME(0.00)[];
+         TO_MATCH_ENVRCPT_ALL(0.00)[];
+         TAGGED_RCPT(0.00)[dt];
+         MIME_GOOD(-0.10)[text/plain];
+         DKIM_SIGNED(0.00)[];
+         RCPT_COUNT_SEVEN(0.00)[8];
+         RCVD_COUNT_ZERO(0.00)[0];
+         FROM_EQ_ENVFROM(0.00)[];
+         MIME_TRACE(0.00)[0:+];
+         MID_RHS_MATCH_FROM(0.00)[];
+         SUSPICIOUS_RECIPS(1.50)[]
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed 29-01-20 17:57:00, Liu Song wrote:
-> From: Liu Song <liu.song11@zte.com.cn>
-> 
-> In "journal_alloc_journal_head" use "GFP_NOFS | __GFP_NOFAIL"
-> as the alloc flag, so it will retry until memory allocation
-> is successful. Then we do not need to do extra repeat.
-> 
-> Signed-off-by: Liu Song <liu.song11@zte.com.cn>
+Hi Shawn,
 
-Thanks for the patch. It looks good. You can add:
-
-Reviewed-by: Jan Kara <jack@suse.cz>
-
-								Honza
-
-> ---
->  fs/jbd2/journal.c | 6 ------
->  1 file changed, 6 deletions(-)
+Am 2019-12-10 00:43, schrieb Michael Walle:
+> This series adds basic support for the Kontron SMARC-sAL28 board. It 
+> also
+> adds missing nodes to the ls1028a base device tree which are used by 
+> the
+> board.
 > 
-> diff --git a/fs/jbd2/journal.c b/fs/jbd2/journal.c
-> index 5e408ee24a1a..1a9aaf07cecd 100644
-> --- a/fs/jbd2/journal.c
-> +++ b/fs/jbd2/journal.c
-> @@ -2503,7 +2503,6 @@ struct journal_head *jbd2_journal_add_journal_head(struct buffer_head *bh)
->  	struct journal_head *jh;
->  	struct journal_head *new_jh = NULL;
->  
-> -repeat:
->  	if (!buffer_jbd(bh))
->  		new_jh = journal_alloc_journal_head();
->  
-> @@ -2515,11 +2514,6 @@ struct journal_head *jbd2_journal_add_journal_head(struct buffer_head *bh)
->  			(atomic_read(&bh->b_count) > 0) ||
->  			(bh->b_page && bh->b_page->mapping));
->  
-> -		if (!new_jh) {
-> -			jbd_unlock_bh_journal_head(bh);
-> -			goto repeat;
-> -		}
-> -
->  		jh = new_jh;
->  		new_jh = NULL;		/* We consumed it */
->  		set_buffer_jbd(bh);
-> -- 
-> 2.20.1
+> changes since v1:
+>  - dropped "arm64: dts: ls1028a: add FlexSPI node" in favor of:
 > 
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+> https://lore.kernel.org/lkml/1575457098-18368-2-git-send-email-Ashish.Kumar@nxp.com/
+>    Thus, this series now depends on that patch
+>  - better commit message for the TMU patch
+>  - added fixes tag to the TMU patch
+>  - document the LS1028A evaluation boards compatible strings
+>  - document the Kontron sl28 boards compatible strings
+>  - fix node names of the sl28 device tree(s)
+>  - removed device specific compatible string of the spi flash
+>  - rebased the patch series
+>  - integrate the RGMII configuration of the AR8031 PHY since the 
+> binding is
+>    now already upstream
+> 
+> This patchseries depends on:
+>  - [Patch v2 1/5] arm64: dts: ls1028a: Add FlexSPI support
+> 
+> https://lore.kernel.org/lkml/1575457098-18368-2-git-send-email-Ashish.Kumar@nxp.com/
+>  - [PATCH v2 1/2] dt-bindings: clock: document the fsl-sai driver
+>    
+> https://lore.kernel.org/lkml/20191209233305.18619-1-michael@walle.cc/
+
+
+it seems that all the pieces are now together.
+
+  - "arm64: dts: ls1028a: Add FlexSPI support" is pulled
+  - you've already pulled the patches 1 and 2 from this series
+  - Rob reviewed patch 3 and 4
+  - your review remarks of patch 5 should be included
+  - and last but not least, the clock driver used by the device tree 
+finally
+    made it into clk-next [1]
+
+
+-michael
+
+[1] 
+https://lore.kernel.org/linux-clk/20200128220445.DE778207FD@mail.kernel.org/
+
+
+
+> 
+> This patchseries superseeds:
+>  - [PATCH 0/4] ls1028a: dts fixes and new board support
+>    
+> https://lore.kernel.org/lkml/20191123201317.25861-1-michael@walle.cc/
+>  - [PATCH] arm64: dts: sl28: configure the RGMII PHY
+>    
+> https://lore.kernel.org/lkml/20191123202624.28093-1-michael@walle.cc/
+> 
+> Michael Walle (5):
+>   arm64: dts: ls1028a: fix typo in TMU calibration data
+>   arm64: dts: ls1028a: add missing sai nodes
+>   dt-bindings: arm: fsl: add LS1028A based boards
+>   dt-bindings: arm: fsl: add Kontron sl28 boards
+>   arm64: dts: freescale: add Kontron sl28 support
+> 
+>  .../devicetree/bindings/arm/fsl.yaml          |  45 +++++
+>  arch/arm64/boot/dts/freescale/Makefile        |   4 +
+>  .../fsl-ls1028a-kontron-kbox-a-230-ls.dts     |  27 +++
+>  .../fsl-ls1028a-kontron-sl28-var3-ads2.dts    | 106 +++++++++++
+>  .../fsl-ls1028a-kontron-sl28-var4.dts         |  50 +++++
+>  .../freescale/fsl-ls1028a-kontron-sl28.dts    | 174 ++++++++++++++++++
+>  .../arm64/boot/dts/freescale/fsl-ls1028a.dtsi |  44 ++++-
+>  7 files changed, 449 insertions(+), 1 deletion(-)
+>  create mode 100644
+> arch/arm64/boot/dts/freescale/fsl-ls1028a-kontron-kbox-a-230-ls.dts
+>  create mode 100644
+> arch/arm64/boot/dts/freescale/fsl-ls1028a-kontron-sl28-var3-ads2.dts
+>  create mode 100644
+> arch/arm64/boot/dts/freescale/fsl-ls1028a-kontron-sl28-var4.dts
+>  create mode 100644 
+> arch/arm64/boot/dts/freescale/fsl-ls1028a-kontron-sl28.dts
