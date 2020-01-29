@@ -2,90 +2,142 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AFB1F14CA65
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Jan 2020 13:11:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 85E6614CA3A
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Jan 2020 13:06:52 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726385AbgA2MK5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 29 Jan 2020 07:10:57 -0500
-Received: from foss.arm.com ([217.140.110.172]:40314 "EHLO foss.arm.com"
+        id S1726743AbgA2MGo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 29 Jan 2020 07:06:44 -0500
+Received: from mga03.intel.com ([134.134.136.65]:59027 "EHLO mga03.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726271AbgA2MK5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 Jan 2020 07:10:57 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id C50041FB;
-        Wed, 29 Jan 2020 04:10:56 -0800 (PST)
-Received: from [10.0.2.15] (unknown [172.31.20.19])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id B747E3F67D;
-        Wed, 29 Jan 2020 04:10:55 -0800 (PST)
-Subject: Re: [PATCH v3 1/3] sched/fair: Add asymmetric CPU capacity wakeup
- scan
-To:     Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        id S1726067AbgA2MGk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 Jan 2020 07:06:40 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga008.jf.intel.com ([10.7.209.65])
+  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 29 Jan 2020 04:06:38 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.70,377,1574150400"; 
+   d="scan'208";a="222433133"
+Received: from jacob-builder.jf.intel.com ([10.7.199.155])
+  by orsmga008.jf.intel.com with ESMTP; 29 Jan 2020 04:06:38 -0800
+From:   "Liu, Yi L" <yi.l.liu@intel.com>
+To:     alex.williamson@redhat.com, eric.auger@redhat.com
+Cc:     kevin.tian@intel.com, jacob.jun.pan@linux.intel.com,
+        joro@8bytes.org, ashok.raj@intel.com, yi.l.liu@intel.com,
+        jun.j.tian@intel.com, yi.y.sun@intel.com,
+        jean-philippe.brucker@arm.com, peterx@redhat.com,
+        iommu@lists.linux-foundation.org, kvm@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Cc:     mingo@redhat.com, peterz@infradead.org, vincent.guittot@linaro.org,
-        morten.rasmussen@arm.com, qperret@google.com,
-        adharmap@codeaurora.org
-References: <20200126200934.18712-1-valentin.schneider@arm.com>
- <20200126200934.18712-2-valentin.schneider@arm.com>
- <a2f9e7d1-08c6-2545-2088-e0226ffd79e0@arm.com>
-From:   Valentin Schneider <valentin.schneider@arm.com>
-Message-ID: <40bfa77b-b695-5f53-848a-b72b67b33d69@arm.com>
-Date:   Wed, 29 Jan 2020 12:10:55 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.1
-MIME-Version: 1.0
-In-Reply-To: <a2f9e7d1-08c6-2545-2088-e0226ffd79e0@arm.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Subject: [RFC v3 0/8] vfio: expose virtual Shared Virtual Addressing to VMs
+Date:   Wed, 29 Jan 2020 04:11:44 -0800
+Message-Id: <1580299912-86084-1-git-send-email-yi.l.liu@intel.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 29/01/2020 11:04, Dietmar Eggemann wrote:
->> +		/*
->> +		 * It would be silly to keep looping when we've found a CPU
->> +		 * of highest available capacity. Just check that it's not been
->> +		 * too pressured lately.
->> +		 */
->> +		if (rq->cpu_capacity_orig == READ_ONCE(rq->rd->max_cpu_capacity) &&
-> 
-> There is a similar check in check_misfit_status(). Common helper function?
+Shared Virtual Addressing (SVA), a.k.a, Shared Virtual Memory (SVM) on
+Intel platforms allows address space sharing between device DMA and
+applications. SVA can reduce programming complexity and enhance security.
 
-Mright, and check_misfit_status() is missing the READ_ONCE(). That said...
+This VFIO series is intended to expose SVA usage to VMs. i.e. Sharing
+guest application address space with passthru devices. This is called
+vSVA in this series. The whole vSVA enabling requires QEMU/VFIO/IOMMU
+changes. For IOMMU and QEMU changes, they are in separate series (listed
+in the "Related series").
 
-> 
->> +		    !check_cpu_capacity(rq, sd))
->> +			return cpu;
-> 
-> I wonder how this special treatment of a big CPU behaves in (LITTLE,
-> medium, big) system like Pixel4 (Snapdragon 855):
-> 
->  flame:/ $ cat /sys/devices/system/cpu/cpu*/cpu_capacity
-> 
-> 261
-> 261
-> 261
-> 261
-> 871
-> 871
-> 871
-> 1024
-> 
-> Or on legacy systems where the sd->imbalance_pct is 25% instead of 17%?
-> 
+The high-level architecture for SVA virtualization is as below, the key
+design of vSVA support is to utilize the dual-stage IOMMU translation (
+also known as IOMMU nesting translation) capability in host IOMMU.
 
-... This is a very valid point. When I wrote this bit I had the good old
-big.LITTLE split in mind where there are big differences between the capacity
-values. As you point out, that's not so true with DynamIQ systems sporting
-> 2 capacity values. The issue here is that we could bail early picking a
-(slightly) pressured big (1024 capacity_orig) when there was a non-pressured
-idle medium (871 capacity orig).
 
-It's borderline in this example - the threshold for a big to be seen as
-pressured by check_cpu_capacity(), assuming a flat topology with just an MC
-domain, is ~ 875. If we have e.g. mediums at 900 and bigs at 1024, this
-logic is broken.
+    .-------------.  .---------------------------.
+    |   vIOMMU    |  | Guest process CR3, FL only|
+    |             |  '---------------------------'
+    .----------------/
+    | PASID Entry |--- PASID cache flush -
+    '-------------'                       |
+    |             |                       V
+    |             |                CR3 in GPA
+    '-------------'
+Guest
+------| Shadow |--------------------------|--------
+      v        v                          v
+Host
+    .-------------.  .----------------------.
+    |   pIOMMU    |  | Bind FL for GVA-GPA  |
+    |             |  '----------------------'
+    .----------------/  |
+    | PASID Entry |     V (Nested xlate)
+    '----------------\.------------------------------.
+    |             |   |SL for GPA-HPA, default domain|
+    |             |   '------------------------------'
+    '-------------'
+Where:
+ - FL = First level/stage one page tables
+ - SL = Second level/stage two page tables
 
-So this is pretty much a case of my trying to be too clever for my own good,
-I'll remove that "fastpath" in v4. Thanks for pointing it out!
+There are roughly four parts in this patchset which are
+corresponding to the basic vSVA support for PCI device
+assignment
+ 1. vfio support for PASID allocation and free for VMs
+ 2. vfio support for guest page table binding request from VMs
+ 3. vfio support for IOMMU cache invalidation from VMs
+ 4. vfio support for vSVA usage on IOMMU-backed mdevs
+
+The complete vSVA kernel upstream patches are divided into three phases:
+    1. Common APIs and PCI device direct assignment
+    2. IOMMU-backed Mediated Device assignment
+    3. Page Request Services (PRS) support
+
+This RFC patchset is aiming for the phase 1 and phase 2, and works
+together with the VT-d driver[1] changes and QEMU changes[2]. Complete
+set for current vSVA can be found in below branch. This branch also
+includes the patches for exposing PASID capability to VM, which will be
+in another patchset.
+https://github.com/luxis1999/linux-vsva: vsva-linux-5.5-rc3
+old version: https://github.com/jacobpan/linux.git:siov_sva.
+
+Related series:
+[1] [PATCH V9 00/10] Nested Shared Virtual Address (SVA) VT-d support:
+    https://lkml.org/lkml/2020/1/29/37
+    [PATCH 0/3] IOMMU user API enhancement:
+    https://lkml.org/lkml/2020/1/29/45
+
+[2] [RFC v3 00/25] intel_iommu: expose Shared Virtual Addressing to VMs
+    The complete QEMU set can be found in below link:
+    https://github.com/luxis1999/qemu.git: sva_vtd_v9_rfcv3
+
+Changelog:
+	- RFC v2 -> v3:
+	  a) Refine the whole patchset to fit the roughly parts in this series
+	  b) Adds complete vfio PASID management framework. e.g. pasid alloc,
+	  free, reclaim in VM crash/down and per-VM PASID quota to prevent
+	  PASID abuse.
+	  c) Adds IOMMU uAPI version check and page table format check to ensure
+	  version compatibility and hardware compatibility.
+	  d) Adds vSVA vfio support for IOMMU-backed mdevs.
+
+	- RFC v1 -> v2:
+	  Dropped vfio: VFIO_IOMMU_ATTACH/DETACH_PASID_TABLE.
+
+Liu Yi L (8):
+  vfio: Add VFIO_IOMMU_PASID_REQUEST(alloc/free)
+  vfio/type1: Make per-application (VM) PASID quota tunable
+  vfio: Reclaim PASIDs when application is down
+  vfio/type1: Add VFIO_NESTING_GET_IOMMU_UAPI_VERSION
+  vfio/type1: Report 1st-level/stage-1 page table format to userspace
+  vfio/type1: Bind guest page tables to host
+  vfio/type1: Add VFIO_IOMMU_CACHE_INVALIDATE
+  vfio/type1: Add vSVA support for IOMMU-backed mdevs
+
+ drivers/vfio/vfio.c             | 183 +++++++++++++++++
+ drivers/vfio/vfio_iommu_type1.c | 421 ++++++++++++++++++++++++++++++++++++++++
+ include/linux/vfio.h            |  21 ++
+ include/uapi/linux/vfio.h       | 148 ++++++++++++++
+ 4 files changed, 773 insertions(+)
+
+-- 
+2.7.4
+
