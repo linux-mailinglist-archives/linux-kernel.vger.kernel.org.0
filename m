@@ -2,154 +2,105 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B0C3E14D3C6
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Jan 2020 00:47:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3447014D3F6
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Jan 2020 00:50:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727302AbgA2XrB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 29 Jan 2020 18:47:01 -0500
-Received: from mga06.intel.com ([134.134.136.31]:46692 "EHLO mga06.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727223AbgA2Xqv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 Jan 2020 18:46:51 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 29 Jan 2020 15:46:44 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.70,379,1574150400"; 
-   d="scan'208";a="309551770"
-Received: from sjchrist-coffee.jf.intel.com ([10.54.74.202])
-  by orsmga001.jf.intel.com with ESMTP; 29 Jan 2020 15:46:44 -0800
-From:   Sean Christopherson <sean.j.christopherson@intel.com>
-To:     Paolo Bonzini <pbonzini@redhat.com>
-Cc:     Sean Christopherson <sean.j.christopherson@intel.com>,
-        Vitaly Kuznetsov <vkuznets@redhat.com>,
-        Wanpeng Li <wanpengli@tencent.com>,
-        Jim Mattson <jmattson@google.com>,
-        Joerg Roedel <joro@8bytes.org>, kvm@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH 26/26] KVM: VMX: Directly query Intel PT mode when refreshing PMUs
-Date:   Wed, 29 Jan 2020 15:46:40 -0800
-Message-Id: <20200129234640.8147-27-sean.j.christopherson@intel.com>
-X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20200129234640.8147-1-sean.j.christopherson@intel.com>
-References: <20200129234640.8147-1-sean.j.christopherson@intel.com>
+        id S1727211AbgA2Xt3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 29 Jan 2020 18:49:29 -0500
+Received: from mail-lf1-f67.google.com ([209.85.167.67]:45296 "EHLO
+        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727124AbgA2Xt2 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 Jan 2020 18:49:28 -0500
+Received: by mail-lf1-f67.google.com with SMTP id 203so933525lfa.12
+        for <linux-kernel@vger.kernel.org>; Wed, 29 Jan 2020 15:49:27 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=hZuYO1iwTS6qTMEuTEAkXWId/UBWv4N98s5kLzpeWFk=;
+        b=Mmdzqguz0RYjmqywHXsnnBq1PdYo4sEDQvqeVgCcrxrK3x4W6UMUDCboC/Le9yM/eX
+         4+GaCZCfx4fDwOpfU7dHJTWHzF+yfSKLllDfGhshvjXnlZPG3siNr2aa6jyb/1ZYnJtX
+         EpWbRtyk0rfwFsoj1VzGp/DiH69QHf88kVbL0=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=hZuYO1iwTS6qTMEuTEAkXWId/UBWv4N98s5kLzpeWFk=;
+        b=dFmjPBZFEr5wS25evGaB/KpKWuLGShGqFUFmJjJ4fpIuQNXPqotWJZ/l73nDl0Eubk
+         Jb5nA34hRogXimQdZKnW3S2EB5ardo1ogsLckZfMXMEn5NWyvdb8VdI0Lmy+ROw4feTL
+         +XMlHC4HGnQJgwZNSFigyXhJJlomaGkLrR9qif/JWxZdoWwtUGPjC/YnTZgdwEfGoqIQ
+         ffhxPhvCeAAd3CIySup/vPGfp1wBKCsP6Uaxqc91aIoiH2DROv0syxG2yJs7NLG9HSjR
+         4FvrDucMJVaxeg7E3cQjtz95V6Qe6Z0us2/cvXG28Mx8/h5HnHM2yOCnWcWMh7xpKtwI
+         lKcQ==
+X-Gm-Message-State: APjAAAWOKL9OZSXfpuVo+aK2habT/2DeETeG8jP5N0f8fSS3D12S+osa
+        9nQdugebi4k6jMOMkSNxTl7i3lgzLwI=
+X-Google-Smtp-Source: APXvYqxU2+MdW4SeY8JKXKu8BcRQPvkBdnoIA3V8xMOFDs+740uYM8SusCWx9Iu3lOcr0AI4Ej3ZVA==
+X-Received: by 2002:a19:8456:: with SMTP id g83mr965603lfd.0.1580341766561;
+        Wed, 29 Jan 2020 15:49:26 -0800 (PST)
+Received: from mail-lj1-f180.google.com (mail-lj1-f180.google.com. [209.85.208.180])
+        by smtp.gmail.com with ESMTPSA id s22sm1791142ljm.41.2020.01.29.15.49.25
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 29 Jan 2020 15:49:25 -0800 (PST)
+Received: by mail-lj1-f180.google.com with SMTP id h23so1302388ljc.8
+        for <linux-kernel@vger.kernel.org>; Wed, 29 Jan 2020 15:49:25 -0800 (PST)
+X-Received: by 2002:a2e:85ce:: with SMTP id h14mr988980ljj.41.1580341764990;
+ Wed, 29 Jan 2020 15:49:24 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20200117162444.v2.1.I9c7e72144ef639cc135ea33ef332852a6b33730f@changeid>
+ <CACK8Z6Ft95qj4e_fsA32r_bcz2SsHOW1xxqZJt3_DBAJw=NMGA@mail.gmail.com>
+ <CAE=gft6fKQWExW-=xjZGzXs30XohfpA5SKggvL2WtYXAHmzMew@mail.gmail.com>
+ <87y2tytv5i.fsf@nanos.tec.linutronix.de> <87eevqkpgn.fsf@nanos.tec.linutronix.de>
+ <CAE=gft6YiM5S1A7iJYJTd5zmaAa8=nhLE3B94JtWa+XW-qVSqQ@mail.gmail.com>
+ <CAE=gft5xta4XCJtctWe=R3w=kVr598JCbk9VSRue04nzKAk3CQ@mail.gmail.com>
+ <CAE=gft7MqQ3Mej5oCT=gw6ZLMSTHoSyMGOFz=-hae-eRZvXLxA@mail.gmail.com>
+ <87d0b82a9o.fsf@nanos.tec.linutronix.de> <CAE=gft7C5HTmcTLsXqXbCtcYDeKG6bCJ0gmgwVNc0PDHLJ5y_A@mail.gmail.com>
+ <878slwmpu9.fsf@nanos.tec.linutronix.de> <87imkv63yf.fsf@nanos.tec.linutronix.de>
+ <CAE=gft7Gu0ah4qcbsEB1X+kUMagCzPR+cdCfn2caofcGV+tBjA@mail.gmail.com>
+ <87pnf342pr.fsf@nanos.tec.linutronix.de> <CAE=gft69hQcbmT46b1T8eLdPFyb9Pp-sDYd5JfPsZ2JWL4PXqQ@mail.gmail.com>
+ <877e1a2d11.fsf@nanos.tec.linutronix.de> <CAE=gft7mLAU3G+f8gi_etRSpUijoCh7_6ni9Ob2JqjW7Q1n3yQ@mail.gmail.com>
+ <874kwd3lbn.fsf@nanos.tec.linutronix.de>
+In-Reply-To: <874kwd3lbn.fsf@nanos.tec.linutronix.de>
+From:   Evan Green <evgreen@chromium.org>
+Date:   Wed, 29 Jan 2020 15:48:48 -0800
+X-Gmail-Original-Message-ID: <CAE=gft52iBTJyyvDTXeHdEYnpSSROvrQsweuXjd6OuaLO47ACw@mail.gmail.com>
+Message-ID: <CAE=gft52iBTJyyvDTXeHdEYnpSSROvrQsweuXjd6OuaLO47ACw@mail.gmail.com>
+Subject: Re: [PATCH v2] PCI/MSI: Avoid torn updates to MSI pairs
+To:     Thomas Gleixner <tglx@linutronix.de>
+Cc:     Rajat Jain <rajatja@google.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        linux-pci <linux-pci@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        x86@kernel.org, Marc Zyngier <maz@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Use vmx_pt_mode_is_host_guest() in intel_pmu_refresh() instead of
-bouncing through kvm_x86_ops->pt_supported and remove ->pt_supported()
-as the PMU code was the last remaining user.
+On Wed, Jan 29, 2020 at 3:16 PM Thomas Gleixner <tglx@linutronix.de> wrote:
+>
+> Evan,
+>
+> Evan Green <evgreen@chromium.org> writes:
+> > On Wed, Jan 29, 2020 at 1:01 PM Thomas Gleixner <tglx@linutronix.de> wrote:
+> >
+> >> Could you please add some instrumentation to see how often this stuff
+> >> actually triggers spurious interrupts?
+> >
+> > In about 10 minutes of this script running, I got 142 hits. My script
+> > can toggle the HT cpus on and off about twice per second.
+> > Here's my diff (sorry it's mangled by gmail). If you're looking for
+> > something else, let me know, or I can run a patch.
+> >
+> No, that's good data. Your testing is hiting the critical path and as
+> you did not complain about negative side effects it seems to hold up to
+> the expectations. I'm going to convert this to real patch with a
+> proper changelog tomorrow.
+>
+> Thanks for your help!
 
-Opportunistically clean up the wording of a comment that referenced
-kvm_x86_ops->pt_supported().
-
-No functional change intended.
-
-Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
----
- arch/x86/include/asm/kvm_host.h | 1 -
- arch/x86/kvm/svm.c              | 6 ------
- arch/x86/kvm/vmx/pmu_intel.c    | 2 +-
- arch/x86/kvm/vmx/vmx.c          | 6 ------
- arch/x86/kvm/x86.c              | 7 +++----
- 5 files changed, 4 insertions(+), 18 deletions(-)
-
-diff --git a/arch/x86/include/asm/kvm_host.h b/arch/x86/include/asm/kvm_host.h
-index ea076debe6f8..3106abbf5ac2 100644
---- a/arch/x86/include/asm/kvm_host.h
-+++ b/arch/x86/include/asm/kvm_host.h
-@@ -1164,7 +1164,6 @@ struct kvm_x86_ops {
- 		enum exit_fastpath_completion *exit_fastpath);
- 
- 	bool (*umip_emulated)(void);
--	bool (*pt_supported)(void);
- 
- 	int (*check_nested_events)(struct kvm_vcpu *vcpu, bool external_intr);
- 	void (*request_immediate_exit)(struct kvm_vcpu *vcpu);
-diff --git a/arch/x86/kvm/svm.c b/arch/x86/kvm/svm.c
-index a08ee7b2dddb..dd616cac6e67 100644
---- a/arch/x86/kvm/svm.c
-+++ b/arch/x86/kvm/svm.c
-@@ -6108,11 +6108,6 @@ static bool svm_umip_emulated(void)
- 	return false;
- }
- 
--static bool svm_pt_supported(void)
--{
--	return false;
--}
--
- static bool svm_has_wbinvd_exit(void)
- {
- 	return true;
-@@ -7474,7 +7469,6 @@ static struct kvm_x86_ops svm_x86_ops __ro_after_init = {
- 	.cpuid_update = svm_cpuid_update,
- 
- 	.umip_emulated = svm_umip_emulated,
--	.pt_supported = svm_pt_supported,
- 
- 	.set_supported_cpuid = svm_set_supported_cpuid,
- 
-diff --git a/arch/x86/kvm/vmx/pmu_intel.c b/arch/x86/kvm/vmx/pmu_intel.c
-index 34a3a17bb6d7..d8f5cb312b9d 100644
---- a/arch/x86/kvm/vmx/pmu_intel.c
-+++ b/arch/x86/kvm/vmx/pmu_intel.c
-@@ -330,7 +330,7 @@ static void intel_pmu_refresh(struct kvm_vcpu *vcpu)
- 	pmu->global_ovf_ctrl_mask = pmu->global_ctrl_mask
- 			& ~(MSR_CORE_PERF_GLOBAL_OVF_CTRL_OVF_BUF |
- 			    MSR_CORE_PERF_GLOBAL_OVF_CTRL_COND_CHGD);
--	if (kvm_x86_ops->pt_supported())
-+	if (vmx_pt_mode_is_host_guest())
- 		pmu->global_ovf_ctrl_mask &=
- 				~MSR_CORE_PERF_GLOBAL_OVF_CTRL_TRACE_TOPA_PMI;
- 
-diff --git a/arch/x86/kvm/vmx/vmx.c b/arch/x86/kvm/vmx/vmx.c
-index 10c31aa40730..75842b574e26 100644
---- a/arch/x86/kvm/vmx/vmx.c
-+++ b/arch/x86/kvm/vmx/vmx.c
-@@ -6318,11 +6318,6 @@ static bool vmx_has_emulated_msr(u32 index)
- 	}
- }
- 
--static bool vmx_pt_supported(void)
--{
--	return vmx_pt_mode_is_host_guest();
--}
--
- static void vmx_recover_nmi_blocking(struct vcpu_vmx *vmx)
- {
- 	u32 exit_intr_info;
-@@ -7914,7 +7909,6 @@ static struct kvm_x86_ops vmx_x86_ops __ro_after_init = {
- 	.check_intercept = vmx_check_intercept,
- 	.handle_exit_irqoff = vmx_handle_exit_irqoff,
- 	.umip_emulated = vmx_umip_emulated,
--	.pt_supported = vmx_pt_supported,
- 
- 	.request_immediate_exit = vmx_request_immediate_exit,
- 
-diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
-index 03e656d05c15..e889e83dbb78 100644
---- a/arch/x86/kvm/x86.c
-+++ b/arch/x86/kvm/x86.c
-@@ -2805,10 +2805,9 @@ int kvm_set_msr_common(struct kvm_vcpu *vcpu, struct msr_data *msr_info)
- 		    !guest_cpuid_has(vcpu, X86_FEATURE_XSAVES))
- 			return 1;
- 		/*
--		 * We do support PT if kvm_x86_ops->pt_supported(), but we do
--		 * not support IA32_XSS[bit 8]. Guests will have to use
--		 * RDMSR/WRMSR rather than XSAVES/XRSTORS to save/restore PT
--		 * MSRs.
-+		 * KVM supports exposing PT to the guest, but does not support
-+		 * IA32_XSS[bit 8]. Guests have to use RDMSR/WRMSR rather than
-+		 * XSAVES/XRSTORS to save/restore PT MSRs.
- 		 */
- 		if (data != 0)
- 			return 1;
--- 
-2.24.1
-
+Sounds good, please CC me on it and I'll be sure to test the final
+result as well.
+-Evan
