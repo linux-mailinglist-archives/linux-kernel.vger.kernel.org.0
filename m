@@ -2,99 +2,102 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D336F14C8E5
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Jan 2020 11:45:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 165ED14C8D9
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Jan 2020 11:40:52 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726694AbgA2KpT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 29 Jan 2020 05:45:19 -0500
-Received: from merlin.infradead.org ([205.233.59.134]:48212 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726184AbgA2KpP (ORCPT
+        id S1726261AbgA2Kks (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 29 Jan 2020 05:40:48 -0500
+Received: from mail-pl1-f195.google.com ([209.85.214.195]:42267 "EHLO
+        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726091AbgA2Kks (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 Jan 2020 05:45:15 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=Content-Type:MIME-Version:References:
-        Subject:Cc:To:From:Date:Message-Id:Sender:Reply-To:Content-Transfer-Encoding:
-        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-        Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=rTxt4FphL53Y4h3JaY+82PJXfecw+fNjkxlfqbGvTag=; b=I5bHV9jX+P4Pnw44FeNDchBR5j
-        nr6rDGfNbe1OtEqk91kppqMSFoYpL3LxsW3iD/S4cUJGnj2K/Ub9xlHzFZZnsT0Lmpr00Y/T7tHu6
-        tRFuULJ5yonlaG4q+h35649kXTz5VM+XrAAgrhWwQieQ19qC/HHP3micQ67Ll4wSqROo3i/N4ewdx
-        DM4kb6WtWnYW/CXZgcQzMTiUjLierx0QlrsqHs4BHJzhWwXI2Evi3VPsBieEr45kwyCVrNcAu02hP
-        XQllDIrGFq/7WHm5l26+9EpRTU0dH5m9agpwstu8i8tcDEdn4LiGLePVL6ykagjLU7jwX74O6otWY
-        ByY96J7g==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
-        by merlin.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1iwkqO-0001OK-8O; Wed, 29 Jan 2020 10:45:12 +0000
-Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (Client did not present a certificate)
-        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id E3055306637;
-        Wed, 29 Jan 2020 11:43:24 +0100 (CET)
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 0)
-        id 93F722B2E7F42; Wed, 29 Jan 2020 11:45:07 +0100 (CET)
-Message-Id: <20200129104345.548344561@infradead.org>
-User-Agent: quilt/0.65
-Date:   Wed, 29 Jan 2020 11:39:46 +0100
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Geert Uytterhoeven <geert@linux-m68k.org>
-Cc:     linux-m68k@lists.linux-m68k.org, linux-kernel@vger.kernel.org,
-        Will Deacon <will@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>
-Subject: [PATCH 5/5] m68k,mm: Fully initialize the page-table allocator
-References: <20200129103941.304769381@infradead.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+        Wed, 29 Jan 2020 05:40:48 -0500
+Received: by mail-pl1-f195.google.com with SMTP id p9so6301904plk.9;
+        Wed, 29 Jan 2020 02:40:47 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=message-id:subject:from:to:cc:date:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=uzRHTQO3pKjBfSJ2Rfvh5FEUg0GL15o7FlclGpgfTy8=;
+        b=mXXPkK8PdQ2HdiEfv6/GdfMm2GHaXIbrDmZE6DD7Ikgky9gFKICmwUhAGVv62RvaGo
+         0LvGo8bD2iL13nEuUbdsCGON79b56e0+xUNbWjsihsxRNealZEf4eLifUd+FdnG8xFEU
+         SUx8GApPVHqVlym8IjGEYT0dVck16glEdhbRyhfeJwqSh3dYI3gjRSXSV82Bz8SoG7Ul
+         DySpydLaiVdTS18v9FYxMhuNkyshDxDQi6NsoB3JiXQ5ItbffCpELITTXwAYvXHZIkjm
+         ydLKgbfsJa8Zgr11su/bnscBM7IAWC6hA2ewzu51NYnSJRK44W9xTqA+Tu20YUu5M12M
+         x5Cw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=uzRHTQO3pKjBfSJ2Rfvh5FEUg0GL15o7FlclGpgfTy8=;
+        b=mmYeTx52qorRCgXizrGQ8th1FX+zfOwAJQWbe3JfZD593LipEEDqUCSBHK6YbSf5LW
+         hdDEudhw3Jj/kI0KIq+MpoFY6pNWJ8kFTAUGtOv3Uv54WKLOiNL1/Kk6Rugwely/n5eW
+         oiH6IeVweRyoUE7V56Im6Ov9gy4kPHqNtY6J8ZJoRR80PFoRDemYxEyb2XXUzsdo4kZQ
+         aRbtGfhSu3O17mSyjqh8TApZOOeMT9jeRf89VK8GxhHZF6l9bcfFldQtPg2IU10gQNXR
+         eu+ldLSoq0ueD8QmULX7Ji3fkwhDnoivlcldlOS8s3NMdGodfR54KcYr7L/2TJhqzT0v
+         WukA==
+X-Gm-Message-State: APjAAAWJNLTiKh1iYp9AKjjASHRAc4xA+Tlam7PMkXmhcCzesI1UvCvc
+        OrP4hIpRRsu7C1sukvK2hu4=
+X-Google-Smtp-Source: APXvYqwyd5UBrtC57QGpd9Ru9Ha2G15gvVk/UC14vHvGCkou957aoLuYoIipivd+xRp9PllidBEvXQ==
+X-Received: by 2002:a17:90a:2545:: with SMTP id j63mr10615588pje.128.1580294447327;
+        Wed, 29 Jan 2020 02:40:47 -0800 (PST)
+Received: from pragat-GL553VD ([2405:205:c92f:3ccd:49ce:a9e3:28b5:cf94])
+        by smtp.googlemail.com with ESMTPSA id h3sm2319678pfr.15.2020.01.29.02.40.43
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 29 Jan 2020 02:40:46 -0800 (PST)
+Message-ID: <287916429826dd2f14d82f9b7b6b15a9cace2734.camel@gmail.com>
+Subject: Re: [PATCH 09/22] staging: exfat: Rename variable "Size" to "size"
+From:   Pragat Pandya <pragat.pandya@gmail.com>
+To:     Dan Carpenter <dan.carpenter@oracle.com>
+Cc:     valdis.kletnieks@vt.edu, gregkh@linuxfoundation.org,
+        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
+        skhan@linuxfoundation.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel-mentees@lists.linuxfoundation.org
+Date:   Wed, 29 Jan 2020 16:10:39 +0530
+In-Reply-To: <20200127115741.GA1847@kadam>
+References: <20200127101343.20415-1-pragat.pandya@gmail.com>
+         <20200127101343.20415-10-pragat.pandya@gmail.com>
+         <20200127115741.GA1847@kadam>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.28.5-0ubuntu0.18.04.1 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Also iterate the PMD tables to populate the PTE table allocator. This
-also fully replaces the previous zero_pgtable hack.
+On Mon, 2020-01-27 at 14:57 +0300, Dan Carpenter wrote:
+> On Mon, Jan 27, 2020 at 03:43:30PM +0530, Pragat Pandya wrote:
+> > Change all the occurences of "Size" to "size" in exfat.
+> > 
+> > Signed-off-by: Pragat Pandya <pragat.pandya@gmail.com>
+> > ---
+> >  drivers/staging/exfat/exfat.h | 2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> > 
+> > diff --git a/drivers/staging/exfat/exfat.h
+> > b/drivers/staging/exfat/exfat.h
+> > index 52f314d50b91..a228350acdb4 100644
+> > --- a/drivers/staging/exfat/exfat.h
+> > +++ b/drivers/staging/exfat/exfat.h
+> > @@ -233,7 +233,7 @@ struct date_time_t {
+> >  
+> >  struct part_info_t {
+> >  	u32      offset;    /* start sector number of the partition */
+> > -	u32      Size;      /* in sectors */
+> > +	u32      size;      /* in sectors */
+> >  };
+> 
+> We just renamed all the struct members of this without changing any
+> users.  Which suggests that this is unused and can be deleted.
+> 
+> regards,
+> dan carpenter
+> 
+Can I just drop this commit from this patchset and do a separate patch
+to remove the unused structure?
 
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
----
- arch/m68k/mm/init.c |   23 +++++++++++++++++++----
- 1 file changed, 19 insertions(+), 4 deletions(-)
-
---- a/arch/m68k/mm/init.c
-+++ b/arch/m68k/mm/init.c
-@@ -124,15 +124,30 @@ void free_initmem(void)
- static inline void init_pointer_tables(void)
- {
- #if defined(CONFIG_MMU) && !defined(CONFIG_SUN3) && !defined(CONFIG_COLDFIRE)
--	int i;
-+	int i, j;
- 
- 	/* insert pointer tables allocated so far into the tablelist */
- 	init_pointer_table((unsigned long)kernel_pg_dir, 0);
- 	for (i = 0; i < PTRS_PER_PGD; i++) {
--		pud_t *pud = (pud_t *)(&kernel_pg_dir[i]);
-+		pud_t *pud = (pud_t *)&kernel_pg_dir[i];
-+		pmd_t *pmd_dir;
- 
--		if (pud_present(*pud))
--			init_pointer_table(pgd_page_vaddr(kernel_pg_dir[i]), 0);
-+		if (!pud_present(*pud))
-+			continue;
-+
-+		pmd_dir = (pmd_t *)pgd_page_vaddr(kernel_pg_dir[i]);
-+		init_pointer_table((unsigned long)pmd_dir, 0);
-+
-+		for (j = 0; j < PTRS_PER_PMD; j++) {
-+			pmd_t *pmd = &pmd_dir[j];
-+			pte_t *pte_dir;
-+
-+			if (!pmd_present(*pmd))
-+				continue;
-+
-+			pte_dir = (pte_t *)__pmd_page(*pmd);
-+			init_pointer_table((unsigned long)pte_dir, 1);
-+		}
- 	}
- #endif
- }
-
+regards,
+pragat pandya
 
