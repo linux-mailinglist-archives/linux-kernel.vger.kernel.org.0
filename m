@@ -2,132 +2,68 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1467C14C446
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Jan 2020 01:58:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5C2EB14C427
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Jan 2020 01:49:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726989AbgA2A60 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 28 Jan 2020 19:58:26 -0500
-Received: from mail-io1-f65.google.com ([209.85.166.65]:35936 "EHLO
-        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726393AbgA2A60 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 Jan 2020 19:58:26 -0500
-Received: by mail-io1-f65.google.com with SMTP id d15so16707517iog.3
-        for <linux-kernel@vger.kernel.org>; Tue, 28 Jan 2020 16:58:25 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=hfPnwCqzCAhNK/qRWkWU3pxM5PERG8Ehj+A9uu9jn7s=;
-        b=PV5nGiReMA0sAjLADHB6cjIFeP0lOuZ2izL3OeGoiIvgFCUiygVFxPpzwLVE5KY48/
-         fNV7VLkyKdLRhdw6lXTdtjxDSp1Kfm98KBAR0mc8RBQRe6pToRC6dObO8PA0tI98u+En
-         ahQO0LZozEg2pDBtBjOaZHpxcaSgzRJcywL2E=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=hfPnwCqzCAhNK/qRWkWU3pxM5PERG8Ehj+A9uu9jn7s=;
-        b=kThPNHC/R77s/m9fLL8fRnA7v87mupk9kFd2VFOtI5QpTu/5C8SddmkoJ04O+Min9Q
-         lQ2zEPRdpuGvC+xaMu0XUmhavGU/PvMq+L0V3EeOIlF8l5L8I//Fr/GaQJd3ddrIX5E6
-         wtwYIDkKmXTaj67P16LxuzNqGrtsG1Q6Yu3kCFvwjg6gTzq0p7IrErKW9W66rHwaUo6u
-         6znERpmQTkvGtPHq8wl8gZw8lH4pEPab53klM2d1zr/W+16SrLV8qcEX8QOqsUk14CUc
-         3B8mYaIZpMudp85Xhs53MQujaBDq90yARG4S2/s3kueGNu3gJCoXCAaeG/0f+l64xCHz
-         bxEQ==
-X-Gm-Message-State: APjAAAVp+IbsvFfxe/MhIxamr489vs9PJqwJDn4pPEehUS0K9jhOtoWO
-        Gk2j6e51XxJRfoz+cQ/amhWErhT4dL+/mNK6KzsSOQ==
-X-Google-Smtp-Source: APXvYqymqB5TqQR1jEIKQdvhU6+g/gQUeuhg7Wx4i4yDpD6JXZCAkkKsc3l6eWETvdrvN+KyCLd1363joP/UoRND9Pw=
-X-Received: by 2002:a05:6602:22cd:: with SMTP id e13mr15272247ioe.251.1580259505025;
- Tue, 28 Jan 2020 16:58:25 -0800 (PST)
+        id S1730446AbgA2AtA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 28 Jan 2020 19:49:00 -0500
+Received: from mga12.intel.com ([192.55.52.136]:19474 "EHLO mga12.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726487AbgA2AtA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 28 Jan 2020 19:49:00 -0500
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 28 Jan 2020 16:48:59 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.70,376,1574150400"; 
+   d="scan'208";a="312141985"
+Received: from romley-ivt3.sc.intel.com ([172.25.110.60])
+  by fmsmga001.fm.intel.com with ESMTP; 28 Jan 2020 16:48:59 -0800
+Date:   Tue, 28 Jan 2020 16:59:22 -0800
+From:   Fenghua Yu <fenghua.yu@intel.com>
+To:     Shakeel Butt <shakeelb@google.com>
+Cc:     Reinette Chatre <reinette.chatre@intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H . Peter Anvin" <hpa@zytor.com>,
+        Stephane Eranian <eranian@google.com>, x86@kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] x86/resctrl: fix redundant task movement
+Message-ID: <20200129005922.GA74965@romley-ivt3.sc.intel.com>
+References: <20200129002222.213154-1-shakeelb@google.com>
 MIME-Version: 1.0
-References: <20200128221457.12467-1-linux@roeck-us.net> <CAD=FV=Wg2MZ56fsCk+TvRSSeZVz5eM4cwugK=HN6imm5wfGgiw@mail.gmail.com>
- <20200129000551.GA17256@roeck-us.net>
-In-Reply-To: <20200129000551.GA17256@roeck-us.net>
-From:   Franky Lin <franky.lin@broadcom.com>
-Date:   Tue, 28 Jan 2020 16:57:59 -0800
-Message-ID: <CA+8PC_f=qCUjihwbjd3vtGaNkG-=R1qm83oS7AmgtLTy6EgjyQ@mail.gmail.com>
-Subject: Re: [PATCH] brcmfmac: abort and release host after error
-To:     Guenter Roeck <linux@roeck-us.net>
-Cc:     Doug Anderson <dianders@chromium.org>,
-        Kalle Valo <kvalo@codeaurora.org>,
-        Arend van Spriel <arend.vanspriel@broadcom.com>,
-        Hante Meuleman <hante.meuleman@broadcom.com>,
-        Chi-Hsien Lin <chi-hsien.lin@cypress.com>,
-        Dan Carpenter <dan.carpenter@oracle.com>,
-        linux-wireless <linux-wireless@vger.kernel.org>,
-        "open list:BROADCOM BRCM80211 IEEE802.11n WIRELESS DRIVER" 
-        <brcm80211-dev-list.pdl@broadcom.com>,
-        brcm80211-dev-list <brcm80211-dev-list@cypress.com>,
-        netdev <netdev@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Matthias Kaehlcke <mka@chromium.org>,
-        Brian Norris <briannorris@chromium.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200129002222.213154-1-shakeelb@google.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jan 28, 2020 at 4:05 PM Guenter Roeck <linux@roeck-us.net> wrote:
->
-> On Tue, Jan 28, 2020 at 03:14:45PM -0800, Doug Anderson wrote:
-> > Hi,
-> >
-> > On Tue, Jan 28, 2020 at 2:15 PM Guenter Roeck <linux@roeck-us.net> wrote:
-> > >
-> > > With commit 216b44000ada ("brcmfmac: Fix use after free in
-> > > brcmf_sdio_readframes()") applied, we see locking timeouts in
-> > > brcmf_sdio_watchdog_thread().
-> > >
-> > > brcmfmac: brcmf_escan_timeout: timer expired
-> > > INFO: task brcmf_wdog/mmc1:621 blocked for more than 120 seconds.
-> > > Not tainted 4.19.94-07984-g24ff99a0f713 #1
-> > > "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-> > > brcmf_wdog/mmc1 D    0   621      2 0x00000000 last_sleep: 2440793077.  last_runnable: 2440766827
-> > > [<c0aa1e60>] (__schedule) from [<c0aa2100>] (schedule+0x98/0xc4)
-> > > [<c0aa2100>] (schedule) from [<c0853830>] (__mmc_claim_host+0x154/0x274)
-> > > [<c0853830>] (__mmc_claim_host) from [<bf10c5b8>] (brcmf_sdio_watchdog_thread+0x1b0/0x1f8 [brcmfmac])
-> > > [<bf10c5b8>] (brcmf_sdio_watchdog_thread [brcmfmac]) from [<c02570b8>] (kthread+0x178/0x180)
-> > >
-> > > In addition to restarting or exiting the loop, it is also necessary to
-> > > abort the command and to release the host.
-> > >
-> > > Fixes: 216b44000ada ("brcmfmac: Fix use after free in brcmf_sdio_readframes()")
-> > > Cc: Dan Carpenter <dan.carpenter@oracle.com>
-> > > Cc: Matthias Kaehlcke <mka@chromium.org>
-> > > Cc: Brian Norris <briannorris@chromium.org>
-> > > Cc: Douglas Anderson <dianders@chromium.org>
-> > > Signed-off-by: Guenter Roeck <linux@roeck-us.net>
-> > > ---
-> > >  drivers/net/wireless/broadcom/brcm80211/brcmfmac/sdio.c | 2 ++
-> > >  1 file changed, 2 insertions(+)
-> > >
-> > > diff --git a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/sdio.c b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/sdio.c
-> > > index f9df95bc7fa1..2e1c23c7269d 100644
-> > > --- a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/sdio.c
-> > > +++ b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/sdio.c
-> > > @@ -1938,6 +1938,8 @@ static uint brcmf_sdio_readframes(struct brcmf_sdio *bus, uint maxframes)
-> > >                         if (brcmf_sdio_hdparse(bus, bus->rxhdr, &rd_new,
-> > >                                                BRCMF_SDIO_FT_NORMAL)) {
-> > >                                 rd->len = 0;
-> > > +                               brcmf_sdio_rxfail(bus, true, true);
-> > > +                               sdio_release_host(bus->sdiodev->func1);
-> >
-> > I don't know much about this driver so I don't personally know if
-> > "true, true" is the correct thing to pass to brcmf_sdio_rxfail(), but
-> > it seems plausible.  Definitely the fix to call sdio_release_host() is
-> > sane.
-> >
-> > Thus, unless someone knows for sure that brcmf_sdio_rxfail()'s
-> > parameters should be different:
-> >
-> Actually, looking at brcmf_sdio_hdparse() and its other callers,
-> I think it may not be needed at all - other callers don't do it, and
-> there already are some calls to brcmf_sdio_rxfail() in that function.
-> It would be nice though to get a confirmation before I submit v2.
+On Tue, Jan 28, 2020 at 04:22:22PM -0800, Shakeel Butt wrote:
+> Currently a task can be moved to a rdtgroup multiple times or between
+> resource or monitoring groups. This can cause multiple task works are
+> added, waste memory and degrade performance.
+> 
+> To fix the issue, only move the task to a rdtgroup when the task
+> is not in the rdgroup. Don't try to move the task to the rdtgroup
+> again when the task is already in the rdtgroup.
 
-I think invoking rxfail with both abort and NACK set to true is the
-right thing to do here so that the pipeline can be properly purged.
+Hi, Shakeel,
 
-Thanks!
+Acutally we are working on replacing the callback by a synchronous way
+to update closid and rmid when moving a task to a resource group. The
+reason is the task may use old (even invalid) closid and rmid before
+they are updated.
 
-Acked-by: franky.lin@broadcom.com
+With the new way to update closid and rmid, the issues related to
+the callbacks will be fixed as well.
+
+We will release the new patches soon.
+
+Thanks.
+
+-Fenghua
+
