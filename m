@@ -2,99 +2,145 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8428C14D416
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Jan 2020 00:53:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2C51614D421
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Jan 2020 00:56:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727046AbgA2Xw6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 29 Jan 2020 18:52:58 -0500
-Received: from gate2.alliedtelesis.co.nz ([202.36.163.20]:46264 "EHLO
-        gate2.alliedtelesis.co.nz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726750AbgA2Xw6 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 Jan 2020 18:52:58 -0500
-Received: from mmarshal3.atlnz.lc (mmarshal3.atlnz.lc [10.32.18.43])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (Client did not present a certificate)
-        by gate2.alliedtelesis.co.nz (Postfix) with ESMTPS id A95AF891AA;
-        Thu, 30 Jan 2020 12:52:54 +1300 (NZDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alliedtelesis.co.nz;
-        s=mail181024; t=1580341974;
-        bh=PTdksFoM/7SQ5czBIotje9MiignV7b05HggnglFtQc4=;
-        h=From:To:CC:Subject:Date:References:In-Reply-To;
-        b=S6dAZ1r18b6INCasDmgP7mvqNyWu0bdI97O/XabFH7vwHdYX1Q9Ls1kEXQ5hEgtRk
-         hPG+2TlNfLqiwomzCLaiounXZhVldSdPksyh2Tlt9mxE0IEqtpYTX18ss6+3J1YXP+
-         A4r8wL2rgcrrU/faYsO2YzHCTURwF9QgvfG6k5zYNk/EmusNXQzk2fICre9oxEDEUU
-         5pGJpb391liuRGVGC+AB4Vv4zlKQavvQN7AE0kty47neB0tGyiupn8i4cBh0JtREVJ
-         vzRJR8/NQqPz2fRdikuNMR6HoMTIGnypQiLWgAmDsfWlupfdTfm5daWS6eqYpShGQD
-         LteyulR2bdVoQ==
-Received: from svr-chch-ex1.atlnz.lc (Not Verified[10.32.16.77]) by mmarshal3.atlnz.lc with Trustwave SEG (v7,5,8,10121)
-        id <B5e321ad60000>; Thu, 30 Jan 2020 12:52:54 +1300
-Received: from svr-chch-ex1.atlnz.lc (2001:df5:b000:bc8::77) by
- svr-chch-ex1.atlnz.lc (2001:df5:b000:bc8::77) with Microsoft SMTP Server
- (TLS) id 15.0.1473.3; Thu, 30 Jan 2020 12:52:49 +1300
-Received: from svr-chch-ex1.atlnz.lc ([fe80::409d:36f5:8899:92e8]) by
- svr-chch-ex1.atlnz.lc ([fe80::409d:36f5:8899:92e8%12]) with mapi id
- 15.00.1473.005; Thu, 30 Jan 2020 12:52:49 +1300
-From:   Logan Shaw <Logan.Shaw@alliedtelesis.co.nz>
-To:     "robh@kernel.org" <robh@kernel.org>
-CC:     "linux@roeck-us.net" <linux@roeck-us.net>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Joshua Scott <Joshua.Scott@alliedtelesis.co.nz>,
-        Chris Packham <Chris.Packham@alliedtelesis.co.nz>,
-        "linux-hwmon@vger.kernel.org" <linux-hwmon@vger.kernel.org>,
-        "jdelvare@suse.com" <jdelvare@suse.com>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
-Subject: Re: [PATCH v6 2/2] dt-bindings: hwmon: (adt7475) Added missing
- adt7475 documentation
-Thread-Topic: [PATCH v6 2/2] dt-bindings: hwmon: (adt7475) Added missing
- adt7475 documentation
-Thread-Index: AQHV1JVtwGwHv/A/qEeLHCGfFZLcOaf9zzQAgAJnaoCAANkQgIAAa6QA
-Date:   Wed, 29 Jan 2020 23:52:49 +0000
-Message-ID: <b6829b7582fd777babcad066f7b4c5c3684e4919.camel@alliedtelesis.co.nz>
-References: <20200126221014.2978-1-logan.shaw@alliedtelesis.co.nz>
-         <20200126221014.2978-3-logan.shaw@alliedtelesis.co.nz>
-         <20200127154800.GA7023@bogus>
-         <b1d669567b5f9f00dfb5d6dab89262f68c5523f1.camel@alliedtelesis.co.nz>
-         <CAL_Jsq+UZvX-Avz7mA=RmhNU3hjKd2se1KODfGt9dfdbn_ACKQ@mail.gmail.com>
-In-Reply-To: <CAL_Jsq+UZvX-Avz7mA=RmhNU3hjKd2se1KODfGt9dfdbn_ACKQ@mail.gmail.com>
-Accept-Language: en-NZ, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [2001:df5:b000:25:ae22:bff:fe77:dd09]
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <565BC1698FBA41449B65E6A86B2784B9@atlnz.lc>
-Content-Transfer-Encoding: base64
+        id S1727168AbgA2Xzw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 29 Jan 2020 18:55:52 -0500
+Received: from mout.gmx.net ([212.227.15.19]:58939 "EHLO mout.gmx.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726648AbgA2Xzw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 Jan 2020 18:55:52 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gmx.net;
+        s=badeba3b8450; t=1580342141;
+        bh=XITtJExlSdMJlvvk3SPPpbztWnmlDrNbkZn5CRoQBMk=;
+        h=X-UI-Sender-Class:Subject:To:References:From:Date:In-Reply-To;
+        b=ZO7aULeul8WVQQRCr/e/jyU/9rHzFbYMMaS5ktSTrJT9BEryz1EVg+TGy4RQkzcNX
+         CD7LRuD/gxi+E1w6AQ/kRcjrvBPgoKfXDhsTj5wPxeSyTWfqTWWcADl9AV3UZH8PUG
+         kGiL7Ye46BPFdfOb+aCcHiVUmKdIll7Y8ObwN9Hg=
+X-UI-Sender-Class: 01bb95c1-4bf8-414a-932a-4f6e2808ef9c
+Received: from [0.0.0.0] ([149.28.201.231]) by mail.gmx.com (mrgmx005
+ [212.227.17.184]) with ESMTPSA (Nemesis) id 1MeU4s-1jXOSe2Nsa-00aTMb; Thu, 30
+ Jan 2020 00:55:41 +0100
+Subject: Re: [PATCH] btrfs: optimize barrier usage for Rmw atomics
+To:     Davidlohr Bueso <dave@stgolabs.net>, dsterba@suse.cz,
+        dsterba@suse.com, nborisov@suse.com, linux-btrfs@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Davidlohr Bueso <dbueso@suse.de>
+References: <20200129180324.24099-1-dave@stgolabs.net>
+ <20200129191439.GN3929@twin.jikos.cz>
+ <20200129192550.nnfkkgde445nrbko@linux-p48b>
+From:   Qu Wenruo <quwenruo.btrfs@gmx.com>
+Autocrypt: addr=quwenruo.btrfs@gmx.com; prefer-encrypt=mutual; keydata=
+ mQENBFnVga8BCACyhFP3ExcTIuB73jDIBA/vSoYcTyysFQzPvez64TUSCv1SgXEByR7fju3o
+ 8RfaWuHCnkkea5luuTZMqfgTXrun2dqNVYDNOV6RIVrc4YuG20yhC1epnV55fJCThqij0MRL
+ 1NxPKXIlEdHvN0Kov3CtWA+R1iNN0RCeVun7rmOrrjBK573aWC5sgP7YsBOLK79H3tmUtz6b
+ 9Imuj0ZyEsa76Xg9PX9Hn2myKj1hfWGS+5og9Va4hrwQC8ipjXik6NKR5GDV+hOZkktU81G5
+ gkQtGB9jOAYRs86QG/b7PtIlbd3+pppT0gaS+wvwMs8cuNG+Pu6KO1oC4jgdseFLu7NpABEB
+ AAG0IlF1IFdlbnJ1byA8cXV3ZW5ydW8uYnRyZnNAZ214LmNvbT6JAU4EEwEIADgCGwMFCwkI
+ BwIGFQgJCgsCBBYCAwECHgECF4AWIQQt33LlpaVbqJ2qQuHCPZHzoSX+qAUCXZw1oQAKCRDC
+ PZHzoSX+qCY6CACd+mWu3okGwRKXju6bou+7VkqCaHTdyXwWFTsr+/0ly5nUdDtT3yEVggPJ
+ 3VP70wjlrxUjNjFb6iIvGYxiPOrop1NGwGYvQktgRhaIhALG6rPoSSAhGNjwGVRw0km0PlIN
+ D29BTj/lYEk+jVM1YL0QLgAE1AI3krihg/lp/fQT53wLhR8YZIF8ETXbClQG1vJ0cllPuEEv
+ efKxRyiTSjB+PsozSvYWhXsPeJ+KKjFen7ebE5reQTPFzSHctCdPnoR/4jSPlnTlnEvLeqcD
+ ZTuKfQe1gWrPeevQzgCtgBF/WjIOeJs41klnYzC3DymuQlmFubss0jShLOW8eSOOWhLRuQEN
+ BFnVga8BCACqU+th4Esy/c8BnvliFAjAfpzhI1wH76FD1MJPmAhA3DnX5JDORcgaCbPEwhLj
+ 1xlwTgpeT+QfDmGJ5B5BlrrQFZVE1fChEjiJvyiSAO4yQPkrPVYTI7Xj34FnscPj/IrRUUka
+ 68MlHxPtFnAHr25VIuOS41lmYKYNwPNLRz9Ik6DmeTG3WJO2BQRNvXA0pXrJH1fNGSsRb+pK
+ EKHKtL1803x71zQxCwLh+zLP1iXHVM5j8gX9zqupigQR/Cel2XPS44zWcDW8r7B0q1eW4Jrv
+ 0x19p4P923voqn+joIAostyNTUjCeSrUdKth9jcdlam9X2DziA/DHDFfS5eq4fEvABEBAAGJ
+ ATwEGAEIACYCGwwWIQQt33LlpaVbqJ2qQuHCPZHzoSX+qAUCXZw1rgUJCWpOfwAKCRDCPZHz
+ oSX+qFcEB/95cs8cM1OQdE/GgOfCGxwgckMeWyzOR7bkAWW0lDVp2hpgJuxBW/gyfmtBnUai
+ fnggx3EE3ev8HTysZU9q0h+TJwwJKGv6sUc8qcTGFDtavnnl+r6xDUY7A6GvXEsSoCEEynby
+ 72byGeSovfq/4AWGNPBG1L61Exl+gbqfvbECP3ziXnob009+z9I4qXodHSYINfAkZkA523JG
+ ap12LndJeLk3gfWNZfXEWyGnuciRGbqESkhIRav8ootsCIops/SqXm0/k+Kcl4gGUO/iD/T5
+ oagaDh0QtOd8RWSMwLxwn8uIhpH84Q4X1LadJ5NCgGa6xPP5qqRuiC+9gZqbq4Nj
+Message-ID: <f49aaafa-9144-5644-adae-d5bc13b6ca41@gmx.com>
+Date:   Thu, 30 Jan 2020 07:55:35 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.2
 MIME-Version: 1.0
+In-Reply-To: <20200129192550.nnfkkgde445nrbko@linux-p48b>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:vKbIn1BgJMkSZlYsDHNNloPVS6CzOJ6Jbe8+Vbhx6l5avVBfbu6
+ djLKitQzzavm8h09+MQdjnCFrSPKUm+4svxVi62aQ9rLGVfUrTTFYIYNlwqKI8Mw+AgLcyb
+ 1l/8QM8bwXS4KasZwmif45KD2XDVKs3kn1LRAJ4zDSF3l+df/lARUgmS4ofQ2MyeCqkGj9J
+ Fb5BF7Wk/QhzBNCMGOIqw==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:rkod/PACeIY=:NafSwqzKI40NSpj7xmTXkY
+ AMyUO6OSmE4Ec+YjheoIN9BYc979Gu587jlGdYjUoiNiY0GbHbuLxGqK4yc2/YyL4ovl2U490
+ LRQOOaEysPTsaTS1WooOxO7iqrANkK6u9mDW5XTH8aa0/GUSUJTdqN6BlA6nyZVRtdBIg/pPk
+ FR8Q5TVHmkJ0vNWm22nIR0g8i80Xv8/6fj/H+Qm4XAxFHgAZJVweEd1Gobv4KhNmBeyghP5GU
+ dgZ9en+G4SJJ9Z6BQdiiiy5V7ep7ayH+JHkGS6bnjtPxiaRC0erwf9sEUVKZX85hnmlZ7oElG
+ gTKVdTHsZE8nwosDmQxvAvMhDoULzIUThjrnLURKUoSM7iX2UgFS/B6x5411Gil8RfA6u+8dW
+ rCLwHDBwioBNwGO7Onw7hqYpikapnCwaqqLsEKntOGwgdZeGm33qoicCZJDDw5HsoMGR6oI9J
+ tiRtFswwQw9VCneiyKWjqaCTzxG/2o7Kf0DOdTZSGl6HsvR8gkNlxvUvu4Fr13TAQ2TVlkqhz
+ XUkMQAT3zXSG/oeVwj2Afcvmwj9DwRP5CCuOfNexUfzSTN+DguR2QzpLG8LdZ/zdw9e3CABpF
+ uGA+U4bMtCj9jgPXwnk6HKVh9LgUahEcxmnHVRhmsS+k+VxTBDUb3pBgL01EdClu5JuObykLn
+ 8Y3zS6EshOdZKHzI2mOAeGALpHlTP9P9kNVZ+akiBynZxP5GkmOGHBrQ+s+NC07ScGVlwZods
+ 7WpX/UnpUEE5uc7UNJWXInojLyC0YKIo7Yg6usPLbuUFuj31NxTBtPEgDbhXUoGywQ+DZG2VN
+ GZSnYNHXVCaQiqfGoV/DIHeJrnuIZkdg7iMKKqtDF29kTBrpIeZQ64Cc7NYn5CDV5Y4wGmT5N
+ mb8aE5Ms1mDMrh544wdPMjZGw5ZBTRnPiQifNmNDZ9z2qogOzwBk42l+adS/+IVRTT7huy72R
+ PghUz+P1FvvvqTVUgBCY+P9n2oa/loA/fa+RDGmXZ5Uw6U+jgODfg/J7sfNFSW2RoLClOh8QQ
+ cVajxkSe6U5WtzO1smbBLl9fGpwCcMMEjR7/cnk3xf5eUqukOI+/58SyouD+iqeBsjU13S47O
+ RgniZ7YKv5gEGZzk1/UtODQYCpF9wuXm0BvIOe6AL2aZu9yAxuCS5/I2NqPpXIJig0Qh6kHpy
+ LIekZQEnWZY9ZNuZuC6K6CJOgC8dFGLyyTkVQmVUoc0tkBlBRDp4rO/o6VWXMSCKoqUTiWefR
+ N0Ui8xHuX+b46pRUJ
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-T24gV2VkLCAyMDIwLTAxLTI5IGF0IDExOjI3IC0wNjAwLCBSb2IgSGVycmluZyB3cm90ZToNCj4g
-T24gVHVlLCBKYW4gMjgsIDIwMjAgYXQgMTA6MzAgUE0gTG9nYW4gU2hhdw0KPiA8TG9nYW4uU2hh
-d0BhbGxpZWR0ZWxlc2lzLmNvLm56PiB3cm90ZToNCj4gPiANCj4gPiBPbiBNb24sIDIwMjAtMDEt
-MjcgYXQgMDk6NDggLTA2MDAsIFJvYiBIZXJyaW5nIHdyb3RlOg0KPiA+ID4gT24gTW9uLCBKYW4g
-MjcsIDIwMjAgYXQgMTE6MTA6MTRBTSArMTMwMCwgTG9nYW4gU2hhdyB3cm90ZToNCj4gPiA+ID4g
-QWRkZWQgYSBuZXcgZmlsZSBkb2N1bWVudGluZyB0aGUgYWR0NzQ3NSBkZXZpY2V0cmVlIGFuZCBh
-ZGRlZA0KPiA+ID4gPiB0aGUNCj4gPiA+ID4gZm91cg0KPiA+ID4gPiBuZXcgcHJvcGVydGllcyB0
-byBpdC4NCj4gPiA+ID4gDQo+ID4gPiA+IFNpZ25lZC1vZmYtYnk6IExvZ2FuIFNoYXcgPGxvZ2Fu
-LnNoYXdAYWxsaWVkdGVsZXNpcy5jby5uej4NCj4gPiA+ID4gLS0tDQo+ID4gPiA+ICsgIGJ5cGFz
-cy1hdHRlbnVhdG9yLWluMDoNCj4gPiA+IA0KPiA+ID4gTmVlZHMgYSB2ZW5kb3IgcHJlZml4IGFu
-ZCBhIHR5cGUgcmVmLg0KPiA+IA0KPiA+IEFkaSAoQW5hbG9nIERldmljZXMpIHNvbGQgdGhlIEFE
-VCBwcm9kdWN0IGxpbmUgKGFtb25nc3Qgb3RoZXINCj4gPiB0aGluZ3MpDQo+ID4gdG8gT24gU2Vt
-aWNvbmR1Y3Rvci4gQXMgY2hhbmdpbmcgdGhlIHZlbmRvciBvZiB0aGVzZSBjaGlwcyAoaW4NCj4g
-PiBjb2RlKQ0KPiA+IHdvdWxkIGJyZWFrIGJhY2t3YXJkcyBjb21wYXRpYmlsaXR5IHNob3VsZCB3
-ZSBrZWVwIHRoZSB2ZW5kb3IgYXMNCj4gPiBhZGk/DQo+IA0KPiBZZXMuIEl0IHNob3VsZCBtYXRj
-aCB3aGF0J3MgdXNlZCBpbiB0aGUgY29tcGF0aWJsZSBzdHJpbmcocykuDQo+IA0KPiA+IFRvIGNv
-bmZpcm0sIHdvdWxkIHRoaXMgbWFrZSB0aGUgcHJvcGVydHkgImFkaSxhZHQ3NDc2LGJ5cGFzcy0N
-Cj4gPiBhdHRlbnVhdG9yLWluMCI/DQo+ID4gDQo+ID4gU28gdXNlZCBpbiBjb25qdW5jdGlvbiB3
-aXRoIHBhdHRlcm5Qcm9wZXJ0aWVzIHlvdSB3b3VsZCBlbmQgdXAgd2l0aA0KPiA+IHNvbWV0aGlu
-ZyBsaWtlOg0KPiA+IA0KPiA+ICJhZGksKGFkdDc0NzN8YWR0NzQ3NXxhZHQ3NDc2fGFkdDc0OTAp
-LGJ5cGFzcy1hdHRlbnVhdG9yLWluWzAxMzRdIg0KPiANCj4gTm8gZm9yIHRoZSBwYXJ0ICMncy4g
-SnVzdCBhZGQgJ2FkaSwnLiBNYXliZSB5b3UgdGhvdWdodCBmb3IgdHlwZSByZWYNCj4gdGhhdCdz
-IHdoYXQgSSBtZWFudD8gQSB0eXBlIHJlZiBpczoNCj4gDQo+ICRyZWY6IC9zY2hlbWFzL3R5cGVz
-LnlhbWwjL2RlZmluaXRpb25zL3VpbnQzMg0KDQpZZXMsIEkgd2FzIGEgbGl0dGxlIGNvbmZ1c2Vk
-IGJ1dCBub3cgSSBhbSBvbiB0aGUgcmlnaHQgdHJhY2suDQo=
+
+
+On 2020/1/30 =E4=B8=8A=E5=8D=883:25, Davidlohr Bueso wrote:
+> On Wed, 29 Jan 2020, David Sterba wrote:
+>
+>> On Wed, Jan 29, 2020 at 10:03:24AM -0800, Davidlohr Bueso wrote:
+>>> Use smp_mb__after_atomic() instead of smp_mb() and avoid the
+>>> unnecessary barrier for non LL/SC architectures, such as x86.
+>>
+>> So that's a conflicting advice from what we got when discussing wich
+>> barriers to use in 6282675e6708ec78518cc0e9ad1f1f73d7c5c53d and the
+>> memory is still fresh. My first idea was to take the
+>> smp_mb__after_atomic and __before_atomic variants and after discussion
+>> with various people the plain smp_wmb/smp_rmb were suggested and used i=
+n
+>> the end.
+>
+> So the patch you mention deals with test_bit(), which is out of the scop=
+e
+> of smp_mb__{before,after}_atomic() as it's not a RMW operation.
+> atomic_inc()
+> and set_bit() are, however, meant to use these barriers.
+
+Exactly!
+I'm still not convinced to use full barrier for test_bit() and I see no
+reason to use any barrier for test_bit().
+All mb should only be needed between two or more memory access, thus mb
+should sit between set/clear_bit() and other operations, not around
+test_bit().
+
+>
+>>
+>> I can dig the email threads and excerpts from irc conversations, maybe
+>> Nik has them at hand too. We do want to get rid of all unnecessary and
+>> uncommented barriers in btrfs code, so I appreciate your patch.
+>
+> Yeah, I struggled with the amount of undocumented barriers, and decided
+> not to go down that rabbit hole. This patch is only an equivalent of
+> what is currently there. When possible, getting rid of barriers is of
+> course better.
+
+BTW, is there any convincing method to do proper mb examination?
+
+I really found it hard to convince others or even myself when mb is
+involved.
+
+Thanks,
+Qu
+
+>
+> Thanks,
+> Davidlohr
