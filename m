@@ -2,93 +2,89 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5E2B314CF3C
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Jan 2020 18:07:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BD87C14CF4B
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Jan 2020 18:09:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727238AbgA2RH1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 29 Jan 2020 12:07:27 -0500
-Received: from mga17.intel.com ([192.55.52.151]:36373 "EHLO mga17.intel.com"
+        id S1727186AbgA2RJO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 29 Jan 2020 12:09:14 -0500
+Received: from mga17.intel.com ([192.55.52.151]:36543 "EHLO mga17.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726927AbgA2RH0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 Jan 2020 12:07:26 -0500
-X-Amp-Result: UNSCANNABLE
+        id S1726647AbgA2RJN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 Jan 2020 12:09:13 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 29 Jan 2020 09:07:26 -0800
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 29 Jan 2020 09:09:13 -0800
+X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.70,378,1574150400"; 
-   d="scan'208";a="223890527"
-Received: from agluck-desk2.sc.intel.com (HELO agluck-desk2.amr.corp.intel.com) ([10.3.52.68])
-  by fmsmga008-auth.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 29 Jan 2020 09:07:26 -0800
-Date:   Wed, 29 Jan 2020 09:07:25 -0800
-From:   "Luck, Tony" <tony.luck@intel.com>
-To:     Borislav Petkov <bp@suse.de>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Borislav Petkov <bp@alien8.de>,
-        Peter Zijlstra <a.p.zijlstra@chello.nl>,
-        Andrew Morton <akpm@linux-foundation.org>
-Subject: Re: [GIT PULL] x86/asm changes for v5.6
-Message-ID: <20200129170725.GA21265@agluck-desk2.amr.corp.intel.com>
-References: <20200128165906.GA67781@gmail.com>
- <CAHk-=wgm+2ac4nnprPST6CnehHXScth=A7-ayrNyhydNC+xG-g@mail.gmail.com>
- <CAHk-=wi=otQxzhLAofWEvULLMk2X3G3zcWfUWz7e1CFz+xYs2Q@mail.gmail.com>
- <20200129132618.GA30979@zn.tnic>
+   d="scan'208";a="314882181"
+Received: from cmossx-mobl1.amr.corp.intel.com ([10.251.7.89])
+  by fmsmga001.fm.intel.com with ESMTP; 29 Jan 2020 09:09:13 -0800
+Date:   Wed, 29 Jan 2020 09:09:12 -0800 (PST)
+From:   Mat Martineau <mathew.j.martineau@linux.intel.com>
+X-X-Sender: mjmartin@cmossx-mobl1.amr.corp.intel.com
+To:     Randy Dunlap <rdunlap@infradead.org>
+cc:     "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        David Miller <davem@davemloft.net>,
+        Matthieu Baerts <matthieu.baerts@tessares.net>,
+        mptcp@lists.01.org, LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] MAINTAINERS: mptcp@ mailing list is moderated
+In-Reply-To: <0d3e4e6f-5437-ae85-f1f5-89971ea3423f@infradead.org>
+Message-ID: <alpine.OSX.2.21.2001290857310.9282@cmossx-mobl1.amr.corp.intel.com>
+References: <0d3e4e6f-5437-ae85-f1f5-89971ea3423f@infradead.org>
+User-Agent: Alpine 2.21 (OSX 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200129132618.GA30979@zn.tnic>
+Content-Type: text/plain; format=flowed; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jan 29, 2020 at 02:26:18PM +0100, Borislav Petkov wrote:
-> On Tue, Jan 28, 2020 at 12:06:53PM -0800, Linus Torvalds wrote:
-> > On Tue, Jan 28, 2020 at 11:51 AM Linus Torvalds
-> > <torvalds@linux-foundation.org> wrote:
-> > >
-> > >         ALTERNATIVE_2 \
-> > >                 "cmp  $680, %rdx ; jb 3f ; cmpb %dil, %sil; je 4f", \
-> > >                 "movq %rdx, %rcx ; rep movsb; retq", X86_FEATURE_FSRM, \
-> > >                 "cmp $0x20, %rdx; jb 1f; movq %rdx, %rcx; rep movsb; retq", X86_FEATURE_ERMS
-> > 
-> > Note the UNTESTED part.
-> > 
-> > In particular, I didn't check what the priority for the alternatives
-> > is. Since FSRM being set always implies ERMS being set too, it may be
-> > that the ERMS case is always picked with the above code.
 
-So I wrote a tiny function to test (rather than wrestle with trying
-to disassemble the post-alternative patched binary of the running system):
+On Tue, 28 Jan 2020, Randy Dunlap wrote:
 
-        .globl  feature
-        .type   feature, @function
-feature:
-        .cfi_startproc
-       ALTERNATIVE_2 \
-               "movl    $1, %eax", \
-               "movl    $2, %eax", X86_FEATURE_FSRM, \
-               "movl    $3, %eax", X86_FEATURE_ERMS
+> From: Randy Dunlap <rdunlap@infradead.org>
+>
+> Note that mptcp@lists.01.org is moderated, like we note for
+> other mailing lists.
 
-        ret
+Hi Randy -
 
-This returns "3" ... not what we want. But swapping the ERMS/FSRM order
-gets the correct version.
+The mptcp@lists.01.org list is not moderated, but there's a server-wide 
+default rule that holds messages with 10 or more recipients for any sender 
+(list member or not). I've turned off those server-wide defaults for this 
+list so it shouldn't be a problem in the future.
 
-> And yes, your idea makes sense to use ALTERNATIVE_2 but as it is, it
-> triple-faults my guest. I'll debug it more later to find out why, when I
-> get a chance.
+Thank you for your report on the build errors.
 
-Triple fault is a surprise.  As long as you have ERMS, it shouldn't
-hurt to take the FSRM code path.
 
-Does the code that performs the patch use memmove() to copy the alternate
-version into place? That could get ugly!
+Mat
 
-I'm not in the same city as my test machine, so I'm going to defer testing
-Linus' patch (with FSRM/ERMS swapped) until I'm near enough to poke it
-if it breaks.
 
--Tony
+>
+> Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
+> Cc: Mat Martineau <mathew.j.martineau@linux.intel.com>
+> Cc: Matthieu Baerts <matthieu.baerts@tessares.net>
+> Cc: netdev@vger.kernel.org
+> Cc: mptcp@lists.01.org
+> ---
+> MAINTAINERS |    2 +-
+> 1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> --- mmotm-2020-0128-2005.orig/MAINTAINERS
+> +++ mmotm-2020-0128-2005/MAINTAINERS
+> @@ -11718,7 +11718,7 @@ NETWORKING [MPTCP]
+> M:	Mat Martineau <mathew.j.martineau@linux.intel.com>
+> M:	Matthieu Baerts <matthieu.baerts@tessares.net>
+> L:	netdev@vger.kernel.org
+> -L:	mptcp@lists.01.org
+> +L:	mptcp@lists.01.org (moderated for non-subscribers)
+> W:	https://github.com/multipath-tcp/mptcp_net-next/wiki
+> B:	https://github.com/multipath-tcp/mptcp_net-next/issues
+> S:	Maintained
+>
+>
+
+--
+Mat Martineau
+Intel
