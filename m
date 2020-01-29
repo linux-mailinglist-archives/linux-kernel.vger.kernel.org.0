@@ -2,137 +2,85 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AC6B014D429
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Jan 2020 00:57:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3A27314D435
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Jan 2020 00:59:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727223AbgA2X46 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 29 Jan 2020 18:56:58 -0500
-Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:26248 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1727091AbgA2X46 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 Jan 2020 18:56:58 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1580342217;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=YWdRpM1kcQ6PLj0ocD77Ak3FkfzKXOacBKoKAVuuAfg=;
-        b=SVL7viY7t8k7Ce2NHtfhkCFziGpWWiniL1kNW4i0XOFUrxThq6fnlj/W2jvuAySGD3TDFo
-        c5kpGjxx44zpeKRXvIZschbKER6td/JVFGLXGOSyE7Bl68GKEcCLF8Fkh91ovfaJOy8Jb2
-        zLIxd24JI2iEfSVcTrISJIYnYKyinEE=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-62-6U95WgCEN6uGY4yXsZpQvw-1; Wed, 29 Jan 2020 18:56:55 -0500
-X-MC-Unique: 6U95WgCEN6uGY4yXsZpQvw-1
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        id S1726949AbgA2X7K (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 29 Jan 2020 18:59:10 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60278 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726617AbgA2X7K (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 Jan 2020 18:59:10 -0500
+Received: from localhost.localdomain (c-73-231-172-41.hsd1.ca.comcast.net [73.231.172.41])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 0AB738017CC;
-        Wed, 29 Jan 2020 23:56:54 +0000 (UTC)
-Received: from w520.home (ovpn-116-28.phx2.redhat.com [10.3.116.28])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 4546184D8B;
-        Wed, 29 Jan 2020 23:56:50 +0000 (UTC)
-Date:   Wed, 29 Jan 2020 16:56:49 -0700
-From:   Alex Williamson <alex.williamson@redhat.com>
-To:     "Liu, Yi L" <yi.l.liu@intel.com>
-Cc:     eric.auger@redhat.com, kevin.tian@intel.com,
-        jacob.jun.pan@linux.intel.com, joro@8bytes.org,
-        ashok.raj@intel.com, jun.j.tian@intel.com, yi.y.sun@intel.com,
-        jean-philippe.brucker@arm.com, peterx@redhat.com,
-        iommu@lists.linux-foundation.org, kvm@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [RFC v3 4/8] vfio/type1: Add
- VFIO_NESTING_GET_IOMMU_UAPI_VERSION
-Message-ID: <20200129165649.43008300@w520.home>
-In-Reply-To: <1580299912-86084-5-git-send-email-yi.l.liu@intel.com>
-References: <1580299912-86084-1-git-send-email-yi.l.liu@intel.com>
-        <1580299912-86084-5-git-send-email-yi.l.liu@intel.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
+        by mail.kernel.org (Postfix) with ESMTPSA id 60269205ED;
+        Wed, 29 Jan 2020 23:59:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1580342348;
+        bh=yxkaudjRnjvvfdKWPnNCLoYBv3LloMsyXzwr45ZzU78=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=cLuVWANomNH0rT6PVVW/FB09C+GLkJj5uCGw3ovSGcUEOHRFFVDPAPxxYR0gh0Nv+
+         rNcyGRrkz2MGQ9q+Z7eXg5x1wJHt/u0eFEWGdiV25ZvsrWayVp2v21BRkWLQiy3930
+         etAwh0LVr43xhSG865jgg0JD+Vm2JPvztCMi0lZU=
+Date:   Wed, 29 Jan 2020 15:59:07 -0800
+From:   Andrew Morton <akpm@linux-foundation.org>
+To:     Dmitry Osipenko <digetx@gmail.com>
+Cc:     Wei Yang <richardw.yang@linux.intel.com>, dan.j.williams@intel.com,
+        aneesh.kumar@linux.ibm.com, kirill@shutemov.name,
+        yang.shi@linux.alibaba.com, thellstrom@vmware.com,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jon Hunter <jonathanh@nvidia.com>,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        Russell King - ARM Linux <linux@armlinux.org.uk>,
+        Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: [PATCH 3/5] mm/mremap: use pmd_addr_end to calculate next in
+ move_page_tables()
+Message-Id: <20200129155907.75868e8a36c5fffc3ec354b9@linux-foundation.org>
+In-Reply-To: <b5eb4766-38ba-0153-2844-cc303fe0dc07@gmail.com>
+References: <20200117232254.2792-1-richardw.yang@linux.intel.com>
+        <20200117232254.2792-4-richardw.yang@linux.intel.com>
+        <7147774a-14e9-4ff3-1548-4565f0d214d5@gmail.com>
+        <20200126185951.c9246349befcccce210a4ab8@linux-foundation.org>
+        <b5eb4766-38ba-0153-2844-cc303fe0dc07@gmail.com>
+X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 29 Jan 2020 04:11:48 -0800
-"Liu, Yi L" <yi.l.liu@intel.com> wrote:
+On Wed, 29 Jan 2020 20:18:56 +0300 Dmitry Osipenko <digetx@gmail.com> wrote:
 
-> From: Liu Yi L <yi.l.liu@intel.com>
+> 27.01.2020 05:59, Andrew Morton пишет:
+> > On Sun, 26 Jan 2020 17:47:57 +0300 Dmitry Osipenko <digetx@gmail.com> wrote:
+> ...
+> >> Hello Wei,
+> >>
+> >> Starting with next-20200122, I'm seeing the following in KMSG on NVIDIA
+> >> Tegra (ARM32):
+> >>
+> >>   BUG: Bad rss-counter state mm:(ptrval) type:MM_ANONPAGES val:190
+> >>
+> >> and eventually kernel hangs.
+> >>
+> >> Git's bisection points to this patch and reverting it helps. Please fix,
+> >> thanks in advance.
+> > 
+> > Thanks.  I had these tagged for 5.7-rc1 anyway, so I'll drop all five
+> > patches.
+> > 
 > 
-> In Linux Kernel, the IOMMU nesting translation (a.k.a. IOMMU dual stage
-> translation capability) is abstracted in uapi/iommu.h, in which the uAPIs
-> like bind_gpasid/iommu_cache_invalidate/fault_report/pgreq_resp are defined.
+> Hello Andrew,
 > 
-> VFIO_TYPE1_NESTING_IOMMU stands for the vfio iommu type which is backed by
-> IOMMU nesting translation capability. VFIO exposes the nesting capability
-> to userspace and also exposes uAPIs (will be added in later patches) to user
-> space for setting up nesting translation from userspace. Thus applications
-> like QEMU could support vIOMMU for pass-through devices with IOMMU nesting
-> translation capability.
-> 
-> As VFIO expose the nesting IOMMU programming to userspace, it also needs to
-> provide an API for the uapi/iommu.h version check to ensure compatibility.
-> This patch reports the iommu uapi version to userspace. Applications could
-> use this API to do version check before further using the nesting uAPIs.
-> 
-> Cc: Kevin Tian <kevin.tian@intel.com>
-> CC: Jacob Pan <jacob.jun.pan@linux.intel.com>
-> Cc: Alex Williamson <alex.williamson@redhat.com>
-> Cc: Eric Auger <eric.auger@redhat.com>
-> Cc: Jean-Philippe Brucker <jean-philippe.brucker@arm.com>
-> Signed-off-by: Liu Yi L <yi.l.liu@intel.com>
-> ---
->  drivers/vfio/vfio.c       |  3 +++
->  include/uapi/linux/vfio.h | 10 ++++++++++
->  2 files changed, 13 insertions(+)
-> 
-> diff --git a/drivers/vfio/vfio.c b/drivers/vfio/vfio.c
-> index 425d60a..9087ad4 100644
-> --- a/drivers/vfio/vfio.c
-> +++ b/drivers/vfio/vfio.c
-> @@ -1170,6 +1170,9 @@ static long vfio_fops_unl_ioctl(struct file *filep,
->  	case VFIO_GET_API_VERSION:
->  		ret = VFIO_API_VERSION;
->  		break;
-> +	case VFIO_NESTING_GET_IOMMU_UAPI_VERSION:
-> +		ret = iommu_get_uapi_version();
-> +		break;
+> FYI, I'm still seeing the offending patches in the today's next-20200129.
 
-Shouldn't the type1 backend report this?  It doesn't make much sense
-that the spapr backend reports a version for something it doesn't
-support.  Better yet, provide this info gratuitously in the
-VFIO_IOMMU_GET_INFO ioctl return like you do with nesting in the next
-patch, then it can help the user figure out if this support is present.
-Thanks,
-
-Alex
-
->  	case VFIO_CHECK_EXTENSION:
->  		ret = vfio_ioctl_check_extension(container, arg);
->  		break;
-> diff --git a/include/uapi/linux/vfio.h b/include/uapi/linux/vfio.h
-> index d4bf415..62113be 100644
-> --- a/include/uapi/linux/vfio.h
-> +++ b/include/uapi/linux/vfio.h
-> @@ -857,6 +857,16 @@ struct vfio_iommu_type1_pasid_quota {
->   */
->  #define VFIO_IOMMU_SET_PASID_QUOTA	_IO(VFIO_TYPE, VFIO_BASE + 23)
->  
-> +/**
-> + * VFIO_NESTING_GET_IOMMU_UAPI_VERSION - _IO(VFIO_TYPE, VFIO_BASE + 24)
-> + *
-> + * Report the version of the IOMMU UAPI when dual stage IOMMU is supported.
-> + * In VFIO, it is needed for VFIO_TYPE1_NESTING_IOMMU.
-> + * Availability: Always.
-> + * Return: IOMMU UAPI version
-> + */
-> +#define VFIO_NESTING_GET_IOMMU_UAPI_VERSION	_IO(VFIO_TYPE, VFIO_BASE + 24)
-> +
->  /* -------- Additional API for SPAPR TCE (Server POWERPC) IOMMU -------- */
->  
->  /*
+hm, me too.  Stephen, it's unexpected that 9ff4452912d63f ("mm/mremap:
+use pmd_addr_end to calculate next in move_page_tables()") is still in
+the -next lineup?  It was dropped from -mm on Jan 26?
 
