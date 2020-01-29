@@ -2,91 +2,77 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3200414D2E8
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Jan 2020 23:16:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7F32114D2ED
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Jan 2020 23:18:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726828AbgA2WQj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 29 Jan 2020 17:16:39 -0500
-Received: from mga02.intel.com ([134.134.136.20]:4886 "EHLO mga02.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726222AbgA2WQh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 Jan 2020 17:16:37 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga002.fm.intel.com ([10.253.24.26])
-  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 29 Jan 2020 14:16:36 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.70,379,1574150400"; 
-   d="scan'208";a="261959958"
-Received: from richard.sh.intel.com (HELO localhost) ([10.239.159.54])
-  by fmsmga002.fm.intel.com with ESMTP; 29 Jan 2020 14:16:35 -0800
-From:   Wei Yang <richardw.yang@linux.intel.com>
-To:     akpm@linux-foundation.org
-Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org, mhocko@suse.com,
-        yang.shi@linux.alibaba.com, rientjes@google.com, david@redhat.com,
-        Wei Yang <richardw.yang@linux.intel.com>
-Subject: [Patch v4 4/4] mm/migrate.c: unify "not queued for migration" handling in do_pages_move()
-Date:   Thu, 30 Jan 2020 06:16:16 +0800
-Message-Id: <20200129221616.25432-5-richardw.yang@linux.intel.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20200129221616.25432-1-richardw.yang@linux.intel.com>
-References: <20200129221616.25432-1-richardw.yang@linux.intel.com>
+        id S1726683AbgA2WSX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 29 Jan 2020 17:18:23 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:41614 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726314AbgA2WSX (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 Jan 2020 17:18:23 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
+        Content-Type:In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:
+        Subject:Sender:Reply-To:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=g1xN3pkWgTiIog0aZR6ocu7odeQml1rb1vpE5DQa10I=; b=dRZ3NVX5DnCiK3wUCKQz95Ly7
+        GcAWGsQMcJR6ipsCH1/++PKoQPrXTgWuaJ1U3G4vEW0MXXHGoM82xc1//NHKjIAB3a4Cd4wPKwLJl
+        lsgHL3rFQsyVSARRF10jMF5fyG1qwrLorHVwrTM6q+WGbssh0E4xGJCThEmpiRLb1QvsZNHjaMdYT
+        H+bLteE8w9ExY5qhYZaeUakav4gvWV+Vm7RYQPmoLQgEGbLGgtBK6eMgaR58ZNp2pEFjX5B6KzaCR
+        ut7vl6u0fWfGRJeqxdkj246fhxNxBkdPvdKBHFPd/yVDlvxhVOTcBfyM+cUAHPRPI/2eHc4oozrWI
+        c1iOefcEQ==;
+Received: from [2601:1c0:6280:3f0:897c:6038:c71d:ecac]
+        by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1iwvfC-0003Tr-Ay; Wed, 29 Jan 2020 22:18:22 +0000
+Subject: Re: linux-next: Tree for Jan 29 (security/smack/)
+To:     Stephen Rothwell <sfr@canb.auug.org.au>,
+        Linux Next Mailing List <linux-next@vger.kernel.org>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        linux-security-module <linux-security-module@vger.kernel.org>
+References: <20200129155431.76bd7f25@canb.auug.org.au>
+From:   Randy Dunlap <rdunlap@infradead.org>
+Message-ID: <e66a563e-b612-c5b6-7bdd-b55113a9b822@infradead.org>
+Date:   Wed, 29 Jan 2020 14:18:20 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.1
+MIME-Version: 1.0
+In-Reply-To: <20200129155431.76bd7f25@canb.auug.org.au>
+Content-Type: text/plain; charset=windows-1252
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-It can currently happen that we store the status of a page twice:
-* Once we detect that it is already on the target node
-* Once we moved a bunch of pages, and a page that's already on the
-  target node is contained in the current interval.
+On 1/28/20 8:54 PM, Stephen Rothwell wrote:
+> Hi all,
+> 
+> Please do not add any v5.7 material to your linux-next included
+> branches until after v5.6-rc1 has been released.
+> 
+> Changes since 20200128:
+> 
 
-Let's simplify the code and always call do_move_pages_to_node() in
-case we did not queue a page for migration. Note that pages that are
-already on the target node are not added to the pagelist and are,
-therefore, ignored by do_move_pages_to_node() - there is no functional
-change.
+../security/smack/smack_lsm.c: In function ‘smack_post_notification’:
+../security/smack/smack_lsm.c:4383:7: error: dereferencing pointer to incomplete type ‘struct watch_notification’
+  if (n->type == WATCH_TYPE_META)
+       ^~
+  CC      kernel/time/hrtimer.o
+../security/smack/smack_lsm.c:4383:17: error: ‘WATCH_TYPE_META’ undeclared (first use in this function); did you mean ‘TCA_PIE_BETA’?
+  if (n->type == WATCH_TYPE_META)
+                 ^~~~~~~~~~~~~~~
+                 TCA_PIE_BETA
 
-The status of such a page is now only stored once.
 
-[david@redhat.com rephrase changelog]
+Probably just missing
+#include <linux/watch_queue.h>
 
-Signed-off-by: Wei Yang <richardw.yang@linux.intel.com>
-Acked-by: Michal Hocko <mhocko@suse.com>
-Reviewed-by: David Hildenbrand <david@redhat.com>
----
- mm/migrate.c | 14 ++++++--------
- 1 file changed, 6 insertions(+), 8 deletions(-)
 
-diff --git a/mm/migrate.c b/mm/migrate.c
-index 981916007b4f..7c850fe5a1a8 100644
---- a/mm/migrate.c
-+++ b/mm/migrate.c
-@@ -1653,18 +1653,16 @@ static int do_pages_move(struct mm_struct *mm, nodemask_t task_nodes,
- 		err = add_page_for_migration(mm, addr, current_node,
- 				&pagelist, flags & MPOL_MF_MOVE_ALL);
- 
--		if (!err) {
--			/* The page is already on the target node */
--			err = store_status(status, i, current_node, 1);
--			if (err)
--				goto out_flush;
--			continue;
--		} else if (err > 0) {
-+		if (err > 0) {
- 			/* The page is successfully queued for migration */
- 			continue;
- 		}
- 
--		err = store_status(status, i, err, 1);
-+		/*
-+		 * If the page is already on the target node (!err), store the
-+		 * node, otherwise, store the err.
-+		 */
-+		err = store_status(status, i, err ? : current_node, 1);
- 		if (err)
- 			goto out_flush;
- 
 -- 
-2.17.1
-
+~Randy
+Reported-by: Randy Dunlap <rdunlap@infradead.org>
