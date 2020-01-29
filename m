@@ -2,109 +2,120 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DAE5C14D3BB
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Jan 2020 00:39:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CCB9E14D3CB
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Jan 2020 00:48:50 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726820AbgA2XjU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 29 Jan 2020 18:39:20 -0500
-Received: from foss.arm.com ([217.140.110.172]:46970 "EHLO foss.arm.com"
+        id S1727145AbgA2Xqq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 29 Jan 2020 18:46:46 -0500
+Received: from mga06.intel.com ([134.134.136.31]:46688 "EHLO mga06.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726528AbgA2XjU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 Jan 2020 18:39:20 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 39A9331B;
-        Wed, 29 Jan 2020 15:39:19 -0800 (PST)
-Received: from [10.0.2.15] (unknown [172.31.20.19])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 570803F52E;
-        Wed, 29 Jan 2020 15:39:17 -0800 (PST)
-Subject: Re: [PATCH v2 6/6] arm64: use activity monitors for frequency
- invariance
-From:   Valentin Schneider <valentin.schneider@arm.com>
-To:     Ionela Voinescu <ionela.voinescu@arm.com>, catalin.marinas@arm.com,
-        will@kernel.org, mark.rutland@arm.com, maz@kernel.org,
-        suzuki.poulose@arm.com, sudeep.holla@arm.com,
-        dietmar.eggemann@arm.com
-Cc:     peterz@infradead.org, mingo@redhat.com, ggherdovich@suse.cz,
-        vincent.guittot@linaro.org, linux-arm-kernel@lists.infradead.org,
-        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20191218182607.21607-1-ionela.voinescu@arm.com>
- <20191218182607.21607-7-ionela.voinescu@arm.com>
- <96fdead6-9896-5695-6744-413300d424f5@arm.com>
-Message-ID: <3ed9af08-82ef-e30c-b1ec-3a1dac0d2091@arm.com>
-Date:   Wed, 29 Jan 2020 23:39:11 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.1
+        id S1726401AbgA2Xqp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 Jan 2020 18:46:45 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga001.jf.intel.com ([10.7.209.18])
+  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 29 Jan 2020 15:46:43 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.70,379,1574150400"; 
+   d="scan'208";a="309551694"
+Received: from sjchrist-coffee.jf.intel.com ([10.54.74.202])
+  by orsmga001.jf.intel.com with ESMTP; 29 Jan 2020 15:46:43 -0800
+From:   Sean Christopherson <sean.j.christopherson@intel.com>
+To:     Paolo Bonzini <pbonzini@redhat.com>
+Cc:     Sean Christopherson <sean.j.christopherson@intel.com>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Wanpeng Li <wanpengli@tencent.com>,
+        Jim Mattson <jmattson@google.com>,
+        Joerg Roedel <joro@8bytes.org>, kvm@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH 00/26] KVM: x86: Purge kvm_x86_ops->*_supported()
+Date:   Wed, 29 Jan 2020 15:46:14 -0800
+Message-Id: <20200129234640.8147-1-sean.j.christopherson@intel.com>
+X-Mailer: git-send-email 2.24.1
 MIME-Version: 1.0
-In-Reply-To: <96fdead6-9896-5695-6744-413300d424f5@arm.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 29/01/2020 17:13, Valentin Schneider wrote:
-> I had a brief look at the Arm ARM, for the arch timer it says it is
-> "typically in the range 1-50MHz", but then also gives an example with 20KHz
-> in a low-power mode.
-> 
-> If we take say 5GHz max CPU frequency, our lower bound for the arch timer
-> (with that SCHED_CAPACITY_SCALE² trick) is about ~4.768KHz. It's not *too*
-> far from that 20KHz, but I'm not sure we would actually be executing stuff
-> in that low-power mode.
-> 
+Our benevolent dictator decreed that "all *_supported() should be removed,
+and the code moved from __do_cpuid_func() to set_supported_cpuid"[*].
 
-I mixed up a few things in there; that low-power mode is supposed to do
-higher increments, so it would emulate a similar frequency as the non-low-power
-mode. Thus the actual frequency matters less than what is reported in CNTFRQ
-(though we hope to get the behaviour we're told we should see), so we should
-be quite safe from that ~5KHz value. Still, to make it obvious, I don't think
-something like this would hurt:
+To make that happen, move CPUID and MSR checks from x86 into SVM/VMX via
+the existing ->set_supported_cpuid() and a ->new has_virtualized_msr() ops
+respectively.
 
----
-diff --git a/drivers/clocksource/arm_arch_timer.c b/drivers/clocksource/arm_arch_timer.c
-index 9a5464c625b45..a72832093575a 100644
---- a/drivers/clocksource/arm_arch_timer.c
-+++ b/drivers/clocksource/arm_arch_timer.c
-@@ -885,6 +885,17 @@ static int arch_timer_starting_cpu(unsigned int cpu)
- 	return 0;
- }
- 
-+static int validate_timer_rate(void)
-+{
-+	if (!arch_timer_rate)
-+		return 1;
-+
-+	/* Arch timer frequency < 1MHz is shady */
-+	WARN_ON(arch_timer_rate < 1000000);
-+
-+	return 0;
-+}
-+
- /*
-  * For historical reasons, when probing with DT we use whichever (non-zero)
-  * rate was probed first, and don't verify that others match. If the first node
-@@ -900,7 +911,7 @@ static void arch_timer_of_configure_rate(u32 rate, struct device_node *np)
- 		arch_timer_rate = rate;
- 
- 	/* Check the timer frequency. */
--	if (arch_timer_rate == 0)
-+	if (validate_timer_rate())
- 		pr_warn("frequency not available\n");
- }
- 
-@@ -1594,7 +1605,7 @@ static int __init arch_timer_acpi_init(struct acpi_table_header *table)
- 	 * CNTFRQ value. This *must* be correct.
- 	 */
- 	arch_timer_rate = arch_timer_get_cntfrq();
--	if (!arch_timer_rate) {
-+	if (validate_timer_rate()) {
- 		pr_err(FW_BUG "frequency not available.\n");
- 		return -EINVAL;
- 	}
----
+As usual, there's a fair amount of cleanup in between the mechanical
+changes.  Most notable is the introduction of cpuid entry accessors and
+mutators to replace all of the code to manipulate individual feature bits
+in cpuid entries, which is error prone and annoying.  MPX (*sigh*) also
+gets a healthly dose of cleanup.
 
-> Long story short, we're probably fine, but it would nice to shove some of
-> the above into comments (especially the SCHED_CAPACITY_SCALE² trick)
-> 
+I don't love every patch in this series.  Specifically, adding an extra
+call to ->set_supported_cpuid() to handle XSAVES is ugly.  But, I do like
+that it purges all ->*_supported() hooks.  And practically speaking, odds
+are good that CPUID 0xD.1 will get more feature bits, i.e. keeping
+->xsaves_supported() would likely lead to another ->*_supported() hook.
+
+Paolo also expressed a dislike for clearing bits in set_supported_cpuid().
+I don't have a strong opinion regarding clearing bits, but the alternative
+approach, i.e. leave the bits clear and then set them in vendor code,
+gets quite kludgy because the vendor code (mostly VMX) would need to
+manually recheck boot_cpu_data to ensure it wasn't advertising a feature
+that the user/kernel expressly disabled.  IMO, forcing manual checks is
+more likely to introduce errors and provides less insight into why VMX
+needs to adjust the advertised CPUID values (VMCS != CPUID).
+
+Tested on Intel by verifying the output of KVM_GET_SUPPORTED_CPUID is
+identical before and after (on almost every patch) on a Haswell and Coffee
+Lake.  The big untested pieces are PKU and PT on Intel, and everything AMD.
+
+[*] https://lkml.kernel.org/r/8a77e3b9-049e-e622-9332-9bebb829bc3d@redhat.com
+
+Sean Christopherson (26):
+  KVM: x86: Remove superfluous brackets from case statement
+  KVM: x86: Take an unsigned 32-bit int for has_emulated_msr()'s index
+  KVM: x86: Snapshot MSR index in a local variable when processing lists
+  KVM: x86: Add a kvm_x86_ops hook to query virtualized MSR support
+  KVM: x86: Move MSR_TSC_AUX existence checks into vendor code
+  KVM: x86: Move MSR_IA32_BNDCFGS existence checks into vendor code
+  KVM: VMX: Add helpers to query Intel PT mode
+  KVM: x86: Move RTIT (Intel PT) MSR existence checks into vendor code
+  KVM: x86: Calculate the supported xcr0 mask at load time
+  KVM: x86: Use supported_xcr0 to detect MPX support
+  KVM: x86: Make kvm_mpx_supported() an inline function
+  KVM: x86: Drop explicit @func param from ->set_supported_cpuid()
+  KVM: x86: Use u32 for holding CPUID register value in helpers
+  KVM: x86: Introduce cpuid_entry_{get,has}() accessors
+  KVM: x86: Introduce cpuid_entry_{change,set,clear}() mutators
+  KVM: x86: Add Kconfig-controlled auditing of reverse CPUID lookups
+  KVM: x86: Handle MPX CPUID adjustment in vendor code
+  KVM: x86: Handle INVPCID CPUID adjustment in vendor code
+  KVM: x86: Handle UMIP emulation CPUID adjustment in VMX code
+  KVM: x86: Handle PKU CPUID adjustment in SVM code
+  KVM: x86: Handle RDTSCP CPUID adjustment in VMX code
+  KVM: x86: Handle XSAVES CPUID adjustment in VMX code
+  KVM: x86: Handle Intel PT CPUID adjustment in vendor code
+  KVM: x86: Clear output regs for CPUID 0x14 if PT isn't exposed to
+    guest
+  KVM: x86: Handle main Intel PT CPUID leaf in vendor code
+  KVM: VMX: Directly query Intel PT mode when refreshing PMUs
+
+ arch/x86/include/asm/kvm_host.h |  12 +--
+ arch/x86/kvm/Kconfig            |  10 +++
+ arch/x86/kvm/cpuid.c            | 147 +++++++++++++-------------------
+ arch/x86/kvm/cpuid.h            |  85 +++++++++++++++---
+ arch/x86/kvm/svm.c              |  88 ++++++++++---------
+ arch/x86/kvm/vmx/capabilities.h |  25 ++++--
+ arch/x86/kvm/vmx/nested.c       |   2 +-
+ arch/x86/kvm/vmx/pmu_intel.c    |   2 +-
+ arch/x86/kvm/vmx/vmx.c          | 119 ++++++++++++++++++--------
+ arch/x86/kvm/vmx/vmx.h          |   4 +-
+ arch/x86/kvm/x86.c              |  76 +++++++----------
+ arch/x86/kvm/x86.h              |  10 +--
+ 12 files changed, 331 insertions(+), 249 deletions(-)
+
+-- 
+2.24.1
+
