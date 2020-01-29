@@ -2,106 +2,63 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 085DF14C8D6
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Jan 2020 11:39:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1E77314C8E8
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Jan 2020 11:45:50 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726206AbgA2KjB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 29 Jan 2020 05:39:01 -0500
-Received: from foss.arm.com ([217.140.110.172]:39128 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726069AbgA2KjB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 Jan 2020 05:39:01 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E03F51FB;
-        Wed, 29 Jan 2020 02:39:00 -0800 (PST)
-Received: from [192.168.0.7] (unknown [172.31.20.19])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 8573E3F52E;
-        Wed, 29 Jan 2020 02:38:59 -0800 (PST)
-Subject: Re: [PATCH v3 1/3] sched/fair: Add asymmetric CPU capacity wakeup
- scan
-To:     Valentin Schneider <valentin.schneider@arm.com>,
-        Pavan Kondeti <pkondeti@codeaurora.org>
-Cc:     linux-kernel@vger.kernel.org, mingo@redhat.com,
-        peterz@infradead.org, vincent.guittot@linaro.org,
-        morten.rasmussen@arm.com, qperret@google.com,
-        adharmap@codeaurora.org
-References: <20200126200934.18712-1-valentin.schneider@arm.com>
- <20200126200934.18712-2-valentin.schneider@arm.com>
- <20200128062245.GA27398@codeaurora.org>
- <1ed322d6-0325-ecac-cc68-326a14b8c1dd@arm.com>
-From:   Dietmar Eggemann <dietmar.eggemann@arm.com>
-Message-ID: <1aa14491-517e-92d2-08b0-568338d75812@arm.com>
-Date:   Wed, 29 Jan 2020 11:38:37 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.1
-MIME-Version: 1.0
-In-Reply-To: <1ed322d6-0325-ecac-cc68-326a14b8c1dd@arm.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        id S1726358AbgA2KpO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 29 Jan 2020 05:45:14 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:59030 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726067AbgA2KpO (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 Jan 2020 05:45:14 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=Subject:Cc:To:From:Date:Message-Id:
+        Sender:Reply-To:MIME-Version:Content-Type:Content-Transfer-Encoding:
+        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+        Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=we/4Fl/l94slaz/GSOPIlS4lUUi9W+pKMjbWxf4YQWU=; b=haCEa77lyvI7dbf2bAz/aEnPY
+        RCmjnMorFr5kPIs8k4hbfw7gdVZVgxzGXAtyR1LzWamrOUXE7kSkk8cw9DSPK8yHL8ACbc+iMp3MF
+        oZW+kyABFwzhfVXhSiyzin0d+K8HbpvI9FAFpgf8/FpwClaq6/qIka2uhu3ffgL0QkF3AL4t979RP
+        +WpGq9gjdsL2e9Ai9inaSmxIUNe55IyapYFyA3zheS2Mq7Z0Dt1n5is9sy8T7fQ3HEP4nd3rB/ey2
+        Fki5GyiRcMXRCkAN1qtNKm8N7Q7R9haXVZTHlz8QI9GooAGuBtaMHtHUHj6oZ8zB8NWomJgMHEi/T
+        32tQa3RfQ==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
+        by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1iwkqM-0001DW-Ox; Wed, 29 Jan 2020 10:45:11 +0000
+Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (Client did not present a certificate)
+        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id C0BCA300606;
+        Wed, 29 Jan 2020 11:43:24 +0100 (CET)
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 0)
+        id 7CEA62B2E7F2E; Wed, 29 Jan 2020 11:45:07 +0100 (CET)
+Message-Id: <20200129103941.304769381@infradead.org>
+User-Agent: quilt/0.65
+Date:   Wed, 29 Jan 2020 11:39:41 +0100
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Geert Uytterhoeven <geert@linux-m68k.org>
+Cc:     linux-m68k@lists.linux-m68k.org, linux-kernel@vger.kernel.org,
+        Will Deacon <will@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>
+Subject: [PATCH 0/5] Rewrite Motorola MMU page-table layout
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 28/01/2020 12:30, Valentin Schneider wrote:
-> Hi Pavan,
-> 
-> On 28/01/2020 06:22, Pavan Kondeti wrote:
->> Hi Valentin,
->>
->> On Sun, Jan 26, 2020 at 08:09:32PM +0000, Valentin Schneider wrote:
+Hi!
 
-[...]
+In order to faciliate Will's READ_ONCE() patches:
 
->>> +
->>> +	if (!static_branch_unlikely(&sched_asym_cpucapacity))
->>> +		return -1;
+  https://lkml.kernel.org/r/20200123153341.19947-1-will@kernel.org
 
-We do need this one to bail out quickly on non CPU asym systems. (1)
+we need to fix m68k/motorola to not have a giant pmd_t. These patches do so and
+are tested using ARAnyM/68040.
 
->>> +	sd = rcu_dereference(per_cpu(sd_asym_cpucapacity, target));
->>> +	if (!sd)
->>> +		return -1;
+It would be very good if someone can either test or tell us what emulator to
+use for 020/030.
 
-And I assume we can't return target here because of exclusive cpusets
-which can form symmetric CPU capacities islands on a CPU asymmetric
-system? (2)
+Please consider.
 
->>> +	sync_entity_load_avg(&p->se);
->>> +
->>> +	cpus = this_cpu_cpumask_var_ptr(select_idle_mask);
->>> +	cpumask_and(cpus, sched_domain_span(sd), p->cpus_ptr);
->>> +
->>> +	for_each_cpu_wrap(cpu, cpus, target) {
->>> +		rq = cpu_rq(cpu);
->>> +
->>> +		if (!available_idle_cpu(cpu))
->>> +			continue;
->>> +		if (task_fits_capacity(p, rq->cpu_capacity))
->>> +			return cpu;
->>
->> I have couple of questions.
-
-[...]
-
->> (2) Assuming all CPUs are busy, we return -1 from here and end up
->> calling select_idle_cpu(). The traversal in select_idle_cpu() may be
->> waste in cases where sd_llc == sd_asym_cpucapacity . For example SDM845.
->> Should we worry about this?
->>
-> 
-> Before v3, since we didn't have the fallback CPU selection within
-> select_idle_capacity(), we would need the fall-through to select_idle_cpu()
-> (we could've skipped an idle CPU just because its capacity wasn't high
-> enough).
-> 
-> That's not the case anymore, so indeed we may be able to bail out of
-> select_idle_sibling() right after select_idle_capacity() (or after the
-> prev / recent_used_cpu checks). Our only requirement here is that sd_llc
-> remains a subset of sd_asym_cpucapacity.
-
-How do you distinguish '-1' in (1), (2) and 'best_cpu = -1' (3)?
-
-In (1) and (2) you want to check if target is idle (or sched_idle) but
-in (3) you probably only want to check 'recent_used_cpu'?
