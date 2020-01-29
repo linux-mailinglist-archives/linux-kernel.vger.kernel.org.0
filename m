@@ -2,128 +2,94 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E2ACC14C7EA
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Jan 2020 10:17:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E12B714C7FB
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Jan 2020 10:25:23 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726139AbgA2JRa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 29 Jan 2020 04:17:30 -0500
-Received: from us-smtp-2.mimecast.com ([207.211.31.81]:29935 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726010AbgA2JRa (ORCPT
+        id S1726145AbgA2JZV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 29 Jan 2020 04:25:21 -0500
+Received: from mail-oi1-f195.google.com ([209.85.167.195]:46017 "EHLO
+        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726010AbgA2JZV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 Jan 2020 04:17:30 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1580289448;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding;
-        bh=RGglrM7s5lSXQM0eAmEz+FQFKQqXY1sMI+jK3RokXCY=;
-        b=WrZvXtECRQjq5EvS2g0g7hBdGqC1RCmyW3f4ATMvpgqOaXG1jIxOgDr02hAGvHo2j6R3X5
-        tDYhoeQF2eWi3/9nM8vieezWpz9U6RrpMsEqQu5sf2EVg282Zdm8nfSL5W8cQi/SKEeMI+
-        LyGERR5LKZaUPrEH8gfgZ+3iDlQ2lQY=
-Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
- [209.85.128.72]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-241-zg9FZZGHOCiT0QOJUZuz4Q-1; Wed, 29 Jan 2020 04:17:26 -0500
-X-MC-Unique: zg9FZZGHOCiT0QOJUZuz4Q-1
-Received: by mail-wm1-f72.google.com with SMTP id z7so2129712wmi.0
-        for <linux-kernel@vger.kernel.org>; Wed, 29 Jan 2020 01:17:26 -0800 (PST)
+        Wed, 29 Jan 2020 04:25:21 -0500
+Received: by mail-oi1-f195.google.com with SMTP id v19so3412340oic.12;
+        Wed, 29 Jan 2020 01:25:21 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=RGglrM7s5lSXQM0eAmEz+FQFKQqXY1sMI+jK3RokXCY=;
-        b=tIWxd1QrkY0U0pYer56lcPDQRg/M206ei/3KrbBGBjtBAKJ06HMdPCoc1HssXFJs3o
-         7Hm+mng0AeYoIAzv296dzI9C9bYF8gbPR/WO/WJmZx6eczPjDbBdfSZ3enfcQ9JT/jqA
-         9bjVMnPhkoqxBLSOQ28XryYj9XsnXTTKDx5K6VzL12Nlyrny+c6hGt4CgkYJVxT8kavF
-         Cg4UBpDABIGmk0htLsDTHoGgAlzhU6N1ZTIccwNXN/6RVuoQvkEM+OCNQmw7i4I8ei4M
-         hD3OptVvvn3hbqdkIOMfQ8pagpHstdtIhhlRHvK4NCjrEgh2JljEZ4EkIqoDoYqF9bTA
-         Sdyw==
-X-Gm-Message-State: APjAAAW/uIHzgE2vBF0dKgFj/acXfhanMQnwgZ5OqZaBTDH7OmMB/3il
-        MiVYAGowQOBgEUyAlzHiaj+qmkviGdtRrfxnCWgBvYPhL8qVBDDnb1avCSMCgtf2ZBV55X2r8VI
-        p89lJDLi3q8mQhr2u/TAwJ8Pe
-X-Received: by 2002:a5d:5706:: with SMTP id a6mr34179123wrv.108.1580289445162;
-        Wed, 29 Jan 2020 01:17:25 -0800 (PST)
-X-Google-Smtp-Source: APXvYqwNEgRl6FoHBqOsuInbDXgnwmjNkSyuM8sX3+aZwGv9UkUvO1RB7XUCm8cQEi3IOEHAnJfT7g==
-X-Received: by 2002:a5d:5706:: with SMTP id a6mr34179089wrv.108.1580289444845;
-        Wed, 29 Jan 2020 01:17:24 -0800 (PST)
-Received: from steredhat.redhat.com (host106-49-dynamic.31-79-r.retail.telecomitalia.it. [79.31.49.106])
-        by smtp.gmail.com with ESMTPSA id a22sm1550885wmd.20.2020.01.29.01.17.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 29 Jan 2020 01:17:24 -0800 (PST)
-From:   Stefano Garzarella <sgarzare@redhat.com>
-To:     Jens Axboe <axboe@kernel.dk>
-Cc:     io-uring@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH liburing v2] .gitignore: add missing tests to ignore
-Date:   Wed, 29 Jan 2020 10:17:23 +0100
-Message-Id: <20200129091723.16746-1-sgarzare@redhat.com>
-X-Mailer: git-send-email 2.24.1
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=oUhjMl/AlmJ59wYzrcHaZFBOUtqm+JrPDdjn+L5sDCE=;
+        b=WwbQ5PMnxDs/zds7hXIqFNmiO4owL7qkG96NDylXzaUTBv/o1otCbSutaorMVGRIYF
+         hK3iJd5Ot5G6NslSjZYDqhgoyv7WY41N32hrmOx1F/r/pzmobrVNnmA5/lcqqEWm21rL
+         zd5fJTlfdrF8D4Q3djNsDCk0p4Jfu6MXIg08+hecOWUfBF/wkz5d90KjgvzzANhEtPKD
+         9j7WXvUFTFQ1sukRgcmhdwFy8ndGntZ39ApZIwxObYFgujXLYLt7fiqhrgtMtTEtnnjh
+         iRH5Kb/i3qKktNVq9GZf2Zf1BHnet8Uug7JGzRdWF8vS9f1SK9g6ppWSp56Tkhcwgu6o
+         EXZQ==
+X-Gm-Message-State: APjAAAXCRd9EFXDMj1ZS8b2ZHJn0cm2IsiOaVQMYpnUSYT+/X62Crz+d
+        BLU5dpHuY0Odrex2Yb4IrXZLT/Mnogg/AK+yauJEfQ==
+X-Google-Smtp-Source: APXvYqxNSUA0NN2VeORoT7Xl02kvoS2AlUoGauJn4GhKLN+jaEFM97hL+bVRis1AQOb8lYCrsdYDM9w6Ul09Olonyxs=
+X-Received: by 2002:aca:1a06:: with SMTP id a6mr5573201oia.148.1580289920723;
+ Wed, 29 Jan 2020 01:25:20 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20200128190913.23086-1-geert+renesas@glider.be> <CAOtvUMfoND5iJi7p9YRb6C3To6FGTKGBSoD+cBhkHnLXSppKEw@mail.gmail.com>
+In-Reply-To: <CAOtvUMfoND5iJi7p9YRb6C3To6FGTKGBSoD+cBhkHnLXSppKEw@mail.gmail.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Wed, 29 Jan 2020 10:25:09 +0100
+Message-ID: <CAMuHMdXA3omJ+YRVMS6yfj8avsEo47DjpFPADBvQZuT+CfWMtA@mail.gmail.com>
+Subject: Re: [PATCH] [RFC] crypto: ccree - fix retry handling in cc_send_sync_request()
+To:     Gilad Ben-Yossef <gilad@benyossef.com>
+Cc:     Geert Uytterhoeven <geert+renesas@glider.be>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S . Miller" <davem@davemloft.net>,
+        Linux Crypto Mailing List <linux-crypto@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Linux kernel mailing list <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Signed-off-by: Stefano Garzarella <sgarzare@redhat.com>
----
-v1 -> v2:
-    - rebased on master
-    - forced 8-bit content transfer encoding (I hope it works)
----
- .gitignore | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
+Hi Gilad,
 
-diff --git a/.gitignore b/.gitignore
-index fdb4b32..acbd30b 100644
---- a/.gitignore
-+++ b/.gitignore
-@@ -24,6 +24,7 @@
- /test/a4c0b3decb33-test
- /test/accept
- /test/accept-link
-+/test/accept-reuse
- /test/accept-test
- /test/b19062a56726-test
- /test/b5837bd5311d-test
-@@ -36,8 +37,11 @@
- /test/d77a67ed5f27-test
- /test/defer
- /test/eeed8b54e0df-test
-+/test/fadvise
-+/test/fallocate
- /test/fc2a85cb02ef-test
- /test/file-register
-+/test/file-update
- /test/fixed-link
- /test/fsync
- /test/io_uring_enter
-@@ -47,18 +51,26 @@
- /test/link
- /test/link-timeout
- /test/link_drain
-+/test/madvise
- /test/nop
-+/test/open-close
-+/test/openat2
- /test/poll
- /test/poll-cancel
- /test/poll-cancel-ton
- /test/poll-link
- /test/poll-many
-+/test/poll-v-poll
-+/test/probe
- /test/read-write
- /test/ring-leak
- /test/send_recvmsg
-+/test/shared-wq
-+/test/short-read
- /test/socket-rw
- /test/sq-full
- /test/sq-space_left
-+/test/statx
- /test/stdout
- /test/submit-reuse
- /test/teardowns
+On Wed, Jan 29, 2020 at 10:11 AM Gilad Ben-Yossef <gilad@benyossef.com> wrote:
+> On Tue, Jan 28, 2020 at 9:09 PM Geert Uytterhoeven
+> <geert+renesas@glider.be> wrote:
+> > If cc_queues_status() indicates that the queue is full,
+> > cc_send_sync_request() should loop and retry.
+> >
+> > However, cc_queues_status() returns either 0 (for success), or -ENOSPC
+> > (for queue full), while cc_send_sync_request() checks for real errors by
+> > comparing with -EAGAIN.  Hence -ENOSPC is always considered a real
+> > error, and the code never retries the operation.
+> >
+> > Fix this by just removing the check, as cc_queues_status() never returns
+> > any other error value than -ENOSPC.
+>
+> Thank you for spotting this!
+>
+> The error is simply checking for the wrong error value.
+> We should be checking for -ENOSPC!
+>
+> What this does aims to do is wait for the hardware queue to free up if
+> we were asked to queue a synchronous request and there was no room in
+> the hardware queue.
+> The cc_queue_status() function used to return -EAGAIN in this scenario
+> and this was missed in the change.
+>
+> I'm curious as to how you found this - did you run into some problem
+> and traced it to this?
+
+I didn't run into a specific problem, but I'm working on cleaning up the driver
+a bit.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
 -- 
-2.24.1
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
