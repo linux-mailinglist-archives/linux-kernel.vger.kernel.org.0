@@ -2,153 +2,205 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EAB9014CCF5
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Jan 2020 16:07:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4E1EF14CCEF
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Jan 2020 16:05:00 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726829AbgA2PG6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 29 Jan 2020 10:06:58 -0500
-Received: from mail-qv1-f66.google.com ([209.85.219.66]:46241 "EHLO
-        mail-qv1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726261AbgA2PG6 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 Jan 2020 10:06:58 -0500
-Received: by mail-qv1-f66.google.com with SMTP id y2so4300688qvu.13
-        for <linux-kernel@vger.kernel.org>; Wed, 29 Jan 2020 07:06:57 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=InuKBX2au5PgZW6T2UC0fko2cqbcK+Z9FZ9mVarwTPc=;
-        b=UHycOpckqcmEHlujxurhr+2yzJXIdF3P7M/bxMu5HRHXUFMy8t5uMpeIIvIg1zAf5a
-         9O/hNk7D/5yWbFCcGAmsKMfAfuBtI7SpykFLDbojMWNcU+0Bltcr98zTC2AnVpvojl1U
-         1BVzpyYAs5zc7l1o40O6rgqjAzUvfLnkNpaYhIGOZlu6GfF+RSyCvS+ah7wl66zbboVN
-         GG5mZR2jJavEE60EAldt5qavIpwXX56JK5PB7+AHnQD9PbOXfurtN4qmGbPRvvNYdW7H
-         I/9oH45TGNXxln3ZF2BpyQ5Vu19jrkPl4KQ6KGwstRBIOiE0PfrRsDtOzoPS0dEOMS+j
-         pe9w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=InuKBX2au5PgZW6T2UC0fko2cqbcK+Z9FZ9mVarwTPc=;
-        b=OTQP0GZl6uwAjzb5qtoYpU+jrVtVzE4ocA8wzROt0+93frmQT1z+us4Ieii2qLPo0h
-         7eo+eoVPrRkXfy7ojxgq/ZaeBlJ4lzcvYlh3y7EqXIOTuJYIQ7IBt7BfJ+0c3ti64ncq
-         ewSDBqoxw0fpnEaGG3k51uwSsJzhF/JgMeTV/Zl6Ab0B9WKeoleMtMsEH9fRAVyF8Ij5
-         fqVzY/VH06aIiYj62Bt7x4bdEOOizcswafxtRovsW6hHKWEvibGcnjC4MNduTRs/tH0e
-         dzn7A9p6yh/0/c3X6sqg4YiLe/jQD2WVRBNK3/BLYLfQekweb0690YQ4V2/F1Xm+/2Pw
-         rjKA==
-X-Gm-Message-State: APjAAAUGv+1SGY9AWiwZ3jcAm9VQViCM5JhyDTzLa7035wuPhQfIfMGc
-        WlCA6oBI6N+J8st6P5CdOt2/0NdPF5EQ/HhTbX066g==
-X-Google-Smtp-Source: APXvYqxGXya7Ub3SmIcL1siAW7Ztqg0GnN7Sc8WRiWlrbmRJSMj/AvnQ1pJy7D+Vx9YUjv/TNuT7lT3ae0M7TlCuxdc=
-X-Received: by 2002:a05:6214:1874:: with SMTP id eh20mr28761173qvb.122.1580310416499;
- Wed, 29 Jan 2020 07:06:56 -0800 (PST)
-MIME-Version: 1.0
-References: <CAA=061EoW8AmjUrBLsJy5nTDz-1jeArLeB+z6HJuyZud0zZXug@mail.gmail.com>
- <CGME20200128124918eucas1p1f0ce2b2b7b33a5d63d33f876ef30f454@eucas1p1.samsung.com>
- <20200128124912.chttagasucdpydhk@pathway.suse.cz> <4ab69855-6112-52f4-bee2-3358664d0c20@samsung.com>
- <20200129141517.GA13721@jagdpanzerIV.localdomain> <20200129141759.GB13721@jagdpanzerIV.localdomain>
- <20200129143754.GA15445@jagdpanzerIV.localdomain> <CACT4Y+bavHG8esK3jsv0V40+9+mUOFaSdOD1+prpw6L4Wv816g@mail.gmail.com>
-In-Reply-To: <CACT4Y+bavHG8esK3jsv0V40+9+mUOFaSdOD1+prpw6L4Wv816g@mail.gmail.com>
-From:   Dmitry Vyukov <dvyukov@google.com>
-Date:   Wed, 29 Jan 2020 16:06:45 +0100
-Message-ID: <CACT4Y+arS5GsyUa0A0s51OAWj7eJohZsCoY-7cuoU0HVsyeZ6Q@mail.gmail.com>
-Subject: Re: KASAN: slab-out-of-bounds Write in vgacon_scroll
-To:     Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
-Cc:     anon anon <742991625abc@gmail.com>,
-        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Petr Mladek <pmladek@suse.com>,
-        Kefeng Wang <wangkefeng.wang@huawei.com>,
-        syzkaller <syzkaller@googlegroups.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        DRI <dri-devel@lists.freedesktop.org>,
-        Linux Fbdev development list <linux-fbdev@vger.kernel.org>
+        id S1726787AbgA2PE5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 29 Jan 2020 10:04:57 -0500
+Received: from mx2.suse.de ([195.135.220.15]:44686 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726271AbgA2PE4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 Jan 2020 10:04:56 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx2.suse.de (Postfix) with ESMTP id B8A9BAAA6;
+        Wed, 29 Jan 2020 15:04:54 +0000 (UTC)
+Message-ID: <fd8a3cb87b1084e5ab68fdcb60f7af3c6b6265d1.camel@suse.de>
+Subject: Re: [PATCHv2] btrfs: Introduce new BTRFS_IOC_SNAP_DESTROY_V2 ioctl
+From:   Marcos Paulo de Souza <mpdesouza@suse.de>
+To:     dsterba@suse.cz
+Cc:     linux-kernel@vger.kernel.org, dsterba@suse.com,
+        josef@toxicpanda.com, linux-btrfs@vger.kernel.org,
+        Marcos Paulo de Souza <mpdesouza@suse.com>
+Date:   Wed, 29 Jan 2020 12:07:40 -0300
+In-Reply-To: <20200128172638.GA3929@twin.jikos.cz>
+References: <20200127024817.15587-1-marcos.souza.org@gmail.com>
+         <20200128172638.GA3929@twin.jikos.cz>
 Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.34.2 
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jan 29, 2020 at 3:59 PM Dmitry Vyukov <dvyukov@google.com> wrote:
->
-> On Wed, Jan 29, 2020 at 3:40 PM Sergey Senozhatsky
-> <sergey.senozhatsky@gmail.com> wrote:
-> >
-> > Cc-ing Dmitry and Tetsuo
-> >
-> > Original Message-id: CAA=061EoW8AmjUrBLsJy5nTDz-1jeArLeB+z6HJuyZud0zZXug@mail.gmail.com
-> >
-> > On (20/01/29 23:17), Sergey Senozhatsky wrote:
-> > > > Hmm. There is something strange about it. I use vga console quite
-> > > > often, and scrolling happens all the time, yet I can't get the same
-> > > > out-of-bounds report (nor have I ever seen it in the past), even with
-> > > > the reproducer. Is it supposed to be executed as it is, or are there
-> > > > any preconditions? Any chance that something that runs prior to that
-> > > > reproducer somehow impacts the system? Just asking.
-> > >
-> > > These questions were addressed to anon anon (742991625abc@gmail.com),
-> > > not to Bartlomiej.
-> >
-> > Could this be GCC_PLUGIN related?
->
-> syzkaller repros are meant to be self-contained, but they don't
-> capture the image and VM setup (or actual hardware). I suspect it may
-> have something to do with these bugs.
-> syzbot has reported a bunch of similar bugs in one of our internal kernels:
->
-> KASAN: slab-out-of-bounds Read in vgacon_scroll
-> KASAN: slab-out-of-bounds Read in vgacon_invert_region
-> KASAN: use-after-free Write in vgacon_scroll
-> KASAN: use-after-free Read in vgacon_scroll
-> KASAN: use-after-free Read in vgacon_invert_region
-> BUG: unable to handle kernel paging request in vgacon_scroll
->
-> But none on upstream kernels. That may be some difference in config?
-> I actually don't know what affects these things. When I tried to get
-> at least some coverage of that code in syzkaller I just understood
-> that relations between all these
-> tty/pty/ptmx/vt/pt/ldisc/vcs/vcsu/fb/con/dri/drm/etc are complex to
-> say the least...
+On Tue, 2020-01-28 at 18:26 +0100, David Sterba wrote:
+> wrote:
+> > From: Marcos Paulo de Souza <mpdesouza@suse.com>
+
+...
+
+> >  	struct dentry *parent = file->f_path.dentry;
+> >  	struct btrfs_fs_info *fs_info = btrfs_sb(parent->d_sb);
+> > @@ -2845,34 +2847,87 @@ static noinline int
+> btrfs_ioctl_snap_destroy(struct file *file,
+> >  	struct inode *inode;
+> >  	struct btrfs_root *root = BTRFS_I(dir)->root;
+> >  	struct btrfs_root *dest = NULL;
+> > -	struct btrfs_ioctl_vol_args *vol_args;
+> > +	struct btrfs_ioctl_vol_args *vol_args = NULL;
+> > +	struct btrfs_ioctl_vol_args_v2 *vol_args2 = NULL;
+> > +	char *name, *name_ptr = NULL;
+> 
+> The naming is confusing, name_ptr refers to the resolved subvolume
+> name,
+> so I suggest to rename it to subvol_name.
+
+Sure, much better.
+
+> >  	int namelen;
+> >  	int err = 0;
+> >  
+> > -	if (!S_ISDIR(dir->i_mode))
+> > -		return -ENOTDIR;
+> > +	if (destroy_v2) {
+> > +		vol_args2 = memdup_user(arg, sizeof(*vol_args2));
+> > +		if (IS_ERR(vol_args2))
+> > +			return PTR_ERR(vol_args2);
+> >  
+> > -	vol_args = memdup_user(arg, sizeof(*vol_args));
+> > -	if (IS_ERR(vol_args))
+> > -		return PTR_ERR(vol_args);
+> > +		if (vol_args2->subvolid == 0) {
+> 
+> This should be compared >= BTRFS_FIRST_FREE_OBJECTID
+> as there are no valid subvolumes with lower id. The exception is the
+> toplevel subvolume with id 5 that must not be deletable.
+
+Agreed.
+
+> 
+> > +			err = -EINVAL;
+> > +			goto out;
+> > +		}
+> >  
+> > -	vol_args->name[BTRFS_PATH_NAME_MAX] = '\0';
+> > -	namelen = strlen(vol_args->name);
+> > -	if (strchr(vol_args->name, '/') ||
+> > -	    strncmp(vol_args->name, "..", namelen) == 0) {
+> > -		err = -EINVAL;
+> > -		goto out;
+> > +		if (!(vol_args2->flags & BTRFS_SUBVOL_BY_ID)) {
+> > +			err = -EINVAL;
+> > +			goto out;
+> 
+> The flag validation needs to be factored out of the if. First
+> validate,
+> then do the rest. For backward compatibility, the v1 ioctl must take
+> no
+> flags, so if theres BTRFS_SUBVOL_BY_ID for v1, it needs to fail. For
+> v2
+> the flag is optional.
+
+Only vol_args_v2 has the flags field, so for current
+BTRFS_IOC_SNAP_DESTORY there won't be any flags. If we drop the check
+for BTRFS_SUBVOL_BY_ID in BTRFS_IOC_SNAP_DESTORY_V2, so won't check for
+this flag at all, making it meaningless.
+
+What do you think? Should we drop this flag at all and just rely in the
+ioctl number + subvolid being informed?
+
+> 
+> > +		}
+> > +
+> > +		dentry = btrfs_get_dentry(fs_info->sb,
+> BTRFS_FIRST_FREE_OBJECTID,
+> > +					vol_args2->subvolid, 0, 0);
+> > +		if (IS_ERR(dentry)) {
+> > +			err = PTR_ERR(dentry);
+> > +			goto out;
+> > +		}
+> > +
+> > +		/* 
+> 
+> There's a trailing space on the line, 'git am' does not allow me to
+> apply the patch without removing it manually. Same for the comment
+> below.
+
+Done.
+
+> 
+> > +		 * change the default parent since the subvolume being
+> deleted
+> 
+> Also please uppercase first letter in comments unless it's an
+> identifier. I fix such things but for patches that are going to have
+> another iteration it's better to point it out.
+
+Sure.
+
+> 
+> > +		 * can be outside of the current mount point
+> > +		 */
+> > +		parent = btrfs_get_parent(dentry);
+> > +
+> > +		/* 
+> > +		 * the only use of dentry was to get the parent, so we
+> can
+> > +		 * release it now. Later on the dentry will be queried
+> again to
+> > +		 * make sure the dentry will reside in the dentry cache
+> 
+> Can you please rephrase that? I'm not sure I understand.
+
+What do you think about:
+      /*
+       * At this point dentry->d_name can point to '/' if the
+       * subvolume we want to destroy is outsite of the current mount
+       * point, so we need to released the current dentry and execute
+       * the lookup to return a new one with ->d_name pointing to the
+       * <mount point>/subvol_name.
+       */
 
 
-It would also be good to figure out how we can cover this on syzbot/upstream.
+> > +		if (strchr(vol_args->name, '/') ||
+>  +		    strncmp(vol_args->name, "..", namelen) == 0) {
+> > +			err = -EINVAL;
+> > +			goto out;
+> > +		}
+> 
+> This sanity check can be unconditional, ie. also done for the v2 even
+> in
+> the spec-by-id case.
 
-Our upstream config is:
+Makes sense.
 
-$ grep VGA upstream-kasan.config
-CONFIG_VGA_ARB=y
-CONFIG_VGA_ARB_MAX_GPUS=16
-# CONFIG_VGA_SWITCHEROO is not set
-CONFIG_FB_VGA16=y
-CONFIG_VGASTATE=y
-CONFIG_VGA_CONSOLE=y
-CONFIG_VGACON_SOFT_SCROLLBACK=y
-CONFIG_VGACON_SOFT_SCROLLBACK_SIZE=64
-# CONFIG_VGACON_SOFT_SCROLLBACK_PERSISTENT_ENABLE_BY_DEFAULT is not set
-CONFIG_LOGO_LINUX_VGA16=y
-# CONFIG_USB_SISUSBVGA is not set
-# CONFIG_VFIO_PCI_VGA is not set
+> 
+> > +		name = vol_args->name;
+> > +	}
+> > +
+> > +	if (!S_ISDIR(dir->i_mode)) {
+> > +		err = -ENOTDIR;
+> > +		goto free_subvol_name;
+> >  	}
+> >  
+> >  	err = mnt_want_write_file(file);
+> 
+> So this is related to separating the validation. Calling
+> mnt_want_write_file must be between flag validation and using the
+> dentries and resolving path etc.
+> 
+> The initial part is ordered like: argument checks, subsystem checks,
+> the
+> implementation.
 
-where anon's is:
-CONFIG_VGA_ARB=y
-CONFIG_VGA_ARB_MAX_GPUS=16
-# CONFIG_VGA_SWITCHEROO is not set
-# CONFIG_FB_VGA16 is not set
-CONFIG_VGA_CONSOLE=y
-CONFIG_VGACON_SOFT_SCROLLBACK=y
-CONFIG_VGACON_SOFT_SCROLLBACK_SIZE=64
-# CONFIG_VGACON_SOFT_SCROLLBACK_PERSISTENT_ENABLE_BY_DEFAULT is not set
-# CONFIG_LOGO_LINUX_VGA16 is not set
-# CONFIG_USB_SISUSBVGA is not set
+Done.
 
-And the one on which are catching the bugs in vgacon on internal kernel is:
-CONFIG_VGA_ARB=y
-CONFIG_VGA_ARB_MAX_GPUS=16
-# CONFIG_VGA_SWITCHEROO is not set
-# CONFIG_VGASTATE is not set
-CONFIG_VGA_CONSOLE=y
-# CONFIG_VGACON_SOFT_SCROLLBACK is not set
-# CONFIG_USB_SISUSBVGA is not set
-# CONFIG_VFIO_PCI_VGA is not set
+Thanks for your review David. Once I have the flag question clarified I
+will sent the v3.
 
 
-May it be related to CONFIG_VGASTATE?
+Thanks,
+  Marcos
+
