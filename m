@@ -2,121 +2,53 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DABF314D031
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Jan 2020 19:15:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A6D8514D06D
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Jan 2020 19:25:57 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727401AbgA2SPp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 29 Jan 2020 13:15:45 -0500
-Received: from mail-qv1-f74.google.com ([209.85.219.74]:51932 "EHLO
-        mail-qv1-f74.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726245AbgA2SPp (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 Jan 2020 13:15:45 -0500
-Received: by mail-qv1-f74.google.com with SMTP id e10so347991qvq.18
-        for <linux-kernel@vger.kernel.org>; Wed, 29 Jan 2020 10:15:44 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:message-id:mime-version:subject:from:to:cc;
-        bh=8OmDOl+HzY7kcK871zVejMIspdUpfLqTD5KCeutuWtI=;
-        b=b89C2vjAvi8rn6ke4cMrbzWhPNxthh3YpogsX2uEkpXypteStYFa0eHE/vbKpyKJ7c
-         kWBwggD5XvuNwYUWI3HuS2xE8BtlawGJaAre2+1dfgETw9jFkKK6veUMfpnsJgwGEvS2
-         ewiUCzMI+c7/iBJZ8k++QCDfVxrlW41Rxy71EifgoDosJUOQnNzS2Qu5dfJHfZYldD3U
-         kqYxC9hGbFd+k+7wkbuxYBxMxuFdnt0siR959H1OQ2ZgvBwY85FaMSAPHb0mkKviUm+V
-         jooaRPM1l29+Kfwou3Aigf5v39axWr8UVxi1lWm5JGeUFN4uv0P8fFv+4VJOQHiVLxhF
-         xZLg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:message-id:mime-version:subject:from:to:cc;
-        bh=8OmDOl+HzY7kcK871zVejMIspdUpfLqTD5KCeutuWtI=;
-        b=keN2owWw5yGJKCvq3YS0pTUYhgCYe7cHYUz0CAv0hKaEpO71vJcQsYZosv2v3UIuS6
-         jLqlo4+DBI85PSPMa/6r/ar/ZBHzXpjiaM6hNPxKwUDEqN3xc8/fQKuaRX7RTaZsFhpn
-         mh2gjFYOG/Jdi6YKZih1IDmrxQtfgG570KBoFaOvKF8bhrcjONqGLDmpmPtiZCcGPawa
-         s/k0T5xqj5oHMYzKOLnyGWSpd/GwCMZHtMFoBmjhXsDF5q95gmuisTs/vnFvyzq3xxA6
-         5yySUKF5wj6x21P58so/+vXcMC2XKXFL/E/8jctm67uH7uGKxLHaFmkKL2ztBdFuwkQe
-         cCLA==
-X-Gm-Message-State: APjAAAXfT8TznNnzF7+SSw+hWLJICS816b4K6ktmfqw6i943+UddKszS
-        gn0lJC+qNWZPjBJ4KDc2mUrBsmmnBihb
-X-Google-Smtp-Source: APXvYqwN3ACQ2noJKaiSC9xLyVQkZaRwlbZlPfvTuolBVWN/pWc4or7pdoyNb13qvrWpG7kKbhq6JsmksPdy
-X-Received: by 2002:ac8:1385:: with SMTP id h5mr461391qtj.59.1580321744050;
- Wed, 29 Jan 2020 10:15:44 -0800 (PST)
-Date:   Wed, 29 Jan 2020 18:15:41 +0000
-Message-Id: <20200129181541.105335-1-qperret@google.com>
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.25.0.341.g760bfbb309-goog
-Subject: [PATCH v2] kbuild: allow symbol whitelisting with TRIM_UNUSED_KSYMS
-From:   Quentin Perret <qperret@google.com>
-To:     masahiroy@kernel.org, nico@fluxnic.net
-Cc:     linux-kernel@vger.kernel.org, linux-kbuild@vger.kernel.org,
-        maennich@google.com, kernel-team@android.com, qperret@google.com,
-        jeyu@kernel.org
-Content-Type: text/plain; charset="UTF-8"
+        id S1727485AbgA2SZx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 29 Jan 2020 13:25:53 -0500
+Received: from mx2.suse.de ([195.135.220.15]:45858 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726560AbgA2SZx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 Jan 2020 13:25:53 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx2.suse.de (Postfix) with ESMTP id 01C25AECB;
+        Wed, 29 Jan 2020 18:25:52 +0000 (UTC)
+From:   Davidlohr Bueso <dave@stgolabs.net>
+To:     oneukum@suse.com
+Cc:     linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
+        dave@stgolabs.net, Davidlohr Bueso <dbueso@suse.de>
+Subject: [PATCH 7/8] usb, cdc-acm: optimize barrier usage for Rmw atomic bitops
+Date:   Wed, 29 Jan 2020 10:15:45 -0800
+Message-Id: <20200129181545.25302-1-dave@stgolabs.net>
+X-Mailer: git-send-email 2.16.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-CONFIG_TRIM_UNUSED_KSYMS currently removes all unused exported symbols
-from ksymtab. This works really well when using in-tree drivers, but
-cannot be used in its current form if some of them are out-of-tree.
+We can avoid the unnecessary barrier on non LL/SC architectures,
+such as x86. Instead, use the smp_mb__after_atomic() call.
 
-Indeed, even if the list of symbols required by out-of-tree drivers is
-known at compile time, the only solution today to guarantee these don't
-get trimmed is to set CONFIG_TRIM_UNUSED_KSYMS=n. This not only wastes
-space, but also makes it difficult to control the ABI usable by vendor
-modules in distribution kernels such as Android. Being able to control
-the kernel ABI surface is particularly useful to ship a unique Generic
-Kernel Image (GKI) for all vendors.
-
-As such, attempt to improve the situation by enabling users to specify a
-symbol 'whitelist' at compile time. Any symbol specified in this
-whitelist will be kept exported when CONFIG_TRIM_UNUSED_KSYMS is set,
-even if it has no in-tree user. The whitelist is defined as a simple
-text file, listing symbols, one per line.
-
-Signed-off-by: Quentin Perret <qperret@google.com>
-
+Signed-off-by: Davidlohr Bueso <dbueso@suse.de>
 ---
-v2: make sure to quote the whitelist path properly (Nicolas)
----
- init/Kconfig                | 12 ++++++++++++
- scripts/adjust_autoksyms.sh |  1 +
- 2 files changed, 13 insertions(+)
+ drivers/usb/class/cdc-acm.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/init/Kconfig b/init/Kconfig
-index a34064a031a5..d9c977ef7de5 100644
---- a/init/Kconfig
-+++ b/init/Kconfig
-@@ -2180,6 +2180,18 @@ config TRIM_UNUSED_KSYMS
+diff --git a/drivers/usb/class/cdc-acm.c b/drivers/usb/class/cdc-acm.c
+index 62f4fb9b362f..0bc4b558f387 100644
+--- a/drivers/usb/class/cdc-acm.c
++++ b/drivers/usb/class/cdc-acm.c
+@@ -842,7 +842,7 @@ static void acm_tty_unthrottle(struct tty_struct *tty)
+ 	clear_bit(ACM_THROTTLED, &acm->flags);
  
- 	  If unsure, or if you need to build out-of-tree modules, say N.
+ 	/* Matches the smp_mb__after_atomic() in acm_read_bulk_callback(). */
+-	smp_mb();
++	smp_mb__after_atomic();
  
-+config UNUSED_KSYMS_WHITELIST
-+	string "Whitelist of symbols to keep in ksymtab"
-+	depends on TRIM_UNUSED_KSYMS
-+	help
-+	  By default, all unused exported symbols will be trimmed from the
-+	  build when TRIM_UNUSED_KSYMS is selected.
-+
-+	  UNUSED_KSYMS_WHITELIST allows to whitelist symbols that must be kept
-+	  exported at all times, even in absence of in-tree users. The value to
-+	  set here is the path to a text file containing the list of symbols,
-+	  one per line.
-+
- endif # MODULES
- 
- config MODULES_TREE_LOOKUP
-diff --git a/scripts/adjust_autoksyms.sh b/scripts/adjust_autoksyms.sh
-index a904bf1f5e67..8e1b7f70e800 100755
---- a/scripts/adjust_autoksyms.sh
-+++ b/scripts/adjust_autoksyms.sh
-@@ -48,6 +48,7 @@ cat > "$new_ksyms_file" << EOT
- EOT
- sed 's/ko$/mod/' modules.order |
- xargs -n1 sed -n -e '2{s/ /\n/g;/^$/!p;}' -- |
-+cat - "${CONFIG_UNUSED_KSYMS_WHITELIST:-/dev/null}" |
- sort -u |
- sed -e 's/\(.*\)/#define __KSYM_\1 1/' >> "$new_ksyms_file"
- 
+ 	acm_submit_read_urbs(acm, GFP_KERNEL);
+ }
 -- 
-2.25.0.341.g760bfbb309-goog
+2.16.4
 
