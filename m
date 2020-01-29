@@ -2,158 +2,159 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6996414CB8E
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Jan 2020 14:40:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1960014CB94
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Jan 2020 14:41:26 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726671AbgA2Nk2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 29 Jan 2020 08:40:28 -0500
-Received: from mx08-00178001.pphosted.com ([91.207.212.93]:27912 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726140AbgA2Nk2 (ORCPT
+        id S1726742AbgA2NlT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 29 Jan 2020 08:41:19 -0500
+Received: from mail-wr1-f100.google.com ([209.85.221.100]:33076 "EHLO
+        mail-wr1-f100.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726178AbgA2NlS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 Jan 2020 08:40:28 -0500
-Received: from pps.filterd (m0046660.ppops.net [127.0.0.1])
-        by mx07-00178001.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 00TDbPIJ020808;
-        Wed, 29 Jan 2020 14:40:08 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=st.com; h=from : to : cc : subject
- : date : message-id : references : in-reply-to : content-type : content-id
- : content-transfer-encoding : mime-version; s=STMicroelectronics;
- bh=4SJ07WkQhCjDkgV5mpvt2QuKgcj7uzQOY4rqO06PZzk=;
- b=PE4JwyGP0he4GpKWOKdWgHJ6WFB67N9jFQnnqA75SdVALzXKRsg/cBE4PtROZN43yKSk
- kERGP0wue1sklKK+OjBOiWZs0t+Q3SFC7LGGR+JULyQP07pHns+jDXlEzKcGdmwrB5Fd
- 8ztSSue0q3BahHw8pb3P/um+KnFGd85X83WvOUF3LzfeJNO+PZAAitFhjjMOPplQIQcN
- 1mD/ED/AAuckokQvUo0SwRlEGBgZOLRxBjDrolZENMksDx4btogjnLFFe5PonAoxu6UV
- ry9RFf/2Gs859VCm+2Lk+fsxEWLFrbwvzwrg7RjGpq3lfIs6tAL3mdgN4UC53f+N7IN2 sQ== 
-Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx07-00178001.pphosted.com with ESMTP id 2xrbpb3kek-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 29 Jan 2020 14:40:08 +0100
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id CF50910002A;
-        Wed, 29 Jan 2020 14:40:02 +0100 (CET)
-Received: from Webmail-eu.st.com (sfhdag7node1.st.com [10.75.127.19])
-        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id A77A82A96FE;
-        Wed, 29 Jan 2020 14:40:02 +0100 (CET)
-Received: from SFHDAG3NODE3.st.com (10.75.127.9) by SFHDAG7NODE1.st.com
- (10.75.127.19) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Wed, 29 Jan
- 2020 14:40:02 +0100
-Received: from SFHDAG3NODE3.st.com ([fe80::3507:b372:7648:476]) by
- SFHDAG3NODE3.st.com ([fe80::3507:b372:7648:476%20]) with mapi id
- 15.00.1347.000; Wed, 29 Jan 2020 14:40:02 +0100
-From:   Benjamin GAIGNARD <benjamin.gaignard@st.com>
-To:     Robin Murphy <robin.murphy@arm.com>,
-        Sudeep Holla <sudeep.holla@arm.com>
-CC:     "broonie@kernel.org" <broonie@kernel.org>,
-        "robh@kernel.org" <robh@kernel.org>,
-        "arnd@arndb.de" <arnd@arndb.de>,
-        "shawnguo@kernel.org" <shawnguo@kernel.org>,
-        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
-        "fabio.estevam@nxp.com" <fabio.estevam@nxp.com>,
-        "lkml@metux.net" <lkml@metux.net>,
-        Loic PALLARDY <loic.pallardy@st.com>,
-        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-imx@nxp.com" <linux-imx@nxp.com>,
-        "kernel@pengutronix.de" <kernel@pengutronix.de>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "system-dt@lists.openampproject.org" 
-        <system-dt@lists.openampproject.org>,
-        "stefano.stabellini@xilinx.com" <stefano.stabellini@xilinx.com>,
-        Mark Rutland <mark.rutland@arm.com>
-Subject: Re: [PATCH v2 0/7] Introduce bus firewall controller framework
-Thread-Topic: [PATCH v2 0/7] Introduce bus firewall controller framework
-Thread-Index: AQHV1fD3HkoxlN8gBkO/naZ6SuTotagANYcAgAAC24CAAAijAIAALxcAgAAhvgCAAQS1gA==
-Date:   Wed, 29 Jan 2020 13:40:01 +0000
-Message-ID: <c4d5c46a-7f90-ff2b-9496-26102114c5e6@st.com>
-References: <20200128153806.7780-1-benjamin.gaignard@st.com>
- <20200128163628.GB30489@bogus> <7f54ec36-8022-a57a-c634-45257f4c6984@st.com>
- <20200128171639.GA36496@bogus> <26eb1fde-5408-43f0-ccba-f0c81e791f54@st.com>
- <6a6ba7ff-7ed9-e573-63ca-66fca609075b@arm.com>
-In-Reply-To: <6a6ba7ff-7ed9-e573-63ca-66fca609075b@arm.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-user-agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
-x-ms-exchange-messagesentrepresentingtype: 1
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.75.127.49]
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <05F9A8BE92B24F46B47FB1CCF3D34DEF@st.com>
-Content-Transfer-Encoding: base64
-MIME-Version: 1.0
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.572
- definitions=2020-01-29_03:2020-01-28,2020-01-29 signatures=0
+        Wed, 29 Jan 2020 08:41:18 -0500
+Received: by mail-wr1-f100.google.com with SMTP id b6so20258515wrq.0
+        for <linux-kernel@vger.kernel.org>; Wed, 29 Jan 2020 05:41:16 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=flowbird.group; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=LKAhm5fgnCM0f4ool+EzZtuKWekhU6ZjNjBMoV+cWXA=;
+        b=PMb22boP3CV1EyVw1dzQscsMHDiMAsnTPfS80IVQS+kzcT55qoid2iPIWveJzgs1t4
+         TbtnBge7nIGnp4Yk2L58XyNcE5vaEbZl1icPp8g9mvE81iNUQZBIHdx03Jzb/O19uYjR
+         lm5tgSgLRJIZdcb3ZXqucs9cpbiJJRec7cNEBeh0jLIxESZPSN8rxqivDbcu6lNgT6m8
+         EKHj9I3QJSf453pGCmysJSM7LOkU3+B4onEA/w/xWvFxxVK/Ae5fYCEq182LGRJECnU3
+         0h/9iSOseqfUelq0iw0GKK3tuawCrHhslneda3rv+roe31BI9cd5MLZAPyj17bhP1n0R
+         gIew==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=LKAhm5fgnCM0f4ool+EzZtuKWekhU6ZjNjBMoV+cWXA=;
+        b=W5Xgcbd7e4HEKHJnP8fJLergpLk2sXo+mVQUdjlKvea4a9FeMQJiLYzPGv2VMUnRey
+         cm7TCsJ+3rSRze/NYVnYLNn9lf7YZpBXjF62EDhZM1tv5gN+tBNg5JVsI1Yor6ZrKr2D
+         hbWOPhRgvAlBtsQ55/3spe2MmsKRfV/axzGnVxgXeRjyFHzE8aRLGQGOHHC4KfAP60Kf
+         36mluxWZMGuB++z7LB7e9dpm4xOnSBpfRQ15Q/5E0mqNhrc43blOkJwUaLr/dMWjq68X
+         soON5ObaLZijljEhphy6oZpYOSLlElHG7+yhSECTc2+IFK1+dyYSRn4HSTKluaQe2Zyw
+         MsDw==
+X-Gm-Message-State: APjAAAU4UCeSsN/DjSuZyFVvbqzKcwZ8UJVF7jUJn/CV83rpDbh9r+6W
+        9wjSmJLSDywUGI8BUjs0N5lV9Kpi7kElnjFPMIv/n/LnzPii
+X-Google-Smtp-Source: APXvYqyFQ98FYktk+97oLQYaNelIlb9g5MjMxMu3Mz01RbmXwDkqAxJuAuvFxeN+z7MX3XHkYpJc92dWUgQm
+X-Received: by 2002:adf:97d6:: with SMTP id t22mr35073052wrb.407.1580305275875;
+        Wed, 29 Jan 2020 05:41:15 -0800 (PST)
+Received: from mail.besancon.parkeon.com ([185.149.63.251])
+        by smtp-relay.gmail.com with ESMTPS id r3sm33567wro.56.2020.01.29.05.41.15
+        (version=TLS1 cipher=AES128-SHA bits=128/128);
+        Wed, 29 Jan 2020 05:41:15 -0800 (PST)
+X-Relaying-Domain: flowbird.group
+Received: from [10.32.51.186] (port=60422 helo=PC12445-BES.dynamic.besancon.parkeon.com)
+        by mail.besancon.parkeon.com with esmtp (Exim 4.71)
+        (envelope-from <martin.fuzzey@flowbird.group>)
+        id 1iwnak-0003Z2-Rk; Wed, 29 Jan 2020 14:41:14 +0100
+From:   Martin Fuzzey <martin.fuzzey@flowbird.group>
+To:     dmaengine@vger.kernel.org
+Cc:     stable@vger.kernel.org, Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Robin Gong <yibin.gong@nxp.com>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] dmaengine: imx-sdma: fix context cache
+Date:   Wed, 29 Jan 2020 14:40:06 +0100
+Message-Id: <1580305274-27274-1-git-send-email-martin.fuzzey@flowbird.group>
+X-Mailer: git-send-email 1.9.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-DQpPbiAxLzI4LzIwIDExOjA2IFBNLCBSb2JpbiBNdXJwaHkgd3JvdGU6DQo+IE9uIDIwMjAtMDEt
-MjggODowNiBwbSwgQmVuamFtaW4gR0FJR05BUkQgd3JvdGU6DQo+Pg0KPj4gT24gMS8yOC8yMCA2
-OjE3IFBNLCBTdWRlZXAgSG9sbGEgd3JvdGU6DQo+Pj4gT24gVHVlLCBKYW4gMjgsIDIwMjAgYXQg
-MDQ6NDY6NDFQTSArMDAwMCwgQmVuamFtaW4gR0FJR05BUkQgd3JvdGU6DQo+Pj4+IE9uIDEvMjgv
-MjAgNTozNiBQTSwgU3VkZWVwIEhvbGxhIHdyb3RlOg0KPj4+Pj4gT24gVHVlLCBKYW4gMjgsIDIw
-MjAgYXQgMDQ6Mzc6NTlQTSArMDEwMCwgQmVuamFtaW4gR2FpZ25hcmQgd3JvdGU6DQo+Pj4+Pj4g
-QnVzIGZpcmV3YWxsIGZyYW1ld29yayBhaW1zIHRvIHByb3ZpZGUgYSBrZXJuZWwgQVBJIHRvIHNl
-dCB0aGUgDQo+Pj4+Pj4gY29uZmlndXJhdGlvbg0KPj4+Pj4+IG9mIHRoZSBoYXJ3YXJlIGJsb2Nr
-cyBpbiBjaGFyZ2Ugb2YgYnVzc2VzIGFjY2VzcyBjb250cm9sLg0KPj4+Pj4+DQo+Pj4+Pj4gRnJh
-bWV3b3JrIGFyY2hpdGVjdHVyZSBpcyBpbnNwaXJhdGVkIGJ5IHBpbmN0cmwgZnJhbWV3b3JrOg0K
-Pj4+Pj4+IC0gYSBkZWZhdWx0IGNvbmZpZ3VyYXRpb24gY291bGQgYmUgYXBwbGllZCBiZWZvcmUg
-YmluZCB0aGUgZHJpdmVyLg0KPj4+Pj4+IMKgwqDCoMKgIElmIGEgY29uZmlndXJhdGlvbiBjb3Vs
-ZCBub3QgYmUgYXBwbGllZCB0aGUgZHJpdmVyIGlzIG5vdCBiaW5kDQo+Pj4+Pj4gwqDCoMKgwqAg
-dG8gYXZvaWQgZG9pbmcgYWNjZXNzZXMgb24gcHJvaGliaXRlZCByZWdpb25zLg0KPj4+Pj4+IC0g
-Y29uZmlndXJhdGlvbnMgY291bGQgYmUgYXBsbGllZCBkeW5hbWljYWxseSBieSBkcml2ZXJzLg0K
-Pj4+Pj4+IC0gZGV2aWNlIG5vZGUgcHJvdmlkZXMgdGhlIGJ1cyBmaXJld2FsbCBjb25maWd1cmF0
-aW9ucy4NCj4+Pj4+Pg0KPj4+Pj4+IEFuIGV4YW1wbGUgb2YgYnVzIGZpcmV3YWxsIGNvbnRyb2xs
-ZXIgaXMgU1RNMzIgRVRaUEMgaGFyZHdhcmUgYmxvY2sNCj4+Pj4+PiB3aGljaCBnb3QgMyBwb3Nz
-aWJsZSBjb25maWd1cmF0aW9uczoNCj4+Pj4+PiAtIHRydXN0OiBoYXJkd2FyZSBibG9ja3MgYXJl
-IG9ubHkgYWNjZXNzaWJsZSBieSBzb2Z0d2FyZSBydW5uaW5nIA0KPj4+Pj4+IG9uIHRydXN0DQo+
-Pj4+Pj4gwqDCoMKgwqAgem9uZSAoaS5lIG9wLXRlZSBmaXJtd2FyZSkuDQo+Pj4+Pj4gLSBub24t
-c2VjdXJlOiBoYXJkd2FyZSBibG9ja3MgYXJlIGFjY2Vzc2libGUgYnkgbm9uLXNlY3VyZSANCj4+
-Pj4+PiBzb2Z0d2FyZSAoaS5lLg0KPj4+Pj4+IMKgwqDCoMKgIGxpbnV4IGtlcm5lbCkuDQo+Pj4+
-Pj4gLSBjb3Byb2Nlc3NvcjogaGFyZHdhcmUgYmxvY2tzIGFyZSBvbmx5IGFjY2Vzc2libGUgYnkg
-dGhlIA0KPj4+Pj4+IGNvcHJvY2Vzc29yLg0KPj4+Pj4+IFVwIHRvIDk0IGhhcmR3YXJlIGJsb2Nr
-cyBvZiB0aGUgc29jIGNvdWxkIGJlIG1hbmFnZWQgYnkgRVRaUEMuDQo+Pj4+Pj4NCj4+Pj4+IC9t
-ZSBjb25mdXNlZC4gSXMgRVRaUEMgYWNjZXNzaWJsZSBmcm9tIHRoZSBub24tc2VjdXJlIGtlcm5l
-bCBzcGFjZSB0bw0KPj4+Pj4gYmVnaW4gd2l0aCA/IElmIHNvLCBpcyBpdCBhbGxvd2VkIHRvIGNv
-bmZpZ3VyZSBoYXJkd2FyZSBibG9ja3MgYXMgDQo+Pj4+PiBzZWN1cmUNCj4+Pj4+IG9yIHRydXN0
-ZWQgPyBJIGFtIGZhaWxpbmcgdG8gdW5kZXJzdGFuZCB0aGUgb3ZlcmFsbCBkZXNpZ24gb2YgYSAN
-Cj4+Pj4+IHN5c3RlbQ0KPj4+Pj4gd2l0aCBFVFpQQyBjb250cm9sbGVyLg0KPj4+PiBOb24tc2Vj
-dXJlIGtlcm5lbCBjb3VsZCByZWFkIHRoZSB2YWx1ZXMgc2V0IGluIEVUWlBDLCBpZiBpdCBkb2Vz
-bid0IA0KPj4+PiBtYXRjaA0KPj4+PiB3aXRoIHdoYXQgaXMgcmVxdWlyZWQgYnkgdGhlIGRldmlj
-ZSBub2RlIHRoZSBkcml2ZXIgd29uJ3QgYmUgcHJvYmVkLg0KPj4+Pg0KPj4+IE9LLCBidXQgSSB3
-YXMgdW5kZXIgdGhlIGltcHJlc3Npb24gdGhhdCBpdCB3YXMgbWFkZSBjbGVhciB0aGF0IExpbnV4
-IGlzDQo+Pj4gbm90IGZpcm13YXJlIHZhbGlkYXRpb24gc3VpdGUuIFRoZSBmaXJtd2FyZSBuZWVk
-IHRvIGVuc3VyZSBhbGwgdGhlIA0KPj4+IGRldmljZXMNCj4+PiB0aGF0IGFyZSBub3QgYWNjZXNz
-aWJsZSBpbiB0aGUgTGludXgga2VybmVsIGFyZSBtYXJrZWQgYXMgZGlzYWJsZWQgYW5kDQo+Pj4g
-dGhpcyBuZWVkcyB0byBoYXBwZW4gYmVmb3JlIGVudGVyaW5nIHRoZSBrZXJuZWwuIFNvIGlmIHRo
-aXMgaXMgd2hhdCANCj4+PiB0aGlzDQo+Pj4gcGF0Y2ggc2VyaWVzIGFjaGlldmVzLCB0aGVuIHRo
-ZXJlIGlzIG5vIG5lZWQgZm9yIGl0LiBQbGVhc2Ugc3RvcCANCj4+PiBwdXJzdWluZw0KPj4+IHRo
-aXMgYW55IGZ1cnRoZXIgb3IgcHJvdmlkZSBhbnkgb3RoZXIgcmVhc29ucyhpZiBhbnkpIHRvIGhh
-dmUgaXQuIFVudGlsDQo+Pj4geW91IGhhdmUgb3RoZXIgcmVhc29ucywgTkFDSyBmb3IgdGhpcyBz
-ZXJpZXMuDQo+Pg0KPj4gTm8gaXQgZG9lc24ndCBkaXNhYmxlIHRoZSBub2Rlcy4NCj4+DQo+PiBX
-aGVuIHRoZSBmaXJtd2FyZSBkaXNhYmxlIGEgbm9kZSBiZWZvcmUgdGhlIGtlcm5lbCB0aGF0IG1l
-YW5zIGl0IGNoYW5nZQ0KPj4NCj4+IHRoZSBEVEIgYW5kIHRoYXQgaXMgYSBwcm9ibGVtIHdoZW4g
-eW91IHdhbnQgdG8gc2lnbiBpdC4gV2l0aCBteSBwcm9wb3NhbA0KPj4NCj4+IHRoZSBEVEIgcmVt
-YWlucyB0aGUgc2FtZS4NCj4NCj4gPz8/DQo+DQo+IDovDQo+DQo+IFRoZSBEVEIgaXMgdXNlZCB0
-byBwYXNzIHRoZSBrZXJuZWwgY29tbWFuZCBsaW5lLCBtZW1vcnkgcmVzZXJ2YXRpb25zLCANCj4g
-cmFuZG9tIHNlZWRzLCBhbmQgYWxsIG1hbm5lciBvZiBvdGhlciB0aGluZ3MgZHluYW1pY2FsbHkg
-Z2VuZXJhdGVkIGJ5IA0KPiBmaXJtd2FyZSBhdCBib290LXRpbWUuIEFwb2xvZ2llcyBmb3IgYmVp
-bmcgYmx1bnQgYnV0IGlmICJjaGFuZ2luZyB0aGUgDQo+IERUQiIgaXMgY29uc2lkZXJlZCBhIHBy
-b2JsZW0gdGhlbiBJIGNhbid0IGhlbHAgYnV0IHRoaW5rIHlvdSdyZSBkb2luZyANCj4gaXQgd3Jv
-bmcuDQoNClllcyBidXQgSSB3b3VsZCBsaWtlIHRvIGxpbWl0IHRoZSBudW1iZXIgb2YgY2FzZXMg
-d2hlcmUgYSBmaXJtd2FyZSBoYXMgDQp0byBjaGFuZ2UgdGhlIERUQi4NCg0KV2l0aCB0aGlzIHBy
-b3Bvc2FsIG5vZGVzIHJlbWFpbiB0aGUgc2FtZSBhbmQgZW1iZWRkZWQgdGhlIGZpcmV3YWxsIA0K
-Y29uZmlndXJhdGlvbihzKS4NCg0KVW50aWwgbm93IGZpcmV3YWxsIGNvbmZpZ3VyYXRpb24gaXMg
-InN0YXRpYyIsIHRoZSBmaXJtd2FyZSBkaXNhYmxlIChvciANCnJlbW92ZSkgdGhlIG5vZGVzIG5v
-dCBhY2Nlc3NpYmxlIGZyb20gTGludXguDQoNCklmIExpbnV4IGNhbiByZWx5IG9uIG5vZGUncyBm
-aXJld2FsbCBpbmZvcm1hdGlvbiBpdCBjb3VsZCBhbGxvdyBzd2l0Y2ggDQpkeW5hbWljYWxseSBh
-biBoYXJkd2FyZSBibG9jayBmcm9tIExpbnV4IHRvIGEgY29wcm9jZXNzb3IuDQoNCkZvciBleGFt
-cGxlIExpbnV4IGNvdWxkIG1hbmFnZSB0aGUgZGlzcGxheSBwaXBlIGNvbmZpZ3VyYXRpb24gYW5k
-IHdoZW4gDQpnb2luZyB0byBzdXNwZW5kIGhhbmRvdmVyIHRoZSBkaXNwbGF5IGhhcmR3YXJlIGJs
-b2NrIHRvIGEgY29wcm9jZXNzb3IgaW4gDQpjaGFyZ2UgYSByZWZyZXNoaW5nIG9ubHkgc29tZSBw
-aXhlbHMuDQoNCkJlbmphbWluDQoNCj4NCj4gUm9iaW4u
+There is a DMA problem with the serial ports on i.MX6.
+
+When the following sequence is performed:
+
+1) Open a port
+2) Write some data
+3) Close the port
+4) Open a *different* port
+5) Write some data
+6) Close the port
+
+The second write sends nothing and the second close hangs.
+If the first close() is omitted it works.
+
+Adding logs to the the UART driver shows that the DMA is being setup but
+the callback is never invoked for the second write.
+
+This used to work in 4.19.
+
+Git bisect leads to:
+	ad0d92d: "dmaengine: imx-sdma: refine to load context only once"
+
+This commit adds a "context_loaded" flag used to avoid unnecessary context
+setups.
+However the flag is only reset in sdma_channel_terminate_work(),
+which is only invoked in a worker triggered by sdma_terminate_all() IF
+there is an active descriptor.
+
+So, if no active descriptor remains when the channel is terminated, the
+flag is not reset and, when the channel is later reused the old context
+is used.
+
+Fix the problem by always resetting the flag in sdma_free_chan_resources().
+
+Fixes: ad0d92d: "dmaengine: imx-sdma: refine to load context only once"
+Cc: stable@vger.kernel.org
+Signed-off-by: Martin Fuzzey <martin.fuzzey@flowbird.group>
+
+---
+
+The following python script may be used to reproduce the problem:
+
+import re, serial, sys
+
+ports=(0, 4) # Can be any ports not used (no need to connect anything) NOT console...
+
+def get_tx_counts():
+        pattern = re.compile("(\d+):.*tx:(\d+).*")
+        tx_counts = {}
+        with open("/proc/tty/driver/IMX-uart", "r") as f:
+                for line in f:
+                        match = pattern.match(line)
+                        if match:
+                                tx_counts[int(match.group(1))] = int(match.group(2))
+        return tx_counts
+
+before = get_tx_counts()
+
+a = serial.Serial("/dev/ttymxc%d" % ports[0])
+a.write("polop")
+a.close()
+b = serial.Serial("/dev/ttymxc%d" % ports[1])
+b.write("test")
+
+after = get_tx_counts()
+
+if (after[ports[0]] - before[ports[0]]  > 0) and (after[ports[1]] - before[ports[1]] > 0):
+        print "PASS"
+        sys.exit(0)
+else:
+        print "FAIL"
+        print "Before: %s" % before
+        print "After: %s" % after
+        sys.exit(1)
+---
+ drivers/dma/imx-sdma.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/drivers/dma/imx-sdma.c b/drivers/dma/imx-sdma.c
+index 066b21a..332ca50 100644
+--- a/drivers/dma/imx-sdma.c
++++ b/drivers/dma/imx-sdma.c
+@@ -1338,6 +1338,7 @@ static void sdma_free_chan_resources(struct dma_chan *chan)
+ 
+ 	sdmac->event_id0 = 0;
+ 	sdmac->event_id1 = 0;
++	sdmac->context_loaded = false;
+ 
+ 	sdma_set_channel_priority(sdmac, 0);
+ 
+-- 
+1.9.1
+
