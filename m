@@ -2,54 +2,123 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AF3F414D0D8
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Jan 2020 20:00:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7649814D0E5
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Jan 2020 20:03:24 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727983AbgA2TAQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 29 Jan 2020 14:00:16 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54290 "EHLO mail.kernel.org"
+        id S1728086AbgA2TCz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 29 Jan 2020 14:02:55 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56468 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727929AbgA2TAK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 Jan 2020 14:00:10 -0500
-Subject: Re: [GIT PULL] Char/Misc driver patches for 5.6-rc1
+        id S1728373AbgA2TCy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 Jan 2020 14:02:54 -0500
+Received: from tzanussi-mobl (c-98-220-238-81.hsd1.il.comcast.net [98.220.238.81])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id D9363206D4;
+        Wed, 29 Jan 2020 19:02:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1580324410;
-        bh=tXKQnpqyzv/3jq3kxrPbXyFJC2Dm3jjakMtdUV7QSkc=;
-        h=From:In-Reply-To:References:Date:To:Cc:From;
-        b=PcMwUafbQVZWospJAHTXvjA/91MAN2xfdlbRYV55WW5+d2nSN60twrTDy4PV1elQy
-         l1Cbc+FPdSX/CJBIfhUukKuPV/xtyR4z8trpBTCY1cmh9F9x+6b5tD/6lUUqmwFpxi
-         7zX/4FQYHZA7Xg31HN/TrcMNMAbZdkuG84IGTYGU=
-From:   pr-tracker-bot@kernel.org
-In-Reply-To: <20200129101523.GA3858602@kroah.com>
-References: <20200129101523.GA3858602@kroah.com>
-X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <20200129101523.GA3858602@kroah.com>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/char-misc.git
- tags/char-misc-5.6-rc1
-X-PR-Tracked-Commit-Id: 0db4a15d4c2787b1112001790d4f95bd2c5fed6f
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 701a9c8092ddf299d7f90ab2d66b19b4526d1186
-Message-Id: <158032441008.15518.5224890766145091657.pr-tracker-bot@kernel.org>
-Date:   Wed, 29 Jan 2020 19:00:10 +0000
-To:     Greg KH <gregkh@linuxfoundation.org>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Arnd Bergmann <arnd@arndb.de>, linux-kernel@vger.kernel.org
+        s=default; t=1580324574;
+        bh=QQLziFiL8YYCmRpFavz8eyI/YvvOY3R1GJH7XOORQCE=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=MMDhW4eDkXXPkbNXPZ1hh572XtFxMrTeanOOPcD/1dtw0swimQklT3dapRGm7MggR
+         Qmri/RBJ71/DuiZ/U3d1qv4Hn+gmm7RoRgxOXazWOyNaQ57+f3wIVIgfaeRRczXlC5
+         6ZqGOSrnHNMqD3o4c2UioizzaljpuqSvfQXasjjc=
+Message-ID: <1580324572.2757.2.camel@kernel.org>
+Subject: Re: [PATCH v3 04/12] tracing: Add dynamic event command creation
+ interface
+From:   Tom Zanussi <zanussi@kernel.org>
+To:     Steven Rostedt <rostedt@goodmis.org>
+Cc:     artem.bityutskiy@linux.intel.com, mhiramat@kernel.org,
+        linux-kernel@vger.kernel.org, linux-rt-users@vger.kernel.org,
+        ndesaulniers@google.com
+Date:   Wed, 29 Jan 2020 13:02:52 -0600
+In-Reply-To: <20200129130018.230cef12@gandalf.local.home>
+References: <cover.1579904761.git.zanussi@kernel.org>
+         <4a38478f56b9e831803500f82af896bda92a5370.1579904761.git.zanussi@kernel.org>
+         <20200129130018.230cef12@gandalf.local.home>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.26.1-1 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The pull request you sent on Wed, 29 Jan 2020 11:15:23 +0100:
+Hi Steve,
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/char-misc.git tags/char-misc-5.6-rc1
+On Wed, 2020-01-29 at 13:00 -0500, Steven Rostedt wrote:
+> On Fri, 24 Jan 2020 16:56:15 -0600
+> Tom Zanussi <zanussi@kernel.org> wrote:
+> 
+> > +/**
+> > + * dynevent_arg_add - Add an arg to a dynevent_cmd
+> > + * @cmd: A pointer to the dynevent_cmd struct representing the new
+> > event cmd
+> > + * @arg: The argument to append to the current cmd
+> > + *
+> > + * Append an argument to a dynevent_cmd.  The argument string will
+> > be
+> > + * appended to the current cmd string, followed by a separator, if
+> > + * applicable.  Before the argument is added, the check_arg()
+> > + * function, if defined, is called.
+> > + *
+> > + * The cmd string, separator, and check_arg() function should be
+> > set
+> > + * using the dynevent_arg_init() before any arguments are added
+> > using
+> > + * this function.
+> > + *
+> > + * Return: 0 if successful, error otherwise.
+> > + */
+> > +int dynevent_arg_add(struct dynevent_cmd *cmd,
+> > +		     struct dynevent_arg *arg)
+> > +{
+> > +	int ret = 0;
+> > +	int delta;
+> > +	char *q;
+> > +
+> > +	if (arg->check_arg) {
+> > +		ret = arg->check_arg(arg);
+> > +		if (ret)
+> > +			return ret;
+> > +	}
+> > +
+> > +	q = cmd->buf + (cmd->maxlen - cmd->remaining);
+> > +
+> > +	delta = snprintf(q, cmd->remaining, " %s%c", arg->str,
+> > arg->separator);
+> > +	if (delta >= cmd->remaining) {
+> > +		pr_err("String is too long: %s\n", arg->str);
+> > +		return -E2BIG;
+> > +	}
+> > +	cmd->remaining -= delta;
+> 
+> This looks like you can take advantage of the seq_buf code
+> (see /lib/seq_buf.c), as that handles a lot of this for you.
+> 
+> As I'm trying to get this into the merge window, I won't delay this
+> for
+> that (unless I find something else to delay this for), but this
+> should
+> definitely incorporate seq_buf and not handle its own buffering.
+> 
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/701a9c8092ddf299d7f90ab2d66b19b4526d1186
+OK, I can send a follow-on patch that does this.
 
-Thank you!
+Note that I just sent a v4 series which moves most of the code in this
+patch to trace_dynevent.{c,h} as requested by Masami.  No other changes
+from v3 were made other than adding acks.
 
--- 
-Deet-doot-dot, I am a bot.
-https://korg.wiki.kernel.org/userdoc/prtracker
+Thanks,
+
+Tom  
+
+
+> -- Steve
+> 
+> 
+> 
+> > +
+> > +	return ret;
+> > +}
