@@ -2,180 +2,223 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A85D014D27A
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Jan 2020 22:28:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C288614D28C
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Jan 2020 22:33:27 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726671AbgA2V2W (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 29 Jan 2020 16:28:22 -0500
-Received: from mail-pl1-f193.google.com ([209.85.214.193]:43298 "EHLO
-        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726222AbgA2V2V (ORCPT
+        id S1726647AbgA2VdY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 29 Jan 2020 16:33:24 -0500
+Received: from mail104.syd.optusnet.com.au ([211.29.132.246]:41878 "EHLO
+        mail104.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726222AbgA2VdY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 Jan 2020 16:28:21 -0500
-Received: by mail-pl1-f193.google.com with SMTP id p11so449561plq.10
-        for <linux-kernel@vger.kernel.org>; Wed, 29 Jan 2020 13:28:21 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:from:to:cc:subject:in-reply-to:message-id:references
-         :user-agent:mime-version;
-        bh=6QHSV0epbJ5GjLnwh0+RSWrqsLLDJlBBjEbhEIImewk=;
-        b=ENiOsZ0f46TX6ufRsYGjsJNC8xCpWbLhi4TIyRcHHUP+Ia4FhbXMIXnWxgTOibbyIY
-         8S45r25tALWzmwgpFNbGezbFftN93GkVD4s+qgI8tz+915haHocfcpQAFQEmPcI7aVaj
-         kCAZXT1Sxy98pIbdeLlzBTBF6SOrsilyw4s+Fc6lRzaGpSrf0WwbTlquO5FUJ+G1Ma0u
-         e9TKZAC7JHJkc6Ua88CdqkK5DfKKLR7mJmLfKGJpNnboOFtnHexCda86j9FhClhQYEIT
-         yuyR9rDmK72Zao5ti4A1Ts/Nc9i9md5i/3qGwjAW7jyQ1DW6D0Eh42o12gjW1kH7EDwi
-         kAbQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:in-reply-to:message-id
-         :references:user-agent:mime-version;
-        bh=6QHSV0epbJ5GjLnwh0+RSWrqsLLDJlBBjEbhEIImewk=;
-        b=IKYERcfDMcFHhNJDjFMZ4eFusvWjgNomKztYRoFO4rficzWKUzEKdF9bDy+aUaOITC
-         Y/KVjeKtbIFBE+xfNPbuHn1Xtck3BA6vtF+mpN7Cd03p/8kFbGfBtTJqBAM4KrBBNfWj
-         rIWmfoiE2Fh8XBNp5EOkxTo9qMRBWzXGpjNfACwXIMdN2eeoksrU26M654vnCodtxk1c
-         DAlF88J+RPZRqAFlh6C6ZcsMalHcWs6V3KUXikKIyO3dWgFpLpzt7rXDqtESWYjoqjWb
-         RE7DCpuNnVNClea+rHmnbMbMWQ1Y13GaJf7GOvXZSpyp6F8WWWYiIPZG3TuqzFnX0HS0
-         7PyQ==
-X-Gm-Message-State: APjAAAUYZyMP5AYVas6zHjKJOnPyhsgTvq1N5mjpC+AWiNzf9zabc9cy
-        FTwMeKKXLLIqwHg5oEpuD2xv5g==
-X-Google-Smtp-Source: APXvYqzskV3cOHpvwCbLWBb5kHNV1C8EooS3qoyWLKjCJ0sdJLvE03VvOltGzJUYy3hnunNZOHD3sQ==
-X-Received: by 2002:a17:902:8303:: with SMTP id bd3mr1413243plb.171.1580333300740;
-        Wed, 29 Jan 2020 13:28:20 -0800 (PST)
-Received: from [2620:15c:17:3:3a5:23a7:5e32:4598] ([2620:15c:17:3:3a5:23a7:5e32:4598])
-        by smtp.gmail.com with ESMTPSA id e6sm3786414pfh.32.2020.01.29.13.28.19
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 29 Jan 2020 13:28:20 -0800 (PST)
-Date:   Wed, 29 Jan 2020 13:28:19 -0800 (PST)
-From:   David Rientjes <rientjes@google.com>
-X-X-Sender: rientjes@chino.kir.corp.google.com
-To:     Mina Almasry <almasrymina@google.com>
-cc:     mike.kravetz@oracle.com, shakeelb@google.com, shuah@kernel.org,
-        gthelen@google.com, akpm@linux-foundation.org,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        linux-kselftest@vger.kernel.org, cgroups@vger.kernel.org,
-        aneesh.kumar@linux.vnet.ibm.com
-Subject: Re: [PATCH v10 3/8] hugetlb_cgroup: add reservation accounting for
- private mappings
-In-Reply-To: <20200115012651.228058-3-almasrymina@google.com>
-Message-ID: <alpine.DEB.2.21.2001291323270.175731@chino.kir.corp.google.com>
-References: <20200115012651.228058-1-almasrymina@google.com> <20200115012651.228058-3-almasrymina@google.com>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        Wed, 29 Jan 2020 16:33:24 -0500
+Received: from dread.disaster.area (pa49-195-111-217.pa.nsw.optusnet.com.au [49.195.111.217])
+        by mail104.syd.optusnet.com.au (Postfix) with ESMTPS id 70BDA7EAB58;
+        Thu, 30 Jan 2020 08:33:19 +1100 (AEDT)
+Received: from dave by dread.disaster.area with local (Exim 4.92.3)
+        (envelope-from <david@fromorbit.com>)
+        id 1iwuxa-0004p3-9N; Thu, 30 Jan 2020 08:33:18 +1100
+Date:   Thu, 30 Jan 2020 08:33:18 +1100
+From:   Dave Chinner <david@fromorbit.com>
+To:     Damien Le Moal <Damien.LeMoal@wdc.com>
+Cc:     "darrick.wong@oracle.com" <darrick.wong@oracle.com>,
+        "torvalds@linux-foundation.org" <torvalds@linux-foundation.org>,
+        "jth@kernel.org" <jth@kernel.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "linux-xfs@vger.kernel.org" <linux-xfs@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Naohiro Aota <Naohiro.Aota@wdc.com>,
+        "hare@suse.de" <hare@suse.de>
+Subject: Re: [PATCH v9 1/2] fs: New zonefs file system
+Message-ID: <20200129213318.GM18610@dread.disaster.area>
+References: <20200127100521.53899-1-damien.lemoal@wdc.com>
+ <20200127100521.53899-2-damien.lemoal@wdc.com>
+ <20200128174608.GR3447196@magnolia>
+ <b404c1cd7a0c8ccbabcbd3c8aed440542750706e.camel@wdc.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <b404c1cd7a0c8ccbabcbd3c8aed440542750706e.camel@wdc.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Optus-CM-Score: 0
+X-Optus-CM-Analysis: v=2.3 cv=W5xGqiek c=1 sm=1 tr=0
+        a=0OveGI8p3fsTA6FL6ss4ZQ==:117 a=0OveGI8p3fsTA6FL6ss4ZQ==:17
+        a=jpOVt7BSZ2e4Z31A5e1TngXxSK0=:19 a=kj9zAlcOel0A:10 a=Jdjhy38mL1oA:10
+        a=7-415B0cAAAA:8 a=3J5UeX1WDUf5wypQ6G8A:9 a=CjuIK1q_8ugA:10
+        a=biEYGPWJfzWAr4FL6Ov7:22
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 14 Jan 2020, Mina Almasry wrote:
+On Wed, Jan 29, 2020 at 01:06:29PM +0000, Damien Le Moal wrote:
+> On Tue, 2020-01-28 at 09:46 -0800, Darrick J. Wong wrote:
+> > > +static int zonefs_io_err_cb(struct blk_zone *zone, unsigned int idx, void *data)
+> > > +{
+> > > +	struct zonefs_ioerr_data *ioerr = data;
+> > > +	struct inode *inode = ioerr->inode;
+> > > +	struct zonefs_inode_info *zi = ZONEFS_I(inode);
+> > > +	struct super_block *sb = inode->i_sb;
+> > > +	loff_t isize, wp_ofst;
+> > > +
+> > > +	/*
+> > > +	 * The condition of the zone may have change. Fix the file access
+> > > +	 * permissions if necessary.
+> > > +	 */
+> > > +	zonefs_update_file_perm(inode, zone);
+> > > +
+> > > +	/*
+> > > +	 * There is no write pointer on conventional zones and read operations
+> > > +	 * do not change a zone write pointer. So there is nothing more to do
+> > > +	 * for these two cases.
+> > > +	 */
+> > > +	if (zi->i_ztype == ZONEFS_ZTYPE_CNV || !ioerr->write)
+> > > +		return 0;
+> > > +
+> > > +	/*
+> > > +	 * For sequential zones write, make sure that the zone write pointer
+> > > +	 * position is as expected, that is, in sync with the inode size.
+> > > +	 */
+> > > +	wp_ofst = (zone->wp - zone->start) << SECTOR_SHIFT;
+> > > +	zi->i_wpoffset = wp_ofst;
+> > > +	isize = i_size_read(inode);
+> > > +
+> > > +	if (isize == wp_ofst)
+> > /> +		return 0;
+> > > +
+> > > +	/*
+> > > +	 * The inode size and the zone write pointer are not in sync.
+> > > +	 * If the inode size is below the zone write pointer, then data was
+> > 
+> > I'm a little confused about what events these states reflect.
+> > 
+> > "inode size is below the zone wp" -- let's say we have a partially
+> > written sequential zone:
+> > 
+> >     isize
+> > ----v---------------
+> > DDDDD
+> > ----^---------------
+> >     WP
+> > 
+> > Then we tried to write to the end of the sequential zone:
+> > 
+> >     isize
+> > ----v---------------
+> > DDDDDWWWW
+> > ----^---------------
+> >     WP
+> > 
+> > Then an error happens so we didn't update the isize, and now we see that
+> > the write pointer is beyond isize (pretend the write failed to the '?'
+> > area):
+> > 
+> >     isize
+> > ----v---------------
+> > DDDDDD?DD
+> > --------^-----------
+> >         WP
+> 
+> If the write failed at the "?" location, then the zone write pointer
+> points to that location since nothing after that location can be
+> written unless that location itself is first written.
+> 
+> So with your example, the drive will give back:
+> 
+>     isize
+> ----v---------------
+> DDDDDD?XX
+> ------^-------------
+>       WP
+> 
+> With XX denoting the unwritten part of the issued write.
+> 
+> > So if we increase isize to match the WP, what happens when userspace
+> > tries to read the question-mark area?  Do they get read errors?  Stale
+> > contents?
+> 
+> Nope, see above: the write pointer always point to the sector following
+> the last sector correctly written. So increasing isize to the write
+> pointer location only exposes the data that actually was written and is
+> readable. No stale data.
+> > Or am I misunderstanding SMR firmware, and the drive only advances the
+> > write pointer once it has written a block?  i.e. if a write fails in
+> > the middle, the drive ends up in this state, not the one I drew above:
+> > 
+> >     isize
+> > ----v---------------
+> > DDDDDD?
+> > -----^--------------
+> >      WP
+> > 
+> > In which case it would be fine to push isize up to the write pointer?
+> 
+> Exactly. This is how the ZBC & ZAC (and upcoming ZNS) specifications
+> define the write pointer behavior. That makes error recovery a lot
+> easier and does not result in stale data accesses. Just notice the one-
+> off difference for the WP position from your example as WP will be
+> pointing at the error location, not the last written location. Indexing
+> from 0, we get (wp - zone start) always being isize with all written
+> and readable data in the sector range between zone start and zone write
+> pointer.
 
-> diff --git a/include/linux/hugetlb.h b/include/linux/hugetlb.h
-> index dea6143aa0685..5491932ea5758 100644
-> --- a/include/linux/hugetlb.h
-> +++ b/include/linux/hugetlb.h
-> @@ -46,6 +46,16 @@ struct resv_map {
->  	long adds_in_progress;
->  	struct list_head region_cache;
->  	long region_cache_count;
-> +#ifdef CONFIG_CGROUP_HUGETLB
-> +	/*
-> +	 * On private mappings, the counter to uncharge reservations is stored
-> +	 * here. If these fields are 0, then either the mapping is shared, or
-> +	 * cgroup accounting is disabled for this resv_map.
-> +	 */
-> +	struct page_counter *reservation_counter;
-> +	unsigned long pages_per_hpage;
-> +	struct cgroup_subsys_state *css;
-> +#endif
->  };
->  extern struct resv_map *resv_map_alloc(void);
->  void resv_map_release(struct kref *ref);
-> diff --git a/include/linux/hugetlb_cgroup.h b/include/linux/hugetlb_cgroup.h
-> index eab8a70d5bcb5..8c320accefe87 100644
-> --- a/include/linux/hugetlb_cgroup.h
-> +++ b/include/linux/hugetlb_cgroup.h
-> @@ -25,6 +25,33 @@ struct hugetlb_cgroup;
->  #define HUGETLB_CGROUP_MIN_ORDER	2
-> 
->  #ifdef CONFIG_CGROUP_HUGETLB
-> +enum hugetlb_memory_event {
-> +	HUGETLB_MAX,
-> +	HUGETLB_NR_MEMORY_EVENTS,
-> +};
-> +
-> +struct hugetlb_cgroup {
-> +	struct cgroup_subsys_state css;
-> +
-> +	/*
-> +	 * the counter to account for hugepages from hugetlb.
-> +	 */
-> +	struct page_counter hugepage[HUGE_MAX_HSTATE];
-> +
-> +	/*
-> +	 * the counter to account for hugepage reservations from hugetlb.
-> +	 */
-> +	struct page_counter reserved_hugepage[HUGE_MAX_HSTATE];
-> +
-> +	atomic_long_t events[HUGE_MAX_HSTATE][HUGETLB_NR_MEMORY_EVENTS];
-> +	atomic_long_t events_local[HUGE_MAX_HSTATE][HUGETLB_NR_MEMORY_EVENTS];
-> +
-> +	/* Handle for "hugetlb.events" */
-> +	struct cgroup_file events_file[HUGE_MAX_HSTATE];
-> +
-> +	/* Handle for "hugetlb.events.local" */
-> +	struct cgroup_file events_local_file[HUGE_MAX_HSTATE];
-> +};
-> 
->  static inline struct hugetlb_cgroup *hugetlb_cgroup_from_page(struct page *page,
->  							      bool reserved)
-> diff --git a/mm/hugetlb.c b/mm/hugetlb.c
-> index 62a4cf3db4090..f1b63946ee95c 100644
-> --- a/mm/hugetlb.c
-> +++ b/mm/hugetlb.c
-> @@ -666,6 +666,17 @@ struct resv_map *resv_map_alloc(void)
->  	INIT_LIST_HEAD(&resv_map->regions);
-> 
->  	resv_map->adds_in_progress = 0;
-> +#ifdef CONFIG_CGROUP_HUGETLB
-> +	/*
-> +	 * Initialize these to 0. On shared mappings, 0's here indicate these
-> +	 * fields don't do cgroup accounting. On private mappings, these will be
-> +	 * re-initialized to the proper values, to indicate that hugetlb cgroup
-> +	 * reservations are to be un-charged from here.
-> +	 */
-> +	resv_map->reservation_counter = NULL;
-> +	resv_map->pages_per_hpage = 0;
-> +	resv_map->css = NULL;
-> +#endif
+Ok, I'm going throw a curve ball here: volatile device caches.
 
-Might be better to extract out a resv_map_init() that does the 
-initialization when CONFIG_CGROUP_HUGETLB is enabled?  Could be used here 
-as well as hugetlb_reserve_pages().
+How does the write pointer updates interact with device write
+caches? i.e.  the first write could be sitting in the device write
+cache, and the OS write pointer has been advanced. Then another write
+occurs, the device decides to write both to physical media, and it
+gets a write error in the area of the first write that only hit the
+volatile cache.
 
-> 
->  	INIT_LIST_HEAD(&resv_map->region_cache);
->  	list_add(&rg->link, &resv_map->region_cache);
-> @@ -3194,7 +3205,11 @@ static void hugetlb_vm_op_close(struct vm_area_struct *vma)
-> 
->  	reserve = (end - start) - region_count(resv, start, end);
-> 
-> -	kref_put(&resv->refs, resv_map_release);
-> +#ifdef CONFIG_CGROUP_HUGETLB
-> +	hugetlb_cgroup_uncharge_counter(resv->reservation_counter,
-> +					(end - start) * resv->pages_per_hpage,
-> +					resv->css);
-> +#endif
-> 
->  	if (reserve) {
->  		/*
+So does this mean that, from the POV of the OS, the device zone
+write pointer has gone backwards?
 
-Mike has given is Reviewed-by so likely not a big concern for the generic 
-hugetlb code, but I was wondering if we can reduce the number of #ifdef's 
-if we defined a CONFIG_CGROUP_HUGETLB helper to take the resv, end, and 
-start?  If CONFIG_CGROUP_HUGETLB is defined, it converts into the above, 
-otherwise it's a no-op and we don't run into any compile errors because we 
-are accessing fields that don't exist without the option.
+Unless there's some other magic that ensures device cached writes
+that have been signalled as successfully completed to the OS
+can never fail or that sequential zone writes are never cached in
+volatile memory in drives, I can't see how the above guarantees
+can be provided.
 
-Otherwise looks good!
+> It is hard to decide on the best action to take here considering the
+> simple nature of zonefs (i.e. another better interface to do raw block
+> device file accesses). Including your comments on mount options, I cam
+> up with these actions that the user can choose with mount options:
+> * repair: Truncate the inode size only, nothing else
+> * remount-ro (default): Truncate the inode size and remount read-only
+> * zone-ro: Truncate the inode size and set the inode read-only
+> * zone-offline: Truncate the inode size to 0 and assume that its zone 
+> is offline (no reads nor writes possible).
+> 
+> This gives I think a good range of possible behaviors that the user may
+> want, from almost nothing (repair) to extreme to avoid accessing bad
+> data (zone-offline).
 
-Acked-by: David Rientjes <rientjes@google.com>
+I would suggest that this is something that can be added later as it
+is not critical to supporting the underlying functionality.  Right
+now I'd just pick the safest option: shutdown to protect what data
+is on the storage right now and then let the user take action to
+recover/fix the issue.
+
+> > > +	 * BIO allocations for the same device. The former case may end up in
+> > > +	 * a deadlock on the inode truncate mutex, while the latter may prevent
+> > > +	 * forward progress with BIO allocations as we are potentially still
+> > > +	 * holding the failed BIO. Executing the report zones under GFP_NOIO
+> > > +	 * avoids both problems.
+> > > +	 */
+> > > +	noio_flag = memalloc_noio_save();
+> > 
+> > Don't you still need memalloc_nofs_ here too?
+> 
+> noio implies nofs, doesn't it ? Or rather, noio is more restrictive
+> than nofs here. Which is safer since we need a struct request to be
+> able to execute blkdev_report_zones().
+
+Correct, noio implies nofs.
+
+Cheers,
+
+Dave.
+-- 
+Dave Chinner
+david@fromorbit.com
