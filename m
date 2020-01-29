@@ -2,81 +2,103 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9EF4D14D135
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Jan 2020 20:31:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0754214D147
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Jan 2020 20:40:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727322AbgA2TbU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 29 Jan 2020 14:31:20 -0500
-Received: from merlin.infradead.org ([205.233.59.134]:52300 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726203AbgA2TbU (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 Jan 2020 14:31:20 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=mPKhSGzCXQSe05xs1pmWo6QlfzIgdBymEOx6dbVc6AY=; b=NvpFi2pNiSM8B9O2oBcNQYYoO
-        ifYEMAzEST4o10GmLrqVPJu7C+7sJqDPKepPXwdv2Kkx7W7egizawuK78Kz31imUiOodzSv8IO8+n
-        1DjDMJ5iUas9rmz2SjBfsM/4/ccdl+Uz+IgUKQG+WY+uF7HT92GIt1ACiKRGY9JpInpjDJf2t64Fw
-        F2esNU97u3UZ1xf8JhNOulYXpbYONuhIxLBu5GFPW72L0qTtdRRfphOoWfO4s+f8is0yQGCtNCSOH
-        Ul0uhQXO097XAG5UECRzjX8EHJOPdbUfOibWnf1+2bmSYl1/fcb9LQ9D6JK3mK8c8UbGOquc+G5SF
-        78jHLdeGw==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
-        by merlin.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1iwt3P-0006bK-7o; Wed, 29 Jan 2020 19:31:11 +0000
-Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (Client did not present a certificate)
-        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 2EF79300606;
-        Wed, 29 Jan 2020 20:29:26 +0100 (CET)
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 16F582B7337B9; Wed, 29 Jan 2020 20:31:09 +0100 (CET)
-Date:   Wed, 29 Jan 2020 20:31:09 +0100
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Michael Schmitz <schmitzmic@gmail.com>
-Cc:     John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Linux/m68k <linux-m68k@lists.linux-m68k.org>,
-        Linux Kernel Development <linux-kernel@vger.kernel.org>,
-        Will Deacon <will@kernel.org>
-Subject: Re: [PATCH 0/5] Rewrite Motorola MMU page-table layout
-Message-ID: <20200129193109.GS14914@hirez.programming.kicks-ass.net>
-References: <20200129103941.304769381@infradead.org>
- <bbdb9596-583e-5d26-ac1c-4775440059b9@physik.fu-berlin.de>
- <20200129115412.GN14914@hirez.programming.kicks-ass.net>
- <CAOmrzkJ8dsuSnomcE7uhyY9ip6T9ADLT7LhjydvY-hizpikBiA@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAOmrzkJ8dsuSnomcE7uhyY9ip6T9ADLT7LhjydvY-hizpikBiA@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        id S1727413AbgA2Tkf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 29 Jan 2020 14:40:35 -0500
+Received: from mxout2.idt.com ([157.165.5.26]:50725 "EHLO mxout2.idt.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727369AbgA2Tkd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 Jan 2020 14:40:33 -0500
+X-Greylist: delayed 319 seconds by postgrey-1.27 at vger.kernel.org; Wed, 29 Jan 2020 14:40:33 EST
+Received: from mail6.idt.com (localhost [127.0.0.1])
+        by mxout2.idt.com (8.14.4/8.14.4) with ESMTP id 00TJZ4hJ016692;
+        Wed, 29 Jan 2020 11:35:04 -0800
+Received: from corpml3.corp.idt.com (corpml3.corp.idt.com [157.165.140.25])
+        by mail6.idt.com (8.14.4/8.14.4) with ESMTP id 00TJZ30M005578;
+        Wed, 29 Jan 2020 11:35:03 -0800
+Received: from minli-office.na.ads.idt.com (corpimss2.corp.idt.com [157.165.141.30])
+        by corpml3.corp.idt.com (8.11.7p1+Sun/8.11.7) with ESMTP id 00TJZ2W14625;
+        Wed, 29 Jan 2020 11:35:03 -0800 (PST)
+From:   min.li.xe@renesas.com
+To:     robh+dt@kernel.org, mark.rutland@arm.com
+Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Min Li <min.li.xe@renesas.com>
+Subject: [PATCH 1/2] dt-bindings: ptp: Add IDT 82P33 based PTP clock
+Date:   Wed, 29 Jan 2020 14:34:31 -0500
+Message-Id: <1580326471-5389-1-git-send-email-min.li.xe@renesas.com>
+X-Mailer: git-send-email 2.7.4
+X-TM-AS-MML: disable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jan 30, 2020 at 07:52:11AM +1300, Michael Schmitz wrote:
-> Peter,
-> 
-> On Thu, Jan 30, 2020 at 12:54 AM Peter Zijlstra <peterz@infradead.org> wrote:
-> >
-> > On Wed, Jan 29, 2020 at 11:49:13AM +0100, John Paul Adrian Glaubitz wrote:
-> >
-> > > > [1] https://wiki.debian.org/M68k/QemuSystemM68k
-> >
-> > Now, if only debian would actually ship that :/
-> >
-> > AFAICT that emulates a q800 which is another 68040 and should thus not
-> > differ from ARAnyM.
-> >
-> > I'm fairly confident in the 040 bits, it's the 020/030 things that need
-> > coverage.
-> 
-> I'll take a look - unless this eats up way more kernel memory for page
-> tables, it should still boot on my Falcon.
+From: Min Li <min.li.xe@renesas.com>
 
-It should actually be better in most cases I think, since we no longer
-require all 16 pte-tables to map consecutive (virtual) memory.
+Add device tree binding doc for the PTP clock based on IDT 82P33
+Synchronization Management Unit (SMU).
+
+Signed-off-by: Min Li <min.li.xe@renesas.com>
+---
+ .../devicetree/bindings/ptp/ptp-idt82p33.yaml      | 47 ++++++++++++++++++++++
+ 1 file changed, 47 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/ptp/ptp-idt82p33.yaml
+
+diff --git a/Documentation/devicetree/bindings/ptp/ptp-idt82p33.yaml b/Documentation/devicetree/bindings/ptp/ptp-idt82p33.yaml
+new file mode 100644
+index 0000000..11d1b40
+--- /dev/null
++++ b/Documentation/devicetree/bindings/ptp/ptp-idt82p33.yaml
+@@ -0,0 +1,47 @@
++# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/ptp/ptp-idt82p33.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: IDT 82P33 PTP Clock Device Tree Bindings
++
++description: |
++  IDT 82P33XXX Synchronization Management Unit (SMU) based PTP clock
++
++maintainers:
++  - Min Li <min.li.xe@renesas.com>
++
++properties:
++  compatible:
++    enum:
++      - idt,82p33810
++      - idt,82p33813
++      - idt,82p33814
++      - idt,82p33831
++      - idt,82p33910
++      - idt,82p33913
++      - idt,82p33914
++      - idt,82p33931
++
++  reg:
++    maxItems: 1
++    description:
++      I2C slave address of the device.
++
++required:
++  - compatible
++  - reg
++
++examples:
++  - |
++    i2c@1 {
++        compatible = "abc,acme-1234";
++        reg = <0x01 0x400>;
++        #address-cells = <1>;
++        #size-cells = <0>;
++        phc@51 {
++            compatible = "idt,82p33810";
++            reg = <0x51>;
++        };
++    };
+-- 
+2.7.4
+
