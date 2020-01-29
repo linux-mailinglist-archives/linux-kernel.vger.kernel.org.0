@@ -2,138 +2,57 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1E06A14D205
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Jan 2020 21:38:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2F2F414D21C
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Jan 2020 21:51:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727219AbgA2UiV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 29 Jan 2020 15:38:21 -0500
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:38396 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726672AbgA2UiV (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 Jan 2020 15:38:21 -0500
-Received: by mail-pf1-f193.google.com with SMTP id x185so251446pfc.5
-        for <linux-kernel@vger.kernel.org>; Wed, 29 Jan 2020 12:38:21 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=I/3MIyesWwLMZvoquoi7/37fnkG30lH2RtrUZl2JY2g=;
-        b=RCII856zNQ+5oofjSFPKITF/gPTInLOj3Bh8ZgmaHEk7wpcvKCtOUKUxi5Fazcpk2x
-         jG+C3Ps8b6d29UipkLfgcYTpH6UEhv7b4AhlR7c9O3RWekLCn6gki/XcsACCuIrSgef4
-         dwsyBtU4SN7Piz79NMuLyKVtBEcqEN039rBOU=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=I/3MIyesWwLMZvoquoi7/37fnkG30lH2RtrUZl2JY2g=;
-        b=thxpz0Gr44LpTpDdbpUJNWBBnYzHHQv7bwLBjnRTmGunD+QKrSEgasHnEZPOcn2R98
-         uN0ip5wWlvGtrTDl2KNjSi9sE8zBsPE2zPZX5OlDsA9a7mGUnaRlXRhlt9VNpzyuzssD
-         mVQxcTvoWOkxiefNeP8bjLZEJB2xrWhd2cC3dF8YXvNoCSfDJIDrlquVhJ77Nv2Z4eFz
-         bsgxyUKGyPMiTjacoWs6NqDyc+VBiMq7yh/ELZ0ic7DXY3keb/8OExDiJA5h1etiSkIp
-         XbgR1o1QLKrjGjssbpFC8AEFdqXf3z372EiyzN1s5lexBql1VFaCeMq2upCL6cPrGQSX
-         50zA==
-X-Gm-Message-State: APjAAAUhw8k0+4OirF0h757gJtt3Ej1oeXVCes73mQYIzTO0QDfjtZRp
-        JgPP9Z6eIw+Kn0cZMRRaWF98jQ==
-X-Google-Smtp-Source: APXvYqzTw+xm1aPbfFtOpUBNxbQQnU4Kqem8ct4fM6luLP9FdjijLkOJpwXwa0gAgqPC142Zo9Dy1g==
-X-Received: by 2002:a63:1f21:: with SMTP id f33mr918798pgf.91.1580330300869;
-        Wed, 29 Jan 2020 12:38:20 -0800 (PST)
-Received: from localhost ([2620:15c:202:1:4fff:7a6b:a335:8fde])
-        by smtp.gmail.com with ESMTPSA id b185sm3644304pfa.102.2020.01.29.12.38.19
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 29 Jan 2020 12:38:20 -0800 (PST)
-Date:   Wed, 29 Jan 2020 12:38:19 -0800
-From:   Matthias Kaehlcke <mka@chromium.org>
-To:     Sandeep Maheswaram <sanm@codeaurora.org>
-Cc:     Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Kishon Vijay Abraham I <kishon@ti.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Stephen Boyd <swboyd@chromium.org>,
-        Doug Anderson <dianders@chromium.org>,
-        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org
-Subject: Re: [PATCH v4 4/8] dt-bindings: phy: qcom-qusb2: Add support for
- overriding Phy tuning parameters
-Message-ID: <20200129203819.GE71044@google.com>
-References: <1580305919-30946-1-git-send-email-sanm@codeaurora.org>
- <1580305919-30946-5-git-send-email-sanm@codeaurora.org>
+        id S1727237AbgA2UvW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 29 Jan 2020 15:51:22 -0500
+Received: from ned.t-8ch.de ([212.47.237.191]:44324 "EHLO ned.t-8ch.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726672AbgA2UvO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 Jan 2020 15:51:14 -0500
+From:   =?UTF-8?q?Thomas=20Wei=C3=9Fschuh?= <linux@weissschuh.net>
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=weissschuh.net;
+        s=mail; t=1580330625;
+        bh=NKUmMyQPNMW9j4FgzjMYHkAPpVi0GsN0og9K81e2G90=;
+        h=From:To:Cc:Subject:Date:From;
+        b=J2ASqw0ExW8TjRkwaPHTq1UXNlQHF04mTpvQe4Ac5u720QAxiyIM6i7LkPRjfebcb
+         TOjyIVcMgBnZiNIIh6t6pX+HouH/1MmsMkvHA67f15jr7WFp9SvkRBk8z/Y1On1KAY
+         Y06i0dLP+2ZPjMaI5NUPdSGTTDDKaipIh42bcLwo=
+To:     Henrique de Moraes Holschuh <ibm-acpi@hmh.eng.br>,
+        Darren Hart <dvhart@infradead.org>,
+        Andy Shevchenko <andy@infradead.org>
+Cc:     ibm-acpi-devel@lists.sourceforge.net,
+        platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org,
+        =?UTF-8?q?Thomas=20Wei=C3=9Fschuh?= <linux@weissschuh.net>
+Subject: [PATCH 0/3] platform/x86: thinkpad_acpi: use standard charge control attribute names
+Date:   Wed, 29 Jan 2020 21:43:35 +0100
+Message-Id: <20200129204338.4055-1-linux@weissschuh.net>
+X-Mailer: git-send-email 2.25.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <1580305919-30946-5-git-send-email-sanm@codeaurora.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jan 29, 2020 at 07:21:55PM +0530, Sandeep Maheswaram wrote:
-> Add support for overriding QUSB2 V2 phy tuning parameters
-> in device tree bindings.
-> 
-> Signed-off-by: Sandeep Maheswaram <sanm@codeaurora.org>
-> Reviewed-by: Rob Herring <robh@kernel.org>
-> ---
->  .../devicetree/bindings/phy/qcom,qusb2-phy.yaml    | 33 ++++++++++++++++++++++
->  1 file changed, 33 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/phy/qcom,qusb2-phy.yaml b/Documentation/devicetree/bindings/phy/qcom,qusb2-phy.yaml
-> index 43082c8..dfef356 100644
-> --- a/Documentation/devicetree/bindings/phy/qcom,qusb2-phy.yaml
-> +++ b/Documentation/devicetree/bindings/phy/qcom,qusb2-phy.yaml
-> @@ -80,6 +80,28 @@ properties:
->          maximum: 63
->          default: 0
->  
-> +  qcom,bias-ctrl-value:
-> +    description:
-> +        It is a 6 bit value that specifies bias-ctrl-value. It is a PHY
-> +        tuning parameter that may vary for different boards of same SOC.
-> +        This property is applicable to only QUSB2 v2 PHY.
+This patch series switches over the battery control sysfs attributes to their
+standard names as documented in Documentation/ABI/testing/sysfs-class-power.
 
-As commented on 'dt-bindings: phy: qcom,qusb2: Convert QUSB2 phy bindings
-to yaml' a possible improvement could be to restrict these properties to
-the QUSB2 v2 PHY through the schema.
+If backwards compatability is not required please drop patch 3 of this series.
+The old names were not documented explicitly and new generic software should
+automatically use the new attributes, which may allow us to drop the old names.
 
-> +    allOf:
-> +      - $ref: /schemas/types.yaml#/definitions/uint32
-> +      - minimum: 0
-> +        maximum: 63
-> +        default: 0
-> +
-> +  qcom,charge-ctrl-value:
-> +    description:
-> +        It is a 2 bit value that specifies charge-ctrl-value. It is a PHY
-> +        tuning parameter that may vary for different boards of same SOC.
-> +        This property is applicable to only QUSB2 v2 PHY.
-> +    allOf:
-> +      - $ref: /schemas/types.yaml#/definitions/uint32
-> +      - minimum: 0
-> +        maximum: 3
-> +        default: 0
-> +
->    qcom,hstx-trim-value:
->      description:
->          It is a 4 bit value that specifies tuning for HSTX
-> @@ -118,6 +140,17 @@ properties:
->          maximum: 1
->          default: 0
->  
-> +  qcom,hsdisc-trim-value:
-> +    description:
-> +        It is a 2 bit value tuning parameter that control disconnect
-> +        threshold and may vary for different boards of same SOC.
-> +        This property is applicable to only QUSB2 v2 PHY.
-> +    allOf:
-> +      - $ref: /schemas/types.yaml#/definitions/uint32
-> +      - minimum: 0
-> +        maximum: 3
-> +        default: 0
-> +
->  required:
->    - compatible
->    - reg
+Thomas Weißschuh (3):
+  platform/x86: thinkpad_acpi: remove unused defines
+  platform/x86: thinkpad_acpi: use standard charge control attribute
+    names
+  platform/x86: thinkpad_acpi: restore old battery charge attributes
 
-Reviewed-by: Matthias Kaehlcke <mka@chromium.org>
+ drivers/platform/x86/thinkpad_acpi.c | 29 +++++++++++++++++++---------
+ 1 file changed, 20 insertions(+), 9 deletions(-)
+
+-- 
+2.25.0
+
