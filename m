@@ -2,24 +2,24 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 537F714C644
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Jan 2020 06:57:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 820C514C641
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Jan 2020 06:57:27 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726751AbgA2F5Y (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 29 Jan 2020 00:57:24 -0500
-Received: from mga02.intel.com ([134.134.136.20]:33109 "EHLO mga02.intel.com"
+        id S1726718AbgA2F5J (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 29 Jan 2020 00:57:09 -0500
+Received: from mga09.intel.com ([134.134.136.24]:55027 "EHLO mga09.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726124AbgA2F4n (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 Jan 2020 00:56:43 -0500
+        id S1726487AbgA2F4x (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 Jan 2020 00:56:53 -0500
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 28 Jan 2020 21:56:42 -0800
+Received: from fmsmga004.fm.intel.com ([10.253.24.48])
+  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 28 Jan 2020 21:56:52 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.70,376,1574150400"; 
-   d="scan'208";a="222346547"
+   d="scan'208";a="252500707"
 Received: from jacob-builder.jf.intel.com ([10.7.199.155])
-  by orsmga008.jf.intel.com with ESMTP; 28 Jan 2020 21:56:41 -0800
+  by fmsmga004.fm.intel.com with ESMTP; 28 Jan 2020 21:56:51 -0800
 From:   Jacob Pan <jacob.jun.pan@linux.intel.com>
 To:     iommu@lists.linux-foundation.org,
         LKML <linux-kernel@vger.kernel.org>,
@@ -35,81 +35,55 @@ Cc:     "Yi Liu" <yi.l.liu@intel.com>,
         Jonathan Cameron <jic23@kernel.org>,
         Eric Auger <eric.auger@redhat.com>,
         Jacob Pan <jacob.jun.pan@linux.intel.com>
-Subject: [PATCH V9 10/10] iommu/vt-d: Report PASID format as domain attribute
-Date:   Tue, 28 Jan 2020 22:01:53 -0800
-Message-Id: <1580277713-66934-11-git-send-email-jacob.jun.pan@linux.intel.com>
+Subject: [PATCH 0/3] IOMMU user API enhancement
+Date:   Tue, 28 Jan 2020 22:02:01 -0800
+Message-Id: <1580277724-66994-1-git-send-email-jacob.jun.pan@linux.intel.com>
 X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1580277713-66934-1-git-send-email-jacob.jun.pan@linux.intel.com>
-References: <1580277713-66934-1-git-send-email-jacob.jun.pan@linux.intel.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Report the domain attribute of PASID table format. As multiple formats
-of PASID table entry are supported, it is important for the guest to
-know which format to use in virtual IOMMU. The result will be used for
-binding device with guest PASID.
+IOMMU user API header was introduced to support nested DMA translation and
+related fault handling. The current UAPI data structures consist of three
+areas that cover the interactions between host kernel and guest:
+ - fault handling
+ - cache invalidation
+ - bind guest page tables, i.e. guest PASID
 
-Signed-off-by: Liu Yi L <yi.l.liu@intel.com>
-Signed-off-by: Jacob Pan <jacob.jun.pan@linux.intel.com>
----
- drivers/iommu/intel-iommu.c | 22 ++++++++++++++++++++++
- include/linux/iommu.h       |  1 +
- 2 files changed, 23 insertions(+)
+With future extension in mind, the UAPI structures passed from user to kernel
+always starts with a mandatory version field (u32). While this is flexible
+for extensions of individual structures, it is difficult to maintain support
+of combinations of different version numbers.
 
-diff --git a/drivers/iommu/intel-iommu.c b/drivers/iommu/intel-iommu.c
-index 2f0bf7cc70ce..b3778e86dc32 100644
---- a/drivers/iommu/intel-iommu.c
-+++ b/drivers/iommu/intel-iommu.c
-@@ -6413,6 +6413,27 @@ intel_iommu_domain_set_attr(struct iommu_domain *domain,
- 	return ret;
- }
- 
-+static int intel_iommu_domain_get_attr(struct iommu_domain *domain,
-+				       enum iommu_attr attr, void *data)
-+{
-+	/* Only used for guest */
-+	switch (domain->type) {
-+	case IOMMU_DOMAIN_DMA:
-+		return -ENODEV;
-+	case IOMMU_DOMAIN_UNMANAGED:
-+		switch (attr) {
-+		case DOMAIN_ATTR_PASID_FORMAT:
-+			*(int *)data = IOMMU_PASID_FORMAT_INTEL_VTD;
-+			return 0;
-+		default:
-+			return -ENODEV;
-+		}
-+		break;
-+	default:
-+		return -EINVAL;
-+	}
-+}
-+
- const struct iommu_ops intel_iommu_ops = {
- 	.capable		= intel_iommu_capable,
- 	.domain_alloc		= intel_iommu_domain_alloc,
-@@ -6432,6 +6453,7 @@ const struct iommu_ops intel_iommu_ops = {
- 	.put_resv_regions	= intel_iommu_put_resv_regions,
- 	.apply_resv_region	= intel_iommu_apply_resv_region,
- 	.device_group		= pci_device_group,
-+	.domain_get_attr	= intel_iommu_domain_get_attr,
- 	.dev_has_feat		= intel_iommu_dev_has_feat,
- 	.dev_feat_enabled	= intel_iommu_dev_feat_enabled,
- 	.dev_enable_feat	= intel_iommu_dev_enable_feat,
-diff --git a/include/linux/iommu.h b/include/linux/iommu.h
-index f2223cbb5fd5..9718c109ea0a 100644
---- a/include/linux/iommu.h
-+++ b/include/linux/iommu.h
-@@ -126,6 +126,7 @@ enum iommu_attr {
- 	DOMAIN_ATTR_FSL_PAMUV1,
- 	DOMAIN_ATTR_NESTING,	/* two stages of translation */
- 	DOMAIN_ATTR_DMA_USE_FLUSH_QUEUE,
-+	DOMAIN_ATTR_PASID_FORMAT,
- 	DOMAIN_ATTR_MAX,
- };
- 
+This patchset introduces a unified UAPI version number that governs all the
+UAPI data structure versions. When userspace query UAPI version for check on
+compatibility, a single match would be sufficient.
+
+After UAPI version check, users such as VFIO can also retrieve the matching
+data structure size based on version and type. Kernel IOMMU UAPI support is
+always backward compatible. Data structures are also only open to extension
+and closed to modifications.
+
+The introduction of UAPI version does not change the existing UAPI but rather
+simplify the data structure version and size matching.
+
+Thanks,
+
+Jacob
+
+Jacob Pan (3):
+  iommu/uapi: Define uapi version and capabilities
+  iommu/uapi: Use unified UAPI version
+  iommu/uapi: Add helper function for size lookup
+
+ drivers/iommu/intel-iommu.c |  3 ++-
+ drivers/iommu/intel-svm.c   |  2 +-
+ drivers/iommu/iommu.c       | 25 +++++++++++++++++++-
+ include/linux/iommu.h       |  6 +++++
+ include/uapi/linux/iommu.h  | 57 ++++++++++++++++++++++++++++++++++++++++-----
+ 5 files changed, 84 insertions(+), 9 deletions(-)
+
 -- 
 2.7.4
 
