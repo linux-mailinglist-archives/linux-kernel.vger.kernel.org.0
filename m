@@ -2,76 +2,84 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 03F2F14C99E
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Jan 2020 12:31:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3D44014C9B3
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Jan 2020 12:34:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726528AbgA2LbJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 29 Jan 2020 06:31:09 -0500
-Received: from jabberwock.ucw.cz ([46.255.230.98]:39728 "EHLO
-        jabberwock.ucw.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726068AbgA2LbJ (ORCPT
+        id S1726672AbgA2LdG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 29 Jan 2020 06:33:06 -0500
+Received: from Galois.linutronix.de ([193.142.43.55]:51052 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726484AbgA2LdF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 Jan 2020 06:31:09 -0500
-Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
-        id 70DA21C2607; Wed, 29 Jan 2020 12:31:07 +0100 (CET)
-Date:   Wed, 29 Jan 2020 12:31:06 +0100
-From:   Pavel Machek <pavel@denx.de>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-        akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
-        patches@kernelci.org, ben.hutchings@codethink.co.uk,
-        lkft-triage@lists.linaro.org, stable@vger.kernel.org
-Subject: Re: [PATCH 4.19 00/92] 4.19.100-stable review
-Message-ID: <20200129113106.GA28178@duo.ucw.cz>
-References: <20200128135809.344954797@linuxfoundation.org>
+        Wed, 29 Jan 2020 06:33:05 -0500
+Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tip-bot2@linutronix.de>)
+        id 1iwlaa-0007kJ-GC; Wed, 29 Jan 2020 12:32:56 +0100
+Received: from [127.0.1.1] (localhost [IPv6:::1])
+        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id B0F581C0095;
+        Wed, 29 Jan 2020 12:32:55 +0100 (CET)
+Date:   Wed, 29 Jan 2020 11:32:55 -0000
+From:   "tip-bot2 for Benjamin Thiel" <tip-bot2@linutronix.de>
+Reply-to: linux-kernel@vger.kernel.org
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip: perf/urgent] kernel/events: Add a missing prototype for
+ arch_perf_update_userpage()
+Cc:     Benjamin Thiel <b.thiel@posteo.de>,
+        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+        Ingo Molnar <mingo@kernel.org>, x86 <x86@kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+In-Reply-To: <20200109131351.9468-1-b.thiel@posteo.de>
+References: <20200109131351.9468-1-b.thiel@posteo.de>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="VbJkn9YxBvnuCH5J"
-Content-Disposition: inline
-In-Reply-To: <20200128135809.344954797@linuxfoundation.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Message-ID: <158029757541.396.4238678830980853491.tip-bot2@tip-bot2>
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot2.linutronix.de>
+Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+The following commit has been merged into the perf/urgent branch of tip:
 
---VbJkn9YxBvnuCH5J
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Commit-ID:     f1ec3a517b4352e78dbef6b1e591f43202ecb3fe
+Gitweb:        https://git.kernel.org/tip/f1ec3a517b4352e78dbef6b1e591f43202ecb3fe
+Author:        Benjamin Thiel <b.thiel@posteo.de>
+AuthorDate:    Thu, 09 Jan 2020 14:13:51 +01:00
+Committer:     Ingo Molnar <mingo@kernel.org>
+CommitterDate: Tue, 28 Jan 2020 21:26:44 +01:00
 
-Hi!
+kernel/events: Add a missing prototype for arch_perf_update_userpage()
 
-> This is the start of the stable review cycle for the 4.19.100 release.
-> There are 92 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
->=20
-> Responses should be made by Thu, 30 Jan 2020 13:57:09 +0000.
-> Anything received after that time might be too late.
+... in order to fix a -Wmissing-prototype warning.
 
-It builds and basic tests work in our configurations.
+No functional changes.
 
-https://gitlab.com/cip-project/cip-testing/linux-stable-rc-ci/pipelines/112=
-957173
+Signed-off-by: Benjamin Thiel <b.thiel@posteo.de>
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Link: https://lkml.kernel.org/r/20200109131351.9468-1-b.thiel@posteo.de
+---
+ include/linux/perf_event.h | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-Best regards,
-									Pavel
-
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
-
---VbJkn9YxBvnuCH5J
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCXjFs+gAKCRAw5/Bqldv6
-8g5oAJ0SUS7p1w/quPFGQ9A4jFluVxdgIwCgw5neYeW/cz8x9LWLws9qlDYKWg8=
-=gRsD
------END PGP SIGNATURE-----
-
---VbJkn9YxBvnuCH5J--
+diff --git a/include/linux/perf_event.h b/include/linux/perf_event.h
+index 6d4c22a..52928e0 100644
+--- a/include/linux/perf_event.h
++++ b/include/linux/perf_event.h
+@@ -1544,4 +1544,8 @@ int perf_event_exit_cpu(unsigned int cpu);
+ #define perf_event_exit_cpu	NULL
+ #endif
+ 
++extern void __weak arch_perf_update_userpage(struct perf_event *event,
++					     struct perf_event_mmap_page *userpg,
++					     u64 now);
++
+ #endif /* _LINUX_PERF_EVENT_H */
