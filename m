@@ -2,48 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 25D6B14C595
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Jan 2020 06:19:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E83D514C58E
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Jan 2020 06:18:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726813AbgA2FSF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 29 Jan 2020 00:18:05 -0500
-Received: from ozlabs.org ([203.11.71.1]:54909 "EHLO ozlabs.org"
+        id S1726803AbgA2FR7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 29 Jan 2020 00:17:59 -0500
+Received: from ozlabs.org ([203.11.71.1]:36931 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726670AbgA2FRl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1726677AbgA2FRl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 29 Jan 2020 00:17:41 -0500
 Received: by ozlabs.org (Postfix, from userid 1034)
-        id 486sDz55YZz9sRp; Wed, 29 Jan 2020 16:17:39 +1100 (AEDT)
+        id 486sF01mqkz9sS3; Wed, 29 Jan 2020 16:17:40 +1100 (AEDT)
 X-powerpc-patch-notification: thanks
-X-powerpc-patch-commit: 3d4247fcc938d0ab5cf6fdb752dae07fdeab9736
-In-Reply-To: <031dec5487bde9b2181c8b3c9800e1879cf98c1a.1579024426.git.christophe.leroy@c-s.fr>
-To:     Christophe Leroy <christophe.leroy@c-s.fr>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>, erhard_f@mailbox.org,
-        dja@axtens.net
+X-powerpc-patch-commit: f1dbc1c5c70d0d4c60b5d467ba941fba167c12f6
+In-Reply-To: <5577aef8-1d5a-ca95-ff0a-9c7b5977e5bf@linux.ibm.com>
+To:     Michael Bringmann <mwb@linux.ibm.com>,
+        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
+        Gustavo Walbon <gwalbon@linux.ibm.com>,
+        Paul Mackerras <paulus@samba.org>
 From:   Michael Ellerman <patch-notifications@ellerman.id.au>
-Cc:     linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/5] powerpc/32: add support of KASAN_VMALLOC
-Message-Id: <486sDz55YZz9sRp@ozlabs.org>
-Date:   Wed, 29 Jan 2020 16:17:39 +1100 (AEDT)
+Subject: Re: [PATCH v2] Fix display of Maximum Memory
+Message-Id: <486sF01mqkz9sS3@ozlabs.org>
+Date:   Wed, 29 Jan 2020 16:17:40 +1100 (AEDT)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 2020-01-14 at 17:54:00 UTC, Christophe Leroy wrote:
-> Add support of KASAN_VMALLOC on PPC32.
+On Wed, 2020-01-15 at 14:53:59 UTC, Michael Bringmann wrote:
+> Correct overflow problem in calculation+display of Maximum Memory
+> value to syscfg where 32bits is insufficient.
 > 
-> To allow this, the early shadow covering the VMALLOC space
-> need to be removed once high_memory var is set and before
-> freeing memblock.
-> 
-> And the VMALLOC area need to be aligned such that boundaries
-> are covered by a full shadow page.
-> 
-> Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
+> Signed-off-by: Michael Bringmann <mwb@linux.ibm.com>
 
-Series applied to powerpc next, thanks.
+Applied to powerpc next, thanks.
 
-https://git.kernel.org/powerpc/c/3d4247fcc938d0ab5cf6fdb752dae07fdeab9736
+https://git.kernel.org/powerpc/c/f1dbc1c5c70d0d4c60b5d467ba941fba167c12f6
 
 cheers
