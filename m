@@ -2,130 +2,109 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B17A214D020
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Jan 2020 19:09:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 61A8F14D026
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Jan 2020 19:10:37 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727299AbgA2SJI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 29 Jan 2020 13:09:08 -0500
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:35337 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726245AbgA2SJI (ORCPT
+        id S1727366AbgA2SKd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 29 Jan 2020 13:10:33 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:50780 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726222AbgA2SKd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 Jan 2020 13:09:08 -0500
-Received: by mail-pg1-f195.google.com with SMTP id l24so195226pgk.2
-        for <linux-kernel@vger.kernel.org>; Wed, 29 Jan 2020 10:09:08 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:from:to:cc:references:message-id:date:user-agent
-         :mime-version:in-reply-to:content-transfer-encoding:content-language;
-        bh=Qfgy4sCCCO9qTQgchyD2bDgwppQqFA1HOWEoZpdCsZk=;
-        b=oIY+T7f1/3KDhWmi+9XoCo3BKr+sq4W/mKeDPKem3BbD+RYGZFt1E4Jp4cyhzNTMxX
-         Vl4hyPH9kJOowMKuBPT14LZs8R7i6iRzAvLg4vy1iaGYIi3E5lYXku6DVG8xl258MhEl
-         E11Q+enPS9OJ02bTdGX9v8A4hEx02Brb38Kxi3nQOfl6km6CZ0My6MEozc6OUudKSHD2
-         kWixGUmfrVcQczIGzuiq4qKlMsZoHHEDPx8WHoXnoe6jMj96x4/AAWrNkteBp0x15qMV
-         yQPmd/JcBLUbLvLO4WCP/uNjORquLpGHF8O1GKCVNz0drUGPUSfR27pKbWBGJVtNZL31
-         wh4A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:from:to:cc:references:message-id:date
-         :user-agent:mime-version:in-reply-to:content-transfer-encoding
-         :content-language;
-        bh=Qfgy4sCCCO9qTQgchyD2bDgwppQqFA1HOWEoZpdCsZk=;
-        b=OMabP//BMbH5xk5rQ1/muWsw3pePJkJfAxEGBb2NiEa2AaNW3AjXb9trmRAg1rRdiO
-         EefnqexA/OUC0rc+hyElTwZJs4xB6hcnyxBXuRNqibtaN/m3atn0tsuNnPcVNCVljYQY
-         BF4d+4jD2pmZ4/x+JdrNOAWX3VvqCs+np+b7a3oc8TWr97siPj5ljBR/OR+zEazmHq63
-         5mYYZ5bWdkEfUSIAdH15svAEbm2IjpgLfxqcRBYW/jVIdAzc/i6ZuKpUha306BLa/TgO
-         q6wukgmhDHABxLi9kjNlExQ6QBkBvEwNnpIsX6xORlZSOWc+0J7MFzy3Zz8V3U5nbnPf
-         X8Rw==
-X-Gm-Message-State: APjAAAXzSiJBQoxEzsyd/hc8jYZptMjWRveW2Pu+UE/9D4s9satXaIB2
-        sZSKzc9QEsFNro9+MXIxKHI=
-X-Google-Smtp-Source: APXvYqwichPv1+UwFlqgSYCn8ypS1/PKPTuj/ovLT9rCDcB1J+64NLcb3U0HJ6idY1dU0SMjh5rnng==
-X-Received: by 2002:a63:1106:: with SMTP id g6mr282135pgl.13.1580321347528;
-        Wed, 29 Jan 2020 10:09:07 -0800 (PST)
-Received: from [192.168.0.16] (97-115-104-237.ptld.qwest.net. [97.115.104.237])
-        by smtp.gmail.com with ESMTPSA id n15sm204952pfq.168.2020.01.29.10.09.06
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 29 Jan 2020 10:09:06 -0800 (PST)
-Subject: Re: [PATCH] kbuild: Include external modules compile flags
-From:   Gregory Rose <gvrose8192@gmail.com>
-To:     Masahiro Yamada <masahiroy@kernel.org>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        dev@openvswitch.org, dsahern@gmail.com
-References: <1580161806-8037-1-git-send-email-gvrose8192@gmail.com>
- <CAK7LNAQyh9CFgKd1DtAPFW8DuHNp1gn8YABuP8-LsF=hHK2DFw@mail.gmail.com>
- <f6ffa0d0-8214-8fc0-4fe9-4b70a1581d3e@gmail.com>
-Message-ID: <677aff5a-a52e-08ae-f341-547af08f7566@gmail.com>
-Date:   Wed, 29 Jan 2020 10:09:05 -0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.2
+        Wed, 29 Jan 2020 13:10:33 -0500
+Received: from pps.filterd (m0098410.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 00TI7T6x129481;
+        Wed, 29 Jan 2020 13:10:17 -0500
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2xtpmtaccq-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 29 Jan 2020 13:10:17 -0500
+Received: from m0098410.ppops.net (m0098410.ppops.net [127.0.0.1])
+        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 00TI7k5O131193;
+        Wed, 29 Jan 2020 13:10:16 -0500
+Received: from ppma05wdc.us.ibm.com (1b.90.2fa9.ip4.static.sl-reverse.com [169.47.144.27])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2xtpmtacc5-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 29 Jan 2020 13:10:16 -0500
+Received: from pps.filterd (ppma05wdc.us.ibm.com [127.0.0.1])
+        by ppma05wdc.us.ibm.com (8.16.0.27/8.16.0.27) with SMTP id 00TI53W7010000;
+        Wed, 29 Jan 2020 18:10:15 GMT
+Received: from b03cxnp08027.gho.boulder.ibm.com (b03cxnp08027.gho.boulder.ibm.com [9.17.130.19])
+        by ppma05wdc.us.ibm.com with ESMTP id 2xrda741py-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 29 Jan 2020 18:10:15 +0000
+Received: from b03ledav006.gho.boulder.ibm.com (b03ledav006.gho.boulder.ibm.com [9.17.130.237])
+        by b03cxnp08027.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 00TIAEa456164636
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 29 Jan 2020 18:10:14 GMT
+Received: from b03ledav006.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 8D75DC605D;
+        Wed, 29 Jan 2020 18:10:14 +0000 (GMT)
+Received: from b03ledav006.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 7928DC6062;
+        Wed, 29 Jan 2020 18:10:14 +0000 (GMT)
+Received: from localhost (unknown [9.41.179.32])
+        by b03ledav006.gho.boulder.ibm.com (Postfix) with ESMTP;
+        Wed, 29 Jan 2020 18:10:14 +0000 (GMT)
+Date:   Wed, 29 Jan 2020 12:10:13 -0600
+From:   Scott Cheloha <cheloha@linux.ibm.com>
+To:     Nathan Lynch <nathanl@linux.ibm.com>
+Cc:     Nathan Fontenont <ndfont@gmail.com>,
+        Rick Lindsley <ricklind@linux.vnet.ibm.com>,
+        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
+        Michael Ellerman <mpe@ellerman.id.au>
+Subject: Re: [PATCH] powerpc/drmem: cache LMBs in xarray to accelerate lookup
+Message-ID: <20200129181013.lz6q5lpntnhwclqi@rascal.austin.ibm.com>
+References: <20200128221113.17158-1-cheloha@linux.ibm.com>
+ <87pnf3i188.fsf@linux.ibm.com>
 MIME-Version: 1.0
-In-Reply-To: <f6ffa0d0-8214-8fc0-4fe9-4b70a1581d3e@gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <87pnf3i188.fsf@linux.ibm.com>
+X-TM-AS-GCONF: 00
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.572
+ definitions=2020-01-29_05:2020-01-28,2020-01-29 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 phishscore=0
+ adultscore=0 clxscore=1015 priorityscore=1501 bulkscore=0 spamscore=0
+ suspectscore=1 impostorscore=0 malwarescore=0 mlxlogscore=999
+ lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-1911200001 definitions=main-2001290146
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Tue, Jan 28, 2020 at 05:56:55PM -0600, Nathan Lynch wrote:
+> Scott Cheloha <cheloha@linux.ibm.com> writes:
+> > LMB lookup is currently an O(n) linear search.  This scales poorly when
+> > there are many LMBs.
+> >
+> > If we cache each LMB by both its base address and its DRC index
+> > in an xarray we can cut lookups to O(log n), greatly accelerating
+> > drmem initialization and memory hotplug.
+> >
+> > This patch introduces two xarrays of of LMBs and fills them during
+> > drmem initialization.  The patch also adds two interfaces for LMB
+> > lookup.
+> 
+> Good but can you replace the array of LMBs altogether
+> (drmem_info->lmbs)? xarray allows iteration over the members if needed.
 
-On 1/28/2020 7:37 AM, Gregory Rose wrote:
-> On 1/27/2020 7:35 PM, Masahiro Yamada wrote:
->> On Tue, Jan 28, 2020 at 6:50 AM Greg Rose <gvrose8192@gmail.com> wrote:
->>> Since this commit:
->>> 'commit 9b9a3f20cbe0 ("kbuild: split final module linking out into 
->>> Makefile.modfinal")'
->>> at least one out-of-tree external kernel module build fails
->>> during the modfinal make phase because Makefile.modfinal does
->>> not include the ccflags-y variable from the exernal module's Kbuild.
->> ccflags-y is passed only for compiling C files in that directory.
->>
->> It is not used for compiling *.mod.c
->> This is true for both in-kernel and external modules.
->>
->> So, ccflags-y is not a good choice
->> for passing such flags that should be globally effective.
->>
->>
->> Maybe, KCFLAGS should work.
->>
->>
->> module:
->>         $(MAKE) KCFLAGS=...  M=$(PWD) -C /lib/modules/$(uname 
->> -r)/build modules
->>
+I don't think we can without potentially changing the current behavior.
 
-Hi Masahiro,
+The current behavior in dlpar_memory_{add,remove}_by_ic() is to advance
+linearly through the array from the LMB with the matching DRC index.
 
-I'm unable to get that to work.  KCFLAGS does not seem to be used in 
-Makefile.modfinal.
+Iteration through the xarray via xa_for_each_start() will return LMBs
+indexed with monotonically increasing DRC indices.
 
-[snip]
->>> --- a/scripts/Makefile.modfinal
->>> +++ b/scripts/Makefile.modfinal
->>> @@ -21,6 +21,10 @@ __modfinal: $(modules)
->>>   modname = $(notdir $(@:.mod.o=))
->>>   part-of-module = y
->>>
->>> +# Include the module's Makefile to find KBUILD_EXTRA_SYMBOLS
->>> +include $(if $(wildcard $(KBUILD_EXTMOD)/Kbuild), \
->>> +             $(KBUILD_EXTMOD)/Kbuild)
->>> +
+Are they equivalent?  Or can we have an LMB with a smaller DRC index
+appear at a greater offset in the array?
 
-I continue to wonder why this it is so bad to include the external 
-module's Kbuild.
-It used to be included in Makefile.modpost and did no harm, and in fact 
-was what
-made our external build work at all in the past.  Without the ability to 
-define our
-local kernel module build environment during the modfinal make I see no 
-way forward.
+If the following condition is possible:
 
-That said, I'm no expert on the Linux kernel Makefile 
-interdependencies.  If you
-have some other idea we could try I'm game.
+	drmem_info->lmbs[i].drc_index > drmem_info->lmbs[j].drc_index
 
-Thanks,
-
-- Greg
-
+where i < j, then we have a possible behavior change because
+xa_for_each_start() may not return a contiguous array slice.  It might
+"leap backwards" in the array.  Or it might skip over a chunk of LMBs.
