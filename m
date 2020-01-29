@@ -2,59 +2,96 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A83AB14D253
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Jan 2020 22:09:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 83C7214D256
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Jan 2020 22:10:10 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727455AbgA2VJR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 29 Jan 2020 16:09:17 -0500
-Received: from mail.kernel.org ([198.145.29.99]:55982 "EHLO mail.kernel.org"
+        id S1727478AbgA2VKI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 29 Jan 2020 16:10:08 -0500
+Received: from sauhun.de ([88.99.104.3]:41756 "EHLO pokefinder.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727299AbgA2VJR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 Jan 2020 16:09:17 -0500
-Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 962E320674;
-        Wed, 29 Jan 2020 21:09:16 +0000 (UTC)
-Date:   Wed, 29 Jan 2020 16:09:14 -0500
-From:   Steven Rostedt <rostedt@goodmis.org>
-To:     Tom Zanussi <zanussi@kernel.org>
-Cc:     artem.bityutskiy@linux.intel.com, mhiramat@kernel.org,
-        linux-kernel@vger.kernel.org, linux-rt-users@vger.kernel.org
-Subject: Re: [PATCH v4 07/12] tracing: Add synth_event_trace() and related
- functions
-Message-ID: <20200129160915.4ebe0f08@gandalf.local.home>
-In-Reply-To: <7a84de5f1854acf4144b57efe835ca645afa764f.1580323897.git.zanussi@kernel.org>
-References: <cover.1580323897.git.zanussi@kernel.org>
-        <7a84de5f1854acf4144b57efe835ca645afa764f.1580323897.git.zanussi@kernel.org>
-X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        id S1727133AbgA2VKG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 Jan 2020 16:10:06 -0500
+Received: from localhost (p5486CF2C.dip0.t-ipconnect.de [84.134.207.44])
+        by pokefinder.org (Postfix) with ESMTPSA id A24962C06AB;
+        Wed, 29 Jan 2020 22:10:03 +0100 (CET)
+Date:   Wed, 29 Jan 2020 22:10:03 +0100
+From:   Wolfram Sang <wsa@the-dreams.de>
+To:     Luca Ceresoli <luca@lucaceresoli.net>
+Cc:     linux-i2c@vger.kernel.org, linux-doc@vger.kernel.org,
+        Jean Delvare <jdelvare@suse.de>, Peter Rosin <peda@axentia.se>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 00/28] docs: i2c: rework I2C documentation, part I
+Message-ID: <20200129211003.GF7586@ninjato>
+References: <20200129151953.31582-1-luca@lucaceresoli.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="L2Brqb15TUChFOBK"
+Content-Disposition: inline
+In-Reply-To: <20200129151953.31582-1-luca@lucaceresoli.net>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 29 Jan 2020 12:59:27 -0600
-Tom Zanussi <zanussi@kernel.org> wrote:
 
-> +static struct synth_field *find_synth_field(struct synth_event *event,
-> +					    const char *field_name)
-> +{
-> +	struct synth_field *field = NULL;
-> +	unsigned int i;
-> +
-> +	for (i = 0; i < event->n_fields; i++) {
-> +		field = event->fields[i];
-> +		if (strcmp(field->name, field_name) == 0)
-> +			return field;
-> +	}
-> +
-> +	return NULL;
-> +}
+--L2Brqb15TUChFOBK
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Why duplicate all theses functions and not use them in the
-synth_event_trace() directly?
+On Wed, Jan 29, 2020 at 04:19:25PM +0100, Luca Ceresoli wrote:
+>=20
+> Hi,
+>=20
+> this series is a list of improvements to the I2C documentation.
+>=20
+> It started as a simple reordering of index.rst from alphabetical order to=
+ a
+> logical order. Then it grew to a mixture of various improvements to each
+> section and some cross-section changes.
+>=20
+> I wanted to rework all the sections in a unique series, but after covering
+> about one third of them the number of patches has already grown pretty lo=
+ng
+> so I'm sending it in its current state. I will continue to cover the rest
+> of the sections later.
+>=20
+> Each patch is quite self-standing, and most are trivial, so have a good
+> reading.
+>=20
+> v2 and v3 incorporate many improvements suggested by Jean Delvare and Pet=
+er
+> Rosin. A special thank you to Jean for his very patient and appreciated
+> review work of _all_ of the 26 patches. Thanks to his work the patches are
+> now 28. :) Patches 27 and 28 are the new ones.
 
--- Steve
+I really want this in 5.6, so I applied them all to for-next. Other
+fixes or improvements should be sent on top of this.
+
+Thank you a *lot*, Luca! And Jean and Peter for the review.
+
+Awesome work!
+
+
+--L2Brqb15TUChFOBK
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAl4x9KsACgkQFA3kzBSg
+KbYbnBAAhprpV7wAA9NqSfMDHHmaqpyaZtwPybgDpYM0XTNRM8CgMudFEsAyC9lX
+MshwajeHlFUWCMKyKnPQynC2AhHxqPWK0H1G6iHz/TZthHeF96lBRT5WPlxE9KHP
+rb2H0/EmQUOOO9Ok00270FOrkz8QIDOvRVnYjKH28++gcX0DqKT2dzSoYHrMPRyY
+H/57UIKpu/qjZqHzGC8H7vnU2R+1zXL+yQ+XT2fXbaSP1z0SByVRGEv2to/zaT4G
+5G9sm/bPeznRGtKfAyreovusw0emENLBPuMQXkJPWyAaeyTGwUO1yydDyQLVpaH4
+N8Y27ZuVof/AujEcrRnn/OW0B9vBJP4FPblxsWFR+iTbl/vMPOyyTUW4xlamZyaP
+lqbRPyTAkdHtshKxcj+NUwe5yPWAh8QuPWJWuMyr/8L+vgclqU57I0LpRNhOKvqQ
+L7xIL+/MKZkmwvINb/m/7nTlvAtrep9jG3gVk4cgtQoy9LHpvdEzubwI+jazioIX
+z5M+vsGWk11UVbiuAp/3hnAzaV4Td7WXSQIquJRP+wdDP9mxM0kyi0i6l9ILjo8W
+Fm+ihydY0Ad2w5+Tpv3rIeqHzUhf8kxTTQrIbMBj6St+70/606WnVYceO6LxUM/X
+coyyaEX5t22GQ0cB2Jm+ALqyF4eWh2xqtUMqkT6/NjWXW+N3DoE=
+=1moL
+-----END PGP SIGNATURE-----
+
+--L2Brqb15TUChFOBK--
