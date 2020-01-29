@@ -2,104 +2,118 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5F90C14CEAF
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Jan 2020 17:51:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 69C1814CEC1
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Jan 2020 17:59:19 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726930AbgA2Qu5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 29 Jan 2020 11:50:57 -0500
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:42479 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726498AbgA2Qu5 (ORCPT
+        id S1727177AbgA2Q65 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 29 Jan 2020 11:58:57 -0500
+Received: from mail-pg1-f176.google.com ([209.85.215.176]:42674 "EHLO
+        mail-pg1-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727134AbgA2Q6z (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 Jan 2020 11:50:57 -0500
-Received: by mail-pg1-f194.google.com with SMTP id s64so43109pgb.9
-        for <linux-kernel@vger.kernel.org>; Wed, 29 Jan 2020 08:50:57 -0800 (PST)
+        Wed, 29 Jan 2020 11:58:55 -0500
+Received: by mail-pg1-f176.google.com with SMTP id s64so55367pgb.9;
+        Wed, 29 Jan 2020 08:58:54 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:date:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=xnACTF0mg7+AZUrTeSaTlJDBtgVeUJkDSPQmQ/i+6ts=;
-        b=s6ux0JBWLeR5W9OzYXqRzHK3paqGpf1pyCwTY01YQAPkWXUvUHWXMHSdICezVrOY0x
-         zSs4kY2L9Fo07FoiCx8/FlvM0DP7pCAOsWDiNrOgxyxzhtuUl8fkRNXBvhRpn4VTvH6h
-         Mxzsj8u+3G6AuRhZqhHVuO8z4uLudbrPb6FLii0MQJSkb/IXLtIYxz7IcB4GCpu0cGpI
-         7xPNyXObhI8lgs5dJMuq+gm4sSVaiCtc9zYl/krKU6HT+asR7fj2P7RPzEPEHH+iyq8x
-         QFWSTs8k1QaCy5opNgZUXAth5NitP3WiJLrbiQbBVfM120nGJtswBI9HKZxATubF9haA
-         p0vQ==
+        h=from:to:cc:subject:date:message-id;
+        bh=eD+vRWY6gNxHaAV067ybERz640J/iRSAZ6Igbxb8aJA=;
+        b=LzePr+ho2mkMe7rrNfWRFX+CZgPIUeo9UTtw7QPUjt74C05Xi6AAXoWzxFDL2OQfPp
+         XE2FnCXuNWtEkD/9MhuOc0BEN8hJQVcJSk0VoOav/PF4eEwSLVcoaxWJx6WMjSwDBfh7
+         biWGjzQFxbwgYH1YlpeSbMZ510lZq8uTMreaXWXUfG/QwipOfChGjk4lc3CX929NjZ8Y
+         JJ7yLtWJb94bl2oW/deQvXy+zQbzP2C/lULG6lAE3iD9OUOyeqZ6EC1iegdxOTKyl0xh
+         qpbnFODvHEN0BVVdDv3/cBdVL64i/V26f+QaUYHB9aVHPaC2TAo0B9kqXR0nNkOK8MaU
+         76+A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:date:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=xnACTF0mg7+AZUrTeSaTlJDBtgVeUJkDSPQmQ/i+6ts=;
-        b=hX9JEHf9YBVsERymKnNn7rpVRYmBAHkTfjzTgMTLUBr+xkPC2I99zA5+T128mJjDxl
-         tOV23XR0Sqd1IaBrwGF8Og3LeTK3oW9hOUM/TzamYxA0fVZb9coI+T3tseIYPBcIZW1F
-         C1Lrum7/kIfdHa/F4NRRa4VhAPoulQXxs33pDVfLSe8jPyr8yQLrlIRTLLJvti7AtHJ+
-         nMQQqwEDMMaZ1WReStLFPBcEEMdd1QIMp5UZon8FwJx7q+p7zjiIWcROnhzc9EZmiyLg
-         290k3H1+18D7bj/VFZ87jnaZfAAV2P0/gkt9t5II/ZwkiA7dPlU68kblXZ/XhmJnrSb4
-         uugg==
-X-Gm-Message-State: APjAAAUdjGdE0riccxyFYInpSb4fFO1Jruq7Djcf68NUgm/uH2Tm1U5w
-        GAH24quA/STh0307PR5KJ6LCNvFW
-X-Google-Smtp-Source: APXvYqz/HAjAcQJe9Hr3dWO2NAAL0kqeQeIDh5Z/y3bKVL6BhkgLf6hyzpgOLs3MaZoWPYxW6UrVmA==
-X-Received: by 2002:a63:774f:: with SMTP id s76mr30994951pgc.187.1580316656667;
-        Wed, 29 Jan 2020 08:50:56 -0800 (PST)
-Received: from localhost (167.117.30.125.dy.iij4u.or.jp. [125.30.117.167])
-        by smtp.gmail.com with ESMTPSA id d4sm3305600pjg.19.2020.01.29.08.50.55
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=eD+vRWY6gNxHaAV067ybERz640J/iRSAZ6Igbxb8aJA=;
+        b=gjSU4e1TDS3uyzT4XXriKQyj5JVlSpOzT5xhMKfvwMOto0nSN1HHDK+2aLI978aVGO
+         +S9pAskH24xdGe2tO3mpu/BRXbJ4XR0sHeeKQSGQWIU4nS0XCG4aUSZGhekrefO7sHIq
+         HjKHCA+ae8c9KELsuFAyPsI5k18Qek6WHX/XTU02OFyanHtDYgQcYbDiBSbPv8+MslYv
+         R1fQtYK4oxPJ9VvYRy0v/WTa3Q3ZKpu03llULj36kWi2jLxRBpGsx6L56klrYBtrafVc
+         5GPGHyyTtuYU731RSlRbFUp5sYgdKWFwDhE6lR7yVy0VwQny9TWpybmEK6LeDKcO40zW
+         hJLQ==
+X-Gm-Message-State: APjAAAXMF62vBmdQBuX6OVK8SBL5wdQan0cRMGkcdVKw+iqwWvYzWkDq
+        yMs/dotoQ/yyhoeOpjQKhKc=
+X-Google-Smtp-Source: APXvYqxs/Jl7PMhYtjwLBwzCSSLuYsfivJj3Uv7KEyLY8Gtm/XNRdAwennWZZ0/+2Dr0Yhxg6rPsYg==
+X-Received: by 2002:a65:66c4:: with SMTP id c4mr32175251pgw.429.1580317134361;
+        Wed, 29 Jan 2020 08:58:54 -0800 (PST)
+Received: from localhost.localdomain ([2405:205:c92f:3ccd:49ce:a9e3:28b5:cf94])
+        by smtp.gmail.com with ESMTPSA id f8sm3223610pfn.2.2020.01.29.08.58.48
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 29 Jan 2020 08:50:55 -0800 (PST)
-From:   Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
-X-Google-Original-From: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
-Date:   Thu, 30 Jan 2020 01:50:53 +0900
-To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc:     Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
-        Petr Mladek <pmladek@suse.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        linux-kernel@vger.kernel.org,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
-Subject: Re: [PATCH v3 5/5] console: Introduce ->exit() callback
-Message-ID: <20200129165053.GA392@jagdpanzerIV.localdomain>
-References: <20200127114719.69114-1-andriy.shevchenko@linux.intel.com>
- <20200127114719.69114-5-andriy.shevchenko@linux.intel.com>
- <20200128051711.GB115889@google.com>
- <20200128094418.GY32742@smile.fi.intel.com>
- <20200129134141.GA537@jagdpanzerIV.localdomain>
- <20200129142558.GF32742@smile.fi.intel.com>
- <20200129151243.GA488@jagdpanzerIV.localdomain>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200129151243.GA488@jagdpanzerIV.localdomain>
+        Wed, 29 Jan 2020 08:58:53 -0800 (PST)
+From:   Pragat Pandya <pragat.pandya@gmail.com>
+To:     gregkh@linuxfoundation.org, valdis.kletnieks@vt.edu
+Cc:     devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
+        skhan@linuxfoundation.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel-mentees@lists.linuxfoundation.org,
+        Pragat Pandya <pragat.pandya@gmail.com>
+Subject: [PATCH 00/19] Renaming some identifiers
+Date:   Wed, 29 Jan 2020 22:28:13 +0530
+Message-Id: <20200129165832.10574-1-pragat.pandya@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On (20/01/30 00:12), Sergey Senozhatsky wrote:
-> On (20/01/29 16:25), Andy Shevchenko wrote:
-> > I understand. Seems the ->setup() has to be idempotent. We can tell the same
-> > for ->exit() in some comment.
-> > 
-> > Can you describe, btw, struct console in kernel doc format?
-> > It will be very helpful!
-> 
-> We probably need some documentation.
-> 
-> > > > In both cases we will get the console to have CON_ENABLED flag set.
-> > > 
-> > > And there are sneaky consoles that have CON_ENABLED before we even
-> > > register them.
-> > 
-> > So, taking into consideration my comment to the previous patch, what would be
-> > suggested guard here?
-> > 
-> > For a starter something like this?
-> > 
-> >   if ((console->flags & CON_ENABLED) && console->exit)
-> > 	console->exit(console);
-> 
-> This will work if we also add something like this
+This patchset renames following nineteen variables in exfat.h
+Fix checkpatch warning: Avoid CamelCase
+ -Year->year
+ -Day->day
+ -Hour->hour
+ -Minute->minute
+ -Second->second
+ -Millisecond->millisecond
+ -FatType->fat_type
+ -ClusterSize->cluster_size
+ -NumClusters->num_clusters
+ -FreeClusters->free_clusters
+ -UsedClusters->used_clusters
+ -Name->name
+ -ShortName->short_name
+ -Attr->attr
+ -NumSubdirs->num_subdirs
+ -CreateTimestamp->create_timestamp
+ -ModifyTimestamp->modify_timestamp
+ -AccessTimestamp->access_timestamp
 
-No, wait... This will not work, console can be suspended, yet
-still registered. I think the only criteria is "the console is
-on the list".
+v2:
+ -Correct misplaced quatation character in subject line(s).
+ -Remove unnecessary '_'(underscore) character in renaming of identifier
+  MilliSecond.
+ -Drop commits renaming unused struct members.
+ 
 
-	-ss
+Pragat Pandya (19):
+  staging: exfat: Rename variable 'Year' to 'year'
+  staging: exfat: Rename variable 'Month' to 'month'
+  staging: exfat: Rename variable 'Day' to 'day'
+  staging: exfat: Rename variable 'Hour' to 'hour'
+  staging: exfat: Rename variable 'Minute' to 'minute'
+  staging: exfat: Rename variable 'Second' to 'second'
+  staging: exfat: Rename variable 'MilliSecond' to 'millisecond'
+  staging: exfat: Rename variable 'FatType' to 'fat_type'
+  staging: exfat: Rename variable 'ClusterSize' to 'cluster_size'
+  staging: exfat: Rename variable 'NumClusters' to 'num_cluster'
+  staging: exfat: Rename variable 'FreeClusters' to 'free_clusters'
+  staging: exfat: Rename variable 'UsedClusters' to 'used_clusters'
+  staging: exfat: Rename variable 'Name' to 'name'
+  staging: exfat: Rename variable 'ShortName' to 'short_name'
+  staging: exfat: Rename variable 'Attr' to 'attr'
+  staging: exfat: Rename variable 'NumSubdirs' to 'num_subdirs'
+  staging: exfat: Rename variable 'CreateTimestamp' to
+    'create_timestamp'
+  staging: exfat: Rename variable 'ModifyTimestamp' to
+    'modify_timestamp'
+  staging: exfat: Rename variable 'AccessTimestamp' to
+    'access_timestamp'
+
+ drivers/staging/exfat/exfat.h       |  38 ++---
+ drivers/staging/exfat/exfat_super.c | 232 ++++++++++++++--------------
+ 2 files changed, 135 insertions(+), 135 deletions(-)
+
+-- 
+2.17.1
 
