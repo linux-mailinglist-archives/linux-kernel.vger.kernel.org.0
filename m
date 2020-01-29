@@ -2,120 +2,124 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2FA2D14CE7E
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Jan 2020 17:38:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8FD9114CE8F
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Jan 2020 17:40:27 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727067AbgA2Qik (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 29 Jan 2020 11:38:40 -0500
-Received: from gloria.sntech.de ([185.11.138.130]:44702 "EHLO gloria.sntech.de"
+        id S1727103AbgA2QkX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 29 Jan 2020 11:40:23 -0500
+Received: from foss.arm.com ([217.140.110.172]:43474 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726671AbgA2Qik (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 Jan 2020 11:38:40 -0500
-Received: from p508fd499.dip0.t-ipconnect.de ([80.143.212.153] helo=phil.sntech)
-        by gloria.sntech.de with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.89)
-        (envelope-from <heiko@sntech.de>)
-        id 1iwqMO-0006rE-SM; Wed, 29 Jan 2020 17:38:36 +0100
-From:   Heiko Stuebner <heiko@sntech.de>
-To:     linux-clk@vger.kernel.org
-Cc:     linux-arm-kernel@lists.infradead.org,
-        linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
-        mturquette@baylibre.com, sboyd@kernel.org, heiko@sntech.de,
-        christoph.muellner@theobroma-systems.com, zhangqing@rock-chips.com,
-        robin.murphy@arm.com,
-        Heiko Stuebner <heiko.stuebner@theobroma-systems.com>
-Subject: [PATCH v3 3/3] clk: rockchip: convert rk3036 pll type to use internal lock status
-Date:   Wed, 29 Jan 2020 17:38:21 +0100
-Message-Id: <20200129163821.1547295-3-heiko@sntech.de>
-X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20200129163821.1547295-1-heiko@sntech.de>
-References: <20200129163821.1547295-1-heiko@sntech.de>
+        id S1726645AbgA2QkW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 Jan 2020 11:40:22 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id B84B2328;
+        Wed, 29 Jan 2020 08:40:21 -0800 (PST)
+Received: from bogus (e103737-lin.cambridge.arm.com [10.1.197.49])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id B87F43F52E;
+        Wed, 29 Jan 2020 08:40:20 -0800 (PST)
+Date:   Wed, 29 Jan 2020 16:40:18 +0000
+From:   Sudeep Holla <sudeep.holla@arm.com>
+To:     Etienne Carriere <etienne.carriere@linaro.org>
+Cc:     Peng Fan <peng.fan@nxp.com>,
+        "f.fainelli@gmail.com" <f.fainelli@gmail.com>,
+        "andre.przywara@arm.com" <andre.przywara@arm.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        etienne carriere <etienne.carriere@st.com>,
+        Sudeep Holla <sudeep.holla@arm.com>
+Subject: Re: [PATCH v11 2/2] mailbox: introduce ARM SMC based mailbox
+Message-ID: <20200129164018.GE36496@bogus>
+References: <CAN5uoS_YyPXiqZnNfM32cxeAsK+xuPX9QRK94-DJ6oMQFrZPXQ@mail.gmail.com>
+ <CAN5uoS-9yUfAT4=a9ys4d_2wxh9nW_RgXd_-3T-zF2r-k-PtOw@mail.gmail.com>
+ <AM0PR04MB448137850D19BADD11F75B18880B0@AM0PR04MB4481.eurprd04.prod.outlook.com>
+ <CAN5uoS-cHxrFD-H245iHMU_zzk6wAL=YJvKFAY6rr2EMgd0L3w@mail.gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAN5uoS-cHxrFD-H245iHMU_zzk6wAL=YJvKFAY6rr2EMgd0L3w@mail.gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Heiko Stuebner <heiko.stuebner@theobroma-systems.com>
+On Wed, Jan 29, 2020 at 04:01:07PM +0100, Etienne Carriere wrote:
+> Hello Peng,
+>
+> On Mon, 27 Jan 2020 at 13:58, Peng Fan <peng.fan@nxp.com> wrote:
+> >
+> > > Subject: Re: [PATCH v11 2/2] mailbox: introduce ARM SMC based mailbox
+> > >
+> > > Hello Peng and all,
+> > >
+> > >
+> > > > From: Peng Fan <peng.fan@nxp.com>
+> > > >
+> > > > This mailbox driver implements a mailbox which signals transmitted
+> > > > data via an ARM smc (secure monitor call) instruction. The mailbox
+> > > > receiver is implemented in firmware and can synchronously return data
+> > > > when it returns execution to the non-secure world again.
+> > > > An asynchronous receive path is not implemented.
+> > > > This allows the usage of a mailbox to trigger firmware actions on SoCs
+> > > > which either don't have a separate management processor or on which
+> > > > such a core is not available. A user of this mailbox could be the SCP
+> > > > interface.
+> > > >
+> > > > Modified from Andre Przywara's v2 patch
+> > > > https://eur01.safelinks.protection.outlook.com/?url=https%3A%2F%2Flore
+> > > > .kernel.org%2Fpatchwork%2Fpatch%2F812999%2F&amp;data=02%7C01%7
+> > > Cpeng.fa
+> > > >
+> > > n%40nxp.com%7C735cc6cd00404082bf8c08d79f67b93a%7C686ea1d3bc2b4
+> > > c6fa92cd
+> > > >
+> > > 99c5c301635%7C0%7C0%7C637153140140878278&amp;sdata=m0lcAEIr0ZP
+> > > tyPHorSW
+> > > > NYgjfI5p0genJLlhqHMIHBg0%3D&amp;reserved=0
+> > > >
+> > > > Reviewed-by: Florian Fainelli <f.fainelli@gmail.com>
+> > > > Reviewed-by: Andre Przywara <andre.przywara@arm.com>
+> > > > Signed-off-by: Peng Fan <peng.fan@nxp.com>
+> > >
+> > > I've successfully tested your change on my board. It is a stm32mp1 with TZ
+> > > secure hardening and I run an OP-TEE firmware (possibly a TF-A
+> > > sp_min) with a SCMI server for clock and reset. Upstream in progress.
+> > > The platform uses 2 instances of your SMC based mailbox device driver
+> > > (2 mailboxes). Works nice with your change.
+> > >
+> > > You can add my T-b tag: Tested-by: Etienne Carriere
+> > > <etienne.carriere@linaro.org>
+> >
+> > Thanks, but this patch has been dropped.
+> >
+> > Per Sudeep, we all use smc transport, not smc mailbox ,
+> > I'll post patch in a few days based on the transport split patch.
+>
+> Ok, i am syncing.
+>
+> > >
+> > > FYI, I'll (hopefully soon) post a change proposal in U-Boot ML for an equvalent
+> > > 'SMC based mailbox' driver and SCMI agent protocol/device drivers for clock
+> > > and reset controllers.
+> >
+> > Great to know you did scmi agent code in U-Boot. Do you have some public repo
+> > for access?
+>
+> I've created a P-R on my github repo to share until I submit to u-boot:
+>  https://github.com/etienne-lms/u-boot/pull/3
+>
+> I guess I will change my u-boot proposal and get a SMC SCMI transport
+> outside of the mailbox framework.
+>
 
-The rk3036 pll type exposes its lock status in both its pllcon registers
-as well as the General Register Files. To remove one dependency convert
-it to the "internal" lock status, similar to how rk3399 handles it.
+Unless U-boot has mailbox framework or you are importing it, it's better
+to keep U-boot implementation simple as SMC transport which I think you
+already do. I had a look at the implementation[1], it shouldn't change
+much other than if you prefer not to use "mailbox" terminology. I don't
+understand the reason for even using the mailbox term there in the first
+place.
 
-Signed-off-by: Heiko Stuebner <heiko.stuebner@theobroma-systems.com>
----
-changes in v3:
-- switch to readl_relaxed_poll_timeout
-changes in v2:
-- use readl_poll_timeout instead of opencoding
+--
+Regards,
+Sudeep
 
- drivers/clk/rockchip/clk-pll.c | 26 +++++++++++++++++++++++---
- 1 file changed, 23 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/clk/rockchip/clk-pll.c b/drivers/clk/rockchip/clk-pll.c
-index c7c3848d68e8..eccd9d49ee59 100644
---- a/drivers/clk/rockchip/clk-pll.c
-+++ b/drivers/clk/rockchip/clk-pll.c
-@@ -12,6 +12,7 @@
- #include <linux/io.h>
- #include <linux/delay.h>
- #include <linux/clk-provider.h>
-+#include <linux/iopoll.h>
- #include <linux/regmap.h>
- #include <linux/clk.h>
- #include "clk.h"
-@@ -109,12 +110,31 @@ static int rockchip_pll_wait_lock(struct rockchip_clk_pll *pll)
- #define RK3036_PLLCON1_REFDIV_SHIFT		0
- #define RK3036_PLLCON1_POSTDIV2_MASK		0x7
- #define RK3036_PLLCON1_POSTDIV2_SHIFT		6
-+#define RK3036_PLLCON1_LOCK_STATUS		BIT(10)
- #define RK3036_PLLCON1_DSMPD_MASK		0x1
- #define RK3036_PLLCON1_DSMPD_SHIFT		12
-+#define RK3036_PLLCON1_PWRDOWN			BIT(13)
- #define RK3036_PLLCON2_FRAC_MASK		0xffffff
- #define RK3036_PLLCON2_FRAC_SHIFT		0
- 
--#define RK3036_PLLCON1_PWRDOWN			(1 << 13)
-+static int rockchip_rk3036_pll_wait_lock(struct rockchip_clk_pll *pll)
-+{
-+	u32 pllcon;
-+	int ret;
-+
-+	/*
-+	 * Lock time typical 250, max 500 input clock cycles @24MHz
-+	 * So define a very safe maximum of 1000us, meaning 24000 cycles.
-+	 */
-+	ret = readl_relaxed_poll_timeout(pll->reg_base + RK3036_PLLCON(1),
-+					 pllcon,
-+					 pllcon & RK3036_PLLCON1_LOCK_STATUS,
-+					 0, 1000);
-+	if (ret)
-+		pr_err("%s: timeout waiting for pll to lock\n", __func__);
-+
-+	return ret;
-+}
- 
- static void rockchip_rk3036_pll_get_params(struct rockchip_clk_pll *pll,
- 					struct rockchip_pll_rate_table *rate)
-@@ -212,7 +232,7 @@ static int rockchip_rk3036_pll_set_params(struct rockchip_clk_pll *pll,
- 	writel_relaxed(pllcon, pll->reg_base + RK3036_PLLCON(2));
- 
- 	/* wait for the pll to lock */
--	ret = rockchip_pll_wait_lock(pll);
-+	ret = rockchip_rk3036_pll_wait_lock(pll);
- 	if (ret) {
- 		pr_warn("%s: pll update unsuccessful, trying to restore old params\n",
- 			__func__);
-@@ -251,7 +271,7 @@ static int rockchip_rk3036_pll_enable(struct clk_hw *hw)
- 
- 	writel(HIWORD_UPDATE(0, RK3036_PLLCON1_PWRDOWN, 0),
- 	       pll->reg_base + RK3036_PLLCON(1));
--	rockchip_pll_wait_lock(pll);
-+	rockchip_rk3036_pll_wait_lock(pll);
- 
- 	return 0;
- }
--- 
-2.24.1
-
+[1] https://github.com/etienne-lms/u-boot/pull/3/commits/34812c9175436f6a082f77347c5384393757c233
