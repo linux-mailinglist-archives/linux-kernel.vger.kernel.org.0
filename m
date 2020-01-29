@@ -2,95 +2,93 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CB74A14CC9E
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Jan 2020 15:39:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1A6AE14CC99
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Jan 2020 15:38:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726952AbgA2Oij (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 29 Jan 2020 09:38:39 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33630 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726865AbgA2Oib (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 Jan 2020 09:38:31 -0500
-Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2976524683;
-        Wed, 29 Jan 2020 14:38:31 +0000 (UTC)
-Received: from rostedt by gandalf.local.home with local (Exim 4.93)
-        (envelope-from <rostedt@goodmis.org>)
-        id 1iwoUA-0019mX-2g; Wed, 29 Jan 2020 09:38:30 -0500
-Message-Id: <20200129143829.959687381@goodmis.org>
-User-Agent: quilt/0.65
-Date:   Wed, 29 Jan 2020 09:38:07 -0500
-From:   Steven Rostedt <rostedt@goodmis.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Ingo Molnar <mingo@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Tom Zanussi <zanussi@kernel.org>
-Subject: [for-next][PATCH 5/5] tracing: Add new testcases for hist trigger parsing errors
-References: <20200129143802.971887038@goodmis.org>
+        id S1726823AbgA2Oi0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 29 Jan 2020 09:38:26 -0500
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:44957 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726184AbgA2OiY (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 Jan 2020 09:38:24 -0500
+Received: by mail-lj1-f194.google.com with SMTP id q8so18665360ljj.11;
+        Wed, 29 Jan 2020 06:38:22 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=x9cas/+X1zyUKvZrT+ywQG9cQsvEI2jODuyH9GxwbZ4=;
+        b=lZVdw08CSa/FCqccdPfm83wSXIKemZJusaCVbpfc0SzvXEu6kp8tSYtr2QpidS5Nu0
+         EKdgNOlgqnoiTsPb4oiFwa2juxxAZR0s3fqYfOPNmtxTsZV2glwBcaEtUokTUI8YwFQ9
+         Xf25oFPCWI4vJ+lFzPdKw5SFcUBsspczaMyZTqPGn/WXbO2bqutA80e3eY2ofdE9UcEg
+         TzxeSehx91bDZMPwiWHrjzOoxPwqZDsOZHUk2ARfeTz8xh9rPBGuMYQecrj5a5EfF/31
+         WcGbXT492A4+WFkmUsUg2hvwUQooMDgMo4x/GL1NhJeU3lVjuM+ImSeZO31BDIm/vsya
+         ObGA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=x9cas/+X1zyUKvZrT+ywQG9cQsvEI2jODuyH9GxwbZ4=;
+        b=EWQy3O6h5GgdBiAx0YOvOhVHNU+r/MqlGkuwOMvfvfX9V/wR6Y1lDYPGs92YHUrRuP
+         Lk+COrhvZklEnQbUJEy41f++qrnAssw9eC658pJhPYzr7ioKKQmnXQnIRA5plYq2ABKf
+         4NH1ImRa56XsjPOQmDTS+kVtGstymF8OrUfP67f55SiLIGeExpeFN0FnUCC8koZk06mp
+         nTG31/4TFNczoyu3HF+rmxUS7XUtbIdrs304a6BZ/lFRU8uDM0h8/ajqXO/myVdxk1FX
+         tmZ/yGW/BAVMAq+7mEA1GQTuMTZbGDpiYxrvGLHdvwgxaGTnTGgPzcP8MTYHQtCYfLdG
+         id6A==
+X-Gm-Message-State: APjAAAUSZfvBkWXFaHOj3xGUKnX3IeMRN5GpYSsDVhc9oZhMDxhra3UH
+        bVOX1oRfvmSrCwT70Z8ERQejN8Xi
+X-Google-Smtp-Source: APXvYqz9jEDhSAUeU3Qrzbt8F84n3Y5kQKwkmX9toAPTv/ttf0K+IPzfxPVGwKu96wXuX6Z3tlV3Yw==
+X-Received: by 2002:a2e:88d6:: with SMTP id a22mr15515824ljk.163.1580308701573;
+        Wed, 29 Jan 2020 06:38:21 -0800 (PST)
+Received: from [192.168.2.145] (79-139-233-37.dynamic.spd-mgts.ru. [79.139.233.37])
+        by smtp.googlemail.com with ESMTPSA id n11sm1072323ljg.15.2020.01.29.06.38.20
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 29 Jan 2020 06:38:20 -0800 (PST)
+Subject: Re: [PATCH v5 01/14] dmaengine: tegra-apb: Fix use-after-free
+To:     Jon Hunter <jonathanh@nvidia.com>,
+        Laxman Dewangan <ldewangan@nvidia.com>,
+        Vinod Koul <vkoul@kernel.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>
+Cc:     dmaengine@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20200123230325.3037-1-digetx@gmail.com>
+ <20200123230325.3037-2-digetx@gmail.com>
+ <858021de-62fd-2d21-7152-42af4e3a04b2@nvidia.com>
+From:   Dmitry Osipenko <digetx@gmail.com>
+Message-ID: <362d18b9-e928-bcdd-9183-88e2d487ba22@gmail.com>
+Date:   Wed, 29 Jan 2020 17:38:20 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.3.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-15
+In-Reply-To: <858021de-62fd-2d21-7152-42af4e3a04b2@nvidia.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Tom Zanussi <zanussi@kernel.org>
+29.01.2020 13:56, Jon Hunter пишет:
+> On 23/01/2020 23:03, Dmitry Osipenko wrote:
+[snip]
 
-Add a testcase ensuring that the tracing error_log correctly displays
-hist trigger parsing errors.
+>> Cc: <stable@vger.kernel.org>
 
-Link: http://lkml.kernel.org/r/62ec58d9aca661cde46ba678e32a938427945e9e.1561743018.git.zanussi@kernel.org
+^^^
 
-Reviewed-by: Masami Hiramatsu <mhiramat@kernel.org>
-Signed-off-by: Tom Zanussi <zanussi@kernel.org>
-Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
----
- .../trigger/trigger-hist-syntax-errors.tc     | 32 +++++++++++++++++++
- 1 file changed, 32 insertions(+)
- create mode 100644 tools/testing/selftests/ftrace/test.d/trigger/trigger-hist-syntax-errors.tc
+>> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+>> ---
+[snip]
 
-diff --git a/tools/testing/selftests/ftrace/test.d/trigger/trigger-hist-syntax-errors.tc b/tools/testing/selftests/ftrace/test.d/trigger/trigger-hist-syntax-errors.tc
-new file mode 100644
-index 000000000000..d44087a2f3d1
---- /dev/null
-+++ b/tools/testing/selftests/ftrace/test.d/trigger/trigger-hist-syntax-errors.tc
-@@ -0,0 +1,32 @@
-+#!/bin/sh
-+# SPDX-License-Identifier: GPL-2.0
-+# description: event trigger - test histogram parser errors
-+
-+if [ ! -f set_event -o ! -d events/kmem ]; then
-+    echo "event tracing is not supported"
-+    exit_unsupported
-+fi
-+
-+if [ ! -f events/kmem/kmalloc/trigger ]; then
-+    echo "event trigger is not supported"
-+    exit_unsupported
-+fi
-+
-+if [ ! -f events/kmem/kmalloc/hist ]; then
-+    echo "hist trigger is not supported"
-+    exit_unsupported
-+fi
-+
-+[ -f error_log ] || exit_unsupported
-+
-+check_error() { # command-with-error-pos-by-^
-+    ftrace_errlog_check 'hist:kmem:kmalloc' "$1" 'events/kmem/kmalloc/trigger'
-+}
-+
-+check_error 'hist:keys=common_pid:vals=bytes_req:sort=common_pid,^junk'	# INVALID_SORT_FIELD
-+check_error 'hist:keys=common_pid:vals=bytes_req:^sort='		# EMPTY_ASSIGNMENT
-+check_error 'hist:keys=common_pid:vals=bytes_req:^sort=common_pid,'	# EMPTY_SORT_FIELD
-+check_error 'hist:keys=common_pid:vals=bytes_req:sort=common_pid.^junk'	# INVALID_SORT_MODIFIER
-+check_error 'hist:keys=common_pid:vals=bytes_req,bytes_alloc:^sort=common_pid,bytes_req,bytes_alloc'	# TOO_MANY_SORT_FIELDS
-+
-+exit 0
--- 
-2.24.1
+> Acked-by: Jon Hunter <jonathanh@nvidia.com>
 
+Thanks!
 
+> I think that we should mark this one for stable.
+
+This one is marked already ;)
