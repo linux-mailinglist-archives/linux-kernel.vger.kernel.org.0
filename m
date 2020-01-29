@@ -2,94 +2,70 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 64C4314C65C
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Jan 2020 07:08:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D6C5314C668
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Jan 2020 07:17:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726047AbgA2GIa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 29 Jan 2020 01:08:30 -0500
-Received: from mail-qt1-f195.google.com ([209.85.160.195]:33588 "EHLO
-        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725816AbgA2GIa (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 Jan 2020 01:08:30 -0500
-Received: by mail-qt1-f195.google.com with SMTP id d5so12424748qto.0;
-        Tue, 28 Jan 2020 22:08:29 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=XSsdezcj4dG+mQwXOhVLjFrU3arbmVdqxIXjBy6aTQk=;
-        b=unu9sTAC770niJyIOKL2Eilh2pMycRYRTt29Z8AeiVOpg0EMXWODFBJcSKLLYFOF/0
-         YJ/U79FE5M3LFEGI3mY9+cGUdtDqE1Vh7wjGScAOxX3xfa3e/WzhYlirvoOtQPUb7aAk
-         B2yNT82RSsVMZromy1NexPvwh9f8FktI8/E91U+L8SvObcKA74NK7Pxuw5xpxOKST4Ac
-         OaYptmFD9JKQFC8aGMy0X6+Ey3nyrmAWg613vZE85rr/9idXtkSYQCQM3KG0TW+4Vnri
-         NM1Xc6lqlQhhFP2iA1a/ez7/IziOEysUwdfwRVdbkjuGynqtuMqNKXwu6KhYDFdZlosZ
-         ZnOQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=XSsdezcj4dG+mQwXOhVLjFrU3arbmVdqxIXjBy6aTQk=;
-        b=LaaIoVI3p+wJhKsYc34LS+71TswQ6PUL61rslsJ8j/QYQcdae2vaJZhrNY8bznR5pQ
-         P33gJcwwvJlqQm3xPC5GZXi/V21QKZCxDkOTc6rFYJ6/K0UIdV7yw3lqIhH/tH3KU1Hs
-         myG7VAMfdGj2U/MW8bK8io2fKhQ5eRk492UBOjDLsNMrZLHaFY5hhT93DUit1QVo4zTn
-         Px2/g6JuhZ1pmM7yoLfvD1+8/U/OjwlG0VdwxRuiVlXgD69hnnVOBLWf4/7AT8ghXDO6
-         ZzzZKElNTXFXvxT2t3TJRUXe/edcz3rQTnY5DlwlsW2iKX9gHvzBkEO/j4WPqa4e6OqL
-         f6Lw==
-X-Gm-Message-State: APjAAAUIW6gjpk5oO9qI9o0/Pue/Gkdc0TDJWds6hv3G37eBxZp2RunS
-        J2HIJwELORY+2/HEG9qithQ/aFl/6mUW+8KhHOs=
-X-Google-Smtp-Source: APXvYqxvSSiUSFJBwX3yjsjDIoIuBmp6Zq/TSfyo5m+te6q/fjs3XaiYsEgMqBYfabWxsKuUjEZStjhJLT4WuIFxdhU=
-X-Received: by 2002:ac8:70d5:: with SMTP id g21mr12306205qtp.46.1580278109295;
- Tue, 28 Jan 2020 22:08:29 -0800 (PST)
+        id S1726116AbgA2GRc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 29 Jan 2020 01:17:32 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41128 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726020AbgA2GRb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 Jan 2020 01:17:31 -0500
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8CF21206A2;
+        Wed, 29 Jan 2020 06:17:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1580278651;
+        bh=yWzTGoVZiwZ0LjtV7+6Rwyv3oTv1Ts0ntr+VJTvUIjc=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=AwCM2mmPcx7NBaU55spqHjtnUoyusb+e2IfMIFtfXfz7YsHgNuFCY4JLg85WsVUAw
+         OuVIMjf+CNgnBAF1+6aovMmWGTieOZ3VAr75Kv5JxiuquercbPX+8/odzgHrJzSIPP
+         wNZyQI5nxhKBSStnllomy4SRUU4Ti527BgBS7FmM=
+Date:   Wed, 29 Jan 2020 07:17:28 +0100
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     shuah <shuah@kernel.org>
+Cc:     linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+        akpm@linux-foundation.org, linux@roeck-us.net,
+        patches@kernelci.org, ben.hutchings@codethink.co.uk,
+        lkft-triage@lists.linaro.org, stable@vger.kernel.org
+Subject: Re: [PATCH 5.4 000/104] 5.4.16-stable review
+Message-ID: <20200129061728.GA3768602@kroah.com>
+References: <20200128135817.238524998@linuxfoundation.org>
+ <13867bdc-88b4-5c0c-aa63-de003c44a44f@kernel.org>
 MIME-Version: 1.0
-References: <20200126194513.6359-1-martyn@welchs.me.uk> <CAEc3jaDjVZF_Z7Guj1YUo5J5C_-GEOYTH=LKARKccCwQAwuZnQ@mail.gmail.com>
- <nycvar.YFH.7.76.2001281109030.31058@cbobk.fhfr.pm>
-In-Reply-To: <nycvar.YFH.7.76.2001281109030.31058@cbobk.fhfr.pm>
-From:   Roderick Colenbrander <thunderbird2k@gmail.com>
-Date:   Tue, 28 Jan 2020 22:08:18 -0800
-Message-ID: <CAEc3jaDpHzxOVNLoAtVLRV_5b2kkSgGBepe1y4P6Rdjgd_rkOw@mail.gmail.com>
-Subject: Re: [PATCH] HID: Sony: Add support for Gasia controllers
-To:     Jiri Kosina <jikos@kernel.org>
-Cc:     Martyn Welch <martyn@welchs.me.uk>,
-        Benjamin Tissoires <benjamin.tissoires@redhat.com>,
-        linux-input <linux-input@vger.kernel.org>,
-        lkml <linux-kernel@vger.kernel.org>,
-        "Conn O'Griofa" <connogriofa@gmail.com>,
-        "Colenbrander, Roelof" <roderick.colenbrander@sony.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <13867bdc-88b4-5c0c-aa63-de003c44a44f@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jan 28, 2020 at 2:11 AM Jiri Kosina <jikos@kernel.org> wrote:
->
-> On Mon, 27 Jan 2020, Roderick Colenbrander wrote:
->
-> > Thanks for sharing your patch. Though I must say with my Sony hat on, I
-> > don't really like supporting clone devices (they hijack our device ids..
-> > etcetera) and we support hid-sony in an official capacity now across
-> > various devices.
->
-> Drifting away from this particular patch a little bit -- given this
-> official support from Sony, would you be fine with putting this into
-> writing, and adding yourself to MAINTAINERS file?
+On Tue, Jan 28, 2020 at 04:00:50PM -0700, shuah wrote:
+> On 1/28/20 6:59 AM, Greg Kroah-Hartman wrote:
+> > This is the start of the stable review cycle for the 5.4.16 release.
+> > There are 104 patches in this series, all will be posted as a response
+> > to this one.  If anyone has any issues with these being applied, please
+> > let me know.
+> > 
+> > Responses should be made by Thu, 30 Jan 2020 13:57:09 +0000.
+> > Anything received after that time might be too late.
+> > 
+> > The whole patch series can be found in one patch at:
+> > 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.4.16-rc1.gz
+> > or in the git tree and branch at:
+> > 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.4.y
+> > and the diffstat can be found below.
+> > 
+> > thanks,
+> > 
+> > greg k-h
+> > 
+> 
+> Compiled and booted on my test system. No dmesg regressions.
 
-Of course that's no problem. Over time I need to figure out how will
-maintain aspects of the driver though. I belong to the game console
-division, some other devices currently supported by the driver (e.g.
-TV remotes, Vaio laptops) are other divisions, so that's a challenge
-as we don't know anything about those devices and don't have
-datasheets or anything. Maybe we will slice the driver in some way or
-something.
+Great, thanks for testing all of these and letting me know.
 
-Thanks,
-Roderick
-
-
-> Thanks,
->
-> --
-> Jiri Kosina
-> SUSE Labs
->
+greg k-h
