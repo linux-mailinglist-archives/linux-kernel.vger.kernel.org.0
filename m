@@ -2,112 +2,150 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D95E114CC26
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Jan 2020 15:14:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A126E14CC2B
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Jan 2020 15:15:43 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726560AbgA2OOq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 29 Jan 2020 09:14:46 -0500
-Received: from mga11.intel.com ([192.55.52.93]:17780 "EHLO mga11.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726177AbgA2OOq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 Jan 2020 09:14:46 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 29 Jan 2020 06:14:45 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.70,378,1574150400"; 
-   d="scan'208";a="223844287"
-Received: from smile.fi.intel.com (HELO smile) ([10.237.68.40])
-  by fmsmga008.fm.intel.com with ESMTP; 29 Jan 2020 06:14:43 -0800
-Received: from andy by smile with local (Exim 4.93)
-        (envelope-from <andriy.shevchenko@linux.intel.com>)
-        id 1iwo7A-0002xX-Gd; Wed, 29 Jan 2020 16:14:44 +0200
-Date:   Wed, 29 Jan 2020 16:14:44 +0200
-From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To:     Hans de Goede <hdegoede@redhat.com>
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        vipul kumar <vipulk0511@gmail.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        linux-kernel@vger.kernel.org, Stable <stable@vger.kernel.org>,
-        Srikanth Krishnakar <Srikanth_Krishnakar@mentor.com>,
-        Cedric Hombourger <Cedric_Hombourger@mentor.com>,
-        x86@kernel.org, Len Brown <len.brown@intel.com>,
-        Vipul Kumar <vipul_kumar@mentor.com>
-Subject: Re: [v3] x86/tsc: Unset TSC_KNOWN_FREQ and TSC_RELIABLE flags on
- Intel Bay Trail SoC
-Message-ID: <20200129141444.GE32742@smile.fi.intel.com>
-References: <CADdC98TE4oNWZyEsqXzr+zJtfdTTOyeeuHqu1u04X_ktLHo-Hg@mail.gmail.com>
- <20200123144108.GU32742@smile.fi.intel.com>
- <df04f43d-8c6d-7602-cb50-535b85cf2aaa@redhat.com>
- <87iml11ccf.fsf@nanos.tec.linutronix.de>
- <c06260e3-bd19-bf3c-89f7-d36bdb9a5b20@redhat.com>
- <87ftg5131x.fsf@nanos.tec.linutronix.de>
- <30d49be8-67ad-6f32-37a8-0cdd26f0852e@redhat.com>
- <87sgjz434v.fsf@nanos.tec.linutronix.de>
- <20200129130350.GD32742@smile.fi.intel.com>
- <0d361322-87aa-af48-492c-e8c4983bb35b@redhat.com>
+        id S1726648AbgA2OPZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 29 Jan 2020 09:15:25 -0500
+Received: from mail-ot1-f67.google.com ([209.85.210.67]:42203 "EHLO
+        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726177AbgA2OPZ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 Jan 2020 09:15:25 -0500
+Received: by mail-ot1-f67.google.com with SMTP id 66so15628017otd.9
+        for <linux-kernel@vger.kernel.org>; Wed, 29 Jan 2020 06:15:23 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=gaK0UAbJtL0uxpjJEmYb9zSSzbq8Eo54UUTLP0zD1Ao=;
+        b=gFolVnVBt04bVd0dl76dVied0P9GBbsNVT7S2sVu2lTG9L713zC+RV2GMjdWUbTqlz
+         gqO7eoPLnCn0pIQFlY7S/XeXrbyuj4F96cWsgSxLf3yXTSJWn+abHFCkX5NC7prQv0p3
+         RyxkPsssvpXaKdjBDFIZ4XqyOa5u3mM+tRN1Q/zdMBFDyZC7FX82+iZWQK8eOgF/6d6p
+         sLo0bKPxljgKZdsKE2NBRKfCuB3smjELvJ/UheJ8SHGeBqkiLcHI0XBYDyE/SyhdE820
+         x2xM5grYaS0bPsIMeE/z+qtQ8GikqhRFRoIi187G6DqTAhpkfh+K5mBs0ZOK+N84QwNo
+         TOFA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=gaK0UAbJtL0uxpjJEmYb9zSSzbq8Eo54UUTLP0zD1Ao=;
+        b=TXBajMyoepdt2o9JZmPMqzSb5DqzrSzHOB6YquGZHuWvHXlQ4g4KpV+1SjDNEIKv4Z
+         7cP26QmEd4N7bdqrBSwgQbkKvMn7fOC6WzCT+xAKIyFIoqhwtvU4ZUUz2fMvfaVX3589
+         VfS3eNgK6NlELxDM0R//zVk0TTlh4n13NsR7MJSMJeF4Ga8q1QMhhfSQOuNxc3oOGpw1
+         F9vJ/nMMyzWXBXEXhrK0IQvlyjLEEx7QWW1fB2dODKojiRkamVUTA7Fx3mk+yI20cTrl
+         NZGtJLUw56OfRR/bHzaFnCPiMN7iqngVuunWQ0Mr2dMgUbIS3RWy2S2b7iSZt/eHSl/M
+         oQ5A==
+X-Gm-Message-State: APjAAAWlm51yjS6v5t3WNJvhud5xrRnyLO/Uoc2VmcW66SC5O1wCjQGl
+        1Nmc7HodwSg3z8Oo8hzviO/qyLCgNd++W/Q/gpUBxw==
+X-Google-Smtp-Source: APXvYqytFER0ez+KO+YLGNjnwB2XdBzkqyPzOp42lBOeEaY5qyOiE4r2GoLd8mXSXXbq7qL/jvrpfhLgYAXm4YfZYM4=
+X-Received: by 2002:a9d:4f11:: with SMTP id d17mr19556346otl.228.1580307323086;
+ Wed, 29 Jan 2020 06:15:23 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <0d361322-87aa-af48-492c-e8c4983bb35b@redhat.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20200128072740.21272-1-frextrite@gmail.com> <CAG48ez3ZcO+kVPJVG6XpCPyGUKF2o4UJ6AVdgZXGQ6XJJpcdmg@mail.gmail.com>
+ <20200128170426.GA10277@workstation-portable> <CAG48ez3bLC3dzXn7Ep0YmBENg7wp6TMrocGa6q2RLtYoOdUSxg@mail.gmail.com>
+ <20200129065738.GA17486@workstation-portable>
+In-Reply-To: <20200129065738.GA17486@workstation-portable>
+From:   Jann Horn <jannh@google.com>
+Date:   Wed, 29 Jan 2020 15:14:56 +0100
+Message-ID: <CAG48ez2Yc-J1gV4=sTMizySmeFkiZGU+j1NTnZaqyPPo1mYQ=Q@mail.gmail.com>
+Subject: Re: [PATCH] cred: Use RCU primitives to access RCU pointers
+To:     Amol Grover <frextrite@gmail.com>
+Cc:     David Howells <dhowells@redhat.com>,
+        Shakeel Butt <shakeelb@google.com>,
+        James Morris <jamorris@linux.microsoft.com>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Kees Cook <keescook@chromium.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        kernel list <linux-kernel@vger.kernel.org>,
+        linux-kernel-mentees@lists.linuxfoundation.org,
+        Joel Fernandes <joel@joelfernandes.org>,
+        Madhuparna Bhowmik <madhuparnabhowmik04@gmail.com>,
+        "Paul E . McKenney" <paulmck@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jan 29, 2020 at 02:21:40PM +0100, Hans de Goede wrote:
-> On 29-01-2020 14:03, Andy Shevchenko wrote:
-> > On Tue, Jan 28, 2020 at 11:39:28PM +0100, Thomas Gleixner wrote:
-> > > Hans de Goede <hdegoede@redhat.com> writes:
+On Wed, Jan 29, 2020 at 7:57 AM Amol Grover <frextrite@gmail.com> wrote:
+> On Tue, Jan 28, 2020 at 08:09:17PM +0100, Jann Horn wrote:
+> > On Tue, Jan 28, 2020 at 6:04 PM Amol Grover <frextrite@gmail.com> wrote:
+> > > On Tue, Jan 28, 2020 at 10:30:19AM +0100, Jann Horn wrote:
+> > > > On Tue, Jan 28, 2020 at 8:28 AM Amol Grover <frextrite@gmail.com> wrote:
+> > > > > task_struct.cred and task_struct.real_cred are annotated by __rcu,
+> > > >
+> > > > task_struct.cred doesn't actually have RCU semantics though, see
+> > > > commit d7852fbd0f0423937fa287a598bfde188bb68c22. For task_struct.cred,
+> > > > it would probably be more correct to remove the __rcu annotation?
+> > >
+> > > Hi Jann,
+> > >
+> > > I went through the commit you mentioned. If I understand it correctly,
+> > > ->cred was not being accessed concurrently (via RCU), hence, a non_rcu
+> > > flag was introduced, which determined if the clean-up should wait for
+> > > RCU grace-periods or not. And since, the changes were 'thread local'
+> > > there was no need to wait for an entire RCU GP to elapse.
+> >
+> > Yeah.
+> >
+> > > The commit too, as you said, mentions the removal of __rcu annotation.
+> > > However, simply removing the annotation won't work, as there are quite a
+> > > few instances where RCU primitives are used. Even get_current_cred()
+> > > uses RCU APIs to get a reference to ->cred.
+> >
+> > Luckily, there aren't too many places that directly access ->cred,
+> > since luckily there are helper functions like get_current_cred() that
+> > will do it for you. Grepping through the kernel, I see:
+[...]
+> > So actually, the number of places that already don't use RCU accessors
+> > is much higher than the number of places that use them.
+> >
+> > > So, currently, maybe we
+> > > should continue to use RCU APIs and leave the __rcu annotation in?
+> > > (Until someone who takes it on himself to remove __rcu annotation and
+> > > fix all the instances). Does that sound good? Or do you want me to
+> > > remove __rcu annotation and get the process started?
+> >
+> > I don't think it's a good idea to add more uses of RCU APIs for
+> > ->cred; you shouldn't "fix" warnings by making the code more wrong.
+> >
+> > If you want to fix this, I think it would be relatively easy to fix
+> > this properly - as far as I can tell, there are only seven places that
+> > you'll have to change, although you may have to split it up into three
+> > patches.
+>
+> Thank you for the detailed analysis. I'll try my best and send you a
+> patch.
 
-...
+While you can CC me on that, I'm not a kernel maintainer; you should
+send patches to the people who maintain the areas of kernel code that
+you're modifying. (kernel/cred.c has no specific maintainer; for that
+file, I'd probably try sending patches to Andrew Morton, Oleg
+Nesterov, David Howells and Eric Biederman, as well as the
+linux-kernel@ mailinglist.)
 
-> > > Typical crystal frequencies are 19.2, 24 and 25Mhz.
-> > 
-> > Hans, I think Cherrytrail may be affected by this as the others.
-> > CHT AFAIK uses 19.2MHz xtal.
-> 
-> Are you sure?
+> But before I start I want to make sure one thing. The changes
+> done by the commit you mentioned (which introduced non_rcu flag), should
+> be now reverted, right?
 
-I'm not. I may mixed this with PMC clock.
+No.
 
-> The first 5 entries of the CHT MSR_FSB_FREQ documentation exactly
-> match those of the BYT documentation (which has only 5 entries),
-> which suggests to me that CHT is also using a 25 MHz crystal.
-> 
-> I can also make the other CHT only frequencies when assuming a 25
-> MHz crystal, here is a bit from the patch I'm working on for this:
-> 
-> /*
->  * Cherry Trail SDM MSR_FSB_FREQ frequencies to PLL settings map:
->  * 0000:   25 * 20 /  6  =  83.3333 MHz
->  * 0001:   25 *  4 /  1  = 100.0000 MHz
->  * 0010:   25 * 16 /  3  = 133.3333 MHz
->  * 0011:   25 * 28 /  6  = 116.6667 MHz
->  * 0100:   25 * 16 /  5  =  80.0000 MHz
->  * 0101:   25 * 56 / 15  =  93.3333 MHz
->  * 0110:   25 * 18 /  5  =  90.0000 MHz
->  * 0111:   25 * 32 /  9  =  88.8889 MHz
->  * 1000:   25 *  7 /  2  =  87.5000 MHz
->  */
-> 
-> The only one which is possibly suspicious here is this line:
-> 
->  * 0111:   25 * 32 /  9  =  88.8889 MHz
-> 
-> The SDM says 88.9 MHz for this one.
+> Since, prior to the commit RCU semantics were
+> there and RCU was being used (which was unnecessary) and the fix merely,
+> removed these (unnecessary) RCU usages (with checks to either use them
+> or not, but now we actually don't use RCU for subjective credentials).
+>
+> So, now what's left is the unused RCU code (which needs to be removed)
+> and the changes done in the temporary fix (which would be reverted since
+> we don't want to use RCU).
 
-Anyway it seems need to be fixed as well.
+No. Instances of `struct cred` *can* still have an RCU-protected
+lifetime; but only certain references to it have RCU semantics.
+{task}->cred doesn't have RCU semantics, but {task}->real_cred does
+have RCU semantics, and those two can point to the same object.
 
-Btw, why we are mentioning 20 / 6 and 28 / 6 when arithmetically
-it's the same as 10 / 3 and 14 / 3?
-
--- 
-With Best Regards,
-Andy Shevchenko
-
-
+__rcu annotations mark that a *reference* has RCU semantics. Lack of
+__rcu annotation means that the *reference* does not have RCU
+semantics, but the object it points to can still have a RCU-protected
+lifetime.
