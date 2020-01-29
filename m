@@ -2,52 +2,84 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 870F114D157
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Jan 2020 20:50:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C781F14D15B
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Jan 2020 20:50:23 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727237AbgA2TuD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 29 Jan 2020 14:50:03 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37824 "EHLO mail.kernel.org"
+        id S1727520AbgA2TuO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 29 Jan 2020 14:50:14 -0500
+Received: from pegase1.c-s.fr ([93.17.236.30]:21089 "EHLO pegase1.c-s.fr"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726251AbgA2TuC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 Jan 2020 14:50:02 -0500
-Subject: Re: [git pull] vfs.git openat2 series
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1580327402;
-        bh=bivy4n/ijun9pS+hWJwggr0hK4fk6xxaGxyKDV9SEuI=;
-        h=From:In-Reply-To:References:Date:To:Cc:From;
-        b=Mgz5u25OENOHi/J1ZPDKE4vRRIvOpzkjLH1Q79wtgrJZSffnZkKDM3aADNuMYVJJx
-         +6kRk75AJYV53F+9vlOQZ8SgugVTnmITVfRPOf9y4bkJP7v5X7ZhF45r+QsN2QAWkQ
-         6UvJWe3EI7QF8v39u5Qzu5+FJToKLcbUTm1Plyng=
-From:   pr-tracker-bot@kernel.org
-In-Reply-To: <20200129142709.GX23230@ZenIV.linux.org.uk>
-References: <20200129142709.GX23230@ZenIV.linux.org.uk>
-X-PR-Tracked-List-Id: <linux-fsdevel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <20200129142709.GX23230@ZenIV.linux.org.uk>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/viro/vfs.git work.openat2
-X-PR-Tracked-Commit-Id: b55eef872a96738ea9cb35774db5ce9a7d3a648f
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 6aee4badd8126f3a2b6d31c5e2db2439d316374f
-Message-Id: <158032740211.31127.14966607782443439395.pr-tracker-bot@kernel.org>
-Date:   Wed, 29 Jan 2020 19:50:02 +0000
-To:     Al Viro <viro@zeniv.linux.org.uk>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+        id S1727478AbgA2TuM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 Jan 2020 14:50:12 -0500
+Received: from localhost (mailhub1-int [192.168.12.234])
+        by localhost (Postfix) with ESMTP id 487Dbk13KPz9v6Mk;
+        Wed, 29 Jan 2020 20:50:10 +0100 (CET)
+Authentication-Results: localhost; dkim=pass
+        reason="1024-bit key; insecure key"
+        header.d=c-s.fr header.i=@c-s.fr header.b=By0dBFVu; dkim-adsp=pass;
+        dkim-atps=neutral
+X-Virus-Scanned: Debian amavisd-new at c-s.fr
+Received: from pegase1.c-s.fr ([192.168.12.234])
+        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
+        with ESMTP id Q7PoxufizGrV; Wed, 29 Jan 2020 20:50:10 +0100 (CET)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+        by pegase1.c-s.fr (Postfix) with ESMTP id 487Dbh6Ts9z9v6Mj;
+        Wed, 29 Jan 2020 20:50:08 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=c-s.fr; s=mail;
+        t=1580327408; bh=omfaf4XjOg/DOAMNgBIrA90fdsNIo9S16aDDtammHcA=;
+        h=From:Subject:To:Cc:Date:From;
+        b=By0dBFVu+gRnHvvbFgvwb0hK9EM/9M3ZV9pXAzO4uq1mvKF5B923cg00oWd7FvKqU
+         FWo6Pgv3cHXhgpmfwU1c3ldxXmPDxSlO7wYDUNyzpxZabYjPw9aPWi9DtocJ7lVzo2
+         JXx/ckC0U3jWeUbMhdXV0QjObPbhOMCzzUmi5e3A=
+Received: from localhost (localhost [127.0.0.1])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id DD4468B82F;
+        Wed, 29 Jan 2020 20:50:08 +0100 (CET)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+        with ESMTP id yox7VE7PLePX; Wed, 29 Jan 2020 20:50:08 +0100 (CET)
+Received: from po14934vm.idsi0.si.c-s.fr (unknown [192.168.4.90])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id 7FFE78B829;
+        Wed, 29 Jan 2020 20:50:08 +0100 (CET)
+Received: by po14934vm.idsi0.si.c-s.fr (Postfix, from userid 0)
+        id 095696524E; Wed, 29 Jan 2020 19:50:07 +0000 (UTC)
+Message-Id: <6ecbda05b4119c40222dc8ec284604e1597c9bff.1580327381.git.christophe.leroy@c-s.fr>
+From:   Christophe Leroy <christophe.leroy@c-s.fr>
+Subject: [PATCH] powerpc/process: Remove unneccessary #ifdef CONFIG_PPC64 in
+ copy_thread_tls()
+To:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>
+Cc:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
+Date:   Wed, 29 Jan 2020 19:50:07 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The pull request you sent on Wed, 29 Jan 2020 14:27:09 +0000:
+is_32bit_task() exists on both PPC64 and PPC32, no need of an ifdefery.
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/viro/vfs.git work.openat2
+Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
+---
+ arch/powerpc/kernel/process.c | 2 --
+ 1 file changed, 2 deletions(-)
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/6aee4badd8126f3a2b6d31c5e2db2439d316374f
-
-Thank you!
-
+diff --git a/arch/powerpc/kernel/process.c b/arch/powerpc/kernel/process.c
+index fad50db9dcf2..e730b8e522b0 100644
+--- a/arch/powerpc/kernel/process.c
++++ b/arch/powerpc/kernel/process.c
+@@ -1634,11 +1634,9 @@ int copy_thread_tls(unsigned long clone_flags, unsigned long usp,
+ 		p->thread.regs = childregs;
+ 		childregs->gpr[3] = 0;  /* Result from fork() */
+ 		if (clone_flags & CLONE_SETTLS) {
+-#ifdef CONFIG_PPC64
+ 			if (!is_32bit_task())
+ 				childregs->gpr[13] = tls;
+ 			else
+-#endif
+ 				childregs->gpr[2] = tls;
+ 		}
+ 
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.wiki.kernel.org/userdoc/prtracker
+2.25.0
+
