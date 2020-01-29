@@ -2,74 +2,59 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E84EF14C551
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Jan 2020 05:45:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B08D414C55A
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Jan 2020 05:49:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726633AbgA2Ep5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 28 Jan 2020 23:45:57 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:57030 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726518AbgA2Ep5 (ORCPT
+        id S1726623AbgA2Etl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 28 Jan 2020 23:49:41 -0500
+Received: from mail-qk1-f194.google.com ([209.85.222.194]:45617 "EHLO
+        mail-qk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726598AbgA2Etl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 Jan 2020 23:45:57 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
-        Content-Type:MIME-Version:Date:Message-ID:Subject:From:Cc:To:Sender:Reply-To:
-        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-        Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=RB7MFvDynCTDcWQk8mAdBFKKrkJBxKbDXqcgxHTixUM=; b=UKkHZ/zZvyUOLq14+wpZWR38w
-        yhW2iXMLFlqd6x/u0CdSxlIMcDC0FLYGw5zSJpX+liUP6PBPkAqTOaOc6taBy96hIwZwmeoVzDtyw
-        7ITrwOTmns/bFGmXftJRtbWdJius7cLzOZjrhlG/Br94kcQEys/cDm1jB+fST68n+VT1fQpsfSm/b
-        o0uJjhbncUKqbWmRvlYEAPs08tPFWWRlKkih+l/E1CIOAMqhr+v8IpiESO/67E13nqQ2fn0QwiXw4
-        T1bddIyCsrdky3nAGyEuq145Z9uKU6w4svXjcBTCzvfu0Jvi9L0iV4LEXiYxVwiYX7IRx2YD49CkF
-        l52+zUTbA==;
-Received: from [2601:1c0:6280:3f0:897c:6038:c71d:ecac]
-        by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1iwfEh-0003UC-Kt; Wed, 29 Jan 2020 04:45:56 +0000
-To:     "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        David Miller <davem@davemloft.net>
-Cc:     Mat Martineau <mathew.j.martineau@linux.intel.com>,
-        Matthieu Baerts <matthieu.baerts@tessares.net>,
-        mptcp@lists.01.org, LKML <linux-kernel@vger.kernel.org>
-From:   Randy Dunlap <rdunlap@infradead.org>
-Subject: [PATCH] MAINTAINERS: mptcp@ mailing list is moderated
-Message-ID: <0d3e4e6f-5437-ae85-f1f5-89971ea3423f@infradead.org>
-Date:   Tue, 28 Jan 2020 20:45:54 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.1
+        Tue, 28 Jan 2020 23:49:41 -0500
+Received: by mail-qk1-f194.google.com with SMTP id x1so15780752qkl.12
+        for <linux-kernel@vger.kernel.org>; Tue, 28 Jan 2020 20:49:40 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:reply-to:from:date:message-id:subject:to;
+        bh=KhIk8bt+9SSBsktvOnFPMm3JCUsAz7dzjkA0ENZ5ZaA=;
+        b=BfRCX4BAHbRs50XTUqpOaYrB3UnMeMZIA3jxmDS1IDAyNZjMI6R1VcmRqH8pjoTQzy
+         TtYsYLHziXyuSyrXzI5cAbzgBpAFPq4R9JVQLUWNdi8GaAzitKZ8Dy56gj0ok8fee9F/
+         ByeTzhkfSQgWX9SAoQhUsK+0aO2JuNTVepHDFDWAkoIRFSNn/Huo+aJwyQtCkVBCZsPx
+         GIlKT7kaIjnWJ2mtzftet+EDBYYYdIcnmX61g8EVq7fklLcmX5i0Sww0AEwqWenz9Xrk
+         4BDTSlzP9DQhWxVNm3QyCdhkP3uujFuZ5F8nJsDKKJD4iruwkpUVpvrPK9M/teoIyXKL
+         M9Xw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
+         :subject:to;
+        bh=KhIk8bt+9SSBsktvOnFPMm3JCUsAz7dzjkA0ENZ5ZaA=;
+        b=XON2n8mXBMH0HwQrj7P6rKgzExKmr8hpn6WNSsktkajj4wb7bO3Tox7nZDoNKqUZX5
+         EdEQsbncKc83HagtIPsfYT10Oos1ORbtoV/2blcJGd/eNJLXu4pjB/hf6GA9OetHuKJ4
+         YvffpUtX8Ku5CWrnSTbLciRfsu1a58smBsEpj8KEyTjDY3e8gGuV290yXoQOqXXHFebT
+         R4yJfknjWbAk+eTfLE1otIr5vhVHxu9m0UHIxPv57zOxczv1Kku/9QiqBA7FkHyVvJJH
+         ppGWrqupLuG9/yog4kzU3LRHXb1ddhzL4sxFtCuv4odfVPf/gxI1Xp1CojO3BCH1LacN
+         5R7w==
+X-Gm-Message-State: APjAAAUf82eoWbs299W3e059zPq2efKCh6uAsV4LajFSHK6LZJBQ81ur
+        ZmMA1tSRfg9ciQ7ihoXl4DKatz51VmIBz/1GsHM=
+X-Google-Smtp-Source: APXvYqwFHnwJLqpuagfEzRO6F8c7umJFQZy/m+9OC5eD7DurPtGIoB8hDD7bfcSp3VTbFCOpbWyKhwoFV7tcqJ70vbk=
+X-Received: by 2002:a37:9245:: with SMTP id u66mr26926667qkd.102.1580273380443;
+ Tue, 28 Jan 2020 20:49:40 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Received: by 2002:a05:6214:184f:0:0:0:0 with HTTP; Tue, 28 Jan 2020 20:49:40
+ -0800 (PST)
+Reply-To: execbenmoore@gmail.com
+From:   Caroll Benmoore <peaceafa.1@gmail.com>
+Date:   Wed, 29 Jan 2020 05:49:40 +0100
+Message-ID: <CALkP74z9hNL9jwN=CcmbdPsCmeFxFXKwJ+TEJqncqr=SAwPCRw@mail.gmail.com>
+Subject: partnership investment
+To:     undisclosed-recipients:;
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Randy Dunlap <rdunlap@infradead.org>
-
-Note that mptcp@lists.01.org is moderated, like we note for
-other mailing lists.
-
-Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
-Cc: Mat Martineau <mathew.j.martineau@linux.intel.com>
-Cc: Matthieu Baerts <matthieu.baerts@tessares.net>
-Cc: netdev@vger.kernel.org
-Cc: mptcp@lists.01.org
----
- MAINTAINERS |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
---- mmotm-2020-0128-2005.orig/MAINTAINERS
-+++ mmotm-2020-0128-2005/MAINTAINERS
-@@ -11718,7 +11718,7 @@ NETWORKING [MPTCP]
- M:	Mat Martineau <mathew.j.martineau@linux.intel.com>
- M:	Matthieu Baerts <matthieu.baerts@tessares.net>
- L:	netdev@vger.kernel.org
--L:	mptcp@lists.01.org
-+L:	mptcp@lists.01.org (moderated for non-subscribers)
- W:	https://github.com/multipath-tcp/mptcp_net-next/wiki
- B:	https://github.com/multipath-tcp/mptcp_net-next/issues
- S:	Maintained
-
+-- 
+I wish to go into partnership with you on investment grounds, respond
+for more details.
