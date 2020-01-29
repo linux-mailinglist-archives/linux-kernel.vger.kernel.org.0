@@ -2,93 +2,59 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A470A14C88B
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Jan 2020 11:11:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E02BB14C88E
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Jan 2020 11:12:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726192AbgA2KLK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 29 Jan 2020 05:11:10 -0500
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:50586 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726010AbgA2KLK (ORCPT
+        id S1726261AbgA2KMb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 29 Jan 2020 05:12:31 -0500
+Received: from mail-wr1-f41.google.com ([209.85.221.41]:33200 "EHLO
+        mail-wr1-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726010AbgA2KMb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 Jan 2020 05:11:10 -0500
-Received: by mail-wm1-f66.google.com with SMTP id a5so5556260wmb.0;
-        Wed, 29 Jan 2020 02:11:08 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=/s2Pvc4rtIYnq/pOc+rMYu1hL0CKlGk2c1b/QVFIVn4=;
-        b=GYTVgM1vQnXVg0+jEtvE7gtklxDswWkLuuwHNMr6z3BQV0ttepBWhjqNmwRquO5brZ
-         wPtWlFREh5Vc0JH+3O1M3X2lHstBuW+77J1ZUWxlm+q8sLhYwS58BrlsHDx2eJITqjhg
-         Cf+TN+vVVqFHtl9ln+OpWWuyyO8YshPjfzFI5ekBvNvVtbx/NjpcEqtJnJycINaT/0TT
-         MtodmhdefRK6RPGA3csepwhJESJw+uiurIz2lPWIRqdwkm7BwNMQUQtRrLhVbhSk0yfp
-         JeR/q1pgY0S1YMqfbnKa7JTON9S0MyeoeKbFArB+S4LQkcuXR30dYLTyjfl8/Kqn7INv
-         U2nw==
+        Wed, 29 Jan 2020 05:12:31 -0500
+Received: by mail-wr1-f41.google.com with SMTP id b6so19495836wrq.0;
+        Wed, 29 Jan 2020 02:12:30 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=/s2Pvc4rtIYnq/pOc+rMYu1hL0CKlGk2c1b/QVFIVn4=;
-        b=Ddvo/WBjPHeVKsfStrsan7kkKaWfY4tO8O+LRI0BVZlt7Nx9sBN/oyfdAZxrYWj8pm
-         IPFbqq8Tn2QPXugEevT2V3l5d3oci2Zbiji3u/H6lJ/rCeg6qpd5JF91vEJ/rTuugLZI
-         QsdhCgfgHrx9au8zP1PZ7nTvaUIUmm/cloLwDl0ZCSbRSTVvRv2oAiFk6ACVWEoOOhl4
-         ta6gLAfwXZFQ4iF1IBGJYNRSReepb1s74SO27mGLTjjP00dEBNF7BXJ4CcQOACRADYfO
-         /71z/0mJ+rGoxTNUU9thpkseu/4DuvSE2+RBXJIu4wCTwvECe/2dev+qWIZW8X9AS8AB
-         JngA==
-X-Gm-Message-State: APjAAAUnzIQcNc8/Gafy7kvxk/zssBjcN9RLcUybokqb9qGdssi8quyO
-        YiqSktudkgT63gyQk7QP/LY=
-X-Google-Smtp-Source: APXvYqzIno68ySw/HwWTZAocIeDIM+K/daqEQzdiw7u+TzLm3AvoUindlXWfE5FZ8QiUQkImcz0dCQ==
-X-Received: by 2002:a05:600c:217:: with SMTP id 23mr3252001wmi.124.1580292667970;
-        Wed, 29 Jan 2020 02:11:07 -0800 (PST)
-Received: from localhost.localdomain ([109.126.145.157])
-        by smtp.gmail.com with ESMTPSA id q14sm2182354wrj.81.2020.01.29.02.11.06
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=bZNl3QUSC0FMfcPPPWWqrnao2QBojv3lR0t976hDnyI=;
+        b=JnAgaEv1OmDCCc0AklSlbeMzV5qeY1xxcLaM6+gXIAnLYHKV9CQ8Hm0S3w1/4T+pvu
+         cMqumU56aS5JStqajD8ZdRSAFdsh7v+n9YdBdPsFo1cghmMpYzowftO1xSSUUEiJ6MqX
+         ndiWDWhKh4qzudjdeMMQVj7y0UmNacDfJ5P4qvVS5oZQyDODhMujq+3xIe0leoCkID3H
+         Gi4uxYtZrLeRFp0nHI5dw290bUWoJRbtyTHimjp3DF9Q0nPpfEb4ZLxrFZjc89cPVsfd
+         Vl38UaXDab3lJ+0IALUQb/gEsolZjmodB5delayL0kpWuRfKBdn7LFS4QiH71MhdGDca
+         KJig==
+X-Gm-Message-State: APjAAAU9CoN/OMVY8oK+PhDdA0PaRpotRpDg+iJQpdHdC3PY9xirJZLh
+        7OFysusIF+4GoYYCbF4fzDo=
+X-Google-Smtp-Source: APXvYqwNKe/pk9bvldrLRJdvIFIJ+Gzr8weZdit3VhnUIq/c4bHYeuttKAB9NgHWm7KAom3kuLaGog==
+X-Received: by 2002:adf:f10b:: with SMTP id r11mr5936811wro.307.1580292749767;
+        Wed, 29 Jan 2020 02:12:29 -0800 (PST)
+Received: from localhost (prg-ext-pat.suse.com. [213.151.95.130])
+        by smtp.gmail.com with ESMTPSA id c9sm2205865wrq.44.2020.01.29.02.12.28
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 29 Jan 2020 02:11:07 -0800 (PST)
-From:   Pavel Begunkov <asml.silence@gmail.com>
-To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] io-wq: use put instead of revert creds
-Date:   Wed, 29 Jan 2020 13:10:23 +0300
-Message-Id: <c79bab7a6bd174f32121c9508390264bff9950ca.1580292613.git.asml.silence@gmail.com>
-X-Mailer: git-send-email 2.24.0
+        Wed, 29 Jan 2020 02:12:28 -0800 (PST)
+Date:   Wed, 29 Jan 2020 11:12:28 +0100
+From:   Michal Hocko <mhocko@kernel.org>
+To:     Yang Shi <yang.shi@linux.alibaba.com>
+Cc:     richardw.yang@linux.intel.com, akpm@linux-foundation.org,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        stable@vger.kernel.org
+Subject: Re: [v3 PATCH] mm: move_pages: report the number of non-attempted
+ pages
+Message-ID: <20200129101228.GH24244@dhcp22.suse.cz>
+References: <1580144268-79620-1-git-send-email-yang.shi@linux.alibaba.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1580144268-79620-1-git-send-email-yang.shi@linux.alibaba.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-There is no need to publish creds twice in io_wq_switch_creds() (in
-revert_creds() and override_creds()). Just do override_creds() and
-put_creds() if needed.
-
-Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
----
- fs/io-wq.c | 8 +++++---
- 1 file changed, 5 insertions(+), 3 deletions(-)
-
-diff --git a/fs/io-wq.c b/fs/io-wq.c
-index 8fbbadf04cc3..f7eb577ccd2d 100644
---- a/fs/io-wq.c
-+++ b/fs/io-wq.c
-@@ -425,11 +425,13 @@ static void io_wq_switch_mm(struct io_worker *worker, struct io_wq_work *work)
- static void io_wq_switch_creds(struct io_worker *worker,
- 			       struct io_wq_work *work)
- {
--	if (worker->saved_creds)
--		revert_creds(worker->saved_creds);
-+	const struct cred *old_creds = override_creds(work->creds);
- 
--	worker->saved_creds = override_creds(work->creds);
- 	worker->cur_creds = work->creds;
-+	if (worker->saved_creds)
-+		put_cred(old_creds); /* creds set by previous switch */
-+	else
-+		worker->saved_creds = old_creds;
- }
- 
- static void io_worker_handle_work(struct io_worker *worker)
+Btw. please do not forget to update the man page as well.
+Thanks!
 -- 
-2.24.0
-
+Michal Hocko
+SUSE Labs
