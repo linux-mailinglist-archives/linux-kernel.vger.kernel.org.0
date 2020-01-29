@@ -2,53 +2,52 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E895214D103
+	by mail.lfdr.de (Postfix) with ESMTP id EBED514D104
 	for <lists+linux-kernel@lfdr.de>; Wed, 29 Jan 2020 20:10:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727581AbgA2TKH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 29 Jan 2020 14:10:07 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60428 "EHLO mail.kernel.org"
+        id S1727592AbgA2TKJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 29 Jan 2020 14:10:09 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60450 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726332AbgA2TKH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 Jan 2020 14:10:07 -0500
-Subject: Re: [GIT PULL] core kernel fixes
+        id S1727542AbgA2TKI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 Jan 2020 14:10:08 -0500
+Subject: Re: [GIT PULL tip/core/rcu urgent] RCU fix for boot-time splat
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
         s=default; t=1580325007;
-        bh=5IGj7XaAlyGABAFyqwwPk8jCEbYUJkHgWFYLKNXdmFc=;
+        bh=gMB61TugbTETLOelIlSzb0zII7/V7zLdZi/9zcPYho4=;
         h=From:In-Reply-To:References:Date:To:Cc:From;
-        b=deu4O0lI5xvN2Z93vtbWORcTqVzPrEGoZAUBibxsSnIXJ3jv7I0v1r0rJBjqrDbu1
-         7hauHAt0kzDl+xJWazUZzIuDXRePmB2U/vsniyQTmwD/b4VmmCikf+saIgvHmqxO/o
-         xU/jJFFlDdZ6siSqt2WzI4/OMTUf5j/zd3xGgHvY=
+        b=yDsJ83JoBjk5P4woSuPMxzxWfHR/cwCPSLREp191WVOCEx7KPUY99u/RFhTpeg1dB
+         /bqvQfo/GbiNbJqKwN19+3p7F6Ozwfyeuav3b82r1crCml+GmJd0Anl7PZegFkU5Ws
+         J2p2jCNNLK594nAY+vDpRsqapvBqB/Z/CENSRWX4=
 From:   pr-tracker-bot@kernel.org
-In-Reply-To: <20200129115348.GA128016@gmail.com>
-References: <20200129115348.GA128016@gmail.com>
+In-Reply-To: <20200129120206.GA15554@paulmck-ThinkPad-P72>
+References: <20200129120206.GA15554@paulmck-ThinkPad-P72>
 X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <20200129115348.GA128016@gmail.com>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git
- core-urgent-for-linus
-X-PR-Tracked-Commit-Id: 74777eaf7aef0f80276cb1c3fad5b8292c368859
+X-PR-Tracked-Message-Id: <20200129120206.GA15554@paulmck-ThinkPad-P72>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/paulmck/linux-rcu.git
+ urgent-for-mingo
+X-PR-Tracked-Commit-Id: 59d8cc6b2e375ff486b030da6703b1d481e186e6
 X-PR-Merge-Tree: torvalds/linux.git
 X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 80b60e3849bfe987801a73ebd4bab43b7b591a09
-Message-Id: <158032500696.28574.15940097960042411983.pr-tracker-bot@kernel.org>
-Date:   Wed, 29 Jan 2020 19:10:06 +0000
-To:     Ingo Molnar <mingo@kernel.org>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
-        Borislav Petkov <bp@alien8.de>,
-        Peter Zijlstra <a.p.zijlstra@chello.nl>,
-        Andrew Morton <akpm@linux-foundation.org>
+X-PR-Merge-Commit-Id: 15d6632496537fa66488221ee5dd2f9fb318ef2e
+Message-Id: <158032500759.28574.17205140926246637211.pr-tracker-bot@kernel.org>
+Date:   Wed, 29 Jan 2020 19:10:07 +0000
+To:     "Paul E. McKenney" <paulmck@kernel.org>
+Cc:     mingo@kernel.org, rcu@vger.kernel.org,
+        linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+        a.p.zijlstra@chello.nl, tglx@linutronix.de,
+        akpm@linux-foundation.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The pull request you sent on Wed, 29 Jan 2020 12:53:48 +0100:
+The pull request you sent on Wed, 29 Jan 2020 04:02:06 -0800:
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git core-urgent-for-linus
+> git://git.kernel.org/pub/scm/linux/kernel/git/paulmck/linux-rcu.git urgent-for-mingo
 
 has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/80b60e3849bfe987801a73ebd4bab43b7b591a09
+https://git.kernel.org/torvalds/c/15d6632496537fa66488221ee5dd2f9fb318ef2e
 
 Thank you!
 
