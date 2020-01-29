@@ -2,155 +2,163 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A275114CE26
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Jan 2020 17:22:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2FEF014CE2F
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Jan 2020 17:23:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726893AbgA2QWO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 29 Jan 2020 11:22:14 -0500
-Received: from ssl.serverraum.org ([176.9.125.105]:47951 "EHLO
-        ssl.serverraum.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726645AbgA2QWO (ORCPT
+        id S1727175AbgA2QWw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 29 Jan 2020 11:22:52 -0500
+Received: from hqnvemgate26.nvidia.com ([216.228.121.65]:17644 "EHLO
+        hqnvemgate26.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727141AbgA2QWv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 Jan 2020 11:22:14 -0500
-Received: from ssl.serverraum.org (web.serverraum.org [172.16.0.2])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ssl.serverraum.org (Postfix) with ESMTPSA id 3E07E23E62;
-        Wed, 29 Jan 2020 17:22:07 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=walle.cc; s=mail2016061301;
-        t=1580314931;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=sW0QA5hhkf7I3N3KjWQhrGatYUrwYHEsrUcrrXuwzR4=;
-        b=nGONfZBo+MF8xCLtL+W9xgTLviPkQ+YDRjN+oRs6Tn1xY19psXusVp50c7JK9RFxA10UBl
-        b56t/s+eKqvLn47ys13ldz1LMXHNuCqEX2BkSKYnucZvCVoizVI/xFNRv38YAwoY5o03aV
-        PSnFrGTI9QaP8nmrRYNOQYhMF+cj4HY=
+        Wed, 29 Jan 2020 11:22:51 -0500
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate26.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5e31b14b0000>; Wed, 29 Jan 2020 08:22:35 -0800
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate101.nvidia.com (PGP Universal service);
+  Wed, 29 Jan 2020 08:22:50 -0800
+X-PGP-Universal: processed;
+        by hqpgpgate101.nvidia.com on Wed, 29 Jan 2020 08:22:50 -0800
+Received: from [10.2.164.115] (10.124.1.5) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Wed, 29 Jan
+ 2020 16:22:49 +0000
+Subject: Re: Re: [RFC PATCH v1 5/5] arm64: tegra: Add Tegra VI CSI suppport in
+ device tree
+To:     Thierry Reding <thierry.reding@gmail.com>
+CC:     <jonathanh@nvidia.com>, <frankc@nvidia.com>, <hverkuil@xs4all.nl>,
+        <linux-media@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+References: <1580235801-4129-1-git-send-email-skomatineni@nvidia.com>
+ <1580235801-4129-6-git-send-email-skomatineni@nvidia.com>
+ <20200129094624.GD2479935@ulmo>
+From:   Sowjanya Komatineni <skomatineni@nvidia.com>
+Message-ID: <bd18711d-ce23-cbee-7824-37a8c78908e6@nvidia.com>
+Date:   Wed, 29 Jan 2020 08:22:48 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
+In-Reply-To: <20200129094624.GD2479935@ulmo>
+X-Originating-IP: [10.124.1.5]
+X-ClientProxiedBy: HQMAIL105.nvidia.com (172.20.187.12) To
+ HQMAIL107.nvidia.com (172.20.187.13)
+Content-Type: text/plain; charset="windows-1252"; format=flowed
 Content-Transfer-Encoding: 7bit
-Date:   Wed, 29 Jan 2020 17:22:07 +0100
-From:   Michael Walle <michael@walle.cc>
-To:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Shawn Guo <shawnguo@kernel.org>, Li Yang <leoyang.li@nxp.com>,
-        Yuantian Tang <andy.tang@nxp.com>
-Subject: Re: [PATCH v2 0/5] ls1028a: dts fixes and new board support
-In-Reply-To: <20191209234350.18994-1-michael@walle.cc>
-References: <20191209234350.18994-1-michael@walle.cc>
-Message-ID: <d5a729321220f35bd0ea377a8ec2f852@walle.cc>
-X-Sender: michael@walle.cc
-User-Agent: Roundcube Webmail/1.3.8
-X-Spamd-Bar: +
-X-Spam-Level: *
-X-Rspamd-Server: web
-X-Spam-Status: No, score=1.40
-X-Spam-Score: 1.40
-X-Rspamd-Queue-Id: 3E07E23E62
-X-Spamd-Result: default: False [1.40 / 15.00];
-         ARC_NA(0.00)[];
-         FROM_HAS_DN(0.00)[];
-         TO_DN_SOME(0.00)[];
-         TO_MATCH_ENVRCPT_ALL(0.00)[];
-         TAGGED_RCPT(0.00)[dt];
-         MIME_GOOD(-0.10)[text/plain];
-         DKIM_SIGNED(0.00)[];
-         RCPT_COUNT_SEVEN(0.00)[8];
-         RCVD_COUNT_ZERO(0.00)[0];
-         FROM_EQ_ENVFROM(0.00)[];
-         MIME_TRACE(0.00)[0:+];
-         MID_RHS_MATCH_FROM(0.00)[];
-         SUSPICIOUS_RECIPS(1.50)[]
+Content-Language: en-US
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1580314955; bh=eLeON2MxtqTE1lp83s18wcsu20gMK+jZz18egxh1R4s=;
+        h=X-PGP-Universal:Subject:To:CC:References:From:Message-ID:Date:
+         User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
+         X-ClientProxiedBy:Content-Type:Content-Transfer-Encoding:
+         Content-Language;
+        b=Pd4wjUdLK95tGQ+sjDU/adByintrMeBPwj9MI7AfSC7ItU9W8KcmRMs2IW9a40cIK
+         nxLIKAheY1jQn6bDWzOAhi01ju6CVzZqiN4SFszHqe2fot8xwdld/ZqvcARBq13J3N
+         +JqfEQdzjAoXvt+A7nXO5Ir696wEn+2dTAag3XAhD8U/kVyRTKOqNLktOyrem2TiDP
+         aEgt1bZ0nV0C6UW4X3Dto41RM+QN+wfkRzR98c354oMqQk88cSSP0NkuC23kWxOCLT
+         ye52CcISxwm17dKRA8SsOXzI6houcLgaWiDRa29sbIkZ87ZVVEQEq7Zy3gzOPHRvh7
+         nBjmlxztZWGXg==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Shawn,
 
-Am 2019-12-10 00:43, schrieb Michael Walle:
-> This series adds basic support for the Kontron SMARC-sAL28 board. It 
-> also
-> adds missing nodes to the ls1028a base device tree which are used by 
-> the
-> board.
-> 
-> changes since v1:
->  - dropped "arm64: dts: ls1028a: add FlexSPI node" in favor of:
-> 
-> https://lore.kernel.org/lkml/1575457098-18368-2-git-send-email-Ashish.Kumar@nxp.com/
->    Thus, this series now depends on that patch
->  - better commit message for the TMU patch
->  - added fixes tag to the TMU patch
->  - document the LS1028A evaluation boards compatible strings
->  - document the Kontron sl28 boards compatible strings
->  - fix node names of the sl28 device tree(s)
->  - removed device specific compatible string of the spi flash
->  - rebased the patch series
->  - integrate the RGMII configuration of the AR8031 PHY since the 
-> binding is
->    now already upstream
-> 
-> This patchseries depends on:
->  - [Patch v2 1/5] arm64: dts: ls1028a: Add FlexSPI support
-> 
-> https://lore.kernel.org/lkml/1575457098-18368-2-git-send-email-Ashish.Kumar@nxp.com/
->  - [PATCH v2 1/2] dt-bindings: clock: document the fsl-sai driver
->    
-> https://lore.kernel.org/lkml/20191209233305.18619-1-michael@walle.cc/
+On 1/29/20 1:46 AM, Thierry Reding wrote:
+> On Tue, Jan 28, 2020 at 10:23:21AM -0800, Sowjanya Komatineni wrote:
+>> Tegra210 contains VI controller for video input capture from MIPI
+>> CSI camera sensors and also supports built-in test pattern generator.
+>>
+>> CSI ports can be one-to-one mapped to VI channels for capturing from
+>> an external sensor or from built-in test pattern generator.
+>>
+>> This patch adds support for VI and CSI and enables them in Tegra210
+>> device tree.
+>>
+>> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
+>> ---
+>>   arch/arm64/boot/dts/nvidia/tegra210-p2597.dtsi |  8 +++++++
+>>   arch/arm64/boot/dts/nvidia/tegra210.dtsi       | 31 +++++++++++++++++++++++++-
+>>   2 files changed, 38 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/arch/arm64/boot/dts/nvidia/tegra210-p2597.dtsi b/arch/arm64/boot/dts/nvidia/tegra210-p2597.dtsi
+>> index b0095072bc28..ec1b3033fa03 100644
+>> --- a/arch/arm64/boot/dts/nvidia/tegra210-p2597.dtsi
+>> +++ b/arch/arm64/boot/dts/nvidia/tegra210-p2597.dtsi
+>> @@ -10,6 +10,14 @@
+>>   			status = "okay";
+>>   		};
+>>   
+>> +		vi@54080000 {
+>> +			status = "okay";
+>> +		};
+>> +
+>> +		csi@0x54080838 {
+>> +			status = "okay";
+>> +		};
+>> +
+>>   		sor@54580000 {
+>>   			status = "okay";
+>>   
+>> diff --git a/arch/arm64/boot/dts/nvidia/tegra210.dtsi b/arch/arm64/boot/dts/nvidia/tegra210.dtsi
+>> index 48c63256ba7f..c6107ec03ad1 100644
+>> --- a/arch/arm64/boot/dts/nvidia/tegra210.dtsi
+>> +++ b/arch/arm64/boot/dts/nvidia/tegra210.dtsi
+>> @@ -136,9 +136,38 @@
+>>   
+>>   		vi@54080000 {
+>>   			compatible = "nvidia,tegra210-vi";
+>> -			reg = <0x0 0x54080000 0x0 0x00040000>;
+>> +			reg = <0x0 0x54080000 0x0 0x808>;
+>>   			interrupts = <GIC_SPI 69 IRQ_TYPE_LEVEL_HIGH>;
+>>   			status = "disabled";
+>> +			assigned-clocks = <&tegra_car TEGRA210_CLK_VI>;
+>> +			assigned-clock-parents = <&tegra_car TEGRA210_CLK_PLL_C4_OUT0>;
+>> +
+>> +			clocks = <&tegra_car TEGRA210_CLK_VI>;
+>> +			clock-names = "vi";
+>> +			resets = <&tegra_car 20>;
+>> +			reset-names = "vi";
+>> +		};
+>> +
+>> +		csi@0x54080838 {
+>> +			compatible = "nvidia,tegra210-csi";
+>> +			reg = <0x0 0x54080838 0x0 0x2000>;
+>> +			status = "disabled";
+>> +			assigned-clocks = <&tegra_car TEGRA210_CLK_CILAB>,
+>> +					  <&tegra_car TEGRA210_CLK_CILCD>,
+>> +					  <&tegra_car TEGRA210_CLK_CILE>;
+>> +			assigned-clock-parents = <&tegra_car TEGRA210_CLK_PLL_P>,
+>> +						 <&tegra_car TEGRA210_CLK_PLL_P>,
+>> +						 <&tegra_car TEGRA210_CLK_PLL_P>;
+>> +			assigned-clock-rates = <102000000>,
+>> +					       <102000000>,
+>> +					       <102000000>;
+>> +
+>> +			clocks = <&tegra_car TEGRA210_CLK_CSI>,
+>> +				 <&tegra_car TEGRA210_CLK_CILAB>,
+>> +				 <&tegra_car TEGRA210_CLK_CILCD>,
+>> +				 <&tegra_car TEGRA210_CLK_CILE>;
+>> +			clock-names = "csi", "cilab", "cilcd", "cile";
+>> +
+>>   		};
+> Can this be a child of the vi node? Looking at the register ranges it
+> seems like these are actually a single IP block. If they have separate
+> blocks with clearly separate functionality, then it makes sense to have
+> CSI be a child node of VI, though it may also be okay to merge both and
+> have a single node with the driver doing all of the differentiation
+> between what's VI and what's CSI.
+>
+> Looking at later chips, the split between VI and CSI is more explicit,
+> so having the split in DT for Tegra210 may make sense for consistency.
+>
+> I know we've discussed this before, but for some reason I keep coming
+> back to this. I'll go through the other patches to see if I can get a
+> clearer picture of how this could all work together.
+>
+> Thierry
 
+We can keep it separate as we discussed.
 
-it seems that all the pieces are now together.
+But as Tegra186 onwards, CSI is separate device to be all cosistent I 
+kept CSI as separate node for Tegra210 as well.
 
-  - "arm64: dts: ls1028a: Add FlexSPI support" is pulled
-  - you've already pulled the patches 1 and 2 from this series
-  - Rob reviewed patch 3 and 4
-  - your review remarks of patch 5 should be included
-  - and last but not least, the clock driver used by the device tree 
-finally
-    made it into clk-next [1]
-
-
--michael
-
-[1] 
-https://lore.kernel.org/linux-clk/20200128220445.DE778207FD@mail.kernel.org/
-
-
-
-> 
-> This patchseries superseeds:
->  - [PATCH 0/4] ls1028a: dts fixes and new board support
->    
-> https://lore.kernel.org/lkml/20191123201317.25861-1-michael@walle.cc/
->  - [PATCH] arm64: dts: sl28: configure the RGMII PHY
->    
-> https://lore.kernel.org/lkml/20191123202624.28093-1-michael@walle.cc/
-> 
-> Michael Walle (5):
->   arm64: dts: ls1028a: fix typo in TMU calibration data
->   arm64: dts: ls1028a: add missing sai nodes
->   dt-bindings: arm: fsl: add LS1028A based boards
->   dt-bindings: arm: fsl: add Kontron sl28 boards
->   arm64: dts: freescale: add Kontron sl28 support
-> 
->  .../devicetree/bindings/arm/fsl.yaml          |  45 +++++
->  arch/arm64/boot/dts/freescale/Makefile        |   4 +
->  .../fsl-ls1028a-kontron-kbox-a-230-ls.dts     |  27 +++
->  .../fsl-ls1028a-kontron-sl28-var3-ads2.dts    | 106 +++++++++++
->  .../fsl-ls1028a-kontron-sl28-var4.dts         |  50 +++++
->  .../freescale/fsl-ls1028a-kontron-sl28.dts    | 174 ++++++++++++++++++
->  .../arm64/boot/dts/freescale/fsl-ls1028a.dtsi |  44 ++++-
->  7 files changed, 449 insertions(+), 1 deletion(-)
->  create mode 100644
-> arch/arm64/boot/dts/freescale/fsl-ls1028a-kontron-kbox-a-230-ls.dts
->  create mode 100644
-> arch/arm64/boot/dts/freescale/fsl-ls1028a-kontron-sl28-var3-ads2.dts
->  create mode 100644
-> arch/arm64/boot/dts/freescale/fsl-ls1028a-kontron-sl28-var4.dts
->  create mode 100644 
-> arch/arm64/boot/dts/freescale/fsl-ls1028a-kontron-sl28.dts
