@@ -2,101 +2,89 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9BC6414D06B
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Jan 2020 19:24:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9915E14D02F
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Jan 2020 19:15:24 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727481AbgA2SYr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 29 Jan 2020 13:24:47 -0500
-Received: from mx2.suse.de ([195.135.220.15]:45752 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727107AbgA2SYr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 Jan 2020 13:24:47 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id 5F52DAECB;
-        Wed, 29 Jan 2020 18:24:45 +0000 (UTC)
-From:   Davidlohr Bueso <dave@stgolabs.net>
-To:     song@kernel.org
-Cc:     linux-raid@vger.kernel.org, linux-kernel@vger.kernel.org,
-        dave@stgolabs.net, Davidlohr Bueso <dbueso@suse.de>
-Subject: [PATCH] md: optimize barrier usage for Rmw atomic bitops
-Date:   Wed, 29 Jan 2020 10:14:37 -0800
-Message-Id: <20200129181437.25155-1-dave@stgolabs.net>
-X-Mailer: git-send-email 2.16.4
+        id S1727380AbgA2SPT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 29 Jan 2020 13:15:19 -0500
+Received: from www381.your-server.de ([78.46.137.84]:48004 "EHLO
+        www381.your-server.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726245AbgA2SPT (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 Jan 2020 13:15:19 -0500
+Received: from sslproxy06.your-server.de ([78.46.172.3])
+        by www381.your-server.de with esmtpsa (TLSv1.2:DHE-RSA-AES256-GCM-SHA384:256)
+        (Exim 4.89_1)
+        (envelope-from <lars@metafoo.de>)
+        id 1iwrrs-0008Vd-UB; Wed, 29 Jan 2020 19:15:13 +0100
+Received: from [93.104.127.234] (helo=[192.168.178.20])
+        by sslproxy06.your-server.de with esmtpsa (TLSv1.3:TLS_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <lars@metafoo.de>)
+        id 1iwrrs-000OrG-Kw; Wed, 29 Jan 2020 19:15:12 +0100
+Subject: Re: [PATCH V3] iio: adc: ad7124: Add direct reg access
+To:     Mircea Caprioru <mircea.caprioru@analog.com>, jic23@kernel.org
+Cc:     Michael.Hennerich@analog.com, alexandru.ardelean@analog.com,
+        gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org,
+        linux-iio@vger.kernel.org
+References: <20200129085356.28899-1-mircea.caprioru@analog.com>
+From:   Lars-Peter Clausen <lars@metafoo.de>
+Message-ID: <eb4d0972-f95c-39f7-0520-c71c8370428d@metafoo.de>
+Date:   Wed, 29 Jan 2020 19:15:11 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.1
+MIME-Version: 1.0
+In-Reply-To: <20200129085356.28899-1-mircea.caprioru@analog.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Authenticated-Sender: lars@metafoo.de
+X-Virus-Scanned: Clear (ClamAV 0.101.4/25710/Wed Jan 29 12:38:38 2020)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-For both set and clear_bit, we can avoid the unnecessary barrier
-on non LL/SC architectures, such as x86. Instead, use the
-smp_mb__{before,after}_atomic() calls.
+[...]
+>   
+> +static int ad7124_reg_access(struct iio_dev *indio_dev,
+> +			     unsigned int reg,
+> +			     unsigned int writeval,
+> +			     unsigned int *readval)
+> +{
+> +	struct ad7124_state *st = iio_priv(indio_dev);
+> +	int ret;
+> +
+> +	if (reg >= AD7124_REG_NO)
 
-Signed-off-by: Davidlohr Bueso <dbueso@suse.de>
----
- drivers/md/md.c     | 2 +-
- drivers/md/raid10.c | 7 ++++---
- drivers/md/raid5.c  | 9 +++++----
- 3 files changed, 10 insertions(+), 8 deletions(-)
+How about ARRAY_SIZE(ad7124_reg_size)? That will make sure that the 
+check is always correct and does not depend on an extra constant that 
+might go out-of-sync with the array. It also makes it easier for 
+reviewers to check that the code is correct. Otherwise they'll have to 
+count how many entries there are in ad7124_reg_size.
 
-diff --git a/drivers/md/md.c b/drivers/md/md.c
-index 4824d50526fa..4ed2eb6933f7 100644
---- a/drivers/md/md.c
-+++ b/drivers/md/md.c
-@@ -2561,7 +2561,7 @@ static bool set_in_sync(struct mddev *mddev)
- 			 * Ensure ->in_sync is visible before we clear
- 			 * ->sync_checkers.
- 			 */
--			smp_mb();
-+			smp_mb__before_atomic();
- 			set_bit(MD_SB_CHANGE_CLEAN, &mddev->sb_flags);
- 			sysfs_notify_dirent_safe(mddev->sysfs_state);
- 		}
-diff --git a/drivers/md/raid10.c b/drivers/md/raid10.c
-index ec136e44aef7..1993a1958c75 100644
---- a/drivers/md/raid10.c
-+++ b/drivers/md/raid10.c
-@@ -1865,9 +1865,10 @@ static int raid10_remove_disk(struct mddev *mddev, struct md_rdev *rdev)
- 		/* We must have just cleared 'rdev' */
- 		p->rdev = p->replacement;
- 		clear_bit(Replacement, &p->replacement->flags);
--		smp_mb(); /* Make sure other CPUs may see both as identical
--			   * but will never see neither -- if they are careful.
--			   */
-+		/* Make sure other CPUs may see both as identical
-+		 * but will never see neither -- if they are careful.
-+		 */
-+		smp_mb__after_atomic();
- 		p->replacement = NULL;
- 	}
- 
-diff --git a/drivers/md/raid5.c b/drivers/md/raid5.c
-index ba00e9877f02..3ad6209287cf 100644
---- a/drivers/md/raid5.c
-+++ b/drivers/md/raid5.c
-@@ -364,7 +364,7 @@ static int release_stripe_list(struct r5conf *conf,
- 		int hash;
- 
- 		/* sh could be readded after STRIPE_ON_RELEASE_LIST is cleard */
--		smp_mb();
-+		smp_mb__before_atomic();
- 		clear_bit(STRIPE_ON_RELEASE_LIST, &sh->state);
- 		/*
- 		 * Don't worry the bit is set here, because if the bit is set
-@@ -7654,9 +7654,10 @@ static int raid5_remove_disk(struct mddev *mddev, struct md_rdev *rdev)
- 		/* We must have just cleared 'rdev' */
- 		p->rdev = p->replacement;
- 		clear_bit(Replacement, &p->replacement->flags);
--		smp_mb(); /* Make sure other CPUs may see both as identical
--			   * but will never see neither - if they are careful
--			   */
-+		/* Make sure other CPUs may see both as identical
-+		 * but will never see neither - if they are careful
-+		 */
-+		smp_mb__after_atomic();
- 		p->replacement = NULL;
- 
- 		if (!err)
--- 
-2.16.4
+> +		return -EINVAL;
+> +
+> +	if (readval)
+> +		ret = ad_sd_read_reg(&st->sd, reg, ad7124_reg_size[reg],
+> +				     readval);
+> +	else
+> +		ret = ad_sd_write_reg(&st->sd, reg, ad7124_reg_size[reg],
+> +				      writeval);
+> +
+> +	return ret;
+> +}
+> +
+>   static IIO_CONST_ATTR(in_voltage_scale_available,
+>   	"0.000001164 0.000002328 0.000004656 0.000009313 0.000018626 0.000037252 0.000074505 0.000149011 0.000298023");
+>   
+> @@ -375,6 +406,7 @@ static const struct attribute_group ad7124_attrs_group = {
+>   static const struct iio_info ad7124_info = {
+>   	.read_raw = ad7124_read_raw,
+>   	.write_raw = ad7124_write_raw,
+> +	.debugfs_reg_access = &ad7124_reg_access,
+>   	.validate_trigger = ad_sd_validate_trigger,
+>   	.attrs = &ad7124_attrs_group,
+>   };
+> 
 
