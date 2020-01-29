@@ -2,127 +2,84 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 65A7914C7E1
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Jan 2020 10:13:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5B53F14C7ED
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Jan 2020 10:17:37 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726237AbgA2JNc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 29 Jan 2020 04:13:32 -0500
-Received: from hqnvemgate24.nvidia.com ([216.228.121.143]:17471 "EHLO
-        hqnvemgate24.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725951AbgA2JNc (ORCPT
+        id S1726216AbgA2JRf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 29 Jan 2020 04:17:35 -0500
+Received: from mail-vs1-f68.google.com ([209.85.217.68]:38395 "EHLO
+        mail-vs1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726145AbgA2JRd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 Jan 2020 04:13:32 -0500
-Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate24.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5e314c880000>; Wed, 29 Jan 2020 01:12:40 -0800
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate102.nvidia.com (PGP Universal service);
-  Wed, 29 Jan 2020 01:13:30 -0800
-X-PGP-Universal: processed;
-        by hqpgpgate102.nvidia.com on Wed, 29 Jan 2020 01:13:30 -0800
-Received: from [10.19.66.205] (172.20.13.39) by HQMAIL107.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Wed, 29 Jan
- 2020 09:13:27 +0000
-Subject: Re: [Patch V3 03/18] phy: tegra: xusb: Add usb-role-switch support
-To:     Thierry Reding <thierry.reding@gmail.com>
-CC:     <balbi@kernel.org>, <gregkh@linuxfoundation.org>,
-        <jonathanh@nvidia.com>, <mark.rutland@arm.com>,
-        <robh+dt@kernel.org>, <kishon@ti.com>,
-        <devicetree@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
-        <linux-usb@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <1577704195-2535-1-git-send-email-nkristam@nvidia.com>
- <1577704195-2535-4-git-send-email-nkristam@nvidia.com>
- <20200128173244.GA2293590@ulmo>
-X-Nvconfidentiality: public
-From:   Nagarjuna Kristam <nkristam@nvidia.com>
-Message-ID: <b6de0078-f1cd-31a1-70bd-dfc320eab70e@nvidia.com>
-Date:   Wed, 29 Jan 2020 14:45:38 +0530
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.2.2
+        Wed, 29 Jan 2020 04:17:33 -0500
+Received: by mail-vs1-f68.google.com with SMTP id r18so9964951vso.5
+        for <linux-kernel@vger.kernel.org>; Wed, 29 Jan 2020 01:17:33 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=benyossef-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=bNAC2+oIozcnNbPThp/wFML15nI58BBOU0+BFe2CZdw=;
+        b=AB5tIAhPfSaTUA30b2rz5nRhgwFARjT/wGDh/jXm589vlqC83Oc2T6QUmOtSTs4C5U
+         ii0gtU5y/tXxYG4+s59v464GcBzW2yVF52O6FaIHNmHPSfvGeolEnZh9s/1doMOx+4ZW
+         JApBsw9NjruJop5KT1CwDLLMmh2eBLTMAr9L0IG74JFKCDAOy2tXQchChyx57VDDMZBp
+         BCK5Ibw1MbOG2iMXVUyNWT43B9G8aEMkiu0TSmf6O0OpD2fT9ThSeXva5TZzS/5aZ3uM
+         Ec6OkU8ADPyWrUvHheawMHJP+tlU84XeAMlDQLZfVQo5B8rtWkrCXiso33tdrfEfrms3
+         9skQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=bNAC2+oIozcnNbPThp/wFML15nI58BBOU0+BFe2CZdw=;
+        b=PqGaS5DlMMO/h/OZH0/yCqnXpsBg88uKaonfgxU9tiAiBies0x5m/5W/M3fdcXP0IU
+         FFzcs5VDCsYaM9XvGrssHY8rilmDO76hw013a/zrI3YZ02AXT+68s16SAAK8SHkWtx6r
+         2YLCBft5jaBBswgYW0P1wP5wzeOgV7hMxIB1z9hsniMb4T/hq6bwheMyac+/R7HQgQ+3
+         gQAB9PA7/C2PjXIwbolV7SwT0ToVIE9BX2yhtH2NjwwB9SJQKleMdxsTaS1PC6I3kT9r
+         VN5X5RtenpripyW4zSMg8WuDCOn/dpEiWo4iM+sxQf56pmRI7Q8rvPWL+G5NqYYOfRZ8
+         Sl2g==
+X-Gm-Message-State: APjAAAVl+y8HkaQbfjcGmm1rgqsC3VJRXvgwrQ11bcUPsQrU+UsnWNTI
+        rLaWzZz4Yjf6EVRA6lTFR1qok08qE47IhorKSrF4HQ==
+X-Google-Smtp-Source: APXvYqyT9AjfuxiZkQLTBthqWh9Qhawn64PCRqSKs9oxee+UzBlV+bTnb4G3Vj19hooUj+iG1WxQj29hKiFWdU6MeZg=
+X-Received: by 2002:a67:f683:: with SMTP id n3mr15974310vso.117.1580289452828;
+ Wed, 29 Jan 2020 01:17:32 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <20200128173244.GA2293590@ulmo>
-X-Originating-IP: [172.20.13.39]
-X-ClientProxiedBy: HQMAIL107.nvidia.com (172.20.187.13) To
- HQMAIL107.nvidia.com (172.20.187.13)
-Content-Type: text/plain; charset="windows-1252"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1580289160; bh=AfKsN9drip9fGF1J0qLuc6MudsZ5rcBopOsTLJQmYOU=;
-        h=X-PGP-Universal:Subject:To:CC:References:X-Nvconfidentiality:From:
-         Message-ID:Date:User-Agent:MIME-Version:In-Reply-To:
-         X-Originating-IP:X-ClientProxiedBy:Content-Type:Content-Language:
-         Content-Transfer-Encoding;
-        b=MBAooP6zorBL94Rw5yws9+pE/JuBQTCObfMRTLoCqHa7DkGpdPFUVTuyxJNMrl2Yn
-         uNS7Ry4YpvrYeuh4Vtez6/SPp7MiOVe8GMHYaqMmNnhUptibVxL8XLaDTPUVSUepM+
-         AmhQ0jo5hhnn+7fnT+I4soRC6ZpbeO9ZV0MUdGO04iVKOqpITv+LRl0JqvHk6JVXzm
-         D66WU5Mtr+iC9LEgwd+GPB9RKWzvt275lKagF6mHDNM/8HCwOmK7EOXKatldBrWuoA
-         iWfnXwllUpw96TA64d9dVETfJIVNZQp0nIEOtTNpmDWGUk6pz9SU2gUoMXyeAxXwTM
-         tPZGwOIA1GCeQ==
+References: <20200128190913.23086-1-geert+renesas@glider.be> <CAOtvUMfoND5iJi7p9YRb6C3To6FGTKGBSoD+cBhkHnLXSppKEw@mail.gmail.com>
+In-Reply-To: <CAOtvUMfoND5iJi7p9YRb6C3To6FGTKGBSoD+cBhkHnLXSppKEw@mail.gmail.com>
+From:   Gilad Ben-Yossef <gilad@benyossef.com>
+Date:   Wed, 29 Jan 2020 11:17:22 +0200
+Message-ID: <CAOtvUMdWHPsGMbwkOwoGzAkeD=Vko=gD=wCn02pfEM9pmNWsfw@mail.gmail.com>
+Subject: Re: [PATCH] [RFC] crypto: ccree - fix retry handling in cc_send_sync_request()
+To:     Geert Uytterhoeven <geert+renesas@glider.be>
+Cc:     Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S . Miller" <davem@davemloft.net>,
+        Linux Crypto Mailing List <linux-crypto@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Linux kernel mailing list <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Wed, Jan 29, 2020 at 11:11 AM Gilad Ben-Yossef <gilad@benyossef.com> wrote:
+>
+> On Tue, Jan 28, 2020 at 9:09 PM Geert Uytterhoeven
+> <geert+renesas@glider.be> wrote:
+> >
+> > If cc_queues_status() indicates that the queue is full,
+> > cc_send_sync_request() should loop and retry.
+> >
+> > However, cc_queues_status() returns either 0 (for success), or -ENOSPC
+> > (for queue full), while cc_send_sync_request() checks for real errors by
+> > comparing with -EAGAIN.  Hence -ENOSPC is always considered a real
+> > error, and the code never retries the operation.
+> >
+> > Fix this by just removing the check, as cc_queues_status() never returns
+> > any other error value than -ENOSPC.
+>
 
+OK, it took me a minute but I now see what you mean... your patch does
+the right thing.
 
-On 28-01-2020 23:02, Thierry Reding wrote:
-> On Mon, Dec 30, 2019 at 04:39:40PM +0530, Nagarjuna Kristam wrote:
->> If usb-role-switch property is present in USB 2 port, register
->> usb-role-switch to receive usb role changes.
->>
->> Signed-off-by: Nagarjuna Kristam<nkristam@nvidia.com>
->> ---
->> V3:
->>   - Driver aborts if usb-role-switch is not added in dt forotg/peripheral
->>     roles.
->>   - Added role name strings instead of enum values in debug prints.
->>   - Updated arguments and variable allignments as per Thierry inputs.
->> ---
->> V2:
->>   - Removed dev_set_drvdata for port->dev.
->>   - Added of_platform_depopulate during error handling and driver removal.
->> ---
->>   drivers/phy/tegra/Kconfig |  1 +
->>   drivers/phy/tegra/xusb.c  | 57 +++++++++++++++++++++++++++++++++++++++++++++++
->>   drivers/phy/tegra/xusb.h  |  3 +++
->>   3 files changed, 61 insertions(+)
->>
->> diff --git a/drivers/phy/tegra/Kconfig b/drivers/phy/tegra/Kconfig
->> index f9817c3..df07c4d 100644
->> --- a/drivers/phy/tegra/Kconfig
->> +++ b/drivers/phy/tegra/Kconfig
->> @@ -2,6 +2,7 @@
->>   config PHY_TEGRA_XUSB
->>   	tristate "NVIDIA Tegra XUSB pad controller driver"
->>   	depends on ARCH_TEGRA
->> +	select USB_CONN_GPIO
->>   	help
->>   	  Choose this option if you have an NVIDIA Tegra SoC.
->>   
->> diff --git a/drivers/phy/tegra/xusb.c b/drivers/phy/tegra/xusb.c
->> index f98ec39..11ea9b5 100644
->> --- a/drivers/phy/tegra/xusb.c
->> +++ b/drivers/phy/tegra/xusb.c
->> @@ -523,6 +523,7 @@ static int tegra_xusb_port_init(struct tegra_xusb_port *port,
->>   	port->dev.type = &tegra_xusb_port_type;
->>   	port->dev.of_node = of_node_get(np);
->>   	port->dev.parent = padctl->dev;
->> +	port->dev.driver = padctl->dev->driver;
-> This looks wrong. I don't think driver's are supposed to set this
-> because it basically means that the device is being attached to the
-> driver, but in this case it doesn't get probed by the driver and in
-> fact the ports don't match the pad controller, so they can't really
-> be driven by the same driver.
-> 
-> Is there any particular reason why you need this?
-> 
-> Thierry
+Acked-by: Gilad Ben-Yossef <gilad@benyossef.com>
 
-Yes, port->dev.driver->owner is accessed in USB role switch driver in 
-API usb_role_switch_get. If driver param is not updated, it causes NULL 
-pointer exception. Based on your inputs, since this assignment is not 
-supposed to used, I believe option available is to create a new 
-device_driver structure and assign the same here.
-Please share your thoughts.
-
-- Nagarjuna
+Gilad
