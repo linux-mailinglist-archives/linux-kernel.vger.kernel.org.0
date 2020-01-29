@@ -2,136 +2,187 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9C8CB14CAD2
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Jan 2020 13:27:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4784414CAD9
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Jan 2020 13:28:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726647AbgA2M1L (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 29 Jan 2020 07:27:11 -0500
-Received: from mail-io1-f70.google.com ([209.85.166.70]:53877 "EHLO
-        mail-io1-f70.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726142AbgA2M1K (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 Jan 2020 07:27:10 -0500
-Received: by mail-io1-f70.google.com with SMTP id q24so6534669iot.20
-        for <linux-kernel@vger.kernel.org>; Wed, 29 Jan 2020 04:27:10 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=1LU7cT1NM4zJrmEpKD8Xx8DzjfpEkyjd7mAueUGcFA4=;
-        b=cKkZNus8attjqA5agCC9rRZ+oknQiQ3oJLL9XROoJS48sCfNtAF1Eo+MJdgbXlZRMx
-         80gzEIe9vLZV91452QGBUxfcy6Nk+exyyKsjTLoquuALeNJ2sZEHv1rlR8rMCo346Qtj
-         cZ2uBzIXQSnmnMXUTU30BWiEjXwE9mqFUja2SvW0BgXZz1fwPZTu7IdyWSLt0dH9casT
-         dZU2HCo6ZH2fDYeGH9clVcJ2YX/Tm8icaH6VIT+eS2kxTv5qYOiBgV9BT4dzX6/6OG+A
-         6dzUK3ubfTXZqfljpQBdk2bXIcuJ4O0SvsG/QcaeUnNSclVGqSm2oq5P2vdUyI0V66nf
-         c97w==
-X-Gm-Message-State: APjAAAV52Q+IxTiyuV4Z1YztoSqcubyibOa6BG63CTXBLm3KWiyepRxM
-        nQWNdX+aTsuMTzn66BF9hLtHdL56OZf5gw+nbMUvxkrZVXYZ
-X-Google-Smtp-Source: APXvYqyNNrRfVc3UyNQSHPkK7stFmdv/ZckLWKDUYrA32R2im2tl3cGAMvD4/gIXTVOHZxoxgKtB42vprg8vDW7+E4Q2MgUMWssJ
+        id S1726717AbgA2M2f (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 29 Jan 2020 07:28:35 -0500
+Received: from mx2.suse.de ([195.135.220.15]:54164 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726271AbgA2M2f (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 Jan 2020 07:28:35 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx2.suse.de (Postfix) with ESMTP id D717EAF92;
+        Wed, 29 Jan 2020 12:28:31 +0000 (UTC)
+Date:   Wed, 29 Jan 2020 13:28:30 +0100 (CET)
+From:   Miroslav Benes <mbenes@suse.cz>
+To:     Josh Poimboeuf <jpoimboe@redhat.com>
+cc:     Petr Mladek <pmladek@suse.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Joe Lawrence <joe.lawrence@redhat.com>,
+        Jessica Yu <jeyu@kernel.org>, x86@kernel.org,
+        linux-kernel@vger.kernel.org, mhiramat@kernel.org,
+        bristot@redhat.com, jbaron@akamai.com,
+        torvalds@linux-foundation.org, tglx@linutronix.de,
+        mingo@kernel.org, namit@vmware.com, hpa@zytor.com, luto@kernel.org,
+        ard.biesheuvel@linaro.org, live-patching@vger.kernel.org,
+        Randy Dunlap <rdunlap@infradead.org>, nstange@suse.de
+Subject: Re: [PATCH v3 5/6] x86/ftrace: Use text_poke()
+In-Reply-To: <20200128170254.igb72ib5n7lvn3ds@treble>
+Message-ID: <alpine.LSU.2.21.2001291249430.28615@pobox.suse.cz>
+References: <20191016074217.GL2328@hirez.programming.kicks-ass.net> <20191021150549.bitgqifqk2tbd3aj@treble> <20200120165039.6hohicj5o52gdghu@treble> <alpine.LSU.2.21.2001210922060.6036@pobox.suse.cz> <20200121161045.dhihqibnpyrk2lsu@treble>
+ <alpine.LSU.2.21.2001221052331.15957@pobox.suse.cz> <20200122214239.ivnebi7hiabi5tbs@treble> <alpine.LSU.2.21.2001281014280.14030@pobox.suse.cz> <20200128150014.juaxfgivneiv6lje@treble> <20200128154046.trkpkdaz7qeovhii@pathway.suse.cz>
+ <20200128170254.igb72ib5n7lvn3ds@treble>
+User-Agent: Alpine 2.21 (LSU 202 2017-01-01)
 MIME-Version: 1.0
-X-Received: by 2002:a02:5206:: with SMTP id d6mr3952937jab.8.1580300829579;
- Wed, 29 Jan 2020 04:27:09 -0800 (PST)
-Date:   Wed, 29 Jan 2020 04:27:09 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <00000000000095e1d8059d4675ac@google.com>
-Subject: WARNING in ar5523_cmd/usb_submit_urb
-From:   syzbot <syzbot+1bc2c2afd44f820a669f@syzkaller.appspotmail.com>
-To:     andreyknvl@google.com, gregkh@linuxfoundation.org,
-        ingrassia@epigenesys.com, linux-kernel@vger.kernel.org,
-        linux-usb@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+> > > There are N users[*] of CONFIG_LIVEPATCH, where N is perhaps dozens.
+> > > For N-1 users, they have to suffer ALL the drawbacks, with NONE of the
+> > > benefits.
+> > 
+> > You wrote in the other mail:
+> > 
+> >   > The problems associated with it: performance, LTO incompatibility,
+> >   > clang incompatibility (I think?), the GCC dead code issue.
+> > 
+> > SUSE performance team did extensive testing and did not found
+> > any real performance issues. It was discussed when the option
+> > was enabled upstream.
+> > 
+> > Are the other problems affecting real life usage, please?
+> > Could you be more specific about them, please?
+> 
+> The original commit mentioned 1-3% scheduler degradation.  And I'd
+> expect things to worsen over time as interprocedural optimizations
+> improve.
 
-syzbot found the following crash on:
+Or maybe not.
 
-HEAD commit:    cd234325 usb: gadget: add raw-gadget interface
-git tree:       https://github.com/google/kasan.git usb-fuzzer
-console output: https://syzkaller.appspot.com/x/log.txt?x=146bf3c9e00000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=bb745005307bc641
-dashboard link: https://syzkaller.appspot.com/bug?extid=1bc2c2afd44f820a669f
-compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1646cf35e00000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=11017735e00000
+Anyway, -flive-patching does not disable all interprocedural 
+optimizations. By far. Only a subset of optimizations whose usage on the 
+linux kernel is reportedly even not that prominent (compared to heavily 
+C++ template based source codes). Reportedly, because we did some tests 
+but nothing exhaustive. So I'd leave any expectations aside now.
 
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+1bc2c2afd44f820a669f@syzkaller.appspotmail.com
+The fact is that -fno-ipa-pure-const caused the objtool issue. One could 
+argue that it should be fixed anyway, because it relies on GCC internal 
+implementation which could easily change, and we luckily found it out 
+thanks to -flive-patching. But you pointed out that was not even the main 
+problem here, so I'd leave it for the separate subthread which Jiri 
+started. 
 
-usb 1-1: New USB device strings: Mfr=1, Product=2, SerialNumber=3
-usb 1-1: Product: syz
-usb 1-1: Manufacturer: syz
-usb 1-1: SerialNumber: syz
-------------[ cut here ]------------
-usb 1-1: BOGUS urb xfer, pipe 3 != type 1
-WARNING: CPU: 0 PID: 95 at drivers/usb/core/urb.c:478 usb_submit_urb+0x1188/0x1460 drivers/usb/core/urb.c:478
-Kernel panic - not syncing: panic_on_warn set ...
-CPU: 0 PID: 95 Comm: kworker/0:2 Not tainted 5.5.0-rc7-syzkaller #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-Workqueue: usb_hub_wq hub_event
-Call Trace:
- __dump_stack lib/dump_stack.c:77 [inline]
- dump_stack+0xef/0x16e lib/dump_stack.c:118
- panic+0x2aa/0x6e1 kernel/panic.c:221
- __warn.cold+0x2f/0x30 kernel/panic.c:582
- report_bug+0x27b/0x2f0 lib/bug.c:195
- fixup_bug arch/x86/kernel/traps.c:174 [inline]
- fixup_bug arch/x86/kernel/traps.c:169 [inline]
- do_error_trap+0x12b/0x1e0 arch/x86/kernel/traps.c:267
- do_invalid_op+0x32/0x40 arch/x86/kernel/traps.c:286
- invalid_op+0x23/0x30 arch/x86/entry/entry_64.S:1027
-RIP: 0010:usb_submit_urb+0x1188/0x1460 drivers/usb/core/urb.c:478
-Code: 4d 85 ed 74 46 e8 28 2d e1 fd 4c 89 f7 e8 d0 87 17 ff 41 89 d8 44 89 e1 4c 89 ea 48 89 c6 48 c7 c7 a0 2b 3b 86 e8 20 13 b6 fd <0f> 0b e9 20 f4 ff ff e8 fc 2c e1 fd 0f 1f 44 00 00 e8 f2 2c e1 fd
-RSP: 0018:ffff8881d58cf0d8 EFLAGS: 00010286
-RAX: 0000000000000000 RBX: 0000000000000001 RCX: 0000000000000000
-RDX: 0000000000000000 RSI: ffffffff81295a0d RDI: ffffed103ab19e0d
-RBP: ffff8881cd478050 R08: ffff8881d71ac980 R09: fffffbfff1269cae
-R10: fffffbfff1269cad R11: ffffffff8934e56f R12: 0000000000000003
-R13: ffff8881d098eee8 R14: ffff8881cda730a0 R15: ffff8881d5583b00
- ar5523_cmd+0x438/0x7a0 drivers/net/wireless/ath/ar5523/ar5523.c:271
- ar5523_cmd_read drivers/net/wireless/ath/ar5523/ar5523.c:298 [inline]
- ar5523_host_available drivers/net/wireless/ath/ar5523/ar5523.c:1372 [inline]
- ar5523_probe+0xc11/0x1ad0 drivers/net/wireless/ath/ar5523/ar5523.c:1652
- usb_probe_interface+0x310/0x800 drivers/usb/core/driver.c:361
- really_probe+0x290/0xad0 drivers/base/dd.c:548
- driver_probe_device+0x223/0x350 drivers/base/dd.c:721
- __device_attach_driver+0x1d1/0x290 drivers/base/dd.c:828
- bus_for_each_drv+0x162/0x1e0 drivers/base/bus.c:430
- __device_attach+0x217/0x390 drivers/base/dd.c:894
- bus_probe_device+0x1e4/0x290 drivers/base/bus.c:490
- device_add+0x1459/0x1bf0 drivers/base/core.c:2487
- usb_set_configuration+0xe47/0x17d0 drivers/usb/core/message.c:2023
- generic_probe+0x9d/0xd5 drivers/usb/core/generic.c:210
- usb_probe_device+0xaf/0x140 drivers/usb/core/driver.c:266
- really_probe+0x290/0xad0 drivers/base/dd.c:548
- driver_probe_device+0x223/0x350 drivers/base/dd.c:721
- __device_attach_driver+0x1d1/0x290 drivers/base/dd.c:828
- bus_for_each_drv+0x162/0x1e0 drivers/base/bus.c:430
- __device_attach+0x217/0x390 drivers/base/dd.c:894
- bus_probe_device+0x1e4/0x290 drivers/base/bus.c:490
- device_add+0x1459/0x1bf0 drivers/base/core.c:2487
- usb_new_device.cold+0x540/0xcd0 drivers/usb/core/hub.c:2538
- hub_port_connect drivers/usb/core/hub.c:5185 [inline]
- hub_port_connect_change drivers/usb/core/hub.c:5325 [inline]
- port_event drivers/usb/core/hub.c:5471 [inline]
- hub_event+0x21cb/0x4300 drivers/usb/core/hub.c:5553
- process_one_work+0x945/0x15c0 kernel/workqueue.c:2264
- worker_thread+0x96/0xe20 kernel/workqueue.c:2410
- kthread+0x318/0x420 kernel/kthread.c:255
- ret_from_fork+0x24/0x30 arch/x86/entry/entry_64.S:352
-Kernel Offset: disabled
-Rebooting in 86400 seconds..
+Regarding the scheduler degradation. hackbench performance degradation to 
+make it clear. It might be interesting to find out what really changed 
+there. Which disabled optimization caused it and how. Maybe it could be 
+gained back if proven again (because it may have changed, right?).
 
+It all sound artificial to me though. I am not saying the degradation is 
+not there, but many people also lived with frame pointers enabled for 
+quite a long time and no one seemed to be bothered. And that was even more 
+serious because the decline was bigger and it was measurable in many 
+workflows. Not just a schedule microbenchmark. That is why Petr asked 
+about real life reports, I guess.
+ 
+> Also, LTO is coming whether we like it or not.  As is Clang.  Those are
+> real-world things which will need to work with livepatching sooner or
+> later.
 
----
-This bug is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+Yes, but we are not there yet. Once a user has problem with that, we will 
+try to solve it.
 
-syzbot will keep track of this bug report. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-syzbot can test patches for this bug, for details see:
-https://goo.gl/tpsmEJ#testing-patches
+LTO might not be a big problem. The number of ipa clones would probably 
+grow, but that is not directly dangerous. It remains to be seen.
+
+I don't know much about Clang.
+
+> > > And, even if they wanted those benefits, they have no idea how to get
+> > > them because the patch creation process isn't documented.
+> > 
+> > I do not understand this. All the sample modules and selftests are
+> > using source based livepatches.
+> 
+> We're talking in circles.  Have you read the thread?
+>
+> The samples are a (dangerous) joke.  With or without -flive-patching.
+
+How come?
+
+In my opinion, the samples and selftests try to show the way to prepare a 
+(simple, yes) live patch. We try to ensure it always works (selftests 
+should).
+
+After all, there is not much more we do at SUSE to prepare a live patch.
+
+1. take a patch and put all touched functions in a live patch
+2. if the functions cannot be patched, patch their callers
+3. do the function closure and/or add references (relocations or 
+   kallsyms trick) so it can all be compiled.
+4. done
+
+See? Samples and selftests are not different. Our live patches are not 
+different (https://kernel.suse.com/cgit/kernel-livepatch/). Can we 
+implement the samples and selftests without -flive-patching? No, not 
+really. Or we could, but no guarantees they would work.
+
+For 2., we use -fdump-ipa-clones and Martin Liska's tool 
+(https://github.com/marxin/kgraft-analysis-tool) to parse the output.
+
+Yes, sometimes it is more complicated. Source based approach allows us to 
+cope with that quite well. But that is case by case and cannot be easily 
+documented.
+
+Do we lack the documentation of our approach? Definitely. We are moving to 
+klp-ccp automation now (https://github.com/SUSE/klp-ccp) and once done 
+completely, we will hopefully have some documention. CCing Nicolai if he 
+wants to add something.
+
+Should it be upstream? I don't know. I don't think so. For the same reason 
+kpatch-build documentation is not upstream either. Use cases of the 
+infrastructure differ. Maybe there are users who use it in a completely 
+different way. I don't know. In fact, it does not matter to me. I think we 
+should support it all if they make sense.
+
+And that is my message which (in my opinion) makes more sense. Definitely 
+more sense than your "kpatch-build is the only safe way to prepare a live 
+patch" mantra you are trying to sell here for whatever reason. I don't 
+agree with it.
+
+> > It is actually the only somehow documented way. Sure, the
+> > documentation might get improved.  Patches are welcome.
+> 
+> Are you suggesting for *me* to send documentation for how *you* build
+> patches?
+
+I don't think that is what Petr meant (he will definitely correct me). If 
+you think there is a space for improvement in our upstream documentation 
+of the infrastructure, you are welcome to send patches. The space is 
+definitely there.
+
+> > The option is not currently needed by the selftests only because there
+> > is no selftest for this type of problems. But the problems are real.
+> > They would actually deserve selftests. Again, patches are welcome.
+> > 
+> > My understanding is that the source based livepatches is the future.
+> 
+> I think that still remains to be seen.
+> 
+> > N-1 users are just waiting until the 1 user develops more helper tools
+> > for this.
+> 
+> No.  N-1 users have no idea how to make (safe) source-based patches in
+> the first place.  And if *you* don't need the tools, why would anyone
+> else?  Why not document the process and encourage the existence of other
+> users so they can get involved and help with the tooling?
+
+I replied to this one above. You are right we should document our approach 
+better. I think it is off topic of the thread and problem here.
+
+Regards
+Miroslav
