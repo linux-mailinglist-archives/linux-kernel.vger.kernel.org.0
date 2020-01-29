@@ -2,94 +2,133 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A7F2514CC47
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Jan 2020 15:22:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B7FCD14CC60
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Jan 2020 15:24:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726823AbgA2OV4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 29 Jan 2020 09:21:56 -0500
-Received: from mx0a-00128a01.pphosted.com ([148.163.135.77]:43054 "EHLO
-        mx0a-00128a01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726178AbgA2OVy (ORCPT
+        id S1726774AbgA2OYh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 29 Jan 2020 09:24:37 -0500
+Received: from mail26.static.mailgun.info ([104.130.122.26]:37322 "EHLO
+        mail26.static.mailgun.info" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726485AbgA2OYg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 Jan 2020 09:21:54 -0500
-Received: from pps.filterd (m0167089.ppops.net [127.0.0.1])
-        by mx0a-00128a01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 00TEDTG3012736;
-        Wed, 29 Jan 2020 09:21:31 -0500
-Received: from nwd2mta3.analog.com ([137.71.173.56])
-        by mx0a-00128a01.pphosted.com with ESMTP id 2xrkfam73m-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 29 Jan 2020 09:21:31 -0500
-Received: from ASHBMBX8.ad.analog.com (ashbmbx8.ad.analog.com [10.64.17.5])
-        by nwd2mta3.analog.com (8.14.7/8.14.7) with ESMTP id 00TELUfd043131
-        (version=TLSv1/SSLv3 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=FAIL);
-        Wed, 29 Jan 2020 09:21:30 -0500
-Received: from ASHBMBX8.ad.analog.com (10.64.17.5) by ASHBMBX8.ad.analog.com
- (10.64.17.5) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1779.2; Wed, 29 Jan
- 2020 09:21:23 -0500
-Received: from zeus.spd.analog.com (10.64.82.11) by ASHBMBX8.ad.analog.com
- (10.64.17.5) with Microsoft SMTP Server id 15.1.1779.2 via Frontend
- Transport; Wed, 29 Jan 2020 09:21:23 -0500
-Received: from ben-Latitude-E6540.ad.analog.com ([10.48.65.231])
-        by zeus.spd.analog.com (8.15.1/8.15.1) with ESMTP id 00TEKwxj027599;
-        Wed, 29 Jan 2020 09:21:20 -0500
-From:   Beniamin Bia <beniamin.bia@analog.com>
-To:     <jic23@kernel.org>
-CC:     <lars@metafoo.de>, <Michael.Hennerich@analog.com>,
-        <pmeerw@pmeerw.net>, <linux-iio@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <biabeniamin@outlook.com>,
-        <knaack.h@gmx.de>, <robh+dt@kernel.org>, <mark.rutland@arm.com>,
-        <devicetree@vger.kernel.org>,
-        Beniamin Bia <beniamin.bia@analog.com>
-Subject: [PATCH v4 5/5] MAINTAINERS: add entry for hmc425a driver.
-Date:   Wed, 29 Jan 2020 16:23:01 +0200
-Message-ID: <20200129142301.13918-6-beniamin.bia@analog.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20200129142301.13918-1-beniamin.bia@analog.com>
-References: <20200129142301.13918-1-beniamin.bia@analog.com>
+        Wed, 29 Jan 2020 09:24:36 -0500
+DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
+ s=smtp; t=1580307876; h=Content-Type: MIME-Version: Message-ID:
+ In-Reply-To: Date: References: Subject: Cc: To: From: Sender;
+ bh=VX3kmbdYfef45mzPcZSRglrDaIuEGLiG+F/CL1OGSpc=; b=g1bnharH3K5gazzDni0aeKZhY0l4NqSr9UJwozvc/5De8MRC/LKRUUFGUwns4fj+YSVx2kYf
+ G4JwTvUJlaYf50Z3u2yWG3bfObGSudWYNzx82Q38VO/TJmpbD4JVJWVqpvnYmkCit+h82ADM
+ g/Kagq6Gq+NlHOTcGrs9Rl8wbI0=
+X-Mailgun-Sending-Ip: 104.130.122.26
+X-Mailgun-Sid: WyI0MWYwYSIsICJsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
+Received: from smtp.codeaurora.org (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171])
+ by mxa.mailgun.org with ESMTP id 5e31959c.7f717f937d50-smtp-out-n03;
+ Wed, 29 Jan 2020 14:24:28 -0000 (UTC)
+Received: by smtp.codeaurora.org (Postfix, from userid 1001)
+        id E9771C4479F; Wed, 29 Jan 2020 14:24:27 +0000 (UTC)
+X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
+        aws-us-west-2-caf-mail-1.web.codeaurora.org
+X-Spam-Level: 
+X-Spam-Status: No, score=-1.0 required=2.0 tests=ALL_TRUSTED,SPF_NONE
+        autolearn=unavailable autolearn_force=no version=3.4.0
+Received: from x230.qca.qualcomm.com (88-114-240-156.elisa-laajakaista.fi [88.114.240.156])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: kvalo)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 095A5C433CB;
+        Wed, 29 Jan 2020 14:24:24 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 095A5C433CB
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=none smtp.mailfrom=kvalo@codeaurora.org
+From:   Kalle Valo <kvalo@codeaurora.org>
+To:     Stephen Rothwell <sfr@canb.auug.org.au>
+Cc:     David Miller <davem@davemloft.net>,
+        Networking <netdev@vger.kernel.org>,
+        Wireless <linux-wireless@vger.kernel.org>,
+        Christoph Hellwig <hch@lst.de>,
+        Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Alexandru-Mihai Maftei <amaftei@solarflare.com>
+Subject: Re: linux-next: manual merge of the generic-ioremap tree with the net-next tree
+References: <20200109161202.1b0909d9@canb.auug.org.au>
+        <20200128095449.5688fddc@canb.auug.org.au>
+        <20200129081628.750f5e05@canb.auug.org.au>
+Date:   Wed, 29 Jan 2020 16:24:22 +0200
+In-Reply-To: <20200129081628.750f5e05@canb.auug.org.au> (Stephen Rothwell's
+        message of "Wed, 29 Jan 2020 08:16:28 +1100")
+Message-ID: <87blqm8hnt.fsf@codeaurora.org>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/24.5 (gnu/linux)
 MIME-Version: 1.0
 Content-Type: text/plain
-X-ADIRoutedOnPrem: True
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.572
- definitions=2020-01-29_03:2020-01-28,2020-01-29 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 malwarescore=0
- suspectscore=1 mlxlogscore=881 clxscore=1015 phishscore=0 spamscore=0
- adultscore=0 priorityscore=1501 bulkscore=0 lowpriorityscore=0
- impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-1911200001 definitions=main-2001290118
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add Beniamin Bia and Michael Hennerich as maintainers for HMC425A
-attenuator.
+Stephen Rothwell <sfr@canb.auug.org.au> writes:
 
-Signed-off-by: Beniamin Bia <beniamin.bia@analog.com>
----
- MAINTAINERS | 9 +++++++++
- 1 file changed, 9 insertions(+)
+> Hi all,
+>
+> On Tue, 28 Jan 2020 09:54:49 +1100 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+>>
+>> On Thu, 9 Jan 2020 16:12:02 +1100 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+>> > 
+>> > Today's linux-next merge of the generic-ioremap tree got a conflict in:
+>> > 
+>> >   drivers/net/ethernet/sfc/efx.c
+>> > 
+>> > between commit:
+>> > 
+>> >   f1826756b499 ("sfc: move struct init and fini code")
+>> > 
+>> > from the net-next tree and commit:
+>> > 
+>> >   4bdc0d676a64 ("remove ioremap_nocache and devm_ioremap_nocache")
+>> > 
+>> > from the generic-ioremap tree.
+>> > 
+>> > I fixed it up (the latter moved the code, so I applied the following
+>> > merge fix patch) and can carry the fix as necessary. This is now fixed
+>> > as far as linux-next is concerned, but any non trivial conflicts should
+>> > be mentioned to your upstream maintainer when your tree is submitted
+>> > for merging.  You may also want to consider cooperating with the
+>> > maintainer of the conflicting tree to minimise any particularly complex
+>> > conflicts.
+>> > 
+>> > From: Stephen Rothwell <sfr@canb.auug.org.au>
+>> > Date: Thu, 9 Jan 2020 16:08:52 +1100
+>> > Subject: [PATCH] fix up for "sfc: move struct init and fini code"
+>> > 
+>> > Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+>> > ---
+>> >  drivers/net/ethernet/sfc/efx_common.c | 2 +-
+>> >  1 file changed, 1 insertion(+), 1 deletion(-)
+>> > 
+>> > diff --git a/drivers/net/ethernet/sfc/efx_common.c b/drivers/net/ethernet/sfc/efx_common.c
+>> > index fe74c66c8ec6..bf0126633c25 100644
+>> > --- a/drivers/net/ethernet/sfc/efx_common.c
+>> > +++ b/drivers/net/ethernet/sfc/efx_common.c
+>> > @@ -954,7 +954,7 @@ int efx_init_io(struct efx_nic *efx, int bar, dma_addr_t dma_mask,
+>> >  		goto fail3;
+>> >  	}
+>> >  
+>> > -	efx->membase = ioremap_nocache(efx->membase_phys, mem_map_size);
+>> > +	efx->membase = ioremap(efx->membase_phys, mem_map_size);
+>> >  	if (!efx->membase) {
+>> >  		netif_err(efx, probe, efx->net_dev,
+>> >  			  "could not map memory BAR at %llx+%x\n",
+>> > -- 
+>> > 2.24.0  
+>> 
+>> This is now a conflict between the net-next tree and Linus' tree.
+>
+> It actually turns out that this is a conflict between the
+> wireless-drivers tree and Linus' tree since the wireless-drivers tree
+> has merged most of the net-next tree.
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index e699fe378e71..06c283553e30 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -1063,6 +1063,15 @@ F:	drivers/iio/adc/ltc249*
- X:	drivers/iio/*/adjd*
- F:	drivers/staging/iio/*/ad*
- 
-+ANALOG DEVICES INC HMC425A DRIVER
-+M:	Beniamin Bia <beniamin.bia@analog.com>
-+M:	Michael Hennerich <michael.hennerich@analog.com>
-+L:	linux-iio@vger.kernel.org
-+W:	http://ez.analog.com/community/linux-device-drivers
-+S:	Supported
-+F:	drivers/iio/amplifiers/hmc425a.c
-+F:	Documentation/devicetree/bindings/iio/amplifiers/adi,hmc425a.yaml
-+
- ANALOGBITS PLL LIBRARIES
- M:	Paul Walmsley <paul.walmsley@sifive.com>
- S:	Supported
+Yeah, I fast forwarded wireless-drivers to top of net-next so that I can
+easily apply fixes and send them to Dave later this week. But as I don't
+touch drivers/net/ethernet I don't think there's nothing I can do to fix
+this conflict.
+
 -- 
-2.17.1
-
+https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
