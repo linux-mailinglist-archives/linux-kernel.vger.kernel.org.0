@@ -2,47 +2,47 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5213C14C8E6
+	by mail.lfdr.de (Postfix) with ESMTP id C654D14C8E7
 	for <lists+linux-kernel@lfdr.de>; Wed, 29 Jan 2020 11:45:26 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726718AbgA2KpU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 29 Jan 2020 05:45:20 -0500
-Received: from merlin.infradead.org ([205.233.59.134]:48216 "EHLO
+        id S1726668AbgA2KpS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 29 Jan 2020 05:45:18 -0500
+Received: from merlin.infradead.org ([205.233.59.134]:48214 "EHLO
         merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726632AbgA2KpR (ORCPT
+        with ESMTP id S1726551AbgA2KpP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 Jan 2020 05:45:17 -0500
+        Wed, 29 Jan 2020 05:45:15 -0500
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=merlin.20170209; h=Content-Type:MIME-Version:References:
         Subject:Cc:To:From:Date:Message-Id:Sender:Reply-To:Content-Transfer-Encoding:
         Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
         Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:List-Id:List-Help:
         List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=cKWDLyH34lsKGUb78B0klmtcz2u9EuKcQCo74I6jyeE=; b=yNtSuSdW1EumY55qZ6YMz7b987
-        mWMEH0KDZu8DoDXe3Gu3e0al84S8oNCypo5p6puul3Q/Ri3RVPA5FsBuAadOflGHC+nCqrhh5VBzR
-        QVXEmmaJT/UQcO3ALJJchukTm8pUkLxgAnMmSeNBeSng4rZi0NennmQCdYyJVQgIJ4UAQicolxyHi
-        9awjiXtBnRFhZpDpPprBfKuSTmcnMUb44Gb2wjwZ0TAowt/kr0/hiwjoZ8HOM3SfarINvL6CPBs0y
-        jPfUvpLiCgpaHNZeZ5v1XFJ9tAS2QVzSBZ3LjTTHfRILDhgADQHWkBPDZTnnxf8zT8MTXD2LHEWso
-        kOb82pxA==;
+        bh=Xf+HYyabx00hesBGuy25K5IzuYiZGH8DfWI2UrwSTqY=; b=hW7aiT84MMdNFafk4bT7Yf5Abh
+        o4p3gvNtQLXqD2ElCZZqOLh3bS5cB6Rrx2gpcN9OBW074Q2L/MNhTn0zQIaXixtJS0HSVoN0p+RJ+
+        dPuk3Nu0MeU0uL8HOoFpwM5KI3VrLXay28d4GdCsFRI5atfAf8J7pTaEEFZSIwmsZv3JNm7loMMsH
+        X4vGSHASOO1AUmOxKYJoSptVVrS4l76iH5iqws3sEIsoxJ2xx0BSZycxvyM9MHM0EOnSTTJQRmMGw
+        iGED+pRbokH6qDx0zIl7rSpzH3JJtZZ/ATiOQJXC2iEcAkH9GnOEltxk8LZ3y7yfYFfQCTLGVq4ZD
+        G1j6kwqA==;
 Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
         by merlin.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1iwkqN-0001OI-8O; Wed, 29 Jan 2020 10:45:11 +0000
+        id 1iwkqN-0001OJ-8W; Wed, 29 Jan 2020 10:45:11 +0000
 Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (Client did not present a certificate)
-        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id C795A30607E;
+        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id CA9153060EB;
         Wed, 29 Jan 2020 11:43:24 +0100 (CET)
 Received: by hirez.programming.kicks-ass.net (Postfix, from userid 0)
-        id 8266F2B2E7F3D; Wed, 29 Jan 2020 11:45:07 +0100 (CET)
-Message-Id: <20200129104345.378213302@infradead.org>
+        id 895DF2B2E7F40; Wed, 29 Jan 2020 11:45:07 +0100 (CET)
+Message-Id: <20200129104345.434705552@infradead.org>
 User-Agent: quilt/0.65
-Date:   Wed, 29 Jan 2020 11:39:43 +0100
+Date:   Wed, 29 Jan 2020 11:39:44 +0100
 From:   Peter Zijlstra <peterz@infradead.org>
 To:     Geert Uytterhoeven <geert@linux-m68k.org>
 Cc:     linux-m68k@lists.linux-m68k.org, linux-kernel@vger.kernel.org,
         Will Deacon <will@kernel.org>,
         Peter Zijlstra <peterz@infradead.org>
-Subject: [PATCH 2/5] m68k,mm: Improve kernel_page_table()
+Subject: [PATCH 3/5] m68k,mm: Use table allocator for pgtables
 References: <20200129103941.304769381@infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -51,176 +51,135 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-With the PTE-tables now only being 256 bytes, allocating a full page
-for them is a giant waste. Start by improving the boot time allocator
-such that init_mm initialization will at least have optimal memory
-density.
+With the new page-table layout, using full (4k) pages for (256 byte)
+pte-tables is immensely wastefull. Move the pte-tables over to the
+same allocator already used for the (512 byte) higher level tables
+(pgd/pmd).
 
-Much thanks to Will Deacon in help with debugging and ferreting out
-lost information on these dusty MMUs.
+This reduces the pte-table waste from 15x to 2x.
 
-Notes:
-
- - _TABLE_MASK is reduced to account for the shorter (256 byte)
-   alignment of pte-tables, per the manual, table entries should only
-   ever have state in the low 4 bits (Used,WrProt,Desc1,Desc0) so it is
-   still longer than strictly required. (Thanks Will!!!)
-
- - Also use kernel_page_table() for the 020/030 zero_pgtable case and
-   consequently remove the zero_pgtable init hack (will fix up later).
+Due to no longer being bound to 16 consecutive tables, this might
+actually already be more efficient than the old code for sparse
+tables.
 
 Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
 ---
- arch/m68k/include/asm/motorola_pgtable.h |   13 ++++++
- arch/m68k/mm/init.c                      |    5 --
- arch/m68k/mm/motorola.c                  |   61 +++++++++++++++++--------------
- 3 files changed, 46 insertions(+), 33 deletions(-)
+ arch/m68k/include/asm/motorola_pgalloc.h |   54 ++++++-------------------------
+ arch/m68k/include/asm/motorola_pgtable.h |    8 ++++
+ arch/m68k/include/asm/page.h             |    2 -
+ 3 files changed, 19 insertions(+), 45 deletions(-)
 
+--- a/arch/m68k/include/asm/motorola_pgalloc.h
++++ b/arch/m68k/include/asm/motorola_pgalloc.h
+@@ -10,60 +10,28 @@ extern int free_pointer_table(pmd_t *);
+ 
+ static inline pte_t *pte_alloc_one_kernel(struct mm_struct *mm)
+ {
+-	pte_t *pte;
+-
+-	pte = (pte_t *)__get_free_page(GFP_KERNEL|__GFP_ZERO);
+-	if (pte) {
+-		__flush_page_to_ram(pte);
+-		flush_tlb_kernel_page(pte);
+-		nocache_page(pte);
+-	}
+-
+-	return pte;
++	return (pte_t *)get_pointer_table();
+ }
+ 
+ static inline void pte_free_kernel(struct mm_struct *mm, pte_t *pte)
+ {
+-	cache_page(pte);
+-	free_page((unsigned long) pte);
++	free_pointer_table((void *)pte);
+ }
+ 
+ static inline pgtable_t pte_alloc_one(struct mm_struct *mm)
+ {
+-	struct page *page;
+-	pte_t *pte;
++	return (pte_t *)get_pointer_table();
++}
+ 
+-	page = alloc_pages(GFP_KERNEL|__GFP_ZERO, 0);
+-	if(!page)
+-		return NULL;
+-	if (!pgtable_pte_page_ctor(page)) {
+-		__free_page(page);
+-		return NULL;
+-	}
+-
+-	pte = kmap(page);
+-	__flush_page_to_ram(pte);
+-	flush_tlb_kernel_page(pte);
+-	nocache_page(pte);
+-	kunmap(page);
+-	return page;
+-}
+-
+-static inline void pte_free(struct mm_struct *mm, pgtable_t page)
+-{
+-	pgtable_pte_page_dtor(page);
+-	cache_page(kmap(page));
+-	kunmap(page);
+-	__free_page(page);
++static inline void pte_free(struct mm_struct *mm, pgtable_t pgtable)
++{
++	free_pointer_table((void *)pgtable);
+ }
+ 
+-static inline void __pte_free_tlb(struct mmu_gather *tlb, pgtable_t page,
++static inline void __pte_free_tlb(struct mmu_gather *tlb, pgtable_t pgtable,
+ 				  unsigned long address)
+ {
+-	pgtable_pte_page_dtor(page);
+-	cache_page(kmap(page));
+-	kunmap(page);
+-	__free_page(page);
++	free_pointer_table((void *)pgtable);
+ }
+ 
+ 
+@@ -102,9 +70,9 @@ static inline void pmd_populate_kernel(s
+ 
+ static inline void pmd_populate(struct mm_struct *mm, pmd_t *pmd, pgtable_t page)
+ {
+-	pmd_set(pmd, page_address(page));
++	pmd_set(pmd, page);
+ }
+-#define pmd_pgtable(pmd) pmd_page(pmd)
++#define pmd_pgtable(pmd) ((pgtable_t)__pmd_page(pmd))
+ 
+ static inline void pud_populate(struct mm_struct *mm, pud_t *pud, pmd_t *pmd)
+ {
 --- a/arch/m68k/include/asm/motorola_pgtable.h
 +++ b/arch/m68k/include/asm/motorola_pgtable.h
-@@ -23,7 +23,18 @@
- #define _DESCTYPE_MASK	0x003
- 
- #define _CACHEMASK040	(~0x060)
--#define _TABLE_MASK	(0xfffffe00)
+@@ -133,7 +133,13 @@ static inline void pud_set(pud_t *pudp,
+ #define pmd_bad(pmd)		((pmd_val(pmd) & _DESCTYPE_MASK) != _PAGE_TABLE)
+ #define pmd_present(pmd)	(pmd_val(pmd) & _PAGE_TABLE)
+ #define pmd_clear(pmdp)		({ pmd_val(*pmdp) = 0; })
+-#define pmd_page(pmd)		virt_to_page(__va(pmd_val(pmd)))
 +
 +/*
-+ * Currently set to the minimum alignment of table pointers (256 bytes).
-+ * The hardware only uses the low 4 bits for state:
-+ *
-+ *    3 - Used
-+ *    2 - Write Protected
-+ *  0,1 - Desciptor Type
-+ *
-+ * and has the rest of the bits reserved.
++ * m68k does not have huge pages (020/030 actually could), but generic code
++ * expects pmd_page() to exists, only to then DCE it all. Provide a dummy to
++ * make the compiler happy.
 + */
-+#define _TABLE_MASK	(0xffffff00)
++#define pmd_page(pmd)		NULL
  
- #define _PAGE_TABLE	(_PAGE_SHORT)
- #define _PAGE_CHG_MASK  (PAGE_MASK | _PAGE_ACCESSED | _PAGE_DIRTY | _PAGE_NOCACHE)
---- a/arch/m68k/mm/init.c
-+++ b/arch/m68k/mm/init.c
-@@ -42,7 +42,6 @@ EXPORT_SYMBOL(empty_zero_page);
  
- #if !defined(CONFIG_SUN3) && !defined(CONFIG_COLDFIRE)
- extern void init_pointer_table(unsigned long ptable);
--extern pmd_t *zero_pgtable;
- #endif
+ #define pud_none(pud)		(!pud_val(pud))
+--- a/arch/m68k/include/asm/page.h
++++ b/arch/m68k/include/asm/page.h
+@@ -30,7 +30,7 @@ typedef struct { unsigned long pmd; } pm
+ typedef struct { unsigned long pte; } pte_t;
+ typedef struct { unsigned long pgd; } pgd_t;
+ typedef struct { unsigned long pgprot; } pgprot_t;
+-typedef struct page *pgtable_t;
++typedef pte_t *pgtable_t;
  
- #ifdef CONFIG_MMU
-@@ -135,10 +134,6 @@ static inline void init_pointer_tables(v
- 		if (pud_present(*pud))
- 			init_pointer_table(pgd_page_vaddr(kernel_pg_dir[i]));
- 	}
--
--	/* insert also pointer table that we used to unmap the zero page */
--	if (zero_pgtable)
--		init_pointer_table((unsigned long)zero_pgtable);
- #endif
- }
- 
---- a/arch/m68k/mm/motorola.c
-+++ b/arch/m68k/mm/motorola.c
-@@ -50,29 +50,37 @@ extern __initdata unsigned long m68k_ini
- 
- extern unsigned long availmem;
- 
-+static pte_t *last_pte_table __initdata = NULL;
-+
- static pte_t * __init kernel_page_table(void)
- {
--	pte_t *ptablep;
-+	pte_t *pte_table = last_pte_table;
-+
-+	if (((unsigned long)last_pte_table & ~PAGE_MASK) == 0) {
-+		pte_table = (pte_t *)memblock_alloc_low(PAGE_SIZE, PAGE_SIZE);
-+		if (!pte_table) {
-+			panic("%s: Failed to allocate %lu bytes align=%lx\n",
-+					__func__, PAGE_SIZE, PAGE_SIZE);
-+		}
-+
-+		clear_page(pte_table);
-+		__flush_page_to_ram(pte_table);
-+		flush_tlb_kernel_page(pte_table);
-+		nocache_page(pte_table);
-+
-+		last_pte_table = pte_table;
-+	}
- 
--	ptablep = (pte_t *)memblock_alloc_low(PAGE_SIZE, PAGE_SIZE);
--	if (!ptablep)
--		panic("%s: Failed to allocate %lu bytes align=%lx\n",
--		      __func__, PAGE_SIZE, PAGE_SIZE);
--
--	clear_page(ptablep);
--	__flush_page_to_ram(ptablep);
--	flush_tlb_kernel_page(ptablep);
--	nocache_page(ptablep);
-+	last_pte_table += PTRS_PER_PTE;
- 
--	return ptablep;
-+	return pte_table;
- }
- 
--static pmd_t *last_pgtable __initdata = NULL;
--pmd_t *zero_pgtable __initdata = NULL;
-+static pmd_t *last_pmd_table __initdata = NULL;
- 
- static pmd_t * __init kernel_ptr_table(void)
- {
--	if (!last_pgtable) {
-+	if (!last_pmd_table) {
- 		unsigned long pmd, last;
- 		int i;
- 
-@@ -91,27 +99,27 @@ static pmd_t * __init kernel_ptr_table(v
- 				last = pmd;
- 		}
- 
--		last_pgtable = (pmd_t *)last;
-+		last_pmd_table = (pmd_t *)last;
- #ifdef DEBUG
--		printk("kernel_ptr_init: %p\n", last_pgtable);
-+		printk("kernel_ptr_init: %p\n", last_pmd_table);
- #endif
- 	}
- 
--	last_pgtable += PTRS_PER_PMD;
--	if (((unsigned long)last_pgtable & ~PAGE_MASK) == 0) {
--		last_pgtable = (pmd_t *)memblock_alloc_low(PAGE_SIZE,
-+	last_pmd_table += PTRS_PER_PMD;
-+	if (((unsigned long)last_pmd_table & ~PAGE_MASK) == 0) {
-+		last_pmd_table = (pmd_t *)memblock_alloc_low(PAGE_SIZE,
- 							   PAGE_SIZE);
--		if (!last_pgtable)
-+		if (!last_pmd_table)
- 			panic("%s: Failed to allocate %lu bytes align=%lx\n",
- 			      __func__, PAGE_SIZE, PAGE_SIZE);
- 
--		clear_page(last_pgtable);
--		__flush_page_to_ram(last_pgtable);
--		flush_tlb_kernel_page(last_pgtable);
--		nocache_page(last_pgtable);
-+		clear_page(last_pmd_table);
-+		__flush_page_to_ram(last_pmd_table);
-+		flush_tlb_kernel_page(last_pmd_table);
-+		nocache_page(last_pmd_table);
- 	}
- 
--	return last_pgtable;
-+	return last_pmd_table;
- }
- 
- static void __init map_node(int node)
-@@ -174,8 +182,7 @@ static void __init map_node(int node)
- #ifdef DEBUG
- 				printk ("[zero map]");
- #endif
--				zero_pgtable = kernel_ptr_table();
--				pte_dir = (pte_t *)zero_pgtable;
-+				pte_dir = kernel_page_table();
- 				pmd_set(pmd_dir, pte_dir);
- 
- 				pte_val(*pte_dir++) = 0;
+ #define pte_val(x)	((x).pte)
+ #define pgd_val(x)	((x).pgd)
 
 
