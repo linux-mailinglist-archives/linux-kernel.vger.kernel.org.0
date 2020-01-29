@@ -2,60 +2,49 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9F87214CF72
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Jan 2020 18:18:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BD0DB14CF78
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Jan 2020 18:19:16 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727301AbgA2RSv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 29 Jan 2020 12:18:51 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:50732 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727241AbgA2RSv (ORCPT
+        id S1727338AbgA2RTB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 29 Jan 2020 12:19:01 -0500
+Received: from out30-130.freemail.mail.aliyun.com ([115.124.30.130]:41248 "EHLO
+        out30-130.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726647AbgA2RTA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 Jan 2020 12:18:51 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=xn0S8KRH1jS8YVCTq8Af8bK8be4jymLEEWTnenXGXxw=; b=TcFaQyliwW87jlf6pu6/emL0v
-        I0OJn/VJWNjhGw/vIEJhLN0cmOe2VRmrep3Xl79QRG0IZv9H0dyyt20thOZIl8vrjidoDaLJ3kqiJ
-        VLebR2Ozm1zGebDRikmX23rymkYJ4aI4DAAuGmvIiItq21r9axpgrSsG/V/CeL9r0tIEWKcwRKPP3
-        hQowRuN8y+04Sud7hqGz8U1O3ktCQBSAvdxygFS2GgD//+2YJl68/gJS7IA08eR0sQ/pKN9wAQPoM
-        YIrdN0Mtgqs4Y7q/jzkVkE+Vg9dttG+IGIP31CyQFdOjtR7lrGbQ9Vam5/ThpO9WtDUNPkN+73r/o
-        1nZvYKZzQ==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1iwqzI-0004pL-5E; Wed, 29 Jan 2020 17:18:48 +0000
-Date:   Wed, 29 Jan 2020 09:18:48 -0800
-From:   Christoph Hellwig <hch@infradead.org>
-To:     Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Cc:     Jens Axboe <axboe@kernel.dk>,
-        Michael Schmitz <schmitzmic@gmail.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        linux-ide@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 08/28] ata: move EXPORT_SYMBOL_GPL()s close to exported
- code
-Message-ID: <20200129171848.GC12616@infradead.org>
-References: <20200128133343.29905-1-b.zolnierkie@samsung.com>
- <CGME20200128133413eucas1p195d291f69413cbb3bb86da9571942259@eucas1p1.samsung.com>
- <20200128133343.29905-9-b.zolnierkie@samsung.com>
+        Wed, 29 Jan 2020 12:19:00 -0500
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R141e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01f04446;MF=yang.shi@linux.alibaba.com;NM=1;PH=DS;RN=6;SR=0;TI=SMTPD_---0TojgHea_1580318334;
+Received: from US-143344MP.local(mailfrom:yang.shi@linux.alibaba.com fp:SMTPD_---0TojgHea_1580318334)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Thu, 30 Jan 2020 01:18:56 +0800
+Subject: Re: [v3 PATCH] mm: move_pages: report the number of non-attempted
+ pages
+To:     Michal Hocko <mhocko@kernel.org>
+Cc:     richardw.yang@linux.intel.com, akpm@linux-foundation.org,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        stable@vger.kernel.org
+References: <1580144268-79620-1-git-send-email-yang.shi@linux.alibaba.com>
+ <20200129101228.GH24244@dhcp22.suse.cz>
+From:   Yang Shi <yang.shi@linux.alibaba.com>
+Message-ID: <ac797acb-fff9-3d23-18e7-94f97bd19dcb@linux.alibaba.com>
+Date:   Wed, 29 Jan 2020 09:18:51 -0800
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.12; rv:52.0)
+ Gecko/20100101 Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200128133343.29905-9-b.zolnierkie@samsung.com>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+In-Reply-To: <20200129101228.GH24244@dhcp22.suse.cz>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jan 28, 2020 at 02:33:23PM +0100, Bartlomiej Zolnierkiewicz wrote:
-> Move EXPORT_SYMBOL_GPL()s close to exported code like it is
-> done in other kernel subsystems. As a nice side effect this
-> results in the removal of few ifdefs.
-> 
-> Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 
-Looks good,
 
-Reviewed-by: Christoph Hellwig <hch@lst.de>
+On 1/29/20 2:12 AM, Michal Hocko wrote:
+> Btw. please do not forget to update the man page as well.
+> Thanks!
+
+Sure.
+
+
