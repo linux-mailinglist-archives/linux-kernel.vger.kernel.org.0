@@ -2,107 +2,111 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2ABD914CA13
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Jan 2020 13:05:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A8A9714CA62
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Jan 2020 13:10:14 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726484AbgA2MFk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 29 Jan 2020 07:05:40 -0500
-Received: from mail-qt1-f193.google.com ([209.85.160.193]:38161 "EHLO
-        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726067AbgA2MFk (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 Jan 2020 07:05:40 -0500
-Received: by mail-qt1-f193.google.com with SMTP id c24so12995520qtp.5;
-        Wed, 29 Jan 2020 04:05:39 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=jms.id.au; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=mBhYDjlMYt9oPvJDVZEMOGajq1ap97bap+avx9OLRTo=;
-        b=bSukH/zF9ERehDN/leiT06EaG3VBfbDrDV4lszITXI4Bv+2DtvigXYXFE1g7lcxN0O
-         U2TKdN0v29NYCpDpbbW1Oj8POlnIAD5jLUQ1X+Apt36OVF4hjycewluABof0RELDGbNI
-         X55E988XDoPirlb+bbSnfoASlDrXczeMzHdX4=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=mBhYDjlMYt9oPvJDVZEMOGajq1ap97bap+avx9OLRTo=;
-        b=NdZxfRQy0PH1j0typkcwxQEZr+mbrDLW8wnbbEGlaZhJoNIrk8rrEAfkLTuQA3/Fc9
-         xv37t8B2nhMIG7BoD77FdSXdjfyBvUfyHiSMHXng0PLXIV33vvtaKc/gwum48mcvjk3C
-         ZdzZ5GsKTBPpgTgrfchn6eFeUHL8TvzTDDrAYne9UEVEr4wTMRgHLOJ0f3gPiHbhYLvh
-         9a4DgW/YWu+xrsBNeo5ZK++GXqZQMJN4lCJMc0rdwE6ID8j3EGdkyrAJ2qbAK4YH1ncV
-         T++OyeAP1CioQm04ycvFTIt1VkqEhDhNBaXEJUcrlDNtI0peOqj3O2kpFozPeFftpbYm
-         O21A==
-X-Gm-Message-State: APjAAAWPaL7iPNn/PIuEHivJUU/4nj/BzdJb66OeiMiUOPiIx62tLj78
-        j2w3NKehBauQtjDJ7dIYIUIR+njz6hGQweZkLcQULw==
-X-Google-Smtp-Source: APXvYqwwYOnEPeP6zNxmB7ArfBKhqOZuvhZ78RvYhGJ4L6VqO8SHJNxy14/eqW+VoKPy2f0j6WfUfjKO/Jnfil+w88c=
-X-Received: by 2002:aed:3b3b:: with SMTP id p56mr26336771qte.234.1580299538663;
- Wed, 29 Jan 2020 04:05:38 -0800 (PST)
+        id S1726498AbgA2MKI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 29 Jan 2020 07:10:08 -0500
+Received: from foss.arm.com ([217.140.110.172]:40284 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726177AbgA2MKH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 Jan 2020 07:10:07 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 6B5CB1FB;
+        Wed, 29 Jan 2020 04:10:07 -0800 (PST)
+Received: from [10.0.2.15] (unknown [172.31.20.19])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 2C1093F67D;
+        Wed, 29 Jan 2020 04:10:06 -0800 (PST)
+Subject: Re: [PATCH v3 1/3] sched/fair: Add asymmetric CPU capacity wakeup
+ scan
+To:     Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Pavan Kondeti <pkondeti@codeaurora.org>
+Cc:     linux-kernel@vger.kernel.org, mingo@redhat.com,
+        peterz@infradead.org, vincent.guittot@linaro.org,
+        morten.rasmussen@arm.com, qperret@google.com,
+        adharmap@codeaurora.org
+References: <20200126200934.18712-1-valentin.schneider@arm.com>
+ <20200126200934.18712-2-valentin.schneider@arm.com>
+ <20200128062245.GA27398@codeaurora.org>
+ <1ed322d6-0325-ecac-cc68-326a14b8c1dd@arm.com>
+ <1aa14491-517e-92d2-08b0-568338d75812@arm.com>
+From:   Valentin Schneider <valentin.schneider@arm.com>
+Message-ID: <f5eb1fa8-2b0e-19ed-fa74-a16bfa50dc17@arm.com>
+Date:   Wed, 29 Jan 2020 12:10:05 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.1
 MIME-Version: 1.0
-References: <20191107094218.13210-1-joel@jms.id.au> <20191107094218.13210-2-joel@jms.id.au>
- <747e3c0a-ee10-4a41-d0b7-1d54e0f56dd0@linaro.org> <CACPK8XeWY-upP-b_aAMWv-Rx9qaNSbPxOZLVd67-khEVjG877A@mail.gmail.com>
- <805bbfa2-e6ff-3b22-02cf-cd1419bcf929@linaro.org>
-In-Reply-To: <805bbfa2-e6ff-3b22-02cf-cd1419bcf929@linaro.org>
-From:   Joel Stanley <joel@jms.id.au>
-Date:   Wed, 29 Jan 2020 12:05:27 +0000
-Message-ID: <CACPK8Xcq27cRQOwKCmVHD0uphERPm=hxQUscw2Z6zzi8DTT9Nw@mail.gmail.com>
-Subject: Re: [PATCH v2 1/4] clocksource: fttmr010: Parametrise shutdown
-To:     Daniel Lezcano <daniel.lezcano@linaro.org>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        =?UTF-8?Q?C=C3=A9dric_Le_Goater?= <clg@kaod.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Andrew Jeffery <andrew@aj.id.au>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <1aa14491-517e-92d2-08b0-568338d75812@arm.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 29 Jan 2020 at 11:53, Daniel Lezcano <daniel.lezcano@linaro.org> wr=
-ote:
->
-> On 29/01/2020 12:41, Joel Stanley wrote:
-> > On Wed, 29 Jan 2020 at 11:25, Daniel Lezcano <daniel.lezcano@linaro.org=
-> wrote:
-> >>
-> >> On 07/11/2019 10:42, Joel Stanley wrote:
-> >>> In preparation for supporting the ast2600 which uses a different meth=
-od
-> >>> to clear bits in the control register, use a callback for performing =
-the
-> >>> shutdown sequence.
-> >>>
-> >>> Reviewed-by: C=C3=A9dric Le Goater <clg@kaod.org>
-> >>> Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
-> >>> Signed-off-by: Joel Stanley <joel@jms.id.au>
-> >>
-> >> It will be cleaner if you create a struct of_device_id array where you
-> >> store the different variant data.
-> >
-> > I agree, and that's the path I would have taken when writing a normal
-> > driver. However as the timer drivers probe with the
-> > TIMER_OF_DECLARE/timer_probe infrastructure, we can't register our own
-> > .data pointer (TIMER_OF_DECLARE uses .data  to store the _init
-> > function).
-> >
-> > Unless I'm missing something?
->
-> I was suggesting to add the array like:
->
-> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/d=
-rivers/clocksource/timer-atmel-tcb.c#n351
->
-> TIMER_OF_DECLARE is used and the probe functions relies on the match arra=
-y:
->
-> match =3D of_match_node(atmel_tcb_of_match, node->parent);
+On 29/01/2020 10:38, Dietmar Eggemann wrote:
+> On 28/01/2020 12:30, Valentin Schneider wrote:
+>> Hi Pavan,
+>>
+>> On 28/01/2020 06:22, Pavan Kondeti wrote:
+>>> Hi Valentin,
+>>>
+>>> On Sun, Jan 26, 2020 at 08:09:32PM +0000, Valentin Schneider wrote:
+> 
+> [...]
+> 
+>>>> +
+>>>> +	if (!static_branch_unlikely(&sched_asym_cpucapacity))
+>>>> +		return -1;
+> 
+> We do need this one to bail out quickly on non CPU asym systems. (1)
+> 
+>>>> +	sd = rcu_dereference(per_cpu(sd_asym_cpucapacity, target));
+>>>> +	if (!sd)
+>>>> +		return -1;
+> 
+> And I assume we can't return target here because of exclusive cpusets
+> which can form symmetric CPU capacities islands on a CPU asymmetric
+> system? (2)
+> 
 
-I see. So we don't use this table for probing the driver, just getting
-the associated data.
+Precisely, the "canonical" check for asymmetry is static key + SD pointer.
+In terms of functionality we could "just" check sd_asym_cpucapacity (it can't
+be set without having the static key set, though the reverse isn't true),
+but we *want* to use the static key here to make SMP people happy.
 
-I'm not convinced that's an improvement over what we have. If you have
-a strong preference I can try it out.
+>> That's not the case anymore, so indeed we may be able to bail out of
+>> select_idle_sibling() right after select_idle_capacity() (or after the
+>> prev / recent_used_cpu checks). Our only requirement here is that sd_llc
+>> remains a subset of sd_asym_cpucapacity.
+> 
+> How do you distinguish '-1' in (1), (2) and 'best_cpu = -1' (3)?
+> 
+> In (1) and (2) you want to check if target is idle (or sched_idle) but
+> in (3) you probably only want to check 'recent_used_cpu'?
+> 
+
+Right, when we come back from select_idle_capacity(), and we did go through
+the CPU loop, but we still returned -1, it means all CPUs in sd_asym_cpucapacity
+were not idle. This includes 'target' of course, so we shouldn't need to
+check it again. 
+
+In those cases we might still not have evaluated 'prev' or 'recent_used_cpu'.
+It's somewhat of a last ditch attempt to find an idle CPU, and they'll only
+help when they aren't in sd_asym_cpucapacity. I'm actually curious as to how
+much the 'recent_used_cpu' thing helps, I've never paid it much attention.
+
+So yeah my options are (for asym CPU capacity topologies):
+a) just bail out after select_idle_capacity()
+b) try to squeeze out a bit more out of select_idle_sibling() by also doing
+  the 'prev' & 'recent_used_cpu' checks.
+
+a) is quite easy to implement; I can just inline the static key and sd checks
+  in select_idle_sibling() and return unconditionally once I'm past those
+  checks.
+
+b) is more intrusive and I don't have a clear picture yet as to how much it
+  will really bring to the table.
+
+I'll think about it and try to play around with both of these.
