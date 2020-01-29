@@ -2,95 +2,102 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1F0C314CDF1
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Jan 2020 17:08:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D09B514CDF3
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Jan 2020 17:09:16 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726964AbgA2QIB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 29 Jan 2020 11:08:01 -0500
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:40050 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726766AbgA2QIA (ORCPT
+        id S1727020AbgA2QJM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 29 Jan 2020 11:09:12 -0500
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:46364 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726564AbgA2QJM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 Jan 2020 11:08:00 -0500
-Received: by mail-pf1-f193.google.com with SMTP id q8so8640693pfh.7;
-        Wed, 29 Jan 2020 08:08:00 -0800 (PST)
+        Wed, 29 Jan 2020 11:09:12 -0500
+Received: by mail-pg1-f195.google.com with SMTP id z124so9037976pgb.13
+        for <linux-kernel@vger.kernel.org>; Wed, 29 Jan 2020 08:09:11 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:date:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=8JqRhiDOHvgPoZeVnB2/bI1P2RUwGdHALzeY09zc6AU=;
-        b=ub6sLpwwTWJc0DJT5UDWjzIwiugnQZno6L7yV/YzPZ8PqzySLQXrh33ibMBqECPhJD
-         i9qOjKCFkLgTXci2siKMJV8UPCXQp64Lyq1A1WUISGnU8/VjWj/5CSaxVIoRiykTHk1p
-         JPKxjK2SB0vZgMmpC4PEnEqnqzkH1P0ggO2vuTFS+ycnVNAXDMjdpH2IcFE9er0hsq2n
-         1f/zNiMjsiyUqIDoHgijiNx8MFfRWO6nS6mwZ7mfh/xk0B22tJ4KUfJ8+19iGNKxOV68
-         NFdruNQIX4Qj4BMlPk4Rwuf/xEYyeCne9qEkSUEnt8UGY1tYI1t/6sQAeJKSE8jU0w4Y
-         j04w==
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=+oq96d085fk9R1zembWjfCyukhjjIatlVof2J+sNPxs=;
+        b=EamuglrtmZ9uGundx/IPRJmVpL0Y/3ThnGKOVz4Zqb8m1MOH+bYP3fPoP5u8oz49Pn
+         1Ij0uVWlWzH+x4BHRgxbd/WvXmQvpf1139nKPgvcQwhptH7/kdEQp58OBYTmsNidNqu+
+         t2BBYY5mNpfr1yt+vHtvAupk/RTbYduLBjxPdP3PIsc4rgg5R1XSPm2TAPcEGkAOASzE
+         kY1PCIFULGkg/YJjrCq9QmJB8D/tSTQv/nAfwwkcDJjKNBiSDRAPmySG9yxlrYhEs4qd
+         uM1e2ZNWjtHQ2PpOvWQBMcJKxfTO350EfYmBRbw1WpRyyTa+cta9B1bu6pubqqsmNGK6
+         5oVg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:date:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=8JqRhiDOHvgPoZeVnB2/bI1P2RUwGdHALzeY09zc6AU=;
-        b=kXZEuvF514Mo6cAPdfLbLhFxU/lJNY1W+Pa890LFlcuoHWmLR5FNfC5lQECGmYGo17
-         fLvscdfRaq+zBatRYxo74ec3w3IbwFFn8hOXu9ED+UIk1nBf93Ae4a7ANtmDCR2CB1RT
-         R4BN+7xTV7jPzzElxLryBVTB4FaATiGAlG7uuH+t47tRPGCAUB8CHD8YSTtxLwmigVHR
-         zZMSQ+1fE4h4LnLs3LdIavPNUZ2ePRiaxOJ5HXZPSp+LFTftyHy2qKh+dD/jjxlVorTG
-         egRAUU57ERWIu+7WoApM8S2J92GBfzeql8Dn0z28ScbP+OXFWgMTBIXCZzOpU9fN6BMo
-         d14Q==
-X-Gm-Message-State: APjAAAVP5cYLJWiwVNmWnUXFep/jQD2uyGhl5FpgnGOqQxcuFqz8mM9n
-        tJOBWmb8vdLyVHlXZchFuQ==
-X-Google-Smtp-Source: APXvYqxfZP/dEAKdniyQQ5yUDQhVGpJiIk1VxKKDOMBaGSKoI02Ozrv7wvSI+HYbEIFUY+8k8SvIFA==
-X-Received: by 2002:a63:c747:: with SMTP id v7mr21375207pgg.291.1580314080050;
-        Wed, 29 Jan 2020 08:08:00 -0800 (PST)
-Received: from madhuparna-HP-Notebook ([2402:3a80:1ee5:e7da:d421:7a49:b2e4:2bd6])
-        by smtp.gmail.com with ESMTPSA id u3sm3129608pjv.32.2020.01.29.08.07.55
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 29 Jan 2020 08:07:59 -0800 (PST)
-From:   Madhuparna Bhowmik <madhuparnabhowmik10@gmail.com>
-X-Google-Original-From: Madhuparna Bhowmik <change_this_user_name@gmail.com>
-Date:   Wed, 29 Jan 2020 21:37:52 +0530
-To:     Michal =?iso-8859-1?Q?Koutn=FD?= <mkoutny@suse.com>
-Cc:     madhuparnabhowmik10@gmail.com, tj@kernel.org, lizefan@huawei.com,
-        cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
-        joel@joelfernandes.org, rcu@vger.kernel.org, frextrite@gmail.com
-Subject: Re: [PATCH] cgroup.c: Use built-in RCU list checking
-Message-ID: <20200129160752.GA15913@madhuparna-HP-Notebook>
-References: <20200118031051.28776-1-madhuparnabhowmik10@gmail.com>
- <20200129142255.GE11384@blackbody.suse.cz>
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=+oq96d085fk9R1zembWjfCyukhjjIatlVof2J+sNPxs=;
+        b=PWF1q0Oq4VaeWQSxnS+WykWRwRJjn1JT2tHR6ndhjBK0DoWkWibRCoMl6iFO1esgBZ
+         C52N7kUu55dERpSyVRFAUacOmfeQoRFO2PcEWZAU1s7bOqQQ79MLI1iYsccPIwRn541E
+         IJxUQDYcsIrg9D4SI3X03wl526M6kokrWpDfEDibNWMSoPN8KwMPP7MMYBPvTI/9UL71
+         +4nKWz1UFtLaLSG5ZWx7r6hzupMTwdeNepxKk/jw2X+sMcRUyKzzWFgiJNuVvSK32hX0
+         onywIj7ASKaJ128/NFw+xbH/C+GlwSTLWWOHxM54PCuCwB1JjS9TKyqUNQTqrMe9gqdV
+         sxKg==
+X-Gm-Message-State: APjAAAUdBth0FCu6d99NqpKzfH6TRNF4i17ywTBA71gAvFINbp+Oq1jE
+        zJaUIIY2g6uXFUBy7zPCiuo=
+X-Google-Smtp-Source: APXvYqyhg/HldHGGdfEgHowy5IgtRURU9SafwhhUwsow9z2iqxxg52P1LutbN5nUIyb+3aqkQpZ/Eg==
+X-Received: by 2002:a65:5809:: with SMTP id g9mr31259946pgr.146.1580314151330;
+        Wed, 29 Jan 2020 08:09:11 -0800 (PST)
+Received: from localhost.localdomain ([146.196.37.139])
+        by smtp.googlemail.com with ESMTPSA id 73sm3258801pgc.13.2020.01.29.08.09.08
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 29 Jan 2020 08:09:10 -0800 (PST)
+From:   Amol Grover <frextrite@gmail.com>
+To:     Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>
+Cc:     linux-kernel@vger.kernel.org,
+        linux-kernel-mentees@lists.linuxfoundation.org,
+        Joel Fernandes <joel@joelfernandes.org>,
+        Madhuparna Bhowmik <madhuparnabhowmik04@gmail.com>,
+        "Paul E . McKenney" <paulmck@kernel.org>,
+        Amol Grover <frextrite@gmail.com>
+Subject: [PATCH 1/2] events: callchain: Annotate RCU pointer with __rcu
+Date:   Wed, 29 Jan 2020 21:38:12 +0530
+Message-Id: <20200129160813.14263-1-frextrite@gmail.com>
+X-Mailer: git-send-email 2.24.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20200129142255.GE11384@blackbody.suse.cz>
-User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jan 29, 2020 at 03:22:55PM +0100, Michal Koutný wrote:
-> Hello.
-> 
-> On Sat, Jan 18, 2020 at 08:40:51AM +0530, madhuparnabhowmik10@gmail.com wrote:
-> > From: Madhuparna Bhowmik <madhuparnabhowmik10@gmail.com>
-> > 
-> > list_for_each_entry_rcu has built-in RCU and lock checking.
-> > Pass cond argument to list_for_each_entry_rcu() to silence
-> > false lockdep warning when  CONFIG_PROVE_RCU_LIST is enabled
-> > by default.
-> I assume if you've seen the RCU warning, you haven't seen the warning
-> from cgroup_assert_mutex_or_rcu_locked() above. 
->
-No, I haven't seen any warning from cgroup_assert_mutex_or_rcu_locked(),
-I am just doing the conversions to prevent any false lockdep warnings
-because of CONFIG_PROVE_RCU_LIST in the future.
+Fixes following instances of sparse error
+error: incompatible types in comparison expression
+(different address spaces)
+kernel/events/callchain.c:66:9: error: incompatible types in comparison
+kernel/events/callchain.c:96:9: error: incompatible types in comparison
+kernel/events/callchain.c:161:19: error: incompatible types in comparison
 
-> The patch makes sense to me from the consistency POV.
-> 
-Thank you,
-Madhuparna
+This introduces the following warning
+kernel/events/callchain.c:65:17: warning: incorrect type in assignment
 
-> Acked-by: Michal Koutný <mkoutny@suse.com>
-> 
-> Michal
+Signed-off-by: Amol Grover <frextrite@gmail.com>
+---
+ kernel/events/callchain.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/kernel/events/callchain.c b/kernel/events/callchain.c
+index c2b41a263166..f91e1f41d25d 100644
+--- a/kernel/events/callchain.c
++++ b/kernel/events/callchain.c
+@@ -32,7 +32,7 @@ static inline size_t perf_callchain_entry__sizeof(void)
+ static DEFINE_PER_CPU(int, callchain_recursion[PERF_NR_CONTEXTS]);
+ static atomic_t nr_callchain_events;
+ static DEFINE_MUTEX(callchain_mutex);
+-static struct callchain_cpus_entries *callchain_cpus_entries;
++static struct callchain_cpus_entries __rcu *callchain_cpus_entries;
+ 
+ 
+ __weak void perf_callchain_kernel(struct perf_callchain_entry_ctx *entry,
+-- 
+2.24.1
+
