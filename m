@@ -2,85 +2,64 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5763D14D12F
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Jan 2020 20:27:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E484314D139
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Jan 2020 20:36:01 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727479AbgA2T0D (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 29 Jan 2020 14:26:03 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35222 "EHLO mail.kernel.org"
+        id S1727171AbgA2Tf5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 29 Jan 2020 14:35:57 -0500
+Received: from mx2.suse.de ([195.135.220.15]:41600 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726298AbgA2T0D (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 Jan 2020 14:26:03 -0500
-Received: from paulmck-ThinkPad-P72.home (unknown [199.201.64.141])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2B80120661;
-        Wed, 29 Jan 2020 19:26:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1580325963;
-        bh=Yl825t3iEZ9buUUQpy6DFrNLD2QXVg3+Vh95zXjA0YU=;
-        h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
-        b=jGfMBgUqiwXEsv1joHMa8MKSKFPtqcwjn8dKeRt42hRj347g6r/6iUVVtrCDGp8jm
-         ueQnutfF7uiJ22pzV2wrZGkmv+6IsJQ3/qHtLb2LjoyR2OB2B6Z0EuRzXnIrmwgFo+
-         29p9L+TisDEIg31p+KXsqiWEac31vlGQVfo7ewpk=
-Received: by paulmck-ThinkPad-P72.home (Postfix, from userid 1000)
-        id C3B9A3521AEF; Wed, 29 Jan 2020 11:26:02 -0800 (PST)
-Date:   Wed, 29 Jan 2020 11:26:02 -0800
-From:   "Paul E. McKenney" <paulmck@kernel.org>
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     Marco Elver <elver@google.com>, Qian Cai <cai@lca.pw>,
-        Will Deacon <will@kernel.org>, Ingo Molnar <mingo@redhat.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        kasan-dev <kasan-dev@googlegroups.com>
-Subject: Re: [PATCH] locking/osq_lock: fix a data race in osq_wait_next
-Message-ID: <20200129192602.GA2935@paulmck-ThinkPad-P72>
-Reply-To: paulmck@kernel.org
-References: <20200122165938.GA16974@willie-the-truck>
- <A5114711-B8DE-48DA-AFD0-62128AC08270@lca.pw>
- <20200122223851.GA45602@google.com>
- <A90E2B85-77CB-4743-AEC3-90D7836C4D47@lca.pw>
- <20200123093905.GU14914@hirez.programming.kicks-ass.net>
- <E722E6E0-26CB-440F-98D7-D182B57D1F43@lca.pw>
- <CANpmjNNo6yW-y-Af7JgvWi3t==+=02hE4-pFU4OiH8yvbT3Byg@mail.gmail.com>
- <20200128165655.GM14914@hirez.programming.kicks-ass.net>
- <20200129002253.GT2935@paulmck-ThinkPad-P72>
- <20200129184935.GU14879@hirez.programming.kicks-ass.net>
+        id S1726683AbgA2Tf4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 Jan 2020 14:35:56 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx2.suse.de (Postfix) with ESMTP id F1B98AD72;
+        Wed, 29 Jan 2020 19:35:54 +0000 (UTC)
+Date:   Wed, 29 Jan 2020 11:25:50 -0800
+From:   Davidlohr Bueso <dave@stgolabs.net>
+To:     dsterba@suse.cz, dsterba@suse.com, nborisov@suse.com,
+        linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Davidlohr Bueso <dbueso@suse.de>
+Subject: Re: [PATCH] btrfs: optimize barrier usage for Rmw atomics
+Message-ID: <20200129192550.nnfkkgde445nrbko@linux-p48b>
+References: <20200129180324.24099-1-dave@stgolabs.net>
+ <20200129191439.GN3929@twin.jikos.cz>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=us-ascii; format=flowed
 Content-Disposition: inline
-In-Reply-To: <20200129184935.GU14879@hirez.programming.kicks-ass.net>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <20200129191439.GN3929@twin.jikos.cz>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jan 29, 2020 at 07:49:35PM +0100, Peter Zijlstra wrote:
-> On Tue, Jan 28, 2020 at 04:22:53PM -0800, Paul E. McKenney wrote:
-> > On Tue, Jan 28, 2020 at 05:56:55PM +0100, Peter Zijlstra wrote:
-> > > On Tue, Jan 28, 2020 at 12:46:26PM +0100, Marco Elver wrote:
-> > > 
-> > > > > Marco, any thought on improving KCSAN for this to reduce the false
-> > > > > positives?
-> > > > 
-> > > > Define 'false positive'.
-> > > 
-> > > I'll use it where the code as written is correct while the tool
-> > > complains about it.
-> > 
-> > I could be wrong, but I would guess that Marco is looking for something
-> > a little less subjective and a little more specific.  ;-)
-> 
-> How is that either? If any valid translation by a compile results in
-> correct functionality, yet the tool complains, then surely we can speak
-> of a objective fact.
+On Wed, 29 Jan 2020, David Sterba wrote:
 
-Marco covered my concern in his point about the need to change the
-compiler.
+>On Wed, Jan 29, 2020 at 10:03:24AM -0800, Davidlohr Bueso wrote:
+>> Use smp_mb__after_atomic() instead of smp_mb() and avoid the
+>> unnecessary barrier for non LL/SC architectures, such as x86.
+>
+>So that's a conflicting advice from what we got when discussing wich
+>barriers to use in 6282675e6708ec78518cc0e9ad1f1f73d7c5c53d and the
+>memory is still fresh. My first idea was to take the
+>smp_mb__after_atomic and __before_atomic variants and after discussion
+>with various people the plain smp_wmb/smp_rmb were suggested and used in
+>the end.
 
-In any case, agreed, if a read does nothing but feed into the old/new
-values for a CAS, the only thing a reasonable compiler (as opposed to
-a just-barely-meets-the-standard demonic compiler) can do to you is to
-decrease the CAS success rate.
+So the patch you mention deals with test_bit(), which is out of the scope
+of smp_mb__{before,after}_atomic() as it's not a RMW operation. atomic_inc()
+and set_bit() are, however, meant to use these barriers.
 
-							Thanx, Paul
+>
+>I can dig the email threads and excerpts from irc conversations, maybe
+>Nik has them at hand too. We do want to get rid of all unnecessary and
+>uncommented barriers in btrfs code, so I appreciate your patch.
+
+Yeah, I struggled with the amount of undocumented barriers, and decided
+not to go down that rabbit hole. This patch is only an equivalent of
+what is currently there. When possible, getting rid of barriers is of
+course better.
+
+Thanks,
+Davidlohr
