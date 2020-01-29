@@ -2,63 +2,48 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0C2B314D255
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Jan 2020 22:10:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1A46B14D25A
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Jan 2020 22:15:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727464AbgA2VKG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 29 Jan 2020 16:10:06 -0500
-Received: from mga03.intel.com ([134.134.136.65]:46432 "EHLO mga03.intel.com"
+        id S1726528AbgA2VPB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 29 Jan 2020 16:15:01 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56732 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727208AbgA2VKG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 Jan 2020 16:10:06 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga006.fm.intel.com ([10.253.24.20])
-  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 29 Jan 2020 13:10:05 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.70,379,1574150400"; 
-   d="scan'208";a="429805093"
-Received: from cmossx-mobl1.amr.corp.intel.com ([10.251.7.89])
-  by fmsmga006.fm.intel.com with ESMTP; 29 Jan 2020 13:10:04 -0800
-Date:   Wed, 29 Jan 2020 13:10:04 -0800 (PST)
-From:   Mat Martineau <mathew.j.martineau@linux.intel.com>
-X-X-Sender: mjmartin@cmossx-mobl1.amr.corp.intel.com
-To:     Geert Uytterhoeven <geert@linux-m68k.org>
-cc:     Paolo Abeni <pabeni@redhat.com>, Florian Westphal <fw@strlen.de>,
-        Christoph Paasch <cpaasch@apple.com>,
-        Matthieu Baerts <matthieu.baerts@tessares.net>,
-        "David S . Miller" <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>, netdev@vger.kernel.org,
-        mptcp@lists.01.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] mptcp: Fix incorrect IPV6 dependency check
-In-Reply-To: <20200129180117.545-1-geert@linux-m68k.org>
-Message-ID: <alpine.OSX.2.21.2001291308450.9282@cmossx-mobl1.amr.corp.intel.com>
-References: <20200129180117.545-1-geert@linux-m68k.org>
-User-Agent: Alpine 2.21 (OSX 202 2017-01-01)
+        id S1726116AbgA2VPA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 Jan 2020 16:15:00 -0500
+Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8F07F20674;
+        Wed, 29 Jan 2020 21:14:59 +0000 (UTC)
+Date:   Wed, 29 Jan 2020 16:14:58 -0500
+From:   Steven Rostedt <rostedt@goodmis.org>
+To:     Tom Zanussi <zanussi@kernel.org>
+Cc:     artem.bityutskiy@linux.intel.com, mhiramat@kernel.org,
+        linux-kernel@vger.kernel.org, linux-rt-users@vger.kernel.org
+Subject: Re: [PATCH v4 01/12] tracing: Add trace_array_find/_get() to find
+ instance trace arrays
+Message-ID: <20200129161458.2647379b@gandalf.local.home>
+In-Reply-To: <cb68528c975eba95bee4561ac67dd1499423b2e5.1580323897.git.zanussi@kernel.org>
+References: <cover.1580323897.git.zanussi@kernel.org>
+        <cb68528c975eba95bee4561ac67dd1499423b2e5.1580323897.git.zanussi@kernel.org>
+X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII; format=flowed
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 29 Jan 2020, Geert Uytterhoeven wrote:
+On Wed, 29 Jan 2020 12:59:21 -0600
+Tom Zanussi <zanussi@kernel.org> wrote:
 
-> If CONFIG_MPTCP=y, CONFIG_MPTCP_IPV6=n, and CONFIG_IPV6=m:
->
->    net/mptcp/protocol.o: In function `__mptcp_tcp_fallback':
->    protocol.c:(.text+0x786): undefined reference to `inet6_stream_ops'
->
-> Fix this by checking for CONFIG_MPTCP_IPV6 instead of CONFIG_IPV6, like
-> is done in all other places in the mptcp code.
->
-> Fixes: 8ab183deb26a3b79 ("mptcp: cope with later TCP fallback")
-> Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
-> ---
+> Signed-off-by: Tom Zanussi <zanussi@kernel.org>
+> Acked-by: Masami Hiramatsu <mhiramat@kernel.org>
 
-Reviewed-by: Mat Martineau <mathew.j.martineau@linux.intel.com>
+FYI, I prefer the "Signed-off-by" to come at the end.
 
+I switched them all.
 
---
-Mat Martineau
-Intel
+-- Steve
