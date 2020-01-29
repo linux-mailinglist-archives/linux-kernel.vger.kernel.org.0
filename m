@@ -2,64 +2,90 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EDE0A14D03B
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Jan 2020 19:16:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 63B4514D01D
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Jan 2020 19:07:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727447AbgA2SQc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 29 Jan 2020 13:16:32 -0500
-Received: from mx2.suse.de ([195.135.220.15]:43232 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726245AbgA2SQc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 Jan 2020 13:16:32 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id 3A99EB27D;
-        Wed, 29 Jan 2020 18:16:30 +0000 (UTC)
-From:   Davidlohr Bueso <dave@stgolabs.net>
-To:     dhowells@redhat.com
-Cc:     linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, dave@stgolabs.net,
-        Davidlohr Bueso <dbueso@suse.de>
-Subject: [PATCH] security, keys: Optimize barrier usage for Rmw atomic  bitops
-Date:   Wed, 29 Jan 2020 10:06:25 -0800
-Message-Id: <20200129180625.24486-1-dave@stgolabs.net>
-X-Mailer: git-send-email 2.16.4
+        id S1727188AbgA2SHz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 29 Jan 2020 13:07:55 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:58056 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726245AbgA2SHz (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 Jan 2020 13:07:55 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=Ti7tqcCoopz85yAZx6ODwlyVLtxIWBrtp0ypbKnSIIQ=; b=G6Ah1duV6XYd7U02JYqwA9701
+        BYJscf1GahK9hRHau93+bYNyshPFIk3rCBti2rpJlwa00ZJ8bV9SriQfyVqTZpxx0W07qDSzmMS7y
+        3Xk1UhhS0XHt9ksGdXz6TNCibZJoRghnWkWg8dusjDQmdcrhUw2l1vFyM1m8Uh1vjtsj8uPYkIrHh
+        u//Nm5ZeFBzPFR2Tj5OIPsXrKv8RB8HOLuJRwKl8G66axlVYIxXTedxqM9CdWMC7CvdYgOndg/4M9
+        Q+LAyDjlHHGUuIoY5S0lVRuPO1kcNj8lijzvMLmsNS8Fzx655R3eyr8T4hcdSlRFvhDY+a+F2rOWG
+        9tqRrZJ1w==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
+        by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1iwrk9-0005CU-1G; Wed, 29 Jan 2020 18:07:13 +0000
+Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (Client did not present a certificate)
+        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id E6CCD300606;
+        Wed, 29 Jan 2020 19:05:26 +0100 (CET)
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id B3EF12B7A8626; Wed, 29 Jan 2020 19:07:09 +0100 (CET)
+Date:   Wed, 29 Jan 2020 19:07:09 +0100
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     sjpark@amazon.com
+Cc:     akpm@linux-foundation.org, SeongJae Park <sjpark@amazon.de>,
+        sj38.park@gmail.com, acme@kernel.org, amit@kernel.org,
+        brendan.d.gregg@gmail.com, corbet@lwn.net, dwmw@amazon.com,
+        mgorman@suse.de, rostedt@goodmis.org, kirill@shutemov.name,
+        brendanhiggins@google.com, colin.king@canonical.com,
+        minchan@kernel.org, vdavydov.dev@gmail.com, vdavydov@parallels.com,
+        linux-mm@kvack.org, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Ingo Molnar <mingo@redhat.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>
+Subject: Re: Re: Re: [PATCH v2 0/9] Introduce Data Access MONitor (DAMON)
+Message-ID: <20200129180709.GS14879@hirez.programming.kicks-ass.net>
+References: <20200129125615.GQ14879@hirez.programming.kicks-ass.net>
+ <20200129143758.896-1-sjpark@amazon.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200129143758.896-1-sjpark@amazon.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-For both set and clear_bit, we can avoid the unnecessary barriers
-on non LL/SC architectures, such as x86. Instead, use the
-smp_mb__{before,after}_atomic() calls.
+On Wed, Jan 29, 2020 at 03:37:58PM +0100, sjpark@amazon.com wrote:
+> On Wed, 29 Jan 2020 13:56:15 +0100 Peter Zijlstra <peterz@infradead.org> wrote:
+> 
+> > On Tue, Jan 28, 2020 at 01:00:33PM +0100, sjpark@amazon.com wrote:
+> > 
+> > > I worried whether it could be a bother to send the mail to everyone in the
+> > > section, but seems it was an unnecessary worry.  Adding those to recipients.
+> > > You can get the original thread of this patchset from
+> > > https://lore.kernel.org/linux-mm/20200128085742.14566-1-sjpark@amazon.com/
+> > 
+> > I read first patch (the document) and still have no friggin clue.
+> 
+> Do you mean the document has insufficient description only?  If so, could you
+> please point me me which information do you want to be added?
 
-Signed-off-by: Davidlohr Bueso <dbueso@suse.de>
----
- security/keys/gc.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+There was a lot of words; but I'm still not sure what it actually does.
 
-diff --git a/security/keys/gc.c b/security/keys/gc.c
-index 671dd730ecfc..ce7b4c22e3c4 100644
---- a/security/keys/gc.c
-+++ b/security/keys/gc.c
-@@ -102,7 +102,7 @@ void key_gc_keytype(struct key_type *ktype)
- 
- 	key_gc_dead_keytype = ktype;
- 	set_bit(KEY_GC_REAPING_KEYTYPE, &key_gc_flags);
--	smp_mb();
-+	smp_mb__after_atomic();
- 	set_bit(KEY_GC_REAP_KEYTYPE, &key_gc_flags);
- 
- 	kdebug("schedule");
-@@ -308,7 +308,7 @@ static void key_garbage_collector(struct work_struct *work)
- 
- 	if (unlikely(gc_state & KEY_GC_REAPING_DEAD_3)) {
- 		kdebug("dead wake");
--		smp_mb();
-+		smp_mb__before_atomic();
- 		clear_bit(KEY_GC_REAPING_KEYTYPE, &key_gc_flags);
- 		wake_up_bit(&key_gc_flags, KEY_GC_REAPING_KEYTYPE);
- 	}
--- 
-2.16.4
+I've read some of the code that followed; is it simply sampling the
+page-table access bit? It did some really weird things though, like that
+whole 3 regions thing.
 
+Also, you wrote you wanted feedback from perf people; but it doesn't use
+perf, what are you asking?
+
+Perf can do address based sampling of memops, I suspect you can create
+something using that.
