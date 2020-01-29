@@ -2,101 +2,132 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C472914D113
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Jan 2020 20:14:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A9A8E14D129
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Jan 2020 20:23:55 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727266AbgA2TOv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 29 Jan 2020 14:14:51 -0500
-Received: from mail-qt1-f193.google.com ([209.85.160.193]:39696 "EHLO
-        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726171AbgA2TOv (ORCPT
+        id S1727191AbgA2TX3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 29 Jan 2020 14:23:29 -0500
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:41636 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726171AbgA2TX3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 Jan 2020 14:14:51 -0500
-Received: by mail-qt1-f193.google.com with SMTP id c5so378691qtj.6
-        for <linux-kernel@vger.kernel.org>; Wed, 29 Jan 2020 11:14:50 -0800 (PST)
+        Wed, 29 Jan 2020 14:23:29 -0500
+Received: by mail-wr1-f65.google.com with SMTP id c9so829432wrw.8
+        for <linux-kernel@vger.kernel.org>; Wed, 29 Jan 2020 11:23:27 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:reply-to:from:date:message-id:subject:to;
-        bh=gl8m333ia74OFZpNmB4o7kIcYlvQPFpoCsxlN0OXKb0=;
-        b=qDNg86QOF5KVlsbn4GgZrRW7GKmFpkTIQxI82I9XCBezHFaW8+0wbu/FBYr+7AGK77
-         4KHW6kzPk9W9TFaPhlJs1hTFXCtKAjPggt2rYcoxQcpuUQfz9TEcP66LeMHHqPqyxtcL
-         lSKy+vdQjukzabTccQOAOpzoeEDlKSfXgP1rn8hJtdAfAQPiE4dsok92G+lHchXgzoyw
-         T2ZGcW5xJUa3yAQNIREF9OM6DBV/9gqpZAriIKNF4biTPFRV6CcfM6yptRiEyTfl6W3X
-         zDiYhow1bprXpbzVn7m+XBZKG+qkJdrmbStVYOKQlL9GCZ/fhIG6VHof7YpT4YGiAwQh
-         TXgQ==
+        d=google.com; s=20161025;
+        h=date:from:subject:cc:to:in-reply-to:references:message-id
+         :mime-version:content-transfer-encoding;
+        bh=5dpkdxJKo0D3Co0IYX0+FJAqVgwjrCjxGckzFnAFk30=;
+        b=EKGknQz/CJF9qnizztY4apE1qf9rCi/BQDgUenjew4SIgrWKi7BReyO8h+UGAdhrYw
+         +Om6yZO4ovjeY9v67bWESViU+IsvZ8HyaEaE8cVc+0BIMVUAo6pRQ55FStSyd/BYDqlU
+         bUiC48/ZBmkbs0+KJiByUylNXnmiD6il31j5JkS0xOP0E68ZexmQ1DU1dQ3ge5fmfnTs
+         FfqUMgb/Wl2QkE7kw+/tzmAk3en+eyjpfzbkAnhQVStl8SCKgcHwtN41oP/eL63zwKXW
+         3IW5aRzfYkSSU5o5k2PlTeY8fsX1S1uYyffVSKAzLcWGB+NEbRmVrKXsd+aG2W0Fd2GN
+         ti3A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
-         :subject:to;
-        bh=gl8m333ia74OFZpNmB4o7kIcYlvQPFpoCsxlN0OXKb0=;
-        b=riaX69hae8hexnb7vOMZqqCaJ335NBnclhWUfYrmZ3lyLsCeap1HRCq4y0ajZJzceQ
-         yZ1ggPyhowmusieDvUhaHhAzF0oiklh9crXwt8B0rnHqf8Qb3uG1wLpXjEUhvD6JaSFV
-         Es91gcXRmoPLH0E7YGLpnC7EWdVqfQ8YfB4p705oa1vxFnh36EX2lTgREOl11WeBjTA5
-         5WGBH95YwDfIiz2O+AqV50OdCHJyixXOmlUHbEocU5W1gw2Gfu7HYL7vL6g1G1Di6Mx9
-         lyvW86aAM8+15JcsWYeEEXO0hcaGN+hBwQKC+hYige/5I+iTBjQTg3kMzlXluM6wfzp5
-         2h5w==
-X-Gm-Message-State: APjAAAV2BRoxoQXoiZXRgPlZdqGoFyoQZYSzDA7BGdFutSrQHrlNEetp
-        QH+4RKmEFvtcgJNfejqnf02crJip6WCKfS2ox9Q=
-X-Google-Smtp-Source: APXvYqxsEKzRV7m9+FwVVFoYHiuFsnOPwa7NwVWLNRRDceIsoN+TIlOG+ehBtCg2kRsRKH+vMGDIB29kfpsztSxRld8=
-X-Received: by 2002:ac8:544f:: with SMTP id d15mr762821qtq.53.1580325290125;
- Wed, 29 Jan 2020 11:14:50 -0800 (PST)
-MIME-Version: 1.0
-Received: by 2002:a05:6214:1413:0:0:0:0 with HTTP; Wed, 29 Jan 2020 11:14:49
- -0800 (PST)
-Reply-To: RevWrightWatson@yandex.com
-From:   "Rev.Wright Watson" <mrali.abun@gmail.com>
-Date:   Wed, 29 Jan 2020 20:14:49 +0100
-Message-ID: <CAPWv7SwSnVS_9ROyVP1yK6GuFjqCTdnkGC9dS00unZfc=BTpuw@mail.gmail.com>
-Subject: Dear Beloved,
-To:     undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
+        h=x-gm-message-state:date:from:subject:cc:to:in-reply-to:references
+         :message-id:mime-version:content-transfer-encoding;
+        bh=5dpkdxJKo0D3Co0IYX0+FJAqVgwjrCjxGckzFnAFk30=;
+        b=CL9uaJO/EcDk3B/GhwBFZ8xPiCjPO/9dWZNAzbAA2LNX1d2sU+jpD6Yh1TXpDLj1+z
+         Whn13musbH8MUcsJl06ijqpetCX3BXF5YRiV9Hpbz+XqkAhyGBYNNKxGSHpjGxioUNrU
+         58EjOCn57CTB7pH4mYl2HZl8y+MbninHEk2XNUjAJ0GJu62SdbeZ6QojDyJ5P+kbXcpR
+         13VToIh+e52ysAXXVS5mbKJVm3swGLwzwlTUQF3GAfIWYSIWb+a7yHrL+E27KRXTRnLh
+         IX3fBqys/I+ogKuEfy7RCqjv0mosIVgfzd/OdEIfQmxxZIAE6w8Mkp1GGGM8FuUz1k/0
+         UnRg==
+X-Gm-Message-State: APjAAAWYx2Vx2+YcDXTXubD5+obUieMFuO5z5nlrIGbWhDVSuSr8iUg5
+        w40hQSp59Ty+xflH4JYZ4Kt3ZQ==
+X-Google-Smtp-Source: APXvYqyPxZfY79rDY0CdM/7Pe4WDEsuLtRhNBJTLA0YXCmXAaPAu1HUWfiq3TvDqQkUxmZLK6AejwQ==
+X-Received: by 2002:adf:e78a:: with SMTP id n10mr400841wrm.62.1580325806962;
+        Wed, 29 Jan 2020 11:23:26 -0800 (PST)
+Received: from localhost ([2a00:79e0:d:11:1da2:3fd4:a302:4fff])
+        by smtp.gmail.com with ESMTPSA id r6sm970807wrp.95.2020.01.29.11.23.26
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 29 Jan 2020 11:23:26 -0800 (PST)
+Date:   Wed, 29 Jan 2020 11:23:26 -0800 (PST)
+X-Google-Original-Date: Wed, 29 Jan 2020 19:23:14 GMT (+0000)
+From:   Palmer Dabbelt <palmerdabbelt@google.com>
+X-Google-Original-From: Palmer Dabbelt <palmer@dabbelt.com>
+Subject:     Re: [PATCH] riscv: set pmp configuration if kernel is running in M-mode
+CC:     green.hu@gmail.com, greentime@kernel.org,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
+        greentime.hu@sifive.com
+To:     greentime.hu@sifive.com
+In-Reply-To: <20200109031740.29717-1-greentime.hu@sifive.com>
+References: <20200109031740.29717-1-greentime.hu@sifive.com>
+Message-ID: <mhng-f4b42a19-22f3-43f3-9750-58b994e23246@palmerdabbelt-glaptop1>
+Mime-Version: 1.0 (MHng)
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Dear Beloved,
+On Thu, 09 Jan 2020 03:17:40 GMT (+0000), greentime.hu@sifive.com wrote:
+> When the kernel is running in S-mode, the expectation is that the
+> bootloader or SBI layer will configure the PMP to allow the kernel to
+> access physical memory.  But, when the kernel is running in M-mode and is
+> started with the ELF "loader", there's probably no bootloader or SBI layer
+> involved to configure the PMP.  Thus, we need to configure the PMP
+> ourselves to enable the kernel to access all regions.
+>
+> Signed-off-by: Greentime Hu <greentime.hu@sifive.com>
+> ---
+>  arch/riscv/include/asm/csr.h | 12 ++++++++++++
+>  arch/riscv/kernel/head.S     |  6 ++++++
+>  2 files changed, 18 insertions(+)
+>
+> diff --git a/arch/riscv/include/asm/csr.h b/arch/riscv/include/asm/csr.h
+> index 0a62d2d68455..0f25e6c4e45c 100644
+> --- a/arch/riscv/include/asm/csr.h
+> +++ b/arch/riscv/include/asm/csr.h
+> @@ -72,6 +72,16 @@
+>  #define EXC_LOAD_PAGE_FAULT	13
+>  #define EXC_STORE_PAGE_FAULT	15
+>
+> +/* PMP configuration */
+> +#define PMP_R			0x01
+> +#define PMP_W			0x02
+> +#define PMP_X			0x04
+> +#define PMP_A			0x18
+> +#define PMP_A_TOR		0x08
+> +#define PMP_A_NA4		0x10
+> +#define PMP_A_NAPOT		0x18
+> +#define PMP_L			0x80
+> +
+>  /* symbolic CSR names: */
+>  #define CSR_CYCLE		0xc00
+>  #define CSR_TIME		0xc01
+> @@ -100,6 +110,8 @@
+>  #define CSR_MCAUSE		0x342
+>  #define CSR_MTVAL		0x343
+>  #define CSR_MIP			0x344
+> +#define CSR_PMPCFG0		0x3a0
+> +#define CSR_PMPADDR0		0x3b0
+>  #define CSR_MHARTID		0xf14
+>
+>  #ifdef CONFIG_RISCV_M_MODE
+> diff --git a/arch/riscv/kernel/head.S b/arch/riscv/kernel/head.S
+> index 5c8b24bf4e4e..f8f996916c5b 100644
+> --- a/arch/riscv/kernel/head.S
+> +++ b/arch/riscv/kernel/head.S
+> @@ -60,6 +60,12 @@ _start_kernel:
+>  	/* Reset all registers except ra, a0, a1 */
+>  	call reset_regs
+>
+> +	/* Setup a PMP to permit access to all of memory. */
+> +	li a0, -1
+> +	csrw CSR_PMPADDR0, a0
+> +	li a0, (PMP_A_NAPOT | PMP_R | PMP_W | PMP_X)
+> +	csrw CSR_PMPCFG0, a0
 
-I'm Reverend Wright Watson, I was born in USA, 1945, I was ordained
-into the Catholic Priesthood.
+These should be guarded by some sort of #ifdef CONFIG_M_MODE, as they're not
+part of S mode.
 
-Please take your time to read this message, although we have never met
-before, this is no spam, It's a real message sent to you. I know also
-that you will be amazed at the level of trust that I am willing to
-place in a person that I have never seen nor spoken with. If I can
-receive favor from someone I barely know, its not bad entrusting this
-project to unknown person as long as my spirit directed me to you.
-
-I have been a catholic priest for over 22 years. I spent about 10
-years serving at Africa, Burkina Faso to be precise, I spend most time
-in Ouagadougou Cathedral.
-Presently, I had a heart surgery on the 23-11-2018 and the Doctors
-have informed me that I cannot live longer; I had a serious bleeding
-after the operation.
-Before I left Ouagadougou to my country for the surgery, a priest
-friend of mine visited me from Netherlands with three companion, when
-they went back, one among his companion Transferred 10M$ in my
-personal account with Bank of Africa and advised that I use the money
-to help the poor, handicaps and less privileges because he saw the
-level hardship then.
-
-Because of my present health condition, I cannot live to proceed with
-the projects, therefore, I have decided to appoint you to reclaim the
-money which total sum of $10,970,000.00 (Ten million Nine Hundred and
-seventy Thousand US DOLLARS).
-
-I want you to use this sum to make the world a better place for the
-poor and less privileged, help the needy and also help your family
-members.
-
-I took this decision because I was raised in an Orphanage so I don't
-have relatives and presently, I'm still in the hospital, where I am
-undergoing treatment. That's why I have decided to contact you so that
-you can contact my account manager in Bank of Africa, reclaim the
-money and make good use of it.
-
-then you can contact me through private email
-addres(RevWrightWatson@yandex.com)
-
-Regards,
-Rev.Wright Watson
+> +
+>  	/*
+>  	 * The hartid in a0 is expected later on, and we have no firmware
+>  	 * to hand it to us.
