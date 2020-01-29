@@ -2,166 +2,319 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0053C14C979
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Jan 2020 12:19:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8116114C954
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Jan 2020 12:12:51 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726677AbgA2LTS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 29 Jan 2020 06:19:18 -0500
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:36579 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726067AbgA2LTS (ORCPT
+        id S1726385AbgA2LMf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 29 Jan 2020 06:12:35 -0500
+Received: from mailout1.samsung.com ([203.254.224.24]:63374 "EHLO
+        mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726177AbgA2LMb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 Jan 2020 06:19:18 -0500
-Received: by mail-lj1-f194.google.com with SMTP id r19so18030321ljg.3;
-        Wed, 29 Jan 2020 03:19:15 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:from:to:cc:subject:in-reply-to:references:date:message-id
-         :mime-version;
-        bh=4dqWHdv0qrHd3fdZPTf0f4D+2/ihtxoiaJ94Krc3ahg=;
-        b=vIWZLKSm+3y/+75p3blXXHBratQSdjYwo+jOHbtfxIEeB6TbDkZsZ1LtkcP0+JOjG1
-         w/cYuxSpedrPYSQ7EqeRv0RqhI9qhuJNT7E8zLzT1Knv3NA1D22d3Rg1RTKLreGeDkQ+
-         M3iqvNEBJ9K7xHNjVgSaJ7rQ69YWrq3sQgkrrTtPKWXYXP+laxHyQImchiQCkcJWb+Xf
-         NSE1JXharu3320/8KMn2xsNXDKn+J4lR0psOymKP4gSaUey7uWIoPYcD/cFf/FeWNyMr
-         iUjiRvk/Kqu/92h0pScLp5gDtmcwqPpsRRo9tTmDBNt7jJXANc2LfavzTu5WoGOHfD8Q
-         L1Ew==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:from:to:cc:subject:in-reply-to:references
-         :date:message-id:mime-version;
-        bh=4dqWHdv0qrHd3fdZPTf0f4D+2/ihtxoiaJ94Krc3ahg=;
-        b=qpIy0qTpkvw5tSJ51B3DlvfdNTZY6b8F78eIRwVHpZFRaEbh/XHyxPYC2TbL8PxKZm
-         VCaCIo0Z16gixFQiX6jL6co/8HCXSLf4B1NqhJz8nEWXJ0rU66iePEU5RiUgRHg1gS44
-         UtpU91cbdIBNJL5fB+5KGRNi1YnPcxkZAfmaxMZY5ZCNlh4LTklzcRyjxmuiUSjeDf1u
-         Qz4MQcbMPYmePURBQlj//QKB48xnlbH5LcXp4dA/NA8PYYVKAjotCjhX+LLRU5LIxvSx
-         YMB20SlXrGI0qEO9ZTHwvwAJdh/y5ykEC7DWlSbXRGYRUBV4huIy0MpM404GF+pQCRmk
-         NyOA==
-X-Gm-Message-State: APjAAAXHG18qiiYIyiCVgWAoUU7hudZ8C7uhYc1MI45zE7G6M4kzGZgI
-        IA6paII1/4eA3A2gTg37zw5X6fxaHPA=
-X-Google-Smtp-Source: APXvYqwd5YyySgaiM29kXaQ6GJaqSjqqDHoiA2AZNwIkeE/Bfpk5Ey/ifB3mdOyBnHer/QMlFTlhzA==
-X-Received: by 2002:a2e:b4f6:: with SMTP id s22mr15183473ljm.218.1580296754412;
-        Wed, 29 Jan 2020 03:19:14 -0800 (PST)
-Received: from saruman (88-113-215-33.elisa-laajakaista.fi. [88.113.215.33])
-        by smtp.gmail.com with ESMTPSA id f16sm768170ljn.17.2020.01.29.03.19.12
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 29 Jan 2020 03:19:13 -0800 (PST)
-From:   Felipe Balbi <balbi@kernel.org>
-To:     John Stultz <john.stultz@linaro.org>
-Cc:     lkml <linux-kernel@vger.kernel.org>,
-        Anurag Kumar Vulisha <anurag.kumar.vulisha@xilinx.com>,
-        Yang Fei <fei.yang@intel.com>,
-        Thinh Nguyen <thinhn@synopsys.com>,
-        Tejas Joglekar <tejas.joglekar@synopsys.com>,
-        Andrzej Pietrasiewicz <andrzej.p@collabora.com>,
-        Jack Pham <jackp@codeaurora.org>, Todd Kjos <tkjos@google.com>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        Linux USB List <linux-usb@vger.kernel.org>,
-        stable <stable@vger.kernel.org>
-Subject: Re: [PATCH v2] usb: dwc3: gadget: Check for IOC/LST bit in TRB->ctrl fields
-In-Reply-To: <CALAqxLUNg_Oww17U=BW9XTzZAdkCoCWCg=92Js17SexhT8gy6g@mail.gmail.com>
-References: <20200127193046.110258-1-john.stultz@linaro.org> <87lfpq915x.fsf@kernel.org> <CALAqxLUNg_Oww17U=BW9XTzZAdkCoCWCg=92Js17SexhT8gy6g@mail.gmail.com>
-Date:   Wed, 29 Jan 2020 13:19:03 +0200
-Message-ID: <87imku8q8o.fsf@kernel.org>
-MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="=-=-=";
-        micalg=pgp-sha256; protocol="application/pgp-signature"
+        Wed, 29 Jan 2020 06:12:31 -0500
+Received: from epcas1p1.samsung.com (unknown [182.195.41.45])
+        by mailout1.samsung.com (KnoxPortal) with ESMTP id 20200129111229epoutp01d6202da2bf211cf37f788e4060b6f7b9~uVygcrT2d1611016110epoutp01B
+        for <linux-kernel@vger.kernel.org>; Wed, 29 Jan 2020 11:12:29 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20200129111229epoutp01d6202da2bf211cf37f788e4060b6f7b9~uVygcrT2d1611016110epoutp01B
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1580296349;
+        bh=FOqPzoYfYORigK00AWcJ1jApU66hHrUT+pBzUwH0zsU=;
+        h=From:To:Cc:Subject:Date:References:From;
+        b=lOf/zYPRZxHwDdM/P6yOQfMuHW2jD5jueBp9E6ecr/YElQhJj9106rdlRqNKVXt9X
+         o0/BmJDmUiIycjETwDMPrQxSXCJhbJhJ1Vr1PfiKs7Nr9OV0SLXlfgduzDB1TxMJG7
+         3GO70zVL2FtH98Vep/frcG2bX59AEy2/XNK7JgUc=
+Received: from epsnrtp4.localdomain (unknown [182.195.42.165]) by
+        epcas1p4.samsung.com (KnoxPortal) with ESMTP id
+        20200129111228epcas1p4e319dd77fdbbacbb6dc1aebc5bcd5b28~uVyftArZn0294002940epcas1p4F;
+        Wed, 29 Jan 2020 11:12:28 +0000 (GMT)
+Received: from epsmges1p4.samsung.com (unknown [182.195.40.152]) by
+        epsnrtp4.localdomain (Postfix) with ESMTP id 48716K6cXfzMqYkZ; Wed, 29 Jan
+        2020 11:12:25 +0000 (GMT)
+Received: from epcas1p4.samsung.com ( [182.195.41.48]) by
+        epsmges1p4.samsung.com (Symantec Messaging Gateway) with SMTP id
+        E4.E2.48019.998613E5; Wed, 29 Jan 2020 20:12:25 +0900 (KST)
+Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
+        epcas1p3.samsung.com (KnoxPortal) with ESMTPA id
+        20200129111225epcas1p3f9b495ee2565858d19bce43fb6e86ac1~uVydC1-Kk1412914129epcas1p3e;
+        Wed, 29 Jan 2020 11:12:25 +0000 (GMT)
+Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
+        epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
+        20200129111225epsmtrp2e290f00fc9ba497d1aceecac6518ad4c~uVydCO_7s1038910389epsmtrp2R;
+        Wed, 29 Jan 2020 11:12:25 +0000 (GMT)
+X-AuditID: b6c32a38-257ff7000001bb93-70-5e316899051b
+Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
+        epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        03.EF.10238.998613E5; Wed, 29 Jan 2020 20:12:25 +0900 (KST)
+Received: from localhost.localdomain (unknown [10.113.221.102]) by
+        epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
+        20200129111225epsmtip1555f61b8d808bab8f96c8e7a59543126~uVyc4SdkN2784527845epsmtip1P;
+        Wed, 29 Jan 2020 11:12:25 +0000 (GMT)
+From:   Chanwoo Choi <cw00.choi@samsung.com>
+To:     linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     cw00.choi@samsung.com, chanwoo@kernel.org,
+        myungjoo.ham@samsung.com, kyungmin.park@samsung.com
+Subject: [PATCH 1/2] PM / devfreq: Remove unneeded extern keyword
+Date:   Wed, 29 Jan 2020 20:20:01 +0900
+Message-Id: <20200129112002.6998-1-cw00.choi@samsung.com>
+X-Mailer: git-send-email 2.17.1
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrDKsWRmVeSWpSXmKPExsWy7bCmge7MDMM4g6+TzSwm3rjCYnH9y3NW
+        i7NNb9gtLu+aw2bxufcIo8XtxhVsDmwem1Z1snn0bVnF6PF5k1wAc1S2TUZqYkpqkUJqXnJ+
+        SmZeuq2Sd3C8c7ypmYGhrqGlhbmSQl5ibqqtkotPgK5bZg7QXiWFssScUqBQQGJxsZK+nU1R
+        fmlJqkJGfnGJrVJqQUpOgWWBXnFibnFpXrpecn6ulaGBgZEpUGFCdsb6C0EFC+0rjvacYGtg
+        bDDpYuTkkBAwkdhw8jlLFyMXh5DADkaJN/sfs0M4nxglFrXfZINwvjFKPNp9k7mLkQOs5e9c
+        foj4XkaJU43TWSGcL4wSV198YwKZyyagJbH/xQ02EFtEwEri9P8OZhCbWSBFov/3GRaQQcIC
+        jhJdS8RAwiwCqhJ/f58HK+EVsJR4OuE/I8R58hKrNxxgBpkvIfCWVWLau41QCReJxh2TWSBs
+        YYlXx7ewQ9hSEp/f7WWDsKslVp48wgbR3MEosWX/BVaIhLHE/qWTmUCOYBbQlFi/Sx8irCix
+        8/dcRog7+STefe1hhXiYV6KjTQiiRFni8oO7TBC2pMTi9k6oVR4Svz5OBztBSCBWYuukLywT
+        GGVnISxYwMi4ilEstaA4Nz212LDABDmONjGCU5KWxQ7GPed8DjEKcDAq8fDOUDGIE2JNLCuu
+        zD3EKMHBrCTCK+pqGCfEm5JYWZValB9fVJqTWnyI0RQYehOZpUST84HpMq8k3tDUyNjY2MLE
+        0MzU0FBJnPdhpGackEB6YklqdmpqQWoRTB8TB6dUA2N7dZL4g/AXC8yyfjIdTJuUkjtbs2iL
+        TCdH3fRctz+nA9bO1d7z2C5Eqd1YzMZ2u6nkfBv12iqxr39n6Z5dmNykrs3q934eMCX+6P3v
+        utiDb4r27n9Wv8RjpVv4jBQ2HtiiWCB+c2Xw70zNRRNWCR/dvmdBZU1GUnDIzuVL9lrHSXbe
+        nb7ggBJLcUaioRZzUXEiAKVlPndfAwAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrBJMWRmVeSWpSXmKPExsWy7bCSnO7MDMM4g+uHhC0m3rjCYnH9y3NW
+        i7NNb9gtLu+aw2bxufcIo8XtxhVsDmwem1Z1snn0bVnF6PF5k1wAcxSXTUpqTmZZapG+XQJX
+        xvoLQQUL7SuO9pxga2BsMOli5OCQEDCR+DuXv4uRi0NIYDejxIdj3UxdjJxAcUmJaRePMkPU
+        CEscPlwMUfOJUeLn2S+MIDVsAloS+1/cYAOxRQRsJO4uvsYCUs8skCHxf7kSiCks4CjRtUQM
+        pIJFQFXi7+/zzCA2r4ClxNMJ/xkhNslLrN5wgHkCI88CRoZVjJKpBcW56bnFhgWGeanlesWJ
+        ucWleel6yfm5mxjB4aGluYPx8pL4Q4wCHIxKPLwzVAzihFgTy4orcw8xSnAwK4nwiroaxgnx
+        piRWVqUW5ccXleakFh9ilOZgURLnfZp3LFJIID2xJDU7NbUgtQgmy8TBKdXAGPTrtf2/3fGW
+        ruVJkyK/twTPVlOq4Y4vm3mRSXbjszPrVmlFb/752dLoUHjWKzfT1iMn/Sr55ujdyl19QMZW
+        K/Ath/9dmcPLv4lHfz76/Hxxy/3VfOeit+RGeIdufv5yV83NnNSbhoVTSpO92N9Fbfw5U3/V
+        /cneOdKPvAuCTOMmrLLZy7DioxJLcUaioRZzUXEiACPwOVULAgAA
+X-CMS-MailID: 20200129111225epcas1p3f9b495ee2565858d19bce43fb6e86ac1
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: SVC_REQ_APPROVE
+CMS-TYPE: 101P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20200129111225epcas1p3f9b495ee2565858d19bce43fb6e86ac1
+References: <CGME20200129111225epcas1p3f9b495ee2565858d19bce43fb6e86ac1@epcas1p3.samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---=-=-=
-Content-Type: text/plain
-Content-Transfer-Encoding: quoted-printable
+Remove unneeded extern keyword from devfreq-related header file
+and adjust the indentation of function parameter to keep the
+consistency in header file
 
+Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
+---
+ drivers/devfreq/governor.h |  17 +++----
+ include/linux/devfreq.h    | 100 ++++++++++++++++++-------------------
+ 2 files changed, 57 insertions(+), 60 deletions(-)
 
-Hi,
+diff --git a/drivers/devfreq/governor.h b/drivers/devfreq/governor.h
+index dc7533ccc3db..5ba3e051b1d0 100644
+--- a/drivers/devfreq/governor.h
++++ b/drivers/devfreq/governor.h
+@@ -57,17 +57,16 @@ struct devfreq_governor {
+ 				unsigned int event, void *data);
+ };
+ 
+-extern void devfreq_monitor_start(struct devfreq *devfreq);
+-extern void devfreq_monitor_stop(struct devfreq *devfreq);
+-extern void devfreq_monitor_suspend(struct devfreq *devfreq);
+-extern void devfreq_monitor_resume(struct devfreq *devfreq);
+-extern void devfreq_interval_update(struct devfreq *devfreq,
+-					unsigned int *delay);
++void devfreq_monitor_start(struct devfreq *devfreq);
++void devfreq_monitor_stop(struct devfreq *devfreq);
++void devfreq_monitor_suspend(struct devfreq *devfreq);
++void devfreq_monitor_resume(struct devfreq *devfreq);
++void devfreq_interval_update(struct devfreq *devfreq, unsigned int *delay);
+ 
+-extern int devfreq_add_governor(struct devfreq_governor *governor);
+-extern int devfreq_remove_governor(struct devfreq_governor *governor);
++int devfreq_add_governor(struct devfreq_governor *governor);
++int devfreq_remove_governor(struct devfreq_governor *governor);
+ 
+-extern int devfreq_update_status(struct devfreq *devfreq, unsigned long freq);
++int devfreq_update_status(struct devfreq *devfreq, unsigned long freq);
+ 
+ static inline int devfreq_update_stats(struct devfreq *df)
+ {
+diff --git a/include/linux/devfreq.h b/include/linux/devfreq.h
+index c6f82d4bec9f..82630fafacde 100644
+--- a/include/linux/devfreq.h
++++ b/include/linux/devfreq.h
+@@ -201,24 +201,23 @@ struct devfreq_freqs {
+ };
+ 
+ #if defined(CONFIG_PM_DEVFREQ)
+-extern struct devfreq *devfreq_add_device(struct device *dev,
+-				  struct devfreq_dev_profile *profile,
+-				  const char *governor_name,
+-				  void *data);
+-extern int devfreq_remove_device(struct devfreq *devfreq);
+-extern struct devfreq *devm_devfreq_add_device(struct device *dev,
+-				  struct devfreq_dev_profile *profile,
+-				  const char *governor_name,
+-				  void *data);
+-extern void devm_devfreq_remove_device(struct device *dev,
+-				  struct devfreq *devfreq);
++struct devfreq *devfreq_add_device(struct device *dev,
++				struct devfreq_dev_profile *profile,
++				const char *governor_name,
++				void *data);
++int devfreq_remove_device(struct devfreq *devfreq);
++struct devfreq *devm_devfreq_add_device(struct device *dev,
++				struct devfreq_dev_profile *profile,
++				const char *governor_name,
++				void *data);
++void devm_devfreq_remove_device(struct device *dev, struct devfreq *devfreq);
+ 
+ /* Supposed to be called by PM callbacks */
+-extern int devfreq_suspend_device(struct devfreq *devfreq);
+-extern int devfreq_resume_device(struct devfreq *devfreq);
++int devfreq_suspend_device(struct devfreq *devfreq);
++int devfreq_resume_device(struct devfreq *devfreq);
+ 
+-extern void devfreq_suspend(void);
+-extern void devfreq_resume(void);
++void devfreq_suspend(void);
++void devfreq_resume(void);
+ 
+ /**
+  * update_devfreq() - Reevaluate the device and configure frequency
+@@ -226,35 +225,34 @@ extern void devfreq_resume(void);
+  *
+  * Note: devfreq->lock must be held
+  */
+-extern int update_devfreq(struct devfreq *devfreq);
++int update_devfreq(struct devfreq *devfreq);
+ 
+ /* Helper functions for devfreq user device driver with OPP. */
+-extern struct dev_pm_opp *devfreq_recommended_opp(struct device *dev,
+-					   unsigned long *freq, u32 flags);
+-extern int devfreq_register_opp_notifier(struct device *dev,
+-					 struct devfreq *devfreq);
+-extern int devfreq_unregister_opp_notifier(struct device *dev,
+-					   struct devfreq *devfreq);
+-extern int devm_devfreq_register_opp_notifier(struct device *dev,
+-					      struct devfreq *devfreq);
+-extern void devm_devfreq_unregister_opp_notifier(struct device *dev,
+-						struct devfreq *devfreq);
+-extern int devfreq_register_notifier(struct devfreq *devfreq,
+-					struct notifier_block *nb,
+-					unsigned int list);
+-extern int devfreq_unregister_notifier(struct devfreq *devfreq,
+-					struct notifier_block *nb,
+-					unsigned int list);
+-extern int devm_devfreq_register_notifier(struct device *dev,
++struct dev_pm_opp *devfreq_recommended_opp(struct device *dev,
++				unsigned long *freq, u32 flags);
++int devfreq_register_opp_notifier(struct device *dev,
++				struct devfreq *devfreq);
++int devfreq_unregister_opp_notifier(struct device *dev,
++				struct devfreq *devfreq);
++int devm_devfreq_register_opp_notifier(struct device *dev,
++				struct devfreq *devfreq);
++void devm_devfreq_unregister_opp_notifier(struct device *dev,
++				struct devfreq *devfreq);
++int devfreq_register_notifier(struct devfreq *devfreq,
++				struct notifier_block *nb,
++				unsigned int list);
++int devfreq_unregister_notifier(struct devfreq *devfreq,
++				struct notifier_block *nb,
++				unsigned int list);
++int devm_devfreq_register_notifier(struct device *dev,
+ 				struct devfreq *devfreq,
+ 				struct notifier_block *nb,
+ 				unsigned int list);
+-extern void devm_devfreq_unregister_notifier(struct device *dev,
++void devm_devfreq_unregister_notifier(struct device *dev,
+ 				struct devfreq *devfreq,
+ 				struct notifier_block *nb,
+ 				unsigned int list);
+-extern struct devfreq *devfreq_get_devfreq_by_phandle(struct device *dev,
+-						int index);
++struct devfreq *devfreq_get_devfreq_by_phandle(struct device *dev, int index);
+ 
+ #if IS_ENABLED(CONFIG_DEVFREQ_GOV_SIMPLE_ONDEMAND)
+ /**
+@@ -311,9 +309,9 @@ struct devfreq_passive_data {
+ 
+ #else /* !CONFIG_PM_DEVFREQ */
+ static inline struct devfreq *devfreq_add_device(struct device *dev,
+-					  struct devfreq_dev_profile *profile,
+-					  const char *governor_name,
+-					  void *data)
++					struct devfreq_dev_profile *profile,
++					const char *governor_name,
++					void *data)
+ {
+ 	return ERR_PTR(-ENOSYS);
+ }
+@@ -350,31 +348,31 @@ static inline void devfreq_suspend(void) {}
+ static inline void devfreq_resume(void) {}
+ 
+ static inline struct dev_pm_opp *devfreq_recommended_opp(struct device *dev,
+-					   unsigned long *freq, u32 flags)
++					unsigned long *freq, u32 flags)
+ {
+ 	return ERR_PTR(-EINVAL);
+ }
+ 
+ static inline int devfreq_register_opp_notifier(struct device *dev,
+-					 struct devfreq *devfreq)
++					struct devfreq *devfreq)
+ {
+ 	return -EINVAL;
+ }
+ 
+ static inline int devfreq_unregister_opp_notifier(struct device *dev,
+-					   struct devfreq *devfreq)
++					struct devfreq *devfreq)
+ {
+ 	return -EINVAL;
+ }
+ 
+ static inline int devm_devfreq_register_opp_notifier(struct device *dev,
+-						     struct devfreq *devfreq)
++					struct devfreq *devfreq)
+ {
+ 	return -EINVAL;
+ }
+ 
+ static inline void devm_devfreq_unregister_opp_notifier(struct device *dev,
+-							struct devfreq *devfreq)
++					struct devfreq *devfreq)
+ {
+ }
+ 
+@@ -393,22 +391,22 @@ static inline int devfreq_unregister_notifier(struct devfreq *devfreq,
+ }
+ 
+ static inline int devm_devfreq_register_notifier(struct device *dev,
+-				struct devfreq *devfreq,
+-				struct notifier_block *nb,
+-				unsigned int list)
++					struct devfreq *devfreq,
++					struct notifier_block *nb,
++					unsigned int list)
+ {
+ 	return 0;
+ }
+ 
+ static inline void devm_devfreq_unregister_notifier(struct device *dev,
+-				struct devfreq *devfreq,
+-				struct notifier_block *nb,
+-				unsigned int list)
++					struct devfreq *devfreq,
++					struct notifier_block *nb,
++					unsigned int list)
+ {
+ }
+ 
+ static inline struct devfreq *devfreq_get_devfreq_by_phandle(struct device *dev,
+-							int index)
++					int index)
+ {
+ 	return ERR_PTR(-ENODEV);
+ }
+-- 
+2.17.1
 
-John Stultz <john.stultz@linaro.org> writes:
-> On Tue, Jan 28, 2020 at 11:23 PM Felipe Balbi <balbi@kernel.org> wrote:
->> John Stultz <john.stultz@linaro.org> writes:
->> > From: Anurag Kumar Vulisha <anurag.kumar.vulisha@xilinx.com>
->> >
->> > The current code in dwc3_gadget_ep_reclaim_completed_trb() will
->> > check for IOC/LST bit in the event->status and returns if
->> > IOC/LST bit is set. This logic doesn't work if multiple TRBs
->> > are queued per request and the IOC/LST bit is set on the last
->> > TRB of that request.
->> >
->> > Consider an example where a queued request has multiple queued
->> > TRBs and IOC/LST bit is set only for the last TRB. In this case,
->> > the core generates XferComplete/XferInProgress events only for
->> > the last TRB (since IOC/LST are set only for the last TRB). As
->> > per the logic in dwc3_gadget_ep_reclaim_completed_trb()
->> > event->status is checked for IOC/LST bit and returns on the
->> > first TRB. This leaves the remaining TRBs left unhandled.
->> >
->> > Similarly, if the gadget function enqueues an unaligned request
->> > with sglist already in it, it should fail the same way, since we
->> > will append another TRB to something that already uses more than
->> > one TRB.
->> >
->> > To aviod this, this patch changes the code to check for IOC/LST
->> > bits in TRB->ctrl instead.
->> >
->> > At a practical level, this patch resolves USB transfer stalls seen
->> > with adb on dwc3 based HiKey960 after functionfs gadget added
->> > scatter-gather support around v4.20.
->> >
->> > Cc: Felipe Balbi <balbi@kernel.org>
->> > Cc: Yang Fei <fei.yang@intel.com>
->> > Cc: Thinh Nguyen <thinhn@synopsys.com>
->> > Cc: Tejas Joglekar <tejas.joglekar@synopsys.com>
->> > Cc: Andrzej Pietrasiewicz <andrzej.p@collabora.com>
->> > Cc: Jack Pham <jackp@codeaurora.org>
->> > Cc: Todd Kjos <tkjos@google.com>
->> > Cc: Greg KH <gregkh@linuxfoundation.org>
->> > Cc: Linux USB List <linux-usb@vger.kernel.org>
->> > Cc: stable <stable@vger.kernel.org>
->> > Tested-by: Tejas Joglekar <tejas.joglekar@synopsys.com>
->> > Reviewed-by: Thinh Nguyen <thinhn@synopsys.com>
->> > Signed-off-by: Anurag Kumar Vulisha <anurag.kumar.vulisha@xilinx.com>
->> > [jstultz: forward ported to mainline, reworded commit log, reworked
->> >  to only check trb->ctrl as suggested by Felipe]
->> > Signed-off-by: John Stultz <john.stultz@linaro.org>
->>
->> since v5.5 is already merged, I'll send this to Greg once -rc1 is
->> tagged. It's already in my testing/fixes branch waiting for a pull
->> request.
->
-> Great, thanks so much for queueing this! I'll be digging on the db845c
-
-no worries, it was way past the time :-)
-
-> side wrt the dma-api issue to hopefully get that one sorted as well.
-
-Thanks, that would, indeed, be great :-)
-
-> Thanks again for the help and analysis!
-
-no worries. If you find anything odd, just collect traces and I can help
-have a look.
-
-=2D-=20
-balbi
-
---=-=-=
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCAAdFiEElLzh7wn96CXwjh2IzL64meEamQYFAl4xaikACgkQzL64meEa
-mQbN3w//V3sy7UdebQ1Xo0antHtl+NK72TPw4TMUjIAsj+oup5UBBmN9zVHByNOU
-K1UjaWzFeH2IwAqmaIKoPbp/LNd1tKeEGASPQgN97Rjp8L5i6IS58th043gympLQ
-1yig3rvofyMaRlJlkt0EwXO1zfFLSVAj7Kd8nONMF7e86+yR9lNw4Sc/xT3vDZu4
-nDHw4YooT7vO5WiUpO1+rHv85lmv5fD7e5O7TYVAsk3wtdubBMX+Hv0MgtIjXeAD
-yRPCZEFDXAd1lgw5jwcluowH3GKIJp4aW0+WtF6uaUo5A9DtN7qOt88MNkrLXTjA
-Uzg7wOvBInUsDOW3OkrZsEYKNdAbo1SlVcfjAl9gIGRbxFju/xjTrYBP/rt6KITf
-k0B88PnD8amQiDl2ks3MRfIFeQa4lC/IzRFAuKVeCGnaOM+9Vhhbbt8WjsHw6qZr
-lhVopqA7jWP+yQs/bv1RK7+8uGoFZIVaAs1F8tP078+dd6v5bCKjWemSKojOVoWG
-/VHLugyWZLCiXg5ltUoHQlXgOnTXZboaD+zWbz9lLd+NYJJg0bqRbYmYUZyYr1yx
-+/RrSCJWgPqUHxMjPoQFqgbLxoBUPyU6fZxFBQPdPvpBFiB4FQ77uaja6/LjKiU1
-cm3Lro5pdwtO+MuY7QiXP4MyJGf+mzZPGJIzyd0eqM+SpHa0c3I=
-=98RO
------END PGP SIGNATURE-----
---=-=-=--
