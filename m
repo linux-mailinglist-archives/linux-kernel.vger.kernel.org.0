@@ -2,254 +2,223 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CBA0614C9CC
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Jan 2020 12:34:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0BDFD14C9D9
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Jan 2020 12:42:14 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726668AbgA2LeV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 29 Jan 2020 06:34:21 -0500
-Received: from mailout1.samsung.com ([203.254.224.24]:14142 "EHLO
-        mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726206AbgA2LeU (ORCPT
+        id S1726256AbgA2LmM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 29 Jan 2020 06:42:12 -0500
+Received: from mail-qk1-f193.google.com ([209.85.222.193]:42384 "EHLO
+        mail-qk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726067AbgA2LmM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 Jan 2020 06:34:20 -0500
-Received: from epcas1p2.samsung.com (unknown [182.195.41.46])
-        by mailout1.samsung.com (KnoxPortal) with ESMTP id 20200129113418epoutp016970a4bc22e7f81e7c713cc3e260c68f~uWFkBQgNM0044600446epoutp01l
-        for <linux-kernel@vger.kernel.org>; Wed, 29 Jan 2020 11:34:18 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20200129113418epoutp016970a4bc22e7f81e7c713cc3e260c68f~uWFkBQgNM0044600446epoutp01l
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1580297658;
-        bh=dZpZLGiMiSwje8YHHJxOlxCUUy21vccxwXWxrORqna4=;
-        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
-        b=P93p1HByYvkyb7tGvK6HyPSBBa9KGAvkioj0+5GLYUPY1Tvz14ksLe9Fz3f3m6ltN
-         GTOgnZkBP9E2s7TFKd5mlOGYMqBEuO4WgYP3geqfmARzM4VxvBGAk/NW9Sd/qYNPRP
-         77LQwF3wVGiYuKnGpSTeWJNmDTH3WwmKnTVYOj9M=
-Received: from epsnrtp2.localdomain (unknown [182.195.42.163]) by
-        epcas1p3.samsung.com (KnoxPortal) with ESMTP id
-        20200129113418epcas1p3c930f8ee8d2fa429f9bfbd6232902c9f~uWFjnVVm70473404734epcas1p3c;
-        Wed, 29 Jan 2020 11:34:18 +0000 (GMT)
-Received: from epsmges1p1.samsung.com (unknown [182.195.40.155]) by
-        epsnrtp2.localdomain (Postfix) with ESMTP id 4871bR61GzzMqYkZ; Wed, 29 Jan
-        2020 11:34:11 +0000 (GMT)
-Received: from epcas1p2.samsung.com ( [182.195.41.46]) by
-        epsmges1p1.samsung.com (Symantec Messaging Gateway) with SMTP id
-        81.2F.57028.3BD613E5; Wed, 29 Jan 2020 20:34:11 +0900 (KST)
-Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
-        epcas1p2.samsung.com (KnoxPortal) with ESMTPA id
-        20200129113411epcas1p27949df511b1284425e9d284d61b9bb41~uWFdTxpyX1912319123epcas1p2i;
-        Wed, 29 Jan 2020 11:34:11 +0000 (GMT)
-Received: from epsmgms1p2new.samsung.com (unknown [182.195.42.42]) by
-        epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20200129113411epsmtrp19a53a2c33686b05655cc2b715654d208~uWFdTBORZ0526205262epsmtrp1w;
-        Wed, 29 Jan 2020 11:34:11 +0000 (GMT)
-X-AuditID: b6c32a35-4f3ff7000001dec4-db-5e316db30a96
-Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
-        epsmgms1p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        C9.43.06569.3BD613E5; Wed, 29 Jan 2020 20:34:11 +0900 (KST)
-Received: from [10.113.221.102] (unknown [10.113.221.102]) by
-        epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
-        20200129113411epsmtip183fee66781f1e38368691526762f8e21~uWFdJstLc0853208532epsmtip1G;
-        Wed, 29 Jan 2020 11:34:11 +0000 (GMT)
-Subject: Re: [PATCH 2/2] PM / devfreq: Change to DEVFREQ_GOV_UPDATE_INTERVAL
- event name
-To:     Lukasz Luba <lukasz.luba@arm.com>, linux-pm@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc:     chanwoo@kernel.org, myungjoo.ham@samsung.com,
-        kyungmin.park@samsung.com
-From:   Chanwoo Choi <cw00.choi@samsung.com>
-Organization: Samsung Electronics
-Message-ID: <cb22cfaf-ad28-9697-f2f2-b6f79c19220d@samsung.com>
-Date:   Wed, 29 Jan 2020 20:41:49 +0900
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:59.0) Gecko/20100101
-        Thunderbird/59.0
+        Wed, 29 Jan 2020 06:42:12 -0500
+Received: by mail-qk1-f193.google.com with SMTP id q15so16650361qke.9;
+        Wed, 29 Jan 2020 03:42:11 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=jms.id.au; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=Uvj5lSyDUBorAnnxXjG0B8EQR6HQaBhBDU5iflSNwj4=;
+        b=QOXi+X6cQhMWnytGleLK0OUN0HI68S/oKGGDuKDiUzWhkhBdWDeWp8/8fKCMF/GO8X
+         LXMHYqJW1mNZZT7D5EghCfl5YVfwFUwNMdZgV3KaJZlY5T3GaNUO1wnQlgtIVfEJ7F1u
+         86uPAT4HtTHfYhInYGsO8oeMGpaAIcLeWJNuQ=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=Uvj5lSyDUBorAnnxXjG0B8EQR6HQaBhBDU5iflSNwj4=;
+        b=CAUhTpBOOkP1RlGfixcqBkpSvd3QR+iz2IwMThtTvyfU91tfJfXnj2NdAHnHjyTdPC
+         bNTyuvqV5m+hgMRPapXICP14oNDTw+ho+IA0WhAlh/pndKx26CEs4DbpQcTUVrN617jo
+         uQZcfqVGpA0z+qLgBNsga+yZeBegtuxI0zHz12SBFz1XaaSZm0rdP6YqCCYkWJRziY2a
+         Rq/Vb7YmbTNe3g0apSNYzo0bvvFKCMvqw/UfcayrMoxWgwdtO+NKJ4Ou4mzU/V8RfrDO
+         Ac+53yyk5d9hKU2X81RwrQnljP+yutK9wLeQJx0golFGqxVTKCgaNVOt2xHA7Bk0yoCH
+         I82g==
+X-Gm-Message-State: APjAAAXR9elkurJI/ZD4ELO5OuNuPd6crXo+m+oDysCMUAwMqt5mKeVP
+        p7aTmPtuAzhxvaaKq4i0cs0Fo7K0rBE/nGSyoL4=
+X-Google-Smtp-Source: APXvYqymt5r5lppEO2YAaxtxP6Hxljwgl3tAcJc5DzZr7VRHl4+EmiLFZU/qDQx5le6IjkigmbJOKkdUbF27trs4L5A=
+X-Received: by 2002:a37:a1cc:: with SMTP id k195mr27881820qke.414.1580298130544;
+ Wed, 29 Jan 2020 03:42:10 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <bc60b915-1975-b623-6b85-fc034cf649f3@arm.com>
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprFJsWRmVeSWpSXmKPExsWy7bCmnu7mXMM4gzX9ehYTb1xhsTjb9Ibd
-        4vKuOWwWn3uPMFosbGpht7jduILNgc1jzbw1jB6bVnWyefRtWcXo8XmTXABLVLZNRmpiSmqR
-        Qmpecn5KZl66rZJ3cLxzvKmZgaGuoaWFuZJCXmJuqq2Si0+ArltmDtByJYWyxJxSoFBAYnGx
-        kr6dTVF+aUmqQkZ+cYmtUmpBSk6BZYFecWJucWleul5yfq6VoYGBkSlQYUJ2xoWLa9gLfulX
-        TF3QxdbAuEmzi5GTQ0LARGLetBtMXYxcHEICOxglps9awQ6SEBL4xCixtbMEIvGNUeLfqlds
-        MB2bdtxmhUjsZZT42vAQqv09o8TOJ7fA2oUFIiV+bf0N1iEiEC/xtnsNmM0s4C2x+O1qRhCb
-        TUBLYv+LG2BxfgFFias/HoPFeQXsJM70HwGzWQRUJX5sfM4EYosKhEmc3NYCVSMocXLmExYQ
-        m1PAWuLg3VtQ88Ulbj2ZzwRhy0s0b53NDHKchMBjNokVx98BFXEAOS4SFyYXQHwjLPHq+BZ2
-        CFtK4mV/G5RdLbHy5BE2iN4ORokt+y+wQiSMJfYvncwEModZQFNi/S59iLCixM7fcxkh9vJJ
-        vPvawwqxileio00IokRZ4vKDu0wQtqTE4vZOtgmMSrOQfDMLyQezkHwwC2HZAkaWVYxiqQXF
-        uempxYYFhsiRvYkRnC61THcwTjnnc4hRgINRiYfXQckgTog1say4MvcQowQHs5IIr6irYZwQ
-        b0piZVVqUX58UWlOavEhRlNgYE9klhJNzgem8rySeENTI2NjYwsTQzNTQ0Mlcd6HkZpxQgLp
-        iSWp2ampBalFMH1MHJxSDYzzo70yhJo8P0kY8jmkN7w4MPGZyUWPum+vbjZM0j7qqnp9R2b3
-        19OnDN79qLfdsjuLe9Xr3sWnGjZNCny6w+NtLFfkazHmHM2ORfW2n8L53MsaEi7w3/tsvbC0
-        9P+KwM+vlwTMFkruldTuW39zviaf+OeS4p7EHN4ZsxsTV2xoT8mVfbRm2WYlluKMREMt5qLi
-        RAD41rxtrQMAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFmpjkeLIzCtJLcpLzFFi42LZdlhJTndzrmGcwY8vAhYTb1xhsTjb9Ibd
-        4vKuOWwWn3uPMFosbGpht7jduILNgc1jzbw1jB6bVnWyefRtWcXo8XmTXABLFJdNSmpOZllq
-        kb5dAlfGhYtr2At+6VdMXdDF1sC4SbOLkZNDQsBEYtOO26xdjFwcQgK7GSX61q9mhkhISky7
-        eBTI5gCyhSUOHy6GqHnLKNG9bjc7SI2wQKTEr62/2UBsEYF4iZsTHrKA2MwC3hKL365mhGh4
-        xyhx9eZEsASbgJbE/hc3wBr4BRQlrv54zAhi8wrYSZzpPwJmswioSvzY+JwJxBYVCJPYueQx
-        E0SNoMTJmU/A5nAKWEscvHuLDWKZusSfeZeYIWxxiVtP5jNB2PISzVtnM09gFJ6FpH0WkpZZ
-        SFpmIWlZwMiyilEytaA4Nz232LDAKC+1XK84Mbe4NC9dLzk/dxMjOHa0tHYwnjgRf4hRgINR
-        iYfXQckgTog1say4MvcQowQHs5IIr6irYZwQb0piZVVqUX58UWlOavEhRmkOFiVxXvn8Y5FC
-        AumJJanZqakFqUUwWSYOTqkGxtiXfF9q0tlqPaZbaKVPPpS0S6p2p2juXMEFCxg9+n8KiWgl
-        NZYtz6yc7DktwOL85qxlW7cv/XlF+k1q5/Yl6YUF5a+rZ+ibpxxXdLhvevH052nvb3Gc9Jl8
-        tfGKwZu9y42Lf0dPX3j3eq39hIUnfmt+vCEyY/LuZ1vSP3N4NVsmhK8/setJb5YSS3FGoqEW
-        c1FxIgB79w/+mQIAAA==
-X-CMS-MailID: 20200129113411epcas1p27949df511b1284425e9d284d61b9bb41
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: SVC_REQ_APPROVE
-CMS-TYPE: 101P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20200129111225epcas1p1c262e46a878ad68836a676bc351840bf
-References: <20200129112002.6998-1-cw00.choi@samsung.com>
-        <CGME20200129111225epcas1p1c262e46a878ad68836a676bc351840bf@epcas1p1.samsung.com>
-        <20200129112002.6998-2-cw00.choi@samsung.com>
-        <bc60b915-1975-b623-6b85-fc034cf649f3@arm.com>
+References: <20191107094218.13210-1-joel@jms.id.au> <20191107094218.13210-2-joel@jms.id.au>
+ <747e3c0a-ee10-4a41-d0b7-1d54e0f56dd0@linaro.org>
+In-Reply-To: <747e3c0a-ee10-4a41-d0b7-1d54e0f56dd0@linaro.org>
+From:   Joel Stanley <joel@jms.id.au>
+Date:   Wed, 29 Jan 2020 11:41:59 +0000
+Message-ID: <CACPK8XeWY-upP-b_aAMWv-Rx9qaNSbPxOZLVd67-khEVjG877A@mail.gmail.com>
+Subject: Re: [PATCH v2 1/4] clocksource: fttmr010: Parametrise shutdown
+To:     Daniel Lezcano <daniel.lezcano@linaro.org>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        =?UTF-8?Q?C=C3=A9dric_Le_Goater?= <clg@kaod.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Andrew Jeffery <andrew@aj.id.au>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 1/29/20 8:28 PM, Lukasz Luba wrote:
-> Hi Chanwoo,
-> 
-> Apart from small mistakes in the commit message, looks good to me.
-> 
-> On 1/29/20 11:20 AM, Chanwoo Choi wrote:
->> DEVFREQ_GOV_INTERVAL event indicates that update the interval
->> for polling mode of devfreq device. But, this event name doesn't
->> specify exactly what to do.
->>
->> Change DEVFREQ_GOV_INTERVAL event name to DEVFREQ_GOV_UPDATE_INTERVAL
->> which specifies what to do by event name.
->>
->> And modify the functio name for DEVFREQ_GOV_UPDATE_INTERVAL
-> 
-> s/functio/function
+On Wed, 29 Jan 2020 at 11:25, Daniel Lezcano <daniel.lezcano@linaro.org> wr=
+ote:
+>
+> On 07/11/2019 10:42, Joel Stanley wrote:
+> > In preparation for supporting the ast2600 which uses a different method
+> > to clear bits in the control register, use a callback for performing th=
+e
+> > shutdown sequence.
+> >
+> > Reviewed-by: C=C3=A9dric Le Goater <clg@kaod.org>
+> > Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+> > Signed-off-by: Joel Stanley <joel@jms.id.au>
+>
+> It will be cleaner if you create a struct of_device_id array where you
+> store the different variant data.
 
-I'll fix it.
+I agree, and that's the path I would have taken when writing a normal
+driver. However as the timer drivers probe with the
+TIMER_OF_DECLARE/timer_probe infrastructure, we can't register our own
+.data pointer (TIMER_OF_DECLARE uses .data  to store the _init
+function).
 
-> 
->> with 'devfreq_' prefix + verb + obejct as following:
-> 
-> 'obejct'?
+Unless I'm missing something?
 
-I'll fix it to 'object'.
+Cheers,
 
-Thanks for the review.
-
-> 
->> - devfreq_interval_update -> devfreq_updatee_interval
->>
->> Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
->> ---
->>   drivers/devfreq/devfreq.c                 | 10 +++++-----
->>   drivers/devfreq/governor.h                |  4 ++--
->>   drivers/devfreq/governor_simpleondemand.c |  4 ++--
->>   drivers/devfreq/tegra30-devfreq.c         |  4 ++--
->>   4 files changed, 11 insertions(+), 11 deletions(-)
->>
->> diff --git a/drivers/devfreq/devfreq.c b/drivers/devfreq/devfreq.c
->> index cceee8bc3c2f..8494c5f05a73 100644
->> --- a/drivers/devfreq/devfreq.c
->> +++ b/drivers/devfreq/devfreq.c
->> @@ -550,14 +550,14 @@ void devfreq_monitor_resume(struct devfreq *devfreq)
->>   EXPORT_SYMBOL(devfreq_monitor_resume);
->>     /**
->> - * devfreq_interval_update() - Update device devfreq monitoring interval
->> + * devfreq_update_interval() - Update device devfreq monitoring interval
->>    * @devfreq:    the devfreq instance.
->>    * @delay:      new polling interval to be set.
->>    *
->>    * Helper function to set new load monitoring polling interval. Function
->> - * to be called from governor in response to DEVFREQ_GOV_INTERVAL event.
->> + * to be called from governor in response to DEVFREQ_GOV_UPDATE_INTERVAL event.
->>    */
->> -void devfreq_interval_update(struct devfreq *devfreq, unsigned int *delay)
->> +void devfreq_update_interval(struct devfreq *devfreq, unsigned int *delay)
->>   {
->>       unsigned int cur_delay = devfreq->profile->polling_ms;
->>       unsigned int new_delay = *delay;
->> @@ -597,7 +597,7 @@ void devfreq_interval_update(struct devfreq *devfreq, unsigned int *delay)
->>   out:
->>       mutex_unlock(&devfreq->lock);
->>   }
->> -EXPORT_SYMBOL(devfreq_interval_update);
->> +EXPORT_SYMBOL(devfreq_update_interval);
->>     /**
->>    * devfreq_notifier_call() - Notify that the device frequency requirements
->> @@ -1426,7 +1426,7 @@ static ssize_t polling_interval_store(struct device *dev,
->>       if (ret != 1)
->>           return -EINVAL;
->>   -    df->governor->event_handler(df, DEVFREQ_GOV_INTERVAL, &value);
->> +    df->governor->event_handler(df, DEVFREQ_GOV_UPDATE_INTERVAL, &value);
->>       ret = count;
->>         return ret;
->> diff --git a/drivers/devfreq/governor.h b/drivers/devfreq/governor.h
->> index 5ba3e051b1d0..c07ce77c253d 100644
->> --- a/drivers/devfreq/governor.h
->> +++ b/drivers/devfreq/governor.h
->> @@ -18,7 +18,7 @@
->>   /* Devfreq events */
->>   #define DEVFREQ_GOV_START            0x1
->>   #define DEVFREQ_GOV_STOP            0x2
->> -#define DEVFREQ_GOV_INTERVAL            0x3
->> +#define DEVFREQ_GOV_UPDATE_INTERVAL        0x3
->>   #define DEVFREQ_GOV_SUSPEND            0x4
->>   #define DEVFREQ_GOV_RESUME            0x5
->>   @@ -61,7 +61,7 @@ void devfreq_monitor_start(struct devfreq *devfreq);
->>   void devfreq_monitor_stop(struct devfreq *devfreq);
->>   void devfreq_monitor_suspend(struct devfreq *devfreq);
->>   void devfreq_monitor_resume(struct devfreq *devfreq);
->> -void devfreq_interval_update(struct devfreq *devfreq, unsigned int *delay);
->> +void devfreq_update_interval(struct devfreq *devfreq, unsigned int *delay);
->>     int devfreq_add_governor(struct devfreq_governor *governor);
->>   int devfreq_remove_governor(struct devfreq_governor *governor);
->> diff --git a/drivers/devfreq/governor_simpleondemand.c b/drivers/devfreq/governor_simpleondemand.c
->> index 3d809f228619..1b314e1df028 100644
->> --- a/drivers/devfreq/governor_simpleondemand.c
->> +++ b/drivers/devfreq/governor_simpleondemand.c
->> @@ -96,8 +96,8 @@ static int devfreq_simple_ondemand_handler(struct devfreq *devfreq,
->>           devfreq_monitor_stop(devfreq);
->>           break;
->>   -    case DEVFREQ_GOV_INTERVAL:
->> -        devfreq_interval_update(devfreq, (unsigned int *)data);
->> +    case DEVFREQ_GOV_UPDATE_INTERVAL:
->> +        devfreq_update_interval(devfreq, (unsigned int *)data);
->>           break;
->>         case DEVFREQ_GOV_SUSPEND:
->> diff --git a/drivers/devfreq/tegra30-devfreq.c b/drivers/devfreq/tegra30-devfreq.c
->> index 0b65f89d74d5..28b2c7ca416e 100644
->> --- a/drivers/devfreq/tegra30-devfreq.c
->> +++ b/drivers/devfreq/tegra30-devfreq.c
->> @@ -734,7 +734,7 @@ static int tegra_governor_event_handler(struct devfreq *devfreq,
->>           devfreq_monitor_stop(devfreq);
->>           break;
->>   -    case DEVFREQ_GOV_INTERVAL:
->> +    case DEVFREQ_GOV_UPDATE_INTERVAL:
->>           /*
->>            * ACTMON hardware supports up to 256 milliseconds for the
->>            * sampling period.
->> @@ -745,7 +745,7 @@ static int tegra_governor_event_handler(struct devfreq *devfreq,
->>           }
->>             tegra_actmon_pause(tegra);
->> -        devfreq_interval_update(devfreq, new_delay);
->> +        devfreq_update_interval(devfreq, new_delay);
->>           ret = tegra_actmon_resume(tegra);
->>           break;
->>  
-> 
-> 
-> Reviewed-by: Lukasz Luba <lukasz.luba@arm.com>
-> 
-> 
-> Regards,
-> Lukasz
-> 
-> 
+Joel
 
 
--- 
-Best Regards,
-Chanwoo Choi
-Samsung Electronics
+>
+> eg.
+> struct myops {
+>         int (*shutdown)(struct clock_event_device *evt);
+> };
+>
+> struct fttmr010 {
+>         ...
+>         struct myops *ops;
+> };
+>
+> ...
+>
+> static const struct of_device_id fttmr010_of_match[] =3D {
+>         { .compatible =3D "faraday,fttmr010",     .data =3D &fttmr010_ops=
+ },
+>         ...
+>         { .compatible =3D "aspeed,ast2600-timer", .data =3D &as2600_ops, =
+},
+>         { /* sentinel */ }
+> };
+>
+> Keep the generic timer_shutdown function, get the ops from there and
+> then call the shutdown callback.
+>
+> At init time:
+>
+> ...
+>
+> const struct of_device_id *match;
+>
+> ...
+>
+> match =3D of_match_node(fttmr010_of_match, node);
+> fttmr010->ops =3D (struct myops *)match->data;
+>
+> ...
+>
+> (also if you have time, remove the is_aspeed boolean test by a
+> corresponding callback).
+>
+> > ---
+> >  drivers/clocksource/timer-fttmr010.c | 19 ++++++++-----------
+> >  1 file changed, 8 insertions(+), 11 deletions(-)
+> >
+> > diff --git a/drivers/clocksource/timer-fttmr010.c b/drivers/clocksource=
+/timer-fttmr010.c
+> > index fadff7915dd9..c2d30eb9dc72 100644
+> > --- a/drivers/clocksource/timer-fttmr010.c
+> > +++ b/drivers/clocksource/timer-fttmr010.c
+> > @@ -97,6 +97,7 @@ struct fttmr010 {
+> >       bool is_aspeed;
+> >       u32 t1_enable_val;
+> >       struct clock_event_device clkevt;
+> > +     int (*timer_shutdown)(struct clock_event_device *evt);
+> >  #ifdef CONFIG_ARM
+> >       struct delay_timer delay_timer;
+> >  #endif
+> > @@ -140,9 +141,7 @@ static int fttmr010_timer_set_next_event(unsigned l=
+ong cycles,
+> >       u32 cr;
+> >
+> >       /* Stop */
+> > -     cr =3D readl(fttmr010->base + TIMER_CR);
+> > -     cr &=3D ~fttmr010->t1_enable_val;
+> > -     writel(cr, fttmr010->base + TIMER_CR);
+> > +     fttmr010->timer_shutdown(evt);
+> >
+> >       if (fttmr010->is_aspeed) {
+> >               /*
+> > @@ -183,9 +182,7 @@ static int fttmr010_timer_set_oneshot(struct clock_=
+event_device *evt)
+> >       u32 cr;
+> >
+> >       /* Stop */
+> > -     cr =3D readl(fttmr010->base + TIMER_CR);
+> > -     cr &=3D ~fttmr010->t1_enable_val;
+> > -     writel(cr, fttmr010->base + TIMER_CR);
+> > +     fttmr010->timer_shutdown(evt);
+> >
+> >       /* Setup counter start from 0 or ~0 */
+> >       writel(0, fttmr010->base + TIMER1_COUNT);
+> > @@ -211,9 +208,7 @@ static int fttmr010_timer_set_periodic(struct clock=
+_event_device *evt)
+> >       u32 cr;
+> >
+> >       /* Stop */
+> > -     cr =3D readl(fttmr010->base + TIMER_CR);
+> > -     cr &=3D ~fttmr010->t1_enable_val;
+> > -     writel(cr, fttmr010->base + TIMER_CR);
+> > +     fttmr010->timer_shutdown(evt);
+> >
+> >       /* Setup timer to fire at 1/HZ intervals. */
+> >       if (fttmr010->is_aspeed) {
+> > @@ -350,6 +345,8 @@ static int __init fttmr010_common_init(struct devic=
+e_node *np, bool is_aspeed)
+> >                                    fttmr010->tick_rate);
+> >       }
+> >
+> > +     fttmr010->timer_shutdown =3D fttmr010_timer_shutdown;
+> > +
+> >       /*
+> >        * Setup clockevent timer (interrupt-driven) on timer 1.
+> >        */
+> > @@ -370,10 +367,10 @@ static int __init fttmr010_common_init(struct dev=
+ice_node *np, bool is_aspeed)
+> >       fttmr010->clkevt.features =3D CLOCK_EVT_FEAT_PERIODIC |
+> >               CLOCK_EVT_FEAT_ONESHOT;
+> >       fttmr010->clkevt.set_next_event =3D fttmr010_timer_set_next_event=
+;
+> > -     fttmr010->clkevt.set_state_shutdown =3D fttmr010_timer_shutdown;
+> > +     fttmr010->clkevt.set_state_shutdown =3D fttmr010->timer_shutdown;
+> >       fttmr010->clkevt.set_state_periodic =3D fttmr010_timer_set_period=
+ic;
+> >       fttmr010->clkevt.set_state_oneshot =3D fttmr010_timer_set_oneshot=
+;
+> > -     fttmr010->clkevt.tick_resume =3D fttmr010_timer_shutdown;
+> > +     fttmr010->clkevt.tick_resume =3D fttmr010->timer_shutdown;
+> >       fttmr010->clkevt.cpumask =3D cpumask_of(0);
+> >       fttmr010->clkevt.irq =3D irq;
+> >       clockevents_config_and_register(&fttmr010->clkevt,
+> >
+>
+>
+> --
+>  <http://www.linaro.org/> Linaro.org =E2=94=82 Open source software for A=
+RM SoCs
+>
+> Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+> <http://twitter.com/#!/linaroorg> Twitter |
+> <http://www.linaro.org/linaro-blog/> Blog
+>
