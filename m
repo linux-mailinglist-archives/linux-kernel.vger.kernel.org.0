@@ -2,129 +2,158 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 78A3614CC33
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Jan 2020 15:19:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 87B7F14CC49
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Jan 2020 15:22:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726560AbgA2OT3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 29 Jan 2020 09:19:29 -0500
-Received: from mail.kernel.org ([198.145.29.99]:52058 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726177AbgA2OT3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 Jan 2020 09:19:29 -0500
-Received: from tzanussi-mobl (c-98-220-238-81.hsd1.il.comcast.net [98.220.238.81])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C1AEE2070E;
-        Wed, 29 Jan 2020 14:19:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1580307568;
-        bh=7TBURzc5ZWsm5if65UrsTx/OLpKms2Tc+7+K6XT2J6w=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=YpwMFw5cBjb3gXsdyQP3nevhdd5nIr7iZi2pIGwZRBlpHBTAGNYMQDJBhXqwpxY5i
-         3sJeT5f2h5hDzdCS44czytB6RX19wXF/vhJeEqB9NtnIm6TXCD/TVYJu5BXTLYTV5N
-         2EYzGZ1o615geIx28vdlLnGOoKOkhifjoeqxtVd8=
-Message-ID: <1580307566.2294.4.camel@kernel.org>
-Subject: Re: Using matched variables in trace actions
-From:   Tom Zanussi <zanussi@kernel.org>
-To:     Steven Rostedt <rostedt@goodmis.org>
-Cc:     LKML <linux-kernel@vger.kernel.org>
-Date:   Wed, 29 Jan 2020 08:19:26 -0600
-In-Reply-To: <20200128220138.50b203d3@rorschach.local.home>
-References: <20200128220138.50b203d3@rorschach.local.home>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.26.1-1 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        id S1726847AbgA2OWC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 29 Jan 2020 09:22:02 -0500
+Received: from mail-lf1-f65.google.com ([209.85.167.65]:45388 "EHLO
+        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726178AbgA2OWB (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 Jan 2020 09:22:01 -0500
+Received: by mail-lf1-f65.google.com with SMTP id 203so11967401lfa.12;
+        Wed, 29 Jan 2020 06:22:00 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=ngpKtKkRqA4bLgz9hqEAUDGl9vfshEKzWUpmN7kSf5I=;
+        b=T97g40JJkCpTxOs4RtOf8TMHdkcMmZpyDUyvKE+M1iCiredbwhZo9f47sRYycRIOaK
+         WyRyhVj0F9rXnlB6WwfXq8UStjlYgLbzIx32++G2z5paGl/dAsz2EtaxCr3Y5ZZK8HSw
+         V6LFhztzhwtgeFU8H5F7qi5OTfhHx56KqIJlwD38+TRWLoR7E3wSvR2b3KBUsTlREpN1
+         y6qnV/iY2W3/UwC4lELDiA8sSWsh81hoVkm/7MgRcBLLKmxtHZS1BMSVzJ3Yz8ECIyS8
+         wrymSuYT9ddaYnMPBkLl/4Dx6SEHyjtfp5oxSN2GbwMxMJ7AMvnd30yLnpJ8oaO3x17Z
+         AGVg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=ngpKtKkRqA4bLgz9hqEAUDGl9vfshEKzWUpmN7kSf5I=;
+        b=cyxniXOqnvtYQcyXuIwKEFlumgxJLxWHc+WSYA3pRQZEdrwEDvHu7opwzS/k8jhe5J
+         PjgH7vO/LKMl3bt+ErUP1SN3+gUu1H98Rlqgp/73CXgualD5l5Mw8BV8jPhLIYpaCxjG
+         /GCAHa3krPNrumUiSe9DZyaHELEF3KlIhmIWcynUjtYUtiIbPyfkhMuG9PEpDxKCXmZg
+         qfbs0eIOhPp0Coi0eIOD1XFliewLX19chtIaxA3FqNTrKS0+Y8vojHoa/TMigvVvEGH/
+         pXPVeD+7k8DFEG/FBBGcwdy54VcxkAscEV39j21azakfK/keJcMfjA78zB40hirLFzfw
+         b1NA==
+X-Gm-Message-State: APjAAAWkaL2mUGV8xUoQ/yjM4ha+LlYRgESoJu/TPxs+3Qc1Sm8t/mj/
+        Tgu1VEIYx675quTwxpzJx9c=
+X-Google-Smtp-Source: APXvYqzYvUkcSlNuXDwv7XdX0nVLb/c5ZJ/5O8HRyToU75dsf2h82fIfm+1f6ytmKF9sY990bRaQeg==
+X-Received: by 2002:a19:cb95:: with SMTP id b143mr5622613lfg.158.1580307719408;
+        Wed, 29 Jan 2020 06:21:59 -0800 (PST)
+Received: from [192.168.2.145] (79-139-233-37.dynamic.spd-mgts.ru. [79.139.233.37])
+        by smtp.googlemail.com with ESMTPSA id 21sm1055977ljv.19.2020.01.29.06.21.57
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 29 Jan 2020 06:21:58 -0800 (PST)
+Subject: Re: [PATCH 3/5] mm/mremap: use pmd_addr_end to calculate next in
+ move_page_tables()
+To:     Russell King - ARM Linux admin <linux@armlinux.org.uk>
+Cc:     Wei Yang <richardw.yang@linux.intel.com>,
+        akpm@linux-foundation.org, dan.j.williams@intel.com,
+        aneesh.kumar@linux.ibm.com, kirill@shutemov.name,
+        yang.shi@linux.alibaba.com, thellstrom@vmware.com,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jon Hunter <jonathanh@nvidia.com>,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>
+References: <20200117232254.2792-1-richardw.yang@linux.intel.com>
+ <20200117232254.2792-4-richardw.yang@linux.intel.com>
+ <7147774a-14e9-4ff3-1548-4565f0d214d5@gmail.com>
+ <20200129094738.GE25745@shell.armlinux.org.uk>
+From:   Dmitry Osipenko <digetx@gmail.com>
+Message-ID: <2791a187-ec3e-6b78-515f-25e7559a3749@gmail.com>
+Date:   Wed, 29 Jan 2020 17:21:55 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.3.0
+MIME-Version: 1.0
+In-Reply-To: <20200129094738.GE25745@shell.armlinux.org.uk>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Steve,
+29.01.2020 12:47, Russell King - ARM Linux admin пишет:
+> On Sun, Jan 26, 2020 at 05:47:57PM +0300, Dmitry Osipenko wrote:
+>> 18.01.2020 02:22, Wei Yang пишет:
+>>> Use the general helper instead of do it by hand.
+>>>
+>>> Signed-off-by: Wei Yang <richardw.yang@linux.intel.com>
+>>> ---
+>>>  mm/mremap.c | 7 ++-----
+>>>  1 file changed, 2 insertions(+), 5 deletions(-)
+>>>
+>>> diff --git a/mm/mremap.c b/mm/mremap.c
+>>> index c2af8ba4ba43..a258914f3ee1 100644
+>>> --- a/mm/mremap.c
+>>> +++ b/mm/mremap.c
+>>> @@ -253,11 +253,8 @@ unsigned long move_page_tables(struct vm_area_struct *vma,
+>>>  
+>>>  	for (; old_addr < old_end; old_addr += extent, new_addr += extent) {
+>>>  		cond_resched();
+>>> -		next = (old_addr + PMD_SIZE) & PMD_MASK;
+>>> -		/* even if next overflowed, extent below will be ok */
+>>> +		next = pmd_addr_end(old_addr, old_end);
+>>>  		extent = next - old_addr;
+>>> -		if (extent > old_end - old_addr)
+>>> -			extent = old_end - old_addr;
+>>>  		old_pmd = get_old_pmd(vma->vm_mm, old_addr);
+>>>  		if (!old_pmd)
+>>>  			continue;
+>>> @@ -301,7 +298,7 @@ unsigned long move_page_tables(struct vm_area_struct *vma,
+>>>  
+>>>  		if (pte_alloc(new_vma->vm_mm, new_pmd))
+>>>  			break;
+>>> -		next = (new_addr + PMD_SIZE) & PMD_MASK;
+>>> +		next = pmd_addr_end(new_addr, new_addr + len);
+>>>  		if (extent > next - new_addr)
+>>>  			extent = next - new_addr;
+>>>  		move_ptes(vma, old_pmd, old_addr, old_addr + extent, new_vma,
+>>>
+>>
+>> Hello Wei,
+>>
+>> Starting with next-20200122, I'm seeing the following in KMSG on NVIDIA
+>> Tegra (ARM32):
+>>
+>>   BUG: Bad rss-counter state mm:(ptrval) type:MM_ANONPAGES val:190
+>>
+>> and eventually kernel hangs.
+>>
+>> Git's bisection points to this patch and reverting it helps. Please fix,
+>> thanks in advance.
+> 
+> The above is definitely wrong - pXX_addr_end() are designed to be used
+> with an address index within the pXX table table and the address index
+> of either the last entry in the same pXX table or the beginning of the
+> _next_ pXX table.  Arbitary end address indicies are not allowed.
+> 
+> When page tables are "rolled up" when levels don't exist, it is common
+> practice for these macros to just return their end address index.
+> Hence, if they are used with arbitary end address indicies, then the
+> iteration will fail.
+> 
+> The only way to do this is:
+> 
+> 	next = pmd_addr_end(old_addr,
+> 			pud_addr_end(old_addr,
+> 				p4d_addr_end(old_addr,
+> 					pgd_addr_end(old_addr, old_end))));
+> 
+> which gives pmd_addr_end() (and each of the intermediate pXX_addr_end())
+> the correct end argument.  However, that's a more complex and verbose,
+> and likely less efficient than the current code.
+> 
+> I'd suggest that there's nothing to "fix" in the v5.5 code wrt this,
+> and trying to "clean it up" will just result in less efficient or
+> broken code.
+> 
 
-On Tue, 2020-01-28 at 22:01 -0500, Steven Rostedt wrote:
-> Hi Tom,
-> 
-> I was debugging a histogram that wasn't working.
-> 
-> I had the following:
-> 
->  # cd /sys/kernel/tracing/
->  # echo 'first u64 start_time u64 end_time pid_t pid u64 delta' > synthetic_events
->  # echo 'hist:keys=pid:start_time=common_timestamp' > events/sched/sched_waking/trigger
->  # echo 'hist:keys=next_pid:delta=common_timestamp-$start_time:onmatch(sched.sched_waking).first($start_time,common_timestamp,next_pid,$delta)' > events/sched/sched_switch/trigger
-> 
-> Which produced:
-> 
+Hello Russell,
 
-Yes, this is definitely strange, and a bug.  I'll root-cause it and try
-to come up with a fix today.  Thanks for reporting it, as well as the
-workaround.
-
-Tom 
-
->  # echo 1 > synthetic/enable
->  # cat trace
-> [..]
->           <idle>-0     [005] d..4   342.980379: first: start_time=342980373002 end_time=197 pid=43140 delta=18446744072217752717
->           <idle>-0     [000] d..4   342.980439: first: start_time=342980434369 end_time=1598 pid=44526 delta=18446744072239552512
->           <idle>-0     [005] d..4   342.980495: first: start_time=342980489992 end_time=197 pid=44739 delta=18446744072217752717
->           <idle>-0     [000] d..4   342.980528: first: start_time=342980525307 end_time=1598 pid=15317 delta=18446744072239552512
->           <idle>-0     [003] d..4   342.981176: first: start_time=342981170950 end_time=10 pid=42697 delta=18446744072217752717
->           <idle>-0     [003] d..4   342.985178: first: start_time=342985174789 end_time=10 pid=31097 delta=18446744072217752717
->           <idle>-0     [003] d..4   342.989172: first: start_time=342989168085 end_time=10 pid=30487 delta=18446744072217752717
->           <idle>-0     [001] d..4   343.044173: first: start_time=343044169712 end_time=593 pid=30677 delta=18446744072217752717
->           <idle>-0     [003] d..4   343.358828: first: start_time=343358824790 end_time=713 pid=24892 delta=18446744072217752717
->           <idle>-0     [003] d..4   343.533459: first: start_time=343533455001 end_time=1466 pid=24272 delta=18446744072217752717
-> 
-> Now, this is strange, because the end_time should not ever be 10!
-> 
-> I added debugging and found that everything is shifted off by one.
-> 
-> That is for 
-> 
->           <idle>-0     [003] d..4   343.533459: first: start_time=343533455001 end_time=1466 pid=24272 delta=18446744072217752717 
-> 
-> 
-> end_time is actually 343533455001
-> pid is actually 1466
-> and delta is 24272
-> 
-> Which also means that that delta that is printed is reading some random
-> variable, and if you look at it in hex it's ffffffffa714f48d which
-> looks to be some random pointer.
-> 
-> Playing with this, I found that the issue is that I have $start_time in
-> my parameter list for the synthetic event. But $start_time was a
-> variable defined by sched_waking and not sched_switch. Although the
-> references can read that variable, the synthetic parameters fail on
-> that, and basically ignore it.
-> 
-> That is, if I add start=$start_time and use $start as a parameter it
-> works fine.
-> 
->  # echo 'hist:keys=next_pid:start=$start_time,delta=common_timestamp-$start_time:onmatch(sched.sched_waking).first($start,common_timestamp,next_pid,$delta)' > events/sched/sched_switch/trigger
-> 
-> 
->  # cat trace
-> [...]
->           <idle>-0     [001] d..4   679.668272: first: start_time=679668221531 end_time=679668266756 pid=1598 delta=45225
->           <idle>-0     [006] d..4   679.668425: first: start_time=679668406777 end_time=679668420837 pid=10 delta=14060
->           <idle>-0     [006] d..4   679.672431: first: start_time=679672407062 end_time=679672426696 pid=10 delta=19634
->           <idle>-0     [006] d..4   679.676443: first: start_time=679676408260 end_time=679676438476 pid=10 delta=30216
->           <idle>-0     [003] d..4   679.715562: first: start_time=679715533636 end_time=679715558490 pid=713 delta=24854
->           <idle>-0     [003] d..4   679.865699: first: start_time=679865670612 end_time=679865695333 pid=1466 delta=24721
->           <idle>-0     [003] d..4   679.865775: first: start_time=679865764528 end_time=679865773007 pid=1466 delta=8479
->           <idle>-0     [003] d..4   679.865842: first: start_time=679865833406 end_time=679865840063 pid=1466 delta=6657
->           <idle>-0     [003] d..4   679.865906: first: start_time=679865898302 end_time=679865904792 pid=1466 delta=6490
->           <idle>-0     [003] d..4   679.865970: first: start_time=679865962239 end_time=679865968686 pid=1466 delta=6447
->           <idle>-0     [003] d..4   679.866034: first: start_time=679866026284 end_time=679866032651 pid=1466 delta=6367
->           <idle>-0     [003] d..4   679.866098: first: start_time=679866090264 end_time=679866096593 pid=1466 delta=6329
->           <idle>-0     [003] d..4   679.866162: first: start_time=679866154251 end_time=679866160656 pid=1466 delta=6405
->           <idle>-0     [003] d..4   679.866226: first: start_time=679866218281 end_time=679866224500 pid=1466 delta=6219
->           <idle>-0     [003] d..4   679.866290: first: start_time=679866282296 end_time=679866288558 pid=1466 delta=6262
-> 
-> But this is a bug. We either should fail the creation of the trigger,
-> or we should allow it and handle it properly.
-> 
-> -- Steve
+Thank you very much for the extra clarification!
