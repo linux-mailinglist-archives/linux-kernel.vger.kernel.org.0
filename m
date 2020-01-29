@@ -2,80 +2,91 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BDE3A14CBC6
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Jan 2020 14:52:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B65C714CBBB
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Jan 2020 14:52:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726906AbgA2Nwi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 29 Jan 2020 08:52:38 -0500
-Received: from alexa-out-blr-01.qualcomm.com ([103.229.18.197]:11989 "EHLO
-        alexa-out-blr-01.qualcomm.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726797AbgA2Nwe (ORCPT
+        id S1726735AbgA2NwH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 29 Jan 2020 08:52:07 -0500
+Received: from mail-ed1-f65.google.com ([209.85.208.65]:45655 "EHLO
+        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726605AbgA2NwG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 Jan 2020 08:52:34 -0500
-Received: from ironmsg01-blr.qualcomm.com ([10.86.208.130])
-  by alexa-out-blr-01.qualcomm.com with ESMTP/TLS/AES256-SHA; 29 Jan 2020 19:22:26 +0530
-Received: from c-sanm-linux.qualcomm.com ([10.206.25.31])
-  by ironmsg01-blr.qualcomm.com with ESMTP; 29 Jan 2020 19:22:06 +0530
-Received: by c-sanm-linux.qualcomm.com (Postfix, from userid 2343233)
-        id A4C66257F; Wed, 29 Jan 2020 19:22:04 +0530 (IST)
-From:   Sandeep Maheswaram <sanm@codeaurora.org>
-To:     Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Kishon Vijay Abraham I <kishon@ti.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Stephen Boyd <swboyd@chromium.org>,
-        Doug Anderson <dianders@chromium.org>,
-        Matthias Kaehlcke <mka@chromium.org>
-Cc:     linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org,
-        Sandeep Maheswaram <sanm@codeaurora.org>
-Subject: [PATCH v4 2/8] dt-bindings: phy: qcom,qusb2: Add compatibles for QUSB2 V2 phy and SC7180
-Date:   Wed, 29 Jan 2020 19:21:53 +0530
-Message-Id: <1580305919-30946-3-git-send-email-sanm@codeaurora.org>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1580305919-30946-1-git-send-email-sanm@codeaurora.org>
-References: <1580305919-30946-1-git-send-email-sanm@codeaurora.org>
+        Wed, 29 Jan 2020 08:52:06 -0500
+Received: by mail-ed1-f65.google.com with SMTP id v28so18641893edw.12
+        for <linux-kernel@vger.kernel.org>; Wed, 29 Jan 2020 05:52:05 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=g/z/wuxc+7xT2yV/Klj0Qifjo3UGoZMxK1efiAVi90k=;
+        b=OA+jLaOxwv5kxEK2jsC84DNaLbn6Q1JxahmQrobXYSjuoltN+RtJtJ4ZtScgLiCFu3
+         T5UYzEfynULE4EaZg4NBya6auTieKqJkB2N44rpxTyRYKKTCiGSN3sfgKbWAjKWTZZgk
+         bAD8Oj8cd64yGmTYuHWo3WiQieUFsd3dneI8ES7qmXhnxxYMoRE/LfryOQtanjRzfZkC
+         hKKe/5J/uYyUdKpTYVjyKNMTSptlQBaj2dAw2epcloBiAsIge+mEKsRomG6oAnqwGVMe
+         3NY7D1MfljKmmnH8QiCR5CwQaU5BXX/6xWOJPMIlDcDhlRKQTQTuG2EXA+XQ0hioW122
+         +fAg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=g/z/wuxc+7xT2yV/Klj0Qifjo3UGoZMxK1efiAVi90k=;
+        b=nikRXiOOAh5OhHmLxkumqxD0NFuUlLugYKxdmoTzP7uRt+RfWA3Z5UopqXhD2h+fD3
+         bL+mZEkr0todQI1EybZkRcAChGbeyGZVgkFZY5STPyQTjLkSCzTrj4kWLlpVCY2rrJMN
+         b1DLp20twvRb5xHlDlcF0ZkAbv6uFdS3/iEq0s6H/jBUNcVCITZYwUZYArW5Rv+w7m+7
+         jtVKAsn7JprZtG+vufQdESnujiForP7MJyXZiFTZ5ATroFvPW38EiuHZmKkAf9Pt6JoQ
+         XOxgYcP/E/G+LQBKUZOSaym3IcxbXi2E2nJX0wN2xzB40SEiircDKSjf3/XuUANMoycf
+         CyKg==
+X-Gm-Message-State: APjAAAWBdrg37dFbih4oTAnoc+1UUYHjKST3wvUYp9Me1UONBlTdiHc9
+        3FSY/SiH0xcTM24dXZjA7aavTIqybvncG5is6AYg
+X-Google-Smtp-Source: APXvYqzfpqAQqbk304DWn4ktRIxY8tzK9qnQQq5mo7EYBxsHQtxhRehkW3/mP7Fefk8Y240fGdoIbbYINrSyMgy7Rl0=
+X-Received: by 2002:a17:906:f251:: with SMTP id gy17mr7400826ejb.308.1580305924909;
+ Wed, 29 Jan 2020 05:52:04 -0800 (PST)
+MIME-Version: 1.0
+References: <20200129040640.6PNuz0vcp%akpm@linux-foundation.org> <56177bc4-441d-36f4-fe73-4e86edf02899@infradead.org>
+In-Reply-To: <56177bc4-441d-36f4-fe73-4e86edf02899@infradead.org>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Wed, 29 Jan 2020 08:51:53 -0500
+Message-ID: <CAHC9VhRW68ccE_8HJnv4anFdSgkY2Yk3612LPCT5o4+vXQGqQA@mail.gmail.com>
+Subject: Re: mmotm 2020-01-28-20-05 uploaded (security/security.c)
+To:     Randy Dunlap <rdunlap@infradead.org>
+Cc:     akpm@linux-foundation.org, broonie@kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, linux-next@vger.kernel.org, mhocko@suse.cz,
+        mm-commits@vger.kernel.org, sfr@canb.auug.org.au,
+        linux-security-module <linux-security-module@vger.kernel.org>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add compatibles for generic QUSB2 V2 phy which can be used for
-sdm845 and sc7180.
+On Tue, Jan 28, 2020 at 11:52 PM Randy Dunlap <rdunlap@infradead.org> wrote:
+> On 1/28/20 8:06 PM, akpm@linux-foundation.org wrote:
+> > The mm-of-the-moment snapshot 2020-01-28-20-05 has been uploaded to
+> >
+> >    http://www.ozlabs.org/~akpm/mmotm/
+> >
+> > mmotm-readme.txt says
+> >
+> > README for mm-of-the-moment:
+> >
+> > http://www.ozlabs.org/~akpm/mmotm/
+> >
+> > This is a snapshot of my -mm patch queue.  Uploaded at random hopefully
+> > more than once a week.
+> >
+>
+> security/security.c contains duplicate lines for <lockdown_reasons> array:
 
-Signed-off-by: Sandeep Maheswaram <sanm@codeaurora.org>
----
- Documentation/devicetree/bindings/phy/qcom,qusb2-phy.yaml | 15 +++++++++++----
- 1 file changed, 11 insertions(+), 4 deletions(-)
+Hmmm.  Commit 59438b46471a ("security,lockdown,selinux: implement
+SELinux lockdown"), which was merged into Linus' tree during the
+current merge window, moved the lockdown_reasons array from
+security/lockdown/lockdown.c to security/security.c; is there another
+tree in linux-next which is moving lockdown_reasons into
+security/security.c?
 
-diff --git a/Documentation/devicetree/bindings/phy/qcom,qusb2-phy.yaml b/Documentation/devicetree/bindings/phy/qcom,qusb2-phy.yaml
-index 90b3cc6..43082c8 100644
---- a/Documentation/devicetree/bindings/phy/qcom,qusb2-phy.yaml
-+++ b/Documentation/devicetree/bindings/phy/qcom,qusb2-phy.yaml
-@@ -15,10 +15,17 @@ description:
- 
- properties:
-   compatible:
--    enum:
--      - qcom,msm8996-qusb2-phy
--      - qcom,msm8998-qusb2-phy
--      - qcom,sdm845-qusb2-phy
-+    oneOf:
-+      - items:
-+        - enum:
-+          - qcom,msm8996-qusb2-phy
-+          - qcom,msm8998-qusb2-phy
-+          - qcom,qusb2-v2-phy
-+      - items:
-+        - enum:
-+          - qcom,sc7180-qusb2-phy
-+          - qcom,sdm845-qusb2-phy
-+        - const: qcom,qusb2-v2-phy
-   reg:
-     maxItems: 1
- 
 -- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
-of Code Aurora Forum, hosted by The Linux Foundation
-
+paul moore
+www.paul-moore.com
