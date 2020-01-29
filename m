@@ -2,130 +2,71 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 59D5114D22C
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Jan 2020 21:57:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 69AC614D22D
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Jan 2020 21:57:50 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727208AbgA2U52 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 29 Jan 2020 15:57:28 -0500
-Received: from Galois.linutronix.de ([193.142.43.55]:51913 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726317AbgA2U52 (ORCPT
+        id S1727299AbgA2U5r (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 29 Jan 2020 15:57:47 -0500
+Received: from mail-lf1-f66.google.com ([209.85.167.66]:45259 "EHLO
+        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726317AbgA2U5q (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 Jan 2020 15:57:28 -0500
-Received: from 51.26-246-81.adsl-static.isp.belgacom.be ([81.246.26.51] helo=nanos.tec.linutronix.de)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1iwuOZ-0006F3-FS; Wed, 29 Jan 2020 21:57:07 +0100
-Received: by nanos.tec.linutronix.de (Postfix, from userid 1000)
-        id 317BA105CFD; Wed, 29 Jan 2020 21:57:02 +0100 (CET)
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc:     Hans de Goede <hdegoede@redhat.com>,
-        vipul kumar <vipulk0511@gmail.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        linux-kernel@vger.kernel.org, Stable <stable@vger.kernel.org>,
-        Srikanth Krishnakar <Srikanth_Krishnakar@mentor.com>,
-        Cedric Hombourger <Cedric_Hombourger@mentor.com>,
-        x86@kernel.org, Len Brown <len.brown@intel.com>,
-        Vipul Kumar <vipul_kumar@mentor.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: Re: [v3] x86/tsc: Unset TSC_KNOWN_FREQ and TSC_RELIABLE flags on Intel Bay Trail SoC
-In-Reply-To: <20200129155353.GI32742@smile.fi.intel.com>
-References: <87iml11ccf.fsf@nanos.tec.linutronix.de> <c06260e3-bd19-bf3c-89f7-d36bdb9a5b20@redhat.com> <87ftg5131x.fsf@nanos.tec.linutronix.de> <30d49be8-67ad-6f32-37a8-0cdd26f0852e@redhat.com> <87sgjz434v.fsf@nanos.tec.linutronix.de> <20200129130350.GD32742@smile.fi.intel.com> <0d361322-87aa-af48-492c-e8c4983bb35b@redhat.com> <20200129141444.GE32742@smile.fi.intel.com> <91cdda7a-4194-ebe7-225d-854447b0436e@redhat.com> <87imku2t3w.fsf@nanos.tec.linutronix.de> <20200129155353.GI32742@smile.fi.intel.com>
-Date:   Wed, 29 Jan 2020 21:57:02 +0100
-Message-ID: <87a7662d7l.fsf@nanos.tec.linutronix.de>
+        Wed, 29 Jan 2020 15:57:46 -0500
+Received: by mail-lf1-f66.google.com with SMTP id 203so640623lfa.12
+        for <linux-kernel@vger.kernel.org>; Wed, 29 Jan 2020 12:57:45 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:reply-to:from:date:message-id:subject:to;
+        bh=ZgXaiMoNWkpgbw6uWTvwmirHDXu3Eo7Nh8gc/HaUT1U=;
+        b=E0KfPOr2h3Hn17lUXVcrDibg2niFf/OWhisoQruLvpxr5ynuu5BeRAibmI+h89SrJU
+         cdOKOneDfMtDUB8Zjh9OmajzTVvEr+A02vvwQNLZqUzJ7wjXwOcnI3vsdOr4qxMRoGNG
+         aCEahznQvO/3DWmSMdoUJmD8bACywZG8IrHSIhK71Db7DxsjGMEKrd/onzRAVZceSo8l
+         Y8QO8SBt/jYwkGDwtXTPaA1tENJgq7Ys7YNZXfhEGZEeo014EAtuj3aU7L8HbBrbZBqu
+         BaIKj8LT6gO/FkOlmWhKOIH9SRV0frsh+Zfvd4b8rzCAiiZJty5HMLh5Vg1coBEKHL+I
+         47VA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
+         :subject:to;
+        bh=ZgXaiMoNWkpgbw6uWTvwmirHDXu3Eo7Nh8gc/HaUT1U=;
+        b=RvRGoQgRTilnOQVHy7PfUKPFEnc768VgY7IFRDSI5BFxVJxsOMqreZGOli5zZNmYVT
+         y++CoDdl+WfjZ/25CxykosbZtqqE7SqShOnPz1DXO9ujj2FuK1hUtdvsyQi6ZfflwqSI
+         maeZvDsLwLHfYXTfTxZueL3yHtuMgcU1TNFELyp8rQVs8IJzsTym2hnlgVeTzwL1SLWU
+         8y+B1w1M1Zyb8ZRP2GWgE5RpfU0IEDc8FCbxdkvy3fbAKgh/34RxefY50GlB290XZlJa
+         ZBTMWo4Cd0KgZAvbnUIcFPPTHFt51AGvjP7IUhjPcDqnm/3C1VmLSdSzuPNFlRQ9ngmG
+         H50Q==
+X-Gm-Message-State: APjAAAXA56Ia7OK1QBJTWWTIjaIgcTxGHQvmf3Cx+5sWf901opFpyBhW
+        K8rQcgfS7ySPUqxwgQSulife7hbojpqEOTqtAfA=
+X-Google-Smtp-Source: APXvYqxfSOSnieMEKI/ZFQc3aU0hApsbq2Vra5NTlagXAwmIcCj+d/oGJ+AYwv1JU3tetis7SgSNjl8Wpy2roI3pzXI=
+X-Received: by 2002:a19:2213:: with SMTP id i19mr600082lfi.83.1580331464572;
+ Wed, 29 Jan 2020 12:57:44 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+Received: by 2002:a19:c149:0:0:0:0:0 with HTTP; Wed, 29 Jan 2020 12:57:44
+ -0800 (PST)
+Reply-To: drbellomusa009@gmail.com
+From:   "Dr.Bello Musa." <musaboy1988@gmail.com>
+Date:   Wed, 29 Jan 2020 21:57:44 +0100
+Message-ID: <CAH3v6_KbxgboBX8yH3L=zyONi1D1GyoHBwxfjBiMWzU4CZZd1w@mail.gmail.com>
+Subject: THANKS ALOT.
+To:     undisclosed-recipients:;
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Andy,
+Attn: Sir,
 
-Andy Shevchenko <andriy.shevchenko@linux.intel.com> writes:
-> On Wed, Jan 29, 2020 at 04:13:39PM +0100, Thomas Gleixner wrote:
->> Andy, can you please make sure that people inside Intel who can look
->> into the secrit documentation confirm what we are aiming for?
->> 
->> Ideally they should provide the X-tal frequency and the mult/div pair
->> themself :)
->
-> So, I don't have access to the CPU core documentation (and may be will not be
-> given), nevertheless I dug a bit to what I have for Cherrytrail. So, the XTAL
-> is 19.2MHz, which becomes 100MHz and 1600MHz by some root PLL, then, the latter
-> two frequencies are being used by another PLL to provide a reference clock (*)
-> to PLL which derives CPU clock.
->
-> *) According to colleagues of mine it's a fixed rate source.
->
-> That's all what I have.
+Good and hopeful to contact you for us to inherit the sum of $18M
+American United States Dollars Only to any of your good receiving bank
+account there in your country with faith and trust as my good foreign
+partner in this transaction today.
 
-I'm surely not blaming you for this, you're just the messenger.
+I will stop here until i receive your positive response before i can
+disclose the details of this claim to you for security reasons.
 
-Just to make it entirely clear. We are wasting days already due to the
-fact that Intel, who designs, specifies and most importantly sells these
-CPUs is either unable or unwilling to provide accurate information about
-the trivial and essential information to support these CPUs:
+Waiting to hear from you as soon as possible.
 
-    1) The crystal frequency
+Yours Faithfully.
 
-    2) The nominator/denominator pair to calculate the TSC frequency
-       from #1
-
-The numbers which are in the kernel have been provided by Intel, but
-they are inaccurate as we have proven.
-
-Sure, we can reverse engineer the exact numbers assumed that we have
-access to all variants of affected devices and enough spare time to
-waste.
-
-But why should we do that?
-
-Intel has the exact numbers at their fingertip and is just not providing
-them for whatever reasons (I really don't want to know).
-
-So instead of wasting our precious time further, I'm going to apply the
-patch below unless Intel comes forth with the information they should
-have provided many years ago.
-
-Thanks,
-
-        tglx
-
-8<--------------
- arch/x86/kernel/tsc_msr.c |    9 +++++++++
- 1 file changed, 9 insertions(+)
-
---- a/arch/x86/kernel/tsc_msr.c
-+++ b/arch/x86/kernel/tsc_msr.c
-@@ -73,6 +73,13 @@ static const struct x86_cpu_id tsc_msr_c
- 	{}
- };
- 
-+static char msr_warning[] = \
-+	"The TSC/APIC timer frequency for your CPU is guesswork.\n\n"	\
-+	"It is derived from frequency tables provided by Intel.\n"	\
-+	"These tables are demonstrably inaccurate, but Intel is\n"	\
-+	"either unable or unwilling to provide the correct data.\n"	\
-+	"Please report this to Intel and not on LKML.\n";
-+
- /*
-  * MSR-based CPU/TSC frequency discovery for certain CPUs.
-  *
-@@ -90,6 +97,8 @@ unsigned long cpu_khz_from_msr(void)
- 	if (!id)
- 		return 0;
- 
-+	WARN_ONCE(1, "%s\n", msr_warning);
-+
- 	freq_desc = (struct freq_desc *)id->driver_data;
- 	if (freq_desc->msr_plat) {
- 		rdmsr(MSR_PLATFORM_INFO, lo, hi);
-
+Dr.Bello Musa.
