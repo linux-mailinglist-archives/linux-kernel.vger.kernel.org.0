@@ -2,101 +2,201 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2A26A14CC70
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Jan 2020 15:29:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C746D14CC79
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Jan 2020 15:31:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726632AbgA2O27 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 29 Jan 2020 09:28:59 -0500
-Received: from zeniv.linux.org.uk ([195.92.253.2]:38182 "EHLO
-        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726178AbgA2O27 (ORCPT
+        id S1726677AbgA2ObR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 29 Jan 2020 09:31:17 -0500
+Received: from mout.kundenserver.de ([212.227.126.130]:33501 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726177AbgA2ObR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 Jan 2020 09:28:59 -0500
-Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1iwoKv-004L1o-Uq; Wed, 29 Jan 2020 14:28:58 +0000
-Date:   Wed, 29 Jan 2020 14:28:57 +0000
-From:   Al Viro <viro@zeniv.linux.org.uk>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: [git pull] adfs series
-Message-ID: <20200129142857.GY23230@ZenIV.linux.org.uk>
+        Wed, 29 Jan 2020 09:31:17 -0500
+Received: from mail-qt1-f175.google.com ([209.85.160.175]) by
+ mrelayeu.kundenserver.de (mreue010 [212.227.15.129]) with ESMTPSA (Nemesis)
+ id 1M4roN-1iyB9Q06Wl-00232v for <linux-kernel@vger.kernel.org>; Wed, 29 Jan
+ 2020 15:31:15 +0100
+Received: by mail-qt1-f175.google.com with SMTP id w47so13345834qtk.4
+        for <linux-kernel@vger.kernel.org>; Wed, 29 Jan 2020 06:31:14 -0800 (PST)
+X-Gm-Message-State: APjAAAVLUfDEhHpxx311cqRUBqc63HWhKM8g2mrZ10pPuuG+oE/CK+e5
+        TvvC6eqNlPjVu5/h3YSN8XWq7oQt2s0SqoOkxdY=
+X-Google-Smtp-Source: APXvYqyAUPRTN/4PzvPi5NueZDdmGdAafYBIacuzV4RqMoCyPeL4BrXrRFatMmY/bm62fbzhnzIPFlOzCWlcdR5pSJA=
+X-Received: by 2002:ac8:768d:: with SMTP id g13mr27089460qtr.7.1580308273837;
+ Wed, 29 Jan 2020 06:31:13 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+References: <cover.1580299067.git.vitor.soares@synopsys.com> <442a0c2c52223f9ff1a1d1018ff863fb23105389.1580299067.git.vitor.soares@synopsys.com>
+In-Reply-To: <442a0c2c52223f9ff1a1d1018ff863fb23105389.1580299067.git.vitor.soares@synopsys.com>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Wed, 29 Jan 2020 15:30:56 +0100
+X-Gmail-Original-Message-ID: <CAK8P3a0uFjhuO7e-i3r_RiA_ni=S8MfYoZUwZzmbXRcd=+kMKw@mail.gmail.com>
+Message-ID: <CAK8P3a0uFjhuO7e-i3r_RiA_ni=S8MfYoZUwZzmbXRcd=+kMKw@mail.gmail.com>
+Subject: Re: [RFC v2 4/4] i3c: add i3cdev module to expose i3c dev in /dev
+To:     Vitor Soares <Vitor.Soares@synopsys.com>
+Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        linux-i3c@lists.infradead.org,
+        Joao Pinto <Joao.Pinto@synopsys.com>,
+        Jose Abreu <Jose.Abreu@synopsys.com>,
+        Boris Brezillon <bbrezillon@kernel.org>,
+        gregkh <gregkh@linuxfoundation.org>,
+        Wolfram Sang <wsa@the-dreams.de>,
+        Mark Brown <broonie@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+X-Provags-ID: V03:K1:jmHxeMen6QQN8wi+Mr7c8dMCGeHhwf2Vm5e4ABPCq8PJHV/IlxB
+ 2hgeQEVtSHTkdnIQgtGlnD+gSokB2l5oZc1x+r8/W7qO512h1jy8oU/a5jvcq1cVnqVtfda
+ BFPMmAvnrcKL/MU5nbXx73V3Y28I9tcUuC1lleK6oOh5pnQrNHwxF8yjGXoSaw8emIPyBpK
+ z2Q1jJwMeXOY+B3zYHDPw==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:RPye+uCDh2w=:XI23s1WbcVhcX/KEqWx143
+ LAriGWbZ2eRCEQUj8KpazsUR31kcwBMJk77XwQ2yCPct8FPbLCcuuI9D4aAJ2C9K/WteBP/QA
+ 2PXuf0mIJ2fTLNfsCNoKp7dGQdK5AxoX5MQZGFpONsX/CAmNczVptW+nW9pf4tM2/OI3x4Nrl
+ yTKO4HzsgzgFMLrVC+fzwIbKZ+wcXCcwEfGuc833qrYj3wG7cCEKodAg6orcUlUazbZgBqK0P
+ XZRe9BBORj5fWML5Fw//5Svoe5m/Xpht2eqGjUS2v8PVBrQe1p/EW3MTQ1xnuFksNKD43qOVO
+ 9qfGh9iE/ai1m8YNpVLYYLZlQ7xXONGS12Ei7zMg5QoP1yfRgEUH1LjFsl3a5PSzHAitPkqMX
+ 3cflMWiLdaEgqMhaBr5iV88qIxL2/fXneBjJSdHge9fXDPhS+kA4f4927HvQPVkmlZSMoAhrc
+ YTS3B1k7UfV2bWCbQjPWTDu+hJSiwoicADtK3yBnJFDL3m2NSTaGrYej1RogRpNruBWAWRN8u
+ 1C89FiZgzq3Em2WgyKC5eG4d2rV35MHosGyxOkQTHH10AUmjIqwoej5if77BT7iHY5dWHT8+N
+ mIevnpCBUJ2ImUeIhTotY7iuv96fdK8jBs/WFGbYSkY0mLTxtIwLHLqoRIMnApX3Y9hY9ahNd
+ r1hYMdeR6khjWAaOXAhmyF+xOmDVyZ18+VFy0Qpid9JG5EZIutNjVT8WQ66K6PL10kSXztvYA
+ 1MvrBmHENnxlXun2+HxCtAsDmjtINW/REsUMKitkQyna0TxdX0+XEEzyaeMDsVkOAXfdYYbex
+ SEYsV739Wnk+BM3aV/Pt8CS3YQSmWoxmxKJMdwg6LMaBFv3K4w=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-	adfs stuff for this cycle
+On Wed, Jan 29, 2020 at 1:17 PM Vitor Soares <Vitor.Soares@synopsys.com> wrote:
+>
+> +
+> +struct i3cdev_data {
+> +       struct list_head list;
+> +       struct i3c_device *i3c;
+> +       struct cdev cdev;
+> +       struct device *dev;
+> +       int id;
+> +};
+> +
+> +static DEFINE_IDA(i3cdev_ida);
+> +static dev_t i3cdev_number;
+> +#define I3C_MINORS 16 /* 16 I3C devices supported for now */
+> +
+> +static LIST_HEAD(i3cdev_list);
+> +static DEFINE_SPINLOCK(i3cdev_list_lock);
 
-The following changes since commit e42617b825f8073569da76dc4510bfa019b1c35a:
+Please try to avoid arbitrarily limiting the number of devices you support.
 
-  Linux 5.5-rc1 (2019-12-08 14:57:55 -0800)
+Searching through the list feels a little clumsy. If the i3c user interface is
+supposed to become a standard feature of the subsystem, it would seem
+appropriate to put a pointer into the device to simplify the lookup, or
+just embed the cdev inside of i3c_device.
 
-are available in the git repository at:
+> +static int
+> +i3cdev_do_priv_xfer(struct i3c_device *dev, struct i3c_ioc_priv_xfer *xfers,
+> +                   unsigned int nxfers)
+> +{
+> +       struct i3c_priv_xfer *k_xfers;
+> +       u8 **data_ptrs;
+> +       int i, ret = 0;
+> +
+> +       k_xfers = kcalloc(nxfers, sizeof(*k_xfers), GFP_KERNEL);
+> +       if (!k_xfers)
+> +               return -ENOMEM;
+> +
+> +       data_ptrs = kcalloc(nxfers, sizeof(*data_ptrs), GFP_KERNEL);
+> +       if (!data_ptrs) {
+> +               ret = -ENOMEM;
+> +               goto err_free_k_xfer;
+> +       }
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/viro/vfs.git work.adfs
+Maybe use a  combined allocation to simplify the error handling?
 
-for you to fetch changes up to 587065dcac64e88132803cdb0a7f26bb4a79cf46:
+> +       for (i = 0; i < nxfers; i++) {
+> +               data_ptrs[i] = memdup_user((const u8 __user *)
+> +                                          (uintptr_t)xfers[i].data,
+> +                                          xfers[i].len);
 
-  fs/adfs: bigdir: Fix an error code in adfs_fplus_read() (2020-01-25 11:31:59 -0500)
+> +               if (xfers[i].rnw) {
+> +                       if (copy_to_user((void __user *)(uintptr_t)xfers[i].data,
+> +                                        data_ptrs[i], xfers[i].len))
 
-----------------------------------------------------------------
-Dan Carpenter (1):
-      fs/adfs: bigdir: Fix an error code in adfs_fplus_read()
+Use u64_to_user_ptr() here.
 
-Russell King (41):
-      fs/adfs: inode: update timestamps to centisecond precision
-      fs/adfs: inode: fix adfs_mode2atts()
-      fs/adfs: map: move map reading and validation to map.c
-      fs/adfs: map: rename adfs_map_free() to adfs_map_statfs()
-      fs/adfs: map: break up adfs_read_map()
-      fs/adfs: map: factor out map cleanup
-      fs/adfs: map: incorporate map offsets into layout
-      fs/adfs: map: use find_next_bit_le() rather than open coding it
-      fs/adfs: map: move map-specific sb initialisation to map.c
-      fs/adfs: map: fix map scanning
-      fs/adfs: dir: rename bh_fplus to bhs
-      fs/adfs: dir: add common dir object initialisation
-      fs/adfs: dir: add common directory buffer release method
-      fs/adfs: dir: add common directory sync method
-      fs/adfs: dir: add generic copy functions
-      fs/adfs: dir: add generic directory reading
-      fs/adfs: dir: add helper to read directory using inode
-      fs/adfs: dir: add helper to mark directory buffers dirty
-      fs/adfs: dir: update directory locking
-      fs/adfs: dir: modernise on-disk directory structures
-      fs/adfs: dir: improve update failure handling
-      fs/adfs: dir: improve compiler coverage in adfs_dir_update
-      fs/adfs: dir: switch to iterate_shared method
-      fs/adfs: dir: add more efficient iterate() per-format method
-      fs/adfs: dir: use pointers to access directory head/tails
-      fs/adfs: newdir: factor out directory format validation
-      fs/adfs: newdir: improve directory validation
-      fs/adfs: newdir: merge adfs_dir_read() into adfs_f_read()
-      fs/adfs: newdir: clean up adfs_f_update()
-      fs/adfs: newdir: split out directory commit from update
-      fs/adfs: bigdir: factor out directory entry offset calculation
-      fs/adfs: bigdir: extract directory validation
-      fs/adfs: bigdir: directory validation strengthening
-      fs/adfs: bigdir: calculate and validate directory checkbyte
-      fs/adfs: bigdir: implement directory update support
-      fs/adfs: super: fix inode dropping
-      fs/adfs: dir: remove debug in adfs_dir_update()
-      fs/adfs: super: extract filesystem block probe
-      fs/adfs: super: add support for E and E+ floppy image formats
-      fs/adfs: mostly divorse inode number from indirect disc address
-      Documentation: update adfs filesystem documentation
+> +
+> +static struct i3c_ioc_priv_xfer *
+> +i3cdev_get_ioc_priv_xfer(unsigned int cmd, struct i3c_ioc_priv_xfer *u_xfers,
+> +                        unsigned int *nxfers)
+> +{
+> +       u32 tmp = _IOC_SIZE(cmd);
+> +
+> +       if ((tmp % sizeof(struct i3c_ioc_priv_xfer)) != 0)
+> +               return ERR_PTR(-EINVAL);
+> +
+> +       *nxfers = tmp / sizeof(struct i3c_ioc_priv_xfer);
+> +       if (*nxfers == 0)
+> +               return NULL;
+> +
+> +       return memdup_user(u_xfers, tmp);
+> +}
+> +
+> +static int
+> +i3cdev_ioc_priv_xfer(struct i3c_device *i3c, unsigned int cmd,
+> +                    struct i3c_ioc_priv_xfer *u_xfers)
+> +{
+> +       struct i3c_ioc_priv_xfer *k_xfers;
+> +       unsigned int nxfers;
+> +       int ret;
+> +
+> +       k_xfers = i3cdev_get_ioc_priv_xfer(cmd, u_xfers, &nxfers);
+> +       if (IS_ERR_OR_NULL(k_xfers))
+> +               return PTR_ERR(k_xfers);
+> +
+> +       ret = i3cdev_do_priv_xfer(i3c, k_xfers, nxfers);
 
- Documentation/filesystems/adfs.txt |  24 +++
- fs/adfs/adfs.h                     |  32 ++--
- fs/adfs/dir.c                      | 314 +++++++++++++++++++++++++--------
- fs/adfs/dir_f.c                    | 302 +++++++++-----------------------
- fs/adfs/dir_f.h                    |  52 +++---
- fs/adfs/dir_fplus.c                | 346 +++++++++++++++++++++----------------
- fs/adfs/dir_fplus.h                |   6 +-
- fs/adfs/inode.c                    |  64 +++----
- fs/adfs/map.c                      | 247 +++++++++++++++++++-------
- fs/adfs/super.c                    | 267 ++++++++++------------------
- 10 files changed, 914 insertions(+), 740 deletions(-)
+The IS_ERR_OR_NULL() usage looks suspicious. It's generally
+better to avoid interfaces that require this. What does it mean to
+return NULL from i3cdev_get_ioc_priv_xfer() and turn that into
+success? Could you handle this condition in the caller instead,
+or turn it into an error?
+
+> +       /* Keep track of busses which have devices to add or remove later */
+> +       res = bus_register_notifier(&i3c_bus_type, &i3c_notifier);
+> +       if (res)
+> +               goto out_unreg_class;
+> +
+> +       /* Bind to already existing device without driver right away */
+> +       i3c_for_each_dev(NULL, i3cdev_attach);
+
+The combination of the notifier and searching through the devices
+seems to be racy. What happens when a device appears just before
+or during the i3c_for_each_dev() traversal?
+
+What happens when a driver attaches to a device that is currently
+transferring data on the user interface?
+
+Is there any guarantee that the notifiers for attach and detach
+are serialized?
+
+> +/**
+> + * struct i3c_ioc_priv_xfer - I3C SDR ioctl private transfer
+> + * @data: Holds pointer to userspace buffer with transmit data.
+> + * @len: Length of data buffer buffers, in bytes.
+> + * @rnw: encodes the transfer direction. true for a read, false for a write
+> + */
+> +struct i3c_ioc_priv_xfer {
+> +       __u64 data;
+> +       __u16 len;
+> +       __u8 rnw;
+> +       __u8 pad[5];
+> +};
+> +
+> +
+> +#define I3C_PRIV_XFER_SIZE(N)  \
+> +       ((((sizeof(struct i3c_ioc_priv_xfer)) * (N)) < (1 << _IOC_SIZEBITS)) \
+> +       ? ((sizeof(struct i3c_ioc_priv_xfer)) * (N)) : 0)
+> +
+> +#define I3C_IOC_PRIV_XFER(N)   \
+> +       _IOC(_IOC_READ|_IOC_WRITE, I3C_DEV_IOC_MAGIC, 30, I3C_PRIV_XFER_SIZE(N))
+
+This looks like a reasonable ioctl definition, avoiding the usual problems
+with compat mode etc.
+
+      Arnd
