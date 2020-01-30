@@ -2,95 +2,83 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BC1EE14DC74
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Jan 2020 15:08:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E160914DC79
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Jan 2020 15:08:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727304AbgA3OIp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 30 Jan 2020 09:08:45 -0500
-Received: from youngberry.canonical.com ([91.189.89.112]:59472 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726902AbgA3OIp (ORCPT
+        id S1727370AbgA3OI4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 30 Jan 2020 09:08:56 -0500
+Received: from hqnvemgate24.nvidia.com ([216.228.121.143]:15358 "EHLO
+        hqnvemgate24.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726902AbgA3OIz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 30 Jan 2020 09:08:45 -0500
-Received: from [109.134.33.162] (helo=wittgenstein)
-        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.86_2)
-        (envelope-from <christian.brauner@ubuntu.com>)
-        id 1ixAUo-0007pq-GF; Thu, 30 Jan 2020 14:08:38 +0000
-Date:   Thu, 30 Jan 2020 15:08:38 +0100
-From:   Christian Brauner <christian.brauner@ubuntu.com>
-To:     Dave Chinner <david@fromorbit.com>,
-        Mike Christie <mchristi@redhat.com>,
-        Michal Hocko <mhocko@kernel.org>
-Cc:     Shakeel Butt <shakeelb@google.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        linux-api@vger.kernel.org, idryomov@gmail.com,
-        Linux MM <linux-mm@kvack.org>,
-        LKML <linux-kernel@vger.kernel.org>, linux-scsi@vger.kernel.org,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-block@vger.kernel.org, martin@urbackup.org,
-        Damien.LeMoal@wdc.com, Michal Hocko <mhocko@suse.com>,
-        Masato Suzuki <masato.suzuki@wdc.com>
-Subject: Re: [PATCH] Add prctl support for controlling mem reclaim V4
-Message-ID: <20200130140838.mfl2p3zb5f26kej6@wittgenstein>
-References: <20191112001900.9206-1-mchristi@redhat.com>
- <CALvZod47XyD2x8TuZcb9PgeVY14JBwNhsUpN3RAeAt+RJJC=hg@mail.gmail.com>
- <5E2B19C9.6080907@redhat.com>
- <20200124211642.GB7216@dread.disaster.area>
- <20200127130258.2bknkl3mwpkfyml4@wittgenstein>
+        Thu, 30 Jan 2020 09:08:55 -0500
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate24.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5e32e3430000>; Thu, 30 Jan 2020 06:08:03 -0800
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate101.nvidia.com (PGP Universal service);
+  Thu, 30 Jan 2020 06:08:55 -0800
+X-PGP-Universal: processed;
+        by hqpgpgate101.nvidia.com on Thu, 30 Jan 2020 06:08:55 -0800
+Received: from [10.26.11.91] (10.124.1.5) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Thu, 30 Jan
+ 2020 14:08:51 +0000
+Subject: Re: [PATCH v6 08/16] dmaengine: tegra-apb: Fix coding style problems
+To:     Dmitry Osipenko <digetx@gmail.com>,
+        Laxman Dewangan <ldewangan@nvidia.com>,
+        Vinod Koul <vkoul@kernel.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>
+CC:     <dmaengine@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+References: <20200130043804.32243-1-digetx@gmail.com>
+ <20200130043804.32243-9-digetx@gmail.com>
+From:   Jon Hunter <jonathanh@nvidia.com>
+Message-ID: <5194893f-3b2c-5f00-035a-2be62e8b1d89@nvidia.com>
+Date:   Thu, 30 Jan 2020 14:08:48 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20200127130258.2bknkl3mwpkfyml4@wittgenstein>
+In-Reply-To: <20200130043804.32243-9-digetx@gmail.com>
+X-Originating-IP: [10.124.1.5]
+X-ClientProxiedBy: HQMAIL111.nvidia.com (172.20.187.18) To
+ HQMAIL107.nvidia.com (172.20.187.13)
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1580393283; bh=A6G6Pwn0RO+ie3y0YiBc4An7mwnXvP01M5DO4BoZRaQ=;
+        h=X-PGP-Universal:Subject:To:CC:References:From:Message-ID:Date:
+         User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
+         X-ClientProxiedBy:Content-Type:Content-Language:
+         Content-Transfer-Encoding;
+        b=k2CyEyKEjBp4qKbaB7YCPgAd2xuu7fi5jJmqcRm9cRtaMQr2Dr0E35GAjY3cpmuWt
+         WGFr2TDNiMMurBKCiOHkDL3wZIKLQ/BpWvw3VDkvp/4iniM0U+0dl894bsMu+bUOal
+         Se3RCjLutdCjpl5Zzs9VPHqvvJSMNqsbE7O8oJX245VsJKmK3SX97PbjQr7F/KUsyQ
+         bkDCw2KSJDmF15eGpQZQBdgCJblch8cWLsYo2JY6/ONWBNJXkxRCmJj9rpbZkrSZ/t
+         D+ugH1gNNUgYNXuzxaOoKLUt/UkMXOb0RO5cEoXN6zFLfMjUaBSHUffz2uGtfb/1Q/
+         Xw3HZXyXNHJ3g==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jan 27, 2020 at 02:02:59PM +0100, Christian Brauner wrote:
-> On Sat, Jan 25, 2020 at 08:16:42AM +1100, Dave Chinner wrote:
-> > On Fri, Jan 24, 2020 at 10:22:33AM -0600, Mike Christie wrote:
-> > > On 12/05/2019 04:43 PM, Shakeel Butt wrote:
-> > > > On Mon, Nov 11, 2019 at 4:19 PM Mike Christie <mchristi@redhat.com> wrote:
-> > > >> This patch adds a new prctl command that daemons can use after they have
-> > > >> done their initial setup, and before they start to do allocations that
-> > > >> are in the IO path. It sets the PF_MEMALLOC_NOIO and PF_LESS_THROTTLE
-> > > >> flags so both userspace block and FS threads can use it to avoid the
-> > > >> allocation recursion and try to prevent from being throttled while
-> > > >> writing out data to free up memory.
-> > > >>
-> > > >> Signed-off-by: Mike Christie <mchristi@redhat.com>
-> > > >> Acked-by: Michal Hocko <mhocko@suse.com>
-> > > >> Tested-by: Masato Suzuki <masato.suzuki@wdc.com>
-> > > >> Reviewed-by: Damien Le Moal <damien.lemoal@wdc.com>
-> > > > 
-> > > > I suppose this patch should be routed through MM tree, so, CCing Andrew.
-> > > >
-> > > 
-> > > Andrew and other mm/storage developers,
-> > > 
-> > > Do I need to handle anything else for this patch, or are there any other
-> > > concerns? Is this maybe something we want to talk about at a quick LSF
-> > > session?
-> > > 
-> > > I have retested it with Linus's current tree. It still applies cleanly
-> > > (just some offsets), and fixes the problem described above we have been
-> > > hitting.
-> > 
-> > I must have missed this version being posted (just looked it up on
-> > lore.kernel.org). As far as I'm concerned this is good to go and it
-> > is absolutely necessary for userspace IO stacks to function
-> > correctly.
-> > 
-> > Reviewed-by: Dave Chinner <dchinner@redhat.com>
-> > 
-> > If no manintainer picks it up before the next merge window, then I
+
+On 30/01/2020 04:37, Dmitry Osipenko wrote:
+> This patch fixes few dozens of coding style problems reported by
+> checkpatch and prettifies code where makes sense.
 > 
-> Since prctl() is thread-management and fs people seem to be happy and
-> have acked it I can pick this up too if noone objects and send this
-> along with the rest of process management.
+> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+> ---
+>  drivers/dma/tegra20-apb-dma.c | 275 ++++++++++++++++++----------------
+>  1 file changed, 144 insertions(+), 131 deletions(-)
 
-This is upstream now
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=8d19f1c8e1937baf74e1962aae9f90fa3aeab463
+Thanks!
 
-Christian
+Acked-by: Jon Hunter <jonathanh@nvidia.com>
+
+Cheers
+Jon
+
+-- 
+nvpublic
