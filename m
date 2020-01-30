@@ -2,124 +2,74 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8F67114D563
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Jan 2020 04:41:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 08A2814D565
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Jan 2020 04:44:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726847AbgA3Dl6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 29 Jan 2020 22:41:58 -0500
-Received: from mga03.intel.com ([134.134.136.65]:57283 "EHLO mga03.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726723AbgA3Dl6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 Jan 2020 22:41:58 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga003.jf.intel.com ([10.7.209.27])
-  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 29 Jan 2020 19:41:57 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.70,380,1574150400"; 
-   d="scan'208";a="229827225"
-Received: from linux.intel.com ([10.54.29.200])
-  by orsmga003.jf.intel.com with ESMTP; 29 Jan 2020 19:41:56 -0800
-Received: from [10.226.38.32] (unknown [10.226.38.32])
-        by linux.intel.com (Postfix) with ESMTP id 1093C5803C1;
-        Wed, 29 Jan 2020 19:41:53 -0800 (PST)
-Subject: Re: [PATCH v8 2/2] spi: cadence-quadpsi: Add support for the Cadence
- QSPI controller
-To:     Simon Goldschmidt <simon.k.r.goldschmidt@gmail.com>,
-        Dinh Nguyen <dinguyen@kernel.org>,
-        Tien-Fong Chee <tien.fong.chee@intel.com>,
-        Marek Vasut <marex@denx.de>
-Cc:     Mark Brown <broonie@kernel.org>, Vignesh R <vigneshr@ti.com>,
-        linux-spi@vger.kernel.org,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Rob Herring <robh+dt@kernel.org>, dan.carpenter@oracle.com,
-        cheol.yong.kim@intel.com, qi-ming.wu@intel.com
-References: <20200129072455.35807-1-vadivel.muruganx.ramuthevar@linux.intel.com>
- <20200129072455.35807-3-vadivel.muruganx.ramuthevar@linux.intel.com>
- <CAAh8qszwQ5sJw4G_fM5vKjYu24xs03CuW371gyFE4G0hNJHdXw@mail.gmail.com>
- <abaae0fa-c2b8-bbe0-b64d-0ee4c95c1479@linux.intel.com>
- <CAAh8qsxRPx8KDyqvp=8zcrGCE82YJ_9O9cJXrgKdH7VwXeGQgg@mail.gmail.com>
-From:   "Ramuthevar, Vadivel MuruganX" 
-        <vadivel.muruganx.ramuthevar@linux.intel.com>
-Message-ID: <0f079cf6-c146-8941-5bdd-f978ff3455ab@linux.intel.com>
-Date:   Thu, 30 Jan 2020 11:41:52 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.1
+        id S1726986AbgA3DoG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 29 Jan 2020 22:44:06 -0500
+Received: from mailgw02.mediatek.com ([210.61.82.184]:23159 "EHLO
+        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726811AbgA3DoG (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 Jan 2020 22:44:06 -0500
+X-UUID: b27cc1cbc00d4125a60e144d1168b3d8-20200130
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+        h=Content-Transfer-Encoding:MIME-Version:Content-Type:References:In-Reply-To:Date:CC:To:From:Subject:Message-ID; bh=3bvai5RkNO6CsB90bdkSQOYb8Boyue9WmpvdjPAjYrE=;
+        b=LvZByeUmLm02Ok2hWnLatHg7/qO01kS4WAdxpbZX63pcSnhfwymAwFzLGT9fxb5xyVUWZ4P+FekUugDq1QYEJxMNhQK9+smkTFdAJAbXV6uZLC+sNYE0UV+qLNVGzL6vmKwtDmD3kuQlNaJk+Daj9UxQ8LrSUZRmdzpLbzl436c=;
+X-UUID: b27cc1cbc00d4125a60e144d1168b3d8-20200130
+Received: from mtkcas07.mediatek.inc [(172.21.101.84)] by mailgw02.mediatek.com
+        (envelope-from <walter-zh.wu@mediatek.com>)
+        (Cellopoint E-mail Firewall v4.1.10 Build 0809 with TLS)
+        with ESMTP id 1456654747; Thu, 30 Jan 2020 11:43:59 +0800
+Received: from mtkcas08.mediatek.inc (172.21.101.126) by
+ mtkmbs07n1.mediatek.inc (172.21.101.16) with Microsoft SMTP Server (TLS) id
+ 15.0.1395.4; Thu, 30 Jan 2020 11:43:15 +0800
+Received: from [172.21.84.99] (172.21.84.99) by mtkcas08.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
+ Transport; Thu, 30 Jan 2020 11:44:02 +0800
+Message-ID: <1580355838.11126.5.camel@mtksdccf07>
+Subject: Re: [PATCH v4 2/2] kasan: add test for invalid size in memmove
+From:   Walter Wu <walter-zh.wu@mediatek.com>
+To:     Andrey Ryabinin <aryabinin@virtuozzo.com>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        Andrew Morton <akpm@linux-foundation.org>
+CC:     Alexander Potapenko <glider@google.com>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        "kasan-dev@googlegroups.com" <kasan-dev@googlegroups.com>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        wsd_upstream <wsd_upstream@mediatek.com>,
+        "linux-mediatek@lists.infradead.org" 
+        <linux-mediatek@lists.infradead.org>,
+        Andrew Morton <akpm@linux-foundation.org>
+Date:   Thu, 30 Jan 2020 11:43:58 +0800
+In-Reply-To: <619b898f-f9c2-1185-5ea7-b9bf21924942@virtuozzo.com>
+References: <20191112065313.7060-1-walter-zh.wu@mediatek.com>
+         <619b898f-f9c2-1185-5ea7-b9bf21924942@virtuozzo.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.2.3-0ubuntu6 
 MIME-Version: 1.0
-In-Reply-To: <CAAh8qsxRPx8KDyqvp=8zcrGCE82YJ_9O9cJXrgKdH7VwXeGQgg@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+X-MTK:  N
+Content-Transfer-Encoding: base64
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Simon,
+T24gRnJpLCAyMDE5LTExLTIyIGF0IDA2OjIxICswODAwLCBBbmRyZXkgUnlhYmluaW4gd3JvdGU6
+DQo+IA0KPiBPbiAxMS8xMi8xOSA5OjUzIEFNLCBXYWx0ZXIgV3Ugd3JvdGU6DQo+ID4gVGVzdCBu
+ZWdhdGl2ZSBzaXplIGluIG1lbW1vdmUgaW4gb3JkZXIgdG8gdmVyaWZ5IHdoZXRoZXIgaXQgY29y
+cmVjdGx5DQo+ID4gZ2V0IEtBU0FOIHJlcG9ydC4NCj4gPiANCj4gPiBDYXN0aW5nIG5lZ2F0aXZl
+IG51bWJlcnMgdG8gc2l6ZV90IHdvdWxkIGluZGVlZCB0dXJuIHVwIGFzIGEgbGFyZ2UNCj4gPiBz
+aXplX3QsIHNvIGl0IHdpbGwgaGF2ZSBvdXQtb2YtYm91bmRzIGJ1ZyBhbmQgYmUgZGV0ZWN0ZWQg
+YnkgS0FTQU4uDQo+ID4gDQo+ID4gU2lnbmVkLW9mZi1ieTogV2FsdGVyIFd1IDx3YWx0ZXItemgu
+d3VAbWVkaWF0ZWsuY29tPg0KPiA+IFJldmlld2VkLWJ5OiBEbWl0cnkgVnl1a292IDxkdnl1a292
+QGdvb2dsZS5jb20+DQo+IA0KPiBSZXZpZXdlZC1ieTogQW5kcmV5IFJ5YWJpbmluIDxhcnlhYmlu
+aW5AdmlydHVvenpvLmNvbT4NCg0KSGkgQW5kcmV5LCBEbWl0cnksIEFuZHJldywNCg0KV291bGQg
+eW91IHRlbGwgbWUgd2h5IHRoaXMgcGF0Y2gtc2V0cyBkb24ndCBtZXJnZSBpbnRvIGxpbnV4LW5l
+eHQgdHJlZT8NCldlIGxvc3Qgc29tZXRoaW5nPw0KDQpUaGFua3MgZm9yIHlvdXIgaGVscC4NCg0K
+V2FsdGVyDQoNCg==
 
-On 29/1/2020 8:01 PM, Simon Goldschmidt wrote:
-> + some people possibly interested in this for the Altera platforms (see below)
->
-> Hi all,
->
-> This is about moving the cadence qspi driver (which is used on TI, Altera FPGAs
-> and a new Intel SoC) to spi-mem.Vadivel asked me to include some Altera people
-> in the loop (see below), as this is the only platform currently untested,
-> I think.
->
-> Right now, I'm not in the position to test this myself as we're currently stuck
-> on an older RT kernel, so I cannot test with HEAD.
->
-> Feel free to involve other Intel/Altera if you're interested in that peripheral
-> not being broke for socfpga in one of the next releases :-)
->
-> On Wed, Jan 29, 2020 at 10:18 AM Ramuthevar, Vadivel MuruganX
-> <vadivel.muruganx.ramuthevar@linux.intel.com> wrote:
->> Hi,
->>
->>    Thank you for the query and confirmation.
->>
->> On 29/1/2020 4:31 PM, Simon Goldschmidt wrote:
->>
->> On Wed, Jan 29, 2020 at 8:25 AM Ramuthevar,Vadivel MuruganX
->> <vadivel.muruganx.ramuthevar@linux.intel.com> wrote:
->>
->> From: Ramuthevar Vadivel Murugan <vadivel.muruganx.ramuthevar@linux.intel.com>
->>
->> Add support for the Cadence QSPI controller. This controller is
->> present in the Intel Lightning Mountain(LGM) SoCs, Altera and TI SoCs.
->> This driver has been tested on the Intel LGM SoCs.
->>
->> So it has been tested on LGM and Vignesh gave his ok for TI. Is there anyone
->> in the loop by now checking that this is valid for the 3rd platform using this
->> (Altera)?
->>
->> Or am I wrong in thinking that this driver is meant to replace
->> drivers/mtd/spi-nor/cadence-quadspi.c used on that platform?
->>
->> Absolutely , You are right, this driver is meant to replace to drivers/mtd/spi-nor/cadence-quadspi.c
->> for Intel, TI and Altera SoC's using Cadence-QSPI IP.
->>
->> Meanwhile we have adapted to spi-mem framework (to support spi-nor/nand)and also didn't change the existing
->> functionalities of spi-nor flash operations like hw_init/read/write/erase in drivers/mtd/spi-nor/cadence-quadspi.c,
->> so it works fine (might be in Altera as well).
->>
->> Already I checked that Graham Moore <grmoore@opensource.altera.com> who has submitted the existing driver patches to upstream,
->> His mail-id is bouncing back, then I decided that you are the right person to ask, could you please add them in loop if you know the team
->> (socfpga platform engineers).
-> OK, done that. I mainly know them from U-Boot development, so I'm not sure
-> who's responsible for the Linux drivers...
-Thank you for adding the team and respective members, let's see.
-
-Regards
-vadivel
->
-> Regards,
-> Simon
->
->> Regards
->> Vadivel
->>
->> Regards,
->> Simon
->>
