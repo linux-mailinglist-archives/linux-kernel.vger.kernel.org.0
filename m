@@ -2,100 +2,81 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1751E14E2F9
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Jan 2020 20:16:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 290E414E2D7
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Jan 2020 20:00:50 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727704AbgA3TQg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 30 Jan 2020 14:16:36 -0500
-Received: from mga04.intel.com ([192.55.52.120]:9436 "EHLO mga04.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726267AbgA3TQg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 30 Jan 2020 14:16:36 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga002.fm.intel.com ([10.253.24.26])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 30 Jan 2020 11:16:35 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.70,382,1574150400"; 
-   d="scan'208";a="262281101"
-Received: from ranger.igk.intel.com ([10.102.21.164])
-  by fmsmga002.fm.intel.com with ESMTP; 30 Jan 2020 11:16:33 -0800
-Date:   Thu, 30 Jan 2020 13:07:30 +0100
-From:   Maciej Fijalkowski <maciej.fijalkowski@intel.com>
-To:     Jakub Kicinski <kuba@kernel.org>
-Cc:     Robert Jones <rjones@gateworks.com>,
-        Sunil Goutham <sgoutham@marvell.com>,
-        Robert Richter <rrichter@marvell.com>,
-        David Miller <davem@davemloft.net>,
-        linux-arm-kernel@lists.infradead.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Tim Harvey <tharvey@gateworks.com>
-Subject: Re: [PATCH net] net: thunderx: workaround BGX TX Underflow issue
-Message-ID: <20200130120730.GA60572@ranger.igk.intel.com>
-References: <20200129223609.9327-1-rjones@gateworks.com>
- <20200130091055.159d63ed@cakuba>
+        id S1728045AbgA3TAr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 30 Jan 2020 14:00:47 -0500
+Received: from hqnvemgate25.nvidia.com ([216.228.121.64]:3453 "EHLO
+        hqnvemgate25.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727285AbgA3TAq (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 30 Jan 2020 14:00:46 -0500
+Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate25.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5e3327c90001>; Thu, 30 Jan 2020 11:00:25 -0800
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate102.nvidia.com (PGP Universal service);
+  Thu, 30 Jan 2020 11:00:45 -0800
+X-PGP-Universal: processed;
+        by hqpgpgate102.nvidia.com on Thu, 30 Jan 2020 11:00:45 -0800
+Received: from [10.26.11.91] (10.124.1.5) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Thu, 30 Jan
+ 2020 19:00:40 +0000
+Subject: Re: [PATCH v6 12/16] dmaengine: tegra-apb: Clean up suspend-resume
+To:     Dmitry Osipenko <digetx@gmail.com>,
+        Laxman Dewangan <ldewangan@nvidia.com>,
+        Vinod Koul <vkoul@kernel.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>
+CC:     <dmaengine@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+References: <20200130043804.32243-1-digetx@gmail.com>
+ <20200130043804.32243-13-digetx@gmail.com>
+From:   Jon Hunter <jonathanh@nvidia.com>
+Message-ID: <3507dcb9-4a92-8145-1953-e40960604661@nvidia.com>
+Date:   Thu, 30 Jan 2020 19:00:37 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200130091055.159d63ed@cakuba>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+In-Reply-To: <20200130043804.32243-13-digetx@gmail.com>
+X-Originating-IP: [10.124.1.5]
+X-ClientProxiedBy: HQMAIL111.nvidia.com (172.20.187.18) To
+ HQMAIL107.nvidia.com (172.20.187.13)
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1580410825; bh=HvbTM3jfPnqdOoL/RKMU1UXf18+E1vc/sKF7YsOBlrg=;
+        h=X-PGP-Universal:Subject:To:CC:References:From:Message-ID:Date:
+         User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
+         X-ClientProxiedBy:Content-Type:Content-Language:
+         Content-Transfer-Encoding;
+        b=k277C6/HK3imWn6CinhGpwcNsA6KLB6lPtlKEbQbFJ4CB4krWu2ik+G9Shsu6b1V6
+         vPMuFvNlKYrKmaTq1SGMvQU6GudR4qJry+ABdamn1Oi8zfH13ujpqe7he+0a60mk4I
+         ZbLOrD1nguYwFAR92/XvwMyjyLLV4A4fba3xjOFASMfivG7cFKwqUDqsqnyivpktUE
+         w1MQtUTMMZOD9ummePeKIPRYGXe7s2g2OAgioVnwTUoeUF8Mq1GL7l/37fmlpQT6Jh
+         70O4ixhpCv7pPFLEza2Epbwei1x+lacjUTj3H/is7iF81qpfXo5W4KWu/CF48nneYF
+         TfU1WtM120LCQ==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jan 30, 2020 at 09:10:55AM -0800, Jakub Kicinski wrote:
-> On Wed, 29 Jan 2020 14:36:09 -0800, Robert Jones wrote:
-> > From: Tim Harvey <tharvey@gateworks.com>
-> > 
-> > While it is not yet understood why a TX underflow can easily occur
-> > for SGMII interfaces resulting in a TX wedge. It has been found that
-> > disabling/re-enabling the LMAC resolves the issue.
-> > 
-> > Signed-off-by: Tim Harvey <tharvey@gateworks.com>
-> > Reviewed-by: Robert Jones <rjones@gateworks.com>
-> 
-> Sunil or Robert (i.e. one of the maintainers) will have to review this
-> patch (as indicated by Dave by marking it with "Needs Review / ACK" in
-> patchwork).
-> 
-> At a quick look there are some things which jump out at me:
-> 
-> > +static int bgx_register_intr(struct pci_dev *pdev)
-> > +{
-> > +	struct bgx *bgx = pci_get_drvdata(pdev);
-> > +	struct device *dev = &pdev->dev;
-> > +	int num_vec, ret;
-> > +
-> > +	/* Enable MSI-X */
-> > +	num_vec = pci_msix_vec_count(pdev);
-> > +	ret = pci_alloc_irq_vectors(pdev, num_vec, num_vec, PCI_IRQ_MSIX);
-> > +	if (ret < 0) {
-> > +		dev_err(dev, "Req for #%d msix vectors failed\n", num_vec);
-> > +		return 1;
-> 
-> Please propagate real error codes, or make this function void as the
-> caller never actually checks the return value.
-> 
-> > +	}
-> > +	sprintf(bgx->irq_name, "BGX%d", bgx->bgx_id);
 
-Another quick look: use snprintf so that you won't overflow the
-bgx->irq_name in case bgx->bgx_id has some weird big number.
+On 30/01/2020 04:38, Dmitry Osipenko wrote:
+> It is enough to check whether hardware is busy on suspend and to reset
+> it across of suspend-resume because channel's configuration is fully
+> re-programmed on each DMA transaction anyways and because save-restore
+> of an active channel won't end up well without pausing transfer prior to
+> saving of the state (note that all channels shall be idling at the time of
+> suspend, so save-restore is not needed at all).
 
-> > +	ret = request_irq(pci_irq_vector(pdev, GMPX_GMI_TX_INT),
-> 
-> There is a alloc_irq and request_irq call added in this patch but there
-> is never any freeing. Are you sure this is fine? Devices can be
-> reprobed (unbound and bound to drivers via sysfs).
-> 
-> > +		bgx_intr_handler, 0, bgx->irq_name, bgx);
-> 
-> Please align the continuation line with the opening bracket (checkpatch
-> --strict should help catch this).
-> 
-> > +	if (ret)
-> > +		return 1;
-> > +
-> > +	return 0;
-> > +}
+Maybe just update the commit message to state that the pause callback is
+not implemented and channel pause is not supported prior to T114. And
+then ...
+
+Acked-by: Jon Hunter <jonathanh@nvidia.com>
+
+Cheers
+Jon
