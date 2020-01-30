@@ -2,77 +2,54 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6795914E0B8
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Jan 2020 19:25:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BCC3414E0B5
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Jan 2020 19:24:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729513AbgA3SY7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 30 Jan 2020 13:24:59 -0500
-Received: from mail-ua1-f67.google.com ([209.85.222.67]:33950 "EHLO
-        mail-ua1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729503AbgA3SY6 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 30 Jan 2020 13:24:58 -0500
-Received: by mail-ua1-f67.google.com with SMTP id 1so1552946uao.1
-        for <linux-kernel@vger.kernel.org>; Thu, 30 Jan 2020 10:24:58 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=CJPY+g/XzCm6UWO3D8mKRxGxfTcXSUIYOUXNI4GNTD8=;
-        b=BfQG+oTCMVxlg4wY8DUnH37t9rAIzLS4W4kBKdZBWR+QzaPeVDDSBBXOCM5jcqS184
-         7z/yo+l0hDOZzpC2ERgZFxmFpmjwHGcZ8UyGlvlgloFIb0V9DTOjRoWcGbjeL6/SP5o6
-         5UvCzcjJvRoIprtS7ojhc5t5+b4RMuK+mt/xs=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=CJPY+g/XzCm6UWO3D8mKRxGxfTcXSUIYOUXNI4GNTD8=;
-        b=XHgM4W5Q30ZSXkPL8arO8X3epuCU/8ErOTZRQFJ1IzOD6yriD/Y/ESg0VNJ0gjYV9s
-         naQz7dpLqTHpvfsjWZleOZxtxSIGIss61Juc5k9T1NoaWv13DduN+tKtpnREru6plQcz
-         7t9s1jNlMMieLhm/HrJjMYonBi9VGczw+u/ZeP6GleKbCZ5bQAzulJMo4vvvSLsd5a6m
-         2OWhvcULVPIFgNrjQURU+ADnIECQXcK3WOFTp16DiLifawvbbLrySR5mHoprzndg6LPD
-         gQxaHdKTLRVMYH26ym0McZoBpTimo6oOKZokJBvIcPKZbamd4aU7Buai/U1xtt0AkKzo
-         cYFA==
-X-Gm-Message-State: APjAAAU2B5I2fiI1cxHhAKG4tcHp6N4tlJTGif65nT3u7oOCHrJLZqqa
-        qsAOnNFZIAC4/rZfba5qTMNjPFUT7zs=
-X-Google-Smtp-Source: APXvYqxu9P4udUCmXH1vnDv0k1vViEGZ/BkEGsD+j/Ikg55Io6SCThEZ1VrdXKXfREb4D2HRKbzQjA==
-X-Received: by 2002:ab0:3742:: with SMTP id i2mr3353252uat.132.1580408697634;
-        Thu, 30 Jan 2020 10:24:57 -0800 (PST)
-Received: from mail-ua1-f42.google.com (mail-ua1-f42.google.com. [209.85.222.42])
-        by smtp.gmail.com with ESMTPSA id q189sm1766692vkh.44.2020.01.30.10.24.57
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 30 Jan 2020 10:24:57 -0800 (PST)
-Received: by mail-ua1-f42.google.com with SMTP id h32so1538647uah.4
-        for <linux-kernel@vger.kernel.org>; Thu, 30 Jan 2020 10:24:57 -0800 (PST)
-X-Received: by 2002:ab0:254e:: with SMTP id l14mr3487338uan.91.1580408268842;
- Thu, 30 Jan 2020 10:17:48 -0800 (PST)
+        id S1729438AbgA3SYJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 30 Jan 2020 13:24:09 -0500
+Received: from node.akkea.ca ([192.155.83.177]:57316 "EHLO node.akkea.ca"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727697AbgA3SYJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 30 Jan 2020 13:24:09 -0500
+X-Greylist: delayed 312 seconds by postgrey-1.27 at vger.kernel.org; Thu, 30 Jan 2020 13:24:09 EST
+Received: from localhost (localhost [127.0.0.1])
+        by node.akkea.ca (Postfix) with ESMTP id 2F2884E204D;
+        Thu, 30 Jan 2020 18:18:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=akkea.ca; s=mail;
+        t=1580408337; bh=3E251MH06Dbd00638c4EBWp/OLDF5tixRqh+0dV7y5Y=;
+        h=Date:From:To:Cc:Subject;
+        b=oQGW8Lg5T8UqWMQ6eEYb3z3rRwCySG4i2NpDkrYlh84RT5yII8Lf9yfevBBtmwGZQ
+         bBJM1LvXYK658qeWhIcRfZ1NqFP0P2U57NDH7Lkxk+yPDYpXaMid7DKQtcrMjN+l0C
+         5iaKf+luLCDePSu3DM64SB7eqr7KxNDSUWAQxO+4=
+X-Virus-Scanned: Debian amavisd-new at mail.akkea.ca
+Received: from node.akkea.ca ([127.0.0.1])
+        by localhost (mail.akkea.ca [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id E_-dYhpVuoUL; Thu, 30 Jan 2020 18:18:56 +0000 (UTC)
+Received: from www.akkea.ca (node.akkea.ca [192.155.83.177])
+        by node.akkea.ca (Postfix) with ESMTPSA id A899F4E200C;
+        Thu, 30 Jan 2020 18:18:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=akkea.ca; s=mail;
+        t=1580408336; bh=3E251MH06Dbd00638c4EBWp/OLDF5tixRqh+0dV7y5Y=;
+        h=Date:From:To:Cc:Subject;
+        b=RC66mL6wBnh9Vxy0M/T7tGydF5dz1qCANrAqG7zJstzjEI9eIDVOp98MXKF1yCgs5
+         B03dUfyFBmv+H6XlpVFicPR9EAjDimNQ0XLAovsl4hg5kOXOToOW3Hhug3I7O54hyX
+         DyADWx5DX40SttywcQZ4hbp+5civvmf+cZ2FenjE=
 MIME-Version: 1.0
-References: <20200129152458.v2.1.I4452dc951d7556ede422835268742b25a18b356b@changeid>
- <20200130180404.6771A2083E@mail.kernel.org>
-In-Reply-To: <20200130180404.6771A2083E@mail.kernel.org>
-From:   Doug Anderson <dianders@chromium.org>
-Date:   Thu, 30 Jan 2020 10:17:37 -0800
-X-Gmail-Original-Message-ID: <CAD=FV=Xvw+oA70+JG-5wMy+0v5M324idQRJsujVbNnBtEF2gvQ@mail.gmail.com>
-Message-ID: <CAD=FV=Xvw+oA70+JG-5wMy+0v5M324idQRJsujVbNnBtEF2gvQ@mail.gmail.com>
-Subject: Re: [PATCH v2] dt-bindings: clk: qcom: Fix self-validation, split,
- and clean cruft
-To:     Stephen Boyd <sboyd@kernel.org>
-Cc:     Rob Herring <robh+dt@kernel.org>, Taniya Das <tdas@codeaurora.org>,
-        Jeffrey Hugo <jhugo@codeaurora.org>,
-        Abhishek Sahu <absahu@codeaurora.org>, sivaprak@codeaurora.org,
-        anusharao@codeaurora.org, Sricharan <sricharan@codeaurora.org>,
-        Rob Herring <robh@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Andy Gross <agross@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        linux-clk <linux-clk@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Date:   Thu, 30 Jan 2020 10:18:56 -0800
+From:   Angus Ainslie <angus@akkea.ca>
+To:     Amitkumar Karwar <amitkarwar@gmail.com>,
+        Siva Rebbagondla <siva8118@gmail.com>
+Cc:     Kalle Valo <kvalo@codeaurora.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Redpine RS9116 M.2 module with NetworkManager
+Message-ID: <59789f30ee686338c7bcffe3c6cbc453@akkea.ca>
+X-Sender: angus@akkea.ca
+User-Agent: Roundcube Webmail/1.3.6
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -80,31 +57,26 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 Hi,
 
-On Thu, Jan 30, 2020 at 10:04 AM Stephen Boyd <sboyd@kernel.org> wrote:
->
-> > Misc cleanups as part of this patch:
-> > - sm8150 was claimed to be same set of clocks as sc7180, but driver
-> >   and dts appear to say that "bi_tcxo_ao" doesn't exist.  Fixed.
->
-> Someone will probably want to change this at some point.
+I'm trying the get a Redpine RS9116 module working with networkmanager. 
+I've tried this on 5.3, 5.5 and next-20200128. I'm using the Redpine 1.5 
+"rs9116_wlan_bt_classic.rps" firmware.
 
-I have no insight into sm8150, but I guess I assumed that since it
-wasn't in the driver that maybe sm8150 just doesnt have this hookup?
-I'm happy to add it back in.
+If I configure the interface using iw, wpa_supplicant and dhclient all 
+works as expected.
 
+If I try to configure the interface using nmtui most of the time no APs 
+show up to associate to. "iw dev wlan0 list" shows all of the APs in the 
+vicinity.
 
-> > +description:
-> > +  Qualcomm global clock control module which supports the clocks, resets and
-> > +  power domains on APQ8064.
->
-> It would be great if this could also point to the
-> include/dt-bindings/clock/qcom,apq8064.h file here. If you don't resend
-> this patch then I will try to remember to make this addition to the
-> binding docs.
+If I do manage to get an AP to show when I try to "Activate a 
+connection" I get the error below
 
-You're saying that the top-level description for all these should
-point to the header file?  Seems line a sane idea.  I guess we'd need
-to do that for all of them?  I could spin with that if you want, but
-we could also do a follow-up patch?
+Could not activate connection:
+Activation failed: No reason given
 
--Doug
+I suspect this is a driver bug rather than a NM bug as I saw similar 
+issues with an earlier Redpine proprietary driver that was fixed by 
+updating that driver. What rsi_dbg zone will help debug this ?
+
+Thanks
+Angus
