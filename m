@@ -2,96 +2,89 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6E14814D66A
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Jan 2020 07:31:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1A83814D6AC
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Jan 2020 07:40:46 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726464AbgA3GbA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 30 Jan 2020 01:31:00 -0500
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:40031 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725865AbgA3GbA (ORCPT
+        id S1726767AbgA3Gkm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 30 Jan 2020 01:40:42 -0500
+Received: from smtprelay0157.hostedemail.com ([216.40.44.157]:42661 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1725935AbgA3Gkm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 30 Jan 2020 01:31:00 -0500
-Received: by mail-pg1-f193.google.com with SMTP id k25so1109200pgt.7
-        for <linux-kernel@vger.kernel.org>; Wed, 29 Jan 2020 22:30:59 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=message-id:mime-version:content-transfer-encoding:in-reply-to
-         :references:subject:to:from:cc:user-agent:date;
-        bh=0tFsYcjfOOa4j0wNofi5s1JbHK10UxRY/7iGvUSf+kk=;
-        b=KbnW8hcVBL+cjoPJI4C8c4WYYBRdr3lVrJlK+VN35PtAz96+RJuL/ELLxdLSp0mLQr
-         U9iIpV6CcuvgD2XX6SiYM16zJwlenQUU/44+VCqojADOc8i5f1SrK9zHJA1yIoDzcTsb
-         JyPMx/3lnzwjm2LBn+HJSPUK6x2NxxcpNjT24=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:mime-version
-         :content-transfer-encoding:in-reply-to:references:subject:to:from:cc
-         :user-agent:date;
-        bh=0tFsYcjfOOa4j0wNofi5s1JbHK10UxRY/7iGvUSf+kk=;
-        b=sNUpLzSEX8zE8AJBSL3JL/BR4XhyBQmIFVceAJKi+BLtq9vymPYuJSaYVwiNcgJVhO
-         0hxuJ6AKsHqC9qwPp/S8DFM6KHc2rzv2lGhQOV6RqQtFkkmlIguI+59nWFsnT5PpMTNs
-         8WOsNhuX7UhTnTOIDbjfJ4MVLtgM8bNc1eZkWhuXMXUVEN1Zx4/LRt0TYi+mNOhK19ie
-         9AzHMwZ/Zscy8Zoi5R8A0v7eE79T+fvnhNIdK9A16s8+Bj7ae74ZanX0sokEJCvYNLhZ
-         MHDztgm1UGnL+jZZKqvjRmvbJxkJVSdw4VHBeiKmNNcSn+nysed0oQOT3VeoGshZB+S0
-         0FOg==
-X-Gm-Message-State: APjAAAXMrdnw8K1h38K8seapP0Gta3Uo/IcNZmlPeu+2c8UT5KdHBiO/
-        p52EVCM6lUX6/yWKVi3+YsjKQw==
-X-Google-Smtp-Source: APXvYqxkoOSz3EElUiJyrS7XLxT4E2RrTKPRQZsLo3gTD8kEkuzwObe1rg6ylHw8yiou5ZegP9TqoA==
-X-Received: by 2002:a63:e911:: with SMTP id i17mr3199910pgh.42.1580365859422;
-        Wed, 29 Jan 2020 22:30:59 -0800 (PST)
-Received: from chromium.org ([2620:15c:202:1:fa53:7765:582b:82b9])
-        by smtp.gmail.com with ESMTPSA id q12sm4862272pfh.158.2020.01.29.22.30.58
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 29 Jan 2020 22:30:58 -0800 (PST)
-Message-ID: <5e327822.1c69fb81.80136.dfc1@mx.google.com>
-Content-Type: text/plain; charset="utf-8"
+        Thu, 30 Jan 2020 01:40:42 -0500
+Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
+        by smtprelay08.hostedemail.com (Postfix) with ESMTP id 187D6182CED2A;
+        Thu, 30 Jan 2020 06:40:41 +0000 (UTC)
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-Spam-Summary: 50,0,0,,d41d8cd98f00b204,joe@perches.com,:::::::::::::,RULES_HIT:41:355:379:599:966:967:973:988:989:1260:1277:1311:1313:1314:1345:1359:1437:1515:1516:1518:1534:1541:1593:1594:1711:1730:1747:1777:1792:1801:2196:2199:2393:2525:2560:2563:2682:2685:2693:2828:2859:2933:2937:2939:2942:2945:2947:2951:2954:3022:3138:3139:3140:3141:3142:3353:3622:3865:3867:3868:3870:3871:3872:3874:3934:3936:3938:3941:3944:3947:3950:3953:3956:3959:4321:4385:4605:5007:7875:8603:9025:10004:10400:10848:11026:11232:11473:11658:11914:12043:12296:12297:12438:12663:12740:12760:12895:13069:13095:13311:13357:13439:14096:14097:14180:14181:14659:14721:21060:21063:21080:21433:21451:21627:21795:21939:21966:30012:30041:30051:30054:30070:30091,0,RBL:none,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:,MSBL:0,DNSBL:none,Custom_rules:0:0:0,LFtime:1,LUA_SUMMARY:none
+X-HE-Tag: chalk31_40013548c1333
+X-Filterd-Recvd-Size: 2693
+Received: from XPS-9350.home (unknown [47.151.135.224])
+        (Authenticated sender: joe@perches.com)
+        by omf04.hostedemail.com (Postfix) with ESMTPA;
+        Thu, 30 Jan 2020 06:40:39 +0000 (UTC)
+Message-ID: <f099965dc5de82fc5fb60ba10371cd9f1aed2d94.camel@perches.com>
+Subject: Re: -Wfortify-source in kernel/printk/printk.c
+From:   Joe Perches <joe@perches.com>
+To:     Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
+        Nathan Chancellor <natechancellor@gmail.com>
+Cc:     Petr Mladek <pmladek@suse.com>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        linux-kernel@vger.kernel.org, clang-built-linux@googlegroups.com
+Date:   Wed, 29 Jan 2020 22:39:32 -0800
+In-Reply-To: <20200130051711.GF115889@google.com>
+References: <20200130021648.GA32309@ubuntu-x2-xlarge-x86>
+         <20200130051711.GF115889@google.com>
+Content-Type: text/plain; charset="ISO-8859-1"
+User-Agent: Evolution 3.34.1-2 
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <202001271525.E6EB4FDD6@keescook>
-References: <20200123160031.9853-1-saiprakash.ranjan@codeaurora.org> <202001271525.E6EB4FDD6@keescook>
-Subject: Re: [PATCH] pstore: Fix printing of duplicate boot messages to console
-To:     Kees Cook <keescook@chromium.org>,
-        Sai Prakash Ranjan <saiprakash.ranjan@codeaurora.org>
-From:   Stephen Boyd <swboyd@chromium.org>
-Cc:     Anton Vorontsov <anton@enomsg.org>,
-        Colin Cross <ccross@android.com>,
-        Tony Luck <tony.luck@intel.com>,
-        Joel Fernandes <joel@joelfernandes.org>,
-        Matthias Kaehlcke <mka@chromium.org>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org,
-        Douglas Anderson <dianders@chromium.org>
-User-Agent: alot/0.8.1
-Date:   Wed, 29 Jan 2020 22:30:57 -0800
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting Kees Cook (2020-01-27 15:27:33)
-> On Thu, Jan 23, 2020 at 09:30:31PM +0530, Sai Prakash Ranjan wrote:
-> > Since commit f92b070f2dc8 ("printk: Do not miss new messages
-> > when replaying the log"), CON_PRINTBUFFER flag causes the
-> > duplicate boot messages to be printed on the console when
-> > PSTORE_CONSOLE and earlycon (boot console) is enabled.
-> > Pstore console registers to boot console when earlycon is
-> > enabled during pstore_register_console as a part of ramoops
-> > initialization in postcore_initcall and the printk core
-> > checks for CON_PRINTBUFFER flag and replays the log buffer
-> > to registered console (in this case pstore console which
-> > just registered to boot console) causing duplicate messages
-> > to be printed. Remove the CON_PRINTBUFFER flag from pstore
-> > console since pstore is not concerned with the printing of
-> > buffer to console but with writing of the buffer to the
-> > backend.
->=20
-> I agree this patch isn't the solution, but I'm trying to understand
-> where better logic could be added. Is the issue that printk sees both
-> earlycon and CON_PRINTBUFFER active? Can we add a new CON_* flag that
-> means "not actually printing anything"? (Or maybe a new flag for
-> non-printing to replace CON_PRINTBUFFER that lets pstore still work?)
->=20
+On Thu, 2020-01-30 at 14:17 +0900, Sergey Senozhatsky wrote:
+> On (20/01/29 19:16), Nathan Chancellor wrote:
+> > Hi all,
+> > 
+> > After commit 6d485ff455e ("Improve static checks for sprintf and
+> > __builtin___sprintf_chk") in clang [1], the following warning appears
+> > when CONFIG_PRINTK is disabled (e.g. allnoconfig):
+> > 
+> > ../kernel/printk/printk.c:2416:10: warning: 'sprintf' will always
+> > overflow; destination buffer has size 0, but format string expands
+> > to at least 33 [-Wfortify-source]
+> >                         len = sprintf(text,
+> >                               ^
+> > 1 warning generated.
+> > 
+> > Specifically referring to
+> > https://elixir.bootlin.com/linux/v5.5/source/kernel/printk/printk.c#L2416.
+> 
+> Good catch.
+> 
+> > It isn't wrong, given that when CONFIG_PRINTK is disabled, text's length
+> > is 0 (LOG_LINE_MAX and PREFIX_MAX are both zero). How should this
+> > warning be dealt this? I am not familiar enough with the printk code to
+> > say myself.
+> 
+> It's not wrong.
+> 
+> Unless I'm missing something completely obvious: with disabled printk()
+> we don't have any functions that can append messages to the logbuf, hence
+> we can't overflow it. So the error in question should never trigger.
+> 
+> - Normal printk() is void, so kernel cannot append messages;
+> - dev_printk() is void, so drivers cannot append messages and dicts;
+> - devkmsg_write() is void, so user space cannot write to logbuf.
+> 
+> So I think we should never trigger that overflow (assuming that I
+> didn't miss something) message.
+> 
+> In any case feel free to submit a patch - switch it to snprintf().
 
-This seems to be fixed by commit def97da13651 ("printk: fix
-exclusive_console replaying"). I think there's nothing to do.
+and/or make the code depend on CONFIG_PRINTK
+
 
