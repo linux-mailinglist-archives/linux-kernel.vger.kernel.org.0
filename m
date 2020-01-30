@@ -2,80 +2,44 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 716A914DDE8
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Jan 2020 16:33:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A437814DE1C
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Jan 2020 16:43:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727366AbgA3Pda (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 30 Jan 2020 10:33:30 -0500
-Received: from foss.arm.com ([217.140.110.172]:54476 "EHLO foss.arm.com"
+        id S1727379AbgA3Pni (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 30 Jan 2020 10:43:38 -0500
+Received: from mx2.suse.de ([195.135.220.15]:36464 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726948AbgA3Pd2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 30 Jan 2020 10:33:28 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 838EB31B;
-        Thu, 30 Jan 2020 07:33:27 -0800 (PST)
-Received: from localhost (unknown [10.1.198.81])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 24FC23F68E;
-        Thu, 30 Jan 2020 07:33:27 -0800 (PST)
-Date:   Thu, 30 Jan 2020 15:33:25 +0000
-From:   Ionela Voinescu <ionela.voinescu@arm.com>
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     catalin.marinas@arm.com, will@kernel.org, mark.rutland@arm.com,
-        maz@kernel.org, suzuki.poulose@arm.com, sudeep.holla@arm.com,
-        dietmar.eggemann@arm.com, mingo@redhat.com, ggherdovich@suse.cz,
-        vincent.guittot@linaro.org, linux-arm-kernel@lists.infradead.org,
-        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Juri Lelli <juri.lelli@redhat.com>
-Subject: Re: [PATCH v2 5/6] TEMP: sched: add interface for counter-based
- frequency invariance
-Message-ID: <20200130153325.GA5208@arm.com>
-References: <20191218182607.21607-1-ionela.voinescu@arm.com>
- <20191218182607.21607-6-ionela.voinescu@arm.com>
- <20200129193741.GU14914@hirez.programming.kicks-ass.net>
+        id S1726948AbgA3Pni (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 30 Jan 2020 10:43:38 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx2.suse.de (Postfix) with ESMTP id 0319FAFCC;
+        Thu, 30 Jan 2020 15:43:37 +0000 (UTC)
+Date:   Thu, 30 Jan 2020 07:33:28 -0800
+From:   Davidlohr Bueso <dave@stgolabs.net>
+To:     Johan Hovold <johan@kernel.org>
+Cc:     linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] USB: serial: relax unthrottle memory barrier
+Message-ID: <20200130153328.jt5stb4svajrbkf6@linux-p48b>
+References: <20200130100658.683-1-johan@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=us-ascii; format=flowed
 Content-Disposition: inline
-In-Reply-To: <20200129193741.GU14914@hirez.programming.kicks-ass.net>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <20200130100658.683-1-johan@kernel.org>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wednesday 29 Jan 2020 at 20:37:41 (+0100), Peter Zijlstra wrote:
-> On Wed, Dec 18, 2019 at 06:26:06PM +0000, Ionela Voinescu wrote:
-> > To be noted that this patch is a temporary one. It introduces the
-> > interface added by the patches at [1] to allow update of the frequency
-> > invariance scale factor based on counters. If [1] is merged there is
-> > not need for this patch.
-> > 
-> > For platforms that support counters (x86 - APERF/MPERF, arm64 - AMU
-> > counters) the frequency invariance correction factor can be obtained
-> > using a core counter and a fixed counter to get information on the
-> > performance (frequency based only) obtained in a period of time. This
-> > will more accurately reflect the actual current frequency of the CPU,
-> > compared with the alternative implementation that reflects the request
-> > of a performance level from the OS through the cpufreq framework
-> > (arch_set_freq_scale).
-> > 
-> > Therefore, introduce an interface - arch_scale_freq_tick, to be
-> > implemented by each architecture and called for each CPU on the tick
-> > to update the scale factor based on the delta in the counter values,
-> > if counter support is present on the CPU.
-> > 
-> > Either because reading counters is expensive or because reading
-> > counters from remote CPUs is not possible or is expensive, only
-> > update the counter based frequency scale factor on the tick for
-> > now. A tick based update will definitely be necessary either due to
-> > it being the only point of update for certain architectures or in
-> > order to cache the counter values for a particular CPU, if a
-> > further update from that CPU is not possible.
-> > 
-> > [1]
-> > https://lore.kernel.org/lkml/20191113124654.18122-1-ggherdovich@suse.cz/
-> 
-> FWIW, those patches just landed in tip/sched/core
+On Thu, 30 Jan 2020, Johan Hovold wrote:
 
-Thanks, Peter, I'll drop this one next time around.
+>Commit a8d78d9f3856 ("USB: serial: clean up throttle handling")
+>converted the throttle handling to use atomic bitops. This means that we
+>can relax the smp_mb() in unthrottle() to smp_mb__after_atomic(), which
+>for example is a no-op on architectures like x86 that provide fully
+>ordered atomics.
+>
+>Signed-off-by: Johan Hovold <johan@kernel.org>
 
-Ionela.
+Reviewed-by: Davidlohr Bueso <dbueso@suse.de>
