@@ -2,145 +2,109 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 325D914E091
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Jan 2020 19:11:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6795914E0B8
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Jan 2020 19:25:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728377AbgA3SLo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 30 Jan 2020 13:11:44 -0500
-Received: from lelv0143.ext.ti.com ([198.47.23.248]:40990 "EHLO
-        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727729AbgA3SLo (ORCPT
+        id S1729513AbgA3SY7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 30 Jan 2020 13:24:59 -0500
+Received: from mail-ua1-f67.google.com ([209.85.222.67]:33950 "EHLO
+        mail-ua1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729503AbgA3SY6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 30 Jan 2020 13:11:44 -0500
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 00UIBhI8005214;
-        Thu, 30 Jan 2020 12:11:43 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1580407903;
-        bh=h+G3LYU16aiLuWdXeyIlXaOLzpHdez77njrJFeFbZgc=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=VB4nECyOLcYrKZ2Lwg0Fj+3Ce9RxR92ut+kqcss4ZGQole0jHQD4F83kbFT3VsQ6e
-         Sl6M5vgI7GTndGQmKueITUkH87KvfPbkxq3Yia2UmyDKelAwLP3vAd8ONUdLp5F2fY
-         M6sxxx7TfHtNKY9M3WIz+MbuVAq7shX/5O2ABcwk=
-Received: from DLEE115.ent.ti.com (dlee115.ent.ti.com [157.170.170.26])
-        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 00UIBhX6046863
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Thu, 30 Jan 2020 12:11:43 -0600
-Received: from DLEE101.ent.ti.com (157.170.170.31) by DLEE115.ent.ti.com
- (157.170.170.26) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Thu, 30
- Jan 2020 12:11:42 -0600
-Received: from lelv0327.itg.ti.com (10.180.67.183) by DLEE101.ent.ti.com
- (157.170.170.31) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
- Frontend Transport; Thu, 30 Jan 2020 12:11:43 -0600
-Received: from [10.250.70.160] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by lelv0327.itg.ti.com (8.15.2/8.15.2) with ESMTP id 00UIBfRd064578;
-        Thu, 30 Jan 2020 12:11:42 -0600
-Subject: Re: [PATCHv5 06/14] remoteproc/omap: Initialize and assign reserved
- memory node
-To:     Tero Kristo <t-kristo@ti.com>, <bjorn.andersson@linaro.org>,
-        <ohad@wizery.com>, <linux-remoteproc@vger.kernel.org>
-CC:     <linux-kernel@vger.kernel.org>, <mathieu.poirier@linaro.org>,
-        <s-anna@ti.com>, <linux-omap@vger.kernel.org>
-References: <20200116135332.7819-1-t-kristo@ti.com>
- <20200116135332.7819-7-t-kristo@ti.com>
-From:   "Andrew F. Davis" <afd@ti.com>
-Message-ID: <249c293c-6a23-165f-1df5-4859ee47658a@ti.com>
-Date:   Thu, 30 Jan 2020 13:11:41 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.1
+        Thu, 30 Jan 2020 13:24:58 -0500
+Received: by mail-ua1-f67.google.com with SMTP id 1so1552946uao.1
+        for <linux-kernel@vger.kernel.org>; Thu, 30 Jan 2020 10:24:58 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=CJPY+g/XzCm6UWO3D8mKRxGxfTcXSUIYOUXNI4GNTD8=;
+        b=BfQG+oTCMVxlg4wY8DUnH37t9rAIzLS4W4kBKdZBWR+QzaPeVDDSBBXOCM5jcqS184
+         7z/yo+l0hDOZzpC2ERgZFxmFpmjwHGcZ8UyGlvlgloFIb0V9DTOjRoWcGbjeL6/SP5o6
+         5UvCzcjJvRoIprtS7ojhc5t5+b4RMuK+mt/xs=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=CJPY+g/XzCm6UWO3D8mKRxGxfTcXSUIYOUXNI4GNTD8=;
+        b=XHgM4W5Q30ZSXkPL8arO8X3epuCU/8ErOTZRQFJ1IzOD6yriD/Y/ESg0VNJ0gjYV9s
+         naQz7dpLqTHpvfsjWZleOZxtxSIGIss61Juc5k9T1NoaWv13DduN+tKtpnREru6plQcz
+         7t9s1jNlMMieLhm/HrJjMYonBi9VGczw+u/ZeP6GleKbCZ5bQAzulJMo4vvvSLsd5a6m
+         2OWhvcULVPIFgNrjQURU+ADnIECQXcK3WOFTp16DiLifawvbbLrySR5mHoprzndg6LPD
+         gQxaHdKTLRVMYH26ym0McZoBpTimo6oOKZokJBvIcPKZbamd4aU7Buai/U1xtt0AkKzo
+         cYFA==
+X-Gm-Message-State: APjAAAU2B5I2fiI1cxHhAKG4tcHp6N4tlJTGif65nT3u7oOCHrJLZqqa
+        qsAOnNFZIAC4/rZfba5qTMNjPFUT7zs=
+X-Google-Smtp-Source: APXvYqxu9P4udUCmXH1vnDv0k1vViEGZ/BkEGsD+j/Ikg55Io6SCThEZ1VrdXKXfREb4D2HRKbzQjA==
+X-Received: by 2002:ab0:3742:: with SMTP id i2mr3353252uat.132.1580408697634;
+        Thu, 30 Jan 2020 10:24:57 -0800 (PST)
+Received: from mail-ua1-f42.google.com (mail-ua1-f42.google.com. [209.85.222.42])
+        by smtp.gmail.com with ESMTPSA id q189sm1766692vkh.44.2020.01.30.10.24.57
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 30 Jan 2020 10:24:57 -0800 (PST)
+Received: by mail-ua1-f42.google.com with SMTP id h32so1538647uah.4
+        for <linux-kernel@vger.kernel.org>; Thu, 30 Jan 2020 10:24:57 -0800 (PST)
+X-Received: by 2002:ab0:254e:: with SMTP id l14mr3487338uan.91.1580408268842;
+ Thu, 30 Jan 2020 10:17:48 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <20200116135332.7819-7-t-kristo@ti.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+References: <20200129152458.v2.1.I4452dc951d7556ede422835268742b25a18b356b@changeid>
+ <20200130180404.6771A2083E@mail.kernel.org>
+In-Reply-To: <20200130180404.6771A2083E@mail.kernel.org>
+From:   Doug Anderson <dianders@chromium.org>
+Date:   Thu, 30 Jan 2020 10:17:37 -0800
+X-Gmail-Original-Message-ID: <CAD=FV=Xvw+oA70+JG-5wMy+0v5M324idQRJsujVbNnBtEF2gvQ@mail.gmail.com>
+Message-ID: <CAD=FV=Xvw+oA70+JG-5wMy+0v5M324idQRJsujVbNnBtEF2gvQ@mail.gmail.com>
+Subject: Re: [PATCH v2] dt-bindings: clk: qcom: Fix self-validation, split,
+ and clean cruft
+To:     Stephen Boyd <sboyd@kernel.org>
+Cc:     Rob Herring <robh+dt@kernel.org>, Taniya Das <tdas@codeaurora.org>,
+        Jeffrey Hugo <jhugo@codeaurora.org>,
+        Abhishek Sahu <absahu@codeaurora.org>, sivaprak@codeaurora.org,
+        anusharao@codeaurora.org, Sricharan <sricharan@codeaurora.org>,
+        Rob Herring <robh@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Andy Gross <agross@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        linux-clk <linux-clk@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 1/16/20 8:53 AM, Tero Kristo wrote:
-> From: Suman Anna <s-anna@ti.com>
-> 
-> The reserved memory nodes are not assigned to platform devices by
-> default in the driver core to avoid the lookup for every platform
-> device and incur a penalty as the real users are expected to be
-> only a few devices.
-> 
-> OMAP remoteproc devices fall into the above category and the OMAP
-> remoteproc driver _requires_ specific CMA pools to be assigned
-> for each device at the moment to align on the location of the
-> vrings and vring buffers in the RTOS-side firmware images. So,
+Hi,
+
+On Thu, Jan 30, 2020 at 10:04 AM Stephen Boyd <sboyd@kernel.org> wrote:
+>
+> > Misc cleanups as part of this patch:
+> > - sm8150 was claimed to be same set of clocks as sc7180, but driver
+> >   and dts appear to say that "bi_tcxo_ao" doesn't exist.  Fixed.
+>
+> Someone will probably want to change this at some point.
+
+I have no insight into sm8150, but I guess I assumed that since it
+wasn't in the driver that maybe sm8150 just doesnt have this hookup?
+I'm happy to add it back in.
 
 
-Same comment as before, this is a firmware issue for only some firmwares
-that do not handle being assigned vring locations correctly and instead
-hard-code them.
+> > +description:
+> > +  Qualcomm global clock control module which supports the clocks, resets and
+> > +  power domains on APQ8064.
+>
+> It would be great if this could also point to the
+> include/dt-bindings/clock/qcom,apq8064.h file here. If you don't resend
+> this patch then I will try to remember to make this addition to the
+> binding docs.
 
-This is not a requirement of the remote processor itself and so it
-should not fail to probe if a specific memory carveout isn't given.
+You're saying that the top-level description for all these should
+point to the header file?  Seems line a sane idea.  I guess we'd need
+to do that for all of them?  I could spin with that if you want, but
+we could also do a follow-up patch?
 
-Andrew
-
-
-> use the of_reserved_mem_device_init/release() API appropriately
-> to assign the corresponding reserved memory region to the OMAP
-> remoteproc device. Note that only one region per device is
-> allowed by the framework.
-> 
-> Signed-off-by: Suman Anna <s-anna@ti.com>
-> Signed-off-by: Tero Kristo <t-kristo@ti.com>
-> Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-> ---
-> v5: no changes
-> 
->  drivers/remoteproc/omap_remoteproc.c | 12 +++++++++++-
->  1 file changed, 11 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/remoteproc/omap_remoteproc.c b/drivers/remoteproc/omap_remoteproc.c
-> index 0846839b2c97..194303b860b2 100644
-> --- a/drivers/remoteproc/omap_remoteproc.c
-> +++ b/drivers/remoteproc/omap_remoteproc.c
-> @@ -17,6 +17,7 @@
->  #include <linux/module.h>
->  #include <linux/err.h>
->  #include <linux/of_device.h>
-> +#include <linux/of_reserved_mem.h>
->  #include <linux/platform_device.h>
->  #include <linux/dma-mapping.h>
->  #include <linux/remoteproc.h>
-> @@ -480,14 +481,22 @@ static int omap_rproc_probe(struct platform_device *pdev)
->  	if (ret)
->  		goto free_rproc;
->  
-> +	ret = of_reserved_mem_device_init(&pdev->dev);
-> +	if (ret) {
-> +		dev_err(&pdev->dev, "device does not have specific CMA pool\n");
-> +		goto free_rproc;
-> +	}
-> +
->  	platform_set_drvdata(pdev, rproc);
->  
->  	ret = rproc_add(rproc);
->  	if (ret)
-> -		goto free_rproc;
-> +		goto release_mem;
->  
->  	return 0;
->  
-> +release_mem:
-> +	of_reserved_mem_device_release(&pdev->dev);
->  free_rproc:
->  	rproc_free(rproc);
->  	return ret;
-> @@ -499,6 +508,7 @@ static int omap_rproc_remove(struct platform_device *pdev)
->  
->  	rproc_del(rproc);
->  	rproc_free(rproc);
-> +	of_reserved_mem_device_release(&pdev->dev);
->  
->  	return 0;
->  }
-> 
+-Doug
