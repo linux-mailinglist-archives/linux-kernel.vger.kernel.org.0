@@ -2,41 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7451114E1EE
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Jan 2020 19:48:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id ED96614E129
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Jan 2020 19:42:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731615AbgA3Sss (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 30 Jan 2020 13:48:48 -0500
-Received: from mail.kernel.org ([198.145.29.99]:59882 "EHLO mail.kernel.org"
+        id S1730285AbgA3Sl5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 30 Jan 2020 13:41:57 -0500
+Received: from mail.kernel.org ([198.145.29.99]:50014 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731586AbgA3Ssp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 30 Jan 2020 13:48:45 -0500
+        id S1730270AbgA3Sl4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 30 Jan 2020 13:41:56 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D76E3205F4;
-        Thu, 30 Jan 2020 18:48:43 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id CB40E2465B;
+        Thu, 30 Jan 2020 18:41:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1580410124;
-        bh=m7HO3EtQN1j59V/2gBIHF/vuLHrgFxMgrUCgTi7HC/w=;
+        s=default; t=1580409715;
+        bh=5x8PPQJiNKA7767tXvocesBKsxHI1hUir67V25xNjqs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=A/EzGzLkfI3iYrUojGNpQBmvBDH1nMtA3EDjV40dClnfYyHNgEZgi3C9Q2smMcwqc
-         BgwYhLrPE41VoBHPHyx0D1m5aqkZLjiICjMec9yCyFcFmy6uzfnZ0wIUJck5w6iIuf
-         A/DCDUCXHAsLRK9HM2/j8q686l97Y4ywCS963vJ8=
+        b=vQOm8WGxJd9mRdUnxT1HsrZnWJqJvKArxx+qBdHV7LoaKqk5QMyDM0jmCcq2Hw1Co
+         rEJeFskKG6rFgvjHzI7O1hN7qfDT/xNJh4N02bQkrnk/+5+v+9mR1wIfnjdkwfI44r
+         OjdFrakkn+DU/cBN1A2sKsir209fLPk132GDCthA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Leonard Crestez <leonard.crestez@nxp.com>,
-        Lorenzo Bianconi <lorenzo.bianconi83@gmail.com>,
-        Stable@vger.kernel.org,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Jonathan Cameron <Jonathan.Cameron@huawei.com>
-Subject: [PATCH 4.19 16/55] iio: st_gyro: Correct data for LSM9DS0 gyro
+        stable@vger.kernel.org, Lorenzo Bianconi <lorenzo@kernel.org>,
+        Jesper Dangaard Brouer <brouer@redhat.com>,
+        Ilias Apalodimas <ilias.apalodimas@linaro.org>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 5.5 40/56] net: socionext: fix possible user-after-free in netsec_process_rx
 Date:   Thu, 30 Jan 2020 19:38:57 +0100
-Message-Id: <20200130183611.814778774@linuxfoundation.org>
+Message-Id: <20200130183616.324057835@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200130183608.563083888@linuxfoundation.org>
-References: <20200130183608.563083888@linuxfoundation.org>
+In-Reply-To: <20200130183608.849023566@linuxfoundation.org>
+References: <20200130183608.849023566@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,120 +45,42 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+From: Lorenzo Bianconi <lorenzo@kernel.org>
 
-commit e825070f697abddf3b9b0a675ed0ff1884114818 upstream.
+[ Upstream commit b5e82e3c89c78ee0407ea8e8087af5519b6c7bae ]
 
-The commit 41c128cb25ce ("iio: st_gyro: Add lsm9ds0-gyro support")
-assumes that gyro in LSM9DS0 is the same as others with 0xd4 WAI ID,
-but datasheet tells slight different story, i.e. the first scale factor
-for the chip is 245 dps, and not 250 dps.
+Fix possible use-after-free in in netsec_process_rx that can occurs if
+the first packet is sent to the normal networking stack and the
+following one is dropped by the bpf program attached to the xdp hook.
+Fix the issue defining the skb pointer in the 'budget' loop
 
-Correct this by introducing a separate settings for LSM9DS0.
-
-Fixes: 41c128cb25ce ("iio: st_gyro: Add lsm9ds0-gyro support")
-Depends-on: 45a4e4220bf4 ("iio: gyro: st_gyro: fix L3GD20H support")
-Cc: Leonard Crestez <leonard.crestez@nxp.com>
-Cc: Lorenzo Bianconi <lorenzo.bianconi83@gmail.com>
-Cc: <Stable@vger.kernel.org>
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Signed-off-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+Fixes: ba2b232108d3c ("net: netsec: add XDP support")
+Signed-off-by: Lorenzo Bianconi <lorenzo@kernel.org>
+Acked-by: Jesper Dangaard Brouer <brouer@redhat.com>
+Acked-by: Ilias Apalodimas <ilias.apalodimas@linaro.org>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- drivers/iio/gyro/st_gyro_core.c |   75 +++++++++++++++++++++++++++++++++++++++-
- 1 file changed, 74 insertions(+), 1 deletion(-)
+ drivers/net/ethernet/socionext/netsec.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/iio/gyro/st_gyro_core.c
-+++ b/drivers/iio/gyro/st_gyro_core.c
-@@ -141,7 +141,6 @@ static const struct st_sensor_settings s
- 			[2] = LSM330DLC_GYRO_DEV_NAME,
- 			[3] = L3G4IS_GYRO_DEV_NAME,
- 			[4] = LSM330_GYRO_DEV_NAME,
--			[5] = LSM9DS0_GYRO_DEV_NAME,
- 		},
- 		.ch = (struct iio_chan_spec *)st_gyro_16bit_channels,
- 		.odr = {
-@@ -205,6 +204,80 @@ static const struct st_sensor_settings s
- 			},
- 		},
- 		.sim = {
-+			.addr = 0x23,
-+			.value = BIT(0),
-+		},
-+		.multi_read_bit = true,
-+		.bootime = 2,
-+	},
-+	{
-+		.wai = 0xd4,
-+		.wai_addr = ST_SENSORS_DEFAULT_WAI_ADDRESS,
-+		.sensors_supported = {
-+			[0] = LSM9DS0_GYRO_DEV_NAME,
-+		},
-+		.ch = (struct iio_chan_spec *)st_gyro_16bit_channels,
-+		.odr = {
-+			.addr = 0x20,
-+			.mask = GENMASK(7, 6),
-+			.odr_avl = {
-+				{ .hz = 95, .value = 0x00, },
-+				{ .hz = 190, .value = 0x01, },
-+				{ .hz = 380, .value = 0x02, },
-+				{ .hz = 760, .value = 0x03, },
-+			},
-+		},
-+		.pw = {
-+			.addr = 0x20,
-+			.mask = BIT(3),
-+			.value_on = ST_SENSORS_DEFAULT_POWER_ON_VALUE,
-+			.value_off = ST_SENSORS_DEFAULT_POWER_OFF_VALUE,
-+		},
-+		.enable_axis = {
-+			.addr = ST_SENSORS_DEFAULT_AXIS_ADDR,
-+			.mask = ST_SENSORS_DEFAULT_AXIS_MASK,
-+		},
-+		.fs = {
-+			.addr = 0x23,
-+			.mask = GENMASK(5, 4),
-+			.fs_avl = {
-+				[0] = {
-+					.num = ST_GYRO_FS_AVL_245DPS,
-+					.value = 0x00,
-+					.gain = IIO_DEGREE_TO_RAD(8750),
-+				},
-+				[1] = {
-+					.num = ST_GYRO_FS_AVL_500DPS,
-+					.value = 0x01,
-+					.gain = IIO_DEGREE_TO_RAD(17500),
-+				},
-+				[2] = {
-+					.num = ST_GYRO_FS_AVL_2000DPS,
-+					.value = 0x02,
-+					.gain = IIO_DEGREE_TO_RAD(70000),
-+				},
-+			},
-+		},
-+		.bdu = {
-+			.addr = 0x23,
-+			.mask = BIT(7),
-+		},
-+		.drdy_irq = {
-+			.int2 = {
-+				.addr = 0x22,
-+				.mask = BIT(3),
-+			},
-+			/*
-+			 * The sensor has IHL (active low) and open
-+			 * drain settings, but only for INT1 and not
-+			 * for the DRDY line on INT2.
-+			 */
-+			.stat_drdy = {
-+				.addr = ST_SENSORS_DEFAULT_STAT_ADDR,
-+				.mask = GENMASK(2, 0),
-+			},
-+		},
-+		.sim = {
- 			.addr = 0x23,
- 			.value = BIT(0),
- 		},
+--- a/drivers/net/ethernet/socionext/netsec.c
++++ b/drivers/net/ethernet/socionext/netsec.c
+@@ -929,7 +929,6 @@ static int netsec_process_rx(struct nets
+ 	struct netsec_rx_pkt_info rx_info;
+ 	enum dma_data_direction dma_dir;
+ 	struct bpf_prog *xdp_prog;
+-	struct sk_buff *skb = NULL;
+ 	u16 xdp_xmit = 0;
+ 	u32 xdp_act = 0;
+ 	int done = 0;
+@@ -943,6 +942,7 @@ static int netsec_process_rx(struct nets
+ 		struct netsec_de *de = dring->vaddr + (DESC_SZ * idx);
+ 		struct netsec_desc *desc = &dring->desc[idx];
+ 		struct page *page = virt_to_page(desc->addr);
++		struct sk_buff *skb = NULL;
+ 		u32 xdp_result = XDP_PASS;
+ 		u16 pkt_len, desc_len;
+ 		dma_addr_t dma_handle;
 
 
