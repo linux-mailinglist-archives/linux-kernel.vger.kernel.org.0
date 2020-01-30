@@ -2,40 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8D3C114E116
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Jan 2020 19:41:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 30B8714E18C
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Jan 2020 19:46:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730135AbgA3SlS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 30 Jan 2020 13:41:18 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48978 "EHLO mail.kernel.org"
+        id S1730753AbgA3Sp1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 30 Jan 2020 13:45:27 -0500
+Received: from mail.kernel.org ([198.145.29.99]:54966 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730069AbgA3SlI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 30 Jan 2020 13:41:08 -0500
+        id S1731016AbgA3SpX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 30 Jan 2020 13:45:23 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D799F2082E;
-        Thu, 30 Jan 2020 18:41:07 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 735972082E;
+        Thu, 30 Jan 2020 18:45:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1580409668;
-        bh=PX+NekbHaH9u/jpvMiovw0iRieOMJ7bTyjXb933qnTw=;
+        s=default; t=1580409922;
+        bh=z0Eloz/7uH30N/JaCMyrHQ6PHSsN/zgQzEJaOUFKGCk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ZEOQe68PLl06dmW/9beIjqlRBQk/n7wTrh1csvpMPbG1uqxJNy+m83ehorL8qyc/A
-         pKJLR+Mcj9ES8dTypVU5Jce+hvJmEVZGCNgds1j+PD+fVwJqO3dXyKr+zolpkoPuhc
-         TY4vcr1iJmli+uat9PCG5ZMOkFhxeCC+0B1xxOMQ=
+        b=QP2iy013wLE5fS+XCoj9QVpZ/6y3JOn4RQMOR5usAASl6aQ4dsZHmOKQTzCB0tXw8
+         c6gPCVDRo+UTUp4ZT8OEssFFS41Av1nsGnoxnkixuPhBs4+XtTf3B/mxAoOTi27McN
+         DVdLX1m34Xtk6jOmPvRanSA5a3BNR/LLLnbagtB4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        Ido Schimmel <idosch@mellanox.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 5.5 43/56] mlxsw: minimal: Fix an error handling path in mlxsw_m_port_create()
-Date:   Thu, 30 Jan 2020 19:39:00 +0100
-Message-Id: <20200130183616.880159739@linuxfoundation.org>
+        Jarkko Nikula <jarkko.nikula@linux.intel.com>,
+        Mark Brown <broonie@kernel.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 5.4 085/110] spi: pxa2xx: Add support for Intel Comet Lake-H
+Date:   Thu, 30 Jan 2020 19:39:01 +0100
+Message-Id: <20200130183624.185123304@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200130183608.849023566@linuxfoundation.org>
-References: <20200130183608.849023566@linuxfoundation.org>
+In-Reply-To: <20200130183613.810054545@linuxfoundation.org>
+References: <20200130183613.810054545@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,35 +45,37 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+From: Jarkko Nikula <jarkko.nikula@linux.intel.com>
 
-[ Upstream commit 6dd4b4f3936e17fedea1308bc70e9716f68bf232 ]
+[ Upstream commit f0cf17ed76cffa365001d263ced1f130ec794917 ]
 
-An 'alloc_etherdev()' called is not ballanced by a corresponding
-'free_netdev()' call in one error handling path.
+Add Intel Comet Lake-H LPSS SPI PCI IDs.
 
-Slighly reorder the error handling code to catch the missed case.
-
-Fixes: c100e47caa8e ("mlxsw: minimal: Add ethtool support")
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Reviewed-by: Ido Schimmel <idosch@mellanox.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Signed-off-by: Jarkko Nikula <jarkko.nikula@linux.intel.com>
+Link: https://lore.kernel.org/r/20191029115802.6779-1-jarkko.nikula@linux.intel.com
+Signed-off-by: Mark Brown <broonie@kernel.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/mellanox/mlxsw/minimal.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/spi/spi-pxa2xx.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
---- a/drivers/net/ethernet/mellanox/mlxsw/minimal.c
-+++ b/drivers/net/ethernet/mellanox/mlxsw/minimal.c
-@@ -213,8 +213,8 @@ mlxsw_m_port_create(struct mlxsw_m *mlxs
- 
- err_register_netdev:
- 	mlxsw_m->ports[local_port] = NULL;
--	free_netdev(dev);
- err_dev_addr_get:
-+	free_netdev(dev);
- err_alloc_etherdev:
- 	mlxsw_core_port_fini(mlxsw_m->core, local_port);
- 	return err;
+diff --git a/drivers/spi/spi-pxa2xx.c b/drivers/spi/spi-pxa2xx.c
+index 9f92165fe09f8..2fd843b18297d 100644
+--- a/drivers/spi/spi-pxa2xx.c
++++ b/drivers/spi/spi-pxa2xx.c
+@@ -1461,6 +1461,10 @@ static const struct pci_device_id pxa2xx_spi_pci_compound_match[] = {
+ 	{ PCI_VDEVICE(INTEL, 0x02aa), LPSS_CNL_SSP },
+ 	{ PCI_VDEVICE(INTEL, 0x02ab), LPSS_CNL_SSP },
+ 	{ PCI_VDEVICE(INTEL, 0x02fb), LPSS_CNL_SSP },
++	/* CML-H */
++	{ PCI_VDEVICE(INTEL, 0x06aa), LPSS_CNL_SSP },
++	{ PCI_VDEVICE(INTEL, 0x06ab), LPSS_CNL_SSP },
++	{ PCI_VDEVICE(INTEL, 0x06fb), LPSS_CNL_SSP },
+ 	/* TGL-LP */
+ 	{ PCI_VDEVICE(INTEL, 0xa0aa), LPSS_CNL_SSP },
+ 	{ PCI_VDEVICE(INTEL, 0xa0ab), LPSS_CNL_SSP },
+-- 
+2.20.1
+
 
 
