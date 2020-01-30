@@ -2,117 +2,125 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A2A0C14DF95
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Jan 2020 18:02:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id F372514DF9A
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Jan 2020 18:06:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727483AbgA3RCZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 30 Jan 2020 12:02:25 -0500
-Received: from hqnvemgate25.nvidia.com ([216.228.121.64]:13959 "EHLO
-        hqnvemgate25.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727158AbgA3RCY (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 30 Jan 2020 12:02:24 -0500
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate25.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5e330c0b0000>; Thu, 30 Jan 2020 09:02:03 -0800
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate101.nvidia.com (PGP Universal service);
-  Thu, 30 Jan 2020 09:02:23 -0800
-X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Thu, 30 Jan 2020 09:02:23 -0800
-Received: from [10.2.164.115] (10.124.1.5) by HQMAIL107.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Thu, 30 Jan
- 2020 17:02:23 +0000
-Subject: Re: Re: Re: [RFC PATCH v1 4/5] media: tegra: Add Tegra Video input
- driver for Tegra210
-To:     Thierry Reding <thierry.reding@gmail.com>
-CC:     <jonathanh@nvidia.com>, <frankc@nvidia.com>, <hverkuil@xs4all.nl>,
-        <linux-media@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-References: <1580235801-4129-1-git-send-email-skomatineni@nvidia.com>
- <1580235801-4129-5-git-send-email-skomatineni@nvidia.com>
- <20200129111340.GF2479935@ulmo>
- <070f9a4c-1919-f3f6-fef3-ed0a84cf5776@nvidia.com>
- <20200130122055.GA2584455@ulmo>
-From:   Sowjanya Komatineni <skomatineni@nvidia.com>
-Message-ID: <5a45782a-d88f-099a-f3b6-3c0255131f6b@nvidia.com>
-Date:   Thu, 30 Jan 2020 09:02:21 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        id S1727455AbgA3RGc convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Thu, 30 Jan 2020 12:06:32 -0500
+Received: from unicorn.mansr.com ([81.2.72.234]:59262 "EHLO unicorn.mansr.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727158AbgA3RGb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 30 Jan 2020 12:06:31 -0500
+Received: by unicorn.mansr.com (Postfix, from userid 51770)
+        id 7B0BB1B0DC; Thu, 30 Jan 2020 17:06:29 +0000 (GMT)
+From:   =?iso-8859-1?Q?M=E5ns_Rullg=E5rd?= <mans@mansr.com>
+To:     Rob Herring <robh@kernel.org>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Linux USB List <linux-usb@vger.kernel.org>,
+        devicetree@vger.kernel.org,
+        "linux-kernel\@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [RESEND][PATCH 1/2] dt-bindings: usb: add non-removable-ports hub property
+References: <20200124152504.23411-1-mans@mansr.com>
+        <20200127153506.GA4589@bogus> <yw1xy2tsvnww.fsf@mansr.com>
+        <20200128134745.GA3048749@kroah.com> <yw1xpnf3vchs.fsf@mansr.com>
+        <20200128152818.GB3437093@kroah.com>
+        <20200128165243.GC3666045@kroah.com>
+        <CAL_JsqK1fMCrbbMdRPqVjtS0D6p4AhqjcOGoivGbT2aKN7UJWw@mail.gmail.com>
+Date:   Thu, 30 Jan 2020 17:06:29 +0000
+In-Reply-To: <CAL_JsqK1fMCrbbMdRPqVjtS0D6p4AhqjcOGoivGbT2aKN7UJWw@mail.gmail.com>
+        (Rob Herring's message of "Tue, 28 Jan 2020 12:21:32 -0600")
+Message-ID: <yw1ximksvppm.fsf@mansr.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.3 (gnu/linux)
 MIME-Version: 1.0
-In-Reply-To: <20200130122055.GA2584455@ulmo>
-X-Originating-IP: [10.124.1.5]
-X-ClientProxiedBy: HQMAIL105.nvidia.com (172.20.187.12) To
- HQMAIL107.nvidia.com (172.20.187.13)
-Content-Type: text/plain; charset="windows-1252"; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1580403723; bh=A9RuPB5fbixK5sm9wKeq5QfAS+EZrvYRY7JYNhFDIxM=;
-        h=X-PGP-Universal:Subject:To:CC:References:From:Message-ID:Date:
-         User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
-         X-ClientProxiedBy:Content-Type:Content-Transfer-Encoding:
-         Content-Language;
-        b=f+KBjjefTnGF+7UwoAa9RNl2MGpafpuIMkycNlYO3mvZKyGb+pnAb7SfZtnWE9Qiq
-         pXfRB7v8J2Kbfb0ONZ+7H0yt/iEibISeh9AWrAjNpBFg4c3Mb5V0Nf3NWa7tp75GT7
-         OAAXITy2uqWyrz5UtCH6UcbZ+jMRie1i9EzYlhMhlKYGxfS6ld28TpFFU+5reXQOmy
-         +Chrfc/+ecGwiCVNveR2ge83D+ZY+2k4lQdT3bSgwpc4UNb/t+k5Q20OJexu3t+TlB
-         ShQsGCdA2nuVSXex8Xj/09EMUrnPjuIUiSWCntiL2nhyDA+N5fpR4jF8AB850rRdBq
-         6O16IKT8ainJA==
+Content-Type: text/plain; charset=iso-8859-1
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Rob Herring <robh@kernel.org> writes:
 
-On 1/30/20 4:20 AM, Thierry Reding wrote:
-> On Wed, Jan 29, 2020 at 09:23:38AM -0800, Sowjanya Komatineni wrote:
->> On 1/29/20 3:13 AM, Thierry Reding wrote:
->>> On Tue, Jan 28, 2020 at 10:23:20AM -0800, Sowjanya Komatineni wrote:
-> [...]
->>>> diff --git a/drivers/staging/media/tegra/host1x-video.c b/drivers/staging/media/tegra/host1x-video.c
-> [...]
->>>> +	media_device_init(&cam->media_dev);
->>>> +	ret = media_device_register(&cam->media_dev);
->>>> +	if (ret < 0) {
->>>> +		dev_err(cam->dev, "failed to register media device: %d\n", ret);
->>>> +		return ret;
->>>> +	}
->>>> +
->>>> +	cam->v4l2_dev.mdev = &cam->media_dev;
->>>> +	ret = v4l2_device_register(cam->dev, &cam->v4l2_dev);
->>>> +	if (ret < 0) {
->>>> +		dev_err(cam->dev, "V4L2 device registration failed: %d\n", ret);
->>>> +		goto register_error;
->>>> +	}
->>>> +
->>>> +	dev_set_drvdata(&dev->dev, cam);
->>>> +
->>>> +	ret = host1x_device_init(dev);
->>>> +	if (ret < 0)
->>>> +		goto dev_exit;
->>>> +
->>>> +	return 0;
->>>> +
->>>> +dev_exit:
->>>> +	host1x_device_exit(dev);
->>> There should be no need to call host1x_device_exit() when
->>> host1x_device_init() failed because the latter already takes care of
->>> undoing whatever it did already.
->>>
->> host1x_device_init can fail if any of its client ops init fails.
+> n Tue, Jan 28, 2020 at 10:52 AM Greg Kroah-Hartman
+> <gregkh@linuxfoundation.org> wrote:
 >>
->> So, calling host1x_device_exit here to undo the things done in other
->> successful client init ops.
-> host1x_device_init() already takes care of undoing what it did on
-> failure. Also, it makes sure to only undo what had already been done,
-> rather than tear down every client, even if it hadn't been initialized
-> yet when the failure happened. The latter is what would happen if you
-> called host1x_device_exit() to cleanup at this point.
+>> On Tue, Jan 28, 2020 at 04:28:18PM +0100, Greg Kroah-Hartman wrote:
+>> > On Tue, Jan 28, 2020 at 03:15:11PM +0000, Måns Rullgård wrote:
+>> > > Greg Kroah-Hartman <gregkh@linuxfoundation.org> writes:
+>> > >
+>> > > > On Mon, Jan 27, 2020 at 04:56:15PM +0000, Måns Rullgård wrote:
+>> > > >> Rob Herring <robh@kernel.org> writes:
+>> > > >>
+>> > > >> > On Fri, Jan 24, 2020 at 03:25:03PM +0000, Mans Rullgard wrote:
+>> > > >> >> Add a non-removable-ports property that lists the hardwired downstream
+>> > > >> >> ports of a hub.  Although hubs can provide this information, they are
+>> > > >> >> not always configured correctly.  An alternate means of indicating this
+>> > > >> >> for built-in USB devices is thus useful.
+>> > > >> >>
+>> > > >> >> Signed-off-by: Mans Rullgard <mans@mansr.com>
+>> > > >> >
+>> > > >> > I reviewed this already, but since you didn't add my reviewed-by, I'm
+>> > > >> > looking at it again and having 2nd thoughts.
+>> > > >> >
+>> > > >> >> ---
+>> > > >> >>  Documentation/devicetree/bindings/usb/usb-device.txt | 4 ++++
+>> > > >> >>  1 file changed, 4 insertions(+)
+>> > > >> >>
+>> > > >> >> diff --git a/Documentation/devicetree/bindings/usb/usb-device.txt b/Documentation/devicetree/bindings/usb/usb-device.txt
+>> > > >> >> index 036be172b1ae..92d863cc96b6 100644
+>> > > >> >> --- a/Documentation/devicetree/bindings/usb/usb-device.txt
+>> > > >> >> +++ b/Documentation/devicetree/bindings/usb/usb-device.txt
+>> > > >> >> @@ -66,6 +66,10 @@ Required properties for host-controller nodes with device nodes:
+>> > > >> >>  - #size-cells: shall be 0
+>> > > >> >>
+>> > > >> >>
+>> > > >> >> +Optional properties for hub and host-controller nodes:
+>> > > >> >> +- non-removable-ports: list of hardwired downstream ports
+>> > > >> >
+>> > > >> > If you have a hardwired device and need to know that, doesn't that imply
+>> > > >> > there's some other stuff you need to describe beyond what a standard USB
+>> > > >> > device has. Such as a power supply that's not Vbus from the hub.
+>> > > >>
+>> > > >> I suppose there could be, but there isn't in my actual situation.
+>> > > >>
+>> > > >> > At a minimum, I think this should be a per port property.
+>> > > >>
+>> > > >> That's what I suggested first.  Greg told me to do it like this instead.
+>> > > >
+>> > > > I said that?  I do not remember discussing this at all, when did that
+>> > > > happen?
+>> > >
+>> > > https://lore.kernel.org/lkml/20190228155241.GC12050@kroah.com/
+>> >
+>> > Almost a full year ago!  Hah, I can't remember what I wrote last week.
+>>
+>> Ah, ok, all I said was "do what ACPI does here", as that's a model of
+>> what has already been agreed apon by a whole huge number of people and
+>> standardized.  No need for DT to come up with something totally
+>> different instead, making a mess of things :)
+>>
+>> If this is doing what ACPI does, fine, if not, it should.  It was here
+>> first.
 >
-> Thierry
+> That's not always possible as ACPI and DT work in different ways. The
+> DT (Open Firmware) USB binding originated in 1998[1]. While ancient,
+> that is what defines the node structure of USB hubs, ports, and
+> devices that we use today.
+>
+> However, after a quick read of ACPI sec 9.14, I'd say what I suggested
+> is more aligned to ACPI than what's proposed here. Ports are child
+> nodes ("Device" in ACPI terms) and the properties to determine all
+> this are properties of the port node(s). Aligning beyond that isn't
+> really possible. ACPI has a standard thing (not sure what the proper
+> term is) called '_PLD' for describing device location which includes
+> 'user visible' among several other things. There is no such concept in
+> DT to align with. What we have is the 'non-removable' property and IMO
+> that's what we should use here.
 
-Sorry, yes I see host1x_device_init calls exit ops on failures .
+Can you guys please agree on something or other.  I'm happy to do it
+whichever way you decide, but I'd rather not waste my time making
+patches that will just get rejected.
 
-Will remove it. Thanks Thierry.
-
+-- 
+Måns Rullgård
