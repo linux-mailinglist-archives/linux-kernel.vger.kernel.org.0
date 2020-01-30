@@ -2,100 +2,97 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3D82A14E20A
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Jan 2020 19:50:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C909814E2C4
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Jan 2020 19:54:43 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731655AbgA3StD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 30 Jan 2020 13:49:03 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60270 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731649AbgA3Ss7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 30 Jan 2020 13:48:59 -0500
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S1731799AbgA3Syl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 30 Jan 2020 13:54:41 -0500
+Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:60664 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1727946AbgA3Sj4 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 30 Jan 2020 13:39:56 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1580409595;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=w+IsZLk2QS34Oo7KTKmvIUSpjq3N05oYW9SD/Unr8w4=;
+        b=RRiHr7bW11uB7kK8R2TAIxYNnlnxwUqmQ9qWSPX6r3sA5HEEhdPs+U1HEIrdrvy/QP4JMO
+        ADkoLJaNOtcb7jqtcp/4nJBUvyNovOAu728VtWWbFJ7dWnBDsHsPnYbfnhnYQ3qdzLfr/B
+        zrPJ8fw8par5GEVdDvHcjCH9ATNABeA=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-365-wb1VbVZAMMK-6Y2788fnkg-1; Thu, 30 Jan 2020 13:39:51 -0500
+X-MC-Unique: wb1VbVZAMMK-6Y2788fnkg-1
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id ACB7F2082E;
-        Thu, 30 Jan 2020 18:48:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1580410139;
-        bh=s2rmcFHlg0bundURMOPl/pYu5ppo6GpvVpIgo6Gqktk=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=uz044B4Av4Sv8nvgZDoJ6ucaMPBqGC6j519l3rVKjkkQ5gg7TyOBWT1mZg0JSZPyW
-         WZUmV4HKxRUuo4H9i3RXDzUxOOEH6X0QAuaaJ6eZzm1D6Vq5Gjbo3Wh5ZzR8daZ7DD
-         0c1J66fRp0fYph4B0lKbA2Zp9Pd7AP6CRGsYIAtE=
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, James Morse <james.morse@arm.com>,
-        Will Deacon <will@kernel.org>, Marc Zyngier <maz@kernel.org>,
-        Andrew Murray <andrew.murray@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>
-Subject: [PATCH 4.19 55/55] KVM: arm64: Write arch.mdcr_el2 changes since last vcpu_load on VHE
-Date:   Thu, 30 Jan 2020 19:39:36 +0100
-Message-Id: <20200130183618.321089628@linuxfoundation.org>
-X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200130183608.563083888@linuxfoundation.org>
-References: <20200130183608.563083888@linuxfoundation.org>
-User-Agent: quilt/0.66
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 8439B1800D41;
+        Thu, 30 Jan 2020 18:39:49 +0000 (UTC)
+Received: from ovpn-112-12.rdu2.redhat.com (ovpn-112-12.rdu2.redhat.com [10.10.112.12])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 1658219E9C;
+        Thu, 30 Jan 2020 18:39:47 +0000 (UTC)
+Message-ID: <dec7cce5138d4cfeb5596d63048db7ec19a18c3c.camel@redhat.com>
+Subject: Re: Redpine RS9116 M.2 module with NetworkManager
+From:   Dan Williams <dcbw@redhat.com>
+To:     Angus Ainslie <angus@akkea.ca>,
+        Amitkumar Karwar <amitkarwar@gmail.com>,
+        Siva Rebbagondla <siva8118@gmail.com>
+Cc:     Kalle Valo <kvalo@codeaurora.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Date:   Thu, 30 Jan 2020 12:39:52 -0600
+In-Reply-To: <59789f30ee686338c7bcffe3c6cbc453@akkea.ca>
+References: <59789f30ee686338c7bcffe3c6cbc453@akkea.ca>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.32.5 (3.32.5-1.fc30) 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Andrew Murray <andrew.murray@arm.com>
+On Thu, 2020-01-30 at 10:18 -0800, Angus Ainslie wrote:
+> Hi,
+> 
+> I'm trying the get a Redpine RS9116 module working with
+> networkmanager. 
+> I've tried this on 5.3, 5.5 and next-20200128. I'm using the Redpine
+> 1.5 
+> "rs9116_wlan_bt_classic.rps" firmware.
+> 
+> If I configure the interface using iw, wpa_supplicant and dhclient
+> all 
+> works as expected.
+> 
+> If I try to configure the interface using nmtui most of the time no
+> APs 
+> show up to associate to. "iw dev wlan0 list" shows all of the APs in
+> the 
+> vicinity.
+> 
+> If I do manage to get an AP to show when I try to "Activate a 
+> connection" I get the error below
+> 
+> Could not activate connection:
+> Activation failed: No reason given
+> 
+> I suspect this is a driver bug rather than a NM bug as I saw similar 
+> issues with an earlier Redpine proprietary driver that was fixed by 
+> updating that driver. What rsi_dbg zone will help debug this ?
 
-commit 4942dc6638b07b5326b6d2faa142635c559e7cd5 upstream.
+NM just uses wpa_supplicant underneath, so if you can get supplicant
+debug logs showing the failure, that would help. But perhaps the driver
+has a problem with scan MAC randomization that NM can be configured to
+do by default; that's been an issue with proprietary and out-of-tree
+drivers in the past. Just a thought.
 
-On VHE systems arch.mdcr_el2 is written to mdcr_el2 at vcpu_load time to
-set options for self-hosted debug and the performance monitors
-extension.
+https://blog.muench-johannes.de/networkmanager-disable-mac-randomization-314
 
-Unfortunately the value of arch.mdcr_el2 is not calculated until
-kvm_arm_setup_debug() in the run loop after the vcpu has been loaded.
-This means that the initial brief iterations of the run loop use a zero
-value of mdcr_el2 - until the vcpu is preempted. This also results in a
-delay between changes to vcpu->guest_debug taking effect.
-
-Fix this by writing to mdcr_el2 in kvm_arm_setup_debug() on VHE systems
-when a change to arch.mdcr_el2 has been detected.
-
-Fixes: d5a21bcc2995 ("KVM: arm64: Move common VHE/non-VHE trap config in separate functions")
-Cc: <stable@vger.kernel.org> # 4.17.x-
-Suggested-by: James Morse <james.morse@arm.com>
-Acked-by: Will Deacon <will@kernel.org>
-Reviewed-by: Marc Zyngier <maz@kernel.org>
-Signed-off-by: Andrew Murray <andrew.murray@arm.com>
-Signed-off-by: Catalin Marinas <catalin.marinas@arm.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
----
- arch/arm64/kvm/debug.c |    6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
-
---- a/arch/arm64/kvm/debug.c
-+++ b/arch/arm64/kvm/debug.c
-@@ -112,7 +112,7 @@ void kvm_arm_reset_debug_ptr(struct kvm_
- void kvm_arm_setup_debug(struct kvm_vcpu *vcpu)
- {
- 	bool trap_debug = !(vcpu->arch.flags & KVM_ARM64_DEBUG_DIRTY);
--	unsigned long mdscr;
-+	unsigned long mdscr, orig_mdcr_el2 = vcpu->arch.mdcr_el2;
- 
- 	trace_kvm_arm_setup_debug(vcpu, vcpu->guest_debug);
- 
-@@ -208,6 +208,10 @@ void kvm_arm_setup_debug(struct kvm_vcpu
- 	if (vcpu_read_sys_reg(vcpu, MDSCR_EL1) & (DBG_MDSCR_KDE | DBG_MDSCR_MDE))
- 		vcpu->arch.flags |= KVM_ARM64_DEBUG_DIRTY;
- 
-+	/* Write mdcr_el2 changes since vcpu_load on VHE systems */
-+	if (has_vhe() && orig_mdcr_el2 != vcpu->arch.mdcr_el2)
-+		write_sysreg(vcpu->arch.mdcr_el2, mdcr_el2);
-+
- 	trace_kvm_arm_set_dreg32("MDCR_EL2", vcpu->arch.mdcr_el2);
- 	trace_kvm_arm_set_dreg32("MDSCR_EL1", vcpu_read_sys_reg(vcpu, MDSCR_EL1));
- }
-
+Dan
 
