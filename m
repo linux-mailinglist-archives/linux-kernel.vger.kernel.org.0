@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AFF1C14E1E3
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Jan 2020 19:48:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3D28614E1A7
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Jan 2020 19:46:48 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731554AbgA3Ss1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 30 Jan 2020 13:48:27 -0500
-Received: from mail.kernel.org ([198.145.29.99]:59148 "EHLO mail.kernel.org"
+        id S1731201AbgA3Sq1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 30 Jan 2020 13:46:27 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56312 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731529AbgA3SsT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 30 Jan 2020 13:48:19 -0500
+        id S1730878AbgA3SqV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 30 Jan 2020 13:46:21 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A8FDE20674;
-        Thu, 30 Jan 2020 18:48:16 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7029A217BA;
+        Thu, 30 Jan 2020 18:46:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1580410097;
-        bh=8I4N5SI5pfjtzoqByMlS3MkZ2k66b7rxqF1BnrKZr/k=;
+        s=default; t=1580409980;
+        bh=VqDmHkwwQXUzjmkuYi1yVAWOTe1K9YymAZQllXMZIEg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=oQQhBF86433b1vBTlu5kwIv7pzOxv3RHhHCDuQAPiiBxAimMTgCahIJ/KWXFpr3i4
-         bNOhlmiyT9iq0saBoegZN7mRY2bOiy8AxEzqSECNX6g3kil6JxW6jCwXCNo9nzS/G+
-         0xYh/2aLsR7xlE3gmz6Uaae2AS4d6pnqCkcTNJPM=
+        b=k//I/OdIoJjeTpZLvhovMTJxoQGiARLGDUKsfpn3f6tBNGP/0dAegjF/R/JmTLke5
+         svG5J3puTU38j1AINhGCJxHOjVxamM2rwlnar4+lNH07l3OtTT91IilcNXreTg6hRV
+         I69n1jq2bIDGAGsluBMwI1JO52gZ9602LsBNdw30=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Ben Dooks <ben.dooks@codethink.co.uk>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 44/55] ARM: OMAP2+: SmartReflex: add omap_sr_pdata definition
-Date:   Thu, 30 Jan 2020 19:39:25 +0100
-Message-Id: <20200130183616.560082057@linuxfoundation.org>
+        stable@vger.kernel.org, Paul Cercueil <paul@crapouillou.net>,
+        Artur Rojek <contact@artur-rojek.eu>,
+        Sebastian Reichel <sebastian.reichel@collabora.com>
+Subject: [PATCH 5.4 110/110] power/supply: ingenic-battery: Dont change scale if theres only one
+Date:   Thu, 30 Jan 2020 19:39:26 +0100
+Message-Id: <20200130183626.282928977@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200130183608.563083888@linuxfoundation.org>
-References: <20200130183608.563083888@linuxfoundation.org>
+In-Reply-To: <20200130183613.810054545@linuxfoundation.org>
+References: <20200130183613.810054545@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,38 +44,54 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Ben Dooks <ben.dooks@codethink.co.uk>
+From: Paul Cercueil <paul@crapouillou.net>
 
-[ Upstream commit 2079fe6ea8cbd2fb2fbadba911f1eca6c362eb9b ]
+commit 86b9182df8bb12610d4d6feac45a69f3ed57bfd2 upstream.
 
-The omap_sr_pdata is not declared but is exported, so add a
-define for it to fix the following warning:
+The ADC in the JZ4740 can work either in high-precision mode with a 2.5V
+range, or in low-precision mode with a 7.5V range. The code in place in
+this driver will select the proper scale according to the maximum
+voltage of the battery.
 
-arch/arm/mach-omap2/pdata-quirks.c:609:36: warning: symbol 'omap_sr_pdata' was not declared. Should it be static?
+The JZ4770 however only has one mode, with a 6.6V range. If only one
+scale is available, there's no need to change it (and nothing to change
+it to), and trying to do so will fail with -EINVAL.
 
-Signed-off-by: Ben Dooks <ben.dooks@codethink.co.uk>
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Fixes: fb24ccfbe1e0 ("power: supply: add Ingenic JZ47xx battery driver.")
+
+Signed-off-by: Paul Cercueil <paul@crapouillou.net>
+Acked-by: Artur Rojek <contact@artur-rojek.eu>
+Cc: stable@vger.kernel.org
+Signed-off-by: Sebastian Reichel <sebastian.reichel@collabora.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- include/linux/power/smartreflex.h | 3 +++
- 1 file changed, 3 insertions(+)
+ drivers/power/supply/ingenic-battery.c |   15 +++++++++++----
+ 1 file changed, 11 insertions(+), 4 deletions(-)
 
-diff --git a/include/linux/power/smartreflex.h b/include/linux/power/smartreflex.h
-index 7b81dad712de8..37d9b70ed8f0a 100644
---- a/include/linux/power/smartreflex.h
-+++ b/include/linux/power/smartreflex.h
-@@ -296,6 +296,9 @@ struct omap_sr_data {
- 	struct voltagedomain		*voltdm;
- };
+--- a/drivers/power/supply/ingenic-battery.c
++++ b/drivers/power/supply/ingenic-battery.c
+@@ -100,10 +100,17 @@ static int ingenic_battery_set_scale(str
+ 		return -EINVAL;
+ 	}
  
+-	return iio_write_channel_attribute(bat->channel,
+-					   scale_raw[best_idx],
+-					   scale_raw[best_idx + 1],
+-					   IIO_CHAN_INFO_SCALE);
++	/* Only set scale if there is more than one (fractional) entry */
++	if (scale_len > 2) {
++		ret = iio_write_channel_attribute(bat->channel,
++						  scale_raw[best_idx],
++						  scale_raw[best_idx + 1],
++						  IIO_CHAN_INFO_SCALE);
++		if (ret)
++			return ret;
++	}
 +
-+extern struct omap_sr_data omap_sr_pdata[OMAP_SR_NR];
-+
- #ifdef CONFIG_POWER_AVS_OMAP
++	return 0;
+ }
  
- /* Smartreflex module enable/disable interface */
--- 
-2.20.1
-
+ static enum power_supply_property ingenic_battery_properties[] = {
 
 
