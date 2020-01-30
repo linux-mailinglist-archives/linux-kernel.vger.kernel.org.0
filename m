@@ -2,40 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7D9A814E123
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Jan 2020 19:41:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C44E614E235
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Jan 2020 19:51:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730233AbgA3Sln (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 30 Jan 2020 13:41:43 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49650 "EHLO mail.kernel.org"
+        id S1731218AbgA3Sqd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 30 Jan 2020 13:46:33 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56350 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730211AbgA3Sli (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 30 Jan 2020 13:41:38 -0500
+        id S1731190AbgA3SqX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 30 Jan 2020 13:46:23 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 99491205F4;
-        Thu, 30 Jan 2020 18:41:37 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id DDE9320674;
+        Thu, 30 Jan 2020 18:46:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1580409698;
-        bh=jN6ANbQqioYljWwZi7eZoRc2McZejpuPir7nTRbPY+U=;
+        s=default; t=1580409983;
+        bh=xjiIuT2evy8epx2GISn700fzYHTLGE7gpt2NB0cwO60=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=0Dp2MA5j9xVf4gneBfhxn1jKm9j45X2cpCs9EfmMbE9QVZ3Qxn+y8ML5x+a1vXqNU
-         8iON2yMOlHcs2mk8vS85HMsKvRXqQlQlAIckc/j7weyStgt/TQnM+uy9G8f1FlpFpb
-         QOTgPS46yscCyQavBH7dbSefyK4Co1RqYOzIT4EI=
+        b=2unGKum/abviiiSlkrMBEzMuTd/rh6j95jo5JLTqMzN3qDW0Ss7WO/LcH5DWCsTK0
+         tRtvdGn9uO0Nhe8Mdy1FH1SakHMGzCDxTlldGr75jYJkZ86GCKk+agfHwY00EzE2uX
+         4YwWgjC7vK0sY9QjZGKk8jtDlT1uEGHtIarNL+eQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, James Morse <james.morse@arm.com>,
-        Will Deacon <will@kernel.org>, Marc Zyngier <maz@kernel.org>,
-        Andrew Murray <andrew.murray@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>
-Subject: [PATCH 5.5 54/56] KVM: arm64: Write arch.mdcr_el2 changes since last vcpu_load on VHE
+        stable@vger.kernel.org, Steven Ellis <sellis@redhat.com>,
+        Pacho Ramos <pachoramos@gmail.com>,
+        Laura Abbott <labbott@fedoraproject.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 5.4 095/110] usb-storage: Disable UAS on JMicron SATA enclosure
 Date:   Thu, 30 Jan 2020 19:39:11 +0100
-Message-Id: <20200130183618.519896222@linuxfoundation.org>
+Message-Id: <20200130183625.212740705@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200130183608.849023566@linuxfoundation.org>
-References: <20200130183608.849023566@linuxfoundation.org>
+In-Reply-To: <20200130183613.810054545@linuxfoundation.org>
+References: <20200130183613.810054545@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,57 +45,47 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Andrew Murray <andrew.murray@arm.com>
+From: Laura Abbott <labbott@fedoraproject.org>
 
-commit 4942dc6638b07b5326b6d2faa142635c559e7cd5 upstream.
+[ Upstream commit bc3bdb12bbb3492067c8719011576370e959a2e6 ]
 
-On VHE systems arch.mdcr_el2 is written to mdcr_el2 at vcpu_load time to
-set options for self-hosted debug and the performance monitors
-extension.
+Steve Ellis reported incorrect block sizes and alignement
+offsets with a SATA enclosure. Adding a quirk to disable
+UAS fixes the problems.
 
-Unfortunately the value of arch.mdcr_el2 is not calculated until
-kvm_arm_setup_debug() in the run loop after the vcpu has been loaded.
-This means that the initial brief iterations of the run loop use a zero
-value of mdcr_el2 - until the vcpu is preempted. This also results in a
-delay between changes to vcpu->guest_debug taking effect.
-
-Fix this by writing to mdcr_el2 in kvm_arm_setup_debug() on VHE systems
-when a change to arch.mdcr_el2 has been detected.
-
-Fixes: d5a21bcc2995 ("KVM: arm64: Move common VHE/non-VHE trap config in separate functions")
-Cc: <stable@vger.kernel.org> # 4.17.x-
-Suggested-by: James Morse <james.morse@arm.com>
-Acked-by: Will Deacon <will@kernel.org>
-Reviewed-by: Marc Zyngier <maz@kernel.org>
-Signed-off-by: Andrew Murray <andrew.murray@arm.com>
-Signed-off-by: Catalin Marinas <catalin.marinas@arm.com>
+Reported-by: Steven Ellis <sellis@redhat.com>
+Cc: Pacho Ramos <pachoramos@gmail.com>
+Signed-off-by: Laura Abbott <labbott@fedoraproject.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arm64/kvm/debug.c |    6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+ drivers/usb/storage/unusual_uas.h | 7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
 
---- a/arch/arm64/kvm/debug.c
-+++ b/arch/arm64/kvm/debug.c
-@@ -101,7 +101,7 @@ void kvm_arm_reset_debug_ptr(struct kvm_
- void kvm_arm_setup_debug(struct kvm_vcpu *vcpu)
- {
- 	bool trap_debug = !(vcpu->arch.flags & KVM_ARM64_DEBUG_DIRTY);
--	unsigned long mdscr;
-+	unsigned long mdscr, orig_mdcr_el2 = vcpu->arch.mdcr_el2;
+diff --git a/drivers/usb/storage/unusual_uas.h b/drivers/usb/storage/unusual_uas.h
+index d0bdebd87ce3a..1b23741036ee8 100644
+--- a/drivers/usb/storage/unusual_uas.h
++++ b/drivers/usb/storage/unusual_uas.h
+@@ -87,12 +87,15 @@ UNUSUAL_DEV(0x2537, 0x1068, 0x0000, 0x9999,
+ 		USB_SC_DEVICE, USB_PR_DEVICE, NULL,
+ 		US_FL_IGNORE_UAS),
  
- 	trace_kvm_arm_setup_debug(vcpu, vcpu->guest_debug);
+-/* Reported-by: Takeo Nakayama <javhera@gmx.com> */
++/*
++ * Initially Reported-by: Takeo Nakayama <javhera@gmx.com>
++ * UAS Ignore Reported by Steven Ellis <sellis@redhat.com>
++ */
+ UNUSUAL_DEV(0x357d, 0x7788, 0x0000, 0x9999,
+ 		"JMicron",
+ 		"JMS566",
+ 		USB_SC_DEVICE, USB_PR_DEVICE, NULL,
+-		US_FL_NO_REPORT_OPCODES),
++		US_FL_NO_REPORT_OPCODES | US_FL_IGNORE_UAS),
  
-@@ -197,6 +197,10 @@ void kvm_arm_setup_debug(struct kvm_vcpu
- 	if (vcpu_read_sys_reg(vcpu, MDSCR_EL1) & (DBG_MDSCR_KDE | DBG_MDSCR_MDE))
- 		vcpu->arch.flags |= KVM_ARM64_DEBUG_DIRTY;
- 
-+	/* Write mdcr_el2 changes since vcpu_load on VHE systems */
-+	if (has_vhe() && orig_mdcr_el2 != vcpu->arch.mdcr_el2)
-+		write_sysreg(vcpu->arch.mdcr_el2, mdcr_el2);
-+
- 	trace_kvm_arm_set_dreg32("MDCR_EL2", vcpu->arch.mdcr_el2);
- 	trace_kvm_arm_set_dreg32("MDSCR_EL1", vcpu_read_sys_reg(vcpu, MDSCR_EL1));
- }
+ /* Reported-by: Hans de Goede <hdegoede@redhat.com> */
+ UNUSUAL_DEV(0x4971, 0x1012, 0x0000, 0x9999,
+-- 
+2.20.1
+
 
 
