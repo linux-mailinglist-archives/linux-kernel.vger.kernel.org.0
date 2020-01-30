@@ -2,141 +2,134 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3FA5314DB32
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Jan 2020 14:04:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 91A1A14DB3C
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Jan 2020 14:05:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727262AbgA3NE3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 30 Jan 2020 08:04:29 -0500
-Received: from fllv0016.ext.ti.com ([198.47.19.142]:33904 "EHLO
-        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727001AbgA3NE3 (ORCPT
+        id S1727310AbgA3NFx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 30 Jan 2020 08:05:53 -0500
+Received: from esa2.microchip.iphmx.com ([68.232.149.84]:31493 "EHLO
+        esa2.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727001AbgA3NFw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 30 Jan 2020 08:04:29 -0500
-Received: from fllv0035.itg.ti.com ([10.64.41.0])
-        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 00UD3r8w022295;
-        Thu, 30 Jan 2020 07:03:53 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1580389433;
-        bh=mEcLQEChF7CG3SdoHl9lJA4gqUSKK86HYBojtm7S8K4=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=FdMory5EL5Lpr0oRMV/b8+w2bkp0m8n3dQv69sKaKqOqAuQb7aVSxUZh0v5UsXSgg
-         IDQfesYGJX3fhF+Gi4f5C2PIxuGmZNdZPCohbCRXc8q6GnwhwN7X6Pg5+qV3HTdI+E
-         Lr3BM/QAGKgzOKtFWVKfsyuXXX3t2WX6q8Q6LGoM=
-Received: from DLEE113.ent.ti.com (dlee113.ent.ti.com [157.170.170.24])
-        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTP id 00UD3rwY115312;
-        Thu, 30 Jan 2020 07:03:53 -0600
-Received: from DLEE100.ent.ti.com (157.170.170.30) by DLEE113.ent.ti.com
- (157.170.170.24) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Thu, 30
- Jan 2020 07:03:52 -0600
-Received: from lelv0326.itg.ti.com (10.180.67.84) by DLEE100.ent.ti.com
- (157.170.170.30) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
- Frontend Transport; Thu, 30 Jan 2020 07:03:52 -0600
-Received: from [192.168.2.6] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by lelv0326.itg.ti.com (8.15.2/8.15.2) with ESMTP id 00UD3oM1101462;
-        Thu, 30 Jan 2020 07:03:50 -0600
-Subject: Re: [PoC] arm: dma-mapping: direct: Apply dma_pfn_offset only when it
- is valid
-To:     Christoph Hellwig <hch@lst.de>
-CC:     Robin Murphy <robin.murphy@arm.com>, <vigneshr@ti.com>,
-        <konrad.wilk@oracle.com>, <linux@armlinux.org.uk>,
-        <linux-kernel@vger.kernel.org>, <iommu@lists.linux-foundation.org>,
-        <linux-arm-kernel@lists.infradead.org>, <rogerq@ti.com>,
-        <robh@kernel.org>
-References: <8eb68140-97b2-62ce-3e06-3761984aa5b1@ti.com>
- <20200114164332.3164-1-peter.ujfalusi@ti.com>
- <f8121747-8840-e279-8c7c-75a9d4becce8@arm.com>
- <28ee3395-baed-8d59-8546-ab7765829cc8@ti.com>
- <4f0e307f-29a9-44cd-eeaa-3b999e03871c@arm.com>
- <75843c71-1718-8d61-5e3d-edba6e1b10bd@ti.com> <20200130075332.GA30735@lst.de>
-From:   Peter Ujfalusi <peter.ujfalusi@ti.com>
-Message-ID: <b2b1cb21-3aae-2181-fd79-f63701f283c0@ti.com>
-Date:   Thu, 30 Jan 2020 15:04:37 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        Thu, 30 Jan 2020 08:05:52 -0500
+Received-SPF: Pass (esa2.microchip.iphmx.com: domain of
+  Codrin.Ciubotariu@microchip.com designates 198.175.253.82 as
+  permitted sender) identity=mailfrom;
+  client-ip=198.175.253.82; receiver=esa2.microchip.iphmx.com;
+  envelope-from="Codrin.Ciubotariu@microchip.com";
+  x-sender="Codrin.Ciubotariu@microchip.com";
+  x-conformance=spf_only; x-record-type="v=spf1";
+  x-record-text="v=spf1 mx a:ushub1.microchip.com
+  a:smtpout.microchip.com -exists:%{i}.spf.microchip.iphmx.com
+  include:servers.mcsv.net include:mktomail.com
+  include:spf.protection.outlook.com ~all"
+Received-SPF: None (esa2.microchip.iphmx.com: no sender
+  authenticity information available from domain of
+  postmaster@email.microchip.com) identity=helo;
+  client-ip=198.175.253.82; receiver=esa2.microchip.iphmx.com;
+  envelope-from="Codrin.Ciubotariu@microchip.com";
+  x-sender="postmaster@email.microchip.com";
+  x-conformance=spf_only
+Authentication-Results: esa2.microchip.iphmx.com; dkim=none (message not signed) header.i=none; spf=Pass smtp.mailfrom=Codrin.Ciubotariu@microchip.com; spf=None smtp.helo=postmaster@email.microchip.com; dmarc=pass (p=none dis=none) d=microchip.com
+IronPort-SDR: BkINU+vNvBMEuPmGTZME0oxSyx9tcuNT89zZky2VclTmF1rdGfxPq2NaOpAHELikB8EOoOdifG
+ qnY131M4ZO+7LrKRQnIk4FKyhGaIwArXLQn3eIwXpumbl6SnhYyW89nJ1EGbAq34wLkBK6Xfo/
+ DQ4STD4aiq28SH5HtNUaIhbCKFnoWkhQxwqjrc1OO/n9hWXxOvbVya5vpT/RrwPfqihXPi2hm/
+ +1h6n9FDFt8jmyoB9w1DNu3GR+02Nfg8WvU0Vlllk36lnzbeLv2aQo4iE4VMdxSAbLQr4hIR1m
+ 0hg=
+X-IronPort-AV: E=Sophos;i="5.70,382,1574146800"; 
+   d="scan'208";a="64232611"
+Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
+  by esa2.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 30 Jan 2020 06:05:52 -0700
+Received: from chn-vm-ex02.mchp-main.com (10.10.85.144) by
+ chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.1713.5; Thu, 30 Jan 2020 06:05:52 -0700
+Received: from rob-ult-m19940.microchip.com (10.10.85.251) by
+ chn-vm-ex02.mchp-main.com (10.10.85.144) with Microsoft SMTP Server id
+ 15.1.1713.5 via Frontend Transport; Thu, 30 Jan 2020 06:05:49 -0700
+From:   Codrin Ciubotariu <codrin.ciubotariu@microchip.com>
+To:     <alsa-devel@alsa-project.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>
+CC:     <broonie@kernel.org>, <nicolas.ferre@microchip.com>,
+        <alexandre.belloni@bootlin.com>, <ludovic.desroches@microchip.com>,
+        <mirq-linux@rere.qmqm.pl>, Arnd Bergmann <arnd@arndb.de>,
+        Codrin Ciubotariu <codrin.ciubotariu@microchip.com>
+Subject: [RESEND PATCH] ASoC: atmel: fix atmel_ssc_set_audio link failure
+Date:   Thu, 30 Jan 2020 15:05:45 +0200
+Message-ID: <20200130130545.31148-1-codrin.ciubotariu@microchip.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-In-Reply-To: <20200130075332.GA30735@lst.de>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Transfer-Encoding: 7BIT
+Content-Type:   text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+From: Arnd Bergmann <arnd@arndb.de>
 
+The ssc audio driver can call into both pdc and dma backends.  With the
+latest rework, the logic to do this in a safe way avoiding link errors
+was removed, bringing back link errors that were fixed long ago in commit
+061981ff8cc8 ("ASoC: atmel: properly select dma driver state") such as
 
-On 30/01/2020 9.53, Christoph Hellwig wrote:
-> [skipping the DT bits, as I'm everything but an expert on that..]
-> 
-> On Mon, Jan 27, 2020 at 04:00:30PM +0200, Peter Ujfalusi wrote:
->> I agree on the phys_to_dma(). It should fail for addresses which does
->> not fall into any of the ranges.
->> It is just a that we in Linux don't have the concept atm for ranges, we
->> have only _one_ range which applies to every memory address.
-> 
-> what does atm here mean?
+sound/soc/atmel/atmel_ssc_dai.o: In function `atmel_ssc_set_audio':
+atmel_ssc_dai.c:(.text+0xac): undefined reference to `atmel_pcm_pdc_platform_register'
 
-struct device have only single dma_pfn_offset, one can not have multiple
-ranges defined. If we have then only the first is taken and the physical
-address and dma address is discarded, only the dma_pfn_offset is stored
-and used.
+Fix it this time using Makefile hacks and a comment to prevent this
+from accidentally getting removed again rather than Kconfig hacks.
 
-> We have needed multi-range support for quite a while, as common broadcom
-> SOCs do need it.  So patches for that are welcome at least from the
-> DMA layer perspective (kinda similar to your pseudo code earlier)
+Fixes: 18291410557f ("ASoC: atmel: enable SOC_SSC_PDC and SOC_SSC_DMA in Kconfig")
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Signed-off-by: Codrin Ciubotariu <codrin.ciubotariu@microchip.com>
+---
 
-But do they have dma_pfn_offset != 0?
+Added my signed-off because I sent the patch, no other changes.
 
->>> Nobody's disputing that the current dma_direct_supported()
->>> implementation is broken for the case where ZONE_DMA itself is offset
->>> from PA 0; the more pressing question is why Christoph's diff, which was
->>> trying to take that into account, still didn't work.
->>
->> I understand that this is a bit more complex than I interpret it, but
->> the k2g is broken and currently the simplest way to make it work is to
->> use the arm dma_ops in case the pfn_offset is not 0.
->> It will be easy to test dma-direct changes trying to address the issue
->> in hand, but will allow k2g to be usable at the same time.
-> 
-> Well, using the legacy arm dma ops means we can't use swiotlb if there
-> is an offset, which is also wrong for lots of common cases, including
-> the Rpi 4.  I'm still curious why my patch didn't work, as I thought
-> it should.
+ sound/soc/atmel/Kconfig  |  4 ++--
+ sound/soc/atmel/Makefile | 10 ++++++++--
+ 2 files changed, 10 insertions(+), 4 deletions(-)
 
-The dma_pfn_offset is _still_ applied to the mask we are trying to set
-(and validate) via dma-direct.
+diff --git a/sound/soc/atmel/Kconfig b/sound/soc/atmel/Kconfig
+index d1dc8e6366dc..71f2d42188c4 100644
+--- a/sound/soc/atmel/Kconfig
++++ b/sound/soc/atmel/Kconfig
+@@ -10,11 +10,11 @@ config SND_ATMEL_SOC
+ if SND_ATMEL_SOC
+ 
+ config SND_ATMEL_SOC_PDC
+-	tristate
++	bool
+ 	depends on HAS_DMA
+ 
+ config SND_ATMEL_SOC_DMA
+-	tristate
++	bool
+ 	select SND_SOC_GENERIC_DMAENGINE_PCM
+ 
+ config SND_ATMEL_SOC_SSC
+diff --git a/sound/soc/atmel/Makefile b/sound/soc/atmel/Makefile
+index 1f6890ed3738..c7d2989791be 100644
+--- a/sound/soc/atmel/Makefile
++++ b/sound/soc/atmel/Makefile
+@@ -6,8 +6,14 @@ snd-soc-atmel_ssc_dai-objs := atmel_ssc_dai.o
+ snd-soc-atmel-i2s-objs := atmel-i2s.o
+ snd-soc-mchp-i2s-mcc-objs := mchp-i2s-mcc.o
+ 
+-obj-$(CONFIG_SND_ATMEL_SOC_PDC) += snd-soc-atmel-pcm-pdc.o
+-obj-$(CONFIG_SND_ATMEL_SOC_DMA) += snd-soc-atmel-pcm-dma.o
++# pdc and dma need to both be built-in if any user of
++# ssc is built-in.
++ifdef CONFIG_SND_ATMEL_SOC_PDC
++obj-$(CONFIG_SND_ATMEL_SOC_SSC) += snd-soc-atmel-pcm-pdc.o
++endif
++ifdef CONFIG_SND_ATMEL_SOC_DMA
++obj-$(CONFIG_SND_ATMEL_SOC_SSC) += snd-soc-atmel-pcm-dma.o
++endif
+ obj-$(CONFIG_SND_ATMEL_SOC_SSC) += snd-soc-atmel_ssc_dai.o
+ obj-$(CONFIG_SND_ATMEL_SOC_I2S) += snd-soc-atmel-i2s.o
+ obj-$(CONFIG_SND_MCHP_SOC_I2S_MCC) += snd-soc-mchp-i2s-mcc.o
+-- 
+2.20.1
 
-in dma_direct_supported:
-mask == 0xffffffff // DMA_BIT_MASK(32)
-dev->dma_pfn_offset == 0x780000 // Keystone 2
-min_mask == 0xffffff
-
-tmp_mask = __phys_to_dma(dev, min_mask);
-tmp_mask == 0xff880ffffff
-
-within __phys_to_dma() converts the min_mask to pfn and calls
-pfn_to_dma() which does:
-if (dev)
-	pfn -= dev->dma_pfn_offset;
-
-the returned pfn is then converted back to address.
-
-the mask (0xffffffff) is well under the tmp_mask (0xff880ffffff) so
-dma_direct_supported() will tell us that DMA is not supported for
-DMA_BIT_MASK(32), which is not true, because DMA is supporting 32 bits.
-
-> We'll need to find the minimum change to make it work
-> for now without switching ops, even if it isn't the correct one, and
-> then work from there.
-
-Sure, but can we fix the regression by reverting to arm_ops for now only
-if dma_pfn_offset is not 0? It used to work fine in the past at least it
-appeared to work on K2 platforms.
-
-- Péter
-
-Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
-Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
