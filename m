@@ -2,67 +2,209 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C2BDC14DCCD
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Jan 2020 15:31:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 57CC514DCD5
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Jan 2020 15:34:23 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727448AbgA3ObD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 30 Jan 2020 09:31:03 -0500
-Received: from mail-pj1-f67.google.com ([209.85.216.67]:55617 "EHLO
-        mail-pj1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727238AbgA3ObC (ORCPT
+        id S1727366AbgA3OeU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 30 Jan 2020 09:34:20 -0500
+Received: from youngberry.canonical.com ([91.189.89.112]:60349 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726980AbgA3OeT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 30 Jan 2020 09:31:02 -0500
-Received: by mail-pj1-f67.google.com with SMTP id d5so1397696pjz.5
-        for <linux-kernel@vger.kernel.org>; Thu, 30 Jan 2020 06:31:02 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:from:date:message-id:subject:to;
-        bh=EqeNuPCh2EscwVWwyfmdlBnc1Jo/GS7LeqzNO4LEAkE=;
-        b=rrZoAqEL+L29Qz/Z9Ln9VNpkDUQuxzoPHfR0+wPtotUTlP5IlWgGfvafY3xAjIe3pH
-         vIw63XvTk5EOAUp58cK54embBSOJFuIZlci0dhiXGssfQjUAHd76UtFS1wG4gA5SSyC2
-         uf2cPF9n7ThtOg56uHDjb+T+G7EMM8SK68DeUVji3GlzObPgiaqO/sy+ZguWRNZUZsNW
-         +QxStUWxSuoTY97SjfAppV70g3zzHrhAn/VWikMnMQnv4Y3tY1OFm596FmvZYta0fMhZ
-         UAh3RhLnnqFmT/+H21H/P/dVstxSoes4NEZvWIkIkn7qnLQ/hxque384TI/Mh/4WGw4r
-         2ZaQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:from:date:message-id:subject:to;
-        bh=EqeNuPCh2EscwVWwyfmdlBnc1Jo/GS7LeqzNO4LEAkE=;
-        b=boBe12eZ1x/7Q+mLDDk3oEPoVteH8D0qjLTU4IsjR83xq2R9X/b0udC2sP3iBRf00w
-         zVD6CDh10CTU0ayL+N329h6aFpjPG8ji+eTX23lPKcUNaDvOOGN/+exTkvhX8PPFD47r
-         mBOGoXx2xrfjNV8hq9bPuYzgcvPMFQ5nqAmIvOqf7biKHD6JwKrDib8l12uMdcLXT2yf
-         UF4/5/swnturvRyANYDfeU0uO/8w3pX4/Mh3eXnd7ajBPiWzT1tQggqrPaXQUb+HLBRJ
-         JrvMdHe7d1IxS0yWOc1+qARJWeS5dEZr1lT1bu8ZqHhMgZcUrS1EfygYuRdqVXZNV0Om
-         rrQQ==
-X-Gm-Message-State: APjAAAU+eL9nnGvWZW3VjSpHZL5Z8N673aV7+GsJWwN3CGOFcL2y/RoZ
-        UctAs5Kgv850kr8NaWYnAIqLYH0C16q92aQJyIo=
-X-Google-Smtp-Source: APXvYqwQSq/4+ksyqMJg/5sZ3A/CiVqnrT3LLHKkqwOnCIaagZtJpgAF4lC1sl21oSJfHOEELdGwx2CDiPHOuxAWW58=
-X-Received: by 2002:a17:902:7244:: with SMTP id c4mr4963937pll.49.1580394661822;
- Thu, 30 Jan 2020 06:31:01 -0800 (PST)
+        Thu, 30 Jan 2020 09:34:19 -0500
+Received: from [109.134.33.162] (helo=wittgenstein)
+        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.86_2)
+        (envelope-from <christian.brauner@ubuntu.com>)
+        id 1ixAtc-0001Hg-Pm; Thu, 30 Jan 2020 14:34:16 +0000
+Date:   Thu, 30 Jan 2020 15:34:16 +0100
+From:   Christian Brauner <christian.brauner@ubuntu.com>
+To:     Al Viro <viro@ZenIV.linux.org.uk>
+Cc:     linux-fsdevel@vger.kernel.org,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-kernel@vger.kernel.org, Aleksa Sarai <cyphar@cyphar.com>,
+        David Howells <dhowells@redhat.com>,
+        Eric Biederman <ebiederm@xmission.com>
+Subject: Re: [PATCH 02/17] fix automount/automount race properly
+Message-ID: <20200130143416.zr2od5u42fpdl7n3@wittgenstein>
+References: <20200119031423.GV8904@ZenIV.linux.org.uk>
+ <20200119031738.2681033-1-viro@ZenIV.linux.org.uk>
+ <20200119031738.2681033-2-viro@ZenIV.linux.org.uk>
 MIME-Version: 1.0
-Received: by 2002:a17:90a:332f:0:0:0:0 with HTTP; Thu, 30 Jan 2020 06:31:01
- -0800 (PST)
-From:   Ganbatar Azzanayaj <ganbatarazzanayajg@gmail.com>
-Date:   Thu, 30 Jan 2020 14:31:01 +0000
-Message-ID: <CAM7Kmtkjpai4D5GdBZ+xK78KFeDvYtrDmJ8Z4GssWo1epQJHZA@mail.gmail.com>
-Subject: hope
-To:     undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20200119031738.2681033-2-viro@ZenIV.linux.org.uk>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Good day , i write to inform you as auditor onbehalf of ORABANK.
+On Sun, Jan 19, 2020 at 03:17:14AM +0000, Al Viro wrote:
+> From: Al Viro <viro@zeniv.linux.org.uk>
+> 
+> Protection against automount/automount races (two threads hitting the same
+> referral point at the same time) is based upon do_add_mount() prevention of
+> identical overmounts - trying to overmount the root of mounted tree with
+> the same tree fails with -EBUSY.  It's unreliable (the other thread might've
+> mounted something on top of the automount it has triggered) *and* causes
+> no end of headache for follow_automount() and its caller, since
+> finish_automount() behaves like do_new_mount() - if the mountpoint to be is
+> overmounted, it mounts on top what's overmounting it.  It's not only wrong
+> (we want to go into what's overmounting the automount point and quietly
+> discard what we planned to mount there), it introduces the possibility of
+> original parent mount getting dropped.  That's what 8aef18845266 (VFS: Fix
+> vfsmount overput on simultaneous automount) deals with, but it can't do
+> anything about the reliability of conflict detection - if something had
+> been overmounted the other thread's automount (e.g. that other thread
+> having stepped into automount in mount(2)), we don't get that -EBUSY and
+> the result is
+> 	 referral point under automounted NFS under explicit overmount
+> under another copy of automounted NFS
+> 
+> What we need is finish_automount() *NOT* digging into overmounts - if it
+> finds one, it should just quietly discard the thing it was asked to mount.
+> And don't bother with actually crossing into the results of finish_automount() -
+> the same loop that calls follow_automount() will do that just fine on the
+> next iteration.
+> 
+> IOW, instead of calling lock_mount() have finish_automount() do it manually,
+> _without_ the "move into overmount and retry" part.  And leave crossing into
+> the results to the caller of follow_automount(), which simplifies it a lot.
+> 
+> Moral: if you end up with a lot of glue working around the calling conventions
+> of something, perhaps these calling conventions are simply wrong...
+> 
+> Fixes: 8aef18845266 (VFS: Fix vfsmount overput on simultaneous automount)
+> Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
 
-Transaction number 000399577OBK have been approved for release
-through VISA ELECTRON ATM Card.
+I mean, just reading this is awefully complicated but the code seems
+fine.
+Acked-by: Christian Brauner <christian.brauner@ubuntu.com>
 
-Note that you are required to reconfirm your complete mailing address
-for delivery.
+> ---
+>  fs/namei.c     | 29 ++++-------------------------
+>  fs/namespace.c | 41 ++++++++++++++++++++++++++++++++++-------
+>  2 files changed, 38 insertions(+), 32 deletions(-)
+> 
+> diff --git a/fs/namei.c b/fs/namei.c
+> index d2720dc71d0e..bd036dfdb0d9 100644
+> --- a/fs/namei.c
+> +++ b/fs/namei.c
+> @@ -1133,11 +1133,9 @@ EXPORT_SYMBOL(follow_up);
+>   * - return -EISDIR to tell follow_managed() to stop and return the path we
+>   *   were called with.
+>   */
+> -static int follow_automount(struct path *path, struct nameidata *nd,
+> -			    bool *need_mntput)
+> +static int follow_automount(struct path *path, struct nameidata *nd)
+>  {
+>  	struct vfsmount *mnt;
+> -	int err;
+>  
+>  	if (!path->dentry->d_op || !path->dentry->d_op->d_automount)
+>  		return -EREMOTE;
+> @@ -1178,29 +1176,10 @@ static int follow_automount(struct path *path, struct nameidata *nd,
+>  		return PTR_ERR(mnt);
+>  	}
+>  
+> -	if (!mnt) /* mount collision */
+> -		return 0;
+> -
+> -	if (!*need_mntput) {
+> -		/* lock_mount() may release path->mnt on error */
+> -		mntget(path->mnt);
+> -		*need_mntput = true;
+> -	}
+> -	err = finish_automount(mnt, path);
+> -
+> -	switch (err) {
+> -	case -EBUSY:
+> -		/* Someone else made a mount here whilst we were busy */
+> +	if (!mnt)
+>  		return 0;
+> -	case 0:
+> -		path_put(path);
+> -		path->mnt = mnt;
+> -		path->dentry = dget(mnt->mnt_root);
+> -		return 0;
+> -	default:
+> -		return err;
+> -	}
+>  
+> +	return finish_automount(mnt, path);
+>  }
+>  
+>  /*
+> @@ -1258,7 +1237,7 @@ static int follow_managed(struct path *path, struct nameidata *nd)
+>  
+>  		/* Handle an automount point */
+>  		if (flags & DCACHE_NEED_AUTOMOUNT) {
+> -			ret = follow_automount(path, nd, &need_mntput);
+> +			ret = follow_automount(path, nd);
+>  			if (ret < 0)
+>  				break;
+>  			continue;
+> diff --git a/fs/namespace.c b/fs/namespace.c
+> index 5f0a80f17651..f1817eb5f87d 100644
+> --- a/fs/namespace.c
+> +++ b/fs/namespace.c
+> @@ -2823,6 +2823,7 @@ static int do_new_mount(struct path *path, const char *fstype, int sb_flags,
+>  
+>  int finish_automount(struct vfsmount *m, struct path *path)
+>  {
+> +	struct dentry *dentry = path->dentry;
+>  	struct mount *mnt = real_mount(m);
+>  	struct mountpoint *mp;
+>  	int err;
+> @@ -2832,21 +2833,47 @@ int finish_automount(struct vfsmount *m, struct path *path)
+>  	BUG_ON(mnt_get_count(mnt) < 2);
+>  
+>  	if (m->mnt_sb == path->mnt->mnt_sb &&
+> -	    m->mnt_root == path->dentry) {
+> +	    m->mnt_root == dentry) {
+>  		err = -ELOOP;
+> -		goto fail;
+> +		goto discard;
+>  	}
+>  
+> -	mp = lock_mount(path);
+> +	/*
+> +	 * we don't want to use lock_mount() - in this case finding something
+> +	 * that overmounts our mountpoint to be means "quitely drop what we've
+> +	 * got", not "try to mount it on top".
+> +	 */
+> +	inode_lock(dentry->d_inode);
+> +	if (unlikely(cant_mount(dentry))) {
+> +		err = -ENOENT;
+> +		goto discard1;
+> +	}
+> +	namespace_lock();
+> +	rcu_read_lock();
+> +	if (unlikely(__lookup_mnt(path->mnt, dentry))) {
 
-Reconfirm code 000399577OBK to the Director Mr. Patrick Masrellet on ( (
-atm.orabank@iname.com )) for further action.
+That means someone has already performed that mount in the meantime, I
+take it.
 
-Regards.
-ganbatar azzanayajg( Esq)
+> +		rcu_read_unlock();
+> +		err = 0;
+> +		goto discard2;
+> +	}
+> +	rcu_read_unlock();
+> +	mp = get_mountpoint(dentry);
+>  	if (IS_ERR(mp)) {
+>  		err = PTR_ERR(mp);
+> -		goto fail;
+> +		goto discard2;
+>  	}
+> +
+>  	err = do_add_mount(mnt, mp, path, path->mnt->mnt_flags | MNT_SHRINKABLE);
+>  	unlock_mount(mp);
+> -	if (!err)
+> -		return 0;
+> -fail:
+> +	if (unlikely(err))
+> +		goto discard;
+> +	mntput(m);
+
+Probably being dense here but better safe than sorry: this mntput()
+corresponds to the get_mountpoint() above, right?
