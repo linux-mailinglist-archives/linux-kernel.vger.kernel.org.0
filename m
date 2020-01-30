@@ -2,165 +2,108 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 21ADC14DB77
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Jan 2020 14:22:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C6EE614DB9C
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Jan 2020 14:27:19 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727378AbgA3NWu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 30 Jan 2020 08:22:50 -0500
-Received: from mx2.suse.de ([195.135.220.15]:52080 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727132AbgA3NWu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 30 Jan 2020 08:22:50 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id 8E969AB87;
-        Thu, 30 Jan 2020 13:22:47 +0000 (UTC)
-Date:   Thu, 30 Jan 2020 14:22:46 +0100
-From:   Petr Mladek <pmladek@suse.com>
-To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc:     Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 5/5] console: Introduce ->exit() callback
-Message-ID: <20200130132246.qesf6bupt4m3jnue@pathway.suse.cz>
-References: <20200127114719.69114-1-andriy.shevchenko@linux.intel.com>
- <20200127114719.69114-5-andriy.shevchenko@linux.intel.com>
- <20200128051711.GB115889@google.com>
- <20200128094418.GY32742@smile.fi.intel.com>
- <20200129134141.GA537@jagdpanzerIV.localdomain>
- <20200129142558.GF32742@smile.fi.intel.com>
+        id S1727351AbgA3N1S (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 30 Jan 2020 08:27:18 -0500
+Received: from mail-pl1-f194.google.com ([209.85.214.194]:38845 "EHLO
+        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726980AbgA3N1S (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 30 Jan 2020 08:27:18 -0500
+Received: by mail-pl1-f194.google.com with SMTP id t6so1356515plj.5
+        for <linux-kernel@vger.kernel.org>; Thu, 30 Jan 2020 05:27:17 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=gOwA34ILdL4oq25kJIGC/jLpgzcKXdQaeYAFeBcy1qU=;
+        b=dDfuPRQ92jWU0LIkSN1QSD3lU0PgvRSKLD0/H/oICMEy+QGRURjYYoIOpY68SEDw6v
+         cvyLpxh1WKa9yC3IKL5OQnHVPccffzEltS+6hPhxusl5diXJU0KSernxH89Df20Lo1dz
+         L2JvC+UEHFUOG92LTb0G0YPjVkfVQ/pbE/XDZ/kv4tjCSqBC56vDPSJbWio9hr9o0ts7
+         bxMsA7iYWbuTGQ0v5Kse7F2G7ayr0SvYqa20rj3t5z39NtpIyA6MmbjUjZOs73necCLF
+         j9t/5cckZplBRMr1E7VbV0Mqq05NAyNYlecxuoyeN+Bw+lO36miU8u2x015oZFk4T07e
+         eF+Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=gOwA34ILdL4oq25kJIGC/jLpgzcKXdQaeYAFeBcy1qU=;
+        b=TUnbfdc1tKV0Q+CHAB6c7pcbm2X4xWqFrvsgVA5hdJUlMJJe5vqhBPtnuL6iHgmrbq
+         f9LjG/RX4qwabGg8WTHRGuGTZVAyyRDuQvw7OZb+7Llsmev6g9HfHoD5i8wIhsi9IMqD
+         rnAxzWff8wmXMzGOLlyvr937oHgWEPVMyI4cDup01T1Ug1OJOWm6MDXJbYL/SR2EOOPa
+         L71lPbDZDtx5Z4WIFiKbdZAyNI+wMoXj1Tv5bnD8Z0VcP5CGfIGdnw5A3UCCD0bRu/ss
+         Dh+Y0vxz84hdJ8SrCjZkGKT8lbQ34KGgHOVPiBG1llXr+OT9VJfl3r6LmTObJTKd/dj/
+         LCOw==
+X-Gm-Message-State: APjAAAUxFDj7qM18Oo5ktzBTTYUqUsIqyM5ppj90BU+zoDC5E4t0/kCY
+        tf1hb9piM1Z9hibxfZYW+mROcuJllbXhHg==
+X-Google-Smtp-Source: APXvYqybNMBlwVwbr5VBc7GgFdTLkBEI3jWbTqxHCsdTz2w9rxxEqg9xiNLt2XBIsvjvMyBQ31KyKg==
+X-Received: by 2002:a17:90a:d783:: with SMTP id z3mr5766375pju.3.1580390836630;
+        Thu, 30 Jan 2020 05:27:16 -0800 (PST)
+Received: from localhost ([45.127.45.97])
+        by smtp.gmail.com with ESMTPSA id w187sm6757314pfw.62.2020.01.30.05.27.14
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 30 Jan 2020 05:27:15 -0800 (PST)
+From:   Amit Kucheria <amit.kucheria@linaro.org>
+To:     linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        bjorn.andersson@linaro.org, swboyd@chromium.org,
+        sivaa@codeaurora.org, Andy Gross <agross@kernel.org>
+Cc:     Amit Kucheria <amit.kucheria@verdurent.com>,
+        linux-pm@vger.kernel.org
+Subject: [PATCH v4 0/7] thermal: tsens: Handle critical interrupts
+Date:   Thu, 30 Jan 2020 18:57:03 +0530
+Message-Id: <cover.1580390127.git.amit.kucheria@linaro.org>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200129142558.GF32742@smile.fi.intel.com>
-User-Agent: NeoMutt/20170912 (1.9.0)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed 2020-01-29 16:25:58, Andy Shevchenko wrote:
-> On Wed, Jan 29, 2020 at 10:41:41PM +0900, Sergey Senozhatsky wrote:
-> > On (20/01/28 11:44), Andy Shevchenko wrote:
-> > > > If the console was not registered (hence not enabled) is it still required
-> > > > to call ->exit()? Is there a requirement that ->exit() should handle such
-> > > > cases?
-> > > 
-> > > This is a good point. The ->exit() purpose is to keep balance for whatever
-> > > happened at ->setup().
-> > > 
-> > > But ->setup() is being called either when we have has_preferred == false or
-> > > when we got no matching we call it for all such consoles, till it returns an
-> > > error (can you elaborate the logic behind it?).
-> > 
-> > ->match() does alias matching and ->setup(). If alias matching failed,
-> > exact name match takes place. We don't call ->setup() for all consoles,
-> > but only for those that have exact name match:
-> > 
-> > 	if (strcmp(c->name, newcon->name) != 0)
-> > 		continue;
-> > 
-> > As to why we don't stop sooner in that loop - I need to to do some
-> > archaeology. We need to have CON_CONSDEV at proper place, which is
-> > IIRC the last matching console.
-> > 
-> > Pretty much every time we tried to change the logic we ended up
-> > reverting the changes.
-> 
-> I understand. Seems the ->setup() has to be idempotent. We can tell the same
-> for ->exit() in some comment.
+TSENS IP v2.x supports critical interrupts and v2.3+ adds watchdog support
+in case the FSM is stuck. Enable support in the driver.
 
-I believe that ->setup() can succeesfully be called only once.
-It is tricky like hell:
+This series was generated on top of linux-next from 20200130 to integrate
+some patches that that are queued currently.
 
-1st piece:
+Changes from v3:
+- Remove the DTS changes that are already queued
+- Fix review comments by Bjorn
+- Fixup patch description to clarify that we don't use TSENS critical
+  interrupts in Linux, but need it for the watchdog support that uses the
+  same HW irq line.
+- Separate kernel-doc fixes into a separate patch.
 
-	if (!has_preferred || bcon || !console_drivers)
-		has_preferred = preferred_console >= 0;
+Changes from v2:
+- Handle old DTBs w/o critical irq in the same way as fix sent for 5.5
 
-  note:
-
-     + "has_preferred" is updated here only when it was not "true" before.
-     + "has_preferred" is set to "true" here only when "preferred_console"
-       is set in __add_preferred_console()
-
-2nd piece:
-
-  + __add_preferred_console() is called for console defined on
-    the command line. "preferred_console" points to the console
-    defined by the last "console=" parameter.
-
-3rd piece:
-
-  + "has_preferred" is set to "true" later in register_console() when
-    a console with tty binding gets enabled.
-
-4th piece:
-
-  + The code:
-
-	/*
-	 *	See if we want to use this console driver. If we
-	 *	didn't select a console we take the first one
-	 *	that registers here.
-	 */
-	if (!has_preferred)
-		... try to enable the given console
-
-   The comment is a bit unclear. The code is used as a fallback
-   when no console was defined on the command line.
-
-   Note that "has_preferred" is always true when "preferred_console"
-   was defined via command line, see 2nd piece above.
+Changes from v1:
+- Make tsens_features non-const to allow run time detection of features
+- Pass tsens_sensor around as a const
+- Fix a bug to release dev pointer in success path
+- Address review comments from Bjorn and Stephen (thanks for the review)
+- Add msm8998 and msm8996 DTSI changes for critical interrupts
 
 
-By other words:
 
-  + The fallback code (4th piece) is called only when
-    "preferred_console" was not defined on the command line.
+Amit Kucheria (7):
+  drivers: thermal: tsens: Pass around struct tsens_sensor as a constant
+  drivers: thermal: tsens: use simpler variables
+  drivers: thermal: tsens: Release device in success path
+  drivers: thermal: tsens: Add critical interrupt support
+  drivers: thermal: tsens: Add watchdog support
+  drivers: thermal: tsens: kernel-doc fixup
+  drivers: thermal: tsens: Remove unnecessary irq flag
 
-  + The cycle below matches the given console only when
-    it was defined on the command line.
+ drivers/thermal/qcom/tsens-8960.c   |   2 +-
+ drivers/thermal/qcom/tsens-common.c | 191 ++++++++++++++++++++++++----
+ drivers/thermal/qcom/tsens-v2.c     |  18 ++-
+ drivers/thermal/qcom/tsens.c        |  26 +++-
+ drivers/thermal/qcom/tsens.h        |  94 +++++++++++++-
+ 5 files changed, 300 insertions(+), 31 deletions(-)
 
+-- 
+2.20.1
 
-As a result, I believe that ->setup() could never be called
-in both paths for the same console. Especially I think that
-fallback code should not be used when the console was defined on
-the command line.
-
-I am not 100% sure but I am ready to risk this. Anyway, I think
-that many ->setup() callbacks are not ready to be successfully
-called twice.
-
-(Sigh, I have started to clean up this code two years ago.
-But I have never found time to finish the patchset. It is
-such a huge mess.)
-
-> Can you describe, btw, struct console in kernel doc format?
-> It will be very helpful!
-> 
-> > > In both cases we will get the console to have CON_ENABLED flag set.
-> > 
-> > And there are sneaky consoles that have CON_ENABLED before we even
-> > register them.
-> 
-> So, taking into consideration my comment to the previous patch, what would be
-> suggested guard here?
-> 
-> For a starter something like this?
-> 
->   if ((console->flags & CON_ENABLED) && console->exit)
-> 	console->exit(console);
-
-I would do:
-
-	if (!res && console->exit)
-		console->exit(console);
-
-I mean. I would call ->exit() only when console->setup() succeeded in
-register_console(). In this case, the console was later added to
-the console_drivers list.
-
-Best Regards,
-Petr
