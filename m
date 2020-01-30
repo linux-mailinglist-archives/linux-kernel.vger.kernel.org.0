@@ -2,42 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C893714E1D3
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Jan 2020 19:48:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id F371C14E125
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Jan 2020 19:42:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731436AbgA3Sru (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 30 Jan 2020 13:47:50 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58494 "EHLO mail.kernel.org"
+        id S1730243AbgA3Slr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 30 Jan 2020 13:41:47 -0500
+Received: from mail.kernel.org ([198.145.29.99]:49736 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731428AbgA3Srq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 30 Jan 2020 13:47:46 -0500
+        id S1729435AbgA3Sln (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 30 Jan 2020 13:41:43 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0E8F2205F4;
-        Thu, 30 Jan 2020 18:47:43 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9EA00205F4;
+        Thu, 30 Jan 2020 18:41:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1580410064;
-        bh=Icfs7dzmGLlT+hgorSORj+xu364BUM8vtKrQpAU/dAM=;
+        s=default; t=1580409703;
+        bh=VqDmHkwwQXUzjmkuYi1yVAWOTe1K9YymAZQllXMZIEg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=n0gSChXRtguDA6a1ugbq9I8WBW5ejasrp2sItSEdU3qMjqtyO4bh6T6syRjcrHnct
-         3+NUyZ1XRXw4Wxom+3HvH0kCc5i/cKlUetMoQtrBniBdNWvxvebe1KJlyNU96rwN9r
-         LfqPw6vHejxFS1JA8bTkvCGiDSsZABiqoDuvngqo=
+        b=zuLpxkRCBTfLL1UxoJT2CfA//Z8FvFGOH1uwFCTJVJCep+wt7JgCE7SeMIy/56vNN
+         fgmnQCjmWJF+lftcEj/Bna1G/01+Wnhi3qgGEVPeb/7Yh+Z3AF4gFm62EUFKf+uKLf
+         Wa2Ku6Kbhb0tGjyBpZOsk8twuGIMJjLk/2TsU2/A=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Merlijn Wajer <merlijn@wizzup.org>,
-        Pavel Machek <pavel@ucw.cz>,
-        Sebastian Reichel <sre@kernel.org>,
-        Tony Lindgren <tony@atomide.com>,
-        Kishon Vijay Abraham I <kishon@ti.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 32/55] phy: cpcap-usb: Prevent USB line glitches from waking up modem
+        stable@vger.kernel.org, Paul Cercueil <paul@crapouillou.net>,
+        Artur Rojek <contact@artur-rojek.eu>,
+        Sebastian Reichel <sebastian.reichel@collabora.com>
+Subject: [PATCH 5.5 56/56] power/supply: ingenic-battery: Dont change scale if theres only one
 Date:   Thu, 30 Jan 2020 19:39:13 +0100
-Message-Id: <20200130183614.470977612@linuxfoundation.org>
+Message-Id: <20200130183619.041405246@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200130183608.563083888@linuxfoundation.org>
-References: <20200130183608.563083888@linuxfoundation.org>
+In-Reply-To: <20200130183608.849023566@linuxfoundation.org>
+References: <20200130183608.849023566@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -47,94 +44,54 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Tony Lindgren <tony@atomide.com>
+From: Paul Cercueil <paul@crapouillou.net>
 
-[ Upstream commit 63078b6ba09e842f09df052c5728857389fddcd2 ]
+commit 86b9182df8bb12610d4d6feac45a69f3ed57bfd2 upstream.
 
-The micro-USB connector on Motorola Mapphone devices can be muxed between
-the SoC and the mdm6600 modem. But even when used for the SoC, configuring
-the PHY with ID pin grounded will wake up the modem from idle state. Looks
-like the issue is probably caused by line glitches.
+The ADC in the JZ4740 can work either in high-precision mode with a 2.5V
+range, or in low-precision mode with a 7.5V range. The code in place in
+this driver will select the proper scale according to the maximum
+voltage of the battery.
 
-We can prevent the glitches by using a previously unknown mode of the
-GPIO mux to prevent the USB lines from being connected to the moden while
-configuring the USB PHY, and enable the USB lines after configuring the
-PHY.
+The JZ4770 however only has one mode, with a 6.6V range. If only one
+scale is available, there's no need to change it (and nothing to change
+it to), and trying to do so will fail with -EINVAL.
 
-Note that this only prevents waking up mdm6600 as regular USB A-host mode,
-and does not help when connected to a lapdock. The lapdock specific issue
-still needs to be debugged separately.
+Fixes: fb24ccfbe1e0 ("power: supply: add Ingenic JZ47xx battery driver.")
 
-Cc: Merlijn Wajer <merlijn@wizzup.org>
-Cc: Pavel Machek <pavel@ucw.cz>
-Cc: Sebastian Reichel <sre@kernel.org>
-Acked-by: Pavel Machek <pavel@ucw.cz>
-Signed-off-by: Tony Lindgren <tony@atomide.com>
-Signed-off-by: Kishon Vijay Abraham I <kishon@ti.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Signed-off-by: Paul Cercueil <paul@crapouillou.net>
+Acked-by: Artur Rojek <contact@artur-rojek.eu>
+Cc: stable@vger.kernel.org
+Signed-off-by: Sebastian Reichel <sebastian.reichel@collabora.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- drivers/phy/motorola/phy-cpcap-usb.c | 18 +++++++++++++++---
- 1 file changed, 15 insertions(+), 3 deletions(-)
+ drivers/power/supply/ingenic-battery.c |   15 +++++++++++----
+ 1 file changed, 11 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/phy/motorola/phy-cpcap-usb.c b/drivers/phy/motorola/phy-cpcap-usb.c
-index 4ba3634009afc..593c77dbde2eb 100644
---- a/drivers/phy/motorola/phy-cpcap-usb.c
-+++ b/drivers/phy/motorola/phy-cpcap-usb.c
-@@ -115,7 +115,7 @@ struct cpcap_usb_ints_state {
- enum cpcap_gpio_mode {
- 	CPCAP_DM_DP,
- 	CPCAP_MDM_RX_TX,
--	CPCAP_UNKNOWN,
-+	CPCAP_UNKNOWN_DISABLED,	/* Seems to disable USB lines */
- 	CPCAP_OTG_DM_DP,
- };
+--- a/drivers/power/supply/ingenic-battery.c
++++ b/drivers/power/supply/ingenic-battery.c
+@@ -100,10 +100,17 @@ static int ingenic_battery_set_scale(str
+ 		return -EINVAL;
+ 	}
  
-@@ -379,7 +379,8 @@ static int cpcap_usb_set_uart_mode(struct cpcap_phy_ddata *ddata)
- {
- 	int error;
- 
--	error = cpcap_usb_gpio_set_mode(ddata, CPCAP_DM_DP);
-+	/* Disable lines to prevent glitches from waking up mdm6600 */
-+	error = cpcap_usb_gpio_set_mode(ddata, CPCAP_UNKNOWN_DISABLED);
- 	if (error)
- 		goto out_err;
- 
-@@ -406,6 +407,11 @@ static int cpcap_usb_set_uart_mode(struct cpcap_phy_ddata *ddata)
- 	if (error)
- 		goto out_err;
- 
-+	/* Enable UART mode */
-+	error = cpcap_usb_gpio_set_mode(ddata, CPCAP_DM_DP);
-+	if (error)
-+		goto out_err;
+-	return iio_write_channel_attribute(bat->channel,
+-					   scale_raw[best_idx],
+-					   scale_raw[best_idx + 1],
+-					   IIO_CHAN_INFO_SCALE);
++	/* Only set scale if there is more than one (fractional) entry */
++	if (scale_len > 2) {
++		ret = iio_write_channel_attribute(bat->channel,
++						  scale_raw[best_idx],
++						  scale_raw[best_idx + 1],
++						  IIO_CHAN_INFO_SCALE);
++		if (ret)
++			return ret;
++	}
 +
- 	return 0;
++	return 0;
+ }
  
- out_err:
-@@ -418,7 +424,8 @@ static int cpcap_usb_set_usb_mode(struct cpcap_phy_ddata *ddata)
- {
- 	int error;
- 
--	error = cpcap_usb_gpio_set_mode(ddata, CPCAP_OTG_DM_DP);
-+	/* Disable lines to prevent glitches from waking up mdm6600 */
-+	error = cpcap_usb_gpio_set_mode(ddata, CPCAP_UNKNOWN_DISABLED);
- 	if (error)
- 		return error;
- 
-@@ -458,6 +465,11 @@ static int cpcap_usb_set_usb_mode(struct cpcap_phy_ddata *ddata)
- 	if (error)
- 		goto out_err;
- 
-+	/* Enable USB mode */
-+	error = cpcap_usb_gpio_set_mode(ddata, CPCAP_OTG_DM_DP);
-+	if (error)
-+		goto out_err;
-+
- 	return 0;
- 
- out_err:
--- 
-2.20.1
-
+ static enum power_supply_property ingenic_battery_properties[] = {
 
 
