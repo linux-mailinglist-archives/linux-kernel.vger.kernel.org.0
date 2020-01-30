@@ -2,86 +2,53 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C4AFE14E0BA
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Jan 2020 19:25:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 43C9A14E05A
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Jan 2020 19:00:30 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729535AbgA3SZF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 30 Jan 2020 13:25:05 -0500
-Received: from mx2.suse.de ([195.135.220.15]:51550 "EHLO mx2.suse.de"
+        id S1727524AbgA3SAR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 30 Jan 2020 13:00:17 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35642 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729518AbgA3SZE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 30 Jan 2020 13:25:04 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id 96B7BAF21;
-        Thu, 30 Jan 2020 18:25:02 +0000 (UTC)
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-In-Reply-To: <20200128141958.vwbxoqglt5gw4xj5@wunner.de>
-Date:   Thu, 30 Jan 2020 17:11:55 +0100
-Cc:     "Matthias Brugger" <matthias.bgg@gmail.com>,
-        <matthias.bgg@kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        "Matthias Brugger" <mbrugger@suse.com>,
-        "Scott Branden" <sbranden@broadcom.com>,
-        <gregkh@linuxfoundation.org>, <linux-kernel@vger.kernel.org>,
-        "Ray Jui" <rjui@broadcom.com>,
-        "Stephen Boyd" <swboyd@chromium.org>,
-        "Florian Fainelli" <f.fainelli@gmail.com>,
-        <bcm-kernel-feedback-list@broadcom.com>,
-        <linux-rpi-kernel@lists.infradead.org>,
-        <linux-serial@vger.kernel.org>, <jslaby@suse.com>
-Subject: Re: [PATCH] serial: 8250_early: Add earlycon for BCM2835 aux uart
-From:   "Nicolas Saenz Julienne" <nsaenzjulienne@suse.de>
-To:     "Lukas Wunner" <lukas@wunner.de>
-Message-Id: <C099APQHQAHB.3Q9UVYJYT98TN@linux-9qgx>
+        id S1726514AbgA3SAQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 30 Jan 2020 13:00:16 -0500
+Subject: Re: [GIT PULL] power-supply changes for 5.6
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1580407216;
+        bh=aVRiGFRtERdZiobP1u7JD7R+PuRRALh/IlDSc9WjZpU=;
+        h=From:In-Reply-To:References:Date:To:Cc:From;
+        b=1cJGJPUROnqCx5XF3PZbEnyEATcojZViLwnEVuWmvPCmSEELhnVoqxY1S96F10mTn
+         ++tvzhl06TqEbqougJlePrzt4+lXC+NWdzF5Cr6FXSPEVCdOJrC9EO7ngP5hrPZUmS
+         jJx+DyP55bB8el5AaCUPxERxalnjFqoSbArCFlwA=
+From:   pr-tracker-bot@kernel.org
+In-Reply-To: <20200129224926.owfuj6mfya4crpwm@earth.universe>
+References: <20200129224926.owfuj6mfya4crpwm@earth.universe>
+X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
+X-PR-Tracked-Message-Id: <20200129224926.owfuj6mfya4crpwm@earth.universe>
+X-PR-Tracked-Remote: ssh://git@gitolite.kernel.org/pub/scm/linux/kernel/git/sre/linux-power-supply.git
+ tags/for-v5.6
+X-PR-Tracked-Commit-Id: 3d32a8437c051013352baf5cbd0844fcf5d2f409
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: 4cadc60d6bcfee9c626d4b55e9dc1475d21ad3bb
+Message-Id: <158040721634.2766.17366184752319645480.pr-tracker-bot@kernel.org>
+Date:   Thu, 30 Jan 2020 18:00:16 +0000
+To:     Sebastian Reichel <sre@kernel.org>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue Jan 28, 2020 at 3:19 PM, Lukas Wunner wrote:
-> On Tue, Jan 28, 2020 at 01:42:21PM +0100, Nicolas Saenz Julienne wrote:
-> > I'm testing this by booting directly from RPi4's bootloader. And it
-> > works as long as I add this to config.txt:
-> >=20
-> > enable_uart=3D1
-> > gpu_freq=3D500
-> >=20
-> > Which AFAIK blocks frequency scalin on the GPU and fixes the clock to a
-> > point where the serial is set at 115200 bauds.
-> >=20
-> > Ideally it'd be nice to be able to query the clock frequency, and
-> > recalculate the divisors based on that. But I don't know if it's
-> > feasible at that point in the boot process.
->
-> Well, we don't even support adjusting the baudrate *after* the kernel
-> has booted.
+The pull request you sent on Wed, 29 Jan 2020 23:49:26 +0100:
 
-Don't 8250 uarts have a clk divisor? I've seen other 8250 earlycon
-drivers do this (see 8250_ingenic.c), that said I think it's a lost
-cause for us.
+> ssh://git@gitolite.kernel.org/pub/scm/linux/kernel/git/sre/linux-power-supply.git tags/for-v5.6
 
-BTW did you had the oportunity to have a go at the patch?
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/4cadc60d6bcfee9c626d4b55e9dc1475d21ad3bb
 
-> The problem is that in mainline, bcm2835_defconfig contains:
-> CONFIG_CPU_FREQ_DEFAULT_GOV_CONSERVATIVE=3Dy
->
-> Likewise in the Foundation's downstream tree, bcmrpi_defconfig as well
-> as bcm2711_defconfig and bcm2709_defconfig contain:
-> CONFIG_CPU_FREQ_DEFAULT_GOV_POWERSAVE=3Dy
->
-> In contrast to this, we set the following on Revolution Pi devices:
-> CONFIG_CPU_FREQ_DEFAULT_GOV_PERFORMANCE=3Dy
->
-> Downclocking influences not only the uart1 baud rate but also the
-> spi0 clock. We attach Ethernet chips to spi0, throughput was
-> significantly worse with the ondemand governor (which is what we
-> used previously). We felt that maximum Ethernet performance
-> outweighs the relatively small powersaving gains.
+Thank you!
 
-In that regard I suggest you use the upstream cpufreq driver which
-behaves properly in that regard. It disables GPU freq scaling, so as to
-change CPU frequencies without SPI/I2C/UART issues.
-
-Regards,
-Nicolas
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.wiki.kernel.org/userdoc/prtracker
