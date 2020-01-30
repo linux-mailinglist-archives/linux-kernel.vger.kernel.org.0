@@ -2,37 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 084B514E1E6
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Jan 2020 19:48:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 484B114E180
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Jan 2020 19:45:23 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731572AbgA3Ssc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 30 Jan 2020 13:48:32 -0500
-Received: from mail.kernel.org ([198.145.29.99]:59464 "EHLO mail.kernel.org"
+        id S1728063AbgA3SpD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 30 Jan 2020 13:45:03 -0500
+Received: from mail.kernel.org ([198.145.29.99]:54370 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731553AbgA3Ss1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 30 Jan 2020 13:48:27 -0500
+        id S1730930AbgA3SpB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 30 Jan 2020 13:45:01 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 72DFF2082E;
-        Thu, 30 Jan 2020 18:48:26 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id F1AA1205F4;
+        Thu, 30 Jan 2020 18:44:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1580410106;
-        bh=99BtX/pBn3r/H1nNWbh9nCTgSnUF/ehvAdurJE7FIyo=;
+        s=default; t=1580409900;
+        bh=1CJUUDFCemZcrasaD10onhLEDNjLB5/mzrNSPYQzFng=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=bkj7JTn52yWQbBt90+yPnsUO+LZPbwnXwxJ+tAo7gIRC8p/Utsg3eCip+8ZSAnjYZ
-         GSKM4FV5bpy2nRiMA3ZsfBPQHCEml84M+DPx9r/GEvKEFAriLyMlt80G0EduLCf+Qq
-         lRHzyc0WEeaLXi0A7QmfHPTavKn52XopD2rf1/XA=
+        b=lauwEwn1EQfcHg1x79eCe1jK3/hh1iDqyunv33LRYLTJckl9oBga8cpqNWbbQQLWm
+         89Wa4HCeL2vf1+jiUKVjO+yNrR8DDggqa79ingrzrOdLVLPD4QGajQTis16uB7/tmP
+         HRjhQ4JlYeavgBpKp+cRl1tMuJmDfL6689EstOVw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Malcolm Priestley <tvboxspy@gmail.com>
-Subject: [PATCH 4.19 12/55] staging: vt6656: Fix false Tx excessive retries reporting.
+        stable@vger.kernel.org, Jiange Zhao <Jiange.Zhao@amd.com>,
+        Alex Deucher <alexander.deucher@amd.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 5.4 077/110] drm/amdgpu/SRIOV: add navi12 pci id for SRIOV (v2)
 Date:   Thu, 30 Jan 2020 19:38:53 +0100
-Message-Id: <20200130183611.067371290@linuxfoundation.org>
+Message-Id: <20200130183623.425577059@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200130183608.563083888@linuxfoundation.org>
-References: <20200130183608.563083888@linuxfoundation.org>
+In-Reply-To: <20200130183613.810054545@linuxfoundation.org>
+References: <20200130183613.810054545@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -42,39 +44,36 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Malcolm Priestley <tvboxspy@gmail.com>
+From: Jiange Zhao <Jiange.Zhao@amd.com>
 
-commit 9dd631fa99dc0a0dfbd191173bf355ba30ea786a upstream.
+[ Upstream commit 57d4f3b7fd65b56f98b62817f27c461142c0bc2a ]
 
-The driver reporting  IEEE80211_TX_STAT_ACK is not being handled
-correctly. The driver should only report on TSR_TMO flag is not
-set indicating no transmission errors and when not IEEE80211_TX_CTL_NO_ACK
-is being requested.
+Add Navi12 PCI id support.
 
-Cc: stable <stable@vger.kernel.org>
-Signed-off-by: Malcolm Priestley <tvboxspy@gmail.com>
-Link: https://lore.kernel.org/r/340f1f7f-c310-dca5-476f-abc059b9cd97@gmail.com
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+v2: flag as experimental for now (Alex)
 
+Signed-off-by: Jiange Zhao <Jiange.Zhao@amd.com>
+Reviewed-by: Alex Deucher <alexander.deucher@amd.com>
+Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/staging/vt6656/int.c |    6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ drivers/gpu/drm/amd/amdgpu/amdgpu_drv.c | 1 +
+ 1 file changed, 1 insertion(+)
 
---- a/drivers/staging/vt6656/int.c
-+++ b/drivers/staging/vt6656/int.c
-@@ -97,9 +97,11 @@ static int vnt_int_report_rate(struct vn
+diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_drv.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_drv.c
+index 33a1099e2f33e..bb9a2771a0f9e 100644
+--- a/drivers/gpu/drm/amd/amdgpu/amdgpu_drv.c
++++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_drv.c
+@@ -1023,6 +1023,7 @@ static const struct pci_device_id pciidlist[] = {
  
- 	info->status.rates[0].count = tx_retry;
+ 	/* Navi12 */
+ 	{0x1002, 0x7360, PCI_ANY_ID, PCI_ANY_ID, 0, 0, CHIP_NAVI12|AMD_EXP_HW_SUPPORT},
++	{0x1002, 0x7362, PCI_ANY_ID, PCI_ANY_ID, 0, 0, CHIP_NAVI12|AMD_EXP_HW_SUPPORT},
  
--	if (!(tsr & (TSR_TMO | TSR_RETRYTMO))) {
-+	if (!(tsr & TSR_TMO)) {
- 		info->status.rates[0].idx = idx;
--		info->flags |= IEEE80211_TX_STAT_ACK;
-+
-+		if (!(info->flags & IEEE80211_TX_CTL_NO_ACK))
-+			info->flags |= IEEE80211_TX_STAT_ACK;
- 	}
- 
- 	ieee80211_tx_status_irqsafe(priv->hw, context->skb);
+ 	{0, 0, 0}
+ };
+-- 
+2.20.1
+
 
 
