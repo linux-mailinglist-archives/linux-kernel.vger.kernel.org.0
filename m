@@ -2,171 +2,130 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 17AC014E487
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Jan 2020 22:13:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EE08F14E4B5
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Jan 2020 22:17:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727948AbgA3VNJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 30 Jan 2020 16:13:09 -0500
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:46964 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727927AbgA3VNH (ORCPT
+        id S1727359AbgA3VRA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 30 Jan 2020 16:17:00 -0500
+Received: from mail-pl1-f193.google.com ([209.85.214.193]:38690 "EHLO
+        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726739AbgA3VQ7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 30 Jan 2020 16:13:07 -0500
-Received: by mail-pg1-f193.google.com with SMTP id z124so2273531pgb.13
-        for <linux-kernel@vger.kernel.org>; Thu, 30 Jan 2020 13:13:06 -0800 (PST)
+        Thu, 30 Jan 2020 16:16:59 -0500
+Received: by mail-pl1-f193.google.com with SMTP id t6so1827847plj.5;
+        Thu, 30 Jan 2020 13:16:59 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=Oa49p/xGTn6NCKmNAd8eGM0hUYKRobdCqjFRXtL8/kA=;
-        b=YztztHo+5GQxLT621C7Rqngv72wMhREmQYp/vsbj0VtWWHVT1+KSLTkNKq3nPnnT77
-         u96ZJxht7JRHvwCE695YNRG5Uha2O2igcMyHdsHpf0hmrv3tbv/L2mWXHlqFgY431VFB
-         sFrWLJFUmpQYg22ekzG2C7G5D1oa04m585Vtc=
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=9z1ji1XI9x2ElU3JVLNHC7IHbODO5Yx8KS5lA50OWDQ=;
+        b=is7/Ki7qeNGRZqe0Km8A5jUlEAXkI1wDK/+YG7VPYiPEk29SbSYxW0Dv1mbuXSIyR6
+         vuS9PsvapTy8ncL1Gzh8ldUrB39x5FSMakIuk6zDLk55zGp2aaA6JY5+Mt4XDQI9H7/J
+         FSb9d1E/P50QonRK+QNen2zUVG/HObb5VrlpSc2B9+X7djx3nzepyisCOBGhBDVEwHwz
+         dRXPaKYC+lLj080/rwtbf9/xG39DgqGJg36GC/6sCiSAkAE5D7l1x9mpWA9PIvvGYLcU
+         Tp7Vt6YClp0RBuEWX53UEP98SWkIibYB09KVhJz3oCSIIPaoGapq24rlMO3wj8+XssRp
+         NqEA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=Oa49p/xGTn6NCKmNAd8eGM0hUYKRobdCqjFRXtL8/kA=;
-        b=lHMB9+frdyQGGT1rZGr0sXgR4iVlGUSbUJg6lJLh2SMuVFulIpVuXlUy6KbSw59sh/
-         LZrBVuqDO+pfb6s4Bdze9/iF276IPSN0gfzP4bLJ08R2D9EA/PdkZPP+UC6zmHLptB/M
-         HnhUtD29tP1TM0x0GVzIs/9VEoRQXQQS4Pe9XJrhn0P0IAwx4OFczS8AgSfg8r+cOFRt
-         QOZoDtk9Zrexr5fMv2n2Zv0fIPgZIgMAY/qIvimDUBA0MSFun4JydrnXq07MwIchzdMu
-         ZbmCo7/ishO2ykP2dJLc6akVf2O/3g/gY92eel0SUAW77V0Xhy+RZLXnLqzmwO80L2wH
-         XMVg==
-X-Gm-Message-State: APjAAAVzdskviMT+K+3DJ4Gttf07iAOc3atlOT/GzKWsp3YntWpX/iYP
-        QR2qtQsPUJmxjcc7b5y+JTJByg==
-X-Google-Smtp-Source: APXvYqzzw2CG5kff+mpG3Nv7sadrfFm8uoc1EhB2TT6G2I2DqhJX1YdC+8eq25u2MR3IrmdXmtro/w==
-X-Received: by 2002:a62:1d07:: with SMTP id d7mr6747690pfd.159.1580418786161;
-        Thu, 30 Jan 2020 13:13:06 -0800 (PST)
-Received: from tictac2.mtv.corp.google.com ([2620:15c:202:1:24fa:e766:52c9:e3b2])
-        by smtp.gmail.com with ESMTPSA id ci5sm4343871pjb.5.2020.01.30.13.13.05
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 30 Jan 2020 13:13:05 -0800 (PST)
-From:   Douglas Anderson <dianders@chromium.org>
-To:     Rob Herring <robh@kernel.org>, Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     Jeffrey Hugo <jhugo@codeaurora.org>,
-        Taniya Das <tdas@codeaurora.org>, jeffrey.l.hugo@gmail.com,
-        linux-arm-msm@vger.kernel.org, harigovi@codeaurora.org,
-        devicetree@vger.kernel.org, mka@chromium.org,
-        kalyan_t@codeaurora.org, Mark Rutland <mark.rutland@arm.com>,
-        linux-clk@vger.kernel.org, hoegsberg@chromium.org,
-        Douglas Anderson <dianders@chromium.org>,
-        linux-kernel@vger.kernel.org, Rob Herring <robh+dt@kernel.org>
-Subject: [PATCH v3 15/15] arm64: dts: sc7180: Add clock controller nodes
-Date:   Thu, 30 Jan 2020 13:12:31 -0800
-Message-Id: <20200130131220.v3.15.I1a4b93fb005791e29a9dcf288fc8bd459a555a59@changeid>
-X-Mailer: git-send-email 2.25.0.341.g760bfbb309-goog
-In-Reply-To: <20200130211231.224656-1-dianders@chromium.org>
-References: <20200130211231.224656-1-dianders@chromium.org>
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=9z1ji1XI9x2ElU3JVLNHC7IHbODO5Yx8KS5lA50OWDQ=;
+        b=TAsLT1Pvg0vSDND2ppLyHSIUZH17/FmNewMOpv1jAbxVF45aWGQHDjwzBJn1jzSCXH
+         vrtrmB8OWNRFXoOMW1SDvi84sSl2PD+W0Oq9NSUGiwNdNbQanW1DwCpTgKFRRfnDLYLg
+         2g2nTX4+rfW/kNHXY+GR2x/SBTp4LyCIk6vtllvzDaAGginDI+bv9G2JRFd81bmhRN+f
+         GwfHuueV31EPNbg2/1gZ0BwtDP+o4ikZ/YO1M0qcjv68Zk56RpnQ8bXIqWBm0xIDFh5Q
+         s6alBGB3OrlA7XJrVTVy1K6ptw5Z2LSmhe1t67dOsarjzJHD90p4zmWcsFkysz60/F0r
+         AEpQ==
+X-Gm-Message-State: APjAAAU5jwYASvHowXY4jHPdomJrmXT8ATCexUlywBZoNTPTAZ7V0+bT
+        ypFunqqjmTY+MUo2yvRbzCzM2ydF
+X-Google-Smtp-Source: APXvYqyAxiLT8RkiPIpI9BPPOn+XovBZeBsYegjSLOJM+l5K7R3lODPuNbxMhuukJ+NxGREahe2nsQ==
+X-Received: by 2002:a17:902:7b92:: with SMTP id w18mr6584659pll.72.1580419019050;
+        Thu, 30 Jan 2020 13:16:59 -0800 (PST)
+Received: from [192.168.0.16] ([75.167.220.149])
+        by smtp.gmail.com with ESMTPSA id e6sm7694489pfh.32.2020.01.30.13.16.58
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 30 Jan 2020 13:16:58 -0800 (PST)
+Subject: Re: [REGRESSION][BISECTED] 5.5-rc suspend/resume failure caused by
+ patch a4f55d8b8c14 ("usb: hub: Check device descriptor before resusciation")
+To:     Alan Stern <stern@rowland.harvard.edu>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     David Heinzelmann <heinzelmann.david@gmail.com>,
+        linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org
+References: <Pine.LNX.4.44L0.2001231035250.1518-100000@iolanthe.rowland.org>
+From:   Paul Zimmerman <pauldzim@gmail.com>
+Message-ID: <482da576-e945-b804-3d36-65aee142e645@gmail.com>
+Date:   Thu, 30 Jan 2020 14:16:57 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <Pine.LNX.4.44L0.2001231035250.1518-100000@iolanthe.rowland.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Taniya Das <tdas@codeaurora.org>
+Hi Alan,
 
-Add the display, video & graphics clock controller nodes supported on
-SC7180.
+On 1/23/20 8:50 AM, Alan Stern wrote:
+> On Wed, 22 Jan 2020, Paul Zimmerman wrote:
+> 
+>>> Still, since there was no real connection change at the port, there's
+>>> no reason to call hub_port_connect_change() here.  Let's see if the
+>>> patch below fixes your problem.
+>>>
+>>> Alan Stern
+>>>
+>>>
+>>>
+>>> Index: usb-devel/drivers/usb/core/hub.c
+>>> ===================================================================
+>>> --- usb-devel.orig/drivers/usb/core/hub.c
+>>> +++ usb-devel/drivers/usb/core/hub.c
+>>> @@ -1216,11 +1216,6 @@ static void hub_activate(struct usb_hub
+>>>   #ifdef CONFIG_PM
+>>>   			udev->reset_resume = 1;
+>>>   #endif
+>>> -			/* Don't set the change_bits when the device
+>>> -			 * was powered off.
+>>> -			 */
+>>> -			if (test_bit(port1, hub->power_bits))
+>>> -				set_bit(port1, hub->change_bits);
+>>>   
+>>>   		} else {
+>>>   			/* The power session is gone; tell hub_wq */
+>>>
+>>
+>> I can confirm this fixes the issue for me, I did a couple dozen
+>> suspend/resume cycles without seeing a failure.
+>>
+>> I see the code you removed was added by Lan Tianyu in commit
+>> ad493e5e5805 ("usb: add usb port auto power off mechanism"). I
+> 
+> No, not really.  The set_bit() call was added by me in a much earlier
+> commit (8808f00c7adf, merged in 2008).  Lan Tianyu merely added the
+> "if" test, so that set_bit() doesn't always get called.  Now with this
+> change, set_bit() never gets called.
+> 
+>> wonder if your patch would break that? I don't know what that is
+>> or how to test it.
+> 
+> While some code review by people who are familiar with this material
+> wouldn't hurt, I don't think you need to worry about any additional
+> testing.
+> 
+>> In any case:
+>> Tested-by: Paul Zimmerman <pauldzim@gmail.com>
+> 
+> Thank you.  I'll submit the patch soon.
+> 
+> Alan Stern
 
-NOTE: the dispcc needs input clocks from various PHYs that aren't in
-the device tree yet.  For now we'll leave these stubbed out with <0>,
-which is apparently the magic way to do this.  These clocks aren't
-really "optional" and this stubbing out method is apparently the best
-way to handle it.
+Ping? Unfortunately 5.5 was released with this regression, do you plan
+to submit this patch soon?
 
-Signed-off-by: Taniya Das <tdas@codeaurora.org>
-Signed-off-by: Douglas Anderson <dianders@chromium.org>
----
-
-Changes in v3:
-- Added videocc include file.
-- Unlike in v2, use internal name instead of purist name.
-
-Changes in v2:
-- Added includes
-- Changed various parent names to match bindings / driver
-
- arch/arm64/boot/dts/qcom/sc7180.dtsi | 47 ++++++++++++++++++++++++++++
- 1 file changed, 47 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/qcom/sc7180.dtsi b/arch/arm64/boot/dts/qcom/sc7180.dtsi
-index 8011c5fe2a31..57ff5e0f7ae6 100644
---- a/arch/arm64/boot/dts/qcom/sc7180.dtsi
-+++ b/arch/arm64/boot/dts/qcom/sc7180.dtsi
-@@ -5,8 +5,11 @@
-  * Copyright (c) 2019, The Linux Foundation. All rights reserved.
-  */
- 
-+#include <dt-bindings/clock/qcom,dispcc-sc7180.h>
- #include <dt-bindings/clock/qcom,gcc-sc7180.h>
-+#include <dt-bindings/clock/qcom,gpucc-sc7180.h>
- #include <dt-bindings/clock/qcom,rpmh.h>
-+#include <dt-bindings/clock/qcom,videocc-sc7180.h>
- #include <dt-bindings/interrupt-controller/arm-gic.h>
- #include <dt-bindings/phy/phy-qcom-qusb2.h>
- #include <dt-bindings/power/qcom-aoss-qmp.h>
-@@ -1039,6 +1042,20 @@ pinmux {
- 			};
- 		};
- 
-+		gpucc: clock-controller@5090000 {
-+			compatible = "qcom,sc7180-gpucc";
-+			reg = <0 0x05090000 0 0x9000>;
-+			clocks = <&rpmhcc RPMH_CXO_CLK>,
-+				 <&gcc GCC_GPU_GPLL0_CLK_SRC>,
-+				 <&gcc GCC_GPU_GPLL0_DIV_CLK_SRC>;
-+			clock-names = "bi_tcxo",
-+				      "gcc_gpu_gpll0_clk_src",
-+				      "gcc_gpu_gpll0_div_clk_src";
-+			#clock-cells = <1>;
-+			#reset-cells = <1>;
-+			#power-domain-cells = <1>;
-+		};
-+
- 		qspi: spi@88dc000 {
- 			compatible = "qcom,qspi-v1";
- 			reg = <0 0x088dc000 0 0x600>;
-@@ -1151,6 +1168,36 @@ usb_1_dwc3: dwc3@a600000 {
- 			};
- 		};
- 
-+		videocc: clock-controller@ab00000 {
-+			compatible = "qcom,sc7180-videocc";
-+			reg = <0 0x0ab00000 0 0x10000>;
-+			clocks = <&rpmhcc RPMH_CXO_CLK>;
-+			clock-names = "bi_tcxo";
-+			#clock-cells = <1>;
-+			#reset-cells = <1>;
-+			#power-domain-cells = <1>;
-+		};
-+
-+		dispcc: clock-controller@af00000 {
-+			compatible = "qcom,sc7180-dispcc";
-+			reg = <0 0x0af00000 0 0x200000>;
-+			clocks = <&rpmhcc RPMH_CXO_CLK>,
-+				 <&gcc GCC_DISP_GPLL0_CLK_SRC>,
-+				 <0>,
-+				 <0>,
-+				 <0>,
-+				 <0>;
-+			clock-names = "bi_tcxo",
-+				      "gcc_disp_gpll0_clk_src",
-+				      "dsi0_phy_pll_out_byteclk",
-+				      "dsi0_phy_pll_out_dsiclk",
-+				      "dp_phy_pll_link_clk",
-+				      "dp_phy_pll_vco_div_clk";
-+			#clock-cells = <1>;
-+			#reset-cells = <1>;
-+			#power-domain-cells = <1>;
-+		};
-+
- 		pdc: interrupt-controller@b220000 {
- 			compatible = "qcom,sc7180-pdc", "qcom,pdc";
- 			reg = <0 0x0b220000 0 0x30000>;
 -- 
-2.25.0.341.g760bfbb309-goog
-
+Paul
