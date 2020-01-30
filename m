@@ -2,31 +2,31 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E300C14DD2B
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Jan 2020 15:48:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E1A6914DD37
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Jan 2020 15:49:52 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727537AbgA3OsS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 30 Jan 2020 09:48:18 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33578 "EHLO mail.kernel.org"
+        id S1727571AbgA3Osl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 30 Jan 2020 09:48:41 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33700 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727505AbgA3OsO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1727506AbgA3OsO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Thu, 30 Jan 2020 09:48:14 -0500
 Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 448532468A;
+        by mail.kernel.org (Postfix) with ESMTPSA id 68F3C2468C;
         Thu, 30 Jan 2020 14:48:14 +0000 (UTC)
 Received: from rostedt by gandalf.local.home with local (Exim 4.93)
         (envelope-from <rostedt@goodmis.org>)
-        id 1ixB77-001CSv-6I; Thu, 30 Jan 2020 09:48:13 -0500
-Message-Id: <20200130144813.077885336@goodmis.org>
+        id 1ixB77-001CTP-Ap; Thu, 30 Jan 2020 09:48:13 -0500
+Message-Id: <20200130144813.219617268@goodmis.org>
 User-Agent: quilt/0.65
-Date:   Thu, 30 Jan 2020 09:48:02 -0500
+Date:   Thu, 30 Jan 2020 09:48:03 -0500
 From:   Steven Rostedt <rostedt@goodmis.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Ingo Molnar <mingo@kernel.org>,
         Andrew Morton <akpm@linux-foundation.org>
-Subject: [for-next][PATCH 19/21] tracing: Move tracing test module configs together
+Subject: [for-next][PATCH 20/21] tracing: Move mmio tracer config up with the other tracers
 References: <20200130144743.527378179@goodmis.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-15
@@ -37,56 +37,58 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: "Steven Rostedt (VMware)" <rostedt@goodmis.org>
 
-The MMIO test module was by itself, move it to the other test modules. Also,
-add the text "Test module" to PREEMPTIRQ_DELAY_TEST as that create a test
-module as well.
+Move the config that enables the mmiotracer with the other tracers such that
+all the tracers are together.
 
 Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
 ---
- kernel/trace/Kconfig | 22 +++++++++++-----------
- 1 file changed, 11 insertions(+), 11 deletions(-)
+ kernel/trace/Kconfig | 26 +++++++++++++-------------
+ 1 file changed, 13 insertions(+), 13 deletions(-)
 
 diff --git a/kernel/trace/Kconfig b/kernel/trace/Kconfig
-index 32fcbc00753b..47d0149347a9 100644
+index 47d0149347a9..2014056682f5 100644
 --- a/kernel/trace/Kconfig
 +++ b/kernel/trace/Kconfig
-@@ -680,16 +680,6 @@ config TRACE_EVENT_INJECT
+@@ -353,6 +353,19 @@ config HWLAT_TRACER
+ 	 file. Every time a latency is greater than tracing_thresh, it will
+ 	 be recorded into the ring buffer.
  
- 	  If unsure, say N.
- 
--config MMIOTRACE_TEST
--	tristate "Test module for mmiotrace"
--	depends on MMIOTRACE && m
--	help
--	  This is a dumb module for testing mmiotrace. It is very dangerous
--	  as it will write garbage to IO memory starting at a given address.
--	  However, it should be safe to use on e.g. unused portion of VRAM.
--
--	  Say N, unless you absolutely know what you are doing.
--
- config TRACEPOINT_BENCHMARK
- 	bool "Add tracepoint that benchmarks tracepoints"
- 	help
-@@ -759,8 +749,18 @@ config RING_BUFFER_STARTUP_TEST
- 
- 	 If unsure, say N
- 
-+config MMIOTRACE_TEST
-+	tristate "Test module for mmiotrace"
-+	depends on MMIOTRACE && m
++config MMIOTRACE
++	bool "Memory mapped IO tracing"
++	depends on HAVE_MMIOTRACE_SUPPORT && PCI
++	select GENERIC_TRACER
 +	help
-+	  This is a dumb module for testing mmiotrace. It is very dangerous
-+	  as it will write garbage to IO memory starting at a given address.
-+	  However, it should be safe to use on e.g. unused portion of VRAM.
++	  Mmiotrace traces Memory Mapped I/O access and is meant for
++	  debugging and reverse engineering. It is called from the ioremap
++	  implementation and works via page faults. Tracing is disabled by
++	  default and can be enabled at run-time.
 +
-+	  Say N, unless you absolutely know what you are doing.
++	  See Documentation/trace/mmiotrace.rst.
++	  If you are not helping to develop drivers, say N.
 +
- config PREEMPTIRQ_DELAY_TEST
--	tristate "Preempt / IRQ disable delay thread to test latency tracers"
-+	tristate "Test module to create a preempt / IRQ disable delay thread to test latency tracers"
- 	depends on m
- 	help
- 	  Select this option to build a test module that can help test latency
+ config ENABLE_DEFAULT_TRACERS
+ 	bool "Trace process context switches and events"
+ 	depends on !GENERIC_TRACER
+@@ -627,19 +640,6 @@ config EVENT_TRACE_TEST_SYSCALLS
+ 	 TBD - enable a way to actually call the syscalls as we test their
+ 	       events
+ 
+-config MMIOTRACE
+-	bool "Memory mapped IO tracing"
+-	depends on HAVE_MMIOTRACE_SUPPORT && PCI
+-	select GENERIC_TRACER
+-	help
+-	  Mmiotrace traces Memory Mapped I/O access and is meant for
+-	  debugging and reverse engineering. It is called from the ioremap
+-	  implementation and works via page faults. Tracing is disabled by
+-	  default and can be enabled at run-time.
+-
+-	  See Documentation/trace/mmiotrace.rst.
+-	  If you are not helping to develop drivers, say N.
+-
+ config TRACING_MAP
+ 	bool
+ 	depends on ARCH_HAVE_NMI_SAFE_CMPXCHG
 -- 
 2.24.1
 
