@@ -2,114 +2,94 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 80DB114DFA2
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Jan 2020 18:09:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0BDDB14DFA8
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Jan 2020 18:11:00 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727413AbgA3RJt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 30 Jan 2020 12:09:49 -0500
-Received: from mail-ed1-f65.google.com ([209.85.208.65]:41341 "EHLO
-        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726514AbgA3RJt (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 30 Jan 2020 12:09:49 -0500
-Received: by mail-ed1-f65.google.com with SMTP id c26so4595747eds.8;
-        Thu, 30 Jan 2020 09:09:46 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=yel/LjQW25KcQEFu+jzZC73Egkh1tqmmLbvqWmoKP8c=;
-        b=McU784o+BlKHiU8m5vavNqQyA3oFBpzOf3HlAuCMmdNFGz14lvO6yRPhgp4Ds4XVp6
-         xpAvGZTEv5SCKQaFFrYwvi75BMEkZDA8i++ymWsMVkOxfW8HgsbWyQQk17cRno5N8yNy
-         +eIYCA09AdUds5GQp5XlCVuz/67NmydI1ExgXMUGQFlMcp5FGKG/ZtrQ/KCpvil1xyVO
-         0ksORwuZ0HqRtD5JoqebvM+XYG3wA0+1+jUB9RegC363PKmF5T0++3mtERGo7eQT9ejz
-         sToBBqbfHIJj1AGeYQFSLG+RrdNaGhNET4V1YnbxG1yRxsjjVFAvJtCdYFhJBthvZJ94
-         0Fog==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=yel/LjQW25KcQEFu+jzZC73Egkh1tqmmLbvqWmoKP8c=;
-        b=CAa92roEjYmgqg66N4WE3LAaPk5wQY0zB6/F1GK1ZhZk93hgfiB0/r48Sg+CjZu9kZ
-         5IdnQfdEccqqr6skQEnxAlmQjxPLa9B4tlWTOONzHSnYhZPFTSc1WfbvqsXDL2FSyhdV
-         PI+1V5W4UrXr5UWqg/OcpytpAB4ACGW8R0k/Fg/BD4tvuTEtrud/H0A7IriqqoWmnzYe
-         UK6E/zGHLdI36ntO4UCFp5mb/7gzKtn9Fv3Y5y3MVVhxbDEvzL7sCj+J0+9BV8Egct81
-         GtjJjxDLDGCMNbvfwzGJSV/rrduElCrSQUhyaxUlTbJwxtAP3/9umR+ZIErMAfTpsA89
-         4DFw==
-X-Gm-Message-State: APjAAAWPwKA2Oj2RtAP9szB5oWIqonHxiv8B6GptEXqJ2UfPjjZbf3TO
-        BGq4dfkkyDcQC9iwuwzDFyI=
-X-Google-Smtp-Source: APXvYqwq3GK/kZ6ctkM0oUPdYfKKLpmFsfdQxaEw47STW+5vOHF65mQWT7BC3nPoioz0sKAOgdJxuA==
-X-Received: by 2002:a05:6402:168c:: with SMTP id a12mr4871067edv.43.1580404185669;
-        Thu, 30 Jan 2020 09:09:45 -0800 (PST)
-Received: from [192.168.2.145] (79-139-233-37.dynamic.spd-mgts.ru. [79.139.233.37])
-        by smtp.googlemail.com with ESMTPSA id u9sm493512edt.91.2020.01.30.09.09.43
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 30 Jan 2020 09:09:44 -0800 (PST)
-Subject: Re: [PATCH v2 5/9] ASoC: tegra: add Tegra210 based AHUB driver
-To:     Sameer Pujar <spujar@nvidia.com>, perex@perex.cz, tiwai@suse.com,
-        robh+dt@kernel.org
-Cc:     broonie@kernel.org, lgirdwood@gmail.com, thierry.reding@gmail.com,
-        jonathanh@nvidia.com, alsa-devel@alsa-project.org,
-        devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org, sharadg@nvidia.com,
-        mkumard@nvidia.com, viswanathl@nvidia.com, rlokhande@nvidia.com,
-        dramesh@nvidia.com, atalambedu@nvidia.com
-References: <1580380422-3431-1-git-send-email-spujar@nvidia.com>
- <1580380422-3431-6-git-send-email-spujar@nvidia.com>
-From:   Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <bd802f93-dd03-f39d-86e1-39f8571bbbb0@gmail.com>
-Date:   Thu, 30 Jan 2020 20:09:41 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.3.0
+        id S1727481AbgA3RK5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 30 Jan 2020 12:10:57 -0500
+Received: from mail.kernel.org ([198.145.29.99]:45944 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726514AbgA3RK4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 30 Jan 2020 12:10:56 -0500
+Received: from cakuba (unknown [199.201.64.133])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id D4AB020707;
+        Thu, 30 Jan 2020 17:10:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1580404256;
+        bh=Hxrsh7O/rjzAeL1uBZU4NMmuZq1J4Zw8jlVqpSJ/bR4=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=S3+Rs+Ad125yxd6jqyK1V6fCELrvcCmCaIoeJpZld0ZcfixK0JJDrONTnLfoa7w27
+         oiiKZKJjwAhxUh3gMtGWF2xjVe3ofm0/vd8aTqCiRH8jE8zA79fG4bkhDFQf9UP1gW
+         kyjzhAV/8gHxw4DJwQBnUgr2ogEgCLzhmPkbrEI8=
+Date:   Thu, 30 Jan 2020 09:10:55 -0800
+From:   Jakub Kicinski <kuba@kernel.org>
+To:     Robert Jones <rjones@gateworks.com>
+Cc:     Sunil Goutham <sgoutham@marvell.com>,
+        Robert Richter <rrichter@marvell.com>,
+        David Miller <davem@davemloft.net>,
+        linux-arm-kernel@lists.infradead.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Tim Harvey <tharvey@gateworks.com>
+Subject: Re: [PATCH net] net: thunderx: workaround BGX TX Underflow issue
+Message-ID: <20200130091055.159d63ed@cakuba>
+In-Reply-To: <20200129223609.9327-1-rjones@gateworks.com>
+References: <20200129223609.9327-1-rjones@gateworks.com>
 MIME-Version: 1.0
-In-Reply-To: <1580380422-3431-6-git-send-email-spujar@nvidia.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-30.01.2020 13:33, Sameer Pujar пишет:
-...
-> +	ret = devm_snd_soc_register_component(&pdev->dev,
-> +					      ahub->soc_data->cmpnt_drv,
-> +					      ahub->soc_data->dai_drv,
-> +					      ahub->soc_data->num_dais);
+On Wed, 29 Jan 2020 14:36:09 -0800, Robert Jones wrote:
+> From: Tim Harvey <tharvey@gateworks.com>
+> 
+> While it is not yet understood why a TX underflow can easily occur
+> for SGMII interfaces resulting in a TX wedge. It has been found that
+> disabling/re-enabling the LMAC resolves the issue.
+> 
+> Signed-off-by: Tim Harvey <tharvey@gateworks.com>
+> Reviewed-by: Robert Jones <rjones@gateworks.com>
+
+Sunil or Robert (i.e. one of the maintainers) will have to review this
+patch (as indicated by Dave by marking it with "Needs Review / ACK" in
+patchwork).
+
+At a quick look there are some things which jump out at me:
+
+> +static int bgx_register_intr(struct pci_dev *pdev)
+> +{
+> +	struct bgx *bgx = pci_get_drvdata(pdev);
+> +	struct device *dev = &pdev->dev;
+> +	int num_vec, ret;
+> +
+> +	/* Enable MSI-X */
+> +	num_vec = pci_msix_vec_count(pdev);
+> +	ret = pci_alloc_irq_vectors(pdev, num_vec, num_vec, PCI_IRQ_MSIX);
 > +	if (ret < 0) {
-> +		dev_err(&pdev->dev, "failed to register component, err: %d\n",
-> +			ret);
-> +		return ret;
+> +		dev_err(dev, "Req for #%d msix vectors failed\n", num_vec);
+> +		return 1;
+
+Please propagate real error codes, or make this function void as the
+caller never actually checks the return value.
+
 > +	}
-In the the patch #4 ("ASoC: tegra: add Tegra210 based I2S driver") I see
-the following:
+> +	sprintf(bgx->irq_name, "BGX%d", bgx->bgx_id);
+> +	ret = request_irq(pci_irq_vector(pdev, GMPX_GMI_TX_INT),
 
-	ret = devm_snd_soc_register_component(dev, &tegra210_i2s_cmpnt,
-					tegra210_i2s_dais,
-					ARRAY_SIZE(tegra210_i2s_dais));
-	if (ret != 0) {
-		dev_err(dev, "can't register I2S component, err: %d\n", ret);
-		return ret;
-	}
+There is a alloc_irq and request_irq call added in this patch but there
+is never any freeing. Are you sure this is fine? Devices can be
+reprobed (unbound and bound to drivers via sysfs).
 
-Please be consistent in regards to errors checking. The correct variant
-should be: if (ret != 0). Usually error codes are a negative value, but
-it is much safer to check whether value isn't 0 in all cases where
-positive value isn't expected to happen.
+> +		bgx_intr_handler, 0, bgx->irq_name, bgx);
 
-I'd also recommend to rename all "ret" variables to "err" everywhere in
-the code where returned value is used only for errors checking. This
-will make code more explicit, and hence, easier to read and follow.
+Please align the continuation line with the opening bracket (checkpatch
+--strict should help catch this).
 
-So, it will be nicer to write it as:
-
-	err = devm_snd_soc_register_component(&pdev->dev,
-					ahub->soc_data->cmpnt_drv,
-					ahub->soc_data->dai_drv,
-					ahub->soc_data->num_dais);
-	if (err) {
-		dev_err(&pdev->dev, "failed to register component: %d\n", err);
-		return err;
-	}
+> +	if (ret)
+> +		return 1;
+> +
+> +	return 0;
+> +}
