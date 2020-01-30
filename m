@@ -2,42 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0297214E0E4
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Jan 2020 19:39:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9122814E2AB
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Jan 2020 19:54:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727763AbgA3Sjp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 30 Jan 2020 13:39:45 -0500
-Received: from mail.kernel.org ([198.145.29.99]:47038 "EHLO mail.kernel.org"
+        id S1729924AbgA3SkW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 30 Jan 2020 13:40:22 -0500
+Received: from mail.kernel.org ([198.145.29.99]:47692 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727285AbgA3Sjp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 30 Jan 2020 13:39:45 -0500
+        id S1727993AbgA3SkN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 30 Jan 2020 13:40:13 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2E4A520702;
-        Thu, 30 Jan 2020 18:39:44 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4154320702;
+        Thu, 30 Jan 2020 18:40:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1580409584;
-        bh=1Lk7hPEkOLOEcPqJfFAlWYzJ+zQGDXWu3g8dnRXH9yM=;
+        s=default; t=1580409611;
+        bh=ITckDNbzz/TzTQNnL3xhySzEkpTq0zAHIzS2Ots334w=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=HpveTHkIYfK5N+LOUue45QZv1KHo1dW29N4w5ZrvQv0ROxkw8rM3hFYXnDldOSWci
-         US16yV75qI9rCBeUsECLOhLOZHyVFBEDeS1MBoffR5dwT65SiQVxvFlGHgGjN9cFyu
-         mVZ2wyYCR+1oV8iMefVnr2mFdKNhlTnK+RCfAbco=
+        b=QDnDLgoRapQaO4jl/rSSa1OhLeZ+baryrBeHMQnxFsq8pYzg1PDoHwhAYqpVX3NM3
+         Cr5h98idoSUiWyVfoWI8hOo2YOwwiZ1UyxP2lHPzyAyi3sIjdbpDq37RtG2ZNYz2Qd
+         AkFg7XdmxJ8ZOOeWaz94/gi4zMIRvhMd3JshzUJI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Sean Wang <sean.wang@mediatek.com>,
-        Johan Hovold <johan@kernel.org>,
-        Marcel Holtmann <marcel@holtmann.org>
-Subject: [PATCH 5.5 01/56] Bluetooth: btusb: fix non-atomic allocation in completion handler
-Date:   Thu, 30 Jan 2020 19:38:18 +0100
-Message-Id: <20200130183609.173830396@linuxfoundation.org>
+        stable@vger.kernel.org, Johan Hovold <johan@kernel.org>,
+        Kalle Valo <kvalo@codeaurora.org>
+Subject: [PATCH 5.5 02/56] orinoco_usb: fix interface sanity check
+Date:   Thu, 30 Jan 2020 19:38:19 +0100
+Message-Id: <20200130183609.410847643@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
 In-Reply-To: <20200130183608.849023566@linuxfoundation.org>
 References: <20200130183608.849023566@linuxfoundation.org>
 User-Agent: quilt/0.66
-X-stable: review
-X-Patchwork-Hint: ignore
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
@@ -48,32 +45,37 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Johan Hovold <johan@kernel.org>
 
-commit 22cc6b7a1dbb58da4afc539d9b7d470b23a25eea upstream.
+commit b73e05aa543cf8db4f4927e36952360d71291d41 upstream.
 
-USB completion handlers are called in atomic context and must
-specifically not allocate memory using GFP_KERNEL.
+Make sure to use the current alternate setting when verifying the
+interface descriptors to avoid binding to an invalid interface.
 
-Fixes: a1c49c434e15 ("Bluetooth: btusb: Add protocol support for MediaTek MT7668U USB devices")
-Cc: stable <stable@vger.kernel.org>     # 5.3
-Cc: Sean Wang <sean.wang@mediatek.com>
+Failing to do so could cause the driver to misbehave or trigger a WARN()
+in usb_submit_urb() that kernels with panic_on_warn set would choke on.
+
+Fixes: 9afac70a7305 ("orinoco: add orinoco_usb driver")
+Cc: stable <stable@vger.kernel.org>     # 2.6.35
 Signed-off-by: Johan Hovold <johan@kernel.org>
-Signed-off-by: Marcel Holtmann <marcel@holtmann.org>
+Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/bluetooth/btusb.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/net/wireless/intersil/orinoco/orinoco_usb.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/drivers/bluetooth/btusb.c
-+++ b/drivers/bluetooth/btusb.c
-@@ -2602,7 +2602,7 @@ static void btusb_mtk_wmt_recv(struct ur
- 		 * and being processed the events from there then.
- 		 */
- 		if (test_bit(BTUSB_TX_WAIT_VND_EVT, &data->flags)) {
--			data->evt_skb = skb_clone(skb, GFP_KERNEL);
-+			data->evt_skb = skb_clone(skb, GFP_ATOMIC);
- 			if (!data->evt_skb)
- 				goto err_out;
- 		}
+--- a/drivers/net/wireless/intersil/orinoco/orinoco_usb.c
++++ b/drivers/net/wireless/intersil/orinoco/orinoco_usb.c
+@@ -1608,9 +1608,9 @@ static int ezusb_probe(struct usb_interf
+ 	/* set up the endpoint information */
+ 	/* check out the endpoints */
+ 
+-	iface_desc = &interface->altsetting[0].desc;
++	iface_desc = &interface->cur_altsetting->desc;
+ 	for (i = 0; i < iface_desc->bNumEndpoints; ++i) {
+-		ep = &interface->altsetting[0].endpoint[i].desc;
++		ep = &interface->cur_altsetting->endpoint[i].desc;
+ 
+ 		if (usb_endpoint_is_bulk_in(ep)) {
+ 			/* we found a bulk in endpoint */
 
 
