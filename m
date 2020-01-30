@@ -2,40 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8853014E191
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Jan 2020 19:46:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 44A6D14E11C
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Jan 2020 19:41:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731057AbgA3Spf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 30 Jan 2020 13:45:35 -0500
-Received: from mail.kernel.org ([198.145.29.99]:55202 "EHLO mail.kernel.org"
+        id S1730168AbgA3Sl1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 30 Jan 2020 13:41:27 -0500
+Received: from mail.kernel.org ([198.145.29.99]:49310 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728079AbgA3Spd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 30 Jan 2020 13:45:33 -0500
+        id S1730152AbgA3SlY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 30 Jan 2020 13:41:24 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0608B21734;
-        Thu, 30 Jan 2020 18:45:32 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 81C182082E;
+        Thu, 30 Jan 2020 18:41:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1580409933;
-        bh=EdaxlxNioT7INiZrUk3Gj5CiZ2MoNSzxkO3BpJhuZm8=;
+        s=default; t=1580409683;
+        bh=7jlyodMR1hMib1vLo8tBYpdkJz1ljJqLkFdpx1YkWZc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=XU1IzcUmSeB6QNU/yohMrBPXTrTEy71W/Zxg/p04e2bsThiXDV/zi7rIw9wmzYK0L
-         s223KmDA4O+V3rfgtqSHlnUNzxNmWLanQ8tKR9X9JxYuvL5ZwIrNUaI8Bkf2/qlo7W
-         sldcmnyTEo/lQW+uDXMWI4ka/2W/Jg5iJyqHJom8=
+        b=DstCog62vcLfkeVuKwafd+qjwdcvySiauIBmDWIez6ssJ89vQHeDRLh1PpiYS450f
+         689xlbjPw0i8e3stguR4jKRnN9EHwhqbf93uGAn5vRdN4ICB3nOQCOppQDle0IApga
+         IhtxVGS62zO4ycRR8emlrG8+lq95UxDlit7HbfA0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Lee Jones <lee.jones@linaro.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.4 089/110] mfd: intel-lpss: Add Intel Comet Lake PCH-H PCI IDs
-Date:   Thu, 30 Jan 2020 19:39:05 +0100
-Message-Id: <20200130183624.724129396@linuxfoundation.org>
+        Prameela Rani Garnepudi <prameela.j04cs@gmail.com>,
+        Johan Hovold <johan@kernel.org>,
+        Kalle Valo <kvalo@codeaurora.org>
+Subject: [PATCH 5.5 49/56] rsi: fix non-atomic allocation in completion handler
+Date:   Thu, 30 Jan 2020 19:39:06 +0100
+Message-Id: <20200130183617.803270823@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200130183613.810054545@linuxfoundation.org>
-References: <20200130183613.810054545@linuxfoundation.org>
+In-Reply-To: <20200130183608.849023566@linuxfoundation.org>
+References: <20200130183608.849023566@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,53 +45,84 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+From: Johan Hovold <johan@kernel.org>
 
-[ Upstream commit dd047dce3a6f5233b98e792e2287cc549da35879 ]
+commit b9b9f9fea21830f85cf0148cd8dce001ae55ead1 upstream.
 
-Intel Comet Lake PCH-H has the same LPSS than Intel Cannon Lake.
-Add the new IDs to the list of supported devices.
+USB completion handlers are called in atomic context and must
+specifically not allocate memory using GFP_KERNEL.
 
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Signed-off-by: Lee Jones <lee.jones@linaro.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Fixes: a1854fae1414 ("rsi: improve RX packet handling in USB interface")
+Cc: stable <stable@vger.kernel.org> # 4.17
+Cc: Prameela Rani Garnepudi <prameela.j04cs@gmail.com>
+Signed-off-by: Johan Hovold <johan@kernel.org>
+Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- drivers/mfd/intel-lpss-pci.c | 13 ++++++++++++-
- 1 file changed, 12 insertions(+), 1 deletion(-)
+ drivers/net/wireless/rsi/rsi_91x_usb.c |   13 +++++++------
+ 1 file changed, 7 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/mfd/intel-lpss-pci.c b/drivers/mfd/intel-lpss-pci.c
-index 1767f30a16761..b33030e3385c7 100644
---- a/drivers/mfd/intel-lpss-pci.c
-+++ b/drivers/mfd/intel-lpss-pci.c
-@@ -140,7 +140,7 @@ static const struct intel_lpss_platform_info cnl_i2c_info = {
- };
+--- a/drivers/net/wireless/rsi/rsi_91x_usb.c
++++ b/drivers/net/wireless/rsi/rsi_91x_usb.c
+@@ -16,6 +16,7 @@
+  */
  
- static const struct pci_device_id intel_lpss_pci_ids[] = {
--	/* CML */
-+	/* CML-LP */
- 	{ PCI_VDEVICE(INTEL, 0x02a8), (kernel_ulong_t)&spt_uart_info },
- 	{ PCI_VDEVICE(INTEL, 0x02a9), (kernel_ulong_t)&spt_uart_info },
- 	{ PCI_VDEVICE(INTEL, 0x02aa), (kernel_ulong_t)&spt_info },
-@@ -153,6 +153,17 @@ static const struct pci_device_id intel_lpss_pci_ids[] = {
- 	{ PCI_VDEVICE(INTEL, 0x02ea), (kernel_ulong_t)&cnl_i2c_info },
- 	{ PCI_VDEVICE(INTEL, 0x02eb), (kernel_ulong_t)&cnl_i2c_info },
- 	{ PCI_VDEVICE(INTEL, 0x02fb), (kernel_ulong_t)&spt_info },
-+	/* CML-H */
-+	{ PCI_VDEVICE(INTEL, 0x06a8), (kernel_ulong_t)&spt_uart_info },
-+	{ PCI_VDEVICE(INTEL, 0x06a9), (kernel_ulong_t)&spt_uart_info },
-+	{ PCI_VDEVICE(INTEL, 0x06aa), (kernel_ulong_t)&spt_info },
-+	{ PCI_VDEVICE(INTEL, 0x06ab), (kernel_ulong_t)&spt_info },
-+	{ PCI_VDEVICE(INTEL, 0x06c7), (kernel_ulong_t)&spt_uart_info },
-+	{ PCI_VDEVICE(INTEL, 0x06e8), (kernel_ulong_t)&cnl_i2c_info },
-+	{ PCI_VDEVICE(INTEL, 0x06e9), (kernel_ulong_t)&cnl_i2c_info },
-+	{ PCI_VDEVICE(INTEL, 0x06ea), (kernel_ulong_t)&cnl_i2c_info },
-+	{ PCI_VDEVICE(INTEL, 0x06eb), (kernel_ulong_t)&cnl_i2c_info },
-+	{ PCI_VDEVICE(INTEL, 0x06fb), (kernel_ulong_t)&spt_info },
- 	/* BXT A-Step */
- 	{ PCI_VDEVICE(INTEL, 0x0aac), (kernel_ulong_t)&bxt_i2c_info },
- 	{ PCI_VDEVICE(INTEL, 0x0aae), (kernel_ulong_t)&bxt_i2c_info },
--- 
-2.20.1
-
+ #include <linux/module.h>
++#include <linux/types.h>
+ #include <net/rsi_91x.h>
+ #include "rsi_usb.h"
+ #include "rsi_hal.h"
+@@ -29,7 +30,7 @@ MODULE_PARM_DESC(dev_oper_mode,
+ 		 "9[Wi-Fi STA + BT LE], 13[Wi-Fi STA + BT classic + BT LE]\n"
+ 		 "6[AP + BT classic], 14[AP + BT classic + BT LE]");
+ 
+-static int rsi_rx_urb_submit(struct rsi_hw *adapter, u8 ep_num);
++static int rsi_rx_urb_submit(struct rsi_hw *adapter, u8 ep_num, gfp_t flags);
+ 
+ /**
+  * rsi_usb_card_write() - This function writes to the USB Card.
+@@ -285,7 +286,7 @@ static void rsi_rx_done_handler(struct u
+ 	status = 0;
+ 
+ out:
+-	if (rsi_rx_urb_submit(dev->priv, rx_cb->ep_num))
++	if (rsi_rx_urb_submit(dev->priv, rx_cb->ep_num, GFP_ATOMIC))
+ 		rsi_dbg(ERR_ZONE, "%s: Failed in urb submission", __func__);
+ 
+ 	if (status)
+@@ -307,7 +308,7 @@ static void rsi_rx_urb_kill(struct rsi_h
+  *
+  * Return: 0 on success, a negative error code on failure.
+  */
+-static int rsi_rx_urb_submit(struct rsi_hw *adapter, u8 ep_num)
++static int rsi_rx_urb_submit(struct rsi_hw *adapter, u8 ep_num, gfp_t mem_flags)
+ {
+ 	struct rsi_91x_usbdev *dev = (struct rsi_91x_usbdev *)adapter->rsi_dev;
+ 	struct rx_usb_ctrl_block *rx_cb = &dev->rx_cb[ep_num - 1];
+@@ -337,7 +338,7 @@ static int rsi_rx_urb_submit(struct rsi_
+ 			  rsi_rx_done_handler,
+ 			  rx_cb);
+ 
+-	status = usb_submit_urb(urb, GFP_KERNEL);
++	status = usb_submit_urb(urb, mem_flags);
+ 	if (status) {
+ 		rsi_dbg(ERR_ZONE, "%s: Failed in urb submission\n", __func__);
+ 		dev_kfree_skb(skb);
+@@ -827,12 +828,12 @@ static int rsi_probe(struct usb_interfac
+ 		rsi_dbg(INIT_ZONE, "%s: Device Init Done\n", __func__);
+ 	}
+ 
+-	status = rsi_rx_urb_submit(adapter, WLAN_EP);
++	status = rsi_rx_urb_submit(adapter, WLAN_EP, GFP_KERNEL);
+ 	if (status)
+ 		goto err1;
+ 
+ 	if (adapter->priv->coex_mode > 1) {
+-		status = rsi_rx_urb_submit(adapter, BT_EP);
++		status = rsi_rx_urb_submit(adapter, BT_EP, GFP_KERNEL);
+ 		if (status)
+ 			goto err_kill_wlan_urb;
+ 	}
 
 
