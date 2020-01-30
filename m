@@ -2,73 +2,79 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EACFB14D717
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Jan 2020 08:37:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 417FF14D71E
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Jan 2020 08:50:27 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726882AbgA3Hho (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 30 Jan 2020 02:37:44 -0500
-Received: from Galois.linutronix.de ([193.142.43.55]:52480 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726401AbgA3Hho (ORCPT
+        id S1726880AbgA3HuT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 30 Jan 2020 02:50:19 -0500
+Received: from mail-ua1-f68.google.com ([209.85.222.68]:36643 "EHLO
+        mail-ua1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726415AbgA3HuT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 30 Jan 2020 02:37:44 -0500
-Received: from [195.177.82.11] (helo=nanos.tec.linutronix.de)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1ix4OO-0003G3-Fe; Thu, 30 Jan 2020 08:37:36 +0100
-Received: by nanos.tec.linutronix.de (Postfix, from userid 1000)
-        id 758E5105CFC; Thu, 30 Jan 2020 08:37:29 +0100 (CET)
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     Sasha Levin <sashal@kernel.org>, Dexuan Cui <decui@microsoft.com>
-Cc:     "arnd\@arndb.de" <arnd@arndb.de>, "bp\@alien8.de" <bp@alien8.de>,
-        "daniel.lezcano\@linaro.org" <daniel.lezcano@linaro.org>,
-        Haiyang Zhang <haiyangz@microsoft.com>,
-        "hpa\@zytor.com" <hpa@zytor.com>,
-        KY Srinivasan <kys@microsoft.com>,
-        "linux-hyperv\@vger.kernel.org" <linux-hyperv@vger.kernel.org>,
-        "linux-kernel\@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "mingo\@redhat.com" <mingo@redhat.com>,
-        Stephen Hemminger <sthemmin@microsoft.com>,
-        "x86\@kernel.org" <x86@kernel.org>,
-        Michael Kelley <mikelley@microsoft.com>,
-        Sasha Levin <Alexander.Levin@microsoft.com>,
-        vkuznets <vkuznets@redhat.com>,
-        "linux-arch\@vger.kernel.org" <linux-arch@vger.kernel.org>
-Subject: Re: [PATCH v6][RESEND] x86/hyperv: Suspend/resume the hypercall page for hibernation
-In-Reply-To: <20200130000552.GD2896@sasha-vm>
-Date:   Thu, 30 Jan 2020 08:37:29 +0100
-Message-ID: <877e195r9i.fsf@nanos.tec.linutronix.de>
+        Thu, 30 Jan 2020 02:50:19 -0500
+Received: by mail-ua1-f68.google.com with SMTP id y3so833206uae.3
+        for <linux-kernel@vger.kernel.org>; Wed, 29 Jan 2020 23:50:17 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:reply-to:from:date:message-id:subject:to;
+        bh=RFjST6WTWl2HErgo/MFlw9oz3Ck4pyxWRgkJWzlGF00=;
+        b=rAASwXhAOcyZVhslCcnf+k/Ky+2K4vjGx261K9pXu5z1IbnF39ND4gTEPJTU81GW33
+         pW2sox/Q50LUHf7KjgGs+WlvkpUbJ72lfXzhh0LkGVGnGCeNgkfW+FrtsxHYzQELBE+H
+         +NueJXm1x8WMRdfGbG6CiWChrmsPoAwQ1Zt0KsWKPU3FW0a2377hVIMD3yZe4cXxr8yw
+         etaTIwKuzmG6nuD+PMiX8D3ns/IUz+xhTdEcnHKiBZk01ovjZikoU0cKjJ6T/fN2svP8
+         ZhoRT19+V4TPxSMdWPsYtoRmE6ENFssQka6RZ78Y0Mf+Z9Va4eWFn9WRp6wNODh84iQw
+         mNcg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
+         :subject:to;
+        bh=RFjST6WTWl2HErgo/MFlw9oz3Ck4pyxWRgkJWzlGF00=;
+        b=cNlyTOKlWljNo91Ok4+J+WWft85sd5wzctMX4mblb6779R8YCrQ+b6q9owiOYa/BU0
+         ubiYwR7c68wST3l7MrhFO2X5zncT21ij/9Ni65E2Qj6syUhXwqcWIndTTdqtqdTQE+rP
+         dwLYJGYri309KgmkleOwiFlSYHaXHd4a9RWjN85peNOYuAAHGXQfyXv0owLjyLOPY2bo
+         M8dljx/K7IoaXWOerZ0OYv89W1niyowqZY10lM7o0BKCGg0e5nNwQdmS+UsaQ96KBIHo
+         4qGpD5m+PJEyBfbMy3GreOC7gJZfJfnkKMrmUSRIkCHg91usAADijCsAOw51Gg9WmtuF
+         S10w==
+X-Gm-Message-State: APjAAAVzmiqONUn2ynFVmTZCdHAmdYm8z3MmzL53m0q7xpWU2OFjxieA
+        uDUDAQGJpG24+w0A8nLi6tCevzE3cEhQwjSVBB4=
+X-Google-Smtp-Source: APXvYqyP01s+XjxcCft7dTFuRL2ClBijruZk63jxyEdFKJhaMTJMwjtbkok4oPRTGCk5Yve9hBJ2wZFcdOZYDwRcB5g=
+X-Received: by 2002:ab0:69c9:: with SMTP id u9mr1803726uaq.80.1580370616870;
+ Wed, 29 Jan 2020 23:50:16 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+Received: by 2002:a67:cb95:0:0:0:0:0 with HTTP; Wed, 29 Jan 2020 23:50:16
+ -0800 (PST)
+Reply-To: dunawattara96@outlook.com
+From:   Mr Duna Wattara <drhajizongod@gmail.com>
+Date:   Wed, 29 Jan 2020 23:50:16 -0800
+Message-ID: <CA+aQzqzi1d=WzkXjRbggJHOj2KVKMvveb2NU+VONyN7tPCE6+w@mail.gmail.com>
+Subject: with due respect
+To:     undisclosed-recipients:;
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Sasha Levin <sashal@kernel.org> writes:
-> On Sat, Jan 25, 2020 at 01:44:31AM +0000, Dexuan Cui wrote:
->>> This is a RESEND of https://lkml.org/lkml/2019/11/20/68
->>>
->>> Please review.
->>>
->>> If it looks good, can you please pick it up through the tip.git tree?
->>>
->>>  arch/x86/hyperv/hv_init.c | 48
->>> +++++++++++++++++++++++++++++++++++++++
->>>  1 file changed, 48 insertions(+)
->>
->>Hi, Vitaly and x86 maintainers,
->>Can you please take a look at this patch?
->
-> Ping?
->
-> This patch has been floating around in it's current form for the past 2
-> months. I'll happily take Hyper-V patches under arch/x86/hyperv/ via the
-> Hyper-V tree rather than tip if the x86 folks don't want to deal with
-> them.
+Dear Friend,
 
-sorry fell through the cracks. Will take care of it.
+I know that this mail will come to you as a surprise as we have never
+met before, but need not to worry as I am contacting you independently
+of my investigation and no one is informed of this communication.
+
+I need your urgent assistance in transferring the sum of $11.3million
+immediately to your private account.The money has been here in our
+Bank lying dormant for years now without anybody coming for the claim of it.
+
+I want to release the money to you as the relative to our deceased
+customer (the account owner) who died a long with his supposed NEXT OF
+KIN since 16th October 2005. The Banking laws here does not allow such
+money to stay more than 15 years, because the money will be recalled
+to the Bank treasury account as unclaimed fund.
+
+By indicating your interest I will send you the full details on how
+the business will be executed.
+
+Please respond urgently and delete if you are not interested.
+
+Best Regards,
+Mr. Duna Wattara.
