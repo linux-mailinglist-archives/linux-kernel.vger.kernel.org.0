@@ -2,97 +2,158 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0FC0B14D4AB
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Jan 2020 01:29:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 42E0B14D4AF
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Jan 2020 01:31:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727176AbgA3A33 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 29 Jan 2020 19:29:29 -0500
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:33915 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726401AbgA3A33 (ORCPT
+        id S1727240AbgA3AbG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 29 Jan 2020 19:31:06 -0500
+Received: from mail-vk1-f196.google.com ([209.85.221.196]:44810 "EHLO
+        mail-vk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726401AbgA3AbG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 Jan 2020 19:29:29 -0500
-Received: by mail-wr1-f68.google.com with SMTP id t2so1851992wrr.1
-        for <linux-kernel@vger.kernel.org>; Wed, 29 Jan 2020 16:29:27 -0800 (PST)
+        Wed, 29 Jan 2020 19:31:06 -0500
+Received: by mail-vk1-f196.google.com with SMTP id y184so531149vkc.11
+        for <linux-kernel@vger.kernel.org>; Wed, 29 Jan 2020 16:31:05 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=NKXAmCNluFTleOGteK3fJq6Z0n6+m36donNYzzstnig=;
-        b=mE1D4feJyGF3q5NG8awe2zWKc74q3909Ep2ML4ft+uegUhElUbnV+wXW0SZ3JsO+Mm
-         xksRMmQgpBIOxxA88e/5vHP6PasLZbjWg2TUBYoYaCsF/lGFKHQimzLDEW2vJ0INWNSI
-         FuK8oU14c4bZSP9qcvibr4xyPSpUliay3ztzB5Yam3SYGpSYcGwAZ36cNZH3epjIwX3n
-         22XdpT/RsxnKMoSsraUIKOrw3VNfetQEspk8o0IebwX7/jY6H7d9HBpamjtQpISfIKsW
-         HOgDrun97cstFraVosbMcweAHbK3rgnNSBIyAe3D9AcGeovmQi6iVQ+2neRW6mm+KO8g
-         uktQ==
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=HPkGA3GK3blVdQi8+NIYhn2wAG+9S/XJZPz8vvp4cLo=;
+        b=M6sCkftYdw+yxCZolQLugqQz0RovdHNk6PaR2tvafsXWi2mt6BF6Ldsv8+gYeZxs4Y
+         T2tWoq+ubinXa1WQmLOIo4QqMm2Q2BQMVBcF/P7CTCZTe0tWMlAeT7Guo+gsC2Doi5Vb
+         boHynzCL0K0eWTW5QtPEO9/8SJrt4pkwf46fw=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=NKXAmCNluFTleOGteK3fJq6Z0n6+m36donNYzzstnig=;
-        b=Ypkin2N0ocsmgfdJeNgS8EwWxQLMuF9R5ZXcqDL3qQWK4zQhWhAv8rFR/lASfcfcP3
-         iTOP31KfGoQUhyCkIzcNcx6J6h5F4jXyJT/soXU6iln/2A78qvV/GNtovsDXqbXUgdQZ
-         yeZJhcmXubERjAEPVwpYhUZ9ULmZ8xGrsOXq3yGmAfOLG9jx96xPZ2iij0vHq5zN2UQJ
-         PQHYpDoTygY/wjppu3pGsr55n6E2VexW2SLQZOxe4Eu0cJPWQ4cODbiUkDm28dZRXio3
-         caoevBToS+eCQZNtLE2NmVhs1mUyJexlL39TylTK5vm41NIiS11YNU5iIMlh4A6Ppjd+
-         JYkw==
-X-Gm-Message-State: APjAAAU10uIYBQF/HJRumf9QnQ3DXAPS7U19Dsx2LlNh/dVeq1tTHCp4
-        NTyiTmx3FLO9rrvCxcxa7A==
-X-Google-Smtp-Source: APXvYqwz257SMCVPpvTd9JWrn8AXoQkgBnRVeymWxzSln+TXebLZhYKYXmbfluXc+vjcbF4ZpjUwnA==
-X-Received: by 2002:adf:a51d:: with SMTP id i29mr1530198wrb.119.1580344166675;
-        Wed, 29 Jan 2020 16:29:26 -0800 (PST)
-Received: from ninjahost.lan (host-2-102-13-223.as13285.net. [2.102.13.223])
-        by smtp.googlemail.com with ESMTPSA id r5sm5011294wrt.43.2020.01.29.16.29.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 29 Jan 2020 16:29:26 -0800 (PST)
-From:   Jules Irenge <jbi.octave@gmail.com>
-To:     boqun.feng@gmail.com
-Cc:     viro@zeniv.linux.org.uk, linux-kernel@vger.kernel.org,
-        Jules Irenge <jbi.octave@gmail.com>
-Subject: [PATCH 1/2] fs_pin: Add missing annotation to pin_kill() declaration
-Date:   Thu, 30 Jan 2020 00:29:13 +0000
-Message-Id: <3d8d1f596dcf556f1b9276c4e6d2f5401e598657.1580337836.git.jbi.octave@gmail.com>
-X-Mailer: git-send-email 2.24.1
-In-Reply-To: <cover.1580337836.git.jbi.octave@gmail.com>
-References: <0/2> <cover.1580337836.git.jbi.octave@gmail.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=HPkGA3GK3blVdQi8+NIYhn2wAG+9S/XJZPz8vvp4cLo=;
+        b=Ibk1CrD6lpJirQvHVIrhj24v7sGJ2T9waFruIe44nu4uVexzTYKCzdfVu80V0crIs/
+         s3aH881KaY+4ggstXadV+I70VvEmU2AyFi/HnzpPE7uPVxkUsVKkMxvHPwfPgZOui7Qp
+         iM/kJN14Wa1sgSWpXh20G/212sKv07ksQhD+ujpOFxuSHkNw0mbaGQBSfqQZN8/HfzG/
+         uVfqZ+NSsiXVKxxOCAZ2WxnbVwW17/WFUx7cLWfOfhrX2YwzQsnMiXDmq1RxvPQ4Ym7S
+         TIrB+XXuTqq/5p9hDhkLM1RGR71XTt5okILGS4CgSKci+p99YcrwrqVXmw0eRCaHTbj/
+         jA0A==
+X-Gm-Message-State: APjAAAVLTozuqihU7DCgFPMAu6KaiRPczuwRvugXPtf698EHXlst8E0E
+        9tWwC6s3Jr7Ti8qhIFPqPh4L1u4/s6c=
+X-Google-Smtp-Source: APXvYqw8oLESthY+ErK2RwF9V8vLb3Yx0ByUQb0wTsP53Kh+VCgsoFD0+8gr4VjXYpfeTrO3gXtnZA==
+X-Received: by 2002:a1f:28cd:: with SMTP id o196mr1260911vko.87.1580344264528;
+        Wed, 29 Jan 2020 16:31:04 -0800 (PST)
+Received: from mail-vk1-f177.google.com (mail-vk1-f177.google.com. [209.85.221.177])
+        by smtp.gmail.com with ESMTPSA id z15sm952099vsz.27.2020.01.29.16.31.03
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 29 Jan 2020 16:31:04 -0800 (PST)
+Received: by mail-vk1-f177.google.com with SMTP id c129so539934vkh.7
+        for <linux-kernel@vger.kernel.org>; Wed, 29 Jan 2020 16:31:03 -0800 (PST)
+X-Received: by 2002:a1f:c686:: with SMTP id w128mr1285411vkf.34.1580343865022;
+ Wed, 29 Jan 2020 16:24:25 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20200129132313.1.I4452dc951d7556ede422835268742b25a18b356b@changeid>
+ <CAL_JsqJk1NZSDAXgqc-CS9a1UCmNYPhC-LwjPUZaX2oK=EtHzQ@mail.gmail.com>
+ <CAD=FV=XLq4-EdsuKnDjuc3-6P3i6o-tV5MJbdFbvAscF_ouOpg@mail.gmail.com> <CAL_JsqLVaJMidm2QcpmxXeT+Q+uU8esm1shdRs3BVoeRYqhJng@mail.gmail.com>
+In-Reply-To: <CAL_JsqLVaJMidm2QcpmxXeT+Q+uU8esm1shdRs3BVoeRYqhJng@mail.gmail.com>
+From:   Doug Anderson <dianders@chromium.org>
+Date:   Wed, 29 Jan 2020 16:24:10 -0800
+X-Gmail-Original-Message-ID: <CAD=FV=Uv-td=PhCSZNsjBB-cQB=vJKLbw_BLbM3B1ORRzuTB5A@mail.gmail.com>
+Message-ID: <CAD=FV=Uv-td=PhCSZNsjBB-cQB=vJKLbw_BLbM3B1ORRzuTB5A@mail.gmail.com>
+Subject: Re: [PATCH] dt-bindings: clk: qcom: Fix self-validation, split, and
+ clean cruft
+To:     Rob Herring <robh+dt@kernel.org>
+Cc:     Stephen Boyd <sboyd@kernel.org>, Taniya Das <tdas@codeaurora.org>,
+        Jeffrey Hugo <jhugo@codeaurora.org>,
+        Abhishek Sahu <absahu@codeaurora.org>, sivaprak@codeaurora.org,
+        anusharao@codeaurora.org, Sricharan <sricharan@codeaurora.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Andy Gross <agross@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        linux-clk <linux-clk@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Sparse reports several warnings within the kernel acct.c file
+Hi,
 
-warning: context imbalance in acct_on()
- - different lock contexts for basic block
-warning: context imbalance in __se_sys_acct()
- - different lock contexts for basic block
-warning: context imbalance in acct_exit_ns()
- - wrong count at exit
+On Wed, Jan 29, 2020 at 3:50 PM Rob Herring <robh+dt@kernel.org> wrote:
+>
+> On Wed, Jan 29, 2020 at 5:26 PM Doug Anderson <dianders@chromium.org> wrote:
+> >
+> > Hi,
+> >
+> > On Wed, Jan 29, 2020 at 2:01 PM Rob Herring <robh+dt@kernel.org> wrote:
+> > >
+> > > On Wed, Jan 29, 2020 at 3:23 PM Douglas Anderson <dianders@chromium.org> wrote:
+> > > >
+> > > > The 'qcom,gcc.yaml' file failed self-validation (dt_binding_check)
+> > > > because it required a property to be either (3 entries big),
+> > > > (3 entries big), or (7 entries big), but not more than one of those
+> > > > things.  That didn't make a ton of sense.
+> > > >
+> > > > This patch splits all of the exceptional device trees (AKA those that
+> > > > would have needed if/then/else rules) from qcom,gcc.yaml.  It also
+> > > > cleans up some cruft found while doing that.
+> > > >
+> > > > After this lands, this worked for me atop clk-next:
+> > > >   for f in \
+> > > >     Documentation/devicetree/bindings/clock/qcom,gcc-apq8064.yaml \
+> > > >     Documentation/devicetree/bindings/clock/qcom,gcc-ipq8074.yaml \
+> > > >     Documentation/devicetree/bindings/clock/qcom,gcc-msm8996.yaml \
+> > > >     Documentation/devicetree/bindings/clock/qcom,gcc-msm8998.yaml \
+> > > >     Documentation/devicetree/bindings/clock/qcom,gcc-qcs404.yaml \
+> > > >     Documentation/devicetree/bindings/clock/qcom,gcc-sc7180.yaml \
+> > > >     Documentation/devicetree/bindings/clock/qcom,gcc-sm8150.yaml \
+> > > >     Documentation/devicetree/bindings/clock/qcom,gcc.yaml; do \
+> > > >       ARCH=arm64 make dt_binding_check DT_SCHEMA_FILES=$f; \
+> > > >       ARCH=arm64 make dtbs_check DT_SCHEMA_FILES=$f; \
+> > > >   done
+> > >
+> > > Note that using DT_SCHEMA_FILES may hide some errors in examples as
+> > > all other schemas (including the core ones) are not used for
+> > > validation. So just 'make dt_binding_check' needs to pass (ignoring
+> > > any other unrelated errors as it breaks frequently). Supposedly a
+> > > patch is coming explaining this in the documentation.
+> >
+> > That seems like it's going to be a huge pain going forward, but OK.
+>
+> Use of DT_SCHEMA_FILES hiding problems or having to run 'make
+> dt_binding_check' on everything?
 
-The root cause is a missing annotation at
-declaration of pin_kill() within the header file
-Given that pin_kill() does actually call
-read_rcu_unlock()in its function definition
+Having to run 'make dt_binding_check' on everything.  I guess maybe if
+the tree stays clean it won't be too bad and it wasn't too bad against
+the current linux-next, but I can imagine that every time I want to
+run this I'll run into a pile of warnings / errors in other people's
+files.  Then I need to figure out what to ignore / workaround.  If
+something fails badly (like intel-gw-pcie.yaml) I'll have to realize
+that I should just delete that file to get the rest of the run to
+report errors that are relevant to me.
 
-Add the missing __releases(RCU) annotation.
+This'll probably be worse because most maintainer trees are based on
+"-rc1" and at least in the past I've found that "-rc1" tends to have
+lots of problems.  Each maintainer then fixes the problems relative to
+their own subsystem, but it's not a wonderful thing to rely on.
 
-Signed-off-by: Jules Irenge <jbi.octave@gmail.com>
----
- include/linux/fs_pin.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/include/linux/fs_pin.h b/include/linux/fs_pin.h
-index bdd09fd2520c..d2fcf1a5112f 100644
---- a/include/linux/fs_pin.h
-+++ b/include/linux/fs_pin.h
-@@ -21,4 +21,4 @@ static inline void init_fs_pin(struct fs_pin *p, void (*kill)(struct fs_pin *))
- 
- void pin_remove(struct fs_pin *);
- void pin_insert(struct fs_pin *, struct vfsmount *);
--void pin_kill(struct fs_pin *);
-+void pin_kill(struct fs_pin *) __releases(RCU);
--- 
-2.24.1
+> I could probably rework things such that you can check a single
+> binding example against all schema, but dtbs still get validated by
+> just a single schema.
 
+This would be helpful.  ...or some way to easily make really bad
+failures non-fatal.  Then I can maybe just diff the results before my
+patch and after and that'll give me a hint of what I've fixed / made
+worse.
+
+
+> Probably is. There are cases where a new schema breaks another file's
+> example. If someone has a gcc node in another example for example.
+
+At this point I'm going to say that we're better off than we were, but
+I'll try to keep this in mind for future patches.
+
+
+-Doug
