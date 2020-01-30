@@ -2,44 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 16B3214E2B7
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Jan 2020 19:54:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A51E114E254
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Jan 2020 19:51:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731775AbgA3Sxp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 30 Jan 2020 13:53:45 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49152 "EHLO mail.kernel.org"
+        id S1731730AbgA3SvS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 30 Jan 2020 13:51:18 -0500
+Received: from mail.kernel.org ([198.145.29.99]:55082 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730125AbgA3SlQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 30 Jan 2020 13:41:16 -0500
+        id S1731016AbgA3Sp3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 30 Jan 2020 13:45:29 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2EF962083E;
-        Thu, 30 Jan 2020 18:41:15 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 67551215A4;
+        Thu, 30 Jan 2020 18:45:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1580409675;
-        bh=yNI5ogw+07m/kN6nHUW3rK8XJmN2BvbV3VxJy40X4EQ=;
+        s=default; t=1580409927;
+        bh=Zq4F/Ve3Iyslt78uHqrrDIEnnHV8eM3FeTzoQFH0KQA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Je1yExcrWySGfzOW5n9ewoVluoHkBHYp36sfHpvdy76sEjWwHQem6YCb0fuQPp982
-         mJPyW56P+L4oQSyVGtSh0Zq45g8+blrEt/8CbQY04KXNWSJWB9mEcPF0fn/TTsG4MX
-         fydZ6VoXJGB4sUzSYyahuxRdc6Ba2RGI07FACjLU=
+        b=gDdozfyQtRtua5OPO4XKjn4mS5hWLrffkuka60SbcW3CpQOsAJVUPoBlKjJPi2fnT
+         zh5PE/gzDtCQDyOL8gGGXocY4X+ZJziCB1+BdGbEnwdOx8vXWhXEjHpaTFvUdTy7yK
+         V2Mb9FSyzd/mLmD2Ez4/SS5nXuO+nbMcVyH0Tg08=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        syzbot+b563b7f8dbe8223a51e8@syzkaller.appspotmail.com,
-        Siva Rebbagondla <siva.rebbagondla@redpinesignals.com>,
-        Prameela Rani Garnepudi <prameela.j04cs@gmail.com>,
-        Amitkumar Karwar <amit.karwar@redpinesignals.com>,
-        Fariya Fatima <fariyaf@gmail.com>,
-        Johan Hovold <johan@kernel.org>,
-        Kalle Valo <kvalo@codeaurora.org>
-Subject: [PATCH 5.5 46/56] rsi: fix use-after-free on failed probe and unbind
+        stable@vger.kernel.org, Logan Gunthorpe <logang@deltatee.com>,
+        Joerg Roedel <jroedel@suse.de>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 5.4 087/110] iommu/amd: Support multiple PCI DMA aliases in IRQ Remapping
 Date:   Thu, 30 Jan 2020 19:39:03 +0100
-Message-Id: <20200130183617.350722335@linuxfoundation.org>
+Message-Id: <20200130183624.526829149@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200130183608.849023566@linuxfoundation.org>
-References: <20200130183608.849023566@linuxfoundation.org>
+In-Reply-To: <20200130183613.810054545@linuxfoundation.org>
+References: <20200130183613.810054545@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -49,72 +43,123 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Johan Hovold <johan@kernel.org>
+From: Logan Gunthorpe <logang@deltatee.com>
 
-commit e93cd35101b61e4c79149be2cfc927c4b28dc60c upstream.
+[ Upstream commit 3c124435e8dd516df4b2fc983f4415386fd6edae ]
 
-Make sure to stop both URBs before returning after failed probe as well
-as on disconnect to avoid use-after-free in the completion handler.
+Non-Transparent Bridge (NTB) devices (among others) may have many DMA
+aliases seeing the hardware will send requests with different device ids
+depending on their origin across the bridged hardware.
 
-Reported-by: syzbot+b563b7f8dbe8223a51e8@syzkaller.appspotmail.com
-Fixes: a4302bff28e2 ("rsi: add bluetooth rx endpoint")
-Fixes: dad0d04fa7ba ("rsi: Add RS9113 wireless driver")
-Cc: stable <stable@vger.kernel.org>     # 3.15
-Cc: Siva Rebbagondla <siva.rebbagondla@redpinesignals.com>
-Cc: Prameela Rani Garnepudi <prameela.j04cs@gmail.com>
-Cc: Amitkumar Karwar <amit.karwar@redpinesignals.com>
-Cc: Fariya Fatima <fariyaf@gmail.com>
-Signed-off-by: Johan Hovold <johan@kernel.org>
-Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+See commit ad281ecf1c7d ("PCI: Add DMA alias quirk for Microsemi Switchtec
+NTB") for more information on this.
 
+The AMD IOMMU IRQ remapping functionality ignores all PCI aliases for
+IRQs so if devices send an interrupt from one of their aliases they
+will be blocked on AMD hardware with the IOMMU enabled.
+
+To fix this, ensure IRQ remapping is enabled for all aliases with
+MSI interrupts.
+
+This is analogous to the functionality added to the Intel IRQ remapping
+code in commit 3f0c625c6ae7 ("iommu/vt-d: Allow interrupts from the entire
+bus for aliased devices")
+
+Signed-off-by: Logan Gunthorpe <logang@deltatee.com>
+Signed-off-by: Joerg Roedel <jroedel@suse.de>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/wireless/rsi/rsi_91x_usb.c |   18 +++++++++++++++++-
- 1 file changed, 17 insertions(+), 1 deletion(-)
+ drivers/iommu/amd_iommu.c | 37 ++++++++++++++++++++++++++++++-------
+ 1 file changed, 30 insertions(+), 7 deletions(-)
 
---- a/drivers/net/wireless/rsi/rsi_91x_usb.c
-+++ b/drivers/net/wireless/rsi/rsi_91x_usb.c
-@@ -292,6 +292,15 @@ out:
- 		dev_kfree_skb(rx_cb->rx_skb);
+diff --git a/drivers/iommu/amd_iommu.c b/drivers/iommu/amd_iommu.c
+index 16e0e3af2de0e..454695b372c8c 100644
+--- a/drivers/iommu/amd_iommu.c
++++ b/drivers/iommu/amd_iommu.c
+@@ -3741,7 +3741,20 @@ static void set_remap_table_entry(struct amd_iommu *iommu, u16 devid,
+ 	iommu_flush_dte(iommu, devid);
  }
  
-+static void rsi_rx_urb_kill(struct rsi_hw *adapter, u8 ep_num)
+-static struct irq_remap_table *alloc_irq_table(u16 devid)
++static int set_remap_table_entry_alias(struct pci_dev *pdev, u16 alias,
++				       void *data)
 +{
-+	struct rsi_91x_usbdev *dev = (struct rsi_91x_usbdev *)adapter->rsi_dev;
-+	struct rx_usb_ctrl_block *rx_cb = &dev->rx_cb[ep_num - 1];
-+	struct urb *urb = rx_cb->rx_urb;
++	struct irq_remap_table *table = data;
 +
-+	usb_kill_urb(urb);
++	irq_lookup_table[alias] = table;
++	set_dte_irq_entry(alias, table);
++
++	iommu_flush_dte(amd_iommu_rlookup_table[alias], alias);
++
++	return 0;
 +}
 +
- /**
-  * rsi_rx_urb_submit() - This function submits the given URB to the USB stack.
-  * @adapter: Pointer to the adapter structure.
-@@ -823,10 +832,13 @@ static int rsi_probe(struct usb_interfac
- 	if (adapter->priv->coex_mode > 1) {
- 		status = rsi_rx_urb_submit(adapter, BT_EP);
- 		if (status)
--			goto err1;
-+			goto err_kill_wlan_urb;
- 	}
++static struct irq_remap_table *alloc_irq_table(u16 devid, struct pci_dev *pdev)
+ {
+ 	struct irq_remap_table *table = NULL;
+ 	struct irq_remap_table *new_table = NULL;
+@@ -3787,7 +3800,12 @@ static struct irq_remap_table *alloc_irq_table(u16 devid)
+ 	table = new_table;
+ 	new_table = NULL;
  
- 	return 0;
+-	set_remap_table_entry(iommu, devid, table);
++	if (pdev)
++		pci_for_each_dma_alias(pdev, set_remap_table_entry_alias,
++				       table);
++	else
++		set_remap_table_entry(iommu, devid, table);
 +
-+err_kill_wlan_urb:
-+	rsi_rx_urb_kill(adapter, WLAN_EP);
- err1:
- 	rsi_deinit_usb_interface(adapter);
- err:
-@@ -857,6 +869,10 @@ static void rsi_disconnect(struct usb_in
- 		adapter->priv->bt_adapter = NULL;
- 	}
+ 	if (devid != alias)
+ 		set_remap_table_entry(iommu, alias, table);
  
-+	if (adapter->priv->coex_mode > 1)
-+		rsi_rx_urb_kill(adapter, BT_EP);
-+	rsi_rx_urb_kill(adapter, WLAN_EP);
+@@ -3804,7 +3822,8 @@ out_unlock:
+ 	return table;
+ }
+ 
+-static int alloc_irq_index(u16 devid, int count, bool align)
++static int alloc_irq_index(u16 devid, int count, bool align,
++			   struct pci_dev *pdev)
+ {
+ 	struct irq_remap_table *table;
+ 	int index, c, alignment = 1;
+@@ -3814,7 +3833,7 @@ static int alloc_irq_index(u16 devid, int count, bool align)
+ 	if (!iommu)
+ 		return -ENODEV;
+ 
+-	table = alloc_irq_table(devid);
++	table = alloc_irq_table(devid, pdev);
+ 	if (!table)
+ 		return -ENODEV;
+ 
+@@ -4247,7 +4266,7 @@ static int irq_remapping_alloc(struct irq_domain *domain, unsigned int virq,
+ 		struct irq_remap_table *table;
+ 		struct amd_iommu *iommu;
+ 
+-		table = alloc_irq_table(devid);
++		table = alloc_irq_table(devid, NULL);
+ 		if (table) {
+ 			if (!table->min_index) {
+ 				/*
+@@ -4264,11 +4283,15 @@ static int irq_remapping_alloc(struct irq_domain *domain, unsigned int virq,
+ 		} else {
+ 			index = -ENOMEM;
+ 		}
+-	} else {
++	} else if (info->type == X86_IRQ_ALLOC_TYPE_MSI ||
++		   info->type == X86_IRQ_ALLOC_TYPE_MSIX) {
+ 		bool align = (info->type == X86_IRQ_ALLOC_TYPE_MSI);
+ 
+-		index = alloc_irq_index(devid, nr_irqs, align);
++		index = alloc_irq_index(devid, nr_irqs, align, info->msi_dev);
++	} else {
++		index = alloc_irq_index(devid, nr_irqs, false, NULL);
+ 	}
 +
- 	rsi_reset_card(adapter);
- 	rsi_deinit_usb_interface(adapter);
- 	rsi_91x_deinit(adapter);
+ 	if (index < 0) {
+ 		pr_warn("Failed to allocate IRTE\n");
+ 		ret = index;
+-- 
+2.20.1
+
 
 
