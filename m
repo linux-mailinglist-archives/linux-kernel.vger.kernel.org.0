@@ -2,37 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 171C714E1F6
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Jan 2020 19:50:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3D94A14E1D4
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Jan 2020 19:48:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731445AbgA3Srw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 30 Jan 2020 13:47:52 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58546 "EHLO mail.kernel.org"
+        id S1731454AbgA3Sr4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 30 Jan 2020 13:47:56 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58622 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731026AbgA3Srr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 30 Jan 2020 13:47:47 -0500
+        id S1731431AbgA3Sru (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 30 Jan 2020 13:47:50 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CE9452082E;
-        Thu, 30 Jan 2020 18:47:46 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 46D6B20674;
+        Thu, 30 Jan 2020 18:47:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1580410067;
-        bh=4AtbueEFuNKAL6mZDMVjdBYtBNKuiC/Tvwz9VqmlWJc=;
+        s=default; t=1580410069;
+        bh=Xx6NspAId0wP+mlZ4mJIqcrWJ7K8o+uHRjuJ9rUmNos=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=TBxLyeeVXkVpDmVedKMKYBHUsnIB3Uy50ZJxqc0yqjM8HtjH4k4NDE4lCeUwZMcjD
-         ETY+h1YBYfCFm0KJSM8ZxFuFp6nLub/4bbY6iCqYpUSkvDO5DbHw53s79HFBrnpvez
-         B78pOPz3pP+ZKIr3uLfz4HK0nN5mBbJuA8reEYd8=
+        b=0fBkBYGmzeDrZQX3y/MQZgWGXoHYQnn84OaCZHZo0ePJG7lxyra2EOCpc4UH6jVIm
+         e9qLYGIETMSI9kkaK4UT1gailbZ8AKRRsmUrAxEAnu262nzalFExrqclAiJKF3H012
+         Cbts43a7lcFsOxRkbBKDgG51z0lKrGejnsz0WFF4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, David Engraf <david.engraf@sysgo.com>,
+        stable@vger.kernel.org, Andreas Kemnade <andreas@kemnade.info>,
         Guenter Roeck <linux@roeck-us.net>,
         Wim Van Sebroeck <wim@linux-watchdog.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 33/55] watchdog: max77620_wdt: fix potential build errors
-Date:   Thu, 30 Jan 2020 19:39:14 +0100
-Message-Id: <20200130183614.628871091@linuxfoundation.org>
+Subject: [PATCH 4.19 34/55] watchdog: rn5t618_wdt: fix module aliases
+Date:   Thu, 30 Jan 2020 19:39:15 +0100
+Message-Id: <20200130183614.794969088@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
 In-Reply-To: <20200130183608.563083888@linuxfoundation.org>
 References: <20200130183608.563083888@linuxfoundation.org>
@@ -45,35 +45,35 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: David Engraf <david.engraf@sysgo.com>
+From: Andreas Kemnade <andreas@kemnade.info>
 
-[ Upstream commit da9e3f4e30a53cd420cf1e6961c3b4110f0f21f0 ]
+[ Upstream commit a76dfb859cd42df6e3d1910659128ffcd2fb6ba2 ]
 
-max77620_wdt uses watchdog core functions. Enable CONFIG_WATCHDOG_CORE
-to fix potential build errors.
+Platform device aliases were missing so module autoloading
+did not work.
 
-Signed-off-by: David Engraf <david.engraf@sysgo.com>
+Signed-off-by: Andreas Kemnade <andreas@kemnade.info>
 Reviewed-by: Guenter Roeck <linux@roeck-us.net>
-Link: https://lore.kernel.org/r/20191127084617.16937-1-david.engraf@sysgo.com
+Link: https://lore.kernel.org/r/20191213214802.22268-1-andreas@kemnade.info
 Signed-off-by: Guenter Roeck <linux@roeck-us.net>
 Signed-off-by: Wim Van Sebroeck <wim@linux-watchdog.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/watchdog/Kconfig | 1 +
+ drivers/watchdog/rn5t618_wdt.c | 1 +
  1 file changed, 1 insertion(+)
 
-diff --git a/drivers/watchdog/Kconfig b/drivers/watchdog/Kconfig
-index b165c46aca741..709d4de11f40f 100644
---- a/drivers/watchdog/Kconfig
-+++ b/drivers/watchdog/Kconfig
-@@ -594,6 +594,7 @@ config MAX63XX_WATCHDOG
- config MAX77620_WATCHDOG
- 	tristate "Maxim Max77620 Watchdog Timer"
- 	depends on MFD_MAX77620 || COMPILE_TEST
-+	select WATCHDOG_CORE
- 	help
- 	 This is the driver for the Max77620 watchdog timer.
- 	 Say 'Y' here to enable the watchdog timer support for
+diff --git a/drivers/watchdog/rn5t618_wdt.c b/drivers/watchdog/rn5t618_wdt.c
+index e60f55702ab79..d2e79cf70e774 100644
+--- a/drivers/watchdog/rn5t618_wdt.c
++++ b/drivers/watchdog/rn5t618_wdt.c
+@@ -193,6 +193,7 @@ static struct platform_driver rn5t618_wdt_driver = {
+ 
+ module_platform_driver(rn5t618_wdt_driver);
+ 
++MODULE_ALIAS("platform:rn5t618-wdt");
+ MODULE_AUTHOR("Beniamino Galvani <b.galvani@gmail.com>");
+ MODULE_DESCRIPTION("RN5T618 watchdog driver");
+ MODULE_LICENSE("GPL v2");
 -- 
 2.20.1
 
