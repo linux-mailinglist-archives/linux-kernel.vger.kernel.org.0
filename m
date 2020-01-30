@@ -2,202 +2,147 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5785214DA93
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Jan 2020 13:24:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id F401014DA87
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Jan 2020 13:21:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727234AbgA3MYx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 30 Jan 2020 07:24:53 -0500
-Received: from mga07.intel.com ([134.134.136.100]:49436 "EHLO mga07.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727206AbgA3MYu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 30 Jan 2020 07:24:50 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga002.fm.intel.com ([10.253.24.26])
-  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 30 Jan 2020 04:24:50 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.70,381,1574150400"; 
-   d="scan'208";a="262155263"
-Received: from lxy-dell.sh.intel.com ([10.239.13.109])
-  by fmsmga002.fm.intel.com with ESMTP; 30 Jan 2020 04:24:48 -0800
-From:   Xiaoyao Li <xiaoyao.li@intel.com>
-To:     Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Sean Christopherson <sean.j.christopherson@intel.com>
-Cc:     Xiaoyao Li <xiaoyao.li@intel.com>, x86@kernel.org,
-        linux-kernel@vger.kernel.org, kvm@vger.kernel.org
-Subject: [PATCH 2/2] KVM: VMX: Extend VMX's #AC handding
-Date:   Thu, 30 Jan 2020 20:19:39 +0800
-Message-Id: <20200130121939.22383-3-xiaoyao.li@intel.com>
-X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20200130121939.22383-1-xiaoyao.li@intel.com>
-References: <20200130121939.22383-1-xiaoyao.li@intel.com>
+        id S1727223AbgA3MVC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 30 Jan 2020 07:21:02 -0500
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:34380 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726902AbgA3MVB (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 30 Jan 2020 07:21:01 -0500
+Received: by mail-wr1-f67.google.com with SMTP id t2so3823155wrr.1;
+        Thu, 30 Jan 2020 04:20:59 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=39kKGSsq/ObIawmRn5Y1+axiVM/RiW/k7k81hkLQRko=;
+        b=oo5DZEdTb3XjAOtMywZUicFSjYM+vuNT+aYsFJ5fHdEK0MvAU8ag7x5JNILJr07qNI
+         0sGA7fXgaAhgD0kNkPT9V+DoHZkeDYuuhjrd8bHButpUvM1XzVnyQHZ72ByCxDk7XGIT
+         PtkoPEpf0dM7iKsWCL5gmgffZf0Say7AdBWqt3FzX5ez/lbjm2xznyP6m3XEXAl9rK7v
+         o0dy/uznwHToU1ACefu1SctXFI73OackEEGD6wKH/Ft63JUMHjdoq/gROTb6deg17r28
+         iF+xvK4ZyewjQdBzfTNJGflEpkFJXqxF6yMKYYJ6qIzL82LBWeI7UWMdDVD0kZN+JJ1o
+         tiew==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=39kKGSsq/ObIawmRn5Y1+axiVM/RiW/k7k81hkLQRko=;
+        b=l6wqIi7pVzedJ2jBkp6FrDj39qzCjrPLNAoeFogunjxlL5m2DsUFGY3H0vXOhbWsEG
+         UutVnAlPq3ui85YFtMjBw2aNJ7/dXxG9/UmBj2bDiuVmo5goMQ2FEt50TplsIabN+8fJ
+         Ntic+TNVzs2t4KURUziUG762EiGfGyj/2xBNvaUFiNtNTB/GEZufNBsW1FoT/fTPS3OX
+         dp4a4ZapBMiivF4B4mSVXMHCN/Rk8CQrg6h5vA6zZ1JlEP+0hYqYpCVvwGiyUrIEIrvA
+         HSTi4FE95wsYgH2Ifq/A+yBzHu1zuiKmLBOZ19rMGBBSazmFOFaTtaRitJ2JiyUaRoUG
+         L9SQ==
+X-Gm-Message-State: APjAAAXKPZ41uHcxllt6Dt+ZM3H24AkDych8KDpeSn6AuB5PjOAA6zct
+        BagC4sDZX/khTivyvkY7ggN5ITSG
+X-Google-Smtp-Source: APXvYqyxv03XTlw/35Gt0k++PPZwBCYXIg/xJFHtkjG8IrqT3QT85s5kM89Y38/s+l0sWBR5FrZ0WQ==
+X-Received: by 2002:a5d:4b4e:: with SMTP id w14mr5424825wrs.187.1580386859077;
+        Thu, 30 Jan 2020 04:20:59 -0800 (PST)
+Received: from localhost (p2E5BEF3F.dip0.t-ipconnect.de. [46.91.239.63])
+        by smtp.gmail.com with ESMTPSA id o129sm6081097wmb.1.2020.01.30.04.20.56
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 30 Jan 2020 04:20:57 -0800 (PST)
+Date:   Thu, 30 Jan 2020 13:20:55 +0100
+From:   Thierry Reding <thierry.reding@gmail.com>
+To:     Sowjanya Komatineni <skomatineni@nvidia.com>
+Cc:     jonathanh@nvidia.com, frankc@nvidia.com, hverkuil@xs4all.nl,
+        linux-media@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: Re: [RFC PATCH v1 4/5] media: tegra: Add Tegra Video input
+ driver for Tegra210
+Message-ID: <20200130122055.GA2584455@ulmo>
+References: <1580235801-4129-1-git-send-email-skomatineni@nvidia.com>
+ <1580235801-4129-5-git-send-email-skomatineni@nvidia.com>
+ <20200129111340.GF2479935@ulmo>
+ <070f9a4c-1919-f3f6-fef3-ed0a84cf5776@nvidia.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="J2SCkAp4GZ/dPZZf"
+Content-Disposition: inline
+In-Reply-To: <070f9a4c-1919-f3f6-fef3-ed0a84cf5776@nvidia.com>
+User-Agent: Mutt/1.13.1 (2019-12-14)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-There are two types of #AC can be generated in Intel CPUs:
- 1. legacy alignment check #AC;
- 2. split lock #AC;
 
-Legacy alignment check #AC can be injected to guest if guest has enabled
-alignemnet check.
+--J2SCkAp4GZ/dPZZf
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-When host enables split lock detection, i.e., split_lock_detect!=off,
-guest will receive an unexpected #AC when there is a split_lock happens in
-guest since KVM doesn't virtualize this feature to guest.
+On Wed, Jan 29, 2020 at 09:23:38AM -0800, Sowjanya Komatineni wrote:
+>=20
+> On 1/29/20 3:13 AM, Thierry Reding wrote:
+> > On Tue, Jan 28, 2020 at 10:23:20AM -0800, Sowjanya Komatineni wrote:
+[...]
+> > > diff --git a/drivers/staging/media/tegra/host1x-video.c b/drivers/sta=
+ging/media/tegra/host1x-video.c
+[...]
+> > > +	media_device_init(&cam->media_dev);
+> > > +	ret =3D media_device_register(&cam->media_dev);
+> > > +	if (ret < 0) {
+> > > +		dev_err(cam->dev, "failed to register media device: %d\n", ret);
+> > > +		return ret;
+> > > +	}
+> > > +
+> > > +	cam->v4l2_dev.mdev =3D &cam->media_dev;
+> > > +	ret =3D v4l2_device_register(cam->dev, &cam->v4l2_dev);
+> > > +	if (ret < 0) {
+> > > +		dev_err(cam->dev, "V4L2 device registration failed: %d\n", ret);
+> > > +		goto register_error;
+> > > +	}
+> > > +
+> > > +	dev_set_drvdata(&dev->dev, cam);
+> > > +
+> > > +	ret =3D host1x_device_init(dev);
+> > > +	if (ret < 0)
+> > > +		goto dev_exit;
+> > > +
+> > > +	return 0;
+> > > +
+> > > +dev_exit:
+> > > +	host1x_device_exit(dev);
+> > There should be no need to call host1x_device_exit() when
+> > host1x_device_init() failed because the latter already takes care of
+> > undoing whatever it did already.
+> >=20
+> host1x_device_init can fail if any of its client ops init fails.
+>=20
+> So, calling host1x_device_exit here to undo the things done in other
+> successful client init ops.
 
-Since the old guests lack split_lock #AC handler and may have split lock
-buges. To make guest survive from split lock, applying the similar policy
-as host's split lock detect configuration:
- - host split lock detect is sld_warn:
-   warning the split lock happened in guest, and disabling split lock
-   detect around VM-enter;
- - host split lock detect is sld_fatal:
-   forwarding #AC to userspace. (Usually userspace dump the #AC
-   exception and kill the guest).
+host1x_device_init() already takes care of undoing what it did on
+failure. Also, it makes sure to only undo what had already been done,
+rather than tear down every client, even if it hadn't been initialized
+yet when the failure happened. The latter is what would happen if you
+called host1x_device_exit() to cleanup at this point.
 
-Note, if sld_warn and SMT is enabled, the split lock in guest's vcpu
-leads the disabling of split lock detect on the sibling CPU thread during
-the vcpu is running.
+Thierry
 
-Signed-off-by: Xiaoyao Li <xiaoyao.li@intel.com>
----
- arch/x86/include/asm/cpu.h  |  1 +
- arch/x86/kernel/cpu/intel.c |  6 ++++++
- arch/x86/kvm/vmx/vmx.c      | 42 ++++++++++++++++++++++++++++++++++---
- arch/x86/kvm/vmx/vmx.h      |  3 +++
- 4 files changed, 49 insertions(+), 3 deletions(-)
+--J2SCkAp4GZ/dPZZf
+Content-Type: application/pgp-signature; name="signature.asc"
 
-diff --git a/arch/x86/include/asm/cpu.h b/arch/x86/include/asm/cpu.h
-index 167d0539e0ad..b46262afa6c1 100644
---- a/arch/x86/include/asm/cpu.h
-+++ b/arch/x86/include/asm/cpu.h
-@@ -52,6 +52,7 @@ extern enum split_lock_detect_state get_split_lock_detect_state(void);
- extern void __init cpu_set_core_cap_bits(struct cpuinfo_x86 *c);
- extern void switch_to_sld(unsigned long tifn);
- extern bool handle_user_split_lock(struct pt_regs *regs, long error_code);
-+extern void split_lock_detect_set(bool on);
- #else
- static inline enum split_lock_detect_state get_split_lock_detect_state(void)
- {
-diff --git a/arch/x86/kernel/cpu/intel.c b/arch/x86/kernel/cpu/intel.c
-index 2f9c48e91caf..889469b54b5a 100644
---- a/arch/x86/kernel/cpu/intel.c
-+++ b/arch/x86/kernel/cpu/intel.c
-@@ -1124,6 +1124,12 @@ void switch_to_sld(unsigned long tifn)
- 	__sld_msr_set(!(tifn & _TIF_SLD));
- }
- 
-+void split_lock_detect_set(bool on)
-+{
-+	__sld_msr_set(on);
-+}
-+EXPORT_SYMBOL_GPL(split_lock_detect_set);
-+
- #define SPLIT_LOCK_CPU(model) {X86_VENDOR_INTEL, 6, model, X86_FEATURE_ANY}
- 
- /*
-diff --git a/arch/x86/kvm/vmx/vmx.c b/arch/x86/kvm/vmx/vmx.c
-index cdb4bf50ee14..402a9152c6ee 100644
---- a/arch/x86/kvm/vmx/vmx.c
-+++ b/arch/x86/kvm/vmx/vmx.c
-@@ -4553,6 +4553,12 @@ static int handle_machine_check(struct kvm_vcpu *vcpu)
- 	return 1;
- }
- 
-+static bool guest_cpu_alignment_check_enabled(struct kvm_vcpu *vcpu)
-+{
-+	return vmx_get_cpl(vcpu) == 3 && kvm_read_cr0_bits(vcpu, X86_CR0_AM) &&
-+	       (kvm_get_rflags(vcpu) & X86_EFLAGS_AC);
-+}
-+
- static int handle_exception_nmi(struct kvm_vcpu *vcpu)
- {
- 	struct vcpu_vmx *vmx = to_vmx(vcpu);
-@@ -4618,9 +4624,6 @@ static int handle_exception_nmi(struct kvm_vcpu *vcpu)
- 		return handle_rmode_exception(vcpu, ex_no, error_code);
- 
- 	switch (ex_no) {
--	case AC_VECTOR:
--		kvm_queue_exception_e(vcpu, AC_VECTOR, error_code);
--		return 1;
- 	case DB_VECTOR:
- 		dr6 = vmcs_readl(EXIT_QUALIFICATION);
- 		if (!(vcpu->guest_debug &
-@@ -4649,6 +4652,29 @@ static int handle_exception_nmi(struct kvm_vcpu *vcpu)
- 		kvm_run->debug.arch.pc = vmcs_readl(GUEST_CS_BASE) + rip;
- 		kvm_run->debug.arch.exception = ex_no;
- 		break;
-+	case AC_VECTOR:
-+		/*
-+		 * Inject #AC back to guest only when legacy alignment check
-+		 * enabled.
-+		 * Otherwise, it must be a split-lock #AC.
-+		 *  - If sld_state == sld_warn, it can let guest survive by
-+		 *    setting the vcpu's diasble_split_lock_detect to true so
-+		 *    that it will toggle MSR_TEST.SPLIT_LOCK_DETECT bit during
-+		 *    every following VM Entry and Exit;
-+		 *  - If sld_state == sld_fatal, it forwards #AC to userspace;
-+		 */
-+		if (guest_cpu_alignment_check_enabled(vcpu) ||
-+		    WARN_ON(get_split_lock_detect_state() == sld_off)) {
-+			kvm_queue_exception_e(vcpu, AC_VECTOR, error_code);
-+			return 1;
-+		}
-+		if (get_split_lock_detect_state() == sld_warn) {
-+			pr_warn("kvm: split lock #AC happened in %s [%d]\n",
-+				current->comm, current->pid);
-+			vmx->disable_split_lock_detect = true;
-+			return 1;
-+		}
-+		/* fall through*/
- 	default:
- 		kvm_run->exit_reason = KVM_EXIT_EXCEPTION;
- 		kvm_run->ex.exception = ex_no;
-@@ -6511,6 +6537,11 @@ static void vmx_vcpu_run(struct kvm_vcpu *vcpu)
- 	 */
- 	x86_spec_ctrl_set_guest(vmx->spec_ctrl, 0);
- 
-+	if (static_cpu_has(X86_FEATURE_SPLIT_LOCK_DETECT) &&
-+	    !test_tsk_thread_flag(current, TIF_SLD) &&
-+	    unlikely(vmx->disable_split_lock_detect))
-+		split_lock_detect_set(false);
-+
- 	/* L1D Flush includes CPU buffer clear to mitigate MDS */
- 	if (static_branch_unlikely(&vmx_l1d_should_flush))
- 		vmx_l1d_flush(vcpu);
-@@ -6545,6 +6576,11 @@ static void vmx_vcpu_run(struct kvm_vcpu *vcpu)
- 
- 	x86_spec_ctrl_restore_host(vmx->spec_ctrl, 0);
- 
-+	if (static_cpu_has(X86_FEATURE_SPLIT_LOCK_DETECT) &&
-+	    !test_tsk_thread_flag(current, TIF_SLD) &&
-+	    unlikely(vmx->disable_split_lock_detect))
-+		split_lock_detect_set(true);
-+
- 	/* All fields are clean at this point */
- 	if (static_branch_unlikely(&enable_evmcs))
- 		current_evmcs->hv_clean_fields |=
-diff --git a/arch/x86/kvm/vmx/vmx.h b/arch/x86/kvm/vmx/vmx.h
-index 7f42cf3dcd70..912eba66c5d5 100644
---- a/arch/x86/kvm/vmx/vmx.h
-+++ b/arch/x86/kvm/vmx/vmx.h
-@@ -274,6 +274,9 @@ struct vcpu_vmx {
- 
- 	bool req_immediate_exit;
- 
-+	/* Disable split-lock detection when running the vCPU */
-+	bool disable_split_lock_detect;
-+
- 	/* Support for PML */
- #define PML_ENTITY_NUM		512
- 	struct page *pml_pg;
--- 
-2.23.0
+-----BEGIN PGP SIGNATURE-----
 
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl4yyiQACgkQ3SOs138+
+s6Egvw/+Nt0LgFzPcflJKTBtvEJ+MNiUId+X2Lhb9zZ6HgVKJ2WZqabYUUydRq7a
+RePVuSe28Q9GPY7XIBS5qLsaglkrI4TqELRyOFzBwrhFGg14XQbeMGs84IDTLfd+
+okiQvOORTCHDzhYfyYU1Fn62+IVzAV5hXsMfYDKo1U43JgocUfwDlateRn7E47HI
+T/sQbQ7/AlxY+9pWPy+pBErXZ+PxbbHnotTlM1pCYO3aQIueOJwUo3PpXiUg1oSa
+DtFxxh4Ez8dfOpb5JEU35/URi2yUNlFGuuAb6d7rAVwQXm9bcIdUZcnwd7ICUSD8
+qiZo88c/s9qb8niupzp4kWP1oq6ddk0QWQ+tin3Pk5mtp3+6OXZLzwYYnYBI+UXm
+y4tcfSLc5jMn9VpLg3aH5cZjPGBg6Iv3Elku0+iIZQLBO48A1YRd5g1+uDjl2D/g
+3Ee0mA/zX6XcjAj0OJm/tM14mNgQTrORC3xZ1uY/4iYrvFPaP/yO+4ijaxo5bWhX
+qsJmfubdA5Uz9Fp3TLkiBsXuiJ/3yJV3NCG6Ci86nFhGBBjsbYBYite+k2O3sPNU
+s8T6yjyIPnSF1eJPZpr0BUVgR2FMc8saU3Hyy38qpTDGbAREiMHidYG2u7FigvAS
+NV5GHdLs4DAUf58P5f2EVPmVVVqzhxgC4kUaaP1HHGvJGJUVflc=
+=kfTx
+-----END PGP SIGNATURE-----
+
+--J2SCkAp4GZ/dPZZf--
