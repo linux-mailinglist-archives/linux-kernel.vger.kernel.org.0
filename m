@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5AC5D14E1C1
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Jan 2020 19:48:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 64DDC14E12C
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Jan 2020 19:42:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731344AbgA3SrP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 30 Jan 2020 13:47:15 -0500
-Received: from mail.kernel.org ([198.145.29.99]:57568 "EHLO mail.kernel.org"
+        id S1730308AbgA3SmE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 30 Jan 2020 13:42:04 -0500
+Received: from mail.kernel.org ([198.145.29.99]:50122 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731318AbgA3SrI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 30 Jan 2020 13:47:08 -0500
+        id S1728028AbgA3SmA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 30 Jan 2020 13:42:00 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5205220674;
-        Thu, 30 Jan 2020 18:47:07 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A8EDC2083E;
+        Thu, 30 Jan 2020 18:41:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1580410027;
-        bh=6GzoNV0zyINcGNLAPy2ZdbfQ+iqqU24+bbg51LWIlX4=;
+        s=default; t=1580409720;
+        bh=N5y1muu8N21M0FsvptEApXfStVYRWbQEbqqaQyDIb50=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=mr+5iNRQfOuSxFqNbNAZPs0hznMMoVWcjXvvnoWXzt7jK2PrjeZCETWjHKO4F6waF
-         sKbj3W7+qOUQjXh92LLrwHNreWuppMb2ENEB3UMj0dYBsr7im0/uC7vppgJJZCqmTf
-         qzU/YrUaJxzS7qEqquixoTPANPuUvOMwgTBYR7i4=
+        b=QxvQjUfnd+w2PvYH++mtQ4gwZ37RCbPF8wrQDqQCFu4zZOkELWCMniEUrhlJnLyz+
+         sB8hISz1j31hAF5JuNJYDuArF3er/ap7bJzKUsl21MAQT8Hsmgs2tDoCbd+XrZbW3+
+         g+t9SGnwAGOLtM8jQU8nGp59pniacGIgeh/s2Wf8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, "Paulo Alcantara (SUSE)" <pc@cjr.nz>,
-        Steve French <stfrench@microsoft.com>,
-        Pavel Shilovsky <pshilov@microsoft.com>
-Subject: [PATCH 4.19 18/55] cifs: Fix memory allocation in __smb2_handle_cancelled_cmd()
+        stable@vger.kernel.org, syzbot <syzkaller@googlegroups.com>,
+        Willem de Bruijn <willemb@google.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 5.5 42/56] udp: segment looped gso packets correctly
 Date:   Thu, 30 Jan 2020 19:38:59 +0100
-Message-Id: <20200130183612.174750191@linuxfoundation.org>
+Message-Id: <20200130183616.721326806@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200130183608.563083888@linuxfoundation.org>
-References: <20200130183608.563083888@linuxfoundation.org>
+In-Reply-To: <20200130183608.849023566@linuxfoundation.org>
+References: <20200130183608.849023566@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,62 +44,43 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Paulo Alcantara (SUSE) <pc@cjr.nz>
+From: Willem de Bruijn <willemb@google.com>
 
-commit 0a5a98863c9debc02387b3d23c46d187756f5e2b upstream.
+[ Upstream commit 6cd021a58c18a1731f7e47f83e172c0c302d65e5 ]
 
-__smb2_handle_cancelled_cmd() is called under a spin lock held in
-cifs_mid_q_entry_release(), so make its memory allocation GFP_ATOMIC.
+Multicast and broadcast packets can be looped from egress to ingress
+pre segmentation with dev_loopback_xmit. That function unconditionally
+sets ip_summed to CHECKSUM_UNNECESSARY.
 
-This issue was observed when running xfstests generic/028:
+udp_rcv_segment segments gso packets in the udp rx path. Segmentation
+usually executes on egress, and does not expect packets of this type.
+__udp_gso_segment interprets !CHECKSUM_PARTIAL as CHECKSUM_NONE. But
+the offsets are not correct for gso_make_checksum.
 
-[ 1722.589204] CIFS VFS: \\192.168.30.26 Cancelling wait for mid 72064 cmd: 5
-[ 1722.590687] CIFS VFS: \\192.168.30.26 Cancelling wait for mid 72065 cmd: 17
-[ 1722.593529] CIFS VFS: \\192.168.30.26 Cancelling wait for mid 72066 cmd: 6
-[ 1723.039014] BUG: sleeping function called from invalid context at mm/slab.h:565
-[ 1723.040710] in_atomic(): 1, irqs_disabled(): 0, non_block: 0, pid: 30877, name: cifsd
-[ 1723.045098] CPU: 3 PID: 30877 Comm: cifsd Not tainted 5.5.0-rc4+ #313
-[ 1723.046256] Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS rel-1.12.0-59-gc9ba527-rebuilt.opensuse.org 04/01/2014
-[ 1723.048221] Call Trace:
-[ 1723.048689]  dump_stack+0x97/0xe0
-[ 1723.049268]  ___might_sleep.cold+0xd1/0xe1
-[ 1723.050069]  kmem_cache_alloc_trace+0x204/0x2b0
-[ 1723.051051]  __smb2_handle_cancelled_cmd+0x40/0x140 [cifs]
-[ 1723.052137]  smb2_handle_cancelled_mid+0xf6/0x120 [cifs]
-[ 1723.053247]  cifs_mid_q_entry_release+0x44d/0x630 [cifs]
-[ 1723.054351]  ? cifs_reconnect+0x26a/0x1620 [cifs]
-[ 1723.055325]  cifs_demultiplex_thread+0xad4/0x14a0 [cifs]
-[ 1723.056458]  ? cifs_handle_standard+0x2c0/0x2c0 [cifs]
-[ 1723.057365]  ? kvm_sched_clock_read+0x14/0x30
-[ 1723.058197]  ? sched_clock+0x5/0x10
-[ 1723.058838]  ? sched_clock_cpu+0x18/0x110
-[ 1723.059629]  ? lockdep_hardirqs_on+0x17d/0x250
-[ 1723.060456]  kthread+0x1ab/0x200
-[ 1723.061149]  ? cifs_handle_standard+0x2c0/0x2c0 [cifs]
-[ 1723.062078]  ? kthread_create_on_node+0xd0/0xd0
-[ 1723.062897]  ret_from_fork+0x3a/0x50
+UDP GSO packets are of type CHECKSUM_PARTIAL, with their uh->check set
+to the correct pseudo header checksum. Reset ip_summed to this type.
+(CHECKSUM_PARTIAL is allowed on ingress, see comments in skbuff.h)
 
-Signed-off-by: Paulo Alcantara (SUSE) <pc@cjr.nz>
-Fixes: 9150c3adbf24 ("CIFS: Close open handle after interrupted close")
-Cc: Stable <stable@vger.kernel.org>
-Signed-off-by: Steve French <stfrench@microsoft.com>
-Reviewed-by: Pavel Shilovsky <pshilov@microsoft.com>
+Reported-by: syzbot <syzkaller@googlegroups.com>
+Fixes: cf329aa42b66 ("udp: cope with UDP GRO packet misdirection")
+Signed-off-by: Willem de Bruijn <willemb@google.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- fs/cifs/smb2misc.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ include/net/udp.h |    3 +++
+ 1 file changed, 3 insertions(+)
 
---- a/fs/cifs/smb2misc.c
-+++ b/fs/cifs/smb2misc.c
-@@ -750,7 +750,7 @@ __smb2_handle_cancelled_close(struct cif
- {
- 	struct close_cancelled_open *cancelled;
+--- a/include/net/udp.h
++++ b/include/net/udp.h
+@@ -476,6 +476,9 @@ static inline struct sk_buff *udp_rcv_se
+ 	if (!inet_get_convert_csum(sk))
+ 		features |= NETIF_F_IP_CSUM | NETIF_F_IPV6_CSUM;
  
--	cancelled = kzalloc(sizeof(*cancelled), GFP_KERNEL);
-+	cancelled = kzalloc(sizeof(*cancelled), GFP_ATOMIC);
- 	if (!cancelled)
- 		return -ENOMEM;
- 
++	if (skb->pkt_type == PACKET_LOOPBACK)
++		skb->ip_summed = CHECKSUM_PARTIAL;
++
+ 	/* the GSO CB lays after the UDP one, no need to save and restore any
+ 	 * CB fragment
+ 	 */
 
 
