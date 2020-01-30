@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A8F3A14E104
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Jan 2020 19:40:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8BA1314E17A
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Jan 2020 19:45:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730026AbgA3Skp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 30 Jan 2020 13:40:45 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48348 "EHLO mail.kernel.org"
+        id S1730896AbgA3Sou (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 30 Jan 2020 13:44:50 -0500
+Received: from mail.kernel.org ([198.145.29.99]:54090 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730008AbgA3Skl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 30 Jan 2020 13:40:41 -0500
+        id S1730880AbgA3Sos (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 30 Jan 2020 13:44:48 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9FA73214AF;
-        Thu, 30 Jan 2020 18:40:40 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1047E205F4;
+        Thu, 30 Jan 2020 18:44:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1580409641;
-        bh=JkVwYf0IXv2ijGwm1KGIIPEiPDUR4873p/dAQ6BicAU=;
+        s=default; t=1580409887;
+        bh=vVe2J0NLPpOZp8vR8ECvcA8eLEA7SgBwdYsD8uicAmg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=bnqJIbtDfbQFISeEDiqG0nvFThrXIXUE+x+QV0cLi4vlKrUPzvOT1FXDplxlmpQAg
-         HnNqd3k7z7y5ysgp1h3DZsngWEwAcFN8eBD1/KSQFyv731eMS+hF6KrObgxJBR5Q2j
-         psOQOSgx0NmdX5HXGlQMFJqg9fX5VZFGC7aERFqE=
+        b=e/9ed2iJOMl0Wf9LWzZsTx1Z/kj7ThvNcH94gztW6qEIvMXOHBmnrDCMIHfcb74kL
+         ytK8CoHxsjZGgaxnx3opC2KBmpHQwPyK2YhTe9HejVPi7wmTdyCe/kWFir2CfgMJx1
+         wb+gHKQtMBUZBA2iRZF8CGxTVCYgkVM3toDZJvso=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Ronnie Sahlberg <lsahlber@redhat.com>,
-        Steve French <stfrench@microsoft.com>,
-        Pavel Shilovsky <pshilov@microsoft.com>
-Subject: [PATCH 5.5 30/56] cifs: set correct max-buffer-size for smb2_ioctl_init()
-Date:   Thu, 30 Jan 2020 19:38:47 +0100
-Message-Id: <20200130183614.551929041@linuxfoundation.org>
+        stable@vger.kernel.org, Jiping Ma <jiping.ma2@windriver.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 5.4 072/110] stmmac: debugfs entry name is not be changed when udev rename device name.
+Date:   Thu, 30 Jan 2020 19:38:48 +0100
+Message-Id: <20200130183622.973401988@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200130183608.849023566@linuxfoundation.org>
-References: <20200130183608.849023566@linuxfoundation.org>
+In-Reply-To: <20200130183613.810054545@linuxfoundation.org>
+References: <20200130183613.810054545@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,47 +44,85 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Ronnie Sahlberg <lsahlber@redhat.com>
+From: Jiping Ma <jiping.ma2@windriver.com>
 
-commit 731b82bb1750a906c1e7f070aedf5505995ebea7 upstream.
+[ Upstream commit 481a7d154cbbd5ca355cc01cc8969876b240eded ]
 
-Fix two places where we need to adjust down the max response size for
-ioctl when it is used together with compounding.
+Add one notifier for udev changes net device name.
+Fixes: b6601323ef9e ("net: stmmac: debugfs entry name is not be changed when udev rename")
 
-Signed-off-by: Ronnie Sahlberg <lsahlber@redhat.com>
-Signed-off-by: Steve French <stfrench@microsoft.com>
-Reviewed-by: Pavel Shilovsky <pshilov@microsoft.com>
-CC: Stable <stable@vger.kernel.org>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Signed-off-by: Jiping Ma <jiping.ma2@windriver.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/cifs/smb2ops.c |    9 +++++++--
- 1 file changed, 7 insertions(+), 2 deletions(-)
+ .../net/ethernet/stmicro/stmmac/stmmac_main.c | 32 +++++++++++++++++++
+ 1 file changed, 32 insertions(+)
 
---- a/fs/cifs/smb2ops.c
-+++ b/fs/cifs/smb2ops.c
-@@ -1523,7 +1523,9 @@ smb2_ioctl_query_info(const unsigned int
- 					     COMPOUND_FID, COMPOUND_FID,
- 					     qi.info_type, true, buffer,
- 					     qi.output_buffer_length,
--					     CIFSMaxBufSize);
-+					     CIFSMaxBufSize -
-+					     MAX_SMB2_CREATE_RESPONSE_SIZE -
-+					     MAX_SMB2_CLOSE_RESPONSE_SIZE);
- 		}
- 	} else if (qi.flags == PASSTHRU_SET_INFO) {
- 		/* Can eventually relax perm check since server enforces too */
-@@ -2697,7 +2699,10 @@ smb2_query_symlink(const unsigned int xi
+diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
+index 1b3520d0e59ef..06dd65c419c49 100644
+--- a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
++++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
+@@ -105,6 +105,7 @@ MODULE_PARM_DESC(chain_mode, "To use chain instead of ring mode");
+ static irqreturn_t stmmac_interrupt(int irq, void *dev_id);
  
- 	rc = SMB2_ioctl_init(tcon, &rqst[1], fid.persistent_fid,
- 			     fid.volatile_fid, FSCTL_GET_REPARSE_POINT,
--			     true /* is_fctl */, NULL, 0, CIFSMaxBufSize);
-+			     true /* is_fctl */, NULL, 0,
-+			     CIFSMaxBufSize -
-+			     MAX_SMB2_CREATE_RESPONSE_SIZE -
-+			     MAX_SMB2_CLOSE_RESPONSE_SIZE);
- 	if (rc)
- 		goto querty_exit;
+ #ifdef CONFIG_DEBUG_FS
++static const struct net_device_ops stmmac_netdev_ops;
+ static void stmmac_init_fs(struct net_device *dev);
+ static void stmmac_exit_fs(struct net_device *dev);
+ #endif
+@@ -4175,6 +4176,34 @@ static int stmmac_dma_cap_show(struct seq_file *seq, void *v)
+ }
+ DEFINE_SHOW_ATTRIBUTE(stmmac_dma_cap);
  
++/* Use network device events to rename debugfs file entries.
++ */
++static int stmmac_device_event(struct notifier_block *unused,
++			       unsigned long event, void *ptr)
++{
++	struct net_device *dev = netdev_notifier_info_to_dev(ptr);
++	struct stmmac_priv *priv = netdev_priv(dev);
++
++	if (dev->netdev_ops != &stmmac_netdev_ops)
++		goto done;
++
++	switch (event) {
++	case NETDEV_CHANGENAME:
++		if (priv->dbgfs_dir)
++			priv->dbgfs_dir = debugfs_rename(stmmac_fs_dir,
++							 priv->dbgfs_dir,
++							 stmmac_fs_dir,
++							 dev->name);
++		break;
++	}
++done:
++	return NOTIFY_DONE;
++}
++
++static struct notifier_block stmmac_notifier = {
++	.notifier_call = stmmac_device_event,
++};
++
+ static void stmmac_init_fs(struct net_device *dev)
+ {
+ 	struct stmmac_priv *priv = netdev_priv(dev);
+@@ -4189,12 +4218,15 @@ static void stmmac_init_fs(struct net_device *dev)
+ 	/* Entry to report the DMA HW features */
+ 	debugfs_create_file("dma_cap", 0444, priv->dbgfs_dir, dev,
+ 			    &stmmac_dma_cap_fops);
++
++	register_netdevice_notifier(&stmmac_notifier);
+ }
+ 
+ static void stmmac_exit_fs(struct net_device *dev)
+ {
+ 	struct stmmac_priv *priv = netdev_priv(dev);
+ 
++	unregister_netdevice_notifier(&stmmac_notifier);
+ 	debugfs_remove_recursive(priv->dbgfs_dir);
+ }
+ #endif /* CONFIG_DEBUG_FS */
+-- 
+2.20.1
+
 
 
