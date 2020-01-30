@@ -2,149 +2,70 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 25D7414E3AD
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Jan 2020 21:08:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3A9F214E3B9
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Jan 2020 21:14:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727538AbgA3UIK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 30 Jan 2020 15:08:10 -0500
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:34456 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726267AbgA3UIK (ORCPT
+        id S1727554AbgA3UOT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 30 Jan 2020 15:14:19 -0500
+Received: from us-smtp-1.mimecast.com ([205.139.110.61]:55344 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727089AbgA3UOT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 30 Jan 2020 15:08:10 -0500
-Received: by mail-pf1-f196.google.com with SMTP id i6so2062010pfc.1
-        for <linux-kernel@vger.kernel.org>; Thu, 30 Jan 2020 12:08:09 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=HoUQ+yE0LEnd0V4DJaBMqfms/cYBhB81pcgudu6AOqs=;
-        b=WpD4ITRo93dijLN31FEvm/ZVopaujOGbmA9L1HVweIElOelDIgl6jdS+D9lBC3yPTL
-         AxD0PBlvInFtwuWFYJyHyMDzHpYMUXVtL/XgqbnKY7gmrxHKN3U/SCxcFZg4mMXPbjfr
-         J+9nzkmx16lYtuyZWjuJzo5xFFEduvxG1E9yk=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=HoUQ+yE0LEnd0V4DJaBMqfms/cYBhB81pcgudu6AOqs=;
-        b=o0cLGmRRKpC574IdmpZzsGy6ADUbWwBJUwZzXteMZaazvyYIGzpgMTHf1ccpJZVLOd
-         zOgsQZBpZajXu2KKRAgyC2Y5nRDAtrRkN9pfbew4H40/g8l5mmSTieiM+8Lqoljf03nW
-         g2Hgu6af2RQ6yoORbIlMVRiccMfzzzjjoIpw0Zjv7cRSimt8JsddGlapAyDtF+35yrhA
-         zdONjpMD7mqgFZqNjElKUitHDzTnxsz8CgFxSoKQtXcfA+26wD4/MtB5rSjcwdbCqSkb
-         Gp3HtdcQ2vRU80V1zHwk7ytMAO/6PeE692gMh3XQMBsjGHCkWqkxb4T7vh2RQPpPUVyK
-         HkTg==
-X-Gm-Message-State: APjAAAUyMFJRlbOIJ1Kh+6Q86oDCokYoH/V6GCOU94yC9Fs01Cm2m8C6
-        1XRPNpbHIqGueRMhVEIW5+4fbQ==
-X-Google-Smtp-Source: APXvYqybPhuB7qHu7jGKJ2xZeVYPaIIpGLPbQPGxCXOo+hLx+zRpgFSuOMCyCymtKU+jg4JLaMj7rg==
-X-Received: by 2002:a63:e545:: with SMTP id z5mr6298948pgj.209.1580414889068;
-        Thu, 30 Jan 2020 12:08:09 -0800 (PST)
-Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id z26sm7221191pgu.80.2020.01.30.12.08.08
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 30 Jan 2020 12:08:08 -0800 (PST)
-Date:   Thu, 30 Jan 2020 12:08:07 -0800
-From:   Kees Cook <keescook@chromium.org>
-To:     "H.J. Lu" <hjl.tools@gmail.com>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Thomas Lendacky <Thomas.Lendacky@amd.com>,
-        Sami Tolvanen <samitolvanen@google.com>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H . Peter Anvin" <hpa@zytor.com>,
-        the arch/x86 maintainers <x86@kernel.org>,
-        Yu-cheng Yu <yu-cheng.yu@intel.com>
-Subject: Re: [PATCH 2/2] x86: Discard .note.gnu.property sections in vmlinux
-Message-ID: <202001301206.13AF0512@keescook>
-References: <20200124181819.4840-1-hjl.tools@gmail.com>
- <20200124181819.4840-3-hjl.tools@gmail.com>
- <202001271531.B9ACE2A@keescook>
- <CAMe9rOrVyzvaTyURc4RJJTHUXGG6uAC9KyQomxQFzWzrAN4nrg@mail.gmail.com>
- <202001301143.288B55DCC1@keescook>
- <CAMe9rOocT960KsofP9o_y49FdgY9NGix=GcYnpKLvp7RhieZNA@mail.gmail.com>
+        Thu, 30 Jan 2020 15:14:19 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1580415258;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=It49j9LVTEdfoN2GEBrycA6NOResxAai2wxDK0RMpj4=;
+        b=ByIPweATlBxfk4QLbk999ojVIqLOZkkkwvsAeupEgunDiQW+Csz7NohEklpsokmW+OJdc7
+        Gx4+QWUlYOVm8t3eRG8S9uT0FE8xTaygBZH+/JFMs94viqNOxP/HwLmrOW7aYq2LWH4T5S
+        inIIzKdmji+Fo4A7I9xYfX2VRB5cKpg=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-212-wmRWdobNOZq_4MnUvh1Upw-1; Thu, 30 Jan 2020 15:14:16 -0500
+X-MC-Unique: wmRWdobNOZq_4MnUvh1Upw-1
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 665E3107B26F;
+        Thu, 30 Jan 2020 20:14:14 +0000 (UTC)
+Received: from localhost (unused-10-15-17-6.yyz.redhat.com [10.15.17.6])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id A09BB5DA7B;
+        Thu, 30 Jan 2020 20:14:11 +0000 (UTC)
+Date:   Thu, 30 Jan 2020 15:14:11 -0500
+From:   Eduardo Habkost <ehabkost@redhat.com>
+To:     Wei Wang <wei.w.wang@intel.com>
+Cc:     linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
+        ak@linux.intel.com, peterz@infradead.org, pbonzini@redhat.com,
+        kan.liang@intel.com, mingo@redhat.com, rkrcmar@redhat.com,
+        like.xu@intel.com, jannh@google.com, arei.gonglei@huawei.com,
+        jmattson@google.com,
+        Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>,
+        Jiri Olsa <jolsa@redhat.com>
+Subject: Re: [PATCH v8 00/14] Guest LBR Enabling
+Message-ID: <20200130201411.GF25446@habkost.net>
+References: <1565075774-26671-1-git-send-email-wei.w.wang@intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAMe9rOocT960KsofP9o_y49FdgY9NGix=GcYnpKLvp7RhieZNA@mail.gmail.com>
+In-Reply-To: <1565075774-26671-1-git-send-email-wei.w.wang@intel.com>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jan 30, 2020 at 12:04:54PM -0800, H.J. Lu wrote:
-> > I don't understand this. "may not be incompatible"? Is there an error
-> > generated? If so, what does it look like?
+On Tue, Aug 06, 2019 at 03:16:00PM +0800, Wei Wang wrote:
+> Last Branch Recording (LBR) is a performance monitor unit (PMU) feature
+> on Intel CPUs that captures branch related info. This patch series enables
+> this feature to KVM guests.
 > 
-> When -mx86-used-note=yes is passed to assembler, with my patch, I got
-> 
-> [hjl@gnu-skx-1 linux]$ readelf -n vmlinux
-> 
-> Displaying notes found in: .notes
->   Owner                Data size Description
->   Xen                  0x00000006 Unknown note type: (0x00000006)
->    description data: 6c 69 6e 75 78 00
->   Xen                  0x00000004 Unknown note type: (0x00000007)
->    description data: 32 2e 36 00
->   Xen                  0x00000008 Unknown note type: (0x00000005)
->    description data: 78 65 6e 2d 33 2e 30 00
->   Xen                  0x00000008 Unknown note type: (0x00000003)
->    description data: 00 00 00 80 ff ff ff ff
->   Xen                  0x00000008 Unknown note type: (0x0000000f)
->    description data: 00 00 00 00 80 00 00 00
->   Xen                  0x00000008 NT_VERSION (version)
->    description data: 80 a1 ba 82 ff ff ff ff
->   Xen                  0x00000008 NT_ARCH (architecture)
->    description data: 00 10 00 81 ff ff ff ff
->   Xen                  0x00000029 Unknown note type: (0x0000000a)
->    description data: 21 77 72 69 74 61 62 6c 65 5f 70 61 67 65 5f 74
-> 61 62 6c 65 73 7c 70 61 65 5f 70 67 64 69 72 5f 61 62 6f 76 65 5f 34
-> 67 62
->   Xen                  0x00000004 Unknown note type: (0x00000011)
->    description data: 01 88 00 00
->   Xen                  0x00000004 Unknown note type: (0x00000009)
->    description data: 79 65 73 00
->   Xen                  0x00000008 Unknown note type: (0x00000008)
->    description data: 67 65 6e 65 72 69 63 00
->   Xen                  0x00000010 Unknown note type: (0x0000000d)
->    description data: 01 00 00 00 00 00 00 00 01 00 00 00 00 00 00 00
->   Xen                  0x00000004 Unknown note type: (0x0000000e)
->    description data: 01 00 00 00
->   Xen                  0x00000004 Unknown note type: (0x00000010)
->    description data: 01 00 00 00
->   Xen                  0x00000008 Unknown note type: (0x0000000c)
->    description data: 00 00 00 00 00 80 ff ff
->   Xen                  0x00000008 Unknown note type: (0x00000004)
->    description data: 00 00 00 00 00 00 00 00
->   GNU                  0x00000014 NT_GNU_BUILD_ID (unique build ID bitstring)
->     Build ID: 11c73de2922f593e1b35b92ab3c70eaa1a80fa83
->   Linux                0x00000018 OPEN
->    description data: 35 2e 33 2e 39 2d 32 30 30 2e 30 2e 66 63 33 30
-> 2e 78 38 36 5f 36 34 00
->   Xen                  0x00000008 Unknown note type: (0x00000012)
->    description data: 70 04 00 01 00 00 00 00
-> [hjl@gnu-skx-1 linux]$
-> 
-> Without my patch,
-> 
-> [hjl@gnu-skx-1 linux]$ readelf -n vmlinux
-> 
-> Displaying notes found in: .notes
->   Owner                Data size Description
->   Xen                  0x00000006 Unknown note type: (0x00000006)
->    description data: 6c 69 6e 75 78 00
->   Xen                  0x00000004 Unknown note type: (0x00000007)
->    description data: 32 2e 36 00
->   xen-3.0              0x00000005 Unknown note type: (0x006e6558)
->    description data: 08 00 00 00 03
-> readelf: Warning: note with invalid namesz and/or descsz found at offset 0x50
-> readelf: Warning:  type: 0xffffffff, namesize: 0x006e6558, descsize:
-> 0x80000000, alignment: 8
-> [hjl@gnu-skx-1 linux]$
+> Each guest can be configured to expose this LBR feature to the guest via
+> userspace setting the enabling param in KVM_CAP_X86_GUEST_LBR (patch 3).
 
-What is the source of this failure? Does readelf need updating instead?
-Is the linking step producing an invalid section? It seems like
-discarding the properties isn't the right solution here?
+Are QEMU patches for enabling KVM_CAP_X86_GUEST_LBR being planned?
 
 -- 
-Kees Cook
+Eduardo
+
