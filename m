@@ -2,40 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2D60714E16B
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Jan 2020 19:44:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4511D14E0F9
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Jan 2020 19:40:28 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730809AbgA3SoT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 30 Jan 2020 13:44:19 -0500
-Received: from mail.kernel.org ([198.145.29.99]:53334 "EHLO mail.kernel.org"
+        id S1729934AbgA3SkX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 30 Jan 2020 13:40:23 -0500
+Received: from mail.kernel.org ([198.145.29.99]:47794 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730801AbgA3SoR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 30 Jan 2020 13:44:17 -0500
+        id S1728000AbgA3SkR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 30 Jan 2020 13:40:17 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 20F5A205F4;
-        Thu, 30 Jan 2020 18:44:15 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1700420702;
+        Thu, 30 Jan 2020 18:40:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1580409856;
-        bh=l/54tbrLAeoXmLygfmCUMy7nlKmDi4RKwGSnm2fHF3s=;
+        s=default; t=1580409616;
+        bh=IzDMZNQl3J1nGNsNXmPv0XusuU1RExicvphwbiLdAOQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=OD+FJ/vvtqvsoQx16cw7Hz4wEdbxOkr6QoKBSjwoLuXgq7sZhnwhJIIGfPNLtbVTZ
-         i1Nh9NKHX8IqHftHaQ7Zj2U9Li8aPGSO2ZZI6tVtrkQHvbebLrS7Vd3tXZlZMEENHs
-         gxHOPbithv6EtbbUGTPf2Z26D+ytZbM1P/bf7TQg=
+        b=gaSQtA8TDuKGt3r66yE+cQoFB9kRR14geqKhGlHaEORnv6+p8Zsg6u2QWW0xPqiXx
+         VKiBEZ3EvBLNip0vpPWacdAXStMFFdUh7RRryNUgwxd9mWWb1pCuWC83QsGDC14bMv
+         GSlI/U7SAgbAegnet32WNmy1i0uUkbUbqWfnvL50=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Andreas Kemnade <andreas@kemnade.info>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Wim Van Sebroeck <wim@linux-watchdog.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.4 061/110] watchdog: rn5t618_wdt: fix module aliases
-Date:   Thu, 30 Jan 2020 19:38:37 +0100
-Message-Id: <20200130183622.170030070@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Martin Fuzzey <martin.fuzzey@flowbird.group>,
+        Todd Kjos <tkjos@google.com>
+Subject: [PATCH 5.5 21/56] binder: fix log spam for existing debugfs file creation.
+Date:   Thu, 30 Jan 2020 19:38:38 +0100
+Message-Id: <20200130183613.111465806@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200130183613.810054545@linuxfoundation.org>
-References: <20200130183613.810054545@linuxfoundation.org>
+In-Reply-To: <20200130183608.849023566@linuxfoundation.org>
+References: <20200130183608.849023566@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,37 +44,116 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Andreas Kemnade <andreas@kemnade.info>
+From: Martin Fuzzey <martin.fuzzey@flowbird.group>
 
-[ Upstream commit a76dfb859cd42df6e3d1910659128ffcd2fb6ba2 ]
+commit eb143f8756e77c8fcfc4d574922ae9efd3a43ca9 upstream.
 
-Platform device aliases were missing so module autoloading
-did not work.
+Since commit 43e23b6c0b01 ("debugfs: log errors when something goes wrong")
+debugfs logs attempts to create existing files.
 
-Signed-off-by: Andreas Kemnade <andreas@kemnade.info>
-Reviewed-by: Guenter Roeck <linux@roeck-us.net>
-Link: https://lore.kernel.org/r/20191213214802.22268-1-andreas@kemnade.info
-Signed-off-by: Guenter Roeck <linux@roeck-us.net>
-Signed-off-by: Wim Van Sebroeck <wim@linux-watchdog.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+However binder attempts to create multiple debugfs files with
+the same name when a single PID has multiple contexts, this leads
+to log spamming during an Android boot (17 such messages during
+boot on my system).
+
+Fix this by checking if we already know the PID and only create
+the debugfs entry for the first context per PID.
+
+Do the same thing for binderfs for symmetry.
+
+Signed-off-by: Martin Fuzzey <martin.fuzzey@flowbird.group>
+Acked-by: Todd Kjos <tkjos@google.com>
+Fixes: 43e23b6c0b01 ("debugfs: log errors when something goes wrong")
+Cc: stable <stable@vger.kernel.org>
+Link: https://lore.kernel.org/r/1578671054-5982-1-git-send-email-martin.fuzzey@flowbird.group
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- drivers/watchdog/rn5t618_wdt.c | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/android/binder.c |   37 +++++++++++++++++++------------------
+ 1 file changed, 19 insertions(+), 18 deletions(-)
 
-diff --git a/drivers/watchdog/rn5t618_wdt.c b/drivers/watchdog/rn5t618_wdt.c
-index 2348760474317..6e524c8e26a8f 100644
---- a/drivers/watchdog/rn5t618_wdt.c
-+++ b/drivers/watchdog/rn5t618_wdt.c
-@@ -188,6 +188,7 @@ static struct platform_driver rn5t618_wdt_driver = {
+--- a/drivers/android/binder.c
++++ b/drivers/android/binder.c
+@@ -5199,10 +5199,11 @@ err_bad_arg:
  
- module_platform_driver(rn5t618_wdt_driver);
+ static int binder_open(struct inode *nodp, struct file *filp)
+ {
+-	struct binder_proc *proc;
++	struct binder_proc *proc, *itr;
+ 	struct binder_device *binder_dev;
+ 	struct binderfs_info *info;
+ 	struct dentry *binder_binderfs_dir_entry_proc = NULL;
++	bool existing_pid = false;
  
-+MODULE_ALIAS("platform:rn5t618-wdt");
- MODULE_AUTHOR("Beniamino Galvani <b.galvani@gmail.com>");
- MODULE_DESCRIPTION("RN5T618 watchdog driver");
- MODULE_LICENSE("GPL v2");
--- 
-2.20.1
-
+ 	binder_debug(BINDER_DEBUG_OPEN_CLOSE, "%s: %d:%d\n", __func__,
+ 		     current->group_leader->pid, current->pid);
+@@ -5235,19 +5236,24 @@ static int binder_open(struct inode *nod
+ 	filp->private_data = proc;
+ 
+ 	mutex_lock(&binder_procs_lock);
++	hlist_for_each_entry(itr, &binder_procs, proc_node) {
++		if (itr->pid == proc->pid) {
++			existing_pid = true;
++			break;
++		}
++	}
+ 	hlist_add_head(&proc->proc_node, &binder_procs);
+ 	mutex_unlock(&binder_procs_lock);
+ 
+-	if (binder_debugfs_dir_entry_proc) {
++	if (binder_debugfs_dir_entry_proc && !existing_pid) {
+ 		char strbuf[11];
+ 
+ 		snprintf(strbuf, sizeof(strbuf), "%u", proc->pid);
+ 		/*
+-		 * proc debug entries are shared between contexts, so
+-		 * this will fail if the process tries to open the driver
+-		 * again with a different context. The priting code will
+-		 * anyway print all contexts that a given PID has, so this
+-		 * is not a problem.
++		 * proc debug entries are shared between contexts.
++		 * Only create for the first PID to avoid debugfs log spamming
++		 * The printing code will anyway print all contexts for a given
++		 * PID so this is not a problem.
+ 		 */
+ 		proc->debugfs_entry = debugfs_create_file(strbuf, 0444,
+ 			binder_debugfs_dir_entry_proc,
+@@ -5255,19 +5261,16 @@ static int binder_open(struct inode *nod
+ 			&proc_fops);
+ 	}
+ 
+-	if (binder_binderfs_dir_entry_proc) {
++	if (binder_binderfs_dir_entry_proc && !existing_pid) {
+ 		char strbuf[11];
+ 		struct dentry *binderfs_entry;
+ 
+ 		snprintf(strbuf, sizeof(strbuf), "%u", proc->pid);
+ 		/*
+ 		 * Similar to debugfs, the process specific log file is shared
+-		 * between contexts. If the file has already been created for a
+-		 * process, the following binderfs_create_file() call will
+-		 * fail with error code EEXIST if another context of the same
+-		 * process invoked binder_open(). This is ok since same as
+-		 * debugfs, the log file will contain information on all
+-		 * contexts of a given PID.
++		 * between contexts. Only create for the first PID.
++		 * This is ok since same as debugfs, the log file will contain
++		 * information on all contexts of a given PID.
+ 		 */
+ 		binderfs_entry = binderfs_create_file(binder_binderfs_dir_entry_proc,
+ 			strbuf, &proc_fops, (void *)(unsigned long)proc->pid);
+@@ -5277,10 +5280,8 @@ static int binder_open(struct inode *nod
+ 			int error;
+ 
+ 			error = PTR_ERR(binderfs_entry);
+-			if (error != -EEXIST) {
+-				pr_warn("Unable to create file %s in binderfs (error %d)\n",
+-					strbuf, error);
+-			}
++			pr_warn("Unable to create file %s in binderfs (error %d)\n",
++				strbuf, error);
+ 		}
+ 	}
+ 
 
 
