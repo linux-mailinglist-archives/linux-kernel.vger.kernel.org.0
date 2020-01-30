@@ -2,39 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E092714E210
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Jan 2020 19:50:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6490A14E187
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Jan 2020 19:45:26 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727490AbgA3StS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 30 Jan 2020 13:49:18 -0500
-Received: from mail.kernel.org ([198.145.29.99]:59960 "EHLO mail.kernel.org"
+        id S1730733AbgA3SpT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 30 Jan 2020 13:45:19 -0500
+Received: from mail.kernel.org ([198.145.29.99]:54816 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731611AbgA3Sss (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 30 Jan 2020 13:48:48 -0500
+        id S1730986AbgA3SpQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 30 Jan 2020 13:45:16 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9655020CC7;
-        Thu, 30 Jan 2020 18:48:46 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D62B320CC7;
+        Thu, 30 Jan 2020 18:45:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1580410127;
-        bh=shx1sGlh9za0Mqaiys2YgLTeo6T/lPQsbfWBk6k3YUE=;
+        s=default; t=1580409915;
+        bh=dpSH7wm6P98BNVbE4Ngg343Teh85IXSxwMZFTo00bpY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=LaP4hLOaHYR410ZAmbVFsbtCOEu87a9iVy68fsgzA1XAAbjJAwh60H+6YLxNCksdX
-         DFfsPEUL5azTLpj/EAPdpqtWu7jNEvaApT76GnSgpvwt0TupgbPAnnwrVZFbs+DaA0
-         QqRe9B94ga+4JjVRBsRlkhcd76CwQWSFyEi7Sf/U=
+        b=PXhf2mPwHX3+ecBZqT6Y8kq3M7/aTUn+846r5O/R5C0yP1wDa6h6stDaQ9oLwO/zJ
+         xgc113ntYiM5qgBYAYHcgjfA3eNNdjc+JGoW5reaQjfFYuqaqfSXmSHIpqNB0sWRfQ
+         SYPeZJ/ePgZiN1ZbVz9dRtXhHsa55qBHrU+XEMjk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Atul Gupta <atul.gupta@chelsio.com>,
-        Eric Biggers <ebiggers@google.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>
-Subject: [PATCH 4.19 17/55] crypto: chelsio - fix writing tfm flags to wrong place
+        stable@vger.kernel.org, Thomas Voegtle <tv@lio96.de>,
+        Jan Pieter van Woerkom <jp@jpvw.nl>,
+        Sean Young <sean@mess.org>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 5.4 082/110] media: dvbsky: add support for eyeTV Geniatech T2 lite
 Date:   Thu, 30 Jan 2020 19:38:58 +0100
-Message-Id: <20200130183611.997731512@linuxfoundation.org>
+Message-Id: <20200130183623.902015896@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200130183608.563083888@linuxfoundation.org>
-References: <20200130183608.563083888@linuxfoundation.org>
+In-Reply-To: <20200130183613.810054545@linuxfoundation.org>
+References: <20200130183613.810054545@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,92 +46,51 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Eric Biggers <ebiggers@google.com>
+From: Thomas Voegtle <tv@lio96.de>
 
-commit bd56cea012fc2d6381e8cd3209510ce09f9de8c9 upstream.
+[ Upstream commit 14494583336880640654300c76d0f5df3360d85f ]
 
-The chelsio crypto driver is casting 'struct crypto_aead' directly to
-'struct crypto_tfm', which is incorrect because the crypto_tfm isn't the
-first field of 'struct crypto_aead'.  Consequently, the calls to
-crypto_tfm_set_flags() are modifying some other field in the struct.
+Adds USB ID for the eyeTV Geniatech T2 lite to the dvbsky driver.
+This is a Geniatech T230C based stick without IR and a different USB ID.
 
-Also, the driver is setting CRYPTO_TFM_RES_BAD_KEY_LEN in
-->setauthsize(), not just in ->setkey().  This is incorrect since this
-flag is for bad key lengths, not for bad authentication tag lengths.
-
-Fix these bugs by removing the broken crypto_tfm_set_flags() calls from
-->setauthsize() and by fixing them in ->setkey().
-
-Fixes: 324429d74127 ("chcr: Support for Chelsio's Crypto Hardware")
-Cc: <stable@vger.kernel.org> # v4.9+
-Cc: Atul Gupta <atul.gupta@chelsio.com>
-Signed-off-by: Eric Biggers <ebiggers@google.com>
-Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Signed-off-by: Thomas Voegtle <tv@lio96.de>
+Tested-by: Jan Pieter van Woerkom <jp@jpvw.nl>
+Signed-off-by: Sean Young <sean@mess.org>
+Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/crypto/chelsio/chcr_algo.c |   16 +++-------------
- 1 file changed, 3 insertions(+), 13 deletions(-)
+ drivers/media/usb/dvb-usb-v2/dvbsky.c | 3 +++
+ include/media/dvb-usb-ids.h           | 1 +
+ 2 files changed, 4 insertions(+)
 
---- a/drivers/crypto/chelsio/chcr_algo.c
-+++ b/drivers/crypto/chelsio/chcr_algo.c
-@@ -3135,9 +3135,6 @@ static int chcr_gcm_setauthsize(struct c
- 		aeadctx->mayverify = VERIFY_SW;
- 		break;
- 	default:
--
--		  crypto_tfm_set_flags((struct crypto_tfm *) tfm,
--			CRYPTO_TFM_RES_BAD_KEY_LEN);
- 		return -EINVAL;
- 	}
- 	return crypto_aead_setauthsize(aeadctx->sw_cipher, authsize);
-@@ -3162,8 +3159,6 @@ static int chcr_4106_4309_setauthsize(st
- 		aeadctx->mayverify = VERIFY_HW;
- 		break;
- 	default:
--		crypto_tfm_set_flags((struct crypto_tfm *)tfm,
--				     CRYPTO_TFM_RES_BAD_KEY_LEN);
- 		return -EINVAL;
- 	}
- 	return crypto_aead_setauthsize(aeadctx->sw_cipher, authsize);
-@@ -3204,8 +3199,6 @@ static int chcr_ccm_setauthsize(struct c
- 		aeadctx->mayverify = VERIFY_HW;
- 		break;
- 	default:
--		crypto_tfm_set_flags((struct crypto_tfm *)tfm,
--				     CRYPTO_TFM_RES_BAD_KEY_LEN);
- 		return -EINVAL;
- 	}
- 	return crypto_aead_setauthsize(aeadctx->sw_cipher, authsize);
-@@ -3230,8 +3223,7 @@ static int chcr_ccm_common_setkey(struct
- 		ck_size = CHCR_KEYCTX_CIPHER_KEY_SIZE_256;
- 		mk_size = CHCR_KEYCTX_MAC_KEY_SIZE_256;
- 	} else {
--		crypto_tfm_set_flags((struct crypto_tfm *)aead,
--				     CRYPTO_TFM_RES_BAD_KEY_LEN);
-+		crypto_aead_set_flags(aead, CRYPTO_TFM_RES_BAD_KEY_LEN);
- 		aeadctx->enckey_len = 0;
- 		return	-EINVAL;
- 	}
-@@ -3269,8 +3261,7 @@ static int chcr_aead_rfc4309_setkey(stru
- 	int error;
- 
- 	if (keylen < 3) {
--		crypto_tfm_set_flags((struct crypto_tfm *)aead,
--				     CRYPTO_TFM_RES_BAD_KEY_LEN);
-+		crypto_aead_set_flags(aead, CRYPTO_TFM_RES_BAD_KEY_LEN);
- 		aeadctx->enckey_len = 0;
- 		return	-EINVAL;
- 	}
-@@ -3320,8 +3311,7 @@ static int chcr_gcm_setkey(struct crypto
- 	} else if (keylen == AES_KEYSIZE_256) {
- 		ck_size = CHCR_KEYCTX_CIPHER_KEY_SIZE_256;
- 	} else {
--		crypto_tfm_set_flags((struct crypto_tfm *)aead,
--				     CRYPTO_TFM_RES_BAD_KEY_LEN);
-+		crypto_aead_set_flags(aead, CRYPTO_TFM_RES_BAD_KEY_LEN);
- 		pr_err("GCM: Invalid key length %d\n", keylen);
- 		ret = -EINVAL;
- 		goto out;
+diff --git a/drivers/media/usb/dvb-usb-v2/dvbsky.c b/drivers/media/usb/dvb-usb-v2/dvbsky.c
+index 617a306f6815d..dc380c0c95369 100644
+--- a/drivers/media/usb/dvb-usb-v2/dvbsky.c
++++ b/drivers/media/usb/dvb-usb-v2/dvbsky.c
+@@ -792,6 +792,9 @@ static const struct usb_device_id dvbsky_id_table[] = {
+ 	{ DVB_USB_DEVICE(USB_VID_CONEXANT, USB_PID_MYGICA_T230C,
+ 		&mygica_t230c_props, "MyGica Mini DVB-T2 USB Stick T230C",
+ 		RC_MAP_TOTAL_MEDIA_IN_HAND_02) },
++	{ DVB_USB_DEVICE(USB_VID_CONEXANT, USB_PID_MYGICA_T230C_LITE,
++		&mygica_t230c_props, "MyGica Mini DVB-T2 USB Stick T230C Lite",
++		NULL) },
+ 	{ DVB_USB_DEVICE(USB_VID_CONEXANT, USB_PID_MYGICA_T230C2,
+ 		&mygica_t230c_props, "MyGica Mini DVB-T2 USB Stick T230C v2",
+ 		RC_MAP_TOTAL_MEDIA_IN_HAND_02) },
+diff --git a/include/media/dvb-usb-ids.h b/include/media/dvb-usb-ids.h
+index 7ce4e83324219..1409230ad3a4c 100644
+--- a/include/media/dvb-usb-ids.h
++++ b/include/media/dvb-usb-ids.h
+@@ -389,6 +389,7 @@
+ #define USB_PID_MYGICA_T230				0xc688
+ #define USB_PID_MYGICA_T230C				0xc689
+ #define USB_PID_MYGICA_T230C2				0xc68a
++#define USB_PID_MYGICA_T230C_LITE			0xc699
+ #define USB_PID_ELGATO_EYETV_DIVERSITY			0x0011
+ #define USB_PID_ELGATO_EYETV_DTT			0x0021
+ #define USB_PID_ELGATO_EYETV_DTT_2			0x003f
+-- 
+2.20.1
+
 
 
