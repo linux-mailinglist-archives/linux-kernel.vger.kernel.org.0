@@ -2,101 +2,67 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AB2C414DCC1
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Jan 2020 15:25:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C8F4014DCCF
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Jan 2020 15:31:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727322AbgA3OZW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 30 Jan 2020 09:25:22 -0500
-Received: from mail-pj1-f66.google.com ([209.85.216.66]:39198 "EHLO
+        id S1727405AbgA3ObC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 30 Jan 2020 09:31:02 -0500
+Received: from mail-pj1-f66.google.com ([209.85.216.66]:54232 "EHLO
         mail-pj1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726980AbgA3OZV (ORCPT
+        with ESMTP id S1726902AbgA3ObC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 30 Jan 2020 09:25:21 -0500
-Received: by mail-pj1-f66.google.com with SMTP id e9so1406213pjr.4;
-        Thu, 30 Jan 2020 06:25:21 -0800 (PST)
+        Thu, 30 Jan 2020 09:31:02 -0500
+Received: by mail-pj1-f66.google.com with SMTP id n96so1401523pjc.3
+        for <linux-kernel@vger.kernel.org>; Thu, 30 Jan 2020 06:31:02 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=yk6qeDRk9bsU8rZcHl5rGYUeaQ0Nm0LWhFjeUIifTCg=;
-        b=ig4AfFwlEW+d5fbFaH+GgYqVzP0YFZXTCoswJrMx0kJSjC4fA99v9z7j3LFfVU+jxp
-         asMpi1UYRcVqfx1SjwmQ//C1T31rtF65AyRgBZKz3Bpo/ujlLlvTfpfdRpTmUFArmK5m
-         iWzBgHgIGxlMIq7FgfG05AYM3Qag7AzGcWPd5ncpbqugMhePyCjRldM+6Z3rIwaGXCrr
-         fLNFzshWXFBqJdRnQKXzOJTQdtoAfMDjpg1aYxDkBfqhFp9jnl79yvBZQFqsJ1DVr6kn
-         xq1dyP2jmm9hBVK8119UZT02p6W5+eSXdxUy6j4d6qWZ0sldFQ8F3IignkKBJnBp0XRz
-         sA9g==
+        h=mime-version:from:date:message-id:subject:to;
+        bh=EqeNuPCh2EscwVWwyfmdlBnc1Jo/GS7LeqzNO4LEAkE=;
+        b=HLTz72LxCzKxM10J6cnICXKhn5cZMGR948HKs+Nk5nhjOrnw6ehkZiB/t1ncQd+DpG
+         s6/uP/ZH3bJjBk2aSvFC4GwwMtF0rhK3OIguebfYvJaY8xYKbj5jYTw2jgZDQiQaije6
+         HAIx3pmumbZSLcg1L+UcM1q4O4igue16LIVGyFS8CPt3kB9UBXCVkS7XYRz2ZzJBzBUR
+         sEzNWIwgCOvtpm3GkDB+FEkXiUCeD4No3EXIHvh3Ebhd97Y1ZgG2ugpA7oZSK6lah2Ay
+         /m3lRvLGw+lZEHQqNZ8gUO8rfGUcOeAVPh88NdBv7q809PrK1GUjMSEU9PGXkYqIshpE
+         VfOQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=yk6qeDRk9bsU8rZcHl5rGYUeaQ0Nm0LWhFjeUIifTCg=;
-        b=fV0V33Eo+KcOKKH/73m/cc9Sc3krqYUihxk7RQv8dPyX4Dfe/YUqXUTokAO5v6b38k
-         1AeZKDnRRBcqaYAHDJi34bj3UJHxptG/FSrXMHVgkjco6U2MPFucWO8X3/unkDGuo4oZ
-         8IgL+g8BTkfjBeDPwj/6fCRP66hMXYND9JGgOasFHtMByIlxULBxoCrPivuRmQe5GD7h
-         aEXKh+4ttuZvTD54xBEnBs1Ir2434/L9dN+S7+P1aR3DTSLMhZLwYxXZ0ni/KuJFR5Ri
-         B8hDSSCIQSysTeBwnve/pnhLOBgFA8lE4bsOA3ZTnD2b8R6l1EqHCMyE6Tc51O9gr/5c
-         Mm7Q==
-X-Gm-Message-State: APjAAAXfkzx5Wq9sxvBUy/rbpURmevvS4ETM0P/fZC/S5FKu5KMs9OJM
-        UnR3ku18165lwPaD7AMeLPA=
-X-Google-Smtp-Source: APXvYqyqIS+XYq1I0HTTRAOscemOLsmgOadI9AArHOtu2fEs5qsnq67NH6uW4eQBgn9M/eO3pw3uRQ==
-X-Received: by 2002:a17:90a:3243:: with SMTP id k61mr6405780pjb.43.1580394320899;
-        Thu, 30 Jan 2020 06:25:20 -0800 (PST)
-Received: from localhost ([43.224.245.179])
-        by smtp.gmail.com with ESMTPSA id r2sm6669642pgv.16.2020.01.30.06.25.19
-        (version=TLS1_2 cipher=AES128-SHA bits=128/128);
-        Thu, 30 Jan 2020 06:25:20 -0800 (PST)
-From:   qiwuchen55@gmail.com
-To:     viro@zeniv.linux.org.uk
-Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        chenqiwu <chenqiwu@xiaomi.com>
-Subject: [PATCH] fs/namespace.c: fix typos in comment
-Date:   Thu, 30 Jan 2020 22:25:05 +0800
-Message-Id: <1580394305-28573-1-git-send-email-qiwuchen55@gmail.com>
-X-Mailer: git-send-email 1.9.1
+        h=x-gm-message-state:mime-version:from:date:message-id:subject:to;
+        bh=EqeNuPCh2EscwVWwyfmdlBnc1Jo/GS7LeqzNO4LEAkE=;
+        b=OsMOUDHab1sMY5KgL4SgRtb6DfdksZ0WAqFzAr8M54nFTV9e+L6evNToZaeVWOQ2Io
+         cEhXKfkA9f7jj5q4ROFyFxQopoKYMoTxYQtjrPwSJmBhtN3W49K7lb4Pf9MiBcc4C54C
+         gv/T6niEZG05+R0T6DrPFixqEVCC2QIpQ/GkYUVvKmPJsSdC5biWbVxNMvpZ9QNmTRQC
+         kDsVvG/eWqshdsUUaBHuWZX8v1te/LuI7js9t9qi+4b/zvu1pOQSlw1ImRPJCaKmx3Ej
+         CUn0Dsh76jT4dSMms5LC3ORH4jn9LzNUTMSC8waOLTAOm675W7lCJ52RPRkwGBWx+wXK
+         hjBw==
+X-Gm-Message-State: APjAAAWDBWEOQRAfQ2F2hApPEdYWZLZF0whGYybennKjnNzHewe3z7Ng
+        KUZ8NuV7fzOf40UFAskyltS58zmTJcgxFnrLIvc=
+X-Google-Smtp-Source: APXvYqw5SWt5tbdIrLq2xIZl5TO6uw/EQzos700Samo/y04UrurqC+cGiLMuSgQ8ooe1ONYdv3DMFnJRySs2lUplQ7M=
+X-Received: by 2002:a17:902:e789:: with SMTP id cp9mr5026477plb.85.1580394661802;
+ Thu, 30 Jan 2020 06:31:01 -0800 (PST)
+MIME-Version: 1.0
+Received: by 2002:a17:90a:332f:0:0:0:0 with HTTP; Thu, 30 Jan 2020 06:31:00
+ -0800 (PST)
+From:   Ganbatar Azzanayaj <ganbatarazzanayajg@gmail.com>
+Date:   Thu, 30 Jan 2020 14:31:00 +0000
+Message-ID: <CAM7Kmt=fFfn4N_SCfCVAAz8j9cYXnzfsiRss_bGskC_fDfuj3Q@mail.gmail.com>
+Subject: hope
+To:     undisclosed-recipients:;
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: chenqiwu <chenqiwu@xiaomi.com>
+Good day , i write to inform you as auditor onbehalf of ORABANK.
 
-Fix the typos of correct parameter description.
+Transaction number 000399577OBK have been approved for release
+through VISA ELECTRON ATM Card.
 
-Signed-off-by: chenqiwu <chenqiwu@xiaomi.com>
----
- fs/namespace.c | 7 ++++---
- fs/pnode.c     | 2 +-
- 2 files changed, 5 insertions(+), 4 deletions(-)
+Note that you are required to reconfirm your complete mailing address
+for delivery.
 
-diff --git a/fs/namespace.c b/fs/namespace.c
-index 5e1bf61..cb9584f 100644
---- a/fs/namespace.c
-+++ b/fs/namespace.c
-@@ -1975,9 +1975,10 @@ int count_mounts(struct mnt_namespace *ns, struct mount *mnt)
- }
- 
- /*
-- *  @source_mnt : mount tree to be attached
-- *  @nd         : place the mount tree @source_mnt is attached
-- *  @parent_nd  : if non-null, detach the source_mnt from its parent and
-+ *  @source_mnt : source mount.
-+ *  @dest_mnt   : destination mount.
-+ *  @dest_mp    : destination mountpoint.
-+ *  @moving     : if true, attach source_mnt to dest_mnt and
-  *  		   store the parent mount and mountpoint dentry.
-  *  		   (done when source_mnt is moved)
-  *
-diff --git a/fs/pnode.c b/fs/pnode.c
-index 49f6d7f..bc378ec 100644
---- a/fs/pnode.c
-+++ b/fs/pnode.c
-@@ -282,7 +282,7 @@ static int propagate_one(struct mount *m)
-  * headed at source_mnt's ->mnt_list
-  *
-  * @dest_mnt: destination mount.
-- * @dest_dentry: destination dentry.
-+ * @dest_mp: destination mountpoint.
-  * @source_mnt: source mount.
-  * @tree_list : list of heads of trees to be attached.
-  */
--- 
-1.9.1
+Reconfirm code 000399577OBK to the Director Mr. Patrick Masrellet on ( (
+atm.orabank@iname.com )) for further action.
 
+Regards.
+ganbatar azzanayajg( Esq)
