@@ -2,70 +2,109 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3A9F214E3B9
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Jan 2020 21:14:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D2D2914E3BB
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Jan 2020 21:14:45 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727554AbgA3UOT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 30 Jan 2020 15:14:19 -0500
-Received: from us-smtp-1.mimecast.com ([205.139.110.61]:55344 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727089AbgA3UOT (ORCPT
+        id S1727619AbgA3UOj convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Thu, 30 Jan 2020 15:14:39 -0500
+Received: from relay3-d.mail.gandi.net ([217.70.183.195]:48921 "EHLO
+        relay3-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727564AbgA3UOj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 30 Jan 2020 15:14:19 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1580415258;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=It49j9LVTEdfoN2GEBrycA6NOResxAai2wxDK0RMpj4=;
-        b=ByIPweATlBxfk4QLbk999ojVIqLOZkkkwvsAeupEgunDiQW+Csz7NohEklpsokmW+OJdc7
-        Gx4+QWUlYOVm8t3eRG8S9uT0FE8xTaygBZH+/JFMs94viqNOxP/HwLmrOW7aYq2LWH4T5S
-        inIIzKdmji+Fo4A7I9xYfX2VRB5cKpg=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-212-wmRWdobNOZq_4MnUvh1Upw-1; Thu, 30 Jan 2020 15:14:16 -0500
-X-MC-Unique: wmRWdobNOZq_4MnUvh1Upw-1
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 665E3107B26F;
-        Thu, 30 Jan 2020 20:14:14 +0000 (UTC)
-Received: from localhost (unused-10-15-17-6.yyz.redhat.com [10.15.17.6])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id A09BB5DA7B;
-        Thu, 30 Jan 2020 20:14:11 +0000 (UTC)
-Date:   Thu, 30 Jan 2020 15:14:11 -0500
-From:   Eduardo Habkost <ehabkost@redhat.com>
-To:     Wei Wang <wei.w.wang@intel.com>
-Cc:     linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
-        ak@linux.intel.com, peterz@infradead.org, pbonzini@redhat.com,
-        kan.liang@intel.com, mingo@redhat.com, rkrcmar@redhat.com,
-        like.xu@intel.com, jannh@google.com, arei.gonglei@huawei.com,
-        jmattson@google.com,
-        Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>,
-        Jiri Olsa <jolsa@redhat.com>
-Subject: Re: [PATCH v8 00/14] Guest LBR Enabling
-Message-ID: <20200130201411.GF25446@habkost.net>
-References: <1565075774-26671-1-git-send-email-wei.w.wang@intel.com>
+        Thu, 30 Jan 2020 15:14:39 -0500
+X-Originating-IP: 93.23.196.10
+Received: from xps13 (10.196.23.93.rev.sfr.net [93.23.196.10])
+        (Authenticated sender: miquel.raynal@bootlin.com)
+        by relay3-d.mail.gandi.net (Postfix) with ESMTPSA id 4F9D460007;
+        Thu, 30 Jan 2020 20:14:35 +0000 (UTC)
+Date:   Thu, 30 Jan 2020 21:14:33 +0100
+From:   Miquel Raynal <miquel.raynal@bootlin.com>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     linux-mtd@lists.infradead.org, Richard Weinberger <richard@nod.at>,
+        Tudor Ambarus <Tudor.Ambarus@microchip.com>,
+        Vignesh Raghavendra <vigneshr@ti.com>,
+        Frieder Schrempf <frieder.schrempf@kontron.de>,
+        linux-kernel@vger.kernel.org
+Subject: [GIT PULL] UBIFS changes for 5.6-rc1
+Message-ID: <20200130211433.46abdf90@xps13>
+Organization: Bootlin
+X-Mailer: Claws Mail 3.17.4 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1565075774-26671-1-git-send-email-wei.w.wang@intel.com>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Aug 06, 2019 at 03:16:00PM +0800, Wei Wang wrote:
-> Last Branch Recording (LBR) is a performance monitor unit (PMU) feature
-> on Intel CPUs that captures branch related info. This patch series enables
-> this feature to KVM guests.
-> 
-> Each guest can be configured to expose this LBR feature to the guest via
-> userspace setting the enabling param in KVM_CAP_X86_GUEST_LBR (patch 3).
+Hello Linus,
 
-Are QEMU patches for enabling KVM_CAP_X86_GUEST_LBR being planned?
+This is the UBI/UBIFS PR for 5.6, sent on behalf of Richard.
 
--- 
-Eduardo
+Thanks,
+Miquèl
 
+The following changes since commit b3a987b0264d3ddbb24293ebff10eddfc472f653:
+
+  Linux 5.5-rc6 (2020-01-12 16:55:08 -0800)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/rw/ubifs.git tags/upstream-5.6-rc1
+
+for you to fetch changes up to 5d3805af279c93ef49a64701f35254676d709622:
+
+  ubi: Fix an error pointer dereference in error handling code (2020-01-19 23:23:28 +0100)
+
+----------------------------------------------------------------
+This pull request contains mostly fixes for UBI and UBIFS:
+
+UBI:
+ - Fixes for memory leaks in error paths
+ - Fix for an logic error in a fastmap selfcheck
+
+UBIFS:
+ - Fix for FS_IOC_SETFLAGS related to fscrypt flag
+ - Support for FS_ENCRYPT_FL
+ - Fix for a dead lock in bulk-read mode
+
+----------------------------------------------------------------
+Dan Carpenter (1):
+      ubi: Fix an error pointer dereference in error handling code
+
+Eric Biggers (2):
+      ubifs: Fix FS_IOC_SETFLAGS unexpectedly clearing encrypt flag
+      ubifs: Add support for FS_ENCRYPT_FL
+
+Geert Uytterhoeven (1):
+      ubifs: Fix ino_t format warnings in orphan_delete()
+
+Hou Tao (2):
+      ubi: Check the presence of volume before call ubi_fastmap_destroy_checkmap()
+      ubi: Free the normal volumes in error paths of ubi_attach_mtd_dev()
+
+Quanyang Wang (1):
+      ubifs: Fix memory leak from c->sup_node
+
+Sascha Hauer (2):
+      ubi: fastmap: Fix inverted logic in seen selfcheck
+      ubifs: Fix wrong memory allocation
+
+YueHaibing (1):
+      ubi: wl: Remove set but not used variable 'prev_e'
+
+Zhihao Cheng (1):
+      ubifs: Fix deadlock in concurrent bulk-read and writepage
+
+ drivers/mtd/ubi/attach.c  |  2 +-
+ drivers/mtd/ubi/build.c   | 31 ++++++++++++++++++++++++++-----
+ drivers/mtd/ubi/fastmap.c | 23 +++++++++++++----------
+ drivers/mtd/ubi/ubi.h     |  1 +
+ drivers/mtd/ubi/vtbl.c    |  8 ++------
+ drivers/mtd/ubi/wl.c      |  3 +--
+ fs/ubifs/file.c           |  4 +++-
+ fs/ubifs/ioctl.c          | 14 +++++++++++---
+ fs/ubifs/orphan.c         |  4 ++--
+ fs/ubifs/sb.c             |  2 +-
+ fs/ubifs/super.c          |  2 ++
+ 11 files changed, 63 insertions(+), 31 deletions(-)
