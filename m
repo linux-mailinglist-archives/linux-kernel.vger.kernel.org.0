@@ -2,211 +2,142 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3955814E377
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Jan 2020 20:55:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A7CA014E37E
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Jan 2020 20:59:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727575AbgA3Tzv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 30 Jan 2020 14:55:51 -0500
-Received: from fllv0015.ext.ti.com ([198.47.19.141]:45188 "EHLO
-        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727538AbgA3Tzv (ORCPT
+        id S1727376AbgA3T67 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 30 Jan 2020 14:58:59 -0500
+Received: from mail-pl1-f194.google.com ([209.85.214.194]:39446 "EHLO
+        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726514AbgA3T66 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 30 Jan 2020 14:55:51 -0500
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 00UJtom5115766;
-        Thu, 30 Jan 2020 13:55:50 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1580414150;
-        bh=jy8HYzbJyjt9/AzRY9VxOERo9XptW7CNk1g+TR9yPl8=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=Ajztpo3dBZHSJpmRCJlicmCb7F6dn99woCjUmzZEf804Gb4Y9w5P0Ys3VeXI5eKJs
-         xgGDwBSXIT1Lk/MVUuKZlmosT7PQPvM6hNKgxnTN4vQVVGzKjLG2TlEswvpb/kLPXS
-         Rxv6RtgDO9xUwG4q7qXvp0F+2jZ1AYZIWmfj/J1o=
-Received: from DFLE115.ent.ti.com (dfle115.ent.ti.com [10.64.6.36])
-        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 00UJto4Q007782
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Thu, 30 Jan 2020 13:55:50 -0600
-Received: from DFLE112.ent.ti.com (10.64.6.33) by DFLE115.ent.ti.com
- (10.64.6.36) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Thu, 30
- Jan 2020 13:55:49 -0600
-Received: from fllv0040.itg.ti.com (10.64.41.20) by DFLE112.ent.ti.com
- (10.64.6.33) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
- Frontend Transport; Thu, 30 Jan 2020 13:55:49 -0600
-Received: from [128.247.58.153] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by fllv0040.itg.ti.com (8.15.2/8.15.2) with ESMTP id 00UJtnAm095935;
-        Thu, 30 Jan 2020 13:55:49 -0600
-Subject: Re: [PATCHv5 06/14] remoteproc/omap: Initialize and assign reserved
- memory node
-To:     Tero Kristo <t-kristo@ti.com>, "Andrew F. Davis" <afd@ti.com>,
-        <bjorn.andersson@linaro.org>, <ohad@wizery.com>,
-        <linux-remoteproc@vger.kernel.org>
-CC:     <linux-kernel@vger.kernel.org>, <mathieu.poirier@linaro.org>,
-        <linux-omap@vger.kernel.org>
-References: <20200116135332.7819-1-t-kristo@ti.com>
- <20200116135332.7819-7-t-kristo@ti.com>
- <249c293c-6a23-165f-1df5-4859ee47658a@ti.com>
- <37db5d57-b1cd-1cec-2c9b-31c49e3bdc10@ti.com>
- <a0e85451-7c05-884c-4997-b4e8c5684c3e@ti.com>
- <2aaa4024-1e2c-5cab-c9f3-3be59c57e9ac@ti.com>
-From:   Suman Anna <s-anna@ti.com>
-Message-ID: <be337641-b4ac-d2be-b814-55b7681cb91a@ti.com>
-Date:   Thu, 30 Jan 2020 13:55:49 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+        Thu, 30 Jan 2020 14:58:58 -0500
+Received: by mail-pl1-f194.google.com with SMTP id g6so1750435plp.6
+        for <linux-kernel@vger.kernel.org>; Thu, 30 Jan 2020 11:58:57 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=nuZRnP6UqnW4avEUhneKXXkjHvfMUjP2ZDJ4PulKqqQ=;
+        b=QqLDILrzrhQk+7d3tEZQHCNfh+FgnoPCqnnfyZ7DeZznVwiXusJzis6+VLINE1hN0P
+         /AGEsrrTjBuoRzINldutvYP5QLCEswfHSegkRH6YydXhaAUruANy2BrMrWt+vdIePY19
+         HOdHlKxtN7qTuNhdcy91xrxibM0jj8PZHvhbM=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=nuZRnP6UqnW4avEUhneKXXkjHvfMUjP2ZDJ4PulKqqQ=;
+        b=joiVdRfx1eI+IxOvdGdVmhql+8e/FWuNPDAVcYn1T17tLc4ZfkDVVfW94p0g5rgvxZ
+         L5ikPBuGFaxyHc92T6O2Jkd0IQ3idD4AnM6LgoILolXHUiMrjQRxVAe3kyLnwaS+7eqB
+         BISmbvBkYb10QvbD0H/zxaq7V+H/f7DO872x88GhGfunTuGkzJ1WjhbD3UUkWAqsFGBl
+         ndsHfJFIxy1iCy5tQZYqWY/ClJxxxwBcbKDhUQ6eYueQ5Xn2bPYmgC9ZL5enEf4PBxuC
+         7z3S9is/1L/7XXIF3eVsZCKK+NV65SWvuF2+Lh3GEd5atOJys+U2Qgf03t6DW76m0HvI
+         /cHg==
+X-Gm-Message-State: APjAAAUyFfBWWC/Ez6U87mxlxcTZEFjoqJ+BqIyQZWTPjXypMJZxEWBD
+        aLU3YDGvZ1ZgLjCTAoAuTQ6eAw==
+X-Google-Smtp-Source: APXvYqzrB3EsH2ErCz1lmdRkG7rlqSY6t2HUgiywFLiVgkuvylRNh0x/Wk+74zjZpqYgVHOKQgf1SQ==
+X-Received: by 2002:a17:90a:d34c:: with SMTP id i12mr7865690pjx.18.1580414336488;
+        Thu, 30 Jan 2020 11:58:56 -0800 (PST)
+Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
+        by smtp.gmail.com with ESMTPSA id y75sm7830321pfb.116.2020.01.30.11.58.55
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 30 Jan 2020 11:58:55 -0800 (PST)
+Date:   Thu, 30 Jan 2020 11:58:54 -0800
+From:   Kees Cook <keescook@chromium.org>
+To:     "H.J. Lu" <hjl.tools@gmail.com>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Thomas Lendacky <Thomas.Lendacky@amd.com>,
+        Sami Tolvanen <samitolvanen@google.com>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H . Peter Anvin" <hpa@zytor.com>,
+        the arch/x86 maintainers <x86@kernel.org>,
+        Yu-cheng Yu <yu-cheng.yu@intel.com>
+Subject: Re: [PATCH] x86: Don't discard .exit.text and .exit.data at link-time
+Message-ID: <202001301152.DF108B6CC@keescook>
+References: <20200130180048.2901-1-hjl.tools@gmail.com>
+ <202001301139.F8859A4@keescook>
+ <CAMe9rOrrrZFWgVpsKAWjHKzVh3ZziFLs2ua0m0Ewymrjs-b+EA@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <2aaa4024-1e2c-5cab-c9f3-3be59c57e9ac@ti.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAMe9rOrrrZFWgVpsKAWjHKzVh3ZziFLs2ua0m0Ewymrjs-b+EA@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 1/30/20 1:42 PM, Tero Kristo wrote:
-> On 30/01/2020 21:20, Andrew F. Davis wrote:
->> On 1/30/20 2:18 PM, Tero Kristo wrote:
->>> On 30/01/2020 20:11, Andrew F. Davis wrote:
->>>> On 1/16/20 8:53 AM, Tero Kristo wrote:
->>>>> From: Suman Anna <s-anna@ti.com>
->>>>>
->>>>> The reserved memory nodes are not assigned to platform devices by
->>>>> default in the driver core to avoid the lookup for every platform
->>>>> device and incur a penalty as the real users are expected to be
->>>>> only a few devices.
->>>>>
->>>>> OMAP remoteproc devices fall into the above category and the OMAP
->>>>> remoteproc driver _requires_ specific CMA pools to be assigned
->>>>> for each device at the moment to align on the location of the
->>>>> vrings and vring buffers in the RTOS-side firmware images. So,
->>>>
->>>>
->>>> Same comment as before, this is a firmware issue for only some
->>>> firmwares
->>>> that do not handle being assigned vring locations correctly and instead
->>>> hard-code them.
-
-As for this statement, this can do with some updating. Post 4.20,
-because of the lazy allocation scheme used for carveouts including the
-vrings, the resource tables now have to use FW_RSC_ADDR_ANY and will
-have to wait for the vdev synchronization to happen.
-
->>>
->>> I believe we discussed this topic in length in previous version but
->>> there was no conclusion on it.
->>>
->>> The commit desc might be a bit misleading, we are not actually forced to
->>> use specific CMA buffers, as we use IOMMU to map these to device
->>> addresses. For example IPU1/IPU2 use internally exact same memory
->>> addresses, iommu is used to map these to specific CMA buffer.
->>>
->>> CMA buffers are mostly used so that we get aligned large chunk of memory
->>> which can be mapped properly with the limited IOMMU OMAP family of chips
->>> have. Not sure if there is any sane way to get this done in any other
->>> manner.
->>>
->>
->>
->> Why not use the default CMA area?
+On Thu, Jan 30, 2020 at 11:45:15AM -0800, H.J. Lu wrote:
+> On Thu, Jan 30, 2020 at 11:40 AM Kees Cook <keescook@chromium.org> wrote:
+> >
+> > On Thu, Jan 30, 2020 at 10:00:48AM -0800, H.J. Lu wrote:
+> > > Since .exit.text and .exit.data sections are discarded at runtime, we
+> > > should undefine EXIT_TEXT and EXIT_DATA to exclude .exit.text and
+> > > .exit.data sections from default discarded sections.
+> >
+> > This is just a correctness fix, yes? The EXIT_TEXT and EXIT_DATA were
+> > already included before the /DISCARD/ section here, so there's no
+> > behavioral change with this patch, correct?
 > 
-> I think using default CMA area getting the actual memory block is not
-> guaranteed and might fail. There are other users for the memory, and it
-> might get fragmented at the very late phase we are grabbing the memory
-> (omap remoteproc driver probe time.) Some chunks we need are pretty large.
-> 
-> I believe I could experiment with this a bit though and see, or Suman
-> could maybe provide feedback why this was designed initially like this
-> and why this would not be a good idea.
+> That is correct.  I was confused by EXIT_TEXT and EXIT_DATA in generic
+> DISCARDS.   My patch just makes it more explicit.
 
-I have given some explanation on this on v4 as well, but if it is not
-clear, there are restrictions with using default CMA. Default CMA has
-switched to be assigned from the top of the memory (higher addresses,
-since 3.18 IIRC), and the MMUs on IPUs and DSPs can only address
-32-bits. So, we cannot blindly use the default CMA pool, and this will
-definitely not work on boards > 2 GB RAM. And, if you want to add in any
-firewall capability, then specific physical addresses becomes mandatory.
+Okay, so to that end and because this isn't arch-specific, I'd like to
+see this be a behavioral flag, and then the generic DISCARDS macro can
+be adjusted. This lets all architectures implement this without having
+to scatter undef/define lines in each arch.
 
-regards
-Suman
+Something like this:
 
-> 
-> -Tero
-> 
->>
->> Andrew
->>
->>
->>> -Tero
->>>
->>>>
->>>> This is not a requirement of the remote processor itself and so it
->>>> should not fail to probe if a specific memory carveout isn't given.
->>>>
->>>>
->>>>> use the of_reserved_mem_device_init/release() API appropriately
->>>>> to assign the corresponding reserved memory region to the OMAP
->>>>> remoteproc device. Note that only one region per device is
->>>>> allowed by the framework.
->>>>>
->>>>> Signed-off-by: Suman Anna <s-anna@ti.com>
->>>>> Signed-off-by: Tero Kristo <t-kristo@ti.com>
->>>>> Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
->>>>> ---
->>>>> v5: no changes
->>>>>
->>>>>    drivers/remoteproc/omap_remoteproc.c | 12 +++++++++++-
->>>>>    1 file changed, 11 insertions(+), 1 deletion(-)
->>>>>
->>>>> diff --git a/drivers/remoteproc/omap_remoteproc.c
->>>>> b/drivers/remoteproc/omap_remoteproc.c
->>>>> index 0846839b2c97..194303b860b2 100644
->>>>> --- a/drivers/remoteproc/omap_remoteproc.c
->>>>> +++ b/drivers/remoteproc/omap_remoteproc.c
->>>>> @@ -17,6 +17,7 @@
->>>>>    #include <linux/module.h>
->>>>>    #include <linux/err.h>
->>>>>    #include <linux/of_device.h>
->>>>> +#include <linux/of_reserved_mem.h>
->>>>>    #include <linux/platform_device.h>
->>>>>    #include <linux/dma-mapping.h>
->>>>>    #include <linux/remoteproc.h>
->>>>> @@ -480,14 +481,22 @@ static int omap_rproc_probe(struct
->>>>> platform_device *pdev)
->>>>>        if (ret)
->>>>>            goto free_rproc;
->>>>>    +    ret = of_reserved_mem_device_init(&pdev->dev);
->>>>> +    if (ret) {
->>>>> +        dev_err(&pdev->dev, "device does not have specific CMA
->>>>> pool\n");
->>>>> +        goto free_rproc;
->>>>> +    }
->>>>> +
->>>>>        platform_set_drvdata(pdev, rproc);
->>>>>          ret = rproc_add(rproc);
->>>>>        if (ret)
->>>>> -        goto free_rproc;
->>>>> +        goto release_mem;
->>>>>          return 0;
->>>>>    +release_mem:
->>>>> +    of_reserved_mem_device_release(&pdev->dev);
->>>>>    free_rproc:
->>>>>        rproc_free(rproc);
->>>>>        return ret;
->>>>> @@ -499,6 +508,7 @@ static int omap_rproc_remove(struct
->>>>> platform_device *pdev)
->>>>>          rproc_del(rproc);
->>>>>        rproc_free(rproc);
->>>>> +    of_reserved_mem_device_release(&pdev->dev);
->>>>>          return 0;
->>>>>    }
->>>>>
->>>
->>> -- 
-> 
-> -- 
-> Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
-> Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
+diff --git a/include/asm-generic/vmlinux.lds.h b/include/asm-generic/vmlinux.lds.h
+index e00f41aa8ec4..f242d3b4814d 100644
+--- a/include/asm-generic/vmlinux.lds.h
++++ b/include/asm-generic/vmlinux.lds.h
+@@ -894,11 +894,17 @@
+  * section definitions so that such archs put those in earlier section
+  * definitions.
+  */
+-#define DISCARDS							\
+-	/DISCARD/ : {							\
++#ifdef RUNTIME_DISCARD_EXIT
++#define EXIT_DISCARDS
++#else
++#define EXIT_DISCARDS							\
+ 	EXIT_TEXT							\
+ 	EXIT_DATA							\
+-	EXIT_CALL							\
++	EXIT_CALL
++#endif
++#define DISCARDS							\
++	/DISCARD/ : {							\
++	EXIT_DISCARDS							\
+ 	*(.discard)							\
+ 	*(.discard.*)							\
+ 	*(.modinfo)							\
 
+Then x86 and all other architectures that do this can just use
+#define RUNTIME_DISCARD_EXIT
+at the top (like EMITS_PT_NOTE, etc).
+
+-Kees
+
+> > > --- a/arch/x86/kernel/vmlinux.lds.S
+> > > +++ b/arch/x86/kernel/vmlinux.lds.S
+> > > @@ -416,6 +416,12 @@ SECTIONS
+> > >       STABS_DEBUG
+> > >       DWARF_DEBUG
+> > >
+> > > +     /* Sections to be discarded.  EXIT_TEXT and EXIT_DATA discard at runtime.
+> > > +      * not link time.  */
+> > > +#undef EXIT_TEXT
+> > > +#define EXIT_TEXT
+> > > +#undef EXIT_DATA
+> > > +#define EXIT_DATA
+> > >       DISCARDS
+> > >       /DISCARD/ : {
+> > >               *(.eh_frame)
+
+-- 
+Kees Cook
