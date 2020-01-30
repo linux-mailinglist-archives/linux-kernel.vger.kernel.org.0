@@ -2,254 +2,142 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C602F14E4BB
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Jan 2020 22:19:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 815CB14E4C9
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Jan 2020 22:29:54 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727542AbgA3VTK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 30 Jan 2020 16:19:10 -0500
-Received: from lelv0143.ext.ti.com ([198.47.23.248]:58414 "EHLO
-        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727191AbgA3VTJ (ORCPT
+        id S1727498AbgA3V3t (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 30 Jan 2020 16:29:49 -0500
+Received: from mail-oi1-f195.google.com ([209.85.167.195]:37416 "EHLO
+        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726739AbgA3V3t (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 30 Jan 2020 16:19:09 -0500
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 00ULJ7As048516;
-        Thu, 30 Jan 2020 15:19:07 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1580419147;
-        bh=WJcjecLBPhfv7j+LHNZqkBE7evYHbN76BlAAHet5Nzo=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=W8PhmgzBpvbaqU3iXFD5/9F6pob5wOwa8SnHUy+Zg4w3NKCla//Jnweo3Eoxgf5pH
-         ZLfzhok4bMKIsmdgIi5ZyfRTIrgqWwcRMaSJzf+MMFhEjFV1TnMzjrOx/j+P83Wdye
-         Tn/JoW9IBpC7nSu/138M3bctMT4eqMNt6toPyAmU=
-Received: from DFLE104.ent.ti.com (dfle104.ent.ti.com [10.64.6.25])
-        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 00ULJ7vk124673
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Thu, 30 Jan 2020 15:19:07 -0600
-Received: from DFLE106.ent.ti.com (10.64.6.27) by DFLE104.ent.ti.com
- (10.64.6.25) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Thu, 30
- Jan 2020 15:19:07 -0600
-Received: from fllv0040.itg.ti.com (10.64.41.20) by DFLE106.ent.ti.com
- (10.64.6.27) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
- Frontend Transport; Thu, 30 Jan 2020 15:19:07 -0600
-Received: from [10.250.70.160] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by fllv0040.itg.ti.com (8.15.2/8.15.2) with ESMTP id 00ULJ56u112194;
-        Thu, 30 Jan 2020 15:19:06 -0600
-Subject: Re: [PATCHv5 06/14] remoteproc/omap: Initialize and assign reserved
- memory node
-To:     Suman Anna <s-anna@ti.com>, Tero Kristo <t-kristo@ti.com>,
-        <bjorn.andersson@linaro.org>, <ohad@wizery.com>,
-        <linux-remoteproc@vger.kernel.org>
-CC:     <linux-kernel@vger.kernel.org>, <mathieu.poirier@linaro.org>,
-        <linux-omap@vger.kernel.org>
-References: <20200116135332.7819-1-t-kristo@ti.com>
- <20200116135332.7819-7-t-kristo@ti.com>
- <249c293c-6a23-165f-1df5-4859ee47658a@ti.com>
- <37db5d57-b1cd-1cec-2c9b-31c49e3bdc10@ti.com>
- <a0e85451-7c05-884c-4997-b4e8c5684c3e@ti.com>
- <2aaa4024-1e2c-5cab-c9f3-3be59c57e9ac@ti.com>
- <be337641-b4ac-d2be-b814-55b7681cb91a@ti.com>
- <7aed7a9f-3546-f622-37ac-34d33ddb4298@ti.com>
- <50c69e97-034b-3160-e95e-97aec2e75cc6@ti.com>
-From:   "Andrew F. Davis" <afd@ti.com>
-Message-ID: <cf6fff1c-fde9-67b0-3173-7e019ce587cb@ti.com>
-Date:   Thu, 30 Jan 2020 16:19:05 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.1
+        Thu, 30 Jan 2020 16:29:49 -0500
+Received: by mail-oi1-f195.google.com with SMTP id q84so5162627oic.4
+        for <linux-kernel@vger.kernel.org>; Thu, 30 Jan 2020 13:29:49 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=soBhgt6ejO4/2ekR+e8tGWX3kM/LmDzHreUHc+EeF3w=;
+        b=UmA6OAApu+akBNpGLj811nB/xI4YpTmmiAlK8p4fpq0gu2jkanyjSbcOfxkW6Efe7X
+         ceef7+Yof8hoCgGDSDPps+pTfnFiM5dxaVigpic6Ta2HuMlY5xj6m3gcCEQ4nfTkm8l6
+         b2gX9hY+S44619efqx+zCzXXOZ7irt0LA8gh+iGt/BzKWopiG/KFIgwvR0Sl8IBS+sXg
+         Z0MzlepV2gPbg/IBATIsG4h8SY9JTnZwxHaojIErTGj7GA2+KBMH0aijEOLwG+1lLy7X
+         RO4MbUWFLSRcW033ethZu2O5G76F7Sw+1Zrdbx1wEHzmsVVZ+w2TQ8nSky0Ff/hGAWy3
+         Cs9w==
+X-Gm-Message-State: APjAAAXuL7dlB//JXYaUr22dQFzeX/cgk3K6/euK6gZJ5ICaqMDxcJVp
+        eJ0WhmBsvMN7epQqY1wqx5IKpcyReOHXyjd6jNQ=
+X-Google-Smtp-Source: APXvYqzmrxwT5kg4qHFYISAvEGZKVv/ulcjCjrlzB51QlPN+V0/LTyu6B2NTj5sCi1ymxut6dzXFAgD5rAs4g4Pnv0o=
+X-Received: by 2002:a54:4e96:: with SMTP id c22mr4402249oiy.110.1580419788640;
+ Thu, 30 Jan 2020 13:29:48 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <50c69e97-034b-3160-e95e-97aec2e75cc6@ti.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+References: <20191226220205.128664-1-semenzato@google.com> <20191226220205.128664-2-semenzato@google.com>
+ <20200106125352.GB9198@dhcp22.suse.cz> <CAA25o9S7EzQ0xcoxuWtYr2dd0WB4KSQNP4OxPb2gAeaz0EgomA@mail.gmail.com>
+ <20200108114952.GR32178@dhcp22.suse.cz> <CAA25o9Q4XP8weCNcTr1ZT9N7Y3V=B90mK8mykLOyy=-4RJ_uHQ@mail.gmail.com>
+ <20200127141637.GL1183@dhcp22.suse.cz> <CAA25o9QuA_9EoivWo-DuJsWoHCdBm2wio3G8JYxuTfQErT42kg@mail.gmail.com>
+ <CAJZ5v0iDtk+WWHV8F2C+9EdeMSx_JKYDEiarProoE55kiBOjkg@mail.gmail.com>
+ <CAA25o9RHKerPJNW6h5d6W48q1qA3wYJAmhOBU3XiBHwMcEChhA@mail.gmail.com>
+ <CAJZ5v0jiZMtv8s7AQBz212=aEm75hniJr9jXsMma8YxhRYZFJw@mail.gmail.com> <CAA25o9R26U6RKvSAL9ckz+d-hH+5aZ0ufQPqiefn4dOhSiDS0w@mail.gmail.com>
+In-Reply-To: <CAA25o9R26U6RKvSAL9ckz+d-hH+5aZ0ufQPqiefn4dOhSiDS0w@mail.gmail.com>
+From:   "Rafael J. Wysocki" <rafael@kernel.org>
+Date:   Thu, 30 Jan 2020 22:29:37 +0100
+Message-ID: <CAJZ5v0i=v_+n1yVdmO7L1FYpe=3WQHM03NQqHNfTCTKG5MVtNQ@mail.gmail.com>
+Subject: Re: [PATCH 1/2] Documentation: clarify limitations of hibernation
+To:     Luigi Semenzato <semenzato@google.com>
+Cc:     "Rafael J. Wysocki" <rafael@kernel.org>,
+        Michal Hocko <mhocko@kernel.org>,
+        Linux Memory Management List <linux-mm@kvack.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Geoff Pike <gpike@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 1/30/20 3:39 PM, Suman Anna wrote:
-> On 1/30/20 2:22 PM, Andrew F. Davis wrote:
->> On 1/30/20 2:55 PM, Suman Anna wrote:
->>> On 1/30/20 1:42 PM, Tero Kristo wrote:
->>>> On 30/01/2020 21:20, Andrew F. Davis wrote:
->>>>> On 1/30/20 2:18 PM, Tero Kristo wrote:
->>>>>> On 30/01/2020 20:11, Andrew F. Davis wrote:
->>>>>>> On 1/16/20 8:53 AM, Tero Kristo wrote:
->>>>>>>> From: Suman Anna <s-anna@ti.com>
->>>>>>>>
->>>>>>>> The reserved memory nodes are not assigned to platform devices by
->>>>>>>> default in the driver core to avoid the lookup for every platform
->>>>>>>> device and incur a penalty as the real users are expected to be
->>>>>>>> only a few devices.
->>>>>>>>
->>>>>>>> OMAP remoteproc devices fall into the above category and the OMAP
->>>>>>>> remoteproc driver _requires_ specific CMA pools to be assigned
->>>>>>>> for each device at the moment to align on the location of the
->>>>>>>> vrings and vring buffers in the RTOS-side firmware images. So,
->>>>>>>
->>>>>>>
->>>>>>> Same comment as before, this is a firmware issue for only some
->>>>>>> firmwares
->>>>>>> that do not handle being assigned vring locations correctly and instead
->>>>>>> hard-code them.
->>>
->>> As for this statement, this can do with some updating. Post 4.20,
->>> because of the lazy allocation scheme used for carveouts including the
->>> vrings, the resource tables now have to use FW_RSC_ADDR_ANY and will
->>> have to wait for the vdev synchronization to happen.
->>>
->>>>>>
->>>>>> I believe we discussed this topic in length in previous version but
->>>>>> there was no conclusion on it.
->>>>>>
->>>>>> The commit desc might be a bit misleading, we are not actually forced to
->>>>>> use specific CMA buffers, as we use IOMMU to map these to device
->>>>>> addresses. For example IPU1/IPU2 use internally exact same memory
->>>>>> addresses, iommu is used to map these to specific CMA buffer.
->>>>>>
->>>>>> CMA buffers are mostly used so that we get aligned large chunk of memory
->>>>>> which can be mapped properly with the limited IOMMU OMAP family of chips
->>>>>> have. Not sure if there is any sane way to get this done in any other
->>>>>> manner.
->>>>>>
->>>>>
->>>>>
->>>>> Why not use the default CMA area?
->>>>
->>>> I think using default CMA area getting the actual memory block is not
->>>> guaranteed and might fail. There are other users for the memory, and it
->>>> might get fragmented at the very late phase we are grabbing the memory
->>>> (omap remoteproc driver probe time.) Some chunks we need are pretty large.
->>>>
->>>> I believe I could experiment with this a bit though and see, or Suman
->>>> could maybe provide feedback why this was designed initially like this
->>>> and why this would not be a good idea.
->>>
->>> I have given some explanation on this on v4 as well, but if it is not
->>> clear, there are restrictions with using default CMA. Default CMA has
->>> switched to be assigned from the top of the memory (higher addresses,
->>> since 3.18 IIRC), and the MMUs on IPUs and DSPs can only address
->>> 32-bits. So, we cannot blindly use the default CMA pool, and this will
->>> definitely not work on boards > 2 GB RAM. And, if you want to add in any
->>> firewall capability, then specific physical addresses becomes mandatory.
->>>
->>
->>
->> If you need 32bit range allocations then
->> dma_set_mask(dev, DMA_BIT_MASK(32));
->>
->> I'm not saying don't have support for carveouts, just make them
->> optional, keystone_remoteproc.c does this:
->>
->> if (of_reserved_mem_device_init(dev))
->> 	dev_warn(dev, "device does not have specific CMA pool\n");
->>
->> There doesn't even needs to be a warning but that is up to you.
-> 
-> It is not exactly an apples to apples comparison. K2s do not have MMUs,
-> and most of our firmware images on K2 are actually running out of the
-> DSP internal memory.
-> 
+On Thu, Jan 30, 2020 at 10:11 PM Luigi Semenzato <semenzato@google.com> wrote:
+>
+> On Thu, Jan 30, 2020 at 12:50 PM Rafael J. Wysocki <rafael@kernel.org> wrote:
+> >
+> > On Mon, Jan 27, 2020 at 6:21 PM Luigi Semenzato <semenzato@google.com> wrote:
+> > >
+> > > On Mon, Jan 27, 2020 at 8:28 AM Rafael J. Wysocki <rafael@kernel.org> wrote:
+> > > >
+> > > > On Mon, Jan 27, 2020 at 5:13 PM Luigi Semenzato <semenzato@google.com> wrote:
+> > > > >
+> > > > > On Mon, Jan 27, 2020 at 6:16 AM Michal Hocko <mhocko@kernel.org> wrote:
+> > > > > >
+> > > > > > On Fri 24-01-20 08:37:12, Luigi Semenzato wrote:
+> > > > > > [...]
+> > > > > > > The purpose of my documentation patch was to make it clearer that
+> > > > > > > hibernation may fail in situations in which suspend-to-RAM works; for
+> > > > > > > instance, when there is no swap, and anonymous pages are over 50% of
+> > > > > > > total RAM.  I will send a new version of the patch which hopefully
+> > > > > > > makes this clearer.
+> > > > > >
+> > > > > > I was under impression that s2disk is pretty much impossible without any
+> > > > > > swap.
+> > > > >
+> > > > > I am not sure what you mean by "swap" here.  S2disk needs a swap
+> > > > > partition for storing the image, but that partition is not used for
+> > > > > regular swap.
+> > > >
+> > > > That's not correct.
+> > > >
+> > > > The swap partition (or file) used by s2disk needs to be made active
+> > > > before it can use it and the mm subsystem is also able to use it for
+> > > > regular swap then.
+> > >
+> > > OK---I had this wrong, thanks.
+> > >
+> > > > >  If there is no swap, but more than 50% of RAM is free
+> > > > > or reclaimable, s2disk works fine.  If anonymous is more than 50%,
+> > > > > hibernation can still work, but swap needs to be set up (in addition
+> > > > > to the space for the hibernation image).  The setup is not obvious and
+> > > > > I don't think that the documentation is clear on this.
+> > > >
+> > > > Well, the entire contents of RAM must be preserved, this way or
+> > > > another, during hibernation.  That should be totally obvious to anyone
+> > > > using it really.
+> > >
+> > > Yes, that's obvious.
+> > >
+> > > > Some of the RAM contents is copies of data already there in the
+> > > > filesystems on persistent storage and that does not need to be saved
+> > > > again.  Everything else must be saved and s2disk (and Linux
+> > > > hibernation in general) uses active swap space to save these things.
+> > > > This implies that in order to hibernate the system, you generally need
+> > > > the amount of swap space equal to the size of RAM minus the size of
+> > > > files mapped into memory.
+> > > >
+> > > > So, to be on the safe side, the total amount of swap space to be used
+> > > > for hibernation needs to match the size of RAM (even though
+> > > > realistically it may be smaller than that in the majority of cases).
+> > >
+> > > This all makes sense, but we do this:
+> > >
+> > > -- add resume=/dev/sdc to the command line
+> > > -- attach a disk (/dev/sdc) with size equal to RAM
+> > > -- mkswap /dev/sdc
+> > > -- swapon /dev/sdc
+> > > -- echo disk > /sys/power/state
+> > >
+> > > and the last operation fails with ENOMEM.  Are we doing something
+> > > wrong?  Are we hitting some other mm bug?
+> >
+> > I would expect this to work, so the fact that it doesn't work for you
+> > indicates a bug somewhere or at least an assumption that doesn't hold.
+> >
+> > Can you please remind me what you do to trigger the unexpected behavior?
+>
+> Yes, I create processes that use a large amount of anon memory, more
+> than 50% of RAM, like this:
+>
+> dd if=/dev/zero bs=1G count=1 | sleep infinity
+>
+> I think dd has a 2 GB limit, or around that number, so you'll need a
+> few of those.
 
-
-So again we circle back to it being a firmware issue, if K2 can get away
-without needing carveouts and it doesn't even have an MMU then certainly
-OMAP/DRA7x class devices can handle it even better given they *do* have
-an IOMMU. Unless someone is hard-coding the IOMMU configuration.. In
-which case we are still just hacking around the problem here with
-mandatory specific address memory carveouts.
-
-Andrew
-
-
-> regards
-> Suman
-> 
->>
->> Andrew
->>
->>
->>> regards
->>> Suman
->>>
->>>>
->>>> -Tero
->>>>
->>>>>
->>>>> Andrew
->>>>>
->>>>>
->>>>>> -Tero
->>>>>>
->>>>>>>
->>>>>>> This is not a requirement of the remote processor itself and so it
->>>>>>> should not fail to probe if a specific memory carveout isn't given.
->>>>>>>
->>>>>>>
->>>>>>>> use the of_reserved_mem_device_init/release() API appropriately
->>>>>>>> to assign the corresponding reserved memory region to the OMAP
->>>>>>>> remoteproc device. Note that only one region per device is
->>>>>>>> allowed by the framework.
->>>>>>>>
->>>>>>>> Signed-off-by: Suman Anna <s-anna@ti.com>
->>>>>>>> Signed-off-by: Tero Kristo <t-kristo@ti.com>
->>>>>>>> Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
->>>>>>>> ---
->>>>>>>> v5: no changes
->>>>>>>>
->>>>>>>>    drivers/remoteproc/omap_remoteproc.c | 12 +++++++++++-
->>>>>>>>    1 file changed, 11 insertions(+), 1 deletion(-)
->>>>>>>>
->>>>>>>> diff --git a/drivers/remoteproc/omap_remoteproc.c
->>>>>>>> b/drivers/remoteproc/omap_remoteproc.c
->>>>>>>> index 0846839b2c97..194303b860b2 100644
->>>>>>>> --- a/drivers/remoteproc/omap_remoteproc.c
->>>>>>>> +++ b/drivers/remoteproc/omap_remoteproc.c
->>>>>>>> @@ -17,6 +17,7 @@
->>>>>>>>    #include <linux/module.h>
->>>>>>>>    #include <linux/err.h>
->>>>>>>>    #include <linux/of_device.h>
->>>>>>>> +#include <linux/of_reserved_mem.h>
->>>>>>>>    #include <linux/platform_device.h>
->>>>>>>>    #include <linux/dma-mapping.h>
->>>>>>>>    #include <linux/remoteproc.h>
->>>>>>>> @@ -480,14 +481,22 @@ static int omap_rproc_probe(struct
->>>>>>>> platform_device *pdev)
->>>>>>>>        if (ret)
->>>>>>>>            goto free_rproc;
->>>>>>>>    +    ret = of_reserved_mem_device_init(&pdev->dev);
->>>>>>>> +    if (ret) {
->>>>>>>> +        dev_err(&pdev->dev, "device does not have specific CMA
->>>>>>>> pool\n");
->>>>>>>> +        goto free_rproc;
->>>>>>>> +    }
->>>>>>>> +
->>>>>>>>        platform_set_drvdata(pdev, rproc);
->>>>>>>>          ret = rproc_add(rproc);
->>>>>>>>        if (ret)
->>>>>>>> -        goto free_rproc;
->>>>>>>> +        goto release_mem;
->>>>>>>>          return 0;
->>>>>>>>    +release_mem:
->>>>>>>> +    of_reserved_mem_device_release(&pdev->dev);
->>>>>>>>    free_rproc:
->>>>>>>>        rproc_free(rproc);
->>>>>>>>        return ret;
->>>>>>>> @@ -499,6 +508,7 @@ static int omap_rproc_remove(struct
->>>>>>>> platform_device *pdev)
->>>>>>>>          rproc_del(rproc);
->>>>>>>>        rproc_free(rproc);
->>>>>>>> +    of_reserved_mem_device_release(&pdev->dev);
->>>>>>>>          return 0;
->>>>>>>>    }
->>>>>>>>
->>>>>>
->>>>>> -- 
->>>>
->>>> -- 
->>>> Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
->>>> Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
->>>
-> 
+And then you get -ENOMEM from hibernate_preallocate_memory(), or from
+somewhere else?
