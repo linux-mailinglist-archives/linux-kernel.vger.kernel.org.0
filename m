@@ -2,158 +2,99 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AE07F14DD1B
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Jan 2020 15:47:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6591314DD26
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Jan 2020 15:48:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727405AbgA3Ork (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 30 Jan 2020 09:47:40 -0500
-Received: from cloudserver094114.home.pl ([79.96.170.134]:53773 "EHLO
-        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727241AbgA3Orj (ORCPT
+        id S1727464AbgA3Orw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 30 Jan 2020 09:47:52 -0500
+Received: from mail-pl1-f193.google.com ([209.85.214.193]:38740 "EHLO
+        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727328AbgA3Orv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 30 Jan 2020 09:47:39 -0500
-Received: from 79.184.253.19.ipv4.supernova.orange.pl (79.184.253.19) (HELO kreacher.localnet)
- by serwer1319399.home.pl (79.96.170.134) with SMTP (IdeaSmtpServer 0.83.341)
- id cb4c27334bb16a9a; Thu, 30 Jan 2020 15:47:37 +0100
-From:   "Rafael J. Wysocki" <rjw@rjwysocki.net>
-To:     Linux PM <linux-pm@vger.kernel.org>
-Cc:     Linux ACPI <linux-acpi@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Len Brown <len.brown@intel.com>,
-        Zhang Rui <rui.zhang@intel.com>,
-        David Box <david.e.box@linux.intel.com>,
-        Artem Bityutskiy <artem.bityutskiy@linux.intel.com>,
-        "Rafael J. Wysocki" <rafael@kernel.org>
-Subject: [PATCH 2/2] intel_idle: Introduce 'states_off' module parameter
-Date:   Thu, 30 Jan 2020 15:47:24 +0100
-Message-ID: <16995896.bQtfYxEEOs@kreacher>
-In-Reply-To: <1720216.0Jr2BLnqKp@kreacher>
-References: <1720216.0Jr2BLnqKp@kreacher>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+        Thu, 30 Jan 2020 09:47:51 -0500
+Received: by mail-pl1-f193.google.com with SMTP id t6so1436471plj.5
+        for <linux-kernel@vger.kernel.org>; Thu, 30 Jan 2020 06:47:51 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=8j7vPXQ8NnTfCALzCvlEWGGchYaunD8ZmjFF9OfryBo=;
+        b=dTYRlrP1Sg5/xLx73QGqX7OvqDFxXjeAQpEcGzWdvNok45gR/uNcMELPLogJvlqukJ
+         5p6eRnQKAbCK+qxWIuVY8ecUzC35l3XjURCG9TmnYqtJDnGYqCcULECCl8n4gLWy1muU
+         zd1xmyRkjTwHELeVGWvx8ku+TYdQpEesAFPd61I6wmI4hUQ2878FMLmlZdGCy4c0zBx2
+         AZ9l4ruslNPJ4yCPjHNECJKtZs5fIMHSByDfxIr0QxPzGmCDi3mY+d5hPkbQwH3AwTTJ
+         ATO6K/wdTw2kRcqd9UuUimpgQnjlBuiCQ0Q8t6/+FhMdxKU/84RmSgaOQJYUczl86xuR
+         +23Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=8j7vPXQ8NnTfCALzCvlEWGGchYaunD8ZmjFF9OfryBo=;
+        b=rbDVqvullL1FHuAlsFQU7+YLOR09uIvpZnW6+6UM+S7pgEqPxhXHFowX03t2Jjlsq+
+         SMGz8AiECyjUQ56ZO7W8lNaOieW3orkbj2xWJ/FksRBGrM0aMMDO5dCr4zF4l8am3p9V
+         gK8+tuDM5QPdh/AEk8NgP6EcbNr160auzOT3JP42Sew0zOFUdTr5O46YBsH7QYyLXX6y
+         GuR+oHoRaVh+PV8zUfypkZNPg6UR08EcmbBeZJrNXzDNRhYxDIhGry6hDIy7b/tVuvPU
+         hub4VSzpPap2jLMFJp6mqUMQbSZKsiTkbKLUB8fyDQ3qcOpsqLO/Fgdj+JXtrihWxHYc
+         VDAg==
+X-Gm-Message-State: APjAAAUKMiYU2XTI+KhurxCxM+X/eUM+R3auA82cKkrX6vlxCTJZs4OV
+        /8hcMWdmO1qCUaxxG+P0Mye7W7s=
+X-Google-Smtp-Source: APXvYqxweGS12eq7xzPRA2TGNxLW34igZlRxFgUer0mcaJqfFCqFllIcyokHKrPw9a9xIZBKM24v8g==
+X-Received: by 2002:a17:90a:e653:: with SMTP id ep19mr6606383pjb.58.1580395671183;
+        Thu, 30 Jan 2020 06:47:51 -0800 (PST)
+Received: from madhuparna-HP-Notebook.nitk.ac.in ([2402:3a80:1ee1:f815:d421:7a49:b2e4:2bd6])
+        by smtp.gmail.com with ESMTPSA id b1sm7204927pfg.182.2020.01.30.06.47.43
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 30 Jan 2020 06:47:50 -0800 (PST)
+From:   madhuparnabhowmik10@gmail.com
+To:     peterz@infradead.org, mingo@redhat.com, acme@kernel.org,
+        mark.rutland@arm.com, alexander.shishkin@linux.intel.com,
+        olsa@redhat.com, namhyung@kernel.org
+Cc:     linux-kernel@vger.kernel.org, frextrite@gmail.com,
+        joel@joelfernandes.org, paulmck@kernel.org,
+        linux-kernel-mentees@lists.linuxfoundation.org,
+        Madhuparna Bhowmik <madhuparnabhowmik10@gmail.com>
+Subject: [PATCH] perf_event.h: Add RCU Annotation to struct ring_buffer in perf_event
+Date:   Thu, 30 Jan 2020 20:17:28 +0530
+Message-Id: <20200130144728.24072-1-madhuparnabhowmik10@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+From: Madhuparna Bhowmik <madhuparnabhowmik10@gmail.com>
 
-In certain system configurations it may not be desirable to use some
-C-states assumed to be available by intel_idle and the driver needs
-to be prevented from using them even before the cpuidle sysfs
-interface becomes accessible to user space.  Currently, the only way
-to achieve that is by setting the 'max_cstate' module parameter to a
-value lower than the index of the shallowest of the C-states in
-question, but that may be overly intrusive, because it effectively
-makes all of the idle states deeper than the 'max_cstate' one go
-away (and the C-state to avoid may be in the middle of the range
-normally regarded as available).
+This patch fixes the following sparse errors in events/core.c
+and events/ring_buffer.c by adding RCU Annotation to struct
+ring_buffer in perf_event:
 
-To allow that limitation to be overcome, introduce a new module
-parameter called 'states_off' to represent a list of idle states to
-be disabled by default in the form of a bitmask and update the
-documentation to cover it.
+kernel/events/core.c:5597:9: error: incompatible types in comparison expression
+kernel/events/core.c:5303:22: error: incompatible types in comparison expression
+kernel/events/core.c:5439:14: error: incompatible types in comparison expression
+kernel/events/core.c:5472:14: error: incompatible types in comparison expression
+kernel/events/core.c:5529:14: error: incompatible types in comparison expression
+kernel/events/core.c:5615:14: error: incompatible types in comparison expression
+kernel/events/core.c:5615:14: error: incompatible types in comparison expression
+kernel/events/core.c:7183:13: error: incompatible types in comparison expression
 
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+kernel/events/ring_buffer.c:169:14: error: incompatible types in comparison expression
+
+Signed-off-by: Madhuparna Bhowmik <madhuparnabhowmik10@gmail.com>
 ---
- Documentation/admin-guide/pm/intel_idle.rst |   15 ++++++++++++++-
- drivers/idle/intel_idle.c                   |   24 +++++++++++++++++++++---
- 2 files changed, 35 insertions(+), 4 deletions(-)
+ include/linux/perf_event.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Index: linux-pm/drivers/idle/intel_idle.c
-===================================================================
---- linux-pm.orig/drivers/idle/intel_idle.c
-+++ linux-pm/drivers/idle/intel_idle.c
-@@ -63,6 +63,7 @@ static struct cpuidle_driver intel_idle_
- };
- /* intel_idle.max_cstate=0 disables driver */
- static int max_cstate = CPUIDLE_STATE_MAX - 1;
-+static unsigned int disabled_states_mask;
+diff --git a/include/linux/perf_event.h b/include/linux/perf_event.h
+index 6d4c22aee384..1691107d2800 100644
+--- a/include/linux/perf_event.h
++++ b/include/linux/perf_event.h
+@@ -694,7 +694,7 @@ struct perf_event {
+ 	struct mutex			mmap_mutex;
+ 	atomic_t			mmap_count;
  
- static unsigned int mwait_substates;
- 
-@@ -1234,6 +1235,9 @@ static void __init intel_idle_init_cstat
- 		if (cx->type > ACPI_STATE_C2)
- 			state->flags |= CPUIDLE_FLAG_TLB_FLUSHED;
- 
-+		if (disabled_states_mask & BIT(cstate))
-+			state->flags |= CPUIDLE_FLAG_OFF;
-+
- 		state->enter = intel_idle;
- 		state->enter_s2idle = intel_idle_s2idle;
- 	}
-@@ -1466,9 +1470,10 @@ static void __init intel_idle_init_cstat
- 		/* Structure copy. */
- 		drv->states[drv->state_count] = cpuidle_state_table[cstate];
- 
--		if ((icpu->use_acpi || use_acpi) &&
--		    intel_idle_off_by_default(mwait_hint) &&
--		    !(cpuidle_state_table[cstate].flags & CPUIDLE_FLAG_ALWAYS_ENABLE))
-+		if ((disabled_states_mask & BIT(drv->state_count)) ||
-+		    ((icpu->use_acpi || use_acpi) &&
-+		     intel_idle_off_by_default(mwait_hint) &&
-+		     !(cpuidle_state_table[cstate].flags & CPUIDLE_FLAG_ALWAYS_ENABLE)))
- 			drv->states[drv->state_count].flags |= CPUIDLE_FLAG_OFF;
- 
- 		drv->state_count++;
-@@ -1487,6 +1492,10 @@ static void __init intel_idle_init_cstat
- static void __init intel_idle_cpuidle_driver_init(struct cpuidle_driver *drv)
- {
- 	cpuidle_poll_state_init(drv);
-+
-+	if (disabled_states_mask & BIT(0))
-+		drv->states[0].flags |= CPUIDLE_FLAG_OFF;
-+
- 	drv->state_count = 1;
- 
- 	if (icpu)
-@@ -1667,3 +1676,12 @@ device_initcall(intel_idle_init);
-  * is the easiest way (currently) to continue doing that.
-  */
- module_param(max_cstate, int, 0444);
-+/*
-+ * The positions of the bits that are set in the two's complement representation
-+ * of this value are the indices of the idle states to be disabled by default
-+ * (as reflected by the names of the corresponding idle state directories in
-+ * sysfs, "state0", "state1" ... "state<i>" ..., where <i> is the index of the
-+ * given state).
-+ */
-+module_param_named(states_off, disabled_states_mask, uint, 0444);
-+MODULE_PARM_DESC(states_off, "Mask of disabled idle states");
-Index: linux-pm/Documentation/admin-guide/pm/intel_idle.rst
-===================================================================
---- linux-pm.orig/Documentation/admin-guide/pm/intel_idle.rst
-+++ linux-pm/Documentation/admin-guide/pm/intel_idle.rst
-@@ -168,7 +168,7 @@ and ``idle=nomwait``.  If any of them is
- ``MWAIT`` instruction is not allowed to be used, so the initialization of
- ``intel_idle`` will fail.
- 
--Apart from that there are three module parameters recognized by ``intel_idle``
-+Apart from that there are four module parameters recognized by ``intel_idle``
- itself that can be set via the kernel command line (they cannot be updated via
- sysfs, so that is the only way to change their values).
- 
-@@ -195,6 +195,19 @@ driver ignore the system's ACPI tables e
- recognized processor models, respectively (they both are unset by default and
- ``use_acpi`` has no effect if ``no_acpi`` is set).
- 
-+The value of the ``states_off`` module parameter (0 by default) represents a
-+list of idle states to be disabled by default in the form of a bitmask.  Namely,
-+the positions of the bits that are set in the two's complement representation of
-+that value are the indices of idle states to be disabled by default (as
-+reflected by the names of the corresponding idle state directories in ``sysfs``,
-+:file:`state0`, :file:`state1` ... :file:`state<i>` ..., where ``<i>`` is the
-+index of the given idle state; see :ref:`idle-states-representation` in
-+:doc:`cpuidle`).  For example, if ``states_off`` is equal to 3, the driver will
-+disable idle states 0 and 1 by default, and if it is equal to 8, idle state 3
-+will be disabled by default and so on (bit positions beyond the maximum idle
-+state index are ignored).  The idle states disabled this way can be enabled (on
-+a per-CPU basis) from user space via ``sysfs``.
-+
- 
- .. _intel-idle-core-and-package-idle-states:
- 
-
-
+-	struct ring_buffer		*rb;
++	struct ring_buffer __rcu	*rb;
+ 	struct list_head		rb_entry;
+ 	unsigned long			rcu_batches;
+ 	int				rcu_pending;
+-- 
+2.17.1
 
