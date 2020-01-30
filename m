@@ -2,120 +2,164 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 02E2A14E2F7
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Jan 2020 20:12:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C26B114E2FF
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Jan 2020 20:18:58 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727654AbgA3TMa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 30 Jan 2020 14:12:30 -0500
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:42193 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726267AbgA3TMa (ORCPT
+        id S1727743AbgA3TS5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 30 Jan 2020 14:18:57 -0500
+Received: from fllv0015.ext.ti.com ([198.47.19.141]:41594 "EHLO
+        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727400AbgA3TS5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 30 Jan 2020 14:12:30 -0500
-Received: by mail-pl1-f196.google.com with SMTP id p9so1699895plk.9
-        for <linux-kernel@vger.kernel.org>; Thu, 30 Jan 2020 11:12:30 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-transfer-encoding:content-language;
-        bh=Xi1otSyD3nUiREFcsX3WomP4ANVRxh8JOt8EQSGwhSA=;
-        b=q6SkCaC8jxep5Pr2qCOlaJdwrspZ5LewaxnL26u3jsX+2b24208BAXcvhBz4lK4+9f
-         AVqiOwPCBQXnpPLdHytifoGtqT0NSJHwhzGj32GLJIl4WFyE8PqUEXeSQfV6hFoeEByh
-         Ld51OqFq3baghqTx1OsLyH1nwWKC66a6C+jEy7OF0rPg+3MLxD8YjfdOsk2s02bOLLki
-         v+lNIWWY/ImGvd8yAPAkdQKpFzgURVoJtmwRmIEnWJHJXdm1YwtdhPb5BkSSSUz+2DvX
-         5A0vl44SAn7nUd/vVWsQ3boQLtgTkNrTjmDA6+9lzQI7n2sxnznq+u8ZQpQ9K0hoYrWP
-         NNEg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-transfer-encoding
-         :content-language;
-        bh=Xi1otSyD3nUiREFcsX3WomP4ANVRxh8JOt8EQSGwhSA=;
-        b=B0r13b9cZIfYcFFxMNGbO0Znp08MMcKVUe3v4LWVAHdohzcyHNoy3qRdhlHNzc0z2W
-         M7iEa/gspbOwN5VSRs/yuDhYJGPMZCL0Q9ZpV464vm7TECDUd+G6ZeiePQrnrLVcw6UW
-         2xelzVV4Lr5O78HJxCrTd6D6pudy1MUk3eykoPewZbIDUoKqO99dceOyojL5u/DmneQZ
-         PDH+rGH3kvBH+q0FO93IIlc4GHbdIDYuW1AlDISxBJpQCptCEQotpBS5DM+Kvci0/fXP
-         rH4RdHQMN9Y+NGVxTiTq3uWsJAKb+/0ajkKTVJvoLCcRNBOytY33U/szixyQW+lyH/qC
-         eg+w==
-X-Gm-Message-State: APjAAAURinb32fx+k0CnIkf3khJSHFuK/3+IAL8A9AdbNr4Z4dS+UYxo
-        zeOnac+iKuXt2NbR1pQLa7HQbxAW
-X-Google-Smtp-Source: APXvYqzsYVe5dvCSon0un7A9gVj8k/TL7s5MfjVudCTxJYWSypYZZMkeb/Q26sTji8CcJtqRG0hreA==
-X-Received: by 2002:a17:90a:e397:: with SMTP id b23mr7458573pjz.135.1580411549672;
-        Thu, 30 Jan 2020 11:12:29 -0800 (PST)
-Received: from ?IPv6:2001:df0:0:200c:24a0:dd2f:5dc3:c66a? ([2001:df0:0:200c:24a0:dd2f:5dc3:c66a])
-        by smtp.gmail.com with ESMTPSA id a195sm7496505pfa.120.2020.01.30.11.12.26
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 30 Jan 2020 11:12:28 -0800 (PST)
-Subject: Re: [PATCH 0/5] Rewrite Motorola MMU page-table layout
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Linux/m68k <linux-m68k@lists.linux-m68k.org>,
-        Linux Kernel Development <linux-kernel@vger.kernel.org>,
-        Will Deacon <will@kernel.org>
-References: <20200129103941.304769381@infradead.org>
- <bbdb9596-583e-5d26-ac1c-4775440059b9@physik.fu-berlin.de>
- <20200129115412.GN14914@hirez.programming.kicks-ass.net>
- <CAOmrzkJ8dsuSnomcE7uhyY9ip6T9ADLT7LhjydvY-hizpikBiA@mail.gmail.com>
- <20200129193109.GS14914@hirez.programming.kicks-ass.net>
- <b72358cc-ddd2-52d6-7eed-c88bab46e6f1@gmail.com>
- <20200130081623.GW14879@hirez.programming.kicks-ass.net>
-From:   Michael Schmitz <schmitzmic@gmail.com>
-Message-ID: <c4d3efbe-2d91-c5e4-aa9e-680ffd0d5c89@gmail.com>
-Date:   Fri, 31 Jan 2020 08:12:23 +1300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+        Thu, 30 Jan 2020 14:18:57 -0500
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 00UJIuRr106609;
+        Thu, 30 Jan 2020 13:18:56 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1580411936;
+        bh=wdTBVFk9af+5181QMMgprWeO90o2Vtdv8glzZOzDVhs=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=M7iy5tO0rzyJIDugMAF1uSYZ3gyYHiqYHD1rOXpeVu17/FcwJaNLWmIJYUeSJFGPZ
+         pot3krvLQhUxJMPctIC9ZI88ed+/Wx8GAchWtfNB1vksVM0oS79V73yEh2w5m1mPK3
+         +15OXGt0F1LOC9u5zZ6LQuB4ITkT+huEJ6KmWHMM=
+Received: from DLEE109.ent.ti.com (dlee109.ent.ti.com [157.170.170.41])
+        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 00UJItwM087385
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Thu, 30 Jan 2020 13:18:55 -0600
+Received: from DLEE107.ent.ti.com (157.170.170.37) by DLEE109.ent.ti.com
+ (157.170.170.41) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Thu, 30
+ Jan 2020 13:18:55 -0600
+Received: from fllv0039.itg.ti.com (10.64.41.19) by DLEE107.ent.ti.com
+ (157.170.170.37) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
+ Frontend Transport; Thu, 30 Jan 2020 13:18:55 -0600
+Received: from [127.0.0.1] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by fllv0039.itg.ti.com (8.15.2/8.15.2) with ESMTP id 00UJIrq3092024;
+        Thu, 30 Jan 2020 13:18:53 -0600
+Subject: Re: [PATCHv5 06/14] remoteproc/omap: Initialize and assign reserved
+ memory node
+To:     "Andrew F. Davis" <afd@ti.com>, <bjorn.andersson@linaro.org>,
+        <ohad@wizery.com>, <linux-remoteproc@vger.kernel.org>
+CC:     <linux-kernel@vger.kernel.org>, <mathieu.poirier@linaro.org>,
+        <s-anna@ti.com>, <linux-omap@vger.kernel.org>
+References: <20200116135332.7819-1-t-kristo@ti.com>
+ <20200116135332.7819-7-t-kristo@ti.com>
+ <249c293c-6a23-165f-1df5-4859ee47658a@ti.com>
+From:   Tero Kristo <t-kristo@ti.com>
+Message-ID: <37db5d57-b1cd-1cec-2c9b-31c49e3bdc10@ti.com>
+Date:   Thu, 30 Jan 2020 21:18:52 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.1
 MIME-Version: 1.0
-In-Reply-To: <20200130081623.GW14879@hirez.programming.kicks-ass.net>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <249c293c-6a23-165f-1df5-4859ee47658a@ti.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
 Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Peter,
-
-On 30/01/20 9:16 PM, Peter Zijlstra wrote:
-> Hi Michael,
->
-> On Thu, Jan 30, 2020 at 08:31:13PM +1300, Michael Schmitz wrote:
->
->> Not much difference:
+On 30/01/2020 20:11, Andrew F. Davis wrote:
+> On 1/16/20 8:53 AM, Tero Kristo wrote:
+>> From: Suman Anna <s-anna@ti.com>
 >>
->>               total       used       free     shared    buffers     cached
->> Mem:         10712      10120        592          0       1860       2276
->> -/+ buffers/cache:       5984       4728
->> Swap:      2097144       1552    2095592
+>> The reserved memory nodes are not assigned to platform devices by
+>> default in the driver core to avoid the lookup for every platform
+>> device and incur a penalty as the real users are expected to be
+>> only a few devices.
 >>
+>> OMAP remoteproc devices fall into the above category and the OMAP
+>> remoteproc driver _requires_ specific CMA pools to be assigned
+>> for each device at the moment to align on the location of the
+>> vrings and vring buffers in the RTOS-side firmware images. So,
+> 
+> 
+> Same comment as before, this is a firmware issue for only some firmwares
+> that do not handle being assigned vring locations correctly and instead
+> hard-code them.
+
+I believe we discussed this topic in length in previous version but 
+there was no conclusion on it.
+
+The commit desc might be a bit misleading, we are not actually forced to 
+use specific CMA buffers, as we use IOMMU to map these to device 
+addresses. For example IPU1/IPU2 use internally exact same memory 
+addresses, iommu is used to map these to specific CMA buffer.
+
+CMA buffers are mostly used so that we get aligned large chunk of memory 
+which can be mapped properly with the limited IOMMU OMAP family of chips 
+have. Not sure if there is any sane way to get this done in any other 
+manner.
+
+-Tero
+
+> 
+> This is not a requirement of the remote processor itself and so it
+> should not fail to probe if a specific memory carveout isn't given.
+> 
+> 
+>> use the of_reserved_mem_device_init/release() API appropriately
+>> to assign the corresponding reserved memory region to the OMAP
+>> remoteproc device. Note that only one region per device is
+>> allowed by the framework.
 >>
->> vs. vanilla 5.5rc5:
->>               total       used       free     shared    buffers     cached
->> Mem:         10716      10104        612          0       1588       2544
->> -/+ buffers/cache:       5972       4744
->> Swap:      2097144       1296    2095848
+>> Signed-off-by: Suman Anna <s-anna@ti.com>
+>> Signed-off-by: Tero Kristo <t-kristo@ti.com>
+>> Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+>> ---
+>> v5: no changes
 >>
->> By sheer coincidence, the boot with your patch series happened to run a full
->> filesystem check on the root filesystem, so I'd say it got a good workout
->> re: paging and swapping (even though it's just a paltry 4 GB).
-> Sweet!, can I translate this into a Tested-by: from you?
+>>   drivers/remoteproc/omap_remoteproc.c | 12 +++++++++++-
+>>   1 file changed, 11 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/remoteproc/omap_remoteproc.c b/drivers/remoteproc/omap_remoteproc.c
+>> index 0846839b2c97..194303b860b2 100644
+>> --- a/drivers/remoteproc/omap_remoteproc.c
+>> +++ b/drivers/remoteproc/omap_remoteproc.c
+>> @@ -17,6 +17,7 @@
+>>   #include <linux/module.h>
+>>   #include <linux/err.h>
+>>   #include <linux/of_device.h>
+>> +#include <linux/of_reserved_mem.h>
+>>   #include <linux/platform_device.h>
+>>   #include <linux/dma-mapping.h>
+>>   #include <linux/remoteproc.h>
+>> @@ -480,14 +481,22 @@ static int omap_rproc_probe(struct platform_device *pdev)
+>>   	if (ret)
+>>   		goto free_rproc;
+>>   
+>> +	ret = of_reserved_mem_device_init(&pdev->dev);
+>> +	if (ret) {
+>> +		dev_err(&pdev->dev, "device does not have specific CMA pool\n");
+>> +		goto free_rproc;
+>> +	}
+>> +
+>>   	platform_set_drvdata(pdev, rproc);
+>>   
+>>   	ret = rproc_add(rproc);
+>>   	if (ret)
+>> -		goto free_rproc;
+>> +		goto release_mem;
+>>   
+>>   	return 0;
+>>   
+>> +release_mem:
+>> +	of_reserved_mem_device_release(&pdev->dev);
+>>   free_rproc:
+>>   	rproc_free(rproc);
+>>   	return ret;
+>> @@ -499,6 +508,7 @@ static int omap_rproc_remove(struct platform_device *pdev)
+>>   
+>>   	rproc_del(rproc);
+>>   	rproc_free(rproc);
+>> +	of_reserved_mem_device_release(&pdev->dev);
+>>   
+>>   	return 0;
+>>   }
+>>
 
-If the test coverage is sufficient, you may certainly do that.
-
-Cheers,
-
-     Michael
-
->
->> Haven't tried any VM stress testing yet (not sure what to do for that; it's
->> been years since I tried that sort of stuff).
-> I think, this not being SMP, doing what you just did tickled just about
-> everything there is.
->
-> There is one more potential issue with MMU-gather / TLB invalidate on
-> m68k (and a whole bunch of other archs) and I have patches for that
-> (although I now need to redo the m68k one.
->
-> Meanwhile the build robot gifted me with a build issue, and Will had
-> some nitpicks, so I'll go respin and repost these patches.
+--
+Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki. Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
