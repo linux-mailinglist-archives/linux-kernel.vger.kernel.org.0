@@ -2,73 +2,66 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E462314DA83
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Jan 2020 13:19:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0ADAD14DA90
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Jan 2020 13:24:51 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727170AbgA3MT1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 30 Jan 2020 07:19:27 -0500
-Received: from jabberwock.ucw.cz ([46.255.230.98]:56500 "EHLO
-        jabberwock.ucw.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726873AbgA3MT1 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 30 Jan 2020 07:19:27 -0500
-Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
-        id 1A7F41C2604; Thu, 30 Jan 2020 13:19:26 +0100 (CET)
-Date:   Thu, 30 Jan 2020 13:19:26 +0100
-From:   Pavel Machek <pavel@ucw.cz>
-To:     "Rafael J. Wysocki" <rafael@kernel.org>
-Cc:     Jonas Meurer <jonas@freesources.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        Len Brown <len.brown@intel.com>,
-        Tim Dittler <tim.dittler@systemli.org>,
-        Yannik Sembritzki <yannik@sembritzki.me>
-Subject: Re: [PATCH v3] PM: suspend: Add sysfs attribute to control the "sync
- on suspend" behavior
-Message-ID: <20200130121926.cdz7dtrcbeuodqca@ucw.cz>
-References: <d05a1c0c-1212-17f4-3772-042e2ff76a40@freesources.org>
- <CAJZ5v0gXMkL8Z_=jUvNGoVjDr4s5osO8RNekJ1yg-b+=zi7GSw@mail.gmail.com>
+        id S1727145AbgA3MYs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 30 Jan 2020 07:24:48 -0500
+Received: from mga07.intel.com ([134.134.136.100]:49436 "EHLO mga07.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726902AbgA3MYr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 30 Jan 2020 07:24:47 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga002.fm.intel.com ([10.253.24.26])
+  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 30 Jan 2020 04:24:46 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.70,381,1574150400"; 
+   d="scan'208";a="262155240"
+Received: from lxy-dell.sh.intel.com ([10.239.13.109])
+  by fmsmga002.fm.intel.com with ESMTP; 30 Jan 2020 04:24:44 -0800
+From:   Xiaoyao Li <xiaoyao.li@intel.com>
+To:     Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Sean Christopherson <sean.j.christopherson@intel.com>
+Cc:     Xiaoyao Li <xiaoyao.li@intel.com>, x86@kernel.org,
+        linux-kernel@vger.kernel.org, kvm@vger.kernel.org
+Subject: [PATCH 0/2] kvm: split_lock: Fix emulator and extend #AC handler 
+Date:   Thu, 30 Jan 2020 20:19:37 +0800
+Message-Id: <20200130121939.22383-1-xiaoyao.li@intel.com>
+X-Mailer: git-send-email 2.23.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAJZ5v0gXMkL8Z_=jUvNGoVjDr4s5osO8RNekJ1yg-b+=zi7GSw@mail.gmail.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi!
+As kernel split lock patch[1] merged into tip tree, kvm emulator needs to be
+fixed and vmx's #AC handler needs to be extended.
 
-> > The sysfs attribute `/sys/power/sync_on_suspend` controls, whether or not
-> > filesystems are synced by the kernel before system suspend.
-> >
-> > Congruously, the behaviour of build-time switch CONFIG_SUSPEND_SKIP_SYNC
-> > is slightly changed: It now defines the run-tim default for the new sysfs
-> > attribute `/sys/power/sync_on_suspend`.
-> >
-> > The run-time attribute is added because the existing corresponding
-> > build-time Kconfig flag for (`CONFIG_SUSPEND_SKIP_SYNC`) is not flexible
-> > enough. E.g. Linux distributions that provide pre-compiled kernels
-> > usually want to stick with the default (sync filesystems before suspend)
-> > but under special conditions this needs to be changed.
-> >
-> > One example for such a special condition is user-space handling of
-> > suspending block devices (e.g. using `cryptsetup luksSuspend` or `dmsetup
-> > suspend`) before system suspend. The Kernel trying to sync filesystems
-> > after the underlying block device already got suspended obviously leads
-> > to dead-locks. Be aware that you have to take care of the filesystem sync
-> > yourself before suspending the system in those scenarios.
-> >
-> > Signed-off-by: Jonas Meurer <jonas@freesources.org>
-> 
-> Applied as 5.6 material with minor changes in the ABI document, thanks!
+Patch 1 fixes x86/emulator to emualte split lock access as write to avoid
+malicous guest[2] exploiting it to populate host kernel log.
 
-For the record, I still believe this is bad idea.
+Patch 2 extends vmx's #AC handler that we can make old guestes (has split_lock
+buges) survive on certain cases.
 
-User should not have to tweak variables in /sys for system not to
-deadlock with cryptsetup.. and we are stuck with this pretty much
-forever.
+[1] https://lore.kernel.org/lkml/158031147976.396.8941798847364718785.tip-bot2@tip-bot2/
+[2] https://lore.kernel.org/lkml/8c5b11c9-58df-38e7-a514-dc12d687b198@redhat.com/
 
-									Pavel
+Xiaoyao Li (2):
+  KVM: x86: Emulate split-lock access as a write
+  KVM: VMX: Extend VMX's #AC handding
+
+ arch/x86/include/asm/cpu.h  | 13 ++++++++++++
+ arch/x86/kernel/cpu/intel.c | 18 ++++++++++------
+ arch/x86/kvm/vmx/vmx.c      | 42 ++++++++++++++++++++++++++++++++++---
+ arch/x86/kvm/vmx/vmx.h      |  3 +++
+ arch/x86/kvm/x86.c          | 11 ++++++++++
+ 5 files changed, 78 insertions(+), 9 deletions(-)
+
+-- 
+2.23.0
+
