@@ -2,38 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 46DDE14E21E
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Jan 2020 19:50:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6519014E195
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Jan 2020 19:46:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731699AbgA3SuL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 30 Jan 2020 13:50:11 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58050 "EHLO mail.kernel.org"
+        id S1731074AbgA3Spl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 30 Jan 2020 13:45:41 -0500
+Received: from mail.kernel.org ([198.145.29.99]:55328 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730563AbgA3Sr1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 30 Jan 2020 13:47:27 -0500
+        id S1728079AbgA3Spj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 30 Jan 2020 13:45:39 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BA10C205F4;
-        Thu, 30 Jan 2020 18:47:24 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 30B3E217BA;
+        Thu, 30 Jan 2020 18:45:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1580410045;
-        bh=2nKHVnA/3UzuDVgqgySUvYBdJHYlQz0tZPaby5jU1MI=;
+        s=default; t=1580409938;
+        bh=WYPDK5cm9HmuZ3ULm+770FTcNMJYJDWL+36DjqaSXy4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=1jk/ILQmOo0705PNsH2E2f38xeqOl/Jdsxbf7ifcwlYvhICoEv45exc7iYIP8CoT3
-         GpZMpAbLhuUayPz0yAtpQ7xJNJIH7HTcbN8sL2Xk3UO9PTgFx9tFnasY+h3Kp5pDT5
-         quDNkhGfC+Px8T2IyFdZLqWBBoCujC/G2R/GqfAw=
+        b=WuJjH78JTzpNQVH2OLrciLRMhWhIeTA3dR+/W5bo3d38cKps6t1ri7yCmJjYMJLpk
+         8gSO0FfZ0Ug2Xi/oD2ZGByGbeFqJYHk8Vc6UIe5fN8PRZiygyN+nuhottrdCiwZ4FS
+         3TcakazEm64inA8osHkLpoOZ0zwgx8hFF5wI5F+A=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Aaron Ma <aaron.ma@canonical.com>,
-        Jiri Kosina <jkosina@suse.cz>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 25/55] HID: multitouch: Add LG MELF0410 I2C touchscreen support
+        stable@vger.kernel.org,
+        =?UTF-8?q?C=C3=A9dric=20Le=20Goater?= <clg@kaod.org>,
+        Arnd Bergmann <arnd@arndb.de>, Joel Stanley <joel@jms.id.au>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 5.4 090/110] ARM: config: aspeed-g5: Enable 8250_DW quirks
 Date:   Thu, 30 Jan 2020 19:39:06 +0100
-Message-Id: <20200130183613.386811542@linuxfoundation.org>
+Message-Id: <20200130183624.805590706@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200130183608.563083888@linuxfoundation.org>
-References: <20200130183608.563083888@linuxfoundation.org>
+In-Reply-To: <20200130183613.810054545@linuxfoundation.org>
+References: <20200130183613.810054545@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,47 +45,33 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Aaron Ma <aaron.ma@canonical.com>
+From: Joel Stanley <joel@jms.id.au>
 
-[ Upstream commit 348b80b273fbf4ce2a307f9e38eadecf37828cad ]
+[ Upstream commit a5331a7a87ec81d5228b7421acf831b2d0c0de26 ]
 
-Add multitouch support for LG MELF I2C touchscreen.
-Apply the same workaround as LG USB touchscreen.
+This driver option is used by the AST2600 A0 boards to work around a
+hardware issue.
 
-Signed-off-by: Aaron Ma <aaron.ma@canonical.com>
-Signed-off-by: Jiri Kosina <jkosina@suse.cz>
+Reviewed-by: Cédric Le Goater <clg@kaod.org>
+Acked-by: Arnd Bergmann <arnd@arndb.de>
+Signed-off-by: Joel Stanley <joel@jms.id.au>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/hid/hid-ids.h        | 1 +
- drivers/hid/hid-multitouch.c | 3 +++
- 2 files changed, 4 insertions(+)
+ arch/arm/configs/aspeed_g5_defconfig | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/hid/hid-ids.h b/drivers/hid/hid-ids.h
-index 1949d6fca53e5..ee243bf8cc3df 100644
---- a/drivers/hid/hid-ids.h
-+++ b/drivers/hid/hid-ids.h
-@@ -717,6 +717,7 @@
- #define USB_DEVICE_ID_LG_MULTITOUCH	0x0064
- #define USB_DEVICE_ID_LG_MELFAS_MT	0x6007
- #define I2C_DEVICE_ID_LG_8001		0x8001
-+#define I2C_DEVICE_ID_LG_7010		0x7010
- 
- #define USB_VENDOR_ID_LOGITECH		0x046d
- #define USB_DEVICE_ID_LOGITECH_AUDIOHUB 0x0a0e
-diff --git a/drivers/hid/hid-multitouch.c b/drivers/hid/hid-multitouch.c
-index f9167d0e095ce..8403251992abb 100644
---- a/drivers/hid/hid-multitouch.c
-+++ b/drivers/hid/hid-multitouch.c
-@@ -1972,6 +1972,9 @@ static const struct hid_device_id mt_devices[] = {
- 	{ .driver_data = MT_CLS_LG,
- 		HID_USB_DEVICE(USB_VENDOR_ID_LG,
- 			USB_DEVICE_ID_LG_MELFAS_MT) },
-+	{ .driver_data = MT_CLS_LG,
-+		HID_DEVICE(BUS_I2C, HID_GROUP_GENERIC,
-+			USB_VENDOR_ID_LG, I2C_DEVICE_ID_LG_7010) },
- 
- 	/* MosArt panels */
- 	{ .driver_data = MT_CLS_CONFIDENCE_MINUS_ONE,
+diff --git a/arch/arm/configs/aspeed_g5_defconfig b/arch/arm/configs/aspeed_g5_defconfig
+index 597536cc9573d..b87508c7056c9 100644
+--- a/arch/arm/configs/aspeed_g5_defconfig
++++ b/arch/arm/configs/aspeed_g5_defconfig
+@@ -139,6 +139,7 @@ CONFIG_SERIAL_8250_RUNTIME_UARTS=6
+ CONFIG_SERIAL_8250_EXTENDED=y
+ CONFIG_SERIAL_8250_ASPEED_VUART=y
+ CONFIG_SERIAL_8250_SHARE_IRQ=y
++CONFIG_SERIAL_8250_DW=y
+ CONFIG_SERIAL_OF_PLATFORM=y
+ CONFIG_ASPEED_KCS_IPMI_BMC=y
+ CONFIG_ASPEED_BT_IPMI_BMC=y
 -- 
 2.20.1
 
