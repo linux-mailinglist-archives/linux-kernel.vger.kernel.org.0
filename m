@@ -2,194 +2,91 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DD2A914E55F
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Jan 2020 23:10:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6758314E55A
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Jan 2020 23:09:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726940AbgA3WK5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 30 Jan 2020 17:10:57 -0500
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:35131 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725835AbgA3WK4 (ORCPT
+        id S1726466AbgA3WJI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 30 Jan 2020 17:09:08 -0500
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:35136 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725907AbgA3WJI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 30 Jan 2020 17:10:56 -0500
-Received: by mail-pg1-f196.google.com with SMTP id l24so2372240pgk.2
-        for <linux-kernel@vger.kernel.org>; Thu, 30 Jan 2020 14:10:56 -0800 (PST)
+        Thu, 30 Jan 2020 17:09:08 -0500
+Received: by mail-pf1-f194.google.com with SMTP id y73so2211066pfg.2
+        for <linux-kernel@vger.kernel.org>; Thu, 30 Jan 2020 14:09:06 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=k029CDeAqt4dUC9H9+EV7LYLJIQEFancJ5Wj56ItmGo=;
-        b=dCWZCo18HtOEmjoQl7n4HwAgKb5W5oJONACUqkIwhx4UmKgI3l5T071gHg9npFepTT
-         Mut1UWLtTVi+yzaFPXplS30wTqZbd+Vixio/mck2cZ0tMF5fjLCvgSUuL4SsZIz1LKqA
-         Du8pWyjyvxc0kwyUgvsJR1asyP6GSLvxCnVJ8=
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=ZUexxNUx2dGjQIPMcFbU0fVcZMDC50Hvbcrbeq+H2V0=;
+        b=TZ6hrhFuqgBA4J1CeCNDRVu7W6cC06JV/7oLVVdX5AikBVmwiWHR8bfUZWuKOljo99
+         x30t0zV7uxM0dzEeSbBCqbgHacMW+OHT3zzhLCkrHtIZALyuI//pE+6bkJvt8b9rUzwS
+         NXacaeOJGQFQ387XD3h0B8ntMsYNMi9Ee1ZTs=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=k029CDeAqt4dUC9H9+EV7LYLJIQEFancJ5Wj56ItmGo=;
-        b=V1B0MsQsekNwWfSZP/3AKa3c3/R9+2oyMvsMr1BESEc5yXpEdktFbKeHW+GnK2egYh
-         RZW0rEpTFHMkLbN8LqB8Dkk7mDQuCa6l3Kd559TFlEVX/LLU3lR03zswMj8wP/Pnom7r
-         kDUucXAVShbWCB2IWT4ytZY4ppG7L6ZgV6z0Zr/I5C+MioNIrAuqodRM0EF0sGMPAWq1
-         FxjNlDjfaKH5FtfSr5fFQV8Ida9Cey1XhCDhNOFP3VUVIqtY/wlgtvgaw5URlQPhJwxe
-         US1+64c3Lfk4t8QZS/n8qlUTICmmD4dEJjjtYAEPvTYG6Q/awY4NRpljg0WqjPNMbd1c
-         KAgg==
-X-Gm-Message-State: APjAAAXq9fgsJOa19lkaZDhPiFxDi3epnwJwl90l6bSOFE6IYDIqT9L5
-        qi7xLDaeCylCu2hLwKHYf75yDKQDq0SHNg==
-X-Google-Smtp-Source: APXvYqwDJuW8369as93nHWYOxB61drOp1HiUsDm1tyLrIp4X44cE/81RZlARuDBtxCsu6tXV/LWFOg==
-X-Received: by 2002:aa7:8755:: with SMTP id g21mr7165277pfo.36.1580422255463;
-        Thu, 30 Jan 2020 14:10:55 -0800 (PST)
-Received: from pmalani2.mtv.corp.google.com ([2620:15c:202:201:172e:4646:c089:ce59])
-        by smtp.gmail.com with ESMTPSA id p16sm7403859pgi.50.2020.01.30.14.10.54
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=ZUexxNUx2dGjQIPMcFbU0fVcZMDC50Hvbcrbeq+H2V0=;
+        b=jk0jusqfNT9iM0BD46t8PgtfYbFI2uzOlGNinhbGSqg8zhekLjXpSxRdme+Y7QDSjT
+         /hB8L378qF8ShRbZOFgmmwOF32sWMwkZfrWoCdXTaUGTxglLn32miKPdxAZUj194X7hW
+         3/0eOGLraoH5GOkKULxienGA3GvAsVDKQGVCxdfX4XGmqMEdi9crwQqNCO3ALLR5d7fr
+         fLaItZPDOUjd/8CnTLoqR1iY0dC88CotxvYKYFThONc8UiK1MxUZiEMVlRW8l3qZQG70
+         ZLOLYtaa/vKme6brrKxgRar+FaiBgiB0yLLsNEsZXu6hxjrfszPux84EcVXRNd1+1Xdc
+         guhw==
+X-Gm-Message-State: APjAAAX4MRpyQsfrrhnj18YglV7xF8JVfJ6LLzKR6D2WderX8ixFnzbI
+        0nWOHKJwKnuE+ZEUEUtK6iYUrg==
+X-Google-Smtp-Source: APXvYqykPZTCjcvVR9SGe1agZZrOZfRDah7+fVB0EvIAQLg3I5L4pet/YQS99dtHp1ZsnUufEj+7hQ==
+X-Received: by 2002:a63:f142:: with SMTP id o2mr6696978pgk.181.1580422146031;
+        Thu, 30 Jan 2020 14:09:06 -0800 (PST)
+Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
+        by smtp.gmail.com with ESMTPSA id k21sm7678551pgt.22.2020.01.30.14.09.05
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 30 Jan 2020 14:10:54 -0800 (PST)
-From:   Prashant Malani <pmalani@chromium.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     heikki.krogerus@intel.com, enric.balletbo@collabora.com,
-        bleung@chromium.org, Prashant Malani <pmalani@chromium.org>,
-        Jon Flatley <jflat@chromium.org>,
-        Guenter Roeck <groeck@chromium.org>
-Subject: [RFC v2 3/3] platform/chrome: Update Type C port info from EC
-Date:   Thu, 30 Jan 2020 14:07:48 -0800
-Message-Id: <20200130220747.163053-4-pmalani@chromium.org>
-X-Mailer: git-send-email 2.25.0.341.g760bfbb309-goog
-In-Reply-To: <20200130220747.163053-1-pmalani@chromium.org>
-References: <20200130220747.163053-1-pmalani@chromium.org>
+        Thu, 30 Jan 2020 14:09:05 -0800 (PST)
+Date:   Thu, 30 Jan 2020 14:09:04 -0800
+From:   Kees Cook <keescook@chromium.org>
+To:     "H.J. Lu" <hjl.tools@gmail.com>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Thomas Lendacky <Thomas.Lendacky@amd.com>,
+        Sami Tolvanen <samitolvanen@google.com>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H . Peter Anvin" <hpa@zytor.com>,
+        the arch/x86 maintainers <x86@kernel.org>,
+        Yu-cheng Yu <yu-cheng.yu@intel.com>
+Subject: Re: [PATCH] Discard .note.gnu.property sections in generic NOTES
+Message-ID: <202001301407.0C25389FC2@keescook>
+References: <20200124181819.4840-1-hjl.tools@gmail.com>
+ <20200124181819.4840-3-hjl.tools@gmail.com>
+ <202001271531.B9ACE2A@keescook>
+ <CAMe9rOrVyzvaTyURc4RJJTHUXGG6uAC9KyQomxQFzWzrAN4nrg@mail.gmail.com>
+ <202001301143.288B55DCC1@keescook>
+ <CAMe9rOocT960KsofP9o_y49FdgY9NGix=GcYnpKLvp7RhieZNA@mail.gmail.com>
+ <202001301206.13AF0512@keescook>
+ <CAMe9rOoU1B8enyoL4-SSQKYLHpevR5yrbp5ewztC=Owr69y2SQ@mail.gmail.com>
+ <CAMe9rOpkrPOsymJiBv0i3_Q6hp=fyUYLqBKpOZAHx3d5t54GDA@mail.gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAMe9rOpkrPOsymJiBv0i3_Q6hp=fyUYLqBKpOZAHx3d5t54GDA@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-After registering the ports at probe, get the current port information
-from EC and update the Type C connector class ports accordingly.
+On Thu, Jan 30, 2020 at 12:48:38PM -0800, H.J. Lu wrote:
+> Here is a patch to discard .note.gnu.property sections in generic NOTES.
 
-Co-developed-by: Jon Flatley <jflat@chromium.org>
-Signed-off-by: Prashant Malani <pmalani@chromium.org>
----
+Thanks! This looks good, though please send not as an attachment. :)
 
-Changes in v2:
-- No changes.
+Also, one more nit: the comment style should be:
 
- drivers/platform/chrome/cros_ec_typec.c | 90 ++++++++++++++++++++++++-
- 1 file changed, 89 insertions(+), 1 deletion(-)
+/*
+ * First line of text, blah blah ...
+ * ... blah blah, end of text.
+ */
 
-diff --git a/drivers/platform/chrome/cros_ec_typec.c b/drivers/platform/chrome/cros_ec_typec.c
-index 189c2192375c5d..a9160a5734a489 100644
---- a/drivers/platform/chrome/cros_ec_typec.c
-+++ b/drivers/platform/chrome/cros_ec_typec.c
-@@ -27,6 +27,82 @@ struct cros_typec_data {
- 	struct typec_port *ports[EC_USB_PD_MAX_PORTS];
- };
- 
-+static void cros_typec_set_port_params_v0(struct cros_typec_data *typec,
-+		int port_num, struct ec_response_usb_pd_control *resp)
-+{
-+	struct typec_port *port = typec->ports[port_num];
-+	enum typec_orientation polarity;
-+
-+	if (!resp->enabled)
-+		polarity = TYPEC_ORIENTATION_NONE;
-+	else if (!resp->polarity)
-+		polarity = TYPEC_ORIENTATION_NORMAL;
-+	else
-+		polarity = TYPEC_ORIENTATION_REVERSE;
-+
-+	typec_set_pwr_role(port, resp->role ? TYPEC_SOURCE : TYPEC_SINK);
-+	typec_set_orientation(port, polarity);
-+}
-+
-+
-+static void cros_typec_set_port_params_v1(struct cros_typec_data *typec,
-+		int port_num, struct ec_response_usb_pd_control_v1 *resp)
-+{
-+	struct typec_port *port = typec->ports[port_num];
-+	enum typec_orientation polarity;
-+
-+	if (!(resp->enabled & PD_CTRL_RESP_ENABLED_CONNECTED))
-+		polarity = TYPEC_ORIENTATION_NONE;
-+	else if (!resp->polarity)
-+		polarity = TYPEC_ORIENTATION_NORMAL;
-+	else
-+		polarity = TYPEC_ORIENTATION_REVERSE;
-+	typec_set_orientation(port, polarity);
-+	typec_set_data_role(port, resp->role & PD_CTRL_RESP_ROLE_DATA ?
-+			TYPEC_HOST : TYPEC_DEVICE);
-+	typec_set_pwr_role(port, resp->role & PD_CTRL_RESP_ROLE_POWER ?
-+			TYPEC_SOURCE : TYPEC_SINK);
-+	typec_set_vconn_role(port, resp->role & PD_CTRL_RESP_ROLE_VCONN ?
-+			TYPEC_SOURCE : TYPEC_SINK);
-+}
-+
-+static int cros_typec_port_update(struct cros_typec_data *typec, int port_num)
-+{
-+	struct ec_params_usb_pd_control req;
-+	struct ec_response_usb_pd_control_v1 resp;
-+	int ret;
-+
-+	if (port_num < 0 || port_num >= typec->num_ports) {
-+		dev_err(typec->dev, "cannot get status for invalid port %d\n",
-+				port_num);
-+		return -EINVAL;
-+	}
-+
-+	req.port = port_num;
-+	req.role = USB_PD_CTRL_ROLE_NO_CHANGE;
-+	req.mux = USB_PD_CTRL_MUX_NO_CHANGE;
-+	req.swap = USB_PD_CTRL_SWAP_NONE;
-+
-+	ret = cros_ec_send_cmd_msg(typec->ec, typec->cmd_ver,
-+			EC_CMD_USB_PD_CONTROL,
-+			&req, sizeof(req), &resp, sizeof(resp));
-+	if (ret < 0)
-+		return ret;
-+
-+	dev_dbg(typec->dev, "Enabled %d: 0x%hhx\n", port_num, resp.enabled);
-+	dev_dbg(typec->dev, "Role %d: 0x%hhx\n", port_num, resp.role);
-+	dev_dbg(typec->dev, "Polarity %d: 0x%hhx\n", port_num, resp.polarity);
-+	dev_dbg(typec->dev, "State %d: %s\n", port_num, resp.state);
-+
-+	if (typec->cmd_ver == 1)
-+		cros_typec_set_port_params_v1(typec, port_num, &resp);
-+	else
-+		cros_typec_set_port_params_v0(typec, port_num,
-+			(struct ec_response_usb_pd_control *) &resp);
-+
-+	return 0;
-+}
-+
- void cros_typec_parse_port_props(struct typec_capability *cap,
- 				 const struct fwnode_handle *fwnode,
- 				 struct device *dev)
-@@ -168,7 +244,7 @@ static int cros_typec_probe(struct platform_device *pdev)
- {
- 	struct device *dev = &pdev->dev;
- 	struct cros_typec_data *typec;
--	int ret;
-+	int ret, i;
- 
- 	typec = devm_kzalloc(dev, sizeof(*typec), GFP_KERNEL);
- 	if (!typec)
-@@ -197,7 +273,19 @@ static int cros_typec_probe(struct platform_device *pdev)
- 	if (ret < 0)
- 		return ret;
- 
-+	for (i = 0; i < typec->num_ports; i++) {
-+		ret = cros_typec_port_update(typec, i);
-+		if (ret < 0)
-+			goto unregister_ports;
-+	}
-+
- 	return 0;
-+
-+unregister_ports:
-+	for (i = 0; i < typec->num_ports; i++)
-+		if (typec->ports[i])
-+			typec_unregister_port(typec->ports[i]);
-+	return ret;
- }
- 
- #ifdef CONFIG_ACPI
+
 -- 
-2.25.0.341.g760bfbb309-goog
-
+Kees Cook
