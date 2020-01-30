@@ -2,79 +2,67 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 417FF14D71E
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Jan 2020 08:50:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9496614D71F
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Jan 2020 08:53:43 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726880AbgA3HuT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 30 Jan 2020 02:50:19 -0500
-Received: from mail-ua1-f68.google.com ([209.85.222.68]:36643 "EHLO
-        mail-ua1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726415AbgA3HuT (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 30 Jan 2020 02:50:19 -0500
-Received: by mail-ua1-f68.google.com with SMTP id y3so833206uae.3
-        for <linux-kernel@vger.kernel.org>; Wed, 29 Jan 2020 23:50:17 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:reply-to:from:date:message-id:subject:to;
-        bh=RFjST6WTWl2HErgo/MFlw9oz3Ck4pyxWRgkJWzlGF00=;
-        b=rAASwXhAOcyZVhslCcnf+k/Ky+2K4vjGx261K9pXu5z1IbnF39ND4gTEPJTU81GW33
-         pW2sox/Q50LUHf7KjgGs+WlvkpUbJ72lfXzhh0LkGVGnGCeNgkfW+FrtsxHYzQELBE+H
-         +NueJXm1x8WMRdfGbG6CiWChrmsPoAwQ1Zt0KsWKPU3FW0a2377hVIMD3yZe4cXxr8yw
-         etaTIwKuzmG6nuD+PMiX8D3ns/IUz+xhTdEcnHKiBZk01ovjZikoU0cKjJ6T/fN2svP8
-         ZhoRT19+V4TPxSMdWPsYtoRmE6ENFssQka6RZ78Y0Mf+Z9Va4eWFn9WRp6wNODh84iQw
-         mNcg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
-         :subject:to;
-        bh=RFjST6WTWl2HErgo/MFlw9oz3Ck4pyxWRgkJWzlGF00=;
-        b=cNlyTOKlWljNo91Ok4+J+WWft85sd5wzctMX4mblb6779R8YCrQ+b6q9owiOYa/BU0
-         ubiYwR7c68wST3l7MrhFO2X5zncT21ij/9Ni65E2Qj6syUhXwqcWIndTTdqtqdTQE+rP
-         dwLYJGYri309KgmkleOwiFlSYHaXHd4a9RWjN85peNOYuAAHGXQfyXv0owLjyLOPY2bo
-         M8dljx/K7IoaXWOerZ0OYv89W1niyowqZY10lM7o0BKCGg0e5nNwQdmS+UsaQ96KBIHo
-         4qGpD5m+PJEyBfbMy3GreOC7gJZfJfnkKMrmUSRIkCHg91usAADijCsAOw51Gg9WmtuF
-         S10w==
-X-Gm-Message-State: APjAAAVzmiqONUn2ynFVmTZCdHAmdYm8z3MmzL53m0q7xpWU2OFjxieA
-        uDUDAQGJpG24+w0A8nLi6tCevzE3cEhQwjSVBB4=
-X-Google-Smtp-Source: APXvYqyP01s+XjxcCft7dTFuRL2ClBijruZk63jxyEdFKJhaMTJMwjtbkok4oPRTGCk5Yve9hBJ2wZFcdOZYDwRcB5g=
-X-Received: by 2002:ab0:69c9:: with SMTP id u9mr1803726uaq.80.1580370616870;
- Wed, 29 Jan 2020 23:50:16 -0800 (PST)
+        id S1726891AbgA3Hxg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 30 Jan 2020 02:53:36 -0500
+Received: from verein.lst.de ([213.95.11.211]:39306 "EHLO verein.lst.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726464AbgA3Hxf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 30 Jan 2020 02:53:35 -0500
+Received: by verein.lst.de (Postfix, from userid 2407)
+        id 57B3C68B05; Thu, 30 Jan 2020 08:53:32 +0100 (CET)
+Date:   Thu, 30 Jan 2020 08:53:32 +0100
+From:   Christoph Hellwig <hch@lst.de>
+To:     Peter Ujfalusi <peter.ujfalusi@ti.com>
+Cc:     Robin Murphy <robin.murphy@arm.com>, hch@lst.de, vigneshr@ti.com,
+        konrad.wilk@oracle.com, linux@armlinux.org.uk,
+        linux-kernel@vger.kernel.org, iommu@lists.linux-foundation.org,
+        linux-arm-kernel@lists.infradead.org, rogerq@ti.com,
+        robh@kernel.org
+Subject: Re: [PoC] arm: dma-mapping: direct: Apply dma_pfn_offset only when
+ it is valid
+Message-ID: <20200130075332.GA30735@lst.de>
+References: <8eb68140-97b2-62ce-3e06-3761984aa5b1@ti.com> <20200114164332.3164-1-peter.ujfalusi@ti.com> <f8121747-8840-e279-8c7c-75a9d4becce8@arm.com> <28ee3395-baed-8d59-8546-ab7765829cc8@ti.com> <4f0e307f-29a9-44cd-eeaa-3b999e03871c@arm.com> <75843c71-1718-8d61-5e3d-edba6e1b10bd@ti.com>
 MIME-Version: 1.0
-Received: by 2002:a67:cb95:0:0:0:0:0 with HTTP; Wed, 29 Jan 2020 23:50:16
- -0800 (PST)
-Reply-To: dunawattara96@outlook.com
-From:   Mr Duna Wattara <drhajizongod@gmail.com>
-Date:   Wed, 29 Jan 2020 23:50:16 -0800
-Message-ID: <CA+aQzqzi1d=WzkXjRbggJHOj2KVKMvveb2NU+VONyN7tPCE6+w@mail.gmail.com>
-Subject: with due respect
-To:     undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <75843c71-1718-8d61-5e3d-edba6e1b10bd@ti.com>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Dear Friend,
+[skipping the DT bits, as I'm everything but an expert on that..]
 
-I know that this mail will come to you as a surprise as we have never
-met before, but need not to worry as I am contacting you independently
-of my investigation and no one is informed of this communication.
+On Mon, Jan 27, 2020 at 04:00:30PM +0200, Peter Ujfalusi wrote:
+> I agree on the phys_to_dma(). It should fail for addresses which does
+> not fall into any of the ranges.
+> It is just a that we in Linux don't have the concept atm for ranges, we
+> have only _one_ range which applies to every memory address.
 
-I need your urgent assistance in transferring the sum of $11.3million
-immediately to your private account.The money has been here in our
-Bank lying dormant for years now without anybody coming for the claim of it.
+what does atm here mean?
 
-I want to release the money to you as the relative to our deceased
-customer (the account owner) who died a long with his supposed NEXT OF
-KIN since 16th October 2005. The Banking laws here does not allow such
-money to stay more than 15 years, because the money will be recalled
-to the Bank treasury account as unclaimed fund.
+We have needed multi-range support for quite a while, as common broadcom
+SOCs do need it.  So patches for that are welcome at least from the
+DMA layer perspective (kinda similar to your pseudo code earlier)
 
-By indicating your interest I will send you the full details on how
-the business will be executed.
+> > Nobody's disputing that the current dma_direct_supported()
+> > implementation is broken for the case where ZONE_DMA itself is offset
+> > from PA 0; the more pressing question is why Christoph's diff, which was
+> > trying to take that into account, still didn't work.
+> 
+> I understand that this is a bit more complex than I interpret it, but
+> the k2g is broken and currently the simplest way to make it work is to
+> use the arm dma_ops in case the pfn_offset is not 0.
+> It will be easy to test dma-direct changes trying to address the issue
+> in hand, but will allow k2g to be usable at the same time.
 
-Please respond urgently and delete if you are not interested.
-
-Best Regards,
-Mr. Duna Wattara.
+Well, using the legacy arm dma ops means we can't use swiotlb if there
+is an offset, which is also wrong for lots of common cases, including
+the Rpi 4.  I'm still curious why my patch didn't work, as I thought
+it should.  We'll need to find the minimum change to make it work
+for now without switching ops, even if it isn't the correct one, and
+then work from there.
