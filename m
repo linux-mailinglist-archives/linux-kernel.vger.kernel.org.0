@@ -2,228 +2,130 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D43D614E3DD
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Jan 2020 21:22:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9CE1614E3E9
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Jan 2020 21:26:18 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727747AbgA3UWR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 30 Jan 2020 15:22:17 -0500
-Received: from fllv0016.ext.ti.com ([198.47.19.142]:51694 "EHLO
-        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726514AbgA3UWR (ORCPT
+        id S1727391AbgA3U0N (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 30 Jan 2020 15:26:13 -0500
+Received: from mail-il1-f194.google.com ([209.85.166.194]:45246 "EHLO
+        mail-il1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726514AbgA3U0M (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 30 Jan 2020 15:22:17 -0500
-Received: from fllv0035.itg.ti.com ([10.64.41.0])
-        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 00UKMFjb001348;
-        Thu, 30 Jan 2020 14:22:15 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1580415735;
-        bh=f9rMzOOvLA+U/oerycRaC6siozRFk+uiXMS8sNGl5zY=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=n9oU19TkgejKF3xlc/5M1CBWX9DLgXFi0ClmqJcMW6HFtk3PJGVZtO6QlLXiGPrBN
-         QP9zo5i19sbg+g9B2oRp0e6vF2KKdhMKrs92XOUX9pSKedN4CDXtAMiipwWCEDHz+C
-         rYiWrfydaUzIU6no9ylqwbcM7vXlYSPeei0R1LIA=
-Received: from DLEE108.ent.ti.com (dlee108.ent.ti.com [157.170.170.38])
-        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTP id 00UKMFRD083354;
-        Thu, 30 Jan 2020 14:22:15 -0600
-Received: from DLEE112.ent.ti.com (157.170.170.23) by DLEE108.ent.ti.com
- (157.170.170.38) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Thu, 30
- Jan 2020 14:22:15 -0600
-Received: from fllv0039.itg.ti.com (10.64.41.19) by DLEE112.ent.ti.com
- (157.170.170.23) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
- Frontend Transport; Thu, 30 Jan 2020 14:22:15 -0600
-Received: from [10.250.70.160] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by fllv0039.itg.ti.com (8.15.2/8.15.2) with ESMTP id 00UKMElr076026;
-        Thu, 30 Jan 2020 14:22:14 -0600
-Subject: Re: [PATCHv5 06/14] remoteproc/omap: Initialize and assign reserved
- memory node
-To:     Suman Anna <s-anna@ti.com>, Tero Kristo <t-kristo@ti.com>,
-        <bjorn.andersson@linaro.org>, <ohad@wizery.com>,
-        <linux-remoteproc@vger.kernel.org>
-CC:     <linux-kernel@vger.kernel.org>, <mathieu.poirier@linaro.org>,
-        <linux-omap@vger.kernel.org>
-References: <20200116135332.7819-1-t-kristo@ti.com>
- <20200116135332.7819-7-t-kristo@ti.com>
- <249c293c-6a23-165f-1df5-4859ee47658a@ti.com>
- <37db5d57-b1cd-1cec-2c9b-31c49e3bdc10@ti.com>
- <a0e85451-7c05-884c-4997-b4e8c5684c3e@ti.com>
- <2aaa4024-1e2c-5cab-c9f3-3be59c57e9ac@ti.com>
- <be337641-b4ac-d2be-b814-55b7681cb91a@ti.com>
-From:   "Andrew F. Davis" <afd@ti.com>
-Message-ID: <7aed7a9f-3546-f622-37ac-34d33ddb4298@ti.com>
-Date:   Thu, 30 Jan 2020 15:22:14 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.1
+        Thu, 30 Jan 2020 15:26:12 -0500
+Received: by mail-il1-f194.google.com with SMTP id p8so4184692iln.12
+        for <linux-kernel@vger.kernel.org>; Thu, 30 Jan 2020 12:26:12 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gateworks-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=mMmbTPRv5n9fcnTR4JD/Hiobk7HR6X/mODzSmDElFRk=;
+        b=UJG07q0ZvllEgVwuAoevdh4W2PsMLK8OB4w5jNu08HE+oqaV0dPCzf6G0s28627iHX
+         MAeM0+1hO7Q2rcZRlzA757D7sD7JXrirx/PgZPiMwHhbj9oInkKx0RKNdrD7wlxxP3HN
+         8H8GRgU6guwk3DDN9gxR7XFi8L9Fu+IuylCY9CCcIViFiuQnch7A4mOtzRzlLvDD64xC
+         5EM4anhFUfbutFIJc+/Kq+JL6zrAp6xok25sEwrImK0K1jVsjqykH1fnKHssrE6VaZ74
+         ujMrhqsKK0AHG3KYqLz2HkDkWvBm5V4I3H+jqJzqGlGiLwL5z60horRKkm5RSuYM1SLV
+         IzzQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=mMmbTPRv5n9fcnTR4JD/Hiobk7HR6X/mODzSmDElFRk=;
+        b=fBYKE3+lqinxsPNgHWrftN/mjrl5orkvJn61TQtpoklds8x0l08sTRPak9PJA/IX+F
+         1J9dDCEWBKT1Les2xYt2X9UPKWtKN6gWIgUgn9dg+ke4mY3qNkI80cAbKVPdQoyWndK+
+         P1Rsk3Q42eqqplGl+kG3q6wYkq0AO99fCYjI5gRSt6MHBo4Iw/kH7Y/ste+Fqr+oqWRL
+         yjruBzw57AZELicrTOJG5WxXsZ5ZMD/PtdT2qPhbro5yC3LLMg+rjfX2Sn8weQ1bwXhu
+         hIuDuVvuPFeeK2lJSz0ZSZzmleZMJqAjDRPbXpGt2Up4cqG9nuHThjb8FPXfhylRtX4U
+         V+qw==
+X-Gm-Message-State: APjAAAXYUYgPGApUGHE/519ukOkkW0nIfzWLsxnhB+jWXlqTZz7NkqU2
+        TXnsLrCr/XM2ZGkTFBRKbTFek5cKxnQjI7clNtim6w==
+X-Google-Smtp-Source: APXvYqyLkAz/Xj41rF8RDGjF+NXQgzOwtixw6VtvNiEJGbHaCdRsXwh3NpcbcJY/YLZlte51umpHDg/clYxyTtxmrpU=
+X-Received: by 2002:a92:3a8d:: with SMTP id i13mr6549486ilf.112.1580415971935;
+ Thu, 30 Jan 2020 12:26:11 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <be337641-b4ac-d2be-b814-55b7681cb91a@ti.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+References: <20200129223609.9327-1-rjones@gateworks.com> <20200130091055.159d63ed@cakuba>
+In-Reply-To: <20200130091055.159d63ed@cakuba>
+From:   Bobby Jones <rjones@gateworks.com>
+Date:   Thu, 30 Jan 2020 12:26:01 -0800
+Message-ID: <CALAE=UBu=9ieHytFqD7PPMSr3hv+aCC7naLN5Bh6pB4ODEDCsw@mail.gmail.com>
+Subject: Re: [PATCH net] net: thunderx: workaround BGX TX Underflow issue
+To:     Jakub Kicinski <kuba@kernel.org>
+Cc:     Sunil Goutham <sgoutham@marvell.com>,
+        Robert Richter <rrichter@marvell.com>,
+        David Miller <davem@davemloft.net>,
+        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
+        <linux-arm-kernel@lists.infradead.org>, netdev@vger.kernel.org,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Tim Harvey <tharvey@gateworks.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 1/30/20 2:55 PM, Suman Anna wrote:
-> On 1/30/20 1:42 PM, Tero Kristo wrote:
->> On 30/01/2020 21:20, Andrew F. Davis wrote:
->>> On 1/30/20 2:18 PM, Tero Kristo wrote:
->>>> On 30/01/2020 20:11, Andrew F. Davis wrote:
->>>>> On 1/16/20 8:53 AM, Tero Kristo wrote:
->>>>>> From: Suman Anna <s-anna@ti.com>
->>>>>>
->>>>>> The reserved memory nodes are not assigned to platform devices by
->>>>>> default in the driver core to avoid the lookup for every platform
->>>>>> device and incur a penalty as the real users are expected to be
->>>>>> only a few devices.
->>>>>>
->>>>>> OMAP remoteproc devices fall into the above category and the OMAP
->>>>>> remoteproc driver _requires_ specific CMA pools to be assigned
->>>>>> for each device at the moment to align on the location of the
->>>>>> vrings and vring buffers in the RTOS-side firmware images. So,
->>>>>
->>>>>
->>>>> Same comment as before, this is a firmware issue for only some
->>>>> firmwares
->>>>> that do not handle being assigned vring locations correctly and instead
->>>>> hard-code them.
-> 
-> As for this statement, this can do with some updating. Post 4.20,
-> because of the lazy allocation scheme used for carveouts including the
-> vrings, the resource tables now have to use FW_RSC_ADDR_ANY and will
-> have to wait for the vdev synchronization to happen.
-> 
->>>>
->>>> I believe we discussed this topic in length in previous version but
->>>> there was no conclusion on it.
->>>>
->>>> The commit desc might be a bit misleading, we are not actually forced to
->>>> use specific CMA buffers, as we use IOMMU to map these to device
->>>> addresses. For example IPU1/IPU2 use internally exact same memory
->>>> addresses, iommu is used to map these to specific CMA buffer.
->>>>
->>>> CMA buffers are mostly used so that we get aligned large chunk of memory
->>>> which can be mapped properly with the limited IOMMU OMAP family of chips
->>>> have. Not sure if there is any sane way to get this done in any other
->>>> manner.
->>>>
->>>
->>>
->>> Why not use the default CMA area?
->>
->> I think using default CMA area getting the actual memory block is not
->> guaranteed and might fail. There are other users for the memory, and it
->> might get fragmented at the very late phase we are grabbing the memory
->> (omap remoteproc driver probe time.) Some chunks we need are pretty large.
->>
->> I believe I could experiment with this a bit though and see, or Suman
->> could maybe provide feedback why this was designed initially like this
->> and why this would not be a good idea.
-> 
-> I have given some explanation on this on v4 as well, but if it is not
-> clear, there are restrictions with using default CMA. Default CMA has
-> switched to be assigned from the top of the memory (higher addresses,
-> since 3.18 IIRC), and the MMUs on IPUs and DSPs can only address
-> 32-bits. So, we cannot blindly use the default CMA pool, and this will
-> definitely not work on boards > 2 GB RAM. And, if you want to add in any
-> firewall capability, then specific physical addresses becomes mandatory.
-> 
+On Thu, Jan 30, 2020 at 9:10 AM Jakub Kicinski <kuba@kernel.org> wrote:
+>
+> On Wed, 29 Jan 2020 14:36:09 -0800, Robert Jones wrote:
+> > From: Tim Harvey <tharvey@gateworks.com>
+> >
+> > While it is not yet understood why a TX underflow can easily occur
+> > for SGMII interfaces resulting in a TX wedge. It has been found that
+> > disabling/re-enabling the LMAC resolves the issue.
+> >
+> > Signed-off-by: Tim Harvey <tharvey@gateworks.com>
+> > Reviewed-by: Robert Jones <rjones@gateworks.com>
+>
+> Sunil or Robert (i.e. one of the maintainers) will have to review this
+> patch (as indicated by Dave by marking it with "Needs Review / ACK" in
+> patchwork).
+>
+> At a quick look there are some things which jump out at me:
+>
+> > +static int bgx_register_intr(struct pci_dev *pdev)
+> > +{
+> > +     struct bgx *bgx = pci_get_drvdata(pdev);
+> > +     struct device *dev = &pdev->dev;
+> > +     int num_vec, ret;
+> > +
+> > +     /* Enable MSI-X */
+> > +     num_vec = pci_msix_vec_count(pdev);
+> > +     ret = pci_alloc_irq_vectors(pdev, num_vec, num_vec, PCI_IRQ_MSIX);
+> > +     if (ret < 0) {
+> > +             dev_err(dev, "Req for #%d msix vectors failed\n", num_vec);
+> > +             return 1;
+>
+> Please propagate real error codes, or make this function void as the
+> caller never actually checks the return value.
+>
+> > +     }
+> > +     sprintf(bgx->irq_name, "BGX%d", bgx->bgx_id);
+> > +     ret = request_irq(pci_irq_vector(pdev, GMPX_GMI_TX_INT),
+>
+> There is a alloc_irq and request_irq call added in this patch but there
+> is never any freeing. Are you sure this is fine? Devices can be
+> reprobed (unbound and bound to drivers via sysfs).
 
+I agree there needs to be accompanying free calls. I'm referencing
+drivers/net/ethernet/cavium/thunder/nic_main.c and see instances of
+both pci_free_irq_vectors() and free_irq(). My initial thought was
+that I should use pci_free_irq_vectors() in the error check
+conditional of the above request irq and also in the bgx_remove()
+function. Would that be appropriate in this case?
 
-If you need 32bit range allocations then
-dma_set_mask(dev, DMA_BIT_MASK(32));
+I'd also plan on using a conditional like this for the free calls:
 
-I'm not saying don't have support for carveouts, just make them
-optional, keystone_remoteproc.c does this:
+if (bgx->irq_name)
+    pci_free_irq_vectors(pdev);
 
-if (of_reserved_mem_device_init(dev))
-	dev_warn(dev, "device does not have specific CMA pool\n");
+I'm new to kernel development so suggestions are welcome.
 
-There doesn't even needs to be a warning but that is up to you.
-
-Andrew
-
-
-> regards
-> Suman
-> 
->>
->> -Tero
->>
->>>
->>> Andrew
->>>
->>>
->>>> -Tero
->>>>
->>>>>
->>>>> This is not a requirement of the remote processor itself and so it
->>>>> should not fail to probe if a specific memory carveout isn't given.
->>>>>
->>>>>
->>>>>> use the of_reserved_mem_device_init/release() API appropriately
->>>>>> to assign the corresponding reserved memory region to the OMAP
->>>>>> remoteproc device. Note that only one region per device is
->>>>>> allowed by the framework.
->>>>>>
->>>>>> Signed-off-by: Suman Anna <s-anna@ti.com>
->>>>>> Signed-off-by: Tero Kristo <t-kristo@ti.com>
->>>>>> Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
->>>>>> ---
->>>>>> v5: no changes
->>>>>>
->>>>>>    drivers/remoteproc/omap_remoteproc.c | 12 +++++++++++-
->>>>>>    1 file changed, 11 insertions(+), 1 deletion(-)
->>>>>>
->>>>>> diff --git a/drivers/remoteproc/omap_remoteproc.c
->>>>>> b/drivers/remoteproc/omap_remoteproc.c
->>>>>> index 0846839b2c97..194303b860b2 100644
->>>>>> --- a/drivers/remoteproc/omap_remoteproc.c
->>>>>> +++ b/drivers/remoteproc/omap_remoteproc.c
->>>>>> @@ -17,6 +17,7 @@
->>>>>>    #include <linux/module.h>
->>>>>>    #include <linux/err.h>
->>>>>>    #include <linux/of_device.h>
->>>>>> +#include <linux/of_reserved_mem.h>
->>>>>>    #include <linux/platform_device.h>
->>>>>>    #include <linux/dma-mapping.h>
->>>>>>    #include <linux/remoteproc.h>
->>>>>> @@ -480,14 +481,22 @@ static int omap_rproc_probe(struct
->>>>>> platform_device *pdev)
->>>>>>        if (ret)
->>>>>>            goto free_rproc;
->>>>>>    +    ret = of_reserved_mem_device_init(&pdev->dev);
->>>>>> +    if (ret) {
->>>>>> +        dev_err(&pdev->dev, "device does not have specific CMA
->>>>>> pool\n");
->>>>>> +        goto free_rproc;
->>>>>> +    }
->>>>>> +
->>>>>>        platform_set_drvdata(pdev, rproc);
->>>>>>          ret = rproc_add(rproc);
->>>>>>        if (ret)
->>>>>> -        goto free_rproc;
->>>>>> +        goto release_mem;
->>>>>>          return 0;
->>>>>>    +release_mem:
->>>>>> +    of_reserved_mem_device_release(&pdev->dev);
->>>>>>    free_rproc:
->>>>>>        rproc_free(rproc);
->>>>>>        return ret;
->>>>>> @@ -499,6 +508,7 @@ static int omap_rproc_remove(struct
->>>>>> platform_device *pdev)
->>>>>>          rproc_del(rproc);
->>>>>>        rproc_free(rproc);
->>>>>> +    of_reserved_mem_device_release(&pdev->dev);
->>>>>>          return 0;
->>>>>>    }
->>>>>>
->>>>
->>>> -- 
->>
->> -- 
->> Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
->> Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
-> 
+>
+> > +             bgx_intr_handler, 0, bgx->irq_name, bgx);
+>
+> Please align the continuation line with the opening bracket (checkpatch
+> --strict should help catch this).
+>
+> > +     if (ret)
+> > +             return 1;
+> > +
+> > +     return 0;
+> > +}
