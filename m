@@ -2,161 +2,78 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2737B14DEAB
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Jan 2020 17:14:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id ACC5914DEE3
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Jan 2020 17:19:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727533AbgA3QNl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 30 Jan 2020 11:13:41 -0500
-Received: from mail.kernel.org ([198.145.29.99]:59282 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727158AbgA3QNk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 30 Jan 2020 11:13:40 -0500
-Received: from localhost (c-67-169-218-210.hsd1.or.comcast.net [67.169.218.210])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 16E4220CC7;
-        Thu, 30 Jan 2020 16:13:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1580400819;
-        bh=y4LBdyNzad+FYy/0/jvCYzeA/hoqHIJ23g5XmjtmHmc=;
-        h=Date:From:To:Cc:Subject:From;
-        b=u54hoVK5cla26Fm6lwxRF3kHM4Mr3otCKEToeqgwzWW3F5FT2uh1+saXT3Ku6lOji
-         A5X7HbquEMdxMHcW/Tl8DgHFCwK3O9SqFySvQ0ug3rJbqUsFZy5hNbSH/XormOBxcE
-         Vve76VqcUywa1XY3opfVr3w97gEs5j1cfbVMjPLY=
-Date:   Thu, 30 Jan 2020 08:13:38 -0800
-From:   "Darrick J. Wong" <djwong@kernel.org>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     "Darrick J. Wong" <djwong@kernel.org>,
-        linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org,
-        david@fromorbit.com, linux-kernel@vger.kernel.org,
-        sandeen@sandeen.net, hch@lst.de
-Subject: [GIT PULL] xfs: new code for 5.6
-Message-ID: <20200130161338.GX3447196@magnolia>
+        id S1727322AbgA3QT2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 30 Jan 2020 11:19:28 -0500
+Received: from mail-lf1-f66.google.com ([209.85.167.66]:44352 "EHLO
+        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727267AbgA3QT2 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 30 Jan 2020 11:19:28 -0500
+Received: by mail-lf1-f66.google.com with SMTP id v201so2642280lfa.11
+        for <linux-kernel@vger.kernel.org>; Thu, 30 Jan 2020 08:19:26 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=4aauck1BwjHmPxReHY5+5wBQQQKQ71X2qt0RvmNdruY=;
+        b=C79ZEneeywO5bDkFYspTf0mHqg+XFdEPkZsBeweiskD6zGKYsX69OLWfEGmiyq0kF4
+         7cVO+mYrSPIpx8aclMNM6JP+nr3WlLliM10cmXlSndRjIxf2x6/xKP/br5BKDGTfdn+l
+         Cdmuz/2CZ9lz/Lb8JfgQUlPOoXks5ZIoUYivY=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=4aauck1BwjHmPxReHY5+5wBQQQKQ71X2qt0RvmNdruY=;
+        b=GwtT8NbkM3PpbAbTNTG+G566mVv+3MluyNkrYK1+GwrMiHdtfwKgx9wjNLhse3ym/V
+         qBCNmSiKrhT1/JX1rJBgOXqUEe+8s5gR1Xjg4qAOMoYG2MMpSVWKOB6GMNCKJzFHUR2L
+         2NwYPw70g82pcxvJ5OV9HXgaUu00KR8NdvV0lkTyGvOMgdJPPySceAi2CSdZihjo8mGZ
+         4pbzxfTDiPZo1m3YP/PUsCH+f97GQimdGDIHEd1lBi/xXc79xJuvGo77KR027A4Xk5Ga
+         2pLKTKvS6X6t1lCCwV3A8OBqSHgtioeEV+pSNq+EM0vcPuEHOf6IiQTqDHbmt/g2i3i7
+         166Q==
+X-Gm-Message-State: APjAAAX/pajpMgFEmxpt72VtC6Qe79fAdBsko3MtY6qW35EneWCV5GJw
+        3MgBeaj9p4IVDspf32n/wFNVP+uaqNM=
+X-Google-Smtp-Source: APXvYqz2q8E7ASe9RqaHYTxoZ5SuNhGjgNOwdDPrvbgAP1/1nkOV74aME8ub06zNFutLaG1GAgpnng==
+X-Received: by 2002:ac2:4472:: with SMTP id y18mr2897554lfl.39.1580401164608;
+        Thu, 30 Jan 2020 08:19:24 -0800 (PST)
+Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com. [209.85.167.48])
+        by smtp.gmail.com with ESMTPSA id q10sm3252851ljj.60.2020.01.30.08.19.23
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 30 Jan 2020 08:19:24 -0800 (PST)
+Received: by mail-lf1-f48.google.com with SMTP id v201so2642192lfa.11
+        for <linux-kernel@vger.kernel.org>; Thu, 30 Jan 2020 08:19:23 -0800 (PST)
+X-Received: by 2002:a19:4849:: with SMTP id v70mr3068446lfa.30.1580401163417;
+ Thu, 30 Jan 2020 08:19:23 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.9.4 (2018-02-28)
+References: <CAPM=9twBvYvUoijdzAi2=FGLys0pfaK+PZw-uq2kyxqZipeujA@mail.gmail.com>
+ <CAHk-=wi31OH0Rjv5=0ELTz3ZFUVaARmvq+w-oy+pRpGENd-iEA@mail.gmail.com>
+In-Reply-To: <CAHk-=wi31OH0Rjv5=0ELTz3ZFUVaARmvq+w-oy+pRpGENd-iEA@mail.gmail.com>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Thu, 30 Jan 2020 08:19:07 -0800
+X-Gmail-Original-Message-ID: <CAHk-=whum_jLmptKrgV-fOvXZvHH68xbZU-wDSj1n9gWL5A5pA@mail.gmail.com>
+Message-ID: <CAHk-=whum_jLmptKrgV-fOvXZvHH68xbZU-wDSj1n9gWL5A5pA@mail.gmail.com>
+Subject: Re: [git pull] drm for 5.6-rc1
+To:     Dave Airlie <airlied@gmail.com>
+Cc:     Daniel Vetter <daniel.vetter@ffwll.ch>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Linus,
+On Thu, Jan 30, 2020 at 8:13 AM Linus Torvalds
+<torvalds@linux-foundation.org> wrote:
+>
+> That doesn't seem right. If I do that, I lose the added GEM_BUG_ON()'s.
 
-Please pull this first batch of new changes for 5.6-rc1.  In this
-release we clean out the last of the old 32-bit timestamp code, fix a
-number of bugs and memory corruptions on 32-bit platforms, and a
-refactoring of some of the extended attribute code.
+Just for your ref: see commit ecc4d2a52df6 ("drm/i915/userptr: fix
+size calculation") for the source of those debug statements, and then
+2c86e55d2ab5 ("drm/i915/gtt: split up i915_gem_gtt") on the other side
+that just moved the functions..
 
-I think I'll be back next week with some refactoring of how the XFS
-buffer code returns error codes, however I prefer to hold onto that for
-another week to let it soak a while longer.
-
---D
-
-The following changes since commit fd6988496e79a6a4bdb514a4655d2920209eb85d:
-
-  Linux 5.5-rc4 (2019-12-29 15:29:16 -0800)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/fs/xfs/xfs-linux.git tags/xfs-5.6-merge-6
-
-for you to fetch changes up to b3531f5fc16d4df2b12567bce48cd9f3ab5f9131:
-
-  xfs: remove unused variable 'done' (2020-01-23 21:24:50 -0800)
-
-----------------------------------------------------------------
-New code for 5.6:
-- Get rid of compat_time_t
-- Convert time_t to time64_t in quota code
-- Remove shadow variables
-- Prevent ATTR_ flag misuse in the attrmulti ioctls
-- Clean out strlen in the attr code
-- Remove some bogus asserts
-- Fix various file size limit calculation errors with 32-bit kernels
-- Pack xfs_dir2_sf_entry_t to fix build errors on arm oabi
-- Fix nowait inode locking calls for directio aio reads.
-- Fix memory corruption bugs when invalidating remote xattr value
-  buffers.
-- Streamline remote attr value removal.
-- Make the buffer log format size consistent across platforms.
-- Strengthen buffer log format size checking.
-- Fix messed up return types of xfs_inode_need_cow.
-- Fix some unused variable warnings.
-
-----------------------------------------------------------------
-Allison Henderson (1):
-      xfs: Remove all strlen in all xfs_attr_* functions for attr names.
-
-Arnd Bergmann (2):
-      xfs: rename compat_time_t to old_time32_t
-      xfs: quota: move to time64_t interfaces
-
-Christoph Hellwig (5):
-      xfs: clear kernel only flags in XFS_IOC_ATTRMULTI_BY_HANDLE
-      xfs: reject invalid flags combinations in XFS_IOC_ATTRMULTI_BY_HANDLE
-      xfs: also remove cached ACLs when removing the underlying attr
-      xfs: fix misuse of the XFS_ATTR_INCOMPLETE flag
-      xfs: fix IOCB_NOWAIT handling in xfs_file_dio_aio_read
-
-Darrick J. Wong (12):
-      xfs: remove bogus assertion when online repair isn't enabled
-      xfs: introduce XFS_MAX_FILEOFF
-      xfs: truncate should remove all blocks, not just to the end of the page cache
-      xfs: fix s_maxbytes computation on 32-bit kernels
-      xfs: refactor remote attr value buffer invalidation
-      xfs: fix memory corruption during remote attr value buffer invalidation
-      xfs: streamline xfs_attr3_leaf_inactive
-      xfs: clean up xfs_buf_item_get_format return value
-      xfs: complain if anyone tries to create a too-large buffer log item
-      xfs: make struct xfs_buf_log_format have a consistent size
-      xfs: check log iovec size to make sure it's plausibly a buffer log format
-      xfs: fix uninitialized variable in xfs_attr3_leaf_inactive
-
-Eric Sandeen (1):
-      xfs: remove shadow variable in xfs_btree_lshift
-
-Vincenzo Frascino (1):
-      xfs: Add __packed to xfs_dir2_sf_entry_t definition
-
-YueHaibing (1):
-      xfs: remove unused variable 'done'
-
-zhengbin (1):
-      xfs: change return value of xfs_inode_need_cow to int
-
- fs/xfs/libxfs/xfs_attr.c        |  14 ++--
- fs/xfs/libxfs/xfs_attr.h        |  15 ++--
- fs/xfs/libxfs/xfs_attr_leaf.c   |   4 +-
- fs/xfs/libxfs/xfs_attr_leaf.h   |   9 ---
- fs/xfs/libxfs/xfs_attr_remote.c |  89 +++++++++++++++++-------
- fs/xfs/libxfs/xfs_attr_remote.h |   2 +
- fs/xfs/libxfs/xfs_btree.c       |   2 -
- fs/xfs/libxfs/xfs_da_btree.h    |   4 +-
- fs/xfs/libxfs/xfs_da_format.h   |   4 +-
- fs/xfs/libxfs/xfs_format.h      |   7 ++
- fs/xfs/libxfs/xfs_log_format.h  |  19 +++--
- fs/xfs/scrub/repair.h           |   1 -
- fs/xfs/xfs_acl.c                |  11 +--
- fs/xfs/xfs_attr_inactive.c      | 149 ++++++++++++----------------------------
- fs/xfs/xfs_buf_item.c           |  45 ++++++++----
- fs/xfs/xfs_buf_item.h           |   1 +
- fs/xfs/xfs_dquot.c              |   6 +-
- fs/xfs/xfs_file.c               |   7 +-
- fs/xfs/xfs_inode.c              |  25 ++++---
- fs/xfs/xfs_ioctl.c              |  20 +++++-
- fs/xfs/xfs_ioctl32.c            |   9 ++-
- fs/xfs/xfs_ioctl32.h            |   2 +-
- fs/xfs/xfs_iomap.c              |   2 +-
- fs/xfs/xfs_iops.c               |   6 +-
- fs/xfs/xfs_log_recover.c        |   6 ++
- fs/xfs/xfs_ondisk.h             |   1 +
- fs/xfs/xfs_qm.h                 |   6 +-
- fs/xfs/xfs_quotaops.c           |   6 +-
- fs/xfs/xfs_reflink.c            |   9 +--
- fs/xfs/xfs_reflink.h            |   2 +-
- fs/xfs/xfs_super.c              |  48 ++++++-------
- fs/xfs/xfs_trans_dquot.c        |   8 ++-
- fs/xfs/xfs_xattr.c              |  14 ++--
- 33 files changed, 300 insertions(+), 253 deletions(-)
+              Linus
