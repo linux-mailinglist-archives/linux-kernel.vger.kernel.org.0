@@ -2,54 +2,86 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4194D14E058
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Jan 2020 19:00:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C4AFE14E0BA
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Jan 2020 19:25:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727468AbgA3SAP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 30 Jan 2020 13:00:15 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35594 "EHLO mail.kernel.org"
+        id S1729535AbgA3SZF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 30 Jan 2020 13:25:05 -0500
+Received: from mx2.suse.de ([195.135.220.15]:51550 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726514AbgA3SAP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 30 Jan 2020 13:00:15 -0500
-Subject: Re: [GIT PULL] Devicetree updates for v5.6
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1580407215;
-        bh=cusQbFWMTnL3Rh1oiIOqngTNbqxWXXjtJnQYo60AcAs=;
-        h=From:In-Reply-To:References:Date:To:Cc:From;
-        b=j3pHpRXYQlroO0Lg6ndy3Ngu/mFpqiaAl1hIgnyVKVik+yTkH+HioxUjqvZPJOkcz
-         8lL4g+WGbtGWbNeoVMQ3bI8ZxWiuywyFZG34Zdj68z3c50i02LJ70tBVLhCftg1QIn
-         NHgfR5sbU0aR3D1/VvdaoGVG+L73Ge3chWRhgYOE=
-From:   pr-tracker-bot@kernel.org
-In-Reply-To: <20200129210736.GA29551@bogus>
-References: <20200129210736.GA29551@bogus>
-X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <20200129210736.GA29551@bogus>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/robh/linux.git
- tags/devicetree-for-5.6
-X-PR-Tracked-Commit-Id: e9a3bfe38e393e1d8bd74986cdc9b99b8f9d1efc
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 893e591b59036f9bc629f55bce715d67bdd266a2
-Message-Id: <158040721497.2766.9176226336933567028.pr-tracker-bot@kernel.org>
-Date:   Thu, 30 Jan 2020 18:00:14 +0000
-To:     Rob Herring <robh@kernel.org>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        Frank Rowand <frowand.list@gmail.com>
+        id S1729518AbgA3SZE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 30 Jan 2020 13:25:04 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx2.suse.de (Postfix) with ESMTP id 96B7BAF21;
+        Thu, 30 Jan 2020 18:25:02 +0000 (UTC)
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+In-Reply-To: <20200128141958.vwbxoqglt5gw4xj5@wunner.de>
+Date:   Thu, 30 Jan 2020 17:11:55 +0100
+Cc:     "Matthias Brugger" <matthias.bgg@gmail.com>,
+        <matthias.bgg@kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        "Matthias Brugger" <mbrugger@suse.com>,
+        "Scott Branden" <sbranden@broadcom.com>,
+        <gregkh@linuxfoundation.org>, <linux-kernel@vger.kernel.org>,
+        "Ray Jui" <rjui@broadcom.com>,
+        "Stephen Boyd" <swboyd@chromium.org>,
+        "Florian Fainelli" <f.fainelli@gmail.com>,
+        <bcm-kernel-feedback-list@broadcom.com>,
+        <linux-rpi-kernel@lists.infradead.org>,
+        <linux-serial@vger.kernel.org>, <jslaby@suse.com>
+Subject: Re: [PATCH] serial: 8250_early: Add earlycon for BCM2835 aux uart
+From:   "Nicolas Saenz Julienne" <nsaenzjulienne@suse.de>
+To:     "Lukas Wunner" <lukas@wunner.de>
+Message-Id: <C099APQHQAHB.3Q9UVYJYT98TN@linux-9qgx>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The pull request you sent on Wed, 29 Jan 2020 15:07:36 -0600:
+On Tue Jan 28, 2020 at 3:19 PM, Lukas Wunner wrote:
+> On Tue, Jan 28, 2020 at 01:42:21PM +0100, Nicolas Saenz Julienne wrote:
+> > I'm testing this by booting directly from RPi4's bootloader. And it
+> > works as long as I add this to config.txt:
+> >=20
+> > enable_uart=3D1
+> > gpu_freq=3D500
+> >=20
+> > Which AFAIK blocks frequency scalin on the GPU and fixes the clock to a
+> > point where the serial is set at 115200 bauds.
+> >=20
+> > Ideally it'd be nice to be able to query the clock frequency, and
+> > recalculate the divisors based on that. But I don't know if it's
+> > feasible at that point in the boot process.
+>
+> Well, we don't even support adjusting the baudrate *after* the kernel
+> has booted.
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/robh/linux.git tags/devicetree-for-5.6
+Don't 8250 uarts have a clk divisor? I've seen other 8250 earlycon
+drivers do this (see 8250_ingenic.c), that said I think it's a lost
+cause for us.
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/893e591b59036f9bc629f55bce715d67bdd266a2
+BTW did you had the oportunity to have a go at the patch?
 
-Thank you!
+> The problem is that in mainline, bcm2835_defconfig contains:
+> CONFIG_CPU_FREQ_DEFAULT_GOV_CONSERVATIVE=3Dy
+>
+> Likewise in the Foundation's downstream tree, bcmrpi_defconfig as well
+> as bcm2711_defconfig and bcm2709_defconfig contain:
+> CONFIG_CPU_FREQ_DEFAULT_GOV_POWERSAVE=3Dy
+>
+> In contrast to this, we set the following on Revolution Pi devices:
+> CONFIG_CPU_FREQ_DEFAULT_GOV_PERFORMANCE=3Dy
+>
+> Downclocking influences not only the uart1 baud rate but also the
+> spi0 clock. We attach Ethernet chips to spi0, throughput was
+> significantly worse with the ondemand governor (which is what we
+> used previously). We felt that maximum Ethernet performance
+> outweighs the relatively small powersaving gains.
 
--- 
-Deet-doot-dot, I am a bot.
-https://korg.wiki.kernel.org/userdoc/prtracker
+In that regard I suggest you use the upstream cpufreq driver which
+behaves properly in that regard. It disables GPU freq scaling, so as to
+change CPU frequencies without SPI/I2C/UART issues.
+
+Regards,
+Nicolas
