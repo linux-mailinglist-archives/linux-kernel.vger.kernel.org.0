@@ -2,103 +2,75 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3D70714E575
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Jan 2020 23:18:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7336F14E579
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Jan 2020 23:20:10 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726295AbgA3WSG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 30 Jan 2020 17:18:06 -0500
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:53400 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725855AbgA3WSG (ORCPT
+        id S1726622AbgA3WUI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 30 Jan 2020 17:20:08 -0500
+Received: from mail-qt1-f195.google.com ([209.85.160.195]:41555 "EHLO
+        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725855AbgA3WUH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 30 Jan 2020 17:18:06 -0500
-Received: by mail-wm1-f65.google.com with SMTP id s10so5601284wmh.3
-        for <linux-kernel@vger.kernel.org>; Thu, 30 Jan 2020 14:18:04 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=GL8YlOuK+lPzvntmToerBw7cag+fxZ5AswnfHKR/VLk=;
-        b=qZDwMV4crOkitMmF78zyNFVYRJb9e5CEAC4FCpSUWyji9TxxJJgsUSjQudQUxFKjDe
-         OnWpEQMl0la0WRTBE71vLNCTqZ0FYROPkKOith/+dgUtPhzurU8FSu7MZT9BHX5pKJsg
-         Odnw+zIk7XQEqj69zFrjvFnedoTatx8SnUj/qphLqeOX3aUAs9gi9YogmZLEQ0orZMYU
-         BLBhKyWM8Ea3XP+ewS0doz/fBpU9LVhRAnEEs9DKAav5GgWUmOP903EdO9Crdn3c4ag/
-         kCObtj/qfwF4ndTi6VhjJ56L85HTLk6oryAENEQ7g4+78P1CH5lkHv2JOaOKVsWfptSt
-         rhYA==
+        Thu, 30 Jan 2020 17:20:07 -0500
+Received: by mail-qt1-f195.google.com with SMTP id l19so3825825qtq.8;
+        Thu, 30 Jan 2020 14:20:06 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=GL8YlOuK+lPzvntmToerBw7cag+fxZ5AswnfHKR/VLk=;
-        b=BK+YyN8KLhFJ3AWIdHo9W1709pvyKOIFMCkqSW+TEq8G0G0oc/R0EKWXHy0rTjqqcK
-         H5ofyxDyNyUPE3JPdVmir/VCLitrzYekQ6vgpUcS5Bm8ZSYDrlk/GcKvuPMYT2EbGjZY
-         qXt1z9YlsB2O0nejW8gJh1fuRYjxeZmsmkZsOPZjU7vT1A9DOnumYCDgi5bQfIoXDJIB
-         4oWjcoxpiu+8ea1erVO1Vr7UwprReeggu4beY0bwNTsZc+nei9jYE5K2qgdWKByQeFVD
-         5ldcMvpEOTEsPsY6IQwQ/EASrUHGqmAlu4pxeLpZFYD2J6KAotKaeuzgtMl/WjhEq/ed
-         mPkA==
-X-Gm-Message-State: APjAAAX/EqTlwqWwsRnu6o33C6s8spJCX4trXfLQ/CPoyK6LZ4vdmwJH
-        ZonB9KvE2xxhd4kBt8+P16Y=
-X-Google-Smtp-Source: APXvYqzXvgPJ14PpKCOak++6YdVlnp+Bo55KVfK80pKxm/zXXmnUS0dnTImjZ9kxihgjtrdnQMUchQ==
-X-Received: by 2002:a1c:dfd6:: with SMTP id w205mr8017311wmg.151.1580422683872;
-        Thu, 30 Jan 2020 14:18:03 -0800 (PST)
-Received: from [192.168.2.145] (79-139-233-37.dynamic.spd-mgts.ru. [79.139.233.37])
-        by smtp.googlemail.com with ESMTPSA id y10sm8959076wrw.68.2020.01.30.14.18.02
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 30 Jan 2020 14:18:03 -0800 (PST)
-Subject: Re: [Patch v2 0/4] mm/mremap: cleanup move_page_tables() a little
-To:     Wei Yang <richardw.yang@linux.intel.com>,
-        akpm@linux-foundation.org, aneesh.kumar@linux.ibm.com,
-        kirill@shutemov.name, dan.j.williams@intel.com,
-        yang.shi@linux.alibaba.com, thellstrom@vmware.com
-Cc:     linux-kernel@vger.kernel.org, linux-mm@kvack.org
-References: <20200129002642.13508-1-richardw.yang@linux.intel.com>
-From:   Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <50f408bd-502e-bd02-53d4-719300736ce2@gmail.com>
-Date:   Fri, 31 Jan 2020 01:18:00 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.3.0
+        bh=en1MT5pfFYZGlv9UT5t9agWedf83iVv/aGc5EUfT5Zc=;
+        b=Ev4rTNf6mduRXJB3Lr9t6ESO8yGPYrVRQa8YXDWaE/1mkN71xFH7FPDV+8+Mp88wo6
+         VWJ6SyEmxCVA4tIgG9X2eyUKeKX8LxS4be0SXKOvDMjBbNxKhC66iKjlptke6lZnjdv+
+         ezfPz0ZA4P25JRQDYOcDSBv2E4bCzK+i61o+07vzvDhq8O+arvd8FcPxJmKcaNggPxbL
+         Ra3x84wL4XwB5Aypy1LIYZQ22D7VlgmZdqbSLqC+iYe22j3vJG0W8CGPKCx8pEEWXX00
+         eTdGcUdrlJZrQ60xqmwrKuJbw7MON1TUcSxYnqgXjvFs5JDyGJz13ZYrO1z/Pq0oZOBO
+         8xbw==
+X-Gm-Message-State: APjAAAUZQhcgTHV4c0XaejTXIOYfbY9wufN8IKzGxpYqlW3Z1j1yBOcw
+        9aZecFQHcKzU9ZILZtQS+n8=
+X-Google-Smtp-Source: APXvYqwmKk3Q21jsUq6mWGkYPBdAVXbqi23AQ2F6jBL81aRXB94JTeDkd8tDk/DKdk6qqZJx0UDOAg==
+X-Received: by 2002:ac8:76d7:: with SMTP id q23mr473459qtr.198.1580422806255;
+        Thu, 30 Jan 2020 14:20:06 -0800 (PST)
+Received: from rani.riverdale.lan ([2001:470:1f07:5f3::b55f])
+        by smtp.gmail.com with ESMTPSA id d25sm3465389qkk.77.2020.01.30.14.20.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 30 Jan 2020 14:20:05 -0800 (PST)
+From:   Arvind Sankar <nivedita@alum.mit.edu>
+To:     Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>, Ard Biesheuvel <ardb@kernel.org>
+Cc:     linux-efi@vger.kernel.org, x86@kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] efi/x86: Mark setup_graphics static
+Date:   Thu, 30 Jan 2020 17:20:04 -0500
+Message-Id: <20200130222004.1932152-1-nivedita@alum.mit.edu>
+X-Mailer: git-send-email 2.24.1
 MIME-Version: 1.0
-In-Reply-To: <20200129002642.13508-1-richardw.yang@linux.intel.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-29.01.2020 03:26, Wei Yang пишет:
-> move_page_tables() tries to move page table by PMD or PTE.
-> 
-> The root reason is if it tries to move PMD, both old and new range should
-> be PMD aligned. But current code calculate old range and new range
-> separately.  This leads to some redundant check and calculation.
-> 
-> This cleanup tries to consolidate the range check in one place to reduce
-> some extra range handling.
-> 
-> v2:
->   * remove 3rd patch which doesn't work on ARM platform. Thanks report from
->     Dmitry Osipenko
-> 
-> Wei Yang (4):
->   mm/mremap: format the check in move_normal_pmd() same as
->     move_huge_pmd()
->   mm/mremap: it is sure to have enough space when extent meets
->     requirement
->   mm/mremap: calculate extent in one place
->   mm/mremap: start addresses are properly aligned
-> 
->  include/linux/huge_mm.h |  2 +-
->  mm/huge_memory.c        |  8 +-------
->  mm/mremap.c             | 17 ++++++-----------
->  3 files changed, 8 insertions(+), 19 deletions(-)
-> 
+This function is only called from efi_main in the same source file.
 
-Hello Wei,
+Signed-off-by: Arvind Sankar <nivedita@alum.mit.edu>
+---
+ arch/x86/boot/compressed/eboot.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-I haven't noticed any problems using the v2. Thank you very much for
-addressing the problem!
+diff --git a/arch/x86/boot/compressed/eboot.c b/arch/x86/boot/compressed/eboot.c
+index 2447e4508aa4..5e5f89ff5226 100644
+--- a/arch/x86/boot/compressed/eboot.c
++++ b/arch/x86/boot/compressed/eboot.c
+@@ -316,7 +316,7 @@ setup_uga(struct screen_info *si, efi_guid_t *uga_proto, unsigned long size)
+ 	return status;
+ }
+ 
+-void setup_graphics(struct boot_params *boot_params)
++static void setup_graphics(struct boot_params *boot_params)
+ {
+ 	efi_guid_t graphics_proto = EFI_GRAPHICS_OUTPUT_PROTOCOL_GUID;
+ 	struct screen_info *si;
+-- 
+2.24.1
 
-Tested-by: Dmitry Osipenko <digetx@gmail.com>
