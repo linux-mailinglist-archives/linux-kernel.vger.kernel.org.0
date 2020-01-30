@@ -2,95 +2,87 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 45AEA14D4AE
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Jan 2020 01:30:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4DD7814D4B1
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Jan 2020 01:31:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727208AbgA3Aa0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 29 Jan 2020 19:30:26 -0500
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:35472 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726401AbgA3AaZ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 Jan 2020 19:30:25 -0500
-Received: by mail-wm1-f68.google.com with SMTP id b17so2134506wmb.0;
-        Wed, 29 Jan 2020 16:30:24 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=MXuXlcYaFybhZK1QuyNgDHIHxuFl+Ricrrn7dPKgOpU=;
-        b=pPg9s5tX1/hohT72JS+QDkLFoGqmfB/XaHf6yg7/jcblENm75u/+9Sl+yQHCc94SKI
-         zLoPOlxuHhG1OdbNAyXgh5FZVipwTYXOJR67wLkdcJhdoD8/QvIaBjXqHuqSixS3Iu26
-         zDceuYL4PA4PoB49Iy4CfmPo4hl8wpvAo96JJ52804N5tHFzcQIXbkfzF3SYhIvl05PT
-         uwX5vU9PmthXgf9rQAScrnjL5ZUS+tVbc7tCpsmbSOeTVUDFYL7iqmIoxudjdrSuU5cp
-         Zpm/ARGuqHmKyn+28Ftg3oDU1T6DEkDTa0TOCJK3t50BHsROSKL78y/vjiH20JSLc8A/
-         WaHg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=MXuXlcYaFybhZK1QuyNgDHIHxuFl+Ricrrn7dPKgOpU=;
-        b=V7TdbAyRpEgVPVssCj3qyWYMXVEitrjdBTScua2yYbl0GWe3UvXSBOxCaYNFbcbgRj
-         W+qII+Bb8XtrkPU7sbJ/lA6UA1qhZ4OsItMKegnaCx7DJwxj1FE5CXrotRRBhL747Yej
-         erajWiDgxSa0o6e8mARpVB60qS5LSRlgeCKSzlbItAmIWAQK19Dt3htwB8xY1WIWKx4f
-         dOTqPXegDPGKwX8xCiDsNb8d6g+lPBG1Peua6KR/pG9fIB01hxwAuAm/0C+40kR4nwiJ
-         +Tsi5taw40qlJAbErekj5UPexPr+D/DrOILFzpKRjhyd9l8t7vdDBCdqcHOGVa64aQD8
-         qBhg==
-X-Gm-Message-State: APjAAAVrYNocQntROamIT6WDh8oGQ/uPA0z+3ZhHtvWlmIYb6WtVj3Fr
-        ujVmNdmbDTef9pI0jE2ZbA==
-X-Google-Smtp-Source: APXvYqyUxbLDQUOJnk4TfX1NU5mYiXT9GRYv4ft2uoUmMv/0O3z5CsV4F7GZiGd17qPKYGcUGMINyg==
-X-Received: by 2002:a7b:cb42:: with SMTP id v2mr1870894wmj.170.1580344223698;
-        Wed, 29 Jan 2020 16:30:23 -0800 (PST)
-Received: from ninjahost.lan (host-2-102-13-223.as13285.net. [2.102.13.223])
-        by smtp.googlemail.com with ESMTPSA id f1sm4946356wro.85.2020.01.29.16.30.19
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 29 Jan 2020 16:30:23 -0800 (PST)
-From:   Jules Irenge <jbi.octave@gmail.com>
-To:     boqun.feng@gmail.com
-Cc:     viro@zeniv.linux.org.uk, linux-kernel@vger.kernel.org,
-        joel@joelfernandes.org, jiangshanlai@gmail.com,
-        mathieu.desnoyers@efficios.com, rostedt@goodmis.org,
-        josh@joshtriplett.org, paulmck@kernel.org, rcu@vger.kernel.org,
-        Jules Irenge <jbi.octave@gmail.com>
-Subject: [PATCH 2/2] rcu/nocb: Add missing annotation for rcu_nocb_bypass_unlock()
-Date:   Thu, 30 Jan 2020 00:30:09 +0000
-Message-Id: <59087bdc398a69ac743ee3e5cfa0bd26495881e3.1580337836.git.jbi.octave@gmail.com>
-X-Mailer: git-send-email 2.24.1
-In-Reply-To: <cover.1580337836.git.jbi.octave@gmail.com>
-References: <0/2> <cover.1580337836.git.jbi.octave@gmail.com>
+        id S1727272AbgA3AbQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 29 Jan 2020 19:31:16 -0500
+Received: from bilbo.ozlabs.org ([203.11.71.1]:45529 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726401AbgA3AbP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 Jan 2020 19:31:15 -0500
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 487Lr15Sc6z9sRK;
+        Thu, 30 Jan 2020 11:31:13 +1100 (AEDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1580344273;
+        bh=UasNzZsdmoKqNzUfwBDjvPcSgD+GAGln/F/xYXps81o=;
+        h=Date:From:To:Cc:Subject:From;
+        b=qau+JTU08cJFdWkUIptCsK37f/CFd4NAlRjttvCBkXbtu0xA/fru9yoWjMwHgj6a7
+         beYh76PnWpZ89kn2m+RFG0LfjbViYk8WUgYDd5CrfBzqcQaPGM8Ud0meRYonJm9/Vy
+         Yp8AVNoICa8dpFcoeocRW6y5mQllA7Bc2LviyAM5F9jXErCSCn7qFRyeufNtCUJv+X
+         PbjAcDIxuuyxVsV/aY9qIhQ35M1nkN+JflTI9gVkP7DCd2mluVWHXesWuOVnGM42Ce
+         7kS7wvF7RWRJ394T7uWge08cT+cXxRoMs9HeboOUSN2sn2ISQzQfitsPRYkfyyNEPK
+         XMCD5NV2v+wAg==
+Date:   Thu, 30 Jan 2020 11:31:13 +1100
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Paul Mackerras <paulus@ozlabs.org>
+Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Bharata B Rao <bharata@linux.ibm.com>
+Subject: linux-next: Fixes tag needs some work in the kvm-ppc tree
+Message-ID: <20200130113113.590049a8@canb.auug.org.au>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; boundary="Sig_/Xu5GMCSQAi5uoDfLLOScfP3";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Sparse reports warning at rcu_nocb_bypass_unlock()
+--Sig_/Xu5GMCSQAi5uoDfLLOScfP3
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-warning: context imbalance in rcu_nocb_bypass_unlock() - unexpected unlock
+Hi all,
 
-The root cause is a missing annotation of rcu_nocb_bypass_unlock()
-which causes the warning.
+In commit
 
-Add the missing __releases(&rdp->nocb_bypass_lock) annotation.
+  e032e3b55b6f ("KVM: PPC: Book3S HV: Release lock on page-out failure path=
+")
 
-Signed-off-by: Jules Irenge <jbi.octave@gmail.com>
----
- kernel/rcu/tree_plugin.h | 1 +
- 1 file changed, 1 insertion(+)
+Fixes tag
 
-diff --git a/kernel/rcu/tree_plugin.h b/kernel/rcu/tree_plugin.h
-index 9d21cb07d57c..8783d19a58b2 100644
---- a/kernel/rcu/tree_plugin.h
-+++ b/kernel/rcu/tree_plugin.h
-@@ -1553,6 +1553,7 @@ static bool rcu_nocb_bypass_trylock(struct rcu_data *rdp)
-  * Release the specified rcu_data structure's ->nocb_bypass_lock.
-  */
- static void rcu_nocb_bypass_unlock(struct rcu_data *rdp)
-+	__releases(&rdp->nocb_bypass_lock)
- {
- 	lockdep_assert_irqs_disabled();
- 	raw_spin_unlock(&rdp->nocb_bypass_lock);
--- 
-2.24.1
+  Fixes: ca9f4942670 ("KVM: PPC: Book3S HV: Support for running secure gues=
+ts")
 
+has these problem(s):
+
+  - SHA1 should be at least 12 digits long
+    Can be fixed by setting core.abbrev to 12 (or more) or (for git v2.11
+    or later) just making sure it is not set (or set to "auto").
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/Xu5GMCSQAi5uoDfLLOScfP3
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl4yI9EACgkQAVBC80lX
+0GyJcQf+MISFUiMhzEks+ikpdj72fIkC97dYHjTN+yZaaAvl9zcS3vhILNLVJcM+
+JdEM0EbECnsz/WzT6NHx7YMRUSUmry8R5hw/DXQFTIBnlWtHdr/9LkANs+Lpusua
+JcLnDjHPHDFhYE4NLNATSCoQUjrdROUcSdb318O5wdBvDm94JZEKwg6apBhjPtLD
+WbmJOlNfR/Akje6EwT7Y/HiY4afYLnS2cgoAhLt2eP+/5t7MapJMoiR3yxZzEPYX
+wML+Rjr6dfLVqqLnb7Htlx6XcYOBSYRPmyDwfgNMvP2kDj3N3VaxYqsrWmTN4/Y5
+DFW03GM/LIbL8QfSmYoHXlSOH+vM+A==
+=3sm1
+-----END PGP SIGNATURE-----
+
+--Sig_/Xu5GMCSQAi5uoDfLLOScfP3--
