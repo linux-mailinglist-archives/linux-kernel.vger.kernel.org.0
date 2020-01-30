@@ -2,59 +2,107 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2C32D14DB44
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Jan 2020 14:09:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6448314DB4A
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Jan 2020 14:09:50 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727291AbgA3NJD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 30 Jan 2020 08:09:03 -0500
-Received: from out4436.biz.mail.alibaba.com ([47.88.44.36]:8274 "EHLO
-        out4436.biz.mail.alibaba.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727125AbgA3NJC (ORCPT
+        id S1727330AbgA3NJq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 30 Jan 2020 08:09:46 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:20180 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726980AbgA3NJq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 30 Jan 2020 08:09:02 -0500
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R151e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01f04397;MF=wenyang@linux.alibaba.com;NM=1;PH=DS;RN=3;SR=0;TI=SMTPD_---0TomMfq-_1580389734;
-Received: from localhost(mailfrom:wenyang@linux.alibaba.com fp:SMTPD_---0TomMfq-_1580389734)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Thu, 30 Jan 2020 21:09:00 +0800
-From:   Wen Yang <wenyang@linux.alibaba.com>
-To:     Thomas Gleixner <tglx@linutronix.de>
-Cc:     Wen Yang <wenyang@linux.alibaba.com>, linux-kernel@vger.kernel.org
-Subject: [PATCH] hrtimer: fix an explicit cast in __ktime_divns()
-Date:   Thu, 30 Jan 2020 21:08:51 +0800
-Message-Id: <20200130130851.29204-1-wenyang@linux.alibaba.com>
-X-Mailer: git-send-email 2.23.0
+        Thu, 30 Jan 2020 08:09:46 -0500
+Received: from pps.filterd (m0098394.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 00UD7qLK081989
+        for <linux-kernel@vger.kernel.org>; Thu, 30 Jan 2020 08:09:45 -0500
+Received: from e06smtp04.uk.ibm.com (e06smtp04.uk.ibm.com [195.75.94.100])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2xueh768ps-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Thu, 30 Jan 2020 08:09:45 -0500
+Received: from localhost
+        by e06smtp04.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <oberpar@linux.ibm.com>;
+        Thu, 30 Jan 2020 13:09:43 -0000
+Received: from b06avi18626390.portsmouth.uk.ibm.com (9.149.26.192)
+        by e06smtp04.uk.ibm.com (192.168.101.134) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Thu, 30 Jan 2020 13:09:40 -0000
+Received: from d06av22.portsmouth.uk.ibm.com (d06av22.portsmouth.uk.ibm.com [9.149.105.58])
+        by b06avi18626390.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 00UD8l8V44564936
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 30 Jan 2020 13:08:47 GMT
+Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 098984C040;
+        Thu, 30 Jan 2020 13:09:39 +0000 (GMT)
+Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id AFCE54C04A;
+        Thu, 30 Jan 2020 13:09:38 +0000 (GMT)
+Received: from [9.152.212.29] (unknown [9.152.212.29])
+        by d06av22.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Thu, 30 Jan 2020 13:09:38 +0000 (GMT)
+Subject: Re: [PATCH 2/7] gcov_seq_next should increase position index
+To:     Vasily Averin <vvs@virtuozzo.com>, linux-kernel@vger.kernel.org
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        NeilBrown <neilb@suse.com>, Waiman Long <longman@redhat.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Ingo Molnar <mingo@redhat.com>
+References: <f65c6ee7-bd00-f910-2f8a-37cc67e4ff88@virtuozzo.com>
+From:   Peter Oberparleiter <oberpar@linux.ibm.com>
+Date:   Thu, 30 Jan 2020 14:09:42 +0100
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <f65c6ee7-bd00-f910-2f8a-37cc67e4ff88@virtuozzo.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+x-cbid: 20013013-0016-0000-0000-000002E22BE6
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 20013013-0017-0000-0000-00003344F629
+Message-Id: <44b8bbff-0ade-d390-e2df-7a66d6c3f19c@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.572
+ definitions=2020-01-30_03:2020-01-28,2020-01-30 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 mlxscore=0
+ clxscore=1015 lowpriorityscore=0 suspectscore=0 impostorscore=0
+ adultscore=0 malwarescore=0 bulkscore=0 phishscore=0 priorityscore=1501
+ mlxlogscore=999 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-1911200001 definitions=main-2001300094
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-do_div() does a 64-by-32 division, while the divisor 'div' is
-explicitly casted to unsigned long, thus 64-bit on 64-bit platforms.
-In addition, the above lines also ensures that the divisor is less
-than 2^32. Hence the proper cast type is u32.
+On 24.01.2020 08:02, Vasily Averin wrote:
+> if seq_file .next fuction does not change position index,
+> read after some lseek can generate unexpected output.
+> 
+> https://bugzilla.kernel.org/show_bug.cgi?id=206283
+> Signed-off-by: Vasily Averin <vvs@virtuozzo.com>
 
-Signed-off-by: Wen Yang <wenyang@linux.alibaba.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: linux-kernel@vger.kernel.org
----
- kernel/time/hrtimer.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Acked-by: Peter Oberparleiter <oberpar@linux.ibm.com>
 
-diff --git a/kernel/time/hrtimer.c b/kernel/time/hrtimer.c
-index d8b62f93fc8d..57e543860660 100644
---- a/kernel/time/hrtimer.c
-+++ b/kernel/time/hrtimer.c
-@@ -311,7 +311,7 @@ s64 __ktime_divns(const ktime_t kt, s64 div)
- 		div >>= 1;
- 	}
- 	tmp >>= sft;
--	do_div(tmp, (unsigned long) div);
-+	do_div(tmp, (u32) div);
- 	return dclc < 0 ? -tmp : tmp;
- }
- EXPORT_SYMBOL_GPL(__ktime_divns);
+> ---
+>  kernel/gcov/fs.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/kernel/gcov/fs.c b/kernel/gcov/fs.c
+> index e5eb5ea..cc4ee48 100644
+> --- a/kernel/gcov/fs.c
+> +++ b/kernel/gcov/fs.c
+> @@ -108,9 +108,9 @@ static void *gcov_seq_next(struct seq_file *seq, void *data, loff_t *pos)
+>  {
+>  	struct gcov_iterator *iter = data;
+>  
+> +	(*pos)++;
+>  	if (gcov_iter_next(iter))
+>  		return NULL;
+> -	(*pos)++;
+>  
+>  	return iter;
+>  }
+> 
+
+
 -- 
-2.23.0
+Peter Oberparleiter
+Linux on Z Development - IBM Germany
 
