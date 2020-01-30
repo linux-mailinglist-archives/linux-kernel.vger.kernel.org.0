@@ -2,40 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7D86314E1A3
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Jan 2020 19:46:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D058614E0E6
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Jan 2020 19:40:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731152AbgA3SqM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 30 Jan 2020 13:46:12 -0500
-Received: from mail.kernel.org ([198.145.29.99]:55794 "EHLO mail.kernel.org"
+        id S1727880AbgA3Sjt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 30 Jan 2020 13:39:49 -0500
+Received: from mail.kernel.org ([198.145.29.99]:47138 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731117AbgA3Sp7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 30 Jan 2020 13:45:59 -0500
+        id S1727285AbgA3Sjr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 30 Jan 2020 13:39:47 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 01A5B20674;
-        Thu, 30 Jan 2020 18:45:57 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id AD3CA2082E;
+        Thu, 30 Jan 2020 18:39:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1580409958;
-        bh=GwxN6G4Z+HbomlJxJoFijiT8hCvHs7f70RSobAcqGSc=;
+        s=default; t=1580409587;
+        bh=IVVM1hgl08D2fgpzsJMgLZQwDiwjlJhV9sFa2kUzlz8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=tJO9NfPMvb1ud0yH2D8HMqcMb+ZUJmJetq8g3aa1EnrWcu3a9RwgNoSLD5YsipOe9
-         wYymoaT/dGUNZyjnUrOLhQy6qtF8xXljGGd6OmellHnCILwRVFaqYBXhNJCXkxdo1B
-         vlBycXWUbRF8vUd6E60WtTNWBloaLbNYt7m2hLO0=
+        b=vdW9PcrTq85ORY7Fts+ae6D61sB1hyxJFpoRDyZAS8LEIkJkAhh7apF3xVvFbAysb
+         eIJO5tKITrEZROK1GwjG7u59uF/nZc4DmbKYzzjdbUfo7wVjHiXObQQJkHI/3lM7tD
+         rWxO3qyFUPXlP/WS8DYJoA+PDJWkhe/aDSZs97EE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Even Xu <even.xu@intel.com>,
-        Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
-        Benjamin Tissoires <benjamin.tissoires@redhat.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.4 050/110] HID: intel-ish-hid: ipc: add CMP device id
-Date:   Thu, 30 Jan 2020 19:38:26 +0100
-Message-Id: <20200130183621.075907363@linuxfoundation.org>
+        stable@vger.kernel.org, Thomas Hebb <tommyhebb@gmail.com>,
+        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+        Guenter Roeck <linux@roeck-us.net>
+Subject: [PATCH 5.5 10/56] usb: typec: wcove: fix "op-sink-microwatt" default that was in mW
+Date:   Thu, 30 Jan 2020 19:38:27 +0100
+Message-Id: <20200130183611.051674781@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200130183613.810054545@linuxfoundation.org>
-References: <20200130183613.810054545@linuxfoundation.org>
+In-Reply-To: <20200130183608.849023566@linuxfoundation.org>
+References: <20200130183608.849023566@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,47 +44,36 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Even Xu <even.xu@intel.com>
+From: Thomas Hebb <tommyhebb@gmail.com>
 
-[ Upstream commit abb33ee8a8c0d146b4b2c52937dc86a15ec92d05 ]
+commit 0e64350bf4668d0fbbfec66fd8e637b971b4e976 upstream.
 
-Add Comet Lake H into ishtp support list.
+commit 4c912bff46cc ("usb: typec: wcove: Provide fwnode for the port")
+didn't convert this value from mW to uW when migrating to a new
+specification format like it should have.
 
-Signed-off-by: Even Xu <even.xu@intel.com>
-Acked-by: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
-Signed-off-by: Benjamin Tissoires <benjamin.tissoires@redhat.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Fixes: 4c912bff46cc ("usb: typec: wcove: Provide fwnode for the port")
+Cc: stable@vger.kernel.org
+Signed-off-by: Thomas Hebb <tommyhebb@gmail.com>
+Reviewed-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
+Reviewed-by: Guenter Roeck <linux@roeck-us.net>
+Link: https://lore.kernel.org/r/d8be32512efd31995ad7d65b27df9d443131b07c.1579529334.git.tommyhebb@gmail.com
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- drivers/hid/intel-ish-hid/ipc/hw-ish.h  | 1 +
- drivers/hid/intel-ish-hid/ipc/pci-ish.c | 1 +
- 2 files changed, 2 insertions(+)
+ drivers/usb/typec/tcpm/wcove.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/hid/intel-ish-hid/ipc/hw-ish.h b/drivers/hid/intel-ish-hid/ipc/hw-ish.h
-index 6c1e6110867f0..905e1bc3f91db 100644
---- a/drivers/hid/intel-ish-hid/ipc/hw-ish.h
-+++ b/drivers/hid/intel-ish-hid/ipc/hw-ish.h
-@@ -24,6 +24,7 @@
- #define ICL_MOBILE_DEVICE_ID	0x34FC
- #define SPT_H_DEVICE_ID		0xA135
- #define CML_LP_DEVICE_ID	0x02FC
-+#define CMP_H_DEVICE_ID		0x06FC
- #define EHL_Ax_DEVICE_ID	0x4BB3
- 
- #define	REVISION_ID_CHT_A0	0x6
-diff --git a/drivers/hid/intel-ish-hid/ipc/pci-ish.c b/drivers/hid/intel-ish-hid/ipc/pci-ish.c
-index 784dcc8c70228..9c8cefe16af3e 100644
---- a/drivers/hid/intel-ish-hid/ipc/pci-ish.c
-+++ b/drivers/hid/intel-ish-hid/ipc/pci-ish.c
-@@ -34,6 +34,7 @@ static const struct pci_device_id ish_pci_tbl[] = {
- 	{PCI_DEVICE(PCI_VENDOR_ID_INTEL, ICL_MOBILE_DEVICE_ID)},
- 	{PCI_DEVICE(PCI_VENDOR_ID_INTEL, SPT_H_DEVICE_ID)},
- 	{PCI_DEVICE(PCI_VENDOR_ID_INTEL, CML_LP_DEVICE_ID)},
-+	{PCI_DEVICE(PCI_VENDOR_ID_INTEL, CMP_H_DEVICE_ID)},
- 	{PCI_DEVICE(PCI_VENDOR_ID_INTEL, EHL_Ax_DEVICE_ID)},
- 	{0, }
+--- a/drivers/usb/typec/tcpm/wcove.c
++++ b/drivers/usb/typec/tcpm/wcove.c
+@@ -597,7 +597,7 @@ static const struct property_entry wcove
+ 	PROPERTY_ENTRY_STRING("try-power-role", "sink"),
+ 	PROPERTY_ENTRY_U32_ARRAY("source-pdos", src_pdo),
+ 	PROPERTY_ENTRY_U32_ARRAY("sink-pdos", snk_pdo),
+-	PROPERTY_ENTRY_U32("op-sink-microwatt", 15000),
++	PROPERTY_ENTRY_U32("op-sink-microwatt", 15000000),
+ 	{ }
  };
--- 
-2.20.1
-
+ 
 
 
