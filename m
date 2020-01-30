@@ -2,293 +2,229 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4CFC114E3CA
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Jan 2020 21:18:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1CBE614E3D3
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Jan 2020 21:21:16 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727717AbgA3USX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 30 Jan 2020 15:18:23 -0500
-Received: from hqnvemgate24.nvidia.com ([216.228.121.143]:14954 "EHLO
-        hqnvemgate24.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726514AbgA3USX (ORCPT
+        id S1727621AbgA3UVI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 30 Jan 2020 15:21:08 -0500
+Received: from mail-ot1-f67.google.com ([209.85.210.67]:39505 "EHLO
+        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726514AbgA3UVH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 30 Jan 2020 15:18:23 -0500
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate24.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5e3339d80000>; Thu, 30 Jan 2020 12:17:28 -0800
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate101.nvidia.com (PGP Universal service);
-  Thu, 30 Jan 2020 12:18:20 -0800
-X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Thu, 30 Jan 2020 12:18:20 -0800
-Received: from [10.110.103.70] (172.20.13.39) by HQMAIL107.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Thu, 30 Jan
- 2020 20:18:20 +0000
-Subject: Re: [RFC PATCH v1 5/5] arm64: tegra: Add Tegra VI CSI suppport in
- device tree
-From:   Sowjanya Komatineni <skomatineni@nvidia.com>
-To:     Thierry Reding <thierry.reding@gmail.com>
-CC:     <jonathanh@nvidia.com>, <frankc@nvidia.com>, <hverkuil@xs4all.nl>,
-        <linux-media@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-References: <1580235801-4129-1-git-send-email-skomatineni@nvidia.com>
- <1580235801-4129-6-git-send-email-skomatineni@nvidia.com>
- <20200129094624.GD2479935@ulmo>
- <bd18711d-ce23-cbee-7824-37a8c78908e6@nvidia.com>
- <20200130123607.GB2584455@ulmo>
- <c5fd4eb3-0026-95a5-5162-e1cf5302698e@nvidia.com>
- <20200130175820.GA3155155@ulmo>
- <deb6839b-2ddb-be54-a985-a2b7624374af@nvidia.com>
-Message-ID: <ba57fcf2-a7bf-8154-96c9-aba401327af7@nvidia.com>
-Date:   Thu, 30 Jan 2020 12:18:19 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        Thu, 30 Jan 2020 15:21:07 -0500
+Received: by mail-ot1-f67.google.com with SMTP id 77so4359881oty.6
+        for <linux-kernel@vger.kernel.org>; Thu, 30 Jan 2020 12:21:06 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=fOJEE1fkLwQsVSnFFDCeiNMIe7GX26OPeYKy9HbEFGg=;
+        b=dSaB8Xzxl0tgYBnY8WWqccFO4aKhOpEKCcG8OYcXKqhigHa4cX5a+yQ6m3OoPjKe2a
+         9KtGInNtcrHL82kDG1PHJCpk15YLNm4JbKkuAz58+CPLeNUN/BzlL4RZHZx4wzj0F8zv
+         gIo2SXPaWtKj5ASJEqCiWPC4BKKt5TXBMSvmSalsF4BA1EkOpS+NFqlFsc1o8s4ZOyZF
+         RYLSwGwLF1T3Z6mw+kMgBJqs2HwgokfUxtN5xRXKyrWvLTXCKZdSHoa9TqV7uEiX7NLx
+         E9meXMT/aBKgHxVSzDSh7eFntmyec2YfC8nOp2aNXD7V6Isx3eU3sKBB3/5QlMHxxANl
+         Hg8Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=fOJEE1fkLwQsVSnFFDCeiNMIe7GX26OPeYKy9HbEFGg=;
+        b=oaCTJt/zp2FGCk56qgcfIFZ5JLjxWH1XY1lGuLwIlnrU1IyQjiCPriHPh7sY7FFRdX
+         r1I0ZIkJkKufbMHj33QNOxySaUGxKlNMMAdWTWPtTgGUZkM2R3LBB23sO3+ZLe4gkaEC
+         UI9fPANc7NXNrNluR+vuYASOsIvYkr988dyHURcTGdBgD1lVSgXTDWLDPIH5YffE4jyx
+         yjTt1kYm5VdFkNlFRa4EOUHZR3ZD9g+XqgHMNbrYUfAAyB5mQRdxDyBK6uydqBRhVsvV
+         EVGfgz2aPIXWeGsaVYL+hInoHw0cQQeGONedjrLTBgY2fDifJ81BtLlYt21Xwmatos7P
+         5vtg==
+X-Gm-Message-State: APjAAAUw/9erOMX7gMCh3OsJr6HZTQoG1k/Gb/bRgR6+iZlRQwdAugml
+        oVl/wwO9rQyeMN6tPwFb9U+ivHXg+0S3xlcvC+I=
+X-Google-Smtp-Source: APXvYqzDM8OCFgNpvqzUl2WS7ghEHAAo5ALxx1Xwxs+PJKijo5lCEE8CT8lEB9ddQyjzOMjy6M3gmCPlGP6jjUGEAPw=
+X-Received: by 2002:a05:6830:1e30:: with SMTP id t16mr5070986otr.220.1580415665784;
+ Thu, 30 Jan 2020 12:21:05 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <deb6839b-2ddb-be54-a985-a2b7624374af@nvidia.com>
-X-Originating-IP: [172.20.13.39]
-X-ClientProxiedBy: HQMAIL107.nvidia.com (172.20.187.13) To
- HQMAIL107.nvidia.com (172.20.187.13)
-Content-Type: text/plain; charset="windows-1252"; format=flowed
-Content-Transfer-Encoding: quoted-printable
-Content-Language: en-US
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1580415449; bh=ca6fwawVS1LllpxDMOUrHSchE4I2p7wXuXiAS1BaG4Y=;
-        h=X-PGP-Universal:Subject:From:To:CC:References:Message-ID:Date:
-         User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
-         X-ClientProxiedBy:Content-Type:Content-Transfer-Encoding:
-         Content-Language;
-        b=Fv6gi4y19QD9RNCb7ovCu73XWStA/oTMANNlrCFgKacSHb6i3A8uOjSDIym++ZtK/
-         8IITmTfl9nOe404yFXERRUnEKRpsqSzK0ydGvQA2gc01fNFiJoXtPvsUwOoi4IWWdD
-         V8HTVwC2RsYEooCKAAP3bLC6xb8NxK7Q9pwJV8wgE3ZqlPCkawRwtTLwWl+sOzdteA
-         6Jn5X7xL95mAxnh+Oxq4996Pi+Q7KujIw25y2Byg7+Vgue4DU3uMJhzaR6QdTvhcC6
-         BC3hLf5bd8TabDZtGS+b/VpGdVPL3LaohC2I2NljORqVEfcL9vRj6ez4KoyS4fmThr
-         qIe6YmDexg58Q==
+References: <20200124181819.4840-1-hjl.tools@gmail.com> <20200124181819.4840-3-hjl.tools@gmail.com>
+ <202001271531.B9ACE2A@keescook> <CAMe9rOrVyzvaTyURc4RJJTHUXGG6uAC9KyQomxQFzWzrAN4nrg@mail.gmail.com>
+ <202001301143.288B55DCC1@keescook> <CAMe9rOocT960KsofP9o_y49FdgY9NGix=GcYnpKLvp7RhieZNA@mail.gmail.com>
+ <202001301206.13AF0512@keescook>
+In-Reply-To: <202001301206.13AF0512@keescook>
+From:   "H.J. Lu" <hjl.tools@gmail.com>
+Date:   Thu, 30 Jan 2020 12:20:30 -0800
+Message-ID: <CAMe9rOoU1B8enyoL4-SSQKYLHpevR5yrbp5ewztC=Owr69y2SQ@mail.gmail.com>
+Subject: Re: [PATCH 2/2] x86: Discard .note.gnu.property sections in vmlinux
+To:     Kees Cook <keescook@chromium.org>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Thomas Lendacky <Thomas.Lendacky@amd.com>,
+        Sami Tolvanen <samitolvanen@google.com>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H . Peter Anvin" <hpa@zytor.com>,
+        "the arch/x86 maintainers" <x86@kernel.org>,
+        Yu-cheng Yu <yu-cheng.yu@intel.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Thu, Jan 30, 2020 at 12:08 PM Kees Cook <keescook@chromium.org> wrote:
+>
+> On Thu, Jan 30, 2020 at 12:04:54PM -0800, H.J. Lu wrote:
+> > > I don't understand this. "may not be incompatible"? Is there an error
+> > > generated? If so, what does it look like?
+> >
+> > When -mx86-used-note=yes is passed to assembler, with my patch, I got
+> >
+> > [hjl@gnu-skx-1 linux]$ readelf -n vmlinux
+> >
+> > Displaying notes found in: .notes
+> >   Owner                Data size Description
+> >   Xen                  0x00000006 Unknown note type: (0x00000006)
+> >    description data: 6c 69 6e 75 78 00
+> >   Xen                  0x00000004 Unknown note type: (0x00000007)
+> >    description data: 32 2e 36 00
+> >   Xen                  0x00000008 Unknown note type: (0x00000005)
+> >    description data: 78 65 6e 2d 33 2e 30 00
+> >   Xen                  0x00000008 Unknown note type: (0x00000003)
+> >    description data: 00 00 00 80 ff ff ff ff
+> >   Xen                  0x00000008 Unknown note type: (0x0000000f)
+> >    description data: 00 00 00 00 80 00 00 00
+> >   Xen                  0x00000008 NT_VERSION (version)
+> >    description data: 80 a1 ba 82 ff ff ff ff
+> >   Xen                  0x00000008 NT_ARCH (architecture)
+> >    description data: 00 10 00 81 ff ff ff ff
+> >   Xen                  0x00000029 Unknown note type: (0x0000000a)
+> >    description data: 21 77 72 69 74 61 62 6c 65 5f 70 61 67 65 5f 74
+> > 61 62 6c 65 73 7c 70 61 65 5f 70 67 64 69 72 5f 61 62 6f 76 65 5f 34
+> > 67 62
+> >   Xen                  0x00000004 Unknown note type: (0x00000011)
+> >    description data: 01 88 00 00
+> >   Xen                  0x00000004 Unknown note type: (0x00000009)
+> >    description data: 79 65 73 00
+> >   Xen                  0x00000008 Unknown note type: (0x00000008)
+> >    description data: 67 65 6e 65 72 69 63 00
+> >   Xen                  0x00000010 Unknown note type: (0x0000000d)
+> >    description data: 01 00 00 00 00 00 00 00 01 00 00 00 00 00 00 00
+> >   Xen                  0x00000004 Unknown note type: (0x0000000e)
+> >    description data: 01 00 00 00
+> >   Xen                  0x00000004 Unknown note type: (0x00000010)
+> >    description data: 01 00 00 00
+> >   Xen                  0x00000008 Unknown note type: (0x0000000c)
+> >    description data: 00 00 00 00 00 80 ff ff
+> >   Xen                  0x00000008 Unknown note type: (0x00000004)
+> >    description data: 00 00 00 00 00 00 00 00
+> >   GNU                  0x00000014 NT_GNU_BUILD_ID (unique build ID bitstring)
+> >     Build ID: 11c73de2922f593e1b35b92ab3c70eaa1a80fa83
+> >   Linux                0x00000018 OPEN
+> >    description data: 35 2e 33 2e 39 2d 32 30 30 2e 30 2e 66 63 33 30
+> > 2e 78 38 36 5f 36 34 00
+> >   Xen                  0x00000008 Unknown note type: (0x00000012)
+> >    description data: 70 04 00 01 00 00 00 00
+> > [hjl@gnu-skx-1 linux]$
+> >
+> > Without my patch,
+> >
+> > [hjl@gnu-skx-1 linux]$ readelf -n vmlinux
+> >
+> > Displaying notes found in: .notes
+> >   Owner                Data size Description
+> >   Xen                  0x00000006 Unknown note type: (0x00000006)
+> >    description data: 6c 69 6e 75 78 00
+> >   Xen                  0x00000004 Unknown note type: (0x00000007)
+> >    description data: 32 2e 36 00
+> >   xen-3.0              0x00000005 Unknown note type: (0x006e6558)
+> >    description data: 08 00 00 00 03
+> > readelf: Warning: note with invalid namesz and/or descsz found at offset 0x50
+> > readelf: Warning:  type: 0xffffffff, namesize: 0x006e6558, descsize:
+> > 0x80000000, alignment: 8
+> > [hjl@gnu-skx-1 linux]$
+>
+> What is the source of this failure? Does readelf need updating instead?
+> Is the linking step producing an invalid section? It seems like
+> discarding the properties isn't the right solution here?
 
-On 1/30/20 10:58 AM, Sowjanya Komatineni wrote:
->
-> On 1/30/20 9:58 AM, Thierry Reding wrote:
->> On Thu, Jan 30, 2020 at 09:18:50AM -0800, Sowjanya Komatineni wrote:
->>> On 1/30/20 4:36 AM, Thierry Reding wrote:
->>>> On Wed, Jan 29, 2020 at 08:22:48AM -0800, Sowjanya Komatineni wrote:
->>>>> On 1/29/20 1:46 AM, Thierry Reding wrote:
->>>>>> On Tue, Jan 28, 2020 at 10:23:21AM -0800, Sowjanya Komatineni wrote:
->>>>>>> Tegra210 contains VI controller for video input capture from MIPI
->>>>>>> CSI camera sensors and also supports built-in test pattern=20
->>>>>>> generator.
->>>>>>>
->>>>>>> CSI ports can be one-to-one mapped to VI channels for capturing=20
->>>>>>> from
->>>>>>> an external sensor or from built-in test pattern generator.
->>>>>>>
->>>>>>> This patch adds support for VI and CSI and enables them in Tegra210
->>>>>>> device tree.
->>>>>>>
->>>>>>> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
->>>>>>> ---
->>>>>>> =A0=A0=A0 arch/arm64/boot/dts/nvidia/tegra210-p2597.dtsi | 8 ++++++=
-+
->>>>>>> =A0=A0=A0 arch/arm64/boot/dts/nvidia/tegra210.dtsi=A0=A0=A0=A0=A0=
-=A0 | 31=20
->>>>>>> +++++++++++++++++++++++++-
->>>>>>> =A0=A0=A0 2 files changed, 38 insertions(+), 1 deletion(-)
->>>>>>>
->>>>>>> diff --git a/arch/arm64/boot/dts/nvidia/tegra210-p2597.dtsi=20
->>>>>>> b/arch/arm64/boot/dts/nvidia/tegra210-p2597.dtsi
->>>>>>> index b0095072bc28..ec1b3033fa03 100644
->>>>>>> --- a/arch/arm64/boot/dts/nvidia/tegra210-p2597.dtsi
->>>>>>> +++ b/arch/arm64/boot/dts/nvidia/tegra210-p2597.dtsi
->>>>>>> @@ -10,6 +10,14 @@
->>>>>>> =A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 status =3D "okay";
->>>>>>> =A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 };
->>>>>>> +=A0=A0=A0=A0=A0=A0=A0 vi@54080000 {
->>>>>>> +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 status =3D "okay";
->>>>>>> +=A0=A0=A0=A0=A0=A0=A0 };
->>>>>>> +
->>>>>>> +=A0=A0=A0=A0=A0=A0=A0 csi@0x54080838 {
->>>>>>> +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 status =3D "okay";
->>>>>>> +=A0=A0=A0=A0=A0=A0=A0 };
->>>>>>> +
->>>>>>> =A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 sor@54580000 {
->>>>>>> =A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 status =3D "okay";
->>>>>>> diff --git a/arch/arm64/boot/dts/nvidia/tegra210.dtsi=20
->>>>>>> b/arch/arm64/boot/dts/nvidia/tegra210.dtsi
->>>>>>> index 48c63256ba7f..c6107ec03ad1 100644
->>>>>>> --- a/arch/arm64/boot/dts/nvidia/tegra210.dtsi
->>>>>>> +++ b/arch/arm64/boot/dts/nvidia/tegra210.dtsi
->>>>>>> @@ -136,9 +136,38 @@
->>>>>>> =A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 vi@54080000 {
->>>>>>> =A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 compatible =3D "nvidi=
-a,tegra210-vi";
->>>>>>> -=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 reg =3D <0x0 0x54080000 0x0 0x00=
-040000>;
->>>>>>> +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 reg =3D <0x0 0x54080000 0x0 0x80=
-8>;
->>>>>>> =A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 interrupts =3D <GIC_S=
-PI 69 IRQ_TYPE_LEVEL_HIGH>;
->>>>>>> =A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 status =3D "disabled"=
-;
->>>>>>> +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 assigned-clocks =3D <&tegra_car =
-TEGRA210_CLK_VI>;
->>>>>>> +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 assigned-clock-parents =3D <&teg=
-ra_car=20
->>>>>>> TEGRA210_CLK_PLL_C4_OUT0>;
->>>>>>> +
->>>>>>> +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 clocks =3D <&tegra_car TEGRA210_=
-CLK_VI>;
->>>>>>> +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 clock-names =3D "vi";
->>>>>>> +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 resets =3D <&tegra_car 20>;
->>>>>>> +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 reset-names =3D "vi";
->>>>>>> +=A0=A0=A0=A0=A0=A0=A0 };
->>>>>>> +
->>>>>>> +=A0=A0=A0=A0=A0=A0=A0 csi@0x54080838 {
->>>>>>> +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 compatible =3D "nvidia,tegra210-=
-csi";
->>>>>>> +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 reg =3D <0x0 0x54080838 0x0 0x20=
-00>;
->>>>>>> +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 status =3D "disabled";
->>>>>>> +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 assigned-clocks =3D <&tegra_car =
-TEGRA210_CLK_CILAB>,
->>>>>>> +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 <&=
-tegra_car TEGRA210_CLK_CILCD>,
->>>>>>> +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 <&=
-tegra_car TEGRA210_CLK_CILE>;
->>>>>>> +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 assigned-clock-parents =3D <&teg=
-ra_car=20
->>>>>>> TEGRA210_CLK_PLL_P>,
->>>>>>> +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=
-=A0=A0 <&tegra_car TEGRA210_CLK_PLL_P>,
->>>>>>> +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=
-=A0=A0 <&tegra_car TEGRA210_CLK_PLL_P>;
->>>>>>> +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 assigned-clock-rates =3D <102000=
-000>,
->>>>>>> +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=
-=A0=A0=A0=A0 <102000000>,
->>>>>>> +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=
-=A0=A0=A0=A0 <102000000>;
->>>>>>> +
->>>>>>> +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 clocks =3D <&tegra_car TEGRA210_=
-CLK_CSI>,
->>>>>>> +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 <&tegra_car TEGRA=
-210_CLK_CILAB>,
->>>>>>> +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 <&tegra_car TEGRA=
-210_CLK_CILCD>,
->>>>>>> +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 <&tegra_car TEGRA=
-210_CLK_CILE>;
->>>>>>> +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 clock-names =3D "csi", "cilab", =
-"cilcd", "cile";
->>>>>>> +
->>>>>>> =A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 };
->>>>>> Can this be a child of the vi node? Looking at the register=20
->>>>>> ranges it
->>>>>> seems like these are actually a single IP block. If they have=20
->>>>>> separate
->>>>>> blocks with clearly separate functionality, then it makes sense=20
->>>>>> to have
->>>>>> CSI be a child node of VI, though it may also be okay to merge=20
->>>>>> both and
->>>>>> have a single node with the driver doing all of the differentiation
->>>>>> between what's VI and what's CSI.
->>>>>>
->>>>>> Looking at later chips, the split between VI and CSI is more=20
->>>>>> explicit,
->>>>>> so having the split in DT for Tegra210 may make sense for=20
->>>>>> consistency.
->>>>>>
->>>>>> I know we've discussed this before, but for some reason I keep=20
->>>>>> coming
->>>>>> back to this. I'll go through the other patches to see if I can=20
->>>>>> get a
->>>>>> clearer picture of how this could all work together.
->>>>>>
->>>>>> Thierry
->>>>> We can keep it separate as we discussed.
->>>>>
->>>>> But as Tegra186 onwards, CSI is separate device to be all=20
->>>>> cosistent I kept
->>>>> CSI as separate node for Tegra210 as well.
->>>> =A0 From our discussion, my understanding was that CSI would be a=20
->>>> separate
->>>> device, but it would still be a subdevice of VI. The address offset of
->>>> the CSI registers not being aligned to a power of two is a strong
->>>> indication that this is really all part of the same block.
->>> Yes our earlier discussion is to have CSI as subdevice.
->>>
->>> Later looking into T186 and later NVCSI is totally separate so it=20
->>> will be
->>> separate device and to have driver common moved Tegra210 CSI also as
->>> separate device instead of having it as subdevice of VI.
->>>
->>> Earlier when we discussed at that time I am using TPG also from device
->>> graphs but not moved to hard media links inside driver for TPG.
->>>
->>> For this we need CSI to be available prior to VI.
->> Why is that? Does creating the hard media links need access to a struct
->> device? What if we created that device in the VI driver without any
->> reliance on DT? Shouldn't that also work? I have a hard time imagining
->> that there aren't other devices like this where we don't necessarily
->> have separate devices for these links.
-> Yes we need CSI structure for hard link TPG also as all csi channel=20
-> list is part of CSI device.
->
-> We can create CSI channel subdevices within VI without using CSI=20
-> device from a separate CSI driver probe for Tegra210 and make all=20
-> subdev related ops implementations as global so they can be used from=20
-> VI driver for Tegra210 and can also be used for Tegra186 and later in=20
-> separate CSI driver.
->
-> During creating media links in VI driver for TPG, for T210 we can use=20
-> local CSI device structure and for T186+ we can use CSI device=20
-> structure created during CSI probe.
->
-> Sorry, I didn't understood what you meant by separate devices for=20
-> these link.
->
-> We only have Tegra CSI linked to Tegra VI for TPG/Real sensor.
->
->>> If we add CSI as subdevice to VI, CSI will not be available by the time
->>> VI init happens.
->> The CSI subdevice should be registered as part of the VI driver's probe,
->> right? That's typically where you'd call of_platform_populate(). Could
->> we not set up the hard media links in the ->init() callbacks for the
->> host1x clients? Those are called after all of the devices have been
->> probed, so the CSI device should be available at that time.
->>
-yes, will update to have CSI as child node to VI
->>> Currently host1x subdevices listed has CSI before VI and CSI init=20
->>> happens
->>> earlier so by the time VI init happens CSI is available to do media=20
->>> links
->>> b/w VI video entity and CSI subdevice entity.
->> Okay, I understand how this would be a convenient solution. However, the
->> device tree is a hardware description, so we need to ignore what we know
->> about the operating system infrastructure that we want to use when
->> writing the device tree bindings (and the device tree content) in order
->> to make sure the same binding will work on a different operating system
->> which may have a completely different infrastructure (or none at all).
->>
->>> Also having CSI as separate subdevice (not as subdevice to VI) for=20
->>> T210 will
->>> be consistent with T186 and later.
->> Again, I see how that's convenient. But the main difference between
->> Tegra210 and Tegra186 is that on the former, the CSI is merged with VI,
->> whereas on the latter the CSI is a completely separate hardware block.
->>
->> Since device tree describes the hardware, that difference should be
->> apparent in the device tree. I initially thought as well that it would
->> be advantageous if both had the same representation, but I do realize
->> now that this has a significant impact on the device tree, and it
->> violates the basic principles we base device tree binding design on.
->>
->> Thierry
->
-> I just thought of driver implementation being common b/w T210 and=20
-> T186+ by having CSI as separate device node rather than as child node=20
-> to VI to avoid CSI structure handling within VI for T210 only.
->
-> Will update DT and driver to have CSI as child node of VI for T210.
->
->
+With the command-line option, -mx86-used-note=yes, the x86 assembler
+in binutils 2.32 and above generates a program property note in a note
+section, .note.gnu.property, to encode used x86 ISAs and features.
+But x86 kernel linker script only contains a signle NOTE segment:
+
+PHDRS {
+ text PT_LOAD FLAGS(5);
+ data PT_LOAD FLAGS(6);
+ percpu PT_LOAD FLAGS(6);
+ init PT_LOAD FLAGS(7);
+ note PT_NOTE FLAGS(0);
+}
+SECTIONS
+{
+...
+ .notes : AT(ADDR(.notes) - 0xffffffff80000000) { __start_notes = .; KEEP(*(.not
+e.*)) __stop_notes = .; } :text :note
+...
+}
+
+But .note.gnu.property must be 8-byte aligned.  Linker deals with it
+by generating
+2 PT_NOTE segments, one has 4-byte alignment and the other has 8-byte alignment:
+
+[hjl@gnu-cfl-1 ~]$ readelf -l /usr/local/bin/ld
+
+Elf file type is EXEC (Executable file)
+Entry point 0x404530
+There are 13 program headers, starting at offset 64
+
+Program Headers:
+  Type           Offset             VirtAddr           PhysAddr
+                 FileSiz            MemSiz              Flags  Align
+  PHDR           0x0000000000000040 0x0000000000400040 0x0000000000400040
+                 0x00000000000002d8 0x00000000000002d8  R      0x8
+  INTERP         0x0000000000000318 0x0000000000400318 0x0000000000400318
+                 0x000000000000001c 0x000000000000001c  R      0x1
+      [Requesting program interpreter: /lib64/ld-linux-x86-64.so.2]
+  LOAD           0x0000000000000000 0x0000000000400000 0x0000000000400000
+                 0x0000000000002a30 0x0000000000002a30  R      0x1000
+  LOAD           0x0000000000003000 0x0000000000403000 0x0000000000403000
+                 0x00000000000d7b35 0x00000000000d7b35  R E    0x1000
+  LOAD           0x00000000000db000 0x00000000004db000 0x00000000004db000
+                 0x0000000000179248 0x0000000000179248  R      0x1000
+  LOAD           0x0000000000254de0 0x0000000000655de0 0x0000000000655de0
+                 0x00000000000062e8 0x000000000000ba68  RW     0x1000
+  DYNAMIC        0x0000000000254df0 0x0000000000655df0 0x0000000000655df0
+                 0x0000000000000200 0x0000000000000200  RW     0x8
+  NOTE           0x0000000000000338 0x0000000000400338 0x0000000000400338
+                 0x0000000000000030 0x0000000000000030  R      0x8
+  NOTE           0x0000000000000368 0x0000000000400368 0x0000000000400368
+                 0x0000000000000044 0x0000000000000044  R      0x4
+  GNU_PROPERTY   0x0000000000000338 0x0000000000400338 0x0000000000400338
+                 0x0000000000000030 0x0000000000000030  R      0x8
+  GNU_EH_FRAME   0x0000000000233efc 0x0000000000633efc 0x0000000000633efc
+                 0x000000000000478c 0x000000000000478c  R      0x4
+  GNU_STACK      0x0000000000000000 0x0000000000000000 0x0000000000000000
+                 0x0000000000000000 0x0000000000000000  RW     0x10
+  GNU_RELRO      0x0000000000254de0 0x0000000000655de0 0x0000000000655de0
+                 0x0000000000000220 0x0000000000000220  R      0x1
+
+ Section to Segment mapping:
+  Segment Sections...
+   00
+   01     .interp
+   02     .interp .note.gnu.property .note.gnu.build-id .note.ABI-tag
+.hash .gnu.hash .dynsym .dynstr .gnu.version .gnu.version_r .rela.dyn
+.rela.plt
+   03     .init .plt .text .fini
+   04     .rodata .eh_frame_hdr .eh_frame
+   05     .init_array .fini_array .dynamic .got .got.plt .data .bss
+   06     .dynamic
+   07     .note.gnu.property
+   08     .note.gnu.build-id .note.ABI-tag
+   09     .note.gnu.property
+   10     .eh_frame_hdr
+   11
+   12     .init_array .fini_array .dynamic .got
+[hjl@gnu-cfl-1 ~]$
+
+Since .note.gnu.property in vmlinux is unused, it can be discarded.
+
+-- 
+H.J.
