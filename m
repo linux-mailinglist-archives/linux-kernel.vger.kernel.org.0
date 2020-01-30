@@ -2,61 +2,106 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5AB2514D9F0
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Jan 2020 12:40:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7115014D9FD
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Jan 2020 12:41:54 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727149AbgA3LkN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 30 Jan 2020 06:40:13 -0500
-Received: from foss.arm.com ([217.140.110.172]:51404 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726873AbgA3LkM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 30 Jan 2020 06:40:12 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 1DF96328;
-        Thu, 30 Jan 2020 03:40:12 -0800 (PST)
-Received: from bogus (e103737-lin.cambridge.arm.com [10.1.197.49])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 734143F67D;
-        Thu, 30 Jan 2020 03:40:09 -0800 (PST)
-Date:   Thu, 30 Jan 2020 11:40:04 +0000
-From:   Sudeep Holla <sudeep.holla@arm.com>
-To:     Matthias Kaehlcke <mka@chromium.org>,
-        Sibi Sankar <sibis@codeaurora.org>
-Cc:     viresh.kumar@linaro.org, sboyd@kernel.org,
-        georgi.djakov@linaro.org, saravanak@google.com, nm@ti.com,
-        bjorn.andersson@linaro.org, agross@kernel.org,
-        david.brown@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com,
-        rjw@rjwysocki.net, linux-arm-msm@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-pm@vger.kernel.org, dianders@chromium.org,
-        vincent.guittot@linaro.org, amit.kucheria@linaro.org,
-        ulf.hansson@linaro.org, Sudeep Holla <sudeep.holla@arm.com>
-Subject: Re: [RFC v3 02/10] cpufreq: blacklist SDM845 in cpufreq-dt-platdev
-Message-ID: <20200130114004.GA56122@bogus>
-References: <20200127200350.24465-1-sibis@codeaurora.org>
- <20200127200350.24465-3-sibis@codeaurora.org>
- <20200128204423.GF46072@google.com>
+        id S1727252AbgA3Llv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 30 Jan 2020 06:41:51 -0500
+Received: from lelv0143.ext.ti.com ([198.47.23.248]:58478 "EHLO
+        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726873AbgA3Llp (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 30 Jan 2020 06:41:45 -0500
+Received: from lelv0266.itg.ti.com ([10.180.67.225])
+        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 00UBfYAq040398;
+        Thu, 30 Jan 2020 05:41:34 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1580384495;
+        bh=MgMgxrY4r0pbPJYk9YGQY7AwMzFYv2Fq/3K2ab3HHT0=;
+        h=From:To:CC:Subject:Date;
+        b=cCK+MwDnWoHsMgJsdb7I0D8fWDIPyIiIV9hmI/qs7ylA0RU6XLiOYh2Elnyc/uPsx
+         2B1bv7OE3HorJ6rmQcugfhIke/+GzjlJLH8fU/vTz6/ZuPU8lNV5K2z8mzjQ1d3nF6
+         qUoXNEuR563qzw2P5DntFX+7Yelcr5osP7QpLO6g=
+Received: from DLEE100.ent.ti.com (dlee100.ent.ti.com [157.170.170.30])
+        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 00UBfY9U015549
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Thu, 30 Jan 2020 05:41:34 -0600
+Received: from DLEE100.ent.ti.com (157.170.170.30) by DLEE100.ent.ti.com
+ (157.170.170.30) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Thu, 30
+ Jan 2020 05:41:34 -0600
+Received: from lelv0326.itg.ti.com (10.180.67.84) by DLEE100.ent.ti.com
+ (157.170.170.30) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
+ Frontend Transport; Thu, 30 Jan 2020 05:41:34 -0600
+Received: from feketebors.ti.com (ileax41-snat.itg.ti.com [10.172.224.153])
+        by lelv0326.itg.ti.com (8.15.2/8.15.2) with ESMTP id 00UBfW7W104655;
+        Thu, 30 Jan 2020 05:41:33 -0600
+From:   Peter Ujfalusi <peter.ujfalusi@ti.com>
+To:     <vkoul@kernel.org>
+CC:     <dmaengine@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <dan.j.williams@intel.com>, <geert@linux-m68k.org>
+Subject: [PATCH 0/2] dmaengine: Cleanups for symlink handling and debugfs support
+Date:   Thu, 30 Jan 2020 13:42:18 +0200
+Message-ID: <20200130114220.23538-1-peter.ujfalusi@ti.com>
+X-Mailer: git-send-email 2.25.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200128204423.GF46072@google.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jan 28, 2020 at 12:44:23PM -0800, Matthias Kaehlcke wrote:
-> On Tue, Jan 28, 2020 at 01:33:42AM +0530, Sibi Sankar wrote:
-> > Add SDM845 to cpufreq-dt-platdev blacklist.
->
-> nit: you could mention that cpufreq is handled by the
-> 'qcom-cpufreq-hw' driver.
->
+Hi,
 
-IIUC, these platforms get the OPP table from the firmware and there shouldn't
-be OPP entries in the DT. If not, why not fix that to avoid more confusion.
-Can we make cpu0_node_has_opp_v2_prop return false in short.
+As I have mentioned on the symlink patch earlier I like how the gpio's debugfs
+shows in one place information.
 
---
+These patches are on top of Vinod's next (with the v2 fix for the symlink
+support).
+
+The first patch fixes and cleans up the symlink handling code a bit and the
+second adds support for debugfs file:
+
+On my board with audio and after a run with dmatest on 6 channels this is how
+the information is presented about the DMA drivers:
+
+ # cat /sys/kernel/debug/dmaengine 
+dma0 (285c0000.dma-controller): number of channels: 96
+
+dma1 (31150000.dma-controller): number of channels: 267
+ dma1chan0:             2b00000.mcasp:tx
+ dma1chan1:             2b00000.mcasp:rx
+ dma1chan2:             in-use
+ dma1chan3:             in-use
+ dma1chan4:             in-use
+ dma1chan5:             in-use
+ dma1chan6:             in-use
+ dma1chan7:             in-use
+
+It shows the users (device name + channel name) of the channels. If it is not a
+slave channel, then it only prints 'in-use' as no other information is
+available for non save channels.
+
+DMA drivers can implement the dbg_show callback to provide custom information
+for their channels if needed.
+
 Regards,
-Sudeep
+Peter
+---
+Peter Ujfalusi (2):
+  dmaengine: Cleanups for the slave <-> channel symlink support
+  dmaengine: Add basic debugfs support
+
+ drivers/dma/dmaengine.c   | 143 +++++++++++++++++++++++++++++++++++---
+ include/linux/dmaengine.h |  12 +++-
+ 2 files changed, 144 insertions(+), 11 deletions(-)
+
+-- 
+Peter
+
+Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
+Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
+
