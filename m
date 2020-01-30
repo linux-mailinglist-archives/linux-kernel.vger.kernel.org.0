@@ -2,35 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9525814DDE6
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Jan 2020 16:33:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B7FC814DDBE
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Jan 2020 16:26:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727313AbgA3PdZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 30 Jan 2020 10:33:25 -0500
-Received: from mga06.intel.com ([134.134.136.31]:47862 "EHLO mga06.intel.com"
+        id S1727303AbgA3P0D (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 30 Jan 2020 10:26:03 -0500
+Received: from mga03.intel.com ([134.134.136.65]:33923 "EHLO mga03.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726948AbgA3PdZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 30 Jan 2020 10:33:25 -0500
+        id S1727158AbgA3P0D (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 30 Jan 2020 10:26:03 -0500
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 30 Jan 2020 07:26:02 -0800
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 30 Jan 2020 07:26:02 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.70,382,1574150400"; 
-   d="scan'208";a="218308624"
+   d="scan'208";a="319227682"
 Received: from black.fi.intel.com ([10.237.72.28])
-  by orsmga007.jf.intel.com with ESMTP; 30 Jan 2020 07:26:00 -0800
+  by fmsmga001.fm.intel.com with ESMTP; 30 Jan 2020 07:26:00 -0800
 Received: by black.fi.intel.com (Postfix, from userid 1003)
-        id 6322A25A; Thu, 30 Jan 2020 17:25:59 +0200 (EET)
+        id 6A65542D; Thu, 30 Jan 2020 17:25:59 +0200 (EET)
 From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 To:     Petr Mladek <pmladek@suse.com>,
         Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
         Steven Rostedt <rostedt@goodmis.org>,
         linux-kernel@vger.kernel.org
 Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: [PATCH v4 3/6] console: Use for_each_console() helper in unregister_console()
-Date:   Thu, 30 Jan 2020 17:25:55 +0200
-Message-Id: <20200130152558.51839-3-andriy.shevchenko@linux.intel.com>
+Subject: [PATCH v4 4/6] console: Avoid positive return code from unregister_console()
+Date:   Thu, 30 Jan 2020 17:25:56 +0200
+Message-Id: <20200130152558.51839-4-andriy.shevchenko@linux.intel.com>
 X-Mailer: git-send-email 2.24.1
 In-Reply-To: <20200130152558.51839-1-andriy.shevchenko@linux.intel.com>
 References: <20200130152558.51839-1-andriy.shevchenko@linux.intel.com>
@@ -41,48 +41,48 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-We have rather open coded single linked list manipulations where we may
-simple use for_each_console() helper with properly set exit conditions.
+There are only two callers that use the returned code from
+unregister_console():
 
-Replace open coded single-linked list handling with for_each_console()
-helper in use.
+  - unregister_early_console() in arch/m68k/kernel/early_printk.c
+  - kgdb_unregister_nmi_console() in drivers/tty/serial/kgdb_nmi.c
+
+They both expect to get "0" on success and a non-zero value on error.
+But the current behavior is confusing and buggy:
+
+  - _braille_unregister_console() returns "1" on success
+  - unregister_console() returns "1" on error
+
+Fix and clean up the behavior:
+
+  - Return success when _braille_unregister_console() succeeded
+  - Return a meaningful error code when the console was not registered before
 
 Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Reviewed-by: Petr Mladek <pmladek@suse.com>
 ---
-v4: Add tag (Petr)
- kernel/printk/printk.c | 11 +++++------
- 1 file changed, 5 insertions(+), 6 deletions(-)
+v4: Drop return code mangling (Sergey, Petr), update commit message (Petr)
+ kernel/printk/printk.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
 diff --git a/kernel/printk/printk.c b/kernel/printk/printk.c
-index 51337ed426e0..d40a316908da 100644
+index d40a316908da..932345e6cd71 100644
 --- a/kernel/printk/printk.c
 +++ b/kernel/printk/printk.c
-@@ -2809,7 +2809,7 @@ EXPORT_SYMBOL(register_console);
+@@ -2817,10 +2817,12 @@ int unregister_console(struct console *console)
+ 		console->name, console->index);
  
- int unregister_console(struct console *console)
- {
--        struct console *a, *b;
-+	struct console *con;
- 	int res;
+ 	res = _braille_unregister_console(console);
+-	if (res)
++	if (res < 0)
+ 		return res;
++	if (res > 0)
++		return 0;
  
- 	pr_info("%sconsole [%s%d] disabled\n",
-@@ -2825,11 +2825,10 @@ int unregister_console(struct console *console)
+-	res = 1;
++	res = -ENODEV;
+ 	console_lock();
  	if (console_drivers == console) {
  		console_drivers=console->next;
- 		res = 0;
--	} else if (console_drivers) {
--		for (a=console_drivers->next, b=console_drivers ;
--		     a; b=a, a=b->next) {
--			if (a == console) {
--				b->next = a->next;
-+	} else {
-+		for_each_console(con) {
-+			if (con->next == console) {
-+				con->next = console->next;
- 				res = 0;
- 				break;
- 			}
 -- 
 2.24.1
 
