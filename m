@@ -2,157 +2,242 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 34C6C14E2A3
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Jan 2020 19:53:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7DE0914E2CB
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Jan 2020 19:58:07 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731767AbgA3Sxi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 30 Jan 2020 13:53:38 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36628 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730632AbgA3Sxh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 30 Jan 2020 13:53:37 -0500
-Received: from localhost (unknown [104.132.1.66])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 76A8220702;
-        Thu, 30 Jan 2020 18:53:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1580410416;
-        bh=gkUZbH3+rXoDnKrPU3LUSjOmxfEKY55z4s/Syd5EzCk=;
-        h=Date:From:To:Cc:Subject:From;
-        b=WfC4r47vT1+7aO/866TXK/W8wZf+cBh1dbByr+22PkvKt327PJ6JvEuvSgILTjVq3
-         Ms6NDRGJK0nAk0d1kQoeOeIz6xio7S+fwAlFTBfwBA3nyX+8Jfqy6pUf/0vOEitBb5
-         mApmLVB4Wny4Pkid6ZSk/VmRtZEt12uGooCY2w9k=
-Date:   Thu, 30 Jan 2020 10:53:36 -0800
-From:   Jaegeuk Kim <jaegeuk@kernel.org>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux F2FS Dev Mailing List 
-        <linux-f2fs-devel@lists.sourceforge.net>
-Subject: [GIT PULL] f2fs for 5.6
-Message-ID: <20200130185335.GA225399@google.com>
+        id S1727946AbgA3S6F (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 30 Jan 2020 13:58:05 -0500
+Received: from hqnvemgate25.nvidia.com ([216.228.121.64]:3326 "EHLO
+        hqnvemgate25.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727285AbgA3S6F (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 30 Jan 2020 13:58:05 -0500
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate25.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5e3327260000>; Thu, 30 Jan 2020 10:57:42 -0800
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate101.nvidia.com (PGP Universal service);
+  Thu, 30 Jan 2020 10:58:02 -0800
+X-PGP-Universal: processed;
+        by hqpgpgate101.nvidia.com on Thu, 30 Jan 2020 10:58:02 -0800
+Received: from [10.2.164.115] (10.124.1.5) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Thu, 30 Jan
+ 2020 18:58:02 +0000
+Subject: Re: Re: Re: Re: [RFC PATCH v1 5/5] arm64: tegra: Add Tegra VI CSI
+ suppport in device tree
+To:     Thierry Reding <thierry.reding@gmail.com>
+CC:     <jonathanh@nvidia.com>, <frankc@nvidia.com>, <hverkuil@xs4all.nl>,
+        <linux-media@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+References: <1580235801-4129-1-git-send-email-skomatineni@nvidia.com>
+ <1580235801-4129-6-git-send-email-skomatineni@nvidia.com>
+ <20200129094624.GD2479935@ulmo>
+ <bd18711d-ce23-cbee-7824-37a8c78908e6@nvidia.com>
+ <20200130123607.GB2584455@ulmo>
+ <c5fd4eb3-0026-95a5-5162-e1cf5302698e@nvidia.com>
+ <20200130175820.GA3155155@ulmo>
+From:   Sowjanya Komatineni <skomatineni@nvidia.com>
+Message-ID: <deb6839b-2ddb-be54-a985-a2b7624374af@nvidia.com>
+Date:   Thu, 30 Jan 2020 10:58:00 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20200130175820.GA3155155@ulmo>
+X-Originating-IP: [10.124.1.5]
+X-ClientProxiedBy: HQMAIL105.nvidia.com (172.20.187.12) To
+ HQMAIL107.nvidia.com (172.20.187.13)
+Content-Type: text/plain; charset="windows-1252"; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1580410662; bh=QNM5QzcxkMUFdTXG9lkyArnht6Pwyaue/OM6xvKj7m0=;
+        h=X-PGP-Universal:Subject:To:CC:References:From:Message-ID:Date:
+         User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
+         X-ClientProxiedBy:Content-Type:Content-Transfer-Encoding:
+         Content-Language;
+        b=ITmCna9sbrRh0pVzoqdUgyZz/6ImOFemFtsl4vdj/gf6PWpATy+sWSI6nF+ifGKrd
+         bnhVllCaiZ8kQPLOo1M5uvWz2qgA86mFdQS1D5WPIlXVjigxYOwx+CBHu3PM9Sd1MQ
+         S+tQY1MRuMxHNF8jCQLi6ltoifA6WpBSbEeuPRvFQHwl3AlmYehaj3d/W202b5Hjy4
+         MiD7qCCEKPTBaYAg24PAi8pJI0tNggkzoT0K1IQ8YNjHnh1RdZlp6Yk5D1cd2Q8NgW
+         j/X5bJF9U05rh7TIQkbOGpiVLaEXu8yBQJwPlEGJxd6xw/B+d3FxL0Ix3x6suelAhY
+         j/copeF0M0uLA==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Linus,
 
-Could you please consider this pull request?
+On 1/30/20 9:58 AM, Thierry Reding wrote:
+> On Thu, Jan 30, 2020 at 09:18:50AM -0800, Sowjanya Komatineni wrote:
+>> On 1/30/20 4:36 AM, Thierry Reding wrote:
+>>> On Wed, Jan 29, 2020 at 08:22:48AM -0800, Sowjanya Komatineni wrote:
+>>>> On 1/29/20 1:46 AM, Thierry Reding wrote:
+>>>>> On Tue, Jan 28, 2020 at 10:23:21AM -0800, Sowjanya Komatineni wrote:
+>>>>>> Tegra210 contains VI controller for video input capture from MIPI
+>>>>>> CSI camera sensors and also supports built-in test pattern generator.
+>>>>>>
+>>>>>> CSI ports can be one-to-one mapped to VI channels for capturing from
+>>>>>> an external sensor or from built-in test pattern generator.
+>>>>>>
+>>>>>> This patch adds support for VI and CSI and enables them in Tegra210
+>>>>>> device tree.
+>>>>>>
+>>>>>> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
+>>>>>> ---
+>>>>>>     arch/arm64/boot/dts/nvidia/tegra210-p2597.dtsi |  8 +++++++
+>>>>>>     arch/arm64/boot/dts/nvidia/tegra210.dtsi       | 31 +++++++++++++++++++++++++-
+>>>>>>     2 files changed, 38 insertions(+), 1 deletion(-)
+>>>>>>
+>>>>>> diff --git a/arch/arm64/boot/dts/nvidia/tegra210-p2597.dtsi b/arch/arm64/boot/dts/nvidia/tegra210-p2597.dtsi
+>>>>>> index b0095072bc28..ec1b3033fa03 100644
+>>>>>> --- a/arch/arm64/boot/dts/nvidia/tegra210-p2597.dtsi
+>>>>>> +++ b/arch/arm64/boot/dts/nvidia/tegra210-p2597.dtsi
+>>>>>> @@ -10,6 +10,14 @@
+>>>>>>     			status = "okay";
+>>>>>>     		};
+>>>>>> +		vi@54080000 {
+>>>>>> +			status = "okay";
+>>>>>> +		};
+>>>>>> +
+>>>>>> +		csi@0x54080838 {
+>>>>>> +			status = "okay";
+>>>>>> +		};
+>>>>>> +
+>>>>>>     		sor@54580000 {
+>>>>>>     			status = "okay";
+>>>>>> diff --git a/arch/arm64/boot/dts/nvidia/tegra210.dtsi b/arch/arm64/boot/dts/nvidia/tegra210.dtsi
+>>>>>> index 48c63256ba7f..c6107ec03ad1 100644
+>>>>>> --- a/arch/arm64/boot/dts/nvidia/tegra210.dtsi
+>>>>>> +++ b/arch/arm64/boot/dts/nvidia/tegra210.dtsi
+>>>>>> @@ -136,9 +136,38 @@
+>>>>>>     		vi@54080000 {
+>>>>>>     			compatible = "nvidia,tegra210-vi";
+>>>>>> -			reg = <0x0 0x54080000 0x0 0x00040000>;
+>>>>>> +			reg = <0x0 0x54080000 0x0 0x808>;
+>>>>>>     			interrupts = <GIC_SPI 69 IRQ_TYPE_LEVEL_HIGH>;
+>>>>>>     			status = "disabled";
+>>>>>> +			assigned-clocks = <&tegra_car TEGRA210_CLK_VI>;
+>>>>>> +			assigned-clock-parents = <&tegra_car TEGRA210_CLK_PLL_C4_OUT0>;
+>>>>>> +
+>>>>>> +			clocks = <&tegra_car TEGRA210_CLK_VI>;
+>>>>>> +			clock-names = "vi";
+>>>>>> +			resets = <&tegra_car 20>;
+>>>>>> +			reset-names = "vi";
+>>>>>> +		};
+>>>>>> +
+>>>>>> +		csi@0x54080838 {
+>>>>>> +			compatible = "nvidia,tegra210-csi";
+>>>>>> +			reg = <0x0 0x54080838 0x0 0x2000>;
+>>>>>> +			status = "disabled";
+>>>>>> +			assigned-clocks = <&tegra_car TEGRA210_CLK_CILAB>,
+>>>>>> +					  <&tegra_car TEGRA210_CLK_CILCD>,
+>>>>>> +					  <&tegra_car TEGRA210_CLK_CILE>;
+>>>>>> +			assigned-clock-parents = <&tegra_car TEGRA210_CLK_PLL_P>,
+>>>>>> +						 <&tegra_car TEGRA210_CLK_PLL_P>,
+>>>>>> +						 <&tegra_car TEGRA210_CLK_PLL_P>;
+>>>>>> +			assigned-clock-rates = <102000000>,
+>>>>>> +					       <102000000>,
+>>>>>> +					       <102000000>;
+>>>>>> +
+>>>>>> +			clocks = <&tegra_car TEGRA210_CLK_CSI>,
+>>>>>> +				 <&tegra_car TEGRA210_CLK_CILAB>,
+>>>>>> +				 <&tegra_car TEGRA210_CLK_CILCD>,
+>>>>>> +				 <&tegra_car TEGRA210_CLK_CILE>;
+>>>>>> +			clock-names = "csi", "cilab", "cilcd", "cile";
+>>>>>> +
+>>>>>>     		};
+>>>>> Can this be a child of the vi node? Looking at the register ranges it
+>>>>> seems like these are actually a single IP block. If they have separate
+>>>>> blocks with clearly separate functionality, then it makes sense to have
+>>>>> CSI be a child node of VI, though it may also be okay to merge both and
+>>>>> have a single node with the driver doing all of the differentiation
+>>>>> between what's VI and what's CSI.
+>>>>>
+>>>>> Looking at later chips, the split between VI and CSI is more explicit,
+>>>>> so having the split in DT for Tegra210 may make sense for consistency.
+>>>>>
+>>>>> I know we've discussed this before, but for some reason I keep coming
+>>>>> back to this. I'll go through the other patches to see if I can get a
+>>>>> clearer picture of how this could all work together.
+>>>>>
+>>>>> Thierry
+>>>> We can keep it separate as we discussed.
+>>>>
+>>>> But as Tegra186 onwards, CSI is separate device to be all cosistent I kept
+>>>> CSI as separate node for Tegra210 as well.
+>>>   From our discussion, my understanding was that CSI would be a separate
+>>> device, but it would still be a subdevice of VI. The address offset of
+>>> the CSI registers not being aligned to a power of two is a strong
+>>> indication that this is really all part of the same block.
+>> Yes our earlier discussion is to have CSI as subdevice.
+>>
+>> Later looking into T186 and later NVCSI is totally separate so it will be
+>> separate device and to have driver common moved Tegra210 CSI also as
+>> separate device instead of having it as subdevice of VI.
+>>
+>> Earlier when we discussed at that time I am using TPG also from device
+>> graphs but not moved to hard media links inside driver for TPG.
+>>
+>> For this we need CSI to be available prior to VI.
+> Why is that? Does creating the hard media links need access to a struct
+> device? What if we created that device in the VI driver without any
+> reliance on DT? Shouldn't that also work? I have a hard time imagining
+> that there aren't other devices like this where we don't necessarily
+> have separate devices for these links.
+Yes we need CSI structure for hard link TPG also as all csi channel list 
+is part of CSI device.
 
-Thanks,
+We can create CSI channel subdevices within VI without using CSI device 
+from a separate CSI driver probe for Tegra210 and make all subdev 
+related ops implementations as global so they can be used from VI driver 
+for Tegra210 and can also be used for Tegra186 and later in separate CSI 
+driver.
 
-The following changes since commit 6794862a16ef41f753abd75c03a152836e4c8028:
+During creating media links in VI driver for TPG, for T210 we can use 
+local CSI device structure and for T186+ we can use CSI device structure 
+created during CSI probe.
 
-  Merge tag 'for-5.5-rc1-kconfig-tag' of git://git.kernel.org/pub/scm/linux/kernel/git/kdave/linux (2019-12-09 12:14:31 -0800)
+Sorry, I didn't understood what you meant by separate devices for these 
+link.
 
-are available in the Git repository at:
+We only have Tegra CSI linked to Tegra VI for TPG/Real sensor.
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/jaegeuk/f2fs.git tags/f2fs-for-5.6
+>> If we add CSI as subdevice to VI, CSI will not be available by the time
+>> VI init happens.
+> The CSI subdevice should be registered as part of the VI driver's probe,
+> right? That's typically where you'd call of_platform_populate(). Could
+> we not set up the hard media links in the ->init() callbacks for the
+> host1x clients? Those are called after all of the devices have been
+> probed, so the CSI device should be available at that time.
+>
+>> Currently host1x subdevices listed has CSI before VI and CSI init happens
+>> earlier so by the time VI init happens CSI is available to do media links
+>> b/w VI video entity and CSI subdevice entity.
+> Okay, I understand how this would be a convenient solution. However, the
+> device tree is a hardware description, so we need to ignore what we know
+> about the operating system infrastructure that we want to use when
+> writing the device tree bindings (and the device tree content) in order
+> to make sure the same binding will work on a different operating system
+> which may have a completely different infrastructure (or none at all).
+>
+>> Also having CSI as separate subdevice (not as subdevice to VI) for T210 will
+>> be consistent with T186 and later.
+> Again, I see how that's convenient. But the main difference between
+> Tegra210 and Tegra186 is that on the former, the CSI is merged with VI,
+> whereas on the latter the CSI is a completely separate hardware block.
+>
+> Since device tree describes the hardware, that difference should be
+> apparent in the device tree. I initially thought as well that it would
+> be advantageous if both had the same representation, but I do realize
+> now that this has a significant impact on the device tree, and it
+> violates the basic principles we base device tree binding design on.
+>
+> Thierry
 
-for you to fetch changes up to 80f2388afa6ef985f9c5c228e36705c4d4db4756:
+I just thought of driver implementation being common b/w T210 and T186+ 
+by having CSI as separate device node rather than as child node to VI to 
+avoid CSI structure handling within VI for T210 only.
 
-  f2fs: fix race conditions in ->d_compare() and ->d_hash() (2020-01-24 10:04:09 -0800)
+Will update DT and driver to have CSI as child node of VI for T210.
 
-----------------------------------------------------------------
-f2fs-for-5.6
 
-In this series, we've implemented transparent compression experimentally. It
-supports LZO and LZ4, but will add more later as we investigate in the field
-more. At this point, the feature doesn't expose compressed space to user
-directly in order to guarantee potential data updates later to the space.
-Instead, the main goal is to reduce data writes to flash disk as much as
-possible, resulting in extending disk life time as well as relaxing IO
-congestion. Alternatively, we're also considering to add ioctl() to reclaim
-compressed space and show it to user after putting the immutable bit.
-
-Enhancement:
- - add compression support
- - avoid unnecessary locks in quota ops
- - harden power-cut scenario for zoned block devices
- - use private bio_set to avoid IO congestion
- - replace GC mutex with rwsem to serialize callers
-
-Bug fix:
- - fix dentry consistency and memory corruption in rename()'s error case
- - fix wrong swap extent reports
- - fix casefolding bugs
- - change lock coverage to avoid deadlock
- - avoid GFP_KERNEL under f2fs_lock_op
-
-And, we've cleaned up sysfs entries to prepare no debugfs.
-
-----------------------------------------------------------------
-Chao Yu (5):
-      f2fs: introduce private bioset
-      f2fs: support data compression
-      f2fs: fix to add swap extent correctly
-      f2fs: fix memleak of kobject
-      f2fs: change to use rwsem for gc_mutex
-
-Chengguang Xu (2):
-      f2fs: fix miscounted block limit in f2fs_statfs_project()
-      f2fs: code cleanup for f2fs_statfs_project()
-
-Eric Biggers (5):
-      f2fs: don't keep META_MAPPING pages used for moving verity file blocks
-      f2fs: remove unneeded check for error allocating bio_post_read_ctx
-      f2fs: fix deadlock allocating bio_post_read_ctx from mempool
-      f2fs: fix dcache lookup of !casefolded directories
-      f2fs: fix race conditions in ->d_compare() and ->d_hash()
-
-Hridya Valsaraju (2):
-      f2fs: delete duplicate information on sysfs nodes
-      f2fs: Add f2fs stats to sysfs
-
-Jaegeuk Kim (13):
-      f2fs: preallocate DIO blocks when forcing buffered_io
-      f2fs: call f2fs_balance_fs outside of locked page
-      f2fs: keep quota data on write_begin failure
-      f2fs: should avoid recursive filesystem ops
-      f2fs: set GFP_NOFS when moving inline dentries
-      f2fs: set I_LINKABLE early to avoid wrong access by vfs
-      f2fs: don't put new_page twice in f2fs_rename
-      f2fs: declare nested quota_sem and remove unnecessary sems
-      f2fs: free sysfs kobject
-      f2fs: run fsck when getting bad inode during GC
-      f2fs: convert inline_dir early before starting rename
-      f2fs: add a way to turn off ipu bio cache
-      f2fs: update f2fs document regarding to fsync_mode
-
-Sahitya Tummala (2):
-      f2fs: cleanup duplicate stats for atomic files
-      f2fs: show the CP_PAUSE reason in checkpoint traces
-
-Shin'ichiro Kawasaki (2):
-      f2fs: Check write pointer consistency of open zones
-      f2fs: Check write pointer consistency of non-open zones
-
- Documentation/ABI/testing/sysfs-fs-f2fs |  280 +++++---
- Documentation/filesystems/f2fs.txt      |  216 ++----
- fs/f2fs/Kconfig                         |   27 +-
- fs/f2fs/Makefile                        |    1 +
- fs/f2fs/checkpoint.c                    |    6 +-
- fs/f2fs/compress.c                      | 1176 +++++++++++++++++++++++++++++++
- fs/f2fs/data.c                          |  736 ++++++++++++++++---
- fs/f2fs/debug.c                         |   88 ++-
- fs/f2fs/dir.c                           |   25 +-
- fs/f2fs/f2fs.h                          |  329 ++++++++-
- fs/f2fs/file.c                          |  251 +++++--
- fs/f2fs/gc.c                            |   18 +-
- fs/f2fs/inline.c                        |   44 +-
- fs/f2fs/inode.c                         |   41 ++
- fs/f2fs/namei.c                         |  120 +++-
- fs/f2fs/recovery.c                      |   20 +-
- fs/f2fs/segment.c                       |  271 ++++++-
- fs/f2fs/segment.h                       |   19 +-
- fs/f2fs/super.c                         |  182 ++++-
- fs/f2fs/sysfs.c                         |  158 ++++-
- include/linux/f2fs_fs.h                 |    5 +
- include/trace/events/f2fs.h             |  103 ++-
- 22 files changed, 3467 insertions(+), 649 deletions(-)
- create mode 100644 fs/f2fs/compress.c
