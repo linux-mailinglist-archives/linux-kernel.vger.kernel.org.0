@@ -2,40 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1F46614E16D
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Jan 2020 19:44:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 11BA314E2AC
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Jan 2020 19:54:33 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730817AbgA3SoW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 30 Jan 2020 13:44:22 -0500
-Received: from mail.kernel.org ([198.145.29.99]:53398 "EHLO mail.kernel.org"
+        id S1729947AbgA3Sk0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 30 Jan 2020 13:40:26 -0500
+Received: from mail.kernel.org ([198.145.29.99]:47882 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730811AbgA3SoT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 30 Jan 2020 13:44:19 -0500
+        id S1729912AbgA3SkT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 30 Jan 2020 13:40:19 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D15432082E;
-        Thu, 30 Jan 2020 18:44:18 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C395F214DB;
+        Thu, 30 Jan 2020 18:40:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1580409859;
-        bh=qsORcU52zr2Vq4Oqy+qSQle/OTS7u/Pcf1nBx+OzJBc=;
+        s=default; t=1580409619;
+        bh=N/VGsv4nbUCgQlYnuvBIaa7hCq3CZsorA+Vhoh+tDc4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=UQ9kApeRIXc8bC52KGCGBPez5wX2A3Vn67X2cvEP1L8qbOcqv/Cn7xAZuz3Vtazs8
-         Hg2QIv+CaswrQNQzR+xagQCAI3o1NLspic5i/yqcoag5v+xQJuonEQQCcrhQ7TS428
-         bMVqzFUKiYuouxJ5xVRQr5UcbaduuBYCUqGOKdkQ=
+        b=iUxTGvdC+6nhz1VEENg8LEh5kU7YpcFY7Zn258H7dVYbb19+77FhFzSj1YYc++YaR
+         +YyQEHhdin/lCSgeftTzJ8QNJMdjWYR9LNiftRZMD6H6xb7+YHQb9oRL5m9oI5gO2G
+         exer4ADN8hopKrJnYyp7hDsxPGALpbUsZdkVIuAs=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Russell King <rmk+kernel@armlinux.org.uk>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Wim Van Sebroeck <wim@linux-watchdog.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.4 062/110] watchdog: orion: fix platform_get_irq() complaints
-Date:   Thu, 30 Jan 2020 19:38:38 +0100
-Message-Id: <20200130183622.243888264@linuxfoundation.org>
+        stable@vger.kernel.org, Ramalingam C <ramalingam.c@intel.com>,
+        Tomas Winkler <tomas.winkler@intel.com>,
+        Alexander Usyskin <alexander.usyskin@intel.com>
+Subject: [PATCH 5.5 22/56] mei: hdcp: bind only with i915 on the same PCH
+Date:   Thu, 30 Jan 2020 19:38:39 +0100
+Message-Id: <20200130183613.282806892@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200130183613.810054545@linuxfoundation.org>
-References: <20200130183613.810054545@linuxfoundation.org>
+In-Reply-To: <20200130183608.849023566@linuxfoundation.org>
+References: <20200130183608.849023566@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,52 +44,82 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Russell King <rmk+kernel@armlinux.org.uk>
+From: Tomas Winkler <tomas.winkler@intel.com>
 
-[ Upstream commit dcbce5fbcc69bf2553f650004aad44bf390eca73 ]
+commit 1e8d19d9b0dfcf11b61bac627203a290577e807a upstream.
 
-Fix:
+The mei device and i915 must reside on the same
+PCH in order for HDCP to work. Make the component
+matching function enforce this requirement.
 
-orion_wdt f1020300.watchdog: IRQ index 1 not found
+                   hdcp
+                    |
+   i915            mei
+    |               |
+    +----= PCH =----+
 
-which is caused by platform_get_irq() now complaining when optional
-IRQs are not found.  Neither interrupt for orion is required, so
-make them both optional.
+Cc: <stable@vger.kernel.org> v5.0+
+Cc: Ramalingam C <ramalingam.c@intel.com>
+Signed-off-by: Tomas Winkler <tomas.winkler@intel.com>
+Reviewed-by: Alexander Usyskin <alexander.usyskin@intel.com>
+Link: https://lore.kernel.org/r/20191212084103.2893-1-tomas.winkler@intel.com
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-Signed-off-by: Russell King <rmk+kernel@armlinux.org.uk>
-Reviewed-by: Guenter Roeck <linux@roeck-us.net>
-Link: https://lore.kernel.org/r/E1iahcN-0000AT-Co@rmk-PC.armlinux.org.uk
-Signed-off-by: Guenter Roeck <linux@roeck-us.net>
-Signed-off-by: Wim Van Sebroeck <wim@linux-watchdog.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/watchdog/orion_wdt.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/misc/mei/hdcp/mei_hdcp.c |   33 ++++++++++++++++++++++++++++++---
+ 1 file changed, 30 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/watchdog/orion_wdt.c b/drivers/watchdog/orion_wdt.c
-index 1cccf8eb1c5d4..8e6dfe76f9c9d 100644
---- a/drivers/watchdog/orion_wdt.c
-+++ b/drivers/watchdog/orion_wdt.c
-@@ -602,7 +602,7 @@ static int orion_wdt_probe(struct platform_device *pdev)
- 		set_bit(WDOG_HW_RUNNING, &dev->wdt.status);
+--- a/drivers/misc/mei/hdcp/mei_hdcp.c
++++ b/drivers/misc/mei/hdcp/mei_hdcp.c
+@@ -757,11 +757,38 @@ static const struct component_master_ops
+ 	.unbind = mei_component_master_unbind,
+ };
  
- 	/* Request the IRQ only after the watchdog is disabled */
--	irq = platform_get_irq(pdev, 0);
-+	irq = platform_get_irq_optional(pdev, 0);
- 	if (irq > 0) {
- 		/*
- 		 * Not all supported platforms specify an interrupt for the
-@@ -617,7 +617,7 @@ static int orion_wdt_probe(struct platform_device *pdev)
- 	}
++/**
++ * mei_hdcp_component_match - compare function for matching mei hdcp.
++ *
++ *    The function checks if the driver is i915, the subcomponent is HDCP
++ *    and the grand parent of hdcp and the parent of i915 are the same
++ *    PCH device.
++ *
++ * @dev: master device
++ * @subcomponent: subcomponent to match (I915_COMPONENT_HDCP)
++ * @data: compare data (mei hdcp device)
++ *
++ * Return:
++ * * 1 - if components match
++ * * 0 - otherwise
++ */
+ static int mei_hdcp_component_match(struct device *dev, int subcomponent,
+ 				    void *data)
+ {
+-	return !strcmp(dev->driver->name, "i915") &&
+-	       subcomponent == I915_COMPONENT_HDCP;
++	struct device *base = data;
++
++	if (strcmp(dev->driver->name, "i915") ||
++	    subcomponent != I915_COMPONENT_HDCP)
++		return 0;
++
++	base = base->parent;
++	if (!base)
++		return 0;
++
++	base = base->parent;
++	dev = dev->parent;
++
++	return (base && dev && dev == base);
+ }
  
- 	/* Optional 2nd interrupt for pretimeout */
--	irq = platform_get_irq(pdev, 1);
-+	irq = platform_get_irq_optional(pdev, 1);
- 	if (irq > 0) {
- 		orion_wdt_info.options |= WDIOF_PRETIMEOUT;
- 		ret = devm_request_irq(&pdev->dev, irq, orion_wdt_pre_irq,
--- 
-2.20.1
-
+ static int mei_hdcp_probe(struct mei_cl_device *cldev,
+@@ -785,7 +812,7 @@ static int mei_hdcp_probe(struct mei_cl_
+ 
+ 	master_match = NULL;
+ 	component_match_add_typed(&cldev->dev, &master_match,
+-				  mei_hdcp_component_match, comp_master);
++				  mei_hdcp_component_match, &cldev->dev);
+ 	if (IS_ERR_OR_NULL(master_match)) {
+ 		ret = -ENOMEM;
+ 		goto err_exit;
 
 
