@@ -2,37 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 22FEF14E0ED
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Jan 2020 19:40:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 556FB14E19E
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Jan 2020 19:46:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727984AbgA3SkA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 30 Jan 2020 13:40:00 -0500
-Received: from mail.kernel.org ([198.145.29.99]:47366 "EHLO mail.kernel.org"
+        id S1731116AbgA3Sp6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 30 Jan 2020 13:45:58 -0500
+Received: from mail.kernel.org ([198.145.29.99]:55566 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727954AbgA3Sj6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 30 Jan 2020 13:39:58 -0500
+        id S1728089AbgA3Spt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 30 Jan 2020 13:45:49 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BBBBE214D8;
-        Thu, 30 Jan 2020 18:39:56 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 55FD4205F4;
+        Thu, 30 Jan 2020 18:45:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1580409597;
-        bh=PcYjAsbCfzF+5dESTDBeoAdBwesnGNr/0H4djHcVYs4=;
+        s=default; t=1580409948;
+        bh=AJU6CtPh0acVabB7XyOq/MYQTgmrFRKeMffxV6gDCu4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=bDUvCcCkLkRbdPluGqYI/q1EJZ6muIZhvZlQFIqWxUEI99UybSPxgb+8JO8ij9WQq
-         vjJtOIQpdyOA4p0fE1dg9tpqiFvyvcL/vNVC8EvYO0gmUO/3m+FttMdpL1JZG+AwiO
-         5XWjDowSQndlwZUUm6QHf0Fh7+3CqP5Rgv1nfUrk=
+        b=RstR3Y8XA5WSMMm2dvl2xPUmMeXnZDjV5o8nNO94/XQBjC9uJkyk/fpCHKxk8Irq6
+         vguFGmCC/HReSLXb4rF334VMDD8EGyLf1QQDSWa5+z05wXRZuEnk+YDlGcoD7wqY8L
+         oYmcVTG176YmyITCzdx8RZ9xMbGfVVAsqVruJ7WI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Malcolm Priestley <tvboxspy@gmail.com>
-Subject: [PATCH 5.5 14/56] staging: vt6656: correct packet types for CTS protect, mode.
-Date:   Thu, 30 Jan 2020 19:38:31 +0100
-Message-Id: <20200130183611.888987584@linuxfoundation.org>
+        stable@vger.kernel.org, Chuhong Yuan <hslester96@gmail.com>,
+        Nicolin Chen <nicoleotsuka@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 5.4 056/110] ASoC: fsl_audmix: add missed pm_runtime_disable
+Date:   Thu, 30 Jan 2020 19:38:32 +0100
+Message-Id: <20200130183621.760869222@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200130183608.849023566@linuxfoundation.org>
-References: <20200130183608.849023566@linuxfoundation.org>
+In-Reply-To: <20200130183613.810054545@linuxfoundation.org>
+References: <20200130183613.810054545@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -42,60 +45,60 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Malcolm Priestley <tvboxspy@gmail.com>
+From: Chuhong Yuan <hslester96@gmail.com>
 
-commit d971fdd3412f8342747778fb59b8803720ed82b1 upstream.
+[ Upstream commit 77fffa742285f2b587648d6c72b5c705633f146f ]
 
-It appears that the driver still transmits in CTS protect mode even
-though it is not enabled in mac80211.
+The driver forgets to call pm_runtime_disable in probe failure
+and remove.
+Add the missed calls to fix it.
 
-That is both packet types PK_TYPE_11GA and PK_TYPE_11GB both use CTS protect.
-The only difference between them GA does not use B rates.
-
-Find if only B rate in GB or GA in protect mode otherwise transmit packets
-as PK_TYPE_11A.
-
-Cc: stable <stable@vger.kernel.org>
-Signed-off-by: Malcolm Priestley <tvboxspy@gmail.com>
-Link: https://lore.kernel.org/r/9c1323ff-dbb3-0eaa-43e1-9453f7390dc0@gmail.com
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Signed-off-by: Chuhong Yuan <hslester96@gmail.com>
+Acked-by: Nicolin Chen <nicoleotsuka@gmail.com>
+Link: https://lore.kernel.org/r/20191203111303.12933-1-hslester96@gmail.com
+Signed-off-by: Mark Brown <broonie@kernel.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/staging/vt6656/device.h |    2 ++
- drivers/staging/vt6656/rxtx.c   |   12 ++++++++----
- 2 files changed, 10 insertions(+), 4 deletions(-)
+ sound/soc/fsl/fsl_audmix.c | 9 ++++++++-
+ 1 file changed, 8 insertions(+), 1 deletion(-)
 
---- a/drivers/staging/vt6656/device.h
-+++ b/drivers/staging/vt6656/device.h
-@@ -52,6 +52,8 @@
- #define RATE_AUTO	12
+diff --git a/sound/soc/fsl/fsl_audmix.c b/sound/soc/fsl/fsl_audmix.c
+index a1db1bce330fa..5faecbeb54970 100644
+--- a/sound/soc/fsl/fsl_audmix.c
++++ b/sound/soc/fsl/fsl_audmix.c
+@@ -505,15 +505,20 @@ static int fsl_audmix_probe(struct platform_device *pdev)
+ 					      ARRAY_SIZE(fsl_audmix_dai));
+ 	if (ret) {
+ 		dev_err(dev, "failed to register ASoC DAI\n");
+-		return ret;
++		goto err_disable_pm;
+ 	}
  
- #define MAX_RATE			12
-+#define VNT_B_RATES	(BIT(RATE_1M) | BIT(RATE_2M) |\
-+			BIT(RATE_5M) | BIT(RATE_11M))
+ 	priv->pdev = platform_device_register_data(dev, mdrv, 0, NULL, 0);
+ 	if (IS_ERR(priv->pdev)) {
+ 		ret = PTR_ERR(priv->pdev);
+ 		dev_err(dev, "failed to register platform %s: %d\n", mdrv, ret);
++		goto err_disable_pm;
+ 	}
  
- /*
-  * device specific
---- a/drivers/staging/vt6656/rxtx.c
-+++ b/drivers/staging/vt6656/rxtx.c
-@@ -815,10 +815,14 @@ int vnt_tx_packet(struct vnt_private *pr
- 		if (info->band == NL80211_BAND_5GHZ) {
- 			pkt_type = PK_TYPE_11A;
- 		} else {
--			if (tx_rate->flags & IEEE80211_TX_RC_USE_CTS_PROTECT)
--				pkt_type = PK_TYPE_11GB;
--			else
--				pkt_type = PK_TYPE_11GA;
-+			if (tx_rate->flags & IEEE80211_TX_RC_USE_CTS_PROTECT) {
-+				if (priv->basic_rates & VNT_B_RATES)
-+					pkt_type = PK_TYPE_11GB;
-+				else
-+					pkt_type = PK_TYPE_11GA;
-+			} else {
-+				pkt_type = PK_TYPE_11A;
-+			}
- 		}
- 	} else {
- 		pkt_type = PK_TYPE_11B;
++	return 0;
++
++err_disable_pm:
++	pm_runtime_disable(dev);
+ 	return ret;
+ }
+ 
+@@ -521,6 +526,8 @@ static int fsl_audmix_remove(struct platform_device *pdev)
+ {
+ 	struct fsl_audmix *priv = dev_get_drvdata(&pdev->dev);
+ 
++	pm_runtime_disable(&pdev->dev);
++
+ 	if (priv->pdev)
+ 		platform_device_unregister(priv->pdev);
+ 
+-- 
+2.20.1
+
 
 
