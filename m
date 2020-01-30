@@ -2,88 +2,91 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 538BE14E3DE
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Jan 2020 21:22:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4C5D814E3A4
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Jan 2020 21:06:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727769AbgA3UWU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 30 Jan 2020 15:22:20 -0500
-Received: from mga07.intel.com ([134.134.136.100]:20854 "EHLO mga07.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727592AbgA3UWR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 30 Jan 2020 15:22:17 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 30 Jan 2020 12:22:16 -0800
-X-IronPort-AV: E=Sophos;i="5.70,382,1574150400"; 
-   d="scan'208";a="222908329"
-Received: from dwillia2-desk3.jf.intel.com (HELO dwillia2-desk3.amr.corp.intel.com) ([10.54.39.16])
-  by orsmga008-auth.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 30 Jan 2020 12:22:16 -0800
-Subject: [PATCH 3/5] libnvdimm/namespace: Enforce memremap_compat_align()
-From:   Dan Williams <dan.j.williams@intel.com>
-To:     linux-nvdimm@lists.01.org
-Cc:     "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>,
-        Jeff Moyer <jmoyer@redhat.com>, vishal.l.verma@intel.com,
-        hch@lst.de, linux-kernel@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org
-Date:   Thu, 30 Jan 2020 12:06:13 -0800
-Message-ID: <158041477336.3889308.4581652885008605170.stgit@dwillia2-desk3.amr.corp.intel.com>
-In-Reply-To: <158041475480.3889308.655103391935006598.stgit@dwillia2-desk3.amr.corp.intel.com>
-References: <158041475480.3889308.655103391935006598.stgit@dwillia2-desk3.amr.corp.intel.com>
-User-Agent: StGit/0.18-3-g996c
+        id S1727589AbgA3UGS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 30 Jan 2020 15:06:18 -0500
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:38771 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726267AbgA3UGS (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 30 Jan 2020 15:06:18 -0500
+Received: by mail-lj1-f194.google.com with SMTP id w1so4752212ljh.5;
+        Thu, 30 Jan 2020 12:06:16 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=5MtfyjIK8iIjsf2DswNSJhJWXPmE9JSASerKTR8hIHk=;
+        b=Dfjjt1oJBm8Zv7HcUVqflmVkswBSaeNY1oyGduYay3CkUQkstffONIaynu+1fv8eTL
+         qArLmejHHLOWYCjM0k54OTmjEtQqrvRSzJDmN+VBXZCsXuUd0r8tzS5wfxWylcOTIWpp
+         Fd3T036r7GTGzbIs1WcoywQwBcIVqflDA5o4wzt3BeC9n31ck1XSu0DS0t+kybmvYEde
+         YfRYCu9adTRSrobveMAIae0JVppeN9QqoZ9K8W6ar20RXASNUZmtsXUKwwd5O7qeafOp
+         +/CAbeAgpWAgBaU1NIslo5ijNfwja1MIfFokWgl83gHD8aEO3UZaNh2r3nyw72nO2rCi
+         Wd7Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=5MtfyjIK8iIjsf2DswNSJhJWXPmE9JSASerKTR8hIHk=;
+        b=an7OnvN7qXQA5ssVshsIzjkYS7mgOgNMi7AhoZwohkENWCFS3GXNviSAePwHdr8Zlj
+         yxAPcH0MJGmqGAMEgnh9i353Xrf0UhKfoZm4a9um1KX0n2gvyYivd7EJnu8x5ZEBJk0T
+         /looD7DPyUbmW5FOlOyHekFJZSdwAp7QX2Gs7ohcZtpDo4iMQ2fpmENt/+nzySkhE3CH
+         yNxX5O7E4TttNuPrua0/lGElCUBUmSlbpAIjccJFnDww5wRUVQDzqM3W87id08X5Em05
+         GZemZuzAaiNT/OFOqsKPLAfDnPcEiwO/JgSYEnU8DgQd77SgbvIT+01T5zFwFO+5peDy
+         T/tw==
+X-Gm-Message-State: APjAAAXoi4pxWT9mofHNagnNz8OwZLZI40RBaZVKoDzCR39YvAkBAISq
+        86qKukNYyxdoekhPqds9I+hfiecY
+X-Google-Smtp-Source: APXvYqyXwLnGLwg102wBTYCAiUt/EXf5IEfxXfCBcbMe98trvybQO7hUWy+nEDwU/LSwjKRV65eGiA==
+X-Received: by 2002:a2e:9090:: with SMTP id l16mr3909709ljg.281.1580414775879;
+        Thu, 30 Jan 2020 12:06:15 -0800 (PST)
+Received: from [192.168.2.145] (79-139-233-37.dynamic.spd-mgts.ru. [79.139.233.37])
+        by smtp.googlemail.com with ESMTPSA id u16sm3535567ljl.34.2020.01.30.12.06.14
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 30 Jan 2020 12:06:15 -0800 (PST)
+Subject: Re: [PATCH v6 12/16] dmaengine: tegra-apb: Clean up suspend-resume
+To:     Jon Hunter <jonathanh@nvidia.com>,
+        Laxman Dewangan <ldewangan@nvidia.com>,
+        Vinod Koul <vkoul@kernel.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>
+Cc:     dmaengine@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20200130043804.32243-1-digetx@gmail.com>
+ <20200130043804.32243-13-digetx@gmail.com>
+ <3507dcb9-4a92-8145-1953-e40960604661@nvidia.com>
+From:   Dmitry Osipenko <digetx@gmail.com>
+Message-ID: <fb32d2e2-4cd3-c493-7792-3da62276cc07@gmail.com>
+Date:   Thu, 30 Jan 2020 23:06:14 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.3.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <3507dcb9-4a92-8145-1953-e40960604661@nvidia.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The pmem driver on PowerPC crashes with the following signature when
-instantiating misaligned namespaces that map their capacity via
-memremap_pages().
+30.01.2020 22:00, Jon Hunter пишет:
+> 
+> On 30/01/2020 04:38, Dmitry Osipenko wrote:
+>> It is enough to check whether hardware is busy on suspend and to reset
+>> it across of suspend-resume because channel's configuration is fully
+>> re-programmed on each DMA transaction anyways and because save-restore
+>> of an active channel won't end up well without pausing transfer prior to
+>> saving of the state (note that all channels shall be idling at the time of
+>> suspend, so save-restore is not needed at all).
+> 
+> Maybe just update the commit message to state that the pause callback is
+> not implemented and channel pause is not supported prior to T114. And
+> then ...
+> 
+> Acked-by: Jon Hunter <jonathanh@nvidia.com>
 
-    BUG: Unable to handle kernel data access at 0xc001000406000000
-    Faulting instruction address: 0xc000000000090790
-    NIP [c000000000090790] arch_add_memory+0xc0/0x130
-    LR [c000000000090744] arch_add_memory+0x74/0x130
-    Call Trace:
-     arch_add_memory+0x74/0x130 (unreliable)
-     memremap_pages+0x74c/0xa30
-     devm_memremap_pages+0x3c/0xa0
-     pmem_attach_disk+0x188/0x770
-     nvdimm_bus_probe+0xd8/0x470
-
-With the assumption that only memremap_pages() has alignment
-constraints, enforce memremap_compat_align() for
-pmem_should_map_pages(), nd_pfn, or nd_dax cases.
-
-Reported-by: Aneesh Kumar K.V <aneesh.kumar@linux.ibm.com>
-Cc: Jeff Moyer <jmoyer@redhat.com>
-Signed-off-by: Dan Williams <dan.j.williams@intel.com>
----
- drivers/nvdimm/namespace_devs.c |   10 ++++++++++
- 1 file changed, 10 insertions(+)
-
-diff --git a/drivers/nvdimm/namespace_devs.c b/drivers/nvdimm/namespace_devs.c
-index 032dc61725ff..aff1f32fdb4f 100644
---- a/drivers/nvdimm/namespace_devs.c
-+++ b/drivers/nvdimm/namespace_devs.c
-@@ -1739,6 +1739,16 @@ struct nd_namespace_common *nvdimm_namespace_common_probe(struct device *dev)
- 		return ERR_PTR(-ENODEV);
- 	}
- 
-+	if (pmem_should_map_pages(dev) || nd_pfn || nd_dax) {
-+		struct nd_namespace_io *nsio = to_nd_namespace_io(&ndns->dev);
-+		resource_size_t start = nsio->res.start;
-+
-+		if (!IS_ALIGNED(start | size, memremap_compat_align())) {
-+			dev_dbg(&ndns->dev, "misaligned, unable to map\n");
-+			return ERR_PTR(-EOPNOTSUPP);
-+		}
-+	}
-+
- 	if (is_namespace_pmem(&ndns->dev)) {
- 		struct nd_namespace_pmem *nspm;
- 
-
+Thanks, I'll update the message.
