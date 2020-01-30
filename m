@@ -2,41 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1B07F14E1D6
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Jan 2020 19:48:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4F12814E1AE
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Jan 2020 19:46:51 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731463AbgA3Sr6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 30 Jan 2020 13:47:58 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58720 "EHLO mail.kernel.org"
+        id S1731245AbgA3Sqo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 30 Jan 2020 13:46:44 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56858 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731451AbgA3Srz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 30 Jan 2020 13:47:55 -0500
+        id S1731235AbgA3Sql (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 30 Jan 2020 13:46:41 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 71A86217BA;
-        Thu, 30 Jan 2020 18:47:54 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 68FEC205F4;
+        Thu, 30 Jan 2020 18:46:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1580410074;
-        bh=KGVdJI4QeammafVVxIwwiX4/OvI88n2ymAv/vzMJ+04=;
+        s=default; t=1580410000;
+        bh=ruD9v7iz3Y5cNeFCZjb02nuwwTlDJHiAKmIYc+H0aCQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=LopmQZ9SnYjPcWN/QgYavm6eTeTvfzRT+zddfejDfpGN25AKzWsP+U30OSXvWfM9s
-         Q0DNXl8vUM5g2aFz6euSry8rWtVWIRE/E7ydj+OeUOdoD+Zboc6ElNVXBRS7GntQzr
-         ZUPkxFYmNQ7fj/ODJYOu1ZoO2gQQhVAfDSrtXZKA=
+        b=dGYEuCZMoKL+HUBEF2N1ppxd4e3AB6oUFB/h1stJJkBfh9g73rB4sW3hZguZpASFw
+         hPARRJhMHu+viPmcIsWaSM8AM4pZR1z90N+EW6MDiGKmksOI+4EEld6rJeNwOj8a6B
+         REthfRw3xNZKtlZPvqhpB/6bjH/0Ej6RW51BfCOs=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Peter Zijlstra <peterz@infradead.org>,
-        Fenghua Yu <fenghua.yu@intel.com>,
-        Tony Luck <tony.luck@intel.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 36/55] drivers/net/b44: Change to non-atomic bit operations on pwol_mask
-Date:   Thu, 30 Jan 2020 19:39:17 +0100
-Message-Id: <20200130183615.120752961@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Prameela Rani Garnepudi <prameela.j04cs@gmail.com>,
+        Johan Hovold <johan@kernel.org>,
+        Kalle Valo <kvalo@codeaurora.org>
+Subject: [PATCH 5.4 102/110] rsi: fix memory leak on failed URB submission
+Date:   Thu, 30 Jan 2020 19:39:18 +0100
+Message-Id: <20200130183625.718011784@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200130183608.563083888@linuxfoundation.org>
-References: <20200130183608.563083888@linuxfoundation.org>
+In-Reply-To: <20200130183613.810054545@linuxfoundation.org>
+References: <20200130183613.810054545@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,66 +45,37 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Fenghua Yu <fenghua.yu@intel.com>
+From: Johan Hovold <johan@kernel.org>
 
-[ Upstream commit f11421ba4af706cb4f5703de34fa77fba8472776 ]
+commit 47768297481184932844ab01a86752ba31a38861 upstream.
 
-Atomic operations that span cache lines are super-expensive on x86
-(not just to the current processor, but also to other processes as all
-memory operations are blocked until the operation completes). Upcoming
-x86 processors have a switch to cause such operations to generate a #AC
-trap. It is expected that some real time systems will enable this mode
-in BIOS.
+Make sure to free the skb on failed receive-URB submission (e.g. on
+disconnect or currently also due to a missing endpoint).
 
-In preparation for this, it is necessary to fix code that may execute
-atomic instructions with operands that cross cachelines because the #AC
-trap will crash the kernel.
+Fixes: a1854fae1414 ("rsi: improve RX packet handling in USB interface")
+Cc: stable <stable@vger.kernel.org>     # 4.17
+Cc: Prameela Rani Garnepudi <prameela.j04cs@gmail.com>
+Signed-off-by: Johan Hovold <johan@kernel.org>
+Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-Since "pwol_mask" is local and never exposed to concurrency, there is
-no need to set bits in pwol_mask using atomic operations.
-
-Directly operate on the byte which contains the bit instead of using
-__set_bit() to avoid any big endian concern due to type cast to
-unsigned long in __set_bit().
-
-Suggested-by: Peter Zijlstra <peterz@infradead.org>
-Signed-off-by: Fenghua Yu <fenghua.yu@intel.com>
-Signed-off-by: Tony Luck <tony.luck@intel.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/broadcom/b44.c | 9 ++++++---
- 1 file changed, 6 insertions(+), 3 deletions(-)
+ drivers/net/wireless/rsi/rsi_91x_usb.c |    4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/net/ethernet/broadcom/b44.c b/drivers/net/ethernet/broadcom/b44.c
-index e445ab724827f..88f8d31e4c833 100644
---- a/drivers/net/ethernet/broadcom/b44.c
-+++ b/drivers/net/ethernet/broadcom/b44.c
-@@ -1519,8 +1519,10 @@ static int b44_magic_pattern(u8 *macaddr, u8 *ppattern, u8 *pmask, int offset)
- 	int ethaddr_bytes = ETH_ALEN;
+--- a/drivers/net/wireless/rsi/rsi_91x_usb.c
++++ b/drivers/net/wireless/rsi/rsi_91x_usb.c
+@@ -338,8 +338,10 @@ static int rsi_rx_urb_submit(struct rsi_
+ 			  rx_cb);
  
- 	memset(ppattern + offset, 0xff, magicsync);
--	for (j = 0; j < magicsync; j++)
--		set_bit(len++, (unsigned long *) pmask);
-+	for (j = 0; j < magicsync; j++) {
-+		pmask[len >> 3] |= BIT(len & 7);
-+		len++;
+ 	status = usb_submit_urb(urb, GFP_KERNEL);
+-	if (status)
++	if (status) {
+ 		rsi_dbg(ERR_ZONE, "%s: Failed in urb submission\n", __func__);
++		dev_kfree_skb(skb);
 +	}
  
- 	for (j = 0; j < B44_MAX_PATTERNS; j++) {
- 		if ((B44_PATTERN_SIZE - len) >= ETH_ALEN)
-@@ -1532,7 +1534,8 @@ static int b44_magic_pattern(u8 *macaddr, u8 *ppattern, u8 *pmask, int offset)
- 		for (k = 0; k< ethaddr_bytes; k++) {
- 			ppattern[offset + magicsync +
- 				(j * ETH_ALEN) + k] = macaddr[k];
--			set_bit(len++, (unsigned long *) pmask);
-+			pmask[len >> 3] |= BIT(len & 7);
-+			len++;
- 		}
- 	}
- 	return len - 1;
--- 
-2.20.1
-
+ 	return status;
+ }
 
 
