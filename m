@@ -2,35 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D0E0814DDC0
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Jan 2020 16:26:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9525814DDE6
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Jan 2020 16:33:28 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727368AbgA3P0N (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 30 Jan 2020 10:26:13 -0500
-Received: from mga09.intel.com ([134.134.136.24]:4226 "EHLO mga09.intel.com"
+        id S1727313AbgA3PdZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 30 Jan 2020 10:33:25 -0500
+Received: from mga06.intel.com ([134.134.136.31]:47862 "EHLO mga06.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727186AbgA3P0C (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 30 Jan 2020 10:26:02 -0500
+        id S1726948AbgA3PdZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 30 Jan 2020 10:33:25 -0500
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from fmsmga003.fm.intel.com ([10.253.24.29])
-  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 30 Jan 2020 07:26:02 -0800
+Received: from orsmga007.jf.intel.com ([10.7.209.58])
+  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 30 Jan 2020 07:26:02 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.70,382,1574150400"; 
-   d="scan'208";a="277826052"
+   d="scan'208";a="218308624"
 Received: from black.fi.intel.com ([10.237.72.28])
-  by FMSMGA003.fm.intel.com with ESMTP; 30 Jan 2020 07:26:00 -0800
+  by orsmga007.jf.intel.com with ESMTP; 30 Jan 2020 07:26:00 -0800
 Received: by black.fi.intel.com (Postfix, from userid 1003)
-        id 56C2D10E; Thu, 30 Jan 2020 17:25:59 +0200 (EET)
+        id 6322A25A; Thu, 30 Jan 2020 17:25:59 +0200 (EET)
 From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 To:     Petr Mladek <pmladek@suse.com>,
         Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
         Steven Rostedt <rostedt@goodmis.org>,
         linux-kernel@vger.kernel.org
 Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: [PATCH v4 2/6] console: Drop double check for console_drivers being non-NULL
-Date:   Thu, 30 Jan 2020 17:25:54 +0200
-Message-Id: <20200130152558.51839-2-andriy.shevchenko@linux.intel.com>
+Subject: [PATCH v4 3/6] console: Use for_each_console() helper in unregister_console()
+Date:   Thu, 30 Jan 2020 17:25:55 +0200
+Message-Id: <20200130152558.51839-3-andriy.shevchenko@linux.intel.com>
 X-Mailer: git-send-email 2.24.1
 In-Reply-To: <20200130152558.51839-1-andriy.shevchenko@linux.intel.com>
 References: <20200130152558.51839-1-andriy.shevchenko@linux.intel.com>
@@ -41,55 +41,48 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-There is no need to explicitly check for console_drivers to be non-NULL
-since for_each_console() does this.
+We have rather open coded single linked list manipulations where we may
+simple use for_each_console() helper with properly set exit conditions.
+
+Replace open coded single-linked list handling with for_each_console()
+helper in use.
 
 Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 Reviewed-by: Petr Mladek <pmladek@suse.com>
 ---
 v4: Add tag (Petr)
- kernel/printk/printk.c | 16 ++++++----------
- 1 file changed, 6 insertions(+), 10 deletions(-)
+ kernel/printk/printk.c | 11 +++++------
+ 1 file changed, 5 insertions(+), 6 deletions(-)
 
 diff --git a/kernel/printk/printk.c b/kernel/printk/printk.c
-index fada22dc4ab6..51337ed426e0 100644
+index 51337ed426e0..d40a316908da 100644
 --- a/kernel/printk/printk.c
 +++ b/kernel/printk/printk.c
-@@ -1772,9 +1772,6 @@ static void call_console_drivers(const char *ext_text, size_t ext_len,
+@@ -2809,7 +2809,7 @@ EXPORT_SYMBOL(register_console);
  
- 	trace_console_rcuidle(text, len);
+ int unregister_console(struct console *console)
+ {
+-        struct console *a, *b;
++	struct console *con;
+ 	int res;
  
--	if (!console_drivers)
--		return;
--
- 	for_each_console(con) {
- 		if (exclusive_console && con != exclusive_console)
- 			continue;
-@@ -2653,18 +2650,17 @@ void register_console(struct console *newcon)
- 	struct console_cmdline *c;
- 	static bool has_preferred;
- 
--	if (console_drivers)
--		for_each_console(bcon)
--			if (WARN(bcon == newcon,
--					"console '%s%d' already registered\n",
--					bcon->name, bcon->index))
--				return;
-+	for_each_console(bcon) {
-+		if (WARN(bcon == newcon, "console '%s%d' already registered\n",
-+					 bcon->name, bcon->index))
-+			return;
-+	}
- 
- 	/*
- 	 * before we register a new CON_BOOT console, make sure we don't
- 	 * already have a valid console
- 	 */
--	if (console_drivers && newcon->flags & CON_BOOT) {
-+	if (newcon->flags & CON_BOOT) {
- 		/* find the last or real console */
- 		for_each_console(bcon) {
- 			if (!(bcon->flags & CON_BOOT)) {
+ 	pr_info("%sconsole [%s%d] disabled\n",
+@@ -2825,11 +2825,10 @@ int unregister_console(struct console *console)
+ 	if (console_drivers == console) {
+ 		console_drivers=console->next;
+ 		res = 0;
+-	} else if (console_drivers) {
+-		for (a=console_drivers->next, b=console_drivers ;
+-		     a; b=a, a=b->next) {
+-			if (a == console) {
+-				b->next = a->next;
++	} else {
++		for_each_console(con) {
++			if (con->next == console) {
++				con->next = console->next;
+ 				res = 0;
+ 				break;
+ 			}
 -- 
 2.24.1
 
