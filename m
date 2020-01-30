@@ -2,204 +2,228 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 85F4C14E3D2
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Jan 2020 21:21:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D43D614E3DD
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Jan 2020 21:22:24 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727552AbgA3UU6 convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Thu, 30 Jan 2020 15:20:58 -0500
-Received: from relay5-d.mail.gandi.net ([217.70.183.197]:34007 "EHLO
-        relay5-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726514AbgA3UU5 (ORCPT
+        id S1727747AbgA3UWR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 30 Jan 2020 15:22:17 -0500
+Received: from fllv0016.ext.ti.com ([198.47.19.142]:51694 "EHLO
+        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726514AbgA3UWR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 30 Jan 2020 15:20:57 -0500
-X-Originating-IP: 93.23.196.10
-Received: from xps13 (10.196.23.93.rev.sfr.net [93.23.196.10])
-        (Authenticated sender: miquel.raynal@bootlin.com)
-        by relay5-d.mail.gandi.net (Postfix) with ESMTPSA id 166BB1C0002;
-        Thu, 30 Jan 2020 20:20:53 +0000 (UTC)
-Date:   Thu, 30 Jan 2020 21:20:52 +0100
-From:   Miquel Raynal <miquel.raynal@bootlin.com>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     linux-mtd@lists.infradead.org, Richard Weinberger <richard@nod.at>,
-        Tudor Ambarus <Tudor.Ambarus@microchip.com>,
-        Vignesh Raghavendra <vigneshr@ti.com>,
-        Frieder Schrempf <frieder.schrempf@kontron.de>,
-        linux-kernel@vger.kernel.org
-Subject: [GIT PULL] mtd: Changes for 5.6
-Message-ID: <20200130212052.11ca8719@xps13>
-Organization: Bootlin
-X-Mailer: Claws Mail 3.17.4 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        Thu, 30 Jan 2020 15:22:17 -0500
+Received: from fllv0035.itg.ti.com ([10.64.41.0])
+        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 00UKMFjb001348;
+        Thu, 30 Jan 2020 14:22:15 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1580415735;
+        bh=f9rMzOOvLA+U/oerycRaC6siozRFk+uiXMS8sNGl5zY=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=n9oU19TkgejKF3xlc/5M1CBWX9DLgXFi0ClmqJcMW6HFtk3PJGVZtO6QlLXiGPrBN
+         QP9zo5i19sbg+g9B2oRp0e6vF2KKdhMKrs92XOUX9pSKedN4CDXtAMiipwWCEDHz+C
+         rYiWrfydaUzIU6no9ylqwbcM7vXlYSPeei0R1LIA=
+Received: from DLEE108.ent.ti.com (dlee108.ent.ti.com [157.170.170.38])
+        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTP id 00UKMFRD083354;
+        Thu, 30 Jan 2020 14:22:15 -0600
+Received: from DLEE112.ent.ti.com (157.170.170.23) by DLEE108.ent.ti.com
+ (157.170.170.38) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Thu, 30
+ Jan 2020 14:22:15 -0600
+Received: from fllv0039.itg.ti.com (10.64.41.19) by DLEE112.ent.ti.com
+ (157.170.170.23) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
+ Frontend Transport; Thu, 30 Jan 2020 14:22:15 -0600
+Received: from [10.250.70.160] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by fllv0039.itg.ti.com (8.15.2/8.15.2) with ESMTP id 00UKMElr076026;
+        Thu, 30 Jan 2020 14:22:14 -0600
+Subject: Re: [PATCHv5 06/14] remoteproc/omap: Initialize and assign reserved
+ memory node
+To:     Suman Anna <s-anna@ti.com>, Tero Kristo <t-kristo@ti.com>,
+        <bjorn.andersson@linaro.org>, <ohad@wizery.com>,
+        <linux-remoteproc@vger.kernel.org>
+CC:     <linux-kernel@vger.kernel.org>, <mathieu.poirier@linaro.org>,
+        <linux-omap@vger.kernel.org>
+References: <20200116135332.7819-1-t-kristo@ti.com>
+ <20200116135332.7819-7-t-kristo@ti.com>
+ <249c293c-6a23-165f-1df5-4859ee47658a@ti.com>
+ <37db5d57-b1cd-1cec-2c9b-31c49e3bdc10@ti.com>
+ <a0e85451-7c05-884c-4997-b4e8c5684c3e@ti.com>
+ <2aaa4024-1e2c-5cab-c9f3-3be59c57e9ac@ti.com>
+ <be337641-b4ac-d2be-b814-55b7681cb91a@ti.com>
+From:   "Andrew F. Davis" <afd@ti.com>
+Message-ID: <7aed7a9f-3546-f622-37ac-34d33ddb4298@ti.com>
+Date:   Thu, 30 Jan 2020 15:22:14 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+In-Reply-To: <be337641-b4ac-d2be-b814-55b7681cb91a@ti.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello Linus,
+On 1/30/20 2:55 PM, Suman Anna wrote:
+> On 1/30/20 1:42 PM, Tero Kristo wrote:
+>> On 30/01/2020 21:20, Andrew F. Davis wrote:
+>>> On 1/30/20 2:18 PM, Tero Kristo wrote:
+>>>> On 30/01/2020 20:11, Andrew F. Davis wrote:
+>>>>> On 1/16/20 8:53 AM, Tero Kristo wrote:
+>>>>>> From: Suman Anna <s-anna@ti.com>
+>>>>>>
+>>>>>> The reserved memory nodes are not assigned to platform devices by
+>>>>>> default in the driver core to avoid the lookup for every platform
+>>>>>> device and incur a penalty as the real users are expected to be
+>>>>>> only a few devices.
+>>>>>>
+>>>>>> OMAP remoteproc devices fall into the above category and the OMAP
+>>>>>> remoteproc driver _requires_ specific CMA pools to be assigned
+>>>>>> for each device at the moment to align on the location of the
+>>>>>> vrings and vring buffers in the RTOS-side firmware images. So,
+>>>>>
+>>>>>
+>>>>> Same comment as before, this is a firmware issue for only some
+>>>>> firmwares
+>>>>> that do not handle being assigned vring locations correctly and instead
+>>>>> hard-code them.
+> 
+> As for this statement, this can do with some updating. Post 4.20,
+> because of the lazy allocation scheme used for carveouts including the
+> vrings, the resource tables now have to use FW_RSC_ADDR_ANY and will
+> have to wait for the vdev synchronization to happen.
+> 
+>>>>
+>>>> I believe we discussed this topic in length in previous version but
+>>>> there was no conclusion on it.
+>>>>
+>>>> The commit desc might be a bit misleading, we are not actually forced to
+>>>> use specific CMA buffers, as we use IOMMU to map these to device
+>>>> addresses. For example IPU1/IPU2 use internally exact same memory
+>>>> addresses, iommu is used to map these to specific CMA buffer.
+>>>>
+>>>> CMA buffers are mostly used so that we get aligned large chunk of memory
+>>>> which can be mapped properly with the limited IOMMU OMAP family of chips
+>>>> have. Not sure if there is any sane way to get this done in any other
+>>>> manner.
+>>>>
+>>>
+>>>
+>>> Why not use the default CMA area?
+>>
+>> I think using default CMA area getting the actual memory block is not
+>> guaranteed and might fail. There are other users for the memory, and it
+>> might get fragmented at the very late phase we are grabbing the memory
+>> (omap remoteproc driver probe time.) Some chunks we need are pretty large.
+>>
+>> I believe I could experiment with this a bit though and see, or Suman
+>> could maybe provide feedback why this was designed initially like this
+>> and why this would not be a good idea.
+> 
+> I have given some explanation on this on v4 as well, but if it is not
+> clear, there are restrictions with using default CMA. Default CMA has
+> switched to be assigned from the top of the memory (higher addresses,
+> since 3.18 IIRC), and the MMUs on IPUs and DSPs can only address
+> 32-bits. So, we cannot blindly use the default CMA pool, and this will
+> definitely not work on boards > 2 GB RAM. And, if you want to add in any
+> firewall capability, then specific physical addresses becomes mandatory.
+> 
 
-This is the MTD PR for 5.6.
 
-Thanks,
-Miquèl
+If you need 32bit range allocations then
+dma_set_mask(dev, DMA_BIT_MASK(32));
 
-The following changes since commit b3a987b0264d3ddbb24293ebff10eddfc472f653:
+I'm not saying don't have support for carveouts, just make them
+optional, keystone_remoteproc.c does this:
 
-  Linux 5.5-rc6 (2020-01-12 16:55:08 -0800)
+if (of_reserved_mem_device_init(dev))
+	dev_warn(dev, "device does not have specific CMA pool\n");
 
-are available in the Git repository at:
+There doesn't even needs to be a warning but that is up to you.
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/mtd/linux.git tags/mtd/for-5.6
+Andrew
 
-for you to fetch changes up to 4575243c5c173f8adbc08a5c6ea2269742ea2b47:
 
-  Merge tag 'nand/for-5.6' into mtd/next (2020-01-27 17:49:15 +0100)
-
-----------------------------------------------------------------
-MTD core
-* block2mtd: page index should use pgoff_t
-* maps: physmap: minimal Runtime PM support
-* maps: pcmciamtd: avoid possible sleep-in-atomic-context bugs
-* concat: Fix a comment referring to an unknown symbol
-
-Raw NAND
-* Macronix: Use match_string() helper
-* Atmel: switch to using devm_fwnode_gpiod_get()
-* Denali: rework the SKIP_BYTES feature and add reset controlling
-* Brcmnand: set appropriate DMA mask
-* Cadence: add unspecified HAS_IOMEM dependency
-* Various cleanup.
-
-Onenand
-* Rename Samsung and Omap2 drivers to avoid possible build warnings
-* Enable compile testing
-* Various build issues
-* Kconfig cleanup
-
-SPI-NAND
-* Support for Toshiba TC58CVG2S0HRAIJ
-
-SPI-NOR:
-- Add support for TB selection using SR bit 6,
-- Add support for few flashes.
-
-----------------------------------------------------------------
-Brendan Higgins (1):
-      mtd: rawnand: add unspecified HAS_IOMEM dependency
-
-Chen Wandun (1):
-      mtd: onenand: samsung: remove set but not used variable
-
-David Bauer (1):
-      mtd: spi-nor: Add support for mx25r3235f
-
-Dmitry Torokhov (1):
-      mtd: rawnand: atmel: switch to using devm_fwnode_gpiod_get()
-
-Florian Fainelli (1):
-      mtd: rawnand: brcmnand: Set appropriate DMA mask
-
-Geert Uytterhoeven (1):
-      mtd: maps: physmap: Add minimal Runtime PM support
-
-Jerome Brunet (1):
-      mtd: spi-nor: add Gigadevice gd25lq128d support
-
-Jia-Ju Bai (1):
-      mtd: maps: pcmciamtd: fix possible sleep-in-atomic-context bugs in pcmciamtd_set_vpp()
-
-John Garry (1):
-      mtd: spi-nor: hisi-sfc: Try to provide some clarity on which SFC we are
-
-Joseph Kust (1):
-      mtd: spi-nor: Add support for sst26vf016b
-
-Jungseung Lee (4):
-      mtd: spi-nor: fix typo of "JESB216" in comment
-      mtd: spi-nor: Rename SR_TB to indicate the bit used
-      mtd: spi-nor: Support TB selection using SR bit 6
-      mtd: spi-nor: Fix wrong TB selection of GD25Q256
-
-Krzysztof Kozlowski (4):
-      mtd: onenand: Fix Kconfig indentation
-      mtd: onenand: samsung: Fix pointer cast -Wpointer-to-int-cast warnings on 64 bit
-      mtd: onenand: samsung: Fix printing format for size_t on 64-bit
-      mtd: onenand: Enable compile testing of OMAP and Samsung drivers
-
-Liu Song (1):
-      mtd: block2mtd: page index should use pgoff_t
-
-Marek Vasut (1):
-      mtd: rawnand: denali_dt: Add support for configuring SPARE_AREA_SKIP_BYTES
-
-Masahiro Yamada (4):
-      mtd: rawnand: denali_dt: error out if platform has no associated data
-      dt-bindings: mtd: denali_dt: document reset property
-      mtd: rawnand: denali_dt: add reset controlling
-      mtd: rawnand: denali: remove hard-coded DENALI_DEFAULT_OOB_SKIP_BYTES
-
-Michael Walle (3):
-      mtd: spi-nor: remove unused enum spi_nor_ops
-      mtd: spi-nor: Add support for w25q32jwm
-      mtd: spi-nor: Add support for at25sl321
-
-Mika Westerberg (2):
-      mtd: spi-nor: intel-spi: Add support for Intel Jasper Lake SPI serial flash
-      mtd: spi-nor: intel-spi: Add support for Intel Comet Lake-V SPI serial flash
-
-Miquel Raynal (5):
-      mtd: onenand: Use a better name for samsung driver
-      mtd: onenand: Rename omap2 driver to avoid a build warning
-      mtd: concat: Fix a comment referring to an unknown symbol
-      Merge tag 'spi-nor/for-5.6' into mtd/next
-      Merge tag 'nand/for-5.6' into mtd/next
-
-Nathan Chancellor (1):
-      mtd: onenand_base: Adjust indentation in onenand_read_ops_nolock
-
-Robert Marko (2):
-      mtd: spi-nor: Add 4B_OPCODES flag to w25q256
-      mtd: spinand: add support for Toshiba TC58CVG2S0HRAIJ
-
-Vignesh Raghavendra (3):
-      mtd: spi-nor: Split mt25qu512a (n25q512a) entry into two
-      mtd: spi-nor: Add entries for mt25q variants
-      mtd: spi-nor: Add USE_FSR flag for n25q* entries
-
-YueHaibing (2):
-      mtd: sharpslpart: Fix unsigned comparison to zero
-      mtd: rawnand: macronix: Use match_string() helper to simplify the code
-
-zhengbin (1):
-      mtd: rawnand: mpc5121: Remove unneeded semicolon
-
- Documentation/devicetree/bindings/mtd/denali-nand.txt   |   7 ++
- drivers/mtd/devices/block2mtd.c                         |   8 +-
- drivers/mtd/maps/pcmciamtd.c                            |   7 +-
- drivers/mtd/maps/physmap-core.c                         |  20 +++-
- drivers/mtd/mtdconcat.c                                 |   5 +-
- drivers/mtd/nand/onenand/Kconfig                        |  14 +--
- drivers/mtd/nand/onenand/Makefile                       |   4 +-
- drivers/mtd/nand/onenand/onenand_base.c                 |  82 +++++++--------
- drivers/mtd/nand/onenand/{omap2.c => onenand_omap2.c}   |   0
- .../nand/onenand/{samsung_mtd.c => onenand_samsung.c}   |   9 +-
- drivers/mtd/nand/raw/Kconfig                            |   2 +-
- drivers/mtd/nand/raw/atmel/nand-controller.c            |  20 ++--
- drivers/mtd/nand/raw/brcmnand/brcmnand.c                |  10 ++
- drivers/mtd/nand/raw/denali.c                           |  14 +--
- drivers/mtd/nand/raw/denali_dt.c                        |  56 ++++++++--
- drivers/mtd/nand/raw/mpc5121_nfc.c                      |   2 +-
- drivers/mtd/nand/raw/nand_macronix.c                    |  11 +-
- drivers/mtd/nand/spi/toshiba.c                          |  10 ++
- drivers/mtd/parsers/sharpslpart.c                       |   4 +-
- drivers/mtd/spi-nor/Kconfig                             |   4 +-
- drivers/mtd/spi-nor/aspeed-smc.c                        |   4 +-
- drivers/mtd/spi-nor/cadence-quadspi.c                   |   4 +-
- drivers/mtd/spi-nor/hisi-sfc.c                          |   6 +-
- drivers/mtd/spi-nor/intel-spi-pci.c                     |   2 +
- drivers/mtd/spi-nor/spi-nor.c                           | 127 ++++++++++++++++-------
- include/linux/mtd/spi-nor.h                             |  16 +--
- 26 files changed, 286 insertions(+), 162 deletions(-)
- rename drivers/mtd/nand/onenand/{omap2.c => onenand_omap2.c} (100%)
- rename drivers/mtd/nand/onenand/{samsung_mtd.c => onenand_samsung.c} (99%)
+> regards
+> Suman
+> 
+>>
+>> -Tero
+>>
+>>>
+>>> Andrew
+>>>
+>>>
+>>>> -Tero
+>>>>
+>>>>>
+>>>>> This is not a requirement of the remote processor itself and so it
+>>>>> should not fail to probe if a specific memory carveout isn't given.
+>>>>>
+>>>>>
+>>>>>> use the of_reserved_mem_device_init/release() API appropriately
+>>>>>> to assign the corresponding reserved memory region to the OMAP
+>>>>>> remoteproc device. Note that only one region per device is
+>>>>>> allowed by the framework.
+>>>>>>
+>>>>>> Signed-off-by: Suman Anna <s-anna@ti.com>
+>>>>>> Signed-off-by: Tero Kristo <t-kristo@ti.com>
+>>>>>> Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+>>>>>> ---
+>>>>>> v5: no changes
+>>>>>>
+>>>>>>    drivers/remoteproc/omap_remoteproc.c | 12 +++++++++++-
+>>>>>>    1 file changed, 11 insertions(+), 1 deletion(-)
+>>>>>>
+>>>>>> diff --git a/drivers/remoteproc/omap_remoteproc.c
+>>>>>> b/drivers/remoteproc/omap_remoteproc.c
+>>>>>> index 0846839b2c97..194303b860b2 100644
+>>>>>> --- a/drivers/remoteproc/omap_remoteproc.c
+>>>>>> +++ b/drivers/remoteproc/omap_remoteproc.c
+>>>>>> @@ -17,6 +17,7 @@
+>>>>>>    #include <linux/module.h>
+>>>>>>    #include <linux/err.h>
+>>>>>>    #include <linux/of_device.h>
+>>>>>> +#include <linux/of_reserved_mem.h>
+>>>>>>    #include <linux/platform_device.h>
+>>>>>>    #include <linux/dma-mapping.h>
+>>>>>>    #include <linux/remoteproc.h>
+>>>>>> @@ -480,14 +481,22 @@ static int omap_rproc_probe(struct
+>>>>>> platform_device *pdev)
+>>>>>>        if (ret)
+>>>>>>            goto free_rproc;
+>>>>>>    +    ret = of_reserved_mem_device_init(&pdev->dev);
+>>>>>> +    if (ret) {
+>>>>>> +        dev_err(&pdev->dev, "device does not have specific CMA
+>>>>>> pool\n");
+>>>>>> +        goto free_rproc;
+>>>>>> +    }
+>>>>>> +
+>>>>>>        platform_set_drvdata(pdev, rproc);
+>>>>>>          ret = rproc_add(rproc);
+>>>>>>        if (ret)
+>>>>>> -        goto free_rproc;
+>>>>>> +        goto release_mem;
+>>>>>>          return 0;
+>>>>>>    +release_mem:
+>>>>>> +    of_reserved_mem_device_release(&pdev->dev);
+>>>>>>    free_rproc:
+>>>>>>        rproc_free(rproc);
+>>>>>>        return ret;
+>>>>>> @@ -499,6 +508,7 @@ static int omap_rproc_remove(struct
+>>>>>> platform_device *pdev)
+>>>>>>          rproc_del(rproc);
+>>>>>>        rproc_free(rproc);
+>>>>>> +    of_reserved_mem_device_release(&pdev->dev);
+>>>>>>          return 0;
+>>>>>>    }
+>>>>>>
+>>>>
+>>>> -- 
+>>
+>> -- 
+>> Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
+>> Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
+> 
