@@ -2,59 +2,140 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4743314E54B
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Jan 2020 23:03:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3D9FE14E54C
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Jan 2020 23:04:10 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726319AbgA3WDc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 30 Jan 2020 17:03:32 -0500
-Received: from mail-ot1-f66.google.com ([209.85.210.66]:44311 "EHLO
-        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725835AbgA3WDb (ORCPT
+        id S1726561AbgA3WEH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 30 Jan 2020 17:04:07 -0500
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:42028 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725835AbgA3WEH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 30 Jan 2020 17:03:31 -0500
-Received: by mail-ot1-f66.google.com with SMTP id h9so4604291otj.11
-        for <linux-kernel@vger.kernel.org>; Thu, 30 Jan 2020 14:03:31 -0800 (PST)
+        Thu, 30 Jan 2020 17:04:07 -0500
+Received: by mail-pf1-f196.google.com with SMTP id 4so2184426pfz.9
+        for <linux-kernel@vger.kernel.org>; Thu, 30 Jan 2020 14:04:06 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:reply-to:from:date:message-id:subject:to;
-        bh=nLHHJR/f2FNOWY32dezFklufEGi2pRB5LTP4mIqeAO4=;
-        b=gDOJE/6mIJnf9onHJRTgbb8dTzVaxXoQJbLZfRJeITcrx+ex0XcH7qGaEqVyYUlMIq
-         bAfxS1o3aR7070KuP5XienAZSMJZUbzqGiNhy12x1b9ISMdSeMeNr3Gum9A/wOYLuOxN
-         xr8bqg7EwYn4NFIKd2YnuM2M9624QA6ekiHtQGyJqmCLDF/p4/fb+0wH+FN6sE6Wabad
-         Ch6sSPPOO69NLU2N1l1M9s1fJG5MJV993y5l8BNnNE9BTstBcCXAgmCQgeLWD0AXJKO+
-         12DnvSBwA1REm8I2WzwXxBohSckiTG7AzoJyJRyLr5bk/PzC/YjmtJtxc/4kc11bUoCB
-         83nA==
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=n+A9Sx+NAJWYedW4n2tIiVzmJW2dkc/pU/Gt5hSqf6c=;
+        b=d+1GtPTWlR/snBZ+43fitICGSmmyJ5n6vv7mFpMznofVG8ZdIzy3GMY+Xhoh3QvSxX
+         YWLh7jYlx00SIQy+il+HadTAEoIXs68ACynQty2mToNVcVFQBJDJZvxGVNTDw4/ojprj
+         QvcGQQWLek9d2bP7GnJaiSEeTUNjREqPV9yNk=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
-         :subject:to;
-        bh=nLHHJR/f2FNOWY32dezFklufEGi2pRB5LTP4mIqeAO4=;
-        b=PfUDAd0J53LfAsWGhtmWesVm8nO8A2RKnXucy53tEN67Epu4wWm5uuuwixyzBKHzPf
-         5K7Qe6TjAw2Y/cUsdp/uq429lbx/jj4260+VcUGqrY5Twjg454q8Ak6frrrhEc58Sloa
-         x8kPgczzQt8jqIeUtZVJONnCeHKyhPLz+mhcKu1/AITalfH8K1W4GrdNDxHI6xpttqv3
-         CEe32BJ77kHF3IjR+7nAanUwmQYOqdakmtmfzjeQk8V+MeFKpKgVDeHi7N+RQwUcEGzl
-         Jw7KiMtBvf50bD8xusoIU47L2pZiUvusR7VnTTTDP/xlKnmFfI54D1HlOURTKF02jm4M
-         EObQ==
-X-Gm-Message-State: APjAAAUaYm2KAlfdPnvD8xjUYN4rbgirf7YAVr5NDvCgIPiSaAfi7mT5
-        UwGvZr0TetsSxZ2Q4QQv59QbatqON6KCS7PHYQY=
-X-Google-Smtp-Source: APXvYqzx463+GJJKUaUTDdkP4YpHT7JrdvstD6cLX5a/w8UtIjIDcy6JA33Z8heR0dqZ/vEDLS/HYkz2CQGCt1s9m78=
-X-Received: by 2002:a9d:53c2:: with SMTP id i2mr4991570oth.43.1580421810810;
- Thu, 30 Jan 2020 14:03:30 -0800 (PST)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=n+A9Sx+NAJWYedW4n2tIiVzmJW2dkc/pU/Gt5hSqf6c=;
+        b=EP92oqXVfMKKsQtVW1//IHY+m2X/KngSppinjBdi2EapErGZdv81jxsYBpB6faMlPk
+         YXMe8S4HjEdatME/xaXyoMIoBRGYTReX1dtR5zh557vQRye4MZKX2YzrX6XrgHKNepxn
+         7vNckN1Il2hWaEXkeVi755/kkB6D7FZ9F53VkGPDptVjC4zbCkCpv90glSA/d0h3O6JB
+         YrtZ671E61OrOarf3ge9umC/sb2pfZMu5EOA9O6Ndxncgz4+F56yEa6YDm+ciPbCDSSG
+         bjMOsPh18ER5oNGu/q2R6ezyNWTSSIKMeOQBzEgqtZm3zELc9IsFF40gV+v+WGXk1oyC
+         /zhw==
+X-Gm-Message-State: APjAAAXpvwWJgMBssRcUdNMNA6cONxk5zVWqzMeUrSky3paXMJPfui+C
+        PJzRYwiBTErYbu9N0stsX/Jv2g==
+X-Google-Smtp-Source: APXvYqxfDuQ31K2PH60+cElEEgLxwTnz181+0mp5RwiDq4ouAY1fzQKjf23rjXH0AQU8CEjFaSDnGg==
+X-Received: by 2002:a63:6d05:: with SMTP id i5mr7229857pgc.120.1580421846379;
+        Thu, 30 Jan 2020 14:04:06 -0800 (PST)
+Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
+        by smtp.gmail.com with ESMTPSA id x7sm7813179pfp.93.2020.01.30.14.04.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 30 Jan 2020 14:04:05 -0800 (PST)
+Date:   Thu, 30 Jan 2020 14:04:04 -0800
+From:   Kees Cook <keescook@chromium.org>
+To:     "H.J. Lu" <hjl.tools@gmail.com>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Thomas Lendacky <Thomas.Lendacky@amd.com>,
+        Sami Tolvanen <samitolvanen@google.com>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H . Peter Anvin" <hpa@zytor.com>,
+        the arch/x86 maintainers <x86@kernel.org>,
+        Yu-cheng Yu <yu-cheng.yu@intel.com>
+Subject: Re: [PATCH] Add RUNTIME_DISCARD_EXIT to generic DISCARDS
+Message-ID: <202001301402.7E23309E2C@keescook>
+References: <20200130180048.2901-1-hjl.tools@gmail.com>
+ <202001301139.F8859A4@keescook>
+ <CAMe9rOrrrZFWgVpsKAWjHKzVh3ZziFLs2ua0m0Ewymrjs-b+EA@mail.gmail.com>
+ <202001301152.DF108B6CC@keescook>
+ <CAMe9rOp1SJvsjSMtDFi4HWKPpu2eePCDiedTPAndUEL5-HSU1w@mail.gmail.com>
+ <CAMe9rOqYh3QEdT16C8TOCBhYqfzsYJ6re0x+MDjpad9_59krZw@mail.gmail.com>
 MIME-Version: 1.0
-Received: by 2002:a4a:d021:0:0:0:0:0 with HTTP; Thu, 30 Jan 2020 14:03:30
- -0800 (PST)
-Reply-To: Millersophia434@gmail.com
-From:   Sophia Miller <ogechithompson1@gmail.com>
-Date:   Thu, 30 Jan 2020 22:03:30 +0000
-Message-ID: <CADTAFDPGLk0n8E45QBh+ubLt_ivocRRsquNsfdupQqN01B1BQw@mail.gmail.com>
-Subject: Hello
-To:     undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAMe9rOqYh3QEdT16C8TOCBhYqfzsYJ6re0x+MDjpad9_59krZw@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Thu, Jan 30, 2020 at 12:47:07PM -0800, H.J. Lu wrote:
+> From bde2821f5e01a5f49b227c6fb8ba6195c26381a9 Mon Sep 17 00:00:00 2001
+> From: "H.J. Lu" <hjl.tools@gmail.com>
+> Date: Thu, 30 Jan 2020 12:31:22 -0800
+> Subject: [PATCH] Add RUNTIME_DISCARD_EXIT to generic DISCARDS
+> 
+> In x86 kernel, .exit.text and .exit.data sections are discarded at
+> runtime not by linker.  Add RUNTIME_DISCARD_EXIT to generic DISCARDS
+> and define it in x86 kernel linker script to keep them.
+
+Thanks for doing this! :) (I wasn't sure about _CALL, thanks also for
+checking that.)
+
+(The patch is missing your SoB?)
+
+Reviewed-by: Kees Cook <keescook@chromium.org>
+
+-Kees
+
+> ---
+>  arch/x86/kernel/vmlinux.lds.S     |  1 +
+>  include/asm-generic/vmlinux.lds.h | 10 ++++++++--
+>  2 files changed, 9 insertions(+), 2 deletions(-)
+> 
+> diff --git a/arch/x86/kernel/vmlinux.lds.S b/arch/x86/kernel/vmlinux.lds.S
+> index e3296aa028fe..7206e1ac23dd 100644
+> --- a/arch/x86/kernel/vmlinux.lds.S
+> +++ b/arch/x86/kernel/vmlinux.lds.S
+> @@ -21,6 +21,7 @@
+>  #define LOAD_OFFSET __START_KERNEL_map
+>  #endif
+>  
+> +#define RUNTIME_DISCARD_EXIT
+>  #define EMITS_PT_NOTE
+>  #define RO_EXCEPTION_TABLE_ALIGN	16
+>  
+> diff --git a/include/asm-generic/vmlinux.lds.h b/include/asm-generic/vmlinux.lds.h
+> index e00f41aa8ec4..6b943fb8c5fd 100644
+> --- a/include/asm-generic/vmlinux.lds.h
+> +++ b/include/asm-generic/vmlinux.lds.h
+> @@ -894,10 +894,16 @@
+>   * section definitions so that such archs put those in earlier section
+>   * definitions.
+>   */
+> +#ifdef RUNTIME_DISCARD_EXIT
+> +#define EXIT_DISCARDS
+> +#else
+> +#define EXIT_DISCARDS							\
+> +	EXIT_TEXT							\
+> +	EXIT_DATA
+> +#endif
+>  #define DISCARDS							\
+>  	/DISCARD/ : {							\
+> -	EXIT_TEXT							\
+> -	EXIT_DATA							\
+> +	EXIT_DISCARDS							\
+>  	EXIT_CALL							\
+>  	*(.discard)							\
+>  	*(.discard.*)							\
+> -- 
+> 2.24.1
+> 
+
+
 -- 
-I'm Sophia a military personnel,i will like to know more about you and
-also share ideas with you my dear......
+Kees Cook
+
