@@ -2,37 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3C4D014E21C
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Jan 2020 19:50:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2993014E2B5
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Jan 2020 19:54:37 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727492AbgA3SuE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 30 Jan 2020 13:50:04 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58212 "EHLO mail.kernel.org"
+        id S1730126AbgA3SlQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 30 Jan 2020 13:41:16 -0500
+Received: from mail.kernel.org ([198.145.29.99]:48926 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730141AbgA3Srd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 30 Jan 2020 13:47:33 -0500
+        id S1730088AbgA3SlG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 30 Jan 2020 13:41:06 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E924420674;
-        Thu, 30 Jan 2020 18:47:31 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 43D6E2083E;
+        Thu, 30 Jan 2020 18:41:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1580410052;
-        bh=PcYjAsbCfzF+5dESTDBeoAdBwesnGNr/0H4djHcVYs4=;
+        s=default; t=1580409665;
+        bh=NkzPDC3WmqTpG5Q3lK/TWMmu0KCXkzpL1LCZ44XdnZI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=GESOKA0KLqgLICKY0MWH13Wr+U52VvYfxRlVG49dd0zeMWDwZvhAd4PqrynRXA04j
-         XK0jB3WIA3bHEtIrT+2Y/xY0N2eU1Ckyd6/r4QUeyyMMItuMfa23BJXNCiXxiSBCuF
-         0QeH+ATbYV6DvzKGuw4QulMCsGWC02l9grgoiu/4=
+        b=J+z5EEmNle5FjCsy3HURLDD9WdASBtRt9VQCd0HzbJs+RZuDzcMDA/IGEN0NU4EAF
+         1BNhkoE1pWBfNTHzNYD36MayACcnGTdkD2FONeTISipnR8RdMSLYfDke0gtM8luHED
+         LOlnU4nalonLJue31m6bbugMfR+zyjKov7ZUddmc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Malcolm Priestley <tvboxspy@gmail.com>
-Subject: [PATCH 4.19 10/55] staging: vt6656: correct packet types for CTS protect, mode.
+        stable@vger.kernel.org, Jes Sorensen <Jes.Sorensen@redhat.com>,
+        Johan Hovold <johan@kernel.org>,
+        Kalle Valo <kvalo@codeaurora.org>
+Subject: [PATCH 5.5 34/56] rtl8xxxu: fix interface sanity check
 Date:   Thu, 30 Jan 2020 19:38:51 +0100
-Message-Id: <20200130183610.637745300@linuxfoundation.org>
+Message-Id: <20200130183615.238289079@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200130183608.563083888@linuxfoundation.org>
-References: <20200130183608.563083888@linuxfoundation.org>
+In-Reply-To: <20200130183608.849023566@linuxfoundation.org>
+References: <20200130183608.849023566@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -42,60 +44,37 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Malcolm Priestley <tvboxspy@gmail.com>
+From: Johan Hovold <johan@kernel.org>
 
-commit d971fdd3412f8342747778fb59b8803720ed82b1 upstream.
+commit 39a4281c312f2d226c710bc656ce380c621a2b16 upstream.
 
-It appears that the driver still transmits in CTS protect mode even
-though it is not enabled in mac80211.
+Make sure to use the current alternate setting when verifying the
+interface descriptors to avoid binding to an invalid interface.
 
-That is both packet types PK_TYPE_11GA and PK_TYPE_11GB both use CTS protect.
-The only difference between them GA does not use B rates.
+Failing to do so could cause the driver to misbehave or trigger a WARN()
+in usb_submit_urb() that kernels with panic_on_warn set would choke on.
 
-Find if only B rate in GB or GA in protect mode otherwise transmit packets
-as PK_TYPE_11A.
-
-Cc: stable <stable@vger.kernel.org>
-Signed-off-by: Malcolm Priestley <tvboxspy@gmail.com>
-Link: https://lore.kernel.org/r/9c1323ff-dbb3-0eaa-43e1-9453f7390dc0@gmail.com
+Fixes: 26f1fad29ad9 ("New driver: rtl8xxxu (mac80211)")
+Cc: stable <stable@vger.kernel.org>     # 4.4
+Cc: Jes Sorensen <Jes.Sorensen@redhat.com>
+Signed-off-by: Johan Hovold <johan@kernel.org>
+Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/staging/vt6656/device.h |    2 ++
- drivers/staging/vt6656/rxtx.c   |   12 ++++++++----
- 2 files changed, 10 insertions(+), 4 deletions(-)
+ drivers/net/wireless/realtek/rtl8xxxu/rtl8xxxu_core.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/staging/vt6656/device.h
-+++ b/drivers/staging/vt6656/device.h
-@@ -52,6 +52,8 @@
- #define RATE_AUTO	12
+--- a/drivers/net/wireless/realtek/rtl8xxxu/rtl8xxxu_core.c
++++ b/drivers/net/wireless/realtek/rtl8xxxu/rtl8xxxu_core.c
+@@ -6384,7 +6384,7 @@ static int rtl8xxxu_parse_usb(struct rtl
+ 	u8 dir, xtype, num;
+ 	int ret = 0;
  
- #define MAX_RATE			12
-+#define VNT_B_RATES	(BIT(RATE_1M) | BIT(RATE_2M) |\
-+			BIT(RATE_5M) | BIT(RATE_11M))
+-	host_interface = &interface->altsetting[0];
++	host_interface = interface->cur_altsetting;
+ 	interface_desc = &host_interface->desc;
+ 	endpoints = interface_desc->bNumEndpoints;
  
- /*
-  * device specific
---- a/drivers/staging/vt6656/rxtx.c
-+++ b/drivers/staging/vt6656/rxtx.c
-@@ -815,10 +815,14 @@ int vnt_tx_packet(struct vnt_private *pr
- 		if (info->band == NL80211_BAND_5GHZ) {
- 			pkt_type = PK_TYPE_11A;
- 		} else {
--			if (tx_rate->flags & IEEE80211_TX_RC_USE_CTS_PROTECT)
--				pkt_type = PK_TYPE_11GB;
--			else
--				pkt_type = PK_TYPE_11GA;
-+			if (tx_rate->flags & IEEE80211_TX_RC_USE_CTS_PROTECT) {
-+				if (priv->basic_rates & VNT_B_RATES)
-+					pkt_type = PK_TYPE_11GB;
-+				else
-+					pkt_type = PK_TYPE_11GA;
-+			} else {
-+				pkt_type = PK_TYPE_11A;
-+			}
- 		}
- 	} else {
- 		pkt_type = PK_TYPE_11B;
 
 
