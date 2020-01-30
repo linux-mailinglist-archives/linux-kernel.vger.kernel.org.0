@@ -2,89 +2,112 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A4E9514D94D
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Jan 2020 11:53:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6695D14D94F
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Jan 2020 11:53:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727090AbgA3Kww (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 30 Jan 2020 05:52:52 -0500
-Received: from mail-qk1-f193.google.com ([209.85.222.193]:41706 "EHLO
-        mail-qk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726873AbgA3Kww (ORCPT
+        id S1727132AbgA3KxE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 30 Jan 2020 05:53:04 -0500
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:43322 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726873AbgA3KxD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 30 Jan 2020 05:52:52 -0500
-Received: by mail-qk1-f193.google.com with SMTP id s187so2448471qke.8
-        for <linux-kernel@vger.kernel.org>; Thu, 30 Jan 2020 02:52:51 -0800 (PST)
+        Thu, 30 Jan 2020 05:53:03 -0500
+Received: by mail-lj1-f194.google.com with SMTP id a13so2784588ljm.10;
+        Thu, 30 Jan 2020 02:53:02 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=mime-version:reply-to:from:date:message-id:subject:to
-         :content-transfer-encoding;
-        bh=fj6+7XdfY+psK9aUy8vPwpzcDlN0nKnYH4DbLtpBXRs=;
-        b=DatAPRPR25Vgm5YtzfSYtVd4UMnzt7z1AsEXxwCEqqbMzFvNxixN+y5TNlx20XXM4k
-         0O4kfYe3c0zvKTfMJJyGXwCXBjpiNR30aA9vzezAlHMk2T2rRC6BCTGPmjiSARI9I4og
-         5ELvB9syAyOTF8LRGynBCvtvO+W6mpPvgvyMk+qV7040NVe1Ix4AMjTh9SwVpCWSa9eO
-         3KG2XwiCOEe8tXipKAfZ/LPNX//9AkcWRJ2jI6P0H0grpQ+XeCA8hFqrWxke5qF+a/ec
-         qPJvC2HWdapBKhQHlCoiSjfChBX6K/JVXnzyKII91fzYc+Hh06rghN4QFTLhkvGT19qa
-         vvdQ==
+        h=sender:from:to:cc:subject:in-reply-to:references:date:message-id
+         :mime-version;
+        bh=VInSeZzfvgmHREHYseWhKaEskYTeZJwjVw1nVI3mDSM=;
+        b=BSL0whsJQB7pKHlTpIwBLCkb5I+yKv0mb9bqNx3DgSN0w1F5FvibJkbn+PcudtlPSk
+         42yHTkhzFMCnWWGMSXFUUA2HG4bau7e+LimBepJYU8eLo0yUNE9kUiy7+60osRUyCUv5
+         pLy53BA9mSVRMjk5BGySw8/DtVerKeqDA0TRiZ+57fbXBaO1aTl/TWADcxkloBX6EdqX
+         1VtdALsPD2cMuoFztqcewiAL462c45MRrH7gLbLjjPSG6qihYRTOoj1HFd8SSOKj4a/u
+         NGgWwS70kCwCefymZhvQf/RPF61ek4ncmffmWrmWqNHRAykOAUZVOvM567mltqETz0hN
+         CzJw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
-         :subject:to:content-transfer-encoding;
-        bh=fj6+7XdfY+psK9aUy8vPwpzcDlN0nKnYH4DbLtpBXRs=;
-        b=lj1/dx4VFqJDzRmqB+ZIVVS+xXMaQbqSkAB61mVpQ47hJxiqVIBriWod1PgXjprP1o
-         EZHzIogAYAyum3wdXGy45Sw1eTeNeJ8Qekk1qPVqYAOBSQisMU391n7oD2ZSv5IVBopJ
-         Wobj8rPRsXSb15FvL4yLdHzSnDsgwSWNAfwB52txDC5c9yY9r7ejDyGh05qtyHO/YmW4
-         vw7fvD50S2CNfsIfZE4HltumyadhCrI32+aWBj4yuER99vleaKNC87+1NXbI2VNreumh
-         s5FZz7eI34xjhd+vnm/Sxk9//SmcqW2elWpOzPxznNjdCXrnVx0HWcnrhXbrCnNR+TWU
-         perA==
-X-Gm-Message-State: APjAAAX7wCdZm4Ew0Q27g8TzOkYwMEBDlShMtcCwjgiRrNQcEgikPBqZ
-        DSWuakb60hgkGor9+QmkUOBIUF55o48+7JPUEnE=
-X-Google-Smtp-Source: APXvYqwkLuuK/KMF7VMUwQE6tGqitHoCVszEm5oMEjwnbmchKmOtvxf6iQPrzOUZyXTN4b/TGheZbGAaClnH4QVUjnw=
-X-Received: by 2002:a05:620a:6b6:: with SMTP id i22mr4314987qkh.301.1580381571369;
- Thu, 30 Jan 2020 02:52:51 -0800 (PST)
+        h=x-gm-message-state:sender:from:to:cc:subject:in-reply-to:references
+         :date:message-id:mime-version;
+        bh=VInSeZzfvgmHREHYseWhKaEskYTeZJwjVw1nVI3mDSM=;
+        b=NCuAQ+9R1a5J2MxdyGBhhl5Wm0+8X1PDvfHQpxRQFdRbBV5fkvmp+PuvqXoUperIIU
+         vWHK8onK10VxNRc3fHLIu4kygd6+/E5BrFabnxfLE2oFeEEzmdEeXVIJwabK3GrlvcX8
+         KH9Iv1wWIV/8FEF19wOrmBUEiT9+CchOXX9KnMRE0MWNnDgW9uoPxZiwnLL+V+9sXH0e
+         33cO+i16esY+eZNMTw6prn03sEPLH60+ewZ8lepU+TGQVaXNFREsszUClGKzE4pe2f5r
+         a/bojC6B/PwyGzbgnRRIoiE8LBIh9BI5UL7n6EzVH519w42WNKokQXPsMvPk9x+3y8vy
+         /rsA==
+X-Gm-Message-State: APjAAAVohmaAe8z0vs1e+poFbvtG5zsfn+321tKUXxoa/WcdSa+Dnx84
+        yWPnCdDK5AoKnQleYkuhahSOK38Mr/M=
+X-Google-Smtp-Source: APXvYqyW8YU5DPRtzWUe9otRvtCWmRlLF4jZgF/dLQpWz7GpFGNLMnob8wZ6nL95k2aVYKoq93G16A==
+X-Received: by 2002:a2e:98c4:: with SMTP id s4mr2512389ljj.102.1580381581018;
+        Thu, 30 Jan 2020 02:53:01 -0800 (PST)
+Received: from saruman (88-113-215-33.elisa-laajakaista.fi. [88.113.215.33])
+        by smtp.gmail.com with ESMTPSA id h14sm2612603lfc.2.2020.01.30.02.52.59
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 30 Jan 2020 02:52:59 -0800 (PST)
+From:   Felipe Balbi <balbi@kernel.org>
+To:     Stephen Rothwell <sfr@canb.auug.org.au>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Greg KH <gregkh@linuxfoundation.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-usb@vger.kernel.org
+Subject: Re: [GIT PULL] USB/Thunderbolt/PHY patches for 5.6-rc1
+In-Reply-To: <20200130083459.206fc0d9@canb.auug.org.au>
+References: <20200129101401.GA3858221@kroah.com> <CAHk-=wgwBfz0CtAFZMDy=A_Wz0+=dzrfWWiHESUD9CxnV=Xyjw@mail.gmail.com> <20200130083459.206fc0d9@canb.auug.org.au>
+Date:   Thu, 30 Jan 2020 12:52:55 +0200
+Message-ID: <87ftfx8bco.fsf@kernel.org>
 MIME-Version: 1.0
-Received: by 2002:ad4:48c5:0:0:0:0:0 with HTTP; Thu, 30 Jan 2020 02:52:50
- -0800 (PST)
-Reply-To: augustineamaga@gmail.com
-From:   Augustine Amaga <policdepartmentg@gmail.com>
-Date:   Thu, 30 Jan 2020 11:52:50 +0100
-Message-ID: <CABajN5NWQ45s0VJBcEJ2LRxnXDJ7k4EFBQZyPeHc8=BfQTrXMQ@mail.gmail.com>
-Subject: =?UTF-8?B?R3LDvMOfZSBGcmV1bmQ=?=
-To:     undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: multipart/signed; boundary="=-=-=";
+        micalg=pgp-sha256; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Guten Tag,
+--=-=-=
+Content-Type: text/plain
+Content-Transfer-Encoding: quoted-printable
 
 
-Es tut mir leid, Sie in dieser Angelegenheit ohne Ihre vorherige
-Zustimmung zu kontaktieren. Es war wegen der Dringlichkeit der Dinge.
+Hi,
 
-Ich bin Auguste AMAGA, ein Rechtsanwalt, und der pers=C3=B6nliche Anwalt
-von  ein verstorbener Kunde aus Ihrem Land. Ich w=C3=BCrde gerne wissen, ob
-wir zusammenarbeiten k=C3=B6nnen?
+Stephen Rothwell <sfr@canb.auug.org.au> writes:
+> On Wed, 29 Jan 2020 10:11:26 -0800 Linus Torvalds <torvalds@linux-foundat=
+ion.org> wrote:
+>>
+>> Stephen, does linux-next perhaps miss these config-time warnings?
+>
+> I saw it when it first happened and reported it, but since I merge the
+> ic2 tree before the usb tree, the warning went away for me after the
+> fix was added to the i2c tree.
 
-Seit dem Tod meines Mandanten ruht sein Fonds im Wert von 11,5
-Millionen US-Dollar [elf Millionen und f=C3=BCnfhunderttausend Dollar] in
-der Bank meines Landes. Die Bank hat mir eine Mitteilung gemacht, um
-die n=C3=A4chsten Angeh=C3=B6rigen f=C3=BCr die Forderung der Fonds zu pr=
-=C3=A4sentieren,
-andernfalls werden die Gelder beschlagnahmt.
+I wonder if we should start shuffling the order of merges in
+linux-next in order to have a chance of finding these issues.
 
-Der Verstorbene starb bei einem Autounfall mit seiner ganzen Familie.
-Ich habe mich mit Ihnen in Verbindung gesetzt, weil Sie den gleichen
-Familiennamen wie der Verstorbene haben, deshalb, k=C3=B6nnen Sie an die
-Bank als mein verstorbener Kunde n=C3=A4chsten Angeh=C3=B6rigen vorgestellt
-werden. Mit meiner Unterst=C3=BCtzung als der verstorbene pers=C3=B6nliche
-Anwalt, k=C3=B6nnen Sie von der Bank genehmigt werden und das Geld wird
-Ihnen freigegeben werden.
+cheers
 
-Ich freue mich auf Ihre Antwort, wenn Sie interessiert sind und ich
-werde Ihnen weitere Details senden.
+=2D-=20
+balbi
 
-Mit freundlichen Gr=C3=BC=C3=9Fen,
+--=-=-=
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Auguste Esq.
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCAAdFiEElLzh7wn96CXwjh2IzL64meEamQYFAl4ytYcACgkQzL64meEa
+mQazdRAA0z0M7brv/67q3vlMfMM9M8uyx+sk6vaS3NCEg1l0YXfWhwdk3fx/0FCf
+DXW+S3BcjgZXUD+U6nNvjp92z7yvoPjaqAUzf4/1vs5/TsuVniJy5hrd5R2rSMR6
+lZnuQ7ilCQvDiRjnSc3WM/sdVh+/mf/d7caxBwq0W6ojry9Hx8PjPoArg9iYcxfm
+UYHVz8oMW3SCyBWZE0a8ZHj9jWa8AcdF8E20ulBL0z/lLpmSN6Oux8+Zd7+Nylw8
+ElL8KW/I/wxQOANQYt22U6vsj4MxItHsejZr3JQ1SPAyr/VgmArGFM435CeDviMr
+Y1hOByIhtT4F2wJ0LvGuIZ95/LHdvttwp2ETtbSyVHlGTiizGZaIMJplvj8ZN7O6
+SNQjWI5ZdhcIIGJzlojGDhO/HBqGG9ED1/0RHG8DLaKho7ntuHifKxxRLO4jEH7T
+dgZ9ResVOysGcaIQgBkh+/c3CXh5WGhjkqm9NpO270ZHW7EgUJKI/kaC/Igi/Z1i
+vvinuicDmayWMOS/+6sd321AWtSIvWvQQS5YD4YmpTi7oor5YYyGfvrKG30ZT7FM
+0H6VqRm+j6+TCEYwzF0yUNaibuOzcFwQ89Upc563FbvY7w2uBYP+JqM7w1/8wfaE
+YCe8SpShKtN/CuDFmz2W0iBy43+mqFtgFZ7G0lhQrWz7KvZSeRg=
+=Io0V
+-----END PGP SIGNATURE-----
+--=-=-=--
