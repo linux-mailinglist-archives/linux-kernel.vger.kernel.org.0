@@ -2,97 +2,98 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 101CD14E5A6
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Jan 2020 23:51:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3862214E5AD
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Jan 2020 23:52:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727577AbgA3WvC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 30 Jan 2020 17:51:02 -0500
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:43054 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726294AbgA3WvC (ORCPT
+        id S1727616AbgA3Ww0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 30 Jan 2020 17:52:26 -0500
+Received: from mail-ot1-f68.google.com ([209.85.210.68]:35503 "EHLO
+        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726294AbgA3WwZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 30 Jan 2020 17:51:02 -0500
-Received: by mail-pg1-f196.google.com with SMTP id u131so2395030pgc.10
-        for <linux-kernel@vger.kernel.org>; Thu, 30 Jan 2020 14:51:00 -0800 (PST)
+        Thu, 30 Jan 2020 17:52:25 -0500
+Received: by mail-ot1-f68.google.com with SMTP id r16so4788879otd.2
+        for <linux-kernel@vger.kernel.org>; Thu, 30 Jan 2020 14:52:25 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
+        d=gmail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=Nm7q/eqnnGMhJ4cSfabctzSKxn0MOorqNV0sKFngedQ=;
-        b=TMfOq3Cm7tFFkVWajkEH/mOlfghX4QyLqQHqYZZWR4V20ArmjrlHpz0d8+8xSByinZ
-         hdNbCAldYk6XW/2l4H6+W+D99nfYFDFdlo1JF1zsEkJxE9vw/m1xetfRlk4B1wB04LUf
-         vgQJJnXFxYGn+sGKkA8pUh58KRPmTHCO35p+LwSV7Wkci1t0zGgCnSKFVsD3CJRVFyCo
-         Hx7zchW0IfdwQSjwaOeDPLPmvT/qzRZbY0PFmpfI+3jsVs5e+ZwXMFUc5OJY345A6bMq
-         pB48aI/3uWmIP/mXK6bLsZAtTLERYf85LGN/IzjM9ZEQtYWVvQ1wOCqgnYJxKRvVLiz2
-         DaBg==
+        bh=XSsZcaTfXOTFMqkKy3ZnZWZbmKJX0x/xuamjtfc8mfk=;
+        b=Xw5+tmp+ErELACNDrM55VJgVQo5HyMVRPz03mHg0bvUr1o3WLBt2ztpTwqWNQ4C0cz
+         wpoBqQ73TseKUZ8LDU9ET88Pi5YITbV03hAd07uV++wHLHZXPZGx4VKWxGVexrtMY6Yz
+         72uHZ7V4nOvxWxQGxD5tABvYW95KNOzueJQ34cQIwX8QbpwuSVeby9/H0+Jq2KuXH59V
+         o5aDsxn/mdcpXjXG0Crki9njtDgVbCcKHaFxxDG456PtfNHslwX+4+KOyHiAHZiPpjs6
+         sbj1cQrJvOPRU9kmKgkGMdkR4NpB4AAaGF8xwA6EMAY5B9cnggQJj2OJ8ijfZjCFPx2/
+         z0eQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=Nm7q/eqnnGMhJ4cSfabctzSKxn0MOorqNV0sKFngedQ=;
-        b=TBGGFUIez4Hf/PSatalhPmBGUeO0SalvSVSsmI2B1xb8nPRVU6CTqS9zdvQ6g2/dt+
-         TuuICPt3wbqUJxWXhDdnjQbLG1x/AFuWSusvoXsUbaH/7ZqIOpZG7mphFyKtGgZdMgTs
-         txf20Le7eixahNZ+Ei2Un69oXjQsl3X/n3yCfLLEVGbwsVVOWl7ENPzQ1w1qmlZTooa6
-         tx4y56pGdXyh3AW61L0J/aCrz+Sfkgt+oayPrAf6EmF1RxNWEytL6MZe7NbPZm3wuuaN
-         elIrLIEETASmXjXStQ1otyKYi1zHcoNw8kualeGMf1VabrBnv5/ZwdZiS3Rmq7aslbX7
-         CskA==
-X-Gm-Message-State: APjAAAUBISqCWKKW+lgT6cf3+k9iur/30NwiTI+SW4Y/f5KLXast6NLM
-        p4cj+xqWVwYL7zlLUW4x+DtxCsQsVwiaXmkcLRIr6A==
-X-Google-Smtp-Source: APXvYqx0i4HutGZ0NwffQW6YWyeSX4LgIJj846OBe2RwSGkQlJX/8HwMxqcna9y1bwf7blHqEu8eaWZyufGuXP7EBl4=
-X-Received: by 2002:a63:597:: with SMTP id 145mr6755667pgf.384.1580424659726;
- Thu, 30 Jan 2020 14:50:59 -0800 (PST)
+        bh=XSsZcaTfXOTFMqkKy3ZnZWZbmKJX0x/xuamjtfc8mfk=;
+        b=MAz0L6zgQ2bOUDpP8+m9oGFLS0uWIQbY+r8sQe16AaoXq+cy/XXGlaXZALgzrRycIE
+         5oQnOyLSawU3dNGXniV19k5IS/FRBUi0EUHSdcbX59o4kn6pVjw/3qbmwM0zW+7yPPR9
+         Hbz2zw4PSYk9WoxElt2fGSLOHVafvv8NRoJ1A3idA/7hEFuby6bhgUPEoByA+AENgKJ8
+         rSgAnUaNf+uqfPvsPkATP0Ny97/ZuDJDCHeQ04JYHdXnYQU/zIlJqhGTHz76tYq5iXBk
+         GPZMPhC30mvT2MXdnhaDDFWm3WMHf9cDr3eefhHyxxsf6XCFUllNH1JfnLUc7EFgSCwe
+         PmHA==
+X-Gm-Message-State: APjAAAVcwE//ylkX9AlJY3Vn1+xp5AL9fzHvLUsZuRjMnM+wKQilyPkm
+        UxNBAPEN/aq9UrTzKM0gMmLWBLWD2j6OashfCd4=
+X-Google-Smtp-Source: APXvYqzXCCLiZwpASK2AHyFBUFB9uZN8F9l7IZ/XQxgSwk9nTjL6WYsOgvdFWnodSKcVaoUZ3cKLGDFGwHqEBfi4Xdc=
+X-Received: by 2002:a05:6830:1e64:: with SMTP id m4mr5653105otr.244.1580424744732;
+ Thu, 30 Jan 2020 14:52:24 -0800 (PST)
 MIME-Version: 1.0
-References: <20200128072002.79250-1-brendanhiggins@google.com>
- <20200128072002.79250-5-brendanhiggins@google.com> <20200129063836.6C2A62064C@mail.kernel.org>
-In-Reply-To: <20200129063836.6C2A62064C@mail.kernel.org>
-From:   Brendan Higgins <brendanhiggins@google.com>
-Date:   Thu, 30 Jan 2020 14:50:48 -0800
-Message-ID: <CAFd5g440ENddSAGA=CQhE-RZQAC8Hh1_+EOmfx2oDueB-EZXLw@mail.gmail.com>
-Subject: Re: [PATCH v1 4/7] init: main: add KUnit to kernel init
-To:     Stephen Boyd <sboyd@kernel.org>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Alan Maguire <alan.maguire@oracle.com>,
-        Anton Ivanov <anton.ivanov@cambridgegreys.com>,
-        Arnd Bergmann <arnd@arndb.de>, David Gow <davidgow@google.com>,
-        Frank Rowand <frowand.list@gmail.com>,
-        Jeff Dike <jdike@addtoit.com>,
-        Kees Cook <keescook@chromium.org>,
-        Richard Weinberger <richard@nod.at>, rppt@linux.ibm.com,
-        Shuah Khan <skhan@linuxfoundation.org>,
-        Iurii Zaikin <yzaikin@google.com>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        Logan Gunthorpe <logang@deltatee.com>,
-        Luis Chamberlain <mcgrof@kernel.org>,
-        Knut Omang <knut.omang@oracle.com>,
-        linux-um <linux-um@lists.infradead.org>,
-        linux-arch@vger.kernel.org,
-        "open list:KERNEL SELFTEST FRAMEWORK" 
-        <linux-kselftest@vger.kernel.org>,
-        KUnit Development <kunit-dev@googlegroups.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>
+References: <CAM_iQpVN4MNhcK0TXvhmxsCdkVOqQ4gZBzkDHykLocPC6Va7LQ@mail.gmail.com>
+ <20200121090048.GG29276@dhcp22.suse.cz> <CAM_iQpU0p7JLyQ4mQ==Kd7+0ugmricsEAp1ST2ShAZar2BLAWg@mail.gmail.com>
+ <20200126233935.GA11536@bombadil.infradead.org> <20200127150024.GN1183@dhcp22.suse.cz>
+ <20200127190653.GA8708@bombadil.infradead.org> <20200128081712.GA18145@dhcp22.suse.cz>
+ <20200128083044.GB6615@bombadil.infradead.org> <20200128091352.GC18145@dhcp22.suse.cz>
+ <20200128104857.GC6615@bombadil.infradead.org> <20200128113953.GA24244@dhcp22.suse.cz>
+ <CAM_iQpVjiui0xb7wTfF2HOME=cuk7M2SCBa7O_RVebk04qMs4w@mail.gmail.com>
+In-Reply-To: <CAM_iQpVjiui0xb7wTfF2HOME=cuk7M2SCBa7O_RVebk04qMs4w@mail.gmail.com>
+From:   Cong Wang <xiyou.wangcong@gmail.com>
+Date:   Thu, 30 Jan 2020 14:52:13 -0800
+Message-ID: <CAM_iQpX2P_NWeR_FTZOcL96Gd0TwDLZY1=X_AeUpYuX=pPE-ew@mail.gmail.com>
+Subject: Re: [PATCH] mm: avoid blocking lock_page() in kcompactd
+To:     Michal Hocko <mhocko@kernel.org>
+Cc:     Matthew Wilcox <willy@infradead.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        linux-mm <linux-mm@kvack.org>, Mel Gorman <mgorman@suse.de>,
+        Vlastimil Babka <vbabka@suse.cz>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jan 28, 2020 at 10:38 PM Stephen Boyd <sboyd@kernel.org> wrote:
+On Tue, Jan 28, 2020 at 11:44 AM Cong Wang <xiyou.wangcong@gmail.com> wrote:
 >
-> Quoting Brendan Higgins (2020-01-27 23:19:59)
-> > Remove KUnit from init calls entirely, instead call directly from
-> > kernel_init().
+> On Tue, Jan 28, 2020 at 3:39 AM Michal Hocko <mhocko@kernel.org> wrote:
 > >
-> > Co-developed-by: Alan Maguire <alan.maguire@oracle.com>
-> > Signed-off-by: Alan Maguire <alan.maguire@oracle.com>
-> > Signed-off-by: Brendan Higgins <brendanhiggins@google.com>
-> > ---
+> > On Tue 28-01-20 02:48:57, Matthew Wilcox wrote:
+> > > Doesn't the stack trace above indicate that we're doing migration as
+> > > the result of an allocation in add_to_page_cache_lru()?
+> >
+> > Which stack trace do you refer to? Because the one above doesn't show
+> > much more beyond mem_cgroup_iter and likewise others in this email
+> > thread. I do not really remember any stack with lock_page on the trace.
 >
-> Reviewed-by: Stephen Boyd <sboyd@kernel.org>
+> I think the page is locked in add_to_page_cache_lru() by
+> __SetPageLocked(), as the stack trace shows __add_to_page_cache_locked().
+> It is not yet unlocked, as it is still looping inside try_charge().
 >
-> Although, why can't it be squashed with the previous patch?
+> I will write a script to see if I can find the longest time spent in reclaim
+> as you suggested.
 
-I think that this is pretty much the smallest logical change that
-doesn't touch just KUnit. I figured it might make it easier for people
-not interested in KUnit what changes I am making to init. I assume
-that people don't touch init willy-nilly, right?
+After digging the changelog, I believe the following commit could fix
+the problem:
+
+commit f9c645621a28e37813a1de96d9cbd89cde94a1e4
+Author: Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+Date:   Mon Sep 23 15:37:08 2019 -0700
+
+    memcg, oom: don't require __GFP_FS when invoking memcg OOM killer
+
+which is not yet in our 4.19 branch yet. We will sync with 4.19 stable soon.
+
+Thanks.
