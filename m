@@ -2,40 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5FB8314E232
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Jan 2020 19:51:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2027A14E1DD
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Jan 2020 19:48:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731172AbgA3SqS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 30 Jan 2020 13:46:18 -0500
-Received: from mail.kernel.org ([198.145.29.99]:55984 "EHLO mail.kernel.org"
+        id S1731515AbgA3SsO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 30 Jan 2020 13:48:14 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58978 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731129AbgA3SqG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 30 Jan 2020 13:46:06 -0500
+        id S1731488AbgA3SsH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 30 Jan 2020 13:48:07 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 90E22214AF;
-        Thu, 30 Jan 2020 18:46:05 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9123A2082E;
+        Thu, 30 Jan 2020 18:48:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1580409966;
-        bh=rTnGPWhJtUxx8YM07eUp4YSPeRUUXMPbXzznbDOrHcM=;
+        s=default; t=1580410087;
+        bh=BG0m2GrDH4m2acE7FgUelvrKxWuUu7u18RQMU/Mm3Ro=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=EidkPdsWIonXJHl28kinZRlUKuwKCT8h/nwoypKqDe2ZFAgmTK916UAEIIMvwhSFA
-         KAmnyKFGjNLILmDggAEeP+LmVYJKdUs36mmc4frqpHns3Icj9y7gFddIVmtjRpes2C
-         2GNFjnizopPWi+nVehiwK9oF0ma9+UoVLZEpgb7E=
+        b=CnAYCJ4Iu90alqCQ4AesaaRJmPYQCWZFR8T/LsYH/X2LNUVwWbrmNckW3KJy7IaYZ
+         ZcYtCP7oR9NMaHwsUfGxr5THMVkRUMaopzV4slfljBJ+Eg8xlZlVcnrEtUiSpgdrAH
+         mv3WuCfL0XI4Gq9hHpi51cihxVhLvXDjr4TDIipQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        syzbot+c2f1558d49e25cc36e5e@syzkaller.appspotmail.com,
-        Eric Dumazet <eric.dumazet@gmail.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>
-Subject: [PATCH 5.4 104/110] crypto: af_alg - Use bh_lock_sock in sk_destruct
-Date:   Thu, 30 Jan 2020 19:39:20 +0100
-Message-Id: <20200130183625.864185374@linuxfoundation.org>
+        Rodrigo Rivas Costa <rodrigorivascosta@gmail.com>,
+        Jiri Kosina <jkosina@suse.cz>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.19 40/55] HID: steam: Fix input device disappearing
+Date:   Thu, 30 Jan 2020 19:39:21 +0100
+Message-Id: <20200130183615.719491608@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200130183613.810054545@linuxfoundation.org>
-References: <20200130183613.810054545@linuxfoundation.org>
+In-Reply-To: <20200130183608.563083888@linuxfoundation.org>
+References: <20200130183608.563083888@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,43 +44,44 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Herbert Xu <herbert@gondor.apana.org.au>
+From: Rodrigo Rivas Costa <rodrigorivascosta@gmail.com>
 
-commit 37f96694cf73ba116993a9d2d99ad6a75fa7fdb0 upstream.
+[ Upstream commit 20eee6e5af35d9586774e80b6e0b1850e7cc9899 ]
 
-As af_alg_release_parent may be called from BH context (most notably
-due to an async request that only completes after socket closure,
-or as reported here because of an RCU-delayed sk_destruct call), we
-must use bh_lock_sock instead of lock_sock.
+The `connected` value for wired devices was not properly initialized,
+it must be set to `true` upon creation, because wired devices do not
+generate connection events.
 
-Reported-by: syzbot+c2f1558d49e25cc36e5e@syzkaller.appspotmail.com
-Reported-by: Eric Dumazet <eric.dumazet@gmail.com>
-Fixes: c840ac6af3f8 ("crypto: af_alg - Disallow bind/setkey/...")
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+When a raw client (the Steam Client) uses the device, the input device
+is destroyed. Then, when the raw client finishes, it must be recreated.
+But since the `connected` variable was false this never happended.
 
+Signed-off-by: Rodrigo Rivas Costa <rodrigorivascosta@gmail.com>
+Signed-off-by: Jiri Kosina <jkosina@suse.cz>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- crypto/af_alg.c |    6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ drivers/hid/hid-steam.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
---- a/crypto/af_alg.c
-+++ b/crypto/af_alg.c
-@@ -134,11 +134,13 @@ void af_alg_release_parent(struct sock *
- 	sk = ask->parent;
- 	ask = alg_sk(sk);
+diff --git a/drivers/hid/hid-steam.c b/drivers/hid/hid-steam.c
+index 8dae0f9b819e0..6286204d4c560 100644
+--- a/drivers/hid/hid-steam.c
++++ b/drivers/hid/hid-steam.c
+@@ -768,8 +768,12 @@ static int steam_probe(struct hid_device *hdev,
  
--	lock_sock(sk);
-+	local_bh_disable();
-+	bh_lock_sock(sk);
- 	ask->nokey_refcnt -= nokey;
- 	if (!last)
- 		last = !--ask->refcnt;
--	release_sock(sk);
-+	bh_unlock_sock(sk);
-+	local_bh_enable();
- 
- 	if (last)
- 		sock_put(sk);
+ 	if (steam->quirks & STEAM_QUIRK_WIRELESS) {
+ 		hid_info(hdev, "Steam wireless receiver connected");
++		/* If using a wireless adaptor ask for connection status */
++		steam->connected = false;
+ 		steam_request_conn_status(steam);
+ 	} else {
++		/* A wired connection is always present */
++		steam->connected = true;
+ 		ret = steam_register(steam);
+ 		if (ret) {
+ 			hid_err(hdev,
+-- 
+2.20.1
+
 
 
