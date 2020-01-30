@@ -2,147 +2,114 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id ED97F14E5CD
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Jan 2020 00:00:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A34F514E5E0
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Jan 2020 00:05:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727754AbgA3W7h (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 30 Jan 2020 17:59:37 -0500
-Received: from mail105.syd.optusnet.com.au ([211.29.132.249]:60534 "EHLO
-        mail105.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727656AbgA3W7f (ORCPT
+        id S1727708AbgA3XFD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 30 Jan 2020 18:05:03 -0500
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:45111 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726294AbgA3XFB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 30 Jan 2020 17:59:35 -0500
-Received: from dread.disaster.area (pa49-195-111-217.pa.nsw.optusnet.com.au [49.195.111.217])
-        by mail105.syd.optusnet.com.au (Postfix) with ESMTPS id 180C43A3C38;
-        Fri, 31 Jan 2020 09:59:22 +1100 (AEDT)
-Received: from dave by dread.disaster.area with local (Exim 4.92.3)
-        (envelope-from <david@fromorbit.com>)
-        id 1ixImP-0005Mg-7O; Fri, 31 Jan 2020 09:59:21 +1100
-Date:   Fri, 31 Jan 2020 09:59:21 +1100
-From:   Dave Chinner <david@fromorbit.com>
-To:     Damien Le Moal <Damien.LeMoal@wdc.com>
-Cc:     "hare@suse.de" <hare@suse.de>, Naohiro Aota <Naohiro.Aota@wdc.com>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "torvalds@linux-foundation.org" <torvalds@linux-foundation.org>,
-        "darrick.wong@oracle.com" <darrick.wong@oracle.com>,
-        "jth@kernel.org" <jth@kernel.org>,
-        "linux-xfs@vger.kernel.org" <linux-xfs@vger.kernel.org>
-Subject: Re: [PATCH v9 1/2] fs: New zonefs file system
-Message-ID: <20200130225921.GR18610@dread.disaster.area>
-References: <20200127100521.53899-1-damien.lemoal@wdc.com>
- <20200127100521.53899-2-damien.lemoal@wdc.com>
- <20200128174608.GR3447196@magnolia>
- <b404c1cd7a0c8ccbabcbd3c8aed440542750706e.camel@wdc.com>
- <20200129213318.GM18610@dread.disaster.area>
- <069a9841bc2a6fc9baee05847812720eb1f6517e.camel@wdc.com>
+        Thu, 30 Jan 2020 18:05:01 -0500
+Received: by mail-pg1-f195.google.com with SMTP id b9so2405815pgk.12
+        for <linux-kernel@vger.kernel.org>; Thu, 30 Jan 2020 15:05:00 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=ZVCoy0c6zBh/23HJ8qV14vEXBoPTNgRjwz7/2GTwHIc=;
+        b=bLf97hh1JmbfTKxaOIa/hfizEnh8PioMn1Y9TI7CEopKUPmgeQBicnEdwrFatxlt9U
+         /dF+mwGLbsQW7KmPTy8I6XvXreO4N48lEX+Ehw6v+hoPAgu86vKzIbhOK4gM6oTf8mzR
+         cUmaOPLKTOy/zPKtP/xK5WHSM7BjdC+E9H/qWV2SFU1exl9sfnhtxf2MfNs0DfBmIsih
+         drKywXHDy84lMq4TuYIprVFUFSLN67kw0IUzFFhKIkCU/UHmgiJqlOOqaSS+2J072x0h
+         J3RdIyqQ5IBv58TAQv0tMiutT2U2bysgST7jCLtDi7nTZT3kvU1poPBXQgw1qd6KjzT/
+         afJg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=ZVCoy0c6zBh/23HJ8qV14vEXBoPTNgRjwz7/2GTwHIc=;
+        b=JqGHqyGSWbBF27FVJSw8H24nBIVzKuzfw2kuGZOkgWEHRwz9d6CvW8k0QvWH9NZrSc
+         K6zFYUZ6p/o70XYE3BZ8VLhFXnhYfNbu+NiQUk2HTc9X+Ag0iKVJ4LGs5JaZ8xSswMq/
+         2ae3LRZJekzzOzKThQ7VPH6tBgEeLuwJHRiuW5PEd+0coA5KC1ErnCQvkLx1QJKOqUF5
+         +b/iZPQ9IyJiMlR3Qvu+Gr9hjoTRrM+gTtb3QNdtFtZUiPvx3HKWg40CcwOHxhaMqdVG
+         u88ewvZ73tSCm/dRyMR9B+8483PkFlDMup9MGsmQWx0PaxwZN5O97d8IxLzhjlBXR7vb
+         yKTQ==
+X-Gm-Message-State: APjAAAXMYlyW6o6XQAQ0/ZFLI/oKLWfZvP74PzZ84M2K2XKZ8mNHO1e+
+        mniSt+O6IuesglxgzV6rsaenjzzLzaV0LMRx/+L9pA==
+X-Google-Smtp-Source: APXvYqzpy57/EHOzTXSLzSf3keMtVmLBKsmU0rRVRaSHQpEvmWIO/hSL5ezfKU+X1bWMMEn/DiuqtJfLEN9g3PJzcvQ=
+X-Received: by 2002:a63:480f:: with SMTP id v15mr6926030pga.201.1580425499190;
+ Thu, 30 Jan 2020 15:04:59 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <069a9841bc2a6fc9baee05847812720eb1f6517e.camel@wdc.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Optus-CM-Score: 0
-X-Optus-CM-Analysis: v=2.3 cv=W5xGqiek c=1 sm=1 tr=0
-        a=0OveGI8p3fsTA6FL6ss4ZQ==:117 a=0OveGI8p3fsTA6FL6ss4ZQ==:17
-        a=jpOVt7BSZ2e4Z31A5e1TngXxSK0=:19 a=kj9zAlcOel0A:10 a=Jdjhy38mL1oA:10
-        a=7-415B0cAAAA:8 a=x1mIa0GL801llPKVRlUA:9 a=CjuIK1q_8ugA:10
-        a=biEYGPWJfzWAr4FL6Ov7:22
+References: <20200128072002.79250-1-brendanhiggins@google.com>
+ <20200128072002.79250-8-brendanhiggins@google.com> <20200129062709.5B2A22067C@mail.kernel.org>
+In-Reply-To: <20200129062709.5B2A22067C@mail.kernel.org>
+From:   Brendan Higgins <brendanhiggins@google.com>
+Date:   Thu, 30 Jan 2020 15:04:47 -0800
+Message-ID: <CAFd5g47cha8DJdS9x=Qjj-vLXjGOugQK38Ln85eznfuN11cLrQ@mail.gmail.com>
+Subject: Re: [PATCH v1 7/7] Documentation: Add kunit_shutdown to kernel-parameters.txt
+To:     Stephen Boyd <sboyd@kernel.org>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Alan Maguire <alan.maguire@oracle.com>,
+        Anton Ivanov <anton.ivanov@cambridgegreys.com>,
+        Arnd Bergmann <arnd@arndb.de>, David Gow <davidgow@google.com>,
+        Frank Rowand <frowand.list@gmail.com>,
+        Jeff Dike <jdike@addtoit.com>,
+        Kees Cook <keescook@chromium.org>,
+        Richard Weinberger <richard@nod.at>, rppt@linux.ibm.com,
+        Shuah Khan <skhan@linuxfoundation.org>,
+        Iurii Zaikin <yzaikin@google.com>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        Logan Gunthorpe <logang@deltatee.com>,
+        Luis Chamberlain <mcgrof@kernel.org>,
+        Knut Omang <knut.omang@oracle.com>,
+        linux-um <linux-um@lists.infradead.org>,
+        linux-arch@vger.kernel.org,
+        "open list:KERNEL SELFTEST FRAMEWORK" 
+        <linux-kselftest@vger.kernel.org>,
+        KUnit Development <kunit-dev@googlegroups.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jan 30, 2020 at 03:00:32AM +0000, Damien Le Moal wrote:
-> On Thu, 2020-01-30 at 08:33 +1100, Dave Chinner wrote:
-> > On Wed, Jan 29, 2020 at 01:06:29PM +0000, Damien Le Moal wrote:
-> > > Exactly. This is how the ZBC & ZAC (and upcoming ZNS) specifications
-> > > define the write pointer behavior. That makes error recovery a lot
-> > > easier and does not result in stale data accesses. Just notice the one-
-> > > off difference for the WP position from your example as WP will be
-> > > pointing at the error location, not the last written location. Indexing
-> > > from 0, we get (wp - zone start) always being isize with all written
-> > > and readable data in the sector range between zone start and zone write
-> > > pointer.
-> > 
-> > Ok, I'm going throw a curve ball here: volatile device caches.
-> > 
-> > How does the write pointer updates interact with device write
-> > caches? i.e.  the first write could be sitting in the device write
-> > cache, and the OS write pointer has been advanced. Then another write
-> > occurs, the device decides to write both to physical media, and it
-> > gets a write error in the area of the first write that only hit the
-> > volatile cache.
-> > 
-> > So does this mean that, from the POV of the OS, the device zone
-> > write pointer has gone backwards?
-> 
-> You are absolutely correct. Forgot to consider this case.
-> Nice pitching :)
+On Tue, Jan 28, 2020 at 10:27 PM Stephen Boyd <sboyd@kernel.org> wrote:
+>
+> Quoting Brendan Higgins (2020-01-27 23:20:02)
+> > Add kunit_shutdown, an option to specify that the kernel shutsdown after
+> > running KUnit tests, to the kernel-parameters.txt documentation.
+> >
+> > Signed-off-by: Brendan Higgins <brendanhiggins@google.com>
+> > ---
+> >  Documentation/admin-guide/kernel-parameters.txt | 7 +++++++
+> >  1 file changed, 7 insertions(+)
+> >
+> > diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
+> > index ade4e6ec23e03..0472b02ce16bb 100644
+> > --- a/Documentation/admin-guide/kernel-parameters.txt
+> > +++ b/Documentation/admin-guide/kernel-parameters.txt
+> > @@ -2054,6 +2054,13 @@
+> >                         0: force disabled
+> >                         1: force enabled
+> >
+> > +       kunit_shutdown  [KERNEL UNIT TESTING FRAMEWORK] Shutdown kernel after
+> > +                       running tests.
+> > +                       Default:        (flag not present) don't shutdown
+> > +                       poweroff:       poweroff the kernel after running tests.
+> > +                       halt:           halt the kernel after running tests.
+> > +                       reboot:         reboot the kernel after running tests.
+>
+> Maybe drop the full stops on the short descriptions.
 
-Potentially adverse IO ordering interactions with volatile device
-caches are never that far from the mind of filesystem engineers...
-:)
+Will fix.
 
-> > Unless there's some other magic that ensures device cached writes
-> > that have been signalled as successfully completed to the OS
-> > can never fail or that sequential zone writes are never cached in
-> > volatile memory in drives, I can't see how the above guarantees
-> > can be provided.
-> 
-> There not, at least from the standards point of view. Such guarantees
-> would be device implementation dependent and so we cannot rely on
-> anything in this regard. The write pointer ending up below the position
-> of the last issue direct IO is thus a possibility and not necessarily
-> indicative of an external action (and we actually cannot distinguish
-> which case it really is).
+> Otherwise,
+>
+> Reviewed-by: Stephen Boyd <sboyd@kernel.org>
+>
 
-*nod*
-
-> > > It is hard to decide on the best action to take here considering the
-> > > simple nature of zonefs (i.e. another better interface to do raw block
-> > > device file accesses). Including your comments on mount options, I cam
-> > > up with these actions that the user can choose with mount options:
-> > > * repair: Truncate the inode size only, nothing else
-> > > * remount-ro (default): Truncate the inode size and remount read-only
-> > > * zone-ro: Truncate the inode size and set the inode read-only
-> > > * zone-offline: Truncate the inode size to 0 and assume that its zone 
-> > > is offline (no reads nor writes possible).
-> > > 
-> > > This gives I think a good range of possible behaviors that the user may
-> > > want, from almost nothing (repair) to extreme to avoid accessing bad
-> > > data (zone-offline).
-> > 
-> > I would suggest that this is something that can be added later as it
-> > is not critical to supporting the underlying functionality.  Right
-> > now I'd just pick the safest option: shutdown to protect what data
-> > is on the storage right now and then let the user take action to
-> > recover/fix the issue.
-> 
-> By shutdown, do you mean remounting read-only ? Or do you mean
-> something more aggressive like preventing all accesses and changes to
-> files, i.e. assuming all zones are offline ? The former is already
-> there and is the default.
-
-"shutdown" in this context means "do whatever is necessary to
-prevent the problem getting worse". So, at minimum, it would be to
-prevent further writes to the zone that has gone bad.
-
-If there's potential for other zones to be affected, then moving to
-a global read-only state is the right thing to do.
-
-If there's potential for the error to expose stale data, propagate
-the error further into currently good on-disk structures, or walk
-off the end of corrupt structures (kernel crash and/or memory
-corruption), then an aggressive "error out as early as possible"
-shutdown is the right solution....
-
-I suspect that zonefs really only needs to go as far as remounting
-read-only as long as the hardware write pointers prevent reading the
-zone beyond that point....
-
-Cheers,
-
-Dave.
--- 
-Dave Chinner
-david@fromorbit.com
+Thanks!
