@@ -2,91 +2,58 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6758314E55A
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Jan 2020 23:09:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 93A7B14E565
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Jan 2020 23:14:53 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726466AbgA3WJI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 30 Jan 2020 17:09:08 -0500
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:35136 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725907AbgA3WJI (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 30 Jan 2020 17:09:08 -0500
-Received: by mail-pf1-f194.google.com with SMTP id y73so2211066pfg.2
-        for <linux-kernel@vger.kernel.org>; Thu, 30 Jan 2020 14:09:06 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=ZUexxNUx2dGjQIPMcFbU0fVcZMDC50Hvbcrbeq+H2V0=;
-        b=TZ6hrhFuqgBA4J1CeCNDRVu7W6cC06JV/7oLVVdX5AikBVmwiWHR8bfUZWuKOljo99
-         x30t0zV7uxM0dzEeSbBCqbgHacMW+OHT3zzhLCkrHtIZALyuI//pE+6bkJvt8b9rUzwS
-         NXacaeOJGQFQ387XD3h0B8ntMsYNMi9Ee1ZTs=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=ZUexxNUx2dGjQIPMcFbU0fVcZMDC50Hvbcrbeq+H2V0=;
-        b=jk0jusqfNT9iM0BD46t8PgtfYbFI2uzOlGNinhbGSqg8zhekLjXpSxRdme+Y7QDSjT
-         /hB8L378qF8ShRbZOFgmmwOF32sWMwkZfrWoCdXTaUGTxglLn32miKPdxAZUj194X7hW
-         3/0eOGLraoH5GOkKULxienGA3GvAsVDKQGVCxdfX4XGmqMEdi9crwQqNCO3ALLR5d7fr
-         fLaItZPDOUjd/8CnTLoqR1iY0dC88CotxvYKYFThONc8UiK1MxUZiEMVlRW8l3qZQG70
-         ZLOLYtaa/vKme6brrKxgRar+FaiBgiB0yLLsNEsZXu6hxjrfszPux84EcVXRNd1+1Xdc
-         guhw==
-X-Gm-Message-State: APjAAAX4MRpyQsfrrhnj18YglV7xF8JVfJ6LLzKR6D2WderX8ixFnzbI
-        0nWOHKJwKnuE+ZEUEUtK6iYUrg==
-X-Google-Smtp-Source: APXvYqykPZTCjcvVR9SGe1agZZrOZfRDah7+fVB0EvIAQLg3I5L4pet/YQS99dtHp1ZsnUufEj+7hQ==
-X-Received: by 2002:a63:f142:: with SMTP id o2mr6696978pgk.181.1580422146031;
-        Thu, 30 Jan 2020 14:09:06 -0800 (PST)
-Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id k21sm7678551pgt.22.2020.01.30.14.09.05
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 30 Jan 2020 14:09:05 -0800 (PST)
-Date:   Thu, 30 Jan 2020 14:09:04 -0800
-From:   Kees Cook <keescook@chromium.org>
-To:     "H.J. Lu" <hjl.tools@gmail.com>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Thomas Lendacky <Thomas.Lendacky@amd.com>,
-        Sami Tolvanen <samitolvanen@google.com>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H . Peter Anvin" <hpa@zytor.com>,
-        the arch/x86 maintainers <x86@kernel.org>,
-        Yu-cheng Yu <yu-cheng.yu@intel.com>
-Subject: Re: [PATCH] Discard .note.gnu.property sections in generic NOTES
-Message-ID: <202001301407.0C25389FC2@keescook>
-References: <20200124181819.4840-1-hjl.tools@gmail.com>
- <20200124181819.4840-3-hjl.tools@gmail.com>
- <202001271531.B9ACE2A@keescook>
- <CAMe9rOrVyzvaTyURc4RJJTHUXGG6uAC9KyQomxQFzWzrAN4nrg@mail.gmail.com>
- <202001301143.288B55DCC1@keescook>
- <CAMe9rOocT960KsofP9o_y49FdgY9NGix=GcYnpKLvp7RhieZNA@mail.gmail.com>
- <202001301206.13AF0512@keescook>
- <CAMe9rOoU1B8enyoL4-SSQKYLHpevR5yrbp5ewztC=Owr69y2SQ@mail.gmail.com>
- <CAMe9rOpkrPOsymJiBv0i3_Q6hp=fyUYLqBKpOZAHx3d5t54GDA@mail.gmail.com>
+        id S1726213AbgA3WOv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 30 Jan 2020 17:14:51 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38972 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725907AbgA3WOu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 30 Jan 2020 17:14:50 -0500
+Received: from cakuba (unknown [199.201.64.133])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9273620707;
+        Thu, 30 Jan 2020 22:14:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1580422489;
+        bh=Hh04uXBi7OcIx5ozha/taPqwFRcX5aRWOqzIboXiuHU=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=s9ACRgpQmFHVWcx5jc0K+lNdf539SserYwTzfbdVUaTUnC72bjHFmygCrnuZfE5YA
+         Fq2wn2udDI8nOuRa0iIxQqUBuI0H5aIv4+vAlGbBnR5UQ41+QE7ALfD8/n9YpQb9oa
+         yxbZaXU5dQF8EM3PF6N4Qp57ZJ8F5vD3Mrf60/Ok=
+Date:   Thu, 30 Jan 2020 14:14:48 -0800
+From:   Jakub Kicinski <kuba@kernel.org>
+To:     Pablo Neira Ayuso <pablo@netfilter.org>
+Cc:     Matteo Croce <mcroce@redhat.com>, netdev@vger.kernel.org,
+        linux-doc@vger.kernel.org, "David S. Miller" <davem@davemloft.net>,
+        Florian Westphal <fw@strlen.de>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net] netfilter: nf_flowtable: fix documentation
+Message-ID: <20200130141448.27fa32aa@cakuba>
+In-Reply-To: <20200130191019.19440-1-mcroce@redhat.com>
+References: <20200130191019.19440-1-mcroce@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAMe9rOpkrPOsymJiBv0i3_Q6hp=fyUYLqBKpOZAHx3d5t54GDA@mail.gmail.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jan 30, 2020 at 12:48:38PM -0800, H.J. Lu wrote:
-> Here is a patch to discard .note.gnu.property sections in generic NOTES.
+On Thu, 30 Jan 2020 20:10:19 +0100, Matteo Croce wrote:
+> In the flowtable documentation there is a missing semicolon, the command
+> as is would give this error:
+> 
+>     nftables.conf:5:27-33: Error: syntax error, unexpected devices, expecting newline or semicolon
+>                     hook ingress priority 0 devices = { br0, pppoe-data };
+>                                             ^^^^^^^
+>     nftables.conf:4:12-13: Error: invalid hook (null)
+>             flowtable ft {
+>                       ^^
+> 
+> Fixes: 19b351f16fd9 ("netfilter: add flowtable documentation")
+> Signed-off-by: Matteo Croce <mcroce@redhat.com>
 
-Thanks! This looks good, though please send not as an attachment. :)
-
-Also, one more nit: the comment style should be:
-
-/*
- * First line of text, blah blah ...
- * ... blah blah, end of text.
- */
-
-
--- 
-Kees Cook
+This is netfilter so even though it's tagged as net, I'm expecting
+Pablo (or Jon) to take it. Please LMK if I'm wrong.
