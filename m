@@ -2,54 +2,100 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 680A914D4F3
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Jan 2020 02:22:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E7E9A14D4F6
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Jan 2020 02:25:01 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727239AbgA3BWP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 29 Jan 2020 20:22:15 -0500
-Received: from smtprelay0234.hostedemail.com ([216.40.44.234]:49140 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726618AbgA3BWP (ORCPT
+        id S1727262AbgA3BYz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 29 Jan 2020 20:24:55 -0500
+Received: from mail-ot1-f67.google.com ([209.85.210.67]:45040 "EHLO
+        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726618AbgA3BYz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 Jan 2020 20:22:15 -0500
-Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
-        by smtprelay01.hostedemail.com (Postfix) with ESMTP id 04DC9100E7B42;
-        Thu, 30 Jan 2020 01:22:14 +0000 (UTC)
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,:::::::::::,RULES_HIT:41:355:379:599:973:988:989:1260:1277:1311:1313:1314:1345:1359:1437:1515:1516:1518:1534:1537:1566:1593:1594:1711:1714:1730:1747:1777:1792:2393:2559:2562:2828:3138:3139:3140:3141:3142:3622:3865:3870:3871:3872:4250:4321:5007:6117:7901:10004:10400:10848:11232:11658:11914:12297:12740:12760:12895:13069:13311:13357:13439:14659:21080:21627:30054:30070:30091,0,RBL:none,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:,MSBL:0,DNSBL:none,Custom_rules:0:0:0,LFtime:1,LUA_SUMMARY:none
-X-HE-Tag: tank25_3070df626a919
-X-Filterd-Recvd-Size: 1170
-Received: from XPS-9350.home (unknown [47.151.135.224])
-        (Authenticated sender: joe@perches.com)
-        by omf17.hostedemail.com (Postfix) with ESMTPA;
-        Thu, 30 Jan 2020 01:22:12 +0000 (UTC)
-Message-ID: <14c4cd0d74d9de88f8cf16bad8910f1273a46a47.camel@perches.com>
-Subject: Re: [PATCH] checkpatch: check SPDX tags in YAML files
-From:   Joe Perches <joe@perches.com>
-To:     Lubomir Rintel <lkundrak@v3.sk>,
-        Andy Whitcroft <apw@canonical.com>,
-        Andrew Morton <akpm@linux-foundation.org>
-Cc:     Rob Herring <robh@kernel.org>, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Date:   Wed, 29 Jan 2020 17:21:05 -0800
-In-Reply-To: <20200129123356.388669-1-lkundrak@v3.sk>
-References: <20200129123356.388669-1-lkundrak@v3.sk>
-Content-Type: text/plain; charset="ISO-8859-1"
-User-Agent: Evolution 3.34.1-2 
+        Wed, 29 Jan 2020 20:24:55 -0500
+Received: by mail-ot1-f67.google.com with SMTP id h9so1551055otj.11
+        for <linux-kernel@vger.kernel.org>; Wed, 29 Jan 2020 17:24:54 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=m24GYwzOSVWU+XgAxv5NZs3essGtF+Xv5GVsT6y+oQ0=;
+        b=SmLK3Ae8l49DBLrp/TyTcGyk46WdEdjUx6FKHNpKRhBw9rTaOz876P6OfK77iim7e1
+         MddSYRqGP5ni4xD8KuRd7Of4iUtVDcB928Ak72Fey9l8UnhdViUomoJtetz5CqymXQZx
+         cm8bRQqgdyv3W8lUAOyIl1xwy+R2keLecloC+YKhM73fSWIg+vNkHRC9+kmCT95+0VGE
+         SklY3eRTKam9mcq1T3MYXaNEg85e44va9QEMcDPt70pZRvf9+aSc+e39nUKouD81ly+O
+         kCYuF4Mxkn9szjWp0adK7dEvmbylf2/tdG/vtf/y3aJK+EmhJCyGFzzgCbeBXbQFehyt
+         aL/A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=m24GYwzOSVWU+XgAxv5NZs3essGtF+Xv5GVsT6y+oQ0=;
+        b=kVcbIzTe7Szvf/DNZzyg28WR+zp+mLXPdllXKU5wFjnOI2DbRSDqVzJLp7B4+0PPkh
+         PGwPyuUerQnhK2ygXl/ECQ9apFYMPnfx50jn73bFQdP7DHLZ8ptBLT+VEGbJgCkeafue
+         1scd2nuzpnGBFYLGPu18dyuprskWdhbG/536V8KDxU9z37Zo0yyBOOR7V8f7HH5qJ14u
+         55ndJtnmN5FzEiIFT2kVH3SlZiI9V1KS6r9VwzHJTTe1XOFuVT8exC2b9rAK/Ib8sJFF
+         QDp44W4d89O1PXz3HLkqfX9IphpKw0VIfY7x4xMSNbxZsxf3z8hTOqck7nGr+y2FQM7c
+         4hxA==
+X-Gm-Message-State: APjAAAVobC/kYLjQIqhJN+YYO4k3mgt8u/VnwZxYtaYDsVRW80rThOBO
+        cSEyffLkm5JJVb1WWp++EeI=
+X-Google-Smtp-Source: APXvYqxPPGBp3KYwUcU6vqfn1qJZSerBLkruC3uBx8UzrQIyDAYRD458ao+PQYaeLP+w76nr1cOfng==
+X-Received: by 2002:a05:6830:15d7:: with SMTP id j23mr1517474otr.357.1580347494042;
+        Wed, 29 Jan 2020 17:24:54 -0800 (PST)
+Received: from localhost.localdomain ([2604:1380:4111:8b00::1])
+        by smtp.gmail.com with ESMTPSA id v10sm930917oic.32.2020.01.29.17.24.52
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 29 Jan 2020 17:24:53 -0800 (PST)
+From:   Nathan Chancellor <natechancellor@gmail.com>
+To:     Alex Deucher <alexander.deucher@amd.com>,
+        =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
+        "David (ChunMing) Zhou" <David1.Zhou@amd.com>
+Cc:     amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+        linux-kernel@vger.kernel.org, clang-built-linux@googlegroups.com,
+        Nathan Chancellor <natechancellor@gmail.com>
+Subject: [PATCH] drm/amdgpu: Fix implicit enum conversion in gfx_v9_4_ras_error_inject
+Date:   Wed, 29 Jan 2020 18:24:35 -0700
+Message-Id: <20200130012435.49822-1-natechancellor@gmail.com>
+X-Mailer: git-send-email 2.25.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+X-Patchwork-Bot: notify
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 2020-01-29 at 13:33 +0100, Lubomir Rintel wrote:
-> This adds a warning when a YAML file is lacking a SPDX header on first
-> line, or it uses incorrect commenting style.
-> 
-> Currently the only YAML files in three are Devicetree binding documents.
+Clang warns:
 
-three/tree typo?
+../drivers/gpu/drm/amd/amdgpu/gfx_v9_4.c:967:35: warning: implicit
+conversion from enumeration type 'enum amdgpu_ras_block' to different
+enumeration type 'enum ta_ras_block' [-Wenum-conversion]
+        block_info.block_id = info->head.block;
+                            ~ ~~~~~~~~~~~^~~~~
+1 warning generated.
 
-Otherwise, looks fine.
+Use the function added in commit 828cfa29093f ("drm/amdgpu: Fix amdgpu
+ras to ta enums conversion") that handles this conversion explicitly.
+
+Fixes: 4c461d89db4f ("drm/amdgpu: add RAS support for the gfx block of Arcturus")
+Link: https://github.com/ClangBuiltLinux/linux/issues/849
+Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
+---
+ drivers/gpu/drm/amd/amdgpu/gfx_v9_4.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/gpu/drm/amd/amdgpu/gfx_v9_4.c b/drivers/gpu/drm/amd/amdgpu/gfx_v9_4.c
+index e19d275f3f7d..f099f13d7f1e 100644
+--- a/drivers/gpu/drm/amd/amdgpu/gfx_v9_4.c
++++ b/drivers/gpu/drm/amd/amdgpu/gfx_v9_4.c
+@@ -964,7 +964,7 @@ int gfx_v9_4_ras_error_inject(struct amdgpu_device *adev, void *inject_if)
+ 	if (!amdgpu_ras_is_supported(adev, AMDGPU_RAS_BLOCK__GFX))
+ 		return -EINVAL;
+ 
+-	block_info.block_id = info->head.block;
++	block_info.block_id = amdgpu_ras_block_to_ta(info->head.block);
+ 	block_info.sub_block_index = info->head.sub_block_index;
+ 	block_info.inject_error_type = amdgpu_ras_error_to_ta(info->head.type);
+ 	block_info.address = info->address;
+-- 
+2.25.0
 
