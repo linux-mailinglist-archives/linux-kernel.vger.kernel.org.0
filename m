@@ -2,139 +2,89 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5880614E06F
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Jan 2020 19:02:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 44AE614E077
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Jan 2020 19:03:48 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727757AbgA3SCJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 30 Jan 2020 13:02:09 -0500
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:36807 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727728AbgA3SCH (ORCPT
+        id S1727855AbgA3SDQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 30 Jan 2020 13:03:16 -0500
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:39199 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727845AbgA3SDP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 30 Jan 2020 13:02:07 -0500
-Received: by mail-wm1-f66.google.com with SMTP id p17so5410468wma.1;
-        Thu, 30 Jan 2020 10:02:06 -0800 (PST)
+        Thu, 30 Jan 2020 13:03:15 -0500
+Received: by mail-lj1-f196.google.com with SMTP id o11so4356865ljc.6
+        for <linux-kernel@vger.kernel.org>; Thu, 30 Jan 2020 10:03:14 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=Kj0vyrXH7QR7unCChoOZszZJi2rlsZtvdnmK5XaO1uo=;
-        b=eWM7AMTNMqhErTPIy9xpuR5NXPXz9OsQrL3YwHB+DudINSvFdE2QMWMCfbEY7H73A9
-         x2xntrvzwkyoFqnpvSPAscjxb47flhcS5GYhORnD4yeOXSV1VjNzLZGITsH90eAqnKE5
-         NIcXuZzb+a2Ax1liUUjUGs9FydjQ1FMJXbqW7QC9NS7X+rnqjDvct8S2a+ma2aC/xxa+
-         LzquKB/Z/vexxC5CAlliTbP5we9gFKF+mQLu/DVwCqKvyvIgp3kQ+XwC3qOoIFTRlyxf
-         cbetoVw7xRn8/y6Np2hLljYc1wMOfRSlW0VZh1/8Zc5Z2IZ7Yks1qM94lFa2WREGpd1J
-         35UA==
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=/9X8HUg12idUhOalYmqmMIhcIcQDy0wCmRGthHqv0oo=;
+        b=fkFG0bT/IO/IJgFOieHFkw9uIuvGWcTtTiE+EBLzArGcj5YA8ITAbWwgiw5qGm9tBC
+         NEYngFRhruJFMCaefC36aQcAu/e0Z2bPIzGfr0CgtMvLmOk8+Zmpfem7t6N9UscZXUFf
+         1MyvVI8YNI1tNeNs8P3c3/OIt2PrT5CH8l5H8=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:from:to:cc:subject:date:message-id
-         :in-reply-to:references;
-        bh=Kj0vyrXH7QR7unCChoOZszZJi2rlsZtvdnmK5XaO1uo=;
-        b=VOvzQDw9WomOaiWEoV/FI1hdCAnyJSeBPkOt2CH11Qeh7qMGpcVZeKL//gm6qmkJ/O
-         TuOOxtP4uBbfgEMyApGIVB7WzdoB07xefrAfqtPjHO5uZtox21WeLs/RCoGiw4IjRzVR
-         RGVXw5Fo49HMFRK9J/zHUYnNlI3uqXH5asQbhdttQYJJdGI9HJiieeVuV6EMBoCrlN/1
-         eAxW8LKNI5g3FtrefugaJ53n8W9bxpjnYTQ4+ZpeqR4iLuYKDvRTOk1i370z+i8TEHOe
-         fPGO+kaAMdHfUYSOwdQlbEfdnwJh1jW480F590qBHqQq34ZyTAVQxb6qYn/MoPWGJ0bN
-         Xzzg==
-X-Gm-Message-State: APjAAAWHTcpxlEU7B590tyEkPdCB476cL4kX/Wi7xEkqWZZY+r4vwVx6
-        yOaCw7BcKoBGl7hNpUh7RtFR4/5iC6Q=
-X-Google-Smtp-Source: APXvYqwB2jmuxzyKr2zpDGIIjLZzOU+UOq7DdE8OxcYPU6Vw+/KqPaKy9LUMuEqhjbfpyAxBW/KVHQ==
-X-Received: by 2002:a7b:c258:: with SMTP id b24mr7155543wmj.140.1580407325310;
-        Thu, 30 Jan 2020 10:02:05 -0800 (PST)
-Received: from 640k.localdomain.com ([93.56.166.5])
-        by smtp.gmail.com with ESMTPSA id w19sm6956878wmc.22.2020.01.30.10.02.04
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 30 Jan 2020 10:02:04 -0800 (PST)
-From:   Paolo Bonzini <pbonzini@redhat.com>
-To:     linux-kernel@vger.kernel.org, kvm@vger.kernel.org
-Cc:     Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        stable@vger.kernel.org
-Subject: [FYI PATCH 5/5] x86/KVM: Clean up host's steal time structure
-Date:   Thu, 30 Jan 2020 19:01:56 +0100
-Message-Id: <1580407316-11391-6-git-send-email-pbonzini@redhat.com>
-X-Mailer: git-send-email 1.8.3.1
-In-Reply-To: <1580407316-11391-1-git-send-email-pbonzini@redhat.com>
-References: <1580407316-11391-1-git-send-email-pbonzini@redhat.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=/9X8HUg12idUhOalYmqmMIhcIcQDy0wCmRGthHqv0oo=;
+        b=Uec3pBskZjRKevKRNgPY9aYUQD2pNTFlmgVIlzRYRIUP39DTCALKGM5UqCnKtRVKfh
+         7ReKujrtSCDhS0uzgo0SQJKxR7RgMV1dUXhivc9xWdq+TMpI8cE94v4tbqTvMesoQ++h
+         HZXP1yb4JXBPELMlpey7F/snbS/MoZOOO/HEw7C80ZvaJ20VCzODjYIVv4X0siiUrhVD
+         eKSSspTy4Lg2B5u8jXx/mp5vAfbrarbtC7yTGUxwKU6/4iwE0yS0Ls9O5algQZ/8yXk2
+         Ouwz4urgHTYbESTzhENuXEZbd5ozqVjLcx4PTzPdLiqeiCFyPsPyy4ctNGXmT3u/8zO7
+         GB0Q==
+X-Gm-Message-State: APjAAAWm3zmyVqv47NMAOEJO8JmC5lr8Bmq1wC4T3itrN/UYNIkUXIEx
+        uGYOhx6zNnpmPn2isgyEn+wIhGQWrbY=
+X-Google-Smtp-Source: APXvYqwyGdlAFcCJCjrlwXY1ZTwrtMlj2gniZz8M2bSwTIunP9/rAFUf3y+l7BSpp67CPYBcR972+Q==
+X-Received: by 2002:a2e:9a01:: with SMTP id o1mr3665547lji.247.1580407392298;
+        Thu, 30 Jan 2020 10:03:12 -0800 (PST)
+Received: from mail-lj1-f174.google.com (mail-lj1-f174.google.com. [209.85.208.174])
+        by smtp.gmail.com with ESMTPSA id a12sm3340661ljk.48.2020.01.30.10.03.11
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 30 Jan 2020 10:03:11 -0800 (PST)
+Received: by mail-lj1-f174.google.com with SMTP id w1so4371428ljh.5
+        for <linux-kernel@vger.kernel.org>; Thu, 30 Jan 2020 10:03:11 -0800 (PST)
+X-Received: by 2002:a2e:580c:: with SMTP id m12mr3650122ljb.150.1580407390980;
+ Thu, 30 Jan 2020 10:03:10 -0800 (PST)
+MIME-Version: 1.0
+References: <20200128165906.GA67781@gmail.com> <CAHk-=wgm+2ac4nnprPST6CnehHXScth=A7-ayrNyhydNC+xG-g@mail.gmail.com>
+ <CAHk-=wi=otQxzhLAofWEvULLMk2X3G3zcWfUWz7e1CFz+xYs2Q@mail.gmail.com>
+ <20200129132618.GA30979@zn.tnic> <20200129170725.GA21265@agluck-desk2.amr.corp.intel.com>
+ <CAHk-=wgns2Tvph77XZWN=r_qAtUwxrTzDXNffi8nGKz1mLZNHw@mail.gmail.com>
+ <20200129183404.GB30979@zn.tnic> <CAHk-=wh62anGKKEeey8ubD+-+3qSv059z7zSWZ4J=CoaOo4j_A@mail.gmail.com>
+ <20200130085134.GB6684@zn.tnic> <CAHk-=wje_k92K6j0-=HH4F5Jmr8Fv7vB-ANObqbQeGS_RsikWA@mail.gmail.com>
+ <20200130173910.GK6684@zn.tnic>
+In-Reply-To: <20200130173910.GK6684@zn.tnic>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Thu, 30 Jan 2020 10:02:54 -0800
+X-Gmail-Original-Message-ID: <CAHk-=wh9xdJzfcPU4e4diAZDtUJVg+SSocoYP+aVYWnDZd-UMQ@mail.gmail.com>
+Message-ID: <CAHk-=wh9xdJzfcPU4e4diAZDtUJVg+SSocoYP+aVYWnDZd-UMQ@mail.gmail.com>
+Subject: Re: [GIT PULL] x86/asm changes for v5.6
+To:     Borislav Petkov <bp@suse.de>
+Cc:     "Luck, Tony" <tony.luck@intel.com>, Ingo Molnar <mingo@kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Borislav Petkov <bp@alien8.de>,
+        Peter Zijlstra <a.p.zijlstra@chello.nl>,
+        Andrew Morton <akpm@linux-foundation.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Boris Ostrovsky <boris.ostrovsky@oracle.com>
+On Thu, Jan 30, 2020 at 9:39 AM Borislav Petkov <bp@suse.de> wrote:
+>
+> Yeah, makes sense. It would help if one slaps a relative JMP as *not*
+> the first insn in an alternatives replacement and the build to warn that
+> it can't work.
 
-Now that we are mapping kvm_steal_time from the guest directly we
-don't need keep a copy of it in kvm_vcpu_arch.st. The same is true
-for the stime field.
+Maybe with the exception that a short conditional jump inside the
+alternative code itself is fine.
 
-This is part of CVE-2019-3016.
+Because a branch-over inside the alternative sequence (or a loop -
+think inline cmpxchg loop or whatever) would be fine, since it's
+unaffected by code placement.
 
-Signed-off-by: Boris Ostrovsky <boris.ostrovsky@oracle.com>
-Reviewed-by: Joao Martins <joao.m.martins@oracle.com>
-Cc: stable@vger.kernel.org
-Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
----
- arch/x86/include/asm/kvm_host.h |  3 +--
- arch/x86/kvm/x86.c              | 11 +++--------
- 2 files changed, 4 insertions(+), 10 deletions(-)
-
-diff --git a/arch/x86/include/asm/kvm_host.h b/arch/x86/include/asm/kvm_host.h
-index f48a306e..4925bdb 100644
---- a/arch/x86/include/asm/kvm_host.h
-+++ b/arch/x86/include/asm/kvm_host.h
-@@ -685,10 +685,9 @@ struct kvm_vcpu_arch {
- 	bool pvclock_set_guest_stopped_request;
- 
- 	struct {
-+		u8 preempted;
- 		u64 msr_val;
- 		u64 last_steal;
--		struct gfn_to_hva_cache stime;
--		struct kvm_steal_time steal;
- 		struct gfn_to_pfn_cache cache;
- 	} st;
- 
-diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
-index f1845df..a0381ec 100644
---- a/arch/x86/kvm/x86.c
-+++ b/arch/x86/kvm/x86.c
-@@ -2604,7 +2604,7 @@ static void record_steal_time(struct kvm_vcpu *vcpu)
- 	if (xchg(&st->preempted, 0) & KVM_VCPU_FLUSH_TLB)
- 		kvm_vcpu_flush_tlb(vcpu, false);
- 
--	vcpu->arch.st.steal.preempted = 0;
-+	vcpu->arch.st.preempted = 0;
- 
- 	if (st->version & 1)
- 		st->version += 1;  /* first time write, random junk */
-@@ -2788,11 +2788,6 @@ int kvm_set_msr_common(struct kvm_vcpu *vcpu, struct msr_data *msr_info)
- 		if (data & KVM_STEAL_RESERVED_MASK)
- 			return 1;
- 
--		if (kvm_gfn_to_hva_cache_init(vcpu->kvm, &vcpu->arch.st.stime,
--						data & KVM_STEAL_VALID_BITS,
--						sizeof(struct kvm_steal_time)))
--			return 1;
--
- 		vcpu->arch.st.msr_val = data;
- 
- 		if (!(data & KVM_MSR_ENABLED))
-@@ -3509,7 +3504,7 @@ static void kvm_steal_time_set_preempted(struct kvm_vcpu *vcpu)
- 	if (!(vcpu->arch.st.msr_val & KVM_MSR_ENABLED))
- 		return;
- 
--	if (vcpu->arch.st.steal.preempted)
-+	if (vcpu->arch.st.preempted)
- 		return;
- 
- 	if (kvm_map_gfn(vcpu, vcpu->arch.st.msr_val >> PAGE_SHIFT, &map,
-@@ -3519,7 +3514,7 @@ static void kvm_steal_time_set_preempted(struct kvm_vcpu *vcpu)
- 	st = map.hva +
- 		offset_in_page(vcpu->arch.st.msr_val & KVM_STEAL_VALID_BITS);
- 
--	st->preempted = vcpu->arch.st.steal.preempted = KVM_VCPU_PREEMPTED;
-+	st->preempted = vcpu->arch.st.preempted = KVM_VCPU_PREEMPTED;
- 
- 	kvm_unmap_gfn(vcpu, &map, &vcpu->arch.st.cache, true, true);
- }
--- 
-1.8.3.1
-
+              Linus
