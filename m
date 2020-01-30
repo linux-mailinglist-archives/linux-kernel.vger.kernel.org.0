@@ -2,41 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9BE7114E11F
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Jan 2020 19:41:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7627E14E19C
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Jan 2020 19:46:43 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730189AbgA3Slc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 30 Jan 2020 13:41:32 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49410 "EHLO mail.kernel.org"
+        id S1731105AbgA3Spy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 30 Jan 2020 13:45:54 -0500
+Received: from mail.kernel.org ([198.145.29.99]:55466 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730170AbgA3Sl2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 30 Jan 2020 13:41:28 -0500
+        id S1731083AbgA3Spp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 30 Jan 2020 13:45:45 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7577A2082E;
-        Thu, 30 Jan 2020 18:41:27 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5C91B21734;
+        Thu, 30 Jan 2020 18:45:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1580409687;
-        bh=bGoDS0mBgh3I4daVnCZ7k2qTbcUa8RGgkJZ9QH04wi4=;
+        s=default; t=1580409943;
+        bh=mjJrS8A36FDuKb9fONPOUFh7RpbbhF9DWKvJqd6eeek=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=mRvNfCvOhxJhcltJAlWf5khuKitrNTbaMK/ET8f0c5zfAEYtM/5NqhLZ4JgViSdOu
-         i4jBHf1q6nJ+gfXQv+jiR3/XEAyHQTH1z1axfYzJw7psQzt3nRQ+DmGztL+aO8PR7R
-         xm8A6szOBPi6q+tzIT+8E+2MDSm8wpCR6Cm/q61s=
+        b=pEpH8Qh1CcCxq0iIynqjX/6f+3ZRCA7ZNhy6iXyNui4G82bHTFkEBR/4syR2gG14m
+         GtMdWnWNCK5jIgljLDrJZzftyTbQ+sB9b/0HDUgZWHqOtL1YCBj/jwt1LqMPwKFPX/
+         m/aC4QrdmGtqWfiBeCs3OocYhgU5GJZSxN/OrU1g=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Erhard Furtner <erhard_f@mailbox.org>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Daniel Axtens <dja@axtens.net>,
-        Herbert Xu <herbert@gondor.apana.org.au>
-Subject: [PATCH 5.5 51/56] crypto: vmx - reject xts inputs that are too short
+        stable@vger.kernel.org, Raul E Rangel <rrangel@chromium.org>,
+        Shyam Sundar S K <Shyam-sundar.S-k@amd.com>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 5.4 092/110] mmc: sdhci-pci: Quirk for AMD SDHC Device 0x7906
 Date:   Thu, 30 Jan 2020 19:39:08 +0100
-Message-Id: <20200130183618.075735523@linuxfoundation.org>
+Message-Id: <20200130183624.964768848@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200130183608.849023566@linuxfoundation.org>
-References: <20200130183608.849023566@linuxfoundation.org>
+In-Reply-To: <20200130183613.810054545@linuxfoundation.org>
+References: <20200130183613.810054545@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,49 +46,102 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Daniel Axtens <dja@axtens.net>
+From: Raul E Rangel <rrangel@chromium.org>
 
-commit 1372a51b88fa0d5a8ed2803e4975c98da3f08463 upstream.
+[ Upstream commit 7a869f00bb15bcefb8804d798a49b086267b03e6 ]
 
-When the kernel XTS implementation was extended to deal with ciphertext
-stealing in commit 8083b1bf8163 ("crypto: xts - add support for ciphertext
-stealing"), a check was added to reject inputs that were too short.
+AMD SDHC 0x7906 requires a hard reset to clear all internal state.
+Otherwise it can get into a bad state where the DATA lines are always
+read as zeros.
 
-However, in the vmx enablement - commit 239668419349 ("crypto: vmx/xts -
-use fallback for ciphertext stealing"), that check wasn't added to the
-vmx implementation. This disparity leads to errors like the following:
+This change requires firmware that can transition the device into
+D3Cold for it to work correctly. If the firmware does not support
+transitioning to D3Cold then the power state transitions are a no-op.
 
-alg: skcipher: p8_aes_xts encryption unexpectedly succeeded on test vector "random: len=0 klen=64"; expected_error=-22, cfg="random: inplace may_sleep use_finup src_divs=[<flush>66.99%@+10, 33.1%@alignmask+1155]"
-
-Return -EINVAL if asked to operate with a cryptlen smaller than the AES
-block size. This brings vmx in line with the generic implementation.
-
-Reported-by: Erhard Furtner <erhard_f@mailbox.org>
-Link: https://bugzilla.kernel.org/show_bug.cgi?id=206049
-Fixes: 239668419349 ("crypto: vmx/xts - use fallback for ciphertext stealing")
-Cc: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Cc: stable@vger.kernel.org # v5.4+
-Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
-[dja: commit message]
-Signed-off-by: Daniel Axtens <dja@axtens.net>
-Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Signed-off-by: Raul E Rangel <rrangel@chromium.org>
+Signed-off-by: Shyam Sundar S K <Shyam-sundar.S-k@amd.com>
+Acked-by: Adrian Hunter <adrian.hunter@intel.com>
+Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/crypto/vmx/aes_xts.c |    3 +++
- 1 file changed, 3 insertions(+)
+ drivers/mmc/host/sdhci-pci-core.c | 51 ++++++++++++++++++++++++++++++-
+ 1 file changed, 50 insertions(+), 1 deletion(-)
 
---- a/drivers/crypto/vmx/aes_xts.c
-+++ b/drivers/crypto/vmx/aes_xts.c
-@@ -84,6 +84,9 @@ static int p8_aes_xts_crypt(struct skcip
- 	u8 tweak[AES_BLOCK_SIZE];
- 	int ret;
+diff --git a/drivers/mmc/host/sdhci-pci-core.c b/drivers/mmc/host/sdhci-pci-core.c
+index 642a9667db4dd..96a163f36a395 100644
+--- a/drivers/mmc/host/sdhci-pci-core.c
++++ b/drivers/mmc/host/sdhci-pci-core.c
+@@ -21,6 +21,7 @@
+ #include <linux/mmc/mmc.h>
+ #include <linux/scatterlist.h>
+ #include <linux/io.h>
++#include <linux/iopoll.h>
+ #include <linux/gpio.h>
+ #include <linux/pm_runtime.h>
+ #include <linux/mmc/slot-gpio.h>
+@@ -1598,11 +1599,59 @@ static int amd_probe(struct sdhci_pci_chip *chip)
+ 	return 0;
+ }
  
-+	if (req->cryptlen < AES_BLOCK_SIZE)
-+		return -EINVAL;
++static u32 sdhci_read_present_state(struct sdhci_host *host)
++{
++	return sdhci_readl(host, SDHCI_PRESENT_STATE);
++}
 +
- 	if (!crypto_simd_usable() || (req->cryptlen % XTS_BLOCK_SIZE) != 0) {
- 		struct skcipher_request *subreq = skcipher_request_ctx(req);
++void amd_sdhci_reset(struct sdhci_host *host, u8 mask)
++{
++	struct sdhci_pci_slot *slot = sdhci_priv(host);
++	struct pci_dev *pdev = slot->chip->pdev;
++	u32 present_state;
++
++	/*
++	 * SDHC 0x7906 requires a hard reset to clear all internal state.
++	 * Otherwise it can get into a bad state where the DATA lines are always
++	 * read as zeros.
++	 */
++	if (pdev->device == 0x7906 && (mask & SDHCI_RESET_ALL)) {
++		pci_clear_master(pdev);
++
++		pci_save_state(pdev);
++
++		pci_set_power_state(pdev, PCI_D3cold);
++		pr_debug("%s: power_state=%u\n", mmc_hostname(host->mmc),
++			pdev->current_state);
++		pci_set_power_state(pdev, PCI_D0);
++
++		pci_restore_state(pdev);
++
++		/*
++		 * SDHCI_RESET_ALL says the card detect logic should not be
++		 * reset, but since we need to reset the entire controller
++		 * we should wait until the card detect logic has stabilized.
++		 *
++		 * This normally takes about 40ms.
++		 */
++		readx_poll_timeout(
++			sdhci_read_present_state,
++			host,
++			present_state,
++			present_state & SDHCI_CD_STABLE,
++			10000,
++			100000
++		);
++	}
++
++	return sdhci_reset(host, mask);
++}
++
+ static const struct sdhci_ops amd_sdhci_pci_ops = {
+ 	.set_clock			= sdhci_set_clock,
+ 	.enable_dma			= sdhci_pci_enable_dma,
+ 	.set_bus_width			= sdhci_set_bus_width,
+-	.reset				= sdhci_reset,
++	.reset				= amd_sdhci_reset,
+ 	.set_uhs_signaling		= sdhci_set_uhs_signaling,
+ };
  
+-- 
+2.20.1
+
 
 
