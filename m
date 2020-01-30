@@ -2,148 +2,81 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7C03414DA91
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Jan 2020 13:24:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7DD0D14DA85
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Jan 2020 13:20:01 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727201AbgA3MYu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 30 Jan 2020 07:24:50 -0500
-Received: from mga07.intel.com ([134.134.136.100]:49436 "EHLO mga07.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726902AbgA3MYs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 30 Jan 2020 07:24:48 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga002.fm.intel.com ([10.253.24.26])
-  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 30 Jan 2020 04:24:48 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.70,381,1574150400"; 
-   d="scan'208";a="262155251"
-Received: from lxy-dell.sh.intel.com ([10.239.13.109])
-  by fmsmga002.fm.intel.com with ESMTP; 30 Jan 2020 04:24:46 -0800
-From:   Xiaoyao Li <xiaoyao.li@intel.com>
-To:     Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Sean Christopherson <sean.j.christopherson@intel.com>
-Cc:     Xiaoyao Li <xiaoyao.li@intel.com>, x86@kernel.org,
-        linux-kernel@vger.kernel.org, kvm@vger.kernel.org
-Subject: [PATCH 1/2] KVM: x86: Emulate split-lock access as a write
-Date:   Thu, 30 Jan 2020 20:19:38 +0800
-Message-Id: <20200130121939.22383-2-xiaoyao.li@intel.com>
-X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20200130121939.22383-1-xiaoyao.li@intel.com>
-References: <20200130121939.22383-1-xiaoyao.li@intel.com>
+        id S1727206AbgA3MT6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 30 Jan 2020 07:19:58 -0500
+Received: from us-smtp-2.mimecast.com ([207.211.31.81]:39974 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726873AbgA3MT6 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 30 Jan 2020 07:19:58 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1580386797;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=6Xqdu8J6TOj9He6qQ+BqrK7qHeGQ1dIibFBQ/FqCh1s=;
+        b=D0WwOnHP24mRjhrfcRwZYM+JuqHTBH2t/xypTKgVP3o030xg1EGGmN39SeW9n8VZs41+O9
+        +SVxUvhqbEPPAheL58Xwx2LORq17Cyd8oPxZaP6bHgISL7lVXbk71LCIIsvsRl2nsgCOoP
+        LPC675ERSwQ3tmADIwyScp/fvCorzIw=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-23-n6jIJxsQONivvhbjyMM1Ng-1; Thu, 30 Jan 2020 07:19:51 -0500
+X-MC-Unique: n6jIJxsQONivvhbjyMM1Ng-1
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 94C6D8010EE;
+        Thu, 30 Jan 2020 12:19:49 +0000 (UTC)
+Received: from oldenburg2.str.redhat.com (ovpn-116-29.ams2.redhat.com [10.36.116.29])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 967175DA75;
+        Thu, 30 Jan 2020 12:19:41 +0000 (UTC)
+From:   Florian Weimer <fweimer@redhat.com>
+To:     Brian Geffon <bgeffon@google.com>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        "Michael S . Tsirkin" <mst@redhat.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-mm <linux-mm@kvack.org>, linux-api@vger.kernel.org,
+        Andy Lutomirski <luto@amacapital.net>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Sonny Rao <sonnyrao@google.com>,
+        Minchan Kim <minchan@kernel.org>,
+        Joel Fernandes <joel@joelfernandes.org>,
+        Yu Zhao <yuzhao@google.com>, Jesse Barnes <jsbarnes@google.com>
+Subject: Re: [PATCH v2] mm: Add MREMAP_DONTUNMAP to mremap().
+References: <20200123014627.71720-1-bgeffon@google.com>
+        <20200124190625.257659-1-bgeffon@google.com>
+        <87imkxxl5d.fsf@oldenburg2.str.redhat.com>
+        <CADyq12xCpTzLpYC16FjnM60tHhCfnccNfg6JJuqcBd_6ACDGcQ@mail.gmail.com>
+Date:   Thu, 30 Jan 2020 13:19:39 +0100
+In-Reply-To: <CADyq12xCpTzLpYC16FjnM60tHhCfnccNfg6JJuqcBd_6ACDGcQ@mail.gmail.com>
+        (Brian Geffon's message of "Mon, 27 Jan 2020 14:33:44 -0800")
+Message-ID: <87eevh3zms.fsf@oldenburg2.str.redhat.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.3 (gnu/linux)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-If split lock detect is enabled (warn/fatal), #AC handler calls die()
-when split lock happens in kernel.
+* Brian Geffon:
 
-A sane guest should never tigger emulation on a split-lock access, but
-it cannot prevent malicous guest from doing this. So just emulating the
-access as a write if it's a split-lock access to avoid malicous guest
-polluting the kernel log.
+> Hi Florian,
+> copy_vma will make a copy of the existing VMA leaving the old VMA
+> unchanged, so the source keeps its existing protections, this is what
+> makes it very useful along with userfaultfd.
 
-Suggested-by: Sean Christopherson <sean.j.christopherson@intel.com>
-Signed-off-by: Xiaoyao Li <xiaoyao.li@intel.com>
----
- arch/x86/include/asm/cpu.h  | 12 ++++++++++++
- arch/x86/kernel/cpu/intel.c | 12 ++++++------
- arch/x86/kvm/x86.c          | 11 +++++++++++
- 3 files changed, 29 insertions(+), 6 deletions(-)
+I see.  On the other hand, it's impossible to get the PROT_NONE behavior
+by a subsequent mprotect call because the mremap has to fail in some
+cases in vm.overcommit_memory=2 mode.  But maybe that other behavior can
+be provided with a different flag if it turns out to be useful in the
+future.
 
-diff --git a/arch/x86/include/asm/cpu.h b/arch/x86/include/asm/cpu.h
-index ff6f3ca649b3..167d0539e0ad 100644
---- a/arch/x86/include/asm/cpu.h
-+++ b/arch/x86/include/asm/cpu.h
-@@ -40,11 +40,23 @@ int mwait_usable(const struct cpuinfo_x86 *);
- unsigned int x86_family(unsigned int sig);
- unsigned int x86_model(unsigned int sig);
- unsigned int x86_stepping(unsigned int sig);
-+
-+enum split_lock_detect_state {
-+	sld_off = 0,
-+	sld_warn,
-+	sld_fatal,
-+};
-+
- #ifdef CONFIG_CPU_SUP_INTEL
-+extern enum split_lock_detect_state get_split_lock_detect_state(void);
- extern void __init cpu_set_core_cap_bits(struct cpuinfo_x86 *c);
- extern void switch_to_sld(unsigned long tifn);
- extern bool handle_user_split_lock(struct pt_regs *regs, long error_code);
- #else
-+static inline enum split_lock_detect_state get_split_lock_detect_state(void)
-+{
-+	return sld_off;
-+}
- static inline void __init cpu_set_core_cap_bits(struct cpuinfo_x86 *c) {}
- static inline void switch_to_sld(unsigned long tifn) {}
- static inline bool handle_user_split_lock(struct pt_regs *regs, long error_code)
-diff --git a/arch/x86/kernel/cpu/intel.c b/arch/x86/kernel/cpu/intel.c
-index 5d92e381fd91..2f9c48e91caf 100644
---- a/arch/x86/kernel/cpu/intel.c
-+++ b/arch/x86/kernel/cpu/intel.c
-@@ -33,12 +33,6 @@
- #include <asm/apic.h>
- #endif
- 
--enum split_lock_detect_state {
--	sld_off = 0,
--	sld_warn,
--	sld_fatal,
--};
--
- /*
-  * Default to sld_off because most systems do not support split lock detection
-  * split_lock_setup() will switch this to sld_warn on systems that support
-@@ -1004,6 +998,12 @@ cpu_dev_register(intel_cpu_dev);
- #undef pr_fmt
- #define pr_fmt(fmt) "x86/split lock detection: " fmt
- 
-+enum split_lock_detect_state get_split_lock_detect_state(void)
-+{
-+	return sld_state;
-+}
-+EXPORT_SYMBOL_GPL(get_split_lock_detect_state);
-+
- static const struct {
- 	const char			*option;
- 	enum split_lock_detect_state	state;
-diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
-index e6d4e4dcd11c..7d9303c303d9 100644
---- a/arch/x86/kvm/x86.c
-+++ b/arch/x86/kvm/x86.c
-@@ -5800,6 +5800,13 @@ static int emulator_write_emulated(struct x86_emulate_ctxt *ctxt,
- 	(cmpxchg64((u64 *)(ptr), *(u64 *)(old), *(u64 *)(new)) == *(u64 *)(old))
- #endif
- 
-+static inline bool is_split_lock_access(gpa_t gpa, unsigned int bytes)
-+{
-+	unsigned int cache_line_size = cache_line_size();
-+
-+	return (gpa & (cache_line_size - 1)) + bytes > cache_line_size;
-+}
-+
- static int emulator_cmpxchg_emulated(struct x86_emulate_ctxt *ctxt,
- 				     unsigned long addr,
- 				     const void *old,
-@@ -5826,6 +5833,10 @@ static int emulator_cmpxchg_emulated(struct x86_emulate_ctxt *ctxt,
- 	if (((gpa + bytes - 1) & PAGE_MASK) != (gpa & PAGE_MASK))
- 		goto emul_write;
- 
-+	if (get_split_lock_detect_state() != sld_off &&
-+	    is_split_lock_access(gpa, bytes))
-+		goto emul_write;
-+
- 	if (kvm_vcpu_map(vcpu, gpa_to_gfn(gpa), &map))
- 		goto emul_write;
- 
--- 
-2.23.0
+Thanks,
+Florian
 
