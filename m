@@ -2,142 +2,118 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A7CA014E37E
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Jan 2020 20:59:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3629C14E382
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Jan 2020 21:02:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727376AbgA3T67 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 30 Jan 2020 14:58:59 -0500
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:39446 "EHLO
-        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726514AbgA3T66 (ORCPT
+        id S1727570AbgA3UC2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 30 Jan 2020 15:02:28 -0500
+Received: from mail-qt1-f194.google.com ([209.85.160.194]:45162 "EHLO
+        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726267AbgA3UC1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 30 Jan 2020 14:58:58 -0500
-Received: by mail-pl1-f194.google.com with SMTP id g6so1750435plp.6
-        for <linux-kernel@vger.kernel.org>; Thu, 30 Jan 2020 11:58:57 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=nuZRnP6UqnW4avEUhneKXXkjHvfMUjP2ZDJ4PulKqqQ=;
-        b=QqLDILrzrhQk+7d3tEZQHCNfh+FgnoPCqnnfyZ7DeZznVwiXusJzis6+VLINE1hN0P
-         /AGEsrrTjBuoRzINldutvYP5QLCEswfHSegkRH6YydXhaAUruANy2BrMrWt+vdIePY19
-         HOdHlKxtN7qTuNhdcy91xrxibM0jj8PZHvhbM=
+        Thu, 30 Jan 2020 15:02:27 -0500
+Received: by mail-qt1-f194.google.com with SMTP id d9so3480660qte.12
+        for <linux-kernel@vger.kernel.org>; Thu, 30 Jan 2020 12:02:26 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=nuZRnP6UqnW4avEUhneKXXkjHvfMUjP2ZDJ4PulKqqQ=;
-        b=joiVdRfx1eI+IxOvdGdVmhql+8e/FWuNPDAVcYn1T17tLc4ZfkDVVfW94p0g5rgvxZ
-         L5ikPBuGFaxyHc92T6O2Jkd0IQ3idD4AnM6LgoILolXHUiMrjQRxVAe3kyLnwaS+7eqB
-         BISmbvBkYb10QvbD0H/zxaq7V+H/f7DO872x88GhGfunTuGkzJ1WjhbD3UUkWAqsFGBl
-         ndsHfJFIxy1iCy5tQZYqWY/ClJxxxwBcbKDhUQ6eYueQ5Xn2bPYmgC9ZL5enEf4PBxuC
-         7z3S9is/1L/7XXIF3eVsZCKK+NV65SWvuF2+Lh3GEd5atOJys+U2Qgf03t6DW76m0HvI
-         /cHg==
-X-Gm-Message-State: APjAAAUyFfBWWC/Ez6U87mxlxcTZEFjoqJ+BqIyQZWTPjXypMJZxEWBD
-        aLU3YDGvZ1ZgLjCTAoAuTQ6eAw==
-X-Google-Smtp-Source: APXvYqzrB3EsH2ErCz1lmdRkG7rlqSY6t2HUgiywFLiVgkuvylRNh0x/Wk+74zjZpqYgVHOKQgf1SQ==
-X-Received: by 2002:a17:90a:d34c:: with SMTP id i12mr7865690pjx.18.1580414336488;
-        Thu, 30 Jan 2020 11:58:56 -0800 (PST)
-Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id y75sm7830321pfb.116.2020.01.30.11.58.55
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=EnO9ApUhravM+tL102IQlojS3LeUikkMXEduxs5VnRY=;
+        b=buUCSUGjOSvW39r5wIg+tKdu30Kq25W821E2E7UAPF9lUKcKSvLUjYWNfxihI/c3Ek
+         GHrXIfAzH0B6agYXgc92IvUSdMfQ8Ams3sRb0vOpGpOyP8yL5gFo4TtDBofUZET4hoqW
+         jHFoHEgkNjIRrmsZ8kVI/UE9rqpAY/SNg9TTVd3Etdxh7W+Qhz6VA3GPdYDF9FhMIB4q
+         bH5h4lG2QPOwMp5EV9GZ2hPVhLSouke9V3VaLWhPBkzU29ozKJeTkLgau+slDIxbFV5S
+         GtLYIEcqw0ci18FXwA1rzU/oJbumlq1YDujYxWx4Pspb2KseQCQZfTxeUVOx4lAp/Sn+
+         aEXA==
+X-Gm-Message-State: APjAAAXG5AmFyw/iPu79+ZB3jxeOneyRxQQV08JrXWrm6IlBfryJTWcM
+        a/NuPG47bzj0XSNfb3UYUsE=
+X-Google-Smtp-Source: APXvYqzTd0jiVB0C/NGRDY2nITRBPLL+esJyO9jJ6SAdUEND2P7U5Z3tpNG7u1P+TegikMJjbZH6YA==
+X-Received: by 2002:ac8:6910:: with SMTP id e16mr6828095qtr.273.1580414545491;
+        Thu, 30 Jan 2020 12:02:25 -0800 (PST)
+Received: from dennisz-mbp ([2620:10d:c091:480::308e])
+        by smtp.gmail.com with ESMTPSA id f4sm3311771qka.89.2020.01.30.12.02.14
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 30 Jan 2020 11:58:55 -0800 (PST)
-Date:   Thu, 30 Jan 2020 11:58:54 -0800
-From:   Kees Cook <keescook@chromium.org>
-To:     "H.J. Lu" <hjl.tools@gmail.com>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Thomas Lendacky <Thomas.Lendacky@amd.com>,
-        Sami Tolvanen <samitolvanen@google.com>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H . Peter Anvin" <hpa@zytor.com>,
-        the arch/x86 maintainers <x86@kernel.org>,
-        Yu-cheng Yu <yu-cheng.yu@intel.com>
-Subject: Re: [PATCH] x86: Don't discard .exit.text and .exit.data at link-time
-Message-ID: <202001301152.DF108B6CC@keescook>
-References: <20200130180048.2901-1-hjl.tools@gmail.com>
- <202001301139.F8859A4@keescook>
- <CAMe9rOrrrZFWgVpsKAWjHKzVh3ZziFLs2ua0m0Ewymrjs-b+EA@mail.gmail.com>
+        Thu, 30 Jan 2020 12:02:24 -0800 (PST)
+Date:   Thu, 30 Jan 2020 20:01:50 +0000
+From:   Dennis Zhou <dennis@kernel.org>
+To:     Qian Cai <cai@lca.pw>
+Cc:     akpm@linux-foundation.org, dennis@kernel.org, tj@kernel.org,
+        cl@linux.com, elver@google.com, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH -next] mm/util: annotate an intentional data race
+Message-ID: <20200130200150.GA99121@dennisz-mbp>
+References: <20200130145649.1240-1-cai@lca.pw>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAMe9rOrrrZFWgVpsKAWjHKzVh3ZziFLs2ua0m0Ewymrjs-b+EA@mail.gmail.com>
+In-Reply-To: <20200130145649.1240-1-cai@lca.pw>
+User-Agent: Mutt/1.12.2 (2019-09-21)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jan 30, 2020 at 11:45:15AM -0800, H.J. Lu wrote:
-> On Thu, Jan 30, 2020 at 11:40 AM Kees Cook <keescook@chromium.org> wrote:
-> >
-> > On Thu, Jan 30, 2020 at 10:00:48AM -0800, H.J. Lu wrote:
-> > > Since .exit.text and .exit.data sections are discarded at runtime, we
-> > > should undefine EXIT_TEXT and EXIT_DATA to exclude .exit.text and
-> > > .exit.data sections from default discarded sections.
-> >
-> > This is just a correctness fix, yes? The EXIT_TEXT and EXIT_DATA were
-> > already included before the /DISCARD/ section here, so there's no
-> > behavioral change with this patch, correct?
+On Thu, Jan 30, 2020 at 09:56:49AM -0500, Qian Cai wrote:
+> "vm_committed_as.count" could be accessed concurrently as reported by
+> KCSAN,
 > 
-> That is correct.  I was confused by EXIT_TEXT and EXIT_DATA in generic
-> DISCARDS.   My patch just makes it more explicit.
+>  read to 0xffffffff923164f8 of 8 bytes by task 1268 on cpu 38:
+>   __vm_enough_memory+0x43/0x280 mm/util.c:801
+>   mmap_region+0x1b2/0xb90 mm/mmap.c:1726
+>   do_mmap+0x45c/0x700
+>   vm_mmap_pgoff+0xc0/0x130
+>   vm_mmap+0x71/0x90
+>   elf_map+0xa1/0x1b0
+>   load_elf_binary+0x9de/0x2180
+>   search_binary_handler+0xd8/0x2b0
+>   __do_execve_file+0xb61/0x1080
+>   __x64_sys_execve+0x5f/0x70
+>   do_syscall_64+0x91/0xb47
+>   entry_SYSCALL_64_after_hwframe+0x49/0xbe
+> 
+>  write to 0xffffffff923164f8 of 8 bytes by task 1265 on cpu 41:
+>   percpu_counter_add_batch+0x83/0xd0 lib/percpu_counter.c:91
+>   exit_mmap+0x178/0x220 include/linux/mman.h:68
+>   mmput+0x10e/0x270
+>   flush_old_exec+0x572/0xfe0
+>   load_elf_binary+0x467/0x2180
+>   search_binary_handler+0xd8/0x2b0
+>   __do_execve_file+0xb61/0x1080
+>   __x64_sys_execve+0x5f/0x70
+>   do_syscall_64+0x91/0xb47
+>   entry_SYSCALL_64_after_hwframe+0x49/0xbe
+> 
+> The warning is almost impossible to trigger according to the commit
+> 82f71ae4a2b8 ("mm: catch memory commitment underflow") but leave it for
+> now to catch any possible unbalanced vm_unacct_memory() in the future.
+> Since only the read is operating as lockless, mark it as an intentional
+> data race using the data_race() macro.
+> 
+> Signed-off-by: Qian Cai <cai@lca.pw>
+> ---
+>  mm/util.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/mm/util.c b/mm/util.c
+> index 988d11e6c17c..528d2c710771 100644
+> --- a/mm/util.c
+> +++ b/mm/util.c
+> @@ -798,8 +798,8 @@ int __vm_enough_memory(struct mm_struct *mm, long pages, int cap_sys_admin)
+>  {
+>  	long allowed;
+>  
+> -	VM_WARN_ONCE(percpu_counter_read(&vm_committed_as) <
+> -			-(s64)vm_committed_as_batch * num_online_cpus(),
+> +	VM_WARN_ONCE(data_race(percpu_counter_read(&vm_committed_as) <
+> +			-(s64)vm_committed_as_batch * num_online_cpus()),
+>  			"memory commitment underflow");
+>  
+>  	vm_acct_memory(pages);
+> -- 
+> 2.21.0 (Apple Git-122.2)
+> 
 
-Okay, so to that end and because this isn't arch-specific, I'd like to
-see this be a behavioral flag, and then the generic DISCARDS macro can
-be adjusted. This lets all architectures implement this without having
-to scatter undef/define lines in each arch.
+Acked-by: Dennis Zhou <dennis@kernel.org>
 
-Something like this:
-
-diff --git a/include/asm-generic/vmlinux.lds.h b/include/asm-generic/vmlinux.lds.h
-index e00f41aa8ec4..f242d3b4814d 100644
---- a/include/asm-generic/vmlinux.lds.h
-+++ b/include/asm-generic/vmlinux.lds.h
-@@ -894,11 +894,17 @@
-  * section definitions so that such archs put those in earlier section
-  * definitions.
-  */
--#define DISCARDS							\
--	/DISCARD/ : {							\
-+#ifdef RUNTIME_DISCARD_EXIT
-+#define EXIT_DISCARDS
-+#else
-+#define EXIT_DISCARDS							\
- 	EXIT_TEXT							\
- 	EXIT_DATA							\
--	EXIT_CALL							\
-+	EXIT_CALL
-+#endif
-+#define DISCARDS							\
-+	/DISCARD/ : {							\
-+	EXIT_DISCARDS							\
- 	*(.discard)							\
- 	*(.discard.*)							\
- 	*(.modinfo)							\
-
-Then x86 and all other architectures that do this can just use
-#define RUNTIME_DISCARD_EXIT
-at the top (like EMITS_PT_NOTE, etc).
-
--Kees
-
-> > > --- a/arch/x86/kernel/vmlinux.lds.S
-> > > +++ b/arch/x86/kernel/vmlinux.lds.S
-> > > @@ -416,6 +416,12 @@ SECTIONS
-> > >       STABS_DEBUG
-> > >       DWARF_DEBUG
-> > >
-> > > +     /* Sections to be discarded.  EXIT_TEXT and EXIT_DATA discard at runtime.
-> > > +      * not link time.  */
-> > > +#undef EXIT_TEXT
-> > > +#define EXIT_TEXT
-> > > +#undef EXIT_DATA
-> > > +#define EXIT_DATA
-> > >       DISCARDS
-> > >       /DISCARD/ : {
-> > >               *(.eh_frame)
-
--- 
-Kees Cook
+Thanks,
+Dennis
