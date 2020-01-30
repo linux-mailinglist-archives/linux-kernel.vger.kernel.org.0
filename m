@@ -2,116 +2,118 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A6B5414D4B9
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Jan 2020 01:39:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B9A0714D4C1
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Jan 2020 01:44:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727142AbgA3AjG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 29 Jan 2020 19:39:06 -0500
-Received: from mga06.intel.com ([134.134.136.31]:50326 "EHLO mga06.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726401AbgA3AjF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 Jan 2020 19:39:05 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from orsmga003.jf.intel.com ([10.7.209.27])
-  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 29 Jan 2020 16:38:40 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.70,379,1574150400"; 
-   d="scan'208";a="229788654"
-Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.202])
-  by orsmga003.jf.intel.com with ESMTP; 29 Jan 2020 16:38:40 -0800
-Date:   Wed, 29 Jan 2020 16:38:40 -0800
-From:   Sean Christopherson <sean.j.christopherson@intel.com>
-To:     Paolo Bonzini <pbonzini@redhat.com>
-Cc:     Vitaly Kuznetsov <vkuznets@redhat.com>,
-        Wanpeng Li <wanpengli@tencent.com>,
-        Jim Mattson <jmattson@google.com>,
-        Joerg Roedel <joro@8bytes.org>, kvm@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 25/26] KVM: x86: Handle main Intel PT CPUID leaf in
- vendor code
-Message-ID: <20200130003840.GA24606@linux.intel.com>
-References: <20200129234640.8147-1-sean.j.christopherson@intel.com>
- <20200129234640.8147-26-sean.j.christopherson@intel.com>
+        id S1727252AbgA3AoE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 29 Jan 2020 19:44:04 -0500
+Received: from userp2120.oracle.com ([156.151.31.85]:48668 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726401AbgA3AoE (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 Jan 2020 19:44:04 -0500
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id 00U0SbKm039876;
+        Thu, 30 Jan 2020 00:43:55 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=corp-2019-08-05;
+ bh=HxaL1diqaEv286OlhDwXeFz8SznwXgpMh0T9XvkcS/4=;
+ b=LJ9NJDtZ0xIKPfo7TT45ZkKFwtd9FFccN180bLdE9yns4f+qBam/ogmCeWLDlc2ZNCAg
+ I+FH9dVYVyMPmEjJyYU2ddfw6f4duwPwx7jCXuAMw49PxmA2JGAHhY+J6wfFjaA7rC0U
+ DY1g+95BqBT5v8sSEvlm9s55Xe2OpckmxNgf+UDRxw9DGZC/CBpXQu/Jm/LchvMU/aOV
+ jxoV82UQsrwH/kS3aw+K7BHRBy3utlkidz/84ERau0SgG7q+VrCvTzEVbwPHN2HxtklE
+ 6Zm2vdYAvRE7A2FV5xurm72isVkq0rcJ2EYPCZe5og/YSoQpt08U8mwyHjf9aqRw9SXQ Cw== 
+Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
+        by userp2120.oracle.com with ESMTP id 2xreargvmn-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 30 Jan 2020 00:43:55 +0000
+Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
+        by aserp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id 00U0Ta5l022634;
+        Thu, 30 Jan 2020 00:41:54 GMT
+Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
+        by aserp3030.oracle.com with ESMTP id 2xuc2xu82x-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 30 Jan 2020 00:41:54 +0000
+Received: from abhmp0014.oracle.com (abhmp0014.oracle.com [141.146.116.20])
+        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id 00U0frUM019805;
+        Thu, 30 Jan 2020 00:41:53 GMT
+Received: from [192.168.1.206] (/71.63.128.209)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Wed, 29 Jan 2020 16:41:53 -0800
+Subject: Re: [PATCH v10 2/8] hugetlb_cgroup: add interface for charge/uncharge
+ hugetlb reservations
+To:     David Rientjes <rientjes@google.com>,
+        Mina Almasry <almasrymina@google.com>
+Cc:     shakeelb@google.com, shuah@kernel.org, gthelen@google.com,
+        Andrew Morton <akpm@linux-foundation.org>,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        linux-kselftest@vger.kernel.org, cgroups@vger.kernel.org,
+        aneesh.kumar@linux.vnet.ibm.com
+References: <20200115012651.228058-1-almasrymina@google.com>
+ <20200115012651.228058-2-almasrymina@google.com>
+ <alpine.DEB.2.21.2001291312490.175731@chino.kir.corp.google.com>
+From:   Mike Kravetz <mike.kravetz@oracle.com>
+Message-ID: <43930e45-7505-1fc2-36ac-69a91a00a336@oracle.com>
+Date:   Wed, 29 Jan 2020 16:41:51 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200129234640.8147-26-sean.j.christopherson@intel.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <alpine.DEB.2.21.2001291312490.175731@chino.kir.corp.google.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9515 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1911140001 definitions=main-2001300001
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9515 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1911140001
+ definitions=main-2001300001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jan 29, 2020 at 03:46:39PM -0800, Sean Christopherson wrote:
-> diff --git a/arch/x86/kvm/cpuid.c b/arch/x86/kvm/cpuid.c
-> index d06fb54c9c0d..ca766c460318 100644
-> --- a/arch/x86/kvm/cpuid.c
-> +++ b/arch/x86/kvm/cpuid.c
-> @@ -409,7 +409,6 @@ static inline int __do_cpuid_func(struct kvm_cpuid_entry2 *entry, u32 function,
->  	unsigned f_gbpages = 0;
->  	unsigned f_lm = 0;
->  #endif
-> -	unsigned f_intel_pt = kvm_x86_ops->pt_supported() ? F(INTEL_PT) : 0;
->  
->  	/* cpuid 1.edx */
->  	const u32 kvm_cpuid_1_edx_x86_features =
-> @@ -648,22 +647,8 @@ static inline int __do_cpuid_func(struct kvm_cpuid_entry2 *entry, u32 function,
->  		break;
->  	}
->  	/* Intel PT */
-> -	case 0x14: {
-> -		int t, times = entry->eax;
-> -
-> -		if (!f_intel_pt) {
-> -			entry->eax = entry->ebx = entry->ecx = entry->edx = 0;
-> -			break;
-> -		}
-> -
-> -		for (t = 1; t <= times; ++t) {
-> -			if (*nent >= maxnent)
-> -				goto out;
-> -			do_host_cpuid(&entry[t], function, t);
-> -			++*nent;
-> -		}
-> +	case 0x14:
->  		break;
-> -	}
->  	case KVM_CPUID_SIGNATURE: {
->  		static const char signature[12] = "KVMKVMKVM\0\0";
->  		const u32 *sigptr = (const u32 *)signature;
-> @@ -778,6 +763,21 @@ static inline int __do_cpuid_func(struct kvm_cpuid_entry2 *entry, u32 function,
->  
->  	kvm_x86_ops->set_supported_cpuid(entry);
->  
-> +	/*
-> +	 * Add feature-dependent sub-leafs after ->set_supported_cpuid() to
-> +	 * properly handle the feature being disabled by SVM/VMX.
-> +	 */
-> +	if (function == 0x14) {
-> +		int t, times = entry->eax;
-> +
-> +		for (t = 1; t <= times; ++t) {
-> +			if (*nent >= maxnent)
-> +				goto out;
-> +			do_host_cpuid(&entry[t], function, t);
-> +			++*nent;
-> +		}
-> +	}
-> +
->  	r = 0;
+On 1/29/20 1:21 PM, David Rientjes wrote:
+> On Tue, 14 Jan 2020, Mina Almasry wrote:
+> 
+>> diff --git a/include/linux/hugetlb_cgroup.h b/include/linux/hugetlb_cgroup.h
+>> index 063962f6dfc6a..eab8a70d5bcb5 100644
+>> --- a/include/linux/hugetlb_cgroup.h
+>> +++ b/include/linux/hugetlb_cgroup.h
+>> @@ -20,29 +20,37 @@
+>>  struct hugetlb_cgroup;
+>>  /*
+>>   * Minimum page order trackable by hugetlb cgroup.
+>> - * At least 3 pages are necessary for all the tracking information.
+>> + * At least 4 pages are necessary for all the tracking information.
+>>   */
+>>  #define HUGETLB_CGROUP_MIN_ORDER	2
+> 
+> I always struggle with a way to document and protect these types of 
+> usages.  In this case, we are using the private filed of tail pages; in 
+> thp code, we enumerate these usages separately in struct page: see "Tail 
+> pages of compound page" comment in the union.  Using the private field is 
+> fine to store a pointer to the hugetlb_cgroup, but I'm wondering if we can 
+> document or protect against future patches not understanding this usage.  
+> Otherwise it's implicit beyond this comment.
+> 
+> Maybe an expanded comment here is the only thing that is needed because 
+> it's unique to struct hugetlb_cgroup that describes what struct page 
+> represents for the second, third, and (now) fourth tail page.
 
-I belatedly thought of an alternative that I think I like better.  Instead
-of adding the sub-leafs in common code, introduce a new kvm_x86_ops hook to
-add vendor specific sub-leafs, e.g.:
+I think that expanding the comment may be sufficient.  Let's at least
+document what the private field of the of the tail pages are used for
+WRT cgroups.
+Second tail page (hpage[2]) usage cgroup
+Third tail page (hpage[3]) reservation cgroup
 
-        kvm_x86_ops->set_supported_cpuid(entry);
-
-        r = kvm_x86_ops->add_cpuid_sub_leafs(entry, nent, maxent,
-					     do_host_cpuid);
-
-That gets Intel PT (and SGX if/when it gets merged) sub-leafs out of the
-common x86 code without polluting ->set_supported_cpuid with the extra
-params and return value.  The other hiccup is that SGX will want access to
-cpuid_mask(), but I don't see an issue with moving that to cpuid.h.
+BTW, we are just adding usage of the third tail page IIUC.  The comment
+that 4 pages are necessary includes the head page.
+-- 
+Mike Kravetz
