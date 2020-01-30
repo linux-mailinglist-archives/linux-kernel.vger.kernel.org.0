@@ -2,122 +2,106 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4C08014DF98
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Jan 2020 18:05:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 42DE114DFA5
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Jan 2020 18:09:57 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727395AbgA3RFf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 30 Jan 2020 12:05:35 -0500
-Received: from mga09.intel.com ([134.134.136.24]:16487 "EHLO mga09.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727158AbgA3RFf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 30 Jan 2020 12:05:35 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 30 Jan 2020 09:05:17 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.70,382,1574150400"; 
-   d="scan'208";a="309759519"
-Received: from mattu-haswell.fi.intel.com (HELO [10.237.72.170]) ([10.237.72.170])
-  by orsmga001.jf.intel.com with ESMTP; 30 Jan 2020 09:05:13 -0800
-Subject: Re: [PATCH v6 0/5] usb: xhci: Add support for Renesas USB controllers
-To:     Vinod Koul <vkoul@kernel.org>,
-        Christian Lamparter <chunkeey@gmail.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     John Stultz <john.stultz@linaro.org>,
-        Mathias Nyman <mathias.nyman@intel.com>,
-        linux-arm-msm@vger.kernel.org,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        USB list <linux-usb@vger.kernel.org>,
+        id S1727464AbgA3RJz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 30 Jan 2020 12:09:55 -0500
+Received: from lelv0143.ext.ti.com ([198.47.23.248]:35078 "EHLO
+        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727417AbgA3RJz (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 30 Jan 2020 12:09:55 -0500
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 00UH8sTu120578;
+        Thu, 30 Jan 2020 11:08:54 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1580404134;
+        bh=zCnXxzU/EUyxz2StGAYBKDJKmkVjS0wWM+yswum6tEc=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=G39DJeW9wpm9C/7pNqXSda95uaioGn1Ihy5r/RUiX0c+l58jt9GtlfYrZ95LFcKMw
+         9+h3vai439QcZ6jcMzv2NnByN4gaI/JerdlZMNDzipRa5I0EiNxXxm9DEA3t9hs2hP
+         A/ylH5/pLGwg2/PYQYczua4RutEdnmo+sOk08g3A=
+Received: from DFLE112.ent.ti.com (dfle112.ent.ti.com [10.64.6.33])
+        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 00UH8sdK126653
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Thu, 30 Jan 2020 11:08:54 -0600
+Received: from DFLE105.ent.ti.com (10.64.6.26) by DFLE112.ent.ti.com
+ (10.64.6.33) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Thu, 30
+ Jan 2020 11:08:54 -0600
+Received: from lelv0326.itg.ti.com (10.180.67.84) by DFLE105.ent.ti.com
+ (10.64.6.26) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
+ Frontend Transport; Thu, 30 Jan 2020 11:08:54 -0600
+Received: from [128.247.58.153] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by lelv0326.itg.ti.com (8.15.2/8.15.2) with ESMTP id 00UH8rQO026105;
+        Thu, 30 Jan 2020 11:08:53 -0600
+Subject: Re: [PATCH v2] mfd: syscon: Use a unique name with regmap_config
+To:     Andy Shevchenko <andy.shevchenko@gmail.com>
+CC:     Lee Jones <lee.jones@linaro.org>, Arnd Bergmann <arnd@arndb.de>,
+        David Lechner <david@lechnology.com>,
+        Tony Lindgren <tony@atomide.com>,
+        Roger Quadros <rogerq@ti.com>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Alan Stern <stern@rowland.harvard.edu>,
-        Heikki Krogerus <heikki.krogerus@linux.intel.com>
-References: <20200113084005.849071-1-vkoul@kernel.org>
- <20200121064608.GA2841@vkoul-mobl>
- <CAAd0S9Dd7Ygx7TgV3E_A6z29efG7jsE1-xy48_cHotroWuk_ZA@mail.gmail.com>
- <5878067.luYmtVZgP3@debian64> <20200125053237.GG2841@vkoul-mobl>
-From:   Mathias Nyman <mathias.nyman@linux.intel.com>
-Message-ID: <64340358-6682-4ae0-9c06-d72d5a4ff259@linux.intel.com>
-Date:   Thu, 30 Jan 2020 19:07:25 +0200
+        linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>,
+        Linux OMAP Mailing List <linux-omap@vger.kernel.org>
+References: <20200127231208.1443-1-s-anna@ti.com>
+ <CAHp75VfaOfBZYjQa960keORW=VjOn2PdwoYpJMG7SsN83daSJg@mail.gmail.com>
+From:   Suman Anna <s-anna@ti.com>
+Message-ID: <99a04c52-1ff6-1611-5cf6-2c71b810ba43@ti.com>
+Date:   Thu, 30 Jan 2020 11:08:53 -0600
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+ Thunderbird/60.6.1
 MIME-Version: 1.0
-In-Reply-To: <20200125053237.GG2841@vkoul-mobl>
-Content-Type: text/plain; charset=utf-8; format=flowed
+In-Reply-To: <CAHp75VfaOfBZYjQa960keORW=VjOn2PdwoYpJMG7SsN83daSJg@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 25.1.2020 7.32, Vinod Koul wrote:
->>>>>>
->>>>>> On Mon, Jan 13, 2020 at 12:42 AM Vinod Koul <vkoul@kernel.org> wrote:
->>>>>>>
->>>>>>> This series add support for Renesas USB controllers uPD720201 and uPD720202.
->>>>>>> These require firmware to be loaded and in case devices have ROM those can
->>>>>>> also be programmed if empty. If ROM is programmed, it runs from ROM as well.
->>>>>>>
->>>>>>> This includes two patches from Christian which supported these controllers
->>>>>>> w/o ROM and later my patches for ROM support and multiple firmware versions,
->>>>>>> debugfs hook for rom erase and export of xhci-pci functions.
->>>>>>>
-...
+Hi Andy,
+
+On 1/30/20 9:34 AM, Andy Shevchenko wrote:
+> On Tue, Jan 28, 2020 at 1:14 AM Suman Anna <s-anna@ti.com> wrote:
+>>
+>> The DT node full name is currently being used in regmap_config
+>> which in turn is used to create the regmap debugfs directories.
+>> This name however is not guaranteed to be unique and the regmap
+>> debugfs registration can fail in the cases where the syscon nodes
+>> have the same unit-address but are present in different DT node
+>> hierarchies. Replace this logic using the syscon reg resource
+>> address instead (inspired from logic used while creating platform
+>> devices) to ensure a unique name is given for each syscon.
 > 
-> Mathias, any comments on this series..?
+>> -       syscon_config.name = of_node_full_name(np);
+>> +       syscon_config.name = kasprintf(GFP_KERNEL, "%pOFn@%llx", np,
+>> +                                      (u64)res.start);
 > 
+> Explicit castings in printf() usually tell us that something is not okay.
 
-Hi Vinod
+Yes, I agree in general.
 
-Sorry about the delay.
+> Yes, for resource_size_t we have %pa.
 
-Maybe a firmware loading driver like this that wraps the xhci pci driver could
-work.
+And that was the first thing I tried when doing v2, before moving away
+from it. This is not for a console printf statement, but is rather for
+the regmap debugfs name. Using a %pa adds the 0x and leading zeros in
+the debugfs name, when compared to the name before this patch. The
+typecast retains the current format, and replaces the unit-address
+without the leading 0s either. Introducing a local-variable to avoid the
+typecast is overkill.
 
-One benefit is that we could skip searching for the right firmware name based
-on PCI ID. Each of these Renesas controllers now have their own pci_device_id
-entry in the pci_ids[] table, and could have the supported firmware name(s)
-in .driver_data. This way we wouldn't need to add the renesas_fw_table[] or
-maybe even the renesas_needs_fw_dl() function in this series.
+> 
+> On top of that, I would rather see %pfwn to avoid modification for
+> other fwnode types.
 
-I realize this can't be easily changed because usb_hcd_pci_probe() takes the
-pci_device_id pointer as an argument, and expects id.driver_data to be a
-HC driver pointer.
+Did you mean %pfwP? That can probably be handled when syscon code is
+updated to use fwnode API.
 
-So this turns out to be a question for Greg and Alan:
-
-Would it make sense to change usb_hcd_pci_probe() to take a HC driver pointer
-as an argument instead of a pointer to pci_device_id?
-pci_device_id pointer is only used to extract the HC driver handle.
-This way the driver_data could be used for, well, driver data.
-
-Heikki actually suggested this some time ago to me, back then the idea was to
-improve xhci quirks code by using driver_data for quirk flags instead of
-finding and setting them later.
-
-There are a few other opens regarding this series. Mostly because I'm not (yet)
-familiar with all the details, so I'll just just list them here.
-
-- Is it really enough to add the Renesas driver to Makefile before xhci-pci
-   driver to make sure it gets matched and probed based on vendor/device id
-   before xhci-pci driver is matched and probed based on pci class?
-   What if the Renesas driver is a module and xhci-pci compiled in?
-
-- Previously probe didn't return before hcd's were added and everything set up.
-   Now with request_firmware_nowait() probe returns early successfully, and the
-   old xhci_pci_probe() which sets up everything is called later by the request
-   firmware callback. So there could be whole new set of races possible.
-   For example pci remove can be called mid firmware loading, or when the old
-   xhci_pci_probe is still setting up things.
-
-   I understood that a synchronous request_firmware() in probe has its own
-   issues, not sure if there is a good solution for this.
-
-- Before the firmware is written to the controller the firmware version is
-   compared against a hardcoded number in the drivers renesas_fw_table[].
-   This means new firmware versions can't be supported without patching the driver.
-   Is this intentional?
-
-- Mathias
+regards
+Suman
