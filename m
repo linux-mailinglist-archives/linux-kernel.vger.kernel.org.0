@@ -2,39 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EC8A714E1D8
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Jan 2020 19:48:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E804414E231
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Jan 2020 19:51:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731472AbgA3SsC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 30 Jan 2020 13:48:02 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58758 "EHLO mail.kernel.org"
+        id S1731163AbgA3SqQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 30 Jan 2020 13:46:16 -0500
+Received: from mail.kernel.org ([198.145.29.99]:55922 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731464AbgA3Sr7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 30 Jan 2020 13:47:59 -0500
+        id S1731123AbgA3SqE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 30 Jan 2020 13:46:04 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D60A520CC7;
-        Thu, 30 Jan 2020 18:47:56 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 230FB20674;
+        Thu, 30 Jan 2020 18:46:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1580410077;
-        bh=g7iUG3P/vV3u1gAoyzlinadyflWpDD9tPXwLkewpevo=;
+        s=default; t=1580409963;
+        bh=7jlyodMR1hMib1vLo8tBYpdkJz1ljJqLkFdpx1YkWZc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=qsiq6YJYlwH9VLeZ++w+Cudg/83YIjA6nI9NsGFRMg2wC1vNwnbA2xgzhYxE8XgJ3
-         yAQ4bF1uviyEa73121iOr2qUuQ66NJDef9jWEVnfBcfqVhcZJyg0iLetrty0hyCsS4
-         liJSEi79G8udG8qqU8qE0uwM+udUo29uws6ixe9I=
+        b=UrHGxclw1KMYn3SsVyDUTF3hJs+JcbIJ5kIKPlSOI4WXcgC9c6CY0NIdVIKAviNyx
+         3TMH1XLaFt229TdBdXMF9vOocMqobqeqVIGndufZZZxE1FRax4lOB7H7kxFrstk93x
+         fpixHP2pgvadmuj8JT4n5qUYhmrJDzRed81wkRPA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 37/55] net: wan: sdla: Fix cast from pointer to integer of different size
-Date:   Thu, 30 Jan 2020 19:39:18 +0100
-Message-Id: <20200130183615.265337658@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Prameela Rani Garnepudi <prameela.j04cs@gmail.com>,
+        Johan Hovold <johan@kernel.org>,
+        Kalle Valo <kvalo@codeaurora.org>
+Subject: [PATCH 5.4 103/110] rsi: fix non-atomic allocation in completion handler
+Date:   Thu, 30 Jan 2020 19:39:19 +0100
+Message-Id: <20200130183625.791081129@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200130183608.563083888@linuxfoundation.org>
-References: <20200130183608.563083888@linuxfoundation.org>
+In-Reply-To: <20200130183613.810054545@linuxfoundation.org>
+References: <20200130183613.810054545@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,40 +45,84 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Krzysztof Kozlowski <krzk@kernel.org>
+From: Johan Hovold <johan@kernel.org>
 
-[ Upstream commit 00c0688cecadbf7ac2f5b4cdb36d912a2d3f0cca ]
+commit b9b9f9fea21830f85cf0148cd8dce001ae55ead1 upstream.
 
-Since net_device.mem_start is unsigned long, it should not be cast to
-int right before casting to pointer.  This fixes warning (compile
-testing on alpha architecture):
+USB completion handlers are called in atomic context and must
+specifically not allocate memory using GFP_KERNEL.
 
-    drivers/net/wan/sdla.c: In function ‘sdla_transmit’:
-    drivers/net/wan/sdla.c:711:13: warning:
-        cast to pointer from integer of different size [-Wint-to-pointer-cast]
+Fixes: a1854fae1414 ("rsi: improve RX packet handling in USB interface")
+Cc: stable <stable@vger.kernel.org> # 4.17
+Cc: Prameela Rani Garnepudi <prameela.j04cs@gmail.com>
+Signed-off-by: Johan Hovold <johan@kernel.org>
+Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/wan/sdla.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/net/wireless/rsi/rsi_91x_usb.c |   13 +++++++------
+ 1 file changed, 7 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/net/wan/sdla.c b/drivers/net/wan/sdla.c
-index 57ed259c8208d..09fde60a5f9de 100644
---- a/drivers/net/wan/sdla.c
-+++ b/drivers/net/wan/sdla.c
-@@ -711,7 +711,7 @@ static netdev_tx_t sdla_transmit(struct sk_buff *skb,
+--- a/drivers/net/wireless/rsi/rsi_91x_usb.c
++++ b/drivers/net/wireless/rsi/rsi_91x_usb.c
+@@ -16,6 +16,7 @@
+  */
  
- 					spin_lock_irqsave(&sdla_lock, flags);
- 					SDLA_WINDOW(dev, addr);
--					pbuf = (void *)(((int) dev->mem_start) + (addr & SDLA_ADDR_MASK));
-+					pbuf = (void *)(dev->mem_start + (addr & SDLA_ADDR_MASK));
- 					__sdla_write(dev, pbuf->buf_addr, skb->data, skb->len);
- 					SDLA_WINDOW(dev, addr);
- 					pbuf->opp_flag = 1;
--- 
-2.20.1
-
+ #include <linux/module.h>
++#include <linux/types.h>
+ #include <net/rsi_91x.h>
+ #include "rsi_usb.h"
+ #include "rsi_hal.h"
+@@ -29,7 +30,7 @@ MODULE_PARM_DESC(dev_oper_mode,
+ 		 "9[Wi-Fi STA + BT LE], 13[Wi-Fi STA + BT classic + BT LE]\n"
+ 		 "6[AP + BT classic], 14[AP + BT classic + BT LE]");
+ 
+-static int rsi_rx_urb_submit(struct rsi_hw *adapter, u8 ep_num);
++static int rsi_rx_urb_submit(struct rsi_hw *adapter, u8 ep_num, gfp_t flags);
+ 
+ /**
+  * rsi_usb_card_write() - This function writes to the USB Card.
+@@ -285,7 +286,7 @@ static void rsi_rx_done_handler(struct u
+ 	status = 0;
+ 
+ out:
+-	if (rsi_rx_urb_submit(dev->priv, rx_cb->ep_num))
++	if (rsi_rx_urb_submit(dev->priv, rx_cb->ep_num, GFP_ATOMIC))
+ 		rsi_dbg(ERR_ZONE, "%s: Failed in urb submission", __func__);
+ 
+ 	if (status)
+@@ -307,7 +308,7 @@ static void rsi_rx_urb_kill(struct rsi_h
+  *
+  * Return: 0 on success, a negative error code on failure.
+  */
+-static int rsi_rx_urb_submit(struct rsi_hw *adapter, u8 ep_num)
++static int rsi_rx_urb_submit(struct rsi_hw *adapter, u8 ep_num, gfp_t mem_flags)
+ {
+ 	struct rsi_91x_usbdev *dev = (struct rsi_91x_usbdev *)adapter->rsi_dev;
+ 	struct rx_usb_ctrl_block *rx_cb = &dev->rx_cb[ep_num - 1];
+@@ -337,7 +338,7 @@ static int rsi_rx_urb_submit(struct rsi_
+ 			  rsi_rx_done_handler,
+ 			  rx_cb);
+ 
+-	status = usb_submit_urb(urb, GFP_KERNEL);
++	status = usb_submit_urb(urb, mem_flags);
+ 	if (status) {
+ 		rsi_dbg(ERR_ZONE, "%s: Failed in urb submission\n", __func__);
+ 		dev_kfree_skb(skb);
+@@ -827,12 +828,12 @@ static int rsi_probe(struct usb_interfac
+ 		rsi_dbg(INIT_ZONE, "%s: Device Init Done\n", __func__);
+ 	}
+ 
+-	status = rsi_rx_urb_submit(adapter, WLAN_EP);
++	status = rsi_rx_urb_submit(adapter, WLAN_EP, GFP_KERNEL);
+ 	if (status)
+ 		goto err1;
+ 
+ 	if (adapter->priv->coex_mode > 1) {
+-		status = rsi_rx_urb_submit(adapter, BT_EP);
++		status = rsi_rx_urb_submit(adapter, BT_EP, GFP_KERNEL);
+ 		if (status)
+ 			goto err_kill_wlan_urb;
+ 	}
 
 
