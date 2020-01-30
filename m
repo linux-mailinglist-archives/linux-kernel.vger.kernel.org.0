@@ -2,91 +2,213 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4C5D814E3A4
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Jan 2020 21:06:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 503A714E3E1
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Jan 2020 21:22:26 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727589AbgA3UGS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 30 Jan 2020 15:06:18 -0500
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:38771 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726267AbgA3UGS (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 30 Jan 2020 15:06:18 -0500
-Received: by mail-lj1-f194.google.com with SMTP id w1so4752212ljh.5;
-        Thu, 30 Jan 2020 12:06:16 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=5MtfyjIK8iIjsf2DswNSJhJWXPmE9JSASerKTR8hIHk=;
-        b=Dfjjt1oJBm8Zv7HcUVqflmVkswBSaeNY1oyGduYay3CkUQkstffONIaynu+1fv8eTL
-         qArLmejHHLOWYCjM0k54OTmjEtQqrvRSzJDmN+VBXZCsXuUd0r8tzS5wfxWylcOTIWpp
-         Fd3T036r7GTGzbIs1WcoywQwBcIVqflDA5o4wzt3BeC9n31ck1XSu0DS0t+kybmvYEde
-         YfRYCu9adTRSrobveMAIae0JVppeN9QqoZ9K8W6ar20RXASNUZmtsXUKwwd5O7qeafOp
-         +/CAbeAgpWAgBaU1NIslo5ijNfwja1MIfFokWgl83gHD8aEO3UZaNh2r3nyw72nO2rCi
-         Wd7Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=5MtfyjIK8iIjsf2DswNSJhJWXPmE9JSASerKTR8hIHk=;
-        b=an7OnvN7qXQA5ssVshsIzjkYS7mgOgNMi7AhoZwohkENWCFS3GXNviSAePwHdr8Zlj
-         yxAPcH0MJGmqGAMEgnh9i353Xrf0UhKfoZm4a9um1KX0n2gvyYivd7EJnu8x5ZEBJk0T
-         /looD7DPyUbmW5FOlOyHekFJZSdwAp7QX2Gs7ohcZtpDo4iMQ2fpmENt/+nzySkhE3CH
-         yNxX5O7E4TttNuPrua0/lGElCUBUmSlbpAIjccJFnDww5wRUVQDzqM3W87id08X5Em05
-         GZemZuzAaiNT/OFOqsKPLAfDnPcEiwO/JgSYEnU8DgQd77SgbvIT+01T5zFwFO+5peDy
-         T/tw==
-X-Gm-Message-State: APjAAAXoi4pxWT9mofHNagnNz8OwZLZI40RBaZVKoDzCR39YvAkBAISq
-        86qKukNYyxdoekhPqds9I+hfiecY
-X-Google-Smtp-Source: APXvYqyXwLnGLwg102wBTYCAiUt/EXf5IEfxXfCBcbMe98trvybQO7hUWy+nEDwU/LSwjKRV65eGiA==
-X-Received: by 2002:a2e:9090:: with SMTP id l16mr3909709ljg.281.1580414775879;
-        Thu, 30 Jan 2020 12:06:15 -0800 (PST)
-Received: from [192.168.2.145] (79-139-233-37.dynamic.spd-mgts.ru. [79.139.233.37])
-        by smtp.googlemail.com with ESMTPSA id u16sm3535567ljl.34.2020.01.30.12.06.14
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 30 Jan 2020 12:06:15 -0800 (PST)
-Subject: Re: [PATCH v6 12/16] dmaengine: tegra-apb: Clean up suspend-resume
-To:     Jon Hunter <jonathanh@nvidia.com>,
-        Laxman Dewangan <ldewangan@nvidia.com>,
-        Vinod Koul <vkoul@kernel.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>
-Cc:     dmaengine@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20200130043804.32243-1-digetx@gmail.com>
- <20200130043804.32243-13-digetx@gmail.com>
- <3507dcb9-4a92-8145-1953-e40960604661@nvidia.com>
-From:   Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <fb32d2e2-4cd3-c493-7792-3da62276cc07@gmail.com>
-Date:   Thu, 30 Jan 2020 23:06:14 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.3.0
+        id S1727785AbgA3UWY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 30 Jan 2020 15:22:24 -0500
+Received: from mga12.intel.com ([192.55.52.136]:39661 "EHLO mga12.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727592AbgA3UWX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 30 Jan 2020 15:22:23 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga007.jf.intel.com ([10.7.209.58])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 30 Jan 2020 12:22:22 -0800
+X-IronPort-AV: E=Sophos;i="5.70,382,1574150400"; 
+   d="scan'208";a="218395047"
+Received: from dwillia2-desk3.jf.intel.com (HELO dwillia2-desk3.amr.corp.intel.com) ([10.54.39.16])
+  by orsmga007-auth.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 30 Jan 2020 12:22:21 -0800
+Subject: [PATCH 4/5] libnvdimm/region: Introduce NDD_LABELING
+From:   Dan Williams <dan.j.williams@intel.com>
+To:     linux-nvdimm@lists.01.org
+Cc:     Vishal Verma <vishal.l.verma@intel.com>,
+        "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>,
+        Oliver O'Halloran <oohall@gmail.com>, hch@lst.de,
+        linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
+Date:   Thu, 30 Jan 2020 12:06:18 -0800
+Message-ID: <158041477856.3889308.4212605617834097674.stgit@dwillia2-desk3.amr.corp.intel.com>
+In-Reply-To: <158041475480.3889308.655103391935006598.stgit@dwillia2-desk3.amr.corp.intel.com>
+References: <158041475480.3889308.655103391935006598.stgit@dwillia2-desk3.amr.corp.intel.com>
+User-Agent: StGit/0.18-3-g996c
 MIME-Version: 1.0
-In-Reply-To: <3507dcb9-4a92-8145-1953-e40960604661@nvidia.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-30.01.2020 22:00, Jon Hunter пишет:
-> 
-> On 30/01/2020 04:38, Dmitry Osipenko wrote:
->> It is enough to check whether hardware is busy on suspend and to reset
->> it across of suspend-resume because channel's configuration is fully
->> re-programmed on each DMA transaction anyways and because save-restore
->> of an active channel won't end up well without pausing transfer prior to
->> saving of the state (note that all channels shall be idling at the time of
->> suspend, so save-restore is not needed at all).
-> 
-> Maybe just update the commit message to state that the pause callback is
-> not implemented and channel pause is not supported prior to T114. And
-> then ...
-> 
-> Acked-by: Jon Hunter <jonathanh@nvidia.com>
+The NDD_ALIASING flag is used to indicate where pmem capacity might
+alias with blk capacity and require labeling. It is also used to
+indicate whether the DIMM supports labeling. Separate this latter
+capability into its own flag so that the NDD_ALIASING flag is scoped to
+true aliased configurations.
 
-Thanks, I'll update the message.
+To my knowledge aliased configurations only exist in the ACPI spec,
+there are no known platforms that ship this support in production.
+
+This clarity allows namespace-capacity alignment constraints around
+interleave-ways to be relaxed.
+
+Cc: Vishal Verma <vishal.l.verma@intel.com>
+Cc: Aneesh Kumar K.V <aneesh.kumar@linux.ibm.com>
+Cc: Oliver O'Halloran <oohall@gmail.com>
+Signed-off-by: Dan Williams <dan.j.williams@intel.com>
+---
+ arch/powerpc/platforms/pseries/papr_scm.c |    2 +-
+ drivers/acpi/nfit/core.c                  |    4 +++-
+ drivers/nvdimm/dimm.c                     |    2 +-
+ drivers/nvdimm/dimm_devs.c                |    9 +++++----
+ drivers/nvdimm/namespace_devs.c           |    2 +-
+ drivers/nvdimm/nd.h                       |    2 +-
+ drivers/nvdimm/region_devs.c              |   10 +++++-----
+ include/linux/libnvdimm.h                 |    2 ++
+ 8 files changed, 19 insertions(+), 14 deletions(-)
+
+diff --git a/arch/powerpc/platforms/pseries/papr_scm.c b/arch/powerpc/platforms/pseries/papr_scm.c
+index c2ef320ba1bf..aae60cfd4e38 100644
+--- a/arch/powerpc/platforms/pseries/papr_scm.c
++++ b/arch/powerpc/platforms/pseries/papr_scm.c
+@@ -326,7 +326,7 @@ static int papr_scm_nvdimm_init(struct papr_scm_priv *p)
+ 	}
+ 
+ 	dimm_flags = 0;
+-	set_bit(NDD_ALIASING, &dimm_flags);
++	set_bit(NDD_LABELING, &dimm_flags);
+ 
+ 	p->nvdimm = nvdimm_create(p->bus, p, NULL, dimm_flags,
+ 				  PAPR_SCM_DIMM_CMD_MASK, 0, NULL);
+diff --git a/drivers/acpi/nfit/core.c b/drivers/acpi/nfit/core.c
+index a3320f93616d..71d7f2aa1b12 100644
+--- a/drivers/acpi/nfit/core.c
++++ b/drivers/acpi/nfit/core.c
+@@ -2026,8 +2026,10 @@ static int acpi_nfit_register_dimms(struct acpi_nfit_desc *acpi_desc)
+ 			continue;
+ 		}
+ 
+-		if (nfit_mem->bdw && nfit_mem->memdev_pmem)
++		if (nfit_mem->bdw && nfit_mem->memdev_pmem) {
+ 			set_bit(NDD_ALIASING, &flags);
++			set_bit(NDD_LABELING, &flags);
++		}
+ 
+ 		/* collate flags across all memdevs for this dimm */
+ 		list_for_each_entry(nfit_memdev, &acpi_desc->memdevs, list) {
+diff --git a/drivers/nvdimm/dimm.c b/drivers/nvdimm/dimm.c
+index 64776ed15bb3..7d4ddc4d9322 100644
+--- a/drivers/nvdimm/dimm.c
++++ b/drivers/nvdimm/dimm.c
+@@ -99,7 +99,7 @@ static int nvdimm_probe(struct device *dev)
+ 	if (ndd->ns_current >= 0) {
+ 		rc = nd_label_reserve_dpa(ndd);
+ 		if (rc == 0)
+-			nvdimm_set_aliasing(dev);
++			nvdimm_set_labeling(dev);
+ 	}
+ 	nvdimm_bus_unlock(dev);
+ 
+diff --git a/drivers/nvdimm/dimm_devs.c b/drivers/nvdimm/dimm_devs.c
+index 94ea6dba6b4f..64159d4d4b8f 100644
+--- a/drivers/nvdimm/dimm_devs.c
++++ b/drivers/nvdimm/dimm_devs.c
+@@ -32,7 +32,7 @@ int nvdimm_check_config_data(struct device *dev)
+ 
+ 	if (!nvdimm->cmd_mask ||
+ 	    !test_bit(ND_CMD_GET_CONFIG_DATA, &nvdimm->cmd_mask)) {
+-		if (test_bit(NDD_ALIASING, &nvdimm->flags))
++		if (test_bit(NDD_LABELING, &nvdimm->flags))
+ 			return -ENXIO;
+ 		else
+ 			return -ENOTTY;
+@@ -173,11 +173,11 @@ int nvdimm_set_config_data(struct nvdimm_drvdata *ndd, size_t offset,
+ 	return rc;
+ }
+ 
+-void nvdimm_set_aliasing(struct device *dev)
++void nvdimm_set_labeling(struct device *dev)
+ {
+ 	struct nvdimm *nvdimm = to_nvdimm(dev);
+ 
+-	set_bit(NDD_ALIASING, &nvdimm->flags);
++	set_bit(NDD_LABELING, &nvdimm->flags);
+ }
+ 
+ void nvdimm_set_locked(struct device *dev)
+@@ -312,8 +312,9 @@ static ssize_t flags_show(struct device *dev,
+ {
+ 	struct nvdimm *nvdimm = to_nvdimm(dev);
+ 
+-	return sprintf(buf, "%s%s\n",
++	return sprintf(buf, "%s%s%s\n",
+ 			test_bit(NDD_ALIASING, &nvdimm->flags) ? "alias " : "",
++			test_bit(NDD_LABELING, &nvdimm->flags) ? "label" : "",
+ 			test_bit(NDD_LOCKED, &nvdimm->flags) ? "lock " : "");
+ }
+ static DEVICE_ATTR_RO(flags);
+diff --git a/drivers/nvdimm/namespace_devs.c b/drivers/nvdimm/namespace_devs.c
+index aff1f32fdb4f..30cda9f235de 100644
+--- a/drivers/nvdimm/namespace_devs.c
++++ b/drivers/nvdimm/namespace_devs.c
+@@ -2531,7 +2531,7 @@ static int init_active_labels(struct nd_region *nd_region)
+ 		if (!ndd) {
+ 			if (test_bit(NDD_LOCKED, &nvdimm->flags))
+ 				/* fail, label data may be unreadable */;
+-			else if (test_bit(NDD_ALIASING, &nvdimm->flags))
++			else if (test_bit(NDD_LABELING, &nvdimm->flags))
+ 				/* fail, labels needed to disambiguate dpa */;
+ 			else
+ 				return 0;
+diff --git a/drivers/nvdimm/nd.h b/drivers/nvdimm/nd.h
+index c9f6a5b5253a..ca39abe29c7c 100644
+--- a/drivers/nvdimm/nd.h
++++ b/drivers/nvdimm/nd.h
+@@ -252,7 +252,7 @@ int nvdimm_set_config_data(struct nvdimm_drvdata *ndd, size_t offset,
+ 		void *buf, size_t len);
+ long nvdimm_clear_poison(struct device *dev, phys_addr_t phys,
+ 		unsigned int len);
+-void nvdimm_set_aliasing(struct device *dev);
++void nvdimm_set_labeling(struct device *dev);
+ void nvdimm_set_locked(struct device *dev);
+ void nvdimm_clear_locked(struct device *dev);
+ int nvdimm_security_setup_events(struct device *dev);
+diff --git a/drivers/nvdimm/region_devs.c b/drivers/nvdimm/region_devs.c
+index a19e535830d9..a5fc6e4c56ff 100644
+--- a/drivers/nvdimm/region_devs.c
++++ b/drivers/nvdimm/region_devs.c
+@@ -195,16 +195,16 @@ EXPORT_SYMBOL_GPL(nd_blk_region_set_provider_data);
+ int nd_region_to_nstype(struct nd_region *nd_region)
+ {
+ 	if (is_memory(&nd_region->dev)) {
+-		u16 i, alias;
++		u16 i, label;
+ 
+-		for (i = 0, alias = 0; i < nd_region->ndr_mappings; i++) {
++		for (i = 0, label = 0; i < nd_region->ndr_mappings; i++) {
+ 			struct nd_mapping *nd_mapping = &nd_region->mapping[i];
+ 			struct nvdimm *nvdimm = nd_mapping->nvdimm;
+ 
+-			if (test_bit(NDD_ALIASING, &nvdimm->flags))
+-				alias++;
++			if (test_bit(NDD_LABELING, &nvdimm->flags))
++				label++;
+ 		}
+-		if (alias)
++		if (label)
+ 			return ND_DEVICE_NAMESPACE_PMEM;
+ 		else
+ 			return ND_DEVICE_NAMESPACE_IO;
+diff --git a/include/linux/libnvdimm.h b/include/linux/libnvdimm.h
+index 9df091bd30ba..18da4059be09 100644
+--- a/include/linux/libnvdimm.h
++++ b/include/linux/libnvdimm.h
+@@ -37,6 +37,8 @@ enum {
+ 	NDD_WORK_PENDING = 4,
+ 	/* ignore / filter NSLABEL_FLAG_LOCAL for this DIMM, i.e. no aliasing */
+ 	NDD_NOBLK = 5,
++	/* dimm supports namespace labels */
++	NDD_LABELING = 6,
+ 
+ 	/* need to set a limit somewhere, but yes, this is likely overkill */
+ 	ND_IOCTL_MAX_BUFLEN = SZ_4M,
+
