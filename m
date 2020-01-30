@@ -2,105 +2,120 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A166B14DCB2
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Jan 2020 15:17:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EC8CB14DCBD
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Jan 2020 15:23:18 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727488AbgA3ORv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 30 Jan 2020 09:17:51 -0500
-Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:36585 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1727001AbgA3ORu (ORCPT
+        id S1727490AbgA3OXR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 30 Jan 2020 09:23:17 -0500
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:38815 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727107AbgA3OXQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 30 Jan 2020 09:17:50 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1580393869;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=SQLCEiwjxFUhrMsORDFo4u4SoI+4SqDuOptNlKVezG8=;
-        b=D0pSnybUNZCn/Wdr7JZ4AO4Mh4h/4Ci7TNgbh/HvCsC0zShQw8Q/Q+NYbHl7ws8pz8pG/j
-        L4UOXPpRbHeMFCUkqE6vm7Efoa4ZA04ZLS7PoZhr1KwaDa251dzWo+9ULzDNn5gN05Wsuh
-        JGFYksLPCYMZYI5Y5fuY6DD2d3Lws7k=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-170-MywjOwE5PnGrr_6RyZCF3Q-1; Thu, 30 Jan 2020 09:17:47 -0500
-X-MC-Unique: MywjOwE5PnGrr_6RyZCF3Q-1
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 806A31005F73;
-        Thu, 30 Jan 2020 14:17:44 +0000 (UTC)
-Received: from treble (ovpn-120-83.rdu2.redhat.com [10.10.120.83])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 98BDD60BE1;
-        Thu, 30 Jan 2020 14:17:36 +0000 (UTC)
-Date:   Thu, 30 Jan 2020 08:17:33 -0600
-From:   Josh Poimboeuf <jpoimboe@redhat.com>
-To:     Petr Mladek <pmladek@suse.com>
-Cc:     Miroslav Benes <mbenes@suse.cz>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Joe Lawrence <joe.lawrence@redhat.com>,
-        Jessica Yu <jeyu@kernel.org>, x86@kernel.org,
-        linux-kernel@vger.kernel.org, mhiramat@kernel.org,
-        bristot@redhat.com, jbaron@akamai.com,
-        torvalds@linux-foundation.org, tglx@linutronix.de,
-        mingo@kernel.org, namit@vmware.com, hpa@zytor.com, luto@kernel.org,
-        ard.biesheuvel@linaro.org, live-patching@vger.kernel.org,
-        Randy Dunlap <rdunlap@infradead.org>, nstange@suse.de
-Subject: Re: [PATCH v3 5/6] x86/ftrace: Use text_poke()
-Message-ID: <20200130141733.krfdmirathscgkkp@treble>
-References: <20200121161045.dhihqibnpyrk2lsu@treble>
- <alpine.LSU.2.21.2001221052331.15957@pobox.suse.cz>
- <20200122214239.ivnebi7hiabi5tbs@treble>
- <alpine.LSU.2.21.2001281014280.14030@pobox.suse.cz>
- <20200128150014.juaxfgivneiv6lje@treble>
- <20200128154046.trkpkdaz7qeovhii@pathway.suse.cz>
- <20200128170254.igb72ib5n7lvn3ds@treble>
- <alpine.LSU.2.21.2001291249430.28615@pobox.suse.cz>
- <20200129155951.qvf3tjsv2qvswciw@treble>
- <20200130095346.6buhb3reehijbamz@pathway.suse.cz>
+        Thu, 30 Jan 2020 09:23:16 -0500
+Received: by mail-pg1-f196.google.com with SMTP id a33so1733697pgm.5
+        for <linux-kernel@vger.kernel.org>; Thu, 30 Jan 2020 06:23:16 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=6T7BA/VeHSTmsgbu5fmQVa4i4NpuWX85GL9aH8ZEE74=;
+        b=R3LnSqcAeDVQOAHlpG1owMpEpBN/wKJXlNPE4yy2OJftYy+o1XFdg2UvFuYOcApUCs
+         wzj6xHPsgPqTmDBIZ31a33yVDP95XBf9aS8RiBaegWDx0USmHQD2N6xncypmbbIL/V7S
+         pAZF1CnqdBCMYawpCCBIulwl5/aQ0566iMvNDUqD0+AwGHu/QG8wdXxZQtTPEX4MvPUC
+         TJsILeo5ZsI7D1qb7HpdCPLQbJX37Lnr/P/obM2hE2jPsiRiv9YkcHI+EORU2tzzekTd
+         lusGAtCSo5AWjvSe9SLGDRS1HbgWyDPTbTnruPvJ3wy/CXxvixVGmJ+tpuY6OacDhaFS
+         i1OQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=6T7BA/VeHSTmsgbu5fmQVa4i4NpuWX85GL9aH8ZEE74=;
+        b=UmvxQX907rQRJd6z6WTBja5q5Bx5wbOR9JNnOM+yROHF8SPssv6lF2yF8654xAEgC7
+         XurP5W17yRCQvWFSrkea3K2BFjQcNhxw79rNqORexxPpxbUQ/uO0ykzW4cnWhiVuyon8
+         aZZtPDF9IJWQasFrhul6cvbf9ZSasg/jP2Y40gfRyAIvFXY11vsohiHuzS4GrKRZ1JXy
+         IepAhi53q3ag1+Pyn9g8GOk3j49gLOt7AjKJ7I3UEd6jHc6RJr029ogmU3MJcUZSJHCh
+         Lo2zSi63USowa7ftt4Wn40sUr/mH3iQcDTvKq/DcDyUupYtBHsT7QY4p/MqEg1ECIFeu
+         oHxw==
+X-Gm-Message-State: APjAAAV8LtHLhzIBzYvn08/Qqnav6WLcnJMxtiiedhuQ52OGqR3MROFE
+        tdqOZGtV3r7RC0vhzVIKk0A=
+X-Google-Smtp-Source: APXvYqyd+aww2fw9g4HcNT4GjoA8fFMGIE5pWD4/IgsGGZeCK+OdvzCgNlecdkjgsjA9wLillvUIvA==
+X-Received: by 2002:aa7:874b:: with SMTP id g11mr5469169pfo.225.1580394195955;
+        Thu, 30 Jan 2020 06:23:15 -0800 (PST)
+Received: from localhost.localdomain ([103.211.17.117])
+        by smtp.googlemail.com with ESMTPSA id m71sm9840602pje.0.2020.01.30.06.23.13
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 30 Jan 2020 06:23:15 -0800 (PST)
+From:   Amol Grover <frextrite@gmail.com>
+To:     Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>
+Cc:     linux-kernel@vger.kernel.org,
+        linux-kernel-mentees@lists.linuxfoundation.org,
+        Joel Fernandes <joel@joelfernandes.org>,
+        Madhuparna Bhowmik <madhuparnabhowmik10@gmail.com>,
+        "Paul E . McKenney" <paulmck@kernel.org>,
+        Amol Grover <frextrite@gmail.com>
+Subject: [PATCH v2] callchain: Annotate RCU pointer with __rcu
+Date:   Thu, 30 Jan 2020 19:48:19 +0530
+Message-Id: <20200130141818.18391-1-frextrite@gmail.com>
+X-Mailer: git-send-email 2.24.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20200130095346.6buhb3reehijbamz@pathway.suse.cz>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jan 30, 2020 at 10:53:46AM +0100, Petr Mladek wrote:
-> On Wed 2020-01-29 09:59:51, Josh Poimboeuf wrote:
-> > In retrospect, the prerequisites for merging it should have been:
-> 
-> OK, let me do one more move in this game.
-> 
-> 
-> > 1) Document how source-based patches can be safely generated;
-> 
-> I agree that the information are really scattered over many files
-> in Documentation/livepatch/.
+Fixes following instances of sparse error
+error: incompatible types in comparison expression
+(different address spaces)
+kernel/events/callchain.c:66:9: error: incompatible types in comparison
+kernel/events/callchain.c:96:9: error: incompatible types in comparison
+kernel/events/callchain.c:161:19: error: incompatible types in comparison
 
-Once again you're blithely ignoring my point and pretending I'm saying
-something else.  And you did that again further down in the email, but
-what's the point of arguing if you're not going to listen.
+This introduces the following warning
+kernel/events/callchain.c:65:17: warning: incorrect type in assignment
+which is fixed as below
 
-This has nothing to do with the organization of the existing
-documentation.  When did I say that?
+callchain_cpus_entries is annotated as an RCU pointer.
+Hence rcu_dereference_protected or similar RCU API is
+required to dereference the pointer.
 
-Adding the -flive-patching flag doesn't remove *all*
-function-ABI-breaking optimizations.  It's only a partial solution.  The
-rest of the solution involves tooling and processes which need to be
-documented.  But you already know that.
+Signed-off-by: Amol Grover <frextrite@gmail.com>
+---
+v2:
+- Squash both the commits into a single one.
 
-If we weren't co-maintainers I would have reverted the patch days ago.
-I've tried to give you all the benefit of the doubt.  But you seem to be
-playing company politics.
+ kernel/events/callchain.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-I would ask that you please put on your upstream hats and stop playing
-politics.  If the patch creation process is a secret, then by all means,
-keep it secret.  But then keep your GCC flag to yourself.
-
+diff --git a/kernel/events/callchain.c b/kernel/events/callchain.c
+index c2b41a263166..a672d02a1b3a 100644
+--- a/kernel/events/callchain.c
++++ b/kernel/events/callchain.c
+@@ -32,7 +32,7 @@ static inline size_t perf_callchain_entry__sizeof(void)
+ static DEFINE_PER_CPU(int, callchain_recursion[PERF_NR_CONTEXTS]);
+ static atomic_t nr_callchain_events;
+ static DEFINE_MUTEX(callchain_mutex);
+-static struct callchain_cpus_entries *callchain_cpus_entries;
++static struct callchain_cpus_entries __rcu *callchain_cpus_entries;
+ 
+ 
+ __weak void perf_callchain_kernel(struct perf_callchain_entry_ctx *entry,
+@@ -62,7 +62,8 @@ static void release_callchain_buffers(void)
+ {
+ 	struct callchain_cpus_entries *entries;
+ 
+-	entries = callchain_cpus_entries;
++	entries = rcu_dereference_protected(callchain_cpus_entries,
++					    lockdep_is_held(&callchain_mutex));
+ 	RCU_INIT_POINTER(callchain_cpus_entries, NULL);
+ 	call_rcu(&entries->rcu_head, release_callchain_buffers_rcu);
+ }
 -- 
-Josh
+2.24.1
 
