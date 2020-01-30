@@ -2,31 +2,31 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DE5BE14DD2D
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Jan 2020 15:48:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E300C14DD2B
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Jan 2020 15:48:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726996AbgA3OsX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 30 Jan 2020 09:48:23 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33678 "EHLO mail.kernel.org"
+        id S1727537AbgA3OsS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 30 Jan 2020 09:48:18 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33578 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727322AbgA3OsO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1727505AbgA3OsO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Thu, 30 Jan 2020 09:48:14 -0500
 Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1D7FE24685;
+        by mail.kernel.org (Postfix) with ESMTPSA id 448532468A;
         Thu, 30 Jan 2020 14:48:14 +0000 (UTC)
 Received: from rostedt by gandalf.local.home with local (Exim 4.93)
         (envelope-from <rostedt@goodmis.org>)
-        id 1ixB77-001CSQ-1j; Thu, 30 Jan 2020 09:48:13 -0500
-Message-Id: <20200130144812.928328487@goodmis.org>
+        id 1ixB77-001CSv-6I; Thu, 30 Jan 2020 09:48:13 -0500
+Message-Id: <20200130144813.077885336@goodmis.org>
 User-Agent: quilt/0.65
-Date:   Thu, 30 Jan 2020 09:48:01 -0500
+Date:   Thu, 30 Jan 2020 09:48:02 -0500
 From:   Steven Rostedt <rostedt@goodmis.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Ingo Molnar <mingo@kernel.org>,
         Andrew Morton <akpm@linux-foundation.org>
-Subject: [for-next][PATCH 18/21] tracing: Move all function tracing configs together
+Subject: [for-next][PATCH 19/21] tracing: Move tracing test module configs together
 References: <20200130144743.527378179@goodmis.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-15
@@ -37,181 +37,56 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: "Steven Rostedt (VMware)" <rostedt@goodmis.org>
 
-The features that depend on the function tracer were spread out through the
-tracing menu, pull them together as it is easier to manage.
+The MMIO test module was by itself, move it to the other test modules. Also,
+add the text "Test module" to PREEMPTIRQ_DELAY_TEST as that create a test
+module as well.
 
 Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
 ---
- kernel/trace/Kconfig | 142 +++++++++++++++++++++----------------------
- 1 file changed, 71 insertions(+), 71 deletions(-)
+ kernel/trace/Kconfig | 22 +++++++++++-----------
+ 1 file changed, 11 insertions(+), 11 deletions(-)
 
 diff --git a/kernel/trace/Kconfig b/kernel/trace/Kconfig
-index 4484e783f68d..32fcbc00753b 100644
+index 32fcbc00753b..47d0149347a9 100644
 --- a/kernel/trace/Kconfig
 +++ b/kernel/trace/Kconfig
-@@ -172,6 +172,77 @@ config FUNCTION_GRAPH_TRACER
- 	  the return value. This is done by setting the current return
- 	  address on the current task structure into a stack of calls.
+@@ -680,16 +680,6 @@ config TRACE_EVENT_INJECT
  
-+config DYNAMIC_FTRACE
-+	bool "enable/disable function tracing dynamically"
-+	depends on FUNCTION_TRACER
-+	depends on HAVE_DYNAMIC_FTRACE
-+	default y
-+	help
-+	  This option will modify all the calls to function tracing
-+	  dynamically (will patch them out of the binary image and
-+	  replace them with a No-Op instruction) on boot up. During
-+	  compile time, a table is made of all the locations that ftrace
-+	  can function trace, and this table is linked into the kernel
-+	  image. When this is enabled, functions can be individually
-+	  enabled, and the functions not enabled will not affect
-+	  performance of the system.
-+
-+	  See the files in /sys/kernel/debug/tracing:
-+	    available_filter_functions
-+	    set_ftrace_filter
-+	    set_ftrace_notrace
-+
-+	  This way a CONFIG_FUNCTION_TRACER kernel is slightly larger, but
-+	  otherwise has native performance as long as no tracing is active.
-+
-+config DYNAMIC_FTRACE_WITH_REGS
-+	def_bool y
-+	depends on DYNAMIC_FTRACE
-+	depends on HAVE_DYNAMIC_FTRACE_WITH_REGS
-+
-+config DYNAMIC_FTRACE_WITH_DIRECT_CALLS
-+	def_bool y
-+	depends on DYNAMIC_FTRACE
-+	depends on HAVE_DYNAMIC_FTRACE_WITH_DIRECT_CALLS
-+
-+config FUNCTION_PROFILER
-+	bool "Kernel function profiler"
-+	depends on FUNCTION_TRACER
-+	default n
-+	help
-+	  This option enables the kernel function profiler. A file is created
-+	  in debugfs called function_profile_enabled which defaults to zero.
-+	  When a 1 is echoed into this file profiling begins, and when a
-+	  zero is entered, profiling stops. A "functions" file is created in
-+	  the trace_stat directory; this file shows the list of functions that
-+	  have been hit and their counters.
-+
-+	  If in doubt, say N.
-+
-+config STACK_TRACER
-+	bool "Trace max stack"
-+	depends on HAVE_FUNCTION_TRACER
-+	select FUNCTION_TRACER
-+	select STACKTRACE
-+	select KALLSYMS
-+	help
-+	  This special tracer records the maximum stack footprint of the
-+	  kernel and displays it in /sys/kernel/debug/tracing/stack_trace.
-+
-+	  This tracer works by hooking into every function call that the
-+	  kernel executes, and keeping a maximum stack depth value and
-+	  stack-trace saved.  If this is configured with DYNAMIC_FTRACE
-+	  then it will not have any overhead while the stack tracer
-+	  is disabled.
-+
-+	  To enable the stack tracer on bootup, pass in 'stacktrace'
-+	  on the kernel command line.
-+
-+	  The stack tracer can also be enabled or disabled via the
-+	  sysctl kernel.stack_tracer_enabled
-+
-+	  Say N if unsure.
-+
- config TRACE_PREEMPT_TOGGLE
- 	bool
+ 	  If unsure, say N.
+ 
+-config MMIOTRACE_TEST
+-	tristate "Test module for mmiotrace"
+-	depends on MMIOTRACE && m
+-	help
+-	  This is a dumb module for testing mmiotrace. It is very dangerous
+-	  as it will write garbage to IO memory starting at a given address.
+-	  However, it should be safe to use on e.g. unused portion of VRAM.
+-
+-	  Say N, unless you absolutely know what you are doing.
+-
+ config TRACEPOINT_BENCHMARK
+ 	bool "Add tracepoint that benchmarks tracepoints"
  	help
-@@ -410,30 +481,6 @@ config BRANCH_TRACER
+@@ -759,8 +749,18 @@ config RING_BUFFER_STARTUP_TEST
  
- 	  Say N if unsure.
+ 	 If unsure, say N
  
--config STACK_TRACER
--	bool "Trace max stack"
--	depends on HAVE_FUNCTION_TRACER
--	select FUNCTION_TRACER
--	select STACKTRACE
--	select KALLSYMS
--	help
--	  This special tracer records the maximum stack footprint of the
--	  kernel and displays it in /sys/kernel/debug/tracing/stack_trace.
--
--	  This tracer works by hooking into every function call that the
--	  kernel executes, and keeping a maximum stack depth value and
--	  stack-trace saved.  If this is configured with DYNAMIC_FTRACE
--	  then it will not have any overhead while the stack tracer
--	  is disabled.
--
--	  To enable the stack tracer on bootup, pass in 'stacktrace'
--	  on the kernel command line.
--
--	  The stack tracer can also be enabled or disabled via the
--	  sysctl kernel.stack_tracer_enabled
--
--	  Say N if unsure.
--
- config BLK_DEV_IO_TRACE
- 	bool "Support for tracing block IO actions"
- 	depends on SYSFS
-@@ -531,53 +578,6 @@ config DYNAMIC_EVENTS
- config PROBE_EVENTS
- 	def_bool n
- 
--config DYNAMIC_FTRACE
--	bool "enable/disable function tracing dynamically"
--	depends on FUNCTION_TRACER
--	depends on HAVE_DYNAMIC_FTRACE
--	default y
--	help
--	  This option will modify all the calls to function tracing
--	  dynamically (will patch them out of the binary image and
--	  replace them with a No-Op instruction) on boot up. During
--	  compile time, a table is made of all the locations that ftrace
--	  can function trace, and this table is linked into the kernel
--	  image. When this is enabled, functions can be individually
--	  enabled, and the functions not enabled will not affect
--	  performance of the system.
--
--	  See the files in /sys/kernel/debug/tracing:
--	    available_filter_functions
--	    set_ftrace_filter
--	    set_ftrace_notrace
--
--	  This way a CONFIG_FUNCTION_TRACER kernel is slightly larger, but
--	  otherwise has native performance as long as no tracing is active.
--
--config DYNAMIC_FTRACE_WITH_REGS
--	def_bool y
--	depends on DYNAMIC_FTRACE
--	depends on HAVE_DYNAMIC_FTRACE_WITH_REGS
--
--config DYNAMIC_FTRACE_WITH_DIRECT_CALLS
--	def_bool y
--	depends on DYNAMIC_FTRACE
--	depends on HAVE_DYNAMIC_FTRACE_WITH_DIRECT_CALLS
--
--config FUNCTION_PROFILER
--	bool "Kernel function profiler"
--	depends on FUNCTION_TRACER
--	default n
--	help
--	  This option enables the kernel function profiler. A file is created
--	  in debugfs called function_profile_enabled which defaults to zero.
--	  When a 1 is echoed into this file profiling begins, and when a
--	  zero is entered, profiling stops. A "functions" file is created in
--	  the trace_stat directory; this file shows the list of functions that
--	  have been hit and their counters.
--
--	  If in doubt, say N.
--
- config BPF_KPROBE_OVERRIDE
- 	bool "Enable BPF programs to override a kprobed function"
- 	depends on BPF_EVENTS
++config MMIOTRACE_TEST
++	tristate "Test module for mmiotrace"
++	depends on MMIOTRACE && m
++	help
++	  This is a dumb module for testing mmiotrace. It is very dangerous
++	  as it will write garbage to IO memory starting at a given address.
++	  However, it should be safe to use on e.g. unused portion of VRAM.
++
++	  Say N, unless you absolutely know what you are doing.
++
+ config PREEMPTIRQ_DELAY_TEST
+-	tristate "Preempt / IRQ disable delay thread to test latency tracers"
++	tristate "Test module to create a preempt / IRQ disable delay thread to test latency tracers"
+ 	depends on m
+ 	help
+ 	  Select this option to build a test module that can help test latency
 -- 
 2.24.1
 
