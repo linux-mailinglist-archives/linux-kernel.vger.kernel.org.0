@@ -2,40 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 556FB14E19E
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Jan 2020 19:46:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9759C14E0EE
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Jan 2020 19:40:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731116AbgA3Sp6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 30 Jan 2020 13:45:58 -0500
-Received: from mail.kernel.org ([198.145.29.99]:55566 "EHLO mail.kernel.org"
+        id S1728472AbgA3SkE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 30 Jan 2020 13:40:04 -0500
+Received: from mail.kernel.org ([198.145.29.99]:47410 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728089AbgA3Spt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 30 Jan 2020 13:45:49 -0500
+        id S1727986AbgA3SkB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 30 Jan 2020 13:40:01 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 55FD4205F4;
-        Thu, 30 Jan 2020 18:45:48 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 379032083E;
+        Thu, 30 Jan 2020 18:39:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1580409948;
-        bh=AJU6CtPh0acVabB7XyOq/MYQTgmrFRKeMffxV6gDCu4=;
+        s=default; t=1580409599;
+        bh=KfBzupkFxBd+ifbwc5W3OUYtV+2mG+5kcjHNzbruZGg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=RstR3Y8XA5WSMMm2dvl2xPUmMeXnZDjV5o8nNO94/XQBjC9uJkyk/fpCHKxk8Irq6
-         vguFGmCC/HReSLXb4rF334VMDD8EGyLf1QQDSWa5+z05wXRZuEnk+YDlGcoD7wqY8L
-         oYmcVTG176YmyITCzdx8RZ9xMbGfVVAsqVruJ7WI=
+        b=iYvWC68OvcgPo6MT5JLL3KHvZoaPPYpfPrHqgJC+p52mGneurAz/cQ0pSj2fjN6sV
+         QWP4tDDOsDGPIZbe0zxNkNYmVR5gNBP1FuEqSnm/EDPv3WBbURMmdHZOffXQvEIMPN
+         7fJixz3rFk6WRDFKX5yF2epn2hpp4abMUdF4utnQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Chuhong Yuan <hslester96@gmail.com>,
-        Nicolin Chen <nicoleotsuka@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.4 056/110] ASoC: fsl_audmix: add missed pm_runtime_disable
+        stable@vger.kernel.org, Malcolm Priestley <tvboxspy@gmail.com>
+Subject: [PATCH 5.5 15/56] staging: vt6656: use NULLFUCTION stack on mac80211
 Date:   Thu, 30 Jan 2020 19:38:32 +0100
-Message-Id: <20200130183621.760869222@linuxfoundation.org>
+Message-Id: <20200130183612.078415490@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200130183613.810054545@linuxfoundation.org>
-References: <20200130183613.810054545@linuxfoundation.org>
+In-Reply-To: <20200130183608.849023566@linuxfoundation.org>
+References: <20200130183608.849023566@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,60 +42,66 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Chuhong Yuan <hslester96@gmail.com>
+From: Malcolm Priestley <tvboxspy@gmail.com>
 
-[ Upstream commit 77fffa742285f2b587648d6c72b5c705633f146f ]
+commit d579c43c82f093e63639151625b2139166c730fd upstream.
 
-The driver forgets to call pm_runtime_disable in probe failure
-and remove.
-Add the missed calls to fix it.
+It appears that the drivers does not go into power save correctly the
+NULL data packets are not being transmitted because it not enabled
+in mac80211.
 
-Signed-off-by: Chuhong Yuan <hslester96@gmail.com>
-Acked-by: Nicolin Chen <nicoleotsuka@gmail.com>
-Link: https://lore.kernel.org/r/20191203111303.12933-1-hslester96@gmail.com
-Signed-off-by: Mark Brown <broonie@kernel.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+The driver needs to capture ieee80211_is_nullfunc headers and
+copy the duration_id to it's own duration data header.
+
+Cc: stable <stable@vger.kernel.org>
+Signed-off-by: Malcolm Priestley <tvboxspy@gmail.com>
+Link: https://lore.kernel.org/r/610971ae-555b-a6c3-61b3-444a0c1e35b4@gmail.com
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- sound/soc/fsl/fsl_audmix.c | 9 ++++++++-
- 1 file changed, 8 insertions(+), 1 deletion(-)
+ drivers/staging/vt6656/main_usb.c |    1 +
+ drivers/staging/vt6656/rxtx.c     |   14 +++++---------
+ 2 files changed, 6 insertions(+), 9 deletions(-)
 
-diff --git a/sound/soc/fsl/fsl_audmix.c b/sound/soc/fsl/fsl_audmix.c
-index a1db1bce330fa..5faecbeb54970 100644
---- a/sound/soc/fsl/fsl_audmix.c
-+++ b/sound/soc/fsl/fsl_audmix.c
-@@ -505,15 +505,20 @@ static int fsl_audmix_probe(struct platform_device *pdev)
- 					      ARRAY_SIZE(fsl_audmix_dai));
- 	if (ret) {
- 		dev_err(dev, "failed to register ASoC DAI\n");
--		return ret;
-+		goto err_disable_pm;
- 	}
+--- a/drivers/staging/vt6656/main_usb.c
++++ b/drivers/staging/vt6656/main_usb.c
+@@ -1015,6 +1015,7 @@ vt6656_probe(struct usb_interface *intf,
+ 	ieee80211_hw_set(priv->hw, RX_INCLUDES_FCS);
+ 	ieee80211_hw_set(priv->hw, REPORTS_TX_ACK_STATUS);
+ 	ieee80211_hw_set(priv->hw, SUPPORTS_PS);
++	ieee80211_hw_set(priv->hw, PS_NULLFUNC_STACK);
  
- 	priv->pdev = platform_device_register_data(dev, mdrv, 0, NULL, 0);
- 	if (IS_ERR(priv->pdev)) {
- 		ret = PTR_ERR(priv->pdev);
- 		dev_err(dev, "failed to register platform %s: %d\n", mdrv, ret);
-+		goto err_disable_pm;
- 	}
+ 	priv->hw->max_signal = 100;
  
-+	return 0;
-+
-+err_disable_pm:
-+	pm_runtime_disable(dev);
- 	return ret;
- }
+--- a/drivers/staging/vt6656/rxtx.c
++++ b/drivers/staging/vt6656/rxtx.c
+@@ -278,11 +278,9 @@ static u16 vnt_rxtx_datahead_g(struct vn
+ 			  PK_TYPE_11B, &buf->b);
  
-@@ -521,6 +526,8 @@ static int fsl_audmix_remove(struct platform_device *pdev)
- {
- 	struct fsl_audmix *priv = dev_get_drvdata(&pdev->dev);
+ 	/* Get Duration and TimeStamp */
+-	if (ieee80211_is_pspoll(hdr->frame_control)) {
+-		__le16 dur = cpu_to_le16(priv->current_aid | BIT(14) | BIT(15));
+-
+-		buf->duration_a = dur;
+-		buf->duration_b = dur;
++	if (ieee80211_is_nullfunc(hdr->frame_control)) {
++		buf->duration_a = hdr->duration_id;
++		buf->duration_b = hdr->duration_id;
+ 	} else {
+ 		buf->duration_a = vnt_get_duration_le(priv,
+ 						tx_context->pkt_type, need_ack);
+@@ -371,10 +369,8 @@ static u16 vnt_rxtx_datahead_ab(struct v
+ 			  tx_context->pkt_type, &buf->ab);
  
-+	pm_runtime_disable(&pdev->dev);
-+
- 	if (priv->pdev)
- 		platform_device_unregister(priv->pdev);
- 
--- 
-2.20.1
-
+ 	/* Get Duration and TimeStampOff */
+-	if (ieee80211_is_pspoll(hdr->frame_control)) {
+-		__le16 dur = cpu_to_le16(priv->current_aid | BIT(14) | BIT(15));
+-
+-		buf->duration = dur;
++	if (ieee80211_is_nullfunc(hdr->frame_control)) {
++		buf->duration = hdr->duration_id;
+ 	} else {
+ 		buf->duration = vnt_get_duration_le(priv, tx_context->pkt_type,
+ 						    need_ack);
 
 
