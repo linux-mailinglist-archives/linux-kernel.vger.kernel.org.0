@@ -2,98 +2,89 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id ACBF414D93C
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Jan 2020 11:47:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A4E9514D94D
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Jan 2020 11:53:00 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727088AbgA3KrV convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Thu, 30 Jan 2020 05:47:21 -0500
-Received: from mail-oi1-f193.google.com ([209.85.167.193]:44305 "EHLO
-        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726873AbgA3KrU (ORCPT
+        id S1727090AbgA3Kww (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 30 Jan 2020 05:52:52 -0500
+Received: from mail-qk1-f193.google.com ([209.85.222.193]:41706 "EHLO
+        mail-qk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726873AbgA3Kww (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 30 Jan 2020 05:47:20 -0500
-Received: by mail-oi1-f193.google.com with SMTP id d62so2990447oia.11;
-        Thu, 30 Jan 2020 02:47:18 -0800 (PST)
+        Thu, 30 Jan 2020 05:52:52 -0500
+Received: by mail-qk1-f193.google.com with SMTP id s187so2448471qke.8
+        for <linux-kernel@vger.kernel.org>; Thu, 30 Jan 2020 02:52:51 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:reply-to:from:date:message-id:subject:to
+         :content-transfer-encoding;
+        bh=fj6+7XdfY+psK9aUy8vPwpzcDlN0nKnYH4DbLtpBXRs=;
+        b=DatAPRPR25Vgm5YtzfSYtVd4UMnzt7z1AsEXxwCEqqbMzFvNxixN+y5TNlx20XXM4k
+         0O4kfYe3c0zvKTfMJJyGXwCXBjpiNR30aA9vzezAlHMk2T2rRC6BCTGPmjiSARI9I4og
+         5ELvB9syAyOTF8LRGynBCvtvO+W6mpPvgvyMk+qV7040NVe1Ix4AMjTh9SwVpCWSa9eO
+         3KG2XwiCOEe8tXipKAfZ/LPNX//9AkcWRJ2jI6P0H0grpQ+XeCA8hFqrWxke5qF+a/ec
+         qPJvC2HWdapBKhQHlCoiSjfChBX6K/JVXnzyKII91fzYc+Hh06rghN4QFTLhkvGT19qa
+         vvdQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=bPds3H999b4sbHrI2xdAWDEqcLze26VG68J4dxk2Yzk=;
-        b=hMJEGbqCGoXqKSMm7XRaHGmbjlgrwgA35iGbJ6tjlpXkjSz9HM5pUHHn8ZIiiHeeLe
-         2Lnhbyqpw+Kb4JkIdM0qHToDd85qVJ74mIho77RoWzEXha+ZabgI7sQ+ZQZGD9ueR0dc
-         o9k+GGWM5kOd9qDV/fH92l9MF0QHEmejEGBcJCcszmMeZh80CQTVDt9jtjgbS8QYY3or
-         RkfExkDASbxI10MM3qf4Z+Q+HK7c/BuegdFSB87HbsNB4nP1XQXxtexFG1AZ5CEZiYFH
-         cIPlB6BSsVlvTHd8O5zJ5GS0wHqQDSTsFim6TYB318kTYV8LiE3Zm8JDFjYd9iWH4gF2
-         ZtIQ==
-X-Gm-Message-State: APjAAAW2hfsMAlsVDdNYmMVVWbSgEEe4z3wQ0PKacILSF//G5ty5OCMB
-        NtfdQXhJaCY7uehkiwAXKNzW55U/KWzJYh6KNEY=
-X-Google-Smtp-Source: APXvYqxIIIUZohrSHPenmUgXJVSQveonFR4aBuAgIfsx5KeWWKf4XoO8s9HK9UDm6Zq9rBqeQiGzkmicCj+rhBlMZPs=
-X-Received: by 2002:aca:48cd:: with SMTP id v196mr2530305oia.102.1580381238139;
- Thu, 30 Jan 2020 02:47:18 -0800 (PST)
+        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
+         :subject:to:content-transfer-encoding;
+        bh=fj6+7XdfY+psK9aUy8vPwpzcDlN0nKnYH4DbLtpBXRs=;
+        b=lj1/dx4VFqJDzRmqB+ZIVVS+xXMaQbqSkAB61mVpQ47hJxiqVIBriWod1PgXjprP1o
+         EZHzIogAYAyum3wdXGy45Sw1eTeNeJ8Qekk1qPVqYAOBSQisMU391n7oD2ZSv5IVBopJ
+         Wobj8rPRsXSb15FvL4yLdHzSnDsgwSWNAfwB52txDC5c9yY9r7ejDyGh05qtyHO/YmW4
+         vw7fvD50S2CNfsIfZE4HltumyadhCrI32+aWBj4yuER99vleaKNC87+1NXbI2VNreumh
+         s5FZz7eI34xjhd+vnm/Sxk9//SmcqW2elWpOzPxznNjdCXrnVx0HWcnrhXbrCnNR+TWU
+         perA==
+X-Gm-Message-State: APjAAAX7wCdZm4Ew0Q27g8TzOkYwMEBDlShMtcCwjgiRrNQcEgikPBqZ
+        DSWuakb60hgkGor9+QmkUOBIUF55o48+7JPUEnE=
+X-Google-Smtp-Source: APXvYqwkLuuK/KMF7VMUwQE6tGqitHoCVszEm5oMEjwnbmchKmOtvxf6iQPrzOUZyXTN4b/TGheZbGAaClnH4QVUjnw=
+X-Received: by 2002:a05:620a:6b6:: with SMTP id i22mr4314987qkh.301.1580381571369;
+ Thu, 30 Jan 2020 02:52:51 -0800 (PST)
 MIME-Version: 1.0
-References: <CGME20200129174723eucas1p1fe4f76325f463fc9e3645ce18740d2eb@eucas1p1.samsung.com>
- <20200117153056.31363-1-geert+renesas@glider.be> <fde812a2-aea6-c16e-5ed7-ab5195b1259f@samsung.com>
- <CAMuHMdXds2HuBAnLXmLVaCWKX77iZGvNSnD35-ysY9AnG9TKMw@mail.gmail.com> <ab83c4e0-87d2-c60e-afa7-4549ffb15397@samsung.com>
-In-Reply-To: <ab83c4e0-87d2-c60e-afa7-4549ffb15397@samsung.com>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Thu, 30 Jan 2020 11:47:06 +0100
-Message-ID: <CAMuHMdV3iCgcOxNnjEaAW-E=OzyWfnFJppS5pPoGD6O6h6kcfg@mail.gmail.com>
-Subject: Re: [PATCH v2] dmaengine: Create symlinks between DMA channels and slaves
-To:     Marek Szyprowski <m.szyprowski@samsung.com>
-Cc:     Geert Uytterhoeven <geert+renesas@glider.be>,
-        Vinod Koul <vkoul@kernel.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        dmaengine@vger.kernel.org,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Received: by 2002:ad4:48c5:0:0:0:0:0 with HTTP; Thu, 30 Jan 2020 02:52:50
+ -0800 (PST)
+Reply-To: augustineamaga@gmail.com
+From:   Augustine Amaga <policdepartmentg@gmail.com>
+Date:   Thu, 30 Jan 2020 11:52:50 +0100
+Message-ID: <CABajN5NWQ45s0VJBcEJ2LRxnXDJ7k4EFBQZyPeHc8=BfQTrXMQ@mail.gmail.com>
+Subject: =?UTF-8?B?R3LDvMOfZSBGcmV1bmQ=?=
+To:     undisclosed-recipients:;
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8BIT
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Marek,
+Guten Tag,
 
-On Thu, Jan 30, 2020 at 11:33 AM Marek Szyprowski
-<m.szyprowski@samsung.com> wrote:
-> On 30.01.2020 09:30, Geert Uytterhoeven wrote:
-> > On Wed, Jan 29, 2020 at 6:47 PM Marek Szyprowski
-> > <m.szyprowski@samsung.com> wrote:
-> >> On 17.01.2020 16:30, Geert Uytterhoeven wrote:
-> >>> Currently it is not easy to find out which DMA channels are in use, and
-> >>> which slave devices are using which channels.
-> >>>
-> >>> Fix this by creating two symlinks between the DMA channel and the actual
-> >>> slave device when a channel is requested:
-> >>>     1. A "slave" symlink from DMA channel to slave device,
-> >>>     2. A "dma:<name>" symlink slave device to DMA channel.
-> >>> When the channel is released, the symlinks are removed again.
-> >>> The latter requires keeping track of the slave device and the channel
-> >>> name in the dma_chan structure.
-> >>>
-> >>> Note that this is limited to channel request functions for requesting an
-> >>> exclusive slave channel that take a device pointer (dma_request_chan()
-> >>> and dma_request_slave_channel*()).
-> >>>
-> >>> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> >>> Tested-by: Niklas Söderlund <niklas.soderlund@ragnatech.se>
-> >> This patch breaks booting on almost all Exynos based boards:
-> >>
-> >> https://lore.kernel.org/linux-samsung-soc/20200129161113.GE3928@sirena.org.uk/T/#u
-> > Sorry for the breakage.
->
-> No problem, that's why we have linux-next.
 
-Not really: by that time it had been upstream for 2 days :-(
+Es tut mir leid, Sie in dieser Angelegenheit ohne Ihre vorherige
+Zustimmung zu kontaktieren. Es war wegen der Dringlichkeit der Dinge.
 
-Gr{oetje,eeting}s,
+Ich bin Auguste AMAGA, ein Rechtsanwalt, und der pers=C3=B6nliche Anwalt
+von  ein verstorbener Kunde aus Ihrem Land. Ich w=C3=BCrde gerne wissen, ob
+wir zusammenarbeiten k=C3=B6nnen?
 
-                        Geert
+Seit dem Tod meines Mandanten ruht sein Fonds im Wert von 11,5
+Millionen US-Dollar [elf Millionen und f=C3=BCnfhunderttausend Dollar] in
+der Bank meines Landes. Die Bank hat mir eine Mitteilung gemacht, um
+die n=C3=A4chsten Angeh=C3=B6rigen f=C3=BCr die Forderung der Fonds zu pr=
+=C3=A4sentieren,
+andernfalls werden die Gelder beschlagnahmt.
 
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+Der Verstorbene starb bei einem Autounfall mit seiner ganzen Familie.
+Ich habe mich mit Ihnen in Verbindung gesetzt, weil Sie den gleichen
+Familiennamen wie der Verstorbene haben, deshalb, k=C3=B6nnen Sie an die
+Bank als mein verstorbener Kunde n=C3=A4chsten Angeh=C3=B6rigen vorgestellt
+werden. Mit meiner Unterst=C3=BCtzung als der verstorbene pers=C3=B6nliche
+Anwalt, k=C3=B6nnen Sie von der Bank genehmigt werden und das Geld wird
+Ihnen freigegeben werden.
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Ich freue mich auf Ihre Antwort, wenn Sie interessiert sind und ich
+werde Ihnen weitere Details senden.
+
+Mit freundlichen Gr=C3=BC=C3=9Fen,
+
+Auguste Esq.
