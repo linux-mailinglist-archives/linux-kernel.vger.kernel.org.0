@@ -2,35 +2,34 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1355F14E222
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Jan 2020 19:50:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8CCBA14E204
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Jan 2020 19:50:18 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731335AbgA3SrN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 30 Jan 2020 13:47:13 -0500
-Received: from mail.kernel.org ([198.145.29.99]:57324 "EHLO mail.kernel.org"
+        id S1731632AbgA3Ssz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 30 Jan 2020 13:48:55 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60002 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730859AbgA3SrB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 30 Jan 2020 13:47:01 -0500
+        id S1731620AbgA3Ssu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 30 Jan 2020 13:48:50 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 12D0520674;
-        Thu, 30 Jan 2020 18:46:59 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0AD32205F4;
+        Thu, 30 Jan 2020 18:48:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1580410020;
-        bh=ftI8eDVrvC2aJUG7JBr0DZAnlyra1cmDYbWgTZ5JY3Q=;
+        s=default; t=1580410129;
+        bh=3OppFeTIC5EGVmWme2JxnhZ9O/cxokC45JreOYg3EiA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ZHWJrexvyhnbv5ABv4k31lExx88F6H7/ncG+c4njBCyuF+WVColIFq8HX+VKzb3S2
-         AZChzo052wnQTM2xIAbFXS6rcJ68T8A2VuISKQ8MJajPG9UqQqQ/pKZf7ELx6hHDWT
-         KTklHRHxqC/i794zbMWiAtrFILadU44pc08PYSks=
+        b=BPWYIaL7yClDdNDRywe5QkKppKAg/uPe95pCLzMvFGHYSOnVfR9ol/Cs0mONYgKCt
+         b5AJObZ4vKXlmcm/Oxn/2vCxxk9utlIVJQynx8di047CQyN/K95JwAN21u9gHKoZXS
+         xGVXRGTJykbLG8TqcaFtDvIi66cXuuRNxalPp1gw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Bin Liu <b-liu@ti.com>,
-        Felipe Balbi <balbi@kernel.org>
-Subject: [PATCH 4.19 07/55] usb: dwc3: turn off VBUS when leaving host mode
-Date:   Thu, 30 Jan 2020 19:38:48 +0100
-Message-Id: <20200130183610.083422589@linuxfoundation.org>
+        stable@vger.kernel.org, Andrey Shvetsov <andrey.shvetsov@k2l.de>
+Subject: [PATCH 4.19 08/55] staging: most: net: fix buffer overflow
+Date:   Thu, 30 Jan 2020 19:38:49 +0100
+Message-Id: <20200130183610.260601451@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
 In-Reply-To: <20200130183608.563083888@linuxfoundation.org>
 References: <20200130183608.563083888@linuxfoundation.org>
@@ -43,35 +42,58 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Bin Liu <b-liu@ti.com>
+From: Andrey Shvetsov <andrey.shvetsov@k2l.de>
 
-commit 09ed259fac621634d51cd986aa8d65f035662658 upstream.
+commit 4d1356ac12f4d5180d0df345d85ff0ee42b89c72 upstream.
 
-VBUS should be turned off when leaving the host mode.
-Set GCTL_PRTCAP to device mode in teardown to de-assert DRVVBUS pin to
-turn off VBUS power.
+If the length of the socket buffer is 0xFFFFFFFF (max size for an
+unsigned int), then payload_len becomes 0xFFFFFFF1 after subtracting 14
+(ETH_HLEN).  Then, mdp_len is set to payload_len + 16 (MDP_HDR_LEN)
+which overflows and results in a value of 2.  These values for
+payload_len and mdp_len will pass current buffer size checks.
 
-Fixes: 5f94adfeed97 ("usb: dwc3: core: refactor mode initialization to its own function")
-Cc: stable@vger.kernel.org
-Signed-off-by: Bin Liu <b-liu@ti.com>
-Signed-off-by: Felipe Balbi <balbi@kernel.org>
+This patch checks if derived from skb->len sum may overflow.
+
+The check is based on the following idea:
+
+For any `unsigned V1, V2` and derived `unsigned SUM = V1 + V2`,
+`V1 + V2` overflows iif `SUM < V1`.
+
+Reported-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Signed-off-by: Andrey Shvetsov <andrey.shvetsov@k2l.de>
+Cc: stable <stable@vger.kernel.org>
+Link: https://lore.kernel.org/r/20200116172238.6046-1-andrey.shvetsov@microchip.com
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/usb/dwc3/core.c |    3 +++
- 1 file changed, 3 insertions(+)
+ drivers/staging/most/net/net.c |   10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
---- a/drivers/usb/dwc3/core.c
-+++ b/drivers/usb/dwc3/core.c
-@@ -1199,6 +1199,9 @@ static void dwc3_core_exit_mode(struct d
- 		/* do nothing */
- 		break;
- 	}
-+
-+	/* de-assert DRVVBUS for HOST and OTG mode */
-+	dwc3_set_prtcap(dwc, DWC3_GCTL_PRTCAP_DEVICE);
- }
+--- a/drivers/staging/most/net/net.c
++++ b/drivers/staging/most/net/net.c
+@@ -81,6 +81,11 @@ static int skb_to_mamac(const struct sk_
+ 	unsigned int payload_len = skb->len - ETH_HLEN;
+ 	unsigned int mdp_len = payload_len + MDP_HDR_LEN;
  
- static void dwc3_get_properties(struct dwc3 *dwc)
++	if (mdp_len < skb->len) {
++		pr_err("drop: too large packet! (%u)\n", skb->len);
++		return -EINVAL;
++	}
++
+ 	if (mbo->buffer_length < mdp_len) {
+ 		pr_err("drop: too small buffer! (%d for %d)\n",
+ 		       mbo->buffer_length, mdp_len);
+@@ -128,6 +133,11 @@ static int skb_to_mep(const struct sk_bu
+ 	u8 *buff = mbo->virt_address;
+ 	unsigned int mep_len = skb->len + MEP_HDR_LEN;
+ 
++	if (mep_len < skb->len) {
++		pr_err("drop: too large packet! (%u)\n", skb->len);
++		return -EINVAL;
++	}
++
+ 	if (mbo->buffer_length < mep_len) {
+ 		pr_err("drop: too small buffer! (%d for %d)\n",
+ 		       mbo->buffer_length, mep_len);
 
 
