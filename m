@@ -2,112 +2,138 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6695D14D94F
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Jan 2020 11:53:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 37C2A14D95B
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Jan 2020 11:55:58 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727132AbgA3KxE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 30 Jan 2020 05:53:04 -0500
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:43322 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726873AbgA3KxD (ORCPT
+        id S1727142AbgA3Kzy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 30 Jan 2020 05:55:54 -0500
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:37888 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726902AbgA3Kzx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 30 Jan 2020 05:53:03 -0500
-Received: by mail-lj1-f194.google.com with SMTP id a13so2784588ljm.10;
-        Thu, 30 Jan 2020 02:53:02 -0800 (PST)
+        Thu, 30 Jan 2020 05:55:53 -0500
+Received: by mail-wm1-f67.google.com with SMTP id a9so3674476wmj.3
+        for <linux-kernel@vger.kernel.org>; Thu, 30 Jan 2020 02:55:51 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=sender:from:to:cc:subject:in-reply-to:references:date:message-id
-         :mime-version;
-        bh=VInSeZzfvgmHREHYseWhKaEskYTeZJwjVw1nVI3mDSM=;
-        b=BSL0whsJQB7pKHlTpIwBLCkb5I+yKv0mb9bqNx3DgSN0w1F5FvibJkbn+PcudtlPSk
-         42yHTkhzFMCnWWGMSXFUUA2HG4bau7e+LimBepJYU8eLo0yUNE9kUiy7+60osRUyCUv5
-         pLy53BA9mSVRMjk5BGySw8/DtVerKeqDA0TRiZ+57fbXBaO1aTl/TWADcxkloBX6EdqX
-         1VtdALsPD2cMuoFztqcewiAL462c45MRrH7gLbLjjPSG6qihYRTOoj1HFd8SSOKj4a/u
-         NGgWwS70kCwCefymZhvQf/RPF61ek4ncmffmWrmWqNHRAykOAUZVOvM567mltqETz0hN
-         CzJw==
+        h=from:date:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=kt7HAhJ250QKlm+prfn9G61LylW+yIqwv6cj/bQWNRo=;
+        b=VwvN15vfAc3KV+UVggIL9kXNiYk1m/kHlQ+rc+giZckCEkmUrH4z86Q9sRuh38KKzE
+         6n9f+xAQNyC54akdxXh76ENZvcjPt2jlJhKiYCsaqcOIeuB8MGp+eUq1xcX8UJ+IPzdy
+         ys3ppW6ohDf2fhc8w9IKvHZR2K90A728zl1lWs2tPaSm7lqwJd/B54shFn0kWHdrfsCH
+         ts5SUv5n/LMuqX41Cq1JKEiL3zjttqBQ6sy1BZ1HRMLxq11o4EmimJCbgSX+ycf3nqIr
+         /obTQo2Sbbl+gdvxjhgLpy0j+8VX31nxKc/HKHeiBgtAu6flEtOgZVV8qV4AeT4goN1T
+         +orA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:from:to:cc:subject:in-reply-to:references
-         :date:message-id:mime-version;
-        bh=VInSeZzfvgmHREHYseWhKaEskYTeZJwjVw1nVI3mDSM=;
-        b=NCuAQ+9R1a5J2MxdyGBhhl5Wm0+8X1PDvfHQpxRQFdRbBV5fkvmp+PuvqXoUperIIU
-         vWHK8onK10VxNRc3fHLIu4kygd6+/E5BrFabnxfLE2oFeEEzmdEeXVIJwabK3GrlvcX8
-         KH9Iv1wWIV/8FEF19wOrmBUEiT9+CchOXX9KnMRE0MWNnDgW9uoPxZiwnLL+V+9sXH0e
-         33cO+i16esY+eZNMTw6prn03sEPLH60+ewZ8lepU+TGQVaXNFREsszUClGKzE4pe2f5r
-         a/bojC6B/PwyGzbgnRRIoiE8LBIh9BI5UL7n6EzVH519w42WNKokQXPsMvPk9x+3y8vy
-         /rsA==
-X-Gm-Message-State: APjAAAVohmaAe8z0vs1e+poFbvtG5zsfn+321tKUXxoa/WcdSa+Dnx84
-        yWPnCdDK5AoKnQleYkuhahSOK38Mr/M=
-X-Google-Smtp-Source: APXvYqyW8YU5DPRtzWUe9otRvtCWmRlLF4jZgF/dLQpWz7GpFGNLMnob8wZ6nL95k2aVYKoq93G16A==
-X-Received: by 2002:a2e:98c4:: with SMTP id s4mr2512389ljj.102.1580381581018;
-        Thu, 30 Jan 2020 02:53:01 -0800 (PST)
-Received: from saruman (88-113-215-33.elisa-laajakaista.fi. [88.113.215.33])
-        by smtp.gmail.com with ESMTPSA id h14sm2612603lfc.2.2020.01.30.02.52.59
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 30 Jan 2020 02:52:59 -0800 (PST)
-From:   Felipe Balbi <balbi@kernel.org>
-To:     Stephen Rothwell <sfr@canb.auug.org.au>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Greg KH <gregkh@linuxfoundation.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-usb@vger.kernel.org
-Subject: Re: [GIT PULL] USB/Thunderbolt/PHY patches for 5.6-rc1
-In-Reply-To: <20200130083459.206fc0d9@canb.auug.org.au>
-References: <20200129101401.GA3858221@kroah.com> <CAHk-=wgwBfz0CtAFZMDy=A_Wz0+=dzrfWWiHESUD9CxnV=Xyjw@mail.gmail.com> <20200130083459.206fc0d9@canb.auug.org.au>
-Date:   Thu, 30 Jan 2020 12:52:55 +0200
-Message-ID: <87ftfx8bco.fsf@kernel.org>
+        h=x-gm-message-state:from:date:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=kt7HAhJ250QKlm+prfn9G61LylW+yIqwv6cj/bQWNRo=;
+        b=iFW54KUd/FAZzbhG8M51os3PP0Yk3Wx88vx92Fpzx1299M2Og3SzLed2alfSAo7Ien
+         MLpsHOn4mBcfhUzP6D4mGtSIEfd9i+M0753bS09pycyI63x5q2lD3d8MbCgwE3DDu7NI
+         BRX56C4qcm3kr5/HAScEPqrkvcm+Zqe60I0sATXG/WfVodiZcm13UtvFA8WgT5E5XDqz
+         j+2a1ScZcPV5pUT7pYIunEuKVEtynrpBbDYKvX/e4no6OguYYl888wa5oQKMwShYkYa4
+         AlS/MjS3m4IAv5zQC3PMKZDi9vaOj3bv8Qsk6kSlsbFHqRd/gJ1R49AIqvCwPM9hH3tc
+         bJVg==
+X-Gm-Message-State: APjAAAUleFTq4l2TfemW36vWBHmBG+4kwF5q0rwPqbKR0Kjrh//iVGxv
+        D7iTKQVG10BOirWtXC6WkxQ=
+X-Google-Smtp-Source: APXvYqyb5iKo8leWq7gU8O3XAk6/h9oyj1KhnBZz5KEOnzSSCs/Xzm5hMWopzCLd3W0rvOThz4lgtw==
+X-Received: by 2002:a05:600c:2207:: with SMTP id z7mr5002060wml.138.1580381750651;
+        Thu, 30 Jan 2020 02:55:50 -0800 (PST)
+Received: from quaco.ghostprotocols.net (20014C4D19C29300C4AE62814D0D5430.dsl.pool.telekom.hu. [2001:4c4d:19c2:9300:c4ae:6281:4d0d:5430])
+        by smtp.gmail.com with ESMTPSA id m21sm6049457wmi.27.2020.01.30.02.55.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 30 Jan 2020 02:55:49 -0800 (PST)
+From:   Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>
+X-Google-Original-From: Arnaldo Carvalho de Melo <acme@kernel.org>
+Received: by quaco.ghostprotocols.net (Postfix, from userid 1000)
+        id C1EBC40A7D; Thu, 30 Jan 2020 11:55:48 +0100 (CET)
+Date:   Thu, 30 Jan 2020 11:55:48 +0100
+To:     Jiri Olsa <jolsa@redhat.com>
+Cc:     Changbin Du <changbin.du@gmail.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] perf: Make perf able to build with latest libbfd
+Message-ID: <20200130105548.GC3841@kernel.org>
+References: <20200128152938.31413-1-changbin.du@gmail.com>
+ <20200129075829.GB1256499@krava>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="=-=-=";
-        micalg=pgp-sha256; protocol="application/pgp-signature"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200129075829.GB1256499@krava>
+X-Url:  http://acmel.wordpress.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---=-=-=
-Content-Type: text/plain
-Content-Transfer-Encoding: quoted-printable
+Em Wed, Jan 29, 2020 at 08:58:29AM +0100, Jiri Olsa escreveu:
+> On Tue, Jan 28, 2020 at 11:29:38PM +0800, Changbin Du wrote:
+> > libbfd has changed the bfd_section_* macros to inline functions
+> > bfd_section_<field> since 2019-09-18. See below two commits:
+> >   o http://www.sourceware.org/ml/gdb-cvs/2019-09/msg00064.html
+> >   o https://www.sourceware.org/ml/gdb-cvs/2019-09/msg00072.html
+> > 
+> > This fix make perf able to build with both old and new libbfd.
+> > 
+> > Signed-off-by: Changbin Du <changbin.du@gmail.com>
+> 
+> Acked-by: Jiri Olsa <jolsa@redhat.com>
 
+Thanks, applied.
 
-Hi,
+- Arnaldo
+ 
+> thanks,
+> jirka
+> 
+> 
+> > ---
+> >  tools/perf/util/srcline.c | 16 +++++++++++++++-
+> >  1 file changed, 15 insertions(+), 1 deletion(-)
+> > 
+> > diff --git a/tools/perf/util/srcline.c b/tools/perf/util/srcline.c
+> > index 6ccf6f6d09df..5b7d6c16d33f 100644
+> > --- a/tools/perf/util/srcline.c
+> > +++ b/tools/perf/util/srcline.c
+> > @@ -193,16 +193,30 @@ static void find_address_in_section(bfd *abfd, asection *section, void *data)
+> >  	bfd_vma pc, vma;
+> >  	bfd_size_type size;
+> >  	struct a2l_data *a2l = data;
+> > +	flagword flags;
+> >  
+> >  	if (a2l->found)
+> >  		return;
+> >  
+> > -	if ((bfd_get_section_flags(abfd, section) & SEC_ALLOC) == 0)
+> > +#ifdef bfd_get_section_flags
+> > +	flags = bfd_get_section_flags(abfd, section);
+> > +#else
+> > +	flags = bfd_section_flags(section);
+> > +#endif
+> > +	if ((flags & SEC_ALLOC) == 0)
+> >  		return;
+> >  
+> >  	pc = a2l->addr;
+> > +#ifdef bfd_get_section_vma
+> >  	vma = bfd_get_section_vma(abfd, section);
+> > +#else
+> > +	vma = bfd_section_vma(section);
+> > +#endif
+> > +#ifdef bfd_get_section_size
+> >  	size = bfd_get_section_size(section);
+> > +#else
+> > +	size = bfd_section_size(section);
+> > +#endif
+> >  
+> >  	if (pc < vma || pc >= vma + size)
+> >  		return;
+> > -- 
+> > 2.24.0
+> > 
+> 
 
-Stephen Rothwell <sfr@canb.auug.org.au> writes:
-> On Wed, 29 Jan 2020 10:11:26 -0800 Linus Torvalds <torvalds@linux-foundat=
-ion.org> wrote:
->>
->> Stephen, does linux-next perhaps miss these config-time warnings?
->
-> I saw it when it first happened and reported it, but since I merge the
-> ic2 tree before the usb tree, the warning went away for me after the
-> fix was added to the i2c tree.
+-- 
 
-I wonder if we should start shuffling the order of merges in
-linux-next in order to have a chance of finding these issues.
-
-cheers
-
-=2D-=20
-balbi
-
---=-=-=
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCAAdFiEElLzh7wn96CXwjh2IzL64meEamQYFAl4ytYcACgkQzL64meEa
-mQazdRAA0z0M7brv/67q3vlMfMM9M8uyx+sk6vaS3NCEg1l0YXfWhwdk3fx/0FCf
-DXW+S3BcjgZXUD+U6nNvjp92z7yvoPjaqAUzf4/1vs5/TsuVniJy5hrd5R2rSMR6
-lZnuQ7ilCQvDiRjnSc3WM/sdVh+/mf/d7caxBwq0W6ojry9Hx8PjPoArg9iYcxfm
-UYHVz8oMW3SCyBWZE0a8ZHj9jWa8AcdF8E20ulBL0z/lLpmSN6Oux8+Zd7+Nylw8
-ElL8KW/I/wxQOANQYt22U6vsj4MxItHsejZr3JQ1SPAyr/VgmArGFM435CeDviMr
-Y1hOByIhtT4F2wJ0LvGuIZ95/LHdvttwp2ETtbSyVHlGTiizGZaIMJplvj8ZN7O6
-SNQjWI5ZdhcIIGJzlojGDhO/HBqGG9ED1/0RHG8DLaKho7ntuHifKxxRLO4jEH7T
-dgZ9ResVOysGcaIQgBkh+/c3CXh5WGhjkqm9NpO270ZHW7EgUJKI/kaC/Igi/Z1i
-vvinuicDmayWMOS/+6sd321AWtSIvWvQQS5YD4YmpTi7oor5YYyGfvrKG30ZT7FM
-0H6VqRm+j6+TCEYwzF0yUNaibuOzcFwQ89Upc563FbvY7w2uBYP+JqM7w1/8wfaE
-YCe8SpShKtN/CuDFmz2W0iBy43+mqFtgFZ7G0lhQrWz7KvZSeRg=
-=Io0V
------END PGP SIGNATURE-----
---=-=-=--
+- Arnaldo
