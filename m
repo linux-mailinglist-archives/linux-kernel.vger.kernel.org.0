@@ -2,76 +2,86 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A01E814E7C6
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Jan 2020 05:08:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AF17A14E7CB
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Jan 2020 05:12:14 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728004AbgAaEH4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 30 Jan 2020 23:07:56 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58006 "EHLO mail.kernel.org"
+        id S1727995AbgAaEMN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 30 Jan 2020 23:12:13 -0500
+Received: from bilbo.ozlabs.org ([203.11.71.1]:50335 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727448AbgAaEH4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 30 Jan 2020 23:07:56 -0500
-Received: from localhost (unknown [148.87.23.8])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S1727448AbgAaEMN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 30 Jan 2020 23:12:13 -0500
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 72D6E2067C;
-        Fri, 31 Jan 2020 04:07:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1580443675;
-        bh=XIeaxEWK1mrLmoM0G35VztUKYFHHBWwEZ5TMhYQByAA=;
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 4883hV3JKJz9sPJ;
+        Fri, 31 Jan 2020 15:12:10 +1100 (AEDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1580443930;
+        bh=fNz3+AU8ISEERvRzFWxc2tZiNqkg3kelUGRQSJvLivs=;
         h=Date:From:To:Cc:Subject:From;
-        b=0rNPOyR8wazibZtS/ZpAm7xqwqBjKRW1XxnbUfWxlFl5vb4gd+4wleYkCz9cLfef5
-         4HosjGjdO9LEikhqbVtai7z1s2N0USMA8fHRpfcJgTnCOTPDOKY6RvNmufFw83B0Tt
-         UtgU6cBndE745V+qMczHEkYzp6Z16ic+qfMXiqwU=
-Date:   Thu, 30 Jan 2020 20:07:53 -0800
-From:   "Darrick J. Wong" <djwong@kernel.org>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     "Darrick J. Wong" <djwong@kernel.org>,
-        linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org,
-        david@fromorbit.com, linux-kernel@vger.kernel.org,
-        sandeen@sandeen.net, hch@lst.de, agruenba@redhat.com,
-        rpeterso@redhat.com, cluster-devel@redhat.com,
-        linux-ext4 <linux-ext4@vger.kernel.org>,
-        Theodore Ts'o <tytso@mit.edu>
-Subject: [GIT PULL] iomap: new code for 5.6
-Message-ID: <20200131040753.GB6869@magnolia>
+        b=TL26u89sOGl3v/V2hIWhRPn5VfLYix/O+RNmrgbCuRL+eyoAyLiWNhUVkpUqvYghf
+         XS0Uc3o54DQ6ybe9YA/h0UJehEj6MIsArvRxT4T9NjQLfgijA25vfrpwOFXOoAC1H8
+         gM28AcC1HDtTvplp9nOZPGDG0EfZ4RujPpvBtQ7DlhnOALNwvK3Hk+I9uh/mlqJYtZ
+         mi/9l2RNxOzm2/Fxery9bSz5xuSwOUSjXSAItxcvjyPR+fgxkCxdLyZ9zQrCRIBHBw
+         2wOHR7ZUNtkfz4NND+C0hHjG9xLCkS6pK57UsMykVDmzEs3lN2uo5hzs02ZeIAO7oO
+         I8ijhytlRbqjw==
+Date:   Fri, 31 Jan 2020 15:12:09 +1100
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Daniel Lezcano <daniel.lezcano@linaro.org>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Michael Ellerman <mpe@ellerman.id.au>
+Subject: linux-next: build failure after merge of the origin tree
+Message-ID: <20200131151209.37e780f8@canb.auug.org.au>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Type: multipart/signed; boundary="Sig_/GfybL3_=Dh.QX=..tFc3V+N";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Linus,
+--Sig_/GfybL3_=Dh.QX=..tFc3V+N
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Please pull this set of new code for 5.6.  There's a single patch fixing
-an off-by-one error when we're checking to see how far we're gotten into
-an EOF page.
+Hi all,
 
---D
+[At Michael's suggestion I have started doing htmldocs builds at the
+end of linux-next runs.  Unfortunately, this currently fails for Linus'
+tree.]
 
-The following changes since commit fd6988496e79a6a4bdb514a4655d2920209eb85d:
+In Linus' tree, today's linux-next build (htmldocs) failed like this:
 
-  Linux 5.5-rc4 (2019-12-29 15:29:16 -0800)
+docutils.utils.SystemMessage: Documentation/driver-api/thermal/cpu-idle-coo=
+ling.rst:69: (SEVERE/4) Unexpected section title.
 
-are available in the Git repository at:
+Caused by commit
 
-  git://git.kernel.org/pub/scm/fs/xfs/xfs-linux.git tags/iomap-5.6-merge-3
+  0a1990a2d1f2 ("thermal/drivers/cpu_cooling: Add idle cooling device docum=
+entation")
 
-for you to fetch changes up to 243145bc4336684c69f95de0a303b31f2e5bf264:
+--=20
+Cheers,
+Stephen Rothwell
 
-  fs: Fix page_mkwrite off-by-one errors (2020-01-06 08:58:23 -0800)
+--Sig_/GfybL3_=Dh.QX=..tFc3V+N
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
 
-----------------------------------------------------------------
-New code for 5.6:
-- Fix an off-by-one error when checking if offset is within inode size
+-----BEGIN PGP SIGNATURE-----
 
-----------------------------------------------------------------
-Andreas Gruenbacher (1):
-      fs: Fix page_mkwrite off-by-one errors
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl4zqRkACgkQAVBC80lX
+0GxlWAf/VnhyXcQrWat1iseOQKqe5oHXX8xBVHxCEKaUT/sV5Pt901EBlLN+RI/o
+bzuoL1HGUuSFskOlENKVLWtk6Z4Y2+DEyQIGAcbQmsD05XwyIgVS7tkhIJ7xMqt2
+Jkc9t//gilhe8Pqgcq9UcwDzbYbdcdURFRBHTSa4MpotTccPoEbZVaWKWH/P0q/b
+1mzEi58lzaKOIZym/fEvcNypzO+xc2O7iBgPiz8O541DEVvVkpRq5RS1yHFPy8Hf
+rPYPRXcv9eJRsu624wEgu2thPZbM5CX04s4sai1lBVNCHXt6aptUuqARCGfNzgKD
+LTdQ/FaaI0OkM0ZXN1C0LzXotpMzxw==
+=2lww
+-----END PGP SIGNATURE-----
 
- fs/iomap/buffered-io.c  | 18 +++++-------------
- include/linux/pagemap.h | 28 ++++++++++++++++++++++++++++
- 2 files changed, 33 insertions(+), 13 deletions(-)
+--Sig_/GfybL3_=Dh.QX=..tFc3V+N--
