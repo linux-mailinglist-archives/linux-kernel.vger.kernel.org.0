@@ -2,240 +2,159 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D22BE14EA2B
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Jan 2020 10:38:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4D8BA14EA32
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Jan 2020 10:40:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728310AbgAaJiX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 31 Jan 2020 04:38:23 -0500
-Received: from fllv0016.ext.ti.com ([198.47.19.142]:49318 "EHLO
-        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728287AbgAaJiW (ORCPT
+        id S1728281AbgAaJkD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 31 Jan 2020 04:40:03 -0500
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:37903 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728231AbgAaJkD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 31 Jan 2020 04:38:22 -0500
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 00V9cG9h062891;
-        Fri, 31 Jan 2020 03:38:16 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1580463496;
-        bh=9TngcuOhfMZbaWeTL28TLmvKTUEs6RWhGH7o8O7jm4o=;
-        h=From:To:CC:Subject:Date:In-Reply-To:References;
-        b=lHGTLPewwf/NR4DMB0lA1iP3tfGZdY3B0IS6AfDkZUyZ3OSFQDPuqsiO6urgjkgiQ
-         x4S++uwHQgCNvqSJKcGpV7ceBfzMTaJYlJanB5mMfGKgpkoKh27EYdgTuHmMReCwRo
-         p5CL1UEmWCQDTqMdiedWyjhOBtLFRKVYaVSleQVA=
-Received: from DLEE103.ent.ti.com (dlee103.ent.ti.com [157.170.170.33])
-        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 00V9cGta069275
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Fri, 31 Jan 2020 03:38:16 -0600
-Received: from DLEE106.ent.ti.com (157.170.170.36) by DLEE103.ent.ti.com
- (157.170.170.33) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Fri, 31
- Jan 2020 03:38:16 -0600
-Received: from fllv0040.itg.ti.com (10.64.41.20) by DLEE106.ent.ti.com
- (157.170.170.36) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
- Frontend Transport; Fri, 31 Jan 2020 03:38:15 -0600
-Received: from feketebors.ti.com (ileax41-snat.itg.ti.com [10.172.224.153])
-        by fllv0040.itg.ti.com (8.15.2/8.15.2) with ESMTP id 00V9cAGl054689;
-        Fri, 31 Jan 2020 03:38:14 -0600
-From:   Peter Ujfalusi <peter.ujfalusi@ti.com>
-To:     <vkoul@kernel.org>
-CC:     <dmaengine@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <dan.j.williams@intel.com>, <geert@linux-m68k.org>
-Subject: [PATCH v2 2/2] dmaengine: Add basic debugfs support
-Date:   Fri, 31 Jan 2020 11:38:59 +0200
-Message-ID: <20200131093859.3311-3-peter.ujfalusi@ti.com>
-X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200131093859.3311-1-peter.ujfalusi@ti.com>
-References: <20200131093859.3311-1-peter.ujfalusi@ti.com>
+        Fri, 31 Jan 2020 04:40:03 -0500
+Received: by mail-wr1-f68.google.com with SMTP id y17so7805775wrh.5
+        for <linux-kernel@vger.kernel.org>; Fri, 31 Jan 2020 01:40:00 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=subject:to:cc:references:from:autocrypt:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=Ndhvk5LkAqM1xOeMsGz3JzFsEgTy4qIZT1Y3E6tT7KA=;
+        b=PMlJBIxwnd71knVit2QcyGY4fZFJWJh7EZ7NEJFjgAbr/d0Y0QCyg5mealP42n97rE
+         nXwaVd3ZDtVfKT2usxSNqbLngtctFUo8pwO1cv4DmdW7+KHFa0CaBtP9X0g/MAtafnBB
+         isiNhcxaux1yrHVZfUmTvUJusJ9n+ogS7RLPZngZIUS+E+2sMOjn6YMR5Dyu0L82SNCy
+         MNlZEojDJ4xjiy0CdC2gI/wrr7O3opiqyVMVlPulElQkvGgJ+OxPAJzMf4b6IrAf/DcF
+         6/GQpSrD/zWQ6ShmQkoNV2qdb3B3MxEjGw3REWMC37Tgbbm8ekyrdl5pw92jK3Miw0m4
+         VIFg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:autocrypt
+         :message-id:date:user-agent:mime-version:in-reply-to
+         :content-language:content-transfer-encoding;
+        bh=Ndhvk5LkAqM1xOeMsGz3JzFsEgTy4qIZT1Y3E6tT7KA=;
+        b=WNmigk/NJ4muVcmQcn/MaWMVj8tBh0P7GWYxgr5wurDlF8IrxnAC0tBHmPj2i/j+Gq
+         gcFS2bJl7H2YI5sf8JGX4GJ8otIvosOiBTzfz/hBhmMvHJEXeCmjXnuMBh2WZkx/6kXE
+         z7Am4kEN9zj4VumLD/+x1osgXxjxHMg1cQjaU2bEzsJfJYMvyTTrq5DjGCb+h1rVYx1L
+         0DGkF+I2RH/zqGRTmMnaBcNMTqwrWvVArokJSRX6oKhYCd9TWPXbVB43G5+j8y8/M2Z1
+         ipB1jUQLgKKBVcROjrtsGC1P5FYoaRXzpV+CcsorbsUM0XQzqeo7GQ7MX6peZ0UlQ7dS
+         nOhQ==
+X-Gm-Message-State: APjAAAXEkNsBkWgz1CS/zRDI38OJlJX6ZErL2JEB6L5MBkGhBmjX/HkM
+        hf8Odm9JgdTI0s4uqqUY4EJdtQ==
+X-Google-Smtp-Source: APXvYqwfR+QHNfdDt7UU5RURef7BACAjn9y0Yqww6MDLw7rr5Mv7l5prwZs7fL9u8XGHYfoEgfxGUw==
+X-Received: by 2002:a5d:62d1:: with SMTP id o17mr11389511wrv.9.1580463599879;
+        Fri, 31 Jan 2020 01:39:59 -0800 (PST)
+Received: from ?IPv6:2a01:e34:ed2f:f020:adb6:efff:339:7c48? ([2a01:e34:ed2f:f020:adb6:efff:339:7c48])
+        by smtp.googlemail.com with ESMTPSA id w22sm9833428wmk.34.2020.01.31.01.39.58
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 31 Jan 2020 01:39:59 -0800 (PST)
+Subject: Re: linux-next: build failure after merge of the origin tree
+To:     Randy Dunlap <rdunlap@infradead.org>,
+        Stephen Rothwell <sfr@canb.auug.org.au>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Michael Ellerman <mpe@ellerman.id.au>
+References: <20200131151209.37e780f8@canb.auug.org.au>
+ <73f27df0-451f-d274-a7db-293cbf2c7690@infradead.org>
+From:   Daniel Lezcano <daniel.lezcano@linaro.org>
+Autocrypt: addr=daniel.lezcano@linaro.org; prefer-encrypt=mutual; keydata=
+ xsFNBFv/yykBEADDdW8RZu7iZILSf3zxq5y8YdaeyZjI/MaqgnvG/c3WjFaunoTMspeusiFE
+ sXvtg3ehTOoyD0oFjKkHaia1Zpa1m/gnNdT/WvTveLfGA1gH+yGes2Sr53Ht8hWYZFYMZc8V
+ 2pbSKh8wepq4g8r5YI1XUy9YbcTdj5mVrTklyGWA49NOeJz2QbfytMT3DJmk40LqwK6CCSU0
+ 9Ed8n0a+vevmQoRZJEd3Y1qXn2XHys0F6OHCC+VLENqNNZXdZE9E+b3FFW0lk49oLTzLRNIq
+ 0wHeR1H54RffhLQAor2+4kSSu8mW5qB0n5Eb/zXJZZ/bRiXmT8kNg85UdYhvf03ZAsp3qxcr
+ xMfMsC7m3+ADOtW90rNNLZnRvjhsYNrGIKH8Ub0UKXFXibHbafSuq7RqyRQzt01Ud8CAtq+w
+ P9EftUysLtovGpLSpGDO5zQ++4ZGVygdYFr318aGDqCljKAKZ9hYgRimPBToDedho1S1uE6F
+ 6YiBFnI3ry9+/KUnEP6L8Sfezwy7fp2JUNkUr41QF76nz43tl7oersrLxHzj2dYfWUAZWXva
+ wW4IKF5sOPFMMgxoOJovSWqwh1b7hqI+nDlD3mmVMd20VyE9W7AgTIsvDxWUnMPvww5iExlY
+ eIC0Wj9K4UqSYBOHcUPrVOKTcsBVPQA6SAMJlt82/v5l4J0pSQARAQABzSpEYW5pZWwgTGV6
+ Y2FubyA8ZGFuaWVsLmxlemNhbm9AbGluYXJvLm9yZz7Cwa4EEwEIAEECGwEFCwkIBwIGFQoJ
+ CAsCBBYCAwECHgECF4ACGQEWIQQk1ibyU76eh+bOW/SP9LjScWdVJwUCXAkeagUJDRnjhwAh
+ CRCP9LjScWdVJxYhBCTWJvJTvp6H5s5b9I/0uNJxZ1Un69gQAJK0ODuKzYl0TvHPU8W7uOeu
+ U7OghN/DTkG6uAkyqW+iIVi320R5QyXN1Tb6vRx6+yZ6mpJRW5S9fO03wcD8Sna9xyZacJfO
+ UTnpfUArs9FF1pB3VIr95WwlVoptBOuKLTCNuzoBTW6jQt0sg0uPDAi2dDzf+21t/UuF7I3z
+ KSeVyHuOfofonYD85FkQJN8lsbh5xWvsASbgD8bmfI87gEbt0wq2ND5yuX+lJK7FX4lMO6gR
+ ZQ75g4KWDprOO/w6ebRxDjrH0lG1qHBiZd0hcPo2wkeYwb1sqZUjQjujlDhcvnZfpDGR4yLz
+ 5WG+pdciQhl6LNl7lctNhS8Uct17HNdfN7QvAumYw5sUuJ+POIlCws/aVbA5+DpmIfzPx5Ak
+ UHxthNIyqZ9O6UHrVg7SaF3rvqrXtjtnu7eZ3cIsfuuHrXBTWDsVwub2nm1ddZZoC530BraS
+ d7Y7eyKs7T4mGwpsi3Pd33Je5aC/rDeF44gXRv3UnKtjq2PPjaG/KPG0fLBGvhx0ARBrZLsd
+ 5CTDjwFA4bo+pD13cVhTfim3dYUnX1UDmqoCISOpzg3S4+QLv1bfbIsZ3KDQQR7y/RSGzcLE
+ z164aDfuSvl+6Myb5qQy1HUQ0hOj5Qh+CzF3CMEPmU1v9Qah1ThC8+KkH/HHjPPulLn7aMaK
+ Z8t6h7uaAYnGzjMEXZLIEhYJKwYBBAHaRw8BAQdAGdRDglTydmxI03SYiVg95SoLOKT5zZW1
+ 7Kpt/5zcvt3CwhsEGAEIACAWIQQk1ibyU76eh+bOW/SP9LjScWdVJwUCXZLIEgIbAgCvCRCP
+ 9LjScWdVJ40gBBkWCAAdFiEEbinX+DPdhovb6oob3uarTi9/eqYFAl2SyBIAIQkQ3uarTi9/
+ eqYWIQRuKdf4M92Gi9vqihve5qtOL396pnZGAP0c3VRaj3RBEOUGKxHzcu17ZUnIoJLjpHdk
+ NfBnWU9+UgD/bwTxE56Wd8kQZ2e2UTy4BM8907FsJgAQLL4tD2YZggwWIQQk1ibyU76eh+bO
+ W/SP9LjScWdVJ5CaD/0YQyfUzjpR1GnCSkbaLYTEUsyaHuWPI/uSpKTtcbttpYv+QmYsIwD9
+ 8CeH3zwY0Xl/1fE9Hy59z6Vxv9YVapLx0nPDOA1zDVNq2MnutxHb8t+Imjz4ERCxysqtfYrv
+ gao3E/h0c8SEeh+bh5MkjwmU8CwZ3doWyiVdULKESe7/Gs5OuhFzaDVPCpWdsKdCAGyUuP/+
+ qRWwKGVpWP0Rrt6MTK24Ibeu3xEZO8c3XOEXH5d9nf6YRqBEIizAecoCr00E9c+6BlRS0AqR
+ OQC3/Mm7rWtco3+WOridqVXkko9AcZ8AiM5nu0F8AqYGKg0y7vkL2LOP8us85L0p57MqIR1u
+ gDnITlTY0x4RYRWJ9+k7led5WsnWlyv84KNzbDqQExTm8itzeZYW9RvbTS63r/+FlcTa9Cz1
+ 5fW3Qm0BsyECvpAD3IPLvX9jDIR0IkF/BQI4T98LQAkYX1M/UWkMpMYsL8tLObiNOWUl4ahb
+ PYi5Yd8zVNYuidXHcwPAUXqGt3Cs+FIhihH30/Oe4jL0/2ZoEnWGOexIFVFpue0jdqJNiIvA
+ F5Wpx+UiT5G8CWYYge5DtHI3m5qAP9UgPuck3N8xCihbsXKX4l8bdHfziaJuowief7igeQs/
+ WyY9FnZb0tl29dSa7PdDKFWu+B+ZnuIzsO5vWMoN6hMThTl1DxS+jc7ATQRb/8z6AQgAvSkg
+ 5w7dVCSbpP6nXc+i8OBz59aq8kuL3YpxT9RXE/y45IFUVuSc2kuUj683rEEgyD7XCf4QKzOw
+ +XgnJcKFQiACpYAowhF/XNkMPQFspPNM1ChnIL5KWJdTp0DhW+WBeCnyCQ2pzeCzQlS/qfs3
+ dMLzzm9qCDrrDh/aEegMMZFO+reIgPZnInAcbHj3xUhz8p2dkExRMTnLry8XXkiMu9WpchHy
+ XXWYxXbMnHkSRuT00lUfZAkYpMP7La2UudC/Uw9WqGuAQzTqhvE1kSQe0e11Uc+PqceLRHA2
+ bq/wz0cGriUrcCrnkzRmzYLoGXQHqRuZazMZn2/pSIMZdDxLbwARAQABwsGNBBgBCAAgFiEE
+ JNYm8lO+nofmzlv0j/S40nFnVScFAlv/zPoCGwwAIQkQj/S40nFnVScWIQQk1ibyU76eh+bO
+ W/SP9LjScWdVJ/g6EACFYk+OBS7pV9KZXncBQYjKqk7Kc+9JoygYnOE2wN41QN9Xl0Rk3wri
+ qO7PYJM28YjK3gMT8glu1qy+Ll1bjBYWXzlsXrF4szSqkJpm1cCxTmDOne5Pu6376dM9hb4K
+ l9giUinI4jNUCbDutlt+Cwh3YuPuDXBAKO8YfDX2arzn/CISJlk0d4lDca4Cv+4yiJpEGd/r
+ BVx2lRMUxeWQTz+1gc9ZtbRgpwoXAne4iw3FlR7pyg3NicvR30YrZ+QOiop8psWM2Fb1PKB9
+ 4vZCGT3j2MwZC50VLfOXC833DBVoLSIoL8PfTcOJOcHRYU9PwKW0wBlJtDVYRZ/CrGFjbp2L
+ eT2mP5fcF86YMv0YGWdFNKDCOqOrOkZVmxai65N9d31k8/O9h1QGuVMqCiOTULy/h+FKpv5q
+ t35tlzA2nxPOX8Qj3KDDqVgQBMYJRghZyj5+N6EKAbUVa9Zq8xT6Ms2zz/y7CPW74G1GlYWP
+ i6D9VoMMi6ICko/CXUZ77OgLtMsy3JtzTRbn/wRySOY2AsMgg0Sw6yJ0wfrVk6XAMoLGjaVt
+ X4iPTvwocEhjvrO4eXCicRBocsIB2qZaIj3mlhk2u4AkSpkKm9cN0KWYFUxlENF4/NKWMK+g
+ fGfsCsS3cXXiZpufZFGr+GoHwiELqfLEAQ9AhlrHGCKcgVgTOI6NHg==
+Message-ID: <c90b72d2-bc7d-1bc0-2507-e8da0f7cd58c@linaro.org>
+Date:   Fri, 31 Jan 2020 10:39:58 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.1
 MIME-Version: 1.0
+In-Reply-To: <73f27df0-451f-d274-a7db-293cbf2c7690@infradead.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Via the /sys/kernel/debug/dmaengine users can get information about the
-DMA devices and the used channels.
+On 31/01/2020 05:17, Randy Dunlap wrote:
+> On 1/30/20 8:12 PM, Stephen Rothwell wrote:
+>> Hi all,
+>>
+>> [At Michael's suggestion I have started doing htmldocs builds at the
+>> end of linux-next runs.  Unfortunately, this currently fails for Linus'
+>> tree.]
+>>
+>> In Linus' tree, today's linux-next build (htmldocs) failed like this:
+>>
+>> docutils.utils.SystemMessage: Documentation/driver-api/thermal/cpu-idle-cooling.rst:69: (SEVERE/4) Unexpected section title.
+>>
+>> Caused by commit
+>>
+>>   0a1990a2d1f2 ("thermal/drivers/cpu_cooling: Add idle cooling device documentation")
+>>
+> 
+> 
+> I sent a patch for that on 2020-JAN-20 but no one has replied to the patch:
+> 
+> https://lore.kernel.org/linux-pm/712c1152-56b5-307f-b3f3-ed03a30b804a@infradead.org/
 
-Example output on am654-evm with audio using two channels and after running
-dmatest on 6 channels:
+Right, sorry for that. I'll pick it and send a PR.
 
- # cat /sys/kernel/debug/dmaengine
-dma0 (285c0000.dma-controller): number of channels: 96
+Thanks for the fix.
 
-dma1 (31150000.dma-controller): number of channels: 267
- dma1chan0:             2b00000.mcasp:tx
- dma1chan1:             2b00000.mcasp:rx
- dma1chan2:             in-use
- dma1chan3:             in-use
- dma1chan4:             in-use
- dma1chan5:             in-use
- dma1chan6:             in-use
- dma1chan7:             in-use
 
-For slave channels we can show the device and the channel name a given
-channel is requested.
-For non slave devices the only information we know is that the channel is
-in use.
-
-DMA drivers can implement the optional dbg_show callback to provide
-controller specific information instead of the generic one.
-
-It is easy to extend the generic dmaengine_dbg_show() to print additional
-information about the used channels.
-
-I have taken the idea from gpiolib.
-
-Signed-off-by: Peter Ujfalusi <peter.ujfalusi@ti.com>
----
- drivers/dma/dmaengine.c   | 66 +++++++++++++++++++++++++++++++++++++++
- include/linux/dmaengine.h | 12 ++++++-
- 2 files changed, 77 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/dma/dmaengine.c b/drivers/dma/dmaengine.c
-index 342d23132fca..121231300d35 100644
---- a/drivers/dma/dmaengine.c
-+++ b/drivers/dma/dmaengine.c
-@@ -32,6 +32,7 @@
- #define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
- 
- #include <linux/platform_device.h>
-+#include <linux/debugfs.h>
- #include <linux/dma-mapping.h>
- #include <linux/init.h>
- #include <linux/module.h>
-@@ -760,6 +761,11 @@ struct dma_chan *dma_request_chan(struct device *dev, const char *name)
- 		return chan ? chan : ERR_PTR(-EPROBE_DEFER);
- 
- found:
-+#ifdef CONFIG_DEBUG_FS
-+	chan->dbg_client_name = kasprintf(GFP_KERNEL, "%s:%s", dev_name(dev),
-+					  name);
-+#endif
-+
- 	chan->name = kasprintf(GFP_KERNEL, "dma:%s", name);
- 	if (!chan->name)
- 		return chan;
-@@ -837,6 +843,11 @@ void dma_release_channel(struct dma_chan *chan)
- 		chan->name = NULL;
- 		chan->slave = NULL;
- 	}
-+
-+#ifdef CONFIG_DEBUG_FS
-+	kfree(chan->dbg_client_name);
-+	chan->dbg_client_name = NULL;
-+#endif
- 	mutex_unlock(&dma_list_mutex);
- }
- EXPORT_SYMBOL_GPL(dma_release_channel);
-@@ -1559,3 +1570,58 @@ static int __init dma_bus_init(void)
- 	return class_register(&dma_devclass);
- }
- arch_initcall(dma_bus_init);
-+
-+#ifdef CONFIG_DEBUG_FS
-+static void dmaengine_dbg_show(struct seq_file *s, struct dma_device *dma_dev)
-+{
-+	struct dma_chan *chan;
-+
-+	list_for_each_entry(chan, &dma_dev->channels, device_node) {
-+		if (chan->client_count) {
-+			seq_printf(s, " dma%dchan%-4d| %s",
-+				   dma_dev->dev_id, chan->chan_id,
-+				   chan->dbg_client_name ?: "in-use");
-+
-+			if (chan->router)
-+				seq_printf(s, " (via router: %s)\n",
-+					dev_name(chan->router->dev));
-+			else
-+				seq_puts(s, "\n");
-+		}
-+	}
-+}
-+
-+static int dmaengine_debugfs_show(struct seq_file *s, void *data)
-+{
-+	struct dma_device *dma_dev = NULL;
-+
-+	mutex_lock(&dma_list_mutex);
-+	list_for_each_entry(dma_dev, &dma_device_list, global_node) {
-+		seq_printf(s, "dma%d (%s): number of channels: %u\n",
-+			   dma_dev->dev_id, dev_name(dma_dev->dev),
-+			   dma_dev->chancnt);
-+
-+		if (dma_dev->dbg_show)
-+			dma_dev->dbg_show(s, dma_dev);
-+		else
-+			dmaengine_dbg_show(s, dma_dev);
-+
-+		if (!list_is_last(&dma_dev->global_node, &dma_device_list))
-+			seq_puts(s, "\n");
-+	}
-+	mutex_unlock(&dma_list_mutex);
-+
-+	return 0;
-+}
-+DEFINE_SHOW_ATTRIBUTE(dmaengine_debugfs);
-+
-+static int __init dmaengine_debugfs_init(void)
-+{
-+	/* /sys/kernel/debug/dmaengine */
-+	debugfs_create_file("dmaengine", 0444, NULL, NULL,
-+			    &dmaengine_debugfs_fops);
-+	return 0;
-+}
-+late_initcall(dmaengine_debugfs_init);
-+
-+#endif	/* DEBUG_FS */
-diff --git a/include/linux/dmaengine.h b/include/linux/dmaengine.h
-index 64461fc64e1b..9f232b7618f1 100644
---- a/include/linux/dmaengine.h
-+++ b/include/linux/dmaengine.h
-@@ -300,6 +300,8 @@ struct dma_router {
-  * @chan_id: channel ID for sysfs
-  * @dev: class device for sysfs
-  * @name: backlink name for sysfs
-+ * @dbg_client_name: slave name for debugfs in format:
-+ *	dev_name(requester's dev):channel name, for example: "2b00000.mcasp:tx"
-  * @device_node: used to add this to the device chan list
-  * @local: per-cpu pointer to a struct dma_chan_percpu
-  * @client_count: how many clients are using this channel
-@@ -318,6 +320,9 @@ struct dma_chan {
- 	int chan_id;
- 	struct dma_chan_dev *dev;
- 	const char *name;
-+#ifdef CONFIG_DEBUG_FS
-+	char *dbg_client_name;
-+#endif
- 
- 	struct list_head device_node;
- 	struct dma_chan_percpu __percpu *local;
-@@ -805,7 +810,9 @@ struct dma_filter {
-  *     called and there are no further references to this structure. This
-  *     must be implemented to free resources however many existing drivers
-  *     do not and are therefore not safe to unbind while in use.
-- *
-+ * @dbg_show: optional routine to show contents in debugfs; default code
-+ *     will be used when this is omitted, but custom code can show extra,
-+ *     controller specific information.
-  */
- struct dma_device {
- 	struct kref ref;
-@@ -891,6 +898,9 @@ struct dma_device {
- 					    struct dma_tx_state *txstate);
- 	void (*device_issue_pending)(struct dma_chan *chan);
- 	void (*device_release)(struct dma_device *dev);
-+#ifdef CONFIG_DEBUG_FS
-+	void (*dbg_show)(struct seq_file *s, struct dma_device *dev);
-+#endif
- };
- 
- static inline int dmaengine_slave_config(struct dma_chan *chan,
 -- 
-Peter
+ <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
 
-Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
-Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
+Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
 
