@@ -2,58 +2,58 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 45C2C14EA09
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Jan 2020 10:25:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id ED11C14EA02
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Jan 2020 10:25:18 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728288AbgAaJZC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 31 Jan 2020 04:25:02 -0500
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:42565 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728198AbgAaJY7 (ORCPT
+        id S1728303AbgAaJZE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 31 Jan 2020 04:25:04 -0500
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:38382 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728276AbgAaJZC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 31 Jan 2020 04:24:59 -0500
-Received: by mail-wr1-f66.google.com with SMTP id k11so7721140wrd.9
-        for <linux-kernel@vger.kernel.org>; Fri, 31 Jan 2020 01:24:58 -0800 (PST)
+        Fri, 31 Jan 2020 04:25:02 -0500
+Received: by mail-wm1-f66.google.com with SMTP id a9so7831083wmj.3
+        for <linux-kernel@vger.kernel.org>; Fri, 31 Jan 2020 01:25:00 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=+Kno0Ufwl1kAKmD9m5umt2SU5mWhcoh+53Gn8TLVtdo=;
-        b=evcl4rc0NAC7KoG7W+hHO+yYLgoIWhsULe3VHo8ZfCPzYl32U5h2vCJyYiJErq0zZi
-         QwpxFwr37Q4gwnpYI5GlKMw5gDoK5/OpuBsaSWew36bydz4zJ46ur/THHH6yFtl8ukK0
-         eelQXn/EOVQPRzSGpkUh3LtUhmue8RWsfMkYrJGivUmsVaRQR/6Axd3OvjTZg503Ff4a
-         +m7rFqdSk6EWppY1EUmL+dsI9TBttxIRgOd2aKpp92TGwK/LYC0EKLjZQu4LWqmytuJm
-         y7EsLlLfcMqUC4oFai2Ds+HZ53A+MOA7b34gEgg2Mhh7woMRKPhUSAao3wfBtSdCfUxp
-         Qd3Q==
+        bh=9S9BwHx5UyCKJX2JPPBf1rlNAUg9PfPZ0MUkcYcdubg=;
+        b=iRXRSb4DE5RRgBR+1dzaU40ae0vmJbAJrH7ssWKCDoti6cVtCXOhHrRgtxLuu74K7I
+         Tw3sJ1uQbf05gkl/PqtpOVRtDGHMsSlfL9YBa91dbcrDEUTDRl7PR0uucmawserg4suP
+         dVsMWzYSzrUpjPPNlKlnyl9QLhCqdHohs4I5rQ4ngR46zzjF+o6Iro7l0p9RQ+jqhj3t
+         GCHSdSsbC9Ez9HMVWP5wRpZO2Mm7sYiWuL0BTzrWlE8QkhY6/PtCQ7lUy4k+/ZmhuXjI
+         msLBIUrrrUE62KX/PYyadwpxp/5qeUMb/NCwLHBukakYpsIZHrjnt5ZcWgkKTa+3iIxE
+         HuUQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=+Kno0Ufwl1kAKmD9m5umt2SU5mWhcoh+53Gn8TLVtdo=;
-        b=tVdAfHj5EGKfXut2TwtTfSDTNgoTib2X4HgD/xdXEo86ApXg7yDFJNYVi5zxTObzTn
-         M2goNss6bFSdbDPC3nc5osAMDLIUPA3I/quJqfd2cFlqX/5Vew0puGM7Y9Up4cAcma10
-         ba8Vn4x0ccfuekleoXV+a0ekHY5uBEwjs4m0CuQgMCBlvMCBsEUwqbw9/jAD4NnuCuNc
-         BB/aZ7BIAWE4Ifkt6BSuWsPI5tkKMeMP2ZE6t8zyTK34u94LP5JUFFc7huxNJ6P7Ribc
-         mNdxzOYmnqo0uu75vpqzuPq+1IbJ7NAuzPvS350fncY353sMYyPl2FiJTHzRKLKw9gv0
-         ra1g==
-X-Gm-Message-State: APjAAAVntDPrnags6iXHAahtfTuFyxfCSmhTsyXIVaotjlez9L+mAQa6
-        /2e9OTfjir+WqHDtpHFcAnWPew==
-X-Google-Smtp-Source: APXvYqxF+WeknTEzrs+NFH97PzIldGWLGI86YDyqDlVHFCExejPHiKfuK1zhZ6neZ8xBPN1vG/Hy8Q==
-X-Received: by 2002:adf:cd04:: with SMTP id w4mr11638814wrm.219.1580462698078;
-        Fri, 31 Jan 2020 01:24:58 -0800 (PST)
+        bh=9S9BwHx5UyCKJX2JPPBf1rlNAUg9PfPZ0MUkcYcdubg=;
+        b=Xi0mIgSob6WbeP/tMY31lOZ7Gd0zVErIJI1fktQRAkY4nIFMZdMFC0Q2BvFDfe/aOe
+         OAPuLM+g6IQc8DyvmYZbkzPELZW+rLJY67+ScNVvNcdFYRh5q7XJdTjGvQAbNzSkHwdO
+         aHbDQtIjyEP/jOTW2lVWDauRb/6nnJ0gylQf+3GRgDu9v1yArV1L/bWiOCsdDgIk4XYB
+         FK4Y0GrXyMSAWOIU+L8SgIA426gA5N8vRz3Dvp9KY8kY+b5tnGKql9beCmyaXqPgLFah
+         G55fxbFyJYbyJ8L7reowSASVIyx9gbXlsldu3nHQiWRNH37Dn6ht0YQQBdWJINEKGN2b
+         7d2A==
+X-Gm-Message-State: APjAAAXz8+NoSuM8Nz7Ieu9I1pwh0zwhiEjeF7ed1MZzXdn05d6B9s9m
+        jbll6GOvvNdPwtBQ0uk/FSs5rQ==
+X-Google-Smtp-Source: APXvYqxB4qSPUHX306OsPESk96PbfKWReeeWyRX+ZbnNBODPZNtLG1E8CogAmQhcBFk6/5MNcZOwqQ==
+X-Received: by 2002:a1c:545d:: with SMTP id p29mr11760504wmi.91.1580462699266;
+        Fri, 31 Jan 2020 01:24:59 -0800 (PST)
 Received: from localhost.localdomain (88-147-73-186.dyn.eolo.it. [88.147.73.186])
-        by smtp.gmail.com with ESMTPSA id 16sm10144364wmi.0.2020.01.31.01.24.56
+        by smtp.gmail.com with ESMTPSA id 16sm10144364wmi.0.2020.01.31.01.24.58
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 31 Jan 2020 01:24:57 -0800 (PST)
+        Fri, 31 Jan 2020 01:24:58 -0800 (PST)
 From:   Paolo Valente <paolo.valente@linaro.org>
 To:     Jens Axboe <axboe@kernel.dk>
 Cc:     linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
         bfq-iosched@googlegroups.com, oleksandr@natalenko.name,
         patdung100@gmail.com, cevich@redhat.com,
         Paolo Valente <paolo.valente@linaro.org>
-Subject: [PATCH BUGFIX 2/6] block, bfq: do not insert oom queue into position tree
-Date:   Fri, 31 Jan 2020 10:24:05 +0100
-Message-Id: <20200131092409.10867-3-paolo.valente@linaro.org>
+Subject: [PATCH BUGFIX 3/6] block, bfq: get extra ref to prevent a queue from being freed during a group move
+Date:   Fri, 31 Jan 2020 10:24:06 +0100
+Message-Id: <20200131092409.10867-4-paolo.valente@linaro.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200131092409.10867-1-paolo.valente@linaro.org>
 References: <20200131092409.10867-1-paolo.valente@linaro.org>
@@ -64,40 +64,48 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-BFQ maintains an ordered list, implemented with an RB tree, of
-head-request positions of non-empty bfq_queues. This position tree,
-inherited from CFQ, is used to find bfq_queues that contain I/O close
-to each other. BFQ merges these bfq_queues into a single shared queue,
-if this boosts throughput on the device at hand.
+In bfq_bfqq_move(), the bfq_queue, say Q, to be moved to a new group
+may happen to be deactivated in the scheduling data structures of the
+source group (and then activated in the destination group). If Q is
+referred only by the data structures in the source group when the
+deactivation happens, then Q is freed upon the deactivation.
 
-There is however a special-purpose bfq_queue that does not participate
-in queue merging, the oom bfq_queue. Yet, also this bfq_queue could be
-wrongly added to the position tree. So bfqq_find_close() could return
-the oom bfq_queue, which is a source of further troubles in an
-out-of-memory situation. This commit prevents the oom bfq_queue from
-being inserted into the position tree.
+This commit addresses this issue by getting an extra reference before
+the possible deactivation, and releasing this extra reference after Q
+has been moved.
 
-Tested-by: Patrick Dung <patdung100@gmail.com>
+Tested-by: Chris Evich <cevich@redhat.com>
 Signed-off-by: Paolo Valente <paolo.valente@linaro.org>
 ---
- block/bfq-iosched.c | 4 ++++
- 1 file changed, 4 insertions(+)
+ block/bfq-cgroup.c | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-diff --git a/block/bfq-iosched.c b/block/bfq-iosched.c
-index 55d4328e7c12..15dfb0844644 100644
---- a/block/bfq-iosched.c
-+++ b/block/bfq-iosched.c
-@@ -613,6 +613,10 @@ bfq_pos_tree_add_move(struct bfq_data *bfqd, struct bfq_queue *bfqq)
- 		bfqq->pos_root = NULL;
- 	}
+diff --git a/block/bfq-cgroup.c b/block/bfq-cgroup.c
+index e1419edde2ec..8ab7f18ff8cb 100644
+--- a/block/bfq-cgroup.c
++++ b/block/bfq-cgroup.c
+@@ -651,6 +651,12 @@ void bfq_bfqq_move(struct bfq_data *bfqd, struct bfq_queue *bfqq,
+ 		bfq_bfqq_expire(bfqd, bfqd->in_service_queue,
+ 				false, BFQQE_PREEMPTED);
  
-+	/* oom_bfqq does not participate in queue merging */
-+	if (bfqq == &bfqd->oom_bfqq)
-+		return;
++	/*
++	 * get extra reference to prevent bfqq from being freed in
++	 * next possible deactivate
++	 */
++	bfqq->ref++;
 +
- 	/*
- 	 * bfqq cannot be merged any longer (see comments in
- 	 * bfq_setup_cooperator): no point in adding bfqq into the
+ 	if (bfq_bfqq_busy(bfqq))
+ 		bfq_deactivate_bfqq(bfqd, bfqq, false, false);
+ 	else if (entity->on_st)
+@@ -670,6 +676,8 @@ void bfq_bfqq_move(struct bfq_data *bfqd, struct bfq_queue *bfqq,
+ 
+ 	if (!bfqd->in_service_queue && !bfqd->rq_in_driver)
+ 		bfq_schedule_dispatch(bfqd);
++	/* release extra ref taken above */
++	bfq_put_queue(bfqq);
+ }
+ 
+ /**
 -- 
 2.20.1
 
