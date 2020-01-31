@@ -2,302 +2,238 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BFEAF14EC72
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Jan 2020 13:25:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 475B614EC7A
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Jan 2020 13:28:19 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728605AbgAaMZD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 31 Jan 2020 07:25:03 -0500
-Received: from smtp-fw-6002.amazon.com ([52.95.49.90]:18569 "EHLO
-        smtp-fw-6002.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728479AbgAaMZC (ORCPT
+        id S1728526AbgAaM2S (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 31 Jan 2020 07:28:18 -0500
+Received: from Galois.linutronix.de ([193.142.43.55]:55184 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728479AbgAaM2R (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 31 Jan 2020 07:25:02 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
-  t=1580473502; x=1612009502;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version;
-  bh=eRB/ftryms8SbjXF4iCqjGPRzeoxvd6GBWw9lqbtxB0=;
-  b=nQKRHryKLJTFcb+57IaviVMdb2qPECQXko9UubgfQWvYGkktseAKrRGv
-   8zjjRABXK24DImgyYC8votSkIc63bJpPi2RvM3f/EEoOE7Qz+Q2WWWTtl
-   7ZKEBEncQsN+PbH3DNsLjqyuOLPpRR4P/cKr8USFutdA2M3nGdRsIVWco
-   4=;
-IronPort-SDR: FjtJcV8W/7QMEyRqX73rrKYPGUu1l5ipxU5Wqi/KNdrAmwIT9DzgOkbgj4ecX+WVJjdtpLd8Eo
- Hj7woZy7te9w==
-X-IronPort-AV: E=Sophos;i="5.70,385,1574121600"; 
-   d="scan'208";a="14174527"
-Received: from iad12-co-svc-p1-lb1-vlan3.amazon.com (HELO email-inbound-relay-2b-a7fdc47a.us-west-2.amazon.com) ([10.43.8.6])
-  by smtp-border-fw-out-6002.iad6.amazon.com with ESMTP; 31 Jan 2020 12:25:00 +0000
-Received: from EX13MTAUEA002.ant.amazon.com (pdx4-ws-svc-p6-lb7-vlan2.pdx.amazon.com [10.170.41.162])
-        by email-inbound-relay-2b-a7fdc47a.us-west-2.amazon.com (Postfix) with ESMTPS id 3822CC5CEB;
-        Fri, 31 Jan 2020 12:24:57 +0000 (UTC)
-Received: from EX13D31EUA001.ant.amazon.com (10.43.165.15) by
- EX13MTAUEA002.ant.amazon.com (10.43.61.77) with Microsoft SMTP Server (TLS)
- id 15.0.1236.3; Fri, 31 Jan 2020 12:24:57 +0000
-Received: from u886c93fd17d25d.ant.amazon.com (10.43.162.50) by
- EX13D31EUA001.ant.amazon.com (10.43.165.15) with Microsoft SMTP Server (TLS)
- id 15.0.1367.3; Fri, 31 Jan 2020 12:24:52 +0000
-From:   <sjpark@amazon.com>
-To:     <edumazet@google.com>, <davem@davemloft.net>
-CC:     <shuah@kernel.org>, <netdev@vger.kernel.org>,
-        <linux-kselftest@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <sj38.park@gmail.com>, <aams@amazon.com>,
-        SeongJae Park <sjpark@amazon.de>
-Subject: [PATCH 3/3] selftests: net: Add FIN_ACK processing order related latency spike test
-Date:   Fri, 31 Jan 2020 13:24:21 +0100
-Message-ID: <20200131122421.23286-4-sjpark@amazon.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20200131122421.23286-1-sjpark@amazon.com>
-References: <20200131122421.23286-1-sjpark@amazon.com>
+        Fri, 31 Jan 2020 07:28:17 -0500
+Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tip-bot2@linutronix.de>)
+        id 1ixVPB-00048x-GT; Fri, 31 Jan 2020 13:28:13 +0100
+Received: from [127.0.1.1] (localhost [IPv6:::1])
+        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 12A231C1B3C;
+        Fri, 31 Jan 2020 13:28:13 +0100 (CET)
+Date:   Fri, 31 Jan 2020 12:28:12 -0000
+From:   "tip-bot2 for Thomas Gleixner" <tip-bot2@linutronix.de>
+Reply-to: linux-kernel@vger.kernel.org
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip: x86/urgent] x86/timer: Don't skip PIT setup when APIC is
+ disabled or in legacy mode
+Cc:     Anthony Buckley <tony.buckley000@gmail.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@kernel.org>,
+        Daniel Drake <drake@endlessm.com>, x86 <x86@kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+In-Reply-To: <87sgk6tmk2.fsf@nanos.tec.linutronix.de>
+References: <87sgk6tmk2.fsf@nanos.tec.linutronix.de>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.43.162.50]
-X-ClientProxiedBy: EX13D24UWA003.ant.amazon.com (10.43.160.195) To
- EX13D31EUA001.ant.amazon.com (10.43.165.15)
+Message-ID: <158047369280.396.809676542150582676.tip-bot2@tip-bot2>
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot2.linutronix.de>
+Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: SeongJae Park <sjpark@amazon.de>
+The following commit has been merged into the x86/urgent branch of tip:
 
-This commit adds a test for FIN_ACK process races related reconnection
-latency spike issues.  The issue has described and solved by the
-previous commit ("tcp: Reduce SYN resend delay if a suspicous ACK is
-received").
+Commit-ID:     979923871f69a4dc926658f9f9a1a4c1bde57552
+Gitweb:        https://git.kernel.org/tip/979923871f69a4dc926658f9f9a1a4c1bde57552
+Author:        Thomas Gleixner <tglx@linutronix.de>
+AuthorDate:    Thu, 23 Jan 2020 12:54:53 +01:00
+Committer:     Ingo Molnar <mingo@kernel.org>
+CommitterDate: Wed, 29 Jan 2020 12:50:12 +01:00
 
-Signed-off-by: SeongJae Park <sjpark@amazon.de>
+x86/timer: Don't skip PIT setup when APIC is disabled or in legacy mode
+
+Tony reported a boot regression caused by the recent workaround for systems
+which have a disabled (clock gate off) PIT.
+
+On his machine the kernel fails to initialize the PIT because
+apic_needs_pit() does not take into account whether the local APIC
+interrupt delivery mode will actually allow to setup and use the local
+APIC timer. This should be easy to reproduce with acpi=off on the
+command line which also disables HPET.
+
+Due to the way the PIT/HPET and APIC setup ordering works (APIC setup can
+require working PIT/HPET) the information is not available at the point
+where apic_needs_pit() makes this decision.
+
+To address this, split out the interrupt mode selection from
+apic_intr_mode_init(), invoke the selection before making the decision
+whether PIT is required or not, and add the missing checks into
+apic_needs_pit().
+
+Fixes: c8c4076723da ("x86/timer: Skip PIT initialization on modern chipsets")
+Reported-by: Anthony Buckley <tony.buckley000@gmail.com>
+Tested-by: Anthony Buckley <tony.buckley000@gmail.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Cc: Daniel Drake <drake@endlessm.com>
+Link: https://bugzilla.kernel.org/show_bug.cgi?id=206125
+Link: https://lore.kernel.org/r/87sgk6tmk2.fsf@nanos.tec.linutronix.de
 ---
- tools/testing/selftests/net/.gitignore        |  2 +
- tools/testing/selftests/net/Makefile          |  2 +
- tools/testing/selftests/net/fin_ack_lat.sh    | 42 ++++++++++
- .../selftests/net/fin_ack_lat_accept.c        | 49 +++++++++++
- .../selftests/net/fin_ack_lat_connect.c       | 81 +++++++++++++++++++
- 5 files changed, 176 insertions(+)
- create mode 100755 tools/testing/selftests/net/fin_ack_lat.sh
- create mode 100644 tools/testing/selftests/net/fin_ack_lat_accept.c
- create mode 100644 tools/testing/selftests/net/fin_ack_lat_connect.c
+ arch/x86/include/asm/apic.h     |  2 ++
+ arch/x86/include/asm/x86_init.h |  2 ++
+ arch/x86/kernel/apic/apic.c     | 23 ++++++++++++++++++-----
+ arch/x86/kernel/time.c          | 12 ++++++++++--
+ arch/x86/kernel/x86_init.c      |  1 +
+ arch/x86/xen/enlighten_pv.c     |  1 +
+ 6 files changed, 34 insertions(+), 7 deletions(-)
 
-diff --git a/tools/testing/selftests/net/.gitignore b/tools/testing/selftests/net/.gitignore
-index 8aefd81fbc86..1bcf7b5498dd 100644
---- a/tools/testing/selftests/net/.gitignore
-+++ b/tools/testing/selftests/net/.gitignore
-@@ -22,3 +22,5 @@ ipv6_flowlabel_mgr
- so_txtime
- tcp_fastopen_backup_key
- nettest
-+fin_ack_lat_accept
-+fin_ack_lat_connect
-diff --git a/tools/testing/selftests/net/Makefile b/tools/testing/selftests/net/Makefile
-index a8e04d665b69..e4938c26ce3f 100644
---- a/tools/testing/selftests/net/Makefile
-+++ b/tools/testing/selftests/net/Makefile
-@@ -11,6 +11,7 @@ TEST_PROGS += udpgso_bench.sh fib_rule_tests.sh msg_zerocopy.sh psock_snd.sh
- TEST_PROGS += udpgro_bench.sh udpgro.sh test_vxlan_under_vrf.sh reuseport_addr_any.sh
- TEST_PROGS += test_vxlan_fdb_changelink.sh so_txtime.sh ipv6_flowlabel.sh
- TEST_PROGS += tcp_fastopen_backup_key.sh fcnal-test.sh l2tp.sh traceroute.sh
-+TEST_PROGS += fin_ack_lat.sh
- TEST_PROGS_EXTENDED := in_netns.sh
- TEST_GEN_FILES =  socket nettest
- TEST_GEN_FILES += psock_fanout psock_tpacket msg_zerocopy reuseport_addr_any
-@@ -18,6 +19,7 @@ TEST_GEN_FILES += tcp_mmap tcp_inq psock_snd txring_overwrite
- TEST_GEN_FILES += udpgso udpgso_bench_tx udpgso_bench_rx ip_defrag
- TEST_GEN_FILES += so_txtime ipv6_flowlabel ipv6_flowlabel_mgr
- TEST_GEN_FILES += tcp_fastopen_backup_key
-+TEST_GEN_FILES += fin_ack_lat_accept fin_ack_lat_connect
- TEST_GEN_PROGS = reuseport_bpf reuseport_bpf_cpu reuseport_bpf_numa
- TEST_GEN_PROGS += reuseport_dualstack reuseaddr_conflict tls
+diff --git a/arch/x86/include/asm/apic.h b/arch/x86/include/asm/apic.h
+index 2ebc17d..be0b9cf 100644
+--- a/arch/x86/include/asm/apic.h
++++ b/arch/x86/include/asm/apic.h
+@@ -140,6 +140,7 @@ extern void apic_soft_disable(void);
+ extern void lapic_shutdown(void);
+ extern void sync_Arb_IDs(void);
+ extern void init_bsp_APIC(void);
++extern void apic_intr_mode_select(void);
+ extern void apic_intr_mode_init(void);
+ extern void init_apic_mappings(void);
+ void register_lapic_address(unsigned long address);
+@@ -188,6 +189,7 @@ static inline void disable_local_APIC(void) { }
+ # define setup_secondary_APIC_clock x86_init_noop
+ static inline void lapic_update_tsc_freq(void) { }
+ static inline void init_bsp_APIC(void) { }
++static inline void apic_intr_mode_select(void) { }
+ static inline void apic_intr_mode_init(void) { }
+ static inline void lapic_assign_system_vectors(void) { }
+ static inline void lapic_assign_legacy_vector(unsigned int i, bool r) { }
+diff --git a/arch/x86/include/asm/x86_init.h b/arch/x86/include/asm/x86_init.h
+index 1943585..96d9cd2 100644
+--- a/arch/x86/include/asm/x86_init.h
++++ b/arch/x86/include/asm/x86_init.h
+@@ -51,12 +51,14 @@ struct x86_init_resources {
+  *				are set up.
+  * @intr_init:			interrupt init code
+  * @trap_init:			platform specific trap setup
++ * @intr_mode_select:		interrupt delivery mode selection
+  * @intr_mode_init:		interrupt delivery mode setup
+  */
+ struct x86_init_irqs {
+ 	void (*pre_vector_init)(void);
+ 	void (*intr_init)(void);
+ 	void (*trap_init)(void);
++	void (*intr_mode_select)(void);
+ 	void (*intr_mode_init)(void);
+ };
  
-diff --git a/tools/testing/selftests/net/fin_ack_lat.sh b/tools/testing/selftests/net/fin_ack_lat.sh
-new file mode 100755
-index 000000000000..0a398c837b7a
---- /dev/null
-+++ b/tools/testing/selftests/net/fin_ack_lat.sh
-@@ -0,0 +1,42 @@
-+#!/bin/bash
-+# SPDX-License-Identifier: GPL-2.0
-+#
-+# Test latency spikes caused by FIN/ACK handling race.
+diff --git a/arch/x86/kernel/apic/apic.c b/arch/x86/kernel/apic/apic.c
+index 28446fa..4b0f911 100644
+--- a/arch/x86/kernel/apic/apic.c
++++ b/arch/x86/kernel/apic/apic.c
+@@ -830,8 +830,17 @@ bool __init apic_needs_pit(void)
+ 	if (!tsc_khz || !cpu_khz)
+ 		return true;
+ 
+-	/* Is there an APIC at all? */
+-	if (!boot_cpu_has(X86_FEATURE_APIC))
++	/* Is there an APIC at all or is it disabled? */
++	if (!boot_cpu_has(X86_FEATURE_APIC) || disable_apic)
++		return true;
 +
-+set +x
-+set -e
-+
-+tmpfile=$(mktemp /tmp/fin_ack_latency.XXXX.log)
-+
-+kill_accept() {
-+	kill $ACCEPT_PID
-+}
-+
-+cleanup() {
-+	kill_accept
-+	rm -f $tmpfile
-+}
-+
-+trap cleanup EXIT
-+
-+do_test() {
-+	RUNTIME=$1
-+
-+	./fin_ack_lat_accept &
-+	ACCEPT_PID=$!
-+	sleep 1
-+
-+	./fin_ack_lat_connect | tee $tmpfile &
-+	sleep $RUNTIME
-+	NR_SPIKES=$(wc -l $tmpfile | awk '{print $1}')
-+	rm $tmpfile
-+	if [ $NR_SPIKES -gt 0 ]
-+	then
-+		echo "FAIL: $NR_SPIKES spikes detected"
-+		return 1
-+	fi
-+	return 0
-+}
-+
-+do_test "30"
-+echo "test done"
-diff --git a/tools/testing/selftests/net/fin_ack_lat_accept.c b/tools/testing/selftests/net/fin_ack_lat_accept.c
-new file mode 100644
-index 000000000000..a0f0210f12b4
---- /dev/null
-+++ b/tools/testing/selftests/net/fin_ack_lat_accept.c
-@@ -0,0 +1,49 @@
-+// SPDX-License-Identifier: GPL-2.0
-+
-+#include <error.h>
-+#include <netinet/in.h>
-+#include <stdio.h>
-+#include <sys/socket.h>
-+#include <unistd.h>
-+
-+int main(int argc, char const *argv[])
++	/*
++	 * If interrupt delivery mode is legacy PIC or virtual wire without
++	 * configuration, the local APIC timer wont be set up. Make sure
++	 * that the PIT is initialized.
++	 */
++	if (apic_intr_mode == APIC_PIC ||
++	    apic_intr_mode == APIC_VIRTUAL_WIRE_NO_CONFIG)
+ 		return true;
+ 
+ 	/* Virt guests may lack ARAT, but still have DEADLINE */
+@@ -1322,7 +1331,7 @@ void __init sync_Arb_IDs(void)
+ 
+ enum apic_intr_mode_id apic_intr_mode __ro_after_init;
+ 
+-static int __init apic_intr_mode_select(void)
++static int __init __apic_intr_mode_select(void)
+ {
+ 	/* Check kernel option */
+ 	if (disable_apic) {
+@@ -1384,6 +1393,12 @@ static int __init apic_intr_mode_select(void)
+ 	return APIC_SYMMETRIC_IO;
+ }
+ 
++/* Select the interrupt delivery mode for the BSP */
++void __init apic_intr_mode_select(void)
 +{
-+	int sock, new_sock;
-+	int opt = 1;
-+	struct sockaddr_in address;
-+	int addrlen = sizeof(address);
-+	int buffer;
-+	int rc;
-+
-+	sock = socket(AF_INET, SOCK_STREAM, 0);
-+	if (!sock)
-+		error(-1, -1, "socket");
-+
-+	rc = setsockopt(sock, SOL_SOCKET, SO_REUSEADDR | SO_REUSEPORT,
-+			&opt, sizeof(opt));
-+	if (rc == -1)
-+		error(-1, -1, "setsockopt");
-+
-+	address.sin_family = AF_INET;
-+	address.sin_addr.s_addr = INADDR_ANY;
-+	address.sin_port = htons(4242);
-+
-+	rc = bind(sock, (struct sockaddr *)&address, sizeof(address));
-+	if (rc < 0)
-+		error(-1, -1, "bind");
-+
-+	rc = listen(sock, 3);
-+	if (rc < 0)
-+		error(-1, -1, "listen");
-+
-+	while (1) {
-+		new_sock = accept(sock, (struct sockaddr *)&address,
-+				(socklen_t *)&addrlen);
-+		if (new_sock < 0)
-+			error(-1, -1, "accept");
-+
-+		rc = read(new_sock, &buffer, sizeof(buffer));
-+		close(new_sock);
-+	}
-+	return 0;
-+}
-diff --git a/tools/testing/selftests/net/fin_ack_lat_connect.c b/tools/testing/selftests/net/fin_ack_lat_connect.c
-new file mode 100644
-index 000000000000..abfdd79f2e17
---- /dev/null
-+++ b/tools/testing/selftests/net/fin_ack_lat_connect.c
-@@ -0,0 +1,81 @@
-+// SPDX-License-Identifier: GPL-2.0
-+
-+#include <arpa/inet.h>
-+#include <error.h>
-+#include <netinet/tcp.h>
-+#include <stdio.h>
-+#include <sys/socket.h>
-+#include <sys/time.h>
-+#include <unistd.h>
-+
-+static unsigned long timediff(struct timeval s, struct timeval e)
-+{
-+	if (s.tv_sec > e.tv_sec)
-+		return 0;
-+	return (e.tv_sec - s.tv_sec) * 1000000 + e.tv_usec - s.tv_usec;
++	apic_intr_mode = __apic_intr_mode_select();
 +}
 +
-+int main(int argc, char const *argv[])
-+{
-+	int sock = 0;
-+	struct sockaddr_in addr, laddr;
-+	socklen_t len = sizeof(laddr);
-+	struct linger sl;
-+	int flag = 1;
-+	int buffer;
-+	int rc;
-+	struct timeval start, end;
-+	unsigned long lat, sum_lat = 0, nr_lat = 0;
+ /*
+  * An initial setup of the virtual wire mode.
+  */
+@@ -1440,8 +1455,6 @@ void __init apic_intr_mode_init(void)
+ {
+ 	bool upmode = IS_ENABLED(CONFIG_UP_LATE_INIT);
+ 
+-	apic_intr_mode = apic_intr_mode_select();
+-
+ 	switch (apic_intr_mode) {
+ 	case APIC_PIC:
+ 		pr_info("APIC: Keep in PIC mode(8259)\n");
+diff --git a/arch/x86/kernel/time.c b/arch/x86/kernel/time.c
+index 7ce29ce..d8673d8 100644
+--- a/arch/x86/kernel/time.c
++++ b/arch/x86/kernel/time.c
+@@ -91,10 +91,18 @@ void __init hpet_time_init(void)
+ 
+ static __init void x86_late_time_init(void)
+ {
++	/*
++	 * Before PIT/HPET init, select the interrupt mode. This is required
++	 * to make the decision whether PIT should be initialized correct.
++	 */
++	x86_init.irqs.intr_mode_select();
 +
-+	while (1) {
-+		gettimeofday(&start, NULL);
++	/* Setup the legacy timers */
+ 	x86_init.timers.timer_init();
 +
-+		sock = socket(AF_INET, SOCK_STREAM, 0);
-+		if (sock < 0)
-+			error(-1, -1, "socket creation");
-+
-+		sl.l_onoff = 1;
-+		sl.l_linger = 0;
-+		if (setsockopt(sock, SOL_SOCKET, SO_LINGER, &sl, sizeof(sl)))
-+			error(-1, -1, "setsockopt(linger)");
-+
-+		if (setsockopt(sock, IPPROTO_TCP, TCP_NODELAY,
-+					&flag, sizeof(flag)))
-+			error(-1, -1, "setsockopt(nodelay)");
-+
-+		addr.sin_family = AF_INET;
-+		addr.sin_port = htons(4242);
-+
-+		rc = inet_pton(AF_INET, "127.0.0.1", &addr.sin_addr);
-+		if (rc <= 0)
-+			error(-1, -1, "inet_pton");
-+
-+		rc = connect(sock, (struct sockaddr *)&addr, sizeof(addr));
-+		if (rc < 0)
-+			error(-1, -1, "connect");
-+
-+		send(sock, &buffer, sizeof(buffer), 0);
-+
-+		rc = read(sock, &buffer, sizeof(buffer));
-+
-+		gettimeofday(&end, NULL);
-+		lat = timediff(start, end);
-+		sum_lat += lat;
-+		nr_lat++;
-+		if (lat > 100000) {
-+			rc = getsockname(sock, (struct sockaddr *)&laddr, &len);
-+			if (rc == -1)
-+				error(-1, -1, "getsockname");
-+			printf("port: %d, lat: %lu, avg: %lu, nr: %lu\n",
-+					ntohs(laddr.sin_port), lat,
-+					sum_lat / nr_lat, nr_lat);
-+		}
-+
-+		if (nr_lat % 1000 == 0)
-+			fflush(stdout);
-+
-+
-+		close(sock);
-+	}
-+	return 0;
-+}
--- 
-2.17.1
-
+ 	/*
+-	 * After PIT/HPET timers init, select and setup
+-	 * the final interrupt mode for delivering IRQs.
++	 * After PIT/HPET timers init, set up the final interrupt mode for
++	 * delivering IRQs.
+ 	 */
+ 	x86_init.irqs.intr_mode_init();
+ 	tsc_init();
+diff --git a/arch/x86/kernel/x86_init.c b/arch/x86/kernel/x86_init.c
+index ce89430..9a89261 100644
+--- a/arch/x86/kernel/x86_init.c
++++ b/arch/x86/kernel/x86_init.c
+@@ -80,6 +80,7 @@ struct x86_init_ops x86_init __initdata = {
+ 		.pre_vector_init	= init_ISA_irqs,
+ 		.intr_init		= native_init_IRQ,
+ 		.trap_init		= x86_init_noop,
++		.intr_mode_select	= apic_intr_mode_select,
+ 		.intr_mode_init		= apic_intr_mode_init
+ 	},
+ 
+diff --git a/arch/x86/xen/enlighten_pv.c b/arch/x86/xen/enlighten_pv.c
+index ae4a41c..1f756ff 100644
+--- a/arch/x86/xen/enlighten_pv.c
++++ b/arch/x86/xen/enlighten_pv.c
+@@ -1205,6 +1205,7 @@ asmlinkage __visible void __init xen_start_kernel(void)
+ 	x86_platform.get_nmi_reason = xen_get_nmi_reason;
+ 
+ 	x86_init.resources.memory_setup = xen_memory_setup;
++	x86_init.irqs.intr_mode_select	= x86_init_noop;
+ 	x86_init.irqs.intr_mode_init	= x86_init_noop;
+ 	x86_init.oem.arch_setup = xen_arch_setup;
+ 	x86_init.oem.banner = xen_banner;
