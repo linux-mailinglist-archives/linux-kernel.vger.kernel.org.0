@@ -2,41 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5CDF014ECC8
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Jan 2020 13:56:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D5FB814ECC4
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Jan 2020 13:56:33 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728594AbgAaM4F (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 31 Jan 2020 07:56:05 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:53356 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728511AbgAaM4F (ORCPT
+        id S1728691AbgAaM4U (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 31 Jan 2020 07:56:20 -0500
+Received: from merlin.infradead.org ([205.233.59.134]:39046 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728643AbgAaM4L (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 31 Jan 2020 07:56:05 -0500
+        Fri, 31 Jan 2020 07:56:11 -0500
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=Content-Type:MIME-Version:References:
+        d=infradead.org; s=merlin.20170209; h=Content-Type:MIME-Version:References:
         Subject:Cc:To:From:Date:Message-Id:Sender:Reply-To:Content-Transfer-Encoding:
         Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
         Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:List-Id:List-Help:
         List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=n6RhCQHsHSyTTjZawIUQRIGp0UsjTpUD7uRgGAuTt9A=; b=PiXr0TMKBYgO1KuaqgBFJjOPAJ
-        jsw+p5rUo36Dm+/CFm2tZ4siWZ254oxNJxdEqOfpzB4jEH/UhKKmw0fuf9KV261tj7yFZ+3lsVPVZ
-        r2ysWQwFFvo34sOzbTY3Op04SYS2dFAvyn5OkjQdxK0dwPv8aRd2UthCr8rF0amWRlUIv7dLeb8wV
-        QqmyHqNODbxGQujpXWQO6LDfdtSaRghDzFvdfBxXF+OQPSDOuvLuDmk1WIp1PS8hWCmY+DHPUXqLr
-        Ql1j4CrA5ofiQim4yVy47OunCuO0gTkQOlSP0lfWkEHB5h7l7ZoLY8k98mkbPphB0WJNqvy6oAG0A
-        JxRLjLKA==;
+        bh=q4E39gWihzu+lIedcU2GGQL0DwGBBTGpotUpwCrekG0=; b=gijDdNhwx0ahvyqqnoFgAwTs4f
+        MzFxNGcBZ0dyybAbU1SknjtOuMiXb1NtDqwp8mZGUAs6+KqPJPXor6OREGptpbgh72lnluc+bQFzS
+        vDJRhIONq4U3eI9wUi3625ottotc5XBDee6TE7nOAf8BMr1TvMW7izn7BwalMWjTPb1XAC7xl9l/g
+        jD8a4zVXepk01IXSU4Dap4n7sK/Xr1Kz3q2vgeJpX4qBVYgNUxs5R//xkNhrYIH7ZVLRomk0nWaM1
+        tuwTRBnGyvCEUCHkU43/OahAJQCvNJkoYlS4DwcoJ+L5A6Wepdr18v1DvVYDPQbCc08b4pK8aq0Cw
+        ovy3arRg==;
 Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1ixVq7-0001ZA-2D; Fri, 31 Jan 2020 12:56:03 +0000
+        by merlin.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1ixVq7-0003gI-Op; Fri, 31 Jan 2020 12:56:04 +0000
 Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (Client did not present a certificate)
-        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 3C2B43011E8;
+        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 3E03F30603C;
         Fri, 31 Jan 2020 13:54:17 +0100 (CET)
 Received: by hirez.programming.kicks-ass.net (Postfix, from userid 0)
-        id E25142B4C4271; Fri, 31 Jan 2020 13:56:00 +0100 (CET)
-Message-Id: <20200131125403.597688427@infradead.org>
+        id E6C6B2B4C4272; Fri, 31 Jan 2020 13:56:00 +0100 (CET)
+Message-Id: <20200131125403.654652162@infradead.org>
 User-Agent: quilt/0.65
-Date:   Fri, 31 Jan 2020 13:45:34 +0100
+Date:   Fri, 31 Jan 2020 13:45:35 +0100
 From:   Peter Zijlstra <peterz@infradead.org>
 To:     Geert Uytterhoeven <geert@linux-m68k.org>
 Cc:     linux-m68k@lists.linux-m68k.org, linux-kernel@vger.kernel.org,
@@ -44,7 +44,7 @@ Cc:     linux-m68k@lists.linux-m68k.org, linux-kernel@vger.kernel.org,
         Peter Zijlstra <peterz@infradead.org>,
         Michael Schmitz <schmitzmic@gmail.com>,
         Greg Ungerer <gerg@linux-m68k.org>
-Subject: [PATCH -v2 03/10] m68k,mm: Unify Motorola MMU page setup
+Subject: [PATCH -v2 04/10] m68k,mm: Move the pointer table allocator to motorola.c
 References: <20200131124531.623136425@infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -53,162 +53,237 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Seeing how there are 5 copies of this magic code, one of which is
-unexplainably different, unify and document things.
+Only the Motorola MMU makes use of this allocator, it is a waste of
+.text to include it for Sun3/ColdFire. Also, this is going to avoid
+build issues when we're going to make it more Motorola specific.
 
-Suggested-by: Will Deacon <will@kernel.org>
 Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
 ---
- arch/m68k/include/asm/motorola_pgalloc.h |   23 ++++++++++-------------
- arch/m68k/mm/memory.c                    |    5 ++---
- arch/m68k/mm/motorola.c                  |   30 ++++++++++++++++++++++++------
- 3 files changed, 36 insertions(+), 22 deletions(-)
+ arch/m68k/mm/memory.c   |  102 ------------------------------------------------
+ arch/m68k/mm/motorola.c |  102 ++++++++++++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 102 insertions(+), 102 deletions(-)
 
---- a/arch/m68k/include/asm/motorola_pgalloc.h
-+++ b/arch/m68k/include/asm/motorola_pgalloc.h
-@@ -5,6 +5,9 @@
- #include <asm/tlb.h>
- #include <asm/tlbflush.h>
- 
-+extern void mmu_page_ctor(void *page);
-+extern void mmu_page_dtor(void *page);
-+
- extern pmd_t *get_pointer_table(void);
- extern int free_pointer_table(pmd_t *);
- 
-@@ -13,25 +16,21 @@ static inline pte_t *pte_alloc_one_kerne
- 	pte_t *pte;
- 
- 	pte = (pte_t *)__get_free_page(GFP_KERNEL|__GFP_ZERO);
--	if (pte) {
--		__flush_page_to_ram(pte);
--		flush_tlb_kernel_page(pte);
--		nocache_page(pte);
--	}
-+	if (pte)
-+		mmu_page_ctor(pte);
- 
- 	return pte;
- }
- 
- static inline void pte_free_kernel(struct mm_struct *mm, pte_t *pte)
- {
--	cache_page(pte);
-+	mmu_page_dtor(pte);
- 	free_page((unsigned long) pte);
- }
- 
- static inline pgtable_t pte_alloc_one(struct mm_struct *mm)
- {
- 	struct page *page;
--	pte_t *pte;
- 
- 	page = alloc_pages(GFP_KERNEL|__GFP_ZERO, 0);
- 	if(!page)
-@@ -41,18 +40,16 @@ static inline pgtable_t pte_alloc_one(st
- 		return NULL;
- 	}
- 
--	pte = kmap(page);
--	__flush_page_to_ram(pte);
--	flush_tlb_kernel_page(pte);
--	nocache_page(pte);
-+	mmu_page_ctor(kmap(page));
- 	kunmap(page);
-+
- 	return page;
- }
- 
- static inline void pte_free(struct mm_struct *mm, pgtable_t page)
- {
- 	pgtable_pte_page_dtor(page);
--	cache_page(kmap(page));
-+	mmu_page_dtor(kmap(page));
- 	kunmap(page);
- 	__free_page(page);
- }
-@@ -61,7 +58,7 @@ static inline void __pte_free_tlb(struct
- 				  unsigned long address)
- {
- 	pgtable_pte_page_dtor(page);
--	cache_page(kmap(page));
-+	mmu_page_dtor(kmap(page));
- 	kunmap(page);
- 	__free_page(page);
- }
 --- a/arch/m68k/mm/memory.c
 +++ b/arch/m68k/mm/memory.c
-@@ -77,8 +77,7 @@ pmd_t *get_pointer_table (void)
- 		if (!(page = (void *)get_zeroed_page(GFP_KERNEL)))
- 			return NULL;
+@@ -22,108 +22,6 @@
+ #include <asm/machdep.h>
  
--		flush_tlb_kernel_page(page);
--		nocache_page(page);
-+		mmu_page_ctor(page);
  
- 		new = PD_PTABLE(page);
- 		PD_MARKBITS(new) = 0xfe;
-@@ -112,7 +111,7 @@ int free_pointer_table (pmd_t *ptable)
- 	if (PD_MARKBITS(dp) == 0xff) {
- 		/* all tables in page are free, free page */
- 		list_del(dp);
--		cache_page((void *)page);
-+		mmu_page_dtor((void *)page);
- 		free_page (page);
- 		return 1;
- 	} else if (ptable_list.next != dp) {
+-/* ++andreas: {get,free}_pointer_table rewritten to use unused fields from
+-   struct page instead of separately kmalloced struct.  Stolen from
+-   arch/sparc/mm/srmmu.c ... */
+-
+-typedef struct list_head ptable_desc;
+-static LIST_HEAD(ptable_list);
+-
+-#define PD_PTABLE(page) ((ptable_desc *)&(virt_to_page(page)->lru))
+-#define PD_PAGE(ptable) (list_entry(ptable, struct page, lru))
+-#define PD_MARKBITS(dp) (*(unsigned char *)&PD_PAGE(dp)->index)
+-
+-#define PTABLE_SIZE (PTRS_PER_PMD * sizeof(pmd_t))
+-
+-void __init init_pointer_table(unsigned long ptable)
+-{
+-	ptable_desc *dp;
+-	unsigned long page = ptable & PAGE_MASK;
+-	unsigned char mask = 1 << ((ptable - page)/PTABLE_SIZE);
+-
+-	dp = PD_PTABLE(page);
+-	if (!(PD_MARKBITS(dp) & mask)) {
+-		PD_MARKBITS(dp) = 0xff;
+-		list_add(dp, &ptable_list);
+-	}
+-
+-	PD_MARKBITS(dp) &= ~mask;
+-	pr_debug("init_pointer_table: %lx, %x\n", ptable, PD_MARKBITS(dp));
+-
+-	/* unreserve the page so it's possible to free that page */
+-	__ClearPageReserved(PD_PAGE(dp));
+-	init_page_count(PD_PAGE(dp));
+-
+-	return;
+-}
+-
+-pmd_t *get_pointer_table (void)
+-{
+-	ptable_desc *dp = ptable_list.next;
+-	unsigned char mask = PD_MARKBITS (dp);
+-	unsigned char tmp;
+-	unsigned int off;
+-
+-	/*
+-	 * For a pointer table for a user process address space, a
+-	 * table is taken from a page allocated for the purpose.  Each
+-	 * page can hold 8 pointer tables.  The page is remapped in
+-	 * virtual address space to be noncacheable.
+-	 */
+-	if (mask == 0) {
+-		void *page;
+-		ptable_desc *new;
+-
+-		if (!(page = (void *)get_zeroed_page(GFP_KERNEL)))
+-			return NULL;
+-
+-		mmu_page_ctor(page);
+-
+-		new = PD_PTABLE(page);
+-		PD_MARKBITS(new) = 0xfe;
+-		list_add_tail(new, dp);
+-
+-		return (pmd_t *)page;
+-	}
+-
+-	for (tmp = 1, off = 0; (mask & tmp) == 0; tmp <<= 1, off += PTABLE_SIZE)
+-		;
+-	PD_MARKBITS(dp) = mask & ~tmp;
+-	if (!PD_MARKBITS(dp)) {
+-		/* move to end of list */
+-		list_move_tail(dp, &ptable_list);
+-	}
+-	return (pmd_t *) (page_address(PD_PAGE(dp)) + off);
+-}
+-
+-int free_pointer_table (pmd_t *ptable)
+-{
+-	ptable_desc *dp;
+-	unsigned long page = (unsigned long)ptable & PAGE_MASK;
+-	unsigned char mask = 1 << (((unsigned long)ptable - page)/PTABLE_SIZE);
+-
+-	dp = PD_PTABLE(page);
+-	if (PD_MARKBITS (dp) & mask)
+-		panic ("table already free!");
+-
+-	PD_MARKBITS (dp) |= mask;
+-
+-	if (PD_MARKBITS(dp) == 0xff) {
+-		/* all tables in page are free, free page */
+-		list_del(dp);
+-		mmu_page_dtor((void *)page);
+-		free_page (page);
+-		return 1;
+-	} else if (ptable_list.next != dp) {
+-		/*
+-		 * move this descriptor to the front of the list, since
+-		 * it has one or more free tables.
+-		 */
+-		list_move(dp, &ptable_list);
+-	}
+-	return 0;
+-}
+-
+ /* invalidate page in both caches */
+ static inline void clear040(unsigned long paddr)
+ {
 --- a/arch/m68k/mm/motorola.c
 +++ b/arch/m68k/mm/motorola.c
-@@ -45,6 +45,28 @@ unsigned long mm_cachebits;
- EXPORT_SYMBOL(mm_cachebits);
- #endif
+@@ -67,6 +67,108 @@ void mmu_page_dtor(void *page)
+ 	cache_page(page);
+ }
  
++/* ++andreas: {get,free}_pointer_table rewritten to use unused fields from
++   struct page instead of separately kmalloced struct.  Stolen from
++   arch/sparc/mm/srmmu.c ... */
 +
-+/*
-+ * Motorola 680x0 user's manual recommends using uncached memory for address
-+ * translation tables.
-+ *
-+ * Seeing how the MMU can be external on (some of) these chips, that seems like
-+ * a very important recommendation to follow. Provide some helpers to combat
-+ * 'variation' amongst the users of this.
-+ */
++typedef struct list_head ptable_desc;
++static LIST_HEAD(ptable_list);
 +
-+void mmu_page_ctor(void *page)
++#define PD_PTABLE(page) ((ptable_desc *)&(virt_to_page(page)->lru))
++#define PD_PAGE(ptable) (list_entry(ptable, struct page, lru))
++#define PD_MARKBITS(dp) (*(unsigned char *)&PD_PAGE(dp)->index)
++
++#define PTABLE_SIZE (PTRS_PER_PMD * sizeof(pmd_t))
++
++void __init init_pointer_table(unsigned long ptable)
 +{
-+	__flush_page_to_ram(page);
-+	flush_tlb_kernel_page(page);
-+	nocache_page(page);
++	ptable_desc *dp;
++	unsigned long page = ptable & PAGE_MASK;
++	unsigned char mask = 1 << ((ptable - page)/PTABLE_SIZE);
++
++	dp = PD_PTABLE(page);
++	if (!(PD_MARKBITS(dp) & mask)) {
++		PD_MARKBITS(dp) = 0xff;
++		list_add(dp, &ptable_list);
++	}
++
++	PD_MARKBITS(dp) &= ~mask;
++	pr_debug("init_pointer_table: %lx, %x\n", ptable, PD_MARKBITS(dp));
++
++	/* unreserve the page so it's possible to free that page */
++	__ClearPageReserved(PD_PAGE(dp));
++	init_page_count(PD_PAGE(dp));
++
++	return;
 +}
 +
-+void mmu_page_dtor(void *page)
++pmd_t *get_pointer_table (void)
 +{
-+	cache_page(page);
++	ptable_desc *dp = ptable_list.next;
++	unsigned char mask = PD_MARKBITS (dp);
++	unsigned char tmp;
++	unsigned int off;
++
++	/*
++	 * For a pointer table for a user process address space, a
++	 * table is taken from a page allocated for the purpose.  Each
++	 * page can hold 8 pointer tables.  The page is remapped in
++	 * virtual address space to be noncacheable.
++	 */
++	if (mask == 0) {
++		void *page;
++		ptable_desc *new;
++
++		if (!(page = (void *)get_zeroed_page(GFP_KERNEL)))
++			return NULL;
++
++		mmu_page_ctor(page);
++
++		new = PD_PTABLE(page);
++		PD_MARKBITS(new) = 0xfe;
++		list_add_tail(new, dp);
++
++		return (pmd_t *)page;
++	}
++
++	for (tmp = 1, off = 0; (mask & tmp) == 0; tmp <<= 1, off += PTABLE_SIZE)
++		;
++	PD_MARKBITS(dp) = mask & ~tmp;
++	if (!PD_MARKBITS(dp)) {
++		/* move to end of list */
++		list_move_tail(dp, &ptable_list);
++	}
++	return (pmd_t *) (page_address(PD_PAGE(dp)) + off);
++}
++
++int free_pointer_table (pmd_t *ptable)
++{
++	ptable_desc *dp;
++	unsigned long page = (unsigned long)ptable & PAGE_MASK;
++	unsigned char mask = 1 << (((unsigned long)ptable - page)/PTABLE_SIZE);
++
++	dp = PD_PTABLE(page);
++	if (PD_MARKBITS (dp) & mask)
++		panic ("table already free!");
++
++	PD_MARKBITS (dp) |= mask;
++
++	if (PD_MARKBITS(dp) == 0xff) {
++		/* all tables in page are free, free page */
++		list_del(dp);
++		mmu_page_dtor((void *)page);
++		free_page (page);
++		return 1;
++	} else if (ptable_list.next != dp) {
++		/*
++		 * move this descriptor to the front of the list, since
++		 * it has one or more free tables.
++		 */
++		list_move(dp, &ptable_list);
++	}
++	return 0;
 +}
 +
  /* size of memory already mapped in head.S */
  extern __initdata unsigned long m68k_init_mapped_size;
  
-@@ -60,9 +82,7 @@ static pte_t * __init kernel_page_table(
- 		      __func__, PAGE_SIZE, PAGE_SIZE);
- 
- 	clear_page(ptablep);
--	__flush_page_to_ram(ptablep);
--	flush_tlb_kernel_page(ptablep);
--	nocache_page(ptablep);
-+	mmu_page_ctor(ptablep);
- 
- 	return ptablep;
- }
-@@ -106,9 +126,7 @@ static pmd_t * __init kernel_ptr_table(v
- 			      __func__, PAGE_SIZE, PAGE_SIZE);
- 
- 		clear_page(last_pgtable);
--		__flush_page_to_ram(last_pgtable);
--		flush_tlb_kernel_page(last_pgtable);
--		nocache_page(last_pgtable);
-+		mmu_page_ctor(last_pgtable);
- 	}
- 
- 	return last_pgtable;
 
 
