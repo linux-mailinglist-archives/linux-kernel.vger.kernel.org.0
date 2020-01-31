@@ -2,53 +2,50 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2955914F516
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Feb 2020 00:10:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1F3E814F53A
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Feb 2020 00:33:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727505AbgAaXKV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 31 Jan 2020 18:10:21 -0500
-Received: from mail.kernel.org ([198.145.29.99]:46546 "EHLO mail.kernel.org"
+        id S1726668AbgAaXdK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 31 Jan 2020 18:33:10 -0500
+Received: from mail.kernel.org ([198.145.29.99]:54704 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727444AbgAaXKU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 31 Jan 2020 18:10:20 -0500
-Subject: Re: [GIT PULL] PCI changes for v5.6
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1580512220;
-        bh=A9zDSHkPt5djVFhXJVI200zBLGeM7r/vLu6ZohRK4JQ=;
-        h=From:In-Reply-To:References:Date:To:Cc:From;
-        b=b/pmDiQmYX3Z++86Ijn9Gh06tkXRHiAJ8pN20iB4UYkXc+Ze/Ayi8SH+nSieNrHQf
-         Js5j12XbwYuEZi4TLkcIHD1iiMXv3pn0GBwmd87SRLAmjUjsaf+W/xFZ5q+5/6T+W5
-         c+KENBPemcxzsgSXahooszJclyriydfm0oXwO168=
-From:   pr-tracker-bot@kernel.org
-In-Reply-To: <20200131223407.GA105848@google.com>
-References: <20200131223407.GA105848@google.com>
-X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <20200131223407.GA105848@google.com>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/helgaas/pci.git 01b810ed7187
-X-PR-Tracked-Commit-Id: 01b810ed71878785d189d01e4d7425a11203d7a8
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 26dca6dbd62d74a5012cafab6b2d6d65a01ea69c
-Message-Id: <158051222017.10603.3475601442315291583.pr-tracker-bot@kernel.org>
-Date:   Fri, 31 Jan 2020 23:10:20 +0000
-To:     Bjorn Helgaas <helgaas@kernel.org>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+        id S1726239AbgAaXdK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 31 Jan 2020 18:33:10 -0500
+Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 25D6120663;
+        Fri, 31 Jan 2020 23:33:09 +0000 (UTC)
+Date:   Fri, 31 Jan 2020 18:33:07 -0500
+From:   Steven Rostedt <rostedt@goodmis.org>
+To:     Tom Zanussi <zanussi@kernel.org>
+Cc:     artem.bityutskiy@linux.intel.com, mhiramat@kernel.org,
+        linux-kernel@vger.kernel.org, linux-rt-users@vger.kernel.org
+Subject: Re: [PATCH 1/4] tracing: Consolidate some synth_event_trace code
+Message-ID: <20200131183307.4c23f5d3@gandalf.local.home>
+In-Reply-To: <1580511632.5607.3.camel@kernel.org>
+References: <cover.1580506712.git.zanussi@kernel.org>
+        <d1c8d8ad124a653b7543afe801d38c199ca5c20e.1580506712.git.zanussi@kernel.org>
+        <20200131174344.5606d154@gandalf.local.home>
+        <1580511632.5607.3.camel@kernel.org>
+X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The pull request you sent on Fri, 31 Jan 2020 16:34:07 -0600:
+On Fri, 31 Jan 2020 17:00:32 -0600
+Tom Zanussi <zanussi@kernel.org> wrote:
+> 
+> Here's the patch with __synth_event_add_val() made static.  Let me know
+> if you want me to just do a v2 of this series..
+> 
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/helgaas/pci.git 01b810ed7187
+No, I'll just pull this in over the other one and start testing it.
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/26dca6dbd62d74a5012cafab6b2d6d65a01ea69c
+Thanks a lot for getting this done today!
 
-Thank you!
-
--- 
-Deet-doot-dot, I am a bot.
-https://korg.wiki.kernel.org/userdoc/prtracker
+-- Steve
