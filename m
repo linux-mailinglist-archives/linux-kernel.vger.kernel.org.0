@@ -2,52 +2,70 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A832B14F2D0
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Jan 2020 20:35:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A81A214F2DD
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Jan 2020 20:39:07 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726330AbgAaTfU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 31 Jan 2020 14:35:20 -0500
-Received: from mail.kernel.org ([198.145.29.99]:55530 "EHLO mail.kernel.org"
+        id S1726670AbgAaTjD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 31 Jan 2020 14:39:03 -0500
+Received: from gate.crashing.org ([63.228.1.57]:58945 "EHLO gate.crashing.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726593AbgAaTfS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 31 Jan 2020 14:35:18 -0500
-Subject: Re: [GIT PULL] MIPS changes
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1580499317;
-        bh=4mgYS0AdpRA7BOUvrgkicXbBKz0g9VpGUzSaXTafwHg=;
-        h=From:In-Reply-To:References:Date:To:Cc:From;
-        b=byOPl4TzXyxzVIi/QLpR45/QfUTgebz7XIg0tXaBvmM1Xg5zvCsCRmqib/IWiU2TD
-         za4wxi2IUZsxXpeGwFD0Fvl446leYx2B5gca45RkKfgZexCVTqHetCLOSSxj9kgqVQ
-         JcWPxbfgEP4fymswVthIaK2sJDiU6oFk/bUyu4w0=
-From:   pr-tracker-bot@kernel.org
-In-Reply-To: <20200131175528.m7t6bpd74cuknyht@pburton-laptop>
-References: <20200131175528.m7t6bpd74cuknyht@pburton-laptop>
-X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <20200131175528.m7t6bpd74cuknyht@pburton-laptop>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/mips/linux.git tags/mips_5.6
-X-PR-Tracked-Commit-Id: 2c4288719806ca0b3de1b742ada26b25a60d6a45
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: c5951e7c8ee5cb04b8b41c32bf567b90117a2124
-Message-Id: <158049931780.14867.13739565161470599168.pr-tracker-bot@kernel.org>
-Date:   Fri, 31 Jan 2020 19:35:17 +0000
-To:     Paul Burton <paulburton@kernel.org>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-kernel@vger.kernel.org, linux-mips@vger.kernel.org
+        id S1726001AbgAaTjD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 31 Jan 2020 14:39:03 -0500
+Received: from gate.crashing.org (localhost.localdomain [127.0.0.1])
+        by gate.crashing.org (8.14.1/8.14.1) with ESMTP id 00VJcZbS006329;
+        Fri, 31 Jan 2020 13:38:35 -0600
+Received: (from segher@localhost)
+        by gate.crashing.org (8.14.1/8.14.1/Submit) id 00VJcXRI006321;
+        Fri, 31 Jan 2020 13:38:33 -0600
+X-Authentication-Warning: gate.crashing.org: segher set sender to segher@kernel.crashing.org using -f
+Date:   Fri, 31 Jan 2020 13:38:33 -0600
+From:   Segher Boessenkool <segher@kernel.crashing.org>
+To:     Christophe Leroy <christophe.leroy@c-s.fr>
+Cc:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] powerpc/32s: Don't flush all TLBs when flushing one page
+Message-ID: <20200131193833.GF22482@gate.crashing.org>
+References: <e31c57eb5308a5a73a5c8232454c0dd9f65f6175.1580485014.git.christophe.leroy@c-s.fr> <20200131155150.GD22482@gate.crashing.org> <27cef66b-df5b-0baa-abac-5532e58bd055@c-s.fr>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <27cef66b-df5b-0baa-abac-5532e58bd055@c-s.fr>
+User-Agent: Mutt/1.4.2.3i
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The pull request you sent on Fri, 31 Jan 2020 09:55:28 -0800:
+On Fri, Jan 31, 2020 at 05:15:20PM +0100, Christophe Leroy wrote:
+> Le 31/01/2020 à 16:51, Segher Boessenkool a écrit :
+> >On Fri, Jan 31, 2020 at 03:37:34PM +0000, Christophe Leroy wrote:
+> >>When the range is a single page, do a page flush instead.
+> >
+> >>+	start &= PAGE_MASK;
+> >>+	end = (end - 1) | ~PAGE_MASK;
+> >>  	if (!Hash) {
+> >>-		_tlbia();
+> >>+		if (end - start == PAGE_SIZE)
+> >>+			_tlbie(start);
+> >>+		else
+> >>+			_tlbia();
+> >>  		return;
+> >>  	}
+> >
+> >For just one page, you get  end - start == 0  actually?
+> 
+> Oops, good catch.
+> 
+> Indeed you don't get PAGE_SIZE but (PAGE_SIZE - 1) for just one page.
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/mips/linux.git tags/mips_5.6
+You have all low bits masked off in both start and end, so you get zero.
+You could make the condion read "if (start == end)?
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/c5951e7c8ee5cb04b8b41c32bf567b90117a2124
+Maybe a nicer way to describe what you do is "if start and end are on the
+same memory page, flush that page."
 
-Thank you!
 
--- 
-Deet-doot-dot, I am a bot.
-https://korg.wiki.kernel.org/userdoc/prtracker
+Segher
