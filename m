@@ -2,134 +2,75 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D875F14E931
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Jan 2020 08:41:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B14DF14E935
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Jan 2020 08:45:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728162AbgAaHlo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 31 Jan 2020 02:41:44 -0500
-Received: from smtp-fw-4101.amazon.com ([72.21.198.25]:15475 "EHLO
-        smtp-fw-4101.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728089AbgAaHln (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 31 Jan 2020 02:41:43 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
-  t=1580456503; x=1611992503;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   mime-version;
-  bh=hXqcxoeUTXv6Sl/D/o2xVhucn86dLhacZQT1P/cIuzM=;
-  b=VsXqKMr7mO312v5ohuH8XjkUnzIt36KoDYQhKwgEHa6yIdpnjWHqB85X
-   TNTn0Kk7o/x7ABgvPCoRDa9K3C+gJGtGJRRpyFACsWdoiH4PwE0GSwKgC
-   KDaglHlrsojI/XxhHFBFRSLIKT8Xl/aj7S1yX+sUtX9QXKVFiso9fbq9/
-   0=;
-IronPort-SDR: TDVLF5psLVoz4B8kmnPSKaCBxvX8j+VejGNDcH7bgeJuy0/p1gPPyG1+1SwQ0HFCFa+vcpb7p8
- 3JUDRyKLDbEg==
-X-IronPort-AV: E=Sophos;i="5.70,385,1574121600"; 
-   d="scan'208";a="14975291"
-Received: from iad12-co-svc-p1-lb1-vlan3.amazon.com (HELO email-inbound-relay-1d-74cf8b49.us-east-1.amazon.com) ([10.43.8.6])
-  by smtp-border-fw-out-4101.iad4.amazon.com with ESMTP; 31 Jan 2020 07:41:41 +0000
-Received: from EX13MTAUEA002.ant.amazon.com (iad55-ws-svc-p15-lb9-vlan2.iad.amazon.com [10.40.159.162])
-        by email-inbound-relay-1d-74cf8b49.us-east-1.amazon.com (Postfix) with ESMTPS id CC8DEC08EB;
-        Fri, 31 Jan 2020 07:41:37 +0000 (UTC)
-Received: from EX13D31EUA001.ant.amazon.com (10.43.165.15) by
- EX13MTAUEA002.ant.amazon.com (10.43.61.77) with Microsoft SMTP Server (TLS)
- id 15.0.1236.3; Fri, 31 Jan 2020 07:41:37 +0000
-Received: from u886c93fd17d25d.ant.amazon.com (10.43.160.29) by
- EX13D31EUA001.ant.amazon.com (10.43.165.15) with Microsoft SMTP Server (TLS)
- id 15.0.1367.3; Fri, 31 Jan 2020 07:41:30 +0000
-From:   <sjpark@amazon.com>
-To:     Eric Dumazet <edumazet@google.com>
-CC:     <sjpark@amazon.com>, David Miller <davem@davemloft.net>,
-        "Alexei Starovoitov" <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        "Martin KaFai Lau" <kafai@fb.com>,
-        Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>,
-        <andriin@fb.com>, netdev <netdev@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>, bpf <bpf@vger.kernel.org>,
-        <aams@amazon.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        <dola@amazon.com>
-Subject: Re: Re: Re: Latency spikes occurs from frequent socket connections
-Date:   Fri, 31 Jan 2020 08:41:16 +0100
-Message-ID: <20200131074116.8684-1-sjpark@amazon.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <CANn89iKDn2XhrnLo2rLf7HGXanEuokprqJ_mb0iPqXEnARc9tw@mail.gmail.com> (raw)
+        id S1728122AbgAaHpi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 31 Jan 2020 02:45:38 -0500
+Received: from sauhun.de ([88.99.104.3]:57164 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728027AbgAaHpi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 31 Jan 2020 02:45:38 -0500
+Received: from localhost (p54B333AF.dip0.t-ipconnect.de [84.179.51.175])
+        by pokefinder.org (Postfix) with ESMTPSA id D7CD82C0830;
+        Fri, 31 Jan 2020 08:45:35 +0100 (CET)
+Date:   Fri, 31 Jan 2020 08:45:35 +0100
+From:   Wolfram Sang <wsa@the-dreams.de>
+To:     Akshu Agrawal <akshu.agrawal@amd.com>
+Cc:     rrangel@chromium.org, Benson Leung <bleung@chromium.org>,
+        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
+        Guenter Roeck <groeck@chromium.org>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        "open list:I2C SUBSYSTEM HOST DRIVERS" <linux-i2c@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] i2c: i2c-cros-ec-tunnel: Fix slave device enumeration
+Message-ID: <20200131074535.GC1028@ninjato>
+References: <20191121090620.75569-1-akshu.agrawal@amd.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.43.160.29]
-X-ClientProxiedBy: EX13D13UWA002.ant.amazon.com (10.43.160.172) To
- EX13D31EUA001.ant.amazon.com (10.43.165.15)
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="ctP54qlpMx3WjD+/"
+Content-Disposition: inline
+In-Reply-To: <20191121090620.75569-1-akshu.agrawal@amd.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 30 Jan 2020 09:02:08 -0800 Eric Dumazet <edumazet@google.com> wrote:
 
-> On Thu, Jan 30, 2020 at 4:41 AM <sjpark@amazon.com> wrote:
-> >
-> > On Wed, 29 Jan 2020 09:52:43 -0800 Eric Dumazet <edumazet@google.com> wrote:
-> >
-> > > On Wed, Jan 29, 2020 at 9:14 AM <sjpark@amazon.com> wrote:
-> > > >
-> > > > Hello,
-> > > >
-> > > >
-> > > > We found races in the kernel code that incur latency spikes.  We thus would
-> > > > like to share our investigations and hear your opinions.
-> > > >
-[...]
-> > >
-> > > I would rather try to fix the issue more generically, without adding
-> > > extra lookups as you did, since they might appear
-> > > to reduce the race, but not completely fix it.
-> > >
-> > > For example, the fact that the client side ignores the RST and
-> > > retransmits a SYN after one second might be something that should be
-> > > fixed.
-> >
-> > I also agree with this direction.  It seems detecting this situation and
-> > adjusting the return value of tcp_timeout_init() to a value much lower than the
-> > one second would be a straightforward solution.  For a test, I modified the
-> > function to return 1 (4ms for CONFIG_HZ=250) and confirmed the reproducer be
-> > silent.  My following question is, how we can detect this situation in kernel?
-> > However, I'm unsure how we can distinguish this specific case from other cases,
-> > as everything is working as normal according to the TCP protocol.
-> >
-> > Also, it seems the value is made to be adjustable from the user space using the
-> > bpf callback, BPF_SOCK_OPS_TIMEOUT_INIT:
-> >
-> >     BPF_SOCK_OPS_TIMEOUT_INIT,  /* Should return SYN-RTO value to use or
-> >                                  * -1 if default value should be used
-> >                                  */
-> >
-> > Thus, it sounds like you are suggesting to do the detection and adjustment from
-> > user space.  Am I understanding your point?  If not, please let me know.
-> >
-> 
-> No, I was suggesting to implement a mitigation in the kernel :
-> 
-> When in SYN_SENT state, receiving an suspicious ACK should not
-> simply trigger a RST.
-> 
-> There are multiple ways maybe to address the issue.
-> 
-> 1) Abort the SYN_SENT state and let user space receive an error to its
-> connect() immediately.
-> 
-> 2) Instead of a RST, allow the first SYN retransmit to happen immediately
-> (This is kind of a challenge SYN. Kernel already implements challenge acks)
-> 
-> 3) After RST is sent (to hopefully clear the state of the remote),
-> schedule a SYN rtx in a few ms,
-> instead of ~ one second.
+--ctP54qlpMx3WjD+/
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Thank you for this kind comment, Eric!  I would prefer the second and third
-idea rather than first one.  Anyway, I will send a patch soon.  Will add a
-kselftest for this case, too.
+On Thu, Nov 21, 2019 at 02:36:17PM +0530, Akshu Agrawal wrote:
+> During adding of the adapter the slave device registration
+> use to fail as the acpi companion field was not populated.
+>=20
+> Signed-off-by: Akshu Agrawal <akshu.agrawal@amd.com>
+
+Applied to for-next (v5.6) with Fixes tag added, thanks!
 
 
-Thanks,
-SeongJae Park
+--ctP54qlpMx3WjD+/
+Content-Type: application/pgp-signature; name="signature.asc"
 
-[...]
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAl4z2xsACgkQFA3kzBSg
+KbbKFxAAgpMonUfxyVUY5DY80CPc0VG6rP1A3Y56J94PLSYgvG5TkzVahjZ8IHQA
+CunGV7/qKeG9VpIt33LyPKyJ04aMmN8HL3XWZFTWM63l42Mkba8n4O+2q0CsgmA2
+Q//FTE5YJKPnEIfBe7UWcs52SHoLRJEEyTtb26QYreXjRD2gHzFNcpfLWO9ddLET
+CX0JjZvAWpUFojLg3vNo04HfHWtFsZX/fJM45tog/LSSa9/MIXudWSegH4prR4/M
+cW1QNea4shXiUFXv9qwCtsv9iocV5EKMUZrIgjK/HY0rl1r4iPFMeLOR/bOy+VZz
+3IG6bxAWjQIL80hEofZdjdSpAyeMfydruW/4FcNvlebKuidHR7SSG3qbRQG/3h4Z
+SbJaJK7sjq358yQPU8QNiDRuufbZFtA+Q6/fWm9uL7XKV9jB32YWfO9l+JGmKNid
+V0lJPyU4maw6OIz9g1zATnQwUlub/ot7XQnwPY4gkk78Ln22/u739XoXw7CgmeyP
+mrxIhN9auDY0UJ3AlecIURRbFJGm/XZ8X0qEgI0tAlSvK7OHP5Rmtcri8U6o4cvA
+9Vswrp5bIwMKwfxl8Idorg2IR2/xuV/AF2M17TK57Pu5Ynq9jBOgIcb1ttxx/pzO
+NJJkmDeZ8n4PNwgNlgsho4UQR8XaNSo9T9SNoYVQrw1L+JZHC5Y=
+=t3se
+-----END PGP SIGNATURE-----
+
+--ctP54qlpMx3WjD+/--
