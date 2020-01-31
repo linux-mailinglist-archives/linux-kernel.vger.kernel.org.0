@@ -2,48 +2,48 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C99C214EF65
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Jan 2020 16:18:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4CE4614EF6A
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Jan 2020 16:18:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729152AbgAaPSO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 31 Jan 2020 10:18:14 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:50140 "EHLO
+        id S1729269AbgAaPS1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 31 Jan 2020 10:18:27 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:50142 "EHLO
         bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728884AbgAaPSL (ORCPT
+        with ESMTP id S1729090AbgAaPSM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 31 Jan 2020 10:18:11 -0500
+        Fri, 31 Jan 2020 10:18:12 -0500
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=bombadil.20170209; h=Content-Type:MIME-Version:References:
         Subject:Cc:To:From:Date:Message-Id:Sender:Reply-To:Content-Transfer-Encoding:
         Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
         Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:List-Id:List-Help:
         List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=30tida9Rd+08SPvLTckNsi5mGIA6RIpiUmpqAkSABQk=; b=YXIQJPQtNdgdY31ldVfZyDD9ps
-        lRAdJ4AMX0rZLJHNdefNKHFLuvUMbt3JdJFIO1o8SuLuOrij1yiHx/ODRUoLumuY8m0CqwqjFZTyZ
-        mDPELJLbDOWx5OWhUGDguOOhp/FnnTvtzU08X6iOegehVj7hTvkPuTf2Wd0Sl6CeygZ2t3kzs+gmT
-        fZE9xyIU2/AtdNWh5G17WcU1EwR31jnqAbGvg+EdgkDk5qC3h4E2H/OJrnJQoE7C1sjvMD0d+8Kcl
-        m5kVOXGsqU/M7vhpTo2qthxX5bGMS+wb+4WmEI78Y68STph8dDsy4V8Ushml+6CWpnvmqiNjK3W04
-        fFr31pbA==;
+        bh=qdQ72X8eJDUegByfpEinwuR80lTNXL8pwZViVX83mfE=; b=OdbyEJ7ed8QFDLDOsIXw4wXSCa
+        gpQugNCHyN5wXQJLRlLF+LXJn1lc0P04BUQS/ljpy6yyW8MM8NSzGw6bRlSvuYBlOGmYtgstqc8ey
+        8mTn1fiqqhnKQYm+GhqInJZO6WFEX7aMQZyzccuP+N5iMNDazqvn75jcQfIcFdPMyU/eAycrgMabw
+        CkFo5Kp5wN8oiwAuBYMc9x6wObplBbOcvfw1lavFP8wtRVHmzNdiZvrt08FR6Ox5F2VaDmUCJFnxs
+        t5ILk5dXjEfy7fSw34XZXasWGj+OuMLxWAz4gKEMEuDBU+F9TfUmVg09wiMwKkBykeAxL2ql2XmQu
+        XDT4LraA==;
 Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
         by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1ixY3W-00045a-Uj; Fri, 31 Jan 2020 15:18:03 +0000
+        id 1ixY3W-00045c-VQ; Fri, 31 Jan 2020 15:18:03 +0000
 Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (Client did not present a certificate)
-        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 6911B306368;
+        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 6DAD3306BE4;
         Fri, 31 Jan 2020 16:16:15 +0100 (CET)
 Received: by hirez.programming.kicks-ass.net (Postfix, from userid 0)
-        id C50912B64DB7B; Fri, 31 Jan 2020 16:17:58 +0100 (CET)
-Message-Id: <20200131151540.212415454@infradead.org>
+        id C85A32B64DB7C; Fri, 31 Jan 2020 16:17:58 +0100 (CET)
+Message-Id: <20200131151540.269115130@infradead.org>
 User-Agent: quilt/0.65
-Date:   Fri, 31 Jan 2020 16:07:09 +0100
+Date:   Fri, 31 Jan 2020 16:07:10 +0100
 From:   Peter Zijlstra <peterz@infradead.org>
 To:     peterz@infradead.org, mingo@kernel.org, will@kernel.org
 Cc:     oleg@redhat.com, tglx@linutronix.de, linux-kernel@vger.kernel.org,
         bigeasy@linutronix.de, juri.lelli@redhat.com, williams@redhat.com,
         bristot@redhat.com, longman@redhat.com, dave@stgolabs.net,
-        jack@suse.com
-Subject: [PATCH -v2 6/7] locking/percpu-rwsem: Fold __percpu_up_read()
+        jack@suse.com, Davidlohr Bueso <dbueso@suse.de>
+Subject: [PATCH -v2 7/7] locking/percpu-rwsem: Add might_sleep() for writer locking
 References: <20200131150703.194229898@infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -54,85 +54,25 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Davidlohr Bueso <dave@stgolabs.net>
 
-Now that __percpu_up_read() is only ever used from percpu_up_read()
-merge them, it's a small function.
+We are missing this annotation in percpu_down_write(). Correct
+this.
 
+Signed-off-by: Davidlohr Bueso <dbueso@suse.de>
 Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Link: https://lkml.kernel.org/r/20200108013305.7732-1-dave@stgolabs.net
 ---
- include/linux/percpu-rwsem.h  |   19 +++++++++++++++----
- kernel/exit.c                 |    1 +
- kernel/locking/percpu-rwsem.c |   15 ---------------
- 3 files changed, 16 insertions(+), 19 deletions(-)
+ kernel/locking/percpu-rwsem.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/include/linux/percpu-rwsem.h
-+++ b/include/linux/percpu-rwsem.h
-@@ -43,7 +43,6 @@ is_static struct percpu_rw_semaphore nam
- 	__DEFINE_PERCPU_RWSEM(name, static)
- 
- extern bool __percpu_down_read(struct percpu_rw_semaphore *, bool);
--extern void __percpu_up_read(struct percpu_rw_semaphore *);
- 
- static inline void percpu_down_read(struct percpu_rw_semaphore *sem)
- {
-@@ -103,10 +102,22 @@ static inline void percpu_up_read(struct
- 	/*
- 	 * Same as in percpu_down_read().
- 	 */
--	if (likely(rcu_sync_is_idle(&sem->rss)))
-+	if (likely(rcu_sync_is_idle(&sem->rss))) {
- 		__this_cpu_dec(*sem->read_count);
--	else
--		__percpu_up_read(sem); /* Unconditional memory barrier */
-+	} else {
-+		/*
-+		 * slowpath; reader will only ever wake a single blocked
-+		 * writer.
-+		 */
-+		smp_mb(); /* B matches C */
-+		/*
-+		 * In other words, if they see our decrement (presumably to
-+		 * aggregate zero, as that is the only time it matters) they
-+		 * will also see our critical section.
-+		 */
-+		__this_cpu_dec(*sem->read_count);
-+		rcuwait_wake_up(&sem->writer);
-+	}
- 	preempt_enable();
- }
- 
---- a/kernel/exit.c
-+++ b/kernel/exit.c
-@@ -258,6 +258,7 @@ void rcuwait_wake_up(struct rcuwait *w)
- 		wake_up_process(task);
- 	rcu_read_unlock();
- }
-+EXPORT_SYMBOL_GPL(rcuwait_wake_up);
- 
- /*
-  * Determine if a process group is "orphaned", according to the POSIX
 --- a/kernel/locking/percpu-rwsem.c
 +++ b/kernel/locking/percpu-rwsem.c
-@@ -177,21 +177,6 @@ bool __percpu_down_read(struct percpu_rw
- }
- EXPORT_SYMBOL_GPL(__percpu_down_read);
+@@ -212,6 +212,7 @@ static bool readers_active_check(struct
  
--void __percpu_up_read(struct percpu_rw_semaphore *sem)
--{
--	smp_mb(); /* B matches C */
--	/*
--	 * In other words, if they see our decrement (presumably to aggregate
--	 * zero, as that is the only time it matters) they will also see our
--	 * critical section.
--	 */
--	__this_cpu_dec(*sem->read_count);
--
--	/* Prod writer to re-evaluate readers_active_check() */
--	rcuwait_wake_up(&sem->writer);
--}
--EXPORT_SYMBOL_GPL(__percpu_up_read);
--
- #define per_cpu_sum(var)						\
- ({									\
- 	typeof(var) __sum = 0;						\
+ void percpu_down_write(struct percpu_rw_semaphore *sem)
+ {
++	might_sleep();
+ 	rwsem_acquire(&sem->dep_map, 0, 0, _RET_IP_);
+ 
+ 	/* Notify readers to take the slow path. */
 
 
