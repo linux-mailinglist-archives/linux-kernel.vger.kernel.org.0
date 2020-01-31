@@ -2,118 +2,96 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E165F14E7B5
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Jan 2020 04:56:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8790714E7B8
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Jan 2020 04:57:00 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727956AbgAaD4d (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 30 Jan 2020 22:56:33 -0500
-Received: from mail-qt1-f196.google.com ([209.85.160.196]:43639 "EHLO
-        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727909AbgAaD4d (ORCPT
+        id S1728008AbgAaD44 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 30 Jan 2020 22:56:56 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:36472 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727909AbgAaD44 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 30 Jan 2020 22:56:33 -0500
-Received: by mail-qt1-f196.google.com with SMTP id d18so4372091qtj.10;
-        Thu, 30 Jan 2020 19:56:32 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=jms.id.au; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=giaaas3saM7ZnV4c4smX1JcgTAL1YeM8DtaRFKtNHgc=;
-        b=crNbZOH9Ed0ABdlKTXB1vBiOXKB7+GjFPPrcykjonbeRhA77dU4D95buRmuSb/HrTf
-         lhpOiS4cAAUqZgxGlqbJ+h4wqsWTzf2wpwTyEHHJeDGT2l1kYposPBEuTywoKwmbtOj4
-         YAfplw+l3R8Uxp67cX3Khtk28NkYrLFgNldho=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=giaaas3saM7ZnV4c4smX1JcgTAL1YeM8DtaRFKtNHgc=;
-        b=R1CoVTSBg+GKTPHS7swNpLx92hbAmtrcYzviB2bTDZMcyVShPLWbfIVdKAD+1jJULP
-         0OEe3ERDr+rk+bjmkSUsrpKbmrGUcmi1KPBaQCC2yPYAbKcQ/olK04HhVDuwlzSUxGKb
-         aZL37UQe6M+fyT//HVznXjJfKwwO+9HoXBCHpKOv3aXPF9RWgPozdj73Cmnm8rJsqtaQ
-         p0be4PU8Zg04hzKS5mNo0xSkXLuL6KFV1iDZlGmMb4UOFVmMa3Hpp/c6fSf2R41/pHya
-         rFmFTxoyuRMT3JXJgrrGcJXPRorJIAydum97p6UW0yB1F93rYk+zOYDSIEzCZdCX3Y7l
-         rEBQ==
-X-Gm-Message-State: APjAAAU1pAqKjdhJvuG+NOL7rYn0Vn7znxXzM0HZaCYaHopIibD1bjyi
-        9itt/RAvE6NjMSvnR8zM5rChbaseBGqIyVrRg9g=
-X-Google-Smtp-Source: APXvYqzuY2q7VtjMI43kwIjVulHF6td/oZnRE/hNAX7gUXypAD+c+GinBXcwLLN5Y0oaVYyv8JfSq5V15f8talvX9lw=
-X-Received: by 2002:aed:3b3b:: with SMTP id p56mr8919865qte.234.1580442992161;
- Thu, 30 Jan 2020 19:56:32 -0800 (PST)
+        Thu, 30 Jan 2020 22:56:56 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
+        Content-Type:In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:
+        Subject:Sender:Reply-To:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=5AiRNNR3E4corHChDgT2p0fKB/v898YA69onJ2mDDvw=; b=ZT77gvY6Brb8nwO28+W+PgGME
+        1oHALqs7edfA5cAXt2DkOj2ED02hIyZk7cqJZUEQ6g9u6JxtsI2no2cLY87s/Gw8YqdFaGe7neSG3
+        TnzE4fI058xHpmkMFgn4T9ST8cE/wBnMz1TXttpMowzC/81zyT7NbUQTDs6rp5VjWDP34tBDwvi0d
+        4SaOhBuvujCcPwav2o9u7mZZb9KWuycxO2j08+HV/qBzJPjTSlJgoSlyF8xoM+eO3fEq2SeyS3Wfz
+        FvLanvkTO7oNyZKJHaSODqEIHL/RVYgxErYSycYFySL+vareq71eeVKPboLj6qLAvpnhaSsRKFbhj
+        Jp6aKukPQ==;
+Received: from [2601:1c0:6280:3f0:897c:6038:c71d:ecac]
+        by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1ixNQD-0003II-6X; Fri, 31 Jan 2020 03:56:45 +0000
+Subject: Re: [PATCH] vhost: introduce vDPA based backend
+To:     Tiwei Bie <tiwei.bie@intel.com>, mst@redhat.com,
+        jasowang@redhat.com
+Cc:     linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
+        virtualization@lists.linux-foundation.org, netdev@vger.kernel.org,
+        shahafs@mellanox.com, jgg@mellanox.com, rob.miller@broadcom.com,
+        haotian.wang@sifive.com, eperezma@redhat.com, lulu@redhat.com,
+        parav@mellanox.com, hch@infradead.org, jiri@mellanox.com,
+        hanand@xilinx.com, mhabets@solarflare.com,
+        maxime.coquelin@redhat.com, lingshan.zhu@intel.com,
+        dan.daly@intel.com, cunming.liang@intel.com, zhihong.wang@intel.com
+References: <20200131033651.103534-1-tiwei.bie@intel.com>
+From:   Randy Dunlap <rdunlap@infradead.org>
+Message-ID: <43aeecb4-4c08-df3d-1c1d-699ec4c494bd@infradead.org>
+Date:   Thu, 30 Jan 2020 19:56:43 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.1
 MIME-Version: 1.0
-References: <20200128011728.4092945-1-vijaykhemka@fb.com>
-In-Reply-To: <20200128011728.4092945-1-vijaykhemka@fb.com>
-From:   Joel Stanley <joel@jms.id.au>
-Date:   Fri, 31 Jan 2020 03:56:20 +0000
-Message-ID: <CACPK8Xc6TbHLgWO3p7YXJf+jfzNhiGzGsdDwQsQ56ix8sUQGzg@mail.gmail.com>
-Subject: Re: [PATCH] ARM: dts: aspeed: tiogapass: Add IPMB device
-To:     Vijay Khemka <vijaykhemka@fb.com>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Andrew Jeffery <andrew@aj.id.au>,
-        devicetree <devicetree@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        linux-aspeed <linux-aspeed@lists.ozlabs.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Sai Dasari <sdasari@fb.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20200131033651.103534-1-tiwei.bie@intel.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 28 Jan 2020 at 01:17, Vijay Khemka <vijaykhemka@fb.com> wrote:
->
-> Adding IPMB devices for facebook tiogapass platform.
->
-> Signed-off-by: Vijay Khemka <vijaykhemka@fb.com>
+Hi,
 
-Reviewed-by: Joel Stanley <joel@jms.id.au>
+On 1/30/20 7:36 PM, Tiwei Bie wrote:
+> diff --git a/drivers/vhost/Kconfig b/drivers/vhost/Kconfig
+> index f21c45aa5e07..13e6a94d0243 100644
+> --- a/drivers/vhost/Kconfig
+> +++ b/drivers/vhost/Kconfig
+> @@ -34,6 +34,18 @@ config VHOST_VSOCK
+>  	To compile this driver as a module, choose M here: the module will be called
+>  	vhost_vsock.
+>  
+> +config VHOST_VDPA
+> +	tristate "Vhost driver for vDPA based backend"
+> +	depends on EVENTFD && VDPA
+> +	select VHOST
+> +	default n
+> +	---help---
+> +	This kernel module can be loaded in host kernel to accelerate
+> +	guest virtio devices with the vDPA based backends.
 
-I will merge this through the aspeed tree for 5.7.
+	                              vDPA-based
 
-Cheers,
+> +
+> +	To compile this driver as a module, choose M here: the module
+> +	will be called vhost_vdpa.
+> +
 
-Joel
+The preferred Kconfig style nowadays is
+(a) use "help" instead of "---help---"
+(b) indent the help text with one tab + 2 spaces
 
-> ---
->  arch/arm/boot/dts/aspeed-bmc-facebook-tiogapass.dts | 11 +++++++++++
->  1 file changed, 11 insertions(+)
->
-> diff --git a/arch/arm/boot/dts/aspeed-bmc-facebook-tiogapass.dts b/arch/arm/boot/dts/aspeed-bmc-facebook-tiogapass.dts
-> index fb7f034d5db2..719c130a198c 100644
-> --- a/arch/arm/boot/dts/aspeed-bmc-facebook-tiogapass.dts
-> +++ b/arch/arm/boot/dts/aspeed-bmc-facebook-tiogapass.dts
-> @@ -5,6 +5,7 @@
->
->  #include "aspeed-g5.dtsi"
->  #include <dt-bindings/gpio/aspeed-gpio.h>
-> +#include <dt-bindings/i2c/i2c.h>
->
->  / {
->         model = "Facebook TiogaPass BMC";
-> @@ -428,6 +429,11 @@
->  &i2c4 {
->         status = "okay";
->         // BMC Debug Header
-> +       ipmb0@10 {
-> +               compatible = "ipmb-dev";
-> +               reg = <(0x10 | I2C_OWN_SLAVE_ADDRESS)>;
-> +               i2c-protocol;
-> +       };
->  };
->
->  &i2c5 {
-> @@ -509,6 +515,11 @@
->  &i2c9 {
->         status = "okay";
->         //USB Debug Connector
-> +       ipmb0@10 {
-> +               compatible = "ipmb-dev";
-> +               reg = <(0x10 | I2C_OWN_SLAVE_ADDRESS)>;
-> +               i2c-protocol;
-> +       };
->  };
->
->  &pwm_tacho {
-> --
-> 2.17.1
->
+and don't use "default n" since that is already the default.
+
+>  config VHOST
+>  	tristate
+>          depends on VHOST_IOTLB
+
+thanks.
+-- 
+~Randy
+
