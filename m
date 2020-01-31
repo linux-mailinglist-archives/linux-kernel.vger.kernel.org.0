@@ -2,158 +2,196 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2C09014F242
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Jan 2020 19:37:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 43D3714F253
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Jan 2020 19:42:16 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726186AbgAaShD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 31 Jan 2020 13:37:03 -0500
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:46004 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725909AbgAaShD (ORCPT
+        id S1726264AbgAaSmO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 31 Jan 2020 13:42:14 -0500
+Received: from mail-ed1-f68.google.com ([209.85.208.68]:36597 "EHLO
+        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725909AbgAaSmO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 31 Jan 2020 13:37:03 -0500
-Received: by mail-wr1-f68.google.com with SMTP id a6so9781807wrx.12
-        for <linux-kernel@vger.kernel.org>; Fri, 31 Jan 2020 10:37:02 -0800 (PST)
+        Fri, 31 Jan 2020 13:42:14 -0500
+Received: by mail-ed1-f68.google.com with SMTP id j17so8870376edp.3;
+        Fri, 31 Jan 2020 10:42:10 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=OXV92UcuWOio8wUsLVreOblv28BcDDZ/aCq7MZ9L0O0=;
-        b=dyBDXys7ffHNsUDuD8glyxvA6du8y/ciqORc6VBmFajxFRhllRCvSTruxF7auG/yVL
-         oT4ZZPFRLwWW6M/oDxbO+qP7s9Z2THon72gYtdz4rPz1iAO6XclfZHugrbqZ4S6swYxn
-         Bl71rENXgvALNgi0ok7tQyVA3/pEwQdnB/oi9RUJ+DtFLDnlTD5ZB2JmfTBVQ/cc0D1L
-         cUMl2lO/njYVOr3glSxk0RouVn/Z6ZgUlqHhFwWMHigjnS+x9odQ1N5fDmBAF57SzshQ
-         +I34qoU9qMUaVG8NDKAQ4mttDImRO0nLklkXTccD0AWtia4jWMTrs43RFK8WsMjcmaRJ
-         XmPA==
+        h=subject:to:cc:references:from:autocrypt:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=6BBdKpD2/d2DntApFESCHY7dAIic1HxQ83WKhIFyhjg=;
+        b=arSSi6Xtbctnf1WiUfdaL2EodTsgJl2UZMGwWsklnwLC01nAEAqHK2OifLxvd/cmhZ
+         ePH/OJJy6dQFoCy8YdZV/nJe2epfYDpKyw4sxNSlVGECuwvNzkDliBuy/6IAzeESv45N
+         AgCGP066wK8ktLuFIG1LhsJnRg/IpGF0s2EXg0iM6suGdJBf6zy5Tmjk82ICnG3JDV78
+         RBy38SKP75odJzw0TwNHM8W/iCGX92MB+1AtFEj7y+GGSml6zkXdBjmLMSMq3oSw9oIw
+         8VZNyvkaCtno795LGadmWTSrS1zTp88Bi123uEJgqxfK0h0NjHMCd4gnNqAD9MRM3ASr
+         PR+g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition
-         :content-transfer-encoding:in-reply-to:user-agent;
-        bh=OXV92UcuWOio8wUsLVreOblv28BcDDZ/aCq7MZ9L0O0=;
-        b=Ys+lm8rX/cKl8xZ90tauc46dBjY3mgqR17KARUQdFh8bhsDNMcFvLiYsQRK72EKWKj
-         7XhjRKa8CiIzPV6TftmOrxAZzIj1ayZo69dqUMDH84pOaM4jebBWjSfURgVVWM1h4Grn
-         yqo8s9M8YANZothgGNls8xp78Le+L6iA4qWc4NwkaIBTNU7qJdUKJkKSGh0FZ/2O94bv
-         kO64yrOoi/JrNY0EqjfL1nKv7prVa9tJORRojSNp5J8XDPnGAtlS/Rvwi347zH9k8rO3
-         6HEKDSMZwixOGijWVs3TJn2nipmtIcRNK78nq4Oa862Vr9KPQ7Sc6KVLEeTmPvb817P3
-         q21A==
-X-Gm-Message-State: APjAAAUNJT+Irxmni76Efs40ruKYqf7oNaIspJ+B/r/r71rcr26bK4Fk
-        CcF5MirpYFhWcqgaI+MAZJ8=
-X-Google-Smtp-Source: APXvYqxunHtKyXZnuwgeqSaF0W438oP6AcY4tyRkkHHFBkMwLqf7xudNbBrngPJNxgqRxgaowv6eLg==
-X-Received: by 2002:adf:e483:: with SMTP id i3mr13216394wrm.215.1580495821710;
-        Fri, 31 Jan 2020 10:37:01 -0800 (PST)
-Received: from gmail.com (54033286.catv.pool.telekom.hu. [84.3.50.134])
-        by smtp.gmail.com with ESMTPSA id o15sm12792705wra.83.2020.01.31.10.37.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 31 Jan 2020 10:37:01 -0800 (PST)
-Date:   Fri, 31 Jan 2020 19:36:58 +0100
-From:   Ingo Molnar <mingo@kernel.org>
-To:     =?iso-8859-1?Q?J=F6rg?= Otte <jrg.otte@gmail.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Ard Biesheuvel <ardb@kernel.org>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        the arch/x86 maintainers <x86@kernel.org>
-Subject: EFI boot crash regression (was: Re: 5.6-### doesn't boot)
-Message-ID: <20200131183658.GA71555@gmail.com>
-References: <CADDKRnANovPM5Xvme7Ywg8KEMUyP-gB0M-ufxKD8pw0gNwtFag@mail.gmail.com>
- <CAHk-=wjOXE4cqFOdtSymYnMMayZq8Lv7qDy-6BzCs=2=8HcoBA@mail.gmail.com>
- <20200131064327.GB130017@gmail.com>
- <CADDKRnATVt9JjgV+dAZDH9C3=goJ5=TzdZ8EJMjT8tKP+Uhezw@mail.gmail.com>
+        h=x-gm-message-state:subject:to:cc:references:from:autocrypt
+         :message-id:date:user-agent:mime-version:in-reply-to
+         :content-language:content-transfer-encoding;
+        bh=6BBdKpD2/d2DntApFESCHY7dAIic1HxQ83WKhIFyhjg=;
+        b=igFZbC4Px0Z3/iqu2xl8AFpeifUY66oRpmTEtNDil+OlVdOmZtLzyr0rjZEjgzDjvO
+         qRzMzMYEh+a2TH+eci6kS7n4OPw+wazRCaHejVvnP2rEhbZi1TvjG4M/tJRkKGf2G4pY
+         lRmLvEX9806EegyY36w2GeXt78uEsNJBOsRsb45WZ7lW8EBr5RqmYAL3vbfoUd5nMfLn
+         zV0KHbUxCXmyeyYZ0EiE8SmL3uNg6g/13fTM5utVb+cf/wu0mRedqQVULS/uS6Pkr4vQ
+         O5Bi/tie6ZyiQhQLKB2DI5JDHSH2vj37KUzl9EXYvZHmKPJRRVQw0iufDzSNC7o22goy
+         IC4A==
+X-Gm-Message-State: APjAAAUCwfBKOPz3+1Y6QfLnMnnGr8qXZmpwo6a5xeBYmVvq+4NB5/hq
+        LcgZOzJyuvR0izGbsZX9/dY=
+X-Google-Smtp-Source: APXvYqwZ7tXzZOaZNHN+CcbuxKnMqYQN1MZviDKZLVBKNM4NnirS45TV8KypzXhv5fXQmag3Fz3Mrw==
+X-Received: by 2002:a17:906:c7d5:: with SMTP id dc21mr10437125ejb.316.1580496129953;
+        Fri, 31 Jan 2020 10:42:09 -0800 (PST)
+Received: from [10.67.48.234] ([192.19.223.252])
+        by smtp.googlemail.com with ESMTPSA id g31sm517800edd.53.2020.01.31.10.42.07
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 31 Jan 2020 10:42:08 -0800 (PST)
+Subject: Re: [PATCH net-master 1/1] net: phy: dp83867: Add speed optimization
+ feature
+To:     Dan Murphy <dmurphy@ti.com>, andrew@lunn.ch, hkallweit1@gmail.com,
+        bunk@kernel.org
+Cc:     netdev@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, grygorii.strashko@ti.com
+References: <20200131151110.31642-1-dmurphy@ti.com>
+ <20200131151110.31642-2-dmurphy@ti.com>
+ <8f0e7d61-9433-4b23-5563-4dde03cd4b4a@gmail.com>
+ <d03b5867-a55b-9abc-014f-69ce156b09f3@ti.com>
+From:   Florian Fainelli <f.fainelli@gmail.com>
+Autocrypt: addr=f.fainelli@gmail.com; prefer-encrypt=mutual; keydata=
+ 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
+ G10n8gCguORqNGMsVRxrlLs7/himep7MrCc=
+Message-ID: <5c956a5a-cd83-f290-9995-6ea35383f5f0@gmail.com>
+Date:   Fri, 31 Jan 2020 10:42:05 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
+In-Reply-To: <d03b5867-a55b-9abc-014f-69ce156b09f3@ti.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CADDKRnATVt9JjgV+dAZDH9C3=goJ5=TzdZ8EJMjT8tKP+Uhezw@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-(Cc:ed Dan and Ard)
-
-* J�rg Otte <jrg.otte@gmail.com> wrote:
-
-> Am Fr., 31. Jan. 2020 um 07:43 Uhr schrieb Ingo Molnar <mingo@kernel.org>:
-> >
-> >
-> > * Linus Torvalds <torvalds@linux-foundation.org> wrote:
-> >
-> > > On Thu, Jan 30, 2020 at 9:32 AM J�rg Otte <jrg.otte@gmail.com> wrote:
-> > > >
-> > > > my notebook doesn't boot with current kernel. Booting stops right after
-> > > > displaying "loading initial ramdisk..". No further displays.
-> > > > Also nothing is wriiten to the logs.
-> > > >
-> > > > last known good kernel is : vmlinuz-5.5.0-00849-gb0be0eff1a5a
-> > > > first known bad kernel is : vmlinuz-5.5.0-01154-gc677124e631d
-> > >
-> > > It would be lovely if you can bisect a bit. But my merges in that
-> > > range are all from Ingo:
-> > >
-> > > Ingo Molnar (7):
-> > >     header cleanup
-> > >     objtool updates
-> > >     RCU updates
-> > >     EFI updates
-> > >     locking updates
-> > >     perf updates
-> > >     scheduler updates
-> >
-> > If I had to guess then perhaps the EFI changes look the most dangerous
-> > ones from these trees - but in principle most of these trees could
-> > contain a boot crasher/hang bug.
-> >
-> > > but not having any messages at all makes it hard to guess where it
-> > > would be.
-> >
-> > To improve debug output:
-> >
-> > Removing any 'fbcon' options in /boot/grub/grub.cfg and adding this to
-> > the boot options might improve the debug output:
-> >
-> >   earlyprintk=vga initcall_debug ignore_loglevel debug panic_on_warn
-> >
-> > So for example if the relevant kernel boot entry in grub.cfg looks like
-> > this:
-> >
-> >   linux   /vmlinuz-5.3.0-26-generic root=UUID=1bcxabe3-0b62-4x04-b456-47cd90c0e6x4 ro  splash $vt_handoff
-> >
-> > Then editing it to the following could in principle produce (much) more
-> > verbose boot output:
-> >
-> >   linux   /vmlinuz-5.3.0-26-generic root=UUID=1bcxabe3-0b62-4x04-b456-47cd90c0e6x4 ro earlyprintk=vga initcall_debug ignore_loglevel debug panic_on_warn $vt_handoff
-> >
-> > If this produces more output than just "loading initial ramdisk..' then a
-> > photo of the hung screen would be sufficient, no need to transcribe it.
-> >
-> > > A few bisect runs would narrow it down a fair amount. Bisecting all the
-> > > way would be even better, of course,
-> >
-> > Agreed!
-> >
-> > If compiling full kernels for bisections takes too long (for example
-> > because the .config is from a distro kernel) then running "make
-> > localmodconfig" to create a config tailored to the currently active
-> > modules will cut down significantly on build time.
-> >
-> > Also, a warning: if the normal boot log contains spurious warnings then
-> > the new 'panic_on_warn' option will cause additional trouble on good
-> > kernels.
+On 1/31/20 10:29 AM, Dan Murphy wrote:
+> Florian
 > 
-> It's bisected.
-> The first bad commit is :
-> 1db91035d01aa8bfa2350c00ccb63d629b4041ad
-> efi: Add tracking for dynamically allocated memmaps
+> On 1/31/20 11:49 AM, Florian Fainelli wrote:
+>> On 1/31/20 7:11 AM, Dan Murphy wrote:
+>>> Set the speed optimization bit on the DP83867 PHY.
+>>> This feature can also be strapped on the 64 pin PHY devices
+>>> but the 48 pin devices do not have the strap pin available to enable
+>>> this feature in the hardware.  PHY team suggests to have this bit set.
+>> OK, but why and how does that optimization work exactly?
+> 
+> I described this in the cover letter.  And it is explained in the data
+> sheet Section 8.4.6.6
 
-Thanks a ton, that's very useful!
+Sorry I complete missed that and just focused on the patch, you should
+consider not providing a cover letter for a single patch, and especially
+not when the cover letter contains more information than the patch
+commit message itself.
 
-I've Cc:-ed the EFI gents who are developing this code, maybe they'll 
-spot the bug.
+> 
+>>   Departing from
+>> the BMSR reads means you possibly are going to introduce bugs and/or
+>> incomplete information. For instance, you set phydev->pause and
+>> phydev->asym_pause to 0 now, is there no way to extract what the link
+>> partner has advertised?
+> 
+> I was using the marvel.c as my template as it appears to have a separate
+> status register as well.
+> 
+> Instead of setting those bits in the call back I can call the
+> genphy_read_status then override the duplex and speed based on the
+> physts register like below.  This way link status and pause values can
+> be updated and then we can update the speed and duplex settings.
+> 
+>       ret = genphy_read_status(phydev);
+>     if (ret)
+>         return ret;
+> 
+>     if (status < 0)
+>         return status;
+> 
+>     if (status & DP83867_PHYSTS_DUPLEX)
+>         phydev->duplex = DUPLEX_FULL;
+>     else
+>         phydev->duplex = DUPLEX_HALF;
+> 
+>     if (status & DP83867_PHYSTS_1000)
+>         phydev->speed = SPEED_1000;
+>     else if (status & DP83867_PHYSTS_100)
+>         phydev->speed = SPEED_100;
+>     else
+>         phydev->speed = SPEED_10;
+> 
 
-Thanks,
+OK, but what if they disagree, are they consistently latched with
+respect to one another?
 
-	Ingo
+> 
+>>> With this bit set the PHY will auto negotiate and report the link
+>>> parameters in the PHYSTS register and not in the BMCR.
+>> That should be BMSR, the BMCR is about control, not status.
+> 
+> OK.
+> 
+> Dan
+> 
+
+
+-- 
+Florian
