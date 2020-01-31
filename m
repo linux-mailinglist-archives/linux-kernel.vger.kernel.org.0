@@ -2,83 +2,61 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 668D814F27F
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Jan 2020 20:03:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 02ACC14F29F
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Jan 2020 20:18:27 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726104AbgAaTDh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 31 Jan 2020 14:03:37 -0500
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:36564 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725939AbgAaTDh (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 31 Jan 2020 14:03:37 -0500
-Received: by mail-lj1-f193.google.com with SMTP id r19so8211677ljg.3
-        for <linux-kernel@vger.kernel.org>; Fri, 31 Jan 2020 11:03:36 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=4VxK/MMCQW+dDkX8QecLocFy8dYcEu2g9dKlDlJzkls=;
-        b=Q9Evdpky0V2PYOXzxUeE+Z0wqX2lKAGCp3nVViRW/lRXQ5YgmyuYZxzqoAY8Wyhmwm
-         dQUvSnIuv5+2JkLzQBDvrI9/mHezfih4rZs5oNUSWIgveXLWll3Xv8Ze288fwOVtZRfN
-         97QULoaV14HQwzYfA78+hJCh/lzyKFL4WmevU=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=4VxK/MMCQW+dDkX8QecLocFy8dYcEu2g9dKlDlJzkls=;
-        b=Z/izaE2iIdtFuVw6okrrLYuPx56tAWSGjzlNfurk5dGEhQhycYaYRkjcUyjOd6Y4v+
-         HfPWaW3nbHc+NOMzO2wlwRMUi6cGGdKwPyCwMR2dB1XKHg1TGsZVUPiIhptzrTaVPqEU
-         G40BBSa8iUwcaX1gp4QK4fm+Sa1ZaE+7wp4TEM4L1oxJQ/kx4y/uAgX3tNvz35g17UM/
-         dBsq3KppGzOAaHWebZKWQnSOzTzRYJ2Hiy8faRIbgoF3XCv5ONVqO5z097icgby3MTeI
-         G+1tedgGduis6sToyTYbAWTeJ4f3tjIdLBsxeix1tlPMSAfCpo+HTwEvdN8NOJA4GJMG
-         HsiQ==
-X-Gm-Message-State: APjAAAUuiEvPqVhLpq3fjYiEIcMijQrq4teKwW9RvnYfNV6uTFVXZoP9
-        N3W3dvHCKcH/6Ytf6/jcLEZ+tha+diU=
-X-Google-Smtp-Source: APXvYqy+GRzUDdeeoR2dKozCknJoDC0gulkS1gJ5IqHoL1Jddc2TnA9YsCotCnNhbHsXnsceMZdhFQ==
-X-Received: by 2002:a2e:9e43:: with SMTP id g3mr6855200ljk.37.1580497414468;
-        Fri, 31 Jan 2020 11:03:34 -0800 (PST)
-Received: from mail-lj1-f175.google.com (mail-lj1-f175.google.com. [209.85.208.175])
-        by smtp.gmail.com with ESMTPSA id m13sm5059048lfo.40.2020.01.31.11.03.33
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 31 Jan 2020 11:03:33 -0800 (PST)
-Received: by mail-lj1-f175.google.com with SMTP id d10so8162909ljl.9
-        for <linux-kernel@vger.kernel.org>; Fri, 31 Jan 2020 11:03:33 -0800 (PST)
-X-Received: by 2002:a2e:461a:: with SMTP id t26mr6842099lja.204.1580497413314;
- Fri, 31 Jan 2020 11:03:33 -0800 (PST)
+        id S1726246AbgAaTSP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 31 Jan 2020 14:18:15 -0500
+Received: from mx.infinito.email ([194.185.246.6]:36152 "EHLO mx.infinito.it"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725939AbgAaTSP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 31 Jan 2020 14:18:15 -0500
+X-Greylist: delayed 526 seconds by postgrey-1.27 at vger.kernel.org; Fri, 31 Jan 2020 14:18:14 EST
+Received: from localhost (localhost [127.0.0.1])
+        by mx.infinito.it (Postfix) with ESMTP id D8E4112590B;
+        Fri, 31 Jan 2020 20:08:18 +0100 (CET)
+Received: from mx.infinito.it ([127.0.0.1])
+        by localhost (mta05.collabra.it [127.0.0.1]) (amavisd-new, port 10032)
+        with ESMTP id GEwulPzWXw6A; Fri, 31 Jan 2020 20:08:18 +0100 (CET)
+Received: from localhost (localhost [127.0.0.1])
+        by mx.infinito.it (Postfix) with ESMTP id 0DE2F125908;
+        Fri, 31 Jan 2020 20:08:18 +0100 (CET)
+DKIM-Filter: OpenDKIM Filter v2.10.3 mx.infinito.it 0DE2F125908
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=infinito.it;
+        s=F5B15634-0B56-11E8-B4CC-70D240057030; t=1580497698;
+        bh=Cnec9FCVhTR6ep2TCFKJgTi+1LxabtfP4wgTcz+9Roo=;
+        h=MIME-Version:To:From:Date:Message-Id;
+        b=aeDvB3oCKdAWeVcbRLM4VxtajwxENvbv9MxHMolPeLrhagBu8xFbxSjyCEELAEvo9
+         XeR30sHlVNMqb0GJfoqbZ1GeZk3uHWZWNlbP+WVeDYD/eKxtcKcoiXZegj9Mr1V8T7
+         9Url1+zU0vRXrvMxZh+xk/mFx4R9s8MqZL9FgN5q4yoJ/Tfv5XFM96+/CoZrVceeVv
+         5nixigj0skuCHitz8hbm+xlcs8xMI4JxgEI3K4e3LBSapaQ+JutvohsoE/z6eYgSW/
+         +F6JpdljQpq8JfH3EPBYYKAUxlD3+2TK0ILJyhduOzYJ9PjzCtG0+TvIPOAwI29ICc
+         qmLWcKSbpT2Pw==
+X-Amavis-Modified: Mail body modified (using disclaimer) - mta05.collabra.it
+X-Virus-Scanned: amavisd-new at mta05.collabra.it
+Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
-References: <1580408442-23916-1-git-send-email-pbonzini@redhat.com>
- <CAHk-=wjZTUq8u0HZUJ1mKZjb-haBFhX+mKcUv3Kdh9LQb8rg4g@mail.gmail.com> <20200131185341.GA18946@linux.intel.com>
-In-Reply-To: <20200131185341.GA18946@linux.intel.com>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Fri, 31 Jan 2020 11:03:17 -0800
-X-Gmail-Original-Message-ID: <CAHk-=wjoLqJ+zQQq2S3EmoAjOsY700GAPTCkna-RUG0T+4wYqA@mail.gmail.com>
-Message-ID: <CAHk-=wjoLqJ+zQQq2S3EmoAjOsY700GAPTCkna-RUG0T+4wYqA@mail.gmail.com>
-Subject: Re: [GIT PULL] First batch of KVM changes for 5.6 merge window
-To:     Sean Christopherson <sean.j.christopherson@intel.com>
-Cc:     Paolo Bonzini <pbonzini@redhat.com>, Borislav Petkov <bp@suse.de>,
-        Xiaoyao Li <xiaoyao.li@intel.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        KVM list <kvm@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+Content-Description: Mail message body
+Subject: Business Proposal
+To:     Recipients <admincbottazzi@infinito.it>
+From:   "Naomi" <admincbottazzi@infinito.it>
+Date:   Fri, 31 Jan 2020 11:08:06 -0800
+Reply-To: naomihhayashi03@gmail.com
+Message-Id: <20200131190810.A2ED51258FD@mx.infinito.it>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jan 31, 2020 at 10:53 AM Sean Christopherson
-<sean.j.christopherson@intel.com> wrote:
->
-> I assume the easiest thing would be send a cleanup patch for vmxfeatures.h
-> and route it through the KVM tree?
+Hello, How are you doing today? I am Naomi Hayashi By name. I am sorry for =
+contacting you directly to your email.I have a very genuine and Lucrative o=
+pportunity that won't distract you from your daily schedule. I came across =
+your profile on LinkedIn and would like to talk to you about something very=
+ important. Please acknowledge my email so I can provide you with details.
 
-Probably. The KVM side is the only thing that seems to use the
-defines, so any names changes should impact only them (we do have that
-mkcapflags.sh script, but that should react automatically to any
-changes in the #define names)
+I await your response.
 
-And this is obviously not a big deal, I just noticed the discrepancies
-when doing that resolution.
+Best Regards,
+Naomi Hayashi.
 
-                    Linus
