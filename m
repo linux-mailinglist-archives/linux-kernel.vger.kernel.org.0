@@ -2,101 +2,125 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1FFCA14EE24
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Jan 2020 15:02:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9D95714EE28
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Jan 2020 15:04:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728786AbgAaOCj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 31 Jan 2020 09:02:39 -0500
-Received: from lhrrgout.huawei.com ([185.176.76.210]:2339 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728500AbgAaOCj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 31 Jan 2020 09:02:39 -0500
-Received: from lhreml705-cah.china.huawei.com (unknown [172.18.7.106])
-        by Forcepoint Email with ESMTP id A6AAC28EB21CA5E317E2;
-        Fri, 31 Jan 2020 14:02:37 +0000 (GMT)
-Received: from fraeml702-chm.china.huawei.com (10.206.15.51) by
- lhreml705-cah.china.huawei.com (10.201.108.46) with Microsoft SMTP Server
- (TLS) id 14.3.408.0; Fri, 31 Jan 2020 14:02:37 +0000
-Received: from fraeml714-chm.china.huawei.com (10.206.15.33) by
- fraeml702-chm.china.huawei.com (10.206.15.51) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
- 15.1.1713.5; Fri, 31 Jan 2020 15:02:36 +0100
-Received: from fraeml714-chm.china.huawei.com ([10.206.15.33]) by
- fraeml714-chm.china.huawei.com ([10.206.15.33]) with mapi id 15.01.1713.004;
- Fri, 31 Jan 2020 15:02:36 +0100
-From:   Roberto Sassu <roberto.sassu@huawei.com>
-To:     Mimi Zohar <zohar@linux.ibm.com>,
-        "jarkko.sakkinen@linux.intel.com" <jarkko.sakkinen@linux.intel.com>,
-        "james.bottomley@hansenpartnership.com" 
-        <james.bottomley@hansenpartnership.com>,
-        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>
-CC:     "linux-security-module@vger.kernel.org" 
-        <linux-security-module@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Silviu Vlasceanu <Silviu.Vlasceanu@huawei.com>
-Subject: RE: [PATCH 7/8] ima: use ima_hash_algo for collision detection in the
- measurement list
-Thread-Topic: [PATCH 7/8] ima: use ima_hash_algo for collision detection in
- the measurement list
-Thread-Index: AQHV1TQ5RK/5lZCTqEyIMJscykTYuKgDvV6AgAETjcA=
-Date:   Fri, 31 Jan 2020 14:02:36 +0000
-Message-ID: <44c1b3f6d3fe414e914317ef8e5c6f8f@huawei.com>
-References: <20200127170443.21538-1-roberto.sassu@huawei.com>
-         <20200127170443.21538-8-roberto.sassu@huawei.com>
- <1580423169.6104.18.camel@linux.ibm.com>
-In-Reply-To: <1580423169.6104.18.camel@linux.ibm.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.220.96.108]
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+        id S1728910AbgAaOEE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 31 Jan 2020 09:04:04 -0500
+Received: from merlin.infradead.org ([205.233.59.134]:43528 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728500AbgAaOEE (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 31 Jan 2020 09:04:04 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Transfer-Encoding:
+        Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
+        Sender:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=XBHh8Jcg5JcYYWEBA1VUeT5BCvY8QB1ar+PJ8lieNiY=; b=fDqrWDdq+x30ocPMDCy6nhXtjN
+        usL85bsjhKI/f9+JZXciry2vi6BdtELy+r9YDzliX2vIQXSx2IHbLbOPRzDIXJEZXMAzOjKBzFBJ6
+        EeMrDoHD8hOFqZlO11bvmjMS3Qkzh+5wiP2G9YOm8/nxXY+oyJwHpyuqWUXn+FbvTyiNClLawLnyc
+        wDoIwaEoY/rblI77ir+BJGuaqAMx1458ECd5ssz+Hnvtk/AvJT0I2bMeBtH6CI+yfXI0eCSZ9mJ+d
+        AI4c0NtHG6vhYktms6P/z3cAFbJVauVwIAiudeT/t1Wvu5UzOl6aHvSFupxs6vst1uZlQOpRz0aXU
+        cy6eUO4A==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
+        by merlin.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1ixWtg-0004tq-AO; Fri, 31 Jan 2020 14:03:48 +0000
+Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (Client did not present a certificate)
+        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 48F1E3007F2;
+        Fri, 31 Jan 2020 15:02:01 +0100 (CET)
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id CCCA42024716E; Fri, 31 Jan 2020 15:03:44 +0100 (CET)
+Date:   Fri, 31 Jan 2020 15:03:44 +0100
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Pavel Machek <pavel@denx.de>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-kernel@vger.kernel.org, stable@vger.kernel.org,
+        Fenghua Yu <fenghua.yu@intel.com>,
+        Tony Luck <tony.luck@intel.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Sasha Levin <sashal@kernel.org>
+Subject: Re: [PATCH 4.19 36/55] drivers/net/b44: Change to non-atomic bit
+ operations on pwol_mask
+Message-ID: <20200131140344.GE14914@hirez.programming.kicks-ass.net>
+References: <20200130183608.563083888@linuxfoundation.org>
+ <20200130183615.120752961@linuxfoundation.org>
+ <20200131125730.GA20888@duo.ucw.cz>
 MIME-Version: 1.0
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20200131125730.GA20888@duo.ucw.cz>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-PiAtLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KPiBGcm9tOiBsaW51eC1pbnRlZ3JpdHktb3du
-ZXJAdmdlci5rZXJuZWwub3JnIFttYWlsdG86bGludXgtaW50ZWdyaXR5LQ0KPiBvd25lckB2Z2Vy
-Lmtlcm5lbC5vcmddIE9uIEJlaGFsZiBPZiBNaW1pIFpvaGFyDQo+IFNlbnQ6IFRodXJzZGF5LCBK
-YW51YXJ5IDMwLCAyMDIwIDExOjI2IFBNDQo+IFRvOiBSb2JlcnRvIFNhc3N1IDxyb2JlcnRvLnNh
-c3N1QGh1YXdlaS5jb20+Ow0KPiBqYXJra28uc2Fra2luZW5AbGludXguaW50ZWwuY29tOw0KPiBq
-YW1lcy5ib3R0b21sZXlAaGFuc2VucGFydG5lcnNoaXAuY29tOyBsaW51eC1pbnRlZ3JpdHlAdmdl
-ci5rZXJuZWwub3JnDQo+IENjOiBsaW51eC1zZWN1cml0eS1tb2R1bGVAdmdlci5rZXJuZWwub3Jn
-OyBsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnOw0KPiBTaWx2aXUgVmxhc2NlYW51IDxTaWx2
-aXUuVmxhc2NlYW51QGh1YXdlaS5jb20+DQo+IFN1YmplY3Q6IFJlOiBbUEFUQ0ggNy84XSBpbWE6
-IHVzZSBpbWFfaGFzaF9hbGdvIGZvciBjb2xsaXNpb24gZGV0ZWN0aW9uIGluDQo+IHRoZSBtZWFz
-dXJlbWVudCBsaXN0DQo+IA0KPiBPbiBNb24sIDIwMjAtMDEtMjcgYXQgMTg6MDQgKzAxMDAsIFJv
-YmVydG8gU2Fzc3Ugd3JvdGU6DQo+ID4gQmVmb3JlIGNhbGN1bGF0aW5nIGEgZGlnZXN0IGZvciBl
-YWNoIFBDUiBiYW5rLCBjb2xsaXNpb25zIHdlcmUgZGV0ZWN0ZWQNCj4gPiB3aXRoIGEgU0hBMSBk
-aWdlc3QuIFRoaXMgcGF0Y2ggaW5jbHVkZXMgaW1hX2hhc2hfYWxnbyBhbW9uZyB0aGUNCj4gYWxn
-b3JpdGhtcw0KPiA+IHVzZWQgdG8gY2FsY3VsYXRlIHRoZSB0ZW1wbGF0ZSBkaWdlc3QgYW5kIGNo
-ZWNrcyBjb2xsaXNpb25zIG9uIHRoYXQgZGlnZXN0Lg0KPiA+DQo+ID4gU2lnbmVkLW9mZi1ieTog
-Um9iZXJ0byBTYXNzdSA8cm9iZXJ0by5zYXNzdUBodWF3ZWkuY29tPg0KPiANCj4gRGVmaW5pdGVs
-eSBuZWVkZWQgdG8gcHJvdGVjdCBhZ2FpbnN0IGEgc2hhMSBjb2xsaXNpb24gYXR0YWNrLg0KPiAN
-Cj4gPHNuaXA+DQo+IA0KPiA+DQo+ID4gZGlmZiAtLWdpdCBhL3NlY3VyaXR5L2ludGVncml0eS9p
-bWEvaW1hX2FwaS5jDQo+IGIvc2VjdXJpdHkvaW50ZWdyaXR5L2ltYS9pbWFfYXBpLmMNCj4gPiBp
-bmRleCBlYmFmMDA1NjczNWMuLmE5YmI0NWRlNmRiOSAxMDA2NDQNCj4gPiAtLS0gYS9zZWN1cml0
-eS9pbnRlZ3JpdHkvaW1hL2ltYV9hcGkuYw0KPiA+ICsrKyBiL3NlY3VyaXR5L2ludGVncml0eS9p
-bWEvaW1hX2FwaS5jDQo+ID4gQEAgLTUxLDcgKzUxLDcgQEAgaW50IGltYV9hbGxvY19pbml0X3Rl
-bXBsYXRlKHN0cnVjdCBpbWFfZXZlbnRfZGF0YQ0KPiAqZXZlbnRfZGF0YSwNCj4gPiAgCWlmICgh
-KmVudHJ5KQ0KPiA+ICAJCXJldHVybiAtRU5PTUVNOw0KPiA+DQo+ID4gLQkoKmVudHJ5KS0+ZGln
-ZXN0cyA9IGtjYWxsb2MoaW1hX3RwbV9jaGlwLT5ucl9hbGxvY2F0ZWRfYmFua3MgKyAxLA0KPiA+
-ICsJKCplbnRyeSktPmRpZ2VzdHMgPSBrY2FsbG9jKGltYV90cG1fY2hpcC0+bnJfYWxsb2NhdGVk
-X2JhbmtzICsgMiwNCj4gPiAgCQkJCSAgICBzaXplb2YoKigqZW50cnkpLT5kaWdlc3RzKSwgR0ZQ
-X05PRlMpOw0KPiA+ICAJaWYgKCEoKmVudHJ5KS0+ZGlnZXN0cykgew0KPiA+ICAJCXJlc3VsdCA9
-IC1FTk9NRU07DQo+IA0KPiBJIHdvdWxkIHByZWZlciBub3QgaGF2aW5nIHRvIGFsbG9jYXRlIGFu
-ZCB1c2UgIm5yX2FsbG9jYXRlZF9iYW5rcyArIDEiDQo+IGV2ZXJ5d2hlcmUsIGJ1dCBJIHVuZGVy
-c3RhbmQgdGhlIG5lZWQgZm9yIGl0LiDCoEknbSBub3Qgc3VyZSB0aGlzIHBhdGNoDQo+IHdhcnJh
-bnRzIGFsbG9jYXRpbmcgKzIuIMKgUGVyaGFwcywgaWYgYSBUUE0gYmFuayBkb2Vzbid0IGV4aXN0
-IGZvciB0aGUNCj4gSU1BIGRlZmF1bHQgaGFzaCBhbGdvcml0aG0sIHVzZSBhIGRpZmZlcmVudCBh
-bGdvcml0aG0gb3IsIHdvcnN0IGNhc2UsDQo+IGNvbnRpbnVlIHVzaW5nIHRoZSBpbWFfc2hhMV9p
-ZHguDQoNCldlIGNvdWxkIGludHJvZHVjZSBhIG5ldyBvcHRpb24gY2FsbGVkIGltYV9oYXNoX2Fs
-Z29fdHBtIHRvIHNwZWNpZnkNCnRoZSBhbGdvcml0aG0gb2YgYW4gYWxsb2NhdGVkIGJhbmsuIFdl
-IGNhbiB1c2UgdGhpcyBmb3IgYm9vdF9hZ2dyZWdhdGUNCmFuZCBoYXNoIGNvbGxpc2lvbiBkZXRl
-Y3Rpb24uDQoNClJvYmVydG8NCg0KSFVBV0VJIFRFQ0hOT0xPR0lFUyBEdWVzc2VsZG9yZiBHbWJI
-LCBIUkIgNTYwNjMNCk1hbmFnaW5nIERpcmVjdG9yOiBMaSBQZW5nLCBMaSBKaWFuLCBTaGkgWWFu
-bGkNCg==
+On Fri, Jan 31, 2020 at 01:57:31PM +0100, Pavel Machek wrote:
+> On Thu 2020-01-30 19:39:17, Greg Kroah-Hartman wrote:
+> > From: Fenghua Yu <fenghua.yu@intel.com>
+> >=20
+> > [ Upstream commit f11421ba4af706cb4f5703de34fa77fba8472776 ]
+>=20
+> This is not suitable for stable. It does not fix anything.
+
+It fixes the code for BE at the very least.
+
+> It prepares
+> for theoretical bug that author claims might be introduced to BIOS in
+> future... I doubt it, even BIOS authors boot their machines from time
+> to time.
+
+BIOS authors might not enable this (optional) feature.
+
+> > Atomic operations that span cache lines are super-expensive on x86
+> > (not just to the current processor, but also to other processes as all
+> > memory operations are blocked until the operation completes). Upcoming
+> > x86 processors have a switch to cause such operations to generate a #AC
+> > trap. It is expected that some real time systems will enable this mode
+> > in BIOS.
+>=20
+> And I wonder if this is even good idea for mainline. x86 architecture
+> is here for long time, and I doubt Intel is going to break it like
+> this. Do you have documentation pointer?=20
+
+Or you could, you know, like google it. Try "intel split lock
+detection". It is a feature the OS can enable which will result in #AC
+exceptions when memops to LOCK prefixed instructions are not properly
+aligned (because their performance sucks and it impacts execution across
+the machine, not just the local CPU).
+
+> > In preparation for this, it is necessary to fix code that may execute
+> > atomic instructions with operands that cross cachelines because the #AC
+> > trap will crash the kernel.
+>=20
+> How does single bit operation "cross cacheline"? How is this going to
+> impact non-x86 architectures?
+
+The actual instruction is "LOCK BTSQ", which is a 64bit wide instruction
+(LOCK BTSL on 32bit kernels). The memory operand of that instruction is
+(stupidly IMO) allowed to be non aligned.
+
+Any sane architecture (ie, pretty much everyone else) will already trap
+when you try unaligned atomic ops (or even unaligned anything for most
+RISCs).
+
+> > Since "pwol_mask" is local and never exposed to concurrency, there is
+> > no need to set bits in pwol_mask using atomic operations.
+> >=20
+> > Directly operate on the byte which contains the bit instead of using
+> > __set_bit() to avoid any big endian concern due to type cast to
+> > unsigned long in __set_bit().
+>=20
+> What concerns? Is __set_bit() now useless and are we going to open-code
+> it everywhere? Is set_bit() now unusable on x86?
+
+As David already explained, the bitops are defined on long[], are
+employed on u8[] here (clue the (unsigned long *) cast) and would do
+completely the wrong thing on BE.
+
+set_bit() works as advertised when used as specified; on long[].
