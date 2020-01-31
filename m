@@ -2,119 +2,109 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CFA6114E781
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Jan 2020 04:21:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C580114E795
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Jan 2020 04:32:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727955AbgAaDU7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 30 Jan 2020 22:20:59 -0500
-Received: from hqnvemgate26.nvidia.com ([216.228.121.65]:8581 "EHLO
-        hqnvemgate26.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727801AbgAaDU7 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 30 Jan 2020 22:20:59 -0500
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate26.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5e339d0b0000>; Thu, 30 Jan 2020 19:20:43 -0800
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate101.nvidia.com (PGP Universal service);
-  Thu, 30 Jan 2020 19:20:58 -0800
-X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Thu, 30 Jan 2020 19:20:58 -0800
-Received: from [10.25.73.84] (10.124.1.5) by HQMAIL107.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Fri, 31 Jan
- 2020 03:20:55 +0000
-CC:     <spujar@nvidia.com>,
-        "alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] ASoC: rt5659: add S32_LE format
-To:     Oder Chiou <oder_chiou@realtek.com>,
-        "tiwai@suse.com" <tiwai@suse.com>,
-        "perex@perex.cz" <perex@perex.cz>
-References: <1579501059-27936-1-git-send-email-spujar@nvidia.com>
- <74a42452-f19c-1175-9928-da12ccad621d@nvidia.com>
- <c700f22c-a053-7f39-dddf-41abe52cad77@nvidia.com>
- <67328e51035e4eb5a6a78c3156e5d11f@realtek.com>
-From:   Sameer Pujar <spujar@nvidia.com>
-Message-ID: <d99e7cc4-f69b-55a2-a9e9-623ad11d6312@nvidia.com>
-Date:   Fri, 31 Jan 2020 08:50:52 +0530
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.2
-MIME-Version: 1.0
-In-Reply-To: <67328e51035e4eb5a6a78c3156e5d11f@realtek.com>
-X-Originating-IP: [10.124.1.5]
-X-ClientProxiedBy: HQMAIL101.nvidia.com (172.20.187.10) To
- HQMAIL107.nvidia.com (172.20.187.13)
-Content-Type: text/plain; charset="utf-8"; format=flowed
+        id S1727929AbgAaDcI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 30 Jan 2020 22:32:08 -0500
+Received: from mail.kernel.org ([198.145.29.99]:53484 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727824AbgAaDcI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 30 Jan 2020 22:32:08 -0500
+Received: from devnote2 (NE2965lan1.rev.em-net.ne.jp [210.141.244.193])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id A520220CC7;
+        Fri, 31 Jan 2020 03:32:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1580441527;
+        bh=nlYIG3x2hYLjyk1ASRbuQlsc9A45GUN4qZZV7DWMAtU=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=Hlv/L6/jv5xdgwQbp30Av/aZpGDktDul8FYVSBD1MnI2rRzD7Ei8eEkVqKM2cbExb
+         EugUf+MBwTCFytyN6aEkugdnyI1suZr2OCIb57ksGgLG34vuYAcaulrIroCb8aiSUK
+         pPAxSOzpFNAXFyWaCkXZkwxlIm0ZjsF8YwTUi3q0=
+Date:   Fri, 31 Jan 2020 12:32:03 +0900
+From:   Masami Hiramatsu <mhiramat@kernel.org>
+To:     Steven Rostedt <rostedt@goodmis.org>
+Cc:     Shuah Khan <shuah@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
+        linux-kselftest@vger.kernel.org,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Namhyung Kim <namhyung@kernel.org>
+Subject: Re: [PATCH][RESEND] selftests/ftrace: Have pid filter test use
+ instance flag
+Message-Id: <20200131123203.5de85bfa6ccf946934963e86@kernel.org>
+In-Reply-To: <20200130214527.1ce9a39e@rorschach.local.home>
+References: <20200130214527.1ce9a39e@rorschach.local.home>
+X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Content-Language: en-GB
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1580440843; bh=WmI/B6AsuQiNTGM7yM8QllMGfzZ7qHsDpaBdPWuw/4g=;
-        h=X-PGP-Universal:CC:Subject:To:References:From:Message-ID:Date:
-         User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
-         X-ClientProxiedBy:Content-Type:Content-Transfer-Encoding:
-         Content-Language;
-        b=C3B+OFolt+pEfYtV7JECEFIFpfqBUdvQJKlv4iFaTHkDWjn1amJPzfW4U6Ln/q6W6
-         jqjJc/J8JqAnFRCdL5sBWWXVtlkFGqM0f/4m22fo2t+roFd7sndrLQ6RvRxOZB2zYy
-         tu+1o4+WNdoXA7qBMGWn9doOHZuuUa3vpunL1viukXUwMxBhwLSF8namDJ/1ZtyxyS
-         w+fT7CTV5Yc8BPH7L1m1n9yRY26hDzjLEfjR6msgFW0RRHkhH12SAVs6VkKr53uuJj
-         eA19eHOoVMioZG8f2YuBgQvQ74iUYRX+X7QuUWm5inwcXoRyYYHXjLYrgAjUrRn3d+
-         pEUdMMhOk9rxQ==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Thu, 30 Jan 2020 21:45:27 -0500
+Steven Rostedt <rostedt@goodmis.org> wrote:
+
+> 
+> From: "Steven Rostedt (VMware)" <rostedt@goodmis.org>
+> 
+> While running the ftracetests, the pid filter test failed because the
+> instance "foo" existed, and it was using it to rerun the test under a
+> instance named foo. The collision caused the test to fail as the mkdir
+> failed as the name already existed.
+> 
+> As of commit b5b77be812de7 ("selftests: ftrace: Allow some tests to be run
+> in a tracing instance") all a selftest needs to do to be tested in an
+> instance is to set the "instance" flag. There's no reason a selftest needs
+> to create an instance to run its test in an instance directly.
+> 
+> Remove the open coded testing in an instance for the pid filter test and
+> have it set the "instance" flag instead.
+> 
+
+This looks good to me.
+
+Acked-by: Masami Hiramatsu <mhiramat@kernel.org>
+
+Thanks!
+
+> Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+> ---
+>  .../selftests/ftrace/test.d/ftrace/func-filter-pid.tc     | 8 +-------
+>  1 file changed, 1 insertion(+), 7 deletions(-)
+> 
+> diff --git a/tools/testing/selftests/ftrace/test.d/ftrace/func-filter-pid.tc b/tools/testing/selftests/ftrace/test.d/ftrace/func-filter-pid.tc
+> index 64cfcc75e3c1..f2ee1e889e13 100644
+> --- a/tools/testing/selftests/ftrace/test.d/ftrace/func-filter-pid.tc
+> +++ b/tools/testing/selftests/ftrace/test.d/ftrace/func-filter-pid.tc
+> @@ -1,6 +1,7 @@
+>  #!/bin/sh
+>  # SPDX-License-Identifier: GPL-2.0
+>  # description: ftrace - function pid filters
+> +# flags: instance
+>  
+>  # Make sure that function pid matching filter works.
+>  # Also test it on an instance directory
+> @@ -96,13 +97,6 @@ do_test() {
+>  }
+>  
+>  do_test
+> -
+> -mkdir instances/foo
+> -cd instances/foo
+> -do_test
+> -cd ../../
+> -rmdir instances/foo
+> -
+>  do_reset
+>  
+>  exit 0
+> -- 
+> 2.20.1
+> 
 
 
-On 1/30/2020 10:00 AM, Oder Chiou wrote:
-> External email: Use caution opening links or attachments
->
->
-> Acked-by: Oder Chiou <oder_chiou@realtek.com>
-
-Request maintainers to consider this patch for approval. Thanks in advance.
-
-. . .
->>>> ALC5659 supports maximum data length of 24-bit. Currently driver
->>>> supports
->>>> S24_LE which is a 32-bit container with valid data in [23:0] and 0s
->>>> in MSB.
->>>> S24_3LE is not commonly used and is hard to find audio streams with this
->>>> format. Also many SoC HW do not support S24_LE and S32_LE is used in
->>>> general. The 24-bit data can be represented in S32_LE [31:8] and 0s are
->>>> padded in LSB.
->>>>
->>>> This patch adds S32_LE to ALC5659 driver and data length for this is set
->>>> to 24 as per codec's maximum data length support. This helps to play
->>>> 24-bit audio, packed in S32_LE, on HW which do not support S24_LE.
->>>>
->>>> Signed-off-by: Sameer Pujar <spujar@nvidia.com>
->>>> ---
->>>>    sound/soc/codecs/rt5659.c | 4 +++-
->>>>    1 file changed, 3 insertions(+), 1 deletion(-)
->>>>
->>>> diff --git a/sound/soc/codecs/rt5659.c b/sound/soc/codecs/rt5659.c
->>>> index fc74dd63..f910ddf 100644
->>>> --- a/sound/soc/codecs/rt5659.c
->>>> +++ b/sound/soc/codecs/rt5659.c
->>>> @@ -3339,6 +3339,7 @@ static int rt5659_hw_params(struct
->>>> snd_pcm_substream *substream,
->>>>            val_len |= RT5659_I2S_DL_20;
->>>>            break;
->>>>        case 24:
->>>> +    case 32:
->>>>            val_len |= RT5659_I2S_DL_24;
->>>>            break;
->>>>        case 8:
->>>> @@ -3733,7 +3734,8 @@ static int rt5659_resume(struct
->>>> snd_soc_component *component)
->>>>      #define RT5659_STEREO_RATES SNDRV_PCM_RATE_8000_192000
->>>>    #define RT5659_FORMATS (SNDRV_PCM_FMTBIT_S16_LE |
->>>> SNDRV_PCM_FMTBIT_S20_3LE | \
->>>> -        SNDRV_PCM_FMTBIT_S24_LE | SNDRV_PCM_FMTBIT_S8)
->>>> +        SNDRV_PCM_FMTBIT_S24_LE | SNDRV_PCM_FMTBIT_S32_LE | \
->>>> +        SNDRV_PCM_FMTBIT_S8)
->>>>      static const struct snd_soc_dai_ops rt5659_aif_dai_ops = {
->>>>        .hw_params = rt5659_hw_params,
->>
->> ------Please consider the environment before printing this e-mail.
-
+-- 
+Masami Hiramatsu <mhiramat@kernel.org>
