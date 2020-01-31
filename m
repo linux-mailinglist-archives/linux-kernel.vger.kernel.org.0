@@ -2,78 +2,116 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 696D414F00E
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Jan 2020 16:48:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 385D714F013
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Jan 2020 16:48:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729265AbgAaPsE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 31 Jan 2020 10:48:04 -0500
-Received: from mail-vs1-f68.google.com ([209.85.217.68]:33039 "EHLO
-        mail-vs1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728922AbgAaPsE (ORCPT
+        id S1729279AbgAaPse (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 31 Jan 2020 10:48:34 -0500
+Received: from us-smtp-1.mimecast.com ([207.211.31.81]:29484 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1728974AbgAaPsd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 31 Jan 2020 10:48:04 -0500
-Received: by mail-vs1-f68.google.com with SMTP id n27so4661981vsa.0
-        for <linux-kernel@vger.kernel.org>; Fri, 31 Jan 2020 07:48:04 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:reply-to:from:date:message-id:subject:to;
-        bh=pKMEUn2dF7BW0BevKmi2c8y0oUGLqY/IZv47xCFNAPY=;
-        b=JHztqZtU9pMZVqGoZHzsDzdAeeHcO+gp87V5vPX2BGwJliOYfkuvcrUpDtnzXMgmOD
-         /XU2ms9n4KwGUOy0HpYJ5LthgT8UwMWLkifiGJ/Kc2kvVJfh+MMQmM4o2olwmUOfCDW0
-         U1NHMvGAbsYRfHOzRXbAcbhhes2yWZp1iqdnLWliapSFuOh/LUX8215Zio6MEpHupkie
-         43zCFkesDzZMKqhGOWgNCsHsONsx0nnvi33d+XprJdz3Mi1b0SiLp712zIWqiRUkp1BM
-         CHvl34Clqqhop/OEu7ycKbW9hlXIodxmxDIyfGxlSJM6T4t3UyMHKQdKOiOzfWAMKJBW
-         EuKw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
-         :subject:to;
-        bh=pKMEUn2dF7BW0BevKmi2c8y0oUGLqY/IZv47xCFNAPY=;
-        b=kT1Sj6dwsafvrZ3FrAnFLxb0+hOD2KCHZU4lNr3ZL1PUAW+Z4eebGpubR8R2X23cg1
-         DNuJWY6kzcxsyrxUBvOgKVhJoZP02KqJcKIdBALqDnpnsnYziVVUGzJXHTPrCs5pLlgo
-         Rht6IrVT54yUL8NukG0NneyxLq98LZJQglPPgEK9gmwkIHOTuufpSxtC4glhXE46RWDW
-         TRqCwMggaEXE0ZeCQqpl4z2VQGBqGhLmDl/VICw0Mdh8pDRoyAuWLtppMF5I74fTfLHL
-         PmFPmT27LcP08cs9LnTxEgWlBxUMmRZQGt6EJxCkOAnCW4fsDkcyFGo4D1b6ZG8AsEgd
-         /T+w==
-X-Gm-Message-State: APjAAAXIyGJWQ5Wcxd+rE4IZqH9MyA3uYFXVmW0UIu216/WIq9M+R2TL
-        CA/Xib8cv3CxirKG+Wjt3V0BA9tVeQUKM+hez8c=
-X-Google-Smtp-Source: APXvYqywHR/M3cN+3NpvPK8EGJZ+hy9aQiYR9Y9Gsa+aW6xCRQuUS052RIf6XofxcHOMUQlU33jGaqMRU0EqyUqet9I=
-X-Received: by 2002:a67:320c:: with SMTP id y12mr7309152vsy.47.1580485683509;
- Fri, 31 Jan 2020 07:48:03 -0800 (PST)
+        Fri, 31 Jan 2020 10:48:33 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1580485712;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=gpWbeTX1IiCGQYtqoFvlcDOaUtkH1pyaLXLukOOu9oE=;
+        b=dsd7+0aboVob3yMPz92UwqttLGSBbyaElsGlhWtESCqnm9pFKvKVmUrVC1oC33J+xCjXhA
+        0EdPAa2yzBJRPyQktXT/hDyAcxuKFoIUNh1SEqzok3Toa/jtLVOQFt8GCo8xe3igxu/vMT
+        /BXaSxJnqf4Rr7T4N4af+k3k7ekvvPg=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-265-mo0TXs6tNHewOnBPJ8xP2g-1; Fri, 31 Jan 2020 10:48:30 -0500
+X-MC-Unique: mo0TXs6tNHewOnBPJ8xP2g-1
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id BD3ED100551A;
+        Fri, 31 Jan 2020 15:48:29 +0000 (UTC)
+Received: from max.com (ovpn-205-139.brq.redhat.com [10.40.205.139])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 26BFE89E75;
+        Fri, 31 Jan 2020 15:48:25 +0000 (UTC)
+From:   Andreas Gruenbacher <agruenba@redhat.com>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Andreas Gruenbacher <agruenba@redhat.com>,
+        cluster-devel@redhat.com, linux-kernel@vger.kernel.org
+Subject: [GIT PULL] GFS2 changes for the 5.6 merge window
+Date:   Fri, 31 Jan 2020 16:48:23 +0100
+Message-Id: <20200131154823.30363-1-agruenba@redhat.com>
 MIME-Version: 1.0
-Received: by 2002:ac5:c9ba:0:0:0:0:0 with HTTP; Fri, 31 Jan 2020 07:48:03
- -0800 (PST)
-Reply-To: westernunionmoneypayoffice@gmail.com
-From:   chris william <willychris222@gmail.com>
-Date:   Fri, 31 Jan 2020 15:48:03 +0000
-Message-ID: <CADT5zyzGbK7zD-bMA-8DFncZy9MFqs9UQpdZvH0PbOLAAOvcZA@mail.gmail.com>
-Subject: Good day
-To:     undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
- Attention please,
+Hi Linus,
 
-We have deposited the cheque of your fund ($ 800,000.00USD) through
-Western Union department Finally after our meeting Regarding your
-fund, what you will do is to contact Western Union director Dr.Alex
-Onoja via Email (westernunionmoneypayoffice@gmail.com).
+could you please pull the following changes for gfs2?
 
-He will direct you how you will receiving the Funds daily, remember to
-send him your full information to avoid wrong transfer Such as:
+In addition, please expect to see another pull request from Bob Peterson
+about his gfs2 recovery patch queue shortly.
 
-Receiver's Name _______________
-Address: ________________
-Country: _____________
-Phone Number: _____________
+Thanks a lot,
+Andreas
 
-Dr.Alex Onoja has sent $ 5,000 through Western Union. Contact  Dr.Alex
-Onoja as soon as you receive this email and tell him to give you the
-MTCN, sender name and question / answer to pick the $ 5000 Please let
-us know as soon as you received all your fund.
+The following changes since commit 887352fb5ffd593d28f77059c09dabb47c5b86=
+e9:
 
-Best Regards.
-WESTERN UNION AGENT
+  Merge branch 'for-linus' from git://git.kernel.dk/linux-block (2019-12-=
+10 11:02:38 +0100)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/gfs2/linux-gfs2.git tags/=
+gfs2-for-5.6
+
+for you to fetch changes up to a31b4ec539e966515f1f97f4000d0e2a399930ce:
+
+  Revert "gfs2: eliminate tr_num_revoke_rm" (2020-01-28 15:04:53 +0100)
+
+----------------------------------------------------------------
+Changes in gfs2:
+
+- Fix some corner cases on filesystems with a block size < page size.
+- Fix a corner case that could expose incorrect access times over nfs.
+- Revert an otherwise sensible revoke accounting cleanup that causes
+  assertion failures.  The revoke accounting is whacky and needs to be
+  fixed properly before we can add back this cleanup.
+- Various other minor cleanups.
+
+----------------------------------------------------------------
+Alex Shi (2):
+      fs/gfs2: remove unused IS_DINODE and IS_LEAF macros
+      gfs2: remove unused LBIT macros
+
+Andreas Gruenbacher (4):
+      gfs2: Another gfs2_find_jhead fix
+      gfs2: Avoid access time thrashing in gfs2_inode_lookup
+      gfs2: Fix incorrect variable name
+      gfs2: Remove GFS2_MIN_LVB_SIZE define
+
+Bob Peterson (3):
+      gfs2: eliminate ssize parameter from gfs2_struct2blk
+      gfs2: minor cleanup: remove unneeded variable ret in gfs2_jdata_wri=
+tepage
+      Revert "gfs2: eliminate tr_num_revoke_rm"
+
+ fs/gfs2/aops.c       |  4 +--
+ fs/gfs2/dir.c        |  3 ---
+ fs/gfs2/glock.c      |  2 +-
+ fs/gfs2/glops.c      |  2 +-
+ fs/gfs2/incore.h     |  6 ++---
+ fs/gfs2/inode.c      | 10 ++++----
+ fs/gfs2/log.c        | 21 +++++++---------
+ fs/gfs2/log.h        |  4 +--
+ fs/gfs2/lops.c       | 70 +++++++++++++++++++++++++++++++++-------------=
+------
+ fs/gfs2/ops_fstype.c |  2 ++
+ fs/gfs2/rgrp.c       | 10 --------
+ fs/gfs2/trans.c      |  9 +++----
+ 12 files changed, 73 insertions(+), 70 deletions(-)
+
