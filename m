@@ -2,165 +2,76 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0944214F264
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Jan 2020 19:49:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3C06114F26A
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Jan 2020 19:53:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726319AbgAaSs4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 31 Jan 2020 13:48:56 -0500
-Received: from mail-oi1-f194.google.com ([209.85.167.194]:42329 "EHLO
-        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725939AbgAaSs4 (ORCPT
+        id S1726225AbgAaSxA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 31 Jan 2020 13:53:00 -0500
+Received: from mail-yw1-f49.google.com ([209.85.161.49]:38936 "EHLO
+        mail-yw1-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725939AbgAaSw7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 31 Jan 2020 13:48:56 -0500
-Received: by mail-oi1-f194.google.com with SMTP id j132so8220174oih.9
-        for <linux-kernel@vger.kernel.org>; Fri, 31 Jan 2020 10:48:55 -0800 (PST)
+        Fri, 31 Jan 2020 13:52:59 -0500
+Received: by mail-yw1-f49.google.com with SMTP id h126so5728960ywc.6
+        for <linux-kernel@vger.kernel.org>; Fri, 31 Jan 2020 10:52:58 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=intel-com.20150623.gappssmtp.com; s=20150623;
+        d=google.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=fLcaF8ntvZPal3qbid9CNAGwD4mOTDkCEUjIwpYd2Xo=;
-        b=R9auyalWygTfn6g/yWz839IELezhpT2kdQxHXU5NMqxDhPcHX1skUIywXOCVN7LJEi
-         Nwo39uLr8IVAmNBzLdBbbsFEOmaiZUHAtLkUQnL8uYUJZlbJrrtPMCbfy4ljGM6WaogP
-         Fd6P327IMubILIRZ2ceVA8l2iyrqN99Ly0jqbTpcAK1NduJldMAau03igSZQWtdP+tfI
-         i1ZnueCDHg+cviJ0msLi68C/lNxY3H5O3qOZp/9rRzgesDlsbVF5eIoWWmAI9VMltj8K
-         vvrigOHxSQ+CPDx606QgEotW83bKPlilM3JggN4mZGrrRHHxnZsgyZr9xgfvs78JG568
-         nH2Q==
+         :cc;
+        bh=0s7YpmADBv+t+tBrz8o8hArCzglfv7ZyrkHlwe8Xs0Y=;
+        b=fBwi+v3OiAWodzp2Ig6HRxK2tYzwRLxmcZN8FM/4XdodTKWRFelgoGATjmyI0Hz54u
+         W+5md8mn4LzEUlNuQ1saf0BQHdwzh9QMzWghJhqyqlCT6k5zqRi9Yzo0H0tjLznleCIL
+         iBQVGkVcKsE7QjUBVe+wTqIpsnnkspeoUJGtvSQFP2GuyH3PiCKgbftEg0CS0dfLG+Ml
+         Kf1vbdzXbrr94PGg+V8aCZcUY9HZ7uyt3ulQEYRsbWuTUVkaiXbi9lzg1zb1FrFb6djP
+         xJGhKgOxCOvrMa7CctuPXhE4a88uOmjxsrUZQZ3MwAnxssg+71FBUCDvZGiatShVNAQP
+         KGxA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=fLcaF8ntvZPal3qbid9CNAGwD4mOTDkCEUjIwpYd2Xo=;
-        b=bf6SEMbFA83gNzIV5QI1CfvYXCPPL3dxrIFwzTr6T7YG9tFjxR5WDoNzd0vHK3Sxx7
-         tSW9pONBS97F9H+27XnO2AkeuU3ZrttJrnR6UfNndWQd4ULyXSeCL7GBDFBe1KY6RHIt
-         QTtGmPw5maaWTlahIzDhUJ6FOqDr3+Y4WO3RbUde8J960ihsjY5Zf1j4Fdxk7m/L/mNq
-         A6kM/1gtWnOwOkyEyy6g9qpfzXTQ2r+TfewwBCqT/A5dDNKqXZBTSMIV454hFNaD47Kr
-         6fhzht4Jh3b99u3liNgm3js1NWwsJTXs0U84IqdzZbX719GRAqHATBd1sQftjGUlJmFU
-         39Ew==
-X-Gm-Message-State: APjAAAUN47A9V4dVTJ5aeMRG6+gqvAOXUgooxMi/0iPMfw4Ytv05u6Iv
-        pWH2yHHyfnDTrlp0XxBNbXpKo7dT8VuKtPmlYeZ9Xu3L0gU=
-X-Google-Smtp-Source: APXvYqw5oOxHa4qbJTSbp8mQDGvtgH12KQrwz6kSdFhnTsySKmDt9m5LmkM5cYmGLHx8m+w2jLsy1hdyyNytbajNiHA=
-X-Received: by 2002:a54:4791:: with SMTP id o17mr6940609oic.70.1580496535560;
- Fri, 31 Jan 2020 10:48:55 -0800 (PST)
+         :message-id:subject:to:cc;
+        bh=0s7YpmADBv+t+tBrz8o8hArCzglfv7ZyrkHlwe8Xs0Y=;
+        b=U81KeGB5XjIx4PqPX9yajhq687tmHt13NtAYouzkxTHAjiJ52bdMSLuIL33v4oPWMA
+         VaSOmEy/gRgdx4PU7lNL4gHnExDkNOK9WZ+zBbou0gGnkG9V2y5IXvuvQcl0Zk8yxG77
+         FWaRX02O1ib+J2GTn+T1iIMurQM/T81yxePyBJJvekXxZdOJzKgDfRH/ExOSYKcVXWLZ
+         9m9K3IGR7QV2pDrHqM6rkU3Xi32Qg7OCQbkOS5Vv6mJGoqaKNkFyWiI7rSdR5IOOydA0
+         Card7fJT52GuVpd6PpfQ3d6Q2miBNWcxFnoZYGKfZiq43MQG3z/lrI5SllcnMrR915Ce
+         kOuw==
+X-Gm-Message-State: APjAAAXDfxIf6lPFbY58We0/FdnR1imCluZ12fROZBi/jSZXB+Ml0FXu
+        HpwXsFpECmye5kBX1xLKfOCNt/S+cbYVQ/ohKsRleg==
+X-Google-Smtp-Source: APXvYqxxYLiRs9Aj7YwcdJ1UtdGWJM2u8g4ZtSeojEOgMsSWPiWPdWK81fOk+T++sHs3LCv5GyHQE7YEf/iRuzV4Ai8=
+X-Received: by 2002:a25:d9d4:: with SMTP id q203mr1874186ybg.274.1580496777997;
+ Fri, 31 Jan 2020 10:52:57 -0800 (PST)
 MIME-Version: 1.0
-References: <CADDKRnANovPM5Xvme7Ywg8KEMUyP-gB0M-ufxKD8pw0gNwtFag@mail.gmail.com>
- <CAHk-=wjOXE4cqFOdtSymYnMMayZq8Lv7qDy-6BzCs=2=8HcoBA@mail.gmail.com>
- <20200131064327.GB130017@gmail.com> <CADDKRnATVt9JjgV+dAZDH9C3=goJ5=TzdZ8EJMjT8tKP+Uhezw@mail.gmail.com>
- <20200131183658.GA71555@gmail.com>
-In-Reply-To: <20200131183658.GA71555@gmail.com>
-From:   Dan Williams <dan.j.williams@intel.com>
-Date:   Fri, 31 Jan 2020 10:48:44 -0800
-Message-ID: <CAPcyv4iYSptWo42p1Lnbr4NWRiWG2sat+f3t8Q0kPeiiXHx3fg@mail.gmail.com>
-Subject: Re: EFI boot crash regression (was: Re: 5.6-### doesn't boot)
-To:     =?UTF-8?Q?J=C3=B6rg_Otte?= <jrg.otte@gmail.com>
-Cc:     Ard Biesheuvel <ardb@kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+References: <20200131164308.GA5175@willie-the-truck> <CANn89i+CnezK81gZSLOy0w7MaZy0uT=xyxoKSTyZU3aMpzifOA@mail.gmail.com>
+ <20200131184322.GA11457@worktop.programming.kicks-ass.net> <CANn89iLBL1qbrEucm2FU02oNbf=x3_4K93TmZ3yS2ZNWm8Qrsg@mail.gmail.com>
+In-Reply-To: <CANn89iLBL1qbrEucm2FU02oNbf=x3_4K93TmZ3yS2ZNWm8Qrsg@mail.gmail.com>
+From:   Eric Dumazet <edumazet@google.com>
+Date:   Fri, 31 Jan 2020 10:52:46 -0800
+Message-ID: <CANn89i+pExLRqJxbamGv=uDi2kWY-1CKsh1DcAgfdh9DjpQx3A@mail.gmail.com>
+Subject: Re: Confused about hlist_unhashed_lockless()
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     Will Deacon <will@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "Paul E. McKenney" <paulmck@kernel.org>,
         "the arch/x86 maintainers" <x86@kernel.org>,
-        Ingo Molnar <mingo@kernel.org>
+        LKML <linux-kernel@vger.kernel.org>,
+        Marco Elver <elver@google.com>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jan 31, 2020 at 10:37 AM Ingo Molnar <mingo@kernel.org> wrote:
+On Fri, Jan 31, 2020 at 10:48 AM Eric Dumazet <edumazet@google.com> wrote:
 >
->
-> (Cc:ed Dan and Ard)
->
-> * J=C3=B6rg Otte <jrg.otte@gmail.com> wrote:
->
-> > Am Fr., 31. Jan. 2020 um 07:43 Uhr schrieb Ingo Molnar <mingo@kernel.or=
-g>:
-> > >
-> > >
-> > > * Linus Torvalds <torvalds@linux-foundation.org> wrote:
-> > >
-> > > > On Thu, Jan 30, 2020 at 9:32 AM J=C3=B6rg Otte <jrg.otte@gmail.com>=
- wrote:
-> > > > >
-> > > > > my notebook doesn't boot with current kernel. Booting stops right=
- after
-> > > > > displaying "loading initial ramdisk..". No further displays.
-> > > > > Also nothing is wriiten to the logs.
-> > > > >
-> > > > > last known good kernel is : vmlinuz-5.5.0-00849-gb0be0eff1a5a
-> > > > > first known bad kernel is : vmlinuz-5.5.0-01154-gc677124e631d
-> > > >
-> > > > It would be lovely if you can bisect a bit. But my merges in that
-> > > > range are all from Ingo:
-> > > >
-> > > > Ingo Molnar (7):
-> > > >     header cleanup
-> > > >     objtool updates
-> > > >     RCU updates
-> > > >     EFI updates
-> > > >     locking updates
-> > > >     perf updates
-> > > >     scheduler updates
-> > >
-> > > If I had to guess then perhaps the EFI changes look the most dangerou=
-s
-> > > ones from these trees - but in principle most of these trees could
-> > > contain a boot crasher/hang bug.
-> > >
-> > > > but not having any messages at all makes it hard to guess where it
-> > > > would be.
-> > >
-> > > To improve debug output:
-> > >
-> > > Removing any 'fbcon' options in /boot/grub/grub.cfg and adding this t=
-o
-> > > the boot options might improve the debug output:
-> > >
-> > >   earlyprintk=3Dvga initcall_debug ignore_loglevel debug panic_on_war=
-n
-> > >
-> > > So for example if the relevant kernel boot entry in grub.cfg looks li=
-ke
-> > > this:
-> > >
-> > >   linux   /vmlinuz-5.3.0-26-generic root=3DUUID=3D1bcxabe3-0b62-4x04-=
-b456-47cd90c0e6x4 ro  splash $vt_handoff
-> > >
-> > > Then editing it to the following could in principle produce (much) mo=
-re
-> > > verbose boot output:
-> > >
-> > >   linux   /vmlinuz-5.3.0-26-generic root=3DUUID=3D1bcxabe3-0b62-4x04-=
-b456-47cd90c0e6x4 ro earlyprintk=3Dvga initcall_debug ignore_loglevel debug=
- panic_on_warn $vt_handoff
-> > >
-> > > If this produces more output than just "loading initial ramdisk..' th=
-en a
-> > > photo of the hung screen would be sufficient, no need to transcribe i=
-t.
-> > >
-> > > > A few bisect runs would narrow it down a fair amount. Bisecting all=
- the
-> > > > way would be even better, of course,
-> > >
-> > > Agreed!
-> > >
-> > > If compiling full kernels for bisections takes too long (for example
-> > > because the .config is from a distro kernel) then running "make
-> > > localmodconfig" to create a config tailored to the currently active
-> > > modules will cut down significantly on build time.
-> > >
-> > > Also, a warning: if the normal boot log contains spurious warnings th=
-en
-> > > the new 'panic_on_warn' option will cause additional trouble on good
-> > > kernels.
-> >
-> > It's bisected.
-> > The first bad commit is :
-> > 1db91035d01aa8bfa2350c00ccb63d629b4041ad
-> > efi: Add tracking for dynamically allocated memmaps
->
-> Thanks a ton, that's very useful!
->
-> I've Cc:-ed the EFI gents who are developing this code, maybe they'll
-> spot the bug.
 
-I'll take a look. J=C3=B6rg, can you paste a full dmesg from a good boot?
+> This is nice, now with have data_race()
+>
+> Remember these patches were sent 2 months ago, at a time we were
+> trying to sort out things.
+>
+> data_race() was merged a few days ago.
+
+Well, actually data_race() is not there yet anyway.
+
+Is it really scheduled for 5.7 kernel ?
