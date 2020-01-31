@@ -2,114 +2,195 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BAD8114F4B4
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Jan 2020 23:25:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7349614F4BA
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Jan 2020 23:28:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726332AbgAaWZS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 31 Jan 2020 17:25:18 -0500
-Received: from mail-il1-f193.google.com ([209.85.166.193]:46190 "EHLO
-        mail-il1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726163AbgAaWZS (ORCPT
+        id S1726295AbgAaW2L (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 31 Jan 2020 17:28:11 -0500
+Received: from mail-io1-f69.google.com ([209.85.166.69]:46513 "EHLO
+        mail-io1-f69.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726180AbgAaW2L (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 31 Jan 2020 17:25:18 -0500
-Received: by mail-il1-f193.google.com with SMTP id t17so7562878ilm.13
-        for <linux-kernel@vger.kernel.org>; Fri, 31 Jan 2020 14:25:18 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:sender:from:date:message-id:subject:to;
-        bh=3klmeC9Lsr2nc2INoHrETeVw5GFn76dcfq+e9Fh4gDE=;
-        b=iibMUd9HcFKWit82hzOgzDbD+rzsr6tKc9CBMclWt4EWZrCuoiz6GiNGYxcfdIqoeW
-         /lyqf8PQrOvnfl1AbVB/nIvktszNLe4b5rw5lxGDnMkJ2YOTAXYxeZJJgVMCGD2lWCIE
-         tIgIlnA7+UI3izSwfzATzsddwpCmjfsUx9kzB0Nj1r5GJPDDTD2ptQFOsYa+fVcRaGz4
-         NH8lTDXU1sXanCkfZpDPOwwG3u2e5A5FpEwZEPns0zuA/0o+X8Vux/K5K3Z0HKTD5mJl
-         HuvztAy15ZEvXIQytXfF+2EtUKWA/gb34ebgkfcpdsXhf6J4rOM76WZlpRQe5/eoQx93
-         scdQ==
+        Fri, 31 Jan 2020 17:28:11 -0500
+Received: by mail-io1-f69.google.com with SMTP id r74so5145593iod.13
+        for <linux-kernel@vger.kernel.org>; Fri, 31 Jan 2020 14:28:11 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:sender:from:date:message-id:subject
-         :to;
-        bh=3klmeC9Lsr2nc2INoHrETeVw5GFn76dcfq+e9Fh4gDE=;
-        b=oAUBdRLLmnHYheXGfsuPbxot/nFDTNIbn5kNsaqISoMkqIE39/8N9ByyjvOHdtwrEw
-         p0n71yJKUQK3hUcSq7blaMvsXLVxTs6xC/eIX9ofjjxOzCKJn6uLEfwr06fbueV0jYyR
-         8E2lgA5cqqgkWBDbuT1RzhHJI4QA0XmS7EsqgUUiw33/UM+OleSYjs6nbj1E2MqHlUOV
-         RH/o791YA4F63YpUeK+9C+3WoMALhEOAd+5KYLjMvCvZAzS3UVlCChxlGkOu3SuV4ix+
-         qZSO85HhYeCal4HIbPU6nTu0edPqI525c+Wf84b8cpej4A1I3z1lBFDPb7/9OVknp2Aq
-         0GdQ==
-X-Gm-Message-State: APjAAAVP3UijnNEER7yWOKHaNM9yQ62L7LUwhpgLYU9+SV7/EjOg/T3l
-        TuHt+YJieMQ2cP2XFS1RDkx5GeAPkemqQ0vKRfk=
-X-Google-Smtp-Source: APXvYqzD4WwApACf5ZwBHmKblG/RkU6bBPWdMqSWR2Qx0NhPixIggNhIkuIwedjLR1jH9JpbBt1tTD+MibaC57Btn3Y=
-X-Received: by 2002:a92:5ec8:: with SMTP id f69mr11786748ilg.8.1580509517719;
- Fri, 31 Jan 2020 14:25:17 -0800 (PST)
+        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
+        bh=5B68+vvIFrGZB5dZHD9aKL02/REdWE2ue6OLEqd5GIo=;
+        b=DOp8IjYFUlZifWHvXjdnRB/iFgBVHJzUOK+7mlPeZam7/zBd0Mqg0FtcJr6IoTtGuH
+         PYyoIjdhyGO/l3Efqdt1IIGNbWdVvHddGGSOfjIXOpRjxNLVFAK/4cmzGRkhdy2mPllt
+         Byla/lBbOhzZNLqa8nlBdzbS/zYs17CnEwc1wXYZPMH33vV47P+kKQ7ZekiUFljDfN54
+         unJSPh1oaaj+gxHu9Mx2hireO10/IIhijeVmvMK6FrDR1e2qkNyJUDsa5VBsz52TeMAB
+         fujezNkVrCMrG8Y2ay5NHm7ihoDPgOlPKFFef2bvKUdf9mzBQPaN/yLD1iYHrBdeWwTM
+         4Hdg==
+X-Gm-Message-State: APjAAAX+IbqU+3Fn56RPQF8gcPG9dpgd2OuVmewg4iBDsfVZrROQiVxM
+        CgTeXYZtlJxw/pfbLAKC7VyMbUdZKyn2RD4cEu9c+eX4h6Fy
+X-Google-Smtp-Source: APXvYqxrv66HRZinoVaMmRBfdlvIaAIba0Z5eTuqAXnZ36pho/UItrEKmYY1vlBsYBtWk3pht/SsmDfplF5M/bY9gYPTMQcquGSl
 MIME-Version: 1.0
-Received: by 2002:ac0:e1a7:0:0:0:0:0 with HTTP; Fri, 31 Jan 2020 14:25:17
- -0800 (PST)
-From:   Abibatu Ali <abibatu22ali@gmail.com>
-Date:   Fri, 31 Jan 2020 22:25:17 +0000
-X-Google-Sender-Auth: KgDhr_qCBVaZULEPff8jXLHcPdo
-Message-ID: <CAKFm-kG96NTRm7h-xEk30-e+JLgbJ4MUaUe1taDbZLOv+9SdQQ@mail.gmail.com>
-Subject: KINDLY REPLY
-To:     undisclosed-recipients:;
+X-Received: by 2002:a6b:b606:: with SMTP id g6mr10850574iof.114.1580509690734;
+ Fri, 31 Jan 2020 14:28:10 -0800 (PST)
+Date:   Fri, 31 Jan 2020 14:28:10 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000ae2f81059d7716b8@google.com>
+Subject: KASAN: use-after-free Read in vgem_gem_dumb_create
+From:   syzbot <syzbot+0dc4444774d419e916c8@syzkaller.appspotmail.com>
+To:     airlied@linux.ie, alexander.deucher@amd.com,
+        amd-gfx@lists.freedesktop.org, chris@chris-wilson.co.uk,
+        christian.koenig@amd.com, daniel@ffwll.ch, davem@davemloft.net,
+        dri-devel@lists.freedesktop.org, emil.velikov@collabora.com,
+        eric@anholt.net, linaro-mm-sig@lists.linaro.org,
+        linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
+        netdev@vger.kernel.org, robdclark@chromium.org,
+        seanpaul@chromium.org, sumit.semwal@linaro.org,
+        syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Greetings to you
+Hello,
 
-Let me start by introducing myself, I am miss. Abibatu Ali lives in
-West Africa Ouagadougou precisley. I hope this mail meant well to you,
-because am having a business proposal that i need both of us to
-handle. And it means no harm to you and is risk free as well, because
-as a banker i will not introduce you to a business that will not
-profit us. Try and follow my instruction and directives of this
-business.
+syzbot found the following crash on:
 
-A brief introduction about a reputable client;
+HEAD commit:    39bed42d Merge tag 'for-linus-hmm' of git://git.kernel.org..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=179465bee00000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=2646535f8818ae25
+dashboard link: https://syzkaller.appspot.com/bug?extid=0dc4444774d419e916c8
+compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=16251279e00000
 
-There is a man who's name is Mr. Boas Nicholson who lost his life in a
-plane crash along with all his family members and left no one alive to
-claim his funds that is in our custody here in United Bank For Africa
-(UBA). Mr. Nicholson which is my close friend and also i happen to be his
-account officer, why because on the day of depositing his money into
-the bank, I was the only one that is aware of this urge amount that
-was credited into an ATM VISA CARD that worth the sum of $9.250
-Million US Dollar. And their is nobody to claim this said fund i just
-mention above,
-becasue according to our board meeting held few days ago, and it was
-concluded that it will be shifted to the government account, which i
-know truely well that is a bloody lie, why because it will be
-embezzled by the top officials of the bank.
+The bug was bisected to:
 
-That is why i have decided to contact you so we can come in hand to
-hand to make sure we claim this fund and start a better life in your
-country, so i have all information on how you will receive this credit
-card without delay or disappointment.
+commit 7611750784664db46d0db95631e322aeb263dde7
+Author: Alex Deucher <alexander.deucher@amd.com>
+Date:   Wed Jun 21 16:31:41 2017 +0000
 
-I will front you as a bonified member of Mr. Nicholson family which we
-make the board authority to believe you that truely you are his family
-member to enable you claim the credit card with an immediate effect.
-And also bear it in mind that if there is any question about this said
-fund, am here to guid you, so please if you know you're not interested
-to follow the instruction of this business then please kindly do me a
-favour by not repling back.
+    drm/amdgpu: use kernel is_power_of_2 rather than local version
 
-Now let me brief you on how you can receive the credit card, which it
-will be delivered to you by DHL Courier Service and the amount of the
-delivery is $360 dollar, and also the amount for the registration it
-cost $620 dollar, so please tell me the amount you will be able to
-handle to enable the success of this business, please once
-again if you know you are not ready to follow up my instruction, do
-not reply back to me, because i am sure of this business venture am
-introducing to you with %100 assurance.
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=11628df1e00000
+final crash:    https://syzkaller.appspot.com/x/report.txt?x=13628df1e00000
+console output: https://syzkaller.appspot.com/x/log.txt?x=15628df1e00000
 
-So be inform after the success of this deal is going to be share %50
-for me and %50 for you.
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+0dc4444774d419e916c8@syzkaller.appspotmail.com
+Fixes: 761175078466 ("drm/amdgpu: use kernel is_power_of_2 rather than local version")
 
-Am waiting for your respond to enable me give you the contact of the
-department were you can claim the fund.
+==================================================================
+BUG: KASAN: use-after-free in vgem_gem_dumb_create+0x238/0x250 drivers/gpu/drm/vgem/vgem_drv.c:221
+Read of size 8 at addr ffff88809fa67908 by task syz-executor.0/14871
 
-Thanks for your understanding
+CPU: 0 PID: 14871 Comm: syz-executor.0 Not tainted 5.5.0-syzkaller #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
+Call Trace:
+ __dump_stack lib/dump_stack.c:77 [inline]
+ dump_stack+0x197/0x210 lib/dump_stack.c:118
+ print_address_description.constprop.0.cold+0xd4/0x30b mm/kasan/report.c:374
+ __kasan_report.cold+0x1b/0x32 mm/kasan/report.c:506
+ kasan_report+0x12/0x20 mm/kasan/common.c:639
+ __asan_report_load8_noabort+0x14/0x20 mm/kasan/generic_report.c:135
+ vgem_gem_dumb_create+0x238/0x250 drivers/gpu/drm/vgem/vgem_drv.c:221
+ drm_mode_create_dumb+0x282/0x310 drivers/gpu/drm/drm_dumb_buffers.c:94
+ drm_mode_create_dumb_ioctl+0x26/0x30 drivers/gpu/drm/drm_dumb_buffers.c:100
+ drm_ioctl_kernel+0x244/0x300 drivers/gpu/drm/drm_ioctl.c:786
+ drm_ioctl+0x54e/0xa60 drivers/gpu/drm/drm_ioctl.c:886
+ vfs_ioctl fs/ioctl.c:47 [inline]
+ ksys_ioctl+0x123/0x180 fs/ioctl.c:747
+ __do_sys_ioctl fs/ioctl.c:756 [inline]
+ __se_sys_ioctl fs/ioctl.c:754 [inline]
+ __x64_sys_ioctl+0x73/0xb0 fs/ioctl.c:754
+ do_syscall_64+0xfa/0x790 arch/x86/entry/common.c:294
+ entry_SYSCALL_64_after_hwframe+0x49/0xbe
+RIP: 0033:0x45b349
+Code: ad b6 fb ff c3 66 2e 0f 1f 84 00 00 00 00 00 66 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 0f 83 7b b6 fb ff c3 66 2e 0f 1f 84 00 00 00 00
+RSP: 002b:00007f871af46c78 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
+RAX: ffffffffffffffda RBX: 00007f871af476d4 RCX: 000000000045b349
+RDX: 0000000020000180 RSI: 00000000c02064b2 RDI: 0000000000000003
+RBP: 000000000075bf20 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 00000000ffffffff
+R13: 0000000000000285 R14: 00000000004d14d0 R15: 000000000075bf2c
 
-Yours Sincerely
-Miss Abibatu Ali
+Allocated by task 14871:
+ save_stack+0x23/0x90 mm/kasan/common.c:72
+ set_track mm/kasan/common.c:80 [inline]
+ __kasan_kmalloc mm/kasan/common.c:513 [inline]
+ __kasan_kmalloc.constprop.0+0xcf/0xe0 mm/kasan/common.c:486
+ kasan_kmalloc+0x9/0x10 mm/kasan/common.c:527
+ kmem_cache_alloc_trace+0x158/0x790 mm/slab.c:3551
+ kmalloc include/linux/slab.h:556 [inline]
+ kzalloc include/linux/slab.h:670 [inline]
+ __vgem_gem_create+0x49/0x100 drivers/gpu/drm/vgem/vgem_drv.c:165
+ vgem_gem_create drivers/gpu/drm/vgem/vgem_drv.c:194 [inline]
+ vgem_gem_dumb_create+0xd7/0x250 drivers/gpu/drm/vgem/vgem_drv.c:217
+ drm_mode_create_dumb+0x282/0x310 drivers/gpu/drm/drm_dumb_buffers.c:94
+ drm_mode_create_dumb_ioctl+0x26/0x30 drivers/gpu/drm/drm_dumb_buffers.c:100
+ drm_ioctl_kernel+0x244/0x300 drivers/gpu/drm/drm_ioctl.c:786
+ drm_ioctl+0x54e/0xa60 drivers/gpu/drm/drm_ioctl.c:886
+ vfs_ioctl fs/ioctl.c:47 [inline]
+ ksys_ioctl+0x123/0x180 fs/ioctl.c:747
+ __do_sys_ioctl fs/ioctl.c:756 [inline]
+ __se_sys_ioctl fs/ioctl.c:754 [inline]
+ __x64_sys_ioctl+0x73/0xb0 fs/ioctl.c:754
+ do_syscall_64+0xfa/0x790 arch/x86/entry/common.c:294
+ entry_SYSCALL_64_after_hwframe+0x49/0xbe
+
+Freed by task 14871:
+ save_stack+0x23/0x90 mm/kasan/common.c:72
+ set_track mm/kasan/common.c:80 [inline]
+ kasan_set_free_info mm/kasan/common.c:335 [inline]
+ __kasan_slab_free+0x102/0x150 mm/kasan/common.c:474
+ kasan_slab_free+0xe/0x10 mm/kasan/common.c:483
+ __cache_free mm/slab.c:3426 [inline]
+ kfree+0x10a/0x2c0 mm/slab.c:3757
+ vgem_gem_free_object+0xbe/0xe0 drivers/gpu/drm/vgem/vgem_drv.c:68
+ drm_gem_object_free+0x100/0x220 drivers/gpu/drm/drm_gem.c:983
+ kref_put include/linux/kref.h:65 [inline]
+ drm_gem_object_put_unlocked drivers/gpu/drm/drm_gem.c:1017 [inline]
+ drm_gem_object_put_unlocked+0x196/0x1c0 drivers/gpu/drm/drm_gem.c:1002
+ vgem_gem_create drivers/gpu/drm/vgem/vgem_drv.c:199 [inline]
+ vgem_gem_dumb_create+0x115/0x250 drivers/gpu/drm/vgem/vgem_drv.c:217
+ drm_mode_create_dumb+0x282/0x310 drivers/gpu/drm/drm_dumb_buffers.c:94
+ drm_mode_create_dumb_ioctl+0x26/0x30 drivers/gpu/drm/drm_dumb_buffers.c:100
+ drm_ioctl_kernel+0x244/0x300 drivers/gpu/drm/drm_ioctl.c:786
+ drm_ioctl+0x54e/0xa60 drivers/gpu/drm/drm_ioctl.c:886
+ vfs_ioctl fs/ioctl.c:47 [inline]
+ ksys_ioctl+0x123/0x180 fs/ioctl.c:747
+ __do_sys_ioctl fs/ioctl.c:756 [inline]
+ __se_sys_ioctl fs/ioctl.c:754 [inline]
+ __x64_sys_ioctl+0x73/0xb0 fs/ioctl.c:754
+ do_syscall_64+0xfa/0x790 arch/x86/entry/common.c:294
+ entry_SYSCALL_64_after_hwframe+0x49/0xbe
+
+The buggy address belongs to the object at ffff88809fa67800
+ which belongs to the cache kmalloc-1k of size 1024
+The buggy address is located 264 bytes inside of
+ 1024-byte region [ffff88809fa67800, ffff88809fa67c00)
+The buggy address belongs to the page:
+page:ffffea00027e99c0 refcount:1 mapcount:0 mapping:ffff8880aa400c40 index:0x0
+raw: 00fffe0000000200 ffffea0002293548 ffffea00023e1f08 ffff8880aa400c40
+raw: 0000000000000000 ffff88809fa67000 0000000100000002 0000000000000000
+page dumped because: kasan: bad access detected
+
+Memory state around the buggy address:
+ ffff88809fa67800: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+ ffff88809fa67880: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+>ffff88809fa67900: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+                      ^
+ ffff88809fa67980: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+ ffff88809fa67a00: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+==================================================================
+
+
+---
+This bug is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this bug report. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+syzbot can test patches for this bug, for details see:
+https://goo.gl/tpsmEJ#testing-patches
