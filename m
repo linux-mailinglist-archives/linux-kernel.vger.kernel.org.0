@@ -2,115 +2,106 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8793814F2D9
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Jan 2020 20:38:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C563714F2E4
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Jan 2020 20:41:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726593AbgAaTil (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 31 Jan 2020 14:38:41 -0500
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:59674 "EHLO
-        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726001AbgAaTik (ORCPT
+        id S1726514AbgAaTlB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 31 Jan 2020 14:41:01 -0500
+Received: from out30-56.freemail.mail.aliyun.com ([115.124.30.56]:60681 "EHLO
+        out30-56.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725978AbgAaTlA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 31 Jan 2020 14:38:40 -0500
-Received: from [IPv6:2003:cb:8716:6a00:1956:2e0:5d2c:ff7c] (p200300CB87166A00195602E05D2CFF7C.dip0.t-ipconnect.de [IPv6:2003:cb:8716:6a00:1956:2e0:5d2c:ff7c])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: dafna)
-        by bhuna.collabora.co.uk (Postfix) with ESMTPSA id 4D99026068C;
-        Fri, 31 Jan 2020 19:38:37 +0000 (GMT)
-Subject: Re: [PATCH v8 05/14] media: rkisp1: add Rockchip ISP1 subdev driver
-To:     Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Helen Koike <helen.koike@collabora.com>
-Cc:     linux-rockchip@lists.infradead.org, devicetree@vger.kernel.org,
-        eddie.cai.linux@gmail.com, mchehab@kernel.org, heiko@sntech.de,
-        jacob2.chen@rock-chips.com, jeffy.chen@rock-chips.com,
-        zyc@rock-chips.com, linux-kernel@vger.kernel.org,
-        tfiga@chromium.org, hans.verkuil@cisco.com,
-        laurent.pinchart@ideasonboard.com, kernel@collabora.com,
-        ezequiel@collabora.com, linux-media@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, zhengsq@rock-chips.com,
-        Jacob Chen <cc@rock-chips.com>,
-        Allon Huang <allon.huang@rock-chips.com>,
-        Dafna Hirschfeld <dafna3@gmail.com>
-References: <20190730184256.30338-1-helen.koike@collabora.com>
- <20190730184256.30338-6-helen.koike@collabora.com>
- <20190808091406.GQ21370@paasikivi.fi.intel.com>
- <da6c1d01-e3f6-ad73-db55-145d7832a665@collabora.com>
- <20190815082422.GM6133@paasikivi.fi.intel.com>
- <20190815131748.GS6133@paasikivi.fi.intel.com>
-From:   Dafna Hirschfeld <dafna.hirschfeld@collabora.com>
-Message-ID: <78856358-1afd-31a7-86dd-22f7d6d7fb05@collabora.com>
-Date:   Fri, 31 Jan 2020 20:38:34 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.1
+        Fri, 31 Jan 2020 14:41:00 -0500
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R381e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04407;MF=yang.shi@linux.alibaba.com;NM=1;PH=DS;RN=8;SR=0;TI=SMTPD_---0Tor2FsR_1580499655;
+Received: from US-143344MP.local(mailfrom:yang.shi@linux.alibaba.com fp:SMTPD_---0Tor2FsR_1580499655)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Sat, 01 Feb 2020 03:40:57 +0800
+Subject: Re: [PATCH] move_pages.2: Returning positive value is a new error
+ case
+To:     David Hildenbrand <david@redhat.com>, mhocko@suse.com,
+        mtk.manpages@gmail.com, akpm@linux-foundation.org
+Cc:     linux-man@vger.kernel.org, linux-api@vger.kernel.org,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org
+References: <1580322632-93332-1-git-send-email-yang.shi@linux.alibaba.com>
+ <9aac5bff-3a18-ec5f-5aa0-82c38d367590@redhat.com>
+From:   Yang Shi <yang.shi@linux.alibaba.com>
+Message-ID: <f49736e1-316f-57d4-cd25-5f75b145e033@linux.alibaba.com>
+Date:   Fri, 31 Jan 2020 11:40:54 -0800
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.12; rv:52.0)
+ Gecko/20100101 Thunderbird/52.7.0
 MIME-Version: 1.0
-In-Reply-To: <20190815131748.GS6133@paasikivi.fi.intel.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
+In-Reply-To: <9aac5bff-3a18-ec5f-5aa0-82c38d367590@redhat.com>
+Content-Type: text/plain; charset=windows-1252; format=flowed
 Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
-I (Dafna Hirschfeld) will work in following months with Helen Koike to fix the issues
-in the TODO file of this driver: drivers/staging/media/rkisp1/TODO
 
-On 15.08.19 15:17, Sakari Ailus wrote:
-> On Thu, Aug 15, 2019 at 11:24:22AM +0300, Sakari Ailus wrote:
->> Hi Helen,
+
+On 1/31/20 2:49 AM, David Hildenbrand wrote:
+> On 29.01.20 19:30, Yang Shi wrote:
+>> Since commit a49bd4d71637 ("mm, numa: rework do_pages_move"),
+>> the semantic of move_pages() has changed to return the number of
+>> non-migrated pages if they were result of a non-fatal reasons (usually a
+>> busy page).  This was an unintentional change that hasn't been noticed
+>> except for LTP tests which checked for the documented behavior.
 >>
->> On Wed, Aug 14, 2019 at 09:58:05PM -0300, Helen Koike wrote:
+>> There are two ways to go around this change.  We can even get back to the
+>> original behavior and return -EAGAIN whenever migrate_pages is not able
+>> to migrate pages due to non-fatal reasons.  Another option would be to
+>> simply continue with the changed semantic and extend move_pages
+>> documentation to clarify that -errno is returned on an invalid input or
+>> when migration simply cannot succeed (e.g. -ENOMEM, -EBUSY) or the
+>> number of pages that couldn't have been migrated due to ephemeral
+>> reasons (e.g. page is pinned or locked for other reasons).
 >>
->> ...
+>> We decided to keep the second option in kernel because this behavior is in
+>> place for some time without anybody complaining and possibly new users
+>> depending on it.  Also it allows to have a slightly easier error handling
+>> as the caller knows that it is worth to retry when err > 0.
 >>
->>>>> +static int rkisp1_isp_sd_set_fmt(struct v4l2_subdev *sd,
->>>>> +				 struct v4l2_subdev_pad_config *cfg,
->>>>> +				 struct v4l2_subdev_format *fmt)
->>>>> +{
->>>>> +	struct rkisp1_device *isp_dev = sd_to_isp_dev(sd);
->>>>> +	struct rkisp1_isp_subdev *isp_sd = &isp_dev->isp_sdev;
->>>>> +	struct v4l2_mbus_framefmt *mf = &fmt->format;
->>>>> +
->>>>
->>>> Note that for sub-device nodes, the driver is itself responsible for
->>>> serialising the access to its data structures.
->>>
->>> But looking at subdev_do_ioctl_lock(), it seems that it serializes the
->>> ioctl calls for subdevs, no? Or I'm misunderstanding something (which is
->>> most probably) ?
+>> Update man pages to reflect the new semantic.
 >>
->> Good question. I had missed this change --- subdev_do_ioctl_lock() is
->> relatively new. But setting that lock is still not possible as the struct
-
-'the struct' - do you mean the 'vdev' struct allocated in
-'v4l2_device_register_subdev_nodes' ?
-
->> is allocated in the framework and the device is registered before the
-
->> driver gets hold of it. It's a good idea to provide the same serialisation
->> for subdevs as well.
+>> Cc: Michal Hocko <mhocko@suse.com>
+>> Cc: Michael Kerrisk <mtk.manpages@gmail.com>
+>> Signed-off-by: Yang Shi <yang.shi@linux.alibaba.com>
+>> ---
+>>   man2/move_pages.2 | 6 +++++-
+>>   1 file changed, 5 insertions(+), 1 deletion(-)
 >>
->> I'll get back to this later.
-> 
-> The main reason is actually that these ops are also called through the
-> sub-device kAPI, not only through the uAPI, and the locks are only taken
-> through the calls via uAPI.
+>> diff --git a/man2/move_pages.2 b/man2/move_pages.2
+>> index 1bf1053..c6cf3f8 100644
+>> --- a/man2/move_pages.2
+>> +++ b/man2/move_pages.2
+>> @@ -164,9 +164,13 @@ returns zero.
+>>   .\" do the right thing?
+>>   On error, it returns \-1, and sets
+>>   .I errno
+>> -to indicate the error.
+>> +to indicate the error. Or positive value to report the number of
+>> +non-migrated pages.
+> "If a positive value is returned, it's the number of non-migrated pages".
+>
+>>   .SH ERRORS
+>>   .TP
+>> +.B Positive value
+>> +The number of non-migrated pages if they were result of a non-fatal
+>> +reasons since version 4.17.
+> s/result/the result/ ?
+>
+> s/a reasons/reasons/ ?
+>
+> s/since version 4.17/(since 4.17)/ ?
 
-actually it seems that although 'subdev_do_ioctl_lock' exit, I wonder if
-any subdevice uses that vdev->lock in  subdev_do_ioctl_lock.
-It is not initialized in v4l2_device_register_subdev_nodes where the vdev is allocated
-and I wonder if any subdevice actually initialize it somewhere else. For example it is null in this
-driver and in vimc.
+Thanks. Will fix in new version.
 
-> 
-> So adding the locks to uAPI calls alone would not address the issue.
+>
+>>   .B E2BIG
+>>   Too many pages to move.
+>>   Since Linux 2.6.29,
+>>
+>
 
-What I can do is add a mutex to every struct of a subdevice and lock it
-at the beginning of each subdevice operation.
-Is this an acceptable solution?
-
-Thanks,
-Dafna
-> 
