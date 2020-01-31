@@ -2,105 +2,68 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6687E14F207
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Jan 2020 19:18:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2818914F210
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Jan 2020 19:20:51 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726139AbgAaSSe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 31 Jan 2020 13:18:34 -0500
-Received: from mail-yw1-f66.google.com ([209.85.161.66]:37720 "EHLO
-        mail-yw1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725878AbgAaSSe (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 31 Jan 2020 13:18:34 -0500
-Received: by mail-yw1-f66.google.com with SMTP id l5so5621390ywd.4
-        for <linux-kernel@vger.kernel.org>; Fri, 31 Jan 2020 10:18:34 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:date:to:cc:subject:message-id:mime-version:content-disposition;
-        bh=4VYyzzGXvpkoeXPD6VYi8iy20yoxe+qDPS3ZbJdgxSw=;
-        b=AGei6LyyPbL/uS3xnhgCFxDlX8FD9ZLRHfuc2U2PwbDRurtaUx4dQiSMRQ9jPQ6LfJ
-         4/QcpR9QdvlN2irxJcd6/SepI3rNFHDWBlVM4QYqBOIQH5ky7mXuNbOiKQbMjY1fgvED
-         9UszIyqchT/Y7Tf1v4/nWRJ5C15HURAJiRJ5lwnx1XOI7RwsHjLfg6LpXr0IH3ff0nT1
-         +nv264uCbz0jkfnDPbzbAl/lNAVHrL4tezJyQKAswTLYK6ui2opfY/uddMz3gGpJScJK
-         ByO5uHCpavsKvp4wfgUXznB89PuXEG/bkTDk6V1UVNvbNNL4hktgEP6yUeoXhcmfFu/j
-         GWGg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:date:to:cc:subject:message-id:mime-version
-         :content-disposition;
-        bh=4VYyzzGXvpkoeXPD6VYi8iy20yoxe+qDPS3ZbJdgxSw=;
-        b=Wff5sjWQR1VzWTQljkv2VUHKTSG5Uj5/BissdwZOUD9hod5g/P22qMvrzE/yLDqTwO
-         Xki89XBVJ3pfb8fzXBRpBOJn62yfzCsvpJpjDUkvJmh6pmLvMeoCbG6kSousmzDaqBVb
-         lZo054XBCCjlljjbQVS7/tQNA1XkORxXgPjAVpBgVtqE3eIcGvKjddCeFcaGSJ98uTdG
-         3JOu5Y74KlaMPkzDIoZal3qJ2jRuxEIms+QYx/MC61lxQHwWaIt/olikvfLqiH2gu6TZ
-         WJrD1JNlE/dyIaMN8Bfma+o4dSwyaJ5Z3tZxnQ2JPdSkJDYzpNF8uU9PWx/vjw+yI+5s
-         8GIw==
-X-Gm-Message-State: APjAAAVDi5FAuKVP6L9cQqfM+/D215znbcWKo8UnGJbyj8hcNcCLl+Vb
-        OkXGR15LbqV3/w2obgw47AJ09no9ibY=
-X-Google-Smtp-Source: APXvYqxJGnO1O/rmfQQK1Pc08HE1l2lGIxEBybFDZnB55yHsQoULJyrYbjVS/xdfaTfdSDgBmEopew==
-X-Received: by 2002:a25:9c01:: with SMTP id c1mr9362229ybo.200.1580494284802;
-        Fri, 31 Jan 2020 10:11:24 -0800 (PST)
-Received: from gmail.com ([2601:240:e300:b5b:329c:23ff:fea3:d48c])
-        by smtp.gmail.com with ESMTPSA id p62sm4438951ywc.44.2020.01.31.10.11.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 31 Jan 2020 10:11:24 -0800 (PST)
-From:   Sam Lunt <samueljlunt@gmail.com>
-X-Google-Original-From: Sam Lunt <samuel.j.lunt@gmail.com>
-Date:   Fri, 31 Jan 2020 12:11:23 -0600
-To:     linux-kernel@vger.kernel.org, peterz@infradead.org,
-        mingo@redhat.com, acme@kernel.org
-Cc:     mark.rutland@arm.com, alexander.shishkin@linux.intel.com,
-        jolsa@redhat.com, namhyung@kernel.org, trivial@kernel.org
-Subject: [PATCH] perf: Support Python 3.8+ in Makefile
-Message-ID: <20200131181123.tmamivhq4b7uqasr@gmail.com>
+        id S1726186AbgAaSUr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 31 Jan 2020 13:20:47 -0500
+Received: from mail.kernel.org ([198.145.29.99]:37836 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725907AbgAaSUq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 31 Jan 2020 13:20:46 -0500
+Received: from cakuba.hsd1.ca.comcast.net (unknown [199.201.64.133])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id ACB8A20707;
+        Fri, 31 Jan 2020 18:11:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1580494292;
+        bh=gQno9C8p/R8VNXviQsvTyedgYHZxejFQg8eaD99IcSw=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=gqHXgQ6QYuxFgykHeqKwbiu9BqIB8i++0YkKIbyp8HuV2VvRxhjAZEXOdrTpYAyFb
+         2xa15SknxDnFoJg6pqSN97HzhKDhD2BApDYKOqMjTZIiW5aRBmbJ56KVphXSFJxYB3
+         K9jHLCQHIcgfuo2G9Yw0zK7sdyrpneLkXxtx9VGQ=
+Date:   Fri, 31 Jan 2020 10:11:30 -0800
+From:   Jakub Kicinski <kuba@kernel.org>
+To:     Dan Murphy <dmurphy@ti.com>
+Cc:     <andrew@lunn.ch>, <f.fainelli@gmail.com>, <hkallweit1@gmail.com>,
+        <bunk@kernel.org>, <netdev@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <grygorii.strashko@ti.com>
+Subject: Re: [PATCH net-master 1/1] net: phy: dp83867: Add speed
+ optimization feature
+Message-ID: <20200131101130.1b265526@cakuba.hsd1.ca.comcast.net>
+In-Reply-To: <6b4bb017-de97-0688-47c5-723ec4c3a339@ti.com>
+References: <20200131151110.31642-1-dmurphy@ti.com>
+        <20200131151110.31642-2-dmurphy@ti.com>
+        <20200131091004.18d54183@cakuba.hsd1.ca.comcast.net>
+        <6b4bb017-de97-0688-47c5-723ec4c3a339@ti.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Python 3.8 changed the output of 'python-config --ldflags' to no longer
-include the '-lpythonX.Y' flag (this apparently fixed an issue loading
-modules with a statically linked Python executable).  The libpython
-feature check in linux/build/feature fails if the Python library is not
-included in FEATURE_CHECK_LDFLAGS-libpython variable.
+On Fri, 31 Jan 2020 11:14:05 -0600, Dan Murphy wrote:
+> On 1/31/20 11:10 AM, Jakub Kicinski wrote:
+> > While we wait for the PHY folk to take a look, could you please
+> > provide a Fixes tag?  
+> 
+> Hmm. This is not a bug fix though this is a new feature being added.
+> 
+> Not sure what it would be fixing.
 
-This adds a check in the Makefile to determine if PYTHON_CONFIG accepts
-the '--embed' flag and passes that flag alongside '--ldflags' if so.
+I see, you target the patch at net which is for fixes, so I
+misinterpreted this:
 
-tools/perf is the only place the libpython feature check is used.
+> This feature can also be strapped on the 64 pin PHY devices
+> but the 48 pin devices do not have the strap pin available to enable
+> this feature in the hardware.
 
-Signed-off-by: Sam Lunt <samuel.j.lunt@gmail.com>
----
- tools/perf/Makefile.config | 11 ++++++++++-
- 1 file changed, 10 insertions(+), 1 deletion(-)
+as you fixing 48 devices or such.
 
-diff --git a/tools/perf/Makefile.config b/tools/perf/Makefile.config
-index c90f4146e5a2..ccf99351f058 100644
---- a/tools/perf/Makefile.config
-+++ b/tools/perf/Makefile.config
-@@ -228,8 +228,17 @@ strip-libs  = $(filter-out -l%,$(1))
-
- PYTHON_CONFIG_SQ := $(call shell-sq,$(PYTHON_CONFIG))
-
-+# Python 3.8 changed the output of `python-config --ldflags` to not include the
-+# '-lpythonX.Y' flag unless '--embed' is also passed. The feature check for
-+# libpython fails if that flag is not included in LDFLAGS
-+ifeq ($(shell $(PYTHON_CONFIG_SQ) --ldflags --embed 2>&1 1>/dev/null; echo $$?), 0)
-+  PYTHON_CONFIG_LDFLAGS := --ldflags --embed
-+else
-+  PYTHON_CONFIG_LDFLAGS := --ldflags
-+endif
-+
- ifdef PYTHON_CONFIG
--  PYTHON_EMBED_LDOPTS := $(shell $(PYTHON_CONFIG_SQ) --ldflags 2>/dev/null)
-+  PYTHON_EMBED_LDOPTS := $(shell $(PYTHON_CONFIG_SQ) $(PYTHON_CONFIG_LDFLAGS) 2>/dev/null)
-   PYTHON_EMBED_LDFLAGS := $(call strip-libs,$(PYTHON_EMBED_LDOPTS))
-   PYTHON_EMBED_LIBADD := $(call grep-libs,$(PYTHON_EMBED_LDOPTS)) -lutil
-   PYTHON_EMBED_CCOPTS := $(shell $(PYTHON_CONFIG_SQ) --includes 2>/dev/null)
-
-base-commit: d5d359b0ac3ffc319ca93c46a4cfd87093759ad6
--- 
-2.25.0
+So please correct the tree to net-next and since net-next is now closed:
+http://vger.kernel.org/~davem/net-next.html
+only post as RFC until net-next opens back up.
