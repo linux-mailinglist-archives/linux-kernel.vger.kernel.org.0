@@ -2,87 +2,83 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A51C314EA4C
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Jan 2020 10:55:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EF7BD14EA53
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Jan 2020 10:59:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728298AbgAaJzk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 31 Jan 2020 04:55:40 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54664 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728071AbgAaJzk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 31 Jan 2020 04:55:40 -0500
-Received: from mail-lj1-f176.google.com (mail-lj1-f176.google.com [209.85.208.176])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        id S1728311AbgAaJ67 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 31 Jan 2020 04:58:59 -0500
+Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:20708 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1728271AbgAaJ66 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 31 Jan 2020 04:58:58 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1580464737;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:mime-version:mime-version:content-type:content-type;
+        bh=pM0c0LfCmKVDajSmt5fafYF9h1wpifXzFg1uGepQ6zc=;
+        b=gv34zOU5LvA6Cm0FBUSE8PRDJBTVkPEFRlAezmC4+99P9atJSJ9p9InahGgmdhLI7xxPcd
+        88S5N1JYUmOWlmbpVKJkJjgjEC8WeOjOTIv798eAjj8JWWaLCHLec0YQSiB3CLBXjL2dne
+        xcj0uKH5pq2nXNv3SSVjnf7/rJgg6oQ=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-284-gcltkZgOPJKRkg8LHAmksw-1; Fri, 31 Jan 2020 04:58:50 -0500
+X-MC-Unique: gcltkZgOPJKRkg8LHAmksw-1
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5FDBE214D8
-        for <linux-kernel@vger.kernel.org>; Fri, 31 Jan 2020 09:55:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1580464539;
-        bh=i1Q2HrEqLwmL98c9MGNOn0IlVGiouN5js+O7UuE6uZ8=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=OviUJf/XQPpTumug091IEFOc2iCyQefpCOpXKuhNEdLzK7YW7iu+lpuOubIjOoH8q
-         Qh0vKrNFjPjBdLazzvzijNWnXPswq31ObPM5xrgRPfPcL0HR5q0slVvyeBtAafjOSd
-         pCyH9qlaRDmQW+TcQro2SG+iReh7PXq4Cmcljcks=
-Received: by mail-lj1-f176.google.com with SMTP id v17so6459721ljg.4
-        for <linux-kernel@vger.kernel.org>; Fri, 31 Jan 2020 01:55:39 -0800 (PST)
-X-Gm-Message-State: APjAAAXAV6sbM5rwx7WvIoRvqbNKPQp0wSgLJriabrH9bPJTQm2twXAG
-        E/J9psqrq5LobA2T8OHzzbg/m3ZYig1Opa/6MvA=
-X-Google-Smtp-Source: APXvYqwC583auHB94JFkCsW1SWveAuKT/DkacVrJO6wUv6tp5QQCiiqLXAqL/scYC2HEBggtEZMQKa91V6W2yf2X2Jc=
-X-Received: by 2002:a2e:9a11:: with SMTP id o17mr5258945lji.256.1580464537454;
- Fri, 31 Jan 2020 01:55:37 -0800 (PST)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id B72D9A0CBF;
+        Fri, 31 Jan 2020 09:58:49 +0000 (UTC)
+Received: from ws.net.home (ovpn-204-202.brq.redhat.com [10.40.204.202])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id C18C45D9E5;
+        Fri, 31 Jan 2020 09:58:48 +0000 (UTC)
+Date:   Fri, 31 Jan 2020 10:58:46 +0100
+From:   Karel Zak <kzak@redhat.com>
+To:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        util-linux@vger.kernel.org
+Subject: [ANNOUNCE] util-linux v2.35.1
+Message-ID: <20200131095846.ogjtqrs7ai774tka@ws.net.home>
 MIME-Version: 1.0
-References: <20200130192024.2516-1-krzk@kernel.org> <CAEbi=3eb+UsNz4V-yCWYn4AB96XiVWTrUBnTNthbJ0xeGWiAEw@mail.gmail.com>
-In-Reply-To: <CAEbi=3eb+UsNz4V-yCWYn4AB96XiVWTrUBnTNthbJ0xeGWiAEw@mail.gmail.com>
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-Date:   Fri, 31 Jan 2020 10:55:26 +0100
-X-Gmail-Original-Message-ID: <CAJKOXPfr=B9-8TZQdBqCpoZCu9HDf4Yv4CBA4VwrDMwt3qe5ew@mail.gmail.com>
-Message-ID: <CAJKOXPfr=B9-8TZQdBqCpoZCu9HDf4Yv4CBA4VwrDMwt3qe5ew@mail.gmail.com>
-Subject: Re: [PATCH] nds32: configs: Cleanup CONFIG_CROSS_COMPILE
-To:     Greentime Hu <green.hu@gmail.com>
-Cc:     Nick Hu <nickhu@andestech.com>, Vincent Chen <deanbo422@gmail.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 31 Jan 2020 at 10:33, Greentime Hu <green.hu@gmail.com> wrote:
->
-> Krzysztof Kozlowski <krzk@kernel.org> =E6=96=BC 2020=E5=B9=B41=E6=9C=8831=
-=E6=97=A5 =E9=80=B1=E4=BA=94 =E4=B8=8A=E5=8D=883:20=E5=AF=AB=E9=81=93=EF=BC=
-=9A
-> >
-> > CONFIG_CROSS_COMPILE is gone since commit f1089c92da79 ("kbuild: remove
-> > CONFIG_CROSS_COMPILE support").
-> >
-> > Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
-> > ---
-> >  arch/nds32/configs/defconfig | 1 -
-> >  1 file changed, 1 deletion(-)
-> >
-> > diff --git a/arch/nds32/configs/defconfig b/arch/nds32/configs/defconfi=
-g
-> > index 40313a635075..f9a89cf00aa6 100644
-> > --- a/arch/nds32/configs/defconfig
-> > +++ b/arch/nds32/configs/defconfig
-> > @@ -1,4 +1,3 @@
-> > -CONFIG_CROSS_COMPILE=3D"nds32le-linux-"
-> >  CONFIG_SYSVIPC=3Dy
-> >  CONFIG_POSIX_MQUEUE=3Dy
-> >  CONFIG_HIGH_RES_TIMERS=3Dy
-> > --
-> > 2.17.1
-> >
-> Thank you, Kozlowski.
->
-> Let me know if you like to put in your tree or nds32's.
-> Acked-by: Greentime Hu <green.hu@gmail.com>
 
-Hi,
+The util-linux stable release v2.35.1 is available at:
+            
+  http://www.kernel.org/pub/linux/utils/util-linux/v2.35/
+ 
+Feedback and bug reports, as always, are welcomed.
+ 
+  Karel
 
-Please take it through nds32 tree. Thanks!
 
-Best regards,
-Krzysztof
+
+util-linux 2.35.1 Release Notes
+===============================
+
+build-sys:
+   - add --disable-hwclock-gplv3  [Karel Zak]
+chrt:
+   - Use sched_setscheduler system call directly  [jonnyh64]
+lib/randutils:
+   - use explicit data types for bit ops  [Karel Zak]
+libfdisk:
+   - fix __copy_partition()  [Karel Zak]
+   - make sure we use NULL after free  [Karel Zak]
+libmount:
+   - fix x- options use for non-root users  [Karel Zak]
+po:
+   - update uk.po (from translationproject.org)  [Yuri Chornoivan]
+sfdisk:
+   - make sure we do not overlap on --move  [Karel Zak]
+   - remove broken step alignment for --move  [Karel Zak]
+
+-- 
+ Karel Zak  <kzak@redhat.com>
+ http://karelzak.blogspot.com
+
