@@ -2,28 +2,28 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B4F5814EAFC
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Jan 2020 11:40:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 14A3414EAFF
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Jan 2020 11:40:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728482AbgAaKjN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 31 Jan 2020 05:39:13 -0500
-Received: from mx2.suse.de ([195.135.220.15]:57102 "EHLO mx2.suse.de"
+        id S1728611AbgAaKkB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 31 Jan 2020 05:40:01 -0500
+Received: from mx2.suse.de ([195.135.220.15]:57168 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728366AbgAaKjL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 31 Jan 2020 05:39:11 -0500
+        id S1728470AbgAaKjN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 31 Jan 2020 05:39:13 -0500
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id C7360AF43;
-        Fri, 31 Jan 2020 10:39:09 +0000 (UTC)
+        by mx2.suse.de (Postfix) with ESMTP id C08A8AF96;
+        Fri, 31 Jan 2020 10:39:10 +0000 (UTC)
 From:   Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
 To:     gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org
 Cc:     linux-rpi-kernel@lists.infradead.org,
         Nicolas Saenz Julienne <nsaenzjulienne@suse.de>,
         bcm-kernel-feedback-list@broadcom.com,
         linux-arm-kernel@lists.infradead.org, devel@driverdev.osuosl.org
-Subject: [PATCH v2 07/21] staging: vc04_services: Get rid of vchiq_platform_paused/resumed()
-Date:   Fri, 31 Jan 2020 11:38:23 +0100
-Message-Id: <20200131103836.14312-8-nsaenzjulienne@suse.de>
+Subject: [PATCH v2 08/21] staging: vc04_services: Get rid of vchiq_platform_suspend/resume()
+Date:   Fri, 31 Jan 2020 11:38:24 +0100
+Message-Id: <20200131103836.14312-9-nsaenzjulienne@suse.de>
 X-Mailer: git-send-email 2.25.0
 In-Reply-To: <20200131103836.14312-1-nsaenzjulienne@suse.de>
 References: <20200131103836.14312-1-nsaenzjulienne@suse.de>
@@ -34,80 +34,109 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-vchiq_platform_paused() and vchiq_platform_resumed() do nothing.
+vchiq_platform_suspend() and vchiq_platform_resume() do nothing, get rid
+of them.
 
 Signed-off-by: Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
 ---
- .../vc04_services/interface/vchiq_arm/vchiq_2835_arm.c | 10 ----------
- .../vc04_services/interface/vchiq_arm/vchiq_core.c     |  3 ---
- .../vc04_services/interface/vchiq_arm/vchiq_core.h     |  6 ------
- 3 files changed, 19 deletions(-)
+ .../interface/vchiq_arm/vchiq_2835_arm.c             | 12 ------------
+ .../vc04_services/interface/vchiq_arm/vchiq_arm.c    |  8 +-------
+ .../vc04_services/interface/vchiq_arm/vchiq_arm.h    |  3 ---
+ .../vc04_services/interface/vchiq_arm/vchiq_core.c   |  4 ----
+ .../vc04_services/interface/vchiq_arm/vchiq_core.h   |  3 ---
+ 5 files changed, 1 insertion(+), 29 deletions(-)
 
 diff --git a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_2835_arm.c b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_2835_arm.c
-index 1ffb2aea947c..5f59145f251b 100644
+index 5f59145f251b..65e26a90c1db 100644
 --- a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_2835_arm.c
 +++ b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_2835_arm.c
-@@ -269,16 +269,6 @@ vchiq_platform_resume(struct vchiq_state *state)
- 	return VCHIQ_SUCCESS;
+@@ -257,18 +257,6 @@ int vchiq_dump_platform_state(void *dump_context)
+ 	return vchiq_dump(dump_context, buf, len + 1);
  }
  
--void
--vchiq_platform_paused(struct vchiq_state *state)
+-enum vchiq_status
+-vchiq_platform_suspend(struct vchiq_state *state)
 -{
+-	return VCHIQ_ERROR;
 -}
 -
--void
--vchiq_platform_resumed(struct vchiq_state *state)
+-enum vchiq_status
+-vchiq_platform_resume(struct vchiq_state *state)
 -{
+-	return VCHIQ_SUCCESS;
 -}
 -
  int
  vchiq_platform_videocore_wanted(struct vchiq_state *state)
  {
+diff --git a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_arm.c b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_arm.c
+index 2dfa5793d83b..850774ded8db 100644
+--- a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_arm.c
++++ b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_arm.c
+@@ -2572,7 +2572,6 @@ void
+ vchiq_platform_check_suspend(struct vchiq_state *state)
+ {
+ 	struct vchiq_arm_state *arm_state = vchiq_platform_get_arm_state(state);
+-	int susp = 0;
+ 
+ 	if (!arm_state)
+ 		goto out;
+@@ -2581,15 +2580,10 @@ vchiq_platform_check_suspend(struct vchiq_state *state)
+ 
+ 	write_lock_bh(&arm_state->susp_res_lock);
+ 	if (arm_state->vc_suspend_state == VC_SUSPEND_REQUESTED &&
+-			arm_state->vc_resume_state == VC_RESUME_RESUMED) {
++			arm_state->vc_resume_state == VC_RESUME_RESUMED)
+ 		set_suspend_state(arm_state, VC_SUSPEND_IN_PROGRESS);
+-		susp = 1;
+-	}
+ 	write_unlock_bh(&arm_state->susp_res_lock);
+ 
+-	if (susp)
+-		vchiq_platform_suspend(state);
+-
+ out:
+ 	vchiq_log_trace(vchiq_susp_log_level, "%s exit", __func__);
+ 	return;
+diff --git a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_arm.h b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_arm.h
+index 61c50d7d4396..1874a01f5201 100644
+--- a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_arm.h
++++ b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_arm.h
+@@ -112,9 +112,6 @@ vchiq_release_service(unsigned int handle);
+ extern enum vchiq_status
+ vchiq_check_service(struct vchiq_service *service);
+ 
+-extern enum vchiq_status
+-vchiq_platform_suspend(struct vchiq_state *state);
+-
+ extern int
+ vchiq_platform_videocore_wanted(struct vchiq_state *state);
+ 
 diff --git a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_core.c b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_core.c
-index 76351078affb..71342826ed33 100644
+index 71342826ed33..ef8340ab8a52 100644
 --- a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_core.c
 +++ b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_core.c
-@@ -1798,7 +1798,6 @@ parse_rx_slots(struct vchiq_state *state)
- 			}
- 			/* At this point slot_mutex is held */
- 			vchiq_set_conn_state(state, VCHIQ_CONNSTATE_PAUSED);
--			vchiq_platform_paused(state);
- 			break;
- 		case VCHIQ_MSG_RESUME:
- 			vchiq_log_trace(vchiq_core_log_level,
-@@ -1807,7 +1806,6 @@ parse_rx_slots(struct vchiq_state *state)
- 			/* Release the slot mutex */
- 			mutex_unlock(&state->slot_mutex);
- 			vchiq_set_conn_state(state, VCHIQ_CONNSTATE_CONNECTED);
--			vchiq_platform_resumed(state);
- 			break;
+@@ -1895,10 +1895,6 @@ slot_handler_func(void *v)
+ 				}
+ 				break;
  
- 		case VCHIQ_MSG_REMOTE_USE:
-@@ -1908,7 +1906,6 @@ slot_handler_func(void *v)
- 					!= VCHIQ_RETRY) {
- 					vchiq_set_conn_state(state,
- 						VCHIQ_CONNSTATE_CONNECTED);
--					vchiq_platform_resumed(state);
- 				} else {
- 					/* This should really be impossible,
- 					** since the PAUSE should have flushed
+-			case VCHIQ_CONNSTATE_PAUSED:
+-				vchiq_platform_resume(state);
+-				break;
+-
+ 			case VCHIQ_CONNSTATE_RESUMING:
+ 				if (queue_message(state, NULL,
+ 					VCHIQ_MAKE_MSG(VCHIQ_MSG_RESUME, 0, 0),
 diff --git a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_core.h b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_core.h
-index c31f953a9986..72c88fe5feb1 100644
+index 72c88fe5feb1..535a67cc68ed 100644
 --- a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_core.h
 +++ b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_core.h
-@@ -593,15 +593,9 @@ remote_event_signal(struct remote_event *event);
+@@ -593,9 +593,6 @@ remote_event_signal(struct remote_event *event);
  void
  vchiq_platform_check_suspend(struct vchiq_state *state);
  
--extern void
--vchiq_platform_paused(struct vchiq_state *state);
--
- extern enum vchiq_status
- vchiq_platform_resume(struct vchiq_state *state);
- 
--extern void
--vchiq_platform_resumed(struct vchiq_state *state);
+-extern enum vchiq_status
+-vchiq_platform_resume(struct vchiq_state *state);
 -
  extern int
  vchiq_dump(void *dump_context, const char *str, int len);
