@@ -2,99 +2,98 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C05A314EFC6
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Jan 2020 16:39:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E432814EFCE
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Jan 2020 16:40:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729202AbgAaPjA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 31 Jan 2020 10:39:00 -0500
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:40284 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728752AbgAaPjA (ORCPT
+        id S1729290AbgAaPkB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 31 Jan 2020 10:40:01 -0500
+Received: from pandora.armlinux.org.uk ([78.32.30.218]:45698 "EHLO
+        pandora.armlinux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728752AbgAaPkA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 31 Jan 2020 10:39:00 -0500
-Received: by mail-lj1-f193.google.com with SMTP id n18so7523827ljo.7;
-        Fri, 31 Jan 2020 07:38:58 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=9NPQscGNoa4QIXz4hQhsZPNEmWteEQEWE2lnF9zwH24=;
-        b=HY2h8qXHR+65tHbLBV9R4c9tHZBR6GbAHVfWKrQFLM/T5OcNZzujzh4h7wyxaLOZSw
-         DtPJLapCShNv4r6pa6VPaHjq51f/tLFeFcRtJ7NcTLclpzwfOBa94vMHQl6Y5HO/NLp+
-         Oq9rxnOfqpbInouIdupaA9abu/BKodBdajs8+MsBsiJX6/Xy2p9io6kvVneyr7jDueG0
-         NB4JE12KytkZznQWOAresZeeo5efZmvuSvEBZRaTTEL6tVJEFat8x8y5kTMwsTAw1Qh3
-         JNAXjXVQdajYbUuRbidVUTXYzt1Lmf/EGuut289IrEL/xvNuCBOaUcneJTBJ65yFVeR/
-         1Z/A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=9NPQscGNoa4QIXz4hQhsZPNEmWteEQEWE2lnF9zwH24=;
-        b=gGoqJ+9M8iWv4qEn6IU5vWXRmMXe8cLtOHh4OjdWIb9mtAopfjUGXv92a3S1DKQ3FJ
-         V/Ss7qMkrVzPyZ+6GL2pmFWTzVuSDBhtxvO/AJ0qtMxpxMroj4OiuO+75KiyDz4OOpmp
-         D52ecka/7pf6cZHNrEpHHOlZtMdBFoVSqjS74d1oue6WZxZ8/t62her7hrT8nAeNqAaL
-         K746zzdIvwN4/dI+sIv0eKNwmuQX8RxQKXkS22ZRj0e+MkeStO5xc824I9x+4dwX0DWO
-         00t8rGLra4iC3n8p5YKKjyUPobc5KmYOpdLBm92jhxnIhFVnOUyYO/mzb46oJYrekD6U
-         hmug==
-X-Gm-Message-State: APjAAAWSM/AptSmonwucVbEWpLXHL7x67xIXdkAJ5jEAlce6ZOIerdGg
-        fD6pcVQP9RkR7xwBf8YXZYgE/spW
-X-Google-Smtp-Source: APXvYqxQpZSCnRWgO07QQjTkLnxT1f+sOw6/HeSxPP+VGu4ipK/vezwcHwADfcg1x2dJ2mXLXhKwOA==
-X-Received: by 2002:a2e:88c5:: with SMTP id a5mr6362924ljk.201.1580485137587;
-        Fri, 31 Jan 2020 07:38:57 -0800 (PST)
-Received: from [192.168.2.145] (79-139-233-37.dynamic.spd-mgts.ru. [79.139.233.37])
-        by smtp.googlemail.com with ESMTPSA id a10sm4761180lfr.94.2020.01.31.07.38.56
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 31 Jan 2020 07:38:57 -0800 (PST)
-Subject: Re: [PATCH] Revert "ASoC: tegra: Allow 24bit and 32bit samples"
-To:     Jon Hunter <jonathanh@nvidia.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Ben Dooks <ben.dooks@codethink.co.uk>
-Cc:     alsa-devel@alsa-project.org, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org, stable@vger.kernel.org
-References: <20200131091901.13014-1-jonathanh@nvidia.com>
-From:   Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <2bb53d7d-2d36-e16e-5858-24360b19f936@gmail.com>
-Date:   Fri, 31 Jan 2020 18:38:54 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.3.0
+        Fri, 31 Jan 2020 10:40:00 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=N4e1IlRTcR/cWdEmSvMEu/ZvSyKU7DT7I7Dgvs6lFnY=; b=nlO5iYKINdDyWxjQ9d0yXVoKE
+        GWCL7SdUiY47LuCh3ddWUPXlA5ye7GI0FSP+/MNT0PvAR7qk5uZVLkGUG/01IxRt55wMxfyNnGFJw
+        NCbJbc47B5uH1B+0e6sVj3HkRTirYZtFieGQn1zW7joseysNrx0iYs3cnQwU5g0DaOFHI/R1c5rXn
+        ccVWqjqI6OtqU+QbYYJeBq4f3uifwQdnRV/vR6rdvUWntgEfLtiulcSw7H0kGBUewU8aLc0fv3NlA
+        Rt0bmRYl8Rkd5T358olJqXgjy9CNhaqJHtYTYcdYb/veKfHh9j+x+7tZv0keddxyRfIKheYdeGxNr
+        KHSuQrA9Q==;
+Received: from shell.armlinux.org.uk ([2002:4e20:1eda:1:5054:ff:fe00:4ec]:41668)
+        by pandora.armlinux.org.uk with esmtpsa (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256)
+        (Exim 4.90_1)
+        (envelope-from <linux@armlinux.org.uk>)
+        id 1ixYOS-0001bW-Oe; Fri, 31 Jan 2020 15:39:40 +0000
+Received: from linux by shell.armlinux.org.uk with local (Exim 4.92)
+        (envelope-from <linux@shell.armlinux.org.uk>)
+        id 1ixYOQ-0005W5-Ji; Fri, 31 Jan 2020 15:39:38 +0000
+Date:   Fri, 31 Jan 2020 15:39:38 +0000
+From:   Russell King - ARM Linux admin <linux@armlinux.org.uk>
+To:     Andrew Lunn <andrew@lunn.ch>
+Cc:     Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>,
+        Jon Nettleton <jon@solid-run.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Marc Zyngier <maz@kernel.org>,
+        Makarand Pawagi <makarand.pawagi@nxp.com>,
+        Calvin Johnson <calvin.johnson@nxp.com>, stuyoder@gmail.com,
+        nleeder@codeaurora.org, Ioana Ciornei <ioana.ciornei@nxp.com>,
+        Cristi Sovaiala <cristian.sovaiala@nxp.com>,
+        Hanjun Guo <guohanjun@huawei.com>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Pankaj Bansal <pankaj.bansal@nxp.com>,
+        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
+        Len Brown <lenb@kernel.org>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Andy Wang <Andy.Wang@arm.com>, Varun Sethi <V.Sethi@nxp.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        Laurentiu Tudor <laurentiu.tudor@nxp.com>,
+        Paul Yang <Paul.Yang@arm.com>,
+        "<netdev@vger.kernel.org>" <netdev@vger.kernel.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Shameerali Kolothum Thodi 
+        <shameerali.kolothum.thodi@huawei.com>,
+        Sudeep Holla <sudeep.holla@arm.com>
+Subject: Re: [EXT] Re: [PATCH] bus: fsl-mc: Add ACPI support for fsl-mc
+Message-ID: <20200131153938.GP25745@shell.armlinux.org.uk>
+References: <DB8PR04MB7164DDF48480956F05886DABEB070@DB8PR04MB7164.eurprd04.prod.outlook.com>
+ <12531d6c569c7e14dffe8e288d9f4a0b@kernel.org>
+ <CAKv+Gu8uaJBmy5wDgk=uzcmC4vkEyOjW=JRvhpjfsdh-HcOCLg@mail.gmail.com>
+ <CABdtJHsu9R9g4mn25=9EW3jkCMhnej_rfkiRzo3OCX4cv4hpUQ@mail.gmail.com>
+ <0680c2ce-cff0-d163-6bd9-1eb39be06eee@arm.com>
+ <CABdtJHuLZeNd9bQZ-cmQi00WnObYPvM=BdWNw4EMpOFHjRd70w@mail.gmail.com>
+ <b136adc4-be48-82df-0592-97b4ba11dd79@arm.com>
+ <20200131142906.GG9639@lunn.ch>
+ <20200131144737.GA4948@willie-the-truck>
+ <20200131150929.GB13902@lunn.ch>
 MIME-Version: 1.0
-In-Reply-To: <20200131091901.13014-1-jonathanh@nvidia.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200131150929.GB13902@lunn.ch>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-31.01.2020 12:19, Jon Hunter пишет:
-> Commit f3ee99087c8ca0ecfdd549ef5a94f557c42d5428 ("ASoC: tegra: Allow
-> 24bit and 32bit samples") added 24-bit and 32-bit support for to the
-> Tegra30 I2S driver. However, there are two additional commits that are
-> also needed to get 24-bit and 32-bit support to work correctly. These
-> commits are not yet applied because there are still some review comments
-> that need to be addressed. With only this change applied, 24-bit and
-> 32-bit support is advertised by the I2S driver, but it does not work and
-> the audio is distorted. Therefore, revert this patch for now until the
-> other changes are also ready.
+On Fri, Jan 31, 2020 at 04:09:29PM +0100, Andrew Lunn wrote:
+> > Devicetree to the rescue!
 > 
-> Furthermore, a clock issue with 24-bit support has been identified with
-> this change and so if we revert this now, we can also fix that in the
-> updated version.
-> 
-> Cc: stable@vger.kernel.org
-> 
-> Reported-by: Dmitry Osipenko <digetx@gmail.com>
-> Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
-> ---
+> Yes, exactly. We have good, standardised descriptions for most of this
+> in device tree. And phylink can handle SFP and SFP+. Nobody has worked
+> on QSFP yet, since phylink has mostly been pushed by the embedded
+> world and 40G is not yet popular in the embedded world.
 
-Thanks, Jon!
+That's incorrect (if you read my previous reply.)  It shouldn't come
+as any surprise that I have some experimental QSFP code.
 
-Tested-by: Dmitry Osipenko <digetx@gmail.com>
-
-Ben, looking forward to have 24bit working in 5.7 :)
+-- 
+RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
+FTTC broadband for 0.8mile line in suburbia: sync at 12.1Mbps down 622kbps up
+According to speedtest.net: 11.9Mbps down 500kbps up
