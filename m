@@ -2,174 +2,139 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B6DC714F0D8
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Jan 2020 17:48:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CE99914F0F5
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Jan 2020 17:57:10 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726747AbgAaQsS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 31 Jan 2020 11:48:18 -0500
-Received: from mail-yw1-f68.google.com ([209.85.161.68]:39000 "EHLO
-        mail-yw1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726322AbgAaQsS (ORCPT
+        id S1726825AbgAaQ5I (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 31 Jan 2020 11:57:08 -0500
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:39959 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726604AbgAaQ5I (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 31 Jan 2020 11:48:18 -0500
-Received: by mail-yw1-f68.google.com with SMTP id h126so5317615ywc.6
-        for <linux-kernel@vger.kernel.org>; Fri, 31 Jan 2020 08:48:17 -0800 (PST)
+        Fri, 31 Jan 2020 11:57:08 -0500
+Received: by mail-pg1-f195.google.com with SMTP id k25so3763080pgt.7
+        for <linux-kernel@vger.kernel.org>; Fri, 31 Jan 2020 08:57:06 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
+        d=chromium.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=FStIY2/08JbrIY8f3GxrQrXyoMbYm8zv42KLiEUyb2Y=;
-        b=Lbx0o/hqZc/f2IRTVwsLyoYKtxswAA0b0C92LXok5bruJBgR7GOWxi2smv2bZCNfs4
-         bma668OoSlksLEXxe7CCok46i11OlbNFLPsQYxKxH6TCq/kv4ocmWMBeIUUIq9dQO9Lc
-         cYw/DTkYeVyfGXTSur7ZcWP106rBIQNfBsUw2z0n0psn9UKG/fuhyp7kCHqj8oenHszQ
-         k0u9Tqb9fndheQazRKi38I9J1Bsm5PxZDexaxlt639LVsTUXPm3QLIteoVDbXn2pHT01
-         ACAAQNwfRNYjnFNLKvZXfWWb4RL6RaI25seWZRacbj3n37/Av9FciAmmmx+Nll3JLGIZ
-         m6dQ==
+        bh=H4H/l/EMhFF6pY2BmwBr3TmDwgCoPTi4UEgr7Md8qb0=;
+        b=RfcRbQ+i4VLsXYNxRUM2pBZ+l+GC+HGsPMX/v/dlzShiAEZ9cPp9WuDZE0di5Qjjqo
+         jnk1Sv4jjo88FTcaEWIyZoHfr/vXtvqzDzavZlsBLly/w/rO4dUNs6ko5Cmhdb+3M9vY
+         PcO9IZFZ3wzz3xfvyOfjjTQIbScbsZTZkKwy4=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=FStIY2/08JbrIY8f3GxrQrXyoMbYm8zv42KLiEUyb2Y=;
-        b=lsl2fYSvD09nfPVGfC5+43aCNrhu6hnWpxXe/vFYj+tOtBvU/q/fJc9IT8ZmH3YZ/0
-         P4Y5V0qqmvEhPidQyONEA5nAZRwnn9LIRqX8SIc8qXkMbwVLzohDMNiQMrPo878viKHT
-         i0UXzRcW0a55CYIBy8SPN5M+2oVmiJeR2DzntX9zmAOb12ZOStlJep+G20RhgDhLR0Xm
-         j9G04XQIwpTUh8Xq6P+XdiD35e0NluIZzPNRk/5GpIeX+tmiMzqaa0OeOkdHCmT8v3ac
-         nfBN4WFe9JARmjvw6dzRaDVrx5Y6Rui5emii1bsZkKL8Bb2tfHDMjv550JWM5Kngteya
-         XD2Q==
-X-Gm-Message-State: APjAAAX4Z3nUhumx4bDUMFSVmGe0PCZKrnrSMOrytAcKhGLSj192hk/O
-        xq+Pj1oFly2ysVVja3ZFgdILNaJ66eArUgXeegAOsQ==
-X-Google-Smtp-Source: APXvYqyvyGReVEKAbrrNdb/iIM9t8fuP9A0RNHiXB81RLD5bRwcgC9Og5cZSRNQKXK1G3il3Lm6CuvQXrruw0tr53Xo=
-X-Received: by 2002:a5b:489:: with SMTP id n9mr8832128ybp.395.1580489296249;
- Fri, 31 Jan 2020 08:48:16 -0800 (PST)
+        bh=H4H/l/EMhFF6pY2BmwBr3TmDwgCoPTi4UEgr7Md8qb0=;
+        b=nQiOMAOZdXTp7hRFAt3wi8pJiAuRDeFQZXDyk/SgpbMBqMGLu6KSbtktzVMEBJ6lUF
+         TFZ3PsEK5y97fb0bsMKy6FS+sYuUoWh10gRG1uw8HgLidAYdbxIaloFG4CcCmMn/xAN0
+         tmx/sCAypc4kn9KnpenzRVkmsXBCzXTZwGLkFbz0u/0CxxDPyUP8kEyATfqSJvR/6uJw
+         9iG6HpkQWQOSVDKBvi4H8ZmpNkuUufomesXS23fPSCleiQTLLtoLPR+Nl2Uql2o3Bb1h
+         KrtQUeMu1F+8fgf94ss5CrozYWl/w7obsYKqonkBtl/HfgVAK3Hj4Rc2CHBKf5zfsnXy
+         MfLw==
+X-Gm-Message-State: APjAAAXXymTtsaS05NxTfW1Y4CYGOc4k/yVOOHwGXqp5+6hOfCD68X9c
+        VEVwhVWqtc/tr8kNFny2FHPDDmAfvxY=
+X-Google-Smtp-Source: APXvYqxX5Es/RZTwWnvGdAVuvUlF1rA6JRkZmamR6oSP/DVEwt04YaZ56aw0cU6tqkOk3VSklYY7Ww==
+X-Received: by 2002:a63:8b44:: with SMTP id j65mr10952646pge.272.1580489826065;
+        Fri, 31 Jan 2020 08:57:06 -0800 (PST)
+Received: from mail-pf1-f178.google.com (mail-pf1-f178.google.com. [209.85.210.178])
+        by smtp.gmail.com with ESMTPSA id m15sm10532727pgi.91.2020.01.31.08.57.05
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 31 Jan 2020 08:57:05 -0800 (PST)
+Received: by mail-pf1-f178.google.com with SMTP id 185so3641480pfv.3
+        for <linux-kernel@vger.kernel.org>; Fri, 31 Jan 2020 08:57:05 -0800 (PST)
+X-Received: by 2002:a67:e342:: with SMTP id s2mr7136533vsm.198.1580489329211;
+ Fri, 31 Jan 2020 08:48:49 -0800 (PST)
 MIME-Version: 1.0
-References: <20200131164308.GA5175@willie-the-truck>
-In-Reply-To: <20200131164308.GA5175@willie-the-truck>
-From:   Eric Dumazet <edumazet@google.com>
-Date:   Fri, 31 Jan 2020 08:48:05 -0800
-Message-ID: <CANn89i+CnezK81gZSLOy0w7MaZy0uT=xyxoKSTyZU3aMpzifOA@mail.gmail.com>
-Subject: Re: Confused about hlist_unhashed_lockless()
-To:     Will Deacon <will@kernel.org>
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        "Paul E. McKenney" <paulmck@kernel.org>,
-        "the arch/x86 maintainers" <x86@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>
+References: <20200130211231.224656-1-dianders@chromium.org>
+ <20200130131220.v3.7.I513cd73b16665065ae6c22cf594d8b543745e28c@changeid> <CAL_JsqLj8WbP=oXAovyVFOc-58eFr5xS5EJK=kpAK-eT7_TyNw@mail.gmail.com>
+In-Reply-To: <CAL_JsqLj8WbP=oXAovyVFOc-58eFr5xS5EJK=kpAK-eT7_TyNw@mail.gmail.com>
+From:   Doug Anderson <dianders@chromium.org>
+Date:   Fri, 31 Jan 2020 08:48:37 -0800
+X-Gmail-Original-Message-ID: <CAD=FV=X=vAM7HZmA7pCm707rb8u+ogEqPUu_F_ueiS9GwbVwuw@mail.gmail.com>
+Message-ID: <CAD=FV=X=vAM7HZmA7pCm707rb8u+ogEqPUu_F_ueiS9GwbVwuw@mail.gmail.com>
+Subject: Re: [PATCH v3 07/15] dt-bindings: clock: Fix qcom,gpucc bindings for sdm845/sc7180/msm8998
+To:     Rob Herring <robh@kernel.org>
+Cc:     Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Jeffrey Hugo <jhugo@codeaurora.org>,
+        Taniya Das <tdas@codeaurora.org>,
+        Jeffrey Hugo <jeffrey.l.hugo@gmail.com>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        Harigovindan P <harigovi@codeaurora.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>, Matthias Kaehlcke <mka@chromium.org>,
+        Kalyan Thota <kalyan_t@codeaurora.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        "Kristian H. Kristensen" <hoegsberg@chromium.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jan 31, 2020 at 8:43 AM Will Deacon <will@kernel.org> wrote:
+Hi,
+
+On Fri, Jan 31, 2020 at 8:43 AM Rob Herring <robh@kernel.org> wrote:
 >
-> Hi folks,
+> On Thu, Jan 30, 2020 at 3:12 PM Douglas Anderson <dianders@chromium.org> wrote:
+> >
+> > The qcom,gpucc bindings had a few problems with them:
+> >
+> > 1. When things were converted to yaml the name of the "gpll0 main"
+> >    clock got changed from "gpll0" to "gpll0_main".  Change it back for
+> >    msm8998.
+> >
+> > 2. Apparently there is a push not to use purist aliases for clocks but
+> >    instead to just use the internal Qualcomm names.  For sdm845 and
+> >    sc7180 (where the drivers haven't already been changed) move in
+> >    this direction.
+> >
+> > Things were also getting complicated harder to deal with by jamming
+> > several SoCs into one file.  Splitting simplifies things.
+> >
+> > Fixes: 5c6f3a36b913 ("dt-bindings: clock: Add YAML schemas for the QCOM GPUCC clock bindings")
+> > Signed-off-by: Douglas Anderson <dianders@chromium.org>
+> > ---
+> >
+> > Changes in v3:
+> > - Added pointer to inlude file in description.
+> > - Everyone but msm8998 now uses internal QC names.
+> > - Fixed typo grpahics => graphics
+> > - Split bindings into 3 files.
+> >
+> > Changes in v2:
+> > - Patch ("dt-bindings: clock: Fix qcom,gpucc...") new for v2.
+> >
+> >  .../devicetree/bindings/clock/qcom,gpucc.yaml | 72 -------------------
+> >  .../bindings/clock/qcom,msm8998-gpucc.yaml    | 66 +++++++++++++++++
+> >  .../bindings/clock/qcom,sc7180-gpucc.yaml     | 72 +++++++++++++++++++
+> >  .../bindings/clock/qcom,sdm845-gpucc.yaml     | 72 +++++++++++++++++++
+> >  4 files changed, 210 insertions(+), 72 deletions(-)
+> >  delete mode 100644 Documentation/devicetree/bindings/clock/qcom,gpucc.yaml
+> >  create mode 100644 Documentation/devicetree/bindings/clock/qcom,msm8998-gpucc.yaml
+> >  create mode 100644 Documentation/devicetree/bindings/clock/qcom,sc7180-gpucc.yaml
+> >  create mode 100644 Documentation/devicetree/bindings/clock/qcom,sdm845-gpucc.yaml
 >
-> I just ran into c54a2744497d ("list: Add hlist_unhashed_lockless()")
-> but I'm a bit confused about what it's trying to achieve. It also seems
-> to have been merged without any callers (even in -next) -- was that
-> intentional?
->
-> My main source of confusion is the lack of memory barriers. For example,
-> if you look at the following pair of functions:
->
->
-> static inline int hlist_unhashed_lockless(const struct hlist_node *h)
-> {
->         return !READ_ONCE(h->pprev);
-> }
->
-> static inline void hlist_add_before(struct hlist_node *n,
->                                     struct hlist_node *next)
-> {
->         WRITE_ONCE(n->pprev, next->pprev);
->         WRITE_ONCE(n->next, next);
->         WRITE_ONCE(next->pprev, &n->next);
->         WRITE_ONCE(*(n->pprev), n);
-> }
->
->
-> Then running these two concurrently on the same node means that
-> hlist_unhashed_lockless() doesn't really tell you anything about whether
-> or not the node is reachable in the list (i.e. there is another node
-> with a next pointer pointing to it). In other words, I think all of
-> these outcomes are permitted:
->
->         hlist_unhashed_lockless(n)      n reachable in list
->         0                               0 (No reordering)
->         0                               1 (No reordering)
->         1                               0 (No reordering)
->         1                               1 (Reorder first and last WRITE_ONCEs)
->
-> So I must be missing some details about the use-case here. Please could
-> you enlighten me? The RCU implementation permits only the first three
-> outcomes afaict, why not use that and leave non-RCU hlist as it was?
->
+> I'm not seeing any differences in sdm845 and sc7180. Do those really
+> need to be separate? It doesn't have to be all combined or all
+> separate.
 
-I guess the following has been lost :
+They are the same, other than pointing to a different #include file.
+I debated whether to put them in one file (arbitrarily named after one
+SoC or the other) or to put them in individual files.  I got the
+impression from Stephen that he'd prefer them to be separate files
+even in the case that they were 99% identical, but I certainly could
+have misunderstood.
 
-Author: Eric Dumazet <edumazet@google.com>
-Date:   Thu Nov 7 11:23:14 2019 -0800
+I'll do whatever you guys agree to.  If you want them in one file I'll
+probably name it "qcom,sdm845-gpucc.yaml" just because that SoC is
+earlier, unless someone tells me otherwise.
 
-    timer: use hlist_unhashed_lockless() in timer_pending()
-
-    timer_pending() is mostly used in lockless contexts.
-
-    Without proper annotations, KCSAN might detect a data-race [1]
-
-    Using hlist_unhashed_lockless() instead of hand-coding it
-    seems appropriate (as suggested by Paul E. McKenney).
-
-    [1]
-
-    BUG: KCSAN: data-race in del_timer / detach_if_pending
-
-    write to 0xffff88808697d870 of 8 bytes by task 10 on cpu 0:
-     __hlist_del include/linux/list.h:764 [inline]
-     detach_timer kernel/time/timer.c:815 [inline]
-     detach_if_pending+0xcd/0x2d0 kernel/time/timer.c:832
-     try_to_del_timer_sync+0x60/0xb0 kernel/time/timer.c:1226
-     del_timer_sync+0x6b/0xa0 kernel/time/timer.c:1365
-     schedule_timeout+0x2d2/0x6e0 kernel/time/timer.c:1896
-     rcu_gp_fqs_loop+0x37c/0x580 kernel/rcu/tree.c:1639
-     rcu_gp_kthread+0x143/0x230 kernel/rcu/tree.c:1799
-     kthread+0x1d4/0x200 drivers/block/aoe/aoecmd.c:1253
-     ret_from_fork+0x1f/0x30 arch/x86/entry/entry_64.S:352
-
-    read to 0xffff88808697d870 of 8 bytes by task 12060 on cpu 1:
-     del_timer+0x3b/0xb0 kernel/time/timer.c:1198
-     sk_stop_timer+0x25/0x60 net/core/sock.c:2845
-     inet_csk_clear_xmit_timers+0x69/0xa0 net/ipv4/inet_connection_sock.c:523
-     tcp_clear_xmit_timers include/net/tcp.h:606 [inline]
-     tcp_v4_destroy_sock+0xa3/0x3f0 net/ipv4/tcp_ipv4.c:2096
-     inet_csk_destroy_sock+0xf4/0x250 net/ipv4/inet_connection_sock.c:836
-     tcp_close+0x6f3/0x970 net/ipv4/tcp.c:2497
-     inet_release+0x86/0x100 net/ipv4/af_inet.c:427
-     __sock_release+0x85/0x160 net/socket.c:590
-     sock_close+0x24/0x30 net/socket.c:1268
-     __fput+0x1e1/0x520 fs/file_table.c:280
-     ____fput+0x1f/0x30 fs/file_table.c:313
-     task_work_run+0xf6/0x130 kernel/task_work.c:113
-     tracehook_notify_resume include/linux/tracehook.h:188 [inline]
-     exit_to_usermode_loop+0x2b4/0x2c0 arch/x86/entry/common.c:163
-
-    Reported by Kernel Concurrency Sanitizer on:
-    CPU: 1 PID: 12060 Comm: syz-executor.5 Not tainted 5.4.0-rc3+ #0
-    Hardware name: Google Google Compute Engine/Google Compute Engine,
-
-    Signed-off-by: Eric Dumazet <edumazet@google.com>
-    Cc: "Paul E. McKenney" <paulmck@kernel.org>
-    Cc: Thomas Gleixner <tglx@linutronix.de>
-
-diff --git a/include/linux/timer.h b/include/linux/timer.h
-index 1e6650ed066d5d28251b0bd385fc37ef94c96532..0dc19a8c39c9e49a7cde3d34bfa4be8871cbc1c2
-100644
---- a/include/linux/timer.h
-+++ b/include/linux/timer.h
-@@ -164,7 +164,7 @@ static inline void destroy_timer_on_stack(struct
-timer_list *timer) { }
-  */
- static inline int timer_pending(const struct timer_list * timer)
- {
-- return timer->entry.pprev != NULL;
-+ return !hlist_unhashed_lockless(&timer->entry);
- }
+-Doug
