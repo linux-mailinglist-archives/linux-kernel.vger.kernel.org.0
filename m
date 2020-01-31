@@ -2,84 +2,152 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EEE0514F06C
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Jan 2020 17:09:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DB37714F06F
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Jan 2020 17:09:23 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729308AbgAaQJA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 31 Jan 2020 11:09:00 -0500
-Received: from relay.sw.ru ([185.231.240.75]:54864 "EHLO relay.sw.ru"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729138AbgAaQJA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 31 Jan 2020 11:09:00 -0500
-Received: from dhcp-172-16-24-104.sw.ru ([172.16.24.104])
-        by relay.sw.ru with esmtp (Exim 4.92.3)
-        (envelope-from <ktkhai@virtuozzo.com>)
-        id 1ixYqf-00030w-Uk; Fri, 31 Jan 2020 19:08:50 +0300
-Subject: [PATCH v3] mm: Allocate shrinker_map on appropriate NUMA node
-To:     Michal Hocko <mhocko@kernel.org>
-Cc:     David Hildenbrand <david@redhat.com>, akpm@linux-foundation.org,
-        hannes@cmpxchg.org, shakeelb@google.com, vdavydov.dev@gmail.com,
-        linux-mm@kvack.org, linux-kernel@vger.kernel.org
-References: <158047248934.390127.5043060848569612747.stgit@localhost.localdomain>
- <ebe1c944-2e0f-136d-dd09-0bb37d500fe2@redhat.com>
- <5f3fc9a9-9a22-ccc3-5971-9783b60807bc@virtuozzo.com>
- <20200131154735.GA4520@dhcp22.suse.cz>
- <a03cb815-8f80-03db-c1bd-39af960db601@virtuozzo.com>
- <20200131160151.GB4520@dhcp22.suse.cz>
-From:   Kirill Tkhai <ktkhai@virtuozzo.com>
-Message-ID: <fff0e636-4c36-ed10-281c-8cdb0687c839@virtuozzo.com>
-Date:   Fri, 31 Jan 2020 19:08:49 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.2
+        id S1729344AbgAaQJI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 31 Jan 2020 11:09:08 -0500
+Received: from mail-pl1-f193.google.com ([209.85.214.193]:47103 "EHLO
+        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729138AbgAaQJH (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 31 Jan 2020 11:09:07 -0500
+Received: by mail-pl1-f193.google.com with SMTP id y8so2903565pll.13;
+        Fri, 31 Jan 2020 08:09:06 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=hpBiH5UvVga2L9qKrNHriieDIEKJ+7dJl3rJvusAxwU=;
+        b=iFcwZ0g/ZmSbPVnVcfloa/kuREbVy0mNbss2N6WTeo+WiRF62OvdpOQEZOYKaem8Ty
+         UOPNm2KP9rQC51B/axKOuyRfRSlOb18LAqgRP7FBpUQU7DewyS+Bv9l9uQCl5Zn/ghWB
+         mtPENHVp8IYzOcY57TDUO75Qn85sXrQ7MDwUmOJZIrYiH/ANpLhtg3lfxe7GEMVVK4M0
+         GrDJYt1CYI8qp4JZ39P32xPQcH6HeoPT70yd7q5qeKsuqBCrJPM1I5Rmal8BCsXKgAha
+         LgiLP0Aj9i3KWoyQr2VHhaYQEZJ8er8sBhD0+z+keuP6zsmJHVJAur/Mzu3qrSXq4o9E
+         gDLQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=hpBiH5UvVga2L9qKrNHriieDIEKJ+7dJl3rJvusAxwU=;
+        b=FVobY/Yr2jpIA8VFb33dXEX6QpmTq48fdIlgiTpp56LXrTvQxQpwZFfGPUZL5jBR4g
+         qrArm/Dm7Jagxb4sfljrwUcsSk19fBZnTw2YhZhR5JYAlnQxqTsY/94smewtHIbeL5/B
+         PXfB4cFDAWZ/8vkckXBCbzbR6RPofuBWbp/bMV35afdn4z76e5Ce4EUeyTf3f9sD+TUQ
+         IH1vjf0BRW9Low1guOzDle6bBqAJmGaYthwN/639yKrZ/ZjbIUKFU8uBxtRaazfgI+tk
+         1AkPiz1n7cttb5eu6iHuMf4Wob3gO/pObxBHPz9iAnA4VrngAdZKPb7pARydOEiFhWY2
+         zFBw==
+X-Gm-Message-State: APjAAAVeGIli4BwYccPiH+J+9I4HLO0Q1mxc4nOmfvH2XiCzHUOpnZz+
+        +7/mIOjU2ghMYy9nT1pxCZS6UBb5oLu2NQFbQ/SyYu4NueE+Wg==
+X-Google-Smtp-Source: APXvYqykvrqIfRm3NrlMePhULUO63QsI46EgzavCRq/mFt6uhD6wzoqn9+XwRLaI5sx8zOxRvdIt5NDWLuaYj0bpOJk=
+X-Received: by 2002:a17:90a:2004:: with SMTP id n4mr13343842pjc.20.1580486946392;
+ Fri, 31 Jan 2020 08:09:06 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <20200131160151.GB4520@dhcp22.suse.cz>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <20200131153440.20870-1-calvin.johnson@nxp.com> <20200131153440.20870-4-calvin.johnson@nxp.com>
+In-Reply-To: <20200131153440.20870-4-calvin.johnson@nxp.com>
+From:   Andy Shevchenko <andy.shevchenko@gmail.com>
+Date:   Fri, 31 Jan 2020 18:08:58 +0200
+Message-ID: <CAHp75VeRq8XT67LJOM+9R9xVpsfv7MxZpaCHYkfnCqAzgjXo9A@mail.gmail.com>
+Subject: Re: [PATCH v1 3/7] net/fsl: add ACPI support for mdio bus
+To:     Calvin Johnson <calvin.johnson@nxp.com>
+Cc:     linux.cj@gmail.com, Jon Nettleton <jon@solid-run.com>,
+        Russell King - ARM Linux <linux@armlinux.org.uk>,
+        Makarand Pawagi <makarand.pawagi@nxp.com>,
+        cristian.sovaiala@nxp.com, laurentiu.tudor@nxp.com,
+        ioana.ciornei@nxp.com, V.Sethi@nxp.com, pankaj.bansal@nxp.com,
+        "Rajesh V . Bikkina" <rajesh.bikkina@nxp.com>,
+        Calvin Johnson <calvin.johnson@oss.nxp.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Madalin Bucur <madalin.bucur@oss.nxp.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        netdev <netdev@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-mm: Allocate shrinker_map on appropriate NUMA node
+On Fri, Jan 31, 2020 at 5:37 PM Calvin Johnson <calvin.johnson@nxp.com> wrote:
+>
+> From: Calvin Johnson <calvin.johnson@oss.nxp.com>
+>
+> Add ACPI support for MDIO bus registration while maintaining
+> the existing DT support.
 
-From: Kirill Tkhai <ktkhai@virtuozzo.com>
+...
 
-Despite shrinker_map may be touched from any cpu
-(e.g., a bit there may be set by a task running
-everywhere); kswapd is always bound to specific
-node. So, we will allocate shrinker_map from
-related NUMA node to respect its NUMA locality.
-Also, this follows generic way we use for allocation
-memcg's per-node data.
+> -       ret = of_address_to_resource(np, 0, &res);
+> -       if (ret) {
+> +       res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+> +       if (!res) {
+>                 dev_err(&pdev->dev, "could not obtain address\n");
+> -               return ret;
+> +               return -ENODEV;
+>         }
 
-Signed-off-by: Kirill Tkhai <ktkhai@virtuozzo.com>
+...
 
-v3: Remove node_state() patterns.
-v2: Use NUMA_NO_NODE instead of -1.
----
- mm/memcontrol.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+> -       snprintf(bus->id, MII_BUS_ID_SIZE, "%llx", (unsigned long long)res.start);
+> +       snprintf(bus->id, MII_BUS_ID_SIZE, "%llx",
+> +                (unsigned long long)res->start);
 
-diff --git a/mm/memcontrol.c b/mm/memcontrol.c
-index 6f6dc8712e39..c37382f5a43c 100644
---- a/mm/memcontrol.c
-+++ b/mm/memcontrol.c
-@@ -334,7 +334,7 @@ static int memcg_expand_one_shrinker_map(struct mem_cgroup *memcg,
- 		if (!old)
- 			return 0;
- 
--		new = kvmalloc(sizeof(*new) + size, GFP_KERNEL);
-+		new = kvmalloc_node(sizeof(*new) + size, GFP_KERNEL, nid);
- 		if (!new)
- 			return -ENOMEM;
- 
-@@ -378,7 +378,7 @@ static int memcg_alloc_shrinker_maps(struct mem_cgroup *memcg)
- 	mutex_lock(&memcg_shrinker_map_mutex);
- 	size = memcg_shrinker_map_size;
- 	for_each_node(nid) {
--		map = kvzalloc(sizeof(*map) + size, GFP_KERNEL);
-+		map = kvzalloc_node(sizeof(*map) + size, GFP_KERNEL, nid);
- 		if (!map) {
- 			memcg_free_shrinker_maps(memcg);
- 			ret = -ENOMEM;
+Why this has been touched?
+
+...
+
+> -       priv->mdio_base = of_iomap(np, 0);
+> +       priv->mdio_base = devm_ioremap_resource(&pdev->dev, res);
+>         if (!priv->mdio_base) {
+
+Are you sure the check is correct now?
+
+>                 ret = -ENOMEM;
+>                 goto err_ioremap;
+>         }
+
+...
+
+>
+> -       priv->is_little_endian = of_property_read_bool(pdev->dev.of_node,
+> -                                                      "little-endian");
+> -
+> -       priv->has_a011043 = of_property_read_bool(pdev->dev.of_node,
+> -                                                 "fsl,erratum-a011043");
+> -
+> -       ret = of_mdiobus_register(bus, np);
+> -       if (ret) {
+> -               dev_err(&pdev->dev, "cannot register MDIO bus\n");
+
+> +       if (is_of_node(pdev->dev.fwnode)) {
+
+> +       } else if (is_acpi_node(pdev->dev.fwnode)) {
+
+Oh, no, this is wrong. Pure approach AFAICS is to use fwnode API or
+device property API.
+
+And actually what you need to include is rather <linux/property.h>,
+and not acpi.h.
+
+> +       } else {
+> +               dev_err(&pdev->dev, "Cannot get cfg data from DT or ACPI\n");
+> +               ret = -ENXIO;
+>                 goto err_registration;
+>         }
+
+> +static const struct acpi_device_id xgmac_mdio_acpi_match[] = {
+> +       {"NXP0006", 0}
+
+How did you test this on platforms with the same IP and without device
+ of this ACPI ID present?
+
+(Hint: missed terminator)
+
+> +};
+> +MODULE_DEVICE_TABLE(acpi, xgmac_mdio_acpi_match);
+
+> +               .acpi_match_table = ACPI_PTR(xgmac_mdio_acpi_match),
+
+ACPI_PTR is not needed otherwise you will get a compiler warning.
+
+-- 
+With Best Regards,
+Andy Shevchenko
