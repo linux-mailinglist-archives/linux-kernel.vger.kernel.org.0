@@ -2,67 +2,95 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 85E8A14F272
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Jan 2020 19:55:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1336114F27A
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Jan 2020 19:59:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726497AbgAaSzf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 31 Jan 2020 13:55:35 -0500
-Received: from mga18.intel.com ([134.134.136.126]:30623 "EHLO mga18.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725939AbgAaSze (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 31 Jan 2020 13:55:34 -0500
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from fmsmga004.fm.intel.com ([10.253.24.48])
-  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 31 Jan 2020 10:55:33 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.70,386,1574150400"; 
-   d="scan'208";a="253419672"
-Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.202])
-  by fmsmga004.fm.intel.com with ESMTP; 31 Jan 2020 10:55:32 -0800
-Date:   Fri, 31 Jan 2020 10:55:32 -0800
-From:   Sean Christopherson <sean.j.christopherson@intel.com>
-To:     Paolo Bonzini <pbonzini@redhat.com>
-Cc:     Paul Mackerras <paulus@ozlabs.org>,
-        Christian Borntraeger <borntraeger@de.ibm.com>,
-        Janosch Frank <frankja@linux.ibm.com>,
-        David Hildenbrand <david@redhat.com>,
-        Cornelia Huck <cohuck@redhat.com>,
-        Vitaly Kuznetsov <vkuznets@redhat.com>,
-        Wanpeng Li <wanpengli@tencent.com>,
-        Jim Mattson <jmattson@google.com>,
-        Joerg Roedel <joro@8bytes.org>, Marc Zyngier <maz@kernel.org>,
-        James Morse <james.morse@arm.com>,
-        Julien Thierry <julien.thierry.kdev@gmail.com>,
-        Suzuki K Poulose <suzuki.poulose@arm.com>,
-        linux-mips@vger.kernel.org, kvm@vger.kernel.org,
-        kvm-ppc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        kvmarm@lists.cs.columbia.edu, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 5/5] KVM: x86: Set kvm_x86_ops only after
- ->hardware_setup() completes
-Message-ID: <20200131185531.GB18946@linux.intel.com>
-References: <20200130001023.24339-1-sean.j.christopherson@intel.com>
- <20200130001023.24339-6-sean.j.christopherson@intel.com>
- <44e0c550-7dcc-bfed-07c4-907e61d476a1@redhat.com>
+        id S1726109AbgAaS7D (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 31 Jan 2020 13:59:03 -0500
+Received: from Galois.linutronix.de ([193.142.43.55]:56561 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725939AbgAaS7D (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 31 Jan 2020 13:59:03 -0500
+Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tip-bot2@linutronix.de>)
+        id 1ixbVH-00045g-FQ; Fri, 31 Jan 2020 19:58:55 +0100
+Received: from [127.0.1.1] (localhost [IPv6:::1])
+        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id C2E821C1D5A;
+        Fri, 31 Jan 2020 19:58:54 +0100 (CET)
+Date:   Fri, 31 Jan 2020 18:58:54 -0000
+From:   "tip-bot2 for Steven Clarkson" <tip-bot2@linutronix.de>
+Reply-to: linux-kernel@vger.kernel.org
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip: x86/urgent] x86/boot: Handle malformed SRAT tables during early
+ ACPI parsing
+Cc:     Steven Clarkson <sc@lambdal.com>, Borislav Petkov <bp@suse.de>,
+        linux-acpi@vger.kernel.org, x86 <x86@kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+In-Reply-To: <CAHKq8taGzj0u1E_i=poHUam60Bko5BpiJ9jn0fAupFUYexvdUQ@mail.gmail.com>
+References: <CAHKq8taGzj0u1E_i=poHUam60Bko5BpiJ9jn0fAupFUYexvdUQ@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <44e0c550-7dcc-bfed-07c4-907e61d476a1@redhat.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+Message-ID: <158049713455.396.18295937467351025626.tip-bot2@tip-bot2>
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot2.linutronix.de>
+Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jan 30, 2020 at 06:44:09AM +0100, Paolo Bonzini wrote:
-> On 30/01/20 01:10, Sean Christopherson wrote:
-> > Set kvm_x86_ops with the vendor's ops only after ->hardware_setup()
-> > completes to "prevent" using kvm_x86_ops before they are ready, i.e. to
-> > generate a null pointer fault instead of silently consuming unconfigured
-> > state.
-> 
-> What about even copying kvm_x86_ops by value, so that they can be
-> accessed with "kvm_x86_ops.callback()" and save one memory access?
+The following commit has been merged into the x86/urgent branch of tip:
 
-Oooh, I like that idea.  And {svm,vmx}_x86_ops could be marked __initdata
-to save a few bytes and force all the runtime stuff through kvm_x86_ops.
+Commit-ID:     32ea5bc7ab8344600e87acf68cd6981c845d6edc
+Gitweb:        https://git.kernel.org/tip/32ea5bc7ab8344600e87acf68cd6981c845d6edc
+Author:        Steven Clarkson <sc@lambdal.com>
+AuthorDate:    Thu, 30 Jan 2020 16:48:16 -08:00
+Committer:     Borislav Petkov <bp@suse.de>
+CommitterDate: Fri, 31 Jan 2020 19:54:35 +01:00
+
+x86/boot: Handle malformed SRAT tables during early ACPI parsing
+
+Break an infinite loop when early parsing of the SRAT table is caused
+by a subtable with zero length. Known to affect the ASUS WS X299 SAGE
+motherboard with firmware version 1201 which has a large block of
+zeros in its SRAT table. The kernel could boot successfully on this
+board/firmware prior to the introduction of early parsing this table or
+after a BIOS update.
+
+ [ bp: Fixup whitespace damage and commit message. ]
+
+Fixes: 02a3e3cdb7f1 ("x86/boot: Parse SRAT table and count immovable memory regions")
+Signed-off-by: Steven Clarkson <sc@lambdal.com>
+Signed-off-by: Borislav Petkov <bp@suse.de>
+Cc: linux-acpi@vger.kernel.org
+Link: https://bugzilla.kernel.org/show_bug.cgi?id=206343
+Link: https://lkml.kernel.org/r/CAHKq8taGzj0u1E_i=poHUam60Bko5BpiJ9jn0fAupFUYexvdUQ@mail.gmail.com
+---
+ arch/x86/boot/compressed/acpi.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
+
+diff --git a/arch/x86/boot/compressed/acpi.c b/arch/x86/boot/compressed/acpi.c
+index 25019d4..ef2ad72 100644
+--- a/arch/x86/boot/compressed/acpi.c
++++ b/arch/x86/boot/compressed/acpi.c
+@@ -393,7 +393,13 @@ int count_immovable_mem_regions(void)
+ 	table = table_addr + sizeof(struct acpi_table_srat);
+ 
+ 	while (table + sizeof(struct acpi_subtable_header) < table_end) {
++
+ 		sub_table = (struct acpi_subtable_header *)table;
++		if (!sub_table->length) {
++			debug_putstr("Invalid zero length SRAT subtable.\n");
++			return 0;
++		}
++
+ 		if (sub_table->type == ACPI_SRAT_TYPE_MEMORY_AFFINITY) {
+ 			struct acpi_srat_mem_affinity *ma;
+ 
