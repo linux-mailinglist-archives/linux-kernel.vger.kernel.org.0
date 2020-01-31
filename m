@@ -2,81 +2,106 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6571214E9E9
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Jan 2020 10:07:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EFF7214E9E8
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Jan 2020 10:06:54 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728252AbgAaJHA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 31 Jan 2020 04:07:00 -0500
-Received: from mail-ot1-f66.google.com ([209.85.210.66]:40908 "EHLO
-        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728181AbgAaJG7 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 31 Jan 2020 04:06:59 -0500
-Received: by mail-ot1-f66.google.com with SMTP id i6so5906075otr.7
-        for <linux-kernel@vger.kernel.org>; Fri, 31 Jan 2020 01:06:59 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=FD1m1C7Z6owu7pJKCcZNi0kfjnO20uBFbl49wSgK5Lg=;
-        b=hle8MrtlObbp8du0+KnsTcFFRKRJGmAa/SeuW6xqbXWTh6BX+cc9XkiWMy6K0324Oh
-         Y4j15FnY57MLGdpt93p3OheNy7jmhyzS9XEC04vFiyE9hIYV3oJkxOBdwwJ+w59erd+I
-         M/PFHx5c4tA1KJlBG7jro/bnZQKPa/YbpjftnLWcQD0xwTEpZ19RtvAAxkZCpduRLAmZ
-         bhz07Xa6a/bPDBp0Fp2/Mhq13Lcpaql9dLmgGJkz39Bp5qIDISCbTuCUKuXBszzwUKP7
-         o5gqqB63cCWsq7PEuc5/BNREGie/NZvxRj7QTemHY4lRi7QPnCwXtXKvz5aQgHK26IsL
-         p+jQ==
-X-Gm-Message-State: APjAAAUAidzduP409qFszsqJ3XQ7yJAlvvkXS0deKpkT8F6/pkB4yvCp
-        ZxcuU3uQT7d/mJVAqWVopzB1m0Fa0zlj+abFxAuUtA==
-X-Google-Smtp-Source: APXvYqxXnQrTWkpOmfZ4c1F1M3YsJErcFXJpAlowXPQwo2N4eVzTPJn2pP+D0bi+mHOGRWxfvp5vAPdvsTIebEfZIQg=
-X-Received: by 2002:a05:6830:1d55:: with SMTP id p21mr6833651oth.145.1580461618754;
- Fri, 31 Jan 2020 01:06:58 -0800 (PST)
+        id S1728226AbgAaJGx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 31 Jan 2020 04:06:53 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44158 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728151AbgAaJGx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 31 Jan 2020 04:06:53 -0500
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 551E5206F0;
+        Fri, 31 Jan 2020 09:06:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1580461612;
+        bh=V7vDxMmmNX8/A1ufnjJg7tEfNXHbzelUW1ofiI0bxCg=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=y0OJFeMQhpY0sXS4zKX09ro+1I0G5B1zntn688rrb6fejMrX5MpTjefojd56PxR47
+         Cw8hOA8PzmnyJwKYIJsmrolmv4wa4yXRi1RiuZB+V1u8IvySYxMHUYNUwqG+E6s6vt
+         txWo1RkgBOlq4TGaf3Vn9xq5d6tPdnJj/B5jv60c=
+Date:   Fri, 31 Jan 2020 10:06:50 +0100
+From:   Greg KH <gregkh@linuxfoundation.org>
+To:     Benjamin GAIGNARD <benjamin.gaignard@st.com>
+Cc:     Linus Walleij <linus.walleij@linaro.org>,
+        "robh@kernel.org" <robh@kernel.org>,
+        Loic PALLARDY <loic.pallardy@st.com>,
+        "arnd@arndb.de" <arnd@arndb.de>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "system-dt@lists.openampproject.org" 
+        <system-dt@lists.openampproject.org>,
+        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "lkml@metux.net" <lkml@metux.net>,
+        "linux-imx@nxp.com" <linux-imx@nxp.com>,
+        "kernel@pengutronix.de" <kernel@pengutronix.de>,
+        "sudeep.holla@arm.com" <sudeep.holla@arm.com>,
+        "fabio.estevam@nxp.com" <fabio.estevam@nxp.com>,
+        "stefano.stabellini@xilinx.com" <stefano.stabellini@xilinx.com>,
+        "shawnguo@kernel.org" <shawnguo@kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCH v2 2/7] bus: Introduce firewall controller framework
+Message-ID: <20200131090650.GA2267325@kroah.com>
+References: <20200128153806.7780-1-benjamin.gaignard@st.com>
+ <20200128153806.7780-3-benjamin.gaignard@st.com>
+ <20200128155243.GC3438643@kroah.com>
+ <0dd9dc95-1329-0ad4-d03d-99899ea4f574@st.com>
+ <20200128165712.GA3667596@kroah.com>
+ <62b38576-0e1a-e30e-a954-a8b6a7d8d897@st.com>
+ <CACRpkdY427EzpAt7f5wwqHpRS_SHM8Fvm+cFrwY8op0E_J+D9Q@mail.gmail.com>
+ <20200129095240.GA3852081@kroah.com>
+ <20200129111717.GA3928@sirena.org.uk>
+ <0b109c05-24cf-a1c4-6072-9af8a61f45b2@st.com>
 MIME-Version: 1.0
-References: <20200130191049.190569-1-edumazet@google.com> <e0a0ffa9-3721-4bac-1c8f-bcbd53d22ba1@arm.com>
-In-Reply-To: <e0a0ffa9-3721-4bac-1c8f-bcbd53d22ba1@arm.com>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Fri, 31 Jan 2020 10:06:47 +0100
-Message-ID: <CAMuHMdVSyD62nvRmN-v6CbJ2UyqH=d7xdVeCD8_X5us+mvCXUQ@mail.gmail.com>
-Subject: Re: [PATCH] dma-debug: dynamic allocation of hash table
-To:     Robin Murphy <robin.murphy@arm.com>
-Cc:     Eric Dumazet <edumazet@google.com>, Christoph Hellwig <hch@lst.de>,
-        Joerg Roedel <jroedel@suse.de>,
-        Linux IOMMU <iommu@lists.linux-foundation.org>,
-        Eric Dumazet <eric.dumazet@gmail.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <0b109c05-24cf-a1c4-6072-9af8a61f45b2@st.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Robin,
+On Fri, Jan 31, 2020 at 08:37:27AM +0000, Benjamin GAIGNARD wrote:
+> 
+> On 1/29/20 12:17 PM, Mark Brown wrote:
+> > On Wed, Jan 29, 2020 at 10:52:40AM +0100, Greg KH wrote:
+> >
+> >> It just needs to be part of the bus logic for the specific bus that this
+> >> "firewall" is on.  Just like we do the same thing for USB or thunderbolt
+> >> devices.  Put this in the bus-specific code please.
+> > I'd expect that this is going to affect at least platform and AMBA
+> > buses.
+> 
+> Correct me if I'm wrong but creating a new type of bus would mean
+> that all the drivers living on this bus must be changed to register 
+> themselves on this bus ?
 
-On Fri, Jan 31, 2020 at 12:46 AM Robin Murphy <robin.murphy@arm.com> wrote:
-> On 2020-01-30 7:10 pm, Eric Dumazet via iommu wrote:
-> > Increasing the size of dma_entry_hash size by 327680 bytes
-> > has reached some bootloaders limitations.
->
-> [ That might warrant some further explanation - I don't quite follow how
-> this would relate to a bootloader specifically :/ ]
+Yes.
 
-Increasing the size of a static array increases kernel size.
-Some (all? ;-) bootloaders have limitations on the maximum size of a
-kernel image they can boot (usually something critical gets overwritten
-when handling a too large image).  While boot loaders can be fixed and
-upgraded, this is usually much more cumbersome than updating the
-kernel.
+> Or does a solution exist to let them live on the platform bus and call 
+> firewalled bus before been probed ?
 
-Besides, a static array always consumes valuable unswapable memory,
-even when the feature would not be used (e.g. disabled by a command
-line option).
+Why do people want to abuse the platform bus so much?  If a device is on
+a bus that can have such a controller, then it is on a real bus, use it!
 
-Gr{oetje,eeting}s,
+> All the impacted drivers could work on the existing bus with or without 
+> the firewall so I don't want to break
 
-                        Geert
+break what?
 
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+> 
+> that.
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Odd line-break :)
+
+Just register the driver on both busses, no big deal.
+
+Stop abusing the platform bus code for things that it is not for.
+
+thanks,
+
+greg k-h
