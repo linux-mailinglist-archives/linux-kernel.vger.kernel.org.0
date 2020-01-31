@@ -2,121 +2,117 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D81A114F26D
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Jan 2020 19:55:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id ECB2D14F276
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Jan 2020 19:55:51 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726163AbgAaSzO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 31 Jan 2020 13:55:14 -0500
-Received: from mail-yw1-f67.google.com ([209.85.161.67]:44108 "EHLO
-        mail-yw1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726023AbgAaSzN (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 31 Jan 2020 13:55:13 -0500
-Received: by mail-yw1-f67.google.com with SMTP id t141so5718805ywc.11
-        for <linux-kernel@vger.kernel.org>; Fri, 31 Jan 2020 10:55:13 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=5LQSLWOoReetCIdpu+9h4YNEFY4D/YOcI+H4hdRcLHo=;
-        b=GTxwABBI9+3yHgLCLV9IsnX1UmSlN5zyu7Eqj4HYVDyUXzsvi/A/NluzZZ4jVWM1p8
-         q/RxmSivl0x2yfPs5zcAYdfZkd+nOAC5TUkNqX4yUZsNUzrhQ1Qaa8TwH4M/FiBcbzfM
-         yXoGnLPRt37sfJ+h4KnQsQAFdyObB4gtgDIEWBtDBX5gcGw16z1Jen4VXhAKkfsy107W
-         kSxgAc6KcDcX5Ju9lex4dnejIhyAWYCTDd+pmzmPvmmCmKyY3VA47HIK19qsdXCDCR/z
-         MioMOoPkC7i3Ah6Xh8fRavwneGUD25NMjrc94S2Ec0l/m+34m56Y1wHiVnEbPoPsKMYz
-         Ws/g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=5LQSLWOoReetCIdpu+9h4YNEFY4D/YOcI+H4hdRcLHo=;
-        b=ehw9OpB1KJ0nASdP88rpFgeQ61NA1tVjO7SHM++fiboyWdyruNggizvqjRDGg2wY6p
-         5OixyQ1X/fzBCL0qMa1N+oVgz3eIdH/8IdlnEqv9KfPmirJyyC5xIGT7Pw3RD02/ZJOn
-         tTknI4QlqB6/C1KtLrtvAjk7GIM7csVzgKjTRd9OKFcGq40pM7P8bvQ9sFcVkoNHXvmi
-         WjgCLw4eJpUa73CNRpMYqlhCfCWf3ijV4Q667UqWzUMPhIxTeeXjty3bWjF3Z+uCF39L
-         cCeapHh57UphYXG+QTN7ptaEfQHWcp/Kv8TFf0/pec1uUukRvROOyRar/drFiB6CtNf3
-         n5hQ==
-X-Gm-Message-State: APjAAAUokIvzOxp7UfFalpJDIdBAPiHOpqJoA3u4CuS9TQv3xEPJOaBa
-        1tgf1wj3Fue+nVMLD0Fdchqjg/5L3+eEO4dS9ZcimYxO
-X-Google-Smtp-Source: APXvYqy9/uYNRyNxfH5Qji613hlgQDt/i0jNq8dvoebQM/CvjYymvkvZDiQwMnU0HkCj4yI5Ap9se4SzqwpNI7gIezc=
-X-Received: by 2002:a81:3845:: with SMTP id f66mr9502941ywa.220.1580496912297;
- Fri, 31 Jan 2020 10:55:12 -0800 (PST)
+        id S1726598AbgAaSzr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 31 Jan 2020 13:55:47 -0500
+Received: from mx2.suse.de ([195.135.220.15]:32912 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725939AbgAaSzq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 31 Jan 2020 13:55:46 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx2.suse.de (Postfix) with ESMTP id 06371AC5F;
+        Fri, 31 Jan 2020 18:55:45 +0000 (UTC)
+Date:   Fri, 31 Jan 2020 19:55:31 +0100
+From:   Borislav Petkov <bp@suse.de>
+To:     Steven Clarkson <sc@lambdal.com>
+Cc:     linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] x86/boot: Handle malformed SRAT tables during early ACPI
+ parsing
+Message-ID: <20200131185531.GC14851@zn.tnic>
+References: <CAHKq8taGzj0u1E_i=poHUam60Bko5BpiJ9jn0fAupFUYexvdUQ@mail.gmail.com>
 MIME-Version: 1.0
-References: <20200131164308.GA5175@willie-the-truck> <CANn89i+CnezK81gZSLOy0w7MaZy0uT=xyxoKSTyZU3aMpzifOA@mail.gmail.com>
- <20200131185249.GR2935@paulmck-ThinkPad-P72>
-In-Reply-To: <20200131185249.GR2935@paulmck-ThinkPad-P72>
-From:   Eric Dumazet <edumazet@google.com>
-Date:   Fri, 31 Jan 2020 10:55:01 -0800
-Message-ID: <CANn89i+pEuNoV91rr4N+Vash4FQ0dX2AiKvtwPS4DK7bVuXFGg@mail.gmail.com>
-Subject: Re: Confused about hlist_unhashed_lockless()
-To:     "Paul E. McKenney" <paulmck@kernel.org>
-Cc:     Will Deacon <will@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "the arch/x86 maintainers" <x86@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAHKq8taGzj0u1E_i=poHUam60Bko5BpiJ9jn0fAupFUYexvdUQ@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jan 31, 2020 at 10:52 AM Paul E. McKenney <paulmck@kernel.org> wrote:
->
-> On Fri, Jan 31, 2020 at 08:48:05AM -0800, Eric Dumazet wrote:
-> > On Fri, Jan 31, 2020 at 8:43 AM Will Deacon <will@kernel.org> wrote:
-> > >
-> > > Hi folks,
-> > >
-> > > I just ran into c54a2744497d ("list: Add hlist_unhashed_lockless()")
-> > > but I'm a bit confused about what it's trying to achieve. It also seems
-> > > to have been merged without any callers (even in -next) -- was that
-> > > intentional?
-> > >
-> > > My main source of confusion is the lack of memory barriers. For example,
-> > > if you look at the following pair of functions:
-> > >
-> > >
-> > > static inline int hlist_unhashed_lockless(const struct hlist_node *h)
-> > > {
-> > >         return !READ_ONCE(h->pprev);
-> > > }
-> > >
-> > > static inline void hlist_add_before(struct hlist_node *n,
-> > >                                     struct hlist_node *next)
-> > > {
-> > >         WRITE_ONCE(n->pprev, next->pprev);
-> > >         WRITE_ONCE(n->next, next);
-> > >         WRITE_ONCE(next->pprev, &n->next);
-> > >         WRITE_ONCE(*(n->pprev), n);
-> > > }
-> > >
-> > >
-> > > Then running these two concurrently on the same node means that
-> > > hlist_unhashed_lockless() doesn't really tell you anything about whether
-> > > or not the node is reachable in the list (i.e. there is another node
-> > > with a next pointer pointing to it). In other words, I think all of
-> > > these outcomes are permitted:
-> > >
-> > >         hlist_unhashed_lockless(n)      n reachable in list
-> > >         0                               0 (No reordering)
-> > >         0                               1 (No reordering)
-> > >         1                               0 (No reordering)
-> > >         1                               1 (Reorder first and last WRITE_ONCEs)
-> > >
-> > > So I must be missing some details about the use-case here. Please could
-> > > you enlighten me? The RCU implementation permits only the first three
-> > > outcomes afaict, why not use that and leave non-RCU hlist as it was?
-> >
-> > I guess the following has been lost :
->
-> 4d3d2ae81afd ("timer: Use hlist_unhashed_lockless() in timer_pending()")
-> in -rcu, slated for not this merge window but the next one.  And
-> including the changes in your later email, Eric.  Please see below
-> and let me know whether you are OK with it.
->
->                                                         Thanx, Paul
+On Thu, Jan 30, 2020 at 04:48:16PM -0800, Steven Clarkson wrote:
+> Break an infinite loop when early parsing SRAT caused by a subtable with
+> zero length. Known to affect the ASUS WS X299 SAGE motherboard with
+> firmware version 1201, which has a large block of zeros in its SRAT table.
+> The kernel could boot successfully on this board/firmware prior to the
+> introduction of early parsing this table.
+> 
+> Fixes: 02a3e3cdb7f1 ("x86/boot: Parse SRAT table and count immovable
+> memory regions")
+> Signed-off-by: Steven Clarkson <sc@lambdal.com>
+> ---
+>  arch/x86/boot/compressed/acpi.c | 6 ++++++
+>  1 file changed, 6 insertions(+)
+> 
+> diff --git a/arch/x86/boot/compressed/acpi.c b/arch/x86/boot/compressed/acpi.c
+> index 25019d42ae93..1a4479c5edfc 100644
+> --- a/arch/x86/boot/compressed/acpi.c
+> +++ b/arch/x86/boot/compressed/acpi.c
+> @@ -394,6 +394,12 @@ int count_immovable_mem_regions(void)
+> 
+>         while (table + sizeof(struct acpi_subtable_header) < table_end) {
+>                 sub_table = (struct acpi_subtable_header *)table;
+> +
+> +               if (!sub_table->length) {
+> +                       debug_putstr("Invalid zero length SRAT subtable.\n");
+> +                       break;
+> +               }
+> +
+>                 if (sub_table->type == ACPI_SRAT_TYPE_MEMORY_AFFINITY) {
+>                         struct acpi_srat_mem_affinity *ma;
+> 
+> -- 
 
-Well, it seems we only have to wait for data_race() being available, right ?
+Only in case you want to send patches in the future, see below.
+scripts/checkpatch.pl can do that checking for you before you send. I'll
+fix it up now.
 
-Then push a patch using data_race() instead of READ_ONCE() thing.
+ERROR: code indent should use tabs where possible
+#37: FILE: arch/x86/boot/compressed/acpi.c:398:
++               if (!sub_table->length) {$
+
+WARNING: please, no spaces at the start of a line
+#37: FILE: arch/x86/boot/compressed/acpi.c:398:
++               if (!sub_table->length) {$
+
+WARNING: suspect code indent for conditional statements (15, 23)
+#37: FILE: arch/x86/boot/compressed/acpi.c:398:
++               if (!sub_table->length) {
++                       debug_putstr("Invalid zero length SRAT subtable.\n");
+
+ERROR: code indent should use tabs where possible
+#38: FILE: arch/x86/boot/compressed/acpi.c:399:
++                       debug_putstr("Invalid zero length SRAT subtable.\n");$
+
+WARNING: please, no spaces at the start of a line
+#38: FILE: arch/x86/boot/compressed/acpi.c:399:
++                       debug_putstr("Invalid zero length SRAT subtable.\n");$
+
+ERROR: code indent should use tabs where possible
+#39: FILE: arch/x86/boot/compressed/acpi.c:400:
++                       break;$
+
+WARNING: please, no spaces at the start of a line
+#39: FILE: arch/x86/boot/compressed/acpi.c:400:
++                       break;$
+
+ERROR: code indent should use tabs where possible
+#40: FILE: arch/x86/boot/compressed/acpi.c:401:
++               }$
+
+WARNING: please, no spaces at the start of a line
+#40: FILE: arch/x86/boot/compressed/acpi.c:401:
++               }$
+
+total: 4 errors, 5 warnings, 12 lines checked
+
+
+-- 
+Regards/Gruss,
+    Boris.
+
+SUSE Software Solutions Germany GmbH, GF: Felix Imendörffer, HRB 36809, AG Nürnberg
