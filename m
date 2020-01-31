@@ -2,177 +2,116 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9D30E14E703
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Jan 2020 03:18:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DFD5914E6F5
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Jan 2020 03:10:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727872AbgAaCSG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 30 Jan 2020 21:18:06 -0500
-Received: from mga02.intel.com ([134.134.136.20]:45714 "EHLO mga02.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727741AbgAaCSG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 30 Jan 2020 21:18:06 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 30 Jan 2020 18:18:05 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.70,384,1574150400"; 
-   d="scan'208";a="222995947"
-Received: from joy-optiplex-7040.sh.intel.com ([10.239.13.16])
-  by orsmga008.jf.intel.com with ESMTP; 30 Jan 2020 18:18:03 -0800
-From:   Yan Zhao <yan.y.zhao@intel.com>
-To:     alex.williamson@redhat.com
-Cc:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        cohuck@redhat.com, zhenyuw@linux.intel.com, zhi.a.wang@intel.com,
-        kevin.tian@intel.com, shaopeng.he@intel.com, yi.l.liu@intel.com,
-        Yan Zhao <yan.y.zhao@intel.com>
-Subject: [RFC PATCH v2 0/9] Introduce vendor ops in vfio-pci
-Date:   Thu, 30 Jan 2020 21:08:03 -0500
-Message-Id: <20200131020803.27519-1-yan.y.zhao@intel.com>
-X-Mailer: git-send-email 2.17.1
+        id S1727841AbgAaCJt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 30 Jan 2020 21:09:49 -0500
+Received: from conssluserg-02.nifty.com ([210.131.2.81]:34011 "EHLO
+        conssluserg-02.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727722AbgAaCJs (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 30 Jan 2020 21:09:48 -0500
+Received: from mail-vk1-f181.google.com (mail-vk1-f181.google.com [209.85.221.181]) (authenticated)
+        by conssluserg-02.nifty.com with ESMTP id 00V29a5f030104;
+        Fri, 31 Jan 2020 11:09:37 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-02.nifty.com 00V29a5f030104
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1580436577;
+        bh=1ml7WK63dNBM7MHoN9Z9msiF/YNQtLKjJ8iQrEqO4mg=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=Wu4frIsLmTiGVqxzf+hfs35hXsedrDOhCMDyBOeOWWfMcXNdIUrLQDnWdOJV3Ogii
+         k8FNrtXxmHBPGHxz+Tz84EW44Hc3lky8Op7V/6FxlLlKy61DCeLJzHSzbhM8f613Ab
+         c1qm8Icor9MygJhZf+wi/kc3VFb/svN8CQMsZi9vLBrqPpWz5V96C9gcW6y6s/k3JO
+         Hm5zE12friJfgFDgWygobiw9vgXwyqLVVr24AENz+AiXMp1VjN7H/MplrqKhz0Az6z
+         D9T+3cYd7E5L2b48I+cKXW3yDC3uwzgedlme73sJn/odwdEDjMYXjIh9l8dQX0xZ3u
+         okmF6vdbi2aBA==
+X-Nifty-SrcIP: [209.85.221.181]
+Received: by mail-vk1-f181.google.com with SMTP id c129so1656838vkh.7;
+        Thu, 30 Jan 2020 18:09:37 -0800 (PST)
+X-Gm-Message-State: APjAAAX9ar1dAKUZvL3H/YfrspDBgwfqswhkfJHGPvGOKBy8AF0YDR0l
+        Et/Gh3o55mWvSXfAaaG0TsH67MOfp+Rr3xwLBhI=
+X-Google-Smtp-Source: APXvYqwdA+Fex+HuhRymUnLjk7XdUW2IH0faVNX5Ii7SGIr3HF5wsVwXxXeG08q+In5n+9NDH3H9d+sdY9soiVEJV7I=
+X-Received: by 2002:a1f:bfc2:: with SMTP id p185mr5026562vkf.73.1580436575822;
+ Thu, 30 Jan 2020 18:09:35 -0800 (PST)
+MIME-Version: 1.0
+References: <20200130122221.30029e32@gandalf.local.home> <CAK7LNAR1AJFDahD6cB_MryBd-79N_T5O9WV3CMEA+HOCDXZEig@mail.gmail.com>
+ <20200130143941.23a0e217@gandalf.local.home>
+In-Reply-To: <20200130143941.23a0e217@gandalf.local.home>
+From:   Masahiro Yamada <masahiroy@kernel.org>
+Date:   Fri, 31 Jan 2020 11:08:59 +0900
+X-Gmail-Original-Message-ID: <CAK7LNATryPUSTm8wPTFHO=E5f=sVPM4T0UxT=BF2qeyVehsH6Q@mail.gmail.com>
+Message-ID: <CAK7LNATryPUSTm8wPTFHO=E5f=sVPM4T0UxT=BF2qeyVehsH6Q@mail.gmail.com>
+Subject: Re: [GIT PULL] kconfig: localmodconfig: Minor clean ups to streamline_config.pl
+To:     Steven Rostedt <rostedt@goodmis.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When using module vfio-pci to pass through devices, though for the most
-of time, it is desired to use default implementations in vfio-pci, vendors
-sometimes may want to do certain kind of customization.
-For example, vendors may want to add a vendor device region or may want to
-intercept writes to a BAR region.
-So, in this patch set, we introduce a way to allow vendors to focus on
-handling of regions of their interest and call default vfio-pci ops to
-handle the reset ones.
+On Fri, Jan 31, 2020 at 4:39 AM Steven Rostedt <rostedt@goodmis.org> wrote:
+>
+> On Fri, 31 Jan 2020 03:30:37 +0900
+> Masahiro Yamada <masahiroy@kernel.org> wrote:
+>
+> >
+> > I know you are the author of streamline_config,
+> > but actually did not know you were collecting
+> > patches for this particular file.
+> >
+> >
+> > I did not receive a notice email from you,
+> > nor did these commits appear in linux-next at all.
+> > Could you send a notice email when
+> > you pick up a patch next time?
+> > (Sorry, I also forgot to send a email.
+> > I will drop them from my tree.)
+> >
+>
+>
+> It's my fault. I was looking through my inbox (actually my local
+> patchwork that reads my inbox) and saw these patches from back in
+> December. I then went to my "kconfig" development git repo, and saw I
+> pulled them in, but never actually pushed them anywhere (not even to my
+> "staging" machine where I stage my pushes to kernel.org).
+>
+> This being the merge window, I rushed to get them in as they were very
+> trivial changes. This isn't my normal flow, it was more "Oh crap! I
+> forgot about these, let me get them in now".
+>
+> If you have them in your tree, I'm fine with them getting in from there.
+> I should have looked in next (I only looked to see if Linus already had
+> them).
+>
+> Note, since this file hasn't been updated in years, my kconfig
+> 'for-next' branch has been removed from linux-next :-/
+>
 
-It goes like this:
-(1) macros are provided to let vendor drivers register/unregister
-vfio_pci_vendor_driver_ops to vfio_pci in their module_init() and
-module_exit().
-vfio_pci_vendor_driver_ops contains callbacks probe() and remove() and a
-pointer to vfio_device_ops.
 
-(2) vendor drivers define their module aliases as
-"vfio-pci:$vendor_id-$device_id".
-E.g. A vendor module for VF devices of Intel(R) Ethernet Controller XL710
-family can define its module alias as MODULE_ALIAS("vfio-pci:8086-154c").
+Steven,
 
-(3) when module vfio_pci is bound to a device, it would call modprobe in
-user space for modules of alias "vfio-pci:$vendor_id-$device_id", which
-would trigger unloaded vendor drivers to register their
-vfio_pci_vendor_driver_ops to vfio_pci.
-Then it searches registered ops list and calls probe() to test whether this
-vendor driver supports this physical device.
-A success probe() would make vfio_pci to use vfio_device_ops provided
-vendor driver as the ops of the vfio device. So vfio_pci_ops are not to be
-called for this device any more. Instead, they are exported to be called
-from vendor drivers as a default implementation.
-
-
-                                        _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
-                                  
- __________   (un)register vendor ops  |  ___________    ___________   |
-|          |<----------------------------|    VF    |   |           |   
-| vfio-pci |                           | |  vendor  |   | PF driver |  |
-|__________|---------------------------->|  driver  |   |___________|   
-     |           probe/remove()        |  -----------          |       |
-     |                                                         |         
-     |                                 |_ _ _ _ _ _ _ _ _ _ _ _|_ _ _ _|
-    \|/                                                       \|/
------------                                              ------------
-|    VF   |                                              |    PF    |
------------                                              ------------
-                   a typical usage in SRIOV
+OK, I see.  I will also try my best to send a notice email.
+I want to avoid a situation where two people
+are picking up the same patches without noticing each other.
 
 
 
-Ref counts:
-(1) vendor drivers must be a module and compiled to depend on module
-vfio_pci.
-(2) In vfio_pci, a successful register would add refs of itself, and a
-successful unregister would derefs of itself.
-(3) In vfio_pci, a successful probe() of a vendor driver would add ref of
-the vendor module. It derefs of the vendor module after calling remove().
-(4) macro provided to make sure vendor module always unregister itself in
-its module_exit
+Linus,
 
-Those are to prevent below conditions:
-a. vfio_pci is unloaded after a successful register from vendor driver.
-   Though vfio_pci would later call modprobe to ask the vendor module to
-   register again, it cannot help if vendor driver remain as loaded
-   across unloading-loading of vfio_pci.
-b. vendor driver unregisters itself after successfully probed by vfio_pci.
-c. circular dependency between vfio_pci and the vendor driver.
-   if vfio_pci adds refs to both vfio_pci and vendor driver on a successful
-   register and if vendor driver only do the unregister in its module_exit,
-   then it would have no chance to do the unregister.
+If you have not pulled this one yet,
+could you ignore it?
 
 
-Patch Overview
-patches 1-2 makes vfio_pci inheritable by vendor modules
-            by making part of struct vfio_pci_device public and functions
-            in struct vfio_pci_ops exported
-patches 3-4 provide register/unregister interfaces for vendor drivers
-patches 5-6 some more enhancements
-patch 7 provides an sample to pass through IGD devices
-patches 8-9 implement VF live migration on Intel's 710 SRIOV devices.
-            Some dirty page tracking functions are intentionally
-            commented out and would send out later in future.
-
-Changelog:
-RFC v1- RFC v2:
-- renamed mediate ops to vendor ops
-- use of request_module and module alias to manage vendor driver load
-  (Alex)
-- changed from vfio_pci_ops calling vendor ops
-  to vendor ops calling default vfio_pci_ops  (Alex)
-- dropped patches for dynamic traps of BARs. will submit them later.
-
-Links:
-Previous version (RFC v1):
-kernel part: https://www.spinics.net/lists/kernel/msg3337337.html.
-qemu part: https://www.spinics.net/lists/kernel/msg3337337.html.
-
-VFIO live migration v8:
-https://lists.gnu.org/archive/html/qemu-devel/2019-08/msg05542.html.
+I will soon send pull requests for Kbuild + Kconfig,
+which includes the same patches.
 
 
-Yan Zhao (9):
-  vfio/pci: split vfio_pci_device into public and private parts
-  vfio/pci: export functions in vfio_pci_ops
-  vfio/pci: register/unregister vfio_pci_vendor_driver_ops
-  vfio/pci: macros to generate module_init and module_exit for vendor
-    modules
-  vfio/pci: let vfio_pci know how many vendor regions are registered
-  vfio/pci: export vfio_pci_setup_barmap
-  samples/vfio-pci: add a sample vendor module of vfio-pci for IGD
-    devices
-  vfio: header for vfio live migration region.
-  i40e/vf_migration: vfio-pci vendor driver for VF live migration
-
- drivers/net/ethernet/intel/Kconfig            |  10 +
- drivers/net/ethernet/intel/i40e/Makefile      |   2 +
- drivers/net/ethernet/intel/i40e/i40e.h        |   2 +
- .../ethernet/intel/i40e/i40e_vf_migration.c   | 590 ++++++++++++++++++
- .../ethernet/intel/i40e/i40e_vf_migration.h   |  92 +++
- drivers/vfio/pci/vfio_pci.c                   | 337 ++++++----
- drivers/vfio/pci/vfio_pci_config.c            | 157 ++---
- drivers/vfio/pci/vfio_pci_igd.c               |  16 +-
- drivers/vfio/pci/vfio_pci_intrs.c             | 171 ++---
- drivers/vfio/pci/vfio_pci_nvlink2.c           |  16 +-
- drivers/vfio/pci/vfio_pci_private.h           |  11 +-
- drivers/vfio/pci/vfio_pci_rdwr.c              |  60 +-
- include/linux/vfio.h                          |  61 ++
- include/uapi/linux/vfio.h                     | 149 +++++
- samples/Kconfig                               |   6 +
- samples/Makefile                              |   1 +
- samples/vfio-pci/Makefile                     |   2 +
- samples/vfio-pci/igd_pt.c                     | 153 +++++
- 18 files changed, 1518 insertions(+), 318 deletions(-)
- create mode 100644 drivers/net/ethernet/intel/i40e/i40e_vf_migration.c
- create mode 100644 drivers/net/ethernet/intel/i40e/i40e_vf_migration.h
- create mode 100644 samples/vfio-pci/Makefile
- create mode 100644 samples/vfio-pci/igd_pt.c
 
 -- 
-2.17.1
-
+Best Regards
+Masahiro Yamada
