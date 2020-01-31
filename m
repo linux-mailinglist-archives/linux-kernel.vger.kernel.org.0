@@ -2,38 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C13F914E9C5
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Jan 2020 09:48:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3D9CF14E9BF
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Jan 2020 09:47:52 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728270AbgAaIsZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 31 Jan 2020 03:48:25 -0500
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:39652 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728175AbgAaIsY (ORCPT
+        id S1728242AbgAaIrv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 31 Jan 2020 03:47:51 -0500
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:42496 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728191AbgAaIru (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 31 Jan 2020 03:48:24 -0500
-Received: by mail-wm1-f68.google.com with SMTP id c84so7707917wme.4;
-        Fri, 31 Jan 2020 00:48:23 -0800 (PST)
+        Fri, 31 Jan 2020 03:47:50 -0500
+Received: by mail-wr1-f65.google.com with SMTP id k11so7595672wrd.9;
+        Fri, 31 Jan 2020 00:47:47 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=2dEBK2/0QEjcEIbTow6H8atvD57XckSzsqrktuuuwiQ=;
-        b=iE1y3RWV6QWI2ssruPyBjM36XoczkGFjHbsAK0Y9paiW+gaFQBHH/jxSsIsLAoirYF
-         rrkYwl2rFqusVLx0t5h3dtjthYzl69mfNc2AT+hcEHaFoSITKYuHtiuNfHvwybE8ige+
-         zx7tBKDEZXncKMHWLI2JUQtigaqSQYDd6QPeXKDyeXnj6qcST8YugW6lELv1KbdLjWBe
-         I7Lzjzj+iLRlblzpS2iGRjTSCdLEzTM+qYiPfXp6/DDxTg4JsJ+L86wlIluEj9AQ5h3Q
-         NmpuMr8C2TMz2RmDHp3dvkAUvKFSy6eD6MwyIjZFJoWUrv4QOWi3u3bM0sZ6Q9dinoYO
-         gkPQ==
-X-Gm-Message-State: APjAAAU7CS6MbwWa3bizXyUTFUAcjJFzQrOg6OnzWrzZFWKMVFycCvz6
-        ZgTzWnp8QnEtzWrprrmhMPfTG2F/Z/Q=
-X-Google-Smtp-Source: APXvYqyHY3SsN8sdxcNTZKwuYJH0cgDW0nY1gVdu6YC/r1hZq5mTO/Ua3IXVS/iQwDDxxCzDvFMN6w==
-X-Received: by 2002:a1c:6389:: with SMTP id x131mr11106584wmb.155.1580460119746;
-        Fri, 31 Jan 2020 00:41:59 -0800 (PST)
+        bh=I8BhmUjvRpuRsDLc+hCNgR+cjfG8z1wM6d0LK3Ong3c=;
+        b=Lj4E18atvb05TubG/cEzpGPx58RpO71czlMVc3RGskC8qpHse61P4h+UC90S1IdFBP
+         37y4S2AT8lziGQks5BzawsSOanlsFuFy49pUbc9U7U2fpkuQAed+iDQVoJypYlVB8bvh
+         AV2HZYGWJ3e3+0XoaqByyMStoTnQv5Np4zOK0PedA8MwuQw+XdWiqv2eDzeYVWgVZAB+
+         kZlXkuw49eV67vnOlZyGr8F0DWGZNzi2nqURIkgzVmoHg2PN06JemoE3plPy4uM11SOp
+         B+9xxeh8VtCgYVlj2YCt3TuT1ovmNUjae4bsRF4B6l8rZzqMiNB9IR5yTgsA1a/HgWtJ
+         6l0w==
+X-Gm-Message-State: APjAAAXTED9QiZqrmzgd0VpN1wODwv4xw2earBDJq5WinXfp/vMqbaru
+        9fWW/7YTFVNdvHoPCEcH59Zp9HP3YHM=
+X-Google-Smtp-Source: APXvYqxxlDx6OL+N6mRBKI3g5CIhqUA5YoHHDTW8clNvHsx+P0JH34TY2Onr5/+6Mfr6D6bRmeSs/g==
+X-Received: by 2002:adf:ffc7:: with SMTP id x7mr10605714wrs.159.1580460121281;
+        Fri, 31 Jan 2020 00:42:01 -0800 (PST)
 Received: from 1aq-andre.garage.tyco.com ([77.107.218.170])
-        by smtp.gmail.com with ESMTPSA id x7sm11034302wrq.41.2020.01.31.00.41.58
+        by smtp.gmail.com with ESMTPSA id x7sm11034302wrq.41.2020.01.31.00.41.59
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 31 Jan 2020 00:41:59 -0800 (PST)
+        Fri, 31 Jan 2020 00:42:00 -0800 (PST)
 From:   =?UTF-8?q?Andr=C3=A9=20Draszik?= <git@andred.net>
 To:     linux-kernel@vger.kernel.org
 Cc:     =?UTF-8?q?Andr=C3=A9=20Draszik?= <git@andred.net>,
@@ -47,9 +47,9 @@ Cc:     =?UTF-8?q?Andr=C3=A9=20Draszik?= <git@andred.net>,
         Fabio Estevam <festevam@gmail.com>,
         NXP Linux Team <linux-imx@nxp.com>,
         devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: [PATCH v3 10/12] ARM: dts: imx7d: cl-som-imx7: add WiLink8 WLAN support
-Date:   Fri, 31 Jan 2020 08:36:36 +0000
-Message-Id: <20200131083638.6118-10-git@andred.net>
+Subject: [PATCH v3 11/12] ARM: dts: imx7d: cl-som-imx7: add WiLink Bluetooth support
+Date:   Fri, 31 Jan 2020 08:36:37 +0000
+Message-Id: <20200131083638.6118-11-git@andred.net>
 X-Mailer: git-send-email 2.23.0.rc1
 In-Reply-To: <20200131083638.6118-1-git@andred.net>
 References: <20200131083638.6118-1-git@andred.net>
@@ -61,13 +61,7 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-add / enable TI's WiLink8 WLAN module on SDIO2.
-
-Notes:
-* power is always enabled (because of bluetooth)
-* the downstream delay of 70ms after power-on
-  doesn't seem to reliably work, hence it was
-  bumped to 700ms
+add / enable TI's WiLink8 Bluetooth module on UART3.
 
 Signed-off-by: André Draszik <git@andred.net>
 Cc: Ilya Ledvich <ilya@compulab.co.il>
@@ -82,94 +76,51 @@ Cc: NXP Linux Team <linux-imx@nxp.com>
 Cc: devicetree@vger.kernel.org
 Cc: linux-arm-kernel@lists.infradead.org
 ---
- arch/arm/boot/dts/imx7d-cl-som-imx7.dts | 60 +++++++++++++++++++++++++
- 1 file changed, 60 insertions(+)
+ arch/arm/boot/dts/imx7d-cl-som-imx7.dts | 24 ++++++++++++++++++++++++
+ 1 file changed, 24 insertions(+)
 
 diff --git a/arch/arm/boot/dts/imx7d-cl-som-imx7.dts b/arch/arm/boot/dts/imx7d-cl-som-imx7.dts
-index a16cbb070a12..4cb36decef3d 100644
+index 4cb36decef3d..08fb43f7ae1d 100644
 --- a/arch/arm/boot/dts/imx7d-cl-som-imx7.dts
 +++ b/arch/arm/boot/dts/imx7d-cl-som-imx7.dts
-@@ -28,6 +28,24 @@
- 		compatible = "smsc,usb3503";
- 		reset-gpios = <&pca9555 6 GPIO_ACTIVE_LOW>;
- 	};
-+
-+	pwrseq_ti_wifi: ti-wifi-pwrseq {
-+		compatible = "mmc-pwrseq-simple";
-+		reset-gpios = <&pca9555 0 GPIO_ACTIVE_LOW>;
-+		post-power-on-delay-ms = <700>;
-+		/* 10μs during shutdown, but 60μs between two enables */
-+		power-off-delay-us = "60";
-+	};
-+
-+	reg_ti_wifi: regulator-ti-wifi {
-+		compatible = "regulator-fixed";
-+		regulator-name = "wilink-regulator";
-+		regulator-min-microvolt = <3300000>;
-+		regulator-max-microvolt = <3300000>;
-+		gpio = <&pca9555 9 GPIO_ACTIVE_HIGH>;
-+		enable-active-high;
-+		regulator-always-on;
-+	};
- };
- 
- &cpu0 {
-@@ -232,6 +250,31 @@
+@@ -250,6 +250,21 @@
  	status = "okay";
  };
  
-+&usdhc2 {
++&uart3 {
 +	pinctrl-names = "default";
-+	pinctrl-0 = <&pinctrl_usdhc2>;
-+	bus-width = <4>;
-+	no-1-8-v;
-+	keep-power-in-suspend;
-+	wakeup-source;
-+	vmmc-supply = <&reg_ti_wifi>;
-+	mmc-pwrseq = <&pwrseq_ti_wifi>;
-+	non-removable;
-+	cap-power-off-card;
++	pinctrl-0 = <&pinctrl_uart3>;
++	assigned-clocks = <&clks IMX7D_UART3_ROOT_SRC>;
++	assigned-clock-parents = <&clks IMX7D_PLL_SYS_MAIN_240M_CLK>;
++	uart-has-rtscts;
 +	status = "okay";
 +
-+	#address-cells = <1>;
-+	#size-cells = <0>;
-+	wlcore: wlcore@2 {
-+		compatible = "ti,wl1835";
-+		reg = <2>;
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&pinctrl_usdhc2_wlcore>;
-+		interrupt-parent = <&gpio1>;
-+		interrupts = <15 IRQ_TYPE_LEVEL_HIGH>;
++	bluetooth {
++		compatible = "ti,wl1835-st";
++		enable-gpios = <&pca9555 1 GPIO_ACTIVE_HIGH>;
++		max-speed = <3000000>;
 +	};
 +};
 +
- &usdhc3 {
+ &usdhc2 {
  	pinctrl-names = "default";
- 	pinctrl-0 = <&pinctrl_usdhc3>;
-@@ -308,6 +351,23 @@
+ 	pinctrl-0 = <&pinctrl_usdhc2>;
+@@ -351,6 +366,15 @@
  		>;
  	};
  
-+	pinctrl_usdhc2: usdhc2grp {
++	pinctrl_uart3: uart3grp {
 +		fsl,pins = <
-+			MX7D_PAD_SD2_CMD__SD2_CMD		0x59
-+			MX7D_PAD_SD2_CLK__SD2_CLK		0x19
-+			MX7D_PAD_SD2_DATA0__SD2_DATA0		0x59
-+			MX7D_PAD_SD2_DATA1__SD2_DATA1		0x59
-+			MX7D_PAD_SD2_DATA2__SD2_DATA2		0x59
-+			MX7D_PAD_SD2_DATA3__SD2_DATA3		0x59
++			MX7D_PAD_UART3_TX_DATA__UART3_DCE_TX	0x79
++			MX7D_PAD_UART3_RX_DATA__UART3_DCE_RX	0x79
++			MX7D_PAD_UART3_CTS_B__UART3_DCE_CTS	0x79
++			MX7D_PAD_UART3_RTS_B__UART3_DCE_RTS	0x79
 +		>;
 +	};
 +
-+	pinctrl_usdhc2_wlcore: usdhc2wlcoregrp {
-+		fsl,pins = <
-+			MX7D_PAD_GPIO1_IO15__GPIO1_IO15		0x34
-+		>;
-+	};
-+
- 	pinctrl_usdhc3: usdhc3grp {
+ 	pinctrl_usdhc2: usdhc2grp {
  		fsl,pins = <
- 			MX7D_PAD_SD3_CMD__SD3_CMD		0x59
+ 			MX7D_PAD_SD2_CMD__SD2_CMD		0x59
 -- 
 2.23.0.rc1
 
