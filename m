@@ -2,53 +2,81 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1E26914E7E3
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Jan 2020 05:31:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 284AD14E7E6
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Jan 2020 05:33:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728010AbgAaEbC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 30 Jan 2020 23:31:02 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35760 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727448AbgAaEbC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 30 Jan 2020 23:31:02 -0500
-Received: from localhost.localdomain (c-73-231-172-41.hsd1.ca.comcast.net [73.231.172.41])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E1A9D2063A;
-        Fri, 31 Jan 2020 04:30:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1580445060;
-        bh=uZiWpwqhJJIFoOh6oOyrVhIO6+ps2kiDc/pFktYcI74=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=g1ia/UUV3GOxmpxdGkHgkzKuoKrrAdkMFIURLpFGuzYyF29UdBvSL13o8lSLUd2ob
-         Ud1vo4HGjgXitj5QOkXrx6ptgMfb7i0usRDdFRh+povAp9c09UyOLA0AUW4qNCc9Cq
-         62jADYgFGn+av/WzqtOmTCEvRVYCnxBo/0jtooFU=
-Date:   Thu, 30 Jan 2020 20:30:59 -0800
-From:   Andrew Morton <akpm@linux-foundation.org>
-To:     David Hildenbrand <david@redhat.com>
-Cc:     linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        "Kirill A. Shutemov" <kirill@shutemov.name>,
-        Michal Hocko <mhocko@kernel.org>,
-        Oscar Salvador <osalvador@suse.de>,
-        Pavel Tatashin <pasha.tatashin@oracle.com>
-Subject: Re: [PATCH v1 0/2] mm/page_alloc: memmap_init_zone() cleanups
-Message-Id: <20200130203059.32b48bb73bf0c8e9ee8470db@linux-foundation.org>
-In-Reply-To: <20200113144035.10848-1-david@redhat.com>
-References: <20200113144035.10848-1-david@redhat.com>
-X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        id S1728022AbgAaEdM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 30 Jan 2020 23:33:12 -0500
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:40877 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727448AbgAaEdM (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 30 Jan 2020 23:33:12 -0500
+Received: by mail-pg1-f196.google.com with SMTP id k25so2785108pgt.7
+        for <linux-kernel@vger.kernel.org>; Thu, 30 Jan 2020 20:33:11 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=5YBPz1R1Tq8ogjk4q4yHg3F3OHJSAN1Ceopqmh7+8Ms=;
+        b=YAnnKWp5jcufgnbgPcv7AKk75oBjxglaEg8N0nURW7KbIivjyueLQAlm+afiAEsTht
+         caqFkHkcyvRXrfBNPprCTG+99uObZzuJBYBbTgFmc4sJrU/pSxgqtzEE14G82M9gK571
+         aAzjd1LChFuhfpOBh/eJSX3ICmG9xLLGjb924fwTPG+O8qzY6s/NrZ8tDPYQsSzpGOWE
+         +LZy5oJGpqYPGfyrxxSxkQtVFY+EwLgAhswTruf1iUqO2eOwt0bveKVSEhILIGyA1iil
+         RYRSvuaqA+HZVgtyxbVZPZ5PlE3wNr+AFrw57j1fystiU4DG+cP6lpqeeWnd3lV6QPo3
+         CYSA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=5YBPz1R1Tq8ogjk4q4yHg3F3OHJSAN1Ceopqmh7+8Ms=;
+        b=jns3tsNb7apfWJNKZhq+O5IhL3S79Q9enVJWX/FGUUx5uu6ts9RoSGUESt1oNWw9um
+         Y6IU7hjPJTaLxKOK3/nJeUWu655F/iYiQ6hvq9whMUk56cWdGiMk/Ib2rJqoe1Naf4jP
+         g7rDgviX2ZVxrNiCw2T8ZiavafBLNUVC83iaRO4u8EE6TObxhpBqiplOIZqF/q/hWQtx
+         iwQD/s2tATJZunvOUo16Zrn4pJHC9eo5Bsubd2InB34XvDUdXj90VQ41PclDRhBcQgH5
+         3BeFlDXHu8TosJFDPjOl+l0mRH4XgqW/1pF5nf+MRgTeeRMsy5zi2Ni6S1It8in2FM9h
+         Drng==
+X-Gm-Message-State: APjAAAUcPTkBmAt477Cx32raAIjcXeMivgl8y2FQE1UdXdVMFYma6FtG
+        5KfBlaV/rx46sEq3TTJnczK3IA==
+X-Google-Smtp-Source: APXvYqwEN17hrZK69xPBYl4VAlSoCipA5jd/df38BHlKebya8QekoVxPecktD08Jwc9BQOd4P5p+ag==
+X-Received: by 2002:a62:e30f:: with SMTP id g15mr8470354pfh.124.1580445191433;
+        Thu, 30 Jan 2020 20:33:11 -0800 (PST)
+Received: from localhost ([122.172.141.204])
+        by smtp.gmail.com with ESMTPSA id w18sm3860635pfq.167.2020.01.30.20.33.10
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 30 Jan 2020 20:33:10 -0800 (PST)
+Date:   Fri, 31 Jan 2020 10:03:08 +0530
+From:   Viresh Kumar <viresh.kumar@linaro.org>
+To:     Peter Hilber <peter.hilber@opensynergy.com>
+Cc:     Sudeep Holla <sudeep.holla@arm.com>, arnd@arndb.de,
+        jassisinghbrar@gmail.com, cristian.marussi@arm.com,
+        peng.fan@nxp.com, Vincent Guittot <vincent.guittot@linaro.org>,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH V5] firmware: arm_scmi: Make scmi core independent of the
+ transport type
+Message-ID: <20200131043308.gxcekh2tioydurq7@vireshk-i7>
+References: <f170b33989b426ac095952634fcd1bf45b86a7a3.1580208329.git.viresh.kumar@linaro.org>
+ <20200128173524.GB36496@bogus>
+ <b970542b-0c05-5401-46be-5f585bdafb09@opensynergy.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <b970542b-0c05-5401-46be-5f585bdafb09@opensynergy.com>
+User-Agent: NeoMutt/20180716-391-311a52
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 13 Jan 2020 15:40:33 +0100 David Hildenbrand <david@redhat.com> wrote:
+On 30-01-20, 12:58, Peter Hilber wrote:
+> Maybe the mark_txdone, fetch_response, and poll_done ops should also get
+> a `u32 msg_hdr' parameter? I thought it could be required in case of
+> concurrent xfers, or maybe I don't understand the imposed concurrency
+> limitations properly.
 
-> Two cleanups for "[PATCH] mm/page_alloc: Skip non present sections on zone
-> initialization" [1], whereby one cleanup seems to also be a fix for a
-> (theoretial?) kernelcore=mirror case - unless I am messing something up :)
-> 
+I would like to avoid doing that unless we have some upstreamed
+transport which is going to need it. The parameter won't be used by
+mailbox.c for now and so better add it later only.
 
-I'm not seeing any acks or reviewed-by's on these two?
+-- 
+viresh
