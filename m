@@ -2,199 +2,144 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BB5F314ED08
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Jan 2020 14:14:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5491814ECDC
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Jan 2020 14:04:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728697AbgAaNOL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 31 Jan 2020 08:14:11 -0500
-Received: from icp-osb-irony-out7.external.iinet.net.au ([203.59.1.107]:22912
-        "EHLO icp-osb-irony-out7.external.iinet.net.au" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728575AbgAaNOL (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 31 Jan 2020 08:14:11 -0500
-X-Greylist: delayed 586 seconds by postgrey-1.27 at vger.kernel.org; Fri, 31 Jan 2020 08:14:09 EST
-X-IronPort-Anti-Spam-Filtered: true
-X-IronPort-Anti-Spam-Result: =?us-ascii?q?A2AlAAB/JDRe/zXSMGcNWBoBAQEBAQE?=
- =?us-ascii?q?BAQEDAQEBAREBAQECAgEBAQGBe4MVgTGEFI9YAQEBAQEBBoESJYlvkUkJAQE?=
- =?us-ascii?q?BAQEBAQEBKwwBAYRAAoJTOBMCEAEBAQQBAQEBAQUDAYVYTIVyAQEBAQIBIwQ?=
- =?us-ascii?q?RQQULCw0LAgImAgJXBg0GAgEBgyIBglYFL6wYdX8zGoQbAYEUgy2BOAaBDiq?=
- =?us-ascii?q?BZYpVeYEHgREnDIJgPodZgl4ElzeYKQiCPYdFhUeELYUAIYJ4jBIDi3iXR44?=
- =?us-ascii?q?6hgiBejMaCCgIgycTPXuNUxeIZIVRYgIBjkYBAQ?=
-X-IPAS-Result: =?us-ascii?q?A2AlAAB/JDRe/zXSMGcNWBoBAQEBAQEBAQEDAQEBAREBA?=
- =?us-ascii?q?QECAgEBAQGBe4MVgTGEFI9YAQEBAQEBBoESJYlvkUkJAQEBAQEBAQEBKwwBA?=
- =?us-ascii?q?YRAAoJTOBMCEAEBAQQBAQEBAQUDAYVYTIVyAQEBAQIBIwQRQQULCw0LAgImA?=
- =?us-ascii?q?gJXBg0GAgEBgyIBglYFL6wYdX8zGoQbAYEUgy2BOAaBDiqBZYpVeYEHgREnD?=
- =?us-ascii?q?IJgPodZgl4ElzeYKQiCPYdFhUeELYUAIYJ4jBIDi3iXR446hgiBejMaCCgIg?=
- =?us-ascii?q?ycTPXuNUxeIZIVRYgIBjkYBAQ?=
-X-IronPort-AV: E=Sophos;i="5.70,385,1574092800"; 
-   d="scan'208";a="236594061"
-Received: from unknown (HELO [10.44.0.192]) ([103.48.210.53])
-  by icp-osb-irony-out7.iinet.net.au with ESMTP; 31 Jan 2020 21:04:04 +0800
-Subject: Re: [PATCH 0/5] Rewrite Motorola MMU page-table layout
-To:     Will Deacon <will@kernel.org>
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        linux-m68k@lists.linux-m68k.org, linux-kernel@vger.kernel.org
-References: <20200129103941.304769381@infradead.org>
- <8a81e075-d3bd-80c1-d869-9935fdd73162@linux-m68k.org>
- <20200131093813.GA3938@willie-the-truck>
-From:   Greg Ungerer <gerg@linux-m68k.org>
-Message-ID: <6b345fe8-448f-83b4-5527-db0dfe6036f7@linux-m68k.org>
-Date:   Fri, 31 Jan 2020 23:04:02 +1000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.1
-MIME-Version: 1.0
-In-Reply-To: <20200131093813.GA3938@willie-the-truck>
-Content-Type: text/plain; charset=utf-8; format=flowed
+        id S1728619AbgAaNEg convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Fri, 31 Jan 2020 08:04:36 -0500
+Received: from mga17.intel.com ([192.55.52.151]:56888 "EHLO mga17.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728514AbgAaNEg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 31 Jan 2020 08:04:36 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga005.jf.intel.com ([10.7.209.41])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 31 Jan 2020 05:04:35 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.70,385,1574150400"; 
+   d="scan'208";a="402650842"
+Received: from fmsmsx103.amr.corp.intel.com ([10.18.124.201])
+  by orsmga005.jf.intel.com with ESMTP; 31 Jan 2020 05:04:35 -0800
+Received: from shsmsx153.ccr.corp.intel.com (10.239.6.53) by
+ FMSMSX103.amr.corp.intel.com (10.18.124.201) with Microsoft SMTP Server (TLS)
+ id 14.3.439.0; Fri, 31 Jan 2020 05:04:34 -0800
+Received: from shsmsx104.ccr.corp.intel.com ([169.254.5.197]) by
+ SHSMSX153.ccr.corp.intel.com ([169.254.12.97]) with mapi id 14.03.0439.000;
+ Fri, 31 Jan 2020 21:04:12 +0800
+From:   "Liu, Yi L" <yi.l.liu@intel.com>
+To:     Alex Williamson <alex.williamson@redhat.com>
+CC:     "eric.auger@redhat.com" <eric.auger@redhat.com>,
+        "Tian, Kevin" <kevin.tian@intel.com>,
+        "jacob.jun.pan@linux.intel.com" <jacob.jun.pan@linux.intel.com>,
+        "joro@8bytes.org" <joro@8bytes.org>,
+        "Raj, Ashok" <ashok.raj@intel.com>,
+        "Tian, Jun J" <jun.j.tian@intel.com>,
+        "Sun, Yi Y" <yi.y.sun@intel.com>,
+        "jean-philippe.brucker@arm.com" <jean-philippe.brucker@arm.com>,
+        "peterx@redhat.com" <peterx@redhat.com>,
+        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>,
+        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: RE: [RFC v3 4/8] vfio/type1: Add VFIO_NESTING_GET_IOMMU_UAPI_VERSION
+Thread-Topic: [RFC v3 4/8] vfio/type1: Add
+ VFIO_NESTING_GET_IOMMU_UAPI_VERSION
+Thread-Index: AQHV1pyVzTVYYyC090Ow388f+bA35qgBzDSAgALuTFA=
+Date:   Fri, 31 Jan 2020 13:04:11 +0000
+Message-ID: <A2975661238FB949B60364EF0F2C25743A1994A2@SHSMSX104.ccr.corp.intel.com>
+References: <1580299912-86084-1-git-send-email-yi.l.liu@intel.com>
+        <1580299912-86084-5-git-send-email-yi.l.liu@intel.com>
+ <20200129165649.43008300@w520.home>
+In-Reply-To: <20200129165649.43008300@w520.home>
+Accept-Language: en-US
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+dlp-product: dlpe-windows
+dlp-version: 11.2.0.6
+dlp-reaction: no-action
+x-ctpclassification: CTP_NT
+x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiYTgxNzM5ZWQtYTU3Mi00MjE4LThlNjQtYzE3YmQ3NmRiZGU1IiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjEwLjE4MDQuNDkiLCJUcnVzdGVkTGFiZWxIYXNoIjoiaXE0Skp3bEs4ZGJhdmNWd0dYY3F2VWdpamZjN1FNcHpvZ2pMM2JYZzkxSzR3VVBkSjJpc1Z5TXNOcFBCZ1crSyJ9
+x-originating-ip: [10.239.127.40]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
+MIME-Version: 1.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Will,
+Hi Alex,
 
-On 31/1/20 7:38 pm, Will Deacon wrote:
-> On Fri, Jan 31, 2020 at 04:31:48PM +1000, Greg Ungerer wrote:
->> On 29/1/20 8:39 pm, Peter Zijlstra wrote:
->>> In order to faciliate Will's READ_ONCE() patches:
->>>
->>>     https://lkml.kernel.org/r/20200123153341.19947-1-will@kernel.org
->>>
->>> we need to fix m68k/motorola to not have a giant pmd_t. These patches do so and
->>> are tested using ARAnyM/68040.
->>>
->>> It would be very good if someone can either test or tell us what emulator to
->>> use for 020/030.
->>
->> This series breaks compilation for the ColdFire (with MMU) variant of
->> the m68k family:
+> From: Alex Williamson [mailto:alex.williamson@redhat.com]
+> Sent: Thursday, January 30, 2020 7:57 AM
+> To: Liu, Yi L <yi.l.liu@intel.com>
+> Subject: Re: [RFC v3 4/8] vfio/type1: Add
+> VFIO_NESTING_GET_IOMMU_UAPI_VERSION
 > 
-> [...]
+> On Wed, 29 Jan 2020 04:11:48 -0800
+> "Liu, Yi L" <yi.l.liu@intel.com> wrote:
 > 
->> Easy to reproduce. Build for the m5475evb_defconfig.
+> > From: Liu Yi L <yi.l.liu@intel.com>
+> >
+> > In Linux Kernel, the IOMMU nesting translation (a.k.a. IOMMU dual stage
+> > translation capability) is abstracted in uapi/iommu.h, in which the uAPIs
+> > like bind_gpasid/iommu_cache_invalidate/fault_report/pgreq_resp are defined.
+> >
+> > VFIO_TYPE1_NESTING_IOMMU stands for the vfio iommu type which is backed by
+> > IOMMU nesting translation capability. VFIO exposes the nesting capability
+> > to userspace and also exposes uAPIs (will be added in later patches) to user
+> > space for setting up nesting translation from userspace. Thus applications
+> > like QEMU could support vIOMMU for pass-through devices with IOMMU nesting
+> > translation capability.
+> >
+> > As VFIO expose the nesting IOMMU programming to userspace, it also needs to
+> > provide an API for the uapi/iommu.h version check to ensure compatibility.
+> > This patch reports the iommu uapi version to userspace. Applications could
+> > use this API to do version check before further using the nesting uAPIs.
+> >
+> > Cc: Kevin Tian <kevin.tian@intel.com>
+> > CC: Jacob Pan <jacob.jun.pan@linux.intel.com>
+> > Cc: Alex Williamson <alex.williamson@redhat.com>
+> > Cc: Eric Auger <eric.auger@redhat.com>
+> > Cc: Jean-Philippe Brucker <jean-philippe.brucker@arm.com>
+> > Signed-off-by: Liu Yi L <yi.l.liu@intel.com>
+> > ---
+> >  drivers/vfio/vfio.c       |  3 +++
+> >  include/uapi/linux/vfio.h | 10 ++++++++++
+> >  2 files changed, 13 insertions(+)
+> >
+> > diff --git a/drivers/vfio/vfio.c b/drivers/vfio/vfio.c
+> > index 425d60a..9087ad4 100644
+> > --- a/drivers/vfio/vfio.c
+> > +++ b/drivers/vfio/vfio.c
+> > @@ -1170,6 +1170,9 @@ static long vfio_fops_unl_ioctl(struct file *filep,
+> >  	case VFIO_GET_API_VERSION:
+> >  		ret = VFIO_API_VERSION;
+> >  		break;
+> > +	case VFIO_NESTING_GET_IOMMU_UAPI_VERSION:
+> > +		ret = iommu_get_uapi_version();
+> > +		break;
 > 
-> I've hacked up a fix below, but I don't know how to test whether it actually
-> works (it does fix the build).
+> Shouldn't the type1 backend report this?  It doesn't make much sense
+> that the spapr backend reports a version for something it doesn't
+> support.  Better yet, provide this info gratuitously in the
+> VFIO_IOMMU_GET_INFO ioctl return like you do with nesting in the next
+> patch, then it can help the user figure out if this support is present.
 
-Yep, I can confirm that too.
-There is no emulators for the MMU based ColdFires (qemu only supports
-a non-MMU variant).
+yeah, it would be better to report it by type1 backed. However,
+it is kind of issue when QEMU using it.
 
-I can test on real hardware - but not until Monday when I am back
-in my lab. I'll report back then.
+My series "hooks" vSVA supports on VFIO_TYPE1_NESTING_IOMMU type.
+[RFC v3 09/25] vfio: check VFIO_TYPE1_NESTING_IOMMU support
+https://www.spinics.net/lists/kvm/msg205197.html
 
+In QEMU, it will determine the iommu type firstly and then invoke
+VFIO_SET_IOMMU. I think before selecting VFIO_TYPE1_NESTING_IOMMU,
+QEMU needs to check the IOMMU uAPI version. If IOMMU uAPI is incompatible,
+QEMU should not use VFIO_TYPE1_NESTING_IOMMU type. If
+VFIO_NESTING_GET_IOMMU_UAPI_VERSION is available after set iommu, then it
+may be an issue. That's why this series reports the version in vfio layer
+instead of type1 backend.
 
-> However, I also notice that building for
-> m5475evb_defconfig with vanilla v5.5 triggers this scary looking warning
-> due to a mismatch between the pgd size and the (8k!) page size:
-> 
-> 
->    | In function 'pgd_alloc.isra.111',
->    |     inlined from 'mm_alloc_pgd' at kernel/fork.c:634:12,
->    |     inlined from 'mm_init.isra.112' at kernel/fork.c:1043:6:
->    | ./arch/m68k/include/asm/string.h:72:25: warning: '__builtin_memcpy' forming offset [4097, 8192] is out of the bounds [0, 4096] of object 'kernel_pg_dir' with type 'pgd_t[1024]' {aka 'struct <anonymous>[1024]'} [-Warray-bounds]
->    |  #define memcpy(d, s, n) __builtin_memcpy(d, s, n)
->    |                          ^~~~~~~~~~~~~~~~~~~~~~~~~
->    | ./arch/m68k/include/asm/mcf_pgalloc.h:93:2: note: in expansion of macro 'memcpy'
->    |   memcpy(new_pgd, swapper_pg_dir, PAGE_SIZE);
->    |   ^~~~~~
-> 
-> 
-> I think the correct fix is to add this:
-> 
-> 
-> diff --git a/arch/m68k/include/asm/mcf_pgalloc.h b/arch/m68k/include/asm/mcf_pgalloc.h
-> index 82ec54c2eaa4..c335e6a381a1 100644
-> --- a/arch/m68k/include/asm/mcf_pgalloc.h
-> +++ b/arch/m68k/include/asm/mcf_pgalloc.h
-> @@ -90,7 +90,7 @@ static inline pgd_t *pgd_alloc(struct mm_struct *mm)
->   	new_pgd = (pgd_t *)__get_free_page(GFP_DMA | __GFP_NOWARN);
->   	if (!new_pgd)
->   		return NULL;
-> -	memcpy(new_pgd, swapper_pg_dir, PAGE_SIZE);
-> +	memcpy(new_pgd, swapper_pg_dir, PTRS_PER_PGD * sizeof(pgd_t));
->   	memset(new_pgd, 0, PAGE_OFFSET >> PGDIR_SHIFT);
->   	return new_pgd;
->   }
-> 
-> 
-> but maybe it should be done as a separate patch give that it's not caused
-> by the rework we've been doing.
-
-Indeed I hadn't noticed that before. But good idea, a separate patch
-would make sense.
-
-Regards
-Greg
-
-
-> Will
-> 
-> --->8
-> 
-> diff --git a/arch/m68k/include/asm/mcf_pgalloc.h b/arch/m68k/include/asm/mcf_pgalloc.h
-> index 82ec54c2eaa4..955d54a6e973 100644
-> --- a/arch/m68k/include/asm/mcf_pgalloc.h
-> +++ b/arch/m68k/include/asm/mcf_pgalloc.h
-> @@ -28,21 +28,22 @@ extern inline pmd_t *pmd_alloc_kernel(pgd_t *pgd, unsigned long address)
->   	return (pmd_t *) pgd;
->   }
->   
-> -#define pmd_populate(mm, pmd, page) (pmd_val(*pmd) = \
-> -	(unsigned long)(page_address(page)))
-> +#define pmd_populate(mm, pmd, pte) (pmd_val(*pmd) = (unsigned long)(pte))
->   
-> -#define pmd_populate_kernel(mm, pmd, pte) (pmd_val(*pmd) = (unsigned long)(pte))
-> +#define pmd_populate_kernel pmd_populate
->   
-> -#define pmd_pgtable(pmd) pmd_page(pmd)
-> +#define pmd_pgtable(pmd) pfn_to_virt(pmd_val(pmd) >> PAGE_SHIFT)
->   
-> -static inline void __pte_free_tlb(struct mmu_gather *tlb, pgtable_t page,
-> +static inline void __pte_free_tlb(struct mmu_gather *tlb, pgtable_t pgtable,
->   				  unsigned long address)
->   {
-> +	struct page *page = virt_to_page(pgtable);
-> +
->   	pgtable_pte_page_dtor(page);
->   	__free_page(page);
->   }
->   
-> -static inline struct page *pte_alloc_one(struct mm_struct *mm)
-> +static inline pgtable_t pte_alloc_one(struct mm_struct *mm)
->   {
->   	struct page *page = alloc_pages(GFP_DMA, 0);
->   	pte_t *pte;
-> @@ -54,20 +55,19 @@ static inline struct page *pte_alloc_one(struct mm_struct *mm)
->   		return NULL;
->   	}
->   
-> -	pte = kmap(page);
-> -	if (pte) {
-> -		clear_page(pte);
-> -		__flush_page_to_ram(pte);
-> -		flush_tlb_kernel_page(pte);
-> -		nocache_page(pte);
-> -	}
-> -	kunmap(page);
-> +	pte = page_address(page);
-> +	clear_page(pte);
-> +	__flush_page_to_ram(pte);
-> +	flush_tlb_kernel_page(pte);
-> +	nocache_page(pte);
->   
-> -	return page;
-> +	return pte;
->   }
->   
-> -static inline void pte_free(struct mm_struct *mm, struct page *page)
-> +static inline void pte_free(struct mm_struct *mm, pgtable_t pgtable)
->   {
-> +	struct page *page = virt_to_page(pgtable);
-> +
->   	pgtable_pte_page_dtor(page);
->   	__free_page(page);
->   }
-> 
+Regards,
+Yi Liu
