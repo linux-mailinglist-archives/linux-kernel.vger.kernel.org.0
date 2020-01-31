@@ -2,180 +2,87 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 17C7714EC83
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Jan 2020 13:30:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8313614EC8C
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Jan 2020 13:35:54 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728561AbgAaMao (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 31 Jan 2020 07:30:44 -0500
-Received: from foss.arm.com ([217.140.110.172]:34938 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728479AbgAaMan (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 31 Jan 2020 07:30:43 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D42EF1063;
-        Fri, 31 Jan 2020 04:30:42 -0800 (PST)
-Received: from [192.168.1.123] (unknown [172.31.20.19])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id B7D5B3F67D;
-        Fri, 31 Jan 2020 04:30:41 -0800 (PST)
-Subject: Re: [PATCH] dma-debug: dynamic allocation of hash table
-To:     Eric Dumazet <edumazet@google.com>
-Cc:     Christoph Hellwig <hch@lst.de>, Joerg Roedel <jroedel@suse.de>,
-        iommu@lists.linux-foundation.org,
-        Eric Dumazet <eric.dumazet@gmail.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-References: <20200130191049.190569-1-edumazet@google.com>
- <e0a0ffa9-3721-4bac-1c8f-bcbd53d22ba1@arm.com>
- <CANn89i+fRqeSAz9eH8f2ujzBWSLUXw0eTT=tK=eNj8hL71MiFQ@mail.gmail.com>
-From:   Robin Murphy <robin.murphy@arm.com>
-Message-ID: <f870ae85-995f-7866-ebbd-95b89ca28dc5@arm.com>
-Date:   Fri, 31 Jan 2020 12:30:42 +0000
-User-Agent: Mozilla/5.0 (Windows NT 10.0; rv:68.0) Gecko/20100101
- Thunderbird/68.4.2
+        id S1728569AbgAaMfv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 31 Jan 2020 07:35:51 -0500
+Received: from mail-io1-f65.google.com ([209.85.166.65]:39165 "EHLO
+        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728500AbgAaMfu (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 31 Jan 2020 07:35:50 -0500
+Received: by mail-io1-f65.google.com with SMTP id c16so7961817ioh.6
+        for <linux-kernel@vger.kernel.org>; Fri, 31 Jan 2020 04:35:50 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:reply-to:from:date:message-id:subject:to
+         :content-transfer-encoding;
+        bh=oug1UlqK6G2Dju5seq5Fq243ykNU38Q3az/qNtcH1Rw=;
+        b=pxZCQSAFppqjX+MlStqLPnpj8bVe0sLmrVrbmjbNBLoOr//9FMvqAj+EdcspfFtZVK
+         msvQeY2nDXEjm5nL7x2UV6iWv8wxN5GKtaYDVrnoad5UZT4RJ9fEp5JCqbBqHg3KEKu3
+         oSKfV3cbS6W3ndQZlNkvjbArcWEE2sEJSbZYf5/4kGsNOfBF3qE/aztrR5gw7SIm+Zwn
+         1hkzR2scI2jAnyQqx2ti+JOHTDA037CrYFpMa7OfvgmyeEmuPi0Prm33un3uPKwzNj1a
+         40zGuozuVTQiH5tfZn3XumVoZOUvFlPennmEJlGrzf3OD/XoWaeQgxkgErJc2qHPCyc9
+         cRRw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
+         :subject:to:content-transfer-encoding;
+        bh=oug1UlqK6G2Dju5seq5Fq243ykNU38Q3az/qNtcH1Rw=;
+        b=XZXwcz89VffPvXIjD5m2oDN2UVOP1GE6YivUZblDwuzvyteSZthro7jvEwDOSl/5zq
+         5oS88hq/z0w7DeGvz3DftZi7ZXS96sQnDONeHiz5qCIfbjMCOYH5FEv62KNeEX6GFnjW
+         oHjyUSBwsJENHszQTxukOWEZqrES085ZqkR2z8Ft3eXMy+o+Cy8KCS7QeiqasqfqK3zJ
+         n/ThgX3wD3Eom0e89H1ajTqUZebTT0yUZFRyxhJNG4A2NbQz+OItVH7IHE577Zr8u9Le
+         WxwKW/ISS6oTdxo4rVi5+8ZWT8l4MwneupaZMuqqsOhCvaKWBaNSfzviqrA1JBhEWWnR
+         imWQ==
+X-Gm-Message-State: APjAAAXYfotmje2Um5z2l2ny/rwAc1SKrBKkczlUzs93ExUcrJTK08/L
+        UxAilSK3j4PTPLcl5ERZBEd9IWk/9HtzhHONamo=
+X-Google-Smtp-Source: APXvYqzxNHAKDvAWSypJ+EEajTHEUkRJAFw0W905DEcL1BQwVnkjFewxkzLiaI5Cu1geVEzcyJS/S2D8WJHbDsLzaek=
+X-Received: by 2002:a02:9203:: with SMTP id x3mr7979401jag.62.1580474150024;
+ Fri, 31 Jan 2020 04:35:50 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <CANn89i+fRqeSAz9eH8f2ujzBWSLUXw0eTT=tK=eNj8hL71MiFQ@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+Received: by 2002:a05:6638:3cb:0:0:0:0 with HTTP; Fri, 31 Jan 2020 04:35:49
+ -0800 (PST)
+Reply-To: fedexservice90@outlook.com
+From:   FedEx <johnubah111@gmail.com>
+Date:   Fri, 31 Jan 2020 13:35:49 +0100
+Message-ID: <CALV6UMEnN2A7b1VEY_4pFUPzHPJw-mpkwLO0oL0JTXYVUvZYLQ@mail.gmail.com>
+Subject: Instruction to wire your fund
+To:     undisclosed-recipients:;
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2020-01-31 12:17 am, Eric Dumazet wrote:
-> On Thu, Jan 30, 2020 at 3:46 PM Robin Murphy <robin.murphy@arm.com> wrote:
->>
->> Hi Eric,
->>
->> On 2020-01-30 7:10 pm, Eric Dumazet via iommu wrote:
->>> Increasing the size of dma_entry_hash size by 327680 bytes
->>> has reached some bootloaders limitations.
->>
->> [ That might warrant some further explanation - I don't quite follow how
->> this would relate to a bootloader specifically :/ ]
-> 
-> I had no details, please look at the prior thread where this has been discussed.
-> 
-> https://www.spinics.net/lists/linux-renesas-soc/msg46157.html
+--=20
+FedEx Delivery Company
+630 Dowd Ave Elizabeth NJ 07201
+Email: fedexserice@outlook.com
 
-Thanks for the pointer - that had passed me by as it doesn't seem to 
-have been CCed to the IOMMU list or me as a reviewer.
+Dear Customer,
 
->>> Simply use dynamic allocations instead, and take
->>> this opportunity to increase the hash table to 65536
->>> buckets. Finally my 40Gbit mlx4 NIC can sustain
->>> line rate with CONFIG_DMA_API_DEBUG=y.
->>
->> That's pretty cool, but I can't help but wonder if making the table
->> bigger caused a problem in the first place, whether making it bigger yet
->> again in the name of a fix is really the wisest move. How might this
->> impact DMA debugging on 32-bit embedded systems with limited vmalloc
->> space and even less RAM, for instance? More to the point, does vmalloc()
->> even work for !CONFIG_MMU builds? Obviously we don't want things to be
->> *needlessly* slow if avoidable, but is there a genuine justification for
->> needing to optimise what is fundamentally an invasive heavyweight
->> correctness check - e.g. has it helped expose race conditions that were
->> otherwise masked?
-> 
-> Not sure what you are saying.
-> 
-> vmalloc() _is_ supported by all arches, even !CONFIG_MMU
+I am Mr. Larry Adams The Dispatched Officer,FedEx Delivery Company.
 
-OK, that's good - I wasn't sure off-hand, and I was on the wrong machine 
-to go digging into the source.
+We have waited for so long and there is no responds from you, we don=E2=80=
+=99t
+have enough time to wait for you and we don=E2=80=99t have enough time to
+deliver your $3.5 million to you through any courier system in this
+period of time, because we are about to audit for the year since we
+could not do
+it last year.
 
-> I can not test all platforms, and this is a debugging
-> feature no one uses in production.
+For this reason we have been instructed to wire your $3.5 million to
+your bank account.
 
-...which is exactly why I'd prefer to see a stronger justification for 
-making a change which only benefits performance on large systems, while 
-potentially impacting usability on small ones.
+So therefore you are required to provide to us your bank account
+information to enable us wire your fund to your account before the
+auditing commences.
 
->> That said, by moving to dynamic allocation maybe there's room to be
->> cleverer and make HASH_SIZE scale with, say, system memory size? (I
->> assume from the context it's not something we can expand on-demand like
->> we did for the dma_debug_entry pool)
->>
-> 
-> How memory size can serve as a proxy of the number of entries ?
-> Current 10Gbit NIC need about 256,000 entries in the table.
-> Needless to say, the prior hash size was unusable.
+Reply very urgent via: fedexserice@outlook.com
 
-Because it's actually a reasonable proxy for "system size" in this 
-context - there aren't many good reasons for a driver to maintain 
-hundreds of mappings of the *same* buffer, so in general the maximum 
-number of live mappings is effectively going to scale with the total 
-amount of memory, particularly at the smaller end. Consider it a pretty 
-safe assumption that an embedded system with RAM measured in megabytes 
-won't ever be running anything like an MLX4, let alone in a debug 
-situation. If those 256,000 mappings each represent a typical network 
-packet, that implies well over 300MB of data alone, not to mention the 
-size of the queues themselves, the actual DMA debug entries, and the 
-whole rest of the kernel beyond that one driver - I doubt it's 
-physically possible to 'need' 64K hash buckets without at very least 1GB 
-of total RAM, quite likely much more.
-
-> As I suggested one month ago, HASH_SIZE can be tuned by a developper
-> eager to use this facility.
-> 
-> 65536 slots are 768 KB on 32bit platforms.
-
-...and when that represents ~5% of the total system RAM it is a *lot* 
-less reasonable than even 12KB. As I said, it's great to make a debug 
-option more efficient such that what it observes is more representative 
-of the non-debug behaviour, but it mustn't come at the cost of making 
-the entire option unworkable for other users.
-
-Robin.
-
->>> Fixes: 5e76f564572b ("dma-debug: increase HASH_SIZE")
->>> Signed-off-by: Eric Dumazet <edumazet@google.com>
->>> Reported-by: Geert Uytterhoeven <geert@linux-m68k.org>
->>> Cc: Christoph Hellwig <hch@lst.de>
->>> ---
->>>    kernel/dma/debug.c | 10 ++++++++--
->>>    1 file changed, 8 insertions(+), 2 deletions(-)
->>>
->>> diff --git a/kernel/dma/debug.c b/kernel/dma/debug.c
->>> index 2031ed1ad7fa109bb8a8c290bbbc5f825362baba..a310dbb1515e92c081f8f3f9a7290dd5e53fc889 100644
->>> --- a/kernel/dma/debug.c
->>> +++ b/kernel/dma/debug.c
->>> @@ -27,7 +27,7 @@
->>>
->>>    #include <asm/sections.h>
->>>
->>> -#define HASH_SIZE       16384ULL
->>> +#define HASH_SIZE       65536ULL
->>>    #define HASH_FN_SHIFT   13
->>>    #define HASH_FN_MASK    (HASH_SIZE - 1)
->>>
->>> @@ -90,7 +90,8 @@ struct hash_bucket {
->>>    };
->>>
->>>    /* Hash list to save the allocated dma addresses */
->>> -static struct hash_bucket dma_entry_hash[HASH_SIZE];
->>> +static struct hash_bucket *dma_entry_hash __read_mostly;
->>> +
->>>    /* List of pre-allocated dma_debug_entry's */
->>>    static LIST_HEAD(free_entries);
->>>    /* Lock for the list above */
->>> @@ -934,6 +935,10 @@ static int dma_debug_init(void)
->>>        if (global_disable)
->>>                return 0;
->>>
->>> +     dma_entry_hash = vmalloc(HASH_SIZE * sizeof(*dma_entry_hash));
->>> +     if (!dma_entry_hash)
->>> +             goto err;
->>> +
->>>        for (i = 0; i < HASH_SIZE; ++i) {
->>>                INIT_LIST_HEAD(&dma_entry_hash[i].list);
->>>                spin_lock_init(&dma_entry_hash[i].lock);
->>> @@ -950,6 +955,7 @@ static int dma_debug_init(void)
->>>                pr_warn("%d debug entries requested but only %d allocated\n",
->>>                        nr_prealloc_entries, nr_total_entries);
->>>        } else {
->>> +err:
->>>                pr_err("debugging out of memory error - disabled\n");
->>>                global_disable = true;
->>>
->>>
+Yours Faithfully,
+Mr. Larry Adams
+(The Dispatched Officer)
