@@ -2,110 +2,72 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 98DEF14F366
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Jan 2020 21:53:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0946C14F375
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Jan 2020 21:53:53 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726905AbgAaUxC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 31 Jan 2020 15:53:02 -0500
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:37287 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726793AbgAaUxA (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 31 Jan 2020 15:53:00 -0500
-Received: by mail-wr1-f67.google.com with SMTP id w15so10253501wru.4;
-        Fri, 31 Jan 2020 12:52:58 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=kc0XA6SZSs/HJu0wNbOJrCuXV3cTdtqeEXUQ4KwZ90g=;
-        b=NjJO5Fp+P7xeOsfoZxq8mUANKUCyQc8YTKUBXLsuZ7TKBNygMhFEv2CYfDG/FLCY1S
-         oGJl/pQs+nNvvn5AJr5La31KNonpK1UpGsPRJl2UMNGpNsBiOw503aqqtOcBRUwMfMLf
-         /qrtwkP6rfX1NNYkyu+YCDAXhpNd2Aj2bKhULZiHkclX2QwkirX4lYdJ2/zqBr14KIW4
-         o928iq4UnUtZbfnEBXOhTBvYdkdLtSfg66v3MCJb7bEhoHzOj9v9l2V6R5qrZGH57KkJ
-         llr4oEWh7PeWOXSqUQioMovTAGRUojTguPH37o9GgsrsJ+REIDY/Tt0L9i9teRxbbY86
-         lm1g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=kc0XA6SZSs/HJu0wNbOJrCuXV3cTdtqeEXUQ4KwZ90g=;
-        b=bP+2qaqhXOAtHM6ANRFqRVJ6/WyYhoTxKMPE2fsrfbZ8yL9ZIQdk57LW/j5ecWawwp
-         pCXvMH0GvULezWjYtsinnmaBcB/5TWyQmo3le04QVmAZcyu+Zc8ODq06XauPYgAolhBo
-         iZSxaucYlsJMwqK7HKK0nTdzttfMWlJ4zsafyIFNtQpIt59TS3E3rqudzg19fMNeEQR4
-         wB7cnu+oAhyhnQZgxLxKXiK6jHQP0nmmnw6isHVWk47HVXn/bgYqKhG8IQ/KJpESuHNi
-         m/wfOga1go8Dj9AbSDjWq+rc+W1mRzuVyDNVEMkaWuj/LDgQ+4KXmspFOUXsjX9zkTG5
-         pS6w==
-X-Gm-Message-State: APjAAAVwO68F7tWLRe40mBBVjW7+SxdLGSso0gw6Moquemn7zdsIsWfK
-        wzQbC1QOW3YS9G50Ws1qPyU=
-X-Google-Smtp-Source: APXvYqxKGp9UXIlImbtXXSIjDvf9DFoIBRt9HgHcSdse/qXtjz89OebU+jouTUzH/POw83+2Os+Kgw==
-X-Received: by 2002:a05:6000:118e:: with SMTP id g14mr265423wrx.39.1580503977452;
-        Fri, 31 Jan 2020 12:52:57 -0800 (PST)
-Received: from localhost.localdomain ([2a02:2450:10d2:194d:bcd7:b36c:40fc:d163])
-        by smtp.gmail.com with ESMTPSA id z3sm13483738wrs.94.2020.01.31.12.52.56
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 31 Jan 2020 12:52:56 -0800 (PST)
-From:   SeongJae Park <sj38.park@gmail.com>
-To:     corbet@lwn.net, paulmck@kernel.org
-Cc:     SeongJae Park <sjpark@amazon.de>, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH 5/5] Documentation/memory-barriers: Fix typos
-Date:   Fri, 31 Jan 2020 21:52:37 +0100
-Message-Id: <20200131205237.29535-6-sj38.park@gmail.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20200131205237.29535-1-sj38.park@gmail.com>
-References: <20200131205237.29535-1-sj38.park@gmail.com>
+        id S1727080AbgAaUxj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 31 Jan 2020 15:53:39 -0500
+Received: from mail.kernel.org ([198.145.29.99]:42906 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726139AbgAaUxi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 31 Jan 2020 15:53:38 -0500
+Received: from paulmck-ThinkPad-P72.home (unknown [199.201.64.134])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 36830214D8;
+        Fri, 31 Jan 2020 20:53:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1580504018;
+        bh=NBP1g8bjhdd63aJ13vl8IHf8v729pDdk7CdirgovPsM=;
+        h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
+        b=e/fkGi+QU08bmM8sjux3PfJDZRCUIM9g+cKNrclPySmr4CnLvxhhHJtQkafcB+J1e
+         GkJtg7WdcB9rvy8XH6jSkUrvSauwpLq/uvX5pmMcLfk/ak6EppaGVT0YPlQsl0oC90
+         ZFkZG/M2uvmmLaKlWRXRCmXDm1dIfAWUdyMAQQQw=
+Received: by paulmck-ThinkPad-P72.home (Postfix, from userid 1000)
+        id C9BF03522722; Fri, 31 Jan 2020 12:53:37 -0800 (PST)
+Date:   Fri, 31 Jan 2020 12:53:37 -0800
+From:   "Paul E. McKenney" <paulmck@kernel.org>
+To:     Eric Dumazet <edumazet@google.com>
+Cc:     Peter Zijlstra <peterz@infradead.org>,
+        Will Deacon <will@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        the arch/x86 maintainers <x86@kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Marco Elver <elver@google.com>
+Subject: Re: Confused about hlist_unhashed_lockless()
+Message-ID: <20200131205337.GU2935@paulmck-ThinkPad-P72>
+Reply-To: paulmck@kernel.org
+References: <20200131164308.GA5175@willie-the-truck>
+ <CANn89i+CnezK81gZSLOy0w7MaZy0uT=xyxoKSTyZU3aMpzifOA@mail.gmail.com>
+ <20200131184322.GA11457@worktop.programming.kicks-ass.net>
+ <CANn89iLBL1qbrEucm2FU02oNbf=x3_4K93TmZ3yS2ZNWm8Qrsg@mail.gmail.com>
+ <CANn89i+pExLRqJxbamGv=uDi2kWY-1CKsh1DcAgfdh9DjpQx3A@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CANn89i+pExLRqJxbamGv=uDi2kWY-1CKsh1DcAgfdh9DjpQx3A@mail.gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: SeongJae Park <sjpark@amazon.de>
+On Fri, Jan 31, 2020 at 10:52:46AM -0800, Eric Dumazet wrote:
+> On Fri, Jan 31, 2020 at 10:48 AM Eric Dumazet <edumazet@google.com> wrote:
+> >
+> 
+> > This is nice, now with have data_race()
+> >
+> > Remember these patches were sent 2 months ago, at a time we were
+> > trying to sort out things.
+> >
+> > data_race() was merged a few days ago.
+> 
+> Well, actually data_race() is not there yet anyway.
+> 
+> Is it really scheduled for 5.7 kernel ?
 
-Signed-off-by: SeongJae Park <sjpark@amazon.de>
----
- Documentation/memory-barriers.txt | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+Right now, yes.  Would it make sense to separate it out and push it
+into the current merge window?
 
-diff --git a/Documentation/memory-barriers.txt b/Documentation/memory-barriers.txt
-index ec3b5865c1be..01ab5e22b670 100644
---- a/Documentation/memory-barriers.txt
-+++ b/Documentation/memory-barriers.txt
-@@ -185,7 +185,7 @@ As a further example, consider this sequence of events:
- 	===============	===============
- 	{ A == 1, B == 2, C == 3, P == &A, Q == &C }
- 	B = 4;		Q = P;
--	P = &B		D = *Q;
-+	P = &B;		D = *Q;
- 
- There is an obvious data dependency here, as the value loaded into D depends on
- the address retrieved from P by CPU 2.  At the end of the sequence, any of the
-@@ -569,7 +569,7 @@ following sequence of events:
- 	{ A == 1, B == 2, C == 3, P == &A, Q == &C }
- 	B = 4;
- 	<write barrier>
--	WRITE_ONCE(P, &B)
-+	WRITE_ONCE(P, &B);
- 			      Q = READ_ONCE(P);
- 			      D = *Q;
- 
-@@ -1721,7 +1721,7 @@ of optimizations:
-      and WRITE_ONCE() are more selective:  With READ_ONCE() and
-      WRITE_ONCE(), the compiler need only forget the contents of the
-      indicated memory locations, while with barrier() the compiler must
--     discard the value of all memory locations that it has currented
-+     discard the value of all memory locations that it has currently
-      cached in any machine registers.  Of course, the compiler must also
-      respect the order in which the READ_ONCE()s and WRITE_ONCE()s occur,
-      though the CPU of course need not do so.
-@@ -1833,7 +1833,7 @@ Aside: In the case of data dependencies, the compiler would be expected
- to issue the loads in the correct order (eg. `a[b]` would have to load
- the value of b before loading a[b]), however there is no guarantee in
- the C specification that the compiler may not speculate the value of b
--(eg. is equal to 1) and load a before b (eg. tmp = a[1]; if (b != 1)
-+(eg. is equal to 1) and load a[b] before b (eg. tmp = a[1]; if (b != 1)
- tmp = a[b]; ).  There is also the problem of a compiler reloading b after
- having loaded a[b], thus having a newer copy of b than a[b].  A consensus
- has not yet been reached about these problems, however the READ_ONCE()
--- 
-2.17.1
-
+							Thanx, Paul
