@@ -2,75 +2,78 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4108614F00B
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Jan 2020 16:47:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 696D414F00E
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Jan 2020 16:48:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729247AbgAaPrl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 31 Jan 2020 10:47:41 -0500
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:56111 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728974AbgAaPrl (ORCPT
+        id S1729265AbgAaPsE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 31 Jan 2020 10:48:04 -0500
+Received: from mail-vs1-f68.google.com ([209.85.217.68]:33039 "EHLO
+        mail-vs1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728922AbgAaPsE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 31 Jan 2020 10:47:41 -0500
-Received: by mail-wm1-f67.google.com with SMTP id q9so8385884wmj.5
-        for <linux-kernel@vger.kernel.org>; Fri, 31 Jan 2020 07:47:38 -0800 (PST)
+        Fri, 31 Jan 2020 10:48:04 -0500
+Received: by mail-vs1-f68.google.com with SMTP id n27so4661981vsa.0
+        for <linux-kernel@vger.kernel.org>; Fri, 31 Jan 2020 07:48:04 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:reply-to:from:date:message-id:subject:to;
+        bh=pKMEUn2dF7BW0BevKmi2c8y0oUGLqY/IZv47xCFNAPY=;
+        b=JHztqZtU9pMZVqGoZHzsDzdAeeHcO+gp87V5vPX2BGwJliOYfkuvcrUpDtnzXMgmOD
+         /XU2ms9n4KwGUOy0HpYJ5LthgT8UwMWLkifiGJ/Kc2kvVJfh+MMQmM4o2olwmUOfCDW0
+         U1NHMvGAbsYRfHOzRXbAcbhhes2yWZp1iqdnLWliapSFuOh/LUX8215Zio6MEpHupkie
+         43zCFkesDzZMKqhGOWgNCsHsONsx0nnvi33d+XprJdz3Mi1b0SiLp712zIWqiRUkp1BM
+         CHvl34Clqqhop/OEu7ycKbW9hlXIodxmxDIyfGxlSJM6T4t3UyMHKQdKOiOzfWAMKJBW
+         EuKw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=3u8hTQfD4sS33VMkuC1P4mm6uuQ9b/xEC2uCOAZWPSQ=;
-        b=a15VcwDGCgU/RNZ4fP1luiK04KLQOU7nTw19Vcek/Z1nsal6sXxjGH+oIS0+EQsnh7
-         kjufFcN5/V6a1MhYOdp+/ikwnEkj7e5CFo8579PXOvIoG90MDQpK8lZQWldgNYW4vjIs
-         b7k+iZMMpcfJYQ+6y1sDrRLaYCVbJDmB+ANESwdBf/UsN5f7zVZywh8rmeI8QLFy80LP
-         ePydfrboX8c5g0NDj6w8vTUSCbr0xhqHYxuIntwDZ+OV2PluLOlMvqB1rl3TQvd/nfb1
-         24RY64mKIpDkHS9rtEgleYZ1TYF5eP5Yn3faim7F8Co0kOvHe/iqckaodMyDVwT+TwcL
-         jqug==
-X-Gm-Message-State: APjAAAUth07JW8GhdHCL7vdH0iV6Dc7CL0qq1wrDqGT/YZvTL5FFhN3x
-        c7mvg9QYyd9WxTi2O7UeYaY=
-X-Google-Smtp-Source: APXvYqxVZ4kbX3o5D6rzM1kzGVJZowhvqQimb9/F99TAiPHnp7TxxGEFyIi2Gtb0ybhZKWX9li5vKg==
-X-Received: by 2002:a1c:df41:: with SMTP id w62mr2733578wmg.1.1580485657763;
-        Fri, 31 Jan 2020 07:47:37 -0800 (PST)
-Received: from localhost (ip-37-188-238-177.eurotel.cz. [37.188.238.177])
-        by smtp.gmail.com with ESMTPSA id n12sm11447201wmi.18.2020.01.31.07.47.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 31 Jan 2020 07:47:36 -0800 (PST)
-Date:   Fri, 31 Jan 2020 16:47:35 +0100
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Kirill Tkhai <ktkhai@virtuozzo.com>
-Cc:     David Hildenbrand <david@redhat.com>, akpm@linux-foundation.org,
-        hannes@cmpxchg.org, shakeelb@google.com, vdavydov.dev@gmail.com,
-        linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] mm: Allocate shrinker_map on appropriate NUMA node
-Message-ID: <20200131154735.GA4520@dhcp22.suse.cz>
-References: <158047248934.390127.5043060848569612747.stgit@localhost.localdomain>
- <ebe1c944-2e0f-136d-dd09-0bb37d500fe2@redhat.com>
- <5f3fc9a9-9a22-ccc3-5971-9783b60807bc@virtuozzo.com>
+        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
+         :subject:to;
+        bh=pKMEUn2dF7BW0BevKmi2c8y0oUGLqY/IZv47xCFNAPY=;
+        b=kT1Sj6dwsafvrZ3FrAnFLxb0+hOD2KCHZU4lNr3ZL1PUAW+Z4eebGpubR8R2X23cg1
+         DNuJWY6kzcxsyrxUBvOgKVhJoZP02KqJcKIdBALqDnpnsnYziVVUGzJXHTPrCs5pLlgo
+         Rht6IrVT54yUL8NukG0NneyxLq98LZJQglPPgEK9gmwkIHOTuufpSxtC4glhXE46RWDW
+         TRqCwMggaEXE0ZeCQqpl4z2VQGBqGhLmDl/VICw0Mdh8pDRoyAuWLtppMF5I74fTfLHL
+         PmFPmT27LcP08cs9LnTxEgWlBxUMmRZQGt6EJxCkOAnCW4fsDkcyFGo4D1b6ZG8AsEgd
+         /T+w==
+X-Gm-Message-State: APjAAAXIyGJWQ5Wcxd+rE4IZqH9MyA3uYFXVmW0UIu216/WIq9M+R2TL
+        CA/Xib8cv3CxirKG+Wjt3V0BA9tVeQUKM+hez8c=
+X-Google-Smtp-Source: APXvYqywHR/M3cN+3NpvPK8EGJZ+hy9aQiYR9Y9Gsa+aW6xCRQuUS052RIf6XofxcHOMUQlU33jGaqMRU0EqyUqet9I=
+X-Received: by 2002:a67:320c:: with SMTP id y12mr7309152vsy.47.1580485683509;
+ Fri, 31 Jan 2020 07:48:03 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <5f3fc9a9-9a22-ccc3-5971-9783b60807bc@virtuozzo.com>
+Received: by 2002:ac5:c9ba:0:0:0:0:0 with HTTP; Fri, 31 Jan 2020 07:48:03
+ -0800 (PST)
+Reply-To: westernunionmoneypayoffice@gmail.com
+From:   chris william <willychris222@gmail.com>
+Date:   Fri, 31 Jan 2020 15:48:03 +0000
+Message-ID: <CADT5zyzGbK7zD-bMA-8DFncZy9MFqs9UQpdZvH0PbOLAAOvcZA@mail.gmail.com>
+Subject: Good day
+To:     undisclosed-recipients:;
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri 31-01-20 18:00:51, Kirill Tkhai wrote:
-[...]
-> @@ -333,8 +333,9 @@ static int memcg_expand_one_shrinker_map(struct mem_cgroup *memcg,
->  		/* Not yet online memcg */
->  		if (!old)
->  			return 0;
-> -
-> -		new = kvmalloc(sizeof(*new) + size, GFP_KERNEL);
-> +		/* See comment in alloc_mem_cgroup_per_node_info()*/
-> +		tmp = node_state(nid, N_NORMAL_MEMORY) ? nid : NUMA_NO_NODE;
-> +		new = kvmalloc_node(sizeof(*new) + size, GFP_KERNEL, tmp);
->  		if (!new)
->  			return -ENOMEM;
+ Attention please,
 
-I do not think this is a good pattern to copy. Why cannot you simply use
-kvmalloc_node with the given node? The allocator should fallback to the
-closest node if the given one doesn't have any memory.
--- 
-Michal Hocko
-SUSE Labs
+We have deposited the cheque of your fund ($ 800,000.00USD) through
+Western Union department Finally after our meeting Regarding your
+fund, what you will do is to contact Western Union director Dr.Alex
+Onoja via Email (westernunionmoneypayoffice@gmail.com).
+
+He will direct you how you will receiving the Funds daily, remember to
+send him your full information to avoid wrong transfer Such as:
+
+Receiver's Name _______________
+Address: ________________
+Country: _____________
+Phone Number: _____________
+
+Dr.Alex Onoja has sent $ 5,000 through Western Union. Contact  Dr.Alex
+Onoja as soon as you receive this email and tell him to give you the
+MTCN, sender name and question / answer to pick the $ 5000 Please let
+us know as soon as you received all your fund.
+
+Best Regards.
+WESTERN UNION AGENT
