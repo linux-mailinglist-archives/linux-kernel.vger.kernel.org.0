@@ -2,246 +2,127 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0EAED14F2EC
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Jan 2020 20:46:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EF78514F2F3
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Jan 2020 20:51:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726332AbgAaTp4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 31 Jan 2020 14:45:56 -0500
-Received: from mga17.intel.com ([192.55.52.151]:21848 "EHLO mga17.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726001AbgAaTp4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 31 Jan 2020 14:45:56 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 31 Jan 2020 11:45:55 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.70,386,1574150400"; 
-   d="scan'208";a="218708109"
-Received: from jacob-builder.jf.intel.com (HELO jacob-builder) ([10.7.199.155])
-  by orsmga007.jf.intel.com with ESMTP; 31 Jan 2020 11:45:55 -0800
-Date:   Fri, 31 Jan 2020 11:51:10 -0800
-From:   Jacob Pan <jacob.jun.pan@linux.intel.com>
-To:     Alex Williamson <alex.williamson@redhat.com>
-Cc:     iommu@lists.linux-foundation.org,
-        LKML <linux-kernel@vger.kernel.org>,
-        "Lu Baolu" <baolu.lu@linux.intel.com>,
-        Joerg Roedel <joro@8bytes.org>,
-        David Woodhouse <dwmw2@infradead.org>,
-        "Yi Liu" <yi.l.liu@intel.com>,
-        "Tian, Kevin" <kevin.tian@intel.com>,
-        Raj Ashok <ashok.raj@intel.com>,
-        "Christoph Hellwig" <hch@infradead.org>,
-        Jean-Philippe Brucker <jean-philippe@linaro.com>,
-        Jonathan Cameron <jic23@kernel.org>,
-        Eric Auger <eric.auger@redhat.com>,
-        jacob.jun.pan@linux.intel.com
-Subject: Re: [PATCH 3/3] iommu/uapi: Add helper function for size lookup
-Message-ID: <20200131115110.1de98286@jacob-builder>
-In-Reply-To: <20200129151951.2e354e37@w520.home>
-References: <1580277724-66994-1-git-send-email-jacob.jun.pan@linux.intel.com>
-        <1580277724-66994-4-git-send-email-jacob.jun.pan@linux.intel.com>
-        <20200129144046.3f91e4c1@w520.home>
-        <20200129151951.2e354e37@w520.home>
-Organization: OTC
-X-Mailer: Claws Mail 3.13.2 (GTK+ 2.24.30; x86_64-pc-linux-gnu)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        id S1726239AbgAaTvg convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Fri, 31 Jan 2020 14:51:36 -0500
+Received: from coyote.holtmann.net ([212.227.132.17]:44735 "EHLO
+        mail.holtmann.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726055AbgAaTvg (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 31 Jan 2020 14:51:36 -0500
+Received: from marcel-macpro.fritz.box (p4FEFC5A7.dip0.t-ipconnect.de [79.239.197.167])
+        by mail.holtmann.org (Postfix) with ESMTPSA id ECE1CCECE8;
+        Fri, 31 Jan 2020 21:00:54 +0100 (CET)
+Content-Type: text/plain;
+        charset=us-ascii
+Mime-Version: 1.0 (Mac OS X Mail 13.0 \(3608.60.0.2.5\))
+Subject: Re: [PATCH v2 1/2] Bluetooth: hci_qca: Enable clocks required for BT
+ SOC
+From:   Marcel Holtmann <marcel@holtmann.org>
+In-Reply-To: <1580456335-7317-1-git-send-email-gubbaven@codeaurora.org>
+Date:   Fri, 31 Jan 2020 20:51:33 +0100
+Cc:     Johan Hedberg <johan.hedberg@gmail.com>,
+        Matthias Kaehlcke <mka@chromium.org>,
+        linux-kernel@vger.kernel.org, linux-bluetooth@vger.kernel.org,
+        robh@kernel.org, hemantg@codeaurora.org,
+        linux-arm-msm@vger.kernel.org, bgodavar@codeaurora.org,
+        tientzu@chromium.org, seanpaul@chromium.org, rjliao@codeaurora.org,
+        yshavit@google.com
+Content-Transfer-Encoding: 8BIT
+Message-Id: <543135AD-707A-4945-A67D-8912D1C35EED@holtmann.org>
+References: <1580456335-7317-1-git-send-email-gubbaven@codeaurora.org>
+To:     Venkata Lakshmi Narayana Gubba <gubbaven@codeaurora.org>
+X-Mailer: Apple Mail (2.3608.60.0.2.5)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 29 Jan 2020 15:19:51 -0700
-Alex Williamson <alex.williamson@redhat.com> wrote:
+Hi Venkata,
 
-> On Wed, 29 Jan 2020 14:40:46 -0700
-> Alex Williamson <alex.williamson@redhat.com> wrote:
+> Instead of relying on other subsytem to turn ON clocks
+> required for BT SoC to operate, voting them from the driver.
 > 
-> > On Tue, 28 Jan 2020 22:02:04 -0800
-> > Jacob Pan <jacob.jun.pan@linux.intel.com> wrote:
-> >   
-> > > IOMMU UAPI can be extended in the future by adding new
-> > > fields at the end of each user data structure. Since we use
-> > > a unified UAPI version for compatibility checking, a lookup
-> > > function is needed to find the correct user data size to copy
-> > > from user.
-> > > 
-> > > This patch adds a helper function based on a 2D lookup with
-> > > version and type as input arguments.
-> > > 
-> > > Signed-off-by: Liu Yi L <yi.l.liu@intel.com>
-> > > Signed-off-by: Jacob Pan <jacob.jun.pan@linux.intel.com>
-> > > ---
-> > >  drivers/iommu/iommu.c | 22 ++++++++++++++++++++++
-> > >  include/linux/iommu.h |  6 ++++++
-> > >  2 files changed, 28 insertions(+)
-> > > 
-> > > diff --git a/drivers/iommu/iommu.c b/drivers/iommu/iommu.c
-> > > index 7dd51c5d2ba1..9e5de9abebdf 100644
-> > > --- a/drivers/iommu/iommu.c
-> > > +++ b/drivers/iommu/iommu.c
-> > > @@ -1696,6 +1696,28 @@ int iommu_sva_unbind_gpasid(struct
-> > > iommu_domain *domain, struct device *dev, }
-> > >  EXPORT_SYMBOL_GPL(iommu_sva_unbind_gpasid);
-> > >  
-> > > +
-> > > +/**
-> > > + * Maintain a UAPI version to user data structure size lookup
-> > > for each
-> > > + * API function types we support. e.g. bind guest pasid, cache
-> > > invalidation.
-> > > + * As data structures being extended with new members, the
-> > > offsetofend()
-> > > + * will identify the new sizes.
-> > > + */
-> > > +const static int
-> > > iommu_uapi_data_size[NR_IOMMU_UAPI_TYPE][IOMMU_UAPI_VERSION] = {
-> > > +	/* IOMMU_UAPI_BIND_GPASID */
-> > > +	{offsetofend(struct iommu_gpasid_bind_data, vtd)},
-> > > +	/* IOMMU_UAPI_CACHE_INVAL */
-> > > +	{offsetofend(struct iommu_cache_invalidate_info,
-> > > addr_info)},  
+> Signed-off-by: Venkata Lakshmi Narayana Gubba <gubbaven@codeaurora.org>
+> ---
+> v2:
+>   * addressed forward declarations
+>   * updated with devm_clk_get_optional()
 > 
-> This seems prone to errors in future revisions.  Both of the above
-> reference the end of fields within an anonymous union.  When a new
-> field is added, it's not necessarily the newest field that needs to be
-> listed here, but the largest at the time.
-> So should the current
-> version always use sizeof instead (or name the union so we can
-> reference it)?  I'm not sure of an error proof way to make sure we
-> keep the N-1 version consistent when we add a new version though.
-> More comments?
+> ---
+> drivers/bluetooth/hci_qca.c | 25 +++++++++++++++++++++++++
+> 1 file changed, 25 insertions(+)
 > 
-yes. we must be very careful the new size has to be the largest of the
-union not the newest. I agree that using sizeof() would make current
-version size straightforward. But we have to find the size for N-1
-with offsetofend, seems more risk to the existing N-1 code when bump up
-version.
+> diff --git a/drivers/bluetooth/hci_qca.c b/drivers/bluetooth/hci_qca.c
+> index d6e0c99..73706f3 100644
+> --- a/drivers/bluetooth/hci_qca.c
+> +++ b/drivers/bluetooth/hci_qca.c
+> @@ -1738,6 +1738,15 @@ static int qca_power_off(struct hci_dev *hdev)
+> 	return 0;
+> }
+> 
+> +static int qca_setup_clock(struct clk *clk, bool enable)
+> +{
+> +	if (enable)
+> +		return clk_prepare_enable(clk);
+> +
+> +	clk_disable_unprepare(clk);
+> +	return 0;
+> +}
+> +
 
-I was thinking this array also serve as documentation of the revision
-history, but as you pointed out offsetofend may not be the newest
-member of the union. So it cannot document which member was added in
-which version. Seems more comments is the only way.
+this function is pointless and it just complicated the code.
 
-How about comments as below with example future extensions?
-
-/**
- * Maintain a UAPI version to user data structure size lookup for each
- * API function types we support. e.g. bind guest pasid, cache invalidation.
- * As data structures being extended with new members, offsetofend() is
- * used to identify the size. In case of adding a new member to a union,
- * offsetofend() applies to the largest member which may not be the newest.
- *
- * When new types are introduced with new versions, the new types for older
- * version must be filled with -EINVAL.
- *
- * The table below documents UAPI revision history with the name of the
- * newest member of each data structure. The largest member of a union was
- * used for the initial version of each type.
- *
- * Current version: V1
- * +--------------+---------------+
- * | Type /       |       V1      |
- * | UAPI Version |               |
- * +==============+===============+
- * | BIND_GPASID  |       vtd     |
- * +--------------+---------------+
- * | CACHE_INVAL  |  addr_info    |
- * +--------------+---------------+
- * | PAGE_RESP    |  code         |
- * +--------------+---------------+
- *
- * Future extension examples:
- *
- * V2 adds new members to bind_gpasid and cache_invalidate API but not
- * page response.
- * +--------------+---------------+---------------+
- * | Type /       |       V1      |      V2       |
- * | UAPI Version |               |               |
- * +==============+===============+===============+
- * | BIND_GPASID  |       vtd     |      smmu_v3  |
- * +--------------+---------------+---------------+
- * | CACHE_INVAL  |  addr_info    |     new_info  |
- * +--------------+---------------+---------------+
- * | PAGE_RESP    |  code         |     N/A       |
- * +--------------+---------------+---------------+
- *
- * V3 introduces a new UAPI data type: NEW_TYPE but with no new members
- * added to the existing types.
- * +--------------+---------------+---------------+---------------+
- * | Type /       |       V1      |      V2       |      V3       |
- * | UAPI Version |               |               |               |
- * +==============+===============+===============+===============+
- * | BIND_GPASID  |       vtd     |      smmu_v3  |       N/A     |
- * +--------------+---------------+---------------+---------------+
- * | CACHE_INVAL  |  addr_info    |    new_info   |       N/A     |
- * +--------------+---------------+---------------+---------------+
- * | PAGE_RESP    |  code         |    N/A        |       N/A     |
- * +--------------+---------------+---------------+---------------+
- * | NEW_TYPE     |  -EINVAL      |     -EINVAL   | largest_member|
- * +--------------+---------------+---------------+---------------+
- *
-
-> Also, is the 12-bytes of padding in struct iommu_gpasid_bind_data
-> excessive with this new versioning scheme?  Per rule #2 I'm not sure
-> if we're allowed to repurpose those padding bytes, but if we add
-> fields to the end of the structure as the scheme suggests, we're
-> stuck with not being able to expand the union for new fields.
+> static int qca_regulator_enable(struct qca_serdev *qcadev)
+> {
+> 	struct qca_power *power = qcadev->bt_power;
+> @@ -1755,6 +1764,13 @@ static int qca_regulator_enable(struct qca_serdev *qcadev)
 > 
-> Thanks,
-> Alex
+> 	power->vregs_on = true;
 > 
-> > > +	/* IOMMU_UAPI_PAGE_RESP */
-> > > +	{offsetofend(struct iommu_page_response, code)},
-> > > +};
-> > > +
-> > > +int iommu_uapi_get_data_size(int type, int version)
-> > > +{    
-> > 
-> > Seems like this is asking for a bounds check,
-> > 
-> >   if (type >= NR_IOMMU_UAPI_TYPE || version > IOMMU_UAPI_VERSION)
-> >   	return -EINVAL;
-> > 
-> > If we add new types in future versions, I assume we'd back fill the
-> > table with -EINVAL as well (rather than zero).  Thanks,
-> > 
-> > Alex
-> >   
-> > > +	return iommu_uapi_data_size[type][version - 1];
-> > > +}
-> > > +EXPORT_SYMBOL_GPL(iommu_uapi_get_data_size);
-> > > +
-> > >  static void __iommu_detach_device(struct iommu_domain *domain,
-> > >  				  struct device *dev)
-> > >  {
-> > > diff --git a/include/linux/iommu.h b/include/linux/iommu.h
-> > > index 9718c109ea0a..416fe02160ba 100644
-> > > --- a/include/linux/iommu.h
-> > > +++ b/include/linux/iommu.h
-> > > @@ -500,6 +500,7 @@ extern int iommu_report_device_fault(struct
-> > > device *dev, struct iommu_fault_event *evt);
-> > >  extern int iommu_page_response(struct device *dev,
-> > >  			       struct iommu_page_response *msg);
-> > > +extern int iommu_uapi_get_data_size(int type, int version);
-> > >  
-> > >  extern int iommu_group_id(struct iommu_group *group);
-> > >  extern struct iommu_group *iommu_group_get_for_dev(struct device
-> > > *dev); @@ -885,6 +886,11 @@ static inline int
-> > > iommu_page_response(struct device *dev, return -ENODEV;
-> > >  }
-> > >  
-> > > +static int iommu_uapi_get_data_size(int type, int version)
-> > > +{
-> > > +	return -ENODEV;
-> > > +}
-> > > +
-> > >  static inline int iommu_group_id(struct iommu_group *group)
-> > >  {
-> > >  	return -ENODEV;    
-> >   
-> 
+> +	ret = qca_setup_clock(qcadev->susclk, true);
 
-[Jacob Pan]
+	ret = clk_prepare_enable(qcadev->susclk);
+
+> +	if (ret) {
+> +		/* Turn off regulators to overcome power leakage */
+> +		qca_regulator_disable(qcadev);
+> +		return ret;
+> +	}
+> +
+> 	return 0;
+> }
+> 
+> @@ -1773,6 +1789,9 @@ static void qca_regulator_disable(struct qca_serdev *qcadev)
+> 
+> 	regulator_bulk_disable(power->num_vregs, power->vreg_bulk);
+> 	power->vregs_on = false;
+> +
+> +	if (qcadev->susclk)
+> +		qca_setup_clock(qcadev->susclk, false);
+
+		clk_disable_unprepare(qcadev->susclk);
+
+> }
+> 
+> static int qca_init_regulators(struct qca_power *qca,
+> @@ -1839,6 +1858,12 @@ static int qca_serdev_probe(struct serdev_device *serdev)
+> 
+> 		qcadev->bt_power->vregs_on = false;
+> 
+> +		qcadev->susclk = devm_clk_get_optional(&serdev->dev, NULL);
+> +		if (IS_ERR(qcadev->susclk)) {
+> +			dev_err(&serdev->dev, "failed to acquire clk\n");
+> +			return PTR_ERR(qcadev->susclk);
+> +		}
+> +
+> 		device_property_read_u32(&serdev->dev, "max-speed",
+> 					 &qcadev->oper_speed);
+> 		if (!qcadev->oper_speed)
+
+Regards
+
+Marcel
+
