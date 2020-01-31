@@ -2,118 +2,166 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4137414E999
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Jan 2020 09:36:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A764914E9B9
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Jan 2020 09:47:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728173AbgAaIgX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 31 Jan 2020 03:36:23 -0500
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:51688 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728099AbgAaIgX (ORCPT
+        id S1728211AbgAaIrI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 31 Jan 2020 03:47:08 -0500
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:36816 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728099AbgAaIrH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 31 Jan 2020 03:36:23 -0500
-Received: by mail-wm1-f65.google.com with SMTP id t23so6939416wmi.1;
-        Fri, 31 Jan 2020 00:36:22 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:date:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=r9k5Bfs5SLrPsJzI/LbYVUmLiovQ4hXieUcsFHRvOXU=;
-        b=oBTQCCZl6HplkcZDKbu3+NzYhXLJuNULp1zS6+CwIRvpDg0xYKFBauS6e8MzA2ZI7A
-         i0P21q00Sw9LIbhcI5+7DZ13OmO/1gR99ybGGrjEOBzyoc605fKuYCtXubjy3ENmq+KN
-         zZWCCIczHExJ998WPxskWKkHJayjEPMub9F0jmRRVUd+ysils9+WN77w4H7HMX2Ud3fw
-         5DLDU0FaCCjcFE3V9x3eCbY9fhiBMmmhl+sahtVAGCM13igj3gyV8eV0Tud6Yx0R4d7Y
-         q8kLy8058nALXbUkhsbCWiNz9BfRDIP7JNxp/3NsTfmiLQ3ba5mdRQDvbZ+eARcNMWDG
-         y7JQ==
+        Fri, 31 Jan 2020 03:47:07 -0500
+Received: by mail-wm1-f68.google.com with SMTP id p17so7733339wma.1;
+        Fri, 31 Jan 2020 00:47:06 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:date:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=r9k5Bfs5SLrPsJzI/LbYVUmLiovQ4hXieUcsFHRvOXU=;
-        b=EJ56v2NXgKtf4sGvV7EOvIDmouUB/GODRnPjC6SjiTPmunac5hJb1RYOQjfI8eSmey
-         CNdDkFFZpqkRs2mbLdeSowTuc8t7Le29RtdRBzXfTwCf3F5Ze9Yjgpbm3f0yExWZsfmM
-         tpggF00ZXYdLXj6CKpbZob7rgvy+4RgiJMo08eCTvoPipqGsei/tEtV67CEEeLWsgu3N
-         /t1fx0u5NSRAtICsSz7cWQ2Y//9nsYES4G/d6OaEmq2bPquZWodGPrB0wAvXqXCb8weA
-         lpJKe7dBtchlNASjzrpjMOk1k7JIsekASTaI3zz9MVrfl7K2EAMAoqOS4K4zlNVqwKHD
-         XdJg==
-X-Gm-Message-State: APjAAAUe3qj8j7q41b9Iy7pknC567JE86oxzKaWXWCDxrpE/ETd8vG4y
-        Humd0cqtZ+BAuV1aDCCYPCs=
-X-Google-Smtp-Source: APXvYqyn06/qdNRwbp6v9OznwKKaB4XjqdQ4MBCtVALUWPvoYrd2k6XfESJ5l5yfGK+m6cVK6uaN2w==
-X-Received: by 2002:a1c:df09:: with SMTP id w9mr10106792wmg.143.1580459781168;
-        Fri, 31 Jan 2020 00:36:21 -0800 (PST)
-Received: from quaco.ghostprotocols.net (catv-212-96-54-169.catv.broadband.hu. [212.96.54.169])
-        by smtp.gmail.com with ESMTPSA id u8sm9931320wmm.15.2020.01.31.00.36.20
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=2EkrQbHmytM/4HBLq09Tk0mO3BlMQ43f4QPGQu2sSZ8=;
+        b=jdiYd+Pm+gm3OHGwtuxPRtDq5+uCjJlscbOd31mfYKHMvn4SC6ZI8HDlN8IUKpc4K7
+         D8Li0YbHvxD7baWQVj1Y3E5PqYOwnM8Fy7BSmdIoEyntHjwXmfJD0yzLeOJy57jDDsrr
+         kArFdVyw6vuHfaTY3rAXSTtmgCKSRDXfjwyVi8FgJ3tsVFe+RtBKgr6XuJxTC5doUKMI
+         ni5U1didi/5H+VybrtUREuYwaAfJiKquG2N82QOqCEByBb/LljCsas4zOG3m9at1e6el
+         YFskvKaajUJrt/EoaSHsyCOejF5oIciCMaDsUsThXANYvNlFVJYqJ8P676Lqjz66bQO3
+         T9TQ==
+X-Gm-Message-State: APjAAAUii7HxqaFTS8HJYo8klPeMyvmAeNBfbprKeV0NDXLzgI/ks/bA
+        xAoIcwwMmKZT4WiVn7Z+L9uT4AuyOuU=
+X-Google-Smtp-Source: APXvYqwu9LmExa87URoYI/cO7DwIY7BOw5a3ckxOgqG1pCcQbtNOFFpvqIq7xQjjsS1gxQqpBgRCJg==
+X-Received: by 2002:a1c:1f56:: with SMTP id f83mr10564641wmf.93.1580460110332;
+        Fri, 31 Jan 2020 00:41:50 -0800 (PST)
+Received: from 1aq-andre.garage.tyco.com ([77.107.218.170])
+        by smtp.gmail.com with ESMTPSA id x7sm11034302wrq.41.2020.01.31.00.41.48
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 31 Jan 2020 00:36:20 -0800 (PST)
-From:   Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>
-X-Google-Original-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-Received: by quaco.ghostprotocols.net (Postfix, from userid 1000)
-        id 6E07840A7D; Fri, 31 Jan 2020 09:36:19 +0100 (CET)
-Date:   Fri, 31 Jan 2020 09:36:19 +0100
-To:     Thomas Richter <tmricht@linux.ibm.com>
-Cc:     linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
-        gor@linux.ibm.com, sumanthk@linux.ibm.com,
-        heiko.carstens@de.ibm.com
-Subject: Re: [PATCH v2] perf test: Fix test trace+probe_vfs_getname.sh
-Message-ID: <20200131083619.GG3841@kernel.org>
-References: <20200120132011.64698-1-tmricht@linux.ibm.com>
- <20200120132011.64698-3-tmricht@linux.ibm.com>
+        Fri, 31 Jan 2020 00:41:49 -0800 (PST)
+From:   =?UTF-8?q?Andr=C3=A9=20Draszik?= <git@andred.net>
+To:     linux-kernel@vger.kernel.org
+Cc:     =?UTF-8?q?Andr=C3=A9=20Draszik?= <git@andred.net>,
+        Ilya Ledvich <ilya@compulab.co.il>,
+        Igor Grinberg <grinberg@compulab.co.il>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: [PATCH v3 01/12] ARM: dts: imx7d: cl-som-imx7 imx7d-sbc-imx7: move USB
+Date:   Fri, 31 Jan 2020 08:36:27 +0000
+Message-Id: <20200131083638.6118-1-git@andred.net>
+X-Mailer: git-send-email 2.23.0.rc1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200120132011.64698-3-tmricht@linux.ibm.com>
-X-Url:  http://acmel.wordpress.com
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Em Mon, Jan 20, 2020 at 02:20:11PM +0100, Thomas Richter escreveu:
-> This test places a kprobe to function getname_flags() in the kernel
-> which has the following prototype:
-> 
->   struct filename *
->   getname_flags(const char __user *filename, int flags, int *empty)
-> 
-> Variable filename points to a filename located in user space memory.
-> Looking at
-> commit 88903c464321c ("tracing/probe: Add ustring type for user-space string")
-> the kprobe should indicate that user space memory is accessed.
+Whether and which USB port is enabled and how they
+are powered is a function of the carrier board, not
+of the SoM. Different carrier boards can have different
+ports enabled / wired up, and power them differently;
+so this should really move into the respective DTS.
 
-We can't just replace it, right? I.e. this should continue to work with
-older kernels, i.e. the latest userspace tooling version should work
-when installed in an older kernel, i.e. please just add more fallbacks
-to cover the new cases.
+Do so and update the USB power supply to reflect
+the actual situation on the sbc-imx7 carrier board.
 
-- Arnaldo
+Signed-off-by: André Draszik <git@andred.net>
+Cc: Ilya Ledvich <ilya@compulab.co.il>
+Cc: Igor Grinberg <grinberg@compulab.co.il>
+Cc: Rob Herring <robh+dt@kernel.org>
+Cc: Mark Rutland <mark.rutland@arm.com>
+Cc: Shawn Guo <shawnguo@kernel.org>
+Cc: Sascha Hauer <s.hauer@pengutronix.de>
+Cc: Pengutronix Kernel Team <kernel@pengutronix.de>
+Cc: Fabio Estevam <festevam@gmail.com>
+Cc: NXP Linux Team <linux-imx@nxp.com>
+Cc: devicetree@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org
+---
+ arch/arm/boot/dts/imx7d-cl-som-imx7.dts | 24 ------------------------
+ arch/arm/boot/dts/imx7d-sbc-imx7.dts    | 13 +++++++++++++
+ 2 files changed, 13 insertions(+), 24 deletions(-)
+
+diff --git a/arch/arm/boot/dts/imx7d-cl-som-imx7.dts b/arch/arm/boot/dts/imx7d-cl-som-imx7.dts
+index 7646284e13a7..0d962e9fe83a 100644
+--- a/arch/arm/boot/dts/imx7d-cl-som-imx7.dts
++++ b/arch/arm/boot/dts/imx7d-cl-som-imx7.dts
+@@ -22,15 +22,6 @@
+ 		device_type = "memory";
+ 		reg = <0x80000000 0x10000000>; /* 256 MB - minimal configuration */
+ 	};
+-
+-	reg_usb_otg1_vbus: regulator-vbus {
+-		compatible = "regulator-fixed";
+-		regulator-name = "usb_otg1_vbus";
+-		regulator-min-microvolt = <5000000>;
+-		regulator-max-microvolt = <5000000>;
+-		gpio = <&gpio1 5 GPIO_ACTIVE_HIGH>;
+-		enable-active-high;
+-	};
+ };
  
-> Fix this with a patch to specify user space memory access to
-> parameter 'filename' and 'string' is replaced by 'ustring'.
-> 
-> Signed-off-by: Thomas Richter <tmricht@linux.ibm.com>
-> ---
->  tools/perf/tests/shell/lib/probe_vfs_getname.sh | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/tools/perf/tests/shell/lib/probe_vfs_getname.sh b/tools/perf/tests/shell/lib/probe_vfs_getname.sh
-> index 7cb99b433888..7ecf117651dd 100644
-> --- a/tools/perf/tests/shell/lib/probe_vfs_getname.sh
-> +++ b/tools/perf/tests/shell/lib/probe_vfs_getname.sh
-> @@ -13,8 +13,8 @@ add_probe_vfs_getname() {
->  	local verbose=$1
->  	if [ $had_vfs_getname -eq 1 ] ; then
->  		line=$(perf probe -L getname_flags 2>&1 | egrep 'result.*=.*filename;' | sed -r 's/[[:space:]]+([[:digit:]]+)[[:space:]]+result->uptr.*/\1/')
-> -		perf probe -q       "vfs_getname=getname_flags:${line} pathname=result->name:string" || \
-> -		perf probe $verbose "vfs_getname=getname_flags:${line} pathname=filename:string"
-> +		perf probe -q       "vfs_getname=getname_flags:${line} pathname=result->uptr:ustring" || \
-> +		perf probe $verbose "vfs_getname=getname_flags:${line} pathname=filename:ustring"
->  	fi
->  }
->  
-> -- 
-> 2.21.0
-> 
-
+ &cpu0 {
+@@ -195,13 +186,6 @@
+ 	status = "okay";
+ };
+ 
+-&usbotg1 {
+-	pinctrl-names = "default";
+-	pinctrl-0 = <&pinctrl_usbotg1>;
+-	vbus-supply = <&reg_usb_otg1_vbus>;
+-	status = "okay";
+-};
+-
+ &usdhc3 {
+ 	pinctrl-names = "default";
+ 	pinctrl-0 = <&pinctrl_usdhc3>;
+@@ -280,11 +264,3 @@
+ 		>;
+ 	};
+ };
+-
+-&iomuxc_lpsr {
+-	pinctrl_usbotg1: usbotg1grp {
+-		fsl,pins = <
+-			MX7D_PAD_LPSR_GPIO1_IO05__GPIO1_IO5	0x14 /* OTG PWREN */
+-		>;
+-	};
+-};
+diff --git a/arch/arm/boot/dts/imx7d-sbc-imx7.dts b/arch/arm/boot/dts/imx7d-sbc-imx7.dts
+index f8a868552707..aab646903de3 100644
+--- a/arch/arm/boot/dts/imx7d-sbc-imx7.dts
++++ b/arch/arm/boot/dts/imx7d-sbc-imx7.dts
+@@ -15,6 +15,14 @@
+ / {
+ 	model = "CompuLab SBC-iMX7";
+ 	compatible = "compulab,sbc-imx7", "compulab,cl-som-imx7", "fsl,imx7d";
++
++	reg_usb_vbus: regulator-usb-vbus {
++		compatible = "regulator-fixed";
++		regulator-name = "usb_vbus";
++		regulator-min-microvolt = <5000000>;
++		regulator-max-microvolt = <5000000>;
++		regulator-always-on;
++	};
+ };
+ 
+ &usdhc1 {
+@@ -26,6 +34,11 @@
+ 	status = "okay";
+ };
+ 
++&&usbotg1 {
++	vbus-supply = <&reg_usb_vbus>;
++	status = "okay";
++};
++
+ &iomuxc {
+ 	pinctrl_usdhc1: usdhc1grp {
+ 		fsl,pins = <
 -- 
+2.23.0.rc1
 
-- Arnaldo
