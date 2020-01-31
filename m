@@ -2,123 +2,75 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A817214F167
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Jan 2020 18:38:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 766C014F18C
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Jan 2020 18:49:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727149AbgAaRi2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 31 Jan 2020 12:38:28 -0500
-Received: from foss.arm.com ([217.140.110.172]:37840 "EHLO foss.arm.com"
+        id S1727181AbgAaRtk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 31 Jan 2020 12:49:40 -0500
+Received: from mx2.suse.de ([195.135.220.15]:43612 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726759AbgAaRi2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 31 Jan 2020 12:38:28 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id AE826FEC;
-        Fri, 31 Jan 2020 09:38:27 -0800 (PST)
-Received: from [10.37.12.54] (unknown [10.37.12.54])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 188C23F68E;
-        Fri, 31 Jan 2020 09:38:18 -0800 (PST)
-Subject: Re: [PATCH 3/3] ARM: exynos_defconfig: Enable Energy Model framework
-To:     Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Cc:     kgene@kernel.org, krzk@kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-pm@vger.kernel.org,
-        myungjoo.ham@samsung.com, kyungmin.park@samsung.com,
-        cw00.choi@samsung.com, robh+dt@kernel.org, mark.rutland@arm.com,
-        dietmar.eggemann@arm.com
-References: <20200127215453.15144-1-lukasz.luba@arm.com>
- <CGME20200127215538eucas1p2b8d4886de6f59f6a62257d3d66307c73@eucas1p2.samsung.com>
- <20200127215453.15144-4-lukasz.luba@arm.com>
- <d14546d5-0cd8-c441-c2be-cdeefc8ebb8d@samsung.com>
-From:   Lukasz Luba <lukasz.luba@arm.com>
-Message-ID: <ce51e025-edd5-fdfa-9e2a-9270cacf8660@arm.com>
-Date:   Fri, 31 Jan 2020 17:38:09 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        id S1726989AbgAaRtj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 31 Jan 2020 12:49:39 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx2.suse.de (Postfix) with ESMTP id DA393AF73;
+        Fri, 31 Jan 2020 17:49:36 +0000 (UTC)
+Date:   Fri, 31 Jan 2020 09:39:22 -0800
+From:   Davidlohr Bueso <dave@stgolabs.net>
+To:     Alex Shi <alex.shi@linux.alibaba.com>
+Cc:     Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>,
+        linux-kernel@vger.kernel.org, tglx@linutronix.de
+Subject: Re: [PATCH] locking/rtmutex: remove unused cmpxchg_relaxed
+Message-ID: <20200131173922.hjvugxuybrn2wbsn@linux-p48b>
+References: <1579595686-251535-1-git-send-email-alex.shi@linux.alibaba.com>
 MIME-Version: 1.0
-In-Reply-To: <d14546d5-0cd8-c441-c2be-cdeefc8ebb8d@samsung.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Disposition: inline
+In-Reply-To: <1579595686-251535-1-git-send-email-alex.shi@linux.alibaba.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Bartek,
+Cc'ing tglx.
 
-On 1/31/20 1:30 PM, Bartlomiej Zolnierkiewicz wrote:
-> 
-> Hi,
-> 
-> On 1/27/20 10:54 PM, lukasz.luba@arm.com wrote:
->> From: Lukasz Luba <lukasz.luba@arm.com>
->>
->> Enable the Energy Model (EM) brings possibility to use Energy Aware
->> Scheduler (EAS). This compiles the EM but does not enable to run EAS in
->> default. The EAS only works with SchedUtil - a CPUFreq governor which
->> handles direct requests from the scheduler for the frequency change. Thus,
->> to make EAS working in default, the SchedUtil governor should be
->> configured as default CPUFreq governor. Although, the EAS might be enabled
->> in runtime, when the EM is present for CPUs, the SchedUtil is compiled and
->> then set as CPUFreq governor, i.e.:
->>
->> echo schedutil > /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor
->> echo schedutil > /sys/devices/system/cpu/cpu4/cpufreq/scaling_governor
->>
->> To check if EAS is ready to work, the read output from the command below
->> should show '1':
->> cat /proc/sys/kernel/sched_energy_aware
->>
->> To disable EAS in runtime simply 'echo 0' to the file above.
->>
->> Some test results, which stress the scheduler on Odroid-XU3:
->> hackbench -l 500 -s 4096
->> With mainline code and with this patch set.
->>
->> The tests have been made with and without CONFIG_PROVE_LOCKING (PL)
->> (which is set to =y in default exynos_defconfig)
->>
->> 		|		this patch set			| mainline
->> 		|-----------------------------------------------|---------------
->> 		| performance	| SchedUtil	| SchedUtil	| performance
->> 		| governor	| governor	| governor	| governor
->> 		|		| w/o EAS	| w/ EAS	|
->> ----------------|---------------|---------------|---------------|---------------
->> hackbench w/ PL | 12.7s		| 11.7s		| 12.0s		| 13.0s - 12.2s
->> hackbench w/o PL| 9.2s		| 8.1s		| 8.2s		| 9.2s - 8.4s
-> 
-> Would you happen to have measurements of how much power is
-> saved by running hackbench using "SchedUtil governor w/ EAS"
-> instead of "SchedUtil governor w/o EAS"?
+On Tue, 21 Jan 2020, Alex Shi wrote:
 
-I need to check if this xu3 ina2xx can aggregate energy or
-it's only drained-current-at-that-moment value.
+>No one use this macro after it was introduced. Better to remove it?
 
-Regards,
-Lukasz
+You also need to remove it for the CONFIG_DEBUG_RT_MUTEXES=y case.
 
-> 
-> Best regards,
-> --
-> Bartlomiej Zolnierkiewicz
-> Samsung R&D Institute Poland
-> Samsung Electronics
-> 
->> Signed-off-by: Lukasz Luba <lukasz.luba@arm.com>
->> ---
->>   arch/arm/configs/exynos_defconfig | 1 +
->>   1 file changed, 1 insertion(+)
->>
->> diff --git a/arch/arm/configs/exynos_defconfig b/arch/arm/configs/exynos_defconfig
->> index 1db857056992..c0f8ecabc607 100644
->> --- a/arch/arm/configs/exynos_defconfig
->> +++ b/arch/arm/configs/exynos_defconfig
->> @@ -18,6 +18,7 @@ CONFIG_ZBOOT_ROM_BSS=0x0
->>   CONFIG_ARM_APPENDED_DTB=y
->>   CONFIG_ARM_ATAG_DTB_COMPAT=y
->>   CONFIG_CMDLINE="root=/dev/ram0 rw ramdisk=8192 initrd=0x41000000,8M console=ttySAC1,115200 init=/linuxrc mem=256M"
->> +CONFIG_ENERGY_MODEL=y
->>   CONFIG_CPU_FREQ=y
->>   CONFIG_CPU_FREQ_STAT=y
->>   CONFIG_CPU_FREQ_DEFAULT_GOV_ONDEMAND=y
+>
+>Signed-off-by: Alex Shi <alex.shi@linux.alibaba.com>
+>Cc: Peter Zijlstra <peterz@infradead.org>
+>Cc: Davidlohr Bueso <dave@stgolabs.net>
+>Cc: Ingo Molnar <mingo@redhat.com>
+>Cc: Will Deacon <will@kernel.org>
+>Cc: linux-kernel@vger.kernel.org
+>---
+> kernel/locking/rtmutex.c | 1 -
+> 1 file changed, 1 deletion(-)
+>
+>diff --git a/kernel/locking/rtmutex.c b/kernel/locking/rtmutex.c
+>index 851bbb10819d..a849964a348d 100644
+>--- a/kernel/locking/rtmutex.c
+>+++ b/kernel/locking/rtmutex.c
+>@@ -141,7 +141,6 @@ static void fixup_rt_mutex_waiters(struct rt_mutex *lock)
+>  * set up.
+>  */
+> #ifndef CONFIG_DEBUG_RT_MUTEXES
+>-# define rt_mutex_cmpxchg_relaxed(l,c,n) (cmpxchg_relaxed(&l->owner, c, n) == c)
+> # define rt_mutex_cmpxchg_acquire(l,c,n) (cmpxchg_acquire(&l->owner, c, n) == c)
+> # define rt_mutex_cmpxchg_release(l,c,n) (cmpxchg_release(&l->owner, c, n) == c)
+
+Hmm unrelated, but do we want CCAS for rtmutex fastpath? Ie:
+
+     (l->owner == c && cmpxchg_acquire(&l->owner, c, n) == c)
+
+That would optimize for the contended case and avoid the cmpxchg - it would
+also help if we ever do the top-waiter spin thing.
+
+Thanks,
+Davidlohr
