@@ -2,254 +2,118 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 20C3314ED4B
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Jan 2020 14:30:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8356F14ED50
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Jan 2020 14:30:19 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728815AbgAaN3x (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 31 Jan 2020 08:29:53 -0500
-Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:54933 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1728749AbgAaN3w (ORCPT
+        id S1728858AbgAaNaB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 31 Jan 2020 08:30:01 -0500
+Received: from mail-lf1-f67.google.com ([209.85.167.67]:41332 "EHLO
+        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728782AbgAaNaA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 31 Jan 2020 08:29:52 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1580477391;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=rvNHYAZjYjkV+vkG1tbRc3CJ+s9eRjtdr7RfxMNvBmY=;
-        b=iOTVasFpLX9U14pGt8twYvH1GAbp1tjdVOnLmtpRgT3ChBjZam3l96oTy5Vje682Ygw/rY
-        D9c1hDSgRz38RVIKdj4GpREhLmABBJkVyBXGh7wR8VCZZKmapylkIEOVh3cnpUSIk9z9gr
-        QXIrNh3YUZnSLM7DrmO7nffNATBWCWc=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-1-J3wtULvAN3aEPJEfBbi6mQ-1; Fri, 31 Jan 2020 08:29:46 -0500
-X-MC-Unique: J3wtULvAN3aEPJEfBbi6mQ-1
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 96CE5DB61;
-        Fri, 31 Jan 2020 13:29:45 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-120-218.rdu2.redhat.com [10.10.120.218])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id A1F7387B00;
-        Fri, 31 Jan 2020 13:29:44 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-Subject: [PATCH net 4/4] rxrpc: Fix NULL pointer deref due to call->conn being
- cleared on disconnect
-From:   David Howells <dhowells@redhat.com>
-To:     netdev@vger.kernel.org
-Cc:     dhowells@redhat.com, linux-afs@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-Date:   Fri, 31 Jan 2020 13:29:43 +0000
-Message-ID: <158047738381.133127.11667008504250095221.stgit@warthog.procyon.org.uk>
-In-Reply-To: <158047735578.133127.17728061182258449164.stgit@warthog.procyon.org.uk>
-References: <158047735578.133127.17728061182258449164.stgit@warthog.procyon.org.uk>
-User-Agent: StGit/0.19
+        Fri, 31 Jan 2020 08:30:00 -0500
+Received: by mail-lf1-f67.google.com with SMTP id m30so4859416lfp.8;
+        Fri, 31 Jan 2020 05:29:58 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:from:to:cc:subject:in-reply-to:references:date:message-id
+         :mime-version;
+        bh=7nCtx9E1R22cOlqOHkg/lsnX7MOdIFOpv9Kqo050/84=;
+        b=r6JeGB4WafMEddCLgZJJXZWwy3zgazET9jMPTcaJdAZM4Smttk8qoFY79S6u5M7wJo
+         MW5sF9EIB8ilFF+u539gPebTmswV0n7ugnt3nee5p+N6sXg/i39tj/kx8xnyq1bESCvv
+         FsgFReIcpd+8XKJoAQiwLITwa3GY5W9HASB/PIRMDca9zjdLfFuRvUrVpvWaigcpddgr
+         OVXZCNa7ZiUo0+SokoBIxKs7VZFdM6x02FfoZVQGUnXSDPqzI8o68qdrzZThLDFFgzEU
+         WfeMs+WXquRWOzup0QzBMYCP4yW0FnT8/VDvMHuBkL9VUpEOsLs/MHo0u20hbZBX/Mtp
+         NKpg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:from:to:cc:subject:in-reply-to:references
+         :date:message-id:mime-version;
+        bh=7nCtx9E1R22cOlqOHkg/lsnX7MOdIFOpv9Kqo050/84=;
+        b=FVldo5wx0TPbSwYpBv24HhmkgIrczHJc3waCnhTwmq/M7hGQ0Aq5z8D2YNntQaRPip
+         Mgab2OsGyUGJXTM0LU/t6u2ZYac+c1jMU8SXxkRuPp/ZXv2jjDStBKoX5pitIg+fJfYs
+         dFqIZXGK7mSiwefdsVIWyDh3WA81Vt0DkenmIANBZagnfb5Wy1j1s32GYxDc85OZIPqT
+         VPBTo2mETNDoUVPt7gJv8DWwdnWn/W18AUZ1VjLU1sAtZQnDIqbfxD4I1KE2y5v1oANR
+         05T56sFQKdxjEzzB/II4kOZkloc11PNN3fbCCC1xv8Q85WOuU5UQBXocll9hFsLjHGd7
+         gXng==
+X-Gm-Message-State: APjAAAVQQ/qqjyPsx487e/g1ePNIcFgpo9Qt6PAwGTmVBtJqdU8+c85L
+        1mOixQDK/XLoTDwzbgDQHyc=
+X-Google-Smtp-Source: APXvYqw9Y+k0ca1hl88/2I68pFz4/fGlwLZ4mcQ5yslVZts2CAyWoPoJd6N5Bvdw9QY3sICSZXiezg==
+X-Received: by 2002:ac2:5596:: with SMTP id v22mr5487593lfg.200.1580477397793;
+        Fri, 31 Jan 2020 05:29:57 -0800 (PST)
+Received: from saruman (88-113-215-33.elisa-laajakaista.fi. [88.113.215.33])
+        by smtp.gmail.com with ESMTPSA id q13sm5583986ljj.63.2020.01.31.05.29.56
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 31 Jan 2020 05:29:57 -0800 (PST)
+From:   Felipe Balbi <balbi@kernel.org>
+To:     Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+        linux-arm-msm@vger.kernel.org, linux-usb@vger.kernel.org,
+        gregkh@linuxfoundation.org, jackp@codeaurora.org,
+        bjorn.andersson@linaro.org
+Cc:     linux-kernel@vger.kernel.org, John Stultz <john.stultz@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        ShuFan Lee <shufan_lee@richtek.com>,
+        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+        Suzuki K Poulose <suzuki.poulose@arm.com>,
+        Chunfeng Yun <chunfeng.yun@mediatek.com>,
+        Yu Chen <chenyu56@huawei.com>,
+        Hans de Goede <hdegoede@redhat.com>,
+        Andy Shevchenko <andy.shevchenko@gmail.com>,
+        Jun Li <lijun.kernel@gmail.com>,
+        Valentin Schneider <valentin.schneider@arm.com>,
+        devicetree@vger.kernel.org,
+        Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+Subject: Re: [PATCH v3 10/19] usb: dwc3: Add support for role-switch-default-mode binding
+In-Reply-To: <20200122185610.131930-11-bryan.odonoghue@linaro.org>
+References: <20200122185610.131930-1-bryan.odonoghue@linaro.org> <20200122185610.131930-11-bryan.odonoghue@linaro.org>
+Date:   Fri, 31 Jan 2020 15:29:52 +0200
+Message-ID: <87o8uj7nzj.fsf@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+Content-Type: multipart/signed; boundary="=-=-=";
+        micalg=pgp-sha256; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When a call is disconnected, the connection pointer from the call is
-cleared to make sure it isn't used again and to prevent further attempted
-transmission for the call.  Unfortunately, there might be a daemon trying
-to use it at the same time to transmit a packet.
-
-Fix this by keeping call->conn set, but setting a flag on the call to
-indicate disconnection instead.
-
-Remove also the bits in the transmission functions where the conn pointer is
-checked and a ref taken under spinlock as this is now redundant.
-
-Fixes: 8d94aa381dab ("rxrpc: Calls shouldn't hold socket refs")
-Signed-off-by: David Howells <dhowells@redhat.com>
----
-
- net/rxrpc/ar-internal.h |    1 +
- net/rxrpc/call_object.c |    4 ++--
- net/rxrpc/conn_client.c |    3 +--
- net/rxrpc/conn_object.c |    4 ++--
- net/rxrpc/output.c      |   27 +++++++++------------------
- 5 files changed, 15 insertions(+), 24 deletions(-)
-
-diff --git a/net/rxrpc/ar-internal.h b/net/rxrpc/ar-internal.h
-index 94441fee85bc..7d730c438404 100644
---- a/net/rxrpc/ar-internal.h
-+++ b/net/rxrpc/ar-internal.h
-@@ -490,6 +490,7 @@ enum rxrpc_call_flag {
- 	RXRPC_CALL_RX_HEARD,		/* The peer responded at least once to this call */
- 	RXRPC_CALL_RX_UNDERRUN,		/* Got data underrun */
- 	RXRPC_CALL_IS_INTR,		/* The call is interruptible */
-+	RXRPC_CALL_DISCONNECTED,	/* The call has been disconnected */
- };
- 
- /*
-diff --git a/net/rxrpc/call_object.c b/net/rxrpc/call_object.c
-index a31c18c09894..dbdbc4f18b5e 100644
---- a/net/rxrpc/call_object.c
-+++ b/net/rxrpc/call_object.c
-@@ -493,7 +493,7 @@ void rxrpc_release_call(struct rxrpc_sock *rx, struct rxrpc_call *call)
- 
- 	_debug("RELEASE CALL %p (%d CONN %p)", call, call->debug_id, conn);
- 
--	if (conn)
-+	if (conn && !test_bit(RXRPC_CALL_DISCONNECTED, &call->flags))
- 		rxrpc_disconnect_call(call);
- 	if (call->security)
- 		call->security->free_call_crypto(call);
-@@ -569,6 +569,7 @@ static void rxrpc_rcu_destroy_call(struct rcu_head *rcu)
- 	struct rxrpc_call *call = container_of(rcu, struct rxrpc_call, rcu);
- 	struct rxrpc_net *rxnet = call->rxnet;
- 
-+	rxrpc_put_connection(call->conn);
- 	rxrpc_put_peer(call->peer);
- 	kfree(call->rxtx_buffer);
- 	kfree(call->rxtx_annotations);
-@@ -590,7 +591,6 @@ void rxrpc_cleanup_call(struct rxrpc_call *call)
- 
- 	ASSERTCMP(call->state, ==, RXRPC_CALL_COMPLETE);
- 	ASSERT(test_bit(RXRPC_CALL_RELEASED, &call->flags));
--	ASSERTCMP(call->conn, ==, NULL);
- 
- 	rxrpc_cleanup_ring(call);
- 	rxrpc_free_skb(call->tx_pending, rxrpc_skb_cleaned);
-diff --git a/net/rxrpc/conn_client.c b/net/rxrpc/conn_client.c
-index 376370cd9285..ea7d4c21f889 100644
---- a/net/rxrpc/conn_client.c
-+++ b/net/rxrpc/conn_client.c
-@@ -785,6 +785,7 @@ void rxrpc_disconnect_client_call(struct rxrpc_call *call)
- 	u32 cid;
- 
- 	spin_lock(&conn->channel_lock);
-+	set_bit(RXRPC_CALL_DISCONNECTED, &call->flags);
- 
- 	cid = call->cid;
- 	if (cid) {
-@@ -792,7 +793,6 @@ void rxrpc_disconnect_client_call(struct rxrpc_call *call)
- 		chan = &conn->channels[channel];
- 	}
- 	trace_rxrpc_client(conn, channel, rxrpc_client_chan_disconnect);
--	call->conn = NULL;
- 
- 	/* Calls that have never actually been assigned a channel can simply be
- 	 * discarded.  If the conn didn't get used either, it will follow
-@@ -908,7 +908,6 @@ void rxrpc_disconnect_client_call(struct rxrpc_call *call)
- 	spin_unlock(&rxnet->client_conn_cache_lock);
- out_2:
- 	spin_unlock(&conn->channel_lock);
--	rxrpc_put_connection(conn);
- 	_leave("");
- 	return;
- 
-diff --git a/net/rxrpc/conn_object.c b/net/rxrpc/conn_object.c
-index 38d718e90dc6..c0b3154f7a7e 100644
---- a/net/rxrpc/conn_object.c
-+++ b/net/rxrpc/conn_object.c
-@@ -171,6 +171,8 @@ void __rxrpc_disconnect_call(struct rxrpc_connection *conn,
- 
- 	_enter("%d,%x", conn->debug_id, call->cid);
- 
-+	set_bit(RXRPC_CALL_DISCONNECTED, &call->flags);
-+
- 	if (rcu_access_pointer(chan->call) == call) {
- 		/* Save the result of the call so that we can repeat it if necessary
- 		 * through the channel, whilst disposing of the actual call record.
-@@ -223,9 +225,7 @@ void rxrpc_disconnect_call(struct rxrpc_call *call)
- 	__rxrpc_disconnect_call(conn, call);
- 	spin_unlock(&conn->channel_lock);
- 
--	call->conn = NULL;
- 	conn->idle_timestamp = jiffies;
--	rxrpc_put_connection(conn);
- }
- 
- /*
-diff --git a/net/rxrpc/output.c b/net/rxrpc/output.c
-index 935bb60fff56..bad3d2420344 100644
---- a/net/rxrpc/output.c
-+++ b/net/rxrpc/output.c
-@@ -129,7 +129,7 @@ static size_t rxrpc_fill_out_ack(struct rxrpc_connection *conn,
- int rxrpc_send_ack_packet(struct rxrpc_call *call, bool ping,
- 			  rxrpc_serial_t *_serial)
- {
--	struct rxrpc_connection *conn = NULL;
-+	struct rxrpc_connection *conn;
- 	struct rxrpc_ack_buffer *pkt;
- 	struct msghdr msg;
- 	struct kvec iov[2];
-@@ -139,18 +139,14 @@ int rxrpc_send_ack_packet(struct rxrpc_call *call, bool ping,
- 	int ret;
- 	u8 reason;
- 
--	spin_lock_bh(&call->lock);
--	if (call->conn)
--		conn = rxrpc_get_connection_maybe(call->conn);
--	spin_unlock_bh(&call->lock);
--	if (!conn)
-+	if (test_bit(RXRPC_CALL_DISCONNECTED, &call->flags))
- 		return -ECONNRESET;
- 
- 	pkt = kzalloc(sizeof(*pkt), GFP_KERNEL);
--	if (!pkt) {
--		rxrpc_put_connection(conn);
-+	if (!pkt)
- 		return -ENOMEM;
--	}
-+
-+	conn = call->conn;
- 
- 	msg.msg_name	= &call->peer->srx.transport;
- 	msg.msg_namelen	= call->peer->srx.transport_len;
-@@ -244,7 +240,6 @@ int rxrpc_send_ack_packet(struct rxrpc_call *call, bool ping,
- 	}
- 
- out:
--	rxrpc_put_connection(conn);
- 	kfree(pkt);
- 	return ret;
- }
-@@ -254,7 +249,7 @@ int rxrpc_send_ack_packet(struct rxrpc_call *call, bool ping,
-  */
- int rxrpc_send_abort_packet(struct rxrpc_call *call)
- {
--	struct rxrpc_connection *conn = NULL;
-+	struct rxrpc_connection *conn;
- 	struct rxrpc_abort_buffer pkt;
- 	struct msghdr msg;
- 	struct kvec iov[1];
-@@ -271,13 +266,11 @@ int rxrpc_send_abort_packet(struct rxrpc_call *call)
- 	    test_bit(RXRPC_CALL_TX_LAST, &call->flags))
- 		return 0;
- 
--	spin_lock_bh(&call->lock);
--	if (call->conn)
--		conn = rxrpc_get_connection_maybe(call->conn);
--	spin_unlock_bh(&call->lock);
--	if (!conn)
-+	if (test_bit(RXRPC_CALL_DISCONNECTED, &call->flags))
- 		return -ECONNRESET;
- 
-+	conn = call->conn;
-+
- 	msg.msg_name	= &call->peer->srx.transport;
- 	msg.msg_namelen	= call->peer->srx.transport_len;
- 	msg.msg_control	= NULL;
-@@ -312,8 +305,6 @@ int rxrpc_send_abort_packet(struct rxrpc_call *call)
- 		trace_rxrpc_tx_packet(call->debug_id, &pkt.whdr,
- 				      rxrpc_tx_point_call_abort);
- 	rxrpc_tx_backoff(call, ret);
--
--	rxrpc_put_connection(conn);
- 	return ret;
- }
- 
+--=-=-=
+Content-Type: text/plain
+Content-Transfer-Encoding: quoted-printable
 
 
+Hi,
+
+Bryan O'Donoghue <bryan.odonoghue@linaro.org> writes:
+> From: John Stultz <john.stultz@linaro.org>
+>
+> Support the new role-switch-default-mode binding for configuring
+> the default role the controller assumes as when the usb role is
+> USB_ROLE_NONE
+
+per specification, device is supposed to be the default role. Why isn't
+that working for you?
+
+=2D-=20
+balbi
+
+--=-=-=
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCAAdFiEElLzh7wn96CXwjh2IzL64meEamQYFAl40K9AACgkQzL64meEa
+mQbgJQ//TZGlvG3P1aWp5ikix5NKdKJ2sn7Oz9CZMoAkeF04sOAHSwiD+hcm8jMP
+7iN/2N/pkzajnK8rltb/GI2AfoTeHWPkOzg4uC6+lqOAfg8n1axLg8uj1nVyO07Z
+7yJMhTaRmOO7moEJVk7T+pCNpz+YMb53EV9vcH5n8tqNq/0rmNa86quWooJdSrEe
+2tYX/ZHmMx0LtZ00ki/EtGAqywOnwCk1XkrNa4mcFUaysjtuEaNjxid6dQnVJjjr
+R0VhJPqNQgc/20eQslhaTR9ln45B3d31k9NhEgt9KykSdaC/MtvuTr9fBqhaxvUO
+YlFCL0wvU6Or+YyALv67Kh1CP3NySUwICvkPCyOX06cXFKwFMDJc7sUsckcdhgXh
+X3rjmnjLAkH0mTZK+dn5Q8lzRkcDADmgf19vMTyn9QKio1X5+pswDZErD7gNS/Ho
+/VLig6h+0dc3z2VDHBGPuXcpgSfuETZoGXTA6Xgk7zNbNFq0RWODlT6foxcLyPSO
+8sUDoWyZDGXCPykmjpEEs2/0hrsQAJiZxnf47tJ5Kif9AsUQuD5I6+ZVK/EDTqq0
+3L48JMX2WryTWlbGCwYCSohEhB9bEJijE6tYAzshlQQh/72yelzOBEHUpSWpRw4u
+iqd+eKlALpvs4lm544oI8eWplPd6xoFccGwO5s+eY5jSIyKaf3k=
+=N9RZ
+-----END PGP SIGNATURE-----
+--=-=-=--
