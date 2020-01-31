@@ -2,87 +2,115 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0564F14F12D
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Jan 2020 18:17:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D82D014F132
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Jan 2020 18:21:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726930AbgAaRRb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 31 Jan 2020 12:17:31 -0500
-Received: from fllv0016.ext.ti.com ([198.47.19.142]:40950 "EHLO
-        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726139AbgAaRRb (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 31 Jan 2020 12:17:31 -0500
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 00VHHORw044420;
-        Fri, 31 Jan 2020 11:17:24 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1580491044;
-        bh=+Lek5+g/nyO29sHE2v79UKO/32OeJVnF+qZpmQhxI2o=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=VcPMttHsm08yVTRRIyC1A0qEFeHYBfuHpVc2p2N/ldSx4Udz87FbYIX+rWcaKJFE6
-         6XYxkbUa8hLIFXXJVjnTxxSSM32h65PTj/DaN2QS0l9oSR5YbXoWLTUT6+B+vISNF/
-         CZJUX9DiG1kkk8JY2Dg0mH9GX/PF9lMm9uZ898ck=
-Received: from DLEE109.ent.ti.com (dlee109.ent.ti.com [157.170.170.41])
-        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 00VHHO4m002841
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Fri, 31 Jan 2020 11:17:24 -0600
-Received: from DLEE111.ent.ti.com (157.170.170.22) by DLEE109.ent.ti.com
- (157.170.170.41) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Fri, 31
- Jan 2020 11:17:24 -0600
-Received: from fllv0040.itg.ti.com (10.64.41.20) by DLEE111.ent.ti.com
- (157.170.170.22) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
- Frontend Transport; Fri, 31 Jan 2020 11:17:23 -0600
-Received: from [10.250.65.13] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by fllv0040.itg.ti.com (8.15.2/8.15.2) with ESMTP id 00VHHNpR076978;
-        Fri, 31 Jan 2020 11:17:23 -0600
-Subject: Re: [PATCH net-master 1/1] net: phy: dp83867: Add speed optimization
- feature
-To:     Jakub Kicinski <kuba@kernel.org>
-CC:     <andrew@lunn.ch>, <f.fainelli@gmail.com>, <hkallweit1@gmail.com>,
-        <bunk@kernel.org>, <netdev@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <grygorii.strashko@ti.com>
-References: <20200131151110.31642-1-dmurphy@ti.com>
- <20200131151110.31642-2-dmurphy@ti.com>
- <20200131091004.18d54183@cakuba.hsd1.ca.comcast.net>
-From:   Dan Murphy <dmurphy@ti.com>
-Message-ID: <6b4bb017-de97-0688-47c5-723ec4c3a339@ti.com>
-Date:   Fri, 31 Jan 2020 11:14:05 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.1
+        id S1726814AbgAaRVE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 31 Jan 2020 12:21:04 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44026 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726139AbgAaRVE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 31 Jan 2020 12:21:04 -0500
+Received: from willie-the-truck (236.31.169.217.in-addr.arpa [217.169.31.236])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id F17EC206D5;
+        Fri, 31 Jan 2020 17:21:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1580491263;
+        bh=8igFNYqYVgzz8ufkSfnU3Ql7xpwSAK1V0KyAZMEOiSA=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=zghBy1Lzh7+sMfv0GK3+2FqtKUKrvPcYIx7m30xVHsXD4TsCGzHkgDhv5VG5XSV9K
+         wDKxmPvlmYehJxauRZPj2dBOx+1LTB8uRC4FPMotz0pddLu4zfb0yHx7NpiPurvRom
+         pd2eOM1EePnA9WrOZQ6hYZtclmqrNW9ec8hnj1D0=
+Date:   Fri, 31 Jan 2020 17:20:58 +0000
+From:   Will Deacon <will@kernel.org>
+To:     Eric Dumazet <edumazet@google.com>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        "Paul E. McKenney" <paulmck@kernel.org>,
+        the arch/x86 maintainers <x86@kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>
+Subject: Re: Confused about hlist_unhashed_lockless()
+Message-ID: <20200131172058.GB5517@willie-the-truck>
+References: <20200131164308.GA5175@willie-the-truck>
+ <CANn89i+CnezK81gZSLOy0w7MaZy0uT=xyxoKSTyZU3aMpzifOA@mail.gmail.com>
+ <20200131165718.GA5517@willie-the-truck>
+ <CANn89iKmSBPKJGw--WaJJhCdu2wz2aq-ve+E8z=gfsYj6Zom_A@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20200131091004.18d54183@cakuba.hsd1.ca.comcast.net>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CANn89iKmSBPKJGw--WaJJhCdu2wz2aq-ve+E8z=gfsYj6Zom_A@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Jakub
+On Fri, Jan 31, 2020 at 09:06:27AM -0800, Eric Dumazet wrote:
+> On Fri, Jan 31, 2020 at 8:57 AM Will Deacon <will@kernel.org> wrote:
+> > On Fri, Jan 31, 2020 at 08:48:05AM -0800, Eric Dumazet wrote:
+> > > On Fri, Jan 31, 2020 at 8:43 AM Will Deacon <will@kernel.org> wrote:
+> > > > Then running these two concurrently on the same node means that
+> > > > hlist_unhashed_lockless() doesn't really tell you anything about whether
+> > > > or not the node is reachable in the list (i.e. there is another node
+> > > > with a next pointer pointing to it). In other words, I think all of
+> > > > these outcomes are permitted:
+> > > >
+> > > >         hlist_unhashed_lockless(n)      n reachable in list
+> > > >         0                               0 (No reordering)
+> > > >         0                               1 (No reordering)
+> > > >         1                               0 (No reordering)
+> > > >         1                               1 (Reorder first and last WRITE_ONCEs)
+> > > >
+> > > > So I must be missing some details about the use-case here. Please could
+> > > > you enlighten me? The RCU implementation permits only the first three
+> > > > outcomes afaict, why not use that and leave non-RCU hlist as it was?
+> > > >
+> > >
+> > > I guess the following has been lost :
+> >
+> > Thanks, although...
+> >
+> > > Author: Eric Dumazet <edumazet@google.com>
+> > > Date:   Thu Nov 7 11:23:14 2019 -0800
+> > >
+> > >     timer: use hlist_unhashed_lockless() in timer_pending()
+> > >
+> > >     timer_pending() is mostly used in lockless contexts.
+> >
+> > ... my point above still stands: the value returned by
+> > hlist_unhashed_lockless() doesn't tell you anything about whether or
+> > not the timer is reachable in the hlist or not. The comment above
+> > timer_pending() also states that:
+> >
+> >   | Callers must ensure serialization wrt. other operations done to
+> >   | this timer, e.g. interrupt contexts, or other CPUs on SMP.
+> >
+> > If that is intended to preclude list operations, shouldn't we use an
+> > RCU hlist instead of throwing {READ,WRITE}_ONCE() at the problem to
+> > shut the sanitiser up without actually fixing anything? :(
+> 
+> 
+> Sorry, but timer_pending() requires no serialization.
 
-On 1/31/20 11:10 AM, Jakub Kicinski wrote:
-> On Fri, 31 Jan 2020 09:11:10 -0600, Dan Murphy wrote:
->> Set the speed optimization bit on the DP83867 PHY.
->> This feature can also be strapped on the 64 pin PHY devices
->> but the 48 pin devices do not have the strap pin available to enable
->> this feature in the hardware.  PHY team suggests to have this bit set.
->>
->> With this bit set the PHY will auto negotiate and report the link
->> parameters in the PHYSTS register and not in the BMCR.  So we need to
->> over ride the genphy_read_status with a DP83867 specific read status.
->>
->> Signed-off-by: Dan Murphy <dmurphy@ti.com>
-> While we wait for the PHY folk to take a look, could you please
-> provide a Fixes tag?
+Then we should update the comment!
 
-Hmm. This is not a bug fix though this is a new feature being added.
+Without serialisation, timer_pending() as currently implemented does
+not reliably tell you whether the timer is in the hlist. Is that not a
+problem? Using an RCU hlist does not introduce serialisation, but does
+at least rule out the case where timer_pending() returns false for a
+timer that /is/ reachable in the list by another CPU.
 
-Not sure what it would be fixing.
+> The only thing we need is a READ_ONCE() so that compiler is not allowed
+> to optimize out stuff like
+> 
+> loop() {
+>    if (timer_pending())
+>       something;
 
-Dan
+If that was the case, then you wouldn't need to touch hlist_add_before()
+at all so there's got to be more to it than that or we can revert that
+part of the patch.
 
+Will
