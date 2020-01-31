@@ -2,33 +2,48 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 56AB414F1B3
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Jan 2020 18:55:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id F13CB14F198
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Jan 2020 18:51:21 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727177AbgAaRzn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 31 Jan 2020 12:55:43 -0500
-Received: from mail.kernel.org ([198.145.29.99]:56420 "EHLO mail.kernel.org"
+        id S1727242AbgAaRvN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 31 Jan 2020 12:51:13 -0500
+Received: from mga06.intel.com ([134.134.136.31]:63451 "EHLO mga06.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726712AbgAaRzm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 31 Jan 2020 12:55:42 -0500
-Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9CA3A206D5;
-        Fri, 31 Jan 2020 17:55:41 +0000 (UTC)
-Date:   Fri, 31 Jan 2020 12:55:39 -0500
-From:   Steven Rostedt <rostedt@goodmis.org>
-To:     Tom Zanussi <tzanussi@gmail.com>
-Cc:     artem.bityutskiy@linux.intel.com, mhiramat@kernel.org,
-        linux-kernel@vger.kernel.org, linux-rt-users@vger.kernel.org
-Subject: Re: [PATCH v4 06/12] tracing: Change trace_boot to use synth_event
- interface
-Message-ID: <20200131125539.68ab766d@gandalf.local.home>
-In-Reply-To: <1580492941.24839.5.camel@gmail.com>
-References: <cover.1580323897.git.zanussi@kernel.org>
-        <94f1fa0e31846d0bddca916b8663404b20559e34.1580323897.git.zanussi@kernel.org>
-        <1580492941.24839.5.camel@gmail.com>
-X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        id S1727168AbgAaRvM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 31 Jan 2020 12:51:12 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga004.jf.intel.com ([10.7.209.38])
+  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 31 Jan 2020 09:51:06 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.70,386,1574150400"; 
+   d="scan'208";a="377409500"
+Received: from jacob-builder.jf.intel.com (HELO jacob-builder) ([10.7.199.155])
+  by orsmga004.jf.intel.com with ESMTP; 31 Jan 2020 09:51:06 -0800
+Date:   Fri, 31 Jan 2020 09:56:21 -0800
+From:   Jacob Pan <jacob.jun.pan@linux.intel.com>
+To:     Alex Williamson <alex.williamson@redhat.com>
+Cc:     iommu@lists.linux-foundation.org,
+        LKML <linux-kernel@vger.kernel.org>,
+        "Lu Baolu" <baolu.lu@linux.intel.com>,
+        Joerg Roedel <joro@8bytes.org>,
+        David Woodhouse <dwmw2@infradead.org>,
+        "Yi Liu" <yi.l.liu@intel.com>,
+        "Tian, Kevin" <kevin.tian@intel.com>,
+        Raj Ashok <ashok.raj@intel.com>,
+        "Christoph Hellwig" <hch@infradead.org>,
+        Jean-Philippe Brucker <jean-philippe@linaro.com>,
+        Jonathan Cameron <jic23@kernel.org>,
+        Eric Auger <eric.auger@redhat.com>,
+        jacob.jun.pan@linux.intel.com
+Subject: Re: [PATCH 3/3] iommu/uapi: Add helper function for size lookup
+Message-ID: <20200131095621.6acec2fc@jacob-builder>
+In-Reply-To: <20200129144046.3f91e4c1@w520.home>
+References: <1580277724-66994-1-git-send-email-jacob.jun.pan@linux.intel.com>
+        <1580277724-66994-4-git-send-email-jacob.jun.pan@linux.intel.com>
+        <20200129144046.3f91e4c1@w520.home>
+Organization: OTC
+X-Mailer: Claws Mail 3.13.2 (GTK+ 2.24.30; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
@@ -37,20 +52,106 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 31 Jan 2020 11:49:01 -0600
-Tom Zanussi <tzanussi@gmail.com> wrote:
+On Wed, 29 Jan 2020 14:40:46 -0700
+Alex Williamson <alex.williamson@redhat.com> wrote:
 
-> Hi Steve,
+> On Tue, 28 Jan 2020 22:02:04 -0800
+> Jacob Pan <jacob.jun.pan@linux.intel.com> wrote:
 > 
-> It looks like you missed this patch when you pulled the other ones into
->  for-next.
+> > IOMMU UAPI can be extended in the future by adding new
+> > fields at the end of each user data structure. Since we use
+> > a unified UAPI version for compatibility checking, a lookup
+> > function is needed to find the correct user data size to copy
+> > from user.
+> > 
+> > This patch adds a helper function based on a 2D lookup with
+> > version and type as input arguments.
+> > 
+> > Signed-off-by: Liu Yi L <yi.l.liu@intel.com>
+> > Signed-off-by: Jacob Pan <jacob.jun.pan@linux.intel.com>
+> > ---
+> >  drivers/iommu/iommu.c | 22 ++++++++++++++++++++++
+> >  include/linux/iommu.h |  6 ++++++
+> >  2 files changed, 28 insertions(+)
+> > 
+> > diff --git a/drivers/iommu/iommu.c b/drivers/iommu/iommu.c
+> > index 7dd51c5d2ba1..9e5de9abebdf 100644
+> > --- a/drivers/iommu/iommu.c
+> > +++ b/drivers/iommu/iommu.c
+> > @@ -1696,6 +1696,28 @@ int iommu_sva_unbind_gpasid(struct
+> > iommu_domain *domain, struct device *dev, }
+> >  EXPORT_SYMBOL_GPL(iommu_sva_unbind_gpasid);
+> >  
+> > +
+> > +/**
+> > + * Maintain a UAPI version to user data structure size lookup for
+> > each
+> > + * API function types we support. e.g. bind guest pasid, cache
+> > invalidation.
+> > + * As data structures being extended with new members, the
+> > offsetofend()
+> > + * will identify the new sizes.
+> > + */
+> > +const static int
+> > iommu_uapi_data_size[NR_IOMMU_UAPI_TYPE][IOMMU_UAPI_VERSION] = {
+> > +	/* IOMMU_UAPI_BIND_GPASID */
+> > +	{offsetofend(struct iommu_gpasid_bind_data, vtd)},
+> > +	/* IOMMU_UAPI_CACHE_INVAL */
+> > +	{offsetofend(struct iommu_cache_invalidate_info,
+> > addr_info)},
+> > +	/* IOMMU_UAPI_PAGE_RESP */
+> > +	{offsetofend(struct iommu_page_response, code)},
+> > +};
+> > +
+> > +int iommu_uapi_get_data_size(int type, int version)
+> > +{  
+> 
+> Seems like this is asking for a bounds check,
+> 
+>   if (type >= NR_IOMMU_UAPI_TYPE || version > IOMMU_UAPI_VERSION)
+>   	return -EINVAL;
+> 
+yes, agreed.
+> If we add new types in future versions, I assume we'd back fill the
+> table with -EINVAL as well (rather than zero).  Thanks,
+> 
+right, if the array increase due to new types, the older version with
+the new type should be filled with -EINVAL.
+Let me document this in the rules of extensions.
+
+> Alex
+> 
+> > +	return iommu_uapi_data_size[type][version - 1];
+> > +}
+> > +EXPORT_SYMBOL_GPL(iommu_uapi_get_data_size);
+> > +
+> >  static void __iommu_detach_device(struct iommu_domain *domain,
+> >  				  struct device *dev)
+> >  {
+> > diff --git a/include/linux/iommu.h b/include/linux/iommu.h
+> > index 9718c109ea0a..416fe02160ba 100644
+> > --- a/include/linux/iommu.h
+> > +++ b/include/linux/iommu.h
+> > @@ -500,6 +500,7 @@ extern int iommu_report_device_fault(struct
+> > device *dev, struct iommu_fault_event *evt);
+> >  extern int iommu_page_response(struct device *dev,
+> >  			       struct iommu_page_response *msg);
+> > +extern int iommu_uapi_get_data_size(int type, int version);
+> >  
+> >  extern int iommu_group_id(struct iommu_group *group);
+> >  extern struct iommu_group *iommu_group_get_for_dev(struct device
+> > *dev); @@ -885,6 +886,11 @@ static inline int
+> > iommu_page_response(struct device *dev, return -ENODEV;
+> >  }
+> >  
+> > +static int iommu_uapi_get_data_size(int type, int version)
+> > +{
+> > +	return -ENODEV;
+> > +}
+> > +
+> >  static inline int iommu_group_id(struct iommu_group *group)
+> >  {
+> >  	return -ENODEV;  
 > 
 
-Ah, you're right! And my INBOX patchwork is informing me of it too (I
-have it read my email, and when I post the 'for-next' patches, it
-switches the status from "new" to "Under review", and this one is still
-"new").
-
-Thanks for letting me know. I'll apply it now.
-
--- Steve
+[Jacob Pan]
