@@ -2,38 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5E8CE14E9BC
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Jan 2020 09:47:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6D49A14E9CB
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Jan 2020 09:49:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728229AbgAaIrh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 31 Jan 2020 03:47:37 -0500
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:52943 "EHLO
+        id S1728295AbgAaIsl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 31 Jan 2020 03:48:41 -0500
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:50487 "EHLO
         mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728191AbgAaIrg (ORCPT
+        with ESMTP id S1728175AbgAaIsl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 31 Jan 2020 03:47:36 -0500
-Received: by mail-wm1-f67.google.com with SMTP id p9so6961662wmc.2;
-        Fri, 31 Jan 2020 00:47:35 -0800 (PST)
+        Fri, 31 Jan 2020 03:48:41 -0500
+Received: by mail-wm1-f67.google.com with SMTP id a5so6966972wmb.0;
+        Fri, 31 Jan 2020 00:48:39 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=sdNLZLbUZjioU3Z4lRpuQbaNIysXdv9lDzhe4Q5gJwU=;
-        b=ex6PVFYBZmEDc+SC1Z2fH1XDxwSIt3sgXLQCwIJROjjZK9BFuAGjdjfnDuDRec0Qjx
-         mtT96RuFtPtN/juBcvbaLfOU7svE0VXJqlvLrREV1T+ppDppHOWVjxQO6sK+58pYobhh
-         VA5L1e1ZnkmTvtbb3qOpyRvgRv2U9ZzWg4uVb/w4SCgWxTGGm/sfNxFh/BxdMX2yTPWu
-         BBHCHu8Go6iFgi1SC1y9Hc8sALxNF9U3adPTCSIZsnMWb5leNLb4XqoKuHXLQKTQ5d+V
-         hZBAYLNPGnWCptrfgdn30FP+OSBx/RHnQVck2mpa73VMti6XfYFD3sYoHF/IcAl+LaiB
-         /lAQ==
-X-Gm-Message-State: APjAAAXMwZ9NUhAhbTo0bhNnmINVFuAuVtV+kVD582LPi2MOzBMN91yF
-        pzZ7VJA9DbQ6wscXkYvX9KO6WwMIvo4=
-X-Google-Smtp-Source: APXvYqwcnzQbFdcIMaQGA5ZuO128eq6F3wqKYN22ra3jP99Ay4uMroGsQRwG80xB0777PwhhtX7RWw==
-X-Received: by 2002:a05:600c:1007:: with SMTP id c7mr10594687wmc.158.1580460116515;
-        Fri, 31 Jan 2020 00:41:56 -0800 (PST)
+        bh=sMmbpncOJ0ZaEaTp6uD1F3mJKzNvU9i5QAcT7nrh4JY=;
+        b=taKZC9bUFSpkLtDWwagZqFjJrmmfH0HbDtYdkUPFjSuAs5iSCJS+QWW4LHCxIGb9KP
+         N9GJ3JB3zT/Icnmuq6Za2kXCKFz1aJyKEOSiR/Ja5JzdB6g/mqfdo2r16PSp/fum1AFq
+         cI2l+U9GAa/4Lw2HkPKAGh8rihQu1msjitVVhvg0VIL0KRZpiWqxDI6esSPdu9q3H67q
+         80XlWsz4S4jD4PdNVZPihlAJiuHvSHhTkvOKdAPIxb8z5Qvdwt0bWc3EK7sYQwFV+M/J
+         HnZh3wl+rv6N1huzjfDTr7D8NkSQN3Z0aBuse0tJbM4WDmiykLTm8HQei7e2cGv8Cnzg
+         BJng==
+X-Gm-Message-State: APjAAAXpMptjafk2H39fOBN8KAAIOyU+h09t2RNqHWW5R2bAov19cJib
+        ffF1q/fgG10ycJQTxc+dBcUgBn4OlHE=
+X-Google-Smtp-Source: APXvYqzKcapyTjD9nBiBSyVMOTcqge1oPKD3TaBRMVfA2GO5FZ48/UrkimVNYtSOgOOLzu22AYMvKA==
+X-Received: by 2002:a1c:6a06:: with SMTP id f6mr11000810wmc.137.1580460117691;
+        Fri, 31 Jan 2020 00:41:57 -0800 (PST)
 Received: from 1aq-andre.garage.tyco.com ([77.107.218.170])
-        by smtp.gmail.com with ESMTPSA id x7sm11034302wrq.41.2020.01.31.00.41.55
+        by smtp.gmail.com with ESMTPSA id x7sm11034302wrq.41.2020.01.31.00.41.56
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 31 Jan 2020 00:41:55 -0800 (PST)
+        Fri, 31 Jan 2020 00:41:57 -0800 (PST)
 From:   =?UTF-8?q?Andr=C3=A9=20Draszik?= <git@andred.net>
 To:     linux-kernel@vger.kernel.org
 Cc:     =?UTF-8?q?Andr=C3=A9=20Draszik?= <git@andred.net>,
@@ -47,9 +47,9 @@ Cc:     =?UTF-8?q?Andr=C3=A9=20Draszik?= <git@andred.net>,
         Fabio Estevam <festevam@gmail.com>,
         NXP Linux Team <linux-imx@nxp.com>,
         devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: [PATCH v3 07/12] ARM: dts: imx7d: cl-som-imx7: add/enable SPI flash on spi1
-Date:   Fri, 31 Jan 2020 08:36:33 +0000
-Message-Id: <20200131083638.6118-7-git@andred.net>
+Subject: [PATCH v3 08/12] ARM: dts: imx7d: cl-som-imx7: update UART1 (debug) clock
+Date:   Fri, 31 Jan 2020 08:36:34 +0000
+Message-Id: <20200131083638.6118-8-git@andred.net>
 X-Mailer: git-send-email 2.23.0.rc1
 In-Reply-To: <20200131083638.6118-1-git@andred.net>
 References: <20200131083638.6118-1-git@andred.net>
@@ -61,8 +61,8 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-add/enable SPI flash on spi1 using the default vendor's
-partition layout as per downstream kernel
+assign OSC as uart1 (debug) clock to achieve low power,
+so that the PLL doesn't need to be kept on
 
 Signed-off-by: André Draszik <git@andred.net>
 Cc: Ilya Ledvich <ilya@compulab.co.il>
@@ -77,72 +77,22 @@ Cc: NXP Linux Team <linux-imx@nxp.com>
 Cc: devicetree@vger.kernel.org
 Cc: linux-arm-kernel@lists.infradead.org
 ---
- arch/arm/boot/dts/imx7d-cl-som-imx7.dts | 45 +++++++++++++++++++++++++
- 1 file changed, 45 insertions(+)
+ arch/arm/boot/dts/imx7d-cl-som-imx7.dts | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/arch/arm/boot/dts/imx7d-cl-som-imx7.dts b/arch/arm/boot/dts/imx7d-cl-som-imx7.dts
-index ca3c5d95d6c3..d4637a8ca223 100644
+index d4637a8ca223..f80be855b4ec 100644
 --- a/arch/arm/boot/dts/imx7d-cl-som-imx7.dts
 +++ b/arch/arm/boot/dts/imx7d-cl-som-imx7.dts
-@@ -28,6 +28,36 @@
- 	cpu-supply = <&sw1a_reg>;
- };
- 
-+&ecspi1 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pinctrl_ecspi1 &pinctrl_ecspi1_cs>;
-+	cs-gpios = <&gpio4 19 GPIO_ACTIVE_HIGH>;
-+	status = "okay";
-+
-+	flash@0 {
-+		#address-cells = <1>;
-+		#size-cells = <1>;
-+		compatible = "jedec,spi-nor";
-+		spi-max-frequency = <20000000>;
-+		reg = <0>;
-+
-+		partition@0 {
-+			label = "uboot";
-+			reg = <0x0 0xc0000>;
-+		};
-+
-+		partition@c0000 {
-+			label = "uboot environment";
-+			reg = <0xc0000 0x40000>;
-+		};
-+
-+		partition@100000 {
-+			label = "splash";
-+			reg = <0x100000 0x100000>;
-+		};
-+	};
-+};
-+
- &fec1 {
+@@ -222,7 +222,7 @@
  	pinctrl-names = "default";
- 	pinctrl-0 = <&pinctrl_enet1 &pinctrl_enet1phy>;
-@@ -214,6 +244,21 @@
+ 	pinctrl-0 = <&pinctrl_uart1>;
+ 	assigned-clocks = <&clks IMX7D_UART1_ROOT_SRC>;
+-	assigned-clock-parents = <&clks IMX7D_PLL_SYS_MAIN_240M_CLK>;
++	assigned-clock-parents = <&clks IMX7D_OSC_24M_CLK>;
+ 	status = "okay";
  };
  
- &iomuxc {
-+	pinctrl_ecspi1: ecspi1grp {
-+		fsl,pins = <
-+			MX7D_PAD_ECSPI1_MOSI__ECSPI1_MOSI		0xf
-+			MX7D_PAD_ECSPI1_MISO__ECSPI1_MISO		0xf
-+			MX7D_PAD_ECSPI1_SCLK__ECSPI1_SCLK		0xf
-+		>;
-+	};
-+
-+	pinctrl_ecspi1_cs: ecspi1_cs_grp {
-+		fsl,pins = <
-+			/* SPI flash chipselect */
-+			MX7D_PAD_ECSPI1_SS0__GPIO4_IO19			0x34
-+		>;
-+	};
-+
- 	pinctrl_enet1: enet1grp {
- 		fsl,pins = <
- 			MX7D_PAD_SD2_CD_B__ENET1_MDIO			0x30
 -- 
 2.23.0.rc1
 
