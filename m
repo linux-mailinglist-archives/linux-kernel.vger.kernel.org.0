@@ -2,86 +2,80 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B2C2014EFD7
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Jan 2020 16:41:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6FC9014EFE7
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Jan 2020 16:42:01 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729275AbgAaPkx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 31 Jan 2020 10:40:53 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44476 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728992AbgAaPkw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 31 Jan 2020 10:40:52 -0500
-Received: from cakuba.hsd1.ca.comcast.net (unknown [199.201.64.133])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1AE6D20707;
-        Fri, 31 Jan 2020 15:40:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1580485252;
-        bh=p1kYkLVWMHwzIbsEGD46qdhZq5Y2YJPlobf+Blab68E=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=lfZ/hfqTb0BASsotmVHVHj2tQUvKafrX3wJzuaN3VhrqcZbum02xR0sPK280lWANx
-         xIOmJZbqxvSv8A3k9XPcNLfLhegYjp5NgSDka9igFFVF6EeX+u5r7n2yeYthuilkA7
-         1aYnGTH2/vTocVAYAJcanlDeXHDBQwV8mYaoAcyU=
-Date:   Fri, 31 Jan 2020 07:40:50 -0800
-From:   Jakub Kicinski <kuba@kernel.org>
-To:     Russell King - ARM Linux admin <linux@armlinux.org.uk>
-Cc:     Andrew Lunn <andrew@lunn.ch>, Robin Murphy <robin.murphy@arm.com>,
-        Calvin Johnson <calvin.johnson@nxp.com>, stuyoder@gmail.com,
-        nleeder@codeaurora.org, Ioana Ciornei <ioana.ciornei@nxp.com>,
-        Cristi Sovaiala <cristian.sovaiala@nxp.com>,
-        Hanjun Guo <guohanjun@huawei.com>,
-        Will Deacon <will@kernel.org>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Marc Zyngier <maz@kernel.org>,
-        Pankaj Bansal <pankaj.bansal@nxp.com>,
-        Jon Nettleton <jon@solid-run.com>,
-        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
-        Len Brown <lenb@kernel.org>,
-        Jason Cooper <jason@lakedaemon.net>,
-        Andy Wang <Andy.Wang@arm.com>,
-        Makarand Pawagi <makarand.pawagi@nxp.com>,
-        Varun Sethi <V.Sethi@nxp.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        Laurentiu Tudor <laurentiu.tudor@nxp.com>,
-        Paul Yang <Paul.Yang@arm.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        "<netdev@vger.kernel.org>" <netdev@vger.kernel.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Shameerali Kolothum Thodi 
-        <shameerali.kolothum.thodi@huawei.com>,
-        Sudeep Holla <sudeep.holla@arm.com>
-Subject: Re: [EXT] Re: [PATCH] bus: fsl-mc: Add ACPI support for fsl-mc
-Message-ID: <20200131074050.38d78ff0@cakuba.hsd1.ca.comcast.net>
-In-Reply-To: <20200131151500.GO25745@shell.armlinux.org.uk>
-References: <1580198925-50411-1-git-send-email-makarand.pawagi@nxp.com>
-        <20200128110916.GA491@e121166-lin.cambridge.arm.com>
-        <DB8PR04MB7164DDF48480956F05886DABEB070@DB8PR04MB7164.eurprd04.prod.outlook.com>
-        <12531d6c569c7e14dffe8e288d9f4a0b@kernel.org>
-        <CAKv+Gu8uaJBmy5wDgk=uzcmC4vkEyOjW=JRvhpjfsdh-HcOCLg@mail.gmail.com>
-        <CABdtJHsu9R9g4mn25=9EW3jkCMhnej_rfkiRzo3OCX4cv4hpUQ@mail.gmail.com>
-        <0680c2ce-cff0-d163-6bd9-1eb39be06eee@arm.com>
-        <CABdtJHuLZeNd9bQZ-cmQi00WnObYPvM=BdWNw4EMpOFHjRd70w@mail.gmail.com>
-        <b136adc4-be48-82df-0592-97b4ba11dd79@arm.com>
-        <20200131142906.GG9639@lunn.ch>
-        <20200131151500.GO25745@shell.armlinux.org.uk>
+        id S1729229AbgAaPlw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 31 Jan 2020 10:41:52 -0500
+Received: from mail-il1-f194.google.com ([209.85.166.194]:42258 "EHLO
+        mail-il1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729032AbgAaPlw (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 31 Jan 2020 10:41:52 -0500
+Received: by mail-il1-f194.google.com with SMTP id x2so6490404ila.9
+        for <linux-kernel@vger.kernel.org>; Fri, 31 Jan 2020 07:41:51 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=Bt/QheAZ930twwioViVJw8WXYDgWI7UHXp6ZgLfEFvU=;
+        b=A6Y2AxBNtVwdIYHMVc3HVU8q/VzulMbzj/3/CIXAT1NEl9g+rtYxLOZL0iajhtIH2h
+         MiLriuEA35OxvITi1H1wcLnMy7zEM42kjWp+nV44p6Hs6yBhBUfYF+CthIJYAayJ+nuX
+         KCQQixMqG90XFFpLWL+nGFGJg9T506YOP0lJW6PDhMwqcDTVKct76WRd6XFLaMwx9Bkn
+         uEPZ5feqGTRx9pGjZYNwqYBDDal5sa/0x7x1nfjPOy+8A/wZoVtP/FpcAUGoMrx6NeH8
+         OxL2xDbd8/HQGw316yFtDyGmr6CYXUjoHNSbCIXsqxQx0jR0aDHoNuccm35OKtmQ3Fpg
+         eIYw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=Bt/QheAZ930twwioViVJw8WXYDgWI7UHXp6ZgLfEFvU=;
+        b=nx7PKO2ry04sRm3wInvovQG5qkHSkzLTgnK9/aBvuMWYUZuYAm5xh8E3ec+o9OXyGs
+         ER7pNbVSJXH8zZVqxrpcN2VXW10HQHFvxbXE5BmZ7LQQbum+yCBdU8p1PFzJqS5tKlI6
+         nfBFSGd+kwymf3CeQh+9AJqn+v1QXdeY+/FugBWuboWQ5tRwzDiB2jGWv+f7HNlOMROq
+         T2YAGcLg88Rup06bFpSCoo23ej6vqzN68GzXUUiyzIQBBpgYsNwCynDyg4pvnp4iZ665
+         N9hMipKn7S50XcTRfUbJiURUzF8+ghszVg8VltQBZcwpAZQECOgiE0Vr+FxRM5nNMSn4
+         cH5w==
+X-Gm-Message-State: APjAAAWEmnav9rZg5Ra7xEaUgbv8wc007mc2SMv6WsxXBsOTABQBKkpA
+        +27p0fjHA/B64J1UPDzPsQ3O8A==
+X-Google-Smtp-Source: APXvYqzmFO+FwGR8L2EL82Fy4qUmOkX9hKN8xdZIQNl3E/nj/xI2hVeg29FnzUN/wjKuFPY47A0oeQ==
+X-Received: by 2002:a05:6e02:4cc:: with SMTP id f12mr3138757ils.90.1580485310666;
+        Fri, 31 Jan 2020 07:41:50 -0800 (PST)
+Received: from [192.168.1.159] ([65.144.74.34])
+        by smtp.gmail.com with ESMTPSA id s88sm3276032ilk.79.2020.01.31.07.41.49
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 31 Jan 2020 07:41:50 -0800 (PST)
+Subject: Re: [PATCH liburing v2 1/1] test: add epoll test case
+To:     Stefano Garzarella <sgarzare@redhat.com>
+Cc:     linux-kernel@vger.kernel.org, io-uring@vger.kernel.org
+References: <20200131142943.120459-1-sgarzare@redhat.com>
+ <20200131142943.120459-2-sgarzare@redhat.com>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <00610b2b-2110-36c2-d6ce-85599e46013f@kernel.dk>
+Date:   Fri, 31 Jan 2020 08:41:49 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+In-Reply-To: <20200131142943.120459-2-sgarzare@redhat.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 31 Jan 2020 15:15:00 +0000, Russell King - ARM Linux admin
-wrote:
-> I have some prototype implementation for driving the QSFP+ cage, but
-> I haven't yet worked out how to sensible deal with the "is it 4x 10G
-> or 1x 40G" issue you mention above, and how to interface the QSFP+
-> driver sensibly with one or four network drivers.
+On 1/31/20 7:29 AM, Stefano Garzarella wrote:
+> This patch add the epoll test case that has four sub-tests:
+> - test_epoll
+> - test_epoll_sqpoll
+> - test_epoll_nodrop
+> - test_epoll_sqpoll_nodrop
 
-I'm pretty sure you know this but just FWIW - vendors who do it in FW
-write the current config down in NVM so it doesn't get affected by
-reboots and use devlink port splitting to change it.
+Since we have EPOLL_CTL now, any chance you could also include
+a test case that uses that instead of epoll_ctl()?
+
+-- 
+Jens Axboe
+
