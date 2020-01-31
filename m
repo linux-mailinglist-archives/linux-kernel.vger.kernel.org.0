@@ -2,41 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6D05C14ECC5
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Jan 2020 13:56:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7DB2E14ECBF
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Jan 2020 13:56:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728705AbgAaM4V (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 31 Jan 2020 07:56:21 -0500
-Received: from merlin.infradead.org ([205.233.59.134]:39050 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728645AbgAaM4L (ORCPT
+        id S1728615AbgAaM4G (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 31 Jan 2020 07:56:06 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:53354 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728479AbgAaM4F (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 31 Jan 2020 07:56:11 -0500
+        Fri, 31 Jan 2020 07:56:05 -0500
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=Content-Type:MIME-Version:References:
+        d=infradead.org; s=bombadil.20170209; h=Content-Type:MIME-Version:References:
         Subject:Cc:To:From:Date:Message-Id:Sender:Reply-To:Content-Transfer-Encoding:
         Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
         Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:List-Id:List-Help:
         List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=Y6NQ7WUPygUPeoqsSV5h8nxXiojEVyjEZjXvUDdbeFA=; b=HRWxxGk80Z2wmy/OteRwyZ7vgB
-        T/468wg7IU2wQqytZGvUsTgGU7csZ5XY1HwskC1x8YxMdtxIX6NHavMP0Br3/q8hsXogvQ+Bj8MoO
-        lh3Bnu1iHcboj5qddz+/AGZUzHduc+IAw3boforzaSL/U8bGO7Nmspo0ShUMbeaydifYxjBUP+lhz
-        Nga7vCIAmF2L/YTUGjlDJTxwdyuJRK6W5yNqZpP8KzqQ6f9+OyM9T6kDph6mKDu4IcynW/VQky6Ry
-        iJNPPP6crKwf/GlJuecHRwjgpPphl0vzVUCeAwPf9DJag4lbUei86ubscKZPUH2/qaUslsQh+VfhB
-        V34ZerXQ==;
+        bh=Gmy4IB9yY3Tb1BEcngwE71ugeFa/zavNLfcPY3t/sPw=; b=ejzHNZbCFp0vJk3V9A07jD9T0Y
+        a+4CMFresbe9wCKs9s/AMftfK1FukjiAzqHfubfUNYlvu61xPpLZPJOr8AUKLrgLIvvKlrqL/Wcqu
+        EcmzAQeYU0bWCQwCRXzU9V0c9LgGJC07FlJPOP7YUVWWmeLfgmWU2nGcER9dtHtMUQ3Mv6VcngY+b
+        kS2LcRkC0U04uyRttTbHPTyhiqUGzBcxNIG/gQLfDmnstLy6tF2UqtdlsxDbjYq5bNks97mcVN2pZ
+        tVhZv7ALpPhhMLoZxZ3DOB4hLCrDkes3ErhlfZpRQQ93yqQaOdSNsuVvV/sv2IDBEv3Oqn8jlu9Ti
+        EBpMTeoA==;
 Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
-        by merlin.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1ixVq7-0003gG-Oo; Fri, 31 Jan 2020 12:56:03 +0000
+        by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1ixVq7-0001Z9-1p; Fri, 31 Jan 2020 12:56:03 +0000
 Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (Client did not present a certificate)
-        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 3D3EF305D3F;
+        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 3770E3011DD;
         Fri, 31 Jan 2020 13:54:17 +0100 (CET)
 Received: by hirez.programming.kicks-ass.net (Postfix, from userid 0)
-        id DDEDC2014711E; Fri, 31 Jan 2020 13:56:00 +0100 (CET)
-Message-Id: <20200131125403.481739981@infradead.org>
+        id E06F42B4C4270; Fri, 31 Jan 2020 13:56:00 +0100 (CET)
+Message-Id: <20200131125403.540057688@infradead.org>
 User-Agent: quilt/0.65
-Date:   Fri, 31 Jan 2020 13:45:32 +0100
+Date:   Fri, 31 Jan 2020 13:45:33 +0100
 From:   Peter Zijlstra <peterz@infradead.org>
 To:     Geert Uytterhoeven <geert@linux-m68k.org>
 Cc:     linux-m68k@lists.linux-m68k.org, linux-kernel@vger.kernel.org,
@@ -44,7 +44,7 @@ Cc:     linux-m68k@lists.linux-m68k.org, linux-kernel@vger.kernel.org,
         Peter Zijlstra <peterz@infradead.org>,
         Michael Schmitz <schmitzmic@gmail.com>,
         Greg Ungerer <gerg@linux-m68k.org>
-Subject: [PATCH -v2 01/10] m68k,mm: Remove stray nocache in ColdFire pgalloc
+Subject: [PATCH -v2 02/10] m68k,mm: Fix ColdFire pgd_alloc()
 References: <20200131124531.623136425@infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -53,31 +53,38 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Since ColdFire V4e is a software TLB-miss architecture, there is no
-need for page-tables to be mapped uncached. Remove this stray
-nocache_page() dance, which isn't paired with a cache_page() and looks
-like a copy/paste/edit fail.
+From: Will Deacon <will@kernel.org>
 
+I also notice that building for m5475evb_defconfig with vanilla v5.5
+triggers this scary looking warning due to a mismatch between the pgd
+size and the (8k!) page size:
+
+ | In function 'pgd_alloc.isra.111',
+ |     inlined from 'mm_alloc_pgd' at kernel/fork.c:634:12,
+ |     inlined from 'mm_init.isra.112' at kernel/fork.c:1043:6:
+ | ./arch/m68k/include/asm/string.h:72:25: warning: '__builtin_memcpy' forming offset [4097, 8192] is out of the bounds [0, 4096] of object 'kernel_pg_dir' with type 'pgd_t[1024]' {aka 'struct <anonymous>[1024]'} [-Warray-bounds]
+ |  #define memcpy(d, s, n) __builtin_memcpy(d, s, n)
+ |                          ^~~~~~~~~~~~~~~~~~~~~~~~~
+ | ./arch/m68k/include/asm/mcf_pgalloc.h:93:2: note: in expansion of macro 'memcpy'
+ |   memcpy(new_pgd, swapper_pg_dir, PAGE_SIZE);
+ |   ^~~~~~
+
+Signed-off-by: Will Deacon <will@kernel.org>
 Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
 ---
- arch/m68k/include/asm/mcf_pgalloc.h |    6 +-----
- 1 file changed, 1 insertion(+), 5 deletions(-)
+ arch/m68k/include/asm/mcf_pgalloc.h |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
 --- a/arch/m68k/include/asm/mcf_pgalloc.h
 +++ b/arch/m68k/include/asm/mcf_pgalloc.h
-@@ -55,12 +55,8 @@ static inline struct page *pte_alloc_one
- 	}
- 
- 	pte = kmap(page);
--	if (pte) {
-+	if (pte)
- 		clear_page(pte);
--		__flush_page_to_ram(pte);
--		flush_tlb_kernel_page(pte);
--		nocache_page(pte);
--	}
- 	kunmap(page);
- 
- 	return page;
+@@ -90,7 +90,7 @@ static inline pgd_t *pgd_alloc(struct mm
+ 	new_pgd = (pgd_t *)__get_free_page(GFP_DMA | __GFP_NOWARN);
+ 	if (!new_pgd)
+ 		return NULL;
+-	memcpy(new_pgd, swapper_pg_dir, PAGE_SIZE);
++	memcpy(new_pgd, swapper_pg_dir, PTRS_PER_PGD * sizeof(pgd_t));
+ 	memset(new_pgd, 0, PAGE_OFFSET >> PGDIR_SHIFT);
+ 	return new_pgd;
+ }
 
 
