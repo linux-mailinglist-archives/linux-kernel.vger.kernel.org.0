@@ -2,70 +2,91 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EA43A14E894
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Jan 2020 07:06:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0209D14E896
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Jan 2020 07:10:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728005AbgAaGG0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 31 Jan 2020 01:06:26 -0500
-Received: from mail.kernel.org ([198.145.29.99]:56778 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726336AbgAaGG0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 31 Jan 2020 01:06:26 -0500
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 399752082E;
-        Fri, 31 Jan 2020 06:06:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1580450784;
-        bh=hRukl1dm5QSvpXFH5kTsRLyYQBTXAnyo2x0DgzgPIIM=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=0HcffgGHGHIbiwVAmOCh1SRXUGvI5CNgpQAOCC4aUs4vZCQdgxGi8LTBlTous6hor
-         yz+MeKlXCVqG0oaCpuLC8JSx5TQlyfS8nGqLwCeI48Ht/sGyVFxMvZdcBYuNPdCn0g
-         BQujIWCqKV+M95vlz+R3JgVhrpRELdmWjSfXTfBw=
-Date:   Fri, 31 Jan 2020 07:06:22 +0100
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     shuah <shuah@kernel.org>
-Cc:     linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-        akpm@linux-foundation.org, linux@roeck-us.net,
-        patches@kernelci.org, ben.hutchings@codethink.co.uk,
-        lkft-triage@lists.linaro.org, stable@vger.kernel.org
-Subject: Re: [PATCH 5.5 00/56] 5.5.1-stable review
-Message-ID: <20200131060622.GB2179850@kroah.com>
-References: <20200130183608.849023566@linuxfoundation.org>
- <a99ad773-c0ac-f887-5f74-b47eb395803f@kernel.org>
+        id S1728049AbgAaGKd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 31 Jan 2020 01:10:33 -0500
+Received: from mail-ot1-f67.google.com ([209.85.210.67]:46674 "EHLO
+        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725907AbgAaGKc (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 31 Jan 2020 01:10:32 -0500
+Received: by mail-ot1-f67.google.com with SMTP id g64so5492921otb.13
+        for <linux-kernel@vger.kernel.org>; Thu, 30 Jan 2020 22:10:32 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:reply-to:from:date:message-id:subject:to;
+        bh=Ph/tiCxt6J8lQbta3ZHrGApdLgqUBYn0fpRyKCOIpm8=;
+        b=S4PI06Xn3KC2QkNSk+t83PI8yEkLJS7YAssVerFWgZ8NGMbVKtcTYqxXceJAZcqJ7d
+         +Jh/0dLgNMg7pwFCJMeR8udR2D8IOj8nwkkhEiaYf/nGnM7dSnGi3s6BnfEX9MfiVMki
+         1E3JtdKbvLJdqwu+XShb5fEeGFhoPxW8EXLCDHLh9TN5hulfKnq6IzZkf22dYXg7wcdA
+         1DKFxRfLdtYh5opwXmkFP5QJrprl1rD9RpgUzha5tKElAh0QEDoMOxSMF4IWCP6KTuzK
+         ippoHkwauKfF5+xKWZN1xvH1vGKEXUmaR0+NPdy/VGowITxPbXcuWsidBaFSxH8v6Kap
+         lvBw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
+         :subject:to;
+        bh=Ph/tiCxt6J8lQbta3ZHrGApdLgqUBYn0fpRyKCOIpm8=;
+        b=e41YtlXk4A0XtLsTnwTF97JK96ftuNSYFo+fvk7lq52aFRQHRB8rJggBZ0agX4oYNC
+         /mNawZud2l58o90EUKU5omzAxZLrhbV+sGBNKVlAvgWX9rV2GkD4vWj2jM1rRA8W+MCF
+         msNbVjSC/jM9MoDslP7w/mQoAWEKWFMuET+n02hJKY38C6Mp8dXR46PuWrV5Bb0pYJmP
+         9R11mqMAHd5zS8u3Ow7DxKMSEIt80xVkokF/liCFlLcyHDuQ34DwNUhvAz5lkmT8Ow8t
+         5JC0eBKnXyd5QGE9EqCkgiU1hxBZ8uG9DfuiO7fQPcXnk8hn1/cxwJBGf74n0Y68V0EG
+         DJ8A==
+X-Gm-Message-State: APjAAAVhz5BBkl7XW+4pNFT88I1kWnhUpgN8lZExopciFAd6z7KNyjqw
+        uZ5C8XBdDpoOXK9wW8cOIb5SvQxqgABxym/cHg0=
+X-Google-Smtp-Source: APXvYqzC2c4j0ONoOHRqSC0SOOI+wIDntolplrKKHKgMkCJo0kRZbVqGkfs3fPEOeZtlMjVP+YClzgQqv3DHXaPx4io=
+X-Received: by 2002:a9d:7c99:: with SMTP id q25mr6588777otn.105.1580451031796;
+ Thu, 30 Jan 2020 22:10:31 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <a99ad773-c0ac-f887-5f74-b47eb395803f@kernel.org>
+Received: by 2002:a4a:a482:0:0:0:0:0 with HTTP; Thu, 30 Jan 2020 22:10:31
+ -0800 (PST)
+Reply-To: sulembello879@gmail.com
+From:   Mr Suleman Bello <frankoleka77@gmail.com>
+Date:   Thu, 30 Jan 2020 22:10:31 -0800
+Message-ID: <CAHQPQhDgDEyhU9kxVJA_mEdxDVvUVmXMNn3PY1x+r7MhrmMTrA@mail.gmail.com>
+Subject: CAN I TRUST YOU?
+To:     undisclosed-recipients:;
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jan 30, 2020 at 09:40:28PM -0700, shuah wrote:
-> On 1/30/20 11:38 AM, Greg Kroah-Hartman wrote:
-> > This is the start of the stable review cycle for the 5.5.1 release.
-> > There are 56 patches in this series, all will be posted as a response
-> > to this one.  If anyone has any issues with these being applied, please
-> > let me know.
-> > 
-> > Responses should be made by Sat, 01 Feb 2020 18:35:06 +0000.
-> > Anything received after that time might be too late.
-> > 
-> > The whole patch series can be found in one patch at:
-> > 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.5.1-rc1.gz
-> > or in the git tree and branch at:
-> > 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.5.y
-> > and the diffstat can be found below.
-> > 
-> > thanks,
-> > 
-> > greg k-h
-> > 
-> 
-> Compiled and booted on my test system. No dmesg regressions.
+Dear Friend,
 
-Thanks for testing all of these and letting me know.
+Please i want you to read this letter very carefully and i must
+apologize for berging this message into your mail box without any
+formal introduction due to the urgency and confidential of this issue
+and i know that this message will come to you as a surprise, Please
+this is not a joke and i will not like you to joke with it.I am
+Mr.Suleman Bello, a staff in African Development Bank (A.D.B)
+Ouagadougou, Burkina faso West Africa.I discovered existing dormant
+account for years. When I discovered that there had been neither
+continuation nor withdrawals from this account for this long period
+and according to the laws and constitution guiding this banking
+institution, any unserviceable account for more than (7) seven years,
+that fund will be transferred to national treasury as unclaimed fund.
 
-greg k-h
+I Hoped that you will not expose or betray this trust and confident
+that i am about to extablish with you for the mutual benefit of you
+and i.I need your urgent assistance in transferring the sum of $10.5
+)million usd into your account within 7 banking days. This money has
+been dormant for years in our Bank, and The request of foreigner in
+this transaction is necessary because our late customer was a
+foreigner and a burkinabe cannot stand as next of kin to a
+foreigner.Because of the static of this transaction I want you to
+stand as the next of kin so that our bank will accord you the
+recognition and have the fund transferred to your account.
+
+Upon your response, I shall then provide you with further information
+and more deities that will help you understand the transaction. I am
+expecting your urgent response to enable me inform you on how the
+business will be executed. Please I would like you to keep this
+transaction confidential and as a top secret or delete if you are not
+interested.
+
+Thanks
+Mr.Suleman Bello.
