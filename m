@@ -2,38 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6D49A14E9CB
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Jan 2020 09:49:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C247F14E9C3
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Jan 2020 09:48:30 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728295AbgAaIsl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 31 Jan 2020 03:48:41 -0500
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:50487 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728175AbgAaIsl (ORCPT
+        id S1728263AbgAaIsR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 31 Jan 2020 03:48:17 -0500
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:35908 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728175AbgAaIsR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 31 Jan 2020 03:48:41 -0500
-Received: by mail-wm1-f67.google.com with SMTP id a5so6966972wmb.0;
-        Fri, 31 Jan 2020 00:48:39 -0800 (PST)
+        Fri, 31 Jan 2020 03:48:17 -0500
+Received: by mail-wm1-f68.google.com with SMTP id p17so7736844wma.1;
+        Fri, 31 Jan 2020 00:48:16 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=sMmbpncOJ0ZaEaTp6uD1F3mJKzNvU9i5QAcT7nrh4JY=;
-        b=taKZC9bUFSpkLtDWwagZqFjJrmmfH0HbDtYdkUPFjSuAs5iSCJS+QWW4LHCxIGb9KP
-         N9GJ3JB3zT/Icnmuq6Za2kXCKFz1aJyKEOSiR/Ja5JzdB6g/mqfdo2r16PSp/fum1AFq
-         cI2l+U9GAa/4Lw2HkPKAGh8rihQu1msjitVVhvg0VIL0KRZpiWqxDI6esSPdu9q3H67q
-         80XlWsz4S4jD4PdNVZPihlAJiuHvSHhTkvOKdAPIxb8z5Qvdwt0bWc3EK7sYQwFV+M/J
-         HnZh3wl+rv6N1huzjfDTr7D8NkSQN3Z0aBuse0tJbM4WDmiykLTm8HQei7e2cGv8Cnzg
-         BJng==
-X-Gm-Message-State: APjAAAXpMptjafk2H39fOBN8KAAIOyU+h09t2RNqHWW5R2bAov19cJib
-        ffF1q/fgG10ycJQTxc+dBcUgBn4OlHE=
-X-Google-Smtp-Source: APXvYqzKcapyTjD9nBiBSyVMOTcqge1oPKD3TaBRMVfA2GO5FZ48/UrkimVNYtSOgOOLzu22AYMvKA==
-X-Received: by 2002:a1c:6a06:: with SMTP id f6mr11000810wmc.137.1580460117691;
-        Fri, 31 Jan 2020 00:41:57 -0800 (PST)
+        bh=1rCIaYhy19uhXqC3cBNmvWggUiwiZruQsnEVhDd61mE=;
+        b=DjM9h5+sBhZlQQca+0quhcJ+4I5o1oMSuffIBgvp3dslreOJkOGXecUANQTlT66Daw
+         K2VYfqLm3YSBsw73/P0uDjiov2EABe/oRkiSYrT2FRK9qCKXxzPhNHaiAggsSn1RAqFH
+         0yLK1QDXpzEBouOttmybefx9Xk4PzTXR+5roK18remS4k5VCBiwXKoDKqy/pwI6a2mkv
+         wmxJxXrRfeXwO7NMPWwZPovxkQ6qEQ2qaDD5bj7FRpTUC1Qe8S16FxwYqosG3w5fEWqw
+         3mud+rABM9b/6UAtbNGjhp+mJrh8iBFML599TMIUQxMwDcW2xz1bgx+OAjBTytcvCema
+         FH1A==
+X-Gm-Message-State: APjAAAUf0ww3FSPgsFq7GJB3ADWn0iZxUgfhhdv27lAB9OECzGjc9nNe
+        FuyLiYGrR11F74OS+ePpF7V4AEpXNtE=
+X-Google-Smtp-Source: APXvYqypc6MF6QgCbmPRGX+Y/IH0R/dp9yLZXlhDd9OMREV7VANLITul+BVlNBUSXC75nGwIZHUBxQ==
+X-Received: by 2002:a1c:8095:: with SMTP id b143mr10365919wmd.7.1580460118795;
+        Fri, 31 Jan 2020 00:41:58 -0800 (PST)
 Received: from 1aq-andre.garage.tyco.com ([77.107.218.170])
-        by smtp.gmail.com with ESMTPSA id x7sm11034302wrq.41.2020.01.31.00.41.56
+        by smtp.gmail.com with ESMTPSA id x7sm11034302wrq.41.2020.01.31.00.41.57
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 31 Jan 2020 00:41:57 -0800 (PST)
+        Fri, 31 Jan 2020 00:41:58 -0800 (PST)
 From:   =?UTF-8?q?Andr=C3=A9=20Draszik?= <git@andred.net>
 To:     linux-kernel@vger.kernel.org
 Cc:     =?UTF-8?q?Andr=C3=A9=20Draszik?= <git@andred.net>,
@@ -47,9 +47,9 @@ Cc:     =?UTF-8?q?Andr=C3=A9=20Draszik?= <git@andred.net>,
         Fabio Estevam <festevam@gmail.com>,
         NXP Linux Team <linux-imx@nxp.com>,
         devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: [PATCH v3 08/12] ARM: dts: imx7d: cl-som-imx7: update UART1 (debug) clock
-Date:   Fri, 31 Jan 2020 08:36:34 +0000
-Message-Id: <20200131083638.6118-8-git@andred.net>
+Subject: [PATCH v3 09/12] ARM: dts: imx7d: cl-som-imx7: add SMSC USB3503 usb hub
+Date:   Fri, 31 Jan 2020 08:36:35 +0000
+Message-Id: <20200131083638.6118-9-git@andred.net>
 X-Mailer: git-send-email 2.23.0.rc1
 In-Reply-To: <20200131083638.6118-1-git@andred.net>
 References: <20200131083638.6118-1-git@andred.net>
@@ -61,8 +61,10 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-assign OSC as uart1 (debug) clock to achieve low power,
-so that the PLL doesn't need to be kept on
+As per the SoM design, add the SMSC USB3503 that is
+used as a PHY in hardware-only mode, connected
+to the imx7d's &usbh interface, providing additional
+USB ports for USB and mini-PCIe.
 
 Signed-off-by: André Draszik <git@andred.net>
 Cc: Ilya Ledvich <ilya@compulab.co.il>
@@ -77,22 +79,26 @@ Cc: NXP Linux Team <linux-imx@nxp.com>
 Cc: devicetree@vger.kernel.org
 Cc: linux-arm-kernel@lists.infradead.org
 ---
- arch/arm/boot/dts/imx7d-cl-som-imx7.dts | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/arm/boot/dts/imx7d-cl-som-imx7.dts | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
 diff --git a/arch/arm/boot/dts/imx7d-cl-som-imx7.dts b/arch/arm/boot/dts/imx7d-cl-som-imx7.dts
-index d4637a8ca223..f80be855b4ec 100644
+index f80be855b4ec..a16cbb070a12 100644
 --- a/arch/arm/boot/dts/imx7d-cl-som-imx7.dts
 +++ b/arch/arm/boot/dts/imx7d-cl-som-imx7.dts
-@@ -222,7 +222,7 @@
- 	pinctrl-names = "default";
- 	pinctrl-0 = <&pinctrl_uart1>;
- 	assigned-clocks = <&clks IMX7D_UART1_ROOT_SRC>;
--	assigned-clock-parents = <&clks IMX7D_PLL_SYS_MAIN_240M_CLK>;
-+	assigned-clock-parents = <&clks IMX7D_OSC_24M_CLK>;
- 	status = "okay";
+@@ -22,6 +22,12 @@
+ 		device_type = "memory";
+ 		reg = <0x80000000 0x10000000>; /* 256 MB - minimal configuration */
+ 	};
++
++	/* SMSC USB3503 connected to &usbh */
++	usb_hub: usb-hub {
++		compatible = "smsc,usb3503";
++		reset-gpios = <&pca9555 6 GPIO_ACTIVE_LOW>;
++	};
  };
  
+ &cpu0 {
 -- 
 2.23.0.rc1
 
