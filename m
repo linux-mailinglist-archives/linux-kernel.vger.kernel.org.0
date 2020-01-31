@@ -2,41 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BC6FF14EE16
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Jan 2020 14:59:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A7E4214EE20
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Jan 2020 15:00:53 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728978AbgAaN7f (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 31 Jan 2020 08:59:35 -0500
-Received: from lelv0143.ext.ti.com ([198.47.23.248]:45276 "EHLO
-        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728770AbgAaN7f (ORCPT
+        id S1728981AbgAaOAn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 31 Jan 2020 09:00:43 -0500
+Received: from fllv0016.ext.ti.com ([198.47.19.142]:45956 "EHLO
+        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728686AbgAaOAm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 31 Jan 2020 08:59:35 -0500
+        Fri, 31 Jan 2020 09:00:42 -0500
 Received: from lelv0266.itg.ti.com ([10.180.67.225])
-        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 00VDxHZ3022821;
-        Fri, 31 Jan 2020 07:59:17 -0600
+        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 00VDxYt3123047;
+        Fri, 31 Jan 2020 07:59:34 -0600
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1580479157;
-        bh=5lxWpBZ6G8w1tWs1wN9YxQXc/V6PgNi2wuwT6eWlKGQ=;
+        s=ti-com-17Q1; t=1580479174;
+        bh=FZkmyQeJn+oLDzNu06HRcH5Nr4tmBi5aWzdR9kdWsAU=;
         h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=nDv9VPoNMvUFQB/fhBlINJPFughuTy4qLXzRoy8NKPu5AHZmq9CW/ikGcRnKtAX6i
-         +G6WJny+pq7aAR2+pBFgSfN4kfGa5afgJETWWcAWgvIOyEow8EsOOJlBSTZTS1iaWy
-         J4cdoC0r1cuxU+OjptsIcZse+VjVOowd+if2GX04=
-Received: from DLEE109.ent.ti.com (dlee109.ent.ti.com [157.170.170.41])
-        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 00VDxHMY041900
+        b=ddyok1uQqwJvlnHbdjPnnY4L7hAdtfNvUfOpFkLhJmTQyKXc1NUToORqWsWzp7BJQ
+         61RCP2plo2QNHsyo09qXSIh/l1Vo9jrVWRPReeiGTtni2yrgB82kjRslgeCpwWUxn1
+         d/7VBBdNKXEE0peZTyARw8BGgsb++2sOeUBlugHU=
+Received: from DFLE114.ent.ti.com (dfle114.ent.ti.com [10.64.6.35])
+        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 00VDxYfl042094
         (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Fri, 31 Jan 2020 07:59:17 -0600
-Received: from DLEE109.ent.ti.com (157.170.170.41) by DLEE109.ent.ti.com
- (157.170.170.41) with Microsoft SMTP Server (version=TLS1_2,
+        Fri, 31 Jan 2020 07:59:34 -0600
+Received: from DFLE106.ent.ti.com (10.64.6.27) by DFLE114.ent.ti.com
+ (10.64.6.35) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Fri, 31
- Jan 2020 07:59:17 -0600
-Received: from lelv0327.itg.ti.com (10.180.67.183) by DLEE109.ent.ti.com
- (157.170.170.41) with Microsoft SMTP Server (version=TLS1_2,
+ Jan 2020 07:59:34 -0600
+Received: from lelv0327.itg.ti.com (10.180.67.183) by DFLE106.ent.ti.com
+ (10.64.6.27) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
- Frontend Transport; Fri, 31 Jan 2020 07:59:17 -0600
+ Frontend Transport; Fri, 31 Jan 2020 07:59:34 -0600
 Received: from [192.168.2.6] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by lelv0327.itg.ti.com (8.15.2/8.15.2) with ESMTP id 00VDxEIn021608;
-        Fri, 31 Jan 2020 07:59:15 -0600
+        by lelv0327.itg.ti.com (8.15.2/8.15.2) with ESMTP id 00VDxWsV022023;
+        Fri, 31 Jan 2020 07:59:32 -0600
 Subject: Re: [PoC] arm: dma-mapping: direct: Apply dma_pfn_offset only when it
  is valid
 To:     Christoph Hellwig <hch@lst.de>
@@ -53,8 +53,8 @@ References: <8eb68140-97b2-62ce-3e06-3761984aa5b1@ti.com>
  <75843c71-1718-8d61-5e3d-edba6e1b10bd@ti.com> <20200130075332.GA30735@lst.de>
  <b2b1cb21-3aae-2181-fd79-f63701f283c0@ti.com> <20200130164010.GA6472@lst.de>
 From:   Peter Ujfalusi <peter.ujfalusi@ti.com>
-Message-ID: <54af6531-705f-a31c-c5b8-479261a5454e@ti.com>
-Date:   Fri, 31 Jan 2020 16:00:03 +0200
+Message-ID: <c37b12e4-0e0c-afa2-a8e4-782ccd57542d@ti.com>
+Date:   Fri, 31 Jan 2020 16:00:20 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.9.0
 MIME-Version: 1.0
@@ -163,7 +163,7 @@ in case of LPAE && dma_pfn_offset != 0
 Fwiw:
 Tested-by: Peter Ujfalusi <peter.ujfalusi@ti.com>
 
-Would you be comfortable to send apply this patch to mainline with
+Would you be comfortable to send this patch for mainline with
 Fixes: ad3c7b18c5b3 ("arm: use swiotlb for bounce buffering on LPAE
 configs")
 
