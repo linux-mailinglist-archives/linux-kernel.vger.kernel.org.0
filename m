@@ -2,52 +2,49 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 271C114F2D1
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Jan 2020 20:35:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A832B14F2D0
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Jan 2020 20:35:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727412AbgAaTfX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 31 Jan 2020 14:35:23 -0500
-Received: from mail.kernel.org ([198.145.29.99]:55514 "EHLO mail.kernel.org"
+        id S1726330AbgAaTfU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 31 Jan 2020 14:35:20 -0500
+Received: from mail.kernel.org ([198.145.29.99]:55530 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727379AbgAaTfQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 31 Jan 2020 14:35:16 -0500
-Subject: Re: [GIT PULL] ARC updates for 5.6-rc1
+        id S1726593AbgAaTfS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 31 Jan 2020 14:35:18 -0500
+Subject: Re: [GIT PULL] MIPS changes
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1580499316;
-        bh=IUMbiycIe1bt0rX1nc5L5vMe8l9p7Q4JvNaX6pAiDyc=;
+        s=default; t=1580499317;
+        bh=4mgYS0AdpRA7BOUvrgkicXbBKz0g9VpGUzSaXTafwHg=;
         h=From:In-Reply-To:References:Date:To:Cc:From;
-        b=HaGm7W2VBveiKRW9vCudVOvyVIpSHtI79LARltdq3D+bcbxV92qUNh0IqRyD2go5o
-         24cKK9HnfNl8cUMdQT+gRh/aDZlWEb015z+S7AxZWiJggcetVCn3vFlasFHGoOiNBo
-         G8S3E6xA5uxRPCDD0bsP5O+fcE2fjWrmn2yDcb7w=
+        b=byOPl4TzXyxzVIi/QLpR45/QfUTgebz7XIg0tXaBvmM1Xg5zvCsCRmqib/IWiU2TD
+         za4wxi2IUZsxXpeGwFD0Fvl446leYx2B5gca45RkKfgZexCVTqHetCLOSSxj9kgqVQ
+         JcWPxbfgEP4fymswVthIaK2sJDiU6oFk/bUyu4w0=
 From:   pr-tracker-bot@kernel.org
-In-Reply-To: <d709d1dc-69e8-3fcd-f790-8699ca6a4e04@synopsys.com>
-References: <d709d1dc-69e8-3fcd-f790-8699ca6a4e04@synopsys.com>
+In-Reply-To: <20200131175528.m7t6bpd74cuknyht@pburton-laptop>
+References: <20200131175528.m7t6bpd74cuknyht@pburton-laptop>
 X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <d709d1dc-69e8-3fcd-f790-8699ca6a4e04@synopsys.com>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/vgupta/arc.git/
- tags/arc-5.6-rc1
-X-PR-Tracked-Commit-Id: f45ba2bd6da0dc8000aa7ea7a3858fb51608f766
+X-PR-Tracked-Message-Id: <20200131175528.m7t6bpd74cuknyht@pburton-laptop>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/mips/linux.git tags/mips_5.6
+X-PR-Tracked-Commit-Id: 2c4288719806ca0b3de1b742ada26b25a60d6a45
 X-PR-Merge-Tree: torvalds/linux.git
 X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: b7e573bb4a7a511741f8942b1fb03cfe602ee57f
-Message-Id: <158049931650.14867.17056834872077409001.pr-tracker-bot@kernel.org>
-Date:   Fri, 31 Jan 2020 19:35:16 +0000
-To:     Vineet Gupta <Vineet.Gupta1@synopsys.com>
+X-PR-Merge-Commit-Id: c5951e7c8ee5cb04b8b41c32bf567b90117a2124
+Message-Id: <158049931780.14867.13739565161470599168.pr-tracker-bot@kernel.org>
+Date:   Fri, 31 Jan 2020 19:35:17 +0000
+To:     Paul Burton <paulburton@kernel.org>
 Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        arcml <linux-snps-arc@lists.infradead.org>,
-        lkml <linux-kernel@vger.kernel.org>,
-        Jose Abreu <Jose.Abreu@synopsys.com>
+        linux-kernel@vger.kernel.org, linux-mips@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The pull request you sent on Fri, 31 Jan 2020 17:43:34 +0000:
+The pull request you sent on Fri, 31 Jan 2020 09:55:28 -0800:
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/vgupta/arc.git/ tags/arc-5.6-rc1
+> git://git.kernel.org/pub/scm/linux/kernel/git/mips/linux.git tags/mips_5.6
 
 has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/b7e573bb4a7a511741f8942b1fb03cfe602ee57f
+https://git.kernel.org/torvalds/c/c5951e7c8ee5cb04b8b41c32bf567b90117a2124
 
 Thank you!
 
