@@ -2,347 +2,119 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3EA8314E9CF
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Jan 2020 09:49:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C457214E99C
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Jan 2020 09:37:57 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728227AbgAaItf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 31 Jan 2020 03:49:35 -0500
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:40675 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728141AbgAaItf (ORCPT
+        id S1728187AbgAaIh4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 31 Jan 2020 03:37:56 -0500
+Received: from mx07-00178001.pphosted.com ([62.209.51.94]:36350 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728099AbgAaIh4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 31 Jan 2020 03:49:35 -0500
-Received: by mail-wm1-f68.google.com with SMTP id t14so7717026wmi.5;
-        Fri, 31 Jan 2020 00:49:33 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=nJoqLaePKcCUGwfhd41k13iRET9Ek7BaOdvQo7mN8Ps=;
-        b=IcRAW+LSEmHweQ3aRbMzLei6CdedLeylkFxdgCgVUTU2dX6IdVB1XdemSt69k5oSO0
-         W/gIm0Xs8hx3tDrc4KezEeljqpfNsUCsIq38Nz0UTTs1rCpSD0yz8IWTkr6ybdSpxOqf
-         kraJJH6MOVVubGGsZx5bpunI71fn8E9tnKu9d9lG7F23aKueZS3XYb0cqVi0yPLRNRiE
-         oILrPNM4GS4UVhJiwmwWsV409Vs7TSe+BrQlD3lLuhqLUngJPSv9at+dl0YTe6eqhYvN
-         9DsL7j7lbG6GiR+8qAztMzUjt8tHuDJi0lyo79SoLknCY5Gk4AK7gGsdhsQNe9+H9yLp
-         4d2A==
-X-Gm-Message-State: APjAAAUbU4M08DuKWBW4TDfpBNhqCB+q+TtukUbJoilNhfCJBzeCHAzi
-        fgBSrbPzHtxqW/mVOWwshix/SIKgGdk=
-X-Google-Smtp-Source: APXvYqyZVj7slcwPtHcnqag4Jlh4RMqtDAtGhogi6xVjSWfKoqKQcgrOfykWdsX8Nnx6ZecuKmoCqw==
-X-Received: by 2002:a05:600c:2942:: with SMTP id n2mr10409759wmd.87.1580460122231;
-        Fri, 31 Jan 2020 00:42:02 -0800 (PST)
-Received: from 1aq-andre.garage.tyco.com ([77.107.218.170])
-        by smtp.gmail.com with ESMTPSA id x7sm11034302wrq.41.2020.01.31.00.42.01
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 31 Jan 2020 00:42:01 -0800 (PST)
-From:   =?UTF-8?q?Andr=C3=A9=20Draszik?= <git@andred.net>
-To:     linux-kernel@vger.kernel.org
-Cc:     =?UTF-8?q?Andr=C3=A9=20Draszik?= <git@andred.net>,
-        Ilya Ledvich <ilya@compulab.co.il>,
-        Igor Grinberg <grinberg@compulab.co.il>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: [PATCH v3 12/12] ARM: dts: imx7d: sbc-iot-imx7: add basic board support
-Date:   Fri, 31 Jan 2020 08:36:38 +0000
-Message-Id: <20200131083638.6118-12-git@andred.net>
-X-Mailer: git-send-email 2.23.0.rc1
-In-Reply-To: <20200131083638.6118-1-git@andred.net>
-References: <20200131083638.6118-1-git@andred.net>
+        Fri, 31 Jan 2020 03:37:56 -0500
+Received: from pps.filterd (m0046668.ppops.net [127.0.0.1])
+        by mx07-00178001.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 00V8WWYv021065;
+        Fri, 31 Jan 2020 09:37:35 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=st.com; h=from : to : subject :
+ date : message-id : references : in-reply-to : content-type : content-id :
+ content-transfer-encoding : mime-version; s=STMicroelectronics;
+ bh=RvByVWKDnR1khDO+OZk/bWtvJxxsg3zo5oWTGlVFTCI=;
+ b=cW7pJggbx3yrKAIItVkeJdJz8XFnekW5VBKJ9+R15zPyciyniAlMLSVdQRu/O5Orr219
+ PyXaMkzgz7N0xEON0xL6FkfbNArnfv0lm3+kBIxEo4FRQvEdCcJqibbjE6/JmFS5eH96
+ DDw5g6wKxrryDoLCklMK1UIG8HMRBWXwSOv0OJ3V/n81YSTFERFSTZ84KkkrvlXysKGq
+ xv0/fU2qMMYE+kkQ+6SMkT5zAzlfjXnEgzOMsnFQLQOhEy+m/626IeY/wChEIwxLRMl+
+ 8d3mCNttMM79G87ZeevoOkNeNZoVzv+QNuva2+PwX3WRjY8MI6xOmBqaKsgNxr9s9VjM RQ== 
+Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
+        by mx07-00178001.pphosted.com with ESMTP id 2xrc13mmns-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 31 Jan 2020 09:37:35 +0100
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 4450910003B;
+        Fri, 31 Jan 2020 09:37:28 +0100 (CET)
+Received: from Webmail-eu.st.com (sfhdag7node3.st.com [10.75.127.21])
+        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 03CB921FEBF;
+        Fri, 31 Jan 2020 09:37:28 +0100 (CET)
+Received: from SFHDAG3NODE3.st.com (10.75.127.9) by SFHDAG7NODE3.st.com
+ (10.75.127.21) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Fri, 31 Jan
+ 2020 09:37:27 +0100
+Received: from SFHDAG3NODE3.st.com ([fe80::3507:b372:7648:476]) by
+ SFHDAG3NODE3.st.com ([fe80::3507:b372:7648:476%20]) with mapi id
+ 15.00.1347.000; Fri, 31 Jan 2020 09:37:27 +0100
+From:   Benjamin GAIGNARD <benjamin.gaignard@st.com>
+To:     Greg KH <gregkh@linuxfoundation.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        "robh@kernel.org" <robh@kernel.org>,
+        "Loic PALLARDY" <loic.pallardy@st.com>,
+        "arnd@arndb.de" <arnd@arndb.de>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "system-dt@lists.openampproject.org" 
+        <system-dt@lists.openampproject.org>,
+        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "lkml@metux.net" <lkml@metux.net>,
+        "linux-imx@nxp.com" <linux-imx@nxp.com>,
+        "kernel@pengutronix.de" <kernel@pengutronix.de>,
+        "sudeep.holla@arm.com" <sudeep.holla@arm.com>,
+        "fabio.estevam@nxp.com" <fabio.estevam@nxp.com>,
+        "stefano.stabellini@xilinx.com" <stefano.stabellini@xilinx.com>,
+        "shawnguo@kernel.org" <shawnguo@kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCH v2 2/7] bus: Introduce firewall controller framework
+Thread-Topic: [PATCH v2 2/7] bus: Introduce firewall controller framework
+Thread-Index: AQHV1fD3WqS5xyjWNkazyajQl95bjqgAKU6AgAANnwCAAARlAIAAO2IAgADdioCAAALMAIAAF6SAgAL4AQA=
+Date:   Fri, 31 Jan 2020 08:37:27 +0000
+Message-ID: <0b109c05-24cf-a1c4-6072-9af8a61f45b2@st.com>
+References: <20200128153806.7780-1-benjamin.gaignard@st.com>
+ <20200128153806.7780-3-benjamin.gaignard@st.com>
+ <20200128155243.GC3438643@kroah.com>
+ <0dd9dc95-1329-0ad4-d03d-99899ea4f574@st.com>
+ <20200128165712.GA3667596@kroah.com>
+ <62b38576-0e1a-e30e-a954-a8b6a7d8d897@st.com>
+ <CACRpkdY427EzpAt7f5wwqHpRS_SHM8Fvm+cFrwY8op0E_J+D9Q@mail.gmail.com>
+ <20200129095240.GA3852081@kroah.com> <20200129111717.GA3928@sirena.org.uk>
+In-Reply-To: <20200129111717.GA3928@sirena.org.uk>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+user-agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
+x-ms-exchange-messagesentrepresentingtype: 1
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.75.127.51]
+Content-Type: text/plain; charset="Windows-1252"
+Content-ID: <638172DDBE744F46AA57A5E08293B1A9@st.com>
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.572
+ definitions=2020-01-31_02:2020-01-30,2020-01-31 signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This is a forward-port of Compulab's downstream commit
-against linux 4.9.11, including updates to work with
-more recent kernels.
 
-Original commit message:
-    The SB-IOT-iMX7 base board together with CL-SOM-iMX7
-    SoM forms SBC-IOT-iMX7 single board computer.
-    SBC-IOT-iMX7 is a single board computer optimized for
-    industrial control and monitoring, extensive wireless
-    and wired connectivity, ideal solution for
-    cost-sensitive systems. It is based on the Freescale
-    i.MX7 system-on-chip. SBC-IOT-iMX7 is implemented with
-    the CL-SOM-iMX7 System-on-Module providing most of the
-    functions,and SB-IOT-iMX7 carrier board providing
-    additional peripheral functions and connectors.
+On 1/29/20 12:17 PM, Mark Brown wrote:
+> On Wed, Jan 29, 2020 at 10:52:40AM +0100, Greg KH wrote:
+>
+>> It just needs to be part of the bus logic for the specific bus that this
+>> "firewall" is on.  Just like we do the same thing for USB or thunderbolt
+>> devices.  Put this in the bus-specific code please.
+> I'd expect that this is going to affect at least platform and AMBA
+> buses.
 
-    https://www.compulab.com/products/computer-on-modules/cl-som-imx7-freescale-i-mx-7-system-on-module/
-    https://www.compulab.com/products/sbcs/sbc-iot-imx7-nxp-i-mx-7-internet-of-things-single-board-computer/
+Correct me if I'm wrong but creating a new type of bus would mean
 
-This commit adds basic board support, including:
-* SD-card (note that write-protect is not connected
-  on this carrier board)
-* SPI (available on expansion header)
-* i2c3 & i2c4 (including bus recovery information)
-* additional UARTs
-* all USB ports
-* SNVS powerkey
+that all the drivers living on this bus must be changed to register=20
+themselves on this bus ?
 
-Compared to the downtream commit, this commit doesn't
-add / enable the PCIe and LCD interface, as PCIe
-support needs an additional patch to the PCI controller
-first, and I can't test the LCD.
+Or does a solution exist to let them live on the platform bus and call=20
+firewalled bus before been probed ?
 
-Signed-off-by: André Draszik <git@andred.net>
-Cc: Ilya Ledvich <ilya@compulab.co.il>
-Cc: Igor Grinberg <grinberg@compulab.co.il>
-Cc: Rob Herring <robh+dt@kernel.org>
-Cc: Mark Rutland <mark.rutland@arm.com>
-Cc: Shawn Guo <shawnguo@kernel.org>
-Cc: Sascha Hauer <s.hauer@pengutronix.de>
-Cc: Pengutronix Kernel Team <kernel@pengutronix.de>
-Cc: Fabio Estevam <festevam@gmail.com>
-Cc: NXP Linux Team <linux-imx@nxp.com>
-Cc: devicetree@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org
+All the impacted drivers could work on the existing bus with or without=20
+the firewall so I don't want to break
 
----
-v3:
-* enable snvs_pwrkey node
+that.
 
-v2:
-* use standard uart-has-rtscts instead of fsl,uart-has-rtscts
-
-ARM: dts: imx7d: sbc-iot-imx7: has a power key
-
-Signed-off-by: André Draszik <git@andred.net>
----
- arch/arm/boot/dts/Makefile               |   1 +
- arch/arm/boot/dts/imx7d-sbc-iot-imx7.dts | 202 +++++++++++++++++++++++
- 2 files changed, 203 insertions(+)
- create mode 100644 arch/arm/boot/dts/imx7d-sbc-iot-imx7.dts
-
-diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
-index 08011dc8c7a6..6efbfa613366 100644
---- a/arch/arm/boot/dts/Makefile
-+++ b/arch/arm/boot/dts/Makefile
-@@ -603,6 +603,7 @@ dtb-$(CONFIG_SOC_IMX7D) += \
- 	imx7d-pico-hobbit.dtb \
- 	imx7d-pico-pi.dtb \
- 	imx7d-sbc-imx7.dtb \
-+	imx7d-sbc-iot-imx7.dtb \
- 	imx7d-sdb.dtb \
- 	imx7d-sdb-reva.dtb \
- 	imx7d-sdb-sht11.dtb \
-diff --git a/arch/arm/boot/dts/imx7d-sbc-iot-imx7.dts b/arch/arm/boot/dts/imx7d-sbc-iot-imx7.dts
-new file mode 100644
-index 000000000000..4ffa67f2e530
---- /dev/null
-+++ b/arch/arm/boot/dts/imx7d-sbc-iot-imx7.dts
-@@ -0,0 +1,202 @@
-+// SPDX-License-Identifier: GPL-2.0+ OR MIT
-+//
-+// Copyright 2017 CompuLab Ltd. - http://www.compulab.co.il/
-+/*
-+ * Support for CompuLab SBC-IOT-iMX7 Single Board Computer
-+ */
-+
-+#include "imx7d-cl-som-imx7.dts"
-+
-+/ {
-+	model = "CompuLab,SBC-IOT-iMX7";
-+	compatible = "compulab,sbc-iot-imx7", "compulab,cl-som-imx7", "fsl,imx7d";
-+
-+	reg_usb_vbus: regulator-usb-vbus {
-+		compatible = "regulator-fixed";
-+		regulator-name = "usb_vbus";
-+		regulator-min-microvolt = <5000000>;
-+		regulator-max-microvolt = <5000000>;
-+		regulator-always-on;
-+	};
-+};
-+
-+&ecspi3 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pinctrl_ecspi3 &pinctrl_ecspi3_cs>;
-+	cs-gpios = <&gpio4 11 GPIO_ACTIVE_HIGH>;
-+	status = "okay";
-+};
-+
-+&i2c3 {
-+	clock-frequency = <100000>;
-+	pinctrl-names = "default", "gpio";
-+	pinctrl-0 = <&pinctrl_i2c3>;
-+	pinctrl-1 = <&pinctrl_i2c3_recovery>;
-+	sda-gpios = <&gpio1 9 GPIO_ACTIVE_HIGH>;
-+	scl-gpios = <&gpio1 8 (GPIO_ACTIVE_HIGH | GPIO_OPEN_DRAIN)>;
-+	status = "okay";
-+};
-+
-+&i2c4 {
-+	clock-frequency = <100000>;
-+	pinctrl-names = "default", "gpio";
-+	pinctrl-0 = <&pinctrl_i2c4>;
-+	pinctrl-1 = <&pinctrl_i2c4_recovery>;
-+	sda-gpios = <&gpio1 11 GPIO_ACTIVE_HIGH>;
-+	scl-gpios = <&gpio1 10 (GPIO_ACTIVE_HIGH | GPIO_OPEN_DRAIN)>;
-+	status = "okay";
-+
-+	eeprom_iot@54 {
-+		compatible = "atmel,24c08";
-+		reg = <0x54>;
-+		pagesize = <16>;
-+	};
-+};
-+
-+&snvs_pwrkey {
-+	status = "okay";
-+};
-+
-+&iomuxc {
-+	pinctrl-1 = <&pinctrl_xpen>;
-+
-+	/* SB-IOT-iMX7 Xpension Header P7 */
-+	pinctrl_xpen: xpengrp {
-+		fsl,pins = <
-+			MX7D_PAD_LCD_DATA13__GPIO3_IO18		0x34 /* P7-4 - gpio82 */
-+			MX7D_PAD_LCD_DATA12__GPIO3_IO17		0x34 /* P7-5 - gpio81 */
-+		>;
-+	};
-+
-+	pinctrl_ecspi3: ecspi3grp {
-+		fsl,pins = <
-+			MX7D_PAD_I2C1_SDA__ECSPI3_MOSI		0xf /* P7-7 */
-+			MX7D_PAD_I2C1_SCL__ECSPI3_MISO		0xf /* P7-8 */
-+			MX7D_PAD_I2C2_SCL__ECSPI3_SCLK		0xf /* P7-6 */
-+		>;
-+	};
-+
-+	pinctrl_ecspi3_cs: ecspi3_cs_grp {
-+		fsl,pins = <
-+			MX7D_PAD_I2C2_SDA__GPIO4_IO11		0x34 /* P7-9 */
-+		>;
-+	};
-+
-+	pinctrl_i2c3: i2c3grp {
-+		fsl,pins = <
-+			MX7D_PAD_GPIO1_IO09__I2C3_SDA		0x4000000f /* P7-3 */
-+			MX7D_PAD_GPIO1_IO08__I2C3_SCL		0x4000000f /* P7-2 */
-+		>;
-+	};
-+
-+	pinctrl_i2c3_recovery: i2c3recoverygrp {
-+		fsl,pins = <
-+			MX7D_PAD_GPIO1_IO09__GPIO1_IO9		0x4000000f /* P7-3 */
-+			MX7D_PAD_GPIO1_IO08__GPIO1_IO8		0x4000000f /* P7-2 */
-+		>;
-+	};
-+
-+	pinctrl_i2c4: i2c4grp {
-+		fsl,pins = <
-+			MX7D_PAD_GPIO1_IO11__I2C4_SDA		0x4000000f
-+			MX7D_PAD_GPIO1_IO10__I2C4_SCL		0x4000000f
-+		>;
-+	};
-+
-+	pinctrl_i2c4_recovery: i2c4recoverygrp {
-+		fsl,pins = <
-+			MX7D_PAD_GPIO1_IO11__GPIO1_IO11		0x4000000f
-+			MX7D_PAD_GPIO1_IO10__GPIO1_IO10		0x4000000f
-+		>;
-+	};
-+
-+	pinctrl_uart2: uart2grp {
-+		fsl,pins = <
-+			MX7D_PAD_LCD_ENABLE__UART2_DCE_TX	0x79 /* P7-12 */
-+			MX7D_PAD_LCD_CLK__UART2_DCE_RX		0x79 /* P7-13 */
-+			MX7D_PAD_LCD_VSYNC__UART2_DCE_CTS	0x79 /* P7-11 */
-+			MX7D_PAD_LCD_HSYNC__UART2_DCE_RTS	0x79 /* P7-10 */
-+		>;
-+	};
-+
-+	pinctrl_uart5: uart5grp {
-+		fsl,pins = <
-+			MX7D_PAD_I2C4_SDA__UART5_DCE_TX		0x79 /* RS232-TX */
-+			MX7D_PAD_I2C4_SCL__UART5_DCE_RX		0x79 /* RS232-RX */
-+			MX7D_PAD_I2C3_SDA__UART5_DCE_RTS	0x79 /* RS232-RTS */
-+			MX7D_PAD_I2C3_SCL__UART5_DCE_CTS	0x79 /* RS232-CTS */
-+		>;
-+	};
-+
-+	pinctrl_uart7: uart7grp {
-+		fsl,pins = <
-+			MX7D_PAD_ECSPI2_MOSI__UART7_DCE_TX	0x79 /* R485-TX */
-+			MX7D_PAD_ECSPI2_SCLK__UART7_DCE_RX	0x79 /* R485-RX */
-+			MX7D_PAD_ECSPI2_SS0__UART7_DCE_CTS	0x79 /* R485-CTS */
-+			MX7D_PAD_ECSPI2_MISO__UART7_DCE_RTS	0x79 /* R485-TTS */
-+		>;
-+	};
-+
-+	pinctrl_usdhc1: usdhc1grp {
-+		fsl,pins = <
-+			MX7D_PAD_SD1_CMD__SD1_CMD		0x59
-+			MX7D_PAD_SD1_CLK__SD1_CLK		0x19
-+			MX7D_PAD_SD1_DATA0__SD1_DATA0		0x59
-+			MX7D_PAD_SD1_DATA1__SD1_DATA1		0x59
-+			MX7D_PAD_SD1_DATA2__SD1_DATA2		0x59
-+			MX7D_PAD_SD1_DATA3__SD1_DATA3		0x59
-+			MX7D_PAD_SD1_CD_B__GPIO5_IO0		0x59 /* CD */
-+		>;
-+	};
-+};
-+
-+&uart2 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pinctrl_uart2>;
-+	assigned-clocks = <&clks IMX7D_UART2_ROOT_SRC>;
-+	assigned-clock-parents = <&clks IMX7D_OSC_24M_CLK>;
-+	uart-has-rtscts;
-+	status = "okay";
-+};
-+
-+&uart5 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pinctrl_uart5>;
-+	assigned-clocks = <&clks IMX7D_UART5_ROOT_SRC>;
-+	assigned-clock-parents = <&clks IMX7D_PLL_SYS_MAIN_240M_CLK>;
-+	uart-has-rtscts;
-+	status = "okay";
-+};
-+
-+&uart7 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pinctrl_uart7>;
-+	assigned-clocks = <&clks IMX7D_UART7_ROOT_SRC>;
-+	assigned-clock-parents = <&clks IMX7D_PLL_SYS_MAIN_240M_CLK>;
-+	uart-has-rtscts;
-+	status = "okay";
-+};
-+
-+&usbotg1 {
-+	vbus-supply = <&reg_usb_vbus>;
-+	status = "okay";
-+};
-+
-+&usbotg2 {
-+	dr_mode = "host";
-+	vbus-supply = <&reg_usb_vbus>;
-+	status = "okay";
-+};
-+
-+&usbh {
-+	vbus-supply = <&reg_usb_vbus>;
-+	status = "okay";
-+};
-+
-+&usdhc1 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pinctrl_usdhc1>;
-+	cd-gpios = <&gpio5 0 GPIO_ACTIVE_LOW>;
-+	wakeup-source;
-+	status = "okay";
-+};
--- 
-2.23.0.rc1
-
+Benjamin
