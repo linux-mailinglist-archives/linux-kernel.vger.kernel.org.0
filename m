@@ -2,131 +2,139 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2064E14F06D
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Jan 2020 17:09:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1DE0F14F079
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Jan 2020 17:12:30 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729324AbgAaQJE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 31 Jan 2020 11:09:04 -0500
-Received: from forwardcorp1p.mail.yandex.net ([77.88.29.217]:35184 "EHLO
-        forwardcorp1p.mail.yandex.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1729138AbgAaQJD (ORCPT
+        id S1729282AbgAaQMY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 31 Jan 2020 11:12:24 -0500
+Received: from smtp-fw-6002.amazon.com ([52.95.49.90]:54212 "EHLO
+        smtp-fw-6002.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729162AbgAaQMX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 31 Jan 2020 11:09:03 -0500
-Received: from mxbackcorp1g.mail.yandex.net (mxbackcorp1g.mail.yandex.net [IPv6:2a02:6b8:0:1402::301])
-        by forwardcorp1p.mail.yandex.net (Yandex) with ESMTP id D0ED82E0DE7;
-        Fri, 31 Jan 2020 19:08:59 +0300 (MSK)
-Received: from myt4-18a966dbd9be.qloud-c.yandex.net (myt4-18a966dbd9be.qloud-c.yandex.net [2a02:6b8:c00:12ad:0:640:18a9:66db])
-        by mxbackcorp1g.mail.yandex.net (mxbackcorp/Yandex) with ESMTP id DeVJb1ljZs-8x3iNtbA;
-        Fri, 31 Jan 2020 19:08:59 +0300
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yandex-team.ru; s=default;
-        t=1580486939; bh=1aXLT5+SB/bptNKZjWrCoUNjRiU5JKNMQljh6/ZDiZg=;
-        h=Message-ID:Date:To:From:Subject;
-        b=j0zR+NYAvo8uz4XMmqY24v0RRVslqWZ9uba/9qhqxtGnZcfCmW/l25rCkW2iYQPRx
-         0D2m7vi7eaZm9mc849fbP4vxqjZ0xjiVKQOe364wUbCF5hRIXmKzxa7lKKWHvcKPBe
-         WXenWty/RcXii9IqV7gEKV5u7e0r0Ox/PxKLRYag=
-Authentication-Results: mxbackcorp1g.mail.yandex.net; dkim=pass header.i=@yandex-team.ru
-Received: from dynamic-red.dhcp.yndx.net (dynamic-red.dhcp.yndx.net [2a02:6b8:0:40c:8448:fbcc:1dac:c863])
-        by myt4-18a966dbd9be.qloud-c.yandex.net (smtpcorp/Yandex) with ESMTPSA id H9uLvClZpc-8xXCGoQc;
-        Fri, 31 Jan 2020 19:08:59 +0300
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (Client certificate not present)
-Subject: [PATCH] clocksource: fix double add_timer_on() for watchdog_timer
-From:   Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
-To:     Stephen Boyd <sboyd@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        John Stultz <john.stultz@linaro.org>,
-        linux-kernel@vger.kernel.org
-Date:   Fri, 31 Jan 2020 19:08:59 +0300
-Message-ID: <158048693917.4378.13823603769948933793.stgit@buzz>
-User-Agent: StGit/0.17.1-dirty
+        Fri, 31 Jan 2020 11:12:23 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
+  t=1580487143; x=1612023143;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   mime-version;
+  bh=haMvOsyZc78AVx3AOqC58ELvTFvW3Ug/nhb6F0XmDZ8=;
+  b=OBjuH0leZzo9+07WS9tfrKtYa+MIC3IXoToIKQCG27laXRAnSXndDSeJ
+   JZhZJ/fYkuTEE5339sHr5rwLbuPMGb6YSQnsXMcmMLgrqByVwWOyKmqbc
+   LqFBDpuVjLdU5AHI/xqpvQQCnmSdD+Vnh8guZUEyqlMEHBSdS3S5mocic
+   w=;
+IronPort-SDR: vyo7DKfoJqzBftCArd4OozalyrQLXy5tcIabPnObduFsX93IRKN3fwCGMyGMiYp2as5jzCLpZc
+ NfqLafiDGrIA==
+X-IronPort-AV: E=Sophos;i="5.70,386,1574121600"; 
+   d="scan'208";a="14203199"
+Received: from iad12-co-svc-p1-lb1-vlan3.amazon.com (HELO email-inbound-relay-2a-69849ee2.us-west-2.amazon.com) ([10.43.8.6])
+  by smtp-border-fw-out-6002.iad6.amazon.com with ESMTP; 31 Jan 2020 16:12:20 +0000
+Received: from EX13MTAUEA002.ant.amazon.com (pdx4-ws-svc-p6-lb7-vlan2.pdx.amazon.com [10.170.41.162])
+        by email-inbound-relay-2a-69849ee2.us-west-2.amazon.com (Postfix) with ESMTPS id BB43AA2303;
+        Fri, 31 Jan 2020 16:12:19 +0000 (UTC)
+Received: from EX13D31EUA001.ant.amazon.com (10.43.165.15) by
+ EX13MTAUEA002.ant.amazon.com (10.43.61.77) with Microsoft SMTP Server (TLS)
+ id 15.0.1236.3; Fri, 31 Jan 2020 16:12:19 +0000
+Received: from u886c93fd17d25d.ant.amazon.com (10.43.162.249) by
+ EX13D31EUA001.ant.amazon.com (10.43.165.15) with Microsoft SMTP Server (TLS)
+ id 15.0.1367.3; Fri, 31 Jan 2020 16:12:14 +0000
+From:   <sjpark@amazon.com>
+To:     Eric Dumazet <edumazet@google.com>
+CC:     <sjpark@amazon.com>, David Miller <davem@davemloft.net>,
+        Shuah Khan <shuah@kernel.org>, netdev <netdev@vger.kernel.org>,
+        "open list:KERNEL SELFTEST FRAMEWORK" 
+        <linux-kselftest@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>, <sj38.park@gmail.com>,
+        <aams@amazon.com>, SeongJae Park <sjpark@amazon.de>
+Subject: Re: Re: [PATCH 2/3] tcp: Reduce SYN resend delay if a suspicous ACK is received
+Date:   Fri, 31 Jan 2020 17:12:00 +0100
+Message-ID: <20200131161200.8852-1-sjpark@amazon.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <CANn89i+rKfAhUjYLoEhyYj8OsRBtHC+ukPcE6CuTAJjb183GRQ@mail.gmail.com> (raw)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
+X-Originating-IP: [10.43.162.249]
+X-ClientProxiedBy: EX13D03UWC003.ant.amazon.com (10.43.162.79) To
+ EX13D31EUA001.ant.amazon.com (10.43.165.15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-I've got couple reports about kernel 4.19 crashes inside QEMU/KVM:
+On Fri, 31 Jan 2020 07:01:21 -0800 Eric Dumazet <edumazet@google.com> wrote:
 
-kernel BUG at kernel/time/timer.c:1154!
-BUG_ON(timer_pending(timer) || !timer->function) in add_timer_on().
+> On Fri, Jan 31, 2020 at 4:25 AM <sjpark@amazon.com> wrote:
+> 
+> > Signed-off-by: SeongJae Park <sjpark@amazon.de>
+> > ---
+> >  net/ipv4/tcp_input.c | 6 +++++-
+> >  1 file changed, 5 insertions(+), 1 deletion(-)
+> >
+> > diff --git a/net/ipv4/tcp_input.c b/net/ipv4/tcp_input.c
+> > index 2a976f57f7e7..b168e29e1ad1 100644
+> > --- a/net/ipv4/tcp_input.c
+> > +++ b/net/ipv4/tcp_input.c
+> > @@ -5893,8 +5893,12 @@ static int tcp_rcv_synsent_state_process(struct sock *sk, struct sk_buff *skb,
+> >                  *        the segment and return)"
+> >                  */
+> >                 if (!after(TCP_SKB_CB(skb)->ack_seq, tp->snd_una) ||
+> > -                   after(TCP_SKB_CB(skb)->ack_seq, tp->snd_nxt))
+> > +                   after(TCP_SKB_CB(skb)->ack_seq, tp->snd_nxt)) {
+> > +                       /* Previous FIN/ACK or RST/ACK might be ignore. */
+> > +                       inet_csk_reset_xmit_timer(sk, ICSK_TIME_RETRANS,
+> > +                                                 TCP_ATO_MIN, TCP_RTO_MAX);
+> 
+> This is not what I suggested.
+> 
+> I suggested implementing a strategy where only the _first_ retransmit
+> would be done earlier.
+> 
+> So you need to look at the current counter of retransmit attempts,
+> then reset the timer if this SYN_SENT
+> socket never resent a SYN.
+> 
+> We do not want to trigger packet storms, if for some reason the remote
+> peer constantly sends
+> us the same packet.
 
-At the same time another cpu got:
-general protection fault: 0000 [#1] SMP PTI
-of poinson pointer 0xdead000000000200 in:
+You're right, I missed the important point, thank you for pointing it.  Among
+retransmission related fields of 'tcp_sock', I think '->total_retrans' would
+fit for this check.  How about below change?
 
-__hlist_del at include/linux/list.h:681
-(inlined by) detach_timer at kernel/time/timer.c:818
-(inlined by) expire_timers at kernel/time/timer.c:1355
-(inlined by) __run_timers at kernel/time/timer.c:1686
-(inlined by) run_timer_softirq at kernel/time/timer.c:1699
+```
+diff --git a/net/ipv4/tcp_input.c b/net/ipv4/tcp_input.c
+index 2a976f57f7e7..29fc0e4da931 100644
+--- a/net/ipv4/tcp_input.c
++++ b/net/ipv4/tcp_input.c
+@@ -5893,8 +5893,14 @@ static int tcp_rcv_synsent_state_process(struct sock *sk, struct sk_buff *skb,
+                 *        the segment and return)"
+                 */
+                if (!after(TCP_SKB_CB(skb)->ack_seq, tp->snd_una) ||
+-                   after(TCP_SKB_CB(skb)->ack_seq, tp->snd_nxt))
++                   after(TCP_SKB_CB(skb)->ack_seq, tp->snd_nxt)) {
++                       /* Previous FIN/ACK or RST/ACK might be ignored. */
++                       if (tp->total_retrans == 0)
++                               inet_csk_reset_xmit_timer(sk,
++                                               ICSK_TIME_RETRANS, TCP_ATO_MIN,
++                                               TCP_RTO_MAX);
+                        goto reset_and_undo;
++               }
 
-Unfortunately kernel logs are badly scrambled, stacktraces are lost.
+                if (tp->rx_opt.saw_tstamp && tp->rx_opt.rcv_tsecr &&
+                    !between(tp->rx_opt.rcv_tsecr, tp->retrans_stamp,
+```
 
-Printing timer->function before BUG_ON pointed to clocksource_watchdog().
+Thanks,
+SeongJae Park
 
-It looks execution of clocksource_watchdog() theoretically could race with
-pair clocksource_stop_watchdog() .. clocksource_start_watchdog():
-
-expire_timers()
- detach_timer(timer, true);
-  timer->entry.pprev = NULL;
- raw_spin_unlock_irq(&base->lock);
- call_timer_fn
-  clocksource_watchdog()
-
-					clocksource_watchdog_kthread() or
-					clocksource_unbind()
-
-					spin_lock_irqsave(&watchdog_lock, flags);
-					clocksource_stop_watchdog();
-					 del_timer(&watchdog_timer);
-					 watchdog_running = 0;
-					spin_unlock_irqrestore(&watchdog_lock, flags);
-
-					spin_lock_irqsave(&watchdog_lock, flags);
-					clocksource_start_watchdog();
-					 add_timer_on(&watchdog_timer, ...);
-					 watchdog_running = 1;
-					spin_unlock_irqrestore(&watchdog_lock, flags);
-
-  spin_lock(&watchdog_lock);
-  add_timer_on(&watchdog_timer, ...);
-   BUG_ON(timer_pending(timer) || !timer->function);
-    timer_pending() -> true
-    BUG()
-
-I.e. inside clocksource_watchdog() watchdog_timer could be already armed.
-
-This patch simply checks timer_pending() before calling add_timer_on().
-All operations are synchronized by watchdog_lock.
-
-Signed-off-by: Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
----
- kernel/time/clocksource.c |   11 +++++++++--
- 1 file changed, 9 insertions(+), 2 deletions(-)
-
-diff --git a/kernel/time/clocksource.c b/kernel/time/clocksource.c
-index fff5f64981c6..428beb69426a 100644
---- a/kernel/time/clocksource.c
-+++ b/kernel/time/clocksource.c
-@@ -293,8 +293,15 @@ static void clocksource_watchdog(struct timer_list *unused)
- 	next_cpu = cpumask_next(raw_smp_processor_id(), cpu_online_mask);
- 	if (next_cpu >= nr_cpu_ids)
- 		next_cpu = cpumask_first(cpu_online_mask);
--	watchdog_timer.expires += WATCHDOG_INTERVAL;
--	add_timer_on(&watchdog_timer, next_cpu);
-+
-+	/*
-+	 * Arm timer if not already pending: could race with concurrent
-+	 * pair clocksource_stop_watchdog() clocksource_start_watchdog().
-+	 */
-+	if (!timer_pending(&watchdog_timer)) {
-+		watchdog_timer.expires += WATCHDOG_INTERVAL;
-+		add_timer_on(&watchdog_timer, next_cpu);
-+	}
- out:
- 	spin_unlock(&watchdog_lock);
- }
-
+> 
+> Thanks.
+> 
+> >                         goto reset_and_undo;
+> > +               }
+> >
+> >                 if (tp->rx_opt.saw_tstamp && tp->rx_opt.rcv_tsecr &&
+> >                     !between(tp->rx_opt.rcv_tsecr, tp->retrans_stamp,
+> > --
+> > 2.17.1
+> >
+> 
