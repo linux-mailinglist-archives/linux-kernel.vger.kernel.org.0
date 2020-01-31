@@ -2,202 +2,122 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A1E6714F436
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Jan 2020 22:55:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 58DEF14F43B
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Jan 2020 23:00:50 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726747AbgAaVzt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 31 Jan 2020 16:55:49 -0500
-Received: from mail.kernel.org ([198.145.29.99]:56212 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726138AbgAaVzr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 31 Jan 2020 16:55:47 -0500
-Received: from localhost.localdomain (c-98-220-238-81.hsd1.il.comcast.net [98.220.238.81])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B14A72464B;
-        Fri, 31 Jan 2020 21:55:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1580507746;
-        bh=52icI5wA+dx3epjTLo0tzUGFTDrGn7aMeyEMHANYtBA=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:In-Reply-To:
-         References:From;
-        b=JaEZ1eeOMdm/6wmhz6Le1l0QudbVT6rjPOK5oSZj8UBcLr/ISVt1WZX6VuwlcmcCh
-         vj9KJmzatx+ChWv0GdtRcc6DnrfBry6Q0UnkRE5a1C23KYPzGZHh6EsAFSSB52Eayk
-         J/rNLHJcEYubUFX1uCTtHkGoWiKFRXl1Q7C2YkoE=
-From:   Tom Zanussi <zanussi@kernel.org>
-To:     rostedt@goodmis.org
-Cc:     artem.bityutskiy@linux.intel.com, mhiramat@kernel.org,
-        linux-kernel@vger.kernel.org, linux-rt-users@vger.kernel.org
-Subject: [PATCH 4/4] tracing: Use seq_buf for building dynevent_cmd string
-Date:   Fri, 31 Jan 2020 15:55:34 -0600
-Message-Id: <eb8a6e835c964d0ab8a38cbf5ffa60746b54a465.1580506712.git.zanussi@kernel.org>
-X-Mailer: git-send-email 2.14.1
-In-Reply-To: <cover.1580506712.git.zanussi@kernel.org>
-References: <cover.1580506712.git.zanussi@kernel.org>
-In-Reply-To: <cover.1580506712.git.zanussi@kernel.org>
-References: <cover.1580506712.git.zanussi@kernel.org>
+        id S1726322AbgAaWAr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 31 Jan 2020 17:00:47 -0500
+Received: from mail-pl1-f194.google.com ([209.85.214.194]:37665 "EHLO
+        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726105AbgAaWAr (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 31 Jan 2020 17:00:47 -0500
+Received: by mail-pl1-f194.google.com with SMTP id c23so3284346plz.4
+        for <linux-kernel@vger.kernel.org>; Fri, 31 Jan 2020 14:00:45 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=b82MM5TsQ8A9XNdp0Y7iZIjPTfIvG0TXd9OXwa8Voa4=;
+        b=ln975L+nUDW8vHW1M3ExHfHLl4zJ6xQ7xAqDPH8kgpaC2M25g/M0mpJXtoR9nZ8+zX
+         fCKziGOUYvBuahWMFfMcvJFOCeQJEiH1U3THEAK/GpEkWuPqWgoraNYhdLCyxaDPJZk7
+         8hf9/Az5nYC2xFao/C79k4QgNJRVjrt4tf2rc=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=b82MM5TsQ8A9XNdp0Y7iZIjPTfIvG0TXd9OXwa8Voa4=;
+        b=WT/c8pQEugwQ7oeJ90YoNkg8OpWZKL/OfzcjPxb0cv6RTumPH3YpvP5tEB2eCtf4by
+         JiyqAZavASUJjXovVk5FmYHZ0KDAJ4gZQrzQSN1Spcr55ZaKEIZ4c9ngwyrGS+umVGT6
+         WO5ySz4hYaKvtOU3dxAgxBuLwSpkpi5pkMnRZyJ9TOWWUoXl+t1PJABmMUXoZYGaP1Ld
+         usDa/gst00lL5qdzBkv0qcD9Z64gOi+PD/CQ7qbG1xqyhe0WKxceAdEP1PsUDRSmREe4
+         6IXGHYA6US89oeqAS5d9TSKVRxAhFHPYOZwH9ofSNUzlAuarOv8DyBdc6Cs3YY+FYnNl
+         kxhQ==
+X-Gm-Message-State: APjAAAV3HUlVSjJTjpVAUGKNosL40XQRdFQtSrshdkTPrhBmt/zJMif/
+        nUTUtDb0UHEfOs1bjI5gU023YLZF70c=
+X-Google-Smtp-Source: APXvYqxJ4dABMrxvg8Mkn8WWBjXAgyn0FUDu4pBM/f8rqnl3BFmy/f1OIqxj6WnyNvD4RpAWCJnROA==
+X-Received: by 2002:a17:90a:36af:: with SMTP id t44mr14554287pjb.25.1580508045310;
+        Fri, 31 Jan 2020 14:00:45 -0800 (PST)
+Received: from localhost ([2620:15c:202:1:4fff:7a6b:a335:8fde])
+        by smtp.gmail.com with ESMTPSA id g2sm11436046pgn.59.2020.01.31.14.00.44
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 31 Jan 2020 14:00:44 -0800 (PST)
+Date:   Fri, 31 Jan 2020 14:00:43 -0800
+From:   Matthias Kaehlcke <mka@chromium.org>
+To:     Sharat Masetty <smasetty@codeaurora.org>
+Cc:     freedreno@lists.freedesktop.org, dri-devel@freedesktop.org,
+        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        will@kernel.org, robin.murphy@arm.com, joro@8bytes.org,
+        iommu@lists.linux-foundation.org, jcrouse@codeaurora.org,
+        saiprakash.ranjan@codeaurora.org
+Subject: Re: [PATCH v2 1/7] iommu/arm-smmu: Pass io_pgtable_cfg to impl
+ specific init_context
+Message-ID: <20200131220043.GN71044@google.com>
+References: <1577962933-13577-1-git-send-email-smasetty@codeaurora.org>
+ <1577962933-13577-2-git-send-email-smasetty@codeaurora.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <1577962933-13577-2-git-send-email-smasetty@codeaurora.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The dynevent_cmd commands that build up the command string don't need
-to do that themselves - there's a seq_buf facility that does pretty
-much the same thing those command are doing manually, so use it
-instead.
+Hi,
 
-Signed-off-by: Tom Zanussi <zanussi@kernel.org>
----
- include/linux/trace_events.h     |  4 +---
- kernel/trace/trace_dynevent.c    | 48 +++++++++++-----------------------------
- kernel/trace/trace_events_hist.c |  2 +-
- kernel/trace/trace_kprobe.c      |  2 +-
- 4 files changed, 16 insertions(+), 40 deletions(-)
+On Thu, Jan 02, 2020 at 04:32:07PM +0530, Sharat Masetty wrote:
+> From: Jordan Crouse <jcrouse@codeaurora.org>
+> 
+> Pass the propposed io_pgtable_cfg to the implementation specific
+> init_context() function to give the implementation an opportunity to
+> to modify it before it gets passed to io-pgtable.
+> 
+> Signed-off-by: Jordan Crouse <jcrouse@codeaurora.org>
+> Signed-off-by: Sai Prakash Ranjan <saiprakash.ranjan@codeaurora.org>
+> ---
+>  drivers/iommu/arm-smmu-impl.c |  3 ++-
+>  drivers/iommu/arm-smmu.c      | 11 ++++++-----
+>  drivers/iommu/arm-smmu.h      |  3 ++-
+>  3 files changed, 10 insertions(+), 7 deletions(-)
+> 
+> diff --git a/drivers/iommu/arm-smmu-impl.c b/drivers/iommu/arm-smmu-impl.c
+> index b2fe72a..33ed682 100644
+> --- a/drivers/iommu/arm-smmu-impl.c
+> +++ b/drivers/iommu/arm-smmu-impl.c
+> @@ -68,7 +68,8 @@ static int cavium_cfg_probe(struct arm_smmu_device *smmu)
+>  	return 0;
+>  }
+> 
+> -static int cavium_init_context(struct arm_smmu_domain *smmu_domain)
+> +static int cavium_init_context(struct arm_smmu_domain *smmu_domain,
+> +		struct io_pgtable_cfg *pgtbl_cfg)
+>  {
+>  	struct cavium_smmu *cs = container_of(smmu_domain->smmu,
+>  					      struct cavium_smmu, smmu);
+> diff --git a/drivers/iommu/arm-smmu.c b/drivers/iommu/arm-smmu.c
+> index eee48f9..4f7e0c0 100644
+> --- a/drivers/iommu/arm-smmu.c
+> +++ b/drivers/iommu/arm-smmu.c
+> @@ -758,11 +758,6 @@ static int arm_smmu_init_domain_context(struct iommu_domain *domain,
+>  		cfg->asid = cfg->cbndx;
+> 
+>  	smmu_domain->smmu = smmu;
+> -	if (smmu->impl && smmu->impl->init_context) {
+> -		ret = smmu->impl->init_context(smmu_domain);
+> -		if (ret)
+> -			goto out_unlock;
+> -	}
+> 
+>  	smmu_domain->pgtbl_cfg = (struct io_pgtable_cfg) {
+>  		.pgsize_bitmap	= smmu->pgsize_bitmap,
+> @@ -773,6 +768,12 @@ static int arm_smmu_init_domain_context(struct iommu_domain *domain,
+>  		.iommu_dev	= smmu->dev,
+>  	};
+> 
+> +	if (smmu->impl && smmu->impl->init_context) {
+> +		ret = smmu->impl->init_context(smmu_domain, &smmu_domain->pgtbl_cfg);
 
-diff --git a/include/linux/trace_events.h b/include/linux/trace_events.h
-index 7c307a7c9c6a..67f528ecb9e5 100644
---- a/include/linux/trace_events.h
-+++ b/include/linux/trace_events.h
-@@ -367,10 +367,8 @@ struct dynevent_cmd;
- typedef int (*dynevent_create_fn_t)(struct dynevent_cmd *cmd);
- 
- struct dynevent_cmd {
--	char			*buf;
-+	struct seq_buf		seq;
- 	const char		*event_name;
--	int			maxlen;
--	int			remaining;
- 	unsigned int		n_fields;
- 	enum dynevent_type	type;
- 	dynevent_create_fn_t	run_command;
-diff --git a/kernel/trace/trace_dynevent.c b/kernel/trace/trace_dynevent.c
-index 204275ec8d71..9f2e8520b748 100644
---- a/kernel/trace/trace_dynevent.c
-+++ b/kernel/trace/trace_dynevent.c
-@@ -247,8 +247,6 @@ int dynevent_arg_add(struct dynevent_cmd *cmd,
- 		     dynevent_check_arg_fn_t check_arg)
- {
- 	int ret = 0;
--	int delta;
--	char *q;
- 
- 	if (check_arg) {
- 		ret = check_arg(arg);
-@@ -256,14 +254,11 @@ int dynevent_arg_add(struct dynevent_cmd *cmd,
- 			return ret;
- 	}
- 
--	q = cmd->buf + (cmd->maxlen - cmd->remaining);
--
--	delta = snprintf(q, cmd->remaining, " %s%c", arg->str, arg->separator);
--	if (delta >= cmd->remaining) {
--		pr_err("String is too long: %s\n", arg->str);
-+	ret = seq_buf_printf(&cmd->seq, " %s%c", arg->str, arg->separator);
-+	if (ret) {
-+		pr_err("String is too long: %s%c\n", arg->str, arg->separator);
- 		return -E2BIG;
- 	}
--	cmd->remaining -= delta;
- 
- 	return ret;
- }
-@@ -297,8 +292,6 @@ int dynevent_arg_pair_add(struct dynevent_cmd *cmd,
- 			  dynevent_check_arg_fn_t check_arg)
- {
- 	int ret = 0;
--	int delta;
--	char *q;
- 
- 	if (check_arg) {
- 		ret = check_arg(arg_pair);
-@@ -306,23 +299,15 @@ int dynevent_arg_pair_add(struct dynevent_cmd *cmd,
- 			return ret;
- 	}
- 
--	q = cmd->buf + (cmd->maxlen - cmd->remaining);
--
--	delta = snprintf(q, cmd->remaining, " %s%c", arg_pair->lhs,
--			 arg_pair->operator);
--	if (delta >= cmd->remaining) {
--		pr_err("field string is too long: %s\n", arg_pair->lhs);
--		return -E2BIG;
--	}
--	cmd->remaining -= delta; q += delta;
--
--	delta = snprintf(q, cmd->remaining, "%s%c", arg_pair->rhs,
--			 arg_pair->separator);
--	if (delta >= cmd->remaining) {
--		pr_err("field string is too long: %s\n", arg_pair->rhs);
-+	ret = seq_buf_printf(&cmd->seq, " %s%c%s%c", arg_pair->lhs,
-+			     arg_pair->operator, arg_pair->rhs,
-+			     arg_pair->separator);
-+	if (ret) {
-+		pr_err("field string is too long: %s%c%s%c\n", arg_pair->lhs,
-+		       arg_pair->operator, arg_pair->rhs,
-+		       arg_pair->separator);
- 		return -E2BIG;
- 	}
--	cmd->remaining -= delta;
- 
- 	return ret;
- }
-@@ -340,17 +325,12 @@ int dynevent_arg_pair_add(struct dynevent_cmd *cmd,
- int dynevent_str_add(struct dynevent_cmd *cmd, const char *str)
- {
- 	int ret = 0;
--	int delta;
--	char *q;
--
--	q = cmd->buf + (cmd->maxlen - cmd->remaining);
- 
--	delta = snprintf(q, cmd->remaining, "%s", str);
--	if (delta >= cmd->remaining) {
-+	ret = seq_buf_puts(&cmd->seq, str);
-+	if (ret) {
- 		pr_err("String is too long: %s\n", str);
- 		return -E2BIG;
- 	}
--	cmd->remaining -= delta;
- 
- 	return ret;
- }
-@@ -381,9 +361,7 @@ void dynevent_cmd_init(struct dynevent_cmd *cmd, char *buf, int maxlen,
- {
- 	memset(cmd, '\0', sizeof(*cmd));
- 
--	cmd->buf = buf;
--	cmd->maxlen = maxlen;
--	cmd->remaining = cmd->maxlen;
-+	seq_buf_init(&cmd->seq, buf, maxlen);
- 	cmd->type = type;
- 	cmd->run_command = run_command;
- }
-diff --git a/kernel/trace/trace_events_hist.c b/kernel/trace/trace_events_hist.c
-index a566f5d290c1..6dc3078a6d02 100644
---- a/kernel/trace/trace_events_hist.c
-+++ b/kernel/trace/trace_events_hist.c
-@@ -1762,7 +1762,7 @@ static int synth_event_run_command(struct dynevent_cmd *cmd)
- 	struct synth_event *se;
- 	int ret;
- 
--	ret = trace_run_command(cmd->buf, create_or_delete_synth_event);
-+	ret = trace_run_command(cmd->seq.buffer, create_or_delete_synth_event);
- 	if (ret)
- 		return ret;
- 
-diff --git a/kernel/trace/trace_kprobe.c b/kernel/trace/trace_kprobe.c
-index fe183d4045d2..51efc790aea8 100644
---- a/kernel/trace/trace_kprobe.c
-+++ b/kernel/trace/trace_kprobe.c
-@@ -903,7 +903,7 @@ static int create_or_delete_trace_kprobe(int argc, char **argv)
- 
- static int trace_kprobe_run_command(struct dynevent_cmd *cmd)
- {
--	return trace_run_command(cmd->buf, create_or_delete_trace_kprobe);
-+	return trace_run_command(cmd->seq.buffer, create_or_delete_trace_kprobe);
- }
- 
- /**
--- 
-2.14.1
-
+Which patch adds 'pgtbl_cfg' to struct arm_smmu_domain? The field does
+not exist in iommu/next.
