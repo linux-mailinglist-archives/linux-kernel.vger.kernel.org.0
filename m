@@ -2,100 +2,126 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B906014F1C1
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Jan 2020 19:01:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A4CB914F1C3
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Jan 2020 19:02:00 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727199AbgAaSBY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 31 Jan 2020 13:01:24 -0500
-Received: from mail-il1-f195.google.com ([209.85.166.195]:34321 "EHLO
-        mail-il1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726712AbgAaSBY (ORCPT
+        id S1727218AbgAaSB6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 31 Jan 2020 13:01:58 -0500
+Received: from mail-lf1-f67.google.com ([209.85.167.67]:43838 "EHLO
+        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726712AbgAaSB6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 31 Jan 2020 13:01:24 -0500
-Received: by mail-il1-f195.google.com with SMTP id l4so6918958ilj.1;
-        Fri, 31 Jan 2020 10:01:22 -0800 (PST)
+        Fri, 31 Jan 2020 13:01:58 -0500
+Received: by mail-lf1-f67.google.com with SMTP id 9so5473247lfq.10
+        for <linux-kernel@vger.kernel.org>; Fri, 31 Jan 2020 10:01:57 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=message-id:subject:from:to:cc:date:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=lPtqEjxnKtkoTP5gb2lPGySEQWTilXutlPvMvhSkzB8=;
-        b=KA2CPF4eRl7yvouPfDHAc8MVDYczeN4kvJJZaZgeqVVqzLUnRDuBJa7+VCLwoazucb
-         IRRVFhEOd/5xgV6g0Y3fheDtooFAw19zxNHF7BK/8BrynVyZ0apbAbQH/Zvz070WSCYN
-         WJdTjyWps4J7XaFn0/3EpUQkQttYlQSZZPcaccoxXrP9Oerrad6NbzJH7s9qcikPD+J2
-         ogUIX5SPW0OfE1NYdZJnh5BjRcwLylqxSh7j+/3ObCyU+4WxfmaT/2Nm/XgmNl2uJT+R
-         pOqU1baIFwmS3RsAEt59XeVZqgbchWkmUF3XyKHEu+Z0GrYP9ywF4hBo5miM81Ycieto
-         J4uA==
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=c9j/+yOHRUYs86/r1vUBwGlUumkt31a+ZC51irf1zwo=;
+        b=D9gep9Su+ciFsa7BYxm54ROJPrkIkuAtNGvFFM0CHhn8lLDZwftjQmXQrAcYf+J5GE
+         y5q/J6r9VpK0aNs1wGqnQ3vuOS6I79HcguOHRwiQZ7YGR5sIFAs1gaICq2ZZ9TzJ9r+A
+         Tsy00vCgGmCl5idF1c6WC4PhCg2ur+3fvg0Bc=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=lPtqEjxnKtkoTP5gb2lPGySEQWTilXutlPvMvhSkzB8=;
-        b=ArvuLkiJcwWSbR0XSneCz6Ci/sxWrs6rKuWxsvg1oNsTLCqdIC180g2vFGgu/ak962
-         n/zJRBhWvp8QnwN91gD+ojgvENQgoja//yfbBnJRz107K4KQ+KReAqVb01cbMabJuGcE
-         +cLVsKbfEpz0SUE9AzgGFjobaWjo6wCgqFI8WPGbOI47S/XT5FsAwPhDr9PZF54q0WMy
-         dh4+9k0xjeoAyqKs0NDnp/GaUpqokhrKbcZ/IlB/JiflrA1jwAkXkrKUGUXoDBIgD63s
-         IwzTK3WH6GthUntTguBkAnqqqMGNs9tA19zwgyZIeF2WZeSzA0Y1hqC2A+hLQVIHDHrq
-         sb+w==
-X-Gm-Message-State: APjAAAUnKAU/N1p9JKRI9Nxt4qx5mMKTwuVedLJqIc/Rkj62waxvSWLs
-        V+2ENhb8sws1gwH2ZtFwCNQ=
-X-Google-Smtp-Source: APXvYqzVJDjpZd0RBibJkBOlYS0/M2Rz4oXKuLe0qZs5WdKOVZhG5Hq46U0xB7V74zU9CrQ058QPDg==
-X-Received: by 2002:a92:9e97:: with SMTP id s23mr4054358ilk.139.1580493680666;
-        Fri, 31 Jan 2020 10:01:20 -0800 (PST)
-Received: from tzanussi-mobl ([2601:246:3:ceb0:d4c1:8f5f:7b14:ce46])
-        by smtp.googlemail.com with ESMTPSA id b4sm3416567ill.24.2020.01.31.10.01.19
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 31 Jan 2020 10:01:20 -0800 (PST)
-Message-ID: <1580493678.24839.6.camel@gmail.com>
-Subject: Re: [PATCH v4 06/12] tracing: Change trace_boot to use synth_event
- interface
-From:   Tom Zanussi <tzanussi@gmail.com>
-To:     Steven Rostedt <rostedt@goodmis.org>
-Cc:     artem.bityutskiy@linux.intel.com, mhiramat@kernel.org,
-        linux-kernel@vger.kernel.org, linux-rt-users@vger.kernel.org
-Date:   Fri, 31 Jan 2020 12:01:18 -0600
-In-Reply-To: <20200131130020.51d04203@gandalf.local.home>
-References: <cover.1580323897.git.zanussi@kernel.org>
-         <94f1fa0e31846d0bddca916b8663404b20559e34.1580323897.git.zanussi@kernel.org>
-         <1580492941.24839.5.camel@gmail.com>
-         <20200131125539.68ab766d@gandalf.local.home>
-         <20200131130020.51d04203@gandalf.local.home>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=c9j/+yOHRUYs86/r1vUBwGlUumkt31a+ZC51irf1zwo=;
+        b=M9zR+rkk/MyKctOgevFLjNFYCfpWij06DHSkMGdo10qCSLhKHboW88vfiFaLrgo3ZU
+         p4TC5sWq+D84Srgd+eKjL8NQ7kNVahBm7cUr8NHqGyizAeVZMOboqwxMzZ2sAhZ4OLCd
+         YIH2zKcDjfXlsAcHpfg2SMZeZJucxEHtFOjjIMfxhTg2qHh2APgniDUGND0gujHM+BYh
+         n5XqUxjTldKSkK/jMgi26ZbNb89Wyox9mSMKXY99OxJMQ/0+DUJn4MnPfGYxZ5IjYqug
+         xJdkLCsFv8rvjbXWego0lWNwJcId42pbyDuaZiJRvhZXUfsAO/siU+shm3/rqGI3ysf+
+         u3dw==
+X-Gm-Message-State: APjAAAUEipqiq3fVCzeVGMewQKKVaZX/1/WaJPiblHrJvpKqcqQqtOfK
+        Rj7t5b9jICDXea7QHHl3chVBMRj1ArA=
+X-Google-Smtp-Source: APXvYqxiFUDB6uKrxfbRHTSJhN6eb9hdpFAmbeEAAbfPes/6itUd0uBtdDnKxOgSbV1Pg81RY1dmGw==
+X-Received: by 2002:ac2:4a89:: with SMTP id l9mr6005589lfp.121.1580493715644;
+        Fri, 31 Jan 2020 10:01:55 -0800 (PST)
+Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com. [209.85.167.50])
+        by smtp.gmail.com with ESMTPSA id 126sm4919752lfm.38.2020.01.31.10.01.54
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 31 Jan 2020 10:01:54 -0800 (PST)
+Received: by mail-lf1-f50.google.com with SMTP id b15so5507987lfc.4
+        for <linux-kernel@vger.kernel.org>; Fri, 31 Jan 2020 10:01:54 -0800 (PST)
+X-Received: by 2002:ac2:43a7:: with SMTP id t7mr6129965lfl.125.1580493713847;
+ Fri, 31 Jan 2020 10:01:53 -0800 (PST)
+MIME-Version: 1.0
+References: <1580408442-23916-1-git-send-email-pbonzini@redhat.com>
+In-Reply-To: <1580408442-23916-1-git-send-email-pbonzini@redhat.com>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Fri, 31 Jan 2020 10:01:37 -0800
+X-Gmail-Original-Message-ID: <CAHk-=wjZTUq8u0HZUJ1mKZjb-haBFhX+mKcUv3Kdh9LQb8rg4g@mail.gmail.com>
+Message-ID: <CAHk-=wjZTUq8u0HZUJ1mKZjb-haBFhX+mKcUv3Kdh9LQb8rg4g@mail.gmail.com>
+Subject: Re: [GIT PULL] First batch of KVM changes for 5.6 merge window
+To:     Paolo Bonzini <pbonzini@redhat.com>,
+        Sean Christopherson <sean.j.christopherson@intel.com>,
+        Borislav Petkov <bp@suse.de>, Xiaoyao Li <xiaoyao.li@intel.com>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        KVM list <kvm@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.26.1-1 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 2020-01-31 at 13:00 -0500, Steven Rostedt wrote:
-> On Fri, 31 Jan 2020 12:55:39 -0500
-> Steven Rostedt <rostedt@goodmis.org> wrote:
-> 
-> > On Fri, 31 Jan 2020 11:49:01 -0600
-> > Tom Zanussi <tzanussi@gmail.com> wrote:
-> > 
-> > > Hi Steve,
-> > > 
-> > > It looks like you missed this patch when you pulled the other
-> > > ones into
-> > >  for-next.
-> > >   
-> > 
-> > Ah, you're right! And my INBOX patchwork is informing me of it too
-> > (I
-> > have it read my email, and when I post the 'for-next' patches, it
-> > switches the status from "new" to "Under review", and this one is
-> > still
-> > "new").
-> > 
-> > Thanks for letting me know. I'll apply it now.
-> 
-> My latest has been pushed to ftrace/core.
+On Thu, Jan 30, 2020 at 10:20 AM Paolo Bonzini <pbonzini@redhat.com> wrote:
+>
+> Xiaoyao Li (3):
+>       KVM: VMX: Rename INTERRUPT_PENDING to INTERRUPT_WINDOW
+>       KVM: VMX: Rename NMI_PENDING to NMI_WINDOW
+>       KVM: VMX: Fix the spelling of CPU_BASED_USE_TSC_OFFSETTING
 
-Thanks!
+So in the meantime, on the x86 merge window side, we have this:
 
-Tom
+  b39033f504a7 ("KVM: VMX: Use VMX_FEATURE_* flags to define VMCS control bits")
 
-> 
-> -- Steve
+and while the above results in a conflict, that's not a problem. The
+conflict was trivial to fix up.
+
+HOWEVER.
+
+It most definitely shows that the above renaming now means that the
+names don't match. It didn't match 100% before either, but now the
+differences are even bigger. The VMX_FEATURE_xyz bits have different
+names than the CPU_BASED_xyz bits, and that seems a bit questionable.
+
+So I'm not convinced about the renaming. The spelling fix is good: it
+actually now more closely resembles the VMCS_FEATURE bit that already
+had OFFSETTING with two T's.
+
+But even that one isn't really the same even then. The CPU_BASED_xyz
+thing has "USE_TSC_OFFSETTING", while the VMCS_FEATURE_xyz bit doesn't
+have the "USE" part.
+
+And the actual renaming means that now we basically have
+
+  CPU_BASED_INTR_WINDOW_EXITING
+  VMX_FEATURE_VIRTUAL_INTR_PENDING
+
+and
+
+  CPU_BASED_NMI_WINDOW_EXITING
+  VMX_FEATURE_VIRTUAL_NMI_PENDING
+
+for the same bit definitions (yeah, the VMX_FEATURE bits obviously
+have the offset in them, so it's not the same _value_, but it's a 1:1
+relationship between them).
+
+There are other (pre-existing) differences, but while fixing up the
+merge conflict I really got the feeling that it's confusing and wrong
+to basically use different naming for these things when they are about
+the same bit.
+
+I don't care much which way it goes (maybe the VMX_FATURE_xyz bits
+should be renamed instead of the other way around?) and I wonder what
+the official documentation names are? Is there some standard here or
+are people just picking names at random?
+
+The two commits both came from intel.com addresses, so hopefully there
+can be some intel-sanctioned resolution on the naming? Please?
+
+Hmm?
+
+                  Linus
