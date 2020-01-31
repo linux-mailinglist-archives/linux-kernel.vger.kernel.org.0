@@ -2,68 +2,151 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2818914F210
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Jan 2020 19:20:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 54C6F14F208
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Jan 2020 19:19:01 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726186AbgAaSUr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 31 Jan 2020 13:20:47 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37836 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725907AbgAaSUq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 31 Jan 2020 13:20:46 -0500
-Received: from cakuba.hsd1.ca.comcast.net (unknown [199.201.64.133])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id ACB8A20707;
-        Fri, 31 Jan 2020 18:11:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1580494292;
-        bh=gQno9C8p/R8VNXviQsvTyedgYHZxejFQg8eaD99IcSw=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=gqHXgQ6QYuxFgykHeqKwbiu9BqIB8i++0YkKIbyp8HuV2VvRxhjAZEXOdrTpYAyFb
-         2xa15SknxDnFoJg6pqSN97HzhKDhD2BApDYKOqMjTZIiW5aRBmbJ56KVphXSFJxYB3
-         K9jHLCQHIcgfuo2G9Yw0zK7sdyrpneLkXxtx9VGQ=
-Date:   Fri, 31 Jan 2020 10:11:30 -0800
-From:   Jakub Kicinski <kuba@kernel.org>
-To:     Dan Murphy <dmurphy@ti.com>
-Cc:     <andrew@lunn.ch>, <f.fainelli@gmail.com>, <hkallweit1@gmail.com>,
-        <bunk@kernel.org>, <netdev@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <grygorii.strashko@ti.com>
-Subject: Re: [PATCH net-master 1/1] net: phy: dp83867: Add speed
- optimization feature
-Message-ID: <20200131101130.1b265526@cakuba.hsd1.ca.comcast.net>
-In-Reply-To: <6b4bb017-de97-0688-47c5-723ec4c3a339@ti.com>
-References: <20200131151110.31642-1-dmurphy@ti.com>
-        <20200131151110.31642-2-dmurphy@ti.com>
-        <20200131091004.18d54183@cakuba.hsd1.ca.comcast.net>
-        <6b4bb017-de97-0688-47c5-723ec4c3a339@ti.com>
+        id S1726213AbgAaSS5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 31 Jan 2020 13:18:57 -0500
+Received: from mail-lf1-f65.google.com ([209.85.167.65]:36097 "EHLO
+        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725815AbgAaSS4 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 31 Jan 2020 13:18:56 -0500
+Received: by mail-lf1-f65.google.com with SMTP id f24so5544618lfh.3
+        for <linux-kernel@vger.kernel.org>; Fri, 31 Jan 2020 10:18:53 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=fQB69rHX1wLUOB6ckxnewaTIywwOUniSjsLx2ZdmZVU=;
+        b=jeDt22Y76Yhwn3Q8wYjH9uJcoKEH0QuY429dXNFN7HruLwWlRqVzXUK751j8JOdxjq
+         FULXCK2DPDMD9GR+VdOs4vb/InZZFXbIn0Y73jMsCQBUw7xAQd1SkBJu2EwklkEOxiS6
+         0USCMPOp279Gx/SIRygdYahxOnYgQuJqKQthJwCpA/S0Ut4VeHIr5/WrT9o9OQprpORe
+         xvfqMAcldi7yr298nGsS9k0ykRUMQSUO57pZwZ78QXiR6+6BSTCvE6Xxau6WzzcN/2UD
+         6y+X9NEM5Z/eaynqJL6QbY4sQN5sJ43ZQ4BOe/ZqUspMnrtQZJNJlhlFTMDfeKCP2/+H
+         d7Zg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=fQB69rHX1wLUOB6ckxnewaTIywwOUniSjsLx2ZdmZVU=;
+        b=Cj2QrchkBQw2MddRZzq4FUCB36pP7mxXHLdE0cK32FklgtL9Dej1Q78y1swftFjcHL
+         8MiOed1UU/tic+10Xi/F0wUFA/Yz3dVUoaBxerdIcKg1SPLLotav1/KfrU15G1TRGqBA
+         h9pnx60jMuyyvDwHZhI+RX/kJYCuwOE7AhTSnC//jlozaZnYv31qKgDhOm52Ok5i1VX+
+         omt3GCli/mkc6a04JeE9HVCIk4XgI9FTpZFCnHjuzQF4RCtGsgvdZh/l4XdV6GwqI1Lm
+         fBEES64FUpIKm1Z4kfGIdXbvZTrcmri1XOL15j3eyuwpIXhtdIghTPQ7mjn+neZryMJE
+         Biew==
+X-Gm-Message-State: APjAAAVlwOHdsJH98hBKNz5dXmhpiu+pEzwGFPUU+IlFp1kzHgePi47x
+        HWdCdBwyKZfEXMk3/As4EU81tEARbGtRdI+n9hCFLvSBCoiF5A==
+X-Google-Smtp-Source: APXvYqyq/YfoE0oFSPYzEyKRSgA8t1DxpbDmSXNnWAWmVKZvjNNBuUx80heTPOUQbSjAkXy16oEV7Acsq2nO+E63ABI=
+X-Received: by 2002:a5d:6692:: with SMTP id l18mr12918211wru.382.1580494315839;
+ Fri, 31 Jan 2020 10:11:55 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+References: <20200130064430.17198-1-walter-zh.wu@mediatek.com>
+ <CAG_fn=X_jSUJXD932z9oN5hBa--n3Qct4zrjzGaPtb2MwJye7A@mail.gmail.com> <1580436306.11126.16.camel@mtksdccf07>
+In-Reply-To: <1580436306.11126.16.camel@mtksdccf07>
+From:   Alexander Potapenko <glider@google.com>
+Date:   Fri, 31 Jan 2020 19:11:44 +0100
+Message-ID: <CAG_fn=X2V0nL=+s38bDbS3UXf2_i61tSevd8vzkV-ZKY=7MHvw@mail.gmail.com>
+Subject: Re: [PATCH v3] lib/stackdepot: Fix global out-of-bounds in stackdepot
+To:     Walter Wu <walter-zh.wu@mediatek.com>
+Cc:     Dmitry Vyukov <dvyukov@google.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org,
+        wsd_upstream <wsd_upstream@mediatek.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 31 Jan 2020 11:14:05 -0600, Dan Murphy wrote:
-> On 1/31/20 11:10 AM, Jakub Kicinski wrote:
-> > While we wait for the PHY folk to take a look, could you please
-> > provide a Fixes tag?  
-> 
-> Hmm. This is not a bug fix though this is a new feature being added.
-> 
-> Not sure what it would be fixing.
+On Fri, Jan 31, 2020 at 3:05 AM Walter Wu <walter-zh.wu@mediatek.com> wrote:
+>
+> On Thu, 2020-01-30 at 13:03 +0100, Alexander Potapenko wrote:
+> > On Thu, Jan 30, 2020 at 7:44 AM Walter Wu <walter-zh.wu@mediatek.com> wrote:
+> >
+> > Hi Walter,
+> >
+> > > If the depot_index = STACK_ALLOC_MAX_SLABS - 2 and next_slab_inited = 0,
+> > > then it will cause array out-of-bounds access, so that we should modify
+> > > the detection to avoid this array out-of-bounds bug.
+> > >
+> > > Assume depot_index = STACK_ALLOC_MAX_SLABS - 3
+> > > Consider following call flow sequence:
+> > >
+> > > stack_depot_save()
+> > >    depot_alloc_stack()
+> > >       if (unlikely(depot_index + 1 >= STACK_ALLOC_MAX_SLABS)) //pass
+> > >       depot_index++  //depot_index = STACK_ALLOC_MAX_SLABS - 2
+> > >       if (depot_index + 1 < STACK_ALLOC_MAX_SLABS) //enter
+> > >          smp_store_release(&next_slab_inited, 0); //next_slab_inited = 0
+> > >       init_stack_slab()
+> > >          if (stack_slabs[depot_index] == NULL) //enter and exit
+> > >
+> > > stack_depot_save()
+> > >    depot_alloc_stack()
+> > >       if (unlikely(depot_index + 1 >= STACK_ALLOC_MAX_SLABS)) //pass
+> > >       depot_index++  //depot_index = STACK_ALLOC_MAX_SLABS - 1
+> > >       init_stack_slab(&prealloc)
+> > >          stack_slabs[depot_index + 1]  //here get global out-of-bounds
+> > >
+> > > Cc: Dmitry Vyukov <dvyukov@google.com>
+> > > Cc: Matthias Brugger <matthias.bgg@gmail.com>
+> > > Cc: Thomas Gleixner <tglx@linutronix.de>
+> > > Cc: Alexander Potapenko <glider@google.com>
+> > > Cc: Josh Poimboeuf <jpoimboe@redhat.com>
+> > > Cc: Kate Stewart <kstewart@linuxfoundation.org>
+> > > Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> > > Cc: Kate Stewart <kstewart@linuxfoundation.org>
+> > > Signed-off-by: Walter Wu <walter-zh.wu@mediatek.com>
+> > > ---
+> > > changes in v2:
+> > > modify call flow sequence and preconditon
+> > >
+> > > changes in v3:
+> > > add some reviewers
+> > > ---
+> > >  lib/stackdepot.c | 2 +-
+> > >  1 file changed, 1 insertion(+), 1 deletion(-)
+> > >
+> > > diff --git a/lib/stackdepot.c b/lib/stackdepot.c
+> > > index ed717dd08ff3..7e8a15e41600 100644
+> > > --- a/lib/stackdepot.c
+> > > +++ b/lib/stackdepot.c
+> > > @@ -106,7 +106,7 @@ static struct stack_record *depot_alloc_stack(unsigned long *entries, int size,
+> > >         required_size = ALIGN(required_size, 1 << STACK_ALLOC_ALIGN);
+> > >
+> > >         if (unlikely(depot_offset + required_size > STACK_ALLOC_SIZE)) {
+> > > -               if (unlikely(depot_index + 1 >= STACK_ALLOC_MAX_SLABS)) {
+> > > +               if (unlikely(depot_index + 2 >= STACK_ALLOC_MAX_SLABS)) {
 
-I see, you target the patch at net which is for fixes, so I
-misinterpreted this:
+This again means stack_slabs[STACK_ALLOC_MAX_SLABS - 2] gets
+initialized, but stack_slabs[STACK_ALLOC_MAX_SLABS - 1] doesn't,
+because we'll be bailing out from init_stack_slab() from now on.
+Does this patch actually fix the problem (do you have a reliable reproducer?)
+This addition of 2 is also counterintuitive, I don't think further
+readers will understand the logic behind it.
 
-> This feature can also be strapped on the 64 pin PHY devices
-> but the 48 pin devices do not have the strap pin available to enable
-> this feature in the hardware.
+What if we just check that depot_index + 1 is a valid index before accessing it?
 
-as you fixing 48 devices or such.
-
-So please correct the tree to net-next and since net-next is now closed:
-http://vger.kernel.org/~davem/net-next.html
-only post as RFC until net-next opens back up.
+diff --git a/lib/stackdepot.c b/lib/stackdepot.c
+index 2e7d2232ed3c..c2e6ff18d716 100644
+--- a/lib/stackdepot.c
++++ b/lib/stackdepot.c
+@@ -106,7 +106,9 @@ static bool init_stack_slab(void **prealloc)
+        if (stack_slabs[depot_index] == NULL) {
+                stack_slabs[depot_index] = *prealloc;
+        } else {
+-               stack_slabs[depot_index + 1] = *prealloc;
++               /* If this is the last depot slab, do not touch the next one. */
++               if (depot_index + 1 < STACK_ALLOC_MAX_SLABS)
++                       stack_slabs[depot_index + 1] = *prealloc;
+                /*
+                 * This smp_store_release pairs with smp_load_acquire() from
+                 * |next_slab_inited| above and in stack_depot_save().
