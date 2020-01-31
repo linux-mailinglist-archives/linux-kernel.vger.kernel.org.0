@@ -2,56 +2,51 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2BEE714F394
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Jan 2020 22:10:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1F1BA14F398
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Jan 2020 22:10:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726484AbgAaVKF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 31 Jan 2020 16:10:05 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44994 "EHLO mail.kernel.org"
+        id S1726677AbgAaVKQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 31 Jan 2020 16:10:16 -0500
+Received: from mail.kernel.org ([198.145.29.99]:45162 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726109AbgAaVKE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 31 Jan 2020 16:10:04 -0500
-Subject: Re: [GIT PULL] iomap: new code for 5.6
+        id S1726590AbgAaVKP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 31 Jan 2020 16:10:15 -0500
+Subject: Re: [GIT PULL] GFS2 changes for the 5.6 merge window
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1580505004;
-        bh=MCkR/ng7bUbpozJhY4zARLxv1MqEKe/eRZIzdiuzBpY=;
+        s=default; t=1580505015;
+        bh=iba5F50V90G+dlH4PwC+j6dEvijazd05NJfliKOC/ac=;
         h=From:In-Reply-To:References:Date:To:Cc:From;
-        b=HZsATbrqIem72P9LB8QleE0QUROvKJ5Gl4owE8YRYhBDDRbjHL1kNlGHbXfEtiqJ8
-         J08VkzmdwLvrygp/eV4g/5kz5mhFLq6cxrXaAmFLjnM803Q5XrvLKtIMuMdxby1vUz
-         ZICGVt9Uaa1mHfs6XT9FXJROYwNXDcaPiPLmXp5U=
+        b=UySml0yThgq5MWl8jx7V5iIwE0i27jI0cYlkqUT+CneQe0MdG0EDgvIo7h6DsDhqE
+         Su04gPctpWyrs1wR3o1Yu/ZgeiXzaszrfUa3Nk2Y67DrOqdlF7X8HXl/+svQYXTeGl
+         T4g6wPLxIEmST7kygR9qXPkbFytgiEMh1tVU5CLo=
 From:   pr-tracker-bot@kernel.org
-In-Reply-To: <20200131040753.GB6869@magnolia>
-References: <20200131040753.GB6869@magnolia>
-X-PR-Tracked-List-Id: <linux-fsdevel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <20200131040753.GB6869@magnolia>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/fs/xfs/xfs-linux.git
- tags/iomap-5.6-merge-3
-X-PR-Tracked-Commit-Id: 243145bc4336684c69f95de0a303b31f2e5bf264
+In-Reply-To: <20200131154823.30363-1-agruenba@redhat.com>
+References: <20200131154823.30363-1-agruenba@redhat.com>
+X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
+X-PR-Tracked-Message-Id: <20200131154823.30363-1-agruenba@redhat.com>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/gfs2/linux-gfs2.git
+ tags/gfs2-for-5.6
+X-PR-Tracked-Commit-Id: a31b4ec539e966515f1f97f4000d0e2a399930ce
 X-PR-Merge-Tree: torvalds/linux.git
 X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 677b60dcb68a0c43822b5a8ad97733b4193386b9
-Message-Id: <158050500400.4115.17533922606838474963.pr-tracker-bot@kernel.org>
-Date:   Fri, 31 Jan 2020 21:10:04 +0000
-To:     "Darrick J. Wong" <djwong@kernel.org>
+X-PR-Merge-Commit-Id: a62aa6f7f50a9a0af5e07d98774f8a7b439d390f
+Message-Id: <158050501536.4115.8230409088114911082.pr-tracker-bot@kernel.org>
+Date:   Fri, 31 Jan 2020 21:10:15 +0000
+To:     Andreas Gruenbacher <agruenba@redhat.com>
 Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        "Darrick J. Wong" <djwong@kernel.org>,
-        linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org,
-        david@fromorbit.com, linux-kernel@vger.kernel.org,
-        sandeen@sandeen.net, hch@lst.de, agruenba@redhat.com,
-        rpeterso@redhat.com, cluster-devel@redhat.com,
-        linux-ext4 <linux-ext4@vger.kernel.org>,
-        Theodore Ts'o <tytso@mit.edu>
+        Andreas Gruenbacher <agruenba@redhat.com>,
+        cluster-devel@redhat.com, linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The pull request you sent on Thu, 30 Jan 2020 20:07:53 -0800:
+The pull request you sent on Fri, 31 Jan 2020 16:48:23 +0100:
 
-> git://git.kernel.org/pub/scm/fs/xfs/xfs-linux.git tags/iomap-5.6-merge-3
+> git://git.kernel.org/pub/scm/linux/kernel/git/gfs2/linux-gfs2.git tags/gfs2-for-5.6
 
 has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/677b60dcb68a0c43822b5a8ad97733b4193386b9
+https://git.kernel.org/torvalds/c/a62aa6f7f50a9a0af5e07d98774f8a7b439d390f
 
 Thank you!
 
