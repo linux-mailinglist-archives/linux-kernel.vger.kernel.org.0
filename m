@@ -2,100 +2,81 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 512C914E9E4
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Jan 2020 10:05:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6571214E9E9
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Jan 2020 10:07:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728239AbgAaJFr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 31 Jan 2020 04:05:47 -0500
-Received: from hqnvemgate25.nvidia.com ([216.228.121.64]:3813 "EHLO
-        hqnvemgate25.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728151AbgAaJFr (ORCPT
+        id S1728252AbgAaJHA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 31 Jan 2020 04:07:00 -0500
+Received: from mail-ot1-f66.google.com ([209.85.210.66]:40908 "EHLO
+        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728181AbgAaJG7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 31 Jan 2020 04:05:47 -0500
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate25.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5e33edd50001>; Fri, 31 Jan 2020 01:05:25 -0800
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate101.nvidia.com (PGP Universal service);
-  Fri, 31 Jan 2020 01:05:46 -0800
-X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Fri, 31 Jan 2020 01:05:46 -0800
-Received: from [10.21.133.51] (10.124.1.5) by HQMAIL107.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Fri, 31 Jan
- 2020 09:05:43 +0000
-Subject: Re: [PATCH v6 11/16] dmaengine: tegra-apb: Keep clock enabled only
- during of DMA transfer
-To:     Dmitry Osipenko <digetx@gmail.com>,
-        Laxman Dewangan <ldewangan@nvidia.com>,
-        Vinod Koul <vkoul@kernel.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>
-CC:     <dmaengine@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-References: <20200130043804.32243-1-digetx@gmail.com>
- <20200130043804.32243-12-digetx@gmail.com>
-From:   Jon Hunter <jonathanh@nvidia.com>
-Message-ID: <1b7dd052-20f0-7b38-9578-44967eca1770@nvidia.com>
-Date:   Fri, 31 Jan 2020 09:05:41 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.1
+        Fri, 31 Jan 2020 04:06:59 -0500
+Received: by mail-ot1-f66.google.com with SMTP id i6so5906075otr.7
+        for <linux-kernel@vger.kernel.org>; Fri, 31 Jan 2020 01:06:59 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=FD1m1C7Z6owu7pJKCcZNi0kfjnO20uBFbl49wSgK5Lg=;
+        b=hle8MrtlObbp8du0+KnsTcFFRKRJGmAa/SeuW6xqbXWTh6BX+cc9XkiWMy6K0324Oh
+         Y4j15FnY57MLGdpt93p3OheNy7jmhyzS9XEC04vFiyE9hIYV3oJkxOBdwwJ+w59erd+I
+         M/PFHx5c4tA1KJlBG7jro/bnZQKPa/YbpjftnLWcQD0xwTEpZ19RtvAAxkZCpduRLAmZ
+         bhz07Xa6a/bPDBp0Fp2/Mhq13Lcpaql9dLmgGJkz39Bp5qIDISCbTuCUKuXBszzwUKP7
+         o5gqqB63cCWsq7PEuc5/BNREGie/NZvxRj7QTemHY4lRi7QPnCwXtXKvz5aQgHK26IsL
+         p+jQ==
+X-Gm-Message-State: APjAAAUAidzduP409qFszsqJ3XQ7yJAlvvkXS0deKpkT8F6/pkB4yvCp
+        ZxcuU3uQT7d/mJVAqWVopzB1m0Fa0zlj+abFxAuUtA==
+X-Google-Smtp-Source: APXvYqxXnQrTWkpOmfZ4c1F1M3YsJErcFXJpAlowXPQwo2N4eVzTPJn2pP+D0bi+mHOGRWxfvp5vAPdvsTIebEfZIQg=
+X-Received: by 2002:a05:6830:1d55:: with SMTP id p21mr6833651oth.145.1580461618754;
+ Fri, 31 Jan 2020 01:06:58 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <20200130043804.32243-12-digetx@gmail.com>
-X-Originating-IP: [10.124.1.5]
-X-ClientProxiedBy: HQMAIL105.nvidia.com (172.20.187.12) To
- HQMAIL107.nvidia.com (172.20.187.13)
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1580461525; bh=BuOEIlbunk7DCg4cTZ3hlSTaa7xG8buVShKe71iVBmQ=;
-        h=X-PGP-Universal:Subject:To:CC:References:From:Message-ID:Date:
-         User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
-         X-ClientProxiedBy:Content-Type:Content-Language:
-         Content-Transfer-Encoding;
-        b=k/JTHwA+ZPbXyAPIaXapcZO+zRym95tsMi+ep9eF4W9lfzOG8Y06NARftq85MOHVP
-         Lr6IyrwUWnGPWk6hcySr55nBl+xo5E0DxYNYl5lcqsvtDMi7Pyp5NPZLSFdShVwy/J
-         ikNQgBb0HASbDZwN+8FIXiXULXt5SpotCdZRYGF4v9MrMrSVkgdaoG05xLdlHYAlM4
-         o+dtJOQfxMdutQLJoVsx8YDu3F7eFlX09gHJLwwQqiMegRxNQp9zeOCmGbFvy69zpD
-         LAkrbDqiAdPy4eYuoXvBYojxIM+XRrvpY2AKM/424qEnzYo79Kr5KAw7gH7watJZRj
-         TYtMakNWvDvtg==
+References: <20200130191049.190569-1-edumazet@google.com> <e0a0ffa9-3721-4bac-1c8f-bcbd53d22ba1@arm.com>
+In-Reply-To: <e0a0ffa9-3721-4bac-1c8f-bcbd53d22ba1@arm.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Fri, 31 Jan 2020 10:06:47 +0100
+Message-ID: <CAMuHMdVSyD62nvRmN-v6CbJ2UyqH=d7xdVeCD8_X5us+mvCXUQ@mail.gmail.com>
+Subject: Re: [PATCH] dma-debug: dynamic allocation of hash table
+To:     Robin Murphy <robin.murphy@arm.com>
+Cc:     Eric Dumazet <edumazet@google.com>, Christoph Hellwig <hch@lst.de>,
+        Joerg Roedel <jroedel@suse.de>,
+        Linux IOMMU <iommu@lists.linux-foundation.org>,
+        Eric Dumazet <eric.dumazet@gmail.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Robin,
 
-On 30/01/2020 04:37, Dmitry Osipenko wrote:
-> It's a bit impractical to enable hardware's clock at the time of DMA
-> channel's allocation because most of DMA client drivers allocate DMA
-> channel at the time of the driver's probing, and thus, DMA clock is kept
-> always-enabled in practice, defeating the whole purpose of runtime PM.
-> 
-> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
-> ---
->  drivers/dma/tegra20-apb-dma.c | 47 ++++++++++++++++++++++++-----------
->  1 file changed, 32 insertions(+), 15 deletions(-)
-> 
-> diff --git a/drivers/dma/tegra20-apb-dma.c b/drivers/dma/tegra20-apb-dma.c
-> index 22b88ccff05d..0ee28d8e3c96 100644
-> --- a/drivers/dma/tegra20-apb-dma.c
-> +++ b/drivers/dma/tegra20-apb-dma.c
-> @@ -436,6 +436,8 @@ static void tegra_dma_stop(struct tegra_dma_channel *tdc)
->  		tdc_write(tdc, TEGRA_APBDMA_CHAN_STATUS, status);
->  	}
->  	tdc->busy = false;
-> +
-> +	pm_runtime_put(tdc->tdma->dev);
+On Fri, Jan 31, 2020 at 12:46 AM Robin Murphy <robin.murphy@arm.com> wrote:
+> On 2020-01-30 7:10 pm, Eric Dumazet via iommu wrote:
+> > Increasing the size of dma_entry_hash size by 327680 bytes
+> > has reached some bootloaders limitations.
+>
+> [ That might warrant some further explanation - I don't quite follow how
+> this would relate to a bootloader specifically :/ ]
 
-There are only 3 places where tegra_dma_stop is called, does it simplify
-the code if we move the pm_runtime_put() outside of tegra_dma_stop? In
-other words, everywhere there is a tegra_dma_stop, afterwards we then
-call pm_runtime_put?
+Increasing the size of a static array increases kernel size.
+Some (all? ;-) bootloaders have limitations on the maximum size of a
+kernel image they can boot (usually something critical gets overwritten
+when handling a too large image).  While boot loaders can be fixed and
+upgraded, this is usually much more cumbersome than updating the
+kernel.
 
-This would allow us to get rid of the extra pm_runtime_get in
-terminate_all.
+Besides, a static array always consumes valuable unswapable memory,
+even when the feature would not be used (e.g. disabled by a command
+line option).
 
-Jon
+Gr{oetje,eeting}s,
+
+                        Geert
 
 -- 
-nvpublic
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
