@@ -2,112 +2,105 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A463514F1F4
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Jan 2020 19:08:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6687E14F207
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Jan 2020 19:18:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727210AbgAaSIf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 31 Jan 2020 13:08:35 -0500
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:51836 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726712AbgAaSIf (ORCPT
+        id S1726139AbgAaSSe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 31 Jan 2020 13:18:34 -0500
+Received: from mail-yw1-f66.google.com ([209.85.161.66]:37720 "EHLO
+        mail-yw1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725878AbgAaSSe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 31 Jan 2020 13:08:35 -0500
-Received: by mail-wm1-f68.google.com with SMTP id t23so8981063wmi.1
-        for <linux-kernel@vger.kernel.org>; Fri, 31 Jan 2020 10:08:34 -0800 (PST)
+        Fri, 31 Jan 2020 13:18:34 -0500
+Received: by mail-yw1-f66.google.com with SMTP id l5so5621390ywd.4
+        for <linux-kernel@vger.kernel.org>; Fri, 31 Jan 2020 10:18:34 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=kYOKSEFF1BtF9aJwHzx6v8WXqAWKyMBvX++xdlfE4d8=;
-        b=iYSfoyHTsGlXKZ4IO0n64y0Xqn7f8PjxKdcCYPDJWYitw/g6eGxDn3V5rE/Xe8Ktla
-         vYUmCX3I5mkCkzLmizMb67m/NdRR8sV/C9hZTZ0vHD/UfetrAh0lC3OGmXy2jUwobG9B
-         Lw5eMdV0NCU7UAYlEhmwrE47UkhqC/PBGJkUSmJHsyJNkunH4eja/PlkCQccI8kaxO5q
-         8HC+SngAl3zd2bWqaGlKv2k2h3/nFk7FO93xsxEdBhkDOth6tBP0ohNkeYK24ENkXBav
-         8XTCNb/UW9j/06AdAD1hFtSfBACG9prcTAk/s3SkTNbNKV0fqlHKWLLJIL+JtGVL1wzH
-         Dpew==
+        d=gmail.com; s=20161025;
+        h=from:date:to:cc:subject:message-id:mime-version:content-disposition;
+        bh=4VYyzzGXvpkoeXPD6VYi8iy20yoxe+qDPS3ZbJdgxSw=;
+        b=AGei6LyyPbL/uS3xnhgCFxDlX8FD9ZLRHfuc2U2PwbDRurtaUx4dQiSMRQ9jPQ6LfJ
+         4/QcpR9QdvlN2irxJcd6/SepI3rNFHDWBlVM4QYqBOIQH5ky7mXuNbOiKQbMjY1fgvED
+         9UszIyqchT/Y7Tf1v4/nWRJ5C15HURAJiRJ5lwnx1XOI7RwsHjLfg6LpXr0IH3ff0nT1
+         +nv264uCbz0jkfnDPbzbAl/lNAVHrL4tezJyQKAswTLYK6ui2opfY/uddMz3gGpJScJK
+         ByO5uHCpavsKvp4wfgUXznB89PuXEG/bkTDk6V1UVNvbNNL4hktgEP6yUeoXhcmfFu/j
+         GWGg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=kYOKSEFF1BtF9aJwHzx6v8WXqAWKyMBvX++xdlfE4d8=;
-        b=sw9R8Y0CRtVUmiT4ETyK38gCZtAyhH04yKA1oM5IEcG7vT3Csuoi8g0RWvzpgc/+XT
-         Yr1+pEzAlt1r9q+R3YhldW1SmjwH7ctavoixXagOO4OrTehnEArkFQfo5AD7Wzm+7RmU
-         Dv09nyTmNt29K7l00tpmeAoaD1WN3o3Clr31Lvk+Cwhu/PjEjvxYOYwb37+gsd8rKyvs
-         xUCi/fE1KR/P0UiVOw2gR0BwPOeuL1TPIR+ro0SK0qqSRG6mrLDdvkUDCPH4FY35H34+
-         DfxmT6m0cZ8XUbNm55CkwTeTR4TwaItJ4lkgKAIFoeaZm+o/hne09T2SFHmAimjCuvCN
-         ru3A==
-X-Gm-Message-State: APjAAAVpYHasHQWi3Ii9ca9t7Z111jo3PyyP7eiaqwFoKKKzFDtEQThT
-        WnehgGkljo5UhwDPeh2KctIKwcNBLdSqx12gAUHgPw==
-X-Google-Smtp-Source: APXvYqyhZyRGCBxAeZg+IW09HBdaPjaVlM6D9DWfNiUlhVSeaPJsVbBU1kH/80Y6uYbH7F/mIN7daAvKakWdC3THYQg=
-X-Received: by 2002:a7b:c94a:: with SMTP id i10mr13239142wml.88.1580494113721;
- Fri, 31 Jan 2020 10:08:33 -0800 (PST)
+        h=x-gm-message-state:from:date:to:cc:subject:message-id:mime-version
+         :content-disposition;
+        bh=4VYyzzGXvpkoeXPD6VYi8iy20yoxe+qDPS3ZbJdgxSw=;
+        b=Wff5sjWQR1VzWTQljkv2VUHKTSG5Uj5/BissdwZOUD9hod5g/P22qMvrzE/yLDqTwO
+         Xki89XBVJ3pfb8fzXBRpBOJn62yfzCsvpJpjDUkvJmh6pmLvMeoCbG6kSousmzDaqBVb
+         lZo054XBCCjlljjbQVS7/tQNA1XkORxXgPjAVpBgVtqE3eIcGvKjddCeFcaGSJ98uTdG
+         3JOu5Y74KlaMPkzDIoZal3qJ2jRuxEIms+QYx/MC61lxQHwWaIt/olikvfLqiH2gu6TZ
+         WJrD1JNlE/dyIaMN8Bfma+o4dSwyaJ5Z3tZxnQ2JPdSkJDYzpNF8uU9PWx/vjw+yI+5s
+         8GIw==
+X-Gm-Message-State: APjAAAVDi5FAuKVP6L9cQqfM+/D215znbcWKo8UnGJbyj8hcNcCLl+Vb
+        OkXGR15LbqV3/w2obgw47AJ09no9ibY=
+X-Google-Smtp-Source: APXvYqxJGnO1O/rmfQQK1Pc08HE1l2lGIxEBybFDZnB55yHsQoULJyrYbjVS/xdfaTfdSDgBmEopew==
+X-Received: by 2002:a25:9c01:: with SMTP id c1mr9362229ybo.200.1580494284802;
+        Fri, 31 Jan 2020 10:11:24 -0800 (PST)
+Received: from gmail.com ([2601:240:e300:b5b:329c:23ff:fea3:d48c])
+        by smtp.gmail.com with ESMTPSA id p62sm4438951ywc.44.2020.01.31.10.11.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 31 Jan 2020 10:11:24 -0800 (PST)
+From:   Sam Lunt <samueljlunt@gmail.com>
+X-Google-Original-From: Sam Lunt <samuel.j.lunt@gmail.com>
+Date:   Fri, 31 Jan 2020 12:11:23 -0600
+To:     linux-kernel@vger.kernel.org, peterz@infradead.org,
+        mingo@redhat.com, acme@kernel.org
+Cc:     mark.rutland@arm.com, alexander.shishkin@linux.intel.com,
+        jolsa@redhat.com, namhyung@kernel.org, trivial@kernel.org
+Subject: [PATCH] perf: Support Python 3.8+ in Makefile
+Message-ID: <20200131181123.tmamivhq4b7uqasr@gmail.com>
 MIME-Version: 1.0
-References: <20200129201244.65261-1-john.stultz@linaro.org>
-In-Reply-To: <20200129201244.65261-1-john.stultz@linaro.org>
-From:   Amit Pundir <amit.pundir@linaro.org>
-Date:   Fri, 31 Jan 2020 23:37:57 +0530
-Message-ID: <CAMi1Hd3bWmhSSrbYoM59LP5NuxJt2JWwiXBacOyNxpnx-73w_Q@mail.gmail.com>
-Subject: Re: [PATCH] drm: msm: Fix return type of dsi_mgr_connector_mode_valid
- for kCFI
-To:     John Stultz <john.stultz@linaro.org>
-Cc:     lkml <linux-kernel@vger.kernel.org>,
-        Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>,
-        Sami Tolvanen <samitolvanen@google.com>,
-        Todd Kjos <tkjos@google.com>,
-        Alistair Delva <adelva@google.com>,
-        Sumit Semwal <sumit.semwal@linaro.org>,
-        freedreno@lists.freedesktop.org, clang-built-linux@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 30 Jan 2020 at 01:42, John Stultz <john.stultz@linaro.org> wrote:
->
-> I was hitting kCFI crashes when building with clang, and after
-> some digging finally narrowed it down to the
-> dsi_mgr_connector_mode_valid() function being implemented as
-> returning an int, instead of an enum drm_mode_status.
->
-> This patch fixes it, and appeases the opaque word of the kCFI
-> gods (seriously, clang inlining everything makes the kCFI
-> backtraces only really rough estimates of where things went
-> wrong).
->
-> Thanks as always to Sami for his help narrowing this down.
->
-> Cc: Rob Clark <robdclark@gmail.com>
-> Cc: Sean Paul <sean@poorly.run>
-> Cc: Sami Tolvanen <samitolvanen@google.com>
-> Cc: Todd Kjos <tkjos@google.com>
-> Cc: Alistair Delva <adelva@google.com>
-> Cc: Amit Pundir <amit.pundir@linaro.org>
-> Cc: Sumit Semwal <sumit.semwal@linaro.org>
-> Cc: freedreno@lists.freedesktop.org
-> Cc: clang-built-linux@googlegroups.com
-> Signed-off-by: John Stultz <john.stultz@linaro.org>
+Python 3.8 changed the output of 'python-config --ldflags' to no longer
+include the '-lpythonX.Y' flag (this apparently fixed an issue loading
+modules with a statically linked Python executable).  The libpython
+feature check in linux/build/feature fails if the Python library is not
+included in FEATURE_CHECK_LDFLAGS-libpython variable.
 
-Tested-by: Amit Pundir <amit.pundir@linaro.org>
-Cc: stable@vger.kernel.org # v4.4+
+This adds a check in the Makefile to determine if PYTHON_CONFIG accepts
+the '--embed' flag and passes that flag alongside '--ldflags' if so.
 
-> ---
->  drivers/gpu/drm/msm/dsi/dsi_manager.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/gpu/drm/msm/dsi/dsi_manager.c b/drivers/gpu/drm/msm/dsi/dsi_manager.c
-> index 271aa7bbca925..355a60b4a536f 100644
-> --- a/drivers/gpu/drm/msm/dsi/dsi_manager.c
-> +++ b/drivers/gpu/drm/msm/dsi/dsi_manager.c
-> @@ -336,7 +336,7 @@ static int dsi_mgr_connector_get_modes(struct drm_connector *connector)
->         return num;
->  }
->
-> -static int dsi_mgr_connector_mode_valid(struct drm_connector *connector,
-> +static enum drm_mode_status dsi_mgr_connector_mode_valid(struct drm_connector *connector,
->                                 struct drm_display_mode *mode)
->  {
->         int id = dsi_mgr_connector_get_id(connector);
-> --
-> 2.17.1
->
+tools/perf is the only place the libpython feature check is used.
+
+Signed-off-by: Sam Lunt <samuel.j.lunt@gmail.com>
+---
+ tools/perf/Makefile.config | 11 ++++++++++-
+ 1 file changed, 10 insertions(+), 1 deletion(-)
+
+diff --git a/tools/perf/Makefile.config b/tools/perf/Makefile.config
+index c90f4146e5a2..ccf99351f058 100644
+--- a/tools/perf/Makefile.config
++++ b/tools/perf/Makefile.config
+@@ -228,8 +228,17 @@ strip-libs  = $(filter-out -l%,$(1))
+
+ PYTHON_CONFIG_SQ := $(call shell-sq,$(PYTHON_CONFIG))
+
++# Python 3.8 changed the output of `python-config --ldflags` to not include the
++# '-lpythonX.Y' flag unless '--embed' is also passed. The feature check for
++# libpython fails if that flag is not included in LDFLAGS
++ifeq ($(shell $(PYTHON_CONFIG_SQ) --ldflags --embed 2>&1 1>/dev/null; echo $$?), 0)
++  PYTHON_CONFIG_LDFLAGS := --ldflags --embed
++else
++  PYTHON_CONFIG_LDFLAGS := --ldflags
++endif
++
+ ifdef PYTHON_CONFIG
+-  PYTHON_EMBED_LDOPTS := $(shell $(PYTHON_CONFIG_SQ) --ldflags 2>/dev/null)
++  PYTHON_EMBED_LDOPTS := $(shell $(PYTHON_CONFIG_SQ) $(PYTHON_CONFIG_LDFLAGS) 2>/dev/null)
+   PYTHON_EMBED_LDFLAGS := $(call strip-libs,$(PYTHON_EMBED_LDOPTS))
+   PYTHON_EMBED_LIBADD := $(call grep-libs,$(PYTHON_EMBED_LDOPTS)) -lutil
+   PYTHON_EMBED_CCOPTS := $(shell $(PYTHON_CONFIG_SQ) --includes 2>/dev/null)
+
+base-commit: d5d359b0ac3ffc319ca93c46a4cfd87093759ad6
+-- 
+2.25.0
