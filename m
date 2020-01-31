@@ -2,126 +2,104 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 91C6B14EDA4
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Jan 2020 14:42:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C999414EDAF
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Jan 2020 14:43:52 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728925AbgAaNmR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 31 Jan 2020 08:42:17 -0500
-Received: from lhrrgout.huawei.com ([185.176.76.210]:2338 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728845AbgAaNmR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 31 Jan 2020 08:42:17 -0500
-Received: from lhreml703-cah.china.huawei.com (unknown [172.18.7.108])
-        by Forcepoint Email with ESMTP id 80319B94385C5CAE7D7D;
-        Fri, 31 Jan 2020 13:42:14 +0000 (GMT)
-Received: from fraeml701-chm.china.huawei.com (10.206.15.50) by
- lhreml703-cah.china.huawei.com (10.201.108.44) with Microsoft SMTP Server
- (TLS) id 14.3.408.0; Fri, 31 Jan 2020 13:42:14 +0000
-Received: from fraeml714-chm.china.huawei.com (10.206.15.33) by
- fraeml701-chm.china.huawei.com (10.206.15.50) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
- 15.1.1713.5; Fri, 31 Jan 2020 14:42:13 +0100
-Received: from fraeml714-chm.china.huawei.com ([10.206.15.33]) by
- fraeml714-chm.china.huawei.com ([10.206.15.33]) with mapi id 15.01.1713.004;
- Fri, 31 Jan 2020 14:42:13 +0100
-From:   Roberto Sassu <roberto.sassu@huawei.com>
-To:     Mimi Zohar <zohar@linux.ibm.com>,
-        "jarkko.sakkinen@linux.intel.com" <jarkko.sakkinen@linux.intel.com>,
-        "james.bottomley@hansenpartnership.com" 
-        <james.bottomley@hansenpartnership.com>,
-        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>
-CC:     "linux-security-module@vger.kernel.org" 
-        <linux-security-module@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Silviu Vlasceanu <Silviu.Vlasceanu@huawei.com>
-Subject: RE: [PATCH 5/8] ima: allocate and initialize tfm for each PCR bank
-Thread-Topic: [PATCH 5/8] ima: allocate and initialize tfm for each PCR bank
-Thread-Index: AQHV1TQt9zbbMDf1LU6ofpxaGSDeiKgEpgeAgAAhG0A=
-Date:   Fri, 31 Jan 2020 13:42:13 +0000
-Message-ID: <17b00b78aa2249f19ba376c7613cfb38@huawei.com>
-References: <20200127170443.21538-1-roberto.sassu@huawei.com>
-         <20200127170443.21538-6-roberto.sassu@huawei.com>
- <1580473133.6104.48.camel@linux.ibm.com>
-In-Reply-To: <1580473133.6104.48.camel@linux.ibm.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.220.96.108]
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+        id S1728765AbgAaNnq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 31 Jan 2020 08:43:46 -0500
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:37196 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728696AbgAaNnp (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 31 Jan 2020 08:43:45 -0500
+Received: by mail-wm1-f67.google.com with SMTP id f129so8732615wmf.2
+        for <linux-kernel@vger.kernel.org>; Fri, 31 Jan 2020 05:43:43 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=+Z/QqKPZRNPOFz7Xr+UvMoQ/x/R9CxVbSeJizVEab2M=;
+        b=fzWaT5awKSTprWGNFjvI5CWYnpVIrcnpr/AbZvBQFVBcyiGG+bYBV2uAED78hSAEz0
+         7zsFtBxH85RtgleESDclo/phjJl0zeCBDiIqdBdt/oDG636i/yRAF9NlJVHdUemRVUy6
+         vC+sSqdEcIgsBUtMrVwGouKeiHl//FBWO1Ln3kPU6kgmjlyo4w2yQzhCLbWSkMMS+K68
+         +ixaKPMOyhESZQw4ZJWuPLJaVEhp/KetXJBZKLrHAMXkGY/3LQktbA1oIoL8nNdoWdyM
+         l6zu1UeE01BWgm8s5Xnw22cGgb7DrvNxpuTfTXMdjPGN/k4oj/XEp+RQRAN5+N+mQVTh
+         TfCw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=+Z/QqKPZRNPOFz7Xr+UvMoQ/x/R9CxVbSeJizVEab2M=;
+        b=n0+BXjA5gpE3vBbpZz5UhWSXtMCamnoO2XvjNvbOLN+NwDqCeEG3bPweLWuQyyrjlu
+         8ajEyVLM7ALTM9z0h7S2qvFe5CP69GKbh/PxibBlyXEul9sumyuf/ZFz/Fl12/nFVnSK
+         MvuQFVYlkQEp32dMSW/oFsvSxOu2q1DzjGMurfpdvBfVsyViAxg6PSf3RY8iBtdiLoHJ
+         4Eo9xj+pIg581LK+2yrn5e6cZ1Nffzfb6D1jcSU8J4NotDKsI+DB6vd3Bi73RoHB5xtT
+         ZQypRtq6O5Us8J4LYopNjhPWA2rJZpUcVJ9DR4L7HmiaxnlpN/1574xqpVbWgBv/xe50
+         8pvg==
+X-Gm-Message-State: APjAAAU8iWLK8Bj0WPP94v9MRcAeQOp1TQrKeqI/IPguZt6dRfrabJaW
+        QnrTkqNj3CrgrZqLqdFopLfMKg==
+X-Google-Smtp-Source: APXvYqzt/Q19RKB5qlDxzHOJGecKCDHb2QXQ847rq1x4DycbKl05VzkB6sXzwu8DxSWkFSpV18idNA==
+X-Received: by 2002:a1c:2358:: with SMTP id j85mr12487076wmj.28.1580478223062;
+        Fri, 31 Jan 2020 05:43:43 -0800 (PST)
+Received: from [192.168.0.38] ([176.61.57.127])
+        by smtp.gmail.com with ESMTPSA id g25sm16185615wmh.3.2020.01.31.05.43.41
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 31 Jan 2020 05:43:42 -0800 (PST)
+Subject: Re: [PATCH v3 10/19] usb: dwc3: Add support for
+ role-switch-default-mode binding
+To:     Felipe Balbi <balbi@kernel.org>, linux-arm-msm@vger.kernel.org,
+        linux-usb@vger.kernel.org, gregkh@linuxfoundation.org,
+        jackp@codeaurora.org, bjorn.andersson@linaro.org
+Cc:     linux-kernel@vger.kernel.org, John Stultz <john.stultz@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        ShuFan Lee <shufan_lee@richtek.com>,
+        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+        Suzuki K Poulose <suzuki.poulose@arm.com>,
+        Chunfeng Yun <chunfeng.yun@mediatek.com>,
+        Yu Chen <chenyu56@huawei.com>,
+        Hans de Goede <hdegoede@redhat.com>,
+        Andy Shevchenko <andy.shevchenko@gmail.com>,
+        Jun Li <lijun.kernel@gmail.com>,
+        Valentin Schneider <valentin.schneider@arm.com>,
+        devicetree@vger.kernel.org
+References: <20200122185610.131930-1-bryan.odonoghue@linaro.org>
+ <20200122185610.131930-11-bryan.odonoghue@linaro.org>
+ <87o8uj7nzj.fsf@kernel.org>
+From:   Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+Message-ID: <9b95478d-5ac7-3dfa-a70e-1dd881bd5b2c@linaro.org>
+Date:   Fri, 31 Jan 2020 13:43:44 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.1
 MIME-Version: 1.0
-X-CFilter-Loop: Reflected
+In-Reply-To: <87o8uj7nzj.fsf@kernel.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-PiAtLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KPiBGcm9tOiBsaW51eC1pbnRlZ3JpdHktb3du
-ZXJAdmdlci5rZXJuZWwub3JnIFttYWlsdG86bGludXgtaW50ZWdyaXR5LQ0KPiBvd25lckB2Z2Vy
-Lmtlcm5lbC5vcmddIE9uIEJlaGFsZiBPZiBNaW1pIFpvaGFyDQo+IFNlbnQ6IEZyaWRheSwgSmFu
-dWFyeSAzMSwgMjAyMCAxOjE5IFBNDQo+IFRvOiBSb2JlcnRvIFNhc3N1IDxyb2JlcnRvLnNhc3N1
-QGh1YXdlaS5jb20+Ow0KPiBqYXJra28uc2Fra2luZW5AbGludXguaW50ZWwuY29tOw0KPiBqYW1l
-cy5ib3R0b21sZXlAaGFuc2VucGFydG5lcnNoaXAuY29tOyBsaW51eC1pbnRlZ3JpdHlAdmdlci5r
-ZXJuZWwub3JnDQo+IENjOiBsaW51eC1zZWN1cml0eS1tb2R1bGVAdmdlci5rZXJuZWwub3JnOyBs
-aW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnOw0KPiBTaWx2aXUgVmxhc2NlYW51IDxTaWx2aXUu
-Vmxhc2NlYW51QGh1YXdlaS5jb20+DQo+IFN1YmplY3Q6IFJlOiBbUEFUQ0ggNS84XSBpbWE6IGFs
-bG9jYXRlIGFuZCBpbml0aWFsaXplIHRmbSBmb3IgZWFjaCBQQ1IgYmFuaw0KPiANCj4gT24gTW9u
-LCAyMDIwLTAxLTI3IGF0IDE4OjA0ICswMTAwLCBSb2JlcnRvIFNhc3N1IHdyb3RlOg0KPiA+IFRo
-aXMgcGF0Y2ggY3JlYXRlcyBhIGNyeXB0b19zaGFzaCBzdHJ1Y3R1cmUgZm9yIGVhY2ggYWxsb2Nh
-dGVkIFBDUiBiYW5rDQo+IGFuZA0KPiA+IGZvciBTSEExIGlmIGEgYmFuayB3aXRoIHRoYXQgYWxn
-b3JpdGhtIGlzIG5vdCBjdXJyZW50bHkgYWxsb2NhdGVkLg0KPiA+DQo+ID4gU2lnbmVkLW9mZi1i
-eTogUm9iZXJ0byBTYXNzdSA8cm9iZXJ0by5zYXNzdUBodWF3ZWkuY29tPg0KPiANCj4gPHNuaXA+
-DQo+IA0KPiA+ICtpbnQgX19pbml0IGltYV9pbml0X2NyeXB0byh2b2lkKQ0KPiA+ICt7DQo+ID4g
-KwllbnVtIGhhc2hfYWxnbyBhbGdvOw0KPiA+ICsJbG9uZyByYzsNCj4gPiArCWludCBpOw0KPiA+
-ICsNCj4gPiArCXJjID0gaW1hX2luaXRfaW1hX2NyeXB0bygpOw0KPiA+ICsJaWYgKHJjKQ0KPiA+
-ICsJCXJldHVybiByYzsNCj4gPiArDQo+ID4gKwlpbWFfYWxnb19hcnJheSA9IGttYWxsb2NfYXJy
-YXkoaW1hX3RwbV9jaGlwLQ0KPiA+bnJfYWxsb2NhdGVkX2JhbmtzICsgMSwNCj4gPiArCQkJCSAg
-ICAgICBzaXplb2YoKmltYV9hbGdvX2FycmF5KSwgR0ZQX0tFUk5FTCk7DQo+IA0KPiBQZXJoYXBz
-IGluc3RlYWQgb2YgaGFyZCBjb2RpbmcgIm5yX2FsbG9jYXRlZF9iYW5rcyArIDEiLCBjcmVhdGUg
-YQ0KPiB2YXJpYWJsZSBmb3Igc3RvcmluZyB0aGUgbnVtYmVyIG9mICJleHRyYSIgYmFua3MuIMKg
-V2FsayB0aGUgYmFua3MNCj4gc2V0dGluZyBpbWFfc2hhMV9pZHggYW5kLCBsYXRlciwgaW4gYSBz
-dWJzZXF1ZW50IHBhdGNoIHNldA0KPiBpbWFfaGFzaF9hbGdvX2lkeC4NCg0KSSBjb3VsZCBzdG9y
-ZSB0aGUgaW5kZXhlcyBpbiBhbiBhcnJheSBhbmQgYWRkIEFSUkFZX1NJWkUgb2YgdGhhdCBhcnJh
-eS4NCg0KPiA+ICsJaWYgKCFpbWFfYWxnb19hcnJheSkgew0KPiA+ICsJCXJjID0gLUVOT01FTTsN
-Cj4gPiArCQlnb3RvIG91dDsNCj4gPiArCX0NCj4gPiArDQo+ID4gKwlmb3IgKGkgPSAwOyBpIDwg
-aW1hX3RwbV9jaGlwLT5ucl9hbGxvY2F0ZWRfYmFua3MgKyAxOyBpKyspIHsNCj4gPiArCQlpbWFf
-YWxnb19hcnJheVtpXS50Zm0gPSBOVUxMOw0KPiA+ICsJCWltYV9hbGdvX2FycmF5W2ldLmFsZ28g
-PSBIQVNIX0FMR09fX0xBU1Q7DQo+ID4gKwl9DQo+IA0KPiBpbWFfaW5pdF9jcnlwdG8oKSBpcyBl
-eGVjdXRlZCBvbmNlIG9uIGluaXRpYWxpemF0aW9uLiDCoEknbSBub3Qgc3VyZSBpZg0KPiBpdCBt
-YWtlcyBhIGRpZmZlcmVuY2UsIGJ1dCBpZiB5b3UncmUgcmVhbGx5IGNvbmNlcm5lZCBhYm91dCBh
-bg0KPiBhZGRpdGlvbmFsIGxvb3AsIHRoZSBpbml0aWFsaXphdGlvbiwgaGVyZSwgY291bGQgYmUg
-bGltaXRlZCB0byB0aGUNCj4gImV4dHJhIiBiYW5rcy4gwqBUaGUgb3RoZXIgYmFua3MgY291bGQg
-YmUgaW5pdGlhbGl6ZWQgYXQgdGhlIGJlZ2lubmluZw0KPiBvZiB0aGUgbmV4dCBsb29wLg0KDQpJ
-IHNldCBhbGdvIHRvIEhBU0hfQUxHT19fTEFTVCB0byBtYXJrIHRoZSBpbWFfYWxnb19hcnJheSBl
-bnRyaWVzIGFzDQp1bmluaXRpYWxpemVkLiBpbWFfYWxsb2NfdGZtKCkgdXNlcyBpbWFfYWxnb19h
-cnJheSBpbiB0aGUgbmV4dCBsb29wLg0KUmVwbGFjaW5nIGttYWxsb2NfYXJyYXkoKSB3aXRoIGtj
-YWxsb2MoKSB3b3VsZCBjYXVzZSBhbGdvIHRvIGJlIHNldCB0bw0KSEFTSF9BTEdPX01ENC4NCg0K
-SSBjb3VsZCBjaGVjayB0Zm0gZmlyc3QsIHdoaWNoIGVuc3VyZXMgdGhhdCBhbHNvIGFsZ28gd2Fz
-IGluaXRpYWxpemVkLg0KDQpSb2JlcnRvDQoNCj4gPiArCWltYV9zaGExX2lkeCA9IC0xOw0KPiA+
-ICsNCj4gPiArCWZvciAoaSA9IDA7IGkgPCBpbWFfdHBtX2NoaXAtPm5yX2FsbG9jYXRlZF9iYW5r
-czsgaSsrKSB7DQo+ID4gKwkJYWxnbyA9IGltYV90cG1fY2hpcC0+YWxsb2NhdGVkX2JhbmtzW2ld
-LmNyeXB0b19pZDsNCj4gPiArCQlpbWFfYWxnb19hcnJheVtpXS5hbGdvID0gYWxnbzsNCj4gPiAr
-DQo+ID4gKwkJLyogdW5rbm93biBUUE0gYWxnb3JpdGhtICovDQo+ID4gKwkJaWYgKGFsZ28gPT0g
-SEFTSF9BTEdPX19MQVNUKQ0KPiA+ICsJCQljb250aW51ZTsNCj4gPiArDQo+ID4gKwkJaWYgKGFs
-Z28gPT0gSEFTSF9BTEdPX1NIQTEpDQo+ID4gKwkJCWltYV9zaGExX2lkeCA9IGk7DQo+ID4gKw0K
-PiA+ICsJCWlmIChhbGdvID09IGltYV9oYXNoX2FsZ28pIHsNCj4gPiArCQkJaW1hX2FsZ29fYXJy
-YXlbaV0udGZtID0gaW1hX3NoYXNoX3RmbTsNCj4gPiArCQkJY29udGludWU7DQo+ID4gKwkJfQ0K
-PiA+ICsNCj4gPiArCQlpbWFfYWxnb19hcnJheVtpXS50Zm0gPSBpbWFfYWxsb2NfdGZtKGFsZ28p
-Ow0KPiA+ICsJCWlmIChJU19FUlIoaW1hX2FsZ29fYXJyYXlbaV0udGZtKSkgew0KPiA+ICsJCQlp
-ZiAoYWxnbyA9PSBIQVNIX0FMR09fU0hBMSkgew0KPiA+ICsJCQkJcmMgPSBQVFJfRVJSKGltYV9h
-bGdvX2FycmF5W2ldLnRmbSk7DQo+ID4gKwkJCQlpbWFfYWxnb19hcnJheVtpXS50Zm0gPSBOVUxM
-Ow0KPiA+ICsJCQkJZ290byBvdXRfYXJyYXk7DQo+ID4gKwkJCX0NCj4gPiArDQo+ID4gKwkJCWlt
-YV9hbGdvX2FycmF5W2ldLnRmbSA9IE5VTEw7DQo+ID4gKwkJfQ0KPiA+ICsJfQ0KPiA+ICsNCj4g
-PiArCWlmIChpbWFfc2hhMV9pZHggPCAwKSB7DQo+ID4gKwkJaW1hX2FsZ29fYXJyYXlbaV0udGZt
-ID0gaW1hX2FsbG9jX3RmbShIQVNIX0FMR09fU0hBMSk7DQo+ID4gKwkJaWYgKElTX0VSUihpbWFf
-YWxnb19hcnJheVtpXS50Zm0pKSB7DQo+ID4gKwkJCXJjID0gUFRSX0VSUihpbWFfYWxnb19hcnJh
-eVtpXS50Zm0pOw0KPiA+ICsJCQlnb3RvIG91dF9hcnJheTsNCj4gPiArCQl9DQo+ID4gKw0KPiA+
-ICsJCWltYV9zaGExX2lkeCA9IGk7DQo+ID4gKwkJaW1hX2FsZ29fYXJyYXlbaV0uYWxnbyA9IEhB
-U0hfQUxHT19TSEExOw0KPiA+ICsJfQ0KPiA+ICsNCj4gPiArCXJldHVybiAwOw0KPiA+ICtvdXRf
-YXJyYXk6DQo+ID4gKwlmb3IgKGkgPSAwOyBpIDwgaW1hX3RwbV9jaGlwLT5ucl9hbGxvY2F0ZWRf
-YmFua3MgKyAxOyBpKyspIHsNCj4gPiArCQlpZiAoIWltYV9hbGdvX2FycmF5W2ldLnRmbSB8fA0K
-PiA+ICsJCSAgICBpbWFfYWxnb19hcnJheVtpXS50Zm0gPT0gaW1hX3NoYXNoX3RmbSkNCj4gPiAr
-CQkJY29udGludWU7DQo+ID4gKw0KPiA+ICsJCWNyeXB0b19mcmVlX3NoYXNoKGltYV9hbGdvX2Fy
-cmF5W2ldLnRmbSk7DQo+ID4gKwl9DQo+ID4gK291dDoNCj4gPiArCWNyeXB0b19mcmVlX3NoYXNo
-KGltYV9zaGFzaF90Zm0pOw0KPiA+ICsJcmV0dXJuIHJjOw0KPiA+ICt9DQoNCg==
+On 31/01/2020 13:29, Felipe Balbi wrote:
+> 
+> Hi,
+> 
+> Bryan O'Donoghue <bryan.odonoghue@linaro.org> writes:
+>> From: John Stultz <john.stultz@linaro.org>
+>>
+>> Support the new role-switch-default-mode binding for configuring
+>> the default role the controller assumes as when the usb role is
+>> USB_ROLE_NONE
+> 
+> per specification, device is supposed to be the default role. Why isn't
+> that working for you?
+> 
+
+Speaking for myself - its only the role-switch logic I need. This patch 
+seemed to go along with the the role-switch stuff but, now that you ask, 
+this series can probably do without it.
+
+---
+bod
