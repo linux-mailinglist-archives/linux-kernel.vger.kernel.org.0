@@ -2,169 +2,137 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 550A414E8D9
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Jan 2020 07:39:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0319B14E8EA
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Jan 2020 07:43:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728030AbgAaGiy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 31 Jan 2020 01:38:54 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42600 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725815AbgAaGiy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 31 Jan 2020 01:38:54 -0500
-Received: from [10.44.0.22] (unknown [103.48.210.53])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B08DF2082E;
-        Fri, 31 Jan 2020 06:38:51 +0000 (UTC)
-Subject: Re: [PATCH] m68k: configs: Cleanup old Kconfig IO scheduler options
-To:     Krzysztof Kozlowski <krzk@kernel.org>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        linux-m68k@lists.linux-m68k.org, linux-kernel@vger.kernel.org
-References: <20200130192520.3202-1-krzk@kernel.org>
-From:   Greg Ungerer <gerg@linux-m68k.org>
-Message-ID: <1c7ff9f2-f3fe-ad04-e660-c0e1796280a1@linux-m68k.org>
-Date:   Fri, 31 Jan 2020 16:38:49 +1000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.1
+        id S1727987AbgAaGnc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 31 Jan 2020 01:43:32 -0500
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:45807 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725832AbgAaGnc (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 31 Jan 2020 01:43:32 -0500
+Received: by mail-wr1-f66.google.com with SMTP id a6so7219481wrx.12
+        for <linux-kernel@vger.kernel.org>; Thu, 30 Jan 2020 22:43:31 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=8p4qE6ifkN9u5luLlc5PPEhUo7uti+2D6sa+aGx2WPM=;
+        b=ES0f0iW44b3+TMWrymbT4CFWqgLrj/Ku5TfNTpOYQtd7MdHUBoRa9b05JjGcvUwxw3
+         DGI3CtBNONbI29LN7y/gHNUpBikLiMAQQ7iRX79QgRhGN9kx330tiHwRNXi6briwka5u
+         rJgvziykVkV7gsn2vVO/bX46yf0OSiI7Z5jLDoTm4LI9Fb03ZbGBKPZtr+lA+eMgqsFU
+         DMTMcTevp0tPLvlmfiUiKhe9mlxtumWgE9g/Vb5BS3amSouNHVS/D9pECDmX5SWCCDzO
+         MeykeFZqBpTNWroxyEHWw9PRJfb8gBHwJjMILxsnZ5Zq89AWGnWL71LOniphwtS6AuxE
+         wenA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition
+         :content-transfer-encoding:in-reply-to:user-agent;
+        bh=8p4qE6ifkN9u5luLlc5PPEhUo7uti+2D6sa+aGx2WPM=;
+        b=WkM/5IEkiAAN59hnguVVrzGYw/uExbA5+cVsOyvHuLfpm9dU3hN/TfXVRaYu5HrwJR
+         RjFIhWjc5khdbMWZ70G0kMkrNWh7NCwjrg3jAMdPBgDErSsWiDqHCpjzxmqM0eB32faw
+         TsPU1Jw8ODNvdDp1XJRdxL/irjvH6+/IQOlaPemXEm/OPsTStMwF7q3NSZo28/4KOdLX
+         LT/oUS+gFcN5GkMN6h672hDsCAoyUfJCQODIMVyBekgjT7vY0E49hxWStX5Y6lKATBb2
+         86b36zZg6WURPNJ6/N99o2HWUpdfrUrpwJ2GjHuGyy+mo8JyAXX8MJJRLbiPbNggU+Ax
+         E3dg==
+X-Gm-Message-State: APjAAAVbWLd/8QJUesfMVfft4ex7UfSlJd+HxGoZDDpUkmjN8wTqZB3p
+        Ge+Vxk9YQiaj1/hktDQMp3E=
+X-Google-Smtp-Source: APXvYqx7M24GaSUQMNiexPi/fx9edxK/zBmKjevzdteMfzihXd45RO5/rqMvIP7+Q+TL5iqWN5xccw==
+X-Received: by 2002:adf:ed04:: with SMTP id a4mr9078387wro.76.1580453010295;
+        Thu, 30 Jan 2020 22:43:30 -0800 (PST)
+Received: from gmail.com (54033286.catv.pool.telekom.hu. [84.3.50.134])
+        by smtp.gmail.com with ESMTPSA id f189sm10194177wmf.16.2020.01.30.22.43.29
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 30 Jan 2020 22:43:29 -0800 (PST)
+Date:   Fri, 31 Jan 2020 07:43:27 +0100
+From:   Ingo Molnar <mingo@kernel.org>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     =?iso-8859-1?Q?J=F6rg?= Otte <jrg.otte@gmail.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        the arch/x86 maintainers <x86@kernel.org>
+Subject: Re: 5.6-### doesn't boot
+Message-ID: <20200131064327.GB130017@gmail.com>
+References: <CADDKRnANovPM5Xvme7Ywg8KEMUyP-gB0M-ufxKD8pw0gNwtFag@mail.gmail.com>
+ <CAHk-=wjOXE4cqFOdtSymYnMMayZq8Lv7qDy-6BzCs=2=8HcoBA@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20200130192520.3202-1-krzk@kernel.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAHk-=wjOXE4cqFOdtSymYnMMayZq8Lv7qDy-6BzCs=2=8HcoBA@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Krzysztof,
 
-On 31/1/20 5:25 am, Krzysztof Kozlowski wrote:
-> CONFIG_IOSCHED_DEADLINE and CONFIG_IOSCHED_CFQ are gone since
-> commit f382fb0bcef4 ("block: remove legacy IO schedulers").
+* Linus Torvalds <torvalds@linux-foundation.org> wrote:
+
+> On Thu, Jan 30, 2020 at 9:32 AM Jörg Otte <jrg.otte@gmail.com> wrote:
+> >
+> > my notebook doesn't boot with current kernel. Booting stops right after
+> > displaying "loading initial ramdisk..". No further displays.
+> > Also nothing is wriiten to the logs.
+> >
+> > last known good kernel is : vmlinuz-5.5.0-00849-gb0be0eff1a5a
+> > first known bad kernel is : vmlinuz-5.5.0-01154-gc677124e631d
+>
+> It would be lovely if you can bisect a bit. But my merges in that
+> range are all from Ingo:
 > 
-> The IOSCHED_DEADLINE was replaced by MQ_IOSCHED_DEADLINE and it will be
-> now enabled by default (along with MQ_IOSCHED_KYBER).
-> 
-> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+> Ingo Molnar (7):
+>     header cleanup
+>     objtool updates
+>     RCU updates
+>     EFI updates
+>     locking updates
+>     perf updates
+>     scheduler updates
 
-Thanks, I will apply to the m68knommu git tree (for-next branch).
+If I had to guess then perhaps the EFI changes look the most dangerous 
+ones from these trees - but in principle most of these trees could 
+contain a boot crasher/hang bug.
 
-Regards
-Greg
+> but not having any messages at all makes it hard to guess where it 
+> would be.
 
+To improve debug output:
 
-> ---
->   arch/m68k/configs/amcore_defconfig   | 1 -
->   arch/m68k/configs/m5208evb_defconfig | 2 --
->   arch/m68k/configs/m5249evb_defconfig | 2 --
->   arch/m68k/configs/m5272c3_defconfig  | 2 --
->   arch/m68k/configs/m5275evb_defconfig | 2 --
->   arch/m68k/configs/m5307c3_defconfig  | 2 --
->   arch/m68k/configs/m5407c3_defconfig  | 2 --
->   arch/m68k/configs/m5475evb_defconfig | 2 --
->   8 files changed, 15 deletions(-)
-> 
-> diff --git a/arch/m68k/configs/amcore_defconfig b/arch/m68k/configs/amcore_defconfig
-> index d5e683dd885d..3a84f24d41c8 100644
-> --- a/arch/m68k/configs/amcore_defconfig
-> +++ b/arch/m68k/configs/amcore_defconfig
-> @@ -13,7 +13,6 @@ CONFIG_EMBEDDED=y
->   # CONFIG_SLUB_DEBUG is not set
->   # CONFIG_COMPAT_BRK is not set
->   # CONFIG_BLK_DEV_BSG is not set
-> -# CONFIG_IOSCHED_CFQ is not set
->   # CONFIG_MMU is not set
->   CONFIG_M5307=y
->   CONFIG_AMCORE=y
-> diff --git a/arch/m68k/configs/m5208evb_defconfig b/arch/m68k/configs/m5208evb_defconfig
-> index a3102ff7e5ed..0ee3079f6ca9 100644
-> --- a/arch/m68k/configs/m5208evb_defconfig
-> +++ b/arch/m68k/configs/m5208evb_defconfig
-> @@ -10,8 +10,6 @@ CONFIG_EXPERT=y
->   # CONFIG_VM_EVENT_COUNTERS is not set
->   # CONFIG_COMPAT_BRK is not set
->   # CONFIG_BLK_DEV_BSG is not set
-> -# CONFIG_IOSCHED_DEADLINE is not set
-> -# CONFIG_IOSCHED_CFQ is not set
->   # CONFIG_MMU is not set
->   # CONFIG_4KSTACKS is not set
->   CONFIG_RAMBASE=0x40000000
-> diff --git a/arch/m68k/configs/m5249evb_defconfig b/arch/m68k/configs/m5249evb_defconfig
-> index f7bb9ed3efa8..f84f68c04065 100644
-> --- a/arch/m68k/configs/m5249evb_defconfig
-> +++ b/arch/m68k/configs/m5249evb_defconfig
-> @@ -10,8 +10,6 @@ CONFIG_EXPERT=y
->   # CONFIG_VM_EVENT_COUNTERS is not set
->   # CONFIG_SLUB_DEBUG is not set
->   # CONFIG_BLK_DEV_BSG is not set
-> -# CONFIG_IOSCHED_DEADLINE is not set
-> -# CONFIG_IOSCHED_CFQ is not set
->   # CONFIG_MMU is not set
->   CONFIG_M5249=y
->   CONFIG_M5249C3=y
-> diff --git a/arch/m68k/configs/m5272c3_defconfig b/arch/m68k/configs/m5272c3_defconfig
-> index 1e679f6a400f..eca65020aae3 100644
-> --- a/arch/m68k/configs/m5272c3_defconfig
-> +++ b/arch/m68k/configs/m5272c3_defconfig
-> @@ -10,8 +10,6 @@ CONFIG_EXPERT=y
->   # CONFIG_VM_EVENT_COUNTERS is not set
->   # CONFIG_SLUB_DEBUG is not set
->   # CONFIG_BLK_DEV_BSG is not set
-> -# CONFIG_IOSCHED_DEADLINE is not set
-> -# CONFIG_IOSCHED_CFQ is not set
->   # CONFIG_MMU is not set
->   CONFIG_M5272=y
->   CONFIG_M5272C3=y
-> diff --git a/arch/m68k/configs/m5275evb_defconfig b/arch/m68k/configs/m5275evb_defconfig
-> index d2987b40423e..9402c7a3e9c7 100644
-> --- a/arch/m68k/configs/m5275evb_defconfig
-> +++ b/arch/m68k/configs/m5275evb_defconfig
-> @@ -10,8 +10,6 @@ CONFIG_EXPERT=y
->   # CONFIG_VM_EVENT_COUNTERS is not set
->   # CONFIG_SLUB_DEBUG is not set
->   # CONFIG_BLK_DEV_BSG is not set
-> -# CONFIG_IOSCHED_DEADLINE is not set
-> -# CONFIG_IOSCHED_CFQ is not set
->   # CONFIG_MMU is not set
->   CONFIG_M5275=y
->   # CONFIG_4KSTACKS is not set
-> diff --git a/arch/m68k/configs/m5307c3_defconfig b/arch/m68k/configs/m5307c3_defconfig
-> index 97a78c99eeee..bb8b0eb4bdfc 100644
-> --- a/arch/m68k/configs/m5307c3_defconfig
-> +++ b/arch/m68k/configs/m5307c3_defconfig
-> @@ -10,8 +10,6 @@ CONFIG_EXPERT=y
->   # CONFIG_VM_EVENT_COUNTERS is not set
->   # CONFIG_SLUB_DEBUG is not set
->   # CONFIG_BLK_DEV_BSG is not set
-> -# CONFIG_IOSCHED_DEADLINE is not set
-> -# CONFIG_IOSCHED_CFQ is not set
->   # CONFIG_MMU is not set
->   CONFIG_M5307=y
->   CONFIG_M5307C3=y
-> diff --git a/arch/m68k/configs/m5407c3_defconfig b/arch/m68k/configs/m5407c3_defconfig
-> index 766a97f39a3a..ce9ccf13c7c0 100644
-> --- a/arch/m68k/configs/m5407c3_defconfig
-> +++ b/arch/m68k/configs/m5407c3_defconfig
-> @@ -11,8 +11,6 @@ CONFIG_EXPERT=y
->   CONFIG_MODULES=y
->   CONFIG_MODULE_UNLOAD=y
->   # CONFIG_BLK_DEV_BSG is not set
-> -# CONFIG_IOSCHED_DEADLINE is not set
-> -# CONFIG_IOSCHED_CFQ is not set
->   # CONFIG_MMU is not set
->   CONFIG_M5407=y
->   CONFIG_M5407C3=y
-> diff --git a/arch/m68k/configs/m5475evb_defconfig b/arch/m68k/configs/m5475evb_defconfig
-> index 579fd98afed6..93f7c7a07553 100644
-> --- a/arch/m68k/configs/m5475evb_defconfig
-> +++ b/arch/m68k/configs/m5475evb_defconfig
-> @@ -11,8 +11,6 @@ CONFIG_LOG_BUF_SHIFT=14
->   CONFIG_EMBEDDED=y
->   CONFIG_MODULES=y
->   # CONFIG_BLK_DEV_BSG is not set
-> -# CONFIG_IOSCHED_DEADLINE is not set
-> -# CONFIG_IOSCHED_CFQ is not set
->   CONFIG_COLDFIRE=y
->   # CONFIG_4KSTACKS is not set
->   CONFIG_RAMBASE=0x0
-> 
+Removing any 'fbcon' options in /boot/grub/grub.cfg and adding this to 
+the boot options might improve the debug output:
+
+  earlyprintk=vga initcall_debug ignore_loglevel debug panic_on_warn 
+
+So for example if the relevant kernel boot entry in grub.cfg looks like 
+this:
+
+  linux   /vmlinuz-5.3.0-26-generic root=UUID=1bcxabe3-0b62-4x04-b456-47cd90c0e6x4 ro  splash $vt_handoff
+
+Then editing it to the following could in principle produce (much) more 
+verbose boot output:
+
+  linux   /vmlinuz-5.3.0-26-generic root=UUID=1bcxabe3-0b62-4x04-b456-47cd90c0e6x4 ro earlyprintk=vga initcall_debug ignore_loglevel debug panic_on_warn $vt_handoff
+
+If this produces more output than just "loading initial ramdisk..' then a 
+photo of the hung screen would be sufficient, no need to transcribe it.
+
+> A few bisect runs would narrow it down a fair amount. Bisecting all the 
+> way would be even better, of course,
+
+Agreed!
+
+If compiling full kernels for bisections takes too long (for example 
+because the .config is from a distro kernel) then running "make 
+localmodconfig" to create a config tailored to the currently active 
+modules will cut down significantly on build time.
+
+Also, a warning: if the normal boot log contains spurious warnings then 
+the new 'panic_on_warn' option will cause additional trouble on good 
+kernels.
+
+Thanks,
+
+	Ingo
