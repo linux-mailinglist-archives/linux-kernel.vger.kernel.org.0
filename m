@@ -2,102 +2,100 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8873814F139
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Jan 2020 18:23:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6917514F14C
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Jan 2020 18:31:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727027AbgAaRXX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 31 Jan 2020 12:23:23 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44804 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726139AbgAaRXX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 31 Jan 2020 12:23:23 -0500
-Received: from linux-8ccs (p5B2812F9.dip0.t-ipconnect.de [91.40.18.249])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 431DC20663;
-        Fri, 31 Jan 2020 17:23:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1580491403;
-        bh=XPildtQFTVpy65iEB7yl2hAOgkHxHac/v8CsGQ18TNY=;
-        h=Date:From:To:Cc:Subject:From;
-        b=JO6M4f5ZEeLSJSgF8N5MPSM3UthwfbjyBMLxGt2TJsZdHAYEAlxU6u17BCEydPHZQ
-         w7GgjxsMtSlE7m9had15XeysWkOwtqzl/Wd/AfND/Xdc0k6JNh4bNkGtphK2JUe6m7
-         Fylpm+hF0MBrLtMBtcNSzynd2snYa7UrV/49EzsI=
-Date:   Fri, 31 Jan 2020 18:23:19 +0100
-From:   Jessica Yu <jeyu@kernel.org>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     linux-kernel@vger.kernel.org
-Subject: [GIT PULL] Modules updates for v5.6
-Message-ID: <20200131172319.GA16783@linux-8ccs>
+        id S1727084AbgAaRbM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 31 Jan 2020 12:31:12 -0500
+Received: from lelv0142.ext.ti.com ([198.47.23.249]:55844 "EHLO
+        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726139AbgAaRbL (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 31 Jan 2020 12:31:11 -0500
+Received: from lelv0266.itg.ti.com ([10.180.67.225])
+        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id 00VHV36s087335;
+        Fri, 31 Jan 2020 11:31:03 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1580491863;
+        bh=Gt5dd7XOIRcUxh6uvWBlZM+92xMNDI0LZYHC+I8v0Yc=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=M4gREsBxtBTZzWFlbEJzezhFWLdaORzgSPq+7+d08L2iDdkdonMyzrF2XDxXWcq1J
+         VbBBh3wXz0AWxkGag23GOKlr3Vhig1fvjsTxg3qL7Py70/JONWvb19yxwkvMIxrlgo
+         phE5EXxmjYPV3AQPHMi7GieUayWb+rNJ8uaLJ8bg=
+Received: from DFLE103.ent.ti.com (dfle103.ent.ti.com [10.64.6.24])
+        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 00VHV3HD096950
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Fri, 31 Jan 2020 11:31:03 -0600
+Received: from DFLE103.ent.ti.com (10.64.6.24) by DFLE103.ent.ti.com
+ (10.64.6.24) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Fri, 31
+ Jan 2020 11:31:03 -0600
+Received: from lelv0326.itg.ti.com (10.180.67.84) by DFLE103.ent.ti.com
+ (10.64.6.24) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
+ Frontend Transport; Fri, 31 Jan 2020 11:31:03 -0600
+Received: from [10.250.65.13] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by lelv0326.itg.ti.com (8.15.2/8.15.2) with ESMTP id 00VHV3pe063654;
+        Fri, 31 Jan 2020 11:31:03 -0600
+Subject: Re: [PATCH v2] can: tcan4x5x: Turn on the power before parsing the
+ config
+To:     Marc Kleine-Budde <mkl@pengutronix.de>
+CC:     <linux-can@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <devicetree@vger.kernel.org>
+References: <20191210163204.28225-1-dmurphy@ti.com>
+ <4a2e80f0-13c5-df7b-65af-25f86ca48f2a@pengutronix.de>
+From:   Dan Murphy <dmurphy@ti.com>
+Message-ID: <db84cce8-925e-0b31-e196-6543359e6ea5@ti.com>
+Date:   Fri, 31 Jan 2020 11:27:44 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
-X-OS:   Linux linux-8ccs 4.12.14-lp150.12.61-default x86_64
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <4a2e80f0-13c5-df7b-65af-25f86ca48f2a@pengutronix.de>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Linus,
+Marc
 
-Please pull below to receive modules updates for the 5.6 merge window.
-Details can be found in the signed tag.
+On 1/2/20 6:38 AM, Marc Kleine-Budde wrote:
+> On 12/10/19 5:32 PM, Dan Murphy wrote:
+>> The parse config function now performs action on the device either
+>> reading or writing and a reset.  If the regulator is managed it needs
+>> to be turned on.  So turn on the regulator if available if the parsing
+>> fails then turn off the regulator.
+> Another BTW:
+> Consider converting the switching of the vsup to runtime_pm.
+>
+> Yet another one:
+> Why do you disable the clocks in the error path of tcan4x5x_can_probe(),
+> but never enable them?
+>
+>> out_clk:
+>> 	if (!IS_ERR(mcan_class->cclk)) {
+>> 		clk_disable_unprepare(mcan_class->cclk);
+>> 		clk_disable_unprepare(mcan_class->hclk);
+>> 	}
+> - please move the clock handling from the m_can.c to the individual
+>    driver
+> - please move the clock handling to runtime_pm in the individual driver
+> - remove the obsolete m_can_class_get_clocks()
+> - make runtime_pm mandatory
+>
+> regards,
+> Marc
+>
+I have separate the clock calls into pm runtime calls and moved the 
+clock init into the respective children of the framework.
 
-Thanks,
+Did you want me to submit 1 patch with all the changes or would you like 
+3 separate patches?  First 2 patches will abstract the clocks away into 
+the children and the 3rd patch would be to remove the clocks API from 
+the framework
 
-Jessica
+Dan
 
----
-The following changes since commit e42617b825f8073569da76dc4510bfa019b1c35a:
-
-  Linux 5.5-rc1 (2019-12-08 14:57:55 -0800)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/jeyu/linux.git tags/modules-for-v5.6
-
-for you to fetch changes up to 6080d608eeff7cb5090a2ddbaf723bfb0ff133fc:
-
-  module.h: Annotate mod_kallsyms with __rcu (2020-01-23 18:19:48 +0100)
-
-----------------------------------------------------------------
-Modules updates for v5.6
-
-Summary of modules changes for the 5.6 merge window:
-
-- Add "MS" (SHF_MERGE|SHF_STRINGS) section flags to __ksymtab_strings to
-  indicate to the linker that it can perform string deduplication (i.e.,
-  duplicate strings are reduced to a single copy in the string table).
-  This means any repeated namespace string would be merged to just one
-  entry in __ksymtab_strings.
-
-- Various code cleanups and small fixes (fix small memleak in error path,
-  improve moduleparam docs, silence rcu warnings, improve error logging)
-
-Signed-off-by: Jessica Yu <jeyu@kernel.org>
-
-----------------------------------------------------------------
-Fabien Dessenne (1):
-      moduleparam: fix kerneldoc
-
-Jessica Yu (3):
-      export.h: reduce __ksymtab_strings string duplication by using "MS" section flags
-      modsign: print module name along with error message
-      module: avoid setting info->name early in case we can fall back to info->mod->name
-
-Madhuparna Bhowmik (1):
-      module.h: Annotate mod_kallsyms with __rcu
-
-Masami Hiramatsu (1):
-      modules: lockdep: Suppress suspicious RCU usage warning
-
-YueHaibing (1):
-      kernel/module: Fix memleak in module_add_modinfo_attrs()
-
- include/asm-generic/export.h |  8 +++--
- include/linux/export.h       | 33 ++++++++++++------
- include/linux/module.h       |  2 +-
- include/linux/moduleparam.h  | 82 +++++++++++++++++++++++++++++++++++++++++---
- kernel/module.c              | 22 +++++++-----
- 5 files changed, 119 insertions(+), 28 deletions(-)
