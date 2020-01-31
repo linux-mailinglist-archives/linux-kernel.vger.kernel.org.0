@@ -2,44 +2,78 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 55DA914E873
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Jan 2020 06:32:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id F1EE414E87F
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Jan 2020 06:45:23 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727053AbgAaFcJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 31 Jan 2020 00:32:09 -0500
-Received: from verein.lst.de ([213.95.11.211]:43036 "EHLO verein.lst.de"
+        id S1727494AbgAaFpW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 31 Jan 2020 00:45:22 -0500
+Received: from mga07.intel.com ([134.134.136.100]:30568 "EHLO mga07.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726023AbgAaFcJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 31 Jan 2020 00:32:09 -0500
-Received: by verein.lst.de (Postfix, from userid 2407)
-        id E952568B20; Fri, 31 Jan 2020 06:32:07 +0100 (CET)
-Date:   Fri, 31 Jan 2020 06:32:07 +0100
-From:   Christoph Hellwig <hch@lst.de>
-To:     Dan Williams <dan.j.williams@intel.com>
-Cc:     linux-nvdimm@lists.01.org, Christoph Hellwig <hch@lst.de>,
-        vishal.l.verma@intel.com, linux-kernel@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org
-Subject: Re: [PATCH 1/5] mm/memremap_pages: Kill unused
- __devm_memremap_pages()
-Message-ID: <20200131053207.GC17457@lst.de>
-References: <158041475480.3889308.655103391935006598.stgit@dwillia2-desk3.amr.corp.intel.com> <158041476158.3889308.4221100673554151124.stgit@dwillia2-desk3.amr.corp.intel.com>
+        id S1726023AbgAaFpW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 31 Jan 2020 00:45:22 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga004.fm.intel.com ([10.253.24.48])
+  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 30 Jan 2020 21:45:21 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.70,384,1574150400"; 
+   d="scan'208";a="253240731"
+Received: from spandruv-desk.jf.intel.com ([10.54.75.21])
+  by fmsmga004.fm.intel.com with ESMTP; 30 Jan 2020 21:45:20 -0800
+From:   Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
+To:     andy@kernel.org
+Cc:     platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
+Subject: [PATCH 1/2] tools/power/x86/intel-speed-select: Fix display for turbo-freq auto mode
+Date:   Thu, 30 Jan 2020 21:45:17 -0800
+Message-Id: <20200131054518.1644519-1-srinivas.pandruvada@linux.intel.com>
+X-Mailer: git-send-email 2.24.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <158041476158.3889308.4221100673554151124.stgit@dwillia2-desk3.amr.corp.intel.com>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jan 30, 2020 at 12:06:01PM -0800, Dan Williams wrote:
-> Kill this definition that was introduced in commit 41e94a851304 ("add
-> devm_memremap_pages") add never used.
-> 
-> Cc: Christoph Hellwig <hch@lst.de>
-> Signed-off-by: Dan Williams <dan.j.williams@intel.com>
+When mailbox command for the turbo-freq enable fails, then don't display
+result for auto-mode. When turbo-freq enable fails, there is no point
+to set CPU priorities.
 
-Looks good,
+Signed-off-by: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
+---
+ tools/power/x86/intel-speed-select/isst-config.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
-Reviewed-by: Christoph Hellwig <hch@lst.de>
+diff --git a/tools/power/x86/intel-speed-select/isst-config.c b/tools/power/x86/intel-speed-select/isst-config.c
+index c74b776adc61..7893ad2c34ab 100644
+--- a/tools/power/x86/intel-speed-select/isst-config.c
++++ b/tools/power/x86/intel-speed-select/isst-config.c
+@@ -43,6 +43,7 @@ static int out_format_json;
+ static int cmd_help;
+ static int force_online_offline;
+ static int auto_mode;
++static int fact_enable_fail;
+ 
+ /* clos related */
+ static int current_clos = -1;
+@@ -1581,6 +1582,8 @@ static void set_fact_for_cpu(int cpu, void *arg1, void *arg2, void *arg3,
+ disp_results:
+ 	if (status) {
+ 		isst_display_result(cpu, outf, "turbo-freq", "enable", ret);
++		if (ret)
++			fact_enable_fail = ret;
+ 	} else {
+ 		/* Since we modified TRL during Fact enable, restore it */
+ 		isst_set_trl_from_current_tdp(cpu, fact_trl);
+@@ -1622,7 +1625,7 @@ static void set_fact_enable(int arg)
+ 					       NULL, &enable);
+ 	isst_ctdp_display_information_end(outf);
+ 
+-	if (enable && auto_mode) {
++	if (!fact_enable_fail && enable && auto_mode) {
+ 		/*
+ 		 * When we adjust CLOS param, we have to set for siblings also.
+ 		 * So for the each user specified CPU, also add the sibling
+-- 
+2.24.1
+
