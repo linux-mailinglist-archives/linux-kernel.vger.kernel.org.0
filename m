@@ -2,86 +2,96 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 16F1B14F4F9
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Jan 2020 23:50:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C355314F4FD
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Jan 2020 23:53:53 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726698AbgAaWuM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 31 Jan 2020 17:50:12 -0500
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:42803 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726246AbgAaWuM (ORCPT
+        id S1726747AbgAaWxt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 31 Jan 2020 17:53:49 -0500
+Received: from mail-pj1-f66.google.com ([209.85.216.66]:36453 "EHLO
+        mail-pj1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726239AbgAaWxt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 31 Jan 2020 17:50:12 -0500
-Received: by mail-lj1-f193.google.com with SMTP id d10so8721122ljl.9
-        for <linux-kernel@vger.kernel.org>; Fri, 31 Jan 2020 14:50:11 -0800 (PST)
+        Fri, 31 Jan 2020 17:53:49 -0500
+Received: by mail-pj1-f66.google.com with SMTP id gv17so3595545pjb.1;
+        Fri, 31 Jan 2020 14:53:47 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=YsjAu+tfEvoLC3dwMkCioXx0hC7IWMGyAJfLYgWB1b4=;
-        b=IiZNGX+wDwmdzlBYBzzF8bFUmBUM/q2ECPUku4aCyw6YGltT7EaaLe+x+mvNda/0w1
-         T17XRoUioyvD69g8aQiIpyBZs9gP/DiZ7FJSstZ33pf9E7vEke9Lw6vK0P6D71JAKJcI
-         J/hamojyIzV/uvQu7is+4L6nFhpHXab2nnwQw=
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=O64ZrPgfOSQfg7giHCwyJ23cxOCbiT2C1hToXNCQpWY=;
+        b=BOOJ0Umnh+z2fup1+C6AYpqK8dw/9bii6hztTW4wh+y+LkZJF2CKGz/18Fm825U1Dj
+         WFyhP237naoFQ8e+VIMnumKLEHmoRKvvUnjzMygt+DKP+p0Ql+p/TsTjByl0yYiI3iQ4
+         DovBBDFVI/DC0AnHmJt89Ggra1beaiBH2OUbG5RWTesrXGFIBv5hNfGfLYXHCZ9ZgS+l
+         UxgknH2OodFR0xNk4NuQ7EfqLQMHtagYyh9tFB8XW0oTD5tcyb9liWUlAnzjA461jneW
+         vHcUaDPVeYRkXyBlMlxkMnNNSxU+eBROYVgjmDAEvm6zTTGS3aJ5giXxxI7DxrUM0Xq1
+         PvRQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=YsjAu+tfEvoLC3dwMkCioXx0hC7IWMGyAJfLYgWB1b4=;
-        b=Pm6iUpTf/KMkCTk0a52h6qhRiq3t2xhChU68+qx+B8XbUkIu0LU3XhKRyqvRDhdmHl
-         YwZieATxn5oYO+L2H/nkpf4GmI/o7EfpOl455FERAldtU9+9jmXYsa4t7GsCle5/bBUX
-         YYhsNps+er+eZikEO5e02hyWXGEFP5BUK8zXGIcSafLeGkxt9qRuAQH+u0ljRw7XCuox
-         9PIf0Ekt1Oi5hFRJepZcz/9f/3vVEDIKjHsRl63r9VE0KKlW4DXxm1sbne38NDWmCENQ
-         RVa6xjuO38gma2vLZNDEeGRARRQ1p89MBjCxbqiDaptbE95WJKc/0nrAce8p1KgZ2c6p
-         +XUQ==
-X-Gm-Message-State: APjAAAUz99ypj0ha+94Ylya6EzNXQS9TG2JA/5zUAz1Pp8RvkcMm2dnq
-        7u/6QSWobO7rDRVZt+31X2iYjOpQoow=
-X-Google-Smtp-Source: APXvYqwHfymH/qy8TJH84fzNIS4lSssQkIyaLCQcghckMahgDY29z6hXiFAh1jhyGsTArdVgWx7SVA==
-X-Received: by 2002:a05:651c:102c:: with SMTP id w12mr7209516ljm.53.1580511009778;
-        Fri, 31 Jan 2020 14:50:09 -0800 (PST)
-Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com. [209.85.167.50])
-        by smtp.gmail.com with ESMTPSA id w16sm5323835lfc.1.2020.01.31.14.50.09
-        for <linux-kernel@vger.kernel.org>
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=O64ZrPgfOSQfg7giHCwyJ23cxOCbiT2C1hToXNCQpWY=;
+        b=CY/el1qbIBCzWAGYK34Cw0kidcfUp2ChqxjBUYaeq6NjFcImMv9acjDzDGvtqrzDHK
+         fawjS/HcDsbbbnC74YCIdpAuZc9Vpp8Y423w/PdmpTO5Qbq+p8QWUuqqLi3b94aJS0jq
+         e9y8jQxUNaQOSbscKzpmCLcoIYvkv3uMWRoaJmrZva03RrJrJNHrK3tPPKU0xofkrN4H
+         KMQipqIzVeD1Z/99KtlFAVZ3dbk7ie5egd95lep3XE0zbikXxin5VE1BTdu1Vkw8ja41
+         YKhzONIybnGAtpd96e6x10R89zcnQuGqe06yyySJ2Kn4foLyfs7krMbvMsK1mvlhHJvp
+         d0sw==
+X-Gm-Message-State: APjAAAXvJ04Va4Ggn80cTCLZW06ddjI/j3jTWvpeEuzfh6xKnyBN+m+n
+        o3c1eIoiXE+k181CXvHvCCo=
+X-Google-Smtp-Source: APXvYqzToYKFMEvzvWEdWk6mTmkSMmNSEEJM3PIkpoZY38eIfpy8Ev8fJPhmwggC6n+nHu4XY3wsyA==
+X-Received: by 2002:a17:902:8d94:: with SMTP id v20mr2737008plo.259.1580511227385;
+        Fri, 31 Jan 2020 14:53:47 -0800 (PST)
+Received: from ?IPv6:2620:15c:2c1:200:55c7:81e6:c7d8:94b? ([2620:15c:2c1:200:55c7:81e6:c7d8:94b])
+        by smtp.gmail.com with ESMTPSA id r26sm10876261pga.55.2020.01.31.14.53.44
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 31 Jan 2020 14:50:09 -0800 (PST)
-Received: by mail-lf1-f50.google.com with SMTP id y19so5964884lfl.9
-        for <linux-kernel@vger.kernel.org>; Fri, 31 Jan 2020 14:50:09 -0800 (PST)
-X-Received: by 2002:a19:c82:: with SMTP id 124mr6569338lfm.152.1580511008060;
- Fri, 31 Jan 2020 14:50:08 -0800 (PST)
+        Fri, 31 Jan 2020 14:53:46 -0800 (PST)
+Subject: Re: [PATCH 2/3] tcp: Reduce SYN resend delay if a suspicous ACK is
+ received
+To:     Neal Cardwell <ncardwell@google.com>,
+        Eric Dumazet <eric.dumazet@gmail.com>
+Cc:     sjpark@amazon.com, Eric Dumazet <edumazet@google.com>,
+        David Miller <davem@davemloft.net>, shuah@kernel.org,
+        Netdev <netdev@vger.kernel.org>, linux-kselftest@vger.kernel.org,
+        LKML <linux-kernel@vger.kernel.org>, sj38.park@gmail.com,
+        aams@amazon.com, SeongJae Park <sjpark@amazon.de>,
+        Yuchung Cheng <ycheng@google.com>
+References: <20200131122421.23286-1-sjpark@amazon.com>
+ <20200131122421.23286-3-sjpark@amazon.com>
+ <CADVnQyk9xevY0kA9Sm9S9MOBNvcuiY+7YGBtGuoue+r+eizyOA@mail.gmail.com>
+ <dd146bac-4e8a-4119-2d2b-ce6bf2daf7ce@gmail.com>
+ <CADVnQy=Z0YRPY_0bxBpsZvECgamigESNKx6_-meNW5-6_N4kww@mail.gmail.com>
+From:   Eric Dumazet <eric.dumazet@gmail.com>
+Message-ID: <7d36a817-5519-8496-17cf-00eda5ed4ec7@gmail.com>
+Date:   Fri, 31 Jan 2020 14:53:43 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.2.2
 MIME-Version: 1.0
-References: <20200131223407.GA105848@google.com>
-In-Reply-To: <20200131223407.GA105848@google.com>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Fri, 31 Jan 2020 14:49:52 -0800
-X-Gmail-Original-Message-ID: <CAHk-=wjxMB3UYR5iUHB6+NXT7awOF4DD5=QQrskJ8yocyO+Ebw@mail.gmail.com>
-Message-ID: <CAHk-=wjxMB3UYR5iUHB6+NXT7awOF4DD5=QQrskJ8yocyO+Ebw@mail.gmail.com>
-Subject: Re: [GIT PULL] PCI changes for v5.6
-To:     Bjorn Helgaas <helgaas@kernel.org>
-Cc:     linux-pci@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <CADVnQy=Z0YRPY_0bxBpsZvECgamigESNKx6_-meNW5-6_N4kww@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jan 31, 2020 at 2:34 PM Bjorn Helgaas <helgaas@kernel.org> wrote:
->
->   git://git.kernel.org/pub/scm/linux/kernel/git/helgaas/pci.git 01b810ed7187
 
-You must have screwed up your git request-pull somehow.
 
-Yes, yes, the above works, and a branch is just a named SHA1. You can
-give the SHA1 directly.
+On 1/31/20 2:11 PM, Neal Cardwell wrote:
 
-But it's not what you meant to do, I'm sure. Especially since you
-pointed to the SHA1 of the top commit, not the tag that you have that
-points to it.
+> I looked into fixing this, but my quick reading of the Linux
+> tcp_rcv_state_process() code is that it should behave correctly and
+> that a connection in FIN_WAIT_1 that receives a FIN/ACK should move to
+> TIME_WAIT.
+> 
+> SeongJae, do you happen to have a tcpdump trace of the problematic
+> sequence where the "process A" ends up in FIN_WAIT_2 when it should be
+> in TIME_WAIT?
+> 
+> If I have time I will try to construct a packetdrill case to verify
+> the behavior in this case.
 
-I can see what you _meant_ to ask me to pull with "git ls-remote". I
-clearly should - and will - pull the 'pci-v5.6-changes' tag, which
-points to that commit.
+Unfortunately you wont be able to reproduce the issue with packetdrill,
+since it involved packets being processed at the same time (race window)
 
-But can you check what in your workflow went wrong for the above to happen?
-
-               Linus
