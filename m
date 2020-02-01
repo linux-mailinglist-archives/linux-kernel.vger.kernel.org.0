@@ -2,118 +2,75 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 869B914F8E0
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Feb 2020 17:26:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0EA1914F8D9
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Feb 2020 17:26:23 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727080AbgBAQ0o (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 1 Feb 2020 11:26:44 -0500
-Received: from userp2130.oracle.com ([156.151.31.86]:58866 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726670AbgBAQ0n (ORCPT
+        id S1726839AbgBAQ0S (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 1 Feb 2020 11:26:18 -0500
+Received: from mail-pf1-f175.google.com ([209.85.210.175]:46337 "EHLO
+        mail-pf1-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726622AbgBAQ0S (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 1 Feb 2020 11:26:43 -0500
-Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
-        by userp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id 011GO2ho170066;
-        Sat, 1 Feb 2020 16:26:05 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2019-08-05;
- bh=qcGXKiY3GE8IoOSuEgOX+PWsQEJZ9WKgu7dUUWQqrfQ=;
- b=YSNZofZ7ZqYnCJOxzT8gCflqxf5fW+U69ygw+SqauiAzTzmO5wdPmyb7Iu3JqVUPldJb
- i4r/4UJOEV/voWzBdpRGAh/ya5x/TjfXvibYstNEOW9IdwbVwSv6B/4saeuF600HaYMF
- C5gZbNGYHs4s6ZeVgIJM6UhsD0etsXyU5jEl+kbCx+nSVhWdZvDF7TIl+R/zKI1nuVKE
- e+m6pmS/XHQMPyJ4yFW4AuL+2NmZN1y/tGy8JKvmwZ6MyOQXStAjsAeX1tEzXV1Ia75Z
- QYxEF6Ttok170eDo5OkRmk4kjnGANo6PeQKsEWXJYtR4p3ExjsYmzrUdbccT+UyrA+lp TQ== 
-Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
-        by userp2130.oracle.com with ESMTP id 2xw0rtsr75-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Sat, 01 Feb 2020 16:26:04 +0000
-Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
-        by aserp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id 011GNKM2187896;
-        Sat, 1 Feb 2020 16:26:04 GMT
-Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
-        by aserp3030.oracle.com with ESMTP id 2xvycydah3-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Sat, 01 Feb 2020 16:26:03 +0000
-Received: from abhmp0009.oracle.com (abhmp0009.oracle.com [141.146.116.15])
-        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 011GPpS3016390;
-        Sat, 1 Feb 2020 16:25:51 GMT
-Received: from kadam (/129.205.23.165)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Sat, 01 Feb 2020 08:25:50 -0800
-Date:   Sat, 1 Feb 2020 19:25:37 +0300
-From:   Dan Carpenter <dan.carpenter@oracle.com>
-To:     Hillf Danton <hdanton@sina.com>
-Cc:     syzbot <syzbot+0dc4444774d419e916c8@syzkaller.appspotmail.com>,
-        airlied@linux.ie, alexander.deucher@amd.com,
-        amd-gfx@lists.freedesktop.org, chris@chris-wilson.co.uk,
-        christian.koenig@amd.com, daniel@ffwll.ch, davem@davemloft.net,
-        dri-devel@lists.freedesktop.org, emil.velikov@collabora.com,
-        eric@anholt.net, linaro-mm-sig@lists.linaro.org,
-        linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
-        netdev@vger.kernel.org, robdclark@chromium.org,
-        seanpaul@chromium.org, sumit.semwal@linaro.org,
-        syzkaller-bugs@googlegroups.com
-Subject: Re: KASAN: use-after-free Read in vgem_gem_dumb_create
-Message-ID: <20200201162537.GK1778@kadam>
-References: <20200201043209.13412-1-hdanton@sina.com>
- <20200201090247.10928-1-hdanton@sina.com>
+        Sat, 1 Feb 2020 11:26:18 -0500
+Received: by mail-pf1-f175.google.com with SMTP id k29so5079913pfp.13
+        for <linux-kernel@vger.kernel.org>; Sat, 01 Feb 2020 08:26:17 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:references:from:message-id:date:user-agent:mime-version
+         :in-reply-to:content-language:content-transfer-encoding;
+        bh=w0PjGS/klgnrRtPNKFCF6fGGDejuNhQNgoqlU58Tch0=;
+        b=wAo0xbc12Nh4hBoZVjwv+emR9n/jSarM4NO7bzpPeAFDhzcuD4s73If4amekxIh8IB
+         DO/EFDkqEuHsWJN9yzrZpuPKz2HeXhADf6All8yxhV4FzVl9Tgy/nTMLFVxdvyRLN9mg
+         JiTXclzNVzUv+krA2I4fpeESlvxWHuCLciHRT1cfQWVLkTAgwRnhf/4wMq4uHyl2FTMx
+         xrhU+sVzKtvYvSFEbOuVhyOkFYDD6RCYqy4n0QTFkZEsI2CqDEi8GU1PtXbVzikUyFr7
+         /IKfrTo+wVuZ4waRqyxchYbj0VoRgaFInimhuH6XyYGNgFDdvOPxlqx30Q7gZsGGvpSt
+         W77w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=w0PjGS/klgnrRtPNKFCF6fGGDejuNhQNgoqlU58Tch0=;
+        b=EFEXam1VEqnTvB96A34tmoKA2I4im8VnuTUCpd6FkKZOG7reneFYVY1dwWoHNAQ4Yk
+         oT/Ad0Z/0uxMnwtQLrq8qrqJDotVjddu3k3vK/5oYydSfcoUX8zoGbDmeFfGyUxOtG+0
+         xujjmoHuNkUAU/ofh7IIUZabbG8D6o07mBDQzysAes5NlauEgxwcsGQub6UUCkNRVKTC
+         0hjAhxItnzYnS4qQ2vRJrO0bMacgaVFKfMwvTii98gNWFPYOFLrMQqjTHF6ogoxPW9ze
+         nAt/J0M9rRZDNKqMTls8tbCZTEmjwdC5EUXxvCWJqdVbb/vqB/ECX7MzXOprcuucxLRD
+         itfQ==
+X-Gm-Message-State: APjAAAX+tmVOMrVp1gX1a6vVyiJXAyehsiCZFZ3A5f3lDKP0LwX7RBlV
+        YBVcqKVEeAwoDPyc3MM7eKmWr0ZtDa4=
+X-Google-Smtp-Source: APXvYqwhuUQ1S8cgtvCF/gHqRGnjcizBH7lNM6PwbO1VijPq03ib1uGGVdk3Y3njtLPXenUjzjBlng==
+X-Received: by 2002:a62:1889:: with SMTP id 131mr16240997pfy.250.1580574376482;
+        Sat, 01 Feb 2020 08:26:16 -0800 (PST)
+Received: from [192.168.1.188] ([66.219.217.145])
+        by smtp.gmail.com with ESMTPSA id c14sm14642299pfn.8.2020.02.01.08.26.15
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 01 Feb 2020 08:26:16 -0800 (PST)
+Subject: Re: [PATCH] io_uring: iterate req cache backwards
+To:     Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <df6e93383161cd3bdbe19fe816b761af0096c303.1580518665.git.asml.silence@gmail.com>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <d46cbbd6-65c4-93f9-b3f4-566ec8f10272@kernel.dk>
+Date:   Sat, 1 Feb 2020 09:26:14 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200201090247.10928-1-hdanton@sina.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9518 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1911140001 definitions=main-2002010121
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9518 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1911140001
- definitions=main-2002010121
+In-Reply-To: <df6e93383161cd3bdbe19fe816b761af0096c303.1580518665.git.asml.silence@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Feb 01, 2020 at 05:02:47PM +0800, Hillf Danton wrote:
-> 
-> On Sat, 1 Feb 2020 09:17:57 +0300 Dan Carpenter wrote:
-> > On Sat, Feb 01, 2020 at 12:32:09PM +0800, Hillf Danton wrote:
-> > >
-> > > Release obj in error path.
-> > > 
-> > > --- a/drivers/gpu/drm/vgem/vgem_drv.c
-> > > +++ b/drivers/gpu/drm/vgem/vgem_drv.c
-> > > @@ -196,10 +196,10 @@ static struct drm_gem_object *vgem_gem_c
-> > >  		return ERR_CAST(obj);
-> > >  
-> > >  	ret = drm_gem_handle_create(file, &obj->base, handle);
-> > > -	drm_gem_object_put_unlocked(&obj->base);
-> > > -	if (ret)
-> > > +	if (ret) {
-> > > +		drm_gem_object_put_unlocked(&obj->base);
-> > >  		return ERR_PTR(ret);
-> > > -
-> > > +	}
-> > >  	return &obj->base;
-> > 
-> > Oh yeah.  It's weird that we never noticed the success path was broken.
-> > It's been that way for three years and no one noticed at all.  Very
-> > strange.
-> > 
-> > Anyway, it already gets freed on error in drm_gem_handle_create() so
-> > we should just delete the drm_gem_object_put_unlocked() here it looks
-> > like.
-> 
-> Good catch, Dan :P
-> Would you please post a patch sometime convenient next week?
+On 1/31/20 5:58 PM, Pavel Begunkov wrote:
+> Grab requests from cache-array from the end, so can get by only
+> free_reqs.
 
-Sure.  Will do.
+Applied, thanks.
 
-regards,
-dan carpenter
+-- 
+Jens Axboe
 
