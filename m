@@ -2,223 +2,253 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F17A414F5FF
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Feb 2020 04:15:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 360FC14F64F
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Feb 2020 04:42:16 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727112AbgBADPS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 31 Jan 2020 22:15:18 -0500
-Received: from out30-42.freemail.mail.aliyun.com ([115.124.30.42]:56990 "EHLO
-        out30-42.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726567AbgBADPR (ORCPT
+        id S1727426AbgBADlb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 31 Jan 2020 22:41:31 -0500
+Received: from hqnvemgate24.nvidia.com ([216.228.121.143]:4444 "EHLO
+        hqnvemgate24.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727035AbgBADkh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 31 Jan 2020 22:15:17 -0500
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R171e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04394;MF=wenyang@linux.alibaba.com;NM=1;PH=DS;RN=9;SR=0;TI=SMTPD_---0Tos5PLC_1580526907;
-Received: from localhost(mailfrom:wenyang@linux.alibaba.com fp:SMTPD_---0Tos5PLC_1580526907)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Sat, 01 Feb 2020 11:15:13 +0800
-From:   Wen Yang <wenyang@linux.alibaba.com>
-To:     Christoph Lameter <cl@linux.com>,
-        Pekka Enberg <penberg@kernel.org>,
-        David Rientjes <rientjes@google.com>,
-        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
-        Andrew Morton <akpm@linux-foundation.org>
-Cc:     Wen Yang <wenyang@linux.alibaba.com>,
-        Xunlei Pang <xlpang@linux.alibaba.com>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] mm/slub: Detach node lock from counting free objects
-Date:   Sat,  1 Feb 2020 11:15:02 +0800
-Message-Id: <20200201031502.92218-1-wenyang@linux.alibaba.com>
-X-Mailer: git-send-email 2.23.0
+        Fri, 31 Jan 2020 22:40:37 -0500
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate24.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5e34f2fc0000>; Fri, 31 Jan 2020 19:39:40 -0800
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate101.nvidia.com (PGP Universal service);
+  Fri, 31 Jan 2020 19:40:34 -0800
+X-PGP-Universal: processed;
+        by hqpgpgate101.nvidia.com on Fri, 31 Jan 2020 19:40:34 -0800
+Received: from HQMAIL107.nvidia.com (172.20.187.13) by HQMAIL101.nvidia.com
+ (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Sat, 1 Feb
+ 2020 03:40:33 +0000
+Received: from rnnvemgw01.nvidia.com (10.128.109.123) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3 via Frontend
+ Transport; Sat, 1 Feb 2020 03:40:33 +0000
+Received: from blueforge.nvidia.com (Not Verified[10.110.48.28]) by rnnvemgw01.nvidia.com with Trustwave SEG (v7,5,8,10121)
+        id <B5e34f3300002>; Fri, 31 Jan 2020 19:40:33 -0800
+From:   John Hubbard <jhubbard@nvidia.com>
+To:     Andrew Morton <akpm@linux-foundation.org>
+CC:     Al Viro <viro@zeniv.linux.org.uk>,
+        Christoph Hellwig <hch@infradead.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Dave Chinner <david@fromorbit.com>,
+        Ira Weiny <ira.weiny@intel.com>, Jan Kara <jack@suse.cz>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Jonathan Corbet <corbet@lwn.net>,
+        =?UTF-8?q?J=C3=A9r=C3=B4me=20Glisse?= <jglisse@redhat.com>,
+        "Kirill A . Shutemov" <kirill@shutemov.name>,
+        Michal Hocko <mhocko@suse.com>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Shuah Khan <shuah@kernel.org>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Matthew Wilcox <willy@infradead.org>,
+        <linux-doc@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
+        <linux-kselftest@vger.kernel.org>, <linux-rdma@vger.kernel.org>,
+        <linux-mm@kvack.org>, LKML <linux-kernel@vger.kernel.org>,
+        John Hubbard <jhubbard@nvidia.com>
+Subject: [PATCH v3 00/12] mm/gup: track FOLL_PIN pages
+Date:   Fri, 31 Jan 2020 19:40:17 -0800
+Message-ID: <20200201034029.4063170-1-jhubbard@nvidia.com>
+X-Mailer: git-send-email 2.25.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-NVConfidentiality: public
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1580528381; bh=PVjdhcWaJdJZJP6YMEesi4FW/EBC/lWrMURT82TytPs=;
+        h=X-PGP-Universal:From:To:CC:Subject:Date:Message-ID:X-Mailer:
+         MIME-Version:X-NVConfidentiality:Content-Type:
+         Content-Transfer-Encoding;
+        b=rgUsJVjrMtF/vDQ9D6u7i/0jWNgq1QgB9vY6QI5zxOn0DrWTp8CRHWzeekJj8yxgN
+         SyF4PMu4YShgVsbHZOg3nwe7j5dIX/q5+5Ey3yISV+1nqSXqrMBnfueby8qIsiAOvc
+         KdQ5dXLYcNByywkRlLqsim0w5EdAwsUaJf41Gzahn6iQ20V5v39zD76cEt0ro50Akx
+         d6NqgdH5PYqQFZNLTdlc9SZtjbV30GeMV3Tu0ZhSe9mK2GZ5kAPLy4+c8AgQsYkuF3
+         jm0InwaQ5rz1fw3tqyAMEklG/n2XVcDsgBRk4JI16MULBFHuu+PgtKNv7JoAp02bMs
+         D+HrOKQpLlQew==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The lock, protecting the node partial list, is taken when couting the free
-objects resident in that list. It introduces locking contention when the
-page(s) is moved between CPU and node partial lists in allocation path
-on another CPU. So reading "/proc/slabinfo" can possibily block the slab
-allocation on another CPU for a while, 200ms in extreme cases. If the
-slab object is to carry network packet, targeting the far-end disk array,
-it causes block IO jitter issue.
+Matthew,
 
-This fixes the block IO jitter issue by caching the total inuse objects in
-the node in advance. The value is retrieved without taking the node partial
-list lock on reading "/proc/slabinfo".
+I've merged in your dump_page() ideas,  and also factored things out
+into a new __dump_tail_page() routine, in order to save a few
+indentation levels, mainly.
 
-Signed-off-by: Wen Yang <wenyang@linux.alibaba.com>
-Cc: Christoph Lameter <cl@linux.com>
-Cc: Pekka Enberg <penberg@kernel.org>
-Cc: David Rientjes <rientjes@google.com>
-Cc: Joonsoo Kim <iamjoonsoo.kim@lge.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Cc: Xunlei Pang <xlpang@linux.alibaba.com>
-Cc: linux-mm@kvack.org
-Cc: linux-kernel@vger.kernel.org
----
- mm/slab.h |  1 +
- mm/slub.c | 42 +++++++++++++++++++++++++-----------------
- 2 files changed, 26 insertions(+), 17 deletions(-)
+Kirill, thanks for your review comments. I've applied them, and I think
+splitting this up as you recommended really makes it a lot better, and
+easier to spot problems.
 
-diff --git a/mm/slab.h b/mm/slab.h
-index 7e94700aa78c..27d22837f7ff 100644
---- a/mm/slab.h
-+++ b/mm/slab.h
-@@ -619,6 +619,7 @@ struct kmem_cache_node {
- #ifdef CONFIG_SLUB_DEBUG
- 	atomic_long_t nr_slabs;
- 	atomic_long_t total_objects;
-+	atomic_long_t total_inuse;
- 	struct list_head full;
- #endif
- #endif
-diff --git a/mm/slub.c b/mm/slub.c
-index 503e11b1c4e1..67640e797550 100644
---- a/mm/slub.c
-+++ b/mm/slub.c
-@@ -1060,7 +1060,8 @@ static inline unsigned long node_nr_slabs(struct kmem_cache_node *n)
- 	return atomic_long_read(&n->nr_slabs);
- }
- 
--static inline void inc_slabs_node(struct kmem_cache *s, int node, int objects)
-+static inline void inc_slabs_node(struct kmem_cache *s, int node, int objects,
-+				  int inuse)
- {
- 	struct kmem_cache_node *n = get_node(s, node);
- 
-@@ -1073,14 +1074,17 @@ static inline void inc_slabs_node(struct kmem_cache *s, int node, int objects)
- 	if (likely(n)) {
- 		atomic_long_inc(&n->nr_slabs);
- 		atomic_long_add(objects, &n->total_objects);
-+		atomic_long_add(inuse, &n->total_inuse);
- 	}
- }
--static inline void dec_slabs_node(struct kmem_cache *s, int node, int objects)
-+static inline void dec_slabs_node(struct kmem_cache *s, int node, int objects,
-+				  int inuse)
- {
- 	struct kmem_cache_node *n = get_node(s, node);
- 
- 	atomic_long_dec(&n->nr_slabs);
- 	atomic_long_sub(objects, &n->total_objects);
-+	atomic_long_sub(inuse, &n->total_inuse);
- }
- 
- /* Object debug checks for alloc/free paths */
-@@ -1395,9 +1399,11 @@ static inline unsigned long slabs_node(struct kmem_cache *s, int node)
- static inline unsigned long node_nr_slabs(struct kmem_cache_node *n)
- 							{ return 0; }
- static inline void inc_slabs_node(struct kmem_cache *s, int node,
--							int objects) {}
-+							int objects,
-+							int inuse) {}
- static inline void dec_slabs_node(struct kmem_cache *s, int node,
--							int objects) {}
-+							int objects,
-+							int inuse) {}
- 
- #endif /* CONFIG_SLUB_DEBUG */
- 
-@@ -1708,7 +1714,7 @@ static struct page *allocate_slab(struct kmem_cache *s, gfp_t flags, int node)
- 	if (!page)
- 		return NULL;
- 
--	inc_slabs_node(s, page_to_nid(page), page->objects);
-+	inc_slabs_node(s, page_to_nid(page), page->objects, page->inuse);
- 
- 	return page;
- }
-@@ -1768,7 +1774,9 @@ static void free_slab(struct kmem_cache *s, struct page *page)
- 
- static void discard_slab(struct kmem_cache *s, struct page *page)
- {
--	dec_slabs_node(s, page_to_nid(page), page->objects);
-+	int inuse = page->objects;
-+
-+	dec_slabs_node(s, page_to_nid(page), page->objects, inuse);
- 	free_slab(s, page);
- }
- 
-@@ -2396,9 +2404,9 @@ static inline int node_match(struct page *page, int node)
- }
- 
- #ifdef CONFIG_SLUB_DEBUG
--static int count_free(struct page *page)
-+static inline unsigned long node_nr_inuse(struct kmem_cache_node *n)
- {
--	return page->objects - page->inuse;
-+	return atomic_long_read(&n->total_inuse);
- }
- 
- static inline unsigned long node_nr_objs(struct kmem_cache_node *n)
-@@ -2448,14 +2456,14 @@ slab_out_of_memory(struct kmem_cache *s, gfp_t gfpflags, int nid)
- 	for_each_kmem_cache_node(s, node, n) {
- 		unsigned long nr_slabs;
- 		unsigned long nr_objs;
--		unsigned long nr_free;
-+		unsigned long nr_inuse;
- 
--		nr_free  = count_partial(n, count_free);
- 		nr_slabs = node_nr_slabs(n);
- 		nr_objs  = node_nr_objs(n);
-+		nr_inuse = node_nr_inuse(n);
- 
- 		pr_warn("  node %d: slabs: %ld, objs: %ld, free: %ld\n",
--			node, nr_slabs, nr_objs, nr_free);
-+			node, nr_slabs, nr_objs, nr_objs - nr_inuse);
- 	}
- #endif
- }
-@@ -3348,6 +3356,7 @@ init_kmem_cache_node(struct kmem_cache_node *n)
- #ifdef CONFIG_SLUB_DEBUG
- 	atomic_long_set(&n->nr_slabs, 0);
- 	atomic_long_set(&n->total_objects, 0);
-+	atomic_long_set(&n->total_inuse, 0);
- 	INIT_LIST_HEAD(&n->full);
- #endif
- }
-@@ -3411,7 +3420,7 @@ static void early_kmem_cache_node_alloc(int node)
- 	page->frozen = 0;
- 	kmem_cache_node->node[node] = n;
- 	init_kmem_cache_node(n);
--	inc_slabs_node(kmem_cache_node, node, page->objects);
-+	inc_slabs_node(kmem_cache_node, node, page->objects, page->inuse);
- 
- 	/*
- 	 * No locks need to be taken here as it has just been
-@@ -4857,8 +4866,7 @@ static ssize_t show_slab_objects(struct kmem_cache *s,
- 			if (flags & SO_TOTAL)
- 				x = atomic_long_read(&n->total_objects);
- 			else if (flags & SO_OBJECTS)
--				x = atomic_long_read(&n->total_objects) -
--					count_partial(n, count_free);
-+				x = atomic_long_read(&n->total_inuse);
- 			else
- 				x = atomic_long_read(&n->nr_slabs);
- 			total += x;
-@@ -5900,17 +5908,17 @@ void get_slabinfo(struct kmem_cache *s, struct slabinfo *sinfo)
- {
- 	unsigned long nr_slabs = 0;
- 	unsigned long nr_objs = 0;
--	unsigned long nr_free = 0;
-+	unsigned long nr_inuse = 0;
- 	int node;
- 	struct kmem_cache_node *n;
- 
- 	for_each_kmem_cache_node(s, node, n) {
- 		nr_slabs += node_nr_slabs(n);
- 		nr_objs += node_nr_objs(n);
--		nr_free += count_partial(n, count_free);
-+		nr_inuse += node_nr_inuse(n);
- 	}
- 
--	sinfo->active_objs = nr_objs - nr_free;
-+	sinfo->active_objs = nr_inuse;
- 	sinfo->num_objs = nr_objs;
- 	sinfo->active_slabs = nr_slabs;
- 	sinfo->num_slabs = nr_slabs;
--- 
-2.23.0
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+Changes since v2:
+
+* Rebased onto linux.git, because the akpm tree for 5.6 has been merged.
+
+* Split the tracking patch into even more patches, as requested.
+
+* Merged Matthew Wilcox's dump_page() changes into mine, as part of the
+  first patch.
+
+* Renamed: page_dma_pinned() --> page_maybe_dma_pinned(), in response to
+  Kirill Shutemov's review.
+
+* Moved a WARN to the top of a routine, and fixed a typo in the commit
+  description of patch #7, also as suggested by Kirill.
+
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+Changes since v1:
+
+* Split the tracking patch into 6 smaller patches
+
+* Rebased onto today's linux-next/akpm (there weren't any conflicts).
+
+* Fixed an "unsigned int" vs. "int" problem in gup_benchmark, reported
+  by Nathan Chancellor. (I don't see it in my local builds, probably
+  because they use gcc, but an LLVM test found the mismatch.)
+
+* Fixed a huge page pincount problem (add/subtract vs.
+  increment/decrement), spotted by Jan Kara.
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+
+There is a reasonable case to be made for merging two of the patches
+(patches 4 and 5), given that patch 4 provides tracking that has upper
+limits on the number of pins that can be done with huge pages. Let me
+know if anyone wants those merged, but unless there is some weird chance
+of someone grabbing patch 4 and not patch 5, I don't really see the
+need. Meanwhile, it's easier to review in this form.
+
+Also, patch 3 has been revived. Earlier reviewers asked for it to be
+merged into the tracking patch (one cannot please everyone, heh), but
+now it's back out on it's own.
+
+This activates tracking of FOLL_PIN pages. This is in support of fixing
+the get_user_pages()+DMA problem described in [1]-[4].
+
+It is based on today's (Jan 28) linux-next (branch: akpm),
+commit 280e9cb00b41 ("drivers/media/platform/sti/delta/delta-ipc.c: fix
+read buffer overflow")
+
+There is a git repo and branch, for convenience in reviewing:
+
+    git@github.com:johnhubbard/linux.git
+            track_user_pages_v2_linux-next_akpm_28Jan2020
+
+FOLL_PIN support is (so far) in mmotm and linux-next. However, the
+patch to use FOLL_PIN to track pages was *not* submitted, because Leon
+saw an RDMA test suite failure that involved (I think) page refcount
+overflows when huge pages were used.
+
+This patch definitively solves that kind of overflow problem, by adding
+an exact pincount, for compound pages (of order > 1), in the 3rd struct
+page of a compound page. If available, that form of pincounting is used,
+instead of the GUP_PIN_COUNTING_BIAS approach. Thanks again to Jan Kara
+for that idea.
+
+Here's the last reviewed version of the tracking patch (v11):
+
+  https://lore.kernel.org/r/20191216222537.491123-1-jhubbard@nvidia.com
+
+Jan Kara had provided a reviewed-by tag for that, but I've had to remove
+it (again) here, due to having changed the patch "a little bit", in
+order to add the feature described above.
+
+Other interesting changes:
+
+* dump_page(): added one, or two new things to report for compound
+  pages: head refcount (for all compound pages), and map_pincount (for
+  compound pages of order > 1).
+
+* Documentation/core-api/pin_user_pages.rst: removed the "TODO" for the
+  huge page refcount upper limit problems, and added notes about how it
+  works now. Also added a note about the dump_page() enhancements.
+
+* Added some comments in gup.c and mm.h, to explain that there are two
+  ways to count pinned pages: exact (for compound pages of order > 1)
+  and fuzzy (GUP_PIN_COUNTING_BIAS: for all other pages).
+
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+General notes about the tracking patch:
+
+This is a prerequisite to solving the problem of proper interactions
+between file-backed pages, and [R]DMA activities, as discussed in [1],
+[2], [3], [4] and in a remarkable number of email threads since about
+2017. :)
+
+In contrast to earlier approaches, the page tracking can be
+incrementally applied to the kernel call sites that, until now, have
+been simply calling get_user_pages() ("gup"). In other words, opt-in by
+changing from this:
+
+    get_user_pages() (sets FOLL_GET)
+    put_page()
+
+to this:
+    pin_user_pages() (sets FOLL_PIN)
+    unpin_user_page()
+
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+Next steps:
+
+* Convert more subsystems from get_user_pages() to pin_user_pages().
+* Work with Ira and others to connect this all up with file system
+  leases.
+
+[1] Some slow progress on get_user_pages() (Apr 2, 2019):
+    https://lwn.net/Articles/784574/
+
+[2] DMA and get_user_pages() (LPC: Dec 12, 2018):
+    https://lwn.net/Articles/774411/
+
+[3] The trouble with get_user_pages() (Apr 30, 2018):
+    https://lwn.net/Articles/753027/
+
+[4] LWN kernel index: get_user_pages()
+    https://lwn.net/Kernel/Index/#Memory_management-get_user_pages
+
+John Hubbard (12):
+  mm: dump_page(): better diagnostics for compound pages
+  mm/gup: split get_user_pages_remote() into two routines
+  mm/gup: pass a flags arg to __gup_device_* functions
+  mm: introduce page_ref_sub_return()
+  mm/gup: pass gup flags to two more routines
+  mm/gup: require FOLL_GET for get_user_pages_fast()
+  mm/gup: track FOLL_PIN pages
+  mm/gup: page->hpage_pinned_refcount: exact pin counts for huge pages
+  mm: dump_page(): better diagnostics for huge pinned pages
+  mm/gup: /proc/vmstat: pin_user_pages (FOLL_PIN) reporting
+  mm/gup_benchmark: support pin_user_pages() and related calls
+  selftests/vm: run_vmtests: invoke gup_benchmark with basic FOLL_PIN
+    coverage
+
+ Documentation/core-api/pin_user_pages.rst  |  53 +--
+ include/linux/mm.h                         | 108 ++++-
+ include/linux/mm_types.h                   |   7 +-
+ include/linux/mmzone.h                     |   2 +
+ include/linux/page_ref.h                   |  10 +
+ mm/debug.c                                 |  60 ++-
+ mm/gup.c                                   | 459 ++++++++++++++++-----
+ mm/gup_benchmark.c                         |  71 +++-
+ mm/huge_memory.c                           |  29 +-
+ mm/hugetlb.c                               |  44 +-
+ mm/page_alloc.c                            |   2 +
+ mm/rmap.c                                  |   6 +
+ mm/vmstat.c                                |   2 +
+ tools/testing/selftests/vm/gup_benchmark.c |  15 +-
+ tools/testing/selftests/vm/run_vmtests     |  22 +
+ 15 files changed, 715 insertions(+), 175 deletions(-)
+
+--=20
+2.25.0
 
