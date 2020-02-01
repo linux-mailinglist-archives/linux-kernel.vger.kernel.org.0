@@ -2,59 +2,81 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0A7C514F8F2
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Feb 2020 17:37:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6DA2614F8F8
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Feb 2020 17:40:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726913AbgBAQhF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 1 Feb 2020 11:37:05 -0500
-Received: from sonic316-53.consmr.mail.ne1.yahoo.com ([66.163.187.179]:41150
-        "EHLO sonic316-53.consmr.mail.ne1.yahoo.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726679AbgBAQhE (ORCPT
+        id S1726834AbgBAQkh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 1 Feb 2020 11:40:37 -0500
+Received: from mail-pj1-f65.google.com ([209.85.216.65]:55994 "EHLO
+        mail-pj1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726669AbgBAQkh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 1 Feb 2020 11:37:04 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1580575023; bh=VxFSqOLnoyhxZXWK73TPGK3hr8yutZ4yWmLQa/jSY/I=; h=Date:From:Reply-To:Subject:References:From:Subject; b=Jhu+rinusv8yrO7P+uj9ivOFAjdRsMBmPFc+4IysZP3e42txtiMOS1Ozpd88qtzPDsY7Ry4DTkeFVzuwutwTvuB2SK6jtwnz+e+CV9LD3b7tXVlbuxj0SQCculj/VDgqZbX27+Ef28W/VMCAjI3bUGhbR7zkObIRB9i/4QSUD75FrSIbePMHMqeYH0iRDH93qV5+vpa8I0KTXt8X1xUbiVcSEgY0ezcs/HZwhRIlytkr3tXmf0Eq0BNrIM51cyXxir8X6vAxWcftEFCuWMjb6fuYtRt8Nr1tFEoqkK23t4nGnEiVBfIUCHOg8aYH/SgqjmQ7qSnALaelCJ5naFT5xg==
-X-YMail-OSG: Oiyj.kAVM1n9p7QAwa6TtksRrzjtHbreTj7n.RjcuU6rKCqwcfIKYmMj67_qYGo
- 50yTBpoZktKs6JI1busMmYqgFQC4mGzsqhpK5haoVlNENBtDgC8f6a8gtgtF3PZJnmsu5_75HMRJ
- 7YA46Jghe4INcyn1h5KO_7aYAscKpbF1P9.m2EZgGU72tjGLT8fimkIpwFKpUnj2earMHE_v2TsQ
- MKxYclls27P5vvmnIMV6FrcEeuIn5_DJLmp_uIQ7oDGxO_P0OVuCbdqTtnp.oskGBxMAaLXYfARC
- 4snjv_yE5eAJrwfxkzoB7hrAAYXJozbpASvQf2QZ_UbbbcNJ0JhEzOCUykboiCT64k5af0oehUin
- Twv918CXUpToQeByosgu98y4qNOttRZ1NKp5.mGTFZzXnxYsx9Nt5QpGF.2fhQ9saiFU2.uj6fX1
- fb6swLpUJal48d1jGhfb.XL7IJZ5JQWJoW..NomOUa3Sn8H0lR1E4REfVP33hooYS9inYmNxN9VO
- zODMWKYbM05xw7AM8NYUBQcko5zdCCw.ZIN4GGyZTJ5MjZXTQwee8HfSIZsn5dXJK90FgBUkQDZF
- hfiDy9UgkHyeFXTW.wgINim87rwfdlpPKC9cCePMq6AhzTCR9U5_IhxUVj_oM5OLTAy2BB.wU0kU
- FdtXyxTW9tOMf9ZBC3PGRoiINOUJydKyeov_ZKT5mShpKYiWqyP2NIB1h5wGrYPQm8.NIf4g.3jZ
- hwJe6OvdF8DQSZJneWdcvzRhXbKwWpI_6Fbl_OVTiwy8QAWeGcl9fTpuTtthLNT2GHx30h6fFCT2
- i6NadkPFwW6KGcliefTOTNO03jp_.cOeM4_OFYvsOpY_Ql_xFX_jiMtMjdk5qJdJLnOpXkT971pZ
- rpdK9T6Xbje1MU4FU7PbXhrNDLxv06GO8jQ2VHfHFNXKuzl3wJHjzcsoC8dBSaoIb5FzNPdmJYpU
- bXHnFy1MMsn_UU6lw9IrcYtlFnRUwqAIyVv70EYZVYE4Ti_WVF8IOU9gj2iA4jqdFRNxUlrbeMDK
- XCc.yxjw3lylmFEf85twkP0NJLYKliou8KpJ6bFeLN0wtqeMyPoHvt0kLACIwBKlifIbIpwRXDSY
- Op1MyZfP_EEjDmN5RsrfQ7LI4MsB17EonxqqawHioomWeYVCrSYB1Pa1fmwSLa7ohCQwJ6YNSoMZ
- DYSugR9RYMCoGhmhT0YlZHTQvzfMXhqV6xnn_zOWOiTfbnmKgLZuLzydgbr6LYBWVQke_PaeZA3t
- 4vi5C89maj4hpe._H0Zcy8QpEWZ8KWCVHnxqxG2jI_UF1mlmdATy.ATd_8JXmaYVEmGJeCQEvXRF
- FxmjvPVhnxhZEcXpIBqfsP_vNXbXRMV3RWjs-
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic316.consmr.mail.ne1.yahoo.com with HTTP; Sat, 1 Feb 2020 16:37:03 +0000
-Date:   Sat, 1 Feb 2020 16:35:02 +0000 (UTC)
-From:   "Mrs. Maureen Hinckley" <zz13@gczao.com>
-Reply-To: maurhinck6@gmail.com
-Message-ID: <1187667350.235001.1580574902701@mail.yahoo.com>
-Subject: 
+        Sat, 1 Feb 2020 11:40:37 -0500
+Received: by mail-pj1-f65.google.com with SMTP id d5so4330774pjz.5
+        for <linux-kernel@vger.kernel.org>; Sat, 01 Feb 2020 08:40:36 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=QwZ3CLPSOKerZ4q2cB/Hi0ai1yGFzd/B3udh3ZqTtuM=;
+        b=jsFiPNcF+Kv+AD+cCoimAjdmxdXVfz+jklLjuWAodKYGoYYpsmGFXd7lewm9b+k+0a
+         YxyMuZnoFgQBJJT4fvhBfbLaQinvoO/ovQPcFEXi5AGzl5olCx5gYZ4Eq7/UZCm/eIOr
+         OQ9onHvvIcrtHkP4clI72kPgvkSCx4wYKUuIw=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=QwZ3CLPSOKerZ4q2cB/Hi0ai1yGFzd/B3udh3ZqTtuM=;
+        b=THn6JMzf2vpmkYdnL38X22+In4r7Y6sMGsXwofZzbK2S/FmGrEHUJsjUyHP+aIja+8
+         o1YxaEji0NIkw1BHhUykvv1I0OJg1c1Jipr+S7dZK1wYsehs32KAHtsSYFCWtlHoC8NM
+         V6wBjb7UdvBDt4SrttYBPWkB37378qnhxZAygFcnOa1X3BJwoXHjXVWTRaaGQtGGISwx
+         asN8AHvzjJxACmH0px28gZhmfzPD19h1oKdCk+0Gd2nCMCiDoX32chHqLmvmu2uOEg6y
+         oTbFbf9L0O8dw7QAEfLOh6jbocxIhRP9T21NKmTCZdGOCH56Si4//b6IHLcYnIJtP0LS
+         NB1A==
+X-Gm-Message-State: APjAAAUoG+XUgVlgWEQmYv16NUWEknHHooYLooW3EIQUsloGKT44mqlr
+        UC8O+KmUmvLONCn43Y1bJpw52A==
+X-Google-Smtp-Source: APXvYqxXMppfrfTklyz+pwg0P3CdY6ihdgY9Vslz5MfHbndtzF8KzUGwo01U+1jLgg/AvUUKozH1GA==
+X-Received: by 2002:a17:902:d20f:: with SMTP id t15mr16360800ply.55.1580575236433;
+        Sat, 01 Feb 2020 08:40:36 -0800 (PST)
+Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
+        by smtp.gmail.com with ESMTPSA id dw10sm14222430pjb.11.2020.02.01.08.40.35
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 01 Feb 2020 08:40:35 -0800 (PST)
+Date:   Sat, 1 Feb 2020 08:40:34 -0800
+From:   Kees Cook <keescook@chromium.org>
+To:     Russell Currey <ruscur@russell.cc>
+Cc:     Christophe Leroy <christophe.leroy@c-s.fr>, mpe@ellerman.id.au,
+        linux-kernel@vger.kernel.org, dja@axtens.net,
+        kernel-hardening@lists.openwall.com, linuxppc-dev@lists.ozlabs.org
+Subject: Re: [PATCH] lkdtm: Test KUAP directional user access unlocks on
+ powerpc
+Message-ID: <202002010836.76B19684@keescook>
+References: <20200131053157.22463-1-ruscur@russell.cc>
+ <1b40cea6-0675-731a-58b1-bdc65f1e495e@c-s.fr>
+ <0b016861756cbe27e66651b5c21229a06558cb57.camel@russell.cc>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-References: <1187667350.235001.1580574902701.ref@mail.yahoo.com>
-X-Mailer: WebService/1.1.15149 YMailNodin Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/79.0.3945.130 Safari/537.36 OPR/66.0.3515.44
-To:     unlisted-recipients:; (no To-header on input)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <0b016861756cbe27e66651b5c21229a06558cb57.camel@russell.cc>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Fri, Jan 31, 2020 at 05:53:14PM +1100, Russell Currey wrote:
+> Correct, the ACCESS_USERSPACE test does the same thing.  Splitting this
+> into separate R and W tests makes sense, even if it is unlikely that
+> one would be broken without the other.
 
+That would be my preference too -- the reason it wasn't separated before
+was because it was one big toggle before. I just had both directions in
+the test out of a desire for completeness.
 
-I am Maureen Hinckley and my foundation is donating (Five hundred and fifty=
- thousand USD) to you. Contact us via my email at (maurhinck6@gmail.com) fo=
-r further details.
+Splitting into WRITE_USERSPACE and READ_USERSPACE seems good. Though if
+you want to test functionality (read while only write disabled), then
+I'm not sure what that should look like. Does the new
+user_access_begin() API provide a way to query existing state? I'll go
+read the series...
 
-Best Regards,
-Mrs. Maureen Hinckley,
-Copyright =C2=A92020 The Maureen Hinckley Foundation All Rights Reserved.
+-- 
+Kees Cook
