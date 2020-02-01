@@ -2,68 +2,65 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0C04A14FAAE
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Feb 2020 22:30:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E09B014FAB8
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Feb 2020 22:35:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726834AbgBAVaD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 1 Feb 2020 16:30:03 -0500
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:34801 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726469AbgBAVaC (ORCPT
+        id S1726905AbgBAVfW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 1 Feb 2020 16:35:22 -0500
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:51521 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726469AbgBAVfV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 1 Feb 2020 16:30:02 -0500
-Received: by mail-wr1-f66.google.com with SMTP id t2so12947375wrr.1;
-        Sat, 01 Feb 2020 13:30:01 -0800 (PST)
+        Sat, 1 Feb 2020 16:35:21 -0500
+Received: by mail-wm1-f68.google.com with SMTP id t23so11791246wmi.1;
+        Sat, 01 Feb 2020 13:35:20 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:date:to:cc:subject:in-reply-to:message-id:references
-         :user-agent:mime-version:content-id;
-        bh=Xonz9D/AFswduxxZBjuL+y0rFr7TKLhQeolot8GdlOk=;
-        b=XN/KTCJlSFMpcjPP+HaZsNZwPOvNkipRRNOCENBOQLhL0cHgJOPBztv8+p6qqi4/Tq
-         imNdoJz+rQk3JeQcnFGdzLx7mZn6cvB4QMJdw0/anaEVOWSBbg6ARM4ANtvASdK/Wn3g
-         DOx7OaGtOPkQlJD7HAXYasUUqMYto6Cd75o68SMlD+XNZI3z+CnJzPZn7n8+jCILAvdC
-         EV9mAXrtXS05FNfK3SRvDRgBWgsOPbAfELUEjjxC9P/6YAwPo5f+gb5VYNd2RlNw4kap
-         txIgSUveDHMJsYapvou7IX/CPNrdPxcdKjHm2rB0FblzorK4SbDLtGC8okvbJjwk01aw
-         tdTw==
+         :user-agent:mime-version;
+        bh=S9VZZ78KljGoa33WiUOilS5VA6siSq4KfQ/PVuLOUBE=;
+        b=cGVZnFZCzSSv10xCFYehVFN0LVdEAzZGcAfUNdgjLxsCY+b7DSlBTU0PimWj0vln2R
+         86aAHtHeh0BHgzmP5zxkKjNDvD0+BE2s+5Msin0cEVjF7A4iH8yttNVR4AG8n4rf01Em
+         9CT+4qqQU/dmVhiQRfWZMqZvyHdikIiARuw0aC1FJO+lvqLKU/E93vreHUCcswAlgDvM
+         1nUHOOvrrQy85MfJnv3m+W6sVXZ6+eAkdh6T2hTYbmA3KEfu9Ptq5UhFe6Gk90ba8KLU
+         /vqP2mbX4aYdStiXFY/Hs6fKoZWPFst07Dhbo1FYopfRslDyhtBpCWCiUxQPPWgmatuP
+         I3OA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:date:to:cc:subject:in-reply-to:message-id
-         :references:user-agent:mime-version:content-id;
-        bh=Xonz9D/AFswduxxZBjuL+y0rFr7TKLhQeolot8GdlOk=;
-        b=JMNwDkf60sTps4KpPkHWC64v8M4tOIlADoFlkjXqWiIRuJ+cA1TuNm1m5O02SvlXMz
-         o0GpzDLPw//YGCYQ9S+tnqM1rtda7t/Muh/SDoxk37c4MeWyvhDp8s2zSSRtYEmZd5Tz
-         7B4uE7afsSTb3rNHIVsT5QKu/wQHPl7dJiQbwh2V3QR95pu/p8FrsQtQ5+62Sx+JMdIN
-         0qKGGKRwUFGPDzciNr69J5lNK9XoP+twQWJLz+a5izxZLSDwxne4T0L3EeEGl5F8LgVH
-         NtfVPxmKGI7gjF5iYKPMrfCO91fl1N0O7zsC4vjvURRYldXm1ed/WW/YI3K/iqrqFfkc
-         Mczg==
-X-Gm-Message-State: APjAAAW7Wvbii8Yci0wZmXV46uZwKI98aehX4xBx7rX4+fktwBmesafc
-        wIL+X0nBS9cn5CPTotaXPtyQXSll6ak=
-X-Google-Smtp-Source: APXvYqyVx9vSml2V9JJ+u2YYVvunUl4OvzOz9RjFHrYfEiy230oRb/WhaVXYZJl53HQrEYihbsEBtQ==
-X-Received: by 2002:adf:fd8d:: with SMTP id d13mr5998151wrr.208.1580592600318;
-        Sat, 01 Feb 2020 13:30:00 -0800 (PST)
+         :references:user-agent:mime-version;
+        bh=S9VZZ78KljGoa33WiUOilS5VA6siSq4KfQ/PVuLOUBE=;
+        b=KAeHNz0ACX5uh22cOiUqXtn232ccjckIT1oWGklCArCa5GWWGXGA0DZiInY4Y5pNvF
+         V8uYYasP97jLG4IGN3DP7Itz3UJ5YUjb//mSRYR5jOemUehRfaJRQbqP80xGMD4d8Rlx
+         PQmANDOzFV7CJSG0wxpN5P/ZEJOh9vWPivzMVDRI6mT3kTYW3QsMU3q1rhYbRX4ky3uM
+         Ibbnlo3CHEYy5DLrrUCBf8sNO5PUT3w+KAHg/F/CKBpzbUrwU58Ypr9zOo/8dFlGyI7r
+         GaHaGr2fdCYMmmxDsJ4kP1RRm+AfkBT9Tjyk+fD38AozVSFZ+QkOG8bAItZ6AjvUXmoa
+         mnCA==
+X-Gm-Message-State: APjAAAWy5Fddn7q+U1E7veJSYa3T7f+HMNWimIX96damkHCQ6n3AB1mi
+        kyHSURS+iRWb+jwU+M8Cbt8=
+X-Google-Smtp-Source: APXvYqzn5MJYZfTNQQTHWl1+XmLcR9O4YgJQwxRmXwXcE5TSQBIqADfogAh3L+707cfNqFq8yBkQ3Q==
+X-Received: by 2002:a1c:7d8b:: with SMTP id y133mr20243827wmc.165.1580592919349;
+        Sat, 01 Feb 2020 13:35:19 -0800 (PST)
 Received: from felia ([2001:16b8:2d5f:200:35fb:e0f1:a37a:5e0a])
-        by smtp.gmail.com with ESMTPSA id y12sm16315929wmj.6.2020.02.01.13.29.59
+        by smtp.gmail.com with ESMTPSA id g79sm16018741wme.17.2020.02.01.13.35.18
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 01 Feb 2020 13:29:59 -0800 (PST)
+        Sat, 01 Feb 2020 13:35:18 -0800 (PST)
 From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
 X-Google-Original-From: Lukas Bulwahn <lukas@gmail.com>
-Date:   Sat, 1 Feb 2020 22:29:51 +0100 (CET)
+Date:   Sat, 1 Feb 2020 22:35:12 +0100 (CET)
 X-X-Sender: lukas@felia
-To:     Joe Perches <joe@perches.com>
-cc:     Lukas Bulwahn <lukas.bulwahn@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Karsten Keil <isdn@linux-pingi.de>,
-        Arnd Bergmann <arnd@arndb.de>,
-        isdn4linux@listserv.isdn4linux.de, Netdev <netdev@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] MAINTAINERS: correct entries for ISDN/mISDN section
-In-Reply-To: <68504e9043cbe71437460241a1814529ff2a8be4.camel@perches.com>
-Message-ID: <alpine.DEB.2.21.2002012213240.3841@felia>
-References: <20200201124301.21148-1-lukas.bulwahn@gmail.com> <08d88848280f93c171e4003027644a35740a8e8e.camel@perches.com> <CAKXUXMyToKuJf_kGXWjP1pu33XbiMD4kpBcqUhJu==-OBQ8TQQ@mail.gmail.com> <68504e9043cbe71437460241a1814529ff2a8be4.camel@perches.com>
+To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>
+cc:     Matthew Wilcox <willy@infradead.org>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Joe Perches <joe@perches.com>
+Subject: Re: [PATCH] MAINTAINERS: rectify radix-tree testing entry in
+ XARRAY
+In-Reply-To: <20200201180234.4960-1-lukas.bulwahn@gmail.com>
+Message-ID: <alpine.DEB.2.21.2002012231410.5859@felia>
+References: <20200201180234.4960-1-lukas.bulwahn@gmail.com>
 User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: text/plain; CHARSET=US-ASCII
-Content-ID: <alpine.DEB.2.21.2002012226561.3841@felia>
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -71,40 +68,52 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 
 
-On Sat, 1 Feb 2020, Joe Perches wrote:
+On Sat, 1 Feb 2020, Lukas Bulwahn wrote:
 
-> On Sat, 2020-02-01 at 20:15 +0100, Lukas Bulwahn wrote:
-> > On Sat, Feb 1, 2020 at 7:43 PM Joe Perches <joe@perches.com> wrote:
-> > > Perhaps this is a defect in the small script as
-> > > get_maintainer does already show the directory and
-> > > files as being maintained.
-> > > 
-> > > ie: get_maintainer.pl does this:
-> > > 
-> > >                 ##if pattern is a directory and it lacks a trailing slash, add one
-> > >                 if ((-d $value)) {
-> > >                     $value =~ s@([^/])$@$1/@;
-> > >                 }
-> > > 
-> > 
-> > True. My script did not implement that logic; I will add that to my
-> > script as well.
-> > Fortunately, that is not the major case of issues I have found and
-> > they might need some improvements.
+> The initial commit 3d5bd6e1a04a ("xarray: Add MAINTAINERS entry")
+> missed a trailing slash to include all files and subdirectory files.
+> Hence, all files in tools/testing/radix-tree were not part of XARRAY,
+> but were considered to be part of "THE REST".
 > 
-> You might also try ./scripts/get_maintainer.pl --self-test
-
-Thanks for letting me know about that functionality.
-
-It looks like quite some work to get those warnings sorted out properly. I 
-will check to address the most important/disturbing ones that I see.
-
+> Rectify this to ensure patches reach the actual maintainer.
 > 
-> And here's an attached script to update any missing
-> MAINTAINER [FX]: directory slashes and what it produces
-> against today's -next.
+> This was identified with a small script that finds all files only
+> belonging to "THE REST" according to the current MAINTAINERS file, and I
+> acted upon its output.
+> 
+> Fixes: 3d5bd6e1a04a ("xarray: Add MAINTAINERS entry")
+> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+> ---
+> Matthew, please pick this small fixup patch.
+> 
+> applies cleanly on current master and next-20200131
+> 
 
-I probably make use of that script, at least for some intermediate
-processing.
+Matthew, Joe Perches just informed me that get_maintainers.pl is smart
+enough to handle the case below and does not strictly need a further 
+trailing slash.
+
+Please ignore this patch; the commit message is actually wrong.
 
 Lukas
+
+>  MAINTAINERS | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 1f77fb8cdde3..4ebcc2f09028 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -18198,7 +18198,7 @@ F:	lib/idr.c
+>  F:	lib/xarray.c
+>  F:	include/linux/idr.h
+>  F:	include/linux/xarray.h
+> -F:	tools/testing/radix-tree
+> +F:	tools/testing/radix-tree/
+>  
+>  XBOX DVD IR REMOTE
+>  M:	Benjamin Valentin <benpicco@googlemail.com>
+> -- 
+> 2.17.1
+> 
+> 
