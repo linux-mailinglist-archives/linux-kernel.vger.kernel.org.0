@@ -2,144 +2,77 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1BD4314F9AA
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Feb 2020 19:54:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 267A814F9A8
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Feb 2020 19:54:00 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727286AbgBASxv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 1 Feb 2020 13:53:51 -0500
-Received: from mga02.intel.com ([134.134.136.20]:11294 "EHLO mga02.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727281AbgBASwe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 1 Feb 2020 13:52:34 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 01 Feb 2020 10:52:28 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.70,390,1574150400"; 
-   d="scan'208";a="248075612"
-Received: from sjchrist-coffee.jf.intel.com ([10.54.74.202])
-  by orsmga002.jf.intel.com with ESMTP; 01 Feb 2020 10:52:26 -0800
-From:   Sean Christopherson <sean.j.christopherson@intel.com>
-To:     Paolo Bonzini <pbonzini@redhat.com>
-Cc:     Sean Christopherson <sean.j.christopherson@intel.com>,
-        Vitaly Kuznetsov <vkuznets@redhat.com>,
-        Wanpeng Li <wanpengli@tencent.com>,
-        Jim Mattson <jmattson@google.com>,
-        Joerg Roedel <joro@8bytes.org>, kvm@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH 61/61] KVM: x86: Move VMX's host_efer to common x86 code
-Date:   Sat,  1 Feb 2020 10:52:18 -0800
-Message-Id: <20200201185218.24473-62-sean.j.christopherson@intel.com>
-X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20200201185218.24473-1-sean.j.christopherson@intel.com>
-References: <20200201185218.24473-1-sean.j.christopherson@intel.com>
+        id S1727526AbgBASxR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 1 Feb 2020 13:53:17 -0500
+Received: from mail-oi1-f171.google.com ([209.85.167.171]:39228 "EHLO
+        mail-oi1-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726712AbgBASxE (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 1 Feb 2020 13:53:04 -0500
+Received: by mail-oi1-f171.google.com with SMTP id z2so10740961oih.6;
+        Sat, 01 Feb 2020 10:53:04 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=u78NgzZ3KrEOfpTpyNxckRqZTrwrDsJGa/4Tbk58Hxk=;
+        b=GxL3/WHIG+dHKdSJmccC2EhuC5+Xeh4cjy7QzIJDDegXBinYS/USK76BbAzD1MQjSK
+         DljAHU5SxCAXmxnPUWEt1rgfWa40Z5Vn8QUwpfruDYdwVRsHpniHdndZ0dt0RMDkgfRy
+         yUChf89Ur95RZ4ZkEB4aH4cMeG48GTxr2c/XJYLrPGCNXAFGbTTx/1UU/kdaxO6rXgcN
+         4xHsh8l2a6Gz5T6T54fZQJAt4He1si/1kPOMVUUUG7Cr1EOjT91Fvgt4kXQGBpwadtdI
+         yrgyPlClqMZYfvACn50mPrzungQY4ksE6s7IQZjhDvNPlqYGfaTv/XzfDdmwdlVwzNxP
+         O/Tw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=u78NgzZ3KrEOfpTpyNxckRqZTrwrDsJGa/4Tbk58Hxk=;
+        b=BzTJbvDaocbdV5uMSAT+SOh5p5hfl5tZ+HvSC1wxs8w+7Ohug+YSw+mfwA6ftMjaV5
+         80ZpsYcHy1uFkCF1TmOUu1hBp/kTkPVoc+FFu8QC5AcGRgDc9ostUMkdWBMIB7OqXc1n
+         6ilH74F2dFOIhGUdixZB0SgIqCaU8h+bOrJMu1LDBn5HbBC0StDF4yM3VE9L/SyK8DLi
+         N7u8PrMABkXQ2XX0jsSRhvqgrNLJu7vVjJ6/i4hldqi1v8OuQdG1iogUyp5Uk5fJ/kV6
+         qaRsEfyLXgxSV1meZzCC9qY2o1ueZVHNAaLOTyb8iqWbFPsYx5LbCstc3J7xgxTBb51E
+         GNAg==
+X-Gm-Message-State: APjAAAVu8aId3XNeNOPEFLLDYXjIzQpGQxQ2xnBf8NcchzyHZj2hIdGM
+        LaHtY8sW2qVo6j8YUsyYALnXS5ypJv1zWtybPAI=
+X-Google-Smtp-Source: APXvYqzvVoAlLlNnEUrquYyrowd/GNygHH+kPf3WtbxWTi2YbX4mjnslEPbIqGus2wMsEDBfbJE3f0rCbVKEKHix6Rw=
+X-Received: by 2002:aca:cf07:: with SMTP id f7mr729695oig.5.1580583183580;
+ Sat, 01 Feb 2020 10:53:03 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <000000000000466b64059bcb3843@google.com> <20200126132352.8212-1-hdanton@sina.com>
+ <20200201070541.GJ1778@kadam>
+In-Reply-To: <20200201070541.GJ1778@kadam>
+From:   Cong Wang <xiyou.wangcong@gmail.com>
+Date:   Sat, 1 Feb 2020 10:52:52 -0800
+Message-ID: <CAM_iQpWsfc5U3_csn=qZWZZs7SPptj9ZxGcriMd-aYy8NiN09Q@mail.gmail.com>
+Subject: Re: INFO: task hung in hashlimit_mt_check_common
+To:     Dan Carpenter <dan.carpenter@oracle.com>
+Cc:     Hillf Danton <hdanton@sina.com>,
+        syzbot <syzbot+adf6c6c2be1c3a718121@syzkaller.appspotmail.com>,
+        coreteam@netfilter.org, David Miller <davem@davemloft.net>,
+        Florian Westphal <fw@strlen.de>,
+        Jozsef Kadlecsik <kadlec@netfilter.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Linux Kernel Network Developers <netdev@vger.kernel.org>,
+        NetFilter <netfilter-devel@vger.kernel.org>,
+        Pablo Neira Ayuso <pablo@netfilter.org>,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Move host_efer to common x86 code and use it for CPUID's is_efer_nx() to
-avoid constantly re-reading the MSR.
+On Fri, Jan 31, 2020 at 11:07 PM Dan Carpenter <dan.carpenter@oracle.com> wrote:
+>
+> I wonder if there is some automated way to accept test patches from the
+> mailing list.
 
-No functional change intended.
+At least for me, I always test patches before formally posting to mailing
+lists. Sometimes I want syzbot to test some debugging or experimental
+patches too, those should not be posted to dev mailing lists.
 
-Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
----
- arch/x86/include/asm/kvm_host.h | 2 ++
- arch/x86/kvm/cpuid.c            | 5 +----
- arch/x86/kvm/vmx/vmx.c          | 3 ---
- arch/x86/kvm/vmx/vmx.h          | 1 -
- arch/x86/kvm/x86.c              | 5 +++++
- 5 files changed, 8 insertions(+), 8 deletions(-)
-
-diff --git a/arch/x86/include/asm/kvm_host.h b/arch/x86/include/asm/kvm_host.h
-index 4165d3ef11e4..a2a091d328c6 100644
---- a/arch/x86/include/asm/kvm_host.h
-+++ b/arch/x86/include/asm/kvm_host.h
-@@ -1257,6 +1257,8 @@ struct kvm_arch_async_pf {
- 	bool direct_map;
- };
- 
-+extern u64 __read_mostly host_efer;
-+
- extern struct kvm_x86_ops *kvm_x86_ops;
- extern struct kmem_cache *x86_fpu_cache;
- 
-diff --git a/arch/x86/kvm/cpuid.c b/arch/x86/kvm/cpuid.c
-index 3d287fc6eb6e..e8beb1e542a8 100644
---- a/arch/x86/kvm/cpuid.c
-+++ b/arch/x86/kvm/cpuid.c
-@@ -134,10 +134,7 @@ int kvm_update_cpuid(struct kvm_vcpu *vcpu)
- 
- static int is_efer_nx(void)
- {
--	unsigned long long efer = 0;
--
--	rdmsrl_safe(MSR_EFER, &efer);
--	return efer & EFER_NX;
-+	return host_efer & EFER_NX;
- }
- 
- static void cpuid_fix_nx_cap(struct kvm_vcpu *vcpu)
-diff --git a/arch/x86/kvm/vmx/vmx.c b/arch/x86/kvm/vmx/vmx.c
-index e349689ac0cf..0009066e2009 100644
---- a/arch/x86/kvm/vmx/vmx.c
-+++ b/arch/x86/kvm/vmx/vmx.c
-@@ -433,7 +433,6 @@ static const struct kvm_vmx_segment_field {
- 	VMX_SEGMENT_FIELD(LDTR),
- };
- 
--u64 host_efer;
- static unsigned long host_idt_base;
- 
- /*
-@@ -7577,8 +7576,6 @@ static __init int hardware_setup(void)
- 	struct desc_ptr dt;
- 	int r, i, ept_lpage_level;
- 
--	rdmsrl_safe(MSR_EFER, &host_efer);
--
- 	store_idt(&dt);
- 	host_idt_base = dt.address;
- 
-diff --git a/arch/x86/kvm/vmx/vmx.h b/arch/x86/kvm/vmx/vmx.h
-index 70eafa88876a..0e50fbcb8413 100644
---- a/arch/x86/kvm/vmx/vmx.h
-+++ b/arch/x86/kvm/vmx/vmx.h
-@@ -12,7 +12,6 @@
- #include "vmcs.h"
- 
- extern const u32 vmx_msr_index[];
--extern u64 host_efer;
- 
- extern u32 get_umwait_control_msr(void);
- 
-diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
-index b40488fd2969..2103101eca78 100644
---- a/arch/x86/kvm/x86.c
-+++ b/arch/x86/kvm/x86.c
-@@ -185,6 +185,9 @@ static struct kvm_shared_msrs __percpu *shared_msrs;
- 				| XFEATURE_MASK_BNDCSR | XFEATURE_MASK_AVX512 \
- 				| XFEATURE_MASK_PKRU)
- 
-+u64 __read_mostly host_efer;
-+EXPORT_SYMBOL_GPL(host_efer);
-+
- static u64 __read_mostly host_xss;
- 
- struct kvm_stats_debugfs_item debugfs_entries[] = {
-@@ -9590,6 +9593,8 @@ int kvm_arch_hardware_setup(void)
- {
- 	int r;
- 
-+	rdmsrl_safe(MSR_EFER, &host_efer);
-+
- 	kvm_set_cpu_caps();
- 
- 	r = kvm_x86_ops->hardware_setup();
--- 
-2.24.1
-
+Thanks.
