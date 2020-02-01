@@ -2,96 +2,187 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9569614F984
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Feb 2020 19:45:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 23ED514F988
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Feb 2020 19:53:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726643AbgBASpf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 1 Feb 2020 13:45:35 -0500
-Received: from mail-lf1-f67.google.com ([209.85.167.67]:33889 "EHLO
-        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726354AbgBASpe (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 1 Feb 2020 13:45:34 -0500
-Received: by mail-lf1-f67.google.com with SMTP id l18so7067615lfc.1
-        for <linux-kernel@vger.kernel.org>; Sat, 01 Feb 2020 10:45:33 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=p9t4kwJmW5ARKxnXZ4PSmUiIMEWNVmwbZmARfKh1tBE=;
-        b=gx1D0+QmyxgtSASu1K01jjLcdzW2W7QVPS+we3A9Osh2vJkXIZD2WlELk3mYQf8AF5
-         mxuurGDEa676cmu7D5RHAqbVIOTsin6OjZZYYXMc1rOVI/MXNCchXu1aRPSE8DG1p2LK
-         ZM0CMUzd+IUSL1wjtPfrRtUrWlE/WTu0uwLao=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=p9t4kwJmW5ARKxnXZ4PSmUiIMEWNVmwbZmARfKh1tBE=;
-        b=S8i0LDxVUH4kiJhyE/6xFVdJSndurySt19rnbXVCM01eZI4MA5q/RmSPc55tsAgygL
-         R5aYWG9bVyZFyMuP1T5mKSVzAXuAfFYBpH8l3ztzGWb0DCy3cWANJ5eZCw8ULXLZp5hf
-         QECHAzHJbuWiBRhYTqKOSzZHzxymND83AlOSIwo1soAsOWB6PoY2eYJH0rsjvwltALdb
-         JMFENZFB3QK8pJkzZxTrmquncyaj19Pm51GFnvD9XguL8ow8IT935HF7noW+Pl/f7l7Z
-         p2kBJyncFSzyHEQ3GzN35BayhIx14Ynrp7//9evIF3eMFVAtyD6H7sIq9HuagBLHoTV/
-         TxEA==
-X-Gm-Message-State: APjAAAXZquo/Zs70GtYZCpvyGVTq931U0UqGa6nbejApl991c1zfhU/c
-        6jm8ngyg8rydwKzEOW1kYgJblrNHRSg=
-X-Google-Smtp-Source: APXvYqyQd53c974LbD2nkToY7DSU0+L3A9syueoEMYLm1HMKppRdjJjKPAIECvhItzCSiJTOcjyq7A==
-X-Received: by 2002:a19:cb17:: with SMTP id b23mr8323749lfg.201.1580582732071;
-        Sat, 01 Feb 2020 10:45:32 -0800 (PST)
-Received: from mail-lj1-f169.google.com (mail-lj1-f169.google.com. [209.85.208.169])
-        by smtp.gmail.com with ESMTPSA id y5sm6295734lfl.6.2020.02.01.10.45.31
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 01 Feb 2020 10:45:31 -0800 (PST)
-Received: by mail-lj1-f169.google.com with SMTP id q8so10533362ljb.2
-        for <linux-kernel@vger.kernel.org>; Sat, 01 Feb 2020 10:45:31 -0800 (PST)
-X-Received: by 2002:a2e:580c:: with SMTP id m12mr9494329ljb.150.1580582730741;
- Sat, 01 Feb 2020 10:45:30 -0800 (PST)
+        id S1726803AbgBASw0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 1 Feb 2020 13:52:26 -0500
+Received: from mga05.intel.com ([192.55.52.43]:37509 "EHLO mga05.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726354AbgBASw0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 1 Feb 2020 13:52:26 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga002.jf.intel.com ([10.7.209.21])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 01 Feb 2020 10:52:25 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.70,390,1574150400"; 
+   d="scan'208";a="248075430"
+Received: from sjchrist-coffee.jf.intel.com ([10.54.74.202])
+  by orsmga002.jf.intel.com with ESMTP; 01 Feb 2020 10:52:25 -0800
+From:   Sean Christopherson <sean.j.christopherson@intel.com>
+To:     Paolo Bonzini <pbonzini@redhat.com>
+Cc:     Sean Christopherson <sean.j.christopherson@intel.com>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Wanpeng Li <wanpengli@tencent.com>,
+        Jim Mattson <jmattson@google.com>,
+        Joerg Roedel <joro@8bytes.org>, kvm@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH 00/61] KVM: x86: Introduce KVM cpu caps
+Date:   Sat,  1 Feb 2020 10:51:17 -0800
+Message-Id: <20200201185218.24473-1-sean.j.christopherson@intel.com>
+X-Mailer: git-send-email 2.24.1
 MIME-Version: 1.0
-References: <CAK7LNAS625YwKpv4wfKO78+Rexe2fP5pLDbMD4r71wwiQfN0Ng@mail.gmail.com>
-In-Reply-To: <CAK7LNAS625YwKpv4wfKO78+Rexe2fP5pLDbMD4r71wwiQfN0Ng@mail.gmail.com>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Sat, 1 Feb 2020 10:45:15 -0800
-X-Gmail-Original-Message-ID: <CAHk-=wiTEVwmj-PH98reZTibx+C_GLwAmXO0RFmJa9weZcg70g@mail.gmail.com>
-Message-ID: <CAHk-=wiTEVwmj-PH98reZTibx+C_GLwAmXO0RFmJa9weZcg70g@mail.gmail.com>
-Subject: Re: [GIT PULL 1/2] Kbuild updates for v5.6-rc1
-To:     Masahiro Yamada <masahiroy@kernel.org>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jan 31, 2020 at 8:06 PM Masahiro Yamada <masahiroy@kernel.org> wrote:
->
->  - simplify built-in initramfs creation
+Introduce what is effectively a KVM-specific copy of the x86_capabilities
+array in boot_cpu_data, kvm_cpu_caps.  kvm_cpu_caps is initialized by
+copying boot_cpu_data.x86_capabilities before ->hardware_setup().  It is
+then updated by KVM's CPUID logic (both common x86 and VMX/SVM specific)
+to adjust the caps to reflect the CPU that KVM will expose to the guest.
 
-Hmm.
+Super cool things:
+  - Kills off 8 kvm_x86_ops hooks.
+  - Eliminates a retpoline from pretty much every page fault, and more
+    retpolines throughout KVM.
+  - Automagically handles selecting the appropriate eax/ebx/ecx/edx
+    registers when updating CPUID feature bits.
+  - Adds an auditing capability to double check that the function and
+    index of a CPUID entry are correct during reverse CPUID lookup.
 
-This may simplify it from a _technical_ angle, but it seems to be a
-fairly annoying step backwards from a UI perspective.
+This is sort of a v2 of "KVM: x86: Purge kvm_x86_ops->*_supported()"[*],
+but only a handful of the 26 patches from that series are carried forward
+as is, and this series is obviously much more ambitiuous in scope.  And
+unlike that series, there isn't a single patch in here that makes me go
+"eww", and the end result is pretty awesome :-)
 
-Now Kconfig asks a completely pointless question that most people have
-absolutely zero interest in. The old situation was better, I feel.
+Quick synopsis:
+  1. Refactor the KVM_GET_SUPPORTED_CPUID stack to consolidate code,
+     remove crustiness, and set the stage for introducing kvm_cpu_caps.
 
-Basically, I feel that from a "get normal users to test development
-kernels", our Kconfig pain ends up being the biggest hurdle by far.
+  2. Introduce cpuid_entry_*() accessors/mutators to automatically
+     handle retrieving the correct reg from a CPUID entry, and to audit
+     that the entry matches the reserve CPUID lookup entry.  The
+     cpuid_entry_*() helpers make moving the code from common x86 to
+     vendor code much less risky.
 
-The kernel is easy to build and doesn't really require all that much
-infrastructure, but generating the config - particularly when it
-changes over time and you can't just say "just use the distro config"
-- is a big step for people.
+  3. Move CPUID adjustments to vendor code in preparation for kvm_cpu_caps,
+     which will be initialized at load time before the kvm_x86_ops hooks
+     are ready to be used, i.e. before ->hardware_setup().
 
-So honestly, while I've pulled this, I feel that this kind of change
-is going _exactly_ the wrong way when it asks people questions that
-they don't care one whit about.
+  4. Introduce kvm_cpu_caps and move all the CPUID code over to kvm_cpu_caps.
 
-If I as a kernel developer can't find it in myself to care and go "why
-does it ask this new question", then that should tell you something.
+  5. Use kvm_cpu_cap_has() to kill off a bunch of ->*_supported() hooks.
 
-Why do we have this choice in the first place? And no, it's not a
-"simplification" to make life more complex for users.
+  6. Additional cleanup in tangentially related areas to kill off even more
+     ->*_supported() hooks.
 
-                   Linus
+  7. Profit!
+
+Some of (6) could maybe be moved to a different series, but there would
+likely be a number of minor conflicts.  I dropped as many arbitrary cleanup
+patches as I could without letting any of the ->*_supported() hooks live,
+and without losing confidence in the correctness of the refactoring.
+
+Tested by verifying the output of KVM_GET_SUPPORTED_CPUID is identical
+before and after on every patch on a Haswell and Coffee Lake.  Verified
+correctness when hiding features via Qemu (running this version of KVM
+in L1), e.g. that UMIP is correctly emulated for L2 when it's hidden from
+L1, on relevant patches.
+
+Boot tested and ran kvm-unit-tests at key points, e.g. large page handling.
+
+The big untested pieces are PKU, XSAVES and PT on Intel, and everything AMD.
+
+[*] https://lkml.kernel.org/r/20200129234640.8147-1-sean.j.christopherson@intel.com
+
+Sean Christopherson (61):
+  KVM: x86: Return -E2BIG when KVM_GET_SUPPORTED_CPUID hits max entries
+  KVM: x86: Refactor loop around do_cpuid_func() to separate helper
+  KVM: x86: Simplify handling of Centaur CPUID leafs
+  KVM: x86: Clean up error handling in kvm_dev_ioctl_get_cpuid()
+  KVM: x86: Check userapce CPUID array size after validating sub-leaf
+  KVM: x86: Move CPUID 0xD.1 handling out of the index>0 loop
+  KVM: x86: Check for CPUID 0xD.N support before validating array size
+  KVM: x86: Warn on zero-size save state for valid CPUID 0xD.N sub-leaf
+  KVM: x86: Refactor CPUID 0xD.N sub-leaf entry creation
+  KVM: x86: Clean up CPUID 0x7 sub-leaf loop
+  KVM: x86: Drop the explicit @index from do_cpuid_7_mask()
+  KVM: x86: Drop redundant boot cpu checks on SSBD feature bits
+  KVM: x86: Consolidate CPUID array max num entries checking
+  KVM: x86: Hoist loop counter and terminator to top of
+    __do_cpuid_func()
+  KVM: x86: Refactor CPUID 0x4 and 0x8000001d handling
+  KVM: x86: Encapsulate CPUID entries and metadata in struct
+  KVM: x86: Drop redundant array size check
+  KVM: x86: Use common loop iterator when handling CPUID 0xD.N
+  KVM: VMX: Add helpers to query Intel PT mode
+  KVM: x86: Calculate the supported xcr0 mask at load time
+  KVM: x86: Use supported_xcr0 to detect MPX support
+  KVM: x86: Make kvm_mpx_supported() an inline function
+  KVM: x86: Clear output regs for CPUID 0x14 if PT isn't exposed to
+    guest
+  KVM: x86: Drop explicit @func param from ->set_supported_cpuid()
+  KVM: x86: Use u32 for holding CPUID register value in helpers
+  KVM: x86: Introduce cpuid_entry_{get,has}() accessors
+  KVM: x86: Introduce cpuid_entry_{change,set,clear}() mutators
+  KVM: x86: Refactor cpuid_mask() to auto-retrieve the register
+  KVM: x86: Add Kconfig-controlled auditing of reverse CPUID lookups
+  KVM: x86: Handle MPX CPUID adjustment in VMX code
+  KVM: x86: Handle INVPCID CPUID adjustment in VMX code
+  KVM: x86: Handle UMIP emulation CPUID adjustment in VMX code
+  KVM: x86: Handle PKU CPUID adjustment in VMX code
+  KVM: x86: Handle RDTSCP CPUID adjustment in VMX code
+  KVM: x86: Handle Intel PT CPUID adjustment in VMX code
+  KVM: x86: Handle GBPAGE CPUID adjustment for EPT in VMX code
+  KVM: x86: Refactor handling of XSAVES CPUID adjustment
+  KVM: x86: Introduce kvm_cpu_caps to replace runtime CPUID masking
+  KVM: SVM: Convert feature updates from CPUID to KVM cpu caps
+  KVM: VMX: Convert feature updates from CPUID to KVM cpu caps
+  KVM: x86: Move XSAVES CPUID adjust to VMX's KVM cpu cap update
+  KVM: x86: Add a helper to check kernel support when setting cpu cap
+  KVM: x86: Use KVM cpu caps to mark CR4.LA57 as not-reserved
+  KVM: x86: Use KVM cpu caps to track UMIP emulation
+  KVM: x86: Fold CPUID 0x7 masking back into __do_cpuid_func()
+  KVM: x86: Remove the unnecessary loop on CPUID 0x7 sub-leafs
+  KVM: x86: Squash CPUID 0x2.0 insanity for modern CPUs
+  KVM: x86: Do host CPUID at load time to mask KVM cpu caps
+  KVM: x86: Override host CPUID results with kvm_cpu_caps
+  KVM: x86: Set emulated/transmuted feature bits via kvm_cpu_caps
+  KVM: x86: Use kvm_cpu_caps to detect Intel PT support
+  KVM: x86: Use KVM cpu caps to detect MSR_TSC_AUX virt support
+  KVM: VMX: Directly use VMX capabilities helper to detect RDTSCP
+    support
+  KVM: x86: Check for Intel PT MSR virtualization using KVM cpu caps
+  KVM: VMX: Directly query Intel PT mode when refreshing PMUs
+  KVM: SVM: Refactor logging of NPT enabled/disabled
+  KVM: x86/mmu: Merge kvm_{enable,disable}_tdp() into a common function
+  KVM: x86/mmu: Configure max page level during hardware setup
+  KVM: x86: Don't propagate MMU lpage support to memslot.disallow_lpage
+  KVM: Drop largepages_enabled and its accessor/mutator
+  KVM: x86: Move VMX's host_efer to common x86 code
+
+ arch/x86/include/asm/kvm_host.h |  15 +-
+ arch/x86/kvm/Kconfig            |  10 +
+ arch/x86/kvm/cpuid.c            | 771 +++++++++++++++-----------------
+ arch/x86/kvm/cpuid.h            | 123 ++++-
+ arch/x86/kvm/mmu/mmu.c          |  22 +-
+ arch/x86/kvm/svm.c              | 117 ++---
+ arch/x86/kvm/vmx/capabilities.h |  25 +-
+ arch/x86/kvm/vmx/nested.c       |   2 +-
+ arch/x86/kvm/vmx/pmu_intel.c    |   2 +-
+ arch/x86/kvm/vmx/vmx.c          | 125 +++---
+ arch/x86/kvm/vmx/vmx.h          |   5 +-
+ arch/x86/kvm/x86.c              |  48 +-
+ arch/x86/kvm/x86.h              |  10 +-
+ include/linux/kvm_host.h        |   2 -
+ virt/kvm/kvm_main.c             |  13 -
+ 15 files changed, 662 insertions(+), 628 deletions(-)
+
+-- 
+2.24.1
+
