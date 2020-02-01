@@ -2,79 +2,85 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9357114F7E9
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Feb 2020 14:12:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3AA7414F7EA
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Feb 2020 14:14:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726622AbgBANLz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 1 Feb 2020 08:11:55 -0500
-Received: from mail-pl1-f193.google.com ([209.85.214.193]:43571 "EHLO
-        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726480AbgBANLy (ORCPT
+        id S1726789AbgBANOK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 1 Feb 2020 08:14:10 -0500
+Received: from mout.kundenserver.de ([212.227.17.13]:49559 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726480AbgBANOK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 1 Feb 2020 08:11:54 -0500
-Received: by mail-pl1-f193.google.com with SMTP id p11so3933166plq.10
-        for <linux-kernel@vger.kernel.org>; Sat, 01 Feb 2020 05:11:54 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:reply-to:from:date:message-id:subject:to;
-        bh=TqSPvb4Kl6fAFNqadtBowPqf9HKgwrTg6OsDNuyu+b8=;
-        b=kh03ZUj9ZwUcKrgOd9LCPO45i2mBLi1N9c5gK8AyW8y/1gVOX4XausJgNwXCtmGTwx
-         3OLLLOc6n2Y3S6k+y2AjlO+hlbMEMI3v8j0yysCQVxIccZL90gfguv7ndOcedmT2rQjA
-         ui0/pnWttL84zaKT+KFKpFGis77fwEmZ/8l2gXs2KOupujyWYMdlUO5GApDZtCd3UN7R
-         9P5aX/YW1+m9fqjFDi3UiXlGkY9Uo/SRTUt7JI96YKr8Cp29DdG3C1QQNfzCZA1DJrFd
-         fmU40DdljUV/P+3zqgtrmj55tOtjZScKbcTgv+aGiIw13ghY1KPOul/JpsZrOvI2/2i2
-         ZOVw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
-         :subject:to;
-        bh=TqSPvb4Kl6fAFNqadtBowPqf9HKgwrTg6OsDNuyu+b8=;
-        b=BlSUzmlh49uwnTX514tmHs++L1zZw9w04JFkYRObtKLX5rkahMabnWhghZFhOzHP0J
-         jgYrVta97hO+z3sYfKd2yBtOb/gPVuE8LK/YTBW/86ij7i+NXIgvE0/e5V9gEI+9/E7g
-         R2uc07WH5SSfY3j/6HC5W7ZVHkYV0hFwj41aobRTyEX521KZ92yejEsWbqYfm0j5K2HT
-         Gop25OWhx8LhPa1z84XGAEa8owmhsOw7E4IpR/AC2S90A2tt85Ic0cIV9BNu98OIf4pS
-         c6+UVnIurNt6y/zkv3eGbnPYoB7xlbTh+9VSok5mVR3rfULYYe6fR9nsQiF7A0+zLfEc
-         YZcw==
-X-Gm-Message-State: APjAAAUQJRLlakmnmw6gzeyPwWLu1FAPEwJTcRP7dl5Ub7Aw3VJJt8sJ
-        VcHnB8FFQyRwdhdZPXGma0VxLXHfIVsf7BQbUQg=
-X-Google-Smtp-Source: APXvYqyyDmFALuiGX5WzMHTmxinxEfe5B6Udj8s+6WeTzBAxEW98S2unmZZw7oga86GWlFQGUMoRkeFDMsgryTgIe1A=
-X-Received: by 2002:a17:90a:d807:: with SMTP id a7mr18999977pjv.15.1580562713838;
- Sat, 01 Feb 2020 05:11:53 -0800 (PST)
+        Sat, 1 Feb 2020 08:14:10 -0500
+Received: from mail-qv1-f51.google.com ([209.85.219.51]) by
+ mrelayeu.kundenserver.de (mreue107 [212.227.15.145]) with ESMTPSA (Nemesis)
+ id 1Mqal4-1jJxnk1tmy-00meOJ; Sat, 01 Feb 2020 14:14:08 +0100
+Received: by mail-qv1-f51.google.com with SMTP id o18so4679652qvf.1;
+        Sat, 01 Feb 2020 05:14:08 -0800 (PST)
+X-Gm-Message-State: APjAAAW//JkEy+BCiksALGX+7u5lTM42mlU1/tetHh3wlntMABcuskcM
+        vCGVx4WDCYrI1YDTKhJDJFj8Vv0Wg+D/dd6uvzg=
+X-Google-Smtp-Source: APXvYqzuLmZzlDe0WECUf1s9qKLEpATfkBs6kbKsvRbW3f8o8LQknpzhDn9B3Z0XpzmFVAqpHPZ3Q2HxrreY9WC02o4=
+X-Received: by 2002:a05:6214:524:: with SMTP id x4mr12953450qvw.4.1580562847224;
+ Sat, 01 Feb 2020 05:14:07 -0800 (PST)
 MIME-Version: 1.0
-Received: by 2002:a17:90b:30d7:0:0:0:0 with HTTP; Sat, 1 Feb 2020 05:11:53
- -0800 (PST)
-Reply-To: davidabulatg1@gmail.com
-From:   David Abula <marcels1954@gmail.com>
-Date:   Sat, 1 Feb 2020 13:11:53 +0000
-Message-ID: <CADUkOXZt6zykBJ9S-pL2A9AMgw7Xr5jwzkbR=-vBjM0eFM4ZMw@mail.gmail.com>
-Subject: RE
-To:     undisclosed-recipients:;
+References: <20200201124301.21148-1-lukas.bulwahn@gmail.com>
+In-Reply-To: <20200201124301.21148-1-lukas.bulwahn@gmail.com>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Sat, 1 Feb 2020 14:13:49 +0100
+X-Gmail-Original-Message-ID: <CAK8P3a0eL7MH8cfMcq9NNWOggepNAu7vhQSw9_ED_4WXZyY35A@mail.gmail.com>
+Message-ID: <CAK8P3a0eL7MH8cfMcq9NNWOggepNAu7vhQSw9_ED_4WXZyY35A@mail.gmail.com>
+Subject: Re: [PATCH] MAINTAINERS: correct entries for ISDN/mISDN section
+To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Cc:     Karsten Keil <isdn@linux-pingi.de>,
+        isdn4linux@listserv.isdn4linux.de,
+        Networking <netdev@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
+X-Provags-ID: V03:K1:/orgqm+0oCsfIzcahMzGBa3JvU1sljA5C8ADaFWsmDJtqNLj7xR
+ kHxLR4yJiS37kOpkQ+B8FwPzcsELccuM6+Bq3AtCdmbCMqzjYI+jdjLC0Wnpr+VxvBchqx7
+ uiy6kRNfhDHGRTx/BAQpvFcCPcNvDekf5d5cf96uGumWbVcqNSUPVsVnf0asvMQDK4l67kC
+ lBTEzpo1ImneE5CUxWXdg==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:4zklKAk9hkM=:UC3BAsdyr86cfPpY86NvZI
+ v1L/IO1n9C3Nv9zUrXxHYInVo/VChv5XVvSuVZKNVZEWVyhoGBAOjLADbv/kuQzEu+p+kgl4i
+ GtIqStPiiZ8FL7CW5M7AL4LQjYCxzbRmaUFzKdpkrZP2LisalBTbVzwij9NHBJeegiJR6fc82
+ 9/l8HIgw67UsfYD0iEOm4jGeMS3dSME87gvyaD9mQGNsiHU9Wzz24Z5f5LZR/pttXZr3c0jKN
+ 4tC+2weK5i2BvNb8p08W3Btd2aKFRlUv57pMcrqmUyMVcvg67YOglW/fYrRg/k/OvbdaEt0Vc
+ Eotw/XbTorF80Z0oOIwhF95BJFE4fqAhesS/KR+FitwM2//xfHR5Eu8HUbhKjHoYCN+q+Oy63
+ PgqGRkqpzeWH+qUWc4j9LM5733LN/9zerR0JxJJbJcr3/mf6X/IKCEAkNZHt8tXj2nK2VhG0W
+ 07u1m+Lj9UPzxN5ZknPLF2FmTPMGCAczlLkxPljsbzD7KaEbOZO3jk3UVcovPVaf0Ut0vGN2A
+ aFj0+2inkdY8U9LTd9I6MPjN0WwJ571Px7hcD7OJRkbm597eXHjqygYPn1CHa3CEDL54MscLG
+ yh2ytH2vW0VsUARRxvzgzpntzAEhoG0TIksXxoJRvarFIxsrWq4MFVomWJ0Od0hWeH6FCIFI1
+ 4mtUZCRG+qEgu+JD9F5+bLSTsbKThtJsvMxnwGlYJPez3Wb+Ob2IGRmvjbIsfJ8B2Ds5HGa9D
+ RSIB1HMKoxmSyGP2OSeGXIyKFmj09NsjkTQuB4gxbIRc3ZbRD4HCvgXvaL0GOOcE2S1uTxEm8
+ 71Q1NWWBQfDVyXIrPx95Jjbg3E59iq3ahjVHbkw4l1KeLX38AM=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
-Good day,
-Please accept my sincere congratulations and I know this message may
-come to you as a surprise, but I advise you to read with good
-understanding. I am Barrister David Abula, from Togo. Therefore, there
-is a certain amount of funds $ 11.7 million that was left by my late
-client, is a citizen of your country, who died a few years ago here in
-my country; can I trust you to work with you to transfer the total
-amount of $ 11.7 million into your account in your country? and after
-we will share the total fund 50 % to 50 %.Moreover, my wife is sick
-and I need to fly her to Hospital in Abroad, therefore, i want to get
-to success of this transaction so that i can go further with the
-treatment of my wife so If you are interested to cooperate with me, I
-will advise you to respond back to me in my email address or you
-provide to me your email address to enable me send you the full
-details about the transaction, so that you can read and come to a good
-understanding with me. Reply me on my email address
-(davidabulat1@gmail.com) Thank you and I wait for your immediate
-response.
-Sincerely,
-Lawyer David Abula
-Phone: +22890712188
-davidabulatg1@gmail.com
+On Sat, Feb 1, 2020 at 1:44 PM Lukas Bulwahn <lukas.bulwahn@gmail.com> wrote:
+>
+> Commit 6d97985072dc ("isdn: move capi drivers to staging") cleaned up the
+> isdn drivers and split the MAINTAINERS section for ISDN, but missed to add
+> the terminal slash for the two directories mISDN and hardware. Hence, all
+> files in those directories were not part of the new ISDN/mISDN SUBSYSTEM,
+> but were considered to be part of "THE REST".
+>
+> Rectify the situation, and while at it, also complete the section with two
+> further build files that belong to that subsystem.
+>
+> This was identified with a small script that finds all files belonging to
+> "THE REST" according to the current MAINTAINERS file, and I investigated
+> upon its output.
+>
+> Fixes: 6d97985072dc ("isdn: move capi drivers to staging")
+> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+> ---
+> Arnd, please ack or even pick it.
+> It is no functional change, so I guess you could simply pick in your own
+> tree for minor fixes.
+
+Thanks for fixing this,
+
+Acked-by: Arnd Bergmann <arnd@arndb.de>
