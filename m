@@ -2,59 +2,163 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B761714FB15
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Feb 2020 01:55:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 491B114FB21
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Feb 2020 02:08:23 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726804AbgBBAzW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 1 Feb 2020 19:55:22 -0500
-Received: from sonic313-14.consmr.mail.bf2.yahoo.com ([74.6.133.124]:38972
-        "EHLO sonic313-14.consmr.mail.bf2.yahoo.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726718AbgBBAzW (ORCPT
+        id S1726814AbgBBBIW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 1 Feb 2020 20:08:22 -0500
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:42448 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726712AbgBBBIV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 1 Feb 2020 19:55:22 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1580604921; bh=YooljpITC31Cc9KXMfJzAPmr/1tCBEdX27fhfqn54Fs=; h=Date:From:Reply-To:Subject:References:From:Subject; b=S5oCEhXpvsi1xMvAs1s/OI3/QquDDobJKYwG3N3GxYMB8u3EJnS8/j40DNbPxqKh7hL5p9mbxp882HGx+UpQNKuvjSIw9FYyJ8pWp2OV8XY1NDl6RmHH/ZLuQK7ktBjVtRpize55FvxvRRKNkNr4oqDn1/bUQ0v3QjY6ESLOrxLRBz58iIgmXYIWCI/4p4DCKA/Lk7gzIIawbQV/KKpeP2DVtSFi/IbleK1uCzkWxgyqZ9mLFzLCEretp47mSXlGmwoQDQ77VhlEjKq2lHb83ylPI13+00riFAL35bZDlt319X6OW2J9B0MnS4dDHHcneYMT+Muex6CfsudCktBhuw==
-X-YMail-OSG: IFySW08VM1nEcMBf7jogDoRmQEPI9L9pyDL3J7J0rVSCmimlGRI.o3eRM2YpFp8
- jcKTZcQ05tjVHuFyYq_hYYkqAv.WBpTpPYhudcHQQWKwS9FpSx77GO0MVnPSH0HwMh69BC1ZdMsu
- 8_o7jErVH4Rbrwki6yZcSaQtXCCJiZtvJJXoF8Pxb_8VyNf7XjO3s4ifomxdlmVOdHSo7YsvBPUH
- ZB40JWZOzL3WVqTIZKfKftLjX5Zg7cbYhuKaVY2AUz78w.rH9H_tkjitDoSwKg2a2fRXcvV83U9B
- jiGSrfGyJNRAu1fHTeslo4i9hY55jWkpRlgXFFULCKO4jPscePePuMoxkR34pZJXRMNLRkXVOiHr
- cQL_uKq5huG6V8QN_ThGLW10SovgOhVTLyg0fbpp8jDw9jrWS9h4Zqa22mrnGKixyaf.McBo0P.8
- r.HbTvms619.jNBChvMOWXGLiT_Z2RoB4sIhN4M4zexLTVYMrTKWHJcx8v0GWdPFhtf4JmkJ11ho
- .3jxOcD82pC2bxpUDEypKmENCW6g9S2MsPnUoBdA3yUJs4oRLiKkhSLf.9u62v4l1jT2xATdEYts
- PdzKYhwuYIE1sbdEjnBCD4NilODmq.3FK3qNLvM9aVhbGjQVXnRnuB2RrHXKzusX2Jnh63t_WV.b
- eI2fnSI375lP8uSbcGSC4Ul1LA.MRLIgy3J2ud8Bn1AFQiy.D_.OAoUUs0zK_gpZSptDdVLGcBh6
- FCPjhI9W2g5iGHCLw3jHzzIeWhphLgW3K2AxfDX30FQ930PAkajRCO4o_9m18ux.d_8Jg2_QP0Ld
- K_P9YnGL.VBNI5qDMn51oFuFGa4.uq6y8.dXNWKNMurNGzpaKz17bVHclEiqTtwuFcrVtO0kxZKt
- GaBQDFqHWqOXAuGKqUiPEAuN75kOPf2yIxVw6.2IRgv6KdkKhMACLQI0k00kjYP_cDV9l9G1kag2
- 4N06iivjccGeCg7AVAtRc8Js0mpCVadUnbslObuE8_b3TwJpWpIVNpsY5v3CkWId1qstQGSWuWo6
- glw5DT_K4BupsSL4fS5iZvlIKo_3OB1Gfto4eTdkEjcTcIoQN3yc1cQwc9FDzatlbdxiFpZ95ibW
- Qm0haXn0nhM21y2l9vmHacsGdnraxxS8aous4VC9GROs0vDB2DYtij_1kpK2N21m8fcznKcPoRm8
- .PUF.5S0GRn3J9ejjKe9l4fFC3i2BEIM1qjNKZr8FZo1fR9OHbodrKYD9PtAchzd6zhq7h3wIU6I
- lgzfJeeb2ra7XFHHjxtCn9IqQLVpl2xRHSMwl.GaDDWKJT8DxrGF__TstA45YnGkuVW04O2I.
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic313.consmr.mail.bf2.yahoo.com with HTTP; Sun, 2 Feb 2020 00:55:21 +0000
-Date:   Sun, 2 Feb 2020 00:55:18 +0000 (UTC)
-From:   Lisa Williams <ah1195485@gmail.com>
-Reply-To: lisawilliams00357@yahoo.com
-Message-ID: <727789886.314862.1580604918409@mail.yahoo.com>
-Subject: Hello
+        Sat, 1 Feb 2020 20:08:21 -0500
+Received: by mail-lj1-f194.google.com with SMTP id d10so10960992ljl.9;
+        Sat, 01 Feb 2020 17:08:19 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=KkxpqI/EsjGE/4RKhT6G//VJu5zP3wk8mfvrv9Ew9SA=;
+        b=dl4Wcm9Ihv5Sg21kdP/quxulIbYBw5ctGbYxV3EOOUc5KTsCEDjnlPC0f24Nuv2fCR
+         X7fK5sQCHGypkfDgt2qrvwxem3k9jxrKERoXG6ZtgK4/fgZSQx7fKwCasZow2U9+tqQe
+         JSfNSydMI2RTe8InRKbZGVNdu4TG6HZE9rEXP8WKKIgh0W7UFUpol4+YOkAFhSy5hy/H
+         t2PbgIW1wmwAmbDezD61WYXLy/om8Q+8Sldy2Z7cb6GBLuPYy0C6rNgq3rffi32yo2qx
+         wXn55jBbjEslf83in2VsEFollo4MJpuHXt+hf4VAtTHUQ/V2bdf13ayiyN9xhDvwFRgg
+         UN7A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=KkxpqI/EsjGE/4RKhT6G//VJu5zP3wk8mfvrv9Ew9SA=;
+        b=jKmrO+e58pDtgQR2laZOqKb4wesinuMg8Ae5X+QkGmFnuR12jNUqbU3yHy6TDRo8sU
+         J0nBJ0FzOGtSHzErCgwwvc92hgObzJkLSzuQu2R6+PoGaF8ZkOu68roFzjZnPHsDrJ4t
+         rWF5ParGIzewZZzhi4O8bIm+apgOm4vstinPyfDQ3t4EgZRszPusXnWmryr9wi5vriGf
+         9qXd86N/BKuKEfIkQktniUZqDQtYlt+ww+V787QZhrRalS/xUUOCTzCWeHwG2bBnnuDs
+         PZXYKA51JvwLDrL8cEL5dnNh2qyWcjSled4S7nQydFBr45AbyVFvvK8esrePx1kVAHdk
+         OYNg==
+X-Gm-Message-State: APjAAAXx7awglmvJDzPBvVUQ3ipJIZM8ubAeZ3ZqF+1w3YhXu8W68vfp
+        wCRgYbaviDbi2O9xLOs0Q6A4WPXI
+X-Google-Smtp-Source: APXvYqykYMLNDxOFQTCUm1Msd+TJagDhimZVAVXV1U8WmwhvwGpHe8sOK8r6Tr6az+IksMoG+HbRVQ==
+X-Received: by 2002:a2e:880c:: with SMTP id x12mr10109100ljh.44.1580605698028;
+        Sat, 01 Feb 2020 17:08:18 -0800 (PST)
+Received: from [192.168.2.145] (79-139-233-37.dynamic.spd-mgts.ru. [79.139.233.37])
+        by smtp.googlemail.com with ESMTPSA id l64sm6677014lfd.30.2020.02.01.17.08.16
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 01 Feb 2020 17:08:17 -0800 (PST)
+Subject: Re: [PATCH v6 07/12] ARM: tegra: Don't enable PLLX while resuming
+ from LP1 on Tegra30
+To:     Marcel Ziswiler <marcel@ziswiler.com>
+Cc:     Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Peter De Schrijver <pdeschrijver@nvidia.com>,
+        Prashant Gaikwad <pgaikwad@nvidia.com>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Peter Geis <pgwipeout@gmail.com>,
+        Nicolas Chauvet <kwizart@gmail.com>, linux-pm@vger.kernel.org,
+        linux-tegra@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20191218202142.11717-1-digetx@gmail.com>
+ <20191218202142.11717-8-digetx@gmail.com>
+ <334ac00a0c83e4178e3195cca5d77acaf4a3fae7.camel@ziswiler.com>
+From:   Dmitry Osipenko <digetx@gmail.com>
+Message-ID: <31e4cf7e-9bdc-c9f8-7e6d-a972f43fc5be@gmail.com>
+Date:   Sun, 2 Feb 2020 04:08:12 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.3.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-References: <727789886.314862.1580604918409.ref@mail.yahoo.com>
-X-Mailer: WebService/1.1.15149 YMailNodin Mozilla/5.0 (Windows NT 6.1; rv:72.0) Gecko/20100101 Firefox/72.0
-To:     unlisted-recipients:; (no To-header on input)
+In-Reply-To: <334ac00a0c83e4178e3195cca5d77acaf4a3fae7.camel@ziswiler.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+02.02.2020 01:57, Marcel Ziswiler пишет:
+> Hi Dmitry
+> 
+> Finally, I came around giving this a try again on the Colibri T20 and
+> Apalis/Colibri T30.
+> 
+> Overall, works like a charm and you may add the following to the entire
+> series:
+> 
+> On Wed, 2019-12-18 at 23:21 +0300, Dmitry Osipenko wrote:
+>> PLLX may be kept disabled if cpufreq driver selects some other clock
+>> for
+>> CPU. In that case PLLX will be disabled later in the resume path by
+>> the
+>> CLK driver, which also can enable PLLX if necessary by itself. Thus
+>> there
+>> is no need to enable PLLX early during resume. Tegra114/124 CLK
+>> drivers do
+>> not manage PLLX on resume and thus they are left untouched by this
+>> patch.
+>>
+>> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+> 
+> Tested-by: Marcel Ziswiler <marcel@ziswiler.com>
+> Tested-on: Colibri T20, Apalis/Colibri T30 on resp. EvalBoards
 
+Hello Marcel,
 
-Hi Dear,
+Thank you very much for the testing! Very appreciate that!
 
-I was just going through the Internet search when I found your email address, I want to make a new and special friend, so I decided to contact you to see how we can make it work out if we can. Please I wish you will have the desire with me so that we can get to know each other better and see what happens in future.
+Could you please clarify whether you tried to enable the CPU DVFS by
+including OPPs/etc into device-tree files of the tested boards?
 
-My name is Lisa Williams, I am an American, but presently I live in the UK, I will be glad to see your reply for us to know each other better to exchange pictures and details about us
+>> ---
+>>  arch/arm/mach-tegra/sleep-tegra30.S | 11 ++++++++++-
+>>  1 file changed, 10 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/arch/arm/mach-tegra/sleep-tegra30.S b/arch/arm/mach-
+>> tegra/sleep-tegra30.S
+>> index 9a20c93abe48..4f073869b8ac 100644
+>> --- a/arch/arm/mach-tegra/sleep-tegra30.S
+>> +++ b/arch/arm/mach-tegra/sleep-tegra30.S
+>> @@ -358,7 +358,6 @@ _no_pll_iddq_exit:
+>>  
+>>  	pll_enable r1, r0, CLK_RESET_PLLM_BASE, CLK_RESET_PLLM_MISC
+>>  	pll_enable r1, r0, CLK_RESET_PLLC_BASE, CLK_RESET_PLLC_MISC
+>> -	pll_enable r1, r0, CLK_RESET_PLLX_BASE, CLK_RESET_PLLX_MISC
+>>  
+>>  _pll_m_c_x_done:
+>>  	pll_enable r1, r0, CLK_RESET_PLLP_BASE, CLK_RESET_PLLP_MISC
+>> @@ -368,8 +367,18 @@ _pll_m_c_x_done:
+>>  	pll_locked r1, r0, CLK_RESET_PLLP_BASE
+>>  	pll_locked r1, r0, CLK_RESET_PLLA_BASE
+>>  	pll_locked r1, r0, CLK_RESET_PLLC_BASE
+>> +
+>> +	/*
+>> +	 * CPUFreq driver could select other PLL for CPU. PLLX will be
+>> +	 * enabled by the Tegra30 CLK driver on an as-needed basis, see
+>> +	 * tegra30_cpu_clock_resume().
+>> +	 */
+>> +	cmp	r10, #TEGRA30
+>> +	beq	_pll_m_c_x_locked
+>> +
+>>  	pll_locked r1, r0, CLK_RESET_PLLX_BASE
+>>  
+>> +_pll_m_c_x_locked:
+>>  	mov32	r7, TEGRA_TMRUS_BASE
+>>  	ldr	r1, [r7]
+>>  	add	r1, r1, #LOCK_DELAY
+> 
+> Unfortunately, that one does no longer apply after the following patch
+> recently got applied on Wed Jan 8:
+> 
+> commit 1a3388d506bf ("ARM: tegra: Enable PLLP bypass during Tegra124
+> LP1")
+> 
+> Thanks!
 
-Yours
-Lisa
+Yes, I'm aware about it and going to send out the updated version of the
+patches soon. Meanwhile you could find recent rebase of the patches here
+[1].
+
+[1] https://github.com/grate-driver/linux/commits/master
