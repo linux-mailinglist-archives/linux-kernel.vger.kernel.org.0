@@ -2,73 +2,101 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4534014FD82
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Feb 2020 15:23:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DBCC514FD8F
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Feb 2020 15:36:07 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726969AbgBBOXu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 2 Feb 2020 09:23:50 -0500
-Received: from smtp05.smtpout.orange.fr ([80.12.242.127]:42844 "EHLO
-        smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726880AbgBBOXu (ORCPT
+        id S1726893AbgBBOfS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 2 Feb 2020 09:35:18 -0500
+Received: from isilmar-4.linta.de ([136.243.71.142]:49870 "EHLO
+        isilmar-4.linta.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726679AbgBBOfS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 2 Feb 2020 09:23:50 -0500
-Received: from localhost.localdomain ([93.22.39.62])
-        by mwinf5d09 with ME
-        id xqPl2100G1LTYWM03qPmkl; Sun, 02 Feb 2020 15:23:47 +0100
-X-ME-Helo: localhost.localdomain
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Sun, 02 Feb 2020 15:23:47 +0100
-X-ME-IP: 93.22.39.62
-From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     macro@linux-mips.org, ralf@linux-mips.org, davem@davemloft.net,
-        akpm@linux-foundation.org
-Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Subject: [PATCH] defxx: Fix a sentinel at the end of a 'eisa_device_id' structure
-Date:   Sun,  2 Feb 2020 15:23:41 +0100
-Message-Id: <20200202142341.22124-1-christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.20.1
+        Sun, 2 Feb 2020 09:35:18 -0500
+X-isilmar-external: YES
+X-isilmar-external: YES
+X-isilmar-external: YES
+X-isilmar-external: YES
+Received: from light.dominikbrodowski.net (brodo.linta [10.1.0.102])
+        by isilmar-4.linta.de (Postfix) with ESMTPSA id 7B443200701;
+        Sun,  2 Feb 2020 14:35:16 +0000 (UTC)
+Received: by light.dominikbrodowski.net (Postfix, from userid 1000)
+        id 72CC3205FF; Sun,  2 Feb 2020 15:34:45 +0100 (CET)
+Date:   Sun, 2 Feb 2020 15:34:45 +0100
+From:   Dominik Brodowski <linux@dominikbrodowski.net>
+To:     torvalds@linux-foundation.org
+Cc:     linux-kernel@vger.kernel.org
+Subject: [GIT PULL] pcmcia updates for v5.6
+Message-ID: <20200202143445.GA263996@light.dominikbrodowski.net>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="SLDf9lqlvOQaIe6s"
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-'struct eisa_device_id' must be ended by an empty string, not a NULL
-pointer. Otherwise, a NULL pointer dereference may occur in
-'eisa_bus_match()'.
 
-Also convert some spaces to tab to please 'checkpatch.pl'.
+--SLDf9lqlvOQaIe6s
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Fixes: e89a2cfb7d7b ("[TC] defxx: TURBOchannel support")
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
- drivers/net/fddi/defxx.c | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
+Linus,
 
-diff --git a/drivers/net/fddi/defxx.c b/drivers/net/fddi/defxx.c
-index 077c68498f04..7ef0c57f07c6 100644
---- a/drivers/net/fddi/defxx.c
-+++ b/drivers/net/fddi/defxx.c
-@@ -3768,11 +3768,11 @@ static void dfx_pci_unregister(struct pci_dev *pdev)
- 
- #ifdef CONFIG_EISA
- static const struct eisa_device_id dfx_eisa_table[] = {
--        { "DEC3001", DEFEA_PROD_ID_1 },
--        { "DEC3002", DEFEA_PROD_ID_2 },
--        { "DEC3003", DEFEA_PROD_ID_3 },
--        { "DEC3004", DEFEA_PROD_ID_4 },
--        { }
-+	{ "DEC3001", DEFEA_PROD_ID_1 },
-+	{ "DEC3002", DEFEA_PROD_ID_2 },
-+	{ "DEC3003", DEFEA_PROD_ID_3 },
-+	{ "DEC3004", DEFEA_PROD_ID_4 },
-+	{ "" }
- };
- MODULE_DEVICE_TABLE(eisa, dfx_eisa_table);
- 
--- 
-2.20.1
+please pull the following changes since
+	commit d1eef1c619749b2a57e514a3fa67d9a516ffa919 (Linux 5.5-rc2)
 
+=66rom
+	https://git.kernel.org/pub/scm/linux/kernel/git/brodo/linux.git pcmcia-next
+
+up to 71705c611263cad99edf85a5ea021e098cac032b:
+
+	PCMCIA/i82092: remove #if 0 block (2019-12-16 11:49:54 +0100)
+
+This is a series co-developed by Simon Geis and Lukas Panzer to clean up
+the i82092 PCMCIA device driver.
+
+Thanks,
+	Dominik
+
+----------------------------------------------------------------
+
+Simon Geis (10):
+      PCMCIA/i82092: use dev_<level> instead of printk
+      PCMCIA/i82092: add/remove spaces to improve readability
+      PCMCIA/i82092: remove braces around single statement blocks
+      PCMCIA/i82092: insert blank line after declarations
+      PCMCIA/i82092: change code indentation
+      PCMCIA/i82092: move assignment out of if condition
+      PCMCIA/i82092: shorten the lines with over 80 characters
+      PCMCIA/i82092: include <linux/io.h> instead of <asm/io.h>
+      PCMCIA/i82092: delete enter/leave macro
+      PCMCIA/i82092: remove #if 0 block
+
+ drivers/pcmcia/i82092.c   | 648 ++++++++++++++++++++++--------------------=
+----
+ drivers/pcmcia/i82092aa.h |  11 -
+ 2 files changed, 311 insertions(+), 348 deletions(-)
+
+--SLDf9lqlvOQaIe6s
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCAAdFiEEmgXaWKgmjrvkPhLCmpdgiUyNow0FAl423gUACgkQmpdgiUyN
+ow06jw//T0NOsictd8XuLdxIFnpBU4cNh2RXXm3GD4dD8tJ3MjR4pqQtsoNTJEgN
+PGhbKfSzvzVuvjbDacwFcXiFcbdUUlH2lsV/Bn65NYUZ906guOUiGnN4QGSYrH+a
+vXNWRMqSUBhyO8lOd9GYEwMPZoRQi+8pClnEab3iFKhDZYOMcQ3zT4rBoDe9PInD
+7TCqYDX/5GcMildBkQ6hErf1gMVw2zJZPukbWp6uV5MaOZg+Vxbw3PsqEv2jqraG
+70LqU7D5d1nzaC6TIIdLvvs1iItt66wv5OEPT/eV+QcA9fn0IzqTLD9itRYzT+ht
+2NTq+9bHfJeIy7R9F5S1wqVFhvwQcL5WzF8mluClVHgTDxzH5HspB7Kpb9Chvtzz
+QNmQ6tmpMByxet4Tcsq6tzhzhm1VKQaa28teMgibFOB/yq4JYiLDF3P3sq+PxTWb
+DKeD6LhQLvDHQjA6wanIaCaAAEicj4npgM0DJ1kr6xlYwV1dhBo5O3cwu70XjmFh
+aWW45fCyKmv7jxTHaYkFYaE4xLM52NEb1qTEsmJx/a7avCfYgoRmFqnmOoN9Nd4M
+3qXvCjIsRoJUVSQWmQzNlN0iqvAMpuZM6EHxPUbqfCKGZPSEoSjYbKtqE+djhrhD
+0zjm8rt3YotO6DknNqD7zL720NLyFAhHWu8NNzNL9KfHyaovoLw=
+=HcoJ
+-----END PGP SIGNATURE-----
+
+--SLDf9lqlvOQaIe6s--
