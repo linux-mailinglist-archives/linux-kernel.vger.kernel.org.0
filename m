@@ -2,48 +2,48 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C861A14FF3E
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Feb 2020 22:19:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 50BDA14FF3F
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Feb 2020 22:19:30 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727202AbgBBVTJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 2 Feb 2020 16:19:09 -0500
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:36411 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727112AbgBBVTG (ORCPT
+        id S1727225AbgBBVTM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 2 Feb 2020 16:19:12 -0500
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:42789 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726995AbgBBVTH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 2 Feb 2020 16:19:06 -0500
-Received: by mail-pg1-f195.google.com with SMTP id k3so6701332pgc.3;
-        Sun, 02 Feb 2020 13:19:04 -0800 (PST)
+        Sun, 2 Feb 2020 16:19:07 -0500
+Received: by mail-pf1-f193.google.com with SMTP id 4so6462102pfz.9;
+        Sun, 02 Feb 2020 13:19:06 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=+HqoXW19IU0tQeOfSlgHN6Hx1A42Q+7w83EjyBN0djk=;
-        b=eEhWlT5Tj1M2M79+KdTJ/ZkY6iDqP5hJIiDhZzqXAinj/L9KkQFU688Jn1PUyGQyxm
-         Bkcfp7cQtiCnwvl8tQb4rTDddT04CX3zLjxiELDRPj2y2+7UpfZvx94L7TW2xomnsHdg
-         GR7dyUrYAQewHqrCfO4G9UYTku56Ph3gmI86U7UcZerbjMXh64rOWVmYHz9tM3jSZP0E
-         97/fqoNzIsZtAvdawFdF5wzj5PiIonAkoZl9HRWHlBPjzg7roba95nbyYgKXeIXxryQ8
-         K3NzqxKbud90r2k7ktWW381bCYOSnBMFrPrSkIl28wDuNEKO9EG/YAxRtVKjSSv8uyXa
-         cfXQ==
+        bh=cLNIp7PhbQluM+POzy592n9tV10I9FW4qXHr+ace/0o=;
+        b=ry5sjD1L5SWWSxiszhSYKOJe3zcYfWegJDPhnA4gdDOnQqfvHPpwtdd6hcUx/L1NtJ
+         K/z/1wv0N6xLazRKhcauNDxKBsbvhb7fPo96DoV1ZC7LLGFO8hqcASm9IJwkntCbr66e
+         JqYgA3aV69TyKP7LALziFFb+ZFDl2IWDoglcCE6LRumZ1kZGx6vxTUqwk99zX3QEHMlA
+         VCjfCZoeHIrEJhhzywxDYJlCf33sB6aP2l5BQ3NA8NciKDGJVvpSBP9wSD7JxYtenqtG
+         qtrbdnkPxfcWZ8opEdCU/V6UKRB1zP9o6pKwGKTtIax1eDBjG5XiXRVCbIszFUk/uaEt
+         mt2w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=+HqoXW19IU0tQeOfSlgHN6Hx1A42Q+7w83EjyBN0djk=;
-        b=JeGGRshvuRm1rd/FVPjJtYiejZBTPGpqjQgfkNTs+vvF2A6EJkGHF9+V9yAkZyoZM6
-         JwgU5MQ3ydn5sw4tIPVo4H2pdBc8wxkz1NWcE3wOdh9ODu7+rPUJpJKodQdycHRDIump
-         estj8Q3kkryHG2qPutB5vrxnVy7WthaM9JQU8j2BFuCvYJllFGubcIUJ2GmER9HyRGgw
-         46ThSgKqa3pmYpJhxVnJOPMaFVKkZtL4lzP6XmJP/O9tROXGiZ9AP93FVCFAkM0B1tvD
-         bdRCnanQehPMaeT1IY3IaW+JO2tOAmGNbiiukg4eWEnngt7wFrHb0ptkKMVal/guYE08
-         ySmQ==
-X-Gm-Message-State: APjAAAWHmynUv1vfocMB74L0wJjhkCbprCs11hK4xXo1h5eGOL/n/R5h
-        POMHupeXAmQpyslQJ+4R99VettXM
-X-Google-Smtp-Source: APXvYqxwXr+UYh03Rgin6a5IfM55L+wGSkmtED3oBRwGNCdutIY5WGWTI2Zkb5r4Ms+8sZuujzi9Wg==
-X-Received: by 2002:a63:6441:: with SMTP id y62mr13441735pgb.86.1580678344356;
-        Sun, 02 Feb 2020 13:19:04 -0800 (PST)
+        bh=cLNIp7PhbQluM+POzy592n9tV10I9FW4qXHr+ace/0o=;
+        b=YsE7pqsCbiIzosIs4IZ2k1YdpWME/2BmYjywtJRYYjiVDpxKEbuKJLPtnFiD7PbRcI
+         1lEu3WpvBtuOkKCgZeshTX+Ecn4++Os0I+ep2qaEa6+Dm/KVPSnvm0L1NubNYNMyOrnF
+         YvO1ow1enJDLAKBNMzwnw9nDZcWSeInNVDm7E/GRJlZI4pC0zxRXttpAV6A77PlTzyKk
+         LNIQKBMNy4VMDM9grr1CFSGNpsYmsF/5wR4mf7iyat4vVy2/pqrsrIUJ3L0LBf6jwoQC
+         BYQnx071DAoRjPbC+zhO7pVYfXITN8KdeHKksvY61n2QboYxp5EFF2fBBmyFV5ybrV0Q
+         3vUA==
+X-Gm-Message-State: APjAAAW3BpVl1JkxYwnCsvfaZQMpO/4gu17fgp1zbvW68mMglu9KD4Yr
+        axmoedH7rqFZ4cCw7OlLcPFe71T9
+X-Google-Smtp-Source: APXvYqwrkI357eRs0qOJv+iVUPF/RoVjanzj2RJmPd1gxl+n4lOhSsmQZ6FZzFooY9j35ZJi4460Hg==
+X-Received: by 2002:a63:744f:: with SMTP id e15mr23111913pgn.344.1580678345992;
+        Sun, 02 Feb 2020 13:19:05 -0800 (PST)
 Received: from localhost.localdomain (ip68-111-84-250.oc.oc.cox.net. [68.111.84.250])
-        by smtp.gmail.com with ESMTPSA id y24sm8755639pge.72.2020.02.02.13.19.03
+        by smtp.gmail.com with ESMTPSA id y24sm8755639pge.72.2020.02.02.13.19.04
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 02 Feb 2020 13:19:03 -0800 (PST)
+        Sun, 02 Feb 2020 13:19:05 -0800 (PST)
 From:   Florian Fainelli <f.fainelli@gmail.com>
 To:     linux-arm-kernel@vger.kernel.org
 Cc:     devicetree@vger.kernel.org,
@@ -63,9 +63,9 @@ Cc:     devicetree@vger.kernel.org,
         ARCHITECTURE), linux-kernel@vger.kernel.org (open list),
         linux-rpi-kernel@lists.infradead.org (moderated list:BROADCOM
         BCM2711/BCM2835 ARM ARCHITECTURE)
-Subject: [PATCH 04/12] dt-bindings: arm: bcm: Convert Northstar 2 to YAML
-Date:   Sun,  2 Feb 2020 13:18:19 -0800
-Message-Id: <20200202211827.27682-5-f.fainelli@gmail.com>
+Subject: [PATCH 05/12] dt-bindings: arm: bcm: Convert Stingray to YAML
+Date:   Sun,  2 Feb 2020 13:18:20 -0800
+Message-Id: <20200202211827.27682-6-f.fainelli@gmail.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20200202211827.27682-1-f.fainelli@gmail.com>
 References: <20200202211827.27682-1-f.fainelli@gmail.com>
@@ -74,45 +74,48 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Update the Broadcom Northstar 2 SoC binding document for boards/SoCs to
-use YAML. Verified with dt_binding_check and dtbs_check.
+Update the Broadcom Stingray SoC binding document for boards/SoCs to use
+YAML. Verified with dt_binding_check and dtbs_check.
 
 Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
 ---
- .../devicetree/bindings/arm/bcm/brcm,ns2.txt  |  9 -------
- .../devicetree/bindings/arm/bcm/brcm,ns2.yaml | 25 +++++++++++++++++++
- 2 files changed, 25 insertions(+), 9 deletions(-)
- delete mode 100644 Documentation/devicetree/bindings/arm/bcm/brcm,ns2.txt
- create mode 100644 Documentation/devicetree/bindings/arm/bcm/brcm,ns2.yaml
+ .../bindings/arm/bcm/brcm,stingray.txt        | 12 ---------
+ .../bindings/arm/bcm/brcm,stingray.yaml       | 26 +++++++++++++++++++
+ 2 files changed, 26 insertions(+), 12 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/arm/bcm/brcm,stingray.txt
+ create mode 100644 Documentation/devicetree/bindings/arm/bcm/brcm,stingray.yaml
 
-diff --git a/Documentation/devicetree/bindings/arm/bcm/brcm,ns2.txt b/Documentation/devicetree/bindings/arm/bcm/brcm,ns2.txt
+diff --git a/Documentation/devicetree/bindings/arm/bcm/brcm,stingray.txt b/Documentation/devicetree/bindings/arm/bcm/brcm,stingray.txt
 deleted file mode 100644
-index 35f056f4a1c3..000000000000
---- a/Documentation/devicetree/bindings/arm/bcm/brcm,ns2.txt
+index 23a02178dd44..000000000000
+--- a/Documentation/devicetree/bindings/arm/bcm/brcm,stingray.txt
 +++ /dev/null
-@@ -1,9 +0,0 @@
--Broadcom North Star 2 (NS2) device tree bindings
+@@ -1,12 +0,0 @@
+-Broadcom Stingray device tree bindings
 -------------------------------------------------
 -
--Boards with NS2 shall have the following properties:
+-Boards with Stingray shall have the following properties:
 -
 -Required root node property:
 -
--NS2 SVK board
--compatible = "brcm,ns2-svk", "brcm,ns2";
-diff --git a/Documentation/devicetree/bindings/arm/bcm/brcm,ns2.yaml b/Documentation/devicetree/bindings/arm/bcm/brcm,ns2.yaml
+-Stingray Combo SVK board
+-compatible = "brcm,bcm958742k", "brcm,stingray";
+-
+-Stingray SST100 board
+-compatible = "brcm,bcm958742t", "brcm,stingray";
+diff --git a/Documentation/devicetree/bindings/arm/bcm/brcm,stingray.yaml b/Documentation/devicetree/bindings/arm/bcm/brcm,stingray.yaml
 new file mode 100644
-index 000000000000..2fb9b16408f3
+index 000000000000..b58307086cf2
 --- /dev/null
-+++ b/Documentation/devicetree/bindings/arm/bcm/brcm,ns2.yaml
-@@ -0,0 +1,25 @@
++++ b/Documentation/devicetree/bindings/arm/bcm/brcm,stingray.yaml
+@@ -0,0 +1,26 @@
 +# SPDX-License-Identifier: GPL-2.0
 +%YAML 1.2
 +---
-+$id: http://devicetree.org/schemas/arm/bcm/brcm,ns2.yaml#
++$id: http://devicetree.org/schemas/arm/bcm/brcm,stingray.yaml#
 +$schema: http://devicetree.org/meta-schemas/core.yaml#
 +
-+title: Broadcom North Star 2 (NS2) device tree bindings
++title: Broadcom Stingray device tree bindings
 +
 +maintainers:
 +  - Ray Jui <rjui@broadcom.com>
@@ -123,12 +126,13 @@ index 000000000000..2fb9b16408f3
 +    const: '/'
 +  compatible:
 +    oneOf:
-+      - description: Northstar2 based boards
++      - description: Broadcom Stingray based boards
 +        items:
 +          - enum:
-+              - brcm,ns2-svk
-+              - brcm,ns2-xmc
-+          - const: brcm,ns2
++              - brcm,bcm958742k
++              - brcm,bcm958742t
++              - brcm,bcm958802a802x
++          - const: brcm,stingray
 +
 +...
 -- 
