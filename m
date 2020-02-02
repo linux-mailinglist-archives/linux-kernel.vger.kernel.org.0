@@ -2,104 +2,86 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C340414FC2E
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Feb 2020 08:42:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5D3A314FC3E
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Feb 2020 09:19:18 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727167AbgBBHmQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 2 Feb 2020 02:42:16 -0500
-Received: from esa6.hgst.iphmx.com ([216.71.154.45]:6569 "EHLO
-        esa6.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727134AbgBBHmM (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 2 Feb 2020 02:42:12 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1580629331; x=1612165331;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references;
-  bh=b5vpGURk2FU4BR4h+azmFWcVTABZu/RmGJq2GqpVcf4=;
-  b=r8g9gdBvqE7r4j7eYNTANagzW1dEir/u7YP4Um/7R8Vmn7631LHSFgWn
-   5G9bFpnIUXBOPOVLjsMJvTU1K7CHomCbhfa/zTajf4Sh/swpoAMZPn+pq
-   /xBKpxTv6OnVM9MYc07PwTIXoyYqmL1eu1bNpE4jjXmWTMlEqjGrBResM
-   yvME+5VC10pS45Rqkjj9D/q7gfHAQCGVEpwTNa3zfvISZnsxrPeOr2ics
-   or04BuHX6U5hyRuLR84ee9wegvR8cF8aJeKLPYE6djEbFN2iXuQF/GNCo
-   QC1veYDT0gRgZsiy/DUm4HFX8kQqDp0chwDdujZYrTyl1N+xAoMH1h8dH
-   A==;
-IronPort-SDR: juxvMsncY6TzjujqmMW+0VcMoTmcRF4SvAky9m7jdd/TqzOhMYQaPC/tZh014/Bp8bW4n5SawE
- bZv8QPaBnnFBocogkBMqWeUh0nBARAMvsvjrcU7DbvVYheIcySvIfkBUHUXk54FEMDaAEtEynb
- aMY4RlHjXk0M6NLVK6H6ESRfRItyUXcZm4mo0nOd/XEYmpLy/BhgH7a3mxyJ3/pnocbLddgOry
- W7ShC1Nfmad0PgoiUpM65qgTziNZayLEhkcls8UDr8xnO6kMC26XptBGvNkNqho1ki8Oyt/1eu
- n9A=
-X-IronPort-AV: E=Sophos;i="5.70,393,1574092800"; 
-   d="scan'208";a="130383381"
-Received: from uls-op-cesaip01.wdc.com (HELO uls-op-cesaep01.wdc.com) ([199.255.45.14])
-  by ob1.hgst.iphmx.com with ESMTP; 02 Feb 2020 15:42:11 +0800
-IronPort-SDR: 0qq/XOef7hjvsm2woabK44tycI2xn12x77Mq7d4RNFuehOkgL/Pm5rph9Jx/jAyOnrW6+qrAv+
- 54Waj+c+8JeZz+SG+yamVN3yCKkRDRCRjmH9GslZZwAKQOYbhonblPomSKjBuO9r/Gxm+S/Stg
- Y33L7Kp/e4ByHId85rVFvFjjxbxEbk+7b31k7MmeUFKmxHrc2kfDMDn2HKuZ47MRuvC0JHYkJU
- 0zZN7cTRpdvkBh9c1Q6yvPcrxQWjUuKYB5HA6shuacw/4CAuNOJHu+VJTM9OFQrSpLdNnGRCIw
- ezpPpkBazwu6a7PMLpUHznH1
-Received: from uls-op-cesaip02.wdc.com ([10.248.3.37])
-  by uls-op-cesaep01.wdc.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Feb 2020 23:35:17 -0800
-IronPort-SDR: nGpJs+ohfdqfADBNn7KA2aNQ+dVJm9zrDnay7hG//l9vc+6hVQwxLSUA7Wj5BLEJqh31QZoUXJ
- eFr50Ih+uCDCIvR6Ih4Z783HeMwDB67sTqPv3Qji67KnnuAAQj6yD7QXa1o5yWQIFg1rSzKzsM
- ujLFV4jkw4OdJXR3tSLt37kjVWDQwvkY19fKmCPTRnSAAnZKEDKv3D0/59PnmiAaYDoIY76psM
- 4HBpywpQdFE++vmWB3MA9hWAz7v6yNeYE44DrDs2ljmqylwEjWT53T7U7He9dpGWTFR+zxdcl9
- skc=
-WDCIronportException: Internal
-Received: from kfae419068.sdcorp.global.sandisk.com ([10.0.231.195])
-  by uls-op-cesaip02.wdc.com with ESMTP; 01 Feb 2020 23:42:09 -0800
-From:   Avi Shchislowski <avi.shchislowski@wdc.com>
-To:     Alim Akhtar <alim.akhtar@samsung.com>,
-        Avri Altman <avri.altman@wdc.com>,
-        "James E.J. Bottomley" <jejb@linux.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>
-Cc:     linux-kernel@vger.kernel.org, linux-scsi@vger.kernel.org,
-        Avi Shchislowski <avi.shchislowski@sandisk.com>,
-        Uri Yanai <uri.yanai@wdc.com>
-Subject: [PATCH 5/5] scsi: ufs: temperature atrributes add to ufs_sysfs
-Date:   Sun,  2 Feb 2020 09:41:53 +0200
-Message-Id: <1580629313-20078-6-git-send-email-avi.shchislowski@wdc.com>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1580629313-20078-1-git-send-email-avi.shchislowski@wdc.com>
-References: <1580629313-20078-1-git-send-email-avi.shchislowski@wdc.com>
+        id S1726900AbgBBITR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 2 Feb 2020 03:19:17 -0500
+Received: from pegase1.c-s.fr ([93.17.236.30]:38581 "EHLO pegase1.c-s.fr"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726825AbgBBITQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 2 Feb 2020 03:19:16 -0500
+Received: from localhost (mailhub1-int [192.168.12.234])
+        by localhost (Postfix) with ESMTP id 489P4b5b7lz9tyWH;
+        Sun,  2 Feb 2020 09:19:11 +0100 (CET)
+Authentication-Results: localhost; dkim=pass
+        reason="1024-bit key; insecure key"
+        header.d=c-s.fr header.i=@c-s.fr header.b=BaVurHIL; dkim-adsp=pass;
+        dkim-atps=neutral
+X-Virus-Scanned: Debian amavisd-new at c-s.fr
+Received: from pegase1.c-s.fr ([192.168.12.234])
+        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
+        with ESMTP id B9NtGOyoWiNR; Sun,  2 Feb 2020 09:19:11 +0100 (CET)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+        by pegase1.c-s.fr (Postfix) with ESMTP id 489P4b3vmYz9tyW9;
+        Sun,  2 Feb 2020 09:19:11 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=c-s.fr; s=mail;
+        t=1580631551; bh=nozbN1o9P4CquvGdWc1FeJctNG7HaAWCWuutf8WmoXU=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=BaVurHIL6TimjlEGYLds15Z9up+mVUQ6HV+193Whp9YFYK5rM+qPDpX1j0Fa5jLCv
+         v9NWpQ21dmPmw6A/Z+xZ4BegodThZOkQUgVpRLkN0K0YjzDpsRRdSCWGxRUG3yReVW
+         O72UzU/h74/kFSX47OMjhnFbv5L1NLTG6Lk2xUrA=
+Received: from localhost (localhost [127.0.0.1])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id 5B0F38B767;
+        Sun,  2 Feb 2020 09:19:14 +0100 (CET)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+        with ESMTP id finORXVEXN_k; Sun,  2 Feb 2020 09:19:14 +0100 (CET)
+Received: from [192.168.4.90] (unknown [192.168.4.90])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id C6DDD8B752;
+        Sun,  2 Feb 2020 09:19:13 +0100 (CET)
+Subject: Re: Latest Git kernel: avahi-daemon[2410]: ioctl(): Inappropriate
+ ioctl for device
+To:     Christian Zigotzky <chzigotzky@xenosoft.de>,
+        Michael Ellerman <mpe@ellerman.id.au>
+Cc:     DTML <devicetree@vger.kernel.org>,
+        Darren Stevens <darren@stevens-zone.net>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linuxppc-dev@ozlabs.org, "contact@a-eon.com" <contact@a-eon.com>,
+        "R.T.Dickinson" <rtd2@xtra.co.nz>, Christoph Hellwig <hch@lst.de>
+References: <20200126115247.13402-1-mpe@ellerman.id.au>
+ <CAPDyKFrbYmV6_nV6psVLq6VRKMXf0PXpemBbj48yjOr3P130BA@mail.gmail.com>
+ <58a6d45c-0712-18df-1b14-2f04cf12a1cb@xenosoft.de>
+From:   Christophe Leroy <christophe.leroy@c-s.fr>
+Message-ID: <75aab3c9-1cb6-33bf-5de1-e05bbd98b6fb@c-s.fr>
+Date:   Sun, 2 Feb 2020 09:19:08 +0100
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.2
+MIME-Version: 1.0
+In-Reply-To: <58a6d45c-0712-18df-1b14-2f04cf12a1cb@xenosoft.de>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: fr
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Avi Shchislowski <avi.shchislowski@sandisk.com>
+Hello,
 
-Signed-off-by: Uri Yanai <uri.yanai@wdc.com>
-Signed-off-by: Avi Shchislowski <avi.shchislowski@sandisk.com>
----
- drivers/scsi/ufs/ufs-sysfs.c | 6 ++++++
- 1 file changed, 6 insertions(+)
+Le 02/02/2020 à 01:08, Christian Zigotzky a écrit :
+> Hello,
+> 
+> We regularly compile and test Linux kernels every day during the merge 
+> window. Since Thuesday we have very high CPU loads because of the avahi 
+> daemon on our desktop Linux systems (Ubuntu, Debian etc).
+> 
+> Error message: avahi-daemon[2410]: ioctl(): Inappropriate ioctl for device
 
-diff --git a/drivers/scsi/ufs/ufs-sysfs.c b/drivers/scsi/ufs/ufs-sysfs.c
-index dbdf8b0..180f4db 100644
---- a/drivers/scsi/ufs/ufs-sysfs.c
-+++ b/drivers/scsi/ufs/ufs-sysfs.c
-@@ -667,6 +667,9 @@ static DEVICE_ATTR_RO(_name)
- UFS_ATTRIBUTE(ffu_status, _FFU_STATUS);
- UFS_ATTRIBUTE(psa_state, _PSA_STATE);
- UFS_ATTRIBUTE(psa_data_size, _PSA_DATA_SIZE);
-+UFS_ATTRIBUTE(rough_temp, _ROUGH_TEMP);
-+UFS_ATTRIBUTE(too_high_temp, _TOO_HIGH_TEMP);
-+UFS_ATTRIBUTE(too_low_temp, _TOO_LOW_TEMP);
- 
- static struct attribute *ufs_sysfs_attributes[] = {
- 	&dev_attr_boot_lun_enabled.attr,
-@@ -685,6 +688,9 @@ static DEVICE_ATTR_RO(_name)
- 	&dev_attr_ffu_status.attr,
- 	&dev_attr_psa_state.attr,
- 	&dev_attr_psa_data_size.attr,
-+	&dev_attr_rough_temp.attr,
-+	&dev_attr_too_high_temp.attr,
-+	&dev_attr_too_low_temp.attr,
- 	NULL,
- };
- 
--- 
-1.9.1
+Do you know which ioctl, on which device ?
+Can you take a trace of running avahi-daemon with 'strace' ?
 
+Can you bisect ?
+
+Christophe
