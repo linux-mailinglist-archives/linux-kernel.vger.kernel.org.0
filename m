@@ -2,81 +2,105 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5F7A114FEE9
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Feb 2020 20:35:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 18ECE14FEE3
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Feb 2020 20:30:30 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726987AbgBBTfB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 2 Feb 2020 14:35:01 -0500
-Received: from mailgate.kemenperin.go.id ([202.47.80.81]:52280 "EHLO
-        mailgate.kemenperin.go.id" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726290AbgBBTfB (ORCPT
+        id S1726992AbgBBTaV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 2 Feb 2020 14:30:21 -0500
+Received: from mail.kmu-office.ch ([178.209.48.109]:36278 "EHLO
+        mail.kmu-office.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726959AbgBBTaV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 2 Feb 2020 14:35:01 -0500
-X-Greylist: delayed 665 seconds by postgrey-1.27 at vger.kernel.org; Sun, 02 Feb 2020 14:34:59 EST
-Received: from localhost (localhost [127.0.0.1])
-        by mailgate.kemenperin.go.id (Postfix) with ESMTP id 70B8CD234FF;
-        Mon,  3 Feb 2020 02:23:11 +0700 (WIB)
-Received: from mailgate.kemenperin.go.id ([127.0.0.1])
-        by localhost (mailgate.kemenperin.go.id [127.0.0.1]) (amavisd-new, port 10032)
-        with ESMTP id eTZw27PC2JqS; Mon,  3 Feb 2020 02:23:10 +0700 (WIB)
-Received: from mailgate.kemenperin.go.id (localhost [127.0.0.1])
-        by mailgate.kemenperin.go.id (Postfix) with ESMTPS id B1B74D234D3;
-        Mon,  3 Feb 2020 02:23:10 +0700 (WIB)
-DKIM-Filter: OpenDKIM Filter v2.10.3 mailgate.kemenperin.go.id B1B74D234D3
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kemenperin.go.id;
-        s=3298A942-BBC6-11E3-B333-483736368EC2; t=1580671390;
-        bh=Fw60tXhluqe2PVr4BH03lQ0Ge+VO3Zf7R81bcaw1OI8=;
-        h=Date:From:Message-ID:MIME-Version;
-        b=U7pTHlO5Qy3ivTYvPaN0lQ8+ONQOKvesaWGpIvsiESfHZrlMDDtc+dhN0kuhZ3+f2
-         2herD79NoF+m7q3nkFyDz4UywGPgAI1Dv+pui2IbxYOx9IfKyNjz1leYxkoAE1efB8
-         vD25NPZPhy7FZjeYSQYKVm0CXLkhTDtnc3ZK+NeI=
-Received: from mailgate.kemenperin.go.id (mailgate.kemenperin.go.id [10.1.0.89])
-        by mailgate.kemenperin.go.id (Postfix) with ESMTP id 9C3B7D22E64;
-        Mon,  3 Feb 2020 02:23:06 +0700 (WIB)
-Date:   Mon, 3 Feb 2020 02:23:06 +0700 (WIB)
-From:   Trust Online Credit Bvba <isetyoadi@kemenperin.go.id>
-Reply-To: "info@trustonlinecreditbvba.com" <info@trustonlinecreditbvba.com>
-Message-ID: <1128925571.829973.1580671386608.JavaMail.zimbra@kemenperin.go.id>
-Subject: lening
+        Sun, 2 Feb 2020 14:30:21 -0500
+Received: from trochilidae.toradex.int (unknown [IPv6:2a02:169:3df5::edf])
+        by mail.kmu-office.ch (Postfix) with ESMTPSA id 2E2FE5C3E95;
+        Sun,  2 Feb 2020 20:30:19 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=agner.ch; s=dkim;
+        t=1580671819;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:
+         content-transfer-encoding:content-transfer-encoding:in-reply-to:
+         references; bh=c10NgeLMXY9PyKT9RGI6/m1O339YHY744+DezUz8wuY=;
+        b=sROThqjmpJlX3D+RgZWB1NdsiLEgGKpFD7QGlZo8kG1+mLGcDiVNlpILZPbzrCGggfyFBh
+        p1wR5g9SXC8k8tKuBvXJQKvDjt9nzsHLdxqsHhxPwuZqUIZp8+KXEXxIf/EBt4YAn98b0m
+        Yga4sndTjDh4k2H0bG9U/eREBotbbDg=
+From:   Stefan Agner <stefan@agner.ch>
+To:     shawnguo@kernel.org, s.hauer@pengutronix.de
+Cc:     stefan@agner.ch, linux@armlinux.org.uk, kernel@pengutronix.de,
+        festevam@gmail.com, linux-imx@nxp.com, arnd@arndb.de,
+        Anson.Huang@nxp.com, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org,
+        Stefan Agner <stefan.agner@toradex.com>
+Subject: [PATCH] ARM: imx: limit errata selection to Cortex-A9 based designs
+Date:   Sun,  2 Feb 2020 20:30:14 +0100
+Message-Id: <20200202193014.107003-1-stefan@agner.ch>
+X-Mailer: git-send-email 2.25.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-X-Originating-IP: [10.1.0.89]
-Thread-Index: H1xqTePng7Gxgjeg/qhz9EGG/bqhhg==
-Thread-Topic: lening
-To:     unlisted-recipients:; (no To-header on input)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Goedendag,
+From: Stefan Agner <stefan.agner@toradex.com>
 
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Het is ons een genoegen om u te schrijven me=
-t betrekking tot het verstrekken van leningen per postadvertentie. Trust On=
-line Credit Bvba, Wij werken onder een korte, duidelijke en begrijpelijke v=
-oorwaarden Wij verstrekken leningen tegen een lage rente Gewoonlijk van 1% =
-tot 3,5%. Uw specifieke tarief wordt u voorafgaand aan goedkeuring duidelij=
-k gemaakt.
+The two erratas 754322 and 775420 are Cortex-A9 specific. Only
+select the erratas for SoC which use a Cortex-A9.
 
-Merk op dat dit aanbod is voor serieus ingestelde personen, bedrijven en be=
-drijven. Ontvang uw lening om uw financi=C3=ABle problemen op te lossen, zo=
-als rekeningen afbetalen, nieuwe bedrijven oprichten, oude bedrijven opnieu=
-w vestigen.
+Signed-off-by: Stefan Agner <stefan@agner.ch>
+---
+ arch/arm/mach-imx/Kconfig | 10 ++++++++--
+ 1 file changed, 8 insertions(+), 2 deletions(-)
 
-ge=C3=AFnteresseerde personen, bedrijven en bedrijven moeten contact met on=
-s opnemen via dit e-mailadres: info@trustonlinecreditbvba.com
+diff --git a/arch/arm/mach-imx/Kconfig b/arch/arm/mach-imx/Kconfig
+index 95584ee02b55..e7d7b90e2cf8 100644
+--- a/arch/arm/mach-imx/Kconfig
++++ b/arch/arm/mach-imx/Kconfig
+@@ -471,8 +471,6 @@ config	SOC_IMX53
+ config SOC_IMX6
+ 	bool
+ 	select ARM_CPU_SUSPEND if (PM || CPU_IDLE)
+-	select ARM_ERRATA_754322
+-	select ARM_ERRATA_775420
+ 	select ARM_GIC
+ 	select HAVE_IMX_ANATOP
+ 	select HAVE_IMX_GPC
+@@ -484,6 +482,8 @@ config SOC_IMX6
+ config SOC_IMX6Q
+ 	bool "i.MX6 Quad/DualLite support"
+ 	select ARM_ERRATA_764369 if SMP
++	select ARM_ERRATA_754322
++	select ARM_ERRATA_775420
+ 	select HAVE_ARM_SCU if SMP
+ 	select HAVE_ARM_TWD
+ 	select PINCTRL_IMX6Q
+@@ -494,6 +494,8 @@ config SOC_IMX6Q
+ 
+ config SOC_IMX6SL
+ 	bool "i.MX6 SoloLite support"
++	select ARM_ERRATA_754322
++	select ARM_ERRATA_775420
+ 	select PINCTRL_IMX6SL
+ 	select SOC_IMX6
+ 
+@@ -502,6 +504,8 @@ config SOC_IMX6SL
+ 
+ config SOC_IMX6SLL
+ 	bool "i.MX6 SoloLiteLite support"
++	select ARM_ERRATA_754322
++	select ARM_ERRATA_775420
+ 	select PINCTRL_IMX6SLL
+ 	select SOC_IMX6
+ 
+@@ -510,6 +514,8 @@ config SOC_IMX6SLL
+ 
+ config SOC_IMX6SX
+ 	bool "i.MX6 SoloX support"
++	select ARM_ERRATA_754322
++	select ARM_ERRATA_775420
+ 	select PINCTRL_IMX6SX
+ 	select SOC_IMX6
+ 
+-- 
+2.25.0
 
-Laat deze kans niet voorbijgaan. Krijg uw lening om uw financi=C3=ABle prob=
-lemen op te lossen. Als u ge=C3=AFnteresseerd bent in onze lening, vult u d=
-it leningsaanvraagformulier onmiddellijk in.
-
-Jullie namen:
-Benodigde leningbedrag:
-Looptijd:
-Bezetting:
-Doel:
-Lening rente%:
-
-Wij wachten op uw snelle reactie.
-Ronny
