@@ -2,48 +2,48 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5627014FF3D
+	by mail.lfdr.de (Postfix) with ESMTP id C861A14FF3E
 	for <lists+linux-kernel@lfdr.de>; Sun,  2 Feb 2020 22:19:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727181AbgBBVTF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 2 Feb 2020 16:19:05 -0500
-Received: from mail-pj1-f68.google.com ([209.85.216.68]:37984 "EHLO
-        mail-pj1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727112AbgBBVTE (ORCPT
+        id S1727202AbgBBVTJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 2 Feb 2020 16:19:09 -0500
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:36411 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727112AbgBBVTG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 2 Feb 2020 16:19:04 -0500
-Received: by mail-pj1-f68.google.com with SMTP id j17so5470584pjz.3;
-        Sun, 02 Feb 2020 13:19:03 -0800 (PST)
+        Sun, 2 Feb 2020 16:19:06 -0500
+Received: by mail-pg1-f195.google.com with SMTP id k3so6701332pgc.3;
+        Sun, 02 Feb 2020 13:19:04 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=nME4UAiyqLh/Z+MjnFvU6rmtlnJJbRyaB2eoYcoPeR8=;
-        b=u2r5sGNLhsEZIkA1O36hVJdEuyLiixyE3knkt8AjtlD5EqZAJi5fN5O1dP/AJLOtm2
-         1hdfQj3Gp68oojMSLET6znQvJyocBnxqc9gxIeprx09nORZibJI9Ng3CDWwaWzbPSTVy
-         OXey57EMP/WwpK4K49hkFObnACgz4bq7h1lfD1BRUOHjpr+FdAeScbZTaPbY7Vcn8+aF
-         rUI5ks7HG33MdJ8UzvIYmol3sGN2Z+DroyZthHgB5gJQMNsJJy0yW3pcdailzKpzGGEs
-         gmYZOiv2eZRUAurNIMvZichT8JDNvbkh7FOs91qVI/Kwy9kfW60p/uqO7p51uiqIk0T2
-         zJIg==
+        bh=+HqoXW19IU0tQeOfSlgHN6Hx1A42Q+7w83EjyBN0djk=;
+        b=eEhWlT5Tj1M2M79+KdTJ/ZkY6iDqP5hJIiDhZzqXAinj/L9KkQFU688Jn1PUyGQyxm
+         Bkcfp7cQtiCnwvl8tQb4rTDddT04CX3zLjxiELDRPj2y2+7UpfZvx94L7TW2xomnsHdg
+         GR7dyUrYAQewHqrCfO4G9UYTku56Ph3gmI86U7UcZerbjMXh64rOWVmYHz9tM3jSZP0E
+         97/fqoNzIsZtAvdawFdF5wzj5PiIonAkoZl9HRWHlBPjzg7roba95nbyYgKXeIXxryQ8
+         K3NzqxKbud90r2k7ktWW381bCYOSnBMFrPrSkIl28wDuNEKO9EG/YAxRtVKjSSv8uyXa
+         cfXQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=nME4UAiyqLh/Z+MjnFvU6rmtlnJJbRyaB2eoYcoPeR8=;
-        b=B8atvuYtwUOyA6VboE/oTPHIU/NHRC+0q4XydjMEyG0y90M1GDm08fIfr+iD4vjs7Q
-         AohW+4tj7SSAoquGn2knPZEt1amOlfaVxA2MJPjsQEZ/AY/YvuBgo+qqbXPzV/oHXLkN
-         i+JRFkv/z5Nv4VhP1ZNu3WjylxjuJkVslohy4JPwEsfO55gRJloaEnFdi8LmvPitcIUk
-         ZnpWqmQyZmSlbR5kPAkpvE0iuU9a+sw9/Fl09/X+t05JCeahU8EAjn39DCqzPnyo3wdu
-         47RQ7URd1nfwsKtyvjIzYSyJu+EZkbXS9rqG5ttyxy6yESm0y1PYjjt5YrGMaguz796F
-         fiLg==
-X-Gm-Message-State: APjAAAUkZzU+bKBAcCJie+le9dIPzYKDsJN7oBZh0kULIbFdF5B+Dztd
-        30vsEKy8f1GZ575q8DqgDXgS3BQH
-X-Google-Smtp-Source: APXvYqz3mAk+fb8Lm122pYlg0JTJXIatyW2WXJIFxF3SI5w/XJAdJAztUgAIr7JigfBZ72dcns9g3g==
-X-Received: by 2002:a17:90a:8c0f:: with SMTP id a15mr26321514pjo.86.1580678342786;
-        Sun, 02 Feb 2020 13:19:02 -0800 (PST)
+        bh=+HqoXW19IU0tQeOfSlgHN6Hx1A42Q+7w83EjyBN0djk=;
+        b=JeGGRshvuRm1rd/FVPjJtYiejZBTPGpqjQgfkNTs+vvF2A6EJkGHF9+V9yAkZyoZM6
+         JwgU5MQ3ydn5sw4tIPVo4H2pdBc8wxkz1NWcE3wOdh9ODu7+rPUJpJKodQdycHRDIump
+         estj8Q3kkryHG2qPutB5vrxnVy7WthaM9JQU8j2BFuCvYJllFGubcIUJ2GmER9HyRGgw
+         46ThSgKqa3pmYpJhxVnJOPMaFVKkZtL4lzP6XmJP/O9tROXGiZ9AP93FVCFAkM0B1tvD
+         bdRCnanQehPMaeT1IY3IaW+JO2tOAmGNbiiukg4eWEnngt7wFrHb0ptkKMVal/guYE08
+         ySmQ==
+X-Gm-Message-State: APjAAAWHmynUv1vfocMB74L0wJjhkCbprCs11hK4xXo1h5eGOL/n/R5h
+        POMHupeXAmQpyslQJ+4R99VettXM
+X-Google-Smtp-Source: APXvYqxwXr+UYh03Rgin6a5IfM55L+wGSkmtED3oBRwGNCdutIY5WGWTI2Zkb5r4Ms+8sZuujzi9Wg==
+X-Received: by 2002:a63:6441:: with SMTP id y62mr13441735pgb.86.1580678344356;
+        Sun, 02 Feb 2020 13:19:04 -0800 (PST)
 Received: from localhost.localdomain (ip68-111-84-250.oc.oc.cox.net. [68.111.84.250])
-        by smtp.gmail.com with ESMTPSA id y24sm8755639pge.72.2020.02.02.13.19.01
+        by smtp.gmail.com with ESMTPSA id y24sm8755639pge.72.2020.02.02.13.19.03
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 02 Feb 2020 13:19:02 -0800 (PST)
+        Sun, 02 Feb 2020 13:19:03 -0800 (PST)
 From:   Florian Fainelli <f.fainelli@gmail.com>
 To:     linux-arm-kernel@vger.kernel.org
 Cc:     devicetree@vger.kernel.org,
@@ -63,9 +63,9 @@ Cc:     devicetree@vger.kernel.org,
         ARCHITECTURE), linux-kernel@vger.kernel.org (open list),
         linux-rpi-kernel@lists.infradead.org (moderated list:BROADCOM
         BCM2711/BCM2835 ARM ARCHITECTURE)
-Subject: [PATCH 03/12]  dt-bindings: arm: bcm: Convert Northstar Plus to YAML
-Date:   Sun,  2 Feb 2020 13:18:18 -0800
-Message-Id: <20200202211827.27682-4-f.fainelli@gmail.com>
+Subject: [PATCH 04/12] dt-bindings: arm: bcm: Convert Northstar 2 to YAML
+Date:   Sun,  2 Feb 2020 13:18:19 -0800
+Message-Id: <20200202211827.27682-5-f.fainelli@gmail.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20200202211827.27682-1-f.fainelli@gmail.com>
 References: <20200202211827.27682-1-f.fainelli@gmail.com>
@@ -74,78 +74,45 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Update the Broadcom Northstar Plus SoC binding document for boards/SoCs
-to use YAML. Verified with dt_binding_check and dtbs_check.
+Update the Broadcom Northstar 2 SoC binding document for boards/SoCs to
+use YAML. Verified with dt_binding_check and dtbs_check.
 
 Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
 ---
- .../devicetree/bindings/arm/bcm/brcm,nsp.txt  | 34 ----------
- .../devicetree/bindings/arm/bcm/brcm,nsp.yaml | 68 +++++++++++++++++++
- 2 files changed, 68 insertions(+), 34 deletions(-)
- delete mode 100644 Documentation/devicetree/bindings/arm/bcm/brcm,nsp.txt
- create mode 100644 Documentation/devicetree/bindings/arm/bcm/brcm,nsp.yaml
+ .../devicetree/bindings/arm/bcm/brcm,ns2.txt  |  9 -------
+ .../devicetree/bindings/arm/bcm/brcm,ns2.yaml | 25 +++++++++++++++++++
+ 2 files changed, 25 insertions(+), 9 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/arm/bcm/brcm,ns2.txt
+ create mode 100644 Documentation/devicetree/bindings/arm/bcm/brcm,ns2.yaml
 
-diff --git a/Documentation/devicetree/bindings/arm/bcm/brcm,nsp.txt b/Documentation/devicetree/bindings/arm/bcm/brcm,nsp.txt
+diff --git a/Documentation/devicetree/bindings/arm/bcm/brcm,ns2.txt b/Documentation/devicetree/bindings/arm/bcm/brcm,ns2.txt
 deleted file mode 100644
-index eae53e4556be..000000000000
---- a/Documentation/devicetree/bindings/arm/bcm/brcm,nsp.txt
+index 35f056f4a1c3..000000000000
+--- a/Documentation/devicetree/bindings/arm/bcm/brcm,ns2.txt
 +++ /dev/null
-@@ -1,34 +0,0 @@
--Broadcom Northstar Plus device tree bindings
----------------------------------------------
+@@ -1,9 +0,0 @@
+-Broadcom North Star 2 (NS2) device tree bindings
+-------------------------------------------------
 -
--Broadcom Northstar Plus family of SoCs are used for switching control
--and management applications as well as residential router/gateway
--applications. The SoC features dual core Cortex A9 ARM CPUs, integrating
--several peripheral interfaces including multiple Gigabit Ethernet PHYs,
--DDR3 memory, PCIE Gen-2, USB 2.0 and USB 3.0, serial and NAND flash,
--SATA and several other IO controllers.
--
--Boards with Northstar Plus SoCs shall have the following properties:
+-Boards with NS2 shall have the following properties:
 -
 -Required root node property:
 -
--BCM58522
--compatible = "brcm,bcm58522", "brcm,nsp";
--
--BCM58525
--compatible = "brcm,bcm58525", "brcm,nsp";
--
--BCM58535
--compatible = "brcm,bcm58535", "brcm,nsp";
--
--BCM58622
--compatible = "brcm,bcm58622", "brcm,nsp";
--
--BCM58623
--compatible = "brcm,bcm58623", "brcm,nsp";
--
--BCM58625
--compatible = "brcm,bcm58625", "brcm,nsp";
--
--BCM88312
--compatible = "brcm,bcm88312", "brcm,nsp";
-diff --git a/Documentation/devicetree/bindings/arm/bcm/brcm,nsp.yaml b/Documentation/devicetree/bindings/arm/bcm/brcm,nsp.yaml
+-NS2 SVK board
+-compatible = "brcm,ns2-svk", "brcm,ns2";
+diff --git a/Documentation/devicetree/bindings/arm/bcm/brcm,ns2.yaml b/Documentation/devicetree/bindings/arm/bcm/brcm,ns2.yaml
 new file mode 100644
-index 000000000000..d76b9b14f000
+index 000000000000..2fb9b16408f3
 --- /dev/null
-+++ b/Documentation/devicetree/bindings/arm/bcm/brcm,nsp.yaml
-@@ -0,0 +1,68 @@
++++ b/Documentation/devicetree/bindings/arm/bcm/brcm,ns2.yaml
+@@ -0,0 +1,25 @@
 +# SPDX-License-Identifier: GPL-2.0
 +%YAML 1.2
 +---
-+$id: http://devicetree.org/schemas/arm/bcm/brcm,nsp.yaml#
++$id: http://devicetree.org/schemas/arm/bcm/brcm,ns2.yaml#
 +$schema: http://devicetree.org/meta-schemas/core.yaml#
 +
-+title: Broadcom Northstar Plus device tree bindings
-+
-+description:
-+  Broadcom Northstar Plus family of SoCs are used for switching control
-+  and management applications as well as residential router/gateway
-+  applications. The SoC features dual core Cortex A9 ARM CPUs, integrating
-+  several peripheral interfaces including multiple Gigabit Ethernet PHYs,
-+  DDR3 memory, PCIE Gen-2, USB 2.0 and USB 3.0, serial and NAND flash,
-+  SATA and several other IO controllers.
++title: Broadcom North Star 2 (NS2) device tree bindings
 +
 +maintainers:
 +  - Ray Jui <rjui@broadcom.com>
@@ -156,47 +123,12 @@ index 000000000000..d76b9b14f000
 +    const: '/'
 +  compatible:
 +    oneOf:
-+      - description: BCM58522 based boards
++      - description: Northstar2 based boards
 +        items:
 +          - enum:
-+              - brcm,bcm58522
-+          - const: brcm,nsp
-+
-+      - description: BCM58525 based boards
-+        items:
-+          - enum:
-+              - brcm,bcm58525
-+          - const: brcm,nsp
-+
-+      - description: BCM58535 based boards
-+        items:
-+          - enum:
-+              - brcm,bcm58535
-+          - const: brcm,nsp
-+
-+      - description: BCM58622 based boards
-+        items:
-+          - enum:
-+              - brcm,bcm58622
-+          - const: brcm,nsp
-+
-+      - description: BCM58623 based boards
-+        items:
-+          - enum:
-+              - brcm,bcm58623
-+          - const: brcm,nsp
-+
-+      - description: BCM58625 based boards
-+        items:
-+          - enum:
-+              - brcm,bcm58625
-+          - const: brcm,nsp
-+
-+      - description: BCM88312 based boards
-+        items:
-+          - enum:
-+              - brcm,bcm88312
-+          - const: brcm,nsp
++              - brcm,ns2-svk
++              - brcm,ns2-xmc
++          - const: brcm,ns2
 +
 +...
 -- 
