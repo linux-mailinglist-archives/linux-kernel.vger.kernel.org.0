@@ -2,53 +2,96 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0F2E214FED6
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Feb 2020 20:12:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 67EFF14FEDA
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Feb 2020 20:21:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726989AbgBBTMR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 2 Feb 2020 14:12:17 -0500
-Received: from eddie.linux-mips.org ([148.251.95.138]:56756 "EHLO
-        cvs.linux-mips.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726893AbgBBTMQ (ORCPT
+        id S1726947AbgBBTVJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 2 Feb 2020 14:21:09 -0500
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:40644 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726893AbgBBTVJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 2 Feb 2020 14:12:16 -0500
-Received: (from localhost user: 'macro', uid#1010) by eddie.linux-mips.org
-        with ESMTP id S23990824AbgBBTMNY3IIg (ORCPT
-        <rfc822;kernel-janitors@vger.kernel.org> + 2 others);
-        Sun, 2 Feb 2020 20:12:13 +0100
-Date:   Sun, 2 Feb 2020 19:12:13 +0000 (GMT)
-From:   "Maciej W. Rozycki" <macro@linux-mips.org>
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-cc:     Ralf Baechle <ralf@linux-mips.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] defxx: Fix a sentinel at the end of a 'eisa_device_id'
- structure
-In-Reply-To: <20200202142341.22124-1-christophe.jaillet@wanadoo.fr>
-Message-ID: <alpine.LFD.2.21.2002021858330.683661@eddie.linux-mips.org>
-References: <20200202142341.22124-1-christophe.jaillet@wanadoo.fr>
+        Sun, 2 Feb 2020 14:21:09 -0500
+Received: by mail-pg1-f195.google.com with SMTP id k25so6584326pgt.7;
+        Sun, 02 Feb 2020 11:21:07 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=WhbyccFYxDUetkxi0lachTOu0Psik/R8xkRSrrDTrL0=;
+        b=mZ/7jAOP/h6yiWmdHyEHMv0HBowYNttgAeAUTXLAm6ezCPizNZdVjJOyrwdBl8ZxcE
+         5CH/0sq9hlUJ+Gkc92w8zYXXP7/bEE5bbvAhFW/lN0wa3lVP40KJkS1AnxD6DnPL8etL
+         4WafobsrnwBFIjQbOs1rXo8iDuE3V5/G3wVYgZZaScqNyfAEBf/KVoqj390RMzBbMIj0
+         MP/uMRfuxOaWt2ZLgQy+GqzO/zqns9n1EdgCVz2e/kcWp43W5hoDKFYoUvDIVTUZLnQb
+         //kcVt5fD6PxZKL/Ga9FN2PzUasEx1hvnnZGwS5c/awOyc1va2DQi5NGmhV2VmsLF6lG
+         yScw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=WhbyccFYxDUetkxi0lachTOu0Psik/R8xkRSrrDTrL0=;
+        b=jFcbdr4qAXIB16CWtEfGs1qJ6uPiHXbD1QWw+Vl+QGgv1/GlE2a6pggPxFVTepo1JH
+         UMmOiMhKfU0iRk4uG97BWoQ29BJ6O/JCqEjqyGCA6jF1ZR9J4UbGZyUEjL7Nfm+sVQmL
+         wzD5q3RJsfuBcXJU6b3EUIbHWKaJnnZrwyq3KzGzG/NAoURJWZ3F9djliVzbLcItXrSK
+         +3ICa+IBjzTzVCnu10JAFGB2EdfnQvCwHEKe8UCrM1CiqsZc/gf/CjLINmIm+5XcTbz5
+         eSwo/mEETXfCtNnLNWZh4NWvWuRDEOPSfBxcpaxdZygp+V5t8VQQlWDyAWJmUtkVVeQd
+         9Tow==
+X-Gm-Message-State: APjAAAWVqxZ5H4y9Md2bUG9IV32dolwWndz7DUY7AjGXMrx8JAovXVj1
+        cd6bBvUNjy4q6m9dbufAbSo=
+X-Google-Smtp-Source: APXvYqyYXeyjbiJcsLHIWb5ki4uiBDYotuR0yEOcYTlwSGD4OCJXfT+R+988pdmOjkfqMnSJXII8Tg==
+X-Received: by 2002:a63:ba43:: with SMTP id l3mr7078662pgu.120.1580671266991;
+        Sun, 02 Feb 2020 11:21:06 -0800 (PST)
+Received: from localhost ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id i68sm17605873pfe.173.2020.02.02.11.21.05
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Sun, 02 Feb 2020 11:21:06 -0800 (PST)
+Date:   Sun, 2 Feb 2020 11:21:05 -0800
+From:   Guenter Roeck <linux@roeck-us.net>
+To:     Avi Shchislowski <avi.shchislowski@wdc.com>
+Cc:     Alim Akhtar <alim.akhtar@samsung.com>,
+        Avri Altman <avri.altman@wdc.com>,
+        "James E.J. Bottomley" <jejb@linux.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        linux-kernel@vger.kernel.org, linux-scsi@vger.kernel.org
+Subject: Re: [PATCH 0/5] scsi: ufs: ufs device as a temperature sensor
+Message-ID: <20200202192105.GA20107@roeck-us.net>
+References: <1580640419-6703-1-git-send-email-avi.shchislowski@wdc.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1580640419-6703-1-git-send-email-avi.shchislowski@wdc.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, 2 Feb 2020, Christophe JAILLET wrote:
+On Sun, Feb 02, 2020 at 12:46:54PM +0200, Avi Shchislowski wrote:
+> UFS3.0 allows using the ufs device as a temperature sensor. The
+> purpose of this feature is to provide notification to the host of the
+> UFS device case temperature. It allows reading of a rough estimate
+> (+-10 degrees centigrade) of the current case temperature, And
+> setting a lower and upper temperature bounds, in which the device
+> will trigger an applicable exception event.
+> 
+> We added the capability of responding to such notifications, while
+> notifying the kernel's thermal core, which further exposes the thermal
+> zone attributes to user space. UFS temperature attributes are all
+> read-only, so only thermal read ops (.get_xxx) can be implemented.
+> 
 
-> 'struct eisa_device_id' must be ended by an empty string, not a NULL
-> pointer. Otherwise, a NULL pointer dereference may occur in
-> 'eisa_bus_match()'.
+Can you add an explanation why this can't be added to the just-introduced
+'drivetemp' driver in the hwmon subsystem, and why it make sense to
+have proprietary attributes for temperature and temperature limits ?
 
- Umm, that's weird code there in `eisa_bus_match' (I do hope at least GCC 
-optimises the `strlen' away nowadays and checks for the character pointed 
-being null instead), but as usually with old stuff let's keep changes to 
-the minimum.  So:
+Thanks,
+Guenter
 
-Acked-by: Maciej W. Rozycki <macro@linux-mips.org>
+> Avi Shchislowski (5):
+>   scsi: ufs: Add ufs thermal support
+>   scsi: ufs: export ufshcd_enable_ee
+>   scsi: ufs: enable thermal exception event
+>   scsi: ufs-thermal: implement thermal file ops
+>   scsi: ufs: temperature atrributes add to ufs_sysfs
 
- Thanks for the fix!
-
-  Maciej
+attributes
