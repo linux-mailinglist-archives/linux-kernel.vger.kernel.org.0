@@ -2,144 +2,110 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 612B814FCC9
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Feb 2020 12:06:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 55C1014FCC1
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Feb 2020 12:02:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726913AbgBBLGP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 2 Feb 2020 06:06:15 -0500
-Received: from esa1.hgst.iphmx.com ([68.232.141.245]:31004 "EHLO
-        esa1.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725988AbgBBLGP (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 2 Feb 2020 06:06:15 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1580641574; x=1612177574;
-  h=from:to:cc:subject:date:message-id:mime-version;
-  bh=XES2koAMzAn+jrNRN9pU7/oRTwoU1BNvGUcOReuP/RQ=;
-  b=oQptLglo5IODDYAOI3XhbvnV9NVkJ099F5q7Pq+cGQZabxzF8zYDcjpa
-   dLqe9v0zAy1RWw3q23NW7DAG6kQIsPFRc2nWXcoWPusoEHpWzPiNatMn2
-   yM+mff8F+248cKpQjtEYe8++8hSfOFyB2SKX6CI5SIm9UpvWtY18zDPcl
-   JUmPHza6MRUN85nIbpASVBplb5lQXEZDv0OrNCZTLM2p8qeMKTNcc+Wq6
-   /PwHEW8OawJOInOPIGiv84w3oOFiOXDPUtnTwSkWjEX7wzmvBdVd8425s
-   xA6t2bNDX8yhuzGWBn2kGoC4EJ0rBUL5i/zPkQIRYntVtYWdaaFkUNcve
-   A==;
-IronPort-SDR: nTaWWAEioI2uFmMN0+/5M1zKl6mugcztt5AwiBxqObfcHoMetYfV/3iBaio/XLKK3MkabgxRJf
- Pd6kql/LXOKpa+p3k7ZJE2qyG29mMr5KMG8Y5emsS5uR/v6kXwhYOOEo8fgPPfDIDKPxpsZyXW
- oSqHrR4GzGQi0/LCZvdv4t94mLy6IV+eSf9zGfhr9QsBXEISP5yzrcxjjsC69q/Vcwq/7INLgy
- skYgve6PLePfa/dvJoMsJcFGQDjd+gLeeOAL5l+Vqbx20dIRTmM5rsIfcK0mHvbINNRx74dIWU
- ulE=
-X-IronPort-AV: E=Sophos;i="5.70,393,1574092800"; 
-   d="scan'208";a="236870672"
-Received: from mail-co1nam11lp2171.outbound.protection.outlook.com (HELO NAM11-CO1-obe.outbound.protection.outlook.com) ([104.47.56.171])
-  by ob1.hgst.iphmx.com with ESMTP; 02 Feb 2020 19:06:13 +0800
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=ECVVHzXIaWeGkic2BekVjXfNTte3mogTccsISYkGqFCCh/odK/eDEdMdcEbrBsbQE29OMRF85uXT8M/ImBYNLqV8h6Y9lQM649W3VT5clTliXfe41XWTgcW3xu+28CPgKwNxw6rQNtRJrdzptr8+O4S0SNhq+IYCLvJuRyD7GA2y7110hoWCfJMTusTQs8uW6Y93DaAZ1EpKAE8htKv1njFBhz8VDs8N+hGGTMboJK4C1NUU6zryB/rZQjNJ34mtGkE0LnFEKMqztiQFIW0oQFv99L5fX3Woe+Yw4ImTbVITFkUftkG+MBGxec3zNGNXK3mkSZfN9AdsY2064inNag==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=bsq9FT9moFZoKzWfdtb5BpXHbdCsbs3tT1XCbncxR8o=;
- b=AYyoP8guh95kxaUDhUBYaxV7NM1xpOPV1UVProy8YwNjNyXdQ+BnaspVcLACX8uZBg6XdyyitHbOgnw6y35JrYYo1GUrhFYcOfD9V2KihP0YH5DDEAg7yAAQMgkuzDEXt0ddKVjzv/kot6x2lf4THqnACvkPTjsMm+xJLKqRg2Q/s7RwMq5/qy3PUcB41rlIeaQud37eUmAM61jzqqVPPuQWqWgeSQXQKfvCDi7/Ou28MghZDX9JFrx5+IjTCNC0o92Yds5sxNyo0y9ZICy6zRHaP/NiA2/3VeVKRnoAlKDvoBuVimn/ujrSTajc2yuZWSbIKSU4l//1fGs+YpJNUg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=wdc.com; dmarc=pass action=none header.from=wdc.com; dkim=pass
- header.d=wdc.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=sharedspace.onmicrosoft.com; s=selector2-sharedspace-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=bsq9FT9moFZoKzWfdtb5BpXHbdCsbs3tT1XCbncxR8o=;
- b=DAmbkNAwxMYC0DAPJD3aRYctHN1rkZTP5ZDUzC9+UihBTzv798OZHFHH1Rcz4DoDbtBjVWrhT6bBQSxyB/uX67r95/DzjRuQt2lZeQwMqa2jrg2vMwVEBLsxCNyetjYrf98gXRzH71RSPmbSAajjfSQgG172SvpbVXRGy0FtAKM=
-Authentication-Results: spf=none (sender IP is )
- smtp.mailfrom=Anup.Patel@wdc.com; 
-Received: from MN2PR04MB6061.namprd04.prod.outlook.com (20.178.246.15) by
- MN2PR04MB6333.namprd04.prod.outlook.com (52.132.169.21) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2686.26; Sun, 2 Feb 2020 11:06:11 +0000
-Received: from MN2PR04MB6061.namprd04.prod.outlook.com
- ([fe80::a9a0:3ffa:371f:ad89]) by MN2PR04MB6061.namprd04.prod.outlook.com
- ([fe80::a9a0:3ffa:371f:ad89%7]) with mapi id 15.20.2686.031; Sun, 2 Feb 2020
- 11:06:11 +0000
-From:   Anup Patel <anup.patel@wdc.com>
-To:     Palmer Dabbelt <palmer@dabbelt.com>,
-        Paul Walmsley <paul.walmsley@sifive.com>
-Cc:     Atish Patra <atish.patra@wdc.com>,
-        Alistair Francis <Alistair.Francis@wdc.com>,
-        Damien Le Moal <damien.lemoal@wdc.com>,
-        Christoph Hellwig <hch@lst.de>,
-        Anup Patel <anup@brainfault.org>,
-        linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Anup Patel <anup.patel@wdc.com>, stable@vger.kernel.org
-Subject: [PATCH] RISC-V: Don't enable all interrupts in trap_init()
-Date:   Sun,  2 Feb 2020 16:32:02 +0530
-Message-Id: <20200202110202.124048-1-anup.patel@wdc.com>
-X-Mailer: git-send-email 2.17.1
-Content-Type: text/plain
-X-ClientProxiedBy: AM4PR0902CA0015.eurprd09.prod.outlook.com
- (2603:10a6:200:9b::25) To MN2PR04MB6061.namprd04.prod.outlook.com
- (2603:10b6:208:d8::15)
+        id S1726934AbgBBLCL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 2 Feb 2020 06:02:11 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34884 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725988AbgBBLCL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 2 Feb 2020 06:02:11 -0500
+Received: from archlinux (cpc149474-cmbg20-2-0-cust94.5-4.cable.virginm.net [82.4.196.95])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 63BC62067C;
+        Sun,  2 Feb 2020 11:02:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1580641330;
+        bh=6u1cqWAlRBMJoZ/FrQ6uyLCG43c5Zdqjtczp7wHzdIg=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=insNWVp1qUlymq8s4QspcXAXmxa6tJm5CYz/LWS9mvrzUlPhQP5QBkNl8AI9Aawm/
+         l3URLlAuRMSfWB1RW3SWyfpu7QEa5UlMsaRyGp/w4E5swg1QUsLMeMf/+z2OUzThAN
+         oW3PZpWQoEQPZBMNacyb2cSZVz93ov8SW+2tW2jk=
+Date:   Sun, 2 Feb 2020 11:02:06 +0000
+From:   Jonathan Cameron <jic23@kernel.org>
+To:     <Eugen.Hristev@microchip.com>
+Cc:     <linux-iio@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <Ludovic.Desroches@microchip.com>,
+        <alexandru.ardelean@analog.com>
+Subject: Re: [PATCH v3 1/3] iio: adc: at91-sama5d2_adc: fix differential
+ channels in triggered mode
+Message-ID: <20200202110206.7326ce4d@archlinux>
+In-Reply-To: <1580216189-27418-2-git-send-email-eugen.hristev@microchip.com>
+References: <1580216189-27418-1-git-send-email-eugen.hristev@microchip.com>
+        <1580216189-27418-2-git-send-email-eugen.hristev@microchip.com>
+X-Mailer: Claws Mail 3.17.4 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Received: from wdc.com (151.216.142.133) by AM4PR0902CA0015.eurprd09.prod.outlook.com (2603:10a6:200:9b::25) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2686.29 via Frontend Transport; Sun, 2 Feb 2020 11:06:08 +0000
-X-Mailer: git-send-email 2.17.1
-X-Originating-IP: [151.216.142.133]
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-HT: Tenant
-X-MS-Office365-Filtering-Correlation-Id: b47ccb09-222c-4ca0-3f6a-08d7a7cfe925
-X-MS-TrafficTypeDiagnostic: MN2PR04MB6333:
-X-MS-Exchange-Transport-Forked: True
-X-Microsoft-Antispam-PRVS: <MN2PR04MB633331918D2C4D61E815AB768D010@MN2PR04MB6333.namprd04.prod.outlook.com>
-WDCIPOUTBOUND: EOP-TRUE
-X-MS-Oob-TLC-OOBClassifiers: OLM:3513;
-X-Forefront-PRVS: 0301360BF5
-X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10019020)(4636009)(346002)(366004)(376002)(136003)(39850400004)(396003)(189003)(199004)(8676002)(81166006)(81156014)(8936002)(66946007)(16526019)(186003)(7696005)(4326008)(66476007)(66556008)(26005)(478600001)(956004)(8886007)(52116002)(55016002)(6666004)(2616005)(1076003)(86362001)(36756003)(5660300002)(2906002)(110136005)(54906003)(316002)(44832011);DIR:OUT;SFP:1102;SCL:1;SRVR:MN2PR04MB6333;H:MN2PR04MB6061.namprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-X-MS-Exchange-SenderADCheck: 1
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: Gw/8sQw5JnQ5RklLftya4FIy+3v94f+Spx31+hRNpnAUTWpPU9xTPQ5y/PkXyIUEigXJ//cUCm6OZuTMlF+kIKpX63EqzW4W6f1ERWlOW1J8RSmbGhNp1BHf/8m8VEIKanfBau4G/BjzXI6whVT6wGKjOSY5SgzDgCVxjlGCeyHJxHNzk84bJCiWBOIHDKO0dQ2X4DL2AIRuEz8dfsLho5OkBfkVF1ZPchjZ+D+vjos/Jz3/MSyChZKPuHqvgXs/iZnmTkajTbpm5x10p4rLg3mgNxDtcmj0TZ9TnLidsOdZlPTbIJ5Z2y3jBgaKMFQTpxunN2blcJkw8lI08XbtZnJtXPoD+JTKbU3gH3+kZQh8bcyDAfWQ8VNsJNq2QpWV+fphHMeEjWv1xWAfz0uAz6N7YqMTHF82ME+aIL6KE9WaB/J+rM0ulO1JuEj0FrNl
-X-MS-Exchange-AntiSpam-MessageData: B1Q6WkUWIGAhYYBzPlJslz/T9erwgvDSof4CTVmJ/Z9M0+bdMnTVoiDrqfoDpGR9lndwNwk2Ak0PRKEfb43uXh2EttphSybke3oajA9x7Ilvipr+qnTYfyJZlSMEDdxWN4d78z5gJqyqbVye1hSVUw==
-X-OriginatorOrg: wdc.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: b47ccb09-222c-4ca0-3f6a-08d7a7cfe925
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 02 Feb 2020 11:06:11.2103
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: b61c8803-16f3-4c35-9b17-6f65f441df86
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: g45Bk6FYNJnm3TEc3PRzLiLFEUekIFV5k18HftKvBKq4MHo0zgoCvKFr0tf6JwJ6/TfMZdO9bwj8CEpc5OMOLw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR04MB6333
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Historically, we have been enabling all interrupts for each
-HART in trap_init(). Ideally, we should only enable M-mode
-interrupts for M-mode kernel and S-mode interrupts for S-mode
-kernel in trap_init().
+On Tue, 28 Jan 2020 12:57:39 +0000
+<Eugen.Hristev@microchip.com> wrote:
 
-Currently, we get suprious S-mode interrupts on Kendryte K210
-board running M-mode NO-MMU kernel because we are enabling all
-interrupts in trap_init(). To fix this, we only enable software
-and external interrupt in trap_init(). In future, trap_init()
-will only enable software interrupt and PLIC driver will enable
-external interrupt using CPU notifiers.
+> From: Eugen Hristev <eugen.hristev@microchip.com>
+> 
+> The differential channels require writing the channel offset register (COR).
+> Otherwise they do not work in differential mode.
+> The configuration of COR is missing in triggered mode.
+> 
+> Fixes: 5e1a1da0f8c9 ("iio: adc: at91-sama5d2_adc: add hw trigger and buffer support")
+> Signed-off-by: Eugen Hristev <eugen.hristev@microchip.com>
+Applied to the fixes-togreg branch of iio.git.  Normally I avoid rebasing that
+branch but I may do so this time given it's currently mid merge window.
 
-Cc: stable@vger.kernel.org
-Fixes: 76d2a0493a17 ("RISC-V: Init and Halt Code)
-Signed-off-by: Anup Patel <anup.patel@wdc.com>
----
- arch/riscv/kernel/traps.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+The other two patches will have to wait for this one to get upstream of
+my togreg branch which will take a few weeks.
 
-diff --git a/arch/riscv/kernel/traps.c b/arch/riscv/kernel/traps.c
-index f4cad5163bf2..ffb3d94bf0cc 100644
---- a/arch/riscv/kernel/traps.c
-+++ b/arch/riscv/kernel/traps.c
-@@ -156,6 +156,6 @@ void __init trap_init(void)
- 	csr_write(CSR_SCRATCH, 0);
- 	/* Set the exception vector address */
- 	csr_write(CSR_TVEC, &handle_exception);
--	/* Enable all interrupts */
--	csr_write(CSR_IE, -1);
-+	/* Enable interrupts */
-+	csr_write(CSR_IE, IE_SIE | IE_EIE);
- }
--- 
-2.17.1
+Please give me a poke if I seem to have forgotten about them!
+
+Thanks,
+
+Jonathan
+
+> ---
+> Changes in v2:
+> - moved to the start of the list
+> 
+>  drivers/iio/adc/at91-sama5d2_adc.c | 15 +++++++++++++++
+>  1 file changed, 15 insertions(+)
+> 
+> diff --git a/drivers/iio/adc/at91-sama5d2_adc.c b/drivers/iio/adc/at91-sama5d2_adc.c
+> index e1850f3..2a6950a 100644
+> --- a/drivers/iio/adc/at91-sama5d2_adc.c
+> +++ b/drivers/iio/adc/at91-sama5d2_adc.c
+> @@ -723,6 +723,7 @@ static int at91_adc_configure_trigger(struct iio_trigger *trig, bool state)
+>  
+>  	for_each_set_bit(bit, indio->active_scan_mask, indio->num_channels) {
+>  		struct iio_chan_spec const *chan = at91_adc_chan_get(indio, bit);
+> +		u32 cor;
+>  
+>  		if (!chan)
+>  			continue;
+> @@ -732,6 +733,20 @@ static int at91_adc_configure_trigger(struct iio_trigger *trig, bool state)
+>  			continue;
+>  
+>  		if (state) {
+> +			cor = at91_adc_readl(st, AT91_SAMA5D2_COR);
+> +
+> +			if (chan->differential)
+> +				cor |= (BIT(chan->channel) |
+> +					BIT(chan->channel2)) <<
+> +					AT91_SAMA5D2_COR_DIFF_OFFSET;
+> +			else
+> +				cor &= ~(BIT(chan->channel) <<
+> +				       AT91_SAMA5D2_COR_DIFF_OFFSET);
+> +
+> +			at91_adc_writel(st, AT91_SAMA5D2_COR, cor);
+> +		}
+> +
+> +		if (state) {
+>  			at91_adc_writel(st, AT91_SAMA5D2_CHER,
+>  					BIT(chan->channel));
+>  			/* enable irq only if not using DMA */
 
