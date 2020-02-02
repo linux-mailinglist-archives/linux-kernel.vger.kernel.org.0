@@ -2,33 +2,33 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BFE4114FD79
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Feb 2020 15:17:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C064914FD7B
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Feb 2020 15:17:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726905AbgBBORY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 2 Feb 2020 09:17:24 -0500
-Received: from mga18.intel.com ([134.134.136.126]:6184 "EHLO mga18.intel.com"
+        id S1726971AbgBBOR1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 2 Feb 2020 09:17:27 -0500
+Received: from mga18.intel.com ([134.134.136.126]:6188 "EHLO mga18.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726814AbgBBORY (ORCPT <rfc822;Linux-kernel@vger.kernel.org>);
-        Sun, 2 Feb 2020 09:17:24 -0500
+        id S1726758AbgBBOR0 (ORCPT <rfc822;Linux-kernel@vger.kernel.org>);
+        Sun, 2 Feb 2020 09:17:26 -0500
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from fmsmga004.fm.intel.com ([10.253.24.48])
-  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 02 Feb 2020 06:17:23 -0800
+  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 02 Feb 2020 06:17:25 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.70,394,1574150400"; 
-   d="scan'208";a="253811057"
+   d="scan'208";a="253811061"
 Received: from kbl.sh.intel.com ([10.239.159.24])
-  by fmsmga004.fm.intel.com with ESMTP; 02 Feb 2020 06:17:22 -0800
+  by fmsmga004.fm.intel.com with ESMTP; 02 Feb 2020 06:17:24 -0800
 From:   Jin Yao <yao.jin@linux.intel.com>
 To:     acme@kernel.org, jolsa@kernel.org, peterz@infradead.org,
         mingo@redhat.com, alexander.shishkin@linux.intel.com
 Cc:     Linux-kernel@vger.kernel.org, ak@linux.intel.com,
         kan.liang@intel.com, yao.jin@intel.com,
         Jin Yao <yao.jin@linux.intel.com>
-Subject: [PATCH v6 1/4] perf util: Fix wrong block address comparison in block_info__cmp
-Date:   Sun,  2 Feb 2020 22:16:52 +0800
-Message-Id: <20200202141655.32053-2-yao.jin@linux.intel.com>
+Subject: [PATCH v6 2/4] perf util: Use __block_info__cmp to replace block_pair_cmp
+Date:   Sun,  2 Feb 2020 22:16:53 +0800
+Message-Id: <20200202141655.32053-3-yao.jin@linux.intel.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20200202141655.32053-1-yao.jin@linux.intel.com>
 References: <20200202141655.32053-1-yao.jin@linux.intel.com>
@@ -37,25 +37,13 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit 6041441870ab ("perf block: Cleanup and refactor block info
-functions") introduces a function block_info__cmp, which compares
-two blocks.
+perf-diff uses block_pair_cmp to compare two blocks. The
+block_info__cmp has the similar functionality and it's
+a bit more complete.
 
-But the issues are:
-
-1. It should return the strcmp cmp value only if it's not 0.
-
-2. When symbol names are matched, we need to compare the addresses
-   of blocks further. But it wrongly uses the symbol addresses for
-   comparison.
-
-3. If the syms are both NULL, we can't consider these two blocks are
-   matched.
-
-This patch fixes above 3 issues.
-
-Fixes: 6041441870ab ("perf block: Cleanup and refactor block info
-functions")
+This patch removes the block_pair_cmp and use __block_info__cmp
+instead. The __block_info__cmp is wrapped by block_info__cmp
+and it doesn't receive perf_hpp_fmt parameter.
 
  v6:
  ---
@@ -63,50 +51,95 @@ functions")
 
 Signed-off-by: Jin Yao <yao.jin@linux.intel.com>
 ---
- tools/perf/util/block-info.c | 21 ++++++---------------
- 1 file changed, 6 insertions(+), 15 deletions(-)
+ tools/perf/builtin-diff.c    | 21 ++-------------------
+ tools/perf/util/block-info.c |  9 +++++++--
+ tools/perf/util/block-info.h |  2 ++
+ 3 files changed, 11 insertions(+), 21 deletions(-)
 
-diff --git a/tools/perf/util/block-info.c b/tools/perf/util/block-info.c
-index c4b030bf6ec2..4ed5bce945ad 100644
---- a/tools/perf/util/block-info.c
-+++ b/tools/perf/util/block-info.c
-@@ -74,30 +74,21 @@ int64_t block_info__cmp(struct perf_hpp_fmt *fmt __maybe_unused,
- 
- 	if (!bi_l->sym || !bi_r->sym) {
- 		if (!bi_l->sym && !bi_r->sym)
--			return 0;
-+			return -1;
- 		else if (!bi_l->sym)
- 			return -1;
- 		else
- 			return 1;
- 	}
- 
--	if (bi_l->sym == bi_r->sym) {
--		if (bi_l->start == bi_r->start) {
--			if (bi_l->end == bi_r->end)
--				return 0;
--			else
--				return (int64_t)(bi_r->end - bi_l->end);
--		} else
--			return (int64_t)(bi_r->start - bi_l->start);
--	} else {
--		cmp = strcmp(bi_l->sym->name, bi_r->sym->name);
-+	cmp = strcmp(bi_l->sym->name, bi_r->sym->name);
-+	if (cmp)
- 		return cmp;
--	}
- 
--	if (bi_l->sym->start != bi_r->sym->start)
--		return (int64_t)(bi_r->sym->start - bi_l->sym->start);
-+	if (bi_l->start != bi_r->start)
-+		return (int64_t)(bi_r->start - bi_l->start);
- 
--	return (int64_t)(bi_r->sym->end - bi_l->sym->end);
-+	return (int64_t)(bi_r->end - bi_l->end);
+diff --git a/tools/perf/builtin-diff.c b/tools/perf/builtin-diff.c
+index f8b6ae557d8b..dc151b3ae189 100644
+--- a/tools/perf/builtin-diff.c
++++ b/tools/perf/builtin-diff.c
+@@ -572,29 +572,12 @@ static void init_block_hist(struct block_hist *bh)
+ 	bh->valid = true;
  }
  
+-static int block_pair_cmp(struct hist_entry *a, struct hist_entry *b)
+-{
+-	struct block_info *bi_a = a->block_info;
+-	struct block_info *bi_b = b->block_info;
+-	int cmp;
+-
+-	if (!bi_a->sym || !bi_b->sym)
+-		return -1;
+-
+-	cmp = strcmp(bi_a->sym->name, bi_b->sym->name);
+-
+-	if ((!cmp) && (bi_a->start == bi_b->start) && (bi_a->end == bi_b->end))
+-		return 0;
+-
+-	return -1;
+-}
+-
+ static struct hist_entry *get_block_pair(struct hist_entry *he,
+ 					 struct hists *hists_pair)
+ {
+ 	struct rb_root_cached *root = hists_pair->entries_in;
+ 	struct rb_node *next = rb_first_cached(root);
+-	int cmp;
++	int64_t cmp;
+ 
+ 	while (next != NULL) {
+ 		struct hist_entry *he_pair = rb_entry(next, struct hist_entry,
+@@ -602,7 +585,7 @@ static struct hist_entry *get_block_pair(struct hist_entry *he,
+ 
+ 		next = rb_next(&he_pair->rb_node_in);
+ 
+-		cmp = block_pair_cmp(he_pair, he);
++		cmp = __block_info__cmp(he_pair, he);
+ 		if (!cmp)
+ 			return he_pair;
+ 	}
+diff --git a/tools/perf/util/block-info.c b/tools/perf/util/block-info.c
+index 4ed5bce945ad..c8833f1bbc3a 100644
+--- a/tools/perf/util/block-info.c
++++ b/tools/perf/util/block-info.c
+@@ -65,8 +65,7 @@ struct block_info *block_info__new(void)
+ 	return bi;
+ }
+ 
+-int64_t block_info__cmp(struct perf_hpp_fmt *fmt __maybe_unused,
+-			struct hist_entry *left, struct hist_entry *right)
++int64_t __block_info__cmp(struct hist_entry *left, struct hist_entry *right)
+ {
+ 	struct block_info *bi_l = left->block_info;
+ 	struct block_info *bi_r = right->block_info;
+@@ -91,6 +90,12 @@ int64_t block_info__cmp(struct perf_hpp_fmt *fmt __maybe_unused,
+ 	return (int64_t)(bi_r->end - bi_l->end);
+ }
+ 
++int64_t block_info__cmp(struct perf_hpp_fmt *fmt __maybe_unused,
++			struct hist_entry *left, struct hist_entry *right)
++{
++	return __block_info__cmp(left, right);
++}
++
  static void init_block_info(struct block_info *bi, struct symbol *sym,
+ 			    struct cyc_hist *ch, int offset,
+ 			    u64 total_cycles)
+diff --git a/tools/perf/util/block-info.h b/tools/perf/util/block-info.h
+index bef0d75e9819..a0fa9fefeaf0 100644
+--- a/tools/perf/util/block-info.h
++++ b/tools/perf/util/block-info.h
+@@ -61,6 +61,8 @@ static inline void __block_info__zput(struct block_info **bi)
+ 
+ #define block_info__zput(bi) __block_info__zput(&bi)
+ 
++int64_t __block_info__cmp(struct hist_entry *left, struct hist_entry *right);
++
+ int64_t block_info__cmp(struct perf_hpp_fmt *fmt __maybe_unused,
+ 			struct hist_entry *left, struct hist_entry *right);
+ 
 -- 
 2.17.1
 
