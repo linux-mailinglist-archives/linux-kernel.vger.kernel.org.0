@@ -2,62 +2,110 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 32CAA14FF70
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Feb 2020 22:46:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9ADCC14FF75
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Feb 2020 22:57:16 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727093AbgBBVqy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 2 Feb 2020 16:46:54 -0500
-Received: from mail.kernel.org ([198.145.29.99]:41984 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726967AbgBBVqx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 2 Feb 2020 16:46:53 -0500
-Received: from cakuba.hsd1.ca.comcast.net (c-73-93-4-247.hsd1.ca.comcast.net [73.93.4.247])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B404820679;
-        Sun,  2 Feb 2020 21:46:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1580680013;
-        bh=Y8VhYCn8SLYoDLvdtw5adPkQSiS1U3K567neLTCYUFM=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=TT8ylOUYjKatixXm8qyM98wc2ZqE9XKJLjp69oEblNZmHp+kat6qXxc5sTuIwGDqC
-         wNeFAaNBpw4NiX429E4JZMuAPD9FH3noi3vpg1ggRObPxBrXlkJ5HYy/Cg17kLY4gC
-         1WUc7msPy3wLA8eAgA3Jgx3axpkerpIU0LWapVzQ=
-Date:   Sun, 2 Feb 2020 13:46:52 -0800
-From:   Jakub Kicinski <kuba@kernel.org>
-To:     sj38.park@gmail.com
-Cc:     edumazet@google.com, David.Laight@aculab.com, aams@amazon.com,
-        davem@davemloft.net, eric.dumazet@gmail.com,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-kselftest@vger.kernel.org, ncardwell@google.com,
-        shuah@kernel.org, sjpark@amazon.de
-Subject: Re: [PATCH v3 0/2] Fix reconnection latency caused by FIN/ACK
- handling race
-Message-ID: <20200202134652.0e89ce89@cakuba.hsd1.ca.comcast.net>
-In-Reply-To: <20200202033827.16304-1-sj38.park@gmail.com>
-References: <20200202033827.16304-1-sj38.park@gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        id S1727091AbgBBV5M (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 2 Feb 2020 16:57:12 -0500
+Received: from mail-wm1-f51.google.com ([209.85.128.51]:34075 "EHLO
+        mail-wm1-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726967AbgBBV5M (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 2 Feb 2020 16:57:12 -0500
+Received: by mail-wm1-f51.google.com with SMTP id s144so12982399wme.1
+        for <linux-kernel@vger.kernel.org>; Sun, 02 Feb 2020 13:57:10 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=fns2Ornju2WXVpySQuZ+PsDs1vo+7j/mk6LQDMuQm9A=;
+        b=W7GV6tehArejuwu39wL1q5jCI5CaD+oWFnAUvHAxycAfjyGgu31RMxHB5f0hMdDJOZ
+         cS16BCjvNMqPXMZ95bHMnqJGQuBCO2D3+DL2d/cJLz6y3m5gHV5SScaUUX4o+FvQIQAX
+         D/0svRxcRrK0l/1c24JbwT2eNWNVJfSoX+jxj6gywhzS2/1EEuYwomhupjLTm0IERK3R
+         jaH0Bn1r2EFShx/jNDOJIXfE/WdOUSCx7N85z/nlxbrXtSoR6QsvevY4HsZpPoGbRTJq
+         MCw4fwa92NwbJJVFV8IojNQWWbz44JyjWr0qIDkqUNSULB/Ghdk5tu2b3xfc/FJ8A+sT
+         bJZQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=fns2Ornju2WXVpySQuZ+PsDs1vo+7j/mk6LQDMuQm9A=;
+        b=NbGKi/KdmIaKKPRf1R19Cybt1FHCpqJX4A1BFIvCTBwRWDp23aKLmWCuLxuZAUK01V
+         X13W7M+gx6LHjLM1TvN7aYqIiykrIsJ1h8WCgXEnS1FAYhlHZ2ENxEMMZMxu1d6+2Cai
+         nR6dTvfhox3Q9awTIUNF+N6+rINxuFX9p/r5YEb3iPDGrrG/IcxzU4m16qO2ROlSBDrq
+         Gi4jJ1xindQUmH8k6m/XWpFKZutQykdDl1KqK/s0tbh6cFl8ySI1jUsqgFA+lfZiOZGC
+         Fvvc6e4x95dNvM/CPvfL2hmMNcm1knPjIFSm3AlYucOhyodA8gcXRU67bfXnPLXzW3Wb
+         glLA==
+X-Gm-Message-State: APjAAAWAKZYvK+Kl1fwTG/dlIE2mJ8TfgMnmj73HZBY3+s7p0NxdiAp6
+        mW0yMcxzloy/WEV5yg7XBOQ=
+X-Google-Smtp-Source: APXvYqx59dob6bQ6u27i6pYbjQ5bjx5FpleTfa+c/zmVpjmorV4xV2VxZpzHcxyRSa47BBf+qFzO5Q==
+X-Received: by 2002:a1c:e388:: with SMTP id a130mr24739038wmh.176.1580680629854;
+        Sun, 02 Feb 2020 13:57:09 -0800 (PST)
+Received: from opensdev.fritz.box (business-178-015-117-054.static.arcor-ip.net. [178.15.117.54])
+        by smtp.gmail.com with ESMTPSA id c4sm20612488wml.7.2020.02.02.13.57.07
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 02 Feb 2020 13:57:09 -0800 (PST)
+From:   shiva.linuxworks@gmail.com
+X-Google-Original-From: sshivamurthy@micron.com
+To:     Miquel Raynal <miquel.raynal@bootlin.com>,
+        Richard Weinberger <richard@nod.at>,
+        Vignesh Raghavendra <vigneshr@ti.com>,
+        Frieder Schrempf <frieder.schrempf@kontron.de>,
+        Boris Brezillon <bbrezillon@kernel.org>,
+        linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org
+Cc:     Shivamurthy Shastri <sshivamurthy@micron.com>
+Subject: [PATCH v3 0/5] Add new series Micron SPI NAND devices
+Date:   Sun,  2 Feb 2020 22:55:03 +0100
+Message-Id: <20200202215508.2928-1-sshivamurthy@micron.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun,  2 Feb 2020 03:38:25 +0000, sj38.park@gmail.com wrote:
-> The first patch fixes the problem by adjusting the first resend delay of
-> the SYN in the case.  The second one adds a user space test to reproduce
-> this problem.
-> 
-> The patches are based on the v5.5.  You can also clone the complete git
-> tree:
-> 
->     $ git clone git://github.com/sjp38/linux -b patches/finack_lat/v3
-> 
-> The web is also available:
-> https://github.com/sjp38/linux/tree/patches/finack_lat/v3
+From: Shivamurthy Shastri <sshivamurthy@micron.com>
 
-Applied to net, thank you!
+This patchset is for the new series of Micron SPI NAND devices, and the
+following links are their datasheets.
 
-In the future there is no need to duplicate the info from commit
-messages in the cover letter.
+M78A:
+[1] https://www.micron.com/~/media/documents/products/data-sheet/nand-flash/70-series/m78a_1gb_3v_nand_spi.pdf
+[2] https://www.micron.com/~/media/documents/products/data-sheet/nand-flash/70-series/m78a_1gb_1_8v_nand_spi.pdf
+
+M79A:
+[3] https://www.micron.com/~/media/documents/products/data-sheet/nand-flash/70-series/m79a_2gb_1_8v_nand_spi.pdf
+[4] https://www.micron.com/~/media/documents/products/data-sheet/nand-flash/70-series/m79a_ddp_4gb_3v_nand_spi.pdf
+
+M70A:
+[5] https://www.micron.com/~/media/documents/products/data-sheet/nand-flash/70-series/m70a_4gb_3v_nand_spi.pdf
+[6] https://www.micron.com/~/media/documents/products/data-sheet/nand-flash/70-series/m70a_4gb_1_8v_nand_spi.pdf
+[7] https://www.micron.com/~/media/documents/products/data-sheet/nand-flash/70-series/m70a_ddp_8gb_3v_nand_spi.pdf
+[8] https://www.micron.com/~/media/documents/products/data-sheet/nand-flash/70-series/m70a_ddp_8gb_1_8v_nand_spi.pdf
+
+Changes since v2:
+-----------------
+
+1. Modified the commit messages of the patches.
+2. Handled devices with Continuous Read feature with vendor specific flag.
+3. Reworked die selection function as per the comment.
+
+Changes since v1:
+-----------------
+
+1. The patch split into multiple patches.
+2. Added comments for selecting the die.
+
+Shivamurthy Shastri (5):
+  mtd: spinand: micron: Generalize the OOB layout structure and function
+    names
+  mtd: spinand: micron: Add new Micron SPI NAND devices
+  mtd: spinand: identfiy SPI NAND device with Continuous Read mode
+  mtd: spinand: micron: Add M70A series Micron SPI NAND devices
+  mtd: spinand: micron: Add new Micron SPI NAND devices with multiple
+    dies
+
+ drivers/mtd/nand/spi/micron.c | 153 ++++++++++++++++++++++++++++++----
+ include/linux/mtd/spinand.h   |   1 +
+ 2 files changed, 140 insertions(+), 14 deletions(-)
+
+-- 
+2.17.1
+
