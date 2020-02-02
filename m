@@ -2,63 +2,131 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 22C5114FD45
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Feb 2020 14:21:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 380C314FD3D
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Feb 2020 14:19:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726940AbgBBNVe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 2 Feb 2020 08:21:34 -0500
-Received: from szxga05-in.huawei.com ([45.249.212.191]:9680 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726342AbgBBNVe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 2 Feb 2020 08:21:34 -0500
-Received: from DGGEMS402-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id 1CD0019DDCFA158EFFD1;
-        Sun,  2 Feb 2020 21:21:30 +0800 (CST)
-Received: from localhost.localdomain.localdomain (10.175.113.25) by
- DGGEMS402-HUB.china.huawei.com (10.3.19.202) with Microsoft SMTP Server id
- 14.3.439.0; Sun, 2 Feb 2020 21:21:21 +0800
-From:   Chen Zhou <chenzhou10@huawei.com>
-To:     <viro@zeniv.linux.org.uk>
-CC:     <linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <yaohongbo@huawei.com>, <chenzhou10@huawei.com>
-Subject: [PATCH -next] fs_parse: make fs_param_bad_value() static
-Date:   Sun, 2 Feb 2020 21:15:46 +0800
-Message-ID: <20200202131546.30174-1-chenzhou10@huawei.com>
-X-Mailer: git-send-email 2.20.1
+        id S1726881AbgBBNRO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 2 Feb 2020 08:17:14 -0500
+Received: from mail-ot1-f65.google.com ([209.85.210.65]:37142 "EHLO
+        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726669AbgBBNRO (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 2 Feb 2020 08:17:14 -0500
+Received: by mail-ot1-f65.google.com with SMTP id d3so11081099otp.4
+        for <linux-kernel@vger.kernel.org>; Sun, 02 Feb 2020 05:17:12 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ffwll.ch; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=+JexwpZ7uOUAzO/bZPt69XOsxgXW5ev8PRFd02TcEk8=;
+        b=IE+nMVkXga9fWUwZKPOjqNIk95sq5yO14vZeu1ludYC7s0JaU1fr2jelppwPGlACgG
+         83h28kTdOijU1EWLsvch7JEqnA+Ea0m9DfYb62/uQy108/7UV+m83daOiNSPwAckbp8F
+         DpBcwguqXp7EEyyRRPBYZizpZiRhl1W8LshjY=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=+JexwpZ7uOUAzO/bZPt69XOsxgXW5ev8PRFd02TcEk8=;
+        b=VieXIfIO+rZbppqPClqBT2+a9aYit2ghG2pVKIfTwl+N8ovyicmoYnQftDaSjFRuIR
+         cJLEAffIzqHd3ico9tW+aAdYuiEUdZY1XM76WGop6GCyBy/5fUVq9sf1lc/mA4pCtc4f
+         EaK+cBU/ThLMl7S1azg3h24jM6e9gPsdRkSi7XJIrX2L/9DnXtB7+VBE253N3cIxdSYW
+         zq1dTIasn9E/QZ0WIwAVrUdQRWFRZap8PgNtcYspTC7fW/ZC3GpnwXqEbwj3ZBw+fIGG
+         ljKECZWxLRMIuBFBLvaGWrad0xVrApTBMLuvenhO8a7IjngxG7LC2QRogfwFUEYeB13d
+         XcmQ==
+X-Gm-Message-State: APjAAAWYudjEd4kxMVN8ZJBA2xsnECQDrBgjXWuUJWruttTsOuCN8krr
+        yH30ZQdssm40kX5s6xkwD/giB7uClfUeNHo5a5WH3g==
+X-Google-Smtp-Source: APXvYqyhJpSqQ8at/IdzLDOBcr/4/JYswhhc71+cJLzlo49FIW6k84QX0OWoAy1QjBLh4SW+3pmM+ASFc5nUW+iAsSg=
+X-Received: by 2002:a9d:7696:: with SMTP id j22mr14988663otl.188.1580649432010;
+ Sun, 02 Feb 2020 05:17:12 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7BIT
-Content-Type:   text/plain; charset=US-ASCII
-X-Originating-IP: [10.175.113.25]
-X-CFilter-Loop: Reflected
+References: <20200201043209.13412-1-hdanton@sina.com> <20200201090247.10928-1-hdanton@sina.com>
+ <20200201162537.GK1778@kadam>
+In-Reply-To: <20200201162537.GK1778@kadam>
+From:   Daniel Vetter <daniel@ffwll.ch>
+Date:   Sun, 2 Feb 2020 14:17:00 +0100
+Message-ID: <CAKMK7uGHuvyrn=WghhHBk2miW__ctVHeDTDKz+XVJ9yLjpS97Q@mail.gmail.com>
+Subject: Re: KASAN: use-after-free Read in vgem_gem_dumb_create
+To:     Dan Carpenter <dan.carpenter@oracle.com>
+Cc:     Hillf Danton <hdanton@sina.com>,
+        syzbot <syzbot+0dc4444774d419e916c8@syzkaller.appspotmail.com>,
+        Dave Airlie <airlied@linux.ie>,
+        Alex Deucher <alexander.deucher@amd.com>,
+        amd-gfx list <amd-gfx@lists.freedesktop.org>,
+        "Wilson, Chris" <chris@chris-wilson.co.uk>,
+        =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
+        David Miller <davem@davemloft.net>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        Emil Velikov <emil.velikov@collabora.com>,
+        "Anholt, Eric" <eric@anholt.net>,
+        "moderated list:DMA BUFFER SHARING FRAMEWORK" 
+        <linaro-mm-sig@lists.linaro.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "open list:DMA BUFFER SHARING FRAMEWORK" 
+        <linux-media@vger.kernel.org>, netdev <netdev@vger.kernel.org>,
+        Rob Clark <robdclark@chromium.org>,
+        Sean Paul <seanpaul@chromium.org>,
+        Sumit Semwal <sumit.semwal@linaro.org>,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Fix sparse warning:
+On Sat, Feb 1, 2020 at 5:26 PM Dan Carpenter <dan.carpenter@oracle.com> wrote:
+>
+> On Sat, Feb 01, 2020 at 05:02:47PM +0800, Hillf Danton wrote:
+> >
+> > On Sat, 1 Feb 2020 09:17:57 +0300 Dan Carpenter wrote:
+> > > On Sat, Feb 01, 2020 at 12:32:09PM +0800, Hillf Danton wrote:
+> > > >
+> > > > Release obj in error path.
+> > > >
+> > > > --- a/drivers/gpu/drm/vgem/vgem_drv.c
+> > > > +++ b/drivers/gpu/drm/vgem/vgem_drv.c
+> > > > @@ -196,10 +196,10 @@ static struct drm_gem_object *vgem_gem_c
+> > > >           return ERR_CAST(obj);
+> > > >
+> > > >   ret = drm_gem_handle_create(file, &obj->base, handle);
+> > > > - drm_gem_object_put_unlocked(&obj->base);
+> > > > - if (ret)
+> > > > + if (ret) {
+> > > > +         drm_gem_object_put_unlocked(&obj->base);
+> > > >           return ERR_PTR(ret);
+> > > > -
+> > > > + }
+> > > >   return &obj->base;
+> > >
+> > > Oh yeah.  It's weird that we never noticed the success path was broken.
+> > > It's been that way for three years and no one noticed at all.  Very
+> > > strange.
+> > >
+> > > Anyway, it already gets freed on error in drm_gem_handle_create() so
+> > > we should just delete the drm_gem_object_put_unlocked() here it looks
+> > > like.
 
-fs/fs_parser.c:192:5: warning:
-	symbol 'fs_param_bad_value' was not declared. Should it be static?
+There's two refcounts here, one is the handle_count, and the other is
+the underlying object refcount. I think the code is correct, except if
+you race with a 2nd thread which destroys the object (through the
+handle) while we still try to read gem_object->size in the caller of
+this. So correct fix (I think at least) is to shuffle that temporary
+reference on the object (not the handle) we hold while constructing it
+around a bit, so there's no use-after free anymore in the case of a
+race. I'm typing a patch for this.
 
-Reported-by: Hulk Robot <hulkci@huawei.com>
-Signed-off-by: Chen Zhou <chenzhou10@huawei.com>
----
- fs/fs_parser.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Cheers, Daniel
 
-diff --git a/fs/fs_parser.c b/fs/fs_parser.c
-index fdc047b..904e91f 100644
---- a/fs/fs_parser.c
-+++ b/fs/fs_parser.c
-@@ -189,7 +189,7 @@ int fs_lookup_param(struct fs_context *fc,
- }
- EXPORT_SYMBOL(fs_lookup_param);
- 
--int fs_param_bad_value(struct p_log *log, struct fs_parameter *param)
-+static int fs_param_bad_value(struct p_log *log, struct fs_parameter *param)
- {
- 	return inval_plog(log, "Bad value for '%s'", param->key);
- }
+> > Good catch, Dan :P
+> > Would you please post a patch sometime convenient next week?
+>
+> Sure.  Will do.
+>
+> regards,
+> dan carpenter
+>
+
+
 -- 
-2.7.4
-
+Daniel Vetter
+Software Engineer, Intel Corporation
++41 (0) 79 365 57 48 - http://blog.ffwll.ch
