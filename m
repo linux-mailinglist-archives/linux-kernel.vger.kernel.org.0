@@ -2,164 +2,302 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EDEA314FC8B
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Feb 2020 11:10:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A259614FC93
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Feb 2020 11:19:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726669AbgBBKJz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 2 Feb 2020 05:09:55 -0500
-Received: from propper.duncanthrax.net ([91.207.61.48]:58352 "EHLO
-        smtp.duncanthrax.net" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1725942AbgBBKJz (ORCPT
+        id S1726805AbgBBKT3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 2 Feb 2020 05:19:29 -0500
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:45313 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725956AbgBBKT2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 2 Feb 2020 05:09:55 -0500
-X-Greylist: delayed 1891 seconds by postgrey-1.27 at vger.kernel.org; Sun, 02 Feb 2020 05:09:53 EST
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=duncanthrax.net; s=dkim; h=Content-Transfer-Encoding:MIME-Version:
-        References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:
-        Content-Type:Content-ID:Content-Description:Resent-Date:Resent-From:
-        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=WurKxM7UmPaX2EoryhZt0kZuwKh/DaWByeBrukvwGUY=; b=I1jxxEPL15RFdU7G1Ycbh3vAM1
-        GhJtK/0uckkGPN7+/uv0E9HH8H8rvwWCdx4jabDL1wkckMyAmtpvhrDw13lHTNJvRLTVb4x1WJmMM
-        i1ro6/GOq7iksbb+xFVC0xVYMq5HvpRVMZDualHTYOe1xAEQ7LhaITDv51X5JxUU3EEM=;
-Received: from [134.3.47.90] (helo=x280.stackframe.org)
-        by smtp.duncanthrax.net with esmtpa (Exim 4.90_1)
-        (envelope-from <svens@stackframe.org>)
-        id 1iyBhq-00009N-L8; Sun, 02 Feb 2020 10:38:18 +0100
-From:   Sven Schnelle <svens@stackframe.org>
-To:     Alan Stern <stern@rowland.harvard.edu>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-usb@vger.kernel.org, usb-storage@lists.one-eyed-alien.net,
-        linux-kernel@vger.kernel.org, Sven Schnelle <svens@stackframe.org>
-Subject: [PATCH 2/2] usb-storage: Add support for Ratoc U2SCX multiple device mode
-Date:   Sun,  2 Feb 2020 10:37:49 +0100
-Message-Id: <20200202093750.4439-3-svens@stackframe.org>
-X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20200202093750.4439-1-svens@stackframe.org>
-References: <20200202093750.4439-1-svens@stackframe.org>
+        Sun, 2 Feb 2020 05:19:28 -0500
+Received: by mail-lj1-f196.google.com with SMTP id f25so11535906ljg.12;
+        Sun, 02 Feb 2020 02:19:26 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=KbZhK4eiEfC8B9hj7RYWwm4vi0wSDmiVDkqX6tXrqSk=;
+        b=WyNctkVD92W5Zo5okgP3pijP49S6fSxWYgYHcizXbfYrUKOH2PhITs/0a/pQEzk1YY
+         5xMwOFUroNNjM9BdO1EwXNkbk7cp7qIpq4DskpPIXG5emYlly5IR+xnXcw0zIA/6y3mc
+         6JN19zf+LQQl0FgyYCbW5zfMo3wbYhtNrcFN5V00eKJ1TVDTTMDGESV6NTJEEKuNOtS3
+         5E2BdhRhfxrW0/PabgeFDdE5wbq8E2yZ/3mV/M+YDyMh8en0C1iF6mo3urBWF8oxB7g7
+         zeUH4ngfSizeJJlipAvd0bCzXxJmUeuzJofnn304F19if4RhPlOP73fzDb+zDF0KcBE4
+         Qqrw==
+X-Gm-Message-State: APjAAAW149f3UfxYwN1wdJMkdio1jhngtfETDJkjn9LMct9YdYXcpN2Z
+        xNf+7k1FDSvdYhhoVx0waE4=
+X-Google-Smtp-Source: APXvYqyjioxR0Waw/lsP+2544J5hsUPeUMXhRKM96QkyLQezDZ78Q42rqjZ4IJDsFkmfrnapIiweXw==
+X-Received: by 2002:a2e:85cd:: with SMTP id h13mr11017543ljj.191.1580638766146;
+        Sun, 02 Feb 2020 02:19:26 -0800 (PST)
+Received: from xi.terra (c-12aae455.07-184-6d6c6d4.bbcust.telenor.se. [85.228.170.18])
+        by smtp.gmail.com with ESMTPSA id u16sm7837548ljl.34.2020.02.02.02.19.24
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 02 Feb 2020 02:19:25 -0800 (PST)
+Received: from johan by xi.terra with local (Exim 4.92.3)
+        (envelope-from <johan@kernel.org>)
+        id 1iyCLl-0008Sx-2W; Sun, 02 Feb 2020 11:19:33 +0100
+Date:   Sun, 2 Feb 2020 11:19:33 +0100
+From:   Johan Hovold <johan@kernel.org>
+To:     edes <edes@gmx.net>
+Cc:     linux-usb@vger.kernel.org, Johan Hovold <johan@kernel.org>,
+        linux-kernel@vger.kernel.org, Takashi Iwai <tiwai@suse.de>
+Subject: Re: kernel 5.4.11: problems with usb sound cards
+Message-ID: <20200202101933.GL10381@localhost>
+References: <20200201105829.5682c887@acme7.acmenet>
+ <20200201141009.GK10381@localhost>
+ <20200201132616.09857152@acme7.acmenet>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200201132616.09857152@acme7.acmenet>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The Ratoc U2SCX can support more than one device but uses another
-USB ID in that case (0584:0222) with a Vendor specific class. The
-used protocol is still USB Mass storage, but we need to fetch the
-maximum LUN number as otherwise the controller would address all
-devices on the SCSI bus when an invalid LUN is probed. It looks like
-U2SCX maps SCSI ID to LUN numbers, so we must not enable
-US_FL_SCM_MULT_TARG.
+[ +CC: Takashi ]
 
-dmesg with the driver enabled looks like this:
+On Sat, Feb 01, 2020 at 01:26:16PM -0300, edes wrote:
+> 
+> > Can you please post the output of "lsusb -v" for this device on 5.4.10
+> > and 5.4.11, respectively?
+> 
+> 
+> Hello, thanks for your prompt response. Please see attached (I hope that
+> is OK) the output of lsusb -v on both 5.4.10 and 5.4.11.
+> 
+> The device in question is the Sound Devices USBPre2, Bus 003 Device 004:
+> ID 0926:0202, beginning at line 808.
 
-[  133.157337] usb 1-2: new high-speed USB device number 6 using xhci_hcd
-[  133.170273] usb 1-2: New USB device found, idVendor=0584, idProduct=0222, bcdDevice= 1.11
-[  133.170279] usb 1-2: New USB device strings: Mfr=1, Product=3, SerialNumber=2
-[  133.170283] usb 1-2: Product: USB-SCSI Converter
-[  133.170286] usb 1-2: Manufacturer: RATOCSystems,Inc.
-[  133.170289] usb 1-2: SerialNumber: 020301002197
-[  133.171576] usb-storage 1-2:1.0: USB Mass Storage device detected
-[  133.172084] scsi host1: usb-storage 1-2:1.0
-[  134.199245] scsi 1:0:0:0: CD-ROM            HL-DT-ST DVDRAM GSA-4163B A100 PQ: 0 ANSI: 2
-[  134.202744] scsi 1:0:0:1: Direct-Access     SyQuest  SQ5200C          A0L  PQ: 0 ANSI: 2
-[  134.219300] scsi 1:0:0:2: Direct-Access     SyQuest  SQ3270S          1_24 PQ: 0 ANSI: 2
-[  134.224660] sr 1:0:0:0: Power-on or device reset occurred
-[  134.343256] sr 1:0:0:0: [sr0] scsi3-mmc drive: 40x/40x writer dvd-ram cd/rw xa/form2 cdda tray
-[  134.343262] cdrom: Uniform CD-ROM driver Revision: 3.20
-[  134.350873] sr 1:0:0:0: Attached scsi CD-ROM sr0
-[  134.351120] sr 1:0:0:0: Attached scsi generic sg1 type 5
-[  134.351438] sd 1:0:0:1: Attached scsi generic sg2 type 0
-[  134.351685] sd 1:0:0:2: Attached scsi generic sg3 type 0
-[  134.362141] sd 1:0:0:1: Power-on or device reset occurred
-[  134.483977] sd 1:0:0:1: [sdb] Attached SCSI removable disk
-[  134.513922] sd 1:0:0:2: Power-on or device reset occurred
-[  134.579802] sd 1:0:0:2: [sdc] Spinning up disk...
-[  135.602397] ......
-[  141.707017] sd 1:0:0:1: [sdb] Spinning up disk...
-[  151.346332] .ready
-[  151.353990] sd 1:0:0:2: [sdc] 524288 512-byte logical blocks: (268 MB/256 MiB)
-[  151.361560] sd 1:0:0:2: [sdc] Write Protect is off
-[  151.361566] sd 1:0:0:2: [sdc] Mode Sense: 99 00 00 08
-[  151.368868] sd 1:0:0:2: [sdc] Write cache: disabled, read cache: enabled, doesn't support DPO or FUA
-[  151.428485]  sdc: sdc1
-[  151.465364] sd 1:0:0:2: [sdc] Attached SCSI removable disk
-[  152.178231] .....ready
-[  156.535115] sd 1:0:0:1: [sdb] 173456 512-byte logical blocks: (88.8 MB/84.7 MiB)
-[  156.606445]  sdb: sdb1
+Ok, so the device has a broken altsetting 3 for interface 1, where
+endpoint 0x85 is declared as an isochronous endpoint, despite being used
+by interface 2 as an audio endpoint:
 
-Signed-off-by: Sven Schnelle <svens@stackframe.org>
+    Interface Descriptor:
+      bLength                 9
+      bDescriptorType         4
+      bInterfaceNumber        1
+      bAlternateSetting       3
+      bNumEndpoints           2
+      bInterfaceClass       255 Vendor Specific Class
+      bInterfaceSubClass      0 
+      bInterfaceProtocol      0 
+      iInterface              0 
+      Endpoint Descriptor:
+        bLength                 7
+        bDescriptorType         5
+        bEndpointAddress     0x85  EP 5 IN
+        bmAttributes            5
+          Transfer Type            Isochronous
+          Synch Type               Asynchronous
+          Usage Type               Data
+        wMaxPacketSize     0x0126  1x 294 bytes
+        bInterval               1
+
+...
+
+    Interface Descriptor:
+      bLength                 9
+      bDescriptorType         4
+      bInterfaceNumber        2
+      bAlternateSetting       1
+      bNumEndpoints           1
+      bInterfaceClass         1 Audio
+      bInterfaceSubClass      2 Streaming
+      bInterfaceProtocol      0 
+      iInterface              0 
+      AudioStreaming Interface Descriptor:
+        bLength                 7
+        bDescriptorType        36
+        bDescriptorSubtype      1 (AS_GENERAL)
+        bTerminalLink           4
+        bDelay                  1 frames
+        wFormatTag         0x0001 PCM
+      AudioStreaming Interface Descriptor:
+        bLength                26
+        bDescriptorType        36
+        bDescriptorSubtype      2 (FORMAT_TYPE)
+        bFormatType             1 (FORMAT_TYPE_I)
+        bNrChannels             2
+        bSubframeSize           2
+        bBitResolution         16
+        bSamFreqType            6 Discrete
+        tSamFreq[ 0]         8000
+        tSamFreq[ 1]        16000
+        tSamFreq[ 2]        24000
+        tSamFreq[ 3]        32000
+        tSamFreq[ 4]        44100
+        tSamFreq[ 5]        48000
+      Endpoint Descriptor:
+        bLength                 9
+        bDescriptorType         5
+        bEndpointAddress     0x85  EP 5 IN
+        bmAttributes            5
+          Transfer Type            Isochronous
+          Synch Type               Asynchronous
+          Usage Type               Data
+        wMaxPacketSize     0x0126  1x 294 bytes
+        bInterval               4
+        bRefresh                0
+        bSynchAddress           0
+        AudioStreaming Endpoint Descriptor:
+          bLength                 7
+          bDescriptorType        37
+          bDescriptorSubtype      1 (EP_GENERAL)
+          bmAttributes         0x01
+            Sampling Frequency
+          bLockDelayUnits         2 Decoded PCM samples
+          wLockDelay         0x0000
+
+
+Since commit 3e4f8e21c4f2 ("USB: core: fix check for duplicate
+endpoints") USB core ignores any duplicate endpoints, but in this case
+we really want to ignore the first instance.
+
+Can you try the below patch, which adds a blacklist quirk for the broken
+endpoint descriptor?
+
+Note that the broken altsetting probably should be using endpoint 0x81
+just like the other altsettings for that interface, but hopefully you
+don't really use this setting so that simply ignoring the endpoint will
+make the device work again.
+
+Interestingly enough, in your lsusb output from 5.4.11, the device
+reports a second configuration in which this broken altsetting doesn't
+exist. Switching to that config should also make the problem go away.
+
+Johan
+
+
+From c8980be317939eb7fae73960b0c6fa641c45bd7d Mon Sep 17 00:00:00 2001
+From: Johan Hovold <johan@kernel.org>
+Date: Sun, 2 Feb 2020 10:39:05 +0100
+Subject: [PATCH] USB: core: add endpoint blacklist quirk
+
+Add a new device quirk that can be used to blacklist endpoints.
+
+Since commit 3e4f8e21c4f2 ("USB: core: fix check for duplicate
+endpoints") USB core ignores any duplicate endpoints found during
+descriptor parsing.
+
+In order to handle devices where the first interfaces with duplicate
+endpoints are the ones that should have their endpoints ignored, we need
+to add a blacklist.
+
+Signed-off-by: Johan Hovold <johan@kernel.org>
 ---
- drivers/usb/storage/initializers.c | 27 +++++++++++++++++++++++++++
- drivers/usb/storage/initializers.h |  2 ++
- drivers/usb/storage/unusual_devs.h |  5 +++++
- 3 files changed, 34 insertions(+)
+ drivers/usb/core/config.c  | 11 +++++++++++
+ drivers/usb/core/quirks.c  | 32 ++++++++++++++++++++++++++++++++
+ drivers/usb/core/usb.h     |  3 +++
+ include/linux/usb/quirks.h |  3 +++
+ 4 files changed, 49 insertions(+)
 
-diff --git a/drivers/usb/storage/initializers.c b/drivers/usb/storage/initializers.c
-index f8f9ce8dc710..089d67e99aa9 100644
---- a/drivers/usb/storage/initializers.c
-+++ b/drivers/usb/storage/initializers.c
-@@ -44,6 +44,33 @@ int usb_stor_euscsi_init(struct us_data *us)
- 	return 0;
- }
+diff --git a/drivers/usb/core/config.c b/drivers/usb/core/config.c
+index 26bc05e48d8a..7df22bcefa9d 100644
+--- a/drivers/usb/core/config.c
++++ b/drivers/usb/core/config.c
+@@ -256,6 +256,7 @@ static int usb_parse_endpoint(struct device *ddev, int cfgno,
+ 		struct usb_host_interface *ifp, int num_ep,
+ 		unsigned char *buffer, int size)
+ {
++	struct usb_device *udev = to_usb_device(ddev);
+ 	unsigned char *buffer0 = buffer;
+ 	struct usb_endpoint_descriptor *d;
+ 	struct usb_host_endpoint *endpoint;
+@@ -297,6 +298,16 @@ static int usb_parse_endpoint(struct device *ddev, int cfgno,
+ 		goto skip_to_next_endpoint_or_interface_descriptor;
+ 	}
  
-+/* Function to get the maximum LUN (Logical Unit number) from Ratoc. */
-+int usb_stor_ratoc_u2scx_init(struct us_data *us)
++	/* Ignore blacklisted endpoints */
++	if (udev->quirks & USB_QUIRK_ENDPOINT_BLACKLIST) {
++		if (usb_endpoint_is_blacklisted(udev, ifp, d)) {
++			dev_warn(ddev, "config %d interface %d altsetting %d has a blacklisted endpoint with address 0x%X, skipping\n",
++					cfgno, inum, asnum,
++					d->bEndpointAddress);
++			goto skip_to_next_endpoint_or_interface_descriptor;
++		}
++	}
++
+ 	endpoint = &ifp->endpoint[ifp->desc.bNumEndpoints];
+ 	++ifp->desc.bNumEndpoints;
+ 
+diff --git a/drivers/usb/core/quirks.c b/drivers/usb/core/quirks.c
+index 6b6413073584..a677a47a6438 100644
+--- a/drivers/usb/core/quirks.c
++++ b/drivers/usb/core/quirks.c
+@@ -354,6 +354,9 @@ static const struct usb_device_id usb_quirk_list[] = {
+ 	{ USB_DEVICE(0x0904, 0x6103), .driver_info =
+ 			USB_QUIRK_LINEAR_FRAME_INTR_BINTERVAL },
+ 
++	/* Sound Devices USBPre2 */
++	{ USB_DEVICE(0x0926, 0x0202), .driver_info = USB_QUIRK_ENDPOINT_BLACKLIST },
++
+ 	/* Keytouch QWERTY Panel keyboard */
+ 	{ USB_DEVICE(0x0926, 0x3333), .driver_info =
+ 			USB_QUIRK_CONFIG_INTF_STRINGS },
+@@ -472,6 +475,35 @@ static const struct usb_device_id usb_amd_resume_quirk_list[] = {
+ 	{ }  /* terminating entry must be last */
+ };
+ 
++/*
++ * Entries for blacklisted endpoints.
++ *
++ * Matched for devices with USB_QUIRK_ENDPOINT_BLACKLIST.
++ */
++static const struct usb_device_id usb_endpoint_blacklist_quirk_list[] = {
++	{ USB_DEVICE_INTERFACE_NUMBER(0x0926, 0x0202, 1), .driver_info = 0x85 },
++	{ },
++};
++
++bool usb_endpoint_is_blacklisted(struct usb_device *udev,
++		struct usb_host_interface *intf,
++		struct usb_endpoint_descriptor *epd)
 +{
-+	int i, result;
-+	uint8_t *idmap = (uint8_t *)us->iobuf;
++	const struct usb_device_id *id;
++	unsigned int address;
 +
-+	result = usb_stor_control_msg(us, us->recv_ctrl_pipe,
-+					0xe6, USB_DIR_IN | USB_TYPE_VENDOR |
-+					USB_RECIP_INTERFACE,
-+					0x0, 0x0, idmap, 8, 5 * HZ);
++	for (id = usb_endpoint_blacklist_quirk_list; id->match_flags; ++id) {
++		if (usb_match_one_id_intf(udev, intf, id)) {
++			address = id->driver_info;
 +
-+	if (result < 0) {
-+		usb_stor_dbg(us, "fetching max lun failed: %d\n", result);
-+		return result;
++			if (address == epd->bEndpointAddress)
++				return true;
++		}
 +	}
 +
-+	for (i = 0; i < 7; i++) {
-+		if (idmap[i] == 0xff)
-+			break;
-+	}
-+
-+	if (i == 0)
-+		return -EIO;
-+
-+	us->max_lun = i - 1;
-+	return 0;
++	return false;
 +}
- /*
-  * This function is required to activate all four slots on the UCR-61S2B
-  * flash reader
-diff --git a/drivers/usb/storage/initializers.h b/drivers/usb/storage/initializers.h
-index 2dbf9c7d9749..b3ad7bfadf41 100644
---- a/drivers/usb/storage/initializers.h
-+++ b/drivers/usb/storage/initializers.h
-@@ -37,3 +37,5 @@ int usb_stor_ucr61s2b_init(struct us_data *us);
- 
- /* This places the HUAWEI E220 devices in multi-port mode */
- int usb_stor_huawei_e220_init(struct us_data *us);
 +
-+int usb_stor_ratoc_u2scx_init(struct us_data *us);
-diff --git a/drivers/usb/storage/unusual_devs.h b/drivers/usb/storage/unusual_devs.h
-index 1cd9b6305b06..46b95944533c 100644
---- a/drivers/usb/storage/unusual_devs.h
-+++ b/drivers/usb/storage/unusual_devs.h
-@@ -2372,6 +2372,11 @@ UNUSUAL_DEV( 0xed10, 0x7636, 0x0001, 0x0001,
- 		"Digital MP3 Audio Player",
- 		USB_SC_DEVICE, USB_PR_DEVICE, NULL, US_FL_NOT_LOCKABLE ),
+ static bool usb_match_any_interface(struct usb_device *udev,
+ 				    const struct usb_device_id *id)
+ {
+diff --git a/drivers/usb/core/usb.h b/drivers/usb/core/usb.h
+index cf4783cf661a..3ad0ee57e859 100644
+--- a/drivers/usb/core/usb.h
++++ b/drivers/usb/core/usb.h
+@@ -37,6 +37,9 @@ extern void usb_authorize_interface(struct usb_interface *);
+ extern void usb_detect_quirks(struct usb_device *udev);
+ extern void usb_detect_interface_quirks(struct usb_device *udev);
+ extern void usb_release_quirk_list(void);
++extern bool usb_endpoint_is_blacklisted(struct usb_device *udev,
++		struct usb_host_interface *intf,
++		struct usb_endpoint_descriptor *epd);
+ extern int usb_remove_device(struct usb_device *udev);
  
-+UNUSUAL_DEV(0x0584, 0x0222, 0x0000, 0xffff,
-+		"Ratoc",
-+		"U2SCX USB SCSI converter",
-+		USB_SC_DEVICE, USB_PR_DEVICE, usb_stor_ratoc_u2scx_init, 0),
+ extern int usb_get_device_descriptor(struct usb_device *dev,
+diff --git a/include/linux/usb/quirks.h b/include/linux/usb/quirks.h
+index a1be64c9940f..22c1f579afe3 100644
+--- a/include/linux/usb/quirks.h
++++ b/include/linux/usb/quirks.h
+@@ -69,4 +69,7 @@
+ /* Hub needs extra delay after resetting its port. */
+ #define USB_QUIRK_HUB_SLOW_RESET		BIT(14)
+ 
++/* device has blacklisted endpoints */
++#define USB_QUIRK_ENDPOINT_BLACKLIST		BIT(15)
 +
- /* Unusual uas devices */
- #if IS_ENABLED(CONFIG_USB_UAS)
- #include "unusual_uas.h"
+ #endif /* __LINUX_USB_QUIRKS_H */
 -- 
 2.24.1
 
