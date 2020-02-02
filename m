@@ -2,117 +2,81 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5085514FEDF
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Feb 2020 20:29:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5F7A114FEE9
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Feb 2020 20:35:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726952AbgBBT3P (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 2 Feb 2020 14:29:15 -0500
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:38222 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726290AbgBBT3O (ORCPT
+        id S1726987AbgBBTfB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 2 Feb 2020 14:35:01 -0500
+Received: from mailgate.kemenperin.go.id ([202.47.80.81]:52280 "EHLO
+        mailgate.kemenperin.go.id" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726290AbgBBTfB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 2 Feb 2020 14:29:14 -0500
-Received: by mail-pg1-f193.google.com with SMTP id a33so6600961pgm.5;
-        Sun, 02 Feb 2020 11:29:14 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=83XBXAdF60qQhjfbLi9bwa5VGB/pa56aRpXZec7GZUQ=;
-        b=phTQ09+j8Vr2PTCfUXpoYipZuNKH07aPv2Zc4kKmqWltkBWIFf9lbdsKaJi04tqGKB
-         89O9EaYkOjA51Y7sM+LHx35FD96pzQrI8ycxQF5cEY/yC1ssICLlZEQUycHoZWIVUWt2
-         q16FVK+zhYaWdLk8XAHU1LN0lvwpKUL99e4YsRBtm7+KfvKJwYQvUyk+CtcydCMaq+ET
-         221+uh0dgiGXI2gstojGhDXQ1o8QOETUOOtvRTfRA68FI1vzrH0FMON1RKItRVa6CRuq
-         g8b3vyU06z53cNAR6K9+60lftqNVoGeOuyjvd2bJRGZh6EoIfJa1jV/TIfNInWanSkyq
-         RaVw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=83XBXAdF60qQhjfbLi9bwa5VGB/pa56aRpXZec7GZUQ=;
-        b=VN8H8mCN2nmRVpbvUQ1jbu9U5uQDwy8dP6fwvMAMeAKOHWyxQE000z3BAmfxISjkF2
-         1l5ci0nmLwrhnKJmjaGCVJHzxQfFqHKYIuuIE4d4kHGx5W/EdgprH34JdKuANGQVKTJf
-         3RaMHW+bg8gU7EXOR1ciT9vXFIBQ8JIky8mm5CCvUYOzyH8HMk4DY3qqnqOfu9MAA74m
-         5ddu6PqJmmdfMxipSHcw7W72GA693MqMxZ49n9rak8xYEWvuWa3otYvjQ6Fk18AJWDcG
-         T/4j0jKfc5+tQnt7qMSmrIq3qd76u9mHknroHOzrgDapaPiwi5VArSjPH8UvE1+lcvb7
-         3oKg==
-X-Gm-Message-State: APjAAAXIYN+rIn9rYVJ+yBqCkllJuwprJWOO/UYQ6H4LTLQxKJrozHfK
-        aWmhrFDa6SJv74qkUlAFZhQWiFnG
-X-Google-Smtp-Source: APXvYqzJztCs5B5fO2HsKuk9KrOTKzLnJc/BQ7QWxXvbl/crt2aXnI7p1PJyFU1wfbUJKbCsn2dMEA==
-X-Received: by 2002:a63:8dc4:: with SMTP id z187mr5569042pgd.68.1580671754231;
-        Sun, 02 Feb 2020 11:29:14 -0800 (PST)
-Received: from localhost ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id b4sm17987390pfd.18.2020.02.02.11.29.13
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Sun, 02 Feb 2020 11:29:13 -0800 (PST)
-Date:   Sun, 2 Feb 2020 11:29:12 -0800
-From:   Guenter Roeck <linux@roeck-us.net>
-To:     Macpaul Lin <macpaul.lin@mediatek.com>
-Cc:     Mathias Nyman <mathias.nyman@intel.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        linux-usb@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Chunfeng Yun <chunfeng.yun@mediatek.com>,
-        Mediatek WSD Upstream <wsd_upstream@mediatek.com>,
-        Sriharsha Allenki <sallenki@codeaurora.org>
-Subject: Re: [PATCH] xhci-mtk: Fix NULL pointer dereference with xhci_irq()
- for shared_hcd
-Message-ID: <20200202192912.GA20763@roeck-us.net>
-References: <1579246910-22736-1-git-send-email-macpaul.lin@mediatek.com>
+        Sun, 2 Feb 2020 14:35:01 -0500
+X-Greylist: delayed 665 seconds by postgrey-1.27 at vger.kernel.org; Sun, 02 Feb 2020 14:34:59 EST
+Received: from localhost (localhost [127.0.0.1])
+        by mailgate.kemenperin.go.id (Postfix) with ESMTP id 70B8CD234FF;
+        Mon,  3 Feb 2020 02:23:11 +0700 (WIB)
+Received: from mailgate.kemenperin.go.id ([127.0.0.1])
+        by localhost (mailgate.kemenperin.go.id [127.0.0.1]) (amavisd-new, port 10032)
+        with ESMTP id eTZw27PC2JqS; Mon,  3 Feb 2020 02:23:10 +0700 (WIB)
+Received: from mailgate.kemenperin.go.id (localhost [127.0.0.1])
+        by mailgate.kemenperin.go.id (Postfix) with ESMTPS id B1B74D234D3;
+        Mon,  3 Feb 2020 02:23:10 +0700 (WIB)
+DKIM-Filter: OpenDKIM Filter v2.10.3 mailgate.kemenperin.go.id B1B74D234D3
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kemenperin.go.id;
+        s=3298A942-BBC6-11E3-B333-483736368EC2; t=1580671390;
+        bh=Fw60tXhluqe2PVr4BH03lQ0Ge+VO3Zf7R81bcaw1OI8=;
+        h=Date:From:Message-ID:MIME-Version;
+        b=U7pTHlO5Qy3ivTYvPaN0lQ8+ONQOKvesaWGpIvsiESfHZrlMDDtc+dhN0kuhZ3+f2
+         2herD79NoF+m7q3nkFyDz4UywGPgAI1Dv+pui2IbxYOx9IfKyNjz1leYxkoAE1efB8
+         vD25NPZPhy7FZjeYSQYKVm0CXLkhTDtnc3ZK+NeI=
+Received: from mailgate.kemenperin.go.id (mailgate.kemenperin.go.id [10.1.0.89])
+        by mailgate.kemenperin.go.id (Postfix) with ESMTP id 9C3B7D22E64;
+        Mon,  3 Feb 2020 02:23:06 +0700 (WIB)
+Date:   Mon, 3 Feb 2020 02:23:06 +0700 (WIB)
+From:   Trust Online Credit Bvba <isetyoadi@kemenperin.go.id>
+Reply-To: "info@trustonlinecreditbvba.com" <info@trustonlinecreditbvba.com>
+Message-ID: <1128925571.829973.1580671386608.JavaMail.zimbra@kemenperin.go.id>
+Subject: lening
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1579246910-22736-1-git-send-email-macpaul.lin@mediatek.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+X-Originating-IP: [10.1.0.89]
+Thread-Index: H1xqTePng7Gxgjeg/qhz9EGG/bqhhg==
+Thread-Topic: lening
+To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jan 17, 2020 at 03:41:50PM +0800, Macpaul Lin wrote:
-> According to NULL pointer fix: https://tinyurl.com/uqft5ra
-> xhci: Fix NULL pointer dereference with xhci_irq() for shared_hcd
-> The similar issue has also been found in QC activities in Mediatek.
-> 
-> Here quote the description from the referenced patch as follows.
-> "Commit ("f068090426ea xhci: Fix leaking USB3 shared_hcd
-> at xhci removal") sets xhci_shared_hcd to NULL without
-> stopping xhci host. This results into a race condition
-> where shared_hcd (super speed roothub) related interrupts
-> are being handled with xhci_irq happens when the
-> xhci_plat_remove is called and shared_hcd is set to NULL.
-> Fix this by setting the shared_hcd to NULL only after the
-> controller is halted and no interrupts are generated."
-> 
-> Signed-off-by: Sriharsha Allenki <sallenki@codeaurora.org>
-> Signed-off-by: Macpaul Lin <macpaul.lin@mediatek.com>
-> ---
->  drivers/usb/host/xhci-mtk.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/usb/host/xhci-mtk.c b/drivers/usb/host/xhci-mtk.c
-> index b18a6baef204..c227c67f5dc5 100644
-> --- a/drivers/usb/host/xhci-mtk.c
-> +++ b/drivers/usb/host/xhci-mtk.c
-> @@ -593,11 +593,11 @@ static int xhci_mtk_remove(struct platform_device *dev)
->  	struct usb_hcd  *shared_hcd = xhci->shared_hcd;
->  
->  	usb_remove_hcd(shared_hcd);
-> -	xhci->shared_hcd = NULL;
->  	device_init_wakeup(&dev->dev, false);
->  
->  	usb_remove_hcd(hcd);
->  	usb_put_hcd(shared_hcd);
-> +	xhci->shared_hcd = NULL;
+Goedendag,
 
-I may be wrong, but I have some concerns that this replaces
-the NULL pointer access with a UAF.
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Het is ons een genoegen om u te schrijven me=
+t betrekking tot het verstrekken van leningen per postadvertentie. Trust On=
+line Credit Bvba, Wij werken onder een korte, duidelijke en begrijpelijke v=
+oorwaarden Wij verstrekken leningen tegen een lage rente Gewoonlijk van 1% =
+tot 3,5%. Uw specifieke tarief wordt u voorafgaand aan goedkeuring duidelij=
+k gemaakt.
 
-Guenter
+Merk op dat dit aanbod is voor serieus ingestelde personen, bedrijven en be=
+drijven. Ontvang uw lening om uw financi=C3=ABle problemen op te lossen, zo=
+als rekeningen afbetalen, nieuwe bedrijven oprichten, oude bedrijven opnieu=
+w vestigen.
 
->  	usb_put_hcd(hcd);
->  	xhci_mtk_sch_exit(mtk);
->  	xhci_mtk_clks_disable(mtk);
-> -- 
-> 2.18.0
+ge=C3=AFnteresseerde personen, bedrijven en bedrijven moeten contact met on=
+s opnemen via dit e-mailadres: info@trustonlinecreditbvba.com
+
+Laat deze kans niet voorbijgaan. Krijg uw lening om uw financi=C3=ABle prob=
+lemen op te lossen. Als u ge=C3=AFnteresseerd bent in onze lening, vult u d=
+it leningsaanvraagformulier onmiddellijk in.
+
+Jullie namen:
+Benodigde leningbedrag:
+Looptijd:
+Bezetting:
+Doel:
+Lening rente%:
+
+Wij wachten op uw snelle reactie.
+Ronny
