@@ -2,151 +2,77 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0F45F14FD73
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Feb 2020 15:08:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3FF0114FD7A
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Feb 2020 15:17:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726905AbgBBOIa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 2 Feb 2020 09:08:30 -0500
-Received: from mail.kernel.org ([198.145.29.99]:56368 "EHLO mail.kernel.org"
+        id S1726934AbgBBORZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 2 Feb 2020 09:17:25 -0500
+Received: from mga18.intel.com ([134.134.136.126]:6183 "EHLO mga18.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726669AbgBBOIa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 2 Feb 2020 09:08:30 -0500
-Received: from archlinux (cpc149474-cmbg20-2-0-cust94.5-4.cable.virginm.net [82.4.196.95])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 74D3B20643;
-        Sun,  2 Feb 2020 14:08:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1580652509;
-        bh=1gYVSw87cV5telUJWyrU4zFFINerB9YY8C8irZlxApA=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=ess6qBFo/F1BcnkklY0GwQ0BaBxBJsuYomqCrB30q1vmmC6dsjDMoKMpqMIUUZZUK
-         znJl3Dr37+R4USh1jUHGRUCdUaetljWY9diwl/hUxmdeR5wFzc/oo3d2k8GxHsPJkz
-         IPULSo+/5Rx0OTexcH3P9lIQTNvyGSRSCguT0AxY=
-Date:   Sun, 2 Feb 2020 14:08:23 +0000
-From:   Jonathan Cameron <jic23@kernel.org>
-To:     Olivier Moysan <olivier.moysan@st.com>
-Cc:     <knaack.h@gmx.de>, <lars@metafoo.de>, <pmeerw@pmeerw.net>,
-        <mcoquelin.stm32@gmail.com>, <alexandre.torgue@st.com>,
-        <fabrice.gasnier@st.com>, <linux-iio@vger.kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] iio: adc: stm32-dfsdm: fix sleep in atomic context
-Message-ID: <20200202140823.531aad39@archlinux>
-In-Reply-To: <20200121110256.12415-1-olivier.moysan@st.com>
-References: <20200121110256.12415-1-olivier.moysan@st.com>
-X-Mailer: Claws Mail 3.17.4 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        id S1726758AbgBBORY (ORCPT <rfc822;Linux-kernel@vger.kernel.org>);
+        Sun, 2 Feb 2020 09:17:24 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga004.fm.intel.com ([10.253.24.48])
+  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 02 Feb 2020 06:17:22 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.70,394,1574150400"; 
+   d="scan'208";a="253811052"
+Received: from kbl.sh.intel.com ([10.239.159.24])
+  by fmsmga004.fm.intel.com with ESMTP; 02 Feb 2020 06:17:20 -0800
+From:   Jin Yao <yao.jin@linux.intel.com>
+To:     acme@kernel.org, jolsa@kernel.org, peterz@infradead.org,
+        mingo@redhat.com, alexander.shishkin@linux.intel.com
+Cc:     Linux-kernel@vger.kernel.org, ak@linux.intel.com,
+        kan.liang@intel.com, yao.jin@intel.com,
+        Jin Yao <yao.jin@linux.intel.com>
+Subject: [PATCH v6 0/4] perf: Refactor the block info implementation
+Date:   Sun,  2 Feb 2020 22:16:51 +0800
+Message-Id: <20200202141655.32053-1-yao.jin@linux.intel.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 21 Jan 2020 12:02:56 +0100
-Olivier Moysan <olivier.moysan@st.com> wrote:
+This patch series refactors the block info functionalities to let them
+be used by other builtins and allow setting the output fmts flexibly.
 
-> This commit fixes the error message:
-> "BUG: sleeping function called from invalid context at kernel/irq/chip.c"
-> Suppress the trigger irq handler. Make the buffer transfers directly
-> in DMA callback, instead.
-> Push buffers without timestamps, as timestamps are not supported
-> in DFSDM driver.
-> 
-> Fixes: 11646e81d775 ("iio: adc: stm32-dfsdm: add support for buffer modes")
-> 
-> Signed-off-by: Olivier Moysan <olivier.moysan@st.com>
-Applied to the fixes-togreg branch of iio.git and marked for stable.
+It also supports the 'Sampled Cycles%' and 'Avg Cycles%' printed in
+colors.
 
-Thanks,
+ v6:
+ ---
+ Use __block_info__cmp to replace block_pair_cmp according to Arnaldo's
+ suggestions. Fix some issues found in block_info__cmp.
 
-Jonathan
+ New patches:
+ ------------
+ perf util: Fix wrong block address comparison in block_info__cmp
+ perf util: Use __block_info__cmp to replace block_pair_cmp
 
-> ---
-> There is the same issue on STM32 ADC driver.
-> The solution for ADC driver has been already discussed in the thread
-> https://lkml.org/lkml/2019/3/30/171
-> The current patch for STM32 DFSDM driver, bypasses the IIO IRQ trigger
-> handler, as proposed in this thread.
-> ---
->  drivers/iio/adc/stm32-dfsdm-adc.c | 43 +++++++------------------------
->  1 file changed, 10 insertions(+), 33 deletions(-)
-> 
-> diff --git a/drivers/iio/adc/stm32-dfsdm-adc.c b/drivers/iio/adc/stm32-dfsdm-adc.c
-> index 2aad2cda6943..76a60d93fe23 100644
-> --- a/drivers/iio/adc/stm32-dfsdm-adc.c
-> +++ b/drivers/iio/adc/stm32-dfsdm-adc.c
-> @@ -842,31 +842,6 @@ static inline void stm32_dfsdm_process_data(struct stm32_dfsdm_adc *adc,
->  	}
->  }
->  
-> -static irqreturn_t stm32_dfsdm_adc_trigger_handler(int irq, void *p)
-> -{
-> -	struct iio_poll_func *pf = p;
-> -	struct iio_dev *indio_dev = pf->indio_dev;
-> -	struct stm32_dfsdm_adc *adc = iio_priv(indio_dev);
-> -	int available = stm32_dfsdm_adc_dma_residue(adc);
-> -
-> -	while (available >= indio_dev->scan_bytes) {
-> -		s32 *buffer = (s32 *)&adc->rx_buf[adc->bufi];
-> -
-> -		stm32_dfsdm_process_data(adc, buffer);
-> -
-> -		iio_push_to_buffers_with_timestamp(indio_dev, buffer,
-> -						   pf->timestamp);
-> -		available -= indio_dev->scan_bytes;
-> -		adc->bufi += indio_dev->scan_bytes;
-> -		if (adc->bufi >= adc->buf_sz)
-> -			adc->bufi = 0;
-> -	}
-> -
-> -	iio_trigger_notify_done(indio_dev->trig);
-> -
-> -	return IRQ_HANDLED;
-> -}
-> -
->  static void stm32_dfsdm_dma_buffer_done(void *data)
->  {
->  	struct iio_dev *indio_dev = data;
-> @@ -874,11 +849,6 @@ static void stm32_dfsdm_dma_buffer_done(void *data)
->  	int available = stm32_dfsdm_adc_dma_residue(adc);
->  	size_t old_pos;
->  
-> -	if (indio_dev->currentmode & INDIO_BUFFER_TRIGGERED) {
-> -		iio_trigger_poll_chained(indio_dev->trig);
-> -		return;
-> -	}
-> -
->  	/*
->  	 * FIXME: In Kernel interface does not support cyclic DMA buffer,and
->  	 * offers only an interface to push data samples per samples.
-> @@ -906,7 +876,15 @@ static void stm32_dfsdm_dma_buffer_done(void *data)
->  			adc->bufi = 0;
->  			old_pos = 0;
->  		}
-> -		/* regular iio buffer without trigger */
-> +		/*
-> +		 * In DMA mode the trigger services of IIO are not used
-> +		 * (e.g. no call to iio_trigger_poll).
-> +		 * Calling irq handler associated to the hardware trigger is not
-> +		 * relevant as the conversions have already been done. Data
-> +		 * transfers are performed directly in DMA callback instead.
-> +		 * This implementation avoids to call trigger irq handler that
-> +		 * may sleep, in an atomic context (DMA irq handler context).
-> +		 */
->  		if (adc->dev_data->type == DFSDM_IIO)
->  			iio_push_to_buffers(indio_dev, buffer);
->  	}
-> @@ -1536,8 +1514,7 @@ static int stm32_dfsdm_adc_init(struct iio_dev *indio_dev)
->  	}
->  
->  	ret = iio_triggered_buffer_setup(indio_dev,
-> -					 &iio_pollfunc_store_time,
-> -					 &stm32_dfsdm_adc_trigger_handler,
-> +					 &iio_pollfunc_store_time, NULL,
->  					 &stm32_dfsdm_buffer_setup_ops);
->  	if (ret) {
->  		stm32_dfsdm_dma_release(indio_dev);
+ Unchanged patches:
+ ------------------
+ perf util: Flexible to set block info output formats
+ perf util: Support color ops to print block percents in color
+
+ v5:
+ ---
+ Only change the patch "perf util: Flexible to set block info output formats".
+ Other patches are not changed.
+
+Jin Yao (4):
+  perf util: Fix wrong block address comparison in block_info__cmp
+  perf util: Use __block_info__cmp to replace block_pair_cmp
+  perf util: Flexible to set block info output formats
+  perf util: Support color ops to print block percents in color
+
+ tools/perf/builtin-diff.c    |  21 +------
+ tools/perf/builtin-report.c  |  21 ++++++-
+ tools/perf/util/block-info.c | 106 +++++++++++++++++++++--------------
+ tools/perf/util/block-info.h |   9 ++-
+ 4 files changed, 91 insertions(+), 66 deletions(-)
+
+-- 
+2.17.1
 
