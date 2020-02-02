@@ -2,67 +2,105 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EC49814FC32
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Feb 2020 08:44:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B799214FC20
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Feb 2020 08:42:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727053AbgBBHox (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 2 Feb 2020 02:44:53 -0500
-Received: from szxga07-in.huawei.com ([45.249.212.35]:43514 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726501AbgBBHox (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 2 Feb 2020 02:44:53 -0500
-Received: from DGGEMS412-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id EF867CAA9F20E8809C09;
-        Sun,  2 Feb 2020 15:44:50 +0800 (CST)
-Received: from localhost.localdomain.localdomain (10.175.113.25) by
- DGGEMS412-HUB.china.huawei.com (10.3.19.212) with Microsoft SMTP Server id
- 14.3.439.0; Sun, 2 Feb 2020 15:44:41 +0800
-From:   YueHaibing <yuehaibing@huawei.com>
-To:     Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>,
-        "Matthias Brugger" <matthias.bgg@gmail.com>,
-        Jeff Chang <jeff_chang@richtek.com>
-CC:     YueHaibing <yuehaibing@huawei.com>, <alsa-devel@alsa-project.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-mediatek@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <kernel-janitors@vger.kernel.org>
-Subject: [PATCH -next] ASoC: Remove unused including <linux/version.h>
-Date:   Sun, 2 Feb 2020 07:39:17 +0000
-Message-ID: <20200202073917.195880-1-yuehaibing@huawei.com>
-X-Mailer: git-send-email 2.20.1
+        id S1726839AbgBBHmA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 2 Feb 2020 02:42:00 -0500
+Received: from esa6.hgst.iphmx.com ([216.71.154.45]:6569 "EHLO
+        esa6.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726483AbgBBHl7 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 2 Feb 2020 02:41:59 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
+  t=1580629318; x=1612165318;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=pVVPGA2WzFp5c3l0K1TYYcBXTEJeNaWFm/zchLzBFCA=;
+  b=cf2ItoUxjL/xL5atC6sNmYyExmt6O8Y61bVb6i3w/+2F+FL24MLq9X2R
+   MoJHhfniCgyr4E8KkwXzOOMTFuWH3dpnxBNXNdI6tCMKykM9siC0VyRIA
+   bqMNcLc0zbeEXG8JbqLLrcUZHo9WGxBQlqFdV6r2irl61DiFp5RBMFgtf
+   QIjU6BkLMK4l2wuR4n9TAwHpjaK89svnVgvrpeWp9hFOvXmclnNINqT94
+   uSmT/aqw4GxXs3FSlvR1XuWr0kWafsXqCs2CeY42HjEWfPQ7JpzIm99wk
+   +IoLQBN0hDBI/RtDXwIavLIWezMyjomJlCnEeyJYBPzVrvc1LBdWz2FHE
+   A==;
+IronPort-SDR: NqIJVL35WNHEZKQHDEvNvydj1asX/5Wz4FnqArP1S77by2vVlcwdeHpFstSuqDRimFvrXouUrr
+ olFFvl+/gFafOmW02tNhABdQJjNzUW8fJMXUc96uQTfopreUvtYQ3mo4Itf8/VCnyYm2kgbv8r
+ 675lgZvP4bm3xPBBhRMQ9e5dpqWjL9IXksIs00reMfOmBC5zXf7nY7D0GvpIuxkbTt2qeinQrU
+ rGruNABEftyRR7DbwQ/x7b5Ma4pB0sMiWI0OwYFYhUCEyei/vrIS2faEoOdHVZwvRylVhsasE0
+ HXw=
+X-IronPort-AV: E=Sophos;i="5.70,393,1574092800"; 
+   d="scan'208";a="130383374"
+Received: from uls-op-cesaip01.wdc.com (HELO uls-op-cesaep01.wdc.com) ([199.255.45.14])
+  by ob1.hgst.iphmx.com with ESMTP; 02 Feb 2020 15:41:58 +0800
+IronPort-SDR: kVRhrivDNyWmctJ7DiyIRuqWW6r25YYHWhxBiNlXdcdtMduKbMrEKvVyofYSHxMm+8p/jknHNs
+ 4m8kYwK1LWhAkMNRkxR9zdJagA0KHBd0sRaC+mCIWXISZvcYYtyWpKXGdJrTqR+F5u9HIQCNTO
+ 9JuhDxaBe4UcqN/+GF4AVUfl3LZ9/foik5Xw82ozm6v+eO57SMhc+BEBKsQPeEdvtscZze1TUa
+ rA8as9wwQCtBD/m+M9avwC7HPe1GcOddtG3rYP8byc1zR+vr1uHDEzrfpbSgWlo8mPA8drTcSh
+ phmLAQRudniqNwdwLY32xGRm
+Received: from uls-op-cesaip02.wdc.com ([10.248.3.37])
+  by uls-op-cesaep01.wdc.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Feb 2020 23:35:04 -0800
+IronPort-SDR: ZVz61PXsm9VRyiyyjzqEdOLP5A/vwyBDKs5tpCxcDi22TnzcIv8ggkvRmR2eFoiVjXZBMEuXlo
+ eQ6szzpkt+ZK1+rjPyzmAcxk2jhX2Hm39YchMFpDK84li39yCV13/enjT7/hE2JVZ3+Fj0Ec5Q
+ rceIKf3Jxs9Y5tE+Yfs61RPetgChKCCFkfxF6nMMCC8Zmbed6OJK7Jx1Hd5QUcadvCzOSDIBHG
+ JbY6gVReRZ8AlVEzr+MWu+qmg7xBDApVNBe6W41+3wYrrAlWNaYT5Soad5JFELTj/7GJ8Pcvb1
+ 9ug=
+WDCIronportException: Internal
+Received: from kfae419068.sdcorp.global.sandisk.com ([10.0.231.195])
+  by uls-op-cesaip02.wdc.com with ESMTP; 01 Feb 2020 23:41:56 -0800
+From:   Avi Shchislowski <avi.shchislowski@wdc.com>
+To:     Alim Akhtar <alim.akhtar@samsung.com>,
+        Avri Altman <avri.altman@wdc.com>,
+        "James E.J. Bottomley" <jejb@linux.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>
+Cc:     linux-kernel@vger.kernel.org, linux-scsi@vger.kernel.org,
+        Avi Shchislowski <avi.shchislowski@sandisk.com>
+Subject: [PATCH 0/5] scsi: ufs: ufs device as a temperature sensor
+Date:   Sun,  2 Feb 2020 09:41:48 +0200
+Message-Id: <1580629313-20078-1-git-send-email-avi.shchislowski@wdc.com>
+X-Mailer: git-send-email 1.9.1
 MIME-Version: 1.0
-Content-Type:   text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7BIT
-X-Originating-IP: [10.175.113.25]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Remove including <linux/version.h> that don't need it.
+From: Avi Shchislowski <avi.shchislowski@sandisk.com>
 
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
----
- sound/soc/codecs/mt6660.c | 1 -
- 1 file changed, 1 deletion(-)
+UFS3.0 allows using the ufs device as a temperature sensor. The
+purpose of this feature is to provide notification to the host of the
+UFS device case temperature. It allows reading of a rough estimate
+(+-10 degrees centigrade) of the current case temperature, And
+setting a lower and upper temperature bounds, in which the device
+will trigger an applicable exception event.
 
-diff --git a/sound/soc/codecs/mt6660.c b/sound/soc/codecs/mt6660.c
-index a36c416caad4..1a3515df1764 100644
---- a/sound/soc/codecs/mt6660.c
-+++ b/sound/soc/codecs/mt6660.c
-@@ -4,7 +4,6 @@
- 
- #include <linux/module.h>
- #include <linux/kernel.h>
--#include <linux/version.h>
- #include <linux/err.h>
- #include <linux/i2c.h>
- #include <linux/pm_runtime.h>
+We added the capability of responding to such notifications, while
+notifying the kernel's thermal core, which further exposes the thermal
+zone attributes to user space. UFS temperature attributes are all
+read-only, so only thermal read ops (.get_xxx) can be implemented.
 
+Avi Shchislowski (5):
+  scsi: ufs: Add ufs thermal support
+  scsi: ufs: export ufshcd_enable_ee
+  scsi: ufs: enable thermal exception event
+  scsi: ufs-thermal: implement thermal file ops
+  scsi: ufs: temperature atrributes add to ufs_sysfs
 
+ drivers/scsi/ufs/Kconfig       |  11 ++
+ drivers/scsi/ufs/Makefile      |   1 +
+ drivers/scsi/ufs/ufs-sysfs.c   |   6 +
+ drivers/scsi/ufs/ufs-thermal.c | 247 +++++++++++++++++++++++++++++++++++++++++
+ drivers/scsi/ufs/ufs-thermal.h |  25 +++++
+ drivers/scsi/ufs/ufs.h         |  20 +++-
+ drivers/scsi/ufs/ufshcd.c      |   9 +-
+ drivers/scsi/ufs/ufshcd.h      |  12 ++
+ 8 files changed, 329 insertions(+), 2 deletions(-)
+ create mode 100644 drivers/scsi/ufs/ufs-thermal.c
+ create mode 100644 drivers/scsi/ufs/ufs-thermal.h
 
-
+-- 
+1.9.1
 
