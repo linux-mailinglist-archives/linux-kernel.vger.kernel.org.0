@@ -2,54 +2,62 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8541114FF15
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Feb 2020 21:20:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 30E4114FF1A
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Feb 2020 21:27:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727160AbgBBUUR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 2 Feb 2020 15:20:17 -0500
-Received: from mail.kernel.org ([198.145.29.99]:57266 "EHLO mail.kernel.org"
+        id S1727025AbgBBU1h (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 2 Feb 2020 15:27:37 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58190 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726967AbgBBUUQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 2 Feb 2020 15:20:16 -0500
-Subject: Re: [GIT PULL] LEDs changes for v5.6-rc1
+        id S1726940AbgBBU1g (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 2 Feb 2020 15:27:36 -0500
+Received: from cakuba.hsd1.ca.comcast.net (c-73-93-4-247.hsd1.ca.comcast.net [73.93.4.247])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id CD63D20658;
+        Sun,  2 Feb 2020 20:27:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1580674816;
-        bh=GKuUAL4dTjqBl5hx3T3nm07ePFkvXZLt7KTf8eRwp3o=;
-        h=From:In-Reply-To:References:Date:To:Cc:From;
-        b=Bg+Jyo/ZmkU1l3edxBYuQ6E7QBsVl4LhBqtRYsLtxioKAXUlx/e5W+b7hfkmbyZow
-         8su2y/zALMf/CbqCUdvhr4bfi7ToI+ZuJB1VLtS8sIhUzydGE1wj8XVlLJsFZwricS
-         CeFGB+P3YgJ2zGtoesgld0t3x03W8mIBiIvyj2cU=
-From:   pr-tracker-bot@kernel.org
-In-Reply-To: <20200202190943.GA4506@duo.ucw.cz>
-References: <20200202190943.GA4506@duo.ucw.cz>
-X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <20200202190943.GA4506@duo.ucw.cz>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/pavel/linux-leds.git/
- tags/leds-5.6-rc1
-X-PR-Tracked-Commit-Id: 260718b3a35d23fe89d27cc7b5e8bd30f4bba1aa
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 545ae66582f7627870b719d318954d0252902519
-Message-Id: <158067481634.26837.14390277512508430424.pr-tracker-bot@kernel.org>
-Date:   Sun, 02 Feb 2020 20:20:16 +0000
-To:     Pavel Machek <pavel@ucw.cz>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        kernel list <linux-kernel@vger.kernel.org>,
-        jacek.anaszewski@gmail.com, linux-leds@vger.kernel.org
+        s=default; t=1580675256;
+        bh=RS07e3Qlj1ZE6hT/yNk/el9AIRQKLw4CMrmg2qCg/60=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=mIPiQLt75OcS5pTPQNLZx59Z0lqL6H64LQyCZQ98NAFNg7AKYOUa0brVUY209GSUN
+         jzlpVS9hpS178mm3k/pWhWt0Kaw5oXIhR2WZ9v9prdm+Vc3k5pA5D4xOxE1zPeOeop
+         G6IG0Rkd4V4ubK5pQCt45OMEzfWJMY4lHKcpO0Vs=
+Date:   Sun, 2 Feb 2020 12:27:35 -0800
+From:   Jakub Kicinski <kuba@kernel.org>
+To:     David Howells <dhowells@redhat.com>
+Cc:     netdev@vger.kernel.org, linux-afs@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net 3/4] rxrpc: Fix missing active use pinning of
+ rxrpc_local object
+Message-ID: <20200202122735.157d8b44@cakuba.hsd1.ca.comcast.net>
+In-Reply-To: <158047737679.133127.13567286503234295.stgit@warthog.procyon.org.uk>
+References: <158047735578.133127.17728061182258449164.stgit@warthog.procyon.org.uk>
+        <158047737679.133127.13567286503234295.stgit@warthog.procyon.org.uk>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The pull request you sent on Sun, 2 Feb 2020 20:09:43 +0100:
+On Fri, 31 Jan 2020 13:29:36 +0000, David Howells wrote:
+> diff --git a/net/rxrpc/conn_event.c b/net/rxrpc/conn_event.c
+> index 808a4723f868..abfff3e0921c 100644
+> --- a/net/rxrpc/conn_event.c
+> +++ b/net/rxrpc/conn_event.c
+> @@ -133,6 +133,8 @@ static void rxrpc_conn_retransmit_call(struct rxrpc_connection *conn,
+>  		break;
+>  	}
+>  
+> +	BUG_ON(!conn->params.local);
+> +	BUG_ON(!conn->params.local->socket);
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/pavel/linux-leds.git/ tags/leds-5.6-rc1
+Is this really, really not possible to convert those into a WARN_ON()
+and return?
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/545ae66582f7627870b719d318954d0252902519
+>  	ret = kernel_sendmsg(conn->params.local->socket, &msg, iov, ioc, len);
+>  	conn->params.peer->last_tx_at = ktime_get_seconds();
+>  	if (ret < 0)
 
-Thank you!
-
--- 
-Deet-doot-dot, I am a bot.
-https://korg.wiki.kernel.org/userdoc/prtracker
