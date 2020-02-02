@@ -2,108 +2,153 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A493E14FC96
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Feb 2020 11:27:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7F51014FCA0
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Feb 2020 11:41:26 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726205AbgBBK1k (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 2 Feb 2020 05:27:40 -0500
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:46644 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725942AbgBBK1k (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 2 Feb 2020 05:27:40 -0500
-Received: by mail-wr1-f67.google.com with SMTP id z7so14102682wrl.13
-        for <linux-kernel@vger.kernel.org>; Sun, 02 Feb 2020 02:27:39 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:reply-to:sender:from:date:message-id:subject:to;
-        bh=58vsavE7mK6l6wgmWQgTdDF2YOMMKjHY4y4L6RqmhrA=;
-        b=SxmlqonQLlhu5LsFUVrfq9l0MPGeIe0lHgUnkAJHNkFS1C3wyLubmXx0+HgXSRTogp
-         m+kYqAXrSaxCL2OxZULjU1dbY0Wunf0lH8Yg2g0qxf7iyL/0xPAHEtZFDOcgkrN0fvfi
-         ESAhc7U1DKd8FQacRrsCggDgQYBDUntk8yPHClgB7wQ00f49v4VRx9ZFMVbZGawaR+Wi
-         PThkwbrosJ6rQaFJq1vY1GgrIBckWFdT9hykfy9yxFtbHgIRyVLVorHYQxQIoRfqOyIt
-         rUSif26rq/N34x6o0wLWMmJAo6yi0CaMTyYehTOlJ7Yu/D74FXtg/NbpJZ9+6bXDxfcz
-         jayQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:reply-to:sender:from:date
-         :message-id:subject:to;
-        bh=58vsavE7mK6l6wgmWQgTdDF2YOMMKjHY4y4L6RqmhrA=;
-        b=ryagMSeUWGkmc6gZKcYX5MXE9ipUeASApFf9PvZk0rYAbfxp3l8shwQSbcx/ZHHggo
-         8QwGGi43s2ZZlPYPSHx/oIfKqfk5mzWdIE5lKiUeNfC6Fg21DqfWKqpKn+p5t/4AZRSI
-         P06TNTbjhUXLBZAeWX9Fg/Ns7iDYDGAf/3Eg1ng8msonJ2klZL1DmIA+YAhikehGfIiv
-         nj3wVfgGG5Qigl7oaQi2UugEot2kj7gBYEbEhpubGP1Q7+6dYt+f8RZUntIIhpWE8h4M
-         o7kcHybD84mYRe5nGAnLOutYrWdCAu2lFog3Ig4ils7P7ieYB83XXRSNswIrIeb8aUxh
-         1C+w==
-X-Gm-Message-State: APjAAAWKLDMpoYw8ErbijMwuomOmvyPeurFmCJBqmUKIAOcbOBnaBGR1
-        P/ffbb+IMwMiupxOxzFngCzAmFCZni2n9sbFz3U=
-X-Google-Smtp-Source: APXvYqyhF7paDTkpX6llc0iNCRZ9LTBjhvJHWh9//jXJScelidMvj3LcVZf/7CLiJukvncOLWjWnIuOzXyEbHgdbcIo=
-X-Received: by 2002:a5d:61d1:: with SMTP id q17mr9911251wrv.156.1580639258859;
- Sun, 02 Feb 2020 02:27:38 -0800 (PST)
+        id S1726561AbgBBKlX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 2 Feb 2020 05:41:23 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60540 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725956AbgBBKlX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 2 Feb 2020 05:41:23 -0500
+Received: from archlinux (cpc149474-cmbg20-2-0-cust94.5-4.cable.virginm.net [82.4.196.95])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id C8D71206D3;
+        Sun,  2 Feb 2020 10:41:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1580640081;
+        bh=DjmOvLJxu6nBLbbp0bEQYG1bPbOlqP5KLiv8uBsHamI=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=zsScn23DkdukUMrzFoLdl+wnQYrmmOGE0mcqREqvOfdr7AbfUVYlITC5u90Ecxxfa
+         XH/vUshLwOEDVRCdYccZFqmaMQDYyi8zBdLfGvcjoSC3+RjVaRdmPitpumWMoDp9A0
+         J2eCm5TVek2pOh0qrS30wga6fSYe3Et/NPRPkJVY=
+Date:   Sun, 2 Feb 2020 10:41:16 +0000
+From:   Jonathan Cameron <jic23@kernel.org>
+To:     Beniamin Bia <beniamin.bia@analog.com>
+Cc:     <lars@metafoo.de>, <Michael.Hennerich@analog.com>,
+        <pmeerw@pmeerw.net>, <linux-iio@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <biabeniamin@outlook.com>,
+        <knaack.h@gmx.de>, <robh+dt@kernel.org>, <mark.rutland@arm.com>,
+        <devicetree@vger.kernel.org>
+Subject: Re: [PATCH v4 1/5] iio: core: Handle 'dB' suffix in core
+Message-ID: <20200202104116.4f9fa9f3@archlinux>
+In-Reply-To: <20200129142301.13918-2-beniamin.bia@analog.com>
+References: <20200129142301.13918-1-beniamin.bia@analog.com>
+        <20200129142301.13918-2-beniamin.bia@analog.com>
+X-Mailer: Claws Mail 3.17.4 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Reply-To: ebrimsegun@yandex.com
-Received: by 2002:adf:d0cd:0:0:0:0:0 with HTTP; Sun, 2 Feb 2020 02:27:38 -0800 (PST)
-From:   Olusegun Ebrima <lumebrima@gmail.com>
-Date:   Sun, 2 Feb 2020 03:27:38 -0700
-X-Google-Sender-Auth: wqoHMCHiQjDBYK3P0rMTqQWmyCI
-Message-ID: <CAK3ncCjGFAVF3CHMo-R-U7SHVQBKKC53nGcjr2G6LoLtMPfNCA@mail.gmail.com>
-Subject: Get back to me for more details on this noble project of mine
-To:     undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Greetings from Mr.Olusegun,
-Permit me to inform you of my desire of going into business
-relationship with you, I know this message will sounds very strange to
-you, We live in a global world today, and with the help of Internet
-technology one can easily communicate with one another all around the
-world without knowing him or her in person, what matters will be the
-trust and the Information's you got about the person. In this case we
-can understand our self and work like one family.
+On Wed, 29 Jan 2020 16:22:57 +0200
+Beniamin Bia <beniamin.bia@analog.com> wrote:
 
-I currently hold the post of Internal Audit Manager of our bank I got
-your email account while searching for a business oriented personality
-in my private study in the internet. I have a business proposal which
-will benefit both of us, The amount of money involved is (38,850,000
-Million Dollars)  without any trouble, to be transferred to an
-offshore account with your assistance acting as beneficiary and
-next-of-kin to the funds; it is 100% risk free.
+> This patch handles the db suffix used for writing micro db values.
+> 
+> Signed-off-by: Beniamin Bia <beniamin.bia@analog.com>
+> ---
+>  drivers/iio/industrialio-core.c | 35 ++++++++++++++++++++++++++++++---
+>  1 file changed, 32 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/iio/industrialio-core.c b/drivers/iio/industrialio-core.c
+> index 65ff0d067018..b70111837420 100644
+> --- a/drivers/iio/industrialio-core.c
+> +++ b/drivers/iio/industrialio-core.c
+> @@ -769,17 +769,18 @@ static ssize_t iio_read_channel_info_avail(struct device *dev,
+>  }
+>  
+>  /**
+> - * iio_str_to_fixpoint() - Parse a fixed-point number from a string
+> + * __iio_str_to_fixpoint() - Parse a fixed-point number from a string
+>   * @str: The string to parse
+>   * @fract_mult: Multiplier for the first decimal place, should be a power of 10
+>   * @integer: The integer part of the number
+>   * @fract: The fractional part of the number
+> + * @scale_db: True if this should parse as dB
+>   *
+>   * Returns 0 on success, or a negative error code if the string could not be
+>   * parsed.
+>   */
+> -int iio_str_to_fixpoint(const char *str, int fract_mult,
+> -	int *integer, int *fract)
+> +int __iio_str_to_fixpoint(const char *str, int fract_mult,
+> +			  int *integer, int *fract, bool scale_db)
+>  {
+>  	int i = 0, f = 0;
+>  	bool integer_part = true, negative = false;
+> @@ -810,6 +811,10 @@ int iio_str_to_fixpoint(const char *str, int fract_mult,
+>  				break;
+>  			else
+>  				return -EINVAL;
+> +		} else if (!strncmp(str, " dB", sizeof(" dB") - 1) && scale_db) {
 
-My position as the senior auditor of the bank will be used to advance
-this deal. After the end of the business, Once this fund is
-transferred into your account, we will share the fund accordingly.
-45%, for you, 45%, for me, 5%, had been mapped out for the expense
-made in this transaction, 5% as a free will donation to charity and
-motherless babies homes in both our countries as sign of breakthrough
-and more blessings. Then after the money is been transferred into your
-account, I will visit your country for an investment under your kind
-control.
+I think we need to ignore spacing between the value and the dB.
 
-A lot of customers open private accounts with different Banks without
-the knowledge of their families and when they die, such money will be
-lost to the Bank unless someone comes to claim it.
+We could do that by ignoring spaces in general, but that will lead
+to odd results in other cases.  Perhaps we just need to handle " dB" and "dB"
+to cover likely options?
 
-If you know you are capable of involving and partaking this
-transaction, i will like you to provide immediately the below
-information's, to enable me use it and get you next of kin application
-form from my bank.
+> +			/* Ignore the dB suffix */
+> +			str += sizeof(" dB") - 1;
+> +			continue;
+>  		} else if (*str == '.' && integer_part) {
+>  			integer_part = false;
+>  		} else {
+> @@ -832,6 +837,22 @@ int iio_str_to_fixpoint(const char *str, int fract_mult,
+>  }
+>  EXPORT_SYMBOL_GPL(iio_str_to_fixpoint);
+>  
+> +/**
+> + * iio_str_to_fixpoint() - Parse a fixed-point number from a string
+> + * @str: The string to parse
+> + * @fract_mult: Multiplier for the first decimal place, should be a power of 10
+> + * @integer: The integer part of the number
+> + * @fract: The fractional part of the number
+> + *
+> + * Returns 0 on success, or a negative error code if the string could not be
+> + * parsed.
+> + */
+> +int iio_str_to_fixpoint(const char *str, int fract_mult,
+> +			int *integer, int *fract)
+> +{
+> +	return __iio_str_to_fixpoint(str, fract_mult, integer, fract, false);
+> +}
+> +
+>  static ssize_t iio_write_channel_info(struct device *dev,
+>  				      struct device_attribute *attr,
+>  				      const char *buf,
+> @@ -842,6 +863,7 @@ static ssize_t iio_write_channel_info(struct device *dev,
+>  	int ret, fract_mult = 100000;
+>  	int integer, fract = 0;
+>  	bool is_char = false;
+> +	bool scale_db = false;
+>  
+>  	/* Assumes decimal - precision based on number of digits */
+>  	if (!indio_dev->info->write_raw)
+> @@ -853,6 +875,9 @@ static ssize_t iio_write_channel_info(struct device *dev,
+>  		case IIO_VAL_INT:
+>  			fract_mult = 0;
+>  			break;
+> +		case IIO_VAL_INT_PLUS_MICRO_DB:
+> +			scale_db = true;
+> +			/* fall through */
+>  		case IIO_VAL_INT_PLUS_MICRO:
+>  			fract_mult = 100000;
+>  			break;
+> @@ -877,6 +902,10 @@ static ssize_t iio_write_channel_info(struct device *dev,
+>  		if (ret)
+>  			return ret;
+>  	}
+> +	ret = __iio_str_to_fixpoint(buf, fract_mult, &integer, &fract,
+> +				    scale_db);
+> +	if (ret)
+> +		return ret;
+>  
+>  	ret = indio_dev->info->write_raw(indio_dev, this_attr->c,
+>  					 integer, fract, this_attr->address);
 
-1. Full Name:
-2. Full Address:
-3. Telephone Number:
-4. Country:
-5. Occupation:
-6. Age:
-7. Sex:
-
-As soon as you reply, I will let you know the next steps and
-procedures and more details to follow in order to finalize this
-transaction immediately.
-
-I am waiting soonest to hear from you.
-
-Yours Sincerely,
-Mr. Olusegun Ebrima
