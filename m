@@ -2,62 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 30E4114FF1A
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Feb 2020 21:27:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2A36014FF2C
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Feb 2020 21:53:00 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727025AbgBBU1h (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 2 Feb 2020 15:27:37 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58190 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726940AbgBBU1g (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 2 Feb 2020 15:27:36 -0500
-Received: from cakuba.hsd1.ca.comcast.net (c-73-93-4-247.hsd1.ca.comcast.net [73.93.4.247])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CD63D20658;
-        Sun,  2 Feb 2020 20:27:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1580675256;
-        bh=RS07e3Qlj1ZE6hT/yNk/el9AIRQKLw4CMrmg2qCg/60=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=mIPiQLt75OcS5pTPQNLZx59Z0lqL6H64LQyCZQ98NAFNg7AKYOUa0brVUY209GSUN
-         jzlpVS9hpS178mm3k/pWhWt0Kaw5oXIhR2WZ9v9prdm+Vc3k5pA5D4xOxE1zPeOeop
-         G6IG0Rkd4V4ubK5pQCt45OMEzfWJMY4lHKcpO0Vs=
-Date:   Sun, 2 Feb 2020 12:27:35 -0800
-From:   Jakub Kicinski <kuba@kernel.org>
-To:     David Howells <dhowells@redhat.com>
-Cc:     netdev@vger.kernel.org, linux-afs@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net 3/4] rxrpc: Fix missing active use pinning of
- rxrpc_local object
-Message-ID: <20200202122735.157d8b44@cakuba.hsd1.ca.comcast.net>
-In-Reply-To: <158047737679.133127.13567286503234295.stgit@warthog.procyon.org.uk>
-References: <158047735578.133127.17728061182258449164.stgit@warthog.procyon.org.uk>
-        <158047737679.133127.13567286503234295.stgit@warthog.procyon.org.uk>
+        id S1727066AbgBBUw6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 2 Feb 2020 15:52:58 -0500
+Received: from sonic306-36.consmr.mail.bf2.yahoo.com ([74.6.132.235]:44042
+        "EHLO sonic306-36.consmr.mail.bf2.yahoo.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726971AbgBBUw6 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 2 Feb 2020 15:52:58 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1580676777; bh=3gwbdpD6fpTnU3AIhQs1dw9/oeXqxu71NA+1nQpVq+I=; h=Date:From:Reply-To:Subject:References:From:Subject; b=XxhT3WlE7UWjB/9yaJbTGFGWElDU0PSzmW3dkZoFleOEBvd9VI7qjMyiYN9tecKMZk+ADDxFRkiUnX1zsYTE2b7mV3WGwac17X3jPWzhUjc7WL1WsVFZPTQbtGsujBkBxNFWil+E6ykrLYZ2CL+hGy+k7vjfILW1/u4ktx7IMkX95zTqhIw/Sl2SUmMgsPKyNhd6PQQXglMXjWHIJLuH7Dl3jqC2IcKWcgDDbZixlI/yZc3WXnkQ6QMerqHli0M+I8OCYtRH98domCZL8lGzkXgfY9OLLIxEC9SAwn48V/bVmmURhgcdRsy5xfGorT7MHQYksC/cMMeUA2/JVDXPag==
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic306.consmr.mail.bf2.yahoo.com with HTTP; Sun, 2 Feb 2020 20:52:57 +0000
+Date:   Sun, 2 Feb 2020 20:40:53 +0000 (UTC)
+From:   "Mrs. Maureen Hinckley" <dd7@gczao.com>
+Reply-To: maurhinck7@gmail.com
+Message-ID: <419847631.488854.1580676053942@mail.yahoo.com>
+Subject: 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+References: <419847631.488854.1580676053942.ref@mail.yahoo.com>
+X-Mailer: WebService/1.1.15149 YMailNodin Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/79.0.3945.130 Safari/537.36 OPR/66.0.3515.44
+To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 31 Jan 2020 13:29:36 +0000, David Howells wrote:
-> diff --git a/net/rxrpc/conn_event.c b/net/rxrpc/conn_event.c
-> index 808a4723f868..abfff3e0921c 100644
-> --- a/net/rxrpc/conn_event.c
-> +++ b/net/rxrpc/conn_event.c
-> @@ -133,6 +133,8 @@ static void rxrpc_conn_retransmit_call(struct rxrpc_connection *conn,
->  		break;
->  	}
->  
-> +	BUG_ON(!conn->params.local);
-> +	BUG_ON(!conn->params.local->socket);
 
-Is this really, really not possible to convert those into a WARN_ON()
-and return?
 
->  	ret = kernel_sendmsg(conn->params.local->socket, &msg, iov, ioc, len);
->  	conn->params.peer->last_tx_at = ktime_get_seconds();
->  	if (ret < 0)
+I am Maureen Hinckley and my foundation is donating (Five hundred and fifty=
+ thousand USD) to you. Contact us via my email at (maurhinck7@gmail.com) fo=
+r further details.
 
+Best Regards,
+Mrs. Maureen Hinckley,
+Copyright =C2=A92020 The Maureen Hinckley Foundation All Rights Reserved.
