@@ -2,111 +2,174 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 52C0214FCFC
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Feb 2020 13:00:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7140314FD04
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Feb 2020 13:09:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726947AbgBBMAr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 2 Feb 2020 07:00:47 -0500
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:57124 "EHLO
+        id S1726679AbgBBMJD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 2 Feb 2020 07:09:03 -0500
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:42780 "EHLO
         heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726044AbgBBMAq (ORCPT
+        with ESMTP id S1726044AbgBBMJC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 2 Feb 2020 07:00:46 -0500
+        Sun, 2 Feb 2020 07:09:02 -0500
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
+        Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=a1w13oJxUPKC3CMdf8ErDJElBc0RWvzN5lWluAFbUNY=; b=ugBAHtHBbKW1qIrpyCiB43g8o
-        4Rrs5YqdfQKg+FeHmRx2xclTm/6Z19eKuY+Nq5c1BPEjK4Lk568FMjd3P4qU2En3SHF1hzb4B3Mmp
-        1hGc84NRhn22btpqX+CyrGXhx5I988QFmfgZ//Fxfbs05t29RlpUQH/RAE/OPcWazN0G8=;
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
+        List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
+        List-Archive; bh=SaO73ONbQdM0mbDqkJQ7S6ALPlHo+RxgSer8+54eNsc=; b=Hu2Oc6hNzvU7
+        ro9DWvxU/LISS94/NYcDE1XLEoS7lVb03Zwrhe/L6shup+YQy56QjZC1A44osRcxpJW/+36KFoRDA
+        ymrY/exov98SejEk6watqG9oRt8VpQcqGejFJsdt7Tc/hQE5oM+wRWd0uGORsRCSwp/YQ7qg8RrY1
+        qWRF8=;
 Received: from [151.216.144.116] (helo=fitzroy.sirena.org.uk)
         by heliosphere.sirena.org.uk with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.92)
         (envelope-from <broonie@sirena.org.uk>)
-        id 1iyDvT-0006pn-J5; Sun, 02 Feb 2020 12:00:31 +0000
+        id 1iyE3W-0006sp-J5; Sun, 02 Feb 2020 12:08:50 +0000
 Received: by fitzroy.sirena.org.uk (Postfix, from userid 1000)
-        id B8BFCD01AE4; Sat,  1 Feb 2020 11:34:47 +0000 (GMT)
-Date:   Sat, 1 Feb 2020 11:34:47 +0000
+        id 7B482D00C8C; Sun,  2 Feb 2020 12:08:49 +0000 (GMT)
 From:   Mark Brown <broonie@kernel.org>
-To:     John Garry <john.garry@huawei.com>
-Cc:     Andy Shevchenko <andy.shevchenko@gmail.com>,
-        Jiancheng Xue <xuejiancheng@hisilicon.com>,
-        chenxiang66@hisilicon.com,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        tudor.ambarus@microchip.com, Linuxarm <linuxarm@huawei.com>,
-        linux-spi <linux-spi@vger.kernel.org>,
-        Marek Vasut <marek.vasut@gmail.com>,
-        "open list:MEMORY TECHNOLOGY..." <linux-mtd@lists.infradead.org>,
-        liusimin4@huawei.com,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        wanghuiqiang <wanghuiqiang@huawei.com>, fengsheng5@huawei.com
-Subject: Re: [PATCH v2 2/3] spi: Add HiSilicon v3xx SPI NOR flash controller
- driver
-Message-ID: <20200201113447.GU3897@sirena.org.uk>
-References: <6dd45da9-9ccf-45f7-ed12-8f1406a0a56b@huawei.com>
- <20200113140627.GJ3897@sirena.org.uk>
- <CAHp75VfepiiVFLLmCwdBS0Z6tmR+XKBaOLg1qPPuz1McLjS=4Q@mail.gmail.com>
- <20200113142754.GL3897@sirena.org.uk>
- <20200113143403.GQ32742@smile.fi.intel.com>
- <0252a76d-7e2b-2c70-8b1b-0d041d972098@huawei.com>
- <CAHp75Ve=ZwJe2XV8Y1UN6sMe1ZHOBwUtRUD=aGqhR4Gc7BNUcg@mail.gmail.com>
- <136bd652-dcb9-3efa-a92f-2263cbf840ad@huawei.com>
- <CAHp75Vd=TY0tPfSHMSLTh1Pgg-E7MCP5Gym1yjpLgH0Tx-2xSg@mail.gmail.com>
- <c5cfb189-797e-11c4-f77a-61ec35395b15@huawei.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="p+IlF8Xh9KY56wTg"
-Content-Disposition: inline
-In-Reply-To: <c5cfb189-797e-11c4-f77a-61ec35395b15@huawei.com>
-X-Cookie: Programming is an unnatural act.
-User-Agent: Mutt/1.10.1 (2018-07-13)
+To:     Jon Hunter <jonathanh@nvidia.com>
+Cc:     alsa-devel@alsa-project.org, Ben Dooks <ben.dooks@codethink.co.uk>,
+        Dmitry Osipenko <digetx@gmail.com>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org,
+        Mark Brown <broonie@kernel.org>, stable@vger.kernel.org,
+        Takashi Iwai <tiwai@suse.com>,
+        Thierry Reding <thierry.reding@gmail.com>
+Subject: Applied "ASoC: tegra: Revert 24 and 32 bit support" to the asoc tree
+In-Reply-To:  <20200131091901.13014-1-jonathanh@nvidia.com>
+Message-Id:  <applied-20200131091901.13014-1-jonathanh@nvidia.com>
+X-Patchwork-Hint: ignore
+Date:   Sun,  2 Feb 2020 12:08:49 +0000 (GMT)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+The patch
 
---p+IlF8Xh9KY56wTg
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+   ASoC: tegra: Revert 24 and 32 bit support
 
-On Fri, Jan 31, 2020 at 04:26:46PM +0000, John Garry wrote:
-> On 31/01/2020 15:46, Andy Shevchenko wrote:
+has been applied to the asoc tree at
 
-> > So, it seems I stand corrected, the field is in right use, although
-> > cases like 0x10 and 0x20 should be carefully checked.
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
 
-> > We may teach kernel to get something meaningful out of it.
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
 
-> It seems that someone already had a go at that:
-> https://lore.kernel.org/lkml/20170317212143.bogj6efzyvvf24yd@sirena.org.uk/
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
 
-This is a discussion about supporting DT bindings for
-bits-per-word which is a different thing again, that's the size
-of a data word which is not connected with the physical wiring.
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
 
-Please include human readable descriptions of things like commits and
-issues being discussed in e-mail in your mails, this makes them much
-easier for humans to read especially when they have no internet access.
-I do frequently catch up on my mail on flights or while otherwise
-travelling so this is even more pressing for me than just being about
-making things a bit easier to read.
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
 
---p+IlF8Xh9KY56wTg
-Content-Type: application/pgp-signature; name="signature.asc"
+Thanks,
+Mark
 
------BEGIN PGP SIGNATURE-----
+From 961b91a93ea27495022b2bdc3ca0f608f2c97b5f Mon Sep 17 00:00:00 2001
+From: Jon Hunter <jonathanh@nvidia.com>
+Date: Fri, 31 Jan 2020 09:19:01 +0000
+Subject: [PATCH] ASoC: tegra: Revert 24 and 32 bit support
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl41YlYACgkQJNaLcl1U
-h9C2AAf+Lpm48M0VNHBo5p+A96lptZIvQ30jMdWzH4CZVehdGXJEwCKwJCK/KkL8
-Reo2uQc859QdiYYCMzkwto9l7KvqHDkAeY5r32N30CBTeDKJWSXCrz3nNH/wdt0Z
-V0yeI/zFW+8G0NVIyjXppXOeVZ7KJU+b+aDA6uMsqoSawagT+761zcAD57XQ+j4W
-J6ZgwafT3ztFYNQAkvkgGp78J4hxIvVmSsig3wKbqS50DsbtqAi3pV9k59QVGIKM
-gPKAj6olodQF2e4arzVHCOwoP/3xW6AggOSIJZLCFZrWMOYg9H7NUZz96zG/2b8B
-ZjNQNzX4WUF05WtjTxvNQ/nASdbVvg==
-=BpGX
------END PGP SIGNATURE-----
+Commit f3ee99087c8ca0ecfdd549ef5a94f557c42d5428 ("ASoC: tegra: Allow
+24bit and 32bit samples") added 24-bit and 32-bit support for to the
+Tegra30 I2S driver. However, there are two additional commits that are
+also needed to get 24-bit and 32-bit support to work correctly. These
+commits are not yet applied because there are still some review comments
+that need to be addressed. With only this change applied, 24-bit and
+32-bit support is advertised by the I2S driver, but it does not work and
+the audio is distorted. Therefore, revert this patch for now until the
+other changes are also ready.
 
---p+IlF8Xh9KY56wTg--
+Furthermore, a clock issue with 24-bit support has been identified with
+this change and so if we revert this now, we can also fix that in the
+updated version.
+
+Reported-by: Dmitry Osipenko <digetx@gmail.com>
+Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
+Tested-by: Dmitry Osipenko <digetx@gmail.com>
+Link: https://lore.kernel.org/r/20200131091901.13014-1-jonathanh@nvidia.com
+Signed-off-by: Mark Brown <broonie@kernel.org>
+Cc: stable@vger.kernel.org
+---
+ sound/soc/tegra/tegra30_i2s.c | 25 +++++--------------------
+ 1 file changed, 5 insertions(+), 20 deletions(-)
+
+diff --git a/sound/soc/tegra/tegra30_i2s.c b/sound/soc/tegra/tegra30_i2s.c
+index dbed3c5408e7..d59882ec48f1 100644
+--- a/sound/soc/tegra/tegra30_i2s.c
++++ b/sound/soc/tegra/tegra30_i2s.c
+@@ -127,7 +127,7 @@ static int tegra30_i2s_hw_params(struct snd_pcm_substream *substream,
+ 	struct device *dev = dai->dev;
+ 	struct tegra30_i2s *i2s = snd_soc_dai_get_drvdata(dai);
+ 	unsigned int mask, val, reg;
+-	int ret, sample_size, srate, i2sclock, bitcnt, audio_bits;
++	int ret, sample_size, srate, i2sclock, bitcnt;
+ 	struct tegra30_ahub_cif_conf cif_conf;
+ 
+ 	if (params_channels(params) != 2)
+@@ -137,19 +137,8 @@ static int tegra30_i2s_hw_params(struct snd_pcm_substream *substream,
+ 	switch (params_format(params)) {
+ 	case SNDRV_PCM_FORMAT_S16_LE:
+ 		val = TEGRA30_I2S_CTRL_BIT_SIZE_16;
+-		audio_bits = TEGRA30_AUDIOCIF_BITS_16;
+ 		sample_size = 16;
+ 		break;
+-	case SNDRV_PCM_FORMAT_S24_LE:
+-		val = TEGRA30_I2S_CTRL_BIT_SIZE_24;
+-		audio_bits = TEGRA30_AUDIOCIF_BITS_24;
+-		sample_size = 24;
+-		break;
+-	case SNDRV_PCM_FORMAT_S32_LE:
+-		val = TEGRA30_I2S_CTRL_BIT_SIZE_32;
+-		audio_bits = TEGRA30_AUDIOCIF_BITS_32;
+-		sample_size = 32;
+-		break;
+ 	default:
+ 		return -EINVAL;
+ 	}
+@@ -181,8 +170,8 @@ static int tegra30_i2s_hw_params(struct snd_pcm_substream *substream,
+ 	cif_conf.threshold = 0;
+ 	cif_conf.audio_channels = 2;
+ 	cif_conf.client_channels = 2;
+-	cif_conf.audio_bits = audio_bits;
+-	cif_conf.client_bits = audio_bits;
++	cif_conf.audio_bits = TEGRA30_AUDIOCIF_BITS_16;
++	cif_conf.client_bits = TEGRA30_AUDIOCIF_BITS_16;
+ 	cif_conf.expand = 0;
+ 	cif_conf.stereo_conv = 0;
+ 	cif_conf.replicate = 0;
+@@ -317,18 +306,14 @@ static const struct snd_soc_dai_driver tegra30_i2s_dai_template = {
+ 		.channels_min = 2,
+ 		.channels_max = 2,
+ 		.rates = SNDRV_PCM_RATE_8000_96000,
+-		.formats = SNDRV_PCM_FMTBIT_S32_LE |
+-			   SNDRV_PCM_FMTBIT_S24_LE |
+-			   SNDRV_PCM_FMTBIT_S16_LE,
++		.formats = SNDRV_PCM_FMTBIT_S16_LE,
+ 	},
+ 	.capture = {
+ 		.stream_name = "Capture",
+ 		.channels_min = 2,
+ 		.channels_max = 2,
+ 		.rates = SNDRV_PCM_RATE_8000_96000,
+-		.formats = SNDRV_PCM_FMTBIT_S32_LE |
+-			   SNDRV_PCM_FMTBIT_S24_LE |
+-			   SNDRV_PCM_FMTBIT_S16_LE,
++		.formats = SNDRV_PCM_FMTBIT_S16_LE,
+ 	},
+ 	.ops = &tegra30_i2s_dai_ops,
+ 	.symmetric_rates = 1,
+-- 
+2.20.1
+
