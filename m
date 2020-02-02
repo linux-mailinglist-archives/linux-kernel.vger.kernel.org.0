@@ -2,147 +2,110 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 33FFC14FBFC
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Feb 2020 07:15:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AA27E14FC02
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Feb 2020 07:51:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726483AbgBBGIC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 2 Feb 2020 01:08:02 -0500
-Received: from conssluserg-02.nifty.com ([210.131.2.81]:37824 "EHLO
-        conssluserg-02.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725857AbgBBGIC (ORCPT
+        id S1726805AbgBBGme (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 2 Feb 2020 01:42:34 -0500
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:43763 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726132AbgBBGmd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 2 Feb 2020 01:08:02 -0500
-Received: from mail-vs1-f47.google.com (mail-vs1-f47.google.com [209.85.217.47]) (authenticated)
-        by conssluserg-02.nifty.com with ESMTP id 01267vSo020752
-        for <linux-kernel@vger.kernel.org>; Sun, 2 Feb 2020 15:07:58 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-02.nifty.com 01267vSo020752
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1580623678;
-        bh=J3WU4e+zn67eERAVkmqy0bxRWEiSF9lbC2mFseAfKrA=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=mcvQxZLSO/2cVw1iKSo2MZ5t0bGBPAFSVrepEq+wRCtfs6O5UW9UuQAqochSaFInd
-         JJpqFqlJj8dLOiAk8bPswF07sK/67M1fEsJlF3coaD6GqOcUXLCEK+xOqPnJvkXYSM
-         jJhVXuLxeODOKBOWb+6/Tgnny8vBxyl7ogE2oA5ZylL5LhTwcdtBmNuUxga0QJLKma
-         zA0419nYeX4PPI+mu7TBtS/Djx0wHc3XsxDqIrXsaIxZFVCD4DJYsXOWUJQUzYxDZ/
-         cmqXUAPOjdUknesn2SYryYHeXS7KsD4lFx2TIm1Y4kS+/aDxXD5Dis4XaUZ0XdNicH
-         TPr1o7EyhfhIg==
-X-Nifty-SrcIP: [209.85.217.47]
-Received: by mail-vs1-f47.google.com with SMTP id p6so6941578vsj.11
-        for <linux-kernel@vger.kernel.org>; Sat, 01 Feb 2020 22:07:58 -0800 (PST)
-X-Gm-Message-State: APjAAAVCZp2U0RA0JAUjIcOriLPEPOqLJpy/3P0MAxUzAqCjedZktZIR
-        FAHQqjvh0weR8i1se2k+54MRC57694eb75Jnsag=
-X-Google-Smtp-Source: APXvYqxf0wxZTYPmk3EX9SthhY/Umnv48FrTys6+4NqcBy3NVavWV81H+xHza1pDXBzgBL2VsTzUoyCB0ObMa8T50Ic=
-X-Received: by 2002:a05:6102:1174:: with SMTP id k20mr8960579vsg.155.1580623676956;
- Sat, 01 Feb 2020 22:07:56 -0800 (PST)
+        Sun, 2 Feb 2020 01:42:33 -0500
+Received: by mail-pf1-f196.google.com with SMTP id s1so5747091pfh.10;
+        Sat, 01 Feb 2020 22:42:33 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=qFp00xtTn9+HJYhQIsB25sqv9DA/HyXUxZn21Jjag4k=;
+        b=JJWcLQmS6LoK030ta/ciEFPi/n/n/STKDsL2d+3zoYnBvLJmhY9bZQe0PoUch+DdXj
+         KbycJKii6M8vMohOq7X/qH7xJuFLnLVgmCTJeYNQ3mvGYu5JQxXN6XzyC7PNZoPYzUZM
+         gFi8qk7vY1f2lbLAv6L4gqI4r3iONdv7lXvgO98gJz6aul+JGbClol5nBAukntrJjgd6
+         MFxdnRtQSB079hEX5xus4m75e22C+cM8V/3exdBZ13W4CQFZ3J5AB7MhIhGEsUswWOtq
+         aFoXT+rhuO6X/1hENbMnK3D1Oo9F+yKiRXJrBRbNjPN2FLV40C2MbzbmLFLAT+T1j2sT
+         lHpQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=qFp00xtTn9+HJYhQIsB25sqv9DA/HyXUxZn21Jjag4k=;
+        b=Ho3cnJqFywwera2ulcZ08eEWPi6WSGfrJhibEIT3COmuxBeeyD4tjxen4ZRdRD65pT
+         O3WngSlt7TYhVTfsf2mr2I9OttWmhY7EiHZ2Gc/7VKdGmRKjk/kLXDLaPs5Cuatx7kTS
+         FRLQaLw1c2w8yN86VBpLpbrAHtS6U4P1ukqQXUzLY9ED0LrKKRYyOvsRCZtE328kQ2nO
+         SjEoClbgxkwL927ap8okCTPkPY2TVgHcIq52V4nOI/6/3g4WX0r/aFHJdXrz7uCZiUD9
+         dZ6QfnZuHq2rF5ac4sn9YyiN3fB52wjN48eSMVHnsV3ocZI6N5yt9fzx1x1f2ltkZYc2
+         2XXQ==
+X-Gm-Message-State: APjAAAXATUivHaogKsgf7px8fM9L1DX1BBWzhqg2tPr/sH5fnha+fYvr
+        v/M6XpmkBS1AG/ni+Mz4PUZqVgQG8zz5sw7+BpU=
+X-Google-Smtp-Source: APXvYqy5hrsX5P/2AM0Ag2o/3CoU0KHa9KXnczy1fPjnz2qfBQmS8B4l1BNOkk9BNScz3UFNLYQaWinpZPIAq41FQrc=
+X-Received: by 2002:aa7:9a42:: with SMTP id x2mr15208838pfj.71.1580625753247;
+ Sat, 01 Feb 2020 22:42:33 -0800 (PST)
 MIME-Version: 1.0
-References: <1580161806-8037-1-git-send-email-gvrose8192@gmail.com>
- <CAK7LNAQyh9CFgKd1DtAPFW8DuHNp1gn8YABuP8-LsF=hHK2DFw@mail.gmail.com>
- <f6ffa0d0-8214-8fc0-4fe9-4b70a1581d3e@gmail.com> <677aff5a-a52e-08ae-f341-547af08f7566@gmail.com>
-In-Reply-To: <677aff5a-a52e-08ae-f341-547af08f7566@gmail.com>
-From:   Masahiro Yamada <masahiroy@kernel.org>
-Date:   Sun, 2 Feb 2020 15:07:21 +0900
-X-Gmail-Original-Message-ID: <CAK7LNARsBQm8jTs6PZDHAVFX4GZ_=Ls-5MOutNJFOHBN29Gd5w@mail.gmail.com>
-Message-ID: <CAK7LNARsBQm8jTs6PZDHAVFX4GZ_=Ls-5MOutNJFOHBN29Gd5w@mail.gmail.com>
-Subject: Re: [PATCH] kbuild: Include external modules compile flags
-To:     Gregory Rose <gvrose8192@gmail.com>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        dev@openvswitch.org, dsahern@gmail.com
+References: <20200201161931.29665-1-lukas.bulwahn@gmail.com>
+In-Reply-To: <20200201161931.29665-1-lukas.bulwahn@gmail.com>
+From:   Tzvetomir Stoyanov <tz.stoyanov@gmail.com>
+Date:   Sun, 2 Feb 2020 08:42:21 +0200
+Message-ID: <CAPpZLN7jFvdAKU24PoQjjS7y6tyvi-bKM_oYZkikHD_TZeydmg@mail.gmail.com>
+Subject: Re: [PATCH RFC] MAINTAINERS: add TRACE EVENT LIBRARY section
+To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Cc:     Steven Rostedt <rostedt@goodmis.org>,
+        linux-trace-devel@vger.kernel.org, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jan 30, 2020 at 3:09 AM Gregory Rose <gvrose8192@gmail.com> wrote:
+On Sat, Feb 1, 2020 at 6:19 PM Lukas Bulwahn <lukas.bulwahn@gmail.com> wrote:
 >
+> The git history shows that the files under ./tools/lib/traceevent/ are
+> being developed and maintained by Tzetomir Stoyanov and Steven Rostedt
+> and are discussed on the linux-trace-devel list.
 >
-> On 1/28/2020 7:37 AM, Gregory Rose wrote:
-> > On 1/27/2020 7:35 PM, Masahiro Yamada wrote:
-> >> On Tue, Jan 28, 2020 at 6:50 AM Greg Rose <gvrose8192@gmail.com> wrote:
-> >>> Since this commit:
-> >>> 'commit 9b9a3f20cbe0 ("kbuild: split final module linking out into
-> >>> Makefile.modfinal")'
-> >>> at least one out-of-tree external kernel module build fails
-> >>> during the modfinal make phase because Makefile.modfinal does
-> >>> not include the ccflags-y variable from the exernal module's Kbuild.
-> >> ccflags-y is passed only for compiling C files in that directory.
-> >>
-> >> It is not used for compiling *.mod.c
-> >> This is true for both in-kernel and external modules.
-> >>
-> >> So, ccflags-y is not a good choice
-> >> for passing such flags that should be globally effective.
-> >>
-> >>
-> >> Maybe, KCFLAGS should work.
-> >>
-> >>
-> >> module:
-> >>         $(MAKE) KCFLAGS=...  M=$(PWD) -C /lib/modules/$(uname
-> >> -r)/build modules
-> >>
+> Add a suitable section in MAINTAINERS for patches to reach them.
 >
-> Hi Masahiro,
+> This was identified with a small script that finds all files only
+> belonging to "THE REST" according to the current MAINTAINERS file, and I
+> acted upon its output.
 >
-> I'm unable to get that to work.  KCFLAGS does not seem to be used in
-> Makefile.modfinal.
-
-
-I quickly tested it, and confirmed
-KCFLAGS works for external modules, too.
-
-
-Makefile.modfinal includes scripts/Makefile.lib
-
-
-So,  c_flags contains $(KCFLAGS)
-
- c_flags -> KBUILD_CFLAGS -> KCFLAGS
-
-
-
-
-
-
-> [snip]
-> >>> --- a/scripts/Makefile.modfinal
-> >>> +++ b/scripts/Makefile.modfinal
-> >>> @@ -21,6 +21,10 @@ __modfinal: $(modules)
-> >>>   modname = $(notdir $(@:.mod.o=))
-> >>>   part-of-module = y
-> >>>
-> >>> +# Include the module's Makefile to find KBUILD_EXTRA_SYMBOLS
-> >>> +include $(if $(wildcard $(KBUILD_EXTMOD)/Kbuild), \
-> >>> +             $(KBUILD_EXTMOD)/Kbuild)
-> >>> +
+> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+> ---
+> Ceco, Steven, I added the information based on what I could see from an
+> outsider view. Please change and more files to the entry if needed.
 >
-> I continue to wonder why this it is so bad to include the external
-> module's Kbuild.
-
-
-Because it is not correct behavior.
-
-
-> It used to be included in Makefile.modpost and did no harm, and in fact
-> was what
-> made our external build work at all in the past.  Without the ability to
-> define our
-> local kernel module build environment during the modfinal make I see no
-> way forward.
-
-
-As I said, ccflags-y is not intended to be
-passed to *.mod.c
-Upstream modules never rely on it.
-
-External module should not rely on it either.
-
-
+> applies cleanly on current master and next-20200131
 >
-> That said, I'm no expert on the Linux kernel Makefile
-> interdependencies.  If you
-> have some other idea we could try I'm game.
+> Ceco, congrats becoming a kernel maintainer :)
+>
+Thanks, Lukas!
+
+>  MAINTAINERS | 7 +++++++
+>  1 file changed, 7 insertions(+)
+>
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 1f77fb8cdde3..17eb358c3fda 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -16903,6 +16903,13 @@ T:     git git://git.infradead.org/users/jjs/linux-tpmdd.git
+>  S:     Maintained
+>  F:     drivers/char/tpm/
+>
+> +TRACE EVENT LIBRARY
+> +M:     Tzvetomir Stoyanov <tz.stoyanov@gmail.com>
+> +M:     Steven Rostedt <rostedt@goodmis.org>
+> +L:     linux-trace-devel@vger.kernel.org
+> +S:     Maintained
+> +F:     tools/lib/traceevent/
+> +
+>  TRACING
+>  M:     Steven Rostedt <rostedt@goodmis.org>
+>  M:     Ingo Molnar <mingo@redhat.com>
+> --
+> 2.17.1
+>
+
 
 -- 
-Best Regards
-Masahiro Yamada
+Tzvetomir (Ceco) Stoyanov
+VMware Open Source Technology Center
