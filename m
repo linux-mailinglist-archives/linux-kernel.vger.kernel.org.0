@@ -2,48 +2,48 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 480CB14FF54
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Feb 2020 22:20:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CB58714FF44
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Feb 2020 22:19:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727337AbgBBVTl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 2 Feb 2020 16:19:41 -0500
-Received: from mail-pl1-f193.google.com ([209.85.214.193]:44694 "EHLO
-        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727219AbgBBVTL (ORCPT
+        id S1727267AbgBBVTT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 2 Feb 2020 16:19:19 -0500
+Received: from mail-pj1-f51.google.com ([209.85.216.51]:55619 "EHLO
+        mail-pj1-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727223AbgBBVTL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Sun, 2 Feb 2020 16:19:11 -0500
-Received: by mail-pl1-f193.google.com with SMTP id d9so5015984plo.11;
-        Sun, 02 Feb 2020 13:19:09 -0800 (PST)
+Received: by mail-pj1-f51.google.com with SMTP id d5so5385535pjz.5;
+        Sun, 02 Feb 2020 13:19:11 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=CApnqFg6dAZdHAMhoDwm2LWWZ1aLumfh05lDg8StLtA=;
-        b=OdR7OyUhWCueywPWrKoWOPiNpevH5fUhLA9mhQFziQWq6oeHDZvw3DPqt3AaAXOw87
-         H2Ngmu5zB3r8ZQ9+/CpWeJhgXhHhJelkA0Hwv4cFPtoZDGel2iNSNB6kaKGdU2s+2b1V
-         mGrDOt+jIslxRLg17+fitXzfUuNS7ZZZdyxeCVpb0ytCWlX5GaFZ1JT4S2DM8IJ0NARj
-         vvfOSrTTO5DaR5LhvXYx5wsHJqCJA5Xy3WIVKFIZ7kciCBQCtqlYHcBQKC2N+zRfX5qw
-         EsSfQPph0HD2I5ck6/tZLixz7xKAN5UpisoszBxuJ3edgvkfq796mihiWeTRFeR8qCKR
-         dOEg==
+        bh=lzwVHc1k/dY+x845Gy9RdQHoQfS2nfs3A+KYo1foc+0=;
+        b=H2qx4E2Nhhp/BK97BF1fSINkDJ/idHIamceUiP6CjL6p57LV7ch1P3F1LBIno+/V7C
+         JCGivnzqrNKP8ZuMgrYAwPZ+g656v7GkQb1aTxvaeN7Q3paP1QYJDximmditdTZlBGg6
+         O+ysRhTLoLXbRm72LcVzhRpCJb1E/XxDI6jfePpFplSwJnqD2AWxXanuNWFGWkCSCFjX
+         7gh6iUcIEutC9wVbOuZZwV3DtyZVkLVBAP+RphWo9XibaOjKaBhnatufScJOlmHto115
+         d6g4IUOfrz7sgJDN9L6/nanBoqYiGEz8ofAzQfyfDikuAnIJK8l9J9pW8wYLGArisZCq
+         Muog==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=CApnqFg6dAZdHAMhoDwm2LWWZ1aLumfh05lDg8StLtA=;
-        b=tHs7wKLKaxS9PQ02cSVu/6wohsBbXAiHstaZoPfe723C/PqQ0tXUUz0lLzkqgHG716
-         P/FdW7YErhvFmbnc5wzxJPd2rNmSnlzKnOphYgwF9kVagOe6/a9wemrxSINntKNj4JoB
-         Bj6c2aThQSFzNqLkDkDxuY4xBCoSLwKwWa5dNNdJqpDhIndkZxS3wrWYgjxxjjV1fwa2
-         YneIA4e7uVOxwj3IspvmmUTp9hxUgIJsxH2TNId6Ab7voZtdnzBa3ZJrUXDhvllNyT1l
-         68SX6Br7tybn0dhGXpWFMFDn9OP+DTYzHc5tQ/Od96kLFsc9tbe1jH4sROV35Lnr+ZIf
-         d2/A==
-X-Gm-Message-State: APjAAAUpJ0aizy6bqW8WtAN5WskPP9VuGpV72C4c8LpD07hOlaCcmfsz
-        PPL9YvKSLy4uU+Tv7mmiRtLOFjBP
-X-Google-Smtp-Source: APXvYqxHPR3/QXzPWDEAYpCdrDvxmozm3gOtRBBYqdU0CamZVu9N8hjZFtU/72TwTeU9l/DPURiD6w==
-X-Received: by 2002:a17:902:8bc7:: with SMTP id r7mr17315291plo.12.1580678349098;
-        Sun, 02 Feb 2020 13:19:09 -0800 (PST)
+        bh=lzwVHc1k/dY+x845Gy9RdQHoQfS2nfs3A+KYo1foc+0=;
+        b=owYPBkNDrXy8cdmzhMRDnCVpPVEtCic36AdI0iG1GZtF2wVzCBYrA013G80OHjw70I
+         vPMpVV1ywBwM4XlyXsGOguGh7tA4MxGch5PhnHHl9MD8yIDCLY+MAMuUdJqBDCVyFvYl
+         ORsHi/uAFnv8JR5VfiOlG2A+buk7Lo/uJtmuNdtwDlzBfOM+WVmJMN0D+vPLiCkAmqaO
+         8krPAYt/DN/ZnKUVbhvz0Prny0QKuroBtAfoTjrVQCL23VAWjT70secPAk74MoolYnUG
+         z6myMG3TBSky+GtSfvt5gyEQ7INX6vPfEHttgh2uJ3VPQkO28qnCAxaf6DHi3ZdZ4gnW
+         yw0g==
+X-Gm-Message-State: APjAAAVaDNtchBKRcXvPLh0WTnBD/3Is58ZWpK/4BC6y5nYlSTZ0JXvE
+        HOf4Z7/bqP/8j/8aWg9XsRaSvK1Z
+X-Google-Smtp-Source: APXvYqwpg4xdPeG2V0xlCQCQTflLB4Gel0Sq5vaGv2Q+wOl7EIu98sLT2K4/HtfyYhyrZVMx7mAlUA==
+X-Received: by 2002:a17:90a:2545:: with SMTP id j63mr26212455pje.128.1580678350712;
+        Sun, 02 Feb 2020 13:19:10 -0800 (PST)
 Received: from localhost.localdomain (ip68-111-84-250.oc.oc.cox.net. [68.111.84.250])
-        by smtp.gmail.com with ESMTPSA id y24sm8755639pge.72.2020.02.02.13.19.07
+        by smtp.gmail.com with ESMTPSA id y24sm8755639pge.72.2020.02.02.13.19.09
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 02 Feb 2020 13:19:08 -0800 (PST)
+        Sun, 02 Feb 2020 13:19:10 -0800 (PST)
 From:   Florian Fainelli <f.fainelli@gmail.com>
 To:     linux-arm-kernel@vger.kernel.org
 Cc:     devicetree@vger.kernel.org,
@@ -63,9 +63,9 @@ Cc:     devicetree@vger.kernel.org,
         ARCHITECTURE), linux-kernel@vger.kernel.org (open list),
         linux-rpi-kernel@lists.infradead.org (moderated list:BROADCOM
         BCM2711/BCM2835 ARM ARCHITECTURE)
-Subject: [PATCH 07/12] dt-bindings: arm: bcm: Convert BCM23550 to YAML
-Date:   Sun,  2 Feb 2020 13:18:22 -0800
-Message-Id: <20200202211827.27682-8-f.fainelli@gmail.com>
+Subject: [PATCH 08/12] dt-bindings: arm: bcm: Convert BCM4708 to YAML
+Date:   Sun,  2 Feb 2020 13:18:23 -0800
+Message-Id: <20200202211827.27682-9-f.fainelli@gmail.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20200202211827.27682-1-f.fainelli@gmail.com>
 References: <20200202211827.27682-1-f.fainelli@gmail.com>
@@ -74,66 +74,131 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Update the Broadcom BCM23550 SoC binding document for boards/SoCs to use
-YAML. Verified with dt_binding_check and dtbs_check.
+Update the Broadcom BCM4708 SoC family binding document for boards/SoCs
+to use YAML. Verified with dt_binding_check and dtbs_check.
 
 Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
 ---
- .../bindings/arm/bcm/brcm,bcm23550.txt        | 15 ------------
- .../bindings/arm/bcm/brcm,bcm23550.yaml       | 23 +++++++++++++++++++
- 2 files changed, 23 insertions(+), 15 deletions(-)
- delete mode 100644 Documentation/devicetree/bindings/arm/bcm/brcm,bcm23550.txt
- create mode 100644 Documentation/devicetree/bindings/arm/bcm/brcm,bcm23550.yaml
+ .../bindings/arm/bcm/brcm,bcm4708.txt         | 15 ----
+ .../bindings/arm/bcm/brcm,bcm4708.yaml        | 88 +++++++++++++++++++
+ 2 files changed, 88 insertions(+), 15 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/arm/bcm/brcm,bcm4708.txt
+ create mode 100644 Documentation/devicetree/bindings/arm/bcm/brcm,bcm4708.yaml
 
-diff --git a/Documentation/devicetree/bindings/arm/bcm/brcm,bcm23550.txt b/Documentation/devicetree/bindings/arm/bcm/brcm,bcm23550.txt
+diff --git a/Documentation/devicetree/bindings/arm/bcm/brcm,bcm4708.txt b/Documentation/devicetree/bindings/arm/bcm/brcm,bcm4708.txt
 deleted file mode 100644
-index 080baad923d6..000000000000
---- a/Documentation/devicetree/bindings/arm/bcm/brcm,bcm23550.txt
+index 8608a776caa7..000000000000
+--- a/Documentation/devicetree/bindings/arm/bcm/brcm,bcm4708.txt
 +++ /dev/null
 @@ -1,15 +0,0 @@
--Broadcom BCM23550 device tree bindings
----------------------------------------
+-Broadcom BCM4708 device tree bindings
+--------------------------------------------
 -
--This document describes the device tree bindings for boards with the BCM23550
--SoC.
+-Boards with the BCM4708 SoC shall have the following properties:
 -
 -Required root node property:
--  - compatible: brcm,bcm23550
 -
--Example:
--	/ {
--		model = "BCM23550 SoC";
--		compatible = "brcm,bcm23550";
--		[...]
--	}
-diff --git a/Documentation/devicetree/bindings/arm/bcm/brcm,bcm23550.yaml b/Documentation/devicetree/bindings/arm/bcm/brcm,bcm23550.yaml
+-bcm4708
+-compatible = "brcm,bcm4708";
+-
+-bcm4709
+-compatible = "brcm,bcm4709";
+-
+-bcm53012
+-compatible = "brcm,bcm53012";
+diff --git a/Documentation/devicetree/bindings/arm/bcm/brcm,bcm4708.yaml b/Documentation/devicetree/bindings/arm/bcm/brcm,bcm4708.yaml
 new file mode 100644
-index 000000000000..7a828ccd24f8
+index 000000000000..d48313c7ae45
 --- /dev/null
-+++ b/Documentation/devicetree/bindings/arm/bcm/brcm,bcm23550.yaml
-@@ -0,0 +1,23 @@
++++ b/Documentation/devicetree/bindings/arm/bcm/brcm,bcm4708.yaml
+@@ -0,0 +1,88 @@
 +# SPDX-License-Identifier: GPL-2.0
 +%YAML 1.2
 +---
-+$id: http://devicetree.org/schemas/arm/bcm/brcm,bcm23550.yaml#
++$id: http://devicetree.org/schemas/arm/bcm/brcm,bcm4708.yaml#
 +$schema: http://devicetree.org/meta-schemas/core.yaml#
 +
-+title: Broadcom BCM23550 device tree bindings
++title: Broadcom BCM4708 device tree bindings
++
++description:
++  Broadcom BCM4708/47081/4709/47094/53012 Wi-Fi/network SoCs based
++  on the iProc architecture (Northstar).
 +
 +maintainers:
 +  - Florian Fainelli <f.fainelli@gmail.com>
++  - Hauke Mehrtens <hauke@hauke-m.de>
++  - Rafal Milecki <zajec5@gmail.com>
 +
 +properties:
 +  $nodename:
 +    const: '/'
 +  compatible:
 +    oneOf:
-+      - description: BCM23550 based boards
++      - description: BCM4708 based boards
 +        items:
 +          - enum:
-+              - brcm,bcm23550-sparrow
-+          - const: brcm,bcm23550
++              - asus,rt-ac56u
++              - asus,rt-ac68u
++              - buffalo,wzr-1750dhp
++              - linksys,ea6300-v1
++              - linksys,ea6500-v2
++              - luxul,xap-1510v1
++              - luxul,xwc-1000
++              - netgear,r6250v1
++              - netgear,r6300v2
++              - smartrg,sr400ac
++              - brcm,bcm94708
++          - const: brcm,bcm4708
 +
++      - description: BCM47081 based boards
++        items:
++          - enum:
++              - asus,rt-n18u
++              - buffalo,wzr-600dhp2
++              - buffalo,wzr-900dhp
++              - luxul,xap-1410v1
++              - luxul,xwr-1200v1
++              - tplink,archer-c5-v2
++          - const: brcm,bcm47081
++          - const: brcm,bcm4708
++
++      - description: BCM4709 based boards
++        items:
++          - enum:
++              - asus,rt-ac87u
++              - buffalo,wxr-1900dhp
++              - linksys,ea9200
++              - netgear,r7000
++              - netgear,r8000
++              - tplink,archer-c9-v1
++              - brcm,bcm94709
++          - const: brcm,bcm4709
++          - const: brcm,bcm4708
++
++      - description: BCM47094 based boards
++        items:
++          - enum:
++              - dlink,dir-885l
++              - linksys,panamera
++              - luxul,abr-4500-v1
++              - luxul,xap-1610-v1
++              - luxul,xbr-4500-v1
++              - luxul,xwc-2000-v1
++              - luxul,xwr-3100v1
++              - luxul,xwr-3150-v1
++              - netgear,r8500
++              - phicomm,k3
++          - const: brcm,bcm47094
++          - const: brcm,bcm4708
++
++      - description: BCM53012 based boards
++        items:
++          - enum:
++              - brcm,bcm953012er
++              - brcm,bcm953012hr
++              - brcm,bcm953012k
++          - const: brcm,brcm53012
++          - const: brcm,bcm4708
 +...
 -- 
 2.17.1
