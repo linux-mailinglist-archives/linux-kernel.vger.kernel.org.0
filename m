@@ -2,40 +2,75 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2A36014FF2C
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Feb 2020 21:53:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DD9E714FF20
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Feb 2020 21:42:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727066AbgBBUw6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 2 Feb 2020 15:52:58 -0500
-Received: from sonic306-36.consmr.mail.bf2.yahoo.com ([74.6.132.235]:44042
-        "EHLO sonic306-36.consmr.mail.bf2.yahoo.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726971AbgBBUw6 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 2 Feb 2020 15:52:58 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1580676777; bh=3gwbdpD6fpTnU3AIhQs1dw9/oeXqxu71NA+1nQpVq+I=; h=Date:From:Reply-To:Subject:References:From:Subject; b=XxhT3WlE7UWjB/9yaJbTGFGWElDU0PSzmW3dkZoFleOEBvd9VI7qjMyiYN9tecKMZk+ADDxFRkiUnX1zsYTE2b7mV3WGwac17X3jPWzhUjc7WL1WsVFZPTQbtGsujBkBxNFWil+E6ykrLYZ2CL+hGy+k7vjfILW1/u4ktx7IMkX95zTqhIw/Sl2SUmMgsPKyNhd6PQQXglMXjWHIJLuH7Dl3jqC2IcKWcgDDbZixlI/yZc3WXnkQ6QMerqHli0M+I8OCYtRH98domCZL8lGzkXgfY9OLLIxEC9SAwn48V/bVmmURhgcdRsy5xfGorT7MHQYksC/cMMeUA2/JVDXPag==
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic306.consmr.mail.bf2.yahoo.com with HTTP; Sun, 2 Feb 2020 20:52:57 +0000
-Date:   Sun, 2 Feb 2020 20:40:53 +0000 (UTC)
-From:   "Mrs. Maureen Hinckley" <dd7@gczao.com>
-Reply-To: maurhinck7@gmail.com
-Message-ID: <419847631.488854.1580676053942@mail.yahoo.com>
-Subject: 
+        id S1726995AbgBBUmT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 2 Feb 2020 15:42:19 -0500
+Received: from bilbo.ozlabs.org ([203.11.71.1]:54713 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726921AbgBBUmT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 2 Feb 2020 15:42:19 -0500
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 489jZ07344z9sPK;
+        Mon,  3 Feb 2020 07:42:16 +1100 (AEDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1580676137;
+        bh=B2hLmk31JryAktx7MdlUn59snzXyCALDvA6eVwGUbTg=;
+        h=Date:From:To:Cc:Subject:From;
+        b=imkZ7L7p/Z5IaoyjkP8QVFDMzlx0ljB47+qJBMLXeZyg/TkzFS/aqN+Es0jZdNsR/
+         FJTJpxAzacaxdHpaMpP2AvOm3faM+Ikt/V0nmWT6/180lPF67zAt2RIh+Q7NsbXoDa
+         fqdqpgtmSRKg9N3O12eHtI6EoEnYRPRRzIemktTc4i/oCgDHnRVOzRbZ0A8zUE+NCw
+         GEmDmSawwwro/LCMax0aTRK76Sk1LrV3/tNy5j5RcbGnZzbtt0V1fjphLnF37YEs/0
+         tOYjivOB0UrGNqGVWu0K+/Y77cbA1j22tKQaCzV36rxg7SuqQ6kdrlmMhM91FjxPH2
+         +Z5OgZ8C21kfA==
+Date:   Mon, 3 Feb 2020 07:41:51 +1100
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Guo Ren <ren_guo@c-sky.com>
+Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: linux-next: bad rebase of the csky tree
+Message-ID: <20200203074151.05bfe914@canb.auug.org.au>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-References: <419847631.488854.1580676053942.ref@mail.yahoo.com>
-X-Mailer: WebService/1.1.15149 YMailNodin Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/79.0.3945.130 Safari/537.36 OPR/66.0.3515.44
-To:     unlisted-recipients:; (no To-header on input)
+Content-Type: multipart/signed; boundary="Sig_/lriMuSHaFGbuffbes_tc9eC";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+--Sig_/lriMuSHaFGbuffbes_tc9eC
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
+Hi all,
 
-I am Maureen Hinckley and my foundation is donating (Five hundred and fifty=
- thousand USD) to you. Contact us via my email at (maurhinck7@gmail.com) fo=
-r further details.
+The rebase of the csky tree has rebased some of the commits from Linus'
+tree as well.  Please do not rebase your tree unnecessarily and especially
+not during the merge window.  And be more careful about how you do
+rebases if they are necessary.
 
-Best Regards,
-Mrs. Maureen Hinckley,
-Copyright =C2=A92020 The Maureen Hinckley Foundation All Rights Reserved.
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/lriMuSHaFGbuffbes_tc9eC
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl43NA8ACgkQAVBC80lX
+0GyvHQgAnskELwgAvripE6UZHfaFS9uA/PDWdSzOhEm+DYd4xV93EbMqRRDQ5uKI
+lWoTs4vRJzM8IEqPE0/WzrvPuge42fqzEXzWAHWW0VDRk9OL7dJBZb3LM5LXVNIB
+NrSNOQ5BvS7xuYXJo+7fk77L1OMF7irmXz22vM2oT5b0JNb15gJ6SpNA9NadhG+7
+eIvY54MtulZqkq9a1l8Min2yt9rJNoOvrBgq6Nl1YCuPy8vqgIDiP6j9PGVkOrNJ
+jh3EoAdTn2uLFQEaTjEY2DdpMiOAYfTkPTllQ9YM1KirUdFBt2l7Kqh3MkxQJ50H
+WaFaSgESjeEe+u4PZLtFtxiBysNtog==
+=sToY
+-----END PGP SIGNATURE-----
+
+--Sig_/lriMuSHaFGbuffbes_tc9eC--
