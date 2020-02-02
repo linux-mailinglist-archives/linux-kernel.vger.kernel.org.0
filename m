@@ -2,170 +2,61 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DC4D614FF7C
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Feb 2020 22:57:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 731C714FF74
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Feb 2020 22:56:45 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727202AbgBBV5e (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 2 Feb 2020 16:57:34 -0500
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:51921 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727176AbgBBV5d (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 2 Feb 2020 16:57:33 -0500
-Received: by mail-wm1-f66.google.com with SMTP id t23so13802919wmi.1
-        for <linux-kernel@vger.kernel.org>; Sun, 02 Feb 2020 13:57:32 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=3dLHbgqnxzITEPk0xVr2q4acu5k1gqYIJuRiRDYsyfM=;
-        b=i6sn9HS05ehtC8NoNAFCY/z7MxG4qIQXHBHzArXM8R7czsmlRH6VVbnr7zCGzCMxFw
-         +cpgr9ZntSojztMI+KlXsSAR4fASYj/fXZ/qbKiujILL3t+o+TxxbmL+RA4EAGfQay6D
-         X31ns5YaTQ7PVDmm1QRN94lcDSsq4ne7jbgyiuN1G8vpsvvFOINewix/kDI/r9ZKhgok
-         0jpnTHIjKF/IyYRnfthPoxAbercMPKZgQO+b72Yzr/+wKXaJDHRcmLKfcwMnBZyo26qN
-         1raof8u7y86H7Ag5Zovex574/oGUUHnXs5leK1lZ2OjTFv8kvK8DJJBuCpuPIzwk/HFz
-         7oXA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=3dLHbgqnxzITEPk0xVr2q4acu5k1gqYIJuRiRDYsyfM=;
-        b=NDgWFpWNRWfzwpPnhCLnKpTj7W68/JbBXzywTKRSv5RJKXuai3TwTW0fJnLJzwiRh6
-         2SA8c7RvSfQg83UERtTyxIM/Mmsg82DlI3K2ySvvr90fBSzrM6aFC/eKZuRXscocNkIm
-         1OC1G9O4n3O1Ug02PObzBWWLMJI/IHcgpaJBActZ0dwTPCnF/dLbp4FVn9kAkXAKKlx+
-         WzJS4n8WwLty8rpMQ9RPXUYRmlkMcnisWAr+/sEVnC7rqqhvefsGEItEL+xGxLrVA8yz
-         JLgXDriFCXaSsoBRGRa2cG4N6sdsmG2Q+GmaZFyXz94idih7B17N7EP0CDNCoTLGmRcE
-         YVug==
-X-Gm-Message-State: APjAAAXDMReg7awh/XHZTZD+NxxY/Vx93wdu/mm0rgSCXjgrvDspA+q+
-        7onYcQdxJ09SRyycIlpNGpU=
-X-Google-Smtp-Source: APXvYqxkq79MGinXkrF1t0NJB9q3e2oug5VUdbRsPHSxyrVhg0GfF97I0VOF9GGEzaM6bnpOxTkE4Q==
-X-Received: by 2002:a7b:cb91:: with SMTP id m17mr23679112wmi.146.1580680652015;
-        Sun, 02 Feb 2020 13:57:32 -0800 (PST)
-Received: from opensdev.fritz.box (business-178-015-117-054.static.arcor-ip.net. [178.15.117.54])
-        by smtp.gmail.com with ESMTPSA id c4sm20612488wml.7.2020.02.02.13.57.30
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 02 Feb 2020 13:57:31 -0800 (PST)
-From:   shiva.linuxworks@gmail.com
-X-Google-Original-From: sshivamurthy@micron.com
-To:     Miquel Raynal <miquel.raynal@bootlin.com>,
-        Richard Weinberger <richard@nod.at>,
-        Vignesh Raghavendra <vigneshr@ti.com>,
-        Frieder Schrempf <frieder.schrempf@kontron.de>,
-        Boris Brezillon <bbrezillon@kernel.org>,
-        linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org
-Cc:     Shivamurthy Shastri <sshivamurthy@micron.com>
-Subject: [PATCH v3 5/5] mtd: spinand: micron: Add new Micron SPI NAND devices with multiple dies
-Date:   Sun,  2 Feb 2020 22:55:08 +0100
-Message-Id: <20200202215508.2928-6-sshivamurthy@micron.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20200202215508.2928-1-sshivamurthy@micron.com>
-References: <20200202215508.2928-1-sshivamurthy@micron.com>
+        id S1727063AbgBBV4o (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 2 Feb 2020 16:56:44 -0500
+Received: from mail.kernel.org ([198.145.29.99]:42652 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726967AbgBBV4n (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 2 Feb 2020 16:56:43 -0500
+Received: from localhost (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 03A242051A;
+        Sun,  2 Feb 2020 21:56:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1580680603;
+        bh=h2AnbZ1zvtdRaW+7VGG5Kg0L6L5dvbqhPoz41PUcXgI=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=ZARAdc5PDLtY/d96QpMLrHJEesapUwh7y5PLycAJoRcTHsr19LV6+0kreNhrSj6h3
+         P4pbKyALeE508v09vQ7dHjHo6LoO5nNE9cs47QJLooSO4K42X3koSzI/KPI3r4URpA
+         6BxH/qeVLAHTDUR+gciLM6X1HWf5256yxYz+IMaQ=
+Date:   Sun, 2 Feb 2020 16:56:41 -0500
+From:   Sasha Levin <sashal@kernel.org>
+To:     Xiaochen Shen <xiaochen.shen@intel.com>
+Cc:     stable@vger.kernel.org, gregkh@linuxfoundation.org,
+        tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, hpa@zytor.com,
+        tony.luck@intel.com, fenghua.yu@intel.com,
+        reinette.chatre@intel.com, x86@kernel.org,
+        linux-kernel@vger.kernel.org, pei.p.jia@intel.com,
+        Borislav Petkov <bp@suse.de>
+Subject: Re: [PATCH 4.19 1/3] x86/resctrl: Fix use-after-free when deleting
+ resource groups
+Message-ID: <20200202215641.GB1732@sasha-vm>
+References: <1578500886-21771-1-git-send-email-xiaochen.shen@intel.com>
+ <1580594537-2972-1-git-send-email-xiaochen.shen@intel.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Disposition: inline
+In-Reply-To: <1580594537-2972-1-git-send-email-xiaochen.shen@intel.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Shivamurthy Shastri <sshivamurthy@micron.com>
+On Sun, Feb 02, 2020 at 06:02:17AM +0800, Xiaochen Shen wrote:
+>commit b8511ccc75c033f6d54188ea4df7bf1e85778740 upstream.
+>
+>A resource group (rdtgrp) contains a reference count (rdtgrp->waitcount)
+>that indicates how many waiters expect this rdtgrp to exist. Waiters
+>could be waiting on rdtgroup_mutex or some work sitting on a task's
+>workqueue for when the task returns from kernel mode or exits.
 
-Add device table for new Micron SPI NAND devices, which have multiple
-dies.
+I've queued up the 4.19 and 4.14 backports, thanks!
 
-Also, enable support to select the dies.
-
-Signed-off-by: Shivamurthy Shastri <sshivamurthy@micron.com>
----
- drivers/mtd/nand/spi/micron.c | 58 +++++++++++++++++++++++++++++++++++
- 1 file changed, 58 insertions(+)
-
-diff --git a/drivers/mtd/nand/spi/micron.c b/drivers/mtd/nand/spi/micron.c
-index 3d3734afc35e..84e1c109ad0c 100644
---- a/drivers/mtd/nand/spi/micron.c
-+++ b/drivers/mtd/nand/spi/micron.c
-@@ -20,6 +20,15 @@
- 
- #define MICRON_CFG_CONTI_READ		BIT(0)
- 
-+/*
-+ * As per datasheet, die selection is done by the 6th bit of Die
-+ * Select Register (Address 0xD0).
-+ */
-+#define MICRON_DIE_SELECT_REG	0xD0
-+
-+#define MICRON_SELECT_DIE_0	0x00
-+#define MICRON_SELECT_DIE_1	0x40
-+
- static SPINAND_OP_VARIANTS(read_cache_variants,
- 		SPINAND_PAGE_READ_FROM_CACHE_QUADIO_OP(0, 2, NULL, 0),
- 		SPINAND_PAGE_READ_FROM_CACHE_X4_OP(0, 1, NULL, 0),
-@@ -66,6 +75,22 @@ static const struct mtd_ooblayout_ops micron_8_ooblayout = {
- 	.free = micron_8_ooblayout_free,
- };
- 
-+static int micron_select_target(struct spinand_device *spinand,
-+				unsigned int target)
-+{
-+	struct spi_mem_op op = SPINAND_SET_FEATURE_OP(MICRON_DIE_SELECT_REG,
-+						      spinand->scratchbuf);
-+
-+	if (target == 0)
-+		*spinand->scratchbuf = MICRON_SELECT_DIE_0;
-+	else if (target == 1)
-+		*spinand->scratchbuf = MICRON_SELECT_DIE_1;
-+	else
-+		return -EINVAL;
-+
-+	return spi_mem_exec_op(spinand->spimem, &op);
-+}
-+
- static int micron_8_ecc_get_status(struct spinand_device *spinand,
- 				   u8 status)
- {
-@@ -133,6 +158,17 @@ static const struct spinand_info micron_spinand_table[] = {
- 		     0,
- 		     SPINAND_ECCINFO(&micron_8_ooblayout,
- 				     micron_8_ecc_get_status)),
-+	/* M79A 4Gb 3.3V */
-+	SPINAND_INFO("MT29F4G01ADAGD", 0x36,
-+		     NAND_MEMORG(1, 2048, 128, 64, 2048, 80, 2, 1, 2),
-+		     NAND_ECCREQ(8, 512),
-+		     SPINAND_INFO_OP_VARIANTS(&read_cache_variants,
-+					      &write_cache_variants,
-+					      &update_cache_variants),
-+		     0,
-+		     SPINAND_ECCINFO(&micron_8_ooblayout,
-+				     micron_8_ecc_get_status),
-+		     SPINAND_SELECT_TARGET(micron_select_target)),
- 	/* M70A 4Gb 3.3V */
- 	SPINAND_INFO("MT29F4G01ABAFD", 0x34,
- 		     NAND_MEMORG(1, 4096, 256, 64, 2048, 40, 1, 1, 1),
-@@ -153,6 +189,28 @@ static const struct spinand_info micron_spinand_table[] = {
- 		     SPINAND_HAS_CR_FEAT_BIT,
- 		     SPINAND_ECCINFO(&micron_8_ooblayout,
- 				     micron_8_ecc_get_status)),
-+	/* M70A 8Gb 3.3V */
-+	SPINAND_INFO("MT29F8G01ADAFD", 0x46,
-+		     NAND_MEMORG(1, 4096, 256, 64, 2048, 40, 1, 1, 2),
-+		     NAND_ECCREQ(8, 512),
-+		     SPINAND_INFO_OP_VARIANTS(&read_cache_variants,
-+					      &write_cache_variants,
-+					      &update_cache_variants),
-+		     SPINAND_HAS_CR_FEAT_BIT,
-+		     SPINAND_ECCINFO(&micron_8_ooblayout,
-+				     micron_8_ecc_get_status),
-+		     SPINAND_SELECT_TARGET(micron_select_target)),
-+	/* M70A 8Gb 1.8V */
-+	SPINAND_INFO("MT29F8G01ADBFD", 0x47,
-+		     NAND_MEMORG(1, 4096, 256, 64, 2048, 40, 1, 1, 2),
-+		     NAND_ECCREQ(8, 512),
-+		     SPINAND_INFO_OP_VARIANTS(&read_cache_variants,
-+					      &write_cache_variants,
-+					      &update_cache_variants),
-+		     SPINAND_HAS_CR_FEAT_BIT,
-+		     SPINAND_ECCINFO(&micron_8_ooblayout,
-+				     micron_8_ecc_get_status),
-+		     SPINAND_SELECT_TARGET(micron_select_target)),
- };
- 
- static int micron_spinand_detect(struct spinand_device *spinand)
 -- 
-2.17.1
-
+Thanks,
+Sasha
