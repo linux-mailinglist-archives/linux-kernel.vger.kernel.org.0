@@ -2,310 +2,128 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7F06D1505CC
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Feb 2020 13:03:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EC4E81505D9
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Feb 2020 13:06:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727717AbgBCMDo convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Mon, 3 Feb 2020 07:03:44 -0500
-Received: from lhrrgout.huawei.com ([185.176.76.210]:2349 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727102AbgBCMDn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Feb 2020 07:03:43 -0500
-Received: from LHREML710-CAH.china.huawei.com (unknown [172.18.7.107])
-        by Forcepoint Email with ESMTP id 3CF4667FA7CBC00D936B;
-        Mon,  3 Feb 2020 12:03:40 +0000 (GMT)
-Received: from lhreml710-chm.china.huawei.com (10.201.108.61) by
- LHREML710-CAH.china.huawei.com (10.201.108.33) with Microsoft SMTP Server
- (TLS) id 14.3.408.0; Mon, 3 Feb 2020 12:03:39 +0000
-Received: from localhost (10.202.226.57) by lhreml710-chm.china.huawei.com
- (10.201.108.61) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1713.5; Mon, 3 Feb 2020
- 12:03:39 +0000
-Date:   Mon, 3 Feb 2020 12:03:38 +0000
-From:   Jonathan Cameron <Jonathan.Cameron@Huawei.com>
-To:     Nuno =?ISO-8859-1?Q?S=E1?= <noname.nuno@gmail.com>
-CC:     Jonathan Cameron <jic23@kernel.org>,
-        Alexandru Ardelean <alexandru.ardelean@analog.com>,
-        <linux-iio@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <devel@driverdev.osuosl.org>, <dragos.bogdan@analog.com>
-Subject: Re: [PATCH 2/4] iio: imu: adis: Refactor adis_initial_startup
-Message-ID: <20200203120338.000044c1@Huawei.com>
-In-Reply-To: <da82db5f81e116c7ecc36f5d9833b90b4f7cd15d.camel@gmail.com>
-References: <20200120142051.28533-1-alexandru.ardelean@analog.com>
-        <20200120142051.28533-2-alexandru.ardelean@analog.com>
-        <20200201170839.4ab98d8e@archlinux>
-        <da82db5f81e116c7ecc36f5d9833b90b4f7cd15d.camel@gmail.com>
-Organization: Huawei Technologies Research and Development (UK) Ltd.
-X-Mailer: Claws Mail 3.17.4 (GTK+ 2.24.32; i686-w64-mingw32)
+        id S1727789AbgBCMGQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 3 Feb 2020 07:06:16 -0500
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:54353 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727102AbgBCMGQ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Feb 2020 07:06:16 -0500
+Received: by mail-wm1-f68.google.com with SMTP id g1so15564413wmh.4;
+        Mon, 03 Feb 2020 04:06:14 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=qk2Jt3O1erIU7dk9h6hySa8WTi0Ubkco0XQalim8jms=;
+        b=CE7tCvhl/y7wecdqEHnmgytH9yeu3Ya1/fULl4Yx1GNjCeYENmrF5/32BF3NO4wLXR
+         4uyAyIVKH0grZyW4ccawak3YHuMON/5SHg9N16zG5G1CUlViI65YN6KNGyH9ciLAIy6z
+         gMsWPg1sMP8AJ3Xnvr8Xf1PtxDifN68+LEHkcDhTQLH39U0Ph4Tq1Zjg88fso5qq5zgY
+         YlkmJOmBYyUXotmMkrBHmQ7ZhOGEYL2Pp7HZqIcDx6Nh6jPqU5up/xsFJpVz0WSmY6Q8
+         uq9lfCEmepei9GqDRJDR8vhju4zivSviFY+p06jFTzB0ga2/z+PGKDigbSW+GV6TNC78
+         yyJQ==
+X-Gm-Message-State: APjAAAXrZCq/t1YbDqEhRiEVXD5Cj1rhO2S4EV+2WMs268aJYGNgNMi/
+        S2dsHVj4PeM00fGwdoNADg==
+X-Google-Smtp-Source: APXvYqx7nsm5FWekL3BKJELtK3DXarxIJmSasrulMuL/e1k/RgaRA6fRJdz1qpC/FrkmEVy7vvzz8A==
+X-Received: by 2002:a1c:9c52:: with SMTP id f79mr28804908wme.30.1580731573508;
+        Mon, 03 Feb 2020 04:06:13 -0800 (PST)
+Received: from rob-hp-laptop ([212.187.182.163])
+        by smtp.gmail.com with ESMTPSA id b11sm9698643wrx.89.2020.02.03.04.06.11
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 03 Feb 2020 04:06:12 -0800 (PST)
+Received: (nullmailer pid 28482 invoked by uid 1000);
+        Mon, 03 Feb 2020 12:06:10 -0000
+Date:   Mon, 3 Feb 2020 12:06:10 +0000
+From:   Rob Herring <robh@kernel.org>
+To:     Faiz Abbas <faiz_abbas@ti.com>
+Cc:     Dan Murphy <dmurphy@ti.com>, Sekhar Nori <nsekhar@ti.com>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, netdev@vger.kernel.org,
+        linux-can@vger.kernel.org, catalin.marinas@arm.com,
+        mark.rutland@arm.com, davem@davemloft.net, mkl@pengutronix.de,
+        wg@grandegger.com, sriram.dash@samsung.com, nm@ti.com,
+        t-kristo@ti.com
+Subject: Re: [PATCH 1/3] dt-bindings: net: can: m_can: Add Documentation for
+ stb-gpios
+Message-ID: <20200203120610.GA9303@bogus>
+References: <20200122080310.24653-1-faiz_abbas@ti.com>
+ <20200122080310.24653-2-faiz_abbas@ti.com>
+ <c3b0eeb8-bd78-aa96-4783-62dc93f03bfe@ti.com>
+ <8fc7c343-267d-c91c-0381-60990cfc35e8@ti.com>
+ <f834087b-da1c-88a0-93fe-bc72c8ac71ff@ti.com>
+ <57baeedc-9f51-7b92-f190-c0bbd8525a16@ti.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"
-Content-Transfer-Encoding: 8BIT
-X-Originating-IP: [10.202.226.57]
-X-ClientProxiedBy: lhreml745-chm.china.huawei.com (10.201.108.195) To
- lhreml710-chm.china.huawei.com (10.201.108.61)
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <57baeedc-9f51-7b92-f190-c0bbd8525a16@ti.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 3 Feb 2020 10:31:30 +0100
-Nuno Sá <noname.nuno@gmail.com> wrote:
-
-> Hi Jonathan,
+On Thu, Jan 23, 2020 at 01:09:41PM +0530, Faiz Abbas wrote:
+> Hi,
 > 
-> 
-> On Sat, 2020-02-01 at 17:08 +0000, Jonathan Cameron wrote:
-> > On Mon, 20 Jan 2020 16:20:49 +0200
-> > Alexandru Ardelean <alexandru.ardelean@analog.com> wrote:
-> >   
-> > > From: Nuno Sá <nuno.sa@analog.com>
-> > > 
-> > > All the ADIS devices perform, at the beginning, a self test to make
-> > > sure
-> > > the device is in a sane state. Furthermore, some drivers also do a
-> > > call
-> > > to `adis_reset()` before the test which is also a good practice.
-> > > This
-> > > patch unifies all those operation so that, there's no need for code
-> > > duplication. Furthermore, the rst pin is also checked to make sure
-> > > the
-> > > device is not in HW reset. On top of this, some drivers also read
-> > > the
-> > > device product id and compare it with the device being probed to
-> > > make
-> > > sure the correct device is being handled. This can also be passed
-> > > to the
-> > > library by introducing a variable holding the PROD_ID register of
-> > > the
-> > > device.
-> > > 
-> > > Signed-off-by: Nuno Sá <nuno.sa@analog.com>
-> > > Signed-off-by: Alexandru Ardelean <alexandru.ardelean@analog.com>
-> > > ---
-> > >  drivers/iio/imu/Kconfig      |  1 +
-> > >  drivers/iio/imu/adis.c       | 63 ++++++++++++++++++++++++++----
-> > > ------
-> > >  include/linux/iio/imu/adis.h | 15 ++++++++-
-> > >  3 files changed, 61 insertions(+), 18 deletions(-)
-> > > 
-> > > diff --git a/drivers/iio/imu/Kconfig b/drivers/iio/imu/Kconfig
-> > > index 60bb1029e759..63036cf473c7 100644
-> > > --- a/drivers/iio/imu/Kconfig
-> > > +++ b/drivers/iio/imu/Kconfig
-> > > @@ -85,6 +85,7 @@ endmenu
-> > >  
-> > >  config IIO_ADIS_LIB
-> > >  	tristate
-> > > +	depends on GPIOLIB
-> > >  	help
-> > >  	  A set of IO helper functions for the Analog Devices ADIS*
-> > > device family.
-> > >  
-> > > diff --git a/drivers/iio/imu/adis.c b/drivers/iio/imu/adis.c
-> > > index d02b1911b0f2..1eca5271380e 100644
-> > > --- a/drivers/iio/imu/adis.c
-> > > +++ b/drivers/iio/imu/adis.c
-> > > @@ -7,6 +7,7 @@
-> > >   */
-> > >  
-> > >  #include <linux/delay.h>
-> > > +#include <linux/gpio/consumer.h>
-> > >  #include <linux/mutex.h>
-> > >  #include <linux/device.h>
-> > >  #include <linux/kernel.h>
-> > > @@ -365,36 +366,64 @@ static int adis_self_test(struct adis *adis)
-> > >  }
-> > >  
-> > >  /**
-> > > - * adis_inital_startup() - Performs device self-test
-> > > + * __adis_initial_startup() - Device initial setup
-> > >   * @adis: The adis device
-> > >   *
-> > > + * This functions makes sure the device is not in reset, via rst
-> > > pin.
-> > > + * Furthermore it performs a SW reset (only in the case we are not
-> > > coming from
-> > > + * reset already) and a self test. It also compares the product id
-> > > with the
-> > > + * device id if the prod_id_reg variable is set.
-> > > + *
-> > >   * Returns 0 if the device is operational, a negative error code
-> > > otherwise.
-> > >   *
-> > >   * This function should be called early on in the device
-> > > initialization sequence
-> > >   * to ensure that the device is in a sane and known state and that
-> > > it is usable.
-> > >   */
-> > > -int adis_initial_startup(struct adis *adis)
-> > > +int __adis_initial_startup(struct adis *adis)
-> > >  {
-> > >  	int ret;
-> > > -
-> > > -	mutex_lock(&adis->state_lock);
-> > > +	struct gpio_desc *gpio;
-> > > +	const struct adis_timeout *timeouts = adis->data->timeouts;
-> > > +	const char *iio_name = spi_get_device_id(adis->spi)->name;
-> > > +	u16 prod_id, dev_id;
-> > > +
-> > > +	/* check if the device has rst pin low */
-> > > +	gpio = devm_gpiod_get_optional(&adis->spi->dev, "reset",
-> > > GPIOD_ASIS);
-> > > +	if (IS_ERR(gpio)) {
-> > > +		return PTR_ERR(gpio);  
+> On 22/01/20 8:04 pm, Dan Murphy wrote:
+> > Sekhar
 > > 
-> > Given you are returning here, no need for else to follow
+> > On 1/22/20 8:24 AM, Sekhar Nori wrote:
+> >> On 22/01/20 7:05 PM, Dan Murphy wrote:
+> >>> Faiz
+> >>>
+> >>> On 1/22/20 2:03 AM, Faiz Abbas wrote:
+> >>>> The CAN transceiver on some boards has an STB pin which is
+> >>>> used to control its standby mode. Add an optional property
+> >>>> stb-gpios to toggle the same.
+> >>>>
+> >>>> Signed-off-by: Faiz Abbas <faiz_abbas@ti.com>
+> >>>> Signed-off-by: Sekhar Nori <nsekhar@ti.com>
+> >>>> ---
+> >>>>    Documentation/devicetree/bindings/net/can/m_can.txt | 2 ++
+> >>>>    1 file changed, 2 insertions(+)
+> >>>>
+> >>>> diff --git a/Documentation/devicetree/bindings/net/can/m_can.txt
+> >>>> b/Documentation/devicetree/bindings/net/can/m_can.txt
+> >>>> index ed614383af9c..cc8ba3f7a2aa 100644
+> >>>> --- a/Documentation/devicetree/bindings/net/can/m_can.txt
+> >>>> +++ b/Documentation/devicetree/bindings/net/can/m_can.txt
+> >>>> @@ -48,6 +48,8 @@ Optional Subnode:
+> >>>>                  that can be used for CAN/CAN-FD modes. See
+> >>>>                
+> >>>> Documentation/devicetree/bindings/net/can/can-transceiver.txt
+> >>>>                  for details.
+> >>>> +stb-gpios        : gpio node to toggle the STB (standby) signal on
+> >>>> the transceiver
+> >>>> +
+> >>> The m_can.txt is for the m_can framework.  If this is specific to the
+> >>> platform then it really does not belong here.
+> >>>
+> >>> If the platform has specific nodes then maybe we need a
+> >>> m_can_platform.txt binding for specific platform nodes.  But I leave
+> >>> that decision to Rob.
+> >> Since this is transceiver enable, should this not be in
+> >> Documentation/devicetree/bindings/net/can/can-transceiver.txt?
 > > 
-> > if (gpio...
-> >   
 > 
-> Definitely...
+> The transceiver node is just a node without an associated device. I had
+> tried to convert it to a phy implementation but that idea got shot down
+> here:
 > 
-> > > +	} else if (gpio && gpiod_get_value_cansleep(gpio)) {
-> > > +		/* bring device out of reset */
-> > > +		gpiod_set_value_cansleep(gpio, 0);  
-> > 
-> > Hmm. So is a software reset the best option if we have a hardware
-> > reset
-> > line but it's not currently in the reset mode?
-> >   
-> 
-> Hmm, that's a fair question. Now that I think about it, if we do have a
-> gpio we should just assume it's in reset and call
-> `gpiod_set_value_cansleep`. So, I guess we could just ditch the
-> `gpiod_get_value_cansleep(gpio)` part.
+> https://lore.kernel.org/patchwork/patch/1006238/
 
-Not sure I agree.   For example the driver may well have been unbound
-and rebound for some reason.
+Nodes and drivers are not a 1-1 thing. Is the transceiver a separate h/w 
+device? If so, then it should be a separate node and properties of that 
+device go in its node. Also, nothing is stopping you from using the PHY 
+binding without using the kernel's PHY framework.
 
-I would argue you should just do a set / reset cycle with appropriate sleep
-in between.  If it's already set then no harm done, if it isn't you force
-a hardware reset.
+As to whether it should be a separate phy driver, I think probably the 
+wrong decision was made. We always seem to start out with no PHY on 
+these things and the complexity just grows until we need one. 
 
-> 
-> > > +		msleep(timeouts->reset_ms);
-> > > +	} else {
-> > > +		ret = __adis_reset(adis);
-> > > +		if (ret)
-> > > +			return ret;
-> > > +	}
-> > >  
-> > >  	ret = adis_self_test(adis);
-> > > -	if (ret) {
-> > > -		dev_err(&adis->spi->dev, "Self-test failed, trying
-> > > reset.\n");
-> > > -		__adis_reset(adis);
-> > > -		ret = adis_self_test(adis);
-> > > -		if (ret) {
-> > > -			dev_err(&adis->spi->dev, "Second self-test
-> > > failed, giving up.\n");
-> > > -			goto out_unlock;
-> > > -		}
-> > > -	}
-> > > +	if (ret)
-> > > +		return ret;
-> > >  
-> > > -out_unlock:
-> > > -	mutex_unlock(&adis->state_lock);
-> > > -	return ret;
-> > > +	if (!adis->data->prod_id_reg)
-> > > +		return 0;
-> > > +
-> > > +	ret = adis_read_reg_16(adis, adis->data->prod_id_reg,
-> > > &prod_id);
-> > > +	if (ret)
-> > > +		return ret;
-> > > +
-> > > +	ret = sscanf(iio_name, "adis%hu\n", &dev_id);  
-> > 
-> > Hmm. I have a general dislike of pulling part name strings apart to
-> > get
-> > IDs.  It tends to break when someone comes along and adds a part with
-> > new
-> > branding.  Perhaps just put it in the relevant device part specific
-> > structures
-> > directly?
-> >   
-> 
-> I'll admit that this to orientated to ADI devices and I basically just
-> took what all the drivers were doing and placed it inside the
-> library...
-> 
-> So, you mean passing this to each `chip_info` and then passing it to
-> the library through `adis_data`?
-
-Yes.  People don't tend to expect strings to need to take a particular form,
-so pulling them apart in a library can give unexpected results...
-
-> > > +	if (ret != 1)
-> > > +		return -EINVAL;
-> > > +
-> > > +	if (prod_id != dev_id)
-> > > +		dev_warn(&adis->spi->dev,
-> > > +			 "Device ID(%u) and product ID(%u) do not
-> > > match.",
-> > > +			 dev_id, prod_id);
-> > > +
-> > > +	return 0;
-> > >  }
-> > > -EXPORT_SYMBOL_GPL(adis_initial_startup);
-> > > +EXPORT_SYMBOL_GPL(__adis_initial_startup);
-> > >  
-> > >  /**
-> > >   * adis_single_conversion() - Performs a single sample conversion
-> > > diff --git a/include/linux/iio/imu/adis.h
-> > > b/include/linux/iio/imu/adis.h
-> > > index d21a013d1122..c43e7922ab32 100644
-> > > --- a/include/linux/iio/imu/adis.h
-> > > +++ b/include/linux/iio/imu/adis.h
-> > > @@ -41,6 +41,7 @@ struct adis_timeout {
-> > >   * @glob_cmd_reg: Register address of the GLOB_CMD register
-> > >   * @msc_ctrl_reg: Register address of the MSC_CTRL register
-> > >   * @diag_stat_reg: Register address of the DIAG_STAT register
-> > > + * @prod_id_reg: Register address of the PROD_ID register
-> > >   * @self_test_reg: Register address to request self test command
-> > >   * @status_error_msgs: Array of error messgaes
-> > >   * @status_error_mask:
-> > > @@ -54,6 +55,7 @@ struct adis_data {
-> > >  	unsigned int glob_cmd_reg;
-> > >  	unsigned int msc_ctrl_reg;
-> > >  	unsigned int diag_stat_reg;
-> > > +	unsigned int prod_id_reg;
-> > >  
-> > >  	unsigned int self_test_mask;
-> > >  	unsigned int self_test_reg;
-> > > @@ -299,6 +301,7 @@ static inline int adis_read_reg_32(struct adis
-> > > *adis, unsigned int reg,
-> > >  
-> > >  int adis_enable_irq(struct adis *adis, bool enable);
-> > >  int __adis_check_status(struct adis *adis);
-> > > +int __adis_initial_startup(struct adis *adis);
-> > >  
-> > >  static inline int adis_check_status(struct adis *adis)
-> > >  {
-> > > @@ -311,7 +314,17 @@ static inline int adis_check_status(struct
-> > > adis *adis)
-> > >  	return ret;
-> > >  }
-> > >  
-> > > -int adis_initial_startup(struct adis *adis);
-> > > +/* locked version of __adis_initial_startup() */
-> > > +static inline int adis_initial_startup(struct adis *adis)
-> > > +{
-> > > +	int ret;
-> > > +
-> > > +	mutex_lock(&adis->state_lock);
-> > > +	ret = __adis_initial_startup(adis);
-> > > +	mutex_unlock(&adis->state_lock);
-> > > +
-> > > +	return ret;
-> > > +}
-> > >  
-> > >  int adis_single_conversion(struct iio_dev *indio_dev,
-> > >  	const struct iio_chan_spec *chan, unsigned int error_mask,  
-> > 
-> >   
-> 
-
-
+Rob
