@@ -2,94 +2,138 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 80523150618
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Feb 2020 13:25:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D721015061F
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Feb 2020 13:25:48 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728006AbgBCMZW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 3 Feb 2020 07:25:22 -0500
-Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:51875 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1727339AbgBCMZV (ORCPT
+        id S1728070AbgBCMZr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 3 Feb 2020 07:25:47 -0500
+Received: from mout.kundenserver.de ([217.72.192.75]:56091 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727074AbgBCMZr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Feb 2020 07:25:21 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1580732720;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=rnhSOZrfyRptYaXvcR6IW21U5l/A6AEDfxI9feZjAvY=;
-        b=TIEQPIAmVdzZr0tT1lydQNdr7B2//2TcnqVUzs+WxOo8KxNX0qoDUf6BH5lozIjX1xNsk7
-        VfjG37/cbB0hX27Bsx8oj7kz1cqZEpSPItJu2GPHp5tdelGGwOXgk1m7mrMBdfWdTc0rzJ
-        UFK1vvK+w52hD5EpMYUDfyE0y07b/+U=
-Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com
- [209.85.221.72]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-199-WtNfqeaONfWCNl_avbI_Rw-1; Mon, 03 Feb 2020 07:25:19 -0500
-X-MC-Unique: WtNfqeaONfWCNl_avbI_Rw-1
-Received: by mail-wr1-f72.google.com with SMTP id x15so8124348wrl.15
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Feb 2020 04:25:18 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=rnhSOZrfyRptYaXvcR6IW21U5l/A6AEDfxI9feZjAvY=;
-        b=pYmCAzUj+EPdvvLjQbcqqM0gJEATL6wutjXJyZUU727JmoNLfFSgG+bn174eRNqudN
-         IfO8HnGcWt4Uzpvg209G88jQbXwGeZtSUdB7Yo4xl6bmduwTQSjjcVY7pE3PVGa4pt6i
-         9m1WNQ9eNXF6zmEQsr4LCxMbAtAe7uQ21t+TBEzi3HadkKX59jB0HKPqg4ebZtb8Ya6q
-         ABrEBomnhxiI4S6BY3nxFai1vfwJXOXCdleCDXlJRGxrJxBs9Y991RQvSceHnNJiEtgT
-         ukTa0NdvWNDpqyAdLCU3Y8ePgdta8LnWR3yubrwHRd78kdD2Pz44HFiKji3UpF1h9uGA
-         213g==
-X-Gm-Message-State: APjAAAVuQ6vcKZF7+GMGQjhUxYSnk/k0IuJSBpBUAs5vRY7Upxk7fo+M
-        zdQcyci8gaktzcSg5vyU1sBxCsoViWHMDi8vyszGj8OIiCbuIElQ6fEP0QTIpIieimvegIEhUWr
-        M/qCQYEcBIBVXELkQnIO5IV2G
-X-Received: by 2002:a5d:4d04:: with SMTP id z4mr9862978wrt.157.1580732717982;
-        Mon, 03 Feb 2020 04:25:17 -0800 (PST)
-X-Google-Smtp-Source: APXvYqy5ghHPlkc6xYznMwtJxDFgEjOmagx2Zb7+ckF0+ETu5uHQ0dVmPuQCkSW/CyhcLslYmPrC6w==
-X-Received: by 2002:a5d:4d04:: with SMTP id z4mr9862941wrt.157.1580732717777;
-        Mon, 03 Feb 2020 04:25:17 -0800 (PST)
-Received: from localhost.localdomain ([151.29.2.83])
-        by smtp.gmail.com with ESMTPSA id e22sm18968813wme.45.2020.02.03.04.25.16
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 03 Feb 2020 04:25:17 -0800 (PST)
-Date:   Mon, 3 Feb 2020 13:25:14 +0100
-From:   Juri Lelli <juri.lelli@redhat.com>
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     mingo@kernel.org, will@kernel.org, oleg@redhat.com,
-        tglx@linutronix.de, linux-kernel@vger.kernel.org,
-        bigeasy@linutronix.de, williams@redhat.com, bristot@redhat.com,
-        longman@redhat.com, dave@stgolabs.net, jack@suse.com
-Subject: Re: [PATCH -v2 0/7] locking: Percpu-rwsem rewrite
-Message-ID: <20200203122514.GK8582@localhost.localdomain>
-References: <20200131150703.194229898@infradead.org>
+        Mon, 3 Feb 2020 07:25:47 -0500
+Received: from mail-qk1-f170.google.com ([209.85.222.170]) by
+ mrelayeu.kundenserver.de (mreue107 [212.227.15.145]) with ESMTPSA (Nemesis)
+ id 1N7yuz-1jdEvy0FiF-0150X2; Mon, 03 Feb 2020 13:25:45 +0100
+Received: by mail-qk1-f170.google.com with SMTP id u19so6277011qku.8;
+        Mon, 03 Feb 2020 04:25:44 -0800 (PST)
+X-Gm-Message-State: APjAAAVsig5ayJqpiKY25ChbkwKG8B2i4S8N2jQsFADPbXJ25qZZzHaR
+        qsMyO9bGFEhTUo73T6fu0YHDFqXxy7aA0wWLF+A=
+X-Google-Smtp-Source: APXvYqx0ocLgdidrznoQ8Enyx2eLL3hOdlL2MjBSkguYuLYfdkmdQylLrutBTZG2BNKne5lK1uCb3UnyrUHgc1yB+DQ=
+X-Received: by 2002:a05:620a:909:: with SMTP id v9mr10712027qkv.138.1580732743857;
+ Mon, 03 Feb 2020 04:25:43 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200131150703.194229898@infradead.org>
+References: <20200130195525.4525-1-krzk@kernel.org> <20200130195525.4525-2-krzk@kernel.org>
+ <9f8a0a8e09893e7087d2212fb0eeb94a908b7be1.camel@perches.com> <CAJKOXPf5Mf4FCmtME5yJsBZeP8BkYJgcxkKzS2hd-gp-mq3nag@mail.gmail.com>
+In-Reply-To: <CAJKOXPf5Mf4FCmtME5yJsBZeP8BkYJgcxkKzS2hd-gp-mq3nag@mail.gmail.com>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Mon, 3 Feb 2020 13:25:27 +0100
+X-Gmail-Original-Message-ID: <CAK8P3a3VxqKuPyoparMZQYNNic6K2QsuzHE2mHskBt56cjny=g@mail.gmail.com>
+Message-ID: <CAK8P3a3VxqKuPyoparMZQYNNic6K2QsuzHE2mHskBt56cjny=g@mail.gmail.com>
+Subject: Re: [PATCH 2/2] ARM: configs: Cleanup old Kconfig options
+To:     Krzysztof Kozlowski <krzk@kernel.org>
+Cc:     Joe Perches <joe@perches.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Alexander Shiyan <shc_work@mail.ru>,
+        =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= 
+        <u.kleine-koenig@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Vladimir Zapolskiy <vz@mleia.com>,
+        Aaro Koskinen <aaro.koskinen@iki.fi>,
+        Tony Lindgren <tony@atomide.com>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        Liviu Dudau <liviu.dudau@arm.com>,
+        Sudeep Holla <sudeep.holla@arm.com>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Avi Fishman <avifishman70@gmail.com>,
+        Tomer Maimon <tmaimon77@gmail.com>,
+        Tali Perry <tali.perry1@gmail.com>,
+        Patrick Venture <venture@google.com>,
+        Nancy Yuen <yuenn@google.com>,
+        Benjamin Fair <benjaminfair@google.com>,
+        Olof Johansson <olof@lixom.net>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        linux-omap <linux-omap@vger.kernel.org>,
+        linux-stm32@st-md-mailman.stormreply.com,
+        OpenBMC Maillist <openbmc@lists.ozlabs.org>,
+        arm-soc <arm@kernel.org>, SoC Team <soc@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+X-Provags-ID: V03:K1:Z/o9hl+VbVFCd3JbFMrSX5q5pl1EGoe4TUEC+JYUrP0wfQufBCt
+ x/tSoiBEU2+RFgpd5DRkEdhSBsimgXbMosZEhQwG00/NdJbNrh11Sbm/DeULFKlaCeVyeB5
+ jcHDjtZgpX05iLKDnf4MAuciJQN3pjxGpydNJk2z7UPVXVle2k17FStyt0rJCs3NOo469iv
+ ghOOcuDImLbuTdPVxsRQg==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:LTIDGvjRHmQ=:+Cq4IdjiThj/pyKdrz+aZ5
+ NEPm6iOhe4dr/KngwTqUhDIgfOi1FdeUuxDeiR/8cIt3yVDDN6B3WACw4uqsMlUgY4c77b3iu
+ gElD4y/8VkSsdXCM/pYed4MgPGHq5eCCyE5uK20EYRzL04ssTZskfnT2VrWa76ie0ynDCn8c8
+ eeXPuY7MmtuKm4jY+KkX5kgvjMgBK8OtzZ2RLYgjZqPOOHcuXriVmkdvoCJZdZAq+MaofmJGy
+ k+A0bj7Si1cTiru9eupfeADcU8FAI3LuVdHgeVC/ZQbVMrjhlXcGb8NyXnmGlbT9BeRiOXG3Z
+ aiM+PlQQPqRp84D2hH62/SETV3NBmRrh7P21KIvYWxOA9eoMTT22Lyrftu78euEHg/oioRQYR
+ PTOSBbXaaANOxfY89g3Sdpq6XHZJTqZWkrW6YeuH3Fd0kPmlH6vANXiOqZ/mWMO0MfHLKgIuR
+ FAlEfkGEDe7FiZGyhTJbpPvlFQ10XsS4ulDUQGqH/sIBsxqPQgqShvHbQOr9q88dvyR76O7kn
+ TsECwZ0M3dPWp34ZoIqMO0ZWnfMRa8E+2/k2O+iekVYOXFj1VYo/0MsMTjuvcKByqne5hwbaZ
+ QFWGYFgehhGWiVd/4Ozl5hhrX5XKEe7+KLRBN/rlsOg7KoGMK/BiAVego8K3dcRFgeg0E3PL5
+ WU5tWfKPlXFZ6/TUN+hLOZbVTl0xSlZle/9aGGcifhHP66TeWwWoNCwY5YyGEPzadfaGNYHua
+ VmBedHg+ed2vKsUWz3amSLXqXPRYoq3PPw639aVAh6HXoVxoztZiTC/qREn3BLIicS5Gc76Zl
+ 0RPWL2QF/raRe/ihJd7aLmKj/oJwKYEj8qNK6mnlBo1PwXiYpM=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+On Mon, Feb 3, 2020 at 12:53 PM Krzysztof Kozlowski <krzk@kernel.org> wrote:
+>
+> On Thu, 30 Jan 2020 at 23:06, Joe Perches <joe@perches.com> wrote:
+> >
+> > On Thu, 2020-01-30 at 20:55 +0100, Krzysztof Kozlowski wrote:
+> > > CONFIG_MMC_BLOCK_BOUNCE is gone since commit c3dccb74be28 ("mmc: core:
+> > > Delete bounce buffer Kconfig option").
+> > >
+> > > CONFIG_LBDAF is gone since commit 72deb455b5ec ("block: remove
+> > > CONFIG_LBDAF").
+> > >
+> > > CONFIG_IOSCHED_DEADLINE and CONFIG_IOSCHED_CFQ are gone since
+> > > commit f382fb0bcef4 ("block: remove legacy IO schedulers").
+> > >
+> > > The IOSCHED_DEADLINE was replaced by MQ_IOSCHED_DEADLINE and it will be
+> > > now enabled by default (along with MQ_IOSCHED_KYBER).
+> > >
+> > > The IOSCHED_BFQ seems to replace IOSCHED_CFQ so select it in configs
+> > > previously choosing the latter.
+> > >
+> > > CONFIG_CROSS_COMPILE is gone since commit f1089c92da79 ("kbuild: remove
+> > > CONFIG_CROSS_COMPILE support").
 
-On 31/01/20 16:07, Peter Zijlstra wrote:
-> Hi all,
-> 
-> This is the long awaited report of the percpu-rwsem rework (sorry Juri).
-> 
-> IIRC (I really have trouble keeping up momentum on this series) I've addressed
-> all previous comments by Oleg and Davidlohr and Waiman and hope we can stick
-> this in tip/locking/core for inclusion in the next merge.
-> 
-> It has been cooked (thoroughly) in PREEMPT_RT, and not found wanting.
-> 
-> Any objections to me stuffing it in so we can all forget about it properly?
+Acked-by: Arnd Bergmann <arnd@arndb.de>
 
-FWIW, backported and tested again on downstream PREEMPT_RT kernel.
-locktorture didn't find any problem and latencies look good.
+> > Hi Krzysztof.
+> >
+> > There seems there are a lot more of these unused CONFIG_<foo>
+> > symbols in various defconfigs. (just for arm and treewide below)
 
-Tested-by: Juri Lelli <juri.lelli@redhat.com>
+Feel free to pick any of these symbols and send patches for those.
+No need to do it one symbol at a time, but please group them like
+Krzysztof has done.
 
-Thanks!
+> Nice finding! The trickier point is to nicely remove them because:
+> 1. The easiest is 'savedefconfig' but then some valuable options might
+> disappear (like recently happened with DEBUG_FS),
+> 2. They could be removed in automated way with a script. However in
+> such case what about replacements? If some symbol was replaced with
+> other (or just renamed), maybe we should enable the other one to
+> restore the desired functionality?
+> 3. Or maybe let's don't care about keeping defconfigs stable and just
+> clean them up automatically.
 
-Juri
+I don't see a good way to do it automatically. It would be good to check
+that we don't remove Kconfig symbols that are still used in defconfig
+files without changing those files as well. Cleaning up afterwards also
+works, but this always requires manual inspection for each symbol.
 
+     Arnd
