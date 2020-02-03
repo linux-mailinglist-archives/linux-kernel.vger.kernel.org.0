@@ -2,27 +2,27 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 45745150B44
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Feb 2020 17:26:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D859B150BA0
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Feb 2020 17:29:26 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728972AbgBCQ0J (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 3 Feb 2020 11:26:09 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37064 "EHLO mail.kernel.org"
+        id S1729766AbgBCQ3U (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 3 Feb 2020 11:29:20 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41164 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728930AbgBCQ0H (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Feb 2020 11:26:07 -0500
+        id S1729755AbgBCQ3Q (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Feb 2020 11:29:16 -0500
 Received: from localhost (unknown [104.132.45.99])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5345F2080C;
-        Mon,  3 Feb 2020 16:26:06 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A0C5E20CC7;
+        Mon,  3 Feb 2020 16:29:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1580747166;
+        s=default; t=1580747356;
         bh=f6/Ccx65vDvsW4yhp/ZsExnlynZ3BNePDvYFyDnc58U=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=cwOvH7NvjboqvFevwRCM+BJq3LiiUYwW4hXJ4r9bXfglXilMO09MaqUSKSiZda120
-         8Y7Vve0i7Ey3bvOUQ/wkyiIkLgsKAG3u7y/KTNqIGlLnGvvJpvAZnifHp9Np0Io8+w
-         1g9TB5oBqoL4klt0rxI3aeBPcXDXMBcS3cmnaSdQ=
+        b=dRQHmDFo8bumOI4g6G2MXzzM5MWVQya3gthTUnwpi2L/mbasRVFYew6tW1QzFTUgX
+         quQoO4Q0T82uJxoc+lEidoix1yGVTQ8r8nKKR7qTMt+VlBSOkfUtfCLoqVjgeofGuD
+         GHKvNZJGX1yzKnbzUTck8XtAH7AMUz3X2a1jnr54=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -30,12 +30,12 @@ Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         syzbot+2eeef62ee31f9460ad65@syzkaller.appspotmail.com,
         Zhenzhong Duan <zhenzhong.duan@gmail.com>,
         Arnd Bergmann <arnd@arndb.de>
-Subject: [PATCH 4.9 38/68] ttyprintk: fix a potential deadlock in interrupt context issue
+Subject: [PATCH 4.14 49/89] ttyprintk: fix a potential deadlock in interrupt context issue
 Date:   Mon,  3 Feb 2020 16:19:34 +0000
-Message-Id: <20200203161911.229512565@linuxfoundation.org>
+Message-Id: <20200203161923.502078294@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200203161904.705434837@linuxfoundation.org>
-References: <20200203161904.705434837@linuxfoundation.org>
+In-Reply-To: <20200203161916.847439465@linuxfoundation.org>
+References: <20200203161916.847439465@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
