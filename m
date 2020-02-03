@@ -2,40 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9930A150AE3
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Feb 2020 17:22:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B7A3F150B43
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Feb 2020 17:26:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729205AbgBCQVu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 3 Feb 2020 11:21:50 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33798 "EHLO mail.kernel.org"
+        id S1728916AbgBCQ0G (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 3 Feb 2020 11:26:06 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36946 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729185AbgBCQVp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Feb 2020 11:21:45 -0500
+        id S1728882AbgBCQ0D (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Feb 2020 11:26:03 -0500
 Received: from localhost (unknown [104.132.45.99])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 475912080C;
-        Mon,  3 Feb 2020 16:21:44 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A5A002080C;
+        Mon,  3 Feb 2020 16:26:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1580746904;
-        bh=PBpj83y6P2Oz1vGiFYaOARH393JtewVbCmCv5KbtJAs=;
+        s=default; t=1580747162;
+        bh=UteHNnpLt/O9YQ6oHAMfw8GJtA0rGXMaFuZvPNpQoR0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ulmZqgT54XZXxoZFDJDbasQSClbTqiomVHI/8opeOIJf8Cjq9K6FmvtPDY4E0LsGo
-         4C5sxl0Z0SKKQnnfX1tifVzPICi7XPSWonOZhXvMxs3VBojTRjljU0VENPHUhAgplN
-         jiySncwhSEntw3xzGXOlnqHx0IDi/SFcXFl5tf0Y=
+        b=RwW46wH4oj+MabdomE9w58XUEX4YLjKkssxkMRSS6zsDeeKyWzXxd34D16B6XWGhR
+         aSzmkXKRXXLYMEhXq6awDkx52zInMFe3gsmiXfR5LFW3cqPzlgxJqYk4/DR5N4pcBu
+         TTPeRCvy8ufKBS5TFySKLAdReyxI8K+XRGZLMvm8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Nicolas Dichtel <nicolas.dichtel@6wind.com>,
-        Steffen Klassert <steffen.klassert@secunet.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.4 39/53] vti[6]: fix packet tx through bpf_redirect()
-Date:   Mon,  3 Feb 2020 16:19:31 +0000
-Message-Id: <20200203161909.898535885@linuxfoundation.org>
+        stable@vger.kernel.org, Hans Verkuil <hverkuil-cisco@xs4all.nl>,
+        Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
+        syzbot+32310fc2aea76898d074@syzkaller.appspotmail.com,
+        syzbot+99706d6390be1ac542a2@syzkaller.appspotmail.com,
+        syzbot+64437af5c781a7f0e08e@syzkaller.appspotmail.com
+Subject: [PATCH 4.9 36/68] media: gspca: zero usb_buf
+Date:   Mon,  3 Feb 2020 16:19:32 +0000
+Message-Id: <20200203161910.889671568@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200203161902.714326084@linuxfoundation.org>
-References: <20200203161902.714326084@linuxfoundation.org>
+In-Reply-To: <20200203161904.705434837@linuxfoundation.org>
+References: <20200203161904.705434837@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,82 +46,42 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Nicolas Dichtel <nicolas.dichtel@6wind.com>
+From: Hans Verkuil <hverkuil-cisco@xs4all.nl>
 
-[ Upstream commit 95224166a9032ff5d08fca633d37113078ce7d01 ]
+commit de89d0864f66c2a1b75becfdd6bf3793c07ce870 upstream.
 
-With an ebpf program that redirects packets through a vti[6] interface,
-the packets are dropped because no dst is attached.
+Allocate gspca_dev->usb_buf with kzalloc instead of kmalloc to
+ensure it is property zeroed. This fixes various syzbot errors
+about uninitialized data.
 
-This could also be reproduced with an AF_PACKET socket, with the following
-python script (vti1 is an ip_vti interface):
+Syzbot links:
 
- import socket
- send_s = socket.socket(socket.AF_PACKET, socket.SOCK_RAW, 0)
- # scapy
- # p = IP(src='10.100.0.2', dst='10.200.0.1')/ICMP(type='echo-request')
- # raw(p)
- req = b'E\x00\x00\x1c\x00\x01\x00\x00@\x01e\xb2\nd\x00\x02\n\xc8\x00\x01\x08\x00\xf7\xff\x00\x00\x00\x00'
- send_s.sendto(req, ('vti1', 0x800, 0, 0))
+https://syzkaller.appspot.com/bug?extid=32310fc2aea76898d074
+https://syzkaller.appspot.com/bug?extid=99706d6390be1ac542a2
+https://syzkaller.appspot.com/bug?extid=64437af5c781a7f0e08e
 
-Signed-off-by: Nicolas Dichtel <nicolas.dichtel@6wind.com>
-Signed-off-by: Steffen Klassert <steffen.klassert@secunet.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Reported-and-tested-by: syzbot+32310fc2aea76898d074@syzkaller.appspotmail.com
+Reported-and-tested-by: syzbot+99706d6390be1ac542a2@syzkaller.appspotmail.com
+Reported-and-tested-by: syzbot+64437af5c781a7f0e08e@syzkaller.appspotmail.com
+
+Signed-off-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
+Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- net/ipv4/ip_vti.c  | 13 +++++++++++--
- net/ipv6/ip6_vti.c | 13 +++++++++++--
- 2 files changed, 22 insertions(+), 4 deletions(-)
+ drivers/media/usb/gspca/gspca.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/net/ipv4/ip_vti.c b/net/ipv4/ip_vti.c
-index bbcbbc1cc2cc6..42dbd280dc9be 100644
---- a/net/ipv4/ip_vti.c
-+++ b/net/ipv4/ip_vti.c
-@@ -195,8 +195,17 @@ static netdev_tx_t vti_xmit(struct sk_buff *skb, struct net_device *dev,
- 	int err;
- 
- 	if (!dst) {
--		dev->stats.tx_carrier_errors++;
--		goto tx_error_icmp;
-+		struct rtable *rt;
-+
-+		fl->u.ip4.flowi4_oif = dev->ifindex;
-+		fl->u.ip4.flowi4_flags |= FLOWI_FLAG_ANYSRC;
-+		rt = __ip_route_output_key(dev_net(dev), &fl->u.ip4);
-+		if (IS_ERR(rt)) {
-+			dev->stats.tx_carrier_errors++;
-+			goto tx_error_icmp;
-+		}
-+		dst = &rt->dst;
-+		skb_dst_set(skb, dst);
+--- a/drivers/media/usb/gspca/gspca.c
++++ b/drivers/media/usb/gspca/gspca.c
+@@ -2043,7 +2043,7 @@ int gspca_dev_probe2(struct usb_interfac
+ 		pr_err("couldn't kzalloc gspca struct\n");
+ 		return -ENOMEM;
  	}
- 
- 	dst_hold(dst);
-diff --git a/net/ipv6/ip6_vti.c b/net/ipv6/ip6_vti.c
-index 51da5987952ce..623963a2d8a68 100644
---- a/net/ipv6/ip6_vti.c
-+++ b/net/ipv6/ip6_vti.c
-@@ -441,8 +441,17 @@ vti6_xmit(struct sk_buff *skb, struct net_device *dev, struct flowi *fl)
- 	int err = -1;
- 	int mtu;
- 
--	if (!dst)
--		goto tx_err_link_failure;
-+	if (!dst) {
-+		fl->u.ip6.flowi6_oif = dev->ifindex;
-+		fl->u.ip6.flowi6_flags |= FLOWI_FLAG_ANYSRC;
-+		dst = ip6_route_output(dev_net(dev), NULL, &fl->u.ip6);
-+		if (dst->error) {
-+			dst_release(dst);
-+			dst = NULL;
-+			goto tx_err_link_failure;
-+		}
-+		skb_dst_set(skb, dst);
-+	}
- 
- 	dst_hold(dst);
- 	dst = xfrm_lookup(t->net, dst, fl, NULL, 0);
--- 
-2.20.1
-
+-	gspca_dev->usb_buf = kmalloc(USB_BUF_SZ, GFP_KERNEL);
++	gspca_dev->usb_buf = kzalloc(USB_BUF_SZ, GFP_KERNEL);
+ 	if (!gspca_dev->usb_buf) {
+ 		pr_err("out of memory\n");
+ 		ret = -ENOMEM;
 
 
