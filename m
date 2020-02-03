@@ -2,192 +2,229 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D5255150F5A
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Feb 2020 19:28:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 136C5150F66
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Feb 2020 19:32:18 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729792AbgBCS2N (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 3 Feb 2020 13:28:13 -0500
-Received: from mail-il1-f198.google.com ([209.85.166.198]:49280 "EHLO
-        mail-il1-f198.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727934AbgBCS2M (ORCPT
+        id S1729817AbgBCScP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 3 Feb 2020 13:32:15 -0500
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:38818 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728539AbgBCScO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Feb 2020 13:28:12 -0500
-Received: by mail-il1-f198.google.com with SMTP id p67so12668812ill.16
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Feb 2020 10:28:12 -0800 (PST)
+        Mon, 3 Feb 2020 13:32:14 -0500
+Received: by mail-pf1-f194.google.com with SMTP id x185so8003742pfc.5
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Feb 2020 10:32:13 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=y3mIATAg+5LdFoD0uzm3jVblzLIA03DsoYz6n06M99I=;
+        b=Jc0bkPXu0q0TJFHgu0J0I3RK3fr/jvvfd9XIt0V72QkJ0/4yfkc9JDfEQcwEo/9jda
+         00eu2uEH8hLxxxsTQQoeuUXH4s4LCzG7PPrVQT/HaDeD9MXtRb0rBAkxe7njWA6Dm1yV
+         mkXvBw6cJF19/OOQqDfxYT5OCyYpzficnfaHg=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=fNirEIjUZWmHl3fUAVYFWGTvsAYsyyMxP84IDuD55uU=;
-        b=Bz77Ny7Lt+krS6cf0ZKDE60k76X86IVUrK1TPLHoSxcxOxgG0OJJniMspo/O8Ej09D
-         bF/0ZZrSMmTZ2LZ3ZC6GId1FgTh05S/NN9yD6MFKdfxQyTbsCHnwJQRAVFJKmCxDIqD2
-         aTjZawCDQcq3PEdYuNeqs3WUwcMFnbNrhP1dDyaT4cHdhruWp/cfHCQqsCNOgbzWzh+2
-         pDsoprAEYVKIUZAutA0pzZgdRw32RijeSJMeGKOeV0RWR9jrNE2stWhG/UC+MibvzMaL
-         QhnmOeQ4eZ4YYuRdCCzeiVbrOj4MhT+nzu12PwP1BFNp34yA8ys6dnp3x0dQSEElfBgP
-         gD2Q==
-X-Gm-Message-State: APjAAAUPQ0s1ny3PqujqT0TnoXiFrP7Kf19/lJJEN5oI8Mpowwq+mDSe
-        zWZD1/7O8iGDlbuWHXnOVL/XSmsjr6D6yqcXKwq4IwnEZJUG
-X-Google-Smtp-Source: APXvYqxAnqBewG1iFwpsyVzj92urVpUN607Q5R7WgBJZrs7tq87ZBAeAdxyr34hRFZHw5wcrwspswcSloprUWaKraiBImuLSxIpZ
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=y3mIATAg+5LdFoD0uzm3jVblzLIA03DsoYz6n06M99I=;
+        b=n5kuIDm6+HzKh3E2YlPikeCNVnvGx/Yi/aXpJIcVGoZ1/7QXK+7CKTmYesvi5MA17C
+         XRiG3xRPfItp9u0K/FVNCrtyiBeLbc9TE5aiL3NWZvLc4vrRnoEDwdiW8AVy/l05OZ00
+         ony/n/nlEMteMrEPSUvsMhmR2D0ra6UQ52WDF2V5KWYSz90/EHVHqSMOIEFHj3SkmJP3
+         w/KJ3LdwHhSTG5VhtMjAwBD3oDQdE/XEDIbX23G5cR/F0NzlfNphHegz1DzMrNZkEApR
+         RO7YRhOqqso2IwBQd5ROZOH1H3PK5fRKPdxnZn2Ta56WOyXvvW5PUJNUNlZkoivN4T2o
+         4WDw==
+X-Gm-Message-State: APjAAAXSu8M2RXk5NOTKIcJV4rDTkoSvwF4AOv+EYMTLOhcyvrkCyK5y
+        1jZMkLPN3VjTSeqXmQ31YuSZhQ==
+X-Google-Smtp-Source: APXvYqwbQrtlwxFZ4HRXRZxhqJZn4EN4SQWxd/AalIpnCgqHAzJYQavSHgOve0nJe/XDjgCBXLdCYg==
+X-Received: by 2002:a65:5ccc:: with SMTP id b12mr26278507pgt.124.1580754733211;
+        Mon, 03 Feb 2020 10:32:13 -0800 (PST)
+Received: from tictac2.mtv.corp.google.com ([2620:15c:202:1:24fa:e766:52c9:e3b2])
+        by smtp.gmail.com with ESMTPSA id f9sm21009137pfd.141.2020.02.03.10.32.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 03 Feb 2020 10:32:12 -0800 (PST)
+From:   Douglas Anderson <dianders@chromium.org>
+To:     Rob Herring <robh@kernel.org>, Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     Jeffrey Hugo <jhugo@codeaurora.org>,
+        Taniya Das <tdas@codeaurora.org>, jeffrey.l.hugo@gmail.com,
+        linux-arm-msm@vger.kernel.org, harigovi@codeaurora.org,
+        devicetree@vger.kernel.org, mka@chromium.org,
+        kalyan_t@codeaurora.org, Mark Rutland <mark.rutland@arm.com>,
+        linux-clk@vger.kernel.org, hoegsberg@chromium.org,
+        Douglas Anderson <dianders@chromium.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        linux-kernel@vger.kernel.org, Rob Herring <robh+dt@kernel.org>
+Subject: [PATCH v4 00/15] clk: qcom: Fix parenting for dispcc/gpucc/videocc
+Date:   Mon,  3 Feb 2020 10:31:33 -0800
+Message-Id: <20200203183149.73842-1-dianders@chromium.org>
+X-Mailer: git-send-email 2.25.0.341.g760bfbb309-goog
 MIME-Version: 1.0
-X-Received: by 2002:a02:c906:: with SMTP id t6mr20831421jao.75.1580754491979;
- Mon, 03 Feb 2020 10:28:11 -0800 (PST)
-Date:   Mon, 03 Feb 2020 10:28:11 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000f8bfe8059db01519@google.com>
-Subject: possible deadlock in wg_noise_handshake_create_initiation
-From:   syzbot <syzbot+d5bc560aaa1cedefffd5@syzkaller.appspotmail.com>
-To:     Jason@zx2c4.com, davem@davemloft.net, jason@zx2c4.com,
-        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com, wireguard@lists.zx2c4.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+The aim of this series is to get the dispcc and gpucc in a workable
+shape upstream for sc7180.  I personally wasn't focusing on (and
+didn't test much) videocc but pulled it along for the ride.
 
-syzbot found the following crash on:
+Most of the work in this series deals with the fact that the parenting
+info for these clock controllers was in a bad shape.  It looks like it
+was half transitioned from the old way of doing things (relying on
+global names) to the new way of doing things (putting the linkage in
+the device tree).  This should fully transition us.
 
-HEAD commit:    ccaaaf6f Merge tag 'mpx-for-linus' of git://git.kernel.org..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=16034a79e00000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=3373595e41752b95
-dashboard link: https://syzkaller.appspot.com/bug?extid=d5bc560aaa1cedefffd5
-compiler:       clang version 10.0.0 (https://github.com/llvm/llvm-project/ c2443155a0fb245c8f17f2c1c72b6ea391e86e81)
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=103868b5e00000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=16dd064ee00000
+As part of this transition I update the sdm845.dtsi file to specify
+the info as per the new way of doing things.  Although I've now put
+the linkage info in the sdm845.dtsi file, though, I haven't updated
+the sdm845 clock drivers in Linux so they still work via the global
+name matching.  It's left as an exercise to the reader to update the
+sdm845 clock drivers in Linux.
 
-The bug was bisected to:
+This series passes these things for me on linux-next (next-20200129)
+after picking the recent gcc fix I posted [1]:
 
-commit e7096c131e5161fa3b8e52a650d7719d2857adfd
-Author: Jason A. Donenfeld <Jason@zx2c4.com>
-Date:   Sun Dec 8 23:27:34 2019 +0000
+  for f in \
+    Documentation/devicetree/bindings/clock/qcom,msm8998-gpucc.yaml \
+    Documentation/devicetree/bindings/clock/qcom,sc7180-dispcc.yaml \
+    Documentation/devicetree/bindings/clock/qcom,sc7180-gpucc.yaml \
+    Documentation/devicetree/bindings/clock/qcom,sc7180-videocc.yaml \
+    Documentation/devicetree/bindings/clock/qcom,sdm845-dispcc.yaml \
+    Documentation/devicetree/bindings/clock/qcom,sdm845-gpucc.yaml \
+    Documentation/devicetree/bindings/clock/qcom,sdm845-videocc.yaml; do \
+        ARCH=arm64 make dtbs_check DT_SCHEMA_FILES=$f; \
+    done
 
-    net: WireGuard secure network tunnel
+  I also tried this:
+    # Delete broken yaml:
+    rm Documentation/devicetree/bindings/pci/intel-gw-pcie.yaml
+    ARCH=arm64 make dt_binding_check | grep 'clock/qcom'
+  ...and that didn't seem to indicate problems.
 
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=14440195e00000
-final crash:    https://syzkaller.appspot.com/x/report.txt?x=16440195e00000
-console output: https://syzkaller.appspot.com/x/log.txt?x=12440195e00000
+  I also tried this (make sure you don't run w/ -j64 or diff is hard):
+    # Delete broken yaml:
+    rm Documentation/devicetree/bindings/pci/intel-gw-pcie.yaml
+    git checkout beforeMyCode
+    ARCH=arm64 make dt_binding_check > old.txt 2>&1
+    git checkout myCode
+    ARCH=arm64 make dt_binding_check > new.txt 2>&1
+    diff old.txt new.txt
+  ...and that didn't seem to indicate problems.
 
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+d5bc560aaa1cedefffd5@syzkaller.appspotmail.com
-Fixes: e7096c131e51 ("net: WireGuard secure network tunnel")
+I have confirmed that (with extra patches) the display/gpu come up on
+sc7180 and sdm845-cheza.  You can find the top of my downstream tree at:
+  https://crrev.com/c/2017976/4
 
-======================================================
-WARNING: possible circular locking dependency detected
-5.5.0-syzkaller #0 Not tainted
-------------------------------------------------------
-kworker/u4:4/509 is trying to acquire lock:
-ffff888097a30e80 (&wg->static_identity.lock){++++}, at: wg_noise_handshake_create_initiation+0x6a/0x15c0 drivers/net/wireguard/noise.c:499
+I have confirmed that sdm845-cheza display / GPU come up atop
+next-20200129, which is what this series is posted against.
 
-but task is already holding lock:
-ffffc90002157d78 ((work_completion)(&peer->transmit_handshake_work)){+.+.}, at: process_one_work+0x7a5/0x10f0 kernel/workqueue.c:2239
+From v2 to v3, this series has quite a few changes.  Mostly it's:
+- Always split into multiple files (Stephen).
+- Use internal names, not purist names (Taniya).
+- I realized that I forgot to update the sc7180 video clock controller
+  driver in v2.
+- A few other misc cleanups / fixes, see each patch for details.
 
-which lock already depends on the new lock.
+From v3 to v4 this just removes the "bindings/" from the schema ID and
+adds Rob's tag to two of the bindings patches.  The third binding
+patch didn't get Rob's Ack because he suggested combining two files
+might be a good idea.  I'm assuming he'll be OK with leaving them
+split since Stephen prefers it that way, but if I have to do a v5 I
+can do that.
 
+It feels like with this many patches there's very little chance I
+didn't do something stupid like make a tpyo or a paste-o paste-o,
+though I tried to cross-check as much as I could.  I apologize in
+advance for the stupid things I did that I should have known better
+about.
 
-the existing dependency chain (in reverse order) is:
+[1] https://lore.kernel.org/r/20200129152458.v2.1.I4452dc951d7556ede422835268742b25a18b356b@changeid
 
--> #2 ((work_completion)(&peer->transmit_handshake_work)){+.+.}:
-       lock_acquire+0x154/0x250 kernel/locking/lockdep.c:4484
-       process_one_work+0x7c8/0x10f0 kernel/workqueue.c:2240
-       worker_thread+0xbbc/0x1630 kernel/workqueue.c:2410
-       kthread+0x332/0x350 kernel/kthread.c:255
-       ret_from_fork+0x24/0x30 arch/x86/entry/entry_64.S:352
+Changes in v4:
+- (non-change): Didn't combine sdm845 & sc7180 gpucc as per Stephen.
+- Added Rob's review tag.
+- Fixed schema id to not have "bindings/" as per Rob.
 
--> #1 ((wq_completion)wg-kex-wireguard0){+.+.}:
-       lock_acquire+0x154/0x250 kernel/locking/lockdep.c:4484
-       flush_workqueue+0x10a/0x1820 kernel/workqueue.c:2775
-       peer_remove_after_dead+0x125/0x280 drivers/net/wireguard/peer.c:141
-       wg_peer_remove+0x211/0x270 drivers/net/wireguard/peer.c:176
-       wg_set_device+0xb6a/0x2010 drivers/net/wireguard/netlink.c:575
-       genl_family_rcv_msg_doit net/netlink/genetlink.c:672 [inline]
-       genl_family_rcv_msg net/netlink/genetlink.c:717 [inline]
-       genl_rcv_msg+0xf15/0x13e0 net/netlink/genetlink.c:734
-       netlink_rcv_skb+0x19e/0x3e0 net/netlink/af_netlink.c:2477
-       genl_rcv+0x28/0x40 net/netlink/genetlink.c:745
-       netlink_unicast_kernel net/netlink/af_netlink.c:1302 [inline]
-       netlink_unicast+0x766/0x920 net/netlink/af_netlink.c:1328
-       netlink_sendmsg+0xa2b/0xd40 net/netlink/af_netlink.c:1917
-       sock_sendmsg_nosec net/socket.c:652 [inline]
-       sock_sendmsg net/socket.c:672 [inline]
-       ____sys_sendmsg+0x4f7/0x7f0 net/socket.c:2343
-       ___sys_sendmsg net/socket.c:2397 [inline]
-       __sys_sendmsg+0x1ed/0x290 net/socket.c:2430
-       __do_sys_sendmsg net/socket.c:2439 [inline]
-       __se_sys_sendmsg net/socket.c:2437 [inline]
-       __x64_sys_sendmsg+0x7f/0x90 net/socket.c:2437
-       do_syscall_64+0xf7/0x1c0 arch/x86/entry/common.c:294
-       entry_SYSCALL_64_after_hwframe+0x49/0xbe
+Changes in v3:
+- Add Matthias tag.
+- Added include file to description.
+- Added pointer to inlude file in description.
+- Added videocc include file.
+- Discovered / added new gcc input clock on sdm845.
+- Everyone but msm8998 now uses internal QC names.
+- Fixed typo grpahics => graphics
+- Newly discovered gcc_disp_gpll0_div_clk_src added.
+- Patch ("clk: qcom: Get rid of fallback...dispcc-sc7180") split out for v3.
+- Patch ("clk: qcom: Get rid of the test...dispcc-sc7180") split out for v3.
+- Patch ("clk: qcom: Get rid of the test...gpucc-sc7180") split out for v3.
+- Patch ("clk: qcom: Get rid of the test...videocc-sc7180") new for v3.
+- Patch ("clk: qcom: Use ARRAY_SIZE in dispcc-sc7180...") split out for v3.
+- Patch ("clk: qcom: Use ARRAY_SIZE in gpucc-sc7180...") split out for v3.
+- Patch ("clk: qcom: Use ARRAY_SIZE in videocc-sc7180...") new for v3.
+- Split bindings into 3 files.
+- Split sc7180 and sdm845 into two files.
+- Split videocc bindings into 2 files.
+- Switched names to internal QC names rather than logical ones.
+- Unlike in v2, use internal name instead of purist name.
+- Updated commit description.
 
--> #0 (&wg->static_identity.lock){++++}:
-       check_prev_add kernel/locking/lockdep.c:2475 [inline]
-       check_prevs_add kernel/locking/lockdep.c:2580 [inline]
-       validate_chain+0x1507/0x7be0 kernel/locking/lockdep.c:2970
-       __lock_acquire+0xc5a/0x1bc0 kernel/locking/lockdep.c:3954
-       lock_acquire+0x154/0x250 kernel/locking/lockdep.c:4484
-       down_read+0x39/0x50 kernel/locking/rwsem.c:1495
-       wg_noise_handshake_create_initiation+0x6a/0x15c0 drivers/net/wireguard/noise.c:499
-       wg_packet_send_handshake_initiation drivers/net/wireguard/send.c:34 [inline]
-       wg_packet_handshake_send_worker+0xe5/0x1a0 drivers/net/wireguard/send.c:51
-       process_one_work+0x7f5/0x10f0 kernel/workqueue.c:2264
-       worker_thread+0xbbc/0x1630 kernel/workqueue.c:2410
-       kthread+0x332/0x350 kernel/kthread.c:255
-       ret_from_fork+0x24/0x30 arch/x86/entry/entry_64.S:352
+Changes in v2:
+- Added includes
+- Changed various parent names to match bindings / driver
+- Patch ("arm64: dts: qcom: sdm845: Add...dispcc") new for v2.
+- Patch ("arm64: dts: qcom: sdm845: Add...gpucc") new for v2.
+- Patch ("arm64: dts: qcom: sdm845: Add...videocc") new for v2.
+- Patch ("clk: qcom: rcg2: Don't crash...") new for v2.
+- Patch ("dt-bindings: clock: Cleanup qcom,videocc") new for v2.
+- Patch ("dt-bindings: clock: Fix qcom,dispcc...") new for v2.
+- Patch ("dt-bindings: clock: Fix qcom,gpucc...") new for v2.
 
-other info that might help us debug this:
+Douglas Anderson (14):
+  clk: qcom: rcg2: Don't crash if our parent can't be found; return an
+    error
+  dt-bindings: clock: Fix qcom,dispcc bindings for sdm845/sc7180
+  arm64: dts: qcom: sdm845: Add the missing clocks on the dispcc
+  clk: qcom: Get rid of fallback global names for dispcc-sc7180
+  clk: qcom: Get rid of the test clock for dispcc-sc7180
+  clk: qcom: Use ARRAY_SIZE in dispcc-sc7180 for parent clocks
+  dt-bindings: clock: Fix qcom,gpucc bindings for sdm845/sc7180/msm8998
+  arm64: dts: qcom: sdm845: Add missing clocks / fix names on the gpucc
+  clk: qcom: Get rid of the test clock for gpucc-sc7180
+  clk: qcom: Use ARRAY_SIZE in gpucc-sc7180 for parent clocks
+  dt-bindings: clock: Cleanup qcom,videocc bindings for sdm845/sc7180
+  clk: qcom: Get rid of the test clock for videocc-sc7180
+  clk: qcom: Use ARRAY_SIZE in videocc-sc7180 for parent clocks
+  arm64: dts: qcom: sdm845: Add the missing clock on the videocc
 
-Chain exists of:
-  &wg->static_identity.lock --> (wq_completion)wg-kex-wireguard0 --> (work_completion)(&peer->transmit_handshake_work)
+Taniya Das (1):
+  arm64: dts: sc7180: Add clock controller nodes
 
- Possible unsafe locking scenario:
+ .../devicetree/bindings/clock/qcom,gpucc.yaml | 72 --------------
+ ...om,dispcc.yaml => qcom,msm8998-gpucc.yaml} | 33 +++----
+ .../bindings/clock/qcom,sc7180-dispcc.yaml    | 84 ++++++++++++++++
+ .../bindings/clock/qcom,sc7180-gpucc.yaml     | 72 ++++++++++++++
+ .../bindings/clock/qcom,sc7180-videocc.yaml   | 63 ++++++++++++
+ .../bindings/clock/qcom,sdm845-dispcc.yaml    | 99 +++++++++++++++++++
+ .../bindings/clock/qcom,sdm845-gpucc.yaml     | 72 ++++++++++++++
+ ...,videocc.yaml => qcom,sdm845-videocc.yaml} | 27 ++---
+ arch/arm64/boot/dts/qcom/sc7180.dtsi          | 47 +++++++++
+ arch/arm64/boot/dts/qcom/sdm845.dtsi          | 28 +++++-
+ drivers/clk/qcom/clk-rcg2.c                   |  3 +
+ drivers/clk/qcom/dispcc-sc7180.c              | 45 +++------
+ drivers/clk/qcom/gpucc-sc7180.c               |  4 +-
+ drivers/clk/qcom/videocc-sc7180.c             |  4 +-
+ 14 files changed, 513 insertions(+), 140 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/clock/qcom,gpucc.yaml
+ rename Documentation/devicetree/bindings/clock/{qcom,dispcc.yaml => qcom,msm8998-gpucc.yaml} (51%)
+ create mode 100644 Documentation/devicetree/bindings/clock/qcom,sc7180-dispcc.yaml
+ create mode 100644 Documentation/devicetree/bindings/clock/qcom,sc7180-gpucc.yaml
+ create mode 100644 Documentation/devicetree/bindings/clock/qcom,sc7180-videocc.yaml
+ create mode 100644 Documentation/devicetree/bindings/clock/qcom,sdm845-dispcc.yaml
+ create mode 100644 Documentation/devicetree/bindings/clock/qcom,sdm845-gpucc.yaml
+ rename Documentation/devicetree/bindings/clock/{qcom,videocc.yaml => qcom,sdm845-videocc.yaml} (61%)
 
-       CPU0                    CPU1
-       ----                    ----
-  lock((work_completion)(&peer->transmit_handshake_work));
-                               lock((wq_completion)wg-kex-wireguard0);
-                               lock((work_completion)(&peer->transmit_handshake_work));
-  lock(&wg->static_identity.lock);
+-- 
+2.25.0.341.g760bfbb309-goog
 
- *** DEADLOCK ***
-
-2 locks held by kworker/u4:4/509:
- #0: ffff88809ec44128 ((wq_completion)wg-kex-wireguard0){+.+.}, at: spin_unlock_irq include/linux/spinlock.h:388 [inline]
- #0: ffff88809ec44128 ((wq_completion)wg-kex-wireguard0){+.+.}, at: process_one_work+0x763/0x10f0 kernel/workqueue.c:2237
- #1: ffffc90002157d78 ((work_completion)(&peer->transmit_handshake_work)){+.+.}, at: process_one_work+0x7a5/0x10f0 kernel/workqueue.c:2239
-
-stack backtrace:
-CPU: 1 PID: 509 Comm: kworker/u4:4 Not tainted 5.5.0-syzkaller #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-Workqueue: wg-kex-wireguard0 wg_packet_handshake_send_worker
-Call Trace:
- __dump_stack lib/dump_stack.c:77 [inline]
- dump_stack+0x1fb/0x318 lib/dump_stack.c:118
- print_circular_bug+0xc3f/0xe70 kernel/locking/lockdep.c:1684
- check_noncircular+0x206/0x3a0 kernel/locking/lockdep.c:1808
- check_prev_add kernel/locking/lockdep.c:2475 [inline]
- check_prevs_add kernel/locking/lockdep.c:2580 [inline]
- validate_chain+0x1507/0x7be0 kernel/locking/lockdep.c:2970
- __lock_acquire+0xc5a/0x1bc0 kernel/locking/lockdep.c:3954
- lock_acquire+0x154/0x250 kernel/locking/lockdep.c:4484
- down_read+0x39/0x50 kernel/locking/rwsem.c:1495
- wg_noise_handshake_create_initiation+0x6a/0x15c0 drivers/net/wireguard/noise.c:499
- wg_packet_send_handshake_initiation drivers/net/wireguard/send.c:34 [inline]
- wg_packet_handshake_send_worker+0xe5/0x1a0 drivers/net/wireguard/send.c:51
- process_one_work+0x7f5/0x10f0 kernel/workqueue.c:2264
- worker_thread+0xbbc/0x1630 kernel/workqueue.c:2410
- kthread+0x332/0x350 kernel/kthread.c:255
- ret_from_fork+0x24/0x30 arch/x86/entry/entry_64.S:352
-
-
----
-This bug is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this bug report. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
-syzbot can test patches for this bug, for details see:
-https://goo.gl/tpsmEJ#testing-patches
