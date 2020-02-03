@@ -2,134 +2,109 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D65EF150937
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Feb 2020 16:10:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5D2DB150930
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Feb 2020 16:09:45 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728705AbgBCPKa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 3 Feb 2020 10:10:30 -0500
-Received: from 212.199.177.27.static.012.net.il ([212.199.177.27]:36316 "EHLO
-        herzl.nuvoton.co.il" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1727988AbgBCPK1 (ORCPT
+        id S1728638AbgBCPJm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 3 Feb 2020 10:09:42 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:34746 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727746AbgBCPJm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Feb 2020 10:10:27 -0500
-Received: from taln60.nuvoton.co.il (ntil-fw [212.199.177.25])
-        by herzl.nuvoton.co.il (8.13.8/8.13.8) with ESMTP id 013F9JW7001610;
-        Mon, 3 Feb 2020 17:09:19 +0200
-Received: by taln60.nuvoton.co.il (Postfix, from userid 10070)
-        id BB3D46032F; Mon,  3 Feb 2020 17:09:19 +0200 (IST)
-From:   Tomer Maimon <tmaimon77@gmail.com>
-To:     jic23@kernel.org, knaack.h@gmx.de, lars@metafoo.de,
-        pmeerw@pmeerw.net, robh+dt@kernel.org, mark.rutland@arm.com,
-        avifishman70@gmail.com, tali.perry1@gmail.com, venture@google.com,
-        yuenn@google.com, benjaminfair@google.com, joel@jms.id.au
-Cc:     linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, openbmc@lists.ozlabs.org,
-        Tomer Maimon <tmaimon77@gmail.com>
-Subject: [PATCH v2 2/2] iio: adc: modify NPCM reset support
-Date:   Mon,  3 Feb 2020 17:09:17 +0200
-Message-Id: <20200203150917.176391-2-tmaimon77@gmail.com>
-X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20200203150917.176391-1-tmaimon77@gmail.com>
-References: <20200203150917.176391-1-tmaimon77@gmail.com>
+        Mon, 3 Feb 2020 10:09:42 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=TJi8QtHhsWGCVxRxV46Sl0UBAWvTaJeS0BMr3/1JOes=; b=TToOhRG5H7Rm8TDoz517bEYPm8
+        nPt5NZQXnCIbLuCeR7m40vM9GHtN3KF1O1nSSraj8KYSpPmeyF1jzlLltrR1xQLxN/RPadva3gFxf
+        y+ArOzdoieP3eJlXPNpAC1F2XX04DLn4VmavCMn+qfjCXsAkSwxohO7URvL7k1a92Haa6XgWqAUHk
+        ZVfcogpqnHoH24VD3fNPerCMdeio5DDwxK2H+AkWS3JJP4zIkrDm1zJ4cWGX+ao+AXuy7AWjbdS+c
+        olOQn9D4GBsxFGSLb1G2BPoGj5Ye1UrRVppUvW3yP+9lrckQ1vEPAWLVRNBbsFgoSye1nG7FtDfEZ
+        s+n1hz6Q==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
+        by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1iydM0-0001a3-Lc; Mon, 03 Feb 2020 15:09:36 +0000
+Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (Client did not present a certificate)
+        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id AA04F3011E0;
+        Mon,  3 Feb 2020 16:07:48 +0100 (CET)
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id CB5F92014711E; Mon,  3 Feb 2020 16:09:33 +0100 (CET)
+Date:   Mon, 3 Feb 2020 16:09:33 +0100
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Christoph Hellwig <hch@infradead.org>
+Cc:     mingo@kernel.org, will@kernel.org, oleg@redhat.com,
+        tglx@linutronix.de, linux-kernel@vger.kernel.org,
+        bigeasy@linutronix.de, juri.lelli@redhat.com, williams@redhat.com,
+        bristot@redhat.com, longman@redhat.com, dave@stgolabs.net,
+        jack@suse.com
+Subject: Re: [PATCH -v2 5/7] locking/percpu-rwsem: Remove the embedded rwsem
+Message-ID: <20200203150933.GJ14914@hirez.programming.kicks-ass.net>
+References: <20200131150703.194229898@infradead.org>
+ <20200131151540.155211856@infradead.org>
+ <20200203142050.GA28595@infradead.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200203142050.GA28595@infradead.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Modify NPCM ADC reset support from
-direct register access to reset controller support.
+On Mon, Feb 03, 2020 at 06:20:50AM -0800, Christoph Hellwig wrote:
+> On Fri, Jan 31, 2020 at 04:07:08PM +0100, Peter Zijlstra wrote:
+> > @@ -53,12 +53,6 @@ struct rw_semaphore {
+> >  #endif
+> >  };
+> >  
+> > -/*
+> > - * Setting all bits of the owner field except bit 0 will indicate
+> > - * that the rwsem is writer-owned with an unknown owner.
+> > - */
+> > -#define RWSEM_OWNER_UNKNOWN	(-2L)
+> 
+> Can you split the removal of the non-owned resem support into a separate
+> patch?  I still think keeping this one and moving aio to that scheme is
+> a better idea than the current ad-hoc locking scheme that has all kinds
+> of issues.
 
-please make sure to modify NPCM adc device tree
-parameters as described at nuvoton,npcm-adc.txt
-document for using this change.
+That's basically 2 lines of code and a comment, surely we can ressurect
+that if/when it's needed again?
 
-Signed-off-by: Tomer Maimon <tmaimon77@gmail.com>
 ---
- drivers/iio/adc/npcm_adc.c | 30 +++++++++---------------------
- 1 file changed, 9 insertions(+), 21 deletions(-)
-
-diff --git a/drivers/iio/adc/npcm_adc.c b/drivers/iio/adc/npcm_adc.c
-index a6170a37ebe8..83bad2d5575d 100644
---- a/drivers/iio/adc/npcm_adc.c
-+++ b/drivers/iio/adc/npcm_adc.c
-@@ -14,6 +14,7 @@
- #include <linux/regulator/consumer.h>
- #include <linux/spinlock.h>
- #include <linux/uaccess.h>
-+#include <linux/reset.h>
- 
- struct npcm_adc {
- 	bool int_status;
-@@ -23,13 +24,9 @@ struct npcm_adc {
- 	struct clk *adc_clk;
- 	wait_queue_head_t wq;
- 	struct regulator *vref;
--	struct regmap *rst_regmap;
-+	struct reset_control *reset;
+diff --git a/include/linux/rwsem.h b/include/linux/rwsem.h
+index 00d6054687dd..8a418d9eeb7a 100644
+--- a/include/linux/rwsem.h
++++ b/include/linux/rwsem.h
+@@ -53,12 +53,6 @@ struct rw_semaphore {
+ #endif
  };
  
--/* NPCM7xx reset module */
--#define NPCM7XX_IPSRST1_OFFSET		0x020
--#define NPCM7XX_IPSRST1_ADC_RST		BIT(27)
+-/*
+- * Setting all bits of the owner field except bit 0 will indicate
+- * that the rwsem is writer-owned with an unknown owner.
+- */
+-#define RWSEM_OWNER_UNKNOWN	(-2L)
 -
- /* ADC registers */
- #define NPCM_ADCCON	 0x00
- #define NPCM_ADCDATA	 0x04
-@@ -106,13 +103,11 @@ static int npcm_adc_read(struct npcm_adc *info, int *val, u8 channel)
- 					       msecs_to_jiffies(10));
- 	if (ret == 0) {
- 		regtemp = ioread32(info->regs + NPCM_ADCCON);
--		if ((regtemp & NPCM_ADCCON_ADC_CONV) && info->rst_regmap) {
-+		if (regtemp & NPCM_ADCCON_ADC_CONV) {
- 			/* if conversion failed - reset ADC module */
--			regmap_write(info->rst_regmap, NPCM7XX_IPSRST1_OFFSET,
--				     NPCM7XX_IPSRST1_ADC_RST);
-+			reset_control_assert(info->reset);
- 			msleep(100);
--			regmap_write(info->rst_regmap, NPCM7XX_IPSRST1_OFFSET,
--				     0x0);
-+			reset_control_deassert(info->reset);
- 			msleep(100);
+ /* In all implementations count != 0 means locked */
+ static inline int rwsem_is_locked(struct rw_semaphore *sem)
+ {
+diff --git a/kernel/locking/rwsem.c b/kernel/locking/rwsem.c
+index 44e68761f432..5449ab33f89e 100644
+--- a/kernel/locking/rwsem.c
++++ b/kernel/locking/rwsem.c
+@@ -660,8 +659,6 @@ static inline bool rwsem_can_spin_on_owner(struct rw_semaphore *sem,
+ 	unsigned long flags;
+ 	bool ret = true;
  
- 			/* Enable ADC and start conversion module */
-@@ -186,7 +181,6 @@ static int npcm_adc_probe(struct platform_device *pdev)
- 	struct npcm_adc *info;
- 	struct iio_dev *indio_dev;
- 	struct device *dev = &pdev->dev;
--	struct device_node *np = pdev->dev.of_node;
- 
- 	indio_dev = devm_iio_device_alloc(&pdev->dev, sizeof(*info));
- 	if (!indio_dev)
-@@ -199,6 +193,10 @@ static int npcm_adc_probe(struct platform_device *pdev)
- 	if (IS_ERR(info->regs))
- 		return PTR_ERR(info->regs);
- 
-+	info->reset = devm_reset_control_get(&pdev->dev, NULL);
-+	if (IS_ERR(info->reset))
-+		return PTR_ERR(info->reset);
-+
- 	info->adc_clk = devm_clk_get(&pdev->dev, NULL);
- 	if (IS_ERR(info->adc_clk)) {
- 		dev_warn(&pdev->dev, "ADC clock failed: can't read clk\n");
-@@ -211,16 +209,6 @@ static int npcm_adc_probe(struct platform_device *pdev)
- 	div = div >> NPCM_ADCCON_DIV_SHIFT;
- 	info->adc_sample_hz = clk_get_rate(info->adc_clk) / ((div + 1) * 2);
- 
--	if (of_device_is_compatible(np, "nuvoton,npcm750-adc")) {
--		info->rst_regmap = syscon_regmap_lookup_by_compatible
--			("nuvoton,npcm750-rst");
--		if (IS_ERR(info->rst_regmap)) {
--			dev_err(&pdev->dev, "Failed to find nuvoton,npcm750-rst\n");
--			ret = PTR_ERR(info->rst_regmap);
--			goto err_disable_clk;
--		}
--	}
+-	BUILD_BUG_ON(!(RWSEM_OWNER_UNKNOWN & RWSEM_NONSPINNABLE));
 -
- 	irq = platform_get_irq(pdev, 0);
- 	if (irq <= 0) {
- 		ret = -EINVAL;
--- 
-2.22.0
+ 	if (need_resched()) {
+ 		lockevent_inc(rwsem_opt_fail);
+ 		return false;
+
 
