@@ -2,39 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5AE37150BA1
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Feb 2020 17:29:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7050A150B27
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Feb 2020 17:25:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729776AbgBCQ3W (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 3 Feb 2020 11:29:22 -0500
-Received: from mail.kernel.org ([198.145.29.99]:41216 "EHLO mail.kernel.org"
+        id S1728121AbgBCQZJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 3 Feb 2020 11:25:09 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35608 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729761AbgBCQ3T (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Feb 2020 11:29:19 -0500
+        id S1727939AbgBCQZD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Feb 2020 11:25:03 -0500
 Received: from localhost (unknown [104.132.45.99])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0604A21582;
-        Mon,  3 Feb 2020 16:29:17 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 05B282087E;
+        Mon,  3 Feb 2020 16:25:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1580747358;
-        bh=1sOos8r9C1K2YEJ5KoaoS8yGp3/Qs2/Xad32iYY6mFY=;
+        s=default; t=1580747102;
+        bh=fYBLQfioAFLXVP4+W9lqJsj8o/aOsIiqIGbkM1lhc0w=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=SaqQ1DV/Qn8D5Tpy/CxjOp7kU7Tmj/Dt8J3NyNpWDcdTGFEVKDiy4DEBqVNr1iSrz
-         5KwJBbmFyyVU8HI00lpWIIPuw8dFO9k+cz6fO8Uqh3dzQNIx36oBWgJo7oamJ2Rkcm
-         3iroRwbprhCDGEbe9lSjyQYUlSjkw3fag8C7u3KE=
+        b=U7U0zUDlI5b3qt3NWVxsbIOc8wSn/i1s+7OP4/8aFqhdVAZoUUFy533lb2PxzXEID
+         88LC/BB1Kmugtc574Uh7NRsZ7WqNxBDz67YOFuurxYUbiFojRwUlpPk081OKrKb0Qb
+         Ss007XqJvTukTNdSLxyExsv15sQ68WmZZ4i/2lng=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, "wuxu.wu" <wuxu.wu@huawei.com>,
-        Mark Brown <broonie@kernel.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 23/89] spi: spi-dw: Add lock protect dw_spi rx/tx to prevent concurrent calls
-Date:   Mon,  3 Feb 2020 16:19:08 +0000
-Message-Id: <20200203161919.998455271@linuxfoundation.org>
+        stable@vger.kernel.org, Johan Hovold <johan@kernel.org>,
+        Kalle Valo <kvalo@codeaurora.org>
+Subject: [PATCH 4.9 13/68] ath9k: fix storage endpoint lookup
+Date:   Mon,  3 Feb 2020 16:19:09 +0000
+Message-Id: <20200203161907.090357058@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200203161916.847439465@linuxfoundation.org>
-References: <20200203161916.847439465@linuxfoundation.org>
+In-Reply-To: <20200203161904.705434837@linuxfoundation.org>
+References: <20200203161904.705434837@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,134 +43,37 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: wuxu.wu <wuxu.wu@huawei.com>
+From: Johan Hovold <johan@kernel.org>
 
-[ Upstream commit 19b61392c5a852b4e8a0bf35aecb969983c5932d ]
+commit 0ef332951e856efa89507cdd13ba8f4fb8d4db12 upstream.
 
-dw_spi_irq() and dw_spi_transfer_one concurrent calls.
+Make sure to use the current alternate setting when verifying the
+storage interface descriptors to avoid submitting an URB to an invalid
+endpoint.
 
-I find a panic in dw_writer(): txw = *(u8 *)(dws->tx), when dw->tx==null,
-dw->len==4, and dw->tx_end==1.
+Failing to do so could cause the driver to misbehave or trigger a WARN()
+in usb_submit_urb() that kernels with panic_on_warn set would choke on.
 
-When tpm driver's message overtime dw_spi_irq() and dw_spi_transfer_one
-may concurrent visit dw_spi, so I think dw_spi structure lack of protection.
+Fixes: 36bcce430657 ("ath9k_htc: Handle storage devices")
+Cc: stable <stable@vger.kernel.org>     # 2.6.39
+Signed-off-by: Johan Hovold <johan@kernel.org>
+Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-Otherwise dw_spi_transfer_one set dw rx/tx buffer and then open irq,
-store dw rx/tx instructions and other cores handle irq load dw rx/tx
-instructions may out of order.
-
-	[ 1025.321302] Call trace:
-	...
-	[ 1025.321319]  __crash_kexec+0x98/0x148
-	[ 1025.321323]  panic+0x17c/0x314
-	[ 1025.321329]  die+0x29c/0x2e8
-	[ 1025.321334]  die_kernel_fault+0x68/0x78
-	[ 1025.321337]  __do_kernel_fault+0x90/0xb0
-	[ 1025.321346]  do_page_fault+0x88/0x500
-	[ 1025.321347]  do_translation_fault+0xa8/0xb8
-	[ 1025.321349]  do_mem_abort+0x68/0x118
-	[ 1025.321351]  el1_da+0x20/0x8c
-	[ 1025.321362]  dw_writer+0xc8/0xd0
-	[ 1025.321364]  interrupt_transfer+0x60/0x110
-	[ 1025.321365]  dw_spi_irq+0x48/0x70
-	...
-
-Signed-off-by: wuxu.wu <wuxu.wu@huawei.com>
-Link: https://lore.kernel.org/r/1577849981-31489-1-git-send-email-wuxu.wu@huawei.com
-Signed-off-by: Mark Brown <broonie@kernel.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/spi/spi-dw.c | 15 ++++++++++++---
- drivers/spi/spi-dw.h |  1 +
- 2 files changed, 13 insertions(+), 3 deletions(-)
+ drivers/net/wireless/ath/ath9k/hif_usb.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/spi/spi-dw.c b/drivers/spi/spi-dw.c
-index b217c22ff72fe..b461200871f89 100644
---- a/drivers/spi/spi-dw.c
-+++ b/drivers/spi/spi-dw.c
-@@ -180,9 +180,11 @@ static inline u32 rx_max(struct dw_spi *dws)
- 
- static void dw_writer(struct dw_spi *dws)
+--- a/drivers/net/wireless/ath/ath9k/hif_usb.c
++++ b/drivers/net/wireless/ath/ath9k/hif_usb.c
+@@ -1213,7 +1213,7 @@ err_fw:
+ static int send_eject_command(struct usb_interface *interface)
  {
--	u32 max = tx_max(dws);
-+	u32 max;
- 	u16 txw = 0;
- 
-+	spin_lock(&dws->buf_lock);
-+	max = tx_max(dws);
- 	while (max--) {
- 		/* Set the tx word if the transfer's original "tx" is not null */
- 		if (dws->tx_end - dws->len) {
-@@ -194,13 +196,16 @@ static void dw_writer(struct dw_spi *dws)
- 		dw_write_io_reg(dws, DW_SPI_DR, txw);
- 		dws->tx += dws->n_bytes;
- 	}
-+	spin_unlock(&dws->buf_lock);
- }
- 
- static void dw_reader(struct dw_spi *dws)
- {
--	u32 max = rx_max(dws);
-+	u32 max;
- 	u16 rxw;
- 
-+	spin_lock(&dws->buf_lock);
-+	max = rx_max(dws);
- 	while (max--) {
- 		rxw = dw_read_io_reg(dws, DW_SPI_DR);
- 		/* Care rx only if the transfer's original "rx" is not null */
-@@ -212,6 +217,7 @@ static void dw_reader(struct dw_spi *dws)
- 		}
- 		dws->rx += dws->n_bytes;
- 	}
-+	spin_unlock(&dws->buf_lock);
- }
- 
- static void int_error_stop(struct dw_spi *dws, const char *msg)
-@@ -284,18 +290,20 @@ static int dw_spi_transfer_one(struct spi_master *master,
- {
- 	struct dw_spi *dws = spi_master_get_devdata(master);
- 	struct chip_data *chip = spi_get_ctldata(spi);
-+	unsigned long flags;
- 	u8 imask = 0;
- 	u16 txlevel = 0;
- 	u32 cr0;
- 	int ret;
- 
- 	dws->dma_mapped = 0;
--
-+	spin_lock_irqsave(&dws->buf_lock, flags);
- 	dws->tx = (void *)transfer->tx_buf;
- 	dws->tx_end = dws->tx + transfer->len;
- 	dws->rx = transfer->rx_buf;
- 	dws->rx_end = dws->rx + transfer->len;
- 	dws->len = transfer->len;
-+	spin_unlock_irqrestore(&dws->buf_lock, flags);
- 
- 	spi_enable_chip(dws, 0);
- 
-@@ -486,6 +494,7 @@ int dw_spi_add_host(struct device *dev, struct dw_spi *dws)
- 	dws->type = SSI_MOTO_SPI;
- 	dws->dma_inited = 0;
- 	dws->dma_addr = (dma_addr_t)(dws->paddr + DW_SPI_DR);
-+	spin_lock_init(&dws->buf_lock);
- 
- 	ret = request_irq(dws->irq, dw_spi_irq, IRQF_SHARED, dev_name(dev),
- 			  master);
-diff --git a/drivers/spi/spi-dw.h b/drivers/spi/spi-dw.h
-index 5c07cf8f19e00..45fbf3ad591cc 100644
---- a/drivers/spi/spi-dw.h
-+++ b/drivers/spi/spi-dw.h
-@@ -117,6 +117,7 @@ struct dw_spi {
- 	size_t			len;
- 	void			*tx;
- 	void			*tx_end;
-+	spinlock_t		buf_lock;
- 	void			*rx;
- 	void			*rx_end;
- 	int			dma_mapped;
--- 
-2.20.1
-
+ 	struct usb_device *udev = interface_to_usbdev(interface);
+-	struct usb_host_interface *iface_desc = &interface->altsetting[0];
++	struct usb_host_interface *iface_desc = interface->cur_altsetting;
+ 	struct usb_endpoint_descriptor *endpoint;
+ 	unsigned char *cmd;
+ 	u8 bulk_out_ep;
 
 
