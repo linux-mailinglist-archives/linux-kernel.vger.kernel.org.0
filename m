@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B82FE150DAD
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Feb 2020 17:46:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A8E65150E02
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Feb 2020 17:48:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730263AbgBCQqL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 3 Feb 2020 11:46:11 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40884 "EHLO mail.kernel.org"
+        id S1728814AbgBCQZ6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 3 Feb 2020 11:25:58 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36754 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729708AbgBCQ3E (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Feb 2020 11:29:04 -0500
+        id S1728786AbgBCQZz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Feb 2020 11:25:55 -0500
 Received: from localhost (unknown [104.132.45.99])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BDB7620838;
-        Mon,  3 Feb 2020 16:29:03 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7AD342086A;
+        Mon,  3 Feb 2020 16:25:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1580747344;
-        bh=o8qXUuVMgURdjU9RXTf11ZkJaY0aPqvSHrfr4hZ1FSQ=;
+        s=default; t=1580747154;
+        bh=Hlv4BgpjQ57ab2jPSw4SsV+tpSLZyoBSgMWy+tEbRU0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=a9VIIBY1pPwsLus/WZoRGVND2SVnmIUmlTFsrNVJ2aMpcKsBVAErkPeW2JyICKQP7
-         fA38RvSsfcI25jk6smiwSLOTxHxgSeAgP75oPVriOFc6Hxs+oHK/MJ4hgb+Kvp6wAU
-         HnH8rPPv3VSGE5ehd595g8di0umKY3li0j1NTPtY=
+        b=lldwuz+CmQBKO69xkgsBkMua6mgVj7t62gAoVHAhxy7dG7hl943H/K//1tSZogSGN
+         VSlggMeASFssRQ7Q/rADT1qne33A2qapdsgcJ0DaXEJqkkwvFG1EeQTx73lqhQCgXV
+         xCjD/Po7pp6Ax4tmRX/AsmkVVPAT5IAc1uV3IXOo=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
         syzbot+1c6756baf4b16b94d2a6@syzkaller.appspotmail.com,
         Jan Kara <jack@suse.cz>
-Subject: [PATCH 4.14 44/89] reiserfs: Fix memory leak of journal device string
+Subject: [PATCH 4.9 33/68] reiserfs: Fix memory leak of journal device string
 Date:   Mon,  3 Feb 2020 16:19:29 +0000
-Message-Id: <20200203161922.889518159@linuxfoundation.org>
+Message-Id: <20200203161910.404914413@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200203161916.847439465@linuxfoundation.org>
-References: <20200203161916.847439465@linuxfoundation.org>
+In-Reply-To: <20200203161904.705434837@linuxfoundation.org>
+References: <20200203161904.705434837@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -64,7 +64,7 @@ Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 --- a/fs/reiserfs/super.c
 +++ b/fs/reiserfs/super.c
-@@ -629,6 +629,7 @@ static void reiserfs_put_super(struct su
+@@ -599,6 +599,7 @@ static void reiserfs_put_super(struct su
  	reiserfs_write_unlock(s);
  	mutex_destroy(&REISERFS_SB(s)->lock);
  	destroy_workqueue(REISERFS_SB(s)->commit_wq);
@@ -72,7 +72,7 @@ Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
  	kfree(s->s_fs_info);
  	s->s_fs_info = NULL;
  }
-@@ -2243,6 +2244,7 @@ error_unlocked:
+@@ -2217,6 +2218,7 @@ error_unlocked:
  			kfree(qf_names[j]);
  	}
  #endif
