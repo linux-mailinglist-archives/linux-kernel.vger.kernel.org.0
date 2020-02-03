@@ -2,39 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 66559150C08
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Feb 2020 17:32:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 44D42150CDF
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Feb 2020 17:40:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730475AbgBCQct (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 3 Feb 2020 11:32:49 -0500
-Received: from mail.kernel.org ([198.145.29.99]:46490 "EHLO mail.kernel.org"
+        id S1731496AbgBCQjn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 3 Feb 2020 11:39:43 -0500
+Received: from mail.kernel.org ([198.145.29.99]:55758 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730467AbgBCQco (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Feb 2020 11:32:44 -0500
+        id S1731337AbgBCQjj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Feb 2020 11:39:39 -0500
 Received: from localhost (unknown [104.132.45.99])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 40B972082E;
-        Mon,  3 Feb 2020 16:32:43 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 864A82192A;
+        Mon,  3 Feb 2020 16:39:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1580747563;
-        bh=3X1PU6uQea7BRgZqf4K6xrZwu/6yQq6UNJ+3wSZR3WY=;
+        s=default; t=1580747979;
+        bh=BA46yIdWlpDA7i2X07YkpysZ6Pq9BB41WDFHVxN+xLc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=IEFk3Jh2AWdCeDcbcttWcbDy3qqHyA3PizqQOxdBLbry7HvM34C1JIiE4iXYG6aM5
-         b/631mWC0Lu0/tCv2bFmf3WeBxlyaDDTFoKk02NvAu+WtxTtkcFn2BGnonUSk3qf4k
-         Yr1h1CSq4QjsKEFd1nYZNlWIpAEZrOgJy9tER+xI=
+        b=d+8OYsuZg7G7rtBYk9bUFsdufxG/lHKcFESYsZMdk9MWTu5q4wdoL4qY0sgGgIzH5
+         JwXUqc9gAp5xY8Q6LAoEeGVjX2jHN9xUhiyCmTmTNh7zl4MRyCZt+G5pjnVNBj9MjP
+         rk8zpwW1qOnNrxFlY6pnCPCShcw0AbK5HT4S4iAc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
-        Johannes Berg <johannes.berg@intel.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 45/70] wireless: wext: avoid gcc -O3 warning
-Date:   Mon,  3 Feb 2020 16:19:57 +0000
-Message-Id: <20200203161918.866439075@linuxfoundation.org>
+        stable@vger.kernel.org,
+        "Rosales-fernandez, Carlos" <carlos.rosales-fernandez@intel.com>,
+        Kan Liang <kan.liang@linux.intel.com>,
+        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+        Ingo Molnar <mingo@kernel.org>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 5.4 55/90] perf/x86/intel/uncore: Add PCI ID of IMC for Xeon E3 V5 Family
+Date:   Mon,  3 Feb 2020 16:19:58 +0000
+Message-Id: <20200203161924.464976443@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200203161912.158976871@linuxfoundation.org>
-References: <20200203161912.158976871@linuxfoundation.org>
+In-Reply-To: <20200203161917.612554987@linuxfoundation.org>
+References: <20200203161917.612554987@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,54 +46,57 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Arnd Bergmann <arnd@arndb.de>
+From: Kan Liang <kan.liang@linux.intel.com>
 
-[ Upstream commit e16119655c9e6c4aa5767cd971baa9c491f41b13 ]
+[ Upstream commit e74383045119fb8055cf31cb39e0fe951d67163a ]
 
-After the introduction of CONFIG_CC_OPTIMIZE_FOR_PERFORMANCE_O3,
-the wext code produces a bogus warning:
+The IMC uncore support is missed for E3-1585 v5 CPU.
 
-In function 'iw_handler_get_iwstats',
-    inlined from 'ioctl_standard_call' at net/wireless/wext-core.c:1015:9,
-    inlined from 'wireless_process_ioctl' at net/wireless/wext-core.c:935:10,
-    inlined from 'wext_ioctl_dispatch.part.8' at net/wireless/wext-core.c:986:8,
-    inlined from 'wext_handle_ioctl':
-net/wireless/wext-core.c:671:3: error: argument 1 null where non-null expected [-Werror=nonnull]
-   memcpy(extra, stats, sizeof(struct iw_statistics));
-   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-In file included from arch/x86/include/asm/string.h:5,
-net/wireless/wext-core.c: In function 'wext_handle_ioctl':
-arch/x86/include/asm/string_64.h:14:14: note: in a call to function 'memcpy' declared here
+Intel Xeon E3 V5 Family has Sky Lake CPU.
+Add the PCI ID of IMC for Intel Xeon E3 V5 Family.
 
-The problem is that ioctl_standard_call() sometimes calls the handler
-with a NULL argument that would cause a problem for iw_handler_get_iwstats.
-However, iw_handler_get_iwstats never actually gets called that way.
-
-Marking that function as noinline avoids the warning and leads
-to slightly smaller object code as well.
-
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-Link: https://lore.kernel.org/r/20200107200741.3588770-1-arnd@arndb.de
-Signed-off-by: Johannes Berg <johannes.berg@intel.com>
+Reported-by: Rosales-fernandez, Carlos <carlos.rosales-fernandez@intel.com>
+Signed-off-by: Kan Liang <kan.liang@linux.intel.com>
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Tested-by: Rosales-fernandez, Carlos <carlos.rosales-fernandez@intel.com>
+Link: https://lkml.kernel.org/r/1578687311-158748-1-git-send-email-kan.liang@linux.intel.com
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/wireless/wext-core.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ arch/x86/events/intel/uncore_snb.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-diff --git a/net/wireless/wext-core.c b/net/wireless/wext-core.c
-index 5e677dac2a0ce..69102fda9ebd4 100644
---- a/net/wireless/wext-core.c
-+++ b/net/wireless/wext-core.c
-@@ -657,7 +657,8 @@ struct iw_statistics *get_wireless_stats(struct net_device *dev)
- 	return NULL;
- }
- 
--static int iw_handler_get_iwstats(struct net_device *		dev,
-+/* noinline to avoid a bogus warning with -O3 */
-+static noinline int iw_handler_get_iwstats(struct net_device *	dev,
- 				  struct iw_request_info *	info,
- 				  union iwreq_data *		wrqu,
- 				  char *			extra)
+diff --git a/arch/x86/events/intel/uncore_snb.c b/arch/x86/events/intel/uncore_snb.c
+index dbaa1b088a30e..c37cb12d0ef68 100644
+--- a/arch/x86/events/intel/uncore_snb.c
++++ b/arch/x86/events/intel/uncore_snb.c
+@@ -15,6 +15,7 @@
+ #define PCI_DEVICE_ID_INTEL_SKL_HQ_IMC		0x1910
+ #define PCI_DEVICE_ID_INTEL_SKL_SD_IMC		0x190f
+ #define PCI_DEVICE_ID_INTEL_SKL_SQ_IMC		0x191f
++#define PCI_DEVICE_ID_INTEL_SKL_E3_IMC		0x1918
+ #define PCI_DEVICE_ID_INTEL_KBL_Y_IMC		0x590c
+ #define PCI_DEVICE_ID_INTEL_KBL_U_IMC		0x5904
+ #define PCI_DEVICE_ID_INTEL_KBL_UQ_IMC		0x5914
+@@ -657,6 +658,10 @@ static const struct pci_device_id skl_uncore_pci_ids[] = {
+ 		PCI_DEVICE(PCI_VENDOR_ID_INTEL, PCI_DEVICE_ID_INTEL_SKL_SQ_IMC),
+ 		.driver_data = UNCORE_PCI_DEV_DATA(SNB_PCI_UNCORE_IMC, 0),
+ 	},
++	{ /* IMC */
++		PCI_DEVICE(PCI_VENDOR_ID_INTEL, PCI_DEVICE_ID_INTEL_SKL_E3_IMC),
++		.driver_data = UNCORE_PCI_DEV_DATA(SNB_PCI_UNCORE_IMC, 0),
++	},
+ 	{ /* IMC */
+ 		PCI_DEVICE(PCI_VENDOR_ID_INTEL, PCI_DEVICE_ID_INTEL_KBL_Y_IMC),
+ 		.driver_data = UNCORE_PCI_DEV_DATA(SNB_PCI_UNCORE_IMC, 0),
+@@ -826,6 +831,7 @@ static const struct imc_uncore_pci_dev desktop_imc_pci_ids[] = {
+ 	IMC_DEV(SKL_HQ_IMC, &skl_uncore_pci_driver),  /* 6th Gen Core H Quad Core */
+ 	IMC_DEV(SKL_SD_IMC, &skl_uncore_pci_driver),  /* 6th Gen Core S Dual Core */
+ 	IMC_DEV(SKL_SQ_IMC, &skl_uncore_pci_driver),  /* 6th Gen Core S Quad Core */
++	IMC_DEV(SKL_E3_IMC, &skl_uncore_pci_driver),  /* Xeon E3 V5 Gen Core processor */
+ 	IMC_DEV(KBL_Y_IMC, &skl_uncore_pci_driver),  /* 7th Gen Core Y */
+ 	IMC_DEV(KBL_U_IMC, &skl_uncore_pci_driver),  /* 7th Gen Core U */
+ 	IMC_DEV(KBL_UQ_IMC, &skl_uncore_pci_driver),  /* 7th Gen Core U Quad Core */
 -- 
 2.20.1
 
