@@ -2,104 +2,159 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 53BA61510CA
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Feb 2020 21:12:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 88F4C1510CE
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Feb 2020 21:14:07 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726884AbgBCUMr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 3 Feb 2020 15:12:47 -0500
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:34619 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726187AbgBCUMr (ORCPT
+        id S1727119AbgBCUN6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 3 Feb 2020 15:13:58 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:38514 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726201AbgBCUN6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Feb 2020 15:12:47 -0500
-Received: by mail-wm1-f68.google.com with SMTP id s144so643674wme.1
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Feb 2020 12:12:45 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:reply-to:sender:from:date:message-id:subject:to
-         :content-transfer-encoding;
-        bh=t0TLC5mt6zw20J38nO6UV1Kz+5E95WBtIXeRkoxQ4a0=;
-        b=qSKlOwKv51q2Gl3dCCJHR74S7iD+0Zaqzx+6X/Rkyumhd3Hl2WXjmVzbG4w0jhE5bI
-         84xZf9CTKY5n4slgqTzHNKBBPQsewNbG4aa2lJ7ch+4wbLPXllMS9CRZ+u/DWsNq+ZbX
-         jfBvp8CNWcRmw+irE230e5NfMKQp7misbye/RceJSI5w9qvuEuCmQ9UtT5Y2/0zRn2Iu
-         ryNHmgy3SYhaQqs4B8mzHRlI2UORTiNjAaHOfpJUkV5JdL9Uop1ZOW8eSKtfie2iF9F8
-         GtiGjNgPupWYEeq2qZsLANgriklQW5TmiYKUnRAzYLSdY1qwshnuvMM8Z1KMyd/TqzND
-         3sfQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:reply-to:sender:from:date
-         :message-id:subject:to:content-transfer-encoding;
-        bh=t0TLC5mt6zw20J38nO6UV1Kz+5E95WBtIXeRkoxQ4a0=;
-        b=grZvGoxsb8og2Ms9DxeMs+P0hndekgArqqQqCLNClchdWduWOayp1yvfj2qnagt2lX
-         atN3xPZEXZkwejoxn8QtNo3HP+2Nb297bZ5CQypBlElhivyo43hS7eCjMCfInCxxzq+3
-         QSK6VzJnWlcZPZN779+AIMA208Gw734XgTJwXtzSucu8aI25KzpARVlrCHJK3x48Bp1n
-         rOQPZdQsDHSbuHQ2gvlBjfgEMw76Bor50rNIFILMLWO9G1tdQmIV19AOxyCoGiSrlGxM
-         Z64QQyfUSIrBavB/XMeWiZeIVbC3TBrAZhRP8shcWBCNf1EGX1/ETXgB7Jwh7rBMb1ZB
-         Xs1w==
-X-Gm-Message-State: APjAAAWWXLtJyH2+1eDjTVPgeUgE1t9BhJI6DIq7pSzEgds1c4s7KhiZ
-        KbcXfajnWoc0Mih6bMSOX3o5S8jlZ0AdU1NGuXM=
-X-Google-Smtp-Source: APXvYqyB+DPvce9DmIdgHoq0KBBXdT9JW7GCUICW54NEWZKZRn4QZiah7MtcHQVYApc3GDtkYk1IsO6GxKFPt6W2Flw=
-X-Received: by 2002:a1c:1f56:: with SMTP id f83mr700742wmf.93.1580760764918;
- Mon, 03 Feb 2020 12:12:44 -0800 (PST)
+        Mon, 3 Feb 2020 15:13:58 -0500
+Received: from pps.filterd (m0098414.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 013K7gdx070632;
+        Mon, 3 Feb 2020 15:13:49 -0500
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2xxfrv7hke-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 03 Feb 2020 15:13:49 -0500
+Received: from m0098414.ppops.net (m0098414.ppops.net [127.0.0.1])
+        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 013K7dO7070507;
+        Mon, 3 Feb 2020 15:13:49 -0500
+Received: from ppma04dal.us.ibm.com (7a.29.35a9.ip4.static.sl-reverse.com [169.53.41.122])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2xxfrv7hk5-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 03 Feb 2020 15:13:48 -0500
+Received: from pps.filterd (ppma04dal.us.ibm.com [127.0.0.1])
+        by ppma04dal.us.ibm.com (8.16.0.27/8.16.0.27) with SMTP id 013KArhM011612;
+        Mon, 3 Feb 2020 20:13:48 GMT
+Received: from b03cxnp07029.gho.boulder.ibm.com (b03cxnp07029.gho.boulder.ibm.com [9.17.130.16])
+        by ppma04dal.us.ibm.com with ESMTP id 2xw0y6rh2x-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 03 Feb 2020 20:13:48 +0000
+Received: from b03ledav001.gho.boulder.ibm.com (b03ledav001.gho.boulder.ibm.com [9.17.130.232])
+        by b03cxnp07029.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 013KDkiT56099320
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 3 Feb 2020 20:13:47 GMT
+Received: from b03ledav001.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id DFBFE6E050;
+        Mon,  3 Feb 2020 20:13:46 +0000 (GMT)
+Received: from b03ledav001.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id C0DA56E04C;
+        Mon,  3 Feb 2020 20:13:46 +0000 (GMT)
+Received: from localhost (unknown [9.41.179.32])
+        by b03ledav001.gho.boulder.ibm.com (Postfix) with ESMTP;
+        Mon,  3 Feb 2020 20:13:46 +0000 (GMT)
+Date:   Mon, 3 Feb 2020 14:13:46 -0600
+From:   Scott Cheloha <cheloha@linux.ibm.com>
+To:     "Fontenot, Nathan" <ndfont@gmail.com>,
+        Nathan Lynch <nathanl@linux.ibm.com>
+Cc:     Rick Lindsley <ricklind@linux.vnet.ibm.com>,
+        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
+        Michael Ellerman <mpe@ellerman.id.au>
+Subject: Re: [PATCH] powerpc/drmem: cache LMBs in xarray to accelerate lookup
+Message-ID: <20200203201346.deqkxwgfmkifeb5s@rascal.austin.ibm.com>
+References: <20200128221113.17158-1-cheloha@linux.ibm.com>
+ <87pnf3i188.fsf@linux.ibm.com>
+ <20200129181013.lz6q5lpntnhwclqi@rascal.austin.ibm.com>
+ <4dfb2f93-7af8-8c5f-854c-22afead18a8c@gmail.com>
 MIME-Version: 1.0
-Reply-To: mrsanna.h.bruun119@gmail.com
-Received: by 2002:a05:600c:c2:0:0:0:0 with HTTP; Mon, 3 Feb 2020 12:12:43
- -0800 (PST)
-From:   "Mrs. Anna H. Bruun" <mrsanna.h.bruun119@gmail.com>
-Date:   Mon, 3 Feb 2020 12:12:43 -0800
-X-Google-Sender-Auth: AZcNs5BjzTS2nrs0qKUlxLCTfIg
-Message-ID: <CAD3OtNrnhWxsfri6C6NwEVywk2mE=Uv=8QQnMv3FNZMysW0tYw@mail.gmail.com>
-Subject: My Greetings
-To:     undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <4dfb2f93-7af8-8c5f-854c-22afead18a8c@gmail.com>
+X-TM-AS-GCONF: 00
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.572
+ definitions=2020-02-03_06:2020-02-02,2020-02-03 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 spamscore=0
+ bulkscore=0 suspectscore=1 clxscore=1015 priorityscore=1501
+ lowpriorityscore=0 impostorscore=0 malwarescore=0 phishscore=0 mlxscore=0
+ mlxlogscore=999 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-1911200001 definitions=main-2002030144
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-My Dear
+On Thu, Jan 30, 2020 at 10:09:32AM -0600, Fontenot, Nathan wrote:
+> On 1/29/2020 12:10 PM, Scott Cheloha wrote:
+> > On Tue, Jan 28, 2020 at 05:56:55PM -0600, Nathan Lynch wrote:
+> >> Scott Cheloha <cheloha@linux.ibm.com> writes:
+> >>> LMB lookup is currently an O(n) linear search.  This scales poorly when
+> >>> there are many LMBs.
+> >>>
+> >>> If we cache each LMB by both its base address and its DRC index
+> >>> in an xarray we can cut lookups to O(log n), greatly accelerating
+> >>> drmem initialization and memory hotplug.
+> >>>
+> >>> This patch introduces two xarrays of of LMBs and fills them during
+> >>> drmem initialization.  The patch also adds two interfaces for LMB
+> >>> lookup.
+> >>
+> >> Good but can you replace the array of LMBs altogether
+> >> (drmem_info->lmbs)? xarray allows iteration over the members if needed.
+> > 
+> > I don't think we can without potentially changing the current behavior.
+> > 
+> > The current behavior in dlpar_memory_{add,remove}_by_ic() is to advance
+> > linearly through the array from the LMB with the matching DRC index.
+> > 
+> > Iteration through the xarray via xa_for_each_start() will return LMBs
+> > indexed with monotonically increasing DRC indices.> 
+> > Are they equivalent?  Or can we have an LMB with a smaller DRC index
+> > appear at a greater offset in the array?
+> > 
+> > If the following condition is possible:
+> > 
+> > 	drmem_info->lmbs[i].drc_index > drmem_info->lmbs[j].drc_index
+> > 
+> > where i < j, then we have a possible behavior change because
+> > xa_for_each_start() may not return a contiguous array slice.  It might
+> > "leap backwards" in the array.  Or it might skip over a chunk of LMBs.
+> > 
+> 
+> The LMB array should have each LMB in monotonically increasing DRC Index
+> value. Note that this is set up based on the DT property but I don't recall
+> ever seeing the DT specify LMBs out of order or not being contiguous.
 
-My Name is Mrs. Anna H. Bruun, from Norway. I know that this message
-will be a surprise to you. Firstly, I am married to Mr. Patrick Bruun,
-A gold merchant who owns a small gold Mine in Burkina Faso; He died of
-Cardiovascular Disease in mid-March 2011. During his life time he
-deposited the sum of =E2=82=AC 8.5 Million Euro) Eight million, Five hundre=
-d
-thousand Euros in a bank in Ouagadougou the capital city of Burkina
-Faso. The deposited money was from the sale of the shares, death
-benefits payment and entitlements of my deceased husband by his
-company.
+Is that ordering guaranteed by the PAPR or some other spec or is that
+just a convention?
 
-I am sending this message to you praying that it will reach you in
-good health, since I am not in good health condition in which I sleep
-every night without knowing if I may be alive to see the next day. I
-am suffering from long time cancer and presently i am partially
-suffering from a stroke illness which has become almost impossible for
-me to move around. I am married to my late husband for over 4 years
-before he died and is unfortunately that we don't have a child, my
-doctor confided in me that i have less chance to live. Having known my
-health condition, I decided to contact you to claim the fund since I
-don't have any relation I grew up from the orphanage home,
+Code like drmem_update_dt_v1() makes me very nervous:
 
-I have decided to donate what I have to you for the support of helping
-Motherless babies/Less privileged/Widows' because I am dying and
-diagnosed of cancer for about 2 years ago. I have been touched by God
-Almighty to donate from what I have inherited from my late husband to
-you for good work of God Almighty. I have asked Almighty God to
-forgive me and believe he has, because He is a Merciful God I will be
-going in for an operation surgery soon
+static int drmem_update_dt_v1(struct device_node *memory,
+                              struct property *prop)
+{
+        struct property *new_prop;
+        struct of_drconf_cell_v1 *dr_cell;
+        struct drmem_lmb *lmb;
+        u32 *p;
 
-This is the reason i need your services to stand as my next of kin or
-an executor to claim the funds for charity purposes. If this money
-remains unclaimed after my death, the bank executives or the
-government will take the money as unclaimed fund and maybe use it for
-selfish and worthless ventures, I need a very honest person who can
-claim this money and use it for Charity works, for orphanages, widows
-and also build schools for less privilege that will be named after my
-late husband and my name; I need your urgent answer to know if you
-will be able to execute this project, and I will give you more
-Information on how the fund will be transferred to your bank account.
+        new_prop = clone_property(prop, prop->length);
+        if (!new_prop)
+                return -1;
 
-Thanks
-Mrs. Anna H.
+        p = new_prop->value;
+        *p++ = cpu_to_be32(drmem_info->n_lmbs);
+
+        dr_cell = (struct of_drconf_cell_v1 *)p;
+
+        for_each_drmem_lmb(lmb) {
+                dr_cell->base_addr = cpu_to_be64(lmb->base_addr);
+                dr_cell->drc_index = cpu_to_be32(lmb->drc_index);
+                dr_cell->aa_index = cpu_to_be32(lmb->aa_index);
+                dr_cell->flags = cpu_to_be32(drmem_lmb_flags(lmb));
+
+                dr_cell++;
+        }
+
+        of_update_property(memory, new_prop);
+        return 0;
+}
+
+If for whatever reason the firmware has a DRC that isn't monotonically
+increasing and we update a firmware property at the wrong offset I have
+no idea what would happen.
+
+With the array we preserve the order.  Without it we might violate
+some assumption the firmware has made.
