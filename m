@@ -2,129 +2,141 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EAAB3150CAD
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Feb 2020 17:38:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 446B8150D42
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Feb 2020 17:43:19 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731513AbgBCQic (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 3 Feb 2020 11:38:32 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54454 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728087AbgBCQi2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Feb 2020 11:38:28 -0500
-Received: from localhost (unknown [104.132.45.99])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9284021582;
-        Mon,  3 Feb 2020 16:38:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1580747908;
-        bh=lfYwe/tarBoLxtm2H/IsO93UK4HI9kUOUSlZzZUkZ5c=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=jFni65XR1UqofCLRql4dEsq9xzknbYelGxHP/36CjlKgIH+HhxYMOc8O4vATmln9u
-         g7RT5NOVEulJP8tyP8SanQHXaRl3yow8Iq0E6l9wMloqocGPz2mtsuNjvU5Jl7i+e+
-         VSeDAW+ULDl+OeGGadT+W0AjoWt4ziyKgTU+m70w=
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        syzbot+5493b2a54d31d6aea629@syzkaller.appspotmail.com,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        =?UTF-8?q?Michal=20Koutn=C3=BD?= <mkoutny@suse.com>,
-        Tejun Heo <tj@kernel.org>
-Subject: [PATCH 5.5 23/23] cgroup: Prevent double killing of css when enabling threaded cgroup
-Date:   Mon,  3 Feb 2020 16:20:43 +0000
-Message-Id: <20200203161906.999202354@linuxfoundation.org>
-X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200203161902.288335885@linuxfoundation.org>
-References: <20200203161902.288335885@linuxfoundation.org>
-User-Agent: quilt/0.66
+        id S1730545AbgBCQdN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 3 Feb 2020 11:33:13 -0500
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:34196 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730238AbgBCQdD (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Feb 2020 11:33:03 -0500
+Received: by mail-pg1-f195.google.com with SMTP id j4so8108692pgi.1
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Feb 2020 08:33:03 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=joelfernandes.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=kygvN3JdMT5rx78cW75jLEUMNI3vcBU3dBQx9CHHh28=;
+        b=ssVhzTyIIEma75A48rf94bLZxvLV2Ygj35UJQ0/ElMy5zReCrcJWlvCCuAVwB8VEEM
+         llqIZ5iH0KbSY++6FbAuS7zmU1K48lVteIrWwROBafWrJk86DC6f6DsiYbQ+WcCZwq8u
+         HnYB7uYVt+WC3ZQNE/fe5Uzj89sjepMDJavCo=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=kygvN3JdMT5rx78cW75jLEUMNI3vcBU3dBQx9CHHh28=;
+        b=eJ32wGGc0cDzheWwpELZe0bh8/VIicQ2pFpqURHTulW7nWOduDVVw0bYBZTkkJ1clW
+         B/K4TPbRvy2gSWWge7XSlz+qlSf9e2otv9uJCZF/D8bbUT/RFkcXNeTsERLA0Z6dyhLN
+         B10YnH9u7W6GXSnaJ6ZL5oN8rEnDD/DUAfvWbb7o5o0MeGJWbqQ4Lc1i67HG5Ik+tFL9
+         29tFgG8qSYs+yZGWrsbuI99gd2Vq6jJ3ubjqyekMER9pQJ0L1Bnjdc5vaslEdVKQe5Bb
+         l5kgI5KZIxcunJWluNjtARROMPqE7WwiSaSALIFsqucfuV1cLofzIBdXhCDCAy2FN7ki
+         3ZZw==
+X-Gm-Message-State: APjAAAX66+tgfOEZvOE7CgWGCCXmu1zwDtR/O2WTShpTI8vK+3z7b1Dr
+        UDNThn/BtzfjsVCcTJQlpFWa0g==
+X-Google-Smtp-Source: APXvYqwiD0ofx+MWpoFTDHUC7QLzEfQhhRkJS46LskXJIT7/Zw6mHw+5kbzS177wESnxUfXWKuKlmg==
+X-Received: by 2002:aa7:8e85:: with SMTP id a5mr25792754pfr.24.1580747582875;
+        Mon, 03 Feb 2020 08:33:02 -0800 (PST)
+Received: from localhost ([2620:15c:6:12:9c46:e0da:efbf:69cc])
+        by smtp.gmail.com with ESMTPSA id 11sm22034985pfz.25.2020.02.03.08.33.01
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 03 Feb 2020 08:33:02 -0800 (PST)
+Date:   Mon, 3 Feb 2020 11:33:01 -0500
+From:   Joel Fernandes <joel@joelfernandes.org>
+To:     Amol Grover <frextrite@gmail.com>
+Cc:     Steven Rostedt <rostedt@goodmis.org>,
+        Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org,
+        linux-kernel-mentees@lists.linuxfoundation.org,
+        Madhuparna Bhowmik <madhuparnabhowmik10@gmail.com>,
+        "Paul E . McKenney" <paulmck@kernel.org>
+Subject: Re: [PATCH] tracing: Annotate ftrace_graph_hash pointer with __rcu
+Message-ID: <20200203163301.GB85781@google.com>
+References: <20200201072703.17330-1-frextrite@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200201072703.17330-1-frextrite@gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Michal Koutný <mkoutny@suse.com>
+On Sat, Feb 01, 2020 at 12:57:04PM +0530, Amol Grover wrote:
+> Fix following instances of sparse error
+> kernel/trace/ftrace.c:5664:29: error: incompatible types in comparison
+> kernel/trace/ftrace.c:5785:21: error: incompatible types in comparison
+> kernel/trace/ftrace.c:5864:36: error: incompatible types in comparison
+> kernel/trace/ftrace.c:5866:25: error: incompatible types in comparison
+> 
+> Use rcu_dereference_protected to access the __rcu annotated pointer.
+> 
+> Signed-off-by: Amol Grover <frextrite@gmail.com>
+> ---
+>  kernel/trace/ftrace.c | 2 +-
+>  kernel/trace/trace.h  | 9 ++++++---
+>  2 files changed, 7 insertions(+), 4 deletions(-)
+> 
+> diff --git a/kernel/trace/ftrace.c b/kernel/trace/ftrace.c
+> index 9bf1f2cd515e..959ded08dc13 100644
+> --- a/kernel/trace/ftrace.c
+> +++ b/kernel/trace/ftrace.c
+> @@ -5596,7 +5596,7 @@ static const struct file_operations ftrace_notrace_fops = {
+>  
+>  static DEFINE_MUTEX(graph_lock);
+>  
+> -struct ftrace_hash *ftrace_graph_hash = EMPTY_HASH;
+> +struct ftrace_hash __rcu *ftrace_graph_hash = EMPTY_HASH;
+>  struct ftrace_hash *ftrace_graph_notrace_hash = EMPTY_HASH;
+>  
+>  enum graph_filter_type {
+> diff --git a/kernel/trace/trace.h b/kernel/trace/trace.h
+> index 63bf60f79398..97dad3326020 100644
+> --- a/kernel/trace/trace.h
+> +++ b/kernel/trace/trace.h
+> @@ -950,22 +950,25 @@ extern void __trace_graph_return(struct trace_array *tr,
+>  				 unsigned long flags, int pc);
+>  
+>  #ifdef CONFIG_DYNAMIC_FTRACE
+> -extern struct ftrace_hash *ftrace_graph_hash;
+> +extern struct ftrace_hash __rcu *ftrace_graph_hash;
+>  extern struct ftrace_hash *ftrace_graph_notrace_hash;
+>  
+>  static inline int ftrace_graph_addr(struct ftrace_graph_ent *trace)
+>  {
+>  	unsigned long addr = trace->func;
+>  	int ret = 0;
+> +	struct ftrace_hash *hash;
+>  
+>  	preempt_disable_notrace();
+>  
+> -	if (ftrace_hash_empty(ftrace_graph_hash)) {
+> +	hash = rcu_dereference_protected(ftrace_graph_hash, !preemptible());
 
-commit 3bc0bb36fa30e95ca829e9cf480e1ef7f7638333 upstream.
+I think you can use rcu_dereference_sched() here? That way no need to pass
+!preemptible.
 
-The test_cgcore_no_internal_process_constraint_on_threads selftest when
-running with subsystem controlling noise triggers two warnings:
+A preempt-disabled section is an RCU "sched flavor" section. Flavors are
+consolidated in the backend, but in the front end the dereference API still
+do have flavors.
 
-> [  597.443115] WARNING: CPU: 1 PID: 28167 at kernel/cgroup/cgroup.c:3131 cgroup_apply_control_enable+0xe0/0x3f0
-> [  597.443413] WARNING: CPU: 1 PID: 28167 at kernel/cgroup/cgroup.c:3177 cgroup_apply_control_disable+0xa6/0x160
+thanks,
 
-Both stem from a call to cgroup_type_write. The first warning was also
-triggered by syzkaller.
-
-When we're switching cgroup to threaded mode shortly after a subsystem
-was disabled on it, we can see the respective subsystem css dying there.
-
-The warning in cgroup_apply_control_enable is harmless in this case
-since we're not adding new subsys anyway.
-The warning in cgroup_apply_control_disable indicates an attempt to kill
-css of recently disabled subsystem repeatedly.
-
-The commit prevents these situations by making cgroup_type_write wait
-for all dying csses to go away before re-applying subtree controls.
-When at it, the locations of WARN_ON_ONCE calls are moved so that
-warning is triggered only when we are about to misuse the dying css.
-
-Reported-by: syzbot+5493b2a54d31d6aea629@syzkaller.appspotmail.com
-Reported-by: Christian Brauner <christian.brauner@ubuntu.com>
-Signed-off-by: Michal Koutný <mkoutny@suse.com>
-Signed-off-by: Tejun Heo <tj@kernel.org>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
----
- kernel/cgroup/cgroup.c |   11 ++++++-----
- 1 file changed, 6 insertions(+), 5 deletions(-)
-
---- a/kernel/cgroup/cgroup.c
-+++ b/kernel/cgroup/cgroup.c
-@@ -3055,8 +3055,6 @@ static int cgroup_apply_control_enable(s
- 		for_each_subsys(ss, ssid) {
- 			struct cgroup_subsys_state *css = cgroup_css(dsct, ss);
- 
--			WARN_ON_ONCE(css && percpu_ref_is_dying(&css->refcnt));
--
- 			if (!(cgroup_ss_mask(dsct) & (1 << ss->id)))
- 				continue;
- 
-@@ -3066,6 +3064,8 @@ static int cgroup_apply_control_enable(s
- 					return PTR_ERR(css);
- 			}
- 
-+			WARN_ON_ONCE(percpu_ref_is_dying(&css->refcnt));
-+
- 			if (css_visible(css)) {
- 				ret = css_populate_dir(css);
- 				if (ret)
-@@ -3101,11 +3101,11 @@ static void cgroup_apply_control_disable
- 		for_each_subsys(ss, ssid) {
- 			struct cgroup_subsys_state *css = cgroup_css(dsct, ss);
- 
--			WARN_ON_ONCE(css && percpu_ref_is_dying(&css->refcnt));
--
- 			if (!css)
- 				continue;
- 
-+			WARN_ON_ONCE(percpu_ref_is_dying(&css->refcnt));
-+
- 			if (css->parent &&
- 			    !(cgroup_ss_mask(dsct) & (1 << ss->id))) {
- 				kill_css(css);
-@@ -3392,7 +3392,8 @@ static ssize_t cgroup_type_write(struct
- 	if (strcmp(strstrip(buf), "threaded"))
- 		return -EINVAL;
- 
--	cgrp = cgroup_kn_lock_live(of->kn, false);
-+	/* drain dying csses before we re-apply (threaded) subtree control */
-+	cgrp = cgroup_kn_lock_live(of->kn, true);
- 	if (!cgrp)
- 		return -ENOENT;
- 
+ - Joel
 
 
+> +
+> +	if (ftrace_hash_empty(hash)) {
+>  		ret = 1;
+>  		goto out;
+>  	}
+>  
+> -	if (ftrace_lookup_ip(ftrace_graph_hash, addr)) {
+> +	if (ftrace_lookup_ip(hash, addr)) {
+>  
+>  		/*
+>  		 * This needs to be cleared on the return functions
+> -- 
+> 2.24.1
+> 
