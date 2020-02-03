@@ -2,80 +2,84 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9F2A4150462
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Feb 2020 11:41:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E1B03150479
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Feb 2020 11:41:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727296AbgBCKlM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 3 Feb 2020 05:41:12 -0500
-Received: from alexa-out-blr-01.qualcomm.com ([103.229.18.197]:14206 "EHLO
-        alexa-out-blr-01.qualcomm.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726100AbgBCKlL (ORCPT
+        id S1727916AbgBCKl6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 3 Feb 2020 05:41:58 -0500
+Received: from smtprelay0020.hostedemail.com ([216.40.44.20]:50236 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726884AbgBCKl5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Feb 2020 05:41:11 -0500
-Received: from ironmsg02-blr.qualcomm.com ([10.86.208.131])
-  by alexa-out-blr-01.qualcomm.com with ESMTP/TLS/AES256-SHA; 03 Feb 2020 16:11:08 +0530
-Received: from gubbaven-linux.qualcomm.com ([10.206.64.32])
-  by ironmsg02-blr.qualcomm.com with ESMTP; 03 Feb 2020 16:10:45 +0530
-Received: by gubbaven-linux.qualcomm.com (Postfix, from userid 2365015)
-        id A6A1E21187; Mon,  3 Feb 2020 16:10:43 +0530 (IST)
-From:   Venkata Lakshmi Narayana Gubba <gubbaven@codeaurora.org>
-To:     marcel@holtmann.org, johan.hedberg@gmail.com
-Cc:     mka@chromium.org, linux-kernel@vger.kernel.org,
-        linux-bluetooth@vger.kernel.org, robh@kernel.org,
-        hemantg@codeaurora.org, linux-arm-msm@vger.kernel.org,
-        bgodavar@codeaurora.org, tientzu@chromium.org,
-        seanpaul@chromium.org, rjliao@codeaurora.org, yshavit@google.com,
-        devicetree@vger.kernel.org,
-        Venkata Lakshmi Narayana Gubba <gubbaven@codeaurora.org>
-Subject: [PATCH v3 2/2] dt-bindings: net: bluetooth: Add device tree bindings for QTI chip WCN3991
-Date:   Mon,  3 Feb 2020 16:10:41 +0530
-Message-Id: <1580726441-1100-2-git-send-email-gubbaven@codeaurora.org>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1580726441-1100-1-git-send-email-gubbaven@codeaurora.org>
-References: <1580726441-1100-1-git-send-email-gubbaven@codeaurora.org>
+        Mon, 3 Feb 2020 05:41:57 -0500
+Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
+        by smtprelay02.hostedemail.com (Postfix) with ESMTP id D32D5121A;
+        Mon,  3 Feb 2020 10:41:54 +0000 (UTC)
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,:::::::::::::::::,RULES_HIT:41:355:379:599:968:988:989:1260:1277:1311:1313:1314:1345:1359:1437:1515:1516:1518:1534:1541:1593:1594:1711:1730:1747:1777:1792:2198:2199:2393:2553:2559:2562:2691:2828:3138:3139:3140:3141:3142:3353:3622:3865:3867:3868:3870:3871:3874:4321:5007:6119:6691:8531:8957:9010:10004:10400:10848:11232:11658:11914:12050:12297:12740:12760:12895:13069:13311:13357:13439:14096:14097:14659:14721:21080:21611:21627:21740:21810:30012:30054:30090:30091,0,RBL:none,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:,MSBL:0,DNSBL:none,Custom_rules:0:0:0,LFtime:1,LUA_SUMMARY:none
+X-HE-Tag: range25_4ab6e8725fd55
+X-Filterd-Recvd-Size: 2515
+Received: from XPS-9350.home (unknown [47.151.135.224])
+        (Authenticated sender: joe@perches.com)
+        by omf03.hostedemail.com (Postfix) with ESMTPA;
+        Mon,  3 Feb 2020 10:41:53 +0000 (UTC)
+Message-ID: <5f67af4339e0b9b56b43fb78ebab73e05009e307.camel@perches.com>
+Subject: Re: [PATCH 1/2] staging: exfat: remove DOSNAMEs.
+From:   Joe Perches <joe@perches.com>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Matthew Wilcox <willy@infradead.org>
+Cc:     Tetsuhiro Kohada <Kohada.Tetsuhiro@dc.mitsubishielectric.co.jp>,
+        devel@driverdev.osuosl.org,
+        Valdis Kletnieks <valdis.kletnieks@vt.edu>,
+        Mori.Takahiro@ab.mitsubishielectric.co.jp,
+        linux-kernel@vger.kernel.org,
+        motai.hirotaka@aj.mitsubishielectric.co.jp,
+        linux-fsdevel@vger.kernel.org
+Date:   Mon, 03 Feb 2020 02:40:43 -0800
+In-Reply-To: <20200203094601.GA3040887@kroah.com>
+References: <20200203163118.31332-1-Kohada.Tetsuhiro@dc.MitsubishiElectric.co.jp>
+         <20200203080532.GF8731@bombadil.infradead.org>
+         <20200203081559.GA3038628@kroah.com>
+         <20200203082938.GG8731@bombadil.infradead.org>
+         <20200203094601.GA3040887@kroah.com>
+Content-Type: text/plain; charset="ISO-8859-1"
+User-Agent: Evolution 3.34.1-2 
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add compatible string for the Qualcomm WCN3991 Bluetooth controller
+On Mon, 2020-02-03 at 09:46 +0000, Greg Kroah-Hartman wrote:
+> On Mon, Feb 03, 2020 at 12:29:38AM -0800, Matthew Wilcox wrote:
+> > On Mon, Feb 03, 2020 at 08:15:59AM +0000, Greg Kroah-Hartman wrote:
+> > > On Mon, Feb 03, 2020 at 12:05:32AM -0800, Matthew Wilcox wrote:
+> > > > On Tue, Feb 04, 2020 at 01:31:17AM +0900, Tetsuhiro Kohada wrote:
+> > > > > remove 'dos_name','ShortName' and related definitions.
+> > > > > 
+> > > > > 'dos_name' and 'ShortName' are definitions before VFAT.
+> > > > > These are never used in exFAT.
+> > > > 
+> > > > Why are we still seeing patches for the exfat in staging?
+> > > 
+> > > Because people like doing cleanup patches :)
+> > 
+> > Sure, but I think people also like to believe that their cleanup patches
+> > are making a difference.  In this case, they're just churning code that's
+> > only weeks away from deletion.
+> > 
+> > > > Why are people not working on the Samsung code base?
+> > > 
+> > > They are, see the patches on the list, hopefully they get merged after
+> > > -rc1 is out.
+> > 
+> > I meant the cleanup people.  Obviously _some_ people are working on the
+> > Samsung codebase.
+> 
+> We can't tell people to work on :)
 
-Signed-off-by: Venkata Lakshmi Narayana Gubba <gubbaven@codeaurora.org>
----
-v3:
-  *Updated clocks with <&rpmhcc RPMH_RF_CLK2>  
----
- Documentation/devicetree/bindings/net/qualcomm-bluetooth.txt | 3 +++
- 1 file changed, 3 insertions(+)
+That's more an argument to remove exfat from staging
+sooner than later.
 
-diff --git a/Documentation/devicetree/bindings/net/qualcomm-bluetooth.txt b/Documentation/devicetree/bindings/net/qualcomm-bluetooth.txt
-index 68b67d9..beca646 100644
---- a/Documentation/devicetree/bindings/net/qualcomm-bluetooth.txt
-+++ b/Documentation/devicetree/bindings/net/qualcomm-bluetooth.txt
-@@ -11,6 +11,7 @@ Required properties:
-  - compatible: should contain one of the following:
-    * "qcom,qca6174-bt"
-    * "qcom,wcn3990-bt"
-+   * "qcom,wcn3991-bt"
-    * "qcom,wcn3998-bt"
- 
- Optional properties for compatible string qcom,qca6174-bt:
-@@ -30,6 +31,7 @@ Optional properties for compatible string qcom,wcn399x-bt:
- 
-  - max-speed: see Documentation/devicetree/bindings/serial/slave-device.txt
-  - firmware-name: specify the name of nvm firmware to load
-+ - clocks: clock provided to the controller
- 
- Examples:
- 
-@@ -56,5 +58,6 @@ serial@898000 {
- 		vddch0-supply = <&vreg_l25a_3p3>;
- 		max-speed = <3200000>;
- 		firmware-name = "crnv21.bin";
-+		clocks = <&rpmhcc RPMH_RF_CLK2>;
- 	};
- };
--- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member 
-of Code Aurora Forum, hosted by The Linux Foundation
 
