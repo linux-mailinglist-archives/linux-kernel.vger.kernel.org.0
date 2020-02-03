@@ -2,95 +2,86 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 31613150240
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Feb 2020 09:09:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7FA0E15025E
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Feb 2020 09:16:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727778AbgBCIJ3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 3 Feb 2020 03:09:29 -0500
-Received: from lelv0143.ext.ti.com ([198.47.23.248]:42976 "EHLO
-        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727240AbgBCIJ2 (ORCPT
+        id S1727787AbgBCIQ2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 3 Feb 2020 03:16:28 -0500
+Received: from out30-132.freemail.mail.aliyun.com ([115.124.30.132]:49894 "EHLO
+        out30-132.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727240AbgBCIQ2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Feb 2020 03:09:28 -0500
-Received: from fllv0035.itg.ti.com ([10.64.41.0])
-        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 01389AxS093033;
-        Mon, 3 Feb 2020 02:09:10 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1580717350;
-        bh=SHGNUtZH+GGsjdnH4fW3GSfZiqBh1dX2XaSZkoM0DVQ=;
-        h=Subject:From:To:CC:References:Date:In-Reply-To;
-        b=vIGGXyg5WoZsOivB00ACn4YVYjBPUMmhMnZrMolw05Ei8DzUUE4nrhIx51mq+BlBP
-         GcFBccqy3ETrzImaTH2vnTUCuD2lKC4/LjO886doNODio8vW5T/SsJXXRcNcV8gUdK
-         5NdOh3TOdt6aXdP28VxFV8L5QIOF0AoezQoxt9OU=
-Received: from DFLE106.ent.ti.com (dfle106.ent.ti.com [10.64.6.27])
-        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTP id 01389APV086217;
-        Mon, 3 Feb 2020 02:09:10 -0600
-Received: from DFLE105.ent.ti.com (10.64.6.26) by DFLE106.ent.ti.com
- (10.64.6.27) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Mon, 3 Feb
- 2020 02:09:10 -0600
-Received: from fllv0039.itg.ti.com (10.64.41.19) by DFLE105.ent.ti.com
- (10.64.6.26) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
- Frontend Transport; Mon, 3 Feb 2020 02:09:10 -0600
-Received: from [192.168.2.6] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by fllv0039.itg.ti.com (8.15.2/8.15.2) with ESMTP id 013897tS077934;
-        Mon, 3 Feb 2020 02:09:08 -0600
-Subject: Re: [PATCH] firmware: ti_sci: Export devm_ti_sci_get_of_resource for
- modules
-From:   Peter Ujfalusi <peter.ujfalusi@ti.com>
-To:     <nm@ti.com>, <t-kristo@ti.com>, <ssantosh@kernel.org>,
-        <santosh.shilimkar@oracle.com>
-CC:     <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <lokeshvutla@ti.com>,
-        <grygorii.strashko@ti.com>
-References: <20200122104031.15733-1-peter.ujfalusi@ti.com>
-Message-ID: <88323f5b-1732-f780-5a0d-754026997c2c@ti.com>
-Date:   Mon, 3 Feb 2020 10:10:00 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        Mon, 3 Feb 2020 03:16:28 -0500
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R701e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01f04446;MF=joseph.qi@linux.alibaba.com;NM=1;PH=DS;RN=8;SR=0;TI=SMTPD_---0Tp19xdv_1580717712;
+Received: from JosephdeMacBook-Pro.local(mailfrom:joseph.qi@linux.alibaba.com fp:SMTPD_---0Tp19xdv_1580717712)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Mon, 03 Feb 2020 16:15:12 +0800
+Subject: Re: [PATCH] ocfs2: fix the oops problem when write cloned file
+To:     Gang He <GHe@suse.com>, "mark@fasheh.com" <mark@fasheh.com>,
+        "jlbec@evilplan.org" <jlbec@evilplan.org>,
+        "gechangwei@live.cn" <gechangwei@live.cn>,
+        Shuning Zhang <sunny.s.zhang@oracle.com>
+Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "ocfs2-devel@oss.oracle.com" <ocfs2-devel@oss.oracle.com>,
+        "akpm@linux-foundation.org" <akpm@linux-foundation.org>
+References: <20200121050153.13290-1-ghe@suse.com>
+ <CH2PR18MB3206F418382332EB25130477CF000@CH2PR18MB3206.namprd18.prod.outlook.com>
+ <de23176f-5b84-a785-80a2-0bdc8e3a0fab@linux.alibaba.com>
+ <CH2PR18MB3206844EE94EC90A2CBFF85CCF000@CH2PR18MB3206.namprd18.prod.outlook.com>
+From:   Joseph Qi <joseph.qi@linux.alibaba.com>
+Message-ID: <9dfcde60-f8da-6458-4992-ae1d5dcc1ec1@linux.alibaba.com>
+Date:   Mon, 3 Feb 2020 16:15:12 +0800
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.11; rv:60.0)
+ Gecko/20100101 Thunderbird/60.9.1
 MIME-Version: 1.0
-In-Reply-To: <20200122104031.15733-1-peter.ujfalusi@ti.com>
-Content-Type: text/plain; charset="utf-8"
+In-Reply-To: <CH2PR18MB3206844EE94EC90A2CBFF85CCF000@CH2PR18MB3206.namprd18.prod.outlook.com>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
 
-On 22/01/2020 12.40, Peter Ujfalusi wrote:
-> Allow devm_ti_sci_get_of_resource() to be usable from modules.
 
-I would really appreciate if ti_sci maintainers would spare some time on
-this and the other two patch ;)
-
-https://lore.kernel.org/lkml/20200122104044.15837-1-peter.ujfalusi@ti.com/
-https://lore.kernel.org/lkml/20200122104009.15622-1-peter.ujfalusi@ti.com/
-
-- Péter
-
-> Signed-off-by: Peter Ujfalusi <peter.ujfalusi@ti.com>
-> ---
->  drivers/firmware/ti_sci.c | 1 +
->  1 file changed, 1 insertion(+)
+On 20/2/3 13:32, Gang He wrote:
+> Hi Joseph,
 > 
-> diff --git a/drivers/firmware/ti_sci.c b/drivers/firmware/ti_sci.c
-> index f13e4a96f3b7..3d8241cb6921 100644
-> --- a/drivers/firmware/ti_sci.c
-> +++ b/drivers/firmware/ti_sci.c
-> @@ -3332,6 +3332,7 @@ devm_ti_sci_get_of_resource(const struct ti_sci_handle *handle,
->  
->  	return ERR_PTR(-EINVAL);
->  }
-> +EXPORT_SYMBOL_GPL(devm_ti_sci_get_of_resource);
->  
->  static int tisci_reboot_handler(struct notifier_block *nb, unsigned long mode,
->  				void *cmd)
+> before calling ocfs2_refcount_cow() in the function ocfs2_prepare_inode_for_write(), we do not use inode buffer_head.
+> So, we can let buffer_head is NULL.
+> But, when we invoke ocfs2_refcount_cow() function, we have to pass inode buffer_head without NULL pointer.
+> That is why writing clone file will cause oops and kill the user-space process.
 > 
+Okay, so before commit e74540b28556, we will always get a valid buffer
+head in ocfs2_prepare_inode_for_refcount().
+You can feel free to add:
+Reviewed-by: Joseph Qi <joseph.qi@linux.alibaba.com>
 
-Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
-Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
+BTW, you'd better resend the patch in a single thread, for the
+convenience of merging by akpm.
+
+> 
+> ________________________________________
+> From: Joseph Qi <joseph.qi@linux.alibaba.com>
+> Sent: Monday, February 3, 2020 1:15 PM
+> To: Gang He; mark@fasheh.com; jlbec@evilplan.org; gechangwei@live.cn; Shuning Zhang
+> Cc: linux-kernel@vger.kernel.org; ocfs2-devel@oss.oracle.com; akpm@linux-foundation.org
+> Subject: Re: [PATCH] ocfs2: fix the oops problem when write cloned file
+> 
+> 
+> 
+> On 20/2/3 10:17, Gang He wrote:
+>> Hello Joseph, Changwei, Sunny and all,
+>>
+>> Could you help to review this patch?
+>> This patch will fix the oops problem caused by write ocfs2 clone files.
+>> The root cause is inode buffer head is NULL when calling ocfs2_refcount_cow.
+>> Secondly, we should use EX meta lock when calling ocfs2_refcount_cow.
+>>
+> Before commit e74540b28556, we may also use NULL buffer head in case of
+> overwrite, so why there is no such issue before?
+> 
+> Thanks,
+> Joseph
+> 
