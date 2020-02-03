@@ -2,42 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 36B14150D0D
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Feb 2020 17:41:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 486BA150BB2
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Feb 2020 17:31:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730327AbgBCQlT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 3 Feb 2020 11:41:19 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49916 "EHLO mail.kernel.org"
+        id S1729846AbgBCQ3o (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 3 Feb 2020 11:29:44 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41656 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730930AbgBCQfN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Feb 2020 11:35:13 -0500
+        id S1729822AbgBCQ3i (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Feb 2020 11:29:38 -0500
 Received: from localhost (unknown [104.132.45.99])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7610E21582;
-        Mon,  3 Feb 2020 16:35:12 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 546EC21744;
+        Mon,  3 Feb 2020 16:29:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1580747712;
-        bh=gITOntd6JjepyRqHUzvVgH4Fg1uLC6E0WP0cBUWuEUc=;
+        s=default; t=1580747377;
+        bh=CslaSSQI+Lm9q11vj17D/LgMKJ+dG/2Gb2LaHCRJXVo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ge7Vr+z4dtjgLikgtphmnKQkFkgILyD6hMq29WTy8AvcZOMTGOVbrc3GaqTGYBblL
-         D8eGBQgfj1u5uGAVmqrzGZGrw/dhzYCJ75/eSthBuaZ3RO1dyGk3Fiya8xADm1UPY9
-         fZmSpCVWuAvW0jL7Yrv/JA8wif4x+r1u6beL4vB8=
+        b=wEEu/3zPBe0+yhqf9ntF9sICck6z70lbZ+YdSbSGm+Gcc7MEbHWGtwivIc351bB1h
+         b/UiL8Duf3JTf+mVX1Mw6bPbN/pq209pNHV1Elpap++c2Uww3GIAq/d7JzdSOxk+Qx
+         byzxGF+/D4/Rqhd8hrbGp7GYZCI9S0CwCR7EnqEU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Arkady Gilinksky <arkady.gilinsky@harmonicinc.com>,
-        Brett Creeley <brett.creeley@intel.com>,
-        Andrew Bowers <andrewx.bowers@intel.com>,
-        Jeff Kirsher <jeffrey.t.kirsher@intel.com>,
+        stable@vger.kernel.org, Lubomir Rintel <lkundrak@v3.sk>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Olof Johansson <olof@lixom.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.4 38/90] i40e: Fix virtchnl_queue_select bitmap validation
-Date:   Mon,  3 Feb 2020 16:19:41 +0000
-Message-Id: <20200203161922.708588217@linuxfoundation.org>
+Subject: [PATCH 4.14 57/89] clk: mmp2: Fix the order of timer mux parents
+Date:   Mon,  3 Feb 2020 16:19:42 +0000
+Message-Id: <20200203161924.254260816@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200203161917.612554987@linuxfoundation.org>
-References: <20200203161917.612554987@linuxfoundation.org>
+In-Reply-To: <20200203161916.847439465@linuxfoundation.org>
+References: <20200203161916.847439465@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -47,78 +45,39 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Brett Creeley <brett.creeley@intel.com>
+From: Lubomir Rintel <lkundrak@v3.sk>
 
-[ Upstream commit d9d6a9aed3f66f8ce5fa3ca6ca26007d75032296 ]
+[ Upstream commit 8bea5ac0fbc5b2103f8779ddff216122e3c2e1ad ]
 
-Currently in i40e_vc_disable_queues_msg() we are incorrectly
-validating the virtchnl queue select bitmaps. The
-virtchnl_queue_select rx_queues and tx_queue bitmap is being
-compared against ICE_MAX_VF_QUEUES, but the problem is that
-these bitmaps can have a value greater than I40E_MAX_VF_QUEUES.
-Fix this by comparing the bitmaps against BIT(I40E_MAX_VF_QUEUES).
+Determined empirically, no documentation is available.
 
-Also, add the function i40e_vc_validate_vqs_bitmaps() that checks to see
-if both virtchnl_queue_select bitmaps are empty along with checking that
-the bitmaps only have valid bits set. This function can then be used in
-both the queue enable and disable flows.
+The OLPC XO-1.75 laptop used parent 1, that one being VCTCXO/4 (65MHz), but
+thought it's a VCTCXO/2 (130MHz). The mmp2 timer driver, not knowing
+what is going on, ended up just dividing the rate as of
+commit f36797ee4380 ("ARM: mmp/mmp2: dt: enable the clock")'
 
-Suggested-by: Arkady Gilinksky <arkady.gilinsky@harmonicinc.com>
-Signed-off-by: Brett Creeley <brett.creeley@intel.com>
-Tested-by: Andrew Bowers <andrewx.bowers@intel.com>
-Signed-off-by: Jeff Kirsher <jeffrey.t.kirsher@intel.com>
+Link: https://lore.kernel.org/r/20191218190454.420358-3-lkundrak@v3.sk
+Signed-off-by: Lubomir Rintel <lkundrak@v3.sk>
+Acked-by: Stephen Boyd <sboyd@kernel.org>
+Signed-off-by: Olof Johansson <olof@lixom.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- .../ethernet/intel/i40e/i40e_virtchnl_pf.c    | 22 +++++++++++++++----
- 1 file changed, 18 insertions(+), 4 deletions(-)
+ drivers/clk/mmp/clk-of-mmp2.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/net/ethernet/intel/i40e/i40e_virtchnl_pf.c b/drivers/net/ethernet/intel/i40e/i40e_virtchnl_pf.c
-index 3d24408388226..3515ace0f0201 100644
---- a/drivers/net/ethernet/intel/i40e/i40e_virtchnl_pf.c
-+++ b/drivers/net/ethernet/intel/i40e/i40e_virtchnl_pf.c
-@@ -2322,6 +2322,22 @@ static int i40e_ctrl_vf_rx_rings(struct i40e_vsi *vsi, unsigned long q_map,
- 	return ret;
- }
+diff --git a/drivers/clk/mmp/clk-of-mmp2.c b/drivers/clk/mmp/clk-of-mmp2.c
+index d083b860f0833..10689d8cd3867 100644
+--- a/drivers/clk/mmp/clk-of-mmp2.c
++++ b/drivers/clk/mmp/clk-of-mmp2.c
+@@ -134,7 +134,7 @@ static DEFINE_SPINLOCK(ssp3_lock);
+ static const char *ssp_parent_names[] = {"vctcxo_4", "vctcxo_2", "vctcxo", "pll1_16"};
  
-+/**
-+ * i40e_vc_validate_vqs_bitmaps - validate Rx/Tx queue bitmaps from VIRTHCHNL
-+ * @vqs: virtchnl_queue_select structure containing bitmaps to validate
-+ *
-+ * Returns true if validation was successful, else false.
-+ */
-+static bool i40e_vc_validate_vqs_bitmaps(struct virtchnl_queue_select *vqs)
-+{
-+	if ((!vqs->rx_queues && !vqs->tx_queues) ||
-+	    vqs->rx_queues >= BIT(I40E_MAX_VF_QUEUES) ||
-+	    vqs->tx_queues >= BIT(I40E_MAX_VF_QUEUES))
-+		return false;
-+
-+	return true;
-+}
-+
- /**
-  * i40e_vc_enable_queues_msg
-  * @vf: pointer to the VF info
-@@ -2347,7 +2363,7 @@ static int i40e_vc_enable_queues_msg(struct i40e_vf *vf, u8 *msg)
- 		goto error_param;
- 	}
+ static DEFINE_SPINLOCK(timer_lock);
+-static const char *timer_parent_names[] = {"clk32", "vctcxo_2", "vctcxo_4", "vctcxo"};
++static const char *timer_parent_names[] = {"clk32", "vctcxo_4", "vctcxo_2", "vctcxo"};
  
--	if ((0 == vqs->rx_queues) && (0 == vqs->tx_queues)) {
-+	if (i40e_vc_validate_vqs_bitmaps(vqs)) {
- 		aq_ret = I40E_ERR_PARAM;
- 		goto error_param;
- 	}
-@@ -2409,9 +2425,7 @@ static int i40e_vc_disable_queues_msg(struct i40e_vf *vf, u8 *msg)
- 		goto error_param;
- 	}
+ static DEFINE_SPINLOCK(reset_lock);
  
--	if ((vqs->rx_queues == 0 && vqs->tx_queues == 0) ||
--	    vqs->rx_queues > I40E_MAX_VF_QUEUES ||
--	    vqs->tx_queues > I40E_MAX_VF_QUEUES) {
-+	if (i40e_vc_validate_vqs_bitmaps(vqs)) {
- 		aq_ret = I40E_ERR_PARAM;
- 		goto error_param;
- 	}
 -- 
 2.20.1
 
