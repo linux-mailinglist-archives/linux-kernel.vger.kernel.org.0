@@ -2,40 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 924E1150BFD
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Feb 2020 17:32:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 95FFB150BB9
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Feb 2020 17:31:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730408AbgBCQcU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 3 Feb 2020 11:32:20 -0500
-Received: from mail.kernel.org ([198.145.29.99]:45946 "EHLO mail.kernel.org"
+        id S1729904AbgBCQ37 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 3 Feb 2020 11:29:59 -0500
+Received: from mail.kernel.org ([198.145.29.99]:42082 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730400AbgBCQcS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Feb 2020 11:32:18 -0500
+        id S1729880AbgBCQ3z (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Feb 2020 11:29:55 -0500
 Received: from localhost (unknown [104.132.45.99])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 017E421582;
-        Mon,  3 Feb 2020 16:32:16 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 261622051A;
+        Mon,  3 Feb 2020 16:29:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1580747537;
-        bh=M3igxGJbPwWLFddQF1W+xeYwC2g5LtR0ImoWkxG7tLg=;
+        s=default; t=1580747394;
+        bh=IJCDwsZ4sqrojp7q6Ut5B996TTxXGw4vFPVQ02U1p58=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=P+11jaCr1itH753tvxH3G9Fce6yaFQmRzJqq6EtJizraCDBZ5kr3IkX5aLRJei7wV
-         OKC3u3gV0MYA89QHPtbFOI+H8p3U6PIko6qlz4srblQCuYzU6Iq3riU0M7XH0IZi3/
-         QwuV+iEJ2cjoNOy7KOdrUvVkNCkxdFT5KAmT/PIc=
+        b=tn7vajGC79Hw0u19HgiYyCySunxTi89aEkfVr8XyLFvdIYn3SIKtG+QBTs1eDzBvV
+         zeY1TRgMxtP9mkk+nZhUKLp+QZ3b/81zZh2E2TH/dUEq4W7650SQCwFEFH4csj1MAw
+         ufrrmM+E1OI+OFqe1XRoOaoYWAhm7OA2f2SUkXGM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Radoslaw Tyl <radoslawx.tyl@intel.com>,
-        Paul Menzel <pmenzel@molgen.mpg.de>,
-        Jeff Kirsher <jeffrey.t.kirsher@intel.com>,
+        stable@vger.kernel.org, Cathy Luo <xiaohua.luo@nxp.com>,
+        Ganapathi Bhat <ganapathi.bhat@nxp.com>,
+        Johannes Berg <johannes.berg@intel.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 35/70] ixgbevf: Remove limit of 10 entries for unicast filter list
-Date:   Mon,  3 Feb 2020 16:19:47 +0000
-Message-Id: <20200203161917.584823767@linuxfoundation.org>
+Subject: [PATCH 4.14 63/89] wireless: fix enabling channel 12 for custom regulatory domain
+Date:   Mon,  3 Feb 2020 16:19:48 +0000
+Message-Id: <20200203161924.801752220@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200203161912.158976871@linuxfoundation.org>
-References: <20200203161912.158976871@linuxfoundation.org>
+In-Reply-To: <20200203161916.847439465@linuxfoundation.org>
+References: <20200203161916.847439465@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,40 +45,63 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Radoslaw Tyl <radoslawx.tyl@intel.com>
+From: Ganapathi Bhat <ganapathi.bhat@nxp.com>
 
-[ Upstream commit aa604651d523b1493988d0bf6710339f3ee60272 ]
+[ Upstream commit c4b9d655e445a8be0bff624aedea190606b5ebbc ]
 
-Currently, though the FDB entry is added to VF, it does not appear in
-RAR filters. VF driver only allows to add 10 entries. Attempting to add
-another causes an error. This patch removes limitation and allows use of
-all free RAR entries for the FDB if needed.
+Commit e33e2241e272 ("Revert "cfg80211: Use 5MHz bandwidth by
+default when checking usable channels"") fixed a broken
+regulatory (leaving channel 12 open for AP where not permitted).
+Apply a similar fix to custom regulatory domain processing.
 
-Fixes: 46ec20ff7d ("ixgbevf: Add macvlan support in the set rx mode op")
-Signed-off-by: Radoslaw Tyl <radoslawx.tyl@intel.com>
-Acked-by: Paul Menzel <pmenzel@molgen.mpg.de>
-Signed-off-by: Jeff Kirsher <jeffrey.t.kirsher@intel.com>
+Signed-off-by: Cathy Luo <xiaohua.luo@nxp.com>
+Signed-off-by: Ganapathi Bhat <ganapathi.bhat@nxp.com>
+Link: https://lore.kernel.org/r/1576836859-8945-1-git-send-email-ganapathi.bhat@nxp.com
+[reword commit message, fix coding style, add a comment]
+Signed-off-by: Johannes Berg <johannes.berg@intel.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/intel/ixgbevf/ixgbevf_main.c | 5 -----
- 1 file changed, 5 deletions(-)
+ net/wireless/reg.c | 13 ++++++++++---
+ 1 file changed, 10 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/net/ethernet/intel/ixgbevf/ixgbevf_main.c b/drivers/net/ethernet/intel/ixgbevf/ixgbevf_main.c
-index 4093a9c52c182..a10756f0b0d8b 100644
---- a/drivers/net/ethernet/intel/ixgbevf/ixgbevf_main.c
-+++ b/drivers/net/ethernet/intel/ixgbevf/ixgbevf_main.c
-@@ -2066,11 +2066,6 @@ static int ixgbevf_write_uc_addr_list(struct net_device *netdev)
- 	struct ixgbe_hw *hw = &adapter->hw;
- 	int count = 0;
+diff --git a/net/wireless/reg.c b/net/wireless/reg.c
+index 804eac073b6b9..e60a7dedfbf1b 100644
+--- a/net/wireless/reg.c
++++ b/net/wireless/reg.c
+@@ -1718,14 +1718,15 @@ static void update_all_wiphy_regulatory(enum nl80211_reg_initiator initiator)
  
--	if ((netdev_uc_count(netdev)) > 10) {
--		pr_err("Too many unicast filters - No Space\n");
--		return -ENOSPC;
--	}
--
- 	if (!netdev_uc_empty(netdev)) {
- 		struct netdev_hw_addr *ha;
+ static void handle_channel_custom(struct wiphy *wiphy,
+ 				  struct ieee80211_channel *chan,
+-				  const struct ieee80211_regdomain *regd)
++				  const struct ieee80211_regdomain *regd,
++				  u32 min_bw)
+ {
+ 	u32 bw_flags = 0;
+ 	const struct ieee80211_reg_rule *reg_rule = NULL;
+ 	const struct ieee80211_power_rule *power_rule = NULL;
+ 	u32 bw;
  
+-	for (bw = MHZ_TO_KHZ(20); bw >= MHZ_TO_KHZ(5); bw = bw / 2) {
++	for (bw = MHZ_TO_KHZ(20); bw >= min_bw; bw = bw / 2) {
+ 		reg_rule = freq_reg_info_regd(MHZ_TO_KHZ(chan->center_freq),
+ 					      regd, bw);
+ 		if (!IS_ERR(reg_rule))
+@@ -1781,8 +1782,14 @@ static void handle_band_custom(struct wiphy *wiphy,
+ 	if (!sband)
+ 		return;
+ 
++	/*
++	 * We currently assume that you always want at least 20 MHz,
++	 * otherwise channel 12 might get enabled if this rule is
++	 * compatible to US, which permits 2402 - 2472 MHz.
++	 */
+ 	for (i = 0; i < sband->n_channels; i++)
+-		handle_channel_custom(wiphy, &sband->channels[i], regd);
++		handle_channel_custom(wiphy, &sband->channels[i], regd,
++				      MHZ_TO_KHZ(20));
+ }
+ 
+ /* Used by drivers prior to wiphy registration */
 -- 
 2.20.1
 
