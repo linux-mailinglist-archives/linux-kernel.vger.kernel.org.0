@@ -2,40 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6936F150C5A
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Feb 2020 17:37:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 39F05150DDD
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Feb 2020 17:47:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730139AbgBCQfd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 3 Feb 2020 11:35:33 -0500
-Received: from mail.kernel.org ([198.145.29.99]:50226 "EHLO mail.kernel.org"
+        id S1729802AbgBCQrc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 3 Feb 2020 11:47:32 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38612 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730562AbgBCQfZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Feb 2020 11:35:25 -0500
+        id S1729385AbgBCQ1W (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Feb 2020 11:27:22 -0500
 Received: from localhost (unknown [104.132.45.99])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2C0B92082E;
-        Mon,  3 Feb 2020 16:35:24 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 327642087E;
+        Mon,  3 Feb 2020 16:27:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1580747724;
-        bh=pYJmhRfn9YOi7piJCSMO3M5A4Rv0EXDHpAb2QRyajSE=;
+        s=default; t=1580747241;
+        bh=To2YoZKzBrf7+VzpiwJuMw7MK7JCBI+Y3XIpxGE4wZc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=pty0At0YIaezgavdE6EF5bz3UcB90MB9v98frVDoSc0HCJEymx4LlYaZrojqKsbE1
-         RHZo/2M8OIh0FyyEDDF1GXwNAC1HF5ykoNRqP5shwABFuJJBXCY9rNCVNWZ/l4/hHE
-         aV9mLSk/FF4vX1MmoYp0TTe1ap94SWmNNrAwnMwY=
+        b=OTKb0F8PGcM9gyJM/b4IKzWiRHcf1/jfCkM9Kw0hCQOqDmsz6XdPoLu2pH1jKsWOu
+         sO2LDs3ck3fL0LXW1jQktrzPSMer3cz4m16c3v+UEPtere3AvNPr8DwvcXlpv0f9d8
+         mPtQ2iFozuEFERoG/mncRrcj/fKjh5wEUWp+UVXI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jason Anderson <jasona.594@gmail.com>,
-        Hans de Goede <hdegoede@redhat.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        stable@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
+        Johannes Berg <johannes.berg@intel.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.4 43/90] platform/x86: GPD pocket fan: Allow somewhat lower/higher temperature limits
+Subject: [PATCH 4.9 50/68] wireless: wext: avoid gcc -O3 warning
 Date:   Mon,  3 Feb 2020 16:19:46 +0000
-Message-Id: <20200203161923.329640270@linuxfoundation.org>
+Message-Id: <20200203161913.188652325@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200203161917.612554987@linuxfoundation.org>
-References: <20200203161917.612554987@linuxfoundation.org>
+In-Reply-To: <20200203161904.705434837@linuxfoundation.org>
+References: <20200203161904.705434837@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,37 +44,54 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Hans de Goede <hdegoede@redhat.com>
+From: Arnd Bergmann <arnd@arndb.de>
 
-[ Upstream commit 1f27dbd8265dbb379926c8f6a4453fe7fe26d7a3 ]
+[ Upstream commit e16119655c9e6c4aa5767cd971baa9c491f41b13 ]
 
-Allow the user to configure the fan to turn on / speed-up at lower
-thresholds then before (20 degrees Celcius as minimum instead of 40) and
-likewise also allow the user to delay the fan speeding-up till the
-temperature hits 90 degrees Celcius (was 70).
+After the introduction of CONFIG_CC_OPTIMIZE_FOR_PERFORMANCE_O3,
+the wext code produces a bogus warning:
 
-Cc: Jason Anderson <jasona.594@gmail.com>
-Reported-by: Jason Anderson <jasona.594@gmail.com>
-Signed-off-by: Hans de Goede <hdegoede@redhat.com>
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+In function 'iw_handler_get_iwstats',
+    inlined from 'ioctl_standard_call' at net/wireless/wext-core.c:1015:9,
+    inlined from 'wireless_process_ioctl' at net/wireless/wext-core.c:935:10,
+    inlined from 'wext_ioctl_dispatch.part.8' at net/wireless/wext-core.c:986:8,
+    inlined from 'wext_handle_ioctl':
+net/wireless/wext-core.c:671:3: error: argument 1 null where non-null expected [-Werror=nonnull]
+   memcpy(extra, stats, sizeof(struct iw_statistics));
+   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+In file included from arch/x86/include/asm/string.h:5,
+net/wireless/wext-core.c: In function 'wext_handle_ioctl':
+arch/x86/include/asm/string_64.h:14:14: note: in a call to function 'memcpy' declared here
+
+The problem is that ioctl_standard_call() sometimes calls the handler
+with a NULL argument that would cause a problem for iw_handler_get_iwstats.
+However, iw_handler_get_iwstats never actually gets called that way.
+
+Marking that function as noinline avoids the warning and leads
+to slightly smaller object code as well.
+
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Link: https://lore.kernel.org/r/20200107200741.3588770-1-arnd@arndb.de
+Signed-off-by: Johannes Berg <johannes.berg@intel.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/platform/x86/gpd-pocket-fan.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ net/wireless/wext-core.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/platform/x86/gpd-pocket-fan.c b/drivers/platform/x86/gpd-pocket-fan.c
-index 73eb1572b9662..b471b86c28fe8 100644
---- a/drivers/platform/x86/gpd-pocket-fan.c
-+++ b/drivers/platform/x86/gpd-pocket-fan.c
-@@ -127,7 +127,7 @@ static int gpd_pocket_fan_probe(struct platform_device *pdev)
- 	int i;
+diff --git a/net/wireless/wext-core.c b/net/wireless/wext-core.c
+index 6250b1cfcde58..4bf0296a7c433 100644
+--- a/net/wireless/wext-core.c
++++ b/net/wireless/wext-core.c
+@@ -659,7 +659,8 @@ struct iw_statistics *get_wireless_stats(struct net_device *dev)
+ 	return NULL;
+ }
  
- 	for (i = 0; i < ARRAY_SIZE(temp_limits); i++) {
--		if (temp_limits[i] < 40000 || temp_limits[i] > 70000) {
-+		if (temp_limits[i] < 20000 || temp_limits[i] > 90000) {
- 			dev_err(&pdev->dev, "Invalid temp-limit %d (must be between 40000 and 70000)\n",
- 				temp_limits[i]);
- 			temp_limits[0] = TEMP_LIMIT0_DEFAULT;
+-static int iw_handler_get_iwstats(struct net_device *		dev,
++/* noinline to avoid a bogus warning with -O3 */
++static noinline int iw_handler_get_iwstats(struct net_device *	dev,
+ 				  struct iw_request_info *	info,
+ 				  union iwreq_data *		wrqu,
+ 				  char *			extra)
 -- 
 2.20.1
 
