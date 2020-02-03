@@ -2,38 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5DD0A150B77
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Feb 2020 17:27:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 269D4150B1E
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Feb 2020 17:24:55 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729479AbgBCQ1u (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 3 Feb 2020 11:27:50 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39106 "EHLO mail.kernel.org"
+        id S1727781AbgBCQYx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 3 Feb 2020 11:24:53 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35400 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728887AbgBCQ1n (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Feb 2020 11:27:43 -0500
+        id S1727236AbgBCQYx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Feb 2020 11:24:53 -0500
 Received: from localhost (unknown [104.132.45.99])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 90ED12051A;
-        Mon,  3 Feb 2020 16:27:42 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7077C2080C;
+        Mon,  3 Feb 2020 16:24:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1580747263;
-        bh=528ZcrQJZQ4TUfVFsu6KSmmCu84dPYeWmgxcuBYdxTs=;
+        s=default; t=1580747092;
+        bh=+Bnp/PEjYgWugTCK5CbHdsK5GEnec/R5q6lbcnrZi3g=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=cTNAUF/wu5h4f9s/xvKI5IHUKhATYLI5yoxiAVBwsz5Cl21LlrCOIcsVcN16cEiN/
-         bVaxINiQl+fqCHrrfu/X0bz4XOofoF6Qw1qU4NHwuUsRloowhzNAn40X38kPeZ/Hlf
-         CxcZS50rXFqOC/ZOobbm3O9IfQw0pYcTE7Zehn4w=
+        b=A6lKbpqbyGEJ+Oy4R9QLxlqNJZ+XfEZag3VbGXPaedOW+kXn2g0FFksfeR6Kus7GC
+         2SO0nHq5iu1NVoKVJ29I44HdXzC0kIm/5JUZf97AX8EQwbqsR2JcYuuzkY+DyiT9/q
+         VVVBHyhVRzT8SneMF5t8oAYMFBLqqPlDGH8fWMdQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Malcolm Priestley <tvboxspy@gmail.com>
-Subject: [PATCH 4.14 11/89] staging: vt6656: Fix false Tx excessive retries reporting.
-Date:   Mon,  3 Feb 2020 16:18:56 +0000
-Message-Id: <20200203161918.372503759@linuxfoundation.org>
+        stable@vger.kernel.org, Takashi Iwai <tiwai@suse.de>,
+        Andreas Schneider <asn@cryptomilk.org>
+Subject: [PATCH 4.9 01/68] ALSA: pcm: Add missing copy ops check before clearing buffer
+Date:   Mon,  3 Feb 2020 16:18:57 +0000
+Message-Id: <20200203161904.914178529@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200203161916.847439465@linuxfoundation.org>
-References: <20200203161916.847439465@linuxfoundation.org>
+In-Reply-To: <20200203161904.705434837@linuxfoundation.org>
+References: <20200203161904.705434837@linuxfoundation.org>
 User-Agent: quilt/0.66
+X-stable: review
+X-Patchwork-Hint: ignore
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
@@ -42,39 +45,41 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Malcolm Priestley <tvboxspy@gmail.com>
+From: Takashi Iwai <tiwai@suse.de>
 
-commit 9dd631fa99dc0a0dfbd191173bf355ba30ea786a upstream.
+[ this is a fix specific to 4.4.y and 4.9.y stable trees;
+  4.14.y and older already contain the right fix ]
 
-The driver reporting  IEEE80211_TX_STAT_ACK is not being handled
-correctly. The driver should only report on TSR_TMO flag is not
-set indicating no transmission errors and when not IEEE80211_TX_CTL_NO_ACK
-is being requested.
+The stable 4.4.y and 4.9.y backports of the upstream commit
+add9d56d7b37 ("ALSA: pcm: Avoid possible info leaks from PCM stream
+buffers") dropped the check of substream->ops->copy_user as copy_user
+is a new member that isn't present in the older kernels.
+Although upstream drivers should work without this NULL check, it may
+cause a regression with a downstream driver that sets some
+inaccessible address to runtime->dma_area, leading to a crash at
+worst.
 
-Cc: stable <stable@vger.kernel.org>
-Signed-off-by: Malcolm Priestley <tvboxspy@gmail.com>
-Link: https://lore.kernel.org/r/340f1f7f-c310-dca5-476f-abc059b9cd97@gmail.com
+Since such drivers must have ops->copy member on older kernels instead
+of ops->copy_user, this patch adds the missing check of ops->copy for
+fixing the regression.
+
+Reported-and-tested-by: Andreas Schneider <asn@cryptomilk.org>
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- drivers/staging/vt6656/int.c |    6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ sound/core/pcm_native.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/staging/vt6656/int.c
-+++ b/drivers/staging/vt6656/int.c
-@@ -107,9 +107,11 @@ static int vnt_int_report_rate(struct vn
+--- a/sound/core/pcm_native.c
++++ b/sound/core/pcm_native.c
+@@ -588,7 +588,7 @@ static int snd_pcm_hw_params(struct snd_
+ 		runtime->boundary *= 2;
  
- 	info->status.rates[0].count = tx_retry;
+ 	/* clear the buffer for avoiding possible kernel info leaks */
+-	if (runtime->dma_area)
++	if (runtime->dma_area && !substream->ops->copy)
+ 		memset(runtime->dma_area, 0, runtime->dma_bytes);
  
--	if (!(tsr & (TSR_TMO | TSR_RETRYTMO))) {
-+	if (!(tsr & TSR_TMO)) {
- 		info->status.rates[0].idx = idx;
--		info->flags |= IEEE80211_TX_STAT_ACK;
-+
-+		if (!(info->flags & IEEE80211_TX_CTL_NO_ACK))
-+			info->flags |= IEEE80211_TX_STAT_ACK;
- 	}
- 
- 	ieee80211_tx_status_irqsafe(priv->hw, context->skb);
+ 	snd_pcm_timer_resolution_change(substream);
 
 
