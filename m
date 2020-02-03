@@ -2,71 +2,71 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 117B0150890
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Feb 2020 15:39:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id F291F150895
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Feb 2020 15:42:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728507AbgBCOjo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 3 Feb 2020 09:39:44 -0500
-Received: from mail.kernel.org ([198.145.29.99]:57622 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727454AbgBCOjn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Feb 2020 09:39:43 -0500
-Received: from localhost (unknown [104.132.45.99])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 867752080C;
-        Mon,  3 Feb 2020 14:39:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1580740782;
-        bh=0171nx6hufXe+g+trDymTiyK2AFIkJCHRwvy73yrDSk=;
-        h=Date:From:To:Cc:Subject:From;
-        b=SFy1NQXRERnuiF6lz2JpIZl8MquJGMyk2jttbo68hBPP/qfDRRwB13eQp5WnNJSje
-         NMcvwrHpxDcHxsZfQVtZOEWRLcaXhhQYoLh1aoxKzZXcUzIbEJCliRZQbLxtDyJqnY
-         Qkti9j2uQf4VB+0UU0zjDT4xVSm5tL4lhG1DR9uI=
-Date:   Mon, 3 Feb 2020 14:39:39 +0000
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Arnd Bergmann <arnd@arndb.de>, linux-kernel@vger.kernel.org
-Subject: [GIT PULL] Char/Misc driver fix for 5.6-rc1
-Message-ID: <20200203143939.GA3221812@kroah.com>
+        id S1728513AbgBCOmM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 3 Feb 2020 09:42:12 -0500
+Received: from Galois.linutronix.de ([193.142.43.55]:59841 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727454AbgBCOmL (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Feb 2020 09:42:11 -0500
+Received: from [89.248.140.14] (helo=nanos.tec.linutronix.de)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tglx@linutronix.de>)
+        id 1iycvG-0006rj-Pp; Mon, 03 Feb 2020 15:41:59 +0100
+Received: by nanos.tec.linutronix.de (Postfix, from userid 1000)
+        id B8D19100C1B; Mon,  3 Feb 2020 15:41:52 +0100 (CET)
+From:   Thomas Gleixner <tglx@linutronix.de>
+To:     Boqun Feng <boqun.feng@gmail.com>, linux-pci@vger.kernel.org,
+        linux-hyperv@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Cc:     Michael Kelley <mikelley@microsoft.com>,
+        "K. Y. Srinivasan" <kys@microsoft.com>,
+        Haiyang Zhang <haiyangz@microsoft.com>,
+        Stephen Hemminger <sthemmin@microsoft.com>,
+        Sasha Levin <sashal@kernel.org>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Andrew Murray <andrew.murray@arm.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Boqun Feng <boqun.feng@gmail.com>
+Subject: Re: [PATCH v2 3/3] PCI: hv: Introduce hv_msi_entry
+In-Reply-To: <20200203050313.69247-4-boqun.feng@gmail.com>
+References: <20200203050313.69247-1-boqun.feng@gmail.com> <20200203050313.69247-4-boqun.feng@gmail.com>
+Date:   Mon, 03 Feb 2020 15:41:52 +0100
+Message-ID: <87d0av20nj.fsf@nanos.tec.linutronix.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Content-Type: text/plain
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The following changes since commit 15d6632496537fa66488221ee5dd2f9fb318ef2e:
+Boqun Feng <boqun.feng@gmail.com> writes:
+>  /*
+> diff --git a/arch/x86/include/asm/mshyperv.h b/arch/x86/include/asm/mshyperv.h
+> index 6b79515abb82..3bdaa3b6e68f 100644
+> --- a/arch/x86/include/asm/mshyperv.h
+> +++ b/arch/x86/include/asm/mshyperv.h
+> @@ -240,6 +240,11 @@ bool hv_vcpu_is_preempted(int vcpu);
+>  static inline void hv_apic_init(void) {}
+>  #endif
+>  
+> +#define hv_set_msi_address_from_desc(msi_entry, msi_desc)	\
+> +do {								\
+> +	(msi_entry)->address = (msi_desc)->msg.address_lo;	\
+> +} while (0)
 
-  Merge branch 'urgent-for-mingo' of git://git.kernel.org/pub/scm/linux/kernel/git/paulmck/linux-rcu (2020-01-29 11:04:49 -0800)
+Any reason why this needs to be a macro? inlines are preferrred. They
+are typesafe and readable.
 
-are available in the Git repository at:
+Thanks,
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/char-misc.git tags/char-misc-5.6-rc1-2
-
-for you to fetch changes up to 98c49f1746ac44ccc164e914b9a44183fad09f51:
-
-  char: hpet: Fix out-of-bounds read bug (2020-01-30 06:58:33 +0100)
-
-----------------------------------------------------------------
-Char/Misc fix for 5.6-rc1
-
-Here is a single patch, that fixes up a commit that came in the previous
-char/misc merge.
-
-It fixes a bug in the hpet driver that everyone keeps tripping over in
-their automated testing.  Good thing is, people are catching it.  Bad
-thing it wasn't caught by anyone testing before this.  Oh well...
-
-This has been in linux-next for a few days with no reported issues.
-
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
-----------------------------------------------------------------
-Gustavo A. R. Silva (1):
-      char: hpet: Fix out-of-bounds read bug
-
- drivers/char/hpet.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+        tglx
