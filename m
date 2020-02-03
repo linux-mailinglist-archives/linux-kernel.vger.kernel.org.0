@@ -2,39 +2,46 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D1871150C44
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Feb 2020 17:36:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C2A8C150DAB
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Feb 2020 17:46:37 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730844AbgBCQeo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 3 Feb 2020 11:34:44 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49088 "EHLO mail.kernel.org"
+        id S1727605AbgBCQ3H (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 3 Feb 2020 11:29:07 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40818 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730815AbgBCQek (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Feb 2020 11:34:40 -0500
+        id S1729700AbgBCQ3C (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Feb 2020 11:29:02 -0500
 Received: from localhost (unknown [104.132.45.99])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2142F20CC7;
-        Mon,  3 Feb 2020 16:34:38 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6B6902051A;
+        Mon,  3 Feb 2020 16:29:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1580747679;
-        bh=57FOBy08qBEXlKgCxiaToUjk/k0ohn9GFat1iPhq1H0=;
+        s=default; t=1580747341;
+        bh=N5HNIYWrB8a4KH24nWBO+sCQSMVf9LazI3OcHILKQkk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=bPuSEoKFYbDuHrRmRZGVwxoGkvyRoyYI78CPa7lCS3KXBcMlpakPvoFSUTzaCULEW
-         nj5iDy1dY0oXc030FQHl5LjgzCf9F1aBu3HeTDPWkAsnXEaNZtmP08MMUEA3zsbwx3
-         i12q0BKHiOiaBQzBRjFKaZYgI1MtoksVr2stV14Y=
+        b=SXBfoWEoAX6NObS50fL3euhCJOZ8060DhODIGKDE+ZRWyfHrfpBEQfx3DAc/aMNNa
+         1v3GzD00vltAtPkhkOODZG9tAN/GLQyXU9PitYuRCBn4tOXlFJdg/cKoaS4gYxzf2V
+         O3XrPoItK1DTk/RfrlAbLX41QLqwsQf+MoD8qNr4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Guillaume La Roque <glaroque@baylibre.com>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.4 25/90] arm64: dts: meson-sm1-sei610: add gpio bluetooth interrupt
+        stable@vger.kernel.org,
+        syzbot+e64a13c5369a194d67df@syzkaller.appspotmail.com,
+        Dan Carpenter <dan.carpenter@oracle.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Michal Hocko <mhocko@kernel.org>,
+        Lee Schermerhorn <lee.schermerhorn@hp.com>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Hugh Dickins <hughd@google.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Subject: [PATCH 4.14 43/89] mm/mempolicy.c: fix out of bounds write in mpol_parse_str()
 Date:   Mon,  3 Feb 2020 16:19:28 +0000
-Message-Id: <20200203161920.928315872@linuxfoundation.org>
+Message-Id: <20200203161922.761396204@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200203161917.612554987@linuxfoundation.org>
-References: <20200203161917.612554987@linuxfoundation.org>
+In-Reply-To: <20200203161916.847439465@linuxfoundation.org>
+References: <20200203161916.847439465@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,34 +51,59 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Guillaume La Roque <glaroque@baylibre.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
 
-[ Upstream commit 30388cc075720aa0af4f2cb5933afa1f8f39d313 ]
+commit c7a91bc7c2e17e0a9c8b9745a2cb118891218fd1 upstream.
 
-add gpio irq to support interrupt trigger mode.
+What we are trying to do is change the '=' character to a NUL terminator
+and then at the end of the function we restore it back to an '='.  The
+problem is there are two error paths where we jump to the end of the
+function before we have replaced the '=' with NUL.
 
-Signed-off-by: Guillaume La Roque <glaroque@baylibre.com>
-Signed-off-by: Kevin Hilman <khilman@baylibre.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+We end up putting the '=' in the wrong place (possibly one element
+before the start of the buffer).
+
+Link: http://lkml.kernel.org/r/20200115055426.vdjwvry44nfug7yy@kili.mountain
+Reported-by: syzbot+e64a13c5369a194d67df@syzkaller.appspotmail.com
+Fixes: 095f1fc4ebf3 ("mempolicy: rework shmem mpol parsing and display")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Acked-by: Vlastimil Babka <vbabka@suse.cz>
+Dmitry Vyukov <dvyukov@google.com>
+Cc: Michal Hocko <mhocko@kernel.org>
+Cc: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: Lee Schermerhorn <lee.schermerhorn@hp.com>
+Cc: Andrea Arcangeli <aarcange@redhat.com>
+Cc: Hugh Dickins <hughd@google.com>
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- arch/arm64/boot/dts/amlogic/meson-sm1-sei610.dts | 2 ++
- 1 file changed, 2 insertions(+)
+ mm/mempolicy.c |    6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/amlogic/meson-sm1-sei610.dts b/arch/arm64/boot/dts/amlogic/meson-sm1-sei610.dts
-index 3435aaa4e8db5..5d6a8dafe8dc0 100644
---- a/arch/arm64/boot/dts/amlogic/meson-sm1-sei610.dts
-+++ b/arch/arm64/boot/dts/amlogic/meson-sm1-sei610.dts
-@@ -361,6 +361,8 @@
+--- a/mm/mempolicy.c
++++ b/mm/mempolicy.c
+@@ -2724,6 +2724,9 @@ int mpol_parse_str(char *str, struct mem
+ 	char *flags = strchr(str, '=');
+ 	int err = 1;
  
- 	bluetooth {
- 		compatible = "brcm,bcm43438-bt";
-+		interrupt-parent = <&gpio_intc>;
-+		interrupts = <95 IRQ_TYPE_LEVEL_HIGH>;
- 		shutdown-gpios = <&gpio GPIOX_17 GPIO_ACTIVE_HIGH>;
- 		max-speed = <2000000>;
- 		clocks = <&wifi32k>;
--- 
-2.20.1
-
++	if (flags)
++		*flags++ = '\0';	/* terminate mode string */
++
+ 	if (nodelist) {
+ 		/* NUL-terminate mode or flags string */
+ 		*nodelist++ = '\0';
+@@ -2734,9 +2737,6 @@ int mpol_parse_str(char *str, struct mem
+ 	} else
+ 		nodes_clear(nodes);
+ 
+-	if (flags)
+-		*flags++ = '\0';	/* terminate mode string */
+-
+ 	for (mode = 0; mode < MPOL_MAX; mode++) {
+ 		if (!strcmp(str, policy_modes[mode])) {
+ 			break;
 
 
