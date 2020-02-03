@@ -2,133 +2,75 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 682751509DF
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Feb 2020 16:36:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 21BF41509FA
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Feb 2020 16:41:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728047AbgBCPgC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 3 Feb 2020 10:36:02 -0500
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:53828 "EHLO
-        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726272AbgBCPgC (ORCPT
+        id S1728211AbgBCPlm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 3 Feb 2020 10:41:42 -0500
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:40449 "EHLO
+        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726272AbgBCPlm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Feb 2020 10:36:02 -0500
-Received: from [127.0.0.1] (localhost [127.0.0.1])
-        (Authenticated sender: eballetbo)
-        with ESMTPSA id 6CB6D28F822
-From:   Enric Balletbo i Serra <enric.balletbo@collabora.com>
-Subject: Re: [PATCH 17/17] platform/chrome: Drop cros_ec_cmd_xfer_status()
-To:     Prashant Malani <pmalani@chromium.org>,
-        linux-kernel@vger.kernel.org
-Cc:     Benson Leung <bleung@chromium.org>,
-        Guenter Roeck <groeck@chromium.org>,
-        Lee Jones <lee.jones@linaro.org>,
-        Gwendal Grignou <gwendal@chromium.org>,
-        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-        Evan Green <evgreen@chromium.org>
-References: <20200130203106.201894-1-pmalani@chromium.org>
- <20200130203106.201894-18-pmalani@chromium.org>
-Message-ID: <d4545a76-934d-0bc3-91a2-eb3385d03ef8@collabora.com>
-Date:   Mon, 3 Feb 2020 16:35:56 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.3.0
+        Mon, 3 Feb 2020 10:41:42 -0500
+Received: by mail-lj1-f195.google.com with SMTP id n18so15111453ljo.7;
+        Mon, 03 Feb 2020 07:41:40 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=Tr5D9ovaMOsIdOrJ5QuNqZz6SQs9+PkF6vx1Map7v/k=;
+        b=fFFw6mobaogEbgl0b/xt1VD2i8AiQbQOupxn9azbHTr7FCxoddld3xUnaSezCyqoHv
+         57TTThMuNpdKfLRvih/YUbzHU8PuZN90S23mvxBK8P+lSBPQdDtSzwIyy45a8/7CLAUV
+         ijo9C4cUzeqb1UZzQ8k12b01HQvXvWxqIdI8xY3JTyMRm0m/fAaY2VjbexfhLcu61sJH
+         OKMjMDYgc5eUJtdjgk99VQ1tQD3sqtUMF+O3zEN5dElwtdSyDhb+JWNtC9iCvXsXw2c6
+         pBugdzrsJ/6XvbWCJ2DwAokL2kVeVrjnzDzrl8piAxcAJTJfpa/GnT3AbDtB28WgeOKQ
+         zilA==
+X-Gm-Message-State: APjAAAUfqgQVRv5YuRTaGAMH/G8rAdserOsYoEc45GujgzjUXo9MhuWs
+        1zG4EB0/Egsaro+lJFg8c0o=
+X-Google-Smtp-Source: APXvYqy1God+sf+I3+Dw8Z65JBsf1olps2RdgxJDykqDoM++fMB6Angb6xV8SNe5ujRtKfqZqn/tow==
+X-Received: by 2002:a2e:7d0e:: with SMTP id y14mr14798308ljc.158.1580744499668;
+        Mon, 03 Feb 2020 07:41:39 -0800 (PST)
+Received: from xi.terra (c-12aae455.07-184-6d6c6d4.bbcust.telenor.se. [85.228.170.18])
+        by smtp.gmail.com with ESMTPSA id s17sm11736065ljo.18.2020.02.03.07.41.38
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 03 Feb 2020 07:41:38 -0800 (PST)
+Received: from johan by xi.terra with local (Exim 4.92.3)
+        (envelope-from <johan@xi.terra>)
+        id 1iydrA-0006t7-4c; Mon, 03 Feb 2020 16:41:48 +0100
+From:   Johan Hovold <johan@kernel.org>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     Alan Stern <stern@rowland.harvard.edu>, edes <edes@gmx.net>,
+        Takashi Iwai <tiwai@suse.de>, linux-usb@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Johan Hovold <johan@kernel.org>
+Subject: [PATCH 0/3] USB: core: add endpoint-blacklist quirk
+Date:   Mon,  3 Feb 2020 16:38:27 +0100
+Message-Id: <20200203153830.26394-1-johan@kernel.org>
+X-Mailer: git-send-email 2.24.1
 MIME-Version: 1.0
-In-Reply-To: <20200130203106.201894-18-pmalani@chromium.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+This series adds a new endpoint-blacklist device quirk and uses that to
+ignore a duplicate endpoint in a broken altsetting of a sound card. The
+last patch is just a related cleanup.
+
+Johan
 
 
-On 30/1/20 21:31, Prashant Malani wrote:
-> Remove cros_ec_cmd_xfer_status() since all usages of that function
-> have been converted to cros_ec_send_cmd_msg().
-> 
-> Signed-off-by: Prashant Malani <pmalani@chromium.org>
-> ---
->  drivers/platform/chrome/cros_ec_proto.c     | 42 +++++----------------
->  include/linux/platform_data/cros_ec_proto.h |  3 --
->  2 files changed, 9 insertions(+), 36 deletions(-)
-> 
-> diff --git a/drivers/platform/chrome/cros_ec_proto.c b/drivers/platform/chrome/cros_ec_proto.c
-> index efd1c0b6a830c8..8b97702ba97393 100644
-> --- a/drivers/platform/chrome/cros_ec_proto.c
-> +++ b/drivers/platform/chrome/cros_ec_proto.c
-> @@ -542,35 +542,6 @@ int cros_ec_cmd_xfer(struct cros_ec_device *ec_dev,
->  }
->  EXPORT_SYMBOL(cros_ec_cmd_xfer);
->  
-> -/**
-> - * cros_ec_cmd_xfer_status() - Send a command to the ChromeOS EC.
-> - * @ec_dev: EC device.
-> - * @msg: Message to write.
-> - *
-> - * This function is identical to cros_ec_cmd_xfer, except it returns success
-> - * status only if both the command was transmitted successfully and the EC
-> - * replied with success status. It's not necessary to check msg->result when
-> - * using this function.
-> - *
-> - * Return: The number of bytes transferred on success or negative error code.
-> - */
-> -int cros_ec_cmd_xfer_status(struct cros_ec_device *ec_dev,
-> -			    struct cros_ec_command *msg)
-> -{
-> -	int ret;
-> -
-> -	ret = cros_ec_cmd_xfer(ec_dev, msg);
-> -	if (ret < 0) {
-> -		dev_err(ec_dev->dev, "Command xfer error (err:%d)\n", ret);
-> -	} else if (msg->result != EC_RES_SUCCESS) {
-> -		dev_dbg(ec_dev->dev, "Command result (err: %d)\n", msg->result);
-> -		return -EPROTO;
-> -	}
-> -
-> -	return ret;
-> -}
-> -EXPORT_SYMBOL(cros_ec_cmd_xfer_status);
-> -
->  /**
->   * cros_ec_send_cmd_msg() - Utility function to send commands to ChromeOS EC.
->   * @ec: EC device struct.
-> @@ -581,10 +552,15 @@ EXPORT_SYMBOL(cros_ec_cmd_xfer_status);
->   * @indata: Data to be received from the EC.
->   * @insize: Size of the &indata buffer.
->   *
-> - * This function is a wrapper around &cros_ec_cmd_xfer_status, and performs
-> - * some of the common work involved with sending a command to the EC. This
-> - * includes allocating and filling up a &struct cros_ec_command message buffer,
-> - * and copying the received data to another buffer.
-> + * This function is similar to cros_ec_cmd_xfer(), except it returns success
-> + * status only if both the command was transmitted successfully and the EC
-> + * replied with success status. It's not necessary to check msg->result when
-> + * using this function.
-> + *
-> + * It also performs some of the common work involved with sending a command to
-> + * the EC. This includes allocating and filling up a
-> + * &struct cros_ec_command message buffer, and copying the received data to
-> + * another buffer.
+Johan Hovold (3):
+  USB: core: add endpoint-blacklist quirk
+  USB: quirks: blacklist duplicate ep on Sound Devices USBPre2
+  USB: core: clean up endpoint-descriptor parsing
 
-As I said, explain at the first chance for what is this helper, so you don't
-need to tweak the description here.
+ drivers/usb/core/config.c  | 31 +++++++++++++++++++------------
+ drivers/usb/core/quirks.c  | 37 +++++++++++++++++++++++++++++++++++++
+ drivers/usb/core/usb.h     |  3 +++
+ include/linux/usb/quirks.h |  3 +++
+ 4 files changed, 62 insertions(+), 12 deletions(-)
 
->   *
->   * Return: The number of bytes transferred on success or negative error code.
->   */
-> diff --git a/include/linux/platform_data/cros_ec_proto.h b/include/linux/platform_data/cros_ec_proto.h
-> index 166ce26bdd79eb..851bd9af582d94 100644
-> --- a/include/linux/platform_data/cros_ec_proto.h
-> +++ b/include/linux/platform_data/cros_ec_proto.h
-> @@ -198,9 +198,6 @@ int cros_ec_check_result(struct cros_ec_device *ec_dev,
->  int cros_ec_cmd_xfer(struct cros_ec_device *ec_dev,
->  		     struct cros_ec_command *msg);
->  
-> -int cros_ec_cmd_xfer_status(struct cros_ec_device *ec_dev,
-> -			    struct cros_ec_command *msg);
-> -
->  int cros_ec_send_cmd_msg(struct cros_ec_device *ec_dev, unsigned int version,
->  			 unsigned int command, void *outdata,
->  			 unsigned int outsize, void *indata,
-> 
+-- 
+2.24.1
+
