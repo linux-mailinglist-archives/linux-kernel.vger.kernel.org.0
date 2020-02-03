@@ -2,118 +2,104 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 73545150D30
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Feb 2020 17:42:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1E36D150E18
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Feb 2020 17:50:33 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731683AbgBCQm2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 3 Feb 2020 11:42:28 -0500
-Received: from us-smtp-1.mimecast.com ([205.139.110.61]:35634 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731124AbgBCQmK (ORCPT
+        id S1731574AbgBCQsz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 3 Feb 2020 11:48:55 -0500
+Received: from conuserg-07.nifty.com ([210.131.2.74]:39669 "EHLO
+        conuserg-07.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728725AbgBCQst (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Feb 2020 11:42:10 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1580748130;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:in-reply-to:in-reply-to:references:references;
-        bh=9VWvQGPBU27LRODQE2DAzJDJigt9+M/hKMjwHQzqBmo=;
-        b=GHKe7K8sBu+oI2QraYwK2qk3P2AoWVoT/Lnp8YHxsksWgCEnzagV1FTmbIyYyiWp5RvZ3v
-        drXs3IX7jkza2JUFqe+T1g7VoB0AzH0M/KBjpNRNX2xTnlLFn0LY5aOtYdQutfoTUsc4UV
-        BJjNk7I9mQh21DKPCgvAduOu2m3a6u4=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-14-vsiP23bRPAiOaPkuxqgK3A-1; Mon, 03 Feb 2020 11:42:06 -0500
-X-MC-Unique: vsiP23bRPAiOaPkuxqgK3A-1
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 155C9100726A;
-        Mon,  3 Feb 2020 16:42:05 +0000 (UTC)
-Received: from llong.com (dhcp-17-59.bos.redhat.com [10.18.17.59])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 5E03510013A7;
-        Mon,  3 Feb 2020 16:42:04 +0000 (UTC)
-From:   Waiman Long <longman@redhat.com>
-To:     Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Will Deacon <will.deacon@arm.com>
-Cc:     linux-kernel@vger.kernel.org, Bart Van Assche <bvanassche@acm.org>,
-        Waiman Long <longman@redhat.com>
-Subject: [PATCH v5 7/7] locking/lockdep: Add a fast path for chain_hlocks allocation
-Date:   Mon,  3 Feb 2020 11:41:47 -0500
-Message-Id: <20200203164147.17990-8-longman@redhat.com>
-In-Reply-To: <20200203164147.17990-1-longman@redhat.com>
-References: <20200203164147.17990-1-longman@redhat.com>
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+        Mon, 3 Feb 2020 11:48:49 -0500
+Received: from grover.flets-west.jp (softbank126093102113.bbtec.net [126.93.102.113]) (authenticated)
+        by conuserg-07.nifty.com with ESMTP id 013GlTEe023349;
+        Tue, 4 Feb 2020 01:47:29 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-07.nifty.com 013GlTEe023349
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1580748450;
+        bh=8mL42oRIQaZwSHKJpmCbjvxiZ9pQrs0tUPVRqgWsB3g=;
+        h=From:To:Cc:Subject:Date:From;
+        b=Xf6D5Pz8FLxjB0pUEniUL8d6Ed4jC+q9Ida4tAqk5kb10+teGeZ49/u/IwWsuhhWV
+         M/jQKoFfkD3fUlYD7ld7oAddTE1/mdPlB0vR/m219WPjLBWMDKeswDdUSZdZlUxx+z
+         zZNmN8u9dAXQUksICYcG3dyvsjL8tLXLcKvJT6wM2vTUqxqEhVE89ca1FfJOo7a9bU
+         kA8DM2IulFoQrKjEqApSdSgHVSVwFipB/9af0t7BPeOlTUcxLz66xcD01EZgnbn4ZB
+         9I2QGjGI6505eg5Qqfi6P7ykfS8FEg8DnRPw3qWP21dchYjW+eOUEjGaQLk0tP11de
+         81KZ+ijPKQS0g==
+X-Nifty-SrcIP: [126.93.102.113]
+From:   Masahiro Yamada <masahiroy@kernel.org>
+To:     linux-kbuild@vger.kernel.org,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Geert Uytterhoeven <geert@linux-m68k.org>,
+        linux-kernel@vger.kernel.org,
+        Masahiro Yamada <masahiroy@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Greg Thelen <gthelen@google.com>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Sam Ravnborg <sam@ravnborg.org>
+Subject: [PATCH] initramfs: do not show compression mode choice if INITRAMFS_SOURCE is empty
+Date:   Tue,  4 Feb 2020 01:47:08 +0900
+Message-Id: <20200203164708.17478-1-masahiroy@kernel.org>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When alloc_chain_hlocks() is called, the most likely scenario is
-to allocate from the primordial chain block which holds the whole
-chain_hlocks[] array initially. It is the primordial chain block if its
-size is bigger than MAX_LOCK_DEPTH. As long as the number of entries left
-after splitting is still bigger than MAX_CHAIN_BUCKETS it will remain
-in bucket 0. By splitting out a sub-block at the end, we only need to
-adjust the size without changing any of the existing linkage information.
-This optimized fast path can reduce the latency of allocation requests.
+Since commit ddd09bcc899f ("initramfs: make compression options not
+depend on INITRAMFS_SOURCE"), Kconfig asks the compression mode for
+the built-in initramfs regardless of INITRAMFS_SOURCE.
 
-This patch does change the order by which chain_hlocks entries are
-allocated. The original code allocates entries from the beginning of
-the array. Now it will be allocated from the end of the array backward.
+It is technically simpler, but pointless from a UI perspective,
+Linus says [1].
 
-Signed-off-by: Waiman Long <longman@redhat.com>
+When INITRAMFS_SOURCE is empty, usr/Makefile creates a tiny default
+cpio, which is so small that nobody cares about the compression.
+
+This commit hides the Kconfig choice in that case. The default cpio
+is embedded without compression, which was the original behavior.
+
+[1]: https://lkml.org/lkml/2020/2/1/160
+
+Suggested-by: Linus Torvalds <torvalds@linux-foundation.org>
+Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
 ---
- kernel/locking/lockdep.c | 24 ++++++++++++++++++++----
- 1 file changed, 20 insertions(+), 4 deletions(-)
 
-diff --git a/kernel/locking/lockdep.c b/kernel/locking/lockdep.c
-index 70288bb2331d..d05799872882 100644
---- a/kernel/locking/lockdep.c
-+++ b/kernel/locking/lockdep.c
-@@ -2701,15 +2701,19 @@ static inline int chain_block_size(int offset)
- 	return (chain_hlocks[offset + 2] << 16) | chain_hlocks[offset + 3];
- }
+Linus,
+
+Will you directly pick up this if you are OK with it?
+
+
+
+ usr/Kconfig  | 1 +
+ usr/Makefile | 2 +-
+ 2 files changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/usr/Kconfig b/usr/Kconfig
+index 529caab1a328..bdf5bbd40727 100644
+--- a/usr/Kconfig
++++ b/usr/Kconfig
+@@ -102,6 +102,7 @@ config RD_LZ4
  
-+static inline void init_chain_block_size(int offset, int size)
-+{
-+	chain_hlocks[offset + 2] = size >> 16;
-+	chain_hlocks[offset + 3] = (u16)size;
-+}
-+
- static inline void init_chain_block(int offset, int next, int bucket, int size)
- {
- 	chain_hlocks[offset] = (next >> 16) | CHAIN_BLK_FLAG;
- 	chain_hlocks[offset + 1] = (u16)next;
+ choice
+ 	prompt "Built-in initramfs compression mode"
++	depends on INITRAMFS_SOURCE != ""
+ 	help
+ 	  This option allows you to decide by which algorithm the builtin
+ 	  initramfs will be compressed.  Several compression algorithms are
+diff --git a/usr/Makefile b/usr/Makefile
+index 18aed2ab98da..c12e6b15ce72 100644
+--- a/usr/Makefile
++++ b/usr/Makefile
+@@ -8,7 +8,7 @@
+ # with unpack_to_rootfs(). Make size_append no-op.
+ override size_append := :
  
--	if (bucket == 0) {
--		chain_hlocks[offset + 2] = size >> 16;
--		chain_hlocks[offset + 3] = (u16)size;
--	}
-+	if (bucket == 0)
-+		init_chain_block_size(offset, size);
- }
- 
- static inline void add_chain_block(int offset, int size)
-@@ -2809,6 +2813,18 @@ static int alloc_chain_hlocks(int req)
- 			return curr;
- 		}
- 
-+		/*
-+		 * Fast path: splitting out a sub-block at the end of the
-+		 * primordial chain block.
-+		 */
-+		if (likely((size > MAX_LOCK_DEPTH) &&
-+			   (size - req > MAX_CHAIN_BUCKETS))) {
-+			size -= req;
-+			nr_free_chain_hlocks -= req;
-+			init_chain_block_size(curr, size);
-+			return curr + size;
-+		}
-+
- 		if (size > max_size) {
- 			max_prev = prev;
- 			max_curr = curr;
+-compress-$(CONFIG_INITRAMFS_COMPRESSION_NONE)	:= shipped
++compress-y					:= shipped
+ compress-$(CONFIG_INITRAMFS_COMPRESSION_GZIP)	:= gzip
+ compress-$(CONFIG_INITRAMFS_COMPRESSION_BZIP2)	:= bzip2
+ compress-$(CONFIG_INITRAMFS_COMPRESSION_LZMA)	:= lzma
 -- 
-2.18.1
+2.17.1
 
