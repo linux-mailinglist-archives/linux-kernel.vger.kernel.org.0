@@ -2,39 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9C549150B4C
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Feb 2020 17:26:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 028BB150AD8
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Feb 2020 17:21:45 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728922AbgBCQ00 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 3 Feb 2020 11:26:26 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37396 "EHLO mail.kernel.org"
+        id S1729176AbgBCQVc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 3 Feb 2020 11:21:32 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33410 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727253AbgBCQ0Y (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Feb 2020 11:26:24 -0500
+        id S1728543AbgBCQV3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Feb 2020 11:21:29 -0500
 Received: from localhost (unknown [104.132.45.99])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 64EF52051A;
-        Mon,  3 Feb 2020 16:26:23 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id F091A218AC;
+        Mon,  3 Feb 2020 16:21:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1580747183;
-        bh=DVeTexbQjnRUs8BKffsTZRZmM7OK3bSgOL09DHl0+fY=;
+        s=default; t=1580746888;
+        bh=fA+aPuV5zwwYfBpVqh1eF0HoJ7Bd1nJCffIHV7bwGWQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=l3+4vnhk+YJ4CTQoRxyOpzPACQ6xjVTl3ruPp6ifn5Jd7fpMUjnYzr5AreQTW+L3t
-         VHWqZ7M/9duMHU8m4lpTWErYUfVWXbiT3eo5AB2CqQq3CGVbBR54951IRtpyKGEvTA
-         glhSk2e7D5/nG75JxqnRWbyVWJjhlwfoC1WgHY2Y=
+        b=SW2VH++6r1yXXl00J1IOHpuf+CicIJzGKEbMadVcvPuTKrIqIBKr5m/OEnH5uldnj
+         fzPHCGs1b9qSQrwH7CN3hoGiXxQR68tmBQTXgCYrFFk1lwg4X/lg0knoWMcUO0lVRU
+         l1daPHI5ZL/rOdoOfs09AeVBABi1dQaE6cwGV5II=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Markus Theil <markus.theil@tu-ilmenau.de>,
-        Johannes Berg <johannes.berg@intel.com>,
+        stable@vger.kernel.org, Stan Johnson <userm57@yahoo.com>,
+        Finn Thain <fthain@telegraphics.com.au>,
+        "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 44/68] mac80211: mesh: restrict airtime metric to peered established plinks
-Date:   Mon,  3 Feb 2020 16:19:40 +0000
-Message-Id: <20200203161912.175488260@linuxfoundation.org>
+Subject: [PATCH 4.4 49/53] net/sonic: Fix receive buffer handling
+Date:   Mon,  3 Feb 2020 16:19:41 +0000
+Message-Id: <20200203161911.483527378@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200203161904.705434837@linuxfoundation.org>
-References: <20200203161904.705434837@linuxfoundation.org>
+In-Reply-To: <20200203161902.714326084@linuxfoundation.org>
+References: <20200203161902.714326084@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,53 +45,114 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Markus Theil <markus.theil@tu-ilmenau.de>
+From: Finn Thain <fthain@telegraphics.com.au>
 
-[ Upstream commit 02a614499600af836137c3fbc4404cd96365fff2 ]
+[ Upstream commit 9e311820f67e740f4fb8dcb82b4c4b5b05bdd1a5 ]
 
-The following warning is triggered every time an unestablished mesh peer
-gets dumped. Checks if a peer link is established before retrieving the
-airtime link metric.
+The SONIC can sometimes advance its rx buffer pointer (RRP register)
+without advancing its rx descriptor pointer (CRDA register). As a result
+the index of the current rx descriptor may not equal that of the current
+rx buffer. The driver mistakenly assumes that they are always equal.
+This assumption leads to incorrect packet lengths and possible packet
+duplication. Avoid this by calling a new function to locate the buffer
+corresponding to a given descriptor.
 
-[ 9563.022567] WARNING: CPU: 0 PID: 6287 at net/mac80211/mesh_hwmp.c:345
-               airtime_link_metric_get+0xa2/0xb0 [mac80211]
-[ 9563.022697] Hardware name: PC Engines apu2/apu2, BIOS v4.10.0.3
-[ 9563.022756] RIP: 0010:airtime_link_metric_get+0xa2/0xb0 [mac80211]
-[ 9563.022838] Call Trace:
-[ 9563.022897]  sta_set_sinfo+0x936/0xa10 [mac80211]
-[ 9563.022964]  ieee80211_dump_station+0x6d/0x90 [mac80211]
-[ 9563.023062]  nl80211_dump_station+0x154/0x2a0 [cfg80211]
-[ 9563.023120]  netlink_dump+0x17b/0x370
-[ 9563.023130]  netlink_recvmsg+0x2a4/0x480
-[ 9563.023140]  ____sys_recvmsg+0xa6/0x160
-[ 9563.023154]  ___sys_recvmsg+0x93/0xe0
-[ 9563.023169]  __sys_recvmsg+0x7e/0xd0
-[ 9563.023210]  do_syscall_64+0x4e/0x140
-[ 9563.023217]  entry_SYSCALL_64_after_hwframe+0x44/0xa9
-
-Signed-off-by: Markus Theil <markus.theil@tu-ilmenau.de>
-Link: https://lore.kernel.org/r/20191203180644.70653-1-markus.theil@tu-ilmenau.de
-[rewrite commit message]
-Signed-off-by: Johannes Berg <johannes.berg@intel.com>
+Fixes: efcce839360f ("[PATCH] macsonic/jazzsonic network drivers update")
+Tested-by: Stan Johnson <userm57@yahoo.com>
+Signed-off-by: Finn Thain <fthain@telegraphics.com.au>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/mac80211/mesh_hwmp.c | 3 +++
- 1 file changed, 3 insertions(+)
+ drivers/net/ethernet/natsemi/sonic.c | 35 ++++++++++++++++++++++++----
+ drivers/net/ethernet/natsemi/sonic.h |  5 ++--
+ 2 files changed, 33 insertions(+), 7 deletions(-)
 
-diff --git a/net/mac80211/mesh_hwmp.c b/net/mac80211/mesh_hwmp.c
-index b0acb2961e805..5f4c228b82e56 100644
---- a/net/mac80211/mesh_hwmp.c
-+++ b/net/mac80211/mesh_hwmp.c
-@@ -326,6 +326,9 @@ static u32 airtime_link_metric_get(struct ieee80211_local *local,
- 	u32 tx_time, estimated_retx;
- 	u64 result;
+diff --git a/drivers/net/ethernet/natsemi/sonic.c b/drivers/net/ethernet/natsemi/sonic.c
+index 0374e834f865e..21766ec12ef20 100644
+--- a/drivers/net/ethernet/natsemi/sonic.c
++++ b/drivers/net/ethernet/natsemi/sonic.c
+@@ -423,6 +423,21 @@ static irqreturn_t sonic_interrupt(int irq, void *dev_id)
+ 	return IRQ_HANDLED;
+ }
  
-+	if (sta->mesh->plink_state != NL80211_PLINK_ESTAB)
-+		return MAX_METRIC;
++/* Return the array index corresponding to a given Receive Buffer pointer. */
++static int index_from_addr(struct sonic_local *lp, dma_addr_t addr,
++			   unsigned int last)
++{
++	unsigned int i = last;
 +
- 	/* Try to get rate based on HW/SW RC algorithm.
- 	 * Rate is returned in units of Kbps, correct this
- 	 * to comply with airtime calculation units
++	do {
++		i = (i + 1) & SONIC_RRS_MASK;
++		if (addr == lp->rx_laddr[i])
++			return i;
++	} while (i != last);
++
++	return -ENOENT;
++}
++
+ /*
+  * We have a good packet(s), pass it/them up the network stack.
+  */
+@@ -442,6 +457,16 @@ static void sonic_rx(struct net_device *dev)
+ 
+ 		status = sonic_rda_get(dev, entry, SONIC_RD_STATUS);
+ 		if (status & SONIC_RCR_PRX) {
++			u32 addr = (sonic_rda_get(dev, entry,
++						  SONIC_RD_PKTPTR_H) << 16) |
++				   sonic_rda_get(dev, entry, SONIC_RD_PKTPTR_L);
++			int i = index_from_addr(lp, addr, entry);
++
++			if (i < 0) {
++				WARN_ONCE(1, "failed to find buffer!\n");
++				break;
++			}
++
+ 			/* Malloc up new buffer. */
+ 			new_skb = netdev_alloc_skb(dev, SONIC_RBSIZE + 2);
+ 			if (new_skb == NULL) {
+@@ -463,7 +488,7 @@ static void sonic_rx(struct net_device *dev)
+ 
+ 			/* now we have a new skb to replace it, pass the used one up the stack */
+ 			dma_unmap_single(lp->device, lp->rx_laddr[entry], SONIC_RBSIZE, DMA_FROM_DEVICE);
+-			used_skb = lp->rx_skb[entry];
++			used_skb = lp->rx_skb[i];
+ 			pkt_len = sonic_rda_get(dev, entry, SONIC_RD_PKTLEN);
+ 			skb_trim(used_skb, pkt_len);
+ 			used_skb->protocol = eth_type_trans(used_skb, dev);
+@@ -472,13 +497,13 @@ static void sonic_rx(struct net_device *dev)
+ 			lp->stats.rx_bytes += pkt_len;
+ 
+ 			/* and insert the new skb */
+-			lp->rx_laddr[entry] = new_laddr;
+-			lp->rx_skb[entry] = new_skb;
++			lp->rx_laddr[i] = new_laddr;
++			lp->rx_skb[i] = new_skb;
+ 
+ 			bufadr_l = (unsigned long)new_laddr & 0xffff;
+ 			bufadr_h = (unsigned long)new_laddr >> 16;
+-			sonic_rra_put(dev, entry, SONIC_RR_BUFADR_L, bufadr_l);
+-			sonic_rra_put(dev, entry, SONIC_RR_BUFADR_H, bufadr_h);
++			sonic_rra_put(dev, i, SONIC_RR_BUFADR_L, bufadr_l);
++			sonic_rra_put(dev, i, SONIC_RR_BUFADR_H, bufadr_h);
+ 		} else {
+ 			/* This should only happen, if we enable accepting broken packets. */
+ 			lp->stats.rx_errors++;
+diff --git a/drivers/net/ethernet/natsemi/sonic.h b/drivers/net/ethernet/natsemi/sonic.h
+index a009a99c0e544..d9f8ceb5353a4 100644
+--- a/drivers/net/ethernet/natsemi/sonic.h
++++ b/drivers/net/ethernet/natsemi/sonic.h
+@@ -273,8 +273,9 @@
+ #define SONIC_NUM_RDS   SONIC_NUM_RRS /* number of receive descriptors */
+ #define SONIC_NUM_TDS   16            /* number of transmit descriptors */
+ 
+-#define SONIC_RDS_MASK  (SONIC_NUM_RDS-1)
+-#define SONIC_TDS_MASK  (SONIC_NUM_TDS-1)
++#define SONIC_RRS_MASK  (SONIC_NUM_RRS - 1)
++#define SONIC_RDS_MASK  (SONIC_NUM_RDS - 1)
++#define SONIC_TDS_MASK  (SONIC_NUM_TDS - 1)
+ 
+ #define SONIC_RBSIZE	1520          /* size of one resource buffer */
+ 
 -- 
 2.20.1
 
