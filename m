@@ -2,39 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 91445150C0C
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Feb 2020 17:33:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AC650150BD9
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Feb 2020 17:31:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730494AbgBCQcy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 3 Feb 2020 11:32:54 -0500
-Received: from mail.kernel.org ([198.145.29.99]:46676 "EHLO mail.kernel.org"
+        id S1730143AbgBCQbG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 3 Feb 2020 11:31:06 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43984 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730482AbgBCQcv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Feb 2020 11:32:51 -0500
+        id S1730118AbgBCQbE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Feb 2020 11:31:04 -0500
 Received: from localhost (unknown [104.132.45.99])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 68B8E2082E;
-        Mon,  3 Feb 2020 16:32:50 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 657BF217BA;
+        Mon,  3 Feb 2020 16:31:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1580747570;
-        bh=LhOqOE5Kws2Soqj4/HwGuQ0Mpx90Ny6cQYVhR9F1lZk=;
+        s=default; t=1580747463;
+        bh=cVb0S88UCjPdrHSeJvHEcWnD2n4qSAj8xxjn56lrqBA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=xiH79BnaynXuf7ztsgWke4o4LI1kZwWUKHY1QQ/lTSnWBAEq1RQ52rNwW+862fm6a
-         WHjBHVqFqAQjLABfG6a4GVXTx1pGj6mHK+8NA4Fic0MkgyfpRFXczLC547ZbchRNJJ
-         qkruYb4KLO5cPmr2Snp/6DG7uVoOPFdCqAt2qmKo=
+        b=ggoHA6OJfeddJlOXBHJjNXeNBc0hYLsA+/4Jaun7VPhfOm+tQkDg7ysnW4cdgRFts
+         OeFheZyTV/ksdValCeD5flQIwqYImhx8URu0zjstLk6d3/QQrKu/ZQuZyS8hU+s4UR
+         sdfJSdlZlOEZb9vmTzs+O2cqMw55H6N8T6t4CchU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Florian Fainelli <f.fainelli@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>,
+        stable@vger.kernel.org, Marc Zyngier <maz@kernel.org>,
+        Vladimir Murzin <vladimir.murzin@arm.com>,
+        Russell King <rmk+kernel@armlinux.org.uk>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 47/70] net: dsa: bcm_sf2: Configure IMP port for 2Gb/sec
+Subject: [PATCH 4.14 74/89] ARM: 8955/1: virt: Relax arch timer version check during early boot
 Date:   Mon,  3 Feb 2020 16:19:59 +0000
-Message-Id: <20200203161919.146287783@linuxfoundation.org>
+Message-Id: <20200203161926.021053192@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200203161912.158976871@linuxfoundation.org>
-References: <20200203161912.158976871@linuxfoundation.org>
+In-Reply-To: <20200203161916.847439465@linuxfoundation.org>
+References: <20200203161916.847439465@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,37 +45,48 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Florian Fainelli <f.fainelli@gmail.com>
+From: Vladimir Murzin <vladimir.murzin@arm.com>
 
-[ Upstream commit 8f1880cbe8d0d49ebb7e9ae409b3b96676e5aa97 ]
+[ Upstream commit 6849b5eba1965ceb0cad3a75877ef4569dd3638e ]
 
-With the implementation of the system reset controller we lost a setting
-that is currently applied by the bootloader and which configures the IMP
-port for 2Gb/sec, the default is 1Gb/sec. This is needed given the
-number of ports and applications we expect to run so bring back that
-setting.
+Updates to the Generic Timer architecture allow ID_PFR1.GenTimer to
+have values other than 0 or 1 while still preserving backward
+compatibility. At the moment, Linux is quite strict in the way it
+handles this field at early boot and will not configure arch timer if
+it doesn't find the value 1.
 
-Fixes: 01b0ac07589e ("net: dsa: bcm_sf2: Add support for optional reset controller line")
-Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Since here use ubfx for arch timer version extraction (hyb-stub build
+with -march=armv7-a, so it is safe)
+
+To help backports (even though the code was correct at the time of writing)
+
+Fixes: 8ec58be9f3ff ("ARM: virt: arch_timers: enable access to physical timers")
+Acked-by: Marc Zyngier <maz@kernel.org>
+Signed-off-by: Vladimir Murzin <vladimir.murzin@arm.com>
+Signed-off-by: Russell King <rmk+kernel@armlinux.org.uk>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/dsa/bcm_sf2.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/arm/kernel/hyp-stub.S | 7 +++----
+ 1 file changed, 3 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/net/dsa/bcm_sf2.c b/drivers/net/dsa/bcm_sf2.c
-index 02a4187d81bd0..c936090076706 100644
---- a/drivers/net/dsa/bcm_sf2.c
-+++ b/drivers/net/dsa/bcm_sf2.c
-@@ -72,7 +72,7 @@ static void bcm_sf2_imp_setup(struct dsa_switch *ds, int port)
- 
- 		/* Force link status for IMP port */
- 		reg = core_readl(priv, offset);
--		reg |= (MII_SW_OR | LINK_STS);
-+		reg |= (MII_SW_OR | LINK_STS | GMII_SPEED_UP_2G);
- 		core_writel(priv, reg, offset);
- 
- 		/* Enable Broadcast, Multicast, Unicast forwarding to IMP port */
+diff --git a/arch/arm/kernel/hyp-stub.S b/arch/arm/kernel/hyp-stub.S
+index 82a942894fc04..83e463c05dcdb 100644
+--- a/arch/arm/kernel/hyp-stub.S
++++ b/arch/arm/kernel/hyp-stub.S
+@@ -159,10 +159,9 @@ ARM_BE8(orr	r7, r7, #(1 << 25))     @ HSCTLR.EE
+ #if !defined(ZIMAGE) && defined(CONFIG_ARM_ARCH_TIMER)
+ 	@ make CNTP_* and CNTPCT accessible from PL1
+ 	mrc	p15, 0, r7, c0, c1, 1	@ ID_PFR1
+-	lsr	r7, #16
+-	and	r7, #0xf
+-	cmp	r7, #1
+-	bne	1f
++	ubfx	r7, r7, #16, #4
++	teq	r7, #0
++	beq	1f
+ 	mrc	p15, 4, r7, c14, c1, 0	@ CNTHCTL
+ 	orr	r7, r7, #3		@ PL1PCEN | PL1PCTEN
+ 	mcr	p15, 4, r7, c14, c1, 0	@ CNTHCTL
 -- 
 2.20.1
 
