@@ -2,40 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C4EC3150AC3
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Feb 2020 17:20:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D685F150B34
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Feb 2020 17:25:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728957AbgBCQUq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 3 Feb 2020 11:20:46 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60552 "EHLO mail.kernel.org"
+        id S1728506AbgBCQZf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 3 Feb 2020 11:25:35 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36252 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728486AbgBCQUl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Feb 2020 11:20:41 -0500
+        id S1728369AbgBCQZb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Feb 2020 11:25:31 -0500
 Received: from localhost (unknown [104.132.45.99])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DD1B320838;
-        Mon,  3 Feb 2020 16:20:39 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 923952080C;
+        Mon,  3 Feb 2020 16:25:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1580746840;
-        bh=eUbOBFqqIBVgH1Nw88aUmSR1LKDcDcKzFqzvUnLThQ0=;
+        s=default; t=1580747131;
+        bh=b6IVOamTvGku5jkgEhCb3/Ctk25jZQJJxSPkmWFjWbE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=CkawfK13K4r8zDEflBAJ2YsV9+lM2k6RuiY0twZOfi54U9vy4gecckrQHHK/Sg0un
-         1akqhc6LGV2vK8mWzF+0akxliZ2MkcY9fBRitQK033rIskb9COrqBCJjU0sgVj1zzY
-         E3B+PaKiE2SLpLHPD4oIYTEkgWag+4qpjAPEM+ks=
+        b=dj57FnYcFix05Qlyc+SL8ipakXkeCCEgQ2vagUXwYMvQ7sE0xSNuYYeGxHcKlU9fl
+         Lh+Jzzxcb0xyeZfn+2O67TS1zAG5Jpem435Y7SeYzeRUvp2EfEUv9v5kjrZwvBfMtI
+         GqeVgEV7auXXp7GLoYSMvkHVguRZAvrAEfsTjXTs=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        syzbot+6bf9606ee955b646c0e1@syzkaller.appspotmail.com,
-        Sean Young <sean@mess.org>,
-        Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-Subject: [PATCH 4.4 28/53] media: digitv: dont continue if remote control state cant be read
+        stable@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
+        syzbot+03c4738ed29d5d366ddf@syzkaller.appspotmail.com,
+        Cong Wang <xiyou.wangcong@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.9 24/68] net_sched: ematch: reject invalid TCF_EM_SIMPLE
 Date:   Mon,  3 Feb 2020 16:19:20 +0000
-Message-Id: <20200203161908.197528888@linuxfoundation.org>
+Message-Id: <20200203161909.061635854@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200203161902.714326084@linuxfoundation.org>
-References: <20200203161902.714326084@linuxfoundation.org>
+In-Reply-To: <20200203161904.705434837@linuxfoundation.org>
+References: <20200203161904.705434837@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,48 +45,79 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Sean Young <sean@mess.org>
+From: Eric Dumazet <edumazet@google.com>
 
-commit eecc70d22ae51225de1ef629c1159f7116476b2e upstream.
+[ Upstream commit 55cd9f67f1e45de8517cdaab985fb8e56c0bc1d8 ]
 
-This results in an uninitialized variable read.
+It is possible for malicious userspace to set TCF_EM_SIMPLE bit
+even for matches that should not have this bit set.
 
-Reported-by: syzbot+6bf9606ee955b646c0e1@syzkaller.appspotmail.com
-Signed-off-by: Sean Young <sean@mess.org>
-Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+This can fool two places using tcf_em_is_simple()
+
+1) tcf_em_tree_destroy() -> memory leak of em->data
+   if ops->destroy() is NULL
+
+2) tcf_em_tree_dump() wrongly report/leak 4 low-order bytes
+   of a kernel pointer.
+
+BUG: memory leak
+unreferenced object 0xffff888121850a40 (size 32):
+  comm "syz-executor927", pid 7193, jiffies 4294941655 (age 19.840s)
+  hex dump (first 32 bytes):
+    00 00 00 00 01 00 00 00 00 00 00 00 00 00 00 00  ................
+    00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+  backtrace:
+    [<00000000f67036ea>] kmemleak_alloc_recursive include/linux/kmemleak.h:43 [inline]
+    [<00000000f67036ea>] slab_post_alloc_hook mm/slab.h:586 [inline]
+    [<00000000f67036ea>] slab_alloc mm/slab.c:3320 [inline]
+    [<00000000f67036ea>] __do_kmalloc mm/slab.c:3654 [inline]
+    [<00000000f67036ea>] __kmalloc_track_caller+0x165/0x300 mm/slab.c:3671
+    [<00000000fab0cc8e>] kmemdup+0x27/0x60 mm/util.c:127
+    [<00000000d9992e0a>] kmemdup include/linux/string.h:453 [inline]
+    [<00000000d9992e0a>] em_nbyte_change+0x5b/0x90 net/sched/em_nbyte.c:32
+    [<000000007e04f711>] tcf_em_validate net/sched/ematch.c:241 [inline]
+    [<000000007e04f711>] tcf_em_tree_validate net/sched/ematch.c:359 [inline]
+    [<000000007e04f711>] tcf_em_tree_validate+0x332/0x46f net/sched/ematch.c:300
+    [<000000007a769204>] basic_set_parms net/sched/cls_basic.c:157 [inline]
+    [<000000007a769204>] basic_change+0x1d7/0x5f0 net/sched/cls_basic.c:219
+    [<00000000e57a5997>] tc_new_tfilter+0x566/0xf70 net/sched/cls_api.c:2104
+    [<0000000074b68559>] rtnetlink_rcv_msg+0x3b2/0x4b0 net/core/rtnetlink.c:5415
+    [<00000000b7fe53fb>] netlink_rcv_skb+0x61/0x170 net/netlink/af_netlink.c:2477
+    [<00000000e83a40d0>] rtnetlink_rcv+0x1d/0x30 net/core/rtnetlink.c:5442
+    [<00000000d62ba933>] netlink_unicast_kernel net/netlink/af_netlink.c:1302 [inline]
+    [<00000000d62ba933>] netlink_unicast+0x223/0x310 net/netlink/af_netlink.c:1328
+    [<0000000088070f72>] netlink_sendmsg+0x2c0/0x570 net/netlink/af_netlink.c:1917
+    [<00000000f70b15ea>] sock_sendmsg_nosec net/socket.c:639 [inline]
+    [<00000000f70b15ea>] sock_sendmsg+0x54/0x70 net/socket.c:659
+    [<00000000ef95a9be>] ____sys_sendmsg+0x2d0/0x300 net/socket.c:2330
+    [<00000000b650f1ab>] ___sys_sendmsg+0x8a/0xd0 net/socket.c:2384
+    [<0000000055bfa74a>] __sys_sendmsg+0x80/0xf0 net/socket.c:2417
+    [<000000002abac183>] __do_sys_sendmsg net/socket.c:2426 [inline]
+    [<000000002abac183>] __se_sys_sendmsg net/socket.c:2424 [inline]
+    [<000000002abac183>] __x64_sys_sendmsg+0x23/0x30 net/socket.c:2424
+
+Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
+Signed-off-by: Eric Dumazet <edumazet@google.com>
+Reported-by: syzbot+03c4738ed29d5d366ddf@syzkaller.appspotmail.com
+Cc: Cong Wang <xiyou.wangcong@gmail.com>
+Acked-by: Cong Wang <xiyou.wangcong@gmail.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- drivers/media/usb/dvb-usb/digitv.c |   10 +++++++---
- 1 file changed, 7 insertions(+), 3 deletions(-)
+ net/sched/ematch.c |    3 +++
+ 1 file changed, 3 insertions(+)
 
---- a/drivers/media/usb/dvb-usb/digitv.c
-+++ b/drivers/media/usb/dvb-usb/digitv.c
-@@ -226,18 +226,22 @@ static struct rc_map_table rc_map_digitv
+--- a/net/sched/ematch.c
++++ b/net/sched/ematch.c
+@@ -242,6 +242,9 @@ static int tcf_em_validate(struct tcf_pr
+ 			goto errout;
  
- static int digitv_rc_query(struct dvb_usb_device *d, u32 *event, int *state)
- {
--	int i;
-+	int ret, i;
- 	u8 key[5];
- 	u8 b[4] = { 0 };
- 
- 	*event = 0;
- 	*state = REMOTE_NO_KEY_PRESSED;
- 
--	digitv_ctrl_msg(d,USB_READ_REMOTE,0,NULL,0,&key[1],4);
-+	ret = digitv_ctrl_msg(d, USB_READ_REMOTE, 0, NULL, 0, &key[1], 4);
-+	if (ret)
-+		return ret;
- 
- 	/* Tell the device we've read the remote. Not sure how necessary
- 	   this is, but the Nebula SDK does it. */
--	digitv_ctrl_msg(d,USB_WRITE_REMOTE,0,b,4,NULL,0);
-+	ret = digitv_ctrl_msg(d, USB_WRITE_REMOTE, 0, b, 4, NULL, 0);
-+	if (ret)
-+		return ret;
- 
- 	/* if something is inside the buffer, simulate key press */
- 	if (key[1] != 0)
+ 		if (em->ops->change) {
++			err = -EINVAL;
++			if (em_hdr->flags & TCF_EM_SIMPLE)
++				goto errout;
+ 			err = em->ops->change(net, data, data_len, em);
+ 			if (err < 0)
+ 				goto errout;
 
 
