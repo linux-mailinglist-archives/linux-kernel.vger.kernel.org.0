@@ -2,39 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 85DF7150BBB
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Feb 2020 17:31:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B1A3A150C02
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Feb 2020 17:32:37 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729909AbgBCQaC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 3 Feb 2020 11:30:02 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42230 "EHLO mail.kernel.org"
+        id S1730442AbgBCQcf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 3 Feb 2020 11:32:35 -0500
+Received: from mail.kernel.org ([198.145.29.99]:46152 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729903AbgBCQaA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Feb 2020 11:30:00 -0500
+        id S1730101AbgBCQc1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Feb 2020 11:32:27 -0500
 Received: from localhost (unknown [104.132.45.99])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1165C2051A;
-        Mon,  3 Feb 2020 16:29:58 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9BFAC217BA;
+        Mon,  3 Feb 2020 16:32:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1580747399;
-        bh=rOC8U+f1daTPhWJ4bxWs0HkmJ05pAb0NOy3PkAdNkRg=;
+        s=default; t=1580747547;
+        bh=pYJmhRfn9YOi7piJCSMO3M5A4Rv0EXDHpAb2QRyajSE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=yp6SVhCYkSOIf5E7j7468/Pbb8ISPEDa8xwK433Zmzui3+uHNINGUjb08mOXnM8Rw
-         8C2lrkI3ZjcJcUTwQUS1knOaMSnw9z83klPjZsxiJsrSVlYFo+neaUHsIZDQl2YqGS
-         y2duRj1vlx3TPlpVUEczyt/u7u1CZvtzugHNSEMM=
+        b=oqKv5m0EWjjiISFnBapw8q5x8MDM6mDPd2fbxkfjZWJGxOwoxqgR2194/f9gaUyf/
+         j0YLJ3YTCCeYZySZkO8Ro7gqJywly9vYUeaBwBOMMP88zd/M339uh8HSC3pctYGGRm
+         5keeuMMn95WqU5BgQXzKk+kFd6VxULUKv0YUc8X8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jouni Malinen <j@w1.fi>,
-        Johannes Berg <johannes.berg@intel.com>,
+        stable@vger.kernel.org, Jason Anderson <jasona.594@gmail.com>,
+        Hans de Goede <hdegoede@redhat.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 65/89] mac80211: Fix TKIP replay protection immediately after key setup
+Subject: [PATCH 4.19 38/70] platform/x86: GPD pocket fan: Allow somewhat lower/higher temperature limits
 Date:   Mon,  3 Feb 2020 16:19:50 +0000
-Message-Id: <20200203161925.006283716@linuxfoundation.org>
+Message-Id: <20200203161917.952945455@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200203161916.847439465@linuxfoundation.org>
-References: <20200203161916.847439465@linuxfoundation.org>
+In-Reply-To: <20200203161912.158976871@linuxfoundation.org>
+References: <20200203161912.158976871@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,62 +45,37 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jouni Malinen <j@w1.fi>
+From: Hans de Goede <hdegoede@redhat.com>
 
-[ Upstream commit 6f601265215a421f425ba3a4850a35861d024643 ]
+[ Upstream commit 1f27dbd8265dbb379926c8f6a4453fe7fe26d7a3 ]
 
-TKIP replay protection was skipped for the very first frame received
-after a new key is configured. While this is potentially needed to avoid
-dropping a frame in some cases, this does leave a window for replay
-attacks with group-addressed frames at the station side. Any earlier
-frame sent by the AP using the same key would be accepted as a valid
-frame and the internal RSC would then be updated to the TSC from that
-frame. This would allow multiple previously transmitted group-addressed
-frames to be replayed until the next valid new group-addressed frame
-from the AP is received by the station.
+Allow the user to configure the fan to turn on / speed-up at lower
+thresholds then before (20 degrees Celcius as minimum instead of 40) and
+likewise also allow the user to delay the fan speeding-up till the
+temperature hits 90 degrees Celcius (was 70).
 
-Fix this by limiting the no-replay-protection exception to apply only
-for the case where TSC=0, i.e., when this is for the very first frame
-protected using the new key, and the local RSC had not been set to a
-higher value when configuring the key (which may happen with GTK).
-
-Signed-off-by: Jouni Malinen <j@w1.fi>
-Link: https://lore.kernel.org/r/20200107153545.10934-1-j@w1.fi
-Signed-off-by: Johannes Berg <johannes.berg@intel.com>
+Cc: Jason Anderson <jasona.594@gmail.com>
+Reported-by: Jason Anderson <jasona.594@gmail.com>
+Signed-off-by: Hans de Goede <hdegoede@redhat.com>
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/mac80211/tkip.c | 18 +++++++++++++++---
- 1 file changed, 15 insertions(+), 3 deletions(-)
+ drivers/platform/x86/gpd-pocket-fan.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/net/mac80211/tkip.c b/net/mac80211/tkip.c
-index b3622823bad23..ebd66e8f46b3f 100644
---- a/net/mac80211/tkip.c
-+++ b/net/mac80211/tkip.c
-@@ -266,9 +266,21 @@ int ieee80211_tkip_decrypt_data(struct crypto_cipher *tfm,
- 	if ((keyid >> 6) != key->conf.keyidx)
- 		return TKIP_DECRYPT_INVALID_KEYIDX;
+diff --git a/drivers/platform/x86/gpd-pocket-fan.c b/drivers/platform/x86/gpd-pocket-fan.c
+index 73eb1572b9662..b471b86c28fe8 100644
+--- a/drivers/platform/x86/gpd-pocket-fan.c
++++ b/drivers/platform/x86/gpd-pocket-fan.c
+@@ -127,7 +127,7 @@ static int gpd_pocket_fan_probe(struct platform_device *pdev)
+ 	int i;
  
--	if (rx_ctx->ctx.state != TKIP_STATE_NOT_INIT &&
--	    (iv32 < rx_ctx->iv32 ||
--	     (iv32 == rx_ctx->iv32 && iv16 <= rx_ctx->iv16)))
-+	/* Reject replays if the received TSC is smaller than or equal to the
-+	 * last received value in a valid message, but with an exception for
-+	 * the case where a new key has been set and no valid frame using that
-+	 * key has yet received and the local RSC was initialized to 0. This
-+	 * exception allows the very first frame sent by the transmitter to be
-+	 * accepted even if that transmitter were to use TSC 0 (IEEE 802.11
-+	 * described TSC to be initialized to 1 whenever a new key is taken into
-+	 * use).
-+	 */
-+	if (iv32 < rx_ctx->iv32 ||
-+	    (iv32 == rx_ctx->iv32 &&
-+	     (iv16 < rx_ctx->iv16 ||
-+	      (iv16 == rx_ctx->iv16 &&
-+	       (rx_ctx->iv32 || rx_ctx->iv16 ||
-+		rx_ctx->ctx.state != TKIP_STATE_NOT_INIT)))))
- 		return TKIP_DECRYPT_REPLAY;
- 
- 	if (only_iv) {
+ 	for (i = 0; i < ARRAY_SIZE(temp_limits); i++) {
+-		if (temp_limits[i] < 40000 || temp_limits[i] > 70000) {
++		if (temp_limits[i] < 20000 || temp_limits[i] > 90000) {
+ 			dev_err(&pdev->dev, "Invalid temp-limit %d (must be between 40000 and 70000)\n",
+ 				temp_limits[i]);
+ 			temp_limits[0] = TEMP_LIMIT0_DEFAULT;
 -- 
 2.20.1
 
