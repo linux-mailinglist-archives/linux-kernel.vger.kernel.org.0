@@ -2,39 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 90F9B150AC5
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Feb 2020 17:21:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AD08D150B96
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Feb 2020 17:28:57 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728999AbgBCQUx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 3 Feb 2020 11:20:53 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60862 "EHLO mail.kernel.org"
+        id S1729679AbgBCQ2z (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 3 Feb 2020 11:28:55 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40548 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728984AbgBCQUw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Feb 2020 11:20:52 -0500
+        id S1729662AbgBCQ2u (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Feb 2020 11:28:50 -0500
 Received: from localhost (unknown [104.132.45.99])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B899A2082E;
-        Mon,  3 Feb 2020 16:20:51 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B9DA720838;
+        Mon,  3 Feb 2020 16:28:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1580746852;
-        bh=Ng+xPgKDS+kdlTzojj6DGNvUJu4znB1zBFNtz6PAXvs=;
+        s=default; t=1580747330;
+        bh=UmTtnumsIbudmB10u01PZpWIg9gxzUqeyXo+ysuvURw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=mPw5b9309C5S5Os4mUa1QVDd6xqhLSn+2T1f18sJELPJ6kX2IQyoHHVjSZT8RkBrz
-         Gq1n7dLSdZL0QaDJm+UBk/anWHf+qpQIW4/avSCwfv6tbCRYQhAx+qcwKXMk52GFBI
-         DBCt6Ww35Cn0AK9GYeGZXyBMP7S71Ia5f4bYKOX8=
+        b=cC4g++0J3O+cksqrT2I8DyXTUO/5+Hs7rwBoUqCFAH/DwKpEjltmpSxLiQrRiyVJJ
+         iaX13UeDCi8429P0s+rLNC7gRLT/V0UH25qIgtqFUj9d9R18d7UEypTlUYI44iikkX
+         dAv1tvaLjEr/C8QjBJppOGigc2b7J7pcb6D69O44=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Bin Liu <b-liu@ti.com>,
-        Felipe Balbi <balbi@kernel.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.4 32/53] usb: dwc3: turn off VBUS when leaving host mode
+        stable@vger.kernel.org, Chanwoo Choi <cw00.choi@samsung.com>
+Subject: [PATCH 4.14 39/89] PM / devfreq: Add new name attribute for sysfs
 Date:   Mon,  3 Feb 2020 16:19:24 +0000
-Message-Id: <20200203161908.866733370@linuxfoundation.org>
+Message-Id: <20200203161922.221278903@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200203161902.714326084@linuxfoundation.org>
-References: <20200203161902.714326084@linuxfoundation.org>
+In-Reply-To: <20200203161916.847439465@linuxfoundation.org>
+References: <20200203161916.847439465@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,40 +42,66 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Bin Liu <b-liu@ti.com>
+From: Chanwoo Choi <cw00.choi@samsung.com>
 
-[ Upstream commit 09ed259fac621634d51cd986aa8d65f035662658 ]
+commit 2fee1a7cc6b1ce6634bb0f025be2c94a58dfa34d upstream.
 
-VBUS should be turned off when leaving the host mode.
-Set GCTL_PRTCAP to device mode in teardown to de-assert DRVVBUS pin to
-turn off VBUS power.
+The commit 4585fbcb5331 ("PM / devfreq: Modify the device name as devfreq(X) for
+sysfs") changed the node name to devfreq(x). After this commit, it is not
+possible to get the device name through /sys/class/devfreq/devfreq(X)/*.
 
-Fixes: 5f94adfeed97 ("usb: dwc3: core: refactor mode initialization to its own function")
+Add new name attribute in order to get device name.
+
 Cc: stable@vger.kernel.org
-Signed-off-by: Bin Liu <b-liu@ti.com>
-Signed-off-by: Felipe Balbi <balbi@kernel.org>
+Fixes: 4585fbcb5331 ("PM / devfreq: Modify the device name as devfreq(X) for sysfs")
+Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+
 ---
- drivers/usb/dwc3/core.c | 3 +++
- 1 file changed, 3 insertions(+)
+ Documentation/ABI/testing/sysfs-class-devfreq |    7 +++++++
+ drivers/devfreq/devfreq.c                     |    9 +++++++++
+ 2 files changed, 16 insertions(+)
 
-diff --git a/drivers/usb/dwc3/core.c b/drivers/usb/dwc3/core.c
-index 4378e758baef9..591bc3f7be763 100644
---- a/drivers/usb/dwc3/core.c
-+++ b/drivers/usb/dwc3/core.c
-@@ -801,6 +801,9 @@ static void dwc3_core_exit_mode(struct dwc3 *dwc)
- 		/* do nothing */
- 		break;
- 	}
-+
-+	/* de-assert DRVVBUS for HOST and OTG mode */
-+	dwc3_set_mode(dwc, DWC3_GCTL_PRTCAP_DEVICE);
- }
+--- a/Documentation/ABI/testing/sysfs-class-devfreq
++++ b/Documentation/ABI/testing/sysfs-class-devfreq
+@@ -7,6 +7,13 @@ Description:
+ 		The name of devfreq object denoted as ... is same as the
+ 		name of device using devfreq.
  
- #define DWC3_ALIGN_MASK		(16 - 1)
--- 
-2.20.1
-
++What:		/sys/class/devfreq/.../name
++Date:		November 2019
++Contact:	Chanwoo Choi <cw00.choi@samsung.com>
++Description:
++		The /sys/class/devfreq/.../name shows the name of device
++		of the corresponding devfreq object.
++
+ What:		/sys/class/devfreq/.../governor
+ Date:		September 2011
+ Contact:	MyungJoo Ham <myungjoo.ham@samsung.com>
+--- a/drivers/devfreq/devfreq.c
++++ b/drivers/devfreq/devfreq.c
+@@ -902,6 +902,14 @@ err_out:
+ }
+ EXPORT_SYMBOL(devfreq_remove_governor);
+ 
++static ssize_t name_show(struct device *dev,
++			struct device_attribute *attr, char *buf)
++{
++	struct devfreq *devfreq = to_devfreq(dev);
++	return sprintf(buf, "%s\n", dev_name(devfreq->dev.parent));
++}
++static DEVICE_ATTR_RO(name);
++
+ static ssize_t governor_show(struct device *dev,
+ 			     struct device_attribute *attr, char *buf)
+ {
+@@ -1200,6 +1208,7 @@ static ssize_t trans_stat_show(struct de
+ static DEVICE_ATTR_RO(trans_stat);
+ 
+ static struct attribute *devfreq_attrs[] = {
++	&dev_attr_name.attr,
+ 	&dev_attr_governor.attr,
+ 	&dev_attr_available_governors.attr,
+ 	&dev_attr_cur_freq.attr,
 
 
