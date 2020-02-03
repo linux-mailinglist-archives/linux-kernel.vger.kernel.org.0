@@ -2,39 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C7B32150B22
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Feb 2020 17:25:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AFDFD150B7F
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Feb 2020 17:28:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727918AbgBCQY7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 3 Feb 2020 11:24:59 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35502 "EHLO mail.kernel.org"
+        id S1729513AbgBCQ2E (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 3 Feb 2020 11:28:04 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39254 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727382AbgBCQY6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Feb 2020 11:24:58 -0500
+        id S1729482AbgBCQ1u (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Feb 2020 11:27:50 -0500
 Received: from localhost (unknown [104.132.45.99])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 418B42080C;
-        Mon,  3 Feb 2020 16:24:57 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C6C9220838;
+        Mon,  3 Feb 2020 16:27:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1580747097;
-        bh=blro8WKHqirWAxDR/MgBABqkpB2q71gDN9yLScRLkCA=;
+        s=default; t=1580747270;
+        bh=CiQeIRcGx1eIKU7i3VXIcuFBQVvaTX2mx9Zqf/l7cyA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=WJ3XjLwU9/H4ey4HQQlWNeytgN2Ewg/wrPTPMTG3V29gQBhMvjM8XXc1tZGyi6WjC
-         Y4O0ydGht/AHb71tIms416NU3eVju2P4i3zWwuaZCxBwjFE8PTtC/mVcpny9RVHX++
-         hkq23OY10NaAkrMq9dyNi0N9oy+qyJ5Lu22/baCw=
+        b=l5gkyEFsvqyBUVmTLdSShThHn4Lr/fDG8ATAr4Te0eti/K1mlZ0zhVmb7TOgkZqd3
+         ajqzhfgU/uAbHxqPPQAvnS6HAABLifgxDrLo29qEuCL/RwqmhpEQgYZhpagWGtygXn
+         qQvqbvZ3DWmCpYRm0tfP4FotTE3KIhxkBgWgG4gg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Fariya Fatima <fariyaf@gmail.com>,
-        Johan Hovold <johan@kernel.org>,
+        stable@vger.kernel.org, Johan Hovold <johan@kernel.org>,
         Kalle Valo <kvalo@codeaurora.org>
-Subject: [PATCH 4.9 03/68] rsi_91x_usb: fix interface sanity check
+Subject: [PATCH 4.14 14/89] ath9k: fix storage endpoint lookup
 Date:   Mon,  3 Feb 2020 16:18:59 +0000
-Message-Id: <20200203161905.273228676@linuxfoundation.org>
+Message-Id: <20200203161918.759534226@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200203161904.705434837@linuxfoundation.org>
-References: <20200203161904.705434837@linuxfoundation.org>
+In-Reply-To: <20200203161916.847439465@linuxfoundation.org>
+References: <20200203161916.847439465@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,35 +45,35 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Johan Hovold <johan@kernel.org>
 
-commit 3139b180906af43bc09bd3373fc2338a8271d9d9 upstream.
+commit 0ef332951e856efa89507cdd13ba8f4fb8d4db12 upstream.
 
 Make sure to use the current alternate setting when verifying the
-interface descriptors to avoid binding to an invalid interface.
+storage interface descriptors to avoid submitting an URB to an invalid
+endpoint.
 
 Failing to do so could cause the driver to misbehave or trigger a WARN()
 in usb_submit_urb() that kernels with panic_on_warn set would choke on.
 
-Fixes: dad0d04fa7ba ("rsi: Add RS9113 wireless driver")
-Cc: stable <stable@vger.kernel.org>     # 3.15
-Cc: Fariya Fatima <fariyaf@gmail.com>
+Fixes: 36bcce430657 ("ath9k_htc: Handle storage devices")
+Cc: stable <stable@vger.kernel.org>     # 2.6.39
 Signed-off-by: Johan Hovold <johan@kernel.org>
 Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/net/wireless/rsi/rsi_91x_usb.c |    2 +-
+ drivers/net/wireless/ath/ath9k/hif_usb.c |    2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/net/wireless/rsi/rsi_91x_usb.c
-+++ b/drivers/net/wireless/rsi/rsi_91x_usb.c
-@@ -103,7 +103,7 @@ static int rsi_find_bulk_in_and_out_endp
- 	__le16 buffer_size;
- 	int ii, bep_found = 0;
- 
--	iface_desc = &(interface->altsetting[0]);
-+	iface_desc = interface->cur_altsetting;
- 
- 	for (ii = 0; ii < iface_desc->desc.bNumEndpoints; ++ii) {
- 		endpoint = &(iface_desc->endpoint[ii].desc);
+--- a/drivers/net/wireless/ath/ath9k/hif_usb.c
++++ b/drivers/net/wireless/ath/ath9k/hif_usb.c
+@@ -1214,7 +1214,7 @@ err_fw:
+ static int send_eject_command(struct usb_interface *interface)
+ {
+ 	struct usb_device *udev = interface_to_usbdev(interface);
+-	struct usb_host_interface *iface_desc = &interface->altsetting[0];
++	struct usb_host_interface *iface_desc = interface->cur_altsetting;
+ 	struct usb_endpoint_descriptor *endpoint;
+ 	unsigned char *cmd;
+ 	u8 bulk_out_ep;
 
 
