@@ -2,135 +2,122 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id ED1D01507F7
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Feb 2020 15:05:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8933E150802
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Feb 2020 15:06:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728394AbgBCOFD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 3 Feb 2020 09:05:03 -0500
-Received: from mx07-00178001.pphosted.com ([62.209.51.94]:25148 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728362AbgBCOFB (ORCPT
+        id S1728319AbgBCOGN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 3 Feb 2020 09:06:13 -0500
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:44836 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727577AbgBCOGN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Feb 2020 09:05:01 -0500
-Received: from pps.filterd (m0046668.ppops.net [127.0.0.1])
-        by mx07-00178001.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 013E2qk5021182;
-        Mon, 3 Feb 2020 15:04:47 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=st.com; h=from : to : cc : subject
- : date : message-id : in-reply-to : references : mime-version :
- content-type; s=STMicroelectronics;
- bh=dSvOn8zEFudYBj7GcrolW7Z2iqRoAzVZcowqyt8GqhE=;
- b=XBz7+DsNu6+SKF7QDJ5wDVPsapUPu9hWeGUob9g/HYTdizcNgS/8h6kAsZiIveR6V5dS
- oA0Hg3Eqf01uIDNiP+MUnJaKJs/nL1X3wSP56uj/VFWEzpSvyw6th3k1EtzzMm+3vBAl
- MsuuVYD9ks7YKpcXTCflpi/h76Z819+tKNHShhjgrvwBNZcPqzQj663bU7rWktW6TxC2
- kxNVIO7ZdLNXNE2fBrOS6oM5PpsSsVucXeZr+74tzTnamqToEEp3lV9BBzLm4VxX4IHe
- UMo32LiBi/AabLepF0eSG/1Vj5CQbf3BkrfArL0gJLpZV/SsfCfJaTehysu3DLmlTDCT Wg== 
-Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx07-00178001.pphosted.com with ESMTP id 2xvyp5shja-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 03 Feb 2020 15:04:47 +0100
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 34584100038;
-        Mon,  3 Feb 2020 15:04:46 +0100 (CET)
-Received: from Webmail-eu.st.com (sfhdag3node1.st.com [10.75.127.7])
-        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 273E1222C94;
-        Mon,  3 Feb 2020 15:04:46 +0100 (CET)
-Received: from localhost (10.75.127.46) by SFHDAG3NODE1.st.com (10.75.127.7)
- with Microsoft SMTP Server (TLS) id 15.0.1473.3; Mon, 3 Feb 2020 15:04:45
- +0100
-From:   Erwan Le Ray <erwan.leray@st.com>
-To:     Russell King <linux@armlinux.org.uk>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Olof Johansson <olof@lixom.net>
-CC:     <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Nathan Huckleberry <nhuck15@gmail.com>,
-        Gerald Baeza <gerald.baeza@st.com>,
-        Erwan Le Ray <erwan.leray@st.com>,
-        Clement Peron <peron.clem@gmail.com>,
-        Fabrice Gasnier <fabrice.gasnier@st.com>
-Subject: [PATCH v3 4/4] ARM: debug: stm32: add UART early console support for STM32MP1
-Date:   Mon, 3 Feb 2020 15:04:25 +0100
-Message-ID: <20200203140425.26579-5-erwan.leray@st.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20200203140425.26579-1-erwan.leray@st.com>
-References: <20200203140425.26579-1-erwan.leray@st.com>
+        Mon, 3 Feb 2020 09:06:13 -0500
+Received: by mail-pf1-f193.google.com with SMTP id y5so7618148pfb.11;
+        Mon, 03 Feb 2020 06:06:12 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=CS2tHMMmwWOGzePqxzgdPTa5lsxAUAamlNGJOc+D0IA=;
+        b=AtK9U476+hxcz9fn/khaRNV3/2KDRy4+1499RFByrJYG0AmivrbfQ/FHr2++iEzh/Q
+         baZYgACLmglqjfnPxDWmXRvvSQQSguehckcfRZ+zVGep32t7AWJI/pyW4fzBb08Xw6XY
+         E2XYPekZCSnPouMZSSJppCIfsDHMEN58Haq3lvGQKSuMkBmsTsW6rRKUQUoFD5i4vYzO
+         udZXqE+yRVKCu0tHLqpPfpww5UQCAoOeqhvK36XKM+xvUSx3t/h1lSQxlJVjzctjUY+G
+         HeuoFir+1bqR6Ky2TUG5XJzCTdQPeumTyHYeCJ3jTiQMtVodxUVmLZ13FBuL0l57efs0
+         1vEA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=CS2tHMMmwWOGzePqxzgdPTa5lsxAUAamlNGJOc+D0IA=;
+        b=IoMhPECTIoWT7rqwX/DyyhZQvepJDw/GZOf95X4EtOelzZwMc02t50Szc10MKR7Wph
+         SOGw2M4hlmQlXeDbzt2jea2UtMIHapXy//1Tfg7D3VSpeg5IbyfPCCCvia+iof/A16ae
+         PnKG8of+jjaQVNNGhtH+tDCAL25eBd+DehC2KqKRSMsuwmveYA4AlbN21SXNKoHJVWPN
+         QJySglbaOHsyUYA5NGQx+R81AgstD39wBU0/ugkwJK4kVrnbSzboQlIErkx/6/wQAwUL
+         w0CdSVYmCqVQnszeIn6pmSpEG69bg5PRkjD+hzQaVkgmX1M93vSCHh4KOGsu0GwjvinL
+         VMwQ==
+X-Gm-Message-State: APjAAAVU0+jwlAXW/s86xicxHHepAmG5zkzBihJ00xk4Put3DWsMf3A0
+        J3tQ1DmTzeBtv/No4z/1Zeg=
+X-Google-Smtp-Source: APXvYqzGt0xGwfFWJkv3y58xVYNWirffM9sy+SoulITwlj9fap21bhYbnm0CyO3fv9nJNLax+jo/Nw==
+X-Received: by 2002:a63:348c:: with SMTP id b134mr24489423pga.197.1580738772265;
+        Mon, 03 Feb 2020 06:06:12 -0800 (PST)
+Received: from mail.google.com ([2408:84e1:66:9abe:a0b7:8d02:f456:6577])
+        by smtp.gmail.com with ESMTPSA id q12sm20630847pfh.158.2020.02.03.06.05.37
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 03 Feb 2020 06:06:11 -0800 (PST)
+Date:   Mon, 3 Feb 2020 22:05:21 +0800
+From:   Changbin Du <changbin.du@gmail.com>
+To:     Randy Dunlap <rdunlap@infradead.org>
+Cc:     Changbin Du <changbin.du@gmail.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Vinod Koul <vkoul@kernel.org>,
+        Amit Daniel Kachhap <amit.kachhap@gmail.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Javi Merino <javi.merino@kernel.org>,
+        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-pm@vger.kernel.org
+Subject: Re: [PATCH] Documentation: Fix build error for cpu-idle-cooling.rst
+ and client.rst
+Message-ID: <20200203140521.v3rxpvhqjxpvov3n@mail.google.com>
+References: <20200201062521.7296-1-changbin.du@gmail.com>
+ <6d6bfd1d-dd22-8999-fc73-3cf12dbb3a98@infradead.org>
+ <20200201125914.lpejzlgxazuu4i6f@mail.google.com>
+ <4ca88e39-7dcd-1709-96cc-4fb324715835@infradead.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.75.127.46]
-X-ClientProxiedBy: SFHDAG1NODE3.st.com (10.75.127.3) To SFHDAG3NODE1.st.com
- (10.75.127.7)
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.572
- definitions=2020-02-03_04:2020-02-02,2020-02-03 signatures=0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <4ca88e39-7dcd-1709-96cc-4fb324715835@infradead.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add support of early console for STM32MP1. Default UART instance is UART4,
-but other UART instances can be configured by setting physical and virtual
-base addresses in menuconfig.
+On Sat, Feb 01, 2020 at 08:17:27AM -0800, Randy Dunlap wrote:
+> On 2/1/20 4:59 AM, Changbin Du wrote:
+> > Hi,
+> > On Fri, Jan 31, 2020 at 10:33:30PM -0800, Randy Dunlap wrote:
+> >> On 1/31/20 10:25 PM, Changbin Du wrote:
+> >>> This fixed some errors and warnings in cpu-idle-cooling.rst and client.rst.
+> >>>
+> >>> Sphinx parallel build error:
+> >>> docutils.utils.SystemMessage: ...Documentation/driver-api/thermal/cpu-idle-cooling.rst:96: (SEVERE/4) Unexpected section title.
+> >>>
+> >>> Sphinx parallel build error:
+> >>> docutils.utils.SystemMessage: ...Documentation/driver-api/dmaengine/client.rst:155: (SEVERE/4) Unexpected section title.
+> >>>
+> >>> Signed-off-by: Changbin Du <changbin.du@gmail.com>
+> >>
+> >> Hi,
+> >> This commit has been merged:
+> >> commit fe27f13d677ccd826386094df6977cfbc13ccf5e
+> >> Author: Randy Dunlap <rdunlap@infradead.org>
+> >> Date:   Mon Jan 20 14:33:16 2020 -0800
+> >>
+> >>     Documentation: cpu-idle-cooling: fix a SEVERE docs build failure
+> >>
+> >> Feel free to send patches against current Linus git tree.
+> >>
+> > Seems it is not in Linus's tree yet. But is it in Jonathan's tree now? I could
+> > rebase to the doc tree instead.
+> > 
+> >> Thanks.
+> 
+> Hm, now I am confused.  I cannot find it at
+> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/
+> 
+> but in my local clone of that git tree, I can do
+> $ git show fe27f13d677ccd826386094df6977cfbc13ccf5e
+> and see it.
+>
+I have rebased my patch to Linus's tree which already has Randy's fix. Please
+check v2. Thanks.
 
-Signed-off-by: Erwan Le Ray <erwan.leray@st.com>
+> 
+> -- 
+> ~Randy
+> 
 
-diff --git a/arch/arm/Kconfig.debug b/arch/arm/Kconfig.debug
-index e5e1703a89c0..3357e294a7cc 100644
---- a/arch/arm/Kconfig.debug
-+++ b/arch/arm/Kconfig.debug
-@@ -1235,6 +1235,18 @@ choice
- 
- 		  If unsure, say N.
- 
-+	config STM32MP1_DEBUG_UART
-+		bool "Use STM32MP1 UART for low-level debug"
-+		depends on MACH_STM32MP157
-+		select DEBUG_STM32_UART
-+		help
-+		  Say Y here if you want kernel low-level debugging support
-+		  on STM32MP1 based platforms, wich default UART is wired on
-+		  UART4, but another UART instance can be selected by modifying
-+		  CONFIG_DEBUG_UART_PHYS and CONFIG_DEBUG_UART_VIRT.
-+
-+		  If unsure, say N.
-+
- 	config TEGRA_DEBUG_UART_AUTO_ODMDATA
- 		bool "Kernel low-level debugging messages via Tegra UART via ODMDATA"
- 		depends on ARCH_TEGRA
-@@ -1633,6 +1645,7 @@ config DEBUG_UART_PHYS
- 	default 0x3e000000 if DEBUG_BCM_KONA_UART
- 	default 0x3f201000 if DEBUG_BCM2836
- 	default 0x4000e400 if DEBUG_LL_UART_EFM32
-+	default 0x40010000 if STM32MP1_DEBUG_UART
- 	default 0x40011000 if STM32F4_DEBUG_UART || STM32F7_DEBUG_UART || \
- 				STM32H7_DEBUG_UART
- 	default 0x40028000 if DEBUG_AT91_SAMV7_USART1
-@@ -1795,6 +1808,7 @@ config DEBUG_UART_VIRT
- 	default 0xfcfe8600 if DEBUG_BCM63XX_UART
- 	default 0xfd000000 if DEBUG_SPEAR3XX || DEBUG_SPEAR13XX
- 	default 0xfd883000 if DEBUG_ALPINE_UART0
-+	default 0xfe010000 if STM32MP1_DEBUG_UART
- 	default 0xfe017000 if DEBUG_MMP_UART2
- 	default 0xfe018000 if DEBUG_MMP_UART3
- 	default 0xfe100000 if DEBUG_IMX23_UART || DEBUG_IMX28_UART
-diff --git a/arch/arm/include/debug/stm32.S b/arch/arm/include/debug/stm32.S
-index 5a2e2b065340..f3c4a37210ed 100644
---- a/arch/arm/include/debug/stm32.S
-+++ b/arch/arm/include/debug/stm32.S
-@@ -9,7 +9,8 @@
- #define STM32_USART_TDR_OFF		0x04
- #endif
- 
--#if defined(CONFIG_STM32F7_DEBUG_UART) || defined(CONFIG_STM32H7_DEBUG_UART)
-+#if defined(CONFIG_STM32F7_DEBUG_UART) || defined(CONFIG_STM32H7_DEBUG_UART) || \
-+	defined(CONFIG_STM32MP1_DEBUG_UART)
- #define STM32_USART_SR_OFF		0x1C
- #define STM32_USART_TDR_OFF		0x28
- #endif
 -- 
-2.17.1
-
+Cheers,
+Changbin Du
