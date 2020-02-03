@@ -2,178 +2,198 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4FA95151143
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Feb 2020 21:46:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5433415116F
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Feb 2020 21:56:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727023AbgBCUqa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 3 Feb 2020 15:46:30 -0500
-Received: from mail-qv1-f66.google.com ([209.85.219.66]:41425 "EHLO
-        mail-qv1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726278AbgBCUqa (ORCPT
+        id S1727015AbgBCU4N (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 3 Feb 2020 15:56:13 -0500
+Received: from mail-oi1-f193.google.com ([209.85.167.193]:36074 "EHLO
+        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725372AbgBCU4N (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Feb 2020 15:46:30 -0500
-Received: by mail-qv1-f66.google.com with SMTP id s7so7493182qvn.8
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Feb 2020 12:46:29 -0800 (PST)
+        Mon, 3 Feb 2020 15:56:13 -0500
+Received: by mail-oi1-f193.google.com with SMTP id c16so16209087oic.3
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Feb 2020 12:56:12 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cmpxchg-org.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=/Dyb5P8cYEisIFp4I9bV09OPYylTy1VzXVbN2SCBhjo=;
-        b=HDxZXEChqr8YGF0MhKTxj3c2pDA138gHfw/6zgEsOxoFoaRnu9e+rh9ivPg5RvQK04
-         rj9iNBrqdXd21ZlvGOGXE82Coh4XHqJnAtVsfX6dlkVF7egKmkzt7by0DHYGUMabuijM
-         PR7eVPslVTo/JGx08pjzWnRjui/OWXwkrLRgpJEjJ+z5LFhyWL2RuD0tR25qQYRUJJw2
-         tYjKHJSu8Gw6jNRy30qk7Wtdy6B88BX7aBbbaFXoMuL+j2/x4Zgvsyg7HiujAb9MeFis
-         c6Kx/xigRFf4tVPdNvIF6ATPDTm1xfDu12fZMtyh8dMrEz+Z4RF1LMLbxzlPrIhb66i3
-         rZUg==
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=d+JwFHbchxJ0gg1my7n1CXaZxr3hxuHVj1YoJC44SlE=;
+        b=SCEVhtfbAbnwghXPkv1qNGhfhx7+ObPqKjLQOZh9HGoAf2EoYmD7XqBz5PP5nVTOwt
+         Xg77qSn8dKpq9fyJTZ4fb1ysvbU8U7zW7weoRKoHtZ2yFgzJ9Fc4br1YZ49aI0X7k802
+         OZYYW2/7BmFempKoaKOmfRN2mU09LOD5o4jC0=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=/Dyb5P8cYEisIFp4I9bV09OPYylTy1VzXVbN2SCBhjo=;
-        b=qXf7RgiPsZFl1UNPS0AQNZQFVSElmeafzuPoHKIgbU5kQpRDtqO5yhdIIFYDoxt5oN
-         952iQBXvbVi4ECGXtPKL1d6pYhiT6RSyn1lcLkgBowP4EP9LCB/HmcKq749wsfSTd347
-         SuKIVBmtCujdkpCPpIVgZhVz5qIrjmtDXA65SgMoL6gnXge0cIXDSJsLbd8tK7g4mHDZ
-         Is6gdaCNslkGb8E1wTE7BOEHBIvcqwbKPBGULLJ0aiAQXLukAO+7mrV9fwZQOUucl0IY
-         92gLG6Ti/PjwcAGs3LeW0sJTSC6MCpJDXO/zW4SEtHCTpL24qYiznnFnhendVrPotQ0y
-         kLHw==
-X-Gm-Message-State: APjAAAXqHMD5i+p9HzLDd0qYZwKWkXiok7Ywl7xxXv+avEiTT0Ajiq4l
-        BIzRt9FfWodE7NIdIg07uDMkSg==
-X-Google-Smtp-Source: APXvYqzszWZ7Ewhr+k+B6rzbBT7wB0PB1LbN/PwaCn/pgpKw44Bck5sSf0IftWxwwNoUQe+6FAYo1g==
-X-Received: by 2002:ad4:518d:: with SMTP id b13mr24279887qvp.141.1580762788875;
-        Mon, 03 Feb 2020 12:46:28 -0800 (PST)
-Received: from localhost ([2620:10d:c091:500::2:6320])
-        by smtp.gmail.com with ESMTPSA id t15sm9609895qkg.49.2020.02.03.12.46.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 03 Feb 2020 12:46:28 -0800 (PST)
-Date:   Mon, 3 Feb 2020 15:46:27 -0500
-From:   Johannes Weiner <hannes@cmpxchg.org>
-To:     Roman Gushchin <guro@fb.com>
-Cc:     linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>,
-        Michal Hocko <mhocko@kernel.org>,
-        Shakeel Butt <shakeelb@google.com>,
-        Vladimir Davydov <vdavydov.dev@gmail.com>,
-        linux-kernel@vger.kernel.org, kernel-team@fb.com,
-        Bharata B Rao <bharata@linux.ibm.com>,
-        Yafang Shao <laoar.shao@gmail.com>
-Subject: Re: [PATCH v2 16/28] mm: memcg/slab: allocate obj_cgroups for
- non-root slab pages
-Message-ID: <20200203204627.GB6380@cmpxchg.org>
-References: <20200127173453.2089565-1-guro@fb.com>
- <20200127173453.2089565-17-guro@fb.com>
- <20200203182756.GG1697@cmpxchg.org>
- <20200203183452.GB3700@xps.dhcp.thefacebook.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=d+JwFHbchxJ0gg1my7n1CXaZxr3hxuHVj1YoJC44SlE=;
+        b=SBYOkQiD5KTV6FnOPgGFSnJk5l6ZvD2EndoJMESnCJLo9m5y+r2tJIZaw8TIJ7qPif
+         9DKSjiufcqkev+zbTCEr+8mLraJ0O3QUpGsfnMf7h/rm4JQIM8faFTScev5Wn+8uiZmf
+         Rp3iVPIwHoDEJyp1VC4DMgX7ncAcbbDsIXHXmaw27EmmDM9oMm4y5W5yvlpboElfrtQy
+         WrmdJhcAqrCbX7yvLInAla6d1ocm0zkU/Hqu3VpqPETJAHXxykbt1yFFKgHaShCwshlw
+         TcU3Zrg6u18LF2K9U8FvF+rhmLBH/xVEriOVT+bCOq2fwS4BerNqmGoGAq/z4QGBJixL
+         VzXQ==
+X-Gm-Message-State: APjAAAUxWm6/DsxWW1rb2OFM3G1xiJ5UzvRg6OJjKwNA3DTJJFxyqoul
+        +QSg45rc24JV8n8NlMk9eiQorQcXT9g=
+X-Google-Smtp-Source: APXvYqwdfSJhbKBJxVSH82Cq/02r/JcBTRZW7IZU1zGtLWcsFKO59aMtQGrYkZxGzRyHIB9ucrc1WA==
+X-Received: by 2002:aca:1a10:: with SMTP id a16mr687273oia.9.1580763371664;
+        Mon, 03 Feb 2020 12:56:11 -0800 (PST)
+Received: from mail-ot1-f43.google.com (mail-ot1-f43.google.com. [209.85.210.43])
+        by smtp.gmail.com with ESMTPSA id y25sm62327oto.27.2020.02.03.12.56.11
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 03 Feb 2020 12:56:11 -0800 (PST)
+Received: by mail-ot1-f43.google.com with SMTP id r16so15063904otd.2
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Feb 2020 12:56:11 -0800 (PST)
+X-Received: by 2002:ab0:2006:: with SMTP id v6mr14461189uak.22.1580762931322;
+ Mon, 03 Feb 2020 12:48:51 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200203183452.GB3700@xps.dhcp.thefacebook.com>
+References: <20200203183149.73842-1-dianders@chromium.org> <20200203193027.62BD22080D@mail.kernel.org>
+ <CAD=FV=X2K-Qr17qXgG1Ng8MpZQogagBqMwWu=D2OpQf+ZskBPw@mail.gmail.com> <20200203200443.GN3948@builder>
+In-Reply-To: <20200203200443.GN3948@builder>
+From:   Doug Anderson <dianders@chromium.org>
+Date:   Mon, 3 Feb 2020 12:48:39 -0800
+X-Gmail-Original-Message-ID: <CAD=FV=VQyTHYizfzMwjAaRbmQ4zvFFzdfgGiVkLQU+b+pFVnzg@mail.gmail.com>
+Message-ID: <CAD=FV=VQyTHYizfzMwjAaRbmQ4zvFFzdfgGiVkLQU+b+pFVnzg@mail.gmail.com>
+Subject: Re: [PATCH v4 00/15] clk: qcom: Fix parenting for dispcc/gpucc/videocc
+To:     Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc:     Stephen Boyd <sboyd@kernel.org>, Andy Gross <agross@kernel.org>,
+        Rob Herring <robh@kernel.org>,
+        Jeffrey Hugo <jhugo@codeaurora.org>,
+        Taniya Das <tdas@codeaurora.org>,
+        Jeffrey Hugo <jeffrey.l.hugo@gmail.com>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        Harigovindan P <harigovi@codeaurora.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>, Matthias Kaehlcke <mka@chromium.org>,
+        Kalyan Thota <kalyan_t@codeaurora.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        "Kristian H. Kristensen" <hoegsberg@chromium.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Rob Herring <robh+dt@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 03, 2020 at 10:34:52AM -0800, Roman Gushchin wrote:
-> On Mon, Feb 03, 2020 at 01:27:56PM -0500, Johannes Weiner wrote:
-> > On Mon, Jan 27, 2020 at 09:34:41AM -0800, Roman Gushchin wrote:
-> > > Allocate and release memory to store obj_cgroup pointers for each
-> > > non-root slab page. Reuse page->mem_cgroup pointer to store a pointer
-> > > to the allocated space.
-> > > 
-> > > To distinguish between obj_cgroups and memcg pointers in case
-> > > when it's not obvious which one is used (as in page_cgroup_ino()),
-> > > let's always set the lowest bit in the obj_cgroup case.
-> > > 
-> > > Signed-off-by: Roman Gushchin <guro@fb.com>
-> > > ---
-> > >  include/linux/mm.h       | 25 ++++++++++++++++++--
-> > >  include/linux/mm_types.h |  5 +++-
-> > >  mm/memcontrol.c          |  5 ++--
-> > >  mm/slab.c                |  3 ++-
-> > >  mm/slab.h                | 51 +++++++++++++++++++++++++++++++++++++++-
-> > >  mm/slub.c                |  2 +-
-> > >  6 files changed, 83 insertions(+), 8 deletions(-)
-> > > 
-> > > diff --git a/include/linux/mm.h b/include/linux/mm.h
-> > > index 080f8ac8bfb7..65224becc4ca 100644
-> > > --- a/include/linux/mm.h
-> > > +++ b/include/linux/mm.h
-> > > @@ -1264,12 +1264,33 @@ static inline void set_page_links(struct page *page, enum zone_type zone,
-> > >  #ifdef CONFIG_MEMCG
-> > >  static inline struct mem_cgroup *page_memcg(struct page *page)
-> > >  {
-> > > -	return page->mem_cgroup;
-> > > +	struct mem_cgroup *memcg = page->mem_cgroup;
-> > > +
-> > > +	/*
-> > > +	 * The lowest bit set means that memcg isn't a valid memcg pointer,
-> > > +	 * but a obj_cgroups pointer. In this case the page is shared and
-> > > +	 * isn't charged to any specific memory cgroup. Return NULL.
-> > > +	 */
-> > > +	if ((unsigned long) memcg & 0x1UL)
-> > > +		memcg = NULL;
-> > > +
-> > > +	return memcg;
-> > 
-> > That should really WARN instead of silently returning NULL. Which
-> > callsite optimistically asks a page's cgroup when it has no idea
-> > whether that page is actually a userpage or not?
-> 
-> For instance, look at page_cgroup_ino() called from the
-> reading /proc/kpageflags.
+Hi,
 
-But that checks PageSlab() and implements memcg_from_slab_page() to
-handle that case properly. And that's what we expect all callsites to
-do: make sure that the question asked actually makes sense, instead of
-having the interface paper over bogus requests.
+On Mon, Feb 3, 2020 at 12:04 PM Bjorn Andersson
+<bjorn.andersson@linaro.org> wrote:
+>
+> On Mon 03 Feb 11:41 PST 2020, Doug Anderson wrote:
+>
+> > Hi,
+> >
+> > On Mon, Feb 3, 2020 at 11:30 AM Stephen Boyd <sboyd@kernel.org> wrote:
+> > >
+> > > Quoting Douglas Anderson (2020-02-03 10:31:33)
+> > > >
+> > > >  .../devicetree/bindings/clock/qcom,gpucc.yaml | 72 --------------
+> > > >  ...om,dispcc.yaml => qcom,msm8998-gpucc.yaml} | 33 +++----
+> > > >  .../bindings/clock/qcom,sc7180-dispcc.yaml    | 84 ++++++++++++++++
+> > > >  .../bindings/clock/qcom,sc7180-gpucc.yaml     | 72 ++++++++++++++
+> > > >  .../bindings/clock/qcom,sc7180-videocc.yaml   | 63 ++++++++++++
+> > > >  .../bindings/clock/qcom,sdm845-dispcc.yaml    | 99 +++++++++++++++++++
+> > > >  .../bindings/clock/qcom,sdm845-gpucc.yaml     | 72 ++++++++++++++
+> > > >  ...,videocc.yaml => qcom,sdm845-videocc.yaml} | 27 ++---
+> > > >  arch/arm64/boot/dts/qcom/sc7180.dtsi          | 47 +++++++++
+> > > >  arch/arm64/boot/dts/qcom/sdm845.dtsi          | 28 +++++-
+> > >
+> > > I don't want to take patches touching dts/qcom/. These aren't necessary
+> > > to merge right now, correct? Or at least, they can go via arm-soc tree?
+> >
+> > Right.  They can go later.
+> >
+> > Specifically for sdm845 until the sdm845 patches lands the old dts
+> > trees will yell about the missing clocks, but it's not like they will
+> > compile fail.  Also the bindings themselves will validate fine.
+> > There's no other way forward, though, and the old bindings caused
+> > similar yells.
+> >
+>
+> Can you please help me parse this, will old DT cause complaints or will
+> it fail to boot?
 
-If that function is completely racy and PageSlab isn't stable, then it
-should really just open-code the lookup, rather than require weakening
-the interface for everybody else.
+Sorry, let me try to be more clear:
 
-> > >  static inline struct mem_cgroup *page_memcg_rcu(struct page *page)
-> > >  {
-> > > +	struct mem_cgroup *memcg = READ_ONCE(page->mem_cgroup);
-> > > +
-> > >  	WARN_ON_ONCE(!rcu_read_lock_held());
-> > > -	return READ_ONCE(page->mem_cgroup);
-> > > +
-> > > +	/*
-> > > +	 * The lowest bit set means that memcg isn't a valid memcg pointer,
-> > > +	 * but a obj_cgroups pointer. In this case the page is shared and
-> > > +	 * isn't charged to any specific memory cgroup. Return NULL.
-> > > +	 */
-> > > +	if ((unsigned long) memcg & 0x1UL)
-> > > +		memcg = NULL;
-> > > +
-> > > +	return memcg;
-> > 
-> > Same here.
-> > 
-> > >  }
-> > >  #else
-> > >  static inline struct mem_cgroup *page_memcg(struct page *page)
-> > > diff --git a/include/linux/mm_types.h b/include/linux/mm_types.h
-> > > index 270aa8fd2800..5102f00f3336 100644
-> > > --- a/include/linux/mm_types.h
-> > > +++ b/include/linux/mm_types.h
-> > > @@ -198,7 +198,10 @@ struct page {
-> > >  	atomic_t _refcount;
-> > >  
-> > >  #ifdef CONFIG_MEMCG
-> > > -	struct mem_cgroup *mem_cgroup;
-> > > +	union {
-> > > +		struct mem_cgroup *mem_cgroup;
-> > > +		struct obj_cgroup **obj_cgroups;
-> > > +	};
-> > 
-> > Since you need the casts in both cases anyway, it's safer (and
-> > simpler) to do
-> > 
-> > 	unsigned long mem_cgroup;
-> > 
-> > to prevent accidental direct derefs in future code.
-> 
-> Agree. Maybe even mem_cgroup_data?
+a) Without my series: "make dtbs_check" limited to the bindings files
+I'm touching yells.  Examples:
 
-Personally, I don't think the suffix adds much. The type makes it so
-the compiler catches any accidental use, and access is very
-centralized so greppability doesn't matter much.
+.../msm8998-mtp.dt.yaml: clock-controller@5065000: clock-names:1:
+'gpll0_main' was expected
+
+.../sdm845-mtp.dt.yaml: clock-controller@af00000: 'clocks' is a
+required property
+.../sdm845-mtp.dt.yaml: clock-controller@af00000: 'clock-names' is a
+required property
+
+.../sdm845-mtp.dt.yaml: clock-controller@ab00000: 'clocks' is a
+required property
+.../sdm845-mtp.dt.yaml: clock-controller@ab00000: 'clock-names' is a
+required property
+
+
+b) With just the bindings from my series, "make dtbs_check" yells, but
+yells about different things.  The "gpll0_main" one goes away but this
+one is new:
+
+.../sdm845-mtp.dt.yaml: clock-controller@5090000: clock-names:0:
+'bi_tcxo' was expected
+.../sdm845-mtp.dt.yaml: clock-controller@5090000: clock-names: ['xo']
+is too short
+.../sdm845-mtp.dt.yaml: clock-controller@5090000: clocks: [[26, 0]] is too short
+
+
+c) With just the "dts" from my series, you'll again get different
+yells from "make dtbs_check".  I won't bother listing them, but they
+are similar to the above.
+
+
+d) With everything from my series, the "make dtbs_check" limited to
+the bindings files I'm touching is clean.
+
+---
+
+* sdm845's ability to boot is unaffected by this series.  I have
+tested booting sdm845 after this series and it's fine.  Since nothing
+in this series touches the sdm845 clock drivers (only the bindings and
+the dts) that means that the new dts must work with the existing
+drivers.  You can land the sdm845 dts any time after Stephen and Rob
+are happy with the bindings.
+
+* It should be fine to land the sc7180 dts file without waiting for
+the driver change.  The dts here will work with both the
+dispcc/gpucc/videocc that's in clk-next and also the one that results
+from applying all of my patches.
+
+
+> > For sc7180 there's no usage of any of these clocks and this adds the
+> > first usage, so definitely no problem there.
+> >
+> > Once you've landed then Bjorn or Andy can pick up the dts.
+> >
+>
+> Do I need to apply these after Stephen picks the driver patches? Or are
+> they simply nop until the driver patches lands?
+
+The sdm845 patches are a nop until some future patch changes the Linux
+driver to start using them.  I don't know of anyone planning to do
+that.  The only real result from an sdm845 perspective will be making
+things "more correct" from a dts standpoint and keeping "make
+dtbs_check" happier.
+
+The sc7180 patches are OK to land even without the driver.  They're
+not a nop and I've actually validated that I can bring the display/gpu
+up with them (even without the driver changes) on my downstream
+kernel.
+
+---
+
+Sorry it's so confusing.  Happy to try to clarify more if the above is
+still too hard to follow.
+
+-Doug
