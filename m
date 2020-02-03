@@ -2,39 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 56D36150AB4
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Feb 2020 17:20:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6F2BE150B54
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Feb 2020 17:26:51 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728760AbgBCQUI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 3 Feb 2020 11:20:08 -0500
-Received: from mail.kernel.org ([198.145.29.99]:59710 "EHLO mail.kernel.org"
+        id S1729264AbgBCQ0m (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 3 Feb 2020 11:26:42 -0500
+Received: from mail.kernel.org ([198.145.29.99]:37680 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728714AbgBCQUF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Feb 2020 11:20:05 -0500
+        id S1729224AbgBCQ0i (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Feb 2020 11:26:38 -0500
 Received: from localhost (unknown [104.132.45.99])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5AD0520838;
-        Mon,  3 Feb 2020 16:20:04 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 059692051A;
+        Mon,  3 Feb 2020 16:26:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1580746804;
-        bh=OGjfV5n9QaMI+CzD3q5e6U652LeN/eafcdZBsbNKC84=;
+        s=default; t=1580747198;
+        bh=528ZcrQJZQ4TUfVFsu6KSmmCu84dPYeWmgxcuBYdxTs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=FBJu9B/MxtEFmNC6URn71+fP6e2znWnmEzCAeRm1xATxtslHK7jErsVvM2mat02aA
-         gz1LTbifdAGJdH/YctuNbiAnm5bR+9Rmr6Tf+mf+eJwN4sW7S/RDdIjQQzXpVueyLZ
-         d67v5wdh7RMQQPMtg5D+CYhv+9YqL2cCfpBM+Gs8=
+        b=Z1xF3xDiBVFM4krwdPI5LRSJlQ2sUZpDmqs6RzNBl4BoyfwdJg1Hgh1/eeioCPSJi
+         iRBimG+p/23HSRi5eZ942liMNz7Z2C+teqq3SeLJPHV6zcME/zNYVe4Rxx+OfbRZqT
+         qt8KD1uFN+zNSv023vNr0ULAbRijy3fF2A4jjhCg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jes Sorensen <Jes.Sorensen@redhat.com>,
-        Johan Hovold <johan@kernel.org>,
-        Kalle Valo <kvalo@codeaurora.org>
-Subject: [PATCH 4.4 14/53] rtl8xxxu: fix interface sanity check
-Date:   Mon,  3 Feb 2020 16:19:06 +0000
-Message-Id: <20200203161905.703605867@linuxfoundation.org>
+        stable@vger.kernel.org, Malcolm Priestley <tvboxspy@gmail.com>
+Subject: [PATCH 4.9 11/68] staging: vt6656: Fix false Tx excessive retries reporting.
+Date:   Mon,  3 Feb 2020 16:19:07 +0000
+Message-Id: <20200203161906.732411034@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200203161902.714326084@linuxfoundation.org>
-References: <20200203161902.714326084@linuxfoundation.org>
+In-Reply-To: <20200203161904.705434837@linuxfoundation.org>
+References: <20200203161904.705434837@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,37 +42,39 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Johan Hovold <johan@kernel.org>
+From: Malcolm Priestley <tvboxspy@gmail.com>
 
-commit 39a4281c312f2d226c710bc656ce380c621a2b16 upstream.
+commit 9dd631fa99dc0a0dfbd191173bf355ba30ea786a upstream.
 
-Make sure to use the current alternate setting when verifying the
-interface descriptors to avoid binding to an invalid interface.
+The driver reporting  IEEE80211_TX_STAT_ACK is not being handled
+correctly. The driver should only report on TSR_TMO flag is not
+set indicating no transmission errors and when not IEEE80211_TX_CTL_NO_ACK
+is being requested.
 
-Failing to do so could cause the driver to misbehave or trigger a WARN()
-in usb_submit_urb() that kernels with panic_on_warn set would choke on.
-
-Fixes: 26f1fad29ad9 ("New driver: rtl8xxxu (mac80211)")
-Cc: stable <stable@vger.kernel.org>     # 4.4
-Cc: Jes Sorensen <Jes.Sorensen@redhat.com>
-Signed-off-by: Johan Hovold <johan@kernel.org>
-Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
+Cc: stable <stable@vger.kernel.org>
+Signed-off-by: Malcolm Priestley <tvboxspy@gmail.com>
+Link: https://lore.kernel.org/r/340f1f7f-c310-dca5-476f-abc059b9cd97@gmail.com
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/net/wireless/realtek/rtl8xxxu/rtl8xxxu.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/staging/vt6656/int.c |    6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
---- a/drivers/net/wireless/realtek/rtl8xxxu/rtl8xxxu.c
-+++ b/drivers/net/wireless/realtek/rtl8xxxu/rtl8xxxu.c
-@@ -5555,7 +5555,7 @@ static int rtl8xxxu_parse_usb(struct rtl
- 	u8 dir, xtype, num;
- 	int ret = 0;
+--- a/drivers/staging/vt6656/int.c
++++ b/drivers/staging/vt6656/int.c
+@@ -107,9 +107,11 @@ static int vnt_int_report_rate(struct vn
  
--	host_interface = &interface->altsetting[0];
-+	host_interface = interface->cur_altsetting;
- 	interface_desc = &host_interface->desc;
- 	endpoints = interface_desc->bNumEndpoints;
+ 	info->status.rates[0].count = tx_retry;
  
+-	if (!(tsr & (TSR_TMO | TSR_RETRYTMO))) {
++	if (!(tsr & TSR_TMO)) {
+ 		info->status.rates[0].idx = idx;
+-		info->flags |= IEEE80211_TX_STAT_ACK;
++
++		if (!(info->flags & IEEE80211_TX_CTL_NO_ACK))
++			info->flags |= IEEE80211_TX_STAT_ACK;
+ 	}
+ 
+ 	ieee80211_tx_status_irqsafe(priv->hw, context->skb);
 
 
