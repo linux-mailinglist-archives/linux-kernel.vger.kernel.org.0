@@ -2,38 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AFDFD150B7F
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Feb 2020 17:28:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 55FD4150ACD
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Feb 2020 17:21:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729513AbgBCQ2E (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 3 Feb 2020 11:28:04 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39254 "EHLO mail.kernel.org"
+        id S1729099AbgBCQVL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 3 Feb 2020 11:21:11 -0500
+Received: from mail.kernel.org ([198.145.29.99]:32974 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729482AbgBCQ1u (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Feb 2020 11:27:50 -0500
+        id S1729088AbgBCQVJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Feb 2020 11:21:09 -0500
 Received: from localhost (unknown [104.132.45.99])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C6C9220838;
-        Mon,  3 Feb 2020 16:27:49 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id EB1522082E;
+        Mon,  3 Feb 2020 16:21:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1580747270;
-        bh=CiQeIRcGx1eIKU7i3VXIcuFBQVvaTX2mx9Zqf/l7cyA=;
+        s=default; t=1580746869;
+        bh=Arc0U913xpYMv6QaRiyEBGeYzW3xkup4GFG9woCvfAU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=l5gkyEFsvqyBUVmTLdSShThHn4Lr/fDG8ATAr4Te0eti/K1mlZ0zhVmb7TOgkZqd3
-         ajqzhfgU/uAbHxqPPQAvnS6HAABLifgxDrLo29qEuCL/RwqmhpEQgYZhpagWGtygXn
-         qQvqbvZ3DWmCpYRm0tfP4FotTE3KIhxkBgWgG4gg=
+        b=haoDnF+yle9GqgaIjSw5REIe6z4U+gOdNCjk/yQbg73+p6lmj8G+KQFJyYI01hbur
+         TQQnqLLS+WoEHK7cyZL1crFFElA6OK6v0EeKQxG7ira5e++s2xBNe/cqJHUojvYRci
+         jcKBVXSIshRVx50igdty4RHshB+ZxCAhdC1TN9xA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Johan Hovold <johan@kernel.org>,
-        Kalle Valo <kvalo@codeaurora.org>
-Subject: [PATCH 4.14 14/89] ath9k: fix storage endpoint lookup
-Date:   Mon,  3 Feb 2020 16:18:59 +0000
-Message-Id: <20200203161918.759534226@linuxfoundation.org>
+        stable@vger.kernel.org, Colin Ian King <colin.king@canonical.com>
+Subject: [PATCH 4.4 08/53] staging: wlan-ng: ensure error return is actually returned
+Date:   Mon,  3 Feb 2020 16:19:00 +0000
+Message-Id: <20200203161904.626327949@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200203161916.847439465@linuxfoundation.org>
-References: <20200203161916.847439465@linuxfoundation.org>
+In-Reply-To: <20200203161902.714326084@linuxfoundation.org>
+References: <20200203161902.714326084@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,37 +42,37 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Johan Hovold <johan@kernel.org>
+From: Colin Ian King <colin.king@canonical.com>
 
-commit 0ef332951e856efa89507cdd13ba8f4fb8d4db12 upstream.
+commit 4cc41cbce536876678b35e03c4a8a7bb72c78fa9 upstream.
 
-Make sure to use the current alternate setting when verifying the
-storage interface descriptors to avoid submitting an URB to an invalid
-endpoint.
+Currently when the call to prism2sta_ifst fails a netdev_err error
+is reported, error return variable result is set to -1 but the
+function always returns 0 for success.  Fix this by returning
+the error value in variable result rather than 0.
 
-Failing to do so could cause the driver to misbehave or trigger a WARN()
-in usb_submit_urb() that kernels with panic_on_warn set would choke on.
-
-Fixes: 36bcce430657 ("ath9k_htc: Handle storage devices")
-Cc: stable <stable@vger.kernel.org>     # 2.6.39
-Signed-off-by: Johan Hovold <johan@kernel.org>
-Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
+Addresses-Coverity: ("Unused value")
+Fixes: 00b3ed168508 ("Staging: add wlan-ng prism2 usb driver")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Cc: stable <stable@vger.kernel.org>
+Link: https://lore.kernel.org/r/20200114181604.390235-1-colin.king@canonical.com
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/net/wireless/ath/ath9k/hif_usb.c |    2 +-
+ drivers/staging/wlan-ng/prism2mgmt.c |    2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/net/wireless/ath/ath9k/hif_usb.c
-+++ b/drivers/net/wireless/ath/ath9k/hif_usb.c
-@@ -1214,7 +1214,7 @@ err_fw:
- static int send_eject_command(struct usb_interface *interface)
- {
- 	struct usb_device *udev = interface_to_usbdev(interface);
--	struct usb_host_interface *iface_desc = &interface->altsetting[0];
-+	struct usb_host_interface *iface_desc = interface->cur_altsetting;
- 	struct usb_endpoint_descriptor *endpoint;
- 	unsigned char *cmd;
- 	u8 bulk_out_ep;
+--- a/drivers/staging/wlan-ng/prism2mgmt.c
++++ b/drivers/staging/wlan-ng/prism2mgmt.c
+@@ -940,7 +940,7 @@ int prism2mgmt_flashdl_state(wlandevice_
+ 		}
+ 	}
+ 
+-	return 0;
++	return result;
+ }
+ 
+ /*----------------------------------------------------------------
 
 
