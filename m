@@ -2,36 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 03FB9150C8C
+	by mail.lfdr.de (Postfix) with ESMTP id F4109150C8E
 	for <lists+linux-kernel@lfdr.de>; Mon,  3 Feb 2020 17:37:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731328AbgBCQh2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 3 Feb 2020 11:37:28 -0500
-Received: from mail.kernel.org ([198.145.29.99]:52796 "EHLO mail.kernel.org"
+        id S1731340AbgBCQhc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 3 Feb 2020 11:37:32 -0500
+Received: from mail.kernel.org ([198.145.29.99]:52836 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731303AbgBCQhP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Feb 2020 11:37:15 -0500
+        id S1730233AbgBCQhS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Feb 2020 11:37:18 -0500
 Received: from localhost (unknown [104.132.45.99])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 81B4220721;
-        Mon,  3 Feb 2020 16:37:14 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E8DA72082E;
+        Mon,  3 Feb 2020 16:37:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1580747835;
-        bh=IPrmHewk90z2bfjgSVjIpJD4+5qHS7fePA67uDfcOFM=;
+        s=default; t=1580747837;
+        bh=gGP/SfIH4lkKGzcbPEvojIacfy9rHxQn6f0FxjI501g=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=sl7KnGFB+eCIQtszti7s6S+byoex4LgWc0+dVZxGBaX+kFsHduGb06XmkTF0n1Mof
-         kT8e15wSrhDC65M2R7bSkAKLwKFV8FPT5fiYY/ESiFOpQpmdpPZkBrD4hA3EsxosSl
-         7RAwkKHD+y2eDHEXOkzBEhrLxJu4IARPK6fqjfCc=
+        b=ronKaj2bOCCQGSTG+XuEEQs1BMa/DhSyIYy38gNL3cL3khPh8xEThRm+bCgBN9pm+
+         i8N451lsZ6DUzV3Ddlv5eekIRfEyIZh2+POS5UnF4bfwj4a0IRA3WXEeE8DwiMyfa1
+         +uwCAMN9uNOAGFIZa/+0/kQkeu9XjktWR8TNNpXU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, wenxu <wenxu@ucloud.cn>,
+        stable@vger.kernel.org,
+        Praveen Chaudhary <pchaudhary@linkedin.com>,
+        Zhenggen Xu <zxu@linkedin.com>,
+        Andy Stracner <astracner@linkedin.com>,
+        Florian Westphal <fw@strlen.de>,
         Pablo Neira Ayuso <pablo@netfilter.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.4 89/90] netfilter: nf_tables_offload: fix check the chain offload flag
-Date:   Mon,  3 Feb 2020 16:20:32 +0000
-Message-Id: <20200203161927.827669434@linuxfoundation.org>
+Subject: [PATCH 5.4 90/90] net: Fix skb->csum update in inet_proto_csum_replace16().
+Date:   Mon,  3 Feb 2020 16:20:33 +0000
+Message-Id: <20200203161927.937714547@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
 In-Reply-To: <20200203161917.612554987@linuxfoundation.org>
 References: <20200203161917.612554987@linuxfoundation.org>
@@ -44,34 +48,71 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: wenxu <wenxu@ucloud.cn>
+From: Praveen Chaudhary <praveen5582@gmail.com>
 
-[ Upstream commit c83de17dd6308fb74696923e5245de0e3c427206 ]
+[ Upstream commit 189c9b1e94539b11c80636bc13e9cf47529e7bba ]
 
-In the nft_indr_block_cb the chain should check the flag with
-NFT_CHAIN_HW_OFFLOAD.
+skb->csum is updated incorrectly, when manipulation for
+NF_NAT_MANIP_SRC\DST is done on IPV6 packet.
 
-Fixes: 9a32669fecfb ("netfilter: nf_tables_offload: support indr block call")
-Signed-off-by: wenxu <wenxu@ucloud.cn>
+Fix:
+There is no need to update skb->csum in inet_proto_csum_replace16(),
+because update in two fields a.) IPv6 src/dst address and b.) L4 header
+checksum cancels each other for skb->csum calculation. Whereas
+inet_proto_csum_replace4 function needs to update skb->csum, because
+update in 3 fields a.) IPv4 src/dst address, b.) IPv4 Header checksum
+and c.) L4 header checksum results in same diff as L4 Header checksum
+for skb->csum calculation.
+
+[ pablo@netfilter.org: a few comestic documentation edits ]
+Signed-off-by: Praveen Chaudhary <pchaudhary@linkedin.com>
+Signed-off-by: Zhenggen Xu <zxu@linkedin.com>
+Signed-off-by: Andy Stracner <astracner@linkedin.com>
+Reviewed-by: Florian Westphal <fw@strlen.de>
 Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/netfilter/nf_tables_offload.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ net/core/utils.c | 20 +++++++++++++++++---
+ 1 file changed, 17 insertions(+), 3 deletions(-)
 
-diff --git a/net/netfilter/nf_tables_offload.c b/net/netfilter/nf_tables_offload.c
-index 96a64e7594a51..914cd0618d5a6 100644
---- a/net/netfilter/nf_tables_offload.c
-+++ b/net/netfilter/nf_tables_offload.c
-@@ -437,7 +437,7 @@ static void nft_indr_block_cb(struct net_device *dev,
+diff --git a/net/core/utils.c b/net/core/utils.c
+index 6b6e51db9f3b9..1f31a39236d52 100644
+--- a/net/core/utils.c
++++ b/net/core/utils.c
+@@ -438,6 +438,23 @@ void inet_proto_csum_replace4(__sum16 *sum, struct sk_buff *skb,
+ }
+ EXPORT_SYMBOL(inet_proto_csum_replace4);
  
- 	mutex_lock(&net->nft.commit_mutex);
- 	chain = __nft_offload_get_chain(dev);
--	if (chain) {
-+	if (chain && chain->flags & NFT_CHAIN_HW_OFFLOAD) {
- 		struct nft_base_chain *basechain;
- 
- 		basechain = nft_base_chain(chain);
++/**
++ * inet_proto_csum_replace16 - update layer 4 header checksum field
++ * @sum: Layer 4 header checksum field
++ * @skb: sk_buff for the packet
++ * @from: old IPv6 address
++ * @to: new IPv6 address
++ * @pseudohdr: True if layer 4 header checksum includes pseudoheader
++ *
++ * Update layer 4 header as per the update in IPv6 src/dst address.
++ *
++ * There is no need to update skb->csum in this function, because update in two
++ * fields a.) IPv6 src/dst address and b.) L4 header checksum cancels each other
++ * for skb->csum calculation. Whereas inet_proto_csum_replace4 function needs to
++ * update skb->csum, because update in 3 fields a.) IPv4 src/dst address,
++ * b.) IPv4 Header checksum and c.) L4 header checksum results in same diff as
++ * L4 Header checksum for skb->csum calculation.
++ */
+ void inet_proto_csum_replace16(__sum16 *sum, struct sk_buff *skb,
+ 			       const __be32 *from, const __be32 *to,
+ 			       bool pseudohdr)
+@@ -449,9 +466,6 @@ void inet_proto_csum_replace16(__sum16 *sum, struct sk_buff *skb,
+ 	if (skb->ip_summed != CHECKSUM_PARTIAL) {
+ 		*sum = csum_fold(csum_partial(diff, sizeof(diff),
+ 				 ~csum_unfold(*sum)));
+-		if (skb->ip_summed == CHECKSUM_COMPLETE && pseudohdr)
+-			skb->csum = ~csum_partial(diff, sizeof(diff),
+-						  ~skb->csum);
+ 	} else if (pseudohdr)
+ 		*sum = ~csum_fold(csum_partial(diff, sizeof(diff),
+ 				  csum_unfold(*sum)));
 -- 
 2.20.1
 
