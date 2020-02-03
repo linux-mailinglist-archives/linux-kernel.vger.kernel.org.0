@@ -2,74 +2,51 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4DA9715015E
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Feb 2020 06:25:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B221E150162
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Feb 2020 06:25:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727312AbgBCFZK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 3 Feb 2020 00:25:10 -0500
-Received: from mail.kernel.org ([198.145.29.99]:52436 "EHLO mail.kernel.org"
+        id S1727389AbgBCFZ2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 3 Feb 2020 00:25:28 -0500
+Received: from mail.kernel.org ([198.145.29.99]:52614 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725973AbgBCFZJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Feb 2020 00:25:09 -0500
-Received: from mail.kernel.org (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        id S1727359AbgBCFZ2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Feb 2020 00:25:28 -0500
+Received: from kernel.org (unknown [104.132.0.74])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DCB762080D;
-        Mon,  3 Feb 2020 05:25:08 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B3B1820721;
+        Mon,  3 Feb 2020 05:25:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1580707509;
-        bh=Aq0yEnBkPZ2i28u2kA+F5xCcoMjtJM3CWtJgcuQxAI8=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Q/928VeEyoFEYXbIWkImpCUwlhO4t9K/TmNAhMzMvbabz08lIhif7Mcwem0U1nMdG
-         NGiEk/fp9CgAS1qX0ixhQeyezgyRvifoGuavCo1BHNQ2UCkoDQL0fueNTL4TKF4sDZ
-         1C9RJzKs4knv6M41nQEXx6DbITIwgHdNvWIv83Kg=
-From:   Stephen Boyd <sboyd@kernel.org>
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
-        Wen He <wen.he_1@nxp.com>
-Subject: [PATCH 2/2] dt/bindings: clk: fsl,plldig: Drop 'bindings' from schema id
-Date:   Sun,  2 Feb 2020 21:25:07 -0800
-Message-Id: <20200203052507.93215-2-sboyd@kernel.org>
-X-Mailer: git-send-email 2.25.0.341.g760bfbb309-goog
-In-Reply-To: <20200203052507.93215-1-sboyd@kernel.org>
-References: <20200203052507.93215-1-sboyd@kernel.org>
+        s=default; t=1580707527;
+        bh=Rd3RhW0hSxFREy89fO4D4ydx9QneiWEzojuwg5w5N8k=;
+        h=In-Reply-To:References:From:Subject:To:Cc:Date:From;
+        b=vAPn08+2XaSPg+4Yrad1JUEV6EXEwdnr6LSReS4Bg5eZ8MyU10EVbxABKX8idGKm+
+         fnGkogil8dfT0E3I5/HOUix+R5GILQcH7qMbRWx/a1sbW49iXDrx6z3jUIRDNTJoPT
+         vez45+OlLMOEkoZAau4LoEF3R0W5ETIcggjfxpf0=
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20200203091633.3265a3f1@canb.auug.org.au>
+References: <20200203091633.3265a3f1@canb.auug.org.au>
+From:   Stephen Boyd <sboyd@kernel.org>
+Subject: Re: linux-next: build warnings after merge of the clk tree
+To:     Mike Turquette <mturquette@baylibre.com>,
+        Stephen Rothwell <sfr@canb.auug.org.au>
+Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Wen He <wen.he_1@nxp.com>
+User-Agent: alot/0.8.1
+Date:   Sun, 02 Feb 2020 21:25:27 -0800
+Message-Id: <20200203052527.B3B1820721@mail.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Having 'bindings' in here causes a warning when checking the schema.
+Quoting Stephen Rothwell (2020-02-02 14:16:33)
+> Hi all,
+>=20
+> After merging the clk tree, today's linux-next build (x86_64 allmodconfig)
+> produced these warnings:
 
- Documentation/devicetree/bindings/clock/fsl,plldig.yaml:
- $id: relative path/filename doesn't match actual path or filename
-         expected: http://devicetree.org/schemas/clock/fsl,plldig.yaml#
-
-Remove it.
-
-Cc: Rob Herring <robh+dt@kernel.org>
-Cc: Wen He <wen.he_1@nxp.com>
-Signed-off-by: Stephen Boyd <sboyd@kernel.org>
----
- Documentation/devicetree/bindings/clock/fsl,plldig.yaml | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/Documentation/devicetree/bindings/clock/fsl,plldig.yaml b/Documentation/devicetree/bindings/clock/fsl,plldig.yaml
-index ad37d3273229..c8350030b374 100644
---- a/Documentation/devicetree/bindings/clock/fsl,plldig.yaml
-+++ b/Documentation/devicetree/bindings/clock/fsl,plldig.yaml
-@@ -1,7 +1,7 @@
- # SPDX-License-Identifier: GPL-2.0
- %YAML 1.2
- ---
--$id: http://devicetree.org/schemas/bindings/clock/fsl,plldig.yaml#
-+$id: http://devicetree.org/schemas/clock/fsl,plldig.yaml#
- $schema: http://devicetree.org/meta-schemas/core.yaml#
- 
- title: NXP QorIQ Layerscape LS1028A Display PIXEL Clock Binding
--- 
-Sent by a computer, using git, on the internet
-
+Thanks. I missed this and I've sent a fix now.
