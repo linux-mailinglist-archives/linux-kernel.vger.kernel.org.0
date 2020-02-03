@@ -2,37 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F1D80150AD0
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Feb 2020 17:21:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DD1D8150AF8
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Feb 2020 17:22:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729139AbgBCQVU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 3 Feb 2020 11:21:20 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33138 "EHLO mail.kernel.org"
+        id S1729263AbgBCQWU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 3 Feb 2020 11:22:20 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33694 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728543AbgBCQVR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Feb 2020 11:21:17 -0500
+        id S1728601AbgBCQVl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Feb 2020 11:21:41 -0500
 Received: from localhost (unknown [104.132.45.99])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 157F82080D;
-        Mon,  3 Feb 2020 16:21:15 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A24D52080C;
+        Mon,  3 Feb 2020 16:21:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1580746876;
-        bh=9Pslydd++Su5YjiyttsW3x0kNiUqThyZmeBUxpt8J3I=;
+        s=default; t=1580746900;
+        bh=FbqL9DxWWj8vs/OxbIAQM1UlvvUfqLzpDxKU81KI42M=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Zgcb/V7saLTM3/qfONlnfnT9xoTZT4ZVDxPlerkNEuhClBPbhW5M+6l3FKHCOUIf+
-         /i4QHZEccb96C0IevF1t9ETeS1OsEbjBZrTA8ZY4sK0bAjDw1pv0+75+ivNFKKzc5I
-         MKxvmwRO0rpLpdFVcZ4c8GP5hMXDVk8O7zjLjIAc=
+        b=dEbWf8aAlK/UQeq35T8tr0boSLiq3hPk/RTkAx/g5NoIozbA+KT46NNcWHPGAtv7d
+         l+lLnExyY2oPmexWDt8tshTZAPeP+JZGmnSrDlukIm/Qy7mzzTxYDoHKmcwskIkOhy
+         MCiFa1s7IZGUmWrlLKtQtGg5G49MgumJU+MtHLFU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Cambda Zhu <cambda@linux.alibaba.com>,
-        Andrew Bowers <andrewx.bowers@intel.com>,
-        Jeff Kirsher <jeffrey.t.kirsher@intel.com>,
+        stable@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
+        Johannes Berg <johannes.berg@intel.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.4 36/53] ixgbe: Fix calculation of queue with VFs and flow director on interface flap
-Date:   Mon,  3 Feb 2020 16:19:28 +0000
-Message-Id: <20200203161909.447872854@linuxfoundation.org>
+Subject: [PATCH 4.4 37/53] wireless: wext: avoid gcc -O3 warning
+Date:   Mon,  3 Feb 2020 16:19:29 +0000
+Message-Id: <20200203161909.602727646@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
 In-Reply-To: <20200203161902.714326084@linuxfoundation.org>
 References: <20200203161902.714326084@linuxfoundation.org>
@@ -45,81 +44,54 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Cambda Zhu <cambda@linux.alibaba.com>
+From: Arnd Bergmann <arnd@arndb.de>
 
-[ Upstream commit 4fad78ad6422d9bca62135bbed8b6abc4cbb85b8 ]
+[ Upstream commit e16119655c9e6c4aa5767cd971baa9c491f41b13 ]
 
-This patch fixes the calculation of queue when we restore flow director
-filters after resetting adapter. In ixgbe_fdir_filter_restore(), filter's
-vf may be zero which makes the queue outside of the rx_ring array.
+After the introduction of CONFIG_CC_OPTIMIZE_FOR_PERFORMANCE_O3,
+the wext code produces a bogus warning:
 
-The calculation is changed to the same as ixgbe_add_ethtool_fdir_entry().
+In function 'iw_handler_get_iwstats',
+    inlined from 'ioctl_standard_call' at net/wireless/wext-core.c:1015:9,
+    inlined from 'wireless_process_ioctl' at net/wireless/wext-core.c:935:10,
+    inlined from 'wext_ioctl_dispatch.part.8' at net/wireless/wext-core.c:986:8,
+    inlined from 'wext_handle_ioctl':
+net/wireless/wext-core.c:671:3: error: argument 1 null where non-null expected [-Werror=nonnull]
+   memcpy(extra, stats, sizeof(struct iw_statistics));
+   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+In file included from arch/x86/include/asm/string.h:5,
+net/wireless/wext-core.c: In function 'wext_handle_ioctl':
+arch/x86/include/asm/string_64.h:14:14: note: in a call to function 'memcpy' declared here
 
-Signed-off-by: Cambda Zhu <cambda@linux.alibaba.com>
-Tested-by: Andrew Bowers <andrewx.bowers@intel.com>
-Signed-off-by: Jeff Kirsher <jeffrey.t.kirsher@intel.com>
+The problem is that ioctl_standard_call() sometimes calls the handler
+with a NULL argument that would cause a problem for iw_handler_get_iwstats.
+However, iw_handler_get_iwstats never actually gets called that way.
+
+Marking that function as noinline avoids the warning and leads
+to slightly smaller object code as well.
+
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Link: https://lore.kernel.org/r/20200107200741.3588770-1-arnd@arndb.de
+Signed-off-by: Johannes Berg <johannes.berg@intel.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/intel/ixgbe/ixgbe_main.c | 37 ++++++++++++++-----
- 1 file changed, 27 insertions(+), 10 deletions(-)
+ net/wireless/wext-core.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/net/ethernet/intel/ixgbe/ixgbe_main.c b/drivers/net/ethernet/intel/ixgbe/ixgbe_main.c
-index 4521181aa0ed9..23fb344f9e1cf 100644
---- a/drivers/net/ethernet/intel/ixgbe/ixgbe_main.c
-+++ b/drivers/net/ethernet/intel/ixgbe/ixgbe_main.c
-@@ -4532,7 +4532,7 @@ static void ixgbe_fdir_filter_restore(struct ixgbe_adapter *adapter)
- 	struct ixgbe_hw *hw = &adapter->hw;
- 	struct hlist_node *node2;
- 	struct ixgbe_fdir_filter *filter;
--	u64 action;
-+	u8 queue;
+diff --git a/net/wireless/wext-core.c b/net/wireless/wext-core.c
+index b50ee5d622e14..843d2cf1e6a6c 100644
+--- a/net/wireless/wext-core.c
++++ b/net/wireless/wext-core.c
+@@ -656,7 +656,8 @@ struct iw_statistics *get_wireless_stats(struct net_device *dev)
+ 	return NULL;
+ }
  
- 	spin_lock(&adapter->fdir_perfect_lock);
- 
-@@ -4541,17 +4541,34 @@ static void ixgbe_fdir_filter_restore(struct ixgbe_adapter *adapter)
- 
- 	hlist_for_each_entry_safe(filter, node2,
- 				  &adapter->fdir_filter_list, fdir_node) {
--		action = filter->action;
--		if (action != IXGBE_FDIR_DROP_QUEUE && action != 0)
--			action =
--			(action >> ETHTOOL_RX_FLOW_SPEC_RING_VF_OFF) - 1;
-+		if (filter->action == IXGBE_FDIR_DROP_QUEUE) {
-+			queue = IXGBE_FDIR_DROP_QUEUE;
-+		} else {
-+			u32 ring = ethtool_get_flow_spec_ring(filter->action);
-+			u8 vf = ethtool_get_flow_spec_ring_vf(filter->action);
-+
-+			if (!vf && (ring >= adapter->num_rx_queues)) {
-+				e_err(drv, "FDIR restore failed without VF, ring: %u\n",
-+				      ring);
-+				continue;
-+			} else if (vf &&
-+				   ((vf > adapter->num_vfs) ||
-+				     ring >= adapter->num_rx_queues_per_pool)) {
-+				e_err(drv, "FDIR restore failed with VF, vf: %hhu, ring: %u\n",
-+				      vf, ring);
-+				continue;
-+			}
-+
-+			/* Map the ring onto the absolute queue index */
-+			if (!vf)
-+				queue = adapter->rx_ring[ring]->reg_idx;
-+			else
-+				queue = ((vf - 1) *
-+					adapter->num_rx_queues_per_pool) + ring;
-+		}
- 
- 		ixgbe_fdir_write_perfect_filter_82599(hw,
--				&filter->filter,
--				filter->sw_idx,
--				(action == IXGBE_FDIR_DROP_QUEUE) ?
--				IXGBE_FDIR_DROP_QUEUE :
--				adapter->rx_ring[action]->reg_idx);
-+				&filter->filter, filter->sw_idx, queue);
- 	}
- 
- 	spin_unlock(&adapter->fdir_perfect_lock);
+-static int iw_handler_get_iwstats(struct net_device *		dev,
++/* noinline to avoid a bogus warning with -O3 */
++static noinline int iw_handler_get_iwstats(struct net_device *	dev,
+ 				  struct iw_request_info *	info,
+ 				  union iwreq_data *		wrqu,
+ 				  char *			extra)
 -- 
 2.20.1
 
