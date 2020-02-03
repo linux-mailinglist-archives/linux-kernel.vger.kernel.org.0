@@ -2,136 +2,93 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0ECA2151116
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Feb 2020 21:34:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C292B151123
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Feb 2020 21:40:46 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727128AbgBCUex (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 3 Feb 2020 15:34:53 -0500
-Received: from mail-qk1-f195.google.com ([209.85.222.195]:36316 "EHLO
-        mail-qk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726187AbgBCUex (ORCPT
+        id S1726928AbgBCUkn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 3 Feb 2020 15:40:43 -0500
+Received: from us-smtp-2.mimecast.com ([205.139.110.61]:49350 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726278AbgBCUkn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Feb 2020 15:34:53 -0500
-Received: by mail-qk1-f195.google.com with SMTP id w25so15654991qki.3
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Feb 2020 12:34:52 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cmpxchg-org.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=vD4OaD6/Gu08Tv/eWLm2QG4l2LOcwWo02bsHVNhYVEQ=;
-        b=W3DY1kzjGYRaQaDtq2ZYG1aZxLOR7ajyPdRtTamhizsDcB/cyjSjh5XRHFBA9iCHva
-         fsxvDp7ShuBRZnOMZmW7pA3Y5guojMO9S+oOh11qPvpAoNYgygM9Coy+EtHWbt+dzAxz
-         nymZW8joGe5Vj+WBlgcaHsMAM3enIIe825VxnEbtQcRXW5EVouOS4Qr4JOmbkQlV60RE
-         Br79AFZv5RgJC6JbD/B1lTVtsi/z9nsg6M9x3CPYeB2mwcg3SXWlu6HTlkzAZFx1wQOY
-         Qn8N0UCnOV3TeAMhET8najN9YueeVvnODYE1eWTz0KE1YdNHZIQPInFc2jjtl5XmQBl3
-         CHGA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=vD4OaD6/Gu08Tv/eWLm2QG4l2LOcwWo02bsHVNhYVEQ=;
-        b=B5uzzlxwnjLBikrRGxVwRW20/zstl6kZZd1DXn0zGwlPDWhFKJXfQnKqIaZrwAGpYn
-         pDTVs0rVFZumEH7zyjZ7pdjKcLxeNiRTgdqde/5TZ+vOmegWjIw8lwQcKUvM687ZCACs
-         3UXtftKbB6JhqYMwAu/TV8iFsf0LufZTw5AmwDoj+ZhJzX2bwmumbNiFscZEMn9DufDI
-         XYF+JLxMWunJ79ZlgOYuBijKkLZybm7t5cwCl1aI+pOmQZkWfDusOi7+WRvthLnPPbFS
-         6HtIJeQyILpREKmb9abnHW6geZGtLHUaHAAWqASNzGhrORYdsyTe1mKigoJuOlhtdHKx
-         +mog==
-X-Gm-Message-State: APjAAAVltKuUYNh6zRtWhnQn9AArkPr0r2AAmeYVEPL3ty6gIt+d5YrX
-        msz/GaBrdATX9S7IQT80Yg27vA==
-X-Google-Smtp-Source: APXvYqzyJpvTPAQNuO333DHFMTSybUxePPApluL4ereGDZzQa5rPBTdzb1jyqc/jIvL27oY7+5IubA==
-X-Received: by 2002:a05:620a:909:: with SMTP id v9mr12691741qkv.138.1580762092138;
-        Mon, 03 Feb 2020 12:34:52 -0800 (PST)
-Received: from localhost ([2620:10d:c091:500::2:6320])
-        by smtp.gmail.com with ESMTPSA id v4sm9703099qkj.64.2020.02.03.12.34.51
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 03 Feb 2020 12:34:51 -0800 (PST)
-Date:   Mon, 3 Feb 2020 15:34:50 -0500
-From:   Johannes Weiner <hannes@cmpxchg.org>
-To:     Roman Gushchin <guro@fb.com>
-Cc:     linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>,
-        Michal Hocko <mhocko@kernel.org>,
-        Shakeel Butt <shakeelb@google.com>,
-        Vladimir Davydov <vdavydov.dev@gmail.com>,
-        linux-kernel@vger.kernel.org, kernel-team@fb.com,
-        Bharata B Rao <bharata@linux.ibm.com>,
-        Yafang Shao <laoar.shao@gmail.com>
-Subject: Re: [PATCH v2 12/28] mm: vmstat: use s32 for vm_node_stat_diff in
- struct per_cpu_nodestat
-Message-ID: <20200203203450.GA6380@cmpxchg.org>
-References: <20200127173453.2089565-1-guro@fb.com>
- <20200127173453.2089565-13-guro@fb.com>
- <20200203175818.GF1697@cmpxchg.org>
- <20200203182506.GA3700@xps.dhcp.thefacebook.com>
+        Mon, 3 Feb 2020 15:40:43 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1580762442;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=pyvOKTyWkhnbfDDvx/t4H+37pFyaHZSbAEznQ9w1oyc=;
+        b=TZzJZVlYU0eTggOF8/15pPMtN8SlIXM0ziVGHJ4Fp2/BS0MNaUaQa3RF0OCYrGTA+u1VZr
+        rVrVJ649jZOEfrcVc2PDckdFQIZeKCw+R6YR3+3JZg1QfotZghdeAtYiQO9LYFJvyBDzMp
+        mRiZiKWNJarJuxw177p8gw4wVF6ckhA=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-430-7l1xuXRFPdWWM4vbT9eVRQ-1; Mon, 03 Feb 2020 15:40:39 -0500
+X-MC-Unique: 7l1xuXRFPdWWM4vbT9eVRQ-1
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 809C118C8C01;
+        Mon,  3 Feb 2020 20:40:38 +0000 (UTC)
+Received: from w520.home (ovpn-116-28.phx2.redhat.com [10.3.116.28])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 4853187B1D;
+        Mon,  3 Feb 2020 20:40:38 +0000 (UTC)
+Date:   Mon, 3 Feb 2020 13:40:37 -0700
+From:   Alex Williamson <alex.williamson@redhat.com>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     <linux-kernel@vger.kernel.org>,
+        "kvm@vger.kernel.org" <kvm@vger.kernel.org>
+Subject: [GIT PULL] VFIO updates for v5.6-rc1
+Message-ID: <20200203134037.2fda624f@w520.home>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200203182506.GA3700@xps.dhcp.thefacebook.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 03, 2020 at 10:25:06AM -0800, Roman Gushchin wrote:
-> On Mon, Feb 03, 2020 at 12:58:18PM -0500, Johannes Weiner wrote:
-> > On Mon, Jan 27, 2020 at 09:34:37AM -0800, Roman Gushchin wrote:
-> > > Currently s8 type is used for per-cpu caching of per-node statistics.
-> > > It works fine because the overfill threshold can't exceed 125.
-> > > 
-> > > But if some counters are in bytes (and the next commit in the series
-> > > will convert slab counters to bytes), it's not gonna work:
-> > > value in bytes can easily exceed s8 without exceeding the threshold
-> > > converted to bytes. So to avoid overfilling per-cpu caches and breaking
-> > > vmstats correctness, let's use s32 instead.
-> > > 
-> > > This doesn't affect per-zone statistics. There are no plans to use
-> > > zone-level byte-sized counters, so no reasons to change anything.
-> > 
-> > Wait, is this still necessary? AFAIU, the node counters will account
-> > full slab pages, including free space, and only the memcg counters
-> > that track actual objects will be in bytes.
-> > 
-> > Can you please elaborate?
-> 
-> It's weird to have a counter with the same name (e.g. NR_SLAB_RECLAIMABLE_B)
-> being in different units depending on the accounting scope.
-> So I do convert all slab counters: global, per-lruvec,
-> and per-memcg to bytes.
+Hi Linus,
 
-Since the node counters tracks allocated slab pages and the memcg
-counter tracks allocated objects, arguably they shouldn't use the same
-name anyway.
+The following changes since commit c79f46a282390e0f5b306007bf7b11a46d529538:
 
-> Alternatively I can fork them, e.g. introduce per-memcg or per-lruvec
-> NR_SLAB_RECLAIMABLE_OBJ
-> NR_SLAB_UNRECLAIMABLE_OBJ
+  Linux 5.5-rc5 (2020-01-05 14:23:27 -0800)
 
-Can we alias them and reuse their slots?
+are available in the Git repository at:
 
-	/* Reuse the node slab page counters item for charged objects */
-	MEMCG_SLAB_RECLAIMABLE = NR_SLAB_RECLAIMABLE,
-	MEMCG_SLAB_UNRECLAIMABLE = NR_SLAB_UNRECLAIMABLE,
+  git://github.com/awilliam/linux-vfio.git tags/vfio-v5.6-rc1
 
-> and keep global counters untouched. If going this way, I'd prefer to make
-> them per-memcg, because it will simplify things on charging paths:
-> now we do get task->mem_cgroup->obj_cgroup in the pre_alloc_hook(),
-> and then obj_cgroup->mem_cgroup in the post_alloc_hook() just to
-> bump per-lruvec counters.
+for you to fetch changes up to 7b5372ba04ca1caabed1470d4ec23001cde2eb91:
 
-I don't quite follow. Don't you still have to update the global
-counters?
+  vfio: platform: fix __iomem in vfio_platform_amdxgbe.c (2020-01-09 11:32:14 -0700)
 
-> Btw, I wonder if we really need per-lruvec counters at all (at least
-> being enabled by default). For the significant amount of users who
-> have a single-node machine it doesn't bring anything except performance
-> overhead.
+----------------------------------------------------------------
+VFIO updates for v5.6-rc1
 
-Yeah, for single-node systems we should be able to redirect everything
-to the memcg counters, without allocating and tracking lruvec copies.
+ - Fix nvlink error path (Alexey Kardashevskiy)
 
-> For those who have multiple nodes (and most likely many many
-> memory cgroups) it provides way too many data except for debugging
-> some weird mm issues.
-> I guess in the absolute majority of cases having global per-node + per-memcg
-> counters will be enough.
+ - Update nvlink and spapr to use mmgrab() (Julia Lawall)
 
-Hm? Reclaim uses the lruvec counters.
+ - Update static declaration (Ben Dooks)
+
+ - Annotate __iomem to fix sparse warnings (Ben Dooks)
+
+----------------------------------------------------------------
+Alexey Kardashevskiy (1):
+      vfio/spapr/nvlink2: Skip unpinning pages on error exit
+
+Ben Dooks (Codethink) (2):
+      vfio/mdev: make create attribute static
+      vfio: platform: fix __iomem in vfio_platform_amdxgbe.c
+
+Julia Lawall (2):
+      vfio: vfio_pci_nvlink2: use mmgrab
+      vfio/spapr_tce: use mmgrab
+
+ drivers/vfio/mdev/mdev_sysfs.c                      | 2 +-
+ drivers/vfio/pci/vfio_pci_nvlink2.c                 | 8 +++++---
+ drivers/vfio/platform/reset/vfio_platform_amdxgbe.c | 4 ++--
+ drivers/vfio/vfio_iommu_spapr_tce.c                 | 2 +-
+ 4 files changed, 9 insertions(+), 7 deletions(-)
+
