@@ -2,39 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D6798150D08
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Feb 2020 17:41:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 924E1150BFD
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Feb 2020 17:32:24 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731048AbgBCQlG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 3 Feb 2020 11:41:06 -0500
-Received: from mail.kernel.org ([198.145.29.99]:50342 "EHLO mail.kernel.org"
+        id S1730408AbgBCQcU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 3 Feb 2020 11:32:20 -0500
+Received: from mail.kernel.org ([198.145.29.99]:45946 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730998AbgBCQfa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Feb 2020 11:35:30 -0500
+        id S1730400AbgBCQcS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Feb 2020 11:32:18 -0500
 Received: from localhost (unknown [104.132.45.99])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EBAB32082E;
-        Mon,  3 Feb 2020 16:35:28 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 017E421582;
+        Mon,  3 Feb 2020 16:32:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1580747729;
-        bh=A/OInvNUnYl3sVuGtrPH4+JUTp1LNDxhwo2rpTolErQ=;
+        s=default; t=1580747537;
+        bh=M3igxGJbPwWLFddQF1W+xeYwC2g5LtR0ImoWkxG7tLg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=YymrtlnITm362srKmyAzorZSzslxvrakTkXai984s3nk1pSxF6QTIbr3tjUGdb12G
-         6sUG/VFA8ofjFpDuMgWJrtIu5zgNbFb4t2vQUdNXVG62kt3LE6wChtP3j+c1v/YEd4
-         6ODHozwQY2hHQDDeOrVM6J3uppNty+D/zZp//xXA=
+        b=P+11jaCr1itH753tvxH3G9Fce6yaFQmRzJqq6EtJizraCDBZ5kr3IkX5aLRJei7wV
+         OKC3u3gV0MYA89QHPtbFOI+H8p3U6PIko6qlz4srblQCuYzU6Iq3riU0M7XH0IZi3/
+         QwuV+iEJ2cjoNOy7KOdrUvVkNCkxdFT5KAmT/PIc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Harry Pan <harry.pan@intel.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        stable@vger.kernel.org, Radoslaw Tyl <radoslawx.tyl@intel.com>,
+        Paul Menzel <pmenzel@molgen.mpg.de>,
+        Jeff Kirsher <jeffrey.t.kirsher@intel.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.4 44/90] platform/x86: intel_pmc_core: update Comet Lake platform driver
+Subject: [PATCH 4.19 35/70] ixgbevf: Remove limit of 10 entries for unicast filter list
 Date:   Mon,  3 Feb 2020 16:19:47 +0000
-Message-Id: <20200203161923.441970979@linuxfoundation.org>
+Message-Id: <20200203161917.584823767@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200203161917.612554987@linuxfoundation.org>
-References: <20200203161917.612554987@linuxfoundation.org>
+In-Reply-To: <20200203161912.158976871@linuxfoundation.org>
+References: <20200203161912.158976871@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,32 +45,40 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Harry Pan <harry.pan@intel.com>
+From: Radoslaw Tyl <radoslawx.tyl@intel.com>
 
-[ Upstream commit 515ff674bb9bf06186052e352c4587dab8defaf0 ]
+[ Upstream commit aa604651d523b1493988d0bf6710339f3ee60272 ]
 
-Adding new CML CPU model ID into platform driver support list.
+Currently, though the FDB entry is added to VF, it does not appear in
+RAR filters. VF driver only allows to add 10 entries. Attempting to add
+another causes an error. This patch removes limitation and allows use of
+all free RAR entries for the FDB if needed.
 
-Signed-off-by: Harry Pan <harry.pan@intel.com>
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Fixes: 46ec20ff7d ("ixgbevf: Add macvlan support in the set rx mode op")
+Signed-off-by: Radoslaw Tyl <radoslawx.tyl@intel.com>
+Acked-by: Paul Menzel <pmenzel@molgen.mpg.de>
+Signed-off-by: Jeff Kirsher <jeffrey.t.kirsher@intel.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/platform/x86/intel_pmc_core_pltdrv.c | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/net/ethernet/intel/ixgbevf/ixgbevf_main.c | 5 -----
+ 1 file changed, 5 deletions(-)
 
-diff --git a/drivers/platform/x86/intel_pmc_core_pltdrv.c b/drivers/platform/x86/intel_pmc_core_pltdrv.c
-index 6fe829f30997d..e1266f5c63593 100644
---- a/drivers/platform/x86/intel_pmc_core_pltdrv.c
-+++ b/drivers/platform/x86/intel_pmc_core_pltdrv.c
-@@ -44,6 +44,8 @@ static const struct x86_cpu_id intel_pmc_core_platform_ids[] = {
- 	INTEL_CPU_FAM6(KABYLAKE, pmc_core_device),
- 	INTEL_CPU_FAM6(CANNONLAKE_L, pmc_core_device),
- 	INTEL_CPU_FAM6(ICELAKE_L, pmc_core_device),
-+	INTEL_CPU_FAM6(COMETLAKE, pmc_core_device),
-+	INTEL_CPU_FAM6(COMETLAKE_L, pmc_core_device),
- 	{}
- };
- MODULE_DEVICE_TABLE(x86cpu, intel_pmc_core_platform_ids);
+diff --git a/drivers/net/ethernet/intel/ixgbevf/ixgbevf_main.c b/drivers/net/ethernet/intel/ixgbevf/ixgbevf_main.c
+index 4093a9c52c182..a10756f0b0d8b 100644
+--- a/drivers/net/ethernet/intel/ixgbevf/ixgbevf_main.c
++++ b/drivers/net/ethernet/intel/ixgbevf/ixgbevf_main.c
+@@ -2066,11 +2066,6 @@ static int ixgbevf_write_uc_addr_list(struct net_device *netdev)
+ 	struct ixgbe_hw *hw = &adapter->hw;
+ 	int count = 0;
+ 
+-	if ((netdev_uc_count(netdev)) > 10) {
+-		pr_err("Too many unicast filters - No Space\n");
+-		return -ENOSPC;
+-	}
+-
+ 	if (!netdev_uc_empty(netdev)) {
+ 		struct netdev_hw_addr *ha;
+ 
 -- 
 2.20.1
 
