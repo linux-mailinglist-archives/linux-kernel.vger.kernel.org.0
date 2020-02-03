@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8E72E150C15
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Feb 2020 17:33:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 53BD2150C43
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Feb 2020 17:36:49 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730535AbgBCQdL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 3 Feb 2020 11:33:11 -0500
-Received: from mail.kernel.org ([198.145.29.99]:46912 "EHLO mail.kernel.org"
+        id S1730836AbgBCQel (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 3 Feb 2020 11:34:41 -0500
+Received: from mail.kernel.org ([198.145.29.99]:49030 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730233AbgBCQdD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Feb 2020 11:33:03 -0500
+        id S1730820AbgBCQei (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Feb 2020 11:34:38 -0500
 Received: from localhost (unknown [104.132.45.99])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 29F552082E;
-        Mon,  3 Feb 2020 16:33:02 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B73272051A;
+        Mon,  3 Feb 2020 16:34:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1580747582;
-        bh=o8qXUuVMgURdjU9RXTf11ZkJaY0aPqvSHrfr4hZ1FSQ=;
+        s=default; t=1580747677;
+        bh=WYbTuLuNxFsPNJfXjUbDq6+/+krcm/RTvzoJb9T8RR8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=GFRDZBN+49ZGD8HXefe5wt2LUPYfNZ4PZwUDRBbc3ZvjyMi7tpucl0hoqmtr5kC6s
-         NPYaVBkh+kaVZAAHbqOC4YSBCgZM1XLxH/ji2TrlUYTiX1JbCLqyJ4jWZNEq6TXh27
-         0uCuJ3SqiVyxFAaVknDHYKrbiU+8y7L8vQcWP0JQ=
+        b=aK9tCDZz6kpHnkXntbx9NdfmFqVLCpwycbxgNnUleZpfiODE3AVTugARTDZ2u/pz3
+         L3mkCPL++XfyY0E7uaWdDe+9pVJSwecsf/VRO7KoDMgYWXoYycjFzVAAAWwx6ZSMmm
+         I+eI9iBKYpYK7kMrw4KG35blCgif0dEVSiVIveB8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        syzbot+1c6756baf4b16b94d2a6@syzkaller.appspotmail.com,
-        Jan Kara <jack@suse.cz>
-Subject: [PATCH 4.19 14/70] reiserfs: Fix memory leak of journal device string
-Date:   Mon,  3 Feb 2020 16:19:26 +0000
-Message-Id: <20200203161914.658593167@linuxfoundation.org>
+        stable@vger.kernel.org, Yunhao Tian <18373444@buaa.edu.cn>,
+        Maxime Ripard <maxime@cerno.tech>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 5.4 24/90] clk: sunxi-ng: v3s: Fix incorrect number of hw_clks.
+Date:   Mon,  3 Feb 2020 16:19:27 +0000
+Message-Id: <20200203161920.818308603@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200203161912.158976871@linuxfoundation.org>
-References: <20200203161912.158976871@linuxfoundation.org>
+In-Reply-To: <20200203161917.612554987@linuxfoundation.org>
+References: <20200203161917.612554987@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,41 +44,61 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jan Kara <jack@suse.cz>
+From: Yunhao Tian <18373444@buaa.edu.cn>
 
-commit 5474ca7da6f34fa95e82edc747d5faa19cbdfb5c upstream.
+[ Upstream commit 4ff40d140e2a2060ef6051800a4a9eab07624f42 ]
 
-When a filesystem is mounted with jdev mount option, we store the
-journal device name in an allocated string in superblock. However we
-fail to ever free that string. Fix it.
+The hws field of sun8i_v3s_hw_clks has only 74
+members. However, the number specified by CLK_NUMBER
+is 77 (= CLK_I2S0 + 1). This leads to runtime segmentation
+fault that is not always reproducible.
 
-Reported-by: syzbot+1c6756baf4b16b94d2a6@syzkaller.appspotmail.com
-Fixes: c3aa077648e1 ("reiserfs: Properly display mount options in /proc/mounts")
-CC: stable@vger.kernel.org
-Signed-off-by: Jan Kara <jack@suse.cz>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+This patch fixes the problem by specifying correct clock number.
 
+Signed-off-by: Yunhao Tian <18373444@buaa.edu.cn>
+[Maxime: Also remove the CLK_NUMBER definition]
+Signed-off-by: Maxime Ripard <maxime@cerno.tech>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/reiserfs/super.c |    2 ++
- 1 file changed, 2 insertions(+)
+ drivers/clk/sunxi-ng/ccu-sun8i-v3s.c | 4 ++--
+ drivers/clk/sunxi-ng/ccu-sun8i-v3s.h | 2 --
+ 2 files changed, 2 insertions(+), 4 deletions(-)
 
---- a/fs/reiserfs/super.c
-+++ b/fs/reiserfs/super.c
-@@ -629,6 +629,7 @@ static void reiserfs_put_super(struct su
- 	reiserfs_write_unlock(s);
- 	mutex_destroy(&REISERFS_SB(s)->lock);
- 	destroy_workqueue(REISERFS_SB(s)->commit_wq);
-+	kfree(REISERFS_SB(s)->s_jdev);
- 	kfree(s->s_fs_info);
- 	s->s_fs_info = NULL;
- }
-@@ -2243,6 +2244,7 @@ error_unlocked:
- 			kfree(qf_names[j]);
- 	}
- #endif
-+	kfree(sbi->s_jdev);
- 	kfree(sbi);
+diff --git a/drivers/clk/sunxi-ng/ccu-sun8i-v3s.c b/drivers/clk/sunxi-ng/ccu-sun8i-v3s.c
+index 5c779eec454b6..0e36ca3bf3d52 100644
+--- a/drivers/clk/sunxi-ng/ccu-sun8i-v3s.c
++++ b/drivers/clk/sunxi-ng/ccu-sun8i-v3s.c
+@@ -618,7 +618,7 @@ static struct clk_hw_onecell_data sun8i_v3s_hw_clks = {
+ 		[CLK_MBUS]		= &mbus_clk.common.hw,
+ 		[CLK_MIPI_CSI]		= &mipi_csi_clk.common.hw,
+ 	},
+-	.num	= CLK_NUMBER,
++	.num	= CLK_PLL_DDR1 + 1,
+ };
  
- 	s->s_fs_info = NULL;
+ static struct clk_hw_onecell_data sun8i_v3_hw_clks = {
+@@ -700,7 +700,7 @@ static struct clk_hw_onecell_data sun8i_v3_hw_clks = {
+ 		[CLK_MBUS]		= &mbus_clk.common.hw,
+ 		[CLK_MIPI_CSI]		= &mipi_csi_clk.common.hw,
+ 	},
+-	.num	= CLK_NUMBER,
++	.num	= CLK_I2S0 + 1,
+ };
+ 
+ static struct ccu_reset_map sun8i_v3s_ccu_resets[] = {
+diff --git a/drivers/clk/sunxi-ng/ccu-sun8i-v3s.h b/drivers/clk/sunxi-ng/ccu-sun8i-v3s.h
+index b0160d305a677..108eeeedcbf76 100644
+--- a/drivers/clk/sunxi-ng/ccu-sun8i-v3s.h
++++ b/drivers/clk/sunxi-ng/ccu-sun8i-v3s.h
+@@ -51,6 +51,4 @@
+ 
+ #define CLK_PLL_DDR1		74
+ 
+-#define CLK_NUMBER		(CLK_I2S0 + 1)
+-
+ #endif /* _CCU_SUN8I_H3_H_ */
+-- 
+2.20.1
+
 
 
