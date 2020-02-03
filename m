@@ -2,37 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2335E150B49
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Feb 2020 17:26:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E1A56150B81
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Feb 2020 17:28:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729107AbgBCQ0T (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 3 Feb 2020 11:26:19 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37244 "EHLO mail.kernel.org"
+        id S1729528AbgBCQ2J (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 3 Feb 2020 11:28:09 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39402 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729064AbgBCQ0R (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Feb 2020 11:26:17 -0500
+        id S1729500AbgBCQ15 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Feb 2020 11:27:57 -0500
 Received: from localhost (unknown [104.132.45.99])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EBCAB2080C;
-        Mon,  3 Feb 2020 16:26:15 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E026620CC7;
+        Mon,  3 Feb 2020 16:27:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1580747176;
-        bh=EyhJu2pHtYbE7eiPlxOa57jPW0fWAUvL1FgIjbsTiho=;
+        s=default; t=1580747277;
+        bh=12c1Cba7k9vHIdxb59e3M30I8y9BZKq3PODOf2RGwDs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=QieEHCIDih+iWSOHWVEhQnyidByKw02wwPO/kuZnz6eQWf0NvLt2blSkG4SScq24r
-         bylFpWHCh5KqAXZLwERAop/ZlsTIHSVNRsiZJpFNQ17wvXKwbXQ7ZRcrNVo3dxtgd+
-         KtervvjTwDTajAnTdoM1CbDZ32udOmv0HmoW1Jeo=
+        b=x0RfcUB46xyYIInTac6y/RNLo8VZG0ulCu23pRkF0ZC2OvV1Bk8N30EayKRj28ZIh
+         Y+a6JUUu8lrX+NztA13WzL0WzPRGilLezPtOR+FqboQ+K2c5pPJxFDhOVd8QteiDsu
+         URjI/Kfzb5BaIJR1eN4LdP8L0ZEz5OWHZiiNYpvA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Johan Hovold <johan@kernel.org>
-Subject: [PATCH 4.9 06/68] USB: serial: ir-usb: fix IrLAP framing
+        stable@vger.kernel.org, Johan Hovold <johan@kernel.org>,
+        Kalle Valo <kvalo@codeaurora.org>
+Subject: [PATCH 4.14 17/89] zd1211rw: fix storage endpoint lookup
 Date:   Mon,  3 Feb 2020 16:19:02 +0000
-Message-Id: <20200203161905.842123714@linuxfoundation.org>
+Message-Id: <20200203161919.210447108@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200203161904.705434837@linuxfoundation.org>
-References: <20200203161904.705434837@linuxfoundation.org>
+In-Reply-To: <20200203161916.847439465@linuxfoundation.org>
+References: <20200203161916.847439465@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,171 +45,35 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Johan Hovold <johan@kernel.org>
 
-commit 38c0d5bdf4973f9f5a888166e9d3e9ed0d32057a upstream.
+commit 2d68bb2687abb747558b933e80845ff31570a49c upstream.
 
-Commit f4a4cbb2047e ("USB: ir-usb: reimplement using generic framework")
-switched to using the generic write implementation which may combine
-multiple write requests into larger transfers. This can break the IrLAP
-protocol where end-of-frame is determined using the USB short packet
-mechanism, for example, if multiple frames are sent in rapid succession.
+Make sure to use the current alternate setting when verifying the
+storage interface descriptors to avoid submitting an URB to an invalid
+endpoint.
 
-Fixes: f4a4cbb2047e ("USB: ir-usb: reimplement using generic framework")
-Cc: stable <stable@vger.kernel.org>     # 2.6.35
-Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Failing to do so could cause the driver to misbehave or trigger a WARN()
+in usb_submit_urb() that kernels with panic_on_warn set would choke on.
+
+Fixes: a1030e92c150 ("[PATCH] zd1211rw: Convert installer CDROM device into WLAN device")
+Cc: stable <stable@vger.kernel.org>     # 2.6.19
 Signed-off-by: Johan Hovold <johan@kernel.org>
+Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/usb/serial/ir-usb.c |  113 +++++++++++++++++++++++++++++++++++---------
- 1 file changed, 91 insertions(+), 22 deletions(-)
+ drivers/net/wireless/zydas/zd1211rw/zd_usb.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/usb/serial/ir-usb.c
-+++ b/drivers/usb/serial/ir-usb.c
-@@ -49,9 +49,10 @@ static int buffer_size;
- static int xbof = -1;
- 
- static int  ir_startup (struct usb_serial *serial);
--static int  ir_open(struct tty_struct *tty, struct usb_serial_port *port);
--static int ir_prepare_write_buffer(struct usb_serial_port *port,
--						void *dest, size_t size);
-+static int ir_write(struct tty_struct *tty, struct usb_serial_port *port,
-+		const unsigned char *buf, int count);
-+static int ir_write_room(struct tty_struct *tty);
-+static void ir_write_bulk_callback(struct urb *urb);
- static void ir_process_read_urb(struct urb *urb);
- static void ir_set_termios(struct tty_struct *tty,
- 		struct usb_serial_port *port, struct ktermios *old_termios);
-@@ -81,8 +82,9 @@ static struct usb_serial_driver ir_devic
- 	.num_ports		= 1,
- 	.set_termios		= ir_set_termios,
- 	.attach			= ir_startup,
--	.open			= ir_open,
--	.prepare_write_buffer	= ir_prepare_write_buffer,
-+	.write			= ir_write,
-+	.write_room		= ir_write_room,
-+	.write_bulk_callback	= ir_write_bulk_callback,
- 	.process_read_urb	= ir_process_read_urb,
- };
- 
-@@ -255,35 +257,102 @@ static int ir_startup(struct usb_serial
- 	return 0;
- }
- 
--static int ir_open(struct tty_struct *tty, struct usb_serial_port *port)
-+static int ir_write(struct tty_struct *tty, struct usb_serial_port *port,
-+		const unsigned char *buf, int count)
+--- a/drivers/net/wireless/zydas/zd1211rw/zd_usb.c
++++ b/drivers/net/wireless/zydas/zd1211rw/zd_usb.c
+@@ -1272,7 +1272,7 @@ static void print_id(struct usb_device *
+ static int eject_installer(struct usb_interface *intf)
  {
--	int i;
-+	struct urb *urb = NULL;
-+	unsigned long flags;
-+	int ret;
- 
--	for (i = 0; i < ARRAY_SIZE(port->write_urbs); ++i)
--		port->write_urbs[i]->transfer_flags = URB_ZERO_PACKET;
-+	if (port->bulk_out_size == 0)
-+		return -EINVAL;
- 
--	/* Start reading from the device */
--	return usb_serial_generic_open(tty, port);
--}
-+	if (count == 0)
-+		return 0;
- 
--static int ir_prepare_write_buffer(struct usb_serial_port *port,
--						void *dest, size_t size)
--{
--	unsigned char *buf = dest;
--	int count;
-+	count = min(count, port->bulk_out_size - 1);
-+
-+	spin_lock_irqsave(&port->lock, flags);
-+	if (__test_and_clear_bit(0, &port->write_urbs_free)) {
-+		urb = port->write_urbs[0];
-+		port->tx_bytes += count;
-+	}
-+	spin_unlock_irqrestore(&port->lock, flags);
-+
-+	if (!urb)
-+		return 0;
- 
- 	/*
- 	 * The first byte of the packet we send to the device contains an
--	 * inbound header which indicates an additional number of BOFs and
-+	 * outbound header which indicates an additional number of BOFs and
- 	 * a baud rate change.
- 	 *
- 	 * See section 5.4.2.2 of the USB IrDA spec.
- 	 */
--	*buf = ir_xbof | ir_baud;
-+	*(u8 *)urb->transfer_buffer = ir_xbof | ir_baud;
-+
-+	memcpy(urb->transfer_buffer + 1, buf, count);
-+
-+	urb->transfer_buffer_length = count + 1;
-+	urb->transfer_flags = URB_ZERO_PACKET;
-+
-+	ret = usb_submit_urb(urb, GFP_ATOMIC);
-+	if (ret) {
-+		dev_err(&port->dev, "failed to submit write urb: %d\n", ret);
-+
-+		spin_lock_irqsave(&port->lock, flags);
-+		__set_bit(0, &port->write_urbs_free);
-+		port->tx_bytes -= count;
-+		spin_unlock_irqrestore(&port->lock, flags);
-+
-+		return ret;
-+	}
-+
-+	return count;
-+}
-+
-+static void ir_write_bulk_callback(struct urb *urb)
-+{
-+	struct usb_serial_port *port = urb->context;
-+	int status = urb->status;
-+	unsigned long flags;
-+
-+	spin_lock_irqsave(&port->lock, flags);
-+	__set_bit(0, &port->write_urbs_free);
-+	port->tx_bytes -= urb->transfer_buffer_length - 1;
-+	spin_unlock_irqrestore(&port->lock, flags);
-+
-+	switch (status) {
-+	case 0:
-+		break;
-+	case -ENOENT:
-+	case -ECONNRESET:
-+	case -ESHUTDOWN:
-+		dev_dbg(&port->dev, "write urb stopped: %d\n", status);
-+		return;
-+	case -EPIPE:
-+		dev_err(&port->dev, "write urb stopped: %d\n", status);
-+		return;
-+	default:
-+		dev_err(&port->dev, "nonzero write-urb status: %d\n", status);
-+		break;
-+	}
-+
-+	usb_serial_port_softint(port);
-+}
-+
-+static int ir_write_room(struct tty_struct *tty)
-+{
-+	struct usb_serial_port *port = tty->driver_data;
-+	int count = 0;
-+
-+	if (port->bulk_out_size == 0)
-+		return 0;
-+
-+	if (test_bit(0, &port->write_urbs_free))
-+		count = port->bulk_out_size - 1;
- 
--	count = kfifo_out_locked(&port->write_fifo, buf + 1, size - 1,
--								&port->lock);
--	return count + 1;
-+	return count;
- }
- 
- static void ir_process_read_urb(struct urb *urb)
+ 	struct usb_device *udev = interface_to_usbdev(intf);
+-	struct usb_host_interface *iface_desc = &intf->altsetting[0];
++	struct usb_host_interface *iface_desc = intf->cur_altsetting;
+ 	struct usb_endpoint_descriptor *endpoint;
+ 	unsigned char *cmd;
+ 	u8 bulk_out_ep;
 
 
