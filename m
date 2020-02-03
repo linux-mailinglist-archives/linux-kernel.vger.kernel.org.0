@@ -2,56 +2,65 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F1A3115006A
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Feb 2020 02:58:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 16B2915007A
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Feb 2020 03:08:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727190AbgBCB6R convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Sun, 2 Feb 2020 20:58:17 -0500
-Received: from smtp2200-217.mail.aliyun.com ([121.197.200.217]:44070 "EHLO
-        smtp2200-217.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726670AbgBCB6R (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 2 Feb 2020 20:58:17 -0500
-X-Alimail-AntiSpam: AC=CONTINUE;BC=0.129933|-1;CH=green;DM=CONTINUE|CONTINUE|true|0.206018-0.00306025-0.790922;DS=CONTINUE|ham_social|0.0175627-0.000733147-0.981704;FP=0|0|0|0|0|-1|-1|-1;HT=e02c03305;MF=ren_guo@c-sky.com;NM=1;PH=DS;RN=3;RT=3;SR=0;TI=SMTPD_---.Gk95N9p_1580695094;
-Received: from it-c02z45m7lvcf.lan(mailfrom:ren_guo@c-sky.com fp:SMTPD_---.Gk95N9p_1580695094)
-          by smtp.aliyun-inc.com(10.147.41.137);
-          Mon, 03 Feb 2020 09:58:14 +0800
-Content-Type: text/plain;
-        charset=gb2312
-Mime-Version: 1.0 (Mac OS X Mail 12.4 \(3445.104.11\))
-Subject: Re: linux-next: bad rebase of the csky tree
-From:   Guo Ren <ren_guo@c-sky.com>
-In-Reply-To: <20200203074151.05bfe914@canb.auug.org.au>
-Date:   Mon, 3 Feb 2020 09:58:13 +0800
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Transfer-Encoding: 8BIT
-Message-Id: <98C40432-86BC-4DBD-9896-45B7BB049E7E@c-sky.com>
-References: <20200203074151.05bfe914@canb.auug.org.au>
-To:     Stephen Rothwell <sfr@canb.auug.org.au>
-X-Mailer: Apple Mail (2.3445.104.11)
+        id S1727327AbgBCCID (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 2 Feb 2020 21:08:03 -0500
+Received: from szxga07-in.huawei.com ([45.249.212.35]:55756 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726393AbgBCCIC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 2 Feb 2020 21:08:02 -0500
+Received: from DGGEMS413-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id 5C22F322EA07049DCC32;
+        Mon,  3 Feb 2020 10:07:59 +0800 (CST)
+Received: from localhost.localdomain.localdomain (10.175.113.25) by
+ DGGEMS413-HUB.china.huawei.com (10.3.19.213) with Microsoft SMTP Server id
+ 14.3.439.0; Mon, 3 Feb 2020 10:07:52 +0800
+From:   Hongbo Yao <yaohongbo@huawei.com>
+To:     <ast@kernel.org>, <daniel@iogearbox.net>
+CC:     <yaohongbo@huawei.com>, <chenzhou10@huawei.com>, <kafai@fb.com>,
+        <songliubraving@fb.com>, <yhs@fb.com>, <andriin@fb.com>,
+        <netdev@vger.kernel.org>, <bpf@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>,
+        <clang-built-linux@googlegroups.com>
+Subject: [PATCH -next] bpf: make btf_check_func_type_match() static
+Date:   Mon, 3 Feb 2020 10:02:20 +0800
+Message-ID: <20200203020220.117152-1-yaohongbo@huawei.com>
+X-Mailer: git-send-email 2.20.1
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7BIT
+Content-Type:   text/plain; charset=US-ASCII
+X-Originating-IP: [10.175.113.25]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Sorry got it, I’ll deal with it
+Fix sparse warning:
+kernel/bpf/btf.c:4131:5: warning: symbol 'btf_check_func_type_match' was
+not declared. Should it be static?
 
-Best Regards
-  Guo Ren
+Reported-by: Hulk Robot <hulkci@huawei.com>
+Signed-off-by: Hongbo Yao <yaohongbo@huawei.com>
+---
+ kernel/bpf/btf.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-
-
-> 在 2020年2月3日，上午4:41，Stephen Rothwell <sfr@canb.auug.org.au> 写道：
-> 
-> Hi all,
-> 
-> The rebase of the csky tree has rebased some of the commits from Linus'
-> tree as well.  Please do not rebase your tree unnecessarily and especially
-> not during the merge window.  And be more careful about how you do
-> rebases if they are necessary.
-> 
-> -- 
-> Cheers,
-> Stephen Rothwell
+diff --git a/kernel/bpf/btf.c b/kernel/bpf/btf.c
+index 8c9d8f266bef..83d3d92023af 100644
+--- a/kernel/bpf/btf.c
++++ b/kernel/bpf/btf.c
+@@ -4144,7 +4144,7 @@ int btf_distill_func_proto(struct bpf_verifier_log *log,
+  * EFAULT - verifier bug
+  * 0 - 99% match. The last 1% is validated by the verifier.
+  */
+-int btf_check_func_type_match(struct bpf_verifier_log *log,
++static int btf_check_func_type_match(struct bpf_verifier_log *log,
+ 			      struct btf *btf1, const struct btf_type *t1,
+ 			      struct btf *btf2, const struct btf_type *t2)
+ {
+-- 
+2.20.1
 
