@@ -2,35 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 36CD3150ABA
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Feb 2020 17:20:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D70BC150AFC
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Feb 2020 17:22:50 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728843AbgBCQUV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 3 Feb 2020 11:20:21 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60062 "EHLO mail.kernel.org"
+        id S1728968AbgBCQUs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 3 Feb 2020 11:20:48 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60680 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728824AbgBCQUT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Feb 2020 11:20:19 -0500
+        id S1728511AbgBCQUp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Feb 2020 11:20:45 -0500
 Received: from localhost (unknown [104.132.45.99])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9690620838;
-        Mon,  3 Feb 2020 16:20:18 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9B66720838;
+        Mon,  3 Feb 2020 16:20:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1580746819;
-        bh=sHEQDUxJfVWLAxmiD8XRiG1UUW3yDrMrHX0kipaQi00=;
+        s=default; t=1580746845;
+        bh=blro8WKHqirWAxDR/MgBABqkpB2q71gDN9yLScRLkCA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=gQv2GXP/TGTf8YVVJmPAd1FGYPdvjbC/SYrgAu2tD0nn26B/Dny4MSCyrvT1yonaM
-         3twDSEaVmsiN4TQBH33qd1U+uAvjLDRMxWrR/pgdlz+po5/eC8WefCcBKJJB43IV4V
-         1fhsHQpaRm4R3LECV3WTdX0dun/BzKCa7jcG2ePM=
+        b=IuBYm6jtmKorJT7MekdBIpNW9hU7mkfaG70Y6vkULdo+mSCIp9Iodny8nMshOUwTE
+         0v0bmG6UikrO2ASMruGvwsQslIqv8aDOPr+PumD3XOkGgO7hqNYAF4zYi5utSdzVxP
+         dsY8kPz6N2s8eAqgU4WH28O6Yrlk13cY+q/YADKY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Johan Hovold <johan@kernel.org>,
+        stable@vger.kernel.org, Fariya Fatima <fariyaf@gmail.com>,
+        Johan Hovold <johan@kernel.org>,
         Kalle Valo <kvalo@codeaurora.org>
-Subject: [PATCH 4.4 02/53] orinoco_usb: fix interface sanity check
-Date:   Mon,  3 Feb 2020 16:18:54 +0000
-Message-Id: <20200203161903.457277571@linuxfoundation.org>
+Subject: [PATCH 4.4 03/53] rsi_91x_usb: fix interface sanity check
+Date:   Mon,  3 Feb 2020 16:18:55 +0000
+Message-Id: <20200203161903.650657231@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
 In-Reply-To: <20200203161902.714326084@linuxfoundation.org>
 References: <20200203161902.714326084@linuxfoundation.org>
@@ -45,7 +46,7 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Johan Hovold <johan@kernel.org>
 
-commit b73e05aa543cf8db4f4927e36952360d71291d41 upstream.
+commit 3139b180906af43bc09bd3373fc2338a8271d9d9 upstream.
 
 Make sure to use the current alternate setting when verifying the
 interface descriptors to avoid binding to an invalid interface.
@@ -53,29 +54,27 @@ interface descriptors to avoid binding to an invalid interface.
 Failing to do so could cause the driver to misbehave or trigger a WARN()
 in usb_submit_urb() that kernels with panic_on_warn set would choke on.
 
-Fixes: 9afac70a7305 ("orinoco: add orinoco_usb driver")
-Cc: stable <stable@vger.kernel.org>     # 2.6.35
+Fixes: dad0d04fa7ba ("rsi: Add RS9113 wireless driver")
+Cc: stable <stable@vger.kernel.org>     # 3.15
+Cc: Fariya Fatima <fariyaf@gmail.com>
 Signed-off-by: Johan Hovold <johan@kernel.org>
 Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/net/wireless/orinoco/orinoco_usb.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/net/wireless/rsi/rsi_91x_usb.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/net/wireless/orinoco/orinoco_usb.c
-+++ b/drivers/net/wireless/orinoco/orinoco_usb.c
-@@ -1601,9 +1601,9 @@ static int ezusb_probe(struct usb_interf
- 	/* set up the endpoint information */
- 	/* check out the endpoints */
+--- a/drivers/net/wireless/rsi/rsi_91x_usb.c
++++ b/drivers/net/wireless/rsi/rsi_91x_usb.c
+@@ -103,7 +103,7 @@ static int rsi_find_bulk_in_and_out_endp
+ 	__le16 buffer_size;
+ 	int ii, bep_found = 0;
  
--	iface_desc = &interface->altsetting[0].desc;
-+	iface_desc = &interface->cur_altsetting->desc;
- 	for (i = 0; i < iface_desc->bNumEndpoints; ++i) {
--		ep = &interface->altsetting[0].endpoint[i].desc;
-+		ep = &interface->cur_altsetting->endpoint[i].desc;
+-	iface_desc = &(interface->altsetting[0]);
++	iface_desc = interface->cur_altsetting;
  
- 		if (usb_endpoint_is_bulk_in(ep)) {
- 			/* we found a bulk in endpoint */
+ 	for (ii = 0; ii < iface_desc->desc.bNumEndpoints; ++ii) {
+ 		endpoint = &(iface_desc->endpoint[ii].desc);
 
 
