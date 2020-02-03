@@ -2,40 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D3CF1150D8E
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Feb 2020 17:46:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 53305150CED
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Feb 2020 17:40:30 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729853AbgBCQbL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 3 Feb 2020 11:31:11 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44052 "EHLO mail.kernel.org"
+        id S1731176AbgBCQgT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 3 Feb 2020 11:36:19 -0500
+Received: from mail.kernel.org ([198.145.29.99]:51442 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730118AbgBCQbG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Feb 2020 11:31:06 -0500
+        id S1731162AbgBCQgQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Feb 2020 11:36:16 -0500
 Received: from localhost (unknown [104.132.45.99])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BBFB72080D;
-        Mon,  3 Feb 2020 16:31:05 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9968E2051A;
+        Mon,  3 Feb 2020 16:36:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1580747466;
-        bh=hwXRl+Lx/wvWDC0qswCYyJICTS5Jv0MsAO4f/H81hn8=;
+        s=default; t=1580747776;
+        bh=jHcyarDWnbqM933FxFt04dQFZkiJ+aPj6+SmsWhOmmc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=gjsnkHtBHaTyrCPH0JQP6YLaXslSe8ghm4UMkW8G63n2Pz4NeHvKgzBoZ+ToNDSl4
-         D20LLTQ998oMcmrMMv2YioktVbjlcQ7bIEMN+WCmXQY+s/0+1u9fENebYhrGTqhMU9
-         U/BO94BSUeD9ITh1qwki3Ys/M+vyxR3v+9ig+JbY=
+        b=15ggu6GDSHYO48a4oR9/zA8Eu3RGjoooKKcpMDsK9myZ5fDa7vOQoy+DzQlXTPi02
+         0AynKCSHVcG4fZqEUAPtY96it3FC7ZtGCT2m9Aoi9hu9P/233PRhweLZv/pnw5f/DZ
+         kirrVfPPejaEHbPRkDcn73Xo2xHDscKlmfq3BI2c=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Vincenzo Frascino <vincenzo.frascino@arm.com>,
-        Jens Wiklander <jens.wiklander@linaro.org>,
+        stable@vger.kernel.org, Olof Johansson <olof@lixom.net>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 75/89] tee: optee: Fix compilation issue with nommu
-Date:   Mon,  3 Feb 2020 16:20:00 +0000
-Message-Id: <20200203161926.121917970@linuxfoundation.org>
+Subject: [PATCH 5.4 58/90] riscv: Less inefficient gcc tishift helpers (and export their symbols)
+Date:   Mon,  3 Feb 2020 16:20:01 +0000
+Message-Id: <20200203161924.732994819@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200203161916.847439465@linuxfoundation.org>
-References: <20200203161916.847439465@linuxfoundation.org>
+In-Reply-To: <20200203161917.612554987@linuxfoundation.org>
+References: <20200203161917.612554987@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,49 +44,143 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Vincenzo Frascino <vincenzo.frascino@arm.com>
+From: Olof Johansson <olof@lixom.net>
 
-[ Upstream commit 9e0caab8e0f96f0af7d1dd388e62f44184a75372 ]
+[ Upstream commit fc585d4a5cf614727f64d86550b794bcad29d5c3 ]
 
-The optee driver uses specific page table types to verify if a memory
-region is normal. These types are not defined in nommu systems. Trying
-to compile the driver in these systems results in a build error:
+The existing __lshrti3 was really inefficient, and the other two helpers
+are also needed to compile some modules.
 
-  linux/drivers/tee/optee/call.c: In function ‘is_normal_memory’:
-  linux/drivers/tee/optee/call.c:533:26: error: ‘L_PTE_MT_MASK’ undeclared
-     (first use in this function); did you mean ‘PREEMPT_MASK’?
-     return (pgprot_val(p) & L_PTE_MT_MASK) == L_PTE_MT_WRITEALLOC;
-                             ^~~~~~~~~~~~~
-                             PREEMPT_MASK
-  linux/drivers/tee/optee/call.c:533:26: note: each undeclared identifier is
-     reported only once for each function it appears in
-  linux/drivers/tee/optee/call.c:533:44: error: ‘L_PTE_MT_WRITEALLOC’ undeclared
-     (first use in this function)
-     return (pgprot_val(p) & L_PTE_MT_MASK) == L_PTE_MT_WRITEALLOC;
-                                            ^~~~~~~~~~~~~~~~~~~
+Add the missing versions, and export all of the symbols like arm64
+already does.
 
-Make the optee driver depend on MMU to fix the compilation issue.
+This code is based on the assembly generated by libgcc builds.
 
-Signed-off-by: Vincenzo Frascino <vincenzo.frascino@arm.com>
-[jw: update commit title]
-Signed-off-by: Jens Wiklander <jens.wiklander@linaro.org>
+This fixes a build break triggered by ubsan:
+
+riscv64-unknown-linux-gnu-ld: lib/ubsan.o: in function `.L2':
+ubsan.c:(.text.unlikely+0x38): undefined reference to `__ashlti3'
+riscv64-unknown-linux-gnu-ld: ubsan.c:(.text.unlikely+0x42): undefined reference to `__ashrti3'
+
+Signed-off-by: Olof Johansson <olof@lixom.net>
+[paul.walmsley@sifive.com: use SYM_FUNC_{START,END} instead of
+ ENTRY/ENDPROC; note libgcc origin]
+Signed-off-by: Paul Walmsley <paul.walmsley@sifive.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/tee/optee/Kconfig | 1 +
- 1 file changed, 1 insertion(+)
+ arch/riscv/include/asm/asm-prototypes.h |  4 ++
+ arch/riscv/lib/tishift.S                | 75 +++++++++++++++++++------
+ 2 files changed, 61 insertions(+), 18 deletions(-)
 
-diff --git a/drivers/tee/optee/Kconfig b/drivers/tee/optee/Kconfig
-index 0126de898036c..108600c6eb564 100644
---- a/drivers/tee/optee/Kconfig
-+++ b/drivers/tee/optee/Kconfig
-@@ -2,6 +2,7 @@
- config OPTEE
- 	tristate "OP-TEE"
- 	depends on HAVE_ARM_SMCCC
-+	depends on MMU
- 	help
- 	  This implements the OP-TEE Trusted Execution Environment (TEE)
- 	  driver.
+diff --git a/arch/riscv/include/asm/asm-prototypes.h b/arch/riscv/include/asm/asm-prototypes.h
+index c9fecd120d187..8ae9708a8eee8 100644
+--- a/arch/riscv/include/asm/asm-prototypes.h
++++ b/arch/riscv/include/asm/asm-prototypes.h
+@@ -4,4 +4,8 @@
+ #include <linux/ftrace.h>
+ #include <asm-generic/asm-prototypes.h>
+ 
++long long __lshrti3(long long a, int b);
++long long __ashrti3(long long a, int b);
++long long __ashlti3(long long a, int b);
++
+ #endif /* _ASM_RISCV_PROTOTYPES_H */
+diff --git a/arch/riscv/lib/tishift.S b/arch/riscv/lib/tishift.S
+index 15f9d54c7db63..ef90075c4b0a9 100644
+--- a/arch/riscv/lib/tishift.S
++++ b/arch/riscv/lib/tishift.S
+@@ -4,34 +4,73 @@
+  */
+ 
+ #include <linux/linkage.h>
++#include <asm-generic/export.h>
+ 
+-ENTRY(__lshrti3)
++SYM_FUNC_START(__lshrti3)
+ 	beqz	a2, .L1
+ 	li	a5,64
+ 	sub	a5,a5,a2
+-	addi	sp,sp,-16
+ 	sext.w	a4,a5
+ 	blez	a5, .L2
+ 	sext.w	a2,a2
+-	sll	a4,a1,a4
+ 	srl	a0,a0,a2
+-	srl	a1,a1,a2
++	sll	a4,a1,a4
++	srl	a2,a1,a2
+ 	or	a0,a0,a4
+-	sd	a1,8(sp)
+-	sd	a0,0(sp)
+-	ld	a0,0(sp)
+-	ld	a1,8(sp)
+-	addi	sp,sp,16
+-	ret
++	mv	a1,a2
+ .L1:
+ 	ret
+ .L2:
+-	negw	a4,a4
+-	srl	a1,a1,a4
+-	sd	a1,0(sp)
+-	sd	zero,8(sp)
+-	ld	a0,0(sp)
+-	ld	a1,8(sp)
+-	addi	sp,sp,16
++	negw	a0,a4
++	li	a2,0
++	srl	a0,a1,a0
++	mv	a1,a2
++	ret
++SYM_FUNC_END(__lshrti3)
++EXPORT_SYMBOL(__lshrti3)
++
++SYM_FUNC_START(__ashrti3)
++	beqz	a2, .L3
++	li	a5,64
++	sub	a5,a5,a2
++	sext.w	a4,a5
++	blez	a5, .L4
++	sext.w	a2,a2
++	srl	a0,a0,a2
++	sll	a4,a1,a4
++	sra	a2,a1,a2
++	or	a0,a0,a4
++	mv	a1,a2
++.L3:
++	ret
++.L4:
++	negw	a0,a4
++	srai	a2,a1,0x3f
++	sra	a0,a1,a0
++	mv	a1,a2
++	ret
++SYM_FUNC_END(__ashrti3)
++EXPORT_SYMBOL(__ashrti3)
++
++SYM_FUNC_START(__ashlti3)
++	beqz	a2, .L5
++	li	a5,64
++	sub	a5,a5,a2
++	sext.w	a4,a5
++	blez	a5, .L6
++	sext.w	a2,a2
++	sll	a1,a1,a2
++	srl	a4,a0,a4
++	sll	a2,a0,a2
++	or	a1,a1,a4
++	mv	a0,a2
++.L5:
++	ret
++.L6:
++	negw	a1,a4
++	li	a2,0
++	sll	a1,a0,a1
++	mv	a0,a2
+ 	ret
+-ENDPROC(__lshrti3)
++SYM_FUNC_END(__ashlti3)
++EXPORT_SYMBOL(__ashlti3)
 -- 
 2.20.1
 
