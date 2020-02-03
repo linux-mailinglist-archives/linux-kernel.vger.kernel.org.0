@@ -2,103 +2,94 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6DF8B15125E
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Feb 2020 23:34:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7BF1215125B
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Feb 2020 23:30:51 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726872AbgBCWe0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 3 Feb 2020 17:34:26 -0500
-Received: from outgoing3.flk.host-h.net ([188.40.0.89]:60667 "EHLO
-        outgoing3.flk.host-h.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727276AbgBCWe0 (ORCPT
+        id S1727205AbgBCWam (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 3 Feb 2020 17:30:42 -0500
+Received: from mail-pj1-f65.google.com ([209.85.216.65]:39402 "EHLO
+        mail-pj1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726928AbgBCWal (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Feb 2020 17:34:26 -0500
-Received: from www31.flk1.host-h.net ([188.40.1.173])
-        by antispam1-flk1.host-h.net with esmtpsa (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256)
-        (Exim 4.92)
-        (envelope-from <justin.swartz@risingedge.co.za>)
-        id 1iykIP-0001v2-CU; Tue, 04 Feb 2020 00:34:23 +0200
-Received: from [130.255.73.16] (helo=v01.28459.vpscontrol.net)
-        by www31.flk1.host-h.net with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.89)
-        (envelope-from <justin.swartz@risingedge.co.za>)
-        id 1iykIM-0000k9-VQ; Tue, 04 Feb 2020 00:34:19 +0200
-From:   Justin Swartz <justin.swartz@risingedge.co.za>
-To:     Jacob Chen <jacob-chen@iotwrt.com>,
-        Ezequiel Garcia <ezequiel@collabora.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Heiko Stuebner <heiko@sntech.de>, linux-media@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
-Cc:     Justin Swartz <justin.swartz@risingedge.co.za>
-Subject: [PATCH v4 0/3] Add rga to rk322x device tree
-Date:   Mon,  3 Feb 2020 22:30:28 +0000
-Message-Id: <cover.1580768038.git.justin.swartz@risingedge.co.za>
-X-Mailer: git-send-email 2.11.0
-X-Authenticated-Sender: justin.swartz@risingedge.co.za
-X-Virus-Scanned: Clear
-X-Originating-IP: 188.40.1.173
-X-SpamExperts-Domain: risingedge.co.za
-X-SpamExperts-Username: 
-Authentication-Results: host-h.net; auth=pass (login) smtp.auth=@risingedge.co.za
-X-SpamExperts-Outgoing-Class: ham
-X-SpamExperts-Outgoing-Evidence: Combined (0.02)
-X-Recommended-Action: accept
-X-Filter-ID: Mvzo4OR0dZXEDF/gcnlw0S9sfM/nP8gxoqs1zeWkeM2pSDasLI4SayDByyq9LIhVuTLiRoIJbWVM
- VDvK+OR4bkTNWdUk1Ol2OGx3IfrIJKyP9eGNFz9TW9u+Jt8z2T3K7uDjV/sFUXQr+CDrNQuIHgQg
- mAX8Bxy/iUu0ThNZg0h/RxVysY5Ye6+GGw0VqdJD7ren9RtRNyYim5e3GD8LGfWrcbYvelpuN/Pk
- qhBpvAyWwieZyauFYqHkIbFa+ipF21HJWO60ZqrvKy/1AXUV5oXt6ymoFHaG7BQtEYvFCSrK5j1T
- Po5/LpleUgQM5/MAHmDvzkMd4joYqrUfcPIQdUYI3fUXyt8g6v09xrG7vu/fdUS1M5thdxxsnOTC
- rRmvZNXA7urqkuRkjn1fyteVYP+HXs9CMbFn9vCz9Z+lGmDQvQDDheqH4lBQpR0ziVlLWDAC1vRC
- hq319+C3vxdCgsyStZRkQwmoMeUp+gQglixgZmTW6H0Uo/QzUeaLOBvNEC1g+U1SXfUhLsTk5wUY
- WaWokZC3JOaEfAcg3rPhhffuvzdjlhFBwXCgjBtoYe8eg5nlaTNYebWa2W6GbNvgwptlhJrsz+8j
- XuMdjIbLZhwoK/VzePATsXS/rFxRypFKMiPLyoQzvILSDO18VtgBXTa3ez3cHoqTWBKuYika623Y
- Ta6/LJzl4pg0ZC9q5gYH7EOMauBWC98ol0xUHcbfIJ9ZJ7PpnPxGejDS+HAMyOjpxOsB8gG0slV7
- ra6jI4BS3XLmxFz+88FWeB7miCnFrS+xkiYMmdOwRIKnLhTyDa49KiI6ApkBL1M2pjeIsNv0i2bz
- nHJ53CHS5fL+CC61pH+Mdi8KDLlrJjQEyoQkvVqjwoXSktopqY7X3mJE1vuavCrJPmnnTHzVkpyb
- MK7ZTZV8hN6hngxqNW/p6/rAjB3Bo9WPi4IE45J8SMIBWsA7tm+5pSj1YjV94R3x16NaT9yCB/zW
- LYsk4/ealtlYzK51KubfNuS9lgsouDG6gpp8iIlTfpXH3eJ/htNFsfRJILGw3FQKlZKPu21J/MuB
- 4XqWHsbQ5DjCOMluv3aOz8NW0bDnfSypVfNnD/ody8wcCN83CNy2/HP4CS/B6ymwJqdrYqktDHCy
- f2KOgPWiC6z4HnV1R/vfaN0C4C3KdSxIKbHYhXQwhXELIBZC+BuxdgK5cVvzDCtuQClUbi7eRJvI
- lX3taZxyfrmN0VTHLZteW2tmp/7PDtVuzmh0F4WifHSVhLwCLj5UzlqDZIb7xEp3klSpLYn5Sshm
- tRDo/ib6qUd+ON9Iwv3fqFcmzUrJkUoL/PyVSe2/DDFq5n7HBuKWYRb2mL6sFaAAW2m3yODQWZ6C
- UzN46xT2FnDD31r1QFs2yPRk3H1E4ANRdN1BlPI5cpunCmbc5xpJVMDSneyWOiQlotRPFwUdX67F
- 3JAjgow=
-X-Report-Abuse-To: spam@antispammaster.host-h.net
+        Mon, 3 Feb 2020 17:30:41 -0500
+Received: by mail-pj1-f65.google.com with SMTP id e9so415037pjr.4;
+        Mon, 03 Feb 2020 14:30:41 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=ObtV4GuxT1aWcwvfp7nnODJ0y/i5a5qjCP9/aJC070U=;
+        b=hW4EiNO0em8pz5wgUw2B4xuZDZ3mT6E50lFB5EAtc8czq4jqrEqrqbOUcklIal5A63
+         guM0pZZguacTFTTsoP/RFVDKrmcNfMnvDkJOSrsWrRJHYdO6fK5p3RaA/ljtgW+u59lx
+         7QSpuMOi75f0khTuXluY8gA/Q/TWd9ivfI/sZhcLjncuzJ2KgZ+X6CZMtu7Z8QN8AfVA
+         uVeMrzfIeyz9f5LrwOJEl6lw4ew+l3qPy6ebnClD6FuNNeMO86d2BKz6o4F2fJoVXcG1
+         doA9Sko04QXswsFVUFQ+wCwVMKmSA4J1yKqBE3glWUc3uN1x+7+2O2HNCqam0bkZmchh
+         XDCA==
+X-Gm-Message-State: APjAAAXEndnBKLBNN3cBaLZEeXowGySWodoQNOD4yz+oTglYFx2DKTcW
+        e6bpD/HeIE1LvfUABYcibt6pXQKG
+X-Google-Smtp-Source: APXvYqzhao+tOtQQIRX2TXCk3BtyfpXuzqsBketmSKbHOGUSM+cHFPzLANvHmbrGE6KUdsXAh9V19g==
+X-Received: by 2002:a17:90a:d783:: with SMTP id z3mr1567408pju.3.1580769040238;
+        Mon, 03 Feb 2020 14:30:40 -0800 (PST)
+Received: from desktop-bart.svl.corp.google.com ([2620:15c:2cd:202:4308:52a3:24b6:2c60])
+        by smtp.gmail.com with ESMTPSA id s206sm3569842pfs.100.2020.02.03.14.30.38
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 03 Feb 2020 14:30:39 -0800 (PST)
+Subject: Re: [PATCH v4 6/8] scsi: ufs: Add dev ref clock gating wait time
+ support
+To:     Can Guo <cang@codeaurora.org>
+Cc:     asutoshd@codeaurora.org, nguyenb@codeaurora.org,
+        hongwus@codeaurora.org, rnayak@codeaurora.org,
+        linux-scsi@vger.kernel.org, kernel-team@android.com,
+        saravanak@google.com, salyzyn@google.com,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Avri Altman <avri.altman@wdc.com>,
+        Pedro Sousa <pedrom.sousa@synopsys.com>,
+        "James E.J. Bottomley" <jejb@linux.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        Tomas Winkler <tomas.winkler@intel.com>,
+        Stanley Chu <stanley.chu@mediatek.com>,
+        Venkat Gopalakrishnan <venkatg@codeaurora.org>,
+        open list <linux-kernel@vger.kernel.org>
+References: <1579764349-15578-1-git-send-email-cang@codeaurora.org>
+ <1579764349-15578-7-git-send-email-cang@codeaurora.org>
+ <d51c7c51-482a-01c3-fae0-1e83f9df45ac@acm.org>
+ <bcbd7e82b1ea6f653d5136e89e70c9f0@codeaurora.org>
+From:   Bart Van Assche <bvanassche@acm.org>
+Message-ID: <4fee5a64-8ae3-4d90-617f-699b8d27a699@acm.org>
+Date:   Mon, 3 Feb 2020 14:30:37 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.3.0
+MIME-Version: 1.0
+In-Reply-To: <bcbd7e82b1ea6f653d5136e89e70c9f0@codeaurora.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patchset aims to enable use of Rockchip's RGA, a 2D raster
-graphic acceleration unit, on rk322x based devices.
+On 2/2/20 11:16 PM, Can Guo wrote:
+> On 2020-01-26 11:34, Bart Van Assche wrote:
+>> On 2020-01-22 23:25, Can Guo wrote:
+>>> +    /* getting Specification Version in big endian format */
+>>> +    hba->dev_info.spec_version = 
+>>> desc_buf[DEVICE_DESC_PARAM_SPEC_VER] << 8 |
+>>> +                      desc_buf[DEVICE_DESC_PARAM_SPEC_VER + 1];
+>>
+>> Please use get_unaligned_be16() instead of open-coding it.
+> 
+> I am just keeping symmetry with the other device descriptors,
+> for example w_manufacturer_id.
 
-Changes in v4:
-  - Add a compatible value entry for the rk3228 to the rockchip-rga
-    device tree binding documentation.
+Hi Can,
 
-Changes in v3:
-  - Relocate rga node to the correct position in rk322x.dtsi, as
-    indicated by Johan Jonker.
+How about adding an additional patch that refactors the existing code?
 
-Changes in v2:
-  - Remove unnecessary "rockchip,rk3228-rga" device tree compatibility
-    string patch, as advised by Ezequiel Garcia.
+Please use get_unaligned_be16() in new code. That makes code easier to 
+read compared to open-coding get_unaligned_be16().
 
-  - Use both "rockchip,rk3228-rga" and "rockchip,rk3288-rga" in the
-    rga node's compatibility property, as suggested by Heiko Stuebner.
+Thanks,
 
-Justin Swartz (3):
-  [media] dt-bindings: Add binding for rk3228 rga
-  ARM: dts: rockchip: add rga node for rk322x
-  ARM: dts: rockchip: enable rga for rk3229-xms6
-
- Documentation/devicetree/bindings/media/rockchip-rga.txt |  5 +++--
- arch/arm/boot/dts/rk3229-xms6.dts                        |  4 ++++
- arch/arm/boot/dts/rk322x.dtsi                            | 11 +++++++++++
- 3 files changed, 18 insertions(+), 2 deletions(-)
-
--- 
-2.11.0
-
+Bart.
