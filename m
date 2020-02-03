@@ -2,129 +2,164 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EED9215096C
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Feb 2020 16:14:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AF389150995
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Feb 2020 16:15:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728938AbgBCPO3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 3 Feb 2020 10:14:29 -0500
-Received: from pegase1.c-s.fr ([93.17.236.30]:44923 "EHLO pegase1.c-s.fr"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728918AbgBCPO2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Feb 2020 10:14:28 -0500
-Received: from localhost (mailhub1-int [192.168.12.234])
-        by localhost (Postfix) with ESMTP id 48BBF846fMz9v3ls;
-        Mon,  3 Feb 2020 16:14:20 +0100 (CET)
-Authentication-Results: localhost; dkim=pass
-        reason="1024-bit key; insecure key"
-        header.d=c-s.fr header.i=@c-s.fr header.b=OGtzFIa+; dkim-adsp=pass;
-        dkim-atps=neutral
-X-Virus-Scanned: Debian amavisd-new at c-s.fr
-Received: from pegase1.c-s.fr ([192.168.12.234])
-        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
-        with ESMTP id 5VszB6UW2Yif; Mon,  3 Feb 2020 16:14:20 +0100 (CET)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-        by pegase1.c-s.fr (Postfix) with ESMTP id 48BBF82h8pz9v3lm;
-        Mon,  3 Feb 2020 16:14:20 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=c-s.fr; s=mail;
-        t=1580742860; bh=i4hAG7YwdO6LNDmYZ4wBEtikutj9N76WG5xl/PwnPrw=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=OGtzFIa+5ZhSxgd/BuHky5Jny2LDfnoF42zPtabwjmhorMsQSP8od+tqTvY9oMk3O
-         ug6+KKaiRNlh/wtS69Y4UVsFdUJC1Vu36ZVhY++cHIlyr4PBVDhCfDbWqmvxtfLxhX
-         pBTvZSaYZbiw2B0JwaU6kwU/pCLUp2ai2uhwAOdA=
-Received: from localhost (localhost [127.0.0.1])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id 7DE228B7B0;
-        Mon,  3 Feb 2020 16:14:25 +0100 (CET)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-        with ESMTP id unrhNEULKrXy; Mon,  3 Feb 2020 16:14:25 +0100 (CET)
-Received: from [172.25.230.102] (po15451.idsi0.si.c-s.fr [172.25.230.102])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id 12E638B7AC;
-        Mon,  3 Feb 2020 16:14:25 +0100 (CET)
-Subject: Re: [PATCH V12] mm/debug: Add tests validating architecture page
- table helpers
-To:     Qian Cai <cai@lca.pw>
-Cc:     Anshuman Khandual <Anshuman.Khandual@arm.com>, linux-mm@kvack.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Mike Rapoport <rppt@linux.vnet.ibm.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Michal Hocko <mhocko@kernel.org>,
-        Mark Rutland <Mark.Rutland@arm.com>,
-        Mark Brown <broonie@kernel.org>,
-        Steven Price <Steven.Price@arm.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Kees Cook <keescook@chromium.org>,
-        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-        Matthew Wilcox <willy@infradead.org>,
-        Sri Krishna chowdary <schowdary@nvidia.com>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Russell King - ARM Linux <linux@armlinux.org.uk>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Paul Mackerras <paulus@samba.org>,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Vineet Gupta <vgupta@synopsys.com>,
-        James Hogan <jhogan@kernel.org>,
-        Paul Burton <paul.burton@mips.com>,
-        Ralf Baechle <ralf@linux-mips.org>,
-        "Kirill A . Shutemov" <kirill@shutemov.name>,
-        Gerald Schaefer <gerald.schaefer@de.ibm.com>,
-        Ingo Molnar <mingo@kernel.org>,
-        linux-snps-arc@lists.infradead.org, linux-mips@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-ia64@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org, linux-s390@vger.kernel.org,
-        linux-sh@vger.kernel.org, sparclinux@vger.kernel.org,
-        x86@kernel.org, linux-kernel@vger.kernel.org,
-        kasan-dev <kasan-dev@googlegroups.com>
-References: <473d8198-3ac4-af3b-e2ec-c0698a3565d3@c-s.fr>
- <2C4ADFAE-7BB4-42B7-8F54-F036EA7A4316@lca.pw>
-From:   Christophe Leroy <christophe.leroy@c-s.fr>
-Message-ID: <8e94a073-4045-89aa-6a3b-24847ad7c858@c-s.fr>
-Date:   Mon, 3 Feb 2020 16:14:24 +0100
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.2
+        id S1729074AbgBCPPa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 3 Feb 2020 10:15:30 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:54238 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1729062AbgBCPP3 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Feb 2020 10:15:29 -0500
+Received: from pps.filterd (m0098413.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 013FCwGH029343;
+        Mon, 3 Feb 2020 10:15:09 -0500
+Received: from ppma02dal.us.ibm.com (a.bd.3ea9.ip4.static.sl-reverse.com [169.62.189.10])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2xxhfahuk8-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 03 Feb 2020 10:15:08 -0500
+Received: from pps.filterd (ppma02dal.us.ibm.com [127.0.0.1])
+        by ppma02dal.us.ibm.com (8.16.0.27/8.16.0.27) with SMTP id 013FEtRo002103;
+        Mon, 3 Feb 2020 15:15:08 GMT
+Received: from b03cxnp07028.gho.boulder.ibm.com (b03cxnp07028.gho.boulder.ibm.com [9.17.130.15])
+        by ppma02dal.us.ibm.com with ESMTP id 2xw0y6e89g-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 03 Feb 2020 15:15:07 +0000
+Received: from b03ledav005.gho.boulder.ibm.com (b03ledav005.gho.boulder.ibm.com [9.17.130.236])
+        by b03cxnp07028.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 013FF6wf45220128
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 3 Feb 2020 15:15:06 GMT
+Received: from b03ledav005.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id F4216BE05A;
+        Mon,  3 Feb 2020 15:15:05 +0000 (GMT)
+Received: from b03ledav005.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 9F0DCBE05B;
+        Mon,  3 Feb 2020 15:15:04 +0000 (GMT)
+Received: from swastik.ibm.com (unknown [9.160.115.135])
+        by b03ledav005.gho.boulder.ibm.com (Postfix) with ESMTP;
+        Mon,  3 Feb 2020 15:15:04 +0000 (GMT)
+Subject: Re: [PATCH] security/integrity: Include __func__ in messages for
+ easier debug
+To:     Joe Perches <joe@perches.com>,
+        Shuah Khan <skhan@linuxfoundation.org>, jmorris@namei.org,
+        serge@hallyn.com, mpe@ellerman.id.au, zohar@linux.ibm.com,
+        erichte@linux.ibm.com, nayna@linux.ibm.com, yuehaibing@huawei.com
+Cc:     linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20200130020129.15328-1-skhan@linuxfoundation.org>
+ <ab2e19123cc15e3f8039b0d36e6ebae385db700e.camel@perches.com>
+From:   Nayna <nayna@linux.vnet.ibm.com>
+Message-ID: <79d7b969-9b7d-7853-356b-876e444d3390@linux.vnet.ibm.com>
+Date:   Mon, 3 Feb 2020 10:15:03 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.3.0
 MIME-Version: 1.0
-In-Reply-To: <2C4ADFAE-7BB4-42B7-8F54-F036EA7A4316@lca.pw>
+In-Reply-To: <ab2e19123cc15e3f8039b0d36e6ebae385db700e.camel@perches.com>
 Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: fr
 Content-Transfer-Encoding: 8bit
+Content-Language: en-US
+X-TM-AS-GCONF: 00
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.572
+ definitions=2020-02-03_04:2020-02-02,2020-02-03 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 bulkscore=0
+ phishscore=0 lowpriorityscore=0 adultscore=0 malwarescore=0
+ priorityscore=1501 mlxlogscore=999 spamscore=0 clxscore=1011 mlxscore=0
+ suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-1911200001 definitions=main-2002030114
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
-
-Le 02/02/2020 à 12:26, Qian Cai a écrit :
-> 
-> 
->> On Jan 30, 2020, at 9:13 AM, Christophe Leroy <christophe.leroy@c-s.fr> wrote:
+On 1/29/20 10:08 PM, Joe Perches wrote:
+> On Wed, 2020-01-29 at 19:01 -0700, Shuah Khan wrote:
+>> Change messages to messages to make it easier to debug. The following
+>> error message isn't informative enough to figure out what failed.
+>> Change messages to include function information.
 >>
->> config DEBUG_VM_PGTABLE
->>     bool "Debug arch page table for semantics compliance" if ARCH_HAS_DEBUG_VM_PGTABLE || EXPERT
->>     depends on MMU
->>     default 'n' if !ARCH_HAS_DEBUG_VM_PGTABLE
->>     default 'y' if DEBUG_VM
-> 
-> Does it really necessary to potentially force all bots to run this? Syzbot, kernel test robot etc? Does it ever pay off for all their machine times there?
-> 
+>> Signed-off-by: Shuah Khan <skhan@linuxfoundation.org>
+>> ---
+>>   .../integrity/platform_certs/load_powerpc.c     | 14 ++++++++------
+>>   security/integrity/platform_certs/load_uefi.c   | 17 ++++++++++-------
+>>   2 files changed, 18 insertions(+), 13 deletions(-)
+>>
+>> diff --git a/security/integrity/platform_certs/load_powerpc.c b/security/integrity/platform_certs/load_powerpc.c
+> perhaps instead add #define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
+> so all the pr_<level> logging is more specific.
+>
+> This would prefix all pr_<level> output with "integrity: "
+>
+> 3integrity: Couldn't get size: 0x%lx
+> 3integrity: Error reading db var: 0x%lx
+> 3integrity: MODSIGN: Couldn't get UEFI db list
+> 3integrity: Couldn't parse db signatures: %d
+> 6integrity: Couldn't get UEFI MokListRT
+> 3integrity: Couldn't parse MokListRT signatures: %d
+> 6integrity: Couldn't get UEFI dbx list
+> 3integrity: Couldn't parse dbx signatures: %d
+>
+> 5integrity: Platform Keyring initialized
+> 6integrity: Error adding keys to platform keyring %s
+>
+> ---
+>   security/integrity/platform_certs/load_powerpc.c     | 3 +++
+>   security/integrity/platform_certs/load_uefi.c        | 2 ++
+>   security/integrity/platform_certs/platform_keyring.c | 2 ++
+>   3 files changed, 7 insertions(+)
+>
+> diff --git a/security/integrity/platform_certs/load_powerpc.c b/security/integrity/platform_certs/load_powerpc.c
+> index a2900c..5cfbd0 100644
+> --- a/security/integrity/platform_certs/load_powerpc.c
+> +++ b/security/integrity/platform_certs/load_powerpc.c
+> @@ -5,6 +5,9 @@
+>    *
+>    *      - loads keys and hashes stored and controlled by the firmware.
+>    */
+> +
+> +#define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
+> +
 
-Machine time ?
+Looks good. How about slight addition in it as below:
 
-On a 32 bits powerpc running at 132 MHz, the tests takes less than 10ms. 
-Is it worth taking the risk of not detecting faults by not selecting it 
-by default ?
+#define pr_fmt(fmt) KBUILD_MODNAME ": load_powerpc: " fmt
 
-[    5.656916] debug_vm_pgtable: debug_vm_pgtable: Validating 
-architecture page table helpers
-[    5.665661] debug_vm_pgtable: debug_vm_pgtable: Validated 
-architecture page table helpers
 
-Christophe
+>   #include <linux/kernel.h>
+>   #include <linux/sched.h>
+>   #include <linux/cred.h>
+> diff --git a/security/integrity/platform_certs/load_uefi.c b/security/integrity/platform_certs/load_uefi.c
+> index 111898a..480450a 100644
+> --- a/security/integrity/platform_certs/load_uefi.c
+> +++ b/security/integrity/platform_certs/load_uefi.c
+> @@ -1,5 +1,7 @@
+>   // SPDX-License-Identifier: GPL-2.0
+>   
+> +#define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
+
+Similarly...
+
+#define pr_fmt(fmt) KBUILD_MODNAME ": load_uefi: " fmt
+
+> +
+>   #include <linux/kernel.h>
+>   #include <linux/sched.h>
+>   #include <linux/cred.h>
+> diff --git a/security/integrity/platform_certs/platform_keyring.c b/security/integrity/platform_certs/platform_keyring.c
+> index 7646e35..9bd2846 100644
+> --- a/security/integrity/platform_certs/platform_keyring.c
+> +++ b/security/integrity/platform_certs/platform_keyring.c
+> @@ -6,6 +6,8 @@
+>    * Author(s): Nayna Jain <nayna@linux.ibm.com>
+>    */
+>   
+> +#define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
+
+Same here...
+
+#define pr_fmt(fmt) KBUILD_MODNAME ": platform_keyring:  " fmt
+
+Thanks & Regards,
+
+       - Nayna
+
