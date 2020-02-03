@@ -2,87 +2,83 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 16EFC150738
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Feb 2020 14:30:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 04BC615073B
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Feb 2020 14:30:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727836AbgBCNa3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 3 Feb 2020 08:30:29 -0500
-Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:33967 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1727311AbgBCNa3 (ORCPT
+        id S1728043AbgBCNag (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 3 Feb 2020 08:30:36 -0500
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:39888 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727851AbgBCNae (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Feb 2020 08:30:29 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1580736628;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=RdAsb+jbEHtf+vbvPttlmGBhB3W4rDZHLkASCl6Lfck=;
-        b=RDmdPCPlltv7Mi+8khngV5MeMiGOgnviqpmVxwI8qirn+TPt2NT6Kso1B3qXavCY/4XW6f
-        WECPwsLSiPtC2iFNzqX1nIsgFZGtQA43L4dbMqQDQHlTvvCfre/HOoMcV3M5UqXNQWchI4
-        XtghQ/o+Po3wXnME/jg9LK0hjCkKpIc=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-126-JI1k5S-JPaug1D6lqRFPWA-1; Mon, 03 Feb 2020 08:30:21 -0500
-X-MC-Unique: JI1k5S-JPaug1D6lqRFPWA-1
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 9983213F8;
-        Mon,  3 Feb 2020 13:30:19 +0000 (UTC)
-Received: from krava (ovpn-204-137.brq.redhat.com [10.40.204.137])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 2688B8E9E5;
-        Mon,  3 Feb 2020 13:30:16 +0000 (UTC)
-Date:   Mon, 3 Feb 2020 14:30:04 +0100
-From:   Jiri Olsa <jolsa@redhat.com>
-To:     Ravi Bangoria <ravi.bangoria@linux.ibm.com>
-Cc:     Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>,
-        namhyung@kernel.org, irogers@google.com, songliubraving@fb.com,
-        yao.jin@linux.intel.com, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 1/6] perf annotate: Remove privsize from
- symbol__annotate() args
-Message-ID: <20200203133004.GA1521029@krava>
-References: <20200124080432.8065-1-ravi.bangoria@linux.ibm.com>
- <20200124080432.8065-2-ravi.bangoria@linux.ibm.com>
- <20200130111653.GE3841@kernel.org>
- <ab9edd7d-04d1-f988-9f29-81d65a807250@linux.ibm.com>
+        Mon, 3 Feb 2020 08:30:34 -0500
+Received: by mail-wm1-f68.google.com with SMTP id c84so17079538wme.4
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Feb 2020 05:30:31 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=fkFDQxZCGtJvMWzgeiZLBXi4rV3V0DscLDICyLa6gb8=;
+        b=WMxnr3hliH7xsSmJQs31Wm1EwnsEB4wXvs70NjdbIQsbpXyUzmv3RXEwLv2P0FpP9r
+         Q43faHFZ9r18pgqRxWLRryYOW0aULXFUCsE3yVebQPIlXMPGCa0ycpIJtcIwZPcjiXVI
+         c7Vy261zT6XDDrnudN9lOJAzy1iQS+RrK/Yv+h+y1u64tGkURfOdm2t67OnB5kBL2TDq
+         RkAr9U1Su1sh1ip5LgN/cz3YnX6vgTcbSGONur+niBD8+YnTfLaNZKTdSbhk0ns+svc7
+         1KmsWE3GKLWB7x1Lji2qRNm6zqJMPySYf6uvgAlQqpt3vhtmFXOTbOeYwPvBC5yK5mz1
+         pJlg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=fkFDQxZCGtJvMWzgeiZLBXi4rV3V0DscLDICyLa6gb8=;
+        b=Qk+FIOuhlC6jZz+1syjt1QF+afI5Fp9MXRfr1jNxzA0wdGsuBd6ogKMLex4BQ3Ic+Z
+         afRGt4K0QfE5Wp5im+x5VxCghAYaLDWDfgiLNHCnvmb+dm7dUiyX4vtmRakYE7yynr9b
+         FdzF8GV/rbzeZJdTBXlAtGfYOeDWMJq7nCOU1/A0UAcBBQivH4eR7H0R7I+XZ3/2CwHu
+         lmEaDYl4GF0MJvzz4lIQhVBVJgjfyAwjp/lYcUhqQWqFll4+LuwjQsfeqB4xCOqsQT9e
+         8HBgnHMYiaIlo/H5RWd1kO1VY/6XF4j+f3dyjkIzSt+TwwxC506jFge+S/8PP+qnPN7a
+         rmGA==
+X-Gm-Message-State: APjAAAXmelpp+4ENBIo5Oh891cYIBMdqYIlipNsRyqyA/3jOGoUoc5bA
+        TQm6UDmdEx6Ptumnu6d1iFx/rA==
+X-Google-Smtp-Source: APXvYqzn5qm82dgj5JBm0iOxgAssGQdutrj66VNZBEU6GDKHm91YhpdHpMfx5cHD2PlWa09RqDhJWw==
+X-Received: by 2002:a05:600c:214f:: with SMTP id v15mr29957834wml.110.1580736630865;
+        Mon, 03 Feb 2020 05:30:30 -0800 (PST)
+Received: from localhost.localdomain (lfbn-nic-1-505-157.w90-116.abo.wanadoo.fr. [90.116.92.157])
+        by smtp.gmail.com with ESMTPSA id l8sm7594540wmj.2.2020.02.03.05.30.29
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 03 Feb 2020 05:30:30 -0800 (PST)
+From:   Bartosz Golaszewski <brgl@bgdev.pl>
+To:     Kent Gibson <warthog618@gmail.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Geert Uytterhoeven <geert@linux-m68k.org>
+Cc:     linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Subject: [PATCH 0/3] gpiolib: fix a regression introduced by gpio_do_set_config()
+Date:   Mon,  3 Feb 2020 14:30:23 +0100
+Message-Id: <20200203133026.22930-1-brgl@bgdev.pl>
+X-Mailer: git-send-email 2.23.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ab9edd7d-04d1-f988-9f29-81d65a807250@linux.ibm.com>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 03, 2020 at 10:24:29AM +0530, Ravi Bangoria wrote:
-> 
-> 
-> On 1/30/20 4:46 PM, Arnaldo Carvalho de Melo wrote:
-> > Em Fri, Jan 24, 2020 at 01:34:27PM +0530, Ravi Bangoria escreveu:
-> > > privsize is passed as 0 from all the symbol__annotate() callers.
-> > > Remove it from argument list.
-> > 
-> > Right, trying to figure out when was it that this became unnecessary to
-> > see if this in fact is hiding some other problem...
-> > 
-> > It all starts in the following change, re-reading those patches...
-> > 
-> > - Arnaldo
-> > 
-> 
-> Ok, I just had a quick look at:
-> https://lore.kernel.org/lkml/20171011194323.GI3503@kernel.org/
-> 
-> This change was for python annotation support which, I guess, Jiri didn't posted
-> the patches? Jiri, are you planning to post them?
+From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 
-yea, as I wrote in another reply, this came in as preparation
-to support python code lines, which still did not get in ;-)
+These three patches fix a regression introduced by commit d90f36851d65
+("gpiolib: have a single place of calling set_config()"). We first need
+to revert patches that came on top of it, then apply the actual fix.
 
-also I replied that this way is probably even better for that,
-so that's why I'm ok with the change
+Bartosz Golaszewski (3):
+  Revert "gpiolib: Remove duplicated function gpio_do_set_config()"
+  Revert "gpiolib: remove set but not used variable 'config'"
+  gpiolib: fix gpio_do_set_config()
 
-jirka
+ drivers/gpio/gpiolib.c | 31 ++++++++++++++++++++++++++-----
+ 1 file changed, 26 insertions(+), 5 deletions(-)
+
+-- 
+2.23.0
 
