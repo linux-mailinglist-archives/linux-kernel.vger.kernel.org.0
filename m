@@ -2,88 +2,110 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1B4E9150A10
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Feb 2020 16:43:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C8DE5150A1E
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Feb 2020 16:45:49 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728121AbgBCPnc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 3 Feb 2020 10:43:32 -0500
-Received: from mail-il1-f193.google.com ([209.85.166.193]:37363 "EHLO
-        mail-il1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727339AbgBCPnc (ORCPT
+        id S1727954AbgBCPps (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 3 Feb 2020 10:45:48 -0500
+Received: from mail-pj1-f65.google.com ([209.85.216.65]:35238 "EHLO
+        mail-pj1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727445AbgBCPpr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Feb 2020 10:43:32 -0500
-Received: by mail-il1-f193.google.com with SMTP id v13so12992727iln.4
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Feb 2020 07:43:30 -0800 (PST)
+        Mon, 3 Feb 2020 10:45:47 -0500
+Received: by mail-pj1-f65.google.com with SMTP id q39so6598515pjc.0;
+        Mon, 03 Feb 2020 07:45:47 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=tqYcgHc5VOj+fbH6k9sfeEL1lPZODVdx63DLzZEZWGM=;
-        b=OC9GYtA5uaUGUTNxpxQP/8l4Y2Kmkh6U/EDEHCHesaZEfX9yBWA2ezdOt6+moxwlHA
-         fvWoLToypZUAE/X/KcjKoMOUwGFX1jv2lDCMzgP13MzrkTXz9IqkvAsBru1XMrBRMX8y
-         xwfcccVkfpWsSPduRMbDU/ECQFb1hqkDshtDOEmOYITnJDsj1tyUheUp2g8/yT2kLcAU
-         /z8WF2AHtU/dPDmdye//GZGZ4BuyeFI+8KokNEPRHRRQ2v9LycDhYeQQmGo/4iSwu7pF
-         NhLsacjk8qNBsYCduXgCE+Ap+uOTU+s7qcWhCmSK04kTXkUHuySuSo6uk+XW1NLRNoHA
-         1lyQ==
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=JyS09fTXqCgfMqvRZ+BlVT4vb3SNbwWixmfuMn82Wus=;
+        b=va1Y23/Dt1OTf4zMwQrWKUzkv0ug+Eb1ELDUFXEXTXj1n1HfSL4Zl44YAcO9tpKmQw
+         n5RC15bY6uQwQMOtJjBe08PJY29sC3nk/jINiAbFVj/Tp926UWivuTBkVeKF+D7xJ3io
+         w92FdoVchAn0oI6Zu/BWWERnzqx0t03OS3n01EW1IpargCqCEFM0cunr00DJin/I+AMq
+         smXHUUKnBayba01JP9tn4QFq4nW7ykuCmq1uheTZw9UEKizGn5SYe4zOEMpFVupZoNVP
+         4ZKWbpb2xXRkIcE6ohpE+saMP23uSFVLv+CuYoEI6egEVGOA8Ey3s9Ze9266hTtL89Ym
+         m+0Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=tqYcgHc5VOj+fbH6k9sfeEL1lPZODVdx63DLzZEZWGM=;
-        b=ZFLEzgOdND3yL1CI912DbkF7Khv6CgVYMsXa+bV0GGKya2OrLeXnAn0m//LxwAqlFg
-         pxm4yZzM/p1G7Xj0+kAG2RbUAHNhiASWYZCapDSYMdDWrGBUknEtlLaYeFFoUbZFTl1q
-         g9f3+Ud/fAqTYiTfOsfpUcvn2h50p/Ty7esI4BqLXl+reVDSqCb1CvO5/mnEoiB35jnk
-         E25JXrb4Gw3RM4nxJc0gaPCk1qEhd3NJ2PVL6kKOuxdjvV0OJ7NaBahU/4hA5t6+vc4J
-         yoXU5sGHjBsAuxdrW9rN4akvTTjGnp4U5gCfWAAWrp28XRkpn8QPLXtsNFcSU7fkaKip
-         ePHA==
-X-Gm-Message-State: APjAAAVnQZmYchK4lmYy8isGsvItl+n29A38uMurvOXPt7UX+3gNuaxI
-        w7oq15lb6OvabjMDBoW51WOhUkjzISs=
-X-Google-Smtp-Source: APXvYqzcTRKaGJoUO23/z186pV0Ri5qk49RtXpG070hlIWnLWwd1jK0I3EojhgnXaUiM+3Vq9ztGGA==
-X-Received: by 2002:a92:4818:: with SMTP id v24mr14416711ila.96.1580744609930;
-        Mon, 03 Feb 2020 07:43:29 -0800 (PST)
-Received: from [192.168.1.159] ([65.144.74.34])
-        by smtp.gmail.com with ESMTPSA id x62sm7393197ill.86.2020.02.03.07.43.28
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 03 Feb 2020 07:43:29 -0800 (PST)
-Subject: Re: [PATCH liburing v2 1/1] test: add epoll test case
-To:     Stefano Garzarella <sgarzare@redhat.com>
-Cc:     linux-kernel@vger.kernel.org, io-uring@vger.kernel.org
-References: <20200131142943.120459-1-sgarzare@redhat.com>
- <20200131142943.120459-2-sgarzare@redhat.com>
- <00610b2b-2110-36c2-d6ce-85599e46013f@kernel.dk>
- <20200203090406.mlgmw2u7lv7a76vd@steredhat>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <d3763cdb-dee0-9312-2a4c-08ed939eae70@kernel.dk>
-Date:   Mon, 3 Feb 2020 08:43:28 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.1
-MIME-Version: 1.0
-In-Reply-To: <20200203090406.mlgmw2u7lv7a76vd@steredhat>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=JyS09fTXqCgfMqvRZ+BlVT4vb3SNbwWixmfuMn82Wus=;
+        b=r7sSEgvUL92VgQojWVtmUSczolMlLZcnfVE7icVKLaKll5qgXfBXVAJSwjcIqy6AaC
+         +MtjxQmQxHtKs4w7ZRwXNsMEtRxQ5gs/Bjo0EGOmbSfEG59BFj2n+Y7s3WTPjGLPCkem
+         gAzWdixzavJiS+ODGmlBS3mX1L4r0XNIZ49yXaHstt71WQ53DyH6xxmQjj2Ja7lKvdpz
+         wIi5wxbIj3LquYhaptf8bCDqqEBVkmSXFBKhs21wjm48RU75duObOtYn8sxHAbEYuC3g
+         3kgniKCUd9e2KoW6SxfnAcrskYt1vxoyxYxvSx/PR35Uwm1WAFKZE6I//ISvoZedo6dp
+         dK6g==
+X-Gm-Message-State: APjAAAUzh/zIgxg5MFulhBQc+D4NS5pfwiaOCmXbk6ZJvCA+uOENOjw3
+        GqRei2+rf4jCUWuXCEUuwYeQhjJZ
+X-Google-Smtp-Source: APXvYqydgJ4ZZc45ZDxrZOII/LQJHOId7HwH/4C+OHIif4mcfbgPMPOAZbUe/U0ppEahIKUrywq3NA==
+X-Received: by 2002:a17:90b:11d0:: with SMTP id gv16mr30407161pjb.109.1580744746520;
+        Mon, 03 Feb 2020 07:45:46 -0800 (PST)
+Received: from localhost ([2001:19f0:6001:12c8:5400:2ff:fe72:6403])
+        by smtp.gmail.com with ESMTPSA id m71sm272290pje.0.2020.02.03.07.45.45
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 03 Feb 2020 07:45:45 -0800 (PST)
+From:   Yangtao Li <tiny.windzz@gmail.com>
+To:     rjw@rjwysocki.net, viresh.kumar@linaro.org
+Cc:     linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Yangtao Li <tiny.windzz@gmail.com>
+Subject: [PATCH] cpufreq: make cpufreq_global_kobject static
+Date:   Mon,  3 Feb 2020 15:45:17 +0000
+Message-Id: <20200203154517.2347-1-tiny.windzz@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2/3/20 2:04 AM, Stefano Garzarella wrote:
-> On Fri, Jan 31, 2020 at 08:41:49AM -0700, Jens Axboe wrote:
->> On 1/31/20 7:29 AM, Stefano Garzarella wrote:
->>> This patch add the epoll test case that has four sub-tests:
->>> - test_epoll
->>> - test_epoll_sqpoll
->>> - test_epoll_nodrop
->>> - test_epoll_sqpoll_nodrop
->>
->> Since we have EPOLL_CTL now, any chance you could also include
->> a test case that uses that instead of epoll_ctl()?
-> 
-> Sure, I'll add a test case for EPOLL_CTL!
+The cpufreq_global_kobject is only used internally by cpufreq.c
+after this:
 
-Awesome, thanks!
+commit 2361be236662 ("cpufreq: Don't create empty
+/sys/devices/system/cpu/cpufreq directory")
 
+Make it static.
+
+Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
+---
+ drivers/cpufreq/cpufreq.c | 4 +---
+ include/linux/cpufreq.h   | 3 ---
+ 2 files changed, 1 insertion(+), 6 deletions(-)
+
+diff --git a/drivers/cpufreq/cpufreq.c b/drivers/cpufreq/cpufreq.c
+index 4adac3a8c265..a0831d3d5ed1 100644
+--- a/drivers/cpufreq/cpufreq.c
++++ b/drivers/cpufreq/cpufreq.c
+@@ -105,6 +105,7 @@ bool have_governor_per_policy(void)
+ }
+ EXPORT_SYMBOL_GPL(have_governor_per_policy);
+ 
++static struct kobject *cpufreq_global_kobject;
+ struct kobject *get_governor_parent_kobj(struct cpufreq_policy *policy)
+ {
+ 	if (have_governor_per_policy())
+@@ -2745,9 +2746,6 @@ int cpufreq_unregister_driver(struct cpufreq_driver *driver)
+ }
+ EXPORT_SYMBOL_GPL(cpufreq_unregister_driver);
+ 
+-struct kobject *cpufreq_global_kobject;
+-EXPORT_SYMBOL(cpufreq_global_kobject);
+-
+ static int __init cpufreq_core_init(void)
+ {
+ 	if (cpufreq_disabled())
+diff --git a/include/linux/cpufreq.h b/include/linux/cpufreq.h
+index 018dce868de6..0fb561d1b524 100644
+--- a/include/linux/cpufreq.h
++++ b/include/linux/cpufreq.h
+@@ -201,9 +201,6 @@ static inline bool policy_is_shared(struct cpufreq_policy *policy)
+ 	return cpumask_weight(policy->cpus) > 1;
+ }
+ 
+-/* /sys/devices/system/cpu/cpufreq: entry point for global variables */
+-extern struct kobject *cpufreq_global_kobject;
+-
+ #ifdef CONFIG_CPU_FREQ
+ unsigned int cpufreq_get(unsigned int cpu);
+ unsigned int cpufreq_quick_get(unsigned int cpu);
 -- 
-Jens Axboe
+2.17.1
 
