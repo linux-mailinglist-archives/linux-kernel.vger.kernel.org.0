@@ -2,40 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EA920150D74
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Feb 2020 17:46:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4A8E7150BEA
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Feb 2020 17:32:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729735AbgBCQ3M (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 3 Feb 2020 11:29:12 -0500
-Received: from mail.kernel.org ([198.145.29.99]:41012 "EHLO mail.kernel.org"
+        id S1729553AbgBCQbl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 3 Feb 2020 11:31:41 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44930 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729725AbgBCQ3J (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Feb 2020 11:29:09 -0500
+        id S1730248AbgBCQbh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Feb 2020 11:31:37 -0500
 Received: from localhost (unknown [104.132.45.99])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 86F082086A;
-        Mon,  3 Feb 2020 16:29:08 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 98CB721775;
+        Mon,  3 Feb 2020 16:31:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1580747349;
-        bh=gz9eAKYke4ruOq2+sHvKHX8F3njkkoFPfbTen9cabb8=;
+        s=default; t=1580747497;
+        bh=KQRTBNGIx/d9uZvKRGCFrbPP4MYDMOG24kIsgdaTp+g=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=qP/d1W9h5ike8M7BZ84A8rya6jOgGGAS+/hlIJXBhs5jroNltpqTaOg7PW8PdPBxI
-         h6CxCBbn9KLMnRs3zs2VOEofbDBZnp2iYPEL2NNXwsIBoLkXMAuj9xnBel3V6RvDHj
-         fU1RAoPvO2l9fY2CZ/8TRTNcRMzlYKauNlBdwHnw=
+        b=cYpRuovlT/3pnw0J+xqpXjiOmxi8i5wvREJLOFCGaKOFZdkHhxHeYWInBfLsb1M6u
+         3LzZII6SdMQAhDZY8ieKD+De3h9kcoEWGZTiP9kXP5wtQOGR4GopvHa0XOXvDc9rHZ
+         3CRHHUacScC1kDVOPdMg9uf+Nm1rQDFz+picWXAk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        syzbot+9d42b7773d2fecd983ab@syzkaller.appspotmail.com,
+        stable@vger.kernel.org, Hans Verkuil <hverkuil-cisco@xs4all.nl>,
         Sean Young <sean@mess.org>,
-        Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-Subject: [PATCH 4.14 46/89] media: af9005: uninitialized variable printked
+        Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
+        syzbot+6bf9606ee955b646c0e1@syzkaller.appspotmail.com
+Subject: [PATCH 4.19 19/70] media: dvb-usb/dvb-usb-urb.c: initialize actlen to 0
 Date:   Mon,  3 Feb 2020 16:19:31 +0000
-Message-Id: <20200203161923.154799137@linuxfoundation.org>
+Message-Id: <20200203161915.388634293@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200203161916.847439465@linuxfoundation.org>
-References: <20200203161916.847439465@linuxfoundation.org>
+In-Reply-To: <20200203161912.158976871@linuxfoundation.org>
+References: <20200203161912.158976871@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,31 +45,38 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Sean Young <sean@mess.org>
+From: Hans Verkuil <hverkuil-cisco@xs4all.nl>
 
-commit 51d0c99b391f0cac61ad7b827c26f549ee55672c upstream.
+commit 569bc8d6a6a50acb5fcf07fb10b8d2d461fdbf93 upstream.
 
-If usb_bulk_msg() fails, actual_length can be uninitialized.
+This fixes a syzbot failure since actlen could be uninitialized,
+but it was still used.
 
-Reported-by: syzbot+9d42b7773d2fecd983ab@syzkaller.appspotmail.com
-Signed-off-by: Sean Young <sean@mess.org>
+Syzbot link:
+
+https://syzkaller.appspot.com/bug?extid=6bf9606ee955b646c0e1
+
+Reported-and-tested-by: syzbot+6bf9606ee955b646c0e1@syzkaller.appspotmail.com
+
+Signed-off-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
+Acked-by: Sean Young <sean@mess.org>
 Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/media/usb/dvb-usb/af9005.c |    2 +-
+ drivers/media/usb/dvb-usb/dvb-usb-urb.c |    2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/media/usb/dvb-usb/af9005.c
-+++ b/drivers/media/usb/dvb-usb/af9005.c
-@@ -563,7 +563,7 @@ static int af9005_boot_packet(struct usb
- 			      u8 *buf, int size)
+--- a/drivers/media/usb/dvb-usb/dvb-usb-urb.c
++++ b/drivers/media/usb/dvb-usb/dvb-usb-urb.c
+@@ -12,7 +12,7 @@
+ int dvb_usb_generic_rw(struct dvb_usb_device *d, u8 *wbuf, u16 wlen, u8 *rbuf,
+ 	u16 rlen, int delay_ms)
  {
- 	u16 checksum;
--	int act_len, i, ret;
-+	int act_len = 0, i, ret;
+-	int actlen,ret = -ENOMEM;
++	int actlen = 0, ret = -ENOMEM;
  
- 	memset(buf, 0, size);
- 	buf[0] = (u8) (FW_BULKOUT_SIZE & 0xff);
+ 	if (!d || wbuf == NULL || wlen == 0)
+ 		return -EINVAL;
 
 
