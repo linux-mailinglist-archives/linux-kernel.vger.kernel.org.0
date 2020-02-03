@@ -2,39 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3177E150DD6
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Feb 2020 17:47:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5EC4E150C5C
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Feb 2020 17:37:01 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729424AbgBCQ1c (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 3 Feb 2020 11:27:32 -0500
-Received: from mail.kernel.org ([198.145.29.99]:38756 "EHLO mail.kernel.org"
+        id S1730965AbgBCQfi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 3 Feb 2020 11:35:38 -0500
+Received: from mail.kernel.org ([198.145.29.99]:50446 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729415AbgBCQ13 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Feb 2020 11:27:29 -0500
+        id S1730974AbgBCQfe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Feb 2020 11:35:34 -0500
 Received: from localhost (unknown [104.132.45.99])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 61F5B2086A;
-        Mon,  3 Feb 2020 16:27:28 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id AD29A2051A;
+        Mon,  3 Feb 2020 16:35:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1580747248;
-        bh=mPV8pOApGUcWAqTRUtRnpic/2GQ030XfApSb2e1ez08=;
+        s=default; t=1580747734;
+        bh=2dCeTe+htp6bYLj6TEvc7v6Uv3nrYBGHsJ2ytgCOJwM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=fDq/Mt+jKNFV1GfPNl2nA0xmr7sqeWyuxb2PJJZpgAHifGtcDCUqNKPWdDA+rqNaS
-         eW4snNEND6YIUTgi+F3UovHV5GhHCEgdHqVssb8TqDnNFSEjPfMlFHALnZkodaEnOG
-         agm6YhFHLM64rVd2SgihYl1YlSVJIDZTuRHU5iLE=
+        b=S7x8RZCuj+2mg1GpYwwG5cTAfCGNRSvfBD4oB9nR/lyGd/nwu2UU+nN9seHRWkKEs
+         Yld1kmrnHD/IL/ZuzC091t8m0Lq8ZYSo3u1vAHv+mbIimnINJfd/izpv144ElWO9BI
+         UWMkWSI+ni2moaDXtF0mAgtlIDmuHvxciaNuEC7k=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Hannes Reinecke <hare@suse.de>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        stable@vger.kernel.org,
+        Kai Vehmanen <kai.vehmanen@linux.intel.com>,
+        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
+        Mark Brown <broonie@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 53/68] scsi: fnic: do not queue commands during fwreset
+Subject: [PATCH 5.4 46/90] ASoC: hdac_hda: Fix error in driver removal after failed probe
 Date:   Mon,  3 Feb 2020 16:19:49 +0000
-Message-Id: <20200203161913.727410180@linuxfoundation.org>
+Message-Id: <20200203161923.638680544@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200203161904.705434837@linuxfoundation.org>
-References: <20200203161904.705434837@linuxfoundation.org>
+In-Reply-To: <20200203161917.612554987@linuxfoundation.org>
+References: <20200203161917.612554987@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,46 +46,56 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Hannes Reinecke <hare@suse.de>
+From: Kai Vehmanen <kai.vehmanen@linux.intel.com>
 
-[ Upstream commit 0e2209629fec427ba75a6351486153a9feddd36b ]
+[ Upstream commit 552b1a85da9f63856e7e341b81c16e0e078204f1 ]
 
-When a link is going down the driver will be calling fnic_cleanup_io(),
-which will traverse all commands and calling 'done' for each found command.
-While the traversal is handled under the host_lock, calling 'done' happens
-after the host_lock is being dropped.
+In case system has multiple HDA codecs, and codec probe fails for
+at least one but not all codecs, driver will end up cancelling
+a non-initialized timer context upon driver removal.
 
-As fnic_queuecommand_lck() is being called with the host_lock held, it
-might well be that it will pick the command being selected for abortion
-from the above routine and enqueue it for sending, but then 'done' is being
-called on that very command from the above routine.
+Call trace of typical case:
 
-Which of course confuses the hell out of the scsi midlayer.
+[   60.593646] WARNING: CPU: 1 PID: 1147 at kernel/workqueue.c:3032
+__flush_work+0x18b/0x1a0
+[...]
+[   60.593670]  __cancel_work_timer+0x11f/0x1a0
+[   60.593673]  hdac_hda_dev_remove+0x25/0x30 [snd_soc_hdac_hda]
+[   60.593674]  device_release_driver_internal+0xe0/0x1c0
+[   60.593675]  bus_remove_device+0xd6/0x140
+[   60.593677]  device_del+0x175/0x3e0
+[   60.593679]  ? widget_tree_free.isra.7+0x90/0xb0 [snd_hda_core]
+[   60.593680]  snd_hdac_device_unregister+0x34/0x50 [snd_hda_core]
+[   60.593682]  snd_hdac_ext_bus_device_remove+0x2a/0x60 [snd_hda_ext_core]
+[   60.593684]  hda_dsp_remove+0x26/0x100 [snd_sof_intel_hda_common]
+[   60.593686]  snd_sof_device_remove+0x84/0xa0 [snd_sof]
+[   60.593687]  sof_pci_remove+0x10/0x30 [snd_sof_pci]
+[   60.593689]  pci_device_remove+0x36/0xb0
 
-So fix this by not queueing commands when fnic_cleanup_io is active.
-
-Link: https://lore.kernel.org/r/20200116102053.62755-1-hare@suse.de
-Signed-off-by: Hannes Reinecke <hare@suse.de>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+Signed-off-by: Kai Vehmanen <kai.vehmanen@linux.intel.com>
+Signed-off-by: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+Link: https://lore.kernel.org/r/20200110235751.3404-9-pierre-louis.bossart@linux.intel.com
+Signed-off-by: Mark Brown <broonie@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/scsi/fnic/fnic_scsi.c | 3 +++
- 1 file changed, 3 insertions(+)
+ sound/soc/codecs/hdac_hda.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/scsi/fnic/fnic_scsi.c b/drivers/scsi/fnic/fnic_scsi.c
-index c056b8111ad27..7bf6102b4c3d5 100644
---- a/drivers/scsi/fnic/fnic_scsi.c
-+++ b/drivers/scsi/fnic/fnic_scsi.c
-@@ -445,6 +445,9 @@ static int fnic_queuecommand_lck(struct scsi_cmnd *sc, void (*done)(struct scsi_
- 	if (unlikely(fnic_chk_state_flags_locked(fnic, FNIC_FLAGS_IO_BLOCKED)))
- 		return SCSI_MLQUEUE_HOST_BUSY;
+diff --git a/sound/soc/codecs/hdac_hda.c b/sound/soc/codecs/hdac_hda.c
+index 4570f662fb48b..d78f4d856aaff 100644
+--- a/sound/soc/codecs/hdac_hda.c
++++ b/sound/soc/codecs/hdac_hda.c
+@@ -498,7 +498,9 @@ static int hdac_hda_dev_remove(struct hdac_device *hdev)
+ 	struct hdac_hda_priv *hda_pvt;
  
-+	if (unlikely(fnic_chk_state_flags_locked(fnic, FNIC_FLAGS_FWRESET)))
-+		return SCSI_MLQUEUE_HOST_BUSY;
+ 	hda_pvt = dev_get_drvdata(&hdev->dev);
+-	cancel_delayed_work_sync(&hda_pvt->codec.jackpoll_work);
++	if (hda_pvt && hda_pvt->codec.registered)
++		cancel_delayed_work_sync(&hda_pvt->codec.jackpoll_work);
 +
- 	rport = starget_to_rport(scsi_target(sc->device));
- 	ret = fc_remote_port_chkready(rport);
- 	if (ret) {
+ 	return 0;
+ }
+ 
 -- 
 2.20.1
 
