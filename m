@@ -2,38 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6B2A1150DCC
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Feb 2020 17:47:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 36E8A150DF0
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Feb 2020 17:48:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729898AbgBCQrG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 3 Feb 2020 11:47:06 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39512 "EHLO mail.kernel.org"
+        id S1729216AbgBCQ0h (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 3 Feb 2020 11:26:37 -0500
+Received: from mail.kernel.org ([198.145.29.99]:37552 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729511AbgBCQ2C (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Feb 2020 11:28:02 -0500
+        id S1729003AbgBCQ0e (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Feb 2020 11:26:34 -0500
 Received: from localhost (unknown [104.132.45.99])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BFBA921744;
-        Mon,  3 Feb 2020 16:28:01 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0264620838;
+        Mon,  3 Feb 2020 16:26:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1580747282;
-        bh=Nk9jNBcw53r9L6+tLhH7YjGpWnkMDQa7jjKGCG4czck=;
+        s=default; t=1580747193;
+        bh=pbFL/nVg0WFgaEofhOXaUvhz+B41rwrhVJrp7vZ7Jw4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=HFWltWhdYWEbw4P+pxRl9kP8yMHCjuYs3P5hhqxdcyoeXqAFBvUtH84868H33x3SZ
-         CQbw7GLOQFHpF5x+g0DWf0hu11u4YL/2s0T9OqOCs2v78RMlmSK46mcVOx3URTKGlh
-         IsArs2+ESQVhieMUCuKbBxqtSQWeech8xzQl102U=
+        b=AUnhPcnUDMjAorBzghGhxSqGg9JWpWbt5epEJ+pP96Ads1xKyUYseK8etW8mwDlIU
+         iTce8NtnQbfg6AL8Zhv9MOCJW5sai7PW7qSSqAQcP4EedHyZA/o0Bu1DtSt1OQQSgI
+         R6rQ393qb/8R6Gn8SX1LaI3aGxWjpKyvRpDH4eag=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Hans de Goede <hdegoede@redhat.com>,
-        Jiri Kosina <jkosina@suse.cz>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 19/89] HID: ite: Add USB id match for Acer SW5-012 keyboard dock
-Date:   Mon,  3 Feb 2020 16:19:04 +0000
-Message-Id: <20200203161919.493054041@linuxfoundation.org>
+        stable@vger.kernel.org, Malcolm Priestley <tvboxspy@gmail.com>
+Subject: [PATCH 4.9 09/68] staging: vt6656: correct packet types for CTS protect, mode.
+Date:   Mon,  3 Feb 2020 16:19:05 +0000
+Message-Id: <20200203161906.389310092@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200203161916.847439465@linuxfoundation.org>
-References: <20200203161916.847439465@linuxfoundation.org>
+In-Reply-To: <20200203161904.705434837@linuxfoundation.org>
+References: <20200203161904.705434837@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,56 +42,60 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Hans de Goede <hdegoede@redhat.com>
+From: Malcolm Priestley <tvboxspy@gmail.com>
 
-[ Upstream commit 8f18eca9ebc57d6b150237033f6439242907e0ba ]
+commit d971fdd3412f8342747778fb59b8803720ed82b1 upstream.
 
-The Acer SW5-012 2-in-1 keyboard dock uses a Synaptics S91028 touchpad
-which is connected to an ITE 8595 USB keyboard controller chip.
+It appears that the driver still transmits in CTS protect mode even
+though it is not enabled in mac80211.
 
-This keyboard has the same quirk for its rfkill / airplane mode hotkey as
-other keyboards with the ITE 8595 chip, it only sends a single release
-event when pressed and released, it never sends a press event.
+That is both packet types PK_TYPE_11GA and PK_TYPE_11GB both use CTS protect.
+The only difference between them GA does not use B rates.
 
-This commit adds this keyboards USB id to the hid-ite id-table, fixing
-the rfkill key not working on this keyboard.
+Find if only B rate in GB or GA in protect mode otherwise transmit packets
+as PK_TYPE_11A.
 
-Signed-off-by: Hans de Goede <hdegoede@redhat.com>
-Signed-off-by: Jiri Kosina <jkosina@suse.cz>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Cc: stable <stable@vger.kernel.org>
+Signed-off-by: Malcolm Priestley <tvboxspy@gmail.com>
+Link: https://lore.kernel.org/r/9c1323ff-dbb3-0eaa-43e1-9453f7390dc0@gmail.com
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- drivers/hid/hid-ids.h | 1 +
- drivers/hid/hid-ite.c | 3 +++
- 2 files changed, 4 insertions(+)
+ drivers/staging/vt6656/device.h |    2 ++
+ drivers/staging/vt6656/rxtx.c   |   12 ++++++++----
+ 2 files changed, 10 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/hid/hid-ids.h b/drivers/hid/hid-ids.h
-index 1e2e6e58256ad..9d372fa7c298c 100644
---- a/drivers/hid/hid-ids.h
-+++ b/drivers/hid/hid-ids.h
-@@ -1024,6 +1024,7 @@
- #define USB_DEVICE_ID_SYNAPTICS_LTS2	0x1d10
- #define USB_DEVICE_ID_SYNAPTICS_HD	0x0ac3
- #define USB_DEVICE_ID_SYNAPTICS_QUAD_HD	0x1ac3
-+#define USB_DEVICE_ID_SYNAPTICS_ACER_SWITCH5_012	0x2968
- #define USB_DEVICE_ID_SYNAPTICS_TP_V103	0x5710
+--- a/drivers/staging/vt6656/device.h
++++ b/drivers/staging/vt6656/device.h
+@@ -62,6 +62,8 @@
+ #define RATE_AUTO	12
  
- #define USB_VENDOR_ID_TEXAS_INSTRUMENTS	0x2047
-diff --git a/drivers/hid/hid-ite.c b/drivers/hid/hid-ite.c
-index 98b059d79bc89..2ce1eb0c92125 100644
---- a/drivers/hid/hid-ite.c
-+++ b/drivers/hid/hid-ite.c
-@@ -43,6 +43,9 @@ static int ite_event(struct hid_device *hdev, struct hid_field *field,
- static const struct hid_device_id ite_devices[] = {
- 	{ HID_USB_DEVICE(USB_VENDOR_ID_ITE, USB_DEVICE_ID_ITE8595) },
- 	{ HID_USB_DEVICE(USB_VENDOR_ID_258A, USB_DEVICE_ID_258A_6A88) },
-+	/* ITE8595 USB kbd ctlr, with Synaptics touchpad connected to it. */
-+	{ HID_USB_DEVICE(USB_VENDOR_ID_SYNAPTICS,
-+			 USB_DEVICE_ID_SYNAPTICS_ACER_SWITCH5_012) },
- 	{ }
- };
- MODULE_DEVICE_TABLE(hid, ite_devices);
--- 
-2.20.1
-
+ #define MAX_RATE			12
++#define VNT_B_RATES	(BIT(RATE_1M) | BIT(RATE_2M) |\
++			BIT(RATE_5M) | BIT(RATE_11M))
+ 
+ /*
+  * device specific
+--- a/drivers/staging/vt6656/rxtx.c
++++ b/drivers/staging/vt6656/rxtx.c
+@@ -816,10 +816,14 @@ int vnt_tx_packet(struct vnt_private *pr
+ 		if (info->band == NL80211_BAND_5GHZ) {
+ 			pkt_type = PK_TYPE_11A;
+ 		} else {
+-			if (tx_rate->flags & IEEE80211_TX_RC_USE_CTS_PROTECT)
+-				pkt_type = PK_TYPE_11GB;
+-			else
+-				pkt_type = PK_TYPE_11GA;
++			if (tx_rate->flags & IEEE80211_TX_RC_USE_CTS_PROTECT) {
++				if (priv->basic_rates & VNT_B_RATES)
++					pkt_type = PK_TYPE_11GB;
++				else
++					pkt_type = PK_TYPE_11GA;
++			} else {
++				pkt_type = PK_TYPE_11A;
++			}
+ 		}
+ 	} else {
+ 		pkt_type = PK_TYPE_11B;
 
 
