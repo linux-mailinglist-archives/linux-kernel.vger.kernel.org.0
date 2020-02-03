@@ -2,85 +2,61 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 27A85150FE5
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Feb 2020 19:46:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 388AC150FEA
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Feb 2020 19:48:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729808AbgBCSqj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 3 Feb 2020 13:46:39 -0500
-Received: from foss.arm.com ([217.140.110.172]:58486 "EHLO foss.arm.com"
+        id S1729180AbgBCSsk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 3 Feb 2020 13:48:40 -0500
+Received: from mx2.suse.de ([195.135.220.15]:39862 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728185AbgBCSqi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Feb 2020 13:46:38 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id EFAD7101E;
-        Mon,  3 Feb 2020 10:46:37 -0800 (PST)
-Received: from [192.168.122.164] (unknown [10.118.28.21])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id CEBDB3F52E;
-        Mon,  3 Feb 2020 10:46:37 -0800 (PST)
-Subject: Re: [PATCH 2/6] net: bcmgenet: refactor phy mode configuration
-To:     Florian Fainelli <f.fainelli@gmail.com>,
-        Andrew Lunn <andrew@lunn.ch>
-Cc:     netdev@vger.kernel.org, opendmb@gmail.com, davem@davemloft.net,
-        bcm-kernel-feedback-list@broadcom.com,
-        linux-kernel@vger.kernel.org, wahrenst@gmx.net,
-        hkallweit1@gmail.com
-References: <20200201074625.8698-1-jeremy.linton@arm.com>
- <20200201074625.8698-3-jeremy.linton@arm.com>
- <b2d45990-af71-60c3-a210-b23dabb9ba32@gmail.com>
- <20200203011732.GB30319@lunn.ch>
- <1146c2fa-0f43-39d2-e6e0-3d255bfd5be3@gmail.com>
-From:   Jeremy Linton <jeremy.linton@arm.com>
-Message-ID: <0d743b51-fd77-db8c-1910-c725c4b2e7b9@arm.com>
-Date:   Mon, 3 Feb 2020 12:46:31 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.1
+        id S1728176AbgBCSsk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Feb 2020 13:48:40 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx2.suse.de (Postfix) with ESMTP id 14DE3ABB3;
+        Mon,  3 Feb 2020 18:48:38 +0000 (UTC)
+From:   Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
+To:     linux@armlinux.org.uk, linux-arm-kernel@lists.infradead.org,
+        linuxppc-dev@lists.ozlabs.org, linux-kbuild@vger.kernel.org
+Cc:     bcm-kernel-feedback-list@broadcom.com,
+        linux-rpi-kernel@lists.infradead.org, f.fainelli@gmail.com,
+        yamada.masahiro@socionext.com,
+        Nicolas Saenz Julienne <nsaenzjulienne@suse.de>,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH 0/2] ARM: Introduce multi_v7_lpae_defconfig
+Date:   Mon,  3 Feb 2020 19:48:17 +0100
+Message-Id: <20200203184820.4433-1-nsaenzjulienne@suse.de>
+X-Mailer: git-send-email 2.25.0
 MIME-Version: 1.0
-In-Reply-To: <1146c2fa-0f43-39d2-e6e0-3d255bfd5be3@gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+This series introduces a new configuration target,
+multi_v7_lpae_defconfig, built by merging the config fragment
+lpae.config with mult_v7_defconfig. Ultimately needed in order for
+Raspberry Pi 4's PCIe bus to work on arm builds, but which may benefit
+other boards out there.
 
-On 2/2/20 9:24 PM, Florian Fainelli wrote:
-> 
-> 
-> On 2/2/2020 5:17 PM, Andrew Lunn wrote:
->> On Sat, Feb 01, 2020 at 08:24:14AM -0800, Florian Fainelli wrote:
->>>
->>>
->>> On 1/31/2020 11:46 PM, Jeremy Linton wrote:
->>>> The DT phy mode is similar to what we want for ACPI
->>>> lets factor it out of the of path, and change the
->>>> of_ call to device_. Further if the phy-mode property
->>>> cannot be found instead of failing the driver load lets
->>>> just default it to RGMII.
->>>
->>> Humm no please do not provide a fallback, if we cannot find a valid
->>> 'phy-mode' property we error out. This controller can be used with a
->>> variety of configurations (internal EPHY/GPHY, MoCA, external
->>> MII/Reverse MII/RGMII) and from a support perspective it is much easier
->>> for us if the driver errors out if one of those essential properties are
->>> omitted.
->>
->> Hi Florian
->>
->> Does any of the silicon variants have two or more MACs sharing one
->> MDIO bus? I'm thinking about the next patch in the series.
-> 
-> Have not come across a customer doing that, but the hardware
-> definitively permits it, and so does the top-level chip pinmuxing.
-> 
+---
 
-Does the genet driver?
+Changes since RFC:
+ - Move merge function into the scripts directory.
 
-I might be missing something in the driver, but it looks like the whole 
-thing is 1:1:1:1 with platform dev:mdio:phy:netdev at the moment. Given 
-the way bcmgenet_mii_register is throwing a bcmgenet MII bus for every 
-device _probe().
+Nicolas Saenz Julienne (2):
+  kbuild: Add config fragment merge functionality
+  ARM: add multi_v7_lpae_defconfig
 
+ arch/arm/Makefile            |  4 ++++
+ arch/arm/configs/lpae.config |  1 +
+ arch/powerpc/Makefile        | 12 +-----------
+ scripts/Makefile.defconf     | 15 +++++++++++++++
+ 4 files changed, 21 insertions(+), 11 deletions(-)
+ create mode 100644 arch/arm/configs/lpae.config
+ create mode 100644 scripts/Makefile.defconf
+
+-- 
+2.25.0
 
