@@ -2,159 +2,155 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 88F4C1510CE
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Feb 2020 21:14:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 822B81510D6
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Feb 2020 21:18:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727119AbgBCUN6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 3 Feb 2020 15:13:58 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:38514 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726201AbgBCUN6 (ORCPT
+        id S1727097AbgBCUR6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 3 Feb 2020 15:17:58 -0500
+Received: from us-smtp-1.mimecast.com ([207.211.31.81]:26936 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726250AbgBCUR4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Feb 2020 15:13:58 -0500
-Received: from pps.filterd (m0098414.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 013K7gdx070632;
-        Mon, 3 Feb 2020 15:13:49 -0500
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2xxfrv7hke-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 03 Feb 2020 15:13:49 -0500
-Received: from m0098414.ppops.net (m0098414.ppops.net [127.0.0.1])
-        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 013K7dO7070507;
-        Mon, 3 Feb 2020 15:13:49 -0500
-Received: from ppma04dal.us.ibm.com (7a.29.35a9.ip4.static.sl-reverse.com [169.53.41.122])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2xxfrv7hk5-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 03 Feb 2020 15:13:48 -0500
-Received: from pps.filterd (ppma04dal.us.ibm.com [127.0.0.1])
-        by ppma04dal.us.ibm.com (8.16.0.27/8.16.0.27) with SMTP id 013KArhM011612;
-        Mon, 3 Feb 2020 20:13:48 GMT
-Received: from b03cxnp07029.gho.boulder.ibm.com (b03cxnp07029.gho.boulder.ibm.com [9.17.130.16])
-        by ppma04dal.us.ibm.com with ESMTP id 2xw0y6rh2x-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 03 Feb 2020 20:13:48 +0000
-Received: from b03ledav001.gho.boulder.ibm.com (b03ledav001.gho.boulder.ibm.com [9.17.130.232])
-        by b03cxnp07029.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 013KDkiT56099320
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 3 Feb 2020 20:13:47 GMT
-Received: from b03ledav001.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id DFBFE6E050;
-        Mon,  3 Feb 2020 20:13:46 +0000 (GMT)
-Received: from b03ledav001.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id C0DA56E04C;
-        Mon,  3 Feb 2020 20:13:46 +0000 (GMT)
-Received: from localhost (unknown [9.41.179.32])
-        by b03ledav001.gho.boulder.ibm.com (Postfix) with ESMTP;
-        Mon,  3 Feb 2020 20:13:46 +0000 (GMT)
-Date:   Mon, 3 Feb 2020 14:13:46 -0600
-From:   Scott Cheloha <cheloha@linux.ibm.com>
-To:     "Fontenot, Nathan" <ndfont@gmail.com>,
-        Nathan Lynch <nathanl@linux.ibm.com>
-Cc:     Rick Lindsley <ricklind@linux.vnet.ibm.com>,
-        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
-        Michael Ellerman <mpe@ellerman.id.au>
-Subject: Re: [PATCH] powerpc/drmem: cache LMBs in xarray to accelerate lookup
-Message-ID: <20200203201346.deqkxwgfmkifeb5s@rascal.austin.ibm.com>
-References: <20200128221113.17158-1-cheloha@linux.ibm.com>
- <87pnf3i188.fsf@linux.ibm.com>
- <20200129181013.lz6q5lpntnhwclqi@rascal.austin.ibm.com>
- <4dfb2f93-7af8-8c5f-854c-22afead18a8c@gmail.com>
+        Mon, 3 Feb 2020 15:17:56 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1580761075;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=RutAFnjTPWJQYvSXakp1wH+YCc3aiDR209+0rmd2tsA=;
+        b=W4nuXczMPsnoUF6Vv4OG1sEtME2Zx7grV1D26CQVZ5svPgq08DCL4tOJxcPUned6IJmNTq
+        a1CyuPTPXFo2Mj5eb0HQlQNec38PeOUkX9mGf5BUM+ebQkwyqfXktAqRXGJYct3cVOmDu3
+        9jgY66difSio84NM6Sv+LdZSdyu+9jY=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-413-K6SgvcyMNI-hwGVxcb2tDA-1; Mon, 03 Feb 2020 15:17:50 -0500
+X-MC-Unique: K6SgvcyMNI-hwGVxcb2tDA-1
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id BF651107ACCD;
+        Mon,  3 Feb 2020 20:17:48 +0000 (UTC)
+Received: from mail (ovpn-120-67.rdu2.redhat.com [10.10.120.67])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 0F15819C58;
+        Mon,  3 Feb 2020 20:17:46 +0000 (UTC)
+From:   Andrea Arcangeli <aarcange@redhat.com>
+To:     Will Deacon <will@kernel.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Jon Masters <jcm@jonmasters.org>,
+        Rafael Aquini <aquini@redhat.com>,
+        Mark Salter <msalter@redhat.com>
+Cc:     linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: [RFC] [PATCH 0/2] arm64: tlb: skip tlbi broadcast for single threaded TLB flushes
+Date:   Mon,  3 Feb 2020 15:17:43 -0500
+Message-Id: <20200203201745.29986-1-aarcange@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <4dfb2f93-7af8-8c5f-854c-22afead18a8c@gmail.com>
-X-TM-AS-GCONF: 00
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.572
- definitions=2020-02-03_06:2020-02-02,2020-02-03 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 spamscore=0
- bulkscore=0 suspectscore=1 clxscore=1015 priorityscore=1501
- lowpriorityscore=0 impostorscore=0 malwarescore=0 phishscore=0 mlxscore=0
- mlxlogscore=999 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-1911200001 definitions=main-2002030144
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jan 30, 2020 at 10:09:32AM -0600, Fontenot, Nathan wrote:
-> On 1/29/2020 12:10 PM, Scott Cheloha wrote:
-> > On Tue, Jan 28, 2020 at 05:56:55PM -0600, Nathan Lynch wrote:
-> >> Scott Cheloha <cheloha@linux.ibm.com> writes:
-> >>> LMB lookup is currently an O(n) linear search.  This scales poorly when
-> >>> there are many LMBs.
-> >>>
-> >>> If we cache each LMB by both its base address and its DRC index
-> >>> in an xarray we can cut lookups to O(log n), greatly accelerating
-> >>> drmem initialization and memory hotplug.
-> >>>
-> >>> This patch introduces two xarrays of of LMBs and fills them during
-> >>> drmem initialization.  The patch also adds two interfaces for LMB
-> >>> lookup.
-> >>
-> >> Good but can you replace the array of LMBs altogether
-> >> (drmem_info->lmbs)? xarray allows iteration over the members if needed.
-> > 
-> > I don't think we can without potentially changing the current behavior.
-> > 
-> > The current behavior in dlpar_memory_{add,remove}_by_ic() is to advance
-> > linearly through the array from the LMB with the matching DRC index.
-> > 
-> > Iteration through the xarray via xa_for_each_start() will return LMBs
-> > indexed with monotonically increasing DRC indices.> 
-> > Are they equivalent?  Or can we have an LMB with a smaller DRC index
-> > appear at a greater offset in the array?
-> > 
-> > If the following condition is possible:
-> > 
-> > 	drmem_info->lmbs[i].drc_index > drmem_info->lmbs[j].drc_index
-> > 
-> > where i < j, then we have a possible behavior change because
-> > xa_for_each_start() may not return a contiguous array slice.  It might
-> > "leap backwards" in the array.  Or it might skip over a chunk of LMBs.
-> > 
-> 
-> The LMB array should have each LMB in monotonically increasing DRC Index
-> value. Note that this is set up based on the DT property but I don't recall
-> ever seeing the DT specify LMBs out of order or not being contiguous.
+Hello everyone,
 
-Is that ordering guaranteed by the PAPR or some other spec or is that
-just a convention?
+I've been testing the arm64 ARMv8 tlbi broadcast instruction and it
+seems it doesn't scale in SMP, which opens the door for using similar
+tricks to what alpha, ia64, mips, powerpc, sh, sparc are doing to
+optimize TLB flushes for single threaded processes. This should be
+even more beneficial in NUMA or multi socket systems where the "ASID"
+and "vaddr" information has to cross a longer distance before the tlbi
+broadcast instruction can be retired.
 
-Code like drmem_update_dt_v1() makes me very nervous:
+This mm_users logic seems non standard across different arches: every
+arch does it in its own way. Not only the implementation is different,
+but different arches are also trying to optimize different cases
+through the mm_users checks in the arch code:
 
-static int drmem_update_dt_v1(struct device_node *memory,
-                              struct property *prop)
+1) avoiding remote TLB flushes with mm_users <=3D 1
+
+2) avoiding even local TLB flushes during exit_mmap->unmap_vmas when
+   mm_users =3D=3D 0
+
+For now I only tried to implement 1) on arm64, but I'm left wondering
+which other arches can achieve 2) and in turn which kernel code could
+write to the very userland virtual addresses being unmapped during
+exit_mmap, that would strictly require their flushing using the tlb
+gather mechanism.
+
+This is just a RFC to know if this is would be a viable optimization.
+A basic microbenchmark is included in the commit header of the patch.
+
+Thanks,
+Andrea
+
+Andrea Arcangeli (2):
+  mm: use_mm: fix for arches checking mm_users to optimize TLB flushes
+  arm64: tlb: skip tlbi broadcast for single threaded TLB flushes
+
+ arch/arm64/include/asm/efi.h         |  2 +-
+ arch/arm64/include/asm/mmu.h         |  3 +-
+ arch/arm64/include/asm/mmu_context.h | 10 +--
+ arch/arm64/include/asm/tlbflush.h    | 91 +++++++++++++++++++++++++++-
+ arch/arm64/mm/context.c              | 13 +++-
+ mm/mmu_context.c                     |  2 +
+ 6 files changed, 111 insertions(+), 10 deletions(-)
+
+Some examples of the scattered status of 2) follows:
+
+ia64:
+
+=3D=3D
+flush_tlb_mm (struct mm_struct *mm)
 {
-        struct property *new_prop;
-        struct of_drconf_cell_v1 *dr_cell;
-        struct drmem_lmb *lmb;
-        u32 *p;
+	if (!mm)
+		return;
 
-        new_prop = clone_property(prop, prop->length);
-        if (!new_prop)
-                return -1;
+	set_bit(mm->context, ia64_ctx.flushmap);
+	mm->context =3D 0;
 
-        p = new_prop->value;
-        *p++ = cpu_to_be32(drmem_info->n_lmbs);
+	if (atomic_read(&mm->mm_users) =3D=3D 0)
+		return;		/* happens as a result of exit_mmap() */
+[..]
+=3D=3D
 
-        dr_cell = (struct of_drconf_cell_v1 *)p;
+sparc:
 
-        for_each_drmem_lmb(lmb) {
-                dr_cell->base_addr = cpu_to_be64(lmb->base_addr);
-                dr_cell->drc_index = cpu_to_be32(lmb->drc_index);
-                dr_cell->aa_index = cpu_to_be32(lmb->aa_index);
-                dr_cell->flags = cpu_to_be32(drmem_lmb_flags(lmb));
+=3D=3D
+void flush_tlb_all(void)
+{
+	/*
+	 * Don't bother flushing if this address space is about to be
+	 * destroyed.
+	 */
+	if (atomic_read(&current->mm->mm_users) =3D=3D 0)
+		return;
+[..]
+static void fix_range(struct mm_struct *mm, unsigned long start_addr,
+		      unsigned long end_addr, int force)
+{
+	/*
+	 * Don't bother flushing if this address space is about to be
+	 * destroyed.
+	 */
+	if (atomic_read(&mm->mm_users) =3D=3D 0)
+		return;
+[..]
+=3D=3D
 
-                dr_cell++;
-        }
+arc:
 
-        of_update_property(memory, new_prop);
-        return 0;
-}
+=3D=3D
+noinline void local_flush_tlb_mm(struct mm_struct *mm)
+{
+	/*
+	 * Small optimisation courtesy IA64
+	 * flush_mm called during fork,exit,munmap etc, multiple times as well.
+	 * Only for fork( ) do we need to move parent to a new MMU ctxt,
+	 * all other cases are NOPs, hence this check.
+	 */
+	if (atomic_read(&mm->mm_users) =3D=3D 0)
+		return;
+[..]
+=3D=3D
 
-If for whatever reason the firmware has a DRC that isn't monotonically
-increasing and we update a firmware property at the wrong offset I have
-no idea what would happen.
-
-With the array we preserve the order.  Without it we might violate
-some assumption the firmware has made.
