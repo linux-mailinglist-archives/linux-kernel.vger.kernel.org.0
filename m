@@ -2,230 +2,480 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4AF7E15087E
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Feb 2020 15:36:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6F1C415088D
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Feb 2020 15:38:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728473AbgBCOf5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 3 Feb 2020 09:35:57 -0500
-Received: from mail-qv1-f67.google.com ([209.85.219.67]:39481 "EHLO
-        mail-qv1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728090AbgBCOfz (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Feb 2020 09:35:55 -0500
-Received: by mail-qv1-f67.google.com with SMTP id y8so6882741qvk.6;
-        Mon, 03 Feb 2020 06:35:54 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=pHZXEZfxcArrJOwFLOO5B25gH5Nf7M6GMePV8H95wz8=;
-        b=AN4jrTsY0Be0qFeBI9ikRLgxslO22TK9D1lt7ekoGyu3ID/zgEWhSNVupxjTkfAwxZ
-         RyklxvFtDIJzsnMWV9zv2YBMZWMtNgNTSG0RhwM7waizdUZJv4Yolq1UseGtKmfN4AlG
-         523oxjEUuqbaxJghOAZ2wLYFOObEbNB8BYnW43sb7bdgk+n6zPYYiiGZrSiXYaZAJF5U
-         D4dnArJCuHz5mLrlCfrFE5sAmPQcA6ikoOOc/SmeiOyF6oLimoxK+FiVMdIY1FjMIbbp
-         0XLFnJjUPmrI4YCpuDOGG2azN0IBRGLHF7Ee7qkkwezHahQF5sj8HAx2FTsGIQDMI92c
-         qHFw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=pHZXEZfxcArrJOwFLOO5B25gH5Nf7M6GMePV8H95wz8=;
-        b=Qj4R9ps0BbKwstnXV53H/CEEx9XMMpxoLxXjXK4g2U1mMuMKxkYXQYmwB6ErziT2iV
-         L4KnFG12bTN+Rj8OBTICLdtfoOwSbd76r2F8CETQ4l7SWV7r1vROkkITKOWDmMUv/OLn
-         OgYGoqadk/WIl/ppftN3FTCwc/zA8bqSp/1OYcQob/Kl5dYEtVejNIzq6QmyuM0H5RCc
-         ahpnaTAvnIhaxt81rqeEoG2iKmdFnWEK4y7A381Cy2XIelDCJe/KI36XXXV/zg32NrkX
-         Wh/FfdfE1zO7/gMsRmMHMKujAr9/ve0e9nVdc4+PBmpxwUUtTQBYTzYnnwNWkWp5jvI6
-         MEjg==
-X-Gm-Message-State: APjAAAUZIqXn/OnYtzF8R+yPMXpceN7WMd+mNjsQQAbnaBt59ReJsFOR
-        Gdv6gZr75mB/KEo/zSVGjzY=
-X-Google-Smtp-Source: APXvYqz2HVVFSAa8uHQTrlSI3OhLdRF470sd06dYwwzRxF3/fPsupj9vDFDZEBqMNubVa0aYJMX5hg==
-X-Received: by 2002:ad4:4b08:: with SMTP id r8mr23469453qvw.250.1580740554339;
-        Mon, 03 Feb 2020 06:35:54 -0800 (PST)
-Received: from auth2-smtp.messagingengine.com (auth2-smtp.messagingengine.com. [66.111.4.228])
-        by smtp.gmail.com with ESMTPSA id y26sm10320882qtc.94.2020.02.03.06.35.53
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 03 Feb 2020 06:35:53 -0800 (PST)
-Received: from compute6.internal (compute6.nyi.internal [10.202.2.46])
-        by mailauth.nyi.internal (Postfix) with ESMTP id F307E22076;
-        Mon,  3 Feb 2020 09:35:52 -0500 (EST)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute6.internal (MEProxy); Mon, 03 Feb 2020 09:35:53 -0500
-X-ME-Sender: <xms:xy84XttKeqh-gEQBxwPA7O1wcftgh5R6j1HrJc4iCNBRU1xMSuoZGg>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedugedrgeejgdeihecutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
-    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
-    fjughrpeffhffvuffkfhggtggujgesthdtredttddtvdenucfhrhhomhepuehoqhhunhcu
-    hfgvnhhguceosghoqhhunhdrfhgvnhhgsehgmhgrihhlrdgtohhmqeenucfkphephedvrd
-    duheehrdduuddurdejudenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgr
-    ihhlfhhrohhmpegsohhquhhnodhmvghsmhhtphgruhhthhhpvghrshhonhgrlhhithihqd
-    eiledvgeehtdeigedqudejjeekheehhedvqdgsohhquhhnrdhfvghngheppehgmhgrihhl
-    rdgtohhmsehfihigmhgvrdhnrghmvg
-X-ME-Proxy: <xmx:xy84XrUwqTqDlXrEOy3a-4hDTr1RqwBGNrCO4l3nOYY4diUTEohGaw>
-    <xmx:xy84XmrxUVgY6rxtgT_eM73yjc8rIyKzW2JEtf46MXyzuQgJjmNCLA>
-    <xmx:xy84XmrMHXee9CTrkoNKbXcfj7xPp4QGXyZGcdYPkESWy6NUGo3-aA>
-    <xmx:yC84XrVUQM4PYFvQRz9qqQmG05aMITRnwhR3rbkEWU1bcpyLopjULeXBLiQ>
-Received: from localhost (unknown [52.155.111.71])
-        by mail.messagingengine.com (Postfix) with ESMTPA id BFF233060272;
-        Mon,  3 Feb 2020 09:35:50 -0500 (EST)
-Date:   Mon, 3 Feb 2020 22:35:49 +0800
-From:   Boqun Feng <boqun.feng@gmail.com>
-To:     Andrew Murray <amurray@thegoodpenguin.co.uk>
-Cc:     linux-pci@vger.kernel.org, linux-hyperv@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        Michael Kelley <mikelley@microsoft.com>,
-        "K. Y. Srinivasan" <kys@microsoft.com>,
-        Haiyang Zhang <haiyangz@microsoft.com>,
-        Stephen Hemminger <sthemmin@microsoft.com>,
-        Sasha Levin <sashal@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Andrew Murray <andrew.murray@arm.com>,
-        Bjorn Helgaas <bhelgaas@google.com>
-Subject: Re: [PATCH v2 3/3] PCI: hv: Introduce hv_msi_entry
-Message-ID: <20200203143549.GG83200@debian-boqun.qqnc3lrjykvubdpftowmye0fmh.lx.internal.cloudapp.net>
-References: <20200203050313.69247-1-boqun.feng@gmail.com>
- <20200203050313.69247-4-boqun.feng@gmail.com>
- <20200203095140.GE20189@big-machine>
+        id S1728502AbgBCOi2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 3 Feb 2020 09:38:28 -0500
+Received: from smtp.uniroma2.it ([160.80.6.23]:56264 "EHLO smtp.uniroma2.it"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727454AbgBCOi1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Feb 2020 09:38:27 -0500
+Received: from localhost.localdomain ([160.80.103.126])
+        by smtp-2015.uniroma2.it (8.14.4/8.14.4/Debian-8) with ESMTP id 013EbM5r001139
+        (version=TLSv1/SSLv3 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
+        Mon, 3 Feb 2020 15:37:22 +0100
+From:   Andrea Mayer <andrea.mayer@uniroma2.it>
+To:     "David S. Miller" <davem@davemloft.net>,
+        Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>,
+        Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>,
+        David Lebrun <dav.lebrun@gmail.com>, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc:     Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Martin KaFai Lau <kafai@fb.com>,
+        Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>,
+        Andrii Nakryiko <andriin@fb.com>, bpf@vger.kernel.org,
+        Paolo Lungaroni <paolo.lungaroni@cnit.it>,
+        Andrea Mayer <andrea.mayer@uniroma2.it>
+Subject: [net-next] seg6: add support for optional attributes during behavior construction
+Date:   Mon,  3 Feb 2020 15:36:58 +0100
+Message-Id: <20200203143658.1561-1-andrea.mayer@uniroma2.it>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200203095140.GE20189@big-machine>
+Content-Transfer-Encoding: 8bit
+X-Virus-Scanned: clamav-milter 0.100.0 at smtp-2015
+X-Virus-Status: Clean
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 03, 2020 at 09:51:40AM +0000, Andrew Murray wrote:
-> On Mon, Feb 03, 2020 at 01:03:13PM +0800, Boqun Feng wrote:
-> > Add a new structure (hv_msi_entry), which is also defined int tlfs, to
-> 
-> s/int/in the/ ?
-> 
+before this patch, each SRv6 behavior specifies a set of required
+attributes that must be provided by the userspace application when the
+behavior is created. If an attribute is not supplied, the creation
+operation fails.
+As a workaround, if an attribute is not needed by a behavior, it requires
+to be set by the userspace application to a conventional skip-value. The
+kernel side, that processes the creation request of a behavior, reads the
+supplied attribute values and checks if it has been set to the
+conventional skip-value or not. Hence, each optional attribute must have a
+conventional skip-value which is known a priori and shared between
+userspace applications and kernel.
 
-Good catch, will fix.
+Messy code and complicated tricks may arise from this approach.
+On the other hand, this patch explicitly differentiates the required
+mandatory attributes from the optional ones. Now, each behavior can declare
+a set of required attributes and a set of optional ones. The behavior
+creation fails in case a required attribute is missing, while it goes on
+without generating any issue if an optional attribute is not supplied by
+the userspace application.
 
-> > describe the msi entry for HVCALL_RETARGET_INTERRUPT. The structure is
-> > needed because its layout may be different from architecture to
-> > architecture.
-> > 
-> > Also add a new generic interface hv_set_msi_address_from_desc() to allow
-> > different archs to set the msi address from msi_desc.
-> > 
-> > No functional change, only preparation for the future support of virtual
-> > PCI on non-x86 architectures.
-> > 
-> > Signed-off-by: Boqun Feng (Microsoft) <boqun.feng@gmail.com>
-> > ---
-> >  arch/x86/include/asm/hyperv-tlfs.h  | 11 +++++++++--
-> >  arch/x86/include/asm/mshyperv.h     |  5 +++++
-> >  drivers/pci/controller/pci-hyperv.c |  4 ++--
-> >  3 files changed, 16 insertions(+), 4 deletions(-)
-> > 
-> > diff --git a/arch/x86/include/asm/hyperv-tlfs.h b/arch/x86/include/asm/hyperv-tlfs.h
-> > index 4a76e442481a..953b3ad38746 100644
-> > --- a/arch/x86/include/asm/hyperv-tlfs.h
-> > +++ b/arch/x86/include/asm/hyperv-tlfs.h
-> > @@ -912,11 +912,18 @@ struct hv_partition_assist_pg {
-> >  	u32 tlb_lock_count;
-> >  };
-> >  
-> > +union hv_msi_entry {
-> > +	u64 as_uint64;
-> > +	struct {
-> > +		u32 address;
-> > +		u32 data;
-> > +	} __packed;
-> > +};
-> > +
-> >  struct hv_interrupt_entry {
-> >  	u32 source;			/* 1 for MSI(-X) */
-> >  	u32 reserved1;
-> > -	u32 address;
-> > -	u32 data;
-> > +	union hv_msi_entry msi_entry;
-> >  } __packed;
-> >  
-> >  /*
-> > diff --git a/arch/x86/include/asm/mshyperv.h b/arch/x86/include/asm/mshyperv.h
-> > index 6b79515abb82..3bdaa3b6e68f 100644
-> > --- a/arch/x86/include/asm/mshyperv.h
-> > +++ b/arch/x86/include/asm/mshyperv.h
-> > @@ -240,6 +240,11 @@ bool hv_vcpu_is_preempted(int vcpu);
-> >  static inline void hv_apic_init(void) {}
-> >  #endif
-> >  
-> > +#define hv_set_msi_address_from_desc(msi_entry, msi_desc)	\
-> > +do {								\
-> > +	(msi_entry)->address = (msi_desc)->msg.address_lo;	\
-> > +} while (0)
-> 
-> Given that this is a single statement, is there really a need for the do ; while(0) ?
-> 
+To properly combine the required and optional attributes, a new callback
+function called destroy() is used for releasing resources that have been
+acquired, during the parse() operation, by a given attribute.
+However, the destroy() function is optional and if an attribute does not
+require resources that have to be later released, the callback can be
+omitted.
 
-I choose to use do ; while (0) because I don't want code like the
-following to be able to compile:
+Signed-off-by: Andrea Mayer <andrea.mayer@uniroma2.it>
+---
+ net/ipv6/seg6_local.c | 226 ++++++++++++++++++++++++++++++++++++------
+ 1 file changed, 198 insertions(+), 28 deletions(-)
 
-	hv_set_msi_address_from_desc(...) /* semicolon is missing */
-	a = b;
+diff --git a/net/ipv6/seg6_local.c b/net/ipv6/seg6_local.c
+index 85a5447a3e8d..480f1ab35221 100644
+--- a/net/ipv6/seg6_local.c
++++ b/net/ipv6/seg6_local.c
+@@ -7,6 +7,13 @@
+  *  eBPF support: Mathieu Xhonneux <m.xhonneux@gmail.com>
+  */
+ 
++/* Changes:
++ *
++ * Andrea Mayer <andrea.mayer@uniroma2.it>
++ *	add support for optional attributes during behavior construction
++ *
++ */
++
+ #include <linux/types.h>
+ #include <linux/skbuff.h>
+ #include <linux/net.h>
+@@ -34,7 +41,21 @@ struct seg6_local_lwt;
+ 
+ struct seg6_action_desc {
+ 	int action;
+-	unsigned long attrs;
++	unsigned long required_attrs;
++
++	/* optional_attrs is used to specify attributes which can be defined
++	 * as optional attributes (also called optional parameters). If one of
++	 * these attributes is not present in the netlink msg during the
++	 * behavior creation, no errors will be returned to the userland (as
++	 * opposed to a missing required_attrs, where indeed a -EINVAL error
++	 * is returned to userland).
++	 *
++	 * Each attribute can be 1) required or 2) optional. Anyway, if the
++	 * attribute is set in both ways then it is considered to be only
++	 * required.
++	 */
++	unsigned long optional_attrs;
++
+ 	int (*input)(struct sk_buff *skb, struct seg6_local_lwt *slwt);
+ 	int static_headroom;
+ };
+@@ -56,6 +77,9 @@ struct seg6_local_lwt {
+ 
+ 	int headroom;
+ 	struct seg6_action_desc *desc;
++
++	/* parsed optional attributes */
++	unsigned long parsed_optional_attrs;
+ };
+ 
+ static struct seg6_local_lwt *seg6_local_lwtunnel(struct lwtunnel_state *lwt)
+@@ -559,53 +583,53 @@ static int input_action_end_bpf(struct sk_buff *skb,
+ static struct seg6_action_desc seg6_action_table[] = {
+ 	{
+ 		.action		= SEG6_LOCAL_ACTION_END,
+-		.attrs		= 0,
++		.required_attrs	= 0,
+ 		.input		= input_action_end,
+ 	},
+ 	{
+ 		.action		= SEG6_LOCAL_ACTION_END_X,
+-		.attrs		= (1 << SEG6_LOCAL_NH6),
++		.required_attrs	= (1 << SEG6_LOCAL_NH6),
+ 		.input		= input_action_end_x,
+ 	},
+ 	{
+ 		.action		= SEG6_LOCAL_ACTION_END_T,
+-		.attrs		= (1 << SEG6_LOCAL_TABLE),
++		.required_attrs	= (1 << SEG6_LOCAL_TABLE),
+ 		.input		= input_action_end_t,
+ 	},
+ 	{
+ 		.action		= SEG6_LOCAL_ACTION_END_DX2,
+-		.attrs		= (1 << SEG6_LOCAL_OIF),
++		.required_attrs	= (1 << SEG6_LOCAL_OIF),
+ 		.input		= input_action_end_dx2,
+ 	},
+ 	{
+ 		.action		= SEG6_LOCAL_ACTION_END_DX6,
+-		.attrs		= (1 << SEG6_LOCAL_NH6),
++		.required_attrs	= (1 << SEG6_LOCAL_NH6),
+ 		.input		= input_action_end_dx6,
+ 	},
+ 	{
+ 		.action		= SEG6_LOCAL_ACTION_END_DX4,
+-		.attrs		= (1 << SEG6_LOCAL_NH4),
++		.required_attrs	= (1 << SEG6_LOCAL_NH4),
+ 		.input		= input_action_end_dx4,
+ 	},
+ 	{
+ 		.action		= SEG6_LOCAL_ACTION_END_DT6,
+-		.attrs		= (1 << SEG6_LOCAL_TABLE),
++		.required_attrs	= (1 << SEG6_LOCAL_TABLE),
+ 		.input		= input_action_end_dt6,
+ 	},
+ 	{
+ 		.action		= SEG6_LOCAL_ACTION_END_B6,
+-		.attrs		= (1 << SEG6_LOCAL_SRH),
++		.required_attrs	= (1 << SEG6_LOCAL_SRH),
+ 		.input		= input_action_end_b6,
+ 	},
+ 	{
+ 		.action		= SEG6_LOCAL_ACTION_END_B6_ENCAP,
+-		.attrs		= (1 << SEG6_LOCAL_SRH),
++		.required_attrs	= (1 << SEG6_LOCAL_SRH),
+ 		.input		= input_action_end_b6_encap,
+ 		.static_headroom	= sizeof(struct ipv6hdr),
+ 	},
+ 	{
+ 		.action		= SEG6_LOCAL_ACTION_END_BPF,
+-		.attrs		= (1 << SEG6_LOCAL_BPF),
++		.required_attrs	= (1 << SEG6_LOCAL_BPF),
+ 		.input		= input_action_end_bpf,
+ 	},
+ 
+@@ -708,6 +732,12 @@ static int cmp_nla_srh(struct seg6_local_lwt *a, struct seg6_local_lwt *b)
+ 	return memcmp(a->srh, b->srh, len);
+ }
+ 
++static void destroy_attr_srh(struct seg6_local_lwt *slwt)
++{
++	kfree(slwt->srh);
++	slwt->srh = NULL;
++}
++
+ static int parse_nla_table(struct nlattr **attrs, struct seg6_local_lwt *slwt)
+ {
+ 	slwt->table = nla_get_u32(attrs[SEG6_LOCAL_TABLE]);
+@@ -899,16 +929,36 @@ static int cmp_nla_bpf(struct seg6_local_lwt *a, struct seg6_local_lwt *b)
+ 	return strcmp(a->bpf.name, b->bpf.name);
+ }
+ 
++static void destroy_attr_bpf(struct seg6_local_lwt *slwt)
++{
++	kfree(slwt->bpf.name);
++	if (slwt->bpf.prog)
++		bpf_prog_put(slwt->bpf.prog);
++
++	/* avoid to mess up everything if the function is called more
++	 * than once.
++	 */
++	slwt->bpf.name = NULL;
++	slwt->bpf.prog = NULL;
++}
++
+ struct seg6_action_param {
+ 	int (*parse)(struct nlattr **attrs, struct seg6_local_lwt *slwt);
+ 	int (*put)(struct sk_buff *skb, struct seg6_local_lwt *slwt);
+ 	int (*cmp)(struct seg6_local_lwt *a, struct seg6_local_lwt *b);
++
++	/* optional destroy() callback useful for releasing resources that
++	 * have been previously allocated in the corresponding parse()
++	 * function.
++	 */
++	void (*destroy)(struct seg6_local_lwt *slwt);
+ };
+ 
+ static struct seg6_action_param seg6_action_params[SEG6_LOCAL_MAX + 1] = {
+ 	[SEG6_LOCAL_SRH]	= { .parse = parse_nla_srh,
+ 				    .put = put_nla_srh,
+-				    .cmp = cmp_nla_srh },
++				    .cmp = cmp_nla_srh,
++				    .destroy = destroy_attr_srh },
+ 
+ 	[SEG6_LOCAL_TABLE]	= { .parse = parse_nla_table,
+ 				    .put = put_nla_table,
+@@ -932,12 +982,96 @@ static struct seg6_action_param seg6_action_params[SEG6_LOCAL_MAX + 1] = {
+ 
+ 	[SEG6_LOCAL_BPF]	= { .parse = parse_nla_bpf,
+ 				    .put = put_nla_bpf,
+-				    .cmp = cmp_nla_bpf },
++				    .cmp = cmp_nla_bpf,
++				    .destroy = destroy_attr_bpf	},
+ 
+ };
+ 
++/* call the destroy() callback, if any, for each attribute set in
++ * @parsed_attrs, starting from attribute index @start up to @end excluded.
++ */
++static void __destroy_attrs(unsigned long parsed_attrs, int start, int end,
++			    struct seg6_local_lwt *slwt)
++{
++	struct seg6_action_param *param;
++	int i;
++
++	for (i = start; i < end; i++) {
++		if (!(parsed_attrs & (1 << i)))
++			continue;
++
++		param = &seg6_action_params[i];
++
++		if (param->destroy)
++			param->destroy(slwt);
++	}
++}
++
++/* release all the resources that have been possibly taken by attributes
++ * during parsing operations.
++ */
++static void destroy_attrs(struct seg6_local_lwt *slwt)
++{
++	unsigned long attrs;
++
++	attrs = slwt->desc->required_attrs | slwt->parsed_optional_attrs;
++
++	__destroy_attrs(attrs, 0, SEG6_LOCAL_MAX + 1, slwt);
++}
++
++/* optional attributes differ from the required (mandatory) ones because they
++ * can be or they cannot be present at all. If an attribute is declared but is
++ * not given then it will simply be discarded without generating any error.
++ */
++static int parse_nla_optional_attrs(struct nlattr **attrs,
++				    struct seg6_local_lwt *slwt)
++{
++	unsigned long optional_attrs, parsed_optional_attrs;
++	struct seg6_action_param *param;
++	struct seg6_action_desc *desc;
++	int i, err;
++
++	desc = slwt->desc;
++	parsed_optional_attrs = 0;
++	optional_attrs = desc->optional_attrs;
++
++	if (!optional_attrs)
++		goto out;
++
++	/* we call the parse() function for each optional attribute.
++	 * note: required attributes have already been parsed.
++	 */
++	for (i = 0; i < SEG6_LOCAL_MAX + 1; ++i) {
++		if (!(optional_attrs & (1 << i)) || !attrs[i])
++			continue;
++
++		param = &seg6_action_params[i];
++
++		err = param->parse(attrs, slwt);
++		if (err < 0)
++			goto parse_err;
++
++		/* current attribute has been correctly parsed */
++		parsed_optional_attrs |= (1 << i);
++	}
++
++out:
++	slwt->parsed_optional_attrs = parsed_optional_attrs;
++
++	return 0;
++
++parse_err:
++	/* release any resource that has been possibly allocated during
++	 * successful parse() operations.
++	 */
++	__destroy_attrs(parsed_optional_attrs, 0, i, slwt);
++
++	return err;
++}
++
+ static int parse_nla_action(struct nlattr **attrs, struct seg6_local_lwt *slwt)
+ {
++	unsigned long parsed_required_attrs;
+ 	struct seg6_action_param *param;
+ 	struct seg6_action_desc *desc;
+ 	int i, err;
+@@ -950,10 +1084,18 @@ static int parse_nla_action(struct nlattr **attrs, struct seg6_local_lwt *slwt)
+ 		return -EOPNOTSUPP;
+ 
+ 	slwt->desc = desc;
++	parsed_required_attrs = 0;
+ 	slwt->headroom += desc->static_headroom;
+ 
++	/* if an attribute is set both optional and required, then we consider
++	 * it only as a required one. Therefore, we adjust the optional_attrs
++	 * bit mask so that it cannot contain any required attribute when the
++	 * same has already been specified in the required_attrs bit mask.
++	 */
++	desc->optional_attrs &= ~desc->required_attrs;
++
+ 	for (i = 0; i < SEG6_LOCAL_MAX + 1; i++) {
+-		if (desc->attrs & (1 << i)) {
++		if (desc->required_attrs & (1 << i)) {
+ 			if (!attrs[i])
+ 				return -EINVAL;
+ 
+@@ -961,11 +1103,27 @@ static int parse_nla_action(struct nlattr **attrs, struct seg6_local_lwt *slwt)
+ 
+ 			err = param->parse(attrs, slwt);
+ 			if (err < 0)
+-				return err;
++				goto parse_err;
++
++			/* current attribute has been correctly parsed */
++			parsed_required_attrs |= (1 << i);
+ 		}
+ 	}
+ 
++	/* if we support optional attributes, then we parse all of them */
++	err = parse_nla_optional_attrs(attrs, slwt);
++	if (err < 0)
++		goto parse_err;
++
+ 	return 0;
++
++parse_err:
++	/* release any resource that has been possibly allocated during
++	 * successful parse() operations.
++	 */
++	__destroy_attrs(parsed_required_attrs, 0, i, slwt);
++
++	return err;
+ }
+ 
+ static int seg6_local_build_state(struct nlattr *nla, unsigned int family,
+@@ -1009,8 +1167,16 @@ static int seg6_local_build_state(struct nlattr *nla, unsigned int family,
+ 	return 0;
+ 
+ out_free:
+-	kfree(slwt->srh);
++	/* parse_nla_action() is in charge of calling destroy_attrs() if,
++	 * during the parsing operation, something went wrong. However, if the
++	 * creation of the behavior fails after the parse_nla_action()
++	 * successfully returned, then destroy_attrs() MUST be called.
++	 *
++	 * Please, keep that in mind if you need to add more logic here after
++	 * the parse_nla_action().
++	 */
+ 	kfree(newts);
++
+ 	return err;
+ }
+ 
+@@ -1018,14 +1184,7 @@ static void seg6_local_destroy_state(struct lwtunnel_state *lwt)
+ {
+ 	struct seg6_local_lwt *slwt = seg6_local_lwtunnel(lwt);
+ 
+-	kfree(slwt->srh);
+-
+-	if (slwt->desc->attrs & (1 << SEG6_LOCAL_BPF)) {
+-		kfree(slwt->bpf.name);
+-		bpf_prog_put(slwt->bpf.prog);
+-	}
+-
+-	return;
++	destroy_attrs(slwt);
+ }
+ 
+ static int seg6_local_fill_encap(struct sk_buff *skb,
+@@ -1033,13 +1192,20 @@ static int seg6_local_fill_encap(struct sk_buff *skb,
+ {
+ 	struct seg6_local_lwt *slwt = seg6_local_lwtunnel(lwt);
+ 	struct seg6_action_param *param;
++	unsigned long attrs;
+ 	int i, err;
+ 
+ 	if (nla_put_u32(skb, SEG6_LOCAL_ACTION, slwt->action))
+ 		return -EMSGSIZE;
+ 
++	/* the set of attributes is now made of two parts:
++	 *  1) required_attrs (the default attributes);
++	 *  2) a variable number of parsed optional_attrs.
++	 */
++	attrs = slwt->desc->required_attrs | slwt->parsed_optional_attrs;
++
+ 	for (i = 0; i < SEG6_LOCAL_MAX + 1; i++) {
+-		if (slwt->desc->attrs & (1 << i)) {
++		if (attrs & (1 << i)) {
+ 			param = &seg6_action_params[i];
+ 			err = param->put(skb, slwt);
+ 			if (err < 0)
+@@ -1058,7 +1224,7 @@ static int seg6_local_get_encap_size(struct lwtunnel_state *lwt)
+ 
+ 	nlsize = nla_total_size(4); /* action */
+ 
+-	attrs = slwt->desc->attrs;
++	attrs = slwt->desc->required_attrs | slwt->parsed_optional_attrs;
+ 
+ 	if (attrs & (1 << SEG6_LOCAL_SRH))
+ 		nlsize += nla_total_size((slwt->srh->hdrlen + 1) << 3);
+@@ -1091,6 +1257,7 @@ static int seg6_local_cmp_encap(struct lwtunnel_state *a,
+ {
+ 	struct seg6_local_lwt *slwt_a, *slwt_b;
+ 	struct seg6_action_param *param;
++	unsigned long attrs_a, attrs_b;
+ 	int i;
+ 
+ 	slwt_a = seg6_local_lwtunnel(a);
+@@ -1099,11 +1266,14 @@ static int seg6_local_cmp_encap(struct lwtunnel_state *a,
+ 	if (slwt_a->action != slwt_b->action)
+ 		return 1;
+ 
+-	if (slwt_a->desc->attrs != slwt_b->desc->attrs)
++	attrs_a = slwt_a->desc->required_attrs | slwt_a->parsed_optional_attrs;
++	attrs_b = slwt_b->desc->required_attrs | slwt_b->parsed_optional_attrs;
++
++	if (attrs_a != attrs_b)
+ 		return 1;
+ 
+ 	for (i = 0; i < SEG6_LOCAL_MAX + 1; i++) {
+-		if (slwt_a->desc->attrs & (1 << i)) {
++		if (attrs_a & (1 << i)) {
+ 			param = &seg6_action_params[i];
+ 			if (param->cmp(slwt_a, slwt_b))
+ 				return 1;
+-- 
+2.20.1
 
-But now think more about this, I think it's probably better to define
-this as a function..
-
-> 
-> > +
-> >  #else /* CONFIG_HYPERV */
-> >  static inline void hyperv_init(void) {}
-> >  static inline void hyperv_setup_mmu_ops(void) {}
-> > diff --git a/drivers/pci/controller/pci-hyperv.c b/drivers/pci/controller/pci-hyperv.c
-> > index 0d9b74503577..2240f2b3643e 100644
-> > --- a/drivers/pci/controller/pci-hyperv.c
-> > +++ b/drivers/pci/controller/pci-hyperv.c
-> > @@ -1170,8 +1170,8 @@ static void hv_irq_unmask(struct irq_data *data)
-> >  	memset(params, 0, sizeof(*params));
-> >  	params->partition_id = HV_PARTITION_ID_SELF;
-> >  	params->int_entry.source = 1; /* MSI(-X) */
-> > -	params->int_entry.address = msi_desc->msg.address_lo;
-> > -	params->int_entry.data = msi_desc->msg.data;
-> > +	hv_set_msi_address_from_desc(&params->int_entry.msi_entry, msi_desc);
-> > +	params->int_entry.msi_entry.data = msi_desc->msg.data;
-> 
-> If the layout may differ, then don't we also need a wrapper for data?
-> 
-
-On x86 hv_msi_entry is:
-
-	{
-		u32 address;
-		u32 data;
-	}
-
-and on ARM64 it is:
-
-	{
-		u64 address;
-		u32 data;
-		u32 reserved;
-	}
-
-So currently, setting msi_entry.data doesn't need a wrapper for
-different archs. But now you mention it, probably a better way is to
-provide a wrapper hv_set_msi_entry_from_desc(), which sets both address
-and data instead of hv_set_msi_address_from_desc().
-
-Thanks for looking into the whole patchset!
-
-Regards,
-Boqun
-
-> Thanks,
-> 
-> Andrew Murray
-> 
-> >  	params->device_id = (hbus->hdev->dev_instance.b[5] << 24) |
-> >  			   (hbus->hdev->dev_instance.b[4] << 16) |
-> >  			   (hbus->hdev->dev_instance.b[7] << 8) |
-> > -- 
-> > 2.24.1
-> > 
