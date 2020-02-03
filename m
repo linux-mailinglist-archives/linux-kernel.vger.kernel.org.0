@@ -2,39 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8522E150C6B
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Feb 2020 17:37:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DEE0C150E0E
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Feb 2020 17:50:28 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731142AbgBCQgK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 3 Feb 2020 11:36:10 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51212 "EHLO mail.kernel.org"
+        id S1728652AbgBCQZn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 3 Feb 2020 11:25:43 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36376 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731121AbgBCQgE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Feb 2020 11:36:04 -0500
+        id S1728547AbgBCQZi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Feb 2020 11:25:38 -0500
 Received: from localhost (unknown [104.132.45.99])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C2DEE20CC7;
-        Mon,  3 Feb 2020 16:36:03 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B570C2086A;
+        Mon,  3 Feb 2020 16:25:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1580747764;
-        bh=9KeJ7yaCGgNg9PgIAjp8U+LArV2ZV5IqK5631pvuGiM=;
+        s=default; t=1580747138;
+        bh=ckcf98rypvLsz0Vp0cFslnWN27jANYoCwPDwd2GDQGs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=zLc+/iFdQ435Wy4S/DOa3qEM3Y3w6sWDFUusIYNucSXAKabRMWVh0p+yQhzPIHrUG
-         +XiJ/2DOOoZXj9igUPxp2A7NBmM2c0jom6x8KdQEOjoy4vi2Euau45+XLduifJu66z
-         QQgFpOkecoeCp99rJiscdla7olnEJ2uR+Win1+zY=
+        b=X1PypxdTf0rA809JvyVsEP+pGL6cZXlf1XjjPi60zMI2TBChDAw8pDmsWUrHR1dYa
+         jjDhX8h5qfVCxdXFylv+uoo0nJdWH5wq62H3+d5Ziv0G0NqTUKKVr7Zwc6asfmCrBh
+         i5qqjwGZ1qlXeNQkZbQCIhOEwJZSUXbOsXh+Aq2o=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        syzbot <syzbot+efea72d4a0a1d03596cd@syzkaller.appspotmail.com>,
-        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-Subject: [PATCH 5.4 20/90] tomoyo: Use atomic_t for statistics counter
+        stable@vger.kernel.org, Herbert Xu <herbert@gondor.apana.org.au>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.9 27/68] crypto: pcrypt - Fix user-after-free on module unload
 Date:   Mon,  3 Feb 2020 16:19:23 +0000
-Message-Id: <20200203161920.345794713@linuxfoundation.org>
+Message-Id: <20200203161909.512953235@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200203161917.612554987@linuxfoundation.org>
-References: <20200203161917.612554987@linuxfoundation.org>
+In-Reply-To: <20200203161904.705434837@linuxfoundation.org>
+References: <20200203161904.705434837@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,58 +43,43 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+From: Herbert Xu <herbert@gondor.apana.org.au>
 
-commit a8772fad0172aeae339144598b809fd8d4823331 upstream.
+[ Upstream commit 07bfd9bdf568a38d9440c607b72342036011f727 ]
 
-syzbot is reporting that there is a race at tomoyo_stat_update() [1].
-Although it is acceptable to fail to track exact number of times policy
-was updated, convert to atomic_t because this is not a hot path.
+On module unload of pcrypt we must unregister the crypto algorithms
+first and then tear down the padata structure.  As otherwise the
+crypto algorithms are still alive and can be used while the padata
+structure is being freed.
 
-[1] https://syzkaller.appspot.com/bug?id=a4d7b973972eeed410596e6604580e0133b0fc04
-
-Reported-by: syzbot <syzbot+efea72d4a0a1d03596cd@syzkaller.appspotmail.com>
-Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Fixes: 5068c7a883d1 ("crypto: pcrypt - Add pcrypt crypto...")
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- security/tomoyo/common.c |   11 ++++-------
- 1 file changed, 4 insertions(+), 7 deletions(-)
+ crypto/pcrypt.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/security/tomoyo/common.c
-+++ b/security/tomoyo/common.c
-@@ -2322,9 +2322,9 @@ static const char * const tomoyo_memory_
- 	[TOMOYO_MEMORY_QUERY]  = "query message:",
- };
+diff --git a/crypto/pcrypt.c b/crypto/pcrypt.c
+index a5718c0a3dc4e..1348541da463a 100644
+--- a/crypto/pcrypt.c
++++ b/crypto/pcrypt.c
+@@ -505,11 +505,12 @@ static int __init pcrypt_init(void)
  
--/* Timestamp counter for last updated. */
--static unsigned int tomoyo_stat_updated[TOMOYO_MAX_POLICY_STAT];
- /* Counter for number of updates. */
-+static atomic_t tomoyo_stat_updated[TOMOYO_MAX_POLICY_STAT];
-+/* Timestamp counter for last updated. */
- static time64_t tomoyo_stat_modified[TOMOYO_MAX_POLICY_STAT];
- 
- /**
-@@ -2336,10 +2336,7 @@ static time64_t tomoyo_stat_modified[TOM
-  */
- void tomoyo_update_stat(const u8 index)
+ static void __exit pcrypt_exit(void)
  {
--	/*
--	 * I don't use atomic operations because race condition is not fatal.
--	 */
--	tomoyo_stat_updated[index]++;
-+	atomic_inc(&tomoyo_stat_updated[index]);
- 	tomoyo_stat_modified[index] = ktime_get_real_seconds();
++	crypto_unregister_template(&pcrypt_tmpl);
++
+ 	pcrypt_fini_padata(&pencrypt);
+ 	pcrypt_fini_padata(&pdecrypt);
+ 
+ 	kset_unregister(pcrypt_kset);
+-	crypto_unregister_template(&pcrypt_tmpl);
  }
  
-@@ -2360,7 +2357,7 @@ static void tomoyo_read_stat(struct tomo
- 	for (i = 0; i < TOMOYO_MAX_POLICY_STAT; i++) {
- 		tomoyo_io_printf(head, "Policy %-30s %10u",
- 				 tomoyo_policy_headers[i],
--				 tomoyo_stat_updated[i]);
-+				 atomic_read(&tomoyo_stat_updated[i]));
- 		if (tomoyo_stat_modified[i]) {
- 			struct tomoyo_time stamp;
- 
+ module_init(pcrypt_init);
+-- 
+2.20.1
+
 
 
