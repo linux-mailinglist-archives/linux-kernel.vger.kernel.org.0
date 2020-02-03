@@ -2,88 +2,120 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1E0041508DF
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Feb 2020 15:58:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DD4DB1508E5
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Feb 2020 15:59:24 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728513AbgBCO6g (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 3 Feb 2020 09:58:36 -0500
-Received: from wout5-smtp.messagingengine.com ([64.147.123.21]:50361 "EHLO
-        wout5-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727824AbgBCO6g (ORCPT
+        id S1728349AbgBCO7X (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 3 Feb 2020 09:59:23 -0500
+Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:39780 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1727201AbgBCO7X (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Feb 2020 09:58:36 -0500
-Received: from compute6.internal (compute6.nyi.internal [10.202.2.46])
-        by mailout.west.internal (Postfix) with ESMTP id 6D376790;
-        Mon,  3 Feb 2020 09:58:35 -0500 (EST)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute6.internal (MEProxy); Mon, 03 Feb 2020 09:58:35 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kroah.com; h=
-        date:from:to:cc:subject:message-id:references:mime-version
-        :content-type:in-reply-to; s=fm3; bh=UdM+Slc/O+rORqRWT038kmUBeaR
-        7sEVX6Zilo6E1Q94=; b=Fk0E8TfuBc7J1DA05FLClqHx2e5CcVpzjsufGJOJNuQ
-        FHc4IdrV34Y+TYl/uXC+CJ9e9mvrJkFrsHnhmXlW4eGNVmumZ27InfAxoaAMXJxP
-        VWs1NoXVo1PwQFapz4YVkv6vcz+/lSs81h6Ly1BGSY+ayono3Xr610L8foOuGSrI
-        Sl3efc/s4uK2SHIjqge4GqRoDuaXfziexiU44allK9+a3WYXMsnq/GnCW9r2tBh5
-        mnRT3ih/mTtlvG7DpIjtk9AZmL6cZjNLYUm+oShS/gqgWFiStucJHGpYkEqxNZLf
-        mJA2o/HtlNqj8XJptBpXzyQw9UHG5+4vcjqOfAN2paQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-type:date:from:in-reply-to
-        :message-id:mime-version:references:subject:to:x-me-proxy
-        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; bh=UdM+Sl
-        c/O+rORqRWT038kmUBeaR7sEVX6Zilo6E1Q94=; b=BP6EjgtX7QZ36ZzYy+6laI
-        Ox/n7CZH92SdCMfSwVSL7nTDCTb+WD2TNfj4cpsc6luO2Yz1oitQJPrxPQhoaDzg
-        u+ft/+c/msytjFJ/qWxQHqFx/A7pa0cPZijTmwMdXvrmOTB1v4vITtW+UxvLFpix
-        B4HOBxitJ9++9CPwl30iym31EP8VONOyO7jwalgX9m0lJrgpNfz0bxmlJh5fioDU
-        S1EyTqZZtMnQ72ItF20UM8unlQTto/rlBEMbLDAJm/BgZUlb+vLV72GZ6ylZB5RW
-        XsfR/YQzuXnT6CxNzOVpop5JbrxKh/qZ9ikApKaovV4uZpYrgY5XB2yFppFFu6IQ
-        ==
-X-ME-Sender: <xms:GDU4XtfUH4HfvhZbhxs9h7FGwjqPADbpyi1WADWcUy7mxdoiwxniFA>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedugedrgeejgdeilecutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
-    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
-    fjughrpeffhffvuffkfhggtggujgesthdtredttddtvdenucfhrhhomhepifhrvghgucfm
-    jfcuoehgrhgvgheskhhrohgrhhdrtghomheqnecukfhppedutdegrddufedvrdeghedrle
-    elnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepghhr
-    vghgsehkrhhorghhrdgtohhm
-X-ME-Proxy: <xmx:GDU4Xsc90Ofnvkj0W4zvL_5vsdcleg7bfvW54g76uT7tPN6GQnR94w>
-    <xmx:GDU4Xjl1seuv7jUxRSd0ki5fvZgNu78yXiD5nN_OAvcc8gDCqGypkQ>
-    <xmx:GDU4Xp8hkBstJNrGQ02faEDQUfy7qYhkRZSOX65vrBIhNeffJ6dG8g>
-    <xmx:GzU4XgXV4PCCggqodEn3iKaMm9yqeQtQK98TlJRjqfli5iuj1J5Vfw>
-Received: from localhost (unknown [104.132.45.99])
-        by mail.messagingengine.com (Postfix) with ESMTPA id 858103280059;
-        Mon,  3 Feb 2020 09:58:32 -0500 (EST)
-Date:   Mon, 3 Feb 2020 14:58:31 +0000
-From:   Greg KH <greg@kroah.com>
-To:     Lee Jones <lee.jones@linaro.org>
-Cc:     stable@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/1] media: si470x-i2c: Move free() past last use of
- 'radio'
-Message-ID: <20200203145831.GA3238182@kroah.com>
-References: <20200203132130.12748-1-lee.jones@linaro.org>
- <20200203143245.GA3220000@kroah.com>
+        Mon, 3 Feb 2020 09:59:23 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1580741962;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=9bj1VW0D0sqI3fU0UHoqSbGmPMpku6KBJ1NMQqD1DEE=;
+        b=Sq2FjV21w3Y6chLmti0T/xwE/5kWuLQD6YgbT8cCOBq6iCwpWFsku6DDdo9C/kMqOaopIQ
+        /wWS3vur5Hx/6JMTy63d7UGiGZ824OBz6Dah4SsxlYKGBqj3D7Zt5jcNw0raei3zmDSVm/
+        EuTWQyJ2ulWRs2LEKaxlGA3d94MwxII=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-269-AQ28BhP9OMiZy0cL1mIydQ-1; Mon, 03 Feb 2020 09:59:18 -0500
+X-MC-Unique: AQ28BhP9OMiZy0cL1mIydQ-1
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 81DD71800D41;
+        Mon,  3 Feb 2020 14:59:15 +0000 (UTC)
+Received: from llong.remote.csb (dhcp-17-59.bos.redhat.com [10.18.17.59])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id E429219C58;
+        Mon,  3 Feb 2020 14:59:12 +0000 (UTC)
+Subject: Re: [PATCH v8 4/5] locking/qspinlock: Introduce starvation avoidance
+ into CNA
+To:     Peter Zijlstra <peterz@infradead.org>,
+        Alex Kogan <alex.kogan@oracle.com>
+Cc:     linux@armlinux.org.uk, Ingo Molnar <mingo@redhat.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Arnd Bergmann <arnd@arndb.de>, linux-arch@vger.kernel.org,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
+        Borislav Petkov <bp@alien8.de>, hpa@zytor.com, x86@kernel.org,
+        Hanjun Guo <guohanjun@huawei.com>,
+        Jan Glauber <jglauber@marvell.com>,
+        Steven Sistare <steven.sistare@oracle.com>,
+        Daniel Jordan <daniel.m.jordan@oracle.com>,
+        dave.dice@oracle.com
+References: <cfdf635d-be2e-9d4b-c4ca-6bcbddc6868f@redhat.com>
+ <3862F8A1-FF9B-40AD-A88E-2C0BA7AF6F58@oracle.com>
+ <20200124075235.GX14914@hirez.programming.kicks-ass.net>
+ <2c6741c5-d89d-4b2c-cebe-a7c7f6eed884@redhat.com>
+ <48ce49e5-98a7-23cd-09f4-8290a65abbb5@redhat.com>
+ <8D3AFB47-B595-418C-9568-08780DDC58FF@oracle.com>
+ <714892cd-d96f-4d41-ae8b-d7b7642a6e3c@redhat.com>
+ <1669BFDE-A1A5-4ED8-B586-035460BBF68A@oracle.com>
+ <20200125111931.GW11457@worktop.programming.kicks-ass.net>
+ <F32558D8-4ACB-483A-AB4C-F565003A02E7@oracle.com>
+ <20200203134540.GA14879@hirez.programming.kicks-ass.net>
+From:   Waiman Long <longman@redhat.com>
+Organization: Red Hat
+Message-ID: <6d11b22b-2fb5-7dea-f88b-b32f1576a5e0@redhat.com>
+Date:   Mon, 3 Feb 2020 09:59:12 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200203143245.GA3220000@kroah.com>
+In-Reply-To: <20200203134540.GA14879@hirez.programming.kicks-ass.net>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 03, 2020 at 02:32:45PM +0000, Greg KH wrote:
-> On Mon, Feb 03, 2020 at 01:21:30PM +0000, Lee Jones wrote:
-> > A pointer to 'struct si470x_device' is currently used after free:
-> > 
-> >   drivers/media/radio/si470x/radio-si470x-i2c.c:462:25-30: ERROR: reference
-> >     preceded by free on line 460
-> > 
-> > Shift the call to free() down past its final use.
-> > 
-> > NB: Not sending to Mainline, since the problem does not exist there.
-> 
-> It doesn't exist there because of a bad merge?  What commit caused the
-> problem?
+On 2/3/20 8:45 AM, Peter Zijlstra wrote:
+> On Thu, Jan 30, 2020 at 05:05:28PM -0500, Alex Kogan wrote:
+>>> On Jan 25, 2020, at 6:19 AM, Peter Zijlstra <peterz@infradead.org> wr=
+ote:
+>>>
+>>> On Fri, Jan 24, 2020 at 01:19:05PM -0500, Alex Kogan wrote:
+>>>
+>>>> Is there a lightweight way to identify such a =E2=80=9Cprioritized=E2=
+=80=9D thread?
+>>> No; people might for instance care about tail latencies between their
+>>> identically spec'ed worker tasks.
+>> I would argue that those users need to tune/reduce the intra-node hand=
+off
+>> threshold for their needs. Or disable CNA altogether.
+> I really don't like boot time arguments (or tunables in generic) for a
+> machine to work as it should.
+>
+> The default really should 'just work'.
+That will be the ideal case. In reality, it usually takes a while for
+the code to mature enough to do some kind of self tuning. In the mean
+time, having some configuration options available allows us to have more
+time to figure what the best configuration options to be.
+>> In general, Peter, seems like you are not on board with the way Longma=
+n
+>> suggested to handle prioritized threads. Am I right?
+> Right.
+>
+> Presumably you have a workload where CNA is actually a win? That is,
+> what inspired you to go down this road? Which actual kernel lock is so
+> contended on NUMA machines that we need to do this?
 
-Ah, found it, it was 2df200ab234a ("media: si470x-i2c: add missed
-operations in remove")
+Today, a 2-socket Rome server can have 128 cores and 256 threads. If we
+scale up more, we could easily have more than 1000 threads in a system.
+With that many logical cpus available, it is easy to envision some heavy
+spinlock contention can happen fairly regularly. This patch can
+alleviate the congestion and improve performance under that
+circumstance. Of course, the specific locks that are contended will
+depend on the workloads.
+
+Cheers,
+Longman
+
