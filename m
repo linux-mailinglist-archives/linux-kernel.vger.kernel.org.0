@@ -2,82 +2,149 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E5B7D150430
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Feb 2020 11:26:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C12A7150437
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Feb 2020 11:30:47 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727468AbgBCK0k (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 3 Feb 2020 05:26:40 -0500
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:33921 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726100AbgBCK0j (ORCPT
+        id S1727577AbgBCKan (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 3 Feb 2020 05:30:43 -0500
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:55998 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726100AbgBCKan (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Feb 2020 05:26:39 -0500
-Received: by mail-pf1-f196.google.com with SMTP id i6so7356081pfc.1;
-        Mon, 03 Feb 2020 02:26:39 -0800 (PST)
+        Mon, 3 Feb 2020 05:30:43 -0500
+Received: by mail-wm1-f65.google.com with SMTP id q9so15182331wmj.5
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Feb 2020 02:30:41 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
+        d=google.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=FmHvGOLNVPxI0kt6R17Fdw33zDx8xukTS46dymX55P0=;
-        b=YAAaXbGAvy/ArWefbnDeK5nEA/0+HER/i62fidtCw7orhcmlbsCgNcbE5kcE/zAVcd
-         7M24Sr93wsxNmnSj/fS+/niPdFLBopq1bN3ToJaYlWCBe71U80Oad8IR66G0JbaEVm1C
-         kcyyYwltLwV5x+SGS6Aod1sO2vM1FAKmRf7fgk216sL07nKdJUxY2i0oJVAEEockrRIT
-         rTWW3AEyajbWY2LLnFsMt+z++DmE/uTvy2PNPZkEAnQRLXUaK/gOPUWQErvLG/ZvcSW7
-         hpoLSCa7TBLTX5IRNVTIA/3eaITSBf5RokUJmkbARQaCuRTEMARt0dodYmvVIhVSxdlt
-         SmAw==
+        bh=dD9fba3D0HqXgOSqJlLFz2muhY16h6Gr+BwVuHnFIv4=;
+        b=UKGNNJxPihSVdDnyfCzDlB+1MVddilSdG2GMCVkiCGZL6D4AXhN/Byg8SWyWW/bnPv
+         ZhR3DWnYrfYRCjJom/Sh/JFBZ7Iwl4epixB/18DbnkFz7yPe8kl55ww3eOTntukb3ppn
+         DJMyUvrIU12QGoinWcbsJ/q0VJC88l8j9qeBE7MvLq2Yj6xHtWBYBAQYNNlPMKQf8Nd5
+         EqLLTWtOUfsnFNR7Kr+L3uZvlKVeimHI/QULdJTHLV8iEpdDqj4VDcz3s7vCA2nKdmiV
+         f+EQ9zpHVS6KalEcfPgv8DBDc6jw7fnqqMZlQjLHwj9n0GfXXn0NPvHjPnaM1pSMxGxT
+         XLKQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=FmHvGOLNVPxI0kt6R17Fdw33zDx8xukTS46dymX55P0=;
-        b=qnhy36StQAZmdGP+LFILSPnXqKzt3Oe+gytt2+WZARTwwiEUtHslD0g0gHW0aFvdDl
-         QjCz2GYCzgGlXWBbeJW/Ns+TQ7mM1vuNj64nCcnJ1dGVEoMdTOCdlxTlgg6c0XLJi3/G
-         UyIcQCMKoJ5Lcve3N56xcx4dGRm2TyCaAqVsc8Fok7PNUuUufWnQVvL1YA2E5H/+Q65T
-         SyILog076MN9/fK4iKkPcevEu2rPGjxBc2xPxtC9Q5AWZZt3RRr1NuJyqywEVPeP2lfw
-         wfDACl//hlf0ecIpM2Q3QR+Xa0mDHO+RX+n02GiqZNtF+8Mkd2r35InCC7nbVPrOQWAj
-         KF4Q==
-X-Gm-Message-State: APjAAAVCaiR40Dr0i+1mpAKR3NBhp5rvTQNptJHT93qtAWOEYw8vg4Sm
-        mHrUShGjbF253Yg6o8WfUxOUbumqxgSGhltO3e4=
-X-Google-Smtp-Source: APXvYqzbQt6F4/Oqw6CkftDapRy22S4nLiei4z+xGemquF8I07HdLUMWkd2f+Z1TnVGLJF2+BOjOsPDZqrGW1rVPeJw=
-X-Received: by 2002:a62:1a09:: with SMTP id a9mr24181822pfa.64.1580725599101;
- Mon, 03 Feb 2020 02:26:39 -0800 (PST)
+        bh=dD9fba3D0HqXgOSqJlLFz2muhY16h6Gr+BwVuHnFIv4=;
+        b=E//25EmqGvSZshvoR8k91dQjBWYvNzKKQzw6/9sDk0nJy+jNWVfTcwvgGcHhezziKX
+         iDef3q4USOTRFnMn1IBsNpenINjpjNnrFPxeRnr4cSlKcxopXUut2TfXhpzQqROC2MUJ
+         1QliENmIyoDyH6sZ4+SclolNksRGKSeLm/WRnICMdMHUB2LYLJVc3N/WQ3nBWlGOIvWA
+         Gt+fxjzzG9DKcv9KzDC6b/GOCspqms5AxeubScuPz9gOz2tFrlWOOJGhOXM1NSFpmCPs
+         OwX0m8Y7gAvFtKafycEnlWs2NZT+ZPHMSlmADJoyfPXP2MwiePAW87EO3s0iZ7Kni8QH
+         2byQ==
+X-Gm-Message-State: APjAAAX+p4sWpzYQb7bZkof4JGNslxPwG9foN0kF1wBgPI0qHedWMsBt
+        jbPCGIzcRYhuVuPpkcFn7boNLiFAuBjQSTvF1uVYERCiTN8=
+X-Google-Smtp-Source: APXvYqxNx7Z0KIvo/FhK4eHPDW3mZ84bqAFnEzCbf8Hd0g8df+eNawGKBotlJvsxIVfVYaHjsPN4BUWk/DfxFPRlw6I=
+X-Received: by 2002:a1c:7907:: with SMTP id l7mr27326507wme.37.1580725840251;
+ Mon, 03 Feb 2020 02:30:40 -0800 (PST)
 MIME-Version: 1.0
-References: <20200128111302.24359-1-alexandru.ardelean@analog.com> <20200128111302.24359-3-alexandru.ardelean@analog.com>
-In-Reply-To: <20200128111302.24359-3-alexandru.ardelean@analog.com>
-From:   Andy Shevchenko <andy.shevchenko@gmail.com>
-Date:   Mon, 3 Feb 2020 12:26:31 +0200
-Message-ID: <CAHp75VcHU=PBzxFoLTtVMBkdB8Z0BcRQ2bq8D50YoRNPisxfcQ@mail.gmail.com>
-Subject: Re: [PATCH v3 3/3] MAINTAINERS: add entry for ADF4360 PLL driver
-To:     Alexandru Ardelean <alexandru.ardelean@analog.com>
-Cc:     linux-iio <linux-iio@vger.kernel.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        ekigwana@gmail.com, Jonathan Cameron <jic23@kernel.org>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Rob Herring <robh+dt@kernel.org>
+References: <20200130064430.17198-1-walter-zh.wu@mediatek.com>
+ <CAG_fn=X_jSUJXD932z9oN5hBa--n3Qct4zrjzGaPtb2MwJye7A@mail.gmail.com>
+ <1580436306.11126.16.camel@mtksdccf07> <CAG_fn=X2V0nL=+s38bDbS3UXf2_i61tSevd8vzkV-ZKY=7MHvw@mail.gmail.com>
+ <1580695544.17006.7.camel@mtksdccf07>
+In-Reply-To: <1580695544.17006.7.camel@mtksdccf07>
+From:   Alexander Potapenko <glider@google.com>
+Date:   Mon, 3 Feb 2020 11:30:28 +0100
+Message-ID: <CAG_fn=UHhZB-2JBdSBAbuNjBZwVwrzhqQvR1nHb+XOqUEvLMsw@mail.gmail.com>
+Subject: Re: [PATCH v3] lib/stackdepot: Fix global out-of-bounds in stackdepot
+To:     Walter Wu <walter-zh.wu@mediatek.com>
+Cc:     Dmitry Vyukov <dvyukov@google.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org,
+        wsd_upstream <wsd_upstream@mediatek.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jan 28, 2020 at 1:13 PM Alexandru Ardelean
-<alexandru.ardelean@analog.com> wrote:
+On Mon, Feb 3, 2020 at 3:05 AM Walter Wu <walter-zh.wu@mediatek.com> wrote:
 >
-> From: Edward Kigwana <ekigwana@gmail.com>
+> On Fri, 2020-01-31 at 19:11 +0100, Alexander Potapenko wrote:
+> > On Fri, Jan 31, 2020 at 3:05 AM Walter Wu <walter-zh.wu@mediatek.com> wrote:
+> > >
+> > > On Thu, 2020-01-30 at 13:03 +0100, Alexander Potapenko wrote:
+> > > > On Thu, Jan 30, 2020 at 7:44 AM Walter Wu <walter-zh.wu@mediatek.com> wrote:
+> > > >
+> > > > Hi Walter,
+> > > >
+> > > > > If the depot_index = STACK_ALLOC_MAX_SLABS - 2 and next_slab_inited = 0,
+> > > > > then it will cause array out-of-bounds access, so that we should modify
+> > > > > the detection to avoid this array out-of-bounds bug.
+> > > > >
+> > > > > Assume depot_index = STACK_ALLOC_MAX_SLABS - 3
+> > > > > Consider following call flow sequence:
+> > > > >
+> > > > > stack_depot_save()
+> > > > >    depot_alloc_stack()
+> > > > >       if (unlikely(depot_index + 1 >= STACK_ALLOC_MAX_SLABS)) //pass
+> > > > >       depot_index++  //depot_index = STACK_ALLOC_MAX_SLABS - 2
+> > > > >       if (depot_index + 1 < STACK_ALLOC_MAX_SLABS) //enter
+> > > > >          smp_store_release(&next_slab_inited, 0); //next_slab_inited = 0
+> > > > >       init_stack_slab()
+> > > > >          if (stack_slabs[depot_index] == NULL) //enter and exit
+> > > > >
+> > > > > stack_depot_save()
+> > > > >    depot_alloc_stack()
+> > > > >       if (unlikely(depot_index + 1 >= STACK_ALLOC_MAX_SLABS)) //pass
+> > > > >       depot_index++  //depot_index = STACK_ALLOC_MAX_SLABS - 1
+> > > > >       init_stack_slab(&prealloc)
+> > > > >          stack_slabs[depot_index + 1]  //here get global out-of-bounds
+> > > > >
+> > > > > Cc: Dmitry Vyukov <dvyukov@google.com>
+> > > > > Cc: Matthias Brugger <matthias.bgg@gmail.com>
+> > > > > Cc: Thomas Gleixner <tglx@linutronix.de>
+> > > > > Cc: Alexander Potapenko <glider@google.com>
+> > > > > Cc: Josh Poimboeuf <jpoimboe@redhat.com>
+> > > > > Cc: Kate Stewart <kstewart@linuxfoundation.org>
+> > > > > Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> > > > > Cc: Kate Stewart <kstewart@linuxfoundation.org>
+> > > > > Signed-off-by: Walter Wu <walter-zh.wu@mediatek.com>
+> > > > > ---
+> > > > > changes in v2:
+> > > > > modify call flow sequence and preconditon
+> > > > >
+> > > > > changes in v3:
+> > > > > add some reviewers
+> > > > > ---
+> > > > >  lib/stackdepot.c | 2 +-
+> > > > >  1 file changed, 1 insertion(+), 1 deletion(-)
+> > > > >
+> > > > > diff --git a/lib/stackdepot.c b/lib/stackdepot.c
+> > > > > index ed717dd08ff3..7e8a15e41600 100644
+> > > > > --- a/lib/stackdepot.c
+> > > > > +++ b/lib/stackdepot.c
+> > > > > @@ -106,7 +106,7 @@ static struct stack_record *depot_alloc_stack(unsigned long *entries, int size,
+> > > > >         required_size = ALIGN(required_size, 1 << STACK_ALLOC_ALIGN);
+> > > > >
+> > > > >         if (unlikely(depot_offset + required_size > STACK_ALLOC_SIZE)) {
+> > > > > -               if (unlikely(depot_index + 1 >= STACK_ALLOC_MAX_SLABS)) {
+> > > > > +               if (unlikely(depot_index + 2 >= STACK_ALLOC_MAX_SLABS)) {
+> >
+> > This again means stack_slabs[STACK_ALLOC_MAX_SLABS - 2] gets
+> > initialized, but stack_slabs[STACK_ALLOC_MAX_SLABS - 1] doesn't,
+> > because we'll be bailing out from init_stack_slab() from now on.
+> > Does this patch actually fix the problem (do you have a reliable reproducer?)
+> We get it by reviewing code, because Kasan doesn't scan it and we catch
+> another bug internally, we found it unintentionally.
 >
-> Add entry in the MAINTAINERS file for the ADF4360 PLL driver.
+> > This addition of 2 is also counterintuitive, I don't think further
+> > readers will understand the logic behind it.
+> >
+> Yes
+>
+> > What if we just check that depot_index + 1 is a valid index before accessing it?
+> >
+> It should fix the problem, do you want to send this patch?
 
-> +ADF4360 PLL DRIVER
-> +M:     Edward Kigwana <ekigwana@gmail.com>
-> +W:     http://ez.analog.com/community/linux-device-drivers
-> +L:     linux-iio@vger.kernel.org
-> +S:     Maintained
-> +F:     Documentation/devicetree/bindings/iio/frequency/adi,adf4360.yaml
-> +F:     drivers/iio/frequency/adf4360.c
-
-Had you run parse-maintainers.pl afterwards to see if everything is okay?
-
--- 
-With Best Regards,
-Andy Shevchenko
+I've sent the patch. Thanks for the report!
