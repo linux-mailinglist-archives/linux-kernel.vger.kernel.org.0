@@ -2,72 +2,85 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 16AE015041D
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Feb 2020 11:23:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3611115042A
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Feb 2020 11:25:18 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727253AbgBCKXu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 3 Feb 2020 05:23:50 -0500
-Received: from us-smtp-1.mimecast.com ([207.211.31.81]:44507 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726100AbgBCKXu (ORCPT
+        id S1727382AbgBCKZQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 3 Feb 2020 05:25:16 -0500
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:38084 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727223AbgBCKZQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Feb 2020 05:23:50 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1580725429;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=Ir31YPKw00IaR4oAq3edSrrdUHl7ICLQw2SC3HVAAC4=;
-        b=DutMquvdbcFzWxbaeJqrEYw23CO0QRlhTP2n+eUPy56BVuKWhHgVmJBaCb0cj3g9XI95E6
-        /ReMVQBYYS9e8oiDeHf2+D1ygVh6e0XDhNq1/XxMmMzX+wU34i+HLFh+90uE6NiRTxjWbP
-        cCj2XeuRWqpJG7OdZSwdGvE4mnkJAws=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-335-nK8sREX3OCKJMwcjJ7ImLg-1; Mon, 03 Feb 2020 05:23:47 -0500
-X-MC-Unique: nK8sREX3OCKJMwcjJ7ImLg-1
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 780EB18A6EC2;
-        Mon,  3 Feb 2020 10:23:46 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-120-218.rdu2.redhat.com [10.10.120.218])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 702A91FD3B;
-        Mon,  3 Feb 2020 10:23:45 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <20200202122735.157d8b44@cakuba.hsd1.ca.comcast.net>
-References: <20200202122735.157d8b44@cakuba.hsd1.ca.comcast.net> <158047735578.133127.17728061182258449164.stgit@warthog.procyon.org.uk> <158047737679.133127.13567286503234295.stgit@warthog.procyon.org.uk>
-To:     Jakub Kicinski <kuba@kernel.org>
-Cc:     dhowells@redhat.com, netdev@vger.kernel.org,
-        linux-afs@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net 3/4] rxrpc: Fix missing active use pinning of rxrpc_local object
+        Mon, 3 Feb 2020 05:25:16 -0500
+Received: by mail-pg1-f195.google.com with SMTP id a33so7577771pgm.5;
+        Mon, 03 Feb 2020 02:25:16 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=x7n8iYbotY1SSWk8040/LMh/zf8OB99iIkxzC9W3j6c=;
+        b=KXu8gdqiB+LLnu0PQxmo71BZx4WS9dIPfHjiaOJd1IfXfU8+pe9Cf96kK87ih9AsP2
+         vcm/eDuPmuBOqw3YNn4Q2EwAPOVXqyeHXDPXFk3hbYnqePM9R4SFHHE/uaT/wOdR6iMa
+         KE8ipJgAsiX6XmR/XybvKtXaD9iwgUx6sRdbH7dLLKcq2FokaQqtMV7IPT7MAnr/ezLf
+         sh9GL5eibY4Tf/899ZUw8MoiZJMNTkYx1SKMD94+ObkEMKCPFH5zYdgEjz8jfocOT0sR
+         tmh54ya/yz63T4ZFBTmGdogHE9jvMhe+Qdg5S/yK8YUMUzpEiqm7xqQyg3EyUO8Z04N7
+         7+zw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=x7n8iYbotY1SSWk8040/LMh/zf8OB99iIkxzC9W3j6c=;
+        b=SStpubXG3iiXThC84kzu5CEeOq41tOopjc6n1+ZDoOtlFcICCssAhNNvI63KpQGoKZ
+         MZFBHoXywzTjqfo9urmOB6rilPI1kmVzyOHi9ZMUV4+5crNuQUau8KbBIpX5FA4mD1Sy
+         mcvdMXnPjt5Na3LdF/1vwifGZZcL5PLJUTIoDoCaPbz0h3iLG3hGcqCLbf15ZM1rI/GD
+         oipXxrjAS2cj8dKh1e2FRNSFYSZzVI6sst/TH9uewZUxm0xU09py0xyefsyNKaohu5dy
+         Sc1k2Lu2TPeuCfil+wdnloLz8R46VaAEMvqdcPVlk2ZIY4iuPneUESIgPTlQ6YRrcPAj
+         XksQ==
+X-Gm-Message-State: APjAAAWVA/kFOh3CfzxHpC4+2Zu1EY1I+aoBbwToukFpoTiuzEx/ZprK
+        0OC+HGycdl9z+63P64MGst5v6T9Eg/HaEJWKA/I=
+X-Google-Smtp-Source: APXvYqwhkAJi3dNYvGMLuTcLfW2vveiQI8JKmhBuUGJiCPGAfcCK3DHpzSoyLf4aqgppIqD9dK7YAyoVXsCVrnPOLJA=
+X-Received: by 2002:a62:1944:: with SMTP id 65mr24861365pfz.151.1580725515953;
+ Mon, 03 Feb 2020 02:25:15 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <734243.1580725424.1@warthog.procyon.org.uk>
-Date:   Mon, 03 Feb 2020 10:23:44 +0000
-Message-ID: <734244.1580725424@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
+References: <20200129142301.13918-1-beniamin.bia@analog.com> <20200129142301.13918-6-beniamin.bia@analog.com>
+In-Reply-To: <20200129142301.13918-6-beniamin.bia@analog.com>
+From:   Andy Shevchenko <andy.shevchenko@gmail.com>
+Date:   Mon, 3 Feb 2020 12:25:07 +0200
+Message-ID: <CAHp75Vcvr7RTx1D_qZqSvY5A9irE+4_rSnHC3EFDCfB_MwVn7Q@mail.gmail.com>
+Subject: Re: [PATCH v4 5/5] MAINTAINERS: add entry for hmc425a driver.
+To:     Beniamin Bia <beniamin.bia@analog.com>
+Cc:     Jonathan Cameron <jic23@kernel.org>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Michael Hennerich <Michael.Hennerich@analog.com>,
+        Peter Meerwald <pmeerw@pmeerw.net>,
+        linux-iio <linux-iio@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        biabeniamin@outlook.com, Hartmut Knaack <knaack.h@gmx.de>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        devicetree <devicetree@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Jakub Kicinski <kuba@kernel.org> wrote:
+On Wed, Jan 29, 2020 at 4:24 PM Beniamin Bia <beniamin.bia@analog.com> wrote:
+>
+> Add Beniamin Bia and Michael Hennerich as maintainers for HMC425A
+> attenuator.
 
-> > +	BUG_ON(!conn->params.local);
-> > +	BUG_ON(!conn->params.local->socket);
-> 
-> Is this really, really not possible to convert those into a WARN_ON()
-> and return?
+> +ANALOG DEVICES INC HMC425A DRIVER
+> +M:     Beniamin Bia <beniamin.bia@analog.com>
+> +M:     Michael Hennerich <michael.hennerich@analog.com>
+> +L:     linux-iio@vger.kernel.org
+> +W:     http://ez.analog.com/community/linux-device-drivers
+> +S:     Supported
+> +F:     drivers/iio/amplifiers/hmc425a.c
+> +F:     Documentation/devicetree/bindings/iio/amplifiers/adi,hmc425a.yaml
 
-I can take those out - I actually put them in to help figure out which pointer
-had become NULL - but turning them into a WARN_ON() and return doesn't
-actually help that much since, without this patch, there was nothing to stop
-the relevant pointer getting cleared between this point and the next access,
-so there's a chance you'd end up with the same oops anyway.
+Had you run parse-maintainers.pl afterwards to see if everything is okay?
 
-David
-
+--
+With Best Regards,
+Andy Shevchenko
