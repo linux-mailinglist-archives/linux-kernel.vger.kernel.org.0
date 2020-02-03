@@ -2,41 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B9F5A150BEF
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Feb 2020 17:32:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EC5BC150D15
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Feb 2020 17:41:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730301AbgBCQbv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 3 Feb 2020 11:31:51 -0500
-Received: from mail.kernel.org ([198.145.29.99]:45236 "EHLO mail.kernel.org"
+        id S1731315AbgBCQl3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 3 Feb 2020 11:41:29 -0500
+Received: from mail.kernel.org ([198.145.29.99]:49546 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730291AbgBCQbr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Feb 2020 11:31:47 -0500
+        id S1730885AbgBCQe7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Feb 2020 11:34:59 -0500
 Received: from localhost (unknown [104.132.45.99])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 36E5B2051A;
-        Mon,  3 Feb 2020 16:31:46 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3059F21744;
+        Mon,  3 Feb 2020 16:34:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1580747506;
-        bh=nQ07RDAiC3+NI9ia5iDD9qRPO/t8Hv9eu60i7KhDezE=;
+        s=default; t=1580747698;
+        bh=5Shb8Tk5ld6AXNX7FO+L8lYGIpZSgw9dqSshcT78Bqw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=rSATkHWGXcjlg2tkpQ2XUfjBkHXlufj8B0lzC1MQub6HiC5KVHEq2BHuZrk19xytC
-         ArEf2LxRcbm84Fc719gbqw8ppMtOWYeD+245ok6jn/YnygfNpV09NH2ACH0pAJh0tt
-         /elh7kTkgugIV1NWZ4bLOhCRihOz2ouhN1qpNQ3I=
+        b=bMTUB4L4QbcJk3CRiSnlV9ovor0YvrRm2LZfuseW+JUWW73fk0NEvzuw5mxAKfAV9
+         lqvxeIoHHBlmG5Gi+oPr7IZbj96x324A7uL2Kp9weqYKu5R+uKCJxwNENVwqoW4C/U
+         a4TT8I9+l5aGioZrn0gFLN6fHT8GIyHkmLyLsME8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        syzbot+5493b2a54d31d6aea629@syzkaller.appspotmail.com,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        =?UTF-8?q?Michal=20Koutn=C3=BD?= <mkoutny@suse.com>,
-        Tejun Heo <tj@kernel.org>
-Subject: [PATCH 4.19 23/70] cgroup: Prevent double killing of css when enabling threaded cgroup
-Date:   Mon,  3 Feb 2020 16:19:35 +0000
-Message-Id: <20200203161915.970688753@linuxfoundation.org>
+        stable@vger.kernel.org, Samuel Holland <samuel@sholland.org>,
+        Maxime Ripard <maxime@cerno.tech>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 5.4 33/90] clk: sunxi-ng: h6-r: Fix AR100/R_APB2 parent order
+Date:   Mon,  3 Feb 2020 16:19:36 +0000
+Message-Id: <20200203161922.055743609@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200203161912.158976871@linuxfoundation.org>
-References: <20200203161912.158976871@linuxfoundation.org>
+In-Reply-To: <20200203161917.612554987@linuxfoundation.org>
+References: <20200203161917.612554987@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,85 +44,53 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Michal Koutný <mkoutny@suse.com>
+From: Samuel Holland <samuel@sholland.org>
 
-commit 3bc0bb36fa30e95ca829e9cf480e1ef7f7638333 upstream.
+[ Upstream commit 0c545240aebc2ccb8f661dc54283a14d64659804 ]
 
-The test_cgcore_no_internal_process_constraint_on_threads selftest when
-running with subsystem controlling noise triggers two warnings:
+According to the BSP source code, both the AR100 and R_APB2 clocks have
+PLL_PERIPH0 as mux index 3, not 2 as it was on previous chips. The pre-
+divider used for PLL_PERIPH0 should be changed to index 3 to match.
 
-> [  597.443115] WARNING: CPU: 1 PID: 28167 at kernel/cgroup/cgroup.c:3131 cgroup_apply_control_enable+0xe0/0x3f0
-> [  597.443413] WARNING: CPU: 1 PID: 28167 at kernel/cgroup/cgroup.c:3177 cgroup_apply_control_disable+0xa6/0x160
+This was verified by running a rough benchmark on the AR100 with various
+clock settings:
 
-Both stem from a call to cgroup_type_write. The first warning was also
-triggered by syzkaller.
+        | mux | pre-divider | iterations/second | clock source |
+        |=====|=============|===================|==============|
+        |   0 |           0 |  19033   (stable) |       osc24M |
+        |   2 |           5 |  11466 (unstable) |  iosc/osc16M |
+        |   2 |          17 |  11422 (unstable) |  iosc/osc16M |
+        |   3 |           5 |  85338   (stable) |  pll-periph0 |
+        |   3 |          17 |  27167   (stable) |  pll-periph0 |
 
-When we're switching cgroup to threaded mode shortly after a subsystem
-was disabled on it, we can see the respective subsystem css dying there.
+The relative performance numbers all match up (with pll-periph0 running
+at its default 600MHz).
 
-The warning in cgroup_apply_control_enable is harmless in this case
-since we're not adding new subsys anyway.
-The warning in cgroup_apply_control_disable indicates an attempt to kill
-css of recently disabled subsystem repeatedly.
-
-The commit prevents these situations by making cgroup_type_write wait
-for all dying csses to go away before re-applying subtree controls.
-When at it, the locations of WARN_ON_ONCE calls are moved so that
-warning is triggered only when we are about to misuse the dying css.
-
-Reported-by: syzbot+5493b2a54d31d6aea629@syzkaller.appspotmail.com
-Reported-by: Christian Brauner <christian.brauner@ubuntu.com>
-Signed-off-by: Michal Koutný <mkoutny@suse.com>
-Signed-off-by: Tejun Heo <tj@kernel.org>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Signed-off-by: Samuel Holland <samuel@sholland.org>
+Signed-off-by: Maxime Ripard <maxime@cerno.tech>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- kernel/cgroup/cgroup.c |   11 ++++++-----
- 1 file changed, 6 insertions(+), 5 deletions(-)
+ drivers/clk/sunxi-ng/ccu-sun50i-h6-r.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/kernel/cgroup/cgroup.c
-+++ b/kernel/cgroup/cgroup.c
-@@ -2940,8 +2940,6 @@ static int cgroup_apply_control_enable(s
- 		for_each_subsys(ss, ssid) {
- 			struct cgroup_subsys_state *css = cgroup_css(dsct, ss);
+diff --git a/drivers/clk/sunxi-ng/ccu-sun50i-h6-r.c b/drivers/clk/sunxi-ng/ccu-sun50i-h6-r.c
+index 45a1ed3fe6742..ab194143e06ce 100644
+--- a/drivers/clk/sunxi-ng/ccu-sun50i-h6-r.c
++++ b/drivers/clk/sunxi-ng/ccu-sun50i-h6-r.c
+@@ -23,9 +23,9 @@
+  */
  
--			WARN_ON_ONCE(css && percpu_ref_is_dying(&css->refcnt));
--
- 			if (!(cgroup_ss_mask(dsct) & (1 << ss->id)))
- 				continue;
+ static const char * const ar100_r_apb2_parents[] = { "osc24M", "osc32k",
+-					     "pll-periph0", "iosc" };
++						     "iosc", "pll-periph0" };
+ static const struct ccu_mux_var_prediv ar100_r_apb2_predivs[] = {
+-	{ .index = 2, .shift = 0, .width = 5 },
++	{ .index = 3, .shift = 0, .width = 5 },
+ };
  
-@@ -2951,6 +2949,8 @@ static int cgroup_apply_control_enable(s
- 					return PTR_ERR(css);
- 			}
- 
-+			WARN_ON_ONCE(percpu_ref_is_dying(&css->refcnt));
-+
- 			if (css_visible(css)) {
- 				ret = css_populate_dir(css);
- 				if (ret)
-@@ -2986,11 +2986,11 @@ static void cgroup_apply_control_disable
- 		for_each_subsys(ss, ssid) {
- 			struct cgroup_subsys_state *css = cgroup_css(dsct, ss);
- 
--			WARN_ON_ONCE(css && percpu_ref_is_dying(&css->refcnt));
--
- 			if (!css)
- 				continue;
- 
-+			WARN_ON_ONCE(percpu_ref_is_dying(&css->refcnt));
-+
- 			if (css->parent &&
- 			    !(cgroup_ss_mask(dsct) & (1 << ss->id))) {
- 				kill_css(css);
-@@ -3277,7 +3277,8 @@ static ssize_t cgroup_type_write(struct
- 	if (strcmp(strstrip(buf), "threaded"))
- 		return -EINVAL;
- 
--	cgrp = cgroup_kn_lock_live(of->kn, false);
-+	/* drain dying csses before we re-apply (threaded) subtree control */
-+	cgrp = cgroup_kn_lock_live(of->kn, true);
- 	if (!cgrp)
- 		return -ENOENT;
- 
+ static struct ccu_div ar100_clk = {
+-- 
+2.20.1
+
 
 
