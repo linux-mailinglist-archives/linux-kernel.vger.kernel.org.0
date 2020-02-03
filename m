@@ -2,39 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 03DE7150B2E
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Feb 2020 17:25:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3E644150ABF
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Feb 2020 17:20:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728332AbgBCQZX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 3 Feb 2020 11:25:23 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35998 "EHLO mail.kernel.org"
+        id S1728930AbgBCQUg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 3 Feb 2020 11:20:36 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60414 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728304AbgBCQZT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Feb 2020 11:25:19 -0500
+        id S1727924AbgBCQUe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Feb 2020 11:20:34 -0500
 Received: from localhost (unknown [104.132.45.99])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C62592080C;
-        Mon,  3 Feb 2020 16:25:18 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D3D982086A;
+        Mon,  3 Feb 2020 16:20:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1580747119;
-        bh=wmjiu5PEYm5uCqktUKV3PAIyZwrB09SvsJ4xWzYRc48=;
+        s=default; t=1580746833;
+        bh=wZFsyhga5QYSTylqGI7UKwbx9C1pwpOU3qFRICQa2Z8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=YtWmBd2oOMFdKEJi6jDYLMMHXra0GntHeC97t7pvtRjhmdEWzh0qg106aOlbVn8B7
-         ad/2BIltNuM36sM1NkNAgH6xvJoV532eCzhrUn/EBfgcacVeMhHS28dt8goC2alCId
-         3f3cK+BD+RR4woIjP5HtQn3kR0lj0H03rbdIjynw=
+        b=DajFgzhmdH5WILd0tebpFmh2XoGR5RkQnrc/hssn0UN+EnRjQTiYihI4KnpTXnJC6
+         BwnJLmWR/daYHZKOMGwZIdGjb9KS+Fz+MD4MFo3wjZbsNI0gTE2JPmEW2QTglBLt0l
+         zDz9U+6Oa9KuJpQmymmvCOgWE5V4kjwALqWRLJhM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 20/68] net: wan: sdla: Fix cast from pointer to integer of different size
-Date:   Mon,  3 Feb 2020 16:19:16 +0000
-Message-Id: <20200203161908.429641584@linuxfoundation.org>
+        stable@vger.kernel.org, Dirk Behme <dirk.behme@de.bosch.com>,
+        Eugeniu Rosca <erosca@de.adit-jv.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Will Deacon <will@kernel.org>
+Subject: [PATCH 4.4 25/53] arm64: kbuild: remove compressed images on make ARCH=arm64 (dist)clean
+Date:   Mon,  3 Feb 2020 16:19:17 +0000
+Message-Id: <20200203161907.624089847@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200203161904.705434837@linuxfoundation.org>
-References: <20200203161904.705434837@linuxfoundation.org>
+In-Reply-To: <20200203161902.714326084@linuxfoundation.org>
+References: <20200203161902.714326084@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,40 +45,40 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Krzysztof Kozlowski <krzk@kernel.org>
+From: Dirk Behme <dirk.behme@de.bosch.com>
 
-[ Upstream commit 00c0688cecadbf7ac2f5b4cdb36d912a2d3f0cca ]
+commit d7bbd6c1b01cb5dd13c245d4586a83145c1d5f52 upstream.
 
-Since net_device.mem_start is unsigned long, it should not be cast to
-int right before casting to pointer.  This fixes warning (compile
-testing on alpha architecture):
+Since v4.3-rc1 commit 0723c05fb75e44 ("arm64: enable more compressed
+Image formats"), it is possible to build Image.{bz2,lz4,lzma,lzo}
+AArch64 images. However, the commit missed adding support for removing
+those images on 'make ARCH=arm64 (dist)clean'.
 
-    drivers/net/wan/sdla.c: In function ‘sdla_transmit’:
-    drivers/net/wan/sdla.c:711:13: warning:
-        cast to pointer from integer of different size [-Wint-to-pointer-cast]
+Fix this by adding them to the target list.
+Make sure to match the order of the recipes in the makefile.
 
-Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Cc: stable@vger.kernel.org # v4.3+
+Fixes: 0723c05fb75e44 ("arm64: enable more compressed Image formats")
+Signed-off-by: Dirk Behme <dirk.behme@de.bosch.com>
+Signed-off-by: Eugeniu Rosca <erosca@de.adit-jv.com>
+Reviewed-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+Signed-off-by: Will Deacon <will@kernel.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- drivers/net/wan/sdla.c | 2 +-
+ arch/arm64/boot/Makefile |    2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/net/wan/sdla.c b/drivers/net/wan/sdla.c
-index 421ac5f856994..79fd891509479 100644
---- a/drivers/net/wan/sdla.c
-+++ b/drivers/net/wan/sdla.c
-@@ -711,7 +711,7 @@ static netdev_tx_t sdla_transmit(struct sk_buff *skb,
+--- a/arch/arm64/boot/Makefile
++++ b/arch/arm64/boot/Makefile
+@@ -14,7 +14,7 @@
+ # Based on the ia64 boot/Makefile.
+ #
  
- 					spin_lock_irqsave(&sdla_lock, flags);
- 					SDLA_WINDOW(dev, addr);
--					pbuf = (void *)(((int) dev->mem_start) + (addr & SDLA_ADDR_MASK));
-+					pbuf = (void *)(dev->mem_start + (addr & SDLA_ADDR_MASK));
- 					__sdla_write(dev, pbuf->buf_addr, skb->data, skb->len);
- 					SDLA_WINDOW(dev, addr);
- 					pbuf->opp_flag = 1;
--- 
-2.20.1
-
+-targets := Image Image.gz
++targets := Image Image.bz2 Image.gz Image.lz4 Image.lzma Image.lzo
+ 
+ $(obj)/Image: vmlinux FORCE
+ 	$(call if_changed,objcopy)
 
 
