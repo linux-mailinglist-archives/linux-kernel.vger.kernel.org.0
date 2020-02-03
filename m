@@ -2,66 +2,95 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 54F76150303
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Feb 2020 10:10:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AFF26150349
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Feb 2020 10:20:50 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727906AbgBCJKm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 3 Feb 2020 04:10:42 -0500
-Received: from mail.loongson.cn ([114.242.206.163]:49960 "EHLO loongson.cn"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726992AbgBCJKl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Feb 2020 04:10:41 -0500
-Received: from linux.HaierAP (unknown [111.18.44.203])
-        by mail.loongson.cn (Coremail) with SMTP id AQAAf9Dxv9+M4zden_gLAA--.1394S2;
-        Mon, 03 Feb 2020 17:10:37 +0800 (CST)
-From:   Tiezhu Yang <yangtiezhu@loongson.cn>
-To:     Jonathan Corbet <corbet@lwn.net>
-Cc:     linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] mailmap: add entry for Tiezhu Yang
-Date:   Mon,  3 Feb 2020 17:10:45 +0800
-Message-Id: <1580721045-4988-1-git-send-email-yangtiezhu@loongson.cn>
-X-Mailer: git-send-email 1.8.3.1
-X-CM-TRANSID: AQAAf9Dxv9+M4zden_gLAA--.1394S2
-X-Coremail-Antispam: 1UD129KBjvdXoWrCFy7Jw1UCF4DtFyDCFyfJFb_yoWxArc_Gw
-        1rKF4kWr4rJw4fCwn29wn3uwn0vw1xua10gw4DAry5Za43t34rKr4vvF4fWF15CrWkWrW5
-        Jrs3JFZ2kr1I9jkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-        9fnUUIcSsGvfJTRUUUb2AYjsxI4VWxJwAYFVCjjxCrM7AC8VAFwI0_Jr0_Gr1l1xkIjI8I
-        6I8E6xAIw20EY4v20xvaj40_Wr0E3s1l1IIY67AEw4v_Jr0_Jr4l8cAvFVAK0II2c7xJM2
-        8CjxkF64kEwVA0rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVWUCVW8JwA2z4x0Y4vE2Ix0
-        cI8IcVCY1x0267AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIE14v26r4UJVWxJr1l84ACjcxK6I
-        8E87Iv6xkF7I0E14v26F4UJVW0owAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC
-        0VAKzVAqx4xG6I80ewAv7VC0I7IYx2IY67AKxVWUGVWUXwAv7VC2z280aVAFwI0_Jr0_Gr
-        1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcxkI7VAKI48JMxkIecxEwVAFwVW8uwCF04k2
-        0xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI
-        8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jrv_JF1lIxkGc2Ij64vIr41l
-        IxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Jr0_Gr1lIx
-        AIcVCF04k26cxKx2IYs7xG6rWUJVWrZr1UMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvE
-        x4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x07jYWlkUUUUU=
-X-CM-SenderInfo: p1dqw3xlh2x3gn0dqz5rrqw2lrqou0/
+        id S1727579AbgBCJUm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 3 Feb 2020 04:20:42 -0500
+Received: from smtp11.infineon.com ([217.10.52.105]:27099 "EHLO
+        smtp11.infineon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726244AbgBCJUm (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Feb 2020 04:20:42 -0500
+X-Greylist: delayed 427 seconds by postgrey-1.27 at vger.kernel.org; Mon, 03 Feb 2020 04:20:41 EST
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=infineon.com; i=@infineon.com; q=dns/txt; s=IFXMAIL;
+  t=1580721642; x=1612257642;
+  h=subject:to:cc:references:from:message-id:date:
+   mime-version:in-reply-to:content-transfer-encoding;
+  bh=S+aFt3xpcgLC1SHHmrUIQUyVr6Ob8IJ2Z341QwbK1Dw=;
+  b=btfmWO7ZFibYtWQTA+6iB1ZyZIQ54XzrEzO7pQjou9IW3rk4OhJYpI2J
+   0wZJgAnDJcplP0la9DmuZX5amcB0FP+aKhhGOSkIPD6MmpOZTOL1UZOU5
+   4b9p150Zbo9LySfsqgvL8sB5NFPY4T6Zevo9DZiYb6wPd3si+/NPdNfmj
+   I=;
+IronPort-SDR: 0I5YmOzQwtppJhTcYNFeSh1RQc9kh0GwWJKUsikBGmre1oF1gDyUj+tPLQhHdkgBluO40UUH3m
+ rF7E4t+wVfix9NN3COPNew6PbW2rZPttOaZRQbq87spnvDK31BPPHfUG8VUOd8x+daDtMji9TY
+ cRpAnQdNjjMYdGsRS0c0h1LdPSqZnA4M/nFgoXiq/mXeN40LSWPqxld3Ktfg/OrxiCtqxcrTST
+ KEyZw6od2zKhQAnQ5sRBww7YO6jv/ToiG/QAAXrG74dBvI/vx2n8LelyqfiEGCZvIiC85DRjlQ
+ f/U=
+X-SBRS: None
+X-IronPort-AV: E=McAfee;i="6000,8403,9519"; a="147917928"
+X-IronPort-AV: E=Sophos;i="5.70,397,1574118000"; 
+   d="scan'208";a="147917928"
+Received: from unknown (HELO mucxv003.muc.infineon.com) ([172.23.11.20])
+  by smtp11.infineon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Feb 2020 10:13:34 +0100
+Received: from MUCSE708.infineon.com (MUCSE708.infineon.com [172.23.7.82])
+        by mucxv003.muc.infineon.com (Postfix) with ESMTPS;
+        Mon,  3 Feb 2020 10:13:33 +0100 (CET)
+Received: from [10.154.32.73] (172.23.8.247) by MUCSE708.infineon.com
+ (172.23.7.82) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384_P256) id 15.1.1713.5; Mon, 3 Feb
+ 2020 10:13:33 +0100
+Subject: Re: [PATCH v7 4/6] tpm: tpm_tis_spi: Support cr50 devices
+To:     Stephen Boyd <swboyd@chromium.org>,
+        Peter Huewe <peterhuewe@gmx.de>,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+CC:     Andrey Pronin <apronin@chromium.org>,
+        <linux-kernel@vger.kernel.org>, <linux-integrity@vger.kernel.org>,
+        Duncan Laurie <dlaurie@chromium.org>,
+        Jason Gunthorpe <jgg@ziepe.ca>, Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Guenter Roeck <groeck@chromium.org>,
+        Heiko Stuebner <heiko@sntech.de>
+References: <20190920183240.181420-1-swboyd@chromium.org>
+ <20190920183240.181420-5-swboyd@chromium.org>
+From:   Alexander Steffen <Alexander.Steffen@infineon.com>
+Message-ID: <007dfd87-5170-684a-26dc-9e7533d42034@infineon.com>
+Date:   Mon, 3 Feb 2020 10:13:29 +0100
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.2
+MIME-Version: 1.0
+In-Reply-To: <20190920183240.181420-5-swboyd@chromium.org>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [172.23.8.247]
+X-ClientProxiedBy: MUCSE707.infineon.com (172.23.7.81) To
+ MUCSE708.infineon.com (172.23.7.82)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add an entry to connect all my email addresses.
+On 20.09.2019 20:32, Stephen Boyd wrote:
+> diff --git a/drivers/char/tpm/Makefile b/drivers/char/tpm/Makefile
+> index a01c4cab902a..c96439f11c85 100644
+> --- a/drivers/char/tpm/Makefile
+> +++ b/drivers/char/tpm/Makefile
+> @@ -21,7 +21,9 @@ tpm-$(CONFIG_EFI) += eventlog/efi.o
+>   tpm-$(CONFIG_OF) += eventlog/of.o
+>   obj-$(CONFIG_TCG_TIS_CORE) += tpm_tis_core.o
+>   obj-$(CONFIG_TCG_TIS) += tpm_tis.o
+> -obj-$(CONFIG_TCG_TIS_SPI) += tpm_tis_spi.o
+> +obj-$(CONFIG_TCG_TIS_SPI) += tpm_tis_spi_mod.o
+> +tpm_tis_spi_mod-y := tpm_tis_spi.o
+> +tpm_tis_spi_mod-$(CONFIG_TCG_TIS_SPI_CR50) += tpm_tis_spi_cr50.o
+>   obj-$(CONFIG_TCG_TIS_I2C_ATMEL) += tpm_i2c_atmel.o
+>   obj-$(CONFIG_TCG_TIS_I2C_INFINEON) += tpm_i2c_infineon.o
+>   obj-$(CONFIG_TCG_TIS_I2C_NUVOTON) += tpm_i2c_nuvoton.o
 
-Signed-off-by: Tiezhu Yang <yangtiezhu@loongson.cn>
----
- .mailmap | 1 +
- 1 file changed, 1 insertion(+)
+This renames the driver module from tpm_tis_spi to tpm_tis_spi_mod, was 
+this done intentionally? When trying to upgrade the kernel, this just 
+broke my test system, since all scripts expect to be able to load 
+tpm_tis_spi, which does not exist anymore with that change.
 
-diff --git a/.mailmap b/.mailmap
-index de36dce..29a74cd 100644
---- a/.mailmap
-+++ b/.mailmap
-@@ -261,6 +261,7 @@ Sumit Semwal <sumit.semwal@ti.com>
- Tejun Heo <htejun@gmail.com>
- Thomas Graf <tgraf@suug.ch>
- Thomas Pedersen <twp@codeaurora.org>
-+Tiezhu Yang <yangtiezhu@loongson.cn> <kernelpatch@126.com>
- Todor Tomov <todor.too@gmail.com> <todor.tomov@linaro.org>
- Tony Luck <tony.luck@intel.com>
- TripleX Chung <xxx.phy@gmail.com> <zhongyu@18mail.cn>
--- 
-1.8.3.1
-
+Alexander
