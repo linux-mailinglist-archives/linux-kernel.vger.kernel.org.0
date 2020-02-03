@@ -2,40 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9F8A5150DE1
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Feb 2020 17:47:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9D204150BFB
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Feb 2020 17:32:23 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729945AbgBCQrl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 3 Feb 2020 11:47:41 -0500
-Received: from mail.kernel.org ([198.145.29.99]:38358 "EHLO mail.kernel.org"
+        id S1730398AbgBCQcR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 3 Feb 2020 11:32:17 -0500
+Received: from mail.kernel.org ([198.145.29.99]:45894 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729348AbgBCQ1K (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Feb 2020 11:27:10 -0500
+        id S1729860AbgBCQcN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Feb 2020 11:32:13 -0500
 Received: from localhost (unknown [104.132.45.99])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2CE422086A;
-        Mon,  3 Feb 2020 16:27:09 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 35F3C21744;
+        Mon,  3 Feb 2020 16:32:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1580747229;
-        bh=mHQFP/vtoC7Zz+C7h04SYqUhhYKg5fKVuKYZAuh6FrA=;
+        s=default; t=1580747532;
+        bh=CslaSSQI+Lm9q11vj17D/LgMKJ+dG/2Gb2LaHCRJXVo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=DHWETLMeaxAWSqvZ6R/g1uXI+JhyCv6fr1uv2YrVzZYnRW0X7vn9giUhOuSAdC0Sq
-         1qYmDGhhwo6+XkroQHsJAnhbBTCmqd++3osRRvfCrWMjeQdt4R67GRCxpPPP3MKEUo
-         3eacTULkPxlS+mr0qIJIRRJd/ZAmZnoXe365DUK8=
+        b=wLUv9+uCqVw6X9sGM6S+EyS9swUbECRKcl0x+EWYEEPtlt6/+PfcYTSO8hj25sePe
+         raf9u3Acm9/9slg9Ze7QjmSoYsFiEQHEuyCrzexS8kehEkXP2PXDz7uRvXQqONa9V/
+         s3z6bP9VUjxmp+WoRrik881ZabceqWy1wCaEmztM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Cathy Luo <xiaohua.luo@nxp.com>,
-        Ganapathi Bhat <ganapathi.bhat@nxp.com>,
-        Johannes Berg <johannes.berg@intel.com>,
+        stable@vger.kernel.org, Lubomir Rintel <lkundrak@v3.sk>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Olof Johansson <olof@lixom.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 48/68] wireless: fix enabling channel 12 for custom regulatory domain
-Date:   Mon,  3 Feb 2020 16:19:44 +0000
-Message-Id: <20200203161912.848158796@linuxfoundation.org>
+Subject: [PATCH 4.19 33/70] clk: mmp2: Fix the order of timer mux parents
+Date:   Mon,  3 Feb 2020 16:19:45 +0000
+Message-Id: <20200203161917.321882979@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200203161904.705434837@linuxfoundation.org>
-References: <20200203161904.705434837@linuxfoundation.org>
+In-Reply-To: <20200203161912.158976871@linuxfoundation.org>
+References: <20200203161912.158976871@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,63 +45,39 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Ganapathi Bhat <ganapathi.bhat@nxp.com>
+From: Lubomir Rintel <lkundrak@v3.sk>
 
-[ Upstream commit c4b9d655e445a8be0bff624aedea190606b5ebbc ]
+[ Upstream commit 8bea5ac0fbc5b2103f8779ddff216122e3c2e1ad ]
 
-Commit e33e2241e272 ("Revert "cfg80211: Use 5MHz bandwidth by
-default when checking usable channels"") fixed a broken
-regulatory (leaving channel 12 open for AP where not permitted).
-Apply a similar fix to custom regulatory domain processing.
+Determined empirically, no documentation is available.
 
-Signed-off-by: Cathy Luo <xiaohua.luo@nxp.com>
-Signed-off-by: Ganapathi Bhat <ganapathi.bhat@nxp.com>
-Link: https://lore.kernel.org/r/1576836859-8945-1-git-send-email-ganapathi.bhat@nxp.com
-[reword commit message, fix coding style, add a comment]
-Signed-off-by: Johannes Berg <johannes.berg@intel.com>
+The OLPC XO-1.75 laptop used parent 1, that one being VCTCXO/4 (65MHz), but
+thought it's a VCTCXO/2 (130MHz). The mmp2 timer driver, not knowing
+what is going on, ended up just dividing the rate as of
+commit f36797ee4380 ("ARM: mmp/mmp2: dt: enable the clock")'
+
+Link: https://lore.kernel.org/r/20191218190454.420358-3-lkundrak@v3.sk
+Signed-off-by: Lubomir Rintel <lkundrak@v3.sk>
+Acked-by: Stephen Boyd <sboyd@kernel.org>
+Signed-off-by: Olof Johansson <olof@lixom.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/wireless/reg.c | 13 ++++++++++---
- 1 file changed, 10 insertions(+), 3 deletions(-)
+ drivers/clk/mmp/clk-of-mmp2.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/net/wireless/reg.c b/net/wireless/reg.c
-index dde741f298de7..0e66768427ba7 100644
---- a/net/wireless/reg.c
-+++ b/net/wireless/reg.c
-@@ -1715,14 +1715,15 @@ static void update_all_wiphy_regulatory(enum nl80211_reg_initiator initiator)
+diff --git a/drivers/clk/mmp/clk-of-mmp2.c b/drivers/clk/mmp/clk-of-mmp2.c
+index d083b860f0833..10689d8cd3867 100644
+--- a/drivers/clk/mmp/clk-of-mmp2.c
++++ b/drivers/clk/mmp/clk-of-mmp2.c
+@@ -134,7 +134,7 @@ static DEFINE_SPINLOCK(ssp3_lock);
+ static const char *ssp_parent_names[] = {"vctcxo_4", "vctcxo_2", "vctcxo", "pll1_16"};
  
- static void handle_channel_custom(struct wiphy *wiphy,
- 				  struct ieee80211_channel *chan,
--				  const struct ieee80211_regdomain *regd)
-+				  const struct ieee80211_regdomain *regd,
-+				  u32 min_bw)
- {
- 	u32 bw_flags = 0;
- 	const struct ieee80211_reg_rule *reg_rule = NULL;
- 	const struct ieee80211_power_rule *power_rule = NULL;
- 	u32 bw;
+ static DEFINE_SPINLOCK(timer_lock);
+-static const char *timer_parent_names[] = {"clk32", "vctcxo_2", "vctcxo_4", "vctcxo"};
++static const char *timer_parent_names[] = {"clk32", "vctcxo_4", "vctcxo_2", "vctcxo"};
  
--	for (bw = MHZ_TO_KHZ(20); bw >= MHZ_TO_KHZ(5); bw = bw / 2) {
-+	for (bw = MHZ_TO_KHZ(20); bw >= min_bw; bw = bw / 2) {
- 		reg_rule = freq_reg_info_regd(MHZ_TO_KHZ(chan->center_freq),
- 					      regd, bw);
- 		if (!IS_ERR(reg_rule))
-@@ -1778,8 +1779,14 @@ static void handle_band_custom(struct wiphy *wiphy,
- 	if (!sband)
- 		return;
+ static DEFINE_SPINLOCK(reset_lock);
  
-+	/*
-+	 * We currently assume that you always want at least 20 MHz,
-+	 * otherwise channel 12 might get enabled if this rule is
-+	 * compatible to US, which permits 2402 - 2472 MHz.
-+	 */
- 	for (i = 0; i < sband->n_channels; i++)
--		handle_channel_custom(wiphy, &sband->channels[i], regd);
-+		handle_channel_custom(wiphy, &sband->channels[i], regd,
-+				      MHZ_TO_KHZ(20));
- }
- 
- /* Used by drivers prior to wiphy registration */
 -- 
 2.20.1
 
