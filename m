@@ -2,36 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AD341150C03
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Feb 2020 17:32:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8FC8A150D60
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Feb 2020 17:44:19 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730451AbgBCQch (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 3 Feb 2020 11:32:37 -0500
-Received: from mail.kernel.org ([198.145.29.99]:46210 "EHLO mail.kernel.org"
+        id S1731558AbgBCQnt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 3 Feb 2020 11:43:49 -0500
+Received: from mail.kernel.org ([198.145.29.99]:46246 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730099AbgBCQca (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Feb 2020 11:32:30 -0500
+        id S1730440AbgBCQcc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Feb 2020 11:32:32 -0500
 Received: from localhost (unknown [104.132.45.99])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E9F45218AC;
-        Mon,  3 Feb 2020 16:32:28 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4EF14217BA;
+        Mon,  3 Feb 2020 16:32:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1580747549;
-        bh=3UhvI8O3+HQoLTBCTeoSba6nKdJFcCf8MRzo7M4mGKc=;
+        s=default; t=1580747551;
+        bh=12HEvJehZ/Jgk+eTbKkqViC4hFoUbZr3wcNHfpAyxPQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=UYQ+OjTVWbqFxiCCEqSOu6AgWLeGZVv/6pEc/yYivCuu5GDxteB7baBfclcrqIudF
-         znVbUPDboMrBlqZCImG5L4KzcHu6JxB5jy07tXb5xiXaa2J9FgPR6KxLOtA/Kq3/bX
-         G+cEZt9Sue2tE34EJwuczlg2pe4crd02fFQd5r20=
+        b=M8Yww1F5DHXheUdO8E/+YGLdsuPFA/w7YZpHAHR4YWviTYKfBcDd/45Z5ONERkT7M
+         AyMnCZbDOQjWvdDDZj+EghTAP5GGjVpCCN27XDTi5WI/DePp+Y3uWrqZbPgHVUmxjP
+         +m1sYBVPZxDrgXdibBqWeSzCB7Hb6Va44LzKLP00=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Arnaud Pouliquen <arnaud.pouliquen@st.com>,
-        Mark Brown <broonie@kernel.org>,
+        stable@vger.kernel.org,
+        Kristian Evensen <kristian.evensen@gmail.com>,
+        =?UTF-8?q?Bj=C3=B8rn=20Mork?= <bjorn@mork.no>,
+        Jakub Kicinski <kuba@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 39/70] ASoC: sti: fix possible sleep-in-atomic
-Date:   Mon,  3 Feb 2020 16:19:51 +0000
-Message-Id: <20200203161918.083571185@linuxfoundation.org>
+Subject: [PATCH 4.19 40/70] qmi_wwan: Add support for Quectel RM500Q
+Date:   Mon,  3 Feb 2020 16:19:52 +0000
+Message-Id: <20200203161918.199502280@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
 In-Reply-To: <20200203161912.158976871@linuxfoundation.org>
 References: <20200203161912.158976871@linuxfoundation.org>
@@ -44,69 +46,34 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Arnaud Pouliquen <arnaud.pouliquen@st.com>
+From: Kristian Evensen <kristian.evensen@gmail.com>
 
-[ Upstream commit ce780a47c3c01e1e179d0792df6b853a913928f1 ]
+[ Upstream commit a9ff44f0e61d074f29770413fef6a5452be7b83e ]
 
-Change mutex and spinlock management to avoid sleep
-in atomic issue.
+RM500Q is a 5G module from Quectel, supporting both standalone and
+non-standalone modes. The normal Quectel quirks apply (DTR and dynamic
+interface numbers).
 
-Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@st.com>
-Link: https://lore.kernel.org/r/20200113100400.30472-1-arnaud.pouliquen@st.com
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Signed-off-by: Kristian Evensen <kristian.evensen@gmail.com>
+Acked-by: Bjørn Mork <bjorn@mork.no>
+Signed-off-by: Jakub Kicinski <kuba@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- sound/soc/sti/uniperif_player.c | 7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
+ drivers/net/usb/qmi_wwan.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/sound/soc/sti/uniperif_player.c b/sound/soc/sti/uniperif_player.c
-index 313dab2857ef9..4b0beb372cd94 100644
---- a/sound/soc/sti/uniperif_player.c
-+++ b/sound/soc/sti/uniperif_player.c
-@@ -226,7 +226,6 @@ static void uni_player_set_channel_status(struct uniperif *player,
- 	 * sampling frequency. If no sample rate is already specified, then
- 	 * set one.
- 	 */
--	mutex_lock(&player->ctrl_lock);
- 	if (runtime) {
- 		switch (runtime->rate) {
- 		case 22050:
-@@ -303,7 +302,6 @@ static void uni_player_set_channel_status(struct uniperif *player,
- 		player->stream_settings.iec958.status[3 + (n * 4)] << 24;
- 		SET_UNIPERIF_CHANNEL_STA_REGN(player, n, status);
- 	}
--	mutex_unlock(&player->ctrl_lock);
+diff --git a/drivers/net/usb/qmi_wwan.c b/drivers/net/usb/qmi_wwan.c
+index b55fd76348f9f..13c8788e3b6b2 100644
+--- a/drivers/net/usb/qmi_wwan.c
++++ b/drivers/net/usb/qmi_wwan.c
+@@ -999,6 +999,7 @@ static const struct usb_device_id products[] = {
+ 	{QMI_QUIRK_QUECTEL_DYNCFG(0x2c7c, 0x0125)},	/* Quectel EC25, EC20 R2.0  Mini PCIe */
+ 	{QMI_QUIRK_QUECTEL_DYNCFG(0x2c7c, 0x0306)},	/* Quectel EP06/EG06/EM06 */
+ 	{QMI_QUIRK_QUECTEL_DYNCFG(0x2c7c, 0x0512)},	/* Quectel EG12/EM12 */
++	{QMI_QUIRK_QUECTEL_DYNCFG(0x2c7c, 0x0800)},	/* Quectel RM500Q-GL */
  
- 	/* Update the channel status */
- 	if (player->ver < SND_ST_UNIPERIF_VERSION_UNI_PLR_TOP_1_0)
-@@ -365,8 +363,10 @@ static int uni_player_prepare_iec958(struct uniperif *player,
- 
- 	SET_UNIPERIF_CTRL_ZERO_STUFF_HW(player);
- 
-+	mutex_lock(&player->ctrl_lock);
- 	/* Update the channel status */
- 	uni_player_set_channel_status(player, runtime);
-+	mutex_unlock(&player->ctrl_lock);
- 
- 	/* Clear the user validity user bits */
- 	SET_UNIPERIF_USER_VALIDITY_VALIDITY_LR(player, 0);
-@@ -598,7 +598,6 @@ static int uni_player_ctl_iec958_put(struct snd_kcontrol *kcontrol,
- 	iec958->status[1] = ucontrol->value.iec958.status[1];
- 	iec958->status[2] = ucontrol->value.iec958.status[2];
- 	iec958->status[3] = ucontrol->value.iec958.status[3];
--	mutex_unlock(&player->ctrl_lock);
- 
- 	spin_lock_irqsave(&player->irq_lock, flags);
- 	if (player->substream && player->substream->runtime)
-@@ -608,6 +607,8 @@ static int uni_player_ctl_iec958_put(struct snd_kcontrol *kcontrol,
- 		uni_player_set_channel_status(player, NULL);
- 
- 	spin_unlock_irqrestore(&player->irq_lock, flags);
-+	mutex_unlock(&player->ctrl_lock);
-+
- 	return 0;
- }
- 
+ 	/* 3. Combined interface devices matching on interface number */
+ 	{QMI_FIXED_INTF(0x0408, 0xea42, 4)},	/* Yota / Megafon M100-1 */
 -- 
 2.20.1
 
