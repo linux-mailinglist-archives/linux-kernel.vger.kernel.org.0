@@ -2,39 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D03A5150B10
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Feb 2020 17:23:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 329A1150B29
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Feb 2020 17:25:18 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728828AbgBCQUU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 3 Feb 2020 11:20:20 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60016 "EHLO mail.kernel.org"
+        id S1728180AbgBCQZM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 3 Feb 2020 11:25:12 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35808 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728812AbgBCQUR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Feb 2020 11:20:17 -0500
+        id S1728128AbgBCQZK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Feb 2020 11:25:10 -0500
 Received: from localhost (unknown [104.132.45.99])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 36A812086A;
-        Mon,  3 Feb 2020 16:20:16 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4581821582;
+        Mon,  3 Feb 2020 16:25:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1580746816;
-        bh=wfBRkLYFRKbqZrUEq3QI72RlYv1JuOsCkTJDRnk2R1k=;
+        s=default; t=1580747109;
+        bh=12c1Cba7k9vHIdxb59e3M30I8y9BZKq3PODOf2RGwDs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=eDerth4s5Q6FJKAx6s94xqUu4ojBiMoTe4ZqHuaBltNWQvJ07Wqc0YOPbsJT8fRGo
-         6i20eBE6qqC3Nl0lZV6Zmc9JI+8hN64gHpMS/F0JJOloDkznKTONfSyo7VAb7DYCsD
-         z0m3HPnO6Fe36Ygkqqd5OV6F4k87QLT3SJhJMwh0=
+        b=fX788b/kPduGmEJF6ECai68kcLZy9scUT73QCg3o0Gdfe9Q/H7p2ep2HizMD6AIHb
+         NVYT37f7TGL0fcfC2XA+F1fPVIWda/ZdLWvdkENl7EmR00p94S3vb9q1gnJeIJNxng
+         Fr5aOBn2ne45VNd7gTD5KXeHU1joFv7yDewSaPSo=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
-        "David S. Miller" <davem@davemloft.net>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.4 19/53] atm: eni: fix uninitialized variable warning
-Date:   Mon,  3 Feb 2020 16:19:11 +0000
-Message-Id: <20200203161906.606972809@linuxfoundation.org>
+        stable@vger.kernel.org, Johan Hovold <johan@kernel.org>,
+        Kalle Valo <kvalo@codeaurora.org>
+Subject: [PATCH 4.9 16/68] zd1211rw: fix storage endpoint lookup
+Date:   Mon,  3 Feb 2020 16:19:12 +0000
+Message-Id: <20200203161907.738309609@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200203161902.714326084@linuxfoundation.org>
-References: <20200203161902.714326084@linuxfoundation.org>
+In-Reply-To: <20200203161904.705434837@linuxfoundation.org>
+References: <20200203161904.705434837@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,52 +43,37 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Arnd Bergmann <arnd@arndb.de>
+From: Johan Hovold <johan@kernel.org>
 
-[ Upstream commit 30780d086a83332adcd9362281201cee7c3d9d19 ]
+commit 2d68bb2687abb747558b933e80845ff31570a49c upstream.
 
-With -O3, gcc has found an actual unintialized variable stored
-into an mmio register in two instances:
+Make sure to use the current alternate setting when verifying the
+storage interface descriptors to avoid submitting an URB to an invalid
+endpoint.
 
-drivers/atm/eni.c: In function 'discard':
-drivers/atm/eni.c:465:13: error: 'dma[1]' is used uninitialized in this function [-Werror=uninitialized]
-   writel(dma[i*2+1],eni_dev->rx_dma+dma_wr*8+4);
-             ^
-drivers/atm/eni.c:465:13: error: 'dma[3]' is used uninitialized in this function [-Werror=uninitialized]
+Failing to do so could cause the driver to misbehave or trigger a WARN()
+in usb_submit_urb() that kernels with panic_on_warn set would choke on.
 
-Change the code to always write zeroes instead.
+Fixes: a1030e92c150 ("[PATCH] zd1211rw: Convert installer CDROM device into WLAN device")
+Cc: stable <stable@vger.kernel.org>     # 2.6.19
+Signed-off-by: Johan Hovold <johan@kernel.org>
+Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/atm/eni.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/net/wireless/zydas/zd1211rw/zd_usb.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/atm/eni.c b/drivers/atm/eni.c
-index 6339efd326972..ad591a2f7c822 100644
---- a/drivers/atm/eni.c
-+++ b/drivers/atm/eni.c
-@@ -372,7 +372,7 @@ static int do_rx_dma(struct atm_vcc *vcc,struct sk_buff *skb,
- 		here = (eni_vcc->descr+skip) & (eni_vcc->words-1);
- 		dma[j++] = (here << MID_DMA_COUNT_SHIFT) | (vcc->vci
- 		    << MID_DMA_VCI_SHIFT) | MID_DT_JK;
--		j++;
-+		dma[j++] = 0;
- 	}
- 	here = (eni_vcc->descr+size+skip) & (eni_vcc->words-1);
- 	if (!eff) size += skip;
-@@ -445,7 +445,7 @@ static int do_rx_dma(struct atm_vcc *vcc,struct sk_buff *skb,
- 	if (size != eff) {
- 		dma[j++] = (here << MID_DMA_COUNT_SHIFT) |
- 		    (vcc->vci << MID_DMA_VCI_SHIFT) | MID_DT_JK;
--		j++;
-+		dma[j++] = 0;
- 	}
- 	if (!j || j > 2*RX_DMA_BUF) {
- 		printk(KERN_CRIT DEV_LABEL "!j or j too big!!!\n");
--- 
-2.20.1
-
+--- a/drivers/net/wireless/zydas/zd1211rw/zd_usb.c
++++ b/drivers/net/wireless/zydas/zd1211rw/zd_usb.c
+@@ -1272,7 +1272,7 @@ static void print_id(struct usb_device *
+ static int eject_installer(struct usb_interface *intf)
+ {
+ 	struct usb_device *udev = interface_to_usbdev(intf);
+-	struct usb_host_interface *iface_desc = &intf->altsetting[0];
++	struct usb_host_interface *iface_desc = intf->cur_altsetting;
+ 	struct usb_endpoint_descriptor *endpoint;
+ 	unsigned char *cmd;
+ 	u8 bulk_out_ep;
 
 
