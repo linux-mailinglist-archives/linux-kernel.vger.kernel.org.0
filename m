@@ -2,40 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1F672150D00
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Feb 2020 17:41:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 38C71150DAE
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Feb 2020 17:46:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731409AbgBCQkj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 3 Feb 2020 11:40:39 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51328 "EHLO mail.kernel.org"
+        id S1729690AbgBCQ3C (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 3 Feb 2020 11:29:02 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40742 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731136AbgBCQgJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Feb 2020 11:36:09 -0500
+        id S1729662AbgBCQ25 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Feb 2020 11:28:57 -0500
 Received: from localhost (unknown [104.132.45.99])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 74E3E222D9;
-        Mon,  3 Feb 2020 16:36:08 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B5DD520838;
+        Mon,  3 Feb 2020 16:28:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1580747768;
-        bh=rcQDecP37dL91YXleyWQRqGSr0A+L9q6Ie3Ao5CUXLY=;
+        s=default; t=1580747337;
+        bh=TRgddOces3KCcjZiCU9InaohUeoG1Yx/UpbqoCBwJ7o=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=TT2rrDdD6zNoMdmoIYgMho2p7tbYE3lrl1jHl2M4R1yUOPBIIpgfUZzhUVJu8MW5O
-         DHHtV8shE9VGAhuz7rn+M50kRZLQzHzzIHrHEikWENKC4k9gtz3dnotRAjxj9ZMlt+
-         HIzIxU8n/Q6FRVigTNarBYndERA+xaFKtDGk5YGY=
+        b=GZRNIof7dl7l2+FEag/cBIyUcAVh+C4jJUdTMsXZ3pBplPH6lftN21fNXTSHu0OgY
+         y32mh+aJxCLwCqrdEDuIj2RtWDF8g9KWllZncxs4UrY+URrCoqfuH3scJtVSo5PuS9
+         7rU8lFRFU2KXeNvqWXZx6f5ZuHAs/CvR3WlArabg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        syzbot+eba992608adf3d796bcc@syzkaller.appspotmail.com,
-        Dan Carpenter <dan.carpenter@oracle.com>,
-        Johan Hedberg <johan.hedberg@intel.com>
-Subject: [PATCH 5.4 22/90] Bluetooth: Fix race condition in hci_release_sock()
-Date:   Mon,  3 Feb 2020 16:19:25 +0000
-Message-Id: <20200203161920.591354269@linuxfoundation.org>
+        stable@vger.kernel.org, Dirk Behme <dirk.behme@de.bosch.com>,
+        Eugeniu Rosca <erosca@de.adit-jv.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Will Deacon <will@kernel.org>
+Subject: [PATCH 4.14 41/89] arm64: kbuild: remove compressed images on make ARCH=arm64 (dist)clean
+Date:   Mon,  3 Feb 2020 16:19:26 +0000
+Message-Id: <20200203161922.483714935@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200203161917.612554987@linuxfoundation.org>
-References: <20200203161917.612554987@linuxfoundation.org>
+In-Reply-To: <20200203161916.847439465@linuxfoundation.org>
+References: <20200203161916.847439465@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,44 +45,40 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
+From: Dirk Behme <dirk.behme@de.bosch.com>
 
-commit 11eb85ec42dc8c7a7ec519b90ccf2eeae9409de8 upstream.
+commit d7bbd6c1b01cb5dd13c245d4586a83145c1d5f52 upstream.
 
-Syzbot managed to trigger a use after free "KASAN: use-after-free Write
-in hci_sock_bind".  I have reviewed the code manually and one possibly
-cause I have found is that we are not holding lock_sock(sk) when we do
-the hci_dev_put(hdev) in hci_sock_release().  My theory is that the bind
-and the release are racing against each other which results in this use
-after free.
+Since v4.3-rc1 commit 0723c05fb75e44 ("arm64: enable more compressed
+Image formats"), it is possible to build Image.{bz2,lz4,lzma,lzo}
+AArch64 images. However, the commit missed adding support for removing
+those images on 'make ARCH=arm64 (dist)clean'.
 
-Reported-by: syzbot+eba992608adf3d796bcc@syzkaller.appspotmail.com
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-Signed-off-by: Johan Hedberg <johan.hedberg@intel.com>
+Fix this by adding them to the target list.
+Make sure to match the order of the recipes in the makefile.
+
+Cc: stable@vger.kernel.org # v4.3+
+Fixes: 0723c05fb75e44 ("arm64: enable more compressed Image formats")
+Signed-off-by: Dirk Behme <dirk.behme@de.bosch.com>
+Signed-off-by: Eugeniu Rosca <erosca@de.adit-jv.com>
+Reviewed-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+Signed-off-by: Will Deacon <will@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- net/bluetooth/hci_sock.c |    3 +++
- 1 file changed, 3 insertions(+)
+ arch/arm64/boot/Makefile |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/net/bluetooth/hci_sock.c
-+++ b/net/bluetooth/hci_sock.c
-@@ -831,6 +831,8 @@ static int hci_sock_release(struct socke
- 	if (!sk)
- 		return 0;
+--- a/arch/arm64/boot/Makefile
++++ b/arch/arm64/boot/Makefile
+@@ -16,7 +16,7 @@
  
-+	lock_sock(sk);
-+
- 	switch (hci_pi(sk)->channel) {
- 	case HCI_CHANNEL_MONITOR:
- 		atomic_dec(&monitor_promisc);
-@@ -878,6 +880,7 @@ static int hci_sock_release(struct socke
- 	skb_queue_purge(&sk->sk_receive_queue);
- 	skb_queue_purge(&sk->sk_write_queue);
+ OBJCOPYFLAGS_Image :=-O binary -R .note -R .note.gnu.build-id -R .comment -S
  
-+	release_sock(sk);
- 	sock_put(sk);
- 	return 0;
- }
+-targets := Image Image.gz
++targets := Image Image.bz2 Image.gz Image.lz4 Image.lzma Image.lzo
+ 
+ $(obj)/Image: vmlinux FORCE
+ 	$(call if_changed,objcopy)
 
 
