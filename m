@@ -2,118 +2,85 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id ECD581509A2
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Feb 2020 16:19:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CCE331509BC
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Feb 2020 16:23:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728462AbgBCPTC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 3 Feb 2020 10:19:02 -0500
-Received: from mail-pj1-f65.google.com ([209.85.216.65]:54394 "EHLO
-        mail-pj1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727201AbgBCPTB (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Feb 2020 10:19:01 -0500
-Received: by mail-pj1-f65.google.com with SMTP id dw13so6488829pjb.4
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Feb 2020 07:19:01 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=YtI3wko9t2oOAIREAUfJm0gqwgXj0Ak15/2Y+WhYEy8=;
-        b=k9Vsr0TwVe7g/4grDXN9hkJZJsbpojRFe3qfhI1TxV6zt/LLOSkhRwXU6hfe7YqeIP
-         E/fyx1pRXp/R4tj/PvG78ZU2TLLW/JfE+Rme1VSK6lwhOoY940Ah24K44tA/zijDf/Vc
-         Gl0p33bU5YYSU505zeGLXcTwPZ6FwDhkkL0wdSCQlpO5ro6gAVWepUZ6a1bKmvCj7XZX
-         0Jm/k+Rf0SO2r+V6GQGJdTD70xzXbhRkAy5Vtgpv7LZiIROm/IgcX/6/cGzN7Yi9K+I/
-         hpjT68/m5N5WfiS5Plckd6tDJ9m1uYTyd55RYt4J1fiGQ/xf/DTzFEw4gDKtyLTMj5Kx
-         jGYw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=YtI3wko9t2oOAIREAUfJm0gqwgXj0Ak15/2Y+WhYEy8=;
-        b=LjxZJrxTUlwArQXetTaopPoF63ITvZPT/Ec+9k722kSBMiSdzIrqzkcNNBI2C5vTXX
-         ymgfDj3bJ2d7b5hc9BgWSuGVz3CToWvJxOO/UB+dewdjNznkuIcWUvDJdkCQr617tzbY
-         kkxFrSglnR0IsUCjoEXlFdN4ZpENsEVNeWWt4kr+/hMf0H4DQpn3f4v/FaJNncPLCFTe
-         hzdEGhjumoTFDYyo4IyqpWuEMrZjF712aO88XYpjyuaf30UGde2FryckvhtDnSmZeaKm
-         O/r/hPoZ/PZi3UZnAggYPkNrlfAk4pVGosPeWwL9oIGKZOvv/dIj729FaUrSTRkrmzBr
-         e3Gg==
-X-Gm-Message-State: APjAAAVpN56LIOZmFyiz3ivYkuGlT9LNEq902eipx2ZK6CokDEcVvuw2
-        2DIlWT+kI1S5iqanmJtBQwkA8DlM/1tzN7kmSG2U5w==
-X-Google-Smtp-Source: APXvYqydqwFjJ7KIhfrB5Pm4jGzVBOS+I28Gm5EkJXdXEK+sFb79PGm4CuD3XNTph9XeVjoQg+idlgI4TsJauIBmlMU=
-X-Received: by 2002:a17:902:760e:: with SMTP id k14mr22914555pll.119.1580743140892;
- Mon, 03 Feb 2020 07:19:00 -0800 (PST)
+        id S1727988AbgBCPXC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 3 Feb 2020 10:23:02 -0500
+Received: from mail.kernel.org ([198.145.29.99]:46886 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726244AbgBCPXA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Feb 2020 10:23:00 -0500
+Received: from localhost (unknown [223.226.103.41])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5C03B2086A;
+        Mon,  3 Feb 2020 15:22:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1580743380;
+        bh=rkn26MrpMFcSHnE5z5fUj/UAjI+2umNWmo/mhUQUu48=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=G0ePOciZ27Uh5SbHvFJ7/ESP+OTN9zC5mlignaJ1YY8NDoyOos0idjAxW4iL4ArHn
+         HETVSENpbZ6BQzXZyXf6MXPNeXUar/ODYXXS1YUSE0r1w4WCFrXUTeWDfaDpY75QV+
+         VytdIXNISJpgRTLL43fW9wzFYmgM5VlHYQnJFoJk=
+Date:   Mon, 3 Feb 2020 20:52:55 +0530
+From:   Vinod Koul <vkoul@kernel.org>
+To:     Changbin Du <changbin.du@gmail.com>
+Cc:     Jonathan Corbet <corbet@lwn.net>,
+        Amit Daniel Kachhap <amit.kachhap@gmail.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Javi Merino <javi.merino@kernel.org>,
+        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-pm@vger.kernel.org
+Subject: Re: [PATCH v2] Documentation: Fix build error for
+ cpu-idle-cooling.rst and client.rst
+Message-ID: <20200203152255.GQ2841@vkoul-mobl>
+References: <20200203140223.10298-1-changbin.du@gmail.com>
 MIME-Version: 1.0
-References: <20200130015905.18610-1-natechancellor@gmail.com>
-In-Reply-To: <20200130015905.18610-1-natechancellor@gmail.com>
-From:   Nick Desaulniers <ndesaulniers@google.com>
-Date:   Mon, 3 Feb 2020 15:18:49 +0000
-Message-ID: <CAKwvOd=kehh2A6O1my6FbYtSU7e=p0JVM0+RBSF=rpPU7QWbOw@mail.gmail.com>
-Subject: Re: [PATCH] ath11k: Silence clang -Wsometimes-uninitialized in ath11k_update_per_peer_stats_from_txcompl
-To:     Nathan Chancellor <natechancellor@gmail.com>
-Cc:     Kalle Valo <kvalo@codeaurora.org>, ath11k@lists.infradead.org,
-        linux-wireless@vger.kernel.org,
-        Network Development <netdev@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        clang-built-linux <clang-built-linux@googlegroups.com>,
-        CI Notify <ci_notify@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200203140223.10298-1-changbin.du@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jan 30, 2020 at 1:59 AM Nathan Chancellor
-<natechancellor@gmail.com> wrote:
->
-> Clang warns a few times (trimmed for brevity):
->
-> ../drivers/net/wireless/ath/ath11k/debugfs_sta.c:185:7: warning:
-> variable 'rate_idx' is used uninitialized whenever 'if' condition is
-> false [-Wsometimes-uninitialized]
->
-> It is not wrong, rate_idx is only initialized in the first if block.
-> However, this is not necessarily an issue in practice because rate_idx
-> will only be used when initialized because
-> ath11k_accumulate_per_peer_tx_stats only uses rate_idx when flags is not
-> set to RATE_INFO_FLAGS_HE_MCS, RATE_INFO_FLAGS_VHT_MCS, or
-> RATE_INFO_FLAGS_MCS. Still, it is not good to stick uninitialized values
-> into another function so initialize it to zero to prevent any issues
-> down the line.
->
-> Fixes: d5c65159f289 ("ath11k: driver for Qualcomm IEEE 802.11ax devices")
-> Link: https://github.com/ClangBuiltLinux/linux/issues/832
-> Reported-by: ci_notify@linaro.org
-> Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
-
-Thanks for the patch. A bit tricky to follow that this (previously) is safe.
-Reviewed-by: Nick Desaulniers <ndesaulniers@google.com>
-
+On 03-02-20, 22:02, Changbin Du wrote:
+> This fixed some errors and warnings in cpu-idle-cooling.rst and client.rst.
+> 
+> Sphinx parallel build error:
+> docutils.utils.SystemMessage: ...Documentation/driver-api/thermal/cpu-idle-cooling.rst:96: (SEVERE/4) Unexpected section title.
+> 
+> Sphinx parallel build error:
+> docutils.utils.SystemMessage: ...Documentation/driver-api/dmaengine/client.rst:155: (SEVERE/4) Unexpected section title.
+> 
+> Signed-off-by: Changbin Du <changbin.du@gmail.com>
+> 
 > ---
->  drivers/net/wireless/ath/ath11k/debugfs_sta.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/net/wireless/ath/ath11k/debugfs_sta.c b/drivers/net/wireless/ath/ath11k/debugfs_sta.c
-> index 743760c9bcae..a5bdd16d6d46 100644
-> --- a/drivers/net/wireless/ath/ath11k/debugfs_sta.c
-> +++ b/drivers/net/wireless/ath/ath11k/debugfs_sta.c
-> @@ -136,7 +136,7 @@ void ath11k_update_per_peer_stats_from_txcompl(struct ath11k *ar,
->         struct ath11k_sta *arsta;
->         struct ieee80211_sta *sta;
->         u16 rate;
-> -       u8 rate_idx;
-> +       u8 rate_idx = 0;
->         int ret;
->         u8 mcs;
->
-> --
-> 2.25.0
->
-> --
-> You received this message because you are subscribed to the Google Groups "Clang Built Linux" group.
-> To unsubscribe from this group and stop receiving emails from it, send an email to clang-built-linux+unsubscribe@googlegroups.com.
-> To view this discussion on the web visit https://groups.google.com/d/msgid/clang-built-linux/20200130015905.18610-1-natechancellor%40gmail.com.
+> v2: rebase.
+> ---
+>  Documentation/driver-api/dmaengine/client.rst | 14 +++++++---
+>  .../driver-api/thermal/cpu-idle-cooling.rst   | 27 ++++++++++---------
+>  Documentation/driver-api/thermal/index.rst    |  1 +
+>  3 files changed, 26 insertions(+), 16 deletions(-)
+> 
+> diff --git a/Documentation/driver-api/dmaengine/client.rst b/Documentation/driver-api/dmaengine/client.rst
+> index a9a7a3c84c63..2104830a99ae 100644
+> --- a/Documentation/driver-api/dmaengine/client.rst
+> +++ b/Documentation/driver-api/dmaengine/client.rst
+> @@ -151,8 +151,8 @@ The details of these operations are:
+>       Note that callbacks will always be invoked from the DMA
+>       engines tasklet, never from interrupt context.
+>  
+> -  Optional: per descriptor metadata
+> -  ---------------------------------
+> +  **Optional: per descriptor metadata**
 
+I have already fixed it up and it is linux-next (thru dmaengine tree)
 
+Can you please send rest of client.rst changes to me as well
 
+Thanks
 -- 
-Thanks,
-~Nick Desaulniers
+~Vinod
