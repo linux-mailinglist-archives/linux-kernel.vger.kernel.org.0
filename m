@@ -2,59 +2,61 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8D67C15046A
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Feb 2020 11:41:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0CF6315046B
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Feb 2020 11:41:37 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727578AbgBCKlY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 3 Feb 2020 05:41:24 -0500
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:40710 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727196AbgBCKlS (ORCPT
+        id S1727690AbgBCKl0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 3 Feb 2020 05:41:26 -0500
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:35280 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727320AbgBCKlU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Feb 2020 05:41:18 -0500
-Received: by mail-wm1-f67.google.com with SMTP id t14so16309969wmi.5
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Feb 2020 02:41:15 -0800 (PST)
+        Mon, 3 Feb 2020 05:41:20 -0500
+Received: by mail-wm1-f66.google.com with SMTP id b17so16328774wmb.0
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Feb 2020 02:41:17 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=I7kUAuYHK3HU7kgrmlP52Bgbfr7nuCCYrdhqJu7dVQ8=;
-        b=J55zZsRJHqR8+iP6YWjkIN+xlOxkGVRI4uehq2z6qvNNbhJQl7aUnIeIL9ptoxLXqF
-         9qtzDOApck2LDpnlePnZvfUkD4oBOVZSjQLEKq0/Q448jvTUrZmekKlBC6SaYVqRf1NQ
-         Dl06qyULTlr/6dJ8rCRcGCg7fzFk/B30tfUZZHqynDOMfkKohzX+F94DnibrYrkGVzML
-         qySpDmAkLOcFYh07DJIv7f2pxY6Y8qXk+PfuLmCD+bhzh33S2FhcCSZZbDmCBeK2YNyL
-         5Qe6TSUDERIUBAIISKv07hAdNEiNW/jJ4Y1wBB5rLqISOJg4PINcK7wUp349JgjjqqUa
-         XnJQ==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=wqMailTmZiDzGAaQzZRxkipnoj+fRUU9PJ6V3DKETq8=;
+        b=fpRDQwIuTnnsEyXB2ySM/p4PTDa0o6mNCWb97yzJoMIxm1hOjOzyJyl9xYG18z2uPT
+         +jjhRpUSiO5EEmKc8XND/iIKh/C8Sid5YDykNK8GeUaFBNaeFqu440ubfjfPwErQFY5B
+         Mdc5VNe4/Q3wSBv0XE/og6Ag1FH1RZcXJEgt4cN20kVrJN+4JkBYfeQolvG8+EzaAK0c
+         kgyMnqnPWWGke+XbsIrlZR+VcsFrioLHzE0ZWlgXCXXfYoEM+79cz7DN/avZ3RlPmf90
+         /ZzHsLINcogFG4EytfuVjKt5Qf/J8ELSjr/Iz3h/StandjtsbMtxWa9y45V6Ch1YExbq
+         dNnQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=I7kUAuYHK3HU7kgrmlP52Bgbfr7nuCCYrdhqJu7dVQ8=;
-        b=CrDyrTQtnbGal2+WTWdJiBo+rZR7K7GYrPqSbEjLii22xKUlWaGy7nWraX26Ug6WsX
-         Zc6hZNgmftXJZz2qaS7mIjAiLgrd+mwexq7FHH3L1ES0c2iLdAkavqb4t7NFozRwEPYZ
-         4gb9Dg/HX6PluX0jecFf01ejZuhg3eg16uLyMvGpaDCqqD+m6osoHoJwBlwDroF5Isik
-         XYzstjCcvRZGo6w1GKPY/ZCMvK9UJixheWPoM/LsVZb5B41TddyS3cu8akyoeBJKgAy2
-         TMhTuT4uurXFkjEfQCLw3ME6CykQaN95c+2rlBMXX5OyLL+1u4LJc6Mu+SZTghUNdDoY
-         fYsw==
-X-Gm-Message-State: APjAAAWdUZHOpmQ0kEHCN/FIN2ur9i1EQCwDA2zYdHxtSEpab7Z3yqms
-        fmG8hg/AC/UDpWyB4Jtl9vBbxg==
-X-Google-Smtp-Source: APXvYqxlzkNiELVOe6HFuEvkKPhG/U8qjsN+TV7x9MnYHIj6QHkawmzKn3HRfbvnMAZXZ5vUug/GNQ==
-X-Received: by 2002:a05:600c:218b:: with SMTP id e11mr28672434wme.56.1580726474686;
-        Mon, 03 Feb 2020 02:41:14 -0800 (PST)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=wqMailTmZiDzGAaQzZRxkipnoj+fRUU9PJ6V3DKETq8=;
+        b=X/pFFU3eZKMbV3EABBPtD+R6rTqM3/LMTUxsPubG76lcri40JX2rzKHSEx25vDedL2
+         AxvZNJh4TPK07guJt9lrPtCLnDPIcfawtazl0M94StpVxMybMWjloGJzlqPWlKkHHynF
+         CZ8xOEma5vSUHscQnB22hYQHsExhnAvWL6p7csLgWrsxySKrVdTVnbz9nbbWaD0xk/cL
+         H+/VZy1okS4fo5TOa8J3Haw6mVQ26pLAL/Un/ME3/g9TlMbgLqEKwKvKi6h7L/EOmQGz
+         hy4Hm6HPh0rzF+G9Mtw2I/X2HqMqPDmd/WLcZJN1QFg/fWkB36SIYnx5w4sSx7hNMZp6
+         X7PQ==
+X-Gm-Message-State: APjAAAUh8zv3naZOLBLmDc4PH5ENqOEkY6kpAwv6YbNKfF3sTQ2b26qR
+        HSXW8tiYVTISuBoCX4B7KVHLXA==
+X-Google-Smtp-Source: APXvYqyqDixFhZw5tU0O0/JrbBtxhUTUGNteo4ruPRhRyMasg9wLTEjyyUN0NQFTSelH+2sWXvkRyg==
+X-Received: by 2002:a05:600c:d7:: with SMTP id u23mr29183580wmm.145.1580726476193;
+        Mon, 03 Feb 2020 02:41:16 -0800 (PST)
 Received: from localhost.localdomain (84-33-65-46.dyn.eolo.it. [84.33.65.46])
-        by smtp.gmail.com with ESMTPSA id i204sm23798930wma.44.2020.02.03.02.41.13
+        by smtp.gmail.com with ESMTPSA id i204sm23798930wma.44.2020.02.03.02.41.14
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 03 Feb 2020 02:41:13 -0800 (PST)
+        Mon, 03 Feb 2020 02:41:15 -0800 (PST)
 From:   Paolo Valente <paolo.valente@linaro.org>
 To:     Jens Axboe <axboe@kernel.dk>
 Cc:     linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
         bfq-iosched@googlegroups.com, oleksandr@natalenko.name,
         patdung100@gmail.com, cevich@redhat.com,
         Paolo Valente <paolo.valente@linaro.org>
-Subject: [PATCH BUGFIX V2 0/7] block, bfq: series of fixes, and not only, for some recently reported issues
-Date:   Mon,  3 Feb 2020 11:40:53 +0100
-Message-Id: <20200203104100.16965-1-paolo.valente@linaro.org>
+Subject: [PATCH BUGFIX V2 1/7] block, bfq: do not plug I/O for bfq_queues with no proc refs
+Date:   Mon,  3 Feb 2020 11:40:54 +0100
+Message-Id: <20200203104100.16965-2-paolo.valente@linaro.org>
 X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20200203104100.16965-1-paolo.valente@linaro.org>
+References: <20200203104100.16965-1-paolo.valente@linaro.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -62,34 +64,67 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Jens,
-this the V2 of the series. The only change is the removal of ifdefs
-from around gets and puts of bfq groups. As I wrote in my previous
-cover letter, these patches are mostly fixes for the issues reported
-in [1, 2]. All patches have been publicly tested in the dev version of
-BFQ.
+Commit 478de3380c1c ("block, bfq: deschedule empty bfq_queues not
+referred by any process") fixed commit 3726112ec731 ("block, bfq:
+re-schedule empty queues if they deserve I/O plugging") by
+descheduling an empty bfq_queue when it remains with not process
+reference. Yet, this still left a case uncovered: an empty bfq_queue
+with not process reference that remains in service. This happens for
+an in-service sync bfq_queue that is deemed to deserve I/O-dispatch
+plugging when it remains empty. Yet no new requests will arrive for
+such a bfq_queue if no process sends requests to it any longer. Even
+worse, the bfq_queue may happen to be prematurely freed while still in
+service (because there may remain no reference to it any longer).
 
-Thanks,
-Paolo
+This commit solves this problem by preventing I/O dispatch from being
+plugged for the in-service bfq_queue, if the latter has no process
+reference (the bfq_queue is then prevented from remaining in service).
 
-[1] https://bugzilla.redhat.com/show_bug.cgi?id=1767539
-[2] https://bugzilla.kernel.org/show_bug.cgi?id=205447
+Fixes: 3726112ec731 ("block, bfq: re-schedule empty queues if they deserve I/O plugging")
+Reported-by: Patrick Dung <patdung100@gmail.com>
+Tested-by: Patrick Dung <patdung100@gmail.com>
+Signed-off-by: Paolo Valente <paolo.valente@linaro.org>
+---
+ block/bfq-iosched.c | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
 
-Paolo Valente (7):
-  block, bfq: do not plug I/O for bfq_queues with no proc refs
-  block, bfq: do not insert oom queue into position tree
-  block, bfq: get extra ref to prevent a queue from being freed during a
-    group move
-  block, bfq: extend incomplete name of field on_st
-  block, bfq: remove ifdefs from around gets/puts of bfq groups
-  block, bfq: get a ref to a group when adding it to a service tree
-  block, bfq: clarify the goal of bfq_split_bfqq()
-
- block/bfq-cgroup.c  | 16 ++++++++++++++--
- block/bfq-iosched.c | 26 ++++++++++++++++++++------
- block/bfq-iosched.h |  4 +++-
- block/bfq-wf2q.c    | 23 +++++++++++++++++------
- 4 files changed, 54 insertions(+), 15 deletions(-)
-
---
+diff --git a/block/bfq-iosched.c b/block/bfq-iosched.c
+index 4686b68b48b4..55d4328e7c12 100644
+--- a/block/bfq-iosched.c
++++ b/block/bfq-iosched.c
+@@ -3443,6 +3443,10 @@ static void bfq_dispatch_remove(struct request_queue *q, struct request *rq)
+ static bool idling_needed_for_service_guarantees(struct bfq_data *bfqd,
+ 						 struct bfq_queue *bfqq)
+ {
++	/* No point in idling for bfqq if it won't get requests any longer */
++	if (unlikely(!bfqq_process_refs(bfqq)))
++		return false;
++
+ 	return (bfqq->wr_coeff > 1 &&
+ 		(bfqd->wr_busy_queues <
+ 		 bfq_tot_busy_queues(bfqd) ||
+@@ -4076,6 +4080,10 @@ static bool idling_boosts_thr_without_issues(struct bfq_data *bfqd,
+ 		bfqq_sequential_and_IO_bound,
+ 		idling_boosts_thr;
+ 
++	/* No point in idling for bfqq if it won't get requests any longer */
++	if (unlikely(!bfqq_process_refs(bfqq)))
++		return false;
++
+ 	bfqq_sequential_and_IO_bound = !BFQQ_SEEKY(bfqq) &&
+ 		bfq_bfqq_IO_bound(bfqq) && bfq_bfqq_has_short_ttime(bfqq);
+ 
+@@ -4169,6 +4177,10 @@ static bool bfq_better_to_idle(struct bfq_queue *bfqq)
+ 	struct bfq_data *bfqd = bfqq->bfqd;
+ 	bool idling_boosts_thr_with_no_issue, idling_needed_for_service_guar;
+ 
++	/* No point in idling for bfqq if it won't get requests any longer */
++	if (unlikely(!bfqq_process_refs(bfqq)))
++		return false;
++
+ 	if (unlikely(bfqd->strict_guarantees))
+ 		return true;
+ 
+-- 
 2.20.1
+
