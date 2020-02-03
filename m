@@ -2,27 +2,27 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A9D06150DF3
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Feb 2020 17:48:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0BF71150C55
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Feb 2020 17:36:58 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729986AbgBCQr6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 3 Feb 2020 11:47:58 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37774 "EHLO mail.kernel.org"
+        id S1730964AbgBCQfV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 3 Feb 2020 11:35:21 -0500
+Received: from mail.kernel.org ([198.145.29.99]:50042 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727872AbgBCQ0o (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Feb 2020 11:26:44 -0500
+        id S1730952AbgBCQfS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Feb 2020 11:35:18 -0500
 Received: from localhost (unknown [104.132.45.99])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C9E322051A;
-        Mon,  3 Feb 2020 16:26:42 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 278B9217BA;
+        Mon,  3 Feb 2020 16:35:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1580747203;
-        bh=hwOzeRmZcPdvnDRK6bOH7ZDXX8B+7+SkU/US5GJJKtc=;
+        s=default; t=1580747717;
+        bh=TRkIAPgaqZ7uGRpl7w8gDUwEr9fKVYqbQyFe7pM8l3Q=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=fTXbQU+6MvPOyUH++KKbM2LYPxO160kRJtqqlB5XlvAUiBDSBlKjl8YyRq27NDrt1
-         kyPcaqH6q50Z14P+mIRVN/Tg/0N2oouDbthYq8hD7vr3vAR3ci4eR9dCG+ndpaFvVK
-         Wjthe1ec+uOF8oRhXYSzsJ/yxJdu214XmARhYgTw=
+        b=yPtINkRRgVKrBH7q28ZuPLN19vsV1ZdH3L8b3cn7cukme03ws9Tg6jKofQwTe9bv+
+         v63OfkyjsSXjt3ME8jVXcEdSDRbxGEyg/vCDni4/nsR+zTtLbkg/a44/pNjdtn1/Va
+         oiL+7FzTYg6ApD2OaYmJhiNVVyj1VoM9wyCIspeg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -30,12 +30,12 @@ Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Andrew Bowers <andrewx.bowers@intel.com>,
         Jeff Kirsher <jeffrey.t.kirsher@intel.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 47/68] ixgbe: Fix calculation of queue with VFs and flow director on interface flap
+Subject: [PATCH 5.4 40/90] ixgbe: Fix calculation of queue with VFs and flow director on interface flap
 Date:   Mon,  3 Feb 2020 16:19:43 +0000
-Message-Id: <20200203161912.705889456@linuxfoundation.org>
+Message-Id: <20200203161922.965356959@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200203161904.705434837@linuxfoundation.org>
-References: <20200203161904.705434837@linuxfoundation.org>
+In-Reply-To: <20200203161917.612554987@linuxfoundation.org>
+References: <20200203161917.612554987@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -64,10 +64,10 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  1 file changed, 27 insertions(+), 10 deletions(-)
 
 diff --git a/drivers/net/ethernet/intel/ixgbe/ixgbe_main.c b/drivers/net/ethernet/intel/ixgbe/ixgbe_main.c
-index 8ad20b7852ed7..4c729faeb7132 100644
+index c6404abf2dd18..a26f9fb95ac0a 100644
 --- a/drivers/net/ethernet/intel/ixgbe/ixgbe_main.c
 +++ b/drivers/net/ethernet/intel/ixgbe/ixgbe_main.c
-@@ -4804,7 +4804,7 @@ static void ixgbe_fdir_filter_restore(struct ixgbe_adapter *adapter)
+@@ -5239,7 +5239,7 @@ static void ixgbe_fdir_filter_restore(struct ixgbe_adapter *adapter)
  	struct ixgbe_hw *hw = &adapter->hw;
  	struct hlist_node *node2;
  	struct ixgbe_fdir_filter *filter;
@@ -76,7 +76,7 @@ index 8ad20b7852ed7..4c729faeb7132 100644
  
  	spin_lock(&adapter->fdir_perfect_lock);
  
-@@ -4813,17 +4813,34 @@ static void ixgbe_fdir_filter_restore(struct ixgbe_adapter *adapter)
+@@ -5248,17 +5248,34 @@ static void ixgbe_fdir_filter_restore(struct ixgbe_adapter *adapter)
  
  	hlist_for_each_entry_safe(filter, node2,
  				  &adapter->fdir_filter_list, fdir_node) {
