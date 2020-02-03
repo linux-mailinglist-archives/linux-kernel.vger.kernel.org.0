@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7FE16150D63
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Feb 2020 17:44:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E0602150DA5
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Feb 2020 17:46:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730891AbgBCQoD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 3 Feb 2020 11:44:03 -0500
-Received: from mail.kernel.org ([198.145.29.99]:45922 "EHLO mail.kernel.org"
+        id S1730354AbgBCQpm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 3 Feb 2020 11:45:42 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41966 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730385AbgBCQcP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Feb 2020 11:32:15 -0500
+        id S1729847AbgBCQ3u (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Feb 2020 11:29:50 -0500
 Received: from localhost (unknown [104.132.45.99])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9203921582;
-        Mon,  3 Feb 2020 16:32:14 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3FCDF2051A;
+        Mon,  3 Feb 2020 16:29:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1580747535;
-        bh=a3q3AfdfpnZz0utkiLplW6HuR5hV2vd1W/olLkrViE0=;
+        s=default; t=1580747389;
+        bh=0uOWnKSh83fXudGqMAovmHVwNS2NZDD+nPINkoIHYG4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=vB6NtdYe+0yb8Q2LxxOchww3jLtc+mqWOpDv+C5oJ4dvWyHK53TMwHZvccknlDruO
-         PvsnrG4aeMOOZTLCTFknLp8g2rbY/kAPuoa7o0vC6k7eBzbtgu+g8vfc8bl5PZxq3H
-         TETPRarAfecdz5TQiQfcw0xDm6ZPTR0ow974+dLU=
+        b=IShc2UkybO58Erm5Y898OJYxpvYXx5pF8wB1ryzqKVWmh4oX8Itckm9H30p/An69D
+         vj00BCpPLDQHUqpTwWRctuI/mxeyhwWy24ozzmBgU16zNom0/XB+QiQcVug48ey21w
+         ikXe6Nm+BP54WmnvkPBvjAETcLThpPUS1A3RejpI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dmitry Osipenko <digetx@gmail.com>,
+        stable@vger.kernel.org, Arnaud Pouliquen <arnaud.pouliquen@st.com>,
         Mark Brown <broonie@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 34/70] ASoC: rt5640: Fix NULL dereference on module unload
+Subject: [PATCH 4.14 61/89] ASoC: sti: fix possible sleep-in-atomic
 Date:   Mon,  3 Feb 2020 16:19:46 +0000
-Message-Id: <20200203161917.459061865@linuxfoundation.org>
+Message-Id: <20200203161924.620190422@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200203161912.158976871@linuxfoundation.org>
-References: <20200203161912.158976871@linuxfoundation.org>
+In-Reply-To: <20200203161916.847439465@linuxfoundation.org>
+References: <20200203161916.847439465@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,38 +44,68 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Dmitry Osipenko <digetx@gmail.com>
+From: Arnaud Pouliquen <arnaud.pouliquen@st.com>
 
-[ Upstream commit 89b71b3f02d8ae5a08a1dd6f4a2098b7b868d498 ]
+[ Upstream commit ce780a47c3c01e1e179d0792df6b853a913928f1 ]
 
-The rt5640->jack is NULL if jack is already disabled at the time of
-driver's module unloading.
+Change mutex and spinlock management to avoid sleep
+in atomic issue.
 
-Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
-Link: https://lore.kernel.org/r/20200106014707.11378-1-digetx@gmail.com
+Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@st.com>
+Link: https://lore.kernel.org/r/20200113100400.30472-1-arnaud.pouliquen@st.com
 Signed-off-by: Mark Brown <broonie@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- sound/soc/codecs/rt5640.c | 7 +++++++
- 1 file changed, 7 insertions(+)
+ sound/soc/sti/uniperif_player.c | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
 
-diff --git a/sound/soc/codecs/rt5640.c b/sound/soc/codecs/rt5640.c
-index 27770143ae8f2..974e1a4491723 100644
---- a/sound/soc/codecs/rt5640.c
-+++ b/sound/soc/codecs/rt5640.c
-@@ -2435,6 +2435,13 @@ static void rt5640_disable_jack_detect(struct snd_soc_component *component)
- {
- 	struct rt5640_priv *rt5640 = snd_soc_component_get_drvdata(component);
+diff --git a/sound/soc/sti/uniperif_player.c b/sound/soc/sti/uniperif_player.c
+index d8b6936e544e3..908f13623f8cd 100644
+--- a/sound/soc/sti/uniperif_player.c
++++ b/sound/soc/sti/uniperif_player.c
+@@ -226,7 +226,6 @@ static void uni_player_set_channel_status(struct uniperif *player,
+ 	 * sampling frequency. If no sample rate is already specified, then
+ 	 * set one.
+ 	 */
+-	mutex_lock(&player->ctrl_lock);
+ 	if (runtime) {
+ 		switch (runtime->rate) {
+ 		case 22050:
+@@ -303,7 +302,6 @@ static void uni_player_set_channel_status(struct uniperif *player,
+ 		player->stream_settings.iec958.status[3 + (n * 4)] << 24;
+ 		SET_UNIPERIF_CHANNEL_STA_REGN(player, n, status);
+ 	}
+-	mutex_unlock(&player->ctrl_lock);
  
-+	/*
-+	 * soc_remove_component() force-disables jack and thus rt5640->jack
-+	 * could be NULL at the time of driver's module unloading.
-+	 */
-+	if (!rt5640->jack)
-+		return;
+ 	/* Update the channel status */
+ 	if (player->ver < SND_ST_UNIPERIF_VERSION_UNI_PLR_TOP_1_0)
+@@ -365,8 +363,10 @@ static int uni_player_prepare_iec958(struct uniperif *player,
+ 
+ 	SET_UNIPERIF_CTRL_ZERO_STUFF_HW(player);
+ 
++	mutex_lock(&player->ctrl_lock);
+ 	/* Update the channel status */
+ 	uni_player_set_channel_status(player, runtime);
++	mutex_unlock(&player->ctrl_lock);
+ 
+ 	/* Clear the user validity user bits */
+ 	SET_UNIPERIF_USER_VALIDITY_VALIDITY_LR(player, 0);
+@@ -598,7 +598,6 @@ static int uni_player_ctl_iec958_put(struct snd_kcontrol *kcontrol,
+ 	iec958->status[1] = ucontrol->value.iec958.status[1];
+ 	iec958->status[2] = ucontrol->value.iec958.status[2];
+ 	iec958->status[3] = ucontrol->value.iec958.status[3];
+-	mutex_unlock(&player->ctrl_lock);
+ 
+ 	spin_lock_irqsave(&player->irq_lock, flags);
+ 	if (player->substream && player->substream->runtime)
+@@ -608,6 +607,8 @@ static int uni_player_ctl_iec958_put(struct snd_kcontrol *kcontrol,
+ 		uni_player_set_channel_status(player, NULL);
+ 
+ 	spin_unlock_irqrestore(&player->irq_lock, flags);
++	mutex_unlock(&player->ctrl_lock);
 +
- 	disable_irq(rt5640->irq);
- 	rt5640_cancel_work(rt5640);
+ 	return 0;
+ }
  
 -- 
 2.20.1
