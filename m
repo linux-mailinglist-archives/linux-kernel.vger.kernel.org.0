@@ -2,225 +2,159 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8E7DC150433
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Feb 2020 11:27:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 51004150414
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Feb 2020 11:19:55 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727526AbgBCK1q (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 3 Feb 2020 05:27:46 -0500
-Received: from mx1.tq-group.com ([62.157.118.193]:51690 "EHLO mx1.tq-group.com"
+        id S1727090AbgBCKTt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 3 Feb 2020 05:19:49 -0500
+Received: from comms.puri.sm ([159.203.221.185]:32884 "EHLO comms.puri.sm"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726100AbgBCK1p (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Feb 2020 05:27:45 -0500
-X-Greylist: delayed 428 seconds by postgrey-1.27 at vger.kernel.org; Mon, 03 Feb 2020 05:27:44 EST
-IronPort-SDR: X1Gz/oUg2tDO+KeeBbID8o/+NyshHFoLcFqQjiUnk7LIik9RWLlCrmVbCuxrXzlqhUNlKcU8j8
- fOMDCDG9Baa5t/FsrZerhwXcnKhkMbldApDeC9NkW3ciEA28p8N2XSwbkhCgvhhAjaqVQVM6pe
- YAjnC9k5l5/Sqejrv647jV8/qivic2LjlZz2kS5D0H7BO/8j/jxb2G6bbyRnjgORpXQg3BJjgX
- YGMCP4Ds4PPwg/msfhNfy7msu81op68+57uzh22t/WXU7Dpx/hQ/maTVZvGYgdsgFWH/wygVm1
- gxc=
-X-IronPort-AV: E=Sophos;i="5.70,397,1574118000"; 
-   d="scan'208";a="10771158"
-Received: from unknown (HELO tq-pgp-pr1.tq-net.de) ([192.168.6.15])
-  by mx1-pgp.tq-group.com with ESMTP; 03 Feb 2020 11:20:35 +0100
-Received: from mx1.tq-group.com ([192.168.6.7])
-  by tq-pgp-pr1.tq-net.de (PGP Universal service);
-  Mon, 03 Feb 2020 11:20:35 +0100
-X-PGP-Universal: processed;
-        by tq-pgp-pr1.tq-net.de on Mon, 03 Feb 2020 11:20:35 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=tq-group.com; i=@tq-group.com; q=dns/txt; s=key1;
-  t=1580725235; x=1612261235;
-  h=from:to:cc:subject:date:message-id;
-  bh=D1tHKRm9/T8SfmVVqmQjih0yc81AuYCA3oGPGsPn+YE=;
-  b=FQhXxTwE6Pt62rPMDxweje/LiYgCfSxl/rwALdTyNU9QRx5Gd0Bk2RRD
-   dZjpuU4DpKTjk1Rgd3Fib+kTGX3pcUKHHmCA7ZQSBsWG9KRauhzzd/Zjw
-   E7ph7iltbyu6860wgckYLbAV//ZsTaZlwZN6GHil+YPFk0d0HfcSxwZ+z
-   d5sgPhxwQjV3jSiAJEs2wGA5/Pxq9SnvP94udf0LKW9KEFLcl/5DWTR+A
-   hkke88G6HidkmoAuOi6pwTCPLQcH+c3ashYBpCvYpbawaMPlfjhMqRiYt
-   KUvEe4Y4U2Oin/QXY/o5pialF5z6kLNst9BzDbjOJGayCj9+LNu3R4sEJ
-   w==;
-IronPort-SDR: mim3VmcPh0LqA7R+lC6X8G4512MuGwfV4r/yUaOvfKLTPFOEOGzV7/ZblatpikgN6nwNl06Run
- qgvYCVUiF8ZjBm6dGi+F+rwgVQhensHMOQLG3LyAAEBdeddoEFeQk5CeLDvjL1znO3QXfgCAcs
- Gr+4nwxM6RdyqzB3jxAuzQiXWyEaaLfVDVkxsScoOMPtWSeR5vJkbMRFP3ATXFCH2x9ImX06sR
- fQyF4dZLtna4RrfQZ9Yhk6B5z4gXFKmYJjsfASK84Hp/mz2omlpcqmbB4MR1KKKTfyAUzogM+s
- si0=
-X-IronPort-AV: E=Sophos;i="5.70,397,1574118000"; 
-   d="scan'208";a="10771157"
-Received: from vtuxmail01.tq-net.de ([10.115.0.20])
-  by mx1.tq-group.com with ESMTP; 03 Feb 2020 11:20:35 +0100
-Received: from schifferm-ubuntu4.tq-net.de (schifferm-ubuntu4.tq-net.de [10.117.49.26])
-        by vtuxmail01.tq-net.de (Postfix) with ESMTPA id 5A659280065;
-        Mon,  3 Feb 2020 11:20:37 +0100 (CET)
-From:   Matthias Schiffer <matthias.schiffer@ew.tq-group.com>
-To:     horia.geanta@nxp.com, aymen.sghaier@nxp.com
-Cc:     herbert@gondor.apana.org.au, davem@davemloft.net,
-        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Matthias Schiffer <matthias.schiffer@ew.tq-group.com>
-Subject: [RFC] crypto: caam: re-init JR on resume
-Date:   Mon,  3 Feb 2020 11:18:50 +0100
-Message-Id: <20200203101850.22570-1-matthias.schiffer@ew.tq-group.com>
-X-Mailer: git-send-email 2.17.1
+        id S1726258AbgBCKTt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Feb 2020 05:19:49 -0500
+Received: from localhost (localhost [127.0.0.1])
+        by comms.puri.sm (Postfix) with ESMTP id 73BCDE129D;
+        Mon,  3 Feb 2020 02:19:47 -0800 (PST)
+Received: from comms.puri.sm ([127.0.0.1])
+        by localhost (comms.puri.sm [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id KPRgGz4g9guk; Mon,  3 Feb 2020 02:19:46 -0800 (PST)
+Subject: Re: [PATCH] arm64: dts: librem5-devkit: add lsm9ds1 mount matrix
+To:     robh@kernel.org, mark.rutland@arm.com, shawnguo@kernel.org
+Cc:     kernel@pengutronix.de, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20200120100722.30359-1-martin.kepplinger@puri.sm>
+From:   Martin Kepplinger <martin.kepplinger@puri.sm>
+Autocrypt: addr=martin.kepplinger@puri.sm; keydata=
+ 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
+ ekMtxgNYb/8oDry09UFHbGHLsWn6oBo=
+Message-ID: <26ea325b-5c98-ab3b-dd2b-b91a73482ffa@puri.sm>
+Date:   Mon, 3 Feb 2020 11:19:43 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.1
+In-Reply-To: <20200120100722.30359-1-martin.kepplinger@puri.sm>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The JR loses its configuration during suspend-to-RAM (at least on
-i.MX6UL). Re-initialize the hardware on resume.
+On 20.01.20 11:07, Martin Kepplinger wrote:
+> The IMU chip on the librem5-devkit is not mounted at the "natural" place
+> that would match normal phone orientation (see the documentation for the
+> details about what that is).
+> 
+> Since the lsm9ds1 driver supports providing a mount matrix, we can describe
+> the orientation on the board in the dts:
+> 
+> Create a right-handed coordinate system (x * -1; see the datasheet for the
+> axis) and rotate 180 degrees around the y axis because the device sits on
+> the back side from the display.
+> 
+> Signed-off-by: Martin Kepplinger <martin.kepplinger@puri.sm>
+> ---
+> 
+> tested on the librem5-devkit of course, finally fixing the orientation problem
+> for the accelerometer :)
+> 
+> thanks,
+> 
+>                             martin
+> 
+> 
+>  arch/arm64/boot/dts/freescale/imx8mq-librem5-devkit.dts | 3 +++
+>  1 file changed, 3 insertions(+)
+> 
+> diff --git a/arch/arm64/boot/dts/freescale/imx8mq-librem5-devkit.dts b/arch/arm64/boot/dts/freescale/imx8mq-librem5-devkit.dts
+> index 703254282b96..6c8ab009081b 100644
+> --- a/arch/arm64/boot/dts/freescale/imx8mq-librem5-devkit.dts
+> +++ b/arch/arm64/boot/dts/freescale/imx8mq-librem5-devkit.dts
+> @@ -457,6 +457,9 @@
+>  		reg = <0x6a>;
+>  		vdd-supply = <&reg_3v3_p>;
+>  		vddio-supply = <&reg_3v3_p>;
+> +		mount-matrix =  "1",  "0",  "0",
+> +				"0",  "1",  "0",
+> +				"0",  "0", "-1";
+>  	};
+>  };
+>  
+> 
 
-Signed-off-by: Matthias Schiffer <matthias.schiffer@ew.tq-group.com>
----
+hi,
 
-I've come across the issue that the CAAM would not work anymore after
-deep sleep on i.MX6UL. It turned out that the CAAM loses its state
-during suspend-to-RAM, so all registers read as zero and need to be
-reinitialized.
+again, any questions or comments on this fix?
 
-This patch is my first attempt at fixing the issue. It seems to work
-well enough, but I assume I'm missing some synchronization to prevent
-that some CAAM operation is currently under way when the suspend
-happens? I don't know the PM and crypto subsystems well enough to judge
-if this is possible, and if it is, how to prevent it.
-
-I've only compile-tested this version of the patch, as I had to port it
-from our board kernel, which is based on the heavily-modified NXP branch.
-
-
- drivers/crypto/caam/intern.h |  3 ++
- drivers/crypto/caam/jr.c     | 62 +++++++++++++++++++++++++-----------
- 2 files changed, 46 insertions(+), 19 deletions(-)
-
-diff --git a/drivers/crypto/caam/intern.h b/drivers/crypto/caam/intern.h
-index c7c10c90464b..5d2e9091d5c2 100644
---- a/drivers/crypto/caam/intern.h
-+++ b/drivers/crypto/caam/intern.h
-@@ -47,6 +47,9 @@ struct caam_drv_private_jr {
- 	struct tasklet_struct irqtask;
- 	int irq;			/* One per queue */
- 
-+	dma_addr_t inpbusaddr;
-+	dma_addr_t outbusaddr;
-+
- 	/* Number of scatterlist crypt transforms active on the JobR */
- 	atomic_t tfm_count ____cacheline_aligned;
- 
-diff --git a/drivers/crypto/caam/jr.c b/drivers/crypto/caam/jr.c
-index fc97cde27059..2dabf5fd7818 100644
---- a/drivers/crypto/caam/jr.c
-+++ b/drivers/crypto/caam/jr.c
-@@ -418,13 +418,31 @@ int caam_jr_enqueue(struct device *dev, u32 *desc,
- }
- EXPORT_SYMBOL(caam_jr_enqueue);
- 
-+static void caam_jr_setup_rings(struct caam_drv_private_jr *jrp)
-+{
-+	jrp->out_ring_read_index = 0;
-+	jrp->head = 0;
-+	jrp->tail = 0;
-+
-+	wr_reg64(&jrp->rregs->inpring_base, jrp->inpbusaddr);
-+	wr_reg64(&jrp->rregs->outring_base, jrp->outbusaddr);
-+	wr_reg32(&jrp->rregs->inpring_size, JOBR_DEPTH);
-+	wr_reg32(&jrp->rregs->outring_size, JOBR_DEPTH);
-+
-+	jrp->inpring_avail = JOBR_DEPTH;
-+
-+	/* Select interrupt coalescing parameters */
-+	clrsetbits_32(&jrp->rregs->rconfig_lo, 0, JOBR_INTC |
-+		      (JOBR_INTC_COUNT_THLD << JRCFG_ICDCT_SHIFT) |
-+		      (JOBR_INTC_TIME_THLD << JRCFG_ICTT_SHIFT));
-+}
-+
- /*
-  * Init JobR independent of platform property detection
-  */
- static int caam_jr_init(struct device *dev)
- {
- 	struct caam_drv_private_jr *jrp;
--	dma_addr_t inpbusaddr, outbusaddr;
- 	int i, error;
- 
- 	jrp = dev_get_drvdata(dev);
-@@ -434,13 +452,13 @@ static int caam_jr_init(struct device *dev)
- 		return error;
- 
- 	jrp->inpring = dmam_alloc_coherent(dev, SIZEOF_JR_INPENTRY *
--					   JOBR_DEPTH, &inpbusaddr,
-+					   JOBR_DEPTH, &jrp->inpbusaddr,
- 					   GFP_KERNEL);
- 	if (!jrp->inpring)
- 		return -ENOMEM;
- 
- 	jrp->outring = dmam_alloc_coherent(dev, SIZEOF_JR_OUTENTRY *
--					   JOBR_DEPTH, &outbusaddr,
-+					   JOBR_DEPTH, &jrp->outbusaddr,
- 					   GFP_KERNEL);
- 	if (!jrp->outring)
- 		return -ENOMEM;
-@@ -453,24 +471,9 @@ static int caam_jr_init(struct device *dev)
- 	for (i = 0; i < JOBR_DEPTH; i++)
- 		jrp->entinfo[i].desc_addr_dma = !0;
- 
--	/* Setup rings */
--	jrp->out_ring_read_index = 0;
--	jrp->head = 0;
--	jrp->tail = 0;
--
--	wr_reg64(&jrp->rregs->inpring_base, inpbusaddr);
--	wr_reg64(&jrp->rregs->outring_base, outbusaddr);
--	wr_reg32(&jrp->rregs->inpring_size, JOBR_DEPTH);
--	wr_reg32(&jrp->rregs->outring_size, JOBR_DEPTH);
--
--	jrp->inpring_avail = JOBR_DEPTH;
--
- 	spin_lock_init(&jrp->inplock);
- 
--	/* Select interrupt coalescing parameters */
--	clrsetbits_32(&jrp->rregs->rconfig_lo, 0, JOBR_INTC |
--		      (JOBR_INTC_COUNT_THLD << JRCFG_ICDCT_SHIFT) |
--		      (JOBR_INTC_TIME_THLD << JRCFG_ICTT_SHIFT));
-+	caam_jr_setup_rings(jrp);
- 
- 	tasklet_init(&jrp->irqtask, caam_jr_dequeue, (unsigned long)dev);
- 
-@@ -486,6 +489,20 @@ static int caam_jr_init(struct device *dev)
- 	return error;
- }
- 
-+static int caam_jr_reinit(struct device *dev)
-+{
-+	struct caam_drv_private_jr *jrp = dev_get_drvdata(dev);
-+	int error;
-+
-+	error = caam_reset_hw_jr(dev);
-+	if (error)
-+		return error;
-+
-+	caam_jr_setup_rings(jrp);
-+
-+	return 0;
-+}
-+
- static void caam_jr_irq_dispose_mapping(void *data)
- {
- 	irq_dispose_mapping((unsigned long)data);
-@@ -578,10 +595,17 @@ static const struct of_device_id caam_jr_match[] = {
- };
- MODULE_DEVICE_TABLE(of, caam_jr_match);
- 
-+#ifdef CONFIG_PM
-+static SIMPLE_DEV_PM_OPS(caam_jr_pm_ops, caam_reset_hw_jr, caam_jr_reinit);
-+#endif
-+
- static struct platform_driver caam_jr_driver = {
- 	.driver = {
- 		.name = "caam_jr",
- 		.of_match_table = caam_jr_match,
-+#ifdef CONFIG_PM
-+		.pm = &caam_jr_pm_ops,
-+#endif
- 	},
- 	.probe       = caam_jr_probe,
- 	.remove      = caam_jr_remove,
--- 
-2.17.1
-
+thanks,
+                                       martin
