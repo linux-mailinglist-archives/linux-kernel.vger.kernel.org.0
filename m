@@ -2,39 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 27404150DF8
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Feb 2020 17:48:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6CE0D150D67
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Feb 2020 17:44:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730362AbgBCQsU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 3 Feb 2020 11:48:20 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37192 "EHLO mail.kernel.org"
+        id S1730323AbgBCQby (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 3 Feb 2020 11:31:54 -0500
+Received: from mail.kernel.org ([198.145.29.99]:45324 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728876AbgBCQ0O (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Feb 2020 11:26:14 -0500
+        id S1730305AbgBCQbw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Feb 2020 11:31:52 -0500
 Received: from localhost (unknown [104.132.45.99])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9291B2051A;
-        Mon,  3 Feb 2020 16:26:13 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 018A62051A;
+        Mon,  3 Feb 2020 16:31:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1580747174;
-        bh=8jjE9uv8uvJk6VowYOBj062JvcWcLL7+3in/HzO46K0=;
+        s=default; t=1580747511;
+        bh=T/jzZ2ogRvUw89rxkC5bNFbY9f/guSXh75QqfLjQDUQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=IsdHbGRMej31yK1uO7k4P7ge1CHzwttJopKh2pVW41h1bxtM7/F58DxXyebhxqmNk
-         +dzXLuJWPIPQXuAcr6IecrPsM0L2THf1c5eedSlwVzFz9vjoiBFyBX2rJt17eMjNUq
-         coMGui8SQ2RUi4brQABAytczSgGWqNVRnEbDXZ2Y=
+        b=rXcEewh6i+ES/qCY1sEyMxFcTFOjzABp0/iIMPqNPGPQJAFS2IFUqtnccqc34jeHi
+         Q2LzvWh1VgbZww8ngJQAfyKdLYLex6VkKQJOsk1hdzotRzMwPtZ60WZX4aO0E+eozb
+         t3U47Xb75TjmLlc/00fyWlBYzfkYXnNoNqu+Oq3s=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        kbuild test robot <lkp@intel.com>,
-        Julia Lawall <julia.lawall@lip6.fr>,
-        Lee Jones <lee.jones@linaro.org>
-Subject: [PATCH 4.9 41/68] media: si470x-i2c: Move free() past last use of radio
+        stable@vger.kernel.org,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Maxime Ripard <maxime@cerno.tech>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.19 25/70] ARM: dts: sun8i: a83t: Correct USB3503 GPIOs polarity
 Date:   Mon,  3 Feb 2020 16:19:37 +0000
-Message-Id: <20200203161911.742850167@linuxfoundation.org>
+Message-Id: <20200203161916.211831274@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200203161904.705434837@linuxfoundation.org>
-References: <20200203161904.705434837@linuxfoundation.org>
+In-Reply-To: <20200203161912.158976871@linuxfoundation.org>
+References: <20200203161912.158976871@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,42 +45,40 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Lee Jones <lee.jones@linaro.org>
+From: Marek Szyprowski <m.szyprowski@samsung.com>
 
-A pointer to 'struct si470x_device' is currently used after free:
+[ Upstream commit 1c226017d3ec93547b58082bdf778d9db7401c95 ]
 
-  drivers/media/radio/si470x/radio-si470x-i2c.c:462:25-30: ERROR: reference
-    preceded by free on line 460
+Current USB3503 driver ignores GPIO polarity and always operates as if the
+GPIO lines were flagged as ACTIVE_HIGH. Fix the polarity for the existing
+USB3503 chip applications to match the chip specification and common
+convention for naming the pins. The only pin, which has to be ACTIVE_LOW
+is the reset pin. The remaining are ACTIVE_HIGH. This change allows later
+to fix the USB3503 driver to properly use generic GPIO bindings and read
+polarity from DT.
 
-Shift the call to free() down past its final use.
-
-NB: Not sending to Mainline, since the problem does not exist there, it was
-caused by the backport of 2df200ab234a ("media: si470x-i2c: add missed
-operations in remove") to the stable trees.
-
-Cc: <stable@vger.kernel.org> # v3.18+
-Reported-by: kbuild test robot <lkp@intel.com>
-Reported-by: Julia Lawall <julia.lawall@lip6.fr>
-Signed-off-by: Lee Jones <lee.jones@linaro.org>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+Signed-off-by: Maxime Ripard <maxime@cerno.tech>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/media/radio/si470x/radio-si470x-i2c.c |    2 +-
+ arch/arm/boot/dts/sun8i-a83t-cubietruck-plus.dts | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/media/radio/si470x/radio-si470x-i2c.c
-+++ b/drivers/media/radio/si470x/radio-si470x-i2c.c
-@@ -458,10 +458,10 @@ static int si470x_i2c_remove(struct i2c_
- 
- 	free_irq(client->irq, radio);
- 	video_unregister_device(&radio->videodev);
--	kfree(radio);
- 
- 	v4l2_ctrl_handler_free(&radio->hdl);
- 	v4l2_device_unregister(&radio->v4l2_dev);
-+	kfree(radio);
- 	return 0;
- }
- 
+diff --git a/arch/arm/boot/dts/sun8i-a83t-cubietruck-plus.dts b/arch/arm/boot/dts/sun8i-a83t-cubietruck-plus.dts
+index e5f0645e53a7b..7e74ba83f8095 100644
+--- a/arch/arm/boot/dts/sun8i-a83t-cubietruck-plus.dts
++++ b/arch/arm/boot/dts/sun8i-a83t-cubietruck-plus.dts
+@@ -90,7 +90,7 @@
+ 		initial-mode = <1>; /* initialize in HUB mode */
+ 		disabled-ports = <1>;
+ 		intn-gpios = <&pio 7 5 GPIO_ACTIVE_HIGH>; /* PH5 */
+-		reset-gpios = <&pio 4 16 GPIO_ACTIVE_HIGH>; /* PE16 */
++		reset-gpios = <&pio 4 16 GPIO_ACTIVE_LOW>; /* PE16 */
+ 		connect-gpios = <&pio 4 17 GPIO_ACTIVE_HIGH>; /* PE17 */
+ 		refclk-frequency = <19200000>;
+ 	};
+-- 
+2.20.1
+
 
 
