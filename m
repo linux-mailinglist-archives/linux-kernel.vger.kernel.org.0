@@ -2,41 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AF9F4150DD5
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Feb 2020 17:47:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 768A8150BBD
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Feb 2020 17:31:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729446AbgBCQ1g (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 3 Feb 2020 11:27:36 -0500
-Received: from mail.kernel.org ([198.145.29.99]:38874 "EHLO mail.kernel.org"
+        id S1729917AbgBCQaG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 3 Feb 2020 11:30:06 -0500
+Received: from mail.kernel.org ([198.145.29.99]:42336 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729433AbgBCQ1e (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Feb 2020 11:27:34 -0500
+        id S1729883AbgBCQaC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Feb 2020 11:30:02 -0500
 Received: from localhost (unknown [104.132.45.99])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 317052086A;
-        Mon,  3 Feb 2020 16:27:33 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 86F832051A;
+        Mon,  3 Feb 2020 16:30:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1580747253;
-        bh=p8BeVFlI4B5jR4xhcn1nzxAZeFco8rxCzUuCaHxiy8E=;
+        s=default; t=1580747401;
+        bh=WLHXPwq0EdaMgI+zF0ACG1Mj7qwQtreqZgVlFTlDgD0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=LlOkBys0By3xopfdq437g2h+Ddegjaf5ueLjgetxffIuQHVzZDycojNv5SWimYFdR
-         2waxTM0rGZt0BD6aJe+O0LX5kBgDHJ1Fu/xLPvCuENigt/uJH90RwPOaasaFM/QXbb
-         oa/bW9y7NUL0MNZNU17CnJT4UPUELTv/sPy2+ybM=
+        b=kz3/+I3dheYeKN0DKxXp6XrCGO6Ajn0pQVIRzReVbw+UN4tD4xILIadYAa+d74Xby
+         OQbUcSByDZ2UGG5kEuUfT4AqynH8Poa4vqdEC/SXr2ug8zKWbQUanCLga5XiniBs77
+         QO+WF1tgsJoDPO+u46JUVtSkIsNu70Ni33Kkj37M=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Ilja Van Sprundel <ivansprundel@ioactive.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        "David S. Miller" <davem@davemloft.net>,
+        stable@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
+        Johannes Berg <johannes.berg@intel.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 55/68] airo: Fix possible info leak in AIROOLDIOCTL/SIOCDEVPRIVATE
+Subject: [PATCH 4.14 66/89] wireless: wext: avoid gcc -O3 warning
 Date:   Mon,  3 Feb 2020 16:19:51 +0000
-Message-Id: <20200203161914.040441122@linuxfoundation.org>
+Message-Id: <20200203161925.119010568@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200203161904.705434837@linuxfoundation.org>
-References: <20200203161904.705434837@linuxfoundation.org>
+In-Reply-To: <20200203161916.847439465@linuxfoundation.org>
+References: <20200203161916.847439465@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,68 +44,54 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Michael Ellerman <mpe@ellerman.id.au>
+From: Arnd Bergmann <arnd@arndb.de>
 
-[ Upstream commit d6bce2137f5d6bb1093e96d2f801479099b28094 ]
+[ Upstream commit e16119655c9e6c4aa5767cd971baa9c491f41b13 ]
 
-The driver for Cisco Aironet 4500 and 4800 series cards (airo.c),
-implements AIROOLDIOCTL/SIOCDEVPRIVATE in airo_ioctl().
+After the introduction of CONFIG_CC_OPTIMIZE_FOR_PERFORMANCE_O3,
+the wext code produces a bogus warning:
 
-The ioctl handler copies an aironet_ioctl struct from userspace, which
-includes a command and a length. Some of the commands are handled in
-readrids(), which kmalloc()'s a buffer of RIDSIZE (2048) bytes.
+In function 'iw_handler_get_iwstats',
+    inlined from 'ioctl_standard_call' at net/wireless/wext-core.c:1015:9,
+    inlined from 'wireless_process_ioctl' at net/wireless/wext-core.c:935:10,
+    inlined from 'wext_ioctl_dispatch.part.8' at net/wireless/wext-core.c:986:8,
+    inlined from 'wext_handle_ioctl':
+net/wireless/wext-core.c:671:3: error: argument 1 null where non-null expected [-Werror=nonnull]
+   memcpy(extra, stats, sizeof(struct iw_statistics));
+   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+In file included from arch/x86/include/asm/string.h:5,
+net/wireless/wext-core.c: In function 'wext_handle_ioctl':
+arch/x86/include/asm/string_64.h:14:14: note: in a call to function 'memcpy' declared here
 
-That buffer is then passed to PC4500_readrid(), which has two cases.
-The else case does some setup and then reads up to RIDSIZE bytes from
-the hardware into the kmalloc()'ed buffer.
+The problem is that ioctl_standard_call() sometimes calls the handler
+with a NULL argument that would cause a problem for iw_handler_get_iwstats.
+However, iw_handler_get_iwstats never actually gets called that way.
 
-Here len == RIDSIZE, pBuf is the kmalloc()'ed buffer:
+Marking that function as noinline avoids the warning and leads
+to slightly smaller object code as well.
 
-	// read the rid length field
-	bap_read(ai, pBuf, 2, BAP1);
-	// length for remaining part of rid
-	len = min(len, (int)le16_to_cpu(*(__le16*)pBuf)) - 2;
-	...
-	// read remainder of the rid
-	rc = bap_read(ai, ((__le16*)pBuf)+1, len, BAP1);
-
-PC4500_readrid() then returns to readrids() which does:
-
-	len = comp->len;
-	if (copy_to_user(comp->data, iobuf, min(len, (int)RIDSIZE))) {
-
-Where comp->len is the user controlled length field.
-
-So if the "rid length field" returned by the hardware is < 2048, and
-the user requests 2048 bytes in comp->len, we will leak the previous
-contents of the kmalloc()'ed buffer to userspace.
-
-Fix it by kzalloc()'ing the buffer.
-
-Found by Ilja by code inspection, not tested as I don't have the
-required hardware.
-
-Reported-by: Ilja Van Sprundel <ivansprundel@ioactive.com>
-Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Link: https://lore.kernel.org/r/20200107200741.3588770-1-arnd@arndb.de
+Signed-off-by: Johannes Berg <johannes.berg@intel.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/wireless/cisco/airo.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ net/wireless/wext-core.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/net/wireless/cisco/airo.c b/drivers/net/wireless/cisco/airo.c
-index 04939e576ee02..7956b5b529c99 100644
---- a/drivers/net/wireless/cisco/airo.c
-+++ b/drivers/net/wireless/cisco/airo.c
-@@ -7819,7 +7819,7 @@ static int readrids(struct net_device *dev, aironet_ioctl *comp) {
- 		return -EINVAL;
- 	}
+diff --git a/net/wireless/wext-core.c b/net/wireless/wext-core.c
+index 6cdb054484d66..5236a3c2c0ccf 100644
+--- a/net/wireless/wext-core.c
++++ b/net/wireless/wext-core.c
+@@ -659,7 +659,8 @@ struct iw_statistics *get_wireless_stats(struct net_device *dev)
+ 	return NULL;
+ }
  
--	if ((iobuf = kmalloc(RIDSIZE, GFP_KERNEL)) == NULL)
-+	if ((iobuf = kzalloc(RIDSIZE, GFP_KERNEL)) == NULL)
- 		return -ENOMEM;
- 
- 	PC4500_readrid(ai,ridcode,iobuf,RIDSIZE, 1);
+-static int iw_handler_get_iwstats(struct net_device *		dev,
++/* noinline to avoid a bogus warning with -O3 */
++static noinline int iw_handler_get_iwstats(struct net_device *	dev,
+ 				  struct iw_request_info *	info,
+ 				  union iwreq_data *		wrqu,
+ 				  char *			extra)
 -- 
 2.20.1
 
