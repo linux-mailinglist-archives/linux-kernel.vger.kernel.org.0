@@ -2,39 +2,43 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2056E150CC0
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Feb 2020 17:39:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BF573150D32
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Feb 2020 17:42:52 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731535AbgBCQjF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 3 Feb 2020 11:39:05 -0500
-Received: from mail.kernel.org ([198.145.29.99]:53766 "EHLO mail.kernel.org"
+        id S1730651AbgBCQdr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 3 Feb 2020 11:33:47 -0500
+Received: from mail.kernel.org ([198.145.29.99]:47706 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731428AbgBCQiA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Feb 2020 11:38:00 -0500
+        id S1730629AbgBCQdl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Feb 2020 11:33:41 -0500
 Received: from localhost (unknown [104.132.45.99])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 885AE2087E;
-        Mon,  3 Feb 2020 16:37:59 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 08DD721741;
+        Mon,  3 Feb 2020 16:33:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1580747879;
-        bh=tfUQ0OtFWUwt3ZmIEKievnhC9gC19+ww/xJKGMsOyjo=;
+        s=default; t=1580747620;
+        bh=AecKnrKC/Dm5pmNq8baFZPyx+g+kYbE6BtUDc3Tuugw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=si1Rx+hhZjZlc+wWiNwSDvBXg5HIXzvwN6JlVoRphAWhLgW9ZQ8RvGuTELs7oXFFH
-         PCJCFhBb+thtAVbXOkb58ICpn5Qxu/96MqKkUQg2O8bvDWV/ofmdAMuk656EooNl+2
-         h2yd7XRCd6pEQLr4T5CPKEIqce1ucvF+O5DGU/ZM=
+        b=gtTA36opSYr5/DB3ReflYWENDf5YnT7tiVlyWaDcDCFSYNl3OgEQvKT29MksXh5bo
+         jOoE9duYPDIojlEAh1NbcMPBnLSbDN+8jqQLqEpBJAV2KQvakqg7g9f2I95/Q5faiN
+         aTDyjWiV/HGkG2TZua9pxrZDGLC36WfEXbeG78WU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Ronnie Sahlberg <lsahlber@redhat.com>,
-        Steve French <stfrench@microsoft.com>,
-        "Paulo Alcantara (SUSE)" <pc@cjr.nz>
-Subject: [PATCH 5.5 02/23] cifs: fix soft mounts hanging in the reconnect code
+        stable@vger.kernel.org,
+        Praveen Chaudhary <pchaudhary@linkedin.com>,
+        Zhenggen Xu <zxu@linkedin.com>,
+        Andy Stracner <astracner@linkedin.com>,
+        Florian Westphal <fw@strlen.de>,
+        Pablo Neira Ayuso <pablo@netfilter.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.19 70/70] net: Fix skb->csum update in inet_proto_csum_replace16().
 Date:   Mon,  3 Feb 2020 16:20:22 +0000
-Message-Id: <20200203161903.435449312@linuxfoundation.org>
+Message-Id: <20200203161922.147273020@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200203161902.288335885@linuxfoundation.org>
-References: <20200203161902.288335885@linuxfoundation.org>
+In-Reply-To: <20200203161912.158976871@linuxfoundation.org>
+References: <20200203161912.158976871@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,52 +48,73 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Ronnie Sahlberg <lsahlber@redhat.com>
+From: Praveen Chaudhary <praveen5582@gmail.com>
 
-commit c54849ddd832ae0a45cab16bcd1ed2db7da090d7 upstream.
+[ Upstream commit 189c9b1e94539b11c80636bc13e9cf47529e7bba ]
 
-RHBZ: 1795429
+skb->csum is updated incorrectly, when manipulation for
+NF_NAT_MANIP_SRC\DST is done on IPV6 packet.
 
-In recent DFS updates we have a new variable controlling how many times we will
-retry to reconnect the share.
-If DFS is not used, then this variable is initialized to 0 in:
+Fix:
+There is no need to update skb->csum in inet_proto_csum_replace16(),
+because update in two fields a.) IPv6 src/dst address and b.) L4 header
+checksum cancels each other for skb->csum calculation. Whereas
+inet_proto_csum_replace4 function needs to update skb->csum, because
+update in 3 fields a.) IPv4 src/dst address, b.) IPv4 Header checksum
+and c.) L4 header checksum results in same diff as L4 Header checksum
+for skb->csum calculation.
 
-static inline int
-dfs_cache_get_nr_tgts(const struct dfs_cache_tgt_list *tl)
-{
-        return tl ? tl->tl_numtgts : 0;
-}
-
-This means that in the reconnect loop in smb2_reconnect() we will immediately wrap retries to -1
-and never actually get to pass this conditional:
-
-                if (--retries)
-                        continue;
-
-The effect is that we no longer reach the point where we fail the commands with -EHOSTDOWN
-and basically the kernel threads are virtually hung and unkillable.
-
-Fixes: a3a53b7603798fd8 (cifs: Add support for failover in smb2_reconnect())
-Signed-off-by: Ronnie Sahlberg <lsahlber@redhat.com>
-Signed-off-by: Steve French <stfrench@microsoft.com>
-Reviewed-by: Paulo Alcantara (SUSE) <pc@cjr.nz>
-CC: Stable <stable@vger.kernel.org>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+[ pablo@netfilter.org: a few comestic documentation edits ]
+Signed-off-by: Praveen Chaudhary <pchaudhary@linkedin.com>
+Signed-off-by: Zhenggen Xu <zxu@linkedin.com>
+Signed-off-by: Andy Stracner <astracner@linkedin.com>
+Reviewed-by: Florian Westphal <fw@strlen.de>
+Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/cifs/smb2pdu.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ net/core/utils.c | 20 +++++++++++++++++---
+ 1 file changed, 17 insertions(+), 3 deletions(-)
 
---- a/fs/cifs/smb2pdu.c
-+++ b/fs/cifs/smb2pdu.c
-@@ -312,7 +312,7 @@ smb2_reconnect(__le16 smb2_command, stru
- 		if (server->tcpStatus != CifsNeedReconnect)
- 			break;
+diff --git a/net/core/utils.c b/net/core/utils.c
+index 2a597ac7808e2..60045e9fea05b 100644
+--- a/net/core/utils.c
++++ b/net/core/utils.c
+@@ -442,6 +442,23 @@ void inet_proto_csum_replace4(__sum16 *sum, struct sk_buff *skb,
+ }
+ EXPORT_SYMBOL(inet_proto_csum_replace4);
  
--		if (--retries)
-+		if (retries && --retries)
- 			continue;
- 
- 		/*
++/**
++ * inet_proto_csum_replace16 - update layer 4 header checksum field
++ * @sum: Layer 4 header checksum field
++ * @skb: sk_buff for the packet
++ * @from: old IPv6 address
++ * @to: new IPv6 address
++ * @pseudohdr: True if layer 4 header checksum includes pseudoheader
++ *
++ * Update layer 4 header as per the update in IPv6 src/dst address.
++ *
++ * There is no need to update skb->csum in this function, because update in two
++ * fields a.) IPv6 src/dst address and b.) L4 header checksum cancels each other
++ * for skb->csum calculation. Whereas inet_proto_csum_replace4 function needs to
++ * update skb->csum, because update in 3 fields a.) IPv4 src/dst address,
++ * b.) IPv4 Header checksum and c.) L4 header checksum results in same diff as
++ * L4 Header checksum for skb->csum calculation.
++ */
+ void inet_proto_csum_replace16(__sum16 *sum, struct sk_buff *skb,
+ 			       const __be32 *from, const __be32 *to,
+ 			       bool pseudohdr)
+@@ -453,9 +470,6 @@ void inet_proto_csum_replace16(__sum16 *sum, struct sk_buff *skb,
+ 	if (skb->ip_summed != CHECKSUM_PARTIAL) {
+ 		*sum = csum_fold(csum_partial(diff, sizeof(diff),
+ 				 ~csum_unfold(*sum)));
+-		if (skb->ip_summed == CHECKSUM_COMPLETE && pseudohdr)
+-			skb->csum = ~csum_partial(diff, sizeof(diff),
+-						  ~skb->csum);
+ 	} else if (pseudohdr)
+ 		*sum = ~csum_fold(csum_partial(diff, sizeof(diff),
+ 				  csum_unfold(*sum)));
+-- 
+2.20.1
+
 
 
