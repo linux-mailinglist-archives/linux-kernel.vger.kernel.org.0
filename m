@@ -2,103 +2,81 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 991561504DE
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Feb 2020 12:06:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 85DAE1504E9
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Feb 2020 12:08:18 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727869AbgBCLF5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 3 Feb 2020 06:05:57 -0500
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:34991 "EHLO
-        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727268AbgBCLF5 (ORCPT
+        id S1727933AbgBCLIO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 3 Feb 2020 06:08:14 -0500
+Received: from smtprelay0053.hostedemail.com ([216.40.44.53]:53054 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727509AbgBCLIO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Feb 2020 06:05:57 -0500
-Received: from dude02.hi.pengutronix.de ([2001:67c:670:100:1d::28] helo=dude02.lab.pengutronix.de)
-        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <mfe@pengutronix.de>)
-        id 1iyZY5-00046n-Hb; Mon, 03 Feb 2020 12:05:49 +0100
-Received: from mfe by dude02.lab.pengutronix.de with local (Exim 4.92)
-        (envelope-from <mfe@pengutronix.de>)
-        id 1iyZY1-00028x-QW; Mon, 03 Feb 2020 12:05:45 +0100
-Date:   Mon, 3 Feb 2020 12:05:45 +0100
-From:   Marco Felsch <m.felsch@pengutronix.de>
-To:     Martin Kepplinger <martin.kepplinger@puri.sm>
-Cc:     robh@kernel.org, mark.rutland@arm.com, shawnguo@kernel.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        kernel@pengutronix.de, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] arm64: dts: librem5-devkit: add lsm9ds1 mount matrix
-Message-ID: <20200203110545.GB24291@pengutronix.de>
-References: <20200120100722.30359-1-martin.kepplinger@puri.sm>
+        Mon, 3 Feb 2020 06:08:14 -0500
+Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
+        by smtprelay02.hostedemail.com (Postfix) with ESMTP id BD3E72816;
+        Mon,  3 Feb 2020 11:08:12 +0000 (UTC)
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,:::::::::::::::,RULES_HIT:41:69:355:379:599:800:960:973:982:988:989:1260:1277:1311:1313:1314:1345:1359:1437:1515:1516:1518:1534:1541:1593:1594:1711:1730:1747:1777:1792:2198:2199:2393:2553:2559:2562:2693:2828:3138:3139:3140:3141:3142:3353:3622:3653:3865:3866:3867:3868:3870:3872:3874:4321:5007:6691:7514:9040:10004:10400:10848:10967:11232:11658:11914:12043:12291:12297:12555:12663:12683:12740:12760:12895:12986:13069:13311:13357:13439:14093:14095:14096:14181:14659:14721:21080:21324:21451:21611:21627:30054:30060:30070:30090:30091,0,RBL:none,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:,MSBL:0,DNSBL:none,Custom_rules:0:0:0,LFtime:2,LUA_SUMMARY:none
+X-HE-Tag: cause64_d4df4aac5c17
+X-Filterd-Recvd-Size: 2662
+Received: from XPS-9350.home (unknown [47.151.135.224])
+        (Authenticated sender: joe@perches.com)
+        by omf12.hostedemail.com (Postfix) with ESMTPA;
+        Mon,  3 Feb 2020 11:08:11 +0000 (UTC)
+Message-ID: <ce81e9b1ac6ede9f7a16823175192ef69613ec07.camel@perches.com>
+Subject: Re: [PATCH] MAINTAINERS: correct entries for ISDN/mISDN section
+From:   Joe Perches <joe@perches.com>
+To:     Andy Shevchenko <andy.shevchenko@gmail.com>,
+        Jakub Kicinski <kuba@kernel.org>
+Cc:     Lukas Bulwahn <lukas.bulwahn@gmail.com>,
+        Karsten Keil <isdn@linux-pingi.de>,
+        Arnd Bergmann <arnd@arndb.de>,
+        isdn4linux@listserv.isdn4linux.de, netdev <netdev@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Date:   Mon, 03 Feb 2020 03:07:01 -0800
+In-Reply-To: <CAHp75VdVXqz7fab4MKH2jZozx4NGGkQnJyTWHDKCdgSwD2AtpA@mail.gmail.com>
+References: <20200201124301.21148-1-lukas.bulwahn@gmail.com>
+         <20200202124306.54bcabea@cakuba.hsd1.ca.comcast.net>
+         <CAHp75VdVXqz7fab4MKH2jZozx4NGGkQnJyTWHDKCdgSwD2AtpA@mail.gmail.com>
+Content-Type: text/plain; charset="ISO-8859-1"
+User-Agent: Evolution 3.34.1-2 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200120100722.30359-1-martin.kepplinger@puri.sm>
-X-Sent-From: Pengutronix Hildesheim
-X-URL:  http://www.pengutronix.de/
-X-IRC:  #ptxdist @freenode
-X-Accept-Language: de,en
-X-Accept-Content-Type: text/plain
-X-Uptime: 11:57:57 up 157 days, 23:12, 161 users,  load average: 0.07, 0.17,
- 0.15
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::28
-X-SA-Exim-Mail-From: mfe@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Martin,
+On Mon, 2020-02-03 at 12:13 +0200, Andy Shevchenko wrote:
+> On Sun, Feb 2, 2020 at 10:45 PM Jakub Kicinski <kuba@kernel.org> wrote:
+> > On Sat,  1 Feb 2020 13:43:01 +0100, Lukas Bulwahn wrote:
+> > > Commit 6d97985072dc ("isdn: move capi drivers to staging") cleaned up the
+> > > isdn drivers and split the MAINTAINERS section for ISDN, but missed to add
+> > > the terminal slash for the two directories mISDN and hardware. Hence, all
+> > > files in those directories were not part of the new ISDN/mISDN SUBSYSTEM,
+> > > but were considered to be part of "THE REST".
+> > > 
+> > > Rectify the situation, and while at it, also complete the section with two
+> > > further build files that belong to that subsystem.
+> > > 
+> > > This was identified with a small script that finds all files belonging to
+> > > "THE REST" according to the current MAINTAINERS file, and I investigated
+> > > upon its output.
+> > > 
+> > > Fixes: 6d97985072dc ("isdn: move capi drivers to staging")
+> > > Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+> > 
+> > Applied to net, thanks!
+> 
+> I'm not sure it's ready. I think parse-maintainers.pl will change few
+> lines here.
 
-On 20-01-20 11:07, Martin Kepplinger wrote:
-> The IMU chip on the librem5-devkit is not mounted at the "natural" place
-> that would match normal phone orientation (see the documentation for the
-> details about what that is).
-> 
-> Since the lsm9ds1 driver supports providing a mount matrix, we can describe
-> the orientation on the board in the dts:
+parse-maintainers would change a _lot_ of the MAINTAINERS file
+by reordering section letters.
 
-I didn't found the patch which adds the iio_read_mount_matrix()
-support. Appart of that your patch looks good so feel free to add my:
+$ perl ./scripts/parse-maintainers.pl --output=MAINTAINERS
+$ git diff --stat MAINTAINERS
+ MAINTAINERS | 5572 +++++++++++++++++++++++++++++------------------------------
+ 1 file changed, 2786 insertions(+), 2786 deletions(-)
 
-Reviewed-by: Marco Felsch <m.felsch@pengutronix.de> 
 
-Regards,
-  Marco
-
-> Create a right-handed coordinate system (x * -1; see the datasheet for the
-> axis) and rotate 180 degrees around the y axis because the device sits on
-> the back side from the display.
-> 
-> Signed-off-by: Martin Kepplinger <martin.kepplinger@puri.sm>
-> ---
-> 
-> tested on the librem5-devkit of course, finally fixing the orientation problem
-> for the accelerometer :)
-> 
-> thanks,
-> 
->                             martin
-> 
-> 
->  arch/arm64/boot/dts/freescale/imx8mq-librem5-devkit.dts | 3 +++
->  1 file changed, 3 insertions(+)
-> 
-> diff --git a/arch/arm64/boot/dts/freescale/imx8mq-librem5-devkit.dts b/arch/arm64/boot/dts/freescale/imx8mq-librem5-devkit.dts
-> index 703254282b96..6c8ab009081b 100644
-> --- a/arch/arm64/boot/dts/freescale/imx8mq-librem5-devkit.dts
-> +++ b/arch/arm64/boot/dts/freescale/imx8mq-librem5-devkit.dts
-> @@ -457,6 +457,9 @@
->  		reg = <0x6a>;
->  		vdd-supply = <&reg_3v3_p>;
->  		vddio-supply = <&reg_3v3_p>;
-> +		mount-matrix =  "1",  "0",  "0",
-> +				"0",  "1",  "0",
-> +				"0",  "0", "-1";
->  	};
->  };
->  
-> -- 
-> 2.20.1
