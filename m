@@ -2,54 +2,128 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 76886150993
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Feb 2020 16:15:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 055BF15099A
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Feb 2020 16:16:58 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729058AbgBCPPW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 3 Feb 2020 10:15:22 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43264 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729034AbgBCPPT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Feb 2020 10:15:19 -0500
-Subject: Re: [GIT PULL] Char/Misc driver fix for 5.6-rc1
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1580742919;
-        bh=GUH+MGIwX5p/S8jn4oeJtrxRzwRJq5/29a0e03ze37Y=;
-        h=From:In-Reply-To:References:Date:To:Cc:From;
-        b=FLkJS00b/R8r2lEoX3n9ppuUh/EFcoYSdR+gtWGMnTdHENLiSQI/kqP5m/U9uuouX
-         hoio04z7v3dtDZ++4No9Pvq1febpeaaUrxAbZF0kW/ZLalLA4Ene38n+jf0S0TJjMf
-         CqwDB5nxmJgwIOqkoWxEkq0OJhwHOvOVoON9385g=
-From:   pr-tracker-bot@kernel.org
-In-Reply-To: <20200203143939.GA3221812@kroah.com>
-References: <20200203143939.GA3221812@kroah.com>
-X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <20200203143939.GA3221812@kroah.com>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/char-misc.git
- tags/char-misc-5.6-rc1-2
-X-PR-Tracked-Commit-Id: 98c49f1746ac44ccc164e914b9a44183fad09f51
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 754beeec1d9024eef0db8dc4be2636331dd413c6
-Message-Id: <158074291909.25778.18249983098947017725.pr-tracker-bot@kernel.org>
-Date:   Mon, 03 Feb 2020 15:15:19 +0000
-To:     Greg KH <gregkh@linuxfoundation.org>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Arnd Bergmann <arnd@arndb.de>, linux-kernel@vger.kernel.org
+        id S1728206AbgBCPQ4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 3 Feb 2020 10:16:56 -0500
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:53508 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727279AbgBCPQz (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Feb 2020 10:16:55 -0500
+Received: by mail-wm1-f66.google.com with SMTP id s10so16345390wmh.3
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Feb 2020 07:16:54 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=arangodb.com; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=oDRH5we1LRYr69H/g74BFyb9GhUUuAeUSoG8mXyHu3Y=;
+        b=fl1ZYh0CUf3sMGtHtJIdJafqlYKLZsSI1uu6QurSiwRuCTiVJqh9V0cgqfAZkuYn2S
+         fXV9TTePcAwikD+BC5HR6ZHhzT00wtG+qlrpBQ2Wdn5vUqVy6Bx+g7R5fa+HziqZ6Odm
+         llpf1Jt1DT8yD9+pX8BwrZtNhPoh7hpgfOtBrMgiKpA8nf5H9XBIXmfw1qg0KprYgfSw
+         IBVnql47upOCp2D8yO/F4lG3svM0wg5RwmuIrl8ppeivODqmrlpuUvzvK5KqqjYbd3kW
+         26nq1Ky+W7oW6Mw2INas3fWVOddwxEeg3PyU7BuMHtzNm7TMmEejgAjkYnbaKw7H/oFC
+         q8Xg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=oDRH5we1LRYr69H/g74BFyb9GhUUuAeUSoG8mXyHu3Y=;
+        b=WjjbYFSlHYi/mr9Vu8dQBSLvh+H9a6YcR1qFbYc/TIbQjj245+XdyefmXTfQ4AKTPR
+         gseGiMEO5g/pgLVtVZoRIaYpc3KhdDPMQOcN7h94Tnydk6GHOpuo0Eh5/mM3GD1mG+FV
+         dEtHZozg/qcLzXJCqgAnuoR1+L+gyLwGUJ8sns5nKLLwrrqnZZeIac4E++xH2xzFK5mK
+         jP11IPbpbTM1EgagLgD0zF2J1GiCeKQ6GF0rKtf4WAoNAI80MefFTSiTXTZb6iCbzoCv
+         x15qiIaeOEsy/n+/ZTo92LdlJ1s0cWZDC/SfvhRgLPYPd5392uWjbvwo6r5oRZ5+D30i
+         f2sw==
+X-Gm-Message-State: APjAAAVzchnbu1EwCwvvRe4Meh+kc80skLrNFIOG5TEco5bAFinjP5qX
+        0eAr8dn4aIoUiITX8c6jkBYg
+X-Google-Smtp-Source: APXvYqy9zJqEX1AE9F9FSyxmUYx5bGNX2475G5HyDwL44k6DUQVwT9KWcQDJJvYA7H0B4qM5xdkivw==
+X-Received: by 2002:a7b:c651:: with SMTP id q17mr31280131wmk.5.1580743013835;
+        Mon, 03 Feb 2020 07:16:53 -0800 (PST)
+Received: from localhost (static-85-197-33-87.netcologne.de. [85.197.33.87])
+        by smtp.gmail.com with ESMTPSA id z19sm22877844wmi.43.2020.02.03.07.16.53
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 03 Feb 2020 07:16:53 -0800 (PST)
+Date:   Mon, 3 Feb 2020 16:15:36 +0100
+From:   Max Neunhoeffer <max@arangodb.com>
+To:     Jakub Kicinski <kuba@kernel.org>
+Cc:     netdev@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        LKML <linux-kernel@vger.kernel.org>,
+        Roman Penyaev <rpenyaev@suse.de>,
+        Christopher Kohlhoff <chris.kohlhoff@clearpool.io>
+Subject: Re: epoll_wait misses edge-triggered eventfd events: bug in Linux
+ 5.3 and 5.4
+Message-ID: <20200203151536.caf6n4b2ymvtssmh@tux>
+References: <20200131135730.ezwtgxddjpuczpwy@tux>
+ <20200201121647.62914697@cakuba.hsd1.ca.comcast.net>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200201121647.62914697@cakuba.hsd1.ca.comcast.net>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The pull request you sent on Mon, 3 Feb 2020 14:39:39 +0000:
+Dear Jakub and all,
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/char-misc.git tags/char-misc-5.6-rc1-2
+I have done a git bisect and found that this commit introduced the epoll
+bug:
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/754beeec1d9024eef0db8dc4be2636331dd413c6
+https://github.com/torvalds/linux/commit/a218cc4914209ac14476cb32769b31a556355b22
 
-Thank you!
+I Cc the author of the commit.
 
--- 
-Deet-doot-dot, I am a bot.
-https://korg.wiki.kernel.org/userdoc/prtracker
+This makes sense, since the commit introduces a new rwlock to reduce
+contention in ep_poll_callback. I do not fully understand the details
+but this sounds all very close to this bug.
+
+I have also verified that the bug is still present in the latest master
+branch in Linus' repository.
+
+Furthermore, Chris Kohlhoff has provided yet another reproducing program
+which is no longer using edge-triggered but standard level-triggered
+events and epoll_wait. This makes the bug all the more urgent, since
+potentially more programs could run into this problem and could end up
+with sleeping barbers.
+
+I have added all the details to the bugzilla bugreport:
+
+  https://bugzilla.kernel.org/show_bug.cgi?id=205933
+
+Hopefully, we can resolve this now equipped with this amount of information.
+
+Best regards,
+  Max.
+
+On 20/02/01 12:16, Jakub Kicinski wrote:
+> On Fri, 31 Jan 2020 14:57:30 +0100, Max Neunhoeffer wrote:
+> > Dear All,
+> > 
+> > I believe I have found a bug in Linux 5.3 and 5.4 in epoll_wait/epoll_ctl
+> > when an eventfd together with edge-triggered or the EPOLLONESHOT policy
+> > is used. If an epoll_ctl call to rearm the eventfd happens approximately
+> > at the same time as the epoll_wait goes to sleep, the event can be lost, 
+> > even though proper protection through a mutex is employed.
+> > 
+> > The details together with two programs showing the problem can be found
+> > here:
+> > 
+> >   https://bugzilla.kernel.org/show_bug.cgi?id=205933
+> > 
+> > Older kernels seem not to have this problem, although I did not test all
+> > versions. I know that 4.15 and 5.0 do not show the problem.
+> > 
+> > Note that this method of using epoll_wait/eventfd is used by
+> > boost::asio to wake up event loops in case a new completion handler
+> > is posted to an io_service, so this is probably relevant for many
+> > applications.
+> > 
+> > Any help with this would be appreciated.
+> 
+> Could be networking related but let's CC FS folks just in case.
+> 
+> Would you be able to perform bisection to narrow down the search 
+> for a buggy change?
