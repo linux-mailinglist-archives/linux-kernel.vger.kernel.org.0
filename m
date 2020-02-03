@@ -2,37 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E02BC150C72
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Feb 2020 17:37:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E2C7F150CEA
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Feb 2020 17:40:28 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730991AbgBCQg1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 3 Feb 2020 11:36:27 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51700 "EHLO mail.kernel.org"
+        id S1731000AbgBCQgb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 3 Feb 2020 11:36:31 -0500
+Received: from mail.kernel.org ([198.145.29.99]:51782 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729078AbgBCQgZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Feb 2020 11:36:25 -0500
+        id S1731198AbgBCQg2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Feb 2020 11:36:28 -0500
 Received: from localhost (unknown [104.132.45.99])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0376A20CC7;
-        Mon,  3 Feb 2020 16:36:24 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 598A720CC7;
+        Mon,  3 Feb 2020 16:36:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1580747785;
-        bh=ss7Ch1X+1y2bjXhIPfs5CMbSa5TXR6pSfvlg/0M9wrE=;
+        s=default; t=1580747787;
+        bh=XOxqpovrcV8j1t9Tw3jUSFjv9Txf9xyBxqqZhpFiAw4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=m3mT76CfbVjsf9iQPuM/oYn2/Ap5foFFIpnq/VpERa2fBQRCJyrmkrc+hmqccCbmb
-         1jOKQNmOQ89XxUh54bRpfmZddVtGAs7dP+uocygiRIjUchK7t12L5yZJlWGxY6512w
-         8gp9/0yXBLcUSHuzxyq0hHLHiyYGGvZq4f4od5xM=
+        b=d5r5J3dr4rPtou1XuKKofEAzNS2alHUAjcjuL4KIAFK48dDaB5EB1DYPmKFmfK0gj
+         6HaytW2s3BTivaMunZ7scxMTtxweyd9/g08MlrpO5uT51EBpHV5NIU8Norfch+ohCk
+         ZP6ll77tjhFcrbWdYQ54PEmSOMatYPvfkThiy60I=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        stable@vger.kernel.org, Hannes Reinecke <hare@suse.de>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.4 70/90] Input: max77650-onkey - add of_match table
-Date:   Mon,  3 Feb 2020 16:20:13 +0000
-Message-Id: <20200203161925.971200751@linuxfoundation.org>
+Subject: [PATCH 5.4 71/90] scsi: fnic: do not queue commands during fwreset
+Date:   Mon,  3 Feb 2020 16:20:14 +0000
+Message-Id: <20200203161926.071561120@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
 In-Reply-To: <20200203161917.612554987@linuxfoundation.org>
 References: <20200203161917.612554987@linuxfoundation.org>
@@ -45,41 +44,46 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+From: Hannes Reinecke <hare@suse.de>
 
-[ Upstream commit ce535a2efb48d8d4c4e4b97e2764d7cee73d9b55 ]
+[ Upstream commit 0e2209629fec427ba75a6351486153a9feddd36b ]
 
-We need the of_match table if we want to use the compatible string in
-the pmic's child node and get the onkey driver loaded automatically.
+When a link is going down the driver will be calling fnic_cleanup_io(),
+which will traverse all commands and calling 'done' for each found command.
+While the traversal is handled under the host_lock, calling 'done' happens
+after the host_lock is being dropped.
 
-Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+As fnic_queuecommand_lck() is being called with the host_lock held, it
+might well be that it will pick the command being selected for abortion
+from the above routine and enqueue it for sending, but then 'done' is being
+called on that very command from the above routine.
+
+Which of course confuses the hell out of the scsi midlayer.
+
+So fix this by not queueing commands when fnic_cleanup_io is active.
+
+Link: https://lore.kernel.org/r/20200116102053.62755-1-hare@suse.de
+Signed-off-by: Hannes Reinecke <hare@suse.de>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/input/misc/max77650-onkey.c | 7 +++++++
- 1 file changed, 7 insertions(+)
+ drivers/scsi/fnic/fnic_scsi.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/drivers/input/misc/max77650-onkey.c b/drivers/input/misc/max77650-onkey.c
-index 4d875f2ac13d6..ee55f22dbca54 100644
---- a/drivers/input/misc/max77650-onkey.c
-+++ b/drivers/input/misc/max77650-onkey.c
-@@ -108,9 +108,16 @@ static int max77650_onkey_probe(struct platform_device *pdev)
- 	return input_register_device(onkey->input);
- }
+diff --git a/drivers/scsi/fnic/fnic_scsi.c b/drivers/scsi/fnic/fnic_scsi.c
+index 80608b53897bb..e3f5c91d5e4fe 100644
+--- a/drivers/scsi/fnic/fnic_scsi.c
++++ b/drivers/scsi/fnic/fnic_scsi.c
+@@ -439,6 +439,9 @@ static int fnic_queuecommand_lck(struct scsi_cmnd *sc, void (*done)(struct scsi_
+ 	if (unlikely(fnic_chk_state_flags_locked(fnic, FNIC_FLAGS_IO_BLOCKED)))
+ 		return SCSI_MLQUEUE_HOST_BUSY;
  
-+static const struct of_device_id max77650_onkey_of_match[] = {
-+	{ .compatible = "maxim,max77650-onkey" },
-+	{ }
-+};
-+MODULE_DEVICE_TABLE(of, max77650_onkey_of_match);
++	if (unlikely(fnic_chk_state_flags_locked(fnic, FNIC_FLAGS_FWRESET)))
++		return SCSI_MLQUEUE_HOST_BUSY;
 +
- static struct platform_driver max77650_onkey_driver = {
- 	.driver = {
- 		.name = "max77650-onkey",
-+		.of_match_table = max77650_onkey_of_match,
- 	},
- 	.probe = max77650_onkey_probe,
- };
+ 	rport = starget_to_rport(scsi_target(sc->device));
+ 	if (!rport) {
+ 		FNIC_SCSI_DBG(KERN_DEBUG, fnic->lport->host,
 -- 
 2.20.1
 
