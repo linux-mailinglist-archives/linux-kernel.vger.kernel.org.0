@@ -2,139 +2,135 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DB7DB150763
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Feb 2020 14:37:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 33282150789
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Feb 2020 14:40:16 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727851AbgBCNg7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 3 Feb 2020 08:36:59 -0500
-Received: from UPDC19PA20.eemsg.mail.mil ([214.24.27.195]:37499 "EHLO
-        UPDC19PA20.eemsg.mail.mil" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726561AbgBCNg7 (ORCPT
+        id S1727630AbgBCNkP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 3 Feb 2020 08:40:15 -0500
+Received: from mail-lf1-f67.google.com ([209.85.167.67]:33340 "EHLO
+        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727198AbgBCNkO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Feb 2020 08:36:59 -0500
-X-EEMSG-check-017: 53427087|UPDC19PA20_ESA_OUT02.csd.disa.mil
-X-IronPort-AV: E=Sophos;i="5.70,398,1574121600"; 
-   d="scan'208";a="53427087"
-Received: from emsm-gh1-uea10.ncsc.mil ([214.29.60.2])
-  by UPDC19PA20.eemsg.mail.mil with ESMTP/TLS/DHE-RSA-AES256-SHA256; 03 Feb 2020 13:36:54 +0000
+        Mon, 3 Feb 2020 08:40:14 -0500
+Received: by mail-lf1-f67.google.com with SMTP id n25so9769356lfl.0
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Feb 2020 05:40:13 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=tycho.nsa.gov; i=@tycho.nsa.gov; q=dns/txt;
-  s=tycho.nsa.gov; t=1580737014; x=1612273014;
-  h=subject:to:cc:references:from:message-id:date:
-   mime-version:in-reply-to:content-transfer-encoding;
-  bh=s1FnkH28N4Zw2fh21mMjid1efUXDCGNMHVTkhXhiKpA=;
-  b=BnwVzxhKjl5adUlOj1m3zYtv/ch3mSvLL5lFj5zRRGL0dMxXqA09IjqS
-   /Iv9aDbt3fhDtiLdOiLO7wUeJswetpXHnM1K2dBjBRubOpXZN1tVAZQbc
-   Fn8BG5829fXDqGyDiRoD37vMx7TQ+Z9gCr5G+k1a1r2vKAxG4/laWYr2K
-   uBY3i8LyjGElg2Hi8i72D26Liq3kTinbt1I426CJIAhy7quZ2zXf5B0jz
-   9HCXK5aqx4kDWJppVMhSOAHfwXlUkeBwTp3iTPYIIInnk9QbBrqHrLccP
-   A6W6pn6eVQRitbNm36MVoi4AVz8pgkSBkeSC7rdE8IjI/z6TE9aVZpcuU
-   g==;
-X-IronPort-AV: E=Sophos;i="5.70,398,1574121600"; 
-   d="scan'208";a="32602059"
-IronPort-PHdr: =?us-ascii?q?9a23=3AFBmaOBMTEVw9jItEgjEl6mtUPXoX/o7sNwtQ0K?=
- =?us-ascii?q?IMzox0K/j+osbcNUDSrc9gkEXOFd2Cra4d16yK7Ou9ASRAuc/H7ClZNsQUFl?=
- =?us-ascii?q?cssoY/p0QYGsmLCEn2frbBThcRO4B8bmJj5GyxKkNPGczzNBX4q3y26iMOSF?=
- =?us-ascii?q?2kbVImbuv6FZTPgMupyuu854PcYxlShDq6fLh+MAi6oR/eu8ULjoZuMKk8xx?=
- =?us-ascii?q?nGrnZIZ+hd2GdkKU6Okxrm6cq84ZBu/z5Mt/498sJLTLn3cbk/QbFEFjotLn?=
- =?us-ascii?q?o75NfstRnNTAuP4mUTX2ALmRdWAAbL8Q/3UI7pviT1quRy1i+aPdbrTb8vQj?=
- =?us-ascii?q?St871rSB7zhygZMTMy7XzahdZxjKJfpxKhugB/zovJa4ybKPZyYqXQds4BSG?=
- =?us-ascii?q?FfQsheSTBOAoKkb4sOEeUBO/pYr5LgrFcKtBeyGBWgCP/qxjJOiHD2x6k62P?=
- =?us-ascii?q?k/Hw/A0gIrAtYCvG3aodjxMasfV/2+wqvVwjXZd/5YxCnz6IbIfB4ir/+DU7?=
- =?us-ascii?q?1/fsjNxkcgDA7FkledpJb5Mz+J2OkAsW6W5PdgW+K1jG4nrhl8rCWzxsgyko?=
- =?us-ascii?q?nJhpwaylbZ/itkxYY6P9m4SEplbt+kDZBdsDqaOJZtQs45X2FpuDo1yr0BuZ?=
- =?us-ascii?q?KheigK044oywTQa/yAbYiF+xTuX/uSLzdgnH9pZb2yihmo/UWg1+HwTNe43V?=
- =?us-ascii?q?lUoiZfj9XBsG0G2QbJ5cidUPR9+1+s2TOI1w/O9O5JOVs0la/HK545xb4wi4?=
- =?us-ascii?q?YTvVzDHiDonEX2i7ebdlk+9eiy6uTnf67mqoWdN49yhAH+Nb8uldKjDugiLg?=
- =?us-ascii?q?gPX3SU+eS71LH5+032XK5KgeEsnqncsZDaIdwXpq+/AwBLzoYu8wuzAjip3d?=
- =?us-ascii?q?gCnXQLMUhJdAyIgoT3IV3CPej0DfKljFStlDdryerGPrrkApjVNXjMjazhcK?=
- =?us-ascii?q?1h609c1AUzzddf64hSCrEaOv3/QEDxtNvGDhMhKQy73/7nCMlh1oMZQW+PAr?=
- =?us-ascii?q?WZMKLPvl6I/O0iOOaMZIgSuDbyL/gq+eTigmM+mV8YZaOpx4cYaGikHvR6JE?=
- =?us-ascii?q?WUeWLsjc0cEWcOpQc+VPbliECGUTJKYnayWKU85islB468EYjDQYWtiqSb3C?=
- =?us-ascii?q?inBp1WenxGCleUHHj2b4WLQe0MaCOJIsJ6ijwLT6KhS4461RG2sA/10aZoIf?=
- =?us-ascii?q?TO9i0fr5Lj28B/5/fPmhEq6Tx0E8Od3nmPT25qkGMISSE20btwoUx6zVeD3q?=
- =?us-ascii?q?x4jOJCGdNP4PNJVx8wNYTAwOxiF9DyRgXBc8+SSFm8RtWnATAwT9I3w9IVeU?=
- =?us-ascii?q?l9HcitjgrE3yqrHrAZjaCEBJsx8qjExXj+O959y2ra1Kkml1QmWdVANWmnhq?=
- =?us-ascii?q?556gjSCJXEk1uWl6m0b6QQxi3N+3mZzWqIok5YVBR8UaLfXXAQfkHWt8j25l?=
- =?us-ascii?q?veT7+yDrQqKg9Byc+EKqtXZdzllFZGS+n5ONTYfW2xn3y9BQiHxrySdormYW?=
- =?us-ascii?q?Yd0zvHCEgCjQ8T+WyKNQ8kBieuu2jeFiBhFUrzY0Pw9ulzsHC7QVEuzwGMcU?=
- =?us-ascii?q?Jh06O5+gILivOGTvMexagLuCE8pDVuG1a93s/ZB8CcqApmeaUPKe86tXdd1G?=
- =?us-ascii?q?7IvkRDN5i7JrprhENWJwRtvk//3j14DYJPlcVsp3Qvmk46EauF1BtkcDSC0N?=
- =?us-ascii?q?ikIrTKLkHq9Q2rLqvR3UvTlt2R//FLoNkiql6rhAizF1Fqp3h/2sNUyFOE74?=
- =?us-ascii?q?/LFxIWWJn8FEEt+E4+75PXbCd12YrS2XB2eZKotTLak4YrCeUr1D6veNBQNK?=
- =?us-ascii?q?7CHwj3RYlSIsG0K6QRkly4fAMCdLRJ/aolLdKgX/KA1LSsPeomlzWj2yAP+4?=
- =?us-ascii?q?1500SR5wJiRePSmZUI2feV2k2ATTi4xFOgtN3n3INJfzcfGkKhxiX+Qo1cfK?=
- =?us-ascii?q?t/ecAME2j9Ddeww4BFm5P1W3NevGWmDlcC1d7hLQGedHThzAZQ0gIRunXhli?=
- =?us-ascii?q?ymmW8n2wo1p7aSiXSdi9/pcwAKbysSHzhv?=
-X-IPAS-Result: =?us-ascii?q?A2AVAAA6IThe/wHyM5BlGgEBAQEBAQEBAQMBAQEBEQEBA?=
- =?us-ascii?q?QICAQEBAYFqAgEBAQELAYF8gW0gEiqEFIkDhlwBAQaBN4lvkHIDVAkBAQEBA?=
- =?us-ascii?q?QEBAQE3AQGEQAKCWDcGDgIQAQEBBAEBAQEBBQMBAWyFQ4I7KQGDAgEFIwQRQ?=
- =?us-ascii?q?RALGAICJgICVwYBDAYCAQGCYz+CVyWrYH8zhUqDQYE+gQ4qAYUdDIcQeYEHg?=
- =?us-ascii?q?TgPgl0+hBKDSYI8IgSWV2FGl2SCRYJOk2wGG5sIjmGdKiM3gSErCAIYCCEPg?=
- =?us-ascii?q?ydQGA2cLAFUIwMwjEaCQwEB?=
-Received: from tarius.tycho.ncsc.mil (HELO tarius.infosec.tycho.ncsc.mil) ([144.51.242.1])
-  by EMSM-GH1-UEA10.NCSC.MIL with ESMTP; 03 Feb 2020 13:36:53 +0000
-Received: from moss-pluto.infosec.tycho.ncsc.mil (moss-pluto [192.168.25.131])
-        by tarius.infosec.tycho.ncsc.mil (8.14.7/8.14.4) with ESMTP id 013Da30M154637;
-        Mon, 3 Feb 2020 08:36:03 -0500
-Subject: Re: [PATCH] selinux: Fix typo in filesystem name
-To:     Hridya Valsaraju <hridya@google.com>,
-        Paul Moore <paul@paul-moore.com>,
-        Eric Paris <eparis@parisplace.org>,
-        Jeff Vander Stoep <jeffv@google.com>,
-        Mark Salyzyn <salyzyn@android.com>, selinux@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc:     kernel-team@android.com
-References: <20200202014624.75356-1-hridya@google.com>
-From:   Stephen Smalley <sds@tycho.nsa.gov>
-Message-ID: <63958eb9-0b65-00f2-76fa-799c3a933f7b@tycho.nsa.gov>
-Date:   Mon, 3 Feb 2020 08:38:05 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.1
+        d=shutemov-name.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=IepX5s8KFLsk6M2RacMY6MKMLoWf8Qm8TUZ7wknCHKI=;
+        b=V+4u5+sRDRa4EXjyU6EXahB5/qcJ4orECk73ouG9low9d6PwUnRJjR9NJhHEjTQYSc
+         Kui3JUb7FZskaS0to2XNB5M99d9ceo1Gi5bFsK18GYn0BH9bFlJUjtvPnfiIKpv3JjPG
+         GN2O+dt4wtxSRQgVtfXBVB8anFatg0XNmKR3XbgBZDKcI4KWyRsggZdCxKAEP7fLCJnJ
+         w+lL+mLBi8v46+BSbg8YNQm0rtBn8AvvKMx26WBH8gGzdgfGQpnmd9SEeyJL4Y7qD2NP
+         UHIX453KVTaaxcLGS1d/BQFylt143bcU6bmZEiglXvs0oQ2BwBpYMi+F3sDDFSv4qlp9
+         ++ow==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=IepX5s8KFLsk6M2RacMY6MKMLoWf8Qm8TUZ7wknCHKI=;
+        b=EX6txaq6WweYWkMr5ODTlspa/ySJAWOL/94d31mo1MIzeD1zHnl2F70zcl04Z3Ul+1
+         hQ9iG8JUZmq3kIeLb2SEqlLmnuCLSDC21+i/Pt5Wv7+ydkB2/9/R8uewSuzsTqvYWnj1
+         3qeizxqHxJarn5+dG5WX4fb+bfJ67Lq5Q896+vvmgw8XeU+qDsxbDBE6Bu/SxOcVqmr0
+         Odi05pA/7pgbPrtRnufam1r2s1tL26bHaMwdsZgDQZZtpqlX+iC1v+EtEffGNn3vrV4O
+         3VAvILThHeeskfYs4kZ9pQC54X+s/d2giajVdKATI1dJ9GhGmTbVp6uM7tLlFycMO+6p
+         hrEg==
+X-Gm-Message-State: APjAAAX8jXT33FsDKDu6EQ2YTNtE/7LMVZuH4q8hc19/f+9GQK3lqU65
+        HQiP6j+Pt+o4YgvmTy4f7zbivg==
+X-Google-Smtp-Source: APXvYqy1bsDNFhPqOt4MsuS/yl5Hsf7q101c7952EIchzIfLZ702j/lDwPX7Jz7ekEA66zEPoq/Ulg==
+X-Received: by 2002:ac2:58cf:: with SMTP id u15mr12097728lfo.62.1580737212908;
+        Mon, 03 Feb 2020 05:40:12 -0800 (PST)
+Received: from box.localdomain ([86.57.175.117])
+        by smtp.gmail.com with ESMTPSA id m13sm9054940lfo.40.2020.02.03.05.40.11
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 03 Feb 2020 05:40:11 -0800 (PST)
+Received: by box.localdomain (Postfix, from userid 1000)
+        id A03D9100DC8; Mon,  3 Feb 2020 16:40:24 +0300 (+03)
+Date:   Mon, 3 Feb 2020 16:40:24 +0300
+From:   "Kirill A. Shutemov" <kirill@shutemov.name>
+To:     John Hubbard <jhubbard@nvidia.com>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Christoph Hellwig <hch@infradead.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Dave Chinner <david@fromorbit.com>,
+        Ira Weiny <ira.weiny@intel.com>, Jan Kara <jack@suse.cz>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Jonathan Corbet <corbet@lwn.net>,
+        =?utf-8?B?SsOpcsO0bWU=?= Glisse <jglisse@redhat.com>,
+        Michal Hocko <mhocko@suse.com>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Shuah Khan <shuah@kernel.org>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Matthew Wilcox <willy@infradead.org>,
+        linux-doc@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kselftest@vger.kernel.org, linux-rdma@vger.kernel.org,
+        linux-mm@kvack.org, LKML <linux-kernel@vger.kernel.org>,
+        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>
+Subject: Re: [PATCH v3 07/12] mm/gup: track FOLL_PIN pages
+Message-ID: <20200203134024.htczuqghduajb3yx@box>
+References: <20200201034029.4063170-1-jhubbard@nvidia.com>
+ <20200201034029.4063170-8-jhubbard@nvidia.com>
 MIME-Version: 1.0
-In-Reply-To: <20200202014624.75356-1-hridya@google.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200201034029.4063170-8-jhubbard@nvidia.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2/1/20 8:46 PM, Hridya Valsaraju wrote:
-> Correct the filesystem name to "binder" to enable
-> genfscon per-file labelling for binderfs.
-> 
-> Fixes: 7a4b5194747 ("selinux: allow per-file labelling for binderfs")
-> Signed-off-by: Hridya Valsaraju <hridya@google.com>
+On Fri, Jan 31, 2020 at 07:40:24PM -0800, John Hubbard wrote:
+> @@ -4405,7 +4392,13 @@ long follow_hugetlb_page(struct mm_struct *mm, struct vm_area_struct *vma,
+>  same_page:
+>  		if (pages) {
+>  			pages[i] = mem_map_offset(page, pfn_offset);
+> -			get_page(pages[i]);
+> +			if (!try_grab_page(pages[i], flags)) {
+> +				spin_unlock(ptl);
+> +				remainder = 0;
+> +				err = -ENOMEM;
+> +				WARN_ON_ONCE(1);
 
-Acked-by: Stephen Smalley <sds@tycho.nsa.gov>
+The WARN_ON_ONCE deserve a comment. And I guess you can put it into 'if'
+condition.
 
-> ---
-> 
-> Hello,
-> 
-> I seem to have made the typo/mistake during a rebase. Sorry about that
-> :(
-> 
-> Thanks,
-> Hridya
-> 
->   security/selinux/hooks.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
-> index 89fe3a805129..d67a80b0d8a8 100644
-> --- a/security/selinux/hooks.c
-> +++ b/security/selinux/hooks.c
-> @@ -699,7 +699,7 @@ static int selinux_set_mnt_opts(struct super_block *sb,
->   
->   	if (!strcmp(sb->s_type->name, "debugfs") ||
->   	    !strcmp(sb->s_type->name, "tracefs") ||
-> -	    !strcmp(sb->s_type->name, "binderfs") ||
-> +	    !strcmp(sb->s_type->name, "binder") ||
->   	    !strcmp(sb->s_type->name, "pstore"))
->   		sbsec->flags |= SE_SBGENFS;
->   
-> 
+> +				break;
+> +			}
+>  		}
+>  
+>  		if (vmas)
+> @@ -4965,6 +4958,12 @@ follow_huge_pmd(struct mm_struct *mm, unsigned long address,
+>  	struct page *page = NULL;
+>  	spinlock_t *ptl;
+>  	pte_t pte;
+> +
+> +	/* FOLL_GET and FOLL_PIN are mutually exclusive. */
+> +	if (WARN_ON_ONCE((flags & (FOLL_PIN | FOLL_GET)) ==
+> +			 (FOLL_PIN | FOLL_GET)))
+> +		return NULL;
+> +
+>  retry:
+>  	ptl = pmd_lockptr(mm, pmd);
+>  	spin_lock(ptl);
+> @@ -4977,8 +4976,11 @@ follow_huge_pmd(struct mm_struct *mm, unsigned long address,
+>  	pte = huge_ptep_get((pte_t *)pmd);
+>  	if (pte_present(pte)) {
+>  		page = pmd_page(*pmd) + ((address & ~PMD_MASK) >> PAGE_SHIFT);
+> -		if (flags & FOLL_GET)
+> -			get_page(page);
+> +		if (unlikely(!try_grab_page(page, flags))) {
+> +			WARN_ON_ONCE(1);
 
+Ditto.
+
+> +			page = NULL;
+> +			goto out;
+> +		}
+>  	} else {
+>  		if (is_hugetlb_entry_migration(pte)) {
+>  			spin_unlock(ptl);
+
+-- 
+ Kirill A. Shutemov
