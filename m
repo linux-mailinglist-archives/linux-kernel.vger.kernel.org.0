@@ -2,124 +2,139 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BE6FD150770
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Feb 2020 14:37:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DB7DB150763
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Feb 2020 14:37:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728078AbgBCNh2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 3 Feb 2020 08:37:28 -0500
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:51436 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728019AbgBCNhZ (ORCPT
+        id S1727851AbgBCNg7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 3 Feb 2020 08:36:59 -0500
+Received: from UPDC19PA20.eemsg.mail.mil ([214.24.27.195]:37499 "EHLO
+        UPDC19PA20.eemsg.mail.mil" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726561AbgBCNg7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Feb 2020 08:37:25 -0500
-Received: by mail-wm1-f67.google.com with SMTP id t23so15946367wmi.1
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Feb 2020 05:37:23 -0800 (PST)
+        Mon, 3 Feb 2020 08:36:59 -0500
+X-EEMSG-check-017: 53427087|UPDC19PA20_ESA_OUT02.csd.disa.mil
+X-IronPort-AV: E=Sophos;i="5.70,398,1574121600"; 
+   d="scan'208";a="53427087"
+Received: from emsm-gh1-uea10.ncsc.mil ([214.29.60.2])
+  by UPDC19PA20.eemsg.mail.mil with ESMTP/TLS/DHE-RSA-AES256-SHA256; 03 Feb 2020 13:36:54 +0000
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=O/2GSwnkg77BNm4nP5NyAu/SMCbCUCxlKEX7RXd5hGo=;
-        b=QyqkCHaqANazKMga60HtjP7wB2dSFkmIppV/fL+3uluO6cMtGcuV1ZMB0HLtni0ufU
-         NqMd+7iz+MQ2Xkn/nt6/x/3HL3ltE8PYfr1d9xoPjCNNcybC0Z17TX4G8fXfdg+6OsWy
-         mmvaigLl5jz/yms5rEZEH5sY90O0ksKi1YnjEaJmzYfJdyzsRfXummetiPM41WEtjxSj
-         0kLQ2w9BylCEXs6kkewgHQXiSTfiwjqKe3Ir6b/B5ZqLGJysVWzOl6b7Q8UBdkLhnIb0
-         RmA6dpkRH8ULSn8vtmtCDiS7WkgPexSWNck1irp+0QDBHiK398L0VrhVjnri7tgDKbJT
-         U4pQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=O/2GSwnkg77BNm4nP5NyAu/SMCbCUCxlKEX7RXd5hGo=;
-        b=sAs6tNRlEwwhjOTFlB4d1Uq2p/nDVTUZN4ZvvNCUHK82BHw1jQKXoJgc/y97RZQPyf
-         bvDvVptbkXlR58ggkouPtls2PNz9wMsXJ1v1VCBZKubCzv/x1GALOAEa0lrE61s1ohnw
-         5CsK5YZJG8OFNim2qzVreR18EEa4sAwq3jjINGNiyzQO4P1kvJSyvU8y1B9rghLrQPij
-         L4zPbki60xXr9tRN8fCBOTLM1VtdkaWeriEVl71fiDr+4Dc6PA+ApViz7I1cI1RZxq53
-         IQS062/lFmr/jLMn5lMTP5tnBse1K3R2A/ac+esI54xzK1z96u4KG7t6WNu7xbX0r/Vj
-         GRiA==
-X-Gm-Message-State: APjAAAXJXww3vAYEYVL7gYIzhF5Bq7x8MSPUXAjTQ8bSiSdteF/8tWck
-        ZSIm3udoFBnSBq5E1rQcBEjz/8JqpIekfFC82Zk=
-X-Google-Smtp-Source: APXvYqyCHeEo+TF2vW137Ow69GfaGeid3s96v7had5ahLw8/ZMjxPFmMIZZzfzrfvrZ6vMtnWx4v3dJeeuqW7X3og3Y=
-X-Received: by 2002:a7b:ce10:: with SMTP id m16mr28136509wmc.115.1580737043064;
- Mon, 03 Feb 2020 05:37:23 -0800 (PST)
+  d=tycho.nsa.gov; i=@tycho.nsa.gov; q=dns/txt;
+  s=tycho.nsa.gov; t=1580737014; x=1612273014;
+  h=subject:to:cc:references:from:message-id:date:
+   mime-version:in-reply-to:content-transfer-encoding;
+  bh=s1FnkH28N4Zw2fh21mMjid1efUXDCGNMHVTkhXhiKpA=;
+  b=BnwVzxhKjl5adUlOj1m3zYtv/ch3mSvLL5lFj5zRRGL0dMxXqA09IjqS
+   /Iv9aDbt3fhDtiLdOiLO7wUeJswetpXHnM1K2dBjBRubOpXZN1tVAZQbc
+   Fn8BG5829fXDqGyDiRoD37vMx7TQ+Z9gCr5G+k1a1r2vKAxG4/laWYr2K
+   uBY3i8LyjGElg2Hi8i72D26Liq3kTinbt1I426CJIAhy7quZ2zXf5B0jz
+   9HCXK5aqx4kDWJppVMhSOAHfwXlUkeBwTp3iTPYIIInnk9QbBrqHrLccP
+   A6W6pn6eVQRitbNm36MVoi4AVz8pgkSBkeSC7rdE8IjI/z6TE9aVZpcuU
+   g==;
+X-IronPort-AV: E=Sophos;i="5.70,398,1574121600"; 
+   d="scan'208";a="32602059"
+IronPort-PHdr: =?us-ascii?q?9a23=3AFBmaOBMTEVw9jItEgjEl6mtUPXoX/o7sNwtQ0K?=
+ =?us-ascii?q?IMzox0K/j+osbcNUDSrc9gkEXOFd2Cra4d16yK7Ou9ASRAuc/H7ClZNsQUFl?=
+ =?us-ascii?q?cssoY/p0QYGsmLCEn2frbBThcRO4B8bmJj5GyxKkNPGczzNBX4q3y26iMOSF?=
+ =?us-ascii?q?2kbVImbuv6FZTPgMupyuu854PcYxlShDq6fLh+MAi6oR/eu8ULjoZuMKk8xx?=
+ =?us-ascii?q?nGrnZIZ+hd2GdkKU6Okxrm6cq84ZBu/z5Mt/498sJLTLn3cbk/QbFEFjotLn?=
+ =?us-ascii?q?o75NfstRnNTAuP4mUTX2ALmRdWAAbL8Q/3UI7pviT1quRy1i+aPdbrTb8vQj?=
+ =?us-ascii?q?St871rSB7zhygZMTMy7XzahdZxjKJfpxKhugB/zovJa4ybKPZyYqXQds4BSG?=
+ =?us-ascii?q?FfQsheSTBOAoKkb4sOEeUBO/pYr5LgrFcKtBeyGBWgCP/qxjJOiHD2x6k62P?=
+ =?us-ascii?q?k/Hw/A0gIrAtYCvG3aodjxMasfV/2+wqvVwjXZd/5YxCnz6IbIfB4ir/+DU7?=
+ =?us-ascii?q?1/fsjNxkcgDA7FkledpJb5Mz+J2OkAsW6W5PdgW+K1jG4nrhl8rCWzxsgyko?=
+ =?us-ascii?q?nJhpwaylbZ/itkxYY6P9m4SEplbt+kDZBdsDqaOJZtQs45X2FpuDo1yr0BuZ?=
+ =?us-ascii?q?KheigK044oywTQa/yAbYiF+xTuX/uSLzdgnH9pZb2yihmo/UWg1+HwTNe43V?=
+ =?us-ascii?q?lUoiZfj9XBsG0G2QbJ5cidUPR9+1+s2TOI1w/O9O5JOVs0la/HK545xb4wi4?=
+ =?us-ascii?q?YTvVzDHiDonEX2i7ebdlk+9eiy6uTnf67mqoWdN49yhAH+Nb8uldKjDugiLg?=
+ =?us-ascii?q?gPX3SU+eS71LH5+032XK5KgeEsnqncsZDaIdwXpq+/AwBLzoYu8wuzAjip3d?=
+ =?us-ascii?q?gCnXQLMUhJdAyIgoT3IV3CPej0DfKljFStlDdryerGPrrkApjVNXjMjazhcK?=
+ =?us-ascii?q?1h609c1AUzzddf64hSCrEaOv3/QEDxtNvGDhMhKQy73/7nCMlh1oMZQW+PAr?=
+ =?us-ascii?q?WZMKLPvl6I/O0iOOaMZIgSuDbyL/gq+eTigmM+mV8YZaOpx4cYaGikHvR6JE?=
+ =?us-ascii?q?WUeWLsjc0cEWcOpQc+VPbliECGUTJKYnayWKU85islB468EYjDQYWtiqSb3C?=
+ =?us-ascii?q?inBp1WenxGCleUHHj2b4WLQe0MaCOJIsJ6ijwLT6KhS4461RG2sA/10aZoIf?=
+ =?us-ascii?q?TO9i0fr5Lj28B/5/fPmhEq6Tx0E8Od3nmPT25qkGMISSE20btwoUx6zVeD3q?=
+ =?us-ascii?q?x4jOJCGdNP4PNJVx8wNYTAwOxiF9DyRgXBc8+SSFm8RtWnATAwT9I3w9IVeU?=
+ =?us-ascii?q?l9HcitjgrE3yqrHrAZjaCEBJsx8qjExXj+O959y2ra1Kkml1QmWdVANWmnhq?=
+ =?us-ascii?q?556gjSCJXEk1uWl6m0b6QQxi3N+3mZzWqIok5YVBR8UaLfXXAQfkHWt8j25l?=
+ =?us-ascii?q?veT7+yDrQqKg9Byc+EKqtXZdzllFZGS+n5ONTYfW2xn3y9BQiHxrySdormYW?=
+ =?us-ascii?q?Yd0zvHCEgCjQ8T+WyKNQ8kBieuu2jeFiBhFUrzY0Pw9ulzsHC7QVEuzwGMcU?=
+ =?us-ascii?q?Jh06O5+gILivOGTvMexagLuCE8pDVuG1a93s/ZB8CcqApmeaUPKe86tXdd1G?=
+ =?us-ascii?q?7IvkRDN5i7JrprhENWJwRtvk//3j14DYJPlcVsp3Qvmk46EauF1BtkcDSC0N?=
+ =?us-ascii?q?ikIrTKLkHq9Q2rLqvR3UvTlt2R//FLoNkiql6rhAizF1Fqp3h/2sNUyFOE74?=
+ =?us-ascii?q?/LFxIWWJn8FEEt+E4+75PXbCd12YrS2XB2eZKotTLak4YrCeUr1D6veNBQNK?=
+ =?us-ascii?q?7CHwj3RYlSIsG0K6QRkly4fAMCdLRJ/aolLdKgX/KA1LSsPeomlzWj2yAP+4?=
+ =?us-ascii?q?1500SR5wJiRePSmZUI2feV2k2ATTi4xFOgtN3n3INJfzcfGkKhxiX+Qo1cfK?=
+ =?us-ascii?q?t/ecAME2j9Ddeww4BFm5P1W3NevGWmDlcC1d7hLQGedHThzAZQ0gIRunXhli?=
+ =?us-ascii?q?ymmW8n2wo1p7aSiXSdi9/pcwAKbysSHzhv?=
+X-IPAS-Result: =?us-ascii?q?A2AVAAA6IThe/wHyM5BlGgEBAQEBAQEBAQMBAQEBEQEBA?=
+ =?us-ascii?q?QICAQEBAYFqAgEBAQELAYF8gW0gEiqEFIkDhlwBAQaBN4lvkHIDVAkBAQEBA?=
+ =?us-ascii?q?QEBAQE3AQGEQAKCWDcGDgIQAQEBBAEBAQEBBQMBAWyFQ4I7KQGDAgEFIwQRQ?=
+ =?us-ascii?q?RALGAICJgICVwYBDAYCAQGCYz+CVyWrYH8zhUqDQYE+gQ4qAYUdDIcQeYEHg?=
+ =?us-ascii?q?TgPgl0+hBKDSYI8IgSWV2FGl2SCRYJOk2wGG5sIjmGdKiM3gSErCAIYCCEPg?=
+ =?us-ascii?q?ydQGA2cLAFUIwMwjEaCQwEB?=
+Received: from tarius.tycho.ncsc.mil (HELO tarius.infosec.tycho.ncsc.mil) ([144.51.242.1])
+  by EMSM-GH1-UEA10.NCSC.MIL with ESMTP; 03 Feb 2020 13:36:53 +0000
+Received: from moss-pluto.infosec.tycho.ncsc.mil (moss-pluto [192.168.25.131])
+        by tarius.infosec.tycho.ncsc.mil (8.14.7/8.14.4) with ESMTP id 013Da30M154637;
+        Mon, 3 Feb 2020 08:36:03 -0500
+Subject: Re: [PATCH] selinux: Fix typo in filesystem name
+To:     Hridya Valsaraju <hridya@google.com>,
+        Paul Moore <paul@paul-moore.com>,
+        Eric Paris <eparis@parisplace.org>,
+        Jeff Vander Stoep <jeffv@google.com>,
+        Mark Salyzyn <salyzyn@android.com>, selinux@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc:     kernel-team@android.com
+References: <20200202014624.75356-1-hridya@google.com>
+From:   Stephen Smalley <sds@tycho.nsa.gov>
+Message-ID: <63958eb9-0b65-00f2-76fa-799c3a933f7b@tycho.nsa.gov>
+Date:   Mon, 3 Feb 2020 08:38:05 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.1
 MIME-Version: 1.0
-References: <20200203012702.GA8731@bombadil.infradead.org> <CACVXFVPyW9+oSPAv7-+=hExzktLkmPG=gYUY5acR5UGeJzTh0Q@mail.gmail.com>
- <20200203132334.GH8731@bombadil.infradead.org>
-In-Reply-To: <20200203132334.GH8731@bombadil.infradead.org>
-From:   Ming Lei <tom.leiming@gmail.com>
-Date:   Mon, 3 Feb 2020 21:37:11 +0800
-Message-ID: <CACVXFVNqP=oEZNiu=nebJ5EKKXfMfq7e=M1Ko1_TVw-FJTUpZw@mail.gmail.com>
-Subject: Re: Current Linus tree protection fault in __kmalloc
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        gustavo@embeddedor.com, Clemens Ladisch <clemens@ladisch.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Arnd Bergmann <arnd@arndb.de>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20200202014624.75356-1-hridya@google.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 3, 2020 at 9:23 PM Matthew Wilcox <willy@infradead.org> wrote:
->
-> On Mon, Feb 03, 2020 at 06:47:03PM +0800, Ming Lei wrote:
-> > On Mon, Feb 3, 2020 at 9:29 AM Matthew Wilcox <willy@infradead.org> wrote:
-> > >
-> > > Anyone else seeing this?  My poor laptop has little compile grunt.
-> >
-> > It can be triggered in my VM every time, and has started git-bisect already.
->
-> Glad to know it's not just me.  I finished a git bisect, but it
-> pointed to a nonsense commit:
->
-> git bisect start
-> # bad: [a8ad62c76e8d082aa5fc3f2bd9f65d13ff2d5e8a] iomap: Convert from readpages to readahead
-> git bisect bad a8ad62c76e8d082aa5fc3f2bd9f65d13ff2d5e8a
-> # good: [d5226fa6dbae0569ee43ecfc08bdcd6770fc4755] Linux 5.5
-> git bisect good d5226fa6dbae0569ee43ecfc08bdcd6770fc4755
-> # good: [aac96626713fe167c672f9a008be0f514aa3e237] Merge tag 'usb-5.6-rc1' of git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/usb
-> git bisect good aac96626713fe167c672f9a008be0f514aa3e237
-> # good: [d47c7f06268082bc0082a15297a07c0da59b0fc4] Merge branch 'linux-5.6' of git://github.com/skeggsb/linux into drm-next
-> git bisect good d47c7f06268082bc0082a15297a07c0da59b0fc4
-> # bad: [4cadc60d6bcfee9c626d4b55e9dc1475d21ad3bb] Merge tag 'for-v5.6' of git://git.kernel.org/pub/scm/linux/kernel/git/sre/linux-power-supply
-> git bisect bad 4cadc60d6bcfee9c626d4b55e9dc1475d21ad3bb
-> # bad: [701a9c8092ddf299d7f90ab2d66b19b4526d1186] Merge tag 'char-misc-5.6-rc1' of git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/char-misc
-> git bisect bad 701a9c8092ddf299d7f90ab2d66b19b4526d1186
-> # good: [270f104ba26f0498aff85e5b002e2f4c2249c04b] staging: wfx: update TODO
-> git bisect good 270f104ba26f0498aff85e5b002e2f4c2249c04b
-> # good: [ca9b5b6283984f67434cee810f3b08e19630226d] Merge tag 'tty-5.6-rc1' of git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/tty
-> git bisect good ca9b5b6283984f67434cee810f3b08e19630226d
-> # good: [10d3e38c7923853967cea97513213bba923dde64] Merge tag 'icc-5.6-rc1' of https://git.linaro.org/people/georgi.djakov/linux into char-misc-next
-> git bisect good 10d3e38c7923853967cea97513213bba923dde64
-> # good: [b5909c6d16fd4e3972b0cd48dedde08d55575342] staging: kpc2000: rename variables with kpc namespace
-> git bisect good b5909c6d16fd4e3972b0cd48dedde08d55575342
-> # good: [72a9cc952f123948ca1d1011a12e5e1312140b68] devtmpfs: factor out common tail of devtmpfs_{create,delete}_node
-> git bisect good 72a9cc952f123948ca1d1011a12e5e1312140b68
-> # good: [2485055394be272d098ca7dd63193d5041fb8140] staging: most: core: drop device reference
-> git bisect good 2485055394be272d098ca7dd63193d5041fb8140
-> # good: [7ba31c3f2f1ee095d8126f4d3757fc3b2bc3c838] Merge tag 'staging-5.6-rc1' of git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/staging
-> git bisect good 7ba31c3f2f1ee095d8126f4d3757fc3b2bc3c838
-> # bad: [0db4a15d4c2787b1112001790d4f95bd2c5fed6f] mei: me: add jasper point DID
-> git bisect bad 0db4a15d4c2787b1112001790d4f95bd2c5fed6f
-> # bad: [987f028b8637cfa7658aa456ae73f8f21a7a7f6f] char: hpet: Use flexible-array member
-> git bisect bad 987f028b8637cfa7658aa456ae73f8f21a7a7f6f
-> # bad: [eb143f8756e77c8fcfc4d574922ae9efd3a43ca9] binder: fix log spam for existing debugfs file creation.
-> git bisect bad eb143f8756e77c8fcfc4d574922ae9efd3a43ca9
-> # first bad commit: [eb143f8756e77c8fcfc4d574922ae9efd3a43ca9] binder: fix log spam for existing debugfs file creation.
->
-> The .config doesn't even have the binder enabled, which is the only file
-> touched in the commit.
->
+On 2/1/20 8:46 PM, Hridya Valsaraju wrote:
+> Correct the filesystem name to "binder" to enable
+> genfscon per-file labelling for binderfs.
+> 
+> Fixes: 7a4b5194747 ("selinux: allow per-file labelling for binderfs")
+> Signed-off-by: Hridya Valsaraju <hridya@google.com>
 
-My git bisect is just done, and it points to the following commit:
+Acked-by: Stephen Smalley <sds@tycho.nsa.gov>
 
-commit 987f028b8637cfa7658aa456ae73f8f21a7a7f6f
-Author: Gustavo A. R. Silva <gustavo@embeddedor.com>
-Date:   Mon Jan 20 17:53:26 2020 -0600
+> ---
+> 
+> Hello,
+> 
+> I seem to have made the typo/mistake during a rebase. Sorry about that
+> :(
+> 
+> Thanks,
+> Hridya
+> 
+>   security/selinux/hooks.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
+> index 89fe3a805129..d67a80b0d8a8 100644
+> --- a/security/selinux/hooks.c
+> +++ b/security/selinux/hooks.c
+> @@ -699,7 +699,7 @@ static int selinux_set_mnt_opts(struct super_block *sb,
+>   
+>   	if (!strcmp(sb->s_type->name, "debugfs") ||
+>   	    !strcmp(sb->s_type->name, "tracefs") ||
+> -	    !strcmp(sb->s_type->name, "binderfs") ||
+> +	    !strcmp(sb->s_type->name, "binder") ||
+>   	    !strcmp(sb->s_type->name, "pstore"))
+>   		sbsec->flags |= SE_SBGENFS;
+>   
+> 
 
-    char: hpet: Use flexible-array member
-
-I have double checked the commit, and looks it is really the 1st bad one.
-
-Thanks,
-Ming Lei
