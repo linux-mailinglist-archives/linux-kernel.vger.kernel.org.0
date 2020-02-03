@@ -2,39 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 55D63150BC8
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Feb 2020 17:31:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A8271150C05
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Feb 2020 17:32:43 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729973AbgBCQaY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 3 Feb 2020 11:30:24 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42698 "EHLO mail.kernel.org"
+        id S1730460AbgBCQcl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 3 Feb 2020 11:32:41 -0500
+Received: from mail.kernel.org ([198.145.29.99]:46358 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729966AbgBCQaS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Feb 2020 11:30:18 -0500
+        id S1730446AbgBCQch (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Feb 2020 11:32:37 -0500
 Received: from localhost (unknown [104.132.45.99])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1300E20838;
-        Mon,  3 Feb 2020 16:30:17 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1E8AB218AC;
+        Mon,  3 Feb 2020 16:32:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1580747418;
-        bh=Li8LrGSYb/x5zKMQjBqf/caqYNBfuICQvy7Z9Uro0Mo=;
+        s=default; t=1580747556;
+        bh=gmdhob6KOz5MnFgokEv9xP6qg2mwuk7AnCDlJ8CzVGc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=hMdLdac1IzlqYOKH24soGxd26INqG5bOnaD5QYdeZw4wPBIgGg1JyTtm/oHDgGm9W
-         OQ37Fbo2Q7NJhQQQ60qaCQ8cI7HXp7KeMpqLtTZfUqEdD/9nlXKY4LBNJ8yceYmyan
-         plYr75LAuRA93uF1EZpIOPKlo8V/Z2zSk4CAHde8=
+        b=oO1YoOI2BFlDxN0RoZL5B7b33gmtdC+vs/K1KfK083OjW9esmboGdfQ2dY1caHzRM
+         gnVqalBZporGbrQZvZDVkvZlE9vISxxbLy9X7yLaZEvrW2s6IZNB6atnwdPzpUNBAX
+         53rOOOpEsvIpy3Z7Fiy/0L4GqKjMHhSqEh/E0wrE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Michael Chan <michael.chan@broadcom.com>,
-        "David S. Miller" <davem@davemloft.net>,
+        stable@vger.kernel.org, Cathy Luo <xiaohua.luo@nxp.com>,
+        Ganapathi Bhat <ganapathi.bhat@nxp.com>,
+        Johannes Berg <johannes.berg@intel.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 68/89] bnxt_en: Fix ipv6 RFS filter matching logic.
-Date:   Mon,  3 Feb 2020 16:19:53 +0000
-Message-Id: <20200203161925.390427879@linuxfoundation.org>
+Subject: [PATCH 4.19 42/70] wireless: fix enabling channel 12 for custom regulatory domain
+Date:   Mon,  3 Feb 2020 16:19:54 +0000
+Message-Id: <20200203161918.472611354@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200203161916.847439465@linuxfoundation.org>
-References: <20200203161916.847439465@linuxfoundation.org>
+In-Reply-To: <20200203161912.158976871@linuxfoundation.org>
+References: <20200203161912.158976871@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,55 +45,63 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Michael Chan <michael.chan@broadcom.com>
+From: Ganapathi Bhat <ganapathi.bhat@nxp.com>
 
-[ Upstream commit 6fc7caa84e713f7627e171ab1e7c4b5be0dc9b3d ]
+[ Upstream commit c4b9d655e445a8be0bff624aedea190606b5ebbc ]
 
-Fix bnxt_fltr_match() to match ipv6 source and destination addresses.
-The function currently only checks ipv4 addresses and will not work
-corrently on ipv6 filters.
+Commit e33e2241e272 ("Revert "cfg80211: Use 5MHz bandwidth by
+default when checking usable channels"") fixed a broken
+regulatory (leaving channel 12 open for AP where not permitted).
+Apply a similar fix to custom regulatory domain processing.
 
-Fixes: c0c050c58d84 ("bnxt_en: New Broadcom ethernet driver.")
-Signed-off-by: Michael Chan <michael.chan@broadcom.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Cathy Luo <xiaohua.luo@nxp.com>
+Signed-off-by: Ganapathi Bhat <ganapathi.bhat@nxp.com>
+Link: https://lore.kernel.org/r/1576836859-8945-1-git-send-email-ganapathi.bhat@nxp.com
+[reword commit message, fix coding style, add a comment]
+Signed-off-by: Johannes Berg <johannes.berg@intel.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/broadcom/bnxt/bnxt.c | 22 +++++++++++++++++-----
- 1 file changed, 17 insertions(+), 5 deletions(-)
+ net/wireless/reg.c | 13 ++++++++++---
+ 1 file changed, 10 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/net/ethernet/broadcom/bnxt/bnxt.c b/drivers/net/ethernet/broadcom/bnxt/bnxt.c
-index 38ee7692132c5..7461e7b9eaae5 100644
---- a/drivers/net/ethernet/broadcom/bnxt/bnxt.c
-+++ b/drivers/net/ethernet/broadcom/bnxt/bnxt.c
-@@ -7402,11 +7402,23 @@ static bool bnxt_fltr_match(struct bnxt_ntuple_filter *f1,
- 	struct flow_keys *keys1 = &f1->fkeys;
- 	struct flow_keys *keys2 = &f2->fkeys;
+diff --git a/net/wireless/reg.c b/net/wireless/reg.c
+index 5643bdee7198f..4c3c8a1c116da 100644
+--- a/net/wireless/reg.c
++++ b/net/wireless/reg.c
+@@ -2254,14 +2254,15 @@ static void update_all_wiphy_regulatory(enum nl80211_reg_initiator initiator)
  
--	if (keys1->addrs.v4addrs.src == keys2->addrs.v4addrs.src &&
--	    keys1->addrs.v4addrs.dst == keys2->addrs.v4addrs.dst &&
--	    keys1->ports.ports == keys2->ports.ports &&
--	    keys1->basic.ip_proto == keys2->basic.ip_proto &&
--	    keys1->basic.n_proto == keys2->basic.n_proto &&
-+	if (keys1->basic.n_proto != keys2->basic.n_proto ||
-+	    keys1->basic.ip_proto != keys2->basic.ip_proto)
-+		return false;
-+
-+	if (keys1->basic.n_proto == htons(ETH_P_IP)) {
-+		if (keys1->addrs.v4addrs.src != keys2->addrs.v4addrs.src ||
-+		    keys1->addrs.v4addrs.dst != keys2->addrs.v4addrs.dst)
-+			return false;
-+	} else {
-+		if (memcmp(&keys1->addrs.v6addrs.src, &keys2->addrs.v6addrs.src,
-+			   sizeof(keys1->addrs.v6addrs.src)) ||
-+		    memcmp(&keys1->addrs.v6addrs.dst, &keys2->addrs.v6addrs.dst,
-+			   sizeof(keys1->addrs.v6addrs.dst)))
-+			return false;
-+	}
-+
-+	if (keys1->ports.ports == keys2->ports.ports &&
- 	    keys1->control.flags == keys2->control.flags &&
- 	    ether_addr_equal(f1->src_mac_addr, f2->src_mac_addr) &&
- 	    ether_addr_equal(f1->dst_mac_addr, f2->dst_mac_addr))
+ static void handle_channel_custom(struct wiphy *wiphy,
+ 				  struct ieee80211_channel *chan,
+-				  const struct ieee80211_regdomain *regd)
++				  const struct ieee80211_regdomain *regd,
++				  u32 min_bw)
+ {
+ 	u32 bw_flags = 0;
+ 	const struct ieee80211_reg_rule *reg_rule = NULL;
+ 	const struct ieee80211_power_rule *power_rule = NULL;
+ 	u32 bw;
+ 
+-	for (bw = MHZ_TO_KHZ(20); bw >= MHZ_TO_KHZ(5); bw = bw / 2) {
++	for (bw = MHZ_TO_KHZ(20); bw >= min_bw; bw = bw / 2) {
+ 		reg_rule = freq_reg_info_regd(MHZ_TO_KHZ(chan->center_freq),
+ 					      regd, bw);
+ 		if (!IS_ERR(reg_rule))
+@@ -2317,8 +2318,14 @@ static void handle_band_custom(struct wiphy *wiphy,
+ 	if (!sband)
+ 		return;
+ 
++	/*
++	 * We currently assume that you always want at least 20 MHz,
++	 * otherwise channel 12 might get enabled if this rule is
++	 * compatible to US, which permits 2402 - 2472 MHz.
++	 */
+ 	for (i = 0; i < sband->n_channels; i++)
+-		handle_channel_custom(wiphy, &sband->channels[i], regd);
++		handle_channel_custom(wiphy, &sband->channels[i], regd,
++				      MHZ_TO_KHZ(20));
+ }
+ 
+ /* Used by drivers prior to wiphy registration */
 -- 
 2.20.1
 
