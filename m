@@ -2,27 +2,27 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9B48B150BF5
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Feb 2020 17:32:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CD7DE150DA9
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Feb 2020 17:46:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730350AbgBCQcD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 3 Feb 2020 11:32:03 -0500
-Received: from mail.kernel.org ([198.145.29.99]:45550 "EHLO mail.kernel.org"
+        id S1730552AbgBCQpz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 3 Feb 2020 11:45:55 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41526 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730345AbgBCQcB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Feb 2020 11:32:01 -0500
+        id S1729811AbgBCQ3d (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Feb 2020 11:29:33 -0500
 Received: from localhost (unknown [104.132.45.99])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 58A1A2051A;
-        Mon,  3 Feb 2020 16:32:00 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7ADDE2087E;
+        Mon,  3 Feb 2020 16:29:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1580747520;
-        bh=GgwK2xKL5rzWEjTGTjQrmNbNFmz6oL1dId/NMqfwA/c=;
+        s=default; t=1580747372;
+        bh=v12CYClJrDn14XHZyzfkg2sk9lCjmDtjUyfsGmz6Wgw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=L7kDAsgfUoS1unXzyYH+tb64CM61mKP0OFeRmQhsCRb8sWarsnaFERyhlKzTkxamZ
-         +FDxyOxSB6wyNLq1w9zVoCzhbjicEFtk40njtjGyPObf7IsMp1WT1/bg4tqcjIOP3P
-         ySn7TOO7NWEfW2JuTLItazip4rbzaUcjOjkDgbHg=
+        b=cSOGYEgp7pJ9ymRPTMW49E+X6LJLSUW5dZPg93lZDy8pyGGzbbLXl+2kx3a+db1q+
+         HWp9aGqMmckosUOp1YT6w2x2DXQZPE+i4NMyh10P7eczzjiIimy68gk/BRNaD11PNe
+         /elAXKyM5qMHlIZrWrUXB31S44WYIy9SvDd3NcR8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -31,12 +31,12 @@ Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Santosh Shilimkar <ssantosh@kernel.org>,
         Tony Lindgren <tony@atomide.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 28/70] soc: ti: wkup_m3_ipc: Fix race condition with rproc_boot
+Subject: [PATCH 4.14 55/89] soc: ti: wkup_m3_ipc: Fix race condition with rproc_boot
 Date:   Mon,  3 Feb 2020 16:19:40 +0000
-Message-Id: <20200203161916.612889239@linuxfoundation.org>
+Message-Id: <20200203161924.069841377@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200203161912.158976871@linuxfoundation.org>
-References: <20200203161912.158976871@linuxfoundation.org>
+In-Reply-To: <20200203161916.847439465@linuxfoundation.org>
+References: <20200203161916.847439465@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -72,10 +72,10 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  1 file changed, 2 insertions(+), 2 deletions(-)
 
 diff --git a/drivers/soc/ti/wkup_m3_ipc.c b/drivers/soc/ti/wkup_m3_ipc.c
-index f5cb8c0af09f3..c1fda6acb670a 100644
+index 369aef5e7228e..651827c6ee6f9 100644
 --- a/drivers/soc/ti/wkup_m3_ipc.c
 +++ b/drivers/soc/ti/wkup_m3_ipc.c
-@@ -426,6 +426,8 @@ static void wkup_m3_rproc_boot_thread(struct wkup_m3_ipc *m3_ipc)
+@@ -375,6 +375,8 @@ static void wkup_m3_rproc_boot_thread(struct wkup_m3_ipc *m3_ipc)
  	ret = rproc_boot(m3_ipc->rproc);
  	if (ret)
  		dev_err(dev, "rproc_boot failed\n");
@@ -84,7 +84,7 @@ index f5cb8c0af09f3..c1fda6acb670a 100644
  
  	do_exit(0);
  }
-@@ -512,8 +514,6 @@ static int wkup_m3_ipc_probe(struct platform_device *pdev)
+@@ -461,8 +463,6 @@ static int wkup_m3_ipc_probe(struct platform_device *pdev)
  		goto err_put_rproc;
  	}
  
