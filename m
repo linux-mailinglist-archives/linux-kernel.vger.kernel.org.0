@@ -2,89 +2,89 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8028B15046C
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Feb 2020 11:41:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DFC79150481
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Feb 2020 11:46:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727751AbgBCKla (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 3 Feb 2020 05:41:30 -0500
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:36561 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727661AbgBCKl0 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Feb 2020 05:41:26 -0500
-Received: by mail-wm1-f68.google.com with SMTP id p17so16325069wma.1
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Feb 2020 02:41:24 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=9M/C89B+RPb3s/AEZzJiX5HrsMKA5pqQCZ+d/xtiimQ=;
-        b=HGk1szuNHr8Rpi6K6AEB+UGzUz7mmYy5IVSIeYVQhByZzdXdbUVfmZOZXNPt+6FaDn
-         9YBerNBayTRTP2fjJYfNbtSO6+LlPgjwjOIoPMubtwUGpgPGgQUiQYBBSfZRzhrcHCdO
-         1JVKDUJ1QWcbscUWrS8iB06shr7HP+gyNZcHpdeRLm65/PTor0LwZ0YzW5KmgOMjfs/i
-         scaIjBh4sXpXhScIiFB/DEGdD47H9x/n5w/s5dq6+znXOb7O1TVkhhehsjOkmbz1aIBR
-         9crljBQOXioT5+DnOKMl5A2EdaWHjOrNys/mlU9TOGFuYovwWoVTCy5mkWfzsRSw7a2x
-         80QQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=9M/C89B+RPb3s/AEZzJiX5HrsMKA5pqQCZ+d/xtiimQ=;
-        b=tk/vmiWW5wv5QStbE2cjckbmJoJSXvoddlEgnt0fl9mx25iyIUts/aUAuZIigx58Ix
-         VCdIFOun6ukilgSCtHLUVbkdggy8wZ1mc8o5PZgKF67JGxSr0zG8iFLKXXxaCxP08IUd
-         iXVUFP60yz7gGPvpm8S4SIHYXEOC+TKjWkuWeYKqZ2CWPFXIUlzxUm2pOhALEdk+77iY
-         BiifP29XDfigJ2mIVMUzKlrFUi+WsBREN0NogTPvVAqZsT7eGpMLAnQIH0xRB41jsZrP
-         vUtJNiAr+Pa6+zL6F57paRO9ajl5t/4DU6m/0CIKK9tQuiz4k39wpeYS17fge35/FR3Z
-         X1dQ==
-X-Gm-Message-State: APjAAAWwQ1MuEqJIGXB6weYnpYaK8OWKBQfeEqf26vk1MfkVkhIFSKU/
-        iI1tUZBiblQXGudmqwbZ+iEoKg==
-X-Google-Smtp-Source: APXvYqzbBaAEE1ZuOQv8l5wyfJ6burueShpn1fgakonYTcdxiPDi2XpkDNjDG+Jz74vpXyUSnQ8E/g==
-X-Received: by 2002:a05:600c:d7:: with SMTP id u23mr29184394wmm.145.1580726484032;
-        Mon, 03 Feb 2020 02:41:24 -0800 (PST)
-Received: from localhost.localdomain (84-33-65-46.dyn.eolo.it. [84.33.65.46])
-        by smtp.gmail.com with ESMTPSA id i204sm23798930wma.44.2020.02.03.02.41.22
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 03 Feb 2020 02:41:23 -0800 (PST)
-From:   Paolo Valente <paolo.valente@linaro.org>
-To:     Jens Axboe <axboe@kernel.dk>
-Cc:     linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-        bfq-iosched@googlegroups.com, oleksandr@natalenko.name,
-        patdung100@gmail.com, cevich@redhat.com,
-        Paolo Valente <paolo.valente@linaro.org>
-Subject: [PATCH BUGFIX V2 7/7] block, bfq: clarify the goal of bfq_split_bfqq()
-Date:   Mon,  3 Feb 2020 11:41:00 +0100
-Message-Id: <20200203104100.16965-8-paolo.valente@linaro.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20200203104100.16965-1-paolo.valente@linaro.org>
-References: <20200203104100.16965-1-paolo.valente@linaro.org>
+        id S1727253AbgBCKqK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 3 Feb 2020 05:46:10 -0500
+Received: from mail.kernel.org ([198.145.29.99]:48754 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726100AbgBCKqK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Feb 2020 05:46:10 -0500
+Received: from localhost (unknown [104.132.45.99])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id D81DC20661;
+        Mon,  3 Feb 2020 10:46:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1580726769;
+        bh=/paHcOi+xB86rjIjYyLdXCYTLMIaivBy8llnLyFh7pU=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=P/T7npADd7+0nzPxCVf9hGGeVcTdpJBqO5uAxFzyN+utq6YrZCUAzwkhQMpNn9yNf
+         JoEMFQthG5Jp/5FPIEPkiIDIeh8uDXT1SUYfqp3ZiJ2Q0B8M6247UtJ//J42Un4ot8
+         dYtB7NuiAcXLTc9v3CxxskDU3lZ2VnpKE5h7fT2Q=
+Date:   Mon, 3 Feb 2020 10:46:07 +0000
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Joe Perches <joe@perches.com>
+Cc:     Matthew Wilcox <willy@infradead.org>,
+        Tetsuhiro Kohada <Kohada.Tetsuhiro@dc.mitsubishielectric.co.jp>,
+        devel@driverdev.osuosl.org,
+        Valdis Kletnieks <valdis.kletnieks@vt.edu>,
+        Mori.Takahiro@ab.mitsubishielectric.co.jp,
+        linux-kernel@vger.kernel.org,
+        motai.hirotaka@aj.mitsubishielectric.co.jp,
+        linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH 1/2] staging: exfat: remove DOSNAMEs.
+Message-ID: <20200203104607.GA3130629@kroah.com>
+References: <20200203163118.31332-1-Kohada.Tetsuhiro@dc.MitsubishiElectric.co.jp>
+ <20200203080532.GF8731@bombadil.infradead.org>
+ <20200203081559.GA3038628@kroah.com>
+ <20200203082938.GG8731@bombadil.infradead.org>
+ <20200203094601.GA3040887@kroah.com>
+ <5f67af4339e0b9b56b43fb78ebab73e05009e307.camel@perches.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <5f67af4339e0b9b56b43fb78ebab73e05009e307.camel@perches.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The exact, general goal of the function bfq_split_bfqq() is not that
-apparent. Add a comment to make it clear.
+On Mon, Feb 03, 2020 at 02:40:43AM -0800, Joe Perches wrote:
+> On Mon, 2020-02-03 at 09:46 +0000, Greg Kroah-Hartman wrote:
+> > On Mon, Feb 03, 2020 at 12:29:38AM -0800, Matthew Wilcox wrote:
+> > > On Mon, Feb 03, 2020 at 08:15:59AM +0000, Greg Kroah-Hartman wrote:
+> > > > On Mon, Feb 03, 2020 at 12:05:32AM -0800, Matthew Wilcox wrote:
+> > > > > On Tue, Feb 04, 2020 at 01:31:17AM +0900, Tetsuhiro Kohada wrote:
+> > > > > > remove 'dos_name','ShortName' and related definitions.
+> > > > > > 
+> > > > > > 'dos_name' and 'ShortName' are definitions before VFAT.
+> > > > > > These are never used in exFAT.
+> > > > > 
+> > > > > Why are we still seeing patches for the exfat in staging?
+> > > > 
+> > > > Because people like doing cleanup patches :)
+> > > 
+> > > Sure, but I think people also like to believe that their cleanup patches
+> > > are making a difference.  In this case, they're just churning code that's
+> > > only weeks away from deletion.
+> > > 
+> > > > > Why are people not working on the Samsung code base?
+> > > > 
+> > > > They are, see the patches on the list, hopefully they get merged after
+> > > > -rc1 is out.
+> > > 
+> > > I meant the cleanup people.  Obviously _some_ people are working on the
+> > > Samsung codebase.
+> > 
+> > We can't tell people to work on :)
+> 
+> That's more an argument to remove exfat from staging
+> sooner than later.
 
-Signed-off-by: Paolo Valente <paolo.valente@linaro.org>
----
- block/bfq-iosched.c | 2 ++
- 1 file changed, 2 insertions(+)
+I will remove it when the other patchset is merged, let's not remove
+code that is being used, that's not how we do things, you all know
+this...
 
-diff --git a/block/bfq-iosched.c b/block/bfq-iosched.c
-index fff76c920968..8c436abfaf14 100644
---- a/block/bfq-iosched.c
-+++ b/block/bfq-iosched.c
-@@ -5979,6 +5979,8 @@ static void bfq_finish_requeue_request(struct request *rq)
- }
- 
- /*
-+ * Removes the association between the current task and bfqq, assuming
-+ * that bic points to the bfq iocontext of the task.
-  * Returns NULL if a new bfqq should be allocated, or the old bfqq if this
-  * was the last process referring to that bfqq.
-  */
--- 
-2.20.1
-
+greg k-h
