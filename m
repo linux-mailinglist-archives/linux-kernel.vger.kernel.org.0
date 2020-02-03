@@ -2,37 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E1A57150B7A
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Feb 2020 17:27:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2113B150AC8
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Feb 2020 17:21:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729109AbgBCQ15 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 3 Feb 2020 11:27:57 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39044 "EHLO mail.kernel.org"
+        id S1729050AbgBCQVB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 3 Feb 2020 11:21:01 -0500
+Received: from mail.kernel.org ([198.145.29.99]:32768 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728541AbgBCQ1l (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Feb 2020 11:27:41 -0500
+        id S1729026AbgBCQU7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Feb 2020 11:20:59 -0500
 Received: from localhost (unknown [104.132.45.99])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3C30C2080C;
-        Mon,  3 Feb 2020 16:27:40 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id CE5162080D;
+        Mon,  3 Feb 2020 16:20:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1580747260;
-        bh=AZea3sgVucUEl9+ZbT7c0X9WcUjnpgL4fkil0oRHA68=;
+        s=default; t=1580746859;
+        bh=gwwaMJc62zOc4cwZ+A57UL//D1KSGXRTJYpOZuPMX4w=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=aX8zuBIswgO9DV21cLylX04/UjdO3WnbYIk9hz1Hx/UY0bGkboMIC59PPcZZFzhQ+
-         cxC7jjnOp1mLOAO3dHixPjsM5rLeme6uEBMygXGdfI2o7/0GgdlZLa+NAXVDIxaIoT
-         IRrtFRWDKDAeCbk2QHdWggnlXQ8vt2RygiVJiCBQ=
+        b=uzWNMzn0FHC0I2J5BsjxHtvUxkAtH9MfhzQCdytjRN6SQLILpvHlgScoS+qbjpCnm
+         KKjKp6ZOgm/OQb2niojAZ5Ee9CQiMmvOwDT7GtNGe2dLBWOI+dowJ5XM+Be1PWoGqy
+         U/k3bJ5hq0nnWDCda4bbD68AW5MEeQSJH5U3z6wE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Malcolm Priestley <tvboxspy@gmail.com>
-Subject: [PATCH 4.14 10/89] staging: vt6656: use NULLFUCTION stack on mac80211
-Date:   Mon,  3 Feb 2020 16:18:55 +0000
-Message-Id: <20200203161918.221446466@linuxfoundation.org>
+        stable@vger.kernel.org, Johan Hovold <johan@kernel.org>
+Subject: [PATCH 4.4 04/53] USB: serial: ir-usb: add missing endpoint sanity check
+Date:   Mon,  3 Feb 2020 16:18:56 +0000
+Message-Id: <20200203161903.906704798@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200203161916.847439465@linuxfoundation.org>
-References: <20200203161916.847439465@linuxfoundation.org>
+In-Reply-To: <20200203161902.714326084@linuxfoundation.org>
+References: <20200203161902.714326084@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -42,66 +42,40 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Malcolm Priestley <tvboxspy@gmail.com>
+From: Johan Hovold <johan@kernel.org>
 
-commit d579c43c82f093e63639151625b2139166c730fd upstream.
+commit 2988a8ae7476fe9535ab620320790d1714bdad1d upstream.
 
-It appears that the drivers does not go into power save correctly the
-NULL data packets are not being transmitted because it not enabled
-in mac80211.
+Add missing endpoint sanity check to avoid dereferencing a NULL-pointer
+on open() in case a device lacks a bulk-out endpoint.
 
-The driver needs to capture ieee80211_is_nullfunc headers and
-copy the duration_id to it's own duration data header.
+Note that prior to commit f4a4cbb2047e ("USB: ir-usb: reimplement using
+generic framework") the oops would instead happen on open() if the
+device lacked a bulk-in endpoint and on write() if it lacked a bulk-out
+endpoint.
 
+Fixes: f4a4cbb2047e ("USB: ir-usb: reimplement using generic framework")
+Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
 Cc: stable <stable@vger.kernel.org>
-Signed-off-by: Malcolm Priestley <tvboxspy@gmail.com>
-Link: https://lore.kernel.org/r/610971ae-555b-a6c3-61b3-444a0c1e35b4@gmail.com
+Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Signed-off-by: Johan Hovold <johan@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/staging/vt6656/main_usb.c |    1 +
- drivers/staging/vt6656/rxtx.c     |   14 +++++---------
- 2 files changed, 6 insertions(+), 9 deletions(-)
+ drivers/usb/serial/ir-usb.c |    3 +++
+ 1 file changed, 3 insertions(+)
 
---- a/drivers/staging/vt6656/main_usb.c
-+++ b/drivers/staging/vt6656/main_usb.c
-@@ -977,6 +977,7 @@ vt6656_probe(struct usb_interface *intf,
- 	ieee80211_hw_set(priv->hw, RX_INCLUDES_FCS);
- 	ieee80211_hw_set(priv->hw, REPORTS_TX_ACK_STATUS);
- 	ieee80211_hw_set(priv->hw, SUPPORTS_PS);
-+	ieee80211_hw_set(priv->hw, PS_NULLFUNC_STACK);
+--- a/drivers/usb/serial/ir-usb.c
++++ b/drivers/usb/serial/ir-usb.c
+@@ -198,6 +198,9 @@ static int ir_startup(struct usb_serial
+ {
+ 	struct usb_irda_cs_descriptor *irda_desc;
  
- 	priv->hw->max_signal = 100;
- 
---- a/drivers/staging/vt6656/rxtx.c
-+++ b/drivers/staging/vt6656/rxtx.c
-@@ -288,11 +288,9 @@ static u16 vnt_rxtx_datahead_g(struct vn
- 			  PK_TYPE_11B, &buf->b);
- 
- 	/* Get Duration and TimeStamp */
--	if (ieee80211_is_pspoll(hdr->frame_control)) {
--		__le16 dur = cpu_to_le16(priv->current_aid | BIT(14) | BIT(15));
--
--		buf->duration_a = dur;
--		buf->duration_b = dur;
-+	if (ieee80211_is_nullfunc(hdr->frame_control)) {
-+		buf->duration_a = hdr->duration_id;
-+		buf->duration_b = hdr->duration_id;
- 	} else {
- 		buf->duration_a = vnt_get_duration_le(priv,
- 						tx_context->pkt_type, need_ack);
-@@ -381,10 +379,8 @@ static u16 vnt_rxtx_datahead_ab(struct v
- 			  tx_context->pkt_type, &buf->ab);
- 
- 	/* Get Duration and TimeStampOff */
--	if (ieee80211_is_pspoll(hdr->frame_control)) {
--		__le16 dur = cpu_to_le16(priv->current_aid | BIT(14) | BIT(15));
--
--		buf->duration = dur;
-+	if (ieee80211_is_nullfunc(hdr->frame_control)) {
-+		buf->duration = hdr->duration_id;
- 	} else {
- 		buf->duration = vnt_get_duration_le(priv, tx_context->pkt_type,
- 						    need_ack);
++	if (serial->num_bulk_in < 1 || serial->num_bulk_out < 1)
++		return -ENODEV;
++
+ 	irda_desc = irda_usb_find_class_desc(serial, 0);
+ 	if (!irda_desc) {
+ 		dev_err(&serial->dev->dev,
 
 
