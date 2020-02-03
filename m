@@ -2,153 +2,135 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 90729150340
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Feb 2020 10:18:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 20FF915034B
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Feb 2020 10:21:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728002AbgBCJSt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 3 Feb 2020 04:18:49 -0500
-Received: from mail26.static.mailgun.info ([104.130.122.26]:13666 "EHLO
-        mail26.static.mailgun.info" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727773AbgBCJSr (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Feb 2020 04:18:47 -0500
-DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
- s=smtp; t=1580721527; h=References: In-Reply-To: Message-Id: Date:
- Subject: Cc: To: From: Sender;
- bh=V+8m5T4YfK9wEr3fxSe/8uMdxEMj2GnvJiyPlUOKVy0=; b=wcPheB0jFcC9wnkqLQWrt+dhGslpr+uRbQv0kFRnVW1HwJSiBp8q9csYx1BQl+Pgcc/o5Vi6
- iXW1ZL1fxcHeq4qZrFVGWFZDIaF7L/0LdDv2Hhs4Wj9YX8MfdI12gsqpy/Aw1L5KBRuGBb2e
- lHyN0NszQ//xQEYn0NrdsUrG/Yc=
-X-Mailgun-Sending-Ip: 104.130.122.26
-X-Mailgun-Sid: WyI0MWYwYSIsICJsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
-Received: from smtp.codeaurora.org (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171])
- by mxa.mailgun.org with ESMTP id 5e37e573.7f0d8e32fea0-smtp-out-n03;
- Mon, 03 Feb 2020 09:18:43 -0000 (UTC)
-Received: by smtp.codeaurora.org (Postfix, from userid 1001)
-        id 283DFC447B1; Mon,  3 Feb 2020 09:18:40 +0000 (UTC)
-X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
-        aws-us-west-2-caf-mail-1.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=2.0 tests=ALL_TRUSTED,SPF_NONE,
-        URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
-Received: from pacamara-linux.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: cang)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 2F6A7C447A1;
-        Mon,  3 Feb 2020 09:18:38 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 2F6A7C447A1
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=none smtp.mailfrom=cang@codeaurora.org
-From:   Can Guo <cang@codeaurora.org>
-To:     asutoshd@codeaurora.org, nguyenb@codeaurora.org,
-        hongwus@codeaurora.org, rnayak@codeaurora.org,
-        linux-scsi@vger.kernel.org, kernel-team@android.com,
-        saravanak@google.com, salyzyn@google.com, cang@codeaurora.org
-Cc:     Alim Akhtar <alim.akhtar@samsung.com>,
-        Avri Altman <avri.altman@wdc.com>,
-        "James E.J. Bottomley" <jejb@linux.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        Stanley Chu <stanley.chu@mediatek.com>,
-        Bean Huo <beanhuo@micron.com>,
-        Bart Van Assche <bvanassche@acm.org>,
-        Venkat Gopalakrishnan <venkatg@codeaurora.org>,
-        Tomas Winkler <tomas.winkler@intel.com>,
-        Allison Randal <allison@lohutok.net>,
+        id S1727682AbgBCJVI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 3 Feb 2020 04:21:08 -0500
+Received: from mail-eopbgr10047.outbound.protection.outlook.com ([40.107.1.47]:28580
+        "EHLO EUR02-HE1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726244AbgBCJVH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Feb 2020 04:21:07 -0500
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=AKTDr3saT3KtlARgDkj93c6lpugtDLnSLCsqUSTzb/PTjX2gD0axyG2+kpgviPk3G3kF3SNnnQO4H5mxftVoRjewrv1aXi3Tm465bk/NgoDoCgsphT+8QQ5Fp5j5mL8xIkAqBA0MEdMGJtsrwzHi97MDCkEokkhCoT9qeWHS0xkq4QDsOu9f1LHyKMquGBHXv2IkyIjQZjG7PUNVU1x6M5ZwDRuLlIE2rtARXDCg79UH42hF60MAWCnfJT0Q4oPfrYGyuucUSYppN5LAl5n/xN/OCTcEOksulRuXh7sn/XEIq9a7sNeUNB1kDDEFnjt4jcvAAEeNCBy7AJDx4gSk4Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=QgxXJjFmFaBb1zH2KkVP1dGg32kr6pD3/xdnghcD1Hs=;
+ b=MQJPsmtFrZhtw3G3mXKB7CEcuI4Ip1ab/3ARt0FOUkOHEYdKZHRqTFTLOyi9y+nlTjXokVvaVADIq/qwjbW0UXycdsoJn2m9NeTDBAALOosPGgs/lOahFNalpWA2vjsex0LfZBTMTF2U3SL79PAs66Az7JcFQqIzVCxRpFZXfqfsIBJRsovgY+QvV/0+XLimWf/rgrd3fcNMwKrQXtDuM+pY8TLu0isxtOpO+NUcTUJSCbsZwuqH0Qg7fWhcdmGQn3hWZDj77VgXRzbAtdWljciBvoRnYTy3aCu+OU4SeGZ7pprOPdcPJbjeUmsNtjKZbUWTuftV+gIk9A8BM77h5Q==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oss.nxp.com; dmarc=pass action=none header.from=oss.nxp.com;
+ dkim=pass header.d=oss.nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=NXP1.onmicrosoft.com;
+ s=selector2-NXP1-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=QgxXJjFmFaBb1zH2KkVP1dGg32kr6pD3/xdnghcD1Hs=;
+ b=l68Uje3AI7vakih7KP90Jn0mO9U5EwCb9CwZ6SV87GTcv1mfFADx0zRibdpCS0vp/t6famfoq5iEX0wE4LuxUMs+bNQrJyMBEJn8niRNI1v0GUWPYA1blkZUKSDUrl36E0ulLMVv0xy2xGzaK2aKdkYNh3v1hRtPqCMcH9fHmhs=
+Received: from AM0PR04MB5636.eurprd04.prod.outlook.com (20.178.202.86) by
+ AM0PR04MB5410.eurprd04.prod.outlook.com (20.178.114.143) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2686.27; Mon, 3 Feb 2020 09:21:03 +0000
+Received: from AM0PR04MB5636.eurprd04.prod.outlook.com
+ ([fe80::1b4:31d2:1485:6e07]) by AM0PR04MB5636.eurprd04.prod.outlook.com
+ ([fe80::1b4:31d2:1485:6e07%7]) with mapi id 15.20.2686.028; Mon, 3 Feb 2020
+ 09:21:03 +0000
+From:   "Calvin Johnson (OSS)" <calvin.johnson@oss.nxp.com>
+To:     Andy Shevchenko <andy.shevchenko@gmail.com>
+CC:     "linux.cj@gmail.com" <linux.cj@gmail.com>,
+        Jon Nettleton <jon@solid-run.com>,
+        Russell King - ARM Linux <linux@armlinux.org.uk>,
+        Makarand Pawagi <makarand.pawagi@nxp.com>,
+        Cristi Sovaiala <cristian.sovaiala@nxp.com>,
+        Laurentiu Tudor <laurentiu.tudor@nxp.com>,
+        Ioana Ciornei <ioana.ciornei@nxp.com>,
+        Varun Sethi <V.Sethi@nxp.com>,
+        Pankaj Bansal <pankaj.bansal@nxp.com>,
+        "Rajesh V. Bikkina" <rajesh.bikkina@nxp.com>,
+        "Calvin Johnson (OSS)" <calvin.johnson@oss.nxp.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
         Thomas Gleixner <tglx@linutronix.de>,
-        Pedro Sousa <sousa@synopsys.com>,
-        linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH v5 8/8] scsi: ufs: Select INITIAL adapt for HS Gear4
-Date:   Mon,  3 Feb 2020 01:17:50 -0800
-Message-Id: <1580721472-10784-9-git-send-email-cang@codeaurora.org>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1580721472-10784-1-git-send-email-cang@codeaurora.org>
-References: <1580721472-10784-1-git-send-email-cang@codeaurora.org>
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH v1 5/7] device property: Introduce
+ fwnode_phy_is_fixed_link()
+Thread-Topic: [PATCH v1 5/7] device property: Introduce
+ fwnode_phy_is_fixed_link()
+Thread-Index: AQHV2nNBOg4A6QPfr0Wlmr89aSmq/w==
+Date:   Mon, 3 Feb 2020 09:21:02 +0000
+Message-ID: <AM0PR04MB5636A3081D857484A970970493000@AM0PR04MB5636.eurprd04.prod.outlook.com>
+References: <20200131153440.20870-1-calvin.johnson@nxp.com>
+ <20200131153440.20870-6-calvin.johnson@nxp.com>
+ <CAHp75Vf+UVMS1WOQ3KB8DiSB5KD2oFQs5ZmJ5yDPi=3i4uZVRg@mail.gmail.com>
+In-Reply-To: <CAHp75Vf+UVMS1WOQ3KB8DiSB5KD2oFQs5ZmJ5yDPi=3i4uZVRg@mail.gmail.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=calvin.johnson@oss.nxp.com; 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-originating-ip: [92.121.36.198]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-ht: Tenant
+x-ms-office365-filtering-correlation-id: d0ce3929-f225-4a67-f74b-08d7a88a63f1
+x-ms-traffictypediagnostic: AM0PR04MB5410:|AM0PR04MB5410:
+x-ms-exchange-sharedmailbox-routingagent-processed: True
+x-ms-exchange-transport-forked: True
+x-microsoft-antispam-prvs: <AM0PR04MB5410F822575D7F807E044D83D2000@AM0PR04MB5410.eurprd04.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:9508;
+x-forefront-prvs: 0302D4F392
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(136003)(376002)(39860400002)(366004)(346002)(396003)(189003)(199004)(6916009)(478600001)(7416002)(7696005)(64756008)(66446008)(52536014)(2906002)(66476007)(66556008)(5660300002)(86362001)(76116006)(4326008)(71200400001)(33656002)(186003)(54906003)(26005)(316002)(6506007)(53546011)(9686003)(55016002)(81156014)(8676002)(8936002)(81166006)(66946007);DIR:OUT;SFP:1101;SCL:1;SRVR:AM0PR04MB5410;H:AM0PR04MB5636.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:0;
+received-spf: None (protection.outlook.com: oss.nxp.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: b2zZ7LI/RdEWIK2oR5gBErxx2bku1R0oZjchgbDmlnPxmwSUp/U7kZzrK3hOKwIW67xriRJH+nWQ8eRbHa198hlx53gOnjaJm1Vxliue3xWpy0Pu3CODRe7ipsRSvGvt+LcHHPR3OuB9yPThsOpru+JLAwmReyZQdXPghZNmILw2sCiEWwlTM0BHCmrxEug328qifRm2CrlmOKZxw9K1aIBzaGKCGRczcxYe5g+XWMac8kISevi7FhUFxk5/RQVoBBTq9fb7vYs2N7SUpaWF7E3wDDiUFXNe+IqIR/JE2jeTtQ6b0dFIVn9S4AO2fBqCiTcxoxoPtCIfr1ayJAArNerxFAlu60Ib8x4GJm9/f/g1IH97fWwxEhmMBa/IVAUpY0zNeeSERgLAnL0ytkKBLMyf7BGZKS3+yfamiAMdV7fxn1EtJOKuW47jREmJiUU8
+x-ms-exchange-antispam-messagedata: /SCWsc7XTIvuGN4PT4MN5NJwh2CZ4Iv55bQDG80sFxd/V3EH2kscD/VrfCKZiUVODaNyNaDmmPnYCP+LjcsLHYicpIr9yDwFMzBQS9+M0XLvYucmMSWefoUvQ340FrqwbbKn2nHlH6MQ1Rn7x0knwQ==
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
+X-OriginatorOrg: oss.nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: d0ce3929-f225-4a67-f74b-08d7a88a63f1
+X-MS-Exchange-CrossTenant-originalarrivaltime: 03 Feb 2020 09:21:03.0640
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: /2KaSrx2d0xiINrmJqCGmes++9SDsFQzdA1U2x45geMpNK+RIBXHfg3V7i7NAnyArg8AaXasP7fG+1yXACVZLQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR04MB5410
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-ADAPT is added specifically for HS Gear4 mode only, select INITIAL adapt
-before do power mode change to G4 and select no adapt before switch to
-non-G4 modes.
-
-Signed-off-by: Can Guo <cang@codeaurora.org>
-Reviewed-by: Asutosh Das <asutoshd@codeaurora.org>
----
- drivers/scsi/ufs/ufshcd.c | 14 +++++++++++++-
- drivers/scsi/ufs/ufshci.h |  1 +
- drivers/scsi/ufs/unipro.h |  7 +++++++
- 3 files changed, 21 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/scsi/ufs/ufshcd.c b/drivers/scsi/ufs/ufshcd.c
-index d5c547b..0ac5d47 100644
---- a/drivers/scsi/ufs/ufshcd.c
-+++ b/drivers/scsi/ufs/ufshcd.c
-@@ -4077,6 +4077,17 @@ static int ufshcd_change_power_mode(struct ufs_hba *hba,
- 		ufshcd_dme_set(hba, UIC_ARG_MIB(PA_HSSERIES),
- 						pwr_mode->hs_rate);
- 
-+	if (hba->ufs_version >= UFSHCI_VERSION_30) {
-+		if (pwr_mode->gear_tx == UFS_HS_G4)
-+			/* INITIAL ADAPT */
-+			ufshcd_dme_set(hba, UIC_ARG_MIB(PA_TXHSADAPTTYPE),
-+					PA_INITIAL_ADAPT);
-+		else
-+			/* NO ADAPT */
-+			ufshcd_dme_set(hba, UIC_ARG_MIB(PA_TXHSADAPTTYPE),
-+					PA_NO_ADAPT);
-+	}
-+
- 	ufshcd_dme_set(hba, UIC_ARG_MIB(PA_PWRMODEUSERDATA0),
- 			DL_FC0ProtectionTimeOutVal_Default);
- 	ufshcd_dme_set(hba, UIC_ARG_MIB(PA_PWRMODEUSERDATA1),
-@@ -8455,7 +8466,8 @@ int ufshcd_init(struct ufs_hba *hba, void __iomem *mmio_base, unsigned int irq)
- 	if ((hba->ufs_version != UFSHCI_VERSION_10) &&
- 	    (hba->ufs_version != UFSHCI_VERSION_11) &&
- 	    (hba->ufs_version != UFSHCI_VERSION_20) &&
--	    (hba->ufs_version != UFSHCI_VERSION_21))
-+	    (hba->ufs_version != UFSHCI_VERSION_21) &&
-+	    (hba->ufs_version != UFSHCI_VERSION_30))
- 		dev_err(hba->dev, "invalid UFS version 0x%x\n",
- 			hba->ufs_version);
- 
-diff --git a/drivers/scsi/ufs/ufshci.h b/drivers/scsi/ufs/ufshci.h
-index c2961d3..f2ee816 100644
---- a/drivers/scsi/ufs/ufshci.h
-+++ b/drivers/scsi/ufs/ufshci.h
-@@ -104,6 +104,7 @@ enum {
- 	UFSHCI_VERSION_11 = 0x00010100, /* 1.1 */
- 	UFSHCI_VERSION_20 = 0x00000200, /* 2.0 */
- 	UFSHCI_VERSION_21 = 0x00000210, /* 2.1 */
-+	UFSHCI_VERSION_30 = 0x00000300, /* 3.0 */
- };
- 
- /*
-diff --git a/drivers/scsi/ufs/unipro.h b/drivers/scsi/ufs/unipro.h
-index 3dc4d8b..5a724b2 100644
---- a/drivers/scsi/ufs/unipro.h
-+++ b/drivers/scsi/ufs/unipro.h
-@@ -146,6 +146,12 @@
- #define PA_SLEEPNOCONFIGTIME	0x15A2
- #define PA_STALLNOCONFIGTIME	0x15A3
- #define PA_SAVECONFIGTIME	0x15A4
-+#define PA_TXHSADAPTTYPE	0x15D4
-+
-+/* Adpat type for PA_TXHSADAPTTYPE attribute */
-+#define PA_REFRESH_ADAPT	0x00
-+#define PA_INITIAL_ADAPT	0x01
-+#define PA_NO_ADAPT		0x03
- 
- #define PA_TACTIVATE_TIME_UNIT_US	10
- #define PA_HIBERN8_TIME_UNIT_US		100
-@@ -203,6 +209,7 @@ enum ufs_hs_gear_tag {
- 	UFS_HS_G1,		/* HS Gear 1 (default for reset) */
- 	UFS_HS_G2,		/* HS Gear 2 */
- 	UFS_HS_G3,		/* HS Gear 3 */
-+	UFS_HS_G4,		/* HS Gear 4 */
- };
- 
- enum ufs_unipro_ver {
--- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+DQoNCj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gRnJvbTogQW5keSBTaGV2Y2hlbmtv
+IDxhbmR5LnNoZXZjaGVua29AZ21haWwuY29tPg0KPiBTdWJqZWN0OiBSZTogW1BBVENIIHYxIDUv
+N10gZGV2aWNlIHByb3BlcnR5OiBJbnRyb2R1Y2UNCj4gZndub2RlX3BoeV9pc19maXhlZF9saW5r
+KCkNCj4gDQo+IE9uIEZyaSwgSmFuIDMxLCAyMDIwIGF0IDU6MzggUE0gQ2FsdmluIEpvaG5zb24g
+PGNhbHZpbi5qb2huc29uQG54cC5jb20+DQo+IHdyb3RlOg0KPiA+DQo+ID4gRnJvbTogQ2Fsdmlu
+IEpvaG5zb24gPGNhbHZpbi5qb2huc29uQG9zcy5ueHAuY29tPg0KPiA+DQo+ID4gSW50cm9kdWNl
+IGZ3bm9kZV9waHlfaXNfZml4ZWRfbGluaygpIGZ1bmN0aW9uIHRoYXQgYW4gRXRoZXJuZXQgZHJp
+dmVyDQo+ID4gY2FuIGNhbGwgb24gaXRzIFBIWSBwaGFuZGxlIHRvIGZpbmQgb3V0IHdoZXRoZXIg
+aXQncyBhIGZpeGVkIGxpbmsgUEhZDQo+ID4gb3Igbm90Lg0KPiANCj4gPiArLyoNCj4gPiArICog
+Zndub2RlX3BoeV9pc19maXhlZF9saW5rKCkNCj4gPiArICovDQo+IA0KPiBQbGVhc2UsIGRvIGEg
+ZnVsbCBrZXJuZWwgZG9jIGRlc2NyaXB0aW9uLg0KDQpTdXJlIHdpbGwgdGFrZSBjYXJlIGluIHYy
+Lg0KDQoNCj4gPiArYm9vbCBmd25vZGVfcGh5X2lzX2ZpeGVkX2xpbmsoc3RydWN0IGZ3bm9kZV9o
+YW5kbGUgKmZ3bm9kZSkgew0KPiA+ICsgICAgICAgc3RydWN0IGZ3bm9kZV9oYW5kbGUgKmZpeGVk
+X25vZGU7DQo+ID4gKyAgICAgICBpbnQgbGVuLCBlcnI7DQo+ID4gKyAgICAgICBjb25zdCBjaGFy
+ICptYW5hZ2VkOw0KPiA+ICsNCj4gPiArICAgICAgIGZpeGVkX25vZGUgPSBmd25vZGVfZ2V0X25h
+bWVkX2NoaWxkX25vZGUoZndub2RlLCAiZml4ZWQtbGluayIpOw0KPiA+ICsgICAgICAgaWYgKGZp
+eGVkX25vZGUpDQo+ID4gKyAgICAgICAgICAgICAgIHJldHVybiBmaXhlZF9ub2RlOw0KPiA+ICsN
+Cj4gPiArICAgICAgIGVyciA9IGZ3bm9kZV9wcm9wZXJ0eV9yZWFkX3N0cmluZyhmaXhlZF9ub2Rl
+LCAibWFuYWdlZCIsDQo+ID4gKyAmbWFuYWdlZCk7DQo+IA0KPiA+ICsgICAgICAgaWYgKGVyciA9
+PSAwICYmIHN0cmNtcChtYW5hZ2VkLCAiYXV0byIpICE9IDApDQo+ID4gKyAgICAgICAgICAgICAg
+IHJldHVybiB0cnVlOw0KPiA+ICsNCj4gPiArICAgICAgIHJldHVybiBmYWxzZTsNCj4gDQo+IE1h
+eWJlIG90aGVyIHdheSBhcm91bmQ/DQo+IA0KPiAgIGlmIChlcnIpDQo+ICAgICByZXR1cm4gZmFs
+c2U7DQo+IA0KPiAgIHJldHVybiAhc3RyY21wKG1hbmFnZWQsICJhdXRvIik7DQo+IA0KPiA/DQo+
+IA0KPiBTYW1lIHBhdHRlcm4gcGVyaGFwcyBmb3IgdGhlIHBhdGNoIHdoZXJlIHlvdSBpbnRyb2R1
+Y2UNCj4gZndub2RlX2dldF9waHlfbW9kZSgpLg0KDQpUaGFua3MhIFdpbGwgdGFrZSBjYXJlIGlu
+IHYyLg0KDQpSZWdhcmRzDQpDYWx2aW4NCg0K
