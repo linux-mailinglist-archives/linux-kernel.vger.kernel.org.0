@@ -2,40 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 858E5150AD6
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Feb 2020 17:21:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9C549150B4C
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Feb 2020 17:26:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729171AbgBCQV3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 3 Feb 2020 11:21:29 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33338 "EHLO mail.kernel.org"
+        id S1728922AbgBCQ00 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 3 Feb 2020 11:26:26 -0500
+Received: from mail.kernel.org ([198.145.29.99]:37396 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729161AbgBCQV2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Feb 2020 11:21:28 -0500
+        id S1727253AbgBCQ0Y (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Feb 2020 11:26:24 -0500
 Received: from localhost (unknown [104.132.45.99])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8C64C21582;
-        Mon,  3 Feb 2020 16:21:25 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 64EF52051A;
+        Mon,  3 Feb 2020 16:26:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1580746886;
-        bh=RMVr5lbZNUQ5PLSw+ZOShgdvCLUUmzfmSdmzJ+42/WY=;
+        s=default; t=1580747183;
+        bh=DVeTexbQjnRUs8BKffsTZRZmM7OK3bSgOL09DHl0+fY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Qq/RoDU11s0knQ1pydk6WeTyiTloeZeB3PQN1ntjhmgGZXJrULJ82rUWufcyPmOeS
-         lQPtQIMZ+xD5ezzLo1Ph6MqrDiZCynRbkWzFvO8kqBy/5rAtpyQ/LVObdtT0OYBthy
-         rOmVBlltZd4rqdqOXZXoICFG5ok/32YCyKEqpmNk=
+        b=l3+4vnhk+YJ4CTQoRxyOpzPACQ6xjVTl3ruPp6ifn5Jd7fpMUjnYzr5AreQTW+L3t
+         VHWqZ7M/9duMHU8m4lpTWErYUfVWXbiT3eo5AB2CqQq3CGVbBR54951IRtpyKGEvTA
+         glhSk2e7D5/nG75JxqnRWbyVWJjhlwfoC1WgHY2Y=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Stan Johnson <userm57@yahoo.com>,
-        Finn Thain <fthain@telegraphics.com.au>,
-        "David S. Miller" <davem@davemloft.net>,
+        stable@vger.kernel.org, Markus Theil <markus.theil@tu-ilmenau.de>,
+        Johannes Berg <johannes.berg@intel.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.4 48/53] net/sonic: Use MMIO accessors
+Subject: [PATCH 4.9 44/68] mac80211: mesh: restrict airtime metric to peered established plinks
 Date:   Mon,  3 Feb 2020 16:19:40 +0000
-Message-Id: <20200203161911.342192414@linuxfoundation.org>
+Message-Id: <20200203161912.175488260@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200203161902.714326084@linuxfoundation.org>
-References: <20200203161902.714326084@linuxfoundation.org>
+In-Reply-To: <20200203161904.705434837@linuxfoundation.org>
+References: <20200203161904.705434837@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,67 +44,53 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Finn Thain <fthain@telegraphics.com.au>
+From: Markus Theil <markus.theil@tu-ilmenau.de>
 
-[ Upstream commit e3885f576196ddfc670b3d53e745de96ffcb49ab ]
+[ Upstream commit 02a614499600af836137c3fbc4404cd96365fff2 ]
 
-The driver accesses descriptor memory which is simultaneously accessed by
-the chip, so the compiler must not be allowed to re-order CPU accesses.
-sonic_buf_get() used 'volatile' to prevent that. sonic_buf_put() should
-have done so too but was overlooked.
+The following warning is triggered every time an unestablished mesh peer
+gets dumped. Checks if a peer link is established before retrieving the
+airtime link metric.
 
-Fixes: efcce839360f ("[PATCH] macsonic/jazzsonic network drivers update")
-Tested-by: Stan Johnson <userm57@yahoo.com>
-Signed-off-by: Finn Thain <fthain@telegraphics.com.au>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+[ 9563.022567] WARNING: CPU: 0 PID: 6287 at net/mac80211/mesh_hwmp.c:345
+               airtime_link_metric_get+0xa2/0xb0 [mac80211]
+[ 9563.022697] Hardware name: PC Engines apu2/apu2, BIOS v4.10.0.3
+[ 9563.022756] RIP: 0010:airtime_link_metric_get+0xa2/0xb0 [mac80211]
+[ 9563.022838] Call Trace:
+[ 9563.022897]  sta_set_sinfo+0x936/0xa10 [mac80211]
+[ 9563.022964]  ieee80211_dump_station+0x6d/0x90 [mac80211]
+[ 9563.023062]  nl80211_dump_station+0x154/0x2a0 [cfg80211]
+[ 9563.023120]  netlink_dump+0x17b/0x370
+[ 9563.023130]  netlink_recvmsg+0x2a4/0x480
+[ 9563.023140]  ____sys_recvmsg+0xa6/0x160
+[ 9563.023154]  ___sys_recvmsg+0x93/0xe0
+[ 9563.023169]  __sys_recvmsg+0x7e/0xd0
+[ 9563.023210]  do_syscall_64+0x4e/0x140
+[ 9563.023217]  entry_SYSCALL_64_after_hwframe+0x44/0xa9
+
+Signed-off-by: Markus Theil <markus.theil@tu-ilmenau.de>
+Link: https://lore.kernel.org/r/20191203180644.70653-1-markus.theil@tu-ilmenau.de
+[rewrite commit message]
+Signed-off-by: Johannes Berg <johannes.berg@intel.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/natsemi/sonic.h | 16 ++++++++--------
- 1 file changed, 8 insertions(+), 8 deletions(-)
+ net/mac80211/mesh_hwmp.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/drivers/net/ethernet/natsemi/sonic.h b/drivers/net/ethernet/natsemi/sonic.h
-index 1fd61d7f79bcb..a009a99c0e544 100644
---- a/drivers/net/ethernet/natsemi/sonic.h
-+++ b/drivers/net/ethernet/natsemi/sonic.h
-@@ -342,30 +342,30 @@ static void sonic_tx_timeout(struct net_device *dev);
-    as far as we can tell. */
- /* OpenBSD calls this "SWO".  I'd like to think that sonic_buf_put()
-    is a much better name. */
--static inline void sonic_buf_put(void* base, int bitmode,
-+static inline void sonic_buf_put(u16 *base, int bitmode,
- 				 int offset, __u16 val)
- {
- 	if (bitmode)
- #ifdef __BIG_ENDIAN
--		((__u16 *) base + (offset*2))[1] = val;
-+		__raw_writew(val, base + (offset * 2) + 1);
- #else
--		((__u16 *) base + (offset*2))[0] = val;
-+		__raw_writew(val, base + (offset * 2) + 0);
- #endif
- 	else
--	 	((__u16 *) base)[offset] = val;
-+		__raw_writew(val, base + (offset * 1) + 0);
- }
+diff --git a/net/mac80211/mesh_hwmp.c b/net/mac80211/mesh_hwmp.c
+index b0acb2961e805..5f4c228b82e56 100644
+--- a/net/mac80211/mesh_hwmp.c
++++ b/net/mac80211/mesh_hwmp.c
+@@ -326,6 +326,9 @@ static u32 airtime_link_metric_get(struct ieee80211_local *local,
+ 	u32 tx_time, estimated_retx;
+ 	u64 result;
  
--static inline __u16 sonic_buf_get(void* base, int bitmode,
-+static inline __u16 sonic_buf_get(u16 *base, int bitmode,
- 				  int offset)
- {
- 	if (bitmode)
- #ifdef __BIG_ENDIAN
--		return ((volatile __u16 *) base + (offset*2))[1];
-+		return __raw_readw(base + (offset * 2) + 1);
- #else
--		return ((volatile __u16 *) base + (offset*2))[0];
-+		return __raw_readw(base + (offset * 2) + 0);
- #endif
- 	else
--		return ((volatile __u16 *) base)[offset];
-+		return __raw_readw(base + (offset * 1) + 0);
- }
- 
- /* Inlines that you should actually use for reading/writing DMA buffers */
++	if (sta->mesh->plink_state != NL80211_PLINK_ESTAB)
++		return MAX_METRIC;
++
+ 	/* Try to get rate based on HW/SW RC algorithm.
+ 	 * Rate is returned in units of Kbps, correct this
+ 	 * to comply with airtime calculation units
 -- 
 2.20.1
 
