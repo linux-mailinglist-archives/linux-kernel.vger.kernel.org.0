@@ -2,105 +2,90 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3FD4C1502AF
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Feb 2020 09:35:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 54A111502BB
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Feb 2020 09:39:58 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727803AbgBCIfv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 3 Feb 2020 03:35:51 -0500
-Received: from lelv0142.ext.ti.com ([198.47.23.249]:34486 "EHLO
-        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726244AbgBCIfu (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Feb 2020 03:35:50 -0500
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id 0138ZcL0009609;
-        Mon, 3 Feb 2020 02:35:38 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1580718939;
-        bh=1PMMDpp6XSqR9WhBph6lQ2FGqfnPABFZhmuwEKRj1ms=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=r0TVpkHDXmlJkbqH8GwxZfFQyOsSIC6G9WUWLNdWiCveKA3CiusHofUW9YMXisBOO
-         /PPehsI1dJ+q5+r9YWpiBr3MzktC0+lsSDVfTzvcxJ206gOkEcSapKRCdPM4R/XUNI
-         Ux7wCHpd73tjGth0jEmJCE+Yi00jYdn2Dg/zvUlE=
-Received: from DFLE104.ent.ti.com (dfle104.ent.ti.com [10.64.6.25])
-        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 0138Zce1064333
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Mon, 3 Feb 2020 02:35:38 -0600
-Received: from DFLE113.ent.ti.com (10.64.6.34) by DFLE104.ent.ti.com
- (10.64.6.25) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Mon, 3 Feb
- 2020 02:35:38 -0600
-Received: from fllv0039.itg.ti.com (10.64.41.19) by DFLE113.ent.ti.com
- (10.64.6.34) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
- Frontend Transport; Mon, 3 Feb 2020 02:35:38 -0600
-Received: from [127.0.0.1] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by fllv0039.itg.ti.com (8.15.2/8.15.2) with ESMTP id 0138ZZGl119265;
-        Mon, 3 Feb 2020 02:35:36 -0600
-Subject: Re: [PATCH] firmware: ti_sci: Export devm_ti_sci_get_of_resource for
- modules
-To:     Peter Ujfalusi <peter.ujfalusi@ti.com>, <nm@ti.com>,
-        <ssantosh@kernel.org>, <santosh.shilimkar@oracle.com>
-CC:     <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <lokeshvutla@ti.com>,
-        <grygorii.strashko@ti.com>
-References: <20200122104031.15733-1-peter.ujfalusi@ti.com>
- <88323f5b-1732-f780-5a0d-754026997c2c@ti.com>
-From:   Tero Kristo <t-kristo@ti.com>
-Message-ID: <da988700-d7de-ae81-01d2-6bb5d9fa5985@ti.com>
-Date:   Mon, 3 Feb 2020 10:35:35 +0200
+        id S1727832AbgBCIjz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 3 Feb 2020 03:39:55 -0500
+Received: from mail5.windriver.com ([192.103.53.11]:45936 "EHLO mail5.wrs.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725999AbgBCIjy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Feb 2020 03:39:54 -0500
+Received: from ALA-HCA.corp.ad.wrs.com (ala-hca.corp.ad.wrs.com [147.11.189.40])
+        by mail5.wrs.com (8.15.2/8.15.2) with ESMTPS id 0138cAeT031609
+        (version=TLSv1 cipher=AES256-SHA bits=256 verify=FAIL);
+        Mon, 3 Feb 2020 00:38:20 -0800
+Received: from [128.224.162.199] (128.224.162.199) by ALA-HCA.corp.ad.wrs.com
+ (147.11.189.50) with Microsoft SMTP Server id 14.3.468.0; Mon, 3 Feb 2020
+ 00:37:59 -0800
+Subject: Re: [PATCH] ubi: fix memory leak from ubi->fm_anchor
+To:     <richard@nod.at>, <miquel.raynal@bootlin.com>, <vigneshr@ti.com>
+CC:     <linux-mtd@lists.infradead.org>, <linux-kernel@vger.kernel.org>
+References: <20200114093305.666-1-quanyang.wang@windriver.com>
+From:   Quanyang Wang <quanyang.wang@windriver.com>
+Message-ID: <415718c7-4c55-fb5d-0b10-ad5323daa5a0@windriver.com>
+Date:   Mon, 3 Feb 2020 16:37:57 +0800
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.4.1
 MIME-Version: 1.0
-In-Reply-To: <88323f5b-1732-f780-5a0d-754026997c2c@ti.com>
+In-Reply-To: <20200114093305.666-1-quanyang.wang@windriver.com>
 Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: 7bit
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 03/02/2020 10:10, Peter Ujfalusi wrote:
-> Hi,
-> 
-> On 22/01/2020 12.40, Peter Ujfalusi wrote:
->> Allow devm_ti_sci_get_of_resource() to be usable from modules.
+Ping?
 
-This one looks fine to me, so:
-
-Acked-by: Tero Kristo <t-kristo@ti.com>
-
-> 
-> I would really appreciate if ti_sci maintainers would spare some time on
-> this and the other two patch ;)
-> 
-> https://lore.kernel.org/lkml/20200122104044.15837-1-peter.ujfalusi@ti.com/
-> https://lore.kernel.org/lkml/20200122104009.15622-1-peter.ujfalusi@ti.com/
-> 
-> - Péter
-> 
->> Signed-off-by: Peter Ujfalusi <peter.ujfalusi@ti.com>
->> ---
->>   drivers/firmware/ti_sci.c | 1 +
->>   1 file changed, 1 insertion(+)
->>
->> diff --git a/drivers/firmware/ti_sci.c b/drivers/firmware/ti_sci.c
->> index f13e4a96f3b7..3d8241cb6921 100644
->> --- a/drivers/firmware/ti_sci.c
->> +++ b/drivers/firmware/ti_sci.c
->> @@ -3332,6 +3332,7 @@ devm_ti_sci_get_of_resource(const struct ti_sci_handle *handle,
->>   
->>   	return ERR_PTR(-EINVAL);
->>   }
->> +EXPORT_SYMBOL_GPL(devm_ti_sci_get_of_resource);
->>   
->>   static int tisci_reboot_handler(struct notifier_block *nb, unsigned long mode,
->>   				void *cmd)
->>
-> 
-> 
-
---
-Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki. Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
+On 1/14/20 5:33 PM, quanyang.wang@windriver.com wrote:
+> From: Quanyang Wang <quanyang.wang@windriver.com>
+>
+> Some ubi_wl_entry are allocated in erase_aeb() and one of them is
+> assigned to ubi->fm_anchor in __erase_worker(). And it should be freed
+> like others which are freed in tree_destroy(). Otherwise, it will
+> cause a memory leak:
+>
+> unreferenced object 0xbc094318 (size 24):
+>    comm "ubiattach", pid 491, jiffies 4294954015 (age 420.110s)
+>    hex dump (first 24 bytes):
+>      30 43 09 bc 00 00 00 00 00 00 00 00 01 00 00 00  0C..............
+>      02 00 00 00 04 00 00 00                          ........
+>    backtrace:
+>      [<6c2d5089>] erase_aeb+0x28/0xc8
+>      [<a1c68fb1>] ubi_wl_init+0x1d8/0x4a8
+>      [<d4f408f8>] ubi_attach+0xffc/0x10d0
+>      [<add3b5d8>] ubi_attach_mtd_dev+0x5b4/0x9fc
+>      [<d375a11c>] ctrl_cdev_ioctl+0xb8/0x1d8
+>      [<72b250f2>] vfs_ioctl+0x28/0x3c
+>      [<b80095d7>] do_vfs_ioctl+0xb0/0x798
+>      [<bf9ef69e>] ksys_ioctl+0x58/0x74
+>      [<5355bdbe>] ret_fast_syscall+0x0/0x54
+>      [<90c6c3ca>] 0x7eadf854
+>
+> Signed-off-by: Quanyang Wang <quanyang.wang@windriver.com>
+> ---
+>   drivers/mtd/ubi/wl.c | 2 ++
+>   1 file changed, 2 insertions(+)
+>
+> diff --git a/drivers/mtd/ubi/wl.c b/drivers/mtd/ubi/wl.c
+> index 5d77a38dba54..a5e9d1e4dc34 100644
+> --- a/drivers/mtd/ubi/wl.c
+> +++ b/drivers/mtd/ubi/wl.c
+> @@ -1885,6 +1885,7 @@ int ubi_wl_init(struct ubi_device *ubi, struct ubi_attach_info *ai)
+>   	tree_destroy(ubi, &ubi->used);
+>   	tree_destroy(ubi, &ubi->free);
+>   	tree_destroy(ubi, &ubi->scrub);
+> +	wl_entry_destroy(ubi, ubi->fm_anchor);
+>   	kfree(ubi->lookuptbl);
+>   	return err;
+>   }
+> @@ -1920,6 +1921,7 @@ void ubi_wl_close(struct ubi_device *ubi)
+>   	tree_destroy(ubi, &ubi->erroneous);
+>   	tree_destroy(ubi, &ubi->free);
+>   	tree_destroy(ubi, &ubi->scrub);
+> +	wl_entry_destroy(ubi, ubi->fm_anchor);
+>   	kfree(ubi->lookuptbl);
+>   }
+>   
