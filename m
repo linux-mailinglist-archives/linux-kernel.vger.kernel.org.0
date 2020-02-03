@@ -2,40 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 91E67150AD4
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Feb 2020 17:21:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1B36B150B4D
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Feb 2020 17:26:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728573AbgBCQV0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 3 Feb 2020 11:21:26 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33280 "EHLO mail.kernel.org"
+        id S1729175AbgBCQ02 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 3 Feb 2020 11:26:28 -0500
+Received: from mail.kernel.org ([198.145.29.99]:37356 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727452AbgBCQVY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Feb 2020 11:21:24 -0500
+        id S1729113AbgBCQ0W (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Feb 2020 11:26:22 -0500
 Received: from localhost (unknown [104.132.45.99])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3A5572080D;
-        Mon,  3 Feb 2020 16:21:23 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D9B7B2051A;
+        Mon,  3 Feb 2020 16:26:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1580746883;
-        bh=3LwzmNm6X4itgSMvedQDaPLnD9C+5se1eBBOfqAuUsw=;
+        s=default; t=1580747181;
+        bh=l6cloJhamHOBRbigpyNLbKO8rrDSvstEKce5/7sOMOc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=myrUyANu9tAwQ8Bz4gkldf88fTs+vvaHgoXeWKy3F0Q08aBMfj5tVViu0xgt3tO/5
-         SpqOrXbW1Y4zaazmkunHOKd9JmoDCZEcAbYlHUTQ4JRK8uyzcFX0Hd9wMlXcqPPkyb
-         dhOWznZwNYYYBWdh3IajTE2gstO1R7TzSjp5okBs=
+        b=fRSxOZgox9zl6eFZ9m4x4DRwGdj2ukeZ7wk+gvEf0uofDWsLCrkF3DZi8QU1XoG/k
+         Zqhsi3lOJ9jq7SSqMBBt6rd9IU0P9Xrbybun/qK9PLoLLAS6Js9UsCWKg7CXPhmQ4R
+         Whnm3ErWAIjZ1B2hDkThYAIMcZRqQFqUkRTEA9AU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Stan Johnson <userm57@yahoo.com>,
-        Finn Thain <fthain@telegraphics.com.au>,
-        "David S. Miller" <davem@davemloft.net>,
+        stable@vger.kernel.org, Suman Anna <s-anna@ti.com>,
+        Dave Gerlach <d-gerlach@ti.com>,
+        Santosh Shilimkar <ssantosh@kernel.org>,
+        Tony Lindgren <tony@atomide.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.4 47/53] net/sonic: Add mutual exclusion for accessing shared state
+Subject: [PATCH 4.9 43/68] soc: ti: wkup_m3_ipc: Fix race condition with rproc_boot
 Date:   Mon,  3 Feb 2020 16:19:39 +0000
-Message-Id: <20200203161911.160014666@linuxfoundation.org>
+Message-Id: <20200203161912.034960468@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200203161902.714326084@linuxfoundation.org>
-References: <20200203161902.714326084@linuxfoundation.org>
+In-Reply-To: <20200203161904.705434837@linuxfoundation.org>
+References: <20200203161904.705434837@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,156 +46,53 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Finn Thain <fthain@telegraphics.com.au>
+From: Dave Gerlach <d-gerlach@ti.com>
 
-[ Upstream commit 865ad2f2201dc18685ba2686f13217f8b3a9c52c ]
+[ Upstream commit 03729cfa0d543bc996bf959e762ec999afc8f3d2 ]
 
-The netif_stop_queue() call in sonic_send_packet() races with the
-netif_wake_queue() call in sonic_interrupt(). This causes issues
-like "NETDEV WATCHDOG: eth0 (macsonic): transmit queue 0 timed out".
-Fix this by disabling interrupts when accessing tx_skb[] and next_tx.
-Update a comment to clarify the synchronization properties.
+Any user of wkup_m3_ipc calls wkup_m3_ipc_get to get a handle and this
+checks the value of the static variable m3_ipc_state to see if the
+wkup_m3 is ready. Currently this is populated during probe before
+rproc_boot has been called, meaning there is a window of time that
+wkup_m3_ipc_get can return a valid handle but the wkup_m3 itself is not
+ready, leading to invalid IPC calls to the wkup_m3 and system
+instability.
 
-Fixes: efcce839360f ("[PATCH] macsonic/jazzsonic network drivers update")
-Tested-by: Stan Johnson <userm57@yahoo.com>
-Signed-off-by: Finn Thain <fthain@telegraphics.com.au>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+To avoid this, move the population of the m3_ipc_state variable until
+after rproc_boot has succeeded to guarantee a valid and usable handle
+is always returned.
+
+Reported-by: Suman Anna <s-anna@ti.com>
+Signed-off-by: Dave Gerlach <d-gerlach@ti.com>
+Acked-by: Santosh Shilimkar <ssantosh@kernel.org>
+Signed-off-by: Tony Lindgren <tony@atomide.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/natsemi/sonic.c | 49 ++++++++++++++++++++--------
- drivers/net/ethernet/natsemi/sonic.h |  1 +
- 2 files changed, 36 insertions(+), 14 deletions(-)
+ drivers/soc/ti/wkup_m3_ipc.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/net/ethernet/natsemi/sonic.c b/drivers/net/ethernet/natsemi/sonic.c
-index 6679005782499..0374e834f865e 100644
---- a/drivers/net/ethernet/natsemi/sonic.c
-+++ b/drivers/net/ethernet/natsemi/sonic.c
-@@ -50,6 +50,8 @@ static int sonic_open(struct net_device *dev)
- 	if (sonic_debug > 2)
- 		printk("sonic_open: initializing sonic driver.\n");
+diff --git a/drivers/soc/ti/wkup_m3_ipc.c b/drivers/soc/ti/wkup_m3_ipc.c
+index 5bb376009d98b..fc33bfdc957cc 100644
+--- a/drivers/soc/ti/wkup_m3_ipc.c
++++ b/drivers/soc/ti/wkup_m3_ipc.c
+@@ -377,6 +377,8 @@ static void wkup_m3_rproc_boot_thread(struct wkup_m3_ipc *m3_ipc)
+ 	ret = rproc_boot(m3_ipc->rproc);
+ 	if (ret)
+ 		dev_err(dev, "rproc_boot failed\n");
++	else
++		m3_ipc_state = m3_ipc;
  
-+	spin_lock_init(&lp->lock);
-+
- 	for (i = 0; i < SONIC_NUM_RRS; i++) {
- 		struct sk_buff *skb = netdev_alloc_skb(dev, SONIC_RBSIZE + 2);
- 		if (skb == NULL) {
-@@ -194,8 +196,6 @@ static void sonic_tx_timeout(struct net_device *dev)
-  *   wake the tx queue
-  * Concurrently with all of this, the SONIC is potentially writing to
-  * the status flags of the TDs.
-- * Until some mutual exclusion is added, this code will not work with SMP. However,
-- * MIPS Jazz machines and m68k Macs were all uni-processor machines.
-  */
- 
- static int sonic_send_packet(struct sk_buff *skb, struct net_device *dev)
-@@ -203,7 +203,8 @@ static int sonic_send_packet(struct sk_buff *skb, struct net_device *dev)
- 	struct sonic_local *lp = netdev_priv(dev);
- 	dma_addr_t laddr;
- 	int length;
--	int entry = lp->next_tx;
-+	int entry;
-+	unsigned long flags;
- 
- 	if (sonic_debug > 2)
- 		printk("sonic_send_packet: skb=%p, dev=%p\n", skb, dev);
-@@ -226,6 +227,10 @@ static int sonic_send_packet(struct sk_buff *skb, struct net_device *dev)
- 		return NETDEV_TX_OK;
+ 	do_exit(0);
+ }
+@@ -463,8 +465,6 @@ static int wkup_m3_ipc_probe(struct platform_device *pdev)
+ 		goto err_put_rproc;
  	}
  
-+	spin_lock_irqsave(&lp->lock, flags);
-+
-+	entry = lp->next_tx;
-+
- 	sonic_tda_put(dev, entry, SONIC_TD_STATUS, 0);       /* clear status */
- 	sonic_tda_put(dev, entry, SONIC_TD_FRAG_COUNT, 1);   /* single fragment */
- 	sonic_tda_put(dev, entry, SONIC_TD_PKTSIZE, length); /* length of packet */
-@@ -235,10 +240,6 @@ static int sonic_send_packet(struct sk_buff *skb, struct net_device *dev)
- 	sonic_tda_put(dev, entry, SONIC_TD_LINK,
- 		sonic_tda_get(dev, entry, SONIC_TD_LINK) | SONIC_EOL);
+-	m3_ipc_state = m3_ipc;
+-
+ 	return 0;
  
--	/*
--	 * Must set tx_skb[entry] only after clearing status, and
--	 * before clearing EOL and before stopping queue
--	 */
- 	wmb();
- 	lp->tx_len[entry] = length;
- 	lp->tx_laddr[entry] = laddr;
-@@ -263,6 +264,8 @@ static int sonic_send_packet(struct sk_buff *skb, struct net_device *dev)
- 
- 	SONIC_WRITE(SONIC_CMD, SONIC_CR_TXP);
- 
-+	spin_unlock_irqrestore(&lp->lock, flags);
-+
- 	return NETDEV_TX_OK;
- }
- 
-@@ -275,9 +278,21 @@ static irqreturn_t sonic_interrupt(int irq, void *dev_id)
- 	struct net_device *dev = dev_id;
- 	struct sonic_local *lp = netdev_priv(dev);
- 	int status;
-+	unsigned long flags;
-+
-+	/* The lock has two purposes. Firstly, it synchronizes sonic_interrupt()
-+	 * with sonic_send_packet() so that the two functions can share state.
-+	 * Secondly, it makes sonic_interrupt() re-entrant, as that is required
-+	 * by macsonic which must use two IRQs with different priority levels.
-+	 */
-+	spin_lock_irqsave(&lp->lock, flags);
-+
-+	status = SONIC_READ(SONIC_ISR) & SONIC_IMR_DEFAULT;
-+	if (!status) {
-+		spin_unlock_irqrestore(&lp->lock, flags);
- 
--	if (!(status = SONIC_READ(SONIC_ISR) & SONIC_IMR_DEFAULT))
- 		return IRQ_NONE;
-+	}
- 
- 	do {
- 		if (status & SONIC_INT_PKTRX) {
-@@ -292,11 +307,12 @@ static irqreturn_t sonic_interrupt(int irq, void *dev_id)
- 			int td_status;
- 			int freed_some = 0;
- 
--			/* At this point, cur_tx is the index of a TD that is one of:
--			 *   unallocated/freed                          (status set   & tx_skb[entry] clear)
--			 *   allocated and sent                         (status set   & tx_skb[entry] set  )
--			 *   allocated and not yet sent                 (status clear & tx_skb[entry] set  )
--			 *   still being allocated by sonic_send_packet (status clear & tx_skb[entry] clear)
-+			/* The state of a Transmit Descriptor may be inferred
-+			 * from { tx_skb[entry], td_status } as follows.
-+			 * { clear, clear } => the TD has never been used
-+			 * { set,   clear } => the TD was handed to SONIC
-+			 * { set,   set   } => the TD was handed back
-+			 * { clear, set   } => the TD is available for re-use
- 			 */
- 
- 			if (sonic_debug > 2)
-@@ -398,7 +414,12 @@ static irqreturn_t sonic_interrupt(int irq, void *dev_id)
- 		/* load CAM done */
- 		if (status & SONIC_INT_LCD)
- 			SONIC_WRITE(SONIC_ISR, SONIC_INT_LCD); /* clear the interrupt */
--	} while((status = SONIC_READ(SONIC_ISR) & SONIC_IMR_DEFAULT));
-+
-+		status = SONIC_READ(SONIC_ISR) & SONIC_IMR_DEFAULT;
-+	} while (status);
-+
-+	spin_unlock_irqrestore(&lp->lock, flags);
-+
- 	return IRQ_HANDLED;
- }
- 
-diff --git a/drivers/net/ethernet/natsemi/sonic.h b/drivers/net/ethernet/natsemi/sonic.h
-index 07091dd27e5df..1fd61d7f79bcb 100644
---- a/drivers/net/ethernet/natsemi/sonic.h
-+++ b/drivers/net/ethernet/natsemi/sonic.h
-@@ -320,6 +320,7 @@ struct sonic_local {
- 	unsigned int next_tx;          /* next free TD */
- 	struct device *device;         /* generic device */
- 	struct net_device_stats stats;
-+	spinlock_t lock;
- };
- 
- #define TX_TIMEOUT (3 * HZ)
+ err_put_rproc:
 -- 
 2.20.1
 
