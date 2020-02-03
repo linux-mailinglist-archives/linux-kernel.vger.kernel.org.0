@@ -2,113 +2,92 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 90424151010
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Feb 2020 20:02:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 07B70151015
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Feb 2020 20:04:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727080AbgBCTCm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 3 Feb 2020 14:02:42 -0500
-Received: from mail-vs1-f65.google.com ([209.85.217.65]:46193 "EHLO
-        mail-vs1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726018AbgBCTCm (ORCPT
+        id S1727168AbgBCTEL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 3 Feb 2020 14:04:11 -0500
+Received: from smtprelay0024.hostedemail.com ([216.40.44.24]:50008 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727073AbgBCTEL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Feb 2020 14:02:42 -0500
-Received: by mail-vs1-f65.google.com with SMTP id t12so9638196vso.13
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Feb 2020 11:02:40 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=H92Ceqpm5PG9xicOBj3pwciuaSxJbU1fy1wmWiFsutU=;
-        b=YSoFqclOI7dib/E7gGqaXKXp2CnNGDGmj1obojZ3zyFNN+d1a8M5OGDVct9g5m+3Qc
-         EVBG+5Oyeo8eOzC0EfMf7EgxD/qD79HxaUgerNMIkAWrzGB9FyIBvFUvs6a8ufMFh0mC
-         01nYZLM4yzr5u23teE/ErNPhUeXbQgMLyoAMM=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=H92Ceqpm5PG9xicOBj3pwciuaSxJbU1fy1wmWiFsutU=;
-        b=JTCRoy0GS3WykUQ6ChfYcwY6FOZZUzujcj2C/Pf8QqrhjBmjm5s0LYmvY8zEYlPf+C
-         IXTawY2MRiC1HYFDX8aaAe6+bSlZ7gVxgdPutvdpLuKSXJlTxVM8pMzzeUzh1vnFFtux
-         vbo9lo5bmvuC8cySwC9JQpgWCjTPCSeEc0d79+206K2JjfYngcHqAO67bo7imS0236sh
-         jkX2SBFvwkx2sl2yjOoj/f4s0fj+bwb1FRdbimlsW+wStogrreA3HzwwUhcctym03TkQ
-         svILT8pUQhQgDew9ndkW0IpO4dZONvTEi5A57GGRPBUBEe94EkxROxX062B4peBGcX5I
-         m5tA==
-X-Gm-Message-State: APjAAAWP9BV4fwDahC12zNIg/rbzW0HqplijapzllchWYyqK+YO52T+i
-        xOeLoT0BTzU7j80aR5o6MrKz5cSLNVY=
-X-Google-Smtp-Source: APXvYqzOCLEY5867eOHecB5zAEebQZYACsIKjjQRbQsHgtoaumN60I1CpKkhP9GFw3kY0nztxMkpVg==
-X-Received: by 2002:a05:6102:3235:: with SMTP id x21mr14977140vsf.8.1580756558476;
-        Mon, 03 Feb 2020 11:02:38 -0800 (PST)
-Received: from mail-vs1-f48.google.com (mail-vs1-f48.google.com. [209.85.217.48])
-        by smtp.gmail.com with ESMTPSA id l125sm2882854vke.24.2020.02.03.11.02.37
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 03 Feb 2020 11:02:37 -0800 (PST)
-Received: by mail-vs1-f48.google.com with SMTP id g15so9693432vsf.1
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Feb 2020 11:02:37 -0800 (PST)
-X-Received: by 2002:a67:fa1a:: with SMTP id i26mr15830765vsq.169.1580756556608;
- Mon, 03 Feb 2020 11:02:36 -0800 (PST)
+        Mon, 3 Feb 2020 14:04:11 -0500
+Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
+        by smtprelay03.hostedemail.com (Postfix) with ESMTP id 94C4D8383F91;
+        Mon,  3 Feb 2020 19:04:09 +0000 (UTC)
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,:::::::::::::::::::,RULES_HIT:41:355:379:599:800:960:973:982:988:989:1260:1277:1311:1313:1314:1345:1359:1437:1515:1516:1518:1534:1541:1593:1594:1711:1730:1747:1777:1792:2393:2559:2562:2828:2892:2894:3138:3139:3140:3141:3142:3353:3622:3865:3866:3867:3868:3870:3871:3872:3873:3874:4031:4321:5007:6119:7903:9040:10004:10400:11232:11658:11914:12043:12048:12296:12297:12740:12760:12895:13069:13095:13311:13357:13439:14659:14721:21080:21212:21324:21433:21451:21611:21627:21740:30054:30070:30075:30091,0,RBL:none,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:,MSBL:0,DNSBL:none,Custom_rules:0:0:0,LFtime:2,LUA_SUMMARY:none
+X-HE-Tag: cloth99_5e4a75d69f62c
+X-Filterd-Recvd-Size: 3039
+Received: from XPS-9350.home (unknown [47.151.135.224])
+        (Authenticated sender: joe@perches.com)
+        by omf01.hostedemail.com (Postfix) with ESMTPA;
+        Mon,  3 Feb 2020 19:04:07 +0000 (UTC)
+Message-ID: <94cf0aee8fd8b78718e252488458cfea105c0469.camel@perches.com>
+Subject: Re: [PATCH] security/integrity: Include __func__ in messages for
+ easier debug
+From:   Joe Perches <joe@perches.com>
+To:     Shuah Khan <skhan@linuxfoundation.org>,
+        Mimi Zohar <zohar@linux.ibm.com>, jmorris@namei.org,
+        serge@hallyn.com, mpe@ellerman.id.au, erichte@linux.ibm.com,
+        nayna@linux.ibm.com, yuehaibing@huawei.com
+Cc:     linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Date:   Mon, 03 Feb 2020 11:02:57 -0800
+In-Reply-To: <475ab05c-300b-fdbe-5de0-6fce8d1a360d@linuxfoundation.org>
+References: <20200130020129.15328-1-skhan@linuxfoundation.org>
+         <ab2e19123cc15e3f8039b0d36e6ebae385db700e.camel@perches.com>
+         <1580736077.5585.4.camel@linux.ibm.com>
+         <475ab05c-300b-fdbe-5de0-6fce8d1a360d@linuxfoundation.org>
+Content-Type: text/plain; charset="ISO-8859-1"
+User-Agent: Evolution 3.34.1-2 
 MIME-Version: 1.0
-References: <20200121183748.68662-1-swboyd@chromium.org> <CACRpkdbgfNuJCgOWMBGwf1FoF+9cpQACnGH7Uon5Y6X+kN+x_w@mail.gmail.com>
- <5e29f186.1c69fb81.61d8.83b9@mx.google.com>
-In-Reply-To: <5e29f186.1c69fb81.61d8.83b9@mx.google.com>
-From:   Doug Anderson <dianders@chromium.org>
-Date:   Mon, 3 Feb 2020 11:02:24 -0800
-X-Gmail-Original-Message-ID: <CAD=FV=W=NjMf5UqpSaY-VZfE013Ut=qe2EgSY2UErXM3eqpsGQ@mail.gmail.com>
-Message-ID: <CAD=FV=W=NjMf5UqpSaY-VZfE013Ut=qe2EgSY2UErXM3eqpsGQ@mail.gmail.com>
-Subject: Re: [PATCH] spmi: pmic-arb: Set lockdep class for hierarchical irq domains
-To:     Stephen Boyd <swboyd@chromium.org>
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        MSM <linux-arm-msm@vger.kernel.org>,
-        "open list:GPIO SUBSYSTEM <linux-gpio@vger.kernel.org>, Douglas Anderson
-        <dianders@chromium.org>, Brian Masney <masneyb@onstation.org>, Lina Iyer
-        <ilina@codeaurora.org>, Maulik Shah <mkshah@codeaurora.org>, Bjorn
-        Andersson" <bjorn.andersson@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+On Mon, 2020-02-03 at 11:55 -0700, Shuah Khan wrote:
+> On 2/3/20 6:21 AM, Mimi Zohar wrote:
+> > On Wed, 2020-01-29 at 19:08 -0800, Joe Perches wrote:
+> > > On Wed, 2020-01-29 at 19:01 -0700, Shuah Khan wrote:
+> > > > Change messages to messages to make it easier to debug. The following
+> > > > error message isn't informative enough to figure out what failed.
+> > > > Change messages to include function information.
+> > > > 
+> > > > Signed-off-by: Shuah Khan <skhan@linuxfoundation.org>
+> > > > ---
+> > > >   .../integrity/platform_certs/load_powerpc.c     | 14 ++++++++------
+> > > >   security/integrity/platform_certs/load_uefi.c   | 17 ++++++++++-------
+> > > >   2 files changed, 18 insertions(+), 13 deletions(-)
+> > > > 
+> > > > diff --git a/security/integrity/platform_certs/load_powerpc.c b/security/integrity/platform_certs/load_powerpc.c
+> > > 
+> > > perhaps instead add #define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
+> > > so all the pr_<level> logging is more specific.
+> > > 
+> > > This would prefix all pr_<level> output with "integrity: "
+> 
+> Joe! Sorry for the delay in getting back to you.
+> 
+> > Agreed.  Joe, could you post a patch with a proper patch description
+> > for this?
+> > 
+> 
+> I have been looking into this a bit more and there is an opportunity
+> here to add #define pr_fmt(fmt) KBUILD_MODNAME ": " fmt to integrity.h
+> and get rid of duplicate defines.
 
-On Thu, Jan 23, 2020 at 11:18 AM Stephen Boyd <swboyd@chromium.org> wrote:
->
-> Quoting Linus Walleij (2020-01-23 07:29:31)
-> > On Tue, Jan 21, 2020 at 7:37 PM Stephen Boyd <swboyd@chromium.org> wrote:
-> > >   kobj_attr_store+0x14/0x24
-> > >   sysfs_kf_write+0x4c/0x64
-> > >   kernfs_fop_write+0x15c/0x1fc
-> > >   __vfs_write+0x54/0x18c
-> > >   vfs_write+0xe4/0x1a4
-> > >   ksys_write+0x7c/0xe4
-> > >   __arm64_sys_write+0x20/0x2c
-> > >   el0_svc_common+0xa8/0x160
-> > >   el0_svc_handler+0x7c/0x98
-> > >   el0_svc+0x8/0xc
-> > >
-> > > Set a lockdep class when we map the irq so that irq_set_wake() doesn't
-> > > warn about a lockdep bug that doesn't exist.
-> > >
-> > > Fixes: 12a9eeaebba3 ("spmi: pmic-arb: convert to v2 irq interfaces to support hierarchical IRQ chips")
-> > > Cc: Douglas Anderson <dianders@chromium.org>
-> > > Cc: Brian Masney <masneyb@onstation.org>
-> > > Cc: Lina Iyer <ilina@codeaurora.org>
-> > > Cc: Maulik Shah <mkshah@codeaurora.org>
-> > > Cc: Bjorn Andersson <bjorn.andersson@linaro.org>
-> > > Signed-off-by: Stephen Boyd <swboyd@chromium.org>
-> >
-> > LGTM
-> > Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
->
-> Thanks. I was hoping you would apply it given that the commit it's
-> fixing was applied by you. I can send it to Gregkh or have some qcom
-> person pick it up though if you prefer.
+That might work but:
 
-It appears that the commit this is Fixing is now in Linus's tree but
-Stephen's fix is still nowhere to be found.  Any update on what the
-plan is?
+$ git grep --name-only 'integrity\.h' security | xargs grep pr_fmt
+security/integrity/digsig.c:#define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
+security/integrity/digsig_asymmetric.c:#define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
+security/integrity/evm/evm_main.c:#define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
+security/security.c:#define pr_fmt(fmt) "LSM: " fmt
 
-Thanks!
+Here security.c already uses "LSM: "
 
--Doug
+Does anyone care about the LSM: prefix?
+
+
