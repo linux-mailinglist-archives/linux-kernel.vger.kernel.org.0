@@ -2,38 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E1A56150B81
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Feb 2020 17:28:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2A7F0150B51
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Feb 2020 17:26:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729528AbgBCQ2J (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 3 Feb 2020 11:28:09 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39402 "EHLO mail.kernel.org"
+        id S1729128AbgBCQ0d (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 3 Feb 2020 11:26:33 -0500
+Received: from mail.kernel.org ([198.145.29.99]:37476 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729500AbgBCQ15 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Feb 2020 11:27:57 -0500
+        id S1729180AbgBCQ03 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Feb 2020 11:26:29 -0500
 Received: from localhost (unknown [104.132.45.99])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E026620CC7;
-        Mon,  3 Feb 2020 16:27:56 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 332732051A;
+        Mon,  3 Feb 2020 16:26:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1580747277;
-        bh=12c1Cba7k9vHIdxb59e3M30I8y9BZKq3PODOf2RGwDs=;
+        s=default; t=1580747188;
+        bh=biqmE0tUJGFWbbL8Rgzt39uwI0/WVF4cK/SxguVyDuk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=x0RfcUB46xyYIInTac6y/RNLo8VZG0ulCu23pRkF0ZC2OvV1Bk8N30EayKRj28ZIh
-         Y+a6JUUu8lrX+NztA13WzL0WzPRGilLezPtOR+FqboQ+K2c5pPJxFDhOVd8QteiDsu
-         URjI/Kfzb5BaIJR1eN4LdP8L0ZEz5OWHZiiNYpvA=
+        b=TcO6DU3I+Mlk4HbveBQBA/MjUZHgedr03Ka83zZmmJsG/iZdc/p5UuG7/ezfpHDYC
+         xOcL2ECh1h1cYEENNcZgI9dWesSm+I6zcqYf3Yh3c9u9LdseVnO2VPr9Paw6MrZjgR
+         EmGdkoq0wuAg9RcJnjCPBTwVkgnaKYG4NqD/PCAs=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Johan Hovold <johan@kernel.org>,
-        Kalle Valo <kvalo@codeaurora.org>
-Subject: [PATCH 4.14 17/89] zd1211rw: fix storage endpoint lookup
-Date:   Mon,  3 Feb 2020 16:19:02 +0000
-Message-Id: <20200203161919.210447108@linuxfoundation.org>
+        stable@vger.kernel.org, Andrey Shvetsov <andrey.shvetsov@k2l.de>
+Subject: [PATCH 4.9 07/68] staging: most: net: fix buffer overflow
+Date:   Mon,  3 Feb 2020 16:19:03 +0000
+Message-Id: <20200203161906.087442296@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200203161916.847439465@linuxfoundation.org>
-References: <20200203161916.847439465@linuxfoundation.org>
+In-Reply-To: <20200203161904.705434837@linuxfoundation.org>
+References: <20200203161904.705434837@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,37 +42,58 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Johan Hovold <johan@kernel.org>
+From: Andrey Shvetsov <andrey.shvetsov@k2l.de>
 
-commit 2d68bb2687abb747558b933e80845ff31570a49c upstream.
+commit 4d1356ac12f4d5180d0df345d85ff0ee42b89c72 upstream.
 
-Make sure to use the current alternate setting when verifying the
-storage interface descriptors to avoid submitting an URB to an invalid
-endpoint.
+If the length of the socket buffer is 0xFFFFFFFF (max size for an
+unsigned int), then payload_len becomes 0xFFFFFFF1 after subtracting 14
+(ETH_HLEN).  Then, mdp_len is set to payload_len + 16 (MDP_HDR_LEN)
+which overflows and results in a value of 2.  These values for
+payload_len and mdp_len will pass current buffer size checks.
 
-Failing to do so could cause the driver to misbehave or trigger a WARN()
-in usb_submit_urb() that kernels with panic_on_warn set would choke on.
+This patch checks if derived from skb->len sum may overflow.
 
-Fixes: a1030e92c150 ("[PATCH] zd1211rw: Convert installer CDROM device into WLAN device")
-Cc: stable <stable@vger.kernel.org>     # 2.6.19
-Signed-off-by: Johan Hovold <johan@kernel.org>
-Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
+The check is based on the following idea:
+
+For any `unsigned V1, V2` and derived `unsigned SUM = V1 + V2`,
+`V1 + V2` overflows iif `SUM < V1`.
+
+Reported-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Signed-off-by: Andrey Shvetsov <andrey.shvetsov@k2l.de>
+Cc: stable <stable@vger.kernel.org>
+Link: https://lore.kernel.org/r/20200116172238.6046-1-andrey.shvetsov@microchip.com
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/net/wireless/zydas/zd1211rw/zd_usb.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/staging/most/aim-network/networking.c |   10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
---- a/drivers/net/wireless/zydas/zd1211rw/zd_usb.c
-+++ b/drivers/net/wireless/zydas/zd1211rw/zd_usb.c
-@@ -1272,7 +1272,7 @@ static void print_id(struct usb_device *
- static int eject_installer(struct usb_interface *intf)
- {
- 	struct usb_device *udev = interface_to_usbdev(intf);
--	struct usb_host_interface *iface_desc = &intf->altsetting[0];
-+	struct usb_host_interface *iface_desc = intf->cur_altsetting;
- 	struct usb_endpoint_descriptor *endpoint;
- 	unsigned char *cmd;
- 	u8 bulk_out_ep;
+--- a/drivers/staging/most/aim-network/networking.c
++++ b/drivers/staging/most/aim-network/networking.c
+@@ -87,6 +87,11 @@ static int skb_to_mamac(const struct sk_
+ 	unsigned int payload_len = skb->len - ETH_HLEN;
+ 	unsigned int mdp_len = payload_len + MDP_HDR_LEN;
+ 
++	if (mdp_len < skb->len) {
++		pr_err("drop: too large packet! (%u)\n", skb->len);
++		return -EINVAL;
++	}
++
+ 	if (mbo->buffer_length < mdp_len) {
+ 		pr_err("drop: too small buffer! (%d for %d)\n",
+ 		       mbo->buffer_length, mdp_len);
+@@ -134,6 +139,11 @@ static int skb_to_mep(const struct sk_bu
+ 	u8 *buff = mbo->virt_address;
+ 	unsigned int mep_len = skb->len + MEP_HDR_LEN;
+ 
++	if (mep_len < skb->len) {
++		pr_err("drop: too large packet! (%u)\n", skb->len);
++		return -EINVAL;
++	}
++
+ 	if (mbo->buffer_length < mep_len) {
+ 		pr_err("drop: too small buffer! (%d for %d)\n",
+ 		       mbo->buffer_length, mep_len);
 
 
