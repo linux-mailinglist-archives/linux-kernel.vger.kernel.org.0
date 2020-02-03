@@ -2,96 +2,65 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 316A1151204
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Feb 2020 22:43:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B05931511E3
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Feb 2020 22:37:26 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727226AbgBCVnK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 3 Feb 2020 16:43:10 -0500
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:34441 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726474AbgBCVnK (ORCPT
+        id S1727072AbgBCVhW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 3 Feb 2020 16:37:22 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:58248 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726278AbgBCVhW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Feb 2020 16:43:10 -0500
-Received: by mail-pf1-f193.google.com with SMTP id i6so8286789pfc.1;
-        Mon, 03 Feb 2020 13:43:10 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=4utvhxtA7zvr4Iu+DFpm/vNXzWR8TFP5LHSqSIJBCWo=;
-        b=AjF/en/PwCT4W2EHQ5+3AviOlyIo9uYNWYWol1vasV9sf8IdjnbhX0VVoyzxvrEf/D
-         GFZdJygPyQAUvAfYJcknUmlv/ZtEEyBxTFc9ZsL0fnmwF2hX+u7HoCsDurh8jvMg1FWI
-         ZWHACVb5FbOXuB2KNwYM0j5X+9+pI30sBWK2io4DQOsjatvjLtJ3k8LvU5jD6h+0bApj
-         nji7QoFrpIa/EfyS9aE1H8PnCdnd46+Bv/wWa0lI/yY3MRhmscM5HAz8FUe4N0GHhpMf
-         AblamewqllV4aFJNX9rqC38Bfrua5qSGpBXfEvK4rxqB8uDXrzrhq3DbRWcLI4ZsALte
-         Lfjg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=4utvhxtA7zvr4Iu+DFpm/vNXzWR8TFP5LHSqSIJBCWo=;
-        b=kaYy9bn6CiQJOQv9VcSKd6kZQoVT9NL3NbS85qC2V8bRe/69zKYV5SV6I7SMfcKJA/
-         X4JDPrs5idQaw0W+jtGWtXrkcTnD6ZQUV2syvh0qr04N3q13CxKgaq2IYh+geFUa40nH
-         INHMv6ED2YVf+Yj27ZQJE65TRmF5aCfp/pmsFYsrDv12N9RBT9wfBtpvuCSE/vx3r2tI
-         2UUVHjcj9J0+jeDJNf/UNGBlJ75z6J4jXdIhqb3+eUZyK1SkQgPhKuv58CbyTaFSNvtU
-         CASOdC/6X6NFSYmqzphxoTdMoP/P+a5zPl+EfASS4QihMdd7Dtc7Sj7UqyoTXI+eN6up
-         W8qA==
-X-Gm-Message-State: APjAAAUEZSn4dHuHz2AAVFyZHTcrPXGsLfnPs50ux/Pw1Mjg2LQPAPUk
-        nSjGth1wSFk6dLPRC2andZlYyNzo
-X-Google-Smtp-Source: APXvYqzqvmjhjyfBbCiXK6ubgSKYGKoWsiXrEE1FSXHo7/8RTwhszxSZmlrQQ8mbNKUBQU48ZmIo+A==
-X-Received: by 2002:a63:6c82:: with SMTP id h124mr27098458pgc.328.1580766189626;
-        Mon, 03 Feb 2020 13:43:09 -0800 (PST)
-Received: from fainelli-desktop.igp.broadcom.net ([192.19.223.252])
-        by smtp.gmail.com with ESMTPSA id c26sm2947558pfj.8.2020.02.03.13.43.08
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 03 Feb 2020 13:43:08 -0800 (PST)
-From:   Florian Fainelli <f.fainelli@gmail.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     Florian Fainelli <f.fainelli@gmail.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= 
-        <u.kleine-koenig@pengutronix.de>, Ray Jui <rjui@broadcom.com>,
-        Scott Branden <sbranden@broadcom.com>,
-        bcm-kernel-feedback-list@broadcom.com (maintainer:BROADCOM
-        BCM281XX/BCM11XXX/BCM216XX ARM ARCHITE...),
-        Nicolas Saenz Julienne <nsaenzjulienne@suse.de>,
-        Bart Tanghe <bart.tanghe@thomasmore.be>,
-        Stephen Warren <swarren@wwwdotorg.org>,
-        linux-pwm@vger.kernel.org (open list:PWM SUBSYSTEM),
-        linux-rpi-kernel@lists.infradead.org (moderated list:BROADCOM
-        BCM2711/BCM2835 ARM ARCHITECTURE),
-        linux-arm-kernel@lists.infradead.org (moderated list:BROADCOM
-        BCM2711/BCM2835 ARM ARCHITECTURE)
-Subject: [PATCH] pwm: bcm2835: Dynamically allocate base
-Date:   Mon,  3 Feb 2020 13:35:35 -0800
-Message-Id: <20200203213536.32226-1-f.fainelli@gmail.com>
-X-Mailer: git-send-email 2.17.1
+        Mon, 3 Feb 2020 16:37:22 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=EeOvvWZvH50eEtBKHt08qpUyamao6FaQ0LtUnWK0t5w=; b=MbYqw/Vx49lRe78eDwZHP4w6TQ
+        AFN++lIatMW4RPg/gX94FI0W6fBb+aofjMfYjdZf2T4WYLPc7hk9sPYr2XepIC2kngyt5oWzR5Ar4
+        FcAMWsZ+tpIgZdVNLm7Ys9M1agWjLMHSXX6nGIwvk4lK0hf3Khqnt0Nst+2zDuQQO3b4gBuTDHm5q
+        /bQ67UZbBgjnmnrXWRFAE6UlKG/ETmoHmPhfKHNoLJ1mCTjO2ryl4Ix/Tak+7/1IAnzk3gFgDma21
+        0G622TPsNo9G0c9ZKdm+yeDwghp2gZLQnxF5JUafrOyFDT3OQZt/W836k7QOwEehg/ZwWiKWps8K7
+        Ne8pgJ0A==;
+Received: from willy by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1iyjPD-0005ga-0O; Mon, 03 Feb 2020 21:37:19 +0000
+Date:   Mon, 3 Feb 2020 13:37:18 -0800
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Joao Martins <joao.m.martins@oracle.com>
+Cc:     linux-nvdimm@lists.01.org, Dan Williams <dan.j.williams@intel.com>,
+        Vishal Verma <vishal.l.verma@intel.com>,
+        Dave Jiang <dave.jiang@intel.com>,
+        Ira Weiny <ira.weiny@intel.com>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        Cornelia Huck <cohuck@redhat.com>, kvm@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H . Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
+        Liran Alon <liran.alon@oracle.com>,
+        Nikita Leshenko <nikita.leshchenko@oracle.com>,
+        Barret Rhoden <brho@google.com>,
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+Subject: Re: [PATCH RFC 02/10] mm: Handle pmd entries in follow_pfn()
+Message-ID: <20200203213718.GL8731@bombadil.infradead.org>
+References: <20200110190313.17144-1-joao.m.martins@oracle.com>
+ <20200110190313.17144-3-joao.m.martins@oracle.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200110190313.17144-3-joao.m.martins@oracle.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The newer 2711 and 7211 chips have two PWM controllers and failure to
-dynamically allocate the PWM base would prevent the second PWM
-controller instance being probed for succeeding with an -EEXIST error
-from alloc_pwms().
+On Fri, Jan 10, 2020 at 07:03:05PM +0000, Joao Martins wrote:
+> @@ -4366,6 +4366,7 @@ EXPORT_SYMBOL(follow_pte_pmd);
+>  int follow_pfn(struct vm_area_struct *vma, unsigned long address,
+>  	unsigned long *pfn)
+>  {
+> +	pmd_t *pmdpp = NULL;
 
-Fixes: e5a06dc5ac1f ("pwm: Add BCM2835 PWM driver")
-Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
----
- drivers/pwm/pwm-bcm2835.c | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/drivers/pwm/pwm-bcm2835.c b/drivers/pwm/pwm-bcm2835.c
-index 91e24f01b54e..d78f86f8e462 100644
---- a/drivers/pwm/pwm-bcm2835.c
-+++ b/drivers/pwm/pwm-bcm2835.c
-@@ -166,6 +166,7 @@ static int bcm2835_pwm_probe(struct platform_device *pdev)
- 
- 	pc->chip.dev = &pdev->dev;
- 	pc->chip.ops = &bcm2835_pwm_ops;
-+	pc->chip.base = -1;
- 	pc->chip.npwm = 2;
- 	pc->chip.of_xlate = of_pwm_xlate_with_flags;
- 	pc->chip.of_pwm_n_cells = 3;
--- 
-2.17.1
+Please rename to 'pmdp'.
 
