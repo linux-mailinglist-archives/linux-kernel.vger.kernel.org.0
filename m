@@ -2,165 +2,138 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 02D6215007E
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Feb 2020 03:08:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 140E4150088
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Feb 2020 03:14:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727364AbgBCCIM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 2 Feb 2020 21:08:12 -0500
-Received: from mail-yw1-f68.google.com ([209.85.161.68]:33780 "EHLO
-        mail-yw1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727189AbgBCCIJ (ORCPT
+        id S1727210AbgBCCOd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 2 Feb 2020 21:14:33 -0500
+Received: from mail-pl1-f196.google.com ([209.85.214.196]:36806 "EHLO
+        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726670AbgBCCOd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 2 Feb 2020 21:08:09 -0500
-Received: by mail-yw1-f68.google.com with SMTP id 192so12289896ywy.0;
-        Sun, 02 Feb 2020 18:08:08 -0800 (PST)
+        Sun, 2 Feb 2020 21:14:33 -0500
+Received: by mail-pl1-f196.google.com with SMTP id a6so5214001plm.3;
+        Sun, 02 Feb 2020 18:14:33 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=GK8jXosc4wjx6S0SoTq0HEwikqqeT451T4I5F8z+nXI=;
-        b=nRhbp4BHbnfutNjzP4+igFQX1u/JGN3Kr1ay3UqtxSEmBmws1PsLbXYEn1hM+pVIZv
-         Dd1jzdpWzmFv8NljIxRVRnKRImL2LjdaVgKUE3GgIroJWuJhCNiL5ACT1ra3mS0LPb99
-         efpT0Qyt4id+7Qm+W9CwWULBcEi7gj0utyF24z+s2NXXLVDsgWDa71BmIRvb0Cc66cO6
-         3gSEDW3NoM4oxEZD7PT5LocV/bnpv81mZ4+L/aHlV+1rTIu9zRGLhbnxacmFapQWpzSw
-         Nrq/WJti8iSgPbsbCvm69pHtLEY1se2KPjB8W/6pKqo9kqsGh4rGCxAo0TzH0CCkNLV+
-         ofKg==
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=MlSvnr7alRWcchcXEUNjydXzi0TvlR+UkqP05vumdnk=;
+        b=uJdSikLpqA68ZLjCn6j2afQv/5XuLG5V9o7dalAZskZBLiXM+eUCHaP0+R2rNQSErm
+         eZg1fjoW8Vok1Wy2HXh+KRq+f+SNb1TmGHOn1ghvDELdNWQYNtBPxm82LffZSOr6mLcE
+         67DE6Mnck8/dvVQjVFBqlrHcFBN6nUE/zet9T58SFiwhDEAZ2tmy58eqaqeTEgHueuCJ
+         4zXo4XooSE+09e0K6bx7/MiYKFouz0L50ZSN1Z1DPdvAaKMdXKlyNMDpE0ED7Wmiy2al
+         2VJZBuIabXzM3ThhG0iGPYsxTAEnD2CEhOawy8QbhfDHEWimZThnsH/fRox0Q1TbAuIl
+         8wdA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=GK8jXosc4wjx6S0SoTq0HEwikqqeT451T4I5F8z+nXI=;
-        b=YXSJDWjbIYupEDmB6DbLvFdeKcBDeHibCAIPJCJVxITWJZTHBtrmOHU9X4DaPStqOB
-         6FBpVjeiNSxnNSOG21D4Z4Tfy0TniUKMv8Jsc6rytsuxFHbw1vfHApYVocTpgaIoa0Jk
-         5070LRGaSrORmEcd7B4LnPymJrVPnwzWqEwZkhJv1aYGJlnPTzaMYEeapJKudhgiuiEG
-         ljgbq97Hy8McDMpja+I60+wjWdWQP5por1iKcLERFqa4ufQzQxYw2pe/wK4rHShg1k5n
-         dY/9gj0Id+3P1GUZK+uDgNcwmDvvwRo+0FZk5TzjnOzABPSLYmC66VyqiojEHUf69RLY
-         uDzQ==
-X-Gm-Message-State: APjAAAVD8165NQovEOakL2ltkiwe6AzV+f25cVTPzI0t5kBu/mF4E+a1
-        5Ac2GaOD0CJxWAnQlrdATc8ikNe9fssInV/YhXw=
-X-Google-Smtp-Source: APXvYqzzV9IA5QpefeN18G+sHpy87luUjUGLuoRRVs3LIN9kRy6MdM/9lXPaKUxq7CISI7bJLJ9xxq4n3WPia9Z/yYc=
-X-Received: by 2002:a25:6643:: with SMTP id z3mr16802040ybm.435.1580695687460;
- Sun, 02 Feb 2020 18:08:07 -0800 (PST)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=MlSvnr7alRWcchcXEUNjydXzi0TvlR+UkqP05vumdnk=;
+        b=IkAerlVOe3Q/b7ns//n9CcQ0Zw5Jk6Voz3AqDOlqHXYKNDpJJJTcTLf9qCPGb0knxB
+         x3E7SFkctZ2M9Hf6nEuxLyz08ZVL5KY0K6YMshUJYI5GSiyNzyfp4sgOPwPkET3Ye961
+         kzj90VLQt3cA1y9phss43CXvWME0FM5myt/ZF7JSil/Ak8IU4xPvW39MXnNKiZE/OF4j
+         r4Lyv6Er7Marge8wawmR+8nb0U1CyyinW8Z7V2cuK9iKgiWKZSoCCMP4ScyronOPCbqJ
+         OH5kC22Ks7BOtPrWEqkdy0xotJKP2Z6LK0QSH3ehqGeftz1qcTOwW1CUDXxLXTN4unfU
+         7hmQ==
+X-Gm-Message-State: APjAAAVoj2Ue7hfViAex+j5kRfI2ned5je4Tq6mcTOfL1SORl2u+RiNE
+        ZhIlyNKCL/FFxM/9kSgO9Hg=
+X-Google-Smtp-Source: APXvYqyRd4ugExzcI6oAdObJ297nZlP4Jw7YnILUQHEnmxCoxJSsPmezCUQ38MPkfbE9BGg5TtZVyw==
+X-Received: by 2002:a17:90a:d205:: with SMTP id o5mr26932323pju.46.1580696072872;
+        Sun, 02 Feb 2020 18:14:32 -0800 (PST)
+Received: from localhost (c-73-241-114-122.hsd1.ca.comcast.net. [73.241.114.122])
+        by smtp.gmail.com with ESMTPSA id g21sm18831802pfb.126.2020.02.02.18.14.31
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 02 Feb 2020 18:14:32 -0800 (PST)
+Date:   Sun, 2 Feb 2020 18:14:29 -0800
+From:   Richard Cochran <richardcochran@gmail.com>
+To:     christopher.s.hall@intel.com
+Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        tglx@linutronix.de, hpa@zytor.com, mingo@redhat.com,
+        x86@kernel.org, jacob.e.keller@intel.com, davem@davemloft.net,
+        sean.v.kelley@intel.com
+Subject: Re: [Intel PMC TGPIO Driver 2/5] drivers/ptp: Add PEROUT2 ioctl
+ frequency adjustment interface
+Message-ID: <20200203021429.GB3516@localhost>
+References: <20191211214852.26317-1-christopher.s.hall@intel.com>
+ <20191211214852.26317-3-christopher.s.hall@intel.com>
 MIME-Version: 1.0
-References: <20200120023326.GA149019@google.com> <b9764896-102c-84cb-32ea-c2a122b6f0db@gmail.com>
- <8409fd7ad6b83da75c914a71accf522953a460a0.camel@pengutronix.de>
- <CAPM=9twvggZqVu=HmXZMN70+-6hAPGdog-dGFnM7jp3RhjAB9w@mail.gmail.com> <CAPM=9tz9dOLL=onbA-73T-hwzFYMXjSywCufqmnM7bP5dT_x0Q@mail.gmail.com>
-In-Reply-To: <CAPM=9tz9dOLL=onbA-73T-hwzFYMXjSywCufqmnM7bP5dT_x0Q@mail.gmail.com>
-From:   Ben Skeggs <skeggsb@gmail.com>
-Date:   Mon, 3 Feb 2020 12:07:56 +1000
-Message-ID: <CACAvsv6-7F=JCZeVu4ATsfubtr8huVJFUPuq-xBVgmN2ueX-4A@mail.gmail.com>
-Subject: Re: Issues with "PCI/LINK: Report degraded links via link bandwidth notification"
-To:     Dave Airlie <airlied@gmail.com>
-Cc:     Lucas Stach <l.stach@pengutronix.de>,
-        Alex Deucher <alexdeucher@gmail.com>,
-        Karol Herbst <karolherbst@gmail.com>,
-        "Alex G." <mr.nuke.me@gmail.com>,
-        Bjorn Helgaas <helgaas@kernel.org>,
-        Alexandru Gagniuc <alex_gagniuc@dellteam.com>,
-        Keith Busch <keith.busch@intel.com>, Jens Axboe <axboe@fb.com>,
-        Christoph Hellwig <hch@lst.de>,
-        Sagi Grimberg <sagi@grimberg.me>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Jan Vesely <jano.vesely@gmail.com>,
-        Lukas Wunner <lukas@wunner.de>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        Austin Bolen <austin_bolen@dell.com>,
-        Shyam Iyer <Shyam_Iyer@dell.com>,
-        Sinan Kaya <okaya@kernel.org>,
-        Linux PCI <linux-pci@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191211214852.26317-3-christopher.s.hall@intel.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 3 Feb 2020 at 12:04, Dave Airlie <airlied@gmail.com> wrote:
->
-> On Mon, 3 Feb 2020 at 11:56, Dave Airlie <airlied@gmail.com> wrote:
-> >
-> > On Tue, 21 Jan 2020 at 21:11, Lucas Stach <l.stach@pengutronix.de> wrote:
-> > >
-> > > On Mo, 2020-01-20 at 10:01 -0600, Alex G. wrote:
-> > > >
-> > > > On 1/19/20 8:33 PM, Bjorn Helgaas wrote:
-> > > > > [+cc NVMe, GPU driver folks]
-> > > > >
-> > > > > On Wed, Jan 15, 2020 at 04:10:08PM -0600, Bjorn Helgaas wrote:
-> > > > > > I think we have a problem with link bandwidth change notifications
-> > > > > > (see https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/drivers/pci/pcie/bw_notification.c).
-> > > > > >
-> > > > > > Here's a recent bug report where Jan reported "_tons_" of these
-> > > > > > notifications on an nvme device:
-> > > > > > https://bugzilla.kernel.org/show_bug.cgi?id=206197
-> > > > > >
-> > > > > > There was similar discussion involving GPU drivers at
-> > > > > > https://lore.kernel.org/r/20190429185611.121751-2-helgaas@kernel.org
-> > > > > >
-> > > > > > The current solution is the CONFIG_PCIE_BW config option, which
-> > > > > > disables the messages completely.  That option defaults to "off" (no
-> > > > > > messages), but even so, I think it's a little problematic.
-> > > > > >
-> > > > > > Users are not really in a position to figure out whether it's safe to
-> > > > > > enable.  All they can do is experiment and see whether it works with
-> > > > > > their current mix of devices and drivers.
-> > > > > >
-> > > > > > I don't think it's currently useful for distros because it's a
-> > > > > > compile-time switch, and distros cannot predict what system configs
-> > > > > > will be used, so I don't think they can enable it.
-> > > > > >
-> > > > > > Does anybody have proposals for making it smarter about distinguishing
-> > > > > > real problems from intentional power management, or maybe interfaces
-> > > > > > drivers could use to tell us when we should ignore bandwidth changes?
-> > > > >
-> > > > > NVMe, GPU folks, do your drivers or devices change PCIe link
-> > > > > speed/width for power saving or other reasons?  When CONFIG_PCIE_BW=y,
-> > > > > the PCI core interprets changes like that as problems that need to be
-> > > > > reported.
-> > > > >
-> > > > > If drivers do change link speed/width, can you point me to where
-> > > > > that's done?  Would it be feasible to add some sort of PCI core
-> > > > > interface so the driver could say "ignore" or "pay attention to"
-> > > > > subsequent link changes?
-> > > > >
-> > > > > Or maybe there would even be a way to move the link change itself into
-> > > > > the PCI core, so the core would be aware of what's going on?
-> > > >
-> > > > Funny thing is, I was going to suggest an in-kernel API for this.
-> > > >    * Driver requests lower link speed 'X'
-> > > >    * Link management interrupt fires
-> > > >    * If link speed is at or above 'X' then do not report it.
-> > > > I think an "ignore" flag would defeat the purpose of having link
-> > > > bandwidth reporting in the first place. If some drivers set it, and
-> > > > others don't, then it would be inconsistent enough to not be useful.
-> > > >
-> > > > A second suggestion is, if there is a way to ratelimit these messages on
-> > > > a per-downstream port basis.
-> > >
-> > > Both AMD and Nvidia GPUs have embedded controllers, which are
-> > > responsible for the power management. IIRC those controllers can
-> > > autonomously initiate PCIe link speed changes depending on measured bus
-> > > load. So there is no way for the driver to signal the requested bus
-> > > speed to the PCIe core.
-> > >
-> > > I guess for the GPU usecase the best we can do is to have the driver
-> > > opt-out of the link bandwidth notifications, as the driver knows that
-> > > there is some autonomous entity on the endpoint mucking with the link
-> > > parameters.
-> > >
-> >
-> > Adding Alex and Ben for AMD and NVIDIA info (and Karol).
-We don't attempt link speed changes by default in Nouveau currently,
-however, I believe we will (if instructed by the VBIOS perf tables) if
-you enable clock frequency changes.  We do this from the driver code
-currently, but I'm not 100% sure what this will look like if/when we
-receive PMU firmware.  More and more autonomy is being pushed into
-there by NVIDIA with each generation, it's possible that even happens
-on Volta/Turing PMU already, it's not an area I've looked into
-recently.
+On Wed, Dec 11, 2019 at 01:48:49PM -0800, christopher.s.hall@intel.com wrote:
+> diff --git a/include/linux/ptp_clock_kernel.h b/include/linux/ptp_clock_kernel.h
+> index 93cc4f1d444a..8223f6f656dd 100644
+> --- a/include/linux/ptp_clock_kernel.h
+> +++ b/include/linux/ptp_clock_kernel.h
+> @@ -134,6 +134,8 @@ struct ptp_clock_info {
+>  			  struct ptp_system_timestamp *sts);
+>  	int (*getcrosststamp)(struct ptp_clock_info *ptp,
+>  			      struct system_device_crosststamp *cts);
+> +	int (*counttstamp)(struct ptp_clock_info *ptp,
+> +			   struct ptp_event_count_tstamp *count);
 
-Ben.
+KernelDoc missing.
 
-> >
-> > Dave.
+As tglx said, it is hard to guess what this will be used for.  I would
+appreciate a fuller explanation of the new callback in the commit log
+message.
+
+In general, please introduce a specific new API with an example of how
+it is used.  In this series you have three new APIs,
+
+   [Intel PMC TGPIO Driver 2/5] drivers/ptp: Add PEROUT2 ioctl frequency adjustment interface
+   [Intel PMC TGPIO Driver 3/5] drivers/ptp: Add user-space input polling interface
+   [Intel PMC TGPIO Driver 4/5] x86/tsc: Add TSC support functions to support ART driven Time-Aware GPIO
+
+and then a largish driver using them all.
+
+   [Intel PMC TGPIO Driver 5/5] drivers/ptp: Add PMC Time-Aware GPIO Driver
+
+May I suggest an ordering more like:
+
+[1/5] x86/tsc: Add TSC support functions to support ART...	(with forward explanation of the use case)
+[2/5] drivers/ptp: Add PMC Time-Aware GPIO Driver		(without new bits)
+[3/5] drivers/ptp: Add Enhanced handling of reserve fields	(okay as is)
+[4/5] drivers/ptp: Add PEROUT2 ioctl frequency adjustment interface
+[5/5] implement ^^^ in the driver
+[6/5] drivers/ptp: Add user-space input polling interface
+[7/5] implement ^^^ in the driver
+
+> +/*
+> + * Bits of the ptp_pin_desc.flags field:
+> + */
+> +#define PTP_PINDESC_EVTCNTVALID	(1<<0)
+
+Is this somehow connected to ...
+
+>  #define PTP_PEROUT_ONE_SHOT (1<<0)
+> +#define PTP_PEROUT_FREQ_ADJ (1<<1)
+
+... this?  If not, then they each deserve their own patch.
+
+> @@ -164,10 +179,14 @@ struct ptp_pin_desc {
+>  	 * PTP_EXTTS_REQUEST and PTP_PEROUT_REQUEST ioctls.
+>  	 */
+>  	unsigned int chan;
+> +	/*
+> +	 * Per pin capability flag
+> +	 */
+> +	unsigned int flags;
+
+Please use 'capabilities' instead of 'flags'.
+
+> +#define PTP_EVENT_COUNT_TSTAMP2 \
+> +	_IOWR(PTP_CLK_MAGIC, 19, struct ptp_event_count_tstamp)
+
+What is the connection between this, PTP_PINDESC_EVTCNTVALID, and
+PTP_PEROUT_FREQ?
+
+Thanks,
+Richard
