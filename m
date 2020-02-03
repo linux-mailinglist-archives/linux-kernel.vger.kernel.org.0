@@ -2,306 +2,125 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 37CEB1509B0
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Feb 2020 16:21:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9DA131509A0
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Feb 2020 16:18:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728662AbgBCPVf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 3 Feb 2020 10:21:35 -0500
-Received: from mga02.intel.com ([134.134.136.20]:32939 "EHLO mga02.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728633AbgBCPVa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Feb 2020 10:21:30 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga005.fm.intel.com ([10.253.24.32])
-  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 03 Feb 2020 07:21:29 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.70,398,1574150400"; 
-   d="scan'208";a="429473404"
-Received: from lxy-dell.sh.intel.com ([10.239.13.109])
-  by fmsmga005.fm.intel.com with ESMTP; 03 Feb 2020 07:21:28 -0800
-From:   Xiaoyao Li <xiaoyao.li@intel.com>
-To:     Paolo Bonzini <pbonzini@redhat.com>,
-        Sean Christopherson <sean.j.christopherson@intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        Andy Lutomirski <luto@amacapital.net>
-Cc:     x86@kernel.org, kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        David Laight <David.Laight@aculab.com>,
-        Xiaoyao Li <xiaoyao.li@intel.com>
-Subject: [PATCH v2 6/6] x86: vmx: virtualize split lock detection
-Date:   Mon,  3 Feb 2020 23:16:08 +0800
-Message-Id: <20200203151608.28053-7-xiaoyao.li@intel.com>
-X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20200203151608.28053-1-xiaoyao.li@intel.com>
-References: <20200203151608.28053-1-xiaoyao.li@intel.com>
+        id S1728185AbgBCPSe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 3 Feb 2020 10:18:34 -0500
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:41392 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727201AbgBCPSe (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Feb 2020 10:18:34 -0500
+Received: by mail-lj1-f194.google.com with SMTP id h23so15046108ljc.8
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Feb 2020 07:18:33 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=shutemov-name.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=J9cgaeMLTaJECRcYqxABSftFV/5KWVEItmdNxoAd1kk=;
+        b=R+l3zA+jNPp4j3NEVCD/WguynL5ltM98xpOCFsqcdd6u3ePAmhIrTzIzlNZK58nZb/
+         6N+De1oZJUAwAPmzSiNSFeF+9oQ34uemRwKeyHwM/QRdIWzIsqNz/IGlTHexGVQb2cRx
+         eKYV78sRevdg4SczLQ/iGOayOH9g3hTDCPePwEpiJapkvwbbLxTuWa8FUo0G7W1ViF5j
+         At/LijsaN8RkI4qFEWITlT0Hs3OTPRevQtb/J6XFlU9gwSyVNybe925U1Hu7pcFcG2WY
+         H1hN5LS9tCqu7Qhx2u2F+kCaO0lwJmYUalMbr+55plBjXahEbE4PbbTPHht4peZQZifz
+         z14Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=J9cgaeMLTaJECRcYqxABSftFV/5KWVEItmdNxoAd1kk=;
+        b=t3GfWMcmkj8QWpckiHy++iiI1ojdUnWmz2Zj/oUY8NSUIiNdDO7q1gyiiTh0MmoYX4
+         yr3dOaBLwviwECjiRFklMNn1F41to7tJUCBEwvfXbh+OSD6jlbeR8kDfAspsw5FrUDPP
+         4w2ubUsUTP51BIN56VGSqQ00pueF/dHrZNehmmaHaSYbI0LPxUgvF5GpcZaE6VWlov2k
+         aZIYoFDu0uPzu+oD5QFGFVDzpszzBvuG72bHYdatMzvfbg5CSDLJhUCXPuqcVDQ8qfgW
+         VUXmZQUgpbVxBbk9Huf/I4tJx/A3n1AULtV7RKqD+/FAN3ubmNBN01X8fbc55F0NYfRD
+         cMXg==
+X-Gm-Message-State: APjAAAXMuRAYn696WLHaviTz5DAxrraonb4X/GqTNt+kMbne//VtsJMC
+        NsUNtGmpNlCrLGkCECChhcuKUg==
+X-Google-Smtp-Source: APXvYqyuTiS50TSLyZys9pI8tQ8C0R0qyODfDKnunffnlEE0uashYDmDCPJl8rsojWctlbaz2SykJQ==
+X-Received: by 2002:a2e:9b90:: with SMTP id z16mr13423303lji.254.1580743112406;
+        Mon, 03 Feb 2020 07:18:32 -0800 (PST)
+Received: from box.localdomain ([86.57.175.117])
+        by smtp.gmail.com with ESMTPSA id h10sm9835670ljc.39.2020.02.03.07.18.31
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 03 Feb 2020 07:18:31 -0800 (PST)
+Received: by box.localdomain (Postfix, from userid 1000)
+        id 6D693100996; Mon,  3 Feb 2020 18:18:44 +0300 (+03)
+Date:   Mon, 3 Feb 2020 18:18:44 +0300
+From:   "Kirill A. Shutemov" <kirill@shutemov.name>
+To:     Chris Wilson <chris@chris-wilson.co.uk>
+Cc:     "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Hugh Dickins <hughd@google.com>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Mel Gorman <mgorman@suse.de>, Rik van Riel <riel@redhat.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Christoph Lameter <cl@gentwo.org>,
+        Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>,
+        Steve Capper <steve.capper@linaro.org>,
+        "Aneesh Kumar K.V" <aneesh.kumar@linux.vnet.ibm.com>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Michal Hocko <mhocko@suse.cz>,
+        Jerome Marchand <jmarchan@redhat.com>,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org
+Subject: Re: [PATCH 09/16] page-flags: define PG_reserved behavior on
+ compound pages
+Message-ID: <20200203151844.mmgcwzz3igo7h6wj@box>
+References: <1426784902-125149-1-git-send-email-kirill.shutemov@linux.intel.com>
+ <1426784902-125149-10-git-send-email-kirill.shutemov@linux.intel.com>
+ <158048425224.2430.4905670949721797624@skylake-alporthouse-com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <158048425224.2430.4905670949721797624@skylake-alporthouse-com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Due to the fact that MSR_TEST_CTRL is per-core scope, i.e., the sibling
-threads in the same physical CPU core share the same MSR, only
-advertising feature split lock detection to guest when SMT is disabled
-or unsupported for simplicitly.
+On Fri, Jan 31, 2020 at 03:24:12PM +0000, Chris Wilson wrote:
+> Quoting Kirill A. Shutemov (2015-03-19 17:08:15)
+> > As far as I can see there's no users of PG_reserved on compound pages.
+> > Let's use NO_COMPOUND here.
+> 
+> Much later than you would ever expect, but we just had a user update an
+> ancient device and trip over this.
+> https://gitlab.freedesktop.org/drm/intel/issues/1027
+> 
+> In drm_pci_alloc() we allocate a high-order page (for it to be physically
+> contiguous) and mark each page as Reserved.
+> 
+>         dmah->vaddr = dma_alloc_coherent(&dev->pdev->dev, size,
+>                                          &dmah->busaddr,
+>                                          GFP_KERNEL | __GFP_COMP);
+> 
+>         /* XXX - Is virt_to_page() legal for consistent mem? */
+>         /* Reserve */
+>         for (addr = (unsigned long)dmah->vaddr, sz = size;
+>              sz > 0; addr += PAGE_SIZE, sz -= PAGE_SIZE) {
+>                 SetPageReserved(virt_to_page((void *)addr));
+>         }
+> 
+> It's been doing that since
+> 
+> commit ddf19b973be5a96d77c8467f657fe5bd7d126e0f
+> Author: Dave Airlie <airlied@linux.ie>
+> Date:   Sun Mar 19 18:56:12 2006 +1100
+> 
+>     drm: fixup PCI DMA support
+> 
+> I haven't found anything to say if we are meant to be reserving the
+> pages or not. So I bring it to your attention, asking for help.
 
-Only when host is sld_off, can guest control the hardware value of
-MSR_TEST_CTL, i.e., KVM loads guest's value into hardware when vcpu is
-running.
+I don't see a real reason for these pages to be reserved. But I might be
+wrong here.
 
-The vmx->disable_split_lock_detect can be set to true after unhandled
-split_lock #AC in guest only when host is sld_warn mode. It's for not
-burnning old guest, of course malicous guest can exploit it for DoS
-attack.
+I tried to look around: other users (infiniband/ethernet) of
+dma_alloc_coherent(__GFP_COMP) don't mess with PG_reserved.
 
-If want to prevent DoS attack from malicious guest, it must use sld_fatal
-mode in host. When host is sld_fatal, hardware value of
-MSR_TEST_CTL.SPLIT_LOCK_DETECT never cleared.
+Could you try to drop it from DRM?
 
-Below summarizing how guest behaves if SMT is off and it's a linux guest:
-
------------------------------------------------------------------------
-   Host	| Guest | Guest behavior
------------------------------------------------------------------------
-1. off	|	| same as in bare metal
------------------------------------------------------------------------
-2. warn | off	| hardware bit set initially. Once split lock happens,
-	|	| it sets vmx->disable_split_lock_detect, which leads
-	|	| hardware bit to be cleared when vcpu is running
-        |	| So, it's the same as in bare metal
-	---------------------------------------------------------------
-3.	| warn	| - user space: get #AC when split lock, then clear
-	|	|   MSR bit, but hardware bit is not cleared. #AC again,
-	|	|   finally sets vmx->disable_split_lock_detect, which
-	|	|   leads hardware bit to be cleared when vcpu is running;
-	|	|   After the userspace process finishes, it sets vcpu's
-	|	|   MSR_TEST_CTRL.SPLIT_LOCK_DETECT bit, which causes
-	|	|   vmx->disable_split_lock_detect to be set false
-        |	|   So it's somehow the same as in bare-metal
-        |	| - kernel: same as in bare metal.
-	--------------------------------------------------------------
-4.	| fatal | same as in bare metal
-----------------------------------------------------------------------
-5. fatal| off   | #AC reported to userspace
-	--------------------------------------------------------------
-6.	| warn  | - user space: get #AC when split lock, then clear
-	|	|   MSR bit, but hardware bit is not cleared, #AC again,
-        |	|   #AC reported to userspace
-        |	| - kernel: same as in bare metal, call die();
-	-------------------------------------------------------------
-7.    	| fatal | same as in bare metal
-----------------------------------------------------------------------
-
-Signed-off-by: Xiaoyao Li <xiaoyao.li@intel.com>
----
- arch/x86/kvm/vmx/vmx.c | 72 +++++++++++++++++++++++++++++++++++-------
- arch/x86/kvm/vmx/vmx.h |  1 +
- arch/x86/kvm/x86.c     | 13 ++++++--
- 3 files changed, 73 insertions(+), 13 deletions(-)
-
-diff --git a/arch/x86/kvm/vmx/vmx.c b/arch/x86/kvm/vmx/vmx.c
-index 93e3370c5f84..a0c3f579ecb6 100644
---- a/arch/x86/kvm/vmx/vmx.c
-+++ b/arch/x86/kvm/vmx/vmx.c
-@@ -1781,6 +1781,26 @@ static int vmx_get_msr_feature(struct kvm_msr_entry *msr)
- 	}
- }
- 
-+/*
-+ * Note: for guest, feature split lock detection can only be enumerated by
-+ * MSR_IA32_CORE_CAPS_SPLIT_LOCK_DETECT. The FMS enumeration is invalid.
-+ */
-+static inline bool guest_has_feature_split_lock_detect(struct kvm_vcpu *vcpu)
-+{
-+	return !!(vcpu->arch.core_capabilities &
-+		  MSR_IA32_CORE_CAPS_SPLIT_LOCK_DETECT);
-+}
-+
-+static inline u64 vmx_msr_test_ctrl_valid_bits(struct kvm_vcpu *vcpu)
-+{
-+	u64 valid_bits = 0;
-+
-+	if (guest_has_feature_split_lock_detect(vcpu))
-+		valid_bits |= MSR_TEST_CTRL_SPLIT_LOCK_DETECT;
-+
-+	return valid_bits;
-+}
-+
- /*
-  * Reads an msr value (of 'msr_index') into 'pdata'.
-  * Returns 0 on success, non-0 otherwise.
-@@ -1793,6 +1813,12 @@ static int vmx_get_msr(struct kvm_vcpu *vcpu, struct msr_data *msr_info)
- 	u32 index;
- 
- 	switch (msr_info->index) {
-+	case MSR_TEST_CTRL:
-+		if (!msr_info->host_initiated &&
-+		    !guest_has_feature_split_lock_detect(vcpu))
-+			return 1;
-+		msr_info->data = vmx->msr_test_ctrl;
-+		break;
- #ifdef CONFIG_X86_64
- 	case MSR_FS_BASE:
- 		msr_info->data = vmcs_readl(GUEST_FS_BASE);
-@@ -1934,6 +1960,15 @@ static int vmx_set_msr(struct kvm_vcpu *vcpu, struct msr_data *msr_info)
- 	u32 index;
- 
- 	switch (msr_index) {
-+	case MSR_TEST_CTRL:
-+		if (!msr_info->host_initiated &&
-+		    (!guest_has_feature_split_lock_detect(vcpu) ||
-+		     data & ~vmx_msr_test_ctrl_valid_bits(vcpu)))
-+			return 1;
-+		if (data & MSR_TEST_CTRL_SPLIT_LOCK_DETECT)
-+			vmx->disable_split_lock_detect = false;
-+		vmx->msr_test_ctrl = data;
-+		break;
- 	case MSR_EFER:
- 		ret = kvm_set_msr_common(vcpu, msr_info);
- 		break;
-@@ -4233,6 +4268,7 @@ static void vmx_vcpu_reset(struct kvm_vcpu *vcpu, bool init_event)
- 
- 	vmx->msr_ia32_umwait_control = 0;
- 
-+	vmx->msr_test_ctrl = 0;
- 	vmx->disable_split_lock_detect = false;
- 
- 	vcpu->arch.microcode_version = 0x100000000ULL;
-@@ -4565,6 +4601,11 @@ static inline bool guest_cpu_alignment_check_enabled(struct kvm_vcpu *vcpu)
- 	       (kvm_get_rflags(vcpu) & X86_EFLAGS_AC);
- }
- 
-+static inline bool guest_cpu_split_lock_detect_enabled(struct vcpu_vmx *vmx)
-+{
-+	return !!(vmx->msr_test_ctrl & MSR_TEST_CTRL_SPLIT_LOCK_DETECT);
-+}
-+
- static int handle_exception_nmi(struct kvm_vcpu *vcpu)
- {
- 	struct vcpu_vmx *vmx = to_vmx(vcpu);
-@@ -4660,8 +4701,8 @@ static int handle_exception_nmi(struct kvm_vcpu *vcpu)
- 		break;
- 	case AC_VECTOR:
- 		/*
--		 * Inject #AC back to guest only when legacy alignment check
--		 * enabled.
-+		 * Inject #AC back to guest only when guest is expecting it,
-+		 * i.e., legacy alignment check or split lock #AC enabled.
- 		 * Otherwise, it must be an unexpected split-lock #AC for guest
- 		 * since KVM keeps hardware SPLIT_LOCK_DETECT bit unchanged
- 		 * when vcpu is running.
-@@ -4674,12 +4715,13 @@ static int handle_exception_nmi(struct kvm_vcpu *vcpu)
- 		 *    similar as sending SIGBUS.
- 		 */
- 		if (guest_cpu_alignment_check_enabled(vcpu) ||
-+		    guest_cpu_split_lock_detect_enabled(vmx) ||
- 		    WARN_ON(get_split_lock_detect_state() == sld_off)) {
- 			kvm_queue_exception_e(vcpu, AC_VECTOR, error_code);
- 			return 1;
- 		}
- 		if (get_split_lock_detect_state() == sld_warn) {
--			pr_warn("kvm: split lock #AC happened in %s [%d]\n",
-+			pr_warn_ratelimited("kvm: split lock #AC happened in %s [%d]\n",
- 				current->comm, current->pid);
- 			vmx->disable_split_lock_detect = true;
- 			return 1;
-@@ -6491,6 +6533,7 @@ static void vmx_vcpu_run(struct kvm_vcpu *vcpu)
- {
- 	struct vcpu_vmx *vmx = to_vmx(vcpu);
- 	unsigned long cr3, cr4;
-+	bool host_sld_enabled, guest_sld_enabled;
- 
- 	/* Record the guest's net vcpu time for enforced NMI injections. */
- 	if (unlikely(!enable_vnmi &&
-@@ -6562,10 +6605,15 @@ static void vmx_vcpu_run(struct kvm_vcpu *vcpu)
- 	 */
- 	x86_spec_ctrl_set_guest(vmx->spec_ctrl, 0);
- 
--	if (static_cpu_has(X86_FEATURE_SPLIT_LOCK_DETECT) &&
--	    unlikely(vmx->disable_split_lock_detect) &&
--	    !test_tsk_thread_flag(current, TIF_SLD))
--		split_lock_detect_set(false);
-+	if (static_cpu_has(X86_FEATURE_SPLIT_LOCK_DETECT)) {
-+		host_sld_enabled = get_split_lock_detect_state() &&
-+				   !test_tsk_thread_flag(current, TIF_SLD);
-+		guest_sld_enabled = guest_cpu_split_lock_detect_enabled(vmx);
-+		if (host_sld_enabled && unlikely(vmx->disable_split_lock_detect))
-+			split_lock_detect_set(false);
-+		else if (!host_sld_enabled && guest_sld_enabled)
-+			split_lock_detect_set(true);
-+	}
- 
- 	/* L1D Flush includes CPU buffer clear to mitigate MDS */
- 	if (static_branch_unlikely(&vmx_l1d_should_flush))
-@@ -6601,10 +6649,12 @@ static void vmx_vcpu_run(struct kvm_vcpu *vcpu)
- 
- 	x86_spec_ctrl_restore_host(vmx->spec_ctrl, 0);
- 
--	if (static_cpu_has(X86_FEATURE_SPLIT_LOCK_DETECT) &&
--	    unlikely(vmx->disable_split_lock_detect) &&
--	    !test_tsk_thread_flag(current, TIF_SLD))
--		split_lock_detect_set(true);
-+	if (static_cpu_has(X86_FEATURE_SPLIT_LOCK_DETECT)) {
-+		if (host_sld_enabled && unlikely(vmx->disable_split_lock_detect))
-+			split_lock_detect_set(true);
-+		else if (!host_sld_enabled && guest_sld_enabled)
-+			split_lock_detect_set(false);
-+	}
- 
- 	/* All fields are clean at this point */
- 	if (static_branch_unlikely(&enable_evmcs))
-diff --git a/arch/x86/kvm/vmx/vmx.h b/arch/x86/kvm/vmx/vmx.h
-index 912eba66c5d5..c36c663f4bae 100644
---- a/arch/x86/kvm/vmx/vmx.h
-+++ b/arch/x86/kvm/vmx/vmx.h
-@@ -222,6 +222,7 @@ struct vcpu_vmx {
- #endif
- 
- 	u64		      spec_ctrl;
-+	u64		      msr_test_ctrl;
- 	u32		      msr_ia32_umwait_control;
- 
- 	u32 secondary_exec_control;
-diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
-index a97a8f5dd1df..56e799981d53 100644
---- a/arch/x86/kvm/x86.c
-+++ b/arch/x86/kvm/x86.c
-@@ -1163,7 +1163,7 @@ static const u32 msrs_to_save_all[] = {
- #endif
- 	MSR_IA32_TSC, MSR_IA32_CR_PAT, MSR_VM_HSAVE_PA,
- 	MSR_IA32_FEAT_CTL, MSR_IA32_BNDCFGS, MSR_TSC_AUX,
--	MSR_IA32_SPEC_CTRL,
-+	MSR_IA32_SPEC_CTRL, MSR_TEST_CTRL,
- 	MSR_IA32_RTIT_CTL, MSR_IA32_RTIT_STATUS, MSR_IA32_RTIT_CR3_MATCH,
- 	MSR_IA32_RTIT_OUTPUT_BASE, MSR_IA32_RTIT_OUTPUT_MASK,
- 	MSR_IA32_RTIT_ADDR0_A, MSR_IA32_RTIT_ADDR0_B,
-@@ -1345,7 +1345,12 @@ static u64 kvm_get_arch_capabilities(void)
- 
- static u64 kvm_get_core_capabilities(void)
- {
--	return 0;
-+	u64 data = 0;
-+
-+	if (boot_cpu_has(X86_FEATURE_SPLIT_LOCK_DETECT) && !cpu_smt_possible())
-+		data |= MSR_IA32_CORE_CAPS_SPLIT_LOCK_DETECT;
-+
-+	return data;
- }
- 
- static int kvm_get_msr_feature(struct kvm_msr_entry *msr)
-@@ -5259,6 +5264,10 @@ static void kvm_init_msr_list(void)
- 		 * to the guests in some cases.
- 		 */
- 		switch (msrs_to_save_all[i]) {
-+		case MSR_TEST_CTRL:
-+			if (!(kvm_get_core_capabilities() &
-+			      MSR_IA32_CORE_CAPS_SPLIT_LOCK_DETECT))
-+				continue;
- 		case MSR_IA32_BNDCFGS:
- 			if (!kvm_mpx_supported())
- 				continue;
 -- 
-2.23.0
-
+ Kirill A. Shutemov
