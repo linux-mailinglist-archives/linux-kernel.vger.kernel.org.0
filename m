@@ -2,34 +2,34 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D72B2150AFA
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Feb 2020 17:22:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D8301150ACC
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Feb 2020 17:21:19 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729076AbgBCQVH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 3 Feb 2020 11:21:07 -0500
-Received: from mail.kernel.org ([198.145.29.99]:32886 "EHLO mail.kernel.org"
+        id S1729087AbgBCQVJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 3 Feb 2020 11:21:09 -0500
+Received: from mail.kernel.org ([198.145.29.99]:32934 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729068AbgBCQVE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Feb 2020 11:21:04 -0500
+        id S1728687AbgBCQVH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Feb 2020 11:21:07 -0500
 Received: from localhost (unknown [104.132.45.99])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8BC402080D;
-        Mon,  3 Feb 2020 16:21:03 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0917C2080D;
+        Mon,  3 Feb 2020 16:21:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1580746864;
-        bh=EyhJu2pHtYbE7eiPlxOa57jPW0fWAUvL1FgIjbsTiho=;
+        s=default; t=1580746866;
+        bh=biqmE0tUJGFWbbL8Rgzt39uwI0/WVF4cK/SxguVyDuk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=XwslB3hLRaLNkNZQ9qXavrK9yfLO8sw3gMRNEM0YBBn2vQ309ad7DTb6LlBQp83Vp
-         Un4PPrjjgT8CRkcbneglOKXlB79VGad/7cm1dHoDSrcLQoHIDSBaLNuMAZYUxsEOg7
-         L4PTLBUGz37uiUVIiBicYzaE7FIxu6DzYgk0oDUE=
+        b=JaKRJ90fqhYESDdZmx1AD8QeD31a5uQtF91pTVo/QJAtUiOw2yEN12rUo4fzxoTmE
+         Tl31faE7LyuevJp7GPPiPBkFB6iXBuxKniLvt7VFkGYWLGqAB1Thp6XZk2bFCRCCFI
+         0GuEP/un840BTa7wkQJtK7BO4iV5y6MFz21lRTsY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Johan Hovold <johan@kernel.org>
-Subject: [PATCH 4.4 06/53] USB: serial: ir-usb: fix IrLAP framing
-Date:   Mon,  3 Feb 2020 16:18:58 +0000
-Message-Id: <20200203161904.327982249@linuxfoundation.org>
+        stable@vger.kernel.org, Andrey Shvetsov <andrey.shvetsov@k2l.de>
+Subject: [PATCH 4.4 07/53] staging: most: net: fix buffer overflow
+Date:   Mon,  3 Feb 2020 16:18:59 +0000
+Message-Id: <20200203161904.498920103@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
 In-Reply-To: <20200203161902.714326084@linuxfoundation.org>
 References: <20200203161902.714326084@linuxfoundation.org>
@@ -42,173 +42,58 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Johan Hovold <johan@kernel.org>
+From: Andrey Shvetsov <andrey.shvetsov@k2l.de>
 
-commit 38c0d5bdf4973f9f5a888166e9d3e9ed0d32057a upstream.
+commit 4d1356ac12f4d5180d0df345d85ff0ee42b89c72 upstream.
 
-Commit f4a4cbb2047e ("USB: ir-usb: reimplement using generic framework")
-switched to using the generic write implementation which may combine
-multiple write requests into larger transfers. This can break the IrLAP
-protocol where end-of-frame is determined using the USB short packet
-mechanism, for example, if multiple frames are sent in rapid succession.
+If the length of the socket buffer is 0xFFFFFFFF (max size for an
+unsigned int), then payload_len becomes 0xFFFFFFF1 after subtracting 14
+(ETH_HLEN).  Then, mdp_len is set to payload_len + 16 (MDP_HDR_LEN)
+which overflows and results in a value of 2.  These values for
+payload_len and mdp_len will pass current buffer size checks.
 
-Fixes: f4a4cbb2047e ("USB: ir-usb: reimplement using generic framework")
-Cc: stable <stable@vger.kernel.org>     # 2.6.35
-Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Signed-off-by: Johan Hovold <johan@kernel.org>
+This patch checks if derived from skb->len sum may overflow.
+
+The check is based on the following idea:
+
+For any `unsigned V1, V2` and derived `unsigned SUM = V1 + V2`,
+`V1 + V2` overflows iif `SUM < V1`.
+
+Reported-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Signed-off-by: Andrey Shvetsov <andrey.shvetsov@k2l.de>
+Cc: stable <stable@vger.kernel.org>
+Link: https://lore.kernel.org/r/20200116172238.6046-1-andrey.shvetsov@microchip.com
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/usb/serial/ir-usb.c |  113 +++++++++++++++++++++++++++++++++++---------
- 1 file changed, 91 insertions(+), 22 deletions(-)
+ drivers/staging/most/aim-network/networking.c |   10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
---- a/drivers/usb/serial/ir-usb.c
-+++ b/drivers/usb/serial/ir-usb.c
-@@ -49,9 +49,10 @@ static int buffer_size;
- static int xbof = -1;
+--- a/drivers/staging/most/aim-network/networking.c
++++ b/drivers/staging/most/aim-network/networking.c
+@@ -87,6 +87,11 @@ static int skb_to_mamac(const struct sk_
+ 	unsigned int payload_len = skb->len - ETH_HLEN;
+ 	unsigned int mdp_len = payload_len + MDP_HDR_LEN;
  
- static int  ir_startup (struct usb_serial *serial);
--static int  ir_open(struct tty_struct *tty, struct usb_serial_port *port);
--static int ir_prepare_write_buffer(struct usb_serial_port *port,
--						void *dest, size_t size);
-+static int ir_write(struct tty_struct *tty, struct usb_serial_port *port,
-+		const unsigned char *buf, int count);
-+static int ir_write_room(struct tty_struct *tty);
-+static void ir_write_bulk_callback(struct urb *urb);
- static void ir_process_read_urb(struct urb *urb);
- static void ir_set_termios(struct tty_struct *tty,
- 		struct usb_serial_port *port, struct ktermios *old_termios);
-@@ -81,8 +82,9 @@ static struct usb_serial_driver ir_devic
- 	.num_ports		= 1,
- 	.set_termios		= ir_set_termios,
- 	.attach			= ir_startup,
--	.open			= ir_open,
--	.prepare_write_buffer	= ir_prepare_write_buffer,
-+	.write			= ir_write,
-+	.write_room		= ir_write_room,
-+	.write_bulk_callback	= ir_write_bulk_callback,
- 	.process_read_urb	= ir_process_read_urb,
- };
- 
-@@ -255,35 +257,102 @@ static int ir_startup(struct usb_serial
- 	return 0;
- }
- 
--static int ir_open(struct tty_struct *tty, struct usb_serial_port *port)
-+static int ir_write(struct tty_struct *tty, struct usb_serial_port *port,
-+		const unsigned char *buf, int count)
- {
--	int i;
-+	struct urb *urb = NULL;
-+	unsigned long flags;
-+	int ret;
- 
--	for (i = 0; i < ARRAY_SIZE(port->write_urbs); ++i)
--		port->write_urbs[i]->transfer_flags = URB_ZERO_PACKET;
-+	if (port->bulk_out_size == 0)
++	if (mdp_len < skb->len) {
++		pr_err("drop: too large packet! (%u)\n", skb->len);
 +		return -EINVAL;
- 
--	/* Start reading from the device */
--	return usb_serial_generic_open(tty, port);
--}
-+	if (count == 0)
-+		return 0;
- 
--static int ir_prepare_write_buffer(struct usb_serial_port *port,
--						void *dest, size_t size)
--{
--	unsigned char *buf = dest;
--	int count;
-+	count = min(count, port->bulk_out_size - 1);
-+
-+	spin_lock_irqsave(&port->lock, flags);
-+	if (__test_and_clear_bit(0, &port->write_urbs_free)) {
-+		urb = port->write_urbs[0];
-+		port->tx_bytes += count;
-+	}
-+	spin_unlock_irqrestore(&port->lock, flags);
-+
-+	if (!urb)
-+		return 0;
- 
- 	/*
- 	 * The first byte of the packet we send to the device contains an
--	 * inbound header which indicates an additional number of BOFs and
-+	 * outbound header which indicates an additional number of BOFs and
- 	 * a baud rate change.
- 	 *
- 	 * See section 5.4.2.2 of the USB IrDA spec.
- 	 */
--	*buf = ir_xbof | ir_baud;
-+	*(u8 *)urb->transfer_buffer = ir_xbof | ir_baud;
-+
-+	memcpy(urb->transfer_buffer + 1, buf, count);
-+
-+	urb->transfer_buffer_length = count + 1;
-+	urb->transfer_flags = URB_ZERO_PACKET;
-+
-+	ret = usb_submit_urb(urb, GFP_ATOMIC);
-+	if (ret) {
-+		dev_err(&port->dev, "failed to submit write urb: %d\n", ret);
-+
-+		spin_lock_irqsave(&port->lock, flags);
-+		__set_bit(0, &port->write_urbs_free);
-+		port->tx_bytes -= count;
-+		spin_unlock_irqrestore(&port->lock, flags);
-+
-+		return ret;
 +	}
 +
-+	return count;
-+}
-+
-+static void ir_write_bulk_callback(struct urb *urb)
-+{
-+	struct usb_serial_port *port = urb->context;
-+	int status = urb->status;
-+	unsigned long flags;
-+
-+	spin_lock_irqsave(&port->lock, flags);
-+	__set_bit(0, &port->write_urbs_free);
-+	port->tx_bytes -= urb->transfer_buffer_length - 1;
-+	spin_unlock_irqrestore(&port->lock, flags);
-+
-+	switch (status) {
-+	case 0:
-+		break;
-+	case -ENOENT:
-+	case -ECONNRESET:
-+	case -ESHUTDOWN:
-+		dev_dbg(&port->dev, "write urb stopped: %d\n", status);
-+		return;
-+	case -EPIPE:
-+		dev_err(&port->dev, "write urb stopped: %d\n", status);
-+		return;
-+	default:
-+		dev_err(&port->dev, "nonzero write-urb status: %d\n", status);
-+		break;
+ 	if (mbo->buffer_length < mdp_len) {
+ 		pr_err("drop: too small buffer! (%d for %d)\n",
+ 		       mbo->buffer_length, mdp_len);
+@@ -134,6 +139,11 @@ static int skb_to_mep(const struct sk_bu
+ 	u8 *buff = mbo->virt_address;
+ 	unsigned int mep_len = skb->len + MEP_HDR_LEN;
+ 
++	if (mep_len < skb->len) {
++		pr_err("drop: too large packet! (%u)\n", skb->len);
++		return -EINVAL;
 +	}
 +
-+	usb_serial_port_softint(port);
-+}
-+
-+static int ir_write_room(struct tty_struct *tty)
-+{
-+	struct usb_serial_port *port = tty->driver_data;
-+	int count = 0;
-+
-+	if (port->bulk_out_size == 0)
-+		return 0;
-+
-+	if (test_bit(0, &port->write_urbs_free))
-+		count = port->bulk_out_size - 1;
- 
--	count = kfifo_out_locked(&port->write_fifo, buf + 1, size - 1,
--								&port->lock);
--	return count + 1;
-+	return count;
- }
- 
- static void ir_process_read_urb(struct urb *urb)
+ 	if (mbo->buffer_length < mep_len) {
+ 		pr_err("drop: too small buffer! (%d for %d)\n",
+ 		       mbo->buffer_length, mep_len);
 
 
