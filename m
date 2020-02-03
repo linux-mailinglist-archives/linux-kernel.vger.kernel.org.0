@@ -2,37 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 36E8A150DF0
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Feb 2020 17:48:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4887F150C36
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Feb 2020 17:34:30 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729216AbgBCQ0h (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 3 Feb 2020 11:26:37 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37552 "EHLO mail.kernel.org"
+        id S1730765AbgBCQeR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 3 Feb 2020 11:34:17 -0500
+Received: from mail.kernel.org ([198.145.29.99]:48490 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729003AbgBCQ0e (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Feb 2020 11:26:34 -0500
+        id S1730138AbgBCQeO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Feb 2020 11:34:14 -0500
 Received: from localhost (unknown [104.132.45.99])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0264620838;
-        Mon,  3 Feb 2020 16:26:32 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 26D4F2082E;
+        Mon,  3 Feb 2020 16:34:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1580747193;
-        bh=pbFL/nVg0WFgaEofhOXaUvhz+B41rwrhVJrp7vZ7Jw4=;
+        s=default; t=1580747653;
+        bh=tfUQ0OtFWUwt3ZmIEKievnhC9gC19+ww/xJKGMsOyjo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=AUnhPcnUDMjAorBzghGhxSqGg9JWpWbt5epEJ+pP96Ads1xKyUYseK8etW8mwDlIU
-         iTce8NtnQbfg6AL8Zhv9MOCJW5sai7PW7qSSqAQcP4EedHyZA/o0Bu1DtSt1OQQSgI
-         R6rQ393qb/8R6Gn8SX1LaI3aGxWjpKyvRpDH4eag=
+        b=BvRTIiMTFn4GzDNjmjtvcU7byU8eXdRZIuRNsCgJzRIuUJETKhped4IF4FU1HylVH
+         iPHK3T2YebYl1+hi9TpkFnyKbED/uigwiOH52Rxzl8oYq5Dk/KG8hw3t31ckYyb1Ri
+         izfPkjoH/1Bp1ZwdVNZRjYfyiqnPLpl7oKhd8m/g=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Malcolm Priestley <tvboxspy@gmail.com>
-Subject: [PATCH 4.9 09/68] staging: vt6656: correct packet types for CTS protect, mode.
+        stable@vger.kernel.org, Ronnie Sahlberg <lsahlber@redhat.com>,
+        Steve French <stfrench@microsoft.com>,
+        "Paulo Alcantara (SUSE)" <pc@cjr.nz>
+Subject: [PATCH 5.4 02/90] cifs: fix soft mounts hanging in the reconnect code
 Date:   Mon,  3 Feb 2020 16:19:05 +0000
-Message-Id: <20200203161906.389310092@linuxfoundation.org>
+Message-Id: <20200203161917.912939807@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200203161904.705434837@linuxfoundation.org>
-References: <20200203161904.705434837@linuxfoundation.org>
+In-Reply-To: <20200203161917.612554987@linuxfoundation.org>
+References: <20200203161917.612554987@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -42,60 +44,52 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Malcolm Priestley <tvboxspy@gmail.com>
+From: Ronnie Sahlberg <lsahlber@redhat.com>
 
-commit d971fdd3412f8342747778fb59b8803720ed82b1 upstream.
+commit c54849ddd832ae0a45cab16bcd1ed2db7da090d7 upstream.
 
-It appears that the driver still transmits in CTS protect mode even
-though it is not enabled in mac80211.
+RHBZ: 1795429
 
-That is both packet types PK_TYPE_11GA and PK_TYPE_11GB both use CTS protect.
-The only difference between them GA does not use B rates.
+In recent DFS updates we have a new variable controlling how many times we will
+retry to reconnect the share.
+If DFS is not used, then this variable is initialized to 0 in:
 
-Find if only B rate in GB or GA in protect mode otherwise transmit packets
-as PK_TYPE_11A.
+static inline int
+dfs_cache_get_nr_tgts(const struct dfs_cache_tgt_list *tl)
+{
+        return tl ? tl->tl_numtgts : 0;
+}
 
-Cc: stable <stable@vger.kernel.org>
-Signed-off-by: Malcolm Priestley <tvboxspy@gmail.com>
-Link: https://lore.kernel.org/r/9c1323ff-dbb3-0eaa-43e1-9453f7390dc0@gmail.com
+This means that in the reconnect loop in smb2_reconnect() we will immediately wrap retries to -1
+and never actually get to pass this conditional:
+
+                if (--retries)
+                        continue;
+
+The effect is that we no longer reach the point where we fail the commands with -EHOSTDOWN
+and basically the kernel threads are virtually hung and unkillable.
+
+Fixes: a3a53b7603798fd8 (cifs: Add support for failover in smb2_reconnect())
+Signed-off-by: Ronnie Sahlberg <lsahlber@redhat.com>
+Signed-off-by: Steve French <stfrench@microsoft.com>
+Reviewed-by: Paulo Alcantara (SUSE) <pc@cjr.nz>
+CC: Stable <stable@vger.kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/staging/vt6656/device.h |    2 ++
- drivers/staging/vt6656/rxtx.c   |   12 ++++++++----
- 2 files changed, 10 insertions(+), 4 deletions(-)
+ fs/cifs/smb2pdu.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/staging/vt6656/device.h
-+++ b/drivers/staging/vt6656/device.h
-@@ -62,6 +62,8 @@
- #define RATE_AUTO	12
+--- a/fs/cifs/smb2pdu.c
++++ b/fs/cifs/smb2pdu.c
+@@ -312,7 +312,7 @@ smb2_reconnect(__le16 smb2_command, stru
+ 		if (server->tcpStatus != CifsNeedReconnect)
+ 			break;
  
- #define MAX_RATE			12
-+#define VNT_B_RATES	(BIT(RATE_1M) | BIT(RATE_2M) |\
-+			BIT(RATE_5M) | BIT(RATE_11M))
+-		if (--retries)
++		if (retries && --retries)
+ 			continue;
  
- /*
-  * device specific
---- a/drivers/staging/vt6656/rxtx.c
-+++ b/drivers/staging/vt6656/rxtx.c
-@@ -816,10 +816,14 @@ int vnt_tx_packet(struct vnt_private *pr
- 		if (info->band == NL80211_BAND_5GHZ) {
- 			pkt_type = PK_TYPE_11A;
- 		} else {
--			if (tx_rate->flags & IEEE80211_TX_RC_USE_CTS_PROTECT)
--				pkt_type = PK_TYPE_11GB;
--			else
--				pkt_type = PK_TYPE_11GA;
-+			if (tx_rate->flags & IEEE80211_TX_RC_USE_CTS_PROTECT) {
-+				if (priv->basic_rates & VNT_B_RATES)
-+					pkt_type = PK_TYPE_11GB;
-+				else
-+					pkt_type = PK_TYPE_11GA;
-+			} else {
-+				pkt_type = PK_TYPE_11A;
-+			}
- 		}
- 	} else {
- 		pkt_type = PK_TYPE_11B;
+ 		/*
 
 
