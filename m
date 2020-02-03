@@ -2,40 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1969E150ABB
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Feb 2020 17:20:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A645E150B2A
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Feb 2020 17:25:18 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728857AbgBCQUY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 3 Feb 2020 11:20:24 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60124 "EHLO mail.kernel.org"
+        id S1728196AbgBCQZP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 3 Feb 2020 11:25:15 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35862 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728840AbgBCQUW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Feb 2020 11:20:22 -0500
+        id S1728167AbgBCQZM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Feb 2020 11:25:12 -0500
 Received: from localhost (unknown [104.132.45.99])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 02DCC21744;
-        Mon,  3 Feb 2020 16:20:20 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A27462087E;
+        Mon,  3 Feb 2020 16:25:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1580746821;
-        bh=wV3EqIuuGbB79eip1FqxumZ6nHGkbGQzO68Nyo5GlX8=;
+        s=default; t=1580747112;
+        bh=g8iDQnd6Yr9F7M26ThvnaNNeqrJbWLkQXykum1JpWXY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=YHfEYz9R9NZSTp3hvuyt/Ldp6SBD8xfrtaQG15+S9zXIdBLrMIHef6lRR2S0tX+k6
-         vmm44oYrTXfcRzfXEeKpNqR644oJOCfkAPCEA9iakb/idlVG5gqv5pPKVVdE9pZeME
-         fzhmvNvm3Cl3UlpVAddJW5idMCDJ9lFZTU2WExdQ=
+        b=RD4RJH0gvlltCVDkFr0YWbOT56WMCNeckyluWO8cCiAIfVH6B1al4uZPgstqP9E++
+         uyzwYzsImn3tnULrcMs2GFG4C+zgHQp/jzaMhihRq9NK1JCJzr9iderz8Rva2Qz8JQ
+         5WhV3KB9/hzPe4No4O5U5/tiI+cuOD49IRyoAofU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Steven Ellis <sellis@redhat.com>,
-        Pacho Ramos <pachoramos@gmail.com>,
-        Laura Abbott <labbott@fedoraproject.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.4 20/53] usb-storage: Disable UAS on JMicron SATA enclosure
-Date:   Mon,  3 Feb 2020 16:19:12 +0000
-Message-Id: <20200203161906.795449582@linuxfoundation.org>
+        stable@vger.kernel.org, Randy Dunlap <rdunlap@infradead.org>,
+        Vineet Gupta <vgupta@synopsys.com>,
+        Ofer Levi <oferle@mellanox.com>,
+        linux-snps-arc@lists.infradead.org, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.9 17/68] arc: eznps: fix allmodconfig kconfig warning
+Date:   Mon,  3 Feb 2020 16:19:13 +0000
+Message-Id: <20200203161907.915759199@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200203161902.714326084@linuxfoundation.org>
-References: <20200203161902.714326084@linuxfoundation.org>
+In-Reply-To: <20200203161904.705434837@linuxfoundation.org>
+References: <20200203161904.705434837@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,45 +45,40 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Laura Abbott <labbott@fedoraproject.org>
+From: Randy Dunlap <rdunlap@infradead.org>
 
-[ Upstream commit bc3bdb12bbb3492067c8719011576370e959a2e6 ]
+[ Upstream commit 1928b36cfa4df1aeedf5f2644d0c33f3a1fcfd7b ]
 
-Steve Ellis reported incorrect block sizes and alignement
-offsets with a SATA enclosure. Adding a quirk to disable
-UAS fixes the problems.
+Fix kconfig warning for arch/arc/plat-eznps/Kconfig allmodconfig:
 
-Reported-by: Steven Ellis <sellis@redhat.com>
-Cc: Pacho Ramos <pachoramos@gmail.com>
-Signed-off-by: Laura Abbott <labbott@fedoraproject.org>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+WARNING: unmet direct dependencies detected for CLKSRC_NPS
+  Depends on [n]: GENERIC_CLOCKEVENTS [=y] && !PHYS_ADDR_T_64BIT [=y]
+  Selected by [y]:
+  - ARC_PLAT_EZNPS [=y]
+
+Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
+Cc: Vineet Gupta <vgupta@synopsys.com>
+Cc: Ofer Levi <oferle@mellanox.com>
+Cc: linux-snps-arc@lists.infradead.org
+Signed-off-by: Vineet Gupta <vgupta@synopsys.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/usb/storage/unusual_uas.h | 7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
+ arch/arc/plat-eznps/Kconfig | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/usb/storage/unusual_uas.h b/drivers/usb/storage/unusual_uas.h
-index 8ed80f28416fa..9aad6825947c8 100644
---- a/drivers/usb/storage/unusual_uas.h
-+++ b/drivers/usb/storage/unusual_uas.h
-@@ -162,12 +162,15 @@ UNUSUAL_DEV(0x2537, 0x1068, 0x0000, 0x9999,
- 		USB_SC_DEVICE, USB_PR_DEVICE, NULL,
- 		US_FL_IGNORE_UAS),
- 
--/* Reported-by: Takeo Nakayama <javhera@gmx.com> */
-+/*
-+ * Initially Reported-by: Takeo Nakayama <javhera@gmx.com>
-+ * UAS Ignore Reported by Steven Ellis <sellis@redhat.com>
-+ */
- UNUSUAL_DEV(0x357d, 0x7788, 0x0000, 0x9999,
- 		"JMicron",
- 		"JMS566",
- 		USB_SC_DEVICE, USB_PR_DEVICE, NULL,
--		US_FL_NO_REPORT_OPCODES),
-+		US_FL_NO_REPORT_OPCODES | US_FL_IGNORE_UAS),
- 
- /* Reported-by: Hans de Goede <hdegoede@redhat.com> */
- UNUSUAL_DEV(0x4971, 0x1012, 0x0000, 0x9999,
+diff --git a/arch/arc/plat-eznps/Kconfig b/arch/arc/plat-eznps/Kconfig
+index 1d175cc6ad6d3..86f844caa405d 100644
+--- a/arch/arc/plat-eznps/Kconfig
++++ b/arch/arc/plat-eznps/Kconfig
+@@ -7,7 +7,7 @@ menuconfig ARC_PLAT_EZNPS
+ 	bool "\"EZchip\" ARC dev platform"
+ 	select ARC_HAS_COH_CACHES if SMP
+ 	select CPU_BIG_ENDIAN
+-	select CLKSRC_NPS
++	select CLKSRC_NPS if !PHYS_ADDR_T_64BIT
+ 	select EZNPS_GIC
+ 	select EZCHIP_NPS_MANAGEMENT_ENET if ETHERNET
+ 	help
 -- 
 2.20.1
 
