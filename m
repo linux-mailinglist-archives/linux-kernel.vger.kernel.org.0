@@ -2,84 +2,94 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E1B03150479
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Feb 2020 11:41:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8D67C15046A
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Feb 2020 11:41:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727916AbgBCKl6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 3 Feb 2020 05:41:58 -0500
-Received: from smtprelay0020.hostedemail.com ([216.40.44.20]:50236 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726884AbgBCKl5 (ORCPT
+        id S1727578AbgBCKlY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 3 Feb 2020 05:41:24 -0500
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:40710 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727196AbgBCKlS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Feb 2020 05:41:57 -0500
-Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
-        by smtprelay02.hostedemail.com (Postfix) with ESMTP id D32D5121A;
-        Mon,  3 Feb 2020 10:41:54 +0000 (UTC)
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,:::::::::::::::::,RULES_HIT:41:355:379:599:968:988:989:1260:1277:1311:1313:1314:1345:1359:1437:1515:1516:1518:1534:1541:1593:1594:1711:1730:1747:1777:1792:2198:2199:2393:2553:2559:2562:2691:2828:3138:3139:3140:3141:3142:3353:3622:3865:3867:3868:3870:3871:3874:4321:5007:6119:6691:8531:8957:9010:10004:10400:10848:11232:11658:11914:12050:12297:12740:12760:12895:13069:13311:13357:13439:14096:14097:14659:14721:21080:21611:21627:21740:21810:30012:30054:30090:30091,0,RBL:none,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:,MSBL:0,DNSBL:none,Custom_rules:0:0:0,LFtime:1,LUA_SUMMARY:none
-X-HE-Tag: range25_4ab6e8725fd55
-X-Filterd-Recvd-Size: 2515
-Received: from XPS-9350.home (unknown [47.151.135.224])
-        (Authenticated sender: joe@perches.com)
-        by omf03.hostedemail.com (Postfix) with ESMTPA;
-        Mon,  3 Feb 2020 10:41:53 +0000 (UTC)
-Message-ID: <5f67af4339e0b9b56b43fb78ebab73e05009e307.camel@perches.com>
-Subject: Re: [PATCH 1/2] staging: exfat: remove DOSNAMEs.
-From:   Joe Perches <joe@perches.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Matthew Wilcox <willy@infradead.org>
-Cc:     Tetsuhiro Kohada <Kohada.Tetsuhiro@dc.mitsubishielectric.co.jp>,
-        devel@driverdev.osuosl.org,
-        Valdis Kletnieks <valdis.kletnieks@vt.edu>,
-        Mori.Takahiro@ab.mitsubishielectric.co.jp,
-        linux-kernel@vger.kernel.org,
-        motai.hirotaka@aj.mitsubishielectric.co.jp,
-        linux-fsdevel@vger.kernel.org
-Date:   Mon, 03 Feb 2020 02:40:43 -0800
-In-Reply-To: <20200203094601.GA3040887@kroah.com>
-References: <20200203163118.31332-1-Kohada.Tetsuhiro@dc.MitsubishiElectric.co.jp>
-         <20200203080532.GF8731@bombadil.infradead.org>
-         <20200203081559.GA3038628@kroah.com>
-         <20200203082938.GG8731@bombadil.infradead.org>
-         <20200203094601.GA3040887@kroah.com>
-Content-Type: text/plain; charset="ISO-8859-1"
-User-Agent: Evolution 3.34.1-2 
+        Mon, 3 Feb 2020 05:41:18 -0500
+Received: by mail-wm1-f67.google.com with SMTP id t14so16309969wmi.5
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Feb 2020 02:41:15 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=I7kUAuYHK3HU7kgrmlP52Bgbfr7nuCCYrdhqJu7dVQ8=;
+        b=J55zZsRJHqR8+iP6YWjkIN+xlOxkGVRI4uehq2z6qvNNbhJQl7aUnIeIL9ptoxLXqF
+         9qtzDOApck2LDpnlePnZvfUkD4oBOVZSjQLEKq0/Q448jvTUrZmekKlBC6SaYVqRf1NQ
+         Dl06qyULTlr/6dJ8rCRcGCg7fzFk/B30tfUZZHqynDOMfkKohzX+F94DnibrYrkGVzML
+         qySpDmAkLOcFYh07DJIv7f2pxY6Y8qXk+PfuLmCD+bhzh33S2FhcCSZZbDmCBeK2YNyL
+         5Qe6TSUDERIUBAIISKv07hAdNEiNW/jJ4Y1wBB5rLqISOJg4PINcK7wUp349JgjjqqUa
+         XnJQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=I7kUAuYHK3HU7kgrmlP52Bgbfr7nuCCYrdhqJu7dVQ8=;
+        b=CrDyrTQtnbGal2+WTWdJiBo+rZR7K7GYrPqSbEjLii22xKUlWaGy7nWraX26Ug6WsX
+         Zc6hZNgmftXJZz2qaS7mIjAiLgrd+mwexq7FHH3L1ES0c2iLdAkavqb4t7NFozRwEPYZ
+         4gb9Dg/HX6PluX0jecFf01ejZuhg3eg16uLyMvGpaDCqqD+m6osoHoJwBlwDroF5Isik
+         XYzstjCcvRZGo6w1GKPY/ZCMvK9UJixheWPoM/LsVZb5B41TddyS3cu8akyoeBJKgAy2
+         TMhTuT4uurXFkjEfQCLw3ME6CykQaN95c+2rlBMXX5OyLL+1u4LJc6Mu+SZTghUNdDoY
+         fYsw==
+X-Gm-Message-State: APjAAAWdUZHOpmQ0kEHCN/FIN2ur9i1EQCwDA2zYdHxtSEpab7Z3yqms
+        fmG8hg/AC/UDpWyB4Jtl9vBbxg==
+X-Google-Smtp-Source: APXvYqxlzkNiELVOe6HFuEvkKPhG/U8qjsN+TV7x9MnYHIj6QHkawmzKn3HRfbvnMAZXZ5vUug/GNQ==
+X-Received: by 2002:a05:600c:218b:: with SMTP id e11mr28672434wme.56.1580726474686;
+        Mon, 03 Feb 2020 02:41:14 -0800 (PST)
+Received: from localhost.localdomain (84-33-65-46.dyn.eolo.it. [84.33.65.46])
+        by smtp.gmail.com with ESMTPSA id i204sm23798930wma.44.2020.02.03.02.41.13
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 03 Feb 2020 02:41:13 -0800 (PST)
+From:   Paolo Valente <paolo.valente@linaro.org>
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+        bfq-iosched@googlegroups.com, oleksandr@natalenko.name,
+        patdung100@gmail.com, cevich@redhat.com,
+        Paolo Valente <paolo.valente@linaro.org>
+Subject: [PATCH BUGFIX V2 0/7] block, bfq: series of fixes, and not only, for some recently reported issues
+Date:   Mon,  3 Feb 2020 11:40:53 +0100
+Message-Id: <20200203104100.16965-1-paolo.valente@linaro.org>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 2020-02-03 at 09:46 +0000, Greg Kroah-Hartman wrote:
-> On Mon, Feb 03, 2020 at 12:29:38AM -0800, Matthew Wilcox wrote:
-> > On Mon, Feb 03, 2020 at 08:15:59AM +0000, Greg Kroah-Hartman wrote:
-> > > On Mon, Feb 03, 2020 at 12:05:32AM -0800, Matthew Wilcox wrote:
-> > > > On Tue, Feb 04, 2020 at 01:31:17AM +0900, Tetsuhiro Kohada wrote:
-> > > > > remove 'dos_name','ShortName' and related definitions.
-> > > > > 
-> > > > > 'dos_name' and 'ShortName' are definitions before VFAT.
-> > > > > These are never used in exFAT.
-> > > > 
-> > > > Why are we still seeing patches for the exfat in staging?
-> > > 
-> > > Because people like doing cleanup patches :)
-> > 
-> > Sure, but I think people also like to believe that their cleanup patches
-> > are making a difference.  In this case, they're just churning code that's
-> > only weeks away from deletion.
-> > 
-> > > > Why are people not working on the Samsung code base?
-> > > 
-> > > They are, see the patches on the list, hopefully they get merged after
-> > > -rc1 is out.
-> > 
-> > I meant the cleanup people.  Obviously _some_ people are working on the
-> > Samsung codebase.
-> 
-> We can't tell people to work on :)
+Hi Jens,
+this the V2 of the series. The only change is the removal of ifdefs
+from around gets and puts of bfq groups. As I wrote in my previous
+cover letter, these patches are mostly fixes for the issues reported
+in [1, 2]. All patches have been publicly tested in the dev version of
+BFQ.
 
-That's more an argument to remove exfat from staging
-sooner than later.
+Thanks,
+Paolo
 
+[1] https://bugzilla.redhat.com/show_bug.cgi?id=1767539
+[2] https://bugzilla.kernel.org/show_bug.cgi?id=205447
 
+Paolo Valente (7):
+  block, bfq: do not plug I/O for bfq_queues with no proc refs
+  block, bfq: do not insert oom queue into position tree
+  block, bfq: get extra ref to prevent a queue from being freed during a
+    group move
+  block, bfq: extend incomplete name of field on_st
+  block, bfq: remove ifdefs from around gets/puts of bfq groups
+  block, bfq: get a ref to a group when adding it to a service tree
+  block, bfq: clarify the goal of bfq_split_bfqq()
+
+ block/bfq-cgroup.c  | 16 ++++++++++++++--
+ block/bfq-iosched.c | 26 ++++++++++++++++++++------
+ block/bfq-iosched.h |  4 +++-
+ block/bfq-wf2q.c    | 23 +++++++++++++++++------
+ 4 files changed, 54 insertions(+), 15 deletions(-)
+
+--
+2.20.1
