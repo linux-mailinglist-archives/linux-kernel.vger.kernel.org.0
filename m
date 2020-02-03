@@ -2,39 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D406E150B78
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Feb 2020 17:27:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 74792150B56
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Feb 2020 17:26:52 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729493AbgBCQ1x (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 3 Feb 2020 11:27:53 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39166 "EHLO mail.kernel.org"
+        id S1729273AbgBCQ0p (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 3 Feb 2020 11:26:45 -0500
+Received: from mail.kernel.org ([198.145.29.99]:37716 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728793AbgBCQ1q (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Feb 2020 11:27:46 -0500
+        id S1729245AbgBCQ0l (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Feb 2020 11:26:41 -0500
 Received: from localhost (unknown [104.132.45.99])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 00E542051A;
-        Mon,  3 Feb 2020 16:27:44 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 65A8C2051A;
+        Mon,  3 Feb 2020 16:26:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1580747265;
-        bh=p2WfEJ8ZKgV4J+cESH1NT9VjmZZwXfOgTWMsFY15Pwk=;
+        s=default; t=1580747200;
+        bh=SYaKm53L2/I72Tnwsrj7k4qz91HsmQhZdl1JkzVKpWc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=RBiTzcQsDuJ54+H8R98Ykx5qmF5DDzdGw4ET6xhL1SlIdV1DwahA6hzgjxLIX+Czw
-         6l1z3lBNQmSWfIPAXrq24RyTREERrZ4JTWpHqzHh/wRH5ZvASDRhEeXa7BZGP//LN/
-         5kOfquXBFRJcJ30uyhxGKBC0XNzeLaeD2HvlAlK8=
+        b=ncLtot7DL9GWslSWDLZpAAm6BOES20dEYoDTyk3jzbKz/DJpBtHVDeRkkeTiawdHT
+         NESGYBQmhSWzi+LGmHFnsWBOYchv9YyBqeW0OlIQPMyiluiTjp1S/C/E/kJaY4miN4
+         3zA0q1LL36KhURigWgoNKw23FlePzgZ42FcDFFE8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Lukas Wunner <lukas@wunner.de>,
-        Martin Sperl <kernel@martin.sperl.org>,
-        Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
-Subject: [PATCH 4.14 12/89] serial: 8250_bcm2835aux: Fix line mismatch on driver unbind
-Date:   Mon,  3 Feb 2020 16:18:57 +0000
-Message-Id: <20200203161918.499498763@linuxfoundation.org>
+        stable@vger.kernel.org, Johan Hovold <johan@kernel.org>,
+        Kalle Valo <kvalo@codeaurora.org>
+Subject: [PATCH 4.9 02/68] orinoco_usb: fix interface sanity check
+Date:   Mon,  3 Feb 2020 16:18:58 +0000
+Message-Id: <20200203161905.061964573@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200203161916.847439465@linuxfoundation.org>
-References: <20200203161916.847439465@linuxfoundation.org>
+In-Reply-To: <20200203161904.705434837@linuxfoundation.org>
+References: <20200203161904.705434837@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,49 +43,39 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Lukas Wunner <lukas@wunner.de>
+From: Johan Hovold <johan@kernel.org>
 
-commit dc76697d7e933d5e299116f219c890568785ea15 upstream.
+commit b73e05aa543cf8db4f4927e36952360d71291d41 upstream.
 
-Unbinding the bcm2835aux UART driver raises the following error if the
-maximum number of 8250 UARTs is set to 1 (via the 8250.nr_uarts module
-parameter or CONFIG_SERIAL_8250_RUNTIME_UARTS):
+Make sure to use the current alternate setting when verifying the
+interface descriptors to avoid binding to an invalid interface.
 
-(NULL device *): Removing wrong port: a6f80333 != fa20408b
+Failing to do so could cause the driver to misbehave or trigger a WARN()
+in usb_submit_urb() that kernels with panic_on_warn set would choke on.
 
-That's because bcm2835aux_serial_probe() retrieves UART line number 1
-from the devicetree and stores it in data->uart.port.line, while
-serial8250_register_8250_port() instead uses UART line number 0,
-which is stored in data->line.
-
-On driver unbind, bcm2835aux_serial_remove() uses data->uart.port.line,
-which contains the wrong number.  Fix it.
-
-The issue does not occur if the maximum number of 8250 UARTs is >= 2.
-
-Fixes: bdc5f3009580 ("serial: bcm2835: add driver for bcm2835-aux-uart")
-Signed-off-by: Lukas Wunner <lukas@wunner.de>
-Cc: stable@vger.kernel.org # v4.6+
-Cc: Martin Sperl <kernel@martin.sperl.org>
-Reviewed-by: Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
-Tested-by: Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
-Link: https://lore.kernel.org/r/912ccf553c5258135c6d7e8f404a101ef320f0f4.1579175223.git.lukas@wunner.de
+Fixes: 9afac70a7305 ("orinoco: add orinoco_usb driver")
+Cc: stable <stable@vger.kernel.org>     # 2.6.35
+Signed-off-by: Johan Hovold <johan@kernel.org>
+Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/tty/serial/8250/8250_bcm2835aux.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/net/wireless/intersil/orinoco/orinoco_usb.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/drivers/tty/serial/8250/8250_bcm2835aux.c
-+++ b/drivers/tty/serial/8250/8250_bcm2835aux.c
-@@ -119,7 +119,7 @@ static int bcm2835aux_serial_remove(stru
- {
- 	struct bcm2835aux_data *data = platform_get_drvdata(pdev);
+--- a/drivers/net/wireless/intersil/orinoco/orinoco_usb.c
++++ b/drivers/net/wireless/intersil/orinoco/orinoco_usb.c
+@@ -1601,9 +1601,9 @@ static int ezusb_probe(struct usb_interf
+ 	/* set up the endpoint information */
+ 	/* check out the endpoints */
  
--	serial8250_unregister_port(data->uart.port.line);
-+	serial8250_unregister_port(data->line);
- 	clk_disable_unprepare(data->clk);
+-	iface_desc = &interface->altsetting[0].desc;
++	iface_desc = &interface->cur_altsetting->desc;
+ 	for (i = 0; i < iface_desc->bNumEndpoints; ++i) {
+-		ep = &interface->altsetting[0].endpoint[i].desc;
++		ep = &interface->cur_altsetting->endpoint[i].desc;
  
- 	return 0;
+ 		if (usb_endpoint_is_bulk_in(ep)) {
+ 			/* we found a bulk in endpoint */
 
 
