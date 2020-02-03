@@ -2,37 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 45537150BFF
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Feb 2020 17:32:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 11003150C6A
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Feb 2020 17:37:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730418AbgBCQcY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 3 Feb 2020 11:32:24 -0500
-Received: from mail.kernel.org ([198.145.29.99]:46006 "EHLO mail.kernel.org"
+        id S1731129AbgBCQgH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 3 Feb 2020 11:36:07 -0500
+Received: from mail.kernel.org ([198.145.29.99]:51124 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730407AbgBCQcU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Feb 2020 11:32:20 -0500
+        id S1731115AbgBCQgC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Feb 2020 11:36:02 -0500
 Received: from localhost (unknown [104.132.45.99])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7153621744;
-        Mon,  3 Feb 2020 16:32:19 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 69E9B2051A;
+        Mon,  3 Feb 2020 16:36:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1580747539;
-        bh=SYyVBxqOvd8PZBMYuPnTKpW3r9nD8zK15FsRGcjFJXA=;
+        s=default; t=1580747761;
+        bh=KQRTBNGIx/d9uZvKRGCFrbPP4MYDMOG24kIsgdaTp+g=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=xobgM9GApQV47iI9SAZJBd/XSfcZ9F+mtbI9vjKKLM08R348eL7pWYm9oehvCSuwh
-         FPYn5Nui+YgBk2QN0dWYi/Mp3hEZT+D7C8Rx8Q8z+HbSfLcrL/AuylqJ5UdX12eKnz
-         pGZt/bYgjDUBbTcVXL6LD5TweG9KpPRWVORwRPFw=
+        b=g/SfVMZK+7b9ypAowOcQsoBdr5S2H5YkCYZBYz9knzq2jN3qL2CAHbFX6dKLHE8Yg
+         yLvJB4lx2LEgbZBTrVndV3AFvsBM7//LOu2tpKVNuZsoM0pwWZi5o7doSFpoQsicaD
+         0v+SN4RhLe7p1YjZ6lrf/eaFqN/wIK/gPw7MzgDY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Chanwoo Choi <cw00.choi@samsung.com>
-Subject: [PATCH 4.19 09/70] PM / devfreq: Add new name attribute for sysfs
-Date:   Mon,  3 Feb 2020 16:19:21 +0000
-Message-Id: <20200203161913.849916643@linuxfoundation.org>
+        stable@vger.kernel.org, Hans Verkuil <hverkuil-cisco@xs4all.nl>,
+        Sean Young <sean@mess.org>,
+        Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
+        syzbot+6bf9606ee955b646c0e1@syzkaller.appspotmail.com
+Subject: [PATCH 5.4 19/90] media: dvb-usb/dvb-usb-urb.c: initialize actlen to 0
+Date:   Mon,  3 Feb 2020 16:19:22 +0000
+Message-Id: <20200203161920.218827702@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200203161912.158976871@linuxfoundation.org>
-References: <20200203161912.158976871@linuxfoundation.org>
+In-Reply-To: <20200203161917.612554987@linuxfoundation.org>
+References: <20200203161917.612554987@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -42,66 +45,38 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Chanwoo Choi <cw00.choi@samsung.com>
+From: Hans Verkuil <hverkuil-cisco@xs4all.nl>
 
-commit 2fee1a7cc6b1ce6634bb0f025be2c94a58dfa34d upstream.
+commit 569bc8d6a6a50acb5fcf07fb10b8d2d461fdbf93 upstream.
 
-The commit 4585fbcb5331 ("PM / devfreq: Modify the device name as devfreq(X) for
-sysfs") changed the node name to devfreq(x). After this commit, it is not
-possible to get the device name through /sys/class/devfreq/devfreq(X)/*.
+This fixes a syzbot failure since actlen could be uninitialized,
+but it was still used.
 
-Add new name attribute in order to get device name.
+Syzbot link:
 
-Cc: stable@vger.kernel.org
-Fixes: 4585fbcb5331 ("PM / devfreq: Modify the device name as devfreq(X) for sysfs")
-Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
+https://syzkaller.appspot.com/bug?extid=6bf9606ee955b646c0e1
+
+Reported-and-tested-by: syzbot+6bf9606ee955b646c0e1@syzkaller.appspotmail.com
+
+Signed-off-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
+Acked-by: Sean Young <sean@mess.org>
+Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- Documentation/ABI/testing/sysfs-class-devfreq |    7 +++++++
- drivers/devfreq/devfreq.c                     |    9 +++++++++
- 2 files changed, 16 insertions(+)
+ drivers/media/usb/dvb-usb/dvb-usb-urb.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/Documentation/ABI/testing/sysfs-class-devfreq
-+++ b/Documentation/ABI/testing/sysfs-class-devfreq
-@@ -7,6 +7,13 @@ Description:
- 		The name of devfreq object denoted as ... is same as the
- 		name of device using devfreq.
- 
-+What:		/sys/class/devfreq/.../name
-+Date:		November 2019
-+Contact:	Chanwoo Choi <cw00.choi@samsung.com>
-+Description:
-+		The /sys/class/devfreq/.../name shows the name of device
-+		of the corresponding devfreq object.
-+
- What:		/sys/class/devfreq/.../governor
- Date:		September 2011
- Contact:	MyungJoo Ham <myungjoo.ham@samsung.com>
---- a/drivers/devfreq/devfreq.c
-+++ b/drivers/devfreq/devfreq.c
-@@ -1014,6 +1014,14 @@ err_out:
- }
- EXPORT_SYMBOL(devfreq_remove_governor);
- 
-+static ssize_t name_show(struct device *dev,
-+			struct device_attribute *attr, char *buf)
-+{
-+	struct devfreq *devfreq = to_devfreq(dev);
-+	return sprintf(buf, "%s\n", dev_name(devfreq->dev.parent));
-+}
-+static DEVICE_ATTR_RO(name);
-+
- static ssize_t governor_show(struct device *dev,
- 			     struct device_attribute *attr, char *buf)
+--- a/drivers/media/usb/dvb-usb/dvb-usb-urb.c
++++ b/drivers/media/usb/dvb-usb/dvb-usb-urb.c
+@@ -12,7 +12,7 @@
+ int dvb_usb_generic_rw(struct dvb_usb_device *d, u8 *wbuf, u16 wlen, u8 *rbuf,
+ 	u16 rlen, int delay_ms)
  {
-@@ -1330,6 +1338,7 @@ static ssize_t trans_stat_show(struct de
- static DEVICE_ATTR_RO(trans_stat);
+-	int actlen,ret = -ENOMEM;
++	int actlen = 0, ret = -ENOMEM;
  
- static struct attribute *devfreq_attrs[] = {
-+	&dev_attr_name.attr,
- 	&dev_attr_governor.attr,
- 	&dev_attr_available_governors.attr,
- 	&dev_attr_cur_freq.attr,
+ 	if (!d || wbuf == NULL || wlen == 0)
+ 		return -EINVAL;
 
 
