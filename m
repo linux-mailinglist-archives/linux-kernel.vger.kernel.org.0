@@ -2,41 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A8EB8150B9C
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Feb 2020 17:29:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1912A150AE4
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Feb 2020 17:22:14 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729745AbgBCQ3N (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 3 Feb 2020 11:29:13 -0500
-Received: from mail.kernel.org ([198.145.29.99]:41074 "EHLO mail.kernel.org"
+        id S1729217AbgBCQVx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 3 Feb 2020 11:21:53 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33922 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729734AbgBCQ3L (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Feb 2020 11:29:11 -0500
+        id S1729199AbgBCQVu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Feb 2020 11:21:50 -0500
 Received: from localhost (unknown [104.132.45.99])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EA1D92080C;
-        Mon,  3 Feb 2020 16:29:10 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id F05032087E;
+        Mon,  3 Feb 2020 16:21:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1580747351;
-        bh=nbVpVw4p1VfuJ7QN8lurRGFg/BN8CBl5Bc8vLSaxQwY=;
+        s=default; t=1580746909;
+        bh=C8C94JcxU1kfdUzgZcR5GWniSKPbME7wQTcbrrI6DyY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Rj9dmXNHPCVFpeP4h1Di+GXIZJdMa3u7R58PaWxYO78GDl+kRr/wod3MlTcY2bq0X
-         nJHISJ4RqOMQ4KwBtPZYhh0tgBC7HL2lJMaS9mdYSWAjM/nsdYrHTicYMTBMSr1jx0
-         ira56NUWOBSagGCgY6qrUVyPWQ70OVTuX310tY4Y=
+        b=Mqr8mA6sdKxHwJMXna+10XtdjIg0if0FLJa72zzG9zz0zAaunydZ0jaZhWJqxu4fN
+         /RdxeJ7WA/nE0IBgE8wlBc4ZCmuhL/yJU4nc52TZZ+p4RqBLMzSoaTeknqME9okbyo
+         rCextN13ORuzbz+yYSpJJ7VSylwN92xSU9SZdMx0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Hans Verkuil <hverkuil-cisco@xs4all.nl>,
-        Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
-        syzbot+32310fc2aea76898d074@syzkaller.appspotmail.com,
-        syzbot+99706d6390be1ac542a2@syzkaller.appspotmail.com,
-        syzbot+64437af5c781a7f0e08e@syzkaller.appspotmail.com
-Subject: [PATCH 4.14 47/89] media: gspca: zero usb_buf
-Date:   Mon,  3 Feb 2020 16:19:32 +0000
-Message-Id: <20200203161923.290659014@linuxfoundation.org>
+        stable@vger.kernel.org, Marc Zyngier <maz@kernel.org>,
+        Vladimir Murzin <vladimir.murzin@arm.com>,
+        Russell King <rmk+kernel@armlinux.org.uk>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.4 41/53] ARM: 8955/1: virt: Relax arch timer version check during early boot
+Date:   Mon,  3 Feb 2020 16:19:33 +0000
+Message-Id: <20200203161910.201170377@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200203161916.847439465@linuxfoundation.org>
-References: <20200203161916.847439465@linuxfoundation.org>
+In-Reply-To: <20200203161902.714326084@linuxfoundation.org>
+References: <20200203161902.714326084@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,42 +45,50 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Hans Verkuil <hverkuil-cisco@xs4all.nl>
+From: Vladimir Murzin <vladimir.murzin@arm.com>
 
-commit de89d0864f66c2a1b75becfdd6bf3793c07ce870 upstream.
+[ Upstream commit 6849b5eba1965ceb0cad3a75877ef4569dd3638e ]
 
-Allocate gspca_dev->usb_buf with kzalloc instead of kmalloc to
-ensure it is property zeroed. This fixes various syzbot errors
-about uninitialized data.
+Updates to the Generic Timer architecture allow ID_PFR1.GenTimer to
+have values other than 0 or 1 while still preserving backward
+compatibility. At the moment, Linux is quite strict in the way it
+handles this field at early boot and will not configure arch timer if
+it doesn't find the value 1.
 
-Syzbot links:
+Since here use ubfx for arch timer version extraction (hyb-stub build
+with -march=armv7-a, so it is safe)
 
-https://syzkaller.appspot.com/bug?extid=32310fc2aea76898d074
-https://syzkaller.appspot.com/bug?extid=99706d6390be1ac542a2
-https://syzkaller.appspot.com/bug?extid=64437af5c781a7f0e08e
+To help backports (even though the code was correct at the time of writing)
 
-Reported-and-tested-by: syzbot+32310fc2aea76898d074@syzkaller.appspotmail.com
-Reported-and-tested-by: syzbot+99706d6390be1ac542a2@syzkaller.appspotmail.com
-Reported-and-tested-by: syzbot+64437af5c781a7f0e08e@syzkaller.appspotmail.com
-
-Signed-off-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
-Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Fixes: 8ec58be9f3ff ("ARM: virt: arch_timers: enable access to physical timers")
+Acked-by: Marc Zyngier <maz@kernel.org>
+Signed-off-by: Vladimir Murzin <vladimir.murzin@arm.com>
+Signed-off-by: Russell King <rmk+kernel@armlinux.org.uk>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/media/usb/gspca/gspca.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/arm/kernel/hyp-stub.S | 7 +++----
+ 1 file changed, 3 insertions(+), 4 deletions(-)
 
---- a/drivers/media/usb/gspca/gspca.c
-+++ b/drivers/media/usb/gspca/gspca.c
-@@ -2038,7 +2038,7 @@ int gspca_dev_probe2(struct usb_interfac
- 		pr_err("couldn't kzalloc gspca struct\n");
- 		return -ENOMEM;
- 	}
--	gspca_dev->usb_buf = kmalloc(USB_BUF_SZ, GFP_KERNEL);
-+	gspca_dev->usb_buf = kzalloc(USB_BUF_SZ, GFP_KERNEL);
- 	if (!gspca_dev->usb_buf) {
- 		pr_err("out of memory\n");
- 		ret = -ENOMEM;
+diff --git a/arch/arm/kernel/hyp-stub.S b/arch/arm/kernel/hyp-stub.S
+index 2a55373f49bfb..f9948363111d1 100644
+--- a/arch/arm/kernel/hyp-stub.S
++++ b/arch/arm/kernel/hyp-stub.S
+@@ -144,10 +144,9 @@ ARM_BE8(orr	r7, r7, #(1 << 25))     @ HSCTLR.EE
+ #if !defined(ZIMAGE) && defined(CONFIG_ARM_ARCH_TIMER)
+ 	@ make CNTP_* and CNTPCT accessible from PL1
+ 	mrc	p15, 0, r7, c0, c1, 1	@ ID_PFR1
+-	lsr	r7, #16
+-	and	r7, #0xf
+-	cmp	r7, #1
+-	bne	1f
++	ubfx	r7, r7, #16, #4
++	teq	r7, #0
++	beq	1f
+ 	mrc	p15, 4, r7, c14, c1, 0	@ CNTHCTL
+ 	orr	r7, r7, #3		@ PL1PCEN | PL1PCTEN
+ 	mcr	p15, 4, r7, c14, c1, 0	@ CNTHCTL
+-- 
+2.20.1
+
 
 
