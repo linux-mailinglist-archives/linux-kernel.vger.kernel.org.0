@@ -2,27 +2,27 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3D702150C62
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Feb 2020 17:37:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A8DDA150D5C
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Feb 2020 17:44:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731090AbgBCQfv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 3 Feb 2020 11:35:51 -0500
-Received: from mail.kernel.org ([198.145.29.99]:50834 "EHLO mail.kernel.org"
+        id S1729175AbgBCQnn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 3 Feb 2020 11:43:43 -0500
+Received: from mail.kernel.org ([198.145.29.99]:46382 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730732AbgBCQft (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Feb 2020 11:35:49 -0500
+        id S1730129AbgBCQcj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Feb 2020 11:32:39 -0500
 Received: from localhost (unknown [104.132.45.99])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D0F7D21744;
-        Mon,  3 Feb 2020 16:35:47 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 700942051A;
+        Mon,  3 Feb 2020 16:32:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1580747748;
-        bh=TU+W/o8VBQ8DIoVOwi2OrRAx7A9rVRtH45DypHh4ZZ8=;
+        s=default; t=1580747558;
+        bh=wxmR6bK+1cTs6I/4bhCczSGmGHbhgq301hFma19OM/s=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=hcgb3D1YyEIWcQfVHLYfpvG9V7iEQfxpDpg5MZfjo7RgTMy7FAABcPSDqAgeJwTIM
-         TTnw3tgwf91kE5qlSCds6fLYDiyCNTV9yE3iainxyZkKIrkm0xWpGWNMcmnU/tjjoS
-         BhTx1qgc7ooP/301NrkQy21NYJvcsyxL78PfUrdU=
+        b=tNNxzYEOaq2YRCN4nu46040rh1v7yCGJi7rWc4PZ54tCNiLwJ5thLe7XJoPDDm/wO
+         zsfi3EvIhBERUXZSntF9WX+rfVAdsKLhYMHmm9yjH3ahEKdaAH55hkDitBT+cIMNSw
+         fZIrcOjmgsUn5wCpEI6U/vHpVgt6k/Aybqq9mDNA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -30,12 +30,12 @@ Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Sergey Matyukevich <sergey.matyukevich.os@quantenna.com>,
         Johannes Berg <johannes.berg@intel.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.4 52/90] cfg80211: Fix radar event during another phy CAC
+Subject: [PATCH 4.19 43/70] cfg80211: Fix radar event during another phy CAC
 Date:   Mon,  3 Feb 2020 16:19:55 +0000
-Message-Id: <20200203161924.195422938@linuxfoundation.org>
+Message-Id: <20200203161918.611962441@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200203161917.612554987@linuxfoundation.org>
-References: <20200203161917.612554987@linuxfoundation.org>
+In-Reply-To: <20200203161912.158976871@linuxfoundation.org>
+References: <20200203161912.158976871@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -81,10 +81,10 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  5 files changed, 65 insertions(+), 1 deletion(-)
 
 diff --git a/include/net/cfg80211.h b/include/net/cfg80211.h
-index 4ab2c49423dcb..68782ba8b6e8d 100644
+index 1fa2e72ff7a6a..ae936cd5567e0 100644
 --- a/include/net/cfg80211.h
 +++ b/include/net/cfg80211.h
-@@ -3537,6 +3537,9 @@ struct cfg80211_update_owe_info {
+@@ -3050,6 +3050,9 @@ struct cfg80211_external_auth_params {
   *
   * @start_radar_detection: Start radar detection in the driver.
   *
@@ -94,7 +94,7 @@ index 4ab2c49423dcb..68782ba8b6e8d 100644
   * @update_ft_ies: Provide updated Fast BSS Transition information to the
   *	driver. If the SME is in the driver/firmware, this information can be
   *	used in building Authentication and Reassociation Request frames.
-@@ -3863,6 +3866,8 @@ struct cfg80211_ops {
+@@ -3364,6 +3367,8 @@ struct cfg80211_ops {
  					 struct net_device *dev,
  					 struct cfg80211_chan_def *chandef,
  					 u32 cac_time_ms);
@@ -104,10 +104,10 @@ index 4ab2c49423dcb..68782ba8b6e8d 100644
  				 struct cfg80211_update_ft_ies_params *ftie);
  	int	(*crit_proto_start)(struct wiphy *wiphy,
 diff --git a/net/mac80211/cfg.c b/net/mac80211/cfg.c
-index 70739e746c13e..0daaf7e37a211 100644
+index e46944500cfa1..cb7076d9a7698 100644
 --- a/net/mac80211/cfg.c
 +++ b/net/mac80211/cfg.c
-@@ -2954,6 +2954,28 @@ static int ieee80211_start_radar_detection(struct wiphy *wiphy,
+@@ -2825,6 +2825,28 @@ static int ieee80211_start_radar_detection(struct wiphy *wiphy,
  	return err;
  }
  
@@ -136,7 +136,7 @@ index 70739e746c13e..0daaf7e37a211 100644
  static struct cfg80211_beacon_data *
  cfg80211_beacon_dup(struct cfg80211_beacon_data *beacon)
  {
-@@ -4023,6 +4045,7 @@ const struct cfg80211_ops mac80211_config_ops = {
+@@ -3848,6 +3870,7 @@ const struct cfg80211_ops mac80211_config_ops = {
  #endif
  	.get_channel = ieee80211_cfg_get_channel,
  	.start_radar_detection = ieee80211_start_radar_detection,
@@ -145,10 +145,10 @@ index 70739e746c13e..0daaf7e37a211 100644
  	.set_qos_map = ieee80211_set_qos_map,
  	.set_ap_chanwidth = ieee80211_set_ap_chanwidth,
 diff --git a/net/wireless/rdev-ops.h b/net/wireless/rdev-ops.h
-index 3dd9515c836bc..e0d34f796d0b3 100644
+index 4cff76f33d45f..a8c58aeb9dde9 100644
 --- a/net/wireless/rdev-ops.h
 +++ b/net/wireless/rdev-ops.h
-@@ -1171,6 +1171,16 @@ rdev_start_radar_detection(struct cfg80211_registered_device *rdev,
+@@ -1170,6 +1170,16 @@ rdev_start_radar_detection(struct cfg80211_registered_device *rdev,
  	return ret;
  }
  
@@ -166,12 +166,12 @@ index 3dd9515c836bc..e0d34f796d0b3 100644
  rdev_set_mcast_rate(struct cfg80211_registered_device *rdev,
  		    struct net_device *dev,
 diff --git a/net/wireless/reg.c b/net/wireless/reg.c
-index 3c2070040277d..fff9a74891fc4 100644
+index 4c3c8a1c116da..018c60be153a7 100644
 --- a/net/wireless/reg.c
 +++ b/net/wireless/reg.c
-@@ -3892,6 +3892,25 @@ bool regulatory_pre_cac_allowed(struct wiphy *wiphy)
+@@ -3840,6 +3840,25 @@ bool regulatory_pre_cac_allowed(struct wiphy *wiphy)
+ 	return pre_cac_allowed;
  }
- EXPORT_SYMBOL(regulatory_pre_cac_allowed);
  
 +static void cfg80211_check_and_end_cac(struct cfg80211_registered_device *rdev)
 +{
@@ -195,7 +195,7 @@ index 3c2070040277d..fff9a74891fc4 100644
  void regulatory_propagate_dfs_state(struct wiphy *wiphy,
  				    struct cfg80211_chan_def *chandef,
  				    enum nl80211_dfs_state dfs_state,
-@@ -3918,8 +3937,10 @@ void regulatory_propagate_dfs_state(struct wiphy *wiphy,
+@@ -3866,8 +3885,10 @@ void regulatory_propagate_dfs_state(struct wiphy *wiphy,
  		cfg80211_set_dfs_state(&rdev->wiphy, chandef, dfs_state);
  
  		if (event == NL80211_RADAR_DETECTED ||
@@ -208,10 +208,10 @@ index 3c2070040277d..fff9a74891fc4 100644
  		nl80211_radar_notify(rdev, chandef, event, NULL, GFP_KERNEL);
  	}
 diff --git a/net/wireless/trace.h b/net/wireless/trace.h
-index d98ad2b3143b0..8677d7ab7d692 100644
+index 7c73510b161f3..54b0bb344cf93 100644
 --- a/net/wireless/trace.h
 +++ b/net/wireless/trace.h
-@@ -646,6 +646,11 @@ DEFINE_EVENT(wiphy_netdev_evt, rdev_flush_pmksa,
+@@ -607,6 +607,11 @@ DEFINE_EVENT(wiphy_netdev_evt, rdev_flush_pmksa,
  	TP_ARGS(wiphy, netdev)
  );
  
