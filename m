@@ -2,39 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C2C2A150CC9
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Feb 2020 17:39:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 88224150D83
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Feb 2020 17:46:18 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730919AbgBCQhm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 3 Feb 2020 11:37:42 -0500
-Received: from mail.kernel.org ([198.145.29.99]:53116 "EHLO mail.kernel.org"
+        id S1730058AbgBCQal (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 3 Feb 2020 11:30:41 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43242 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731338AbgBCQhc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Feb 2020 11:37:32 -0500
+        id S1730046AbgBCQai (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Feb 2020 11:30:38 -0500
 Received: from localhost (unknown [104.132.45.99])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 415F020721;
-        Mon,  3 Feb 2020 16:37:31 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1DB1620838;
+        Mon,  3 Feb 2020 16:30:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1580747851;
-        bh=wdHGz14Yhup2AyWZJYu2P5/WKx7btL6hrN/8bDHJHig=;
+        s=default; t=1580747437;
+        bh=2H8ajiglt+EHRYvL1YjeXhL/YtkZxe/aW5ueYBO8jVY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Xd9lCRWH0vBocD3M//mcCcHSyou9fbbSbf0z4lOKm9B2s0eVyJG+r20faqFyQI3w7
-         kYNQ7iohj/4D+HX5djH9CCe7/tbVq8jSiHriqCJEFWRM9c/mHndjuz7Rc4skxnr+w/
-         DHQ+5s17vDMDVCzaqf7/zdP8kFZUMJ4JQm6n7P7s=
+        b=1nQydR4rrLR699nCgDWeCy2I60K3lSefQnG2oKu8XRkIp51JhkMLfYsyM25QzZPGz
+         rXL9DdDX21/7tYtsIGXVNeF6i6COZMmqkngbVDIZ/Q6k0U4LNlUxF+BbA0cX/VrFNg
+         +iQsF0eUBFHULmJXxn98R/uRJGujy2eShb9HBYQ0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, "Matwey V. Kornilov" <matwey@sai.msu.ru>,
-        Tony Lindgren <tony@atomide.com>,
+        stable@vger.kernel.org, Stan Johnson <userm57@yahoo.com>,
+        Finn Thain <fthain@telegraphics.com.au>,
+        "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.4 66/90] ARM: dts: am335x-boneblack-common: fix memory size
+Subject: [PATCH 4.14 84/89] net/sonic: Use MMIO accessors
 Date:   Mon,  3 Feb 2020 16:20:09 +0000
-Message-Id: <20200203161925.567987747@linuxfoundation.org>
+Message-Id: <20200203161926.998786057@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200203161917.612554987@linuxfoundation.org>
-References: <20200203161917.612554987@linuxfoundation.org>
+In-Reply-To: <20200203161916.847439465@linuxfoundation.org>
+References: <20200203161916.847439465@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,39 +45,67 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Matwey V. Kornilov <matwey@sai.msu.ru>
+From: Finn Thain <fthain@telegraphics.com.au>
 
-[ Upstream commit 5abd45ea0fc3060f7805e131753fdcbafd6c6618 ]
+[ Upstream commit e3885f576196ddfc670b3d53e745de96ffcb49ab ]
 
-BeagleBone Black series is equipped with 512MB RAM
-whereas only 256MB is included from am335x-bone-common.dtsi
+The driver accesses descriptor memory which is simultaneously accessed by
+the chip, so the compiler must not be allowed to re-order CPU accesses.
+sonic_buf_get() used 'volatile' to prevent that. sonic_buf_put() should
+have done so too but was overlooked.
 
-This leads to an issue with unusual setups when devicetree
-is loaded by GRUB2 directly.
-
-Signed-off-by: Matwey V. Kornilov <matwey@sai.msu.ru>
-Signed-off-by: Tony Lindgren <tony@atomide.com>
+Fixes: efcce839360f ("[PATCH] macsonic/jazzsonic network drivers update")
+Tested-by: Stan Johnson <userm57@yahoo.com>
+Signed-off-by: Finn Thain <fthain@telegraphics.com.au>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arm/boot/dts/am335x-boneblack-common.dtsi | 5 +++++
- 1 file changed, 5 insertions(+)
+ drivers/net/ethernet/natsemi/sonic.h | 16 ++++++++--------
+ 1 file changed, 8 insertions(+), 8 deletions(-)
 
-diff --git a/arch/arm/boot/dts/am335x-boneblack-common.dtsi b/arch/arm/boot/dts/am335x-boneblack-common.dtsi
-index 7ad079861efd6..91f93bc89716d 100644
---- a/arch/arm/boot/dts/am335x-boneblack-common.dtsi
-+++ b/arch/arm/boot/dts/am335x-boneblack-common.dtsi
-@@ -131,6 +131,11 @@
- };
+diff --git a/drivers/net/ethernet/natsemi/sonic.h b/drivers/net/ethernet/natsemi/sonic.h
+index 944f4830c4a1d..7057760cb55c6 100644
+--- a/drivers/net/ethernet/natsemi/sonic.h
++++ b/drivers/net/ethernet/natsemi/sonic.h
+@@ -343,30 +343,30 @@ static void sonic_tx_timeout(struct net_device *dev);
+    as far as we can tell. */
+ /* OpenBSD calls this "SWO".  I'd like to think that sonic_buf_put()
+    is a much better name. */
+-static inline void sonic_buf_put(void* base, int bitmode,
++static inline void sonic_buf_put(u16 *base, int bitmode,
+ 				 int offset, __u16 val)
+ {
+ 	if (bitmode)
+ #ifdef __BIG_ENDIAN
+-		((__u16 *) base + (offset*2))[1] = val;
++		__raw_writew(val, base + (offset * 2) + 1);
+ #else
+-		((__u16 *) base + (offset*2))[0] = val;
++		__raw_writew(val, base + (offset * 2) + 0);
+ #endif
+ 	else
+-	 	((__u16 *) base)[offset] = val;
++		__raw_writew(val, base + (offset * 1) + 0);
+ }
  
- / {
-+	memory@80000000 {
-+		device_type = "memory";
-+		reg = <0x80000000 0x20000000>; /* 512 MB */
-+	};
-+
- 	clk_mcasp0_fixed: clk_mcasp0_fixed {
- 		#clock-cells = <0>;
- 		compatible = "fixed-clock";
+-static inline __u16 sonic_buf_get(void* base, int bitmode,
++static inline __u16 sonic_buf_get(u16 *base, int bitmode,
+ 				  int offset)
+ {
+ 	if (bitmode)
+ #ifdef __BIG_ENDIAN
+-		return ((volatile __u16 *) base + (offset*2))[1];
++		return __raw_readw(base + (offset * 2) + 1);
+ #else
+-		return ((volatile __u16 *) base + (offset*2))[0];
++		return __raw_readw(base + (offset * 2) + 0);
+ #endif
+ 	else
+-		return ((volatile __u16 *) base)[offset];
++		return __raw_readw(base + (offset * 1) + 0);
+ }
+ 
+ /* Inlines that you should actually use for reading/writing DMA buffers */
 -- 
 2.20.1
 
