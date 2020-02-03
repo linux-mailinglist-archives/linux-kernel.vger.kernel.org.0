@@ -2,43 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5804C150C34
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Feb 2020 17:34:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 07FFF150BC6
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Feb 2020 17:31:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730747AbgBCQeN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 3 Feb 2020 11:34:13 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48342 "EHLO mail.kernel.org"
+        id S1729972AbgBCQaU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 3 Feb 2020 11:30:20 -0500
+Received: from mail.kernel.org ([198.145.29.99]:42622 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730729AbgBCQeH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Feb 2020 11:34:07 -0500
+        id S1729944AbgBCQaO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Feb 2020 11:30:14 -0500
 Received: from localhost (unknown [104.132.45.99])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1F7FD2087E;
-        Mon,  3 Feb 2020 16:34:05 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4DB0420838;
+        Mon,  3 Feb 2020 16:30:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1580747646;
-        bh=NS5ojRQwoa0VTd8vLTGmijdKyn6yx81L7neitWsZBow=;
+        s=default; t=1580747413;
+        bh=w9WNDehsM1lFSFmPeMSuZhv8mPkdVYroQ9F1lrDU4GQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=zXMyU4990rVdrUV03n4k/+miyZMGm3H9m5yXuGELpzPRVvtLoGNwcGqsAUZX33nTX
-         +vITV2vHsEisVmgoM6J7dbRb3HKJqkssYX62OPsgBe+LEcC3gnzr3mzwHXRRWTyD9z
-         yBQHDIPgL4IwDzV1O6yF10nsU7ihD5Aopm8bDXOM=
+        b=u3cDfKRqufBrhZso6r1LvJKn6IQ3Oa+6mGNTV/KQNQmGqOEs8/5FXJcbnGei2qVEw
+         jqgg5WF4TGaqQJCLGJ4MFOOjxYSPgeIpdoJ3tb8y56A9Gs+WDGDcmxjvyZxQZalPmS
+         SlpGoiuNSyTTHFMMxGp+LQTQHDR0Ed5jxxxdm9RU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Vitaly Chikunov <vt@altlinux.org>,
-        Dmitry Levin <ldv@altlinux.org>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        kbuild test robot <lkp@intel.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Vineet Gupta <vineet.gupta1@synopsys.com>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>
-Subject: [PATCH 5.4 11/90] tools lib: Fix builds when glibc contains strlcpy()
+        stable@vger.kernel.org, Steven Ellis <sellis@redhat.com>,
+        Pacho Ramos <pachoramos@gmail.com>,
+        Laura Abbott <labbott@fedoraproject.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.14 29/89] usb-storage: Disable UAS on JMicron SATA enclosure
 Date:   Mon,  3 Feb 2020 16:19:14 +0000
-Message-Id: <20200203161919.110051704@linuxfoundation.org>
+Message-Id: <20200203161920.710515184@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200203161917.612554987@linuxfoundation.org>
-References: <20200203161917.612554987@linuxfoundation.org>
+In-Reply-To: <20200203161916.847439465@linuxfoundation.org>
+References: <20200203161916.847439465@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -48,100 +45,47 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Vitaly Chikunov <vt@altlinux.org>
+From: Laura Abbott <labbott@fedoraproject.org>
 
-commit 6c4798d3f08b81c2c52936b10e0fa872590c96ae upstream.
+[ Upstream commit bc3bdb12bbb3492067c8719011576370e959a2e6 ]
 
-Disable a couple of compilation warnings (which are treated as errors)
-on strlcpy() definition and declaration, allowing users to compile perf
-and kernel (objtool) when:
+Steve Ellis reported incorrect block sizes and alignement
+offsets with a SATA enclosure. Adding a quirk to disable
+UAS fixes the problems.
 
-1. glibc have strlcpy() (such as in ALT Linux since 2004) objtool and
-   perf build fails with this (in gcc):
-
-  In file included from exec-cmd.c:3:
-  tools/include/linux/string.h:20:15: error: redundant redeclaration of ‘strlcpy’ [-Werror=redundant-decls]
-     20 | extern size_t strlcpy(char *dest, const char *src, size_t size);
-
-2. clang ignores `-Wredundant-decls', but produces another warning when
-   building perf:
-
-    CC       util/string.o
-  ../lib/string.c:99:8: error: attribute declaration must precede definition [-Werror,-Wignored-attributes]
-  size_t __weak strlcpy(char *dest, const char *src, size_t size)
-  ../../tools/include/linux/compiler.h:66:34: note: expanded from macro '__weak'
-  # define __weak                 __attribute__((weak))
-  /usr/include/bits/string_fortified.h:151:8: note: previous definition is here
-  __NTH (strlcpy (char *__restrict __dest, const char *__restrict __src,
-
-Committer notes:
-
-The
-
- #pragma GCC diagnostic
-
-directive was introduced in gcc 4.6, so check for that as well.
-
-Fixes: ce99091 ("perf tools: Move strlcpy() from perf to tools/lib/string.c")
-Fixes: 0215d59 ("tools lib: Reinstate strlcpy() header guard with __UCLIBC__")
-Resolves: https://bugzilla.kernel.org/show_bug.cgi?id=118481
-Signed-off-by: Vitaly Chikunov <vt@altlinux.org>
-Reviewed-by: Dmitry Levin <ldv@altlinux.org>
-Cc: Dmitry Levin <ldv@altlinux.org>
-Cc: Josh Poimboeuf <jpoimboe@redhat.com>
-Cc: kbuild test robot <lkp@intel.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: stable@vger.kernel.org
-Cc: Vineet Gupta <vineet.gupta1@synopsys.com>
-Link: http://lore.kernel.org/lkml/20191224172029.19690-1-vt@altlinux.org
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Reported-by: Steven Ellis <sellis@redhat.com>
+Cc: Pacho Ramos <pachoramos@gmail.com>
+Signed-off-by: Laura Abbott <labbott@fedoraproject.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- tools/include/linux/string.h |    8 ++++++++
- tools/lib/string.c           |    7 +++++++
- 2 files changed, 15 insertions(+)
+ drivers/usb/storage/unusual_uas.h | 7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
 
---- a/tools/include/linux/string.h
-+++ b/tools/include/linux/string.h
-@@ -17,7 +17,15 @@ int strtobool(const char *s, bool *res);
-  * However uClibc headers also define __GLIBC__ hence the hack below
-  */
- #if defined(__GLIBC__) && !defined(__UCLIBC__)
-+// pragma diagnostic was introduced in gcc 4.6
-+#if __GNUC__ > 4 || (__GNUC__ == 4 && __GNUC_MINOR__ >= 6)
-+#pragma GCC diagnostic push
-+#pragma GCC diagnostic ignored "-Wredundant-decls"
-+#endif
- extern size_t strlcpy(char *dest, const char *src, size_t size);
-+#if __GNUC__ > 4 || (__GNUC__ == 4 && __GNUC_MINOR__ >= 6)
-+#pragma GCC diagnostic pop
-+#endif
- #endif
+diff --git a/drivers/usb/storage/unusual_uas.h b/drivers/usb/storage/unusual_uas.h
+index f15aa47c54a9d..0eb8c67ee1382 100644
+--- a/drivers/usb/storage/unusual_uas.h
++++ b/drivers/usb/storage/unusual_uas.h
+@@ -163,12 +163,15 @@ UNUSUAL_DEV(0x2537, 0x1068, 0x0000, 0x9999,
+ 		USB_SC_DEVICE, USB_PR_DEVICE, NULL,
+ 		US_FL_IGNORE_UAS),
  
- char *str_error_r(int errnum, char *buf, size_t buflen);
---- a/tools/lib/string.c
-+++ b/tools/lib/string.c
-@@ -96,6 +96,10 @@ int strtobool(const char *s, bool *res)
-  * If libc has strlcpy() then that version will override this
-  * implementation:
-  */
-+#ifdef __clang__
-+#pragma clang diagnostic push
-+#pragma clang diagnostic ignored "-Wignored-attributes"
-+#endif
- size_t __weak strlcpy(char *dest, const char *src, size_t size)
- {
- 	size_t ret = strlen(src);
-@@ -107,6 +111,9 @@ size_t __weak strlcpy(char *dest, const
- 	}
- 	return ret;
- }
-+#ifdef __clang__
-+#pragma clang diagnostic pop
-+#endif
+-/* Reported-by: Takeo Nakayama <javhera@gmx.com> */
++/*
++ * Initially Reported-by: Takeo Nakayama <javhera@gmx.com>
++ * UAS Ignore Reported by Steven Ellis <sellis@redhat.com>
++ */
+ UNUSUAL_DEV(0x357d, 0x7788, 0x0000, 0x9999,
+ 		"JMicron",
+ 		"JMS566",
+ 		USB_SC_DEVICE, USB_PR_DEVICE, NULL,
+-		US_FL_NO_REPORT_OPCODES),
++		US_FL_NO_REPORT_OPCODES | US_FL_IGNORE_UAS),
  
- /**
-  * skip_spaces - Removes leading whitespace from @str.
+ /* Reported-by: Hans de Goede <hdegoede@redhat.com> */
+ UNUSUAL_DEV(0x4971, 0x1012, 0x0000, 0x9999,
+-- 
+2.20.1
+
 
 
