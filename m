@@ -2,41 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F3316150E1C
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Feb 2020 17:50:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CAAC9150C35
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Feb 2020 17:34:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728435AbgBCQtM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 3 Feb 2020 11:49:12 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35914 "EHLO mail.kernel.org"
+        id S1730453AbgBCQeP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 3 Feb 2020 11:34:15 -0500
+Received: from mail.kernel.org ([198.145.29.99]:48372 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727716AbgBCQZR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Feb 2020 11:25:17 -0500
+        id S1730439AbgBCQeJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Feb 2020 11:34:09 -0500
 Received: from localhost (unknown [104.132.45.99])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 69CB320838;
-        Mon,  3 Feb 2020 16:25:16 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7A7E92082E;
+        Mon,  3 Feb 2020 16:34:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1580747116;
-        bh=Yyoggdhu5x9DZsRzhyrznpN1Ss91IeU0GL8C1rPwGeo=;
+        s=default; t=1580747648;
+        bh=TRgddOces3KCcjZiCU9InaohUeoG1Yx/UpbqoCBwJ7o=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=LtrnR4/PoMvO1sbkokU1uc0o34l1bC2vWFO5hMELqDNYlousJpEc7FUBQCi546K0J
-         nVu5pTeWs9wRtzdXF2oeHb0kZKPv8j7acWuJU89CgQURjsuOlCse/ONGtRFJOTfRYI
-         F+tybATmIBVrFFmbCuTfptPF0bQqDG9H3upn47kY=
+        b=aoqwI6euxCdcT+gt0m7DzzGuhiTx7zTgSFDLXqSD7WbnSm4/TfTT/U65tIkQvkhcx
+         rSRC+QRfZmLJ/Vc9svcm4G09TH0HLSGxPhzCsaVJqNRnIhji7S/WH9XBsqImidn6+V
+         DM1mjKkl58/1WF/TSyypcAH2Inrp+EjKA5h8bHTk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Peter Zijlstra <peterz@infradead.org>,
-        Fenghua Yu <fenghua.yu@intel.com>,
-        Tony Luck <tony.luck@intel.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 19/68] drivers/net/b44: Change to non-atomic bit operations on pwol_mask
+        stable@vger.kernel.org, Dirk Behme <dirk.behme@de.bosch.com>,
+        Eugeniu Rosca <erosca@de.adit-jv.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Will Deacon <will@kernel.org>
+Subject: [PATCH 5.4 12/90] arm64: kbuild: remove compressed images on make ARCH=arm64 (dist)clean
 Date:   Mon,  3 Feb 2020 16:19:15 +0000
-Message-Id: <20200203161908.221127019@linuxfoundation.org>
+Message-Id: <20200203161919.250707139@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200203161904.705434837@linuxfoundation.org>
-References: <20200203161904.705434837@linuxfoundation.org>
+In-Reply-To: <20200203161917.612554987@linuxfoundation.org>
+References: <20200203161917.612554987@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,66 +45,40 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Fenghua Yu <fenghua.yu@intel.com>
+From: Dirk Behme <dirk.behme@de.bosch.com>
 
-[ Upstream commit f11421ba4af706cb4f5703de34fa77fba8472776 ]
+commit d7bbd6c1b01cb5dd13c245d4586a83145c1d5f52 upstream.
 
-Atomic operations that span cache lines are super-expensive on x86
-(not just to the current processor, but also to other processes as all
-memory operations are blocked until the operation completes). Upcoming
-x86 processors have a switch to cause such operations to generate a #AC
-trap. It is expected that some real time systems will enable this mode
-in BIOS.
+Since v4.3-rc1 commit 0723c05fb75e44 ("arm64: enable more compressed
+Image formats"), it is possible to build Image.{bz2,lz4,lzma,lzo}
+AArch64 images. However, the commit missed adding support for removing
+those images on 'make ARCH=arm64 (dist)clean'.
 
-In preparation for this, it is necessary to fix code that may execute
-atomic instructions with operands that cross cachelines because the #AC
-trap will crash the kernel.
+Fix this by adding them to the target list.
+Make sure to match the order of the recipes in the makefile.
 
-Since "pwol_mask" is local and never exposed to concurrency, there is
-no need to set bits in pwol_mask using atomic operations.
+Cc: stable@vger.kernel.org # v4.3+
+Fixes: 0723c05fb75e44 ("arm64: enable more compressed Image formats")
+Signed-off-by: Dirk Behme <dirk.behme@de.bosch.com>
+Signed-off-by: Eugeniu Rosca <erosca@de.adit-jv.com>
+Reviewed-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+Signed-off-by: Will Deacon <will@kernel.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-Directly operate on the byte which contains the bit instead of using
-__set_bit() to avoid any big endian concern due to type cast to
-unsigned long in __set_bit().
-
-Suggested-by: Peter Zijlstra <peterz@infradead.org>
-Signed-off-by: Fenghua Yu <fenghua.yu@intel.com>
-Signed-off-by: Tony Luck <tony.luck@intel.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/broadcom/b44.c | 9 ++++++---
- 1 file changed, 6 insertions(+), 3 deletions(-)
+ arch/arm64/boot/Makefile |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/net/ethernet/broadcom/b44.c b/drivers/net/ethernet/broadcom/b44.c
-index 17aa33c5567d6..d95dec5957861 100644
---- a/drivers/net/ethernet/broadcom/b44.c
-+++ b/drivers/net/ethernet/broadcom/b44.c
-@@ -1524,8 +1524,10 @@ static int b44_magic_pattern(u8 *macaddr, u8 *ppattern, u8 *pmask, int offset)
- 	int ethaddr_bytes = ETH_ALEN;
+--- a/arch/arm64/boot/Makefile
++++ b/arch/arm64/boot/Makefile
+@@ -16,7 +16,7 @@
  
- 	memset(ppattern + offset, 0xff, magicsync);
--	for (j = 0; j < magicsync; j++)
--		set_bit(len++, (unsigned long *) pmask);
-+	for (j = 0; j < magicsync; j++) {
-+		pmask[len >> 3] |= BIT(len & 7);
-+		len++;
-+	}
+ OBJCOPYFLAGS_Image :=-O binary -R .note -R .note.gnu.build-id -R .comment -S
  
- 	for (j = 0; j < B44_MAX_PATTERNS; j++) {
- 		if ((B44_PATTERN_SIZE - len) >= ETH_ALEN)
-@@ -1537,7 +1539,8 @@ static int b44_magic_pattern(u8 *macaddr, u8 *ppattern, u8 *pmask, int offset)
- 		for (k = 0; k< ethaddr_bytes; k++) {
- 			ppattern[offset + magicsync +
- 				(j * ETH_ALEN) + k] = macaddr[k];
--			set_bit(len++, (unsigned long *) pmask);
-+			pmask[len >> 3] |= BIT(len & 7);
-+			len++;
- 		}
- 	}
- 	return len - 1;
--- 
-2.20.1
-
+-targets := Image Image.gz
++targets := Image Image.bz2 Image.gz Image.lz4 Image.lzma Image.lzo
+ 
+ $(obj)/Image: vmlinux FORCE
+ 	$(call if_changed,objcopy)
 
 
