@@ -2,37 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B6410150DF1
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Feb 2020 17:48:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 761F5150DBB
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Feb 2020 17:46:45 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726884AbgBCQ0k (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 3 Feb 2020 11:26:40 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37628 "EHLO mail.kernel.org"
+        id S1728698AbgBCQ2f (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 3 Feb 2020 11:28:35 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40054 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727672AbgBCQ0g (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Feb 2020 11:26:36 -0500
+        id S1729586AbgBCQ20 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Feb 2020 11:28:26 -0500
 Received: from localhost (unknown [104.132.45.99])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 94D042051A;
-        Mon,  3 Feb 2020 16:26:35 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D1BAA2086A;
+        Mon,  3 Feb 2020 16:28:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1580747196;
-        bh=bYrPaXwOWdfPDci+/9/1/dgerrTDLlxE+CfpNpAri/Y=;
+        s=default; t=1580747306;
+        bh=yMmzY+xO9X6dnzA77KfXr48cVIU5KP9AVO1G9YWzt/g=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=r9Nzw0BjVa/vwyj3rKyvUSrjkuBknqZvyALUb4+OTyrieJlWwWcYDPcMWos4w5FcH
-         ieOLY5r1FMAgaxv+tSl7NzUsdbTDWcCfnb9h0wAnQSkxKPJLfBABhDkbZa7Hn1JRGA
-         9/Ls3vAnjAN8Yhr3/9hh4BZr27ECIMLm+eittNXo=
+        b=eLQZ1UmfR0Mteu/rFM87cMb8muSsg8rNRmn2NZ89WpqNYTaSfLLzACAbtWaBRIIlf
+         XT8+3bsXXiaJZvuMV+omBwLRB+Qg+A0ZL136sJIM2g3GkJvefsEvO8FstDYF4g7kkY
+         12171gSYxsDbVmuTXITp7ckVAB0ygNCnz8sQzY4U=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Malcolm Priestley <tvboxspy@gmail.com>
-Subject: [PATCH 4.9 10/68] staging: vt6656: use NULLFUCTION stack on mac80211
+        stable@vger.kernel.org, David Engraf <david.engraf@sysgo.com>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Wim Van Sebroeck <wim@linux-watchdog.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.14 21/89] watchdog: max77620_wdt: fix potential build errors
 Date:   Mon,  3 Feb 2020 16:19:06 +0000
-Message-Id: <20200203161906.572491274@linuxfoundation.org>
+Message-Id: <20200203161919.772674335@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200203161904.705434837@linuxfoundation.org>
-References: <20200203161904.705434837@linuxfoundation.org>
+In-Reply-To: <20200203161916.847439465@linuxfoundation.org>
+References: <20200203161916.847439465@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -42,66 +45,37 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Malcolm Priestley <tvboxspy@gmail.com>
+From: David Engraf <david.engraf@sysgo.com>
 
-commit d579c43c82f093e63639151625b2139166c730fd upstream.
+[ Upstream commit da9e3f4e30a53cd420cf1e6961c3b4110f0f21f0 ]
 
-It appears that the drivers does not go into power save correctly the
-NULL data packets are not being transmitted because it not enabled
-in mac80211.
+max77620_wdt uses watchdog core functions. Enable CONFIG_WATCHDOG_CORE
+to fix potential build errors.
 
-The driver needs to capture ieee80211_is_nullfunc headers and
-copy the duration_id to it's own duration data header.
-
-Cc: stable <stable@vger.kernel.org>
-Signed-off-by: Malcolm Priestley <tvboxspy@gmail.com>
-Link: https://lore.kernel.org/r/610971ae-555b-a6c3-61b3-444a0c1e35b4@gmail.com
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Signed-off-by: David Engraf <david.engraf@sysgo.com>
+Reviewed-by: Guenter Roeck <linux@roeck-us.net>
+Link: https://lore.kernel.org/r/20191127084617.16937-1-david.engraf@sysgo.com
+Signed-off-by: Guenter Roeck <linux@roeck-us.net>
+Signed-off-by: Wim Van Sebroeck <wim@linux-watchdog.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/staging/vt6656/main_usb.c |    1 +
- drivers/staging/vt6656/rxtx.c     |   14 +++++---------
- 2 files changed, 6 insertions(+), 9 deletions(-)
+ drivers/watchdog/Kconfig | 1 +
+ 1 file changed, 1 insertion(+)
 
---- a/drivers/staging/vt6656/main_usb.c
-+++ b/drivers/staging/vt6656/main_usb.c
-@@ -995,6 +995,7 @@ vt6656_probe(struct usb_interface *intf,
- 	ieee80211_hw_set(priv->hw, RX_INCLUDES_FCS);
- 	ieee80211_hw_set(priv->hw, REPORTS_TX_ACK_STATUS);
- 	ieee80211_hw_set(priv->hw, SUPPORTS_PS);
-+	ieee80211_hw_set(priv->hw, PS_NULLFUNC_STACK);
- 
- 	priv->hw->max_signal = 100;
- 
---- a/drivers/staging/vt6656/rxtx.c
-+++ b/drivers/staging/vt6656/rxtx.c
-@@ -277,11 +277,9 @@ static u16 vnt_rxtx_datahead_g(struct vn
- 							PK_TYPE_11B, &buf->b);
- 
- 	/* Get Duration and TimeStamp */
--	if (ieee80211_is_pspoll(hdr->frame_control)) {
--		__le16 dur = cpu_to_le16(priv->current_aid | BIT(14) | BIT(15));
--
--		buf->duration_a = dur;
--		buf->duration_b = dur;
-+	if (ieee80211_is_nullfunc(hdr->frame_control)) {
-+		buf->duration_a = hdr->duration_id;
-+		buf->duration_b = hdr->duration_id;
- 	} else {
- 		buf->duration_a = vnt_get_duration_le(priv,
- 						tx_context->pkt_type, need_ack);
-@@ -370,10 +368,8 @@ static u16 vnt_rxtx_datahead_ab(struct v
- 			  tx_context->pkt_type, &buf->ab);
- 
- 	/* Get Duration and TimeStampOff */
--	if (ieee80211_is_pspoll(hdr->frame_control)) {
--		__le16 dur = cpu_to_le16(priv->current_aid | BIT(14) | BIT(15));
--
--		buf->duration = dur;
-+	if (ieee80211_is_nullfunc(hdr->frame_control)) {
-+		buf->duration = hdr->duration_id;
- 	} else {
- 		buf->duration = vnt_get_duration_le(priv, tx_context->pkt_type,
- 						    need_ack);
+diff --git a/drivers/watchdog/Kconfig b/drivers/watchdog/Kconfig
+index f55328a316298..fa15a683ae2d4 100644
+--- a/drivers/watchdog/Kconfig
++++ b/drivers/watchdog/Kconfig
+@@ -563,6 +563,7 @@ config MAX63XX_WATCHDOG
+ config MAX77620_WATCHDOG
+ 	tristate "Maxim Max77620 Watchdog Timer"
+ 	depends on MFD_MAX77620 || COMPILE_TEST
++	select WATCHDOG_CORE
+ 	help
+ 	 This is the driver for the Max77620 watchdog timer.
+ 	 Say 'Y' here to enable the watchdog timer support for
+-- 
+2.20.1
+
 
 
