@@ -2,117 +2,112 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A28AB1502BE
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Feb 2020 09:42:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 68F5A1502C9
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Feb 2020 09:47:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727846AbgBCImb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 3 Feb 2020 03:42:31 -0500
-Received: from mail-lj1-f169.google.com ([209.85.208.169]:39550 "EHLO
-        mail-lj1-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727165AbgBCImb (ORCPT
+        id S1727509AbgBCIrI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 3 Feb 2020 03:47:08 -0500
+Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:23389 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1727441AbgBCIrI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Feb 2020 03:42:31 -0500
-Received: by mail-lj1-f169.google.com with SMTP id o15so8126943ljg.6;
-        Mon, 03 Feb 2020 00:42:29 -0800 (PST)
+        Mon, 3 Feb 2020 03:47:08 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1580719627;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=ZsuCEZWqHm0EboxhQiNEItt1THk0pieZ6uxJHO780LI=;
+        b=bFwu8jrX8uvkRzwdclp8kW3WcsjpVRahIoa/5V+FnXxVPZD2gg2G7gOpiNyOWGNQwmGdN7
+        QY0FYPVXKp4lkCznYHyFq+h5wHc9pydx8ToGdc6rz0U0N/rB6xfb47SeMZEST9VhKQNmoI
+        y6sKBrU17/qJbFgCCfJc72x4LXl82O8=
+Received: from mail-oi1-f199.google.com (mail-oi1-f199.google.com
+ [209.85.167.199]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-400-ibx9IA8jPfyDNY4_lL8ohQ-1; Mon, 03 Feb 2020 03:47:04 -0500
+X-MC-Unique: ibx9IA8jPfyDNY4_lL8ohQ-1
+Received: by mail-oi1-f199.google.com with SMTP id o5so5541934oif.9
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Feb 2020 00:47:04 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to;
-        bh=dtQhIi/Kp1IdGYU3ZiBM80ySVBcZQa692msaAFF44CU=;
-        b=WRm+RZb34Eb86F46R/O1Dn80UN2P9Yw0GGzAcqS6km/fwVpSAaDxcN43eNWKir++ZY
-         j29maVPosi2+6cIm0uUiPINpC7FITerSRav7XnB1y3K7TR6Txh4D62bQQio55uK2nqPp
-         WuyufiwhxgK5evKlCZdStRcH/jeuLcRlFfMk0vL5A/u/iXcfxFRWtn1fx4ASFF47E1hB
-         A9fN5Bv1TTLetLK0ezoXNs42T350Cd3GT2OUjyOQ78Tn31zegcho8FeE0edyB1gKIwK0
-         tknYS+ZJg0RgruPSiNV10SxzrAyuDj3l+L8rz3s8jo18OqaiNV8EWMGVF5kaCAl/y6ld
-         URiA==
-X-Gm-Message-State: APjAAAXSfHu+tGstd6ToqRzrOGpp+0SMn2oGol6/lxqJRYKr/HglXTlw
-        fHNJTCy43OeDhNBtX+0L1G+R4wOh
-X-Google-Smtp-Source: APXvYqx7xVkbzPbEQVocWP3COPBjmixKNJdOkeidyNi07Xa/C9rpP6yAxhIg+3yi1+aRpLK0G5FgyQ==
-X-Received: by 2002:a2e:5304:: with SMTP id h4mr13279381ljb.75.1580719349109;
-        Mon, 03 Feb 2020 00:42:29 -0800 (PST)
-Received: from xi.terra (c-12aae455.07-184-6d6c6d4.bbcust.telenor.se. [85.228.170.18])
-        by smtp.gmail.com with ESMTPSA id u11sm8555731lfo.71.2020.02.03.00.42.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 03 Feb 2020 00:42:28 -0800 (PST)
-Received: from johan by xi.terra with local (Exim 4.92.3)
-        (envelope-from <johan@kernel.org>)
-        id 1iyXJU-0004Ks-KC; Mon, 03 Feb 2020 09:42:36 +0100
-Date:   Mon, 3 Feb 2020 09:42:36 +0100
-From:   Johan Hovold <johan@kernel.org>
-To:     edes <edes@gmx.net>
-Cc:     linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Johan Hovold <johan@kernel.org>, Takashi Iwai <tiwai@suse.de>
-Subject: Re: kernel 5.4.11: problems with usb sound cards
-Message-ID: <20200203084236.GS10381@localhost>
-References: <20200201105829.5682c887@acme7.acmenet>
- <20200201141009.GK10381@localhost>
- <20200201132616.09857152@acme7.acmenet>
- <20200202101933.GL10381@localhost>
- <20200202134159.GM10381@localhost>
- <20200202202816.5a1d8af1@acme7.acmenet>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=ZsuCEZWqHm0EboxhQiNEItt1THk0pieZ6uxJHO780LI=;
+        b=dt27cSPz77JCPo0m52P+22FC0feQtIDhH0M+4iY17B+1bR7u9/Uqrk23tdvl9/Nfj5
+         +H+/vt1P9HY3uCKbepcf8dwDsqJmkTpetaSEYj+4obyWb9ieHIxCHmlir7MD95GT4BuO
+         S7IQ3gewESNZWurhS+UuqOzddmUF9Nq8exQVIKzGOGblhwhWT0roKSBulvHodQRwkXBN
+         xDf+TkBW4cNSpvsCJrJ4o2fr//QyQotnPQbkZsKwvR4wyeuypcl8tKqi76zeMXy4xY0B
+         IvYKv9q1pry6LZev9ecx6qMsDQJNiVdyQpjzFIv+VrUZ3bHhEMrl6rQXu+r9PivRJazX
+         WNKg==
+X-Gm-Message-State: APjAAAVj97/tA+/R2eIZSv/b9QjZx1xo3BypeervfgMybp78EvY472Mz
+        bsH2KOi7bB6a20uZm5oJc0WXmhQRpghXmf0zP4N8FSRzIGiMc7dUaLVI+ulaCe/eqQElWcvgfol
+        hXRiFH0Z+iRm3UcaLurI/6NLIlT8tqYNuZKQ0+dKy
+X-Received: by 2002:a9d:7ccc:: with SMTP id r12mr17777408otn.22.1580719623227;
+        Mon, 03 Feb 2020 00:47:03 -0800 (PST)
+X-Google-Smtp-Source: APXvYqzcWGD0Qnyj7Zne1ZyFHDPESnShitOfod21/McfCGO8zVVTe9jY0RaLcelk1g0/Mer4HCl1lv6TfgIaHzfS23k=
+X-Received: by 2002:a9d:7ccc:: with SMTP id r12mr17777391otn.22.1580719622947;
+ Mon, 03 Feb 2020 00:47:02 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20200202202816.5a1d8af1@acme7.acmenet>
+References: <000000000000143de7059d2ba3e5@google.com> <000000000000fdbd71059d32a906@google.com>
+ <CAHC9VhS_Bfywhp+6H03bY7LrQsBz+io672pSS0DpiZKFiz4L6g@mail.gmail.com>
+ <850873b8-8a30-58e5-ad3c-86fb35296130@tycho.nsa.gov> <CAFqZXNuxFTKXVZDpPGCTHifn_AeCdVmP+PZrMDKDOYiLOWtsUA@mail.gmail.com>
+ <CAHC9VhR9a1xEB3gXUkb4KRVkwXUAo-701ZumN2OTOmJ7r5ez8g@mail.gmail.com>
+ <CAFqZXNv77JHa-6BPzEomZaj2uJqGrBRXrK68cTL0N0--Kz_PkA@mail.gmail.com> <CAHC9VhTHUjdYujta-bOd=AG+XLic6rAZbp2sEpC86vVnpkmBVA@mail.gmail.com>
+In-Reply-To: <CAHC9VhTHUjdYujta-bOd=AG+XLic6rAZbp2sEpC86vVnpkmBVA@mail.gmail.com>
+From:   Ondrej Mosnacek <omosnace@redhat.com>
+Date:   Mon, 3 Feb 2020 09:46:51 +0100
+Message-ID: <CAFqZXNviT4NRyE=CkiQdNy0DRfAi6pV-u=RcJhmMooDuPNhwRw@mail.gmail.com>
+Subject: Re: possible deadlock in sidtab_sid2str_put
+To:     Paul Moore <paul@paul-moore.com>
+Cc:     Stephen Smalley <sds@tycho.nsa.gov>,
+        Jeff Vander Stoep <jeffv@google.com>,
+        Eric Paris <eparis@parisplace.org>,
+        Jann Horn <jannh@google.com>,
+        Kees Cook <keescook@chromium.org>,
+        Linux kernel mailing list <linux-kernel@vger.kernel.org>,
+        "Paul E. McKenney" <paulmck@kernel.org>,
+        SElinux list <selinux@vger.kernel.org>,
+        syzkaller-bugs@googlegroups.com,
+        syzbot <syzbot+61cba5033e2072d61806@syzkaller.appspotmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Feb 02, 2020 at 08:28:16PM -0300, edes wrote:
-> 
-> el 2020-02-02 a las 14:41 Johan Hovold escribió:
-> 
-> > I realised I forgot the test to match on the device descriptor when
-> > applying the blacklist. It doesn't matter currently since I only enable
-> > the quirk for your device, but if you haven't tested the patch already,
-> > would you mind testing the below patch instead?
-> 
-> Hi, Johan, thank you for looking into this. I tested your patch, and it
-> works! (5.4.11 and 5.5.0).
-> 
-> I haven't performed extensive tests, but the card is again recognized as
-> both playback and capture device. Thank you!
+On Tue, Jan 28, 2020 at 6:29 PM Paul Moore <paul@paul-moore.com> wrote:
+> On Tue, Jan 28, 2020 at 11:31 AM Ondrej Mosnacek <omosnace@redhat.com> wrote:
+> > ... the current rawhide 5.5.0-1 kernel seems to have some bug
+> > that prevents it from booting on anything with more than one core.
+> > I'll see if I can work around it somehow...
+>
+> I'm not sure how you are building your kernels, but gcc v10 is causing
+> a lot of problems, I would suggest compiling with an earlier gcc for
+> the near future until things get sorted (I'm doing the kernel-secnext
+> builds on stable Fedora, not Rawhide, for now).
 
-Perfect, thanks for testing.
+Right, thanks, I was using the Rawhide buildroot to build the test
+kernel (derived from Rawhide dist-git source + selinux-next + the
+patch). Fortunately the Rawhide kernel can be also built against the
+f31 target without any additional hacks, so I managed to build a an
+upstream-based kernel with GCC 9 and it didn't have the
+crash-on-multi-core issue. Regardless, I wasn't able to reproduce the
+syzbot crash locally, so I had to ask syzbot to test the patch from my
+git tree [1] and it passed.
 
-Do you have a full name I can use to give you credit in the commit
-message for reporting and testing?
+Nonetheless, I checked to see how the sidtab string cache + IRQ-safe
+locking (assuming mostly cache hits) compares to the non-cache
+situation with a category-free label
+(unconfined_u:unconfined_r:unconfined_t:s0) and the cache (3.2% impact
+when mostly hits) is still faster than the non-cache version (5.5%
+impact best case, 65% impact worst case).
 
-> Is this and acceptable solution and will this patch be integrated into the
-> kernel?
+I intend to incorporate all this information into the log message and
+then post the patch.
 
-Yes, I think so. We've already had one related report so far, and the
-blacklist mechanism should be generic enough to handle any further
-devices like this.
+[1] https://groups.google.com/d/msg/syzkaller-bugs/1UwATFnIiW8/kOpRrjyNAAAJ
 
-Either way, we'll have this fixed in stable in one way or another in a
-couple of weeks.
+--
+Ondrej Mosnacek <omosnace at redhat dot com>
+Software Engineer, Security Technologies
+Red Hat, Inc.
 
-> OTOH, you said:
-> 
-> > Ok, so the device has a broken altsetting 3 for interface 1, where
-> > endpoint 0x85 is declared as an isochronous endpoint, despite being used
-> > by interface 2 as an audio endpoint:
-> [...]
-> > Note that the broken altsetting probably should be using endpoint 0x81
-> > just like the other altsettings for that interface, 
-> 
-> I can't say I understand exactly what you're saying, but do you think it
-> could be worth contacting the company and see if they are willing to fix
-> this with a new firmware?
-
-Yes, I guess that wouldn't hurt.
-
-The device used to work mostly by chance as two interfaces aren't
-allowed to claim the same endpoint. Fortunately, this would only ever be
-an issue in one particular configuration of the device (when altsetting
-3 of interface 1 was selected) and that may be one that was never used
-on Linux.
-
-Takashi may know more about how/if that third altsetting could ever end
-up being set.
-
-Johan
