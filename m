@@ -2,37 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 55414150B2F
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Feb 2020 17:25:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D24EA150ACE
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Feb 2020 17:21:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728304AbgBCQZ0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 3 Feb 2020 11:25:26 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36074 "EHLO mail.kernel.org"
+        id S1729114AbgBCQVN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 3 Feb 2020 11:21:13 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33020 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728276AbgBCQZY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Feb 2020 11:25:24 -0500
+        id S1729088AbgBCQVM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Feb 2020 11:21:12 -0500
 Received: from localhost (unknown [104.132.45.99])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 926042080C;
-        Mon,  3 Feb 2020 16:25:23 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 52D1B2080D;
+        Mon,  3 Feb 2020 16:21:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1580747124;
-        bh=gwwaMJc62zOc4cwZ+A57UL//D1KSGXRTJYpOZuPMX4w=;
+        s=default; t=1580746871;
+        bh=bS01SG1RW3Sb5jgv75RlZ48OcQMnqHnRW+XMwszOiWA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=GL2I5KGoXSrEyMpxYb9qj/DDK/YxeFrwyQUqozLzCcab6cTC7O3VgulU8N6kchzQm
-         IvmZrbGYJZbDQsnKhWClg2JKpvXesCHKs/QramNrJJKGRCFNmCSxCOzPOcoUwh2q8h
-         vaEeA/vKhT4qibfwZEYVvY3SfUox2vx6kIGoGZmg=
+        b=X59EZ+dk3XJKsi7tqVsgLUaf2sMHQRJ7qZ1KvKtgpzz8KX35xUVn8QlAJ0oNsdNvb
+         rDjBmC3IfYv6B2mSLgHdoOardZ8Qum1w8NZFiHwjIuCfShmsMPKaSDXmudkMfYW6Sj
+         fdsQOXiZfbLIYrd4Z6aOcjJKwTJoX3eQ53JkHiIk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Johan Hovold <johan@kernel.org>
-Subject: [PATCH 4.9 04/68] USB: serial: ir-usb: add missing endpoint sanity check
-Date:   Mon,  3 Feb 2020 16:19:00 +0000
-Message-Id: <20200203161905.441371311@linuxfoundation.org>
+        stable@vger.kernel.org, Malcolm Priestley <tvboxspy@gmail.com>
+Subject: [PATCH 4.4 09/53] staging: vt6656: correct packet types for CTS protect, mode.
+Date:   Mon,  3 Feb 2020 16:19:01 +0000
+Message-Id: <20200203161904.871393444@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200203161904.705434837@linuxfoundation.org>
-References: <20200203161904.705434837@linuxfoundation.org>
+In-Reply-To: <20200203161902.714326084@linuxfoundation.org>
+References: <20200203161902.714326084@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -42,40 +42,60 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Johan Hovold <johan@kernel.org>
+From: Malcolm Priestley <tvboxspy@gmail.com>
 
-commit 2988a8ae7476fe9535ab620320790d1714bdad1d upstream.
+commit d971fdd3412f8342747778fb59b8803720ed82b1 upstream.
 
-Add missing endpoint sanity check to avoid dereferencing a NULL-pointer
-on open() in case a device lacks a bulk-out endpoint.
+It appears that the driver still transmits in CTS protect mode even
+though it is not enabled in mac80211.
 
-Note that prior to commit f4a4cbb2047e ("USB: ir-usb: reimplement using
-generic framework") the oops would instead happen on open() if the
-device lacked a bulk-in endpoint and on write() if it lacked a bulk-out
-endpoint.
+That is both packet types PK_TYPE_11GA and PK_TYPE_11GB both use CTS protect.
+The only difference between them GA does not use B rates.
 
-Fixes: f4a4cbb2047e ("USB: ir-usb: reimplement using generic framework")
-Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
+Find if only B rate in GB or GA in protect mode otherwise transmit packets
+as PK_TYPE_11A.
+
 Cc: stable <stable@vger.kernel.org>
-Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Signed-off-by: Johan Hovold <johan@kernel.org>
+Signed-off-by: Malcolm Priestley <tvboxspy@gmail.com>
+Link: https://lore.kernel.org/r/9c1323ff-dbb3-0eaa-43e1-9453f7390dc0@gmail.com
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/usb/serial/ir-usb.c |    3 +++
- 1 file changed, 3 insertions(+)
+ drivers/staging/vt6656/device.h |    2 ++
+ drivers/staging/vt6656/rxtx.c   |   12 ++++++++----
+ 2 files changed, 10 insertions(+), 4 deletions(-)
 
---- a/drivers/usb/serial/ir-usb.c
-+++ b/drivers/usb/serial/ir-usb.c
-@@ -198,6 +198,9 @@ static int ir_startup(struct usb_serial
- {
- 	struct usb_irda_cs_descriptor *irda_desc;
+--- a/drivers/staging/vt6656/device.h
++++ b/drivers/staging/vt6656/device.h
+@@ -65,6 +65,8 @@
+ #define RATE_AUTO	12
  
-+	if (serial->num_bulk_in < 1 || serial->num_bulk_out < 1)
-+		return -ENODEV;
-+
- 	irda_desc = irda_usb_find_class_desc(serial, 0);
- 	if (!irda_desc) {
- 		dev_err(&serial->dev->dev,
+ #define MAX_RATE			12
++#define VNT_B_RATES	(BIT(RATE_1M) | BIT(RATE_2M) |\
++			BIT(RATE_5M) | BIT(RATE_11M))
+ 
+ /*
+  * device specific
+--- a/drivers/staging/vt6656/rxtx.c
++++ b/drivers/staging/vt6656/rxtx.c
+@@ -815,10 +815,14 @@ int vnt_tx_packet(struct vnt_private *pr
+ 		if (info->band == IEEE80211_BAND_5GHZ) {
+ 			pkt_type = PK_TYPE_11A;
+ 		} else {
+-			if (tx_rate->flags & IEEE80211_TX_RC_USE_CTS_PROTECT)
+-				pkt_type = PK_TYPE_11GB;
+-			else
+-				pkt_type = PK_TYPE_11GA;
++			if (tx_rate->flags & IEEE80211_TX_RC_USE_CTS_PROTECT) {
++				if (priv->basic_rates & VNT_B_RATES)
++					pkt_type = PK_TYPE_11GB;
++				else
++					pkt_type = PK_TYPE_11GA;
++			} else {
++				pkt_type = PK_TYPE_11A;
++			}
+ 		}
+ 	} else {
+ 		pkt_type = PK_TYPE_11B;
 
 
