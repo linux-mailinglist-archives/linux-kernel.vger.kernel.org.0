@@ -2,90 +2,74 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 00E7815031D
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Feb 2020 10:16:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 60DB6150328
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Feb 2020 10:17:23 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727826AbgBCJQU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 3 Feb 2020 04:16:20 -0500
-Received: from us-smtp-1.mimecast.com ([207.211.31.81]:29071 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727351AbgBCJQT (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Feb 2020 04:16:19 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1580721378;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=vwM0beCgjCPR5r64LO4IeZHnq/7JINFKcByX6l+uYrM=;
-        b=Dfbj3tkfKNCI394uYhjjjWxTgAgYwpjcOMDAMPOtBdbudM4nIWsVlxJUYTAcRyHQ73xeEr
-        GzUY/fj5v1VVaV+HY0+CUNGntOOpgQ4Dj/LDJuzzq9KFu7QTrHIogcDSn8kM5M8E8vsRqu
-        WPwYcTSQq1jC4gRJTGoiCfGTzGqqHeQ=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-5-74eqfedvOLiniJozDcBEjg-1; Mon, 03 Feb 2020 04:16:14 -0500
-X-MC-Unique: 74eqfedvOLiniJozDcBEjg-1
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 64155107ACCA;
-        Mon,  3 Feb 2020 09:16:12 +0000 (UTC)
-Received: from ming.t460p (ovpn-8-25.pek2.redhat.com [10.72.8.25])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id D88955DA82;
-        Mon,  3 Feb 2020 09:16:06 +0000 (UTC)
-Date:   Mon, 3 Feb 2020 17:16:02 +0800
-From:   Ming Lei <ming.lei@redhat.com>
-To:     Hillf Danton <hdanton@sina.com>
-Cc:     linux-block@vger.kernel.org, Jens Axboe <axboe@fb.com>,
-        Ming Lin <ming.l@ssi.samsung.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] blk-mq: fix selecting software ctx for request
-Message-ID: <20200203091602.GA31450@ming.t460p>
-References: <20200202102004.19132-1-hdanton@sina.com>
+        id S1727932AbgBCJRM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 3 Feb 2020 04:17:12 -0500
+Received: from honk.sigxcpu.org ([24.134.29.49]:46366 "EHLO honk.sigxcpu.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727864AbgBCJRJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Feb 2020 04:17:09 -0500
+Received: from localhost (localhost [127.0.0.1])
+        by honk.sigxcpu.org (Postfix) with ESMTP id 93447FB03;
+        Mon,  3 Feb 2020 10:17:07 +0100 (CET)
+X-Virus-Scanned: Debian amavisd-new at honk.sigxcpu.org
+Received: from honk.sigxcpu.org ([127.0.0.1])
+        by localhost (honk.sigxcpu.org [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id mVpf3Sr-6tqT; Mon,  3 Feb 2020 10:17:05 +0100 (CET)
+Received: by bogon.sigxcpu.org (Postfix, from userid 1000)
+        id CD9F0400E5; Mon,  3 Feb 2020 10:17:02 +0100 (CET)
+From:   =?UTF-8?q?Guido=20G=C3=BCnther?= <agx@sigxcpu.org>
+To:     Tomas Novotny <tomas@novotny.cz>,
+        Jonathan Cameron <jic23@kernel.org>,
+        Hartmut Knaack <knaack.h@gmx.de>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
+        "Angus Ainslie (Purism)" <angus@akkea.ca>,
+        =?UTF-8?q?Guido=20G=C3=BCnther?= <agx@sigxcpu.org>,
+        Marco Felsch <m.felsch@pengutronix.de>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v3 0/2] iio: vncl4000: Enable runtime pm for vcnl4200/4040
+Date:   Mon,  3 Feb 2020 10:17:00 +0100
+Message-Id: <cover.1580721204.git.agx@sigxcpu.org>
+X-Mailer: git-send-email 2.23.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200202102004.19132-1-hdanton@sina.com>
-User-Agent: Mutt/1.12.1 (2019-06-15)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Feb 02, 2020 at 06:20:04PM +0800, Hillf Danton wrote:
-> 
-> Select the current cpu if it's mapped to hardware to make helpers like
-> blk_mq_rq_cpu() return correct value.
-> 
-> Signed-off-by: Hillf Danton <hdanton@sina.com>
-> ---
-> 
-> --- a/block/blk-mq.c
-> +++ b/block/blk-mq.c
-> @@ -454,7 +454,10 @@ struct request *blk_mq_alloc_request_hct
->  		blk_queue_exit(q);
->  		return ERR_PTR(-EXDEV);
->  	}
-> -	cpu = cpumask_first_and(alloc_data.hctx->cpumask, cpu_online_mask);
-> +	cpu = raw_smp_processor_id();
-> +	if (!cpumask_test_cpu(cpu, alloc_data.hctx->cpumask))
-> +		cpu = cpumask_first_and(alloc_data.hctx->cpumask,
-> +						cpu_online_mask);
+This is modelled after the vcnl4035 driver. For the vcnl40{0,1,2}0
+we don't do anything since they use on demand measurement.
 
-How can you know if there is any online CPU available for this hctx?
+Changes from v2
+---------------
+- Based on review feedback from Jonathan Cameron
+  https://lore.kernel.org/linux-iio/cover.1580391472.git.agx@sigxcpu.org/T/#m80668f77cb45cea3973b3609ebdce5bba351ed50
+  - Fix missing return statement
+  - Only update timestamp on power on
+  - simplify returns from vcnl4200_runtime_suspend
+- simplify return from vcnl4000_init
 
->  	alloc_data.ctx = __blk_mq_get_ctx(q, cpu);
->  
->  	rq = blk_mq_get_request(q, NULL, &alloc_data);
-> 
+Changes from v1
+---------------
+- Based on review feedback from Tomas Novotny
+  https://lore.kernel.org/linux-iio/20200120182853.37a724fa@tomas.local.tbs-biometrics.cz/
+  Drop long wait in vcnl4000_runtime_resume but rather
+  use vcnl4200_{al,ps}.last_measurement to make sure
+  we wait long enough.
 
-It is really one NVMe specific issue, see the following discussion:
+Guido Günther (2):
+  iio: vcnl4000: Use a single return when getting IIO_CHAN_INFO_RAW
+  iio: vncl4000: Enable runtime pm for vcnl4200/4040
 
-https://lore.kernel.org/linux-block/8f4402a0-967d-f12d-2f1a-949e1dda017c@grimberg.me/#r
+ drivers/iio/light/vcnl4000.c | 144 ++++++++++++++++++++++++++++++-----
+ 1 file changed, 125 insertions(+), 19 deletions(-)
 
-
-Thanks,
-Ming
+-- 
+2.23.0
 
