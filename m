@@ -2,40 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F1761150CB3
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Feb 2020 17:38:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 68073150CA4
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Feb 2020 17:38:26 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731506AbgBCQis (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 3 Feb 2020 11:38:48 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54106 "EHLO mail.kernel.org"
+        id S1731474AbgBCQiT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 3 Feb 2020 11:38:19 -0500
+Received: from mail.kernel.org ([198.145.29.99]:54170 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731463AbgBCQiO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Feb 2020 11:38:14 -0500
+        id S1731433AbgBCQiQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Feb 2020 11:38:16 -0500
 Received: from localhost (unknown [104.132.45.99])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7FE862051A;
-        Mon,  3 Feb 2020 16:38:13 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id BB7252087E;
+        Mon,  3 Feb 2020 16:38:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1580747894;
-        bh=CVclESlCh4sxDfLxveJPDtGVWFzcdGQ7O6FFLEyx1Yk=;
+        s=default; t=1580747896;
+        bh=nU36sniQgPFfGCvo9LY0os9+T+abyU6kUH4GzuHQaT8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=iuXiHaJJEmw6seoyKxNKiDWgxkojMynLTf6dUkej+wwQa+9/ofePYmyt5VzNIbZtd
-         IfPxMpGV2jq9kPtt90AsntImKMQya7pRzojtNbGhwUr7yjlzHblZ57iqCP68adqA3s
-         RqmiVHbsfp1mtN1Cp545PIrVBxrR3RALZ4kUGqog=
+        b=Xb8dkL/PwakCjko3Er1mhyqE98szCJf/J8lA40RI4WzN8ArEHMcA5Y01p6gVBXm/T
+         4GYl5jquZahHe5YmX4+c3MVFr894B5VGk45ceT2Pih7XXacozWN/iSqae3GBO5Aam4
+         CvtqQqqJmpwCB7699nCQ6UpgWIZOwUfRZ08OHXbs=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        Yury Norov <yury.norov@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Subject: [PATCH 5.5 08/23] lib/test_bitmap: correct test data offsets for 32-bit
-Date:   Mon,  3 Feb 2020 16:20:28 +0000
-Message-Id: <20200203161904.366836024@linuxfoundation.org>
+        stable@vger.kernel.org, Andres Freund <andres@anarazel.de>,
+        Michael Petlan <mpetlan@redhat.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Andi Kleen <ak@linux.intel.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>
+Subject: [PATCH 5.5 09/23] perf c2c: Fix return type for histogram sorting comparision functions
+Date:   Mon,  3 Feb 2020 16:20:29 +0000
+Message-Id: <20200203161904.456238714@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
 In-Reply-To: <20200203161902.288335885@linuxfoundation.org>
 References: <20200203161902.288335885@linuxfoundation.org>
@@ -48,59 +49,86 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+From: Andres Freund <andres@anarazel.de>
 
-commit 69334ca530da80c1563ac6a3bd32afa40884ccd3 upstream.
+commit c1c8013ec34d7163431d18367808ea40b2e305f8 upstream.
 
-On 32-bit platform the size of long is only 32 bits which makes wrong
-offset in the array of 64 bit size.
+Commit 722ddfde366f ("perf tools: Fix time sorting") changed - correctly
+so - hist_entry__sort to return int64. Unfortunately several of the
+builtin-c2c.c comparison routines only happened to work due the cast
+caused by the wrong return type.
 
-Calculate offset based on BITS_PER_LONG.
+This causes meaningless ordering of both the cacheline list, and the
+cacheline details page. E.g a simple:
 
-Link: http://lkml.kernel.org/r/20200109103601.45929-1-andriy.shevchenko@linux.intel.com
-Fixes: 30544ed5de43 ("lib/bitmap: introduce bitmap_replace() helper")
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Reported-by: Guenter Roeck <linux@roeck-us.net>
-Cc: Rasmus Villemoes <linux@rasmusvillemoes.dk>
-Cc: Yury Norov <yury.norov@gmail.com>
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+  perf c2c record -a sleep 3
+  perf c2c report
+
+will result in cacheline table like
+  =================================================
+             Shared Data Cache Line Table
+  =================================================
+  #
+  #        ------- Cacheline ----------    Total     Tot  - LLC Load Hitm -  - Store Reference -  - Load Dram -     LLC  Total  - Core Load Hit -  - LLC Load Hit -
+  # Index         Address  Node  PA cnt  records    Hitm  Total  Lcl    Rmt  Total  L1Hit  L1Miss     Lcl   Rmt  Ld Miss  Loads    FB    L1   L2     Llc      Rmt
+  # .....  ..............  ....  ......  .......  ......  .....  .....  ...  ....   .....  ......  ......  ....  ......   .....  .....  ..... ...  ....     .......
+
+        0  0x7f0d27ffba00   N/A       0       52   0.12%     13      6    7    12      12       0       0     7      14      40      4     16    0    0           0
+        1  0x7f0d27ff61c0   N/A       0     6353  14.04%   1475    801  674   779     779       0       0   718    1392    5574   1299   1967    0  115           0
+        2  0x7f0d26d3ec80   N/A       0       71   0.15%     16      4   12    13      13       0       0    12      24      58      1     20    0    9           0
+        3  0x7f0d26d3ec00   N/A       0       98   0.22%     23     17    6    19      19       0       0     6      12      79      0     40    0   10           0
+
+i.e. with the list not being ordered by Total Hitm.
+
+Fixes: 722ddfde366f ("perf tools: Fix time sorting")
+Signed-off-by: Andres Freund <andres@anarazel.de>
+Tested-by: Michael Petlan <mpetlan@redhat.com>
+Acked-by: Jiri Olsa <jolsa@redhat.com>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: Andi Kleen <ak@linux.intel.com>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: stable@vger.kernel.org # v3.16+
+Link: http://lore.kernel.org/lkml/20200109043030.233746-1-andres@anarazel.de
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- lib/test_bitmap.c |    9 +++++----
- 1 file changed, 5 insertions(+), 4 deletions(-)
+ tools/perf/builtin-c2c.c |   10 ++++++----
+ 1 file changed, 6 insertions(+), 4 deletions(-)
 
---- a/lib/test_bitmap.c
-+++ b/lib/test_bitmap.c
-@@ -275,22 +275,23 @@ static void __init test_copy(void)
- static void __init test_replace(void)
+--- a/tools/perf/builtin-c2c.c
++++ b/tools/perf/builtin-c2c.c
+@@ -595,8 +595,8 @@ tot_hitm_cmp(struct perf_hpp_fmt *fmt __
  {
- 	unsigned int nbits = 64;
-+	unsigned int nlongs = DIV_ROUND_UP(nbits, BITS_PER_LONG);
- 	DECLARE_BITMAP(bmap, 1024);
+ 	struct c2c_hist_entry *c2c_left;
+ 	struct c2c_hist_entry *c2c_right;
+-	unsigned int tot_hitm_left;
+-	unsigned int tot_hitm_right;
++	uint64_t tot_hitm_left;
++	uint64_t tot_hitm_right;
  
- 	bitmap_zero(bmap, 1024);
--	bitmap_replace(bmap, &exp2[0], &exp2[1], exp2_to_exp3_mask, nbits);
-+	bitmap_replace(bmap, &exp2[0 * nlongs], &exp2[1 * nlongs], exp2_to_exp3_mask, nbits);
- 	expect_eq_bitmap(bmap, exp3_0_1, nbits);
- 
- 	bitmap_zero(bmap, 1024);
--	bitmap_replace(bmap, &exp2[1], &exp2[0], exp2_to_exp3_mask, nbits);
-+	bitmap_replace(bmap, &exp2[1 * nlongs], &exp2[0 * nlongs], exp2_to_exp3_mask, nbits);
- 	expect_eq_bitmap(bmap, exp3_1_0, nbits);
- 
- 	bitmap_fill(bmap, 1024);
--	bitmap_replace(bmap, &exp2[0], &exp2[1], exp2_to_exp3_mask, nbits);
-+	bitmap_replace(bmap, &exp2[0 * nlongs], &exp2[1 * nlongs], exp2_to_exp3_mask, nbits);
- 	expect_eq_bitmap(bmap, exp3_0_1, nbits);
- 
- 	bitmap_fill(bmap, 1024);
--	bitmap_replace(bmap, &exp2[1], &exp2[0], exp2_to_exp3_mask, nbits);
-+	bitmap_replace(bmap, &exp2[1 * nlongs], &exp2[0 * nlongs], exp2_to_exp3_mask, nbits);
- 	expect_eq_bitmap(bmap, exp3_1_0, nbits);
+ 	c2c_left  = container_of(left, struct c2c_hist_entry, he);
+ 	c2c_right = container_of(right, struct c2c_hist_entry, he);
+@@ -629,7 +629,8 @@ __f ## _cmp(struct perf_hpp_fmt *fmt __m
+ 									\
+ 	c2c_left  = container_of(left, struct c2c_hist_entry, he);	\
+ 	c2c_right = container_of(right, struct c2c_hist_entry, he);	\
+-	return c2c_left->stats.__f - c2c_right->stats.__f;		\
++	return (uint64_t) c2c_left->stats.__f -				\
++	       (uint64_t) c2c_right->stats.__f;				\
  }
  
+ #define STAT_FN(__f)		\
+@@ -682,7 +683,8 @@ ld_llcmiss_cmp(struct perf_hpp_fmt *fmt
+ 	c2c_left  = container_of(left, struct c2c_hist_entry, he);
+ 	c2c_right = container_of(right, struct c2c_hist_entry, he);
+ 
+-	return llc_miss(&c2c_left->stats) - llc_miss(&c2c_right->stats);
++	return (uint64_t) llc_miss(&c2c_left->stats) -
++	       (uint64_t) llc_miss(&c2c_right->stats);
+ }
+ 
+ static uint64_t total_records(struct c2c_stats *stats)
 
 
