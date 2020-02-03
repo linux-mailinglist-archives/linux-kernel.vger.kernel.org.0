@@ -2,92 +2,183 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 909061512D7
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Feb 2020 00:17:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B1F861512DC
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Feb 2020 00:18:14 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727183AbgBCXRx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 3 Feb 2020 18:17:53 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:53082 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726331AbgBCXRx (ORCPT
+        id S1727225AbgBCXSF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 3 Feb 2020 18:18:05 -0500
+Received: from mail-oi1-f195.google.com ([209.85.167.195]:42026 "EHLO
+        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727207AbgBCXSE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Feb 2020 18:17:53 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
-        Content-Type:In-Reply-To:MIME-Version:Date:Message-ID:From:References:To:
-        Subject:Sender:Reply-To:Cc:Content-ID:Content-Description;
-        bh=tHWXelqy/znzMF/hisstsWcUWFHUWVNzpgrAR2EDFMA=; b=EiMNhEcFgvxPsuKN0FbRgn0l+6
-        7LODD7RsE4kMvTYLZkM/h6YsDiPCWiO9pjhzGBrBUt5MZq80HOiIMI8EppjKtV/XoidTG1tu9Ofqx
-        AHDc/AnEIyVBJdsQkmYFDe4avwCm+R+y+Atg/jbFx7rEaxiUNvZZBqnojCqtLMTB8MQ1GLSaXmBKQ
-        ie7lI1Es4i1OjuhrgWG1wXwLqvPp50SNzZgmkMgwNkL9MOJ4ujO7W0qVk2pCKMZ7EaikHO60ii/G7
-        T6jmAwPDhWTX4kNR7g3z/8JH9vuVXfW76yTgYY40tRfgevRJtMJkJS934BEndKGrAK869mlxGTpbg
-        yZtkiDFw==;
-Received: from [2601:1c0:6280:3f0::19c2]
-        by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1iykyU-0005k5-R5; Mon, 03 Feb 2020 23:17:50 +0000
-Subject: Re: [PATCH v2] x86/PCI: ensure to_pci_sysdata usage is available to
- !CONFIG_PCI
-To:     "Jason A. Donenfeld" <Jason@zx2c4.com>,
-        linux-kernel@vger.kernel.org, bhelgaas@google.com, x86@kernel.org,
-        hch@lst.de
-References: <20200203200942.GA130652@google.com>
- <20200203215306.172000-1-Jason@zx2c4.com>
-From:   Randy Dunlap <rdunlap@infradead.org>
-Message-ID: <75592335-ccb7-7d89-0578-1362d27c3dca@infradead.org>
-Date:   Mon, 3 Feb 2020 15:17:49 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.1
+        Mon, 3 Feb 2020 18:18:04 -0500
+Received: by mail-oi1-f195.google.com with SMTP id j132so16511177oih.9
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Feb 2020 15:18:04 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=4S8vHNwaTJoy9iVF47eyFtZHq86ah3z1R3R7OSO3+2M=;
+        b=P9vxuWfA+Xz9O02Hf3pPI55HK5oO3beJiNSR+DkSHarWvGckjpVxj3+V9IaIcAJtZW
+         mL9Vq5fV6HDoY5T3XjZwRYKZLxdyCMu0xYN0cx5DzBXtkfW6vhkiA1BBfH7tc+MnyXlT
+         ooGWOmIwhM4GBBfvs9TLPhmk/Eq8kz7ojqO1i+vD6/wUHy2iP6866ydb5+Y6V0VY7xWD
+         a/YvrUcthf9AcOfwYbCSNM7QKCs55X7EkSbGzpe2VhlEnkcQX70cj2cTugm1D9SnjfYm
+         s+cZHlRxeIrDbRqXpGiNjtXGTQGo5xThTMF5DlS+ke3zqph4Cmd8k4bTjnhD35NTohrd
+         vuOw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=4S8vHNwaTJoy9iVF47eyFtZHq86ah3z1R3R7OSO3+2M=;
+        b=CvVvuUfBJgbmDLwuIvo+dQGsFvN9gz4FKKs0+NL2ixUo/K/zXUqOtdwZmggTFpGMkO
+         dNofol4hf5tNjnKG4p2jQ0JfSAmgNsOEYIgS2uo/KKDXXblGRHemBQXVxBneKhmTXg/2
+         8r/5wP0wsCU1tvWAXwEzQIGZ88saFvx/ZFIzVTF8gGwEJ8VMeJlkE3imqS/Z1gCW9uWp
+         5Zayk40CKSgLqW/YYln8edpsT2aRrYEJAxDyMrGcbk19dHjTDanuKxjW05o5UjfLskOx
+         FlWWnAqlLSMrJkahJIKG3+p2mURonrq3CNGXLvWKA/mEihNSS3zyr9EnnrHHnzYT94pf
+         ihEg==
+X-Gm-Message-State: APjAAAUUCzxfzDEzKDMvVvXpvFnFkpFz9mwVjgiEnHKXJ/3OW3P8SsnC
+        ILwV1fg0M0VJNXgbKLFUVkmInbx/zvUZbuwLcVLGBg==
+X-Google-Smtp-Source: APXvYqyuj43djmIIaXiJRQDMfPEY4O5rvJgfItz8Cm1XFY7pfC3bE45El1OJ8nh1wyvDG/uukiMcMl2vAZyBV5IHz8Y=
+X-Received: by 2002:a05:6808:7dd:: with SMTP id f29mr1176345oij.67.1580771883610;
+ Mon, 03 Feb 2020 15:18:03 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <20200203215306.172000-1-Jason@zx2c4.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <20200115012651.228058-1-almasrymina@google.com>
+ <20200115012651.228058-3-almasrymina@google.com> <alpine.DEB.2.21.2001291323270.175731@chino.kir.corp.google.com>
+In-Reply-To: <alpine.DEB.2.21.2001291323270.175731@chino.kir.corp.google.com>
+From:   Mina Almasry <almasrymina@google.com>
+Date:   Mon, 3 Feb 2020 15:17:52 -0800
+Message-ID: <CAHS8izPNmO8urNCfVeMU1QnhGsrtg1CNLKXaL_VMe9jB6dtfyA@mail.gmail.com>
+Subject: Re: [PATCH v10 3/8] hugetlb_cgroup: add reservation accounting for
+ private mappings
+To:     David Rientjes <rientjes@google.com>
+Cc:     Mike Kravetz <mike.kravetz@oracle.com>,
+        Shakeel Butt <shakeelb@google.com>, shuah <shuah@kernel.org>,
+        Greg Thelen <gthelen@google.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        open list <linux-kernel@vger.kernel.org>, linux-mm@kvack.org,
+        linux-kselftest@vger.kernel.org, cgroups@vger.kernel.org,
+        Aneesh Kumar <aneesh.kumar@linux.vnet.ibm.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2/3/20 1:53 PM, Jason A. Donenfeld wrote:
-> Recently, the helper to_pci_sysdata was added inside of the CONFIG_PCI
-> guard, but it is used from inside of a CONFIG_NUMA guard, which does not
-> require CONFIG_PCI. This breaks builds on !CONFIG_PCI machines. This
-> commit makes that function available in all configurations.
-> 
-> Signed-off-by: Jason A. Donenfeld <Jason@zx2c4.com>
-> Fixes: aad6aa0cd674 ("x86/PCI: Add to_pci_sysdata() helper")
-> Cc: Christoph Hellwig <hch@lst.de>
+On Wed, Jan 29, 2020 at 1:28 PM David Rientjes <rientjes@google.com> wrote:
+>
+> On Tue, 14 Jan 2020, Mina Almasry wrote:
+>
+> > diff --git a/include/linux/hugetlb.h b/include/linux/hugetlb.h
+> > index dea6143aa0685..5491932ea5758 100644
+> > --- a/include/linux/hugetlb.h
+> > +++ b/include/linux/hugetlb.h
+> > @@ -46,6 +46,16 @@ struct resv_map {
+> >       long adds_in_progress;
+> >       struct list_head region_cache;
+> >       long region_cache_count;
+> > +#ifdef CONFIG_CGROUP_HUGETLB
+> > +     /*
+> > +      * On private mappings, the counter to uncharge reservations is stored
+> > +      * here. If these fields are 0, then either the mapping is shared, or
+> > +      * cgroup accounting is disabled for this resv_map.
+> > +      */
+> > +     struct page_counter *reservation_counter;
+> > +     unsigned long pages_per_hpage;
+> > +     struct cgroup_subsys_state *css;
+> > +#endif
+> >  };
+> >  extern struct resv_map *resv_map_alloc(void);
+> >  void resv_map_release(struct kref *ref);
+> > diff --git a/include/linux/hugetlb_cgroup.h b/include/linux/hugetlb_cgroup.h
+> > index eab8a70d5bcb5..8c320accefe87 100644
+> > --- a/include/linux/hugetlb_cgroup.h
+> > +++ b/include/linux/hugetlb_cgroup.h
+> > @@ -25,6 +25,33 @@ struct hugetlb_cgroup;
+> >  #define HUGETLB_CGROUP_MIN_ORDER     2
+> >
+> >  #ifdef CONFIG_CGROUP_HUGETLB
+> > +enum hugetlb_memory_event {
+> > +     HUGETLB_MAX,
+> > +     HUGETLB_NR_MEMORY_EVENTS,
+> > +};
+> > +
+> > +struct hugetlb_cgroup {
+> > +     struct cgroup_subsys_state css;
+> > +
+> > +     /*
+> > +      * the counter to account for hugepages from hugetlb.
+> > +      */
+> > +     struct page_counter hugepage[HUGE_MAX_HSTATE];
+> > +
+> > +     /*
+> > +      * the counter to account for hugepage reservations from hugetlb.
+> > +      */
+> > +     struct page_counter reserved_hugepage[HUGE_MAX_HSTATE];
+> > +
+> > +     atomic_long_t events[HUGE_MAX_HSTATE][HUGETLB_NR_MEMORY_EVENTS];
+> > +     atomic_long_t events_local[HUGE_MAX_HSTATE][HUGETLB_NR_MEMORY_EVENTS];
+> > +
+> > +     /* Handle for "hugetlb.events" */
+> > +     struct cgroup_file events_file[HUGE_MAX_HSTATE];
+> > +
+> > +     /* Handle for "hugetlb.events.local" */
+> > +     struct cgroup_file events_local_file[HUGE_MAX_HSTATE];
+> > +};
+> >
+> >  static inline struct hugetlb_cgroup *hugetlb_cgroup_from_page(struct page *page,
+> >                                                             bool reserved)
+> > diff --git a/mm/hugetlb.c b/mm/hugetlb.c
+> > index 62a4cf3db4090..f1b63946ee95c 100644
+> > --- a/mm/hugetlb.c
+> > +++ b/mm/hugetlb.c
+> > @@ -666,6 +666,17 @@ struct resv_map *resv_map_alloc(void)
+> >       INIT_LIST_HEAD(&resv_map->regions);
+> >
+> >       resv_map->adds_in_progress = 0;
+> > +#ifdef CONFIG_CGROUP_HUGETLB
+> > +     /*
+> > +      * Initialize these to 0. On shared mappings, 0's here indicate these
+> > +      * fields don't do cgroup accounting. On private mappings, these will be
+> > +      * re-initialized to the proper values, to indicate that hugetlb cgroup
+> > +      * reservations are to be un-charged from here.
+> > +      */
+> > +     resv_map->reservation_counter = NULL;
+> > +     resv_map->pages_per_hpage = 0;
+> > +     resv_map->css = NULL;
+> > +#endif
+>
+> Might be better to extract out a resv_map_init() that does the
+> initialization when CONFIG_CGROUP_HUGETLB is enabled?  Could be used here
+> as well as hugetlb_reserve_pages().
+>
+> >
+> >       INIT_LIST_HEAD(&resv_map->region_cache);
+> >       list_add(&rg->link, &resv_map->region_cache);
+> > @@ -3194,7 +3205,11 @@ static void hugetlb_vm_op_close(struct vm_area_struct *vma)
+> >
+> >       reserve = (end - start) - region_count(resv, start, end);
+> >
+> > -     kref_put(&resv->refs, resv_map_release);
+> > +#ifdef CONFIG_CGROUP_HUGETLB
+> > +     hugetlb_cgroup_uncharge_counter(resv->reservation_counter,
+> > +                                     (end - start) * resv->pages_per_hpage,
+> > +                                     resv->css);
+> > +#endif
+> >
+> >       if (reserve) {
+> >               /*
+>
+> Mike has given is Reviewed-by so likely not a big concern for the generic
+> hugetlb code, but I was wondering if we can reduce the number of #ifdef's
+> if we defined a CONFIG_CGROUP_HUGETLB helper to take the resv, end, and
+> start?  If CONFIG_CGROUP_HUGETLB is defined, it converts into the above,
+> otherwise it's a no-op and we don't run into any compile errors because we
+> are accessing fields that don't exist without the option.
+>
 
-Reported-by: Randy Dunlap <rdunlap@infradead.org>
-Acked-by: Randy Dunlap <rdunlap@infradead.org> # build-tested
+Yes wherever possible I refactored the code a bit to remove #ifdefs in
+the middle of hugetlb logic.
 
-Thanks.
-
-> ---
->  arch/x86/include/asm/pci.h | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/arch/x86/include/asm/pci.h b/arch/x86/include/asm/pci.h
-> index 40ac1330adb2..7ccb338507e3 100644
-> --- a/arch/x86/include/asm/pci.h
-> +++ b/arch/x86/include/asm/pci.h
-> @@ -33,13 +33,13 @@ extern int pci_routeirq;
->  extern int noioapicquirk;
->  extern int noioapicreroute;
->  
-> -#ifdef CONFIG_PCI
-> -
->  static inline struct pci_sysdata *to_pci_sysdata(const struct pci_bus *bus)
->  {
->  	return bus->sysdata;
->  }
->  
-> +#ifdef CONFIG_PCI
-> +
->  #ifdef CONFIG_PCI_DOMAINS
->  static inline int pci_domain_nr(struct pci_bus *bus)
->  {
-> 
-
-
--- 
-~Randy
+> Otherwise looks good!
+>
+> Acked-by: David Rientjes <rientjes@google.com>
