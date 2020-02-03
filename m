@@ -2,96 +2,127 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C16351506FC
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Feb 2020 14:21:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0A7F6150712
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Feb 2020 14:23:21 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728302AbgBCNVS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 3 Feb 2020 08:21:18 -0500
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:37132 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727872AbgBCNVR (ORCPT
+        id S1727311AbgBCNXT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 3 Feb 2020 08:23:19 -0500
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:46680 "EHLO
+        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726287AbgBCNXT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Feb 2020 08:21:17 -0500
-Received: by mail-wr1-f68.google.com with SMTP id w15so18113040wru.4
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Feb 2020 05:21:16 -0800 (PST)
+        Mon, 3 Feb 2020 08:23:19 -0500
+Received: by mail-lj1-f193.google.com with SMTP id x14so14556039ljd.13
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Feb 2020 05:23:17 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=wi18qa0MrlL/7K66WwSCllXqfZXEgraYZcR91lSYDNE=;
-        b=bp8+Uco/w5cV6S55A/YKo5bqO7+Pr/oxNg0Z6oluQH68KFgb2DyxJH1EwAdG4K/oCA
-         RgZ8wCPi+pDA22I3GDZ+m/tglWqftq6a2mbvb0dmPxDZIl6MlarANf/SciK/eh01HGNg
-         zH7H9/rPxFUMrbqchrYmegcJnZL0vNEEiNesSql4aYUXj1ljvecw397nIZH3qASJWysu
-         NXQvoUfF9qP9WQYbBDslrIyaU0HYyFNfUUoReu2ao0QXNWUrFGMOZCSRMEg09zjRiJLw
-         3AxNeaITML3GClFIA311nFdYiGnKiC2ehyUigKDabL9y7VQ+GrENKIYocO2ZosgQRBZ3
-         Yd3A==
+        d=shutemov-name.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=yciKij7aZ9IxqsUAs/104yOVBksVOCSAdlwEXkSdpoQ=;
+        b=FAiKXrOR692VWEgWF88bI0DjGDu/Sjr0t06eV884FO+vVgwg4SO1uh7Qjl5zLD2Mnt
+         6dIaQ6GUVYMIRRdp6Zr3N4HwWQyUE9FJgr/ot760UXFb9ieeuh0y5ihna9xcf2NmLfCx
+         ATq82Ac6zbqDRu4VKrwnxbU4xctjK9vueLdVmKNpS6KqzdJvtHV4CLOBxIiZkxMDg+qK
+         ecH96G8OHeFmWugtvDrmtXQeUcEyqBTxR9to5bv4yN3DtqJmP2+Xwq+RSXlRUoI+6ri4
+         AUdjBjhCj/vULhTNfShatAWSXcd57f3QFCfh0lIhgZ0VEybpMYi20qW77bNE0IKdYCKt
+         uSlw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=wi18qa0MrlL/7K66WwSCllXqfZXEgraYZcR91lSYDNE=;
-        b=tyrgOTHrGGkUmKG/3XLrhDV1PzrICCiDVUWalc9S2NDuDCYgYMO1veDEpRIn/0TgjP
-         skFZspvb1cjPS0/ANkv4NsoFNE8DHIdUkgq6duENEQd9UMwJ4WPfpqZ593PFsKx9pm7d
-         Vn2hmjEmtRInSbvd0yrTQPxdkpJzcPnsnL4cCoa2boJiK/0rkg6R4O8GZbQmaFKs6dPf
-         5ihDEhtA8tza4ppfTUI2XC3Bvagko4+sfyFd+c+xyoXFB0JB2vPLL6F6iwpvl8O6wtLP
-         lHcD/3LzQwwJNTEN7dnZQG7GH1PrsqQ7E3k1v6Y+9sAWcHOsFjOKBrjfIMw1RUhIp5nj
-         KSww==
-X-Gm-Message-State: APjAAAVcWXKX2tP/l0P5Fo0Ywi14KAvtZRBvN6w7nCwAZj8K5OiQSITc
-        AXizpBy9lXDsEGJSrJ1daANwl3G/Zec=
-X-Google-Smtp-Source: APXvYqzSJpvUoeMx6zIu+JC/mHzWGsTSVjVo4y40fmiz9jSCiVrpzfukntQzLAl4MzTE3YGEZljuuA==
-X-Received: by 2002:adf:f1cb:: with SMTP id z11mr15054437wro.375.1580736075590;
-        Mon, 03 Feb 2020 05:21:15 -0800 (PST)
-Received: from localhost.localdomain ([2.27.35.227])
-        by smtp.gmail.com with ESMTPSA id z133sm24623094wmb.7.2020.02.03.05.21.14
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=yciKij7aZ9IxqsUAs/104yOVBksVOCSAdlwEXkSdpoQ=;
+        b=PmtBNU+r32SKTbhryh+cj0H0d5c38cVWfhhOFF69ZyvEXVlty6flSThr55Z8cgUYDz
+         v4g04+GVSyf1TIwavhfBltpTg7eOstqsk1YRN33AwqTw/QjuUAts6Dxkzh+dUUxFdFbb
+         wasv+ShVrd/NFm/HU1zKSd/sCK9sBZf+iy9O5W9XKwK6Eo952Pa6AnivP1AM8VI3mvtL
+         5wHTbBtu88G81dSrUoaHyYl9qO2mgMyKKKBv5aopw6Z7rGK/KTMAtFdfUHkTnnfQ4qzc
+         JFdirWcwJI0w66KWljhM4DL+lZUVFAmdQYm5Cb1F7Jnyw+xrYDYpy21OUEbqfZWszcN7
+         vL0w==
+X-Gm-Message-State: APjAAAWRKj23rZN+PXs+ZwCXGybAA4pqOzX2TCA34A4P6y5TfbJ4dAXD
+        tfxOKVoW7IM/J9yfPfnyMRXpIg==
+X-Google-Smtp-Source: APXvYqz6+ASziVfzDtmIfqoBNJGqRDrKpccZCRWjuRMxtwAuDOff2v4nbarQjcGBTnjRDFxC1sKg0Q==
+X-Received: by 2002:a2e:b0e3:: with SMTP id h3mr13425116ljl.56.1580736196893;
+        Mon, 03 Feb 2020 05:23:16 -0800 (PST)
+Received: from box.localdomain ([86.57.175.117])
+        by smtp.gmail.com with ESMTPSA id j7sm8959848lfh.25.2020.02.03.05.23.16
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 03 Feb 2020 05:21:15 -0800 (PST)
-From:   Lee Jones <lee.jones@linaro.org>
-To:     stable@vger.kernel.org
-Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 1/1] media: si470x-i2c: Move free() past last use of 'radio'
-Date:   Mon,  3 Feb 2020 13:21:30 +0000
-Message-Id: <20200203132130.12748-1-lee.jones@linaro.org>
-X-Mailer: git-send-email 2.24.0
+        Mon, 03 Feb 2020 05:23:16 -0800 (PST)
+Received: by box.localdomain (Postfix, from userid 1000)
+        id 1306D100DC8; Mon,  3 Feb 2020 16:23:29 +0300 (+03)
+Date:   Mon, 3 Feb 2020 16:23:29 +0300
+From:   "Kirill A. Shutemov" <kirill@shutemov.name>
+To:     John Hubbard <jhubbard@nvidia.com>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Christoph Hellwig <hch@infradead.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Dave Chinner <david@fromorbit.com>,
+        Ira Weiny <ira.weiny@intel.com>, Jan Kara <jack@suse.cz>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Jonathan Corbet <corbet@lwn.net>,
+        =?utf-8?B?SsOpcsO0bWU=?= Glisse <jglisse@redhat.com>,
+        Michal Hocko <mhocko@suse.com>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Shuah Khan <shuah@kernel.org>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Matthew Wilcox <willy@infradead.org>,
+        linux-doc@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kselftest@vger.kernel.org, linux-rdma@vger.kernel.org,
+        linux-mm@kvack.org, LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v3 04/12] mm: introduce page_ref_sub_return()
+Message-ID: <20200203132329.oj32h4ryna4gmkwh@box>
+References: <20200201034029.4063170-1-jhubbard@nvidia.com>
+ <20200201034029.4063170-5-jhubbard@nvidia.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200201034029.4063170-5-jhubbard@nvidia.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-A pointer to 'struct si470x_device' is currently used after free:
+On Fri, Jan 31, 2020 at 07:40:21PM -0800, John Hubbard wrote:
+> An upcoming patch requires subtracting a large chunk of refcounts from
+> a page, and checking what the resulting refcount is. This is a little
+> different than the usual "check for zero refcount" that many of the
+> page ref functions already do. However, it is similar to a few other
+> routines that (like this one) are generally useful for things such as
+> 1-based refcounting.
+> 
+> Add page_ref_sub_return(), that subtracts a chunk of refcounts
+> atomically, and returns an atomic snapshot of the result.
+> 
+> Signed-off-by: John Hubbard <jhubbard@nvidia.com>
+> ---
+>  include/linux/page_ref.h | 10 ++++++++++
+>  1 file changed, 10 insertions(+)
+> 
+> diff --git a/include/linux/page_ref.h b/include/linux/page_ref.h
+> index 14d14beb1f7f..b9cbe553d1e7 100644
+> --- a/include/linux/page_ref.h
+> +++ b/include/linux/page_ref.h
+> @@ -102,6 +102,16 @@ static inline void page_ref_sub(struct page *page, int nr)
+>  		__page_ref_mod(page, -nr);
+>  }
+>  
+> +static inline int page_ref_sub_return(struct page *page, int nr)
+> +{
+> +	int ret = atomic_sub_return(nr, &page->_refcount);
+> +
+> +	if (page_ref_tracepoint_active(__tracepoint_page_ref_mod))
+> +		__page_ref_mod(page, -nr);
 
-  drivers/media/radio/si470x/radio-si470x-i2c.c:462:25-30: ERROR: reference
-    preceded by free on line 460
+Shouldn't it be __page_ref_mod_and_return() and relevant tracepoint?
 
-Shift the call to free() down past its final use.
+> +
+> +	return ret;
+> +}
+> +
+>  static inline void page_ref_inc(struct page *page)
+>  {
+>  	atomic_inc(&page->_refcount);
+> -- 
+> 2.25.0
+> 
 
-NB: Not sending to Mainline, since the problem does not exist there.
-
-Cc: <stable@vger.kernel.org> # v3.18+
-Reported-by: kbuild test robot <lkp@intel.com>
-Reported-by: Julia Lawall <julia.lawall@lip6.fr>
-Signed-off-by: Lee Jones <lee.jones@linaro.org>
----
- drivers/media/radio/si470x/radio-si470x-i2c.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/media/radio/si470x/radio-si470x-i2c.c b/drivers/media/radio/si470x/radio-si470x-i2c.c
-index ae7540b765e1d..aa12fd2663895 100644
---- a/drivers/media/radio/si470x/radio-si470x-i2c.c
-+++ b/drivers/media/radio/si470x/radio-si470x-i2c.c
-@@ -483,10 +483,10 @@ static int si470x_i2c_remove(struct i2c_client *client)
- 
- 	free_irq(client->irq, radio);
- 	video_unregister_device(&radio->videodev);
--	kfree(radio);
- 
- 	v4l2_ctrl_handler_free(&radio->hdl);
- 	v4l2_device_unregister(&radio->v4l2_dev);
-+	kfree(radio);
- 	return 0;
- }
- 
 -- 
-2.24.0
-
+ Kirill A. Shutemov
