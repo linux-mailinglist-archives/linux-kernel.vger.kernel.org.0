@@ -2,42 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9592A150BE1
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Feb 2020 17:31:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 06E3B150DB8
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Feb 2020 17:46:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730203AbgBCQbX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 3 Feb 2020 11:31:23 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44414 "EHLO mail.kernel.org"
+        id S1729620AbgBCQ2g (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 3 Feb 2020 11:28:36 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40096 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730192AbgBCQbT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Feb 2020 11:31:19 -0500
+        id S1729598AbgBCQ23 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Feb 2020 11:28:29 -0500
 Received: from localhost (unknown [104.132.45.99])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A792121741;
-        Mon,  3 Feb 2020 16:31:17 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3C4812080C;
+        Mon,  3 Feb 2020 16:28:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1580747478;
-        bh=/nOdczqKjWmmQm4bHY76A4S/KlufdHVq5oohak6Mrto=;
+        s=default; t=1580747308;
+        bh=b6IVOamTvGku5jkgEhCb3/Ctk25jZQJJxSPkmWFjWbE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ufIo+vaY5Bv1f3STLQAcjk0HGDT15u/5F5LkV+jUC4yDnh5GEzgEeZVv9UI7w23qr
-         KwCF2UpjLH9QMU7QQxGhHunejSc2jutQrhP3D1OR+kj0cmYUbaET4A7VAID8GXUKN0
-         SsKzdFH0zfQL7mL73TOnwjgmSlZsP2mMe6y/obg0=
+        b=ZwmQ6h+4ScYWM6V8k6tyiUD1MykRDAYof81KqIsT2wIZjXdZVbDLApyAoYzwPCcY3
+         DGe0/c79Hi0OyTssUFbR6rqayXWOYAXtm6Z6GQ8AamiUV2gbL4KIdLnV/G4WYsL5Wf
+         2LYIU7behfGEm3FndFsUjkDOvLrDtAet7LltETIQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Reinette Chatre <reinette.chatre@intel.com>,
-        Xiaochen Shen <xiaochen.shen@intel.com>,
-        Borislav Petkov <bp@suse.de>, Tony Luck <tony.luck@intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 03/70] x86/resctrl: Fix use-after-free due to inaccurate refcount of rdtgroup
+        stable@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
+        syzbot+03c4738ed29d5d366ddf@syzkaller.appspotmail.com,
+        Cong Wang <xiyou.wangcong@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.14 30/89] net_sched: ematch: reject invalid TCF_EM_SIMPLE
 Date:   Mon,  3 Feb 2020 16:19:15 +0000
-Message-Id: <20200203161912.772712580@linuxfoundation.org>
+Message-Id: <20200203161920.825429598@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200203161912.158976871@linuxfoundation.org>
-References: <20200203161912.158976871@linuxfoundation.org>
+In-Reply-To: <20200203161916.847439465@linuxfoundation.org>
+References: <20200203161916.847439465@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -47,136 +45,79 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Xiaochen Shen <xiaochen.shen@intel.com>
+From: Eric Dumazet <edumazet@google.com>
 
-commit 074fadee59ee7a9d2b216e9854bd4efb5dad679f upstream.
+[ Upstream commit 55cd9f67f1e45de8517cdaab985fb8e56c0bc1d8 ]
 
-There is a race condition in the following scenario which results in an
-use-after-free issue when reading a monitoring file and deleting the
-parent ctrl_mon group concurrently:
+It is possible for malicious userspace to set TCF_EM_SIMPLE bit
+even for matches that should not have this bit set.
 
-Thread 1 calls atomic_inc() to take refcount of rdtgrp and then calls
-kernfs_break_active_protection() to drop the active reference of kernfs
-node in rdtgroup_kn_lock_live().
+This can fool two places using tcf_em_is_simple()
 
-In Thread 2, kernfs_remove() is a blocking routine. It waits on all sub
-kernfs nodes to drop the active reference when removing all subtree
-kernfs nodes recursively. Thread 2 could block on kernfs_remove() until
-Thread 1 calls kernfs_break_active_protection(). Only after
-kernfs_remove() completes the refcount of rdtgrp could be trusted.
+1) tcf_em_tree_destroy() -> memory leak of em->data
+   if ops->destroy() is NULL
 
-Before Thread 1 calls atomic_inc() and kernfs_break_active_protection(),
-Thread 2 could call kfree() when the refcount of rdtgrp (sentry) is 0
-instead of 1 due to the race.
+2) tcf_em_tree_dump() wrongly report/leak 4 low-order bytes
+   of a kernel pointer.
 
-In Thread 1, in rdtgroup_kn_unlock(), referring to earlier rdtgrp memory
-(rdtgrp->waitcount) which was already freed in Thread 2 results in
-use-after-free issue.
+BUG: memory leak
+unreferenced object 0xffff888121850a40 (size 32):
+  comm "syz-executor927", pid 7193, jiffies 4294941655 (age 19.840s)
+  hex dump (first 32 bytes):
+    00 00 00 00 01 00 00 00 00 00 00 00 00 00 00 00  ................
+    00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+  backtrace:
+    [<00000000f67036ea>] kmemleak_alloc_recursive include/linux/kmemleak.h:43 [inline]
+    [<00000000f67036ea>] slab_post_alloc_hook mm/slab.h:586 [inline]
+    [<00000000f67036ea>] slab_alloc mm/slab.c:3320 [inline]
+    [<00000000f67036ea>] __do_kmalloc mm/slab.c:3654 [inline]
+    [<00000000f67036ea>] __kmalloc_track_caller+0x165/0x300 mm/slab.c:3671
+    [<00000000fab0cc8e>] kmemdup+0x27/0x60 mm/util.c:127
+    [<00000000d9992e0a>] kmemdup include/linux/string.h:453 [inline]
+    [<00000000d9992e0a>] em_nbyte_change+0x5b/0x90 net/sched/em_nbyte.c:32
+    [<000000007e04f711>] tcf_em_validate net/sched/ematch.c:241 [inline]
+    [<000000007e04f711>] tcf_em_tree_validate net/sched/ematch.c:359 [inline]
+    [<000000007e04f711>] tcf_em_tree_validate+0x332/0x46f net/sched/ematch.c:300
+    [<000000007a769204>] basic_set_parms net/sched/cls_basic.c:157 [inline]
+    [<000000007a769204>] basic_change+0x1d7/0x5f0 net/sched/cls_basic.c:219
+    [<00000000e57a5997>] tc_new_tfilter+0x566/0xf70 net/sched/cls_api.c:2104
+    [<0000000074b68559>] rtnetlink_rcv_msg+0x3b2/0x4b0 net/core/rtnetlink.c:5415
+    [<00000000b7fe53fb>] netlink_rcv_skb+0x61/0x170 net/netlink/af_netlink.c:2477
+    [<00000000e83a40d0>] rtnetlink_rcv+0x1d/0x30 net/core/rtnetlink.c:5442
+    [<00000000d62ba933>] netlink_unicast_kernel net/netlink/af_netlink.c:1302 [inline]
+    [<00000000d62ba933>] netlink_unicast+0x223/0x310 net/netlink/af_netlink.c:1328
+    [<0000000088070f72>] netlink_sendmsg+0x2c0/0x570 net/netlink/af_netlink.c:1917
+    [<00000000f70b15ea>] sock_sendmsg_nosec net/socket.c:639 [inline]
+    [<00000000f70b15ea>] sock_sendmsg+0x54/0x70 net/socket.c:659
+    [<00000000ef95a9be>] ____sys_sendmsg+0x2d0/0x300 net/socket.c:2330
+    [<00000000b650f1ab>] ___sys_sendmsg+0x8a/0xd0 net/socket.c:2384
+    [<0000000055bfa74a>] __sys_sendmsg+0x80/0xf0 net/socket.c:2417
+    [<000000002abac183>] __do_sys_sendmsg net/socket.c:2426 [inline]
+    [<000000002abac183>] __se_sys_sendmsg net/socket.c:2424 [inline]
+    [<000000002abac183>] __x64_sys_sendmsg+0x23/0x30 net/socket.c:2424
 
-Thread 1 (rdtgroup_mondata_show)  Thread 2 (rdtgroup_rmdir)
---------------------------------  -------------------------
-rdtgroup_kn_lock_live
-  /*
-   * kn active protection until
-   * kernfs_break_active_protection(kn)
-   */
-  rdtgrp = kernfs_to_rdtgroup(kn)
-                                  rdtgroup_kn_lock_live
-                                    atomic_inc(&rdtgrp->waitcount)
-                                    mutex_lock
-                                  rdtgroup_rmdir_ctrl
-                                    free_all_child_rdtgrp
-                                      /*
-                                       * sentry->waitcount should be 1
-                                       * but is 0 now due to the race.
-                                       */
-                                      kfree(sentry)*[1]
-  /*
-   * Only after kernfs_remove()
-   * completes, the refcount of
-   * rdtgrp could be trusted.
-   */
-  atomic_inc(&rdtgrp->waitcount)
-  /* kn->active-- */
-  kernfs_break_active_protection(kn)
-                                    rdtgroup_ctrl_remove
-                                      rdtgrp->flags = RDT_DELETED
-                                      /*
-                                       * Blocking routine, wait for
-                                       * all sub kernfs nodes to drop
-                                       * active reference in
-                                       * kernfs_break_active_protection.
-                                       */
-                                      kernfs_remove(rdtgrp->kn)
-                                  rdtgroup_kn_unlock
-                                    mutex_unlock
-                                    atomic_dec_and_test(
-                                                &rdtgrp->waitcount)
-                                    && (flags & RDT_DELETED)
-                                      kernfs_unbreak_active_protection(kn)
-                                      kfree(rdtgrp)
-  mutex_lock
-mon_event_read
-rdtgroup_kn_unlock
-  mutex_unlock
-  /*
-   * Use-after-free: refer to earlier rdtgrp
-   * memory which was freed in [1].
-   */
-  atomic_dec_and_test(&rdtgrp->waitcount)
-  && (flags & RDT_DELETED)
-    /* kn->active++ */
-    kernfs_unbreak_active_protection(kn)
-    kfree(rdtgrp)
-
-Fix it by moving free_all_child_rdtgrp() to after kernfs_remove() in
-rdtgroup_rmdir_ctrl() to ensure it has the accurate refcount of rdtgrp.
-
-Backporting notes:
-
-Since upstream commit fa7d949337cc ("x86/resctrl: Rename and move rdt
-files to a separate directory"), the file
-arch/x86/kernel/cpu/intel_rdt_rdtgroup.c has been renamed and moved to
-arch/x86/kernel/cpu/resctrl/rdtgroup.c.
-Apply the change against file arch/x86/kernel/cpu/intel_rdt_rdtgroup.c
-for older stable trees.
-
-Fixes: f3cbeacaa06e ("x86/intel_rdt/cqm: Add rmdir support")
-Suggested-by: Reinette Chatre <reinette.chatre@intel.com>
-Signed-off-by: Xiaochen Shen <xiaochen.shen@intel.com>
-Signed-off-by: Borislav Petkov <bp@suse.de>
-Reviewed-by: Reinette Chatre <reinette.chatre@intel.com>
-Reviewed-by: Tony Luck <tony.luck@intel.com>
-Acked-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: stable@vger.kernel.org
-Link: https://lkml.kernel.org/r/1578500886-21771-3-git-send-email-xiaochen.shen@intel.com
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
+Signed-off-by: Eric Dumazet <edumazet@google.com>
+Reported-by: syzbot+03c4738ed29d5d366ddf@syzkaller.appspotmail.com
+Cc: Cong Wang <xiyou.wangcong@gmail.com>
+Acked-by: Cong Wang <xiyou.wangcong@gmail.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/x86/kernel/cpu/intel_rdt_rdtgroup.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ net/sched/ematch.c |    3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/arch/x86/kernel/cpu/intel_rdt_rdtgroup.c b/arch/x86/kernel/cpu/intel_rdt_rdtgroup.c
-index db22ba0bf9167..77770caeea242 100644
---- a/arch/x86/kernel/cpu/intel_rdt_rdtgroup.c
-+++ b/arch/x86/kernel/cpu/intel_rdt_rdtgroup.c
-@@ -2877,13 +2877,13 @@ static int rdtgroup_rmdir_ctrl(struct kernfs_node *kn, struct rdtgroup *rdtgrp,
- 	closid_free(rdtgrp->closid);
- 	free_rmid(rdtgrp->mon.rmid);
+--- a/net/sched/ematch.c
++++ b/net/sched/ematch.c
+@@ -242,6 +242,9 @@ static int tcf_em_validate(struct tcf_pr
+ 			goto errout;
  
-+	rdtgroup_ctrl_remove(kn, rdtgrp);
-+
- 	/*
- 	 * Free all the child monitor group rmids.
- 	 */
- 	free_all_child_rdtgrp(rdtgrp);
- 
--	rdtgroup_ctrl_remove(kn, rdtgrp);
--
- 	return 0;
- }
- 
--- 
-2.20.1
-
+ 		if (em->ops->change) {
++			err = -EINVAL;
++			if (em_hdr->flags & TCF_EM_SIMPLE)
++				goto errout;
+ 			err = em->ops->change(net, data, data_len, em);
+ 			if (err < 0)
+ 				goto errout;
 
 
