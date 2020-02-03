@@ -2,40 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 95FFB150BB9
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Feb 2020 17:31:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DD861150C5B
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Feb 2020 17:37:00 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729904AbgBCQ37 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 3 Feb 2020 11:29:59 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42082 "EHLO mail.kernel.org"
+        id S1730980AbgBCQff (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 3 Feb 2020 11:35:35 -0500
+Received: from mail.kernel.org ([198.145.29.99]:50398 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729880AbgBCQ3z (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Feb 2020 11:29:55 -0500
+        id S1731058AbgBCQfc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Feb 2020 11:35:32 -0500
 Received: from localhost (unknown [104.132.45.99])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 261622051A;
-        Mon,  3 Feb 2020 16:29:54 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 53C4F2051A;
+        Mon,  3 Feb 2020 16:35:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1580747394;
-        bh=IJCDwsZ4sqrojp7q6Ut5B996TTxXGw4vFPVQ02U1p58=;
+        s=default; t=1580747731;
+        bh=VliAeT8Po/eV+MTczlUWIup6JgY6fmjh0jhjULFIku0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=tn7vajGC79Hw0u19HgiYyCySunxTi89aEkfVr8XyLFvdIYn3SIKtG+QBTs1eDzBvV
-         zeY1TRgMxtP9mkk+nZhUKLp+QZ3b/81zZh2E2TH/dUEq4W7650SQCwFEFH4csj1MAw
-         ufrrmM+E1OI+OFqe1XRoOaoYWAhm7OA2f2SUkXGM=
+        b=COp8Fg/H+MrDBis/u1I5Al6CMYpxWHI84guu2o/oQhFHxExIQe5NNy9NLlHUHIU7C
+         bo8M3T19BfdDEJrHqaFuh9nxRX4f9PdEWhFAOjFd/WX/3FvPy+DIuTQXqNEsgbsCKt
+         kNqRU74K8J9EMryPJTaOmyxG8RTPH2fq/REFLmQA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Cathy Luo <xiaohua.luo@nxp.com>,
-        Ganapathi Bhat <ganapathi.bhat@nxp.com>,
-        Johannes Berg <johannes.berg@intel.com>,
+        stable@vger.kernel.org,
+        Kai Vehmanen <kai.vehmanen@linux.intel.com>,
+        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
+        Mark Brown <broonie@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 63/89] wireless: fix enabling channel 12 for custom regulatory domain
+Subject: [PATCH 5.4 45/90] ASoC: SOF: Intel: fix HDA codec driver probe with multiple controllers
 Date:   Mon,  3 Feb 2020 16:19:48 +0000
-Message-Id: <20200203161924.801752220@linuxfoundation.org>
+Message-Id: <20200203161923.547205729@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200203161916.847439465@linuxfoundation.org>
-References: <20200203161916.847439465@linuxfoundation.org>
+In-Reply-To: <20200203161917.612554987@linuxfoundation.org>
+References: <20200203161917.612554987@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,63 +46,88 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Ganapathi Bhat <ganapathi.bhat@nxp.com>
+From: Kai Vehmanen <kai.vehmanen@linux.intel.com>
 
-[ Upstream commit c4b9d655e445a8be0bff624aedea190606b5ebbc ]
+[ Upstream commit 2c63bea714780f8e1fc9cb7bc10deda26fada25b ]
 
-Commit e33e2241e272 ("Revert "cfg80211: Use 5MHz bandwidth by
-default when checking usable channels"") fixed a broken
-regulatory (leaving channel 12 open for AP where not permitted).
-Apply a similar fix to custom regulatory domain processing.
+In case system has multiple HDA controllers, it can happen that
+same HDA codec driver is used for codecs of multiple controllers.
+In this case, SOF may fail to probe the HDA driver and SOF
+initialization fails.
 
-Signed-off-by: Cathy Luo <xiaohua.luo@nxp.com>
-Signed-off-by: Ganapathi Bhat <ganapathi.bhat@nxp.com>
-Link: https://lore.kernel.org/r/1576836859-8945-1-git-send-email-ganapathi.bhat@nxp.com
-[reword commit message, fix coding style, add a comment]
-Signed-off-by: Johannes Berg <johannes.berg@intel.com>
+SOF HDA code currently relies that a call to request_module() will
+also run device matching logic to attach driver to the codec instance.
+However if driver for another HDA controller was already loaded and it
+already loaded the HDA codec driver, this breaks current logic in SOF.
+In this case the request_module() SOF does becomes a no-op and HDA
+Codec driver is not attached to the codec instance sitting on the HDA
+bus SOF is controlling. Typical scenario would be a system with both
+external and internal GPUs, with driver of the external GPU loaded
+first.
+
+Fix this by adding similar logic as is used in legacy HDA driver
+where an explicit device_attach() call is done after request_module().
+
+Also add logic to propagate errors reported by device_attach() back
+to caller. This also works in the case where drivers are not built
+as modules.
+
+Signed-off-by: Kai Vehmanen <kai.vehmanen@linux.intel.com>
+Signed-off-by: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+Link: https://lore.kernel.org/r/20200110235751.3404-8-pierre-louis.bossart@linux.intel.com
+Signed-off-by: Mark Brown <broonie@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/wireless/reg.c | 13 ++++++++++---
- 1 file changed, 10 insertions(+), 3 deletions(-)
+ sound/soc/sof/intel/hda-codec.c | 19 ++++++++++++-------
+ 1 file changed, 12 insertions(+), 7 deletions(-)
 
-diff --git a/net/wireless/reg.c b/net/wireless/reg.c
-index 804eac073b6b9..e60a7dedfbf1b 100644
---- a/net/wireless/reg.c
-+++ b/net/wireless/reg.c
-@@ -1718,14 +1718,15 @@ static void update_all_wiphy_regulatory(enum nl80211_reg_initiator initiator)
+diff --git a/sound/soc/sof/intel/hda-codec.c b/sound/soc/sof/intel/hda-codec.c
+index 3ca6795a89ba3..9e8233c10d860 100644
+--- a/sound/soc/sof/intel/hda-codec.c
++++ b/sound/soc/sof/intel/hda-codec.c
+@@ -24,19 +24,18 @@
+ #define IDISP_VID_INTEL	0x80860000
  
- static void handle_channel_custom(struct wiphy *wiphy,
- 				  struct ieee80211_channel *chan,
--				  const struct ieee80211_regdomain *regd)
-+				  const struct ieee80211_regdomain *regd,
-+				  u32 min_bw)
+ /* load the legacy HDA codec driver */
+-#ifdef MODULE
+-static void hda_codec_load_module(struct hda_codec *codec)
++static int hda_codec_load_module(struct hda_codec *codec)
  {
- 	u32 bw_flags = 0;
- 	const struct ieee80211_reg_rule *reg_rule = NULL;
- 	const struct ieee80211_power_rule *power_rule = NULL;
- 	u32 bw;
++#ifdef MODULE
+ 	char alias[MODULE_NAME_LEN];
+ 	const char *module = alias;
  
--	for (bw = MHZ_TO_KHZ(20); bw >= MHZ_TO_KHZ(5); bw = bw / 2) {
-+	for (bw = MHZ_TO_KHZ(20); bw >= min_bw; bw = bw / 2) {
- 		reg_rule = freq_reg_info_regd(MHZ_TO_KHZ(chan->center_freq),
- 					      regd, bw);
- 		if (!IS_ERR(reg_rule))
-@@ -1781,8 +1782,14 @@ static void handle_band_custom(struct wiphy *wiphy,
- 	if (!sband)
- 		return;
+ 	snd_hdac_codec_modalias(&codec->core, alias, sizeof(alias));
+ 	dev_dbg(&codec->core.dev, "loading codec module: %s\n", module);
+ 	request_module(module);
+-}
+-#else
+-static void hda_codec_load_module(struct hda_codec *codec) {}
+ #endif
++	return device_attach(hda_codec_dev(codec));
++}
  
-+	/*
-+	 * We currently assume that you always want at least 20 MHz,
-+	 * otherwise channel 12 might get enabled if this rule is
-+	 * compatible to US, which permits 2402 - 2472 MHz.
-+	 */
- 	for (i = 0; i < sband->n_channels; i++)
--		handle_channel_custom(wiphy, &sband->channels[i], regd);
-+		handle_channel_custom(wiphy, &sband->channels[i], regd,
-+				      MHZ_TO_KHZ(20));
- }
+ /* enable controller wake up event for all codecs with jack connectors */
+ void hda_codec_jack_wake_enable(struct snd_sof_dev *sdev)
+@@ -116,10 +115,16 @@ static int hda_codec_probe(struct snd_sof_dev *sdev, int address)
+ 	/* use legacy bus only for HDA codecs, idisp uses ext bus */
+ 	if ((resp & 0xFFFF0000) != IDISP_VID_INTEL) {
+ 		hdev->type = HDA_DEV_LEGACY;
+-		hda_codec_load_module(&hda_priv->codec);
++		ret = hda_codec_load_module(&hda_priv->codec);
++		/*
++		 * handle ret==0 (no driver bound) as an error, but pass
++		 * other return codes without modification
++		 */
++		if (ret == 0)
++			ret = -ENOENT;
+ 	}
  
- /* Used by drivers prior to wiphy registration */
+-	return 0;
++	return ret;
+ #else
+ 	hdev = devm_kzalloc(sdev->dev, sizeof(*hdev), GFP_KERNEL);
+ 	if (!hdev)
 -- 
 2.20.1
 
