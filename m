@@ -2,92 +2,146 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 07B70151015
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Feb 2020 20:04:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id F0446151011
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Feb 2020 20:03:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727168AbgBCTEL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 3 Feb 2020 14:04:11 -0500
-Received: from smtprelay0024.hostedemail.com ([216.40.44.24]:50008 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727073AbgBCTEL (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Feb 2020 14:04:11 -0500
-Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
-        by smtprelay03.hostedemail.com (Postfix) with ESMTP id 94C4D8383F91;
-        Mon,  3 Feb 2020 19:04:09 +0000 (UTC)
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,:::::::::::::::::::,RULES_HIT:41:355:379:599:800:960:973:982:988:989:1260:1277:1311:1313:1314:1345:1359:1437:1515:1516:1518:1534:1541:1593:1594:1711:1730:1747:1777:1792:2393:2559:2562:2828:2892:2894:3138:3139:3140:3141:3142:3353:3622:3865:3866:3867:3868:3870:3871:3872:3873:3874:4031:4321:5007:6119:7903:9040:10004:10400:11232:11658:11914:12043:12048:12296:12297:12740:12760:12895:13069:13095:13311:13357:13439:14659:14721:21080:21212:21324:21433:21451:21611:21627:21740:30054:30070:30075:30091,0,RBL:none,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:,MSBL:0,DNSBL:none,Custom_rules:0:0:0,LFtime:2,LUA_SUMMARY:none
-X-HE-Tag: cloth99_5e4a75d69f62c
-X-Filterd-Recvd-Size: 3039
-Received: from XPS-9350.home (unknown [47.151.135.224])
-        (Authenticated sender: joe@perches.com)
-        by omf01.hostedemail.com (Postfix) with ESMTPA;
-        Mon,  3 Feb 2020 19:04:07 +0000 (UTC)
-Message-ID: <94cf0aee8fd8b78718e252488458cfea105c0469.camel@perches.com>
-Subject: Re: [PATCH] security/integrity: Include __func__ in messages for
- easier debug
-From:   Joe Perches <joe@perches.com>
-To:     Shuah Khan <skhan@linuxfoundation.org>,
-        Mimi Zohar <zohar@linux.ibm.com>, jmorris@namei.org,
-        serge@hallyn.com, mpe@ellerman.id.au, erichte@linux.ibm.com,
-        nayna@linux.ibm.com, yuehaibing@huawei.com
-Cc:     linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Date:   Mon, 03 Feb 2020 11:02:57 -0800
-In-Reply-To: <475ab05c-300b-fdbe-5de0-6fce8d1a360d@linuxfoundation.org>
-References: <20200130020129.15328-1-skhan@linuxfoundation.org>
-         <ab2e19123cc15e3f8039b0d36e6ebae385db700e.camel@perches.com>
-         <1580736077.5585.4.camel@linux.ibm.com>
-         <475ab05c-300b-fdbe-5de0-6fce8d1a360d@linuxfoundation.org>
-Content-Type: text/plain; charset="ISO-8859-1"
-User-Agent: Evolution 3.34.1-2 
+        id S1727128AbgBCTDG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 3 Feb 2020 14:03:06 -0500
+Received: from foss.arm.com ([217.140.110.172]:58618 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725372AbgBCTDF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Feb 2020 14:03:05 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 546AB101E;
+        Mon,  3 Feb 2020 11:03:05 -0800 (PST)
+Received: from e107158-lin (e107158-lin.cambridge.arm.com [10.1.195.21])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 04D473F52E;
+        Mon,  3 Feb 2020 11:03:03 -0800 (PST)
+Date:   Mon, 3 Feb 2020 19:03:01 +0000
+From:   Qais Yousef <qais.yousef@arm.com>
+To:     Steven Rostedt <rostedt@goodmis.org>
+Cc:     Pavan Kondeti <pkondeti@codeaurora.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2] sched: rt: Make RT capacity aware
+Message-ID: <20200203190259.bnly7hfp3wfiteof@e107158-lin>
+References: <20191009104611.15363-1-qais.yousef@arm.com>
+ <20200131100629.GC27398@codeaurora.org>
+ <20200131153405.2ejp7fggqtg5dodx@e107158-lin.cambridge.arm.com>
+ <CAEU1=PnYryM26F-tNAT0JVUoFcygRgE374JiBeJPQeTEoZpANg@mail.gmail.com>
+ <20200203142712.a7yvlyo2y3le5cpn@e107158-lin>
+ <20200203111451.0d1da58f@oasis.local.home>
+ <20200203171745.alba7aswajhnsocj@e107158-lin>
+ <20200203131203.20bf3fc3@oasis.local.home>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20200203131203.20bf3fc3@oasis.local.home>
+User-Agent: NeoMutt/20171215
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 2020-02-03 at 11:55 -0700, Shuah Khan wrote:
-> On 2/3/20 6:21 AM, Mimi Zohar wrote:
-> > On Wed, 2020-01-29 at 19:08 -0800, Joe Perches wrote:
-> > > On Wed, 2020-01-29 at 19:01 -0700, Shuah Khan wrote:
-> > > > Change messages to messages to make it easier to debug. The following
-> > > > error message isn't informative enough to figure out what failed.
-> > > > Change messages to include function information.
-> > > > 
-> > > > Signed-off-by: Shuah Khan <skhan@linuxfoundation.org>
-> > > > ---
-> > > >   .../integrity/platform_certs/load_powerpc.c     | 14 ++++++++------
-> > > >   security/integrity/platform_certs/load_uefi.c   | 17 ++++++++++-------
-> > > >   2 files changed, 18 insertions(+), 13 deletions(-)
-> > > > 
-> > > > diff --git a/security/integrity/platform_certs/load_powerpc.c b/security/integrity/platform_certs/load_powerpc.c
-> > > 
-> > > perhaps instead add #define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
-> > > so all the pr_<level> logging is more specific.
-> > > 
-> > > This would prefix all pr_<level> output with "integrity: "
+On 02/03/20 13:12, Steven Rostedt wrote:
+> On Mon, 3 Feb 2020 17:17:46 +0000
+> Qais Yousef <qais.yousef@arm.com> wrote:
 > 
-> Joe! Sorry for the delay in getting back to you.
 > 
-> > Agreed.  Joe, could you post a patch with a proper patch description
-> > for this?
+> > I'm torn about pushing a task already on a big core to a little core if it says
+> > it wants it (down migration).
+> 
+> If the "down migration" happens to a process that is lower in priority,
+> then that stays in line with the policy decisions of scheduling RT
+> tasks. That is, higher priority task take precedence over lower
+> priority tasks, even if that means "degrading" that lower priority task.
+> 
+> For example, if a high priority task wakes up on a CPU that is running
+> a lower priority task, and with the exception of that lower priority
+> task being pinned, it will boot it off the CPU. Even if the lower
+> priority task is pinned, it may still take over the CPU if it can't
+> find another CPU.
+
+Indeed this makes sense.
+
+> 
+> 
+> > > 
+> > > 4. If a little core is returned, and we schedule an RT task that
+> > > prefers big cores on it, we mark it overloaded.
+> > > 
+> > > 5. An RT task on a big core schedules out. Start looking at the RT
+> > > overloaded run queues.
+> > > 
+> > > 6. See that there's an RT task on the little core, and migrate it over.  
 > > 
+> > I think the above should depend on the fitness of the cpu we currently run on.
+> > I think we shouldn't down migrate, or at least investigate better down
+> > migration makes more sense than keeping tasks running on the correct CPU where
+> > they are.
 > 
-> I have been looking into this a bit more and there is an opportunity
-> here to add #define pr_fmt(fmt) KBUILD_MODNAME ": " fmt to integrity.h
-> and get rid of duplicate defines.
+> Note, this only happens when a big core CPU schedules. And if you do
+> not have HAVE_RT_PUSH_IPI (which sends IPIs to overloaded CPUS and just
+> schedules), then that "down migration" happens to an RT task that isn't
+> even running.
 
-That might work but:
+In the light of strictly adhering to priority based scheduling; yes this makes
+sense. Though I still think the migration will produce worse performance, but
+I can appreciate even if that was true it breaks the strict priority rule.
 
-$ git grep --name-only 'integrity\.h' security | xargs grep pr_fmt
-security/integrity/digsig.c:#define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
-security/integrity/digsig_asymmetric.c:#define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
-security/integrity/evm/evm_main.c:#define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
-security/security.c:#define pr_fmt(fmt) "LSM: " fmt
+> 
+> You can add to the logic that you do not take over an RT task that is
+> pinned and can't move itself. Perhaps that may be the only change to
 
-Here security.c already uses "LSM: "
+I get this.
 
-Does anyone care about the LSM: prefix?
+> cpu_find(), is that it will only pick a big CPU if little CPUs are
+> available if the big CPU doesn't have a pinned RT task on it.
+
+But not that. Do you mind rephrasing it?
+
+Or let me try first:
+
+	1. Search all priority levels for a fitting CPU
+	2. If failed, return the first lowest mask found
+	3. If it succeeds, remove any CPU that has a pinned task in it
+	4. If the lowest_mask is empty, return (2).
+	5. Else return the lowest_mask with the fitting CPU(s)
 
 
+Did I get it right?
+
+The idea is not to potentially overload that CPU when this pinned task wakes
+up? The task could be sleeping waiting for something interesting to poke it..?
+
+> 
+> Like you said, this is best effort, and I believe this is the best
+> approach. The policy has always been the higher the priority of a task,
+> the more likely it will push other tasks away. We don't change that. If
+> the system administrator is overloading the big cores with RT tasks,
+> then this is what they get.
+
+Yes. I think that has always been the case with RT. It is very easy to shoot
+yourself in the foot.
+
+> 
+> > 
+> > > Note, this will require a bit more logic as the overloaded code wasn't
+> > > designed for migration of running tasks, but that could be added.  
+> > 
+> > I'm wary of overloading the meaning of rt.overloaded. Maybe I can convert it to
+> > a bitmap so that we can encode the reason.
+> 
+> We can change the name to something like rt.needs_pull or whatever.
+
+Thanks for bringing more clarity to this.
+
+Cheers
+
+--
+Qais Yousef
