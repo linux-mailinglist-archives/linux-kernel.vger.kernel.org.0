@@ -2,40 +2,42 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9B070150DB3
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Feb 2020 17:46:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 151A5150D22
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Feb 2020 17:41:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730506AbgBCQqT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 3 Feb 2020 11:46:19 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40614 "EHLO mail.kernel.org"
+        id S1731579AbgBCQlx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 3 Feb 2020 11:41:53 -0500
+Received: from mail.kernel.org ([198.145.29.99]:48666 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729127AbgBCQ2x (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Feb 2020 11:28:53 -0500
+        id S1730772AbgBCQeV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Feb 2020 11:34:21 -0500
 Received: from localhost (unknown [104.132.45.99])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 23A2F2080C;
-        Mon,  3 Feb 2020 16:28:52 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1622D21927;
+        Mon,  3 Feb 2020 16:34:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1580747332;
-        bh=Xx6NspAId0wP+mlZ4mJIqcrWJ7K8o+uHRjuJ9rUmNos=;
+        s=default; t=1580747660;
+        bh=QRu/AKVn0AAOHfG/bix1Ht8U43k9W/oQjtS6X83Z7s0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Ys51KbTdQMjx3AhIhqaWoSPf1HE/jQgOMuqrqNbTsYGhfTcffFPy6U582mQpJ9/u6
-         6WcoitCzTvAtD3y5G0Ft0G2rHCjJb2KlPFGLIo3n3fArHopix0sRDFgRZRPxw9Q87b
-         JI3/WnVTK9jokFweKxc4Ut19/DhqLcSseTfqZdjo=
+        b=Rgho43YuSWMmIji90JmtVAhW0yiyfSG/ii24kwE4DQSjlZafBh0ZZA+wwmRaYfbQG
+         7R2PCtcOX3BfN7VEC9rRjl15AmmfUQazZwjgfla3jvcZVYZdiRu6RykXFWPmY20hnp
+         CEt7tx0LqLRuLNoa2tZXWwi51a0lgpPVofFWFvWs=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Andreas Kemnade <andreas@kemnade.info>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Wim Van Sebroeck <wim@linux-watchdog.org>,
+        stable@vger.kernel.org,
+        Reinette Chatre <reinette.chatre@intel.com>,
+        Xiaochen Shen <xiaochen.shen@intel.com>,
+        Borislav Petkov <bp@suse.de>, Tony Luck <tony.luck@intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 22/89] watchdog: rn5t618_wdt: fix module aliases
-Date:   Mon,  3 Feb 2020 16:19:07 +0000
-Message-Id: <20200203161919.889851959@linuxfoundation.org>
+Subject: [PATCH 5.4 05/90] x86/resctrl: Fix use-after-free due to inaccurate refcount of rdtgroup
+Date:   Mon,  3 Feb 2020 16:19:08 +0000
+Message-Id: <20200203161918.304723675@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200203161916.847439465@linuxfoundation.org>
-References: <20200203161916.847439465@linuxfoundation.org>
+In-Reply-To: <20200203161917.612554987@linuxfoundation.org>
+References: <20200203161917.612554987@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,35 +47,125 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Andreas Kemnade <andreas@kemnade.info>
+From: Xiaochen Shen <xiaochen.shen@intel.com>
 
-[ Upstream commit a76dfb859cd42df6e3d1910659128ffcd2fb6ba2 ]
+[ Upstream commit 074fadee59ee7a9d2b216e9854bd4efb5dad679f ]
 
-Platform device aliases were missing so module autoloading
-did not work.
+There is a race condition in the following scenario which results in an
+use-after-free issue when reading a monitoring file and deleting the
+parent ctrl_mon group concurrently:
 
-Signed-off-by: Andreas Kemnade <andreas@kemnade.info>
-Reviewed-by: Guenter Roeck <linux@roeck-us.net>
-Link: https://lore.kernel.org/r/20191213214802.22268-1-andreas@kemnade.info
-Signed-off-by: Guenter Roeck <linux@roeck-us.net>
-Signed-off-by: Wim Van Sebroeck <wim@linux-watchdog.org>
+Thread 1 calls atomic_inc() to take refcount of rdtgrp and then calls
+kernfs_break_active_protection() to drop the active reference of kernfs
+node in rdtgroup_kn_lock_live().
+
+In Thread 2, kernfs_remove() is a blocking routine. It waits on all sub
+kernfs nodes to drop the active reference when removing all subtree
+kernfs nodes recursively. Thread 2 could block on kernfs_remove() until
+Thread 1 calls kernfs_break_active_protection(). Only after
+kernfs_remove() completes the refcount of rdtgrp could be trusted.
+
+Before Thread 1 calls atomic_inc() and kernfs_break_active_protection(),
+Thread 2 could call kfree() when the refcount of rdtgrp (sentry) is 0
+instead of 1 due to the race.
+
+In Thread 1, in rdtgroup_kn_unlock(), referring to earlier rdtgrp memory
+(rdtgrp->waitcount) which was already freed in Thread 2 results in
+use-after-free issue.
+
+Thread 1 (rdtgroup_mondata_show)  Thread 2 (rdtgroup_rmdir)
+--------------------------------  -------------------------
+rdtgroup_kn_lock_live
+  /*
+   * kn active protection until
+   * kernfs_break_active_protection(kn)
+   */
+  rdtgrp = kernfs_to_rdtgroup(kn)
+                                  rdtgroup_kn_lock_live
+                                    atomic_inc(&rdtgrp->waitcount)
+                                    mutex_lock
+                                  rdtgroup_rmdir_ctrl
+                                    free_all_child_rdtgrp
+                                      /*
+                                       * sentry->waitcount should be 1
+                                       * but is 0 now due to the race.
+                                       */
+                                      kfree(sentry)*[1]
+  /*
+   * Only after kernfs_remove()
+   * completes, the refcount of
+   * rdtgrp could be trusted.
+   */
+  atomic_inc(&rdtgrp->waitcount)
+  /* kn->active-- */
+  kernfs_break_active_protection(kn)
+                                    rdtgroup_ctrl_remove
+                                      rdtgrp->flags = RDT_DELETED
+                                      /*
+                                       * Blocking routine, wait for
+                                       * all sub kernfs nodes to drop
+                                       * active reference in
+                                       * kernfs_break_active_protection.
+                                       */
+                                      kernfs_remove(rdtgrp->kn)
+                                  rdtgroup_kn_unlock
+                                    mutex_unlock
+                                    atomic_dec_and_test(
+                                                &rdtgrp->waitcount)
+                                    && (flags & RDT_DELETED)
+                                      kernfs_unbreak_active_protection(kn)
+                                      kfree(rdtgrp)
+  mutex_lock
+mon_event_read
+rdtgroup_kn_unlock
+  mutex_unlock
+  /*
+   * Use-after-free: refer to earlier rdtgrp
+   * memory which was freed in [1].
+   */
+  atomic_dec_and_test(&rdtgrp->waitcount)
+  && (flags & RDT_DELETED)
+    /* kn->active++ */
+    kernfs_unbreak_active_protection(kn)
+    kfree(rdtgrp)
+
+Fix it by moving free_all_child_rdtgrp() to after kernfs_remove() in
+rdtgroup_rmdir_ctrl() to ensure it has the accurate refcount of rdtgrp.
+
+Fixes: f3cbeacaa06e ("x86/intel_rdt/cqm: Add rmdir support")
+Suggested-by: Reinette Chatre <reinette.chatre@intel.com>
+Signed-off-by: Xiaochen Shen <xiaochen.shen@intel.com>
+Signed-off-by: Borislav Petkov <bp@suse.de>
+Reviewed-by: Reinette Chatre <reinette.chatre@intel.com>
+Reviewed-by: Tony Luck <tony.luck@intel.com>
+Acked-by: Thomas Gleixner <tglx@linutronix.de>
+Cc: stable@vger.kernel.org
+Link: https://lkml.kernel.org/r/1578500886-21771-3-git-send-email-xiaochen.shen@intel.com
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/watchdog/rn5t618_wdt.c | 1 +
- 1 file changed, 1 insertion(+)
+ arch/x86/kernel/cpu/resctrl/rdtgroup.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/watchdog/rn5t618_wdt.c b/drivers/watchdog/rn5t618_wdt.c
-index e60f55702ab79..d2e79cf70e774 100644
---- a/drivers/watchdog/rn5t618_wdt.c
-+++ b/drivers/watchdog/rn5t618_wdt.c
-@@ -193,6 +193,7 @@ static struct platform_driver rn5t618_wdt_driver = {
+diff --git a/arch/x86/kernel/cpu/resctrl/rdtgroup.c b/arch/x86/kernel/cpu/resctrl/rdtgroup.c
+index c7564294a12a8..954fd048ad9bd 100644
+--- a/arch/x86/kernel/cpu/resctrl/rdtgroup.c
++++ b/arch/x86/kernel/cpu/resctrl/rdtgroup.c
+@@ -2960,13 +2960,13 @@ static int rdtgroup_rmdir_ctrl(struct kernfs_node *kn, struct rdtgroup *rdtgrp,
+ 	closid_free(rdtgrp->closid);
+ 	free_rmid(rdtgrp->mon.rmid);
  
- module_platform_driver(rn5t618_wdt_driver);
++	rdtgroup_ctrl_remove(kn, rdtgrp);
++
+ 	/*
+ 	 * Free all the child monitor group rmids.
+ 	 */
+ 	free_all_child_rdtgrp(rdtgrp);
  
-+MODULE_ALIAS("platform:rn5t618-wdt");
- MODULE_AUTHOR("Beniamino Galvani <b.galvani@gmail.com>");
- MODULE_DESCRIPTION("RN5T618 watchdog driver");
- MODULE_LICENSE("GPL v2");
+-	rdtgroup_ctrl_remove(kn, rdtgrp);
+-
+ 	return 0;
+ }
+ 
 -- 
 2.20.1
 
