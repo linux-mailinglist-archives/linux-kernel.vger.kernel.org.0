@@ -2,83 +2,128 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4225F150053
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Feb 2020 02:46:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 58B40150059
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Feb 2020 02:52:33 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727197AbgBCBqI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 2 Feb 2020 20:46:08 -0500
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:46746 "EHLO
-        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726971AbgBCBqI (ORCPT
+        id S1727209AbgBCBw2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 2 Feb 2020 20:52:28 -0500
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:41352 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726393AbgBCBw2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 2 Feb 2020 20:46:08 -0500
-Received: from [127.0.0.1] (localhost [127.0.0.1])
-        (Authenticated sender: krisman)
-        with ESMTPSA id 085A328BEFA
-From:   Gabriel Krisman Bertazi <krisman@collabora.com>
-To:     Daniel Rosenberg <drosen@google.com>
-Cc:     "Theodore Ts'o" <tytso@mit.edu>, linux-ext4@vger.kernel.org,
-        Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <chao@kernel.org>,
-        linux-f2fs-devel@lists.sourceforge.net,
-        Eric Biggers <ebiggers@kernel.org>,
-        linux-fscrypt@vger.kernel.org,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Richard Weinberger <richard@nod.at>,
-        linux-mtd@lists.infradead.org,
-        Andreas Dilger <adilger.kernel@dilger.ca>,
-        Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        kernel-team@android.com
-Subject: Re: [PATCH v6 1/5] unicode: Add standard casefolded d_ops
-Organization: Collabora
-References: <20200128230328.183524-1-drosen@google.com>
-        <20200128230328.183524-2-drosen@google.com>
-Date:   Sun, 02 Feb 2020 20:45:59 -0500
-In-Reply-To: <20200128230328.183524-2-drosen@google.com> (Daniel Rosenberg's
-        message of "Tue, 28 Jan 2020 15:03:24 -0800")
-Message-ID: <85sgjsxx2g.fsf@collabora.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
-MIME-Version: 1.0
-Content-Type: text/plain
+        Sun, 2 Feb 2020 20:52:28 -0500
+Received: by mail-pg1-f196.google.com with SMTP id l3so2829656pgi.8
+        for <linux-kernel@vger.kernel.org>; Sun, 02 Feb 2020 17:52:28 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=ZiZzXgFFYfVLqsOFrcF9kT69hQ1R19EZVXuDA6GrIHs=;
+        b=Nvtjv9wfYlFsYgkgZwOXN/3fh58yXTRzeeGI/vrHA2OtF3MgRKOus3uWZDfSIHD4/j
+         saz44zAXa5kXX+9rto2vkpklXNpMSQ5s0kYQ7xmyWfStSPPXn2gUNpG4Rlp+uYJdPdsr
+         L4flCZI4VVV8Lx2i8QHaxYPPC/SaQeatGTSlySyH1y7RRlNY642e36rzLoyPpStPZQDO
+         cdccR2nY7E9MWuyba7YN4VctTQsZGVf9WuHTcM/g+fP1LpqBZmtojfepX0FyoiVKTCSE
+         yizo6R7A8N6VRuNNRpsg2Q0yrVgy5IKY4TYutrUh7ukld2ISABEJobbKZO9VLuks1T3h
+         ZCZA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=ZiZzXgFFYfVLqsOFrcF9kT69hQ1R19EZVXuDA6GrIHs=;
+        b=AQwMUvVArrIttjoSIyAcGAUnKuznx9r9m4OYvYf2KN386INiRynC2vi24iXBnlSqrU
+         lqGZH82U30sx1rWLlLKakOBaiddCFVhuBqZL80caLkWBB0F9tnb/z004dpUGHF3QG+uY
+         c1DRANVGQQKTEgta+FRDAIScQn/RAhKfMhlADexR+J+Szas8CCrLk5k99Xoy4/hWn4FE
+         ZQROEqFNganIzpsTYye9CGw3+2MG1YdXc9BuHkzY1YB38+UlnRDPbvTW5kYyPr4tIPNZ
+         7HshrJ4pALnyyhwwKwdZJqwbIv3lMQoSHyie5qA2Y2ngHpXXtlt+Parc1o/8rRmaO7Kj
+         UnLw==
+X-Gm-Message-State: APjAAAUvCYQdq7wQG5gLRR0LPrnMF9nnHg7T3hQNvNIu6WXtMcJEfgjV
+        DHO3eCXpIje5667QokyBaJNv7cMKR2l77w==
+X-Google-Smtp-Source: APXvYqxWZZDHjTaMPRW6uSIFzGF3LauAyqo7quszdHdzQvYb9TKezHOAcjyfmqGck6uaIum0XO4x0g==
+X-Received: by 2002:aa7:848c:: with SMTP id u12mr21352468pfn.12.1580694747534;
+        Sun, 02 Feb 2020 17:52:27 -0800 (PST)
+Received: from localhost.localdomain (li1441-214.members.linode.com. [45.118.134.214])
+        by smtp.gmail.com with ESMTPSA id y38sm17348308pgk.33.2020.02.02.17.52.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 02 Feb 2020 17:52:26 -0800 (PST)
+From:   Leo Yan <leo.yan@linaro.org>
+To:     Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Suzuki K Poulose <suzuki.poulose@arm.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Mike Leach <mike.leach@linaro.org>,
+        Robert Walker <robert.walker@arm.com>,
+        Coresight ML <coresight@lists.linaro.org>
+Cc:     Leo Yan <leo.yan@linaro.org>
+Subject: [PATCH v3 0/5] perf cs-etm: Fix synthesizing instruction samples
+Date:   Mon,  3 Feb 2020 09:51:58 +0800
+Message-Id: <20200203015203.27882-1-leo.yan@linaro.org>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Daniel Rosenberg <drosen@google.com> writes:
+Let's restart this work [1], this patch set is the dependency for
+support callchain for Arm CoreSight, which will be sent out in another
+patch set.
 
-> diff --git a/include/linux/unicode.h b/include/linux/unicode.h
-> index 990aa97d80496..5de313abeaf98 100644
-> --- a/include/linux/unicode.h
-> +++ b/include/linux/unicode.h
-> @@ -4,6 +4,8 @@
->  
->  #include <linux/init.h>
->  #include <linux/dcache.h>
-> +#include <linux/fscrypt.h>
-> +#include <linux/fs.h>
->  
->  struct unicode_map {
->  	const char *charset;
-> @@ -30,4 +32,19 @@ int utf8_casefold(const struct unicode_map *um, const struct qstr *str,
->  struct unicode_map *utf8_load(const char *version);
->  void utf8_unload(struct unicode_map *um);
->  
-> +int utf8_ci_d_hash(const struct dentry *dentry, struct qstr *str);
-> +int utf8_ci_d_compare(const struct dentry *dentry, unsigned int len,
-> +			  const char *str, const struct qstr *name);
+This patch series is to address issues for synthesizing instruction
+samples, especially when the instruction sample period is small enough,
+the current logic cannot synthesize multiple instruction samples within
+one instruction range packet.
+
+Patch 0001 is to swap packets for instruction samples, so this allow
+option '--itrace=iNNN' can work well.
+
+Patch 0002 avoids to reset the last branches for every instruction
+sample; if reset the last branches for every time generating sample, the
+later samples in the same range packet cannot use the last branches
+anymore.
+
+Patch 0003 is the fixing for handling different instruction periods,
+especially for small sample period.
+
+Patch 0004 is an optimization for copying last branches; it only copies
+last branches once if the instruction samples share the same last
+branches.
+
+Patch 0005 is a minor fix for unsigned variable comparison to zero.
+
+This patch set has been rebased on the latest perf/core branch; and
+verified on Juno board with below commands:
+
+  # perf script --itrace=i2
+  # perf script --itrace=i2il16
+  # perf inject --itrace=i2il16 -i perf.data -o perf.data.new
+  # perf inject --itrace=i100il16 -i perf.data -o perf.data.new
+
+Changes from v2:
+* Added patch 0001 which is to fix swapping packets for instruction
+  samples;
+* Refined minor commit logs and comments;
+* Rebased on the latest perf/core branch.
+
+Changes from v1:
+* Rebased patch set on perf/core branch with latest commit 9fec3cd5fa4a
+  ("perf map: Check if the map still has some refcounts on exit").
+
+[1] https://patchwork.kernel.org/cover/11222259/
 
 
-I don't think fs/unicode is the right place for these very specific
-filesystem functions, just because they happen to use unicode.  It is an
-encoding library, it doesn't care about dentries, nor should know how to
-handle them.  It exposes a simple api to manipulate and convert utf8 strings.
+Leo Yan (5):
+  perf cs-etm: Swap packets for instruction samples
+  perf cs-etm: Continuously record last branch
+  perf cs-etm: Correct synthesizing instruction samples
+  perf cs-etm: Optimize copying last branches
+  perf cs-etm: Fix unsigned variable comparison to zero
 
-I saw change was after the desire to not have these functions polluting
-the VFS hot path, but that has nothing to do with placing them here.
-
-Would libfs be better?  or a casefolding library in fs/casefold.c?
-
+ tools/perf/util/cs-etm.c | 142 ++++++++++++++++++++++++++++++++-------
+ 1 file changed, 118 insertions(+), 24 deletions(-)
 
 -- 
-Gabriel Krisman Bertazi
+2.17.1
+
