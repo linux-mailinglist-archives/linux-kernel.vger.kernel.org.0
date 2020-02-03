@@ -2,106 +2,112 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5C6BC1503A8
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Feb 2020 10:55:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4E4DC1503AF
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Feb 2020 10:58:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727235AbgBCJzI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 3 Feb 2020 04:55:08 -0500
-Received: from mout.kundenserver.de ([212.227.126.134]:58209 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726287AbgBCJzI (ORCPT
+        id S1727304AbgBCJ63 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 3 Feb 2020 04:58:29 -0500
+Received: from userp2120.oracle.com ([156.151.31.85]:37180 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726884AbgBCJ62 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Feb 2020 04:55:08 -0500
-Received: from mail-qt1-f177.google.com ([209.85.160.177]) by
- mrelayeu.kundenserver.de (mreue012 [212.227.15.129]) with ESMTPSA (Nemesis)
- id 1MYcy3-1j22n30H0l-00Ve4V; Mon, 03 Feb 2020 10:55:06 +0100
-Received: by mail-qt1-f177.google.com with SMTP id v25so10922209qto.7;
-        Mon, 03 Feb 2020 01:55:05 -0800 (PST)
-X-Gm-Message-State: APjAAAXayw9ab16LOK21AgEd0lxUsYho5mtNcu66Wi0RkBaatjsfQjZJ
-        QJ+pGyM0AwC1hJF8xieNXBnvnGjm4/ySOsWfVVA=
-X-Google-Smtp-Source: APXvYqy6+v9jhWwlyFzCmvPj6FYnUGsrTB9Nh92b9LW7+F8pu5Zr3Tk51OmqHmojYKDT3Q6CDxzqbjHbal9X0W6ejfg=
-X-Received: by 2002:ac8:34b2:: with SMTP id w47mr22353154qtb.142.1580723704779;
- Mon, 03 Feb 2020 01:55:04 -0800 (PST)
+        Mon, 3 Feb 2020 04:58:28 -0500
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id 0139r4Zl146734;
+        Mon, 3 Feb 2020 09:58:06 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2019-08-05;
+ bh=4+fD8usrrX6aqnYnl2AoNHWt1yCoOyQyBn9Zwn1ExN0=;
+ b=WoEUl4OIKL1Ag/ibRqDqLDKt+XcRjiZcA0Jl1QHYOTBvjzSPEh0rPQHu8/ldWDON6NqS
+ KCiZa1Qk/m9CUUjIgozZu6zMFBfQQ/Wbl1HSTm0fxqyJXhG9BFoWGpTQT4i8DCdO2ka7
+ iowAfzdpMrCuWu+CnbWPeSxAKtLnAisi5DmglSOKh0acva02k8hwzVvrpBwJhH9Euapo
+ kk//J2siV6pzzepcD+UFYPgi42PeHmfSNPYUbgLVslRH9jWa1OjlOa3mybKSOJefTHOi
+ hT63CwLsl92tsMo7G9VN5JkmZWqKeGav3+doCC6lLitnl7T1NNnqzywdJ3gip4dFzKqT Iw== 
+Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
+        by userp2120.oracle.com with ESMTP id 2xwyg9avtg-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 03 Feb 2020 09:58:06 +0000
+Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
+        by userp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id 0139rxMR123793;
+        Mon, 3 Feb 2020 09:56:06 GMT
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+        by userp3030.oracle.com with ESMTP id 2xwjt3htqc-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 03 Feb 2020 09:56:05 +0000
+Received: from abhmp0005.oracle.com (abhmp0005.oracle.com [141.146.116.11])
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id 0139u1q3008752;
+        Mon, 3 Feb 2020 09:56:04 GMT
+Received: from kadam (/41.210.143.134)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Mon, 03 Feb 2020 01:56:01 -0800
+Date:   Mon, 3 Feb 2020 12:55:53 +0300
+From:   Dan Carpenter <dan.carpenter@oracle.com>
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc:     macro@linux-mips.org, ralf@linux-mips.org, davem@davemloft.net,
+        akpm@linux-foundation.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] defxx: Fix a sentinel at the end of a 'eisa_device_id'
+ structure
+Message-ID: <20200203095553.GN1778@kadam>
+References: <20200202142341.22124-1-christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
-References: <1580650021-8578-1-git-send-email-hadar.gat@arm.com>
-In-Reply-To: <1580650021-8578-1-git-send-email-hadar.gat@arm.com>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Mon, 3 Feb 2020 10:54:48 +0100
-X-Gmail-Original-Message-ID: <CAK8P3a3C7hfCQwupKQqtnOmwu7faoeKH9fcEZFQW3WmrScKzUw@mail.gmail.com>
-Message-ID: <CAK8P3a3C7hfCQwupKQqtnOmwu7faoeKH9fcEZFQW3WmrScKzUw@mail.gmail.com>
-Subject: Re: [PATCH v2 0/3] hw_random: introduce Arm CryptoCell TRNG driver
-To:     Hadar Gat <hadar.gat@arm.com>
-Cc:     Matt Mackall <mpm@selenic.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Daniel Thompson <daniel.thompson@linaro.org>,
-        Tomer Maimon <tmaimon77@gmail.com>,
-        Stefan Wahren <wahrenst@gmx.net>,
-        Sumit Garg <sumit.garg@linaro.org>,
-        Zaibo Xu <xuzaibo@huawei.com>,
-        Weili Qian <qianweili@huawei.com>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-        "open list:HARDWARE RANDOM NUMBER GENERATOR CORE" 
-        <linux-crypto@vger.kernel.org>, DTML <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Gilad Ben-Yossef <gilad@benyossef.com>,
-        Ofir Drang <ofir.drang@arm.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Provags-ID: V03:K1:2kNRGSn8mD8fztnzDOZ4453fdsXLWQVkYcjEjq19+MXcTDRlRfj
- 6RSPW498pqvA7nX0QvVkzWk3sr+bXKJYLoNs0v87JN8Ddt7ttxoezyhxhpApv9GAE7t4Z52
- P+E+sAJLWrSWP9DU+l0oCpBrzlSrYfdrS9jrJZ85W1akTi+QgK6n+bLQx7kttk2hNoYKaB0
- 7XFgF38IfZMnKhTXPQvkA==
-X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:bQNM/1/Sv1U=:WDiBf8dOswSkZBYWYJwh7W
- gSduKWT7O6TkmOG+fNudlBbUEjr3XaYonkGCH6QNqKzFP61KcSu3ibwkrv5yjZr52yz1HLkfK
- b6zZ0BtcZdZC+h920iAIQsvvqrm9NQadFhOZxOStPonyEGbL1XoIlW/yruAkpTMCExmngxbJ7
- OWqC0c1pji+LAaRQPoCzooHW2Uy61EBGzh8KkIysuffI0eX1R6KDzwJOhi32zQf+LikAhUXmK
- BrLFsowxuAwlllqkMRXH05lCfRf0ka/3RtwymwfG9xH4Yv1cGfxPauPhxy7zynrrCHjWJyXdU
- aKMyvh1BVoBz277kZdRGQ9TUqP+LZKKea8vRnQt1W5E8MpdrRBQqLSX/xRjiHQakA+T3F5mqm
- bmOtjNpjDmqEuNwDhSnwTWrvqbtA6+DW5iSSVhATQbOnY68e+tDML5OL/kR+Y3k0p0GrBYk8U
- WAcas9OvZOLDC1oZbL/sld8zlWRIrO0Q7vPze+I+HOxy1OVj4ISJ3Do9c6v5WhQ6Nnm7RMa6u
- KMvYfBh6uYok/iVAuw7/AhSoaF8LSO7T4t+EaS1YX/VWKm1YeL86sRRqg/9C47nB/V0p8NKai
- jNmVDSxoZa3jwPRNlTVfa3L6RYxf+HT984Xpu4krfD5NXD4SVpMPwr3J0LwmcJHWii2WOe3es
- JiL7oOScaO3txbhhXIxx98Q4E+F/SYQZH5Ld4e5EehecJwk8eMCC3ojqixwPJjmcjrvTDUCQb
- Ucr+i6QBdpaqmprBPDsscYxfK6iydjD49heFYXfhGtUeWzz4lh4G43+R2TFdJc+c1ESXPivHl
- TBd1rI7GdfnUFPJslXFUEAIh86eMx68uCqODBn0E75ZEwF6vlY=
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200202142341.22124-1-christophe.jaillet@wanadoo.fr>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9519 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1911140001 definitions=main-2002030078
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9519 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1911140001
+ definitions=main-2002030078
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Feb 2, 2020 at 2:27 PM Hadar Gat <hadar.gat@arm.com> wrote:
->
-> The Arm CryptoCell is a hardware security engine.
-> This patch introduces driver for its TRNG (True Random Number Generator)
-> engine.
->
-> Changes from previous veriosn: fixed 'make dt_bnding_check' errors.
->
-> Hadar Gat (3):
->   dt-bindings: add device tree binding for Arm CryptoCell trng engine
->   hw_random: cctrng: introduce Arm CryptoCell driver
->   MAINTAINERS: add HG as cctrng maintainer
+On Sun, Feb 02, 2020 at 03:23:41PM +0100, Christophe JAILLET wrote:
+> 'struct eisa_device_id' must be ended by an empty string, not a NULL
+> pointer. Otherwise, a NULL pointer dereference may occur in
+> 'eisa_bus_match()'.
+> 
+> Also convert some spaces to tab to please 'checkpatch.pl'.
+> 
+> Fixes: e89a2cfb7d7b ("[TC] defxx: TURBOchannel support")
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> ---
+>  drivers/net/fddi/defxx.c | 10 +++++-----
+>  1 file changed, 5 insertions(+), 5 deletions(-)
+> 
+> diff --git a/drivers/net/fddi/defxx.c b/drivers/net/fddi/defxx.c
+> index 077c68498f04..7ef0c57f07c6 100644
+> --- a/drivers/net/fddi/defxx.c
+> +++ b/drivers/net/fddi/defxx.c
+> @@ -3768,11 +3768,11 @@ static void dfx_pci_unregister(struct pci_dev *pdev)
+>  
+>  #ifdef CONFIG_EISA
+>  static const struct eisa_device_id dfx_eisa_table[] = {
+> -        { "DEC3001", DEFEA_PROD_ID_1 },
+> -        { "DEC3002", DEFEA_PROD_ID_2 },
+> -        { "DEC3003", DEFEA_PROD_ID_3 },
+> -        { "DEC3004", DEFEA_PROD_ID_4 },
+> -        { }
+> +	{ "DEC3001", DEFEA_PROD_ID_1 },
+> +	{ "DEC3002", DEFEA_PROD_ID_2 },
+> +	{ "DEC3003", DEFEA_PROD_ID_3 },
+> +	{ "DEC3004", DEFEA_PROD_ID_4 },
+> +	{ "" }
 
-I looked at the patches briefly and everything makes sense to me,
+You haven't changed runtime at all.  :P (struct eisa_device_id)->sig[]
+is an array, not a pointer.  There is no NULL dereference because an
+array in the middle of another array can't be NULL.
 
-Acked-by: Arnd Bergmann <arnd@arndb.de>
+regards,
+dan carpenter
 
-There are two style issues that you could improve:
-
-- The header is only included from a single file, so I would just fold
-  its contents into the driver itself.
-
-- You have a lot of "#ifdef CONFIG_PM" that are easy to get wrong
-  with various combinations of config symbols. It's often better to
-  leave that all compiled unconditionally and have the logic in
-  UNIVERSAL_DEV_PM_OPS() take care of dropping the unused
-  bits, with a __maybe_unused annotation on functions that cause
-  a warning otherwise.
-
-       Arnd
