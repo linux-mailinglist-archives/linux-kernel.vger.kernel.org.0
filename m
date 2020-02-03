@@ -2,74 +2,81 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BC18F1503D4
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Feb 2020 11:05:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BF9981503E0
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Feb 2020 11:09:49 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727649AbgBCKFW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 3 Feb 2020 05:05:22 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37404 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727492AbgBCKFW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Feb 2020 05:05:22 -0500
-Received: from disco-boy.misterjones.org (disco-boy.misterjones.org [51.254.78.96])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4F38020661;
-        Mon,  3 Feb 2020 10:05:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1580724321;
-        bh=Dvb/o2l3gfXzlhoeCaVp4liCnwQuEagqrziI3jFG9ek=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=jWrIHDvXXFabPd138bxqY/qFVmzo04QQm8gKpHWnocHxH+4+mXaCPFuBGYELEqXCj
-         6eFzO299/Qmi6nh8ajIcNZMrsoAK0XJWwA1ETsZaTCG5gR+AwyhEnDRwkViGDfuqLS
-         qS/czUFcCwr+Y9F6Hi793G4MBf4INnhhI3+8Y9TM=
-Received: from disco-boy.misterjones.org ([51.254.78.96] helo=www.loen.fr)
-        by disco-boy.misterjones.org with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.92)
-        (envelope-from <maz@kernel.org>)
-        id 1iyYbX-002jpG-71; Mon, 03 Feb 2020 10:05:19 +0000
+        id S1727663AbgBCKJq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 3 Feb 2020 05:09:46 -0500
+Received: from mx08-00178001.pphosted.com ([91.207.212.93]:16558 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727511AbgBCKJq (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Feb 2020 05:09:46 -0500
+Received: from pps.filterd (m0046660.ppops.net [127.0.0.1])
+        by mx07-00178001.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 013A7laG019683;
+        Mon, 3 Feb 2020 11:08:52 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=st.com; h=from : to : subject :
+ date : message-id : mime-version : content-type; s=STMicroelectronics;
+ bh=+4sb3dxn9Wm1UXCadNBKjHSse+85wiCwWOp50/uIgYk=;
+ b=GHPTUpU7vWN8TA0QE+qyk7CUOKxWDYcSA1qrfaYorG8q4wKKfYPX90r8nJiV7zrwUBwF
+ fSC1ATigccIeEonEyDk51oKNrCsqjZKM2aSr6t3cIDYSWTKtHab9VPjkAUcvr4R/aTPv
+ WfKLrhVp7yVrUJvdVFKJWXixmVqk3m8V86WfldlJScUizvxUK68Uy9mII67LbER2Lii9
+ EPtas/rc+SVGKFuwppF2G0cJPi8LIPkC37Jr10WbJI/L3b7bvRDKACpVkuoQoHSRm2T/
+ 6CLWZF8YKAhcWC612OdeNsEJRP1YICChZsgl+gHCSeF8IY/d6csRg0buL+gXnh9Oq30i MA== 
+Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
+        by mx07-00178001.pphosted.com with ESMTP id 2xvybdrs6t-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 03 Feb 2020 11:08:52 +0100
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 0BA6D10002A;
+        Mon,  3 Feb 2020 11:08:48 +0100 (CET)
+Received: from Webmail-eu.st.com (sfhdag6node2.st.com [10.75.127.17])
+        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id A28A92BE22D;
+        Mon,  3 Feb 2020 11:08:48 +0100 (CET)
+Received: from localhost (10.75.127.47) by SFHDAG6NODE2.st.com (10.75.127.17)
+ with Microsoft SMTP Server (TLS) id 15.0.1347.2; Mon, 3 Feb 2020 11:08:47
+ +0100
+From:   Olivier Moysan <olivier.moysan@st.com>
+To:     <lgirdwood@gmail.com>, <broonie@kernel.org>, <perex@perex.cz>,
+        <tiwai@suse.com>, <mcoquelin.stm32@gmail.com>,
+        <alexandre.torgue@st.com>, <alsa-devel@alsa-project.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-kernel@vger.kernel.org>, <olivier.moysan@st.com>
+Subject: [PATCH 0/6] ASoC: stm32: improve error management on probe
+Date:   Mon, 3 Feb 2020 11:08:08 +0100
+Message-ID: <20200203100814.22944-1-olivier.moysan@st.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date:   Mon, 03 Feb 2020 10:05:19 +0000
-From:   Marc Zyngier <maz@kernel.org>
-To:     Zenghui Yu <yuzenghui@huawei.com>
-Cc:     tglx@linutronix.de, jason@lakedaemon.net,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        wanghaibin.wang@huawei.com
-Subject: Re: [PATCH RESEND] irqchip/gic-v3-its: Use the its_invall_cmd
- descriptor when building INVALL
-In-Reply-To: <20200203041821.1862-1-yuzenghui@huawei.com>
-References: <20200203041821.1862-1-yuzenghui@huawei.com>
-Message-ID: <11f7a8ab2f23db10100578506a49fa24@kernel.org>
-X-Sender: maz@kernel.org
-User-Agent: Roundcube Webmail/1.3.8
-X-SA-Exim-Connect-IP: 51.254.78.96
-X-SA-Exim-Rcpt-To: yuzenghui@huawei.com, tglx@linutronix.de, jason@lakedaemon.net, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, wanghaibin.wang@huawei.com
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+Content-Type: text/plain
+X-Originating-IP: [10.75.127.47]
+X-ClientProxiedBy: SFHDAG5NODE3.st.com (10.75.127.15) To SFHDAG6NODE2.st.com
+ (10.75.127.17)
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.572
+ definitions=2020-02-03_02:2020-02-02,2020-02-03 signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2020-02-03 04:18, Zenghui Yu wrote:
-> It looks like an obvious mistake to use its_mapc_cmd descriptor when
-> building the INVALL command block. It so far worked by luck because
-> both its_mapc_cmd.col and its_invall_cmd.col sit at the same offset of
-> the ITS command descriptor, but we should not rely on it.
-> 
-> Fixes: cc2d3216f53c ("irqchip: GICv3: ITS command queue")
-> Signed-off-by: Zenghui Yu <yuzenghui@huawei.com>
-> ---
-> 
-> This patch has been originally posted at:
-> https://lore.kernel.org/r/20191202071021.1251-1-yuzenghui@huawei.com
-> but somehow has been missed for 5.5.  So repost it.
+Improve management of error on probe for STM32 SAI, SPDIFRX and I2S drivers.
+- Handle errors when the driver fails to get a reset controller.
+- Do not print an error trace when deferring probe.
 
-Oops, sorry about that. Now applied and pushed out.
+Olivier Moysan (6):
+  ASoC: stm32: sai: manage error when getting reset controller
+  ASoC: stm32: spdifrx: manage error when getting reset controller
+  ASoC: stm32: i2s: manage error when getting reset controller
+  ASoC: stm32: sai: improve error management on probe deferral
+  ASoC: stm32: spdifrx: improve error management on probe deferral
+  ASoC: stm32: i2s: improve error management on probe deferral
 
-         M.
+ sound/soc/stm/stm32_i2s.c     | 39 +++++++++++++++++++++++++----------
+ sound/soc/stm/stm32_sai.c     | 26 ++++++++++++++++-------
+ sound/soc/stm/stm32_sai_sub.c | 11 +++++++---
+ sound/soc/stm/stm32_spdifrx.c | 29 ++++++++++++++++++--------
+ 4 files changed, 74 insertions(+), 31 deletions(-)
+
 -- 
-Jazz is not dead. It just smells funny...
+2.17.1
+
