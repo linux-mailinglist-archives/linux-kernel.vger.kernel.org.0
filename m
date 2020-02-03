@@ -2,39 +2,43 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 129CE150AC6
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Feb 2020 17:21:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1D877150B97
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Feb 2020 17:29:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728087AbgBCQU4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 3 Feb 2020 11:20:56 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60884 "EHLO mail.kernel.org"
+        id S1729688AbgBCQ26 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 3 Feb 2020 11:28:58 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40684 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728984AbgBCQUz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Feb 2020 11:20:55 -0500
+        id S1729678AbgBCQ2z (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Feb 2020 11:28:55 -0500
 Received: from localhost (unknown [104.132.45.99])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1F4F42080D;
-        Mon,  3 Feb 2020 16:20:53 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4FB1A2051A;
+        Mon,  3 Feb 2020 16:28:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1580746854;
-        bh=8jjE9uv8uvJk6VowYOBj062JvcWcLL7+3in/HzO46K0=;
+        s=default; t=1580747334;
+        bh=SCJEmv0iAHFTm4Tp6DgzuSw1c6tPFAGLtEas5RCywVw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=y5ghfWqcXK9wQPe4Ol1o/Je6Zzavc5HOX77ofmEWXNgBtsC6D3l5LVhhKabdJsWIw
-         QDYzpYJtEGw0JReTNoTu07KvPd0ELAN2MDJraQ0s5bVETgqwpQHiBzXeTy1ZqaEOGP
-         KsAvjJU362YYwA6PwHaPlk4X8VWYuKvnfDH4blfI=
+        b=0t/d0algb5UcwvjV2OaE7fXk6I4moDYFCcD7qE9VkGUnxLZ2rNpkr9Wt+6hZZQs2w
+         cDX5YliLGcd7L/TokJ4+ypx0Q0hdutzXWdS3+Lsc8V+cyx7jSLlPQ6WJUmRXUnoK9X
+         0SHyG8N9aRfXlcooQBJbCMnfqydP67z0YQu9k0bs=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, Vitaly Chikunov <vt@altlinux.org>,
+        Dmitry Levin <ldv@altlinux.org>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
         kbuild test robot <lkp@intel.com>,
-        Julia Lawall <julia.lawall@lip6.fr>,
-        Lee Jones <lee.jones@linaro.org>
-Subject: [PATCH 4.4 33/53] media: si470x-i2c: Move free() past last use of radio
+        Peter Zijlstra <peterz@infradead.org>,
+        Vineet Gupta <vineet.gupta1@synopsys.com>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>
+Subject: [PATCH 4.14 40/89] tools lib: Fix builds when glibc contains strlcpy()
 Date:   Mon,  3 Feb 2020 16:19:25 +0000
-Message-Id: <20200203161909.026778929@linuxfoundation.org>
+Message-Id: <20200203161922.349505858@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200203161902.714326084@linuxfoundation.org>
-References: <20200203161902.714326084@linuxfoundation.org>
+In-Reply-To: <20200203161916.847439465@linuxfoundation.org>
+References: <20200203161916.847439465@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,42 +48,97 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Lee Jones <lee.jones@linaro.org>
+From: Vitaly Chikunov <vt@altlinux.org>
 
-A pointer to 'struct si470x_device' is currently used after free:
+commit 6c4798d3f08b81c2c52936b10e0fa872590c96ae upstream.
 
-  drivers/media/radio/si470x/radio-si470x-i2c.c:462:25-30: ERROR: reference
-    preceded by free on line 460
+Disable a couple of compilation warnings (which are treated as errors)
+on strlcpy() definition and declaration, allowing users to compile perf
+and kernel (objtool) when:
 
-Shift the call to free() down past its final use.
+1. glibc have strlcpy() (such as in ALT Linux since 2004) objtool and
+   perf build fails with this (in gcc):
 
-NB: Not sending to Mainline, since the problem does not exist there, it was
-caused by the backport of 2df200ab234a ("media: si470x-i2c: add missed
-operations in remove") to the stable trees.
+  In file included from exec-cmd.c:3:
+  tools/include/linux/string.h:20:15: error: redundant redeclaration of ‘strlcpy’ [-Werror=redundant-decls]
+     20 | extern size_t strlcpy(char *dest, const char *src, size_t size);
 
-Cc: <stable@vger.kernel.org> # v3.18+
-Reported-by: kbuild test robot <lkp@intel.com>
-Reported-by: Julia Lawall <julia.lawall@lip6.fr>
-Signed-off-by: Lee Jones <lee.jones@linaro.org>
+2. clang ignores `-Wredundant-decls', but produces another warning when
+   building perf:
+
+    CC       util/string.o
+  ../lib/string.c:99:8: error: attribute declaration must precede definition [-Werror,-Wignored-attributes]
+  size_t __weak strlcpy(char *dest, const char *src, size_t size)
+  ../../tools/include/linux/compiler.h:66:34: note: expanded from macro '__weak'
+  # define __weak                 __attribute__((weak))
+  /usr/include/bits/string_fortified.h:151:8: note: previous definition is here
+  __NTH (strlcpy (char *__restrict __dest, const char *__restrict __src,
+
+Committer notes:
+
+The
+
+ #pragma GCC diagnostic
+
+directive was introduced in gcc 4.6, so check for that as well.
+
+Fixes: ce99091 ("perf tools: Move strlcpy() from perf to tools/lib/string.c")
+Fixes: 0215d59 ("tools lib: Reinstate strlcpy() header guard with __UCLIBC__")
+Resolves: https://bugzilla.kernel.org/show_bug.cgi?id=118481
+Signed-off-by: Vitaly Chikunov <vt@altlinux.org>
+Reviewed-by: Dmitry Levin <ldv@altlinux.org>
+Cc: Dmitry Levin <ldv@altlinux.org>
+Cc: Josh Poimboeuf <jpoimboe@redhat.com>
+Cc: kbuild test robot <lkp@intel.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: stable@vger.kernel.org
+Cc: Vineet Gupta <vineet.gupta1@synopsys.com>
+Link: http://lore.kernel.org/lkml/20191224172029.19690-1-vt@altlinux.org
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/media/radio/si470x/radio-si470x-i2c.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ tools/include/linux/string.h |    8 ++++++++
+ tools/lib/string.c           |    7 +++++++
+ 2 files changed, 15 insertions(+)
 
---- a/drivers/media/radio/si470x/radio-si470x-i2c.c
-+++ b/drivers/media/radio/si470x/radio-si470x-i2c.c
-@@ -458,10 +458,10 @@ static int si470x_i2c_remove(struct i2c_
+--- a/tools/include/linux/string.h
++++ b/tools/include/linux/string.h
+@@ -14,7 +14,15 @@ int strtobool(const char *s, bool *res);
+  * However uClibc headers also define __GLIBC__ hence the hack below
+  */
+ #if defined(__GLIBC__) && !defined(__UCLIBC__)
++// pragma diagnostic was introduced in gcc 4.6
++#if __GNUC__ > 4 || (__GNUC__ == 4 && __GNUC_MINOR__ >= 6)
++#pragma GCC diagnostic push
++#pragma GCC diagnostic ignored "-Wredundant-decls"
++#endif
+ extern size_t strlcpy(char *dest, const char *src, size_t size);
++#if __GNUC__ > 4 || (__GNUC__ == 4 && __GNUC_MINOR__ >= 6)
++#pragma GCC diagnostic pop
++#endif
+ #endif
  
- 	free_irq(client->irq, radio);
- 	video_unregister_device(&radio->videodev);
--	kfree(radio);
- 
- 	v4l2_ctrl_handler_free(&radio->hdl);
- 	v4l2_device_unregister(&radio->v4l2_dev);
-+	kfree(radio);
- 	return 0;
+ char *str_error_r(int errnum, char *buf, size_t buflen);
+--- a/tools/lib/string.c
++++ b/tools/lib/string.c
+@@ -95,6 +95,10 @@ int strtobool(const char *s, bool *res)
+  * If libc has strlcpy() then that version will override this
+  * implementation:
+  */
++#ifdef __clang__
++#pragma clang diagnostic push
++#pragma clang diagnostic ignored "-Wignored-attributes"
++#endif
+ size_t __weak strlcpy(char *dest, const char *src, size_t size)
+ {
+ 	size_t ret = strlen(src);
+@@ -106,3 +110,6 @@ size_t __weak strlcpy(char *dest, const
+ 	}
+ 	return ret;
  }
- 
++#ifdef __clang__
++#pragma clang diagnostic pop
++#endif
 
 
