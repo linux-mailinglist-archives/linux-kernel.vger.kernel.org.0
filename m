@@ -2,37 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 27223150D1A
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Feb 2020 17:41:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5C9C8150C45
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Feb 2020 17:36:50 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731554AbgBCQlk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 3 Feb 2020 11:41:40 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49150 "EHLO mail.kernel.org"
+        id S1730465AbgBCQer (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 3 Feb 2020 11:34:47 -0500
+Received: from mail.kernel.org ([198.145.29.99]:49198 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730839AbgBCQem (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Feb 2020 11:34:42 -0500
+        id S1730846AbgBCQeo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Feb 2020 11:34:44 -0500
 Received: from localhost (unknown [104.132.45.99])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 78E982082E;
-        Mon,  3 Feb 2020 16:34:41 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C950E20CC7;
+        Mon,  3 Feb 2020 16:34:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1580747681;
-        bh=8q1Jas/q+s5IaRxGYxL9jFMJFjlPUTIRXcKAPTYK13U=;
+        s=default; t=1580747684;
+        bh=p5WUSpnRjJjRF9kGCVdRNlAHBDmitXxxgOiHRt0J9RQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=NiZc+h7d9IZaf2iTzbKwDyveEdFS1zZwrCxqNqD0x1sLRG7oGQwIjoxjF+Xkn3bU7
-         FH4TJWJLOWtfZ4xn8AhYmz2SXm4uFxqhiS2UdBapwNRj66VRy5+AZu87Uh+Ou4N1W2
-         5ZHmYc6nCoAZxLaj9VgKHk9snC+T1RrrE0OA94VQ=
+        b=OMxT04g+FALL/ZKYUreJnanuGgfcqYav7Iadqp8c77RmPK6srQbxPhtiJPu6a4t8P
+         C/KyIJmSCmYlW8Kf6JP8czigqCkR9NOGTPZCZ6husQ6LVSUaKd0qDPSiMraSKRfUjk
+         nW5g7mXm150v94DA05/UxZNxB3aUSu+byJGCjlnw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Maxime Ripard <maxime@cerno.tech>,
+        stable@vger.kernel.org, Kishon Vijay Abraham I <kishon@ti.com>,
+        Tony Lindgren <tony@atomide.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.4 26/90] ARM: dts: sun8i: a83t: Correct USB3503 GPIOs polarity
-Date:   Mon,  3 Feb 2020 16:19:29 +0000
-Message-Id: <20200203161921.061213173@linuxfoundation.org>
+Subject: [PATCH 5.4 27/90] ARM: dts: am57xx-beagle-x15/am57xx-idk: Remove "gpios" for  endpoint dt nodes
+Date:   Mon,  3 Feb 2020 16:19:30 +0000
+Message-Id: <20200203161921.206999917@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
 In-Reply-To: <20200203161917.612554987@linuxfoundation.org>
 References: <20200203161917.612554987@linuxfoundation.org>
@@ -45,38 +44,68 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Marek Szyprowski <m.szyprowski@samsung.com>
+From: Kishon Vijay Abraham I <kishon@ti.com>
 
-[ Upstream commit 1c226017d3ec93547b58082bdf778d9db7401c95 ]
+[ Upstream commit 81cc0877840f72210e809bbedd6346d686560fc1 ]
 
-Current USB3503 driver ignores GPIO polarity and always operates as if the
-GPIO lines were flagged as ACTIVE_HIGH. Fix the polarity for the existing
-USB3503 chip applications to match the chip specification and common
-convention for naming the pins. The only pin, which has to be ACTIVE_LOW
-is the reset pin. The remaining are ACTIVE_HIGH. This change allows later
-to fix the USB3503 driver to properly use generic GPIO bindings and read
-polarity from DT.
+PERST# line in the PCIE connector is driven by the host mode and not
+EP mode. The gpios property here is used for driving the PERST# line.
+Remove gpios property from all endpoint device tree nodes.
 
-Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-Signed-off-by: Maxime Ripard <maxime@cerno.tech>
+Signed-off-by: Kishon Vijay Abraham I <kishon@ti.com>
+Signed-off-by: Tony Lindgren <tony@atomide.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arm/boot/dts/sun8i-a83t-cubietruck-plus.dts | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/arm/boot/dts/am571x-idk.dts                | 4 ----
+ arch/arm/boot/dts/am572x-idk-common.dtsi        | 4 ----
+ arch/arm/boot/dts/am57xx-beagle-x15-common.dtsi | 4 ----
+ 3 files changed, 12 deletions(-)
 
-diff --git a/arch/arm/boot/dts/sun8i-a83t-cubietruck-plus.dts b/arch/arm/boot/dts/sun8i-a83t-cubietruck-plus.dts
-index fb928503ad45d..d9be511f054f0 100644
---- a/arch/arm/boot/dts/sun8i-a83t-cubietruck-plus.dts
-+++ b/arch/arm/boot/dts/sun8i-a83t-cubietruck-plus.dts
-@@ -101,7 +101,7 @@
- 		initial-mode = <1>; /* initialize in HUB mode */
- 		disabled-ports = <1>;
- 		intn-gpios = <&pio 7 5 GPIO_ACTIVE_HIGH>; /* PH5 */
--		reset-gpios = <&pio 4 16 GPIO_ACTIVE_HIGH>; /* PE16 */
-+		reset-gpios = <&pio 4 16 GPIO_ACTIVE_LOW>; /* PE16 */
- 		connect-gpios = <&pio 4 17 GPIO_ACTIVE_HIGH>; /* PE17 */
- 		refclk-frequency = <19200000>;
- 	};
+diff --git a/arch/arm/boot/dts/am571x-idk.dts b/arch/arm/boot/dts/am571x-idk.dts
+index 9d6a872c2b236..10105a497c1ac 100644
+--- a/arch/arm/boot/dts/am571x-idk.dts
++++ b/arch/arm/boot/dts/am571x-idk.dts
+@@ -170,10 +170,6 @@
+ 	gpios = <&gpio5 18 GPIO_ACTIVE_HIGH>;
+ };
+ 
+-&pcie1_ep {
+-	gpios = <&gpio3 23 GPIO_ACTIVE_HIGH>;
+-};
+-
+ &mmc1 {
+ 	pinctrl-names = "default", "hs";
+ 	pinctrl-0 = <&mmc1_pins_default_no_clk_pu>;
+diff --git a/arch/arm/boot/dts/am572x-idk-common.dtsi b/arch/arm/boot/dts/am572x-idk-common.dtsi
+index a064f13b38802..ddf123620e962 100644
+--- a/arch/arm/boot/dts/am572x-idk-common.dtsi
++++ b/arch/arm/boot/dts/am572x-idk-common.dtsi
+@@ -147,10 +147,6 @@
+ 	gpios = <&gpio3 23 GPIO_ACTIVE_HIGH>;
+ };
+ 
+-&pcie1_ep {
+-	gpios = <&gpio3 23 GPIO_ACTIVE_HIGH>;
+-};
+-
+ &mailbox5 {
+ 	status = "okay";
+ 	mbox_ipu1_ipc3x: mbox_ipu1_ipc3x {
+diff --git a/arch/arm/boot/dts/am57xx-beagle-x15-common.dtsi b/arch/arm/boot/dts/am57xx-beagle-x15-common.dtsi
+index bc76f1705c0f6..9a94c96b0350e 100644
+--- a/arch/arm/boot/dts/am57xx-beagle-x15-common.dtsi
++++ b/arch/arm/boot/dts/am57xx-beagle-x15-common.dtsi
+@@ -547,10 +547,6 @@
+ 	gpios = <&gpio2 8 GPIO_ACTIVE_LOW>;
+ };
+ 
+-&pcie1_ep {
+-	gpios = <&gpio2 8 GPIO_ACTIVE_LOW>;
+-};
+-
+ &mcasp3 {
+ 	#sound-dai-cells = <0>;
+ 	assigned-clocks = <&l4per2_clkctrl DRA7_L4PER2_MCASP3_CLKCTRL 24>;
 -- 
 2.20.1
 
