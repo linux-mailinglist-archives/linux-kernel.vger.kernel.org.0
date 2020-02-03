@@ -2,128 +2,76 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 055BF15099A
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Feb 2020 16:16:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C87901509A9
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Feb 2020 16:21:19 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728206AbgBCPQ4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 3 Feb 2020 10:16:56 -0500
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:53508 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727279AbgBCPQz (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Feb 2020 10:16:55 -0500
-Received: by mail-wm1-f66.google.com with SMTP id s10so16345390wmh.3
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Feb 2020 07:16:54 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=arangodb.com; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=oDRH5we1LRYr69H/g74BFyb9GhUUuAeUSoG8mXyHu3Y=;
-        b=fl1ZYh0CUf3sMGtHtJIdJafqlYKLZsSI1uu6QurSiwRuCTiVJqh9V0cgqfAZkuYn2S
-         fXV9TTePcAwikD+BC5HR6ZHhzT00wtG+qlrpBQ2Wdn5vUqVy6Bx+g7R5fa+HziqZ6Odm
-         llpf1Jt1DT8yD9+pX8BwrZtNhPoh7hpgfOtBrMgiKpA8nf5H9XBIXmfw1qg0KprYgfSw
-         IBVnql47upOCp2D8yO/F4lG3svM0wg5RwmuIrl8ppeivODqmrlpuUvzvK5KqqjYbd3kW
-         26nq1Ky+W7oW6Mw2INas3fWVOddwxEeg3PyU7BuMHtzNm7TMmEejgAjkYnbaKw7H/oFC
-         q8Xg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=oDRH5we1LRYr69H/g74BFyb9GhUUuAeUSoG8mXyHu3Y=;
-        b=WjjbYFSlHYi/mr9Vu8dQBSLvh+H9a6YcR1qFbYc/TIbQjj245+XdyefmXTfQ4AKTPR
-         gseGiMEO5g/pgLVtVZoRIaYpc3KhdDPMQOcN7h94Tnydk6GHOpuo0Eh5/mM3GD1mG+FV
-         dEtHZozg/qcLzXJCqgAnuoR1+L+gyLwGUJ8sns5nKLLwrrqnZZeIac4E++xH2xzFK5mK
-         jP11IPbpbTM1EgagLgD0zF2J1GiCeKQ6GF0rKtf4WAoNAI80MefFTSiTXTZb6iCbzoCv
-         x15qiIaeOEsy/n+/ZTo92LdlJ1s0cWZDC/SfvhRgLPYPd5392uWjbvwo6r5oRZ5+D30i
-         f2sw==
-X-Gm-Message-State: APjAAAVzchnbu1EwCwvvRe4Meh+kc80skLrNFIOG5TEco5bAFinjP5qX
-        0eAr8dn4aIoUiITX8c6jkBYg
-X-Google-Smtp-Source: APXvYqy9zJqEX1AE9F9FSyxmUYx5bGNX2475G5HyDwL44k6DUQVwT9KWcQDJJvYA7H0B4qM5xdkivw==
-X-Received: by 2002:a7b:c651:: with SMTP id q17mr31280131wmk.5.1580743013835;
-        Mon, 03 Feb 2020 07:16:53 -0800 (PST)
-Received: from localhost (static-85-197-33-87.netcologne.de. [85.197.33.87])
-        by smtp.gmail.com with ESMTPSA id z19sm22877844wmi.43.2020.02.03.07.16.53
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 03 Feb 2020 07:16:53 -0800 (PST)
-Date:   Mon, 3 Feb 2020 16:15:36 +0100
-From:   Max Neunhoeffer <max@arangodb.com>
-To:     Jakub Kicinski <kuba@kernel.org>
-Cc:     netdev@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        LKML <linux-kernel@vger.kernel.org>,
-        Roman Penyaev <rpenyaev@suse.de>,
-        Christopher Kohlhoff <chris.kohlhoff@clearpool.io>
-Subject: Re: epoll_wait misses edge-triggered eventfd events: bug in Linux
- 5.3 and 5.4
-Message-ID: <20200203151536.caf6n4b2ymvtssmh@tux>
-References: <20200131135730.ezwtgxddjpuczpwy@tux>
- <20200201121647.62914697@cakuba.hsd1.ca.comcast.net>
+        id S1728024AbgBCPVS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 3 Feb 2020 10:21:18 -0500
+Received: from mga02.intel.com ([134.134.136.20]:32939 "EHLO mga02.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726272AbgBCPVR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Feb 2020 10:21:17 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga005.fm.intel.com ([10.253.24.32])
+  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 03 Feb 2020 07:21:16 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.70,398,1574150400"; 
+   d="scan'208";a="429473339"
+Received: from lxy-dell.sh.intel.com ([10.239.13.109])
+  by fmsmga005.fm.intel.com with ESMTP; 03 Feb 2020 07:21:15 -0800
+From:   Xiaoyao Li <xiaoyao.li@intel.com>
+To:     Paolo Bonzini <pbonzini@redhat.com>,
+        Sean Christopherson <sean.j.christopherson@intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        Andy Lutomirski <luto@amacapital.net>
+Cc:     x86@kernel.org, kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        David Laight <David.Laight@aculab.com>,
+        Xiaoyao Li <xiaoyao.li@intel.com>
+Subject: [PATCH v2 0/6] kvm/split_lock: Add feature split lock detection support in kvm
+Date:   Mon,  3 Feb 2020 23:16:02 +0800
+Message-Id: <20200203151608.28053-1-xiaoyao.li@intel.com>
+X-Mailer: git-send-email 2.23.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200201121647.62914697@cakuba.hsd1.ca.comcast.net>
-User-Agent: NeoMutt/20180716
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Dear Jakub and all,
+This version adds the virtualization of split lock detection for guest
+in patch 5 and patch 6.
 
-I have done a git bisect and found that this commit introduced the epoll
-bug:
+No matter whether we advertise split lock detection to guest, we have to make
+a choice between not burn the old guest and prevent DoS attack from guest since
+we cannot identify whether a guest is malicious.
 
-https://github.com/torvalds/linux/commit/a218cc4914209ac14476cb32769b31a556355b22
+Since sld_warn mode also allows userspace applications to do split lock
+we can extend the similar policy to guest that if host is sld_warn, we allow
+guest to generate split lock by clearing MSR_TEST_CTRL.SPLIT_LOCK_DETECT bit
+when vcpu is running.
 
-I Cc the author of the commit.
+If host is sld_fatal mode and guest doesn't set its SPLIT_LOCK_DETECT bit we
+forward split lock #AC to user space, similar as sending SIGBUS.
 
-This makes sense, since the commit introduces a new rwlock to reduce
-contention in ep_poll_callback. I do not fully understand the details
-but this sounds all very close to this bug.
+Xiaoyao Li (6):
+  x86/split_lock: Add and export get_split_lock_detect_state()
+  x86/split_lock: Add and export split_lock_detect_set()
+  kvm: x86: Emulate split-lock access as a write
+  kvm: vmx: Extend VMX's #AC handding for split lock in guest
+  kvm: x86: Emulate MSR IA32_CORE_CAPABILITIES
+  x86: vmx: virtualize split lock detection
 
-I have also verified that the bug is still present in the latest master
-branch in Linus' repository.
+ arch/x86/include/asm/cpu.h      | 13 +++++
+ arch/x86/include/asm/kvm_host.h |  1 +
+ arch/x86/kernel/cpu/intel.c     | 18 ++++--
+ arch/x86/kvm/cpuid.c            |  5 +-
+ arch/x86/kvm/vmx/vmx.c          | 98 ++++++++++++++++++++++++++++++++-
+ arch/x86/kvm/vmx/vmx.h          |  4 ++
+ arch/x86/kvm/x86.c              | 44 ++++++++++++++-
+ 7 files changed, 171 insertions(+), 12 deletions(-)
 
-Furthermore, Chris Kohlhoff has provided yet another reproducing program
-which is no longer using edge-triggered but standard level-triggered
-events and epoll_wait. This makes the bug all the more urgent, since
-potentially more programs could run into this problem and could end up
-with sleeping barbers.
+-- 
+2.23.0
 
-I have added all the details to the bugzilla bugreport:
-
-  https://bugzilla.kernel.org/show_bug.cgi?id=205933
-
-Hopefully, we can resolve this now equipped with this amount of information.
-
-Best regards,
-  Max.
-
-On 20/02/01 12:16, Jakub Kicinski wrote:
-> On Fri, 31 Jan 2020 14:57:30 +0100, Max Neunhoeffer wrote:
-> > Dear All,
-> > 
-> > I believe I have found a bug in Linux 5.3 and 5.4 in epoll_wait/epoll_ctl
-> > when an eventfd together with edge-triggered or the EPOLLONESHOT policy
-> > is used. If an epoll_ctl call to rearm the eventfd happens approximately
-> > at the same time as the epoll_wait goes to sleep, the event can be lost, 
-> > even though proper protection through a mutex is employed.
-> > 
-> > The details together with two programs showing the problem can be found
-> > here:
-> > 
-> >   https://bugzilla.kernel.org/show_bug.cgi?id=205933
-> > 
-> > Older kernels seem not to have this problem, although I did not test all
-> > versions. I know that 4.15 and 5.0 do not show the problem.
-> > 
-> > Note that this method of using epoll_wait/eventfd is used by
-> > boost::asio to wake up event loops in case a new completion handler
-> > is posted to an io_service, so this is probably relevant for many
-> > applications.
-> > 
-> > Any help with this would be appreciated.
-> 
-> Could be networking related but let's CC FS folks just in case.
-> 
-> Would you be able to perform bisection to narrow down the search 
-> for a buggy change?
