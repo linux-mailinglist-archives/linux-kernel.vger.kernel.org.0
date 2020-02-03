@@ -2,124 +2,132 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F14341508B3
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Feb 2020 15:46:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2C6FF1508BC
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Feb 2020 15:48:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728560AbgBCOq3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 3 Feb 2020 09:46:29 -0500
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:39444 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727406AbgBCOq2 (ORCPT
+        id S1728585AbgBCOsC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 3 Feb 2020 09:48:02 -0500
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:44694 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727427AbgBCOsB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Feb 2020 09:46:28 -0500
-Received: by mail-wr1-f67.google.com with SMTP id y11so18522150wrt.6;
-        Mon, 03 Feb 2020 06:46:26 -0800 (PST)
+        Mon, 3 Feb 2020 09:48:01 -0500
+Received: by mail-pg1-f194.google.com with SMTP id g3so2229971pgs.11;
+        Mon, 03 Feb 2020 06:48:01 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=tMM4CAawPMR8gUufLoNQFgcc2EwWoDOVGHEyUpiGjGI=;
-        b=hxMYDcZ4kZYU2upuRV/2llW2C8uf47+n55DRT8mMYfIF/zL5CKn4ISpPHesWDynpvy
-         CHSDZuPhKTGEWzgydEKo6nN0wfpx3bBoHDx0Av2KYqNxrK5tx98NLOj6+NJ7ERCMgK6N
-         S9TMY9XBiVJyufWrm6gfprVg8JXfNqyyr4mDfDnnR+K2LhkF/5mIOrjxLz7kQ+tSAQUZ
-         dZmrN39IioT+QOTS5vzuacxyBphGgEZRQYqp5V2LEF1/p/CWpD/9DKX+Y7gtFEATWqCh
-         tnFu42q9Wb6NikCfrzjtuBKdjSW4Lulm19ZAXHodZYHDfvGvbDfrmUvkAH5K9EwjOEwj
-         ZTLw==
+        h=sender:subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=83ABERR3SXd05uLlC6qxZc3SIAbiKjtXN4TG7rOd3Iw=;
+        b=jx6r5LiaMOeXKCsrDYstzaXd7gnLPfl8GsxDRXbrlpiegDSSSs6lfqikAOxXcpCw/g
+         zcoBvk656wdjPs/cXgQE0zZXdJjw3tMvGZzWdXu/EWmXCvQUASsXrepUkWMXhzrwvwc6
+         3zvYITHwDyHM8NLtg0u/YxV3u+JX7mMu5Nv+vhLLDAkZYVPmnB3KkFwJx1dH8hu5S/lP
+         fArySjxW9I+ydFx7oOCR0GTdMtyMZ9ftfKw9Dt0gQs4mTpelN6D8FVYoccGaiMhrpO3+
+         BpzwFlW/2qjRKa11OFh2Xs5NouhLtUpQyfGx47q/qpamFd+1g06/Ar7jPjoLeIXZhSuN
+         CwJA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=tMM4CAawPMR8gUufLoNQFgcc2EwWoDOVGHEyUpiGjGI=;
-        b=Szc7y3noyj7Pc8QCiVdGIrlkMcKbI268YpdDjmVUgfTnMfOgAITYD2yZJ47XDNme9m
-         /pX0PmiEdKDsyFeDwFpom7D4+hUuKpTW/wvGZROxsS09lAcYPY6OAVTnE9l0AykpZ4BO
-         nkxNe4gm3of2rH160G/52pe8KVdsLV4r3RimJ6xnEr114uvFk4DNomCdTBZrshTQICIN
-         Vl+zSVVKQytk2t8N4+4MO/wrOM4AqxEyn7zhNrRvaixc1FUfzh2xHi4ZOCqTFDia+xGc
-         SQ0XocO1hrfSI9OyN/nwmvFQFJyE5w+jA0wrB4q/5rcct2DuPHe7lufX8ZhfGp7FsiNg
-         mqOw==
-X-Gm-Message-State: APjAAAUQt2Uvdd8L8kWEPxYtg379oiWwNvPnCaLUoukjt9B2brvZglou
-        iRHQ4R7FtduABjuBeiVQqjGTxo7N/71J5OilKz8=
-X-Google-Smtp-Source: APXvYqy59RG2LpLeid+co/h0YICewTE95xyDO4W08Jab1qQ5XRFDXFtpakqe80Ycz50jrmMRM571xaQtTBO4NA6zFYE=
-X-Received: by 2002:a5d:4692:: with SMTP id u18mr16105157wrq.206.1580741185953;
- Mon, 03 Feb 2020 06:46:25 -0800 (PST)
+        h=x-gm-message-state:sender:subject:to:cc:references:from:message-id
+         :date:user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=83ABERR3SXd05uLlC6qxZc3SIAbiKjtXN4TG7rOd3Iw=;
+        b=PSo4W8BvapONgwfPWquFH+vFhOyTeHJkfF7RG9O3wgcHXqqenCmLiYMacStreFf+le
+         faOfPrcR3jTQGWeeGsbLHRtoVoTKjyjLKjgcFDmDcIszs0U5x6NOHHQi/POcX1A9EvX/
+         O9OaKuhhO+XGfA03CJqMPFHE7pMg7ZDSH5OiIG+1anWYf4B7vOQN2QBJ0fAU7VcX3kjY
+         gDmIBVbI3RCX/asiaxaAp8IzgQu3NBdES4HKU6IjJdWzu/N0jTOCLeoxx87SmU3MRYMi
+         Ryws4zvM5O0be43vqSe7FWQIpc729pDzu/ZvnaFjRQ8uqkztlvGmcZfhX6y6UBA0xBTv
+         H5QA==
+X-Gm-Message-State: APjAAAXmmetBwnU00sFFDn4NFZfEepiLAcyzK34V0zfR1u5HByOB8GYs
+        HwqxWrpUoehlfZfTHL6s9ZER23aq
+X-Google-Smtp-Source: APXvYqyBFaoP5ZJZ+WoBLALu6+7YmzoFOXgRahLjQGDeB3p6e69HOopAuyLkHP4C/vNi39uai6rA8g==
+X-Received: by 2002:a63:f403:: with SMTP id g3mr25999128pgi.62.1580741279858;
+        Mon, 03 Feb 2020 06:47:59 -0800 (PST)
+Received: from server.roeck-us.net ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id a16sm20142226pgb.5.2020.02.03.06.47.55
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 03 Feb 2020 06:47:57 -0800 (PST)
+Subject: Re: [PATCH 0/5] scsi: ufs: ufs device as a temperature sensor
+To:     Avi Shchislowski <Avi.Shchislowski@wdc.com>
+Cc:     Alim Akhtar <alim.akhtar@samsung.com>,
+        Avri Altman <Avri.Altman@wdc.com>,
+        "James E.J. Bottomley" <jejb@linux.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>
+References: <1580640419-6703-1-git-send-email-avi.shchislowski@wdc.com>
+ <20200202192105.GA20107@roeck-us.net>
+ <MN2PR04MB61906E820FAF0F17082D53AE9A000@MN2PR04MB6190.namprd04.prod.outlook.com>
+From:   Guenter Roeck <linux@roeck-us.net>
+Message-ID: <94cb1e97-18ed-ebec-23c2-b4d87434726a@roeck-us.net>
+Date:   Mon, 3 Feb 2020 06:47:54 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.1
 MIME-Version: 1.0
-References: <1579181165-2493-1-git-send-email-yangtiezhu@loongson.cn>
-In-Reply-To: <1579181165-2493-1-git-send-email-yangtiezhu@loongson.cn>
-From:   Jonas Gorski <jonas.gorski@gmail.com>
-Date:   Mon, 3 Feb 2020 15:46:59 +0100
-Message-ID: <CAOiHx==FfiQoFA9cESSni_izS=m+mm7G+gk_tei5XFnKrgurew@mail.gmail.com>
-Subject: Re: [PATCH v2,RESEND] MIPS: Scan the DMI system information
-To:     Tiezhu Yang <yangtiezhu@loongson.cn>
-Cc:     Paul Burton <paulburton@kernel.org>,
-        Ralf Baechle <ralf@linux-mips.org>,
-        Jean Delvare <jdelvare@suse.com>,
-        Huacai Chen <chenhc@lemote.com>,
-        Xuefeng Li <lixuefeng@loongson.cn>, linux-mips@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Yinglu Yang <yangyinglu@loongson.cn>,
-        Jiaxun Yang <jiaxun.yang@flygoat.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <MN2PR04MB61906E820FAF0F17082D53AE9A000@MN2PR04MB6190.namprd04.prod.outlook.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+On 2/3/20 3:57 AM, Avi Shchislowski wrote:
+> 
+> 
+>> -----Original Message-----
+>> From: Guenter Roeck <groeck7@gmail.com> On Behalf Of Guenter Roeck
+>> Sent: Sunday, February 2, 2020 9:21 PM
+>> To: Avi Shchislowski <Avi.Shchislowski@wdc.com>
+>> Cc: Alim Akhtar <alim.akhtar@samsung.com>; Avri Altman
+>> <Avri.Altman@wdc.com>; James E.J. Bottomley <jejb@linux.ibm.com>;
+>> Martin K. Petersen <martin.petersen@oracle.com>; linux-
+>> kernel@vger.kernel.org; linux-scsi@vger.kernel.org
+>> Subject: Re: [PATCH 0/5] scsi: ufs: ufs device as a temperature sensor
+>>
+>   
+>> On Sun, Feb 02, 2020 at 12:46:54PM +0200, Avi Shchislowski wrote:
+>>> UFS3.0 allows using the ufs device as a temperature sensor. The
+>>> purpose of this feature is to provide notification to the host of the
+>>> UFS device case temperature. It allows reading of a rough estimate
+>>> (+-10 degrees centigrade) of the current case temperature, And setting
+>>> a lower and upper temperature bounds, in which the device will trigger
+>>> an applicable exception event.
+>>>
+>>> We added the capability of responding to such notifications, while
+>>> notifying the kernel's thermal core, which further exposes the thermal
+>>> zone attributes to user space. UFS temperature attributes are all
+>>> read-only, so only thermal read ops (.get_xxx) can be implemented.
+>>>
+>>
+>> Can you add an explanation why this can't be added to the just-introduced
+>> 'drivetemp' driver in the hwmon subsystem, and why it make sense to have
+>> proprietary attributes for temperature and temperature limits ?
+>>
+>> Thanks,
+>> Guenter
+>>
+> Hi Guenter
+> 
+> Thank you for your comment
+> 
+> The ufs device is not a temperature sensor per-se.  It is, first and foremost, a storage device.
 
-On Thu, 16 Jan 2020 at 14:28, Tiezhu Yang <yangtiezhu@loongson.cn> wrote:
->
-> Enable DMI scanning on the MIPS architecture, this setups DMI identifiers
-> (dmi_system_id) for printing it out on task dumps and prepares DIMM entry
-> information (dmi_memdev_info) from the SMBIOS table. With this patch, the
-> driver can easily match various of mainboards.
->
-> In the SMBIOS reference specification, the table anchor string "_SM_" is
-> present in the address range 0xF0000 to 0xFFFFF on a 16-byte boundary,
-> but there exists a special case for Loongson platform, when call function
-> dmi_early_remap, it should specify the start address to 0xFFFE000 due to
-> it is reserved for SMBIOS and can be normally access in the BIOS.
->
-> This patch works fine on the Loongson 3A3000 platform which belongs to
-> MIPS architecture and has no influence on the other architectures such
-> as x86 and ARM.
->
-> Co-developed-by: Yinglu Yang <yangyinglu@loongson.cn>
-> Signed-off-by: Yinglu Yang <yangyinglu@loongson.cn>
-> [jiaxun.yang@flygoat.com: Refine definitions and Kconfig]
-> Signed-off-by: Jiaxun Yang <jiaxun.yang@flygoat.com>
-> Signed-off-by: Tiezhu Yang <yangtiezhu@loongson.cn>
-> Reviewed-by: Huacai Chen <chenhc@lemote.com>
-> ---
->
-> v2:
->   - add SMBIOS_ENTRY_POINT_SCAN_START suggested by Jean
->   - refine definitions and Kconfig by Jiaxun
->
->  arch/mips/Kconfig           | 10 ++++++++++
->  arch/mips/include/asm/dmi.h | 20 ++++++++++++++++++++
->  arch/mips/kernel/setup.c    |  2 ++
->  drivers/firmware/dmi_scan.c |  6 +++++-
->  4 files changed, 37 insertions(+), 1 deletion(-)
->  create mode 100644 arch/mips/include/asm/dmi.h
->
-> diff --git a/arch/mips/Kconfig b/arch/mips/Kconfig
-> index 4b83507..c097f78 100644
-> --- a/arch/mips/Kconfig
-> +++ b/arch/mips/Kconfig
-> @@ -2773,6 +2773,16 @@ config HW_PERF_EVENTS
->           Enable hardware performance counter support for perf events. If
->           disabled, perf events will use software events only.
->
-> +config DMI
-> +       default y if MACH_LOONGSON64
-> +       select DMI_SCAN_MACHINE_NON_EFI_FALLBACK
-> +       bool "Enable DMI scanning"
+Huh ? Many non-temperature-sensor devices in the kernel report their temperature
+through the hardware monitoring subsystem.
 
-Is this option harmless to enable for other MIPS platforms? What
-happens if it is enabled on devices where PHYS_OFFSET isn't 0, so
-0xF0000 is likely not backed by anything and accessing it might hang
-the system?
+> Reporting the device case temperature is a feature added in a recently released UFS spec (UFS3.0).
+> Therefore, adding a thermal-core module, in opposed to hwmon module, seemed more appropriate.
+> Registering a hwmon device look excessive, as no other hw-monitoring attribute is available - aside temperature.
+> 
+Really ? Interesting position. Are you saying that instantiating a thermal core
+module, plus providing non-standard sysfs attributes to report the temperature,
+is less complex ? Are you sure ? Can you provide evidence that this is indeed
+the case ?
 
-This probably should depend on MACH_LOONGSON64.
+> Using Martin's tree, I wasn't able to locate the 'drivetemp' module, nor any reference to  it in the hwmon documentation.
+> 
 
-Regards
+You might want to consider looking in the mainline kernel.
 
-Jonas
+Guenter
