@@ -2,135 +2,151 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 06526150230
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Feb 2020 09:02:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EFEB515029C
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Feb 2020 09:30:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727738AbgBCICe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 3 Feb 2020 03:02:34 -0500
-Received: from mx06.melco.co.jp ([192.218.140.146]:56737 "EHLO
-        mx06.melco.co.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727339AbgBCICe (ORCPT
+        id S1727674AbgBCIab (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 3 Feb 2020 03:30:31 -0500
+Received: from new1-smtp.messagingengine.com ([66.111.4.221]:57603 "EHLO
+        new1-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726410AbgBCIab (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Feb 2020 03:02:34 -0500
-Received: from mr06.melco.co.jp (mr06 [133.141.98.164])
-        by mx06.melco.co.jp (Postfix) with ESMTP id BE03A3A3516;
-        Mon,  3 Feb 2020 17:02:31 +0900 (JST)
-Received: from mr06.melco.co.jp (unknown [127.0.0.1])
-        by mr06.imss (Postfix) with ESMTP id 48B0fv4nQNzRkDF;
-        Mon,  3 Feb 2020 17:02:31 +0900 (JST)
-Received: from mf04_second.melco.co.jp (unknown [192.168.20.184])
-        by mr06.melco.co.jp (Postfix) with ESMTP id 48B0fv4TYjzRjwY;
-        Mon,  3 Feb 2020 17:02:31 +0900 (JST)
-Received: from mf04.melco.co.jp (unknown [133.141.98.184])
-        by mf04_second.melco.co.jp (Postfix) with ESMTP id 48B0fv4lKFzRk5n;
-        Mon,  3 Feb 2020 17:02:31 +0900 (JST)
-Received: from tux532.tad.melco.co.jp (unknown [133.141.243.226])
-        by mf04.melco.co.jp (Postfix) with ESMTP id 48B0fv4JkWzRk5j;
-        Mon,  3 Feb 2020 17:02:31 +0900 (JST)
-Received:  from tux532.tad.melco.co.jp
-        by tux532.tad.melco.co.jp (unknown) with ESMTP id 01382VWC022519;
-        Mon, 3 Feb 2020 17:02:31 +0900
-Received: from tux390.tad.melco.co.jp (tux390.tad.melco.co.jp [127.0.0.1])
-        by postfix.imss70 (Postfix) with ESMTP id 47ECC17E075;
-        Mon,  3 Feb 2020 17:02:31 +0900 (JST)
-Received: from tux554.tad.melco.co.jp (tadpost1.tad.melco.co.jp [10.168.7.223])
-        by tux390.tad.melco.co.jp (Postfix) with ESMTP id 329B317E073;
-        Mon,  3 Feb 2020 17:02:31 +0900 (JST)
-Received: from tux554.tad.melco.co.jp
-        by tux554.tad.melco.co.jp (unknown) with ESMTP id 01382Rc2022824;
-        Mon, 3 Feb 2020 17:02:31 +0900
-From:   Tetsuhiro Kohada <Kohada.Tetsuhiro@dc.MitsubishiElectric.co.jp>
-To:     Valdis Kletnieks <valdis.kletnieks@vt.edu>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-fsdevel@vger.kernel.org, devel@driverdev.osuosl.org,
-        linux-kernel@vger.kernel.org
-Cc:     Kohada.Tetsuhiro@dc.MitsubishiElectric.co.jp,
-        Mori.Takahiro@ab.MitsubishiElectric.co.jp,
-        motai.hirotaka@aj.mitsubishielectric.co.jp
-Subject: [PATCH 2/2] staging: exfat: dedicate count_entries() to sub-dir counting.
-Date:   Tue,  4 Feb 2020 01:31:18 +0900
-Message-Id: <20200203163118.31332-2-Kohada.Tetsuhiro@dc.MitsubishiElectric.co.jp>
-X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200203163118.31332-1-Kohada.Tetsuhiro@dc.MitsubishiElectric.co.jp>
-References: <20200203163118.31332-1-Kohada.Tetsuhiro@dc.MitsubishiElectric.co.jp>
+        Mon, 3 Feb 2020 03:30:31 -0500
+Received: from compute3.internal (compute3.nyi.internal [10.202.2.43])
+        by mailnew.nyi.internal (Postfix) with ESMTP id D79996033;
+        Mon,  3 Feb 2020 03:30:29 -0500 (EST)
+Received: from mailfrontend2 ([10.202.2.163])
+  by compute3.internal (MEProxy); Mon, 03 Feb 2020 03:30:29 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cerno.tech; h=
+        date:from:to:cc:subject:message-id:references:mime-version
+        :content-type:in-reply-to; s=fm2; bh=5/m6d79XqC9vih4B9gJzt6EMAAq
+        GOFeC4/ftf/InF74=; b=Wc9ETG5YTTVqP2mH7AArIOvpsRa4oqCDhVFHQ7ndmrj
+        OKrRHmubRX1ZmMydSFd9fExYLWMF4tIDSZniv5mPq2/Sg/c/XwE0cBIIEd+64q/y
+        7KFsjiCkSHFZEvDLa/q07IEDfFgHsr4RQ1GBWlyZ1oH3f1ED6OfDaCstbEm0WiMJ
+        Q9BOtnSjJbqsAeuIBS2kAmL9tDfejt4Z+Uwiyf8KuVZ5l6G/S39wvYQPt+I4Bin+
+        bjRNpd959xj7SmCVtN74hV7K1yivbwLnXSY2av8M9fzAE8wN1X3dwIUAuuhu9V6q
+        OOyBBJgwXJhJFIzSdsdmkkBRaGVQKrlnSqamjRaaxrA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-type:date:from:in-reply-to
+        :message-id:mime-version:references:subject:to:x-me-proxy
+        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; bh=5/m6d7
+        9XqC9vih4B9gJzt6EMAAqGOFeC4/ftf/InF74=; b=e4SKOejaPuaElhEpZzf++6
+        tDS39Yw9YlE9M0swTTtiAzAZYV2O16wAUWOHfCcZ5iBPANuAbsCE9wXZGqbQzFEc
+        tDZj9vE7wU9+hlcqwuIkGCf4KHEz4pqi8LRnu8q69vmUFKy297Yf0sLPcJ1Bx5GT
+        AwM3sW+dQTa8oFQN/ww3882DVFmnethZs9y9eDWmFTTm5gK5aFzCWrGUU0d9h22F
+        ZsIbA/z/nLkQe2H6fay5UYhWt68bpoRoAnSJMJ4mNfk05Mw28pMT/GjDlRNbP1Pl
+        u5JUUEIE6QNu41CfXs9t4/nohlyZ4hqrHKw4KvK/7cb1j/QrdW+h0FD8SvaSkxfQ
+        ==
+X-ME-Sender: <xms:Jdo3Xnu3y5Y5o6vYrJgS19KaqK89UoLXaf3jDvhyym23lzAiPxbUaQ>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedugedrgeeigdduudelucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhepfffhvffukfhfgggtuggjsehttdertddttddvnecuhfhrohhmpeforgigihhm
+    vgcutfhiphgrrhguuceomhgrgihimhgvsegtvghrnhhordhtvggthheqnecuffhomhgrih
+    hnpeguvghvihgtvghtrhgvvgdrohhrghenucfkphepledtrdekledrieekrdejieenucev
+    lhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehmrgigihhmvg
+    estggvrhhnohdrthgvtghh
+X-ME-Proxy: <xmx:Jdo3XsuWHqy773o6GtBS5pRDDCsUHiroq-gm6Lcw5OnaXKCFkiAugg>
+    <xmx:Jdo3XlyDT5P_uAaHslnEJvHh2391qPtgmNwsfJnQCE-8gOmH2y9-Fg>
+    <xmx:Jdo3XqifrhjYa6UGH3hnidOFRzXW_6BNEWNF9R1N1AdjoN1RR98Z8w>
+    <xmx:Jdo3XiWkI3DmgL0L1mvDLKDHpLzMLYlgY1DhKmd77sTnPU8k3am_Jg>
+Received: from localhost (lfbn-tou-1-1502-76.w90-89.abo.wanadoo.fr [90.89.68.76])
+        by mail.messagingengine.com (Postfix) with ESMTPA id 700D13060134;
+        Mon,  3 Feb 2020 03:30:29 -0500 (EST)
+Date:   Mon, 3 Feb 2020 09:30:27 +0100
+From:   Maxime Ripard <maxime@cerno.tech>
+To:     Florian Fainelli <f.fainelli@gmail.com>
+Cc:     linux-arm-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Ray Jui <rjui@broadcom.com>,
+        Scott Branden <sbranden@broadcom.com>,
+        "maintainer:BROADCOM IPROC ARM ARCHITECTURE" 
+        <bcm-kernel-feedback-list@broadcom.com>,
+        Nicolas Saenz Julienne <nsaenzjulienne@suse.de>,
+        Sugaya Taichi <sugaya.taichi@socionext.com>,
+        Olof Johansson <olof@lixom.net>,
+        Andrew Jeffery <andrew@aj.id.au>,
+        Lubomir Rintel <lkundrak@v3.sk>,
+        "moderated list:BROADCOM IPROC ARM ARCHITECTURE" 
+        <linux-arm-kernel@lists.infradead.org>,
+        open list <linux-kernel@vger.kernel.org>,
+        "moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE" 
+        <linux-rpi-kernel@lists.infradead.org>
+Subject: Re: [PATCH 06/12] dt-bindings: arm: bcm: Convert BCM21664 to YAML
+Message-ID: <20200203083027.gdlrv7vcv5hir3g7@gilmour.lan>
+References: <20200202211827.27682-1-f.fainelli@gmail.com>
+ <20200202211827.27682-7-f.fainelli@gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200202211827.27682-7-f.fainelli@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-count_entries() function is only used to count sub-dirs.
-Clarify the role and rename to count_dir_entries().
+On Sun, Feb 02, 2020 at 01:18:21PM -0800, Florian Fainelli wrote:
+> Update the Broadcom BCM21664 SoC binding document for boards/SoCs to use
+> YAML. Verified with dt_binding_check and dtbs_check.
+>
+> Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
+> ---
+>  .../bindings/arm/bcm/brcm,bcm21664.txt        | 15 ------------
+>  .../bindings/arm/bcm/brcm,bcm21664.yaml       | 23 +++++++++++++++++++
+>  2 files changed, 23 insertions(+), 15 deletions(-)
+>  delete mode 100644 Documentation/devicetree/bindings/arm/bcm/brcm,bcm21664.txt
+>  create mode 100644 Documentation/devicetree/bindings/arm/bcm/brcm,bcm21664.yaml
+>
+> diff --git a/Documentation/devicetree/bindings/arm/bcm/brcm,bcm21664.txt b/Documentation/devicetree/bindings/arm/bcm/brcm,bcm21664.txt
+> deleted file mode 100644
+> index e0774255e1a6..000000000000
+> --- a/Documentation/devicetree/bindings/arm/bcm/brcm,bcm21664.txt
+> +++ /dev/null
+> @@ -1,15 +0,0 @@
+> -Broadcom BCM21664 device tree bindings
+> ---------------------------------------
+> -
+> -This document describes the device tree bindings for boards with the BCM21664
+> -SoC.
+> -
+> -Required root node property:
+> -  - compatible: brcm,bcm21664
+> -
+> -Example:
+> -	/ {
+> -		model = "BCM21664 SoC";
+> -		compatible = "brcm,bcm21664";
+> -		[...]
+> -	}
+> diff --git a/Documentation/devicetree/bindings/arm/bcm/brcm,bcm21664.yaml b/Documentation/devicetree/bindings/arm/bcm/brcm,bcm21664.yaml
+> new file mode 100644
+> index 000000000000..8a38a6b68f60
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/arm/bcm/brcm,bcm21664.yaml
+> @@ -0,0 +1,23 @@
+> +# SPDX-License-Identifier: GPL-2.0
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/arm/bcm/brcm,bcm21664.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Broadcom BCM21664 device tree bindings
+> +
+> +maintainers:
+> +  - Florian Fainelli <f.fainelli@gmail.com>
+> +
+> +properties:
+> +  $nodename:
+> +    const: '/'
+> +  compatible:
+> +    oneOf:
+> +      - description: BCM21664 based boards
+> +        items:
+> +          - enum:
+> +              - brcm,bcm21664-garnet
+> +          - const: brcm,bcm21664
 
-Signed-off-by: Tetsuhiro Kohada <Kohada.Tetsuhiro@dc.MitsubishiElectric.co.jp>
----
- drivers/staging/exfat/exfat.h       | 2 +-
- drivers/staging/exfat/exfat_core.c  | 8 ++------
- drivers/staging/exfat/exfat_super.c | 4 ++--
- 3 files changed, 5 insertions(+), 9 deletions(-)
+Do you really need the oneOf here?
 
-diff --git a/drivers/staging/exfat/exfat.h b/drivers/staging/exfat/exfat.h
-index 62aba0feda12..be0ce8998cce 100644
---- a/drivers/staging/exfat/exfat.h
-+++ b/drivers/staging/exfat/exfat.h
-@@ -694,7 +694,7 @@ struct entry_set_cache_t *get_entry_set_in_dir(struct super_block *sb,
- 					       u32 type,
- 					       struct dentry_t **file_ep);
- void release_entry_set(struct entry_set_cache_t *es);
--s32 count_entries(struct super_block *sb, struct chain_t *p_dir, u32 type);
-+s32 count_dir_entries(struct super_block *sb, struct chain_t *p_dir);
- void update_dir_checksum(struct super_block *sb, struct chain_t *p_dir,
- 			 s32 entry);
- void update_dir_checksum_with_entry_set(struct super_block *sb,
-diff --git a/drivers/staging/exfat/exfat_core.c b/drivers/staging/exfat/exfat_core.c
-index 188349eeef5f..a9c86aae688b 100644
---- a/drivers/staging/exfat/exfat_core.c
-+++ b/drivers/staging/exfat/exfat_core.c
-@@ -1854,7 +1854,7 @@ s32 exfat_count_ext_entries(struct super_block *sb, struct chain_t *p_dir,
- 	return count;
- }
- 
--s32 count_entries(struct super_block *sb, struct chain_t *p_dir, u32 type)
-+s32 count_dir_entries(struct super_block *sb, struct chain_t *p_dir)
- {
- 	int i, count = 0;
- 	s32 dentries_per_clu;
-@@ -1885,11 +1885,7 @@ s32 count_entries(struct super_block *sb, struct chain_t *p_dir, u32 type)
- 
- 			if (entry_type == TYPE_UNUSED)
- 				return count;
--			if (!(type & TYPE_CRITICAL_PRI) &&
--			    !(type & TYPE_BENIGN_PRI))
--				continue;
--
--			if ((type == TYPE_ALL) || (type == entry_type))
-+			if (entry_type == TYPE_DIR)
- 				count++;
- 		}
- 
-diff --git a/drivers/staging/exfat/exfat_super.c b/drivers/staging/exfat/exfat_super.c
-index ae666f79ff48..e706fdd667ed 100644
---- a/drivers/staging/exfat/exfat_super.c
-+++ b/drivers/staging/exfat/exfat_super.c
-@@ -1476,7 +1476,7 @@ static int ffsReadStat(struct inode *inode, struct dir_entry_t *info)
- 						p_fs->cluster_size_bits;
- 			}
- 
--			count = count_entries(sb, &dir, TYPE_DIR);
-+			count = count_dir_entries(sb, &dir);
- 			if (count < 0) {
- 				ret = count; /* propagate error upward */
- 				goto out;
-@@ -1543,7 +1543,7 @@ static int ffsReadStat(struct inode *inode, struct dir_entry_t *info)
- 			info->Size = (u64)count_num_clusters(sb, &dir) <<
- 					p_fs->cluster_size_bits;
- 
--		count = count_entries(sb, &dir, TYPE_DIR);
-+		count = count_dir_entries(sb, &dir);
- 		if (count < 0) {
- 			ret = count; /* propagate error upward */
- 			goto out;
--- 
-2.25.0
-
+Maxime
