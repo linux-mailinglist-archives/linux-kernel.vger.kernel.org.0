@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F23A0150D64
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Feb 2020 17:44:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C5870150BAF
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Feb 2020 17:31:01 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730717AbgBCQoL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 3 Feb 2020 11:44:11 -0500
-Received: from mail.kernel.org ([198.145.29.99]:45470 "EHLO mail.kernel.org"
+        id S1729826AbgBCQ3j (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 3 Feb 2020 11:29:39 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41498 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730318AbgBCQb7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Feb 2020 11:31:59 -0500
+        id S1729801AbgBCQ3b (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Feb 2020 11:29:31 -0500
 Received: from localhost (unknown [104.132.45.99])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id F0CF92051A;
-        Mon,  3 Feb 2020 16:31:57 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1660620838;
+        Mon,  3 Feb 2020 16:29:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1580747518;
-        bh=NrobwdqGaNU0yOau8EcxQ97LyAVOpcmmB++1rcAI2n4=;
+        s=default; t=1580747370;
+        bh=4BulwQtBrg3DU3XdrFtI9JrA+USSSeddWgbxypc0wxk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=g5/9aUAarX3wSAuUKM0CEneuthCrnu6d8pwfNffqW6Kr9CwkOhWv7JzYE/LiOE29x
-         aOF5bHooGN6HFxUWjMNv3lkFBZWtr0483TStp41iTU9nm79kQNzkXPcGpjfyEJ2HCq
-         ZDkzJhPTJsxYkLuTmsev7iS5lqioCUxjKnZjWjnM=
+        b=iFdBYVDI99FhEsNi+4bSMFntX9IV57GcQhOoYAYEwc+hFWb2CIFd5Qv4YUOVF8+GC
+         HiVEBsQLguYlpViLzDjtX2dGDk9FbFm9R0/p4EOkvwEK1Vkmbm1eV0UsbcI5zZk5sB
+         kkzPa/TFcUHTJDEEVxroCkCNXvmRnRvuFfYOoNFs=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Kishon Vijay Abraham I <kishon@ti.com>,
         Tony Lindgren <tony@atomide.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 27/70] ARM: dts: beagle-x15-common: Model 5V0 regulator
+Subject: [PATCH 4.14 54/89] ARM: dts: beagle-x15-common: Model 5V0 regulator
 Date:   Mon,  3 Feb 2020 16:19:39 +0000
-Message-Id: <20200203161916.469335121@linuxfoundation.org>
+Message-Id: <20200203161923.975475988@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200203161912.158976871@linuxfoundation.org>
-References: <20200203161912.158976871@linuxfoundation.org>
+In-Reply-To: <20200203161916.847439465@linuxfoundation.org>
+References: <20200203161916.847439465@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -61,7 +61,7 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  1 file changed, 21 insertions(+)
 
 diff --git a/arch/arm/boot/dts/am57xx-beagle-x15-common.dtsi b/arch/arm/boot/dts/am57xx-beagle-x15-common.dtsi
-index 872382bd043f8..0051b2e05c2d5 100644
+index 49aeecd312b4b..d578a9f7e1a0e 100644
 --- a/arch/arm/boot/dts/am57xx-beagle-x15-common.dtsi
 +++ b/arch/arm/boot/dts/am57xx-beagle-x15-common.dtsi
 @@ -32,6 +32,27 @@
