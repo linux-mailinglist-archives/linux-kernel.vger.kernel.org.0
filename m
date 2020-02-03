@@ -2,213 +2,122 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1549115123A
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Feb 2020 23:08:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 32C09151232
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Feb 2020 23:06:53 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727218AbgBCWIN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 3 Feb 2020 17:08:13 -0500
-Received: from mail-il1-f197.google.com ([209.85.166.197]:37678 "EHLO
-        mail-il1-f197.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726924AbgBCWIN (ORCPT
+        id S1727150AbgBCWGu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 3 Feb 2020 17:06:50 -0500
+Received: from aserp2120.oracle.com ([141.146.126.78]:42692 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726331AbgBCWGt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Feb 2020 17:08:13 -0500
-Received: by mail-il1-f197.google.com with SMTP id z79so13222102ilf.4
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Feb 2020 14:08:12 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=Fl+mqf7SXbDA+ahGJYdNPGegyPt8l79GHARMg/wdaAs=;
-        b=YfLDZvTBPzIL90m9tT7m7j5mN7GwFVplAKsjzSC+IVeaP6orxsDaz6kpyOaltR4T+L
-         A9ad3/+mec/0nKzW2NMjZQruZm+QYPYYUT7yHNSlEk7uLx9sb5pZPRmmmgoZ78zgqe2f
-         KW/ph9fHfSGg/R5TSEiz/2dUMpvVuXufclCJR2dEHcKlRpVWuhsc98XBEZyvybA0A+3U
-         +cUGUjp7s4q2YR/6tHcf9LhKpXMe26qbDWLPAwk5nOm0OYV2FPnc6VdcjT6lQKRw26Bo
-         gua7yoVwDyowL8i2Gce64BS0PaUASHPdQ6I+O7q8jI/MtjmXwmi8usAl3JiLdYKaBIS5
-         Mifg==
-X-Gm-Message-State: APjAAAVNddl8vxIbbsJ8eXIXRm3fiHKeiU5vcnG0+jbaJFbdvLwdukYJ
-        FiOV9fLi/V/Q8Jvk4CXfrc5k16CZxHMA5X1jlLSiWWbxANHq
-X-Google-Smtp-Source: APXvYqyQ+w9fm6B/HIwRnHtRDk2vjXzNHeQ1F3vNZIncW6vp9VQKkMODARcwAdWPAHzG6DjcnOeyZrGypXGWCmtfI4/BLtOOD23e
+        Mon, 3 Feb 2020 17:06:49 -0500
+Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
+        by aserp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id 013M4ZF3186917;
+        Mon, 3 Feb 2020 22:06:47 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to :
+ subject : message-id : mime-version : content-type; s=corp-2019-08-05;
+ bh=NB6sde12eQA5tWD5a8THQMHPqXfAxjDZixfUJ6/2uDw=;
+ b=eoW3ojXGBlrl0QsjywVC4TTeOxKjLTEdbLzKm90+VgOHF0nJV+siN4GAaKm5Ho81X2kv
+ WzcsbLydae2Oq8NMC8ctYKeflx7gR7f138p2q3IDj1rSp9tVL0ITVgVBQojYOmFs1h1v
+ Qv4kToXls2BSZE0vkjM2rBfOWlVJkv6E/3j3LOCC9aJSMHTci47RjHd565mTt/ZhibsO
+ 4Nq+S2LEGxZOJj6pN9CDFmzsKhAdmLtHCVQK82qEdFuv4oyO4JRXPYgf1mfGZUD5IG5d
+ x54QaUv3XfUt5hSJh9xntcZio9MgA+lXtVTrxActUr2qValGvZIXdaYzkWtC8oPZ7A/Y 9Q== 
+Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
+        by aserp2120.oracle.com with ESMTP id 2xw19qat17-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 03 Feb 2020 22:06:47 +0000
+Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
+        by aserp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id 013M4WoI140542;
+        Mon, 3 Feb 2020 22:06:47 GMT
+Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
+        by aserp3020.oracle.com with ESMTP id 2xxsbhvtkp-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 03 Feb 2020 22:06:46 +0000
+Received: from abhmp0015.oracle.com (abhmp0015.oracle.com [141.146.116.21])
+        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 013M6jil019527;
+        Mon, 3 Feb 2020 22:06:45 GMT
+Received: from char.us.oracle.com (/10.152.32.25)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Mon, 03 Feb 2020 14:06:45 -0800
+Received: by char.us.oracle.com (Postfix, from userid 1000)
+        id 1F3246A010B; Mon,  3 Feb 2020 17:10:27 -0500 (EST)
+Date:   Mon, 3 Feb 2020 17:10:27 -0500
+From:   Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+To:     Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-kernel@vger.kernel.org
+Subject: [GIT PULL] (ibft) changes for 5.6 merge window
+Message-ID: <20200203221027.GA10946@char.us.oracle.com>
 MIME-Version: 1.0
-X-Received: by 2002:a02:81cc:: with SMTP id r12mr20424294jag.93.1580767692501;
- Mon, 03 Feb 2020 14:08:12 -0800 (PST)
-Date:   Mon, 03 Feb 2020 14:08:12 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000c8bcba059db3289b@google.com>
-Subject: possible deadlock in wg_set_device
-From:   syzbot <syzbot+42d05aefd7fce69f968f@syzkaller.appspotmail.com>
-To:     Jason@zx2c4.com, davem@davemloft.net, jason@zx2c4.com,
-        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com, wireguard@lists.zx2c4.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="vtzGhvizbBRQ85DL"
+Content-Disposition: inline
+User-Agent: Mutt/1.9.1 (2017-09-22)
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9520 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1911140001 definitions=main-2002030159
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9520 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1911140001
+ definitions=main-2002030159
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
 
-syzbot found the following crash on:
+--vtzGhvizbBRQ85DL
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-HEAD commit:    9f68e365 Merge tag 'drm-next-2020-01-30' of git://anongit...
-git tree:       net-next
-console output: https://syzkaller.appspot.com/x/log.txt?x=11b068b5e00000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=95b275782b150c86
-dashboard link: https://syzkaller.appspot.com/bug?extid=42d05aefd7fce69f968f
-compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1087e9bee00000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=16c665bee00000
+Hey Linus,
 
-The bug was bisected to:
+The following changes since commit 040a3c33623ba4bd11588ab0820281b854a3ffaf:
 
-commit e7096c131e5161fa3b8e52a650d7719d2857adfd
-Author: Jason A. Donenfeld <Jason@zx2c4.com>
-Date:   Sun Dec 8 23:27:34 2019 +0000
+  Merge tag 'iommu-fixes-v5.5-rc5' of git://git.kernel.org/pub/scm/linux/kernel/git/joro/iommu (2020-01-12 09:35:42 -0800)
 
-    net: WireGuard secure network tunnel
+are available in the Git repository at:
 
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=15abc7c9e00000
-final crash:    https://syzkaller.appspot.com/x/report.txt?x=17abc7c9e00000
-console output: https://syzkaller.appspot.com/x/log.txt?x=13abc7c9e00000
+  git://git.kernel.org/pub/scm/linux/kernel/git/konrad/ibft.git stable/for-linus-5.6
 
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+42d05aefd7fce69f968f@syzkaller.appspotmail.com
-Fixes: e7096c131e51 ("net: WireGuard secure network tunnel")
+for you to fetch changes up to c08406033fe83a4cb307f2a2e949c59bb86b4f49:
 
-batman_adv: batadv0: Interface activated: batadv_slave_1
-======================================================
-WARNING: possible circular locking dependency detected
-5.5.0-syzkaller #0 Not tainted
-------------------------------------------------------
-syz-executor962/10036 is trying to acquire lock:
-ffff8880a9696128 ((wq_completion)wg-kex-wireguard0){+.+.}, at: flush_workqueue+0xf7/0x14c0 kernel/workqueue.c:2772
+  iscsi_ibft: Don't limits Targets and NICs to two (2020-01-12 13:16:04 -0500)
 
-but task is already holding lock:
-ffff88808ee54e80 (&wg->static_identity.lock){++++}, at: wg_set_device+0xe8b/0x1350 drivers/net/wireguard/netlink.c:567
+..basically adhere to the iBFT spec and extend the structure to handle to more
+than two NICs.
 
-which lock already depends on the new lock.
+Thank you!
 
+----------------------------------------------------------------
+Lubomir Rintel (1):
+      iscsi_ibft: Don't limits Targets and NICs to two
 
-the existing dependency chain (in reverse order) is:
+ drivers/firmware/iscsi_ibft.c | 9 +++++----
+ 1 file changed, 5 insertions(+), 4 deletions(-)
 
--> #2 (&wg->static_identity.lock){++++}:
-       down_read+0x95/0x430 kernel/locking/rwsem.c:1495
-       wg_noise_handshake_create_initiation+0xc0/0x670 drivers/net/wireguard/noise.c:499
-       wg_packet_send_handshake_initiation+0x185/0x250 drivers/net/wireguard/send.c:34
-       wg_packet_handshake_send_worker+0x1d/0x30 drivers/net/wireguard/send.c:51
-       process_one_work+0xa05/0x17a0 kernel/workqueue.c:2264
-       worker_thread+0x98/0xe40 kernel/workqueue.c:2410
-       kthread+0x361/0x430 kernel/kthread.c:255
-       ret_from_fork+0x24/0x30 arch/x86/entry/entry_64.S:352
+--vtzGhvizbBRQ85DL
+Content-Type: application/pgp-signature; name="signature.asc"
 
--> #1 ((work_completion)(&peer->transmit_handshake_work)){+.+.}:
-       process_one_work+0x972/0x17a0 kernel/workqueue.c:2240
-       worker_thread+0x98/0xe40 kernel/workqueue.c:2410
-       kthread+0x361/0x430 kernel/kthread.c:255
-       ret_from_fork+0x24/0x30 arch/x86/entry/entry_64.S:352
+-----BEGIN PGP SIGNATURE-----
 
--> #0 ((wq_completion)wg-kex-wireguard0){+.+.}:
-       check_prev_add kernel/locking/lockdep.c:2475 [inline]
-       check_prevs_add kernel/locking/lockdep.c:2580 [inline]
-       validate_chain kernel/locking/lockdep.c:2970 [inline]
-       __lock_acquire+0x2596/0x4a00 kernel/locking/lockdep.c:3954
-       lock_acquire+0x190/0x410 kernel/locking/lockdep.c:4484
-       flush_workqueue+0x126/0x14c0 kernel/workqueue.c:2775
-       peer_remove_after_dead+0x16b/0x230 drivers/net/wireguard/peer.c:141
-       wg_peer_remove+0x244/0x340 drivers/net/wireguard/peer.c:176
-       wg_set_device+0xf76/0x1350 drivers/net/wireguard/netlink.c:575
-       genl_family_rcv_msg_doit net/netlink/genetlink.c:672 [inline]
-       genl_family_rcv_msg net/netlink/genetlink.c:717 [inline]
-       genl_rcv_msg+0x67d/0xea0 net/netlink/genetlink.c:734
-       netlink_rcv_skb+0x177/0x450 net/netlink/af_netlink.c:2477
-       genl_rcv+0x29/0x40 net/netlink/genetlink.c:745
-       netlink_unicast_kernel net/netlink/af_netlink.c:1302 [inline]
-       netlink_unicast+0x59e/0x7e0 net/netlink/af_netlink.c:1328
-       netlink_sendmsg+0x91c/0xea0 net/netlink/af_netlink.c:1917
-       sock_sendmsg_nosec net/socket.c:652 [inline]
-       sock_sendmsg+0xd7/0x130 net/socket.c:672
-       ____sys_sendmsg+0x753/0x880 net/socket.c:2343
-       ___sys_sendmsg+0x100/0x170 net/socket.c:2397
-       __sys_sendmsg+0x105/0x1d0 net/socket.c:2430
-       __do_sys_sendmsg net/socket.c:2439 [inline]
-       __se_sys_sendmsg net/socket.c:2437 [inline]
-       __x64_sys_sendmsg+0x78/0xb0 net/socket.c:2437
-       do_syscall_64+0xfa/0x790 arch/x86/entry/common.c:294
-       entry_SYSCALL_64_after_hwframe+0x49/0xbe
+iQIcBAEBAgAGBQJeOJpTAAoJEFKlDoTx2wm/7LgP/1o2Bmpyy2PZDJJs8Ow1QYe6
+m0CcWsWFp7rwbJ3usZaLb5MCp97LcbYrKooVdgtH1zAiRt1mp00VHJj6hXfbdhxf
+qUABAJ4HommRILvRS1ejm/rx8YT3WJzn8n6RPFWSDlx+tmZy+roJcVEts9c/xDFa
+9T5h+1L3xzQw1IGSPH5yXG7LcbEKOVdH3N1wXiZdnU/ZYhgrYGP1jdk/c5uF2W4C
+LNELAt3tSUUxCIm7r6/7qQpOvtDqOeORnRxeN+eObWqlOOQzw7RWkX5p1CniFc1Z
+L2HCooxHr5gKHRVLL5MtJP2DRKaOUR5NJSMUk+fxeyeP78NtIixfGAP90W5w/cOY
+ucZXdVxeNsq+mmm388LIjQ6ht/3g+ehJP5+T1144kHdf45X8cnHq78XruuWafiqz
+mkc73CABxHi9ZgUMBv3hTIXVRRS3eaW9oE4R58ikuHDqJ3npa4A5mm1sffqK5PLZ
+Qnw33mi0rVdIi5rNqu4E18GF/mVX1cc7ejl8wyr9Hb3d2qS3F6KtHmjE4k1cZeCk
+t1Zx3OKv+Umb50RsNDiLaZXJNpBwJeZTJxZHHI0NgCYIKDdhZ/LWVB1pSXex3vaS
+5P/d2NC0FPUrVIpQml22rSoyCNScLd/H6FL5imFZueyvJu1eVt0qODEXv5K77orF
+GlL3744Ff3seK7X/WCG/
+=+mMZ
+-----END PGP SIGNATURE-----
 
-other info that might help us debug this:
-
-Chain exists of:
-  (wq_completion)wg-kex-wireguard0 --> (work_completion)(&peer->transmit_handshake_work) --> &wg->static_identity.lock
-
- Possible unsafe locking scenario:
-
-       CPU0                    CPU1
-       ----                    ----
-  lock(&wg->static_identity.lock);
-                               lock((work_completion)(&peer->transmit_handshake_work));
-                               lock(&wg->static_identity.lock);
-  lock((wq_completion)wg-kex-wireguard0);
-
- *** DEADLOCK ***
-
-5 locks held by syz-executor962/10036:
- #0: ffffffff8a7899e8 (cb_lock){++++}, at: genl_rcv+0x1a/0x40 net/netlink/genetlink.c:744
- #1: ffffffff8a789aa0 (genl_mutex){+.+.}, at: genl_lock net/netlink/genetlink.c:33 [inline]
- #1: ffffffff8a789aa0 (genl_mutex){+.+.}, at: genl_rcv_msg+0x7de/0xea0 net/netlink/genetlink.c:732
- #2: ffffffff8a733c80 (rtnl_mutex){+.+.}, at: rtnl_lock+0x17/0x20 net/core/rtnetlink.c:72
- #3: ffff88808ee550a0 (&wg->device_update_lock){+.+.}, at: wg_set_device+0x2be/0x1350 drivers/net/wireguard/netlink.c:510
- #4: ffff88808ee54e80 (&wg->static_identity.lock){++++}, at: wg_set_device+0xe8b/0x1350 drivers/net/wireguard/netlink.c:567
-
-stack backtrace:
-CPU: 0 PID: 10036 Comm: syz-executor962 Not tainted 5.5.0-syzkaller #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-Call Trace:
- __dump_stack lib/dump_stack.c:77 [inline]
- dump_stack+0x197/0x210 lib/dump_stack.c:118
- print_circular_bug.isra.0.cold+0x163/0x172 kernel/locking/lockdep.c:1684
- check_noncircular+0x32e/0x3e0 kernel/locking/lockdep.c:1808
- check_prev_add kernel/locking/lockdep.c:2475 [inline]
- check_prevs_add kernel/locking/lockdep.c:2580 [inline]
- validate_chain kernel/locking/lockdep.c:2970 [inline]
- __lock_acquire+0x2596/0x4a00 kernel/locking/lockdep.c:3954
- lock_acquire+0x190/0x410 kernel/locking/lockdep.c:4484
- flush_workqueue+0x126/0x14c0 kernel/workqueue.c:2775
- peer_remove_after_dead+0x16b/0x230 drivers/net/wireguard/peer.c:141
- wg_peer_remove+0x244/0x340 drivers/net/wireguard/peer.c:176
- wg_set_device+0xf76/0x1350 drivers/net/wireguard/netlink.c:575
- genl_family_rcv_msg_doit net/netlink/genetlink.c:672 [inline]
- genl_family_rcv_msg net/netlink/genetlink.c:717 [inline]
- genl_rcv_msg+0x67d/0xea0 net/netlink/genetlink.c:734
- netlink_rcv_skb+0x177/0x450 net/netlink/af_netlink.c:2477
- genl_rcv+0x29/0x40 net/netlink/genetlink.c:745
- netlink_unicast_kernel net/netlink/af_netlink.c:1302 [inline]
- netlink_unicast+0x59e/0x7e0 net/netlink/af_netlink.c:1328
- netlink_sendmsg+0x91c/0xea0 net/netlink/af_netlink.c:1917
- sock_sendmsg_nosec net/socket.c:652 [inline]
- sock_sendmsg+0xd7/0x130 net/socket.c:672
- ____sys_sendmsg+0x753/0x880 net/socket.c:2343
- ___sys_sendmsg+0x100/0x170 net/socket.c:2397
- __sys_sendmsg+0x105/0x1d0 net/socket.c:2430
- __do_sys_sendmsg net/socket.c:2439 [inline]
- __se_sys_sendmsg net/socket.c:2437 [inline]
- __x64_sys_sendmsg+0x78/0xb0 net/socket.c:2437
- do_syscall_64+0xfa/0x790 arch/x86/entry/common.c:294
- entry_SYSCALL_64_after_hwframe+0x49/0xbe
-RIP: 0033:0x4491c9
-Code: 18 89 d0 c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 0f 83 9b d4 fb ff c3 66 2e 0f 1f 84 00 00 00 00
-RSP: 002b:00007ffcc45f9878 EFLAGS: 00000246 ORIG_RAX: 000000000000002e
-RAX: ffffffffffffffda RBX: 0000000000003064 RCX: 00000000004491c9
-RDX: 0000000000000000 RSI: 0000000020001340 RDI: 0000000000000004
-RBP: 7261756765726977 R08: 0000000000000000 R09: 0000000001bbbbb
-
-
----
-This bug is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this bug report. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
-syzbot can test patches for this bug, for details see:
-https://goo.gl/tpsmEJ#testing-patches
+--vtzGhvizbBRQ85DL--
