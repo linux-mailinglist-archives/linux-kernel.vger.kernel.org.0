@@ -2,41 +2,42 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8CE20150ABD
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Feb 2020 17:20:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 67F4D150B8E
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Feb 2020 17:28:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728260AbgBCQUb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 3 Feb 2020 11:20:31 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60306 "EHLO mail.kernel.org"
+        id S1729630AbgBCQ2i (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 3 Feb 2020 11:28:38 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40146 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728541AbgBCQU3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Feb 2020 11:20:29 -0500
+        id S1729601AbgBCQ2b (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Feb 2020 11:28:31 -0500
 Received: from localhost (unknown [104.132.45.99])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 14C2020838;
-        Mon,  3 Feb 2020 16:20:27 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8DDA521582;
+        Mon,  3 Feb 2020 16:28:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1580746828;
-        bh=WIITaM8Y9JTtZxsqHdkwulwYQlCcQWStSmIDcvjHjx8=;
+        s=default; t=1580747311;
+        bh=Dp+l0yRnGI0bXRovKJ2GdW24jlEgCsxIEgc95RIByA0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=I7cQsuirZzuefpx5IcjvaXgg43ZkxboIlwC8Z86g3Zy9FJLy9PvFJsuN9hXNeqdpi
-         jnbMSkLI1iPIhrSEIDmXr7Hh0j+TxNj/yDX4kGEQkN0ik+AWRsmERkdNt3sjqSIWpt
-         YP0UzkaEs2QKqXbBHabQABGOBWYkSmeQ1+40k9oo=
+        b=nPhpsv/IA52/OYL/1coCe+riO+k61kzyjs5yWLhfjwtyJUyImkbkJ4W862Bj1i9wg
+         pwSLUomPiOjiBq2eGGUnzyea6rAwvpNuwsbN2TifWqj6i8GX2764VXRHcpAZSwZAhH
+         KJjI4yuwi7mTeBzZZ+eEFO9+DQCsAkhWD3sDOzIM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        "Rantala, Tommi T. (Nokia - FI/Espoo)" <tommi.t.rantala@nokia.com>,
-        syzbot+190005201ced78a74ad6@syzkaller.appspotmail.com,
-        stable@kernel.org, Al Viro <viro@zeniv.linux.org.uk>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Subject: [PATCH 4.4 23/53] vfs: fix do_last() regression
-Date:   Mon,  3 Feb 2020 16:19:15 +0000
-Message-Id: <20200203161907.289417636@linuxfoundation.org>
+        syzbot+1d1597a5aa3679c65b9f@syzkaller.appspotmail.com,
+        Prameela Rani Garnepudi <prameela.j04cs@gmail.com>,
+        Amitkumar Karwar <amit.karwar@redpinesignals.com>,
+        Johan Hovold <johan@kernel.org>,
+        Kalle Valo <kvalo@codeaurora.org>
+Subject: [PATCH 4.14 31/89] rsi: fix use-after-free on probe errors
+Date:   Mon,  3 Feb 2020 16:19:16 +0000
+Message-Id: <20200203161920.975871420@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200203161902.714326084@linuxfoundation.org>
-References: <20200203161902.714326084@linuxfoundation.org>
+In-Reply-To: <20200203161916.847439465@linuxfoundation.org>
+References: <20200203161916.847439465@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,63 +47,73 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Al Viro <viro@zeniv.linux.org.uk>
+From: Johan Hovold <johan@kernel.org>
 
-commit 6404674acd596de41fd3ad5f267b4525494a891a upstream.
+commit 92aafe77123ab478e5f5095878856ab0424910da upstream.
 
-Brown paperbag time: fetching ->i_uid/->i_mode really should've been
-done from nd->inode.  I even suggested that, but the reason for that has
-slipped through the cracks and I went for dir->d_inode instead - made
-for more "obvious" patch.
+The driver would fail to stop the command timer in most error paths,
+something which specifically could lead to the timer being freed while
+still active on I/O errors during probe.
 
-Analysis:
+Fix this by making sure that each function starting the timer also stops
+it in all relevant error paths.
 
- - at the entry into do_last() and all the way to step_into(): dir (aka
-   nd->path.dentry) is known not to have been freed; so's nd->inode and
-   it's equal to dir->d_inode unless we are already doomed to -ECHILD.
-   inode of the file to get opened is not known.
-
- - after step_into(): inode of the file to get opened is known; dir
-   might be pointing to freed memory/be negative/etc.
-
- - at the call of may_create_in_sticky(): guaranteed to be out of RCU
-   mode; inode of the file to get opened is known and pinned; dir might
-   be garbage.
-
-The last was the reason for the original patch.  Except that at the
-do_last() entry we can be in RCU mode and it is possible that
-nd->path.dentry->d_inode has already changed under us.
-
-In that case we are going to fail with -ECHILD, but we need to be
-careful; nd->inode is pointing to valid struct inode and it's the same
-as nd->path.dentry->d_inode in "won't fail with -ECHILD" case, so we
-should use that.
-
-Reported-by: "Rantala, Tommi T. (Nokia - FI/Espoo)" <tommi.t.rantala@nokia.com>
-Reported-by: syzbot+190005201ced78a74ad6@syzkaller.appspotmail.com
-Wearing-brown-paperbag: Al Viro <viro@zeniv.linux.org.uk>
-Cc: stable@kernel.org
-Fixes: d0cb50185ae9 ("do_last(): fetch directory ->i_mode and ->i_uid before it's too late")
-Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Reported-by: syzbot+1d1597a5aa3679c65b9f@syzkaller.appspotmail.com
+Fixes: b78e91bcfb33 ("rsi: Add new firmware loading method")
+Cc: stable <stable@vger.kernel.org>     # 4.12
+Cc: Prameela Rani Garnepudi <prameela.j04cs@gmail.com>
+Cc: Amitkumar Karwar <amit.karwar@redpinesignals.com>
+Signed-off-by: Johan Hovold <johan@kernel.org>
+Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/namei.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/net/wireless/rsi/rsi_91x_hal.c |   12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
 
---- a/fs/namei.c
-+++ b/fs/namei.c
-@@ -3060,8 +3060,8 @@ static int do_last(struct nameidata *nd,
- 		   int *opened)
- {
- 	struct dentry *dir = nd->path.dentry;
--	kuid_t dir_uid = dir->d_inode->i_uid;
--	umode_t dir_mode = dir->d_inode->i_mode;
-+	kuid_t dir_uid = nd->inode->i_uid;
-+	umode_t dir_mode = nd->inode->i_mode;
- 	int open_flag = op->open_flag;
- 	bool will_truncate = (open_flag & O_TRUNC) != 0;
- 	bool got_write = false;
+--- a/drivers/net/wireless/rsi/rsi_91x_hal.c
++++ b/drivers/net/wireless/rsi/rsi_91x_hal.c
+@@ -541,6 +541,7 @@ static int bl_cmd(struct rsi_hw *adapter
+ 	bl_start_cmd_timer(adapter, timeout);
+ 	status = bl_write_cmd(adapter, cmd, exp_resp, &regout_val);
+ 	if (status < 0) {
++		bl_stop_cmd_timer(adapter);
+ 		rsi_dbg(ERR_ZONE,
+ 			"%s: Command %s (%0x) writing failed..\n",
+ 			__func__, str, cmd);
+@@ -656,10 +657,9 @@ static int ping_pong_write(struct rsi_hw
+ 	}
+ 
+ 	status = bl_cmd(adapter, cmd_req, cmd_resp, str);
+-	if (status) {
+-		bl_stop_cmd_timer(adapter);
++	if (status)
+ 		return status;
+-	}
++
+ 	return 0;
+ }
+ 
+@@ -749,10 +749,9 @@ static int auto_fw_upgrade(struct rsi_hw
+ 
+ 	status = bl_cmd(adapter, EOF_REACHED, FW_LOADING_SUCCESSFUL,
+ 			"EOF_REACHED");
+-	if (status) {
+-		bl_stop_cmd_timer(adapter);
++	if (status)
+ 		return status;
+-	}
++
+ 	rsi_dbg(INFO_ZONE, "FW loading is done and FW is running..\n");
+ 	return 0;
+ }
+@@ -773,6 +772,7 @@ static int rsi_load_firmware(struct rsi_
+ 		status = hif_ops->master_reg_read(adapter, SWBL_REGOUT,
+ 					      &regout_val, 2);
+ 		if (status < 0) {
++			bl_stop_cmd_timer(adapter);
+ 			rsi_dbg(ERR_ZONE,
+ 				"%s: REGOUT read failed\n", __func__);
+ 			return status;
 
 
