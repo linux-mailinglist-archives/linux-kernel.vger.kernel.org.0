@@ -2,62 +2,105 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 427CB150A7B
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Feb 2020 17:04:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D8B5E150A72
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Feb 2020 17:02:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728606AbgBCQEW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 3 Feb 2020 11:04:22 -0500
-Received: from szxga07-in.huawei.com ([45.249.212.35]:43912 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728389AbgBCQEW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Feb 2020 11:04:22 -0500
-Received: from DGGEMS411-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id 2956C9F6897AF4149922;
-        Tue,  4 Feb 2020 00:04:19 +0800 (CST)
-Received: from localhost.localdomain.localdomain (10.175.113.25) by
- DGGEMS411-HUB.china.huawei.com (10.3.19.211) with Microsoft SMTP Server id
- 14.3.439.0; Tue, 4 Feb 2020 00:04:12 +0800
-From:   YueHaibing <yuehaibing@huawei.com>
-To:     Trond Myklebust <trond.myklebust@hammerspace.com>,
-        Benjamin Coddington <bcodding@redhat.com>,
-        Anna Schumaker <anna.schumaker@netapp.com>
-CC:     YueHaibing <yuehaibing@huawei.com>, <linux-nfs@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <kernel-janitors@vger.kernel.org>
-Subject: [PATCH -next] NFS: use correct 'verifier' in nfs_lookup_revalidate_dentry
-Date:   Mon, 3 Feb 2020 15:58:45 +0000
-Message-ID: <20200203155845.50239-1-yuehaibing@huawei.com>
-X-Mailer: git-send-email 2.20.1
+        id S1728568AbgBCQCQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 3 Feb 2020 11:02:16 -0500
+Received: from mail-qt1-f196.google.com ([209.85.160.196]:45567 "EHLO
+        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728464AbgBCQCP (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Feb 2020 11:02:15 -0500
+Received: by mail-qt1-f196.google.com with SMTP id d9so11770694qte.12
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Feb 2020 08:02:15 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=HjCX6DKDZRyPuFTxNQ4aU6A2wq9gYlzmfJ8lD17itU8=;
+        b=Ck+6WlQcJE25BiRrSHIVOnUYvne1jlfg117XTo2PNNq6uEUOjiDM2DVNysgwlny73c
+         Gr/Pov+u+tJ7ypNSAh9YWJlOwWoS5x+mPK+wlkwCkniM2sqbFM1noFgK+6ub+jSiO3i4
+         /Jl0qXo9bIQA68v9DhAzx++tsGKg9XTgwwX+jhmgc0rH6/wP7BZStFZcNSk+VRkTH0NH
+         MsKa8WGWWn5UKl8FIiBzCnz3M0IQJYlKEqo7IKNuUNm1GxeHVuiU+UfSBVnpRuBv1SV1
+         oK9Vewblu1pxqJLqNlaM852tNEond7EIB04Q5+yJ7UkhM82u0dlq4J4WPCNtw5pFfNxH
+         qLFg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=HjCX6DKDZRyPuFTxNQ4aU6A2wq9gYlzmfJ8lD17itU8=;
+        b=T4cGmb0BghAkeXhGcV800rF3BnVAJQDkPghNb34aDtnjFHxHPc3HVtthL/2rzr6AMv
+         a1cyeVZ3TQcoxy0d2ICOzQM3VZUW7rr+Rc3toopL6L6ARBXLmi0MQ9TxlHZJlunyE4cy
+         nnUBd4DS8361bPb1SY/8VV7ZcZZHPIWPJpGvBGHSAlOi7qsKD8ykau+Mm0WRl8NjxNqR
+         kB+P3X02Avz1JNtVZCut9031Q9VCWN5rr5pR8mxIDo6ghFVybgoLxG97Ym8Ouk9kDQMG
+         uw6rD5cNOZg7AJwfjBv6LFXDeRMhHgSJKSAbZ325zDjidjJWgbCXSKNG8Hd137TKMenG
+         UPPw==
+X-Gm-Message-State: APjAAAX2t8C2CQdgF6+kBlDlgay6e2jCp9LawBgGA6Kkx2NYq4GH+35w
+        jHGMqJcD8/gHXHyLJr0daJQwUw==
+X-Google-Smtp-Source: APXvYqyY7dtDRgnvWHUdqnTYwCPWVXSMT4+TGGcETAa+e/TUe/FBUMLERL5AvnhEUkfLTW4GLqgMtg==
+X-Received: by 2002:ac8:6ec1:: with SMTP id f1mr24196773qtv.144.1580745734160;
+        Mon, 03 Feb 2020 08:02:14 -0800 (PST)
+Received: from [172.20.20.20] ([73.61.14.12])
+        by smtp.gmail.com with ESMTPSA id 21sm9393262qky.41.2020.02.03.08.02.13
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 03 Feb 2020 08:02:13 -0800 (PST)
+Subject: Re: [iommu/vt] c9ac3b69cf:
+ WARNING:at_drivers/iommu/intel-iommu.c:#dmar_parse_one_rmrr
+To:     kernel test robot <rong.a.chen@intel.com>
+Cc:     0day robot <lkp@intel.com>, LKML <linux-kernel@vger.kernel.org>,
+        lkp@lists.01.org
+References: <20200203091023.GH12867@shao2-debian>
+From:   Barret Rhoden <brho@google.com>
+Message-ID: <abfc90f3-1b2a-9784-e688-209913c1d9a4@google.com>
+Date:   Mon, 3 Feb 2020 11:02:12 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.2.2
 MIME-Version: 1.0
-Content-Type:   text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7BIT
-X-Originating-IP: [10.175.113.25]
-X-CFilter-Loop: Reflected
+In-Reply-To: <20200203091023.GH12867@shao2-debian>
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-'verifier' is already set but not used in nfs_set_verifier().
+Hi -
 
-Fixes: 1346d280eafa ("NFS: Revalidate once when holding a delegation")
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
----
- fs/nfs/dir.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+On 2/3/20 4:10 AM, kernel test robot wrote:
+> FYI, we noticed the following commit (built with gcc-7):
+> 
+> commit: c9ac3b69cfdbc46a0504fa353b5126827e4b0bdb ("iommu/vt-d: skip RMRR entries that fail the sanity check")
+> https://github.com/0day-ci/linux/commits/Barret-Rhoden/iommu-vt-d-bad-RMRR-workarounds/20200109-051817
 
-diff --git a/fs/nfs/dir.c b/fs/nfs/dir.c
-index 289052c0ae93..882ea5337627 100644
---- a/fs/nfs/dir.c
-+++ b/fs/nfs/dir.c
-@@ -1180,7 +1180,7 @@ nfs_lookup_revalidate_dentry(struct inode *dir, struct dentry *dentry,
- 		verifier = nfs_save_change_attribute(dir);
- 
- 	nfs_setsecurity(inode, fattr, label);
--	nfs_set_verifier(dentry, nfs_save_change_attribute(dir));
-+	nfs_set_verifier(dentry, verifier);
- 
- 	/* set a readdirplus hint that we had a cache miss */
- 	nfs_force_use_readdirplus(dir);
+This looks like your system's firmware might be buggy, which is what the 
+warning is all about.
+
+ From the kmesg:
+
+> kern  :info  : [    2.912758] DMAR: RMRR base: 0x0000009f271000 end: 0x0000009f290fff
+> kern  :info  : [    2.919226] DMAR: RMRR base: 0x000000a1800000 end: 0x000000a3ffffff
+> kern  :err   : [    2.925692] DMAR: [Firmware Bug]: No firmware reserved region can cover this RMRR [0x00000000a1800000-0x00000000a3ffffff], contact BIOS vendor for fixes
+> kern  :warn  : [    2.939636] ------------[ cut here ]------------
+> kern  :warn  : [    2.944436] Your BIOS is broken; bad RMRR [0x00000000a1800000-0x00000000a3ffffff]
+>                               BIOS vendor: Dell Inc.; Ver: 1.2.8; Product Version: 
 
 
+The e820 map has this:
+
+> kern  :info  : [    0.000000] BIOS-e820: [mem 0x00000000a0000000-0x00000000a00fffff] reserved
+> kern  :info  : [    0.000000] BIOS-e820: [mem 0x00000000f8000000-0x00000000fbffffff] reserved
+> kern  :info  : [    0.000000] BIOS-e820: [mem 0x00000000fe000000-0x00000000fe010fff] reserved
+
+The region 0xa1800000-0xa3ffffff isn't explicitly reserved (it's not 
+listed at all), which the IOMMU-folk say is the fault of the firmware.
+
+My commit made it so that it merely spits out a warning, instead of 
+failing to use the IOMMU at all.
+
+Thanks,
+
+Barret
 
