@@ -2,43 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9367F150B3A
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Feb 2020 17:25:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 34578150B99
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Feb 2020 17:29:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728714AbgBCQZs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 3 Feb 2020 11:25:48 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36542 "EHLO mail.kernel.org"
+        id S1729709AbgBCQ3E (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 3 Feb 2020 11:29:04 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40790 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728627AbgBCQZq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Feb 2020 11:25:46 -0500
+        id S1729678AbgBCQ3A (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Feb 2020 11:29:00 -0500
 Received: from localhost (unknown [104.132.45.99])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EBF1F2080C;
-        Mon,  3 Feb 2020 16:25:44 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2B00220838;
+        Mon,  3 Feb 2020 16:28:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1580747145;
-        bh=LZAGAJaQ3n3fZVaLbEAb93zTGMspTgL5PM6oViMILNI=;
+        s=default; t=1580747339;
+        bh=qF4a9teJ9VsdKlTbjI7CLhaqbCFKwzOnJr0oTgDxSq8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=k05EFcoT8m4iKG7K45XoAEqHNEbdCn4D+dea3yFJyZ/GXjdPNMMFnMCq6hA81mp+l
-         oQmMhSKqsZBI1QFu//TJumb12TvVu6OGIgCXFbLy5QHLfZxeFPKIC5SL9GKDzZ5KmA
-         b8fbmW2nK6xfP3t8p2c6n8fhfsZkMlg6jbrDYZJs=
+        b=zS0e7q5px57DQptpJTlB16AbYffr5hRZ7P9HrHTy3/iAVGmvrimrSLkGyPITaS3D4
+         LjwmDuw6G9SU+FMEepDWZkNBNojX5vDEg+OXunlaLV0BPJ6nz3jGLVtORBmKttxHWe
+         wb4n+GCkveoa1ByuUydsr4Od36s0mj5hkZ1VLqIQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Vitaly Chikunov <vt@altlinux.org>,
-        Dmitry Levin <ldv@altlinux.org>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        kbuild test robot <lkp@intel.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Vineet Gupta <vineet.gupta1@synopsys.com>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>
-Subject: [PATCH 4.9 30/68] tools lib: Fix builds when glibc contains strlcpy()
-Date:   Mon,  3 Feb 2020 16:19:26 +0000
-Message-Id: <20200203161909.959158906@linuxfoundation.org>
+        stable@vger.kernel.org, stable@kernel.org,
+        Theodore Tso <tytso@mit.edu>, Zubin Mithra <zsm@chromium.org>,
+        syzbot+4a39a025912b265cacef@syzkaller.appspotmail.com
+Subject: [PATCH 4.14 42/89] ext4: validate the debug_want_extra_isize mount option at parse time
+Date:   Mon,  3 Feb 2020 16:19:27 +0000
+Message-Id: <20200203161922.617213813@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200203161904.705434837@linuxfoundation.org>
-References: <20200203161904.705434837@linuxfoundation.org>
+In-Reply-To: <20200203161916.847439465@linuxfoundation.org>
+References: <20200203161916.847439465@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -48,97 +44,195 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Vitaly Chikunov <vt@altlinux.org>
+From: Theodore Ts'o <tytso@mit.edu>
 
-commit 6c4798d3f08b81c2c52936b10e0fa872590c96ae upstream.
+commit 9803387c55f7d2ce69aa64340c5fdc6b3027dbc8 upstream.
 
-Disable a couple of compilation warnings (which are treated as errors)
-on strlcpy() definition and declaration, allowing users to compile perf
-and kernel (objtool) when:
+Instead of setting s_want_extra_size and then making sure that it is a
+valid value afterwards, validate the field before we set it.  This
+avoids races and other problems when remounting the file system.
 
-1. glibc have strlcpy() (such as in ALT Linux since 2004) objtool and
-   perf build fails with this (in gcc):
-
-  In file included from exec-cmd.c:3:
-  tools/include/linux/string.h:20:15: error: redundant redeclaration of ‘strlcpy’ [-Werror=redundant-decls]
-     20 | extern size_t strlcpy(char *dest, const char *src, size_t size);
-
-2. clang ignores `-Wredundant-decls', but produces another warning when
-   building perf:
-
-    CC       util/string.o
-  ../lib/string.c:99:8: error: attribute declaration must precede definition [-Werror,-Wignored-attributes]
-  size_t __weak strlcpy(char *dest, const char *src, size_t size)
-  ../../tools/include/linux/compiler.h:66:34: note: expanded from macro '__weak'
-  # define __weak                 __attribute__((weak))
-  /usr/include/bits/string_fortified.h:151:8: note: previous definition is here
-  __NTH (strlcpy (char *__restrict __dest, const char *__restrict __src,
-
-Committer notes:
-
-The
-
- #pragma GCC diagnostic
-
-directive was introduced in gcc 4.6, so check for that as well.
-
-Fixes: ce99091 ("perf tools: Move strlcpy() from perf to tools/lib/string.c")
-Fixes: 0215d59 ("tools lib: Reinstate strlcpy() header guard with __UCLIBC__")
-Resolves: https://bugzilla.kernel.org/show_bug.cgi?id=118481
-Signed-off-by: Vitaly Chikunov <vt@altlinux.org>
-Reviewed-by: Dmitry Levin <ldv@altlinux.org>
-Cc: Dmitry Levin <ldv@altlinux.org>
-Cc: Josh Poimboeuf <jpoimboe@redhat.com>
-Cc: kbuild test robot <lkp@intel.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: stable@vger.kernel.org
-Cc: Vineet Gupta <vineet.gupta1@synopsys.com>
-Link: http://lore.kernel.org/lkml/20191224172029.19690-1-vt@altlinux.org
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Link: https://lore.kernel.org/r/20191215063020.GA11512@mit.edu
+Cc: stable@kernel.org
+Signed-off-by: Theodore Ts'o <tytso@mit.edu>
+Reported-and-tested-by: syzbot+4a39a025912b265cacef@syzkaller.appspotmail.com
+Signed-off-by: Zubin Mithra <zsm@chromium.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- tools/include/linux/string.h |    8 ++++++++
- tools/lib/string.c           |    7 +++++++
- 2 files changed, 15 insertions(+)
+ fs/ext4/super.c |  127 +++++++++++++++++++++++++++++---------------------------
+ 1 file changed, 66 insertions(+), 61 deletions(-)
 
---- a/tools/include/linux/string.h
-+++ b/tools/include/linux/string.h
-@@ -13,7 +13,15 @@ int strtobool(const char *s, bool *res);
-  * However uClibc headers also define __GLIBC__ hence the hack below
-  */
- #if defined(__GLIBC__) && !defined(__UCLIBC__)
-+// pragma diagnostic was introduced in gcc 4.6
-+#if __GNUC__ > 4 || (__GNUC__ == 4 && __GNUC_MINOR__ >= 6)
-+#pragma GCC diagnostic push
-+#pragma GCC diagnostic ignored "-Wredundant-decls"
-+#endif
- extern size_t strlcpy(char *dest, const char *src, size_t size);
-+#if __GNUC__ > 4 || (__GNUC__ == 4 && __GNUC_MINOR__ >= 6)
-+#pragma GCC diagnostic pop
-+#endif
- #endif
- 
- char *str_error_r(int errnum, char *buf, size_t buflen);
---- a/tools/lib/string.c
-+++ b/tools/lib/string.c
-@@ -76,6 +76,10 @@ int strtobool(const char *s, bool *res)
-  * If libc has strlcpy() then that version will override this
-  * implementation:
-  */
-+#ifdef __clang__
-+#pragma clang diagnostic push
-+#pragma clang diagnostic ignored "-Wignored-attributes"
-+#endif
- size_t __weak strlcpy(char *dest, const char *src, size_t size)
- {
- 	size_t ret = strlen(src);
-@@ -87,3 +91,6 @@ size_t __weak strlcpy(char *dest, const
- 	}
- 	return ret;
+--- a/fs/ext4/super.c
++++ b/fs/ext4/super.c
+@@ -1782,6 +1782,13 @@ static int handle_mount_opt(struct super
+ 			arg = JBD2_DEFAULT_MAX_COMMIT_AGE;
+ 		sbi->s_commit_interval = HZ * arg;
+ 	} else if (token == Opt_debug_want_extra_isize) {
++		if ((arg & 1) ||
++		    (arg < 4) ||
++		    (arg > (sbi->s_inode_size - EXT4_GOOD_OLD_INODE_SIZE))) {
++			ext4_msg(sb, KERN_ERR,
++				 "Invalid want_extra_isize %d", arg);
++			return -1;
++		}
+ 		sbi->s_want_extra_isize = arg;
+ 	} else if (token == Opt_max_batch_time) {
+ 		sbi->s_max_batch_time = arg;
+@@ -3454,40 +3461,6 @@ int ext4_calculate_overhead(struct super
+ 	return 0;
  }
-+#ifdef __clang__
-+#pragma clang diagnostic pop
-+#endif
+ 
+-static void ext4_clamp_want_extra_isize(struct super_block *sb)
+-{
+-	struct ext4_sb_info *sbi = EXT4_SB(sb);
+-	struct ext4_super_block *es = sbi->s_es;
+-	unsigned def_extra_isize = sizeof(struct ext4_inode) -
+-						EXT4_GOOD_OLD_INODE_SIZE;
+-
+-	if (sbi->s_inode_size == EXT4_GOOD_OLD_INODE_SIZE) {
+-		sbi->s_want_extra_isize = 0;
+-		return;
+-	}
+-	if (sbi->s_want_extra_isize < 4) {
+-		sbi->s_want_extra_isize = def_extra_isize;
+-		if (ext4_has_feature_extra_isize(sb)) {
+-			if (sbi->s_want_extra_isize <
+-			    le16_to_cpu(es->s_want_extra_isize))
+-				sbi->s_want_extra_isize =
+-					le16_to_cpu(es->s_want_extra_isize);
+-			if (sbi->s_want_extra_isize <
+-			    le16_to_cpu(es->s_min_extra_isize))
+-				sbi->s_want_extra_isize =
+-					le16_to_cpu(es->s_min_extra_isize);
+-		}
+-	}
+-	/* Check if enough inode space is available */
+-	if ((sbi->s_want_extra_isize > sbi->s_inode_size) ||
+-	    (EXT4_GOOD_OLD_INODE_SIZE + sbi->s_want_extra_isize >
+-							sbi->s_inode_size)) {
+-		sbi->s_want_extra_isize = def_extra_isize;
+-		ext4_msg(sb, KERN_INFO,
+-			 "required extra inode space not available");
+-	}
+-}
+-
+ static void ext4_set_resv_clusters(struct super_block *sb)
+ {
+ 	ext4_fsblk_t resv_clusters;
+@@ -3695,6 +3668,65 @@ static int ext4_fill_super(struct super_
+ 	 */
+ 	sbi->s_li_wait_mult = EXT4_DEF_LI_WAIT_MULT;
+ 
++	if (le32_to_cpu(es->s_rev_level) == EXT4_GOOD_OLD_REV) {
++		sbi->s_inode_size = EXT4_GOOD_OLD_INODE_SIZE;
++		sbi->s_first_ino = EXT4_GOOD_OLD_FIRST_INO;
++	} else {
++		sbi->s_inode_size = le16_to_cpu(es->s_inode_size);
++		sbi->s_first_ino = le32_to_cpu(es->s_first_ino);
++		if (sbi->s_first_ino < EXT4_GOOD_OLD_FIRST_INO) {
++			ext4_msg(sb, KERN_ERR, "invalid first ino: %u",
++				 sbi->s_first_ino);
++			goto failed_mount;
++		}
++		if ((sbi->s_inode_size < EXT4_GOOD_OLD_INODE_SIZE) ||
++		    (!is_power_of_2(sbi->s_inode_size)) ||
++		    (sbi->s_inode_size > blocksize)) {
++			ext4_msg(sb, KERN_ERR,
++			       "unsupported inode size: %d",
++			       sbi->s_inode_size);
++			goto failed_mount;
++		}
++		/*
++		 * i_atime_extra is the last extra field available for
++		 * [acm]times in struct ext4_inode. Checking for that
++		 * field should suffice to ensure we have extra space
++		 * for all three.
++		 */
++		if (sbi->s_inode_size >= offsetof(struct ext4_inode, i_atime_extra) +
++			sizeof(((struct ext4_inode *)0)->i_atime_extra)) {
++			sb->s_time_gran = 1;
++		} else {
++			sb->s_time_gran = NSEC_PER_SEC;
++		}
++	}
++	if (sbi->s_inode_size > EXT4_GOOD_OLD_INODE_SIZE) {
++		sbi->s_want_extra_isize = sizeof(struct ext4_inode) -
++			EXT4_GOOD_OLD_INODE_SIZE;
++		if (ext4_has_feature_extra_isize(sb)) {
++			unsigned v, max = (sbi->s_inode_size -
++					   EXT4_GOOD_OLD_INODE_SIZE);
++
++			v = le16_to_cpu(es->s_want_extra_isize);
++			if (v > max) {
++				ext4_msg(sb, KERN_ERR,
++					 "bad s_want_extra_isize: %d", v);
++				goto failed_mount;
++			}
++			if (sbi->s_want_extra_isize < v)
++				sbi->s_want_extra_isize = v;
++
++			v = le16_to_cpu(es->s_min_extra_isize);
++			if (v > max) {
++				ext4_msg(sb, KERN_ERR,
++					 "bad s_min_extra_isize: %d", v);
++				goto failed_mount;
++			}
++			if (sbi->s_want_extra_isize < v)
++				sbi->s_want_extra_isize = v;
++		}
++	}
++
+ 	if (sbi->s_es->s_mount_opts[0]) {
+ 		char *s_mount_opts = kstrndup(sbi->s_es->s_mount_opts,
+ 					      sizeof(sbi->s_es->s_mount_opts),
+@@ -3893,29 +3925,6 @@ static int ext4_fill_super(struct super_
+ 						      has_huge_files);
+ 	sb->s_maxbytes = ext4_max_size(sb->s_blocksize_bits, has_huge_files);
+ 
+-	if (le32_to_cpu(es->s_rev_level) == EXT4_GOOD_OLD_REV) {
+-		sbi->s_inode_size = EXT4_GOOD_OLD_INODE_SIZE;
+-		sbi->s_first_ino = EXT4_GOOD_OLD_FIRST_INO;
+-	} else {
+-		sbi->s_inode_size = le16_to_cpu(es->s_inode_size);
+-		sbi->s_first_ino = le32_to_cpu(es->s_first_ino);
+-		if (sbi->s_first_ino < EXT4_GOOD_OLD_FIRST_INO) {
+-			ext4_msg(sb, KERN_ERR, "invalid first ino: %u",
+-				 sbi->s_first_ino);
+-			goto failed_mount;
+-		}
+-		if ((sbi->s_inode_size < EXT4_GOOD_OLD_INODE_SIZE) ||
+-		    (!is_power_of_2(sbi->s_inode_size)) ||
+-		    (sbi->s_inode_size > blocksize)) {
+-			ext4_msg(sb, KERN_ERR,
+-			       "unsupported inode size: %d",
+-			       sbi->s_inode_size);
+-			goto failed_mount;
+-		}
+-		if (sbi->s_inode_size > EXT4_GOOD_OLD_INODE_SIZE)
+-			sb->s_time_gran = 1 << (EXT4_EPOCH_BITS - 2);
+-	}
+-
+ 	sbi->s_desc_size = le16_to_cpu(es->s_desc_size);
+ 	if (ext4_has_feature_64bit(sb)) {
+ 		if (sbi->s_desc_size < EXT4_MIN_DESC_SIZE_64BIT ||
+@@ -4354,8 +4363,6 @@ no_journal:
+ 	if (ext4_setup_super(sb, es, sb_rdonly(sb)))
+ 		sb->s_flags |= MS_RDONLY;
+ 
+-	ext4_clamp_want_extra_isize(sb);
+-
+ 	ext4_set_resv_clusters(sb);
+ 
+ 	err = ext4_setup_system_zone(sb);
+@@ -5139,8 +5146,6 @@ static int ext4_remount(struct super_blo
+ 		goto restore_opts;
+ 	}
+ 
+-	ext4_clamp_want_extra_isize(sb);
+-
+ 	if ((old_opts.s_mount_opt & EXT4_MOUNT_JOURNAL_CHECKSUM) ^
+ 	    test_opt(sb, JOURNAL_CHECKSUM)) {
+ 		ext4_msg(sb, KERN_ERR, "changing journal_checksum "
 
 
