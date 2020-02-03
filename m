@@ -2,172 +2,148 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E6379151202
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Feb 2020 22:43:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E86C415120A
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Feb 2020 22:44:57 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727151AbgBCVnC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 3 Feb 2020 16:43:02 -0500
-Received: from mga01.intel.com ([192.55.52.88]:38302 "EHLO mga01.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726928AbgBCVnB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Feb 2020 16:43:01 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga003.fm.intel.com ([10.253.24.29])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 03 Feb 2020 13:43:01 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.70,398,1574150400"; 
-   d="scan'208";a="278868982"
-Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.202])
-  by FMSMGA003.fm.intel.com with ESMTP; 03 Feb 2020 13:43:01 -0800
-Date:   Mon, 3 Feb 2020 13:43:00 -0800
-From:   Sean Christopherson <sean.j.christopherson@intel.com>
-To:     Xiaoyao Li <xiaoyao.li@intel.com>
-Cc:     Paolo Bonzini <pbonzini@redhat.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        Andy Lutomirski <luto@amacapital.net>, x86@kernel.org,
-        kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        David Laight <David.Laight@aculab.com>
-Subject: Re: [PATCH v2 5/6] kvm: x86: Emulate MSR IA32_CORE_CAPABILITIES
-Message-ID: <20200203214300.GI19638@linux.intel.com>
-References: <20200203151608.28053-1-xiaoyao.li@intel.com>
- <20200203151608.28053-6-xiaoyao.li@intel.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200203151608.28053-6-xiaoyao.li@intel.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+        id S1727097AbgBCVox (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 3 Feb 2020 16:44:53 -0500
+Received: from us-smtp-1.mimecast.com ([205.139.110.61]:33403 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1725372AbgBCVox (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Feb 2020 16:44:53 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1580766291;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=APvzKJbOVU63A3dxA5kI8kBeWOZPD++mpXTHMc1xuKc=;
+        b=HBLVJVXvxYCtQQDhR+yiD09/k73GjU5RfywgtxhxQt8PZAXsIJ3cr9lxbei67z85ObqTjw
+        kEUBIjloQ4ufv7gTzXbmPJYKEN+eN+2kb6yHbbzgt1Sr1/cwfcuyvEH0mEeDQcJ7+3TjT/
+        TgSSyR+9lbWm3bG1PZlIkxLCjO/4Bf0=
+Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com
+ [209.85.221.72]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-294-7FiP-X_DMzO-5Zu12XEdAQ-1; Mon, 03 Feb 2020 16:44:48 -0500
+X-MC-Unique: 7FiP-X_DMzO-5Zu12XEdAQ-1
+Received: by mail-wr1-f72.google.com with SMTP id d15so5589644wru.1
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Feb 2020 13:44:47 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:content-transfer-encoding:from:mime-version
+         :subject:date:message-id:references:cc:in-reply-to:to;
+        bh=APvzKJbOVU63A3dxA5kI8kBeWOZPD++mpXTHMc1xuKc=;
+        b=ZLN+gCwN2qiDhuuNxyX207h2hbv5gVWIKjRqpEI6wiIrt4BvJ+e16XQURuhn9yzVZE
+         ZrPbZ383G1nZWo9Vw8oS+gRR4rVudyBEUhY92zjOP8YdBfZ8dYM5s8lCAjfBq3t3l1TS
+         X3q2hRnbv1zJKNaNKL9JYIhofwr+OpWB42TM1xeg0l2xsM74/hfLjEZ2kloeArU7vf78
+         oUqnKoHIHuVFye3tr6Vk+JEMS2ZPCB6/DdnAbDPMFH8pGdH6Yw4gZJqYwteUTrqAAzvI
+         U4+BLSrzwDPKD1wWCwFLHmyYICxSasS3IGykSESXIVXhXn2ZsvIGeVuhSHH3f000glL0
+         uCSg==
+X-Gm-Message-State: APjAAAVcmoy5mR843aposjNI+QWTu997FKZmQ2g+lgGCu+Ggn4zrZ9x3
+        /UXE9AJR1OsQCigPXHG47EXquILSF10yJ8LZ797u7Ss45S2mxo33KrZyg9sJdsCoPSyQxtSkEMw
+        w2YjRHAaCuK8Ind48l0q4PwQr
+X-Received: by 2002:adf:ec83:: with SMTP id z3mr16898620wrn.133.1580766286883;
+        Mon, 03 Feb 2020 13:44:46 -0800 (PST)
+X-Google-Smtp-Source: APXvYqyrsyYng4IR6o6G/LYaVafSTJOiC/W7rP+gXYQ+Gl4WeTH94Pt4DFpOc0g+rN+cc4LgnOQtXQ==
+X-Received: by 2002:adf:ec83:: with SMTP id z3mr16898607wrn.133.1580766286715;
+        Mon, 03 Feb 2020 13:44:46 -0800 (PST)
+Received: from [192.168.3.122] (p5B0C6AA7.dip0.t-ipconnect.de. [91.12.106.167])
+        by smtp.gmail.com with ESMTPSA id e17sm14180838wrn.62.2020.02.03.13.44.46
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 03 Feb 2020 13:44:46 -0800 (PST)
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+From:   David Hildenbrand <david@redhat.com>
+Mime-Version: 1.0 (1.0)
+Subject: Re: [PATCH v1 1/2] mm/page_alloc: fix and rework pfn handling in memmap_init_zone()
+Date:   Mon, 3 Feb 2020 22:44:45 +0100
+Message-Id: <1583F4CF-6CD8-4AB6-A2F6-60E6AEE5D5B2@redhat.com>
+References: <CAKgT0UdFphMbS04NMRYU=VUmbnVi_purz4UA0cqA3dd7YW-pJA@mail.gmail.com>
+Cc:     David Hildenbrand <david@redhat.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-mm <linux-mm@kvack.org>,
+        Pavel Tatashin <pasha.tatashin@oracle.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Michal Hocko <mhocko@kernel.org>,
+        Oscar Salvador <osalvador@suse.de>,
+        "Kirill A . Shutemov" <kirill@shutemov.name>
+In-Reply-To: <CAKgT0UdFphMbS04NMRYU=VUmbnVi_purz4UA0cqA3dd7YW-pJA@mail.gmail.com>
+To:     Alexander Duyck <alexander.duyck@gmail.com>
+X-Mailer: iPhone Mail (17C54)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 03, 2020 at 11:16:07PM +0800, Xiaoyao Li wrote:
-> Emulate MSR_IA32_CORE_CAPABILITIES in software and unconditionally
-> advertise its support to userspace. Like MSR_IA32_ARCH_CAPABILITIES, it
-> is a feature-enumerating MSR and can be fully emulated regardless of
-> hardware support. Existence of CORE_CAPABILITIES is enumerated via
-> CPUID.(EAX=7H,ECX=0):EDX[30].
-> 
-> Note, support for individual features enumerated via CORE_CAPABILITIES,
-> e.g., split lock detection, will be added in future patches.
-> 
-> Signed-off-by: Xiaoyao Li <xiaoyao.li@intel.com>
-> ---
->  arch/x86/include/asm/kvm_host.h |  1 +
->  arch/x86/kvm/cpuid.c            |  5 +++--
->  arch/x86/kvm/x86.c              | 22 ++++++++++++++++++++++
->  3 files changed, 26 insertions(+), 2 deletions(-)
-> 
-> diff --git a/arch/x86/include/asm/kvm_host.h b/arch/x86/include/asm/kvm_host.h
-> index 329d01c689b7..dc231240102f 100644
-> --- a/arch/x86/include/asm/kvm_host.h
-> +++ b/arch/x86/include/asm/kvm_host.h
-> @@ -591,6 +591,7 @@ struct kvm_vcpu_arch {
->  	u64 ia32_xss;
->  	u64 microcode_version;
->  	u64 arch_capabilities;
-> +	u64 core_capabilities;
->  
->  	/*
->  	 * Paging state of the vcpu
-> diff --git a/arch/x86/kvm/cpuid.c b/arch/x86/kvm/cpuid.c
-> index b1c469446b07..7282d04f3a6b 100644
-> --- a/arch/x86/kvm/cpuid.c
-> +++ b/arch/x86/kvm/cpuid.c
-> @@ -409,10 +409,11 @@ static inline void do_cpuid_7_mask(struct kvm_cpuid_entry2 *entry, int index)
->  		    boot_cpu_has(X86_FEATURE_AMD_SSBD))
->  			entry->edx |= F(SPEC_CTRL_SSBD);
->  		/*
-> -		 * We emulate ARCH_CAPABILITIES in software even
-> -		 * if the host doesn't support it.
-> +		 * ARCH_CAPABILITIES and CORE_CAPABILITIES are emulated in
-> +		 * software regardless of host support.
->  		 */
->  		entry->edx |= F(ARCH_CAPABILITIES);
-> +		entry->edx |= F(CORE_CAPABILITIES);
->  		break;
->  	case 1:
->  		entry->eax &= kvm_cpuid_7_1_eax_x86_features;
-> diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
-> index 821b7404c0fd..a97a8f5dd1df 100644
-> --- a/arch/x86/kvm/x86.c
-> +++ b/arch/x86/kvm/x86.c
-> @@ -1222,6 +1222,7 @@ static const u32 emulated_msrs_all[] = {
->  	MSR_IA32_TSC_ADJUST,
->  	MSR_IA32_TSCDEADLINE,
->  	MSR_IA32_ARCH_CAPABILITIES,
-> +	MSR_IA32_CORE_CAPS,
->  	MSR_IA32_MISC_ENABLE,
->  	MSR_IA32_MCG_STATUS,
->  	MSR_IA32_MCG_CTL,
-> @@ -1288,6 +1289,7 @@ static const u32 msr_based_features_all[] = {
->  	MSR_F10H_DECFG,
->  	MSR_IA32_UCODE_REV,
->  	MSR_IA32_ARCH_CAPABILITIES,
-> +	MSR_IA32_CORE_CAPS,
->  };
->  
->  static u32 msr_based_features[ARRAY_SIZE(msr_based_features_all)];
-> @@ -1341,12 +1343,20 @@ static u64 kvm_get_arch_capabilities(void)
->  	return data;
->  }
->  
-> +static u64 kvm_get_core_capabilities(void)
-> +{
-> +	return 0;
-> +}
-> +
->  static int kvm_get_msr_feature(struct kvm_msr_entry *msr)
->  {
->  	switch (msr->index) {
->  	case MSR_IA32_ARCH_CAPABILITIES:
->  		msr->data = kvm_get_arch_capabilities();
->  		break;
-> +	case MSR_IA32_CORE_CAPS:
-> +		msr->data = kvm_get_core_capabilities();
-> +		break;
->  	case MSR_IA32_UCODE_REV:
->  		rdmsrl_safe(msr->index, &msr->data);
->  		break;
-> @@ -2716,6 +2726,11 @@ int kvm_set_msr_common(struct kvm_vcpu *vcpu, struct msr_data *msr_info)
->  			return 1;
->  		vcpu->arch.arch_capabilities = data;
->  		break;
-> +	case MSR_IA32_CORE_CAPS:
-> +		if (!msr_info->host_initiated)
 
-Shouldn't @data be checked against kvm_get_core_capabilities()?
 
-> +			return 1;
-> +		vcpu->arch.core_capabilities = data;
-> +		break;
->  	case MSR_EFER:
->  		return set_efer(vcpu, msr_info);
->  	case MSR_K7_HWCR:
-> @@ -3044,6 +3059,12 @@ int kvm_get_msr_common(struct kvm_vcpu *vcpu, struct msr_data *msr_info)
->  			return 1;
->  		msr_info->data = vcpu->arch.arch_capabilities;
->  		break;
-> +	case MSR_IA32_CORE_CAPS:
-> +		if (!msr_info->host_initiated &&
-> +		    !guest_cpuid_has(vcpu, X86_FEATURE_CORE_CAPABILITIES))
-> +			return 1;
-> +		msr_info->data = vcpu->arch.core_capabilities;
-> +		break;
->  	case MSR_IA32_POWER_CTL:
->  		msr_info->data = vcpu->arch.msr_ia32_power_ctl;
->  		break;
-> @@ -9288,6 +9309,7 @@ int kvm_arch_vcpu_create(struct kvm_vcpu *vcpu)
->  		goto free_guest_fpu;
->  
->  	vcpu->arch.arch_capabilities = kvm_get_arch_capabilities();
-> +	vcpu->arch.core_capabilities = kvm_get_core_capabilities();
->  	vcpu->arch.msr_platform_info = MSR_PLATFORM_INFO_CPUID_FAULT;
->  	kvm_vcpu_mtrr_init(vcpu);
->  	vcpu_load(vcpu);
-> -- 
-> 2.23.0
-> 
+> Am 03.02.2020 um 22:35 schrieb Alexander Duyck <alexander.duyck@gmail.com>=
+:
+>=20
+> =EF=BB=BFOn Mon, Jan 13, 2020 at 6:40 AM David Hildenbrand <david@redhat.c=
+om> wrote:
+>>=20
+>> Let's update the pfn manually whenever we continue the loop. This makes
+>> the code easier to read but also less error prone (and we can directly
+>> fix one issue).
+>>=20
+>> When overlap_memmap_init() returns true, pfn is updated to
+>> "memblock_region_memory_end_pfn(r)". So it already points at the *next*
+>> pfn to process. Incrementing the pfn another time is wrong, we might
+>> leave one uninitialized. I spotted this by inspecting the code, so I have=
+
+>> no idea if this is relevant in practise (with kernelcore=3Dmirror).
+>>=20
+>> Fixes: a9a9e77fbf27 ("mm: move mirrored memory specific code outside of m=
+emmap_init_zone")
+>> Cc: Pavel Tatashin <pasha.tatashin@oracle.com>
+>> Cc: Andrew Morton <akpm@linux-foundation.org>
+>> Cc: Michal Hocko <mhocko@kernel.org>
+>> Cc: Oscar Salvador <osalvador@suse.de>
+>> Cc: Kirill A. Shutemov <kirill@shutemov.name>
+>> Signed-off-by: David Hildenbrand <david@redhat.com>
+>> ---
+>> mm/page_alloc.c | 9 ++++++---
+>> 1 file changed, 6 insertions(+), 3 deletions(-)
+>>=20
+>> diff --git a/mm/page_alloc.c b/mm/page_alloc.c
+>> index a41bd7341de1..a92791512077 100644
+>> --- a/mm/page_alloc.c
+>> +++ b/mm/page_alloc.c
+>> @@ -5905,18 +5905,20 @@ void __meminit memmap_init_zone(unsigned long siz=
+e, int nid, unsigned long zone,
+>>        }
+>> #endif
+>>=20
+>> -       for (pfn =3D start_pfn; pfn < end_pfn; pfn++) {
+>> +       for (pfn =3D start_pfn; pfn < end_pfn; ) {
+>>                /*
+>>                 * There can be holes in boot-time mem_map[]s handed to th=
+is
+>>                 * function.  They do not exist on hotplugged memory.
+>>                 */
+>>                if (context =3D=3D MEMMAP_EARLY) {
+>>                        if (!early_pfn_valid(pfn)) {
+>> -                               pfn =3D next_pfn(pfn) - 1;
+>> +                               pfn =3D next_pfn(pfn);
+>>                                continue;
+>>                        }
+>> -                       if (!early_pfn_in_nid(pfn, nid))
+>> +                       if (!early_pfn_in_nid(pfn, nid)) {
+>> +                               pfn++;
+>>                                continue;
+>> +                       }
+>>                        if (overlap_memmap_init(zone, &pfn))
+>>                                continue;
+>>                        if (defer_init(nid, pfn, end_pfn))
+>=20
+> I'm pretty sure this is a bit broken. The overlap_memmap_init is going
+> to return memblock_region_memory_end_pfn instead of the start of the
+> next region. I think that is going to stick you in a mirrored region
+> without advancing in that case. You would also need to have that case
+> do a pfn++ before the continue;
+
+Thanks for having a look.
+
+Did you read the description regarding this change?=
+
