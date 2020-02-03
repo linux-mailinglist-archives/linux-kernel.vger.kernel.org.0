@@ -2,40 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B79ED1503EA
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Feb 2020 11:10:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4F6EF1503E5
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Feb 2020 11:10:01 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727834AbgBCKKI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 3 Feb 2020 05:10:08 -0500
-Received: from mx08-00178001.pphosted.com ([91.207.212.93]:16710 "EHLO
+        id S1727738AbgBCKJx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 3 Feb 2020 05:09:53 -0500
+Received: from mx08-00178001.pphosted.com ([91.207.212.93]:46358 "EHLO
         mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727672AbgBCKJw (ORCPT
+        by vger.kernel.org with ESMTP id S1727500AbgBCKJw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 3 Feb 2020 05:09:52 -0500
-Received: from pps.filterd (m0046660.ppops.net [127.0.0.1])
-        by mx07-00178001.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 013A7o72019717;
+Received: from pps.filterd (m0046661.ppops.net [127.0.0.1])
+        by mx07-00178001.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 0139vJGa024556;
         Mon, 3 Feb 2020 11:09:04 +0100
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=st.com; h=from : to : cc : subject
  : date : message-id : in-reply-to : references : mime-version :
  content-type; s=STMicroelectronics;
- bh=RBofiPp4R9DTfyooLMsUguafFOqr7As70nNTDt8X928=;
- b=ShA0NrRqqtRfTilhlu0v+aukPkeGjS3YyKLE5L8y7KB3dQyCga0T1GXRF/UaEwEjw0L1
- bDQc9ScM7GRWHEvlDcmpCBffUT3kfDJXhhKCwFgSSrTSyn1Ysx2YgqOIe+oEVKAthcxN
- 8XO5jDfb65l4YSgDEKQ5mo9ifMnZJWhMZPWAtwnhMwE/4pVYTZwJ/8zaifSJ7O09XCZh
- g1IR8rLNBBCpPPP9sBF0qcCg+TXOEdKzQBAAJgBbH12FNmfeoeBclfukodHA/B+o0HCl
- vddRti/pmFDo3I9eafpUnuIH10BbUFVrxMsF55RdqHzwsMjGsABNBKXjhAQm0K2sd5e7 PA== 
+ bh=Vr8426iZCU0ASV10nebyPRqDVcg2Jda5jd/ZrCISTcw=;
+ b=C0H/Zf+Ma+QYM1rs8HULVKRJjT/r2KjfKeseIx6uTls8oIRpg7OTl+e/+98DJ1I32AhC
+ yCBixEBGRi55ha1p5eM4rl3M+wOEzSYVuozWrMjbHJgRNzreB7K0+F2lWgl0AHzbY2/W
+ 0DtgCu1gA23QDuj1cPgpAF7wBOgATDbe51lba1oiQ5quxHH95zGCE3Cd++rN8uiWAem0
+ nIzv09pjcYWgdcHLmxo6K6yP0NVWoxI7RmEmMqaRVeynAJu5orRGW0gVZW0e0y/73c7w
+ l3PpSL49meDTkHFZ2MfzWpwVMa1RQvfYtPCQOfqYsFJKm1Spso6fc9M3U94ki9lee9lB /A== 
 Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx07-00178001.pphosted.com with ESMTP id 2xvybdrs7h-1
+        by mx07-00178001.pphosted.com with ESMTP id 2xw13ngdps-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
         Mon, 03 Feb 2020 11:09:04 +0100
 Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 965E210003A;
-        Mon,  3 Feb 2020 11:09:01 +0100 (CET)
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 5B88710003D;
+        Mon,  3 Feb 2020 11:09:03 +0100 (CET)
 Received: from Webmail-eu.st.com (sfhdag6node2.st.com [10.75.127.17])
-        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 8A0412BE22D;
-        Mon,  3 Feb 2020 11:09:01 +0100 (CET)
-Received: from localhost (10.75.127.47) by SFHDAG6NODE2.st.com (10.75.127.17)
- with Microsoft SMTP Server (TLS) id 15.0.1347.2; Mon, 3 Feb 2020 11:09:01
+        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 504342BE22D;
+        Mon,  3 Feb 2020 11:09:03 +0100 (CET)
+Received: from localhost (10.75.127.45) by SFHDAG6NODE2.st.com (10.75.127.17)
+ with Microsoft SMTP Server (TLS) id 15.0.1347.2; Mon, 3 Feb 2020 11:09:02
  +0100
 From:   Olivier Moysan <olivier.moysan@st.com>
 To:     <lgirdwood@gmail.com>, <broonie@kernel.org>, <perex@perex.cz>,
@@ -45,16 +45,16 @@ To:     <lgirdwood@gmail.com>, <broonie@kernel.org>, <perex@perex.cz>,
         <linux-stm32@st-md-mailman.stormreply.com>,
         <linux-kernel@vger.kernel.org>, <olivier.moysan@st.com>
 CC:     Etienne Carriere <etienne.carriere@st.com>
-Subject: [PATCH 4/6] ASoC: stm32: sai: improve error management on probe deferral
-Date:   Mon, 3 Feb 2020 11:08:12 +0100
-Message-ID: <20200203100814.22944-5-olivier.moysan@st.com>
+Subject: [PATCH 5/6] ASoC: stm32: spdifrx: improve error management on probe deferral
+Date:   Mon, 3 Feb 2020 11:08:13 +0100
+Message-ID: <20200203100814.22944-6-olivier.moysan@st.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20200203100814.22944-1-olivier.moysan@st.com>
 References: <20200203100814.22944-1-olivier.moysan@st.com>
 MIME-Version: 1.0
 Content-Type: text/plain
-X-Originating-IP: [10.75.127.47]
-X-ClientProxiedBy: SFHDAG5NODE1.st.com (10.75.127.13) To SFHDAG6NODE2.st.com
+X-Originating-IP: [10.75.127.45]
+X-ClientProxiedBy: SFHDAG3NODE1.st.com (10.75.127.7) To SFHDAG6NODE2.st.com
  (10.75.127.17)
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.572
  definitions=2020-02-03_02:2020-02-02,2020-02-03 signatures=0
@@ -63,83 +63,59 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Do not print an error trace when deferring probe for SAI driver.
+Do not print an error trace when deferring probe for SPDIFRX driver.
 
 Signed-off-by: Etienne Carriere <etienne.carriere@st.com>
 Signed-off-by: Olivier Moysan <olivier.moysan@st.com>
 ---
- sound/soc/stm/stm32_sai.c     | 12 +++++++++---
- sound/soc/stm/stm32_sai_sub.c | 11 ++++++++---
- 2 files changed, 17 insertions(+), 6 deletions(-)
+ sound/soc/stm/stm32_spdifrx.c | 15 +++++++++++----
+ 1 file changed, 11 insertions(+), 4 deletions(-)
 
-diff --git a/sound/soc/stm/stm32_sai.c b/sound/soc/stm/stm32_sai.c
-index b824ba6cb028..058757c721f0 100644
---- a/sound/soc/stm/stm32_sai.c
-+++ b/sound/soc/stm/stm32_sai.c
-@@ -174,20 +174,26 @@ static int stm32_sai_probe(struct platform_device *pdev)
- 	if (!STM_SAI_IS_F4(sai)) {
- 		sai->pclk = devm_clk_get(&pdev->dev, "pclk");
- 		if (IS_ERR(sai->pclk)) {
--			dev_err(&pdev->dev, "missing bus clock pclk\n");
-+			if (PTR_ERR(sai->pclk) != -EPROBE_DEFER)
-+				dev_err(&pdev->dev, "missing bus clock pclk: %ld\n",
-+					PTR_ERR(sai->pclk));
- 			return PTR_ERR(sai->pclk);
- 		}
+diff --git a/sound/soc/stm/stm32_spdifrx.c b/sound/soc/stm/stm32_spdifrx.c
+index 9f80ddf34443..49766afdae61 100644
+--- a/sound/soc/stm/stm32_spdifrx.c
++++ b/sound/soc/stm/stm32_spdifrx.c
+@@ -406,7 +406,9 @@ static int stm32_spdifrx_dma_ctrl_register(struct device *dev,
+ 
+ 	spdifrx->ctrl_chan = dma_request_chan(dev, "rx-ctrl");
+ 	if (IS_ERR(spdifrx->ctrl_chan)) {
+-		dev_err(dev, "dma_request_slave_channel failed\n");
++		if (PTR_ERR(spdifrx->ctrl_chan) != -EPROBE_DEFER)
++			dev_err(dev, "dma_request_slave_channel error %ld\n",
++				PTR_ERR(spdifrx->ctrl_chan));
+ 		return PTR_ERR(spdifrx->ctrl_chan);
  	}
  
- 	sai->clk_x8k = devm_clk_get(&pdev->dev, "x8k");
- 	if (IS_ERR(sai->clk_x8k)) {
--		dev_err(&pdev->dev, "missing x8k parent clock\n");
-+		if (PTR_ERR(sai->clk_x8k) != -EPROBE_DEFER)
-+			dev_err(&pdev->dev, "missing x8k parent clock: %ld\n",
-+				PTR_ERR(sai->clk_x8k));
- 		return PTR_ERR(sai->clk_x8k);
+@@ -929,7 +931,9 @@ static int stm32_spdifrx_parse_of(struct platform_device *pdev,
+ 
+ 	spdifrx->kclk = devm_clk_get(&pdev->dev, "kclk");
+ 	if (IS_ERR(spdifrx->kclk)) {
+-		dev_err(&pdev->dev, "Could not get kclk\n");
++		if (PTR_ERR(spdifrx->kclk) != -EPROBE_DEFER)
++			dev_err(&pdev->dev, "Could not get kclk: %ld\n",
++				PTR_ERR(spdifrx->kclk));
+ 		return PTR_ERR(spdifrx->kclk);
  	}
  
- 	sai->clk_x11k = devm_clk_get(&pdev->dev, "x11k");
- 	if (IS_ERR(sai->clk_x11k)) {
--		dev_err(&pdev->dev, "missing x11k parent clock\n");
-+		if (PTR_ERR(sai->clk_x11k) != -EPROBE_DEFER)
-+			dev_err(&pdev->dev, "missing x11k parent clock: %ld\n",
-+				PTR_ERR(sai->clk_x11k));
- 		return PTR_ERR(sai->clk_x11k);
- 	}
- 
-diff --git a/sound/soc/stm/stm32_sai_sub.c b/sound/soc/stm/stm32_sai_sub.c
-index 30bcd5d3a32a..0bbf9ed5e48b 100644
---- a/sound/soc/stm/stm32_sai_sub.c
-+++ b/sound/soc/stm/stm32_sai_sub.c
-@@ -1380,7 +1380,9 @@ static int stm32_sai_sub_parse_of(struct platform_device *pdev,
- 	sai->regmap = devm_regmap_init_mmio(&pdev->dev, base,
- 					    sai->regmap_config);
- 	if (IS_ERR(sai->regmap)) {
--		dev_err(&pdev->dev, "Failed to initialize MMIO\n");
-+		if (PTR_ERR(sai->regmap) != -EPROBE_DEFER)
+@@ -967,7 +971,9 @@ static int stm32_spdifrx_probe(struct platform_device *pdev)
+ 						    spdifrx->base,
+ 						    spdifrx->regmap_conf);
+ 	if (IS_ERR(spdifrx->regmap)) {
+-		dev_err(&pdev->dev, "Regmap init failed\n");
++		if (PTR_ERR(spdifrx->regmap) != -EPROBE_DEFER)
 +			dev_err(&pdev->dev, "Regmap init error %ld\n",
-+				PTR_ERR(sai->regmap));
- 		return PTR_ERR(sai->regmap);
++				PTR_ERR(spdifrx->regmap));
+ 		return PTR_ERR(spdifrx->regmap);
  	}
  
-@@ -1471,7 +1473,9 @@ static int stm32_sai_sub_parse_of(struct platform_device *pdev,
- 	of_node_put(args.np);
- 	sai->sai_ck = devm_clk_get(&pdev->dev, "sai_ck");
- 	if (IS_ERR(sai->sai_ck)) {
--		dev_err(&pdev->dev, "Missing kernel clock sai_ck\n");
-+		if (PTR_ERR(sai->sai_ck) != -EPROBE_DEFER)
-+			dev_err(&pdev->dev, "Missing kernel clock sai_ck: %ld\n",
-+				PTR_ERR(sai->sai_ck));
- 		return PTR_ERR(sai->sai_ck);
- 	}
- 
-@@ -1553,7 +1557,8 @@ static int stm32_sai_sub_probe(struct platform_device *pdev)
- 
- 	ret = devm_snd_dmaengine_pcm_register(&pdev->dev, conf, 0);
+@@ -1003,7 +1009,8 @@ static int stm32_spdifrx_probe(struct platform_device *pdev)
+ 	pcm_config = &stm32_spdifrx_pcm_config;
+ 	ret = devm_snd_dmaengine_pcm_register(&pdev->dev, pcm_config, 0);
  	if (ret) {
--		dev_err(&pdev->dev, "Could not register pcm dma\n");
+-		dev_err(&pdev->dev, "PCM DMA register returned %d\n", ret);
 +		if (ret != -EPROBE_DEFER)
 +			dev_err(&pdev->dev, "PCM DMA register error %d\n", ret);
- 		return ret;
+ 		goto error;
  	}
  
 -- 
