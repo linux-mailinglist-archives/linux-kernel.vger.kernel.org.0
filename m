@@ -2,52 +2,29 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 31D081509FD
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Feb 2020 16:41:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B729E1509E6
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Feb 2020 16:39:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728286AbgBCPlq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 3 Feb 2020 10:41:46 -0500
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:46321 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728172AbgBCPln (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Feb 2020 10:41:43 -0500
-Received: by mail-lj1-f195.google.com with SMTP id x14so15083662ljd.13;
-        Mon, 03 Feb 2020 07:41:41 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=YEPnTpJ1A58+RhxHoD7vJrWSnZtvCUZLE3PCLpJiyt8=;
-        b=EHrWohtxgyhT2FTpFEZo+V6vbr1RISI5+QKFVGCUmfW1xn5AJPJhZU86uBHrU9ltJe
-         zr0g5b2C3V54Gt00oNMwxHPquYU7v+CBvc/yKt2MhqvP8pubceXvwuaBBVgNlg3IH4Ri
-         +XNJebYyOpLXt4KCWKo3svnUB/gOwhG2Uus/AdJDMGKNfSCqCVVEWeCdt1R45/fHCWXu
-         yRHysqxXEAvT5siwcpAgdMOBDdtNKsdyRSRstJNPwKQCuNcXgn012KdS+Lc7UJ/tkelb
-         KrjbPjSGMb83d5qEpOCsQBTIi/QlCpwEc+wBxMlMmQD6Wkx8HhIKcYlJ/0x4OgfXDI/4
-         NbTQ==
-X-Gm-Message-State: APjAAAUmx5+VDm3hLNIWJVLcf/KouvWgqWCl4OeWnHp4eLKUbPxesGwB
-        YI8XfXh29ZoS/9MyAxEJaS0=
-X-Google-Smtp-Source: APXvYqyEciuyfMkxCvyoadEDctvTyOVKQG9hGQSXBntS3wekh4Qlmu58TCz84YpAkaJcciuIxzwMsw==
-X-Received: by 2002:a2e:818e:: with SMTP id e14mr14219544ljg.2.1580744501178;
-        Mon, 03 Feb 2020 07:41:41 -0800 (PST)
-Received: from xi.terra (c-12aae455.07-184-6d6c6d4.bbcust.telenor.se. [85.228.170.18])
-        by smtp.gmail.com with ESMTPSA id f26sm9844917ljn.104.2020.02.03.07.41.38
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 03 Feb 2020 07:41:39 -0800 (PST)
-Received: from johan by xi.terra with local (Exim 4.92.3)
-        (envelope-from <johan@xi.terra>)
-        id 1iydrA-0006tK-Dt; Mon, 03 Feb 2020 16:41:48 +0100
-From:   Johan Hovold <johan@kernel.org>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     Alan Stern <stern@rowland.harvard.edu>, edes <edes@gmx.net>,
-        Takashi Iwai <tiwai@suse.de>, linux-usb@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Johan Hovold <johan@kernel.org>
-Subject: [PATCH 3/3] USB: core: clean up endpoint-descriptor parsing
-Date:   Mon,  3 Feb 2020 16:38:30 +0100
-Message-Id: <20200203153830.26394-4-johan@kernel.org>
-X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20200203153830.26394-1-johan@kernel.org>
-References: <20200203153830.26394-1-johan@kernel.org>
+        id S1728055AbgBCPjX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 3 Feb 2020 10:39:23 -0500
+Received: from mx2.suse.de ([195.135.220.15]:57616 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726272AbgBCPjX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Feb 2020 10:39:23 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx2.suse.de (Postfix) with ESMTP id AFFA0ADE2;
+        Mon,  3 Feb 2020 15:39:21 +0000 (UTC)
+Received: by ds.suse.cz (Postfix, from userid 10065)
+        id C9BD0DA81B; Mon,  3 Feb 2020 16:39:00 +0100 (CET)
+From:   David Sterba <dsterba@suse.com>
+To:     torvalds@linux-foundation.org
+Cc:     David Sterba <dsterba@suse.com>, linux-btrfs@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [GIT PULL] Btrfs updates for 5.6, part 2
+Date:   Mon,  3 Feb 2020 16:38:55 +0100
+Message-Id: <cover.1580742376.git.dsterba@suse.com>
+X-Mailer: git-send-email 2.24.0
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -55,97 +32,79 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Use the new usb-device pointer instead of back-casting when accessing
-the struct usb_device when parsing endpoints.
+Hi,
 
-Note that this introduces two lines that are longer than 80 chars on
-purpose.
+second batch containing fixes that arrived after the merge window
+freeze, mostly stable material. The top patch is fresh but addressing
+space reporing bug that's been bothering users and we've tested it
+meanwhile.
 
-Signed-off-by: Johan Hovold <johan@kernel.org>
----
- drivers/usb/core/config.c | 20 ++++++++------------
- 1 file changed, 8 insertions(+), 12 deletions(-)
+Please pull thanks.
 
-diff --git a/drivers/usb/core/config.c b/drivers/usb/core/config.c
-index 7df22bcefa9d..b7918f695434 100644
---- a/drivers/usb/core/config.c
-+++ b/drivers/usb/core/config.c
-@@ -322,7 +322,7 @@ static int usb_parse_endpoint(struct device *ddev, int cfgno,
- 	j = 255;
- 	if (usb_endpoint_xfer_int(d)) {
- 		i = 1;
--		switch (to_usb_device(ddev)->speed) {
-+		switch (udev->speed) {
- 		case USB_SPEED_SUPER_PLUS:
- 		case USB_SPEED_SUPER:
- 		case USB_SPEED_HIGH:
-@@ -343,8 +343,7 @@ static int usb_parse_endpoint(struct device *ddev, int cfgno,
- 			/*
- 			 * This quirk fixes bIntervals reported in ms.
- 			 */
--			if (to_usb_device(ddev)->quirks &
--				USB_QUIRK_LINEAR_FRAME_INTR_BINTERVAL) {
-+			if (udev->quirks & USB_QUIRK_LINEAR_FRAME_INTR_BINTERVAL) {
- 				n = clamp(fls(d->bInterval) + 3, i, j);
- 				i = j = n;
- 			}
-@@ -352,8 +351,7 @@ static int usb_parse_endpoint(struct device *ddev, int cfgno,
- 			 * This quirk fixes bIntervals reported in
- 			 * linear microframes.
- 			 */
--			if (to_usb_device(ddev)->quirks &
--				USB_QUIRK_LINEAR_UFRAME_INTR_BINTERVAL) {
-+			if (udev->quirks & USB_QUIRK_LINEAR_UFRAME_INTR_BINTERVAL) {
- 				n = clamp(fls(d->bInterval), i, j);
- 				i = j = n;
- 			}
-@@ -370,7 +368,7 @@ static int usb_parse_endpoint(struct device *ddev, int cfgno,
- 	} else if (usb_endpoint_xfer_isoc(d)) {
- 		i = 1;
- 		j = 16;
--		switch (to_usb_device(ddev)->speed) {
-+		switch (udev->speed) {
- 		case USB_SPEED_HIGH:
- 			n = 7;		/* 8 ms = 2^(7-1) uframes */
- 			break;
-@@ -392,8 +390,7 @@ static int usb_parse_endpoint(struct device *ddev, int cfgno,
- 	 * explicitly forbidden by the USB spec.  In an attempt to make
- 	 * them usable, we will try treating them as Interrupt endpoints.
- 	 */
--	if (to_usb_device(ddev)->speed == USB_SPEED_LOW &&
--			usb_endpoint_xfer_bulk(d)) {
-+	if (udev->speed == USB_SPEED_LOW && usb_endpoint_xfer_bulk(d)) {
- 		dev_warn(ddev, "config %d interface %d altsetting %d "
- 		    "endpoint 0x%X is Bulk; changing to Interrupt\n",
- 		    cfgno, inum, asnum, d->bEndpointAddress);
-@@ -417,7 +414,7 @@ static int usb_parse_endpoint(struct device *ddev, int cfgno,
- 
- 	/* Find the highest legal maxpacket size for this endpoint */
- 	i = 0;		/* additional transactions per microframe */
--	switch (to_usb_device(ddev)->speed) {
-+	switch (udev->speed) {
- 	case USB_SPEED_LOW:
- 		maxpacket_maxes = low_speed_maxpacket_maxes;
- 		break;
-@@ -453,8 +450,7 @@ static int usb_parse_endpoint(struct device *ddev, int cfgno,
- 	 * maxpacket sizes other than 512.  High speed HCDs may not
- 	 * be able to handle that particular bug, so let's warn...
- 	 */
--	if (to_usb_device(ddev)->speed == USB_SPEED_HIGH
--			&& usb_endpoint_xfer_bulk(d)) {
-+	if (udev->speed == USB_SPEED_HIGH && usb_endpoint_xfer_bulk(d)) {
- 		if (maxp != 512)
- 			dev_warn(ddev, "config %d interface %d altsetting %d "
- 				"bulk endpoint 0x%X has invalid maxpacket %d\n",
-@@ -463,7 +459,7 @@ static int usb_parse_endpoint(struct device *ddev, int cfgno,
- 	}
- 
- 	/* Parse a possible SuperSpeed endpoint companion descriptor */
--	if (to_usb_device(ddev)->speed >= USB_SPEED_SUPER)
-+	if (udev->speed >= USB_SPEED_SUPER)
- 		usb_parse_ss_endpoint_companion(ddev, cfgno,
- 				inum, asnum, endpoint, buffer, size);
- 
--- 
-2.24.1
+* fix race in tree-mod-log element tracking
 
+* fix bio flushing inside extent writepages
+
+* fix assertion when in-memory tracking of discarded extents finds an
+  empty tree (eg. after adding a new device)
+
+* update logic of temporary read-only block groups to take into account
+  overcommit
+
+* fix some fixup worker corner cases:
+  - page could not go through proper COW cycle and the dirty status is
+    lost due to page migration
+  - deadlock if delayed allocation is performed under page lock
+
+* fix send emitting invalid clones within the same file
+
+* fix statfs reporting 0 free space when global block reserve size is
+  larger than remaining free space but there is still space for new
+  chunks
+
+----------------------------------------------------------------
+The following changes since commit 4e19443da1941050b346f8fc4c368aa68413bc88:
+
+  btrfs: free block groups after free'ing fs trees (2020-01-23 17:24:39 +0100)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/kdave/linux.git for-5.6-tag
+
+for you to fetch changes up to d55966c4279bfc6a0cf0b32bf13f5df228a1eeb6:
+
+  btrfs: do not zero f_bavail if we have available space (2020-02-02 18:49:32 +0100)
+
+----------------------------------------------------------------
+Chris Mason (1):
+      Btrfs: keep pages dirty when using btrfs_writepage_fixup_worker
+
+Filipe Manana (2):
+      Btrfs: fix race between adding and putting tree mod seq elements and nodes
+      Btrfs: send, fix emission of invalid clone operations within the same file
+
+Josef Bacik (6):
+      btrfs: flush write bio if we loop in extent_write_cache_pages
+      btrfs: fix force usage in inc_block_group_ro
+      btrfs: take overcommit into account in inc_block_group_ro
+      btrfs: drop the -EBUSY case in __extent_writepage_io
+      btrfs: do not do delalloc reservation under page lock
+      btrfs: do not zero f_bavail if we have available space
+
+Nikolay Borisov (1):
+      btrfs: Correctly handle empty trees in find_first_clear_extent_bit
+
+ fs/btrfs/block-group.c           |  39 +++++++++----
+ fs/btrfs/ctree.c                 |   8 +--
+ fs/btrfs/ctree.h                 |   6 +-
+ fs/btrfs/delayed-ref.c           |   8 +--
+ fs/btrfs/disk-io.c               |   1 -
+ fs/btrfs/extent_io.c             |  49 +++++++++-------
+ fs/btrfs/inode.c                 | 121 +++++++++++++++++++++++++++++++--------
+ fs/btrfs/send.c                  |   3 +-
+ fs/btrfs/space-info.c            |  18 +++---
+ fs/btrfs/space-info.h            |   3 +
+ fs/btrfs/super.c                 |  10 +++-
+ fs/btrfs/tests/btrfs-tests.c     |   1 -
+ fs/btrfs/tests/extent-io-tests.c |   9 +++
+ 13 files changed, 193 insertions(+), 83 deletions(-)
