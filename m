@@ -2,40 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E654A150DD9
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Feb 2020 17:47:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 23E63150BB8
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Feb 2020 17:31:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728667AbgBCQ11 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 3 Feb 2020 11:27:27 -0500
-Received: from mail.kernel.org ([198.145.29.99]:38678 "EHLO mail.kernel.org"
+        id S1729895AbgBCQ35 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 3 Feb 2020 11:29:57 -0500
+Received: from mail.kernel.org ([198.145.29.99]:42018 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728526AbgBCQ1Y (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Feb 2020 11:27:24 -0500
+        id S1729872AbgBCQ3w (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Feb 2020 11:29:52 -0500
 Received: from localhost (unknown [104.132.45.99])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 900E02086A;
-        Mon,  3 Feb 2020 16:27:23 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id AE72B20838;
+        Mon,  3 Feb 2020 16:29:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1580747244;
-        bh=hKiHU1a63UxaLAHfhkLxunuN0U4UHhCWDSp0Il/mFMI=;
+        s=default; t=1580747392;
+        bh=ribteiezUfZyuKykqN1aymityXPgyL1l+MDbwRkuauM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=q0qV/7Qk6MHXsFoOzGzdtKqqlfGxGHFcJ8CJ0tVfEix9mcqbJWgZ0jn9QONk1uFO7
-         b0U8csIWPNGe4dEjO8/bQlSDTbYg1YqGE6iJcxANupmy2xMj6abZ3hJ9dK+0o3UygQ
-         ax6Hmb8z9plfBLCIww5nSuqw/Ep+wZ2ZjP4Cug2k=
+        b=LpjwZujf+Ays431B6L/xXPPs6jxj+BiyFcu+tHWjuIEpHhj0NZs/nNVE0EYLd+fh/
+         KslN6k4hOrv9fjozkAYvUVqRGD9pQWFxGrrS9DVqbrQ77ztNNdagUYj0glb4crI1xh
+         zTftpD9miNH0x1//7SLfXRNDInZBGJCBQDywgxiE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Johan Hovold <johan@kernel.org>,
-        Vladis Dronov <vdronov@redhat.com>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        stable@vger.kernel.org,
+        Kristian Evensen <kristian.evensen@gmail.com>,
+        =?UTF-8?q?Bj=C3=B8rn=20Mork?= <bjorn@mork.no>,
+        Jakub Kicinski <kuba@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 51/68] Input: aiptek - use descriptors of current altsetting
+Subject: [PATCH 4.14 62/89] qmi_wwan: Add support for Quectel RM500Q
 Date:   Mon,  3 Feb 2020 16:19:47 +0000
-Message-Id: <20200203161913.376134472@linuxfoundation.org>
+Message-Id: <20200203161924.708944557@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200203161904.705434837@linuxfoundation.org>
-References: <20200203161904.705434837@linuxfoundation.org>
+In-Reply-To: <20200203161916.847439465@linuxfoundation.org>
+References: <20200203161916.847439465@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,36 +46,34 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Johan Hovold <johan@kernel.org>
+From: Kristian Evensen <kristian.evensen@gmail.com>
 
-[ Upstream commit cfa4f6a99fb183742cace65ec551b444852b8ef6 ]
+[ Upstream commit a9ff44f0e61d074f29770413fef6a5452be7b83e ]
 
-Make sure to always use the descriptors of the current alternate setting
-to avoid future issues when accessing fields that may differ between
-settings.
+RM500Q is a 5G module from Quectel, supporting both standalone and
+non-standalone modes. The normal Quectel quirks apply (DTR and dynamic
+interface numbers).
 
-Signed-off-by: Johan Hovold <johan@kernel.org>
-Acked-by: Vladis Dronov <vdronov@redhat.com>
-Link: https://lore.kernel.org/r/20191210113737.4016-4-johan@kernel.org
-Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Signed-off-by: Kristian Evensen <kristian.evensen@gmail.com>
+Acked-by: Bjørn Mork <bjorn@mork.no>
+Signed-off-by: Jakub Kicinski <kuba@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/input/tablet/aiptek.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/net/usb/qmi_wwan.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/input/tablet/aiptek.c b/drivers/input/tablet/aiptek.c
-index 5a7e5e073e526..3b5bccad4a1bb 100644
---- a/drivers/input/tablet/aiptek.c
-+++ b/drivers/input/tablet/aiptek.c
-@@ -1733,7 +1733,7 @@ aiptek_probe(struct usb_interface *intf, const struct usb_device_id *id)
+diff --git a/drivers/net/usb/qmi_wwan.c b/drivers/net/usb/qmi_wwan.c
+index 4a984b76a60ec..db70d4c5778a6 100644
+--- a/drivers/net/usb/qmi_wwan.c
++++ b/drivers/net/usb/qmi_wwan.c
+@@ -999,6 +999,7 @@ static const struct usb_device_id products[] = {
+ 	{QMI_QUIRK_QUECTEL_DYNCFG(0x2c7c, 0x0125)},	/* Quectel EC25, EC20 R2.0  Mini PCIe */
+ 	{QMI_QUIRK_QUECTEL_DYNCFG(0x2c7c, 0x0306)},	/* Quectel EP06/EG06/EM06 */
+ 	{QMI_QUIRK_QUECTEL_DYNCFG(0x2c7c, 0x0512)},	/* Quectel EG12/EM12 */
++	{QMI_QUIRK_QUECTEL_DYNCFG(0x2c7c, 0x0800)},	/* Quectel RM500Q-GL */
  
- 	aiptek->inputdev = inputdev;
- 	aiptek->intf = intf;
--	aiptek->ifnum = intf->altsetting[0].desc.bInterfaceNumber;
-+	aiptek->ifnum = intf->cur_altsetting->desc.bInterfaceNumber;
- 	aiptek->inDelay = 0;
- 	aiptek->endDelay = 0;
- 	aiptek->previousJitterable = 0;
+ 	/* 3. Combined interface devices matching on interface number */
+ 	{QMI_FIXED_INTF(0x0408, 0xea42, 4)},	/* Yota / Megafon M100-1 */
 -- 
 2.20.1
 
