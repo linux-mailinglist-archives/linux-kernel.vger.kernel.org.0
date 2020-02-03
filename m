@@ -2,57 +2,92 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C5DA5150124
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Feb 2020 06:15:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DD9B8150129
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Feb 2020 06:20:07 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727257AbgBCFPg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 3 Feb 2020 00:15:36 -0500
-Received: from out30-45.freemail.mail.aliyun.com ([115.124.30.45]:39163 "EHLO
-        out30-45.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725768AbgBCFPg (ORCPT
+        id S1727315AbgBCFUG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 3 Feb 2020 00:20:06 -0500
+Received: from conssluserg-05.nifty.com ([210.131.2.90]:46625 "EHLO
+        conssluserg-05.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725768AbgBCFUG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Feb 2020 00:15:36 -0500
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R761e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e07417;MF=joseph.qi@linux.alibaba.com;NM=1;PH=DS;RN=8;SR=0;TI=SMTPD_---0TozpQ89_1580706930;
-Received: from JosephdeMacBook-Pro.local(mailfrom:joseph.qi@linux.alibaba.com fp:SMTPD_---0TozpQ89_1580706930)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Mon, 03 Feb 2020 13:15:31 +0800
-Subject: Re: [PATCH] ocfs2: fix the oops problem when write cloned file
-To:     Gang He <GHe@suse.com>, "mark@fasheh.com" <mark@fasheh.com>,
-        "jlbec@evilplan.org" <jlbec@evilplan.org>,
-        "gechangwei@live.cn" <gechangwei@live.cn>,
-        Shuning Zhang <sunny.s.zhang@oracle.com>
-Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "ocfs2-devel@oss.oracle.com" <ocfs2-devel@oss.oracle.com>,
-        "akpm@linux-foundation.org" <akpm@linux-foundation.org>
-References: <20200121050153.13290-1-ghe@suse.com>
- <CH2PR18MB3206F418382332EB25130477CF000@CH2PR18MB3206.namprd18.prod.outlook.com>
-From:   Joseph Qi <joseph.qi@linux.alibaba.com>
-Message-ID: <de23176f-5b84-a785-80a2-0bdc8e3a0fab@linux.alibaba.com>
-Date:   Mon, 3 Feb 2020 13:15:30 +0800
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.11; rv:60.0)
- Gecko/20100101 Thunderbird/60.9.1
+        Mon, 3 Feb 2020 00:20:06 -0500
+Received: from mail-vs1-f51.google.com (mail-vs1-f51.google.com [209.85.217.51]) (authenticated)
+        by conssluserg-05.nifty.com with ESMTP id 0135JhAi023689;
+        Mon, 3 Feb 2020 14:19:44 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-05.nifty.com 0135JhAi023689
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1580707184;
+        bh=R8kzJf9J/bk6QzTc3zwFEeBvlSpMMeb6GRnS58I25Hc=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=GQSkoqUT7cplJ/wXPyA1d1u+d8wPOImQFu0SZBMf0OynqlkJLXNsaTinPjzQcHKeD
+         vXTz7NAZVqSPn/cY3elZG5pe26Moi/Qo71+eLGDmSWykFNDWn4j30SocFci0PemWPZ
+         FS0eYKEMomYmsLmDRIPANfcEe4Rpvb1sOfCXWrLqd1U3Qutpuuf0yUYgCRHMH1wsfZ
+         fbqOQ6um91roMnfKiHb6MM4wI8W/izSQBtt5KGZNcsTdIU3Z+M8zMGO6Cb7W154T+X
+         nRAE3Yxerh6Ct6L8ABvwbDS14VYeW16BnxbKL/kHInW5p9w6Y1umex8JZ9ObGulA2f
+         JiYU7mZonNhVQ==
+X-Nifty-SrcIP: [209.85.217.51]
+Received: by mail-vs1-f51.google.com with SMTP id g15so8166693vsf.1;
+        Sun, 02 Feb 2020 21:19:44 -0800 (PST)
+X-Gm-Message-State: APjAAAUTWFS5Y1xQN7PI5SUkshEms2/Cu4jzZDEq7zTrZ6TpQ0DedguV
+        Ky1OgKWlZrw6/LUuVphRAVO03mvG3KDLvQ6saiE=
+X-Google-Smtp-Source: APXvYqxcQM6p6tR0N8S+zmXJx/zC8ZCy5mVhBsqvx8kWMeB6kjuvHyZcIQDRKcnuAjcZLZYdO62sUG9u8fNw/IYfhmI=
+X-Received: by 2002:a67:6485:: with SMTP id y127mr13978433vsb.54.1580707182954;
+ Sun, 02 Feb 2020 21:19:42 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <CH2PR18MB3206F418382332EB25130477CF000@CH2PR18MB3206.namprd18.prod.outlook.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <20200202050922.12402-1-masahiroy@kernel.org> <20200202050922.12402-3-masahiroy@kernel.org>
+ <CAMrEMU9ZBAwOPsqeKw0sUF0EWnfO1-UtOKROD6T1AjYX_tWLXA@mail.gmail.com>
+In-Reply-To: <CAMrEMU9ZBAwOPsqeKw0sUF0EWnfO1-UtOKROD6T1AjYX_tWLXA@mail.gmail.com>
+From:   Masahiro Yamada <masahiroy@kernel.org>
+Date:   Mon, 3 Feb 2020 14:19:07 +0900
+X-Gmail-Original-Message-ID: <CAK7LNASqGiYHJTsRFdanfxCXe7JYB7+qf=GmvnO3UcJ-uDsatw@mail.gmail.com>
+Message-ID: <CAK7LNASqGiYHJTsRFdanfxCXe7JYB7+qf=GmvnO3UcJ-uDsatw@mail.gmail.com>
+Subject: Re: [PATCH 3/3] kallsyms: fix type of kallsyms_token_table[]
+To:     Justin Capella <justincapella@gmail.com>
+Cc:     Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Marc Zyngier <maz@kernel.org>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Will Deacon <will@kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Mon, Feb 3, 2020 at 12:26 PM Justin Capella <justincapella@gmail.com> wrote:
+>
+> unsigned char maybe? I understand printable chars unlikely to cause
+> any trouble and probably a non issue, but the domain is different for
+> char, and while I don't know of supported implementations where sizeof
+> char isn't a byte, I think it's a possibility and perhaps why u8 was
+> in use?
 
 
-On 20/2/3 10:17, Gang He wrote:
-> Hello Joseph, Changwei, Sunny and all,
-> 
-> Could you help to review this patch? 
-> This patch will fix the oops problem caused by write ocfs2 clone files.
-> The root cause is inode buffer head is NULL when calling ocfs2_refcount_cow.
-> Secondly, we should use EX meta lock when calling ocfs2_refcount_cow.
-> 
-Before commit e74540b28556, we may also use NULL buffer head in case of
-overwrite, so why there is no such issue before?
+As I said in the commit description,
+this only contains ASCII, which is 7-bit code.
 
-Thanks,
-Joseph
+We do not care the signed-ness of char.
+
+
+kallsyms_names[] has been u8 since the
+following old commit:
+
+
+commit e10392112d315c45f054c22c862e3a7ae27d17d4
+Author: Paulo Marques <pmarques@grupopie.com>
+Date:   Mon Oct 18 17:59:03 2004 -0700
+
+    [PATCH] kallsyms data size reduction / lookup speedup
+
+
+
+Probably, this is just coding mistake.
+
+
+
+-- 
+Best Regards
+Masahiro Yamada
