@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5CDCC150D69
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Feb 2020 17:44:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 58778150BAA
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Feb 2020 17:30:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730311AbgBCQbw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 3 Feb 2020 11:31:52 -0500
-Received: from mail.kernel.org ([198.145.29.99]:45284 "EHLO mail.kernel.org"
+        id S1729799AbgBCQ33 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 3 Feb 2020 11:29:29 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41390 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729855AbgBCQbt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Feb 2020 11:31:49 -0500
+        id S1729778AbgBCQ30 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Feb 2020 11:29:26 -0500
 Received: from localhost (unknown [104.132.45.99])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9173A2082E;
-        Mon,  3 Feb 2020 16:31:48 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3A1B120CC7;
+        Mon,  3 Feb 2020 16:29:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1580747509;
-        bh=WIQV5IOn5uIZP2r5HHJ/+hpMVwDPSSHQ6G8Z0Ir6Op8=;
+        s=default; t=1580747365;
+        bh=xRi3OnPDkMrCHrONQoVqFJnmHIAMwnIwbPyrLOZbWDI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=KglSJnAz7fwR7T/SkcZNq9KA9xAhIfx1xhTgX7CHCWWjAEx84NW/6HUXpTGAS73jw
-         oK4sE3hi1U4WESs3mcMJW90sPe6/2FDlp6TJz6KFv4/Bx+6SNOx1gb5Y11kj3PJLXC
-         AS/uTqn4oZcUFq8ZcR50d8e5BFyDm30WGtS5svfc=
+        b=UGUPfFga6w2AQL96QWTE/NnbGEkZQy2od1J5KcqmT8XhZw9kdI2ZHJ2iMJQfbL1xt
+         SpzOa9F//ZlLRZae7aeictOTPS+LOGgxEB45rI/UUGMTLFLK2I6BtYE2yNjemJ6bdU
+         ZJJ7iVyHCl38o7PPLkdOdASbD3Rw2BVdsRVzHIpo=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         kbuild test robot <lkp@intel.com>,
         Julia Lawall <julia.lawall@lip6.fr>,
         Lee Jones <lee.jones@linaro.org>
-Subject: [PATCH 4.19 24/70] media: si470x-i2c: Move free() past last use of radio
-Date:   Mon,  3 Feb 2020 16:19:36 +0000
-Message-Id: <20200203161916.096592935@linuxfoundation.org>
+Subject: [PATCH 4.14 52/89] media: si470x-i2c: Move free() past last use of radio
+Date:   Mon,  3 Feb 2020 16:19:37 +0000
+Message-Id: <20200203161923.790810903@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200203161912.158976871@linuxfoundation.org>
-References: <20200203161912.158976871@linuxfoundation.org>
+In-Reply-To: <20200203161916.847439465@linuxfoundation.org>
+References: <20200203161916.847439465@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -69,7 +69,7 @@ Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 --- a/drivers/media/radio/si470x/radio-si470x-i2c.c
 +++ b/drivers/media/radio/si470x/radio-si470x-i2c.c
-@@ -483,10 +483,10 @@ static int si470x_i2c_remove(struct i2c_
+@@ -453,10 +453,10 @@ static int si470x_i2c_remove(struct i2c_
  
  	free_irq(client->irq, radio);
  	video_unregister_device(&radio->videodev);
