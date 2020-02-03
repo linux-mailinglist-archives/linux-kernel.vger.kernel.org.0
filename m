@@ -2,106 +2,225 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 45AC415040E
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Feb 2020 11:18:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8E7DC150433
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Feb 2020 11:27:50 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727975AbgBCKSU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 3 Feb 2020 05:18:20 -0500
-Received: from fllv0016.ext.ti.com ([198.47.19.142]:54098 "EHLO
-        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727911AbgBCKSS (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Feb 2020 05:18:18 -0500
-Received: from fllv0035.itg.ti.com ([10.64.41.0])
-        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 013AIFsb118145;
-        Mon, 3 Feb 2020 04:18:15 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1580725096;
-        bh=QAD8MJEBJU3Ct4VsAMm9RYlxHl5Eot2UW/ytZA5ij2c=;
-        h=From:To:CC:Subject:Date:In-Reply-To:References;
-        b=fDP89lzjz0/qmrgLHNqhnc66MpWL0QVHIpbxQisA9zIITw6usQo3ujzGn0AS4Enle
-         ZVzOexmlYcfu9voWeP3mK6AVp4y33/sAuuxDSoJINvKeRb3XFEfYVdZZvxnMsimP23
-         +j/6uCmJ/rcWOlfLdkpQSqxZxU1TNjN6u8cBoE0w=
-Received: from DLEE104.ent.ti.com (dlee104.ent.ti.com [157.170.170.34])
-        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTP id 013AIF4j012117;
-        Mon, 3 Feb 2020 04:18:15 -0600
-Received: from DLEE104.ent.ti.com (157.170.170.34) by DLEE104.ent.ti.com
- (157.170.170.34) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Mon, 3 Feb
- 2020 04:18:14 -0600
-Received: from fllv0040.itg.ti.com (10.64.41.20) by DLEE104.ent.ti.com
- (157.170.170.34) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
- Frontend Transport; Mon, 3 Feb 2020 04:18:14 -0600
-Received: from feketebors.ti.com (ileax41-snat.itg.ti.com [10.172.224.153])
-        by fllv0040.itg.ti.com (8.15.2/8.15.2) with ESMTP id 013AI7mV040513;
-        Mon, 3 Feb 2020 04:18:12 -0600
-From:   Peter Ujfalusi <peter.ujfalusi@ti.com>
-To:     <vkoul@kernel.org>
-CC:     <dmaengine@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <dan.j.williams@intel.com>
-Subject: [PATCH 3/3] dmaengine: Encourage dma_request_slave_channel_compat() users to migrate
-Date:   Mon, 3 Feb 2020 12:18:06 +0200
-Message-ID: <20200203101806.2441-4-peter.ujfalusi@ti.com>
-X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200203101806.2441-1-peter.ujfalusi@ti.com>
-References: <20200203101806.2441-1-peter.ujfalusi@ti.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+        id S1727526AbgBCK1q (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 3 Feb 2020 05:27:46 -0500
+Received: from mx1.tq-group.com ([62.157.118.193]:51690 "EHLO mx1.tq-group.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726100AbgBCK1p (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Feb 2020 05:27:45 -0500
+X-Greylist: delayed 428 seconds by postgrey-1.27 at vger.kernel.org; Mon, 03 Feb 2020 05:27:44 EST
+IronPort-SDR: X1Gz/oUg2tDO+KeeBbID8o/+NyshHFoLcFqQjiUnk7LIik9RWLlCrmVbCuxrXzlqhUNlKcU8j8
+ fOMDCDG9Baa5t/FsrZerhwXcnKhkMbldApDeC9NkW3ciEA28p8N2XSwbkhCgvhhAjaqVQVM6pe
+ YAjnC9k5l5/Sqejrv647jV8/qivic2LjlZz2kS5D0H7BO/8j/jxb2G6bbyRnjgORpXQg3BJjgX
+ YGMCP4Ds4PPwg/msfhNfy7msu81op68+57uzh22t/WXU7Dpx/hQ/maTVZvGYgdsgFWH/wygVm1
+ gxc=
+X-IronPort-AV: E=Sophos;i="5.70,397,1574118000"; 
+   d="scan'208";a="10771158"
+Received: from unknown (HELO tq-pgp-pr1.tq-net.de) ([192.168.6.15])
+  by mx1-pgp.tq-group.com with ESMTP; 03 Feb 2020 11:20:35 +0100
+Received: from mx1.tq-group.com ([192.168.6.7])
+  by tq-pgp-pr1.tq-net.de (PGP Universal service);
+  Mon, 03 Feb 2020 11:20:35 +0100
+X-PGP-Universal: processed;
+        by tq-pgp-pr1.tq-net.de on Mon, 03 Feb 2020 11:20:35 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=tq-group.com; i=@tq-group.com; q=dns/txt; s=key1;
+  t=1580725235; x=1612261235;
+  h=from:to:cc:subject:date:message-id;
+  bh=D1tHKRm9/T8SfmVVqmQjih0yc81AuYCA3oGPGsPn+YE=;
+  b=FQhXxTwE6Pt62rPMDxweje/LiYgCfSxl/rwALdTyNU9QRx5Gd0Bk2RRD
+   dZjpuU4DpKTjk1Rgd3Fib+kTGX3pcUKHHmCA7ZQSBsWG9KRauhzzd/Zjw
+   E7ph7iltbyu6860wgckYLbAV//ZsTaZlwZN6GHil+YPFk0d0HfcSxwZ+z
+   d5sgPhxwQjV3jSiAJEs2wGA5/Pxq9SnvP94udf0LKW9KEFLcl/5DWTR+A
+   hkke88G6HidkmoAuOi6pwTCPLQcH+c3ashYBpCvYpbawaMPlfjhMqRiYt
+   KUvEe4Y4U2Oin/QXY/o5pialF5z6kLNst9BzDbjOJGayCj9+LNu3R4sEJ
+   w==;
+IronPort-SDR: mim3VmcPh0LqA7R+lC6X8G4512MuGwfV4r/yUaOvfKLTPFOEOGzV7/ZblatpikgN6nwNl06Run
+ qgvYCVUiF8ZjBm6dGi+F+rwgVQhensHMOQLG3LyAAEBdeddoEFeQk5CeLDvjL1znO3QXfgCAcs
+ Gr+4nwxM6RdyqzB3jxAuzQiXWyEaaLfVDVkxsScoOMPtWSeR5vJkbMRFP3ATXFCH2x9ImX06sR
+ fQyF4dZLtna4RrfQZ9Yhk6B5z4gXFKmYJjsfASK84Hp/mz2omlpcqmbB4MR1KKKTfyAUzogM+s
+ si0=
+X-IronPort-AV: E=Sophos;i="5.70,397,1574118000"; 
+   d="scan'208";a="10771157"
+Received: from vtuxmail01.tq-net.de ([10.115.0.20])
+  by mx1.tq-group.com with ESMTP; 03 Feb 2020 11:20:35 +0100
+Received: from schifferm-ubuntu4.tq-net.de (schifferm-ubuntu4.tq-net.de [10.117.49.26])
+        by vtuxmail01.tq-net.de (Postfix) with ESMTPA id 5A659280065;
+        Mon,  3 Feb 2020 11:20:37 +0100 (CET)
+From:   Matthias Schiffer <matthias.schiffer@ew.tq-group.com>
+To:     horia.geanta@nxp.com, aymen.sghaier@nxp.com
+Cc:     herbert@gondor.apana.org.au, davem@davemloft.net,
+        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Matthias Schiffer <matthias.schiffer@ew.tq-group.com>
+Subject: [RFC] crypto: caam: re-init JR on resume
+Date:   Mon,  3 Feb 2020 11:18:50 +0100
+Message-Id: <20200203101850.22570-1-matthias.schiffer@ew.tq-group.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Users of dma_request_slave_channel_compat() can be migrated to
-dma_request_chan() by correct dma_slave_map for the platform.
+The JR loses its configuration during suspend-to-RAM (at least on
+i.MX6UL). Re-initialize the hardware on resume.
 
-Start nagging users in hope that they will move.
-
-Signed-off-by: Peter Ujfalusi <peter.ujfalusi@ti.com>
+Signed-off-by: Matthias Schiffer <matthias.schiffer@ew.tq-group.com>
 ---
- include/linux/dmaengine.h | 11 +++++++++--
- 1 file changed, 9 insertions(+), 2 deletions(-)
 
-diff --git a/include/linux/dmaengine.h b/include/linux/dmaengine.h
-index 4c522bf6ac25..581f6822a7a5 100644
---- a/include/linux/dmaengine.h
-+++ b/include/linux/dmaengine.h
-@@ -1547,6 +1547,10 @@ dma_request_slave_channel(struct device *dev, const char *name)
- 	return IS_ERR(ch) ? NULL : ch;
- }
+I've come across the issue that the CAAM would not work anymore after
+deep sleep on i.MX6UL. It turned out that the CAAM loses its state
+during suspend-to-RAM, so all registers read as zero and need to be
+reinitialized.
+
+This patch is my first attempt at fixing the issue. It seems to work
+well enough, but I assume I'm missing some synchronization to prevent
+that some CAAM operation is currently under way when the suspend
+happens? I don't know the PM and crypto subsystems well enough to judge
+if this is possible, and if it is, how to prevent it.
+
+I've only compile-tested this version of the patch, as I had to port it
+from our board kernel, which is based on the heavily-modified NXP branch.
+
+
+ drivers/crypto/caam/intern.h |  3 ++
+ drivers/crypto/caam/jr.c     | 62 +++++++++++++++++++++++++-----------
+ 2 files changed, 46 insertions(+), 19 deletions(-)
+
+diff --git a/drivers/crypto/caam/intern.h b/drivers/crypto/caam/intern.h
+index c7c10c90464b..5d2e9091d5c2 100644
+--- a/drivers/crypto/caam/intern.h
++++ b/drivers/crypto/caam/intern.h
+@@ -47,6 +47,9 @@ struct caam_drv_private_jr {
+ 	struct tasklet_struct irqtask;
+ 	int irq;			/* One per queue */
  
-+/*
-+ * Please use dma_request_chan() directly.
-+ * Legacy support should use dma_slave_map + dma_request_chan()
-+ */
- static inline struct dma_chan
- *dma_request_slave_channel_compat(const dma_cap_mask_t mask,
- 				  dma_filter_fn fn, void *fn_param,
-@@ -1554,13 +1558,16 @@ static inline struct dma_chan
- {
- 	struct dma_chan *chan;
- 
--	chan = dma_request_slave_channel(dev, name);
--	if (chan)
-+	chan = dma_request_chan(dev, name);
-+	if (!IS_ERR(chan))
- 		return chan;
- 
- 	if (!fn || !fn_param)
- 		return NULL;
- 
-+	dev_info(dev, "Please add dma_slave_map entry for %s:%s and migrate to"
-+		 " dma_request_chan()", dev_name(dev), name);
++	dma_addr_t inpbusaddr;
++	dma_addr_t outbusaddr;
 +
- 	return __dma_request_channel(&mask, fn, fn_param, NULL);
+ 	/* Number of scatterlist crypt transforms active on the JobR */
+ 	atomic_t tfm_count ____cacheline_aligned;
+ 
+diff --git a/drivers/crypto/caam/jr.c b/drivers/crypto/caam/jr.c
+index fc97cde27059..2dabf5fd7818 100644
+--- a/drivers/crypto/caam/jr.c
++++ b/drivers/crypto/caam/jr.c
+@@ -418,13 +418,31 @@ int caam_jr_enqueue(struct device *dev, u32 *desc,
+ }
+ EXPORT_SYMBOL(caam_jr_enqueue);
+ 
++static void caam_jr_setup_rings(struct caam_drv_private_jr *jrp)
++{
++	jrp->out_ring_read_index = 0;
++	jrp->head = 0;
++	jrp->tail = 0;
++
++	wr_reg64(&jrp->rregs->inpring_base, jrp->inpbusaddr);
++	wr_reg64(&jrp->rregs->outring_base, jrp->outbusaddr);
++	wr_reg32(&jrp->rregs->inpring_size, JOBR_DEPTH);
++	wr_reg32(&jrp->rregs->outring_size, JOBR_DEPTH);
++
++	jrp->inpring_avail = JOBR_DEPTH;
++
++	/* Select interrupt coalescing parameters */
++	clrsetbits_32(&jrp->rregs->rconfig_lo, 0, JOBR_INTC |
++		      (JOBR_INTC_COUNT_THLD << JRCFG_ICDCT_SHIFT) |
++		      (JOBR_INTC_TIME_THLD << JRCFG_ICTT_SHIFT));
++}
++
+ /*
+  * Init JobR independent of platform property detection
+  */
+ static int caam_jr_init(struct device *dev)
+ {
+ 	struct caam_drv_private_jr *jrp;
+-	dma_addr_t inpbusaddr, outbusaddr;
+ 	int i, error;
+ 
+ 	jrp = dev_get_drvdata(dev);
+@@ -434,13 +452,13 @@ static int caam_jr_init(struct device *dev)
+ 		return error;
+ 
+ 	jrp->inpring = dmam_alloc_coherent(dev, SIZEOF_JR_INPENTRY *
+-					   JOBR_DEPTH, &inpbusaddr,
++					   JOBR_DEPTH, &jrp->inpbusaddr,
+ 					   GFP_KERNEL);
+ 	if (!jrp->inpring)
+ 		return -ENOMEM;
+ 
+ 	jrp->outring = dmam_alloc_coherent(dev, SIZEOF_JR_OUTENTRY *
+-					   JOBR_DEPTH, &outbusaddr,
++					   JOBR_DEPTH, &jrp->outbusaddr,
+ 					   GFP_KERNEL);
+ 	if (!jrp->outring)
+ 		return -ENOMEM;
+@@ -453,24 +471,9 @@ static int caam_jr_init(struct device *dev)
+ 	for (i = 0; i < JOBR_DEPTH; i++)
+ 		jrp->entinfo[i].desc_addr_dma = !0;
+ 
+-	/* Setup rings */
+-	jrp->out_ring_read_index = 0;
+-	jrp->head = 0;
+-	jrp->tail = 0;
+-
+-	wr_reg64(&jrp->rregs->inpring_base, inpbusaddr);
+-	wr_reg64(&jrp->rregs->outring_base, outbusaddr);
+-	wr_reg32(&jrp->rregs->inpring_size, JOBR_DEPTH);
+-	wr_reg32(&jrp->rregs->outring_size, JOBR_DEPTH);
+-
+-	jrp->inpring_avail = JOBR_DEPTH;
+-
+ 	spin_lock_init(&jrp->inplock);
+ 
+-	/* Select interrupt coalescing parameters */
+-	clrsetbits_32(&jrp->rregs->rconfig_lo, 0, JOBR_INTC |
+-		      (JOBR_INTC_COUNT_THLD << JRCFG_ICDCT_SHIFT) |
+-		      (JOBR_INTC_TIME_THLD << JRCFG_ICTT_SHIFT));
++	caam_jr_setup_rings(jrp);
+ 
+ 	tasklet_init(&jrp->irqtask, caam_jr_dequeue, (unsigned long)dev);
+ 
+@@ -486,6 +489,20 @@ static int caam_jr_init(struct device *dev)
+ 	return error;
  }
  
++static int caam_jr_reinit(struct device *dev)
++{
++	struct caam_drv_private_jr *jrp = dev_get_drvdata(dev);
++	int error;
++
++	error = caam_reset_hw_jr(dev);
++	if (error)
++		return error;
++
++	caam_jr_setup_rings(jrp);
++
++	return 0;
++}
++
+ static void caam_jr_irq_dispose_mapping(void *data)
+ {
+ 	irq_dispose_mapping((unsigned long)data);
+@@ -578,10 +595,17 @@ static const struct of_device_id caam_jr_match[] = {
+ };
+ MODULE_DEVICE_TABLE(of, caam_jr_match);
+ 
++#ifdef CONFIG_PM
++static SIMPLE_DEV_PM_OPS(caam_jr_pm_ops, caam_reset_hw_jr, caam_jr_reinit);
++#endif
++
+ static struct platform_driver caam_jr_driver = {
+ 	.driver = {
+ 		.name = "caam_jr",
+ 		.of_match_table = caam_jr_match,
++#ifdef CONFIG_PM
++		.pm = &caam_jr_pm_ops,
++#endif
+ 	},
+ 	.probe       = caam_jr_probe,
+ 	.remove      = caam_jr_remove,
 -- 
-Peter
-
-Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
-Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
+2.17.1
 
