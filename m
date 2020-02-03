@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 66C94150D8B
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Feb 2020 17:46:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 65C4E150D51
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Feb 2020 17:44:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730125AbgBCQbB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 3 Feb 2020 11:31:01 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43862 "EHLO mail.kernel.org"
+        id S1730177AbgBCQcq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 3 Feb 2020 11:32:46 -0500
+Received: from mail.kernel.org ([198.145.29.99]:46460 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729275AbgBCQa5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Feb 2020 11:30:57 -0500
+        id S1730159AbgBCQcl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Feb 2020 11:32:41 -0500
 Received: from localhost (unknown [104.132.45.99])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3189A2080C;
-        Mon,  3 Feb 2020 16:30:56 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D33E02082E;
+        Mon,  3 Feb 2020 16:32:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1580747456;
-        bh=B9JCGm51siuIgX7EcU2ySapCcDCJW8dAc+m2KJEWRyw=;
+        s=default; t=1580747561;
+        bh=rOC8U+f1daTPhWJ4bxWs0HkmJ05pAb0NOy3PkAdNkRg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=xgJJSv2Fmq6Zcr/+XRhvVxnDvbu9eyAgGYr7M+fnwU5ID2LSphK6zj5wXo/V/fUyo
-         8QgA3loiNcGbZaUEKgQhex6FCP7YwlLp5+hCise+iKdT5R9luw19yBHofapel5vqNx
-         fHYUBd5Rd4QUP6ElOmT7ARKZjoFf71dZGbeyIwBU=
+        b=QU2BrUgFlnor5Qk/hGAZO+kK5MaVS1TyyxCW0rvkOMz1KFHJhQuC+9RplkP2HUg/f
+         vY+Y4ufjkWPys59Ni9lSFbmzVuneQmCsaeZTEyU1nBhYvFEvPicjHAr+4Q2IaQC7yp
+         XhS9NE/3B0zrVS8xX0LAiP0X29gmccjj5stKwkMo=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, "Matwey V. Kornilov" <matwey@sai.msu.ru>,
-        Tony Lindgren <tony@atomide.com>,
+        stable@vger.kernel.org, Jouni Malinen <j@w1.fi>,
+        Johannes Berg <johannes.berg@intel.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 71/89] ARM: dts: am335x-boneblack-common: fix memory size
+Subject: [PATCH 4.19 44/70] mac80211: Fix TKIP replay protection immediately after key setup
 Date:   Mon,  3 Feb 2020 16:19:56 +0000
-Message-Id: <20200203161925.711697365@linuxfoundation.org>
+Message-Id: <20200203161918.742702787@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200203161916.847439465@linuxfoundation.org>
-References: <20200203161916.847439465@linuxfoundation.org>
+In-Reply-To: <20200203161912.158976871@linuxfoundation.org>
+References: <20200203161912.158976871@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,39 +44,62 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Matwey V. Kornilov <matwey@sai.msu.ru>
+From: Jouni Malinen <j@w1.fi>
 
-[ Upstream commit 5abd45ea0fc3060f7805e131753fdcbafd6c6618 ]
+[ Upstream commit 6f601265215a421f425ba3a4850a35861d024643 ]
 
-BeagleBone Black series is equipped with 512MB RAM
-whereas only 256MB is included from am335x-bone-common.dtsi
+TKIP replay protection was skipped for the very first frame received
+after a new key is configured. While this is potentially needed to avoid
+dropping a frame in some cases, this does leave a window for replay
+attacks with group-addressed frames at the station side. Any earlier
+frame sent by the AP using the same key would be accepted as a valid
+frame and the internal RSC would then be updated to the TSC from that
+frame. This would allow multiple previously transmitted group-addressed
+frames to be replayed until the next valid new group-addressed frame
+from the AP is received by the station.
 
-This leads to an issue with unusual setups when devicetree
-is loaded by GRUB2 directly.
+Fix this by limiting the no-replay-protection exception to apply only
+for the case where TSC=0, i.e., when this is for the very first frame
+protected using the new key, and the local RSC had not been set to a
+higher value when configuring the key (which may happen with GTK).
 
-Signed-off-by: Matwey V. Kornilov <matwey@sai.msu.ru>
-Signed-off-by: Tony Lindgren <tony@atomide.com>
+Signed-off-by: Jouni Malinen <j@w1.fi>
+Link: https://lore.kernel.org/r/20200107153545.10934-1-j@w1.fi
+Signed-off-by: Johannes Berg <johannes.berg@intel.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arm/boot/dts/am335x-boneblack-common.dtsi | 5 +++++
- 1 file changed, 5 insertions(+)
+ net/mac80211/tkip.c | 18 +++++++++++++++---
+ 1 file changed, 15 insertions(+), 3 deletions(-)
 
-diff --git a/arch/arm/boot/dts/am335x-boneblack-common.dtsi b/arch/arm/boot/dts/am335x-boneblack-common.dtsi
-index 325daae40278a..485c27f039f59 100644
---- a/arch/arm/boot/dts/am335x-boneblack-common.dtsi
-+++ b/arch/arm/boot/dts/am335x-boneblack-common.dtsi
-@@ -131,6 +131,11 @@
- };
+diff --git a/net/mac80211/tkip.c b/net/mac80211/tkip.c
+index b3622823bad23..ebd66e8f46b3f 100644
+--- a/net/mac80211/tkip.c
++++ b/net/mac80211/tkip.c
+@@ -266,9 +266,21 @@ int ieee80211_tkip_decrypt_data(struct crypto_cipher *tfm,
+ 	if ((keyid >> 6) != key->conf.keyidx)
+ 		return TKIP_DECRYPT_INVALID_KEYIDX;
  
- / {
-+	memory@80000000 {
-+		device_type = "memory";
-+		reg = <0x80000000 0x20000000>; /* 512 MB */
-+	};
-+
- 	clk_mcasp0_fixed: clk_mcasp0_fixed {
- 		#clock-cells = <0>;
- 		compatible = "fixed-clock";
+-	if (rx_ctx->ctx.state != TKIP_STATE_NOT_INIT &&
+-	    (iv32 < rx_ctx->iv32 ||
+-	     (iv32 == rx_ctx->iv32 && iv16 <= rx_ctx->iv16)))
++	/* Reject replays if the received TSC is smaller than or equal to the
++	 * last received value in a valid message, but with an exception for
++	 * the case where a new key has been set and no valid frame using that
++	 * key has yet received and the local RSC was initialized to 0. This
++	 * exception allows the very first frame sent by the transmitter to be
++	 * accepted even if that transmitter were to use TSC 0 (IEEE 802.11
++	 * described TSC to be initialized to 1 whenever a new key is taken into
++	 * use).
++	 */
++	if (iv32 < rx_ctx->iv32 ||
++	    (iv32 == rx_ctx->iv32 &&
++	     (iv16 < rx_ctx->iv16 ||
++	      (iv16 == rx_ctx->iv16 &&
++	       (rx_ctx->iv32 || rx_ctx->iv16 ||
++		rx_ctx->ctx.state != TKIP_STATE_NOT_INIT)))))
+ 		return TKIP_DECRYPT_REPLAY;
+ 
+ 	if (only_iv) {
 -- 
 2.20.1
 
