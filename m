@@ -2,42 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C0592150BE7
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Feb 2020 17:32:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3AC1F150BF0
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Feb 2020 17:32:18 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730236AbgBCQba (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 3 Feb 2020 11:31:30 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44668 "EHLO mail.kernel.org"
+        id S1730333AbgBCQb5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 3 Feb 2020 11:31:57 -0500
+Received: from mail.kernel.org ([198.145.29.99]:45348 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730218AbgBCQb2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Feb 2020 11:31:28 -0500
+        id S1730318AbgBCQby (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Feb 2020 11:31:54 -0500
 Received: from localhost (unknown [104.132.45.99])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0DE642051A;
-        Mon,  3 Feb 2020 16:31:27 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3A8D92082E;
+        Mon,  3 Feb 2020 16:31:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1580747487;
-        bh=/FxeA2SMt1YoBQQdaj+N42iEP6NaXB/5Fr77Nm5QU7k=;
+        s=default; t=1580747513;
+        bh=Eks/9HFVArPyWzQM0TOyCpnfOGYzDbio/Tb3ivsQxGY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=UvC5Uu8qfkt44698U3Er1E2eAGdZonOQzzzhyv9SlsAf2fDaOnLMf54tnUdvD28Wa
-         jNST8no22ubRtlxPBt4p4AfjPqW5MPxoqLW0k+Ts2IhsDIgazHk4cUy37u1dErWSbL
-         MtJtWAKr8QzgZylVAvoX30iKMt9gmqUL52GkE23w=
+        b=1WNqvFPfZGSicvc8fjAsIh48nT5a5SBUdvQAx33yvPVTf4SJdPkiztnj8jqSNnFOY
+         rrsyFrIAbfeD6PGv4MdXxTqFwvWIyvntz478DMXpyJ+RpdUexZHwkNC5GJ8RmDBfS1
+         fawg4Q0QynqtgQmkkpKgExS+OZCEPMSAQe3bZtxw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        syzbot+b563b7f8dbe8223a51e8@syzkaller.appspotmail.com,
-        Siva Rebbagondla <siva.rebbagondla@redpinesignals.com>,
-        Prameela Rani Garnepudi <prameela.j04cs@gmail.com>,
-        Amitkumar Karwar <amit.karwar@redpinesignals.com>,
-        Fariya Fatima <fariyaf@gmail.com>,
-        Johan Hovold <johan@kernel.org>,
-        Kalle Valo <kvalo@codeaurora.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 07/70] rsi: fix use-after-free on failed probe and unbind
-Date:   Mon,  3 Feb 2020 16:19:19 +0000
-Message-Id: <20200203161913.553800552@linuxfoundation.org>
+        stable@vger.kernel.org, Andres Freund <andres@anarazel.de>,
+        Michael Petlan <mpetlan@redhat.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Andi Kleen <ak@linux.intel.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>
+Subject: [PATCH 4.19 08/70] perf c2c: Fix return type for histogram sorting comparision functions
+Date:   Mon,  3 Feb 2020 16:19:20 +0000
+Message-Id: <20200203161913.708583322@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
 In-Reply-To: <20200203161912.158976871@linuxfoundation.org>
 References: <20200203161912.158976871@linuxfoundation.org>
@@ -50,76 +49,86 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Johan Hovold <johan@kernel.org>
+From: Andres Freund <andres@anarazel.de>
 
-[ Upstream commit e93cd35101b61e4c79149be2cfc927c4b28dc60c ]
+commit c1c8013ec34d7163431d18367808ea40b2e305f8 upstream.
 
-Make sure to stop both URBs before returning after failed probe as well
-as on disconnect to avoid use-after-free in the completion handler.
+Commit 722ddfde366f ("perf tools: Fix time sorting") changed - correctly
+so - hist_entry__sort to return int64. Unfortunately several of the
+builtin-c2c.c comparison routines only happened to work due the cast
+caused by the wrong return type.
 
-Reported-by: syzbot+b563b7f8dbe8223a51e8@syzkaller.appspotmail.com
-Fixes: a4302bff28e2 ("rsi: add bluetooth rx endpoint")
-Fixes: dad0d04fa7ba ("rsi: Add RS9113 wireless driver")
-Cc: stable <stable@vger.kernel.org>     # 3.15
-Cc: Siva Rebbagondla <siva.rebbagondla@redpinesignals.com>
-Cc: Prameela Rani Garnepudi <prameela.j04cs@gmail.com>
-Cc: Amitkumar Karwar <amit.karwar@redpinesignals.com>
-Cc: Fariya Fatima <fariyaf@gmail.com>
-Signed-off-by: Johan Hovold <johan@kernel.org>
-Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+This causes meaningless ordering of both the cacheline list, and the
+cacheline details page. E.g a simple:
+
+  perf c2c record -a sleep 3
+  perf c2c report
+
+will result in cacheline table like
+  =================================================
+             Shared Data Cache Line Table
+  =================================================
+  #
+  #        ------- Cacheline ----------    Total     Tot  - LLC Load Hitm -  - Store Reference -  - Load Dram -     LLC  Total  - Core Load Hit -  - LLC Load Hit -
+  # Index         Address  Node  PA cnt  records    Hitm  Total  Lcl    Rmt  Total  L1Hit  L1Miss     Lcl   Rmt  Ld Miss  Loads    FB    L1   L2     Llc      Rmt
+  # .....  ..............  ....  ......  .......  ......  .....  .....  ...  ....   .....  ......  ......  ....  ......   .....  .....  ..... ...  ....     .......
+
+        0  0x7f0d27ffba00   N/A       0       52   0.12%     13      6    7    12      12       0       0     7      14      40      4     16    0    0           0
+        1  0x7f0d27ff61c0   N/A       0     6353  14.04%   1475    801  674   779     779       0       0   718    1392    5574   1299   1967    0  115           0
+        2  0x7f0d26d3ec80   N/A       0       71   0.15%     16      4   12    13      13       0       0    12      24      58      1     20    0    9           0
+        3  0x7f0d26d3ec00   N/A       0       98   0.22%     23     17    6    19      19       0       0     6      12      79      0     40    0   10           0
+
+i.e. with the list not being ordered by Total Hitm.
+
+Fixes: 722ddfde366f ("perf tools: Fix time sorting")
+Signed-off-by: Andres Freund <andres@anarazel.de>
+Tested-by: Michael Petlan <mpetlan@redhat.com>
+Acked-by: Jiri Olsa <jolsa@redhat.com>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: Andi Kleen <ak@linux.intel.com>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: stable@vger.kernel.org # v3.16+
+Link: http://lore.kernel.org/lkml/20200109043030.233746-1-andres@anarazel.de
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- drivers/net/wireless/rsi/rsi_91x_usb.c | 18 +++++++++++++++++-
- 1 file changed, 17 insertions(+), 1 deletion(-)
+ tools/perf/builtin-c2c.c |   10 ++++++----
+ 1 file changed, 6 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/net/wireless/rsi/rsi_91x_usb.c b/drivers/net/wireless/rsi/rsi_91x_usb.c
-index c62e7e0f82f32..54106646445a9 100644
---- a/drivers/net/wireless/rsi/rsi_91x_usb.c
-+++ b/drivers/net/wireless/rsi/rsi_91x_usb.c
-@@ -291,6 +291,15 @@ static void rsi_rx_done_handler(struct urb *urb)
- 		dev_kfree_skb(rx_cb->rx_skb);
+--- a/tools/perf/builtin-c2c.c
++++ b/tools/perf/builtin-c2c.c
+@@ -586,8 +586,8 @@ tot_hitm_cmp(struct perf_hpp_fmt *fmt __
+ {
+ 	struct c2c_hist_entry *c2c_left;
+ 	struct c2c_hist_entry *c2c_right;
+-	unsigned int tot_hitm_left;
+-	unsigned int tot_hitm_right;
++	uint64_t tot_hitm_left;
++	uint64_t tot_hitm_right;
+ 
+ 	c2c_left  = container_of(left, struct c2c_hist_entry, he);
+ 	c2c_right = container_of(right, struct c2c_hist_entry, he);
+@@ -620,7 +620,8 @@ __f ## _cmp(struct perf_hpp_fmt *fmt __m
+ 									\
+ 	c2c_left  = container_of(left, struct c2c_hist_entry, he);	\
+ 	c2c_right = container_of(right, struct c2c_hist_entry, he);	\
+-	return c2c_left->stats.__f - c2c_right->stats.__f;		\
++	return (uint64_t) c2c_left->stats.__f -				\
++	       (uint64_t) c2c_right->stats.__f;				\
  }
  
-+static void rsi_rx_urb_kill(struct rsi_hw *adapter, u8 ep_num)
-+{
-+	struct rsi_91x_usbdev *dev = (struct rsi_91x_usbdev *)adapter->rsi_dev;
-+	struct rx_usb_ctrl_block *rx_cb = &dev->rx_cb[ep_num - 1];
-+	struct urb *urb = rx_cb->rx_urb;
-+
-+	usb_kill_urb(urb);
-+}
-+
- /**
-  * rsi_rx_urb_submit() - This function submits the given URB to the USB stack.
-  * @adapter: Pointer to the adapter structure.
-@@ -791,10 +800,13 @@ static int rsi_probe(struct usb_interface *pfunction,
- 	if (adapter->priv->coex_mode > 1) {
- 		status = rsi_rx_urb_submit(adapter, BT_EP, GFP_KERNEL);
- 		if (status)
--			goto err1;
-+			goto err_kill_wlan_urb;
- 	}
+ #define STAT_FN(__f)		\
+@@ -673,7 +674,8 @@ ld_llcmiss_cmp(struct perf_hpp_fmt *fmt
+ 	c2c_left  = container_of(left, struct c2c_hist_entry, he);
+ 	c2c_right = container_of(right, struct c2c_hist_entry, he);
  
- 	return 0;
-+
-+err_kill_wlan_urb:
-+	rsi_rx_urb_kill(adapter, WLAN_EP);
- err1:
- 	rsi_deinit_usb_interface(adapter);
- err:
-@@ -825,6 +837,10 @@ static void rsi_disconnect(struct usb_interface *pfunction)
- 		adapter->priv->bt_adapter = NULL;
- 	}
+-	return llc_miss(&c2c_left->stats) - llc_miss(&c2c_right->stats);
++	return (uint64_t) llc_miss(&c2c_left->stats) -
++	       (uint64_t) llc_miss(&c2c_right->stats);
+ }
  
-+	if (adapter->priv->coex_mode > 1)
-+		rsi_rx_urb_kill(adapter, BT_EP);
-+	rsi_rx_urb_kill(adapter, WLAN_EP);
-+
- 	rsi_reset_card(adapter);
- 	rsi_deinit_usb_interface(adapter);
- 	rsi_91x_deinit(adapter);
--- 
-2.20.1
-
+ static uint64_t total_records(struct c2c_stats *stats)
 
 
