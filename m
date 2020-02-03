@@ -2,89 +2,89 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0F1651502B6
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Feb 2020 09:38:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4CD4D1502BC
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Feb 2020 09:40:45 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727820AbgBCIiv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 3 Feb 2020 03:38:51 -0500
-Received: from lelv0143.ext.ti.com ([198.47.23.248]:46574 "EHLO
-        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726082AbgBCIiv (ORCPT
+        id S1727838AbgBCIkl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 3 Feb 2020 03:40:41 -0500
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:33471 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727822AbgBCIkl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Feb 2020 03:38:51 -0500
-Received: from fllv0035.itg.ti.com ([10.64.41.0])
-        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 0138ckDD100871;
-        Mon, 3 Feb 2020 02:38:46 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1580719126;
-        bh=Tfda4LvuUEYTDvyGlYS6mOHiUVeU9HHASiG1AIAbvcA=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=aielRH4sdU7RaEk2GdG9JP1i7St4zjZiS4dkoufB9dlA67dAq+AkPwIbhnA/R+2GP
-         57BXHZUZgiBHZqa2XGSMFuxhEVySL5B+vW8TjKkktaX7409EQ3a/zB8ABoiEIeUCsg
-         HIa2udZRK0MVzhbiZrAy6TLnfG7mwFqh3O0/qCRU=
-Received: from DFLE100.ent.ti.com (dfle100.ent.ti.com [10.64.6.21])
-        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTP id 0138ckXi124317;
-        Mon, 3 Feb 2020 02:38:46 -0600
-Received: from DFLE106.ent.ti.com (10.64.6.27) by DFLE100.ent.ti.com
- (10.64.6.21) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Mon, 3 Feb
- 2020 02:38:46 -0600
-Received: from lelv0326.itg.ti.com (10.180.67.84) by DFLE106.ent.ti.com
- (10.64.6.27) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
- Frontend Transport; Mon, 3 Feb 2020 02:38:46 -0600
-Received: from [127.0.0.1] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by lelv0326.itg.ti.com (8.15.2/8.15.2) with ESMTP id 0138cipW104965;
-        Mon, 3 Feb 2020 02:38:44 -0600
-Subject: Re: [PATCH] firmware: ti_sci: Correct the timeout type in
- ti_sci_do_xfer()
-To:     Peter Ujfalusi <peter.ujfalusi@ti.com>, <nm@ti.com>,
-        <ssantosh@kernel.org>, <santosh.shilimkar@oracle.com>
-CC:     <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <lokeshvutla@ti.com>
-References: <20200122104009.15622-1-peter.ujfalusi@ti.com>
-From:   Tero Kristo <t-kristo@ti.com>
-Message-ID: <a63c23ec-d468-fc9b-3990-becd7c120df6@ti.com>
-Date:   Mon, 3 Feb 2020 10:38:43 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.1
+        Mon, 3 Feb 2020 03:40:41 -0500
+Received: by mail-wr1-f65.google.com with SMTP id u6so3509187wrt.0
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Feb 2020 00:40:40 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=7iMUUuqhP7ZUA/guDhJyWKC3bMbNC5iG2m7Q5NlpRzI=;
+        b=kqgNs19b923xDrGRXumenA5Qc2g0OHW1+kcozElwiJ8X4/B9KmSnm/GMzT8IFx5IXx
+         Q2m0Z00FPcJPmikhX5vmETINiT/SS53QL6eJSErAWa+KkamrPOxUoWVRB6fQYa4yiPL6
+         swZ3dRJenlpJGCtxF6ayEO294fkuZYmy3PWAG8sDz3tNmIZa4ngaekV/DC/hZRQyc23I
+         y5WTnRH9CrGNXJpZyP/S30RnQr2PKn9s7fj9y4HGYM7WFnMOTsN763rDRDraXIhOMvCw
+         S3amwt7Ny4axnsz/ddFKPhZTIV8hpEmlO0mw93l1FMeDPGSh0EB82yDv3QOcPgReUzHQ
+         esBA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=7iMUUuqhP7ZUA/guDhJyWKC3bMbNC5iG2m7Q5NlpRzI=;
+        b=QyM0aLAs58nfMtHJD35vFhbocBXXUPPoHL+Ow8eNKxeyuBKw//P3WjPCrsJcm4ezjN
+         M9lGhSXzeVlQGziief3ynY4JbCciQoxH71Mh2rsjeOH7i5/ulNFymqE0iDaerJ9fLZei
+         vpbO3nPuQYoa1FvyyMAXP3PexxnM009M1q8+mdJ3BnlJCOPDIGYwgru5b12W01weHm5+
+         WBWkgwFpaqmAFc5j3hnQDJRTyItMUwHxkeAahrh+uGnPtWiK2MK0DwZ8Hy3/zbzY3wSz
+         tScIjQrq1Lo1y+Qz+jPX139+39AlayHZKr7Zcd+0x+5H+fMtQpqCNDb0zjByXLSqAKEp
+         FaMA==
+X-Gm-Message-State: APjAAAXPEQQrVItqPj6v0OHwo4Denj9cyfFiIaXCqmKVhqYWJXbJfIkW
+        wZj+yW4q9mfL4X6gtHOqBpVpsw==
+X-Google-Smtp-Source: APXvYqwUEO75VZX36Ds2VGmBJNQLMhkTV1nh5CeCQ4yxpfg36hLtm/wfQ1slP8TD6qTmmK3mUkDmVg==
+X-Received: by 2002:adf:dfc8:: with SMTP id q8mr14220230wrn.135.1580719240030;
+        Mon, 03 Feb 2020 00:40:40 -0800 (PST)
+Received: from dell ([2.27.35.227])
+        by smtp.gmail.com with ESMTPSA id g2sm23857518wrw.76.2020.02.03.00.40.39
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 03 Feb 2020 00:40:39 -0800 (PST)
+Date:   Mon, 3 Feb 2020 08:40:49 +0000
+From:   Lee Jones <lee.jones@linaro.org>
+To:     Geert Uytterhoeven <geert+renesas@glider.be>
+Cc:     Orson Zhai <orson.zhai@unisoc.com>, Arnd Bergmann <arnd@arndb.de>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] mfd: syscon: Fix syscon_regmap_lookup_by_phandle_args()
+ dummy
+Message-ID: <20200203084049.GA15069@dell>
+References: <20200130125529.2304-1-geert+renesas@glider.be>
 MIME-Version: 1.0
-In-Reply-To: <20200122104009.15622-1-peter.ujfalusi@ti.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20200130125529.2304-1-geert+renesas@glider.be>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 22/01/2020 12:40, Peter Ujfalusi wrote:
-> msecs_to_jiffies() returns 'unsigned long' and the timeout parameter for
-> wait_for_completion_timeout() is also 'unsigned long'
+On Thu, 30 Jan 2020, Geert Uytterhoeven wrote:
+
+> If CONFIG_MFD_SYSCON=n:
 > 
-> Signed-off-by: Peter Ujfalusi <peter.ujfalusi@ti.com>
-
-Reviewed-by: Tero Kristo <t-kristo@ti.com>
-
+>     include/linux/mfd/syscon.h:54:23: warning: ‘syscon_regmap_lookup_by_phandle_args’ defined but not used [-Wunused-function]
+> 
+> Fix this by adding the missing inline keyword.
+> 
+> Fixes: 6a24f567af4accef ("mfd: syscon: Add arguments support for syscon reference")
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 > ---
->   drivers/firmware/ti_sci.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/firmware/ti_sci.c b/drivers/firmware/ti_sci.c
-> index 3d8241cb6921..361a82817c1f 100644
-> --- a/drivers/firmware/ti_sci.c
-> +++ b/drivers/firmware/ti_sci.c
-> @@ -422,7 +422,7 @@ static inline int ti_sci_do_xfer(struct ti_sci_info *info,
->   				 struct ti_sci_xfer *xfer)
->   {
->   	int ret;
-> -	int timeout;
-> +	unsigned long timeout;
->   	struct device *dev = info->dev;
->   
->   	ret = mbox_send_message(info->chan_tx, &xfer->tx_message);
-> 
+>  include/linux/mfd/syscon.h | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 
---
-Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki. Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
+Applied, thanks.
+
+-- 
+Lee Jones [李琼斯]
+Linaro Services Technical Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
