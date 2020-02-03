@@ -2,111 +2,109 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9F70A151230
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Feb 2020 23:05:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B4372151234
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Feb 2020 23:07:24 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727100AbgBCWFj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 3 Feb 2020 17:05:39 -0500
-Received: from mga18.intel.com ([134.134.136.126]:63768 "EHLO mga18.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726278AbgBCWFi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Feb 2020 17:05:38 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 03 Feb 2020 14:05:38 -0800
-X-IronPort-AV: E=Sophos;i="5.70,398,1574150400"; 
-   d="scan'208";a="249140829"
-Received: from ahduyck-desk1.jf.intel.com ([10.7.198.76])
-  by orsmga002-auth.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 03 Feb 2020 14:05:38 -0800
-Message-ID: <6758b1e3373fc06b37af1c87901237974d52322f.camel@linux.intel.com>
-Subject: Re: [PATCH v16.1 0/9] mm / virtio: Provide support for free page
- reporting
-From:   Alexander Duyck <alexander.h.duyck@linux.intel.com>
-To:     akpm@linux-foundation.org, mgorman@techsingularity.net,
-        david@redhat.com
-Cc:     yang.zhang.wz@gmail.com, nitesh@redhat.com, konrad.wilk@oracle.com,
-        pagupta@redhat.com, riel@surriel.com, lcapitulino@redhat.com,
-        dave.hansen@intel.com, wei.w.wang@intel.com, aarcange@redhat.com,
-        pbonzini@redhat.com, dan.j.williams@intel.com, osalvador@suse.de,
-        vbabka@suse.cz, AlexanderDuyck <alexander.duyck@gmail.com>,
-        kvm@vger.kernel.org, mst@redhat.com, linux-kernel@vger.kernel.org,
-        willy@infradead.org, mhocko@kernel.org, linux-mm@kvack.org
-Date:   Mon, 03 Feb 2020 14:05:38 -0800
-In-Reply-To: <20200122173040.6142.39116.stgit@localhost.localdomain>
-References: <20200122173040.6142.39116.stgit@localhost.localdomain>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.32.5 (3.32.5-1.fc30) 
+        id S1727177AbgBCWHU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 3 Feb 2020 17:07:20 -0500
+Received: from mail-co1nam11on2089.outbound.protection.outlook.com ([40.107.220.89]:23754
+        "EHLO NAM11-CO1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726984AbgBCWHU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Feb 2020 17:07:20 -0500
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=BetFCXGBjZGdypIJ7k6MoCPuUrbGXuyu1QZonOAAMvHrxh7HF08XDVc7cUIvaThQrltn9omJaD9JR0vGp2hGaKrBPpHoYvHUa0AYHX3ZOfil+KywDMq3gKBj921WFOE1HvS6vmjRnRPfLbjh3hPgDI3FXWV6HIXmbNNhmat1ZUcRY6TFcG5d+g98FgVMHr3VMI9I4SFQ+zPF5+URwTJvD9udtOIEUXO71qFxYIv/ZrvBQJTL/VWySzVpM5MfZ6KOTyYWFvL1hCRiSyOXimQ10D5gzb0XhSmct/+abir07dMGVrSZEFwLFJCWU3iTJ0RCs6Mhtg28gmphOcIf3bCSyg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=TSSXzT7npiTfhrvAMrPhePWe26mXwJJv3NfITrgpg6w=;
+ b=XSY3JAk+he/ZrNo+cGPCz9wdhebuMGpvtCeNSXk9GA/TkJvdtqZKniqmuPuQAXuk9kIMJQqNcoleb6IrtKhhA887PugZLY2KhRWKb6hKSp9b2arAMYjq6jJJAV7LOhls2fq5hnD4MmS8XSqfw0UHelwTENk5KX1ECYHGpri2680fRj/jxEbmC52BDSB/ErKZA0LF2ePbkXMKMQv0WNgt0DwUDh8WHqkUk3sCmVbNi4T6rulhF6SZzYGP/cBcjnsb/Lt08hn80ew0GwWJDPZO339IkJZlKXdI/bs8SfIXveYFEAIq6UEXkJjaMidRmYKkZxAgacmsLjsB1xmfVJdBOw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=micron.com; dmarc=pass action=none header.from=micron.com;
+ dkim=pass header.d=micron.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=micron.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=TSSXzT7npiTfhrvAMrPhePWe26mXwJJv3NfITrgpg6w=;
+ b=URUZVZFn33UrTDmjpvFtCqmqGpTfa5CzpVDMogr5TQyyi/FhCLVg2BwlJ7B7+dqlqgctAI7c1h060abRUvctgTZuSOtFu5EFN5ISWvHaIHQ0VTB1zuSaiJsxvkRv4tvCZkMH5VZL3V4ICTTUC5M4fu5LpaWs8AJPMvKACZ7vAJc=
+Received: from BN7PR08MB5684.namprd08.prod.outlook.com (20.176.179.87) by
+ BN7PR08MB3891.namprd08.prod.outlook.com (52.132.4.146) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2686.26; Mon, 3 Feb 2020 22:07:17 +0000
+Received: from BN7PR08MB5684.namprd08.prod.outlook.com
+ ([fe80::981f:90d7:d45f:fd11]) by BN7PR08MB5684.namprd08.prod.outlook.com
+ ([fe80::981f:90d7:d45f:fd11%7]) with mapi id 15.20.2686.028; Mon, 3 Feb 2020
+ 22:07:17 +0000
+From:   "Bean Huo (beanhuo)" <beanhuo@micron.com>
+To:     Can Guo <cang@codeaurora.org>,
+        "asutoshd@codeaurora.org" <asutoshd@codeaurora.org>,
+        "nguyenb@codeaurora.org" <nguyenb@codeaurora.org>,
+        "hongwus@codeaurora.org" <hongwus@codeaurora.org>,
+        "rnayak@codeaurora.org" <rnayak@codeaurora.org>,
+        "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
+        "kernel-team@android.com" <kernel-team@android.com>,
+        "saravanak@google.com" <saravanak@google.com>,
+        "salyzyn@google.com" <salyzyn@google.com>
+CC:     Alim Akhtar <alim.akhtar@samsung.com>,
+        Avri Altman <avri.altman@wdc.com>,
+        "James E.J. Bottomley" <jejb@linux.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        Stanley Chu <stanley.chu@mediatek.com>,
+        Bart Van Assche <bvanassche@acm.org>,
+        Venkat Gopalakrishnan <venkatg@codeaurora.org>,
+        Tomas Winkler <tomas.winkler@intel.com>,
+        open list <linux-kernel@vger.kernel.org>
+Subject: RE: [EXT] [PATCH v5 5/8] scsi: ufs: Fix ufshcd_hold() caused
+ scheduling while atomic
+Thread-Topic: [EXT] [PATCH v5 5/8] scsi: ufs: Fix ufshcd_hold() caused
+ scheduling while atomic
+Thread-Index: AQHV2nLjjhKx+HbiykOub6suIynkHKgKB4HA
+Date:   Mon, 3 Feb 2020 22:07:17 +0000
+Message-ID: <BN7PR08MB5684AC6701E471E60421FBA1DB000@BN7PR08MB5684.namprd08.prod.outlook.com>
+References: <1580721472-10784-1-git-send-email-cang@codeaurora.org>
+ <1580721472-10784-6-git-send-email-cang@codeaurora.org>
+In-Reply-To: <1580721472-10784-6-git-send-email-cang@codeaurora.org>
+Accept-Language: en-150, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-dg-ref: PG1ldGE+PGF0IG5tPSJib2R5LnR4dCIgcD0iYzpcdXNlcnNcYmVhbmh1b1xhcHBkYXRhXHJvYW1pbmdcMDlkODQ5YjYtMzJkMy00YTQwLTg1ZWUtNmI4NGJhMjllMzViXG1zZ3NcbXNnLTg4NjA0YTQ5LTQ2ZDEtMTFlYS04YjhhLWRjNzE5NjFmOWRkM1xhbWUtdGVzdFw4ODYwNGE0Yi00NmQxLTExZWEtOGI4YS1kYzcxOTYxZjlkZDNib2R5LnR4dCIgc3o9IjMxMSIgdD0iMTMyMjUyNDEyMzQ4NjEyNTEwIiBoPSI1aGI5TlRFcHlNTG5YNGNYeGhqOUdadENXbjg9IiBpZD0iIiBibD0iMCIgYm89IjEiIGNpPSJjQUFBQUVSSFUxUlNSVUZOQ2dVQUFIQUFBQUNlUDdwSzN0clZBZmt5aEYvUnpNRm0rVEtFWDlITXdXWUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUJBQUFCQUFBQTRxMWltZ0FBQUFBQUFBQUFBQUFBQUE9PSIvPjwvbWV0YT4=
+x-dg-rorf: true
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=beanhuo@micron.com; 
+x-originating-ip: [165.225.86.106]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: f9103b63-3183-4d7f-abfa-08d7a8f56ec6
+x-ms-traffictypediagnostic: BN7PR08MB3891:|BN7PR08MB3891:|BN7PR08MB3891:
+x-microsoft-antispam-prvs: <BN7PR08MB389162CBB883E58B94F40DE6DB000@BN7PR08MB3891.namprd08.prod.outlook.com>
+x-ms-exchange-transport-forked: True
+x-ms-oob-tlc-oobclassifiers: OLM:400;
+x-forefront-prvs: 0302D4F392
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(136003)(366004)(346002)(376002)(396003)(39860400002)(199004)(189003)(186003)(86362001)(26005)(33656002)(4326008)(76116006)(5660300002)(64756008)(66556008)(52536014)(7696005)(66476007)(71200400001)(66946007)(7416002)(66446008)(6506007)(55016002)(54906003)(2906002)(316002)(81166006)(478600001)(8676002)(110136005)(9686003)(558084003)(81156014)(55236004)(8936002);DIR:OUT;SFP:1101;SCL:1;SRVR:BN7PR08MB3891;H:BN7PR08MB5684.namprd08.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: micron.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: oXuiZadB0E5mFSwUz3IJX7JKMgTMf1veObw9+RJOokhMuVPZtIxQo2CmPML+SgNP8MgtO170EREM9TAd88fE7hxufBO27F8B8IpNPgrPnrQkTqun3/Lihievu7UbHb/IHmJykxkNp2ep1Xfvhtz4okZ5lPtzUMq51GoUiV7ssuJn1lUilfLVUYNEHj9+zoPBxFa7AilmPuEBXQSQ/kIUq37N9ipSTCFYgZkC0DZVFPN6oBYPeKMhVgyV4w/UFAt/O2OKdXgJQVezMh2BT73UBFxSl5QzSNusV1PWtPlOQ1rR38bbR6oi3ZDrHCq9js1Cu2ILZdBpBLtK1UaFcagSOX0UtNM8Nf4l92wRAdHyeq6KeGwbrmb7d2ivgzEX6iU1VN5UcBN6bbrsGVdIQSx6ADe5whugoWxD10mElrNIvHRKehCzRnwCG8L3ZNGZ0E/M
+x-ms-exchange-antispam-messagedata: GYT2fUdTtp8gY5zxrBevP2rfzfN7aHUGlg2gHN23D126o+3Pqe7BiBymMm+L8c2tv6AV67ZK3tw7WGre2e5qw960UdgKFTh2QpXxl/nEh3YDYHGtPBwD8d8Mrl8w8xzGY6KBi8f0Cco1MX/J0D8y9g==
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+X-OriginatorOrg: micron.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: f9103b63-3183-4d7f-abfa-08d7a8f56ec6
+X-MS-Exchange-CrossTenant-originalarrivaltime: 03 Feb 2020 22:07:17.4748
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: f38a5ecd-2813-4862-b11b-ac1d563c806f
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: epMmxLATeubjb+1N6nsIx2Ai0aX4ksrcWQNkdYZYQO+kmokC2FQgSdeS/HA4/ENvDVRhH5yim6eTZOhP8Sp/fw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN7PR08MB3891
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 2020-01-22 at 09:43 -0800, Alexander Duyck wrote:
-> This series provides an asynchronous means of reporting free guest pages
-> to a hypervisor so that the memory associated with those pages can be
-> dropped and reused by other processes and/or guests on the host. Using
-> this it is possible to avoid unnecessary I/O to disk and greatly improve
-> performance in the case of memory overcommit on the host.
-
-<snip>
-
-> A brief history on the background of free page reporting can be found at:
-> https://lore.kernel.org/lkml/29f43d5796feed0dec8e8bb98b187d9dac03b900.camel@linux.intel.com/
-> 
-> Changes from v14:
-> https://lore.kernel.org/lkml/20191119214454.24996.66289.stgit@localhost.localdomain/
-> Renamed "unused page reporting" to "free page reporting"
->   Updated code, kconfig, and patch descriptions
-> Split out patch for __free_isolated_page
->   Renamed function to __putback_isolated_page
-> Rewrote core reporting functionality
->   Added logic to reschedule worker in 2 seconds instead of run to completion
->   Removed reported_pages statistics
->   Removed REPORTING_REQUESTED bit used in zone flags
->   Replaced page_reporting_dev_info refcount with state variable
->   Removed scatterlist from page_reporting_dev_info
->   Removed capacity from page reporting device
->   Added dynamic scatterlist allocation/free at start/end of reporting process
->   Updated __free_one_page so that reported pages are not always added to tail
->   Added logic to handle error from report function
-> Updated virtio-balloon patch that adds support for page reporting
->   Updated patch description to try and highlight differences in approaches
->   Updated logic to reflect that we cannot limit the scatterlist from device
->   Added logic to return error from report function
-> Moved documentation patch to end of patch set
-> 
-> Changes from v15:
-> https://lore.kernel.org/lkml/20191205161928.19548.41654.stgit@localhost.localdomain/
-> Rebased on linux-next-20191219
-> Split out patches for budget and moving head to last page processed
-> Updated budget code to reduce how much memory is reported per pass
-> Added logic to also rotate the list if we exit due a page isolation failure
-> Added migratetype as argument in __putback_isolated_page
-> 
-> Changes from v16:
-> https://lore.kernel.org/lkml/20200103210509.29237.18426.stgit@localhost.localdomain/
-> Rebased on linux-next-20200122
->   Updated patch 2 to to account for removal of pr_info in __isolate_free_page
-> Updated patch title for patches 7, 8, and 9 to use prefix mm/page_reporting
-> No code changes other than conflict resolution for patch 2
-
-So I thought I would put out a gentle nudge since it has been about 4
-weeks since v16 was submitted, a little over a week and a half for v16.1,
-and I have yet to get any feedback on the code contained in the patchset.
-Codewise nothing has changed from the v16 patchset other than rebasing it
-off of the linux-next tree to resolve some merge conflicts that I saw
-recently, and discussion around v16.1 was mostly about next steps and how
-to deal with the page cache instead of discussing the code itself.
-
-The full patchset can be found at:
-https://lore.kernel.org/lkml/20200122173040.6142.39116.stgit@localhost.localdomain/
-
-I believe I still need review feedback for patches 3, 4, 7, 8, and 9.
-
-Thanks.
-
-- Alex
-
+> Signed-off-by: Can Guo <cang@codeaurora.org>
+> Reviewed-by: Hongwu Su <hongwus@codeaurora.org>
+> Reviewed-by: Asutosh Das <asutoshd@codeaurora.org>
+Reviewed-by: Bean Huo <beanhuo@micron.com>
