@@ -2,78 +2,60 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 583EA150F19
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Feb 2020 19:08:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 493FE150F1A
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Feb 2020 19:08:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728538AbgBCSIN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 3 Feb 2020 13:08:13 -0500
-Received: from Galois.linutronix.de ([193.142.43.55]:60301 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726272AbgBCSIN (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Feb 2020 13:08:13 -0500
-Received: from [185.104.136.29] (helo=nanos.tec.linutronix.de)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1iyg8n-0005sR-MD; Mon, 03 Feb 2020 19:08:09 +0100
-Received: by nanos.tec.linutronix.de (Postfix, from userid 1000)
-        id AAAFD100C1B; Mon,  3 Feb 2020 19:08:03 +0100 (CET)
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     Matija Glavinic Pecotic <matija.glavinic-pecotic.ext@nokia.com>,
-        linux-kernel@vger.kernel.org
-Cc:     "Sverdlin\, Alexander \(Nokia - DE\/Ulm\)" 
-        <alexander.sverdlin@nokia.com>
-Subject: Re: [PATCH RESEND] cpu/hotplug: Wait for cpu_hotplug to be enabled in cpu_up/down
-In-Reply-To: <d950a169-941e-7caa-608a-df97a127c95d@nokia.com>
-References: <d950a169-941e-7caa-608a-df97a127c95d@nokia.com>
-Date:   Mon, 03 Feb 2020 19:08:03 +0100
-Message-ID: <87o8uf1r3w.fsf@nanos.tec.linutronix.de>
+        id S1728714AbgBCSIg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 3 Feb 2020 13:08:36 -0500
+Received: from mail.kernel.org ([198.145.29.99]:59340 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728433AbgBCSIf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Feb 2020 13:08:35 -0500
+Received: from willie-the-truck (236.31.169.217.in-addr.arpa [217.169.31.236])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 607D620838;
+        Mon,  3 Feb 2020 18:08:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1580753315;
+        bh=4eD3rDXxW60j+H1NP2OqAujGFcgndqdD6vtGqWg5yII=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=nARYeB+4A7YHVm5QW3bw9H1KvX35gnxpIa8D9P+RvoHIG7wGRprjacjtTdkSNIQkL
+         rBs9agFUqGBOZBNzwWO1Qz/Ua7SWHFrTjnaOWiF9m/t8+cM5oRmA7luMJ2xFsWrc4u
+         4XNJQg3uCwb6llteHfZqljM4+YqsJNG3aWhYMhuI=
+Date:   Mon, 3 Feb 2020 18:08:30 +0000
+From:   Will Deacon <will@kernel.org>
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     mingo@kernel.org, oleg@redhat.com, tglx@linutronix.de,
+        linux-kernel@vger.kernel.org, bigeasy@linutronix.de,
+        juri.lelli@redhat.com, williams@redhat.com, bristot@redhat.com,
+        longman@redhat.com, dave@stgolabs.net, jack@suse.com
+Subject: Re: [PATCH -v2 0/7] locking: Percpu-rwsem rewrite
+Message-ID: <20200203180829.GA12136@willie-the-truck>
+References: <20200131150703.194229898@infradead.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200131150703.194229898@infradead.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Matija,
+On Fri, Jan 31, 2020 at 04:07:03PM +0100, Peter Zijlstra wrote:
+> This is the long awaited report of the percpu-rwsem rework (sorry Juri).
+> 
+> IIRC (I really have trouble keeping up momentum on this series) I've addressed
+> all previous comments by Oleg and Davidlohr and Waiman and hope we can stick
+> this in tip/locking/core for inclusion in the next merge.
+> 
+> It has been cooked (thoroughly) in PREEMPT_RT, and not found wanting.
+> 
+> Any objections to me stuffing it in so we can all forget about it properly?
 
-Matija Glavinic Pecotic <matija.glavinic-pecotic.ext@nokia.com> writes:
+Whole series looks fine to me and it also passes my arm64 build tests, so:
 
-> Heavier user of cpu_hotplug_enable/disable is pci_device_probe yielding
-> errors on bringing cpu cores up/down if pci devices are getting probed.
-> Situation in which pci devices are getting probed and having cpus going
-> down/up is valid situation.
+Acked-by: Will Deacon <will@kernel.org>
 
-So what?. User space has to handle -EBUSY properly and it was possible
-even before that PCI commit that the online/offline operation request
-returned -EBUSY. 
-
-> Problem was observed on x86 board by having partitioning of the system
-> to RT/NRT cpu sets failing (of which part is to bring cpus down/up via
-> sysfs) if pci devices would be getting probed at the same time. This is
-
-I have no idea why you need to offline/online CPUs to partition a
-system. There are surely more sensible ways to do that, but that's not
-part of this discussion.
-
-> confusing for userspace as dependency to pci devices is not clear.
-
-What's confusing about a EBUSY return code? It's pretty universaly used
-in situations where a facility is temporarily busy. If it's not
-sufficiently documented, why EBUSY can be returned and what that means,
-then this needs to be improved.
-
-> Fix this behavior by waiting for cpu hotplug to be ready. Return -EBUSY
-> only after hotplugging was not enabled for about 10 seconds.
-
-There is nothing to fix here, really. Fix the user space handling which
-fails to handle EBUSY. Just because this commit made it more likely that
-EBUSY is returned does not justify this horrid hack.
-
-Thanks,
-
-        tglx
+Will
