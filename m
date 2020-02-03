@@ -2,42 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 67F4D150B8E
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Feb 2020 17:28:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 81E2F150B09
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Feb 2020 17:23:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729630AbgBCQ2i (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 3 Feb 2020 11:28:38 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40146 "EHLO mail.kernel.org"
+        id S1728918AbgBCQUf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 3 Feb 2020 11:20:35 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60358 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729601AbgBCQ2b (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Feb 2020 11:28:31 -0500
+        id S1728901AbgBCQUb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Feb 2020 11:20:31 -0500
 Received: from localhost (unknown [104.132.45.99])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8DDA521582;
-        Mon,  3 Feb 2020 16:28:30 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 646BB2086A;
+        Mon,  3 Feb 2020 16:20:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1580747311;
-        bh=Dp+l0yRnGI0bXRovKJ2GdW24jlEgCsxIEgc95RIByA0=;
+        s=default; t=1580746830;
+        bh=ckcf98rypvLsz0Vp0cFslnWN27jANYoCwPDwd2GDQGs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=nPhpsv/IA52/OYL/1coCe+riO+k61kzyjs5yWLhfjwtyJUyImkbkJ4W862Bj1i9wg
-         pwSLUomPiOjiBq2eGGUnzyea6rAwvpNuwsbN2TifWqj6i8GX2764VXRHcpAZSwZAhH
-         KJjI4yuwi7mTeBzZZ+eEFO9+DQCsAkhWD3sDOzIM=
+        b=B4HMvu+WFwkO0ut6PodHNY4l7D3xM5Xr53VUJCKI4ZUFEQSbxM4xa1nq9YYGYtgWF
+         9uP+WzvDnsL8tNVrQhj1CcpLI1IiC6CTNjKZtoy5iwBniPqewF7cdoLy2tdEPcU4nG
+         Qghupb/qrxrdrHgg56IZ0np0Nbf6gb7LiKi9w3j4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        syzbot+1d1597a5aa3679c65b9f@syzkaller.appspotmail.com,
-        Prameela Rani Garnepudi <prameela.j04cs@gmail.com>,
-        Amitkumar Karwar <amit.karwar@redpinesignals.com>,
-        Johan Hovold <johan@kernel.org>,
-        Kalle Valo <kvalo@codeaurora.org>
-Subject: [PATCH 4.14 31/89] rsi: fix use-after-free on probe errors
+        stable@vger.kernel.org, Herbert Xu <herbert@gondor.apana.org.au>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.4 24/53] crypto: pcrypt - Fix user-after-free on module unload
 Date:   Mon,  3 Feb 2020 16:19:16 +0000
-Message-Id: <20200203161920.975871420@linuxfoundation.org>
+Message-Id: <20200203161907.439009624@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200203161916.847439465@linuxfoundation.org>
-References: <20200203161916.847439465@linuxfoundation.org>
+In-Reply-To: <20200203161902.714326084@linuxfoundation.org>
+References: <20200203161902.714326084@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -47,73 +43,43 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Johan Hovold <johan@kernel.org>
+From: Herbert Xu <herbert@gondor.apana.org.au>
 
-commit 92aafe77123ab478e5f5095878856ab0424910da upstream.
+[ Upstream commit 07bfd9bdf568a38d9440c607b72342036011f727 ]
 
-The driver would fail to stop the command timer in most error paths,
-something which specifically could lead to the timer being freed while
-still active on I/O errors during probe.
+On module unload of pcrypt we must unregister the crypto algorithms
+first and then tear down the padata structure.  As otherwise the
+crypto algorithms are still alive and can be used while the padata
+structure is being freed.
 
-Fix this by making sure that each function starting the timer also stops
-it in all relevant error paths.
-
-Reported-by: syzbot+1d1597a5aa3679c65b9f@syzkaller.appspotmail.com
-Fixes: b78e91bcfb33 ("rsi: Add new firmware loading method")
-Cc: stable <stable@vger.kernel.org>     # 4.12
-Cc: Prameela Rani Garnepudi <prameela.j04cs@gmail.com>
-Cc: Amitkumar Karwar <amit.karwar@redpinesignals.com>
-Signed-off-by: Johan Hovold <johan@kernel.org>
-Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Fixes: 5068c7a883d1 ("crypto: pcrypt - Add pcrypt crypto...")
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/wireless/rsi/rsi_91x_hal.c |   12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+ crypto/pcrypt.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/drivers/net/wireless/rsi/rsi_91x_hal.c
-+++ b/drivers/net/wireless/rsi/rsi_91x_hal.c
-@@ -541,6 +541,7 @@ static int bl_cmd(struct rsi_hw *adapter
- 	bl_start_cmd_timer(adapter, timeout);
- 	status = bl_write_cmd(adapter, cmd, exp_resp, &regout_val);
- 	if (status < 0) {
-+		bl_stop_cmd_timer(adapter);
- 		rsi_dbg(ERR_ZONE,
- 			"%s: Command %s (%0x) writing failed..\n",
- 			__func__, str, cmd);
-@@ -656,10 +657,9 @@ static int ping_pong_write(struct rsi_hw
- 	}
+diff --git a/crypto/pcrypt.c b/crypto/pcrypt.c
+index a5718c0a3dc4e..1348541da463a 100644
+--- a/crypto/pcrypt.c
++++ b/crypto/pcrypt.c
+@@ -505,11 +505,12 @@ static int __init pcrypt_init(void)
  
- 	status = bl_cmd(adapter, cmd_req, cmd_resp, str);
--	if (status) {
--		bl_stop_cmd_timer(adapter);
-+	if (status)
- 		return status;
--	}
+ static void __exit pcrypt_exit(void)
+ {
++	crypto_unregister_template(&pcrypt_tmpl);
 +
- 	return 0;
+ 	pcrypt_fini_padata(&pencrypt);
+ 	pcrypt_fini_padata(&pdecrypt);
+ 
+ 	kset_unregister(pcrypt_kset);
+-	crypto_unregister_template(&pcrypt_tmpl);
  }
  
-@@ -749,10 +749,9 @@ static int auto_fw_upgrade(struct rsi_hw
- 
- 	status = bl_cmd(adapter, EOF_REACHED, FW_LOADING_SUCCESSFUL,
- 			"EOF_REACHED");
--	if (status) {
--		bl_stop_cmd_timer(adapter);
-+	if (status)
- 		return status;
--	}
-+
- 	rsi_dbg(INFO_ZONE, "FW loading is done and FW is running..\n");
- 	return 0;
- }
-@@ -773,6 +772,7 @@ static int rsi_load_firmware(struct rsi_
- 		status = hif_ops->master_reg_read(adapter, SWBL_REGOUT,
- 					      &regout_val, 2);
- 		if (status < 0) {
-+			bl_stop_cmd_timer(adapter);
- 			rsi_dbg(ERR_ZONE,
- 				"%s: REGOUT read failed\n", __func__);
- 			return status;
+ module_init(pcrypt_init);
+-- 
+2.20.1
+
 
 
