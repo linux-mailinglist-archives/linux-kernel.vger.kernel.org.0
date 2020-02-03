@@ -2,41 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B9EA5150BCB
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Feb 2020 17:31:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AECC3150D38
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Feb 2020 17:42:55 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730017AbgBCQa3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 3 Feb 2020 11:30:29 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42846 "EHLO mail.kernel.org"
+        id S1730697AbgBCQmw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 3 Feb 2020 11:42:52 -0500
+Received: from mail.kernel.org ([198.145.29.99]:47798 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730002AbgBCQa0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Feb 2020 11:30:26 -0500
+        id S1730316AbgBCQdp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Feb 2020 11:33:45 -0500
 Received: from localhost (unknown [104.132.45.99])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 46A6E2086A;
-        Mon,  3 Feb 2020 16:30:25 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id BA50B21741;
+        Mon,  3 Feb 2020 16:33:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1580747425;
-        bh=3wGRL90czmoweh8O1WUlHwtiqXhbAD81rd8yS1gnIek=;
+        s=default; t=1580747625;
+        bh=QsjbUwwT6G2tcMfHQDcUEaZfQFcpR3qcXYmk4I4shpY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Qd1RtVFMt8cYwBW1zMWYCmav8y8EnGoVV7M5OSi/7GTGynbbYCIg5FImVqFBM/fYR
-         TNNcQdTezP7u5kFicXW4A2acPkX4a6pl1bUuB/PDXKmC6X53BaxxdMVM4zskyGC8m7
-         jRZtXTeKRuRbwnFx12MpGMxg7Pd3HMm9SJSB7oSE=
+        b=Y9bvl4no5v6UeCQMOS2bGGZpSyR/01S7L9tMvFVtYqzepa3p+w09VQUD0cBGm/6Au
+         ptcuB73Kzbt68ZSqvaJO2a8+ju5kZ4W62fK1wIlv+KXzejBWc7iCc9cE/ZeXpXgZGf
+         ANdhH0d6rru1TRG9Po8IParbhmzZkqCqxhOkugeg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Shahed Shaikh <shshaikh@marvell.com>,
-        Yonggen Xu <Yonggen.Xu@dell.com>,
-        Manish Chopra <manishc@marvell.com>,
-        "David S. Miller" <davem@davemloft.net>,
+        stable@vger.kernel.org, "Matwey V. Kornilov" <matwey@sai.msu.ru>,
+        Tony Lindgren <tony@atomide.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 79/89] qlcnic: Fix CPU soft lockup while collecting firmware dump
-Date:   Mon,  3 Feb 2020 16:20:04 +0000
-Message-Id: <20200203161926.520406709@linuxfoundation.org>
+Subject: [PATCH 4.19 53/70] ARM: dts: am335x-boneblack-common: fix memory size
+Date:   Mon,  3 Feb 2020 16:20:05 +0000
+Message-Id: <20200203161920.022371354@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200203161916.847439465@linuxfoundation.org>
-References: <20200203161916.847439465@linuxfoundation.org>
+In-Reply-To: <20200203161912.158976871@linuxfoundation.org>
+References: <20200203161912.158976871@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,60 +44,39 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Manish Chopra <manishc@marvell.com>
+From: Matwey V. Kornilov <matwey@sai.msu.ru>
 
-[ Upstream commit 22e984493a41bf8081f13d9ed84def3ca8cfd427 ]
+[ Upstream commit 5abd45ea0fc3060f7805e131753fdcbafd6c6618 ]
 
-Driver while collecting firmware dump takes longer time to
-collect/process some of the firmware dump entries/memories.
-Bigger capture masks makes it worse as it results in larger
-amount of data being collected and results in CPU soft lockup.
-Place cond_resched() in some of the driver flows that are
-expectedly time consuming to relinquish the CPU to avoid CPU
-soft lockup panic.
+BeagleBone Black series is equipped with 512MB RAM
+whereas only 256MB is included from am335x-bone-common.dtsi
 
-Signed-off-by: Shahed Shaikh <shshaikh@marvell.com>
-Tested-by: Yonggen Xu <Yonggen.Xu@dell.com>
-Signed-off-by: Manish Chopra <manishc@marvell.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+This leads to an issue with unusual setups when devicetree
+is loaded by GRUB2 directly.
+
+Signed-off-by: Matwey V. Kornilov <matwey@sai.msu.ru>
+Signed-off-by: Tony Lindgren <tony@atomide.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/qlogic/qlcnic/qlcnic_83xx_init.c | 1 +
- drivers/net/ethernet/qlogic/qlcnic/qlcnic_minidump.c  | 2 ++
- 2 files changed, 3 insertions(+)
+ arch/arm/boot/dts/am335x-boneblack-common.dtsi | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-diff --git a/drivers/net/ethernet/qlogic/qlcnic/qlcnic_83xx_init.c b/drivers/net/ethernet/qlogic/qlcnic/qlcnic_83xx_init.c
-index a496390b8632f..07f9067affc65 100644
---- a/drivers/net/ethernet/qlogic/qlcnic/qlcnic_83xx_init.c
-+++ b/drivers/net/ethernet/qlogic/qlcnic/qlcnic_83xx_init.c
-@@ -2043,6 +2043,7 @@ static void qlcnic_83xx_exec_template_cmd(struct qlcnic_adapter *p_dev,
- 			break;
- 		}
- 		entry += p_hdr->size;
-+		cond_resched();
- 	}
- 	p_dev->ahw->reset.seq_index = index;
- }
-diff --git a/drivers/net/ethernet/qlogic/qlcnic/qlcnic_minidump.c b/drivers/net/ethernet/qlogic/qlcnic/qlcnic_minidump.c
-index afa10a163da1f..f34ae8c75bc5e 100644
---- a/drivers/net/ethernet/qlogic/qlcnic/qlcnic_minidump.c
-+++ b/drivers/net/ethernet/qlogic/qlcnic/qlcnic_minidump.c
-@@ -703,6 +703,7 @@ static u32 qlcnic_read_memory_test_agent(struct qlcnic_adapter *adapter,
- 		addr += 16;
- 		reg_read -= 16;
- 		ret += 16;
-+		cond_resched();
- 	}
- out:
- 	mutex_unlock(&adapter->ahw->mem_lock);
-@@ -1383,6 +1384,7 @@ int qlcnic_dump_fw(struct qlcnic_adapter *adapter)
- 		buf_offset += entry->hdr.cap_size;
- 		entry_offset += entry->hdr.offset;
- 		buffer = fw_dump->data + buf_offset;
-+		cond_resched();
- 	}
+diff --git a/arch/arm/boot/dts/am335x-boneblack-common.dtsi b/arch/arm/boot/dts/am335x-boneblack-common.dtsi
+index 21bc1173fa6b9..cb4267edde63d 100644
+--- a/arch/arm/boot/dts/am335x-boneblack-common.dtsi
++++ b/arch/arm/boot/dts/am335x-boneblack-common.dtsi
+@@ -131,6 +131,11 @@
+ };
  
- 	fw_dump->clr = 1;
+ / {
++	memory@80000000 {
++		device_type = "memory";
++		reg = <0x80000000 0x20000000>; /* 512 MB */
++	};
++
+ 	clk_mcasp0_fixed: clk_mcasp0_fixed {
+ 		#clock-cells = <0>;
+ 		compatible = "fixed-clock";
 -- 
 2.20.1
 
