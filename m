@@ -2,46 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9C3CC150B3D
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Feb 2020 17:26:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id F1D80150AD0
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Feb 2020 17:21:21 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728771AbgBCQZz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 3 Feb 2020 11:25:55 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36696 "EHLO mail.kernel.org"
+        id S1729139AbgBCQVU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 3 Feb 2020 11:21:20 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33138 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728696AbgBCQZw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Feb 2020 11:25:52 -0500
+        id S1728543AbgBCQVR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Feb 2020 11:21:17 -0500
 Received: from localhost (unknown [104.132.45.99])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 12BB22051A;
-        Mon,  3 Feb 2020 16:25:52 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 157F82080D;
+        Mon,  3 Feb 2020 16:21:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1580747152;
-        bh=ofE24FEm24Fj4Yoj4e8H0j42Zj6pFD1BXUp2hpaZBMI=;
+        s=default; t=1580746876;
+        bh=9Pslydd++Su5YjiyttsW3x0kNiUqThyZmeBUxpt8J3I=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=UxSpx69vkcDtwvtU+bvWl5H+KrBa2I5WE6N5vloUgW5G7TSp3IBeuFu9q3Y6vkDbh
-         2vjFeJQLdRoqh9TwLMNgtpAl8XzDl1iLKe5xUtARTdq4qjQ9F4tRQbXY298/CCWGNI
-         6S/AK+NWgIdYtsc3q7zoLW6ZT2irONV7cjynPsm8=
+        b=Zgcb/V7saLTM3/qfONlnfnT9xoTZT4ZVDxPlerkNEuhClBPbhW5M+6l3FKHCOUIf+
+         /i4QHZEccb96C0IevF1t9ETeS1OsEbjBZrTA8ZY4sK0bAjDw1pv0+75+ivNFKKzc5I
+         MKxvmwRO0rpLpdFVcZ4c8GP5hMXDVk8O7zjLjIAc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        syzbot+e64a13c5369a194d67df@syzkaller.appspotmail.com,
-        Dan Carpenter <dan.carpenter@oracle.com>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Michal Hocko <mhocko@kernel.org>,
-        Lee Schermerhorn <lee.schermerhorn@hp.com>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Hugh Dickins <hughd@google.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Subject: [PATCH 4.9 32/68] mm/mempolicy.c: fix out of bounds write in mpol_parse_str()
+        stable@vger.kernel.org, Cambda Zhu <cambda@linux.alibaba.com>,
+        Andrew Bowers <andrewx.bowers@intel.com>,
+        Jeff Kirsher <jeffrey.t.kirsher@intel.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.4 36/53] ixgbe: Fix calculation of queue with VFs and flow director on interface flap
 Date:   Mon,  3 Feb 2020 16:19:28 +0000
-Message-Id: <20200203161910.254070896@linuxfoundation.org>
+Message-Id: <20200203161909.447872854@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200203161904.705434837@linuxfoundation.org>
-References: <20200203161904.705434837@linuxfoundation.org>
+In-Reply-To: <20200203161902.714326084@linuxfoundation.org>
+References: <20200203161902.714326084@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -51,59 +45,83 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
+From: Cambda Zhu <cambda@linux.alibaba.com>
 
-commit c7a91bc7c2e17e0a9c8b9745a2cb118891218fd1 upstream.
+[ Upstream commit 4fad78ad6422d9bca62135bbed8b6abc4cbb85b8 ]
 
-What we are trying to do is change the '=' character to a NUL terminator
-and then at the end of the function we restore it back to an '='.  The
-problem is there are two error paths where we jump to the end of the
-function before we have replaced the '=' with NUL.
+This patch fixes the calculation of queue when we restore flow director
+filters after resetting adapter. In ixgbe_fdir_filter_restore(), filter's
+vf may be zero which makes the queue outside of the rx_ring array.
 
-We end up putting the '=' in the wrong place (possibly one element
-before the start of the buffer).
+The calculation is changed to the same as ixgbe_add_ethtool_fdir_entry().
 
-Link: http://lkml.kernel.org/r/20200115055426.vdjwvry44nfug7yy@kili.mountain
-Reported-by: syzbot+e64a13c5369a194d67df@syzkaller.appspotmail.com
-Fixes: 095f1fc4ebf3 ("mempolicy: rework shmem mpol parsing and display")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-Acked-by: Vlastimil Babka <vbabka@suse.cz>
-Dmitry Vyukov <dvyukov@google.com>
-Cc: Michal Hocko <mhocko@kernel.org>
-Cc: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Lee Schermerhorn <lee.schermerhorn@hp.com>
-Cc: Andrea Arcangeli <aarcange@redhat.com>
-Cc: Hugh Dickins <hughd@google.com>
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Signed-off-by: Cambda Zhu <cambda@linux.alibaba.com>
+Tested-by: Andrew Bowers <andrewx.bowers@intel.com>
+Signed-off-by: Jeff Kirsher <jeffrey.t.kirsher@intel.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- mm/mempolicy.c |    6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/net/ethernet/intel/ixgbe/ixgbe_main.c | 37 ++++++++++++++-----
+ 1 file changed, 27 insertions(+), 10 deletions(-)
 
---- a/mm/mempolicy.c
-+++ b/mm/mempolicy.c
-@@ -2744,6 +2744,9 @@ int mpol_parse_str(char *str, struct mem
- 	char *flags = strchr(str, '=');
- 	int err = 1;
+diff --git a/drivers/net/ethernet/intel/ixgbe/ixgbe_main.c b/drivers/net/ethernet/intel/ixgbe/ixgbe_main.c
+index 4521181aa0ed9..23fb344f9e1cf 100644
+--- a/drivers/net/ethernet/intel/ixgbe/ixgbe_main.c
++++ b/drivers/net/ethernet/intel/ixgbe/ixgbe_main.c
+@@ -4532,7 +4532,7 @@ static void ixgbe_fdir_filter_restore(struct ixgbe_adapter *adapter)
+ 	struct ixgbe_hw *hw = &adapter->hw;
+ 	struct hlist_node *node2;
+ 	struct ixgbe_fdir_filter *filter;
+-	u64 action;
++	u8 queue;
  
-+	if (flags)
-+		*flags++ = '\0';	/* terminate mode string */
+ 	spin_lock(&adapter->fdir_perfect_lock);
+ 
+@@ -4541,17 +4541,34 @@ static void ixgbe_fdir_filter_restore(struct ixgbe_adapter *adapter)
+ 
+ 	hlist_for_each_entry_safe(filter, node2,
+ 				  &adapter->fdir_filter_list, fdir_node) {
+-		action = filter->action;
+-		if (action != IXGBE_FDIR_DROP_QUEUE && action != 0)
+-			action =
+-			(action >> ETHTOOL_RX_FLOW_SPEC_RING_VF_OFF) - 1;
++		if (filter->action == IXGBE_FDIR_DROP_QUEUE) {
++			queue = IXGBE_FDIR_DROP_QUEUE;
++		} else {
++			u32 ring = ethtool_get_flow_spec_ring(filter->action);
++			u8 vf = ethtool_get_flow_spec_ring_vf(filter->action);
 +
- 	if (nodelist) {
- 		/* NUL-terminate mode or flags string */
- 		*nodelist++ = '\0';
-@@ -2754,9 +2757,6 @@ int mpol_parse_str(char *str, struct mem
- 	} else
- 		nodes_clear(nodes);
++			if (!vf && (ring >= adapter->num_rx_queues)) {
++				e_err(drv, "FDIR restore failed without VF, ring: %u\n",
++				      ring);
++				continue;
++			} else if (vf &&
++				   ((vf > adapter->num_vfs) ||
++				     ring >= adapter->num_rx_queues_per_pool)) {
++				e_err(drv, "FDIR restore failed with VF, vf: %hhu, ring: %u\n",
++				      vf, ring);
++				continue;
++			}
++
++			/* Map the ring onto the absolute queue index */
++			if (!vf)
++				queue = adapter->rx_ring[ring]->reg_idx;
++			else
++				queue = ((vf - 1) *
++					adapter->num_rx_queues_per_pool) + ring;
++		}
  
--	if (flags)
--		*flags++ = '\0';	/* terminate mode string */
--
- 	for (mode = 0; mode < MPOL_MAX; mode++) {
- 		if (!strcmp(str, policy_modes[mode])) {
- 			break;
+ 		ixgbe_fdir_write_perfect_filter_82599(hw,
+-				&filter->filter,
+-				filter->sw_idx,
+-				(action == IXGBE_FDIR_DROP_QUEUE) ?
+-				IXGBE_FDIR_DROP_QUEUE :
+-				adapter->rx_ring[action]->reg_idx);
++				&filter->filter, filter->sw_idx, queue);
+ 	}
+ 
+ 	spin_unlock(&adapter->fdir_perfect_lock);
+-- 
+2.20.1
+
 
 
