@@ -2,39 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B70B4150CCB
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Feb 2020 17:39:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 93AFB150C26
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Feb 2020 17:34:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731354AbgBCQhf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 3 Feb 2020 11:37:35 -0500
-Received: from mail.kernel.org ([198.145.29.99]:52874 "EHLO mail.kernel.org"
+        id S1729948AbgBCQds (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 3 Feb 2020 11:33:48 -0500
+Received: from mail.kernel.org ([198.145.29.99]:47760 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731311AbgBCQhU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Feb 2020 11:37:20 -0500
+        id S1730359AbgBCQdn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Feb 2020 11:33:43 -0500
 Received: from localhost (unknown [104.132.45.99])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 448A62087E;
-        Mon,  3 Feb 2020 16:37:19 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 619912051A;
+        Mon,  3 Feb 2020 16:33:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1580747839;
-        bh=Lcno1KbzFHCzHqKn9HtlxRgI1lCVBZUjrWPcoksga+g=;
+        s=default; t=1580747622;
+        bh=bRDxASd4pXuwaIG0C6ZLI8ag5CYBoRgCK8NpwNg/rFI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Ui3L4Xog87WyjIneM0bHb4z6BPWG3dc2yC/9sr2TjIAJDNMFWP/kUTs4YqzuPeViN
-         pA2tOoXpLbU/wgPqkFVXSmMvKgQxTgiNNjzr51UBXpuAIt24dpIXBOs7xCA+IZn7hv
-         lwWsTPdJK5ZA7IkAE8SOqmMIgy2T9YmczBmTJmRU=
+        b=E3jgazon0PEmbKJpi8cXh0WvZ/5scamVh0NSVkB8I4qxNmMVDBwz10UnGuXCUlKfV
+         S6SVFkTAq51uB0zQyKC/HYT0zpNBg0g8J1fXNYy1WJA5MyuJcneR4IgC9WqFBcwIPc
+         Ljzs06QvjkQLAd3wAvbg1lcnARtVMWpN59dzORCg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Stefan Sperling <stsp@stsp.name>,
-        Luca Coelho <luciano.coelho@intel.com>,
+        stable@vger.kernel.org, Johan Hovold <johan@kernel.org>,
+        Vladis Dronov <vdronov@redhat.com>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.4 61/90] iwlwifi: mvm: fix NVM check for 3168 devices
+Subject: [PATCH 4.19 52/70] Input: aiptek - use descriptors of current altsetting
 Date:   Mon,  3 Feb 2020 16:20:04 +0000
-Message-Id: <20200203161925.037188062@linuxfoundation.org>
+Message-Id: <20200203161919.888636372@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200203161917.612554987@linuxfoundation.org>
-References: <20200203161917.612554987@linuxfoundation.org>
+In-Reply-To: <20200203161912.158976871@linuxfoundation.org>
+References: <20200203161912.158976871@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,37 +45,36 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Luca Coelho <luciano.coelho@intel.com>
+From: Johan Hovold <johan@kernel.org>
 
-[ Upstream commit b3f20e098293892388d6a0491d6bbb2efb46fbff ]
+[ Upstream commit cfa4f6a99fb183742cace65ec551b444852b8ef6 ]
 
-We had a check on !NVM_EXT and then a check for NVM_SDP in the else
-block of this if.  The else block, obviously, could only be reached if
-using NVM_EXT, so it would never be NVM_SDP.
+Make sure to always use the descriptors of the current alternate setting
+to avoid future issues when accessing fields that may differ between
+settings.
 
-Fix that by checking whether the nvm_type is IWL_NVM instead of
-checking for !IWL_NVM_EXT to solve this issue.
-
-Reported-by: Stefan Sperling <stsp@stsp.name>
-Signed-off-by: Luca Coelho <luciano.coelho@intel.com>
+Signed-off-by: Johan Hovold <johan@kernel.org>
+Acked-by: Vladis Dronov <vdronov@redhat.com>
+Link: https://lore.kernel.org/r/20191210113737.4016-4-johan@kernel.org
+Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/wireless/intel/iwlwifi/mvm/nvm.c | 2 +-
+ drivers/input/tablet/aiptek.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/net/wireless/intel/iwlwifi/mvm/nvm.c b/drivers/net/wireless/intel/iwlwifi/mvm/nvm.c
-index 945c1ea5cda86..493bcc54a8485 100644
---- a/drivers/net/wireless/intel/iwlwifi/mvm/nvm.c
-+++ b/drivers/net/wireless/intel/iwlwifi/mvm/nvm.c
-@@ -281,7 +281,7 @@ iwl_parse_nvm_sections(struct iwl_mvm *mvm)
- 	int regulatory_type;
+diff --git a/drivers/input/tablet/aiptek.c b/drivers/input/tablet/aiptek.c
+index dc2ad1cc8fe1d..8632ca509887d 100644
+--- a/drivers/input/tablet/aiptek.c
++++ b/drivers/input/tablet/aiptek.c
+@@ -1726,7 +1726,7 @@ aiptek_probe(struct usb_interface *intf, const struct usb_device_id *id)
  
- 	/* Checking for required sections */
--	if (mvm->trans->cfg->nvm_type != IWL_NVM_EXT) {
-+	if (mvm->trans->cfg->nvm_type == IWL_NVM) {
- 		if (!mvm->nvm_sections[NVM_SECTION_TYPE_SW].data ||
- 		    !mvm->nvm_sections[mvm->cfg->nvm_hw_section_num].data) {
- 			IWL_ERR(mvm, "Can't parse empty OTP/NVM sections\n");
+ 	aiptek->inputdev = inputdev;
+ 	aiptek->intf = intf;
+-	aiptek->ifnum = intf->altsetting[0].desc.bInterfaceNumber;
++	aiptek->ifnum = intf->cur_altsetting->desc.bInterfaceNumber;
+ 	aiptek->inDelay = 0;
+ 	aiptek->endDelay = 0;
+ 	aiptek->previousJitterable = 0;
 -- 
 2.20.1
 
