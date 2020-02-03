@@ -2,143 +2,202 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BAC9815054F
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Feb 2020 12:32:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EF7F1150562
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Feb 2020 12:38:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727994AbgBCLcD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 3 Feb 2020 06:32:03 -0500
-Received: from comms.puri.sm ([159.203.221.185]:36998 "EHLO comms.puri.sm"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727183AbgBCLcC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Feb 2020 06:32:02 -0500
-Received: from localhost (localhost [127.0.0.1])
-        by comms.puri.sm (Postfix) with ESMTP id 79F8EE129B;
-        Mon,  3 Feb 2020 03:32:01 -0800 (PST)
-Received: from comms.puri.sm ([127.0.0.1])
-        by localhost (comms.puri.sm [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id MirtzlR82cpZ; Mon,  3 Feb 2020 03:32:00 -0800 (PST)
-Subject: Re: [PATCH] arm64: dts: librem5-devkit: add lsm9ds1 mount matrix
-To:     Marco Felsch <m.felsch@pengutronix.de>
-Cc:     robh@kernel.org, mark.rutland@arm.com, shawnguo@kernel.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        kernel@pengutronix.de, linux-kernel@vger.kernel.org
-References: <20200120100722.30359-1-martin.kepplinger@puri.sm>
- <20200203110545.GB24291@pengutronix.de>
-From:   Martin Kepplinger <martin.kepplinger@puri.sm>
-Autocrypt: addr=martin.kepplinger@puri.sm; keydata=
- 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
- ekMtxgNYb/8oDry09UFHbGHLsWn6oBo=
-Message-ID: <7298838b-b5ce-4e90-331a-4b62a6f91b95@puri.sm>
-Date:   Mon, 3 Feb 2020 12:31:57 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.1
-In-Reply-To: <20200203110545.GB24291@pengutronix.de>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        id S1728061AbgBCLia (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 3 Feb 2020 06:38:30 -0500
+Received: from conssluserg-06.nifty.com ([210.131.2.91]:55227 "EHLO
+        conssluserg-06.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726224AbgBCLia (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Feb 2020 06:38:30 -0500
+Received: from mail-vk1-f181.google.com (mail-vk1-f181.google.com [209.85.221.181]) (authenticated)
+        by conssluserg-06.nifty.com with ESMTP id 013BcLkM023532;
+        Mon, 3 Feb 2020 20:38:21 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-06.nifty.com 013BcLkM023532
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1580729902;
+        bh=1PSKW49SzMn2cJ0cVLR8p8oQ9UmN07qckyWBVdYUJ2s=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=1D/m8iAi1vG02UMNdn/wCglI7KCU8cszFmIiN2r/H1+80+N6YxLJhOiVO7HXicfdR
+         o+4zsCFwTtgUM1T/iYq6Ih6l0AkXSfXDpHpQVPqX4HmZSMZesojH+2s7z53rqtDYTF
+         S30KblamGvRIvvhIEkTypTUzPD1nxXrh1HaY8aYD0EYEdizptwCD5LcQ1SPCaC4ClP
+         DASuAgVg0CyVTbmr9oaF9vQocPQW4v3wLAgrEERVvuil1E+fqviXqjp0EYVyAOqr3x
+         k2aNk8/pZNKwg2lXLII9LRQu5mziyXxSH+DyAEHrhumbDOy6UfrGi5VgOYVMN/AuJv
+         +9WyBW3LP0Nsw==
+X-Nifty-SrcIP: [209.85.221.181]
+Received: by mail-vk1-f181.google.com with SMTP id i4so4006249vkc.3;
+        Mon, 03 Feb 2020 03:38:21 -0800 (PST)
+X-Gm-Message-State: APjAAAUVx0P3CO19ZYYNjrxjTSB9cJAe8tDvatxLv/QLEX0Oim97G3dR
+        3pVIYBni3/iD5jgHQYyXFCy7ju+JEB3nndx007A=
+X-Google-Smtp-Source: APXvYqzZEtJynZEbP+eisZbsUTSXn/m6/NYTRnhItnFRqJmqxS4xC3fEkqWJfaSVXhLlbMFJ0QZ5Jx46nFW7absrCJQ=
+X-Received: by 2002:a1f:bfc2:: with SMTP id p185mr13814951vkf.73.1580729900721;
+ Mon, 03 Feb 2020 03:38:20 -0800 (PST)
+MIME-Version: 1.0
+References: <CAK7LNAS625YwKpv4wfKO78+Rexe2fP5pLDbMD4r71wwiQfN0Ng@mail.gmail.com>
+ <CAHk-=wiTEVwmj-PH98reZTibx+C_GLwAmXO0RFmJa9weZcg70g@mail.gmail.com>
+ <CAK7LNAQwJVnVti4cX2GHdekD0mx1Kc2A3xvsE63WhHAGvgW2QA@mail.gmail.com> <CAMuHMdWerVTn-RvUOzHzGurY71NP9fNj+24EjnVkxnmp5g94jw@mail.gmail.com>
+In-Reply-To: <CAMuHMdWerVTn-RvUOzHzGurY71NP9fNj+24EjnVkxnmp5g94jw@mail.gmail.com>
+From:   Masahiro Yamada <masahiroy@kernel.org>
+Date:   Mon, 3 Feb 2020 20:37:44 +0900
+X-Gmail-Original-Message-ID: <CAK7LNAQOJGnL62ADL76V_jMm356+1rGxqBRt=BBpvvy+iASniw@mail.gmail.com>
+Message-ID: <CAK7LNAQOJGnL62ADL76V_jMm356+1rGxqBRt=BBpvvy+iASniw@mail.gmail.com>
+Subject: Re: [GIT PULL 1/2] Kbuild updates for v5.6-rc1
+To:     Geert Uytterhoeven <geert@linux-m68k.org>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Geert,
+
+On Mon, Feb 3, 2020 at 8:00 PM Geert Uytterhoeven <geert@linux-m68k.org> wrote:
+>
+> Hi Yamada-san,
+>
+> On Mon, Feb 3, 2020 at 2:28 AM Masahiro Yamada <masahiroy@kernel.org> wrote:
+> > On Sun, Feb 2, 2020 at 3:45 AM Linus Torvalds
+> > <torvalds@linux-foundation.org> wrote:
+> > > On Fri, Jan 31, 2020 at 8:06 PM Masahiro Yamada <masahiroy@kernel.org> wrote:
+> > > >
+> > > >  - simplify built-in initramfs creation
+> > >
+> > > Hmm.
+> > >
+> > > This may simplify it from a _technical_ angle, but it seems to be a
+> > > fairly annoying step backwards from a UI perspective.
+> > >
+> > > Now Kconfig asks a completely pointless question that most people have
+> > > absolutely zero interest in. The old situation was better, I feel.
+> > >
+> > > Basically, I feel that from a "get normal users to test development
+> > > kernels", our Kconfig pain ends up being the biggest hurdle by far.
+> > >
+> > > The kernel is easy to build and doesn't really require all that much
+> > > infrastructure, but generating the config - particularly when it
+> > > changes over time and you can't just say "just use the distro config"
+> > > - is a big step for people.
+> > >
+> > > So honestly, while I've pulled this, I feel that this kind of change
+> > > is going _exactly_ the wrong way when it asks people questions that
+> > > they don't care one whit about.
+> > >
+> > > If I as a kernel developer can't find it in myself to care and go "why
+> > > does it ask this new question", then that should tell you something.
+> > >
+> > > Why do we have this choice in the first place?
+> >
+> > Generally, initramfs is passed from a boot-loader,
+> > but some architectures embed initramfs into vmlinux
+> > (perhaps due to poor boot-loader support??)
+> >
+> > arch/arc/configs/tb10x_defconfig:CONFIG_INITRAMFS_SOURCE="../tb10x-rootfs.cpio"
+> > arch/unicore32/configs/defconfig:#CONFIG_INITRAMFS_SOURCE="arch/unicore/ramfs/ramfs_config"
+> > arch/xtensa/configs/cadence_csp_defconfig:CONFIG_INITRAMFS_SOURCE="$$KERNEL_INITRAMFS_SOURCE"
+>
+> Note that the above are examples that do not actually work, as the files
+> referred to are not present in mainline (read below[1] why I have just
+> checked that ;-).
+>
+> > So, data-compression is useful - that's is what I understand.
+>
+> Yes it is, depending on your config.
+>
+> > For major architectures, vmlinux embeds a tiny initramfs,
+> > which is generated based on usr/default_cpio_list.
+> >
+> > We do not need data-compression for such a small cpio,
+> > but handling it in a consistent way is sensible.
+> > This is annoying from the users' PoV, I admit.
+>
+> I was also confused by this question, as by default you have
+>     CONFIG_RD_GZIP=y
+>     CONFIG_RD_BZIP2=y
+>     CONFIG_RD_LZMA=y
+>     CONFIG_RD_XZ=y
+>     CONFIG_RD_LZO=y
+>     CONFIG_RD_LZ4=y
+> so the old 'default ".gz" if RD_GZIP' looked like it would use gzip.
+> However, the tiny default initramfs ended up being uncompressed anyway
+> before, as until commit ddd09bcc899fd374 ("initramfs: make compression
+> options not depend on INITRAMFS_SOURCE"), INITRAMFS_COMPRESSION wasn't
+> taken into account for the default tiny initramfs...
 
 
-On 03.02.20 12:05, Marco Felsch wrote:
-> Hi Martin,
-> 
-> On 20-01-20 11:07, Martin Kepplinger wrote:
->> The IMU chip on the librem5-devkit is not mounted at the "natural" place
->> that would match normal phone orientation (see the documentation for the
->> details about what that is).
->>
->> Since the lsm9ds1 driver supports providing a mount matrix, we can describe
->> the orientation on the board in the dts:
-> 
-> I didn't found the patch which adds the iio_read_mount_matrix()
-> support. Appart of that your patch looks good so feel free to add my:
-> 
-> Reviewed-by: Marco Felsch <m.felsch@pengutronix.de> 
-> 
-> Regards,
->   Marco
-> 
+Because there was a bug in old usr/Kconfig.
 
-hi Marco, thanks for having a look. there it is:
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=04e6fedb18f6899453e59a748fb95be56ef73836
 
-thanks again, for now as long as I don't resend I leave adding the
-reviewed-by to maintainers,
+See the following dependency in the old code:
 
-                               martin
+config INITRAMFS_COMPRESSION
+        depends on INITRAMFS_SOURCE!=""
 
+
+In the default .config, INITRAMFS_SOURCE is "".
+Hence, CONFIG_INITRAMFS_COMPRESSION is undefined.
+So, suffix_y gets empty in usr/Makefile.
+
+That is why the cpio was not compressed
+even though CONFIG_RD_GZIP=y
+
+
+
+> So INITRAMFS_COMPRESSION_NONE is the right answer to retain the
+> old behavior?
+
+Yes, INITRAMFS_COMPRESSION_NONE retains the previous behavior.
+
+But, as far as he I understood what Linus said,
+"we do not care".
+
+
+> One might question why not to use gzip anyway, as
+> CONFIG_RD_GZIP=y is enabled by default, and would give a (small)
+> improvement of ca. 350 bytes ;-)
+> Hence there is some area for improvement...
+
+
+GZIP is not the only compression algorithm.
+
+Somebody may want to disable RD_GZIP,
+then enable RD_XZ.
+If we allow the data compression,
+Kconfig must ask "which compression algorithm".
+
+
+So, if Kconfig would siltently choose something
+as default, INITRAMFS_COMPRESSION_NONE would be the best.
+
+
+
+
+>
+> Thanks!
+>
+> [1] I'm still carrying a local patch for handling relative initramfs
+>     paths with O=, but it's been a while I actually used it.  Due to your
+>     recent changes, it no longer applies, and needs to be updated.
+>     But of course that is only useful if there are some real users...
+>     https://lore.kernel.org/lkml/1384467283-14806-1-git-send-email-geert@linux-m68k.org/
+>
+> Gr{oetje,eeting}s,
+>
+>                         Geert
+>
+> --
+> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+>
+> In personal conversations with technical people, I call myself a hacker. But
+> when I'm talking to journalists I just say "programmer" or something like that.
+>                                 -- Linus Torvalds
+
+
+
+-- 
+Best Regards
+Masahiro Yamada
