@@ -2,53 +2,73 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 251C4151268
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Feb 2020 23:35:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4B243151272
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Feb 2020 23:37:46 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727468AbgBCWfX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 3 Feb 2020 17:35:23 -0500
-Received: from mail.kernel.org ([198.145.29.99]:56556 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727415AbgBCWfV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Feb 2020 17:35:21 -0500
-Subject: Re: [GIT PULL] (ibft) changes for 5.6 merge window
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1580769320;
-        bh=fg68AxkWyc1cl2syyyu7n1m65UmET8YZrZfqVmNDBwI=;
-        h=From:In-Reply-To:References:Date:To:Cc:From;
-        b=jNOFZMT6GdN6l3sqfRdcbodVKi7h3oEY0jVDHqKsl8eCn8xQbLtZeUHa9wd/MNWsy
-         StIk31NKe8SUiVIKpjSeouScnMaLL11dbBuy469G/RLl+FCEXWOO5ZSO31x+NdNtRT
-         EYEXQtn75ZD75M/hE8VB4K7gPbRmh+UvXhQU3FBU=
-From:   pr-tracker-bot@kernel.org
-In-Reply-To: <20200203221027.GA10946@char.us.oracle.com>
-References: <20200203221027.GA10946@char.us.oracle.com>
-X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <20200203221027.GA10946@char.us.oracle.com>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/konrad/ibft.git
- stable/for-linus-5.6
-X-PR-Tracked-Commit-Id: c08406033fe83a4cb307f2a2e949c59bb86b4f49
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 1716f536425f72cca4b0ff42c4be9466ed38dbd9
-Message-Id: <158076932059.15745.15059152979763695404.pr-tracker-bot@kernel.org>
-Date:   Mon, 03 Feb 2020 22:35:20 +0000
-To:     Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-kernel@vger.kernel.org
+        id S1727160AbgBCWhl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 3 Feb 2020 17:37:41 -0500
+Received: from youngberry.canonical.com ([91.189.89.112]:56231 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726331AbgBCWhl (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Feb 2020 17:37:41 -0500
+Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
+        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.86_2)
+        (envelope-from <colin.king@canonical.com>)
+        id 1iykLZ-0001K0-1D; Mon, 03 Feb 2020 22:37:37 +0000
+From:   Colin King <colin.king@canonical.com>
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, Wen He <wen.he_1@nxp.com>,
+        Michael Walle <michael@walle.cc>, linux-clk@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH][next] clk: ls1028a: fix a dereference of pointer 'parent' before a null check
+Date:   Mon,  3 Feb 2020 22:37:36 +0000
+Message-Id: <20200203223736.99645-1-colin.king@canonical.com>
+X-Mailer: git-send-email 2.24.0
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The pull request you sent on Mon, 3 Feb 2020 17:10:27 -0500:
+From: Colin Ian King <colin.king@canonical.com>
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/konrad/ibft.git stable/for-linus-5.6
+Currently the pointer 'parent' is being dereferenced before it is
+being null checked. Fix this by performing the null check before
+it is dereferenced.
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/1716f536425f72cca4b0ff42c4be9466ed38dbd9
+Addresses-Coverity: ("Dereference before null check")
+Fixes: d37010a3c162 ("clk: ls1028a: Add clock driver for Display output interface")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/clk/clk-plldig.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-Thank you!
-
+diff --git a/drivers/clk/clk-plldig.c b/drivers/clk/clk-plldig.c
+index a5da08f98d01..f7c349d9c2dc 100644
+--- a/drivers/clk/clk-plldig.c
++++ b/drivers/clk/clk-plldig.c
+@@ -187,7 +187,7 @@ static int plldig_init(struct clk_hw *hw)
+ {
+ 	struct clk_plldig *data = to_clk_plldig(hw);
+ 	struct clk_hw *parent = clk_hw_get_parent(hw);
+-	unsigned long parent_rate = clk_hw_get_rate(parent);
++	unsigned long parent_rate;
+ 	unsigned long val;
+ 	unsigned long long lltmp;
+ 	unsigned int mfd, fracdiv = 0;
+@@ -195,6 +195,8 @@ static int plldig_init(struct clk_hw *hw)
+ 	if (!parent)
+ 		return -EINVAL;
+ 
++	parent_rate = clk_hw_get_rate(parent);
++
+ 	if (data->vco_freq) {
+ 		mfd = data->vco_freq / parent_rate;
+ 		lltmp = data->vco_freq % parent_rate;
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.wiki.kernel.org/userdoc/prtracker
+2.24.0
+
