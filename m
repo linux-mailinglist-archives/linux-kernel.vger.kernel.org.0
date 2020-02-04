@@ -2,98 +2,126 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 74411151E78
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Feb 2020 17:44:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6389C151E7C
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Feb 2020 17:45:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727376AbgBDQop (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 4 Feb 2020 11:44:45 -0500
-Received: from mail-ot1-f68.google.com ([209.85.210.68]:35027 "EHLO
-        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727330AbgBDQoo (ORCPT
+        id S1727399AbgBDQpW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 4 Feb 2020 11:45:22 -0500
+Received: from us-smtp-1.mimecast.com ([207.211.31.81]:40011 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727296AbgBDQpW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Feb 2020 11:44:44 -0500
-Received: by mail-ot1-f68.google.com with SMTP id r16so17751361otd.2
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Feb 2020 08:44:44 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=intel-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=txCJX4Ne8ohW4iJOJEvhQaXEi/CwoZWs9QB4Yj1b5nw=;
-        b=E8BMVd2Oq2XNQz1eagY0Y+rTL0R1OArk+RNjkxQq4QR/Bf7gXbTtfxyrQDEykMnIHR
-         ZIYTJAG4piDuOptEAgoIFgtwCU06/9y9sKaoiLmmkpV84rsQOEQ/NAg0IN93tOFX9QzO
-         /PnPme6X6LhS85N6jcrz5EqfY+xiY2ggFBHaY+rtueU8D1S8u/NNple1nQKALIFSvNVW
-         PaThBkXTx0caPjS/4ue/jNpLbD60+T30X9Gu1bSWJUt80x0TJ5ZoL0cTEE1238+Gvjew
-         zoVvC54nNhjGAmzxiEtx5R533wm4iuWhq18ZyJKuk10dgIyMAXqY1KynN1wgW6/XdFhm
-         R9jw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=txCJX4Ne8ohW4iJOJEvhQaXEi/CwoZWs9QB4Yj1b5nw=;
-        b=Qa1hQudhXG+5G2q8syUfYga+Q1Eki/3e+/jm1xla1nnE23MVEG/ZxfDtbkNtFBIgXw
-         YEkcFj68tZNb7wuM3dLaltg7DIDv0sKfJrXYrJAvRcw1rsVyW8ysTRjGxXANdSaNmgiY
-         yNsqDs8H4vBsz2f+BrxryueIKx3ew3lEG9zDY7cDeYyMcrZNERwxU5ol72xY/hgekpam
-         LSY+gEZenM1bf10nOdQo2+7ZZUaCiQJd2nWSVIwxZtLkBPZ8NzhS6/+vchIUsX7yDcdh
-         8+z65llu3eb44BKmUaHxSjyxg9u/yVXn+aXXvXWD0+I8qVmstgz387I6sf14rwm97CIk
-         p3pw==
-X-Gm-Message-State: APjAAAULP2XyTcZaQ5VmqwevF5DNYCBg0Jrt8gY6tFrdDNthD0EJgcS0
-        IA73GrZlPMi22Il2jyobsK3/nTvtSUvZwtlgSM1lPg==
-X-Google-Smtp-Source: APXvYqzgn5XWbVJRcw05AyZXj+WSrtxUuUc1VbpFIxK+pSeYmXs4lh9OAJSchu3D7rwCd4p8faMkZHZi8Bn21THy1dU=
-X-Received: by 2002:a9d:7852:: with SMTP id c18mr21603447otm.247.1580834683627;
- Tue, 04 Feb 2020 08:44:43 -0800 (PST)
+        Tue, 4 Feb 2020 11:45:22 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1580834721;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=feetbkeHDvzfuB6p159wOfJOT+uwOceTNFOTbiH83zM=;
+        b=Ry52QdFsibVZoxUMaAgzd1a3uN6GaB34k9eR4fF15+1x53OjZt3nyGynF9IMeOyTJhjfeg
+        39CMkI52KeGkJMkzchNPVPOHUAdeZHi2HQ+QDChn0KkmxpScsHX4eK6Xcy13Xn1CUYd6Gp
+        fF8NgHmbKyRRO2dp1VQoIeV/d5zKeVc=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-179-0QPicVDRPBKYs4utQEu0CA-1; Tue, 04 Feb 2020 11:45:17 -0500
+X-MC-Unique: 0QPicVDRPBKYs4utQEu0CA-1
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 78C77108442E;
+        Tue,  4 Feb 2020 16:45:16 +0000 (UTC)
+Received: from llong.remote.csb (dhcp-17-59.bos.redhat.com [10.18.17.59])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id BE6517FB79;
+        Tue,  4 Feb 2020 16:45:15 +0000 (UTC)
+Subject: Re: [PATCH v5 6/7] locking/lockdep: Reuse freed chain_hlocks entries
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     Ingo Molnar <mingo@redhat.com>, Will Deacon <will.deacon@arm.com>,
+        linux-kernel@vger.kernel.org, Bart Van Assche <bvanassche@acm.org>
+References: <20200203164147.17990-1-longman@redhat.com>
+ <20200203164147.17990-7-longman@redhat.com>
+ <20200204123629.GO14914@hirez.programming.kicks-ass.net>
+From:   Waiman Long <longman@redhat.com>
+Organization: Red Hat
+Message-ID: <8fd7ce61-d8eb-6bde-7d41-54b9920e3e39@redhat.com>
+Date:   Tue, 4 Feb 2020 11:45:15 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.2
 MIME-Version: 1.0
-References: <20200110190313.17144-1-joao.m.martins@oracle.com>
- <20200110190313.17144-11-joao.m.martins@oracle.com> <e605fed8-46f5-6a07-11e6-2cc079a1159b@google.com>
-In-Reply-To: <e605fed8-46f5-6a07-11e6-2cc079a1159b@google.com>
-From:   Dan Williams <dan.j.williams@intel.com>
-Date:   Tue, 4 Feb 2020 08:44:31 -0800
-Message-ID: <CAPcyv4iiSsEOsfEwLQcV3bNDjBSxw1OgWoBdEWPQEymq6=xm-A@mail.gmail.com>
-Subject: Re: [PATCH RFC 10/10] nvdimm/e820: add multiple namespaces support
-To:     Barret Rhoden <brho@google.com>
-Cc:     Joao Martins <joao.m.martins@oracle.com>,
-        linux-nvdimm <linux-nvdimm@lists.01.org>,
-        Vishal Verma <vishal.l.verma@intel.com>,
-        Dave Jiang <dave.jiang@intel.com>,
-        Ira Weiny <ira.weiny@intel.com>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        Cornelia Huck <cohuck@redhat.com>,
-        KVM list <kvm@vger.kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linux MM <linux-mm@kvack.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H . Peter Anvin" <hpa@zytor.com>, X86 ML <x86@kernel.org>,
-        Liran Alon <liran.alon@oracle.com>,
-        Nikita Leshenko <nikita.leshchenko@oracle.com>,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20200204123629.GO14914@hirez.programming.kicks-ass.net>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 4, 2020 at 7:30 AM Barret Rhoden <brho@google.com> wrote:
->
-> Hi -
->
-> On 1/10/20 2:03 PM, Joao Martins wrote:
-> > User can define regions with 'memmap=size!offset' which in turn
-> > creates PMEM legacy devices. But because it is a label-less
-> > NVDIMM device we only have one namespace for the whole device.
-> >
-> > Add support for multiple namespaces by adding ndctl control
-> > support, and exposing a minimal set of features:
-> > (ND_CMD_GET_CONFIG_SIZE, ND_CMD_GET_CONFIG_DATA,
-> > ND_CMD_SET_CONFIG_DATA) alongside NDD_ALIASING because we can
-> > store labels.
->
-> FWIW, I like this a lot.  If we move away from using memmap in favor of
-> efi_fake_mem, ideally we'd have the same support for full-fledged
-> pmem/dax regions and namespaces that this patch brings.
+On 2/4/20 7:36 AM, Peter Zijlstra wrote:
+> --- a/kernel/locking/lockdep_proc.c
+> +++ b/kernel/locking/lockdep_proc.c
+> @@ -278,9 +278,11 @@ static int lockdep_stats_show(struct seq
+>  #ifdef CONFIG_PROVE_LOCKING
+>  	seq_printf(m, " dependency chains:             %11lu [max: %lu]\n",
+>  			lock_chain_count(), MAX_LOCKDEP_CHAINS);
+> -	seq_printf(m, " dependency chain hlocks:       %11lu [max: %lu]\n",
+> -			MAX_LOCKDEP_CHAIN_HLOCKS - nr_free_chain_hlocks,
+> +	seq_printf(m, " dependency chain hlocks used:  %11lu [max: %lu]\n",
+> +			MAX_LOCKDEP_CHAIN_HLOCKS - (nr_free_chain_hlocks - nr_lost_chain_hl=
+ocks),
+>  			MAX_LOCKDEP_CHAIN_HLOCKS);
+> +	seq_printf(m, " dependency chain hlocks free:  %11lu\n", nr_free_chai=
+n_hlocks);
+> +	seq_printf(m, " dependency chain hlocks lost:  %11lu\n", nr_lost_chai=
+n_hlocks);
 
-No, efi_fake_mem only supports creating dax-regions. What's the use
-case that can't be satisfied by just specifying multiple memmap=
-ranges?
+I do have some comments on this. There are three buckets now - free,
+lost, used. They add up to MAX_LOCKDEP_CHAIN_HLOCKS. I don't think we
+need to list all three. We can compute the third one by subtracting max
+from the other two.
+
+Something like:
+
+diff --git a/kernel/locking/lockdep_proc.c b/kernel/locking/lockdep_proc.=
+c
+index 14932ea50317..6fe6a21c58d3 100644
+--- a/kernel/locking/lockdep_proc.c
++++ b/kernel/locking/lockdep_proc.c
+@@ -278,9 +278,12 @@ static int lockdep_stats_show(struct seq_file *m,
+void *v)
+=C2=A0#ifdef CONFIG_PROVE_LOCKING
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 seq_printf(m, " dependency cha=
+ins:=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0 %11lu [max: %lu]\n",
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 lock_chai=
+n_count(), MAX_LOCKDEP_CHAINS);
+-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 seq_printf(m, " dependency chain hl=
+ocks:=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 %11lu [max: %lu]\n",
+-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 MAX_LOCKDEP_=
+CHAIN_HLOCKS - nr_free_chain_hlocks,
++=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 seq_printf(m, " dependency chain hl=
+ocks used:=C2=A0 %11lu [max: %lu]\n",
++=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 MAX_LOCKDEP_=
+CHAIN_HLOCKS -
++=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 (nr_free_cha=
+in_hlocks + nr_lost_chain_hlocks),
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 MAX_LOCKD=
+EP_CHAIN_HLOCKS);
++=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 seq_printf(m, " dependency chain hl=
+ocks lost:=C2=A0 %11lu\n",
++=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 nr_lost_chai=
+n_hlocks);
+=C2=A0#endif
+=C2=A0
+=C2=A0#ifdef CONFIG_TRACE_IRQFLAGS
+
+Cheers,
+Longman
+
