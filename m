@@ -2,154 +2,263 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A9B4715230D
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Feb 2020 00:40:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4D80815234C
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Feb 2020 00:43:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727685AbgBDXk3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 4 Feb 2020 18:40:29 -0500
-Received: from mail-pj1-f68.google.com ([209.85.216.68]:55615 "EHLO
-        mail-pj1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727483AbgBDXk2 (ORCPT
+        id S1727939AbgBDXmP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 4 Feb 2020 18:42:15 -0500
+Received: from hqnvemgate25.nvidia.com ([216.228.121.64]:8773 "EHLO
+        hqnvemgate25.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727687AbgBDXlV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Feb 2020 18:40:28 -0500
-Received: by mail-pj1-f68.google.com with SMTP id d5so117662pjz.5;
-        Tue, 04 Feb 2020 15:40:28 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=AuKl94TVo6mkfdN2jlde8F62+0Ds+RYZaGHAl/YB5GM=;
-        b=Lkv60p7LHGEIs1aeMxJVgf1XrV2+SHx0pc6zjfYjxglh+fyMMaFTcgHCtuNP1ooUEX
-         Y5I3l/MklFQRbIvnWGFxw/q9liwrsJ0znXA7eGYFyziNbEmOk7p4gWSQG1uiKbwPRVHW
-         mifNqF/ydnrSxcGWHXzODu5Pi7esqsvrmPa/+4HTHZKx1HMG6t8fiNlOSckXlTA32ZQj
-         OQc63d8VZhUNQzezE1mBkgnz0VS/8a6E0i4q5dfO3MbzVXZCh57Afj1MaRWEhTAP8ZJR
-         fKgGN2QhB9x5yJLCGvjYPN9TfusqjxkpcNbEggSlGczMObyjjiJoLgsz3xmJDiRiDrmA
-         GShw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=AuKl94TVo6mkfdN2jlde8F62+0Ds+RYZaGHAl/YB5GM=;
-        b=h2Jes37SXfZI7TW2l8EqbHEMzQrShm6BsMQoLBA920dZ5A40LzHI0ic1Bfo/+cK0mW
-         aC6cd346vf0XpkrhmS4DQR39uFQ6w5J+nkBASbm8sqz0p9A8iO7QjVlzHYBsmQCh4BA0
-         n8Lrh1uLcBZhD8NRenStv3mw3Fu93fGfTdSEwHkIZKPDeq4W1MiZYhnleLgPMA5RcBEH
-         W6MXaGaQO+pVP/1nILafmzKby9xV0GOUjUmilUXIKU9Q6rJ0SM3xKJeYWKMGrSuUfyTD
-         eFZCNQnpkI8wGRV8VKAUWQ83OIoaiXnpkoTvRfrwWeaz7oHgdGNXHaZbq265InFbmYVX
-         FuJA==
-X-Gm-Message-State: APjAAAU0L2E2TlShMReChfxEBp9kCwrxizarCVB3MouCCpjGMaO1dFzs
-        EagjRQExqQiqCQMbLr+LUgA=
-X-Google-Smtp-Source: APXvYqxUYqgrxXhDBuc1ZHCkZDpZ+ygztjXvWAtKEJEjnmr4KFmtiCCiksj6ydhDXfMaCbklJKq+DQ==
-X-Received: by 2002:a17:90a:b106:: with SMTP id z6mr2041760pjq.91.1580859627881;
-        Tue, 04 Feb 2020 15:40:27 -0800 (PST)
-Received: from ?IPv6:2620:15c:2c1:200:55c7:81e6:c7d8:94b? ([2620:15c:2c1:200:55c7:81e6:c7d8:94b])
-        by smtp.gmail.com with ESMTPSA id w8sm24922419pfn.186.2020.02.04.15.40.26
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 04 Feb 2020 15:40:27 -0800 (PST)
-Subject: Re: memory leak in tcindex_set_parms
-To:     Cong Wang <xiyou.wangcong@gmail.com>,
-        David Miller <davem@davemloft.net>
-Cc:     Eric Dumazet <eric.dumazet@gmail.com>,
-        syzbot+f0bbb2287b8993d4fa74@syzkaller.appspotmail.com,
-        Jamal Hadi Salim <jhs@mojatatu.com>,
-        Jiri Pirko <jiri@resnulli.us>,
-        Jakub Kicinski <kuba@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Linux Kernel Network Developers <netdev@vger.kernel.org>,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>
-References: <0000000000009a59d2059dc3c8e9@google.com>
- <a1673e4f-6382-d7df-6942-6e4ffd2b81ce@gmail.com>
- <20200204.222245.1920371518669295397.davem@davemloft.net>
- <CAM_iQpVE=B+LDpG=DpiHh_ydUxxhTj_ge-20zgdB4J1OqAfCtQ@mail.gmail.com>
-From:   Eric Dumazet <eric.dumazet@gmail.com>
-Message-ID: <787030ee-ff3e-8eae-3526-24aa8251bcc6@gmail.com>
-Date:   Tue, 4 Feb 2020 15:40:26 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.2.2
+        Tue, 4 Feb 2020 18:41:21 -0500
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate25.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5e3a01070000>; Tue, 04 Feb 2020 15:40:55 -0800
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate101.nvidia.com (PGP Universal service);
+  Tue, 04 Feb 2020 15:41:19 -0800
+X-PGP-Universal: processed;
+        by hqpgpgate101.nvidia.com on Tue, 04 Feb 2020 15:41:19 -0800
+Received: from HQMAIL105.nvidia.com (172.20.187.12) by HQMAIL101.nvidia.com
+ (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Tue, 4 Feb
+ 2020 23:41:18 +0000
+Received: from rnnvemgw01.nvidia.com (10.128.109.123) by HQMAIL105.nvidia.com
+ (172.20.187.12) with Microsoft SMTP Server (TLS) id 15.0.1473.3 via Frontend
+ Transport; Tue, 4 Feb 2020 23:41:18 +0000
+Received: from blueforge.nvidia.com (Not Verified[10.110.48.28]) by rnnvemgw01.nvidia.com with Trustwave SEG (v7,5,8,10121)
+        id <B5e3a011e0000>; Tue, 04 Feb 2020 15:41:18 -0800
+From:   John Hubbard <jhubbard@nvidia.com>
+To:     Andrew Morton <akpm@linux-foundation.org>
+CC:     Al Viro <viro@zeniv.linux.org.uk>,
+        Christoph Hellwig <hch@infradead.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Dave Chinner <david@fromorbit.com>,
+        Ira Weiny <ira.weiny@intel.com>, Jan Kara <jack@suse.cz>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Jonathan Corbet <corbet@lwn.net>,
+        =?UTF-8?q?J=C3=A9r=C3=B4me=20Glisse?= <jglisse@redhat.com>,
+        "Kirill A . Shutemov" <kirill@shutemov.name>,
+        Michal Hocko <mhocko@suse.com>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Shuah Khan <shuah@kernel.org>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Matthew Wilcox <willy@infradead.org>,
+        <linux-doc@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
+        <linux-kselftest@vger.kernel.org>, <linux-rdma@vger.kernel.org>,
+        <linux-mm@kvack.org>, LKML <linux-kernel@vger.kernel.org>,
+        John Hubbard <jhubbard@nvidia.com>
+Subject: [PATCH v4 00/12] mm/gup: track FOLL_PIN pages
+Date:   Tue, 4 Feb 2020 15:41:05 -0800
+Message-ID: <20200204234117.2974687-1-jhubbard@nvidia.com>
+X-Mailer: git-send-email 2.25.0
 MIME-Version: 1.0
-In-Reply-To: <CAM_iQpVE=B+LDpG=DpiHh_ydUxxhTj_ge-20zgdB4J1OqAfCtQ@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+X-NVConfidentiality: public
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1580859655; bh=SerRmArPZCX0Ib3dFIlBTJEtpu68p9opHJ6UlhBBIjA=;
+        h=X-PGP-Universal:From:To:CC:Subject:Date:Message-ID:X-Mailer:
+         MIME-Version:X-NVConfidentiality:Content-Type:
+         Content-Transfer-Encoding;
+        b=lV5VFbmYCWujBf0UXRtyEk8TnmsXoFkF0F1UiBuyQ9nMSCTY1Xrywj+bjfJNDgf/Q
+         qvsYeCkopv9SIrOxW5mnNm/WnvICACvZ3mjzfQ1VuxxWOMKcFOPtJu4/wfYQGyczS+
+         It1/quzbGLH7S3IddoDnt2SJURKwSN4IcCDPaqPbJ4rMh/G6lFsjB++bsa0CHRNofy
+         suc8PGodR9XVMjVGnt7eEdMK3ugMaaeerRWddHSBX0aFNCghSf3yzx87BgFST4O6hH
+         Tep/brUZbtKTvUwngCEeX8HEavrISVnF3qnawWsI4SPAa01hZeY4I4IJ+shoz5jeYe
+         w2GxbvujPI4Jw==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi,
 
+Here's an update after the latest round of reviews from Kirill and Jan.
 
-On 2/4/20 2:26 PM, Cong Wang wrote:
-> On Tue, Feb 4, 2020 at 1:22 PM David Miller <davem@davemloft.net> wrote:
->>
->> From: Eric Dumazet <eric.dumazet@gmail.com>
->> Date: Tue, 4 Feb 2020 10:03:16 -0800
->>
->>>
->>>
->>> On 2/4/20 9:58 AM, syzbot wrote:
->>>> Hello,
->>>>
->>>> syzbot found the following crash on:
->>>>
->>>> HEAD commit:    322bf2d3 Merge branch 'for-5.6' of git://git.kernel.org/pu..
->>>> git tree:       upstream
->>>> console output: https://syzkaller.appspot.com/x/log.txt?x=1111f8e6e00000
->>>> kernel config:  https://syzkaller.appspot.com/x/.config?x=8d0490614a000a37
->>>> dashboard link: https://syzkaller.appspot.com/bug?extid=f0bbb2287b8993d4fa74
->>>> compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
->>>> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=17db90f6e00000
->>>> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=13a94511e00000
->>>>
->>>> IMPORTANT: if you fix the bug, please add the following tag to the commit:
->>>> Reported-by: syzbot+f0bbb2287b8993d4fa74@syzkaller.appspotmail.com
->>>>
->>>>
->>>
->>> Might have been fixed already ?
->>>
->>> commit 599be01ee567b61f4471ee8078870847d0a11e8e    net_sched: fix an OOB access in cls_tcindex
->>
->> My reaction was actually that this bug is caused by this commit :)
-> 
-> I think it is neither of the cases, I will test the following change:
-> 
-> diff --git a/net/sched/cls_tcindex.c b/net/sched/cls_tcindex.c
-> index 09b7dc5fe7e0..2495b15ca78c 100644
-> --- a/net/sched/cls_tcindex.c
-> +++ b/net/sched/cls_tcindex.c
-> @@ -454,6 +454,7 @@ tcindex_set_parms(struct net *net, struct
-> tcf_proto *tp, unsigned long base,
->         oldp = p;
->         r->res = cr;
->         tcf_exts_change(&r->exts, &e);
-> +       tcf_exts_destroy(&e);
-> 
+There is a git repo and branch, for convenience in reviewing:
 
-The only thing the repro fires for me on latest net tree is an UBSAN warning about a silly ->shift
+    git@github.com:johnhubbard/linux.git  track_user_pages_v4
 
-I have not tried it on the old kernel.
+I'm particularly pleased that the /proc/vmstat items are now available
+in all configurations, seeing as how I was looking (in vain) for that
+information during a recent investigation of a remotely reported
+problem.
 
-[  170.331009] UBSAN: Undefined behaviour in net/sched/cls_tcindex.c:239:29
-[  170.337729] shift exponent 19375 is too large for 32-bit type 'int'
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+Changes since v3:
 
+* Rebased onto latest linux.git
 
-diff --git a/net/sched/cls_tcindex.c b/net/sched/cls_tcindex.c
-index 0323aee03de7efbb99c7943be078765c74dfdf2e..42436ae61b7a64a7244a9df03dc397e5aa103a86 100644
---- a/net/sched/cls_tcindex.c
-+++ b/net/sched/cls_tcindex.c
-@@ -339,9 +339,13 @@ tcindex_set_parms(struct net *net, struct tcf_proto *tp, unsigned long base,
-        if (tb[TCA_TCINDEX_MASK])
-                cp->mask = nla_get_u16(tb[TCA_TCINDEX_MASK]);
- 
--       if (tb[TCA_TCINDEX_SHIFT])
-+       if (tb[TCA_TCINDEX_SHIFT]) {
-                cp->shift = nla_get_u32(tb[TCA_TCINDEX_SHIFT]);
--
-+               if (cp->shift > 16) {
-+                       err = -EINVAL;
-+                       goto errout;
-+               }
-+       }
-        if (!cp->hash) {
-                /* Hash not specified, use perfect hash if the upper limit
-                 * of the hashing index is below the threshold.
+* Added ACKs and reviewed-by's from Kirill Shutemov and Jan Kara.
+
+* /proc/vmstat:
+    * Renamed items, after realizing that I hate the previous names:
+         nr_foll_pin_requested --> nr_foll_pin_acquired
+         nr_foll_pin_returned  --> nr_foll_pin_released
+
+    * Removed the CONFIG_DEBUG_VM guard, and collapsed away a wrapper
+      routine: now just calls mod_node_page_state() directly.
+
+* Tweaked the WARN_ON_ONCE() statements in mm/hugetlb.c to be more
+  informative, and added comments above them as well.
+
+* Fixed gup_benchmark: signed int --> unsigned long.
+
+* One or two minor formatting changes.
+
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+Changes since v2:
+
+* Rebased onto linux.git, because the akpm tree for 5.6 has been merged.
+
+* Split the tracking patch into even more patches, as requested.
+
+* Merged Matthew Wilcox's dump_page() changes into mine, as part of the
+  first patch.
+
+* Renamed: page_dma_pinned() --> page_maybe_dma_pinned(), in response to
+  Kirill Shutemov's review.
+
+* Moved a WARN to the top of a routine, and fixed a typo in the commit
+  description of patch #7, also as suggested by Kirill.
+
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+Changes since v1:
+
+* Split the tracking patch into 6 smaller patches
+
+* Rebased onto today's linux-next/akpm (there weren't any conflicts).
+
+* Fixed an "unsigned int" vs. "int" problem in gup_benchmark, reported
+  by Nathan Chancellor. (I don't see it in my local builds, probably
+  because they use gcc, but an LLVM test found the mismatch.)
+
+* Fixed a huge page pincount problem (add/subtract vs.
+  increment/decrement), spotted by Jan Kara.
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+
+There is a reasonable case to be made for merging two of the patches
+(patches 7 and 8), given that patch 7 provides tracking that has upper
+limits on the number of pins that can be done with huge pages. Let me
+know if anyone wants those merged, but unless there is some weird chance
+of someone grabbing patch 7 and not patch 8, I don't really see the
+need. Meanwhile, it's easier to review in this form.
+
+Also, patch 3 has been revived. Earlier reviewers asked for it to be
+merged into the tracking patch (one cannot please everyone, heh), but
+now it's back out on it's own.
+
+This activates tracking of FOLL_PIN pages. This is in support of fixing
+the get_user_pages()+DMA problem described in [1]-[4].
+
+FOLL_PIN support is now in the main linux tree. However, the
+patch to use FOLL_PIN to track pages was *not* submitted, because Leon
+saw an RDMA test suite failure that involved (I think) page refcount
+overflows when huge pages were used.
+
+This patch definitively solves that kind of overflow problem, by adding
+an exact pincount, for compound pages (of order > 1), in the 3rd struct
+page of a compound page. If available, that form of pincounting is used,
+instead of the GUP_PIN_COUNTING_BIAS approach. Thanks again to Jan Kara
+for that idea.
+
+Other interesting changes:
+
+* dump_page(): added one, or two new things to report for compound
+  pages: head refcount (for all compound pages), and map_pincount (for
+  compound pages of order > 1).
+
+* Documentation/core-api/pin_user_pages.rst: removed the "TODO" for the
+  huge page refcount upper limit problems, and added notes about how it
+  works now. Also added a note about the dump_page() enhancements.
+
+* Added some comments in gup.c and mm.h, to explain that there are two
+  ways to count pinned pages: exact (for compound pages of order > 1)
+  and fuzzy (GUP_PIN_COUNTING_BIAS: for all other pages).
+
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+General notes about the tracking patch:
+
+This is a prerequisite to solving the problem of proper interactions
+between file-backed pages, and [R]DMA activities, as discussed in [1],
+[2], [3], [4] and in a remarkable number of email threads since about
+2017. :)
+
+In contrast to earlier approaches, the page tracking can be
+incrementally applied to the kernel call sites that, until now, have
+been simply calling get_user_pages() ("gup"). In other words, opt-in by
+changing from this:
+
+    get_user_pages() (sets FOLL_GET)
+    put_page()
+
+to this:
+    pin_user_pages() (sets FOLL_PIN)
+    unpin_user_page()
+
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+Next steps:
+
+* Convert more subsystems from get_user_pages() to pin_user_pages().
+* Work with Ira and others to connect this all up with file system
+  leases.
+
+[1] Some slow progress on get_user_pages() (Apr 2, 2019):
+    https://lwn.net/Articles/784574/
+
+[2] DMA and get_user_pages() (LPC: Dec 12, 2018):
+    https://lwn.net/Articles/774411/
+
+[3] The trouble with get_user_pages() (Apr 30, 2018):
+    https://lwn.net/Articles/753027/
+
+[4] LWN kernel index: get_user_pages()
+    https://lwn.net/Kernel/Index/#Memory_management-get_user_pages
+
+John Hubbard (12):
+  mm: dump_page(): better diagnostics for compound pages
+  mm/gup: split get_user_pages_remote() into two routines
+  mm/gup: pass a flags arg to __gup_device_* functions
+  mm: introduce page_ref_sub_return()
+  mm/gup: pass gup flags to two more routines
+  mm/gup: require FOLL_GET for get_user_pages_fast()
+  mm/gup: track FOLL_PIN pages
+  mm/gup: page->hpage_pinned_refcount: exact pin counts for huge pages
+  mm: dump_page(): better diagnostics for huge pinned pages
+  mm/gup: /proc/vmstat: pin_user_pages (FOLL_PIN) reporting
+  mm/gup_benchmark: support pin_user_pages() and related calls
+  selftests/vm: run_vmtests: invoke gup_benchmark with basic FOLL_PIN
+    coverage
+
+ Documentation/core-api/pin_user_pages.rst  |  59 ++-
+ include/linux/mm.h                         | 108 ++++-
+ include/linux/mm_types.h                   |   7 +-
+ include/linux/mmzone.h                     |   2 +
+ include/linux/page_ref.h                   |   9 +
+ mm/debug.c                                 |  61 ++-
+ mm/gup.c                                   | 448 ++++++++++++++++-----
+ mm/gup_benchmark.c                         |  71 +++-
+ mm/huge_memory.c                           |  29 +-
+ mm/hugetlb.c                               |  60 ++-
+ mm/page_alloc.c                            |   2 +
+ mm/rmap.c                                  |   6 +
+ mm/vmstat.c                                |   2 +
+ tools/testing/selftests/vm/gup_benchmark.c |  15 +-
+ tools/testing/selftests/vm/run_vmtests     |  22 +
+ 15 files changed, 721 insertions(+), 180 deletions(-)
+
+--=20
+2.25.0
+
