@@ -2,81 +2,55 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 342141513A8
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Feb 2020 01:28:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8E3CC1513CB
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Feb 2020 01:44:46 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727072AbgBDA2i (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 3 Feb 2020 19:28:38 -0500
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:45631 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726853AbgBDA2i (ORCPT
+        id S1727128AbgBDAol (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 3 Feb 2020 19:44:41 -0500
+Received: from mailgate.kemenperin.go.id ([202.47.80.81]:60278 "EHLO
+        mailgate.kemenperin.go.id" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726928AbgBDAol (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Feb 2020 19:28:38 -0500
-Received: by mail-pf1-f195.google.com with SMTP id 2so8475782pfg.12
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Feb 2020 16:28:38 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=vAhBNULLMh9XOTvTdD4G3os1qV1uXBckyQ+ldlyDpfU=;
-        b=cPhAokTZ9kQlxDMTNKVdWb25SdZQI8UBNjRVl3ZSbzLxuAeFM6nmq3+LvH5C//TF72
-         KnmhtKKTDOHe+qmvVNbgnDAq2Img5xAMjhjYPLWv+sLiUToMmBjdRXFhceXTZHrF2ZbY
-         QAgYwXicceFkzvpgstFkXqu24LkxVf4tauXIa/0VhQSciw8bdJEQn5AkAx2RfGETBATL
-         sTUJK4WpvdJJ+lHg8NEvi1TaCek47dl7BprkR5UbBzvJ0SEB9KQamt7iu86LmxJXmwnt
-         /6C7kujevhxm1/7+UJB4473pqpmOeMG8UwOChUsbyZ0K12JZ/+PasYw2ROZpLYfmIVgv
-         Wfnw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=vAhBNULLMh9XOTvTdD4G3os1qV1uXBckyQ+ldlyDpfU=;
-        b=gNNbR+LAXCH7ZeNXPg12fso519pezBYL6gNQjPTYhVpEJ2xMMKhk+eznZpHkOyrXXh
-         AaFBRlEwdiEr3pYU+5VTLYiJRT/V+4O31Ud286xtKscA+EVWvbTnE2nw3CWa9mKK6Iyd
-         /dqsroQOukn+wwTm+qZkluYGijsuyfEUEF+6ipGlkgCKCTLx7+f5dAyCCygPnV1NR/sD
-         JqCtySRqChUQ4SJ5shYbnH/q+sFPmepY2doYRC88au+RURrSpH/+RPxQs/DCwWCTWr53
-         5FJf4D5iF8q9Hvu5hf+1fFu9PW+Prj6IRsNLHLSVwsXL4oFzropklQZfQ1U0XAUcs3pG
-         Hqcw==
-X-Gm-Message-State: APjAAAUbkBq0yx+xCczLYrf1rcDlubsYsUZ1XgfD3ohRTygrt+8uXXVJ
-        NBZNcSCN3u+dGuPj40yDIi4jD9+Xsjs=
-X-Google-Smtp-Source: APXvYqwUc9cZI7DMbGryZAH6VeR/EOia6vpZadPgVDPS+m5PjCNf3yY9tmflych0xth95EjpIgFBDg==
-X-Received: by 2002:aa7:864b:: with SMTP id a11mr27630304pfo.175.1580776117631;
-        Mon, 03 Feb 2020 16:28:37 -0800 (PST)
-Received: from [192.168.1.188] ([66.219.217.145])
-        by smtp.gmail.com with ESMTPSA id g13sm17438595pfo.169.2020.02.03.16.28.36
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 03 Feb 2020 16:28:37 -0800 (PST)
-Subject: Re: linux-next: build failure after merge of the block tree
-To:     Stephen Rothwell <sfr@canb.auug.org.au>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-References: <20200204112555.0f1b1490@canb.auug.org.au>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <eaad4710-872e-a0fd-33df-747d16c8c293@kernel.dk>
-Date:   Mon, 3 Feb 2020 17:28:36 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.1
+        Mon, 3 Feb 2020 19:44:41 -0500
+Received: from localhost (localhost [127.0.0.1])
+        by mailgate.kemenperin.go.id (Postfix) with ESMTP id 2A5D2D24454;
+        Tue,  4 Feb 2020 07:11:09 +0700 (WIB)
+Received: from mailgate.kemenperin.go.id ([127.0.0.1])
+        by localhost (mailgate.kemenperin.go.id [127.0.0.1]) (amavisd-new, port 10032)
+        with ESMTP id GnJwYM-KbyS0; Tue,  4 Feb 2020 07:11:08 +0700 (WIB)
+Received: from mailgate.kemenperin.go.id (localhost [127.0.0.1])
+        by mailgate.kemenperin.go.id (Postfix) with ESMTPS id 7DE24D24478;
+        Tue,  4 Feb 2020 07:11:08 +0700 (WIB)
+DKIM-Filter: OpenDKIM Filter v2.10.3 mailgate.kemenperin.go.id 7DE24D24478
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kemenperin.go.id;
+        s=3298A942-BBC6-11E3-B333-483736368EC2; t=1580775068;
+        bh=wK1eChfgOI+Ep4843SnCQ1p8qsDwmbxZgYuZ1SiWUmo=;
+        h=Date:From:Message-ID:MIME-Version;
+        b=PyqBFG8pE7ndUdTh3zgzehIzRcku8HPBBfBPEy/iSZv8kV9+/8hS5KE9uD0Lp4xhn
+         JCrb0EWMYCKzhev9DekfnDIc+5reOx4k11PMIayXKb0LBXCVH5YUhZI1ALma9NhCCk
+         MiXo9JEyHxCUrxpGBsUUPCurQJ4Qy5kOXhAOg13I=
+Received: from mailgate.kemenperin.go.id (mailgate.kemenperin.go.id [10.1.0.89])
+        by mailgate.kemenperin.go.id (Postfix) with ESMTP id 8D024D243B1;
+        Tue,  4 Feb 2020 07:11:05 +0700 (WIB)
+Date:   Tue, 4 Feb 2020 07:11:05 +0700 (WIB)
+From:   CENTRAL TRUST LTD <dewikurniati@kemenperin.go.id>
+Reply-To: "central_trust_ltd@hotmail.com" <central_trust_ltd@hotmail.com>
+Message-ID: <1224417315.1017890.1580775065555.JavaMail.zimbra@kemenperin.go.id>
+Subject: Darlehensangebot jetzt beantragen
 MIME-Version: 1.0
-In-Reply-To: <20200204112555.0f1b1490@canb.auug.org.au>
-Content-Type: text/plain; charset=windows-1252
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+X-Originating-IP: [10.1.0.89]
+Thread-Index: A48t0lVmVCOm5mGREaFOyijMnQoofQ==
+Thread-Topic: Darlehensangebot jetzt beantragen
+To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2/3/20 5:25 PM, Stephen Rothwell wrote:
-> Hi all,
-> 
-> After merging the block tree, today's linux-next build (powerpc
-> ppc64_defconfig) failed like this:
 
-[snip]
 
-Thanks, apparently we needed two includes... I've folded in your
-fix.
-
--- 
-Jens Axboe
-
+Ben=C3=B6tigen Sie INVESTITIONEN BUSINESS Darlehen Hypothekendarlehen usw. =
+Zu einem erschwinglichen Zinssatz von 3%. Kontaktieren Sie uns jetzt f=C3=
+=BCr weitere Informationen.
