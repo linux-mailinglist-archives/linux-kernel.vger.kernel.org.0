@@ -2,64 +2,84 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2A711152292
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Feb 2020 23:56:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B91E615229A
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Feb 2020 00:01:27 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727685AbgBDW4R (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 4 Feb 2020 17:56:17 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36206 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727412AbgBDW4Q (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Feb 2020 17:56:16 -0500
-Received: from localhost (unknown [167.98.85.149])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 73FB62087E;
-        Tue,  4 Feb 2020 22:56:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1580856974;
-        bh=U8Tdm6VZowdahM3Ii+vu7aEG0jWdeFdxEp7o4xmydII=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=FgeP3Hup75Kr1Ntt2Ao4qUoWruSMWvCKJS5G0zEbSuyq+G6v4miT9eIXW2m62Vwgk
-         cz51RiLF91LTVIo3zeDng9uWVz+i4BWHRGrFsSOHx5pKw91/TdjlKGzaZP0ocE9MyQ
-         4t43B+Q92n37ryp5+2P3r0IF/nxTU7hUKPnLXdlI=
-Date:   Tue, 4 Feb 2020 22:56:12 +0000
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Guenter Roeck <linux@roeck-us.net>
-Cc:     linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-        akpm@linux-foundation.org, shuah@kernel.org, patches@kernelci.org,
-        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
-        stable@vger.kernel.org
-Subject: Re: [PATCH 5.5 00/23] 5.5.2-stable review
-Message-ID: <20200204225612.GA1129826@kroah.com>
-References: <20200203161902.288335885@linuxfoundation.org>
- <20200204172047.GF10163@roeck-us.net>
+        id S1727619AbgBDXBX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 4 Feb 2020 18:01:23 -0500
+Received: from mail-pj1-f67.google.com ([209.85.216.67]:50859 "EHLO
+        mail-pj1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726320AbgBDXBX (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Feb 2020 18:01:23 -0500
+Received: by mail-pj1-f67.google.com with SMTP id r67so91961pjb.0;
+        Tue, 04 Feb 2020 15:01:22 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=H2ogUhcETgyZrfpUeKlCnyr0e1cCASv1/pIpN8mrzTw=;
+        b=ZdprRkijdmA5DFXtvCouv0JBJ1jW1Pa4KkU++Xr90YvgFQS4683KK4uDKZE3cQwk1w
+         8o4Ua9ajjtmgutDz7jj1Z/Q0mQS8Lq9XxRi6kAF3CZyS/IYw6yFe1+T6wGYtBesiirar
+         OzlOYGsA/I1YNiVROrb89PhjclYogTU8WMxnsnHTLqo6azpZYeybLe54m8goiHAU3Eff
+         C7z3XrHeZaFs67s36aiwWN2uiErFx8odrvxG+rBVAxl7eFsvS+z8g1vRvxqMfj1WmvNx
+         hl7KUiOeJ7F+fovDm7+KW8xGoHHlpX4jDazLXRqX8SUdxWHQnLFrfT8bN/Jx2uQyYzS+
+         KlNg==
+X-Gm-Message-State: APjAAAWv1152xyRihHHjcVCrTQxLmHTLaPBP6OhOXCixz3XSsjD5Jm9s
+        9XQ/ereWn0BGq7YAGNcgHT8lG/7G378=
+X-Google-Smtp-Source: APXvYqz15TdBALzoPut4mWMZyx+cVQGcVHC9dYLt1u+GbpYVc3BPFP7q8E4863hbWSpAz5wmROszLg==
+X-Received: by 2002:a17:902:9a8c:: with SMTP id w12mr31653717plp.149.1580857282051;
+        Tue, 04 Feb 2020 15:01:22 -0800 (PST)
+Received: from localhost ([2601:647:5b00:710:ffa7:88dc:9c39:76d9])
+        by smtp.gmail.com with ESMTPSA id b188sm24295650pfb.56.2020.02.04.15.01.20
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 04 Feb 2020 15:01:21 -0800 (PST)
+From:   Moritz Fischer <mdf@kernel.org>
+To:     netdev@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org, linux-parisc@vger.kernel.org,
+        mst@redhat.com, hkallweit1@gmail.com, davem@davemloft.net,
+        morats@google.com, Moritz Fischer <mdf@kernel.org>
+Subject: [PATCH] net: ethernet: dec: tulip: Fix length mask in receive length calculation
+Date:   Tue,  4 Feb 2020 15:01:18 -0800
+Message-Id: <20200204230118.7877-1-mdf@kernel.org>
+X-Mailer: git-send-email 2.25.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200204172047.GF10163@roeck-us.net>
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 04, 2020 at 09:20:47AM -0800, Guenter Roeck wrote:
-> On Mon, Feb 03, 2020 at 04:20:20PM +0000, Greg Kroah-Hartman wrote:
-> > This is the start of the stable review cycle for the 5.5.2 release.
-> > There are 23 patches in this series, all will be posted as a response
-> > to this one.  If anyone has any issues with these being applied, please
-> > let me know.
-> > 
-> > Responses should be made by Wed, 05 Feb 2020 16:17:59 +0000.
-> > Anything received after that time might be too late.
-> > 
-> 
-> Build results:
-> 	total: 157 pass: 157 fail: 0
-> Qemu test results:
-> 	total: 393 pass: 393 fail: 0
+The receive frame length calculation uses a wrong mask to calculate the
+length of the received frames.
 
-Yeah, one is right.  I'll tackle the rest of these tomorrow, thanks
-for all of the testing and reports.
+Per spec table 4-1 the length is contained in the FL (Frame Length)
+field in bits 30:16.
 
-greg k-h
+This didn't show up as an issue so far since frames were limited to
+1500 bytes which falls within the 11 bit window.
+
+Signed-off-by: Moritz Fischer <mdf@kernel.org>
+---
+ drivers/net/ethernet/dec/tulip/de2104x.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/net/ethernet/dec/tulip/de2104x.c b/drivers/net/ethernet/dec/tulip/de2104x.c
+index d305d1b24b0a..42b798a3fad4 100644
+--- a/drivers/net/ethernet/dec/tulip/de2104x.c
++++ b/drivers/net/ethernet/dec/tulip/de2104x.c
+@@ -417,7 +417,10 @@ static void de_rx (struct de_private *de)
+ 		if (status & DescOwn)
+ 			break;
+ 
+-		len = ((status >> 16) & 0x7ff) - 4;
++		/* the length is actually a 15 bit value here according
++		 * to Table 4-1 in the DE2104x spec so mask is 0x7fff
++		 */
++		len = ((status >> 16) & 0x7fff) - 4;
+ 		mapping = de->rx_skb[rx_tail].mapping;
+ 
+ 		if (unlikely(drop)) {
+-- 
+2.25.0
+
