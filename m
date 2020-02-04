@@ -2,112 +2,108 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E2F4015163A
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Feb 2020 08:05:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id F2E55151642
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Feb 2020 08:09:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726406AbgBDHFY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 4 Feb 2020 02:05:24 -0500
-Received: from mail-pj1-f67.google.com ([209.85.216.67]:54366 "EHLO
-        mail-pj1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725834AbgBDHFY (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Feb 2020 02:05:24 -0500
-Received: by mail-pj1-f67.google.com with SMTP id dw13so926024pjb.4
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Feb 2020 23:05:24 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=w5PoBe/LIYLPF7o11SYiI2aW+wfvhFdZMsKpXsr8Bdo=;
-        b=Fb1glgBRu3fbQOC/zgG7Y4VjMCA8stpvNr50Txb+8JbWcrOWDzprownVQimEhveoj4
-         42ZWZ6cu6r+49VQ3SDid3114jZmik+yTWU1e8vJJijU6sZ2tbmjYeUL3ZDbXqk5vg9Aw
-         zHzuXk2YCj3DnOQt5uoXaL0T1ZtxFJgPY2dRvjugQvZ5c1G+R0rj3sK2qbUXTUyR9iTY
-         Sc3B0ZziWPQGkYicJ/UEcGmwJ+FvPry/rIBmFVFLnAuvovoufWIp2fNetRZDMPjDqxXg
-         Oyxio+189suNh0J7r5AKox4QzetQPaExRxFJmiVSHVrLPEYfcB9QTPgym8mXbAZZt65E
-         DXVw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=w5PoBe/LIYLPF7o11SYiI2aW+wfvhFdZMsKpXsr8Bdo=;
-        b=RNLBUokE7p/YmZRprZ1OowBnadAHfEqWyui6hCVM+6UYrBLtCC8MFZkVkHUPlg3qQY
-         iXt0sVdWH0o+vLYjDVEC+/PwH0SUEQRsIwsgIRlZ5SDLcMgXWvbzeB/U2cm11TM3l2Q8
-         5D8+BnhU1YK2HoUYhKElARiXOHN4fhRMC2qqBISftwwUdMSddNnci8N/2A5oHDE/8FGB
-         g5j7R9ng1HE9F8khDJbOn5THT074tJrpfvTaUpkudQ2ZPp9WLq/JApDB93a8L1sntYKI
-         jZGmUS7sobc8YBCM8G4SgHQVbUhB30/YUW5FbU1aKWvE79eWid9X8WTptaEs6axU/903
-         jqHA==
-X-Gm-Message-State: APjAAAU6dENglTTmPbN3m2A06RAeiO6Crh0K85NxKjvuQ847S7R2tMZD
-        SmLKu6JlO+eFvdy10mUMUgqE
-X-Google-Smtp-Source: APXvYqyEsp5NPX+idnfyOkW2uYsdtJuprUa0EiaAoIlzWdgQ3xu7qx9G7UUKaD87ZSkSp+++e8WU1A==
-X-Received: by 2002:a17:90a:d995:: with SMTP id d21mr4502095pjv.118.1580799923596;
-        Mon, 03 Feb 2020 23:05:23 -0800 (PST)
-Received: from Mani-XPS-13-9360 ([2409:4072:184:5239:5cf8:8075:e072:4b02])
-        by smtp.gmail.com with ESMTPSA id k4sm22952117pfg.40.2020.02.03.23.05.17
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 03 Feb 2020 23:05:22 -0800 (PST)
-Date:   Tue, 4 Feb 2020 12:35:15 +0530
-From:   Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To:     Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Arnd Bergmann <arnd@arndb.de>, smohanad@codeaurora.org,
-        Jeffrey Hugo <jhugo@codeaurora.org>,
-        Kalle Valo <kvalo@codeaurora.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        hemantk@codeaurora.org, linux-arm-msm@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2 13/16] MAINTAINERS: Add entry for MHI bus
-Message-ID: <20200204070515.GA7452@Mani-XPS-13-9360>
-References: <20200131135009.31477-1-manivannan.sadhasivam@linaro.org>
- <20200131135009.31477-14-manivannan.sadhasivam@linaro.org>
- <CAHp75Vc2Nf9N0cPBmrqb_xZQG-=eczd=gdZxsfXv6OtZ=ysP6w@mail.gmail.com>
+        id S1726603AbgBDHJc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 4 Feb 2020 02:09:32 -0500
+Received: from mail.kernel.org ([198.145.29.99]:54204 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725834AbgBDHJc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Feb 2020 02:09:32 -0500
+Received: from localhost (unknown [167.98.85.149])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5A28F2086A;
+        Tue,  4 Feb 2020 07:09:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1580800169;
+        bh=scoweAY6anUw8k9z4VoD+ICWjo02gSzC10Rh6liDJfs=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=hKO2dIXaArwgdWAM9HmMcFElchJGp6FfLH+JQv0mvebG6G1Tphb4/4ZEtaoWSpQzF
+         0CRyYtTVRgCSwEONIxEVOpm9fBgkJY2kxsFNxloRwwRONUoDm15uVOAfDa0BMNM6z6
+         N77RAxRplWp5eTl+PZCfy4C2JLSLK//B44vdO+4M=
+Date:   Tue, 4 Feb 2020 07:09:27 +0000
+From:   "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>
+To:     Chris Packham <Chris.Packham@alliedtelesis.co.nz>
+Cc:     "linux@roeck-us.net" <linux@roeck-us.net>,
+        "devel@driverdev.osuosl.org" <devel@driverdev.osuosl.org>,
+        "brandonbonaby94@gmail.com" <brandonbonaby94@gmail.com>,
+        "julia.lawall@lip6.fr" <julia.lawall@lip6.fr>,
+        "paulburton@kernel.org" <paulburton@kernel.org>,
+        "aaro.koskinen@iki.fi" <aaro.koskinen@iki.fi>,
+        "yuehaibing@huawei.com" <yuehaibing@huawei.com>,
+        "fw@strlen.de" <fw@strlen.de>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "willy@infradead.org" <willy@infradead.org>,
+        "ddaney@caviumnetworks.com" <ddaney@caviumnetworks.com>,
+        "bobdc9664@seznam.cz" <bobdc9664@seznam.cz>,
+        "sandro@volery.com" <sandro@volery.com>,
+        "geert@linux-m68k.org" <geert@linux-m68k.org>,
+        "ivalery111@gmail.com" <ivalery111@gmail.com>,
+        "ynezz@true.cz" <ynezz@true.cz>,
+        "davem@davemloft.net" <davem@davemloft.net>,
+        "dan.carpenter@oracle.com" <dan.carpenter@oracle.com>,
+        "wambui.karugax@gmail.com" <wambui.karugax@gmail.com>
+Subject: Re: [PATCH 1/2] staging: octeon: delete driver
+Message-ID: <20200204070927.GA966981@kroah.com>
+References: <20191210091509.3546251-1-gregkh@linuxfoundation.org>
+ <6f934497-0635-7aa0-e7d5-ed2c4cc48d2d@roeck-us.net>
+ <da150cdb160b5d1b58ad1ea2674cc93c1fc6aadc.camel@alliedtelesis.co.nz>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <CAHp75Vc2Nf9N0cPBmrqb_xZQG-=eczd=gdZxsfXv6OtZ=ysP6w@mail.gmail.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <da150cdb160b5d1b58ad1ea2674cc93c1fc6aadc.camel@alliedtelesis.co.nz>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Andy,
-
-On Mon, Feb 03, 2020 at 12:16:16PM +0200, Andy Shevchenko wrote:
-> On Fri, Jan 31, 2020 at 3:53 PM Manivannan Sadhasivam
-> <manivannan.sadhasivam@linaro.org> wrote:
-> >
-> > Add MAINTAINERS entry for MHI bus.
+On Tue, Feb 04, 2020 at 04:02:15AM +0000, Chris Packham wrote:
+> I'll pipe up on this thread too
 > 
-> > +MHI BUS
-> > +M:     Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-> > +M:     Hemant Kumar <hemantk@codeaurora.org>
-> > +L:     linux-arm-msm@vger.kernel.org
-> > +T:     git git://git.kernel.org/pub/scm/linux/kernel/git/mani/mhi.git
-> > +S:     Maintained
-> > +F:     drivers/bus/mhi/
-> > +F:     include/linux/mhi.h
-> > +F:     Documentation/mhi/
+> On Tue, 2019-12-10 at 02:42 -0800, Guenter Roeck wrote:
+> > On 12/10/19 1:15 AM, Greg Kroah-Hartman wrote:
+> > > This driver has been in the tree since 2009 with no real movement to get
+> > > it out.  Now it is starting to cause build issues and other problems for
+> > > people who want to fix coding style problems, but can not actually build
+> > > it.
+> > > 
+> > > As nothing is happening here, just delete the module entirely.
+> > > 
+> > > Reported-by: Guenter Roeck <linux@roeck-us.net>
+> > > Cc: David Daney <ddaney@caviumnetworks.com>
+> > > Cc: "David S. Miller" <davem@davemloft.net>
+> > > Cc: "Matthew Wilcox (Oracle)" <willy@infradead.org>
+> > > Cc: Guenter Roeck <linux@roeck-us.net>
+> > > Cc: YueHaibing <yuehaibing@huawei.com>
+> > > Cc: Aaro Koskinen <aaro.koskinen@iki.fi>
+> > > Cc: Wambui Karuga <wambui.karugax@gmail.com>
+> > > Cc: Julia Lawall <julia.lawall@lip6.fr>
+> > > Cc: Florian Westphal <fw@strlen.de>
+> > > Cc: Geert Uytterhoeven <geert@linux-m68k.org>
+> > > Cc: Branden Bonaby <brandonbonaby94@gmail.com>
+> > > Cc: "Petr Štetiar" <ynezz@true.cz>
+> > > Cc: Sandro Volery <sandro@volery.com>
+> > > Cc: Paul Burton <paulburton@kernel.org>
+> > > Cc: Dan Carpenter <dan.carpenter@oracle.com>
+> > > Cc: Giovanni Gherdovich <bobdc9664@seznam.cz>
+> > > Cc: Valery Ivanov <ivalery111@gmail.com>
+> > > Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> > 
+> > Acked-by: Guenter Roeck <linux@roeck-us.net>
 > 
-> Had you run parse-maintainers.pl afterwards to see if everything is okay?
+> Please can we keep this driver. We do have platforms using it and we
+> would like it to stay around.
 > 
+> Clearly we'll need to sort things out to a point where they build
+> successfully. We've been hoping to see this move out of staging ever
+> since we selected Cavium as a vendor.
 
-Hmm. I didn't run it before but now looks like the entries need to be sorted
-as below:
+Great, can you send me a patchset that reverts this and fixes the build
+issues and accept maintainership of the code?
 
-M:      Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-M:      Hemant Kumar <hemantk@codeaurora.org>
-L:      linux-arm-msm@vger.kernel.org
-S:      Maintained
-T:      git git://git.kernel.org/pub/scm/linux/kernel/git/mani/mhi.git
-F:      Documentation/mhi/
-F:      drivers/bus/mhi/
-F:      include/linux/mhi.h
+thanks,
 
-Will address this in next revision.
-
-Thanks,
-Mani
-
-> -- 
-> With Best Regards,
-> Andy Shevchenko
+greg k-h
