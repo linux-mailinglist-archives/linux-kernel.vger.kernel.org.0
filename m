@@ -2,135 +2,93 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CC39F151C76
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Feb 2020 15:44:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 66343151C81
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Feb 2020 15:47:24 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727336AbgBDOoU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 4 Feb 2020 09:44:20 -0500
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:39131 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727258AbgBDOoT (ORCPT
+        id S1727297AbgBDOrW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 4 Feb 2020 09:47:22 -0500
+Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:55224 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1727260AbgBDOrW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Feb 2020 09:44:19 -0500
-Received: by mail-wm1-f66.google.com with SMTP id c84so3967807wme.4
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Feb 2020 06:44:17 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=1IXHtRUMShcVj0I7kyO/iiIdumIO9Jb0cIQ8fggcE/4=;
-        b=GASTvG1JvEAbAvzsvUyAnc3ILW1Gx+26xA3ilwVyNL7T33tvt+Lz5T2gHkQPZXm+kq
-         M1TPCQg4XHeftf3cfLN8TJFcwJsa+OXXLIlgNSpQNM36YUFxwfDnsFfmz7GtEi8tPzYA
-         rlqjkZUaW7PWBT3yBPOPhJheNAmu0zqG5S5P9Eo49PSjSVTv5QF/hqWT+5nXzlw7u8ky
-         EvBF2KfkLmhLnfxJ1wiqTQA6OCdxfx0ADM4CDYsfMGiw443gGHSHkTWTTTUzj5g0GUyq
-         7kZfvBkoMdsBz0BmnkdIGi8R30GNOZpJs+LZXbdwrii7WtNsp6N+s30vOjRbyc6xz05e
-         1skA==
+        Tue, 4 Feb 2020 09:47:22 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1580827640;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=lw+gzAo8DOLFDe3zbMMR3xycrnPKgKMJnAjOPL2s5GI=;
+        b=UFycp+9+xTO0Z0TreDd4xLl0gkqsqikaaz3gc4AQx8O5r05BJ9B5PcXxRAf5U8jJqP26Te
+        1PCX6GX0ipnZufrTrcqHcTwCLHneQUQhyyj3JzcrMgbOfCr5qFHr7BgesjfXr+9SLpdKr3
+        ObAsXg8oq/gEd/sJkBduquS8OF/x0Wk=
+Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com
+ [209.85.221.72]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-219-MhnF8xvWM56iyP4i6U7IPw-1; Tue, 04 Feb 2020 09:47:18 -0500
+X-MC-Unique: MhnF8xvWM56iyP4i6U7IPw-1
+Received: by mail-wr1-f72.google.com with SMTP id s13so10245652wru.7
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Feb 2020 06:47:18 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=1IXHtRUMShcVj0I7kyO/iiIdumIO9Jb0cIQ8fggcE/4=;
-        b=KAL7i+Hj0PZGud9687rnFfbef0uW0nV6phaiVpZsTdEx8ImCzxZ196uTBbJk7kOdJ9
-         rnChLvRH8XxkJxMk6wNJdmuUZxz6WOqsq5Wr4Nif0dVgXe7gM+tgLgo/bYAYT1oAvBFS
-         EVEJ1nnbATG0SWANjHDqoi/gTBtufMi5fstDKWr07rcTSpcl2ccG5X9129lTfBq5uUFH
-         9EauspSoz3SFOEYqGvRapTlupuuzhG62bEnGOhn5vkDgM8yWO3wveiIt0UBaacs4RG4f
-         e9da6PWTHei7r/fLy0KZOpd0MCMwyle1/SJhUg0UiIsRCSOxHRXchqdvu23FL8ochpXf
-         ds4A==
-X-Gm-Message-State: APjAAAVJOotSg3KtFzgCkWvhXrwtOPRg8dK5Sw95axm+juEtpkHeIiDz
-        nin3OIuuWTAAt4Vkwf5ugOkV5Q==
-X-Google-Smtp-Source: APXvYqzVi62MG4N9AgDN5RDsH5ZMtz54CCua+ACBsaV+ksCH9ExoaI8R+1bNIuPw67s5CtrWxt1jAQ==
-X-Received: by 2002:a7b:c759:: with SMTP id w25mr6083222wmk.15.1580827456175;
-        Tue, 04 Feb 2020 06:44:16 -0800 (PST)
-Received: from google.com ([2a00:79e0:d:210:e8f7:125b:61e9:733d])
-        by smtp.gmail.com with ESMTPSA id c9sm3962843wmc.47.2020.02.04.06.44.15
+        h=x-gm-message-state:from:to:cc:subject:in-reply-to:references:date
+         :message-id:mime-version;
+        bh=lw+gzAo8DOLFDe3zbMMR3xycrnPKgKMJnAjOPL2s5GI=;
+        b=WSSAOOL00t+Ass62B3/06VFMDn1QTVqn1MX5SnC/dj+49dLhwu0rss5U35NRs5mZaC
+         UJOHIHCXvUYjZckw/y2PYV4auSwCpvaZeElA0gTr5AvF2bpALLT7KHotlcUJc80jQl4c
+         tLFVCadSbH6pduhxfOqkbA7wQhgM/Vh+LGc3EwIDzKqYzlll6NEXZU/YWDEN1iXYX8pk
+         E9hiNo6C2G8oyFQrlo1BdksuwVDkW/+OFhziXOc1/W1Xjf4005uiFmS2xdB0b2j+rFz7
+         HSV5m3x7g2U6qLkIeBfgLBU86IBI4g8hh5i0V6dluS7eYI9uEzaOAAuMlrOUo69lj6Eq
+         yCKA==
+X-Gm-Message-State: APjAAAX7iH5dTBtu0XaswUhDj6EL2TgXZzsJ8D7T1xuskzpkJXW00+AX
+        NIapSYjvMoXpuqjXu1KUQlqQJxHynZVJmSx7GrLQyMHmlu8Kk9Xi7HGFPmpOPbhHwwtqHv0Pmie
+        gFXS7Qa5Y8ibxOG0hrRI97Eyg
+X-Received: by 2002:a1c:9c52:: with SMTP id f79mr6200721wme.30.1580827637172;
+        Tue, 04 Feb 2020 06:47:17 -0800 (PST)
+X-Google-Smtp-Source: APXvYqwGD6gTvtFqqoJhFfXZTOsvAgNVMBX4BDKiIn6c4VC9z32JT86bgANO8n+yzg5d3VzQcSYFJw==
+X-Received: by 2002:a1c:9c52:: with SMTP id f79mr6200696wme.30.1580827636998;
+        Tue, 04 Feb 2020 06:47:16 -0800 (PST)
+Received: from vitty.brq.redhat.com (nat-pool-brq-t.redhat.com. [213.175.37.10])
+        by smtp.gmail.com with ESMTPSA id e17sm17425259wrn.62.2020.02.04.06.47.16
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 04 Feb 2020 06:44:15 -0800 (PST)
-Date:   Tue, 4 Feb 2020 14:44:15 +0000
-From:   Matthias Maennich <maennich@google.com>
-To:     Quentin Perret <qperret@google.com>
-Cc:     masahiroy@kernel.org, nico@fluxnic.net,
-        linux-kernel@vger.kernel.org, linux-kbuild@vger.kernel.org,
-        kernel-team@android.com, jeyu@kernel.org
-Subject: Re: [PATCH v2] kbuild: allow symbol whitelisting with
- TRIM_UNUSED_KSYMS
-Message-ID: <20200204144415.GC42496@google.com>
-References: <20200129181541.105335-1-qperret@google.com>
- <20200131131508.GH102066@google.com>
- <20200131174055.GA8425@google.com>
+        Tue, 04 Feb 2020 06:47:16 -0800 (PST)
+From:   Vitaly Kuznetsov <vkuznets@redhat.com>
+To:     Sean Christopherson <sean.j.christopherson@intel.com>,
+        Andy Lutomirski <luto@amacapital.net>
+Cc:     David Laight <David.Laight@aculab.com>,
+        Xiaoyao Li <xiaoyao.li@intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        "x86\@kernel.org" <x86@kernel.org>,
+        "linux-kernel\@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "kvm\@vger.kernel.org" <kvm@vger.kernel.org>
+Subject: Re: [PATCH 1/2] KVM: x86: Emulate split-lock access as a write
+In-Reply-To: <20200131200134.GD18946@linux.intel.com>
+References: <db3b854fd03745738f46cfce451d9c98@AcuMS.aculab.com> <777C5046-B9DE-4F8C-B04F-28A546AE4A3F@amacapital.net> <20200131200134.GD18946@linux.intel.com>
+Date:   Tue, 04 Feb 2020 15:47:15 +0100
+Message-ID: <87y2timmto.fsf@vitty.brq.redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
-In-Reply-To: <20200131174055.GA8425@google.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jan 31, 2020 at 05:40:55PM +0000, Quentin Perret wrote:
->On Friday 31 Jan 2020 at 13:15:08 (+0000), 'Matthias Maennich' via kernel-team wrote:
->> On Wed, Jan 29, 2020 at 06:15:41PM +0000, Quentin Perret wrote:
->> > diff --git a/scripts/adjust_autoksyms.sh b/scripts/adjust_autoksyms.sh
->> > index a904bf1f5e67..8e1b7f70e800 100755
->> > --- a/scripts/adjust_autoksyms.sh
->> > +++ b/scripts/adjust_autoksyms.sh
->> > @@ -48,6 +48,7 @@ cat > "$new_ksyms_file" << EOT
->> > EOT
->> > sed 's/ko$/mod/' modules.order |
->> > xargs -n1 sed -n -e '2{s/ /\n/g;/^$/!p;}' -- |
->> > +cat - "${CONFIG_UNUSED_KSYMS_WHITELIST:-/dev/null}" |
->>
->> This handles absolute paths very well. I wonder whether we can make this
->> more useful for folks that want to maintain such a whitelist in their
->> copy of the tree. Lets say, I have in my sources
->> arch/x86/configs/x86_64_symbol_whitelist and in my config I have
->> CONFIG_UNUSED_KSYMS_WHITELIST="arch/x86/configs/x86_64_symbol_whitelist".
->>
->> If I see it correctly, UNUSED_KSYMS_WHITELIST is currently either an
->> absolute path or a relative path to the current build directory. I would
->> prefer if relative paths would be relative to the source directory to
->> support the above use case. (Note, that scenario above works if I build
->> directly in the sources, but fails if I build O=/somewhere/else.)
->
->Right, that is an interesting use case. I suppose something like the
->below should work (with appropriate documentation of the config option).
->
->---8<---
->diff --git a/scripts/adjust_autoksyms.sh b/scripts/adjust_autoksyms.sh
->index 8e1b7f70e800..d37803fd75ce 100755
->--- a/scripts/adjust_autoksyms.sh
->+++ b/scripts/adjust_autoksyms.sh
->@@ -38,6 +38,12 @@ esac
-> # We need access to CONFIG_ symbols
-> . include/config/auto.conf
->
->+ksym_wl="${CONFIG_UNUSED_KSYMS_WHITELIST:-/dev/null}"
->+# If the path is relative, it must be relative to the source tree
->+if [ "$ksym_wl" == "${ksym_wl#/}" ]; then
->+       ksym_wl="$abs_srctree/$ksym_wl"
->+fi
->+
-> # Generate a new ksym list file with symbols needed by the current
-> # set of modules.
-> cat > "$new_ksyms_file" << EOT
->@@ -48,7 +54,7 @@ cat > "$new_ksyms_file" << EOT
-> EOT
-> sed 's/ko$/mod/' modules.order |
-> xargs -n1 sed -n -e '2{s/ /\n/g;/^$/!p;}' -- |
->-cat - "${CONFIG_UNUSED_KSYMS_WHITELIST:-/dev/null}" |
->+cat - "$ksym_wl" |
-> sort -u |
-> sed -e 's/\(.*\)/#define __KSYM_\1 1/' >> "$new_ksyms_file"
->--->8---
->
->Thoughts ?
+Sean Christopherson <sean.j.christopherson@intel.com> writes:
 
-That definitely looks like I would expect that config option to work.
-Thanks for looking into that!
-
-Cheers,
-Matthias
-
+> Exiting to host userspace with "emulation failed" is the other reasonable
+> alternative, but that's basically the same as killing the guest.  We're
+> arguing that, in the extremely unlikely event that there is a workload out
+> there that hits this, it's preferable to *maybe* corrupt guest memory and
+> log the anomaly in the kernel log, as opposed to outright killing the guest
+> with a generic "emulation failed".
 >
->Thanks,
->Quentin
+
+FWIW, if I was to cast a vote I'd pick 'kill the guest' one way or
+another. "Maybe corrupt guest memory" scares me much more and in many
+cases host and guest are different responsibility domains (think
+'cloud').
+
+-- 
+Vitaly
+
