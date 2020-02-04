@@ -2,52 +2,52 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 053BF151913
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Feb 2020 11:58:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A24CE151919
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Feb 2020 11:58:43 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727128AbgBDK6E (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 4 Feb 2020 05:58:04 -0500
-Received: from mail-qk1-f196.google.com ([209.85.222.196]:40083 "EHLO
-        mail-qk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726631AbgBDK6E (ORCPT
+        id S1727180AbgBDK6m (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 4 Feb 2020 05:58:42 -0500
+Received: from mail-qt1-f196.google.com ([209.85.160.196]:46100 "EHLO
+        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726763AbgBDK6l (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Feb 2020 05:58:04 -0500
-Received: by mail-qk1-f196.google.com with SMTP id b7so2212814qkl.7
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Feb 2020 02:58:02 -0800 (PST)
+        Tue, 4 Feb 2020 05:58:41 -0500
+Received: by mail-qt1-f196.google.com with SMTP id e25so13917962qtr.13
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Feb 2020 02:58:41 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc:content-transfer-encoding;
-        bh=NMkyhVQSWvkEio+aMy2Gad6E8U/YVr2WvfbqrIM79Ns=;
-        b=dDsXTEAwh3dw/aFpDHOSx/OkiR/dsRVQgWaqh/SmX9VrwPf88A3B/TVUN0PSbdTQYj
-         lZFmOK2ulhEsePjtkVF/4C/B4IupUXnqdIpRVSJRaWy9kyjY68vsl5j7PaoeyFdqU+o0
-         jka4e73H48C6I9RUBHYWoNW28ZBnq55U0uLzMqC++YRHovqVCZYGUA99ljOsGx1AnWb7
-         8SKe0YFxMl9p3OOcrGVxjKh74ghwXEPVw3pa8bDymu0VRIm6waXfy22wQQS1qWyqipCG
-         9d8P1fB8zHSuh9ls6JnYc+Ds7FRQJE7aYXW0SpkwtFUa6JD5u8aLJtQbaApeGsf9KX9P
-         HQZw==
+        bh=YL3TO9ZpKBY8+YOVx7GVmXHwa9ZG4OtIovpotqZSOvQ=;
+        b=i0jtLvBBX8r5QFc0r7Hxo2IZOc6yvj9C31xPCO1shilPLnf2bgJo2m6Tz7Lgh3spwt
+         tnKqB4gxkprzhxpFv6FFGHeXmydAtHjxmf0aefNbF9p+ihxiajkPn1gY17dmT1J4+vym
+         SErflyV3b6IxZovmGu7nMrHcy8kBkMAgMvM5vZ8FZ+eZ8HDqAEEczfSp/WMNHoejJYfM
+         lyLrVQTvEcYf2IES4Z3MPN+Vosc+DOGCjPIfkEGjJBPSMC+/zMLUNHbNahIE5qmE9J9a
+         jZUN3yRHQOcgCFTynkHYZJp4g/5Q4fTQPU8VZy3I0/R/vlKdXcVL8w/muhJKDi58nv9Z
+         vp3g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc:content-transfer-encoding;
-        bh=NMkyhVQSWvkEio+aMy2Gad6E8U/YVr2WvfbqrIM79Ns=;
-        b=qh+3NC4rOBBo/JkqH2TmEUqlSFljNoE5Bh7qoUBBy3uwayMeIWTxfnVgEU1Pa5scpq
-         K+ZQYsrMipfd5jeLeyE9c7AlfbYvZoMAKKLQz0Vvv1WTD5kM6S+SZMeXRVQnZyjSKeDW
-         5oBT1lWmKdn/h6Xy3WTFbt9S1J7vFuFBnWpGf0Fqf5NvVbk1WaLbskDlshvjswvMdMOa
-         tGMU5NLsAJDJcIrY2579QBK8J2UqqztiI20o1fdN1ARQZhj8WuE8sWWg+VzpaEWVpHGl
-         Inbrb8V/O4wZnZbEv+r7zNBw/8wWA+wcJmu7HYuMZ52kK7ugDqntVoo4owYkmKHbcdzw
-         19MA==
-X-Gm-Message-State: APjAAAVoobvndh5mFYuDbisZLj/ZzlMuaUtmptENfv9PQjmIlDwqAVwj
-        f0Am6QIHbPWJJgyQkCcTFqc1FHV6Q9LRfI1sBG52vA==
-X-Google-Smtp-Source: APXvYqzs7YECRnkA2CODtIe2tL8VK33eJyMjTkmUGRZ40CQfDGS6bPX1AvCyMG1yAkx4sNvxOLFawWhiHrXirYxrgv8=
-X-Received: by 2002:a37:9c07:: with SMTP id f7mr28691354qke.103.1580813882093;
- Tue, 04 Feb 2020 02:58:02 -0800 (PST)
+        bh=YL3TO9ZpKBY8+YOVx7GVmXHwa9ZG4OtIovpotqZSOvQ=;
+        b=nCubRDI+m4ro20fJweLp8C1ihvl8q7B+4Yg+hFC35O0vN8vHmllvsDX+gnK+x+aUho
+         YgSJNbDsDG6dGK+D+JN4w7w4CIqc0QwGL8Wl1Lmb+Tqpyl543ztnoqvyy6HhUEXGZUqc
+         Lbgehq4z/6meTJqUBnxyYKxz63bjemItUExIfX7Dkkb9OLL0XGrgHrY2S9bAqOuDIAlg
+         bJagKanaqT+IBLO+GFE13TsEwf36gK5ZSGHDAE2zGCZNQEmDj963zuqasibYZG/JMNnj
+         PVeLkkqUHuEYNb2J024ohcHPcup9OdHJgbpW8NNPkEv0Giv9RBy8DXZ+UsxcGfUBStPc
+         d18g==
+X-Gm-Message-State: APjAAAXA/r9NORv7v60yWy+7tY010vz8l/ts7aSO+XGQsLf8caPJUOd5
+        YaWKAnU5BUEM3f2ke6u9Ht2TRQnYqcEv8fDfyvaSdg==
+X-Google-Smtp-Source: APXvYqyiwcSIqGmki9INgStVr+9p8LXvXFoIcE7YOnPCL2ZR5ORRWCr1pIBeEgRF46HUbHiAIYa9Vwxx/3iq0aPPtKQ=
+X-Received: by 2002:aed:2bc2:: with SMTP id e60mr28271222qtd.115.1580813920706;
+ Tue, 04 Feb 2020 02:58:40 -0800 (PST)
 MIME-Version: 1.0
-References: <1579601632-7001-1-git-send-email-yannick.fertre@st.com> <2b967bed-c2fa-1575-3e06-ae5b19069e56@st.com>
-In-Reply-To: <2b967bed-c2fa-1575-3e06-ae5b19069e56@st.com>
+References: <1579601650-7055-1-git-send-email-yannick.fertre@st.com> <f925ddf5-3265-638b-14b9-71b549b5a9ad@st.com>
+In-Reply-To: <f925ddf5-3265-638b-14b9-71b549b5a9ad@st.com>
 From:   Benjamin Gaignard <benjamin.gaignard@linaro.org>
-Date:   Tue, 4 Feb 2020 11:57:51 +0100
-Message-ID: <CA+M3ks5FFZgnWnNcgz7YM7AWbtSNqkQ2-P29ss5FyfDzd6PxeA@mail.gmail.com>
-Subject: Re: [PATCH] drm/stm: ltdc: add number of interrupts
+Date:   Tue, 4 Feb 2020 11:58:30 +0100
+Message-ID: <CA+M3ks7jCHzOuHnOO=v5AgsqSRbMVxYhkMY332u5qec=jJtHsw@mail.gmail.com>
+Subject: Re: [PATCH] drm/stm: ltdc: check crtc state before enabling LIE
 To:     Philippe CORNU <philippe.cornu@st.com>
 Cc:     Yannick FERTRE <yannick.fertre@st.com>,
         Benjamin GAIGNARD <benjamin.gaignard@st.com>,
@@ -68,7 +68,7 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Le jeu. 23 janv. 2020 =C3=A0 10:49, Philippe CORNU <philippe.cornu@st.com> =
+Le jeu. 23 janv. 2020 =C3=A0 10:50, Philippe CORNU <philippe.cornu@st.com> =
 a =C3=A9crit :
 >
 > Dear Yannick,
@@ -78,105 +78,44 @@ a =C3=A9crit :
 >
 > Philippe :-)
 >
-> On 1/21/20 11:13 AM, Yannick Fertre wrote:
-> > The number of interrupts depends on the ltdc version.
-> > Don't try to get interrupt which not exist, avoiding
-> > kernel warning messages.
+> On 1/21/20 11:14 AM, Yannick Fertre wrote:
+> > Following investigations of a hardware bug, the LIE interrupt
+> > can occur while the display controller is not activated.
+> > LIE interrupt (vblank) don't have to be set if the CRTC is not
+> > enabled.
+> >
 
 Applied on drm-misc-next.
 
-Thanks,
+Thanks
 Benjamin
 
-> >
 > > Signed-off-by: Yannick Fertre <yannick.fertre@st.com>
 > > ---
-> >   drivers/gpu/drm/stm/ltdc.c | 30 +++++++++++++++---------------
-> >   drivers/gpu/drm/stm/ltdc.h |  1 +
-> >   2 files changed, 16 insertions(+), 15 deletions(-)
+> >   drivers/gpu/drm/stm/ltdc.c | 7 ++++++-
+> >   1 file changed, 6 insertions(+), 1 deletion(-)
 > >
 > > diff --git a/drivers/gpu/drm/stm/ltdc.c b/drivers/gpu/drm/stm/ltdc.c
-> > index c2815e8..58092b0 100644
+> > index c2815e8..ea654c7 100644
 > > --- a/drivers/gpu/drm/stm/ltdc.c
 > > +++ b/drivers/gpu/drm/stm/ltdc.c
-> > @@ -1146,12 +1146,14 @@ static int ltdc_get_caps(struct drm_device *dde=
-v)
-> >               ldev->caps.pad_max_freq_hz =3D 90000000;
-> >               if (ldev->caps.hw_version =3D=3D HWVER_10200)
-> >                       ldev->caps.pad_max_freq_hz =3D 65000000;
-> > +             ldev->caps.nb_irq =3D 2;
-> >               break;
-> >       case HWVER_20101:
-> >               ldev->caps.reg_ofs =3D REG_OFS_4;
-> >               ldev->caps.pix_fmt_hw =3D ltdc_pix_fmt_a1;
-> >               ldev->caps.non_alpha_only_l1 =3D false;
-> >               ldev->caps.pad_max_freq_hz =3D 150000000;
-> > +             ldev->caps.nb_irq =3D 4;
-> >               break;
-> >       default:
-> >               return -ENODEV;
-> > @@ -1251,13 +1253,21 @@ int ltdc_load(struct drm_device *ddev)
-> >       reg_clear(ldev->regs, LTDC_IER,
-> >                 IER_LIE | IER_RRIE | IER_FUIE | IER_TERRIE);
+> > @@ -648,9 +648,14 @@ static const struct drm_crtc_helper_funcs ltdc_crt=
+c_helper_funcs =3D {
+> >   static int ltdc_crtc_enable_vblank(struct drm_crtc *crtc)
+> >   {
+> >       struct ltdc_device *ldev =3D crtc_to_ltdc(crtc);
+> > +     struct drm_crtc_state *state =3D crtc->state;
 > >
-> > -     for (i =3D 0; i < MAX_IRQ; i++) {
-> > +     ret =3D ltdc_get_caps(ddev);
-> > +     if (ret) {
-> > +             DRM_ERROR("hardware identifier (0x%08x) not supported!\n"=
-,
-> > +                       ldev->caps.hw_version);
-> > +             goto err;
-> > +     }
+> >       DRM_DEBUG_DRIVER("\n");
+> > -     reg_set(ldev->regs, LTDC_IER, IER_LIE);
 > > +
-> > +     DRM_DEBUG_DRIVER("ltdc hw version 0x%08x\n", ldev->caps.hw_versio=
-n);
-> > +
-> > +     for (i =3D 0; i < ldev->caps.nb_irq; i++) {
-> >               irq =3D platform_get_irq(pdev, i);
-> > -             if (irq =3D=3D -EPROBE_DEFER)
-> > +             if (irq < 0) {
-> > +                     ret =3D irq;
-> >                       goto err;
-> > -
-> > -             if (irq < 0)
-> > -                     continue;
-> > +             }
+> > +     if (state->enable)
+> > +             reg_set(ldev->regs, LTDC_IER, IER_LIE);
+> > +     else
+> > +             return -EPERM;
 > >
-> >               ret =3D devm_request_threaded_irq(dev, irq, ltdc_irq,
-> >                                               ltdc_irq_thread, IRQF_ONE=
-SHOT,
-> > @@ -1268,16 +1278,6 @@ int ltdc_load(struct drm_device *ddev)
-> >               }
-> >       }
-> >
-> > -
-> > -     ret =3D ltdc_get_caps(ddev);
-> > -     if (ret) {
-> > -             DRM_ERROR("hardware identifier (0x%08x) not supported!\n"=
-,
-> > -                       ldev->caps.hw_version);
-> > -             goto err;
-> > -     }
-> > -
-> > -     DRM_DEBUG_DRIVER("ltdc hw version 0x%08x\n", ldev->caps.hw_versio=
-n);
-> > -
-> >       /* Add endpoints panels or bridges if any */
-> >       for (i =3D 0; i < MAX_ENDPOINTS; i++) {
-> >               if (panel[i]) {
-> > diff --git a/drivers/gpu/drm/stm/ltdc.h b/drivers/gpu/drm/stm/ltdc.h
-> > index a1ad0ae..310e87f 100644
-> > --- a/drivers/gpu/drm/stm/ltdc.h
-> > +++ b/drivers/gpu/drm/stm/ltdc.h
-> > @@ -19,6 +19,7 @@ struct ltdc_caps {
-> >       const u32 *pix_fmt_hw;  /* supported pixel formats */
-> >       bool non_alpha_only_l1; /* non-native no-alpha formats on layer 1=
- */
-> >       int pad_max_freq_hz;    /* max frequency supported by pad */
-> > +     int nb_irq;             /* number of hardware interrupts */
-> >   };
-> >
-> >   #define LTDC_MAX_LAYER      4
+> >       return 0;
+> >   }
 > >
 > _______________________________________________
 > linux-arm-kernel mailing list
