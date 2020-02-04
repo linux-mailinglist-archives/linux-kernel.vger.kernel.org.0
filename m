@@ -2,98 +2,107 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DD6D1152578
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Feb 2020 05:00:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C5650152586
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Feb 2020 05:11:19 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727929AbgBEEAO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 4 Feb 2020 23:00:14 -0500
-Received: from mail.loongson.cn ([114.242.206.163]:41198 "EHLO loongson.cn"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727836AbgBEEAO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Feb 2020 23:00:14 -0500
-Received: from linux.HaierAP (unknown [111.18.44.203])
-        by mail.loongson.cn (Coremail) with SMTP id AQAAf9DxX9zAPTpew40MAA--.82S2;
-        Wed, 05 Feb 2020 12:00:02 +0800 (CST)
-From:   Tiezhu Yang <yangtiezhu@loongson.cn>
-To:     Paul Burton <paulburton@kernel.org>,
-        Ralf Baechle <ralf@linux-mips.org>,
-        Jean Delvare <jdelvare@suse.com>,
-        Jean Delvare <jdelvare@suse.de>
-Cc:     Yinglu Yang <yangyinglu@loongson.cn>,
-        Jiaxun Yang <jiaxun.yang@flygoat.com>,
-        Huacai Chen <chenhc@lemote.com>,
-        Xuefeng Li <lixuefeng@loongson.cn>, linux-mips@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v3 1/2] firmware: dmi: Add macro SMBIOS_ENTRY_POINT_SCAN_START
-Date:   Wed,  5 Feb 2020 12:00:03 +0800
-Message-Id: <1580875204-18052-1-git-send-email-yangtiezhu@loongson.cn>
-X-Mailer: git-send-email 1.8.3.1
-X-CM-TRANSID: AQAAf9DxX9zAPTpew40MAA--.82S2
-X-Coremail-Antispam: 1UD129KBjvJXoW7Ww4ktF13Xr4rAF15CF15Jwb_yoW8JFyDpF
-        yUGFW5ZrsrJF47t3s5J3WrZF15Xa9aqF98KFWUAr1ruas8Za4fJr4kJaykGr1DArZ5tayS
-        9r1Sqr4FkF1qkaUanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-        9KBjDU0xBIdaVrnRJUUU9Y14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-        rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-        1l84ACjcxK6xIIjxv20xvE14v26r4j6ryUM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4j
-        6F4UM28EF7xvwVC2z280aVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gr
-        1j6F4UJwAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv
-        7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r
-        1j6r4UM4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwACI402YVCY1x02
-        628vn2kIc2xKxwCY02Avz4vE14v_Gryl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7
-        v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF
-        1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIx
-        AIcVC0I7IYx2IY6xkF7I0E14v26r1j6r4UMIIF0xvE42xK8VAvwI8IcIk0rVWrJr0_WFyU
-        JwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCT
-        nIWIevJa73UjIFyTuYvjfUe89NUUUUU
-X-CM-SenderInfo: p1dqw3xlh2x3gn0dqz5rrqw2lrqou0/
+        id S1727975AbgBEELR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 4 Feb 2020 23:11:17 -0500
+Received: from mo-csw1114.securemx.jp ([210.130.202.156]:54104 "EHLO
+        mo-csw.securemx.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727832AbgBEELR (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Feb 2020 23:11:17 -0500
+Received: by mo-csw.securemx.jp (mx-mo-csw1114) id 0154AtKH001907; Wed, 5 Feb 2020 13:10:55 +0900
+X-Iguazu-Qid: 2wHHtzQN1IJBztet9g
+X-Iguazu-QSIG: v=2; s=0; t=1580875855; q=2wHHtzQN1IJBztet9g; m=IQTLn51A8N4XphFMWlu/8Md0Eo6xhWTaA0lOu9rFxI4=
+Received: from imx12.toshiba.co.jp (imx12.toshiba.co.jp [61.202.160.132])
+        by relay.securemx.jp (mx-mr1111) id 0154AsM7031304;
+        Wed, 5 Feb 2020 13:10:54 +0900
+Received: from enc02.toshiba.co.jp ([61.202.160.51])
+        by imx12.toshiba.co.jp  with ESMTP id 0154AslS010278;
+        Wed, 5 Feb 2020 13:10:54 +0900 (JST)
+Received: from hop101.toshiba.co.jp ([133.199.85.107])
+        by enc02.toshiba.co.jp  with ESMTP id 0154ArdQ009010;
+        Wed, 5 Feb 2020 13:10:53 +0900
+Subject: Re: [PATCH] mtd: nand: Add comment about Kioxia ID
+To:     Miquel Raynal <miquel.raynal@bootlin.com>
+Cc:     vigneshr@ti.com, linux-kernel@vger.kernel.org,
+        linux-mtd@lists.infradead.org
+References: <1580783163-5601-1-git-send-email-ytc-mb-yfuruyama7@kioxia.com>
+ <20200204095214.666c71fc@xps13>
+From:   Yoshio Furuyama <ytc-mb-yfuruyama7@kioxia.com>
+X-TSB-HOP: ON
+Message-ID: <73dae14b-5bf0-b909-3229-aab3ed232669@kioxia.com>
+Date:   Tue, 4 Feb 2020 19:30:04 +0900
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
+MIME-Version: 1.0
+In-Reply-To: <20200204095214.666c71fc@xps13>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Use SMBIOS_ENTRY_POINT_SCAN_START instead of 0xF0000, because other
-archtecture maybe use a special start address such as 0xFFFE000 for
-Loongson platform.
+Dear Miquèl,
 
-Signed-off-by: Tiezhu Yang <yangtiezhu@loongson.cn>
-Reviewed-by: Jean Delvare <jdelvare@suse.de>
----
 
-v3:
-  - split the v2 patch into two patches
-  - make MIPS DMI config depend on MACH_LOONGSON64
+On 2020/02/04 17:52, Miquel Raynal wrote:
+> Hi Yoshio,
+>
+> Yoshio Furuyama <ytc-mb-yfuruyama7@kioxia.com> wrote on Tue,  4 Feb
+> 2020 11:26:03 +0900:
+>
+>> Add a comment above NAND_MFR_TOSHIBA and SPINAND_MFR_TOSHIBA definitions
+>> that Toshiba and Kioxia ID are the same.
+>>
+>> Signed-off-by: Yoshio Furuyama <ytc-mb-yfuruyama7@kioxia.com>
+>> ---
+>>   drivers/mtd/nand/raw/internals.h | 1 +
+>>   drivers/mtd/nand/spi/toshiba.c   | 1 +
+>>   2 files changed, 2 insertions(+)
+>>
+>> diff --git a/drivers/mtd/nand/raw/internals.h b/drivers/mtd/nand/raw/internals.h
+>> index cba6fe7..2918376b 100644
+>> --- a/drivers/mtd/nand/raw/internals.h
+>> +++ b/drivers/mtd/nand/raw/internals.h
+>> @@ -30,6 +30,7 @@
+>>   #define NAND_MFR_SAMSUNG	0xec
+>>   #define NAND_MFR_SANDISK	0x45
+>>   #define NAND_MFR_STMICRO	0x20
+>> +/* Toshiba and Kioxia ID are the same. */
+>>   #define NAND_MFR_TOSHIBA	0x98
+>>   #define NAND_MFR_WINBOND	0xef
+>>   
+>> diff --git a/drivers/mtd/nand/spi/toshiba.c b/drivers/mtd/nand/spi/toshiba.c
+>> index 0db5ee4..a92ecc8 100644
+>> --- a/drivers/mtd/nand/spi/toshiba.c
+>> +++ b/drivers/mtd/nand/spi/toshiba.c
+>> @@ -10,6 +10,7 @@
+>>   #include <linux/kernel.h>
+>>   #include <linux/mtd/spinand.h>
+>>   
+>> +/* Toshiba and Kioxia ID are the same. */
+>>   #define SPINAND_MFR_TOSHIBA		0x98
+>>   #define TOSH_STATUS_ECC_HAS_BITFLIPS_T	(3 << 4)
+>>   
+>
+> "Are the same" is not very descriptive, what about "Kioxia is the new
+> name of Toshiba"?
 
-v2:
-  - add SMBIOS_ENTRY_POINT_SCAN_START suggested by Jean
-  - refine definitions and Kconfig by Jiaxun
 
- drivers/firmware/dmi_scan.c | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+That's a good idea.
 
-diff --git a/drivers/firmware/dmi_scan.c b/drivers/firmware/dmi_scan.c
-index 2045566..f59163c 100644
---- a/drivers/firmware/dmi_scan.c
-+++ b/drivers/firmware/dmi_scan.c
-@@ -11,6 +11,10 @@
- #include <asm/dmi.h>
- #include <asm/unaligned.h>
- 
-+#ifndef SMBIOS_ENTRY_POINT_SCAN_START
-+#define SMBIOS_ENTRY_POINT_SCAN_START 0xF0000
-+#endif
-+
- struct kobject *dmi_kobj;
- EXPORT_SYMBOL_GPL(dmi_kobj);
- 
-@@ -663,7 +667,7 @@ static void __init dmi_scan_machine(void)
- 			return;
- 		}
- 	} else if (IS_ENABLED(CONFIG_DMI_SCAN_MACHINE_NON_EFI_FALLBACK)) {
--		p = dmi_early_remap(0xF0000, 0x10000);
-+		p = dmi_early_remap(SMBIOS_ENTRY_POINT_SCAN_START, 0x10000);
- 		if (p == NULL)
- 			goto error;
- 
--- 
-1.8.3.1
+Actually ,
+
+Is was changed a company name from Toshiba memory Co to Kioxia Co.     
+Since became independent from Toshiba group.
+
+I will update the comment as "Kioxia is new name of Toshiba memory"
+
+
+Thanks
+
 
