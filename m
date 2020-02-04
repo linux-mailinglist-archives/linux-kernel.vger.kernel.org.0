@@ -2,165 +2,179 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C7170151D61
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Feb 2020 16:39:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 71448151D70
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Feb 2020 16:40:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727357AbgBDPi7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 4 Feb 2020 10:38:59 -0500
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:40582 "EHLO
-        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727290AbgBDPi7 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Feb 2020 10:38:59 -0500
-Received: from [127.0.0.1] (localhost [127.0.0.1])
-        (Authenticated sender: eballetbo)
-        with ESMTPSA id 3E90428DBA5
-Subject: Re: [PATCH] dt-bindings: convert extcon-usbc-cros-ec.txt
- extcon-usbc-cros-ec.yaml
-To:     Rob Herring <robh@kernel.org>,
-        Dafna Hirschfeld <dafna.hirschfeld@collabora.com>
-Cc:     devicetree@vger.kernel.org, myungjoo.ham@samsung.com,
-        cw00.choi@samsung.com, mark.rutland@arm.com, bleung@chromium.org,
-        groeck@chromium.org, linux-kernel@vger.kernel.org,
-        helen.koike@collabora.com, ezequiel@collabora.com,
-        kernel@collabora.com, dafna3@gmail.com
-References: <20200122151313.11782-1-dafna.hirschfeld@collabora.com>
- <20200203121849.GA8196@bogus>
-From:   Enric Balletbo i Serra <enric.balletbo@collabora.com>
-Message-ID: <46068846-5d7d-8de6-3950-3b0a0d8b60a2@collabora.com>
-Date:   Tue, 4 Feb 2020 16:38:51 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.3.0
+        id S1727382AbgBDPkR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 4 Feb 2020 10:40:17 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56538 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727290AbgBDPkQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Feb 2020 10:40:16 -0500
+Received: from paulmck-ThinkPad-P72.home (50-39-105-78.bvtn.or.frontiernet.net [50.39.105.78])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id CAB1720674;
+        Tue,  4 Feb 2020 15:40:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1580830815;
+        bh=XjO/rypf4gOojGf0oXOQkll6+73OmV+xBEcS+uJX0Ac=;
+        h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
+        b=vodTEsLi+gyzU1kEcPqnqOzgfXe7tDAP6mg488qR+wwKflCraZFaf1nRX5gBLiPlM
+         k0WOtxiHHQaY/qHSKZUlBbYzEXNWfj4Sf+cN8xFNPXXu87KVUUJ/nMXXpK5Qc8k7nw
+         RO7JNt9amNpSfJw3V4ttf203mW86CZPqL5u0Bx9Q=
+Received: by paulmck-ThinkPad-P72.home (Postfix, from userid 1000)
+        id 5D8DD352270F; Tue,  4 Feb 2020 07:40:15 -0800 (PST)
+Date:   Tue, 4 Feb 2020 07:40:15 -0800
+From:   "Paul E. McKenney" <paulmck@kernel.org>
+To:     Marco Elver <elver@google.com>
+Cc:     Andrey Konovalov <andreyknvl@google.com>,
+        Alexander Potapenko <glider@google.com>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        kasan-dev <kasan-dev@googlegroups.com>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 1/3] kcsan: Add option to assume plain writes up to word
+ size are atomic
+Message-ID: <20200204154015.GQ2935@paulmck-ThinkPad-P72>
+Reply-To: paulmck@kernel.org
+References: <20200204140353.177797-1-elver@google.com>
+ <CANpmjNMF3LpOUZSKXigxVXaH8imA2O5OvVu4ibPEDhCjwAXk0w@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20200203121849.GA8196@bogus>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CANpmjNMF3LpOUZSKXigxVXaH8imA2O5OvVu4ibPEDhCjwAXk0w@mail.gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Dafna, Rob,
-
-On 3/2/20 13:18, Rob Herring wrote:
-> On Wed, Jan 22, 2020 at 04:13:13PM +0100, Dafna Hirschfeld wrote:
->> convert the binding file extcon-usbc-cros-ec.txt to yaml format
->> This was tested and verified on ARM with:
->> make dt_binding_check DT_SCHEMA_FILES=Documentation/devicetree/bindings/extcon/extcon-usbc-cros-ec.yaml
->> make dtbs_check DT_SCHEMA_FILES=Documentation/devicetree/bindings/extcon/extcon-usbc-cros-ec.yaml
->>
->> Signed-off-by: Dafna Hirschfeld <dafna.hirschfeld@collabora.com>
->> ---
->>  .../bindings/extcon/extcon-usbc-cros-ec.txt   | 24 -----------
->>  .../bindings/extcon/extcon-usbc-cros-ec.yaml  | 42 +++++++++++++++++++
->>  2 files changed, 42 insertions(+), 24 deletions(-)
->>  delete mode 100644 Documentation/devicetree/bindings/extcon/extcon-usbc-cros-ec.txt
->>  create mode 100644 Documentation/devicetree/bindings/extcon/extcon-usbc-cros-ec.yaml
->>
->> diff --git a/Documentation/devicetree/bindings/extcon/extcon-usbc-cros-ec.txt b/Documentation/devicetree/bindings/extcon/extcon-usbc-cros-ec.txt
->> deleted file mode 100644
->> index 8e8625c00dfa..000000000000
->> --- a/Documentation/devicetree/bindings/extcon/extcon-usbc-cros-ec.txt
->> +++ /dev/null
->> @@ -1,24 +0,0 @@
->> -ChromeOS EC USB Type-C cable and accessories detection
->> -
->> -On ChromeOS systems with USB Type C ports, the ChromeOS Embedded Controller is
->> -able to detect the state of external accessories such as display adapters
->> -or USB devices when said accessories are attached or detached.
->> -
->> -The node for this device must be under a cros-ec node like google,cros-ec-spi
->> -or google,cros-ec-i2c.
->> -
->> -Required properties:
->> -- compatible:		Should be "google,extcon-usbc-cros-ec".
->> -- google,usb-port-id:	Specifies the USB port ID to use.
->> -
->> -Example:
->> -	cros-ec@0 {
->> -		compatible = "google,cros-ec-i2c";
->> -
->> -		...
->> -
->> -		extcon {
->> -			compatible = "google,extcon-usbc-cros-ec";
->> -			google,usb-port-id = <0>;
->> -		};
->> -	}
->> diff --git a/Documentation/devicetree/bindings/extcon/extcon-usbc-cros-ec.yaml b/Documentation/devicetree/bindings/extcon/extcon-usbc-cros-ec.yaml
->> new file mode 100644
->> index 000000000000..78779831282a
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/extcon/extcon-usbc-cros-ec.yaml
->> @@ -0,0 +1,42 @@
->> +# SPDX-License-Identifier: GPL-2.0
+On Tue, Feb 04, 2020 at 04:28:47PM +0100, Marco Elver wrote:
+> On Tue, 4 Feb 2020 at 15:04, Marco Elver <elver@google.com> wrote:
+> >
+> > This adds option KCSAN_ASSUME_PLAIN_WRITES_ATOMIC. If enabled, plain
+> > writes up to word size are also assumed to be atomic, and also not
+> > subject to other unsafe compiler optimizations resulting in data races.
 > 
-> Surely Google is the only copyright holder on the old file and would be 
-> okay with dual licensing here?
+> I just realized we should probably also check for alignedness. Would
+> this be fair to add as an additional constraint? It would be my
+> preference.
+
+Checking for alignment makes a lot of sense to me!  Otherwise, write
+tearing is expected behavior on some systems.
+
+							Thanx, Paul
+
+> Thanks,
+> -- Marco
 > 
->> +%YAML 1.2
->> +---
->> +$id: http://devicetree.org/schemas/extcon/extcon-usbc-cros-ec.yaml#
->> +$schema: http://devicetree.org/meta-schemas/core.yaml#
->> +
->> +title: ChromeOS EC USB Type-C cable and accessories detection
->> +
->> +maintainers:
->> +  - MyungJoo Ham <myungjoo.ham@samsung.com>
->> +  - Chanwoo Choi <cw00.choi@samsung.com>
-> 
-> Usually this is someone that knows the h/w, not who applies the patch. 
-> I'd expect a Google person.
-> 
-
-I'd say that the driver author should be the maintainer, but if you don't know
-who is the maintainer because is not specified you can add Benson and me as
-maintainers (as chrome-platform maintainers we take care of this and all cros-ec
-related drivers)
-
-Benson Leung <bleung@chromium.org>
-Enric Balletbo i Serra <enric.balletbo@collabora.com>
-
->> +
->> +description: |
->> +  On ChromeOS systems with USB Type C ports, the ChromeOS Embedded Controller is
->> +  able to detect the state of external accessories such as display adapters
->> +  or USB devices when said accessories are attached or detached.
->> +  The node for this device must be under a cros-ec node like google,cros-ec-spi
->> +  or google,cros-ec-i2c.
->> +
->> +properties:
->> +  compatible:
->> +    const: google,extcon-usbc-cros-ec
->> +
->> +  google,usb-port-id:
->> +    $ref: /schemas/types.yaml#/definitions/uint32
->> +    description: |
->> +      the port id
-> 
-> Any range of values allowed? ~0 is okay?
-> 
-
-From hardware point of view, the port id, is a number from 0 to 255. The typical
-usage is have two ports with port id 0 and port id 1.
-
-
->> +required:
->> +  - compatible
->> +  - google,usb-port-id
->> +
->> +additionalProperties: false
->> +
->> +examples:
->> +  - |
->> +    cros-ec@0 {
->> +        compatible = "google,cros-ec-i2c";
->> +        extcon {
->> +            compatible = "google,extcon-usbc-cros-ec";
->> +            google,usb-port-id = <0>;
->> +        };
->> +    };
->> -- 
->> 2.17.1
->>
+> > This option has been enabled by default to reflect current kernel-wide
+> > preferences.
+> >
+> > Signed-off-by: Marco Elver <elver@google.com>
+> > ---
+> >  kernel/kcsan/core.c | 20 +++++++++++++++-----
+> >  lib/Kconfig.kcsan   | 26 +++++++++++++++++++-------
+> >  2 files changed, 34 insertions(+), 12 deletions(-)
+> >
+> > diff --git a/kernel/kcsan/core.c b/kernel/kcsan/core.c
+> > index 64b30f7716a12..3bd1bf8d6bfeb 100644
+> > --- a/kernel/kcsan/core.c
+> > +++ b/kernel/kcsan/core.c
+> > @@ -169,10 +169,19 @@ static __always_inline struct kcsan_ctx *get_ctx(void)
+> >         return in_task() ? &current->kcsan_ctx : raw_cpu_ptr(&kcsan_cpu_ctx);
+> >  }
+> >
+> > -static __always_inline bool is_atomic(const volatile void *ptr)
+> > +static __always_inline bool
+> > +is_atomic(const volatile void *ptr, size_t size, int type)
+> >  {
+> > -       struct kcsan_ctx *ctx = get_ctx();
+> > +       struct kcsan_ctx *ctx;
+> > +
+> > +       if ((type & KCSAN_ACCESS_ATOMIC) != 0)
+> > +               return true;
+> >
+> > +       if (IS_ENABLED(CONFIG_KCSAN_ASSUME_PLAIN_WRITES_ATOMIC) &&
+> > +           (type & KCSAN_ACCESS_WRITE) != 0 && size <= sizeof(long))
+> > +               return true; /* Assume all writes up to word size are atomic. */
+> > +
+> > +       ctx = get_ctx();
+> >         if (unlikely(ctx->atomic_next > 0)) {
+> >                 /*
+> >                  * Because we do not have separate contexts for nested
+> > @@ -193,7 +202,8 @@ static __always_inline bool is_atomic(const volatile void *ptr)
+> >         return kcsan_is_atomic(ptr);
+> >  }
+> >
+> > -static __always_inline bool should_watch(const volatile void *ptr, int type)
+> > +static __always_inline bool
+> > +should_watch(const volatile void *ptr, size_t size, int type)
+> >  {
+> >         /*
+> >          * Never set up watchpoints when memory operations are atomic.
+> > @@ -202,7 +212,7 @@ static __always_inline bool should_watch(const volatile void *ptr, int type)
+> >          * should not count towards skipped instructions, and (2) to actually
+> >          * decrement kcsan_atomic_next for consecutive instruction stream.
+> >          */
+> > -       if ((type & KCSAN_ACCESS_ATOMIC) != 0 || is_atomic(ptr))
+> > +       if (is_atomic(ptr, size, type))
+> >                 return false;
+> >
+> >         if (this_cpu_dec_return(kcsan_skip) >= 0)
+> > @@ -460,7 +470,7 @@ static __always_inline void check_access(const volatile void *ptr, size_t size,
+> >         if (unlikely(watchpoint != NULL))
+> >                 kcsan_found_watchpoint(ptr, size, type, watchpoint,
+> >                                        encoded_watchpoint);
+> > -       else if (unlikely(should_watch(ptr, type)))
+> > +       else if (unlikely(should_watch(ptr, size, type)))
+> >                 kcsan_setup_watchpoint(ptr, size, type);
+> >  }
+> >
+> > diff --git a/lib/Kconfig.kcsan b/lib/Kconfig.kcsan
+> > index 3552990abcfe5..08972376f0454 100644
+> > --- a/lib/Kconfig.kcsan
+> > +++ b/lib/Kconfig.kcsan
+> > @@ -91,13 +91,13 @@ config KCSAN_REPORT_ONCE_IN_MS
+> >           limiting reporting to avoid flooding the console with reports.
+> >           Setting this to 0 disables rate limiting.
+> >
+> > -# Note that, while some of the below options could be turned into boot
+> > -# parameters, to optimize for the common use-case, we avoid this because: (a)
+> > -# it would impact performance (and we want to avoid static branch for all
+> > -# {READ,WRITE}_ONCE, atomic_*, bitops, etc.), and (b) complicate the design
+> > -# without real benefit. The main purpose of the below options is for use in
+> > -# fuzzer configs to control reported data races, and they are not expected
+> > -# to be switched frequently by a user.
+> > +# The main purpose of the below options is to control reported data races (e.g.
+> > +# in fuzzer configs), and are not expected to be switched frequently by other
+> > +# users. We could turn some of them into boot parameters, but given they should
+> > +# not be switched normally, let's keep them here to simplify configuration.
+> > +#
+> > +# The defaults below are chosen to be very conservative, and may miss certain
+> > +# bugs.
+> >
+> >  config KCSAN_REPORT_RACE_UNKNOWN_ORIGIN
+> >         bool "Report races of unknown origin"
+> > @@ -116,6 +116,18 @@ config KCSAN_REPORT_VALUE_CHANGE_ONLY
+> >           the data value of the memory location was observed to remain
+> >           unchanged, do not report the data race.
+> >
+> > +config KCSAN_ASSUME_PLAIN_WRITES_ATOMIC
+> > +       bool "Assume that plain writes up to word size are atomic"
+> > +       default y
+> > +       help
+> > +         Assume that plain writes up to word size are atomic by default, and
+> > +         also not subject to other unsafe compiler optimizations resulting in
+> > +         data races. This will cause KCSAN to not report data races due to
+> > +         conflicts where the only plain accesses are writes up to word size:
+> > +         conflicts between marked reads and plain writes up to word size will
+> > +         not be reported as data races; notice that data races between two
+> > +         conflicting plain writes will also not be reported.
+> > +
+> >  config KCSAN_IGNORE_ATOMICS
+> >         bool "Do not instrument marked atomic accesses"
+> >         help
+> > --
+> > 2.25.0.341.g760bfbb309-goog
+> >
