@@ -2,129 +2,149 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 74A44152163
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Feb 2020 21:06:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E4103152168
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Feb 2020 21:07:30 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727493AbgBDUGR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 4 Feb 2020 15:06:17 -0500
-Received: from gate2.alliedtelesis.co.nz ([202.36.163.20]:55563 "EHLO
-        gate2.alliedtelesis.co.nz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727314AbgBDUGR (ORCPT
+        id S1727594AbgBDUH0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 4 Feb 2020 15:07:26 -0500
+Received: from us-smtp-2.mimecast.com ([205.139.110.61]:21190 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727423AbgBDUH0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Feb 2020 15:06:17 -0500
-Received: from mmarshal3.atlnz.lc (mmarshal3.atlnz.lc [10.32.18.43])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (Client did not present a certificate)
-        by gate2.alliedtelesis.co.nz (Postfix) with ESMTPS id 96BF0891A9;
-        Wed,  5 Feb 2020 09:06:14 +1300 (NZDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alliedtelesis.co.nz;
-        s=mail181024; t=1580846774;
-        bh=a5bfvDdo0Iqxg0a4W2z8IHYNemytdwyb6t4ZT4MRLj4=;
-        h=From:To:CC:Subject:Date:References:In-Reply-To;
-        b=HZwrwG0uCemJ2z/L8HxjmcbR4wspKokPBnPe/RpvhGIwSAQo0cLQjZxZAKnvmIkXh
-         podzK35EQKYY9vCkTOXftVHlAP3WBlScKOJBppUOCev849KOSleGrI7K9Vc7GHjAUJ
-         +zyPAB8XtedY0xPQFJ4YXPT50DsiIqK3Iio8NJiMbdwDJ1gU7u3gj2yVT3parfHpO6
-         StpQ1mS0ns74zJRw3wp38JlCO2bfqfL2SqNh/oRzqYOMtVtILXFrCHjzcLdT4oOH6F
-         bUXcOjUSS6Qb9vAVuXRY8P5LEhDC2V2OXOJlwRDnz4dAJ40/nm2Xm081FPfT4w1iWs
-         MNxJ+kJPFnFbg==
-Received: from svr-chch-ex1.atlnz.lc (Not Verified[10.32.16.77]) by mmarshal3.atlnz.lc with Trustwave SEG (v7,5,8,10121)
-        id <B5e39ceb60001>; Wed, 05 Feb 2020 09:06:14 +1300
-Received: from svr-chch-ex1.atlnz.lc (2001:df5:b000:bc8:409d:36f5:8899:92e8)
- by svr-chch-ex1.atlnz.lc (2001:df5:b000:bc8:409d:36f5:8899:92e8) with
- Microsoft SMTP Server (TLS) id 15.0.1473.3; Wed, 5 Feb 2020 09:06:14 +1300
-Received: from svr-chch-ex1.atlnz.lc ([fe80::409d:36f5:8899:92e8]) by
- svr-chch-ex1.atlnz.lc ([fe80::409d:36f5:8899:92e8%12]) with mapi id
- 15.00.1473.005; Wed, 5 Feb 2020 09:06:14 +1300
-From:   Chris Packham <Chris.Packham@alliedtelesis.co.nz>
-To:     "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>
-CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "wambui.karugax@gmail.com" <wambui.karugax@gmail.com>,
-        "dan.carpenter@oracle.com" <dan.carpenter@oracle.com>,
-        "fw@strlen.de" <fw@strlen.de>,
-        "bobdc9664@seznam.cz" <bobdc9664@seznam.cz>,
-        "aaro.koskinen@iki.fi" <aaro.koskinen@iki.fi>,
-        "willy@infradead.org" <willy@infradead.org>,
-        "yuehaibing@huawei.com" <yuehaibing@huawei.com>,
-        "linux@roeck-us.net" <linux@roeck-us.net>,
-        "devel@driverdev.osuosl.org" <devel@driverdev.osuosl.org>,
-        "brandonbonaby94@gmail.com" <brandonbonaby94@gmail.com>,
-        "sandro@volery.com" <sandro@volery.com>,
-        "paulburton@kernel.org" <paulburton@kernel.org>,
-        "ddaney@caviumnetworks.com" <ddaney@caviumnetworks.com>,
-        "ynezz@true.cz" <ynezz@true.cz>,
-        "julia.lawall@lip6.fr" <julia.lawall@lip6.fr>,
-        "ivalery111@gmail.com" <ivalery111@gmail.com>,
-        "davem@davemloft.net" <davem@davemloft.net>,
-        "geert@linux-m68k.org" <geert@linux-m68k.org>
-Subject: Re: [PATCH 1/2] staging: octeon: delete driver
-Thread-Topic: [PATCH 1/2] staging: octeon: delete driver
-Thread-Index: AQHV2w/iRX+gXMaeSEy4Ak2F6OvwO6gJxAWAgADZBoA=
-Date:   Tue, 4 Feb 2020 20:06:14 +0000
-Message-ID: <1a90dc4c62c482ed6a44de70962996b533d6f627.camel@alliedtelesis.co.nz>
-References: <20191210091509.3546251-1-gregkh@linuxfoundation.org>
-         <6f934497-0635-7aa0-e7d5-ed2c4cc48d2d@roeck-us.net>
-         <da150cdb160b5d1b58ad1ea2674cc93c1fc6aadc.camel@alliedtelesis.co.nz>
-         <20200204070927.GA966981@kroah.com>
-In-Reply-To: <20200204070927.GA966981@kroah.com>
-Accept-Language: en-NZ, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-mailer: Evolution 3.28.5-0ubuntu0.18.04.1 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [2001:df5:b000:22:f95d:4478:4d90:53fe]
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <40E690E094F8DD41988D46F5A075A46C@atlnz.lc>
-Content-Transfer-Encoding: base64
+        Tue, 4 Feb 2020 15:07:26 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1580846843;
+        h=from:from:reply-to:reply-to:subject:subject:date:date:
+         message-id:message-id:to:to:cc:mime-version:mime-version:
+         content-type:content-type; bh=geGRjyscrsBDWiuFu7NKdhGNNINWr76N/yWWXvC2beI=;
+        b=ha4sjdSjxYD+pmibKS0Ei0uwWQBvMSRegzo1voOmbXTtrW6cQGjI9SXD4WyYRDadlZ50Om
+        /IwCbJwTF5e7hCqpnVv7Mm/Bq/BDre3rx/6LcZEquCLuksxIyXb4PvECGE+XiaLaEikH1+
+        u4d1jZowxeQ+SzMd6WnDgYQTrT8tX4M=
+Received: from mail-qt1-f200.google.com (mail-qt1-f200.google.com
+ [209.85.160.200]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-432-4Fxkqk66MXWmjBzbw7jJlA-1; Tue, 04 Feb 2020 15:07:17 -0500
+X-MC-Unique: 4Fxkqk66MXWmjBzbw7jJlA-1
+Received: by mail-qt1-f200.google.com with SMTP id c10so13089108qtk.18
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Feb 2020 12:07:17 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:subject:message-id:reply-to
+         :mail-followup-to:mime-version:content-disposition;
+        bh=geGRjyscrsBDWiuFu7NKdhGNNINWr76N/yWWXvC2beI=;
+        b=Q8P0rGQlI1kejE+i/smkrIwu+LtRlDv3GKo5+Rzejhm3LBa88+OMkhqvW5MehR4bGL
+         L045nwX512OH8EKZLJIehe2xn6UPSsswk9AFfyWs4r8a0mrwvdX+e7f6e0uPQwbXaXhy
+         RW3Xowa82oBNPXRrKmroNUgSXiEO9sdYYf1rvAEQuasPLxtBMqCP5twE7yUQRO2vdJ9h
+         WimOQ2zSpaYJ1MvNsrOY/BEgyu1j35YJFzFC9cPu5zCo3MwVoU2dLRdyxxAVYa7G9n05
+         Ux6c21wT7lQR7CB1ImR/0CO5cmntV1DHrPkPeTeRG396OSYfP4AHA8HQaCZbPRXWwGIx
+         Iwzw==
+X-Gm-Message-State: APjAAAUZmt0AMkRaf3RNklIa+vQGN8g1/CNPKU7cbjJ1gXozfVUnnmL7
+        /qcc+AokaKqu5WI5GEmkS8KUlGtZfSJiDXfxv2nC45SsICr35L9cCqv9HIdUQPPF/hvRSZutTc8
+        QH9Y63iO4k0occURj1un5Exio
+X-Received: by 2002:ad4:56a7:: with SMTP id bd7mr29701013qvb.238.1580846836737;
+        Tue, 04 Feb 2020 12:07:16 -0800 (PST)
+X-Google-Smtp-Source: APXvYqwLQAjJRQbVUSFZ+x161T/kjJ9SZRCG1YYob8z9h/7atufYdB9Psm1FOsP/c8c4TvblrtbBSQ==
+X-Received: by 2002:ad4:56a7:: with SMTP id bd7mr29700987qvb.238.1580846836375;
+        Tue, 04 Feb 2020 12:07:16 -0800 (PST)
+Received: from localhost (ip70-163-223-149.ph.ph.cox.net. [70.163.223.149])
+        by smtp.gmail.com with ESMTPSA id e64sm12365895qtd.45.2020.02.04.12.07.15
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 04 Feb 2020 12:07:15 -0800 (PST)
+Date:   Tue, 4 Feb 2020 13:07:14 -0700
+From:   Jerry Snitselaar <jsnitsel@redhat.com>
+To:     iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
+        Lu Baolu <baolu.lu@linux.intel.com>
+Subject: warning from domain_get_iommu
+Message-ID: <20200204200714.u4ezhi6vhqhxog6e@cantor>
+Reply-To: Jerry Snitselaar <jsnitsel@redhat.com>
+Mail-Followup-To: iommu@lists.linux-foundation.org,
+        linux-kernel@vger.kernel.org, Lu Baolu <baolu.lu@linux.intel.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-T24gVHVlLCAyMDIwLTAyLTA0IGF0IDA3OjA5ICswMDAwLCBncmVna2hAbGludXhmb3VuZGF0aW9u
-Lm9yZyB3cm90ZToNCj4gT24gVHVlLCBGZWIgMDQsIDIwMjAgYXQgMDQ6MDI6MTVBTSArMDAwMCwg
-Q2hyaXMgUGFja2hhbSB3cm90ZToNCj4gPiBJJ2xsIHBpcGUgdXAgb24gdGhpcyB0aHJlYWQgdG9v
-DQo+ID4gDQo+ID4gT24gVHVlLCAyMDE5LTEyLTEwIGF0IDAyOjQyIC0wODAwLCBHdWVudGVyIFJv
-ZWNrIHdyb3RlOg0KPiA+ID4gT24gMTIvMTAvMTkgMToxNSBBTSwgR3JlZyBLcm9haC1IYXJ0bWFu
-IHdyb3RlOg0KPiA+ID4gPiBUaGlzIGRyaXZlciBoYXMgYmVlbiBpbiB0aGUgdHJlZSBzaW5jZSAy
-MDA5IHdpdGggbm8gcmVhbCBtb3ZlbWVudCB0byBnZXQNCj4gPiA+ID4gaXQgb3V0LiAgTm93IGl0
-IGlzIHN0YXJ0aW5nIHRvIGNhdXNlIGJ1aWxkIGlzc3VlcyBhbmQgb3RoZXIgcHJvYmxlbXMgZm9y
-DQo+ID4gPiA+IHBlb3BsZSB3aG8gd2FudCB0byBmaXggY29kaW5nIHN0eWxlIHByb2JsZW1zLCBi
-dXQgY2FuIG5vdCBhY3R1YWxseSBidWlsZA0KPiA+ID4gPiBpdC4NCj4gPiA+ID4gDQo+ID4gPiA+
-IEFzIG5vdGhpbmcgaXMgaGFwcGVuaW5nIGhlcmUsIGp1c3QgZGVsZXRlIHRoZSBtb2R1bGUgZW50
-aXJlbHkuDQo+ID4gPiA+IA0KPiA+ID4gPiBSZXBvcnRlZC1ieTogR3VlbnRlciBSb2VjayA8bGlu
-dXhAcm9lY2stdXMubmV0Pg0KPiA+ID4gPiBDYzogRGF2aWQgRGFuZXkgPGRkYW5leUBjYXZpdW1u
-ZXR3b3Jrcy5jb20+DQo+ID4gPiA+IENjOiAiRGF2aWQgUy4gTWlsbGVyIiA8ZGF2ZW1AZGF2ZW1s
-b2Z0Lm5ldD4NCj4gPiA+ID4gQ2M6ICJNYXR0aGV3IFdpbGNveCAoT3JhY2xlKSIgPHdpbGx5QGlu
-ZnJhZGVhZC5vcmc+DQo+ID4gPiA+IENjOiBHdWVudGVyIFJvZWNrIDxsaW51eEByb2Vjay11cy5u
-ZXQ+DQo+ID4gPiA+IENjOiBZdWVIYWliaW5nIDx5dWVoYWliaW5nQGh1YXdlaS5jb20+DQo+ID4g
-PiA+IENjOiBBYXJvIEtvc2tpbmVuIDxhYXJvLmtvc2tpbmVuQGlraS5maT4NCj4gPiA+ID4gQ2M6
-IFdhbWJ1aSBLYXJ1Z2EgPHdhbWJ1aS5rYXJ1Z2F4QGdtYWlsLmNvbT4NCj4gPiA+ID4gQ2M6IEp1
-bGlhIExhd2FsbCA8anVsaWEubGF3YWxsQGxpcDYuZnI+DQo+ID4gPiA+IENjOiBGbG9yaWFuIFdl
-c3RwaGFsIDxmd0BzdHJsZW4uZGU+DQo+ID4gPiA+IENjOiBHZWVydCBVeXR0ZXJob2V2ZW4gPGdl
-ZXJ0QGxpbnV4LW02OGsub3JnPg0KPiA+ID4gPiBDYzogQnJhbmRlbiBCb25hYnkgPGJyYW5kb25i
-b25hYnk5NEBnbWFpbC5jb20+DQo+ID4gPiA+IENjOiAiUGV0ciDFoHRldGlhciIgPHluZXp6QHRy
-dWUuY3o+DQo+ID4gPiA+IENjOiBTYW5kcm8gVm9sZXJ5IDxzYW5kcm9Adm9sZXJ5LmNvbT4NCj4g
-PiA+ID4gQ2M6IFBhdWwgQnVydG9uIDxwYXVsYnVydG9uQGtlcm5lbC5vcmc+DQo+ID4gPiA+IENj
-OiBEYW4gQ2FycGVudGVyIDxkYW4uY2FycGVudGVyQG9yYWNsZS5jb20+DQo+ID4gPiA+IENjOiBH
-aW92YW5uaSBHaGVyZG92aWNoIDxib2JkYzk2NjRAc2V6bmFtLmN6Pg0KPiA+ID4gPiBDYzogVmFs
-ZXJ5IEl2YW5vdiA8aXZhbGVyeTExMUBnbWFpbC5jb20+DQo+ID4gPiA+IFNpZ25lZC1vZmYtYnk6
-IEdyZWcgS3JvYWgtSGFydG1hbiA8Z3JlZ2toQGxpbnV4Zm91bmRhdGlvbi5vcmc+DQo+ID4gPiAN
-Cj4gPiA+IEFja2VkLWJ5OiBHdWVudGVyIFJvZWNrIDxsaW51eEByb2Vjay11cy5uZXQ+DQo+ID4g
-DQo+ID4gUGxlYXNlIGNhbiB3ZSBrZWVwIHRoaXMgZHJpdmVyLiBXZSBkbyBoYXZlIHBsYXRmb3Jt
-cyB1c2luZyBpdCBhbmQgd2UNCj4gPiB3b3VsZCBsaWtlIGl0IHRvIHN0YXkgYXJvdW5kLg0KPiA+
-IA0KPiA+IENsZWFybHkgd2UnbGwgbmVlZCB0byBzb3J0IHRoaW5ncyBvdXQgdG8gYSBwb2ludCB3
-aGVyZSB0aGV5IGJ1aWxkDQo+ID4gc3VjY2Vzc2Z1bGx5LiBXZSd2ZSBiZWVuIGhvcGluZyB0byBz
-ZWUgdGhpcyBtb3ZlIG91dCBvZiBzdGFnaW5nIGV2ZXINCj4gPiBzaW5jZSB3ZSBzZWxlY3RlZCBD
-YXZpdW0gYXMgYSB2ZW5kb3IuDQo+IA0KPiBHcmVhdCwgY2FuIHlvdSBzZW5kIG1lIGEgcGF0Y2hz
-ZXQgdGhhdCByZXZlcnRzIHRoaXMgYW5kIGZpeGVzIHRoZSBidWlsZA0KPiBpc3N1ZXMgYW5kIGFj
-Y2VwdCBtYWludGFpbmVyc2hpcCBvZiB0aGUgY29kZT8NCj4gDQoNClllcCB3aWxsIGRvLg0KDQpP
-biBUdWUsIDIwMjAtMDItMDQgYXQgMTA6MjEgKzAzMDAsIERhbiBDYXJwZW50ZXIgd3JvdGU6DQo+
-IE15IGFkdmljZSBpcyB0byBkZWxldGUgYWxsIHRoZSBDT01QSUxFX1RFU1QgY29kZS4gIFRoYXQg
-c3R1ZmYgd2FzIGENCj4gY29uc3RhbnQgc291cmNlIG9mIGNvbmZ1c2lvbiBhbmQgaGVhZGFjaGVz
-Lg0KDQpJIHdhcyBhbHNvIGdvaW5nIHRvIHN1Z2dlc3QgdGhpcy4gU2luY2UgdGhlIENPTVBJTEVf
-VEVTVCBoYXMgYmVlbiBhDQpzb3VyY2Ugb2YgdHJvdWJsZSBJIHdhcyBnb2luZyB0byBwcm9wb3Nl
-IGRyb3BwaW5nIHRoZSB8fCBDT01QSUxFX1RFU1QNCmZyb20gdGhlIEtjb25maWcgZm9yIHRoZSBv
-Y3Rlb24gZHJpdmVycy4NCg==
+I'm working on getting a system to reproduce this, and verify it also occurs
+with 5.5, but I have a report of a case where the kdump kernel gives
+warnings like the following on a hp dl360 gen9:
+
+[    2.830589] ehci_hcd: USB 2.0 'Enhanced' Host Controller (EHCI) Driver
+[    2.832615] ehci-pci: EHCI PCI platform driver
+[    2.834190] ehci-pci 0000:00:1a.0: EHCI Host Controller
+[    2.835974] ehci-pci 0000:00:1a.0: new USB bus registered, assigned bus number 1
+[    2.838276] ehci-pci 0000:00:1a.0: debug port 2
+[    2.839700] WARNING: CPU: 0 PID: 1 at drivers/iommu/intel-iommu.c:598 domain_get_iommu+0x55/0x60
+[    2.840671] Modules linked in:
+[    2.840671] CPU: 0 PID: 1 Comm: swapper/0 Not tainted 4.18.0-170.el8.kdump2.x86_64 #1
+[    2.840671] Hardware name: HP ProLiant DL360 Gen9/ProLiant DL360 Gen9, BIOS P89 07/21/2019
+[    2.840671] RIP: 0010:domain_get_iommu+0x55/0x60
+[    2.840671] Code: c2 01 eb 0b 48 83 c0 01 8b 34 87 85 f6 75 0b 48 63 c8 48 39 c2 75 ed 31 c0 c3 48 c1 e1 03 48 8b 05 70 f3 91 01 48 8b 04 08 c3 <0f> 0b 31 c0 c3 31 c9 eb eb 66 90 0f 1f 44 00 00 41 55 40 0f b6 f6
+[    2.840671] RSP: 0018:ffffc900000dfab8 EFLAGS: 00010202
+[    2.840671] RAX: ffff88ec7f1c8000 RBX: 0000006c7c867000 RCX: 0000000000000000
+[    2.840671] RDX: 00000000fffffff0 RSI: 0000000000000000 RDI: ffff88ec7f1c8000
+[    2.840671] RBP: ffff88ec6f7000b0 R08: ffff88ec7f19d000 R09: ffff88ec7cbfcd00
+[    2.840671] R10: 0000000000000095 R11: ffffc900000df928 R12: 0000000000000000
+[    2.840671] R13: ffff88ec7f1c8000 R14: 0000000000001000 R15: 00000000ffffffff
+[    2.840671] FS:  0000000000000000(0000) GS:ffff88ec7f600000(0000) knlGS:0000000000000000
+[    2.840671] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[    2.840671] CR2: 00007ff3e1713000 CR3: 0000006c7de0a004 CR4: 00000000001606b0
+[    2.840671] Call Trace:
+[    2.840671]  __intel_map_single+0x62/0x140
+[    2.840671]  intel_alloc_coherent+0xa6/0x130
+[    2.840671]  dma_pool_alloc+0xd8/0x1e0
+[    2.840671]  e_qh_alloc+0x55/0x130
+[    2.840671]  ehci_setup+0x284/0x7b0
+[    2.840671]  ehci_pci_setup+0xa3/0x530
+[    2.840671]  usb_add_hcd+0x2b6/0x800
+[    2.840671]  usb_hcd_pci_probe+0x375/0x460
+[    2.840671]  local_pci_probe+0x41/0x90
+[    2.840671]  pci_device_probe+0x105/0x1b0
+[    2.840671]  driver_probe_device+0x12d/0x460
+[    2.840671]  device_driver_attach+0x50/0x60
+[    2.840671]  __driver_attach+0x61/0x130
+[    2.840671]  ? device_driver_attach+0x60/0x60
+[    2.840671]  bus_for_each_dev+0x77/0xc0
+[    2.840671]  ? klist_add_tail+0x3b/0x70
+[    2.840671]  bus_add_driver+0x14d/0x1e0
+[    2.840671]  ? ehci_hcd_init+0xaa/0xaa
+[    2.840671]  ? do_early_param+0x91/0x91
+[    2.840671]  driver_register+0x6b/0xb0
+[    2.840671]  ? ehci_hcd_init+0xaa/0xaa
+[    2.840671]  do_one_initcall+0x46/0x1c3
+[    2.840671]  ? do_early_param+0x91/0x91
+[    2.840671]  kernel_init_freeable+0x1af/0x258
+[    2.840671]  ? rest_init+0xaa/0xaa
+[    2.840671]  kernel_init+0xa/0xf9
+[    2.840671]  ret_from_fork+0x35/0x40
+[    2.840671] ---[ end trace e87b0d9a1c8135c4 ]---
+[    3.010848] ehci-pci 0000:00:1a.0: Using iommu dma mapping
+[    3.012551] ehci-pci 0000:00:1a.0: 32bit DMA uses non-identity mapping
+[    3.018537] ehci-pci 0000:00:1a.0: cache line size of 64 is not supported
+[    3.021188] ehci-pci 0000:00:1a.0: irq 18, io mem 0x93002000
+[    3.029006] ehci-pci 0000:00:1a.0: USB 2.0 started, EHCI 1.00
+[    3.030918] usb usb1: New USB device found, idVendor=1d6b, idProduct=0002, bcdDevice= 4.18
+[    3.033491] usb usb1: New USB device strings: Mfr=3, Product=2, SerialNumber=1
+[    3.035900] usb usb1: Product: EHCI Host Controller
+[    3.037423] usb usb1: Manufacturer: Linux 4.18.0-170.el8.kdump2.x86_64 ehci_hcd
+[    3.039691] usb usb1: SerialNumber: 0000:00:1a.0
+
+It looks like the device finishes initializing once it figures out it
+needs dma mapping instead of the default
+passthrough. intel_alloc_coherent calls iommu_need_mapping, before it
+calls __intel_map_single, so I'm not sure why it is tripping over the
+WARN_ON in domain_get_iommu.
+
+one thing I noticed while looking at this is that domain_get_iommu can
+return NULL. So should there be something like the following in
+__intel_map_single after the domain_get_iommu call?
+
+if (!iommu)
+    goto error;
+
+It is possible to deref the null pointer later otherwise.
+
+Regards,
+Jerry
+
