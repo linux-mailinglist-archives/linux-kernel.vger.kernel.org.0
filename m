@@ -2,121 +2,89 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 543351519C5
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Feb 2020 12:21:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2ABFE1519CB
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Feb 2020 12:21:43 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727615AbgBDLUQ convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Tue, 4 Feb 2020 06:20:16 -0500
-Received: from eu-smtp-delivery-151.mimecast.com ([207.82.80.151]:22704 "EHLO
-        eu-smtp-delivery-151.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727154AbgBDLUO (ORCPT
+        id S1727282AbgBDLVJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 4 Feb 2020 06:21:09 -0500
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:42964 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727004AbgBDLVI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Feb 2020 06:20:14 -0500
-Received: from AcuMS.aculab.com (156.67.243.126 [156.67.243.126]) (Using
- TLS) by relay.mimecast.com with ESMTP id
- uk-mta-10-vBYvQg4LN36nAgPRQBlxpQ-1; Tue, 04 Feb 2020 11:20:11 +0000
-Received: from AcuMS.Aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) by
- AcuMS.aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) with Microsoft SMTP
- Server (TLS) id 15.0.1347.2; Tue, 4 Feb 2020 11:20:11 +0000
-Received: from AcuMS.Aculab.com ([fe80::43c:695e:880f:8750]) by
- AcuMS.aculab.com ([fe80::43c:695e:880f:8750%12]) with mapi id 15.00.1347.000;
- Tue, 4 Feb 2020 11:20:11 +0000
-From:   David Laight <David.Laight@ACULAB.COM>
-To:     "'axboe@kernel.dk'" <axboe@kernel.dk>
-CC:     LKML <linux-kernel@vger.kernel.org>
-Subject: [PATCH] Fix io_read() and io_write() when io_import_fixed() is used.
-Thread-Topic: [PATCH] Fix io_read() and io_write() when io_import_fixed() is
- used.
-Thread-Index: AdXbTP+YLQmyIuo6Sk+vDwZErsD4Xw==
-Date:   Tue, 4 Feb 2020 11:20:11 +0000
-Message-ID: <0cf51853bebe4c889e4d00e4bbc61fb3@AcuMS.aculab.com>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.202.205.107]
+        Tue, 4 Feb 2020 06:21:08 -0500
+Received: by mail-pf1-f193.google.com with SMTP id 4so9306047pfz.9;
+        Tue, 04 Feb 2020 03:21:08 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=etkzxQdonYJKMTHRqSVIxyc50MlvlU1LrQeOV4a4eFk=;
+        b=PIRI49xc04/X0a8DT1CIRCvr2/mgyzDfnaH9DdnMmIZbmCYVnMSpJhynEmGudh5hDO
+         kVywtrYnr1vRzyqzoru71Fes/x3ooibD9Uqd895xrv9y0yN5ECuVgYh6i0NCQRqUDhyJ
+         qO/t/LY+TELglPmEJCIFcolOV8ow1gOutzm2X7/cKDcQupCEEfZVUVo1/YSCyQdUwDSz
+         5/9f29STvTaZmVDO19GCRyVvBa9rXdFAKdLOnMmVgQYCbkdZYg1fmqJP1iBZsKNeqLWy
+         HfBK1sK9PaokmKWzOFGeMbuUZ+orx+WcSN+ZMje9YdGfzp8Kv7GKh8Ax/rt/3m6aqsWh
+         7GoQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=etkzxQdonYJKMTHRqSVIxyc50MlvlU1LrQeOV4a4eFk=;
+        b=pc6gDTN3mOiBahi3MRqt7tt6mW8pSttBQrVR9VHuYfSPdQKnVnAb12UkQLaOTULtaH
+         tOopDofcD57e8xFi5HsZBFmzHVsTaAQQKduN4L8sxzOgH4zDqfxW+vgTeJFvKblGjEru
+         rdND7K8r+BKiG84kW0wQBWmmCpCthkLXN0ySlrJ/9u7GtRWTgH2x0SbpRduOvpK9OUIg
+         jDWPB6df1Ljw+SDTH2wGzOPvcUeg61HIRrKIxMIRseWUZh9D/yErNB0UmzcrZDd08Uo8
+         mcP4BdwJmwYKAKqV5LxAFMwtKWCb37JDAn40BBkjQC7Ft/FBPfkQjRkhMg9W5ysSwkEs
+         XOdg==
+X-Gm-Message-State: APjAAAWYrhQv8xUaySIOiI4DRATs/38lJT1yrLIdFxa4ExLc71Vv/uwa
+        EIvqM3p+FI3/Hm0kSWEl0s9QuhpYj7t05Ceq6qc=
+X-Google-Smtp-Source: APXvYqwt7q/UzXE/AqPSMjFYF/rze2eiuvxrpzsXScsHqjQIuEpbdTYlvnclZB19Uhn2efeEopSNoRVRDT2HM64mxy4=
+X-Received: by 2002:a65:4685:: with SMTP id h5mr32235446pgr.203.1580815268189;
+ Tue, 04 Feb 2020 03:21:08 -0800 (PST)
 MIME-Version: 1.0
-X-MC-Unique: vBYvQg4LN36nAgPRQBlxpQ-1
-X-Mimecast-Spam-Score: 0
-X-Mimecast-Originator: aculab.com
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+References: <20200203101806.2441-1-peter.ujfalusi@ti.com> <CAHp75Vf__isc59YBS9=O+9ApSV62XuZ2nBAWKKD_K7i72P-yFg@mail.gmail.com>
+ <20200204062118.GS2841@vkoul-mobl>
+In-Reply-To: <20200204062118.GS2841@vkoul-mobl>
+From:   Andy Shevchenko <andy.shevchenko@gmail.com>
+Date:   Tue, 4 Feb 2020 13:21:00 +0200
+Message-ID: <CAHp75VeRemcJkMMB7D2==Y-A4We=s1ntojZoPRdVS8vs+dB_Ew@mail.gmail.com>
+Subject: Re: [PATCH 0/3] dmaengine: Stear users towards dma_request_slave_chan()
+To:     Vinod Koul <vkoul@kernel.org>
+Cc:     Peter Ujfalusi <peter.ujfalusi@ti.com>,
+        dmaengine <dmaengine@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Dan Williams <dan.j.williams@intel.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-io_import_fixed() returns 0 on success so io_import_iovec() may
-not return the length of the transfer.
+On Tue, Feb 4, 2020 at 8:21 AM Vinod Koul <vkoul@kernel.org> wrote:
+>
+> On 03-02-20, 12:37, Andy Shevchenko wrote:
+> > On Mon, Feb 3, 2020 at 12:32 PM Peter Ujfalusi <peter.ujfalusi@ti.com> wrote:
+> >
+> > > dma_request_slave_channel_reason() no longer have user in mainline, it
+> > > can be removed.
+> > >
+> > > Advise users of dma_request_slave_channel() and
+> > > dma_request_slave_channel_compat() to move to dma_request_slave_chan()
+> >
+> > How? There are legacy ARM boards you have to care / remove before.
+> > DMAengine subsystem makes a p*s off decisions without taking care of
+> > (I'm talking now about dma release callback, for example) end users.
+>
+> Can you elaborate issue you are seeing with dma_release callback?
 
-Instead always use the value from iov_iter_count()
-(Which is called at the same place.)
 
-Fixes 9d93a3f5a (modded by 491381ce0) and 9e645e110.
+[    7.980381] intel-lpss 0000:00:1e.3: WARN: Device release is not
+defined so it is not safe to unbind this driver while in use
 
-Signed-off-by: David Laight <david.laight@aculab.com>
----
+It's not limited to that driver, but actually all I'm maintaining.
 
-Spotted while working on another patch to change the return value
-of import_iovec() to be the address of the memory to kfree().
+Users are not happy!
 
- fs/io_uring.c | 14 ++++++--------
- 1 file changed, 6 insertions(+), 8 deletions(-)
-
-diff --git a/fs/io_uring.c b/fs/io_uring.c
-index bde73b1..28128aa 100644
---- a/fs/io_uring.c
-+++ b/fs/io_uring.c
-@@ -1376,7 +1376,7 @@ static int io_read(struct io_kiocb *req, const struct sqe_submit *s,
- 	struct iov_iter iter;
- 	struct file *file;
- 	size_t iov_count;
--	ssize_t read_size, ret;
-+	ssize_t ret;
- 
- 	ret = io_prep_rw(req, s, force_nonblock);
- 	if (ret)
-@@ -1390,11 +1390,10 @@ static int io_read(struct io_kiocb *req, const struct sqe_submit *s,
- 	if (ret < 0)
- 		return ret;
- 
--	read_size = ret;
-+	iov_count = iov_iter_count(&iter);
- 	if (req->flags & REQ_F_LINK)
--		req->result = read_size;
-+		req->result = iov_count;
- 
--	iov_count = iov_iter_count(&iter);
- 	ret = rw_verify_area(READ, file, &kiocb->ki_pos, iov_count);
- 	if (!ret) {
- 		ssize_t ret2;
-@@ -1414,7 +1413,7 @@ static int io_read(struct io_kiocb *req, const struct sqe_submit *s,
- 		 */
- 		if (force_nonblock && !(req->flags & REQ_F_NOWAIT) &&
- 		    (req->flags & REQ_F_ISREG) &&
--		    ret2 > 0 && ret2 < read_size)
-+		    ret2 > 0 && ret2 < iov_count)
- 			ret2 = -EAGAIN;
- 		/* Catch -EAGAIN return for forced non-blocking submission */
- 		if (!force_nonblock || ret2 != -EAGAIN) {
-@@ -1455,10 +1454,9 @@ static int io_write(struct io_kiocb *req, const struct sqe_submit *s,
- 	if (ret < 0)
- 		return ret;
- 
--	if (req->flags & REQ_F_LINK)
--		req->result = ret;
--
- 	iov_count = iov_iter_count(&iter);
-+	if (req->flags & REQ_F_LINK)
-+		req->result = iov_count;
- 
- 	ret = -EAGAIN;
- 	if (force_nonblock && !(kiocb->ki_flags & IOCB_DIRECT)) {
 -- 
-1.8.1.2
-
--
-Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1 1PT, UK
-Registration No: 1397386 (Wales)
-
+With Best Regards,
+Andy Shevchenko
