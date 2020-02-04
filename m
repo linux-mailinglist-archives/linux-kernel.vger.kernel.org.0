@@ -2,125 +2,121 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5F0B5151974
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Feb 2020 12:18:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 543351519C5
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Feb 2020 12:21:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727180AbgBDLSj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 4 Feb 2020 06:18:39 -0500
-Received: from szxga04-in.huawei.com ([45.249.212.190]:10152 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726898AbgBDLSi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Feb 2020 06:18:38 -0500
-Received: from DGGEMS413-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id 1844E1A56B88039184FB;
-        Tue,  4 Feb 2020 19:18:33 +0800 (CST)
-Received: from [127.0.0.1] (10.173.220.183) by DGGEMS413-HUB.china.huawei.com
- (10.3.19.213) with Microsoft SMTP Server id 14.3.439.0; Tue, 4 Feb 2020
- 19:18:27 +0800
-Subject: Re: [PATCH V5] brd: check and limit max_part par
-To:     Ming Lei <ming.lei@redhat.com>
-CC:     Jens Axboe <axboe@kernel.dk>, <linux-block@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>,
-        Mingfangsen <mingfangsen@huawei.com>,
-        "wubo (T)" <wubo40@huawei.com>, Guiyao <guiyao@huawei.com>,
-        Yanxiaodan <yanxiaodan@huawei.com>
-References: <3f053491-d8c1-7092-58d1-85afaa2e68df@huawei.com>
- <20200204085218.GA19922@ming.t460p>
-From:   Zhiqiang Liu <liuzhiqiang26@huawei.com>
-Message-ID: <9ca2aa6a-6d61-16e3-678c-b91fd28b0b88@huawei.com>
-Date:   Tue, 4 Feb 2020 19:18:26 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.2.2
-MIME-Version: 1.0
-In-Reply-To: <20200204085218.GA19922@ming.t460p>
-Content-Type: text/plain; charset="utf-8"
+        id S1727615AbgBDLUQ convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Tue, 4 Feb 2020 06:20:16 -0500
+Received: from eu-smtp-delivery-151.mimecast.com ([207.82.80.151]:22704 "EHLO
+        eu-smtp-delivery-151.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727154AbgBDLUO (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Feb 2020 06:20:14 -0500
+Received: from AcuMS.aculab.com (156.67.243.126 [156.67.243.126]) (Using
+ TLS) by relay.mimecast.com with ESMTP id
+ uk-mta-10-vBYvQg4LN36nAgPRQBlxpQ-1; Tue, 04 Feb 2020 11:20:11 +0000
+Received: from AcuMS.Aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) by
+ AcuMS.aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) with Microsoft SMTP
+ Server (TLS) id 15.0.1347.2; Tue, 4 Feb 2020 11:20:11 +0000
+Received: from AcuMS.Aculab.com ([fe80::43c:695e:880f:8750]) by
+ AcuMS.aculab.com ([fe80::43c:695e:880f:8750%12]) with mapi id 15.00.1347.000;
+ Tue, 4 Feb 2020 11:20:11 +0000
+From:   David Laight <David.Laight@ACULAB.COM>
+To:     "'axboe@kernel.dk'" <axboe@kernel.dk>
+CC:     LKML <linux-kernel@vger.kernel.org>
+Subject: [PATCH] Fix io_read() and io_write() when io_import_fixed() is used.
+Thread-Topic: [PATCH] Fix io_read() and io_write() when io_import_fixed() is
+ used.
+Thread-Index: AdXbTP+YLQmyIuo6Sk+vDwZErsD4Xw==
+Date:   Tue, 4 Feb 2020 11:20:11 +0000
+Message-ID: <0cf51853bebe4c889e4d00e4bbc61fb3@AcuMS.aculab.com>
+Accept-Language: en-GB, en-US
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.173.220.183]
-X-CFilter-Loop: Reflected
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.202.205.107]
+MIME-Version: 1.0
+X-MC-Unique: vBYvQg4LN36nAgPRQBlxpQ-1
+X-Mimecast-Spam-Score: 0
+X-Mimecast-Originator: aculab.com
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+io_import_fixed() returns 0 on success so io_import_iovec() may
+not return the length of the transfer.
 
+Instead always use the value from iov_iter_count()
+(Which is called at the same place.)
 
-On 2020/2/4 16:52, Ming Lei wrote:
-> On Tue, Feb 04, 2020 at 10:44:18AM +0800, Zhiqiang Liu wrote:
->>
->> In brd_init func, rd_nr num of brd_device are firstly allocated
->> and add in brd_devices, then brd_devices are traversed to add each
->> brd_device by calling add_disk func. When allocating brd_device,
->> the disk->first_minor is set to i * max_part, if rd_nr * max_part
->> is larger than MINORMASK, two different brd_device may have the same
->> devt, then only one of them can be successfully added.
->> when rmmod brd.ko, it will cause oops when calling brd_exit.
->>
->> Follow those steps:
->>   # modprobe brd rd_nr=3 rd_size=102400 max_part=1048576
->>   # rmmod brd
->> then, the oops will appear.
->>
->> Oops log:
->> [  726.613722] Call trace:
->> [  726.614175]  kernfs_find_ns+0x24/0x130
->> [  726.614852]  kernfs_find_and_get_ns+0x44/0x68
->> [  726.615749]  sysfs_remove_group+0x38/0xb0
->> [  726.616520]  blk_trace_remove_sysfs+0x1c/0x28
->> [  726.617320]  blk_unregister_queue+0x98/0x100
->> [  726.618105]  del_gendisk+0x144/0x2b8
->> [  726.618759]  brd_exit+0x68/0x560 [brd]
->> [  726.619501]  __arm64_sys_delete_module+0x19c/0x2a0
->> [  726.620384]  el0_svc_common+0x78/0x130
->> [  726.621057]  el0_svc_handler+0x38/0x78
->> [  726.621738]  el0_svc+0x8/0xc
->> [  726.622259] Code: aa0203f6 aa0103f7 aa1e03e0 d503201f (7940e260)
->>
->> Here, we add brd_check_and_reset_par func to check and limit max_part par.
->>
->> --
->> V4->V5:(suggested by Ming Lei)
->>  - make sure max_part is not larger than DISK_MAX_PARTS
->>
->> V3->V4:(suggested by Ming Lei)
->>  - remove useless change
->>  - add one limit of max_part
->>
->> V2->V3: (suggested by Ming Lei)
->>  - clear .minors when running out of consecutive minor space in brd_alloc
->>  - remove limit of rd_nr
->>
->> V1->V2:
->>  - add more checks in brd_check_par_valid as suggested by Ming Lei.
->>
->> Signed-off-by: Zhiqiang Liu <liuzhiqiang26@huawei.com>
->> Reviewed-by: Bob Liu <bob.liu@oracle.com>
->> ---
->>  drivers/block/brd.c | 27 +++++++++++++++++++++++----
->>  1 file changed, 23 insertions(+), 4 deletions(-)
->>
->> diff --git a/drivers/block/brd.c b/drivers/block/brd.c
->> index df8103dd40ac..6b9db3f63cb7 100644
->> --- a/drivers/block/brd.c
->> +++ b/drivers/block/brd.c
->> @@ -389,11 +389,12 @@ static struct brd_device *brd_alloc(int i)
->>  	 *  is harmless)
->>  	 */
->>  	blk_queue_physical_block_size(brd->brd_queue, PAGE_SIZE);
->> -	disk = brd->brd_disk = alloc_disk(max_part);
->> +	disk = brd->brd_disk = alloc_disk(((i * max_part) & ~MINORMASK) ?
->> +			0 : max_part);
->>  	if (!disk)
->>  		goto out_free_queue;
->>  	disk->major		= RAMDISK_MAJOR;
->> -	disk->first_minor	= i * max_part;
->> +	disk->first_minor	= i * disk->minors;
-> 
-> As I told you, the above change isn't needed, otherwise:
-> 
-> Reviewed-by: Ming Lei <ming.lei@redhat.com>
+Fixes 9d93a3f5a (modded by 491381ce0) and 9e645e110.
 
-Sorry for missing that. I will remove these in v6 patch.
-Thanks for your patience.
+Signed-off-by: David Laight <david.laight@aculab.com>
+---
 
+Spotted while working on another patch to change the return value
+of import_iovec() to be the address of the memory to kfree().
+
+ fs/io_uring.c | 14 ++++++--------
+ 1 file changed, 6 insertions(+), 8 deletions(-)
+
+diff --git a/fs/io_uring.c b/fs/io_uring.c
+index bde73b1..28128aa 100644
+--- a/fs/io_uring.c
++++ b/fs/io_uring.c
+@@ -1376,7 +1376,7 @@ static int io_read(struct io_kiocb *req, const struct sqe_submit *s,
+ 	struct iov_iter iter;
+ 	struct file *file;
+ 	size_t iov_count;
+-	ssize_t read_size, ret;
++	ssize_t ret;
+ 
+ 	ret = io_prep_rw(req, s, force_nonblock);
+ 	if (ret)
+@@ -1390,11 +1390,10 @@ static int io_read(struct io_kiocb *req, const struct sqe_submit *s,
+ 	if (ret < 0)
+ 		return ret;
+ 
+-	read_size = ret;
++	iov_count = iov_iter_count(&iter);
+ 	if (req->flags & REQ_F_LINK)
+-		req->result = read_size;
++		req->result = iov_count;
+ 
+-	iov_count = iov_iter_count(&iter);
+ 	ret = rw_verify_area(READ, file, &kiocb->ki_pos, iov_count);
+ 	if (!ret) {
+ 		ssize_t ret2;
+@@ -1414,7 +1413,7 @@ static int io_read(struct io_kiocb *req, const struct sqe_submit *s,
+ 		 */
+ 		if (force_nonblock && !(req->flags & REQ_F_NOWAIT) &&
+ 		    (req->flags & REQ_F_ISREG) &&
+-		    ret2 > 0 && ret2 < read_size)
++		    ret2 > 0 && ret2 < iov_count)
+ 			ret2 = -EAGAIN;
+ 		/* Catch -EAGAIN return for forced non-blocking submission */
+ 		if (!force_nonblock || ret2 != -EAGAIN) {
+@@ -1455,10 +1454,9 @@ static int io_write(struct io_kiocb *req, const struct sqe_submit *s,
+ 	if (ret < 0)
+ 		return ret;
+ 
+-	if (req->flags & REQ_F_LINK)
+-		req->result = ret;
+-
+ 	iov_count = iov_iter_count(&iter);
++	if (req->flags & REQ_F_LINK)
++		req->result = iov_count;
+ 
+ 	ret = -EAGAIN;
+ 	if (force_nonblock && !(kiocb->ki_flags & IOCB_DIRECT)) {
+-- 
+1.8.1.2
+
+-
+Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1 1PT, UK
+Registration No: 1397386 (Wales)
 
