@@ -2,59 +2,59 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3E4CB1521B2
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Feb 2020 22:08:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A75401521B4
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Feb 2020 22:08:18 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727578AbgBDVIM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 4 Feb 2020 16:08:12 -0500
-Received: from mail-vk1-f196.google.com ([209.85.221.196]:45427 "EHLO
-        mail-vk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727445AbgBDVIM (ORCPT
+        id S1727594AbgBDVIR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 4 Feb 2020 16:08:17 -0500
+Received: from mail-vs1-f67.google.com ([209.85.217.67]:35693 "EHLO
+        mail-vs1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727458AbgBDVIQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Feb 2020 16:08:12 -0500
-Received: by mail-vk1-f196.google.com with SMTP id g7so5606028vkl.12
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Feb 2020 13:08:10 -0800 (PST)
+        Tue, 4 Feb 2020 16:08:16 -0500
+Received: by mail-vs1-f67.google.com with SMTP id x123so12449685vsc.2
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Feb 2020 13:08:15 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=NE9H4AjLU7qeu0mbmE//LIZqJwhQlWyPoAREOrQ5X8U=;
-        b=P8+X/m92d/POWNkLsBIXlnVJT3dn0x9yNui8PIaNGXM+CoMBQXQPWGXteEZTY+ifc4
-         ML3OR3zOQ6lT2Llny1GxwbTra+sPe66wTkGALKhQNs+nubwkebpQ2Puq96/KDFzvP4hm
-         MwcYrKWgiq5MeuwjTV4klynvFSrSth4JsgO6Y=
+        bh=WSnbwBgsFio2ehfBChAWyJkxbhcuFHyXVUzB6wC6EcE=;
+        b=FjYS2MR55uToDI5C+GzDlpxU8rd/BFpp55zY9ZUHZkqHH9XTRMqccWRxImQ42ROmuA
+         /DEwp9VP5G5lN6LVdd05687vXMcaxB2Pt8lvrpLz6l7VHcX1haY9aYROuZgCs/b9sGuG
+         CweceSZSCraRJ1FanI0mhXLFKn3I+UBA5uK98=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=NE9H4AjLU7qeu0mbmE//LIZqJwhQlWyPoAREOrQ5X8U=;
-        b=PenqjRDNQ5ldFagW7O1+77E9u+oPLZXpLfoXBFKF9u3F97EMSt8agA3iU60emJ6ZFY
-         Ot9y1ElsAA0f+RFBFaw69oyKZG97hdBJM9JMWefiyngFra6a2b0OnfEeXlcb1wV+DANH
-         /rjsxOOoWKEWkoxTqAqWTKGl8UPQeq4imYhw4LRY57sGKuWbvxRFgHOcUN3aOoUT8gCc
-         1qsaTnxsh6Kwc9QwAGf6tBr6qrZEnBvz9Jfksh3FVCbVeqB3BkrqjII87Hq2HBmx1zeE
-         /Yo/3+cr5eeasJTU18S9eX3djSe35QPcpJtheyaUlOQfhsG2ogfyeJz5Q+VB05CSBvqB
-         Ti/g==
-X-Gm-Message-State: APjAAAVqP5qU669ShdlT9V3rGUb8Fg8WAqUZ59dA5A6gCd57lPryW/fl
-        GoAjgLhNrijc/gpxwzX42jbeNvHlMt0=
-X-Google-Smtp-Source: APXvYqxUxJO41tjDrTbgflamTfC5aSZd7zs1i9SAit9TKxqvYcSuHloAsy+g1R5+3K5xxiipoD6Uzg==
-X-Received: by 2002:a1f:2753:: with SMTP id n80mr19375871vkn.24.1580850489389;
-        Tue, 04 Feb 2020 13:08:09 -0800 (PST)
-Received: from mail-vs1-f46.google.com (mail-vs1-f46.google.com. [209.85.217.46])
-        by smtp.gmail.com with ESMTPSA id l125sm4088305vke.24.2020.02.04.13.08.08
+        bh=WSnbwBgsFio2ehfBChAWyJkxbhcuFHyXVUzB6wC6EcE=;
+        b=FBs5kg1A7snk4E5y7tP6TdKDQgXg7Xk3SK4H3YKFRezyOc6rH91tuCgymvD+K+HAFD
+         nGSRVrz3bOEaLCvvwtMnWhMsHMjZRvfUnZck4IqtWhfsU6ir3KOZ3td3gKmZPL5PEPcV
+         4TVSpTYcgW1KqcHXNJzgjlEJP/MEo0WAIuj4ifur1lQfgOKE8XZAv8uYc232yqL7Qx5U
+         bfKi3vHv1Z0T9MNF86KigejPenX0OlSS3Gi3wcqrgEdg8+SbEuR0Ht+AA1R6Z0rz9/oE
+         NTyQztilUEQC0yIXHE9yyuvxC/VYqDZKsgH7h1a5+asWCEDmxGsGq5OjUoh+HPoKMIOh
+         AeFQ==
+X-Gm-Message-State: APjAAAUiT7qfXbBH3v/wxy5JE4F69RPTVy+8O7D4cQzQvEGPkMOzhB0Z
+        5pAMSvljfeqMBEvtcy6QSLhXS+SuK6M=
+X-Google-Smtp-Source: APXvYqyPjWprOSoSrPciUO32pP6H/h0GW/3deMfpvU9NbgCKTlltaiaMhbtwjTpNs+zuOrzJb5X5og==
+X-Received: by 2002:a67:bb18:: with SMTP id m24mr19029108vsn.92.1580850495027;
+        Tue, 04 Feb 2020 13:08:15 -0800 (PST)
+Received: from mail-vk1-f170.google.com (mail-vk1-f170.google.com. [209.85.221.170])
+        by smtp.gmail.com with ESMTPSA id d8sm7476340uan.13.2020.02.04.13.08.14
         for <linux-kernel@vger.kernel.org>
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 04 Feb 2020 13:08:08 -0800 (PST)
-Received: by mail-vs1-f46.google.com with SMTP id g23so12408880vsr.7
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Feb 2020 13:08:08 -0800 (PST)
-X-Received: by 2002:a67:8704:: with SMTP id j4mr21015690vsd.106.1580850488353;
- Tue, 04 Feb 2020 13:08:08 -0800 (PST)
+        Tue, 04 Feb 2020 13:08:14 -0800 (PST)
+Received: by mail-vk1-f170.google.com with SMTP id o200so5620720vke.4
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Feb 2020 13:08:14 -0800 (PST)
+X-Received: by 2002:a1f:a9d0:: with SMTP id s199mr18378566vke.40.1580850493870;
+ Tue, 04 Feb 2020 13:08:13 -0800 (PST)
 MIME-Version: 1.0
-References: <20200204191206.97036-1-swboyd@chromium.org> <20200204191206.97036-3-swboyd@chromium.org>
-In-Reply-To: <20200204191206.97036-3-swboyd@chromium.org>
+References: <20200204191206.97036-1-swboyd@chromium.org> <20200204191206.97036-4-swboyd@chromium.org>
+In-Reply-To: <20200204191206.97036-4-swboyd@chromium.org>
 From:   Doug Anderson <dianders@chromium.org>
-Date:   Tue, 4 Feb 2020 13:07:56 -0800
-X-Gmail-Original-Message-ID: <CAD=FV=U6Yiv5i4PdDFqNhp0STqAvVi_=F_iuKyonx=MsOQFABQ@mail.gmail.com>
-Message-ID: <CAD=FV=U6Yiv5i4PdDFqNhp0STqAvVi_=F_iuKyonx=MsOQFABQ@mail.gmail.com>
-Subject: Re: [PATCH 2/3] spi: spi-geni-qcom: Grow a dev pointer to simplify code
+Date:   Tue, 4 Feb 2020 13:08:02 -0800
+X-Gmail-Original-Message-ID: <CAD=FV=XLP4Rz9gW4hHDJRf54qFqnYJeXH259_B2Fd5ObTPZUeA@mail.gmail.com>
+Message-ID: <CAD=FV=XLP4Rz9gW4hHDJRf54qFqnYJeXH259_B2Fd5ObTPZUeA@mail.gmail.com>
+Subject: Re: [PATCH 3/3] spi: spi-geni-qcom: Drop of.h include
 To:     Stephen Boyd <swboyd@chromium.org>
 Cc:     Mark Brown <broonie@kernel.org>,
         LKML <linux-kernel@vger.kernel.org>,
@@ -74,10 +74,8 @@ Hi,
 
 On Tue, Feb 4, 2020 at 11:12 AM Stephen Boyd <swboyd@chromium.org> wrote:
 >
-> Some lines are long here. Use a struct dev pointer to shorten lines and
-> simplify code. The clk_get() call can fail because of EPROBE_DEFER
-> problems too, so just remove the error print message because it isn't
-> useful.
+> This driver doesn't call any DT functions like of_get_property(). Remove
+> the of.h include as it isn't used.
 >
 > Cc: Girish Mahadevan <girishm@codeaurora.org>
 > Cc: Dilip Kota <dkota@codeaurora.org>
@@ -85,35 +83,7 @@ On Tue, Feb 4, 2020 at 11:12 AM Stephen Boyd <swboyd@chromium.org> wrote:
 > Cc: Douglas Anderson <dianders@chromium.org>
 > Signed-off-by: Stephen Boyd <swboyd@chromium.org>
 > ---
->  drivers/spi/spi-geni-qcom.c | 24 +++++++++++-------------
->  1 file changed, 11 insertions(+), 13 deletions(-)
->
-> diff --git a/drivers/spi/spi-geni-qcom.c b/drivers/spi/spi-geni-qcom.c
-> index 46e501fc87f3..f0ca7f5ae714 100644
-> --- a/drivers/spi/spi-geni-qcom.c
-> +++ b/drivers/spi/spi-geni-qcom.c
-> @@ -536,6 +536,7 @@ static int spi_geni_probe(struct platform_device *pdev)
->         struct spi_geni_master *mas;
->         void __iomem *base;
->         struct clk *clk;
-> +       struct device *dev = &pdev->dev;
->
->         irq = platform_get_irq(pdev, 0);
->         if (irq < 0)
-> @@ -545,28 +546,25 @@ static int spi_geni_probe(struct platform_device *pdev)
->         if (IS_ERR(base))
->                 return PTR_ERR(base);
->
-> -       clk = devm_clk_get(&pdev->dev, "se");
-> -       if (IS_ERR(clk)) {
-> -               dev_err(&pdev->dev, "Err getting SE Core clk %ld\n",
-> -                                               PTR_ERR(clk));
-> +       clk = devm_clk_get(dev, "se");
-> +       if (IS_ERR(clk))
-
-There could be other errors besides -EPROBE_DEFER and devm_clk_get()
-won't have printed in all cases.  ...but I agree that it seems highly
-unlikely we'd ever hit any of those but highly likely we _would_ print
-out a needless shout about -EPROBE_DEFER, so this is fine:
+>  drivers/spi/spi-geni-qcom.c | 1 -
+>  1 file changed, 1 deletion(-)
 
 Reviewed-by: Douglas Anderson <dianders@chromium.org>
