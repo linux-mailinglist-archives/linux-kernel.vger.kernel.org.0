@@ -2,31 +2,31 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 83DC41519A6
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Feb 2020 12:21:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7690415197E
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Feb 2020 12:19:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727505AbgBDLTn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 4 Feb 2020 06:19:43 -0500
-Received: from hqnvemgate25.nvidia.com ([216.228.121.64]:19180 "EHLO
-        hqnvemgate25.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726887AbgBDLTl (ORCPT
+        id S1727279AbgBDLTG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 4 Feb 2020 06:19:06 -0500
+Received: from hqnvemgate24.nvidia.com ([216.228.121.143]:14221 "EHLO
+        hqnvemgate24.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727067AbgBDLTG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Feb 2020 06:19:41 -0500
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate25.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5e39530d0000>; Tue, 04 Feb 2020 03:18:37 -0800
+        Tue, 4 Feb 2020 06:19:06 -0500
+Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate24.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5e3952f00000>; Tue, 04 Feb 2020 03:18:08 -0800
 Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate101.nvidia.com (PGP Universal service);
-  Tue, 04 Feb 2020 03:19:00 -0800
+  by hqpgpgate102.nvidia.com (PGP Universal service);
+  Tue, 04 Feb 2020 03:19:04 -0800
 X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Tue, 04 Feb 2020 03:19:00 -0800
-Received: from HQMAIL101.nvidia.com (172.20.187.10) by HQMAIL101.nvidia.com
- (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Tue, 4 Feb
- 2020 11:19:00 +0000
-Received: from rnnvemgw01.nvidia.com (10.128.109.123) by HQMAIL101.nvidia.com
- (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1473.3 via Frontend
- Transport; Tue, 4 Feb 2020 11:19:00 +0000
+        by hqpgpgate102.nvidia.com on Tue, 04 Feb 2020 03:19:04 -0800
+Received: from HQMAIL105.nvidia.com (172.20.187.12) by HQMAIL109.nvidia.com
+ (172.20.187.15) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Tue, 4 Feb
+ 2020 11:19:04 +0000
+Received: from rnnvemgw01.nvidia.com (10.128.109.123) by HQMAIL105.nvidia.com
+ (172.20.187.12) with Microsoft SMTP Server (TLS) id 15.0.1473.3 via Frontend
+ Transport; Tue, 4 Feb 2020 11:19:03 +0000
 Received: from nkristam-ubuntu.nvidia.com (Not Verified[10.19.67.128]) by rnnvemgw01.nvidia.com with Trustwave SEG (v7,5,8,10121)
-        id <B5e3953200005>; Tue, 04 Feb 2020 03:18:59 -0800
+        id <B5e3953240004>; Tue, 04 Feb 2020 03:19:03 -0800
 From:   Nagarjuna Kristam <nkristam@nvidia.com>
 To:     <balbi@kernel.org>, <gregkh@linuxfoundation.org>,
         <thierry.reding@gmail.com>, <jonathanh@nvidia.com>,
@@ -34,9 +34,9 @@ To:     <balbi@kernel.org>, <gregkh@linuxfoundation.org>,
 CC:     <devicetree@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
         <linux-usb@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
         Nagarjuna Kristam <nkristam@nvidia.com>
-Subject: [Patch V4 02/19] dt-bindings: usb: Add NVIDIA Tegra XUSB device mode controller binding
-Date:   Tue, 4 Feb 2020 16:46:48 +0530
-Message-ID: <1580815025-10915-3-git-send-email-nkristam@nvidia.com>
+Subject: [Patch V4 03/19] phy: tegra: xusb: Add usb-role-switch support
+Date:   Tue, 4 Feb 2020 16:46:49 +0530
+Message-ID: <1580815025-10915-4-git-send-email-nkristam@nvidia.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1580815025-10915-1-git-send-email-nkristam@nvidia.com>
 References: <1580815025-10915-1-git-send-email-nkristam@nvidia.com>
@@ -44,246 +44,175 @@ X-NVConfidentiality: public
 MIME-Version: 1.0
 Content-Type: text/plain
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1580815117; bh=WaEbZePg+LFcVpfDyrewjyC1+vbGZxN4pi2VKu8N5KE=;
+        t=1580815088; bh=1OfvPYR9hYh1Ivz7BSmZrZRI0tjZeK+qA72ykblKOQc=;
         h=X-PGP-Universal:From:To:CC:Subject:Date:Message-ID:X-Mailer:
          In-Reply-To:References:X-NVConfidentiality:MIME-Version:
          Content-Type;
-        b=l5VUPyXlbBJD1IHBXIuN4P9Mr1+lun7xGbXh/5qJ9N0p5Fj1umlJZjm8lXN/Yp4eM
-         QWbAW7zWIHPzLGKppPKyiYdKwTRU/BS7fFxqhr09zWv5YFHaoKm6zPpP9sZgYQ0XEH
-         p8UYaoxdUSdYwA/ptGyfwWxWpa9/MRbWrsBw6JKzokMuHQmsxsf1vR3WO4I2V6pPiH
-         +nmcfikJ0PGFY7y0znooGNYsKJvTRouxBW41awPznX6eZq2oh/GnNiAxFUwZDPt6nI
-         I/0+aNJzSfmFUsVJCCNqEfxAGoMU/NdauWtuVt8tqfi0qHcf/ro9pPrbBdv3taTugH
-         QoQBX+YLvROHQ==
+        b=JiCO87Rp8XnINWLuuawmn56wsYBYQk6GDkU+eK975BM9GEIr/EBPF5ucmvbRCVymf
+         arejFMs4LfwJp4TdnkM4WOksYsylgE2n55kE4aKZKdlNcU56fUA2DfY/cqd6I1FA2j
+         L4e2C4+wVIJrJKg9MozXnuDbBC3AqZqbMbMiyIh7WSRBGeTku2Oz9It5syiTtjZjLt
+         sWfp+NYsEt+Z8/06HxV5ujBCGFi+Q2McJogZZGb2Mdw2JSa8U6dlvniEggo2IiLtqq
+         26KQFnd+i99gE8JxIYnmQlx8b4z27qXelhtRWD4sEBqe2cvVXgIwbeSE1grh7w0MOB
+         67oUx8wgIizog==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add device-tree binding documentation for the XUSB device mode controller
-present on Tegra210 and Tegra186 SoC. This controller supports the USB 3.0
-specification.
+If usb-role-switch property is present in USB 2 port, register
+usb-role-switch to receive usb role changes.
 
 Signed-off-by: Nagarjuna Kristam <nkristam@nvidia.com>
-Reviewed-by: Rob Herring <robh@kernel.org>
-Acked-by: Thierry Reding <treding@nvidia.com>
 ---
 V4:
- - No changes.
+ - Updated function name in debug messages as suggested by Thierry.
+ - Added owner info to port->dev during USB role switch registration.
+---
 V3:
- - Added Reviewed-by and Acked-by updates to commit message.
+ - Driver aborts if usb-role-switch is not added in dt forotg/peripheral
+   roles.
+ - Added role name strings instead of enum values in debug prints.
+ - Updated arguments and variable allignments as per Thierry inputs.
 ---
 V2:
- - used enum instead of oneOf and const.
- - Moved reg, reg-names, clocks, clock-names to property section from allOf.
- - Limited allOf to min and max items based on soc.
- - Updated description for power-domains.
- - Added V1 reference
+ - Removed dev_set_drvdata for port->dev.
+ - Added of_platform_depopulate during error handling and driver removal.
 ---
-V1
- - This document is yaml version of [1], with difference of usb-role-switch
-   removal.
-[1] https://patchwork.kernel.org/patch/11156253/ 
----
- .../devicetree/bindings/usb/nvidia,tegra-xudc.yaml | 190 +++++++++++++++++++++
- 1 file changed, 190 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/usb/nvidia,tegra-xudc.yaml
+ drivers/phy/tegra/Kconfig |  1 +
+ drivers/phy/tegra/xusb.c  | 67 +++++++++++++++++++++++++++++++++++++++++++++++
+ drivers/phy/tegra/xusb.h  |  3 +++
+ 3 files changed, 71 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/usb/nvidia,tegra-xudc.yaml b/Documentation/devicetree/bindings/usb/nvidia,tegra-xudc.yaml
-new file mode 100644
-index 0000000..b84ed8e
---- /dev/null
-+++ b/Documentation/devicetree/bindings/usb/nvidia,tegra-xudc.yaml
-@@ -0,0 +1,190 @@
-+# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: "http://devicetree.org/schemas/usb/nvidia,tegra-xudc.yaml#"
-+$schema: "http://devicetree.org/meta-schemas/core.yaml#"
+diff --git a/drivers/phy/tegra/Kconfig b/drivers/phy/tegra/Kconfig
+index f9817c3..df07c4d 100644
+--- a/drivers/phy/tegra/Kconfig
++++ b/drivers/phy/tegra/Kconfig
+@@ -2,6 +2,7 @@
+ config PHY_TEGRA_XUSB
+ 	tristate "NVIDIA Tegra XUSB pad controller driver"
+ 	depends on ARCH_TEGRA
++	select USB_CONN_GPIO
+ 	help
+ 	  Choose this option if you have an NVIDIA Tegra SoC.
+ 
+diff --git a/drivers/phy/tegra/xusb.c b/drivers/phy/tegra/xusb.c
+index f98ec39..0fdbaa2 100644
+--- a/drivers/phy/tegra/xusb.c
++++ b/drivers/phy/tegra/xusb.c
+@@ -541,6 +541,11 @@ static int tegra_xusb_port_init(struct tegra_xusb_port *port,
+ 
+ static void tegra_xusb_port_unregister(struct tegra_xusb_port *port)
+ {
++	if (!IS_ERR_OR_NULL(port->usb_role_sw)) {
++		of_platform_depopulate(&port->dev);
++		usb_role_switch_unregister(port->usb_role_sw);
++	}
 +
-+title: Device tree binding for NVIDIA Tegra XUSB device mode controller (XUDC)
+ 	device_unregister(&port->dev);
+ }
+ 
+@@ -551,11 +556,59 @@ static const char *const modes[] = {
+ 	[USB_DR_MODE_OTG] = "otg",
+ };
+ 
++static const char * const usb_roles[] = {
++	[USB_ROLE_NONE]		= "none",
++	[USB_ROLE_HOST]		= "host",
++	[USB_ROLE_DEVICE]	= "device",
++};
 +
-+description:
-+  The Tegra XUDC controller supports both USB 2.0 HighSpeed/FullSpeed and
-+  USB 3.0 SuperSpeed protocols.
++static int tegra_xusb_role_sw_set(struct device *dev, enum usb_role role)
++{
++	dev_dbg(dev, "%s(): role %s\n", __func__, usb_roles[role]);
 +
-+maintainers:
-+  - Nagarjuna Kristam <nkristam@nvidia.com>
-+  - JC Kuo <jckuo@nvidia.com>
-+  - Thierry Reding <treding@nvidia.com>
++	return 0;
++}
 +
-+properties:
-+  compatible:
-+    items:
-+      - enum:
-+          - nvidia,tegra210-xudc # For Tegra210
-+          - nvidia,tegra186-xudc # For Tegra186
++static int tegra_xusb_setup_usb_role_switch(struct tegra_xusb_port *port)
++{
++	struct usb_role_switch_desc role_sx_desc = {
++		.fwnode = dev_fwnode(&port->dev),
++		.set = tegra_xusb_role_sw_set,
++	};
++	int err = 0;
 +
-+  reg:
-+    minItems: 2
-+    maxItems: 3
-+    items:
-+      - description: XUSB device controller registers
-+      - description: XUSB device PCI Config registers
-+      - description: XUSB device registers.
++	/*
++	 * USB role switch driver needs parent driver owner info. This is a
++	 * suboptimal solution. TODO: Need to revisit this in a follow-up patch
++	 * where an optimal solution is possible with changes to USB role
++	 * switch driver.
++	 */
++	port->dev.driver = devm_kzalloc(&port->dev,
++					sizeof(struct device_driver),
++					GFP_KERNEL);
++	port->dev.driver->owner	 = THIS_MODULE;
 +
-+  reg-names:
-+    minItems: 2
-+    maxItems: 3
-+    items:
-+      - const: base
-+      - const: fpci
-+      - const: ipfs
++	port->usb_role_sw = usb_role_switch_register(&port->dev,
++						     &role_sx_desc);
++	if (IS_ERR(port->usb_role_sw)) {
++		err = PTR_ERR(port->usb_role_sw);
++		dev_err(&port->dev, "failed to register USB role switch: %d",
++			err);
++		return err;
++	}
 +
-+  interrupts:
-+    maxItems: 1
-+    description: Must contain the XUSB device interrupt.
++	/* populate connector entry */
++	of_platform_populate(port->dev.of_node, NULL, NULL, &port->dev);
 +
-+  clocks:
-+    minItems: 4
-+    maxItems: 5
-+    items:
-+      - description: Clock to enable core XUSB dev clock.
-+      - description: Clock to enable XUSB super speed clock.
-+      - description: Clock to enable XUSB super speed dev clock.
-+      - description: Clock to enable XUSB high speed dev clock.
-+      - description: Clock to enable XUSB full speed dev clock.
++	return err;
++}
 +
-+  clock-names:
-+    minItems: 4
-+    maxItems: 5
-+    items:
-+     - const: dev
-+     - const: ss
-+     - const: ss_src
-+     - const: fs_src
-+     - const: hs_src
+ static int tegra_xusb_usb2_port_parse_dt(struct tegra_xusb_usb2_port *usb2)
+ {
+ 	struct tegra_xusb_port *port = &usb2->base;
+ 	struct device_node *np = port->dev.of_node;
+ 	const char *mode;
++	int err;
+ 
+ 	usb2->internal = of_property_read_bool(np, "nvidia,internal");
+ 
+@@ -572,6 +625,20 @@ static int tegra_xusb_usb2_port_parse_dt(struct tegra_xusb_usb2_port *usb2)
+ 		usb2->mode = USB_DR_MODE_HOST;
+ 	}
+ 
++	/* usb-role-switch property is mandatory for OTG/Peripheral modes */
++	if (usb2->mode == USB_DR_MODE_PERIPHERAL ||
++	    usb2->mode == USB_DR_MODE_OTG) {
++		if (of_property_read_bool(np, "usb-role-switch")) {
++			err = tegra_xusb_setup_usb_role_switch(port);
++			if (err < 0)
++				return err;
++		} else {
++			dev_err(&port->dev, "usb-role-switch not found for %s mode",
++				modes[usb2->mode]);
++			return -EINVAL;
++		}
++	}
 +
-+  power-domains:
-+    maxItems: 2
-+    items:
-+      - description: XUSBB(device) power-domain
-+      - description: XUSBA(superspeed) power-domain
+ 	usb2->supply = devm_regulator_get(&port->dev, "vbus");
+ 	return PTR_ERR_OR_ZERO(usb2->supply);
+ }
+diff --git a/drivers/phy/tegra/xusb.h b/drivers/phy/tegra/xusb.h
+index da94fcc..9f27899 100644
+--- a/drivers/phy/tegra/xusb.h
++++ b/drivers/phy/tegra/xusb.h
+@@ -12,6 +12,7 @@
+ #include <linux/workqueue.h>
+ 
+ #include <linux/usb/otg.h>
++#include <linux/usb/role.h>
+ 
+ /* legacy entry points for backwards-compatibility */
+ int tegra_xusb_padctl_legacy_probe(struct platform_device *pdev);
+@@ -266,6 +267,8 @@ struct tegra_xusb_port {
+ 	struct list_head list;
+ 	struct device dev;
+ 
++	struct usb_role_switch *usb_role_sw;
 +
-+  power-domain-names:
-+    maxItems: 2
-+    items:
-+      - const: dev
-+      - const: ss
-+
-+  nvidia,xusb-padctl:
-+    $ref: /schemas/types.yaml#/definitions/phandle-array
-+    description:
-+      phandle to the XUSB pad controller that is used to configure the USB pads
-+      used by the XUDC controller.
-+
-+  phys:
-+    minItems: 1
-+    description:
-+      Must contain an entry for each entry in phy-names.
-+      See ../phy/phy-bindings.txt for details.
-+
-+  phy-names:
-+    minItems: 1
-+    items:
-+      - const: usb2-0
-+      - const: usb2-1
-+      - const: usb2-2
-+      - const: usb2-3
-+      - const: usb3-0
-+      - const: usb3-1
-+      - const: usb3-2
-+      - const: usb3-3
-+
-+  avddio-usb-supply:
-+    description: PCIe/USB3 analog logic power supply. Must supply 1.05 V.
-+
-+  hvdd-usb-supply:
-+    description: USB controller power supply. Must supply 3.3 V.
-+
-+required:
-+  - compatible
-+  - reg
-+  - reg-names
-+  - interrupts
-+  - clocks
-+  - clock-names
-+  - power-domains
-+  - power-domain-names
-+  - nvidia,xusb-padctl
-+  - phys
-+  - phy-names
-+
-+allOf:
-+  - if:
-+      properties:
-+        compatible:
-+          contains:
-+            enum:
-+              - nvidia,tegra210-xudc
-+    then:
-+      properties:
-+        reg:
-+          minItems: 3
-+        reg-names:
-+          minItems: 3
-+        clocks:
-+          minItems: 5
-+        clock-names:
-+          minItems: 5
-+      required:
-+        - avddio-usb-supply
-+        - hvdd-usb-supply
-+
-+  - if:
-+      properties:
-+        compatible:
-+          contains:
-+            enum:
-+              - nvidia,tegra186-xudc
-+    then:
-+      properties:
-+        reg:
-+          maxItems: 2
-+        reg-names:
-+          maxItems: 2
-+        clocks:
-+          maxItems: 4
-+        clock-names:
-+          maxItems: 4
-+
-+examples:
-+  - |
-+    #include <dt-bindings/clock/tegra210-car.h>
-+    #include <dt-bindings/gpio/tegra-gpio.h>
-+    #include <dt-bindings/interrupt-controller/arm-gic.h>
-+
-+    usb@700d0000 {
-+        compatible = "nvidia,tegra210-xudc";
-+        reg = <0x0 0x700d0000 0x0 0x8000>,
-+              <0x0 0x700d8000 0x0 0x1000>,
-+              <0x0 0x700d9000 0x0 0x1000>;
-+        reg-names = "base", "fpci", "ipfs";
-+
-+        interrupts = <GIC_SPI 44 IRQ_TYPE_LEVEL_HIGH>;
-+
-+        clocks = <&tegra_car TEGRA210_CLK_XUSB_DEV>,
-+                 <&tegra_car TEGRA210_CLK_XUSB_SS>,
-+                 <&tegra_car TEGRA210_CLK_XUSB_SSP_SRC>,
-+                 <&tegra_car TEGRA210_CLK_XUSB_FS_SRC>,
-+                 <&tegra_car TEGRA210_CLK_XUSB_HS_SRC>;
-+        clock-names = "dev", "ss", "ss_src", "fs_src", "hs_src";
-+
-+        power-domains = <&pd_xusbdev>, <&pd_xusbss>;
-+        power-domain-names = "dev", "ss";
-+
-+        nvidia,xusb-padctl = <&padctl>;
-+
-+        phys = <&micro_b>;
-+        phy-names = "usb2-0";
-+
-+        avddio-usb-supply = <&vdd_pex_1v05>;
-+        hvdd-usb-supply = <&vdd_3v3_sys>;
-+    };
+ 	const struct tegra_xusb_port_ops *ops;
+ };
+ 
 -- 
 2.7.4
 
