@@ -2,78 +2,77 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B4586151935
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Feb 2020 12:05:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 443BD151939
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Feb 2020 12:05:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727226AbgBDLEk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 4 Feb 2020 06:04:40 -0500
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:58156 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727201AbgBDLEi (ORCPT
+        id S1727240AbgBDLFh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 4 Feb 2020 06:05:37 -0500
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:33167 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726845AbgBDLFg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Feb 2020 06:04:38 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=vY3Qq+U7Jn5c6tt2grI3S9+S5kIDQYwY4zy6sNCZABs=; b=MOxQIAQicikK15Kj0qop8iY1C
-        g5bDWw+WyvmkNNXYQWpVnXHKpJEIwDQ6I3XgKA3rkOAXFL3vmkmU8huVXdo1mghxMVl4cQmb4SiDZ
-        Hh3CphlWzl3rDRmIPIUNYmR308WNmMF4KJTQafrd3OOTXo8qhBQXJw0qnU4Val6hZH09c=;
-Received: from fw-tnat-cam2.arm.com ([217.140.106.50] helo=fitzroy.sirena.org.uk)
-        by heliosphere.sirena.org.uk with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1iyw0O-0007Ky-Je; Tue, 04 Feb 2020 11:04:32 +0000
-Received: by fitzroy.sirena.org.uk (Postfix, from userid 1000)
-        id EE06DD01A54; Tue,  4 Feb 2020 11:04:31 +0000 (GMT)
-Date:   Tue, 4 Feb 2020 11:04:31 +0000
-From:   Mark Brown <broonie@kernel.org>
-To:     Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Cc:     alsa-devel@alsa-project.org, sfr@canb.auug.org.au,
-        lee.jones@linaro.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] ASoC: wcd934x: Add missing COMMON_CLK dependency
-Message-ID: <20200204110431.GC3897@sirena.org.uk>
-References: <20200204102428.26021-1-srinivas.kandagatla@linaro.org>
+        Tue, 4 Feb 2020 06:05:36 -0500
+Received: by mail-pg1-f194.google.com with SMTP id 6so9508669pgk.0;
+        Tue, 04 Feb 2020 03:05:36 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=GxykDE+DcSQ1crfYhERdL+BbFmIFCQ49WGPIUjHJPuI=;
+        b=PjRmx6CLUbaArMl7uReXuzNpRv2gR74IIlHJCMoKq1qCFS6axGVFPV2TJGlq1C+3N0
+         7bmCb2k5wItR1sZ7GtTNnFO5OULU6VbGPODrBq4NFI7QF6K8ZhP4wcjTxA4eAakPWZ2C
+         FtMmYpNsbW0XS9nxOlwg0GcugRb4CNfOdTWYi7wR8vvAkOV+S3OXZyqPbWjJI5iMARt6
+         cqYhJqkBK9nb0FQA54S0EZjue6wnkVy3CxVeB1f3Zu8JbS7cMenEDDtBAALQBmKDKpFN
+         pM8OZU293sEX9mYR15FBqyNVTJFpKPee5kwRsnLPpGnvKoOKN/V2n/pl4T8E7UkQuPIW
+         wNjQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=GxykDE+DcSQ1crfYhERdL+BbFmIFCQ49WGPIUjHJPuI=;
+        b=aprHGfbNWlwzeEv+rsVqDoIbkZkYIUKrPXE99CF5GcO+qzXmGI/ChDfJV2rEiN30bz
+         CfnFTJBCyDG2iemMjjgRG7hAa77hHHnCH/EN0yxKYrL1gSnbRj13MBtCCxB2+dyAeiaj
+         NdBXnU53kIB/sJshQQT4GzFovLEB6Cc+KSHJhwF8kGNEOCfRFnKAsk5AdbnBOJnBeMmP
+         UR/3wGcpJyeipQdia+il0wsDU+iMB5D0X7yK+biVIu/x/QJatYyhd8o8ME9ZCQ2ucMku
+         ksZKg1uyuc8wh0TW2YMxaQqg3TtvhtcIDnTprs8LtCJb7pEye36jk0ZhyJydVHZ3u+Y6
+         /9DA==
+X-Gm-Message-State: APjAAAW6Kim/kGTbS3ylrcUeaWKt774xFQcJOx14oKNYd/PwzdIsdrHT
+        GwDlRI4OxR2uU32wRtNlrrN/CD6/AwJQ3nKNGqxF+akSqYQ=
+X-Google-Smtp-Source: APXvYqx2OK4gV7xlnE3taG7vOCZL2ndsFgf07QjvdlOnwm6k0NWOdOBJooLzABA1idpH5vCPxgWevny8Z+JU3e8kh7E=
+X-Received: by 2002:a62:52d0:: with SMTP id g199mr29444152pfb.241.1580814336043;
+ Tue, 04 Feb 2020 03:05:36 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="3m6ZAtymzEdXvUYk"
-Content-Disposition: inline
-In-Reply-To: <20200204102428.26021-1-srinivas.kandagatla@linaro.org>
-X-Cookie: Programming is an unnatural act.
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20200203223003.4567-1-eajames@linux.ibm.com>
+In-Reply-To: <20200203223003.4567-1-eajames@linux.ibm.com>
+From:   Andy Shevchenko <andy.shevchenko@gmail.com>
+Date:   Tue, 4 Feb 2020 13:05:28 +0200
+Message-ID: <CAHp75VfHAS46-kMyg7Ky4jn7zmkht6wd9ayCfn+rrO0R6aNr6A@mail.gmail.com>
+Subject: Re: [PATCH v2] spi: Add FSI-attached SPI controller driver
+To:     Eddie James <eajames@linux.ibm.com>
+Cc:     linux-spi <linux-spi@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Mark Brown <broonie@kernel.org>, Joel Stanley <joel@jms.id.au>,
+        Andrew Jeffery <andrew@aj.id.au>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Tue, Feb 4, 2020 at 12:30 AM Eddie James <eajames@linux.ibm.com> wrote:
+>
+> There exists a set of SPI controllers on some POWER processors that may
+> be accessed through the FSI bus. Add a driver to traverse the FSI CFAM
+> engine that can access and drive the SPI controllers. This driver would
+> typically be used by a baseboard management controller (BMC).
+>
+> The SPI controllers operate by means of programming a sequencing engine
+> which automatically manages the usual SPI protocol buses. The driver
+> programs each transfer into the sequencer as various operations
+> specifying the slave chip and shifting data in and out on the lines.
 
---3m6ZAtymzEdXvUYk
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Some comments left unsettled in v1, thus applicable here.
 
-On Tue, Feb 04, 2020 at 10:24:28AM +0000, Srinivas Kandagatla wrote:
-> Looks like some platforms are not yet using COMMON CLK.
->=20
-> PowerPC allyesconfig failed with below error in next
-
-This doesn't apply against current code, please check and resend.
-
---3m6ZAtymzEdXvUYk
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl45T78ACgkQJNaLcl1U
-h9CV4gf8DoN1L+3ztg3WWNOFL83oV1ry1PG0ADTcRk9kGu6Bvgko4UJq906Df5Or
-eptXPYaalkBhWiCTSb8BVHB4zyOCgMRqdOIBa6II2emQStrWOtbP5PEdMuPxuuie
-1jMV5D3Tio6GZ/RWQmNhSEZrmizFtKqF9iLFGl21FIu3NtCvrPR7+8V1G8GUsoR8
-UntEZCkHvy+QKycJgrZHrAlbRi7fguvG/dVHV7GsKLg9PKkobU1NGVXYfa5hqDTf
-oi8gg1xK0Sparvh223uvCYST/QX/w3a+/dvWAJIqPcG0ke9hjtTUPfIxkZMT7W5U
-GbzCVPWpVOvL3xQB2yyd5h+h3zH/5g==
-=42ud
------END PGP SIGNATURE-----
-
---3m6ZAtymzEdXvUYk--
+-- 
+With Best Regards,
+Andy Shevchenko
