@@ -2,127 +2,94 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 85E3D151A98
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Feb 2020 13:36:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C9230151A9C
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Feb 2020 13:37:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727215AbgBDMgg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 4 Feb 2020 07:36:36 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:58906 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727119AbgBDMgg (ORCPT
+        id S1727272AbgBDMhe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 4 Feb 2020 07:37:34 -0500
+Received: from mx08-00178001.pphosted.com ([91.207.212.93]:17300 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727126AbgBDMhe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Feb 2020 07:36:36 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=GGceJ4EtvvsDv6X5qZjSy1jFYQR9Lzc9wQn41fpyh+4=; b=KkENac0lFLhC88vzKh62FZvw8p
-        cBYiVh7a/DwxGk+5Zj8sS0RV2A4tOxN3KpNK7hveNbnARjIBU60UqyZdu+H9PG98viZKNGNpTKTwD
-        WDBjfzx0kfuwkRui6wL4l3TcFaHVK1pIP8jJ0St1V76L3ZHKzfr8wNhH22V/haCWQjIY86i6Uco9P
-        WNf0up7nb7nuvccEQC7C8O3O6s2gnyiqOUa3v9gHg+nrnemCqlAr26xo6pMLMLZTBNDJtZoWgDNv0
-        2MXQkuwEB1FIos0n/BiWNRuahJwDrMWSlJHJddn8JBceNOtMrNSWnbdzejRwHevIo7beX7nyyk64W
-        5pYVugFw==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1iyxRP-0006wS-4j; Tue, 04 Feb 2020 12:36:31 +0000
-Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (Client did not present a certificate)
-        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id B9126300E0C;
-        Tue,  4 Feb 2020 13:34:43 +0100 (CET)
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 3BA8B2024714C; Tue,  4 Feb 2020 13:36:29 +0100 (CET)
-Date:   Tue, 4 Feb 2020 13:36:29 +0100
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Waiman Long <longman@redhat.com>
-Cc:     Ingo Molnar <mingo@redhat.com>, Will Deacon <will.deacon@arm.com>,
-        linux-kernel@vger.kernel.org, Bart Van Assche <bvanassche@acm.org>
-Subject: Re: [PATCH v5 6/7] locking/lockdep: Reuse freed chain_hlocks entries
-Message-ID: <20200204123629.GO14914@hirez.programming.kicks-ass.net>
-References: <20200203164147.17990-1-longman@redhat.com>
- <20200203164147.17990-7-longman@redhat.com>
+        Tue, 4 Feb 2020 07:37:34 -0500
+Received: from pps.filterd (m0046660.ppops.net [127.0.0.1])
+        by mx07-00178001.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 014CS5JR011049;
+        Tue, 4 Feb 2020 13:37:20 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=st.com; h=from : to : cc : subject
+ : date : message-id : content-type : content-id :
+ content-transfer-encoding : mime-version; s=STMicroelectronics;
+ bh=j6Gu6X4AdfXr88JUQjVDd6lirRJ23U4rW0VUUwrSU7w=;
+ b=Z4N0jj36W8Vt1DmKvyH5ye5ahyNX0/aVmDkOJloX3vMrWE9fIBUGnrfK+GKKCizxQIFq
+ EbLU+3xii1fDgNi0QeJbaSKLQA41m7q4N0LAa5B2QsyetTPkguKdMpKV/GjEQJnMgQa1
+ o+xQlcV7mR7Tl5kFwNjGNDoogJ1g75y01WFpiRxvupf98Y+/L7Sh1pTMINaAW+lcP9tX
+ zJUVLDdG9SEzpMRg7j5TWgYjlu6IWpQ/WeIsTwOMmvj7g/4AEohXFV/iy+Kf0SMwZFZE
+ nVAJq4TgE7fC3Fy+dqs5AYlGYNFG2HBKrQtF7oN2t6zZ8b9UlzwVpk91GA0B3urga2FE OQ== 
+Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
+        by mx07-00178001.pphosted.com with ESMTP id 2xvybe1fms-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 04 Feb 2020 13:37:20 +0100
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 865D410002A;
+        Tue,  4 Feb 2020 13:37:15 +0100 (CET)
+Received: from Webmail-eu.st.com (sfhdag6node1.st.com [10.75.127.16])
+        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 5A2182BE237;
+        Tue,  4 Feb 2020 13:37:15 +0100 (CET)
+Received: from SFHDAG6NODE3.st.com (10.75.127.18) by SFHDAG6NODE1.st.com
+ (10.75.127.16) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Tue, 4 Feb
+ 2020 13:37:15 +0100
+Received: from SFHDAG6NODE3.st.com ([fe80::d04:5337:ab17:b6f6]) by
+ SFHDAG6NODE3.st.com ([fe80::d04:5337:ab17:b6f6%20]) with mapi id
+ 15.00.1473.003; Tue, 4 Feb 2020 13:37:15 +0100
+From:   Patrice CHOTARD <patrice.chotard@st.com>
+To:     Arnd Bergmann <arnd@arndb.de>,
+        "khilman@baylibre.com" <khilman@baylibre.com>,
+        Olof Johansson <olof@lixom.net>
+CC:     Linux ARM Mailing List <linux-arm-kernel@lists.infradead.org>,
+        "Linux Kernel Mailing List" <linux-kernel@vger.kernel.org>,
+        "arm@kernel.org" <arm@kernel.org>,
+        Patrice CHOTARD <patrice.chotard@st.com>
+Subject: [GIT PULL] STi DT update for v5.6 round 1
+Thread-Topic: [GIT PULL] STi DT update for v5.6 round 1
+Thread-Index: AQHV21fUlvmf1pIO+EOSI+9it4Ghsg==
+Date:   Tue, 4 Feb 2020 12:37:14 +0000
+Message-ID: <c6f76adc-b32f-a64f-c7b1-417a26de1667@st.com>
+Accept-Language: fr-FR, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+user-agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.1
+x-ms-exchange-messagesentrepresentingtype: 1
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.75.127.44]
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <46CB922553A16C469783DA69C0F2ED22@st.com>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200203164147.17990-7-longman@redhat.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.572
+ definitions=2020-02-04_03:2020-02-04,2020-02-04 signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 03, 2020 at 11:41:46AM -0500, Waiman Long wrote:
-> +	if (unlikely(size < 2))
-> +		return; // XXX leak!
-
-Stuck this on top...
-
---- a/kernel/locking/lockdep.c
-+++ b/kernel/locking/lockdep.c
-@@ -2631,7 +2631,8 @@ struct lock_chain lock_chains[MAX_LOCKDE
- static DECLARE_BITMAP(lock_chains_in_use, MAX_LOCKDEP_CHAINS);
- static u16 chain_hlocks[MAX_LOCKDEP_CHAIN_HLOCKS];
- unsigned long nr_zapped_lock_chains;
--unsigned int nr_free_chain_hlocks;	/* Free cfhain_hlocks in buckets */
-+unsigned int nr_free_chain_hlocks;	/* Free chain_hlocks in buckets */
-+unsigned int nr_lost_chain_hlocks;	/* Lost chain_hlocks */
- unsigned int nr_large_chain_blocks;	/* size > MAX_CHAIN_BUCKETS */
- 
- /*
-@@ -2718,8 +2719,17 @@ static inline void add_chain_block(int o
- 	int bucket = size_to_bucket(size);
- 	int next = chain_block_buckets[bucket];
- 
--	if (unlikely(size < 2))
--		return; // XXX leak!
-+	if (unlikely(size < 2)) {
-+		/*
-+		 * We can't store single entries on the freelist. Leak them.
-+		 *
-+		 * One possible way out would be to uniquely mark them, other
-+		 * than with CHAIN_BLK_FLAG, such that we can recover them when
-+		 * the block before it is re-added.
-+		 */
-+		nr_lost_chain_hlocks++;
-+		return;
-+	}
- 
- 	init_chain_block(offset, next, bucket, size);
- 	chain_block_buckets[bucket] = offset;
-@@ -2798,8 +2808,8 @@ static int alloc_chain_hlocks(int req)
- 
- search:
- 	/*
--	 * linear search in the 'dump' bucket; look for an exact match or the
--	 * largest block.
-+	 * linear search of the variable sized freelist; look for an exact
-+	 * match or the largest block.
- 	 */
- 	for_each_chain_block(0, prev, curr, next) {
- 		size = chain_block_size(curr);
---- a/kernel/locking/lockdep_internals.h
-+++ b/kernel/locking/lockdep_internals.h
-@@ -141,6 +141,7 @@ extern unsigned int nr_hardirq_chains;
- extern unsigned int nr_softirq_chains;
- extern unsigned int nr_process_chains;
- extern unsigned int nr_free_chain_hlocks;
-+extern unsigned int nr_lost_chain_hlocks;
- extern unsigned int nr_large_chain_blocks;
- 
- extern unsigned int max_lockdep_depth;
---- a/kernel/locking/lockdep_proc.c
-+++ b/kernel/locking/lockdep_proc.c
-@@ -278,9 +278,11 @@ static int lockdep_stats_show(struct seq
- #ifdef CONFIG_PROVE_LOCKING
- 	seq_printf(m, " dependency chains:             %11lu [max: %lu]\n",
- 			lock_chain_count(), MAX_LOCKDEP_CHAINS);
--	seq_printf(m, " dependency chain hlocks:       %11lu [max: %lu]\n",
--			MAX_LOCKDEP_CHAIN_HLOCKS - nr_free_chain_hlocks,
-+	seq_printf(m, " dependency chain hlocks used:  %11lu [max: %lu]\n",
-+			MAX_LOCKDEP_CHAIN_HLOCKS - (nr_free_chain_hlocks - nr_lost_chain_hlocks),
- 			MAX_LOCKDEP_CHAIN_HLOCKS);
-+	seq_printf(m, " dependency chain hlocks free:  %11lu\n", nr_free_chain_hlocks);
-+	seq_printf(m, " dependency chain hlocks lost:  %11lu\n", nr_lost_chain_hlocks);
- #endif
- 
- #ifdef CONFIG_TRACE_IRQFLAGS
+SGkgQXJuZCwgT2xvZiwgS2V2aW4NCg0KUGxlYXNlIGZpbmQgU1RpIGR0IHVwZGF0ZSBmb3IgdjUu
+NiByb3VuZCAxOg0KDQpUaGUgZm9sbG93aW5nIGNoYW5nZXMgc2luY2UgY29tbWl0IGQ1MjI2ZmE2
+ZGJhZTA1NjllZTQzZWNmYzA4YmRjZDY3NzBmYzQ3NTU6DQoNCg0KwqAgTGludXggNS41ICgyMDIw
+LTAxLTI2IDE2OjIzOjAzIC0wODAwKQ0KDQphcmUgYXZhaWxhYmxlIGluIHRoZSBHaXQgcmVwb3Np
+dG9yeSBhdDoNCg0KwqAgZ2l0QGdpdG9saXRlLmtlcm5lbC5vcmc6cHViL3NjbS9saW51eC9rZXJu
+ZWwvZ2l0L3BjaG90YXJkL3N0aS5naXQgdGFncy9zdGktZHQtZm9yLTUuNi1yb3VuZDENCg0KZm9y
+IHlvdSB0byBmZXRjaCBjaGFuZ2VzIHVwIHRvIDIxZWViYWU5YTExZmYxOGZlNmQ2YjQzYWRjY2Fk
+ZDUzM2FiZGYwZDY6DQoNCsKgIEFSTTogc3RpaHh4eC1iMjEyMC5kdHNpOiBmaXh1cCBzb3VuZCBm
+cmFtZS1pbnZlcnNpb24gKDIwMjAtMDItMDQgMTE6MjE6MzcgKzAxMDApDQoNCi0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0NClNU
+aSBkdCBmaXhlczoNCi0tLS0tLS0tLS0tLS0NCsKgIC0gcmVtb3ZlIGRlcHJlY2F0ZWQgU3lub3Bz
+eXMgUEhZIGR0IHByb3BlcnRpZXMNCsKgIC0gZml4IHNvdW5kIGZyYW1lLWludmVyc2lvbiBwcm9w
+ZXJ0eQ0KDQotLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tDQpLdW5pbm9yaSBNb3JpbW90byAoMSk6DQrCoMKgwqDCoMKgIEFSTTog
+c3RpaHh4eC1iMjEyMC5kdHNpOiBmaXh1cCBzb3VuZCBmcmFtZS1pbnZlcnNpb24NCg0KUGF0cmlj
+ZSBDaG90YXJkICgxKToNCsKgwqDCoMKgwqAgQVJNOiBkdHM6IHN0aWg0MTAtYjIyNjA6IFJlbW92
+ZSBkZXByZWNhdGVkIHNucHMgUEhZIHByb3BlcnRpZXMNCg0KwqBhcmNoL2FybS9ib290L2R0cy9z
+dGloNDEwLWIyMjYwLmR0c8KgIHwgMyAtLS0NCsKgYXJjaC9hcm0vYm9vdC9kdHMvc3RpaHh4eC1i
+MjEyMC5kdHNpIHwgMiArLQ0KwqAyIGZpbGVzIGNoYW5nZWQsIDEgaW5zZXJ0aW9uKCspLCA0IGRl
+bGV0aW9ucygtKQ0K
