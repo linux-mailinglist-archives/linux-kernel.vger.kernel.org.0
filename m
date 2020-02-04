@@ -2,68 +2,70 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4B74E151ABF
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Feb 2020 13:48:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D992F151AB8
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Feb 2020 13:47:52 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727286AbgBDMsI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 4 Feb 2020 07:48:08 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:36082 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727127AbgBDMsI (ORCPT
+        id S1727210AbgBDMrv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 4 Feb 2020 07:47:51 -0500
+Received: from fllv0015.ext.ti.com ([198.47.19.141]:46096 "EHLO
+        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727126AbgBDMrv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Feb 2020 07:48:08 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=5fwobFPVYN213YdlVAmil0OJKWX6BVgg2KRIst+6wT8=; b=k3tYxhUQAvDE80kMRro9n/8rhb
-        WpCetLg2fS9WIEGYedeVBhOPhST+lNVq+Bnp8aYadyVVcHhZ+Mjv7/CGBM2sGZDoqlyJFT2/qKTUJ
-        7p704Un/oNZgpsE3tretoQ9/9OBfrG8lEIdsiN8j8YFtHlR9x8A0MCT23Izy/PQMtiyspXilhD0Gm
-        He9PRPZxvB4fvThevPU8QHMlp5Q1fIX8I0oRA1uB9k/wDFTj9fJU1GIEwbiNZCIOb0N0ZI71Z0HZ7
-        Xjv2LoohEZ3bj1KzlY9P+1Axw/qFRgUVAv4Ft8w9tBS1QuJDKq4W0kNsa+L3Dow13COP4PAdj0wbM
-        QqpJzcVA==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1iyxcX-0002J5-Ln; Tue, 04 Feb 2020 12:48:01 +0000
-Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (Client did not present a certificate)
-        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 59A3E304C21;
-        Tue,  4 Feb 2020 13:46:14 +0100 (CET)
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id CE5042B76A662; Tue,  4 Feb 2020 13:47:59 +0100 (CET)
-Date:   Tue, 4 Feb 2020 13:47:59 +0100
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Waiman Long <longman@redhat.com>
-Cc:     Ingo Molnar <mingo@redhat.com>, Will Deacon <will.deacon@arm.com>,
-        linux-kernel@vger.kernel.org, Bart Van Assche <bvanassche@acm.org>
-Subject: Re: [PATCH v5 7/7] locking/lockdep: Add a fast path for chain_hlocks
- allocation
-Message-ID: <20200204124759.GP14914@hirez.programming.kicks-ass.net>
-References: <20200203164147.17990-1-longman@redhat.com>
- <20200203164147.17990-8-longman@redhat.com>
+        Tue, 4 Feb 2020 07:47:51 -0500
+Received: from fllv0035.itg.ti.com ([10.64.41.0])
+        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 014ClnAv107979;
+        Tue, 4 Feb 2020 06:47:49 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1580820469;
+        bh=P9x1aKSTPkxt8ox7A7M8oBeeGqzeXPx6rRSYJ/eVTck=;
+        h=From:To:CC:Subject:Date;
+        b=ixgagomzmJY8lXOnho4tIUH7II0iBQR+kQyarz/4Iv5Ut0XVO8pxvisVRVhW+3nXC
+         q/WfokUm34iL7fc76G2kKrt/kc2lW/PiCNGrDdkH+9E8zaT4AOjl6fLBVsFO14ddK6
+         TxMJfDD6Nt83nXn6uruNN6AxUhG1RFyI9GQZYu2A=
+Received: from DFLE114.ent.ti.com (dfle114.ent.ti.com [10.64.6.35])
+        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTP id 014ClnF5014117;
+        Tue, 4 Feb 2020 06:47:49 -0600
+Received: from DFLE102.ent.ti.com (10.64.6.23) by DFLE114.ent.ti.com
+ (10.64.6.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Tue, 4 Feb
+ 2020 06:47:48 -0600
+Received: from lelv0326.itg.ti.com (10.180.67.84) by DFLE102.ent.ti.com
+ (10.64.6.23) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
+ Frontend Transport; Tue, 4 Feb 2020 06:47:48 -0600
+Received: from a0132425.dhcp.ti.com (ileax41-snat.itg.ti.com [10.172.224.153])
+        by lelv0326.itg.ti.com (8.15.2/8.15.2) with ESMTP id 014ClgcY095019;
+        Tue, 4 Feb 2020 06:47:45 -0600
+From:   Vignesh Raghavendra <vigneshr@ti.com>
+To:     Mark Brown <broonie@kernel.org>
+CC:     Vignesh Raghavendra <vigneshr@ti.com>, <linux-spi@vger.kernel.org>,
+        <linux-omap@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: [PATCH 0/2] spi: spi-omap2-mcspi: Add DMA support for AM65x
+Date:   Tue, 4 Feb 2020 18:18:14 +0530
+Message-ID: <20200204124816.16735-1-vigneshr@ti.com>
+X-Mailer: git-send-email 2.25.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200203164147.17990-8-longman@redhat.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 03, 2020 at 11:41:47AM -0500, Waiman Long wrote:
-> When alloc_chain_hlocks() is called, the most likely scenario is
-> to allocate from the primordial chain block which holds the whole
-> chain_hlocks[] array initially. It is the primordial chain block if its
-> size is bigger than MAX_LOCK_DEPTH. As long as the number of entries left
-> after splitting is still bigger than MAX_CHAIN_BUCKETS it will remain
-> in bucket 0. By splitting out a sub-block at the end, we only need to
-> adjust the size without changing any of the existing linkage information.
-> This optimized fast path can reduce the latency of allocation requests.
-> 
-> This patch does change the order by which chain_hlocks entries are
-> allocated. The original code allocates entries from the beginning of
-> the array. Now it will be allocated from the end of the array backward.
+This patch series adds DMA support for McSPI on AM65x.
+First patch addresses a limitationn on AM65x where transfers have to be
+<4K per DMA request and second patch handles possible EPROBE_DEFER when
+requesting DMA channels
 
-Cute; but why do we care? Is there any measurable performance indicator?
+Vignesh Raghavendra (2):
+  spi: spi-omap2-mcspi: Handle DMA size restriction on AM65x
+  spi: spi-omap2-mcspi: Support probe deferral for DMA channels
+
+ drivers/spi/spi-omap2-mcspi.c                 | 103 +++++++++++-------
+ include/linux/platform_data/spi-omap2-mcspi.h |   1 +
+ 2 files changed, 65 insertions(+), 39 deletions(-)
+
+-- 
+2.25.0
+
