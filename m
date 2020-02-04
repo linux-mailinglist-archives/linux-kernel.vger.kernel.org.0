@@ -2,135 +2,102 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 89F9E151963
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Feb 2020 12:13:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7A0F6151965
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Feb 2020 12:13:37 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727317AbgBDLMb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 4 Feb 2020 06:12:31 -0500
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:35468 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727176AbgBDLMU (ORCPT
+        id S1727349AbgBDLMt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 4 Feb 2020 06:12:49 -0500
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:45252 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726917AbgBDLMs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Feb 2020 06:12:20 -0500
-Received: by mail-pl1-f196.google.com with SMTP id g6so7150295plt.2;
-        Tue, 04 Feb 2020 03:12:20 -0800 (PST)
+        Tue, 4 Feb 2020 06:12:48 -0500
+Received: by mail-wr1-f68.google.com with SMTP id a6so22438137wrx.12
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Feb 2020 03:12:47 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=aUTbPK5hqdnfd6ET5RB1/UVTtKvhLEvaensAdf9wtlo=;
-        b=c0BPASd6egTIHFc0ehictqlGn7fhqzelxxJ0T1vA+XJrKjDeB+KiAmlPkbp/npDJAa
-         VGZawmRW1GnoO6tuqulxfGl2nO63w1NFKE0H9KcQRNYTZjO5fGuAVfVLnXP1juO3UdeK
-         Ob74xY5LCwGVUMp+/KZiYFzY1meSoXh8fIB1nFDscdnI2zttSTCnnzZcZbAbCPdY3t0I
-         8A9W3CGPdoBwbZk+0Fb+VdBHm23KAwSb3CiRU+Ad1e3UCsycj2bCosEVAbNMsIxpIEos
-         ZMw6nhk6s6vmPi91rGS185RmSPnQ3CHJh/QP4B3fqyNibCLDkXwt/HUyZa/yIsMp3PX5
-         trxA==
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=euRgUOHMwfJN66fku2jYxRm29ftSwRr6fu8SbqY0eAc=;
+        b=QR9hOFh8+DQ+Wvt/lNZuDlLWHuHNVU2IaRasepwiUHsedECyFbyY48yqEPWM46xj2j
+         s8MB5JYLY6Q60MBOot/ORXhodw2GJm/Ox/iyFC68DjNH/LpQhF6OUWUQJj9EEcZMU2q1
+         /4bBog0EPt0RpSrgYJtvESydtn3pYJhLHVOd+2Cuw9PatT8UMB3jEd4pPUEbzA7wwHWt
+         mIOQLUGGL/hIULvoI7fl9eW0jSpDoVgoaUphCna44YwSA91qE5XxSRTjyZ7rZN0VM4Ud
+         V0ghFEnNcZFYzVPsNQCN8LWBp6RQNHomFMKolXW61dReQbALB/w7HuQMJztKGg8UxxiN
+         ToaA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=aUTbPK5hqdnfd6ET5RB1/UVTtKvhLEvaensAdf9wtlo=;
-        b=ClgNOBpNR0Z1gYh1lTwfTqdHIvADXsozFfgnkt1a6IRFM7kE97bA9+1UIhDXpe9Ua2
-         RS0IoSZIFXWPnxP1av71WpVwYPCTURcCCSsPyieZHP/r7Uu8dD6NClXaEDRLGCstcDSv
-         LRo7rbhLO4qqGK+bFQ8eoKw3gEvw2JavVY/hVj+hIr7kyWJw5DlNVT49n2AHw+RPWG0r
-         cm26W2lNu7j+1DWDtOR8PGhiYVaEMmgn5K0AekQdGcD5tXRGpOWxwLvjebzA+SYjzCkG
-         FydXLEMxA5OBPwh/1VYJzntKgExAzedrzuDnrF2AVMez+3a4TQT5QlAdP+lM+0JyYPOO
-         YZMA==
-X-Gm-Message-State: APjAAAW0VEIbN/2VYETA8/6rDTyPRctHNsYUiAimorVyJeiwGYtTOAkp
-        g3fz7UR6Eb+VvfoikLdDhfuSZ7343LWPXP1Qt+c=
-X-Google-Smtp-Source: APXvYqwkf/ea/Wg90UbHxH7UJFNU4h1aMvWa3nd+PSwmThksvVrGDx/IvVcE1u2+bh1CqFFDH983rmxQ9B+A77nPTXs=
-X-Received: by 2002:a17:902:d20c:: with SMTP id t12mr29769700ply.18.1580814740109;
- Tue, 04 Feb 2020 03:12:20 -0800 (PST)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=euRgUOHMwfJN66fku2jYxRm29ftSwRr6fu8SbqY0eAc=;
+        b=FbCUjzdxw2+WstPgIuzN0+LzV1+ZO1M0t9hvgKPMjPX36bvYVb+w3doGvC86KrBOly
+         UDjKR9AU2CSNZPzr+CCoDv2/L75DXTKBWv9ne5mWONGJ8twhy76H8TN8WmHlDrFxWRC0
+         LvW+yiYo1BA/0WbeRpMCKOjqzDWLDLaNxrz74CRPKFr2YqIuxHE+ylFfzT22MiF33Y5D
+         ngkUbzSlCSloZwll5SX8yHuxnoq3Q9SS/0jldRLeqoOUkKy87I2SeW4Ii8qaof+/XaWn
+         1lpgIOb6tuB/vmBZ8notSmgqUFuq77vJ7Y16zd361k+X6roqiIF+dnFgvl4BK0QBrEUl
+         6ZYg==
+X-Gm-Message-State: APjAAAXhSfvn78euVKJX+SsvkT4i8l40Lf/CeXLW8yVrgj4xLREvRsvq
+        4IM47jDkFl2nrA8FXB/UG5WCqA==
+X-Google-Smtp-Source: APXvYqxJ3p0f3NqaYyzd6dHvDo+rS6RPnTDwxFF8uIb22oszcbFEPq5OjqcdifqgHTlmhog/UyIEhw==
+X-Received: by 2002:adf:ce86:: with SMTP id r6mr4772043wrn.327.1580814766507;
+        Tue, 04 Feb 2020 03:12:46 -0800 (PST)
+Received: from srini-hackbox.lan (cpc89974-aztw32-2-0-cust43.18-1.cable.virginm.net. [86.30.250.44])
+        by smtp.gmail.com with ESMTPSA id v12sm3239378wru.23.2020.02.04.03.12.45
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 04 Feb 2020 03:12:45 -0800 (PST)
+From:   Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+To:     broonie@kernel.org
+Cc:     alsa-devel@alsa-project.org, sfr@canb.auug.org.au,
+        lee.jones@linaro.org, linux-kernel@vger.kernel.org,
+        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Subject: [PATCH v2] ASoC: wcd934x: Add missing COMMON_CLK dependency
+Date:   Tue,  4 Feb 2020 11:12:41 +0000
+Message-Id: <20200204111241.6927-1-srinivas.kandagatla@linaro.org>
+X-Mailer: git-send-email 2.21.0
 MIME-Version: 1.0
-References: <20200201161931.29665-1-lukas.bulwahn@gmail.com>
- <CAHp75VezYub1YzGSMrwQ7ntAV6EftgLxFiQu9wVnekPHPe4d_g@mail.gmail.com> <alpine.DEB.2.21.2002040533360.3062@felia>
-In-Reply-To: <alpine.DEB.2.21.2002040533360.3062@felia>
-From:   Andy Shevchenko <andy.shevchenko@gmail.com>
-Date:   Tue, 4 Feb 2020 13:12:12 +0200
-Message-ID: <CAHp75VeXBTt07W0Xvke4P_4MEo92Ee7wUbxCg1_LgkXcsVgvVg@mail.gmail.com>
-Subject: Re: [PATCH RFC] MAINTAINERS: add TRACE EVENT LIBRARY section
-To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Cc:     Tzvetomir Stoyanov <tz.stoyanov@gmail.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        linux-trace-devel@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 4, 2020 at 6:42 AM Lukas Bulwahn <lukas.bulwahn@gmail.com> wrote:
->
->
->
-> On Mon, 3 Feb 2020, Andy Shevchenko wrote:
->
-> > On Sat, Feb 1, 2020 at 6:21 PM Lukas Bulwahn <lukas.bulwahn@gmail.com> wrote:
-> > >
-> > > The git history shows that the files under ./tools/lib/traceevent/ are
-> > > being developed and maintained by Tzetomir Stoyanov and Steven Rostedt
-> > > and are discussed on the linux-trace-devel list.
-> > >
-> > > Add a suitable section in MAINTAINERS for patches to reach them.
-> > >
-> > > This was identified with a small script that finds all files only
-> > > belonging to "THE REST" according to the current MAINTAINERS file, and I
-> > > acted upon its output.
-> >
-> > > +TRACE EVENT LIBRARY
-> > > +M:     Tzvetomir Stoyanov <tz.stoyanov@gmail.com>
-> > > +M:     Steven Rostedt <rostedt@goodmis.org>
-> > > +L:     linux-trace-devel@vger.kernel.org
-> > > +S:     Maintained
-> > > +F:     tools/lib/traceevent/
-> >
-> > Don't forget to run early mentioned scripts (in some other threads).
-> >
->
-> Andy, I did run on next-20200203:
+Looks like some platforms are not yet using COMMON CLK.
 
-Awesome, thanks!
+PowerPC allyesconfig failed with below error in next
 
-> $ ./scripts/checkpatch.pl -f MAINTAINERS
->
-> WARNING: MAINTAINERS entries use one tab after TYPE:
-> #14607: FILE: MAINTAINERS:14607:
-> +M:     Micah Morton <mortonm@chromium.org>
->
-> WARNING: MAINTAINERS entries use one tab after TYPE:
-> #14608: FILE: MAINTAINERS:14608:
-> +S:     Supported
->
-> WARNING: MAINTAINERS entries use one tab after TYPE:
-> #14609: FILE: MAINTAINERS:14609:
-> +F:     security/safesetid/
->
-> WARNING: MAINTAINERS entries use one tab after TYPE:
-> #14610: FILE: MAINTAINERS:14610:
-> +F:     Documentation/admin-guide/LSM/SafeSetID.rst
->
-> total: 0 errors, 4 warnings, 18577 lines checked
->
->
-> That issue in MAINTAINERS has a pending patch since 2019-12-07, with three
-> attempts of asking to be picked up by now:
->
-> - https://lore.kernel.org/lkml/20191207182751.14249-1-lukas.bulwahn@gmail.com/
-> - https://lore.kernel.org/lkml/20200116185844.11201-1-lukas.bulwahn@gmail.com/
-> - https://lore.kernel.org/lkml/20200204040434.7173-1-lukas.bulwahn@gmail.com/
->
-> It is not related to this patch in MAINTAINERS here.
->
->
-> I also ran $ perl ./scripts/parse-maintainers.pl and checked the generated
-> diff for this entry, but there was no reordering required; a one-element
-> list of F: entries is difficult to get unsorted ;)
->
-> I am not adding any mess (ordering issues) to MAINTAINERS with this patch,
-> other than what is already there, but cleaning that up is completely other
-> story.
+ld: sound/soc/codecs/wcd934x.o:(.toc+0x0):
+	 undefined reference to `of_clk_src_simple_get'
+ld: sound/soc/codecs/wcd934x.o: in function `.wcd934x_codec_probe':
+wcd934x.c:(.text.wcd934x_codec_probe+0x3d4):
+	 undefined reference to `.__clk_get_name'
+ld: wcd934x.c:(.text.wcd934x_codec_probe+0x438):
+	 undefined reference to `.clk_hw_register'
+ld: wcd934x.c:(.text.wcd934x_codec_probe+0x474):
+	 undefined reference to `.of_clk_add_provider'
 
+Add the missing COMMON_CLK dependency to fix this errors.
+
+Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
+Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+---
+Changes since v1:
+	- Rebased on top of git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git next branch
+
+ sound/soc/codecs/Kconfig | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/sound/soc/codecs/Kconfig b/sound/soc/codecs/Kconfig
+index c9eb683bd1b0..286514865960 100644
+--- a/sound/soc/codecs/Kconfig
++++ b/sound/soc/codecs/Kconfig
+@@ -1334,6 +1334,7 @@ config SND_SOC_WCD9335
+ 
+ config SND_SOC_WCD934X
+ 	tristate "WCD9340/WCD9341 Codec"
++	depends on COMMON_CLK
+ 	depends on MFD_WCD934X
+ 	help
+ 	  The WCD9340/9341 is a audio codec IC Integrated in
 -- 
-With Best Regards,
-Andy Shevchenko
+2.21.0
+
