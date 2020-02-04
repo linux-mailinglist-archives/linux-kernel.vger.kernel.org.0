@@ -2,64 +2,92 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BC97D15194A
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Feb 2020 12:10:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BCD7315194E
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Feb 2020 12:10:48 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727067AbgBDLKU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 4 Feb 2020 06:10:20 -0500
-Received: from mail-qk1-f196.google.com ([209.85.222.196]:35188 "EHLO
-        mail-qk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726883AbgBDLKT (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Feb 2020 06:10:19 -0500
-Received: by mail-qk1-f196.google.com with SMTP id q15so17507749qki.2
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Feb 2020 03:10:19 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:reply-to:from:date:message-id:subject:to;
-        bh=VaqKn8dwdDl+mMFwdMNdp4ruwlEtZO7F7AhEwMdeF98=;
-        b=Fp4yL2S170g2umosddXAOOsMpXyj4NtKkABIV7ns0OilLYX3pyXHHchuX+70vaG2TE
-         tHaL8wBril6v2S5XiD5wkYf5Dh3OPoojgtgW9tUK74RjMj5RxOj0Txi7xYl8mQPGCFd9
-         sS5DI4jHoPQ+ISM7MExgQJczUMjj6TBwrNsyM2CyzB9yDtxfGQbq0WKhsH8dEGyOe8U/
-         xq+Yl1h7nr28m5CquQbKBSKJnP2QQYJTsr13iKazaVxFvw3KZbivIx66Czt1sZY7/3+7
-         oQSaG2/6wdQw4DEhydWisSZmS+ONim50YA1l6o50qeWErr9a3GFuf6Iv9fXf1m0TSHx1
-         6aqg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
-         :subject:to;
-        bh=VaqKn8dwdDl+mMFwdMNdp4ruwlEtZO7F7AhEwMdeF98=;
-        b=Et/fEt6Jq8PTLmvZ9B3BNldsam18O5kZ/0+8u7yJo4qr0i8LOXxcbI0plsySPxmjfv
-         tGTrigDAhiwfUSRHDMk49h1q6bdNuRiVq60u9fOgWeoQ9s5D5EhAbgF9r1YVi8R+9E/C
-         TwcVZTQ9OjH9VRLhuOI9PPyH97sZRRzfY3+SqgNu46RcQQrttg9LDZspXgVzmpOygdHz
-         Eo6QSmfucRa8cnFn8YLZsfG30lkQ6FS14kf1zesrq6xzDJUusiJsbicddcOJIoV06LVl
-         oIlWsc4ilcs2TQbpchvw8u8RWyTk1gTiSpp6SB1rn5aqPpOPE09Dcsj0bxd+iFCRiK7S
-         fEEA==
-X-Gm-Message-State: APjAAAUKNthqazwoPlRsvdh6oewj2pn8M6c8aLodJ3BXlI5oYXGHCjLp
-        pQKDTwaQvswjbmHa/JTd7TLSZk+y5gGihpMUH6I=
-X-Google-Smtp-Source: APXvYqyipgyRnf4AWmOSBDCSbtDuVUZGDkkhiEjcjvkDOniTgeKzalPwuQ03KY99QUw1SqA1NkxInq3it3jTMx+89Rc=
-X-Received: by 2002:a05:620a:12ab:: with SMTP id x11mr28150445qki.149.1580814618657;
- Tue, 04 Feb 2020 03:10:18 -0800 (PST)
-MIME-Version: 1.0
-Received: by 2002:ac8:434f:0:0:0:0:0 with HTTP; Tue, 4 Feb 2020 03:10:18 -0800 (PST)
-Reply-To: corrinc482@gmail.com
-From:   Corrin Campbell <ampcarr88@gmail.com>
-Date:   Tue, 4 Feb 2020 11:10:18 +0000
-Message-ID: <CAFF7RBEmntpespadKeSh5E0qDoG++kA1OqenkrNwT1wNzCdxUg@mail.gmail.com>
-Subject: 
-To:     undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
+        id S1727202AbgBDLKj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 4 Feb 2020 06:10:39 -0500
+Received: from mout.gmx.net ([212.227.17.21]:36971 "EHLO mout.gmx.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727165AbgBDLKj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Feb 2020 06:10:39 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gmx.net;
+        s=badeba3b8450; t=1580814629;
+        bh=w+SKvp56UKIMNMDCt6NqCccXI38PRnIdXVD4TjA0chE=;
+        h=X-UI-Sender-Class:Subject:From:To:Cc:Date:In-Reply-To:References;
+        b=BAQbYNF/lO4xuQOi+ii/UXoh8CHY+aS+yuhsPgoqmxZT5BtUlSPYKxRKvNeixvRNU
+         p+u5wTIgRwDnQall5/NWBiDhECr4wkw1gTKEC56AA20NCz5vd01x0SNptwUaXWcWfY
+         MZurp4KnmotZ/AnAMrV15MQ+SWNpzP9vKu9Xfo5E=
+X-UI-Sender-Class: 01bb95c1-4bf8-414a-932a-4f6e2808ef9c
+Received: from homer.simpson.net ([185.191.216.162]) by mail.gmx.com (mrgmx104
+ [212.227.17.168]) with ESMTPSA (Nemesis) id 1N3KPq-1jhaad0CVm-010LEc; Tue, 04
+ Feb 2020 12:10:29 +0100
+Message-ID: <1580814626.22602.26.camel@gmx.de>
+Subject: Re: [PATCH RT] mm/memcontrol: Move misplaced
+ local_unlock_irqrestore()
+From:   Mike Galbraith <efault@gmx.de>
+To:     Matt Fleming <matt@codeblueprint.co.uk>,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Cc:     linux-kernel@vger.kernel.org, linux-rt-users@vger.kernel.org,
+        Daniel Wagner <wagi@monom.org>
+Date:   Tue, 04 Feb 2020 12:10:26 +0100
+In-Reply-To: <20200204093519.GC4303@codeblueprint.co.uk>
+References: <20200126211945.28116-1-matt@codeblueprint.co.uk>
+         <20200203181746.htlca2aynoqidm3o@linutronix.de>
+         <20200204093519.GC4303@codeblueprint.co.uk>
+Content-Type: text/plain; charset="ISO-8859-15"
+X-Mailer: Evolution 3.26.6 
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:ysEKcjmRuZGpGf3+qTb6S9467Hf2cCE8lzqPowAFHDHKg/QVcAH
+ FRrbdaPp0sLBPxQ11Cf9xrylGHLWRQPBL3RhEB9fUVTGHw0PfNKE5r38iyxJgVUq7QOSuRe
+ GCtGUVWUG9Pc1GfnLvDFh0EZQgnDgeJ9tXu1Xk/uZ1gGjavlnLkQLUnN171Kp8S6iZGODwv
+ SDCR2Hv1yfdbNeJrsvOaA==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:1pksGFDYPTw=:WE4KbA4xnHh4KjvkjTpNwL
+ DWWbWkYgACzuHUEoQSWukuASdfY02ob1H+Vcie2oVfXlJL4ACiqB7H08sMBrkXwyT/YEzi+k0
+ 11wriJYNtX87dpywUqrQiqlcMHbunlmMcg1mYTsjA+c2yh+S2DInHQOP08SmzJ67Nibc/wMrY
+ rXVOv3uGkxrzOyQF2qpGCFHzp5taapT2J1qBF2SA7qPA8umBiPUemKIaoKtggZcX71oYc9mmt
+ s82vWesIfjvLbWo2clL+pj3U1zghJ0n0CTKPDIRmgVpik2a7qf2Jtkcq+8ZnyQBf6GPIhp0XV
+ Z9rJMtDND9R+oos6Zy69Qbz2VTDZs+9dS1sIYHjX9R10nt1sum9DDKYpM9zJ6l1JEYqTAjnTX
+ CDWuzljp0DttSTxvvVsL59Vy7UGb0aZu1ztvE+Ug9wM5xV/jgzZvxO8pV+ADcRA+xh0ZPz6fK
+ hms5Lj+ytSGa/5IvOTCwMdpcvE0UQIUnQgdCY0rg6noYjfuyI1cN1FSxVy/fjEwstKd8/1nh5
+ BIODofxU0mL9GwCNiTyf2ByASq+sLvwgeFiFEV7H6weT/u8SzJgy4sHTSfnTAV8qTvBvFiPjA
+ ocF2CbtN04Ru9A3uuWN6kkVgFYyfIOOA1/YDXkvGQ+p9V7aKBHBQNIDqQtzZKSNcqrPceArAZ
+ D8RjvjE9orWuwXfvD2+hcn2Qc/Cq0mrpN8Us1+IBeZwbVYmCMkC0z/YYC0+WR9SCeEloklnTT
+ 7B+0XSVV6ddG23eTUuTarYywJal+Qm6BibVfzHH6TeYz/PkYKaY04NhloUEuBkG5FwTwuYtn2
+ UZjfFX7Chm0HdGj13DVQs6vkJUajoe/NHlyA8PGZng7qwwx4vcIzAxtM2wqTNfe3+2/Wd/rOe
+ GvrAEOn5dCLRjX24hVA5FAJ92QzYoA+XR6qwQ77CfjgYTR43J4XEcxuV1qjot7930lHwyGTBT
+ Tlvh9Zgt910lrj8Qur57lrhP4R/EAI8TJEjeSFIdQCJrdzv+G7krM5hjM3OKhl8mo+QnwxSPA
+ 0Cdv4or0LezIUkRE/q79EJ3HH3i8zQpfM+QXyzyQcufQX4yoUAjhm3Awc3Af1TMRSfXGi48nK
+ obIuLLkseTmdAjujqPhncov8A9klb4mAYoyJhkkRlIhpuFwTWS9VjJocaOl3erkmXkTNPi2l5
+ Bc+PDne8M+0iunyxY6IGsyzWz5sImKd9XgChZehdN1Eo7Ky52ReHfN1rCf7flf25Ho/j4mwZJ
+ 2tKY0FTpwWFH+Ovpc
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello Dear,
-My name is Corrin, I am a United States and a military woman never
-married no kids yet. I came across your profile, and I personally took
-interest in being your friend. For confidential matters, please
-contact me back through my private email corrinc492@gmail.com to
-enable me send you my pictures and give you more details about me.
-Hoping to hear from you soon.
-Regards
-Corrin.
+On Tue, 2020-02-04 at 09:35 +0000, Matt Fleming wrote:
+> On Mon, 03 Feb, at 07:17:46PM, Sebastian Andrzej Siewior wrote:
+> > On 2020-01-26 21:19:45 [+0000], Matt Fleming wrote:
+> > > There's no need to leave interrupts disabled when calling css_put_ma=
+ny().
+> >
+> > For RT the interrupts are never actually disabled and for !RT they are
+> > disabled with or without the change.
+> > The comment about the disable function mentions just the counters and
+> > css_put_many()'s callback just invokes a worker so it is probably save
+> > to move the function as suggested.
+> >
+> > May I ask how on earth you managed to open that file on a Sunday
+> > evening?
+>
+> We're carrying it in some of our older SUSE RT kernels and I'd really
+> like to get it upstream or sent to /dev/null ;)
+
+My recollection of the reason for that patchlet existing was simply
+because while rummaging around one day, unlock placement offended my
+eye a bit, so I did a dinky on the spot correction.
+
+	-Mike
