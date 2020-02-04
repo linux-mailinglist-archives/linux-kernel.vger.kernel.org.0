@@ -2,290 +2,167 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AEC74151B4F
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Feb 2020 14:30:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2E0E1151B72
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Feb 2020 14:41:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727242AbgBDNaG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 4 Feb 2020 08:30:06 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37250 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727183AbgBDNaG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Feb 2020 08:30:06 -0500
-Received: from tleilax.poochiereds.net (68-20-15-154.lightspeed.rlghnc.sbcglobal.net [68.20.15.154])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7801D20661;
-        Tue,  4 Feb 2020 13:30:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1580823005;
-        bh=l33RWzyOhunOQWWxKiqXr9cBwMNqhBEmiBxmnBqfDNg=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=YMzcYedveQftwneHDJTjxLnvNfxZckkVKdX6AozQXlQwz52nSDSkgd2LQt9gKA1CZ
-         RCt6cvvaU9/RuR6maJMrUSPoTPj4asOxr3ETY/hY10LlP/kaIW25Krw0wEOpTDOYjZ
-         JvuYEN5K0h4/m73xns8GjpY2RvmqSk8KixjoxjG4=
-Message-ID: <0ab59ba87c07ffec6a05b2ed39bc0c112bcf5863.camel@kernel.org>
-Subject: Re: [PATCH v3 1/1] ceph: parallelize all copy-from requests in
- copy_file_range
-From:   Jeff Layton <jlayton@kernel.org>
-To:     Luis Henriques <lhenriques@suse.com>, Sage Weil <sage@redhat.com>,
-        Ilya Dryomov <idryomov@gmail.com>,
-        "Yan, Zheng" <zyan@redhat.com>, Gregory Farnum <gfarnum@redhat.com>
-Cc:     ceph-devel@vger.kernel.org, linux-kernel@vger.kernel.org
-Date:   Tue, 04 Feb 2020 08:30:03 -0500
-In-Reply-To: <20200203165117.5701-2-lhenriques@suse.com>
-References: <20200203165117.5701-1-lhenriques@suse.com>
-         <20200203165117.5701-2-lhenriques@suse.com>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.34.3 (3.34.3-1.fc31) 
+        id S1727281AbgBDNlT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 4 Feb 2020 08:41:19 -0500
+Received: from mail-eopbgr40079.outbound.protection.outlook.com ([40.107.4.79]:13854
+        "EHLO EUR03-DB5-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727174AbgBDNlT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Feb 2020 08:41:19 -0500
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=BUb1eUKBw5hKUYNJOUJVZixxL0lcp1xNS1FmlpWGp6VsFTb5wViI2p6YKfyO0rI4nBhsoZWCsg46mpt+onQIv/0YfN7wiiyBFH+ExdvGgkYqz6HA/gHnkfGVIflFrsa4DA2+TJlIr1VAoJJ7hqmAfxWNVI921q52z6BHDSb/4wOUlGYLpIQ0Im/P1RvRSPDXraWy9WCLxZ++SP0kvM968mTqH7q4+Bx2+1q/Xzcq7lkHs6DyiTP5DNWZ66GSFBvDBrVeZQ/XRey2evPTFv+Vnb9EiTwIb3jrW7tLrZywzJyhhNFH8qFLIL9/9coH7y85hBzoJmeI9u+1bcee915YjQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=TBlopLNh6wMXuG58P/lUZJO6Fuv4jSLilngPYWM4Si0=;
+ b=e5i5eTU6czPhU62lR1BlzSgDTAMzpf7aYsYjdAMF0wsK6l5anE38/Lfiz34sGyIuMjMaCLLuw3ob8cyGTeXLoD2zMxihMCGpuCUArKFO7+VXovYDy0tKLOApf8gmdCLMfDFMDCJO6sqbRn+Mh1iL1W2WaRmmpYA2+VdBrsY6v2RPpYGhXHQXoxG2OkR7KAD4MmuIDTiyLLKUvwZlVj5hrUr4uyYO6vZbWFUesJXcXxlU2csS4DDdR4GHDdEuxOyjzdGpf5Jxf3dskwWShPMIe9+hdCyDB9QrQLQ/OsM6DTJ9k5VAIdrdeZ3Pl68obolJaDXlYRjas0+nmTMCRefm8g==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=TBlopLNh6wMXuG58P/lUZJO6Fuv4jSLilngPYWM4Si0=;
+ b=lFM54PVJjTKaL540pzxoXp3+0Ce3iCRy5tDz3zS7B+gOEZ6rVpBryQBV1ZD7D+HDYKMJ2GYPa/BS06KQcMkuh1FDN1556nWwREPHnsYkQumEW/WpKDN7RVhu37yMo663tcdYNsTksERuDncfMQlAMDmkZ8wxb8tKgCx39N6WMEo=
+Authentication-Results: spf=none (sender IP is )
+ smtp.mailfrom=peng.fan@nxp.com; 
+Received: from AM0PR04MB4481.eurprd04.prod.outlook.com (52.135.147.15) by
+ AM0PR04MB6932.eurprd04.prod.outlook.com (52.132.213.86) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2686.27; Tue, 4 Feb 2020 13:41:09 +0000
+Received: from AM0PR04MB4481.eurprd04.prod.outlook.com
+ ([fe80::91e2:17:b3f4:d422]) by AM0PR04MB4481.eurprd04.prod.outlook.com
+ ([fe80::91e2:17:b3f4:d422%3]) with mapi id 15.20.2686.031; Tue, 4 Feb 2020
+ 13:41:09 +0000
+From:   peng.fan@nxp.com
+To:     shawnguo@kernel.org, s.hauer@pengutronix.de, sboyd@kernel.org,
+        abel.vesa@nxp.com, aisheng.dong@nxp.com, leonard.crestez@nxp.com
+Cc:     kernel@pengutronix.de, festevam@gmail.com, linux-imx@nxp.com,
+        ping.bai@nxp.com, Anson.Huang@nxp.com,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org, Peng Fan <peng.fan@nxp.com>
+Subject: [PATCH 0/7] ARM: imx: imx7ulp: add cpufreq support
+Date:   Tue,  4 Feb 2020 21:34:30 +0800
+Message-Id: <1580823277-13644-1-git-send-email-peng.fan@nxp.com>
+X-Mailer: git-send-email 2.7.4
+Content-Type: text/plain
+X-ClientProxiedBy: HK0PR03CA0107.apcprd03.prod.outlook.com
+ (2603:1096:203:b0::23) To AM0PR04MB4481.eurprd04.prod.outlook.com
+ (2603:10a6:208:70::15)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Received: from localhost.localdomain (119.31.174.66) by HK0PR03CA0107.apcprd03.prod.outlook.com (2603:1096:203:b0::23) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256) id 15.20.2686.28 via Frontend Transport; Tue, 4 Feb 2020 13:41:05 +0000
+X-Mailer: git-send-email 2.7.4
+X-Originating-IP: [119.31.174.66]
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-HT: Tenant
+X-MS-Office365-Filtering-Correlation-Id: 5943aa3c-205d-4ba7-e5a0-08d7a977e44c
+X-MS-TrafficTypeDiagnostic: AM0PR04MB6932:|AM0PR04MB6932:
+X-MS-Exchange-Transport-Forked: True
+X-Microsoft-Antispam-PRVS: <AM0PR04MB69321DDF3D56EB0A07CDC90D88030@AM0PR04MB6932.eurprd04.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:8882;
+X-Forefront-PRVS: 03030B9493
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(4636009)(376002)(366004)(39860400002)(396003)(136003)(346002)(189003)(199004)(16526019)(8936002)(26005)(186003)(2616005)(8676002)(81156014)(956004)(81166006)(4326008)(36756003)(86362001)(6666004)(478600001)(6506007)(66476007)(66556008)(66946007)(69590400006)(6512007)(9686003)(316002)(6486002)(2906002)(5660300002)(52116002);DIR:OUT;SFP:1101;SCL:1;SRVR:AM0PR04MB6932;H:AM0PR04MB4481.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+Received-SPF: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+X-MS-Exchange-SenderADCheck: 1
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: Gbj7O3cxuqi5rMuqGvXyd9YZmiP1nrJK+cU+je2Y8r3BD/euEfiFxv574iVrRfoSkpbsGkh2s5afXk2nqJSarTpPPoyTzRLZGPR4dDeDgmdFbtNy638g6A9P8sG4WnZoWGq9/9g2aWa41iXUXyvqSF6dE2r0cAFmFRMR0T9Cv3iqe7qNnDwS3ZqtZs6Trwfb0vEaiteWdgKr8PpoJ1KTImTSMS6HJYmJUY+pB8Uq/2uO968dtSI0qFvZXW8H1J/Jg5p9ox5bmYDJ0HXdZpXLuF5SuzpA+JZCyLB1r42k2ulphhJJRC+mVqdIYP+g70xEFmkbPGZeC7OOeBtiOOjv7NlBU41BPm5ZQcfly03Vwa0fA8oIzjS/WrR7oylBH0rwEssvZrV9bsm9qT+6jjI6JVRWYXDxz/B1a089srNtlpERunAsfSR0USSFwJ2BZGw4ArNZm5vG+w9MYHrVbIy8o5F7DBxhDnhbDgxLEeR5QBWnnmRTo6FKbL0imgHXO6mJW8Qc//WOmsB2oM/llVxsbwjhAnLJrh2y88AggqNIjSE=
+X-MS-Exchange-AntiSpam-MessageData: B3BDUcnekYlAqAfYWhbjKV/rUrJ3Ln1E+okJ8/UErVjzSyLKHiZSe7Jb3x2oqJCaMIjg4zltV5iQnKbEIt1r2LvzLuKoD3fUjRMaTpFYYPLR9mEOeTBHyx1FEzWGpQVr9JXAEUy1dcM/q0sNUD0Z+A==
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 5943aa3c-205d-4ba7-e5a0-08d7a977e44c
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Feb 2020 13:41:09.4160
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: U+uhDKtLu9QPXdoXzG0FEmOXBqU1ULkIc/Sq1pKJnPmGRNBm9K9j4vEIyuZlOl9Vd3gH9rCgVCvjSoHzVT5gBQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR04MB6932
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 2020-02-03 at 16:51 +0000, Luis Henriques wrote:
-> Right now the copy_file_range syscall serializes all the OSDs 'copy-from'
-> operations, waiting for each request to complete before sending the next
-> one.  This patch modifies copy_file_range so that all the 'copy-from'
-> operations are sent in bulk and waits for its completion at the end.  This
-> will allow significant speed-ups, specially when sending requests for
-> different target OSDs.
-> 
+From: Peng Fan <peng.fan@nxp.com>
 
-Looks good overall. A few nits below:
+This patchset aims to use cpufreq-dt for i.MX7ULP to avoid
+plaform specific cpufreq driver. To use cpufreq-dt, we need
+a ARM core clock that could be easy to support freq change.
 
-> Signed-off-by: Luis Henriques <lhenriques@suse.com>
-> ---
->  fs/ceph/file.c                  | 45 +++++++++++++++++++++-----
->  include/linux/ceph/osd_client.h |  6 +++-
->  net/ceph/osd_client.c           | 56 +++++++++++++++++++++++++--------
->  3 files changed, 85 insertions(+), 22 deletions(-)
-> 
-> diff --git a/fs/ceph/file.c b/fs/ceph/file.c
-> index 1e6cdf2dfe90..b9d8ffafb8c5 100644
-> --- a/fs/ceph/file.c
-> +++ b/fs/ceph/file.c
-> @@ -1943,12 +1943,15 @@ static ssize_t __ceph_copy_file_range(struct file *src_file, loff_t src_off,
->  	struct ceph_fs_client *src_fsc = ceph_inode_to_client(src_inode);
->  	struct ceph_object_locator src_oloc, dst_oloc;
->  	struct ceph_object_id src_oid, dst_oid;
-> +	struct ceph_osd_request *req;
->  	loff_t endoff = 0, size;
->  	ssize_t ret = -EIO;
->  	u64 src_objnum, dst_objnum, src_objoff, dst_objoff;
->  	u32 src_objlen, dst_objlen, object_size;
->  	int src_got = 0, dst_got = 0, err, dirty;
-> +	unsigned int max_copies, copy_count, reqs_complete = 0;
->  	bool do_final_copy = false;
-> +	LIST_HEAD(osd_reqs);
->  
->  	if (src_inode->i_sb != dst_inode->i_sb) {
->  		struct ceph_fs_client *dst_fsc = ceph_inode_to_client(dst_inode);
-> @@ -2083,6 +2086,13 @@ static ssize_t __ceph_copy_file_range(struct file *src_file, loff_t src_off,
->  			goto out_caps;
->  	}
->  	object_size = src_ci->i_layout.object_size;
-> +
-> +	/*
-> +	 * Throttle the object copies: max_copies holds the number of allowed
-> +	 * in-flight 'copy-from' requests before waiting for their completion
-> +	 */
-> +	max_copies = (src_fsc->mount_options->wsize / object_size) * 4;
+However i.MX7ULP has some specific design that we could
+reuse imx_hw_clk_cpu that used on i.MX7D/8M. So
+introduced a new api imx_hw_clk_cpuv2 to add a virtual clk
+that could support ARM core freq change easily.
 
-A note about why you chose to multiply by a factor of 4 here would be
-good. In another year or two, we won't remember.
+Patch 1,2 is to change pfdv2 to make it could determine
+best parent clk, then we could directly configure pfdv2
+to get the best clk per i.MX7ULP datasheet "6.2.4 PLL PFD output"
 
-> +	copy_count = max_copies;
->  	while (len >= object_size) {
->  		ceph_calc_file_object_mapping(&src_ci->i_layout, src_off,
->  					      object_size, &src_objnum,
-> @@ -2097,7 +2107,7 @@ static ssize_t __ceph_copy_file_range(struct file *src_file, loff_t src_off,
->  		ceph_oid_printf(&dst_oid, "%llx.%08llx",
->  				dst_ci->i_vino.ino, dst_objnum);
->  		/* Do an object remote copy */
-> -		err = ceph_osdc_copy_from(
-> +		req = ceph_osdc_copy_from(
->  			&src_fsc->client->osdc,
->  			src_ci->i_vino.snap, 0,
->  			&src_oid, &src_oloc,
-> @@ -2108,21 +2118,40 @@ static ssize_t __ceph_copy_file_range(struct file *src_file, loff_t src_off,
->  			CEPH_OSD_OP_FLAG_FADVISE_DONTNEED,
->  			dst_ci->i_truncate_seq, dst_ci->i_truncate_size,
->  			CEPH_OSD_COPY_FROM_FLAG_TRUNCATE_SEQ);
-> -		if (err) {
-> -			if (err == -EOPNOTSUPP) {
-> -				src_fsc->have_copy_from2 = false;
-> -				pr_notice("OSDs don't support 'copy-from2'; "
-> -					  "disabling copy_file_range\n");
-> -			}
-> +		if (IS_ERR(req)) {
-> +			err = PTR_ERR(req);
->  			dout("ceph_osdc_copy_from returned %d\n", err);
-> +
-> +			/* wait for all queued requests */
-> +			ceph_osdc_wait_requests(&osd_reqs, &reqs_complete);
-> +			ret += reqs_complete * object_size; /* Update copied bytes */
->  			if (!ret)
->  				ret = err;
->  			goto out_caps;
->  		}
-> +		list_add(&req->r_private_item, &osd_reqs);
->  		len -= object_size;
->  		src_off += object_size;
->  		dst_off += object_size;
-> -		ret += object_size;
-> +		/*
-> +		 * Wait requests if we've reached the maximum requests allowed
 
-"Wait for requests..."
+I have tested with following diff applied, and mark fsl,imx7ulp as
+blacklist in cpufreq-dt driver(I also send out when this patchset
+is ok)
+diff --git a/arch/arm/boot/dts/imx7ulp.dtsi b/arch/arm/boot/dts/imx7ulp.dtsi
+index ab91c98f2124..11085b06506e 100644
+--- a/arch/arm/boot/dts/imx7ulp.dtsi
++++ b/arch/arm/boot/dts/imx7ulp.dtsi
+@@ -41,9 +41,29 @@
+                        compatible = "arm,cortex-a7";
+                        device_type = "cpu";
+                        reg = <0xf00>;
++                       clocks = <&smc1 IMX7ULP_CLK_ARM_FREQ>;
++                       clock-frequency = <500210000>;
++                       operating-points-v2 = <&cpu0_opp_table>;
+                };
+        };
 
-> +		 * or if this was the last copy
-> +		 */
-> +		if ((--copy_count == 0) || (len < object_size)) {
-> +			err = ceph_osdc_wait_requests(&osd_reqs, &reqs_complete);
-> +			ret += reqs_complete * object_size; /* Update copied bytes */
-> +			if (err) {
-> +				if (err == -EOPNOTSUPP) {
-> +					src_fsc->have_copy_from2 = false;
-> +					pr_notice("OSDs don't support 'copy-from2'; "
-> +						  "disabling copy_file_range\n");
-> +				}
-> +				if (!ret)
-> +					ret = err;
-> +				goto out_caps;
-> +			}
-> +			copy_count = max_copies;
-> +		}
->  	}
->  
->  	if (len)
-> diff --git a/include/linux/ceph/osd_client.h b/include/linux/ceph/osd_client.h
-> index 5a62dbd3f4c2..0121767cd65e 100644
-> --- a/include/linux/ceph/osd_client.h
-> +++ b/include/linux/ceph/osd_client.h
-> @@ -496,6 +496,9 @@ extern int ceph_osdc_start_request(struct ceph_osd_client *osdc,
->  extern void ceph_osdc_cancel_request(struct ceph_osd_request *req);
->  extern int ceph_osdc_wait_request(struct ceph_osd_client *osdc,
->  				  struct ceph_osd_request *req);
-> +extern int ceph_osdc_wait_requests(struct list_head *osd_reqs,
-> +				   unsigned int *reqs_complete);
-> +
->  extern void ceph_osdc_sync(struct ceph_osd_client *osdc);
->  
->  extern void ceph_osdc_flush_notifies(struct ceph_osd_client *osdc);
-> @@ -526,7 +529,8 @@ extern int ceph_osdc_writepages(struct ceph_osd_client *osdc,
->  				struct timespec64 *mtime,
->  				struct page **pages, int nr_pages);
->  
-> -int ceph_osdc_copy_from(struct ceph_osd_client *osdc,
-> +struct ceph_osd_request *ceph_osdc_copy_from(
-> +			struct ceph_osd_client *osdc,
->  			u64 src_snapid, u64 src_version,
->  			struct ceph_object_id *src_oid,
->  			struct ceph_object_locator *src_oloc,
-> diff --git a/net/ceph/osd_client.c b/net/ceph/osd_client.c
-> index b68b376d8c2f..df9f342f860a 100644
-> --- a/net/ceph/osd_client.c
-> +++ b/net/ceph/osd_client.c
-> @@ -4531,6 +4531,35 @@ int ceph_osdc_wait_request(struct ceph_osd_client *osdc,
->  }
->  EXPORT_SYMBOL(ceph_osdc_wait_request);
->  
-> +/*
-> + * wait for all requests to complete in list @osd_reqs, returning the number of
-> + * successful completions in @reqs_complete
-> + */
++       cpu0_opp_table: opp-table {
++               compatible = "operating-points-v2";
++               opp-shared;
++
++               opp-500210000 {
++                       opp-hz = /bits/ 64 <500210000>;
++                       /*opp-microvolt = <1025000>;*/
++                       clock-latency-ns = <150000>;
++               };
++
++               opp-720000000 {
++                       opp-hz = /bits/ 64 <720000000>;
++                       /*opp-microvolt = <1125000>;*/
++                       clock-latency-ns = <150000>;
++               };
++       };
++
 
-Maybe consider just having it return a positive reqs_complete value or a
-negative error code, and drop the reqs_complete pointer argument? It'd
-also be good to note what this function returns.
+I not include the voltage configuration, because imx-rpmsg
+and pf1550 rpmsg driver still not upstreamed.
 
-> +int ceph_osdc_wait_requests(struct list_head *osd_reqs,
-> +			    unsigned int *reqs_complete)
-> +{
-> +	struct ceph_osd_request *req;
-> +	int ret = 0, err;
-> +	unsigned int counter = 0;
-> +
-> +	while (!list_empty(osd_reqs)) {
-> +		req = list_first_entry(osd_reqs,
-> +				       struct ceph_osd_request,
-> +				       r_private_item);
-> +		list_del_init(&req->r_private_item);
-> +		err = ceph_osdc_wait_request(req->r_osdc, req);
+So I not included dts in this patchset, when imx-rpmsg and pf1550
+ready, the dts part could be added then.
 
-ceph_osdc_wait_request calls wait_request_timeout, which uses a killable
-sleep. That's better than uninterruptible sleep, but maybe it'd be good
-to use an interruptible sleep here instead? Having to send fatal signals
-when things are stuck kind of sucks.
+Anson Huang (1):
+  clk: imx: Fix division by zero warning on pfdv2
 
-> +		if (!err)
-> +			counter++;
-> +		else if (!ret)
-> +			ret = err;
-> +		ceph_osdc_put_request(req);
-> +	}
-> +	*reqs_complete = counter;
-> +
-> +	return ret;
-> +}
-> +EXPORT_SYMBOL(ceph_osdc_wait_requests);
-> +
->  /*
->   * sync - wait for all in-flight requests to flush.  avoid starvation.
->   */
-> @@ -5346,23 +5375,24 @@ static int osd_req_op_copy_from_init(struct ceph_osd_request *req,
->  	return 0;
->  }
->  
-> -int ceph_osdc_copy_from(struct ceph_osd_client *osdc,
-> -			u64 src_snapid, u64 src_version,
-> -			struct ceph_object_id *src_oid,
-> -			struct ceph_object_locator *src_oloc,
-> -			u32 src_fadvise_flags,
-> -			struct ceph_object_id *dst_oid,
-> -			struct ceph_object_locator *dst_oloc,
-> -			u32 dst_fadvise_flags,
-> -			u32 truncate_seq, u64 truncate_size,
-> -			u8 copy_from_flags)
-> +struct ceph_osd_request *ceph_osdc_copy_from(
-> +		struct ceph_osd_client *osdc,
-> +		u64 src_snapid, u64 src_version,
-> +		struct ceph_object_id *src_oid,
-> +		struct ceph_object_locator *src_oloc,
-> +		u32 src_fadvise_flags,
-> +		struct ceph_object_id *dst_oid,
-> +		struct ceph_object_locator *dst_oloc,
-> +		u32 dst_fadvise_flags,
-> +		u32 truncate_seq, u64 truncate_size,
-> +		u8 copy_from_flags)
->  {
->  	struct ceph_osd_request *req;
->  	int ret;
->  
->  	req = ceph_osdc_alloc_request(osdc, NULL, 1, false, GFP_KERNEL);
->  	if (!req)
-> -		return -ENOMEM;
-> +		return ERR_PTR(-ENOMEM);
->  
->  	req->r_flags = CEPH_OSD_FLAG_WRITE;
->  
-> @@ -5381,11 +5411,11 @@ int ceph_osdc_copy_from(struct ceph_osd_client *osdc,
->  		goto out;
->  
->  	ceph_osdc_start_request(osdc, req, false);
-> -	ret = ceph_osdc_wait_request(osdc, req);
-> +	return req;
->  
->  out:
->  	ceph_osdc_put_request(req);
-> -	return ret;
-> +	return ERR_PTR(ret);
->  }
->  EXPORT_SYMBOL(ceph_osdc_copy_from);
->  
+Peng Fan (6):
+  clk: imx: pfdv2: switch to use determine_rate
+  clk: imx: pfdv2: determine best parent rate
+  clk: imx: add imx_hw_clk_cpuv2 for i.MX7ULP
+  clk: imx: imx7ulp: add IMX7ULP_CLK_ARM_FREQ clk
+  ARM: imx: imx7ulp: support HSRUN mode
+  ARM: imx: imx7ulp: create cpufreq device
+
+ arch/arm/mach-imx/mach-imx7ulp.c          |   2 +
+ arch/arm/mach-imx/pm-imx7ulp.c            |   4 +
+ drivers/clk/imx/Makefile                  |   1 +
+ drivers/clk/imx/clk-cpuv2.c               | 137 ++++++++++++++++++++++++++++++
+ drivers/clk/imx/clk-imx7ulp.c             |  15 +++-
+ drivers/clk/imx/clk-pfdv2.c               |  61 +++++++++----
+ drivers/clk/imx/clk.h                     |   9 ++
+ include/dt-bindings/clock/imx7ulp-clock.h |   3 +-
+ 8 files changed, 212 insertions(+), 20 deletions(-)
+ create mode 100644 drivers/clk/imx/clk-cpuv2.c
 
 -- 
-Jeff Layton <jlayton@kernel.org>
+2.16.4
 
