@@ -2,139 +2,172 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 46FA7151D4C
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Feb 2020 16:32:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BD641151D63
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Feb 2020 16:39:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727394AbgBDPbu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 4 Feb 2020 10:31:50 -0500
-Received: from userp2120.oracle.com ([156.151.31.85]:36350 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727321AbgBDPbt (ORCPT
+        id S1727368AbgBDPjQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 4 Feb 2020 10:39:16 -0500
+Received: from UPDC19PA24.eemsg.mail.mil ([214.24.27.199]:32015 "EHLO
+        UPDC19PA24.eemsg.mail.mil" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727290AbgBDPjQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Feb 2020 10:31:49 -0500
-Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
-        by userp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id 014FQg6m037549;
-        Tue, 4 Feb 2020 15:31:37 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : subject : to :
- cc : message-id : date : mime-version : content-type :
- content-transfer-encoding; s=corp-2019-08-05;
- bh=rdhxp4sZ+odDvboe4BcMy7m7ry7TPB1rb7axMCM+iyo=;
- b=pw47cjdHWEuTYMWhy3Li36ZhjoZLOFoby/nZ6f3MYNXY0TeamciIsu2qtXYK3ImDJIKF
- bkiqki9zmuf6TfVjuEUErUjQfTXWEh+yKli28QmpLEU99cCe09agooutsLjyFaRmFk9z
- BTIF21Chk9BSGkdyNwLTQMvo+vIR9tSVt+tzvIdpOsHobJYV5xHbchfqE9KtXc37kdrT
- 75Q6aKNLQJWBs14/zTis54iN37x/Ycstccq6AoTdcoshF4o4r0IG1WDHsZSh2H0RIaZF
- b7gJ5DbiJHH+fLiNVlT7cyGRY5HN64UxgcHvAKbMz97fBMy0Ira6jLtOdwlRCxU2S0F7 RQ== 
-Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
-        by userp2120.oracle.com with ESMTP id 2xwyg9kmky-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 04 Feb 2020 15:31:37 +0000
-Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
-        by userp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id 014FOFFV106123;
-        Tue, 4 Feb 2020 15:31:37 GMT
-Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
-        by userp3030.oracle.com with ESMTP id 2xxvus0vgh-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 04 Feb 2020 15:31:37 +0000
-Received: from abhmp0018.oracle.com (abhmp0018.oracle.com [141.146.116.24])
-        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id 014FVaoi019276;
-        Tue, 4 Feb 2020 15:31:36 GMT
-Received: from [192.168.0.189] (/68.201.65.98)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Tue, 04 Feb 2020 07:31:36 -0800
-From:   Dave Kleikamp <dave.kleikamp@oracle.com>
-Subject: [GIT PULL] jfs update for v5.6
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-X-Mozilla-News-Host: news://news.gmane.org
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        "jfs-discussion@lists.sourceforge.net" 
-        <jfs-discussion@lists.sourceforge.net>
-Autocrypt: addr=dave.kleikamp@oracle.com; keydata=
- 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
- rnNNL3zBkwD3nWcTxFnX
-Message-ID: <ce930730-248c-7e5c-dbf6-7ba5a2db07b0@oracle.com>
-Date:   Tue, 4 Feb 2020 09:31:35 -0600
+        Tue, 4 Feb 2020 10:39:16 -0500
+X-EEMSG-check-017: 54086496|UPDC19PA24_ESA_OUT06.csd.disa.mil
+X-IronPort-AV: E=Sophos;i="5.70,402,1574121600"; 
+   d="scan'208";a="54086496"
+Received: from emsm-gh1-uea11.ncsc.mil ([214.29.60.3])
+  by UPDC19PA24.eemsg.mail.mil with ESMTP/TLS/DHE-RSA-AES256-SHA256; 04 Feb 2020 15:31:30 +0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=tycho.nsa.gov; i=@tycho.nsa.gov; q=dns/txt;
+  s=tycho.nsa.gov; t=1580830290; x=1612366290;
+  h=subject:to:cc:references:from:message-id:date:
+   mime-version:in-reply-to:content-transfer-encoding;
+  bh=gs0nSkbJQkf/VEtAgp330XvlFSh/7fT5YY9yO2wOFaU=;
+  b=JI+b2b8i1J/hgKivQANGc4uOUgt4BD9RbigqOjQu6wPa7b0ojK49K+sd
+   gTiVru4Mo8lcg+HMOQxi1+/K2IaDaMaJRDsypXL+SWFwCKLf2d5CYY4C+
+   23KCf+Ag0CwP6FEuvlw1tNRoHF3Gck3bbgJ62ZE1B1fMwvZqqFy7QhRiw
+   9lvIeZgQ4hlgULbXZmaU48h5lMwmRPlFROiTXlqbDte5UtHCxGt2TfsOZ
+   Z6ZhMO00jzAWoL3uni7Q7TmWB1jwLzWAsYrOVOpiuB0Me45kVy7GEO8UW
+   otRVlJFVglmiu/3xXQrizVC2k3BTOiysC/wNhL2GBP9QLlJp5Oc0djHCa
+   Q==;
+X-IronPort-AV: E=Sophos;i="5.70,402,1574121600"; 
+   d="scan'208";a="38646045"
+IronPort-PHdr: =?us-ascii?q?9a23=3A0aY6kRQqq0M02pQmHJzo9pkdM9psv+yvbD5Q0Y?=
+ =?us-ascii?q?Iujvd0So/mwa67ZhaGt8tkgFKBZ4jH8fUM07OQ7/m8HzBRqsna+DBaKdoQDk?=
+ =?us-ascii?q?RD0Z1X1yUbQ+e9QXXhK/DrayFoVO9jb3RCu0+BDE5OBczlbEfTqHDhpRQbGx?=
+ =?us-ascii?q?H4KBYnbr+tQt2agMu4zf299IPOaAtUmjW9falyLBKrpgnNq8Uam4RvJrs+xx?=
+ =?us-ascii?q?fTrXZFf+tayGFmKFmOmxrw+tq88IRs/ihNtf8t7dJMXbn/c68lUbFWETMqPn?=
+ =?us-ascii?q?wv6sb2rxfDVwyP5nUdUmUSjBVFBhXO4Q/5UJnsrCb0r/Jx1yaGM8L4S7A0Qi?=
+ =?us-ascii?q?mi4LxwSBD0kicHNiU2/3/Rh8dtka9UuhOhpxh4w47JfIGYMed1c63Bcd8GQ2?=
+ =?us-ascii?q?dKQ91cXDJdDIyic4QPDvIBPedGoIn7u1sOtga1CQ21CO/y1jNEmnr60Ks03O?=
+ =?us-ascii?q?Q7FQHNwRIuEdQAvn/JqNn5LbkeXOSwwKTO0D7Nbe5Z2S3l5YbVbB4hr/GCU7?=
+ =?us-ascii?q?F+f8XfxkYgFR/KgFqLpIz5PT6YzPgBv3SV4udiU++klm4pqxt2ojiq3soil5?=
+ =?us-ascii?q?XJiZwNylDE6yp5xps+K8C9SEFhZd6kFIVftiGHPIZxWcMtXnpotT0myrwGpZ?=
+ =?us-ascii?q?G7fC8KxI4hxx7EcfOLaYeI4hX9VOuIJzpzmXxreLW6hxmo8EigzPXxVsqq31?=
+ =?us-ascii?q?ZQqCpKjN3MumoK1xzJ5ciLUvR9/ka92TaPygDc8ftILlwzlareLZMq370+lo?=
+ =?us-ascii?q?ILvEjeESL7l1/6ga+Lekk+5OSl5Prrbq/7qpKaKoR6kBvxMr40lcy6Gek4Nw?=
+ =?us-ascii?q?8OUHWF9umkz73j+FH5QK1Njv0rjqnVqJDaKtofpq6+GwJVzpws6wy+Dze7y9?=
+ =?us-ascii?q?QUh3gHLFRLeBKAlIjmJU3BLOrkDfa/n1uskDBry+rAPrL9GZXCMmLPkLLgfb?=
+ =?us-ascii?q?Z580JcyQwzws5D559MF70ML/3+VlXxudDFFBM1LQO5z/j9BNlgzo8eXHiAAq?=
+ =?us-ascii?q?6dMKPcq1+I4ecvLvGXZIAIozbwMOQl5v7ygn85nl8RZ6+p3YANZ3yiEfRmJF?=
+ =?us-ascii?q?uZbWL2gtgdCWcKohY+TOvyhV2FVD5TYG2yX6Qm6T4nFo2rFp3DSZ6wj7yBxi?=
+ =?us-ascii?q?i7AodaaXxBClCJCX3obZmLW+8QaCKOJc9siiELWqa/S4I60RGvtAn6yrV5Ie?=
+ =?us-ascii?q?vU5CIUr4/s28Zt7e3JiR4y7SB0D9ia02yVV2F7hH4IRzst0aBnu0N911OD3b?=
+ =?us-ascii?q?F9g/xfEtxT/e1GXh0mOp7byuxwE8ryVR7ZfteVVFamRc2rASovQdI1wt8OZV?=
+ =?us-ascii?q?t9Gtq5gxDd0CqlHaUVm6aIBJMq6KLc2Wb+J8Jnx3bBzqkhgEEsQtFTOm2+mq?=
+ =?us-ascii?q?5/6w/TCpbNk0WYkaaqaKsd0DfO9Gid12qOul9XUAprXKXbUnAQeFHWoc765k?=
+ =?us-ascii?q?zcVb+uD6ooMg9bxc6FMKtKZcXjjU9aS/f7JNTef2Wxln+qBRaJ2ryMbJDle3?=
+ =?us-ascii?q?8A0yrFFEcLiwAT8myHNQg4GCihuHnTAydyFVLuZUPs7fdxqGm9TkAq0wGGdV?=
+ =?us-ascii?q?Fu172w+k1dufvJbPUfxL8G8AImsDN9F1u+l4bRDt2boQNqcY1GbN896UsB3m?=
+ =?us-ascii?q?Xc4V9TJJulept+i0YefgI/hEbn0xF6G80UisQxhG87xwp1b6SD2RVOcC3Ojs?=
+ =?us-ascii?q?O4AaHeNmSnpEPnUKXRwFyLlY/Mq6o=3D?=
+X-IPAS-Result: =?us-ascii?q?A2DQAABkjTle/wHyM5BlGwEBAQEBAQEFAQEBEQEBAwMBA?=
+ =?us-ascii?q?QGBe4F9gRhUIRIqhBSJA4ZoBoESJYEBiG6RSQkBAQEBAQEBAQErDAEBhEACg?=
+ =?us-ascii?q?ls4EwIQAQEBBAEBAQEBBQMBAWyFNwyCOykBgwEBAQEBAgEjFUEFCwsOCgICJ?=
+ =?us-ascii?q?gICVwYNBgIBAYJjPwGCVgUgD6wPdYEyhDUBgRSDP4E+gQ4qjDx5gQeBEScMA?=
+ =?us-ascii?q?4IoNT6CZAKEdYI8IgSNVIJEhkBhRnuWaYJFgk6Ee450BhuDQJMChEaERJMEl?=
+ =?us-ascii?q?EQigVgrCAIYCCEPgycJRxgNjigBF4NQhAiBDIVdIwMwjw0BAQ?=
+Received: from tarius.tycho.ncsc.mil (HELO tarius.infosec.tycho.ncsc.mil) ([144.51.242.1])
+  by emsm-gh1-uea11.NCSC.MIL with ESMTP; 04 Feb 2020 15:31:28 +0000
+Received: from moss-pluto.infosec.tycho.ncsc.mil (moss-pluto [192.168.25.131])
+        by tarius.infosec.tycho.ncsc.mil (8.14.7/8.14.4) with ESMTP id 014FUblg176210;
+        Tue, 4 Feb 2020 10:30:38 -0500
+Subject: Re: [PATCH RFC] selinux: policydb - convert filename trans hash to
+ rhashtable
+To:     Ondrej Mosnacek <omosnace@redhat.com>
+Cc:     Lucas Stach <dev@lynxeye.de>, Paul Moore <paul@paul-moore.com>,
+        SElinux list <selinux@vger.kernel.org>,
+        Linux kernel mailing list <linux-kernel@vger.kernel.org>,
+        Richard Haines <richard_c_haines@btinternet.com>
+References: <20200116213937.77795-1-dev@lynxeye.de>
+ <2d1a3d66-c2ee-f7ea-a884-11ac9150d994@tycho.nsa.gov>
+ <CAFqZXNtJ2h-HPwzV9t1bizVB2=xWh=s3jY5aqXG1x86b+oEMYg@mail.gmail.com>
+From:   Stephen Smalley <sds@tycho.nsa.gov>
+Message-ID: <f821809b-548d-fd95-6574-7c74c634353e@tycho.nsa.gov>
+Date:   Tue, 4 Feb 2020 10:32:20 -0500
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.2
+ Thunderbird/68.4.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <CAFqZXNtJ2h-HPwzV9t1bizVB2=xWh=s3jY5aqXG1x86b+oEMYg@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9520 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=663
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1911140001 definitions=main-2002040106
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9520 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=719 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1911140001
- definitions=main-2002040106
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The following changes since commit d96d875ef5dd372f533059a44f98e92de9cf0d42:
+On 2/4/20 10:01 AM, Ondrej Mosnacek wrote:
+> On Fri, Jan 17, 2020 at 8:11 PM Stephen Smalley <sds@tycho.nsa.gov> wrote:
+>> On 1/16/20 4:39 PM, Lucas Stach wrote:
+>>> The current hash is too small for current usages in, e.g. the Fedora standard
+>>> policy. On file creates a considerable amount of CPU time is spent walking the
+>>> the hash chains. Increasing the number of hash buckets somewhat mitigates the
+>>> issue, but doesn't completely get rid of the long hash chains.
+>>>
+>>> This patch does take the bit more invasive route by converting the filename
+>>> trans hash to a rhashtable to allow this hash to scale with load.
+>>>
+>>> fs_mark create benchmark on a SSD device, no ramdisk:
+>>> Count          Size       Files/sec     App Overhead
+>>> before:
+>>> 10000          512        512.3           147715
+>>> after:
+>>> 10000          512        572.3            75141
+>>>
+>>> filenametr_cmp(), which was the topmost function in the CPU cycle trace before
+>>> at ~5% of the overall CPU time, is now down in the noise.
+>>
+>> Thank you for working on this.  IMHO, Fedora overuses name-based type
+>> transitions but that's another topic. I haven't yet investigated the
+>> root cause but with your patch applied, I see some test failures related
+>> to name-based transitions:
+>>
+>> [...]
+>> #   Failed test at overlay/test line 439.
+>> overlay/test ................ 114/119 # Looks like you failed 1 test of 119.
+>> [...]
+>> filesystem/test ............. 3/70 File context error, expected:
+>>          test_filesystem_filenametranscon1_t
+>> got:
+>>          test_filesystem_filetranscon_t
+>>
+>> #   Failed test at filesystem/test line 279.
+>> File context error, expected:
+>>          test_filesystem_filenametranscon2_t
+>> got:
+>>          test_filesystem_filetranscon_t
+>>
+>> #   Failed test at filesystem/test line 286.
+>> filesystem/test ............. 68/70 # Looks like you failed 2 tests of 70.
+>>
+>> You can reproduce by cloning the selinux-testsuite from
+>> https://github.com/SELinuxProject/selinux-testsuite, applying the
+>> filesystem tests patch from
+>> https://patchwork.kernel.org/patch/11337659/,
+>> and following the README.md instructions.
+> 
+> I think I figured out what's wrong - see below.
+> <snip>
+>>> @@ -441,6 +442,39 @@ static int filenametr_cmp(struct hashtab *h, const void *k1, const void *k2)
+>>>
+>>>    }
+>>>
+>>> +static const struct rhashtable_params filename_trans_hashparams = {
+>>> +     .nelem_hint             = 1024,
+>>> +     .head_offset            = offsetof(struct filename_trans, hash_head),
+> 
+> You need to add:
+> 
+> +.hashfn = filenametr_hash,
+> 
+> here so that the key is correctly hashed on lookup. After applying
+> this fix, the selinux-testuite passes for me with this patch.
 
-  Merge tag 'fixes_for_v5.5-rc8' of
-git://git.kernel.org/pub/scm/linux/kernel/git/jack/linux-fs (2020-01-20
-11:24:13 -0800)
+Hmm..does that then make the .obj_hashfn assignment below unnecessary or 
+is that required too?  I'm unclear on the difference.
 
-are available in the Git repository at:
-
-  git://github.com/kleikamp/linux-shaggy.git tags/jfs-5.6
-
-for you to fetch changes up to 802a5017ffb27ade616d0fe605f699a3c6303aa3:
-
-  jfs: remove unused MAXL2PAGES (2020-01-21 10:06:55 -0600)
-
-----------------------------------------------------------------
-Trivial cleanup for jfs
-
-----------------------------------------------------------------
-Alex Shi (1):
-      jfs: remove unused MAXL2PAGES
-
- fs/jfs/jfs_dmap.c | 1 -
- 1 file changed, 1 deletion(-)
+> 
+>>> +     .obj_hashfn             = filenametr_hash,
+>>> +     .obj_cmpfn              = filenametr_cmp,
+>>> +};
