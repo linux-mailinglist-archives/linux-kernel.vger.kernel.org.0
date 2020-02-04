@@ -2,128 +2,135 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E21FF151C78
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Feb 2020 15:44:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CC39F151C76
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Feb 2020 15:44:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727358AbgBDOo1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 4 Feb 2020 09:44:27 -0500
-Received: from mail-il1-f196.google.com ([209.85.166.196]:42600 "EHLO
-        mail-il1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727258AbgBDOo1 (ORCPT
+        id S1727336AbgBDOoU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 4 Feb 2020 09:44:20 -0500
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:39131 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727258AbgBDOoT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Feb 2020 09:44:27 -0500
-Received: by mail-il1-f196.google.com with SMTP id x2so16046234ila.9;
-        Tue, 04 Feb 2020 06:44:26 -0800 (PST)
+        Tue, 4 Feb 2020 09:44:19 -0500
+Received: by mail-wm1-f66.google.com with SMTP id c84so3967807wme.4
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Feb 2020 06:44:17 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=pBPgZrCmoCK+adPpBYU1UgcBrMjDVFByBZS7ldjpSQg=;
-        b=E4Xyb8LiS6clI+5dqopwS6OxlDQ+b2NTz73F0W4FBbpOs3EEVtrxId487UD5r2m8PL
-         HI1VKjnvEvRLgZHOARQnfMSd/8EYJBGf4HCw7TL3k5RWfK7MXwYBuwxzq5oPF2t+Rlj9
-         cUlguf56kwFgdu16U9HCo7Ywnsgeo7Xa2Q1TAIEEfAB1KOl0uPL6ce+TmnvfJ75C01BO
-         RchsaGygoM1zofuLrx75cI9PGtpn83vxqyx0smAb8D/AtI1SrGB5Pqmu2TmrDqxnnizT
-         dI4bdSBfpQFHNjxcIIqJ3ELyp8k9XQolPw6DnXnPyk1BG6S3YqzNa0SvghlBrEvh2FXT
-         sJEQ==
+        d=google.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=1IXHtRUMShcVj0I7kyO/iiIdumIO9Jb0cIQ8fggcE/4=;
+        b=GASTvG1JvEAbAvzsvUyAnc3ILW1Gx+26xA3ilwVyNL7T33tvt+Lz5T2gHkQPZXm+kq
+         M1TPCQg4XHeftf3cfLN8TJFcwJsa+OXXLIlgNSpQNM36YUFxwfDnsFfmz7GtEi8tPzYA
+         rlqjkZUaW7PWBT3yBPOPhJheNAmu0zqG5S5P9Eo49PSjSVTv5QF/hqWT+5nXzlw7u8ky
+         EvBF2KfkLmhLnfxJ1wiqTQA6OCdxfx0ADM4CDYsfMGiw443gGHSHkTWTTTUzj5g0GUyq
+         7kZfvBkoMdsBz0BmnkdIGi8R30GNOZpJs+LZXbdwrii7WtNsp6N+s30vOjRbyc6xz05e
+         1skA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=pBPgZrCmoCK+adPpBYU1UgcBrMjDVFByBZS7ldjpSQg=;
-        b=AYMbwMH/Q1DIJy0ycjinSs7YJKKru+fceutNU3pNlIdXfVG7Aa75Hw1igVxEtYMjGC
-         ih0Csee6t2eVn6voFXYqZ/AMoiGUM6mWz6IOH00INlHuewMwMNSN0BLiBbZ+UTAEMa3W
-         qGQhXFSqa73OhS1TH6V6kwq1/+cWM5Lk6YoODA79fWvpya40pybmSF+toQgCFcJ6cp1C
-         KWSMhS+6gcBWpp1i3YL6E1iBfJTYRkoTWxxYmsGBVHc5fl2WVNdzPkY3YXyO+diLYPCr
-         lbLUPc8mLSR0I1OO7p6Vr4hfuQBTDKYnLcZTtJmJvPpE772+NXs+HCV0wGGoXhbD+oyR
-         4i5A==
-X-Gm-Message-State: APjAAAXeHiZwKdYYYg3C4NuEaTn2h92+wdT3DzB988zWZVCv97QZU3tv
-        ymCyk6otkg0dkSiemRWtv0uHWEXFi8zmB5/WP5Y=
-X-Google-Smtp-Source: APXvYqwK9TpjhX0h1rx34qAMHunSgEc+MuYa+gdNBn5BAmQldz1Y+KTnEKcwvvlYqWn8uE+Twe4govU8jiD5qoDHMWo=
-X-Received: by 2002:a92:5e8b:: with SMTP id f11mr27598714ilg.178.1580827466019;
- Tue, 04 Feb 2020 06:44:26 -0800 (PST)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=1IXHtRUMShcVj0I7kyO/iiIdumIO9Jb0cIQ8fggcE/4=;
+        b=KAL7i+Hj0PZGud9687rnFfbef0uW0nV6phaiVpZsTdEx8ImCzxZ196uTBbJk7kOdJ9
+         rnChLvRH8XxkJxMk6wNJdmuUZxz6WOqsq5Wr4Nif0dVgXe7gM+tgLgo/bYAYT1oAvBFS
+         EVEJ1nnbATG0SWANjHDqoi/gTBtufMi5fstDKWr07rcTSpcl2ccG5X9129lTfBq5uUFH
+         9EauspSoz3SFOEYqGvRapTlupuuzhG62bEnGOhn5vkDgM8yWO3wveiIt0UBaacs4RG4f
+         e9da6PWTHei7r/fLy0KZOpd0MCMwyle1/SJhUg0UiIsRCSOxHRXchqdvu23FL8ochpXf
+         ds4A==
+X-Gm-Message-State: APjAAAVJOotSg3KtFzgCkWvhXrwtOPRg8dK5Sw95axm+juEtpkHeIiDz
+        nin3OIuuWTAAt4Vkwf5ugOkV5Q==
+X-Google-Smtp-Source: APXvYqzVi62MG4N9AgDN5RDsH5ZMtz54CCua+ACBsaV+ksCH9ExoaI8R+1bNIuPw67s5CtrWxt1jAQ==
+X-Received: by 2002:a7b:c759:: with SMTP id w25mr6083222wmk.15.1580827456175;
+        Tue, 04 Feb 2020 06:44:16 -0800 (PST)
+Received: from google.com ([2a00:79e0:d:210:e8f7:125b:61e9:733d])
+        by smtp.gmail.com with ESMTPSA id c9sm3962843wmc.47.2020.02.04.06.44.15
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 04 Feb 2020 06:44:15 -0800 (PST)
+Date:   Tue, 4 Feb 2020 14:44:15 +0000
+From:   Matthias Maennich <maennich@google.com>
+To:     Quentin Perret <qperret@google.com>
+Cc:     masahiroy@kernel.org, nico@fluxnic.net,
+        linux-kernel@vger.kernel.org, linux-kbuild@vger.kernel.org,
+        kernel-team@android.com, jeyu@kernel.org
+Subject: Re: [PATCH v2] kbuild: allow symbol whitelisting with
+ TRIM_UNUSED_KSYMS
+Message-ID: <20200204144415.GC42496@google.com>
+References: <20200129181541.105335-1-qperret@google.com>
+ <20200131131508.GH102066@google.com>
+ <20200131174055.GA8425@google.com>
 MIME-Version: 1.0
-References: <1580825737-27189-1-git-send-email-harigovi@codeaurora.org>
-In-Reply-To: <1580825737-27189-1-git-send-email-harigovi@codeaurora.org>
-From:   Jeffrey Hugo <jeffrey.l.hugo@gmail.com>
-Date:   Tue, 4 Feb 2020 07:44:14 -0700
-Message-ID: <CAOCk7NoAY7QaoBufG=JOR54PocdtrMsxUh9HmdWEwQ4zSG5MDg@mail.gmail.com>
-Subject: Re: [Freedreno] [v1] dt-bindings: msm:disp: update dsi and dpu bindings
-To:     Harigovindan P <harigovi@codeaurora.org>
-Cc:     "open list:DRM PANEL DRIVERS" <dri-devel@lists.freedesktop.org>,
-        MSM <linux-arm-msm@vger.kernel.org>,
-        freedreno <freedreno@lists.freedesktop.org>,
-        DTML <devicetree@vger.kernel.org>,
-        lkml <linux-kernel@vger.kernel.org>,
-        Rob Clark <robdclark@gmail.com>, nganji@codeaurora.org,
-        Sean Paul <seanpaul@chromium.org>, kalyan_t@codeaurora.org,
-        "Kristian H. Kristensen" <hoegsberg@chromium.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Disposition: inline
+In-Reply-To: <20200131174055.GA8425@google.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 4, 2020 at 7:15 AM Harigovindan P <harigovi@codeaurora.org> wrote:
+On Fri, Jan 31, 2020 at 05:40:55PM +0000, Quentin Perret wrote:
+>On Friday 31 Jan 2020 at 13:15:08 (+0000), 'Matthias Maennich' via kernel-team wrote:
+>> On Wed, Jan 29, 2020 at 06:15:41PM +0000, Quentin Perret wrote:
+>> > diff --git a/scripts/adjust_autoksyms.sh b/scripts/adjust_autoksyms.sh
+>> > index a904bf1f5e67..8e1b7f70e800 100755
+>> > --- a/scripts/adjust_autoksyms.sh
+>> > +++ b/scripts/adjust_autoksyms.sh
+>> > @@ -48,6 +48,7 @@ cat > "$new_ksyms_file" << EOT
+>> > EOT
+>> > sed 's/ko$/mod/' modules.order |
+>> > xargs -n1 sed -n -e '2{s/ /\n/g;/^$/!p;}' -- |
+>> > +cat - "${CONFIG_UNUSED_KSYMS_WHITELIST:-/dev/null}" |
+>>
+>> This handles absolute paths very well. I wonder whether we can make this
+>> more useful for folks that want to maintain such a whitelist in their
+>> copy of the tree. Lets say, I have in my sources
+>> arch/x86/configs/x86_64_symbol_whitelist and in my config I have
+>> CONFIG_UNUSED_KSYMS_WHITELIST="arch/x86/configs/x86_64_symbol_whitelist".
+>>
+>> If I see it correctly, UNUSED_KSYMS_WHITELIST is currently either an
+>> absolute path or a relative path to the current build directory. I would
+>> prefer if relative paths would be relative to the source directory to
+>> support the above use case. (Note, that scenario above works if I build
+>> directly in the sources, but fails if I build O=/somewhere/else.)
 >
-> Updating bindings of dsi and dpu by adding and removing certain
-> properties.
+>Right, that is an interesting use case. I suppose something like the
+>below should work (with appropriate documentation of the config option).
 >
-> Signed-off-by: Harigovindan P <harigovi@codeaurora.org>
-> ---
+>---8<---
+>diff --git a/scripts/adjust_autoksyms.sh b/scripts/adjust_autoksyms.sh
+>index 8e1b7f70e800..d37803fd75ce 100755
+>--- a/scripts/adjust_autoksyms.sh
+>+++ b/scripts/adjust_autoksyms.sh
+>@@ -38,6 +38,12 @@ esac
+> # We need access to CONFIG_ symbols
+> . include/config/auto.conf
 >
-> Changes in v1:
->         - Adding "ahb" clock as a required property.
->         - Adding "bus", "rot", "lut" as optional properties for sc7180 device.
->         - Removing properties from dsi bindings that are unused.
->         - Removing power-domain property since DSI is the child node of MDSS
->           and it will inherit supply from its parent.
+>+ksym_wl="${CONFIG_UNUSED_KSYMS_WHITELIST:-/dev/null}"
+>+# If the path is relative, it must be relative to the source tree
+>+if [ "$ksym_wl" == "${ksym_wl#/}" ]; then
+>+       ksym_wl="$abs_srctree/$ksym_wl"
+>+fi
+>+
+> # Generate a new ksym list file with symbols needed by the current
+> # set of modules.
+> cat > "$new_ksyms_file" << EOT
+>@@ -48,7 +54,7 @@ cat > "$new_ksyms_file" << EOT
+> EOT
+> sed 's/ko$/mod/' modules.order |
+> xargs -n1 sed -n -e '2{s/ /\n/g;/^$/!p;}' -- |
+>-cat - "${CONFIG_UNUSED_KSYMS_WHITELIST:-/dev/null}" |
+>+cat - "$ksym_wl" |
+> sort -u |
+> sed -e 's/\(.*\)/#define __KSYM_\1 1/' >> "$new_ksyms_file"
+>--->8---
 >
->  Documentation/devicetree/bindings/display/msm/dpu.txt | 7 +++++++
->  Documentation/devicetree/bindings/display/msm/dsi.txt | 5 -----
->  2 files changed, 7 insertions(+), 5 deletions(-)
-> diff --git a/Documentation/devicetree/bindings/display/msm/dsi.txt b/Documentation/devicetree/bindings/display/msm/dsi.txt
-> index af95586..61d659a 100644
-> --- a/Documentation/devicetree/bindings/display/msm/dsi.txt
-> +++ b/Documentation/devicetree/bindings/display/msm/dsi.txt
-> @@ -8,13 +8,10 @@ Required properties:
->  - reg-names: The names of register regions. The following regions are required:
->    * "dsi_ctrl"
->  - interrupts: The interrupt signal from the DSI block.
-> -- power-domains: Should be <&mmcc MDSS_GDSC>.
->  - clocks: Phandles to device clocks.
->  - clock-names: the following clocks are required:
-> -  * "mdp_core"
->    * "iface"
->    * "bus"
-> -  * "core_mmss"
+>Thoughts ?
 
-Why do you think these are unused?  I see them used in the driver, and
-as far as I can tell these get routed to the hardware, therefore they
-should be described in DT.
+That definitely looks like I would expect that config option to work.
+Thanks for looking into that!
 
->    * "byte"
->    * "pixel"
->    * "core"
-> @@ -156,7 +153,6 @@ Example:
->                         "core",
->                         "core_mmss",
->                         "iface",
-> -                       "mdp_core",
->                         "pixel";
->                 clocks =
->                         <&mmcc MDSS_AXI_CLK>,
-> @@ -164,7 +160,6 @@ Example:
->                         <&mmcc MDSS_ESC0_CLK>,
->                         <&mmcc MMSS_MISC_AHB_CLK>,
->                         <&mmcc MDSS_AHB_CLK>,
-> -                       <&mmcc MDSS_MDP_CLK>,
->                         <&mmcc MDSS_PCLK0_CLK>;
+Cheers,
+Matthias
+
 >
->                 assigned-clocks =
-> --
-> 2.7.4
->
-> _______________________________________________
-> Freedreno mailing list
-> Freedreno@lists.freedesktop.org
-> https://lists.freedesktop.org/mailman/listinfo/freedreno
+>Thanks,
+>Quentin
