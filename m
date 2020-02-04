@@ -2,168 +2,153 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 680E0152010
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Feb 2020 18:54:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 303E5152017
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Feb 2020 18:58:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727453AbgBDRys (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 4 Feb 2020 12:54:48 -0500
-Received: from userp2130.oracle.com ([156.151.31.86]:46590 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727359AbgBDRyr (ORCPT
+        id S1727486AbgBDR6i (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 4 Feb 2020 12:58:38 -0500
+Received: from mail-vs1-f65.google.com ([209.85.217.65]:39573 "EHLO
+        mail-vs1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727454AbgBDR6i (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Feb 2020 12:54:47 -0500
-Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
-        by userp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id 014HrFVZ192141;
-        Tue, 4 Feb 2020 17:53:56 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=content-type :
- mime-version : subject : from : in-reply-to : date : cc :
- content-transfer-encoding : message-id : references : to;
- s=corp-2019-08-05; bh=/K8bkH1tluP7AqL7A5f3qlqtdLKkacRQXpV1VnbEX58=;
- b=CbAgUNM8xdGO+4tR+vkDHikxaGnulHiTHVcPlTr45h1WaN+kHVZ93QdL3KjgbaeUemjE
- s5gJb/Ezs6mklvvIcvbbGHSRaAvtu5/pLiFFQxnal7DNdfdbRR/QR/MZ1O5t9MbwJ1Nz
- yCpfLEezeXvFO+2x170eFuhc1995C39LSCnEfhe8eFLIAZHo5qf/S+1YuepRum6eE1ok
- ifMak7JJHYO/JD13IxXFalU+ON4G7Gsuuzz+7coaqerRYOc/d4S9pzR+U9ybbkisN1B5
- 7zJJkm3adUxRPfM6HLyYTa28L+zu3gYeShH1yn1i0JBWGPMFFBeGsS1hlcSK57gRcyTD 2w== 
-Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
-        by userp2130.oracle.com with ESMTP id 2xw0ru8ddp-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 04 Feb 2020 17:53:56 +0000
-Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
-        by userp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id 014HrloE163721;
-        Tue, 4 Feb 2020 17:53:56 GMT
-Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
-        by userp3030.oracle.com with ESMTP id 2xxvusa5p5-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 04 Feb 2020 17:53:54 +0000
-Received: from abhmp0018.oracle.com (abhmp0018.oracle.com [141.146.116.24])
-        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id 014HrngU027321;
-        Tue, 4 Feb 2020 17:53:49 GMT
-Received: from [10.11.111.157] (/10.11.111.157)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Tue, 04 Feb 2020 09:53:48 -0800
-Content-Type: text/plain;
-        charset=utf-8
-Mime-Version: 1.0 (Mac OS X Mail 12.4 \(3445.104.11\))
-Subject: Re: [PATCH v8 4/5] locking/qspinlock: Introduce starvation avoidance
- into CNA
-From:   Alex Kogan <alex.kogan@oracle.com>
-In-Reply-To: <e26b3afa-80d6-71bf-39c8-0fa4b875cbb2@redhat.com>
-Date:   Tue, 4 Feb 2020 12:53:46 -0500
-Cc:     Peter Zijlstra <peterz@infradead.org>, linux@armlinux.org.uk,
-        Ingo Molnar <mingo@redhat.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Arnd Bergmann <arnd@arndb.de>, linux-arch@vger.kernel.org,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
-        Borislav Petkov <bp@alien8.de>, hpa@zytor.com, x86@kernel.org,
-        Hanjun Guo <guohanjun@huawei.com>,
-        Jan Glauber <jglauber@marvell.com>,
-        Steven Sistare <steven.sistare@oracle.com>,
-        Daniel Jordan <daniel.m.jordan@oracle.com>,
-        dave.dice@oracle.com
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <B98581F8-DE4B-4DF6-B435-112993605E8E@oracle.com>
-References: <8D3AFB47-B595-418C-9568-08780DDC58FF@oracle.com>
- <714892cd-d96f-4d41-ae8b-d7b7642a6e3c@redhat.com>
- <1669BFDE-A1A5-4ED8-B586-035460BBF68A@oracle.com>
- <20200125111931.GW11457@worktop.programming.kicks-ass.net>
- <F32558D8-4ACB-483A-AB4C-F565003A02E7@oracle.com>
- <20200203134540.GA14879@hirez.programming.kicks-ass.net>
- <6d11b22b-2fb5-7dea-f88b-b32f1576a5e0@redhat.com>
- <20200203152807.GK14914@hirez.programming.kicks-ass.net>
- <15fa978d-bd41-3ecb-83d5-896187e11244@redhat.com>
- <83762715-F68C-42DF-9B41-C4C48DF6762F@oracle.com>
- <20200204172758.GF14879@hirez.programming.kicks-ass.net>
- <e26b3afa-80d6-71bf-39c8-0fa4b875cbb2@redhat.com>
-To:     Waiman Long <longman@redhat.com>
-X-Mailer: Apple Mail (2.3445.104.11)
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9521 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=857
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1911140001 definitions=main-2002040119
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9521 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=907 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1911140001
- definitions=main-2002040119
+        Tue, 4 Feb 2020 12:58:38 -0500
+Received: by mail-vs1-f65.google.com with SMTP id p14so11963273vsq.6
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Feb 2020 09:58:37 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=tzVO/i3RlK8wTW0CtIUDqXR3obK88NMKP/u+iDd4rUQ=;
+        b=O5VDOtm/ib9l1nZlkLp5aAjoHDGmbe/pDbvrnrOFQxx0ugJzt1szBuYP/xwnZgETip
+         P7HAfIEw3unJXYEVS4ie/bxig8VQ0AorpiyBzWFvlFBu2KjH3y4NnS7MNtts3L5btYIC
+         ij6sGv8mGSatOqli5mxV83kZVF3PE/4COaxgB7LSHF5HBP1q8UWGxi8IFnO4JFFHivpB
+         4P+JhkKMxD2r24UnI3YkDjuXSbSgbHBTDZuRqnMayX0j18RWJJ47chbBK1li9ZMqSFeQ
+         hiZrZN3Z8qSqzz9dE8/gSy8tALakqrzvM01IHNEFKAhrSTNr8tFlilhaAGg4OUOCOCvD
+         kdwQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=tzVO/i3RlK8wTW0CtIUDqXR3obK88NMKP/u+iDd4rUQ=;
+        b=Un0GDgs8yWiQlTLR7pywxrZTusLLk5yOcUyNvUXY44YHwbe6FhRRT6cCTgl1mb5IUD
+         7daBvit+ozSL3TfEgsPmPLLO2eUWlAWXKJgt1mxQ/PFgEIFSHklVtelLgWLWnquBxHL6
+         hbCwT/DLr93zlHEbJvqkDgxxX4BxBXMHAX0fYnuw1vlvpqwG+FvOA70d54pPeCqLb3HD
+         qw8YQKobutYCZSNXMgpbFhnFj9WKjd7dnSrOythc3g3jcAcc3N7qOeENIIP/pm92aSXf
+         QYQ1gsaoyeOkCXwUp2hvsohCiUJzdwmLWGPx8dft4VbNYCbQEgpCNZ5F1yIyrrIg1r+w
+         sNPg==
+X-Gm-Message-State: APjAAAVsQ7nTotViCUApy1qSbDjicSoHn9zeojeVuTp8zmCIgr+/k6QO
+        sCRdfA0jt7AlljKHWEkBM976F6NzmoA+L4UCYaz/sg==
+X-Google-Smtp-Source: APXvYqy8K0HZyom2Se94kPkPrPAC4jNuAoEYRybckINHoKbQmKOYiKuIMKD8CqYzd04t+SoQUijdLLODpClkxzUnst0=
+X-Received: by 2002:a05:6102:757:: with SMTP id v23mr19931507vsg.35.1580839116928;
+ Tue, 04 Feb 2020 09:58:36 -0800 (PST)
+MIME-Version: 1.0
+References: <20200115013751.249588-1-swboyd@chromium.org>
+In-Reply-To: <20200115013751.249588-1-swboyd@chromium.org>
+From:   Ulf Hansson <ulf.hansson@linaro.org>
+Date:   Tue, 4 Feb 2020 18:58:00 +0100
+Message-ID: <CAPDyKFrQoWaj6uc4Ej_0sUk01X=denmu=v6vq-KgNePbNxkwmw@mail.gmail.com>
+Subject: Re: [PATCH] drivers: qcom: rpmh-rsc: Use rcuidle tracepoints for rpmh
+To:     Stephen Boyd <swboyd@chromium.org>
+Cc:     Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        Sai Prakash Ranjan <saiprakash.ranjan@codeaurora.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Wed, 15 Jan 2020 at 02:37, Stephen Boyd <swboyd@chromium.org> wrote:
+>
+> This tracepoint is hit now that we call into the rpmh code from the cpu
+> idle path. Let's move this to be an rcuidle tracepoint so that we avoid
+> the RCU idle splat below
+>
+>  =============================
+>  WARNING: suspicious RCU usage
+>  5.4.10 #68 Tainted: G S
+>  -----------------------------
+>  drivers/soc/qcom/trace-rpmh.h:72 suspicious rcu_dereference_check() usage!
+>
+>  other info that might help us debug this:
+>
+>  RCU used illegally from idle CPU!
+>  rcu_scheduler_active = 2, debug_locks = 1
+>  RCU used illegally from extended quiescent state!
+>  5 locks held by swapper/2/0:
+>   #0: ffffff81745d6ee8 (&(&genpd->slock)->rlock){+.+.}, at: genpd_lock_spin+0x1c/0x2c
+>   #1: ffffff81745da6e8 (&(&genpd->slock)->rlock/1){....}, at: genpd_lock_nested_spin+0x24/0x34
+>   #2: ffffff8174f2ca20 (&(&genpd->slock)->rlock/2){....}, at: genpd_lock_nested_spin+0x24/0x34
+>   #3: ffffff8174f2c300 (&(&drv->client.cache_lock)->rlock){....}, at: rpmh_flush+0x48/0x24c
+>   #4: ffffff8174f2c150 (&(&tcs->lock)->rlock){+.+.}, at: rpmh_rsc_write_ctrl_data+0x74/0x270
+>
+>  stack backtrace:
+>  CPU: 2 PID: 0 Comm: swapper/2 Tainted: G S                5.4.10 #68
+>  Call trace:
+>   dump_backtrace+0x0/0x174
+>   show_stack+0x20/0x2c
+>   dump_stack+0xc8/0x124
+>   lockdep_rcu_suspicious+0xe4/0x104
+>   __tcs_buffer_write+0x230/0x2d0
+>   rpmh_rsc_write_ctrl_data+0x210/0x270
+>   rpmh_flush+0x84/0x24c
+>   rpmh_domain_power_off+0x78/0x98
+>   _genpd_power_off+0x40/0xc0
+>   genpd_power_off+0x168/0x208
+>   genpd_power_off+0x1e0/0x208
+>   genpd_power_off+0x1e0/0x208
+>   genpd_runtime_suspend+0x1ac/0x220
+>   __rpm_callback+0x70/0xfc
+>   rpm_callback+0x34/0x8c
+>   rpm_suspend+0x218/0x4a4
+>   __pm_runtime_suspend+0x88/0xac
+>   psci_enter_domain_idle_state+0x3c/0xb4
+>   cpuidle_enter_state+0xb8/0x284
+>   cpuidle_enter+0x38/0x4c
+>   call_cpuidle+0x3c/0x68
+>   do_idle+0x194/0x260
+>   cpu_startup_entry+0x24/0x28
+>   secondary_start_kernel+0x150/0x15c
+>
+> Fixes: a65a397f2451 ("cpuidle: psci: Add support for PM domains by using genpd")
+> Reported-by: Sai Prakash Ranjan <saiprakash.ranjan@codeaurora.org>
+> Cc: Ulf Hansson <ulf.hansson@linaro.org>
+> Signed-off-by: Stephen Boyd <swboyd@chromium.org>
 
+Sorry for the delay and many thanks for fixing this!
 
-> On Feb 4, 2020, at 12:39 PM, Waiman Long <longman@redhat.com> wrote:
->=20
-> On 2/4/20 12:27 PM, Peter Zijlstra wrote:
->> On Tue, Feb 04, 2020 at 11:54:02AM -0500, Alex Kogan wrote:
->>>> On Feb 3, 2020, at 10:47 AM, Waiman Long <longman@redhat.com> =
-wrote:
->>>>=20
->>>> On 2/3/20 10:28 AM, Peter Zijlstra wrote:
->>>>> On Mon, Feb 03, 2020 at 09:59:12AM -0500, Waiman Long wrote:
->>>>>> On 2/3/20 8:45 AM, Peter Zijlstra wrote:
->>>>>>> Presumably you have a workload where CNA is actually a win? That =
-is,
->>>>>>> what inspired you to go down this road? Which actual kernel lock =
-is so
->>>>>>> contended on NUMA machines that we need to do this?
->>> There are quite a few actually. files_struct.file_lock, =
-file_lock_context.flc_lock
->>> and lockref.lock are some concrete examples that get very hot in =
-will-it-scale
->>> benchmarks.=20
->> Right, that's all a variant of banging on the same resources across
->> nodes. I'm not sure there's anything fundamental we can fix there.
-Not much, except gain that 2x from a better lock.
+> ---
+>
+> I think the commit that this is "Fixes"ing is a stable commit, but I'm
+> not positive.
 
->>=20
->>> And then there are spinlocks in __futex_data.queues,=20
->>> which get hot when applications have contended (pthread) locks =E2=80=94=
-=20
->>> LevelDB is an example.
->> A numa aware rework of futexes has been on the todo list for years :/
-> Now, we are going to get that for free with this patchset:-)
-Exactly!!
+Correct, the commit is in Linus' tree by now.
 
->>=20
->>> Our initial motivation was based on an observation that kernel =
-qspinlock is not=20
->>> NUMA-aware. So what, you may ask. Much like people realized in the =
-past that
->>> global spinning is bad for performance, and they switched from =
-ticket lock to
->>> locks with local spinning (e.g., MCS), I think everyone would agree =
-these days that
->>> bouncing a lock (and cache lines in general) across numa nodes is =
-similarly bad.
->>> And as CNA demonstrates, we are easily leaving 2-3x speedups on the =
-table by
->>> doing just that with the current qspinlock.
->> Actual benchmarks with performance numbers are required. It helps
->> motivate the patches as well as gives reviewers clues on how to
->> reproduce / inspect the claims made.
->>=20
-> I think the cover-letter does have some benchmark results listed.
-To clarify on that, I _used to include benchmark results in the cover =
-letter=20
-for previous revisions. I stopped doing that as the changes between =
-revisions
-were rather minor =E2=80=94 maybe that is the missing part? If so, my =
-apologies, I can
-certainly publish them again.
+Acked-by: Ulf Hansson <ulf.hansson@linaro.org>
 
-The point is that we have numbers for actual benchmarks, plus the kernel =
-build
-robot has sent quite a few reports on positive improvements in the =
-performance
-of AIM7 and other benchmarks due to CNA (plus ARM folks noticed =
-improvement
-in their benchmarks, although I think those were mostly microbenchmarks.=20=
+Kind regards
+Uffe
 
-Yet, it is evident that the improvements are cross-platform.)
-
-Regards,
-=E2=80=94 Alex=
+>
+>  drivers/soc/qcom/rpmh-rsc.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/soc/qcom/rpmh-rsc.c b/drivers/soc/qcom/rpmh-rsc.c
+> index e278fc11fe5c..b71822131f59 100644
+> --- a/drivers/soc/qcom/rpmh-rsc.c
+> +++ b/drivers/soc/qcom/rpmh-rsc.c
+> @@ -277,7 +277,7 @@ static void __tcs_buffer_write(struct rsc_drv *drv, int tcs_id, int cmd_id,
+>                 write_tcs_cmd(drv, RSC_DRV_CMD_MSGID, tcs_id, j, msgid);
+>                 write_tcs_cmd(drv, RSC_DRV_CMD_ADDR, tcs_id, j, cmd->addr);
+>                 write_tcs_cmd(drv, RSC_DRV_CMD_DATA, tcs_id, j, cmd->data);
+> -               trace_rpmh_send_msg(drv, tcs_id, j, msgid, cmd);
+> +               trace_rpmh_send_msg_rcuidle(drv, tcs_id, j, msgid, cmd);
+>         }
+>
+>         write_tcs_reg(drv, RSC_DRV_CMD_WAIT_FOR_CMPL, tcs_id, cmd_complete);
+> --
+> Sent by a computer, using git, on the internet
+>
