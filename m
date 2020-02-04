@@ -2,103 +2,128 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0BB50151591
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Feb 2020 06:55:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7542115159B
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Feb 2020 07:04:30 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726418AbgBDFy6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 4 Feb 2020 00:54:58 -0500
-Received: from mail-qk1-f196.google.com ([209.85.222.196]:42613 "EHLO
-        mail-qk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725813AbgBDFy6 (ORCPT
+        id S1726763AbgBDGDP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 4 Feb 2020 01:03:15 -0500
+Received: from mail-oi1-f193.google.com ([209.85.167.193]:40056 "EHLO
+        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726053AbgBDGDO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Feb 2020 00:54:58 -0500
-Received: by mail-qk1-f196.google.com with SMTP id q15so16781612qke.9;
-        Mon, 03 Feb 2020 21:54:57 -0800 (PST)
+        Tue, 4 Feb 2020 01:03:14 -0500
+Received: by mail-oi1-f193.google.com with SMTP id a142so17325907oii.7
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Feb 2020 22:03:14 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=jms.id.au; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=p7n4zoUIIiZA2ALJJ4mJ57lt2Tcsn0/OESnXuVktsWY=;
-        b=iVIquOkE279Q+7leFvYOkIFSqSRBJPoOawRF8kQpKRY1g1IVeYzB53msqcbdBWFHuk
-         2VKjw/GtlEhJxzocBgubpF/H/yMargA5Txm2lTb8KCXoviEE+uJp3lC4f+4eqacg0pDq
-         NKAdbraEwRWewqIh8YdXUBf/heEP4vlAfXjac=
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=XMN+K684Z/eVZ2yqWGF8j0z6j6M569qkTkBF8k40oto=;
+        b=iXUE6ebm4DNRaybXe8E5MJV+zuFNTp8YtrjhZBJpVahnRtRlo/wlsroYUWsbzOcqpB
+         ZrD9bBlQE23F5TGK2maz/caplkgCljAVe/NWWPzOTvJESIZqSQ0tLvEinV0j79S2sgCh
+         NqGXfWe/nIqgwPvone2XLITAudSxoARaNlFO2Rw7eFWcs0zfv+F6Qw4SfiTNwxppZVXg
+         yX32n16CFb5WLXAm05/f0NiNfKnbSCdfAsBJC1tdAgIWD7NHiUe9pDBtj8WHq4e7pY61
+         0wZn9jjAC0bAWM31CCckaMxVAePFzTxouLcpqwRCJaT/8E98hn+W/cygJo9iH7G5hRsH
+         IfGg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=p7n4zoUIIiZA2ALJJ4mJ57lt2Tcsn0/OESnXuVktsWY=;
-        b=dV9+Cl/9GHw52nTQL3CP9XPx10v12k5r9e6y9TXsKPpfGcYCXiUZRsj7YllJQ+XjTM
-         L9jbjyubTrKINjOti1rdZ5A8vRufDB7BibRemv3Z6Ki119fDDgXtjcvrtAh+YRHT1hnf
-         1ooOuMHV8Xf03nlVY/tgc+DquNfMrw6RHD3troQ60iA3eJuECtvG5Bsfkd2+znLhc/3B
-         KiYY7xxdknrHN+kT9qsDOXCpS0Kb+zWrkY3XG4dyoxNKAxSWhAeYMmHZRUzrAn5EW5Ah
-         yNf6y4PQRObEVh6+6BgiMgT6EUcVneDNQ60IKL0vx4SHGc3A9dGzaOfXJorNgW3jyUQg
-         V3Rg==
-X-Gm-Message-State: APjAAAXNF+ppSWQe6Vt8T6fksbchS3u+cmtlYCBKorxUzRaueaYs5rM/
-        eaxhlVLoYN6XUpbi42yElDiAjeWyGba1NSl2UrbQnqMR
-X-Google-Smtp-Source: APXvYqzF7uxnpiHtFepL2gYUO8yy3dYQIdv2llaISfPr13fI0OQDLILTDeVHgt8XFYYHzXLAZwTJy/dPVgzXJUE43Ec=
-X-Received: by 2002:ae9:e702:: with SMTP id m2mr26659032qka.208.1580795697026;
- Mon, 03 Feb 2020 21:54:57 -0800 (PST)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=XMN+K684Z/eVZ2yqWGF8j0z6j6M569qkTkBF8k40oto=;
+        b=T3mOpRA/6hq+Ha+xxvV1WpVV64C3JMS+1AZw1F2rsEWNJ1bGsagKD6AFPDIO1BVH8R
+         g2pDgiejJvSPqyRNy2Jnw/0np2YiKqqe9PWyeKYeIg53VwnievX5xzP0YYbgtvHE+zPv
+         228GhG8rCEYk1jBRJbyynIlNiqpVHhPHm1zbep5BxQUmY3vjKRLwHIdPOr31U+stb+n4
+         N4xi/3uRH5DlrAzWRHy5Yy5rSueIES6AANOowiKBo4ElqJm6tUwNDXMI64O/U+mbd1D0
+         UtP/saHj7y9e1+LuM+OFKgV/CvMVEaLShl99pIVaWdPIRedG5a48F1yGJJJH+X0uEVK1
+         uLog==
+X-Gm-Message-State: APjAAAUTmJPfGLq6dXNvOm1YtdXfjV0uphGRp76/fQ1AVsD6+8mXYdu7
+        8RhkURAZOjHTK1hh/jdlRS3ln2bP
+X-Google-Smtp-Source: APXvYqzmORnsr5YKAbx545QjhZhcUKYFi/BJlFYlcOrBRtot49y/1d6gwfVV0ShbmWEKuNCpqRV6Nw==
+X-Received: by 2002:aca:fc0c:: with SMTP id a12mr2264517oii.118.1580796193543;
+        Mon, 03 Feb 2020 22:03:13 -0800 (PST)
+Received: from localhost.localdomain ([2604:1380:4111:8b00::1])
+        by smtp.gmail.com with ESMTPSA id d131sm6501708oia.36.2020.02.03.22.03.11
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 03 Feb 2020 22:03:11 -0800 (PST)
+From:   Nathan Chancellor <natechancellor@gmail.com>
+To:     Mark Brown <broonie@kernel.org>,
+        Liam Girdwood <lgirdwood@gmail.com>
+Cc:     Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+        alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org,
+        clang-built-linux@googlegroups.com,
+        Nathan Chancellor <natechancellor@gmail.com>
+Subject: [PATCH] ASoC: wcd934x: Remove some unnecessary NULL checks
+Date:   Mon,  3 Feb 2020 23:01:44 -0700
+Message-Id: <20200204060143.23393-1-natechancellor@gmail.com>
+X-Mailer: git-send-email 2.25.0
 MIME-Version: 1.0
-References: <20200202163939.13326-1-linux@roeck-us.net>
-In-Reply-To: <20200202163939.13326-1-linux@roeck-us.net>
-From:   Joel Stanley <joel@jms.id.au>
-Date:   Tue, 4 Feb 2020 05:54:44 +0000
-Message-ID: <CACPK8XeLWZT-VvuErtz6oE1tv1dhwwOnpZbV7PVr2PxgT2fopA@mail.gmail.com>
-Subject: Re: [PATCH] ARM: dts: aspeed: tacoma: Enable eMMC controller
-To:     Guenter Roeck <linux@roeck-us.net>
-Cc:     devicetree <devicetree@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        linux-aspeed <linux-aspeed@lists.ozlabs.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Andrew Jeffery <andrew@aj.id.au>
-Content-Type: text/plain; charset="UTF-8"
+X-Patchwork-Bot: notify
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, 2 Feb 2020 at 16:39, Guenter Roeck <linux@roeck-us.net> wrote:
->
-> Enabling emmc without enabling its controller doesn't do any good.
-> Enable its controller as well to make it work.
->
-> Cc: Andrew Jeffery <andrew@aj.id.au>
-> Cc: Joel Stanley <joel@jms.id.au>
-> Signed-off-by: Guenter Roeck <linux@roeck-us.net>
+Clang warns:
 
-Thanks Guenter. The description in aspeed-g6.dtsi changed at some
-point and Tacoma was not updated.
+../sound/soc/codecs/wcd934x.c:1886:11: warning: address of array
+'wcd->rx_chs' will always evaluate to 'true' [-Wpointer-bool-conversion]
+        if (wcd->rx_chs) {
+        ~~  ~~~~~^~~~~~
+../sound/soc/codecs/wcd934x.c:1894:11: warning: address of array
+'wcd->tx_chs' will always evaluate to 'true' [-Wpointer-bool-conversion]
+        if (wcd->tx_chs) {
+        ~~  ~~~~~^~~~~~
+2 warnings generated.
 
-> ---
->  arch/arm/boot/dts/aspeed-bmc-opp-tacoma.dts | 4 ++++
->  1 file changed, 4 insertions(+)
->
-> diff --git a/arch/arm/boot/dts/aspeed-bmc-opp-tacoma.dts b/arch/arm/boot/dts/aspeed-bmc-opp-tacoma.dts
-> index ff49ec76fa7c..47293a5e0c59 100644
-> --- a/arch/arm/boot/dts/aspeed-bmc-opp-tacoma.dts
-> +++ b/arch/arm/boot/dts/aspeed-bmc-opp-tacoma.dts
-> @@ -132,6 +132,10 @@
->         use-ncsi;
->  };
->
-> +&emmc_controller {
-> +       status = "okay";
-> +};
-> +
->  &emmc {
->         status = "okay";
->  };
+Arrays that are in the middle of a struct are never NULL so they don't
+need a check like this.
 
-This node is redundant, as it is not disabled in the dtsi.
+Fixes: a61f3b4f476e ("ASoC: wcd934x: add support to wcd9340/wcd9341 codec")
+Link: https://github.com/ClangBuiltLinux/linux/issues/854
+Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
+---
 
-Andrew, should we add disabled to the emmc node?
+Also, turns out this was fixed in the wcd9335 driver in
+commit d22b4117538d ("ASoC: wcd9335: remove some unnecessary
+NULL checks")...
 
-Or remove the label completely, and just have emmc_controller?
+ sound/soc/codecs/wcd934x.c | 20 ++++++++------------
+ 1 file changed, 8 insertions(+), 12 deletions(-)
 
-Cheers,
+diff --git a/sound/soc/codecs/wcd934x.c b/sound/soc/codecs/wcd934x.c
+index 158e878abd6c..e780ecd554d2 100644
+--- a/sound/soc/codecs/wcd934x.c
++++ b/sound/soc/codecs/wcd934x.c
+@@ -1883,20 +1883,16 @@ static int wcd934x_set_channel_map(struct snd_soc_dai *dai,
+ 		return -EINVAL;
+ 	}
+ 
+-	if (wcd->rx_chs) {
+-		wcd->num_rx_port = rx_num;
+-		for (i = 0; i < rx_num; i++) {
+-			wcd->rx_chs[i].ch_num = rx_slot[i];
+-			INIT_LIST_HEAD(&wcd->rx_chs[i].list);
+-		}
++	wcd->num_rx_port = rx_num;
++	for (i = 0; i < rx_num; i++) {
++		wcd->rx_chs[i].ch_num = rx_slot[i];
++		INIT_LIST_HEAD(&wcd->rx_chs[i].list);
+ 	}
+ 
+-	if (wcd->tx_chs) {
+-		wcd->num_tx_port = tx_num;
+-		for (i = 0; i < tx_num; i++) {
+-			wcd->tx_chs[i].ch_num = tx_slot[i];
+-			INIT_LIST_HEAD(&wcd->tx_chs[i].list);
+-		}
++	wcd->num_tx_port = tx_num;
++	for (i = 0; i < tx_num; i++) {
++		wcd->tx_chs[i].ch_num = tx_slot[i];
++		INIT_LIST_HEAD(&wcd->tx_chs[i].list);
+ 	}
+ 
+ 	return 0;
+-- 
+2.25.0
 
-Joel
-
-> --
-> 2.17.1
->
