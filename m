@@ -2,139 +2,110 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BDEAD1517B2
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Feb 2020 10:20:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B75781517B8
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Feb 2020 10:22:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727093AbgBDJU2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 4 Feb 2020 04:20:28 -0500
-Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:50273 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726371AbgBDJU1 (ORCPT
+        id S1726513AbgBDJWi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 4 Feb 2020 04:22:38 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:52828 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726053AbgBDJWh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Feb 2020 04:20:27 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1580808026;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-        bh=RHvzu8t7DSk7lF1XoO7vsW7bU11o/C+y6p3UFShrwgw=;
-        b=R3ioCFZiv+cR+EIi/g7WLC3Z5ezql5txIBZYtdOpDcayGSCQJ56m3yHSoqsG8QFa9VOfu4
-        QL//sMJml1d/RBcukqvqqBknRD0YDOUEm8WQkGo88/d1fxjohHdYiS3sRIwfyBnq3Y5rs1
-        07QcQZdrRAF/GJEfSFcdyB/UVaEVDls=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-434-1mNuaWW5M6GcS8aYzpsskg-1; Tue, 04 Feb 2020 04:20:22 -0500
-X-MC-Unique: 1mNuaWW5M6GcS8aYzpsskg-1
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 12F3E8010F6;
-        Tue,  4 Feb 2020 09:20:20 +0000 (UTC)
-Received: from [10.36.117.121] (ovpn-117-121.ams2.redhat.com [10.36.117.121])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 4BF735C1B5;
-        Tue,  4 Feb 2020 09:20:17 +0000 (UTC)
-Subject: Re: [PATCH v6 08/10] mm/memory_hotplug: Don't check for "all holes"
- in shrink_zone_span()
-To:     Oscar Salvador <osalvador@suse.de>
-Cc:     linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        linux-arm-kernel@lists.infradead.org, linux-ia64@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org, linux-s390@vger.kernel.org,
-        linux-sh@vger.kernel.org, x86@kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Michal Hocko <mhocko@suse.com>,
-        Pavel Tatashin <pasha.tatashin@soleen.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Wei Yang <richardw.yang@linux.intel.com>
-References: <20191006085646.5768-1-david@redhat.com>
- <20191006085646.5768-9-david@redhat.com> <20200204091312.GC6494@linux>
-From:   David Hildenbrand <david@redhat.com>
-Autocrypt: addr=david@redhat.com; prefer-encrypt=mutual; keydata=
- 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
-Organization: Red Hat GmbH
-Message-ID: <7d36f4cd-3f5b-8fec-2d8b-83e62a34ec89@redhat.com>
-Date:   Tue, 4 Feb 2020 10:20:16 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.3.1
+        Tue, 4 Feb 2020 04:22:37 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=9M17iibfv122ur1ks8I+I3t1ou4sPRJVkTsCZX95FVI=; b=ACiGrEqV2DKuGLBrlG3vRt6K52
+        pmqg1KMBRD0Sksuzj4Aap9wld4vgPp9QXmAqYDrwECIL4P3oouRx7TjusqLQC0o76WInJU/TW4XqD
+        gZsVSlenLs738F4o9c29o9L9WBLIwqMfdk7eHn3EqDswQhcvMubNTwVES7TDHsFgk8unV3BxbztC8
+        RzxlXtrkRyQIeLkgXyo2/j0GqQiSIXayWNf3f1QrJe+Bxgg7c48W57GqTK/VrItlkLJ2QqkZW81AU
+        xBALJxq96Xubg1ZjDZOrsUy+A5u0OsoRa2FeoK3fONW09clHdIRkFNT0tDiXcZRn/KuDpRJQDpUHo
+        WXkAK5Sw==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
+        by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1iyuPe-0008Mr-RQ; Tue, 04 Feb 2020 09:22:31 +0000
+Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (Client did not present a certificate)
+        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 624BA300E0C;
+        Tue,  4 Feb 2020 10:20:43 +0100 (CET)
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id CF68A203A89B2; Tue,  4 Feb 2020 10:22:28 +0100 (CET)
+Date:   Tue, 4 Feb 2020 10:22:28 +0100
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Christoph Hellwig <hch@infradead.org>
+Cc:     mingo@kernel.org, will@kernel.org, oleg@redhat.com,
+        tglx@linutronix.de, linux-kernel@vger.kernel.org,
+        bigeasy@linutronix.de, juri.lelli@redhat.com, williams@redhat.com,
+        bristot@redhat.com, longman@redhat.com, dave@stgolabs.net,
+        jack@suse.com
+Subject: [PATCH] locking/rwsem: Remove RWSEM_OWNER_UNKNOWN
+Message-ID: <20200204092228.GP14946@hirez.programming.kicks-ass.net>
+References: <20200131150703.194229898@infradead.org>
+ <20200131151540.155211856@infradead.org>
+ <20200203142050.GA28595@infradead.org>
+ <20200203150933.GJ14914@hirez.programming.kicks-ass.net>
+ <20200203174831.GA9834@infradead.org>
+ <20200204085049.GN14914@hirez.programming.kicks-ass.net>
 MIME-Version: 1.0
-In-Reply-To: <20200204091312.GC6494@linux>
-Content-Type: text/plain; charset=windows-1252
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200204085049.GN14914@hirez.programming.kicks-ass.net>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 04.02.20 10:13, Oscar Salvador wrote:
-> On Sun, Oct 06, 2019 at 10:56:44AM +0200, David Hildenbrand wrote:
->> If we have holes, the holes will automatically get detected and removed
->> once we remove the next bigger/smaller section. The extra checks can
->> go.
->>
->> Cc: Andrew Morton <akpm@linux-foundation.org>
->> Cc: Oscar Salvador <osalvador@suse.de>
->> Cc: Michal Hocko <mhocko@suse.com>
->> Cc: David Hildenbrand <david@redhat.com>
->> Cc: Pavel Tatashin <pasha.tatashin@soleen.com>
->> Cc: Dan Williams <dan.j.williams@intel.com>
->> Cc: Wei Yang <richardw.yang@linux.intel.com>
->> Signed-off-by: David Hildenbrand <david@redhat.com>
-> 
-> Heh, I have been here before.
-> I have to confess that when I wrote my version of this I was not really 100%
-> about removing it, because hotplug was a sort of a "catchall" for all sort of weird
-> and corner-cases configurations, but thinking more about it, I cannot think of
-> any situation that would make this blow up.
-> 
-> Reviewed-by: Oscar Salvador <osalvador@suse.de>
+On Tue, Feb 04, 2020 at 09:50:49AM +0100, Peter Zijlstra wrote:
 
-Thanks for your review Oscar!
+> Anyway, I'll go split, since you seem to care so deeply.
 
--- 
-Thanks,
+---
 
-David / dhildenb
+Subject: locking/rwsem: Remove RWSEM_OWNER_UNKNOWN
+From: Peter Zijlstra <peterz@infradead.org>
+Date: Tue Feb  4 09:34:37 CET 2020
 
+Remove the now unused RWSEM_OWNER_UNKNOWN hack. This hack breaks
+PREEMPT_RT and getting rid of it was the entire motivation for
+re-writing the percpu rwsem.
+
+The biggest problem is that it is fundamentally incompatible with any
+form of Priority Inheritance, any exclusively held lock must have a
+distinct owner.
+
+Requested-by: Christoph Hellwig <hch@infradead.org>
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+---
+ include/linux/rwsem.h  |    6 ------
+ kernel/locking/rwsem.c |    2 --
+ 2 files changed, 8 deletions(-)
+
+--- a/include/linux/rwsem.h
++++ b/include/linux/rwsem.h
+@@ -53,12 +53,6 @@ struct rw_semaphore {
+ #endif
+ };
+ 
+-/*
+- * Setting all bits of the owner field except bit 0 will indicate
+- * that the rwsem is writer-owned with an unknown owner.
+- */
+-#define RWSEM_OWNER_UNKNOWN	(-2L)
+-
+ /* In all implementations count != 0 means locked */
+ static inline int rwsem_is_locked(struct rw_semaphore *sem)
+ {
+--- a/kernel/locking/rwsem.c
++++ b/kernel/locking/rwsem.c
+@@ -659,8 +659,6 @@ static inline bool rwsem_can_spin_on_own
+ 	unsigned long flags;
+ 	bool ret = true;
+ 
+-	BUILD_BUG_ON(!(RWSEM_OWNER_UNKNOWN & RWSEM_NONSPINNABLE));
+-
+ 	if (need_resched()) {
+ 		lockevent_inc(rwsem_opt_fail);
+ 		return false;
