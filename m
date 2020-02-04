@@ -2,77 +2,99 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5D4CE152173
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Feb 2020 21:17:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CBA6B15218A
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Feb 2020 21:35:21 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727468AbgBDURB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 4 Feb 2020 15:17:01 -0500
-Received: from mga14.intel.com ([192.55.52.115]:44172 "EHLO mga14.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727314AbgBDURA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Feb 2020 15:17:00 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 04 Feb 2020 12:17:00 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.70,403,1574150400"; 
-   d="scan'208";a="219867019"
-Received: from twinkler-lnx.jer.intel.com ([10.12.91.155])
-  by orsmga007.jf.intel.com with ESMTP; 04 Feb 2020 12:16:57 -0800
-From:   Tomas Winkler <tomas.winkler@intel.com>
-To:     Lee Jones <lee.jones@linaro.org>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     linux-kernel@vger.kernel.org,
-        Tomas Winkler <tomas.winkler@intel.com>
-Subject: [PATCH] mfd: constify properties in mfd_cell
-Date:   Tue,  4 Feb 2020 22:16:51 +0200
-Message-Id: <20200204201651.15778-1-tomas.winkler@intel.com>
-X-Mailer: git-send-email 2.21.1
+        id S1727555AbgBDUfS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 4 Feb 2020 15:35:18 -0500
+Received: from fllv0016.ext.ti.com ([198.47.19.142]:47346 "EHLO
+        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727445AbgBDUfR (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Feb 2020 15:35:17 -0500
+Received: from lelv0266.itg.ti.com ([10.180.67.225])
+        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 014KZ5VG105411;
+        Tue, 4 Feb 2020 14:35:05 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1580848505;
+        bh=IocsJb4lt8ba4aTh9yVCxKQrrItDY600pxBV4Igcxn0=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=huoOQfewWrW/q7cjEvE35DCyOuUXPTBgUqHbU3Sj1MZWfpT0+BXXCbSxeurZ0U1qg
+         sZ/GsO5c2gWh2L1JSWu4Mkf+uRzhiID1M0IwdvI1Ir4KwYYhj7rfxcY1vMTo1JosIM
+         RcNugpb/cbW9z5U8w5Aw7KHF/vfyypvfSzqSozfA=
+Received: from DFLE109.ent.ti.com (dfle109.ent.ti.com [10.64.6.30])
+        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 014KZ5vu126333
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Tue, 4 Feb 2020 14:35:05 -0600
+Received: from DFLE110.ent.ti.com (10.64.6.31) by DFLE109.ent.ti.com
+ (10.64.6.30) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Tue, 4 Feb
+ 2020 14:35:05 -0600
+Received: from lelv0327.itg.ti.com (10.180.67.183) by DFLE110.ent.ti.com
+ (10.64.6.31) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
+ Frontend Transport; Tue, 4 Feb 2020 14:35:05 -0600
+Received: from [128.247.59.107] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by lelv0327.itg.ti.com (8.15.2/8.15.2) with ESMTP id 014KZ4rE087244;
+        Tue, 4 Feb 2020 14:35:04 -0600
+Subject: Re: [PATCH net-next v2] net: phy: dp83867: Add speed optimization
+ feature
+To:     Heiner Kallweit <hkallweit1@gmail.com>, <andrew@lunn.ch>,
+        <f.fainelli@gmail.com>
+CC:     <linux@armlinux.org.uk>, <davem@davemloft.net>,
+        <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+References: <20200204181319.27381-1-dmurphy@ti.com>
+ <f977a302-16fc-de68-e84b-d41a0eca4c12@gmail.com>
+From:   Dan Murphy <dmurphy@ti.com>
+Message-ID: <29de8f3f-d9ba-88b3-ca48-61936c012172@ti.com>
+Date:   Tue, 4 Feb 2020 14:30:39 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.1
 MIME-Version: 1.0
+In-Reply-To: <f977a302-16fc-de68-e84b-d41a0eca4c12@gmail.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
 Content-Transfer-Encoding: 8bit
+Content-Language: en-US
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Constify 'struct property_entry *properties' in
-mfd_cell and platform_device. It is always passed
-around as a pointer const struct.
+Heiner
 
-Signed-off-by: Tomas Winkler <tomas.winkler@intel.com>
----
- include/linux/mfd/core.h        | 2 +-
- include/linux/platform_device.h | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+On 2/4/20 2:08 PM, Heiner Kallweit wrote:
+> On 04.02.2020 19:13, Dan Murphy wrote:
+>> Set the speed optimization bit on the DP83867 PHY.
+>> This feature can also be strapped on the 64 pin PHY devices
+>> but the 48 pin devices do not have the strap pin available to enable
+>> this feature in the hardware.  PHY team suggests to have this bit set.
+>>
+>> With this bit set the PHY will auto negotiate and report the link
+>> parameters in the PHYSTS register.  This register provides a single
+>> location within the register set for quick access to commonly accessed
+>> information.
+>>
+>> In this case when auto negotiation is on the PHY core reads the bits
+>> that have been configured or if auto negotiation is off the PHY core
+>> reads the BMCR register and sets the phydev parameters accordingly.
+>>
+>> This Giga bit PHY can throttle the speed to 100Mbps or 10Mbps to accomodate a
+>> 4-wire cable.  If this should occur the PHYSTS register contains the
+>> current negotiated speed and duplex mode.
+>>
+>> In overriding the genphy_read_status the dp83867_read_status will do a
+>> genphy_read_status to setup the LP and pause bits.  And then the PHYSTS
+>> register is read and the phydev speed and duplex mode settings are
+>> updated.
+>>
+>> Signed-off-by: Dan Murphy <dmurphy@ti.com>
+> net-next is closed currently. See here for details:
+> https://www.kernel.org/doc/Documentation/networking/netdev-FAQ.txt
+> Reopening will be announced on the netdev mailing list, you can also
+> check net-next status here: http://vger.kernel.org/~davem/net-next.html
+>
+Thanks Heiner for the link I RTM.  I will wait for the opening.
 
-diff --git a/include/linux/mfd/core.h b/include/linux/mfd/core.h
-index d01d1299e49d..7e5ac3c00891 100644
---- a/include/linux/mfd/core.h
-+++ b/include/linux/mfd/core.h
-@@ -70,7 +70,7 @@ struct mfd_cell {
- 	size_t			pdata_size;
- 
- 	/* device properties passed to the sub devices drivers */
--	struct property_entry *properties;
-+	const struct property_entry *properties;
- 
- 	/*
- 	 * Device Tree compatible string
-diff --git a/include/linux/platform_device.h b/include/linux/platform_device.h
-index 276a03c24691..8e83c6ff140d 100644
---- a/include/linux/platform_device.h
-+++ b/include/linux/platform_device.h
-@@ -89,7 +89,7 @@ struct platform_device_info {
- 		size_t size_data;
- 		u64 dma_mask;
- 
--		struct property_entry *properties;
-+		const struct property_entry *properties;
- };
- extern struct platform_device *platform_device_register_full(
- 		const struct platform_device_info *pdevinfo);
--- 
-2.21.1
+Dan
 
