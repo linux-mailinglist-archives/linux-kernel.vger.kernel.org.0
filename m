@@ -2,78 +2,155 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4C3B0151D9A
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Feb 2020 16:47:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C0218151DA2
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Feb 2020 16:49:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727387AbgBDPrm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 4 Feb 2020 10:47:42 -0500
-Received: from us-smtp-2.mimecast.com ([207.211.31.81]:45438 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727319AbgBDPrl (ORCPT
+        id S1727404AbgBDPty (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 4 Feb 2020 10:49:54 -0500
+Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:21073 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1727311AbgBDPty (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Feb 2020 10:47:41 -0500
+        Tue, 4 Feb 2020 10:49:54 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1580831260;
+        s=mimecast20190719; t=1580831393;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=k5j3ObvOODL75kJLhay5/4twRQnCsNc1II2lP04Cwzc=;
-        b=EXFvQTntXUNXt7svOP1my7rv8MJb2pHJklxfIyioWzthFzHE16TIwHX0pajDYMq/2QCBkv
-        rqNa+mcP8/BKtf01LV/cTX/GXrMf6o5+ba6bZsbuPOk/sijKwJS5g3biZfQTn7RlwSomL5
-        KO+5uBg9yYwHfZL2FQuvv4+C2P86u70=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-245-6f651S_0N52lsFSFMHrBKg-1; Tue, 04 Feb 2020 10:47:39 -0500
-X-MC-Unique: 6f651S_0N52lsFSFMHrBKg-1
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id B3F7A19251A6;
-        Tue,  4 Feb 2020 15:47:36 +0000 (UTC)
-Received: from x2.localnet (ovpn-116-11.phx2.redhat.com [10.3.116.11])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id BFF115C1B5;
-        Tue,  4 Feb 2020 15:47:23 +0000 (UTC)
-From:   Steve Grubb <sgrubb@redhat.com>
-To:     Richard Guy Briggs <rgb@redhat.com>
-Cc:     Paul Moore <paul@paul-moore.com>,
-        containers@lists.linux-foundation.org, linux-api@vger.kernel.org,
-        Linux-Audit Mailing List <linux-audit@redhat.com>,
-        linux-fsdevel@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        netdev@vger.kernel.org, netfilter-devel@vger.kernel.org,
-        omosnace@redhat.com, dhowells@redhat.com, simo@redhat.com,
-        Eric Paris <eparis@parisplace.org>,
-        Serge Hallyn <serge@hallyn.com>, ebiederm@xmission.com,
-        nhorman@tuxdriver.com, Dan Walsh <dwalsh@redhat.com>,
-        mpatel@redhat.com
-Subject: Re: [PATCH ghak90 V8 13/16] audit: track container nesting
-Date:   Tue, 04 Feb 2020 10:47:22 -0500
-Message-ID: <3665686.i1MIc9PeWa@x2>
-Organization: Red Hat
-In-Reply-To: <20200204131944.esnzcqvnecfnqgbi@madcap2.tricolour.ca>
-References: <cover.1577736799.git.rgb@redhat.com> <5238532.OiMyN8JqPO@x2> <20200204131944.esnzcqvnecfnqgbi@madcap2.tricolour.ca>
+        bh=jc0jwQ8Mrnulk4hcRGlXfLCKMEivRMsq7jO1NHpoXC0=;
+        b=cawzCuUQaZSGs48+D+avs0xUCjMN0H1ejaofOITqXznJ4u2dup+q+4bHJU18nNnQGKZHiE
+        kthZae9pFzHTmx9vOVYc1ImvjS6w3qOOQAfn4ZPlhyqWNXpoY5Ddeg3Bm0SnaY+62snuJh
+        s2oqtPXy2TncIqQGdT1LRwBjMDQozss=
+Received: from mail-ot1-f72.google.com (mail-ot1-f72.google.com
+ [209.85.210.72]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-297-0JNQ3P61POqjWghE2qeo9g-1; Tue, 04 Feb 2020 10:49:37 -0500
+X-MC-Unique: 0JNQ3P61POqjWghE2qeo9g-1
+Received: by mail-ot1-f72.google.com with SMTP id a20so11245956otl.11
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Feb 2020 07:49:37 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=jc0jwQ8Mrnulk4hcRGlXfLCKMEivRMsq7jO1NHpoXC0=;
+        b=IkhndPjib1mk5NvPptOWBWR/Vnn964xo32onqBILdYhGTJUksq3l1l1UzKNj1D98vh
+         q9l3oLty2Qy8vYGISRQ47hcNd6sUSTRoZSCbc6lYXkPdPx18PxvtTrbmPZqtA7mTiexA
+         taBIKdpUE+c1+6djdVyR5hGCIg9Lyn1jVtPwWecJmkRSKiZ7woyidvmRA0zNtiwdfs7y
+         0kDqRzCYVX+BLZx0rDSB62rZl7diPKMsalsELuSduFKY1HFli+gTbnbR9gHfDfMUkUL+
+         P7+xVuMw7aoxtVKHFmAdkPbYwoWMalOdjzMUFSL0WgohOlLhM77mjSt5jh5W3LP9Eqfv
+         yzzQ==
+X-Gm-Message-State: APjAAAVAIEqY2xLS/06Tb7JY0toO6Dqw4rF9SefCWsHOcvqQij6pk1RO
+        C5sIralnjOcpcwQ1/eLxks/FTbLN12e+LwoBLuQjKpKju8qxZSyyNhP2GXv9ZxyIMZLmLY0s+gr
+        EwptY0ChQIWslyRhxZkQJ1v2pZwC2f3IOB8aCwGQV
+X-Received: by 2002:aca:1708:: with SMTP id j8mr3906521oii.166.1580831376590;
+        Tue, 04 Feb 2020 07:49:36 -0800 (PST)
+X-Google-Smtp-Source: APXvYqz/7pJYKxR0wQIzWWmQ6QzoKdiSTwKnxwtzbmml2Vsp/OVsGZOcyT2Pr2dG8+zqCPa3KsU9UiVHZDCr6yugfxo=
+X-Received: by 2002:aca:1708:: with SMTP id j8mr3906505oii.166.1580831376283;
+ Tue, 04 Feb 2020 07:49:36 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
+References: <20200116213937.77795-1-dev@lynxeye.de> <2d1a3d66-c2ee-f7ea-a884-11ac9150d994@tycho.nsa.gov>
+ <CAFqZXNtJ2h-HPwzV9t1bizVB2=xWh=s3jY5aqXG1x86b+oEMYg@mail.gmail.com> <f821809b-548d-fd95-6574-7c74c634353e@tycho.nsa.gov>
+In-Reply-To: <f821809b-548d-fd95-6574-7c74c634353e@tycho.nsa.gov>
+From:   Ondrej Mosnacek <omosnace@redhat.com>
+Date:   Tue, 4 Feb 2020 16:49:24 +0100
+Message-ID: <CAFqZXNvih96sEODRJhFvCmx50ROWMb6vF1dK3sUJe_Q4hLiSzw@mail.gmail.com>
+Subject: Re: [PATCH RFC] selinux: policydb - convert filename trans hash to rhashtable
+To:     Stephen Smalley <sds@tycho.nsa.gov>
+Cc:     Lucas Stach <dev@lynxeye.de>, Paul Moore <paul@paul-moore.com>,
+        SElinux list <selinux@vger.kernel.org>,
+        Linux kernel mailing list <linux-kernel@vger.kernel.org>,
+        Richard Haines <richard_c_haines@btinternet.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tuesday, February 4, 2020 8:19:44 AM EST Richard Guy Briggs wrote:
-> > The established pattern is that we print -1 when its unset and "?" when
-> > its totalling missing. So, how could this be invalid? It should be set
-> > or not. That is unless its totally missing just like when we do not run
-> > with selinux enabled and a context just doesn't exist.
-> 
-> Ok, so in this case it is clearly unset, so should be -1, which will be a
-> 20-digit number when represented as an unsigned long long int.
-> 
-> Thank you for that clarification Steve.
+On Tue, Feb 4, 2020 at 4:39 PM Stephen Smalley <sds@tycho.nsa.gov> wrote:
+> On 2/4/20 10:01 AM, Ondrej Mosnacek wrote:
+> > On Fri, Jan 17, 2020 at 8:11 PM Stephen Smalley <sds@tycho.nsa.gov> wrote:
+> >> On 1/16/20 4:39 PM, Lucas Stach wrote:
+> >>> The current hash is too small for current usages in, e.g. the Fedora standard
+> >>> policy. On file creates a considerable amount of CPU time is spent walking the
+> >>> the hash chains. Increasing the number of hash buckets somewhat mitigates the
+> >>> issue, but doesn't completely get rid of the long hash chains.
+> >>>
+> >>> This patch does take the bit more invasive route by converting the filename
+> >>> trans hash to a rhashtable to allow this hash to scale with load.
+> >>>
+> >>> fs_mark create benchmark on a SSD device, no ramdisk:
+> >>> Count          Size       Files/sec     App Overhead
+> >>> before:
+> >>> 10000          512        512.3           147715
+> >>> after:
+> >>> 10000          512        572.3            75141
+> >>>
+> >>> filenametr_cmp(), which was the topmost function in the CPU cycle trace before
+> >>> at ~5% of the overall CPU time, is now down in the noise.
+> >>
+> >> Thank you for working on this.  IMHO, Fedora overuses name-based type
+> >> transitions but that's another topic. I haven't yet investigated the
+> >> root cause but with your patch applied, I see some test failures related
+> >> to name-based transitions:
+> >>
+> >> [...]
+> >> #   Failed test at overlay/test line 439.
+> >> overlay/test ................ 114/119 # Looks like you failed 1 test of 119.
+> >> [...]
+> >> filesystem/test ............. 3/70 File context error, expected:
+> >>          test_filesystem_filenametranscon1_t
+> >> got:
+> >>          test_filesystem_filetranscon_t
+> >>
+> >> #   Failed test at filesystem/test line 279.
+> >> File context error, expected:
+> >>          test_filesystem_filenametranscon2_t
+> >> got:
+> >>          test_filesystem_filetranscon_t
+> >>
+> >> #   Failed test at filesystem/test line 286.
+> >> filesystem/test ............. 68/70 # Looks like you failed 2 tests of 70.
+> >>
+> >> You can reproduce by cloning the selinux-testsuite from
+> >> https://github.com/SELinuxProject/selinux-testsuite, applying the
+> >> filesystem tests patch from
+> >> https://patchwork.kernel.org/patch/11337659/,
+> >> and following the README.md instructions.
+> >
+> > I think I figured out what's wrong - see below.
+> > <snip>
+> >>> @@ -441,6 +442,39 @@ static int filenametr_cmp(struct hashtab *h, const void *k1, const void *k2)
+> >>>
+> >>>    }
+> >>>
+> >>> +static const struct rhashtable_params filename_trans_hashparams = {
+> >>> +     .nelem_hint             = 1024,
+> >>> +     .head_offset            = offsetof(struct filename_trans, hash_head),
+> >
+> > You need to add:
+> >
+> > +.hashfn = filenametr_hash,
+> >
+> > here so that the key is correctly hashed on lookup. After applying
+> > this fix, the selinux-testuite passes for me with this patch.
+>
+> Hmm..does that then make the .obj_hashfn assignment below unnecessary or
+> is that required too?  I'm unclear on the difference.
 
-It is literally a  -1.  ( 2 characters)
+No, they serve different purposes - hashfn is used to hash the key you
+pass when you do the lookup, while obj_hashfn is used to hash the full
+objects stored in the hash table. In general, these can be different
+types, but here we use the same type for both, so the same function
+can be reused for both callbacks.
 
--Steve
+>
+> >
+> >>> +     .obj_hashfn             = filenametr_hash,
+> >>> +     .obj_cmpfn              = filenametr_cmp,
+> >>> +};
+>
 
+-- 
+Ondrej Mosnacek <omosnace at redhat dot com>
+Software Engineer, Security Technologies
+Red Hat, Inc.
 
