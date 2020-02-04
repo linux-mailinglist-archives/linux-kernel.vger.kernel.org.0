@@ -2,241 +2,130 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1BD7C151691
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Feb 2020 08:44:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 884CF1516A0
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Feb 2020 08:52:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727002AbgBDHoB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 4 Feb 2020 02:44:01 -0500
-Received: from mailout4.samsung.com ([203.254.224.34]:64151 "EHLO
-        mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726566AbgBDHoB (ORCPT
+        id S1726923AbgBDHw3 convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Tue, 4 Feb 2020 02:52:29 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:43828 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726000AbgBDHw3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Feb 2020 02:44:01 -0500
-Received: from epcas1p2.samsung.com (unknown [182.195.41.46])
-        by mailout4.samsung.com (KnoxPortal) with ESMTP id 20200204074358epoutp043a6a42ccd488ad86877d9859c1450baa~wI0KjlygR3187331873epoutp048
-        for <linux-kernel@vger.kernel.org>; Tue,  4 Feb 2020 07:43:58 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20200204074358epoutp043a6a42ccd488ad86877d9859c1450baa~wI0KjlygR3187331873epoutp048
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1580802238;
-        bh=E6jhu6LDz2tkms5iVWGpzEUfIjTjUEMI5WxhAe8uQG8=;
-        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
-        b=vYJ3vVwt/rsj4J6J8mO3O5qM3BHk2FzDcXLuY4Bcbux0+z8dwGcLRAeBCYeYHitRp
-         1Dq1EmITPEcD57wMZiwt/SKilJ+mIKc7Z2B7O+Ec5lPXE6w66PFhlPnjd5T7xvSoAG
-         7vFRSRu2vLPTaU7eAbq6uEEU3qbAlJBiJKEyNKIw=
-Received: from epsnrtp2.localdomain (unknown [182.195.42.163]) by
-        epcas1p3.samsung.com (KnoxPortal) with ESMTP id
-        20200204074357epcas1p3d746bc6bca16b985f783b22595a7d006~wI0KHOLR30802108021epcas1p3G;
-        Tue,  4 Feb 2020 07:43:57 +0000 (GMT)
-Received: from epsmges1p1.samsung.com (unknown [182.195.40.153]) by
-        epsnrtp2.localdomain (Postfix) with ESMTP id 48BcBx71BbzMqYkV; Tue,  4 Feb
-        2020 07:43:53 +0000 (GMT)
-Received: from epcas1p1.samsung.com ( [182.195.41.45]) by
-        epsmges1p1.samsung.com (Symantec Messaging Gateway) with SMTP id
-        0A.31.57028.8B0293E5; Tue,  4 Feb 2020 16:43:52 +0900 (KST)
-Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
-        epcas1p1.samsung.com (KnoxPortal) with ESMTPA id
-        20200204074352epcas1p19c4a45e8e4010bfa2c4c9c2335e3914d~wI0E2gsEd1248812488epcas1p11;
-        Tue,  4 Feb 2020 07:43:52 +0000 (GMT)
-Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
-        epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20200204074352epsmtrp2859756a7a24a84fe3ace2f9841991748~wI0E1tIpC1827418274epsmtrp2Z;
-        Tue,  4 Feb 2020 07:43:52 +0000 (GMT)
-X-AuditID: b6c32a35-50bff7000001dec4-dc-5e3920b8eb73
-Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
-        epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        0A.EB.10238.8B0293E5; Tue,  4 Feb 2020 16:43:52 +0900 (KST)
-Received: from [10.113.221.102] (unknown [10.113.221.102]) by
-        epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
-        20200204074352epsmtip26bb88bc3d7ae29e30be73e82c1427ec3~wI0EqxJik0993909939epsmtip22;
-        Tue,  4 Feb 2020 07:43:51 +0000 (GMT)
-Subject: Re: [PATCHv2 2/2] PM / devfreq: Change to
- DEVFREQ_GOV_UPDATE_INTERVAL event name
-To:     linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     chanwoo@kernel.org, myungjoo.ham@samsung.com,
-        kyungmin.park@samsung.com, lukasz.luba@arm.com
-From:   Chanwoo Choi <cw00.choi@samsung.com>
-Organization: Samsung Electronics
-Message-ID: <fad8dc9b-c4bc-a644-74ce-4b293489b01e@samsung.com>
-Date:   Tue, 4 Feb 2020 16:51:39 +0900
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:59.0) Gecko/20100101
-        Thunderbird/59.0
+        Tue, 4 Feb 2020 02:52:29 -0500
+Received: from pps.filterd (m0098394.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 0147pmEm130460
+        for <linux-kernel@vger.kernel.org>; Tue, 4 Feb 2020 02:52:28 -0500
+Received: from e06smtp02.uk.ibm.com (e06smtp02.uk.ibm.com [195.75.94.98])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2xxy9hrxku-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Feb 2020 02:52:28 -0500
+Received: from localhost
+        by e06smtp02.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <naveen.n.rao@linux.vnet.ibm.com>;
+        Tue, 4 Feb 2020 07:52:26 -0000
+Received: from b06cxnps4074.portsmouth.uk.ibm.com (9.149.109.196)
+        by e06smtp02.uk.ibm.com (192.168.101.132) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Tue, 4 Feb 2020 07:52:23 -0000
+Received: from d06av24.portsmouth.uk.ibm.com (d06av24.portsmouth.uk.ibm.com [9.149.105.60])
+        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 0147qLFh40960210
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 4 Feb 2020 07:52:21 GMT
+Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 8E5C242049;
+        Tue,  4 Feb 2020 07:52:21 +0000 (GMT)
+Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 2D45842041;
+        Tue,  4 Feb 2020 07:52:21 +0000 (GMT)
+Received: from localhost (unknown [9.199.60.222])
+        by d06av24.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Tue,  4 Feb 2020 07:52:20 +0000 (GMT)
+Date:   Tue, 04 Feb 2020 13:22:19 +0530
+From:   "Naveen N. Rao" <naveen.n.rao@linux.vnet.ibm.com>
+Subject: Re: [PATCH 2/3] powerpc/sysfs: Show idle_purr and idle_spurr for
+ every CPU
+To:     ego@linux.vnet.ibm.com
+Cc:     Kamalesh Babulal <kamalesh@linux.vnet.ibm.com>,
+        linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Nathan Lynch <nathanl@linux.ibm.com>,
+        Vaidyanathan Srinivasan <svaidy@linux.vnet.ibm.com>,
+        Tyrel Datwyler <tyreld@linux.ibm.com>
+References: <1574856072-30972-1-git-send-email-ego@linux.vnet.ibm.com>
+        <1574856072-30972-3-git-send-email-ego@linux.vnet.ibm.com>
+        <1575564547.si4rk0s96p.naveen@linux.ibm.com>
+        <20200203045013.GC13468@in.ibm.com>
+In-Reply-To: <20200203045013.GC13468@in.ibm.com>
 MIME-Version: 1.0
-In-Reply-To: <20200203011733.7639-2-cw00.choi@samsung.com>
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprFJsWRmVeSWpSXmKPExsWy7bCmru4OBcs4g/M3FS0m3rjCYnG26Q27
-        xeVdc9gsPvceYbRY2NTCbnG7cQWbA5vHmnlrGD02repk8+jbsorR4/MmuQCWqGybjNTElNQi
-        hdS85PyUzLx0WyXv4HjneFMzA0NdQ0sLcyWFvMTcVFslF58AXbfMHKDlSgpliTmlQKGAxOJi
-        JX07m6L80pJUhYz84hJbpdSClJwCywK94sTc4tK8dL3k/FwrQwMDI1OgwoTsjMXr5rMUzNOs
-        WLTzImsDY59SFyMnh4SAicSfQ1uYQGwhgR2MEi8+GnYxcgHZnxglbp3sYIFwvjFKdE7exgjT
-        seXudWaIxF5GiZf9Z6Gc94wSiz7+YQGpEhaIlnjddBxsroiAlcTp/x3MIDazQJLE4S9XwSax
-        CWhJ7H9xgw3E5hdQlLj64zFYnFfATmLe+y1g9SwCKhK3Dr4FmykqECZxclsLVI2gxMmZT8Di
-        nEDz922ZwAgxX1zi1pP5TBC2vMT2t3OYIa6+zyZx6GoKhO0i8XDSChYIW1ji1fEt7BC2lMTn
-        d3vZIOxqiZUnj7CBPCYh0MEosWX/BVaIhLHE/qWTgRZwAC3QlFi/Sx8irCix8/dcqBv4JN59
-        7WEFKZEQ4JXoaBOCKFGWuPzgLhOELSmxuL2TbQKj0iwk38xC8sEsJB/MQli2gJFlFaNYakFx
-        bnpqsWGBIXJkb2IEp0st0x2MU875HGIU4GBU4uG9YGcRJ8SaWFZcmXuIUYKDWUmEt87KNE6I
-        NyWxsiq1KD++qDQntfgQoykwsCcyS4km5wNTeV5JvKGpkbGxsYWJoZmpoaGSOO/DSM04IYH0
-        xJLU7NTUgtQimD4mDk6pBsbqvzlS3K6z0+oKTJgiKnrPvpv9POhYyv2ZWx5EBiceVXj+/uWC
-        bsWSXceN5IQClI4KV+yUWfVGZsEJZ/WzNwJNfAt/yThsXa8cs3bqDe+z6W1mLGlva3Y/sPVa
-        MqHSaOd/z3f86rXfXi8vkKsP+7Zo6rqIKTusfunOueh52dHg6W4N3el1L64osRRnJBpqMRcV
-        JwIAZuKIg60DAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFmpjkeLIzCtJLcpLzFFi42LZdlhJXneHgmWcwazt7BYTb1xhsTjb9Ibd
-        4vKuOWwWn3uPMFosbGpht7jduILNgc1jzbw1jB6bVnWyefRtWcXo8XmTXABLFJdNSmpOZllq
-        kb5dAlfG4nXzWQrmaVYs2nmRtYGxT6mLkZNDQsBEYsvd68xdjFwcQgK7GSXOLVvFApGQlJh2
-        8ShQggPIFpY4fLgYouYto8SEtwfZQGqEBaIlus7OZwSxRQSsJE7/72AGsZkFkiROvrrLAtGw
-        l1Hi4pFTYEPZBLQk9r+4AdbML6AocfXHY7BmXgE7iXnvt4A1swioSNw6+BasXlQgTGLnksdM
-        EDWCEidnPgGLcwIt27dlAiPEMnWJP/MuQS0Wl7j1ZD4ThC0vsf3tHOYJjMKzkLTPQtIyC0nL
-        LCQtCxhZVjFKphYU56bnFhsWGOallusVJ+YWl+al6yXn525iBMeOluYOxstL4g8xCnAwKvHw
-        XrCziBNiTSwrrsw9xCjBwawkwltnZRonxJuSWFmVWpQfX1Sak1p8iFGag0VJnPdp3rFIIYH0
-        xJLU7NTUgtQimCwTB6dUA+PklB/Lvt3011saknDmSqz2hH2qs2Q5mTJDf+3fPeHs2ZrgmfvC
-        555YO9v2mBPHx5khNmv1b/fIFO0La9Jb9fLEnTKRP3u3r8qyiy+ZsHLe7w2On7fJ/Oyum9TY
-        WJBVrcjj/eAP1+3s5lWS/XypE5fOnh6lovLI5F3jmV/N2Y+7rdsDjAtXcDYosRRnJBpqMRcV
-        JwIAvg/gi5kCAAA=
-X-CMS-MailID: 20200204074352epcas1p19c4a45e8e4010bfa2c4c9c2335e3914d
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: SVC_REQ_APPROVE
-CMS-TYPE: 101P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20200203010946epcas1p1dcf58e3d8c638341a3410e813f68e59d
-References: <20200203011733.7639-1-cw00.choi@samsung.com>
-        <CGME20200203010946epcas1p1dcf58e3d8c638341a3410e813f68e59d@epcas1p1.samsung.com>
-        <20200203011733.7639-2-cw00.choi@samsung.com>
+User-Agent: astroid/v0.15-13-gb675b421
+ (https://github.com/astroidmail/astroid)
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8BIT
+X-TM-AS-GCONF: 00
+x-cbid: 20020407-0008-0000-0000-0000034F8587
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 20020407-0009-0000-0000-00004A70116E
+Message-Id: <1580802180.jpxk9s8apz.naveen@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.572
+ definitions=2020-02-04_01:2020-02-04,2020-02-04 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1011 impostorscore=0
+ mlxscore=0 suspectscore=1 phishscore=0 malwarescore=0 spamscore=0
+ lowpriorityscore=0 mlxlogscore=898 bulkscore=0 adultscore=0
+ priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-1911200001 definitions=main-2002040057
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2/3/20 10:17 AM, Chanwoo Choi wrote:
-> DEVFREQ_GOV_INTERVAL event indicates that update the interval
-> for polling mode of devfreq device. But, this event name doesn't
-> specify exactly what to do.
+Gautham R Shenoy wrote:
+> Hi Naveen,
 > 
-> Change DEVFREQ_GOV_INTERVAL event name to DEVFREQ_GOV_UPDATE_INTERVAL
-> which specifies what to do by event name.
+> On Thu, Dec 05, 2019 at 10:23:58PM +0530, Naveen N. Rao wrote:
+>> >diff --git a/arch/powerpc/kernel/sysfs.c b/arch/powerpc/kernel/sysfs.c
+>> >index 80a676d..42ade55 100644
+>> >--- a/arch/powerpc/kernel/sysfs.c
+>> >+++ b/arch/powerpc/kernel/sysfs.c
+>> >@@ -1044,6 +1044,36 @@ static ssize_t show_physical_id(struct device *dev,
+>> > }
+>> > static DEVICE_ATTR(physical_id, 0444, show_physical_id, NULL);
+>> >
+>> >+static ssize_t idle_purr_show(struct device *dev,
+>> >+			      struct device_attribute *attr, char *buf)
+>> >+{
+>> >+	struct cpu *cpu = container_of(dev, struct cpu, dev);
+>> >+	unsigned int cpuid = cpu->dev.id;
+>> >+	struct lppaca *cpu_lppaca_ptr = paca_ptrs[cpuid]->lppaca_ptr;
+>> >+	u64 idle_purr_cycles = be64_to_cpu(cpu_lppaca_ptr->wait_state_cycles);
+>> >+
+>> >+	return sprintf(buf, "%llx\n", idle_purr_cycles);
+>> >+}
+>> >+static DEVICE_ATTR_RO(idle_purr);
+>> >+
+>> >+DECLARE_PER_CPU(u64, idle_spurr_cycles);
+>> >+static ssize_t idle_spurr_show(struct device *dev,
+>> >+			       struct device_attribute *attr, char *buf)
+>> >+{
+>> >+	struct cpu *cpu = container_of(dev, struct cpu, dev);
+>> >+	unsigned int cpuid = cpu->dev.id;
+>> >+	u64 *idle_spurr_cycles_ptr = per_cpu_ptr(&idle_spurr_cycles, cpuid);
+>> 
+>> Is it possible for a user to read stale values if a particular cpu is in an
+>> extended cede? Is it possible to use smp_call_function_single() to force the
+>> cpu out of idle?
 > 
-> And modify the function name to DEVFREQ_GOV_UPDATE_INTERVAL
-> with 'devfreq_' prefix + verb + object as following:
-> - devfreq_interval_update -> devfreq_updatee_interval
-> 
-> Reviewed-by: Lukasz Luba <lukasz.luba@arm.com>
-> Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
-> ---
-> Changes from v1:
-> - Add reviewed tag of Lukasz
-> - Fix typo in patch description
-> 
->  drivers/devfreq/devfreq.c                 | 10 +++++-----
->  drivers/devfreq/governor.h                |  4 ++--
->  drivers/devfreq/governor_simpleondemand.c |  4 ++--
->  drivers/devfreq/tegra30-devfreq.c         |  4 ++--
->  4 files changed, 11 insertions(+), 11 deletions(-)
-> 
-> diff --git a/drivers/devfreq/devfreq.c b/drivers/devfreq/devfreq.c
-> index cceee8bc3c2f..8494c5f05a73 100644
-> --- a/drivers/devfreq/devfreq.c
-> +++ b/drivers/devfreq/devfreq.c
-> @@ -550,14 +550,14 @@ void devfreq_monitor_resume(struct devfreq *devfreq)
->  EXPORT_SYMBOL(devfreq_monitor_resume);
->  
->  /**
-> - * devfreq_interval_update() - Update device devfreq monitoring interval
-> + * devfreq_update_interval() - Update device devfreq monitoring interval
->   * @devfreq:    the devfreq instance.
->   * @delay:      new polling interval to be set.
->   *
->   * Helper function to set new load monitoring polling interval. Function
-> - * to be called from governor in response to DEVFREQ_GOV_INTERVAL event.
-> + * to be called from governor in response to DEVFREQ_GOV_UPDATE_INTERVAL event.
->   */
-> -void devfreq_interval_update(struct devfreq *devfreq, unsigned int *delay)
-> +void devfreq_update_interval(struct devfreq *devfreq, unsigned int *delay)
->  {
->  	unsigned int cur_delay = devfreq->profile->polling_ms;
->  	unsigned int new_delay = *delay;
-> @@ -597,7 +597,7 @@ void devfreq_interval_update(struct devfreq *devfreq, unsigned int *delay)
->  out:
->  	mutex_unlock(&devfreq->lock);
->  }
-> -EXPORT_SYMBOL(devfreq_interval_update);
-> +EXPORT_SYMBOL(devfreq_update_interval);
->  
->  /**
->   * devfreq_notifier_call() - Notify that the device frequency requirements
-> @@ -1426,7 +1426,7 @@ static ssize_t polling_interval_store(struct device *dev,
->  	if (ret != 1)
->  		return -EINVAL;
->  
-> -	df->governor->event_handler(df, DEVFREQ_GOV_INTERVAL, &value);
-> +	df->governor->event_handler(df, DEVFREQ_GOV_UPDATE_INTERVAL, &value);
->  	ret = count;
->  
->  	return ret;
-> diff --git a/drivers/devfreq/governor.h b/drivers/devfreq/governor.h
-> index 5ba3e051b1d0..c07ce77c253d 100644
-> --- a/drivers/devfreq/governor.h
-> +++ b/drivers/devfreq/governor.h
-> @@ -18,7 +18,7 @@
->  /* Devfreq events */
->  #define DEVFREQ_GOV_START			0x1
->  #define DEVFREQ_GOV_STOP			0x2
-> -#define DEVFREQ_GOV_INTERVAL			0x3
-> +#define DEVFREQ_GOV_UPDATE_INTERVAL		0x3
->  #define DEVFREQ_GOV_SUSPEND			0x4
->  #define DEVFREQ_GOV_RESUME			0x5
->  
-> @@ -61,7 +61,7 @@ void devfreq_monitor_start(struct devfreq *devfreq);
->  void devfreq_monitor_stop(struct devfreq *devfreq);
->  void devfreq_monitor_suspend(struct devfreq *devfreq);
->  void devfreq_monitor_resume(struct devfreq *devfreq);
-> -void devfreq_interval_update(struct devfreq *devfreq, unsigned int *delay);
-> +void devfreq_update_interval(struct devfreq *devfreq, unsigned int *delay);
->  
->  int devfreq_add_governor(struct devfreq_governor *governor);
->  int devfreq_remove_governor(struct devfreq_governor *governor);
-> diff --git a/drivers/devfreq/governor_simpleondemand.c b/drivers/devfreq/governor_simpleondemand.c
-> index 3d809f228619..1b314e1df028 100644
-> --- a/drivers/devfreq/governor_simpleondemand.c
-> +++ b/drivers/devfreq/governor_simpleondemand.c
-> @@ -96,8 +96,8 @@ static int devfreq_simple_ondemand_handler(struct devfreq *devfreq,
->  		devfreq_monitor_stop(devfreq);
->  		break;
->  
-> -	case DEVFREQ_GOV_INTERVAL:
-> -		devfreq_interval_update(devfreq, (unsigned int *)data);
-> +	case DEVFREQ_GOV_UPDATE_INTERVAL:
-> +		devfreq_update_interval(devfreq, (unsigned int *)data);
->  		break;
->  
->  	case DEVFREQ_GOV_SUSPEND:
-> diff --git a/drivers/devfreq/tegra30-devfreq.c b/drivers/devfreq/tegra30-devfreq.c
-> index 0b65f89d74d5..28b2c7ca416e 100644
-> --- a/drivers/devfreq/tegra30-devfreq.c
-> +++ b/drivers/devfreq/tegra30-devfreq.c
-> @@ -734,7 +734,7 @@ static int tegra_governor_event_handler(struct devfreq *devfreq,
->  		devfreq_monitor_stop(devfreq);
->  		break;
->  
-> -	case DEVFREQ_GOV_INTERVAL:
-> +	case DEVFREQ_GOV_UPDATE_INTERVAL:
->  		/*
->  		 * ACTMON hardware supports up to 256 milliseconds for the
->  		 * sampling period.
-> @@ -745,7 +745,7 @@ static int tegra_governor_event_handler(struct devfreq *devfreq,
->  		}
->  
->  		tegra_actmon_pause(tegra);
-> -		devfreq_interval_update(devfreq, new_delay);
-> +		devfreq_update_interval(devfreq, new_delay);
->  		ret = tegra_actmon_resume(tegra);
->  		break;
->  
-> 
+> Yes, if the CPU whose idle_spurr cycle is being read is still in idle,
+> then we will miss reporting the delta spurr cycles for this last
+> idle-duration. Yes, we can use an smp_call_function_single(), though
+> that will introduce IPI noise. How often will idle_[s]purr be read ?
 
-Applied it. Thanks.
+Since it is possible for a cpu to go into extended cede for multiple 
+seconds during which time it is possible to mis-report utilization, I 
+think it is better to ensure that the sysfs interface for idle_[s]purr 
+report the proper values through use of IPI.
 
--- 
-Best Regards,
-Chanwoo Choi
-Samsung Electronics
+With repect to lparstat, the read interval is user-specified and just 
+gets passed onto sleep().
+
+- Naveen
+
