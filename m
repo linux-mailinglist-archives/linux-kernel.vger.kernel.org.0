@@ -2,101 +2,93 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9B79215157D
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Feb 2020 06:35:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0B2CA151582
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Feb 2020 06:36:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726763AbgBDFfB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 4 Feb 2020 00:35:01 -0500
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:35921 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725813AbgBDFfB (ORCPT
+        id S1727090AbgBDFgR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 4 Feb 2020 00:36:17 -0500
+Received: from smtprelay0046.hostedemail.com ([216.40.44.46]:54753 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726189AbgBDFgR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Feb 2020 00:35:01 -0500
-Received: by mail-pg1-f193.google.com with SMTP id k3so9078401pgc.3
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Feb 2020 21:34:59 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:mime-version:content-disposition;
-        bh=yDxEzOkKubOgEgaxiXFZGk+/s3twCjegVTvLoi4kxec=;
-        b=BAWnIKC3K2Vf/wj4xU15Xj5aZC1N19QXXylMswEUYDBHsZ8XmkTXyieJoN9N78vI0c
-         DNvlP6L91ESULTg262+vU1RxFJwU2VS/8FiNPjqxI4a+6IRuxF4DBDQAKFTJXAtZy7ke
-         nsDcgtfEE4/F3jsblfOAUEkmtNwUpTIZ5QBtC+NxfV6Q23lLr2XiKPiSmVFtFoCVJosD
-         4ARUGn0iPnivCsqVdLrtB5MOOS0NyuZjT6E4C3xvbeL+0kVCeNDE4B/riXJUiUZ98q21
-         kuzegoU+U/xfucD7tY+4BYFXjVFsdnzSKRTxaP7+LF86pMf4p8uus1c5e6IeXqkKCVN5
-         LEvA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition;
-        bh=yDxEzOkKubOgEgaxiXFZGk+/s3twCjegVTvLoi4kxec=;
-        b=B0nKvlwnJ8k6La6uo+RUrsTyMdCNfBuKVQUsy+tOykFQNltPLULkQgeBYvUQl0HKF0
-         RjIc+rBn33z+vxXnOv0miI8AjqIB47kwCjvABqM4dUVYZLJ6etcU0yEUk61/AzxbDogs
-         M4DxWZSw3R3scZSRrjv9DseuVJIwETP7KdNF0HF3pu1S9T89qu+G4QDhgtbBsRhnNHFP
-         wfnG4jKsIc67jn5iqfwlFKghWyDYM3TzXcbIeldoed6+9kdew0LAeySlvlHFbjGVVTnq
-         qJDTGB73hwj7PJhILZ6H6GfAKBNLlFwh4rcsCUSXXAjJA/hCPS/WxJiivJd9nA73JW3g
-         54cQ==
-X-Gm-Message-State: APjAAAXppJF9ygqQU/q5mXcwIeDpz9qh0o9IIza+Tra94XJ338faDcNV
-        vt2orZIjLUeDazBDZtAA8WOYmQ==
-X-Google-Smtp-Source: APXvYqyTy5OPKQN5nbbZaJ2PXAhUwxG7ur1aECaCG8zlwokLJr4CWDyMyGlf3maXHHAN+DvGF0MC3g==
-X-Received: by 2002:a63:fa0b:: with SMTP id y11mr21305094pgh.137.1580794498804;
-        Mon, 03 Feb 2020 21:34:58 -0800 (PST)
-Received: from yoga (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
-        by smtp.gmail.com with ESMTPSA id i9sm22935845pfk.24.2020.02.03.21.34.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 03 Feb 2020 21:34:58 -0800 (PST)
-Date:   Mon, 3 Feb 2020 21:34:55 -0800
-From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Ohad Ben-Cohen <ohad@wizery.com>, linux-remoteproc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Baolin Wang <baolin.wang7@gmail.com>,
-        Yangtao Li <tiny.windzz@gmail.com>
-Subject: [GIT PULL] hwspinlock updates for v5.6
-Message-ID: <20200204053455.GA130281@yoga>
+        Tue, 4 Feb 2020 00:36:17 -0500
+Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
+        by smtprelay08.hostedemail.com (Postfix) with ESMTP id 71695182CED34;
+        Tue,  4 Feb 2020 05:36:16 +0000 (UTC)
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-Spam-Summary: 50,0,0,,d41d8cd98f00b204,joe@perches.com,:::::::::::::::,RULES_HIT:41:355:379:599:800:960:967:973:988:989:1260:1277:1311:1313:1314:1345:1359:1437:1515:1516:1518:1534:1541:1593:1594:1711:1730:1747:1777:1792:2198:2199:2393:2525:2553:2560:2563:2682:2685:2692:2693:2828:2859:2933:2937:2939:2942:2945:2947:2951:2954:3022:3138:3139:3140:3141:3142:3353:3622:3865:3866:3867:3868:3870:3871:3872:3874:3934:3936:3938:3941:3944:3947:3950:3953:3956:3959:4321:5007:6119:6691:7903:9010:9025:10004:10400:11232:11658:11914:12043:12297:12555:12663:12740:12760:12895:13017:13018:13019:13069:13311:13357:13439:14096:14097:14181:14659:14721:21080:21324:21451:21611:21627:30041:30045:30054:30060:30070:30090:30091,0,RBL:none,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:,MSBL:0,DNSBL:none,Custom_rules:0:0:0,LFtime:3,LUA_SUMMARY:none
+X-HE-Tag: smash54_53b153a945116
+X-Filterd-Recvd-Size: 2936
+Received: from XPS-9350.home (unknown [47.151.135.224])
+        (Authenticated sender: joe@perches.com)
+        by omf04.hostedemail.com (Postfix) with ESMTPA;
+        Tue,  4 Feb 2020 05:36:15 +0000 (UTC)
+Message-ID: <7040e0501f1a04cf09195bdccfcfb05df25962ec.camel@perches.com>
+Subject: Re: [PATCH] MAINTAINERS: correct entries for ISDN/mISDN section
+From:   Joe Perches <joe@perches.com>
+To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>,
+        Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc:     Jakub Kicinski <kuba@kernel.org>,
+        Karsten Keil <isdn@linux-pingi.de>,
+        Arnd Bergmann <arnd@arndb.de>,
+        isdn4linux@listserv.isdn4linux.de, netdev <netdev@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Date:   Mon, 03 Feb 2020 21:35:04 -0800
+In-Reply-To: <alpine.DEB.2.21.2002040550540.3062@felia>
+References: <20200201124301.21148-1-lukas.bulwahn@gmail.com>
+         <20200202124306.54bcabea@cakuba.hsd1.ca.comcast.net>
+         <CAHp75VdVXqz7fab4MKH2jZozx4NGGkQnJyTWHDKCdgSwD2AtpA@mail.gmail.com>
+         <ce81e9b1ac6ede9f7a16823175192ef69613ec07.camel@perches.com>
+         <CAHp75VdaaOW0ktt4eo4NsLFu2QT1K1mHK8DZeycOPhbvcMq4wQ@mail.gmail.com>
+         <alpine.DEB.2.21.2002040550540.3062@felia>
+Content-Type: text/plain; charset="ISO-8859-1"
+User-Agent: Evolution 3.34.1-2 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The following changes since commit e42617b825f8073569da76dc4510bfa019b1c35a:
+On Tue, 2020-02-04 at 06:08 +0100, Lukas Bulwahn wrote:
+> 
+> On Mon, 3 Feb 2020, Andy Shevchenko wrote:
+> 
+> > On Mon, Feb 3, 2020 at 1:08 PM Joe Perches <joe@perches.com> wrote:
+> > > On Mon, 2020-02-03 at 12:13 +0200, Andy Shevchenko wrote:
+> > > > On Sun, Feb 2, 2020 at 10:45 PM Jakub Kicinski <kuba@kernel.org> wrote:
+> > 
+> > ...
+> > 
+> > > > I'm not sure it's ready. I think parse-maintainers.pl will change few
+> > > > lines here.
+> > > 
+> > > parse-maintainers would change a _lot_ of the MAINTAINERS file
+> > > by reordering section letters.
+> > 
+> > I think it's quite easy to find out if it had changed the record in question.
+> > 
+> I checked it and it does change a bit. My patch adds to a list of file 
+> entries sorted by "relevance" (not alphabetically) two further minor (by 
+> relevance) entries, i.e., Kconfig and Makefile, to the end of that list.
+> 
+> The other reorderings would have already applied to the original state; 
+> rather than trying to "fix" this locally for this one patch here, I would 
+> prefer to understand why the discussion on splitting the MAINTAINERS file,
+> summarized at https://lwn.net/Articles/730509/, got stuck and how I can 
+> contribute to that. If that bigger change would happen, we could 
+> automatically clean up all the entries when the things are splitted, 
+> rather than sending reordering patches to the maintainers that then spend 
+> time on trying to merge that all back together.
 
-  Linux 5.5-rc1 (2019-12-08 14:57:55 -0800)
+Realistically, ISDN is all but dead.
 
-are available in the Git repository at:
+Perhaps it'd be better to change the entries here to:
 
-  https://git.kernel.org/pub/scm/linux/kernel/git/andersson/remoteproc.git tags/hwlock-v5.6
+F:	drivers/isdn/
+X:	drivers/isdn/capi/
 
-for you to fetch changes up to cb36017a8b1b582bcb7063e44c598c3e36aa0228:
 
-  hwspinlock: sirf: Use devm_hwspin_lock_register() to register hwlock controller (2020-01-21 16:16:36 -0800)
 
-----------------------------------------------------------------
-hwspinlock updates for v5.6
 
-This continues the transition of drivers to device managed resources and
-removal of unnecessary PM runtime integration, with cleanups to the
-SIRF, OMAP and Qualcomm hwspinlock drivers. It also adds Baolin as
-reviewer in MAINTAINERS.
 
-----------------------------------------------------------------
-Baolin Wang (8):
-      MAINTAINERS: Add myself as reviewer for the hwspinlock subsystem
-      hwspinlock: qcom: Remove redundant PM runtime functions
-      hwspinlock: qcom: Use devm_hwspin_lock_register() to register hwlock controller
-      hwspinlock: omap: Change to use devm_platform_ioremap_resource()
-      hwspinlock: omap: Use devm_kzalloc() to allocate memory
-      hwspinlock: sirf: Change to use devm_platform_ioremap_resource()
-      hwspinlock: sirf: Remove redundant PM runtime functions
-      hwspinlock: sirf: Use devm_hwspin_lock_register() to register hwlock controller
-
-Yangtao Li (1):
-      hwspinlock: stm32: convert to devm_platform_ioremap_resource
-
- MAINTAINERS                           |  1 +
- drivers/hwspinlock/omap_hwspinlock.c  | 32 +++++++++---------------
- drivers/hwspinlock/qcom_hwspinlock.c  | 28 ++-------------------
- drivers/hwspinlock/sirf_hwspinlock.c  | 46 ++++++-----------------------------
- drivers/hwspinlock/stm32_hwspinlock.c |  4 +--
- 5 files changed, 22 insertions(+), 89 deletions(-)
