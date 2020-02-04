@@ -2,85 +2,73 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4BC6D1515C5
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Feb 2020 07:14:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 45F181515CA
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Feb 2020 07:16:23 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725813AbgBDGOr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 4 Feb 2020 01:14:47 -0500
-Received: from mail26.static.mailgun.info ([104.130.122.26]:19211 "EHLO
-        mail26.static.mailgun.info" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726684AbgBDGOq (ORCPT
+        id S1726706AbgBDGQN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 4 Feb 2020 01:16:13 -0500
+Received: from mailgw02.mediatek.com ([210.61.82.184]:56447 "EHLO
+        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726230AbgBDGQM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Feb 2020 01:14:46 -0500
-DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
- s=smtp; t=1580796885; h=References: In-Reply-To: Message-Id: Date:
- Subject: Cc: To: From: Sender;
- bh=lNM+zgIvhfpI499FSDfrS0zI/QLrGsHmRXdvT8JZSSM=; b=EVI7zBWpOkP1y97SdfTtQKb/ssPuc96ZQcX2SYVwo9o2jl97+7zSqmG8/tkQPNRFr+jf8pXM
- 7VU8pL54VJPcgaIi7B6TUZdTVNbi/AJcynuRU8LvFEFT3wdi75L2flwelrMvG+3EYN/E5lW5
- oWEECtbBe24TXsGduHsK6l4PX1Q=
-X-Mailgun-Sending-Ip: 104.130.122.26
-X-Mailgun-Sid: WyI0MWYwYSIsICJsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
-Received: from smtp.codeaurora.org (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171])
- by mxa.mailgun.org with ESMTP id 5e390bd4.7f592b9f2810-smtp-out-n03;
- Tue, 04 Feb 2020 06:14:44 -0000 (UTC)
-Received: by smtp.codeaurora.org (Postfix, from userid 1001)
-        id 454EDC447A3; Tue,  4 Feb 2020 06:14:43 +0000 (UTC)
-X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
-        aws-us-west-2-caf-mail-1.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=2.0 tests=ALL_TRUSTED,SPF_NONE
-        autolearn=unavailable autolearn_force=no version=3.4.0
-Received: from mkshah-linux.qualcomm.com (blr-c-bdr-fw-01_GlobalNAT_AllZones-Outside.qualcomm.com [103.229.19.19])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: mkshah)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 232CDC447A1;
-        Tue,  4 Feb 2020 06:14:38 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 232CDC447A1
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=none smtp.mailfrom=mkshah@codeaurora.org
-From:   Maulik Shah <mkshah@codeaurora.org>
-To:     bjorn.andersson@linaro.org, agross@kernel.org
-Cc:     linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        swboyd@chromium.org, evgreen@chromium.org, dianders@chromium.org,
-        rnayak@codeaurora.org, ilina@codeaurora.org, lsrao@codeaurora.org,
-        Maulik Shah <mkshah@codeaurora.org>
-Subject: [PATCH 3/3] soc: qcom: rpmh: Invalidate sleep and wake TCS before flushing new data
-Date:   Tue,  4 Feb 2020 11:43:51 +0530
-Message-Id: <1580796831-18996-4-git-send-email-mkshah@codeaurora.org>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1580796831-18996-1-git-send-email-mkshah@codeaurora.org>
-References: <1580796831-18996-1-git-send-email-mkshah@codeaurora.org>
+        Tue, 4 Feb 2020 01:16:12 -0500
+X-UUID: 4bc5ab67a75149aa849307972e40adcf-20200204
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+        h=Content-Transfer-Encoding:MIME-Version:Content-Type:References:In-Reply-To:Date:CC:To:From:Subject:Message-ID; bh=jSycVRSOFd2olBoUxTQ1F0UloNW9XP6EQGdyyzGjoj4=;
+        b=rmUKf7PL2J+9qtVAMyutow0HN4h2jEKjyEobYnrAtPMYJAQ+rVvPxjg1Bdn8H3Pq5j9ifmniUR3jZMB5RRgLcztJOULHnxJTisZNHiFvvP/tLIsSJoy/kWdcraegYLelpn8JatnjubYzyeCcbhWpP1T2bSP5Y0yBSUCkBeYNWy0=;
+X-UUID: 4bc5ab67a75149aa849307972e40adcf-20200204
+Received: from mtkcas06.mediatek.inc [(172.21.101.30)] by mailgw02.mediatek.com
+        (envelope-from <stanley.chu@mediatek.com>)
+        (Cellopoint E-mail Firewall v4.1.10 Build 0809 with TLS)
+        with ESMTP id 311145982; Tue, 04 Feb 2020 14:16:04 +0800
+Received: from mtkcas08.mediatek.inc (172.21.101.126) by
+ mtkmbs05n1.mediatek.inc (172.21.101.15) with Microsoft SMTP Server (TLS) id
+ 15.0.1395.4; Tue, 4 Feb 2020 14:15:19 +0800
+Received: from [172.21.84.99] (172.21.84.99) by mtkcas08.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
+ Transport; Tue, 4 Feb 2020 14:15:45 +0800
+Message-ID: <1580796963.21785.1.camel@mtksdccf07>
+Subject: Re: [PATCH v5 2/8] scsi: ufs: set load before setting voltage in
+ regulators
+From:   Stanley Chu <stanley.chu@mediatek.com>
+To:     Can Guo <cang@codeaurora.org>
+CC:     <asutoshd@codeaurora.org>, <nguyenb@codeaurora.org>,
+        <hongwus@codeaurora.org>, <rnayak@codeaurora.org>,
+        <linux-scsi@vger.kernel.org>, <kernel-team@android.com>,
+        <saravanak@google.com>, <salyzyn@google.com>,
+        "Alim Akhtar" <alim.akhtar@samsung.com>,
+        Avri Altman <avri.altman@wdc.com>,
+        "James E.J. Bottomley" <jejb@linux.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        Bean Huo <beanhuo@micron.com>,
+        "Bart Van Assche" <bvanassche@acm.org>,
+        Venkat Gopalakrishnan <venkatg@codeaurora.org>,
+        Tomas Winkler <tomas.winkler@intel.com>,
+        "open list" <linux-kernel@vger.kernel.org>
+Date:   Tue, 4 Feb 2020 14:16:03 +0800
+In-Reply-To: <1580721472-10784-3-git-send-email-cang@codeaurora.org>
+References: <1580721472-10784-1-git-send-email-cang@codeaurora.org>
+         <1580721472-10784-3-git-send-email-cang@codeaurora.org>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.2.3-0ubuntu6 
+MIME-Version: 1.0
+X-MTK:  N
+Content-Transfer-Encoding: base64
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-TCSes have previously programmed data when rpmh_flush is called.
-This can cause old data to trigger along with newly flushed.
+T24gTW9uLCAyMDIwLTAyLTAzIGF0IDAxOjE3IC0wODAwLCBDYW4gR3VvIHdyb3RlOg0KPiBGcm9t
+OiBBc3V0b3NoIERhcyA8YXN1dG9zaGRAY29kZWF1cm9yYS5vcmc+DQo+IA0KPiBUaGlzIHNlcXVl
+bmNlIGNoYW5nZSBpcyByZXF1aXJlZCB0byBhdm9pZCBkaXBzIGluIHZvbHRhZ2UNCj4gZHVyaW5n
+IGJvb3QtdXAuDQo+IA0KPiBBcHBhcmVudGx5LCB0aGlzIGRpcCBpcyBjYXVzZWQgYmVjYXVzZSBp
+biB0aGUgb3JpZ2luYWwNCj4gc2VxdWVuY2UsIHRoZSByZWd1bGF0b3JzIGFyZSBpbml0aWFsaXpl
+ZCBpbiBscG0gbW9kZS4NCj4gQW5kIHRoZW4gd2hlbiB0aGUgbG9hZCBpcyBzZXQgdG8gaGlnaCwg
+YW5kIG1vcmUgY3VycmVudA0KPiBpcyBkcmF3biwgdGhhbiBpcyBhbGxvd2VkIGluIGxwbSwgdGhl
+IGRpcCBpcyBzZWVuLg0KPiANCj4gU2lnbmVkLW9mZi1ieTogQXN1dG9zaCBEYXMgPGFzdXRvc2hk
+QGNvZGVhdXJvcmEub3JnPg0KPiBTaWduZWQtb2ZmLWJ5OiBDYW4gR3VvIDxjYW5nQGNvZGVhdXJv
+cmEub3JnPg0KPiBSZXZpZXdlZC1ieTogSG9uZ3d1IFN1IDxob25nd3VzQGNvZGVhdXJvcmEub3Jn
+Pg0KDQpSZXZpZXdlZC1ieTogU3RhbmxleSBDaHUgPHN0YW5sZXkuY2h1QG1lZGlhdGVrLmNvbT4N
+Cg0K
 
-Fix this by cleaning sleep and wake TCSes before new data is flushed.
-
-Signed-off-by: Maulik Shah <mkshah@codeaurora.org>
----
- drivers/soc/qcom/rpmh.c | 4 ++++
- 1 file changed, 4 insertions(+)
-
-diff --git a/drivers/soc/qcom/rpmh.c b/drivers/soc/qcom/rpmh.c
-index 04c7805..5ae1b91 100644
---- a/drivers/soc/qcom/rpmh.c
-+++ b/drivers/soc/qcom/rpmh.c
-@@ -475,6 +475,10 @@ int rpmh_flush(const struct device *dev)
- 		return 0;
- 	}
- 
-+	do {
-+		ret = rpmh_rsc_invalidate(ctrlr_to_drv(ctrlr));
-+	} while (ret == -EAGAIN);
-+
- 	/* First flush the cached batch requests */
- 	ret = flush_batch(ctrlr);
- 	if (ret)
--- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
-of Code Aurora Forum, hosted by The Linux Foundation
