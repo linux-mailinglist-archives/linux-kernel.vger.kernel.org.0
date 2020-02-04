@@ -2,49 +2,49 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3EB3F1523CE
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Feb 2020 01:08:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 21CE81523BF
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Feb 2020 01:07:49 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727774AbgBEAHb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        id S1727789AbgBEAHb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
         Tue, 4 Feb 2020 19:07:31 -0500
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:40045 "EHLO
-        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727494AbgBEAH3 (ORCPT
+Received: from mail-pl1-f193.google.com ([209.85.214.193]:35246 "EHLO
+        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727755AbgBEAHa (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Feb 2020 19:07:29 -0500
-Received: by mail-pl1-f195.google.com with SMTP id y1so83396plp.7;
-        Tue, 04 Feb 2020 16:07:28 -0800 (PST)
+        Tue, 4 Feb 2020 19:07:30 -0500
+Received: by mail-pl1-f193.google.com with SMTP id g6so93066plt.2;
+        Tue, 04 Feb 2020 16:07:30 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=j/Ku8B9Qr+kQIDeYMGdjbQdZuNDZp/3dsOQZapgb5l0=;
-        b=puIBDqJg+eXqX8nYBtw/bkm2+Z7h/fw+YJFBNnP6/hdde8A+TsEnMhjJtXMdE0j4Uh
-         nMyFsWmqIEFYkKcRd+2ymE4OQCuuONUoD+xixXU+fhKKI30bwwXh0dkvPsQl7y+Vw0Wv
-         b5zd+IqWqGI9AEpgPUXj1F4LKV3b+HPQzAzJH8fkn4NUcIxHS6Tx5FYnKPIKoeZc6mmX
-         1Im+xJNFAp8ArvN/E2LXcyX6DpedyPPuImJ+bGUUU2QlHKvze7oRV/YCjvC+j+Kd3c4Y
-         gIragZeNvm+5SsxBdDWuft3sj3aajxhHE+yxy+7I+z7VXOGkknBoZN9MAmVyCR+e3yLA
-         6uBg==
+        bh=Xy9neKY+qvsY0GTBRTsRimyTOioxmSqME5XU6N4LU3s=;
+        b=Ti2FtfJezQkJeoAyfzKhepKSCTUuIOkCYcaCB4Pl7Wn+7NIpq5ndjx8RrIbkw7P2I+
+         nqufOgXEjyQ9yajE6vHccQEKXXbLfsRp52UbiDDKQ77JyYR6ZpEblAvWBvJmLstwVQgt
+         Dz7VbK/l/SuhrHdsspb25jOl21o4sM2EUEf3hAqhu8yLh/KrxbYYQCdCOMrVEqJMtxhh
+         usjDyE1E9KNltxDx11+0bqxaTpHNsaeywpzKkw3264WZJyJiDbjS3rUkYtXDJ7fN04/6
+         m9yA3kMfa55KSnJO8U2lpus+CQVjdKKqGFLyrShq4oRjLY0Lwz8iGTciOd3wmRL7Jt0d
+         /X4w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=j/Ku8B9Qr+kQIDeYMGdjbQdZuNDZp/3dsOQZapgb5l0=;
-        b=edKzEDMabuSkWUgujR7tuA7YQhMf4tAWeD4YK0+yRBBWi1ijjQiqqnvUBTVO5lrAyV
-         F3V9L7fjHBVB3Qi2zAXKf0EOU4hqiogZ4Obnsm1frr7dRSo5IrJf8Btt8/3bRGbZ1q0t
-         y8tSZub3IikZxx7aNRWznOc99b3YtowW1qrUAk734fXCO00h5K2hdJZuOt8t0ZibISH+
-         fxnYPNyiVK3RFdI7gI2jQGRdM2+ZpYE3M/PBlmQiG/1RyyV0ThHCwmAwtKYbQ39ZMS4q
-         bF+hZVx83xj6mj1bTLTtyrOgFCEnKxWTpDUjbuVv6aWs6zxG5GNqyLykLxXBQtfhFN50
-         UUEQ==
-X-Gm-Message-State: APjAAAWGHIIjnmn3JaUlJX8iN6uLN/vavAqNZ7XN3vGGuqJUX5/8QnGl
-        fWcTl+3kaqUf/eLwcEZ5vPM=
-X-Google-Smtp-Source: APXvYqwQcg6bMiHxRctNlJLi7ARBxfRZwq7QNImw2mutKJl+gsQUxTccPJQXv487JwMRS0XOEDbe0w==
-X-Received: by 2002:a17:902:8bc7:: with SMTP id r7mr29014884plo.12.1580861248342;
-        Tue, 04 Feb 2020 16:07:28 -0800 (PST)
+        bh=Xy9neKY+qvsY0GTBRTsRimyTOioxmSqME5XU6N4LU3s=;
+        b=mHYfORkcj+QxReQpBPIbcMxadHkAublve32JcrZzRtJqqzoYa0YkuDvOTlbUXKH3rN
+         arWPZkW9QcqoNCvu72pneyqCB6GLNwmdP58ZM6yfVMkn4h1dyhIgiQG0P0d5nwUETYJS
+         0zaqI1ZPc4JM9KqrHdI4b6grD4XEzJngwpQL3Ub8A5XnoPEkIsf9Pq1C0jLK4Z9dNKce
+         DsTixpQIu5ooKQEoVYaQ33E7l5SHAZ4tj5X6v4kVsqx8bDBpp37SfavaVy4qWTHqqKwe
+         /d2U1KonoOkEiYGROOzzCpYbjkdiINSb1PofckGto37IM+AcuEaQep0dY6nWinOIVB+Z
+         IZiQ==
+X-Gm-Message-State: APjAAAUNX6v6nzBFXKH/nScD0B7cqSV9hIbiq6b23b3qDNAPZmpRce2v
+        wzVJ/eU0hf5SMOxacRzpo0k=
+X-Google-Smtp-Source: APXvYqyBs/noppCZUBoSmP/i2D6fgztkqlGLtnvnbKInlX4dL6XLl0QIvoeWWFC42Uzl8LEDSrHCjQ==
+X-Received: by 2002:a17:902:6944:: with SMTP id k4mr18346685plt.214.1580861250019;
+        Tue, 04 Feb 2020 16:07:30 -0800 (PST)
 Received: from localhost.localdomain (ip68-111-84-250.oc.oc.cox.net. [68.111.84.250])
-        by smtp.gmail.com with ESMTPSA id g2sm25575468pgn.59.2020.02.04.16.07.26
+        by smtp.gmail.com with ESMTPSA id g2sm25575468pgn.59.2020.02.04.16.07.28
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 04 Feb 2020 16:07:27 -0800 (PST)
+        Tue, 04 Feb 2020 16:07:29 -0800 (PST)
 From:   Florian Fainelli <f.fainelli@gmail.com>
 To:     linux-arm-kernel@lists.infradead.org
 Cc:     Florian Fainelli <f.fainelli@gmail.com>,
@@ -64,9 +64,9 @@ Cc:     Florian Fainelli <f.fainelli@gmail.com>,
         DEVICE TREE BINDINGS), linux-kernel@vger.kernel.org (open list),
         linux-rpi-kernel@lists.infradead.org (moderated list:BROADCOM
         BCM2711/BCM2835 ARM ARCHITECTURE)
-Subject: [PATCH v2 02/12] dt-bindings: arm: bcm: Convert Hurricane 2 to YAML
-Date:   Tue,  4 Feb 2020 15:55:42 -0800
-Message-Id: <20200204235552.7466-3-f.fainelli@gmail.com>
+Subject: [PATCH v2 03/12] dt-bindings: arm: bcm: Convert Northstar Plus to YAML
+Date:   Tue,  4 Feb 2020 15:55:43 -0800
+Message-Id: <20200204235552.7466-4-f.fainelli@gmail.com>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20200204235552.7466-1-f.fainelli@gmail.com>
 References: <20200204235552.7466-1-f.fainelli@gmail.com>
@@ -77,59 +77,82 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Update the Broadcom Hurricane 2 SoC binding document for boards/SoCs to use
-YAML. Verified with dt_binding_check and dtbs_check.
+Update the Broadcom Northstar Plus SoC binding document for boards/SoCs
+to use YAML. Verified with dt_binding_check and dtbs_check.
 
 Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
 ---
- .../devicetree/bindings/arm/bcm/brcm,hr2.txt  | 14 ----------
- .../devicetree/bindings/arm/bcm/brcm,hr2.yaml | 28 +++++++++++++++++++
- 2 files changed, 28 insertions(+), 14 deletions(-)
- delete mode 100644 Documentation/devicetree/bindings/arm/bcm/brcm,hr2.txt
- create mode 100644 Documentation/devicetree/bindings/arm/bcm/brcm,hr2.yaml
+ .../devicetree/bindings/arm/bcm/brcm,nsp.txt  | 34 ------------------
+ .../devicetree/bindings/arm/bcm/brcm,nsp.yaml | 36 +++++++++++++++++++
+ 2 files changed, 36 insertions(+), 34 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/arm/bcm/brcm,nsp.txt
+ create mode 100644 Documentation/devicetree/bindings/arm/bcm/brcm,nsp.yaml
 
-diff --git a/Documentation/devicetree/bindings/arm/bcm/brcm,hr2.txt b/Documentation/devicetree/bindings/arm/bcm/brcm,hr2.txt
+diff --git a/Documentation/devicetree/bindings/arm/bcm/brcm,nsp.txt b/Documentation/devicetree/bindings/arm/bcm/brcm,nsp.txt
 deleted file mode 100644
-index a124c7fc4dcd..000000000000
---- a/Documentation/devicetree/bindings/arm/bcm/brcm,hr2.txt
+index eae53e4556be..000000000000
+--- a/Documentation/devicetree/bindings/arm/bcm/brcm,nsp.txt
 +++ /dev/null
-@@ -1,14 +0,0 @@
--Broadcom Hurricane 2 device tree bindings
-----------------------------------------
+@@ -1,34 +0,0 @@
+-Broadcom Northstar Plus device tree bindings
+---------------------------------------------
 -
--Broadcom Hurricane 2 family of SoCs are used for switching control. These SoCs
--are based on Broadcom's iProc SoC architecture and feature a single core Cortex
--A9 ARM CPUs, DDR2/DDR3 memory, PCIe GEN-2, USB 2.0 and USB 3.0, serial and NAND
--flash and a PCIe attached integrated switching engine.
+-Broadcom Northstar Plus family of SoCs are used for switching control
+-and management applications as well as residential router/gateway
+-applications. The SoC features dual core Cortex A9 ARM CPUs, integrating
+-several peripheral interfaces including multiple Gigabit Ethernet PHYs,
+-DDR3 memory, PCIE Gen-2, USB 2.0 and USB 3.0, serial and NAND flash,
+-SATA and several other IO controllers.
 -
--Boards with Hurricane SoCs shall have the following properties:
+-Boards with Northstar Plus SoCs shall have the following properties:
 -
 -Required root node property:
 -
--BCM53342
--compatible = "brcm,bcm53342", "brcm,hr2";
-diff --git a/Documentation/devicetree/bindings/arm/bcm/brcm,hr2.yaml b/Documentation/devicetree/bindings/arm/bcm/brcm,hr2.yaml
+-BCM58522
+-compatible = "brcm,bcm58522", "brcm,nsp";
+-
+-BCM58525
+-compatible = "brcm,bcm58525", "brcm,nsp";
+-
+-BCM58535
+-compatible = "brcm,bcm58535", "brcm,nsp";
+-
+-BCM58622
+-compatible = "brcm,bcm58622", "brcm,nsp";
+-
+-BCM58623
+-compatible = "brcm,bcm58623", "brcm,nsp";
+-
+-BCM58625
+-compatible = "brcm,bcm58625", "brcm,nsp";
+-
+-BCM88312
+-compatible = "brcm,bcm88312", "brcm,nsp";
+diff --git a/Documentation/devicetree/bindings/arm/bcm/brcm,nsp.yaml b/Documentation/devicetree/bindings/arm/bcm/brcm,nsp.yaml
 new file mode 100644
-index 000000000000..1158f49b0b83
+index 000000000000..fe364cebf57f
 --- /dev/null
-+++ b/Documentation/devicetree/bindings/arm/bcm/brcm,hr2.yaml
-@@ -0,0 +1,28 @@
++++ b/Documentation/devicetree/bindings/arm/bcm/brcm,nsp.yaml
+@@ -0,0 +1,36 @@
 +# SPDX-License-Identifier: GPL-2.0
 +%YAML 1.2
 +---
-+$id: http://devicetree.org/schemas/arm/bcm/brcm,hr2.yaml#
++$id: http://devicetree.org/schemas/arm/bcm/brcm,nsp.yaml#
 +$schema: http://devicetree.org/meta-schemas/core.yaml#
 +
-+title: Broadcom Hurricane 2 device tree bindings
++title: Broadcom Northstar Plus device tree bindings
 +
 +description:
-+  Broadcom Hurricane 2 family of SoCs are used for switching control. These SoCs
-+  are based on Broadcom's iProc SoC architecture and feature a single core Cortex
-+  A9 ARM CPUs, DDR2/DDR3 memory, PCIe GEN-2, USB 2.0 and USB 3.0, serial and NAND
-+  flash and a PCIe attached integrated switching engine.
++  Broadcom Northstar Plus family of SoCs are used for switching control
++  and management applications as well as residential router/gateway
++  applications. The SoC features dual core Cortex A9 ARM CPUs, integrating
++  several peripheral interfaces including multiple Gigabit Ethernet PHYs,
++  DDR3 memory, PCIE Gen-2, USB 2.0 and USB 3.0, serial and NAND flash,
++  SATA and several other IO controllers.
 +
 +maintainers:
-+  - Florian Fainelli <f.fainelli@gmail.com>
++  - Ray Jui <rjui@broadcom.com>
++  - Scott Branden <sbranden@broadcom.com>
 +
 +properties:
 +  $nodename:
@@ -137,9 +160,14 @@ index 000000000000..1158f49b0b83
 +  compatible:
 +    items:
 +      - enum:
-+        - ubnt,unifi-switch8
-+      - const: brcm,bcm53342
-+      - const: brcm,hr2
++        - brcm,bcm58522
++        - brcm,bcm58525
++        - brcm,bcm58535
++        - brcm,bcm58622
++        - brcm,bcm58623
++        - brcm,bcm58625
++        - brcm,bcm88312
++      - const: brcm,nsp
 +
 +...
 -- 
