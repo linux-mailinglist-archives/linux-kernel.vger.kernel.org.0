@@ -2,104 +2,159 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0C1EE151E03
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Feb 2020 17:15:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1063A151E09
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Feb 2020 17:16:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727429AbgBDQPx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 4 Feb 2020 11:15:53 -0500
-Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:34594 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1727379AbgBDQPw (ORCPT
+        id S1727455AbgBDQQa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 4 Feb 2020 11:16:30 -0500
+Received: from mail-qt1-f194.google.com ([209.85.160.194]:39096 "EHLO
+        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727311AbgBDQQ3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Feb 2020 11:15:52 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1580832951;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=fGtFHIbquXcvehIzmocD/BNz/hYF+HSP4Jj3wEbCF8g=;
-        b=DHLsOV9P8e/GnZ+BReQPRuf4gOOZWXlcYVFucSzqGXagrKuFuifJbh5WWQuplbwIJq/dc/
-        DKHy/xdWWUqIHi7A5Gf7HV+w6AJMRJSEr6v9e2VRrIIyu9taKzSLC8s+DFmZ8gAtZz0l4G
-        ZDTRfQP7AofZCCI/VL9cZBdL2ynu26w=
-Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
- [209.85.128.71]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-395-L_6tKLn1MhGUI3GkaN11eg-1; Tue, 04 Feb 2020 11:15:47 -0500
-X-MC-Unique: L_6tKLn1MhGUI3GkaN11eg-1
-Received: by mail-wm1-f71.google.com with SMTP id n17so1681048wmk.1
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Feb 2020 08:15:47 -0800 (PST)
+        Tue, 4 Feb 2020 11:16:29 -0500
+Received: by mail-qt1-f194.google.com with SMTP id c5so14724664qtj.6
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Feb 2020 08:16:29 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=lca.pw; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=pAy8jLtbMbimG8GilZh7LrbVrb27NyycDZqZCxpoHs8=;
+        b=bOvS0LL/h3dhQAj52To9GrwAyqFdTm62vOnjl1p+9e7L19APZ5V84zcaLdt26gQ7n+
+         Lv4DXKhGE9uhyrbgWCbUVizjcOiW8iyVo/TfxharjTyJru/Rk0avd9BcxFuJlRf1xaUR
+         mPFYBG6cfn+QbaX3enxmlbTlL84TJxNNVBQWEgpaVg0HfgxlifYnTLLt+vaCVdNY/uC5
+         PtiUWdr3Pb8aryX1lq3IeaBFwxsD7ls17Eih7+CaL+O8qAJJlTQd02nXY04wI3p+B7r1
+         BTW2HVkEDH5t6Dr5xPhV8mizRrdQk/yKPadT4+Ooc89vLuRS4oIqfEbRXQpyrV5j0e2x
+         eZCQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:in-reply-to:references:date
-         :message-id:mime-version;
-        bh=fGtFHIbquXcvehIzmocD/BNz/hYF+HSP4Jj3wEbCF8g=;
-        b=mHiP+XInuqzmXKMvCEdEoNwcPojVOr1GJT4+OD4j/ug20vb/lsyhEo73z5h2faP/1Z
-         T6CR10Dr3PNzW5W+25IknPD3MzTCsDco5G5xK1bLXJhMLa5rU0ka6ui7FtIvPEiCfEjq
-         YLiFum/hB6qgdA66Dka7kjI0OMa5GAEeovqXMT4w98w0j76/QpuGJW1UN+jwisJqdvHA
-         pzfmSe4sNyS09u73l5uVApCvhuFuGbTgSWQ7WM3rabIr/Hdi/qRr//rynZrgWKUawMqk
-         BOPzbFUOnDyU1S9iB4lpBuboV9GI+WCwjiJWov3cVy7rHre83BMOBnNO1+oqb/mVNRvh
-         YYgw==
-X-Gm-Message-State: APjAAAWqbblqsqDa1DoEE+2BkkGtB6AmIJ9ozlrHx8hWTVFz3pFlC1vW
-        mNN1l6u/shTSzPq68uQpg4/mmavtaOE036SE0jFKsWZ5kV6jQzecg58ySF8tUAbR1WjyCylRDKP
-        nKW6WtIf6ESUMZq3FWURBGIq5
-X-Received: by 2002:adf:b60f:: with SMTP id f15mr24153897wre.372.1580832946425;
-        Tue, 04 Feb 2020 08:15:46 -0800 (PST)
-X-Google-Smtp-Source: APXvYqyXWw5RfxHgVOOaGGG4vnuzrBJpumSAQo4wPDeegi3aQlAvW2b1XwNbmHXYeZOpig4eHyp3dQ==
-X-Received: by 2002:adf:b60f:: with SMTP id f15mr24153877wre.372.1580832946262;
-        Tue, 04 Feb 2020 08:15:46 -0800 (PST)
-Received: from vitty.brq.redhat.com (nat-pool-brq-t.redhat.com. [213.175.37.10])
-        by smtp.gmail.com with ESMTPSA id v8sm30682747wrw.2.2020.02.04.08.15.44
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 04 Feb 2020 08:15:45 -0800 (PST)
-From:   Vitaly Kuznetsov <vkuznets@redhat.com>
-To:     Sean Christopherson <sean.j.christopherson@intel.com>
-Cc:     Wanpeng Li <wanpengli@tencent.com>,
-        Jim Mattson <jmattson@google.com>,
-        Joerg Roedel <joro@8bytes.org>, kvm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Paolo Bonzini <pbonzini@redhat.com>
-Subject: Re: [PATCH] KVM: nVMX: Remove stale comment from nested_vmx_load_cr3()
-In-Reply-To: <20200204153259.16318-1-sean.j.christopherson@intel.com>
-References: <20200204153259.16318-1-sean.j.christopherson@intel.com>
-Date:   Tue, 04 Feb 2020 17:15:44 +0100
-Message-ID: <87imkmmiq7.fsf@vitty.brq.redhat.com>
-MIME-Version: 1.0
-Content-Type: text/plain
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=pAy8jLtbMbimG8GilZh7LrbVrb27NyycDZqZCxpoHs8=;
+        b=B1I3l2o8fF5rHZ8VjlE9Ird6C0yb7IU2GvAkT09XYFnXMrrlNbO0uvi4LfRojJQArW
+         5CUM0/O7ReWp0r96D+f/q7pTKoAe/5pgTAMZZ7DzQNMiGVwAV31YBS7BpjK64DrjWTcK
+         BZAB8N0ar7+rreK73NgO26KKkxhDP+7WbJybnEkzvt09EyTqLC0PY8GcHcHhoidDCE77
+         87AnmLXihTXed2kKd40LxywgBWpbaezYwUjdwe73EMqHP8AMFPoiGrxl7fTzZPVLMqbB
+         Yl8RZIcczHYcxM2N1sDliUuOMAl6nqPuDlPwd8Lkb7mhsEIucgP+klKdSHMpSPNq9pYS
+         Y4DQ==
+X-Gm-Message-State: APjAAAVVUGaB03G7E7tbrfYe/PtXFPuvUtrb9d/0SaJR3ddmTMvjg40O
+        H6ohprNnA1J0h9e7bUYv1Of7XWlHfJk4Sg==
+X-Google-Smtp-Source: APXvYqz7uA5dN7UDMN36zGgMX2aZZ08vO0ZNAvSjII3gVrZwym/G8T5QvFz2fuPqIyNkyulRVDp+XA==
+X-Received: by 2002:ac8:7281:: with SMTP id v1mr29023219qto.79.1580832988769;
+        Tue, 04 Feb 2020 08:16:28 -0800 (PST)
+Received: from qcai.nay.com (nat-pool-bos-t.redhat.com. [66.187.233.206])
+        by smtp.gmail.com with ESMTPSA id b24sm11753939qto.71.2020.02.04.08.16.27
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 04 Feb 2020 08:16:28 -0800 (PST)
+From:   Qian Cai <cai@lca.pw>
+To:     davem@davemloft.net
+Cc:     kuba@kernel.org, elver@google.com, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Qian Cai <cai@lca.pw>
+Subject: [PATCH v2] skbuff: fix a data race in skb_queue_len()
+Date:   Tue,  4 Feb 2020 11:15:45 -0500
+Message-Id: <1580832945-28331-1-git-send-email-cai@lca.pw>
+X-Mailer: git-send-email 1.8.3.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Sean Christopherson <sean.j.christopherson@intel.com> writes:
+sk_buff.qlen can be accessed concurrently as noticed by KCSAN,
 
-> The blurb pertaining to the return value of nested_vmx_load_cr3() no
-> longer matches reality, remove it entirely as the behavior it is
-> attempting to document is quite obvious when reading the actual code.
+ BUG: KCSAN: data-race in __skb_try_recv_from_queue / unix_dgram_sendmsg
 
-"And if it doesn't seem that obvious just try staring at it for a few
-years, do some small (60-70 patches) refactorings and fix several dozens
-of bugs. It will." :-)
+ read to 0xffff8a1b1d8a81c0 of 4 bytes by task 5371 on cpu 96:
+  unix_dgram_sendmsg+0x9a9/0xb70 include/linux/skbuff.h:1821
+				 net/unix/af_unix.c:1761
+  ____sys_sendmsg+0x33e/0x370
+  ___sys_sendmsg+0xa6/0xf0
+  __sys_sendmsg+0x69/0xf0
+  __x64_sys_sendmsg+0x51/0x70
+  do_syscall_64+0x91/0xb47
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
 
->
-> Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
-> ---
->  arch/x86/kvm/vmx/nested.c | 2 --
->  1 file changed, 2 deletions(-)
->
-> diff --git a/arch/x86/kvm/vmx/nested.c b/arch/x86/kvm/vmx/nested.c
-> index 7608924ee8c1..0c9b847f7a25 100644
-> --- a/arch/x86/kvm/vmx/nested.c
-> +++ b/arch/x86/kvm/vmx/nested.c
-> @@ -1076,8 +1076,6 @@ static bool nested_cr3_valid(struct kvm_vcpu *vcpu, unsigned long val)
->  /*
->   * Load guest's/host's cr3 at nested entry/exit. nested_ept is true if we are
->   * emulating VM entry into a guest with EPT enabled.
-> - * Returns 0 on success, 1 on failure. Invalid state exit qualification code
-> - * is assigned to entry_failure_code on failure.
->   */
->  static int nested_vmx_load_cr3(struct kvm_vcpu *vcpu, unsigned long cr3, bool nested_ept,
->  			       u32 *entry_failure_code)
+ write to 0xffff8a1b1d8a81c0 of 4 bytes by task 1 on cpu 99:
+  __skb_try_recv_from_queue+0x327/0x410 include/linux/skbuff.h:2029
+  __skb_try_recv_datagram+0xbe/0x220
+  unix_dgram_recvmsg+0xee/0x850
+  ____sys_recvmsg+0x1fb/0x210
+  ___sys_recvmsg+0xa2/0xf0
+  __sys_recvmsg+0x66/0xf0
+  __x64_sys_recvmsg+0x51/0x70
+  do_syscall_64+0x91/0xb47
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
 
-Reviewed-by: Vitaly Kuznetsov <vkuznets@redhat.com>
+Since only the read is operating as lockless, it could introduce a logic
+bug in unix_recvq_full() due to the load tearing. Fix it by adding
+a lockless variant of skb_queue_len() and unix_recvq_full() where
+READ_ONCE() is on the read while WRITE_ONCE() is on the write similar to
+the commit d7d16a89350a ("net: add skb_queue_empty_lockless()").
 
+Signed-off-by: Qian Cai <cai@lca.pw>
+---
+
+v2: add lockless variant helpers and WRITE_ONCE().
+
+ include/linux/skbuff.h | 14 +++++++++++++-
+ net/unix/af_unix.c     |  9 ++++++++-
+ 2 files changed, 21 insertions(+), 2 deletions(-)
+
+diff --git a/include/linux/skbuff.h b/include/linux/skbuff.h
+index 3d13a4b717e9..de5eade20e52 100644
+--- a/include/linux/skbuff.h
++++ b/include/linux/skbuff.h
+@@ -1822,6 +1822,18 @@ static inline __u32 skb_queue_len(const struct sk_buff_head *list_)
+ }
+ 
+ /**
++ *	skb_queue_len	- get queue length
++ *	@list_: list to measure
++ *
++ *	Return the length of an &sk_buff queue.
++ *	This variant can be used in lockless contexts.
++ */
++static inline __u32 skb_queue_len_lockless(const struct sk_buff_head *list_)
++{
++	return READ_ONCE(list_->qlen);
++}
++
++/**
+  *	__skb_queue_head_init - initialize non-spinlock portions of sk_buff_head
+  *	@list: queue to initialize
+  *
+@@ -2026,7 +2038,7 @@ static inline void __skb_unlink(struct sk_buff *skb, struct sk_buff_head *list)
+ {
+ 	struct sk_buff *next, *prev;
+ 
+-	list->qlen--;
++	WRITE_ONCE(list->qlen, list->qlen - 1);
+ 	next	   = skb->next;
+ 	prev	   = skb->prev;
+ 	skb->next  = skb->prev = NULL;
+diff --git a/net/unix/af_unix.c b/net/unix/af_unix.c
+index 321af97c7bbe..349e7fbfbc67 100644
+--- a/net/unix/af_unix.c
++++ b/net/unix/af_unix.c
+@@ -194,6 +194,12 @@ static inline int unix_recvq_full(struct sock const *sk)
+ 	return skb_queue_len(&sk->sk_receive_queue) > sk->sk_max_ack_backlog;
+ }
+ 
++static inline int unix_recvq_full_lockless(struct sock const *sk)
++{
++	return skb_queue_len_lockless(&sk->sk_receive_queue) >
++		sk->sk_max_ack_backlog;
++}
++
+ struct sock *unix_peer_get(struct sock *s)
+ {
+ 	struct sock *peer;
+@@ -1758,7 +1764,8 @@ static int unix_dgram_sendmsg(struct socket *sock, struct msghdr *msg,
+ 	 * - unix_peer(sk) == sk by time of get but disconnected before lock
+ 	 */
+ 	if (other != sk &&
+-	    unlikely(unix_peer(other) != sk && unix_recvq_full(other))) {
++	    unlikely(unix_peer(other) != sk &&
++	    unix_recvq_full_lockless(other))) {
+ 		if (timeo) {
+ 			timeo = unix_wait_for_peer(other, timeo);
+ 
 -- 
-Vitaly
+1.8.3.1
 
