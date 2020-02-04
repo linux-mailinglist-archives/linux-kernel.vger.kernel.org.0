@@ -2,159 +2,108 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 895B0152155
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Feb 2020 20:57:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8BA3515215A
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Feb 2020 20:59:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727514AbgBDT5E (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 4 Feb 2020 14:57:04 -0500
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:46741 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727450AbgBDT5E (ORCPT
+        id S1727587AbgBDT7C (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 4 Feb 2020 14:59:02 -0500
+Received: from aserp2120.oracle.com ([141.146.126.78]:44236 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727385AbgBDT7B (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Feb 2020 14:57:04 -0500
-Received: by mail-wr1-f67.google.com with SMTP id z7so24596825wrl.13;
-        Tue, 04 Feb 2020 11:57:00 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=K+yNaJp7oUZoKhcclI8Dxuk5xvWQ6/1nUWlWmNYelU0=;
-        b=uXAnnJyOP3XxbaFXyIjwMr/FV8i/RpKXVy2RiVCpSLtnNyTqPeIFDZRRue+N0MZBU0
-         VcTurBFWNZJ4CJMSjwV55oquji6gpM6krYS/OvlNS5a7zmBy4HlpgVjXlQm8xkEqlihi
-         Jd+kXnkQnb3USQ3SC/KeOd92X+zxtTp6dThrLWPx6wUN7kHYro3z01pYcKl52kGB9Cac
-         lhbg8e2VAB4kLuG7N0Y/Hn+LwTsIEJWad645iKYAc8SpAegb0Uvo+WloIG5nPwOjH79O
-         dWR3P8WAi775jXVu9D5FtzyM8WB4jTcWRGbMFH1haEIUxGnDkN8aoRxRX8TP2cbZ+VLx
-         +RpA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=K+yNaJp7oUZoKhcclI8Dxuk5xvWQ6/1nUWlWmNYelU0=;
-        b=agRP0pbHno2LtoCKkQ9plNKVM2WZySnEBetr3/u0OYkzPHTeTtCd/H53xl+1BDfsZS
-         szB8+rYpYsvhTjEOV6CM/0fZZGMX212eNGIxzXQnxUwB/idivKCMBpjo2BeHgn8SdLtj
-         b8Iz9xNqWfkxUVNUaEYn6ikHPDYNxQ3010VCVhGD0qj+qUQtuCVJzqKMcEmDvhpcbmIG
-         31g4TqOAKpLePj5Nxp666JIjqq3mYgfQTerwqgYvZ13tEhcFOZ/OfxVtB5fIO6tRiXEI
-         IzIBthqTAWAIbYr3w02IW3p/dS0kGRBt+wQVWtsCY5GJHtqJnlKx26viHwMZ8TN/qf/D
-         atuQ==
-X-Gm-Message-State: APjAAAV/1OR4/ej3MaRwfwEndykFha5tKig3jMEcuqgWqKNuWCAzDKXo
-        tQeYti5Ytvkte9EGECaOgo8=
-X-Google-Smtp-Source: APXvYqyQx0W0FqnaW4/+81tXXRCLubnvr11FkS+hNIAt/oe7kUrrRQ2gZyVssaB/xpy/R9AFRNQ7hg==
-X-Received: by 2002:a5d:5221:: with SMTP id i1mr22164042wra.44.1580846220291;
-        Tue, 04 Feb 2020 11:57:00 -0800 (PST)
-Received: from Ansuel-XPS.localdomain (93-39-149-95.ip76.fastwebnet.it. [93.39.149.95])
-        by smtp.googlemail.com with ESMTPSA id z6sm29710177wrw.36.2020.02.04.11.56.59
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 04 Feb 2020 11:56:59 -0800 (PST)
-From:   Ansuel Smith <ansuelsmth@gmail.com>
-Cc:     Ansuel Smith <ansuelsmth@gmail.com>,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Wim Van Sebroeck <wim@linux-watchdog.org>,
-        Guenter Roeck <linux@roeck-us.net>,
-        linux-arm-msm@vger.kernel.org, linux-watchdog@vger.kernel.org,
+        Tue, 4 Feb 2020 14:59:01 -0500
+Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
+        by aserp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id 014JrICc081459;
+        Tue, 4 Feb 2020 19:57:45 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=corp-2019-08-05;
+ bh=0INpg/Hj1QddaeE9Yvl2yxKNQKLHtaJEwGKy7Tyco0U=;
+ b=GQZmYL+yR/ltnneW8n9lk5qDTNZvvS0UN8v9V3KNedxvCKp2iHYml59CK7t5nYIo+5UF
+ 44Yg3sYJIE7Gwi6DT336UjElBxPmqL6Bp59SVHremdVsXfAouUl1BqiwXfBprC2IrqvK
+ hDc7hyGTUxlQaX/5PsxNU/n6QVH5OZfRd73D0BVDQqfcRQsf/FfGQAqSQVsP2kTmYP4C
+ wS/5IkSpvXgzJy+Pl+qRVE8SnEprGTBwlvTT0XcOb4XgMGsS54dQCEN0WGK58AAN4vJe
+ o/zOVL+B+WQD81DuyqXlljbjv9pa8USpZyZO9/XHj2DTHlQoFKZcPJut+LV+uFg324B8 6Q== 
+Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
+        by aserp2120.oracle.com with ESMTP id 2xw19qh4vn-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 04 Feb 2020 19:57:45 +0000
+Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
+        by aserp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id 014JrYt6063307;
+        Tue, 4 Feb 2020 19:57:45 GMT
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+        by aserp3020.oracle.com with ESMTP id 2xxsbr9ytx-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 04 Feb 2020 19:57:44 +0000
+Received: from abhmp0001.oracle.com (abhmp0001.oracle.com [141.146.116.7])
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id 014Jveoe012599;
+        Tue, 4 Feb 2020 19:57:40 GMT
+Received: from localhost.localdomain (/10.159.243.11)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Tue, 04 Feb 2020 11:57:40 -0800
+Subject: Re: [PATCH] KVM: nVMX: Remove stale comment from
+ nested_vmx_load_cr3()
+To:     Sean Christopherson <sean.j.christopherson@intel.com>,
+        Paolo Bonzini <pbonzini@redhat.com>
+Cc:     Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Wanpeng Li <wanpengli@tencent.com>,
+        Jim Mattson <jmattson@google.com>,
+        Joerg Roedel <joro@8bytes.org>, kvm@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH v2] watchdog: qcom-wdt: disable pretimeout on timer platform
-Date:   Tue,  4 Feb 2020 20:56:48 +0100
-Message-Id: <20200204195648.23350-1-ansuelsmth@gmail.com>
-X-Mailer: git-send-email 2.24.0
+References: <20200204153259.16318-1-sean.j.christopherson@intel.com>
+From:   Krish Sadhukhan <krish.sadhukhan@oracle.com>
+Message-ID: <dcee13f5-f447-9ab4-4803-e3c4f42fb011@oracle.com>
+Date:   Tue, 4 Feb 2020 11:57:39 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-To:     unlisted-recipients:; (no To-header on input)
+In-Reply-To: <20200204153259.16318-1-sean.j.christopherson@intel.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9521 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1911140001 definitions=main-2002040134
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9521 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1911140001
+ definitions=main-2002040134
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Some platform like ipq806x doesn't support pretimeout and define
-some interrupts used by qcom,msm-timer. Change the driver to check
-and use pretimeout only on qcom,kpss-wdt as it's the only platform
-that actually supports it.
 
-Signed-off-by: Ansuel Smith <ansuelsmth@gmail.com>
----
- drivers/watchdog/qcom-wdt.c | 31 +++++++++++++++++++++++--------
- 1 file changed, 23 insertions(+), 8 deletions(-)
+On 2/4/20 7:32 AM, Sean Christopherson wrote:
+> The blurb pertaining to the return value of nested_vmx_load_cr3() no
+> longer matches reality, remove it entirely as the behavior it is
+> attempting to document is quite obvious when reading the actual code.
+>
+> Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
+> ---
+>   arch/x86/kvm/vmx/nested.c | 2 --
+>   1 file changed, 2 deletions(-)
+>
+> diff --git a/arch/x86/kvm/vmx/nested.c b/arch/x86/kvm/vmx/nested.c
+> index 7608924ee8c1..0c9b847f7a25 100644
+> --- a/arch/x86/kvm/vmx/nested.c
+> +++ b/arch/x86/kvm/vmx/nested.c
+> @@ -1076,8 +1076,6 @@ static bool nested_cr3_valid(struct kvm_vcpu *vcpu, unsigned long val)
+>   /*
+>    * Load guest's/host's cr3 at nested entry/exit. nested_ept is true if we are
+>    * emulating VM entry into a guest with EPT enabled.
+> - * Returns 0 on success, 1 on failure. Invalid state exit qualification code
+> - * is assigned to entry_failure_code on failure.
+>    */
+>   static int nested_vmx_load_cr3(struct kvm_vcpu *vcpu, unsigned long cr3, bool nested_ept,
+>   			       u32 *entry_failure_code)
 
-diff --git a/drivers/watchdog/qcom-wdt.c b/drivers/watchdog/qcom-wdt.c
-index a494543d3ae1..d13c75028985 100644
---- a/drivers/watchdog/qcom-wdt.c
-+++ b/drivers/watchdog/qcom-wdt.c
-@@ -40,6 +40,11 @@ static const u32 reg_offset_data_kpss[] = {
- 	[WDT_BITE_TIME] = 0x14,
- };
- 
-+struct qcom_wdt_match_data {
-+	const u32 *offset;
-+	bool pretimeout;
-+};
-+
- struct qcom_wdt {
- 	struct watchdog_device	wdd;
- 	unsigned long		rate;
-@@ -179,19 +184,29 @@ static void qcom_clk_disable_unprepare(void *data)
- 	clk_disable_unprepare(data);
- }
- 
-+static const struct qcom_wdt_match_data match_data_apcs_tmr = {
-+	.offset = reg_offset_data_apcs_tmr,
-+	.pretimeout = false,
-+};
-+
-+static const struct qcom_wdt_match_data match_data_kpss = {
-+	.offset = reg_offset_data_kpss,
-+	.pretimeout = true,
-+};
-+
- static int qcom_wdt_probe(struct platform_device *pdev)
- {
- 	struct device *dev = &pdev->dev;
- 	struct qcom_wdt *wdt;
- 	struct resource *res;
- 	struct device_node *np = dev->of_node;
--	const u32 *regs;
-+	const struct qcom_wdt_match_data *data;
- 	u32 percpu_offset;
- 	int irq, ret;
- 	struct clk *clk;
- 
--	regs = of_device_get_match_data(dev);
--	if (!regs) {
-+	data = of_device_get_match_data(dev);
-+	if (!data) {
- 		dev_err(dev, "Unsupported QCOM WDT module\n");
- 		return -ENODEV;
- 	}
-@@ -247,7 +262,7 @@ static int qcom_wdt_probe(struct platform_device *pdev)
- 
- 	/* check if there is pretimeout support */
- 	irq = platform_get_irq(pdev, 0);
--	if (irq > 0) {
-+	if (data->pretimeout && irq > 0) {
- 		ret = devm_request_irq(dev, irq, qcom_wdt_isr,
- 				       IRQF_TRIGGER_RISING,
- 				       "wdt_bark", &wdt->wdd);
-@@ -267,7 +282,7 @@ static int qcom_wdt_probe(struct platform_device *pdev)
- 	wdt->wdd.min_timeout = 1;
- 	wdt->wdd.max_timeout = 0x10000000U / wdt->rate;
- 	wdt->wdd.parent = dev;
--	wdt->layout = regs;
-+	wdt->layout = data->offset;
- 
- 	if (readl(wdt_addr(wdt, WDT_STS)) & 1)
- 		wdt->wdd.bootstatus = WDIOF_CARDRESET;
-@@ -311,9 +326,9 @@ static int __maybe_unused qcom_wdt_resume(struct device *dev)
- static SIMPLE_DEV_PM_OPS(qcom_wdt_pm_ops, qcom_wdt_suspend, qcom_wdt_resume);
- 
- static const struct of_device_id qcom_wdt_of_table[] = {
--	{ .compatible = "qcom,kpss-timer", .data = reg_offset_data_apcs_tmr },
--	{ .compatible = "qcom,scss-timer", .data = reg_offset_data_apcs_tmr },
--	{ .compatible = "qcom,kpss-wdt", .data = reg_offset_data_kpss },
-+	{ .compatible = "qcom,kpss-timer", .data = &match_data_apcs_tmr },
-+	{ .compatible = "qcom,scss-timer", .data = &match_data_apcs_tmr },
-+	{ .compatible = "qcom,kpss-wdt", .data = &match_data_kpss },
- 	{ },
- };
- MODULE_DEVICE_TABLE(of, qcom_wdt_of_table);
--- 
-2.24.0
+I think it's worth keeping the last part which is " Exit qualification 
+code is assigned to entry_failure_code on failure." because "Entry 
+Failure" and "Exit Qualification" might sound bit confusing until you 
+actually look at the caller nested_vmx_enter_non_root_mode().
 
