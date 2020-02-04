@@ -2,85 +2,106 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7B332151B0B
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Feb 2020 14:18:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AE5C9151B27
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Feb 2020 14:21:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727202AbgBDNSV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 4 Feb 2020 08:18:21 -0500
-Received: from merlin.infradead.org ([205.233.59.134]:43130 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727149AbgBDNSV (ORCPT
+        id S1727311AbgBDNV3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 4 Feb 2020 08:21:29 -0500
+Received: from alexa-out-blr-02.qualcomm.com ([103.229.18.198]:7394 "EHLO
+        alexa-out-blr-02.qualcomm.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727168AbgBDNV3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Feb 2020 08:18:21 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=Ix0NumNpsipKs3I7asBAFIMQ7gyLpWw2Gx20iaMSHxs=; b=J/awYUnEP1Z2HE1xW6zPHgdmmP
-        qgJThzdUlsh1/6B6UdVVWDXj1qp8hjlgQsqN783pTTf09HaD3pD1knlyW1U/i2bNCpi8OXDZy7KSE
-        04i7J5PHGpccgElYuZA3jQLZ7ZjvUNXYHiHBjpk/HVqhKxG/HBTjx1hJHpsCo7vr+bujDs3tMcMon
-        Ya3/5YZULrpkwvTo8fC9dKx2Qjm5YqnzlcgzoJ3+QARnGa3cX20t+Wy47fKCaoBWMt6dWA/fuI168
-        o14OJJlZ0SSH1SYOc6bhbJ2BQOnguPpc5icP2lZtWOiBcG7M9vxRjY9HKiSv0l54FI5imJ2ZujYFZ
-        NtiM0bkQ==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
-        by merlin.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1iyy5o-0004Zq-DZ; Tue, 04 Feb 2020 13:18:16 +0000
-Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (Client did not present a certificate)
-        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id BA96E300E0C;
-        Tue,  4 Feb 2020 14:16:27 +0100 (CET)
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 3AAB82024714C; Tue,  4 Feb 2020 14:18:13 +0100 (CET)
-Date:   Tue, 4 Feb 2020 14:18:13 +0100
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Waiman Long <longman@redhat.com>
-Cc:     Ingo Molnar <mingo@redhat.com>, Will Deacon <will.deacon@arm.com>,
-        linux-kernel@vger.kernel.org, Bart Van Assche <bvanassche@acm.org>
-Subject: Re: [PATCH v5 7/7] locking/lockdep: Add a fast path for chain_hlocks
- allocation
-Message-ID: <20200204131813.GQ14914@hirez.programming.kicks-ass.net>
-References: <20200203164147.17990-1-longman@redhat.com>
- <20200203164147.17990-8-longman@redhat.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200203164147.17990-8-longman@redhat.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Tue, 4 Feb 2020 08:21:29 -0500
+Received: from ironmsg02-blr.qualcomm.com ([10.86.208.131])
+  by alexa-out-blr-02.qualcomm.com with ESMTP/TLS/AES256-SHA; 04 Feb 2020 18:48:35 +0530
+Received: from pillair-linux.qualcomm.com ([10.204.116.193])
+  by ironmsg02-blr.qualcomm.com with ESMTP; 04 Feb 2020 18:48:26 +0530
+Received: by pillair-linux.qualcomm.com (Postfix, from userid 452944)
+        id C315A3963; Tue,  4 Feb 2020 18:48:24 +0530 (IST)
+From:   Rakesh Pillai <pillair@codeaurora.org>
+To:     devicetree@vger.kernel.org
+Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org,
+        Rakesh Pillai <pillair@codeaurora.org>
+Subject: [PATCH v6] arm64: dts: qcom: sc7180: Add WCN3990 WLAN module device node
+Date:   Tue,  4 Feb 2020 18:48:20 +0530
+Message-Id: <1580822300-4491-1-git-send-email-pillair@codeaurora.org>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 03, 2020 at 11:41:47AM -0500, Waiman Long wrote:
+Add device node for the ath10k SNOC platform driver probe
+and add resources required for WCN3990 on sc7180 soc.
 
-> @@ -2809,6 +2813,18 @@ static int alloc_chain_hlocks(int req)
->  			return curr;
->  		}
->  
-> +		/*
-> +		 * Fast path: splitting out a sub-block at the end of the
-> +		 * primordial chain block.
-> +		 */
-> +		if (likely((size > MAX_LOCK_DEPTH) &&
-> +			   (size - req > MAX_CHAIN_BUCKETS))) {
-> +			size -= req;
-> +			nr_free_chain_hlocks -= req;
-> +			init_chain_block_size(curr, size);
-> +			return curr + size;
-> +		}
-> +
->  		if (size > max_size) {
->  			max_prev = prev;
->  			max_curr = curr;
+Signed-off-by: Rakesh Pillai <pillair@codeaurora.org>
+---
+ arch/arm64/boot/dts/qcom/sc7180-idp.dts |  5 +++++
+ arch/arm64/boot/dts/qcom/sc7180.dtsi    | 27 +++++++++++++++++++++++++++
+ 2 files changed, 32 insertions(+)
 
-A less horrible hack might be to keep the freelist sorted on size (large
--> small)
+diff --git a/arch/arm64/boot/dts/qcom/sc7180-idp.dts b/arch/arm64/boot/dts/qcom/sc7180-idp.dts
+index 388f50a..167f68ac 100644
+--- a/arch/arm64/boot/dts/qcom/sc7180-idp.dts
++++ b/arch/arm64/boot/dts/qcom/sc7180-idp.dts
+@@ -287,6 +287,11 @@
+ 	vdda-pll-supply = <&vreg_l4a_0p8>;
+ };
+ 
++&wifi {
++	status = "okay";
++	qcom,msa-fixed-perm;
++};
++
+ /* PINCTRL - additions to nodes defined in sc7180.dtsi */
+ 
+ &qspi_clk {
+diff --git a/arch/arm64/boot/dts/qcom/sc7180.dtsi b/arch/arm64/boot/dts/qcom/sc7180.dtsi
+index 8011c5f..e3e8610 100644
+--- a/arch/arm64/boot/dts/qcom/sc7180.dtsi
++++ b/arch/arm64/boot/dts/qcom/sc7180.dtsi
+@@ -75,6 +75,11 @@
+ 			reg = <0x0 0x80900000 0x0 0x200000>;
+ 			no-map;
+ 		};
++
++		wlan_fw_mem: memory@93900000 {
++			reg = <0 0x93900000 0 0x200000>;
++			no-map;
++		};
+ 	};
+ 
+ 	cpus {
+@@ -1490,6 +1495,28 @@
+ 
+ 			#freq-domain-cells = <1>;
+ 		};
++
++		wifi: wifi@18800000 {
++			compatible = "qcom,wcn3990-wifi";
++			reg = <0 0x18800000 0 0x800000>;
++			reg-names = "membase";
++			iommus = <&apps_smmu 0xc0 0x1>;
++			interrupts =
++				<GIC_SPI 414 IRQ_TYPE_LEVEL_HIGH /* CE0 */ >,
++				<GIC_SPI 415 IRQ_TYPE_LEVEL_HIGH /* CE1 */ >,
++				<GIC_SPI 416 IRQ_TYPE_LEVEL_HIGH /* CE2 */ >,
++				<GIC_SPI 417 IRQ_TYPE_LEVEL_HIGH /* CE3 */ >,
++				<GIC_SPI 418 IRQ_TYPE_LEVEL_HIGH /* CE4 */ >,
++				<GIC_SPI 419 IRQ_TYPE_LEVEL_HIGH /* CE5 */ >,
++				<GIC_SPI 420 IRQ_TYPE_LEVEL_HIGH /* CE6 */ >,
++				<GIC_SPI 421 IRQ_TYPE_LEVEL_HIGH /* CE7 */ >,
++				<GIC_SPI 422 IRQ_TYPE_LEVEL_HIGH /* CE8 */ >,
++				<GIC_SPI 423 IRQ_TYPE_LEVEL_HIGH /* CE9 */ >,
++				<GIC_SPI 424 IRQ_TYPE_LEVEL_HIGH /* CE10 */>,
++				<GIC_SPI 425 IRQ_TYPE_LEVEL_HIGH /* CE11 */>;
++			memory-region = <&wlan_fw_mem>;
++			status = "disabled";
++		};
+ 	};
+ 
+ 	thermal-zones {
+-- 
+2.7.4
 
-That moves the linear-search from alloc_chain_hlocks() into
-add_chain_block().  But the thing is that it would amortize to O(1)
-because this initial chunk is pretty much 'always' the largest.
-
-Only once we've exhausted the initial block will we hit that search, but
-then the hope is that we mostly live off of the buckets, not the
-variable freelist.
