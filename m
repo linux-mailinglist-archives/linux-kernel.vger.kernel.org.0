@@ -2,55 +2,61 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4CAEB1520CE
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Feb 2020 20:12:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D217A1520D4
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Feb 2020 20:12:24 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727461AbgBDTMJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 4 Feb 2020 14:12:09 -0500
-Received: from mail-pj1-f65.google.com ([209.85.216.65]:53139 "EHLO
+        id S1727522AbgBDTMN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 4 Feb 2020 14:12:13 -0500
+Received: from mail-pj1-f65.google.com ([209.85.216.65]:40158 "EHLO
         mail-pj1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727308AbgBDTMI (ORCPT
+        with ESMTP id S1727479AbgBDTMK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Feb 2020 14:12:08 -0500
-Received: by mail-pj1-f65.google.com with SMTP id ep11so1807778pjb.2
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Feb 2020 11:12:08 -0800 (PST)
+        Tue, 4 Feb 2020 14:12:10 -0500
+Received: by mail-pj1-f65.google.com with SMTP id 12so1804822pjb.5
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Feb 2020 11:12:09 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=uFqUZvbEKYLNXxdPtvXaq5M8MJ+i8vwd9UYeLfuQUDA=;
-        b=HhzCmrYB32A8vt5zVLleIdlmYlky91/IeL3Lk6ezKsBu8iHqwAGGlMHWIBrs7nCL5P
-         N6iTg8JbNeGLBKxYKa21ffo9vqKuutlJarWAxQrTv/PYw0HNxX8K1RF0q+BtV6kqszI+
-         /FVsmU6AULdSSOFeilEEFmG/qWKMFPLXWqGGA=
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=tFXhEwC/wFCkTe/lPBw8m3XC/MunfcfcPF2H9ytGoVc=;
+        b=lPud0IhyMRajOMKw49bKGnWv+xpIFX1ZYKTLwemLAOwK9T0aHLDngCuhvEKt+dtJGx
+         rjUBAZ7USNj9U4KRqF2gjZo37W4178z3GRxFF/oWtYDDGFZWmI9dB9RxwOMMThN6sDHO
+         KLLXiB44aHmu5mI8Nx60UyYqRlRJLOTAFDSGc=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=uFqUZvbEKYLNXxdPtvXaq5M8MJ+i8vwd9UYeLfuQUDA=;
-        b=l1idNmEOk0++E7fQ68ZsN52jPUYMjRVPrtozOPN1UptMylWnYySLWV1vNMawK/OBIb
-         lDcAw/YuBVke0IcgTSdXUzm9iTUpVkCQ8Gtmjaj6RSKpfW5JefbEZd4SwdTyMghWLgKk
-         GL/gntrtlc13GpySlFoN34EiSU0o8Bs+XreaE+c6FntTUuB+YQZ+nU/Mnp8VRF7fMURi
-         bWQVmL5OpwFFVNlItI/mGJCwnRLhbC03pMBJYAo1M2Lrhrwc7l9zC00OPUoR+DA1VZnl
-         +cTrGyZTTaPNzTn0Ls0dLy7J1bRVWA5bblvDidov51OtYaO5HRIJ1umuHA7odSQWqTWr
-         pyrQ==
-X-Gm-Message-State: APjAAAViob50gcknED31YiCwgHr0LT/sWW5FDrLuWGN77XzWVrpC2Grw
-        2zoH+mseqBMDUSYXR0XYmhCwiw==
-X-Google-Smtp-Source: APXvYqyPRzVjhfVocnOGfHHdfLcQSJdIKvNNnAHNb2zia8JuTkMtKWO8HiAmdbjprVW7uwaxJsbvzg==
-X-Received: by 2002:a17:90b:f0f:: with SMTP id br15mr719255pjb.138.1580843528132;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=tFXhEwC/wFCkTe/lPBw8m3XC/MunfcfcPF2H9ytGoVc=;
+        b=Ro8J1URLLVXFNMOvjISmITKKcthhYiINCL8US4oNtzr3Dom7+8bwfY7V38a4MtK7n2
+         WxZT3/SrjbjOV1g7GFkP3rtZJSDGpmBbrCk9B2CSItwH+tNYI4QXTBCGNff2lWfn7Yya
+         SOvYASuBPxDsNEpN4AuKpGolC182irlY/0ahVMi9Q95kits1TStYWsT/x4rZ2FWidEHT
+         4D/YqlMMrOEl00bRRd+wknBWefAhSuy5fGKvmHNIfrg/k8xBmtjSHhSObd4MnCMDJFJG
+         ofDcLDXguU+HoSvdpAfCsgNS0Ye+MGvK8t8/HTzP8ZSld0JZANu2YFqkHIc0HwlGxTYf
+         EN0g==
+X-Gm-Message-State: APjAAAWfk4eLJD4nh9v3jeyb6sH4D3rkfgwqK5U7wcwRwV4cdrvAwrgz
+        qUW1MBZjbhTeWGGo0cKtcnsHYw==
+X-Google-Smtp-Source: APXvYqwNQG37TNBqu0MyO3BxrbVd79f56GLuwPiZ6tu1FZGC4hxyGZHTkNe/F46qpzjEOch7mYsYhg==
+X-Received: by 2002:a17:90a:ead8:: with SMTP id ev24mr688790pjb.91.1580843528907;
         Tue, 04 Feb 2020 11:12:08 -0800 (PST)
 Received: from smtp.gmail.com ([2620:15c:202:1:fa53:7765:582b:82b9])
-        by smtp.gmail.com with ESMTPSA id c19sm26303229pfc.144.2020.02.04.11.12.07
+        by smtp.gmail.com with ESMTPSA id c19sm26303229pfc.144.2020.02.04.11.12.08
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 04 Feb 2020 11:12:07 -0800 (PST)
+        Tue, 04 Feb 2020 11:12:08 -0800 (PST)
 From:   Stephen Boyd <swboyd@chromium.org>
 To:     Mark Brown <broonie@kernel.org>
 Cc:     linux-kernel@vger.kernel.org, Andy Gross <agross@kernel.org>,
         Bjorn Andersson <bjorn.andersson@linaro.org>,
-        linux-spi@vger.kernel.org
-Subject: [PATCH 0/3] Misc qcom geni spi driver fixes
-Date:   Tue,  4 Feb 2020 11:12:03 -0800
-Message-Id: <20200204191206.97036-1-swboyd@chromium.org>
+        linux-spi@vger.kernel.org,
+        Girish Mahadevan <girishm@codeaurora.org>,
+        Dilip Kota <dkota@codeaurora.org>,
+        Alok Chauhan <alokc@codeaurora.org>,
+        Douglas Anderson <dianders@chromium.org>
+Subject: [PATCH 1/3] spi: spi-geni-qcom: Let firmware specify irq trigger flags
+Date:   Tue,  4 Feb 2020 11:12:04 -0800
+Message-Id: <20200204191206.97036-2-swboyd@chromium.org>
 X-Mailer: git-send-email 2.25.0.341.g760bfbb309-goog
+In-Reply-To: <20200204191206.97036-1-swboyd@chromium.org>
+References: <20200204191206.97036-1-swboyd@chromium.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -58,17 +64,33 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Here's a small collection of qcom geni spi driver fixes that
-simplify the code and aid debugging.
+We don't need to force IRQF_TRIGGER_HIGH here as the DT or ACPI tables
+should take care of this for us. Just use 0 instead so that we use the
+flags from the firmware.
 
-Stephen Boyd (3):
-  spi: spi-geni-qcom: Let firmware specify irq trigger flags
-  spi: spi-geni-qcom: Grow a dev pointer to simplify code
-  spi: spi-geni-qcom: Drop of.h include
+Cc: Girish Mahadevan <girishm@codeaurora.org>
+Cc: Dilip Kota <dkota@codeaurora.org>
+Cc: Alok Chauhan <alokc@codeaurora.org>
+Cc: Douglas Anderson <dianders@chromium.org>
+Signed-off-by: Stephen Boyd <swboyd@chromium.org>
+---
+ drivers/spi/spi-geni-qcom.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
- drivers/spi/spi-geni-qcom.c | 26 +++++++++++---------------
- 1 file changed, 11 insertions(+), 15 deletions(-)
-
+diff --git a/drivers/spi/spi-geni-qcom.c b/drivers/spi/spi-geni-qcom.c
+index 6f3d64a1a2b3..46e501fc87f3 100644
+--- a/drivers/spi/spi-geni-qcom.c
++++ b/drivers/spi/spi-geni-qcom.c
+@@ -585,8 +585,7 @@ static int spi_geni_probe(struct platform_device *pdev)
+ 	if (ret)
+ 		goto spi_geni_probe_runtime_disable;
+ 
+-	ret = request_irq(mas->irq, geni_spi_isr,
+-			IRQF_TRIGGER_HIGH, "spi_geni", spi);
++	ret = request_irq(mas->irq, geni_spi_isr, 0, dev_name(&pdev->dev), spi);
+ 	if (ret)
+ 		goto spi_geni_probe_runtime_disable;
+ 
 -- 
 Sent by a computer, using git, on the internet
 
