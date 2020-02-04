@@ -2,59 +2,63 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3D43E151789
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Feb 2020 10:14:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7D73D15178D
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Feb 2020 10:15:24 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726908AbgBDJOI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 4 Feb 2020 04:14:08 -0500
-Received: from Galois.linutronix.de ([193.142.43.55]:33051 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726151AbgBDJOI (ORCPT
+        id S1726706AbgBDJPW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 4 Feb 2020 04:15:22 -0500
+Received: from mailgw02.mediatek.com ([210.61.82.184]:31020 "EHLO
+        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726189AbgBDJPW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Feb 2020 04:14:08 -0500
-Received: from [212.187.182.163] (helo=nanos.tec.linutronix.de)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1iyuHT-0000TV-Eh; Tue, 04 Feb 2020 10:14:03 +0100
-Received: by nanos.tec.linutronix.de (Postfix, from userid 1000)
-        id 72864100720; Tue,  4 Feb 2020 09:13:55 +0000 (GMT)
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     Peter Xu <peterx@redhat.com>
-Cc:     Ming Lei <ming.lei@redhat.com>, linux-kernel@vger.kernel.org,
-        Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Luiz Capitulino <lcapitulino@redhat.com>
-Subject: Re: [PATCH V4] sched/isolation: isolate from handling managed interrupt
-In-Reply-To: <20200203235743.GH155875@xz-x1>
-References: <20200120091625.17912-1-ming.lei@redhat.com> <87eevrei7h.fsf@nanos.tec.linutronix.de> <20200203192154.GG155875@xz-x1> <87a75zz2hl.fsf@nanos.tec.linutronix.de> <20200203235743.GH155875@xz-x1>
-Date:   Tue, 04 Feb 2020 09:13:55 +0000
-Message-ID: <875zgmzpd8.fsf@nanos.tec.linutronix.de>
+        Tue, 4 Feb 2020 04:15:22 -0500
+X-UUID: 5302254f2b0f48a19fd958104aab8149-20200204
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+        h=Content-Transfer-Encoding:Content-Type:MIME-Version:Message-ID:Date:Subject:CC:To:From; bh=fQaXdeVDrEL7G0OipbsvUZ4eyfT2E7gO3ttXrpO3g5M=;
+        b=ZbUNAVMKpShRXgd1DB04GDSBN0perqckMQS3VOq2yExytRJZxTMrfmoxjufegpQxUiinUdLV0AW4f2xt3BlQhvPiRZiF7omV0rUfiKwSCPme7F2eDXhSAiG3tXSsTJgtPB//GezGt8+niPCD9TV2vax9dE01+crllpu1udejkhk=;
+X-UUID: 5302254f2b0f48a19fd958104aab8149-20200204
+Received: from mtkcas07.mediatek.inc [(172.21.101.84)] by mailgw02.mediatek.com
+        (envelope-from <frankie.chang@mediatek.com>)
+        (Cellopoint E-mail Firewall v4.1.10 Build 0809 with TLS)
+        with ESMTP id 512517626; Tue, 04 Feb 2020 17:15:19 +0800
+Received: from MTKCAS06.mediatek.inc (172.21.101.30) by
+ mtkmbs08n2.mediatek.inc (172.21.101.56) with Microsoft SMTP Server (TLS) id
+ 15.0.1395.4; Tue, 4 Feb 2020 17:14:13 +0800
+Received: from mtkswgap22.mediatek.inc (172.21.77.33) by MTKCAS06.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
+ Transport; Tue, 4 Feb 2020 17:12:46 +0800
+From:   Frankie Chang <Frankie.Chang@mediatek.com>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Todd Kjos <tkjos@android.com>,
+        Martijn Coenen <maco@android.com>,
+        =?UTF-8?q?Arve=20Hj=C3=B8nnev=C3=A5g?= <arve@android.com>,
+        Joel Fernandes <joel@joelfernandes.org>,
+        Christian Brauner <christian@brauner.io>
+CC:     <linux-kernel@vger.kernel.org>,
+        <linux-mediatek@lists.infradead.org>, <wsd_upstream@mediatek.com>,
+        <Jian-Min.Liu@mediatek.com>
+Subject: [PATCH v1] binder: transaction latency tracking for user build
+Date:   Tue, 4 Feb 2020 17:15:14 +0800
+Message-ID: <1580807715-26609-1-git-send-email-Frankie.Chang@mediatek.com>
+X-Mailer: git-send-email 1.7.9.5
 MIME-Version: 1.0
 Content-Type: text/plain
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+X-TM-SNTS-SMTP: 888C6AE8C31F60CE5AC86D6652174CD78C707B853BA9C90257CA6842ED7EF1AE2000:8
+X-MTK:  N
+Content-Transfer-Encoding: base64
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Peter,
+UmVjb3JkIHN0YXJ0L2VuZCB0aW1lc3RhbXAgdG8gYmluZGVyIHRyYW5zYWN0aW9uLg0KV2hlbiB0
+cmFuc2FjdGlvbiBpcyBjb21wbGV0ZWQgb3IgdHJhbnNhY3Rpb24gaXMgZnJlZSwNCml0IHdvdWxk
+IGJlIGNoZWNrZWQgaWYgdHJhbnNhY3Rpb24gbGF0ZW5jeSBvdmVyIHRocmVzaG9sZCAoMiBzZWMp
+LA0KaWYgeWVzLCBwcmludGluZyByZWxhdGVkIGluZm9ybWF0aW9uIGZvciB0cmFjaW5nLg0KDQoN
+CkZyYW5raWUgQ2hhbmcgKDEpOg0KICBiaW5kZXI6IHRyYW5zYWN0aW9uIGxhdGVuY3kgdHJhY2tp
+bmcgZm9yIHVzZXIgYnVpbGQNCg0KIGRyaXZlcnMvYW5kcm9pZC9LY29uZmlnICAgICAgICAgICB8
+ICAgIDggKysrDQogZHJpdmVycy9hbmRyb2lkL2JpbmRlci5jICAgICAgICAgIHwgIDEwNyArKysr
+KysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrDQogZHJpdmVycy9hbmRyb2lkL2JpbmRl
+cl9pbnRlcm5hbC5oIHwgICAgNCArKw0KIDMgZmlsZXMgY2hhbmdlZCwgMTE5IGluc2VydGlvbnMo
+KykNCg==
 
-Peter Xu <peterx@redhat.com> writes:
-> On Mon, Feb 03, 2020 at 11:15:50PM +0000, Thomas Gleixner wrote:
->> No, really. The basic guarantee is that your new kernel is going to work
->> fine with the previous command line, but making a guarantee that new
->> command line options still work on an old kernel are just creating a
->> horrible mess. So if that command line interface was not designed to
->> handle unknown arguments in the first place, you better fix that.
->
-> Hi, Thomas,
->
-> Just to make sure I understand it right: are you suggesting that we
-> fix up housekeeping_isolcpus_setup() to be able to skip unknown sub
-> parameters?
-
-Exactly.
