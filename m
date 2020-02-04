@@ -2,46 +2,44 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C79C21515A2
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Feb 2020 07:06:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1CB7B1515AC
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Feb 2020 07:09:00 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727176AbgBDGGJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 4 Feb 2020 01:06:09 -0500
-Received: from verein.lst.de ([213.95.11.211]:59358 "EHLO verein.lst.de"
+        id S1727404AbgBDGG5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 4 Feb 2020 01:06:57 -0500
+Received: from verein.lst.de ([213.95.11.211]:59366 "EHLO verein.lst.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726552AbgBDGGH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Feb 2020 01:06:07 -0500
+        id S1726688AbgBDGG4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Feb 2020 01:06:56 -0500
 Received: by verein.lst.de (Postfix, from userid 2407)
-        id DFC7568BFE; Tue,  4 Feb 2020 07:06:04 +0100 (CET)
-Date:   Tue, 4 Feb 2020 07:06:04 +0100
+        id CB75B68BFE; Tue,  4 Feb 2020 07:06:54 +0100 (CET)
+Date:   Tue, 4 Feb 2020 07:06:54 +0100
 From:   Christoph Hellwig <hch@lst.de>
-To:     "Jason A. Donenfeld" <Jason@zx2c4.com>
-Cc:     linux-kernel@vger.kernel.org, bhelgaas@google.com, x86@kernel.org,
-        hch@lst.de
-Subject: Re: [PATCH v2] x86/PCI: ensure to_pci_sysdata usage is available
- to !CONFIG_PCI
-Message-ID: <20200204060604.GA31675@lst.de>
-References: <20200203200942.GA130652@google.com> <20200203215306.172000-1-Jason@zx2c4.com>
+To:     Valdis =?utf-8?Q?Kl=C4=93tnieks?= <valdis.kletnieks@vt.edu>
+Cc:     Namjae Jeon <linkinjeon@gmail.com>, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, gregkh@linuxfoundation.org,
+        hch@lst.de, sj1557.seo@samsung.com, pali.rohar@gmail.com,
+        arnd@arndb.de, namjae.jeon@samsung.com, viro@zeniv.linux.org.uk
+Subject: Re: [PATCH] exfat: update file system parameter handling
+Message-ID: <20200204060654.GB31675@lst.de>
+References: <297144.1580786668@turing-police>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20200203215306.172000-1-Jason@zx2c4.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <297144.1580786668@turing-police>
 User-Agent: Mutt/1.5.17 (2007-11-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 03, 2020 at 10:53:06PM +0100, Jason A. Donenfeld wrote:
-> Recently, the helper to_pci_sysdata was added inside of the CONFIG_PCI
-> guard, but it is used from inside of a CONFIG_NUMA guard, which does not
-> require CONFIG_PCI. This breaks builds on !CONFIG_PCI machines. This
-> commit makes that function available in all configurations.
+On Mon, Feb 03, 2020 at 10:24:28PM -0500, Valdis Klētnieks wrote:
+> Al Viro recently reworked the way file system parameters are handled
+> Update super.c to work with it in linux-next 20200203.
 > 
-> Signed-off-by: Jason A. Donenfeld <Jason@zx2c4.com>
-> Fixes: aad6aa0cd674 ("x86/PCI: Add to_pci_sysdata() helper")
-> Cc: Christoph Hellwig <hch@lst.de>
+> Signed-off-by: Valdis Kletnieks <valdis.kletnieks@vt.edu>
 
-Looks good,
+Looks good:
 
 Reviewed-by: Christoph Hellwig <hch@lst.de>
