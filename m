@@ -2,121 +2,68 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 71705151AB5
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Feb 2020 13:47:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4B74E151ABF
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Feb 2020 13:48:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727177AbgBDMrY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 4 Feb 2020 07:47:24 -0500
-Received: from jabberwock.ucw.cz ([46.255.230.98]:50844 "EHLO
-        jabberwock.ucw.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727126AbgBDMrY (ORCPT
+        id S1727286AbgBDMsI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 4 Feb 2020 07:48:08 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:36082 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727127AbgBDMsI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Feb 2020 07:47:24 -0500
-Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
-        id E74F31C0141; Tue,  4 Feb 2020 13:47:21 +0100 (CET)
-Date:   Tue, 4 Feb 2020 13:47:21 +0100
-From:   Pavel Machek <pavel@denx.de>
-To:     Chris Paterson <Chris.Paterson2@renesas.com>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "torvalds@linux-foundation.org" <torvalds@linux-foundation.org>,
-        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
-        "linux@roeck-us.net" <linux@roeck-us.net>,
-        "shuah@kernel.org" <shuah@kernel.org>,
-        "patches@kernelci.org" <patches@kernelci.org>,
-        "ben.hutchings@codethink.co.uk" <ben.hutchings@codethink.co.uk>,
-        "lkft-triage@lists.linaro.org" <lkft-triage@lists.linaro.org>,
-        "stable@vger.kernel.org" <stable@vger.kernel.org>,
-        "cip-dev@lists.cip-project.org" <cip-dev@lists.cip-project.org>
-Subject: Re: [PATCH 4.4 00/53] 4.4.213-stable review
-Message-ID: <20200204124721.GB6903@duo.ucw.cz>
-References: <20200203161902.714326084@linuxfoundation.org>
- <TYAPR01MB2285D96DC944217E7A22F8C6B7030@TYAPR01MB2285.jpnprd01.prod.outlook.com>
+        Tue, 4 Feb 2020 07:48:08 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=5fwobFPVYN213YdlVAmil0OJKWX6BVgg2KRIst+6wT8=; b=k3tYxhUQAvDE80kMRro9n/8rhb
+        WpCetLg2fS9WIEGYedeVBhOPhST+lNVq+Bnp8aYadyVVcHhZ+Mjv7/CGBM2sGZDoqlyJFT2/qKTUJ
+        7p704Un/oNZgpsE3tretoQ9/9OBfrG8lEIdsiN8j8YFtHlR9x8A0MCT23Izy/PQMtiyspXilhD0Gm
+        He9PRPZxvB4fvThevPU8QHMlp5Q1fIX8I0oRA1uB9k/wDFTj9fJU1GIEwbiNZCIOb0N0ZI71Z0HZ7
+        Xjv2LoohEZ3bj1KzlY9P+1Axw/qFRgUVAv4Ft8w9tBS1QuJDKq4W0kNsa+L3Dow13COP4PAdj0wbM
+        QqpJzcVA==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
+        by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1iyxcX-0002J5-Ln; Tue, 04 Feb 2020 12:48:01 +0000
+Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (Client did not present a certificate)
+        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 59A3E304C21;
+        Tue,  4 Feb 2020 13:46:14 +0100 (CET)
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id CE5042B76A662; Tue,  4 Feb 2020 13:47:59 +0100 (CET)
+Date:   Tue, 4 Feb 2020 13:47:59 +0100
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Waiman Long <longman@redhat.com>
+Cc:     Ingo Molnar <mingo@redhat.com>, Will Deacon <will.deacon@arm.com>,
+        linux-kernel@vger.kernel.org, Bart Van Assche <bvanassche@acm.org>
+Subject: Re: [PATCH v5 7/7] locking/lockdep: Add a fast path for chain_hlocks
+ allocation
+Message-ID: <20200204124759.GP14914@hirez.programming.kicks-ass.net>
+References: <20200203164147.17990-1-longman@redhat.com>
+ <20200203164147.17990-8-longman@redhat.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="i0/AhcQY5QxfSsSZ"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <TYAPR01MB2285D96DC944217E7A22F8C6B7030@TYAPR01MB2285.jpnprd01.prod.outlook.com>
+In-Reply-To: <20200203164147.17990-8-longman@redhat.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Mon, Feb 03, 2020 at 11:41:47AM -0500, Waiman Long wrote:
+> When alloc_chain_hlocks() is called, the most likely scenario is
+> to allocate from the primordial chain block which holds the whole
+> chain_hlocks[] array initially. It is the primordial chain block if its
+> size is bigger than MAX_LOCK_DEPTH. As long as the number of entries left
+> after splitting is still bigger than MAX_CHAIN_BUCKETS it will remain
+> in bucket 0. By splitting out a sub-block at the end, we only need to
+> adjust the size without changing any of the existing linkage information.
+> This optimized fast path can reduce the latency of allocation requests.
+> 
+> This patch does change the order by which chain_hlocks entries are
+> allocated. The original code allocates entries from the beginning of
+> the array. Now it will be allocated from the end of the array backward.
 
---i0/AhcQY5QxfSsSZ
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-Hi!
-
-> > From: stable-owner@vger.kernel.org <stable-owner@vger.kernel.org> On
-> > Behalf Of Greg Kroah-Hartman
-> > Sent: 03 February 2020 16:19
-> >=20
-> > This is the start of the stable review cycle for the 4.4.213 release.
-> > There are 53 patches in this series, all will be posted as a response
-> > to this one.  If anyone has any issues with these being applied, please
-> > let me know.
-> >=20
-> > Responses should be made by Wed, 05 Feb 2020 16:17:59 +0000.
-> > Anything received after that time might be too late.
->=20
-> We're seeing an issue with 4.4.213-rc1 (36670370c48b) and 4.4.213-rc2 (75=
-8a39807529) with our 4 am335x configurations [0]:
->=20
->    AS      arch/arm/kernel/hyp-stub.o
->  arch/arm/kernel/hyp-stub.S:   CC      arch/arm/mach-omap2/sram.o
->  Assembler messages:
->    AS      arch/arm/kernel/smccc-call.o
->  arch/arm/kernel/hyp-stub.S:147: Error: selected processor does not suppo=
-rt `ubfx r7,r7,#16,#4' in ARM mode
->  scripts/Makefile.build:375: recipe for target 'arch/arm/kernel/hyp-stub.=
-o' failed
->  make[1]: *** [arch/arm/kernel/hyp-stub.o] Error 1
->=20
-> The culprit seems to be: 15163bcee7b5 ("ARM: 8955/1: virt: Relax arch tim=
-er version check during early boot")
-> Reverting the same resolves the build issue.
->=20
-> Latest pipeline: https://gitlab.com/cip-project/cip-testing/linux-stable-=
-rc-ci/pipelines/114683657
->=20
-> [0] https://gitlab.com/cip-project/cip-kernel/cip-kernel-config/-/blob/ma=
-ster/4.4.y-cip/arm/
-> siemens_am335x-axm2_defconfig, siemens_am335x-draco_defconfig, siemens_am=
-335x-dxr2_defconfig, siemens_am335x-etamin_defconfig
->=20
-
-For the record, build results are here:
-
-https://gitlab.com/cip-project/cip-testing/linux-stable-rc-ci/pipelines/114=
-683657
-
-4.19.102 builds okay:
-
-https://gitlab.com/cip-project/cip-testing/linux-stable-rc-ci/pipelines/114=
-683672
-
-but that's probably because siemens_am335x* configurations are not
-tested in 4.19.X case.
-
-Best regards,
-									Pavel
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
-
---i0/AhcQY5QxfSsSZ
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCXjln2QAKCRAw5/Bqldv6
-8sIgAKCyj4zI/uOT7gLAynk1FPJR4qIjfQCeMFByf8ArntJ0TdW9b+2Yosh+sEc=
-=7XhL
------END PGP SIGNATURE-----
-
---i0/AhcQY5QxfSsSZ--
+Cute; but why do we care? Is there any measurable performance indicator?
