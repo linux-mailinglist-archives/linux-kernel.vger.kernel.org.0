@@ -2,53 +2,119 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2AEC4151B6E
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Feb 2020 14:40:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CA634151B82
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Feb 2020 14:41:51 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727341AbgBDNkP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 4 Feb 2020 08:40:15 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40816 "EHLO mail.kernel.org"
+        id S1727472AbgBDNlt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 4 Feb 2020 08:41:49 -0500
+Received: from mga11.intel.com ([192.55.52.93]:39784 "EHLO mga11.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727190AbgBDNkP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Feb 2020 08:40:15 -0500
-Subject: Re: [GIT] Networking
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1580823614;
-        bh=eINyf+5B6qjpdApA+n8ka6WgwixmB1VJ12RxVeeYjtc=;
-        h=From:In-Reply-To:References:Date:To:Cc:From;
-        b=yyBx+7KB2Lw2TrTmPOU0B0Yr0tyPpsbUNv/EldkzTuwPweMYb2O9sHJZUAXGkW5OX
-         TXnG4Jx9G1Zoq/eOxWOVtSBWuh9kzP9OWe78QgEIYSWOC3ALx+13XPjgE0LX5zCUg/
-         38ZzRmfYY4//L2rpYlEevlrF5kyEOHlX3Q8GK5V8=
-From:   pr-tracker-bot@kernel.org
-In-Reply-To: <20200204.132503.783799057091958363.davem@davemloft.net>
-References: <20200204.132503.783799057091958363.davem@davemloft.net>
-X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <20200204.132503.783799057091958363.davem@davemloft.net>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/netdev/net.git
- refs/heads/master
-X-PR-Tracked-Commit-Id: bd5cd35b782abf5437fbd01dfaee12437d20e832
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 33b40134e5cfbbccad7f3040d1919889537a3df7
-Message-Id: <158082361438.32178.6990435504902073112.pr-tracker-bot@kernel.org>
-Date:   Tue, 04 Feb 2020 13:40:14 +0000
-To:     David Miller <davem@davemloft.net>
-Cc:     torvalds@linux-foundation.org, akpm@linux-foundation.org,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+        id S1727197AbgBDNls (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Feb 2020 08:41:48 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga006.fm.intel.com ([10.253.24.20])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 04 Feb 2020 05:41:47 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.70,401,1574150400"; 
+   d="scan'208";a="431525408"
+Received: from smile.fi.intel.com (HELO smile) ([10.237.68.40])
+  by fmsmga006.fm.intel.com with ESMTP; 04 Feb 2020 05:41:45 -0800
+Received: from andy by smile with local (Exim 4.93)
+        (envelope-from <andriy.shevchenko@linux.intel.com>)
+        id 1iyySZ-0005Ac-1E; Tue, 04 Feb 2020 15:41:47 +0200
+Date:   Tue, 4 Feb 2020 15:41:47 +0200
+From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To:     Andrew Morton <akpm@linux-foundation.org>
+Cc:     linux-kernel@vger.kernel.org,
+        Trond Myklebust <trond.myklebust@hammerspace.com>,
+        Anna Schumaker <anna.schumaker@netapp.com>,
+        "Paul E. McKenney" <paulmck@kernel.org>,
+        Josh Triplett <josh@joshtriplett.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Arnd Bergmann <arnd@arndb.de>
+Subject: Re: [PATCH v1] kernel.h: Split out mathematical helpers
+Message-ID: <20200204134147.GC10400@smile.fi.intel.com>
+References: <20190910105105.7714-1-andriy.shevchenko@linux.intel.com>
+ <20191002171337.7cf1f48fde153382d7245fc5@linux-foundation.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191002171337.7cf1f48fde153382d7245fc5@linux-foundation.org>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The pull request you sent on Tue, 04 Feb 2020 13:25:03 +0100 (CET):
+On Wed, Oct 02, 2019 at 05:13:37PM -0700, Andrew Morton wrote:
+> On Tue, 10 Sep 2019 13:51:05 +0300 Andy Shevchenko <andriy.shevchenko@linux.intel.com> wrote:
+> 
+> > kernel.h is being used as a dump for all kinds of stuff for a long time.
+> > Here is the attempt to start cleaning it up by splitting out mathematical
+> > helpers.
+> > 
+> > Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> > ---
+> >  fs/nfs/callback_proc.c        |   1 +
+> >  include/linux/bitops.h        |   3 +-
+> >  include/linux/dcache.h        |   1 +
+> >  include/linux/iommu-helper.h  |   1 +
+> >  include/linux/kernel.h        | 143 --------------------------------
+> >  include/linux/math.h          | 149 ++++++++++++++++++++++++++++++++++
+> >  include/linux/rcu_node_tree.h |   2 +
+> 
+> I'm not really understanding how this works, apart from "dumb luck".
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/netdev/net.git refs/heads/master
+Looks like it right now.
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/33b40134e5cfbbccad7f3040d1919889537a3df7
+> Random example: mm/percpu.c needs roundup(), so how does it include the
+> new math.h?
+> 
+> ....... ./arch/x86/include/asm/uprobes.h
+> ........ ./include/linux/notifier.h
+> ......... ./include/linux/mutex.h
+> ......... ./include/linux/srcu.h
+> .......... ./include/linux/workqueue.h
+> ........... ./include/linux/timer.h
+> ............ ./include/linux/ktime.h
+> ............. ./include/linux/time.h
+> .............. ./include/linux/time32.h
+> ............... ./include/linux/timex.h
+> ................ ./include/uapi/linux/timex.h
+> ................. ./include/linux/time.h
+> ................ ./include/uapi/linux/param.h
+> ................. ./arch/x86/include/generated/uapi/asm/param.h
+> .................. ./include/asm-generic/param.h
+> ................... ./include/uapi/asm-generic/param.h
+> ................ ./arch/x86/include/asm/timex.h
+> ................. ./arch/x86/include/asm/tsc.h
+> ............. ./include/linux/jiffies.h
+> .............. ./arch/x86/include/generated/uapi/asm/param.h
+> .............. ./include/generated/timeconst.h
+> ............. ./include/linux/timekeeping.h
+> ............. ./include/linux/timekeeping32.h
+> ............ ./include/linux/debugobjects.h
+> .......... ./include/linux/rcu_segcblist.h
+> .......... ./include/linux/srcutree.h
+> ........... ./include/linux/rcu_node_tree.h
+> ............ ./include/linux/math.h
+> 
+> oh, like that.
 
-Thank you!
+Long way to clean up this...
+
+> It seems rather unreliable.  Perhaps a "#include <linux/math.h>" was
+> intended in kernel.h?
+
+Yeah, this needs to be done for time being in hope that it will be clearer in
+the future. I'll do this in v2.
+
+Thanks for review!
 
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.wiki.kernel.org/userdoc/prtracker
+With Best Regards,
+Andy Shevchenko
+
+
