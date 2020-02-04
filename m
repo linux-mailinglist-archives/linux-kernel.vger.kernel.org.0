@@ -2,91 +2,132 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D3F291519C4
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Feb 2020 12:21:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 09101151970
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Feb 2020 12:17:52 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727607AbgBDLUJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 4 Feb 2020 06:20:09 -0500
-Received: from hqnvemgate25.nvidia.com ([216.228.121.64]:19289 "EHLO
-        hqnvemgate25.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727154AbgBDLUF (ORCPT
+        id S1727112AbgBDLRq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 4 Feb 2020 06:17:46 -0500
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:38954 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726898AbgBDLRq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Feb 2020 06:20:05 -0500
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate25.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5e39534d0000>; Tue, 04 Feb 2020 03:19:41 -0800
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate101.nvidia.com (PGP Universal service);
-  Tue, 04 Feb 2020 03:20:04 -0800
-X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Tue, 04 Feb 2020 03:20:04 -0800
-Received: from HQMAIL109.nvidia.com (172.20.187.15) by HQMAIL111.nvidia.com
- (172.20.187.18) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Tue, 4 Feb
- 2020 11:20:04 +0000
-Received: from rnnvemgw01.nvidia.com (10.128.109.123) by HQMAIL109.nvidia.com
- (172.20.187.15) with Microsoft SMTP Server (TLS) id 15.0.1473.3 via Frontend
- Transport; Tue, 4 Feb 2020 11:20:03 +0000
-Received: from nkristam-ubuntu.nvidia.com (Not Verified[10.19.67.128]) by rnnvemgw01.nvidia.com with Trustwave SEG (v7,5,8,10121)
-        id <B5e3953600002>; Tue, 04 Feb 2020 03:20:03 -0800
-From:   Nagarjuna Kristam <nkristam@nvidia.com>
-To:     <balbi@kernel.org>, <gregkh@linuxfoundation.org>,
-        <thierry.reding@gmail.com>, <jonathanh@nvidia.com>,
-        <mark.rutland@arm.com>, <robh+dt@kernel.org>, <kishon@ti.com>
-CC:     <devicetree@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
-        <linux-usb@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        Nagarjuna Kristam <nkristam@nvidia.com>
-Subject: [Patch V4 19/19] ARM: tegra: Remove USB 2-0 port from Jetson TK1 padctl
-Date:   Tue, 4 Feb 2020 16:47:05 +0530
-Message-ID: <1580815025-10915-20-git-send-email-nkristam@nvidia.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1580815025-10915-1-git-send-email-nkristam@nvidia.com>
-References: <1580815025-10915-1-git-send-email-nkristam@nvidia.com>
-X-NVConfidentiality: public
+        Tue, 4 Feb 2020 06:17:46 -0500
+Received: by mail-pf1-f193.google.com with SMTP id 84so9296817pfy.6;
+        Tue, 04 Feb 2020 03:17:44 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=UJrcFiRGFHpeFKIvgEGIts5N+gXYNo7ESY+LB68CPkY=;
+        b=abh9OyqK6w5mLqZzYDKcPYa59w2kpiI51le1AN+3A+rOUb0P5/yjVA6/PBWopXrCFa
+         aLcaoxbWVOubeL4X0f2h5sbapQpEbkPgl3oVaEt5WKFdA2OcCViy7PK/UrN1AXjs5C4U
+         uvHwpTRNBUTxcwSlbGP+T5afL/79kucoekn+opShhLhmW8R3bntLfYRZq0erAGs83Em6
+         LBHnC7u2tDikZvVfGL5dkfOIQ7/qrncNjwfJSd8VVvUoKbvpT5MD3Kf4kAaGCxC1cdGx
+         VH15CRASgPMmp3dPGgMTMMRCHvRO3eYwwtVf3Fagv0UtvBMDTGC1u7PiXjPtt5QjtU/d
+         yyLg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=UJrcFiRGFHpeFKIvgEGIts5N+gXYNo7ESY+LB68CPkY=;
+        b=unthTuHjCon0EBaYJsRl4Kzas2MxpWn4UVSZB8dgHWhYHh8Y7yLEVDZoqeYTucVZl0
+         kZFa2PwLBhT+ubwO/xEZf5Y5ugWQgWGsnvmUyEtDFZwAZ560FKQHa8VA95U9zVhw3rTl
+         Fr1EQO1aqpe1JuKqXg/HOW3OXY73LNmy0hBLCeKZ498xyG/dW+DzLjVZzeosODct0I1/
+         ehWryelv9AxsqQm73pn0IU/JjsWnS9f/NmuEmutJqtg2EC2aK1MTXC2ESSsPq/WtslS1
+         8adhI4tKmZViFm7UA0ueTOurzcZYecUYWevvoeckXkL8JOB7WoTiXq1DAVyE6+W+FB7k
+         BflQ==
+X-Gm-Message-State: APjAAAU3fMnWnZDVNxyfR+0F/1n5X2b3ucIbJxD3GamI2o1CQabETxSy
+        /gIrotHFJx1sZSLPsdg7Nwsa3WMX13vViOIWpbk=
+X-Google-Smtp-Source: APXvYqzgvBRis5uAOLpaw8DD2lKOdBTQZLfiNZX4j56TL3j0UnIOLzC7dnkRtQNHZJRN/Ty4HTOskmiSy1lfIVZOVW4=
+X-Received: by 2002:a65:4685:: with SMTP id h5mr32220017pgr.203.1580815064309;
+ Tue, 04 Feb 2020 03:17:44 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1580815181; bh=UZPndxJaS6exdoWA+8qZB2sYlM6GTteSHhoz8vK44JU=;
-        h=X-PGP-Universal:From:To:CC:Subject:Date:Message-ID:X-Mailer:
-         In-Reply-To:References:X-NVConfidentiality:MIME-Version:
-         Content-Type;
-        b=pv3brgodZD9Z9So0D+oNlB0/adP3C6bCPz7RZfGAkog3ecSZsqBgmfXnQDu1JdWfh
-         nLZRyKDXJ1/Q+Oa2MFYQCGXn19xDfGMzBU+lJrk88qClHWeI1fuaGc1az5A8cRZo/H
-         8Eo9ON7YwdDQ6XvXpChVIh0E2WKWAKntXVhps2Oj3NqOOU15Qi3E1h6LQSvkuYrU+i
-         UcyHRsSPImRg3QuZ8LAsbX8Z/BnGH3D/3ZOBx0W9es+NqA5nBgSZ6rYA5UpZIvSpOE
-         UW9+ggGkfeTUBsP7pgOfG8XFKhU20eMA6RkQrEo3j1d9DM4A3vPqkt0k4v/HMcGvY6
-         aac5MLR8KCXRw==
+References: <20200131153440.20870-1-calvin.johnson@nxp.com>
+ <20200131153440.20870-4-calvin.johnson@nxp.com> <CAHp75VeRq8XT67LJOM+9R9xVpsfv7MxZpaCHYkfnCqAzgjXo9A@mail.gmail.com>
+ <AM0PR04MB5636EA716C9D029C97C5854293030@AM0PR04MB5636.eurprd04.prod.outlook.com>
+In-Reply-To: <AM0PR04MB5636EA716C9D029C97C5854293030@AM0PR04MB5636.eurprd04.prod.outlook.com>
+From:   Andy Shevchenko <andy.shevchenko@gmail.com>
+Date:   Tue, 4 Feb 2020 13:17:36 +0200
+Message-ID: <CAHp75VehAzdXrQRL5t3-5Nm0rrdkRdX20rEUhyHNFy_D0Vvtqg@mail.gmail.com>
+Subject: Re: [PATCH v1 3/7] net/fsl: add ACPI support for mdio bus
+To:     "Calvin Johnson (OSS)" <calvin.johnson@oss.nxp.com>
+Cc:     "linux.cj@gmail.com" <linux.cj@gmail.com>,
+        Jon Nettleton <jon@solid-run.com>,
+        Russell King - ARM Linux <linux@armlinux.org.uk>,
+        Makarand Pawagi <makarand.pawagi@nxp.com>,
+        Cristi Sovaiala <cristian.sovaiala@nxp.com>,
+        Laurentiu Tudor <laurentiu.tudor@nxp.com>,
+        Ioana Ciornei <ioana.ciornei@nxp.com>,
+        Varun Sethi <V.Sethi@nxp.com>,
+        Pankaj Bansal <pankaj.bansal@nxp.com>,
+        "Rajesh V. Bikkina" <rajesh.bikkina@nxp.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        "Madalin Bucur (OSS)" <madalin.bucur@oss.nxp.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        netdev <netdev@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Jetson TK1 USB 2-0 port is controlled by phy-tegra-usb driver
-rather than padctl driver. Remove the entry for the same.
+On Tue, Feb 4, 2020 at 9:18 AM Calvin Johnson (OSS)
+<calvin.johnson@oss.nxp.com> wrote:
+> > -----Original Message-----
+> > From: Andy Shevchenko <andy.shevchenko@gmail.com>
+> > Subject: Re: [PATCH v1 3/7] net/fsl: add ACPI support for mdio bus
+> > On Fri, Jan 31, 2020 at 5:37 PM Calvin Johnson <calvin.johnson@nxp.com>
+> > wrote:
 
-Signed-off-by: Nagarjuna Kristam <nkristam@nvidia.com>
----
-V4:
- - New patch in the series.
----
- arch/arm/boot/dts/tegra124-jetson-tk1.dts | 6 ------
- 1 file changed, 6 deletions(-)
+...
 
-diff --git a/arch/arm/boot/dts/tegra124-jetson-tk1.dts b/arch/arm/boot/dts/tegra124-jetson-tk1.dts
-index d5fd642..54600ff 100644
---- a/arch/arm/boot/dts/tegra124-jetson-tk1.dts
-+++ b/arch/arm/boot/dts/tegra124-jetson-tk1.dts
-@@ -1782,12 +1782,6 @@
- 		};
- 
- 		ports {
--			/* Micro A/B */
--			usb2-0 {
--				status = "okay";
--				mode = "otg";
--			};
--
- 			/* Mini PCIe */
- 			usb2-1 {
- 				status = "okay";
+> > > -       snprintf(bus->id, MII_BUS_ID_SIZE, "%llx", (unsigned long
+> > long)res.start);
+> > > +       snprintf(bus->id, MII_BUS_ID_SIZE, "%llx",
+> > > +                (unsigned long long)res->start);
+> >
+> > Why this has been touched?
+>
+> Without this change, I get:
+> ---------------------------------------------------------
+> drivers/net/ethernet/freescale/xgmac_mdio.c: In function 'xgmac_mdio_probe':
+> drivers/net/ethernet/freescale/xgmac_mdio.c:269:27: error: request for member 'start' in something not a structure or union
+>     (unsigned long long)res.start);
+>                            ^
+> scripts/Makefile.build:265: recipe for target 'drivers/net/ethernet/freescale/xgmac_mdio.o' failed
+> make[4]: *** [drivers/net/ethernet/freescale/xgmac_mdio.o] Error 1
+> ---------------------------------------------------------
+
+I see. Thanks.
+Can you leave it one line as it was before?
+
+...
+
+> > (Hint: missed terminator)
+> static const struct acpi_device_id xgmac_mdio_acpi_match[] = {
+>         { "NXP0006", 0 },
+>         { }
+> };
+> Is this what you meant?
+
+Yes!
+
+...
+
+> > > +               .acpi_match_table = ACPI_PTR(xgmac_mdio_acpi_match),
+> >
+> > ACPI_PTR is not needed otherwise you will get a compiler warning.
+>
+> No compiler warning was observed in both cases.
+
+You mean you tried CONFIG_ACPI=n and didn't get a warning about unused
+static variable?
+Perhaps you may run `make W=1 ...`
+
+> I can see other drivers using this macro.
+
+They might have hidden same issue.
+
 -- 
-2.7.4
-
+With Best Regards,
+Andy Shevchenko
