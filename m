@@ -2,49 +2,49 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0BB461523D7
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Feb 2020 01:08:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EDF821523C6
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Feb 2020 01:07:52 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727960AbgBEAH5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 4 Feb 2020 19:07:57 -0500
-Received: from mail-pf1-f181.google.com ([209.85.210.181]:43851 "EHLO
-        mail-pf1-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727807AbgBEAHl (ORCPT
+        id S1727924AbgBEAHq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 4 Feb 2020 19:07:46 -0500
+Received: from mail-pl1-f181.google.com ([209.85.214.181]:36042 "EHLO
+        mail-pl1-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727899AbgBEAHn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Feb 2020 19:07:41 -0500
-Received: by mail-pf1-f181.google.com with SMTP id s1so186973pfh.10;
-        Tue, 04 Feb 2020 16:07:41 -0800 (PST)
+        Tue, 4 Feb 2020 19:07:43 -0500
+Received: by mail-pl1-f181.google.com with SMTP id a6so90259plm.3;
+        Tue, 04 Feb 2020 16:07:43 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=CWkZ+hPOQw0CLt3DIMXNZXqIluJmIb2SwavOv+rxo54=;
-        b=gW+SLLfP8z3aWyWKk+jfFvgADyBQ0AnrBjjwgje8s7KGIEgrE5fPGKZRU37oxYh+L7
-         8qQ+Gy+9cTbJVQpwrvWjAi2YRCFNzeO3lULRFYyoLLuiTjjpzDbbCxWs53qhsSjgERXs
-         uqyO1jRppMX1MauyHDYnyXsZxC2hzDP8zr3Pos1qw8YDFzqGxC/jA3whiTiAHlHKd0Af
-         qm+oUdzthXzT/DCAOs6AGUV16p85tZQ4m2lmHP8uSRgsFlFxm/uvrAzltOy3fGa7OTWJ
-         wJaIJRogqoFNWZB+VXnY3elETVaL9c6lWkokNLSzocYUXTavcxI1ez/vUG5k0OEyO3YS
-         N2qA==
+        bh=sbQmNjEgDYzzs2rJFk7fxPgigyR9od2RmRBDQINeABE=;
+        b=X/iG3RxSH/LRG86sXEZeH4oKj2y1veejQAmKs62/kIub6x8uPw8l+bDx5XPj0KDIy/
+         KLeTSVucR2LAQ5juvnr+f0OY0Uhs6wmsFC0u6negwJgppNl7T0TngviVpMDb9uCiiL3v
+         Hkss/rexr+vuxFxB3zqzrCpxBG2uk3RXpazO9O9G2HmsPac55PXQkAPt2GfEarEFqjN/
+         f2YjcvaoqXPT+APpNK8KNszcd5OmgvVqMPF8mEGwNZ8jyWilj7oPd0ubq+xxFoUNXVfz
+         XapwKBgLTRjBUhP7tWbIeiZaniH9c03Bujkgj5Z+AMl4p3pleE26UG08Y7Qz0cNxbPs1
+         7wJA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=CWkZ+hPOQw0CLt3DIMXNZXqIluJmIb2SwavOv+rxo54=;
-        b=WGf05H2CZn5ZoqJMS6KtnuSUa2RHn7EyNIUkZzhznpAA5jnrxU2Y2Njt4htXsMgw0n
-         A4tPqiFdmQjTiz37DZDwtcpb3+FnknIVfWO2zQQiyxcXBAKr6mfk5Tdowk7Pk1my2+6D
-         KJ/StJumJi3M0ZHwa5ue0OPKJgqfjAAa85O7BsXqeSI0r03UzgwhsaA9DvHITaZTiFFV
-         Yy+5idzGqWtkKhFySkngY9nE/T0Zor2T6Dx3tbh3a9ZiNn41TbuqMeZnS/rmgHWucVzy
-         Q+f1ZePkbQiufKLsHwfQqFf+xMQlkKTAQGuRyXOq4x6KmU44wD0bXP+ntcU2jeMhUXAp
-         1tSw==
-X-Gm-Message-State: APjAAAUzGCuO2TqRv/pMOQ2ZGB17mLc1g2W0YOCDtpM21FhCon3sCzkD
-        vNUnUeM+Vg9WCP6b72ckDmY=
-X-Google-Smtp-Source: APXvYqwzuaFZnoTtVrOKEsVT2qZTwaiz5vwrkRG1cX+LtJZGGmTzCfmaY/I6bRFaxWHqaDcaSKVEiQ==
-X-Received: by 2002:a63:4525:: with SMTP id s37mr4520697pga.418.1580861260751;
-        Tue, 04 Feb 2020 16:07:40 -0800 (PST)
+        bh=sbQmNjEgDYzzs2rJFk7fxPgigyR9od2RmRBDQINeABE=;
+        b=j3Y3i0bGuoMhADKJx1PvVhaMhZj2L9eUJyLrh08rvUHV0lkZtQF4Y5NVU9NCIuoUso
+         q/MeaJIjqBDgJ46stDbO3asFIEEhyE8iOXQPY1eqZ0ey7TicUMwpSC5BjkMLg5z7/nf5
+         6xVqlBlRNsokEIt8VFL8o/oAFjYi9RKOlStcwwj6PwjjWZTf7tvUavnsdt+Qx9nxhuZt
+         uZQpkPU28MfgOjqb7RM3UKS/q5RZgoX7DKkK9fmS8jNDoM007+zDrzva68pGoy8502MT
+         RS58azvKlYmmL0CVOUgWQFCAKpkuS3PYc9Twd6NkOAyTREb7B1RYWhvRPOGIFZM/kFCc
+         oT2A==
+X-Gm-Message-State: APjAAAWhnuGNYjP1dAMDsYG6AKZEOcsFHs4s+TB0+Svic3hZ/LoOIUmn
+        GiRJJEy29dT9sPpO+FQ72SY=
+X-Google-Smtp-Source: APXvYqwHUBZ6SUQPjfSqCn9aPbrL0AEWLGCduHWSGavhPaLzvwgmmufcEcD3bhZpquTizNdPtg32Nw==
+X-Received: by 2002:a17:90a:d141:: with SMTP id t1mr2175313pjw.38.1580861262343;
+        Tue, 04 Feb 2020 16:07:42 -0800 (PST)
 Received: from localhost.localdomain (ip68-111-84-250.oc.oc.cox.net. [68.111.84.250])
-        by smtp.gmail.com with ESMTPSA id g2sm25575468pgn.59.2020.02.04.16.07.39
+        by smtp.gmail.com with ESMTPSA id g2sm25575468pgn.59.2020.02.04.16.07.40
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 04 Feb 2020 16:07:40 -0800 (PST)
+        Tue, 04 Feb 2020 16:07:41 -0800 (PST)
 From:   Florian Fainelli <f.fainelli@gmail.com>
 To:     linux-arm-kernel@lists.infradead.org
 Cc:     Florian Fainelli <f.fainelli@gmail.com>,
@@ -64,9 +64,9 @@ Cc:     Florian Fainelli <f.fainelli@gmail.com>,
         DEVICE TREE BINDINGS), linux-kernel@vger.kernel.org (open list),
         linux-rpi-kernel@lists.infradead.org (moderated list:BROADCOM
         BCM2711/BCM2835 ARM ARCHITECTURE)
-Subject: [PATCH v2 09/12] dt-bindings: arm: bcm: Convert BCM11351 to YAML
-Date:   Tue,  4 Feb 2020 15:55:49 -0800
-Message-Id: <20200204235552.7466-10-f.fainelli@gmail.com>
+Subject: [PATCH v2 10/12] dt-bindings: arm: bcm: Convert Vulcan to YAML
+Date:   Tue,  4 Feb 2020 15:55:50 -0800
+Message-Id: <20200204235552.7466-11-f.fainelli@gmail.com>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20200204235552.7466-1-f.fainelli@gmail.com>
 References: <20200204235552.7466-1-f.fainelli@gmail.com>
@@ -77,49 +77,49 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Update the Broadcom BCM11351 SoC family binding document for boards/SoCs
-to use YAML. Verified with dt_binding_check and dtbs_check.
+Update Vulcan SoC family binding document for boards/SoCs to use YAML.
+Verified with dt_binding_check and dtbs_check.
 
 Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
 ---
- .../bindings/arm/bcm/brcm,bcm11351.txt        | 10 ---------
- .../bindings/arm/bcm/brcm,bcm11351.yaml       | 21 +++++++++++++++++++
- 2 files changed, 21 insertions(+), 10 deletions(-)
- delete mode 100644 Documentation/devicetree/bindings/arm/bcm/brcm,bcm11351.txt
- create mode 100644 Documentation/devicetree/bindings/arm/bcm/brcm,bcm11351.yaml
+ .../bindings/arm/bcm/brcm,vulcan-soc.txt      | 10 ---------
+ .../bindings/arm/bcm/brcm,vulcan-soc.yaml     | 22 +++++++++++++++++++
+ 2 files changed, 22 insertions(+), 10 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/arm/bcm/brcm,vulcan-soc.txt
+ create mode 100644 Documentation/devicetree/bindings/arm/bcm/brcm,vulcan-soc.yaml
 
-diff --git a/Documentation/devicetree/bindings/arm/bcm/brcm,bcm11351.txt b/Documentation/devicetree/bindings/arm/bcm/brcm,bcm11351.txt
+diff --git a/Documentation/devicetree/bindings/arm/bcm/brcm,vulcan-soc.txt b/Documentation/devicetree/bindings/arm/bcm/brcm,vulcan-soc.txt
 deleted file mode 100644
-index 0ff6560e6094..000000000000
---- a/Documentation/devicetree/bindings/arm/bcm/brcm,bcm11351.txt
+index 223ed3471c08..000000000000
+--- a/Documentation/devicetree/bindings/arm/bcm/brcm,vulcan-soc.txt
 +++ /dev/null
 @@ -1,10 +0,0 @@
--Broadcom BCM11351 device tree bindings
---------------------------------------------
+-Broadcom Vulcan device tree bindings
+-------------------------------------
 -
--Boards with the bcm281xx SoC family (which includes bcm11130, bcm11140,
--bcm11351, bcm28145, bcm28155 SoCs) shall have the following properties:
+-Boards with Broadcom Vulcan shall have the following root property:
 -
--Required root node property:
+-Broadcom Vulcan Evaluation Board:
+-  compatible = "brcm,vulcan-eval", "brcm,vulcan-soc";
 -
--compatible = "brcm,bcm11351";
--DEPRECATED: compatible = "bcm,bcm11351";
-diff --git a/Documentation/devicetree/bindings/arm/bcm/brcm,bcm11351.yaml b/Documentation/devicetree/bindings/arm/bcm/brcm,bcm11351.yaml
+-Generic Vulcan board:
+-  compatible = "brcm,vulcan-soc";
+diff --git a/Documentation/devicetree/bindings/arm/bcm/brcm,vulcan-soc.yaml b/Documentation/devicetree/bindings/arm/bcm/brcm,vulcan-soc.yaml
 new file mode 100644
-index 000000000000..b5ef2666e6b2
+index 000000000000..c5b6f31c20b9
 --- /dev/null
-+++ b/Documentation/devicetree/bindings/arm/bcm/brcm,bcm11351.yaml
-@@ -0,0 +1,21 @@
++++ b/Documentation/devicetree/bindings/arm/bcm/brcm,vulcan-soc.yaml
+@@ -0,0 +1,22 @@
 +# SPDX-License-Identifier: GPL-2.0
 +%YAML 1.2
 +---
-+$id: http://devicetree.org/schemas/arm/bcm/brcm,bcm11351.yaml#
++$id: http://devicetree.org/schemas/arm/bcm/brcm,vulcan-soc.yaml#
 +$schema: http://devicetree.org/meta-schemas/core.yaml#
 +
-+title: Broadcom BCM11351 device tree bindings
++title: Broadcom Vulcan device tree bindings
 +
 +maintainers:
-+  - Florian Fainelli <f.fainelli@gmail.com>
++  - Robert Richter <rrichter@marvell.com>
 +
 +properties:
 +  $nodename:
@@ -127,8 +127,9 @@ index 000000000000..b5ef2666e6b2
 +  compatible:
 +    items:
 +      - enum:
-+        - brcm,bcm28155-ap
-+      - const: brcm,bcm11351
++        - brcm,vulcan-eval
++        - cavium,thunderx2-cn9900
++      - const: brcm,vulcan-soc
 +
 +...
 -- 
