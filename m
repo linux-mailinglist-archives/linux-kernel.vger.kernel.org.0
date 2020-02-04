@@ -2,183 +2,101 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4A4CE152015
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Feb 2020 18:58:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B3C5E15201A
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Feb 2020 18:59:26 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727457AbgBDR6Q (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 4 Feb 2020 12:58:16 -0500
-Received: from mail-io1-f72.google.com ([209.85.166.72]:35083 "EHLO
-        mail-io1-f72.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727363AbgBDR6P (ORCPT
+        id S1727501AbgBDR7X (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 4 Feb 2020 12:59:23 -0500
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:34815 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727361AbgBDR7X (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Feb 2020 12:58:15 -0500
-Received: by mail-io1-f72.google.com with SMTP id x10so12280779iob.2
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Feb 2020 09:58:13 -0800 (PST)
+        Tue, 4 Feb 2020 12:59:23 -0500
+Received: by mail-pg1-f196.google.com with SMTP id j4so10042458pgi.1
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Feb 2020 09:59:23 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=jbEbwOgo7ENCwWxsnPJP8SPkXj10iYhhwUubuuIQGpU=;
+        b=aTvxoRFiBebcpxpfT28nCZjCnxMHAde5s0Gwzhhz7aM9dn6pzTFRQofnf3ecqFSI8D
+         eMlAaT0BNAFswRWePkJS0Q1CK41c2C6gPpAp2fJMco2yBO9zlcz9VJnXupigVxYkJnFv
+         bSGHFpr8YK2Dio6gyxW0JmAChekk6Mq/wheYOsCnxZvA/MC5z5P+sHyUaDGSkFDKTNPU
+         7bb1L0P/hUpNNCFLSH0Kez79DlcMyuEVZMTA7wyUVQLmxJ7Puw2TNXIFA1jUk7kYzVJt
+         TrsgC8DZriaeOksvbbRG0FwjN9x3kWnCGqjs/6JZiS+Avc8Q/Fq3gnNDF21vgzontS90
+         s9xA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=Um3Xpzx3vG7vvdGcvA/0vPPxMKJre/Qdw6/82ARcNPc=;
-        b=jbehFsWF+h8P58/R43U1c8Ar1i7OIIoexq3FsN5oDFq8yoz4hSvxx0DJ4JLLfzsSq0
-         aRn61Noc0J/e6S7y2NlPuXYyGJBC7W9tSRKOjV/sXMu6lyNYj+QkFKFTBtLCFFAq6/34
-         POMbSAm/w5WKGZllNw6NRM3qP0OGIgejCa8sLxPj43Q4BoeGVeLFrBzIaLdW0CipJPR6
-         wiJZ8YjiGvjHFa3H4HTmN6R/ELG4QdZ/9RhdqNRg+Aepr3ZtwaK88kdJGPHqSJ0iJPKR
-         4hm3NfnLsPCpjCpkQ16Urw2tC4Bk7AXpvEeoj2b4P+Lkzzqtea9xQkioebKgTqSSB5+U
-         4MYA==
-X-Gm-Message-State: APjAAAVVc5nPqaXrlcZOFAa+xKqTlVY/2GSUJ4wZSLTGldlY7Bw73xu/
-        95PcM7YV77AMUERiwZe8osRybW/v70LtPhNKRUceHOdvHcz8
-X-Google-Smtp-Source: APXvYqz/k4Imyeeca95alZX24eMTHmjPtFwnVqBqXMpEoIKiVc1JLT2fCo9+2dodxN3LxxIeANc25wcdden+gG5lgaAfBgztARLH
-MIME-Version: 1.0
-X-Received: by 2002:a6b:8e51:: with SMTP id q78mr23341440iod.179.1580839093292;
- Tue, 04 Feb 2020 09:58:13 -0800 (PST)
-Date:   Tue, 04 Feb 2020 09:58:13 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000009a59d2059dc3c8e9@google.com>
-Subject: memory leak in tcindex_set_parms
-From:   syzbot <syzbot+f0bbb2287b8993d4fa74@syzkaller.appspotmail.com>
-To:     davem@davemloft.net, jhs@mojatatu.com, jiri@resnulli.us,
-        kuba@kernel.org, linux-kernel@vger.kernel.org,
-        netdev@vger.kernel.org, syzkaller-bugs@googlegroups.com,
-        xiyou.wangcong@gmail.com
-Content-Type: text/plain; charset="UTF-8"
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=jbEbwOgo7ENCwWxsnPJP8SPkXj10iYhhwUubuuIQGpU=;
+        b=WJ9HVXgrK2AWkyU6uAhS/30hrnejpV2hhhuzvBG9oBnbStQchEPmaWnu0TzRu32Oy7
+         1MVI1AuzsZ2f9lsd2fkHHBusIzP14xBUrPwJL6sbxmBN/eZt1SzbhtYvJ/apjyDeZUYg
+         +Tjt1DKUeFMhk3fFjdUMMhlBT6nObDHyFvOPPU78pwTiuveqINwyid0KEOirWRxkAaWw
+         FbZwr/xUMhKrtivFYM3Wf00QsBUAnm77qAG4xjD1TP9le1zylfbUEc3GFlXTCwRI3yOY
+         rJn+DK4TC3jwMM2ol9QUDx4XwaBwMVzDnMETtG52t9JaeInm7Ot5yAlbvJmHc21XDVHI
+         r7cg==
+X-Gm-Message-State: APjAAAWWvBgw+IGx51u2HrYCSICUxVjIHtz4F3S/kr5U36a8aKn2hOiH
+        5fT/8EimCXmyxO2W/4L4rgU=
+X-Google-Smtp-Source: APXvYqxcrSIfmbjS9s7ArRFpumpHY7MXaw0phOSNLdABf42PWMJi52QVUpc2eRXUbUhDgU/SFtdxGQ==
+X-Received: by 2002:a63:7454:: with SMTP id e20mr32353159pgn.192.1580839162631;
+        Tue, 04 Feb 2020 09:59:22 -0800 (PST)
+Received: from localhost.localdomain ([2620:0:1008:fd00:25a6:3140:768c:a64d])
+        by smtp.gmail.com with ESMTPSA id d73sm25414465pfd.109.2020.02.04.09.59.20
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 04 Feb 2020 09:59:20 -0800 (PST)
+From:   Andrei Vagin <avagin@gmail.com>
+To:     Vincenzo Frascino <vincenzo.frascino@arm.com>
+Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Andrei Vagin <avagin@gmail.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Dmitry Safonov <dima@arista.com>
+Subject: [PATCH 0/5] arm64: add the time namespace support
+Date:   Tue,  4 Feb 2020 09:59:08 -0800
+Message-Id: <20200204175913.74901-1-avagin@gmail.com>
+X-Mailer: git-send-email 2.17.2
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+Allocate the time namespace page among VVAR pages and add the logic
+to handle faults on VVAR properly.
 
-syzbot found the following crash on:
+If a task belongs to a time namespace then the VVAR page which contains
+the system wide VDSO data is replaced with a namespace specific page
+which has the same layout as the VVAR page. That page has vdso_data->seq
+set to 1 to enforce the slow path and vdso_data->clock_mode set to
+VCLOCK_TIMENS to enforce the time namespace handling path.
 
-HEAD commit:    322bf2d3 Merge branch 'for-5.6' of git://git.kernel.org/pu..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=1111f8e6e00000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=8d0490614a000a37
-dashboard link: https://syzkaller.appspot.com/bug?extid=f0bbb2287b8993d4fa74
-compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=17db90f6e00000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=13a94511e00000
+The extra check in the case that vdso_data->seq is odd, e.g. a concurrent
+update of the VDSO data is in progress, is not really affecting regular
+tasks which are not part of a time namespace as the task is spin waiting
+for the update to finish and vdso_data->seq to become even again.
 
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+f0bbb2287b8993d4fa74@syzkaller.appspotmail.com
+If a time namespace task hits that code path, it invokes the corresponding
+time getter function which retrieves the real VVAR page, reads host time
+and then adds the offset for the requested clock which is stored in the
+special VVAR page.
 
-executing program
-executing program
-BUG: memory leak
-unreferenced object 0xffff88811ee18c00 (size 256):
-  comm "syz-executor278", pid 7255, jiffies 4294941828 (age 13.710s)
-  hex dump (first 32 bytes):
-    00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
-    00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
-  backtrace:
-    [<0000000004705b10>] kmemleak_alloc_recursive include/linux/kmemleak.h:43 [inline]
-    [<0000000004705b10>] slab_post_alloc_hook mm/slab.h:586 [inline]
-    [<0000000004705b10>] slab_alloc mm/slab.c:3320 [inline]
-    [<0000000004705b10>] kmem_cache_alloc_trace+0x145/0x2c0 mm/slab.c:3549
-    [<000000005a926de7>] kmalloc include/linux/slab.h:556 [inline]
-    [<000000005a926de7>] kmalloc_array include/linux/slab.h:597 [inline]
-    [<000000005a926de7>] kcalloc include/linux/slab.h:609 [inline]
-    [<000000005a926de7>] tcf_exts_init include/net/pkt_cls.h:210 [inline]
-    [<000000005a926de7>] tcindex_set_parms+0xac/0x970 net/sched/cls_tcindex.c:313
-    [<000000004198237d>] tcindex_change+0xd8/0x110 net/sched/cls_tcindex.c:519
-    [<00000000f90be4e9>] tc_new_tfilter+0x566/0xf50 net/sched/cls_api.c:2103
-    [<00000000bdffab68>] rtnetlink_rcv_msg+0x3b2/0x4b0 net/core/rtnetlink.c:5429
-    [<000000008de6f6fa>] netlink_rcv_skb+0x61/0x170 net/netlink/af_netlink.c:2477
-    [<00000000637db501>] rtnetlink_rcv+0x1d/0x30 net/core/rtnetlink.c:5456
-    [<00000000cb1396a7>] netlink_unicast_kernel net/netlink/af_netlink.c:1302 [inline]
-    [<00000000cb1396a7>] netlink_unicast+0x223/0x310 net/netlink/af_netlink.c:1328
-    [<000000003d9f7439>] netlink_sendmsg+0x2c0/0x570 net/netlink/af_netlink.c:1917
-    [<0000000004922ee9>] sock_sendmsg_nosec net/socket.c:652 [inline]
-    [<0000000004922ee9>] sock_sendmsg+0x54/0x70 net/socket.c:672
-    [<00000000bbc6917f>] ____sys_sendmsg+0x2d0/0x300 net/socket.c:2343
-    [<00000000d3ae3854>] ___sys_sendmsg+0x8a/0xd0 net/socket.c:2397
-    [<0000000000c5372b>] __sys_sendmsg+0x80/0xf0 net/socket.c:2430
-    [<00000000db15859a>] __do_sys_sendmsg net/socket.c:2439 [inline]
-    [<00000000db15859a>] __se_sys_sendmsg net/socket.c:2437 [inline]
-    [<00000000db15859a>] __x64_sys_sendmsg+0x23/0x30 net/socket.c:2437
-    [<00000000a5a1c036>] do_syscall_64+0x73/0x220 arch/x86/entry/common.c:294
-    [<00000000e73613df>] entry_SYSCALL_64_after_hwframe+0x44/0xa9
+Cc: Vincenzo Frascino <vincenzo.frascino@arm.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Dmitry Safonov <dima@arista.com>
 
-BUG: memory leak
-unreferenced object 0xffff88811ee18900 (size 256):
-  comm "syz-executor278", pid 7255, jiffies 4294941828 (age 13.710s)
-  hex dump (first 32 bytes):
-    00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
-    00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
-  backtrace:
-    [<0000000004705b10>] kmemleak_alloc_recursive include/linux/kmemleak.h:43 [inline]
-    [<0000000004705b10>] slab_post_alloc_hook mm/slab.h:586 [inline]
-    [<0000000004705b10>] slab_alloc mm/slab.c:3320 [inline]
-    [<0000000004705b10>] kmem_cache_alloc_trace+0x145/0x2c0 mm/slab.c:3549
-    [<0000000036dbc592>] kmalloc include/linux/slab.h:556 [inline]
-    [<0000000036dbc592>] kmalloc_array include/linux/slab.h:597 [inline]
-    [<0000000036dbc592>] kcalloc include/linux/slab.h:609 [inline]
-    [<0000000036dbc592>] tcf_exts_init include/net/pkt_cls.h:210 [inline]
-    [<0000000036dbc592>] tcindex_alloc_perfect_hash net/sched/cls_tcindex.c:287 [inline]
-    [<0000000036dbc592>] tcindex_alloc_perfect_hash+0x8f/0xf0 net/sched/cls_tcindex.c:277
-    [<0000000088e6ec51>] tcindex_set_parms+0x831/0x970 net/sched/cls_tcindex.c:405
-    [<000000004198237d>] tcindex_change+0xd8/0x110 net/sched/cls_tcindex.c:519
-    [<00000000f90be4e9>] tc_new_tfilter+0x566/0xf50 net/sched/cls_api.c:2103
-    [<00000000bdffab68>] rtnetlink_rcv_msg+0x3b2/0x4b0 net/core/rtnetlink.c:5429
-    [<000000008de6f6fa>] netlink_rcv_skb+0x61/0x170 net/netlink/af_netlink.c:2477
-    [<00000000637db501>] rtnetlink_rcv+0x1d/0x30 net/core/rtnetlink.c:5456
-    [<00000000cb1396a7>] netlink_unicast_kernel net/netlink/af_netlink.c:1302 [inline]
-    [<00000000cb1396a7>] netlink_unicast+0x223/0x310 net/netlink/af_netlink.c:1328
-    [<000000003d9f7439>] netlink_sendmsg+0x2c0/0x570 net/netlink/af_netlink.c:1917
-    [<0000000004922ee9>] sock_sendmsg_nosec net/socket.c:652 [inline]
-    [<0000000004922ee9>] sock_sendmsg+0x54/0x70 net/socket.c:672
-    [<00000000bbc6917f>] ____sys_sendmsg+0x2d0/0x300 net/socket.c:2343
-    [<00000000d3ae3854>] ___sys_sendmsg+0x8a/0xd0 net/socket.c:2397
-    [<0000000000c5372b>] __sys_sendmsg+0x80/0xf0 net/socket.c:2430
-    [<00000000db15859a>] __do_sys_sendmsg net/socket.c:2439 [inline]
-    [<00000000db15859a>] __se_sys_sendmsg net/socket.c:2437 [inline]
-    [<00000000db15859a>] __x64_sys_sendmsg+0x23/0x30 net/socket.c:2437
-    [<00000000a5a1c036>] do_syscall_64+0x73/0x220 arch/x86/entry/common.c:294
+Andrei Vagin (5):
+  arm64/vdso: use the fault callback to map vvar pages
+  arm64/vdso: Zap vvar pages when switching to a time namespace
+  arm64/vdso: Add time napespace page
+  arm64/vdso: Handle faults on timens page
+  arm64/vdso: Restrict splitting VVAR VMA
 
-BUG: memory leak
-unreferenced object 0xffff88811ee18800 (size 256):
-  comm "syz-executor278", pid 7255, jiffies 4294941828 (age 13.710s)
-  hex dump (first 32 bytes):
-    00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
-    00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
-  backtrace:
-    [<0000000004705b10>] kmemleak_alloc_recursive include/linux/kmemleak.h:43 [inline]
-    [<0000000004705b10>] slab_post_alloc_hook mm/slab.h:586 [inline]
-    [<0000000004705b10>] slab_alloc mm/slab.c:3320 [inline]
-    [<0000000004705b10>] kmem_cache_alloc_trace+0x145/0x2c0 mm/slab.c:3549
-    [<0000000036dbc592>] kmalloc include/linux/slab.h:556 [inline]
-    [<0000000036dbc592>] kmalloc_array include/linux/slab.h:597 [inline]
-    [<0000000036dbc592>] kcalloc include/linux/slab.h:609 [inline]
-    [<0000000036dbc592>] tcf_exts_init include/net/pkt_cls.h:210 [inline]
-    [<0000000036dbc592>] tcindex_alloc_perfect_hash net/sched/cls_tcindex.c:287 [inline]
-    [<0000000036dbc592>] tcindex_alloc_perfect_hash+0x8f/0xf0 net/sched/cls_tcindex.c:277
-    [<0000000088e6ec51>] tcindex_set_parms+0x831/0x970 net/sched/cls_tcindex.c:405
-    [<000000004198237d>] tcindex_change+0xd8/0x110 net/sched/cls_tcindex.c:519
-    [<00000000f90be4e9>] tc_new_tfilter+0x566/0xf50 net/sched/cls_api.c:2103
-    [<00000000bdffab68>] rtnetlink_rcv_msg+0x3b2/0x4b0 net/core/rtnetlink.c:5429
-    [<000000008de6f6fa>] netlink_rcv_skb+0x61/0x170 net/netlink/af_netlink.c:2477
-    [<00000000637db501>] rtnetlink_rcv+0x1d/0x30 net/core/rtnetlink.c:5456
-    [<00000000cb1396a7>] netlink_unicast_kernel net/netlink/af_netlink.c:1302 [inline]
-    [<00000000cb1396a7>] netlink_unicast+0x223/0x310 net/netlink/af_netlink.c:1328
-    [<000000003d9f7439>] netlink_sendmsg+0x2c0/0x570 net/netlink/af_netlink.c:1917
-    [<0000000004922ee9>] sock_sendmsg_nosec net/socket.c:652 [inline]
-    [<0000000004922ee9>] sock_sendmsg+0x54/0x70 net/socket.c:672
-    [<00000000bbc6917f>] ____sys_sendmsg+0x2d0/0x300 net/socket.c:2343
-    [<00000000d3ae3854>] ___sys_sendmsg+0x8a/0xd0 net/socket.c:2397
-    [<0000000000c5372b>] __sys_sendmsg+0x80/0xf0 net/socket.c:2430
-    [<00000000db15859a>] __do_sys_sendmsg net/socket.c:2439 [inline]
-    [<00000000db15859a>] __se_sys_sendmsg net/socket.c:2437 [inline]
-    [<00000000db15859a>] __x64_sys_sendmsg+0x23/0x30 net/socket.c:2437
-    [<00000000a5a1c036>] do_syscall_64+0x73/0x220 arch/x86/entry/common.c:294
+ arch/arm64/Kconfig                            |   1 +
+ .../include/asm/vdso/compat_gettimeofday.h    |  11 ++
+ arch/arm64/include/asm/vdso/gettimeofday.h    |   8 ++
+ arch/arm64/kernel/vdso.c                      | 134 ++++++++++++++++--
+ arch/arm64/kernel/vdso/vdso.lds.S             |   3 +-
+ arch/arm64/kernel/vdso32/vdso.lds.S           |   3 +-
+ include/vdso/datapage.h                       |   1 +
+ 7 files changed, 147 insertions(+), 14 deletions(-)
 
+-- 
+2.24.1
 
-
----
-This bug is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this bug report. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-syzbot can test patches for this bug, for details see:
-https://goo.gl/tpsmEJ#testing-patches
