@@ -2,130 +2,190 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 24BEB151F99
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Feb 2020 18:39:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 98DA1151FA2
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Feb 2020 18:41:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727477AbgBDRjk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 4 Feb 2020 12:39:40 -0500
-Received: from us-smtp-1.mimecast.com ([207.211.31.81]:26421 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727382AbgBDRjk (ORCPT
+        id S1727501AbgBDRlC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 4 Feb 2020 12:41:02 -0500
+Received: from mail-vk1-f196.google.com ([209.85.221.196]:38497 "EHLO
+        mail-vk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727394AbgBDRlB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Feb 2020 12:39:40 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1580837978;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=rOt4Q7Y7NbeoLNOkgoGRXQ71dvuW8UbbyvbNZ5N5pIs=;
-        b=UBiHX1t+4ROu0VQf6U/i5XkZvi1+z9soqjU5GuTxQf8REepOUjIcsdIGitFmQ0zxD1/4RW
-        3PSGbMjR4AGs0DdDlYFA1ohVxEY2NAuDZseKHcF6jmH8r12Zn1Xa2PUmZsWOv5I7jJqdAM
-        0uFcMFoxSso9ciRpF9dzeEfeUTkyA8Y=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-233-RFdFYVoNOtmfFcl0m6Qxsg-1; Tue, 04 Feb 2020 12:39:36 -0500
-X-MC-Unique: RFdFYVoNOtmfFcl0m6Qxsg-1
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id BE0AADB25;
-        Tue,  4 Feb 2020 17:39:33 +0000 (UTC)
-Received: from llong.remote.csb (dhcp-17-59.bos.redhat.com [10.18.17.59])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 17A5660BF4;
-        Tue,  4 Feb 2020 17:39:30 +0000 (UTC)
-Subject: Re: [PATCH v8 4/5] locking/qspinlock: Introduce starvation avoidance
- into CNA
-To:     Peter Zijlstra <peterz@infradead.org>,
-        Alex Kogan <alex.kogan@oracle.com>
-Cc:     linux@armlinux.org.uk, Ingo Molnar <mingo@redhat.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Arnd Bergmann <arnd@arndb.de>, linux-arch@vger.kernel.org,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
-        Borislav Petkov <bp@alien8.de>, hpa@zytor.com, x86@kernel.org,
-        Hanjun Guo <guohanjun@huawei.com>,
-        Jan Glauber <jglauber@marvell.com>,
-        Steven Sistare <steven.sistare@oracle.com>,
-        Daniel Jordan <daniel.m.jordan@oracle.com>,
-        dave.dice@oracle.com
-References: <8D3AFB47-B595-418C-9568-08780DDC58FF@oracle.com>
- <714892cd-d96f-4d41-ae8b-d7b7642a6e3c@redhat.com>
- <1669BFDE-A1A5-4ED8-B586-035460BBF68A@oracle.com>
- <20200125111931.GW11457@worktop.programming.kicks-ass.net>
- <F32558D8-4ACB-483A-AB4C-F565003A02E7@oracle.com>
- <20200203134540.GA14879@hirez.programming.kicks-ass.net>
- <6d11b22b-2fb5-7dea-f88b-b32f1576a5e0@redhat.com>
- <20200203152807.GK14914@hirez.programming.kicks-ass.net>
- <15fa978d-bd41-3ecb-83d5-896187e11244@redhat.com>
- <83762715-F68C-42DF-9B41-C4C48DF6762F@oracle.com>
- <20200204172758.GF14879@hirez.programming.kicks-ass.net>
-From:   Waiman Long <longman@redhat.com>
-Organization: Red Hat
-Message-ID: <e26b3afa-80d6-71bf-39c8-0fa4b875cbb2@redhat.com>
-Date:   Tue, 4 Feb 2020 12:39:30 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.2
+        Tue, 4 Feb 2020 12:41:01 -0500
+Received: by mail-vk1-f196.google.com with SMTP id w4so3795383vkd.5
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Feb 2020 09:41:00 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=yoiAXhoixmdJYs8LD0r9kQphcdYUs7qTHA0kGn1fjD8=;
+        b=ziMjW1G2ZC36prlStBh0BoqSZzrOzkvJgh4cxQJxzi2UYxeh0U6jYD3ceYaUFbxW/1
+         b/0ePQTGd+lyMBeZqKeC+hxGtEkgpE8EH6Y2lxFMYCqrv3Ak4nk42IGHFOldLsCDBsae
+         40BgwcClVqsWD2sMrahZCAeYJeX4pCF94iZDkyUXuVDghCn/cjfqG/vLYIBWmkBikA9A
+         eRyRF06XfBOXrwxWbGj01NEg1HYXx3jibtOA0Q8TgAXWtmUJtRWBcjd9p7DDi/LBAckX
+         sqg7bIML+x1oxWc2FraBge5N9fzLy5A/TX2gVJmTuwEDW/TJgkzZtOYi0HKw+k5Ll1XH
+         YlWA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=yoiAXhoixmdJYs8LD0r9kQphcdYUs7qTHA0kGn1fjD8=;
+        b=GCsn11X+vLNtuNWH4vZXmuUwg6i8WN6v+v9qdsIxOzB2Bwp/Bp3lzk90bTr21V5h9i
+         KNM6W4a9NNt7N0QKDK58ZDZPPGspTL8oc1RfRgFKWHx/L4DjvB5r6l5+EM4nZtA1QyzD
+         ZqejU50KxCeR/GtuwDEdXfgiFpBfgm0oOLEWGbga80aRdsjOkV5lVwEEe1spdjq5OT4X
+         gfxJQsUCkutge9ECztPqMhzDQ14TrvB4Gml98GYpk8eWi4Vj27gnoYgCpno1M14SsYXg
+         5kosGT4l9aOPx5TOrw+hJjgvtKBCfS+8pHuVzE6GWbikon5mUCSH2V9stKzSSiC96Qo4
+         KLqQ==
+X-Gm-Message-State: APjAAAX0wpMG4scHBRCxlNTxzAPkYvkCt0TBstMjBX3P8CNQnNR2sq41
+        RYwmUQAkDioOA0ggc45eAd5sDhNtM/AsRLYtwnfPsw==
+X-Google-Smtp-Source: APXvYqxED+wsvoC+QCgQxKOUzWUnXH8k+A/0E762um0DhW/ZNecciMz+Dh5mSPvBTLSIOsbmDHFEDhbxvV++vZ1id2Y=
+X-Received: by 2002:a1f:94c1:: with SMTP id w184mr19267627vkd.43.1580838060111;
+ Tue, 04 Feb 2020 09:41:00 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <20200204172758.GF14879@hirez.programming.kicks-ass.net>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
-Content-Transfer-Encoding: quoted-printable
+References: <1574254593-16078-1-git-send-email-thara.gopinath@linaro.org> <1574254593-16078-6-git-send-email-thara.gopinath@linaro.org>
+In-Reply-To: <1574254593-16078-6-git-send-email-thara.gopinath@linaro.org>
+From:   Ulf Hansson <ulf.hansson@linaro.org>
+Date:   Tue, 4 Feb 2020 18:40:24 +0100
+Message-ID: <CAPDyKFopiajhFymXo3q558AYBkdDYzU6Ye9HU9XSdN4r8j+qaw@mail.gmail.com>
+Subject: Re: [Patch v4 5/7] soc: qcom: Extend RPMh power controller driver to
+ register warming devices.
+To:     Thara Gopinath <thara.gopinath@linaro.org>
+Cc:     Eduardo Valentin <edubezval@gmail.com>,
+        Zhang Rui <rui.zhang@intel.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Andy Gross <agross@kernel.org>,
+        Amit Kucheria <amit.kucheria@verdurent.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        DTML <devicetree@vger.kernel.org>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2/4/20 12:27 PM, Peter Zijlstra wrote:
-> On Tue, Feb 04, 2020 at 11:54:02AM -0500, Alex Kogan wrote:
->>> On Feb 3, 2020, at 10:47 AM, Waiman Long <longman@redhat.com> wrote:
->>>
->>> On 2/3/20 10:28 AM, Peter Zijlstra wrote:
->>>> On Mon, Feb 03, 2020 at 09:59:12AM -0500, Waiman Long wrote:
->>>>> On 2/3/20 8:45 AM, Peter Zijlstra wrote:
->>>>>> Presumably you have a workload where CNA is actually a win? That i=
-s,
->>>>>> what inspired you to go down this road? Which actual kernel lock i=
-s so
->>>>>> contended on NUMA machines that we need to do this?
->> There are quite a few actually. files_struct.file_lock, file_lock_cont=
-ext.flc_lock
->> and lockref.lock are some concrete examples that get very hot in will-=
-it-scale
->> benchmarks.=20
-> Right, that's all a variant of banging on the same resources across
-> nodes. I'm not sure there's anything fundamental we can fix there.
+On Wed, 20 Nov 2019 at 13:56, Thara Gopinath <thara.gopinath@linaro.org> wrote:
 >
->> And then there are spinlocks in __futex_data.queues,=20
->> which get hot when applications have contended (pthread) locks =E2=80=94=
-=20
->> LevelDB is an example.
-> A numa aware rework of futexes has been on the todo list for years :/
-Now, we are going to get that for free with this patchset:-)
+> RPMh power control hosts power domains that can be used as
+> thermal warming devices. Register these power domains
+> with the generic power domain warming device thermal framework.
 >
->> Our initial motivation was based on an observation that kernel qspinlo=
-ck is not=20
->> NUMA-aware. So what, you may ask. Much like people realized in the pas=
-t that
->> global spinning is bad for performance, and they switched from ticket =
-lock to
->> locks with local spinning (e.g., MCS), I think everyone would agree th=
-ese days that
->> bouncing a lock (and cache lines in general) across numa nodes is simi=
-larly bad.
->> And as CNA demonstrates, we are easily leaving 2-3x speedups on the ta=
-ble by
->> doing just that with the current qspinlock.
-> Actual benchmarks with performance numbers are required. It helps
-> motivate the patches as well as gives reviewers clues on how to
-> reproduce / inspect the claims made.
+> Signed-off-by: Thara Gopinath <thara.gopinath@linaro.org>
+> ---
+> v3->v4:
+>         - Introduce a boolean value is_warming_dev in rpmhpd structure to
+>           indicate if a generic power domain can be used as a warming
+>           device or not.With this change, device tree no longer has to
+>           specify which power domain inside the rpmh power domain provider
+>           is a warming device.
+>         - Move registering of warming devices into a late initcall to
+>           ensure that warming devices are registerd after thermal
+>           framework is initialized.
 >
-I think the cover-letter does have some benchmark results listed.=C2=A0 A=
-re
-you saying that some benchmark results should be put into individual
-patches themselves?
+>  drivers/soc/qcom/rpmhpd.c | 38 +++++++++++++++++++++++++++++++++++++-
+>  1 file changed, 37 insertions(+), 1 deletion(-)
+>
+> diff --git a/drivers/soc/qcom/rpmhpd.c b/drivers/soc/qcom/rpmhpd.c
+> index 9d37534..5666d1f 100644
+> --- a/drivers/soc/qcom/rpmhpd.c
+> +++ b/drivers/soc/qcom/rpmhpd.c
+> @@ -11,6 +11,7 @@
+>  #include <linux/of_device.h>
+>  #include <linux/platform_device.h>
+>  #include <linux/pm_opp.h>
+> +#include <linux/pwr_domain_warming.h>
+>  #include <soc/qcom/cmd-db.h>
+>  #include <soc/qcom/rpmh.h>
+>  #include <dt-bindings/power/qcom-rpmpd.h>
+> @@ -48,6 +49,7 @@ struct rpmhpd {
+>         bool            enabled;
+>         const char      *res_name;
+>         u32             addr;
+> +       bool            is_warming_dev;
+>  };
+>
+>  struct rpmhpd_desc {
+> @@ -55,6 +57,8 @@ struct rpmhpd_desc {
+>         size_t num_pds;
+>  };
+>
+> +const struct rpmhpd_desc *global_desc;
+> +
+>  static DEFINE_MUTEX(rpmhpd_lock);
+>
+>  /* SDM845 RPMH powerdomains */
+> @@ -89,6 +93,7 @@ static struct rpmhpd sdm845_mx = {
+>         .pd = { .name = "mx", },
+>         .peer = &sdm845_mx_ao,
+>         .res_name = "mx.lvl",
+> +       .is_warming_dev = true,
+>  };
+>
+>  static struct rpmhpd sdm845_mx_ao = {
+> @@ -396,7 +401,14 @@ static int rpmhpd_probe(struct platform_device *pdev)
+>                                                &rpmhpds[i]->pd);
+>         }
+>
+> -       return of_genpd_add_provider_onecell(pdev->dev.of_node, data);
+> +       ret = of_genpd_add_provider_onecell(pdev->dev.of_node, data);
+> +
+> +       if (ret)
+> +               return ret;
+> +
+> +       global_desc = desc;
 
-Cheers,
-Longman
+I assume this works fine, for now.
 
+Although, nothing prevents this driver from being probed for two
+different compatibles for the same platform. Thus the global_desc
+could be overwritten with the last one being probed, so then how do
+you know which one to use?
+
+> +
+> +       return 0;
+>  }
+>
+>  static struct platform_driver rpmhpd_driver = {
+> @@ -413,3 +425,27 @@ static int __init rpmhpd_init(void)
+>         return platform_driver_register(&rpmhpd_driver);
+>  }
+>  core_initcall(rpmhpd_init);
+> +
+> +static int __init rpmhpd_init_warming_device(void)
+> +{
+> +       size_t num_pds;
+> +       struct rpmhpd **rpmhpds;
+> +       int i;
+> +
+> +       if (!global_desc)
+> +               return -EINVAL;
+> +
+> +       rpmhpds = global_desc->rpmhpds;
+> +       num_pds = global_desc->num_pds;
+> +
+> +       if (!of_find_property(rpmhpds[0]->dev->of_node, "#cooling-cells", NULL))
+> +               return 0;
+> +
+> +       for (i = 0; i < num_pds; i++)
+> +               if (rpmhpds[i]->is_warming_dev)
+> +                       pwr_domain_warming_register(rpmhpds[i]->dev,
+> +                                                   rpmhpds[i]->res_name, i);
+> +
+> +       return 0;
+> +}
+> +late_initcall(rpmhpd_init_warming_device);
+
+For the record, there are limitations with this approach, for example
+you can't deal with -EPROBE_DEFER.
+
+On the other hand, I don't have anything better to suggest, from the
+top of my head. So, feel free to add:
+
+Reviewed-by: Ulf Hansson <ulf.hansson@linaro.org>
+
+Kind regards
+Uffe
