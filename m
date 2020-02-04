@@ -2,109 +2,89 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 67B6315181B
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Feb 2020 10:47:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 01F4B151821
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Feb 2020 10:47:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727023AbgBDJq6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 4 Feb 2020 04:46:58 -0500
-Received: from mx2.suse.de ([195.135.220.15]:40210 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726329AbgBDJq6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Feb 2020 04:46:58 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id BC651ABF4;
-        Tue,  4 Feb 2020 09:46:55 +0000 (UTC)
-Date:   Tue, 4 Feb 2020 10:46:53 +0100
-From:   Oscar Salvador <osalvador@suse.de>
-To:     David Hildenbrand <david@redhat.com>
-Cc:     linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        linux-arm-kernel@lists.infradead.org, linux-ia64@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org, linux-s390@vger.kernel.org,
-        linux-sh@vger.kernel.org, x86@kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Michal Hocko <mhocko@suse.com>,
-        Pavel Tatashin <pasha.tatashin@soleen.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Wei Yang <richardw.yang@linux.intel.com>
-Subject: Re: [PATCH v6 10/10] mm/memory_hotplug: Cleanup __remove_pages()
-Message-ID: <20200204094652.GE6494@linux>
-References: <20191006085646.5768-1-david@redhat.com>
- <20191006085646.5768-11-david@redhat.com>
+        id S1727146AbgBDJrL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 4 Feb 2020 04:47:11 -0500
+Received: from mail-io1-f68.google.com ([209.85.166.68]:42734 "EHLO
+        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726343AbgBDJrL (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Feb 2020 04:47:11 -0500
+Received: by mail-io1-f68.google.com with SMTP id s6so9775917iol.9
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Feb 2020 01:47:11 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=DWB0fGs6D7ucbUTFnrtpqXtN60QWiVsKTSoTpOV+cwQ=;
+        b=XxT3YHCdjUeV5vaM9x2BVAz/ipXOX9X2gkgzuN5lR69WqotmvgDPxkKRusp86NCvLT
+         dgUArE8KvG37XY+rkm8XKJJRhKkXxxriRnFPXMjaDgonyEbcF8tb8NVNo1bEiC2UwpNv
+         hzYCORrrcRkAsi15WzajfZU7DIkuqxrqQFmB0tUiQDH49BJ8aimRdfzPKcVClNwOF1gQ
+         rdfBiMYLew5Ps145UHkfySJBjuKiVfYs7vVquH632OoC4frSXWRUGooWjLUxnpLIixlY
+         sfSL2FCMuh0vr02kit4yuMkH0kXDf6PdmyLfnnyBmePpBjYTXFdrJAR8fWTn4CKgpG2z
+         ra0g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=DWB0fGs6D7ucbUTFnrtpqXtN60QWiVsKTSoTpOV+cwQ=;
+        b=CZ8XEbnRGiOBj5oKiyezO6yygb73karKIogwXtuDtMpTibtvJH7qUxnPTzFDdRDtZW
+         DHzG35vC5p7kg8JGYpqAfiFy5U8JTZ3QkeQmXpTOrOU4h2KtZ/lqfHhK9aGva7tNCPB1
+         aZeutQYDNC0iem5mjr8Ndn8IAWd9zdhlWvwrHkIwECJrg1NRSuV/4gCTiJT5aemMyCO8
+         xw6e3ORcatP4Tl3bCzxW/JS/h1FEcoo8iu8rgSgQL23Mvo/NCvulEQm5v4TsjZpn2KFl
+         wYzz/HfKzBKeVYLb+zIoLW7168mK9vWcHwuDdT+k9l7XpDCGiL72kuN15K6Zh6581zYX
+         NwEQ==
+X-Gm-Message-State: APjAAAWnao0HWilFqom+YogJkMwXNOazZkxomFxxTnI1DKUhjxCt7RJN
+        J/YSKPdZIFAvOj29hvjlWjWSqiCakIJsAp1gXWwUW7TD
+X-Google-Smtp-Source: APXvYqyDTCKV1001Mtg+D0euI9fs/vBcJls8wPjmIXSoroJPOS7q+Flq1f6VsazCkXXWHcCrfHdrncKW81QHHYS0ZC8=
+X-Received: by 2002:a05:6602:2352:: with SMTP id r18mr21945815iot.220.1580809630802;
+ Tue, 04 Feb 2020 01:47:10 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191006085646.5768-11-david@redhat.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20200203133026.22930-1-brgl@bgdev.pl> <20200203191451.GA19076@roeck-us.net>
+In-Reply-To: <20200203191451.GA19076@roeck-us.net>
+From:   Bartosz Golaszewski <brgl@bgdev.pl>
+Date:   Tue, 4 Feb 2020 10:46:59 +0100
+Message-ID: <CAMRc=McoG=uRJi0W+KV89bORNbGHOw7F=+hdbbEimANJGAYd7w@mail.gmail.com>
+Subject: Re: [PATCH 0/3] gpiolib: fix a regression introduced by gpio_do_set_config()
+To:     Guenter Roeck <linux@roeck-us.net>
+Cc:     Kent Gibson <warthog618@gmail.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Oct 06, 2019 at 10:56:46AM +0200, David Hildenbrand wrote:
-> Let's drop the basically unused section stuff and simplify.
-> 
-> Also, let's use a shorter variant to calculate the number of pages to
-> the next section boundary.
-> 
-> Cc: Andrew Morton <akpm@linux-foundation.org>
-> Cc: Oscar Salvador <osalvador@suse.de>
-> Cc: Michal Hocko <mhocko@suse.com>
-> Cc: Pavel Tatashin <pasha.tatashin@soleen.com>
-> Cc: Dan Williams <dan.j.williams@intel.com>
-> Cc: Wei Yang <richardw.yang@linux.intel.com>
-> Signed-off-by: David Hildenbrand <david@redhat.com>
+pon., 3 lut 2020 o 20:14 Guenter Roeck <linux@roeck-us.net> napisa=C5=82(a)=
+:
+>
+> On Mon, Feb 03, 2020 at 02:30:23PM +0100, Bartosz Golaszewski wrote:
+> > From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+> >
+> > These three patches fix a regression introduced by commit d90f36851d65
+> > ("gpiolib: have a single place of calling set_config()"). We first need
+> > to revert patches that came on top of it, then apply the actual fix.
+> >
+> > Bartosz Golaszewski (3):
+> >   Revert "gpiolib: Remove duplicated function gpio_do_set_config()"
+> >   Revert "gpiolib: remove set but not used variable 'config'"
+> >   gpiolib: fix gpio_do_set_config()
+> >
+>
+> For the series:
+>
+> Tested-by: Guenter Roeck <linux@roeck-us.net>
+>
 
-I have to confess that it took me while to wrap around my head
-with the new min() change, but looks ok:
+Applied the patches. I'll send them to Linus W shortly.
 
-Reviewed-by: Oscar Salvador <osalvador@suse.de>
-
-> ---
->  mm/memory_hotplug.c | 17 ++++++-----------
->  1 file changed, 6 insertions(+), 11 deletions(-)
-> 
-> diff --git a/mm/memory_hotplug.c b/mm/memory_hotplug.c
-> index 843481bd507d..2275240cfa10 100644
-> --- a/mm/memory_hotplug.c
-> +++ b/mm/memory_hotplug.c
-> @@ -490,25 +490,20 @@ static void __remove_section(unsigned long pfn, unsigned long nr_pages,
->  void __remove_pages(unsigned long pfn, unsigned long nr_pages,
->  		    struct vmem_altmap *altmap)
->  {
-> +	const unsigned long end_pfn = pfn + nr_pages;
-> +	unsigned long cur_nr_pages;
->  	unsigned long map_offset = 0;
-> -	unsigned long nr, start_sec, end_sec;
->  
->  	map_offset = vmem_altmap_offset(altmap);
->  
->  	if (check_pfn_span(pfn, nr_pages, "remove"))
->  		return;
->  
-> -	start_sec = pfn_to_section_nr(pfn);
-> -	end_sec = pfn_to_section_nr(pfn + nr_pages - 1);
-> -	for (nr = start_sec; nr <= end_sec; nr++) {
-> -		unsigned long pfns;
-> -
-> +	for (; pfn < end_pfn; pfn += cur_nr_pages) {
->  		cond_resched();
-> -		pfns = min(nr_pages, PAGES_PER_SECTION
-> -				- (pfn & ~PAGE_SECTION_MASK));
-> -		__remove_section(pfn, pfns, map_offset, altmap);
-> -		pfn += pfns;
-> -		nr_pages -= pfns;
-> +		/* Select all remaining pages up to the next section boundary */
-> +		cur_nr_pages = min(end_pfn - pfn, -(pfn | PAGE_SECTION_MASK));
-> +		__remove_section(pfn, cur_nr_pages, map_offset, altmap);
->  		map_offset = 0;
->  	}
->  }
-> -- 
-> 2.21.0
-> 
-> 
-
--- 
-Oscar Salvador
-SUSE L3
+Bartosz
