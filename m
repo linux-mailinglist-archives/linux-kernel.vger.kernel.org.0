@@ -2,112 +2,173 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 57784151B81
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Feb 2020 14:41:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1B514151B63
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Feb 2020 14:37:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727355AbgBDNlp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 4 Feb 2020 08:41:45 -0500
-Received: from mail-db8eur05on2048.outbound.protection.outlook.com ([40.107.20.48]:14849
-        "EHLO EUR05-DB8-obe.outbound.protection.outlook.com"
+        id S1727230AbgBDNhf convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Tue, 4 Feb 2020 08:37:35 -0500
+Received: from lhrrgout.huawei.com ([185.176.76.210]:2363 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727197AbgBDNln (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Feb 2020 08:41:43 -0500
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=lD1Hcq8XItEIfUat0huGq9C0JLHXIbgeGiTtjQMcrM0Ok61QQr/PA0JhEg/yF/7SFgA88fKBe3PB44tNHK849XxVdzgqg015TET3yqRxfpRb2hOvRBTcNszrph8DSNEk0qHg7fUYKQZvIvKAWIoyp2q2oXYLROTMCj/4koiP7d7aZcdvFw6DoyYf9apsDWrKFAuDTfHK+zqOhdcNLSyy1FVMh+XTVfa4c+vt+koNxuJcxs72ecvMs9NnFrX5cYi67WVAojdeP9h6KkyZFr7OmD+a/Sd3VyO4x0EoqF3VtknqYjGpmukniDxVtPyZtKbgP8BrZ+btY5zw/G611kSS6w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=NEvjWr/4AdbPMAtC1YFADze47JBcfN0qbQO1FdM2O68=;
- b=SL22kKevIjInpACyB4NUXI8azzwUjgbjT2/p9C2YZJt0wBzIeNJ0KQbPCEh88uqzos9wiEPYWe/uM9UzVUclSqXPKmhdl+UBAv6+44Oz8qYugnn4FcutQeY4/wNev+7cnZFcJvnBdnSgBlEBv4oR4qn5TaD87kwq2L5ojN4qYkkGW2WDGF80/Q/kIZVXAeTRgquvM3VjPzjg914bHiOQMm0JuVLTd1nAR2s28PlD2bSVXUfeZEP/MhD/T6S9DPJcPC/J+sA4WGNQG2mfVueBaJVcEqjHHYvf27DG0329h41hv+/3gIbi0vc9C9iclSZz3LPbFpxfeGhPqX7n4y5oAw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=NEvjWr/4AdbPMAtC1YFADze47JBcfN0qbQO1FdM2O68=;
- b=ZGrGqP42cLN9VPfkKfNCfpkR7BtHsNToGhk7VIRs7Pmx1B57dta9NeHJ4gCFQFGMIid+oBB7vRETKURErTGQbL/tYmcr/UYu64LwbnpHB2dUTUE4KSB0WyHwD6DxWIP/wbTxXt0H3ffxOUfvuCyVJ6Dz/XbEMgNUteAk7ianIH4=
-Authentication-Results: spf=none (sender IP is )
- smtp.mailfrom=peng.fan@nxp.com; 
-Received: from AM0PR04MB4481.eurprd04.prod.outlook.com (52.135.147.15) by
- AM0PR04MB6932.eurprd04.prod.outlook.com (52.132.213.86) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2686.27; Tue, 4 Feb 2020 13:41:41 +0000
-Received: from AM0PR04MB4481.eurprd04.prod.outlook.com
- ([fe80::91e2:17:b3f4:d422]) by AM0PR04MB4481.eurprd04.prod.outlook.com
- ([fe80::91e2:17:b3f4:d422%3]) with mapi id 15.20.2686.031; Tue, 4 Feb 2020
- 13:41:41 +0000
-From:   peng.fan@nxp.com
-To:     shawnguo@kernel.org, s.hauer@pengutronix.de, sboyd@kernel.org,
-        abel.vesa@nxp.com, aisheng.dong@nxp.com, leonard.crestez@nxp.com
-Cc:     kernel@pengutronix.de, festevam@gmail.com, linux-imx@nxp.com,
-        ping.bai@nxp.com, Anson.Huang@nxp.com,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org, Peng Fan <peng.fan@nxp.com>
-Subject: [PATCH 7/7] ARM: imx: imx7ulp: create cpufreq device
-Date:   Tue,  4 Feb 2020 21:34:37 +0800
-Message-Id: <1580823277-13644-8-git-send-email-peng.fan@nxp.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1580823277-13644-1-git-send-email-peng.fan@nxp.com>
-References: <1580823277-13644-1-git-send-email-peng.fan@nxp.com>
-Content-Type: text/plain
-X-ClientProxiedBy: HK0PR03CA0107.apcprd03.prod.outlook.com
- (2603:1096:203:b0::23) To AM0PR04MB4481.eurprd04.prod.outlook.com
- (2603:10a6:208:70::15)
+        id S1727174AbgBDNhe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Feb 2020 08:37:34 -0500
+Received: from LHREML713-CAH.china.huawei.com (unknown [172.18.7.107])
+        by Forcepoint Email with ESMTP id AD56E374ACE0C262B18F;
+        Tue,  4 Feb 2020 13:37:32 +0000 (GMT)
+Received: from fraeml702-chm.china.huawei.com (10.206.15.51) by
+ LHREML713-CAH.china.huawei.com (10.201.108.36) with Microsoft SMTP Server
+ (TLS) id 14.3.408.0; Tue, 4 Feb 2020 13:37:32 +0000
+Received: from fraeml714-chm.china.huawei.com (10.206.15.33) by
+ fraeml702-chm.china.huawei.com (10.206.15.51) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
+ 15.1.1713.5; Tue, 4 Feb 2020 14:37:31 +0100
+Received: from fraeml714-chm.china.huawei.com ([10.206.15.33]) by
+ fraeml714-chm.china.huawei.com ([10.206.15.33]) with mapi id 15.01.1713.004;
+ Tue, 4 Feb 2020 14:37:31 +0100
+From:   Roberto Sassu <roberto.sassu@huawei.com>
+To:     Mimi Zohar <zohar@linux.ibm.com>,
+        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>
+CC:     Jerry Snitselaar <jsnitsel@redhat.com>,
+        James Bottomley <James.Bottomley@HansenPartnership.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Silviu Vlasceanu <Silviu.Vlasceanu@huawei.com>
+Subject: RE: [PATCH v3 2/2] ima: support calculating the boot_aggregate based
+ on different TPM banks
+Thread-Topic: [PATCH v3 2/2] ima: support calculating the boot_aggregate based
+ on different TPM banks
+Thread-Index: AQHV14mgGDRCXCHq1UG77eo7NcEnk6gLEMcg
+Date:   Tue, 4 Feb 2020 13:37:31 +0000
+Message-ID: <01986ba728014571a3907fef9c69ff2c@huawei.com>
+References: <1580401363-5593-1-git-send-email-zohar@linux.ibm.com>
+ <1580401363-5593-2-git-send-email-zohar@linux.ibm.com>
+In-Reply-To: <1580401363-5593-2-git-send-email-zohar@linux.ibm.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.220.96.108]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
 MIME-Version: 1.0
-Received: from localhost.localdomain (119.31.174.66) by HK0PR03CA0107.apcprd03.prod.outlook.com (2603:1096:203:b0::23) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256) id 15.20.2686.28 via Frontend Transport; Tue, 4 Feb 2020 13:41:36 +0000
-X-Mailer: git-send-email 2.7.4
-X-Originating-IP: [119.31.174.66]
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-HT: Tenant
-X-MS-Office365-Filtering-Correlation-Id: 2ee1e305-793f-4cd0-36fa-08d7a977f725
-X-MS-TrafficTypeDiagnostic: AM0PR04MB6932:|AM0PR04MB6932:
-X-MS-Exchange-Transport-Forked: True
-X-Microsoft-Antispam-PRVS: <AM0PR04MB6932E326EB1DA519BBD960F688030@AM0PR04MB6932.eurprd04.prod.outlook.com>
-X-MS-Oob-TLC-OOBClassifiers: OLM:459;
-X-Forefront-PRVS: 03030B9493
-X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(4636009)(376002)(366004)(39860400002)(396003)(136003)(346002)(189003)(199004)(16526019)(8936002)(26005)(186003)(2616005)(8676002)(81156014)(956004)(81166006)(4326008)(36756003)(86362001)(478600001)(6506007)(66476007)(66556008)(66946007)(69590400006)(4744005)(6512007)(9686003)(316002)(6486002)(2906002)(5660300002)(52116002);DIR:OUT;SFP:1101;SCL:1;SRVR:AM0PR04MB6932;H:AM0PR04MB4481.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-Received-SPF: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-X-MS-Exchange-SenderADCheck: 1
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: uRKqjbExcXdjnzh42MlKq/RN0e5hNSOIooptQxI8q/jSI0RlSp/s5ErUMCK7gLuHc4mfkceBP4oHO6+5P6RKNc1QVrteqexLRgrdpdCpMs36fG8wqgiVBFq6HmM0YEP9mc05OjqSJ0xLTdkQlFfmGJ5x7i6ir//ndLXNmej3mLFLuT6+DYrxDYjq2GiKYL+Fq17dZzwtGUDlZ4ar8PwoVp/TzR4tMA1/0oSTxuaM8qu3nu4ImyGN9zG/FtTwu2ExFLz5V3q/Ok/U616E7yxezo50FRw/WTCMvsGCN+bXiBPLn1iypEFS78h+zzSPgsaua5VBFZgCl5AVWaCxZK0HrUA7X9qWh8i0P6ISIylmo7COoUg/nBBKtYtARzQzmFPOnohzyIjMrUlFiPGVLU/wQwXjmWfiN6reyn5NItDSWNna4YbNXCaykwNxDYZ79uAUWNwtVQryo5hJALzXk/JPAFcnKBYfA9yLpECm3vMwP3wPbA2U01AWUrEC0XDSfgNpNqY6Kp0lTnUiwvOEuiL6cHKS15YwTIZN5QC80hfypDw=
-X-MS-Exchange-AntiSpam-MessageData: nFnRvmrc5t4r63UlwMxbjLlWz6Prm/xRqZEJjkrooVMixm7J59os+T/asyqgXdJP47ftZ8WtMCYtxKHZrD3H1fv9UZK66ffocKAlh4O/ZPQewttpr8aD+mIwqneUDwAmEMJT+JaBj6TPvcns1OZCiQ==
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 2ee1e305-793f-4cd0-36fa-08d7a977f725
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Feb 2020 13:41:41.2645
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: bvei+I6lgn3QdydFwK3Bq1lz6cTIBb3bGA/q0k5M2SBppfVNlJo9d4C3OpxdnX2G+M2FnHK0tom9jbREcSbHmg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR04MB6932
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Peng Fan <peng.fan@nxp.com>
+> -----Original Message-----
+> From: linux-integrity-owner@vger.kernel.org [mailto:linux-integrity-
+> owner@vger.kernel.org] On Behalf Of Mimi Zohar
+> Sent: Thursday, January 30, 2020 5:23 PM
+> To: linux-integrity@vger.kernel.org
+> Cc: Jerry Snitselaar <jsnitsel@redhat.com>; James Bottomley
+> <James.Bottomley@HansenPartnership.com>; linux-
+> kernel@vger.kernel.org; Mimi Zohar <zohar@linux.ibm.com>
+> Subject: [PATCH v3 2/2] ima: support calculating the boot_aggregate based
+> on different TPM banks
+> 
+> Calculating the boot_aggregate attempts to read the TPM SHA1 bank,
+> assuming it is always enabled.  With TPM 2.0 hash agility, TPM chips
+> could support multiple TPM PCR banks, allowing firmware to configure and
+> enable different banks.
+> 
+> Instead of hard coding the TPM 2.0 bank hash algorithm used for calculating
+> the boot-aggregate, use the same hash algorithm for reading the TPM PCRs
+> as
+> for calculating the boot aggregate digest.  Preference is given to the
+> configured IMA default hash algorithm.
+> 
+> For TPM 1.2 SHA1 is the only supported hash algorithm.
+> 
+> Reported-by: Jerry Snitselaar <jsnitsel@redhat.com>
+> Suggested-by: Roberto Sassu <roberto.sassu@huawei.com>
+> Signed-off-by: Mimi Zohar <zohar@linux.ibm.com>
+> ---
+>  security/integrity/ima/ima_crypto.c | 45
+> ++++++++++++++++++++++++++++++++++++-
+>  1 file changed, 44 insertions(+), 1 deletion(-)
+> 
+> diff --git a/security/integrity/ima/ima_crypto.c
+> b/security/integrity/ima/ima_crypto.c
+> index 7967a6904851..a020aaefdea8 100644
+> --- a/security/integrity/ima/ima_crypto.c
+> +++ b/security/integrity/ima/ima_crypto.c
+> @@ -656,13 +656,34 @@ static void __init ima_pcrread(u32 idx, struct
+> tpm_digest *d)
+>  		pr_err("Error Communicating to TPM chip\n");
+>  }
+> 
+> +static enum hash_algo get_hash_algo(const char *algname)
+> +{
+> +	int i;
+> +
+> +	for (i = 0; i < HASH_ALGO__LAST; i++) {
+> +		if (strcmp(algname, hash_algo_name[i]) == 0)
+> +			break;
+> +	}
+> +
+> +	return i;
+> +}
+> +
+>  /*
+> - * Calculate the boot aggregate hash
+> + * The boot_aggregate is a cumulative hash over TPM registers 0 - 7.  With
+> + * TPM 1.2 the boot_aggregate was based on reading the SHA1 PCRs, but
+> with
+> + * TPM 2.0 hash agility, TPM chips could support multiple TPM PCR banks,
+> + * allowing firmware to configure and enable different banks.
+> + *
+> + * Knowing which TPM bank is read to calculate the boot_aggregate digest
+> + * needs to be conveyed to a verifier.  For this reason, use the same
+> + * hash algorithm for reading the TPM PCRs as for calculating the boot
+> + * aggregate digest as stored in the measurement list.
+>   */
+>  static int __init ima_calc_boot_aggregate_tfm(char *digest,
+>  					      struct crypto_shash *tfm)
+>  {
+>  	struct tpm_digest d = { .alg_id = TPM_ALG_SHA1, .digest = {0} };
+> +	enum hash_algo crypto_id;
+>  	int rc;
+>  	u32 i;
+>  	SHASH_DESC_ON_STACK(shash, tfm);
+> @@ -673,6 +694,28 @@ static int __init ima_calc_boot_aggregate_tfm(char
+> *digest,
+>  	if (rc != 0)
+>  		return rc;
+> 
+> +	crypto_id = get_hash_algo(crypto_shash_alg_name(tfm));
+> +	if (crypto_id == HASH_ALGO__LAST) {
+> +		pr_devel("unknown hash algorithm (%s), failing to read
+> PCRs.\n",
+> +			 crypto_shash_alg_name(tfm));
+> +		return 0;
+> +	}
+> +
+> +	for (i = 0; i < ima_tpm_chip->nr_allocated_banks; i++) {
+> +		if (ima_tpm_chip->allocated_banks[i].crypto_id ==
+> crypto_id) {
+> +			d.alg_id = ima_tpm_chip->allocated_banks[i].alg_id;
+> +			break;
+> +		}
+> +	}
+> +	if (i == ima_tpm_chip->nr_allocated_banks) {
+> +		pr_devel("TPM %s bank not allocated, failing to read
+> PCRs.\n",
+> +			 crypto_shash_alg_name(tfm));
+> +		return 0;
+> +	}
+> +
+> +	pr_devel("calculating the boot-aggregregate based on TPM
+> bank: %04x\n",
+> +		  d.alg_id);
+> +
+>  	/* cumulative sha1 over tpm registers 0-7 */
+>  	for (i = TPM_PCR0; i < TPM_PCR8; i++) {
+>  		ima_pcrread(i, &d);
 
-Create cpufreq device to let cpufreq driver could probe
+The third argument of crypto_shash_update() should be
+crypto_shash_digestsize(tfm).
 
-Signed-off-by: Peng Fan <peng.fan@nxp.com>
----
- arch/arm/mach-imx/mach-imx7ulp.c | 2 ++
- 1 file changed, 2 insertions(+)
+Roberto
 
-diff --git a/arch/arm/mach-imx/mach-imx7ulp.c b/arch/arm/mach-imx/mach-imx7ulp.c
-index 128cf4c92aab..fc44fb4ca48b 100644
---- a/arch/arm/mach-imx/mach-imx7ulp.c
-+++ b/arch/arm/mach-imx/mach-imx7ulp.c
-@@ -67,6 +67,8 @@ static const char *const imx7ulp_dt_compat[] __initconst = {
- 
- static void __init imx7ulp_init_late(void)
- {
-+	platform_device_register_simple("cpufreq-dt", -1, NULL, 0);
-+
- 	imx7ulp_cpuidle_init();
- }
- 
--- 
-2.16.4
-
+HUAWEI TECHNOLOGIES Duesseldorf GmbH, HRB 56063
+Managing Director: Li Peng, Li Jian, Shi Yanli
