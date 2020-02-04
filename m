@@ -2,212 +2,168 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 76372151908
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Feb 2020 11:55:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8B15115190E
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Feb 2020 11:57:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726917AbgBDKzs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 4 Feb 2020 05:55:48 -0500
-Received: from mga09.intel.com ([134.134.136.24]:5374 "EHLO mga09.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726726AbgBDKzs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Feb 2020 05:55:48 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga002.fm.intel.com ([10.253.24.26])
-  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 04 Feb 2020 02:55:47 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.70,401,1574150400"; 
-   d="scan'208";a="263796497"
-Received: from lkp-server01.sh.intel.com (HELO lkp-server01) ([10.239.97.150])
-  by fmsmga002.fm.intel.com with ESMTP; 04 Feb 2020 02:55:46 -0800
-Received: from kbuild by lkp-server01 with local (Exim 4.89)
-        (envelope-from <lkp@intel.com>)
-        id 1iyvrt-000I6Q-J1; Tue, 04 Feb 2020 18:55:45 +0800
-Date:   Tue, 04 Feb 2020 18:55:21 +0800
-From:   kbuild test robot <lkp@intel.com>
-To:     "Paul E. McKenney" <paulmck@kernel.org>
-Cc:     linux-kernel@vger.kernel.org
-Subject: [rcu:dev.2020.01.24a] BUILD SUCCESS
- 1f24afba500958f147e76f07e22e5771493cd6f9
-Message-ID: <5e394d99.7pLNKonGMNtp5O6f%lkp@intel.com>
-User-Agent: Heirloom mailx 12.5 6/20/10
+        id S1727090AbgBDK46 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 4 Feb 2020 05:56:58 -0500
+Received: from mail-qv1-f68.google.com ([209.85.219.68]:33410 "EHLO
+        mail-qv1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726631AbgBDK46 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Feb 2020 05:56:58 -0500
+Received: by mail-qv1-f68.google.com with SMTP id z3so8342758qvn.0
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Feb 2020 02:56:56 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=/oUsrvLxDIg2kRTkRIDa+3f0CNVdXlRSCLiuyEtYa9c=;
+        b=QBN3hZRqRJfvXM7KsldzN/Y7UB9nRf6fT56y9YAkEYDPA55hGUnbTbep8I6bfTbsdW
+         m9Pwoqx4QhXDeO4XtwYSVmDPrWsWQOAo19+2PH+U9Ib5ANtLC8DwrcskFIYSaLHRm45h
+         wLNqkjMwYOrCgjqSaai4YcdjOhwatJxCFjhvu8E89Kxo754pXUvKWDfKHhQxIbcwKFzj
+         h/dQt17+28/5KKynnLEiKf8IZ/OdCSCJJKD1FhhadNOwhLKCLtBsQjUOMyr5LS94Be9/
+         jR+tIGVKEm8A36MijR7kSUYjISnBxK4tA4/iPgmJoWnNId1zmePgSeO4W49pCkgbszTL
+         EAtg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=/oUsrvLxDIg2kRTkRIDa+3f0CNVdXlRSCLiuyEtYa9c=;
+        b=QDddND6p4lvPj3+fTr4i2Sm7/ei3teiqBEvmMSMu4Kk4LCo9LQ7pANXFGbcwXQ7o52
+         pNeaxCP5AnT153Sh0pLyJvBiDsPkNHT6uvG12LTtLyIA/e+wJC9lUoYmaS9jgPkJvpcR
+         L5L1uTaDaMUr69Uj7WLRgm82LHR95uZ753d7pvCINRXNAyZMklKdsqmbQOumkGR/bRzr
+         cbCjp+4QarVPaYo6oMG0ZI1uWKX+bXSlMiHgkdf0Sa89FTP6qz4a6hbBDYde18N33krj
+         lx2697PRbaxdZi5VH2Uu0HTBSpI+lWf6KyHSXz2bKtTfCsBqBDxYX6oyaKrCaG0Uqx5E
+         OHRA==
+X-Gm-Message-State: APjAAAWD1onhSKoqF1izULNa7xfKjMScMA/wc5scr8zRob3a+ro6IdzI
+        /5PFOoCFWXLUzufgoTKV1FzBB5VeE+UYDqarMFonaA==
+X-Google-Smtp-Source: APXvYqwHoNsb4va0mzD8ErAs5TLzl8MOKBkFKNiQum74YciVvwTDMrSJ6Tqrk1Jak8OGeSAYlPULUa93UHza4xbn1YQ=
+X-Received: by 2002:a0c:ead1:: with SMTP id y17mr25795609qvp.210.1580813815924;
+ Tue, 04 Feb 2020 02:56:55 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+References: <1579528013-28445-1-git-send-email-yannick.fertre@st.com> <69cced11-c30a-da6c-0465-79b632901b62@st.com>
+In-Reply-To: <69cced11-c30a-da6c-0465-79b632901b62@st.com>
+From:   Benjamin Gaignard <benjamin.gaignard@linaro.org>
+Date:   Tue, 4 Feb 2020 11:56:45 +0100
+Message-ID: <CA+M3ks5dcQOcHAszgCP=XH5dQrO7OYqpHybeZOm2dXrLBeoJ+w@mail.gmail.com>
+Subject: Re: [PATCH] drm/stm: ltdc: enable/disable depends on encoder
+To:     Philippe CORNU <philippe.cornu@st.com>
+Cc:     Yannick FERTRE <yannick.fertre@st.com>,
+        Benjamin GAIGNARD <benjamin.gaignard@st.com>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre TORGUE <alexandre.torgue@st.com>,
+        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+        "linux-stm32@st-md-mailman.stormreply.com" 
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/paulmck/linux-rcu.git  dev.2020.01.24a
-branch HEAD: 1f24afba500958f147e76f07e22e5771493cd6f9  squash! rcutorture: Suppress forward-progress complaints during early boot
+Le jeu. 23 janv. 2020 =C3=A0 10:47, Philippe CORNU <philippe.cornu@st.com> =
+a =C3=A9crit :
+>
+> Dear Yannick,
+> Thank you for your patch,
+>
+> Acked-by: Philippe Cornu <philippe.cornu@st.com>
+>
+> Philippe :-)
+>
+> On 1/20/20 2:46 PM, Yannick Fertre wrote:
+> > From: Yannick Fertr=C3=A9 <yannick.fertre@st.com>
+> >
+> > When connected to a dsi host, the ltdc display controller
+> > must send frames only after the end of the dsi panel
+> > initialization to avoid errors when the dsi host sends
+> > commands to the dsi panel (dsi px fifo full).
+> > To avoid this issue, the display controller must be
+> > enabled/disabled when the encoder is enabled/disabled.
+> >
 
-elapsed time: 7953m
+Applied on drm-misc-next.
 
-configs tested: 157
-configs skipped: 1
+Thanks
+Benjamin
 
-The following configs have been built successfully.
-More configs may be tested in the coming days.
-
-arm                              allmodconfig
-arm                         at91_dt_defconfig
-arm64                               defconfig
-arm                        multi_v5_defconfig
-arm                              allyesconfig
-arm64                            allyesconfig
-arm                               allnoconfig
-arm                           efm32_defconfig
-arm                           sunxi_defconfig
-arm64                             allnoconfig
-arm64                            allmodconfig
-arm                          exynos_defconfig
-arm                        shmobile_defconfig
-arm                        multi_v7_defconfig
-sparc                            allyesconfig
-i386                             alldefconfig
-i386                              allnoconfig
-i386                             allyesconfig
-i386                                defconfig
-ia64                             allmodconfig
-ia64                              allnoconfig
-ia64                             allyesconfig
-ia64                                defconfig
-ia64                             alldefconfig
-xtensa                       common_defconfig
-openrisc                    or1ksim_defconfig
-nios2                         3c120_defconfig
-xtensa                          iss_defconfig
-c6x                        evmc6678_defconfig
-c6x                              allyesconfig
-nios2                         10m50_defconfig
-openrisc                 simple_smp_defconfig
-alpha                               defconfig
-csky                                defconfig
-nds32                             allnoconfig
-nds32                               defconfig
-m68k                          multi_defconfig
-m68k                       m5475evb_defconfig
-h8300                    h8300h-sim_defconfig
-h8300                     edosk2674_defconfig
-m68k                           sun3_defconfig
-h8300                       h8s-sim_defconfig
-m68k                             allmodconfig
-arc                              allyesconfig
-arc                                 defconfig
-microblaze                      mmu_defconfig
-microblaze                    nommu_defconfig
-powerpc                           allnoconfig
-powerpc                             defconfig
-powerpc                       ppc64_defconfig
-powerpc                          rhel-kconfig
-mips                           32r2_defconfig
-mips                         64r6el_defconfig
-mips                             allmodconfig
-mips                              allnoconfig
-mips                             allyesconfig
-mips                      fuloong2e_defconfig
-mips                      malta_kvm_defconfig
-parisc                            allnoconfig
-parisc                            allyesonfig
-parisc                         b180_defconfig
-parisc                        c3000_defconfig
-parisc                              defconfig
-x86_64               randconfig-a001-20200130
-x86_64               randconfig-a002-20200130
-x86_64               randconfig-a003-20200130
-i386                 randconfig-a001-20200130
-i386                 randconfig-a002-20200130
-i386                 randconfig-a003-20200130
-c6x                  randconfig-a001-20200130
-h8300                randconfig-a001-20200130
-microblaze           randconfig-a001-20200130
-nios2                randconfig-a001-20200130
-sparc64              randconfig-a001-20200130
-csky                 randconfig-a001-20200129
-openrisc             randconfig-a001-20200129
-s390                 randconfig-a001-20200129
-sh                   randconfig-a001-20200129
-xtensa               randconfig-a001-20200129
-sh                   randconfig-a001-20200203
-s390                 randconfig-a001-20200203
-csky                 randconfig-a001-20200203
-xtensa               randconfig-a001-20200203
-openrisc             randconfig-a001-20200203
-x86_64               randconfig-b001-20200129
-x86_64               randconfig-b002-20200129
-x86_64               randconfig-b003-20200129
-i386                 randconfig-b001-20200129
-i386                 randconfig-b002-20200129
-i386                 randconfig-b003-20200129
-x86_64               randconfig-c001-20200129
-x86_64               randconfig-c002-20200129
-x86_64               randconfig-c003-20200129
-i386                 randconfig-c001-20200129
-i386                 randconfig-c002-20200129
-i386                 randconfig-c003-20200129
-x86_64               randconfig-d001-20200130
-x86_64               randconfig-d002-20200130
-x86_64               randconfig-d003-20200130
-i386                 randconfig-d001-20200130
-i386                 randconfig-d002-20200130
-i386                 randconfig-d003-20200130
-x86_64               randconfig-e001-20200129
-x86_64               randconfig-e002-20200129
-x86_64               randconfig-e003-20200129
-i386                 randconfig-e001-20200129
-i386                 randconfig-e002-20200129
-i386                 randconfig-e003-20200129
-x86_64               randconfig-g001-20200129
-x86_64               randconfig-g002-20200129
-x86_64               randconfig-g003-20200129
-i386                 randconfig-g001-20200129
-i386                 randconfig-g002-20200129
-i386                 randconfig-g003-20200129
-x86_64               randconfig-h001-20200129
-x86_64               randconfig-h002-20200129
-x86_64               randconfig-h003-20200129
-i386                 randconfig-h001-20200129
-i386                 randconfig-h002-20200129
-i386                 randconfig-h003-20200129
-arc                  randconfig-a001-20200203
-ia64                 randconfig-a001-20200203
-sparc                randconfig-a001-20200203
-arm64                randconfig-a001-20200203
-arm                  randconfig-a001-20200203
-riscv                             allnoconfig
-riscv                               defconfig
-riscv                            allmodconfig
-riscv                    nommu_virt_defconfig
-riscv                            allyesconfig
-riscv                          rv32_defconfig
-s390                             alldefconfig
-s390                             allmodconfig
-s390                              allnoconfig
-s390                             allyesconfig
-s390                          debug_defconfig
-s390                                defconfig
-s390                       zfcpdump_defconfig
-sh                               allmodconfig
-sh                          rsk7269_defconfig
-sh                  sh7785lcr_32bit_defconfig
-sh                                allnoconfig
-sh                            titan_defconfig
-sparc64                          allmodconfig
-sparc64                          allyesconfig
-sparc                               defconfig
-sparc64                           allnoconfig
-sparc64                             defconfig
-um                           x86_64_defconfig
-um                             i386_defconfig
-um                                  defconfig
-x86_64                              fedora-25
-x86_64                                  kexec
-x86_64                                    lkp
-x86_64                                   rhel
-x86_64                         rhel-7.2-clear
-x86_64                               rhel-7.6
-
----
-0-DAY kernel test infrastructure                 Open Source Technology Center
-https://lists.01.org/hyperkitty/list/kbuild-all@lists.01.org Intel Corporation
+> > Signed-off-by: Yannick Fertr=C3=A9 <yannick.fertre@st.com>
+> > ---
+> >   drivers/gpu/drm/stm/ltdc.c | 14 ++++++++------
+> >   1 file changed, 8 insertions(+), 6 deletions(-)
+> >
+> > diff --git a/drivers/gpu/drm/stm/ltdc.c b/drivers/gpu/drm/stm/ltdc.c
+> > index 719dfc5..9ef125d 100644
+> > --- a/drivers/gpu/drm/stm/ltdc.c
+> > +++ b/drivers/gpu/drm/stm/ltdc.c
+> > @@ -437,9 +437,6 @@ static void ltdc_crtc_atomic_enable(struct drm_crtc=
+ *crtc,
+> >       /* Commit shadow registers =3D update planes at next vblank */
+> >       reg_set(ldev->regs, LTDC_SRCR, SRCR_VBR);
+> >
+> > -     /* Enable LTDC */
+> > -     reg_set(ldev->regs, LTDC_GCR, GCR_LTDCEN);
+> > -
+> >       drm_crtc_vblank_on(crtc);
+> >   }
+> >
+> > @@ -453,9 +450,6 @@ static void ltdc_crtc_atomic_disable(struct drm_crt=
+c *crtc,
+> >
+> >       drm_crtc_vblank_off(crtc);
+> >
+> > -     /* disable LTDC */
+> > -     reg_clear(ldev->regs, LTDC_GCR, GCR_LTDCEN);
+> > -
+> >       /* disable IRQ */
+> >       reg_clear(ldev->regs, LTDC_IER, IER_RRIE | IER_FUIE | IER_TERRIE)=
+;
+> >
+> > @@ -1058,9 +1052,13 @@ static const struct drm_encoder_funcs ltdc_encod=
+er_funcs =3D {
+> >   static void ltdc_encoder_disable(struct drm_encoder *encoder)
+> >   {
+> >       struct drm_device *ddev =3D encoder->dev;
+> > +     struct ltdc_device *ldev =3D ddev->dev_private;
+> >
+> >       DRM_DEBUG_DRIVER("\n");
+> >
+> > +     /* Disable LTDC */
+> > +     reg_clear(ldev->regs, LTDC_GCR, GCR_LTDCEN);
+> > +
+> >       /* Set to sleep state the pinctrl whatever type of encoder */
+> >       pinctrl_pm_select_sleep_state(ddev->dev);
+> >   }
+> > @@ -1068,6 +1066,7 @@ static void ltdc_encoder_disable(struct drm_encod=
+er *encoder)
+> >   static void ltdc_encoder_enable(struct drm_encoder *encoder)
+> >   {
+> >       struct drm_device *ddev =3D encoder->dev;
+> > +     struct ltdc_device *ldev =3D ddev->dev_private;
+> >
+> >       DRM_DEBUG_DRIVER("\n");
+> >
+> > @@ -1078,6 +1077,9 @@ static void ltdc_encoder_enable(struct drm_encode=
+r *encoder)
+> >        */
+> >       if (encoder->encoder_type =3D=3D DRM_MODE_ENCODER_DPI)
+> >               pinctrl_pm_select_default_state(ddev->dev);
+> > +
+> > +     /* Enable LTDC */
+> > +     reg_set(ldev->regs, LTDC_GCR, GCR_LTDCEN);
+> >   }
+> >
+> >   static const struct drm_encoder_helper_funcs ltdc_encoder_helper_func=
+s =3D {
+> >
+> _______________________________________________
+> linux-arm-kernel mailing list
+> linux-arm-kernel@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
