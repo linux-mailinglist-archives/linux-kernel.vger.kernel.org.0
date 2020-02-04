@@ -2,44 +2,81 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1CB7B1515AC
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Feb 2020 07:09:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1A3621515BE
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Feb 2020 07:11:55 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727404AbgBDGG5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 4 Feb 2020 01:06:57 -0500
-Received: from verein.lst.de ([213.95.11.211]:59366 "EHLO verein.lst.de"
+        id S1726378AbgBDGLs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 4 Feb 2020 01:11:48 -0500
+Received: from mga09.intel.com ([134.134.136.24]:38538 "EHLO mga09.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726688AbgBDGG4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Feb 2020 01:06:56 -0500
-Received: by verein.lst.de (Postfix, from userid 2407)
-        id CB75B68BFE; Tue,  4 Feb 2020 07:06:54 +0100 (CET)
-Date:   Tue, 4 Feb 2020 07:06:54 +0100
-From:   Christoph Hellwig <hch@lst.de>
-To:     Valdis =?utf-8?Q?Kl=C4=93tnieks?= <valdis.kletnieks@vt.edu>
-Cc:     Namjae Jeon <linkinjeon@gmail.com>, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, gregkh@linuxfoundation.org,
-        hch@lst.de, sj1557.seo@samsung.com, pali.rohar@gmail.com,
-        arnd@arndb.de, namjae.jeon@samsung.com, viro@zeniv.linux.org.uk
-Subject: Re: [PATCH] exfat: update file system parameter handling
-Message-ID: <20200204060654.GB31675@lst.de>
-References: <297144.1580786668@turing-police>
+        id S1725834AbgBDGLs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Feb 2020 01:11:48 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga004.fm.intel.com ([10.253.24.48])
+  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 03 Feb 2020 22:11:48 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.70,398,1574150400"; 
+   d="scan'208";a="254308213"
+Received: from blu2-mobl3.ccr.corp.intel.com (HELO [10.254.209.105]) ([10.254.209.105])
+  by fmsmga004.fm.intel.com with ESMTP; 03 Feb 2020 22:11:46 -0800
+Subject: Re: [PATCH] iommu/intel-iommu: set as DUMMY_DEVICE_DOMAIN_INFO if no
+ IOMMU
+To:     Jian-Hong Pan <jian-hong@endlessm.com>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Joerg Roedel <joro@8bytes.org>
+Cc:     iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
+        linux@endlessm.com
+References: <20200203091009.196658-1-jian-hong@endlessm.com>
+From:   Lu Baolu <baolu.lu@linux.intel.com>
+Message-ID: <aab0948d-c6a3-baa1-7343-f18c936d662d@linux.intel.com>
+Date:   Tue, 4 Feb 2020 14:11:45 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <297144.1580786668@turing-police>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+In-Reply-To: <20200203091009.196658-1-jian-hong@endlessm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 03, 2020 at 10:24:28PM -0500, Valdis Klētnieks wrote:
-> Al Viro recently reworked the way file system parameters are handled
-> Update super.c to work with it in linux-next 20200203.
+Hi,
+
+On 2020/2/3 17:10, Jian-Hong Pan wrote:
+> If the device has no IOMMU, it still invokes iommu_need_mapping during
+> intel_alloc_coherent. However, iommu_need_mapping can only check the
+> device is DUMMY_DEVICE_DOMAIN_INFO or not. This patch marks the device
+> is a DUMMY_DEVICE_DOMAIN_INFO if the device has no IOMMU.
 > 
-> Signed-off-by: Valdis Kletnieks <valdis.kletnieks@vt.edu>
+> Signed-off-by: Jian-Hong Pan <jian-hong@endlessm.com>
+> ---
+>   drivers/iommu/intel-iommu.c | 4 +++-
+>   1 file changed, 3 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/iommu/intel-iommu.c b/drivers/iommu/intel-iommu.c
+> index 35a4a3abedc6..878bc986a015 100644
+> --- a/drivers/iommu/intel-iommu.c
+> +++ b/drivers/iommu/intel-iommu.c
+> @@ -5612,8 +5612,10 @@ static int intel_iommu_add_device(struct device *dev)
+>   	int ret;
+>   
+>   	iommu = device_to_iommu(dev, &bus, &devfn);
+> -	if (!iommu)
+> +	if (!iommu) {
+> +		dev->archdata.iommu = DUMMY_DEVICE_DOMAIN_INFO;
 
-Looks good:
+Is this a DMA capable device? I am afraid some real bugs might be
+covered up if we marking the device as IOMMU dummy here.
 
-Reviewed-by: Christoph Hellwig <hch@lst.de>
+Best regards,
+baolu
+
+>   		return -ENODEV;
+> +	}
+>   
+>   	iommu_device_link(&iommu->iommu, dev);
+>   
+> 
