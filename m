@@ -2,127 +2,167 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EB8771522B2
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Feb 2020 00:05:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1C88F1522A4
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Feb 2020 00:02:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727768AbgBDXFE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 4 Feb 2020 18:05:04 -0500
-Received: from mga01.intel.com ([192.55.52.88]:22705 "EHLO mga01.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727730AbgBDXFB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Feb 2020 18:05:01 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga002.fm.intel.com ([10.253.24.26])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 04 Feb 2020 15:05:00 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.70,403,1574150400"; 
-   d="scan'208";a="264018019"
-Received: from unknown (HELO gayuk-dev-mach.sc.intel.com) ([10.3.79.172])
-  by fmsmga002.fm.intel.com with ESMTP; 04 Feb 2020 15:05:00 -0800
-From:   Gayatri Kammela <gayatri.kammela@intel.com>
-To:     platform-driver-x86@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org, vishwanath.somayaji@intel.com,
-        dvhart@infradead.org, mika.westerberg@intel.com,
-        peterz@infradead.org, charles.d.prestopine@intel.com,
-        Gayatri Kammela <gayatri.kammela@intel.com>,
-        Srinivas Pandruvada <srinivas.pandruvada@intel.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        "David E . Box" <david.e.box@intel.com>
-Subject: [PATCH v2 7/7] platform/x86: intel_pmc_core: Add debugfs support to access live status registers
-Date:   Tue,  4 Feb 2020 15:02:00 -0800
-Message-Id: <89269c13aa2dbc99246741ff3026a6c7cb3c7495.1580848931.git.gayatri.kammela@intel.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <cover.1580848931.git.gayatri.kammela@intel.com>
-References: <cover.1580848931.git.gayatri.kammela@intel.com>
-In-Reply-To: <cover.1580848931.git.gayatri.kammela@intel.com>
-References: <cover.1580848931.git.gayatri.kammela@intel.com>
+        id S1727695AbgBDXC5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 4 Feb 2020 18:02:57 -0500
+Received: from us-smtp-1.mimecast.com ([205.139.110.61]:40743 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727412AbgBDXC4 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Feb 2020 18:02:56 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1580857375;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=NKr69gnaNBcjsWSr0bho3ksQ06JauqQQ0HsRD8GC1SM=;
+        b=WR7NDBJTcIJlQtvVsUkAYJI4bZUoP9SV8ujxf3RFiicJTBPwNw5tX8ODyYf5Oa3xjXeuAK
+        30gWx/idw2srPJY0Z9TwH4CluK6acKFvQxBuLtTy7CU91SsmGMviZh421scr4WCjl/iKP5
+        FE/iIg2EsySMZs0lO5pks8km4T2yYx4=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-78-MhIqW77NP0-JlIJr67CfLA-1; Tue, 04 Feb 2020 18:02:53 -0500
+X-MC-Unique: MhIqW77NP0-JlIJr67CfLA-1
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id C227A18AB2C0;
+        Tue,  4 Feb 2020 23:02:51 +0000 (UTC)
+Received: from madcap2.tricolour.ca (ovpn-112-16.rdu2.redhat.com [10.10.112.16])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id E6D4877927;
+        Tue,  4 Feb 2020 23:02:37 +0000 (UTC)
+Date:   Tue, 4 Feb 2020 18:02:35 -0500
+From:   Richard Guy Briggs <rgb@redhat.com>
+To:     Paul Moore <paul@paul-moore.com>
+Cc:     containers@lists.linux-foundation.org, linux-api@vger.kernel.org,
+        Linux-Audit Mailing List <linux-audit@redhat.com>,
+        linux-fsdevel@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+        netdev@vger.kernel.org, netfilter-devel@vger.kernel.org,
+        sgrubb@redhat.com, omosnace@redhat.com, dhowells@redhat.com,
+        simo@redhat.com, Eric Paris <eparis@parisplace.org>,
+        Serge Hallyn <serge@hallyn.com>, ebiederm@xmission.com,
+        nhorman@tuxdriver.com, Dan Walsh <dwalsh@redhat.com>,
+        mpatel@redhat.com
+Subject: Re: [PATCH ghak90 V8 05/16] audit: log drop of contid on exit of
+ last task
+Message-ID: <20200204230235.dwunh76dum4kkssp@madcap2.tricolour.ca>
+References: <cover.1577736799.git.rgb@redhat.com>
+ <b3725abab452beaba740ac58f76144e6c3bda2fa.1577736799.git.rgb@redhat.com>
+ <CAHC9VhQ=+4P6Rr1S1-sNb2X-CbYYKMQMJDGP=bBr8GG3xLD8qQ@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAHC9VhQ=+4P6Rr1S1-sNb2X-CbYYKMQMJDGP=bBr8GG3xLD8qQ@mail.gmail.com>
+User-Agent: NeoMutt/20180716
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Just like status registers, Tiger Lake has another set of 6 registers
-that help with status of the low power mode requirements. They are
-latched on every PC10 entry/exit and S0ix.y entry/exit as well.
+On 2020-01-22 16:28, Paul Moore wrote:
+> On Tue, Dec 31, 2019 at 2:50 PM Richard Guy Briggs <rgb@redhat.com> wrote:
+> >
+> > Since we are tracking the life of each audit container indentifier, we
+> > can match the creation event with the destruction event.  Log the
+> > destruction of the audit container identifier when the last process in
+> > that container exits.
+> >
+> > Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
+> > ---
+> >  kernel/audit.c   | 17 +++++++++++++++++
+> >  kernel/audit.h   |  2 ++
+> >  kernel/auditsc.c |  2 ++
+> >  3 files changed, 21 insertions(+)
+> >
+> > diff --git a/kernel/audit.c b/kernel/audit.c
+> > index 4bab20f5f781..fa8f1aa3a605 100644
+> > --- a/kernel/audit.c
+> > +++ b/kernel/audit.c
+> > @@ -2502,6 +2502,23 @@ int audit_set_contid(struct task_struct *task, u64 contid)
+> >         return rc;
+> >  }
+> >
+> > +void audit_log_container_drop(void)
+> > +{
+> > +       struct audit_buffer *ab;
+> > +
+> > +       if (!current->audit || !current->audit->cont ||
+> > +           refcount_read(&current->audit->cont->refcount) > 1)
+> > +               return;
+> > +       ab = audit_log_start(audit_context(), GFP_KERNEL, AUDIT_CONTAINER_OP);
+> > +       if (!ab)
+> > +               return;
+> > +
+> > +       audit_log_format(ab, "op=drop opid=%d contid=%llu old-contid=%llu",
+> > +                        task_tgid_nr(current), audit_get_contid(current),
+> > +                        audit_get_contid(current));
+> > +       audit_log_end(ab);
+> > +}
+> 
+> Assumine we are careful about where we call it in audit_free(...), you
+> are confident we can't do this as part of _audit_contobj_put(...),
+> yes?
 
-Though status and live status registers show the status of same list
-of requirements, live status registers show the status of the low power
-mode requirements at the time of reading.
+We need audit_log_container_drop in audit_free_syscall() due to needing
+context, which gets freed in audit_free_syscall() called from
+audit_free().
 
-Cc: Srinivas Pandruvada <srinivas.pandruvada@intel.com>
-Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: David E. Box <david.e.box@intel.com>
-Signed-off-by: Gayatri Kammela <gayatri.kammela@intel.com>
----
- drivers/platform/x86/intel_pmc_core.c | 19 +++++++++++++++++++
- drivers/platform/x86/intel_pmc_core.h |  2 ++
- 2 files changed, 21 insertions(+)
+We need audit_log_container_drop in audit_log_exit() due to having that
+record included before the EOE record at the end of audit_log_exit().
 
-diff --git a/drivers/platform/x86/intel_pmc_core.c b/drivers/platform/x86/intel_pmc_core.c
-index 62cce906755e..19e02319fd0e 100644
---- a/drivers/platform/x86/intel_pmc_core.c
-+++ b/drivers/platform/x86/intel_pmc_core.c
-@@ -570,6 +570,7 @@ static const struct pmc_reg_map tgl_reg_map = {
- 	.lpm_residency_offset = TGL_LPM_RESIDENCY_OFFSET,
- 	.lpm_sts = tgl_lpm_maps,
- 	.lpm_status_offset = TGL_LPM_STATUS_OFFSET,
-+	.lpm_live_status_offset = TGL_LPM_LIVE_STATUS_OFFSET,
- };
- 
- static inline u32 pmc_core_reg_read(struct pmc_dev *pmcdev, int reg_offset)
-@@ -1019,6 +1020,18 @@ static int pmc_core_substate_sts_regs_show(struct seq_file *s, void *unused)
- }
- DEFINE_SHOW_ATTRIBUTE(pmc_core_substate_sts_regs);
- 
-+static int pmc_core_substate_l_sts_regs_show(struct seq_file *s, void *unused)
-+{
-+	struct pmc_dev *pmcdev = s->private;
-+	const struct pmc_bit_map **maps = pmcdev->map->lpm_sts;
-+	u32 offset = pmcdev->map->lpm_live_status_offset;
-+
-+	pmc_core_lpm_display(pmcdev, NULL, s, offset, "LIVE_STATUS", maps);
-+
-+	return 0;
-+}
-+DEFINE_SHOW_ATTRIBUTE(pmc_core_substate_l_sts_regs);
-+
- static int pmc_core_pkgc_show(struct seq_file *s, void *unused)
- {
- 	struct pmc_dev *pmcdev = s->private;
-@@ -1096,6 +1109,12 @@ static void pmc_core_dbgfs_register(struct pmc_dev *pmcdev)
- 				    pmcdev->dbgfs_dir, pmcdev,
- 				    &pmc_core_substate_sts_regs_fops);
- 	}
-+
-+	if (pmcdev->map->lpm_status_offset) {
-+		debugfs_create_file("substate_live_status_registers", 0444,
-+				    pmcdev->dbgfs_dir, pmcdev,
-+				    &pmc_core_substate_l_sts_regs_fops);
-+	}
- }
- #else
- static inline void pmc_core_dbgfs_register(struct pmc_dev *pmcdev)
-diff --git a/drivers/platform/x86/intel_pmc_core.h b/drivers/platform/x86/intel_pmc_core.h
-index 3fdf4735c56f..1bbdffe80bde 100644
---- a/drivers/platform/x86/intel_pmc_core.h
-+++ b/drivers/platform/x86/intel_pmc_core.h
-@@ -196,6 +196,7 @@ enum ppfear_regs {
- 
- /* Tigerlake Low Power Mode debug registers */
- #define TGL_LPM_STATUS_OFFSET			0x1C3C
-+#define TGL_LPM_LIVE_STATUS_OFFSET		0x1C5C
- 
- const char *lpm_modes[] = {
- 	"S0i2.0",
-@@ -257,6 +258,7 @@ struct pmc_reg_map {
- 	const u32 lpm_en_offset;
- 	const u32 lpm_residency_offset;
- 	const u32 lpm_status_offset;
-+	const u32 lpm_live_status_offset;
- };
- 
- /**
--- 
-2.17.1
+We could put in _contobj_put() if we drop context and any attempt to
+connect it with a syscall record, which I strongly discourage.
+
+The syscall record contains info about subject, container_id record only
+contains info about container object other than subj pid.
+
+> >  /**
+> >   * audit_log_end - end one audit record
+> >   * @ab: the audit_buffer
+> > diff --git a/kernel/audit.h b/kernel/audit.h
+> > index e4a31aa92dfe..162de8366b32 100644
+> > --- a/kernel/audit.h
+> > +++ b/kernel/audit.h
+> > @@ -255,6 +255,8 @@ extern void audit_log_d_path_exe(struct audit_buffer *ab,
+> >  extern struct tty_struct *audit_get_tty(void);
+> >  extern void audit_put_tty(struct tty_struct *tty);
+> >
+> > +extern void audit_log_container_drop(void);
+> > +
+> >  /* audit watch/mark/tree functions */
+> >  #ifdef CONFIG_AUDITSYSCALL
+> >  extern unsigned int audit_serial(void);
+> > diff --git a/kernel/auditsc.c b/kernel/auditsc.c
+> > index 0e2d50533959..bd855794ad26 100644
+> > --- a/kernel/auditsc.c
+> > +++ b/kernel/auditsc.c
+> > @@ -1568,6 +1568,8 @@ static void audit_log_exit(void)
+> >
+> >         audit_log_proctitle();
+> >
+> > +       audit_log_container_drop();
+> > +
+> >         /* Send end of event record to help user space know we are finished */
+> >         ab = audit_log_start(context, GFP_KERNEL, AUDIT_EOE);
+> >         if (ab)
+> > --
+> > 1.8.3.1
+> >
+> 
+> --
+> paul moore
+> www.paul-moore.com
+> 
+
+- RGB
+
+--
+Richard Guy Briggs <rgb@redhat.com>
+Sr. S/W Engineer, Kernel Security, Base Operating Systems
+Remote, Ottawa, Red Hat Canada
+IRC: rgb, SunRaycer
+Voice: +1.647.777.2635, Internal: (81) 32635
 
