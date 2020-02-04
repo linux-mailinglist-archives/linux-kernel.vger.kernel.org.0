@@ -2,233 +2,85 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E3ACB152183
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Feb 2020 21:33:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5894515218C
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Feb 2020 21:36:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727574AbgBDUdW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 4 Feb 2020 15:33:22 -0500
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:43782 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727458AbgBDUdW (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Feb 2020 15:33:22 -0500
-Received: by mail-pg1-f195.google.com with SMTP id u131so10231107pgc.10
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Feb 2020 12:33:20 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:from:to:cc:subject:in-reply-to:message-id:references
-         :user-agent:mime-version;
-        bh=ctEXrh7BheWQOsS9Kl/bOhHMUGdv4AM8Ap/ACYvJln0=;
-        b=q00OvhlhixeaX1IT00zVHR5jmcaOH/fOdcX8kV2LK0YG2A8I0S2OWy4BsTBFtZvIIL
-         xntzdnhYSAE3F9v7o8nLt/7oUpCmpkZF1AKAsmoCu60PHWNgcDO85m07ufwSCpdRzRuC
-         IpEQQisJ7h89UPomw6Q67b/7NTnjfQe0lKLmhbPDhLreFgr3bM8l6bkgFut579vJhbAH
-         SkX6gIoLyQJpnCNuuHnSsCHLg6asDoppXthcaUHikMavXF+5ZzejrUjciB/1GgaErf3r
-         ztYBMK2N69qKObS6hBkuFU2LNwuPt8UPxqo5JhEITvA6TIPsiPk/Ka0pcL8HiBHXoLpH
-         F+9g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:in-reply-to:message-id
-         :references:user-agent:mime-version;
-        bh=ctEXrh7BheWQOsS9Kl/bOhHMUGdv4AM8Ap/ACYvJln0=;
-        b=mIzvMvZBKSLbpYYSLybSZkfWwB6+6ki0++mOjkRlnkoG8B9lSJUSlfeQc+J2+TeMPo
-         S8eX17pLmhtApCA/QP4yrLidLdo6VB35OGik55KE2Zsvi2V2JvJtsaH9AhUzYKZuAenL
-         5D1dxQver0+G+2EZqdvU9DTZkhC+wvJ6ku4rCGhHVdmDHfVcesRM2mTZgfPaHQg6pMZG
-         HZtw0t2XskQX7DYApHGP8oLesWmnVb9RpdRyKz860/m/qhlS8KVQrJzx/uQtM1Qrs0bT
-         J5hhfil3OXyT5vFewT65gywV8JOgxlYINdE01RNKluqvz3c6N/nqDGmIFcZmus5CHYf/
-         1DOw==
-X-Gm-Message-State: APjAAAWT/ErbUfNPE9WWSCJKtbnpnCkW6vt2IOUFfWg4EMK7V8r8zv7i
-        Ph9kg+0dcPk/clWvl6FXX+EKCw==
-X-Google-Smtp-Source: APXvYqyVowEoWNfmXXNoW76yvtJ8Y52eMGNdxHCQ/baVIi8dgLfmRQxel7PBirdIkNiTaVvs+R4TQg==
-X-Received: by 2002:a63:d157:: with SMTP id c23mr33139327pgj.242.1580848399755;
-        Tue, 04 Feb 2020 12:33:19 -0800 (PST)
-Received: from [2620:15c:17:3:3a5:23a7:5e32:4598] ([2620:15c:17:3:3a5:23a7:5e32:4598])
-        by smtp.gmail.com with ESMTPSA id j8sm4605432pjb.4.2020.02.04.12.33.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 04 Feb 2020 12:33:18 -0800 (PST)
-Date:   Tue, 4 Feb 2020 12:33:18 -0800 (PST)
-From:   David Rientjes <rientjes@google.com>
-X-X-Sender: rientjes@chino.kir.corp.google.com
-To:     Mike Kravetz <mike.kravetz@oracle.com>
-cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        Song Liu <songliubraving@fb.com>,
-        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
-        Mel Gorman <mgorman@techsingularity.net>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Andrew Morton <akpm@linux-foundation.org>
-Subject: Re: [PATCH] mm: always consider THP when adjusting min_free_kbytes
-In-Reply-To: <20200204194156.61672-1-mike.kravetz@oracle.com>
-Message-ID: <alpine.DEB.2.21.2002041218580.58724@chino.kir.corp.google.com>
-References: <20200204194156.61672-1-mike.kravetz@oracle.com>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        id S1727588AbgBDUgI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 4 Feb 2020 15:36:08 -0500
+Received: from mga01.intel.com ([192.55.52.88]:11975 "EHLO mga01.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727458AbgBDUgI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Feb 2020 15:36:08 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 04 Feb 2020 12:36:07 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.70,403,1574150400"; 
+   d="scan'208";a="279168231"
+Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.202])
+  by FMSMGA003.fm.intel.com with ESMTP; 04 Feb 2020 12:36:06 -0800
+Date:   Tue, 4 Feb 2020 12:36:07 -0800
+From:   Sean Christopherson <sean.j.christopherson@intel.com>
+To:     Krish Sadhukhan <krish.sadhukhan@oracle.com>
+Cc:     Paolo Bonzini <pbonzini@redhat.com>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Wanpeng Li <wanpengli@tencent.com>,
+        Jim Mattson <jmattson@google.com>,
+        Joerg Roedel <joro@8bytes.org>, kvm@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] KVM: nVMX: Remove stale comment from
+ nested_vmx_load_cr3()
+Message-ID: <20200204203607.GB5663@linux.intel.com>
+References: <20200204153259.16318-1-sean.j.christopherson@intel.com>
+ <dcee13f5-f447-9ab4-4803-e3c4f42fb011@oracle.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <dcee13f5-f447-9ab4-4803-e3c4f42fb011@oracle.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 4 Feb 2020, Mike Kravetz wrote:
-
-> At system initialization time, min_free_kbytes is calculated based
-> on the amount of memory in the system.  If THP is enabled, then
-> khugepaged is started and min_free_kbytes may be adjusted in an
-> attempt to reserve some pageblocks for THP allocations.
+On Tue, Feb 04, 2020 at 11:57:39AM -0800, Krish Sadhukhan wrote:
 > 
-> When memory is offlined or onlined, min_free_kbytes is recalculated
-> and adjusted based on the amount of memory.  However, the adjustment
-> for THP is not considered.  Here is an example from a 2 node system
-> with 8GB of memory.
+> On 2/4/20 7:32 AM, Sean Christopherson wrote:
+> >The blurb pertaining to the return value of nested_vmx_load_cr3() no
+> >longer matches reality, remove it entirely as the behavior it is
+> >attempting to document is quite obvious when reading the actual code.
+> >
+> >Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
+> >---
+> >  arch/x86/kvm/vmx/nested.c | 2 --
+> >  1 file changed, 2 deletions(-)
+> >
+> >diff --git a/arch/x86/kvm/vmx/nested.c b/arch/x86/kvm/vmx/nested.c
+> >index 7608924ee8c1..0c9b847f7a25 100644
+> >--- a/arch/x86/kvm/vmx/nested.c
+> >+++ b/arch/x86/kvm/vmx/nested.c
+> >@@ -1076,8 +1076,6 @@ static bool nested_cr3_valid(struct kvm_vcpu *vcpu, unsigned long val)
+> >  /*
+> >   * Load guest's/host's cr3 at nested entry/exit. nested_ept is true if we are
+> >   * emulating VM entry into a guest with EPT enabled.
+> >- * Returns 0 on success, 1 on failure. Invalid state exit qualification code
+> >- * is assigned to entry_failure_code on failure.
+> >   */
+> >  static int nested_vmx_load_cr3(struct kvm_vcpu *vcpu, unsigned long cr3, bool nested_ept,
+> >  			       u32 *entry_failure_code)
 > 
->  # cat /proc/sys/vm/min_free_kbytes
->  90112
->  # echo 0 > /sys/devices/system/node/node1/memory56/online
->  # cat /proc/sys/vm/min_free_kbytes
->  11243
->  # echo 1 > /sys/devices/system/node/node1/memory56/online
->  # cat /proc/sys/vm/min_free_kbytes
->  11412
-> 
+> I think it's worth keeping the last part which is " Exit qualification code
+> is assigned to entry_failure_code on failure." because "Entry Failure" and
+> "Exit Qualification" might sound bit confusing until you actually look at
+> the caller nested_vmx_enter_non_root_mode().
 
-Ah, that doesn't look good.
+Hmm, something like this?
 
-> One would expect that min_free_kbytes would return to it's original
-> value after the offline/online operations.
-> 
-> Create a simple interface for THP/khugepaged based adjustment and
-> call this whenever min_free_kbytes is adjusted.
-> 
-> Signed-off-by: Mike Kravetz <mike.kravetz@oracle.com>
-> ---
->  include/linux/khugepaged.h |  5 +++++
->  mm/khugepaged.c            | 35 ++++++++++++++++++++++++++++++-----
->  mm/page_alloc.c            |  4 +++-
->  3 files changed, 38 insertions(+), 6 deletions(-)
-> 
-> diff --git a/include/linux/khugepaged.h b/include/linux/khugepaged.h
-> index bc45ea1efbf7..8f02d3575829 100644
-> --- a/include/linux/khugepaged.h
-> +++ b/include/linux/khugepaged.h
-> @@ -15,6 +15,7 @@ extern int __khugepaged_enter(struct mm_struct *mm);
->  extern void __khugepaged_exit(struct mm_struct *mm);
->  extern int khugepaged_enter_vma_merge(struct vm_area_struct *vma,
->  				      unsigned long vm_flags);
-> +extern bool khugepaged_adjust_min_free_kbytes(void);
->  #ifdef CONFIG_SHMEM
->  extern void collapse_pte_mapped_thp(struct mm_struct *mm, unsigned long addr);
->  #else
-> @@ -81,6 +82,10 @@ static inline int khugepaged_enter_vma_merge(struct vm_area_struct *vma,
->  {
->  	return 0;
->  }
-> +static bool khugepaged_adjust_min_free_kbytes(void)
-> +{
-> +	return false;
-> +}
->  static inline void collapse_pte_mapped_thp(struct mm_struct *mm,
->  					   unsigned long addr)
->  {
-> diff --git a/mm/khugepaged.c b/mm/khugepaged.c
-> index b679908743cb..d8040cf19e98 100644
-> --- a/mm/khugepaged.c
-> +++ b/mm/khugepaged.c
-> @@ -2138,7 +2138,7 @@ static int khugepaged(void *none)
->  	return 0;
->  }
->  
-> -static void set_recommended_min_free_kbytes(void)
-> +bool __khugepaged_adjust_min_free_kbytes(void)
->  {
->  	struct zone *zone;
->  	int nr_zones = 0;
-> @@ -2174,17 +2174,26 @@ static void set_recommended_min_free_kbytes(void)
->  
->  	if (recommended_min > min_free_kbytes) {
->  		if (user_min_free_kbytes >= 0)
-> -			pr_info("raising min_free_kbytes from %d to %lu to help transparent hugepage allocations\n",
-> +			pr_info_once("raising min_free_kbytes from %d to %lu to help transparent hugepage allocations\n",
->  				min_free_kbytes, recommended_min);
->  
->  		min_free_kbytes = recommended_min;
-> +		return true;
->  	}
-> -	setup_per_zone_wmarks();
-> +
-> +	return false;
-> +}
-> +
-> +static void set_recommended_min_free_kbytes(void)
-> +{
-> +	if (__khugepaged_adjust_min_free_kbytes())
-> +		setup_per_zone_wmarks();
->  }
->  
-> -int start_stop_khugepaged(void)
-> +static struct task_struct *khugepaged_thread __read_mostly;
-> +
-> +int __ref start_stop_khugepaged(void)
->  {
-> -	static struct task_struct *khugepaged_thread __read_mostly;
->  	static DEFINE_MUTEX(khugepaged_mutex);
->  	int err = 0;
->  
-> @@ -2207,8 +2216,24 @@ int start_stop_khugepaged(void)
->  	} else if (khugepaged_thread) {
->  		kthread_stop(khugepaged_thread);
->  		khugepaged_thread = NULL;
-> +		init_per_zone_wmark_min();
->  	}
->  fail:
->  	mutex_unlock(&khugepaged_mutex);
->  	return err;
->  }
-> +
-> +bool khugepaged_adjust_min_free_kbytes(void)
-> +{
-> +	bool ret = false;
-> +
-> +	/*
-> +	 * This is a bit racy, and we could miss transitions.  However,
-> +	 * start/stop code above will make additional adjustments at the
-> +	 * end of transitions.
-> +	 */
-> +	if (khugepaged_enabled() && khugepaged_thread)
-> +		ret = __khugepaged_adjust_min_free_kbytes();
-> +
-> +	return ret;
-> +}
-> diff --git a/mm/page_alloc.c b/mm/page_alloc.c
-> index d047bf7d8fd4..a7b3a6663ba6 100644
-> --- a/mm/page_alloc.c
-> +++ b/mm/page_alloc.c
-> @@ -68,6 +68,7 @@
->  #include <linux/lockdep.h>
->  #include <linux/nmi.h>
->  #include <linux/psi.h>
-> +#include <linux/khugepaged.h>
->  
->  #include <asm/sections.h>
->  #include <asm/tlbflush.h>
-> @@ -7827,9 +7828,10 @@ int __meminit init_per_zone_wmark_min(void)
->  		if (min_free_kbytes > 65536)
->  			min_free_kbytes = 65536;
->  	} else {
-> -		pr_warn("min_free_kbytes is not updated to %d because user defined value %d is preferred\n",
-> +		pr_warn_once("min_free_kbytes is not updated to %d because user defined value %d is preferred\n",
->  				new_min_free_kbytes, user_min_free_kbytes);
->  	}
-> +	(void)khugepaged_adjust_min_free_kbytes();
->  	setup_per_zone_wmarks();
->  	refresh_zone_stat_thresholds();
->  	setup_per_zone_lowmem_reserve();
-
-Hmm, if khugepaged_adjust_min_free_kbytes() increases min_free_kbytes for 
-thp, then the user has no ability to override this increase by using 
-vm.min_free_kbytes?
-
-IIUC, with this change, it looks like memory hotplug events properly 
-increase min_free_kbytes for thp optimization but also doesn't respect a 
-previous user-defined value?
-
-So it looks like this is fixing an obvious correctness issue but also now 
-requires users to rewrite the sysctl if they want to decrease the min 
-watermark.
+/*
+ * Load guest's/host's cr3 at nested entry/exit.  @nested_ept is true if we are
+ * emulating VM-Entry into a guest with EPT enabled.  On failure, the expected
+ * Exit Qualification (for a VM-Entry consistency check VM-Exit) is assigned to
+ * @entry_failure_code.
+ */
