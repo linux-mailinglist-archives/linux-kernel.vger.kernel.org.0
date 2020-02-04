@@ -2,57 +2,80 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5F1B715185C
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Feb 2020 11:02:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2241315186F
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Feb 2020 11:05:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726763AbgBDKCg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 4 Feb 2020 05:02:36 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39402 "EHLO mail.kernel.org"
+        id S1727110AbgBDKFj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 4 Feb 2020 05:05:39 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40110 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726343AbgBDKCg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Feb 2020 05:02:36 -0500
-Received: from oasis.local.home (unknown [212.187.182.162])
+        id S1726506AbgBDKFi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Feb 2020 05:05:38 -0500
+Received: from localhost (unknown [212.187.182.163])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 09C85217BA;
-        Tue,  4 Feb 2020 10:02:33 +0000 (UTC)
-Date:   Tue, 4 Feb 2020 05:02:29 -0500
-From:   Steven Rostedt <rostedt@goodmis.org>
-To:     Joel Fernandes <joel@joelfernandes.org>
-Cc:     Amol Grover <frextrite@gmail.com>, Ingo Molnar <mingo@redhat.com>,
-        linux-kernel@vger.kernel.org,
-        linux-kernel-mentees@lists.linuxfoundation.org,
-        Madhuparna Bhowmik <madhuparnabhowmik10@gmail.com>,
-        "Paul E . McKenney" <paulmck@kernel.org>
-Subject: Re: [PATCH] tracing: Annotate ftrace_graph_hash pointer with __rcu
-Message-ID: <20200204050229.70e2cb0e@oasis.local.home>
-In-Reply-To: <20200203163301.GB85781@google.com>
-References: <20200201072703.17330-1-frextrite@gmail.com>
-        <20200203163301.GB85781@google.com>
-X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9DDCA2192A;
+        Tue,  4 Feb 2020 10:05:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1580810738;
+        bh=sVWw5io65CFud55R48cwmbeybCwucc32GqEz2clXunY=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=Ax84ru3DK2QxnRTnncBb96xb4kYi7b9Nl02GW0bc1uYLwCNmBIZKvAejB5unuRIbP
+         swUYQujkGap5VWVJB/accBIEXOfyiz0/V9EXV6CS0OpVIqIrjk8o/j6nyJfou35mT8
+         Ps/R7s0IwOQNnQffVe81oqnurYtgOu/hAz+uqYaw=
+Date:   Tue, 4 Feb 2020 10:02:32 +0000
+From:   Greg KH <gregkh@linuxfoundation.org>
+To:     Johan Hovold <johan@kernel.org>
+Cc:     Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        stable@vger.kernel.org, linux-input@vger.kernel.org,
+        linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Martin Kepplinger <martink@posteo.de>
+Subject: Re: [PATCH 1/7] Input: pegasus_notetaker: fix endpoint sanity check
+Message-ID: <20200204100232.GB1088789@kroah.com>
+References: <20191210113737.4016-1-johan@kernel.org>
+ <20191210113737.4016-2-johan@kernel.org>
+ <20200204082441.GD26725@localhost>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200204082441.GD26725@localhost>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 3 Feb 2020 11:33:01 -0500
-Joel Fernandes <joel@joelfernandes.org> wrote:
-
-> >  	preempt_disable_notrace();
-> >  
-> > -	if (ftrace_hash_empty(ftrace_graph_hash)) {
-> > +	hash = rcu_dereference_protected(ftrace_graph_hash, !preemptible());  
+On Tue, Feb 04, 2020 at 09:24:41AM +0100, Johan Hovold wrote:
+> On Tue, Dec 10, 2019 at 12:37:31PM +0100, Johan Hovold wrote:
+> > The driver was checking the number of endpoints of the first alternate
+> > setting instead of the current one, something which could be used by a
+> > malicious device (or USB descriptor fuzzer) to trigger a NULL-pointer
+> > dereference.
+> > 
+> > Fixes: 1afca2b66aac ("Input: add Pegasus Notetaker tablet driver")
+> > Cc: stable <stable@vger.kernel.org>     # 4.8
+> > Cc: Martin Kepplinger <martink@posteo.de>
+> > Signed-off-by: Johan Hovold <johan@kernel.org>
 > 
-> I think you can use rcu_dereference_sched() here? That way no need to pass
-> !preemptible.
+> Looks like the stable tag was removed when this one was applied, and
+> similar for patches 2, 4 and 7 of this series (commits 3111491fca4f,
+> a8eeb74df5a6, 6b32391ed675 upstream).
 > 
-> A preempt-disabled section is an RCU "sched flavor" section. Flavors are
-> consolidated in the backend, but in the front end the dereference API still
-> do have flavors.
+> While the last three are mostly an issue for the syzbot fuzzer, we have
+> started backporting those as well.
+> 
+> This one (bcfcb7f9b480) is more clear cut as it can be used to trigger a
+> NULL-deref.
+> 
+> I only noticed because Sasha picked up one of the other patches in the
+> series which was never intended for stable.
 
-Agreed, Amol, can you send an update?
+Did I end up catching all of these properly?  I've had to expand my
+search for some patches like this that do not explicitly have the cc:
+stable mark on them as not all subsystems do this well (if at all.)
 
--- Steve
+And there's also Sasha's work in digging up patches based on patterns of
+fixes, which also is needed because of this "problem".
+
+thanks,
+
+greg k-h
