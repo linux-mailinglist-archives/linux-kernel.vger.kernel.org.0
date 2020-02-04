@@ -2,124 +2,120 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 85C54151FD1
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Feb 2020 18:45:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6D4B8151F8F
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Feb 2020 18:37:24 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727490AbgBDRpR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 4 Feb 2020 12:45:17 -0500
-Received: from mout-p-201.mailbox.org ([80.241.56.171]:14426 "EHLO
-        mout-p-201.mailbox.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727321AbgBDRpR (ORCPT
+        id S1727466AbgBDRhV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 4 Feb 2020 12:37:21 -0500
+Received: from mail-pj1-f65.google.com ([209.85.216.65]:35275 "EHLO
+        mail-pj1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727310AbgBDRhV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Feb 2020 12:45:17 -0500
-X-Greylist: delayed 428 seconds by postgrey-1.27 at vger.kernel.org; Tue, 04 Feb 2020 12:45:17 EST
-Received: from smtp1.mailbox.org (smtp1.mailbox.org [80.241.60.240])
-        (using TLSv1.2 with cipher ECDHE-RSA-CHACHA20-POLY1305 (256/256 bits))
-        (No client certificate requested)
-        by mout-p-201.mailbox.org (Postfix) with ESMTPS id 48BsNc0x4QzQlBW;
-        Tue,  4 Feb 2020 18:38:08 +0100 (CET)
-X-Virus-Scanned: amavisd-new at heinlein-support.de
-Received: from smtp1.mailbox.org ([80.241.60.240])
-        by hefe.heinlein-support.de (hefe.heinlein-support.de [91.198.250.172]) (amavisd-new, port 10030)
-        with ESMTP id r-FS5AX31atR; Tue,  4 Feb 2020 18:38:04 +0100 (CET)
-From:   Hagen Paul Pfeifer <hagen@jauu.net>
-To:     linux-kernel@vger.kernel.org
-Cc:     Hagen Paul Pfeifer <hagen@jauu.net>,
-        Andi Kleen <ak@linux.intel.com>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Jiri Olsa <jolsa@kernel.org>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>
-Subject: [PATCH] perf script: introduce deltatime option
-Date:   Tue,  4 Feb 2020 18:37:09 +0100
-Message-Id: <20200204173709.489161-1-hagen@jauu.net>
+        Tue, 4 Feb 2020 12:37:21 -0500
+Received: by mail-pj1-f65.google.com with SMTP id q39so1697915pjc.0;
+        Tue, 04 Feb 2020 09:37:20 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=jRjcj/VJ7A9kdBwbhVlZG6Ayb9eCm4/PVayam2B0eBA=;
+        b=uoR4KL1uKqJBStzO/JDHuWnpa9mC8rix26XYVdaBr7Cz4mZHfyWGsbeE/myQHlJrHt
+         n8xWVieFoqAuXS206uRM5MRyF7VuWhT5wn5+nCZE/bGlW4q6B6aiHuJ38KZonamd74UK
+         cuQpOLzpsssvZJ3b/haYr2Isl6OSaObekItK7GQ1LjlRj2ExvuaTl9/tmeNvzhGCyics
+         l2KukTfliq10pu6rH9qwwsfFf9qcemhoNIRWsxEruiZtk7pOM/lgpA4lqsQH1bQ6qWeO
+         7ax/oNGGb83hnH1dJ4GR/jMU3hhb5+vWLl5XyPBROBDDqR74dtitpmudcz1qTjCn+4WG
+         b98Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=jRjcj/VJ7A9kdBwbhVlZG6Ayb9eCm4/PVayam2B0eBA=;
+        b=rPKtbRlK9Ty4KwIj8+hO0m46QjJ7j6OzJ8ev0zuPzWG1U6tuRkHn0z6x/dJBIUbHdM
+         pJ4mE6gTgig5S/VjZy7n9u7IGfFSCx4dPqHyhUQJwhDoTNiqrAlmjY7s2jJfdQ9DzWSR
+         cvOhu49JE84hoGYXp7wEnuuBXwR0OZiOP0/W6G6JhIcZKM4FkWSE0TihbObCYuPzzu8d
+         9vt21I7pEASIDG5G5zjN275xEKOyez5ArFPY0U5q77RMBmsgeqY7DbzDe5l5ArLuGwUw
+         dQcY9bC3QzYVwRqaVZAWBI4187KHGUQfsEOChFGZx1cft1SHPKcPlSwzb4rtqMyIFHM1
+         7u5Q==
+X-Gm-Message-State: APjAAAURDxP+EwKT0OIy78I247vCgVAIY9RZ/R3eygqehiB2fZLzlLtB
+        ARItaxuAwCAWopuaPMIJsUc=
+X-Google-Smtp-Source: APXvYqy6Ik6qvV/q2oAsdNHITnU5LJJgHVNqOLjxz2QEyJpacbCpvipKCoB3ARIs8wV1gX86K67MYQ==
+X-Received: by 2002:a17:902:740c:: with SMTP id g12mr32145514pll.166.1580837840541;
+        Tue, 04 Feb 2020 09:37:20 -0800 (PST)
+Received: from localhost ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id x197sm25258520pfc.1.2020.02.04.09.37.19
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 04 Feb 2020 09:37:19 -0800 (PST)
+Date:   Tue, 4 Feb 2020 09:37:18 -0800
+From:   Guenter Roeck <linux@roeck-us.net>
+To:     ansuelsmth@gmail.com
+Cc:     'Andy Gross' <agross@kernel.org>,
+        'Bjorn Andersson' <bjorn.andersson@linaro.org>,
+        'Wim Van Sebroeck' <wim@linux-watchdog.org>,
+        'Rob Herring' <robh+dt@kernel.org>,
+        'Mark Rutland' <mark.rutland@arm.com>,
+        linux-arm-msm@vger.kernel.org, linux-watchdog@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: R: R: [PATCH 1/3] watchdog: qcom-wdt: add option to skip
+ pretimeout
+Message-ID: <20200204173718.GA10098@roeck-us.net>
+References: <20200204152104.13278-1-ansuelsmth@gmail.com>
+ <20200204160824.GA17320@roeck-us.net>
+ <035201d5db76$78f56670$6ae03350$@gmail.com>
+ <20200204162516.GA22814@roeck-us.net>
+ <035f01d5db80$d2ed1fb0$78c75f10$@gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <035f01d5db80$d2ed1fb0$78c75f10$@gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-For some kind of analysis a deltatime output is more human friendly and reduce
-the cognitive load for further analysis.
+On Tue, Feb 04, 2020 at 06:30:40PM +0100, ansuelsmth@gmail.com wrote:
+> > On Tue, Feb 04, 2020 at 05:16:34PM +0100, ansuelsmth@gmail.com wrote:
+> > > If something like this is used, msm-timer require interrupts. Without
+> this
+> > > configuration, the device is unbootable as the system froze on system
+> > > bootup.
+> > >
+> > > timer@200a000 {
+> > > 			compatible = "qcom,kpss-timer", "qcom,msm-timer";
+> > > 			interrupts = <GIC_PPI 1 (GIC_CPU_MASK_SIMPLE(2) |
+> > > 						 IRQ_TYPE_EDGE_RISING)>,
+> > > 				     <GIC_PPI 2 (GIC_CPU_MASK_SIMPLE(2) |
+> > > 						 IRQ_TYPE_EDGE_RISING)>,
+> > > 				     <GIC_PPI 3 (GIC_CPU_MASK_SIMPLE(2) |
+> > > 						 IRQ_TYPE_EDGE_RISING)>,
+> > > 				     <GIC_PPI 4 (GIC_CPU_MASK_SIMPLE(2) |
+> > > 						 IRQ_TYPE_EDGE_RISING)>,
+> > > 				     <GIC_PPI 5 (GIC_CPU_MASK_SIMPLE(2) |
+> > > 						 IRQ_TYPE_EDGE_RISING)>;
+> > > 			no-pretimeout;
+> > > 			reg = <0x0200a000 0x100>;
+> > > 			clock-frequency = <25000000>,
+> > > 					  <32768>;
+> > > 			clocks = <&sleep_clk>;
+> > > 			clock-names = "sleep";
+> > > 			cpu-offset = <0x80000>;
+> > > 		};
+> > >
+> > 
+> > I think this is all wrong; the new property shows up in a node which
+> > is completely unrelated to a watchdog. Maybe it wasn't such a good idea
+> > to tie the watchdog to the timer node. At the very least, the situation
+> > should be handled in the driver via of_table flags. If the situation can't
+> > be handled that way, something is even more wrong. In that case it might
+> > be better to revert commit 36375491a439 until that is sorted out properly.
+> > 
+> > Guenter
+> > 
+> 
+> So pretimeout should be enabled only for kpss-wdt and disabled with a flag 
+> in the of_table of the driver?
+> 
 
-The following output demonstrate the new option "deltatime": calculate
-the time difference in relation to the previous event.
+Correct, if that is the determining factor.
 
-$ perf script --deltatime
-test  2525 [001]     0.000000:            sdt_libev:ev_add: (5635e72a5ebd)
-test  2525 [001]     0.000091:  sdt_libev:epoll_wait_enter: (5635e72a76a9)
-test  2525 [001]     1.000051: sdt_libev:epoll_wait_return: (5635e72a772e) arg1=1
-test  2525 [001]     0.000685:            sdt_libev:ev_add: (5635e72a5ebd)
-test  2525 [001]     0.000048:  sdt_libev:epoll_wait_enter: (5635e72a76a9)
-test  2525 [001]     1.000104: sdt_libev:epoll_wait_return: (5635e72a772e) arg1=1
-test  2525 [001]     0.003895:  sdt_libev:epoll_wait_enter: (5635e72a76a9)
-test  2525 [001]     0.996034: sdt_libev:epoll_wait_return: (5635e72a772e) arg1=1
-test  2525 [001]     0.000058:  sdt_libev:epoll_wait_enter: (5635e72a76a9)
-test  2525 [001]     1.000004: sdt_libev:epoll_wait_return: (5635e72a772e) arg1=1
-test  2525 [001]     0.000064:  sdt_libev:epoll_wait_enter: (5635e72a76a9)
-test  2525 [001]     0.999934: sdt_libev:epoll_wait_return: (5635e72a772e) arg1=1
-test  2525 [001]     0.000056:  sdt_libev:epoll_wait_enter: (5635e72a76a9)
-test  2525 [001]     0.999930: sdt_libev:epoll_wait_return: (5635e72a772e) arg1=1
-
-Cc: Andi Kleen <ak@linux.intel.com>
-Cc: Adrian Hunter <adrian.hunter@intel.com>
-Cc: Jiri Olsa <jolsa@kernel.org>
-Cc: Arnaldo Carvalho de Melo <acme@kernel.org>
-Signed-off-by: Hagen Paul Pfeifer <hagen@jauu.net>
----
- tools/perf/builtin-script.c | 17 +++++++++++++++++
- 1 file changed, 17 insertions(+)
-
-diff --git a/tools/perf/builtin-script.c b/tools/perf/builtin-script.c
-index e2406b291c1c..d5566b121159 100644
---- a/tools/perf/builtin-script.c
-+++ b/tools/perf/builtin-script.c
-@@ -63,7 +63,9 @@
- static char const		*script_name;
- static char const		*generate_script_lang;
- static bool			reltime;
-+static bool			deltatime;
- static u64			initial_time;
-+static u64			previous_time;
- static bool			debug_mode;
- static u64			last_timestamp;
- static u64			nr_unordered;
-@@ -704,6 +706,13 @@ static int perf_sample__fprintf_start(struct perf_sample *sample,
- 			if (!initial_time)
- 				initial_time = sample->time;
- 			t = sample->time - initial_time;
-+		} else if (deltatime) {
-+			if (previous_time)
-+				t = sample->time - previous_time;
-+			else {
-+				t = 0;
-+			}
-+			previous_time = sample->time;
- 		}
- 		nsecs = t;
- 		secs = nsecs / NSEC_PER_SEC;
-@@ -3551,6 +3560,7 @@ int cmd_script(int argc, const char **argv)
- 		     "anything beyond the specified depth will be ignored. "
- 		     "Default: kernel.perf_event_max_stack or " __stringify(PERF_MAX_STACK_DEPTH)),
- 	OPT_BOOLEAN(0, "reltime", &reltime, "Show time stamps relative to start"),
-+	OPT_BOOLEAN(0, "deltatime", &deltatime, "Show time stamps relative to previous event"),
- 	OPT_BOOLEAN('I', "show-info", &show_full_info,
- 		    "display extended information from perf.data file"),
- 	OPT_BOOLEAN('\0', "show-kernel-path", &symbol_conf.show_kernel_path,
-@@ -3647,6 +3657,13 @@ int cmd_script(int argc, const char **argv)
- 		}
- 	}
- 
-+	if (reltime && deltatime) {
-+		fprintf(stderr,
-+			"reltime and deltatime - the two don't get along well. "
-+			"Please limit to --reltime or --deltatime.\n");
-+		return -1;
-+	}
-+
- 	if (itrace_synth_opts.callchain &&
- 	    itrace_synth_opts.callchain_sz > scripting_max_stack)
- 		scripting_max_stack = itrace_synth_opts.callchain_sz;
--- 
-2.24.1
-
+Guenter
