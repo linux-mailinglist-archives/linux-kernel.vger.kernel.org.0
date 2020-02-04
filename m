@@ -2,130 +2,98 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 72CBE151DB3
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Feb 2020 16:55:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 35503151DB6
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Feb 2020 16:56:51 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727368AbgBDPzJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 4 Feb 2020 10:55:09 -0500
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:36063 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727311AbgBDPzI (ORCPT
+        id S1727357AbgBDP4q (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 4 Feb 2020 10:56:46 -0500
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:34350 "EHLO
+        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727297AbgBDP4q (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Feb 2020 10:55:08 -0500
-Received: by mail-lj1-f194.google.com with SMTP id r19so19166336ljg.3;
-        Tue, 04 Feb 2020 07:55:06 -0800 (PST)
+        Tue, 4 Feb 2020 10:56:46 -0500
+Received: by mail-lj1-f193.google.com with SMTP id x7so19194724ljc.1
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Feb 2020 07:56:44 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=JZwaZAs4VPg+MZljM+SS0kMupA1fP3M0vka2FZtHyUs=;
-        b=keuTsSrKE/2sGEZ/mCNFBtfA5/nM187MrzUuQuHvBMmn2K8XCXRwbE4Qd/r2UMIFFV
-         h3JnXWcGCpHrRZwHIqf0ethN27sLiVG1o9ZYsC26dJpmv/z8C/RL9eXARiuUvm+/2p5V
-         8oMMC4Munw/6fj9RtsfimU/AzN8AvGQ9BdGRhWzJLJQjbpSzCLLQeT2nF7gUfdl25TXY
-         z2pBxogs5PUSvzyLaTZudiH75HrxrB+rUZXm3MFl8tFHa+Okjfcugglb1V2jXhPKKtA5
-         tR//mSQjS0Z3wXRffaKwje4oWDEZQFJtc4pFHM+GRYHN3bVX2nwF4SZANs2/s9z7A4MP
-         ay1Q==
+        h=mime-version:reply-to:from:date:message-id:subject:to;
+        bh=5grMO7aqdXKLG4XIZ9wMGnxSE7OBMkWRIMkqzUfhYEw=;
+        b=qq7j2aQS4DBOaedmpfOsE23r9pbkWZQnaJM9w/Ud85HVggDKq8//9Gg6ZjayDLXStB
+         C4dES1ZUYygBabWXAy/gs3Ee+KviLytKy/ybLsKr+wmRb7k09Sv0XYqX6C96n27f+r0J
+         hRgP1oY89itBKBuW2+X6FGULpwBeZStd1kCMPNainUVCxW1y1UwHxOeq85plpDu+jRyh
+         qhqMq23yFrY6Szc3TJHGG1zbvg/jyh2LXcfYKwS7v1fQU1PuKN75F8v/Lbw58/rv6GA1
+         QIy4qCRGjZkrzrQw9+a1En9AF0lnxr+yBwiS+8V+SSy7l8PV9sIAzJQpthAkR+9hxxZ/
+         kIGw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=JZwaZAs4VPg+MZljM+SS0kMupA1fP3M0vka2FZtHyUs=;
-        b=eOygJrkwboHkKPfu+9anbZXpXi2D5A/VFWp8OMt2d7eK7XMDFquTKllc6jqjgVeWZj
-         YKJwSX2zFIG/MaDwOzSka/APNVEg2rWNSuW/8SHpxIU10UC7+eGW4rpSj40IzsuPK6lW
-         viaTlPqW4ky9c4b1/CP4sBmwy8zxF8vwwlO/ymNucpw+cK+HTUE/Sl3RZvJ2BL7//89R
-         4t65P8C1mCqiYnM+P5ezo2aFPuY771wUdef/P98WmbRe00PDfWQdqpdZqtGtdz0X7Fkd
-         VfAmQNshuq0aNdtqRjrLLEDm4LjE8oEvUyePcrLT78g7CfU+ln1DTCiI4FealRK3FqiM
-         mp8w==
-X-Gm-Message-State: APjAAAVfSGOyTc1X0jhQu0cYyPs+WfT4TGCOs4HdQb+K0vUpm3CpzdVa
-        +X8BDvt5w3b17iO9It9YAo/qooy5
-X-Google-Smtp-Source: APXvYqz9EywivV4SrY2+zghH9X/t0s+7ktKmSSPeAg5hYqrzXzJR9qDy2sP9teMcgdHvAfU0z97esg==
-X-Received: by 2002:a2e:9708:: with SMTP id r8mr17980763lji.92.1580831705084;
-        Tue, 04 Feb 2020 07:55:05 -0800 (PST)
-Received: from [192.168.2.145] (79-139-233-37.dynamic.spd-mgts.ru. [79.139.233.37])
-        by smtp.googlemail.com with ESMTPSA id 126sm10695751lfm.38.2020.02.04.07.55.04
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 04 Feb 2020 07:55:04 -0800 (PST)
-Subject: Re: [PATCH v7 13/19] dmaengine: tegra-apb: Don't stop cyclic DMA in a
- case of error condition
-To:     Jon Hunter <jonathanh@nvidia.com>,
-        Laxman Dewangan <ldewangan@nvidia.com>,
-        Vinod Koul <vkoul@kernel.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>
-Cc:     dmaengine@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20200202222854.18409-1-digetx@gmail.com>
- <20200202222854.18409-14-digetx@gmail.com>
- <332e8e86-dca5-19f2-9ef1-6d89a55f3651@nvidia.com>
-From:   Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <ad86f2a4-6fa0-7958-aad7-1b18f02cabfe@gmail.com>
-Date:   Tue, 4 Feb 2020 18:55:03 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.3.0
+        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
+         :subject:to;
+        bh=5grMO7aqdXKLG4XIZ9wMGnxSE7OBMkWRIMkqzUfhYEw=;
+        b=KbO020KuO4ynTP72iMBDsvPKCl4n39brS1bWmeL2mT/pqH1Nedry+lED+O03wSWirx
+         0S3OgghPUL1sViJLWXHW8BLvchYeKRAtAy5H1P8NrQX3Nvs0GOAb52GsktonXxUVBjOS
+         Oz/Pa6BqoAb4O63Sz1r0hBm1GfHvk0kMh5++nRxDrBN0FJ4CJcR+uHDCls8n/M2j5hBQ
+         PDiqgvVXJ7nYlwxoLHuLbvERUBUZUbyLhTCRLj8U9UpcMB4wIZ8HU/9OHBFgoZCphKnV
+         7iPXkyuP9AIq1MklTnzU7Yf9jgb0/ofiAS5C+KxoCDQkc1VMW+svQrtu7zyUc/xablhx
+         rPEQ==
+X-Gm-Message-State: APjAAAUhTJ9HuD9cywGW4MlPOzbRLkFkSYfWpYrhu3a7mqsm34+YkXOQ
+        LJ8zkAlMDZck0EXeIXyVvMAeapKacrYrBNs1Y/Y=
+X-Google-Smtp-Source: APXvYqzKPUyEei9MfYwbZ8N/jkR9LAajZfmRsnBuPdV9gku6EIZgGPebz1vD95sVd5yKNt+9bTubQ76fBZVKNipqw20=
+X-Received: by 2002:a2e:81c7:: with SMTP id s7mr18018724ljg.3.1580831804164;
+ Tue, 04 Feb 2020 07:56:44 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <332e8e86-dca5-19f2-9ef1-6d89a55f3651@nvidia.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Received: by 2002:ab3:6144:0:0:0:0:0 with HTTP; Tue, 4 Feb 2020 07:56:43 -0800 (PST)
+Reply-To: rev.derrickbowl57@aol.com
+From:   "Rev. Derrick Bowl" <mrmrpeso5@gmail.com>
+Date:   Tue, 4 Feb 2020 15:56:43 +0000
+Message-ID: <CABj-xERDNiNkUQ2CuK7gesXS4Kri_pMwYGfaaFOivBHP50OrqQ@mail.gmail.com>
+Subject: Dear Beloved,
+To:     undisclosed-recipients:;
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-04.02.2020 15:02, Jon Hunter пишет:
-> 
-> On 02/02/2020 22:28, Dmitry Osipenko wrote:
->> There is no harm in keeping DMA active in the case of error condition,
->> which should never happen in practice anyways. This will become useful
->> for the next patch, which will keep RPM enabled only during of DMA
->> transfer, and thus, it will be much nicer if cyclic DMA handler could
->> not touch the DMA-enable state.
->>
->> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
->> ---
->>  drivers/dma/tegra20-apb-dma.c | 9 +++++----
->>  1 file changed, 5 insertions(+), 4 deletions(-)
->>
->> diff --git a/drivers/dma/tegra20-apb-dma.c b/drivers/dma/tegra20-apb-dma.c
->> index c7dc27ef1856..50abce608318 100644
->> --- a/drivers/dma/tegra20-apb-dma.c
->> +++ b/drivers/dma/tegra20-apb-dma.c
->> @@ -571,9 +571,7 @@ static bool handle_continuous_head_request(struct tegra_dma_channel *tdc,
->>  	 */
->>  	hsgreq = list_first_entry(&tdc->pending_sg_req, typeof(*hsgreq), node);
->>  	if (!hsgreq->configured) {
->> -		tegra_dma_stop(tdc);
->> -		dev_err(tdc2dev(tdc), "Error in DMA transfer, aborting DMA\n");
->> -		tegra_dma_abort_all(tdc);
->> +		dev_err_ratelimited(tdc2dev(tdc), "Error in DMA transfer\n");
-> 
-> While we are at it, a more descriptive error message could be good here.
-> I believe that this condition would indicate a potential underrun condition.
+Dear Beloved,
 
-Yes, this error indicates the underrun and indeed the error message
-could be improved. I'll change it in v8.
+I'm Reverend Derrick Bowl, I was born in USA, 1945, I was ordained
+into the Catholic Priesthood.
 
->>  		return false;
->>  	}
->>  
->> @@ -772,7 +770,10 @@ static int tegra_dma_terminate_all(struct dma_chan *dc)
->>  	if (!list_empty(&tdc->pending_sg_req) && was_busy) {
->>  		sgreq = list_first_entry(&tdc->pending_sg_req, typeof(*sgreq),
->>  					 node);
->> -		sgreq->dma_desc->bytes_transferred +=
->> +		dma_desc = sgreq->dma_desc;
->> +
->> +		if (dma_desc->dma_status != DMA_ERROR)
->> +			dma_desc->bytes_transferred +=
->>  				get_current_xferred_count(tdc, sgreq, wcount);
-> 
-> I am wondering if we need to check this here? I assume that the transfer
-> count would still reflect the amount of data transferred, even if some
-> was dropped. We will never know how much data was lost.
+Please take your time to read this message, although we have never met
+before, this is no spam, It's a real message sent to you. I know also
+that you will be amazed at the level of trust that I am willing to
+bestow on a person that I have never seen nor spoken with. If I can
+receive favor from someone I barely know, its not bad entrusting this
+project to unknown person as long as my spirit directed me to you.
 
-I'm wondering too.. stopping DMA in a error case removes this ambiguity
-and that's why in my previous answer to v6 I suggested to drop this patch.
+I have been a catholic priest for over 22 years. I spent about 10
+years serving at Africa, Burkina Faso to be precise, I spend most time
+in Ouagadougou Cathedral.
+Presently, I had a heart surgery on the 23-11-2018 and the Doctors
+have informed me that I cannot live longer; I had a serious bleeding
+after the operation.
+Before I left Ouagadougou to my country for the surgery, a priest
+friend of mine visited me from Netherlands with three companion, when
+they went back, one among his companion Transferred 11M$ in my
+personal account with Bank of Africa and advised that I use the money
+to help the poor, handicaps and less privileges because he saw the
+level hardship then.
 
-Do you think it's worth to keep this patch?
+Because of my present health condition, I cannot live to proceed with
+the projects, therefore, I have decided to appoint you to reclaim the
+money which total sum of $11,970,000.00 (Eleven million Nine Hundred
+and seventy Thousand US DOLLARS).
+
+I want you to use this sum to make the world a better place for the
+poor and less privileged, help the needy and also help your family
+members.
+
+I took this decision because I was raised in an Orphanage so I don't
+have relatives and presently, I'm still in the hospital, where I am
+undergoing treatment. That's why I have decided to contact you so that
+you can contact my account manager in Bank of Africa, reclaim the
+money and make good use of it. You have to contact me through my
+private e-mail at {rev.derrickbowl57@aol.com}
+
+Regards,
+Reverend Derrick Bowl.
