@@ -2,82 +2,184 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BBCBF151F3A
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Feb 2020 18:20:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 03481151F42
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Feb 2020 18:21:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727516AbgBDRUu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 4 Feb 2020 12:20:50 -0500
-Received: from mail-pj1-f68.google.com ([209.85.216.68]:52424 "EHLO
-        mail-pj1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727308AbgBDRUu (ORCPT
+        id S1727455AbgBDRVg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 4 Feb 2020 12:21:36 -0500
+Received: from mail-wr1-f74.google.com ([209.85.221.74]:39764 "EHLO
+        mail-wr1-f74.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727330AbgBDRVf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Feb 2020 12:20:50 -0500
-Received: by mail-pj1-f68.google.com with SMTP id ep11so1665691pjb.2;
-        Tue, 04 Feb 2020 09:20:49 -0800 (PST)
+        Tue, 4 Feb 2020 12:21:35 -0500
+Received: by mail-wr1-f74.google.com with SMTP id 90so10619113wrq.6
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Feb 2020 09:21:32 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=kPZ0FP9iKn3NpVfyfbzekp4EaJMOqkAb0O78P8cCHmE=;
-        b=qRm5XH2Oz9MFbIZaQQrdSsAKqrRuGi3L+pMYoCHSFURgZ4O5oho0bTJmTQe4sMtORU
-         iupgsRqnlcbS7q9LAEiY8BcckCM+cPQRa5NY+4zkFJlC82rocf62moXnw7NqHEW7RoHB
-         274QXrgvD9yyZxMi8aAImk2iiwXnuvLDLrEg3o7/Opy75ghIdtnw7+383qrd7gNWq4qp
-         +va7aQRZ61nIJqKPyrt22aHLM4CeQ6Vd7eqZ7r1zgKeWa3ciTD7Zmgl0uC2iqgu2beNA
-         QCOTrADXQlUPhCNn1REv95UAMwirf/Ox6V8XhqHAzfA+Dnz3xHZramfwJVsXphcFmy5g
-         U26Q==
+        d=google.com; s=20161025;
+        h=date:message-id:mime-version:subject:from:to:cc;
+        bh=kiVUGxEhpAM2mYb96Fzo4yFVjkxMzxjZ34CLdXp6/BA=;
+        b=iHYYBpDM23i8xlqcLxsIInOL/fqAzMaeDrcrX4teRPxJARTrbtVRCjGDA/gJgAfL4h
+         MZ2dhjnjrSYp3sUY6gx9I1627RNY8IbJ4IJ1GWmtv6+lh29Sr2EPC3U/pMVVbsHhYufN
+         2xls69TABg/khlp10KcCX+iFuXv5W+Q2DnKCb6993yxYnDsVZKdFGqsTEjVvluo5r+bC
+         3eh0S95ih46VU0nI6Z9w8G8qlz9dF1Z1OJ5ohvoBo+AalieLzvDSn5AZbK96HLu/860l
+         hh/t43jhf6GF9l8YrQdIZal2wkDszcSI9kHq+4CBGvqAijAasAoTDZdnAsPG3IVszdMz
+         NQnw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=kPZ0FP9iKn3NpVfyfbzekp4EaJMOqkAb0O78P8cCHmE=;
-        b=SNdSA/biT9FYVTEf/XXpqpSS6M9tGXhNvXUBD8HKBPPQMd2KZGtenPsvd2MCkJEucL
-         3+TF9Yy9pXNPcc1LnrQiFtTY00jlOtfAdDYwDbzuZnhhBzywWLPxlpiQ8coUrOJNaEcr
-         zJgDQV9oxr6TH/sDbLZwGHJFihReinG0xsGmwZr8noB73V6+v8TGYVP+VfjdsyCV1OzG
-         NQCfNvHtTfFkhOh0cA5oN0qYROw6VjFdACwybOf8CP6ghk69wknd7pMM/BZKeuPk6Slf
-         ZjvYT4EfhTECHdgjfWnPZEjQ5seJUUPO8XR1SnFnugikI3t4GTb0sbqP8QnfcPr8APou
-         a8Ow==
-X-Gm-Message-State: APjAAAVD1+CNF7eCGDVI+Y/lB20liXc95lMmnbQFOhZZWXMwW9KMdWcI
-        hj6NpRZqBFG2SgLt9I3qGD0=
-X-Google-Smtp-Source: APXvYqy/xjE4+827o1ywDM9A1uTExyptoPE1eReZLLBC99Ns70ZHmdQHyG9IcWF1H8JzhBmoKppm5w==
-X-Received: by 2002:a17:90b:14e:: with SMTP id em14mr124044pjb.112.1580836848714;
-        Tue, 04 Feb 2020 09:20:48 -0800 (PST)
-Received: from localhost ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id d22sm24082720pfo.187.2020.02.04.09.20.47
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 04 Feb 2020 09:20:48 -0800 (PST)
-Date:   Tue, 4 Feb 2020 09:20:47 -0800
-From:   Guenter Roeck <linux@roeck-us.net>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-        akpm@linux-foundation.org, shuah@kernel.org, patches@kernelci.org,
-        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
-        stable@vger.kernel.org
-Subject: Re: [PATCH 5.5 00/23] 5.5.2-stable review
-Message-ID: <20200204172047.GF10163@roeck-us.net>
-References: <20200203161902.288335885@linuxfoundation.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200203161902.288335885@linuxfoundation.org>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+        h=x-gm-message-state:date:message-id:mime-version:subject:from:to:cc;
+        bh=kiVUGxEhpAM2mYb96Fzo4yFVjkxMzxjZ34CLdXp6/BA=;
+        b=mjg9oMaH9YHluKR24wPxwkKI3NrJRcyXBQ2bN1eF5lFbjG+hn9encmEgYAdMGoNfWU
+         +Vcaj7WiS+hJ2JMFAI6qESdLsf5gnkF8nvkIbMvMVg7vbzcKuho5XNwvwcXvUvR5eL4a
+         G4soniytuK7ZEBemmVsZnrRF/9jfUhPVCExaIoH9P0+BE0Q9Qc1DzgTzEI647jXoRcqF
+         8CqdrQ410Q/L66JZjRZ8nv2E0Zan0RhY+Lx5UF6wmu/FDL/VMqFKOQtRUIYiszdROlz6
+         uAF0jJeLLb8v3oAoVZSgji1PvcwVhtC8cCh9ceM2xdFis8/fhqbJi6ji60F+oyY6saHB
+         1Sbg==
+X-Gm-Message-State: APjAAAVLTlSdstuEBrT6uxso1IXgPDgcEnrV6r9Xrc6ISCsrFYLXmsfx
+        wsHal6ongMP1T9caWHdkmQdsXLUbFw==
+X-Google-Smtp-Source: APXvYqwWCUDwitvhY0FZCZW08I+x93BnMVM/jpwKglWQ+MNuYP3yhrRh/OyC4AZFFjfHRZlNe7eNv/HqqA==
+X-Received: by 2002:adf:90e7:: with SMTP id i94mr22040781wri.47.1580836891511;
+ Tue, 04 Feb 2020 09:21:31 -0800 (PST)
+Date:   Tue,  4 Feb 2020 18:21:10 +0100
+Message-Id: <20200204172112.234455-1-elver@google.com>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.25.0.341.g760bfbb309-goog
+Subject: [PATCH v2 1/3] kcsan: Add option to assume plain aligned writes up to
+ word size are atomic
+From:   Marco Elver <elver@google.com>
+To:     elver@google.com
+Cc:     paulmck@kernel.org, andreyknvl@google.com, glider@google.com,
+        dvyukov@google.com, kasan-dev@googlegroups.com,
+        linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 03, 2020 at 04:20:20PM +0000, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 5.5.2 release.
-> There are 23 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
-> 
-> Responses should be made by Wed, 05 Feb 2020 16:17:59 +0000.
-> Anything received after that time might be too late.
-> 
+This adds option KCSAN_ASSUME_PLAIN_WRITES_ATOMIC. If enabled, plain
+aligned writes up to word size are assumed to be atomic, and also not
+subject to other unsafe compiler optimizations resulting in data races.
 
-Build results:
-	total: 157 pass: 157 fail: 0
-Qemu test results:
-	total: 393 pass: 393 fail: 0
+This option has been enabled by default to reflect current kernel-wide
+preferences.
 
-Guenter
+Signed-off-by: Marco Elver <elver@google.com>
+---
+v2:
+* Also check for alignment of writes.
+---
+ kernel/kcsan/core.c | 22 +++++++++++++++++-----
+ lib/Kconfig.kcsan   | 27 ++++++++++++++++++++-------
+ 2 files changed, 37 insertions(+), 12 deletions(-)
+
+diff --git a/kernel/kcsan/core.c b/kernel/kcsan/core.c
+index 64b30f7716a12..e3c7d8f34f2ff 100644
+--- a/kernel/kcsan/core.c
++++ b/kernel/kcsan/core.c
+@@ -5,6 +5,7 @@
+ #include <linux/delay.h>
+ #include <linux/export.h>
+ #include <linux/init.h>
++#include <linux/kernel.h>
+ #include <linux/percpu.h>
+ #include <linux/preempt.h>
+ #include <linux/random.h>
+@@ -169,10 +170,20 @@ static __always_inline struct kcsan_ctx *get_ctx(void)
+ 	return in_task() ? &current->kcsan_ctx : raw_cpu_ptr(&kcsan_cpu_ctx);
+ }
+ 
+-static __always_inline bool is_atomic(const volatile void *ptr)
++static __always_inline bool
++is_atomic(const volatile void *ptr, size_t size, int type)
+ {
+-	struct kcsan_ctx *ctx = get_ctx();
++	struct kcsan_ctx *ctx;
++
++	if ((type & KCSAN_ACCESS_ATOMIC) != 0)
++		return true;
+ 
++	if (IS_ENABLED(CONFIG_KCSAN_ASSUME_PLAIN_WRITES_ATOMIC) &&
++	    (type & KCSAN_ACCESS_WRITE) != 0 && size <= sizeof(long) &&
++	    IS_ALIGNED((unsigned long)ptr, size))
++		return true; /* Assume aligned writes up to word size are atomic. */
++
++	ctx = get_ctx();
+ 	if (unlikely(ctx->atomic_next > 0)) {
+ 		/*
+ 		 * Because we do not have separate contexts for nested
+@@ -193,7 +204,8 @@ static __always_inline bool is_atomic(const volatile void *ptr)
+ 	return kcsan_is_atomic(ptr);
+ }
+ 
+-static __always_inline bool should_watch(const volatile void *ptr, int type)
++static __always_inline bool
++should_watch(const volatile void *ptr, size_t size, int type)
+ {
+ 	/*
+ 	 * Never set up watchpoints when memory operations are atomic.
+@@ -202,7 +214,7 @@ static __always_inline bool should_watch(const volatile void *ptr, int type)
+ 	 * should not count towards skipped instructions, and (2) to actually
+ 	 * decrement kcsan_atomic_next for consecutive instruction stream.
+ 	 */
+-	if ((type & KCSAN_ACCESS_ATOMIC) != 0 || is_atomic(ptr))
++	if (is_atomic(ptr, size, type))
+ 		return false;
+ 
+ 	if (this_cpu_dec_return(kcsan_skip) >= 0)
+@@ -460,7 +472,7 @@ static __always_inline void check_access(const volatile void *ptr, size_t size,
+ 	if (unlikely(watchpoint != NULL))
+ 		kcsan_found_watchpoint(ptr, size, type, watchpoint,
+ 				       encoded_watchpoint);
+-	else if (unlikely(should_watch(ptr, type)))
++	else if (unlikely(should_watch(ptr, size, type)))
+ 		kcsan_setup_watchpoint(ptr, size, type);
+ }
+ 
+diff --git a/lib/Kconfig.kcsan b/lib/Kconfig.kcsan
+index 3552990abcfe5..66126853dab02 100644
+--- a/lib/Kconfig.kcsan
++++ b/lib/Kconfig.kcsan
+@@ -91,13 +91,13 @@ config KCSAN_REPORT_ONCE_IN_MS
+ 	  limiting reporting to avoid flooding the console with reports.
+ 	  Setting this to 0 disables rate limiting.
+ 
+-# Note that, while some of the below options could be turned into boot
+-# parameters, to optimize for the common use-case, we avoid this because: (a)
+-# it would impact performance (and we want to avoid static branch for all
+-# {READ,WRITE}_ONCE, atomic_*, bitops, etc.), and (b) complicate the design
+-# without real benefit. The main purpose of the below options is for use in
+-# fuzzer configs to control reported data races, and they are not expected
+-# to be switched frequently by a user.
++# The main purpose of the below options is to control reported data races (e.g.
++# in fuzzer configs), and are not expected to be switched frequently by other
++# users. We could turn some of them into boot parameters, but given they should
++# not be switched normally, let's keep them here to simplify configuration.
++#
++# The defaults below are chosen to be very conservative, and may miss certain
++# bugs.
+ 
+ config KCSAN_REPORT_RACE_UNKNOWN_ORIGIN
+ 	bool "Report races of unknown origin"
+@@ -116,6 +116,19 @@ config KCSAN_REPORT_VALUE_CHANGE_ONLY
+ 	  the data value of the memory location was observed to remain
+ 	  unchanged, do not report the data race.
+ 
++config KCSAN_ASSUME_PLAIN_WRITES_ATOMIC
++	bool "Assume that plain aligned writes up to word size are atomic"
++	default y
++	help
++	  Assume that plain aligned writes up to word size are atomic by
++	  default, and also not subject to other unsafe compiler optimizations
++	  resulting in data races. This will cause KCSAN to not report data
++	  races due to conflicts where the only plain accesses are aligned
++	  writes up to word size: conflicts between marked reads and plain
++	  aligned writes up to word size will not be reported as data races;
++	  notice that data races between two conflicting plain aligned writes
++	  will also not be reported.
++
+ config KCSAN_IGNORE_ATOMICS
+ 	bool "Do not instrument marked atomic accesses"
+ 	help
+-- 
+2.25.0.341.g760bfbb309-goog
+
