@@ -2,133 +2,212 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 99C47152204
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Feb 2020 22:43:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B98BA152215
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Feb 2020 22:50:30 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727494AbgBDVnt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 4 Feb 2020 16:43:49 -0500
-Received: from mail-ot1-f68.google.com ([209.85.210.68]:40509 "EHLO
-        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727389AbgBDVnt (ORCPT
+        id S1727555AbgBDVu0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 4 Feb 2020 16:50:26 -0500
+Received: from mail-io1-f68.google.com ([209.85.166.68]:44601 "EHLO
+        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727445AbgBDVuZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Feb 2020 16:43:49 -0500
-Received: by mail-ot1-f68.google.com with SMTP id i6so18663868otr.7
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Feb 2020 13:43:49 -0800 (PST)
+        Tue, 4 Feb 2020 16:50:25 -0500
+Received: by mail-io1-f68.google.com with SMTP id z16so17994201iod.11
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Feb 2020 13:50:25 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=intel-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=h4sd+ZATda3xgd2Cabp+ey5GfoagpPrGA3dH0HD9uD4=;
-        b=om0IxymUwPkvWyb01X9tGRJ2/DQx9Zp+ONzq9K7omFBcxtLbIr+tzBJigBSQmHj8ji
-         gecf238XvqhNWCuCqz2KAnrN3hTNL031wGf8u0cF3krNJjO2TYR57Dh5Iw9/Q50LRnkl
-         QuE9a58jgymDElHyDs9NcX4/me9PQ561Fcz/F9UKFm3td3WJmgu2NBt2/IM50iZA2jYR
-         ynmSHN6PcWaa83ih4P3Dpic9Y+SrcIIVXw5jNyh5WQPZRLL9gyDTVPllEJgs5elyQq2f
-         f0vXXrc67OfZVvCrI/PryDxZ6ot5Kg/9J5OGoqR0kSXlTMTH4V1nKwTKuhVR/rFzH6xV
-         XGow==
+        d=chromium.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=i0i3/3+XXmz+J9LUoNMltdqXtFQCY6ttO7G0zGfPbFE=;
+        b=fIOsfh0x/I35igdo5knF4zup1aWEVAScD0wahqnjxg8zRW7zCBPQCt0zApOUQ5BzuE
+         Em1gwA4flRAKFMCK4yDfH+fvrXompZS3zpmEcFL0XOJe5+uv425N1qbWIGLFcM5D4Isw
+         8GfOK4fS05P0dDiCkzWSeMx9OHqJjvp31OJOc=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=h4sd+ZATda3xgd2Cabp+ey5GfoagpPrGA3dH0HD9uD4=;
-        b=baYSCf39LY11J8m2WUAa2u5d+pTQiRqlatmRN778z5GxKe3aO5DjBCgOMjASCp8v/v
-         JYrg/ogJZaT60blefXr1kDYp86AbZIMvRgSoVAXWGBNff/ENEIgW6ZFIJTB6RLRRUR8S
-         CCf3ZFyydmdyYj1NZeZoWijKxpGAC2pGDu0zcPCadqnxSP0haZQO9gy/ODkE9X9DNINd
-         L8lh/Zvyal7psf/Vpd2TUjXijIhr8FItrpTkaIIeT9ZYVUjHsk6q9e8xSe1ee0/lLzaK
-         y3l3hsKNGFVEY2bn637AAUkkYknwN4Kx2bu+DjJhSSy5np8cJ8W96g1qS4talFzeniX7
-         dJ3A==
-X-Gm-Message-State: APjAAAVeqJgp9GIxt3eoKIJtnvLHGrXhp3VD2qDoeQN8SKekolzc1RBP
-        xVbem65XUC0nhr84ZY5Nenc1uFbNv05XLcnN6Jv2VA==
-X-Google-Smtp-Source: APXvYqyzRa/EgbcHWU5oWYs3EwkkIOeOuYIq70nRVJ+YY8OVe8Drtam8ArdPOslMqNhBe4zCRcUBk63gv56UchKAyW4=
-X-Received: by 2002:a9d:4e99:: with SMTP id v25mr24222626otk.363.1580852628908;
- Tue, 04 Feb 2020 13:43:48 -0800 (PST)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=i0i3/3+XXmz+J9LUoNMltdqXtFQCY6ttO7G0zGfPbFE=;
+        b=hbqvBzRgU4EodLF9Mvbaay7MXacosODIvXu9YSQRXED3eRNjzp2e+gmc34XihD/B7e
+         e+DQg6Exhr/yPYecxSVFEm02f9cGtT/oT0hnzXSumVifZr56Lc4fsyfzIladDzYxDuVR
+         Qi7tyy0fJMOXP2byggndMZWT6eLctopImzhgcp/oAXerLrH35IMR06tcFHGCDNN0UL4C
+         8OsGgFyPJ+lkHpqjncAa6DRg4Z0S/7JJFou2j5+zxeFBi6cXbPRWI84y+ewyJhUoGGC7
+         beyzd+h9TeCvF3Sm+2M58FTBe6uPIGJgYj00hv7RJS+vIm8Gx1i/mA3wap8lFlsFVTNl
+         tTLQ==
+X-Gm-Message-State: APjAAAVBex5nKGcvpUnK389hTwd92I6hnW+fpqPzmxWzosG89KIOqpA5
+        UQ2Z53/eEsjkRqhqiNR1Yz3oYrkxFYQ=
+X-Google-Smtp-Source: APXvYqwS02wj0hdef7McBQ3xlASNktjUy6dIZhwla7gWfQXqau25RuyTMMs3Kikk9SubEl+5tQhijg==
+X-Received: by 2002:a02:2a06:: with SMTP id w6mr27039731jaw.63.1580853024210;
+        Tue, 04 Feb 2020 13:50:24 -0800 (PST)
+Received: from localhost ([2620:15c:183:200:855f:8919:84a7:4794])
+        by smtp.gmail.com with ESMTPSA id x87sm9323483ilk.39.2020.02.04.13.50.22
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 04 Feb 2020 13:50:23 -0800 (PST)
+From:   Ross Zwisler <zwisler@chromium.org>
+X-Google-Original-From: Ross Zwisler <zwisler@google.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     Mattias Nissler <mnissler@chromium.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        linux-fsdevel@vger.kernel.org,
+        Benjamin Gordon <bmgordon@google.com>,
+        Ross Zwisler <zwisler@google.com>,
+        Raul Rangel <rrangel@google.com>,
+        Micah Morton <mortonm@google.com>,
+        Dmitry Torokhov <dtor@google.com>, Jan Kara <jack@suse.cz>,
+        Aleksa Sarai <cyphar@cyphar.com>,
+        Matthew Wilcox <willy@infradead.org>
+Subject: [PATCH v5] Add a "nosymfollow" mount option.
+Date:   Tue,  4 Feb 2020 14:50:14 -0700
+Message-Id: <20200204215014.257377-1-zwisler@google.com>
+X-Mailer: git-send-email 2.25.0.341.g760bfbb309-goog
 MIME-Version: 1.0
-References: <20200110190313.17144-1-joao.m.martins@oracle.com>
- <20200110190313.17144-11-joao.m.martins@oracle.com> <e605fed8-46f5-6a07-11e6-2cc079a1159b@google.com>
- <CAPcyv4iiSsEOsfEwLQcV3bNDjBSxw1OgWoBdEWPQEymq6=xm-A@mail.gmail.com> <ae788015-616f-96e6-3a0e-39c1911c4b01@google.com>
-In-Reply-To: <ae788015-616f-96e6-3a0e-39c1911c4b01@google.com>
-From:   Dan Williams <dan.j.williams@intel.com>
-Date:   Tue, 4 Feb 2020 13:43:37 -0800
-Message-ID: <CAPcyv4ibWZgCSTqnYLicVR3vXeNKwuWSnV5K8fCwvyhz_h=0GQ@mail.gmail.com>
-Subject: Re: [PATCH RFC 10/10] nvdimm/e820: add multiple namespaces support
-To:     Barret Rhoden <brho@google.com>
-Cc:     Joao Martins <joao.m.martins@oracle.com>,
-        linux-nvdimm <linux-nvdimm@lists.01.org>,
-        Vishal Verma <vishal.l.verma@intel.com>,
-        Dave Jiang <dave.jiang@intel.com>,
-        Ira Weiny <ira.weiny@intel.com>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        Cornelia Huck <cohuck@redhat.com>,
-        KVM list <kvm@vger.kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linux MM <linux-mm@kvack.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H . Peter Anvin" <hpa@zytor.com>, X86 ML <x86@kernel.org>,
-        Liran Alon <liran.alon@oracle.com>,
-        Nikita Leshenko <nikita.leshchenko@oracle.com>,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 4, 2020 at 10:20 AM Barret Rhoden <brho@google.com> wrote:
->
-> Hi -
->
-> On 2/4/20 11:44 AM, Dan Williams wrote:
-> > On Tue, Feb 4, 2020 at 7:30 AM Barret Rhoden <brho@google.com> wrote:
-> >>
-> >> Hi -
-> >>
-> >> On 1/10/20 2:03 PM, Joao Martins wrote:
-> >>> User can define regions with 'memmap=size!offset' which in turn
-> >>> creates PMEM legacy devices. But because it is a label-less
-> >>> NVDIMM device we only have one namespace for the whole device.
-> >>>
-> >>> Add support for multiple namespaces by adding ndctl control
-> >>> support, and exposing a minimal set of features:
-> >>> (ND_CMD_GET_CONFIG_SIZE, ND_CMD_GET_CONFIG_DATA,
-> >>> ND_CMD_SET_CONFIG_DATA) alongside NDD_ALIASING because we can
-> >>> store labels.
-> >>
-> >> FWIW, I like this a lot.  If we move away from using memmap in favor of
-> >> efi_fake_mem, ideally we'd have the same support for full-fledged
-> >> pmem/dax regions and namespaces that this patch brings.
-> >
-> > No, efi_fake_mem only supports creating dax-regions. What's the use
-> > case that can't be satisfied by just specifying multiple memmap=
-> > ranges?
->
-> I'd like to be able to create and destroy dax regions on the fly.  In
-> particular, I want to run guest VMs using the dax files for guest
-> memory, but I don't know at boot time how many VMs I'll have, or what
-> their sizes are.  Ideally, I'd have separate files for each VM, instead
-> of a single /dev/dax.
->
-> I currently do this with fs-dax with one big memmap region (ext4 on
-> /dev/pmem0), and I use the file system to handle the
-> creation/destruction/resizing and metadata management.  But since fs-dax
-> won't work with device pass-through, I started looking at dev-dax, with
-> the expectation that I'd need some software to manage the memory (i.e.
-> allocation).  That led me to ndctl, which seems to need namespace labels
-> to have the level of control I was looking for.
+From: Mattias Nissler <mnissler@chromium.org>
 
-Ah, got it, you only ended up at wanting namespace labels because
-there was no other way to carve up device-dax. That's changing as part
-of the efi_fake_mem= enabling and I have a patch set in the works to
-allow discontiguous sub-divisions of a device-dax range. Note that is
-this branch rebases frequently:
+For mounts that have the new "nosymfollow" option, don't follow symlinks
+when resolving paths. The new option is similar in spirit to the
+existing "nodev", "noexec", and "nosuid" options, as well as to the
+LOOKUP_NO_SYMLINKS resolve flag in the openat2(2) syscall. Various BSD
+variants have been supporting the "nosymfollow" mount option for a long
+time with equivalent implementations.
 
-https://git.kernel.org/pub/scm/linux/kernel/git/djbw/nvdimm.git/log/?h=libnvdimm-pending
+Note that symlinks may still be created on file systems mounted with
+the "nosymfollow" option present. readlink() remains functional, so
+user space code that is aware of symlinks can still choose to follow
+them explicitly.
 
+Setting the "nosymfollow" mount option helps prevent privileged
+writers from modifying files unintentionally in case there is an
+unexpected link along the accessed path. The "nosymfollow" option is
+thus useful as a defensive measure for systems that need to deal with
+untrusted file systems in privileged contexts.
 
->
-> Thanks,
->
-> Barret
->
+More information on the history and motivation for this patch can be
+found here:
+
+https://sites.google.com/a/chromium.org/dev/chromium-os/chromiumos-design-docs/hardening-against-malicious-stateful-data#TOC-Restricting-symlink-traversal
+
+Signed-off-by: Mattias Nissler <mnissler@chromium.org>
+Signed-off-by: Ross Zwisler <zwisler@google.com>
+---
+Changes since v4 [1]:
+ * Rebased changes on top of the newly merged openat2(2) changes.  This
+   changed the error value when trying to traverse symlinks on a
+   restricted filesystem from -EACCESS to -ELOOP, which is what
+   LOOKUP_NO_SYMLINKS uses.
+
+[1]: https://lkml.org/lkml/2020/1/30/933
+---
+ fs/namei.c                 | 3 ++-
+ fs/namespace.c             | 2 ++
+ fs/proc_namespace.c        | 1 +
+ fs/statfs.c                | 2 ++
+ include/linux/mount.h      | 3 ++-
+ include/linux/statfs.h     | 1 +
+ include/uapi/linux/mount.h | 1 +
+ 7 files changed, 11 insertions(+), 2 deletions(-)
+
+diff --git a/fs/namei.c b/fs/namei.c
+index 4167109297e0f..93af3d4353543 100644
+--- a/fs/namei.c
++++ b/fs/namei.c
+@@ -1122,7 +1122,8 @@ const char *get_link(struct nameidata *nd)
+ 	int error;
+ 	const char *res;
+ 
+-	if (unlikely(nd->flags & LOOKUP_NO_SYMLINKS))
++	if (unlikely(nd->flags & LOOKUP_NO_SYMLINKS) ||
++		unlikely(nd->path.mnt->mnt_flags & MNT_NOSYMFOLLOW))
+ 		return ERR_PTR(-ELOOP);
+ 
+ 	if (!(nd->flags & LOOKUP_RCU)) {
+diff --git a/fs/namespace.c b/fs/namespace.c
+index 5e1bf611a9eb6..240421e02940d 100644
+--- a/fs/namespace.c
++++ b/fs/namespace.c
+@@ -3109,6 +3109,8 @@ long do_mount(const char *dev_name, const char __user *dir_name,
+ 		mnt_flags &= ~(MNT_RELATIME | MNT_NOATIME);
+ 	if (flags & MS_RDONLY)
+ 		mnt_flags |= MNT_READONLY;
++	if (flags & MS_NOSYMFOLLOW)
++		mnt_flags |= MNT_NOSYMFOLLOW;
+ 
+ 	/* The default atime for remount is preservation */
+ 	if ((flags & MS_REMOUNT) &&
+diff --git a/fs/proc_namespace.c b/fs/proc_namespace.c
+index 273ee82d8aa97..91a552f617406 100644
+--- a/fs/proc_namespace.c
++++ b/fs/proc_namespace.c
+@@ -70,6 +70,7 @@ static void show_mnt_opts(struct seq_file *m, struct vfsmount *mnt)
+ 		{ MNT_NOATIME, ",noatime" },
+ 		{ MNT_NODIRATIME, ",nodiratime" },
+ 		{ MNT_RELATIME, ",relatime" },
++		{ MNT_NOSYMFOLLOW, ",nosymfollow" },
+ 		{ 0, NULL }
+ 	};
+ 	const struct proc_fs_info *fs_infop;
+diff --git a/fs/statfs.c b/fs/statfs.c
+index 2616424012ea7..59f33752c1311 100644
+--- a/fs/statfs.c
++++ b/fs/statfs.c
+@@ -29,6 +29,8 @@ static int flags_by_mnt(int mnt_flags)
+ 		flags |= ST_NODIRATIME;
+ 	if (mnt_flags & MNT_RELATIME)
+ 		flags |= ST_RELATIME;
++	if (mnt_flags & MNT_NOSYMFOLLOW)
++		flags |= ST_NOSYMFOLLOW;
+ 	return flags;
+ }
+ 
+diff --git a/include/linux/mount.h b/include/linux/mount.h
+index bf8cc4108b8f9..ff2d132c21f5d 100644
+--- a/include/linux/mount.h
++++ b/include/linux/mount.h
+@@ -30,6 +30,7 @@ struct fs_context;
+ #define MNT_NODIRATIME	0x10
+ #define MNT_RELATIME	0x20
+ #define MNT_READONLY	0x40	/* does the user want this to be r/o? */
++#define MNT_NOSYMFOLLOW	0x80
+ 
+ #define MNT_SHRINKABLE	0x100
+ #define MNT_WRITE_HOLD	0x200
+@@ -46,7 +47,7 @@ struct fs_context;
+ #define MNT_SHARED_MASK	(MNT_UNBINDABLE)
+ #define MNT_USER_SETTABLE_MASK  (MNT_NOSUID | MNT_NODEV | MNT_NOEXEC \
+ 				 | MNT_NOATIME | MNT_NODIRATIME | MNT_RELATIME \
+-				 | MNT_READONLY)
++				 | MNT_READONLY | MNT_NOSYMFOLLOW)
+ #define MNT_ATIME_MASK (MNT_NOATIME | MNT_NODIRATIME | MNT_RELATIME )
+ 
+ #define MNT_INTERNAL_FLAGS (MNT_SHARED | MNT_WRITE_HOLD | MNT_INTERNAL | \
+diff --git a/include/linux/statfs.h b/include/linux/statfs.h
+index 9bc69edb8f188..fac4356ea1bfc 100644
+--- a/include/linux/statfs.h
++++ b/include/linux/statfs.h
+@@ -40,6 +40,7 @@ struct kstatfs {
+ #define ST_NOATIME	0x0400	/* do not update access times */
+ #define ST_NODIRATIME	0x0800	/* do not update directory access times */
+ #define ST_RELATIME	0x1000	/* update atime relative to mtime/ctime */
++#define ST_NOSYMFOLLOW	0x2000	/* do not follow symlinks */
+ 
+ struct dentry;
+ extern int vfs_get_fsid(struct dentry *dentry, __kernel_fsid_t *fsid);
+diff --git a/include/uapi/linux/mount.h b/include/uapi/linux/mount.h
+index 96a0240f23fed..c268ea586dbf4 100644
+--- a/include/uapi/linux/mount.h
++++ b/include/uapi/linux/mount.h
+@@ -34,6 +34,7 @@
+ #define MS_I_VERSION	(1<<23) /* Update inode I_version field */
+ #define MS_STRICTATIME	(1<<24) /* Always perform atime updates */
+ #define MS_LAZYTIME	(1<<25) /* Update the on-disk [acm]times lazily */
++#define MS_NOSYMFOLLOW	(1<<26) /* Do not follow symlinks */
+ 
+ /* These sb flags are internal to the kernel */
+ #define MS_SUBMOUNT     (1<<26)
+-- 
+2.25.0.341.g760bfbb309-goog
+
