@@ -2,116 +2,106 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B287A151C47
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Feb 2020 15:34:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CD5E0151C5F
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Feb 2020 15:37:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727349AbgBDOeO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 4 Feb 2020 09:34:14 -0500
-Received: from mail26.static.mailgun.info ([104.130.122.26]:15308 "EHLO
-        mail26.static.mailgun.info" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727249AbgBDOeN (ORCPT
+        id S1727314AbgBDOhA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 4 Feb 2020 09:37:00 -0500
+Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:57210 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1727250AbgBDOhA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Feb 2020 09:34:13 -0500
-DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
- s=smtp; t=1580826853; h=Content-Transfer-Encoding: Content-Type:
- In-Reply-To: MIME-Version: Date: Message-ID: References: Cc: To: From:
- Subject: Sender; bh=LOayz92CiS3mJzv9h9nepoJ7jN0NsDcY/StZV7GTdyM=; b=l6INJAjiq2YDaEXkpFGD8yu8cc+5VNEJFmGbXE2Hb21VeGZrLioiF7A8MGUAZUDGn07tdCfV
- 5oi083RXWvzSMm+99Ty+t9R/2quldTmu80n71G7rsLxbcvtNPulFQXy6Sv/BoomTiRjbTyym
- XH4FllJgw7mgldVdfo2flW0DqoA=
-X-Mailgun-Sending-Ip: 104.130.122.26
-X-Mailgun-Sid: WyI0MWYwYSIsICJsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
-Received: from smtp.codeaurora.org (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171])
- by mxa.mailgun.org with ESMTP id 5e3980df.7f0a627aa298-smtp-out-n03;
- Tue, 04 Feb 2020 14:34:07 -0000 (UTC)
-Received: by smtp.codeaurora.org (Postfix, from userid 1001)
-        id DEE0CC447A6; Tue,  4 Feb 2020 14:34:06 +0000 (UTC)
-X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
-        aws-us-west-2-caf-mail-1.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=2.0 tests=ALL_TRUSTED,SPF_NONE
-        autolearn=unavailable autolearn_force=no version=3.4.0
-Received: from [192.168.1.5] (unknown [122.164.174.21])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: sricharan)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 7EBEEC447A2;
-        Tue,  4 Feb 2020 14:34:02 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 7EBEEC447A2
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=none smtp.mailfrom=sricharan@codeaurora.org
-Subject: Re: [PATCH V6 1/5] dt-bindings: pinctrl: qcom: Add ipq6018 pinctrl
- bindings
-From:   Sricharan R <sricharan@codeaurora.org>
-To:     Rob Herring <robh@kernel.org>
-Cc:     devicetree@vger.kernel.org,
-        Rajkumar Ayyasamy <arajkuma@codeaurora.org>,
-        linux-arm-msm@vger.kernel.org, linus.walleij@linaro.org,
-        linux-kernel@vger.kernel.org,
-        Selvam Sathappan Periakaruppan <speriaka@codeaurora.org>,
-        linux-gpio@vger.kernel.org, robh+dt@kernel.org, agross@kernel.org,
-        sivaprak@codeaurora.org, linux-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-References: <1579439601-14810-1-git-send-email-sricharan@codeaurora.org>
- <1579439601-14810-2-git-send-email-sricharan@codeaurora.org>
- <20200127154113.GA6904@bogus>
- <422e31d0-f67f-3b10-5d8f-ccc9d6f7dc70@codeaurora.org>
- <9acb9b69-fd44-57db-e974-9fee5a1d871f@codeaurora.org>
-Message-ID: <11ad212e-5c6a-968b-33ca-977c8596ef6a@codeaurora.org>
-Date:   Tue, 4 Feb 2020 20:03:57 +0530
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.2
+        Tue, 4 Feb 2020 09:37:00 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1580827018;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=d4oID/MjfqTQ+n08/EIWcONdJe6Z2nq4WI7xtUbHDEI=;
+        b=b2jpMKPN4ZkcVTOIyiCIiBnZCxncdCbEEVLFwP+IZj9MZ45OiNI/zqm+BH38hyE8R5I9Ut
+        zN8UMVnTRswXbC+UFZQg3khWasyH1wpJ57UHmS4OIev5HU3JBjPUN0CIG8JBeoZLKD4qHv
+        PWE75WRwn+rLZXY/wT8CUtPithAiTMM=
+Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com
+ [209.85.221.72]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-184-D0XqkzqUPe6e6N2DKR8IVA-1; Tue, 04 Feb 2020 09:36:56 -0500
+X-MC-Unique: D0XqkzqUPe6e6N2DKR8IVA-1
+Received: by mail-wr1-f72.google.com with SMTP id s13so10210421wru.7
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Feb 2020 06:36:56 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:in-reply-to:references:date
+         :message-id:mime-version;
+        bh=d4oID/MjfqTQ+n08/EIWcONdJe6Z2nq4WI7xtUbHDEI=;
+        b=MfOTtqt7yWkiNF7NNffH5Z1gxn2yqVGbL+UGnfWlFDl+9E3njqcdX/f5S4pYqVcmZ2
+         o899yz93LHfXjwsPnSSxORYtoosiffHwJGoi5qpEJ72FnA4L76vxalZyLnGxGV/NxBVF
+         96a4hkseoJ9d7fdG3Hkqnk3Wq9c2jJ0MMZ8aMJ7+WAiQOi+mnFSQEbQd9v+azhp4MwYm
+         +nHVryDhMF3NsqEcu/NpLZMgBbX9UkOAPFu2oIiLq2SrgK3TqvYZbkKyKJyz/v3u4AVs
+         3Yj2NiTCoV131nVzF06FrAJmkXJC3UXJUA9oCUB68NoUq0nBX/YOEVgo6XcnoivnmZ/L
+         dA/Q==
+X-Gm-Message-State: APjAAAXN3iGRPUcCySZyTKtCsH9w7rQPbey0LmdtbCCB8RiJa/Hy1Hyr
+        nBRoPqXij+nfpOkVkzgq2KpvMp/srypRYeWoVtmPLrMY2lhk85XhUxWpsRs2OyAmp8JXg0HZFTU
+        Xf6Thv8vm5NV/3dk2LXyKJnWz
+X-Received: by 2002:a1c:9dce:: with SMTP id g197mr5906151wme.23.1580827015035;
+        Tue, 04 Feb 2020 06:36:55 -0800 (PST)
+X-Google-Smtp-Source: APXvYqyac0/Vwg6esCkpMW9u2CVE28Xh1fpnOCRV5CRBnFdTm1nx54yPw5Wkor5FBNIjnBmuYfZhGg==
+X-Received: by 2002:a1c:9dce:: with SMTP id g197mr5906138wme.23.1580827014828;
+        Tue, 04 Feb 2020 06:36:54 -0800 (PST)
+Received: from vitty.brq.redhat.com (nat-pool-brq-t.redhat.com. [213.175.37.10])
+        by smtp.gmail.com with ESMTPSA id e18sm29407471wrw.70.2020.02.04.06.36.53
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 04 Feb 2020 06:36:54 -0800 (PST)
+From:   Vitaly Kuznetsov <vkuznets@redhat.com>
+To:     Wanpeng Li <kernellwp@gmail.com>
+Cc:     LKML <linux-kernel@vger.kernel.org>, kvm <kvm@vger.kernel.org>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Sean Christopherson <sean.j.christopherson@intel.com>,
+        Wanpeng Li <wanpengli@tencent.com>,
+        Jim Mattson <jmattson@google.com>,
+        Joerg Roedel <joro@8bytes.org>,
+        Thadeu Lima de Souza Cascardo <cascardo@canonical.com>
+Subject: Re: [PATCH] KVM: Pre-allocate 1 cpumask variable per cpu for both pv tlb and pv ipis
+In-Reply-To: <CANRm+CzkN9oYf4UqWYp2SHFii02=pvVLbW4oNkLmPan7ZroDZA@mail.gmail.com>
+References: <CANRm+CwwYoSLeA3Squp-_fVZpmYmxEfqOB+DGoQN4Y_iMT347w@mail.gmail.com> <878slio6hp.fsf@vitty.brq.redhat.com> <CANRm+CzkN9oYf4UqWYp2SHFii02=pvVLbW4oNkLmPan7ZroDZA@mail.gmail.com>
+Date:   Tue, 04 Feb 2020 15:36:53 +0100
+Message-ID: <874kw6o1ve.fsf@vitty.brq.redhat.com>
 MIME-Version: 1.0
-In-Reply-To: <9acb9b69-fd44-57db-e974-9fee5a1d871f@codeaurora.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Linus,
+Wanpeng Li <kernellwp@gmail.com> writes:
 
-On 2/4/2020 7:34 PM, Sricharan R wrote:
-> Hi Rob,
-> 
-> On 1/28/2020 10:07 AM, Sricharan R wrote:
->> Hi,
 >>
->> On 1/27/2020 9:11 PM, Rob Herring wrote:
->>> On Sun, 19 Jan 2020 18:43:17 +0530, Sricharan R wrote:
->>>> Add device tree binding Documentation details for ipq6018
->>>> pinctrl driver.
->>>>
->>>> Co-developed-by: Rajkumar Ayyasamy <arajkuma@codeaurora.org>
->>>> Signed-off-by: Rajkumar Ayyasamy <arajkuma@codeaurora.org>
->>>> Co-developed-by: Selvam Sathappan Periakaruppan <speriaka@codeaurora.org>
->>>> Signed-off-by: Selvam Sathappan Periakaruppan <speriaka@codeaurora.org>
->>>> Co-developed-by: Sivaprakash Murugesan <sivaprak@codeaurora.org>
->>>> Signed-off-by: Sivaprakash Murugesan <sivaprak@codeaurora.org>
->>>> Signed-off-by: Sricharan R <sricharan@codeaurora.org>
->>>> Signed-off-by: Sivaprakash Murugesan <sivaprak@codeaurora.org>
->>>> ---
->>>> [V6] 
->>>>   * Addressed review comments form Rob.
->>>>  .../bindings/pinctrl/qcom,ipq6018-pinctrl.yaml     | 153 +++++++++++++++++++++
->>>>  1 file changed, 153 insertions(+)
->>>>  create mode 100644 Documentation/devicetree/bindings/pinctrl/qcom,ipq6018-pinctrl.yaml
->>>>
->>>
->>> Reviewed-by: Rob Herring <robh@kernel.org>
->> Thanks Rob.
+>> Honestly, I'd simplify the check in kvm_alloc_cpumask() as
 >>
->> Hi Linus,
->>    The pinctrl driver can now be pulled in.
-> 
-> Any chance this can be taken for 5.6 ?
-> 
+>> if (!kvm_para_available())
+>>         return;
+>>
+>> and allocated masks for all other cases.
+>
+> This will waste the memory if pv tlb and pv ipis are not exposed which
+> are the only users currently.
+>
 
-Can the pinctrl driver be taken for 5.6 by any chance ?
+My assumption is that the number of cases where we a) expose KVM b)
+don't expose IPIs and PV-TLB and c) care about 1 cpumask per cpu is
+relatively low. Ok, let's at least have a function for
 
-Regards,
- Sricharan
+	if (kvm_para_has_feature(KVM_FEATURE_PV_TLB_FLUSH) &&
+	    !kvm_para_has_hint(KVM_HINTS_REALTIME) &&
+	    kvm_para_has_feature(KVM_FEATURE_STEAL_TIME))
+
+as we now check it twice: in kvm_alloc_cpumask() and kvm_guest_init(),
+something like pv_tlb_flush_supported(). We can also do
+pv_ipi_supported() and probably others for consistency.
+
+Also, probably not for this patch but it all makes me wonder why there's
+no per-cpu 'scratch' cpumask for the whole kernel to use. We definitely
+need it for hypervisor support but I also see
+arch/x86/kernel/apic/x2apic_cluster.c has similar needs.
 
 -- 
-"QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
+Vitaly
+
