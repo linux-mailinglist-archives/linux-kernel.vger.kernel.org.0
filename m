@@ -2,198 +2,114 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E4376151C31
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Feb 2020 15:27:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AD3E8151C45
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Feb 2020 15:33:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727330AbgBDO1t (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 4 Feb 2020 09:27:49 -0500
-Received: from youngberry.canonical.com ([91.189.89.112]:53185 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727230AbgBDO1s (ORCPT
+        id S1727334AbgBDOdP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 4 Feb 2020 09:33:15 -0500
+Received: from userp2120.oracle.com ([156.151.31.85]:60978 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727256AbgBDOdN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Feb 2020 09:27:48 -0500
-Received: from [187.32.88.249] (helo=calabresa)
-        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.86_2)
-        (envelope-from <cascardo@canonical.com>)
-        id 1iyzB0-0001Ay-EI; Tue, 04 Feb 2020 14:27:44 +0000
-Date:   Tue, 4 Feb 2020 11:27:33 -0300
-From:   Thadeu Lima de Souza Cascardo <cascardo@canonical.com>
-To:     Wanpeng Li <kernellwp@gmail.com>
-Cc:     Vitaly Kuznetsov <vkuznets@redhat.com>,
-        LKML <linux-kernel@vger.kernel.org>, kvm <kvm@vger.kernel.org>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Sean Christopherson <sean.j.christopherson@intel.com>,
-        Wanpeng Li <wanpengli@tencent.com>,
-        Jim Mattson <jmattson@google.com>,
-        Joerg Roedel <joro@8bytes.org>
-Subject: Re: [PATCH] KVM: Pre-allocate 1 cpumask variable per cpu for both pv
- tlb and pv ipis
-Message-ID: <20200204142733.GI40679@calabresa>
-References: <CANRm+CwwYoSLeA3Squp-_fVZpmYmxEfqOB+DGoQN4Y_iMT347w@mail.gmail.com>
- <878slio6hp.fsf@vitty.brq.redhat.com>
- <CANRm+CzkN9oYf4UqWYp2SHFii02=pvVLbW4oNkLmPan7ZroDZA@mail.gmail.com>
+        Tue, 4 Feb 2020 09:33:13 -0500
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id 014ENEvJ174913;
+        Tue, 4 Feb 2020 14:31:59 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : mime-version : content-type : in-reply-to;
+ s=corp-2019-08-05; bh=pt2dhiYXg1N/Fuw4ZspxpERuJ9G0f6yoC8gPPXAvscc=;
+ b=kffE1qec3euoQJxKNleY2033qTlUsqCITkCLMS3EGZvyvDdufuyHS5ABue8wxStJCnSK
+ 833owxFAnzfVG4w4RbpeOtZ6AXOXocFWTLDJy0K/LBx23keJERPQQ0/XSjR8vIPlSXSj
+ lzC5E3lG9EFMWYZjKHitNeLDQt+/9g6oEycsBKOfwK6WnxyvSmTo/86b/5pCAJ4x4Uqv
+ Zdj7y+wiUEpQT25mKcpOZ4pmuE1SVLL4O0X5ttn7gRir1xa7zVkVpwE+ybUgUk2F8vzg
+ SaDAKMhXRlSItv0q9wxPEc/aod+IE5NdS2BJ1gHeon1GUkZfczB2gPPAaDn7S//BNfEX cQ== 
+Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
+        by userp2120.oracle.com with ESMTP id 2xwyg9k7m4-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 04 Feb 2020 14:31:58 +0000
+Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
+        by aserp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id 014EOVJZ164778;
+        Tue, 4 Feb 2020 14:31:58 GMT
+Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
+        by aserp3030.oracle.com with ESMTP id 2xxw0x3vqw-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 04 Feb 2020 14:31:58 +0000
+Received: from abhmp0017.oracle.com (abhmp0017.oracle.com [141.146.116.23])
+        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id 014EVsda006815;
+        Tue, 4 Feb 2020 14:31:54 GMT
+Received: from kadam (/129.205.23.165)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Tue, 04 Feb 2020 06:31:54 -0800
+Date:   Tue, 4 Feb 2020 17:31:42 +0300
+From:   Dan Carpenter <dan.carpenter@oracle.com>
+To:     kbuild@lists.01.org, Shiju Jose <shiju.jose@huawei.com>
+Cc:     kbuild-all@lists.01.org, linux-acpi@vger.kernel.org,
+        linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
+        rjw@rjwysocki.net, helgaas@kernel.org, lenb@kernel.org,
+        bp@alien8.de, james.morse@arm.com, tony.luck@intel.com,
+        gregkh@linuxfoundation.org, zhangliguang@linux.alibaba.com,
+        tglx@linutronix.de, linuxarm@huawei.com,
+        jonathan.cameron@huawei.com, tanxiaofei@huawei.com,
+        yangyicong@hisilicon.com, Shiju Jose <shiju.jose@huawei.com>
+Subject: Re: [PATCH v3 2/2] PCI: HIP: Add handling of HiSilicon HIP PCIe
+ controller's errors
+Message-ID: <20200204143142.GQ11068@kadam>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CANRm+CzkN9oYf4UqWYp2SHFii02=pvVLbW4oNkLmPan7ZroDZA@mail.gmail.com>
-User-Agent: Mutt/1.12.2 (2019-09-21)
+In-Reply-To: <20200203165122.17748-3-shiju.jose@huawei.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9520 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1911140001 definitions=main-2002040102
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9520 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1911140001
+ definitions=main-2002040102
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 04, 2020 at 09:09:59PM +0800, Wanpeng Li wrote:
-> Cc Thadeu,
-> On Tue, 4 Feb 2020 at 20:57, Vitaly Kuznetsov <vkuznets@redhat.com> wrote:
-> >
-> > Wanpeng Li <kernellwp@gmail.com> writes:
-> >
-> > > From: Wanpeng Li <wanpengli@tencent.com>
-> > >
-> > > Nick Desaulniers Reported:
-> > >
-> > >   When building with:
-> > >   $ make CC=clang arch/x86/ CFLAGS=-Wframe-larger-than=1000
-> > >   The following warning is observed:
-> > >   arch/x86/kernel/kvm.c:494:13: warning: stack frame size of 1064 bytes in
-> > >   function 'kvm_send_ipi_mask_allbutself' [-Wframe-larger-than=]
-> > >   static void kvm_send_ipi_mask_allbutself(const struct cpumask *mask, int
-> > >   vector)
-> > >               ^
-> > >   Debugging with:
-> > >   https://github.com/ClangBuiltLinux/frame-larger-than
-> > >   via:
-> > >   $ python3 frame_larger_than.py arch/x86/kernel/kvm.o \
-> > >     kvm_send_ipi_mask_allbutself
-> > >   points to the stack allocated `struct cpumask newmask` in
-> > >   `kvm_send_ipi_mask_allbutself`. The size of a `struct cpumask` is
-> > >   potentially large, as it's CONFIG_NR_CPUS divided by BITS_PER_LONG for
-> > >   the target architecture. CONFIG_NR_CPUS for X86_64 can be as high as
-> > >   8192, making a single instance of a `struct cpumask` 1024 B.
-> > >
-> > > This patch fixes it by pre-allocate 1 cpumask variable per cpu and use it for
-> > > both pv tlb and pv ipis..
-> > >
-> > > Reported-by: Nick Desaulniers <ndesaulniers@google.com>
-> > > Acked-by: Nick Desaulniers <ndesaulniers@google.com>
-> > > Cc: Peter Zijlstra <peterz@infradead.org>
-> > > Cc: Nick Desaulniers <ndesaulniers@google.com>
-> > > Signed-off-by: Wanpeng Li <wanpengli@tencent.com>
-> > > ---
-> > >  arch/x86/kernel/kvm.c | 33 +++++++++++++++++++++------------
-> > >  1 file changed, 21 insertions(+), 12 deletions(-)
-> > >
-> > > diff --git a/arch/x86/kernel/kvm.c b/arch/x86/kernel/kvm.c
-> > > index 81045aab..b1e8efa 100644
-> > > --- a/arch/x86/kernel/kvm.c
-> > > +++ b/arch/x86/kernel/kvm.c
-> > > @@ -425,6 +425,8 @@ static void __init sev_map_percpu_data(void)
-> > >      }
-> > >  }
-> > >
-> > > +static DEFINE_PER_CPU(cpumask_var_t, __pv_cpu_mask);
-> > > +
-> > >  #ifdef CONFIG_SMP
-> > >  #define KVM_IPI_CLUSTER_SIZE    (2 * BITS_PER_LONG)
-> > >
-> > > @@ -490,12 +492,12 @@ static void kvm_send_ipi_mask(const struct
-> > > cpumask *mask, int vector)
-> > >  static void kvm_send_ipi_mask_allbutself(const struct cpumask *mask,
-> > > int vector)
-> > >  {
-> > >      unsigned int this_cpu = smp_processor_id();
-> > > -    struct cpumask new_mask;
-> > > +    struct cpumask *new_mask = this_cpu_cpumask_var_ptr(__pv_cpu_mask);
-> > >      const struct cpumask *local_mask;
-> > >
-> > > -    cpumask_copy(&new_mask, mask);
-> > > -    cpumask_clear_cpu(this_cpu, &new_mask);
-> > > -    local_mask = &new_mask;
-> > > +    cpumask_copy(new_mask, mask);
-> > > +    cpumask_clear_cpu(this_cpu, new_mask);
-> > > +    local_mask = new_mask;
-> > >      __send_ipi_mask(local_mask, vector);
-> > >  }
-> > >
-> > > @@ -575,7 +577,6 @@ static void __init kvm_apf_trap_init(void)
-> > >      update_intr_gate(X86_TRAP_PF, async_page_fault);
-> > >  }
-> > >
-> > > -static DEFINE_PER_CPU(cpumask_var_t, __pv_tlb_mask);
-> > >
-> > >  static void kvm_flush_tlb_others(const struct cpumask *cpumask,
-> > >              const struct flush_tlb_info *info)
-> > > @@ -583,7 +584,7 @@ static void kvm_flush_tlb_others(const struct
-> > > cpumask *cpumask,
-> > >      u8 state;
-> > >      int cpu;
-> > >      struct kvm_steal_time *src;
-> > > -    struct cpumask *flushmask = this_cpu_cpumask_var_ptr(__pv_tlb_mask);
-> > > +    struct cpumask *flushmask = this_cpu_cpumask_var_ptr(__pv_cpu_mask);
-> > >
-> > >      cpumask_copy(flushmask, cpumask);
-> > >      /*
-> > > @@ -624,6 +625,7 @@ static void __init kvm_guest_init(void)
-> > >          kvm_para_has_feature(KVM_FEATURE_STEAL_TIME)) {
-> > >          pv_ops.mmu.flush_tlb_others = kvm_flush_tlb_others;
-> > >          pv_ops.mmu.tlb_remove_table = tlb_remove_table;
-> > > +        pr_info("KVM setup pv remote TLB flush\n");
-> > >      }
-> > >
-> > >      if (kvm_para_has_feature(KVM_FEATURE_PV_EOI))
-> > > @@ -732,23 +734,30 @@ static __init int activate_jump_labels(void)
-> > >  }
-> > >  arch_initcall(activate_jump_labels);
-> > >
-> > > -static __init int kvm_setup_pv_tlb_flush(void)
-> > > +static __init int kvm_alloc_cpumask(void)
-> > >  {
-> > >      int cpu;
-> > > +    bool alloc = false;
-> > >
-> > >      if (kvm_para_has_feature(KVM_FEATURE_PV_TLB_FLUSH) &&
-> > >          !kvm_para_has_hint(KVM_HINTS_REALTIME) &&
-> > > -        kvm_para_has_feature(KVM_FEATURE_STEAL_TIME)) {
-> > > +        kvm_para_has_feature(KVM_FEATURE_STEAL_TIME))
-> > > +        alloc = true;
-> > > +
-> > > +#if defined(CONFIG_SMP)
-> > > +    if (!alloc && kvm_para_has_feature(KVM_FEATURE_PV_SEND_IPI))
-> >
-> > '!alloc' check is superfluous.
-> >
-> > > +        alloc = true;
-> > > +#endif
-> > > +
-> > > +    if (alloc)
-> > >          for_each_possible_cpu(cpu) {
-> > > -            zalloc_cpumask_var_node(per_cpu_ptr(&__pv_tlb_mask, cpu),
-> > > +            zalloc_cpumask_var_node(per_cpu_ptr(&__pv_cpu_mask, cpu),
-> > >                  GFP_KERNEL, cpu_to_node(cpu));
-> > >          }
-> > > -        pr_info("KVM setup pv remote TLB flush\n");
-> > > -    }
-> > >
-> > >      return 0;
-> > >  }
-> > > -arch_initcall(kvm_setup_pv_tlb_flush);
-> > > +arch_initcall(kvm_alloc_cpumask);
-> >
-> > Honestly, I'd simplify the check in kvm_alloc_cpumask() as
-> >
-> > if (!kvm_para_available())
-> >         return;
-> >
-> > and allocated masks for all other cases.
-> 
-> This will waste the memory if pv tlb and pv ipis are not exposed which
-> are the only users currently.
-> 
->     Wanpeng
+Hi Shiju,
 
-I am more concerned about printing the "KVM setup pv remote TLB flush" message,
-not only when KVM pv is used, but pv TLB flush is not going to be used, but
-also when the system is not even paravirtualized.
+Thank you for the patch! Perhaps something to improve:
 
-Cascardo.
+url:    https://github.com/0day-ci/linux/commits/Shiju-Jose/ACPI-APEI-Add-support-to-notify-the-vendor-specific-HW-errors/20200204-073736
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git linux-next
+
+If you fix the issue, kindly add following tag
+Reported-by: kbuild test robot <lkp@intel.com>
+Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
+
+smatch warnings:
+drivers/pci/controller/pcie-hisi-error.c:234 hisi_pcie_handle_one_error() warn: should '((((1))) << (9 + i))' be a 64 bit type?
+
+# https://github.com/0day-ci/linux/commit/71688ac6d222c137b66a707f8a6fdf28b48e1942
+git remote add linux-review https://github.com/0day-ci/linux
+git remote update linux-review
+git checkout 71688ac6d222c137b66a707f8a6fdf28b48e1942
+vim +234 drivers/pci/controller/pcie-hisi-error.c
+
+71688ac6d222c1 Yicong Yang 2020-02-03  228  	p += snprintf(p, end - p, "]\n");
+71688ac6d222c1 Yicong Yang 2020-02-03  229  	dev_info(dev, "\nHISI : HIP : PCIe controller error\n");
+71688ac6d222c1 Yicong Yang 2020-02-03  230  	dev_info(dev, "%s\n", buf);
+71688ac6d222c1 Yicong Yang 2020-02-03  231  
+71688ac6d222c1 Yicong Yang 2020-02-03  232  	dev_info(dev, "Reg Dump:\n");
+71688ac6d222c1 Yicong Yang 2020-02-03  233  	for (i = 0; i < HISI_PCIE_ERR_MISC_REGS; i++) {
+71688ac6d222c1 Yicong Yang 2020-02-03 @234  		if (err->val_bits & BIT(HISI_PCIE_LOCAL_VALID_ERR_MISC + i))
+                                                                            ^^^
+This should be BIT_ULL() because it goes up to 9 + 32.
+
+71688ac6d222c1 Yicong Yang 2020-02-03  235  			dev_info(dev,
+71688ac6d222c1 Yicong Yang 2020-02-03  236  				 "ERR_MISC_%d=0x%x\n", i, err->err_misc[i]);
+71688ac6d222c1 Yicong Yang 2020-02-03  237  	}
+71688ac6d222c1 Yicong Yang 2020-02-03  238  
+
+---
+0-DAY kernel test infrastructure                 Open Source Technology Center
+https://lists.01.org/hyperkitty/list/kbuild-all@lists.01.org Intel Corporation
