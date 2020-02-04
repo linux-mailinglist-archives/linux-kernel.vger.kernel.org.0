@@ -2,257 +2,183 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B87DA15190A
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Feb 2020 11:56:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 053BF151913
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Feb 2020 11:58:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727004AbgBDK4p (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 4 Feb 2020 05:56:45 -0500
-Received: from mail-io1-f66.google.com ([209.85.166.66]:33002 "EHLO
-        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726631AbgBDK4p (ORCPT
+        id S1727128AbgBDK6E (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 4 Feb 2020 05:58:04 -0500
+Received: from mail-qk1-f196.google.com ([209.85.222.196]:40083 "EHLO
+        mail-qk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726631AbgBDK6E (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Feb 2020 05:56:45 -0500
-Received: by mail-io1-f66.google.com with SMTP id z8so20424493ioh.0;
-        Tue, 04 Feb 2020 02:56:44 -0800 (PST)
+        Tue, 4 Feb 2020 05:58:04 -0500
+Received: by mail-qk1-f196.google.com with SMTP id b7so2212814qkl.7
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Feb 2020 02:58:02 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
+        d=linaro.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=WKJW1x2nHayBDXv0gzp/5ECrFg2gT65TYL2Ic2r6VWg=;
-        b=ecWFatVuiGk2kHwdhP2nBAmcJA78nd7VWsPKYLN0PFgyJz9Wmz4n0OLDV5DCUU/Ka8
-         AxTym4KK1ZFnmp8wVpzRxSzHGvAGhWVjbqGIoOm6kjSWeSQvOodt7HwsuJThNoi5EioH
-         dOaOqO1ZSfJxSEceSPubp6KUqYcWa2mGYF44I6FraqV2QkVSmuW7iY6LzbdufQcuDV/4
-         +NCk0saT+gGd3NR8g/sWnGwTr8NMAp6lrcPiBrPyO2LKZ6o5J8dMhmH7rV69S/gNv+oi
-         m6OMVTUDeEYzdYxCCXgykC5E8FxpYPIAn5hqvlb65ox+fR7bvGgSV2grwY0DQnpYW3sU
-         pwbA==
+         :cc:content-transfer-encoding;
+        bh=NMkyhVQSWvkEio+aMy2Gad6E8U/YVr2WvfbqrIM79Ns=;
+        b=dDsXTEAwh3dw/aFpDHOSx/OkiR/dsRVQgWaqh/SmX9VrwPf88A3B/TVUN0PSbdTQYj
+         lZFmOK2ulhEsePjtkVF/4C/B4IupUXnqdIpRVSJRaWy9kyjY68vsl5j7PaoeyFdqU+o0
+         jka4e73H48C6I9RUBHYWoNW28ZBnq55U0uLzMqC++YRHovqVCZYGUA99ljOsGx1AnWb7
+         8SKe0YFxMl9p3OOcrGVxjKh74ghwXEPVw3pa8bDymu0VRIm6waXfy22wQQS1qWyqipCG
+         9d8P1fB8zHSuh9ls6JnYc+Ds7FRQJE7aYXW0SpkwtFUa6JD5u8aLJtQbaApeGsf9KX9P
+         HQZw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=WKJW1x2nHayBDXv0gzp/5ECrFg2gT65TYL2Ic2r6VWg=;
-        b=breItNAw76fCqzZ7wqEu0Sc2N0PRYWksBW1WdgzE3vzPqdhz1JDoJQrZfavZzMvsWG
-         OR3HAY2lRLKLXQXhgL7yN5G7wOYauHS8XOkVbL+8RQjbRJeXNluUaOghP2lL+P+oaMYI
-         Jb4pmgZMRVAzU7Ocad+Ho+8SCW23yDrBXS6fVY69IDyjLYi1ajgohNK1X7Chb9yVcLOw
-         CZRy3RBncOkYQTgmcnX2AlFA8dtffum1z48yEfr7q7MmWzmLgc4t+x3BgThVgxv73wkQ
-         wwjO311C49KC/k+kKPI4imNYm9YlUpx39tFcYj83AlUFT+HwXW89wrd1GbUD85H7rNqo
-         sQrg==
-X-Gm-Message-State: APjAAAUkIenh6gSUO+H9Q43FTXNguaB0zszG1JbJlL4SaL5Kjh1NTYpx
-        gttNTYaDu335ALOLRfmunnJJLo/ODqL9IC2XTC0=
-X-Google-Smtp-Source: APXvYqzbluuU2ElAGGABfbziR0W3b6/1aCwAYh9yrz9sKSUrm4bhCm92GeIoQFdeHz8BCHakSQYn4+MYygjFDFfz1J0=
-X-Received: by 2002:a6b:7215:: with SMTP id n21mr23797892ioc.131.1580813804049;
- Tue, 04 Feb 2020 02:56:44 -0800 (PST)
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=NMkyhVQSWvkEio+aMy2Gad6E8U/YVr2WvfbqrIM79Ns=;
+        b=qh+3NC4rOBBo/JkqH2TmEUqlSFljNoE5Bh7qoUBBy3uwayMeIWTxfnVgEU1Pa5scpq
+         K+ZQYsrMipfd5jeLeyE9c7AlfbYvZoMAKKLQz0Vvv1WTD5kM6S+SZMeXRVQnZyjSKeDW
+         5oBT1lWmKdn/h6Xy3WTFbt9S1J7vFuFBnWpGf0Fqf5NvVbk1WaLbskDlshvjswvMdMOa
+         tGMU5NLsAJDJcIrY2579QBK8J2UqqztiI20o1fdN1ARQZhj8WuE8sWWg+VzpaEWVpHGl
+         Inbrb8V/O4wZnZbEv+r7zNBw/8wWA+wcJmu7HYuMZ52kK7ugDqntVoo4owYkmKHbcdzw
+         19MA==
+X-Gm-Message-State: APjAAAVoobvndh5mFYuDbisZLj/ZzlMuaUtmptENfv9PQjmIlDwqAVwj
+        f0Am6QIHbPWJJgyQkCcTFqc1FHV6Q9LRfI1sBG52vA==
+X-Google-Smtp-Source: APXvYqzs7YECRnkA2CODtIe2tL8VK33eJyMjTkmUGRZ40CQfDGS6bPX1AvCyMG1yAkx4sNvxOLFawWhiHrXirYxrgv8=
+X-Received: by 2002:a37:9c07:: with SMTP id f7mr28691354qke.103.1580813882093;
+ Tue, 04 Feb 2020 02:58:02 -0800 (PST)
 MIME-Version: 1.0
-References: <20200203165117.5701-1-lhenriques@suse.com> <20200203165117.5701-2-lhenriques@suse.com>
-In-Reply-To: <20200203165117.5701-2-lhenriques@suse.com>
-From:   Ilya Dryomov <idryomov@gmail.com>
-Date:   Tue, 4 Feb 2020 11:56:57 +0100
-Message-ID: <CAOi1vP8vXeY156baexdZY2FWK_F0jHfWkyNdZ90PA+7txG=Qsw@mail.gmail.com>
-Subject: Re: [PATCH v3 1/1] ceph: parallelize all copy-from requests in copy_file_range
-To:     Luis Henriques <lhenriques@suse.com>
-Cc:     Jeff Layton <jlayton@kernel.org>, Sage Weil <sage@redhat.com>,
-        "Yan, Zheng" <zyan@redhat.com>,
-        Gregory Farnum <gfarnum@redhat.com>,
-        Ceph Development <ceph-devel@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
+References: <1579601632-7001-1-git-send-email-yannick.fertre@st.com> <2b967bed-c2fa-1575-3e06-ae5b19069e56@st.com>
+In-Reply-To: <2b967bed-c2fa-1575-3e06-ae5b19069e56@st.com>
+From:   Benjamin Gaignard <benjamin.gaignard@linaro.org>
+Date:   Tue, 4 Feb 2020 11:57:51 +0100
+Message-ID: <CA+M3ks5FFZgnWnNcgz7YM7AWbtSNqkQ2-P29ss5FyfDzd6PxeA@mail.gmail.com>
+Subject: Re: [PATCH] drm/stm: ltdc: add number of interrupts
+To:     Philippe CORNU <philippe.cornu@st.com>
+Cc:     Yannick FERTRE <yannick.fertre@st.com>,
+        Benjamin GAIGNARD <benjamin.gaignard@st.com>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre TORGUE <alexandre.torgue@st.com>,
+        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+        "linux-stm32@st-md-mailman.stormreply.com" 
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 3, 2020 at 5:51 PM Luis Henriques <lhenriques@suse.com> wrote:
+Le jeu. 23 janv. 2020 =C3=A0 10:49, Philippe CORNU <philippe.cornu@st.com> =
+a =C3=A9crit :
 >
-> Right now the copy_file_range syscall serializes all the OSDs 'copy-from'
-> operations, waiting for each request to complete before sending the next
-> one.  This patch modifies copy_file_range so that all the 'copy-from'
-> operations are sent in bulk and waits for its completion at the end.  This
-> will allow significant speed-ups, specially when sending requests for
-> different target OSDs.
+> Dear Yannick,
+> Thank you for your patch,
 >
-> Signed-off-by: Luis Henriques <lhenriques@suse.com>
-> ---
->  fs/ceph/file.c                  | 45 +++++++++++++++++++++-----
->  include/linux/ceph/osd_client.h |  6 +++-
->  net/ceph/osd_client.c           | 56 +++++++++++++++++++++++++--------
->  3 files changed, 85 insertions(+), 22 deletions(-)
+> Acked-by: Philippe Cornu <philippe.cornu@st.com>
 >
-> diff --git a/fs/ceph/file.c b/fs/ceph/file.c
-> index 1e6cdf2dfe90..b9d8ffafb8c5 100644
-> --- a/fs/ceph/file.c
-> +++ b/fs/ceph/file.c
-> @@ -1943,12 +1943,15 @@ static ssize_t __ceph_copy_file_range(struct file *src_file, loff_t src_off,
->         struct ceph_fs_client *src_fsc = ceph_inode_to_client(src_inode);
->         struct ceph_object_locator src_oloc, dst_oloc;
->         struct ceph_object_id src_oid, dst_oid;
-> +       struct ceph_osd_request *req;
->         loff_t endoff = 0, size;
->         ssize_t ret = -EIO;
->         u64 src_objnum, dst_objnum, src_objoff, dst_objoff;
->         u32 src_objlen, dst_objlen, object_size;
->         int src_got = 0, dst_got = 0, err, dirty;
-> +       unsigned int max_copies, copy_count, reqs_complete = 0;
->         bool do_final_copy = false;
-> +       LIST_HEAD(osd_reqs);
+> Philippe :-)
 >
->         if (src_inode->i_sb != dst_inode->i_sb) {
->                 struct ceph_fs_client *dst_fsc = ceph_inode_to_client(dst_inode);
-> @@ -2083,6 +2086,13 @@ static ssize_t __ceph_copy_file_range(struct file *src_file, loff_t src_off,
->                         goto out_caps;
->         }
->         object_size = src_ci->i_layout.object_size;
-> +
-> +       /*
-> +        * Throttle the object copies: max_copies holds the number of allowed
-> +        * in-flight 'copy-from' requests before waiting for their completion
-> +        */
-> +       max_copies = (src_fsc->mount_options->wsize / object_size) * 4;
-> +       copy_count = max_copies;
->         while (len >= object_size) {
->                 ceph_calc_file_object_mapping(&src_ci->i_layout, src_off,
->                                               object_size, &src_objnum,
-> @@ -2097,7 +2107,7 @@ static ssize_t __ceph_copy_file_range(struct file *src_file, loff_t src_off,
->                 ceph_oid_printf(&dst_oid, "%llx.%08llx",
->                                 dst_ci->i_vino.ino, dst_objnum);
->                 /* Do an object remote copy */
-> -               err = ceph_osdc_copy_from(
-> +               req = ceph_osdc_copy_from(
->                         &src_fsc->client->osdc,
->                         src_ci->i_vino.snap, 0,
->                         &src_oid, &src_oloc,
-> @@ -2108,21 +2118,40 @@ static ssize_t __ceph_copy_file_range(struct file *src_file, loff_t src_off,
->                         CEPH_OSD_OP_FLAG_FADVISE_DONTNEED,
->                         dst_ci->i_truncate_seq, dst_ci->i_truncate_size,
->                         CEPH_OSD_COPY_FROM_FLAG_TRUNCATE_SEQ);
-> -               if (err) {
-> -                       if (err == -EOPNOTSUPP) {
-> -                               src_fsc->have_copy_from2 = false;
-> -                               pr_notice("OSDs don't support 'copy-from2'; "
-> -                                         "disabling copy_file_range\n");
-> -                       }
-> +               if (IS_ERR(req)) {
-> +                       err = PTR_ERR(req);
->                         dout("ceph_osdc_copy_from returned %d\n", err);
-> +
-> +                       /* wait for all queued requests */
-> +                       ceph_osdc_wait_requests(&osd_reqs, &reqs_complete);
-> +                       ret += reqs_complete * object_size; /* Update copied bytes */
+> On 1/21/20 11:13 AM, Yannick Fertre wrote:
+> > The number of interrupts depends on the ltdc version.
+> > Don't try to get interrupt which not exist, avoiding
+> > kernel warning messages.
 
-Hi Luis,
-
-Looks like ret is still incremented unconditionally?  What happens
-if there are three OSD requests on the list and the first fails but
-the second and the third succeed?  As is, ceph_osdc_wait_requests()
-will return an error with reqs_complete set to 2...
-
->                         if (!ret)
->                                 ret = err;
-
-... and we will return 8M instead of an error.
-
->                         goto out_caps;
->                 }
-> +               list_add(&req->r_private_item, &osd_reqs);
->                 len -= object_size;
->                 src_off += object_size;
->                 dst_off += object_size;
-> -               ret += object_size;
-> +               /*
-> +                * Wait requests if we've reached the maximum requests allowed
-> +                * or if this was the last copy
-> +                */
-> +               if ((--copy_count == 0) || (len < object_size)) {
-> +                       err = ceph_osdc_wait_requests(&osd_reqs, &reqs_complete);
-> +                       ret += reqs_complete * object_size; /* Update copied bytes */
-
-Same here.
-
-> +                       if (err) {
-> +                               if (err == -EOPNOTSUPP) {
-> +                                       src_fsc->have_copy_from2 = false;
-
-Since EOPNOTSUPP is special in that it triggers the fallback, it
-should be returned even if something was copied.  Think about a
-mixed cluster, where some OSDs support copy-from2 and some don't.
-If the range is split between such OSDs, copy_file_range() will
-always return short if the range happens to start on a new OSD.
-
-> +                                       pr_notice("OSDs don't support 'copy-from2'; "
-> +                                                 "disabling copy_file_range\n");
-
-This line is over 80 characters but shouldn't be split because it
-is a grepable log message.  Also, this message was slightly tweaked
-in ceph-client.git, so this patch doesn't apply.
-
-> +                               }
-> +                               if (!ret)
-> +                                       ret = err;
-> +                               goto out_caps;
-
-I'm confused about out_caps.  Since a short copy is still copy which
-may change the size, update mtime and ctime times, etc why aren't we
-dirtying caps in these cases?
-
-> +                       }
-> +                       copy_count = max_copies;
-> +               }
->         }
->
->         if (len)
-> diff --git a/include/linux/ceph/osd_client.h b/include/linux/ceph/osd_client.h
-> index 5a62dbd3f4c2..0121767cd65e 100644
-> --- a/include/linux/ceph/osd_client.h
-> +++ b/include/linux/ceph/osd_client.h
-> @@ -496,6 +496,9 @@ extern int ceph_osdc_start_request(struct ceph_osd_client *osdc,
->  extern void ceph_osdc_cancel_request(struct ceph_osd_request *req);
->  extern int ceph_osdc_wait_request(struct ceph_osd_client *osdc,
->                                   struct ceph_osd_request *req);
-> +extern int ceph_osdc_wait_requests(struct list_head *osd_reqs,
-> +                                  unsigned int *reqs_complete);
-> +
->  extern void ceph_osdc_sync(struct ceph_osd_client *osdc);
->
->  extern void ceph_osdc_flush_notifies(struct ceph_osd_client *osdc);
-> @@ -526,7 +529,8 @@ extern int ceph_osdc_writepages(struct ceph_osd_client *osdc,
->                                 struct timespec64 *mtime,
->                                 struct page **pages, int nr_pages);
->
-> -int ceph_osdc_copy_from(struct ceph_osd_client *osdc,
-> +struct ceph_osd_request *ceph_osdc_copy_from(
-> +                       struct ceph_osd_client *osdc,
->                         u64 src_snapid, u64 src_version,
->                         struct ceph_object_id *src_oid,
->                         struct ceph_object_locator *src_oloc,
-> diff --git a/net/ceph/osd_client.c b/net/ceph/osd_client.c
-> index b68b376d8c2f..df9f342f860a 100644
-> --- a/net/ceph/osd_client.c
-> +++ b/net/ceph/osd_client.c
-> @@ -4531,6 +4531,35 @@ int ceph_osdc_wait_request(struct ceph_osd_client *osdc,
->  }
->  EXPORT_SYMBOL(ceph_osdc_wait_request);
->
-> +/*
-> + * wait for all requests to complete in list @osd_reqs, returning the number of
-> + * successful completions in @reqs_complete
-> + */
-> +int ceph_osdc_wait_requests(struct list_head *osd_reqs,
-> +                           unsigned int *reqs_complete)
-> +{
-> +       struct ceph_osd_request *req;
-> +       int ret = 0, err;
-> +       unsigned int counter = 0;
-> +
-> +       while (!list_empty(osd_reqs)) {
-> +               req = list_first_entry(osd_reqs,
-> +                                      struct ceph_osd_request,
-> +                                      r_private_item);
-> +               list_del_init(&req->r_private_item);
-> +               err = ceph_osdc_wait_request(req->r_osdc, req);
-> +               if (!err)
-> +                       counter++;
-
-I think you want to stop incrementing counter after encountering an
-error...
+Applied on drm-misc-next.
 
 Thanks,
+Benjamin
 
-                Ilya
+> >
+> > Signed-off-by: Yannick Fertre <yannick.fertre@st.com>
+> > ---
+> >   drivers/gpu/drm/stm/ltdc.c | 30 +++++++++++++++---------------
+> >   drivers/gpu/drm/stm/ltdc.h |  1 +
+> >   2 files changed, 16 insertions(+), 15 deletions(-)
+> >
+> > diff --git a/drivers/gpu/drm/stm/ltdc.c b/drivers/gpu/drm/stm/ltdc.c
+> > index c2815e8..58092b0 100644
+> > --- a/drivers/gpu/drm/stm/ltdc.c
+> > +++ b/drivers/gpu/drm/stm/ltdc.c
+> > @@ -1146,12 +1146,14 @@ static int ltdc_get_caps(struct drm_device *dde=
+v)
+> >               ldev->caps.pad_max_freq_hz =3D 90000000;
+> >               if (ldev->caps.hw_version =3D=3D HWVER_10200)
+> >                       ldev->caps.pad_max_freq_hz =3D 65000000;
+> > +             ldev->caps.nb_irq =3D 2;
+> >               break;
+> >       case HWVER_20101:
+> >               ldev->caps.reg_ofs =3D REG_OFS_4;
+> >               ldev->caps.pix_fmt_hw =3D ltdc_pix_fmt_a1;
+> >               ldev->caps.non_alpha_only_l1 =3D false;
+> >               ldev->caps.pad_max_freq_hz =3D 150000000;
+> > +             ldev->caps.nb_irq =3D 4;
+> >               break;
+> >       default:
+> >               return -ENODEV;
+> > @@ -1251,13 +1253,21 @@ int ltdc_load(struct drm_device *ddev)
+> >       reg_clear(ldev->regs, LTDC_IER,
+> >                 IER_LIE | IER_RRIE | IER_FUIE | IER_TERRIE);
+> >
+> > -     for (i =3D 0; i < MAX_IRQ; i++) {
+> > +     ret =3D ltdc_get_caps(ddev);
+> > +     if (ret) {
+> > +             DRM_ERROR("hardware identifier (0x%08x) not supported!\n"=
+,
+> > +                       ldev->caps.hw_version);
+> > +             goto err;
+> > +     }
+> > +
+> > +     DRM_DEBUG_DRIVER("ltdc hw version 0x%08x\n", ldev->caps.hw_versio=
+n);
+> > +
+> > +     for (i =3D 0; i < ldev->caps.nb_irq; i++) {
+> >               irq =3D platform_get_irq(pdev, i);
+> > -             if (irq =3D=3D -EPROBE_DEFER)
+> > +             if (irq < 0) {
+> > +                     ret =3D irq;
+> >                       goto err;
+> > -
+> > -             if (irq < 0)
+> > -                     continue;
+> > +             }
+> >
+> >               ret =3D devm_request_threaded_irq(dev, irq, ltdc_irq,
+> >                                               ltdc_irq_thread, IRQF_ONE=
+SHOT,
+> > @@ -1268,16 +1278,6 @@ int ltdc_load(struct drm_device *ddev)
+> >               }
+> >       }
+> >
+> > -
+> > -     ret =3D ltdc_get_caps(ddev);
+> > -     if (ret) {
+> > -             DRM_ERROR("hardware identifier (0x%08x) not supported!\n"=
+,
+> > -                       ldev->caps.hw_version);
+> > -             goto err;
+> > -     }
+> > -
+> > -     DRM_DEBUG_DRIVER("ltdc hw version 0x%08x\n", ldev->caps.hw_versio=
+n);
+> > -
+> >       /* Add endpoints panels or bridges if any */
+> >       for (i =3D 0; i < MAX_ENDPOINTS; i++) {
+> >               if (panel[i]) {
+> > diff --git a/drivers/gpu/drm/stm/ltdc.h b/drivers/gpu/drm/stm/ltdc.h
+> > index a1ad0ae..310e87f 100644
+> > --- a/drivers/gpu/drm/stm/ltdc.h
+> > +++ b/drivers/gpu/drm/stm/ltdc.h
+> > @@ -19,6 +19,7 @@ struct ltdc_caps {
+> >       const u32 *pix_fmt_hw;  /* supported pixel formats */
+> >       bool non_alpha_only_l1; /* non-native no-alpha formats on layer 1=
+ */
+> >       int pad_max_freq_hz;    /* max frequency supported by pad */
+> > +     int nb_irq;             /* number of hardware interrupts */
+> >   };
+> >
+> >   #define LTDC_MAX_LAYER      4
+> >
+> _______________________________________________
+> linux-arm-kernel mailing list
+> linux-arm-kernel@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
