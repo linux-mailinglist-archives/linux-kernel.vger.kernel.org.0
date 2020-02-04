@@ -2,106 +2,108 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A4A8A1513C2
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Feb 2020 01:41:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6B4811513C7
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Feb 2020 01:41:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727127AbgBDAkx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 3 Feb 2020 19:40:53 -0500
-Received: from mail-qk1-f193.google.com ([209.85.222.193]:34816 "EHLO
-        mail-qk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726834AbgBDAkx (ORCPT
+        id S1727165AbgBDAli (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 3 Feb 2020 19:41:38 -0500
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:38589 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727105AbgBDAlh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Feb 2020 19:40:53 -0500
-Received: by mail-qk1-f193.google.com with SMTP id q15so16301771qki.2
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Feb 2020 16:40:52 -0800 (PST)
+        Mon, 3 Feb 2020 19:41:37 -0500
+Received: by mail-pg1-f196.google.com with SMTP id a33so8753361pgm.5
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Feb 2020 16:41:37 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=2eh5eLlWcHGoF/U52PtaGDoZRzy+/UdPDBxS5lqGdoE=;
-        b=Hj4dY79MwiC316wkyEPymztpuzb2g7dCtVDuFqvOw3ugIm6LAFv8f7B8dLHnYb6aKb
-         hB3K705ssZ76iWGwTfnC+H4FCAUermPXw4aS6LB/eqrKd+wBNRDAt+kgVTuxBsq9MZNR
-         c6GO3acbSixCoaI/e4GkapdxAhVi4JVF0/Bho=
+        h=message-id:mime-version:content-transfer-encoding:in-reply-to
+         :references:from:to:subject:cc:user-agent:date;
+        bh=vSA6BvPjvS9ifz76R6As71Q8f4abiw4r0fjrLkrMqHY=;
+        b=X0804Dmzj7ntDUKGWRZy5N8uQqcOcTBMO7/5JxLInlhjMa1DoG2NAjNDdmK+EhLXr6
+         eziBSWTdVkCc3bp10pnLwq++HTZWxJ4VBiJsB9CrXQyCIyQjSbU2ZsDtW1+XIxO/zbUm
+         AtJemD+iiaizG2z6mbq9VAd3R7QtVjGlwHTXY=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=2eh5eLlWcHGoF/U52PtaGDoZRzy+/UdPDBxS5lqGdoE=;
-        b=m3rP2QudBoEa49VrSvqj4lfMUA8hHpG2m5tapdOz8mSq+9xqKmQGCbxL5BVuRyjfd2
-         qWZZwdTkMUlsjdUGY5SJ0Dy13LJnWfv8gKXJAx9IkWPmFcSTONmmR6uEPAVicf/l1A6M
-         Ea2WjVSPAS5CPJ1ntgagkhJg5a6NpOu5dDJIFqGo3lo66m6VpaKBIZxcZkkPTUUnlKLN
-         P2aepcIfCRgjzFVlzSjkVTykqHzs+KvnwmEJmQ0+Ta5gd91VGXJLrTvUJFTVmqrJ1pM/
-         suXA52iAc6R7bFg11KEw/pIvvIR9Go74wdNWDMKxyTXMuoLai3yTJfIJwwIc+Wk4AUYY
-         b7lQ==
-X-Gm-Message-State: APjAAAWDPkNvc0XCNTcw+hYF+BJkSU4by8oeqQgkURuTc4PZ12mM9ebK
-        jTW6NfpxI9qXemz2ElNtnF4q12LKFGxVegriWkudvA==
-X-Google-Smtp-Source: APXvYqxU1bO55XCmlZLBDVH2y1S8uFyVky5JIP8map2b8dUYRhMu18trOmjE/aFqdhps6L2iqh/DxhB2Gx3nHn6tq0g=
-X-Received: by 2002:a37:9186:: with SMTP id t128mr24986019qkd.180.1580776851921;
- Mon, 03 Feb 2020 16:40:51 -0800 (PST)
+        h=x-gm-message-state:message-id:mime-version
+         :content-transfer-encoding:in-reply-to:references:from:to:subject:cc
+         :user-agent:date;
+        bh=vSA6BvPjvS9ifz76R6As71Q8f4abiw4r0fjrLkrMqHY=;
+        b=sBJO7lK4MV6yLx/PknAz4sIRJ3+tGMYx/FBrPjOp28lppDocqZ7sOopZLJj+nqrM3m
+         /fpe8QPBjUtENPc9gSj1BZEFqsTsvwynlbmtpsfKYgpm1Cyly/HD1fOGGFipffZZOZXv
+         b/83Qgdo88rFtXU01zGX9Cxm+kBVSBVyiYgwcKY13yRfLK0sKCymeN4IH7ikSMoi6rkM
+         3208dZn1GgSUu9cuvCP3PeLh2UeyrdtMmj7Jlg6o0RoWfQUW5vavqnli2wKhYlRAqGKU
+         lYc1LOOEtI9HUVVYl67GMyhyZ+AvGLfjXgwVVEZXF97hI6/KHQ5of4QebfBsBNZFzuYu
+         OFeA==
+X-Gm-Message-State: APjAAAURClh8seXwG5PSwumlDOUHwWF9Jhw7jh4uRv+YNkljmrlgozGE
+        mV5+oSBxCBXcobO8ECduB5dy7Q==
+X-Google-Smtp-Source: APXvYqwKmbVPtw5RWhpIEPUagYYd2v0Gs0GvqBxVCfWID/zZfSOnf3RDr8ySgEC0OkU8HPFO64b46w==
+X-Received: by 2002:aa7:8717:: with SMTP id b23mr27854169pfo.53.1580776896777;
+        Mon, 03 Feb 2020 16:41:36 -0800 (PST)
+Received: from chromium.org ([2620:15c:202:1:fa53:7765:582b:82b9])
+        by smtp.gmail.com with ESMTPSA id o6sm20654596pgg.37.2020.02.03.16.41.36
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 03 Feb 2020 16:41:36 -0800 (PST)
+Message-ID: <5e38bdc0.1c69fb81.2e565.9cc7@mx.google.com>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-References: <20200124231834.63628-1-pmalani@chromium.org> <adcf2a99-d6d8-cd4e-e22d-9ce539d87b7f@collabora.com>
- <20200127184439.GA150048@google.com> <CACeCKafdroLXf62aHeP8CZPuiR02EEmKAGmhHczzoSyX0bFv5g@mail.gmail.com>
- <dc1fec43-1bb0-53de-af17-a91fea42a3f5@collabora.com> <CANLzEks0+J9qvAk_rw2_1r74twnonXmPGdCpY3w2nY8xYPAYLw@mail.gmail.com>
-In-Reply-To: <CANLzEks0+J9qvAk_rw2_1r74twnonXmPGdCpY3w2nY8xYPAYLw@mail.gmail.com>
-From:   Prashant Malani <pmalani@chromium.org>
-Date:   Mon, 3 Feb 2020 16:40:40 -0800
-Message-ID: <CACeCKafOhUXcqE6jyaijuFr0V5UtXU8h09RQ=HjV0mE9ar1jWg@mail.gmail.com>
-Subject: Re: [PATCH v8 1/4] platform: chrome: Add cros-usbpd-notify driver
-To:     Benson Leung <bleung@google.com>
-Cc:     Enric Balletbo i Serra <enric.balletbo@collabora.com>,
-        Guenter Roeck <groeck@chromium.org>,
-        Lee Jones <lee.jones@linaro.org>,
-        Sebastian Reichel <sre@kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "open list:POWER SUPPLY CLASS/SUBSYSTEM and DRIVERS" 
-        <linux-pm@vger.kernel.org>, Jon Flatley <jflat@chromium.org>,
-        Gwendal Grignou <gwendal@chromium.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20200129203819.GE71044@google.com>
+References: <1580305919-30946-1-git-send-email-sanm@codeaurora.org> <1580305919-30946-5-git-send-email-sanm@codeaurora.org> <20200129203819.GE71044@google.com>
+From:   Stephen Boyd <swboyd@chromium.org>
+To:     Matthias Kaehlcke <mka@chromium.org>,
+        Sandeep Maheswaram <sanm@codeaurora.org>
+Subject: Re: [PATCH v4 4/8] dt-bindings: phy: qcom-qusb2: Add support for overriding Phy tuning parameters
+Cc:     Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Kishon Vijay Abraham I <kishon@ti.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Doug Anderson <dianders@chromium.org>,
+        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org
+User-Agent: alot/0.8.1
+Date:   Mon, 03 Feb 2020 16:41:35 -0800
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 3, 2020 at 3:42 PM Benson Leung <bleung@google.com> wrote:
->
-> Hi Enric, Hi Prashant,
->
-> On Wed, Jan 29, 2020 at 12:37 AM Enric Balletbo i Serra
-> <enric.balletbo@collabora.com> wrote:
-> > >> I'm OK with creating a branch for this series and merging it into
-> > >> chrome-platform-5.7 once Linus releases v5.6-rc1 late next week.
-> > > Thanks; I'm guessing one of the maintainers will perform the creation
-> > > of chrome-platform-5.7 and merge this patch into that branch.
-> > > Also, kindly pick https://lkml.org/lkml/2020/1/24/2068 , i.e patch 4/4
-> > > of this series (I think an earlier version of this patch, i.e
-> > > https://lkml.org/lkml/2020/1/17/628 was marked "Reviewed-by: Sebastian
-> > > Reichel <sebastian.reichel@collabora.com>"
-> > >
-> >
-> > That patch should go through Sebastian's tree, we will create an immutable
-> > branch for him when rc1 is released.
-> >
->
-> Before rc1 is released, I've gone ahead and created a staging branch
-> on chrome-platform collaboration repo here:
-> https://git.kernel.org/pub/scm/linux/kernel/git/chrome-platform/linux.git/log/?h=staging-cros-usbpd-notify
->
-> Here are the two commits I have right now:
-> e8573ca91ae4 power: supply: cros-ec-usbpd-charger: Fix host events
-> a49c1263a22b platform: chrome: Add cros-usbpd-notify driver
->
-> Enric, I went ahead and modified the Kconfig on the first patch to
-> depend on MFD_CROS_EC_DEV and default it as well.
-> Prashant, let me know how these look to you. We can convert the branch
-> to an immutable next week.
-Thanks Benson, looks good to me.
+Quoting Matthias Kaehlcke (2020-01-29 12:38:19)
+> On Wed, Jan 29, 2020 at 07:21:55PM +0530, Sandeep Maheswaram wrote:
+> > Add support for overriding QUSB2 V2 phy tuning parameters
+> > in device tree bindings.
+> >=20
+> > Signed-off-by: Sandeep Maheswaram <sanm@codeaurora.org>
+> > Reviewed-by: Rob Herring <robh@kernel.org>
+> > ---
+> >  .../devicetree/bindings/phy/qcom,qusb2-phy.yaml    | 33 ++++++++++++++=
+++++++++
+> >  1 file changed, 33 insertions(+)
 
->
-> --
-> Benson Leung
-> Staff Software Engineer
-> Chrome OS Kernel
-> Google Inc.
-> bleung@google.com
-> Chromium OS Project
-> bleung@chromium.org
+Reviewed-by: Stephen Boyd <swboyd@chromium.org>
+
+> >=20
+> > diff --git a/Documentation/devicetree/bindings/phy/qcom,qusb2-phy.yaml =
+b/Documentation/devicetree/bindings/phy/qcom,qusb2-phy.yaml
+> > index 43082c8..dfef356 100644
+> > --- a/Documentation/devicetree/bindings/phy/qcom,qusb2-phy.yaml
+> > +++ b/Documentation/devicetree/bindings/phy/qcom,qusb2-phy.yaml
+> > @@ -80,6 +80,28 @@ properties:
+> >          maximum: 63
+> >          default: 0
+> > =20
+> > +  qcom,bias-ctrl-value:
+> > +    description:
+> > +        It is a 6 bit value that specifies bias-ctrl-value. It is a PHY
+> > +        tuning parameter that may vary for different boards of same SO=
+C.
+> > +        This property is applicable to only QUSB2 v2 PHY.
+>=20
+> As commented on 'dt-bindings: phy: qcom,qusb2: Convert QUSB2 phy bindings
+> to yaml' a possible improvement could be to restrict these properties to
+> the QUSB2 v2 PHY through the schema.
+
+Can this be done? It's nice to keep constraints type, otherwise the
+yaml binding is not as useful.
+
+
