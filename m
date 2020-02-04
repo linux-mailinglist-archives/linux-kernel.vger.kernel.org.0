@@ -2,31 +2,31 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 388B01519C9
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Feb 2020 12:21:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 84B641519B0
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Feb 2020 12:21:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727626AbgBDLUY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 4 Feb 2020 06:20:24 -0500
-Received: from hqnvemgate26.nvidia.com ([216.228.121.65]:17827 "EHLO
-        hqnvemgate26.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727480AbgBDLTm (ORCPT
+        id S1727535AbgBDLTt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 4 Feb 2020 06:19:49 -0500
+Received: from hqnvemgate25.nvidia.com ([216.228.121.64]:19252 "EHLO
+        hqnvemgate25.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726983AbgBDLTq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Feb 2020 06:19:42 -0500
-Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate26.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5e39533f0000>; Tue, 04 Feb 2020 03:19:27 -0800
+        Tue, 4 Feb 2020 06:19:46 -0500
+Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate25.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5e39533a0000>; Tue, 04 Feb 2020 03:19:22 -0800
 Received: from hqmail.nvidia.com ([172.20.161.6])
   by hqpgpgate102.nvidia.com (PGP Universal service);
-  Tue, 04 Feb 2020 03:19:41 -0800
+  Tue, 04 Feb 2020 03:19:46 -0800
 X-PGP-Universal: processed;
-        by hqpgpgate102.nvidia.com on Tue, 04 Feb 2020 03:19:41 -0800
-Received: from HQMAIL109.nvidia.com (172.20.187.15) by HQMAIL111.nvidia.com
- (172.20.187.18) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Tue, 4 Feb
- 2020 11:19:41 +0000
-Received: from rnnvemgw01.nvidia.com (10.128.109.123) by HQMAIL109.nvidia.com
- (172.20.187.15) with Microsoft SMTP Server (TLS) id 15.0.1473.3 via Frontend
- Transport; Tue, 4 Feb 2020 11:19:41 +0000
+        by hqpgpgate102.nvidia.com on Tue, 04 Feb 2020 03:19:46 -0800
+Received: from HQMAIL111.nvidia.com (172.20.187.18) by HQMAIL101.nvidia.com
+ (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Tue, 4 Feb
+ 2020 11:19:45 +0000
+Received: from rnnvemgw01.nvidia.com (10.128.109.123) by HQMAIL111.nvidia.com
+ (172.20.187.18) with Microsoft SMTP Server (TLS) id 15.0.1473.3 via Frontend
+ Transport; Tue, 4 Feb 2020 11:19:45 +0000
 Received: from nkristam-ubuntu.nvidia.com (Not Verified[10.19.67.128]) by rnnvemgw01.nvidia.com with Trustwave SEG (v7,5,8,10121)
-        id <B5e39534a0000>; Tue, 04 Feb 2020 03:19:40 -0800
+        id <B5e39534d0002>; Tue, 04 Feb 2020 03:19:44 -0800
 From:   Nagarjuna Kristam <nkristam@nvidia.com>
 To:     <balbi@kernel.org>, <gregkh@linuxfoundation.org>,
         <thierry.reding@gmail.com>, <jonathanh@nvidia.com>,
@@ -34,9 +34,9 @@ To:     <balbi@kernel.org>, <gregkh@linuxfoundation.org>,
 CC:     <devicetree@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
         <linux-usb@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
         Nagarjuna Kristam <nkristam@nvidia.com>
-Subject: [Patch V4 13/19] arm64: tegra: update OTG port entries for jetson-tx1
-Date:   Tue, 4 Feb 2020 16:46:59 +0530
-Message-ID: <1580815025-10915-14-git-send-email-nkristam@nvidia.com>
+Subject: [Patch V4 14/19] arm64: tegra: update OTG port entries for jetson-tx2
+Date:   Tue, 4 Feb 2020 16:47:00 +0530
+Message-ID: <1580815025-10915-15-git-send-email-nkristam@nvidia.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1580815025-10915-1-git-send-email-nkristam@nvidia.com>
 References: <1580815025-10915-1-git-send-email-nkristam@nvidia.com>
@@ -44,50 +44,42 @@ X-NVConfidentiality: public
 MIME-Version: 1.0
 Content-Type: text/plain
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1580815167; bh=A8BoHnAqalz3GaOqlgeziGgtfXKIEfdQonSYk61J5Qs=;
+        t=1580815162; bh=YhnFKlWKe+Uk+f/3vw1Sjpf4ikaudir6P++hgEaOIS0=;
         h=X-PGP-Universal:From:To:CC:Subject:Date:Message-ID:X-Mailer:
          In-Reply-To:References:X-NVConfidentiality:MIME-Version:
          Content-Type;
-        b=QvXmD12jaATNIGJ8JbrBvKa3rSB3EcC/OTvh/rrk8r5jtDRKsdRiIPMtmc2KEcMCC
-         FWMdsGCrNakCjK4WoiBbT2TY/HUuFeYPP3PNN6bCRh00R+KkmK0bK7URrgwRaDqTrR
-         CHoirU4LGnK6xYZf5/i1G57vqw97L/rocDK644Q1/b/1LoLm/4CY2qE6xB/+X0vkb6
-         R63ueEaOqhuC8fJToNDsb0t8Lb9DoCCAMmIQ1bah2kXuA/ctw2ElQJAvO+6xP0JyK7
-         HZMHH2eqioLwsc0n0YkxP8xIJLLBcO5xEYhG693zmUlodsEYDmq7Awcc/etYPEXi8k
-         8paoW7RUmosjQ==
+        b=Asuz7nSL/SCeA3byDTkBHKflW55TybEZ6G0MDvsn359tVzkpME4I85h3Kot4G7vBx
+         Pc5HoEobGBDwwtDOC2urO2wl1sd66WeTfbASAFiLta1wOQyZ6i+B2uWeyXcsZoTLQY
+         SWpbiySoZnLnjVzSeumjpd/3gp1UXGOJkVnYdl8Q08Osz0G1h/jEJFxoLuVPX36DAh
+         sMzwYAmXucMCV33YDvQTSpTeAKGDckiWT6qa8c+N870/eD2uqWGXOFUJVJbvs69Oil
+         kg+8k32mmcYt7ajB+1J14Jp5zta6vJLQ+eoSIk7y61TrNnkB1aAtjKlw2W0ZJP/5Hr
+         0CPHCWI2O3xnA==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Populate OTG vbus regulator. Add usb-role-switch entry to USB 2-0 port
-and corresponding connector details.
+Add usb-role-switch entry to OTG usb port and add corresponding connector
+details.
 
 Signed-off-by: Nagarjuna Kristam <nkristam@nvidia.com>
 ---
 V2-V4:
  - No changes in this version
 ---
- arch/arm64/boot/dts/nvidia/tegra210-p2597.dtsi | 24 +++++++++++++++++++++++-
- 1 file changed, 23 insertions(+), 1 deletion(-)
+ arch/arm64/boot/dts/nvidia/tegra186-p2771-0000.dts | 14 +++++++++++++-
+ 1 file changed, 13 insertions(+), 1 deletion(-)
 
-diff --git a/arch/arm64/boot/dts/nvidia/tegra210-p2597.dtsi b/arch/arm64/boot/dts/nvidia/tegra210-p2597.dtsi
-index b009507..18c0610 100644
---- a/arch/arm64/boot/dts/nvidia/tegra210-p2597.dtsi
-+++ b/arch/arm64/boot/dts/nvidia/tegra210-p2597.dtsi
-@@ -1336,7 +1336,6 @@
- 		       <&{/padctl@7009f000/pads/pcie/lanes/pcie-5}>;
- 		phy-names = "usb2-0", "usb2-1", "usb2-2", "usb2-3", "usb3-0",
- 			    "usb3-1";
--
- 		dvddio-pex-supply = <&vdd_pex_1v05>;
- 		hvddio-pex-supply = <&vdd_1v8>;
- 		avdd-usb-supply = <&vdd_3v3_sys>;
-@@ -1440,7 +1439,19 @@
- 		ports {
+diff --git a/arch/arm64/boot/dts/nvidia/tegra186-p2771-0000.dts b/arch/arm64/boot/dts/nvidia/tegra186-p2771-0000.dts
+index f1de4ff..a1dcdb9 100644
+--- a/arch/arm64/boot/dts/nvidia/tegra186-p2771-0000.dts
++++ b/arch/arm64/boot/dts/nvidia/tegra186-p2771-0000.dts
+@@ -174,8 +174,20 @@
  			usb2-0 {
  				status = "okay";
-+				vbus-supply = <&vdd_usb_vbus_otg>;
  				mode = "otg";
+-
+ 				vbus-supply = <&vdd_usb0>;
 +
 +				usb-role-switch;
 +				connector {
@@ -95,31 +87,15 @@ index b009507..18c0610 100644
 +						     "gpio-usb-b-connector";
 +					label = "micro-USB";
 +					type = "micro";
-+					vbus-gpio = <&gpio TEGRA_GPIO(Z, 0)
++					vbus-gpio = <&gpio
++						     TEGRA186_MAIN_GPIO(X, 7)
 +						     GPIO_ACTIVE_LOW>;
-+					id-gpio = <&pmic 0 0>;
++					id-gpio = <&pmic 0 GPIO_ACTIVE_HIGH>;
 +				};
++
  			};
  
  			usb2-1 {
-@@ -1606,6 +1617,17 @@
- 			vin-supply = <&vdd_5v0_sys>;
- 		};
- 
-+		vdd_usb_vbus_otg: regulator@11 {
-+			compatible = "regulator-fixed";
-+			reg = <9>;
-+			regulator-name = "USB_VBUS_EN0";
-+			regulator-min-microvolt = <5000000>;
-+			regulator-max-microvolt = <5000000>;
-+			gpio = <&gpio TEGRA_GPIO(CC, 4) GPIO_ACTIVE_HIGH>;
-+			enable-active-high;
-+			vin-supply = <&vdd_5v0_sys>;
-+		};
-+
- 		vdd_hdmi: regulator@10 {
- 			compatible = "regulator-fixed";
- 			reg = <10>;
 -- 
 2.7.4
 
