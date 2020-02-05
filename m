@@ -2,89 +2,123 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2BD55153879
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Feb 2020 19:47:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D096D1538B1
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Feb 2020 20:04:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727309AbgBESrr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 5 Feb 2020 13:47:47 -0500
-Received: from smtprelay0053.hostedemail.com ([216.40.44.53]:33938 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727083AbgBESrr (ORCPT
+        id S1727473AbgBETEb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 5 Feb 2020 14:04:31 -0500
+Received: from mail-pl1-f193.google.com ([209.85.214.193]:44568 "EHLO
+        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727081AbgBETEb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Feb 2020 13:47:47 -0500
-Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
-        by smtprelay07.hostedemail.com (Postfix) with ESMTP id CAF25181D303C;
-        Wed,  5 Feb 2020 18:47:45 +0000 (UTC)
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-Spam-Summary: 50,0,0,,d41d8cd98f00b204,joe@perches.com,:::::::::::,RULES_HIT:41:355:379:599:800:960:967:968:973:981:982:988:989:1260:1277:1311:1313:1314:1345:1359:1437:1515:1516:1518:1534:1541:1593:1594:1711:1730:1747:1777:1792:2393:2525:2560:2563:2682:2685:2693:2828:2859:2933:2937:2939:2942:2945:2947:2951:2954:3022:3138:3139:3140:3141:3142:3353:3622:3653:3865:3866:3867:3870:3872:3934:3936:3938:3941:3944:3947:3950:3953:3956:3959:4250:4321:4605:5007:7903:8985:9010:9025:10004:10400:11026:11232:11658:11854:11914:12043:12048:12296:12297:12438:12555:12740:12760:12895:13069:13072:13311:13357:13439:14181:14659:14721:14777:21080:21433:21611:21627:21740:21819:30003:30022:30054:30064:30091,0,RBL:none,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:,MSBL:0,DNSBL:none,Custom_rules:0:0:0,LFtime:2,LUA_SUMMARY:none
-X-HE-Tag: ray91_43a11b80f6a52
-X-Filterd-Recvd-Size: 2496
-Received: from XPS-9350.home (unknown [47.151.135.224])
-        (Authenticated sender: joe@perches.com)
-        by omf14.hostedemail.com (Postfix) with ESMTPA;
-        Wed,  5 Feb 2020 18:47:44 +0000 (UTC)
-Message-ID: <76267eda365d7c5c0adc7dd16681973c5378df8e.camel@perches.com>
-Subject: Re: [PATCH] get_maintainer: Prefer MAINTAINER address over S-o-b
-From:   Joe Perches <joe@perches.com>
-To:     Dan Carpenter <dan.carpenter@oracle.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Douglas Anderson <dianders@chromium.org>,
-        Andrew Morton <akpm@linux-foundation.org>
-Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Date:   Wed, 05 Feb 2020 10:46:32 -0800
-In-Reply-To: <20200205152429.ejgx2on2z4hoycus@kili.mountain>
-References: <20200205152429.ejgx2on2z4hoycus@kili.mountain>
-Content-Type: text/plain; charset="ISO-8859-1"
-User-Agent: Evolution 3.34.1-2 
+        Wed, 5 Feb 2020 14:04:31 -0500
+Received: by mail-pl1-f193.google.com with SMTP id d9so1247233plo.11
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Feb 2020 11:04:30 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=am6fR46L40jLnJSE/2XocB+n60+MBKESAuM1CJxf9pA=;
+        b=XLUoY2KT5ZdfwTtuUfRq9CQssvHL5pDUTYQsMdMM21EHQ/GJCGkU+JPz2Xms0HSmCy
+         SmDCP2wFbE9g2QihcQLNI+nR3E+cxHylfQvkVHRmIrUoXOwEO12AVwM3cYcccfDmSMZ+
+         C+J1lbCnUbgOtMLL7L7x9ZKBS9VbzzkbuZ734=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=am6fR46L40jLnJSE/2XocB+n60+MBKESAuM1CJxf9pA=;
+        b=Soc66Lsm4rxBkSNDRc5Z7iTLF3f38NKUNZXv0obZeDsTMOP1IGXHBaXlVxuLSbj4bM
+         YBdOCO4dpiquyggnIQrkF/WjQoALhrf21Y9QgWQDjBgfwPtw3Z50m+Hpaf39zz8xrGxz
+         iW+1vzER7Q4zfYrjL6IU46aX1A5oGV2LuU8WSwwuXR/RLrsvWC3iJPVLWRE1vCFxdbC7
+         4XeGS9QgegqMM72UCV7Fcl+YYnudT4M4vKQu68TIlwkSa9iclSu6xD1btVTCW9vqOc9n
+         6gF2UndcsCPrGo8wMmO2j3rXU6Qez1gBvn4fciFeaQ9CTxIY4AlcTIzA5rmFjlLoVvxe
+         wM/g==
+X-Gm-Message-State: APjAAAUIH3qU/59eb4QdyXy9xNgBTbnPu2wh0yKqybfV2FYC9J/YdrzD
+        x5pXFOSVAw6mBbenh6jXZEI7eD3K3l8=
+X-Google-Smtp-Source: APXvYqwNoNSH2IAfwK6qqXpB77hQZdQMZQ4Usbc1WcGx2vILbMTceCVmsnGs7VMg833JoAFeMc/Zdg==
+X-Received: by 2002:a17:90a:bd89:: with SMTP id z9mr7064549pjr.13.1580929470211;
+        Wed, 05 Feb 2020 11:04:30 -0800 (PST)
+Received: from pmalani2.mtv.corp.google.com ([2620:15c:202:201:172e:4646:c089:ce59])
+        by smtp.gmail.com with ESMTPSA id u23sm257224pfm.29.2020.02.05.11.04.29
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 05 Feb 2020 11:04:29 -0800 (PST)
+From:   Prashant Malani <pmalani@chromium.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Prashant Malani <pmalani@chromium.org>,
+        Benson Leung <bleung@chromium.org>,
+        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
+        Guenter Roeck <groeck@chromium.org>
+Subject: [PATCH v2 02/17] platform/chrome: chardev: Use cros_ec_cmd()
+Date:   Wed,  5 Feb 2020 10:59:57 -0800
+Message-Id: <20200205190028.183069-3-pmalani@chromium.org>
+X-Mailer: git-send-email 2.25.0.341.g760bfbb309-goog
+In-Reply-To: <20200205190028.183069-1-pmalani@chromium.org>
+References: <20200205190028.183069-1-pmalani@chromium.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 2020-02-05 at 18:24 +0300, Dan Carpenter wrote:
-> The get_maintainer.pl script looks at git history to create the CC list,
-> but unfortunately sometimes those email addresses are out of date.  The
-> script also looks at the MAINTAINERS file, of course, but if it already
-> found an email address for a maintainer in the git history then the
-> deduplicate_email() function will remove the second address.
-> 
-> It should save the MAINTAINERS address first, before loading the commit
-> signer addresses.
+Update the Chrome OS character device driver to use the newly introduced
+cros_ec_cmd() function instead of cros_ec_cmd_xfer_status(), thus
+avoiding message buffer set up work which is already done by the new
+function.
 
-Yeah, thanks.  This has been submitted already.
-https://lore.kernel.org/patchwork/patch/1186249/
+Signed-off-by: Prashant Malani <pmalani@chromium.org>
+---
 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> ---
-> We will have to add a special case if the Dan Williamses ever decide
-> to work on the same subsystem.
-> 
->  scripts/get_maintainer.pl | 8 ++++----
->  1 file changed, 4 insertions(+), 4 deletions(-)
-> 
-> diff --git a/scripts/get_maintainer.pl b/scripts/get_maintainer.pl
-> index 34085d146fa2..e5bdd3143a49 100755
-> --- a/scripts/get_maintainer.pl
-> +++ b/scripts/get_maintainer.pl
-> @@ -932,14 +932,14 @@ sub get_maintainers {
->  	}
->      }
->  
-> -    foreach my $fix (@fixes) {
-> -	vcs_add_commit_signers($fix, "blamed_fixes");
-> -    }
-> -
->      foreach my $email (@email_to, @list_to) {
->  	$email->[0] = deduplicate_email($email->[0]);
->      }
->  
-> +    foreach my $fix (@fixes) {
-> +	vcs_add_commit_signers($fix, "blamed_fixes");
-> +    }
-> +
->      foreach my $file (@files) {
->  	if ($email &&
->  	    ($email_git || ($email_git_fallback &&
+Changes in v2:
+- Updated to use newer function name and parameter list.
+
+ drivers/platform/chrome/cros_ec_chardev.c | 17 ++++++-----------
+ 1 file changed, 6 insertions(+), 11 deletions(-)
+
+diff --git a/drivers/platform/chrome/cros_ec_chardev.c b/drivers/platform/chrome/cros_ec_chardev.c
+index c65e70bc168d8c..f92fe4139c4367 100644
+--- a/drivers/platform/chrome/cros_ec_chardev.c
++++ b/drivers/platform/chrome/cros_ec_chardev.c
+@@ -57,25 +57,20 @@ static int ec_get_version(struct cros_ec_dev *ec, char *str, int maxlen)
+ 		"unknown", "read-only", "read-write", "invalid",
+ 	};
+ 	struct ec_response_get_version *resp;
+-	struct cros_ec_command *msg;
+ 	int ret;
+ 
+-	msg = kzalloc(sizeof(*msg) + sizeof(*resp), GFP_KERNEL);
+-	if (!msg)
++	resp = kzalloc(sizeof(*resp), GFP_KERNEL);
++	if (!resp)
+ 		return -ENOMEM;
+ 
+-	msg->command = EC_CMD_GET_VERSION + ec->cmd_offset;
+-	msg->insize = sizeof(*resp);
+-
+-	ret = cros_ec_cmd_xfer_status(ec->ec_dev, msg);
++	ret = cros_ec_cmd(ec->ec_dev, 0, ec->cmd_offset + EC_CMD_GET_VERSION,
++			  NULL, 0, resp, sizeof(*resp), NULL);
+ 	if (ret < 0) {
+ 		snprintf(str, maxlen,
+-			 "Unknown EC version, returned error: %d\n",
+-			 msg->result);
++			 "Unknown EC version, returned error: %d\n", ret);
+ 		goto exit;
+ 	}
+ 
+-	resp = (struct ec_response_get_version *)msg->data;
+ 	if (resp->current_image >= ARRAY_SIZE(current_image_name))
+ 		resp->current_image = 3; /* invalid */
+ 
+@@ -85,7 +80,7 @@ static int ec_get_version(struct cros_ec_dev *ec, char *str, int maxlen)
+ 
+ 	ret = 0;
+ exit:
+-	kfree(msg);
++	kfree(resp);
+ 	return ret;
+ }
+ 
+-- 
+2.25.0.341.g760bfbb309-goog
 
