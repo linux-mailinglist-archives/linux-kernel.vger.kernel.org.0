@@ -2,75 +2,100 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BD39D152419
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Feb 2020 01:35:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CB21B15241E
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Feb 2020 01:36:57 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727773AbgBEAfr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 4 Feb 2020 19:35:47 -0500
-Received: from mx1.cock.li ([185.10.68.5]:60785 "EHLO cock.li"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727627AbgBEAfr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Feb 2020 19:35:47 -0500
-X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on cock.li
-X-Spam-Level: 
-X-Spam-Status: No, score=0.7 required=5.0 tests=BAYES_50,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,NO_RECEIVED,NO_RELAYS shortcircuit=_SCTYPE_
-        autolearn=disabled version=3.4.2
-From:   Sergey Alirzaev <l29ah@cock.li>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=cock.li; s=mail;
-        t=1580862943; bh=Hjws4hd6gO2//6ej+Q1oLOrL7jmkiZKIXGuthMfEYqY=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=knpvXt/SYh3/6+DkvT/RYVyVwKyKqP/J1WLMVs3qP/R++J9A2mtZwIjjvtJ+MN2bQ
-         RPoGVCnorvJAyGWi7TMoFHUM6NGBdUXi+mvX9iws//EgMbGGoh1lDdfcbzCOdQ7jo4
-         Tnb5CJldbRPd0ul46RllaNuUEHWk/V+GGAVJTVYs2gXiYkiNpi9EXJeYJkFkCK5mQa
-         6jwTP1VU3bw4b6GV1vCe3OAweiRo5yudSefxBK/A3jqcvpYelAt/JYEW/BOe6XyBpZ
-         Bwrj+uL4xBSfVGZNAN9N0VQ1sfdv0psNuGfwbs7dLeF+inGP4LOFs/i6RFbrSY9F01
-         4XnN3SCgmrXJg==
-To:     v9fs-developer@lists.sourceforge.net
-Cc:     Eric Van Hensbergen <ericvh@gmail.com>,
-        Latchesar Ionkov <lucho@ionkov.net>,
-        Dominique Martinet <asmadeus@codewreck.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Sergey Alirzaev <l29ah@cock.li>
-Subject: [PATCH 2/2] 9p: read only once on O_NONBLOCK
-Date:   Wed,  5 Feb 2020 03:34:57 +0300
-Message-Id: <20200205003457.24340-2-l29ah@cock.li>
-X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200205003457.24340-1-l29ah@cock.li>
-References: <20200205003457.24340-1-l29ah@cock.li>
+        id S1727816AbgBEAgf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 4 Feb 2020 19:36:35 -0500
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:36437 "EHLO
+        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727644AbgBEAge (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Feb 2020 19:36:34 -0500
+Received: by mail-lj1-f195.google.com with SMTP id r19so541455ljg.3
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Feb 2020 16:36:33 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=MjWXCXEdOOwOMkJJTNAHcUDq4zVsPSajy/GXrZmEiag=;
+        b=VT9hTnG+dCpN1oUkTy15tykgYxQNI3vmF23pTk/136wicIDfFXnU1lBcH6cchRsKpj
+         bSE7kppl3FvhhKU2qOSlNuQ01A213YcbbvQtFqQMtuUoH8Pc7or8v4KxolAK6vp21o8N
+         AQKDmeLLPLIAIT3qI/FHSsJCREix1XNwkRx2I=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=MjWXCXEdOOwOMkJJTNAHcUDq4zVsPSajy/GXrZmEiag=;
+        b=Pj6fN02I6tqlZYoGb4K1Xfyi3HpicFALLnRr//W7XKko3fNzfhDQOQDJXjRj1qVIfR
+         p0SnySY3OPLylPovLO1wNJYgtWlT2wNrwa/14916e8CPudI4QrpITH1/lvi5hkyj86+l
+         7ERazLXc8m8Es1ccJT/bhYHwHwJ4Uw+AGUD46ycYGtG/y93zTS2AgCTV3Hood+g5tVnn
+         m+Pg9I4YfEfvb/XYWgR+T84rT9cHCF71OYByy73zEMtIoI5jBQqRaU5z/YmTleKRh4GS
+         r7oQ1BO676n9xCUvSH+IwJi9I3/PrcrhqPcnuvkjyRTW3tl4euCl28T5jktVH8JR+Mwx
+         h6eA==
+X-Gm-Message-State: APjAAAUFwjD7NzRZPtXJFd2QYU0/7VJC51muPZgzueM66szbAbxgWVP+
+        Snfu7YfFdGPDBzVtfVMORMFGJbDkBh0=
+X-Google-Smtp-Source: APXvYqwJw5hJDHqDnfRpbBRNb8GcEWu71ppz7NOv6d5md4IkRXyPcfNI9pE+whVaksEnyz73A0VqvA==
+X-Received: by 2002:a2e:80cc:: with SMTP id r12mr18013940ljg.154.1580862991840;
+        Tue, 04 Feb 2020 16:36:31 -0800 (PST)
+Received: from mail-lj1-f169.google.com (mail-lj1-f169.google.com. [209.85.208.169])
+        by smtp.gmail.com with ESMTPSA id 135sm11336337lfb.28.2020.02.04.16.36.30
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 04 Feb 2020 16:36:31 -0800 (PST)
+Received: by mail-lj1-f169.google.com with SMTP id q8so552441ljb.2
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Feb 2020 16:36:30 -0800 (PST)
+X-Received: by 2002:a2e:3e10:: with SMTP id l16mr18417534lja.286.1580862990119;
+ Tue, 04 Feb 2020 16:36:30 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <1580796831-18996-1-git-send-email-mkshah@codeaurora.org> <1580796831-18996-2-git-send-email-mkshah@codeaurora.org>
+In-Reply-To: <1580796831-18996-2-git-send-email-mkshah@codeaurora.org>
+From:   Evan Green <evgreen@chromium.org>
+Date:   Tue, 4 Feb 2020 16:35:53 -0800
+X-Gmail-Original-Message-ID: <CAE=gft6DCqmX8=cHWXNeOjSTuRHL23t7+b_GZOrvUJAPfhVD8A@mail.gmail.com>
+Message-ID: <CAE=gft6DCqmX8=cHWXNeOjSTuRHL23t7+b_GZOrvUJAPfhVD8A@mail.gmail.com>
+Subject: Re: [PATCH 1/3] soc: qcom: rpmh: Update dirty flag only when data changes
+To:     Maulik Shah <mkshah@codeaurora.org>
+Cc:     Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Andy Gross <agross@kernel.org>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Stephen Boyd <swboyd@chromium.org>,
+        Doug Anderson <dianders@chromium.org>,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        Lina Iyer <ilina@codeaurora.org>, lsrao@codeaurora.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-A proper way to handle O_NONBLOCK would be making the requests and
-responses happen asynchronously, but this would require serious code
-refactoring.
+On Mon, Feb 3, 2020 at 10:14 PM Maulik Shah <mkshah@codeaurora.org> wrote:
+>
+> Currently rpmh ctrlr dirty flag is set for all cases regardless
+> of data is really changed or not.
+>
+> Add changes to update it when data is updated to new values.
+>
+> Signed-off-by: Maulik Shah <mkshah@codeaurora.org>
+> ---
+>  drivers/soc/qcom/rpmh.c | 15 +++++++++++----
+>  1 file changed, 11 insertions(+), 4 deletions(-)
+>
+> diff --git a/drivers/soc/qcom/rpmh.c b/drivers/soc/qcom/rpmh.c
+> index 035091f..c3d6f00 100644
+> --- a/drivers/soc/qcom/rpmh.c
+> +++ b/drivers/soc/qcom/rpmh.c
+> @@ -139,20 +139,27 @@ static struct cache_req *cache_rpm_request(struct rpmh_ctrlr *ctrlr,
+>  existing:
+>         switch (state) {
+>         case RPMH_ACTIVE_ONLY_STATE:
+> -               if (req->sleep_val != UINT_MAX)
+> +               if (req->sleep_val != UINT_MAX) {
+>                         req->wake_val = cmd->data;
+> +                       ctrlr->dirty = true;
+> +               }
 
-Signed-off-by: Sergey Alirzaev <l29ah@cock.li>
----
- fs/9p/vfs_file.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
-
-diff --git a/fs/9p/vfs_file.c b/fs/9p/vfs_file.c
-index fe7f0bd2048e..92cd1d80218d 100644
---- a/fs/9p/vfs_file.c
-+++ b/fs/9p/vfs_file.c
-@@ -388,7 +388,10 @@ v9fs_file_read_iter(struct kiocb *iocb, struct iov_iter *to)
- 	p9_debug(P9_DEBUG_VFS, "count %zu offset %lld\n",
- 		 iov_iter_count(to), iocb->ki_pos);
- 
--	ret = p9_client_read(fid, iocb->ki_pos, to, &err);
-+	if (iocb->ki_filp->f_flags & O_NONBLOCK)
-+		ret = p9_client_read_once(fid, iocb->ki_pos, to, &err);
-+	else
-+		ret = p9_client_read(fid, iocb->ki_pos, to, &err);
- 	if (!ret)
- 		return err;
- 
--- 
-2.25.0
-
+Don't you need to set dirty = true for ACTIVE_ONLY state always? The
+conditional is just saying "if nobody set a sleep vote, then maintain
+this vote when we wake back up".
