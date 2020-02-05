@@ -2,101 +2,90 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E5087153B77
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Feb 2020 23:54:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 159F0153B05
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Feb 2020 23:34:21 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727711AbgBEWyB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 5 Feb 2020 17:54:01 -0500
-Received: from gateway22.websitewelcome.com ([192.185.47.163]:28674 "EHLO
-        gateway22.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727355AbgBEWyA (ORCPT
+        id S1727472AbgBEWeS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 5 Feb 2020 17:34:18 -0500
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:45049 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727116AbgBEWeR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Feb 2020 17:54:00 -0500
-X-Greylist: delayed 1339 seconds by postgrey-1.27 at vger.kernel.org; Wed, 05 Feb 2020 17:54:00 EST
-Received: from cm14.websitewelcome.com (cm14.websitewelcome.com [100.42.49.7])
-        by gateway22.websitewelcome.com (Postfix) with ESMTP id 81EC6300D
-        for <linux-kernel@vger.kernel.org>; Wed,  5 Feb 2020 16:31:40 -0600 (CST)
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with SMTP
-        id zTCuiyULsQfADzTCui1Nf3; Wed, 05 Feb 2020 16:31:40 -0600
-X-Authority-Reason: nr=8
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=embeddedor.com; s=default; h=Content-Type:MIME-Version:Message-ID:Subject:
-        Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
-        List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=L0Nz5IqdwqEH9ceOPKFVEIdv2X6+UyVS0shI1C/vLi8=; b=BLFkwCXKaaGmoFODgQFki5r82E
-        S021q2WGng0zG9zg+PCxkTUhOgv7yJxsvUO8cSV0xDNxytNqx3DPz+a7IWVPzBThzCn6/srLJco5f
-        lsTxcXYpDnEnlXgDemY8uZrASbdNJ2gzw0fAcJgrO9rA0Kf3FKail5tMF1gQzkliLa2/tf02t8ZnP
-        aqbt01yO51riNLXFk3x8HCRqOtFCEmNLLuMrXZYV3GRlBbN8QDpRJtnqmaHhflJ6m8y7i6US7PciX
-        j8fmWaqkGJ97dLh28jakK5oiJMI64mXw/pZA28kWs4k+2wqUPRthdPDFje2XgqDs4z1mkBI1oYoA2
-        IzY4QvJA==;
-Received: from [201.144.174.45] (port=29810 helo=embeddedor)
-        by gator4166.hostgator.com with esmtpa (Exim 4.92)
-        (envelope-from <gustavo@embeddedor.com>)
-        id 1izTCt-000Jo3-6R; Wed, 05 Feb 2020 16:31:39 -0600
-Date:   Wed, 5 Feb 2020 16:34:04 -0600
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-To:     "Steven Rostedt (VMware)" <rostedt@goodmis.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Tom Zanussi <zanussi@kernel.org>
-Cc:     linux-kernel@vger.kernel.org,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Subject: [PATCH][next] tracing/kprobe: Fix uninitialized variable bug
-Message-ID: <20200205223404.GA3379@embeddedor>
+        Wed, 5 Feb 2020 17:34:17 -0500
+Received: by mail-pg1-f193.google.com with SMTP id g3so1648424pgs.11
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Feb 2020 14:34:17 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=joelfernandes.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=BJAZ+tjDZGEWKOLhDN5AGrWH1BdqO7gaMNKY2ZpYEZE=;
+        b=QaYncY22KA1veHmJfyF9ObQNUPiSi3a+CYQ/HWRhROmmrwOgTOH5jglHbNzKa3crqZ
+         0yWquqQt2uqdYLCLXrJPtB1A+OFdkF7HpKyn/NN7xtUqFHK7ipFabry5qlMjt0gX01gE
+         iB3UJDUvBVIWfSXh0lUgCf+hLlzcJkZDwHd/4=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=BJAZ+tjDZGEWKOLhDN5AGrWH1BdqO7gaMNKY2ZpYEZE=;
+        b=P97TlfEr+H/MBdx/rzAOYR6Tb4vwgMRUwdHM/dNq70m7y3vgfRgj/bIL/jN1HNa9xk
+         o21SRNNHC3wQ1SkKcehQd1QkCa/A52i7ek+4lW5pMQu2bwfNRtwm5JMZOZVWKXoSEB8G
+         me48lLAY17NYp5s8l9VKB/gAKQQ7gYsflpt60edAs3Em3deJ5HZoGGvtpdBlAx13CSaG
+         d+j90Lb/leWAxtVRh3Z9dlX+sNXyhP+L7UHVuDahnlPHmYe3TQdIyBVpcwOcXNDt1BwB
+         XBbaYOtVUPEkanMQGmHX3rsH0dTp3iL62ey0FUzkRqMqFAk5gE0Ax3mAt8iuMmlwdpNT
+         HCVQ==
+X-Gm-Message-State: APjAAAUDV0545VWntXhDnSWntVcPnxEv2Ht2AK4SpIhJVHD/SKNH0mFw
+        GNYFzkbpJB/BR2TvJeWIX2bwwg==
+X-Google-Smtp-Source: APXvYqwH/JozABknbiZDhGi/qjztmZyyCX4nXbvdvUmqzc6dhXb1KJ7OGhn2QUC6bDzXn1X7tfRLFg==
+X-Received: by 2002:a63:d0c:: with SMTP id c12mr130039pgl.173.1580942057139;
+        Wed, 05 Feb 2020 14:34:17 -0800 (PST)
+Received: from localhost ([2620:15c:6:12:9c46:e0da:efbf:69cc])
+        by smtp.gmail.com with ESMTPSA id t19sm784459pgg.23.2020.02.05.14.34.16
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 05 Feb 2020 14:34:16 -0800 (PST)
+Date:   Wed, 5 Feb 2020 17:34:15 -0500
+From:   Joel Fernandes <joel@joelfernandes.org>
+To:     Steven Rostedt <rostedt@goodmis.org>
+Cc:     linux-kernel@vger.kernel.org, Ingo Molnar <mingo@redhat.com>,
+        paulmck@kernel.org, frextrite@gmail.com, rcu@vger.kernel.org,
+        madhuparnabhowmik04@gmail.com
+Subject: Re: [PATCH] kernel/trace: Use rcu_assign_pointer() for setting
+ fgraph hash pointers
+Message-ID: <20200205223415.GA55522@google.com>
+References: <20200205221808.54576-1-joel@joelfernandes.org>
+ <20200205172529.4282a0d1@oasis.local.home>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 201.144.174.45
-X-Source-L: No
-X-Exim-ID: 1izTCt-000Jo3-6R
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: (embeddedor) [201.144.174.45]:29810
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 5
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+In-Reply-To: <20200205172529.4282a0d1@oasis.local.home>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-There is a potential execution path in which variable *ret* is returned
-without being properly initialized, previously.
+On Wed, Feb 05, 2020 at 05:25:29PM -0500, Steven Rostedt wrote:
+> On Wed,  5 Feb 2020 17:18:08 -0500
+> "Joel Fernandes (Google)" <joel@joelfernandes.org> wrote:
+> 
+> > set_ftrace_early_graph() sets pointers without any explicit
+> > release-barriers. Let us use rcu_assign_pointer() to ensure the same.
+> > 
+> > Note that ftrace_early_graph() calls ftrace_graph_set_hash() which does
+> > do mutex_unlock(&ftrace_lock); which should imply a release barrier.
+> > However it is better to not depend on it and just use
+> > rcu_assign_pointer() which should also avoid sparse errors in the
+> > future.
+> 
+> This is going to have to wait for the next merge window, as I'm already
+> *very* late, and I've pushed the limit to what I will add at this time
+> frame.
 
-Fix this by initializing variable *ret* to 0.
+I understand, no problem. I will resend it next merge window.
 
-Addresses-Coverity-ID: 1491142 ("Uninitialized scalar variable")
-Fixes: 2a588dd1d5d6 ("tracing: Add kprobe event command generation functions")
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
----
- kernel/trace/trace_kprobe.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+thanks,
 
-diff --git a/kernel/trace/trace_kprobe.c b/kernel/trace/trace_kprobe.c
-index d8264ebb9581..362cca52f5de 100644
---- a/kernel/trace/trace_kprobe.c
-+++ b/kernel/trace/trace_kprobe.c
-@@ -1012,7 +1012,7 @@ int __kprobe_event_add_fields(struct dynevent_cmd *cmd, ...)
- {
- 	struct dynevent_arg arg;
- 	va_list args;
--	int ret;
-+	int ret = 0;
- 
- 	if (cmd->type != DYNEVENT_TYPE_KPROBE)
- 		return -EINVAL;
--- 
-2.25.0
+ - Joel
 
+> 
+> -- Steve
+> 
