@@ -2,59 +2,76 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9E55515280E
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Feb 2020 10:11:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 61FE9152812
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Feb 2020 10:14:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728144AbgBEJLb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 5 Feb 2020 04:11:31 -0500
-Received: from mx2.suse.de ([195.135.220.15]:42326 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727068AbgBEJLb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Feb 2020 04:11:31 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id BDA66AF27;
-        Wed,  5 Feb 2020 09:11:28 +0000 (UTC)
-Date:   Wed, 5 Feb 2020 10:11:26 +0100
-From:   Jean Delvare <jdelvare@suse.de>
-To:     Jiaxun Yang <jiaxun.yang@flygoat.com>
-Cc:     Tiezhu Yang <yangtiezhu@loongson.cn>,
-        Paul Burton <paulburton@kernel.org>,
-        Ralf Baechle <ralf@linux-mips.org>,
-        Huacai Chen <chenhc@lemote.com>,
-        Xuefeng Li <lixuefeng@loongson.cn>, linux-mips@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Yinglu Yang <yangyinglu@loongson.cn>
-Subject: Re: [PATCH v2,RESEND] MIPS: Scan the DMI system information
-Message-ID: <20200205101126.4fad0946@endymion>
-In-Reply-To: <17537451580871338@vla4-87a00c2d2b1b.qloud-c.yandex.net>
-References: <1579181165-2493-1-git-send-email-yangtiezhu@loongson.cn>
-        <a267161f-c8b3-a11c-7416-3ab9ba19aa82@loongson.cn>
-        <20200203131422.384cd168@endymion>
-        <609c7042-0e44-2bd4-5e03-97465621b184@loongson.cn>
-        <17537451580871338@vla4-87a00c2d2b1b.qloud-c.yandex.net>
-Organization: SUSE Linux
-X-Mailer: Claws Mail 3.17.4 (GTK+ 2.24.32; x86_64-suse-linux-gnu)
+        id S1728102AbgBEJOW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 5 Feb 2020 04:14:22 -0500
+Received: from mout-p-201.mailbox.org ([80.241.56.171]:33026 "EHLO
+        mout-p-201.mailbox.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727068AbgBEJOW (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Feb 2020 04:14:22 -0500
+Received: from smtp2.mailbox.org (smtp2.mailbox.org [IPv6:2001:67c:2050:105:465:1:2:0])
+        (using TLSv1.2 with cipher ECDHE-RSA-CHACHA20-POLY1305 (256/256 bits))
+        (No client certificate requested)
+        by mout-p-201.mailbox.org (Postfix) with ESMTPS id 48CG8r10mSzQl9f;
+        Wed,  5 Feb 2020 10:14:20 +0100 (CET)
+X-Virus-Scanned: amavisd-new at heinlein-support.de
+Received: from smtp2.mailbox.org ([80.241.60.241])
+        by spamfilter06.heinlein-hosting.de (spamfilter06.heinlein-hosting.de [80.241.56.125]) (amavisd-new, port 10030)
+        with ESMTP id cC-7nC6GS1d3; Wed,  5 Feb 2020 10:14:16 +0100 (CET)
+Date:   Wed, 5 Feb 2020 10:14:14 +0100
+From:   Hagen Paul Pfeifer <hagen@jauu.net>
+To:     Andi Kleen <ak@linux.intel.com>
+Cc:     linux-kernel@vger.kernel.org,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Jiri Olsa <jolsa@kernel.org>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>
+Subject: Re: [PATCH] perf script: introduce deltatime option
+Message-ID: <20200205091414.GB495987@virgo>
+References: <20200204173709.489161-1-hagen@jauu.net>
+ <20200204231628.GF302770@tassilo.jf.intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200204231628.GF302770@tassilo.jf.intel.com>
+X-Key-Id: 98350C22
+X-Key-Fingerprint: 490F 557B 6C48 6D7E 5706 2EA2 4A22 8D45 9835 0C22
+X-GPG-Key: gpg --recv-keys --keyserver wwwkeys.eu.pgp.net 98350C22
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 05 Feb 2020 10:55:38 +0800, Jiaxun Yang wrote:
-> > I think it is better to split it into the following two patches?
-> > [PATCH v3 1/2] firmware: dmi: Add macro SMBIOS_ENTRY_POINT_SCAN_START
-> > [PATCH v3 2/2] MIPS: Add support for Desktop Management Interface (DMI)  
-> 
-> That way will break bisect.
+* Andi Kleen | 2020-02-04 15:16:28 [-0800]:
 
-Are you sure? As far as I can see, each patch builds individually. The
-dmi patch is a no-op alone. The mips patch will not work alone,
-obviously, however according to Tiezhu dmi_scan_machine() will fail
-with a harmless error message if the base address is 0xF0000. If that's
-correct then it's not breaking bisect.
+>> $ perf script --deltatime
+>
+>It's already implemented as --reltime
 
--- 
-Jean Delvare
-SUSE L3 Support
+Nope ;-)
+
+$ perf script --ns --reltime
+           sleep 49148 [000]     0.000000000: probe_libc:sbrk: (7f279d9144f0)
+           sleep 49148 [000]     0.000009153: probe_libc:sbrk: (7f279d9144f0)
+              sh 49151 [002]     0.099454082: probe_libc:sbrk: (7f9f1c6374f0)
+              sh 49151 [002]     0.099468538: probe_libc:sbrk: (7f9f1c6374f0)
+            curl 49153 [003]     0.114459574: probe_libc:sbrk: (7f9bb2dfb4f0)
+            curl 49153 [003]     0.114474449: probe_libc:sbrk: (7f9bb2dfb4f0)
+						[...]
+
+$ perf script --ns --deltatime
+           sleep 49148 [000]     0.000000000: probe_libc:sbrk: (7f279d9144f0)
+           sleep 49148 [000]     0.000009153: probe_libc:sbrk: (7f279d9144f0)
+              sh 49151 [002]     0.099444929: probe_libc:sbrk: (7f9f1c6374f0)
+              sh 49151 [002]     0.000014456: probe_libc:sbrk: (7f9f1c6374f0)
+            curl 49153 [003]     0.014991036: probe_libc:sbrk: (7f9bb2dfb4f0)
+            curl 49153 [003]     0.000014875: probe_libc:sbrk: (7f9bb2dfb4f0)
+						[...]
+
+
+reltime is relative to the *first event* in the record - deltatime is relative
+to the *previous* event.
+
+Hagen
