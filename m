@@ -2,74 +2,112 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D7ACD15331D
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Feb 2020 15:34:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C4176153321
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Feb 2020 15:34:51 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727054AbgBEOeK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 5 Feb 2020 09:34:10 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35396 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726208AbgBEOeK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Feb 2020 09:34:10 -0500
-Received: from paulmck-ThinkPad-P72.home (50-39-105-78.bvtn.or.frontiernet.net [50.39.105.78])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 80E27217BA;
-        Wed,  5 Feb 2020 14:34:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1580913249;
-        bh=Itaszvd+CGRsoa3oRTb6Hv7hU7etzy6AGLUBM/kaay0=;
-        h=Date:From:To:Cc:Subject:Reply-To:From;
-        b=0QqJqszAs8SwpfM3Ll3F1k1VCwSmvvvzX+0VGgzaOYRD5IaWEvA557c+KmvoX7qIH
-         j7XZCHxtVuvEuKG1nZhSrh7823RDSoTnwPhElttrXukUOU5nhoRIm//kvF0Iuvxklg
-         TR3co75344OJyAGoXpiF4T5XI/mmBRpRJPtY4KLs=
-Received: by paulmck-ThinkPad-P72.home (Postfix, from userid 1000)
-        id 50D8635227F3; Wed,  5 Feb 2020 06:34:09 -0800 (PST)
-Date:   Wed, 5 Feb 2020 06:34:09 -0800
-From:   "Paul E. McKenney" <paulmck@kernel.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     kernel-team@fb.com, tglx@linutronix.de, gregkh@linuxfoundation.org,
-        rmk+kernel@armlinux.org.uk, nico@fluxnic.net
-Subject: [PATCH UP] Make smp_call_function_single() match SMP semantics
-Message-ID: <20200205143409.GA7021@paulmck-ThinkPad-P72>
-Reply-To: paulmck@kernel.org
+        id S1727414AbgBEOej (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 5 Feb 2020 09:34:39 -0500
+Received: from Galois.linutronix.de ([193.142.43.55]:35664 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726627AbgBEOei (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Feb 2020 09:34:38 -0500
+Received: from localhost ([127.0.0.1] helo=flow.W.breakpoint.cc)
+        by Galois.linutronix.de with esmtp (Exim 4.80)
+        (envelope-from <bigeasy@linutronix.de>)
+        id 1izLlB-0003IJ-Ob; Wed, 05 Feb 2020 15:34:33 +0100
+From:   Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+To:     linux-kernel@vger.kernel.org, nouveau@lists.freedesktop.org
+Cc:     Steven Rostedt <rostedt@goodmis.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Karol Herbst <karolherbst@gmail.com>,
+        Pekka Paalanen <ppaalanen@gmail.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Subject: [PATCH] x86/mm/kmmio: Use this_cpu_ptr() instead get_cpu_var() for kmmio_ctx
+Date:   Wed,  5 Feb 2020 15:34:26 +0100
+Message-Id: <20200205143426.2592512-1-bigeasy@linutronix.de>
+X-Mailer: git-send-email 2.25.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In CONFIG_SMP=y kernels, smp_call_function_single() returns -ENXIO when
-invoked for a non-existent CPU.  In contrast, in CONFIG_SMP=n kernels,
-a splat is emitted and smp_call_function_single() otherwise silently
-ignores its "cpu" argument, instead pretending that the caller intended
-to have something happen on CPU 0.  Given that there is now code that
-expects smp_call_function_single() to return an error if a bad CPU was
-specified, this difference in semantics needs to be addressed.
+Both call sites, that access kmmio_ctx, access kmmio_ctx with interrupts
+disabled. There is no need to use get_cpu_var() which additionally
+disables preemption.
 
-This commit therefore brings the semantics of the CONFIG_SMP=n version
-of smp_call_function_single() into alignment with its CONFIG_SMP=y
-counterpart.
+Use this_cpu_ptr() to access the kmmio_ctx variable of the current CPU.
 
-Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
+Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
 ---
- up.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ arch/x86/mm/kmmio.c | 10 +++-------
+ 1 file changed, 3 insertions(+), 7 deletions(-)
 
-diff --git a/kernel/up.c b/kernel/up.c
-index 862b460..a504e81 100644
---- a/kernel/up.c
-+++ b/kernel/up.c
-@@ -14,7 +14,8 @@ int smp_call_function_single(int cpu, void (*func) (void *info), void *info,
+diff --git a/arch/x86/mm/kmmio.c b/arch/x86/mm/kmmio.c
+index 49d7814b59a9b..9994353fb75de 100644
+--- a/arch/x86/mm/kmmio.c
++++ b/arch/x86/mm/kmmio.c
+@@ -260,7 +260,7 @@ int kmmio_handler(struct pt_regs *regs, unsigned long a=
+ddr)
+ 		goto no_kmmio;
+ 	}
+=20
+-	ctx =3D &get_cpu_var(kmmio_ctx);
++	ctx =3D this_cpu_ptr(&kmmio_ctx);
+ 	if (ctx->active) {
+ 		if (page_base =3D=3D ctx->addr) {
+ 			/*
+@@ -285,7 +285,7 @@ int kmmio_handler(struct pt_regs *regs, unsigned long a=
+ddr)
+ 			pr_emerg("previous hit was at 0x%08lx.\n", ctx->addr);
+ 			disarm_kmmio_fault_page(faultpage);
+ 		}
+-		goto no_kmmio_ctx;
++		goto no_kmmio;
+ 	}
+ 	ctx->active++;
+=20
+@@ -314,11 +314,8 @@ int kmmio_handler(struct pt_regs *regs, unsigned long =
+addr)
+ 	 * the user should drop to single cpu before tracing.
+ 	 */
+=20
+-	put_cpu_var(kmmio_ctx);
+ 	return 1; /* fault handled */
+=20
+-no_kmmio_ctx:
+-	put_cpu_var(kmmio_ctx);
+ no_kmmio:
+ 	rcu_read_unlock();
+ 	preempt_enable_no_resched();
+@@ -333,7 +330,7 @@ int kmmio_handler(struct pt_regs *regs, unsigned long a=
+ddr)
+ static int post_kmmio_handler(unsigned long condition, struct pt_regs *reg=
+s)
  {
- 	unsigned long flags;
- 
--	WARN_ON(cpu != 0);
-+	if (cpu != 0)
-+		return -ENXIO;
- 
- 	local_irq_save(flags);
- 	func(info);
+ 	int ret =3D 0;
+-	struct kmmio_context *ctx =3D &get_cpu_var(kmmio_ctx);
++	struct kmmio_context *ctx =3D this_cpu_ptr(&kmmio_ctx);
+=20
+ 	if (!ctx->active) {
+ 		/*
+@@ -371,7 +368,6 @@ static int post_kmmio_handler(unsigned long condition, =
+struct pt_regs *regs)
+ 	if (!(regs->flags & X86_EFLAGS_TF))
+ 		ret =3D 1;
+ out:
+-	put_cpu_var(kmmio_ctx);
+ 	return ret;
+ }
+=20
+--=20
+2.25.0
+
