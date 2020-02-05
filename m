@@ -2,72 +2,146 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5C9C2153B73
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Feb 2020 23:52:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 89A05153B6A
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Feb 2020 23:51:46 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727773AbgBEWwO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 5 Feb 2020 17:52:14 -0500
-Received: from smtprelay0014.hostedemail.com ([216.40.44.14]:52144 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727722AbgBEWwO (ORCPT
+        id S1727725AbgBEWvo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 5 Feb 2020 17:51:44 -0500
+Received: from mail-ed1-f67.google.com ([209.85.208.67]:46688 "EHLO
+        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727615AbgBEWvn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Feb 2020 17:52:14 -0500
-Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
-        by smtprelay02.hostedemail.com (Postfix) with ESMTP id C02BD3AB6;
-        Wed,  5 Feb 2020 22:52:12 +0000 (UTC)
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-Spam-Summary: 50,0,0,,d41d8cd98f00b204,joe@perches.com,:::::::::::::::::::,RULES_HIT:41:355:379:599:800:960:966:967:973:988:989:1260:1277:1311:1313:1314:1345:1359:1437:1515:1516:1518:1534:1541:1593:1594:1711:1730:1747:1777:1792:2196:2199:2393:2525:2553:2560:2563:2682:2685:2828:2859:2902:2933:2937:2939:2942:2945:2947:2951:2954:3022:3138:3139:3140:3141:3142:3352:3622:3865:3866:3867:3868:3870:3871:3934:3936:3938:3941:3944:3947:3950:3953:3956:3959:4321:4362:4385:4605:5007:7903:9025:10004:10400:10848:11026:11232:11233:11658:11914:12043:12048:12262:12297:12438:12555:12679:12740:12760:12895:12986:13069:13311:13357:13439:14096:14097:14181:14659:14721:21080:21365:21451:21611:21627:21740:21811:21939:30012:30054:30064:30091,0,RBL:none,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:,MSBL:0,DNSBL:none,Custom_rules:0:0:0,LFtime:3,LUA_SUMMARY:none
-X-HE-Tag: order36_1316b577d5b11
-X-Filterd-Recvd-Size: 2066
-Received: from XPS-9350.home (unknown [47.151.135.224])
-        (Authenticated sender: joe@perches.com)
-        by omf16.hostedemail.com (Postfix) with ESMTPA;
-        Wed,  5 Feb 2020 22:52:11 +0000 (UTC)
-Message-ID: <5a14078affad5e26330627d91df394da990ba301.camel@perches.com>
-Subject: Re: [PATCH] drm: Add missing newline after comment
-From:   Joe Perches <joe@perches.com>
-To:     Stefan Agner <stefan@agner.ch>, maarten.lankhorst@linux.intel.com,
-        mripard@kernel.org, sean@poorly.run, airlied@linux.ie,
-        daniel.vetter@ffwll.ch
-Cc:     airlied@redhat.com, dri-devel@lists.freedesktop.org,
-        linux-kernel@vger.kernel.org, clang-built-linux@googlegroups.com
-Date:   Wed, 05 Feb 2020 14:50:59 -0800
-In-Reply-To: <586aab08af596120f48858005bb6784c83035d59.1580941448.git.stefan@agner.ch>
-References: <586aab08af596120f48858005bb6784c83035d59.1580941448.git.stefan@agner.ch>
-Content-Type: text/plain; charset="ISO-8859-1"
-User-Agent: Evolution 3.34.1-2 
+        Wed, 5 Feb 2020 17:51:43 -0500
+Received: by mail-ed1-f67.google.com with SMTP id m8so3818230edi.13
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Feb 2020 14:51:41 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=KkJqADdzREDp4wpCa3aAuBXzYy2a7dWtxmQqACuBiLA=;
+        b=tlFhwg7fuSsr9lDMyg/hJyhV9/r+SA/pNtn3GhTpEFeVNqw8D7oPmYV55YrajcvhPi
+         6USVBo6kXicLmvv6Bg2Y0ha0tk2Nay7mXyPilZSuO9GsGXq5p9msM1TW1ThqpEKIk6TO
+         4/OQyO/ulzcMerTQGaeD0VryqdPshEHuhKpG+unQcWhv6sPRbnKksfprLCn66VInLREd
+         Je6wlsaG5QsXqkI7MrdKq8b444s9J9M4EeNMgElcAD+QNFZ/daBRaPIp/Nv+OU/SgL9L
+         aTwx//Ff6J7OlQ/9BFdzCkZlg1MXq+nUXXnJiTXBCnSxNct/pUB8o87OQuSAcShpAQtW
+         d60Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=KkJqADdzREDp4wpCa3aAuBXzYy2a7dWtxmQqACuBiLA=;
+        b=kO0pXF2EcjJ3ot/XWls3GCbRyapJdSWAl02LzusvCtrCHbd4vpkS65ynZShR+Jy4kQ
+         ie25YEwBiL0Lk6ogj/DTvProHr1WaHxdc1lePCha2ByWc9PGRWpm5ixzNGSvBrZkcadn
+         5/fWJ1l8GK5KJ1xMPxy2OM+CxhAaaIzymFJkyNY/Nxr0khEXWFdHKNoBAUykboYH4Y+4
+         KV7aK6Gi1jiEqB9kfAJeyJ3/UTcinUuVxgvgx49otJufTmjmcM7Jj6kB2U08OgIyX7Nz
+         93rxR9HVpCzXfEmDWeQoIuz1F+rfDM8dZ7RjQY8KCqdCC8E85ZBYpI1ySvl3b2dlcUCr
+         2vMA==
+X-Gm-Message-State: APjAAAWY15BqwvG9ckLxYzmT9GDuNbEDGV1T9VTdNTHJvmdYEWykqTuW
+        PPFr2RZJquxylV2Irgmi+fpLkUHaXvzdFBJBvSpB
+X-Google-Smtp-Source: APXvYqz2aK9JflWz0zHltcgH6zygcn9lbVHxrjU8/1oDrOSsvKKPYicMl7ZrYmjGxJ5ErI7H2IQMPuhpOBJ/wakZNE8=
+X-Received: by 2002:a50:e108:: with SMTP id h8mr394067edl.196.1580943101124;
+ Wed, 05 Feb 2020 14:51:41 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+References: <cover.1577736799.git.rgb@redhat.com> <2954ed671a7622ddf3abdb8854dbba2ad13e9f33.1577736799.git.rgb@redhat.com>
+ <CAHC9VhRw3Fj9-hi+Vj8JJb_GXM4B9N5hRXa9H6aQkuuFqJJ15w@mail.gmail.com> <20200204234258.uwaqk3s3c42fxews@madcap2.tricolour.ca>
+In-Reply-To: <20200204234258.uwaqk3s3c42fxews@madcap2.tricolour.ca>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Wed, 5 Feb 2020 17:51:30 -0500
+Message-ID: <CAHC9VhT0NELsrEeTmX15GaZ1SE-qZiQmz9-WweRGWRPcGN5EmA@mail.gmail.com>
+Subject: Re: [PATCH ghak90 V8 11/16] audit: add support for containerid to
+ network namespaces
+To:     Richard Guy Briggs <rgb@redhat.com>
+Cc:     containers@lists.linux-foundation.org, linux-api@vger.kernel.org,
+        Linux-Audit Mailing List <linux-audit@redhat.com>,
+        linux-fsdevel@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+        netdev@vger.kernel.org, netfilter-devel@vger.kernel.org,
+        sgrubb@redhat.com, omosnace@redhat.com, dhowells@redhat.com,
+        simo@redhat.com, Eric Paris <eparis@parisplace.org>,
+        Serge Hallyn <serge@hallyn.com>, ebiederm@xmission.com,
+        nhorman@tuxdriver.com, Dan Walsh <dwalsh@redhat.com>,
+        mpatel@redhat.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 2020-02-05 at 23:26 +0100, Stefan Agner wrote:
-> Clang prints a warning:
-> drivers/gpu/drm/drm_lock.c:363:6: warning: misleading indentation;
-> statement is not part of the previous 'if' [-Wmisleading-indentation]
->          */     mutex_lock(&dev->struct_mutex);
->                 ^
-> drivers/gpu/drm/drm_lock.c:357:2: note: previous statement is here
->         if (!drm_core_check_feature(dev, DRIVER_LEGACY))
->         ^
-> 
-> Fix this by adding a newline after the multi-line comment.
+On Tue, Feb 4, 2020 at 6:43 PM Richard Guy Briggs <rgb@redhat.com> wrote:
+> On 2020-01-22 16:28, Paul Moore wrote:
+> > On Tue, Dec 31, 2019 at 2:51 PM Richard Guy Briggs <rgb@redhat.com> wrote:
+> > >
+> > > This also adds support to qualify NETFILTER_PKT records.
+> > >
+> > > Audit events could happen in a network namespace outside of a task
+> > > context due to packets received from the net that trigger an auditing
+> > > rule prior to being associated with a running task.  The network
+> > > namespace could be in use by multiple containers by association to the
+> > > tasks in that network namespace.  We still want a way to attribute
+> > > these events to any potential containers.  Keep a list per network
+> > > namespace to track these audit container identifiiers.
+> > >
+> > > Add/increment the audit container identifier on:
+> > > - initial setting of the audit container identifier via /proc
+> > > - clone/fork call that inherits an audit container identifier
+> > > - unshare call that inherits an audit container identifier
+> > > - setns call that inherits an audit container identifier
+> > > Delete/decrement the audit container identifier on:
+> > > - an inherited audit container identifier dropped when child set
+> > > - process exit
+> > > - unshare call that drops a net namespace
+> > > - setns call that drops a net namespace
+> > >
+> > > Add audit container identifier auxiliary record(s) to NETFILTER_PKT
+> > > event standalone records.  Iterate through all potential audit container
+> > > identifiers associated with a network namespace.
+> > >
+> > > Please see the github audit kernel issue for contid net support:
+> > >   https://github.com/linux-audit/audit-kernel/issues/92
+> > > Please see the github audit testsuiite issue for the test case:
+> > >   https://github.com/linux-audit/audit-testsuite/issues/64
+> > > Please see the github audit wiki for the feature overview:
+> > >   https://github.com/linux-audit/audit-kernel/wiki/RFE-Audit-Container-ID
+> > > Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
+> > > Acked-by: Neil Horman <nhorman@tuxdriver.com>
+> > > Reviewed-by: Ondrej Mosnacek <omosnace@redhat.com>
+> > > ---
+> > >  include/linux/audit.h    |  24 +++++++++
+> > >  kernel/audit.c           | 132 ++++++++++++++++++++++++++++++++++++++++++++++-
+> > >  kernel/nsproxy.c         |   4 ++
+> > >  net/netfilter/nft_log.c  |  11 +++-
+> > >  net/netfilter/xt_AUDIT.c |  11 +++-
+> > >  5 files changed, 176 insertions(+), 6 deletions(-)
+> >
+> > ...
+> >
+> > > diff --git a/include/linux/audit.h b/include/linux/audit.h
+> > > index 5531d37a4226..ed8d5b74758d 100644
+> > > --- a/include/linux/audit.h
+> > > +++ b/include/linux/audit.h
+> > > @@ -12,6 +12,7 @@
+> > >  #include <linux/sched.h>
+> > >  #include <linux/ptrace.h>
+> > >  #include <uapi/linux/audit.h>
+> > > +#include <linux/refcount.h>
+> > >
+> > >  #define AUDIT_INO_UNSET ((unsigned long)-1)
+> > >  #define AUDIT_DEV_UNSET ((dev_t)-1)
+> > > @@ -121,6 +122,13 @@ struct audit_task_info {
+> > >
+> > >  extern struct audit_task_info init_struct_audit;
+> > >
+> > > +struct audit_contobj_netns {
+> > > +       struct list_head        list;
+> > > +       u64                     id;
+> >
+> > Since we now track audit container IDs in their own structure, why not
+> > link directly to the audit container ID object (and bump the
+> > refcount)?
+>
+> Ok, I've done this but at first I had doubts about the complexity.
 
-Thanks, already in -next
+Yes, it will be more complex, but it should be much safer.
 
-commit 5b99cad6966b92f757863ff9b6688051633fde9a
-Author: Dan Carpenter <dan.carpenter@oracle.com>
-Date:   Wed Jan 8 08:43:12 2020 +0300
-
-    gpu/drm: clean up white space in drm_legacy_lock_master_cleanup()
-    
-    We moved this code to a different file and accidentally deleted a
-    newline.
-    
-    Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-    Signed-off-by: Daniel Vetter <daniel.vetter@ffwll.ch>
-    Link: https://patchwork.freedesktop.org/patch/msgid/20200108054312.yzlj5wmbdktejgob@kili.mountain
-
-
+-- 
+paul moore
+www.paul-moore.com
