@@ -2,21 +2,21 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B7FAF1524ED
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Feb 2020 03:57:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0DDA71524E7
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Feb 2020 03:56:51 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727957AbgBEC4x (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 4 Feb 2020 21:56:53 -0500
-Received: from szxga05-in.huawei.com ([45.249.212.191]:9700 "EHLO huawei.com"
+        id S1727934AbgBEC4p (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 4 Feb 2020 21:56:45 -0500
+Received: from szxga07-in.huawei.com ([45.249.212.35]:42054 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727758AbgBEC4k (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Feb 2020 21:56:40 -0500
-Received: from DGGEMS406-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id AE3CF58F06CF40550DAB;
-        Wed,  5 Feb 2020 10:56:36 +0800 (CST)
+        id S1727855AbgBEC4n (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Feb 2020 21:56:43 -0500
+Received: from DGGEMS406-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id 9D844A9A9D028905D014;
+        Wed,  5 Feb 2020 10:56:41 +0800 (CST)
 Received: from huawei.com (10.175.124.28) by DGGEMS406-HUB.china.huawei.com
  (10.3.19.206) with Microsoft SMTP Server id 14.3.439.0; Wed, 5 Feb 2020
- 10:56:30 +0800
+ 10:56:31 +0800
 From:   Jason Yan <yanaijie@huawei.com>
 To:     <mpe@ellerman.id.au>, <linuxppc-dev@lists.ozlabs.org>,
         <diana.craciun@nxp.com>, <christophe.leroy@c-s.fr>,
@@ -25,9 +25,9 @@ To:     <mpe@ellerman.id.au>, <linuxppc-dev@lists.ozlabs.org>,
         <kernel-hardening@lists.openwall.com>, <oss@buserror.net>
 CC:     <linux-kernel@vger.kernel.org>, <zhaohongjiang@huawei.com>,
         Jason Yan <yanaijie@huawei.com>
-Subject: [PATCH v2 4/6] powerpc/fsl_booke/64: do not clear the BSS for the second pass
-Date:   Wed, 5 Feb 2020 10:55:25 +0800
-Message-ID: <20200205025527.28640-5-yanaijie@huawei.com>
+Subject: [PATCH v2 5/6] powerpc/fsl_booke/64: clear the original kernel if randomized
+Date:   Wed, 5 Feb 2020 10:55:26 +0800
+Message-ID: <20200205025527.28640-6-yanaijie@huawei.com>
 X-Mailer: git-send-email 2.17.2
 In-Reply-To: <20200205025527.28640-1-yanaijie@huawei.com>
 References: <20200205025527.28640-1-yanaijie@huawei.com>
@@ -40,9 +40,7 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The BSS section has already cleared out in the first pass. No need to
-clear it again. This can save some time when booting with KASLR
-enabled.
+The original kernel still exists in the memory, clear it now.
 
 Signed-off-by: Jason Yan <yanaijie@huawei.com>
 Cc: Scott Wood <oss@buserror.net>
@@ -54,27 +52,25 @@ Cc: Paul Mackerras <paulus@samba.org>
 Cc: Nicholas Piggin <npiggin@gmail.com>
 Cc: Kees Cook <keescook@chromium.org>
 ---
- arch/powerpc/kernel/head_64.S | 7 +++++++
- 1 file changed, 7 insertions(+)
+ arch/powerpc/mm/nohash/kaslr_booke.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/arch/powerpc/kernel/head_64.S b/arch/powerpc/kernel/head_64.S
-index b4ececc4323d..9ae7fd8bbf7c 100644
---- a/arch/powerpc/kernel/head_64.S
-+++ b/arch/powerpc/kernel/head_64.S
-@@ -914,6 +914,13 @@ start_here_multiplatform:
- 	bl      relative_toc
- 	tovirt(r2,r2)
+diff --git a/arch/powerpc/mm/nohash/kaslr_booke.c b/arch/powerpc/mm/nohash/kaslr_booke.c
+index c6f5c1db1394..ed1277059368 100644
+--- a/arch/powerpc/mm/nohash/kaslr_booke.c
++++ b/arch/powerpc/mm/nohash/kaslr_booke.c
+@@ -378,8 +378,10 @@ notrace void __init kaslr_early_init(void *dt_ptr, phys_addr_t size)
+ 	unsigned int *__kaslr_offset = (unsigned int *)(KERNELBASE + 0x58);
+ 	unsigned int *__run_at_load = (unsigned int *)(KERNELBASE + 0x5c);
  
-+	/* Do not clear the BSS for the second pass if randomized */
-+	LOAD_REG_ADDR(r3, kernstart_virt_addr)
-+	lwz     r3,0(r3)
-+	LOAD_REG_IMMEDIATE(r4, KERNELBASE)
-+	cmpw	r3,r4
-+	bne	4f
-+
- 	/* Clear out the BSS. It may have been done in prom_init,
- 	 * already but that's irrelevant since prom_init will soon
- 	 * be detached from the kernel completely. Besides, we need
+-	if (*__run_at_load == 1)
++	if (*__run_at_load == 1) {
++		kaslr_late_init();
+ 		return;
++	}
+ 
+ 	/* Setup flat device-tree pointer */
+ 	initial_boot_params = dt_ptr;
 -- 
 2.17.2
 
