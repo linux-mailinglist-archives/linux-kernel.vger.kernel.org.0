@@ -2,214 +2,174 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 99683153A7A
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Feb 2020 22:50:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AE206153A8C
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Feb 2020 22:56:54 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727358AbgBEVuC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 5 Feb 2020 16:50:02 -0500
-Received: from us-smtp-2.mimecast.com ([205.139.110.61]:37140 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727106AbgBEVuB (ORCPT
+        id S1727478AbgBEV4Z (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 5 Feb 2020 16:56:25 -0500
+Received: from fllv0015.ext.ti.com ([198.47.19.141]:59188 "EHLO
+        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727109AbgBEV4Z (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Feb 2020 16:50:01 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1580939399;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=hzR+kWwgje3yUYdtQN4kRBB1wzrOCH+ul+GIZRQLQpQ=;
-        b=NL01Rj01J/O/Qms2wKtxyJQc/bG0G+dtnQuc0neQdovh3NGe5gNVE/PgXVkPBdlqRCeXYE
-        dRTLI7rfgcQt+NEx9jMwwYOcerRz50qnLdHgFu6JC8LR1y8JMWeexZx297HqmUidqUUhBf
-        y0wrnwL2KGP53x8QIYEN+pSb6+y3PoY=
-Received: from mail-qt1-f198.google.com (mail-qt1-f198.google.com
- [209.85.160.198]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-222-xMURXCNQMoaH_8e00NL3mA-1; Wed, 05 Feb 2020 16:49:56 -0500
-X-MC-Unique: xMURXCNQMoaH_8e00NL3mA-1
-Received: by mail-qt1-f198.google.com with SMTP id g26so2345321qts.16
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Feb 2020 13:49:56 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=hzR+kWwgje3yUYdtQN4kRBB1wzrOCH+ul+GIZRQLQpQ=;
-        b=YoOHeYtTS5HgWvqbIfoAjnCLmjap/QokVZivPF6YeEKpp+CMPUsM0uCT83k8RcPjB9
-         RK2Ho3EcFrKefHh+nM19Zk6NBY9+R6Y9tuSruvFDr38mV9gF4ohmSbjyEsTAtbDCfTm9
-         /XtQBS1ngd8uVkq8ekNiMAImtOa6ebiyoXxBiEzY5Pplhd/hO2UDnKHvq+tt3CwMBYgO
-         Y5IxqoFeTxyAjUzym494IxISRwAIc5lBec50hWjBt92YvNK2rVhDPP/N83EyFIiT8qa3
-         QSNE1jMq3LT9+96ujriCdE4cxfCzaX0HslrXtqFkEtrLS+whfw7NodRYvqxtVKxuLKAM
-         c4yg==
-X-Gm-Message-State: APjAAAX4TpzWXr+bSGJ4X0+lwVuAPgmz8unPrjASPy4gC6Eass+4uEkN
-        G9Qnr8FfVXbQTrOgOWSjrlTEfgL49BiqtdXGMjiQSjVz/ISiSl/sW+S5qQ00jRmCB1ArKEsISIq
-        nMpUYaifCEL5IT0r4bFLvo0n5
-X-Received: by 2002:ac8:3886:: with SMTP id f6mr34654890qtc.160.1580939396254;
-        Wed, 05 Feb 2020 13:49:56 -0800 (PST)
-X-Google-Smtp-Source: APXvYqy5rpTfXYiWMOZY+w99nw37RTfo9i89EWpQ1VoSvOcWQbgR5Y78NjhhnEKvcMCS6bstDLPhlA==
-X-Received: by 2002:ac8:3886:: with SMTP id f6mr34654854qtc.160.1580939395875;
-        Wed, 05 Feb 2020 13:49:55 -0800 (PST)
-Received: from xz-x1 ([2607:9880:19c8:32::2])
-        by smtp.gmail.com with ESMTPSA id x11sm472147qkf.50.2020.02.05.13.49.53
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 05 Feb 2020 13:49:55 -0800 (PST)
-Date:   Wed, 5 Feb 2020 16:49:52 -0500
-From:   Peter Xu <peterx@redhat.com>
-To:     Sean Christopherson <sean.j.christopherson@intel.com>
-Cc:     Paolo Bonzini <pbonzini@redhat.com>,
-        Paul Mackerras <paulus@ozlabs.org>,
-        Christian Borntraeger <borntraeger@de.ibm.com>,
-        Janosch Frank <frankja@linux.ibm.com>,
-        David Hildenbrand <david@redhat.com>,
-        Cornelia Huck <cohuck@redhat.com>,
-        Vitaly Kuznetsov <vkuznets@redhat.com>,
-        Wanpeng Li <wanpengli@tencent.com>,
-        Jim Mattson <jmattson@google.com>,
-        Joerg Roedel <joro@8bytes.org>, Marc Zyngier <maz@kernel.org>,
-        James Morse <james.morse@arm.com>,
-        Julien Thierry <julien.thierry.kdev@gmail.com>,
-        Suzuki K Poulose <suzuki.poulose@arm.com>,
-        linux-mips@vger.kernel.org, kvm@vger.kernel.org,
-        kvm-ppc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        kvmarm@lists.cs.columbia.edu, linux-kernel@vger.kernel.org,
-        Christoffer Dall <christoffer.dall@arm.com>,
-        Philippe =?utf-8?Q?Mathieu-Daud=C3=A9?= <f4bug@amsat.org>
-Subject: Re: [PATCH v5 01/19] KVM: x86: Allocate new rmap and large page
- tracking when moving memslot
-Message-ID: <20200205214952.GD387680@xz-x1>
-References: <20200121223157.15263-1-sean.j.christopherson@intel.com>
- <20200121223157.15263-2-sean.j.christopherson@intel.com>
+        Wed, 5 Feb 2020 16:56:25 -0500
+Received: from fllv0035.itg.ti.com ([10.64.41.0])
+        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 015LuCCp079409;
+        Wed, 5 Feb 2020 15:56:12 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1580939772;
+        bh=e1Zw3z+xlD/pz5HMM6azV+85TAV093EqerWx393F+8c=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=lmrdUYtbJn0Pttqhmq0rhw5qWrFyuiNiFj1lZT7e7EQz3vSg8hMR88gb1WNwV4/dj
+         IcunSmV//aJ3GliO8wBZsnpQxjVEDKOt6UuZBsL9A1DGK8NKjMeyApxBsFwDgkPAq6
+         wAlPw8yDQQoBc49v0i6ttbyDbwc9Q03p93SWHfus=
+Received: from DLEE103.ent.ti.com (dlee103.ent.ti.com [157.170.170.33])
+        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTP id 015LuCFD079824;
+        Wed, 5 Feb 2020 15:56:12 -0600
+Received: from DLEE106.ent.ti.com (157.170.170.36) by DLEE103.ent.ti.com
+ (157.170.170.33) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Wed, 5 Feb
+ 2020 15:56:11 -0600
+Received: from lelv0326.itg.ti.com (10.180.67.84) by DLEE106.ent.ti.com
+ (157.170.170.36) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
+ Frontend Transport; Wed, 5 Feb 2020 15:56:11 -0600
+Received: from [10.250.65.13] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by lelv0326.itg.ti.com (8.15.2/8.15.2) with ESMTP id 015LuAOe116131;
+        Wed, 5 Feb 2020 15:56:11 -0600
+Subject: Re: [PATCH net-next v2] net: phy: dp83867: Add speed optimization
+ feature
+To:     Heiner Kallweit <hkallweit1@gmail.com>, <andrew@lunn.ch>,
+        <f.fainelli@gmail.com>
+CC:     <linux@armlinux.org.uk>, <davem@davemloft.net>,
+        <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+References: <20200204181319.27381-1-dmurphy@ti.com>
+ <0ebcd40d-b9cc-1a76-bb18-91d8350aa1cd@gmail.com>
+From:   Dan Murphy <dmurphy@ti.com>
+Message-ID: <170d6518-ea82-08d3-0348-228c72425e64@ti.com>
+Date:   Wed, 5 Feb 2020 15:51:43 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20200121223157.15263-2-sean.j.christopherson@intel.com>
+In-Reply-To: <0ebcd40d-b9cc-1a76-bb18-91d8350aa1cd@gmail.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jan 21, 2020 at 02:31:39PM -0800, Sean Christopherson wrote:
-> Reallocate a rmap array and recalcuate large page compatibility when
-> moving an existing memslot to correctly handle the alignment properties
-> of the new memslot.  The number of rmap entries required at each level
-> is dependent on the alignment of the memslot's base gfn with respect to
-> that level, e.g. moving a large-page aligned memslot so that it becomes
-> unaligned will increase the number of rmap entries needed at the now
-> unaligned level.
-> 
-> Not updating the rmap array is the most obvious bug, as KVM accesses
-> garbage data beyond the end of the rmap.  KVM interprets the bad data as
-> pointers, leading to non-canonical #GPs, unexpected #PFs, etc...
-> 
->   general protection fault: 0000 [#1] SMP
->   CPU: 0 PID: 1909 Comm: move_memory_reg Not tainted 5.4.0-rc7+ #139
->   Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 0.0.0 02/06/2015
->   RIP: 0010:rmap_get_first+0x37/0x50 [kvm]
->   Code: <48> 8b 3b 48 85 ff 74 ec e8 6c f4 ff ff 85 c0 74 e3 48 89 d8 5b c3
->   RSP: 0018:ffffc9000021bbc8 EFLAGS: 00010246
->   RAX: ffff00617461642e RBX: ffff00617461642e RCX: 0000000000000012
->   RDX: ffff88827400f568 RSI: ffffc9000021bbe0 RDI: ffff88827400f570
->   RBP: 0010000000000000 R08: ffffc9000021bd00 R09: ffffc9000021bda8
->   R10: ffffc9000021bc48 R11: 0000000000000000 R12: 0030000000000000
->   R13: 0000000000000000 R14: ffff88827427d700 R15: ffffc9000021bce8
->   FS:  00007f7eda014700(0000) GS:ffff888277a00000(0000) knlGS:0000000000000000
->   CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
->   CR2: 00007f7ed9216ff8 CR3: 0000000274391003 CR4: 0000000000162eb0
->   Call Trace:
->    kvm_mmu_slot_set_dirty+0xa1/0x150 [kvm]
->    __kvm_set_memory_region.part.64+0x559/0x960 [kvm]
->    kvm_set_memory_region+0x45/0x60 [kvm]
->    kvm_vm_ioctl+0x30f/0x920 [kvm]
->    do_vfs_ioctl+0xa1/0x620
->    ksys_ioctl+0x66/0x70
->    __x64_sys_ioctl+0x16/0x20
->    do_syscall_64+0x4c/0x170
->    entry_SYSCALL_64_after_hwframe+0x44/0xa9
->   RIP: 0033:0x7f7ed9911f47
->   Code: <48> 3d 01 f0 ff ff 73 01 c3 48 8b 0d 21 6f 2c 00 f7 d8 64 89 01 48
->   RSP: 002b:00007ffc00937498 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
->   RAX: ffffffffffffffda RBX: 0000000001ab0010 RCX: 00007f7ed9911f47
->   RDX: 0000000001ab1350 RSI: 000000004020ae46 RDI: 0000000000000004
->   RBP: 000000000000000a R08: 0000000000000000 R09: 00007f7ed9214700
->   R10: 00007f7ed92149d0 R11: 0000000000000246 R12: 00000000bffff000
->   R13: 0000000000000003 R14: 00007f7ed9215000 R15: 0000000000000000
->   Modules linked in: kvm_intel kvm irqbypass
->   ---[ end trace 0c5f570b3358ca89 ]---
-> 
-> The disallow_lpage tracking is more subtle.  Failure to update results
-> in KVM creating large pages when it shouldn't, either due to stale data
-> or again due to indexing beyond the end of the metadata arrays, which
-> can lead to memory corruption and/or leaking data to guest/userspace.
-> 
-> Note, the arrays for the old memslot are freed by the unconditional call
-> to kvm_free_memslot() in __kvm_set_memory_region().
+Heiner
 
-If __kvm_set_memory_region() failed, I think the old memslot will be
-kept and the new memslot will be freed instead?
+On 2/5/20 3:16 PM, Heiner Kallweit wrote:
+> On 04.02.2020 19:13, Dan Murphy wrote:
+>> Set the speed optimization bit on the DP83867 PHY.
+>> This feature can also be strapped on the 64 pin PHY devices
+>> but the 48 pin devices do not have the strap pin available to enable
+>> this feature in the hardware.  PHY team suggests to have this bit set.
+>>
+>> With this bit set the PHY will auto negotiate and report the link
+>> parameters in the PHYSTS register.  This register provides a single
+>> location within the register set for quick access to commonly accessed
+>> information.
+>>
+>> In this case when auto negotiation is on the PHY core reads the bits
+>> that have been configured or if auto negotiation is off the PHY core
+>> reads the BMCR register and sets the phydev parameters accordingly.
+>>
+>> This Giga bit PHY can throttle the speed to 100Mbps or 10Mbps to accomodate a
+>> 4-wire cable.  If this should occur the PHYSTS register contains the
+>> current negotiated speed and duplex mode.
+>>
+>> In overriding the genphy_read_status the dp83867_read_status will do a
+>> genphy_read_status to setup the LP and pause bits.  And then the PHYSTS
+>> register is read and the phydev speed and duplex mode settings are
+>> updated.
+>>
+>> Signed-off-by: Dan Murphy <dmurphy@ti.com>
+>> ---
+>> v2 - Updated read status to call genphy_read_status first, added link_change
+>> callback to notify of speed change and use phy_set_bits - https://lore.kernel.org/patchwork/patch/1188348/
+>>
+> As stated in the first review, it would be appreciated if you implement
+> also the downshift tunable. This could be a separate patch in this series.
+> Most of the implementation would be boilerplate code.
 
-> 
-> Fixes: 05da45583de9b ("KVM: MMU: large page support")
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
-> ---
->  arch/x86/kvm/x86.c | 11 +++++++++++
->  1 file changed, 11 insertions(+)
-> 
-> diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
-> index 4c30ebe74e5d..1953c71c52f2 100644
-> --- a/arch/x86/kvm/x86.c
-> +++ b/arch/x86/kvm/x86.c
-> @@ -9793,6 +9793,13 @@ int kvm_arch_create_memslot(struct kvm *kvm, struct kvm_memory_slot *slot,
->  {
->  	int i;
->  
-> +	/*
-> +	 * Clear out the previous array pointers for the KVM_MR_MOVE case.  The
-> +	 * old arrays will be freed by __kvm_set_memory_region() if installing
-> +	 * the new memslot is successful.
-> +	 */
-> +	memset(&slot->arch, 0, sizeof(slot->arch));
+I just don't have a requirement from our customer to make it adjustable 
+so I did not want to add something extra.
 
-I actually gave r-b on this patch but it was lost... And then when I
-read it again I start to confuse on why we need to set these to zeros.
-Even if they're not zeros, iiuc kvm_free_memslot() will compare each
-of the array pointer and it will only free the changed pointers, then
-it looks fine even without zeroing?
+I can add in for v3.
 
-> +
->  	for (i = 0; i < KVM_NR_PAGE_SIZES; ++i) {
->  		struct kvm_lpage_info *linfo;
->  		unsigned long ugfn;
-> @@ -9867,6 +9874,10 @@ int kvm_arch_prepare_memory_region(struct kvm *kvm,
->  				const struct kvm_userspace_memory_region *mem,
->  				enum kvm_mr_change change)
->  {
-> +	if (change == KVM_MR_MOVE)
-> +		return kvm_arch_create_memslot(kvm, memslot,
-> +					       mem->memory_size >> PAGE_SHIFT);
-> +
+>
+> And I have to admit that I'm not too happy with the term "speed optimization".
+> This sounds like the PHY has some magic to establish a 1.2Gbps link.
+> Even though the vendor may call it this way in the datasheet, the standard
+> term is "downshift". I'm fine with using "speed optimization" in constants
+> to be in line with the datasheet. Just a comment in the code would be helpful
+> that speed optimization is the vendor's term for downshift.
 
-Instead of calling kvm_arch_create_memslot() explicitly again here,
-can it be replaced by below?
+Ack.  The data sheet actually says "Speed optimization, also known as 
+link downshift"
 
-diff --git a/virt/kvm/kvm_main.c b/virt/kvm/kvm_main.c
-index 72b45f491692..85a7b02fd752 100644
---- a/virt/kvm/kvm_main.c
-+++ b/virt/kvm/kvm_main.c
-@@ -1144,7 +1144,7 @@ int __kvm_set_memory_region(struct kvm *kvm,
-                new.dirty_bitmap = NULL;
- 
-        r = -ENOMEM;
--       if (change == KVM_MR_CREATE) {
-+       if (change == KVM_MR_CREATE || change == KVM_MR_MOVE) {
-                new.userspace_addr = mem->userspace_addr;
- 
-                if (kvm_arch_create_memslot(kvm, &new, npages))
+So I probably will just rename everything down shift.
 
->  	return 0;
->  }
->  
-> -- 
-> 2.24.1
-> 
+>
+>>   drivers/net/phy/dp83867.c | 55 +++++++++++++++++++++++++++++++++++++++
+>>   1 file changed, 55 insertions(+)
+>>
+>> diff --git a/drivers/net/phy/dp83867.c b/drivers/net/phy/dp83867.c
+>> index 967f57ed0b65..6f86ca1ebb51 100644
+>> --- a/drivers/net/phy/dp83867.c
+>> +++ b/drivers/net/phy/dp83867.c
+>> @@ -21,6 +21,7 @@
+>>   #define DP83867_DEVADDR		0x1f
+>>   
+>>   #define MII_DP83867_PHYCTRL	0x10
+>> +#define MII_DP83867_PHYSTS	0x11
+>>   #define MII_DP83867_MICR	0x12
+>>   #define MII_DP83867_ISR		0x13
+>>   #define DP83867_CFG2		0x14
+>> @@ -118,6 +119,15 @@
+>>   #define DP83867_IO_MUX_CFG_CLK_O_SEL_MASK	(0x1f << 8)
+>>   #define DP83867_IO_MUX_CFG_CLK_O_SEL_SHIFT	8
+>>   
+>> +/* PHY STS bits */
+>> +#define DP83867_PHYSTS_1000			BIT(15)
+>> +#define DP83867_PHYSTS_100			BIT(14)
+>> +#define DP83867_PHYSTS_DUPLEX			BIT(13)
+>> +#define DP83867_PHYSTS_LINK			BIT(10)
+>> +
+>> +/* CFG2 bits */
+>> +#define DP83867_SPEED_OPTIMIZED_EN		(BIT(8) | BIT(9))
+>> +
+>>   /* CFG3 bits */
+>>   #define DP83867_CFG3_INT_OE			BIT(7)
+>>   #define DP83867_CFG3_ROBUST_AUTO_MDIX		BIT(9)
+>> @@ -287,6 +297,43 @@ static int dp83867_config_intr(struct phy_device *phydev)
+>>   	return phy_write(phydev, MII_DP83867_MICR, micr_status);
+>>   }
+>>   
+>> +static void dp83867_link_change_notify(struct phy_device *phydev)
+>> +{
+>> +	if (phydev->state != PHY_RUNNING)
+>> +		return;
+>> +
+>> +	if (phydev->speed == SPEED_100 || phydev->speed == SPEED_10)
+>> +		phydev_warn(phydev, "Downshift detected connection is %iMbps\n",
+>> +			    phydev->speed);
+> The link partner may simply not advertise 1Gbps. How do you know that
+> a link speed of e.g. 100Mbps is caused by a downshift?
+> Some PHY's I've seen with this feature have a flag somewhere indicating
+> that downshift occurred. How about the PHY here?
 
--- 
-Peter Xu
+I don't see a register that gives us that status
+
+I will ask the hardware team if there is one.
+
+This is a 1Gbps PHY by default so if a slower connection is established 
+due to faulty cabling or LP advertisement then this would be a down 
+shift IMO.
+
+Dan
 
