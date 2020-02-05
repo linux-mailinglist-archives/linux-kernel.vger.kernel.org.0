@@ -2,159 +2,188 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9B1E015294A
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Feb 2020 11:36:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9D828152928
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Feb 2020 11:33:53 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728315AbgBEKgo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 5 Feb 2020 05:36:44 -0500
-Received: from lhrrgout.huawei.com ([185.176.76.210]:2373 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727562AbgBEKgo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Feb 2020 05:36:44 -0500
-Received: from lhreml702-cah.china.huawei.com (unknown [172.18.7.108])
-        by Forcepoint Email with ESMTP id 5B0A0A50E481B9D7D2A2;
-        Wed,  5 Feb 2020 10:36:42 +0000 (GMT)
-Received: from roberto-HP-EliteDesk-800-G2-DM-65W.huawei.com (10.204.65.160)
- by smtpsuk.huawei.com (10.201.108.43) with Microsoft SMTP Server (TLS) id
- 14.3.408.0; Wed, 5 Feb 2020 10:36:35 +0000
-From:   Roberto Sassu <roberto.sassu@huawei.com>
-To:     <zohar@linux.ibm.com>, <James.Bottomley@HansenPartnership.com>,
-        <jarkko.sakkinen@linux.intel.com>
-CC:     <linux-integrity@vger.kernel.org>,
-        <linux-security-module@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <silviu.vlasceanu@huawei.com>,
-        Roberto Sassu <roberto.sassu@huawei.com>
-Subject: [PATCH v2 8/8] ima: Use ima_hash_algo for collision detection in the measurement list
-Date:   Wed, 5 Feb 2020 11:33:17 +0100
-Message-ID: <20200205103317.29356-9-roberto.sassu@huawei.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20200205103317.29356-1-roberto.sassu@huawei.com>
-References: <20200205103317.29356-1-roberto.sassu@huawei.com>
+        id S1728279AbgBEKdw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 5 Feb 2020 05:33:52 -0500
+Received: from us-smtp-2.mimecast.com ([205.139.110.61]:24658 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727771AbgBEKdv (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Feb 2020 05:33:51 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1580898829;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=fMJo0Joxo+pl/mB5o3Pd3oM2dXap9Kiay0KNytUxRsU=;
+        b=ZIWxRiOIzLW96aEkYuzKP+c8c6Yr4VUb/c/lPxeAgEQfDfkgOe5MfIc00azpJg+CofmS5H
+        oFRmCVrbW2lAeXJYCkJvCYyvfywqE3Z8VW1XF1CPlZKOc6I3ZkOkPmGu/0ynXMJh1yC7i+
+        B9iSR9oVlUUGUgqROv65tADe6ktU4rY=
+Received: from mail-qk1-f200.google.com (mail-qk1-f200.google.com
+ [209.85.222.200]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-38-Kv2sm9_INeacVasvVJJF4A-1; Wed, 05 Feb 2020 05:33:48 -0500
+X-MC-Unique: Kv2sm9_INeacVasvVJJF4A-1
+Received: by mail-qk1-f200.google.com with SMTP id q2so944071qkq.19
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Feb 2020 02:33:48 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to;
+        bh=fMJo0Joxo+pl/mB5o3Pd3oM2dXap9Kiay0KNytUxRsU=;
+        b=fhk2m4m7Wl+lz8/GrrKgt8iDJeTsCEfQi9J1lfM7/tsWOuq5Tqjrwc7SGYw6H7BM4D
+         00rThA/cxo8EjUfxmr97IoS1aD5ZPG8EV8JXzhEHujB+SWUoK7pGU8dJcxDhl1mHiCPg
+         2ZkWU8WBkxlpC1xSIMh+CZVYXycOtv49UDpOJLuImKvRe/GThmFAARJuH8FKwL5I24iv
+         3a89bzt34429Ws+ZyO9zG+6xy0YhANGNCg/OZTxpZjS/K9zjV5zYBy5fjMlW4bUMQM1J
+         PwnShnsXNvpoOEJfEx0D9aWKEkDADllguK8Y2D6pz/Kggi1bcprLKby2QZM7ynntY6CY
+         0kpg==
+X-Gm-Message-State: APjAAAWk/HD/vl33NVwblQIz8PjVz+/BXJMhXij3Ppxy1PnY6W13o88L
+        D6KpDTjdjShIVPHLvJ4qxU5T0Z5tsEB/QahVH+FQJlUr04zhfy/JUsDCpK53Ih7PmN+pm6lpfM+
+        WU3Lu9qz7KJ4uD5hce0M77Q0T
+X-Received: by 2002:a37:6853:: with SMTP id d80mr4494822qkc.57.1580898827681;
+        Wed, 05 Feb 2020 02:33:47 -0800 (PST)
+X-Google-Smtp-Source: APXvYqxSqc1HJF8dt4Eb/7jFWTJnHSPo1HCY1H3WJbmwy+Vb8UDe9HwZCYMCfYz7+b2DU8mORTzDoA==
+X-Received: by 2002:a37:6853:: with SMTP id d80mr4494800qkc.57.1580898827421;
+        Wed, 05 Feb 2020 02:33:47 -0800 (PST)
+Received: from redhat.com (bzq-79-176-41-183.red.bezeqint.net. [79.176.41.183])
+        by smtp.gmail.com with ESMTPSA id p50sm13949401qtf.5.2020.02.05.02.33.42
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 05 Feb 2020 02:33:46 -0800 (PST)
+Date:   Wed, 5 Feb 2020 05:33:40 -0500
+From:   "Michael S. Tsirkin" <mst@redhat.com>
+To:     Shahaf Shuler <shahafs@mellanox.com>
+Cc:     Jason Wang <jasowang@redhat.com>, Tiwei Bie <tiwei.bie@intel.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+        "virtualization@lists.linux-foundation.org" 
+        <virtualization@lists.linux-foundation.org>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        Jason Gunthorpe <jgg@mellanox.com>,
+        "rob.miller@broadcom.com" <rob.miller@broadcom.com>,
+        "haotian.wang@sifive.com" <haotian.wang@sifive.com>,
+        "eperezma@redhat.com" <eperezma@redhat.com>,
+        "lulu@redhat.com" <lulu@redhat.com>,
+        Parav Pandit <parav@mellanox.com>,
+        "rdunlap@infradead.org" <rdunlap@infradead.org>,
+        "hch@infradead.org" <hch@infradead.org>,
+        Jiri Pirko <jiri@mellanox.com>,
+        "hanand@xilinx.com" <hanand@xilinx.com>,
+        "mhabets@solarflare.com" <mhabets@solarflare.com>,
+        "maxime.coquelin@redhat.com" <maxime.coquelin@redhat.com>,
+        "lingshan.zhu@intel.com" <lingshan.zhu@intel.com>,
+        "dan.daly@intel.com" <dan.daly@intel.com>,
+        "cunming.liang@intel.com" <cunming.liang@intel.com>,
+        "zhihong.wang@intel.com" <zhihong.wang@intel.com>
+Subject: Re: [PATCH] vhost: introduce vDPA based backend
+Message-ID: <20200205053129-mutt-send-email-mst@kernel.org>
+References: <20200131033651.103534-1-tiwei.bie@intel.com>
+ <7aab2892-bb19-a06a-a6d3-9c28bc4c3400@redhat.com>
+ <20200205020247.GA368700@___>
+ <AM0PR0502MB37952015716C1D5E07E390B6C3020@AM0PR0502MB3795.eurprd05.prod.outlook.com>
+ <112858a4-1a01-f4d7-e41a-1afaaa1cad45@redhat.com>
+ <AM0PR0502MB3795AD42233D69F350402A8AC3020@AM0PR0502MB3795.eurprd05.prod.outlook.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.204.65.160]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <AM0PR0502MB3795AD42233D69F350402A8AC3020@AM0PR0502MB3795.eurprd05.prod.outlook.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Before calculating a digest for each PCR bank, collisions were detected
-with a SHA1 digest. This patch includes ima_hash_algo among the algorithms
-used to calculate the template digest and checks collisions on that digest.
+On Wed, Feb 05, 2020 at 09:30:14AM +0000, Shahaf Shuler wrote:
+> Wednesday, February 5, 2020 9:50 AM, Jason Wang:
+> > Subject: Re: [PATCH] vhost: introduce vDPA based backend
+> > On 2020/2/5 下午3:15, Shahaf Shuler wrote:
+> > > Wednesday, February 5, 2020 4:03 AM, Tiwei Bie:
+> > >> Subject: Re: [PATCH] vhost: introduce vDPA based backend
+> > >>
+> > >> On Tue, Feb 04, 2020 at 11:30:11AM +0800, Jason Wang wrote:
+> > >>> On 2020/1/31 上午11:36, Tiwei Bie wrote:
+> > >>>> This patch introduces a vDPA based vhost backend. This backend is
+> > >>>> built on top of the same interface defined in virtio-vDPA and
+> > >>>> provides a generic vhost interface for userspace to accelerate the
+> > >>>> virtio devices in guest.
+> > >>>>
+> > >>>> This backend is implemented as a vDPA device driver on top of the
+> > >>>> same ops used in virtio-vDPA. It will create char device entry
+> > >>>> named vhost-vdpa/$vdpa_device_index for userspace to use.
+> > Userspace
+> > >>>> can use vhost ioctls on top of this char device to setup the backend.
+> > >>>>
+> > >>>> Signed-off-by: Tiwei Bie <tiwei.bie@intel.com>
+> > > [...]
+> > >
+> > >>>> +static long vhost_vdpa_do_dma_mapping(struct vhost_vdpa *v) {
+> > >>>> +	/* TODO: fix this */
+> > >>>
+> > >>> Before trying to do this it looks to me we need the following during
+> > >>> the probe
+> > >>>
+> > >>> 1) if set_map() is not supported by the vDPA device probe the IOMMU
+> > >>> that is supported by the vDPA device
+> > >>> 2) allocate IOMMU domain
+> > >>>
+> > >>> And then:
+> > >>>
+> > >>> 3) pin pages through GUP and do proper accounting
+> > >>> 4) store GPA->HPA mapping in the umem
+> > >>> 5) generate diffs of memory table and using IOMMU API to setup the
+> > >>> dma mapping in this method
+> > >>>
+> > >>> For 1), I'm not sure parent is sufficient for to doing this or need
+> > >>> to introduce new API like iommu_device in mdev.
+> > >> Agree. We may also need to introduce something like the iommu_device.
+> > >>
+> > > Would it be better for the map/umnap logic to happen inside each device ?
+> > > Devices that needs the IOMMU will call iommu APIs from inside the driver
+> > callback.
+> > 
+> > 
+> > Technically, this can work. But if it can be done by vhost-vpda it will make the
+> > vDPA driver more compact and easier to be implemented.
+> 
+> Need to see the layering of such proposal but am not sure. 
+> Vhost-vdpa is generic framework, while the DMA mapping is vendor specific. 
+> Maybe vhost-vdpa can have some shared code needed to operate on iommu, so drivers can re-use it.  to me it seems simpler than exposing a new iommu device. 
+> 
+> > 
+> > 
+> > > Devices that has other ways to do the DMA mapping will call the
+> > proprietary APIs.
+> > 
+> > 
+> > To confirm, do you prefer:
+> > 
+> > 1) map/unmap
+> 
+> It is not only that. AFAIR there also flush and invalidate calls, right?
+> 
+> > 
+> > or
+> > 
+> > 2) pass all maps at one time?
+> 
+> To me this seems more straight forward. 
+> It is correct that under hotplug and large number of memory segments
+> the driver will need to understand the diff (or not and just reload
+> the new configuration).
+> However, my assumption here is that memory
+> hotplug is heavy flow anyway, and the driver extra cycles will not be
+> that visible
 
-Changelog
+I think we can just allow both, after all vhost already has both interfaces ...
+We just need a flag that tells userspace whether it needs to
+update all maps aggressively or can wait for a fault.
 
-v1:
-- increment ima_num_template_digests before kcalloc() (suggested by Mimi)
-- check if ima_tpm_chip is NULL
-
-Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
----
- security/integrity/ima/ima.h        |  1 +
- security/integrity/ima/ima_crypto.c | 20 ++++++++++++++++++--
- security/integrity/ima/ima_queue.c  |  8 ++++----
- 3 files changed, 23 insertions(+), 6 deletions(-)
-
-diff --git a/security/integrity/ima/ima.h b/security/integrity/ima/ima.h
-index 4843077dc9e8..23d63bb96d2c 100644
---- a/security/integrity/ima/ima.h
-+++ b/security/integrity/ima/ima.h
-@@ -51,6 +51,7 @@ extern int ima_policy_flag;
- /* set during initialization */
- extern int ima_hash_algo;
- extern int ima_sha1_idx;
-+extern int ima_hash_algo_idx;
- extern int ima_num_template_digests;
- extern int ima_appraise;
- extern struct tpm_chip *ima_tpm_chip;
-diff --git a/security/integrity/ima/ima_crypto.c b/security/integrity/ima/ima_crypto.c
-index 1ee813d33bdc..f391ee3412b9 100644
---- a/security/integrity/ima/ima_crypto.c
-+++ b/security/integrity/ima/ima_crypto.c
-@@ -65,6 +65,7 @@ struct ima_algo_desc {
- };
- 
- int ima_sha1_idx;
-+int ima_hash_algo_idx;
- int ima_num_template_digests;
- 
- static struct ima_algo_desc *ima_algo_array;
-@@ -123,16 +124,26 @@ int __init ima_init_crypto(void)
- 		nr_allocated_banks = ima_tpm_chip->nr_allocated_banks;
- 
- 	ima_sha1_idx = -1;
-+	ima_hash_algo_idx = -1;
- 	ima_num_template_digests = nr_allocated_banks;
- 
- 	for (i = 0; i < nr_allocated_banks; i++) {
- 		algo = ima_tpm_chip->allocated_banks[i].crypto_id;
- 		if (algo == HASH_ALGO_SHA1)
- 			ima_sha1_idx = i;
-+
-+		if (algo == ima_hash_algo)
-+			ima_hash_algo_idx = i;
- 	}
- 
--	if (ima_sha1_idx < 0)
-+	if (ima_sha1_idx < 0) {
- 		ima_sha1_idx = ima_num_template_digests++;
-+		if (ima_hash_algo == HASH_ALGO_SHA1)
-+			ima_hash_algo_idx = ima_sha1_idx;
-+	}
-+
-+	if (ima_hash_algo_idx < 0)
-+		ima_hash_algo_idx = ima_num_template_digests++;
- 
- 	ima_algo_array = kcalloc(ima_num_template_digests,
- 				 sizeof(*ima_algo_array), GFP_KERNEL);
-@@ -173,7 +184,12 @@ int __init ima_init_crypto(void)
- 			goto out_array;
- 		}
- 
--		ima_algo_array[i].algo = HASH_ALGO_SHA1;
-+		ima_algo_array[i++].algo = HASH_ALGO_SHA1;
-+	}
-+
-+	if (ima_hash_algo_idx >= nr_allocated_banks) {
-+		ima_algo_array[i].tfm = ima_shash_tfm;
-+		ima_algo_array[i].algo = ima_hash_algo;
- 	}
- 
- 	return 0;
-diff --git a/security/integrity/ima/ima_queue.c b/security/integrity/ima/ima_queue.c
-index 7f7509774b85..58983d0f0214 100644
---- a/security/integrity/ima/ima_queue.c
-+++ b/security/integrity/ima/ima_queue.c
-@@ -57,8 +57,8 @@ static struct ima_queue_entry *ima_lookup_digest_entry(u8 *digest_value,
- 	key = ima_hash_key(digest_value);
- 	rcu_read_lock();
- 	hlist_for_each_entry_rcu(qe, &ima_htable.queue[key], hnext) {
--		rc = memcmp(qe->entry->digests[ima_sha1_idx].digest,
--			    digest_value, TPM_DIGEST_SIZE);
-+		rc = memcmp(qe->entry->digests[ima_hash_algo_idx].digest,
-+			    digest_value, hash_digest_size[ima_hash_algo]);
- 		if ((rc == 0) && (qe->entry->pcr == pcr)) {
- 			ret = qe;
- 			break;
-@@ -110,7 +110,7 @@ static int ima_add_digest_entry(struct ima_template_entry *entry,
- 
- 	atomic_long_inc(&ima_htable.len);
- 	if (update_htable) {
--		key = ima_hash_key(entry->digests[ima_sha1_idx].digest);
-+		key = ima_hash_key(entry->digests[ima_hash_algo_idx].digest);
- 		hlist_add_head_rcu(&qe->hnext, &ima_htable.queue[key]);
- 	}
- 
-@@ -162,7 +162,7 @@ int ima_add_template_entry(struct ima_template_entry *entry, int violation,
- 			   const char *op, struct inode *inode,
- 			   const unsigned char *filename)
- {
--	u8 *digest = entry->digests[ima_sha1_idx].digest;
-+	u8 *digest = entry->digests[ima_hash_algo_idx].digest;
- 	struct tpm_digest *digests_arg = entry->digests;
- 	const char *audit_cause = "hash_added";
- 	char tpm_audit_cause[AUDIT_CAUSE_LEN_MAX];
--- 
-2.17.1
+> > 
+> > Thanks
+> > 
+> > 
+> > >
+> 
 
